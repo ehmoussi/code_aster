@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -172,16 +172,32 @@ PESTER = AFFE_CHAR_MECA(
   );
 
 # PRESSION D'EAU SUR LE BARRAGE
-p_am = FORMULE(VALE='max(rho_e*ap*(niv_am(INST)-Y),0)',NOM_PARA=('Y','INST'));
-p_av = FORMULE(VALE='max(rho_e*ap*(niv_av(INST)-Y),0)',NOM_PARA=('Y','INST'));
+p_am = FORMULE(VALE='max(rho_e*ap*(niv_am(INST)-Y),0)',
+               rho_e=rho_e,
+               ap=ap,
+               niv_am=niv_am,
+               NOM_PARA=['Y', 'INST'],)
+p_av = FORMULE(VALE='max(rho_e*ap*(niv_av(INST)-Y),0)',
+               rho_e=rho_e,
+               ap=ap,
+               niv_av=niv_av,
+               NOM_PARA=['Y', 'INST'],)
 
 PAMONT=AFFE_CHAR_MECA_F(MODELE=MO,PRES_REP=_F(GROUP_MA=('BAR_AM') ,PRES=p_am));
 PAVAL =AFFE_CHAR_MECA_F(MODELE=MO,PRES_REP=_F(GROUP_MA=('BAR_AV') ,PRES=p_av));
 
 
 # PRESSION EN AMONT ET AVAL DE FISSURE
-pamj = FORMULE(VALE='max(rho_e*ap*(niv_am(INST)),0.0)',NOM_PARA=('Y','INST'));
-pavj = FORMULE(VALE='max(rho_e*ap*(niv_av(INST)),0.0)',NOM_PARA=('Y','INST'));
+pamj = FORMULE(VALE='max(rho_e*ap*(niv_am(INST)),0.0)',
+               rho_e=rho_e,
+               ap=ap,
+               niv_am=niv_am,
+               NOM_PARA=['Y', 'INST'],)
+pavj = FORMULE(VALE='max(rho_e*ap*(niv_av(INST)),0.0)',
+               rho_e=rho_e,
+               ap=ap,
+               niv_av=niv_av,
+               NOM_PARA=['Y', 'INST'],)
 
 # ON UTILISE AFFE_CHAR_CINE CAR PLUS ROBUSTE POUR LES CALCULS AVEC EJ ET SOLVEUR MUMPS
 P_AM_J = AFFE_CHAR_CINE_F(MODELE = MO,MECA_IMPO = (_F(GROUP_NO='J_AMONT', PRE1=pamj )))

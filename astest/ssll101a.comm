@@ -227,7 +227,8 @@ TEST_RESU(RESU=(_F(NUME_ORDRE=1,
                 ),
           )
 
-Meq = FORMULE(NOM_PARA=('MT', 'MFY', 'MFZ'), VALE='sqrt(MT*MT+MFY*MFY+MFZ*MFZ)')
+Meq = FORMULE(VALE='sqrt(MT*MT+MFY*MFY+MFZ*MFZ)',
+              NOM_PARA=['MT', 'MFY', 'MFZ'],)
 
 STAT1=CALC_CHAMP(reuse=STAT1,RESULTAT=STAT1,NUME_ORDRE=1,CONTRAINTE=('EFGE_ELNO'),
                  CHAM_UTIL=_F(FORMULE=(Meq, ), NOM_CHAM='EFGE_ELNO', NUME_CHAM_RESU=1),)

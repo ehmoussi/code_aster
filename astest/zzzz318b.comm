@@ -39,8 +39,10 @@ MOTHER=AFFE_MODELE(MAILLAGE=MAIL,
 # DEFINITION DES FONCTIONS DE TEMPERATURE ET D'HYDRATATION
 # --------------------------------------------------------
 
-FTEMP = FORMULE(NOM_PARA=('X','Y','Z','INST'),VALE='2.*X +3.*Y +4.*Z +5.*INST')
-FHYDR = FORMULE(NOM_PARA=('X','Y','Z','INST'),VALE='-2.*X -3.*Y -4.*Z -5.*INST')
+FTEMP = FORMULE(VALE='2.*X +3.*Y +4.*Z +5.*INST',
+                NOM_PARA=['X', 'Y', 'Z', 'INST'],)
+FHYDR = FORMULE(VALE='-2.*X -3.*Y -4.*Z -5.*INST',
+                NOM_PARA=['X', 'Y', 'Z', 'INST'],)
 
 
 # CONSTRUCTION DES CHAMPS DE GEOMETRIE
@@ -147,9 +149,12 @@ TEMP1=CREA_CHAMP(OPERATION='ASSE',
                 )
 
 # FONCTIONS POUR TESTER TRANSF_GEOM_1/2
-FX = FORMULE(NOM_PARA=('X','Y'),VALE=' 2.*X + 3.*Y + 4.')
-FY = FORMULE(NOM_PARA=('X','Y'),VALE='-3.*X + 2.*Y + 7.')
-FZ = FORMULE(NOM_PARA=('Z'),VALE='Z+1')
+FX = FORMULE(VALE=' 2.*X + 3.*Y + 4.',
+             NOM_PARA=['X', 'Y'],)
+FY = FORMULE(VALE='-3.*X + 2.*Y + 7.',
+             NOM_PARA=['X', 'Y'],)
+FZ = FORMULE(VALE='Z+1',
+             NOM_PARA='Z',)
 
 
 TEMP_SP=PROJ_CHAMP(PROJECTION='OUI',METHODE='SOUS_POINT',

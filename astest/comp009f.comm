@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -206,7 +206,9 @@ def verif(VAL_CAL,VAL_REF):
       diff=abs (VAL_CAL - VAL_REF)
    return diff
 
-VERIF=FORMULE(NOM_PARA=('VAL_REF', 'VAL_CAL'),VALE='verif(VAL_CAL,VAL_REF)')
+VERIF = FORMULE(VALE='verif(VAL_CAL,VAL_REF)',
+                verif=verif,
+                NOM_PARA=['VAL_REF', 'VAL_CAL'],)
             #  VALE='abs (VAL_CAL - VAL_REF)/max(VAL_REF')
 
 
@@ -281,7 +283,83 @@ for i in range(1,NCAL+1):
                                  );
           else :
 
-              NOR = FORMULE(NOM_PARA='N',VALE='YOUN(Ti)/YOUN(Tm)*N')
+              NOR = FORMULE(VALE='YOUN(Ti)/YOUN(Tm)*N',
+                            YOUN=YOUN,
+                            Ti=Ti,
+                            Tm=Tm,
+                            NOM_PARA='N',)
+                            YOUN=YOUN,
+                            Ti=Ti,
+                            Tm=Tm,
+                            NOM_PARA='N',)
+                            YOUN=YOUN,
+                            Ti=Ti,
+                            Tm=Tm,
+                            NOM_PARA='N',)
+                            YOUN=YOUN,
+                            Ti=Ti,
+                            Tm=Tm,
+                            NOM_PARA='N',)
+                            YOUN=YOUN,
+                            Ti=Ti,
+                            Tm=Tm,
+                            NOM_PARA='N',)
+                            YOUN=YOUN,
+                            Ti=Ti,
+                            Tm=Tm,
+                            NOM_PARA='N',)
+                            YOUN=YOUN,
+                            Ti=Ti,
+                            Tm=Tm,
+                            NOM_PARA='N',)
+                            YOUN=YOUN,
+                            Ti=Ti,
+                            Tm=Tm,
+                            NOM_PARA='N',)
+                            YOUN=YOUN,
+                            Ti=Ti,
+                            Tm=Tm,
+                            NOM_PARA='N',)
+                            YOUN=YOUN,
+                            Ti=Ti,
+                            Tm=Tm,
+                            NOM_PARA='N',)
+                            YOUN=YOUN,
+                            Ti=Ti,
+                            Tm=Tm,
+                            NOM_PARA='N',)
+                            YOUN=YOUN,
+                            Ti=Ti,
+                            Tm=Tm,
+                            NOM_PARA='N',)
+                            YOUN=YOUN,
+                            Ti=Ti,
+                            Tm=Tm,
+                            NOM_PARA='N',)
+                            YOUN=YOUN,
+                            Ti=Ti,
+                            Tm=Tm,
+                            NOM_PARA='N',)
+                            YOUN=YOUN,
+                            Ti=Ti,
+                            Tm=Tm,
+                            NOM_PARA='N',)
+                            YOUN=YOUN,
+                            Ti=Ti,
+                            Tm=Tm,
+                            NOM_PARA='N',)
+                            YOUN=YOUN,
+                            Ti=Ti,
+                            Tm=Tm,
+                            NOM_PARA='N',)
+                            YOUN=YOUN,
+                            Ti=Ti,
+                            Tm=Tm,
+                            NOM_PARA='N',)
+                            YOUN=YOUN,
+                            Ti=Ti,
+                            Tm=Tm,
+                            NOM_PARA='N',)
 
               SIG1=CREA_CHAMP(OPERATION='AFFE', TYPE_CHAM='ELGA_NEUT_F',
                               MODELE=MOMECA,  PROL_ZERO='OUI',   INFO=1,

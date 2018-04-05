@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -74,7 +74,8 @@ POST1=POST_RELEVE_T(ACTION=_F(OPERATION='EXTRACTION',
 # pour retrancher le deplacement du a la pesanteur.
 ini=POST1['DX',2]
 fdecal='(DX-%(ini)e) * -1.    '
-formul = FORMULE(VALE=fdecal%locals(),NOM_PARA=('DX',),)
+formul = FORMULE(VALE='(DX--7.503686e-05) * -1.    ',
+                 NOM_PARA='DX',)
 POST1=CALC_TABLE(reuse=POST1,TABLE=POST1,ACTION=_F(OPERATION='OPER',FORMULE=formul,NOM_PARA='DXdecal',),)
 POST1=CALC_TABLE(reuse=POST1,TABLE=POST1,ACTION=_F(OPERATION='EXTR',NOM_PARA=('INST','DXdecal',),),)
 POST1=CALC_TABLE(reuse=POST1,TABLE=POST1,ACTION=_F(OPERATION='RENOMME',NOM_PARA=['DXdecal','DX']),)

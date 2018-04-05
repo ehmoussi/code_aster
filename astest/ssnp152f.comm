@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -105,9 +105,13 @@ b1=(pres_cont-p)*(R1*R1*R2*R2)/(R1*R1-R2*R2);
 
 eps_r_1 = (1/E1)*(a1*(1-nu1)*R1+b1*(1+nu1)/R1);
 
-ux1 = FORMULE(NOM_PARA=('X','Y',), VALE='eps_r_1*cos(atan2(Y,X))');
+ux1 = FORMULE(VALE='eps_r_1*cos(atan2(Y,X))',
+              eps_r_1=eps_r_1,
+              NOM_PARA=['X', 'Y'],)
 
-uy1 = FORMULE(NOM_PARA=('X','Y',), VALE='eps_r_1*sin(atan2(Y,X))');
+uy1 = FORMULE(VALE='eps_r_1*sin(atan2(Y,X))',
+              eps_r_1=eps_r_1,
+              NOM_PARA=['X', 'Y'],)
 
 
 CH1=AFFE_CHAR_MECA_F(MODELE=MO, DDL_IMPO=(_F(GROUP_MA = 'S1R1', DX=ux1,DY=uy1,),),);
@@ -119,9 +123,17 @@ b2=-pres_cont*(R2*R2*R3*R3)/(R2*R2-R3*R3);
 
 eps_r_2 = (1/E2)*(a2*(1-nu2)*R3+b2*(1+nu2)/R3);
 
-ux2 = FORMULE(NOM_PARA=('X','Y','INST',), VALE='(R3+eps_r_2)*cos(atan2(Y,X)+tour*INST)-X');
+ux2 = FORMULE(VALE='(R3+eps_r_2)*cos(atan2(Y,X)+tour*INST)-X',
+              R3=R3,
+              eps_r_2=eps_r_2,
+              tour=tour,
+              NOM_PARA=['X', 'Y', 'INST'],)
 
-uy2 = FORMULE(NOM_PARA=('X','Y','INST',), VALE='(R3+eps_r_2)*sin(atan2(Y,X)+tour*INST)-Y');
+uy2 = FORMULE(VALE='(R3+eps_r_2)*sin(atan2(Y,X)+tour*INST)-Y',
+              R3=R3,
+              eps_r_2=eps_r_2,
+              tour=tour,
+              NOM_PARA=['X', 'Y', 'INST'],)
 
 CH2=AFFE_CHAR_MECA_F(MODELE=MO, DDL_IMPO=(_F(GROUP_MA='S2R3',DX=ux2,DY=uy2,),),);
 

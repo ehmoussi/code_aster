@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -136,10 +136,12 @@ MODELE=AFFE_MODELE(MAILLAGE=MAIT,
 #           BOUCLE SUR LES PAS DE PROPAGATIONS
 #--------------------------------------------------------------------
 LN = FORMULE(VALE='Z',
-             NOM_PARA=('X','Y','Z'));
+             NOM_PARA=['X', 'Y', 'Z'],)
 
 LT = FORMULE(VALE='+X*X/(a*a)+Y*Y/(b*b)-500.',
-             NOM_PARA=('X','Y','Z'));
+             a=a,
+             b=b,
+             NOM_PARA=['X', 'Y', 'Z'],)
 # on definit une fissure elliptique initiale
 # cf modelisation B
 FISS[0]=DEFI_FISS_XFEM(MAILLAGE=MAIT,

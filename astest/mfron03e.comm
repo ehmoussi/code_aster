@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -321,13 +321,17 @@ TEST2=CALC_TABLE(TABLE=TOME1,
 ACTION= _F(OPERATION='COMB',TABLE= TINT2, NOM_PARA ='INST')
 )
 
-ecarela1=FORMULE(NOM_PARA=('NEUT1','EPZZ'),VALE=("""ecart_relatif(NEUT1,EPZZ)"""))
+ecarela1 = FORMULE(VALE='ecart_relatif(NEUT1,EPZZ)',
+                   ecart_relatif=ecart_relatif,
+                   NOM_PARA=['NEUT1', 'EPZZ'],)
 
 TEST1=CALC_TABLE(TABLE=TEST1,reuse=TEST1,
 ACTION= _F(OPERATION='OPER',FORMULE=ecarela1, NOM_PARA ='ECART')
 )
 
-ecarela2=FORMULE(NOM_PARA=('NEUT1','V7'),VALE=("""ecart_relatif(NEUT1,V7)"""))
+ecarela2 = FORMULE(VALE='ecart_relatif(NEUT1,V7)',
+                   ecart_relatif=ecart_relatif,
+                   NOM_PARA=['NEUT1', 'V7'],)
 
 TEST2=CALC_TABLE(TABLE=TEST2,reuse=TEST2,
 ACTION= _F(OPERATION='OPER',FORMULE=ecarela2, NOM_PARA ='ECART')

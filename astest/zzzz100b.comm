@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -405,8 +405,14 @@ TEST_FONCTION(VALEUR=(_F(VALE_CALC=-1.9510565,
 
 # VALIDATION DE LA REGRESSION POLYNOMIALE
 a0, a1, a2, a3, a4, a5 = (-56., 23., 89, -17.3, -1.414, 3.14)
-form = FORMULE(NOM_PARA='X',
-               VALE="""a0 + a1*X + a2*X**2 + a3*X**3 + a4*X**4 + a5*X**5"""
+form = FORMULE(VALE='a0 + a1*X + a2*X**2 + a3*X**3 + a4*X**4 + a5*X**5',
+               a0=a0,
+               a1=a1,
+               a2=a2,
+               a3=a3,
+               a4=a4,
+               a5=a5,
+               NOM_PARA='X',)
 )
 
 absc_in = DEFI_LIST_REEL(DEBUT=-2.55,

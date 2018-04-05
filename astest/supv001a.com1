@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -33,7 +33,9 @@ sys.path.insert(0, '.')
 from ma_macro import MON_INCLUDE
 
 # form n'est utilisable que dans l'INCLUDE, la ou est defini 'para'
-form = FORMULE(NOM_PARA='INST', VALE='para * INST')
+form = FORMULE(VALE='para * INST',
+               para=para,
+               NOM_PARA='INST',)
 
 # vérifie que l'INCLUDE ne crée pas de conflit avec les concepts du jdc
 fonc = DEFI_FONCTION(NOM_PARA='X',

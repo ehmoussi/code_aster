@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -28,14 +28,16 @@ MODELEIN=AFFE_MODELE(MAILLAGE=MAILLAG2,
                               PHENOMENE='MECANIQUE',
                               MODELISATION='3D_HM',),),);
 
-LN1=FORMULE(NOM_PARA=('X','Y','Z'),VALE='Z-0.5*X-2.7');
+LN1 = FORMULE(VALE='Z-0.5*X-2.7',
+              NOM_PARA=['X', 'Y', 'Z'],)
 
 FISS1=DEFI_FISS_XFEM(MAILLAGE=MAILLAG2,
                     TYPE_DISCONTINUITE='INTERFACE',
                     DEFI_FISS=_F(FONC_LN=LN1,),
                     INFO=1,);
 
-LN2=FORMULE(NOM_PARA=('X','Y','Z'),VALE='Z-7.3+0.5*X');
+LN2 = FORMULE(VALE='Z-7.3+0.5*X',
+              NOM_PARA=['X', 'Y', 'Z'],)
 FISS2=DEFI_FISS_XFEM(MAILLAGE=MAILLAG2,
                     TYPE_DISCONTINUITE='INTERFACE',
                     DEFI_FISS=_F(FONC_LN=LN2,),
@@ -87,7 +89,8 @@ def depn(x,y,z) :
    return 0.
 
 DEPL_N = FORMULE(VALE='depn(X,Y)',
-                  NOM_PARA=('X','Y','Z'),);
+                 depn=depn,
+                 NOM_PARA=['X', 'Y', 'Z'],)
 
 CH1=AFFE_CHAR_MECA(MODELE=MODELEK,
                    DDL_IMPO=(

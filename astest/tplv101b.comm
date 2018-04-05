@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -61,8 +61,8 @@ H1=DEFI_CONSTANTE(VALE=-1.,);
 H2=DEFI_CONSTANTE(VALE=1.,);
 
 #S1=DEFI_CONSTANTE(VALE=-5.,);
-S1=FORMULE(NOM_PARA = ('NEUT1',),
-               VALE     = '-5.*NEUT1',
+S1 = FORMULE(VALE='-5.*NEUT1',
+             NOM_PARA='NEUT1',)
                        )
 
 

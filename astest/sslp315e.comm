@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -76,10 +76,12 @@ YFiss = 15.0
 
 # DEFINITION DES LEVEL SETS
 LN = FORMULE(VALE='X-XFiss',
-             NOM_PARA=('X'));
+             XFiss=XFiss,
+             NOM_PARA='X',)
 
 LT = FORMULE(VALE='Y-YFiss',
-             NOM_PARA=('Y'));
+             YFiss=YFiss,
+             NOM_PARA='Y',)
 
 # DEFINITION DE LA FISSURE INITIALE
 fiss[0] = DEFI_FISS_XFEM(MAILLAGE=poutre,

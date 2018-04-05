@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -352,9 +352,8 @@ MAT0=DEFI_MATERIAU(
                                    TAU0 = 352.)  )
 
 
-WHOL_F =   FORMULE(
-           NOM_PARA=('NBRUP'),
-           VALE=''' 4098.3*(NBRUP**(-0.2693)) '''
+WHOL_F = FORMULE(VALE=' 4098.3*(NBRUP**(-0.2693)) ',
+                 NOM_PARA='NBRUP',)
            )
 
 #
@@ -370,24 +369,20 @@ FATN = [None]*NBPR
 FATNW = [None]*NBPR
 FATNF = [None]*NBPR
 NPAR = [None]*NBPR
-CRIT[0] =   FORMULE(
-           NOM_PARA=('SIPR1_1','SIPR1_2'),
-           VALE= '''abs((SIPR1_1-SIPR1_2)/2)'''
+CRIT_0 = FORMULE(VALE='abs((SIPR1_1-SIPR1_2)/2)',
+                 NOM_PARA=['SIPR1_1', 'SIPR1_2'],)
            )
 
-CRIT[1] =   FORMULE(
-           NOM_PARA=('SITN1_1','SITN1_2'),
-           VALE= '''abs((SITN1_1-SITN1_2)/2)'''
+CRIT_1 = FORMULE(VALE='abs((SITN1_1-SITN1_2)/2)',
+                 NOM_PARA=['SITN1_1', 'SITN1_2'],)
            )
 
-CRIT[2] =   FORMULE(
-           NOM_PARA=('SIPN1_1','SIPN1_2'),
-           VALE= '''abs(SIPN1_1-SIPN1_2)/2'''
+CRIT_2 = FORMULE(VALE='abs(SIPN1_1-SIPN1_2)/2',
+                 NOM_PARA=['SIPN1_1', 'SIPN1_2'],)
            )
 
-CRIT[3] =   FORMULE(
-           NOM_PARA=('SIGEQ_1','SIGEQ_2'),
-           VALE= '''abs(SIGEQ_1-SIGEQ_2)/2'''
+CRIT_3 = FORMULE(VALE='abs(SIGEQ_1-SIGEQ_2)/2',
+                 NOM_PARA=['SIGEQ_1', 'SIGEQ_2'],)
            )
 
 RESU  = [1.92125E-3, 1.92125E-3, 1.92125E-3, 5.8175699E-3]

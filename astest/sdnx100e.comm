@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -318,8 +318,11 @@ vitex=CALC_FONCTION(INTEGRE=_F(FONCTION=ACCEX,));
 
 deplx0=CALC_FONCTION(INTEGRE=_F(FONCTION=vitex,));
 
-deplxF=FORMULE(NOM_PARA='INST',
-            VALE='deplx0(INST)-(INST*deplx0(TFIN-dt)/(TFIN-dt))')
+deplxF = FORMULE(VALE='deplx0(INST)-(INST*deplx0(TFIN-dt)/(TFIN-dt))',
+                 deplx0=deplx0,
+                 TFIN=TFIN,
+                 dt=dt,
+                 NOM_PARA='INST',)
 
 deplx=CALC_FONC_INTERP(FONCTION=deplxF, NOM_PARA = 'INST',
                         PROL_DROITE='CONSTANT',
@@ -330,8 +333,11 @@ vitey=CALC_FONCTION(INTEGRE=_F(FONCTION=ACCEY,));
 
 deply0=CALC_FONCTION(INTEGRE=_F(FONCTION=vitey,));
 
-deplyF=FORMULE(NOM_PARA='INST',
-            VALE='deply0(INST)-(INST*deply0(TFIN-dt)/(TFIN-dt))')
+deplyF = FORMULE(VALE='deply0(INST)-(INST*deply0(TFIN-dt)/(TFIN-dt))',
+                 deply0=deply0,
+                 TFIN=TFIN,
+                 dt=dt,
+                 NOM_PARA='INST',)
 
 deply=CALC_FONC_INTERP(FONCTION=deplyF, NOM_PARA = 'INST',
                         PROL_DROITE='CONSTANT',

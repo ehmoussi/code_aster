@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -45,7 +45,8 @@ MODELE=AFFE_MODELE(MAILLAGE=MAIL,
 # DEFINITION DE LA FONCTION DE TEMPERATURE
 # ----------------------------------------
 
-FTEMP = FORMULE(NOM_PARA=('Y'),VALE='50.*Y -50.')
+FTEMP = FORMULE(VALE='50.*Y -50.',
+                NOM_PARA='Y',)
 
 
 # CONSTRUCTION DES CHAMPS DE GEOMETRIE

@@ -124,13 +124,16 @@ CORGRA=MACRO_ELAS_MULT(MODELE=MODELE,
                                      CHAR_MECA=GRAV,),);
 
 sinom = FORMULE(VALE='sin(om*INST)',
-                NOM_PARA='INST',);
+                om=om,
+                NOM_PARA='INST',)
 
 dsinom = FORMULE(VALE='om*cos(om*INST)',
-                 NOM_PARA='INST',);
+                 om=om,
+                 NOM_PARA='INST',)
 
 d2sinom = FORMULE(VALE='-om**2*sin(om*INST)',
-                  NOM_PARA='INST',);
+                  om=om,
+                  NOM_PARA='INST',)
 
 TRANGENE= DYNA_VIBRA(TYPE_CALCUL='TRAN', BASE_CALCUL='GENE',
                      SCHEMA_TEMPS=_F(SCHEMA='NEWMARK',),

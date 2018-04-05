@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -109,8 +109,9 @@ print sin(beta)
 
 # FUNCTION POUR IMPOSER L'ANGLE DE PROPAGATION CI-DESSUS
 # DANS LA TABLE ISSUE PAR CALC_G
-ZERO=FORMULE(NOM_PARA='G',
-             VALE='0.0*G+beta',);
+ZERO = FORMULE(VALE='0.0*G+beta',
+               beta=beta,
+               NOM_PARA='G',)
 
 # modif pour imposer un angle
 SIF =  CALC_TABLE(TABLE=SIF0,
@@ -167,8 +168,9 @@ PROPA_FISS(MODELE=MODELE,
 # idem, ms angle plus grand
 beta2=70.0/180.0*3.1415
 #
-ANGLE=FORMULE(NOM_PARA='G',
-              VALE='0.0*G+beta2',);
+ANGLE = FORMULE(VALE='0.0*G+beta2',
+                beta2=beta2,
+                NOM_PARA='G',)
 #
 SIF2 = CALC_TABLE(TABLE=SIF0,
                   ACTION=(_F(OPERATION='EXTR',

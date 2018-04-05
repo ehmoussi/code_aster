@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -158,15 +158,31 @@ TSTAT=CREA_CHAMP(TYPE_CHAM='NOEU_TEMP_R',
 
 GRAD = FORMULE(VALE="""
 COEFH*(TEMPD-TEMPG)/(CONDUC+COEFH*LONTOT)""",
-               NOM_PARA='BIDON',);
+               COEFH=COEFH,
+               TEMPD=TEMPD,
+               TEMPG=TEMPG,
+               CONDUC=CONDUC,
+               LONTOT=LONTOT,
+               NOM_PARA='BIDON',)
 
 TINTG = FORMULE(VALE="""
 TEMPG + COEFH*(TEMPD-TEMPG)/(CONDUC+COEFH*LONTOT)*X """,
-                NOM_PARA='X',);
+                TEMPG=TEMPG,
+                COEFH=COEFH,
+                TEMPD=TEMPD,
+                CONDUC=CONDUC,
+                LONTOT=LONTOT,
+                NOM_PARA='X',)
 
 TINTD = FORMULE(VALE="""
 TEMPD - COEFH*(TEMPD-TEMPG)/(CONDUC+COEFH*LONTOT)*(LONMAX-X)""",
-                NOM_PARA='X',);
+                TEMPD=TEMPD,
+                COEFH=COEFH,
+                TEMPG=TEMPG,
+                CONDUC=CONDUC,
+                LONTOT=LONTOT,
+                LONMAX=LONMAX,
+                NOM_PARA='X',)
 #
 IMPR_RESU(RESU=_F(MAILLAGE=MAIL),FORMAT='RESULTAT')
 TEST_RESU(CHAM_NO=(_F(NOEUD='N25',

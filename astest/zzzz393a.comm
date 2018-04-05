@@ -30,17 +30,17 @@ MATAF=AFFE_MATERIAU(MAILLAGE=MA,
 
 #-----------------------------------------------------------------------
 
-MODX=AFFE_MODELE(MAILLAGE=MA,
+MODX=AFFE_MODELE(MAILLAGE=MA,     
                   AFFE=(_F(GROUP_MA = 'COQ_X',
                            PHENOMENE = 'MECANIQUE',
                            MODELISATION = 'DKT',)))
 
-MODY=AFFE_MODELE(MAILLAGE=MA,
+MODY=AFFE_MODELE(MAILLAGE=MA,     
                   AFFE=(_F(GROUP_MA = 'COQ_Y',
                            PHENOMENE = 'MECANIQUE',
                            MODELISATION = 'DKT',)))
 
-MODZ=AFFE_MODELE(MAILLAGE=MA,
+MODZ=AFFE_MODELE(MAILLAGE=MA,     
                   AFFE=(_F(GROUP_MA = 'COQ_Z',
                            PHENOMENE = 'MECANIQUE',
                            MODELISATION = 'DKT',)))
@@ -79,86 +79,86 @@ def escalier(x):
     else:
         return 0.
 
-EXX_X=FORMULE(NOM_PARA = ('X','INST'),
-            VALE     = '1.E-3*escalier(X)*INST',
-            escalier=escalier)
+EXX_X = FORMULE(VALE='1.E-3*escalier(X)*INST',
+                escalier=escalier,
+                NOM_PARA=['X', 'INST'],)
 
-EYY_X=FORMULE(NOM_PARA = ('X','INST'),
-            VALE     = '2.E-3*escalier(X)*INST',
-            escalier=escalier)
+EYY_X = FORMULE(VALE='2.E-3*escalier(X)*INST',
+                escalier=escalier,
+                NOM_PARA=['X', 'INST'],)
+            
+EXY_X = FORMULE(VALE='3.E-3*escalier(X)*INST',
+                escalier=escalier,
+                NOM_PARA=['X', 'INST'],)
+            
+KXX_X = FORMULE(VALE='4.E-3*escalier(X)*INST',
+                escalier=escalier,
+                NOM_PARA=['X', 'INST'],)
 
-EXY_X=FORMULE(NOM_PARA = ('X','INST'),
-            VALE     = '3.E-3*escalier(X)*INST',
-            escalier=escalier)
-
-KXX_X=FORMULE(NOM_PARA = ('X','INST'),
-            VALE     = '4.E-3*escalier(X)*INST',
-            escalier=escalier)
-
-KYY_X=FORMULE(NOM_PARA = ('X','INST'),
-            VALE     = '5.E-3*escalier(X)*INST',
-            escalier=escalier)
-
-KXY_X=FORMULE(NOM_PARA = ('X','INST'),
-            VALE     = '6.E-3*escalier(X)*INST',
-            escalier=escalier)
-
-
-EXX_Y=FORMULE(NOM_PARA = ('Y','INST'),
-            VALE     = '1.E-3*escalier(Y)*INST',
-            escalier=escalier)
-
-EYY_Y=FORMULE(NOM_PARA = ('Y','INST'),
-            VALE     = '2.E-3*escalier(Y)*INST',
-            escalier=escalier)
-
-EXY_Y=FORMULE(NOM_PARA = ('Y','INST'),
-            VALE     = '3.E-3*escalier(Y)*INST',
-            escalier=escalier)
-
-KXX_Y=FORMULE(NOM_PARA = ('Y','INST'),
-            VALE     = '4.E-3*escalier(Y)*INST',
-            escalier=escalier)
-
-KYY_Y=FORMULE(NOM_PARA = ('Y','INST'),
-            VALE     = '5.E-3*escalier(Y)*INST',
-            escalier=escalier)
-
-KXY_Y=FORMULE(NOM_PARA = ('Y','INST'),
-            VALE     = '6.E-3*escalier(Y)*INST',
-            escalier=escalier)
+KYY_X = FORMULE(VALE='5.E-3*escalier(X)*INST',
+                escalier=escalier,
+                NOM_PARA=['X', 'INST'],)
+            
+KXY_X = FORMULE(VALE='6.E-3*escalier(X)*INST',
+                escalier=escalier,
+                NOM_PARA=['X', 'INST'],)
 
 
-EXX_Z=FORMULE(NOM_PARA = ('Z','INST'),
-            VALE     = '1.E-3*escalier(Z)*INST',
-            escalier=escalier)
+EXX_Y = FORMULE(VALE='1.E-3*escalier(Y)*INST',
+                escalier=escalier,
+                NOM_PARA=['Y', 'INST'],)
 
-EYY_Z=FORMULE(NOM_PARA = ('Z','INST'),
-            VALE     = '2.E-3*escalier(Z)*INST',
-            escalier=escalier)
+EYY_Y = FORMULE(VALE='2.E-3*escalier(Y)*INST',
+                escalier=escalier,
+                NOM_PARA=['Y', 'INST'],)
+            
+EXY_Y = FORMULE(VALE='3.E-3*escalier(Y)*INST',
+                escalier=escalier,
+                NOM_PARA=['Y', 'INST'],)
+            
+KXX_Y = FORMULE(VALE='4.E-3*escalier(Y)*INST',
+                escalier=escalier,
+                NOM_PARA=['Y', 'INST'],)
 
-EXY_Z=FORMULE(NOM_PARA = ('Z','INST'),
-            VALE     = '3.E-3*escalier(Z)*INST',
-            escalier=escalier)
+KYY_Y = FORMULE(VALE='5.E-3*escalier(Y)*INST',
+                escalier=escalier,
+                NOM_PARA=['Y', 'INST'],)
+            
+KXY_Y = FORMULE(VALE='6.E-3*escalier(Y)*INST',
+                escalier=escalier,
+                NOM_PARA=['Y', 'INST'],)
+            
+            
+EXX_Z = FORMULE(VALE='1.E-3*escalier(Z)*INST',
+                escalier=escalier,
+                NOM_PARA=['Z', 'INST'],)
 
-KXX_Z=FORMULE(NOM_PARA = ('Z','INST'),
-            VALE     = '4.E-3*escalier(Z)*INST',
-            escalier=escalier)
+EYY_Z = FORMULE(VALE='2.E-3*escalier(Z)*INST',
+                escalier=escalier,
+                NOM_PARA=['Z', 'INST'],)
+            
+EXY_Z = FORMULE(VALE='3.E-3*escalier(Z)*INST',
+                escalier=escalier,
+                NOM_PARA=['Z', 'INST'],)
+            
+KXX_Z = FORMULE(VALE='4.E-3*escalier(Z)*INST',
+                escalier=escalier,
+                NOM_PARA=['Z', 'INST'],)
 
-KYY_Z=FORMULE(NOM_PARA = ('Z','INST'),
-            VALE     = '5.E-3*escalier(Z)*INST',
-            escalier=escalier)
-
-KXY_Z=FORMULE(NOM_PARA = ('Z','INST'),
-            VALE     = '6.E-3*escalier(Z)*INST',
-            escalier=escalier)
+KYY_Z = FORMULE(VALE='5.E-3*escalier(Z)*INST',
+                escalier=escalier,
+                NOM_PARA=['Z', 'INST'],)
+            
+KXY_Z = FORMULE(VALE='6.E-3*escalier(Z)*INST',
+                escalier=escalier,
+                NOM_PARA=['Z', 'INST'],)
 
 #-----------------------------------------------------------------------
 
 BLOCX=AFFE_CHAR_MECA(MODELE=MODX,
                     DDL_IMPO=(_F(GROUP_NO = ('ENCX',),
-                                 DX = 0., DY=0., DZ = 0.,
-                                 DRX = 0., DRY=0., DRZ = 0.,
+                                 DX = 0., DY=0., DZ = 0., 
+                                 DRX = 0., DRY=0., DRZ = 0., 
                                  ),
                              ),
             )
@@ -203,8 +203,8 @@ PEPSIFX=AFFE_CHAR_MECA_F(MODELE=MODX,
 
 BLOCY=AFFE_CHAR_MECA(MODELE=MODY,
                     DDL_IMPO=(_F(GROUP_NO = ('ENCY',),
-                                 DX = 0., DY=0., DZ = 0.,
-                                 DRX = 0., DRY=0., DRZ = 0.,
+                                 DX = 0., DY=0., DZ = 0., 
+                                 DRX = 0., DRY=0., DRZ = 0., 
                                  ),
                              ),
             )
@@ -245,12 +245,12 @@ PEPSIFY=AFFE_CHAR_MECA_F(MODELE=MODY,
                                   )
 
             )
-
-
+            
+            
 BLOCZ=AFFE_CHAR_MECA(MODELE=MODZ,
                     DDL_IMPO=(_F(GROUP_NO = ('ENCZ',),
-                                 DX = 0., DY=0., DZ = 0.,
-                                 DRX = 0., DRY=0., DRZ = 0.,
+                                 DX = 0., DY=0., DZ = 0., 
+                                 DRX = 0., DRY=0., DRZ = 0., 
                                  ),
                              ),
             )

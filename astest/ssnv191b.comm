@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -61,7 +61,7 @@ MO=AFFE_MODELE(MAILLAGE=MAILLAG1,
 
 
 LN = FORMULE(VALE='Y-1.5',
-             NOM_PARA=('X','Y',),);
+             NOM_PARA=['X', 'Y'],)
 
 FISS=DEFI_FISS_XFEM(MAILLAGE=MAILLAG1,
                     TYPE_DISCONTINUITE='INTERFACE',
@@ -127,10 +127,11 @@ def pr(y) :
    if y>1.5  :  return  10000.
    if y==1.5  :  return  0.
 FCTPRES = FORMULE(VALE='pr(Y)',
-                  NOM_PARA=('X','Y',),);
+                  pr=pr,
+                  NOM_PARA=['X', 'Y'],)
 # pour tester option CHAR_MECA_PRES_F
 FCTCIS = FORMULE(VALE='0.',
-                  NOM_PARA=('X','Y',),);
+                 NOM_PARA=['X', 'Y'],)
 
 CH2=AFFE_CHAR_MECA_F(MODELE=MODELEK,
                      PRES_REP=_F(GROUP_MA=('LPRESD','LPRESG',),
@@ -148,7 +149,9 @@ def prinv(y) :
    if y<1.5  :  return 10000.
    if y>1.5  :  return -10000.
    if y==1.5  :  return  0.
-FCTPRES2=FORMULE(NOM_PARA=('X','Y'),VALE='prinv(Y)');
+FCTPRES2 = FORMULE(VALE='prinv(Y)',
+                   prinv=prinv,
+                   NOM_PARA=['X', 'Y'],)
 CH4=AFFE_CHAR_MECA_F(MODELE=MODELEK,
                      FORCE_CONTOUR=(_F(GROUP_MA='LPRESG',FX=FCTPRES,),
                                _F(GROUP_MA='LPRESD',FX=FCTPRES2,),

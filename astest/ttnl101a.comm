@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -43,8 +43,12 @@ RHO_CP = DEFI_CONSTANTE(VALE = rho_cp)
 
 w      = 2.0**0.5
 T_max  = (1-1/cosh(w))/w**2 - exp(-(w**2+pi**2/4))
-T_INF  = FORMULE(NOM_PARA='Y',VALE="(1-cosh(w*Y)/cosh(w))/w**2")
-T_INI  = FORMULE(NOM_PARA='Y',VALE="T_INF(Y)-cos(pi*Y/2.0)")
+T_INF = FORMULE(VALE='(1-cosh(w*Y)/cosh(w))/w**2',
+                w=w,
+                NOM_PARA='Y',)
+T_INI = FORMULE(VALE='T_INF(Y)-cos(pi*Y/2.0)',
+                T_INF=T_INF,
+                NOM_PARA='Y',)
 
 # source(T) = rho_cp - rho_cp*w**2 * T
 

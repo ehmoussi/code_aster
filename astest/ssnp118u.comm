@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -46,7 +46,8 @@ THETA = 30.*pi/180.
 
 # formule analytique pour la fissure
 LN = FORMULE(VALE='X*cos(THETA)+Y*sin(THETA)-0.4',
-             NOM_PARA=('X','Y',),);
+             THETA=THETA,
+             NOM_PARA=['X', 'Y'],)
 
 # definition de la fissure
 FISS=DEFI_FISS_XFEM(MAILLAGE=MA,

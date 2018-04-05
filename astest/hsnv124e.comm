@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -42,11 +42,16 @@ COEF=DEFI_FONCTION(NOM_PARA='INST',
 YOUNG = 200000.0;
 
 
-C_F = FORMULE(NOM_PARA='TEMP',VALE='(1000.+2990.*TEMP)')
+C_F = FORMULE(VALE='(1000.+2990.*TEMP)',
+              NOM_PARA='TEMP',)
 
-H_F = FORMULE(NOM_PARA='TEMP',VALE='YOUNG*C_F(TEMP)/(YOUNG+C_F(TEMP))')
+H_F = FORMULE(VALE='YOUNG*C_F(TEMP)/(YOUNG+C_F(TEMP))',
+              YOUNG=YOUNG,
+              C_F=C_F,
+              NOM_PARA='TEMP',)
 
-SY_F = FORMULE(NOM_PARA='TEMP',VALE='200.-1.7*TEMP')
+SY_F = FORMULE(VALE='200.-1.7*TEMP',
+               NOM_PARA='TEMP',)
 
 TEMPE1=DEFI_LIST_REEL(DEBUT=0.0,
                       INTERVALLE=_F(JUSQU_A=100.0,
@@ -69,7 +74,9 @@ ACIER=DEFI_MATERIAU(ELAS=_F(E=YOUNG,
 #
 
 
-PRAG_F = FORMULE(NOM_PARA='TEMP',VALE='(2. /3.) * C_F(TEMP)')
+PRAG_F = FORMULE(VALE='(2. /3.) * C_F(TEMP)',
+                 C_F=C_F,
+                 NOM_PARA='TEMP',)
 
 PRAG=CALC_FONC_INTERP(FONCTION=PRAG_F,
                       LIST_PARA=TEMPE1,

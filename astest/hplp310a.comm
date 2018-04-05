@@ -60,18 +60,28 @@ RHO=2.
 TP=0.
 
 #
-T1F = FORMULE(NOM_PARA='TPV',
-              VALE='''TPV+((4.*SIGMA0*(1.-NU)*log(RHO/R1))
-                                /(sqrt(3.)*E*ALPHA)) ''')
+T1F = FORMULE(VALE="""TPV+((4.*SIGMA0*(1.-NU)*log(RHO/R1))
+                                /(sqrt(3.)*E*ALPHA)) """,
+              SIGMA0=SIGMA0,
+              NU=NU,
+              RHO=RHO,
+              R1=R1,
+              E=E,
+              ALPHA=ALPHA,
+              NOM_PARA='TPV',)
 
 #
 # ATTENTION : LA GENERATION DU MAILLAGE .MGIB A PARTIR DU FICHIER
 # .DATG FAIT APPARAITRE DES NOEUDS EN 0. A SUPPRIMER, SINON LE
 # LOG N'EST PAS DEFINI.
 #
-F_T = FORMULE(NOM_PARA=('X','Y'),
-              VALE='''(T1F(TP)-((T1F(TP)-TP)*
-               log((sqrt((X*X)+(Y*Y)))/R1))/(log(RHO/R1)))''')
+F_T = FORMULE(VALE="""(T1F(TP)-((T1F(TP)-TP)*
+               log((sqrt((X*X)+(Y*Y)))/R1))/(log(RHO/R1)))""",
+              T1F=T1F,
+              TP=TP,
+              R1=R1,
+              RHO=RHO,
+              NOM_PARA=['X', 'Y'],)
 
 TEMP0=CREA_CHAMP(  OPERATION='AFFE', TYPE_CHAM='NOEU_TEMP_R',
                          MAILLAGE=MA,

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -60,10 +60,11 @@ a0 = 150
 
 # DEFINITION DES LEVEL SETS
 LN = FORMULE(VALE='Y',
-             NOM_PARA=('Y'));
+             NOM_PARA='Y',)
 
 LT = FORMULE(VALE='abs(X)-a0',
-             NOM_PARA=('X'));
+             a0=a0,
+             NOM_PARA='X',)
 
 # NOMBRE DE PROPAGATIONS
 NPS = 3
@@ -77,10 +78,10 @@ Fiss[1]=DEFI_FISS_XFEM(MAILLAGE=MaiPlate,
 
 # FUNCTION POUR AJOUTER LA COLONNE NUME_ORDRE
 # A LA TABLE ISSUE PAR CALC_G
-FOND1=FORMULE(NOM_PARA='NUME_ORDRE',
-              VALE='0*NUME_ORDRE+1',);
-FOND2=FORMULE(NOM_PARA='NUME_ORDRE',
-              VALE='0*NUME_ORDRE+2',);
+FOND1 = FORMULE(VALE='0*NUME_ORDRE+1',
+                NOM_PARA='NUME_ORDRE',)
+FOND2 = FORMULE(VALE='0*NUME_ORDRE+2',
+                NOM_PARA='NUME_ORDRE',)
 
 #****************************
 # PROPAGATION DE LA FISSURE

@@ -481,7 +481,8 @@ LR1=DEFI_LIST_REEL(  DEBUT=INST0,
 
 # ------------------ FORMULE 1 -----------------------------------
 
-SIa = FORMULE(NOM_PARA='INST',VALE='sin(INST)')
+SIa = FORMULE(VALE='sin(INST)',
+              NOM_PARA='INST',)
 
 SIi=CALC_FONC_INTERP(        FONCTION=SIa,    LIST_PARA=LI1,
                             NOM_PARA='INST',
@@ -521,7 +522,8 @@ TEST_FONCTION(VALEUR=_F(VALE_REFE=0.,
 
 # ------------------ FORMULE 2 -----------------------------------
 
-COa = FORMULE(NOM_PARA='INST',VALE='cos(INST)')
+COa = FORMULE(VALE='cos(INST)',
+              NOM_PARA='INST',)
 
 COi=CALC_FONC_INTERP(        FONCTION=COa,    LIST_PARA=LI1,
                             NOM_PARA='INST',
@@ -807,7 +809,8 @@ TEST_TABLE(VALE_REFE=1./sqrt(2.),
 #
 #=======================================================================
 
-UN1 = FORMULE(NOM_PARA='INST',VALE='INST')
+UN1 = FORMULE(VALE='INST',
+              NOM_PARA='INST',)
 
 F5=CALC_FONC_INTERP(FONCTION=UN1,
                     LIST_PARA=LI1,
@@ -881,7 +884,9 @@ LINST=( 0., 0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.10,
 def fFa(INST) :
     return cos(OMEGA*INST)
 
-Fa = FORMULE(NOM_PARA='INST',VALE='fFa(INST)')
+Fa = FORMULE(VALE='fFa(INST)',
+             fFa=fFa,
+             NOM_PARA='INST',)
 
 
 ACCE='ACCE'
@@ -917,25 +922,35 @@ SOA=CALC_FONCTION( SPEC_OSCI=_F(  FONCTION = F,
 # - SOLUTION EXACTE ASSOCIEE A L EXCITATION ----------------------------
 #   SOLUTION EN DEPLACEMENT
 
-DEP = FORMULE(NOM_PARA=('INST','FREQ','AMOR'),VALE='''
+DEP = FORMULE(VALE="""
 (1./
    (((2.*pi*FREQ)**2 - OMEGA**2 )**2 +(2.*AMOR*2.*pi*FREQ*OMEGA)**2))*(((2.*pi*FREQ)**2 - OMEGA**2)*
    cos(OMEGA*INST) + 2.*AMOR*2.*pi*FREQ*
    OMEGA*sin(OMEGA*INST) - ( ((2.*pi*FREQ)**2 - OMEGA**2)*cos(2.*pi*
    FREQ*INST)+ AMOR*((2.*pi*FREQ)**2 + OMEGA**2 )*sin(2.*pi*FREQ*INST))
-   *exp(-AMOR*2.*pi*FREQ*INST) )   ''')
+   *exp(-AMOR*2.*pi*FREQ*INST) )   """,
+              OMEGA=OMEGA,
+              NOM_PARA=['INST', 'FREQ', 'AMOR'],)
 
 #   SOLUTION EN VITESSE
 
-VIT = FORMULE(NOM_PARA=('INST','FREQ','AMOR'),VALE='''
-(2.*pi*FREQ) * DEP(INST,FREQ,AMOR)  ''')
+VIT = FORMULE(VALE="""
+(2.*pi*FREQ) * DEP(INST,FREQ,AMOR)  """,
+              DEP=DEP,
+              NOM_PARA=['INST', 'FREQ', 'AMOR'],)
 
 #   SOLUTION EN ACCELERATION
 
-ACC = FORMULE(NOM_PARA=('INST','FREQ','AMOR'),VALE='''
-(2.*pi*FREQ)**2 * DEP(INST,FREQ,AMOR)  ''')
+ACC = FORMULE(VALE="""
+(2.*pi*FREQ)**2 * DEP(INST,FREQ,AMOR)  """,
+              DEP=DEP,
+              NOM_PARA=['INST', 'FREQ', 'AMOR'],)
 
-DE11a = FORMULE(NOM_PARA='INST',VALE='''DEP(INST,FREQ1,AMOR1) ''')
+DE11a = FORMULE(VALE='DEP(INST,FREQ1,AMOR1) ',
+                DEP=DEP,
+                FREQ1=FREQ1,
+                AMOR1=AMOR1,
+                NOM_PARA='INST',)
 
 DE11=CALC_FONC_INTERP(  FONCTION=DE11a,
                         NOM_PARA='INST', VALE_PARA=LINST   )
@@ -963,7 +978,11 @@ TEST_TABLE(VALE_CALC=1.9573681372588546E-3,
                    ),
            )
 
-VI11a = FORMULE(NOM_PARA='INST',VALE='''VIT(INST,FREQ1,AMOR1) ''')
+VI11a = FORMULE(VALE='VIT(INST,FREQ1,AMOR1) ',
+                VIT=VIT,
+                FREQ1=FREQ1,
+                AMOR1=AMOR1,
+                NOM_PARA='INST',)
 
 VI11=CALC_FONC_INTERP( FONCTION=VI11a,
                        NOM_PARA='INST', VALE_PARA=LINST   )
@@ -990,7 +1009,11 @@ TEST_TABLE(VALE_CALC=0.061492533603831556,
                    ),
            )
 
-AC11a = FORMULE(NOM_PARA='INST',VALE='''ACC(INST,FREQ1,AMOR1) ''')
+AC11a = FORMULE(VALE='ACC(INST,FREQ1,AMOR1) ',
+                ACC=ACC,
+                FREQ1=FREQ1,
+                AMOR1=AMOR1,
+                NOM_PARA='INST',)
 
 AC11=CALC_FONC_INTERP( FONCTION=AC11a,
                        NOM_PARA='INST', VALE_PARA=LINST   )
@@ -1017,7 +1040,11 @@ TEST_TABLE(VALE_CALC=1.931844918204207,
                    ),
            )
 
-DE21a = FORMULE(NOM_PARA='INST',VALE='''DEP(INST,FREQ2,AMOR1) ''')
+DE21a = FORMULE(VALE='DEP(INST,FREQ2,AMOR1) ',
+                DEP=DEP,
+                FREQ2=FREQ2,
+                AMOR1=AMOR1,
+                NOM_PARA='INST',)
 
 DE21=CALC_FONC_INTERP(   FONCTION=DE21a,
                          NOM_PARA='INST', VALE_PARA=LINST   )
@@ -1044,7 +1071,11 @@ TEST_TABLE(VALE_CALC=1.0708882193279175E-4,
                    ),
            )
 
-VI21a = FORMULE(NOM_PARA='INST',VALE='''VIT(INST,FREQ2,AMOR1) ''')
+VI21a = FORMULE(VALE='VIT(INST,FREQ2,AMOR1) ',
+                VIT=VIT,
+                FREQ2=FREQ2,
+                AMOR1=AMOR1,
+                NOM_PARA='INST',)
 
 VI21=CALC_FONC_INTERP(   FONCTION=VI21a,
                          NOM_PARA='INST', VALE_PARA=LINST   )
@@ -1071,7 +1102,11 @@ TEST_TABLE(VALE_CALC=0.014130037163157052,
                    ),
            )
 
-AC21a = FORMULE(NOM_PARA='INST',VALE='''ACC(INST,FREQ2,AMOR1) ''')
+AC21a = FORMULE(VALE='ACC(INST,FREQ2,AMOR1) ',
+                ACC=ACC,
+                FREQ2=FREQ2,
+                AMOR1=AMOR1,
+                NOM_PARA='INST',)
 
 AC21=CALC_FONC_INTERP(   FONCTION=AC21a,
                          NOM_PARA='INST', VALE_PARA=LINST   )
@@ -1098,7 +1133,11 @@ TEST_TABLE(VALE_CALC=1.8644144797624482,
                    ),
            )
 
-DE31a = FORMULE(NOM_PARA='INST',VALE='''DEP(INST,FREQ3,AMOR1) ''')
+DE31a = FORMULE(VALE='DEP(INST,FREQ3,AMOR1) ',
+                DEP=DEP,
+                FREQ3=FREQ3,
+                AMOR1=AMOR1,
+                NOM_PARA='INST',)
 
 DE31=CALC_FONC_INTERP(  FONCTION=DE31a,
                         NOM_PARA='INST', VALE_PARA=LINST   )
@@ -1125,7 +1164,11 @@ TEST_TABLE(VALE_CALC=3.3831793123558589E-06,
                    ),
            )
 
-VI31a = FORMULE(NOM_PARA='INST',VALE='''VIT(INST,FREQ3,AMOR1) ''')
+VI31a = FORMULE(VALE='VIT(INST,FREQ3,AMOR1) ',
+                VIT=VIT,
+                FREQ3=FREQ3,
+                AMOR1=AMOR1,
+                NOM_PARA='INST',)
 
 VI31=CALC_FONC_INTERP(  FONCTION=VI31a,
                         NOM_PARA='INST', VALE_PARA=LINST   )
@@ -1152,7 +1195,11 @@ TEST_TABLE(VALE_CALC=2.2319999674295684E-3,
                    ),
            )
 
-AC31a = FORMULE(NOM_PARA='INST',VALE='''ACC(INST,FREQ3,AMOR1) ''')
+AC31a = FORMULE(VALE='ACC(INST,FREQ3,AMOR1) ',
+                ACC=ACC,
+                FREQ3=FREQ3,
+                AMOR1=AMOR1,
+                NOM_PARA='INST',)
 
 AC31=CALC_FONC_INTERP(  FONCTION=AC31a,
                         NOM_PARA='INST', VALE_PARA=LINST   )
@@ -1179,7 +1226,11 @@ TEST_TABLE(VALE_CALC=1.4725272871027717,
                    ),
            )
 
-DE12a = FORMULE(NOM_PARA='INST',VALE='''DEP(INST,FREQ1,AMOR2) ''')
+DE12a = FORMULE(VALE='DEP(INST,FREQ1,AMOR2) ',
+                DEP=DEP,
+                FREQ1=FREQ1,
+                AMOR2=AMOR2,
+                NOM_PARA='INST',)
 
 DE12=CALC_FONC_INTERP(   FONCTION=DE12a,
                          NOM_PARA='INST', VALE_PARA=LINST   )
@@ -1206,7 +1257,11 @@ TEST_TABLE(VALE_CALC=1.89836090072791E-3,
                    ),
            )
 
-VI12a = FORMULE(NOM_PARA='INST',VALE='''VIT(INST,FREQ1,AMOR2) ''')
+VI12a = FORMULE(VALE='VIT(INST,FREQ1,AMOR2) ',
+                VIT=VIT,
+                FREQ1=FREQ1,
+                AMOR2=AMOR2,
+                NOM_PARA='INST',)
 
 VI12=CALC_FONC_INTERP(   FONCTION=VI12a,
                          NOM_PARA='INST', VALE_PARA=LINST   )
@@ -1233,7 +1288,11 @@ TEST_TABLE(VALE_CALC=0.059638766595889042,
                    ),
            )
 
-AC12a = FORMULE(NOM_PARA='INST',VALE='''ACC(INST,FREQ1,AMOR2) ''')
+AC12a = FORMULE(VALE='ACC(INST,FREQ1,AMOR2) ',
+                ACC=ACC,
+                FREQ1=FREQ1,
+                AMOR2=AMOR2,
+                NOM_PARA='INST',)
 
 AC12=CALC_FONC_INTERP(   FONCTION=AC12a,
                          NOM_PARA='INST', VALE_PARA=LINST   )
@@ -1260,7 +1319,11 @@ TEST_TABLE(VALE_CALC=1.8736071100680138,
                    ),
            )
 
-DE22a = FORMULE(NOM_PARA='INST',VALE='''DEP(INST,FREQ2,AMOR2) ''')
+DE22a = FORMULE(VALE='DEP(INST,FREQ2,AMOR2) ',
+                DEP=DEP,
+                FREQ2=FREQ2,
+                AMOR2=AMOR2,
+                NOM_PARA='INST',)
 
 DE22=CALC_FONC_INTERP(  FONCTION=DE22a,
                         NOM_PARA='INST', VALE_PARA=LINST   )
@@ -1287,7 +1350,11 @@ TEST_TABLE(VALE_CALC=1.0310832170747277E-4,
                    ),
            )
 
-VI22a = FORMULE(NOM_PARA='INST',VALE='''VIT(INST,FREQ2,AMOR2) ''')
+VI22a = FORMULE(VALE='VIT(INST,FREQ2,AMOR2) ',
+                VIT=VIT,
+                FREQ2=FREQ2,
+                AMOR2=AMOR2,
+                NOM_PARA='INST',)
 
 VI22=CALC_FONC_INTERP(   FONCTION=VI22a,
                          NOM_PARA='INST', VALE_PARA=LINST   )
@@ -1314,7 +1381,11 @@ TEST_TABLE(VALE_CALC=0.013604822532007118,
                    ),
            )
 
-AC22a = FORMULE(NOM_PARA='INST',VALE='''ACC(INST,FREQ2,AMOR2) ''')
+AC22a = FORMULE(VALE='ACC(INST,FREQ2,AMOR2) ',
+                ACC=ACC,
+                FREQ2=FREQ2,
+                AMOR2=AMOR2,
+                NOM_PARA='INST',)
 
 AC22=CALC_FONC_INTERP(  FONCTION=AC22a,
                         NOM_PARA='INST', VALE_PARA=LINST   )
@@ -1341,7 +1412,11 @@ TEST_TABLE(VALE_CALC=1.7951140418377509,
                    ),
            )
 
-DE32a = FORMULE(NOM_PARA='INST',VALE='''DEP(INST,FREQ3,AMOR2) ''')
+DE32a = FORMULE(VALE='DEP(INST,FREQ3,AMOR2) ',
+                DEP=DEP,
+                FREQ3=FREQ3,
+                AMOR2=AMOR2,
+                NOM_PARA='INST',)
 
 DE32=CALC_FONC_INTERP(   FONCTION=DE32a,
                          NOM_PARA='INST', VALE_PARA=LINST   )
@@ -1368,7 +1443,11 @@ TEST_FONCTION(VALEUR=_F(VALE_CALC=2.572186E-06,PRECISION=3.E-3,
                         FONCTION=SOD,),
               )
 
-VI32a = FORMULE(NOM_PARA='INST',VALE='''VIT(INST,FREQ3,AMOR2) ''')
+VI32a = FORMULE(VALE='VIT(INST,FREQ3,AMOR2) ',
+                VIT=VIT,
+                FREQ3=FREQ3,
+                AMOR2=AMOR2,
+                NOM_PARA='INST',)
 
 VI32=CALC_FONC_INTERP(  FONCTION=VI32a,
                         NOM_PARA='INST', VALE_PARA=LINST   )
@@ -1395,7 +1474,11 @@ TEST_TABLE(VALE_CALC=1.7009338702507768E-3,
                    ),
            )
 
-AC32a = FORMULE(NOM_PARA='INST',VALE='''ACC(INST,FREQ3,AMOR2) ''')
+AC32a = FORMULE(VALE='ACC(INST,FREQ3,AMOR2) ',
+                ACC=ACC,
+                FREQ3=FREQ3,
+                AMOR2=AMOR2,
+                NOM_PARA='INST',)
 
 AC32=CALC_FONC_INTERP(  FONCTION=AC32a,
                         NOM_PARA='INST', VALE_PARA=LINST   )
@@ -1880,9 +1963,10 @@ TEST_FONCTION(VALEUR=(_F(VALE_CALC=1.0,
 #
 #=======================================================================
 
-SICO = FORMULE(NOM_PARA=('INSTA','INSTB'),VALE='''
+SICO = FORMULE(VALE="""
 2. * sin((pi/4)+((INSTA-INSTB)/2.)) *
-                          cos((pi/4)-((INSTA+INSTB)/2.))  ''')
+                          cos((pi/4)-((INSTA+INSTB)/2.))  """,
+               NOM_PARA=['INSTA', 'INSTB'],)
 
 LST=DEFI_LIST_REEL(  VALE=( INST0, INST1, INST2, INST3, INST4,
                             INST5, INST6, INST7, INST8, INST9, )  )
@@ -2604,15 +2688,21 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
 # VALIDATION DE CALC_FONC_INTERP POUR UNE NAPPE
 # VALIDATION DE LA DESTRUCTION D UNE FORMULE
 #
-NAP = FORMULE(NOM_PARA=('INST','FREQ','AMOR'),VALE='''
+NAP = FORMULE(VALE="""
 (1./(((2.*pi*FREQ)**2 - OMEGA**2 )**2 +(2.*AMOR*2.*pi*FREQ*OMEGA)**2))*(((2.*pi*FREQ)**2 -
 OMEGA**2)*cos(OMEGA*INST) + 2.*AMOR*2.*pi*FREQ*
    OMEGA*sin(OMEGA*INST) - ( ((2.*PI*FREQ)**2 - OMEGA**2)*cos(2.*pi*FREQ*INST)+ AMOR*((2.*pi*FREQ)**2 + OMEGA**2
-   )*sin(2.*pi*FREQ*INST))*exp(-AMOR*2.*pi*FREQ*INST) )   ''')
+   )*sin(2.*pi*FREQ*INST))*exp(-AMOR*2.*pi*FREQ*INST) )   """,
+              OMEGA=OMEGA,
+              PI=PI,
+              NOM_PARA=['INST', 'FREQ', 'AMOR'],)
 #
 INCLUDE(UNITE=11)
 
-NAP1 = FORMULE(NOM_PARA=('AMOR','INST'),VALE='''NAP(INST,FREQ1,AMOR) ''')
+NAP1 = FORMULE(VALE='NAP(INST,FREQ1,AMOR) ',
+               NAP=NAP,
+               FREQ1=FREQ1,
+               NOM_PARA=['AMOR', 'INST'],)
 #
 NAP2 = CALC_FONC_INTERP ( FONCTION = NAP1,
                           NOM_RESU = 'VIT',
@@ -2674,7 +2764,8 @@ TEST_FONCTION(VALEUR=_F(VALE_CALC=-0.0157436635134,
 # VALIDATION DES FORMULES COMPLEXES
 #
 
-frmcpx = FORMULE(NOM_PARA='X',VALE_C='complex(X,2.*X)')
+frmcpx = FORMULE(VALE_C='complex(X,2.*X)',
+                 NOM_PARA='X',)
 
 labs=DEFI_LIST_REEL( VALE=( 0., 1., 2., 3. ) )
 
@@ -2700,7 +2791,9 @@ TEST_FONCTION(VALEUR=(_F(VALE_CALC_C=(1+2j),
                       ),
               )
 
-frmxm1=FORMULE(NOM_PARA='X',VALE_C='1./fctcpx(X)')
+frmxm1 = FORMULE(VALE_C='1./fctcpx(X)',
+                 fctcpx=fctcpx,
+                 NOM_PARA='X',)
 
 labs1=DEFI_LIST_REEL( VALE=( 1.5, 2.5,  ) )
 

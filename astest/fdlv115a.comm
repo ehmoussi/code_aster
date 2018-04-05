@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -398,24 +398,41 @@ Eetaisd  = Eisd*Etaisd
 # DEFINITION DES FONCTIONS
 # ------------------------
 
-fRIGI_V = FORMULE(NOM_PARA=('PULS','NEUT1'),
-                  VALE_C='''complex(NEUT1*2.0*(1.0+nu_visc)*(((Gzer+Ginf*(1.0j*cele_eau*PULS*Tau)**Alp)/(1+(1.0j*cele_eau*PULS*Tau)**Alp)).real)/
+fRIGI_V = FORMULE(VALE_C="""complex(NEUT1*2.0*(1.0+nu_visc)*(((Gzer+Ginf*(1.0j*cele_eau*PULS*Tau)**Alp)/(1+(1.0j*cele_eau*PULS*Tau)**Alp)).real)/
                                 (rho_eau*cele_eau**2), 
                                     NEUT1*2.0*(1.0+nu_visc)*(((Gzer+Ginf*(1.0j*cele_eau*PULS*Tau)**Alp)/(1+(1.0j*cele_eau*PULS*Tau)**Alp)).real)/
                                 (rho_eau*cele_eau**2)*
-           (((Gzer+Ginf*(1.0j*cele_eau*PULS*Tau)**Alp)/(1+(1.0j*cele_eau*PULS*Tau)**Alp)).imag)/(((Gzer+Ginf*(1.0j*cele_eau*PULS*Tau)**Alp)/(1+(1.0j*cele_eau*PULS*Tau)**Alp)).real))''')
+           (((Gzer+Ginf*(1.0j*cele_eau*PULS*Tau)**Alp)/(1+(1.0j*cele_eau*PULS*Tau)**Alp)).imag)/(((Gzer+Ginf*(1.0j*cele_eau*PULS*Tau)**Alp)/(1+(1.0j*cele_eau*PULS*Tau)**Alp)).real))""",
+                  nu_visc=nu_visc,
+                  Gzer=Gzer,
+                  Ginf=Ginf,
+                  cele_eau=cele_eau,
+                  Tau=Tau,
+                  Alp=Alp,
+                  rho_eau=rho_eau,
+                  NOM_PARA=['PULS', 'NEUT1'],)
 
-fRIGI_E = FORMULE(NOM_PARA=('PULS','NEUT2'),VALE = '''NEUT2*e_elas/(rho_eau*cele_eau**2)''' )
+fRIGI_E = FORMULE(VALE='NEUT2*e_elas/(rho_eau*cele_eau**2)',
+                  e_elas=e_elas,
+                  rho_eau=rho_eau,
+                  cele_eau=cele_eau,
+                  NOM_PARA=['PULS', 'NEUT2'],)
 
-fMASS_E = FORMULE(NOM_PARA=('PULS', 'PORO'),VALE = '''-(PULS*PULS)*PORO*rho_elas/rho_eau''' )
+fMASS_E = FORMULE(VALE='-(PULS*PULS)*PORO*rho_elas/rho_eau',
+                  rho_elas=rho_elas,
+                  rho_eau=rho_eau,
+                  NOM_PARA=['PULS', 'PORO'],)
 
-fMASS_FI = FORMULE(NOM_PARA='PULS',VALE = '''-(PULS*PULS)*1.0''' )
+fMASS_FI = FORMULE(VALE='-(PULS*PULS)*1.0',
+                   NOM_PARA='PULS',)
 
 
-fIMPE_R  = FORMULE(NOM_PARA='PULS',VALE_C='''complex(0.0, -(PULS*PULS*PULS)*1.0)''')
+fIMPE_R = FORMULE(VALE_C='complex(0.0, -(PULS*PULS*PULS)*1.0)',
+                  NOM_PARA='PULS',)
 
 
-fRIGI_F = FORMULE(NOM_PARA='PULS',VALE = '''1.''' )
+fRIGI_F = FORMULE(VALE='1.',
+                  NOM_PARA='PULS',)
 
 
 

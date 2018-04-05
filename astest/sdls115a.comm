@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -29,7 +29,8 @@ NU  = 0.
 
 RHOF = DEFI_CONSTANTE(VALE=2500.E0)
 NUF = DEFI_CONSTANTE(VALE=0.)
-EYF = FORMULE(NOM_PARA=('Z',), VALE="4.3880E10+Z-Z" )
+EYF = FORMULE(VALE='4.3880E10+Z-Z',
+              NOM_PARA='Z',)
 AA = DEFI_CONSTANTE(VALE=0.0000001)
 AB = DEFI_CONSTANTE(VALE=0.0001)
 
@@ -137,9 +138,10 @@ COND_L1=AFFE_CHAR_MECA(MODELE=MOD1,
                        );
 
 
-ffonc = FORMULE (
-                  NOM_PARA = 'INST',
-                  VALE = ''' F0*sin(FREQ*INST) '''
+ffonc = FORMULE(VALE=' F0*sin(FREQ*INST) ',
+                F0=F0,
+                FREQ=FREQ,
+                NOM_PARA='INST',)
                   )
 
 INST1=DEFI_LIST_REEL(DEBUT=0.0,INTERVALLE=(

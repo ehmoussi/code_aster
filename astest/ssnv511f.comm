@@ -29,14 +29,16 @@ MODELEIN=AFFE_MODELE(MAILLAGE=MAILLAG,
                               PHENOMENE='MECANIQUE',
                               MODELISATION='C_PLAN')));
 
-LN1=FORMULE(NOM_PARA=('X','Y'),VALE='Y');
+LN1 = FORMULE(VALE='Y',
+              NOM_PARA=['X', 'Y'],)
 
 FISS1=DEFI_FISS_XFEM(MAILLAGE=MAILLAG,
                     TYPE_DISCONTINUITE='INTERFACE',
                     DEFI_FISS=_F(FONC_LN=LN1),
                     INFO=1);
 
-LN2=FORMULE(NOM_PARA=('X','Y'),VALE='X');
+LN2 = FORMULE(VALE='X',
+              NOM_PARA=['X', 'Y'],)
 
 FISS2=DEFI_FISS_XFEM(MAILLAGE=MAILLAG,
                     TYPE_DISCONTINUITE='INTERFACE',
@@ -101,9 +103,11 @@ def pression(x) :
    return 2E6
 
 PRES_H = FORMULE(VALE='pression(X)',
-                  NOM_PARA=('X'));
+                 pression=pression,
+                 NOM_PARA='X',)
 PRES_D = FORMULE(VALE='pression(Y)',
-                  NOM_PARA=('Y'));
+                 pression=pression,
+                 NOM_PARA='Y',)
 
 CH1=AFFE_CHAR_MECA_F(MODELE=MODELEK,
                    PRES_REP=(_F(GROUP_MA='LH',PRES = PRES_H),
@@ -230,8 +234,12 @@ def ux1(x, y):
 def uy1(x, y):
     return -(1. - 2.*nu)*y/EM - 5.*(1. - nu)/EM
 
-depl_x1 = FORMULE(NOM_PARA=('DX','COOR_X','COOR_Y'), VALE='DX-ux1(COOR_X, COOR_Y)')
-depl_y1 = FORMULE(NOM_PARA=('DY','COOR_X','COOR_Y'), VALE='DY-uy1(COOR_X, COOR_Y)')
+depl_x1 = FORMULE(VALE='DX-ux1(COOR_X, COOR_Y)',
+                  ux1=ux1,
+                  NOM_PARA=['DX', 'COOR_X', 'COOR_Y'],)
+depl_y1 = FORMULE(VALE='DY-uy1(COOR_X, COOR_Y)',
+                  uy1=uy1,
+                  NOM_PARA=['DY', 'COOR_X', 'COOR_Y'],)
 
 # zone 2 : [-5, 0[ x [-5, 0[
 def ux2(x, y):
@@ -239,8 +247,12 @@ def ux2(x, y):
 def uy2(x, y):
     return -(1. - nu)*y/EM - 5.*(1. - nu)/EM
 
-depl_x2 = FORMULE(NOM_PARA=('DX','COOR_X','COOR_Y'), VALE='DX-ux2(COOR_X, COOR_Y)')
-depl_y2 = FORMULE(NOM_PARA=('DY','COOR_X','COOR_Y'), VALE='DY-uy2(COOR_X, COOR_Y)')
+depl_x2 = FORMULE(VALE='DX-ux2(COOR_X, COOR_Y)',
+                  ux2=ux2,
+                  NOM_PARA=['DX', 'COOR_X', 'COOR_Y'],)
+depl_y2 = FORMULE(VALE='DY-uy2(COOR_X, COOR_Y)',
+                  uy2=uy2,
+                  NOM_PARA=['DY', 'COOR_X', 'COOR_Y'],)
 
 # zone 3 : ]0, +5] x ]0, +5]
 def ux3(x, y):
@@ -248,8 +260,12 @@ def ux3(x, y):
 def uy3(x, y):
     return -(2. - 2.*nu)*y/EM - 5.*(2. - nu)/EM
 
-depl_x3 = FORMULE(NOM_PARA=('DX','COOR_X','COOR_Y'), VALE='DX-ux3(COOR_X, COOR_Y)')
-depl_y3 = FORMULE(NOM_PARA=('DY','COOR_X','COOR_Y'), VALE='DY-uy3(COOR_X, COOR_Y)')
+depl_x3 = FORMULE(VALE='DX-ux3(COOR_X, COOR_Y)',
+                  ux3=ux3,
+                  NOM_PARA=['DX', 'COOR_X', 'COOR_Y'],)
+depl_y3 = FORMULE(VALE='DY-uy3(COOR_X, COOR_Y)',
+                  uy3=uy3,
+                  NOM_PARA=['DY', 'COOR_X', 'COOR_Y'],)
 
 # zone 4 : ]0, +5] x [-5, 0[
 def ux4(x, y):
@@ -257,8 +273,12 @@ def ux4(x, y):
 def uy4(x, y):
     return -(2. - nu)*y/EM - 5.*(2. - nu)/EM
 
-depl_x4 = FORMULE(NOM_PARA=('DX','COOR_X','COOR_Y'), VALE='DX-ux4(COOR_X, COOR_Y)')
-depl_y4 = FORMULE(NOM_PARA=('DY','COOR_X','COOR_Y'), VALE='DY-uy4(COOR_X, COOR_Y)')
+depl_x4 = FORMULE(VALE='DX-ux4(COOR_X, COOR_Y)',
+                  ux4=ux4,
+                  NOM_PARA=['DX', 'COOR_X', 'COOR_Y'],)
+depl_y4 = FORMULE(VALE='DY-uy4(COOR_X, COOR_Y)',
+                  uy4=uy4,
+                  NOM_PARA=['DY', 'COOR_X', 'COOR_Y'],)
 
 
 DEPZON=[None]*5
@@ -316,8 +336,12 @@ def Sxx(X,Y):
 def Syy(X,Y):
     return -pression(X)
 
-SXX=FORMULE(NOM_PARA=('X','Y',),VALE='Sxx(X,Y)');
-SYY=FORMULE(NOM_PARA=('X','Y',),VALE='Syy(X,Y)');
+SXX = FORMULE(VALE='Sxx(X,Y)',
+              Sxx=Sxx,
+              NOM_PARA=['X', 'Y'],)
+SYY = FORMULE(VALE='Syy(X,Y)',
+              Syy=Syy,
+              NOM_PARA=['X', 'Y'],)
 
 
 
@@ -343,8 +367,12 @@ def uy(x, y):
     if x > 0 and y < 0:
         return uy4(x, y)
 
-UX=FORMULE(NOM_PARA=('X','Y',),VALE='ux(X,Y)')
-UY=FORMULE(NOM_PARA=('X','Y',),VALE='uy(X,Y)')
+UX = FORMULE(VALE='ux(X,Y)',
+             ux=ux,
+             NOM_PARA=['X', 'Y'],)
+UY = FORMULE(VALE='uy(X,Y)',
+             uy=uy,
+             NOM_PARA=['X', 'Y'],)
 
 # calcul de l'erreur en terme de norme en energie
 Scal=CREA_CHAMP(OPERATION='EXTR',

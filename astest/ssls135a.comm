@@ -663,9 +663,8 @@ TEST_RESU(CHAM_ELEM=(_F(CRITERE='RELATIF',
 
 # Formula to compute a maximal criterion in CALC_FERRAILLAGE
 
-MAX_FERR = FORMULE(
-    NOM_PARA=('DNSXI', 'DNSXS', 'DNSYI', 'DNSYS'),
-    VALE='max(DNSXI,DNSXS,DNSYI,DNSYS)'
+MAX_FERR = FORMULE(VALE='max(DNSXI,DNSXS,DNSYI,DNSYS)',
+                   NOM_PARA=['DNSXI', 'DNSXS', 'DNSYI', 'DNSYS'],)
 )
 
 # Max field using CALC_CHAMP/CHAM_UTIL

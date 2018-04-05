@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -66,8 +66,10 @@ MAILLAG1=MODI_MAILLAGE(reuse =MAILLAG1,
                        ORIE_PEAU_3D=_F(GROUP_MA=('SURFSUP','SURFINF',),),
                        );
 
-LN=FORMULE(NOM_PARA=('X','Y','Z'),VALE='Z-15.');
-LT=FORMULE(NOM_PARA=('X','Y','Z'),VALE='-Y+5.');
+LN = FORMULE(VALE='Z-15.',
+             NOM_PARA=['X', 'Y', 'Z'],)
+LT = FORMULE(VALE='-Y+5.',
+             NOM_PARA=['X', 'Y', 'Z'],)
 
 FISS=DEFI_FISS_XFEM(MAILLAGE=MAILLAG1,
                     DEFI_FISS=_F(FONC_LT=LT,FONC_LN=LN,),
@@ -127,22 +129,56 @@ CH=AFFE_CHAR_MECA(MODELE=MODELEK,
                                    COEF_IMPO=0.0,),
                              ),);
 
-R = FORMULE(NOM_PARA=('X','Y','Z'),VALE='sqrt((Y-5.)**2+(Z-15.)**2)');
-T = FORMULE(NOM_PARA=('X','Y','Z'),VALE='atan2(Z-15.,-Y+5.)');
+R = FORMULE(VALE='sqrt((Y-5.)**2+(Z-15.)**2)',
+            NOM_PARA=['X', 'Y', 'Z'],)
+T = FORMULE(VALE='atan2(Z-15.,-Y+5.)',
+            NOM_PARA=['X', 'Y', 'Z'],)
 
 coef=1./sqrt(2.*pi)
 
 # formules des contraintes et de leurs opposees
 
-SIG11 = FORMULE(NOM_PARA=('X','Y','Z'),VALE='coef*1./sqrt(R(X,Y,Z))*cos(T(X,Y,Z)/2.)*(1-sin(T(X,Y,Z)/2.)*sin(3.*T(X,Y,Z)/2.))');
-SIG22 = FORMULE(NOM_PARA=('X','Y','Z'),VALE='coef*1./sqrt(R(X,Y,Z))*cos(T(X,Y,Z)/2.)*(1+sin(T(X,Y,Z)/2.)*sin(3.*T(X,Y,Z)/2.))');
-SIG12 = FORMULE(NOM_PARA=('X','Y','Z'),VALE='coef*1./sqrt(R(X,Y,Z))*cos(T(X,Y,Z)/2.)*sin(T(X,Y,Z)/2.)*cos(3.*T(X,Y,Z)/2.)');
-SIG33 = FORMULE(NOM_PARA=('X','Y','Z'),VALE='nu*(SIG11(X,Y,Z)+SIG22(X,Y,Z))');
+SIG11 = FORMULE(VALE='coef*1./sqrt(R(X,Y,Z))*cos(T(X,Y,Z)/2.)*(1-sin(T(X,Y,Z)/2.)*sin(3.*T(X,Y,Z)/2.))',
+                coef=coef,
+                R=R,
+                T=T,
+                NOM_PARA=['X', 'Y', 'Z'],)
+SIG22 = FORMULE(VALE='coef*1./sqrt(R(X,Y,Z))*cos(T(X,Y,Z)/2.)*(1+sin(T(X,Y,Z)/2.)*sin(3.*T(X,Y,Z)/2.))',
+                coef=coef,
+                R=R,
+                T=T,
+                NOM_PARA=['X', 'Y', 'Z'],)
+SIG12 = FORMULE(VALE='coef*1./sqrt(R(X,Y,Z))*cos(T(X,Y,Z)/2.)*sin(T(X,Y,Z)/2.)*cos(3.*T(X,Y,Z)/2.)',
+                coef=coef,
+                R=R,
+                T=T,
+                NOM_PARA=['X', 'Y', 'Z'],)
+SIG33 = FORMULE(VALE='nu*(SIG11(X,Y,Z)+SIG22(X,Y,Z))',
+                nu=nu,
+                SIG11=SIG11,
+                SIG22=SIG22,
+                NOM_PARA=['X', 'Y', 'Z'],)
 
-OSIG11 = FORMULE(NOM_PARA=('X','Y','Z'),VALE='-coef*1./sqrt(R(X,Y,Z))*cos(T(X,Y,Z)/2.)*(1-sin(T(X,Y,Z)/2.)*sin(3.*T(X,Y,Z)/2.))');
-OSIG22 = FORMULE(NOM_PARA=('X','Y','Z'),VALE='-coef*1./sqrt(R(X,Y,Z))*cos(T(X,Y,Z)/2.)*(1+sin(T(X,Y,Z)/2.)*sin(3.*T(X,Y,Z)/2.))');
-OSIG12 = FORMULE(NOM_PARA=('X','Y','Z'),VALE='-coef*1./sqrt(R(X,Y,Z))*cos(T(X,Y,Z)/2.)*sin(T(X,Y,Z)/2.)*cos(3.*T(X,Y,Z)/2.)');
-OSIG33 = FORMULE(NOM_PARA=('X','Y','Z'),VALE='-nu*(SIG11(X,Y,Z)+SIG22(X,Y,Z))');
+OSIG11 = FORMULE(VALE='-coef*1./sqrt(R(X,Y,Z))*cos(T(X,Y,Z)/2.)*(1-sin(T(X,Y,Z)/2.)*sin(3.*T(X,Y,Z)/2.))',
+                 coef=coef,
+                 R=R,
+                 T=T,
+                 NOM_PARA=['X', 'Y', 'Z'],)
+OSIG22 = FORMULE(VALE='-coef*1./sqrt(R(X,Y,Z))*cos(T(X,Y,Z)/2.)*(1+sin(T(X,Y,Z)/2.)*sin(3.*T(X,Y,Z)/2.))',
+                 coef=coef,
+                 R=R,
+                 T=T,
+                 NOM_PARA=['X', 'Y', 'Z'],)
+OSIG12 = FORMULE(VALE='-coef*1./sqrt(R(X,Y,Z))*cos(T(X,Y,Z)/2.)*sin(T(X,Y,Z)/2.)*cos(3.*T(X,Y,Z)/2.)',
+                 coef=coef,
+                 R=R,
+                 T=T,
+                 NOM_PARA=['X', 'Y', 'Z'],)
+OSIG33 = FORMULE(VALE='-nu*(SIG11(X,Y,Z)+SIG22(X,Y,Z))',
+                 nu=nu,
+                 SIG11=SIG11,
+                 SIG22=SIG22,
+                 NOM_PARA=['X', 'Y', 'Z'],)
 
 
 CHF=AFFE_CHAR_MECA_F(MODELE=MODELEK,

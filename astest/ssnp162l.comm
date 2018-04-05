@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -251,7 +251,8 @@ TFORCE=POST_RELEVE_T(ACTION=_F(OPERATION='EXTRACTION',
 
 # PROJECTEUR SUR LA NORMALE
 PNOR = FORMULE(VALE='DX*cos(angle)+DY*sin(angle)',
-              NOM_PARA=('DX','DY',),);
+               angle=angle,
+               NOM_PARA=['DX', 'DY'],)
 
 # INSERTION D'UNE COLONNE AVEC LA PROJECTION NORMALE DE LA FORCE NODALE
 TFORCE=CALC_TABLE(reuse =TFORCE,
@@ -507,7 +508,8 @@ IMPR_TABLE(TABLE=TFORCET);
 
 # PROJECTEUR SUR LA DIRECTION TANGENTE
 PTAN = FORMULE(VALE='-DX*sin(angle)+DY*cos(angle)',
-              NOM_PARA=('DX','DY',),);
+               angle=angle,
+               NOM_PARA=['DX', 'DY'],)
 
 # RAJOUT D'UNE COLOGNE DANS LE TABLEAU AVEC LA PARTIE TANGENTE DE LA FORCE NODALE
 TFORCET=CALC_TABLE(reuse =TFORCET,

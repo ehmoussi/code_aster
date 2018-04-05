@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -213,7 +213,7 @@ PSTAT=AFFE_CHAR_MECA_F(MODELE=MODE,
                                       PRES=FPSTAT,),);
 
 F_SURP = FORMULE(VALE='ABSC*9.81*1000.',
-                 NOM_PARA='ABSC',);
+                 NOM_PARA='ABSC',)
 
 SURP=AFFE_CHAR_MECA_F(MODELE=MODE,
                       FORCE_TUYAU=_F(GROUP_MA='CF_all',

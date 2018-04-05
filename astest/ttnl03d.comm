@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -92,7 +92,10 @@ AA0=DEFI_FONCTION(NOM_PARA='HYDR',VALE=(0.,6510.,
                         1.,0.,
                         ),PROL_DROITE='CONSTANT',PROL_GAUCHE='EXCLU',);
 AA = FORMULE(VALE='exp(-Ar/(TZ0+TEMP))*(AA0(HYDR))',
-             NOM_PARA=('HYDR','TEMP',),);
+             Ar=Ar,
+             TZ0=TZ0,
+             AA0=AA0,
+             NOM_PARA=['HYDR', 'TEMP'],)
 
 LL=DEFI_LIST_REEL(VALE=(0.,
                         0.008,

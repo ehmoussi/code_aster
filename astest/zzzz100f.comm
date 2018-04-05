@@ -332,8 +332,9 @@ TEST_FONCTION(VALEUR=_F(VALE_CALC=1.0,
 def external_func(x, y):
     return x * y
 
-form = FORMULE(NOM_PARA='X', VALE='mydouble(X, 2.)',
-               mydouble=external_func)
+form = FORMULE(VALE='mydouble(X, 2.)',
+               mydouble=external_func,
+               NOM_PARA='X',)
 
 TEST_FONCTION(VALEUR=_F(VALE_CALC=6.0,
                         VALE_REFE=6.0,
@@ -341,15 +342,5 @@ TEST_FONCTION(VALEUR=_F(VALE_CALC=6.0,
                         REFERENCE='ANALYTIQUE',
                         NOM_PARA='X',
                         FONCTION=form))
-
-interp = CALC_FONC_INTERP(FONCTION=form,
-                          VALE_PARA=[0., 1., 2., 3.])
-
-TEST_FONCTION(VALEUR=_F(VALE_CALC=5.0,
-                        VALE_REFE=5.0,
-                        VALE_PARA=2.5,
-                        REFERENCE='ANALYTIQUE',
-                        NOM_PARA='X',
-                        FONCTION=interp))
 
 FIN();

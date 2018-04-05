@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -126,7 +126,9 @@ p0 = -E/(pi*(1.0-nu*nu))*sqrt(2.0*2.0*h/R)
 a  = sqrt(R*h)
 
 PRES = FORMULE(VALE='p0*sqrt(1.0-(x/a)*(x/a))',
-               NOM_PARA='x',);
+               p0=p0,
+               a=a,
+               NOM_PARA='x',)
 
 PRES_sol=CALC_FONC_INTERP(FONCTION=PRES,
                           LIST_PARA=V_ABSC,

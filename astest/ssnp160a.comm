@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -149,7 +149,9 @@ tinit=tfin1
 # Pour tester la possibilite d'utiliser une variable de commande pour THER_FO / LAMBDA et RHO_CP :
 # Remarque : pour LAMBDA, NEUT1 n'a en realite aucune influence sur la fonction.
 RHOCP  = DEFI_FONCTION(NOM_PARA='NEUT1',VALE=(0.,0.,1.,1.), PROL_DROITE='LINEAIRE')
-LAMBDA = FORMULE(NOM_PARA=('NEUT1',),VALE='Dl + 0.0*NEUT1')
+LAMBDA = FORMULE(VALE='Dl + 0.0*NEUT1',
+                 Dl=Dl,
+                 NOM_PARA='NEUT1',)
 ACIERTH=DEFI_MATERIAU(THER_FO=_F(LAMBDA=LAMBDA, RHO_CP=RHOCP));
 
 
@@ -239,7 +241,9 @@ def Ctana(EPSI) :
    cta=cta/2.
    return cta
 
-Ct_ana = FORMULE(VALE='Ctana(EPSI)', NOM_PARA=('EPSI'),);
+Ct_ana = FORMULE(VALE='Ctana(EPSI)',
+                 Ctana=Ctana,
+                 NOM_PARA='EPSI',)
 
 LT=DEFI_LIST_REEL(DEBUT=0.0,
                   INTERVALLE=_F(JUSQU_A=0.2,

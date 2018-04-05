@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -49,7 +49,9 @@ MODELEIN=AFFE_MODELE(MAILLAGE=MAILLAG2,
                               PHENOMENE='MECANIQUE',
                               MODELISATION='D_PLAN')));
 
-LN=FORMULE(NOM_PARA=('X','Y'),VALE='-X*X-Y*Y+R*R');
+LN = FORMULE(VALE='-X*X-Y*Y+R*R',
+             R=R,
+             NOM_PARA=['X', 'Y'],)
 
 FISS=DEFI_FISS_XFEM(MAILLAGE=MAILLAG2,
                     TYPE_DISCONTINUITE='INTERFACE',
@@ -98,21 +100,27 @@ VAR1=DEFI_FONCTION(NOM_PARA='INST',VALE=(0.,1.,1.,1.));
 p=1.E6
 a=-(p/E)*( (R2*R2)/(R1*R1+R2*R2) )
 b=-a*R1*R1
-ux= FORMULE(NOM_PARA=('X','Y'),
-    VALE='(a*sqrt(X*X+Y*Y)+b/sqrt(X*X+Y*Y))*cos(atan2(Y,X))');
+ux = FORMULE(VALE='(a*sqrt(X*X+Y*Y)+b/sqrt(X*X+Y*Y))*cos(atan2(Y,X))',
+             a=a,
+             b=b,
+             NOM_PARA=['X', 'Y'],)
 
-uy=FORMULE(NOM_PARA=('X','Y'),
-   VALE='(a*sqrt(X*X+Y*Y)+b/sqrt(X*X+Y*Y))*sin(atan2(Y,X))');
+uy = FORMULE(VALE='(a*sqrt(X*X+Y*Y)+b/sqrt(X*X+Y*Y))*sin(atan2(Y,X))',
+             a=a,
+             b=b,
+             NOM_PARA=['X', 'Y'],)
 
 CH1=AFFE_CHAR_MECA_F(MODELE=MODELEK,
                     DDL_IMPO=(_F(GROUP_MA=('LB','LG','LH','LD'),
                                  DX=ux,DY=uy)));
 
-tournex = FORMULE(NOM_PARA=('X','Y','INST'),
-          VALE='sqrt(X*X+Y*Y)*cos(atan2(Y,X)+DTH*INST)-X');
+tournex = FORMULE(VALE='sqrt(X*X+Y*Y)*cos(atan2(Y,X)+DTH*INST)-X',
+                  DTH=DTH,
+                  NOM_PARA=['X', 'Y', 'INST'],)
 
-tourney = FORMULE(NOM_PARA=('X','Y','INST'),
-          VALE='sqrt(X*X+Y*Y)*sin(atan2(Y,X)+DTH*INST)-Y');
+tourney = FORMULE(VALE='sqrt(X*X+Y*Y)*sin(atan2(Y,X)+DTH*INST)-Y',
+                  DTH=DTH,
+                  NOM_PARA=['X', 'Y', 'INST'],)
 
 ROT=AFFE_CHAR_MECA_F(MODELE=MODELEK,
                     DDL_IMPO=(_F(GROUP_NO='INTER',
