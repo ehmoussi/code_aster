@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -270,13 +270,11 @@ TABEPSP=POST_RELEVE_T(ACTION=_F(INTITULE='EPSP_XX',
                                 OPERATION='EXTRACTION',),);
 IMPR_TABLE(TABLE=TABEPSP);
 # PROPRIETES MATERIAUX
-WHOL_F =   FORMULE(
-           NOM_PARA=('NBRUP'),
-           VALE=''' 4098.3*(NBRUP**(-0.2693)) '''
+WHOL_F = FORMULE(VALE=' 4098.3*(NBRUP**(-0.2693)) ',
+                 NOM_PARA='NBRUP',)
            )
-MANCO1=   FORMULE(
-           NOM_PARA=('NBRUP'),
-           VALE=''' 0.01*(NBRUP**(-0.1619)) '''
+MANCO1 = FORMULE(VALE=' 0.01*(NBRUP**(-0.1619)) ',
+                 NOM_PARA='NBRUP',)
            )
 
 NBPR = 12
@@ -328,20 +326,8 @@ RESC = [100, 1.0277056600669E-06, 9.73041E+05, (0.70710678118655, -0.70710678118
 # TEST CRITERE FORMULE
 #########################################NOEUD
 for i in range(NBPR) :
-    CRIT[i] = FORMULE(
-           NOM_PARA=(NPAR[i]),
-           VALE = NCRI[i]
-           )
-
-    FATN[i]=CALC_FATIGUE( TYPE_CALCUL   = 'FATIGUE_MULTI',
-                           OPTION        = 'DOMA_NOEUD',
-                           TYPE_CHARGE   = 'PERIODIQUE',
-                           RESULTAT      = SOL_NL,
-                           CHAM_MATER    = MAT,
-                           GROUP_MA      = ('FACE1', 'FACE2', 'FACE3'),
-                           MAILLAGE      = CUBE,
-                           FORMULE_GRDEQ   = CRIT[i],
-                           FORMULE_CRITIQUE = CRIT[i],
+    CRIT_0 = FORMULE(VALE='DTAUCR',
+                     NOM_PARA='DTAUCR',)
                            COURBE_GRD_VIE  = 'FORM_VIE',
                            CRITERE='FORMULE_CRITERE',
                            FORMULE_VIE = FVIE[i],

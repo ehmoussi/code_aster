@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -43,31 +43,26 @@ MAT0=DEFI_MATERIAU(
                      FATIGUE =_F( MANSON_COFFIN = MANCOF, ), )
 
 
-MANCO1=   FORMULE(
-           NOM_PARA=('NBRUP'),
-           VALE=''' 0.022524751*(NBRUP**(-0.1619)) '''
+MANCO1 = FORMULE(VALE=' 0.022524751*(NBRUP**(-0.1619)) ',
+                 NOM_PARA='NBRUP',)
            )
 
 ## CRITERE A TESTER
 CRIT = [None]*4
-CRIT[0] =   FORMULE(
-           NOM_PARA=('EPSN1_1', 'EPSN1_2'),
-           VALE= '''abs((EPSN1_1-EPSN1_2)/2)'''
+CRIT_0 = FORMULE(VALE='abs((EPSN1_1-EPSN1_2)/2)',
+                 NOM_PARA=['EPSN1_1', 'EPSN1_2'],)
            )
 
-CRIT[1] =   FORMULE(
-           NOM_PARA=('ETPR1_1', 'ETPR1_2'),
-           VALE= '''abs((ETPR1_1-ETPR1_2)/2)'''
+CRIT_1 = FORMULE(VALE='abs((ETPR1_1-ETPR1_2)/2)',
+                 NOM_PARA=['ETPR1_1', 'ETPR1_2'],)
            )
 
-CRIT[2] =   FORMULE(
-           NOM_PARA=('ETEQ_1', 'ETEQ_2'),
-           VALE= '''abs((ETEQ_1-ETEQ_2)/2)'''
+CRIT_2 = FORMULE(VALE='abs((ETEQ_1-ETEQ_2)/2)',
+                 NOM_PARA=['ETEQ_1', 'ETEQ_2'],)
            )
 
-CRIT[3] =   FORMULE(
-           NOM_PARA=('EPPR1_1','EPPR1_2'),
-           VALE= '''abs((EPPR1_2-EPPR1_1)/2)'''
+CRIT_3 = FORMULE(VALE='abs((EPPR1_2-EPPR1_1)/2)',
+                 NOM_PARA=['EPPR1_1', 'EPPR1_2'],)
            )
            
 #######################################################

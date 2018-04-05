@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -50,9 +50,12 @@ CHAM_MAT=AFFE_MATERIAU(   MAILLAGE=MA,  AFFE=_F( TOUT = 'OUI', MATER = MAT) )
 
 # ON IMPOSE UN DEPLACEMENT AFFINE SUR TOUT LE BORD
 # ---------------------------------------------------
-FX = FORMULE(NOM_PARA=('X','Y','Z'),VALE='1.E-3*Z+1.E-3*X')
-FY = FORMULE(NOM_PARA=('X','Y','Z'),VALE='2.E-3*Z+2.E-3*Y')
-FZ = FORMULE(NOM_PARA=('X','Y','Z'),VALE='10.E-3*Z')
+FX = FORMULE(VALE='1.E-3*Z+1.E-3*X',
+             NOM_PARA=['X', 'Y', 'Z'],)
+FY = FORMULE(VALE='2.E-3*Z+2.E-3*Y',
+             NOM_PARA=['X', 'Y', 'Z'],)
+FZ = FORMULE(VALE='10.E-3*Z',
+             NOM_PARA=['X', 'Y', 'Z'],)
 
 CHAR=AFFE_CHAR_MECA_F(MODELE=MO,
        DDL_IMPO=(

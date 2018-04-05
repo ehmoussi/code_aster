@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -90,10 +90,12 @@ eps_r_1 = ((1 / E1) * (((a1 * (1 - nu1)) * R1) + ((b1 * (1 + nu1)) / R1)));
 
 
 ux1 = FORMULE(VALE='eps_r_1*cos(atan2(Y,X))',
-              NOM_PARA=('X','Y',),);
+              eps_r_1=eps_r_1,
+              NOM_PARA=['X', 'Y'],)
 
 uy1 = FORMULE(VALE='eps_r_1*sin(atan2(Y,X))',
-              NOM_PARA=('X','Y',),);
+              eps_r_1=eps_r_1,
+              NOM_PARA=['X', 'Y'],)
 
 CH1=AFFE_CHAR_MECA_F(MODELE=MO,
                      DDL_IMPO=_F(GROUP_MA='S1R1',
@@ -109,10 +111,12 @@ eps_r_2 = ((1 / E2) * (((a2 * (1 - nu2)) * R3) + ((b2 * (1 + nu2)) / R3)));
 
 
 ux2 = FORMULE(VALE='eps_r_2*cos(atan2(Y,X))',
-              NOM_PARA=('X','Y',),);
+              eps_r_2=eps_r_2,
+              NOM_PARA=['X', 'Y'],)
 
 uy2 = FORMULE(VALE='eps_r_2*sin(atan2(Y,X))',
-              NOM_PARA=('X','Y',),);
+              eps_r_2=eps_r_2,
+              NOM_PARA=['X', 'Y'],)
 
 CH2=AFFE_CHAR_MECA_F(MODELE=MO,
                      DDL_IMPO=_F(GROUP_MA='S2R3',
@@ -150,7 +154,7 @@ T=DEFI_LIST_REEL(DEBUT=0.1,
                                NOMBRE=20,),);
 
 EXP = FORMULE(VALE='pow(10,INST-1.1)',
-              NOM_PARA='INST',);
+              NOM_PARA='INST',)
 
 RP_EXP=CALC_FONC_INTERP(FONCTION=EXP,
                         LIST_PARA=T,

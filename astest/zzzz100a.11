@@ -1,6 +1,9 @@
 PARA1=5.
 #
-NAP1 = FORMULE(NOM_PARA=('INST','AMOR'),VALE='''NAP(INST,PARA1,AMOR) ''')
+NAP1 = FORMULE(VALE='NAP(INST,PARA1,AMOR) ',
+               NAP=NAP,
+               PARA1=PARA1,
+               NOM_PARA=['INST', 'AMOR'],)
 aaa=NAP1(2.,3.)
 
 DETRUIRE(CONCEPT=_F(NOM=NAP1))

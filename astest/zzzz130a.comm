@@ -67,9 +67,18 @@ RHO=1000.
 G=10.
 KP=3.
 
-SIZZ = FORMULE(NOM_PARA='Z',VALE='RHO*G*Z')
-SIXX = FORMULE(NOM_PARA='Z',VALE='KP*SIZZ(Z)')
-SIYY = FORMULE(NOM_PARA='Z',VALE='KP*SIZZ(Z)')
+SIZZ = FORMULE(VALE='RHO*G*Z',
+               RHO=RHO,
+               G=G,
+               NOM_PARA='Z',)
+SIXX = FORMULE(VALE='KP*SIZZ(Z)',
+               KP=KP,
+               SIZZ=SIZZ,
+               NOM_PARA='Z',)
+SIYY = FORMULE(VALE='KP*SIZZ(Z)',
+               KP=KP,
+               SIZZ=SIZZ,
+               NOM_PARA='Z',)
 
 SIG1=CREA_CHAMP(OPERATION='AFFE', TYPE_CHAM='ELGA_NEUT_F',
      MODELE=MO,  PROL_ZERO='OUI',   INFO=1,
@@ -118,7 +127,8 @@ TEST_RESU(CHAM_ELEM=(_F(REFERENCE='ANALYTIQUE',
 # 2) FABRICATION DE  TEMP0 :
 # ============================
 
-FTEMP = FORMULE(NOM_PARA=('X','Y','Z','INST'),VALE='2.*X +3.*Y +4.*Z +5.*INST')
+FTEMP = FORMULE(VALE='2.*X +3.*Y +4.*Z +5.*INST',
+                NOM_PARA=['X', 'Y', 'Z', 'INST'],)
 INST=CREA_CHAMP(OPERATION='AFFE', TYPE_CHAM='NOEU_INST_R',
       MAILLAGE=MA,
       AFFE=_F( TOUT = 'OUI', NOM_CMP = ('INST',), VALE = (1.,)))

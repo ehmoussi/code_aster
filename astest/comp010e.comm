@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -73,7 +73,11 @@ ALPH=DEFI_FONCTION(NOM_PARA='TEMP',VALE=(T0,   1.0E-5,
 GRAN_A=-1.51E-16*100.
 GRAN_B=1.542E-13*100.
 GRAN_S=0.396
-GRAND=FORMULE(NOM_PARA=('TEMP','IRRA'),VALE='(GRAN_A*TEMP+GRAN_B)*(IRRA**GRAN_S)');
+GRAND = FORMULE(VALE='(GRAN_A*TEMP+GRAN_B)*(IRRA**GRAN_S)',
+                GRAN_A=GRAN_A,
+                GRAN_B=GRAN_B,
+                GRAN_S=GRAN_S,
+                NOM_PARA=['TEMP', 'IRRA'],)
 
 MATERI=DEFI_MATERIAU( ELAS_FO=_F(E=YOUN,
                                  NU=ZERO,

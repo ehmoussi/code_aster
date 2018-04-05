@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -89,7 +89,8 @@ LI1=DEFI_LIST_REEL(DEBUT=1.E-5,
 
 
 LTBO=DEFI_CONSTANTE(VALE=0.6,);
-LSO = FORMULE(NOM_PARA='SAT',VALE='(0.35*SAT)');
+LSO = FORMULE(VALE='(0.35*SAT)',
+              NOM_PARA='SAT',)
 
 LSBO=CALC_FONC_INTERP(FONCTION=LSO,
                         LIST_PARA=LI1,
@@ -99,7 +100,8 @@ LSBO=CALC_FONC_INTERP(FONCTION=LSO,
                         INFO=2,);
 DLSBO=DEFI_CONSTANTE(VALE=0.35,);
 
-SL = FORMULE(NOM_PARA='PCAP',VALE='0.99*(1.-PCAP*6.E-9)');
+SL = FORMULE(VALE='0.99*(1.-PCAP*6.E-9)',
+             NOM_PARA='PCAP',)
 
 SATUBO=CALC_FONC_INTERP(FONCTION=SL,
                         LIST_PARA=LI2,
@@ -109,7 +111,8 @@ SATUBO=CALC_FONC_INTERP(FONCTION=SL,
                         INFO=2,);
 
 
-DSL = FORMULE(NOM_PARA='PCAP',VALE='-6.E-9*0.99');
+DSL = FORMULE(VALE='-6.E-9*0.99',
+              NOM_PARA='PCAP',)
 
 DSATBO=CALC_FONC_INTERP(FONCTION=DSL,
                         LIST_PARA=LI2,
@@ -119,7 +122,8 @@ DSATBO=CALC_FONC_INTERP(FONCTION=DSL,
                         INFO=2,);
 
 
-PERM = FORMULE(NOM_PARA='SAT',VALE='SAT');
+PERM = FORMULE(VALE='SAT',
+               NOM_PARA='SAT',)
 
 PERM11BO=CALC_FONC_INTERP(FONCTION=PERM,
                           LIST_PARA=LI1,
@@ -129,7 +133,8 @@ PERM11BO=CALC_FONC_INTERP(FONCTION=PERM,
                           INFO=2,);
 
 
-DPERMBO = FORMULE(NOM_PARA='SAT',VALE='1.');
+DPERMBO = FORMULE(VALE='1.',
+                  NOM_PARA='SAT',)
 
 DPR11BO=CALC_FONC_INTERP(FONCTION=DPERMBO,
                          LIST_PARA=LI1,
@@ -139,7 +144,8 @@ DPR11BO=CALC_FONC_INTERP(FONCTION=DPERMBO,
                          INFO=2,);
 
 
-PERM2BO = FORMULE(NOM_PARA='SAT',VALE='1.-SAT');
+PERM2BO = FORMULE(VALE='1.-SAT',
+                  NOM_PARA='SAT',)
 
 PERM21BO=CALC_FONC_INTERP(FONCTION=PERM2BO,
                           LIST_PARA=LI1,
@@ -149,7 +155,8 @@ PERM21BO=CALC_FONC_INTERP(FONCTION=PERM2BO,
                           INFO=2,);
 
 
-DPERM2BO = FORMULE(NOM_PARA='SAT',VALE='-1.');
+DPERM2BO = FORMULE(VALE='-1.',
+                   NOM_PARA='SAT',)
 
 DPR21BO=CALC_FONC_INTERP(FONCTION=DPERM2BO,
                          LIST_PARA=LI1,
@@ -225,7 +232,8 @@ KINTBG=DEFI_CONSTANTE(VALE=1.E-19,);
 
 
 LTBG=DEFI_CONSTANTE(VALE=0.6,);
-LSG = FORMULE(NOM_PARA='SAT',VALE='(0.05*SAT)');
+LSG = FORMULE(VALE='(0.05*SAT)',
+              NOM_PARA='SAT',)
 
 LSBG=CALC_FONC_INTERP(FONCTION=LSG,
                         LIST_PARA=LI1,

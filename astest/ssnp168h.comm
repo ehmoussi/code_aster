@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -414,11 +414,11 @@ T_UY = CALC_TABLE( TABLE = TUHY,
 #IMPR_TABLE(UNITE = 8, TABLE = T_UY)
 
 # CREATION DE LA TABLE DE DEPLACEMENT
-DIFFX = FORMULE( NOM_PARA = ('DEPLXH', 'DEPLXB'),
-                 VALE = 'DEPLXH-DEPLXB');  
+DIFFX = FORMULE(VALE='DEPLXH-DEPLXB',
+                NOM_PARA=['DEPLXH', 'DEPLXB'],)
 
-DIFFY = FORMULE( NOM_PARA = ('DEPLYH', 'DEPLYB'),
-                 VALE = 'DEPLYH-DEPLYB'); 
+DIFFY = FORMULE(VALE='DEPLYH-DEPLYB',
+                NOM_PARA=['DEPLYH', 'DEPLYB'],)
 
 T_UX = CALC_TABLE( TABLE = T_UX,
                    reuse = T_UX,
@@ -447,8 +447,10 @@ T_F = CALC_TABLE( TABLE = FPILO,
 #IMPR_TABLE(UNITE = 8, TABLE = T_F) 
 
 # RECALAGE DES EFFORTS POUR UNE EPASSEUR DE 50 mm (POUR COMPARAISON A L'EXPERIMENTAL)
-SCALE_FX = FORMULE( NOM_PARA = ('DX'), VALE = 'DX*50./1000')
-SCALE_FY = FORMULE( NOM_PARA = ('DY'), VALE = 'DY*50./1000')
+SCALE_FX = FORMULE(VALE='DX*50./1000',
+                   NOM_PARA='DX',)
+SCALE_FY = FORMULE(VALE='DY*50./1000',
+                   NOM_PARA='DY',)
 
 T_F = CALC_TABLE( TABLE = T_F,
                   reuse = T_F,

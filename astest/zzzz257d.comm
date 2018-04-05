@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -66,22 +66,60 @@ const = ((young * sqrt((2 * pi))) / 8.);
 
 
 FPLUSX = FORMULE(VALE='const*2/(Dmax)**2*sqrt((X-X0)**2+(Y-Y0)**2+(Z-Z0)**2)*vx',
-                 NOM_PARA=('X','Y','Z',),);
+                 const=const,
+                 Dmax=Dmax,
+                 X0=X0,
+                 Y0=Y0,
+                 Z0=Z0,
+                 vx=vx,
+                 NOM_PARA=['X', 'Y', 'Z'],)
 
 FPLUSY = FORMULE(VALE='const*2/(Dmax)**2*sqrt((X-X0)**2+(Y-Y0)**2+(Z-Z0)**2)*vy',
-                 NOM_PARA=('X','Y','Z',),);
+                 const=const,
+                 Dmax=Dmax,
+                 X0=X0,
+                 Y0=Y0,
+                 Z0=Z0,
+                 vy=vy,
+                 NOM_PARA=['X', 'Y', 'Z'],)
 
 FPLUSZ = FORMULE(VALE='(const/(1+nu))*2/(Dmax)**2*sqrt((X-X0)**2+(Y-Y0)**2+(Z-Z0)**2)*vz',
-                 NOM_PARA=('X','Y','Z',),);
+                 const=const,
+                 nu=nu,
+                 Dmax=Dmax,
+                 X0=X0,
+                 Y0=Y0,
+                 Z0=Z0,
+                 vz=vz,
+                 NOM_PARA=['X', 'Y', 'Z'],)
 
 FMOINX = FORMULE(VALE='-const*2/(Dmax)**2*sqrt((X-X0)**2+(Y-Y0)**2+(Z-Z0)**2)*vx',
-                 NOM_PARA=('X','Y','Z',),);
+                 const=const,
+                 Dmax=Dmax,
+                 X0=X0,
+                 Y0=Y0,
+                 Z0=Z0,
+                 vx=vx,
+                 NOM_PARA=['X', 'Y', 'Z'],)
 
 FMOINY = FORMULE(VALE='-const*2/(Dmax)**2*sqrt((X-X0)**2+(Y-Y0)**2+(Z-Z0)**2)*vy',
-                 NOM_PARA=('X','Y','Z',),);
+                 const=const,
+                 Dmax=Dmax,
+                 X0=X0,
+                 Y0=Y0,
+                 Z0=Z0,
+                 vy=vy,
+                 NOM_PARA=['X', 'Y', 'Z'],)
 
 FMOINZ = FORMULE(VALE='-(const/(1+nu))*2/(Dmax)**2*sqrt((X-X0)**2+(Y-Y0)**2+(Z-Z0)**2)*vz',
-                 NOM_PARA=('X','Y','Z',),);
+                 const=const,
+                 nu=nu,
+                 Dmax=Dmax,
+                 X0=X0,
+                 Y0=Y0,
+                 Z0=Z0,
+                 vz=vz,
+                 NOM_PARA=['X', 'Y', 'Z'],)
 
 MAI=LIRE_MAILLAGE(FORMAT='MED',);
 

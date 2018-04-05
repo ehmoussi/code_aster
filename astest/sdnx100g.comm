@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -534,8 +534,14 @@ IMPR_RESU(FORMAT="RESULTAT", RESU=_F(RESULTAT = DYNA, NOM_CHAM='DEPL', #INST=TFI
 IMPR_RESU(FORMAT="RESULTAT", RESU=_F(RESULTAT = DYNA, NOM_CHAM='ACCE', #INST=TFIN,
                    GROUP_NO=('CENT_RAD',)), );
 
-ACCEX2 = FORMULE(NOM_PARA='INST', VALE='ACCEX(INST-TFIN)')
-ACCEY2 = FORMULE(NOM_PARA='INST', VALE='ACCEY(INST-TFIN)')
+ACCEX2 = FORMULE(VALE='ACCEX(INST-TFIN)',
+                 ACCEX=ACCEX,
+                 TFIN=TFIN,
+                 NOM_PARA='INST',)
+ACCEY2 = FORMULE(VALE='ACCEY(INST-TFIN)',
+                 ACCEY=ACCEY,
+                 TFIN=TFIN,
+                 NOM_PARA='INST',)
 
 DYNA=DYNA_NON_LINE(
                  reuse = DYNA,

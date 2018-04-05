@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -54,7 +54,9 @@ def LN(x,y):
   if theta>=B1 and theta<=math.pi:
     return (x**2+(y-cte)**2)**0.5
 
-LSN=FORMULE(NOM_PARA=('X','Y'),VALE='LN(X,Y)');
+LSN = FORMULE(VALE='LN(X,Y)',
+              LN=LN,
+              NOM_PARA=['X', 'Y'],)
 
 MAILLAGE=MODI_MAILLAGE(reuse =MAILLAGE,
                        MAILLAGE=MAILLAGE,

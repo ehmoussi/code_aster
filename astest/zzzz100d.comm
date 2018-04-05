@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -341,7 +341,10 @@ A0=2.
 LIST=DEFI_LIST_REEL(  DEBUT=TINIT,
                          INTERVALLE=_F(  JUSQU_A = TFIN, PAS = PAS) )
 
-DROITE = FORMULE(NOM_PARA='INST',VALE='A1*INST + A0 ')
+DROITE = FORMULE(VALE='A1*INST + A0 ',
+                 A1=A1,
+                 A0=A0,
+                 NOM_PARA='INST',)
 
 ACCE=CALC_FONC_INTERP(FONCTION=DROITE,    LIST_PARA=LIST,
 NOM_PARA='INST',

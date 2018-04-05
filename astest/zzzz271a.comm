@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -42,7 +42,8 @@ MO2=AFFE_MODELE(MAILLAGE=MA2, AFFE=_F( TOUT='OUI',PHENOMENE='MECANIQUE',MODELISA
 # 3.1. Creation du champ de contraintes
 #---------------------------------
 
-FONC = FORMULE(NOM_PARA=('X','Y'),VALE='1+X+Y')
+FONC = FORMULE(VALE='1+X+Y',
+               NOM_PARA=['X', 'Y'],)
 
 CHFONC=CREA_CHAMP( OPERATION='AFFE', TYPE_CHAM='ELGA_NEUT_F', MODELE=MO1,PROL_ZERO='OUI',
               AFFE=_F(  TOUT = 'OUI', NOM_CMP = ('X1', ), VALE_F = FONC))
@@ -189,7 +190,8 @@ MO4=AFFE_MODELE(MAILLAGE=MA4, AFFE=_F( TOUT='OUI',PHENOMENE='MECANIQUE',MODELISA
 # 3.1. Creation du champ de contraintes
 #---------------------------------
 
-FONC = FORMULE(NOM_PARA=('X','Y','Z'),VALE='1+X')
+FONC = FORMULE(VALE='1+X',
+               NOM_PARA=['X', 'Y', 'Z'],)
 
 CHFONC=CREA_CHAMP( OPERATION='AFFE', TYPE_CHAM='ELGA_NEUT_F', MODELE=MO3,PROL_ZERO='OUI',
               AFFE=_F(  TOUT = 'OUI', NOM_CMP = ('X1', ), VALE_F = FONC))

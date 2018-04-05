@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -44,10 +44,19 @@ METHOD2='DEVOGE'
 
 #
 # EMPLOI DE FORMULE POUR DEFINIR L ACCELERATION ET LA NON-LINEARITE----
-ACCE_X = FORMULE(NOM_PARA='INST',VALE='''A0*sin(W0*INST) *
+ACCE_X = FORMULE(VALE="""A0*sin(W0*INST) *
                   (-W0**2 +(K0/M0)*(1. - abs(A0*sin(W0*INST))/X0))
-                ''')
-f_NLIN = FORMULE(NOM_PARA='DX',VALE='K0*DX*((abs(DX)-1.E-6)/X0) ')
+                """,
+                 A0=A0,
+                 W0=W0,
+                 K0=K0,
+                 M0=M0,
+                 X0=X0,
+                 NOM_PARA='INST',)
+f_NLIN = FORMULE(VALE='K0*DX*((abs(DX)-1.E-6)/X0) ',
+                 K0=K0,
+                 X0=X0,
+                 NOM_PARA='DX',)
 
 def NONLINEARITE_SOL(X) :
     X0 = 1.E-6
@@ -57,8 +66,9 @@ def NONLINEARITE_SOL(X) :
     if X <= X0 : return 0
     else       : return sign* ( f_NLIN(X) )
 
-FOR_EFDE = FORMULE(NOM_PARA='DX',
-                   VALE='NONLINEARITE_SOL(DX)')
+FOR_EFDE = FORMULE(VALE='NONLINEARITE_SOL(DX)',
+                   NONLINEARITE_SOL=NONLINEARITE_SOL,
+                   NOM_PARA='DX',)
 
 
 # ---------------------------------------------------------------------
@@ -336,12 +346,21 @@ TEST_FONCTION(# DYNA_LINE : F_ES
 
 #
 
-DEPL_R = FORMULE(NOM_PARA='INST',VALE='A0 * sin(W0*INST) ')
+DEPL_R = FORMULE(VALE='A0 * sin(W0*INST) ',
+                 A0=A0,
+                 W0=W0,
+                 NOM_PARA='INST',)
 
 
-VITE_R = FORMULE(NOM_PARA='INST',VALE='A0 * W0 * cos(W0*INST) ')
+VITE_R = FORMULE(VALE='A0 * W0 * cos(W0*INST) ',
+                 A0=A0,
+                 W0=W0,
+                 NOM_PARA='INST',)
 
-ACCE_R = FORMULE(NOM_PARA='INST',VALE='-A0*W0*W0*sin(W0*INST) ')
+ACCE_R = FORMULE(VALE='-A0*W0*W0*sin(W0*INST) ',
+                 A0=A0,
+                 W0=W0,
+                 NOM_PARA='INST',)
 
 TEST_RESU(RESU=(_F(NUME_ORDRE=1,
                    PARA='FREQ',

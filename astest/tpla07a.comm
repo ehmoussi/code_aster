@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -203,16 +203,16 @@ TEMP_CD=POST_RELEVE_T(ACTION=_F(OPERATION='EXTRACTION',
                                 NOM_CMP='TEMP',),);
 
 flux_res = FORMULE(VALE='-2.89*(-117.46/COOR_X)',
-                   NOM_PARA='COOR_X',);
+                   NOM_PARA='COOR_X',)
 
 DIFF1 = FORMULE(VALE='(FLUX-FLX_ref)/FLX_ref',
-                NOM_PARA=('FLUX','FLX_ref',),);
+                NOM_PARA=['FLUX', 'FLX_ref'],)
 
 TEMP_res = FORMULE(VALE='-117.46*log(COOR_X)+12.5*COOR_Y-311.87',
-                   NOM_PARA=('COOR_X','COOR_Y',),);
+                   NOM_PARA=['COOR_X', 'COOR_Y'],)
 
 DIFF2 = FORMULE(VALE='(TEMP-T_ref)/T_ref',
-                NOM_PARA=('TEMP','T_ref',),);
+                NOM_PARA=['TEMP', 'T_ref'],)
 
 FLUYAB=CALC_TABLE(reuse =FLUYAB,
                   TABLE=FLUYAB,

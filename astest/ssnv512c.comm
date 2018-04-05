@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -29,21 +29,24 @@ MODELEIN=AFFE_MODELE(MAILLAGE=MAILLAG,
                               PHENOMENE='MECANIQUE',
                               MODELISATION='3D',),),);
 
-LN1=FORMULE(NOM_PARA=('X','Y','Z'),VALE='Y-2');
+LN1 = FORMULE(VALE='Y-2',
+              NOM_PARA=['X', 'Y', 'Z'],)
 
 FISS1=DEFI_FISS_XFEM(MAILLAGE=MAILLAG,
                     TYPE_DISCONTINUITE='INTERFACE',
                     DEFI_FISS=_F(FONC_LN=LN1,),
                     INFO=1,);
 
-LN2=FORMULE(NOM_PARA=('X','Y','Z'),VALE='Y+2');
+LN2 = FORMULE(VALE='Y+2',
+              NOM_PARA=['X', 'Y', 'Z'],)
 
 FISS2=DEFI_FISS_XFEM(MAILLAGE=MAILLAG,
                     TYPE_DISCONTINUITE='INTERFACE',
                     DEFI_FISS=_F(FONC_LN=LN2,),
                     INFO=1,);
 
-LN3=FORMULE(NOM_PARA=('X','Y','Z'),VALE='X');
+LN3 = FORMULE(VALE='X',
+              NOM_PARA=['X', 'Y', 'Z'],)
 FISS3=DEFI_FISS_XFEM(MAILLAGE=MAILLAG,
                     TYPE_DISCONTINUITE='INTERFACE',
                     DEFI_FISS=_F(FONC_LN=LN3,),
@@ -79,11 +82,14 @@ def depy(x) :
    return 0.
 
 DEPL_X = FORMULE(VALE='depx(X,Y)',
-                  NOM_PARA=('X','Y',),);
+                 depx=depx,
+                 NOM_PARA=['X', 'Y'],)
 DEPL_Y = FORMULE(VALE='depy(X)',
-                  NOM_PARA=('X',),);
+                 depy=depy,
+                 NOM_PARA='X',)
 DEPL_Z = FORMULE(VALE='depy(X)',
-                  NOM_PARA=('X',),);
+                 depy=depy,
+                 NOM_PARA='X',)
 
 CH1=AFFE_CHAR_MECA_F(MODELE=MODELEK,
                    DDL_IMPO=(_F(GROUP_MA=('SD','SG'),DX= DEPL_X,DY= DEPL_Y,DZ= DEPL_Z),),

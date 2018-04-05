@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -161,22 +161,47 @@ def SIzzp(x,y,z):
     return sigma[2,2]
 #
 # Les fonctions contraintes dans le repère global
-SIXX = FORMULE(NOM_PARA=('X','Y','Z',), VALE="SIXXp(X,Y,Z)" )
-SIYY = FORMULE(NOM_PARA=('X','Y','Z',), VALE="SIYYp(X,Y,Z)" )
-SIZZ = FORMULE(NOM_PARA=('X','Y','Z',), VALE="SIZZp(X,Y,Z)" )
-SIXY = FORMULE(NOM_PARA=('X','Y','Z',), VALE="SIXYp(X,Y,Z)" )
-SIXZ = FORMULE(NOM_PARA=('X','Y','Z',), VALE="SIXZp(X,Y,Z)" )
-SIYZ = FORMULE(NOM_PARA=('X','Y','Z',), VALE="SIYZp(X,Y,Z)" )
+SIXX = FORMULE(VALE='SIXXp(X,Y,Z)',
+               SIXXp=SIXXp,
+               NOM_PARA=['X', 'Y', 'Z'],)
+SIYY = FORMULE(VALE='SIYYp(X,Y,Z)',
+               SIYYp=SIYYp,
+               NOM_PARA=['X', 'Y', 'Z'],)
+SIZZ = FORMULE(VALE='SIZZp(X,Y,Z)',
+               SIZZp=SIZZp,
+               NOM_PARA=['X', 'Y', 'Z'],)
+SIXY = FORMULE(VALE='SIXYp(X,Y,Z)',
+               SIXYp=SIXYp,
+               NOM_PARA=['X', 'Y', 'Z'],)
+SIXZ = FORMULE(VALE='SIXZp(X,Y,Z)',
+               SIXZp=SIXZp,
+               NOM_PARA=['X', 'Y', 'Z'],)
+SIYZ = FORMULE(VALE='SIYZp(X,Y,Z)',
+               SIYZp=SIYZp,
+               NOM_PARA=['X', 'Y', 'Z'],)
 #
 # Les fonctions contraintes dans le repère local
-SIxx = FORMULE(NOM_PARA=('X','Y','Z',), VALE="SIxxp(X,Y,Z)" )
-SIxy = FORMULE(NOM_PARA=('X','Y','Z',), VALE="SIxyp(X,Y,Z)" )
-SIxz = FORMULE(NOM_PARA=('X','Y','Z',), VALE="SIxzp(X,Y,Z)" )
-SIyy = FORMULE(NOM_PARA=('X','Y','Z',), VALE="SIyyp(X,Y,Z)" )
-SIyz = FORMULE(NOM_PARA=('X','Y','Z',), VALE="SIyzp(X,Y,Z)" )
-SIzz = FORMULE(NOM_PARA=('X','Y','Z',), VALE="SIzzp(X,Y,Z)" )
+SIxx = FORMULE(VALE='SIxxp(X,Y,Z)',
+               SIxxp=SIxxp,
+               NOM_PARA=['X', 'Y', 'Z'],)
+SIxy = FORMULE(VALE='SIxyp(X,Y,Z)',
+               SIxyp=SIxyp,
+               NOM_PARA=['X', 'Y', 'Z'],)
+SIxz = FORMULE(VALE='SIxzp(X,Y,Z)',
+               SIxzp=SIxzp,
+               NOM_PARA=['X', 'Y', 'Z'],)
+SIyy = FORMULE(VALE='SIyyp(X,Y,Z)',
+               SIyyp=SIyyp,
+               NOM_PARA=['X', 'Y', 'Z'],)
+SIyz = FORMULE(VALE='SIyzp(X,Y,Z)',
+               SIyzp=SIyzp,
+               NOM_PARA=['X', 'Y', 'Z'],)
+SIzz = FORMULE(VALE='SIzzp(X,Y,Z)',
+               SIzzp=SIzzp,
+               NOM_PARA=['X', 'Y', 'Z'],)
 #
-DIFF = FORMULE(NOM_PARA=('A','B',), VALE="abs(A-B)" )
+DIFF = FORMULE(VALE='abs(A-B)',
+               NOM_PARA=['A', 'B'],)
 #
 # --------------------------------------------------------------------------------------------------
 #

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -46,7 +46,9 @@ LISTIMP=DEFI_LIST_REEL(  DEBUT=0.001,
 #--------------------------------
 OMEGAA=2.*pi*10.
 
-ACCE1 = FORMULE(NOM_PARA='INST',VALE='sin(OMEGAA*INST) ')
+ACCE1 = FORMULE(VALE='sin(OMEGAA*INST) ',
+                OMEGAA=OMEGAA,
+                NOM_PARA='INST',)
 ACCELER1=CALC_FONC_INTERP( FONCTION=ACCE1,  LIST_PARA=L_INST,
                            NOM_PARA = 'INST',
                            PROL_DROITE='LINEAIRE',

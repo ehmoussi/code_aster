@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -44,8 +44,13 @@ mu=0.35
 adhe=1000.
 ecrouissage=k_t*0.1
 
-pres_ent = FORMULE(NOM_PARA=('INST'),VALE='rho_e*ap*(niv_am(INST))');
-pres_sor = FORMULE(NOM_PARA=('INST'),VALE='0.0');
+pres_ent = FORMULE(VALE='rho_e*ap*(niv_am(INST))',
+                   rho_e=rho_e,
+                   ap=ap,
+                   niv_am=niv_am,
+                   NOM_PARA='INST',)
+pres_sor = FORMULE(VALE='0.0',
+                   NOM_PARA='INST',)
 
 # PRESSION IMPOSEE DANS LE JOINT (LINEAIRE)
 f_flu = FORMULE(NOM_PARA=('X','Y','INST'),VALE='(1/long)*(pres_sor(INST) - pres_ent(INST))*X + pres_ent(INST)');

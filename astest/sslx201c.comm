@@ -245,7 +245,8 @@ BLOQ_REF=AFFE_CHAR_MECA(MODELE=MO_REF,
                                     );
 
 # le noeud central de la zone de raccord est en x=15
-FPRES = FORMULE(NOM_PARA='X', VALE = "-96*(X-15)")
+FPRES = FORMULE(VALE='-96*(X-15)',
+                NOM_PARA='X',)
 
 CHME_REF=AFFE_CHAR_MECA_F(MODELE=MO_REF,
                       PRES_REP=_F(PRES=FPRES, GROUP_MA='ELEM_BORD_SUP',),

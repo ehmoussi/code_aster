@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -281,7 +281,8 @@ MACRO_EXPANS( MODELE_CALCUL = _F(MODELE = MODFEM,
 lis_no = ['N1011','N1112','N1205']
 lis_ddl1 = ['D3','D3','D2']
 lis_ddl2 = ['DZ','DZ','DY']
-RAPPORT = FORMULE( NOM_PARA = ('REFE','DELTA'), VALE = 'DELTA/REFE')
+RAPPORT = FORMULE(VALE='DELTA/REFE',
+                  NOM_PARA=['REFE', 'DELTA'],)
 
 # TEST_RESU :  coherence entre FRF experimentale et FRF etendue reprojetee.
 # Les test realises ci-dessous peremettent de faire les operations suivantes :

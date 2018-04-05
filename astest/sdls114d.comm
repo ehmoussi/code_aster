@@ -44,8 +44,10 @@ MODELIN=AFFE_MODELE(MAILLAGE=M,
                        ),
                        );
 
-LN = FORMULE ( NOM_PARA = ('X', 'Y', 'Z'), VALE = 'Y-0.05')
-LT = FORMULE ( NOM_PARA = ('X', 'Y', 'Z'), VALE = '0.045-X')
+LN = FORMULE(VALE='Y-0.05',
+             NOM_PARA=['X', 'Y', 'Z'],)
+LT = FORMULE(VALE='0.045-X',
+             NOM_PARA=['X', 'Y', 'Z'],)
 
 FF2=DEFI_FISS_XFEM(MAILLAGE=M,
                    DEFI_FISS=_F(

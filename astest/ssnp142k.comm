@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -140,7 +140,10 @@ PESTER = AFFE_CHAR_MECA(
 
 # PRESSION D'EAU SUR LE BARRAGE
 #p_am = FORMULE(VALE='max(rho_e*ap*(INST-Y),0)',NOM_PARA=('Y','INST',),);
-p_am = FORMULE(VALE='rho_e*ap*INST',NOM_PARA=('INST',),);
+p_am = FORMULE(VALE='rho_e*ap*INST',
+               rho_e=rho_e,
+               ap=ap,
+               NOM_PARA='INST',)
 
 
 PAMONT=AFFE_CHAR_MECA_F(MODELE=MO,PRES_REP=_F(GROUP_MA=('BAR_AMON',),PRES=p_am,),);

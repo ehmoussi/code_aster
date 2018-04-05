@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -198,10 +198,10 @@ TPS_CALC=DEFI_LIST_REEL(DEBUT=0.005,
                                       PAS=0.005,),);
 
 U_REFE = FORMULE(VALE='10*(sin(INST)/INST-1)',
-                 NOM_PARA='INST',);
+                 NOM_PARA='INST',)
 
 V_REFE = FORMULE(VALE='10*(1-cos(INST))/INST',
-                 NOM_PARA='INST',);
+                 NOM_PARA='INST',)
 
 U_REF_FO=CALC_FONC_INTERP(FONCTION=U_REFE,
                           LIST_PARA=TPS_CALC,

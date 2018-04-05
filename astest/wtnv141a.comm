@@ -86,41 +86,63 @@ LISTINST=DEFI_LIST_REEL(VALE=linst);
 ######################################
 
 AMORT = FORMULE(VALE='exp(-P_COEF*INST)',
-                NOM_PARA='INST',);
+                P_COEF=P_COEF,
+                NOM_PARA='INST',)
 
 DEPL_X = FORMULE(VALE='-AMORT(INST)*cos(pi*X)*sin(pi*Y)/(2.*pi)',
-                 NOM_PARA=('INST','X','Y',),);
+                 AMORT=AMORT,
+                 NOM_PARA=['INST', 'X', 'Y'],)
 
 DEPL_Y = FORMULE(VALE='-AMORT(INST)*sin(pi*X)*cos(pi*Y)/(2.*pi)',
-                 NOM_PARA=('INST','X','Y',),);
+                 AMORT=AMORT,
+                 NOM_PARA=['INST', 'X', 'Y'],)
 
 PRESSION = FORMULE(VALE='AMORT(INST)*sin(pi*X)*sin(pi*Y)',
-                   NOM_PARA=('INST','X','Y',),);
+                   AMORT=AMORT,
+                   NOM_PARA=['INST', 'X', 'Y'],)
 
 SIGXX = FORMULE(VALE='2.*AMORT(INST)*sin(pi*X)*sin(pi*Y)',
-                NOM_PARA=('INST','X','Y',),);
+                AMORT=AMORT,
+                NOM_PARA=['INST', 'X', 'Y'],)
 
 SIGXY = FORMULE(VALE='-AMORT(INST)*cos(pi*X)*cos(pi*Y)',
-                NOM_PARA=('INST','X','Y',),);
+                AMORT=AMORT,
+                NOM_PARA=['INST', 'X', 'Y'],)
 
 SIGPRE = FORMULE(VALE='-P_BIOT*AMORT(INST)*sin(pi*X)*sin(pi*Y)',
-                 NOM_PARA=('INST','X','Y',),);
+                 P_BIOT=P_BIOT,
+                 AMORT=AMORT,
+                 NOM_PARA=['INST', 'X', 'Y'],)
 
 FLUHX = FORMULE(VALE='-P_KAPPA*P_RHO_L*pi*AMORT(INST)*cos(pi*X)*sin(pi*Y)',
-                NOM_PARA=('INST','X','Y',),);
+                P_KAPPA=P_KAPPA,
+                P_RHO_L=P_RHO_L,
+                AMORT=AMORT,
+                NOM_PARA=['INST', 'X', 'Y'],)
 
 FLUHY = FORMULE(VALE='-P_KAPPA*P_RHO_L*pi*AMORT(INST)*sin(pi*X)*cos(pi*Y)',
-                NOM_PARA=('INST','X','Y',),);
+                P_KAPPA=P_KAPPA,
+                P_RHO_L=P_RHO_L,
+                AMORT=AMORT,
+                NOM_PARA=['INST', 'X', 'Y'],)
 
 ####################################
 # Definition du chargement mecanique
 ####################################
 
 FXME = FORMULE(VALE='pi*(-(P_LAMBDA+2.*P_MU)+P_BIOT)*AMORT(INST)*cos(pi*X)*sin(pi*Y)',
-               NOM_PARA=('INST','X','Y',),);
+               P_LAMBDA=P_LAMBDA,
+               P_MU=P_MU,
+               P_BIOT=P_BIOT,
+               AMORT=AMORT,
+               NOM_PARA=['INST', 'X', 'Y'],)
 
 FYME = FORMULE(VALE='pi*(-(P_LAMBDA+2.*P_MU)+P_BIOT)*AMORT(INST)*sin(pi*X)*cos(pi*Y)',
-               NOM_PARA=('INST','X','Y',),);
+               P_LAMBDA=P_LAMBDA,
+               P_MU=P_MU,
+               P_BIOT=P_BIOT,
+               AMORT=AMORT,
+               NOM_PARA=['INST', 'X', 'Y'],)
 
 #####################################################
 # Conditions initiales en deplacements et en pression
@@ -128,28 +150,36 @@ FYME = FORMULE(VALE='pi*(-(P_LAMBDA+2.*P_MU)+P_BIOT)*AMORT(INST)*sin(pi*X)*cos(p
 #####################################################
 
 UX0 = FORMULE(VALE='DEPL_X(0.,X,Y)',
-              NOM_PARA=('X','Y',),);
+              DEPL_X=DEPL_X,
+              NOM_PARA=['X', 'Y'],)
 
 UY0 = FORMULE(VALE='DEPL_Y(0.,X,Y)',
-              NOM_PARA=('X','Y',),);
+              DEPL_Y=DEPL_Y,
+              NOM_PARA=['X', 'Y'],)
 
 P0 = FORMULE(VALE='PRESSION(0.,X,Y)',
-             NOM_PARA=('X','Y',),);
+             PRESSION=PRESSION,
+             NOM_PARA=['X', 'Y'],)
 
 SIGXX0 = FORMULE(VALE='SIGXX(0.,X,Y)',
-                 NOM_PARA=('X','Y',),);
+                 SIGXX=SIGXX,
+                 NOM_PARA=['X', 'Y'],)
 
 SIGXY0 = FORMULE(VALE='SIGXY(0.,X,Y)',
-                 NOM_PARA=('X','Y',),);
+                 SIGXY=SIGXY,
+                 NOM_PARA=['X', 'Y'],)
 
 SIGPRE0 = FORMULE(VALE='SIGPRE(0.,X,Y)',
-                  NOM_PARA=('X','Y',),);
+                  SIGPRE=SIGPRE,
+                  NOM_PARA=['X', 'Y'],)
 
 FLUHX0 = FORMULE(VALE='FLUHX(0.,X,Y)',
-                 NOM_PARA=('X','Y',),);
+                 FLUHX=FLUHX,
+                 NOM_PARA=['X', 'Y'],)
 
 FLUHY0 = FORMULE(VALE='FLUHY(0.,X,Y)',
-                 NOM_PARA=('X','Y',),);
+                 FLUHY=FLUHY,
+                 NOM_PARA=['X', 'Y'],)
 
 #####################
 # Lecture du maillage
@@ -274,11 +304,33 @@ for k in range(p_npas+1) :
 
   instant = str(eval('linst[k]'));
 
-  FMX = FORMULE(VALE='FXME('+instant+',X,Y)',
-                NOM_PARA=('X','Y',),);
-
-  FMY = FORMULE(VALE='FYME('+instant+',X,Y)',
-               NOM_PARA=('X','Y',),);
+  FMX = FORMULE(VALE='FXME(0.0,X,Y)',
+                FXME=FXME,
+                NOM_PARA=['X', 'Y'],)
+                NOM_PARA=['X', 'Y'],)
+  FMY = FORMULE(VALE='FYME(0.0,X,Y)',
+                FYME=FYME,
+                NOM_PARA=['X', 'Y'],)
+                FYME=FYME,
+                NOM_PARA=['X', 'Y'],)
+                FYME=FYME,
+                NOM_PARA=['X', 'Y'],)
+                FYME=FYME,
+                NOM_PARA=['X', 'Y'],)
+                FYME=FYME,
+                NOM_PARA=['X', 'Y'],)
+                FYME=FYME,
+                NOM_PARA=['X', 'Y'],)
+                FYME=FYME,
+                NOM_PARA=['X', 'Y'],)
+                FYME=FYME,
+                NOM_PARA=['X', 'Y'],)
+                FYME=FYME,
+                NOM_PARA=['X', 'Y'],)
+                FYME=FYME,
+                NOM_PARA=['X', 'Y'],)
+                FYME=FYME,
+                NOM_PARA=['X', 'Y'],)
 
   FORF=CREA_CHAMP(TYPE_CHAM='NOEU_FORC_F',
                  OPERATION='AFFE',

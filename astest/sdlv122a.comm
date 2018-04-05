@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -379,8 +379,8 @@ VITEM=POST_RELEVE_T(ACTION=_F(INTITULE='VITEM',
 
 #IMPR_TABLE( UNITE = 8, TABLE = VITEM )
 
-F1=FORMULE(NOM_PARA=('DX', 'D1',),
-                VALE='abs (DX - D1)')
+F1 = FORMULE(VALE='abs (DX - D1)',
+             NOM_PARA=['DX', 'D1'],)
 
 T1=CALC_TABLE(TABLE=DEPLM,
               ACTION=(
@@ -473,8 +473,8 @@ SIXXM=POST_RELEVE_T(ACTION=_F(INTITULE='SIXXM',
 
 #IMPR_TABLE( UNITE = 8, TABLE = SIXXM )
 
-F2=FORMULE(NOM_PARA=('SIXX', 'SIXXM',),
-                VALE='abs (SIXX - SIXXM)')
+F2 = FORMULE(VALE='abs (SIXX - SIXXM)',
+             NOM_PARA=['SIXX', 'SIXXM'],)
 
 T3=CALC_TABLE(TABLE=SIXXM,
              ACTION=(_F(OPERATION='RENOMME',

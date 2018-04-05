@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -175,13 +175,25 @@ def u_imp(icmp,x,y,z,t) :
     else :
         return phi[icmp-4]
 
-DXIMP = FORMULE(NOM_PARA=('X','Y','Z','INST'),VALE='u_imp(1,X,Y,Z,INST)')
-DYIMP = FORMULE(NOM_PARA=('X','Y','Z','INST'),VALE='u_imp(2,X,Y,Z,INST)')
-DZIMP = FORMULE(NOM_PARA=('X','Y','Z','INST'),VALE='u_imp(3,X,Y,Z,INST)')
+DXIMP = FORMULE(VALE='u_imp(1,X,Y,Z,INST)',
+                u_imp=u_imp,
+                NOM_PARA=['X', 'Y', 'Z', 'INST'],)
+DYIMP = FORMULE(VALE='u_imp(2,X,Y,Z,INST)',
+                u_imp=u_imp,
+                NOM_PARA=['X', 'Y', 'Z', 'INST'],)
+DZIMP = FORMULE(VALE='u_imp(3,X,Y,Z,INST)',
+                u_imp=u_imp,
+                NOM_PARA=['X', 'Y', 'Z', 'INST'],)
 
-DRXIMP = FORMULE(NOM_PARA=('X','Y','Z','INST'),VALE='u_imp(4,X,Y,Z,INST)')
-DRYIMP = FORMULE(NOM_PARA=('X','Y','Z','INST'),VALE='u_imp(5,X,Y,Z,INST)')
-DRZIMP = FORMULE(NOM_PARA=('X','Y','Z','INST'),VALE='u_imp(6,X,Y,Z,INST)')
+DRXIMP = FORMULE(VALE='u_imp(4,X,Y,Z,INST)',
+                 u_imp=u_imp,
+                 NOM_PARA=['X', 'Y', 'Z', 'INST'],)
+DRYIMP = FORMULE(VALE='u_imp(5,X,Y,Z,INST)',
+                 u_imp=u_imp,
+                 NOM_PARA=['X', 'Y', 'Z', 'INST'],)
+DRZIMP = FORMULE(VALE='u_imp(6,X,Y,Z,INST)',
+                 u_imp=u_imp,
+                 NOM_PARA=['X', 'Y', 'Z', 'INST'],)
 
 #--------------------------------------------------------------------------------------
 PRE_GIBI()

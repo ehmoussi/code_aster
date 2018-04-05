@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -103,8 +103,10 @@ CHAR_UFX = AFFE_CHAR_MECA(MODELE       = MODEL,
 VECT_UFX = CALC_VECT_ELEM(CHARGE    = CHAR_UFX,
                           OPTION    = 'CHAR_MECA')
 
-SINE_FOR = FORMULE       (NOM_PARA = 'INST',
-                          VALE     = 'ampl * sin ( om*INST )')
+SINE_FOR = FORMULE(VALE='ampl * sin ( om*INST )',
+                   ampl=ampl,
+                   om=om,
+                   NOM_PARA='INST',)
 
 
 INSTANTS = DEFI_LIST_REEL(DEBUT      = t0-dt,

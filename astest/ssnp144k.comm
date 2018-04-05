@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -68,7 +68,8 @@ MAILLAG2=DEFI_GROUP(reuse =MAILLAG2,
 
 # FORME ANALYTIQUE POUR LA FISSURE
 
-LN=FORMULE(NOM_PARA=('X','Y','Z'),VALE='Z-10.0 ');
+LN = FORMULE(VALE='Z-10.0 ',
+             NOM_PARA=['X', 'Y', 'Z'],)
 
 FISS=DEFI_FISS_XFEM(MAILLAGE=MAILLAG2,
                     TYPE_DISCONTINUITE='INTERFACE',
@@ -430,8 +431,8 @@ VALE_CALC=[3.6629685330084E+05,
 #--------------------------------------------------------
 #                           MODE I
 #--------------------------------------------------------
-SAUT=FORMULE(NOM_PARA=('DZP','DZM'),
-             VALE='DZP-DZM');
+SAUT = FORMULE(VALE='DZP-DZM',
+               NOM_PARA=['DZP', 'DZM'],)
 
 for i in range(0,nbc) :
 
@@ -504,8 +505,8 @@ for i in range(0,nbc) :
 #--------------------------------------------------------
 #                           MODE II
 #--------------------------------------------------------
-SAUTX=FORMULE(NOM_PARA=('DXP','DXM'),
-             VALE='DXP-DXM');
+SAUTX = FORMULE(VALE='DXP-DXM',
+                NOM_PARA=['DXP', 'DXM'],)
 
 for i in range(0,nbc) :
 

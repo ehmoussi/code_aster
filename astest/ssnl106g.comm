@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -312,8 +312,11 @@ ME = 4642.17;
 RE = 0.0075;
 REMAX=0.0375;
 
-CAa = FORMULE(NOM_PARA='DRZ',VALE='''
-ME*2*DRZ/pi/RE*(asin(RE/DRZ)+RE/DRZ*(1-(RE/DRZ)**2)**(0.5))''');
+CAa = FORMULE(VALE="""
+ME*2*DRZ/pi/RE*(asin(RE/DRZ)+RE/DRZ*(1-(RE/DRZ)**2)**(0.5))""",
+              ME=ME,
+              RE=RE,
+              NOM_PARA='DRZ',)
 
 LI1=DEFI_LIST_REEL(  DEBUT=RE,
                   INTERVALLE=_F(  JUSQU_A = REMAX, NOMBRE=100) )

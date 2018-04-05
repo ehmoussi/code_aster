@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -85,25 +85,56 @@ CHF1=AFFE_CHAR_MECA(MODELE=MODELEIN,PRES_REP=_F(GROUP_MA=('SURFSUP','SURFINF',),
 
 #                   2) CHAMP AUXILAIRE MODE I
 
-R = FORMULE(NOM_PARA=('X','Y','Z'),VALE='sqrt((Y-5.)**2+(Z-15.)**2)');
-T = FORMULE(NOM_PARA=('X','Y','Z'),VALE='atan2(Z-15.,-Y+5.)');
+R = FORMULE(VALE='sqrt((Y-5.)**2+(Z-15.)**2)',
+            NOM_PARA=['X', 'Y', 'Z'],)
+T = FORMULE(VALE='atan2(Z-15.,-Y+5.)',
+            NOM_PARA=['X', 'Y', 'Z'],)
    
 coef=(1+nu)/(E*sqrt(2.*pi))
 
 # FORMULES GENERALES DU MODE I
-OUAUX1 = FORMULE(NOM_PARA=('X','Y','Z'),VALE='-1.*coef*sqrt(R(X,Y,Z))*cos(T(X,Y,Z)/2.)*(3.-4.*nu-cos(T(X,Y,Z)))');
-UAUX2 = FORMULE(NOM_PARA=('X','Y','Z'),VALE=' coef*sqrt(R(X,Y,Z))*sin(T(X,Y,Z)/2.)*(3.-4.*nu-cos(T(X,Y,Z)))');
-UAUX3 = FORMULE(NOM_PARA=('X','Y','Z'),VALE='0.');
+OUAUX1 = FORMULE(VALE='-1.*coef*sqrt(R(X,Y,Z))*cos(T(X,Y,Z)/2.)*(3.-4.*nu-cos(T(X,Y,Z)))',
+                 coef=coef,
+                 R=R,
+                 T=T,
+                 nu=nu,
+                 NOM_PARA=['X', 'Y', 'Z'],)
+UAUX2 = FORMULE(VALE=' coef*sqrt(R(X,Y,Z))*sin(T(X,Y,Z)/2.)*(3.-4.*nu-cos(T(X,Y,Z)))',
+                coef=coef,
+                R=R,
+                T=T,
+                nu=nu,
+                NOM_PARA=['X', 'Y', 'Z'],)
+UAUX3 = FORMULE(VALE='0.',
+                NOM_PARA=['X', 'Y', 'Z'],)
 
 # FORMULES POUR LES NOEUDS DE LA LEVRE SUP (MOINS LE FOND DE FISSURE) : THETA=PI 
-OUAUX1S = FORMULE(NOM_PARA=('X','Y','Z'),VALE='-1.*coef*sqrt(R(X,Y,Z))*cos(pi/2.)*(3.-4.*nu-cos(pi))');
-UAUX2S = FORMULE(NOM_PARA=('X','Y','Z'),VALE=' coef*sqrt(R(X,Y,Z))*sin(pi/2.)*(3.-4.*nu-cos(pi))');
-UAUX3S = FORMULE(NOM_PARA=('X','Y','Z'),VALE='0.');
+OUAUX1S = FORMULE(VALE='-1.*coef*sqrt(R(X,Y,Z))*cos(pi/2.)*(3.-4.*nu-cos(pi))',
+                  coef=coef,
+                  R=R,
+                  nu=nu,
+                  NOM_PARA=['X', 'Y', 'Z'],)
+UAUX2S = FORMULE(VALE=' coef*sqrt(R(X,Y,Z))*sin(pi/2.)*(3.-4.*nu-cos(pi))',
+                 coef=coef,
+                 R=R,
+                 nu=nu,
+                 NOM_PARA=['X', 'Y', 'Z'],)
+UAUX3S = FORMULE(VALE='0.',
+                 NOM_PARA=['X', 'Y', 'Z'],)
 
 # FORMULES POUR LES NOEUDS DE LA LEVRE INF (MOINS LE FOND DE FISSURE) : THETA=-PI 
-OUAUX1I = FORMULE(NOM_PARA=('X','Y','Z'),VALE='-1.*coef*sqrt(R(X,Y,Z))*cos(-pi/2.)*(3.-4.*nu-cos(-pi))');
-UAUX2I = FORMULE(NOM_PARA=('X','Y','Z'),VALE=' coef*sqrt(R(X,Y,Z))*sin(-pi/2.)*(3.-4.*nu-cos(-pi))');
-UAUX3I = FORMULE(NOM_PARA=('X','Y','Z'),VALE='0.');
+OUAUX1I = FORMULE(VALE='-1.*coef*sqrt(R(X,Y,Z))*cos(-pi/2.)*(3.-4.*nu-cos(-pi))',
+                  coef=coef,
+                  R=R,
+                  nu=nu,
+                  NOM_PARA=['X', 'Y', 'Z'],)
+UAUX2I = FORMULE(VALE=' coef*sqrt(R(X,Y,Z))*sin(-pi/2.)*(3.-4.*nu-cos(-pi))',
+                 coef=coef,
+                 R=R,
+                 nu=nu,
+                 NOM_PARA=['X', 'Y', 'Z'],)
+UAUX3I = FORMULE(VALE='0.',
+                 NOM_PARA=['X', 'Y', 'Z'],)
 
 CHARBL2=AFFE_CHAR_MECA(MODELE=MODELEIN,DDL_IMPO=_F(GROUP_MA='FONFIS',DX=0.0,DY=0.0,DZ=0.0,),);
                              
@@ -116,7 +147,8 @@ CHF2=AFFE_CHAR_MECA_F(MODELE=MODELEIN,DDL_IMPO=(_F(GROUP_NO='VOLB',DX=UAUX3,DY=O
 CHPRES=AFFE_CHAR_MECA(MODELE=MODELEIN,PRES_REP=_F(GROUP_MA=('LEVSUP','LEVINF',),PRES=1.e6,),);
 
 #                   4) PRESSION FONCTION SUR LES LEVRES
-PRESF=FORMULE(NOM_PARA=('X','Y','Z'),VALE='1.e6*(1.-X)');
+PRESF = FORMULE(VALE='1.e6*(1.-X)',
+                NOM_PARA=['X', 'Y', 'Z'],)
 CHPRESF=AFFE_CHAR_MECA_F(MODELE=MODELEIN,PRES_REP=_F(GROUP_MA=('LEVSUP','LEVINF',),PRES=PRESF,),);
 
 

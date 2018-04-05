@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -38,30 +38,30 @@ MO=AFFE_MODELE(MAILLAGE=MA,
 
 
 Y_F = FORMULE(VALE='2.E5 - (1.E5*((TEMP - 100.)/960.)**2)',
-              NOM_PARA='TEMP',);
+              NOM_PARA='TEMP',)
 
 AL_F = FORMULE(VALE='1.E-5 + (1.E-5  * ((TEMP - 100.)/960.) ** 4)',
-               NOM_PARA='TEMP',);
+               NOM_PARA='TEMP',)
 
 POISS=DEFI_CONSTANTE(VALE=0.3,);
 
 SIGY=DEFI_CONSTANTE(VALE=200.0,);
 
 K_F = FORMULE(VALE='(300. - 300. * ((TEMP - 700.) / 700.)**2 )',
-              NOM_PARA='TEMP',);
+              NOM_PARA='TEMP',)
 
 N_F = FORMULE(VALE='(7. - (TEMP - 100.) / 160.)',
-              NOM_PARA='TEMP',);
+              NOM_PARA='TEMP',)
 
 Q=DEFI_CONSTANTE(VALE=-100.,);
 
 B=DEFI_CONSTANTE(VALE=20.,);
 
 C_F = FORMULE(VALE='(1.E6 - (98500. * (TEMP - 100.) / 96.))',
-              NOM_PARA='TEMP',);
+              NOM_PARA='TEMP',)
 
 D_F = FORMULE(VALE='(5000. - 5. * (TEMP - 100.) )',
-              NOM_PARA='TEMP',);
+              NOM_PARA='TEMP',)
 
 TEMPE1=DEFI_LIST_REEL(DEBUT=20.,
                       INTERVALLE=_F(JUSQU_A=1060.,

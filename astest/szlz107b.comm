@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -266,73 +266,59 @@ CRIT = [None]*NBPR
 FATN = [None]*NBPR
 FATM = [None]*NBPR
 NPAR = [None]*NBPR
-CRIT[0] =   FORMULE(
-           NOM_PARA='DEPSPE',
-           VALE= '''DEPSPE'''
+CRIT_0 = FORMULE(VALE='DEPSPE',
+                 NOM_PARA='DEPSPE',)
            )
 
-CRIT[1] =   FORMULE(
-           NOM_PARA='EPSPR1',
-           VALE= '''EPSPR1'''
+CRIT_1 = FORMULE(VALE='EPSPR1',
+                 NOM_PARA='EPSPR1',)
            )
 
-CRIT[2] =   FORMULE(
-           NOM_PARA='SIGNM1',
-           VALE= '''SIGNM1'''
+CRIT_2 = FORMULE(VALE='SIGNM1',
+                 NOM_PARA='SIGNM1',)
            )
 
-CRIT[3] =   FORMULE(
-           NOM_PARA='APHYDR',
-           VALE= '''APHYDR'''
+CRIT_3 = FORMULE(VALE='APHYDR',
+                 NOM_PARA='APHYDR',)
            )
-CRIT[4] =   FORMULE(
-           NOM_PARA='DENDIS',
-           VALE= '''DENDIS'''
+CRIT_4 = FORMULE(VALE='DENDIS',
+                 NOM_PARA='DENDIS',)
            )
 
-CRIT[5] =   FORMULE(
-           NOM_PARA='DENDIE',
-           VALE= '''DENDIE'''
+CRIT_5 = FORMULE(VALE='DENDIE',
+                 NOM_PARA='DENDIE',)
            )
 
-CRIT[6] =   FORMULE(
-           NOM_PARA='DSIGEQ',
-           VALE= '''DSIGEQ'''
+CRIT_6 = FORMULE(VALE='DSIGEQ',
+                 NOM_PARA='DSIGEQ',)
            )
 
-CRIT[7] =   FORMULE(
-           NOM_PARA='SIGPR1',
-           VALE= '''SIGPR1'''
+CRIT_7 = FORMULE(VALE='SIGPR1',
+                 NOM_PARA='SIGPR1',)
            )
 
-CRIT[8] =   FORMULE(
-           NOM_PARA='EPSNM1',
-           VALE= '''EPSNM1'''
+CRIT_8 = FORMULE(VALE='EPSNM1',
+                 NOM_PARA='EPSNM1',)
            )
 
-CRIT[9] =   FORMULE(
-           NOM_PARA='INVA2S',
-           VALE= '''INVA2S'''
+CRIT_9 = FORMULE(VALE='INVA2S',
+                 NOM_PARA='INVA2S',)
            )
 
-CRIT[10] =   FORMULE(
-           NOM_PARA='DSITRE',
-           VALE= '''DSITRE'''
+CRIT_10 = FORMULE(VALE='DSITRE',
+                  NOM_PARA='DSITRE',)
            )
 
-CRIT[11] =   FORMULE(
-           NOM_PARA='DEPTRE',
-           VALE= '''DEPTRE'''
+CRIT_11 = FORMULE(VALE='DEPTRE',
+                  NOM_PARA='DEPTRE',)
            )
 
-CRIT[12] =   FORMULE(
-           NOM_PARA='EPSPAC',
-           VALE= '''EPSPAC'''
+CRIT_12 = FORMULE(VALE='EPSPAC',
+                  NOM_PARA='EPSPAC',)
            )
 
-CRIT[13] =   FORMULE(
-           NOM_PARA='DEPSEE',
-           VALE= '''DEPSEE'''
+CRIT_13 = FORMULE(VALE='DEPSEE',
+                  NOM_PARA='DEPSEE',)
            )
            
 RESU = [7.5E-4, 7.625E-4, 200, 66.66666, 0.45, 0.17333333,  200, 100, 1.75E-3 , 1.616666E-3, 50, 6.0625E-4,3.6742346E-3, 0.00086666666]
@@ -472,15 +458,13 @@ EPSTZZ2=DEFI_FONCTION(    NOM_PARA='INST',
 CRIT2 = [None]*4
 
 #POUR RETROUVER 'MATAKE_MODI_AC'
-CRIT2[0] =   FORMULE(
-           NOM_PARA=('DTAUMA','NORMAX'),
-           VALE=''' 1.5*( DTAUMA + max(0,NORMAX) ) '''
+CRIT2_0 = FORMULE(VALE=' 1.5*( DTAUMA + max(0,NORMAX) ) ',
+                  NOM_PARA=['DTAUMA', 'NORMAX'],)
            )
            
 #POUR RETROUVER 'DANG_VAN_MODI_AC'
-CRIT2[1] =  FORMULE(
-           NOM_PARA=('DTAUMA','PHYDRM'),
-           VALE=''' 1.5*(DTAUMA + max(PHYDRM,0)) '''
+CRIT2_1 = FORMULE(VALE=' 1.5*(DTAUMA + max(PHYDRM,0)) ',
+                  NOM_PARA=['DTAUMA', 'PHYDRM'],)
            )
 CRIT2[2] = 'MATAKE_MODI_AC'
 CRIT2[3] = 'DANG_VAN_MODI_AC'

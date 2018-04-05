@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -41,7 +41,8 @@ MOMECA=AFFE_MODELE(MAILLAGE=MAIL,
 #----------------------------------------------------------
 
 E1=DEFI_FONCTION(NOM_PARA='TEMP', VALE=(  0., 3.2E10, 200., 1.6e10),)
-E2= FORMULE(NOM_PARA=('TEMP'),VALE='-0.8E8*TEMP + 3.2E10')
+E2 = FORMULE(VALE='-0.8E8*TEMP + 3.2E10',
+             NOM_PARA='TEMP',)
 BC=DEFI_FONCTION(NOM_PARA='TEMP',
                  VALE=(  0., 2000.,
                        200., 1000.),)

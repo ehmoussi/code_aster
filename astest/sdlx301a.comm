@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -615,105 +615,167 @@ A4 = 0.3;
 
 #
 
-RAPF1 = FORMULE(NOM_PARA='FREQ',VALE=' F1 / FREQ ')
-RAPF2 = FORMULE(NOM_PARA='FREQ',VALE=' F2 / FREQ ')
-RAPF3 = FORMULE(NOM_PARA='FREQ',VALE=' F3 / FREQ ')
-RAPF4 = FORMULE(NOM_PARA='FREQ',VALE=' F4 / FREQ ')
+RAPF1 = FORMULE(VALE=' F1 / FREQ ',
+                F1=F1,
+                NOM_PARA='FREQ',)
+RAPF2 = FORMULE(VALE=' F2 / FREQ ',
+                F2=F2,
+                NOM_PARA='FREQ',)
+RAPF3 = FORMULE(VALE=' F3 / FREQ ',
+                F3=F3,
+                NOM_PARA='FREQ',)
+RAPF4 = FORMULE(VALE=' F4 / FREQ ',
+                F4=F4,
+                NOM_PARA='FREQ',)
 #
 #
 
-DENO11 = FORMULE(NOM_PARA='FREQ',VALE='''
+DENO11 = FORMULE(VALE="""
                  ( (1. - RAPF1(FREQ)*RAPF1(FREQ))*
                        (1. - RAPF1(FREQ)*RAPF1(FREQ))
-                     )''')
+                     )""",
+                 RAPF1=RAPF1,
+                 NOM_PARA='FREQ',)
 #
 
-DENO12 = FORMULE(NOM_PARA='FREQ',VALE='''
+DENO12 = FORMULE(VALE="""
                          ( (1. - RAPF2(FREQ)*RAPF2(FREQ))*
                                     (1. - RAPF2(FREQ)*RAPF2(FREQ))
-                                  )''')
+                                  )""",
+                 RAPF2=RAPF2,
+                 NOM_PARA='FREQ',)
 #
 
-DENO13 = FORMULE(NOM_PARA='FREQ',VALE='''
+DENO13 = FORMULE(VALE="""
                          ( (1. - RAPF3(FREQ)*RAPF3(FREQ))*
                                     (1. - RAPF3(FREQ)*RAPF3(FREQ))
-                                  )''')
+                                  )""",
+                 RAPF3=RAPF3,
+                 NOM_PARA='FREQ',)
 #
 
-DENO14 = FORMULE(NOM_PARA='FREQ',VALE='''
+DENO14 = FORMULE(VALE="""
                         ( (1. - RAPF4(FREQ)*RAPF4(FREQ))*
                                     (1. - RAPF4(FREQ)*RAPF4(FREQ))
-                                  )''')
+                                  )""",
+                 RAPF4=RAPF4,
+                 NOM_PARA='FREQ',)
 #
 
-DENO21 = FORMULE(NOM_PARA='FREQ',VALE='''(2.*XSHI*RAPF1(FREQ))*
-                                  (2.*XSHI*RAPF1(FREQ))''')
+DENO21 = FORMULE(VALE="""(2.*XSHI*RAPF1(FREQ))*
+                                  (2.*XSHI*RAPF1(FREQ))""",
+                 XSHI=XSHI,
+                 RAPF1=RAPF1,
+                 NOM_PARA='FREQ',)
 #
 
-DENO22 = FORMULE(NOM_PARA='FREQ',VALE='''(2.*XSHI*RAPF2(FREQ))*
-                                  (2.*XSHI*RAPF2(FREQ))''')
+DENO22 = FORMULE(VALE="""(2.*XSHI*RAPF2(FREQ))*
+                                  (2.*XSHI*RAPF2(FREQ))""",
+                 XSHI=XSHI,
+                 RAPF2=RAPF2,
+                 NOM_PARA='FREQ',)
 #
 
-DENO23 = FORMULE(NOM_PARA='FREQ',VALE='''(2.*XSHI*RAPF3(FREQ))*
-                                  (2.*XSHI*RAPF3(FREQ))''')
+DENO23 = FORMULE(VALE="""(2.*XSHI*RAPF3(FREQ))*
+                                  (2.*XSHI*RAPF3(FREQ))""",
+                 XSHI=XSHI,
+                 RAPF3=RAPF3,
+                 NOM_PARA='FREQ',)
 #
 
-DENO24 = FORMULE(NOM_PARA='FREQ',VALE='''(2.*XSHI*RAPF4(FREQ))*
-                                  (2.*XSHI*RAPF4(FREQ))''')
+DENO24 = FORMULE(VALE="""(2.*XSHI*RAPF4(FREQ))*
+                                  (2.*XSHI*RAPF4(FREQ))""",
+                 XSHI=XSHI,
+                 RAPF4=RAPF4,
+                 NOM_PARA='FREQ',)
 #
 
-DENO3 = FORMULE(NOM_PARA='FREQ',VALE='''( 4.*pi*pi*(FREQ*FREQ)
-                                  )''')
+DENO3 = FORMULE(VALE="""( 4.*pi*pi*(FREQ*FREQ)
+                                  )""",
+                NOM_PARA='FREQ',)
 #
 
-SOM1 = FORMULE(NOM_PARA='FREQ',VALE='''
+SOM1 = FORMULE(VALE="""
                        ( DENO3(FREQ) *
                          ( (DENO11(FREQ) + DENO21(FREQ))**0.5
                          )
-                     )''')
+                     )""",
+               DENO3=DENO3,
+               DENO11=DENO11,
+               DENO21=DENO21,
+               NOM_PARA='FREQ',)
 #
 
-SOM2 = FORMULE(NOM_PARA='FREQ',VALE='''
+SOM2 = FORMULE(VALE="""
                       ( DENO3(FREQ) *
                          ( (DENO12(FREQ) + DENO22(FREQ))**0.5
                          )
-                     )''')
+                     )""",
+               DENO3=DENO3,
+               DENO12=DENO12,
+               DENO22=DENO22,
+               NOM_PARA='FREQ',)
 #
 
-SOM3 = FORMULE(NOM_PARA='FREQ',VALE='''
+SOM3 = FORMULE(VALE="""
                        ( DENO3(FREQ) *
                          ( (DENO13(FREQ) + DENO23(FREQ))**0.5
                          )
-                     )''')
+                     )""",
+               DENO3=DENO3,
+               DENO13=DENO13,
+               DENO23=DENO23,
+               NOM_PARA='FREQ',)
 #
 
-SOM4 = FORMULE(NOM_PARA='FREQ',VALE='''
+SOM4 = FORMULE(VALE="""
                        ( DENO3(FREQ) *
                          ( (DENO14(FREQ) + DENO24(FREQ))**0.5
                          )
-                     )''')
+                     )""",
+               DENO3=DENO3,
+               DENO14=DENO14,
+               DENO24=DENO24,
+               NOM_PARA='FREQ',)
 #
 
-SD1 = FORMULE(NOM_PARA='FREQ',VALE='''( A1 / SOM1(FREQ)
-                               )''')
+SD1 = FORMULE(VALE="""( A1 / SOM1(FREQ)
+                               )""",
+              A1=A1,
+              SOM1=SOM1,
+              NOM_PARA='FREQ',)
 #
 
-SD2 = FORMULE(NOM_PARA='FREQ',VALE='''( A2 / SOM2(FREQ)
-                               )''')
+SD2 = FORMULE(VALE="""( A2 / SOM2(FREQ)
+                               )""",
+              A2=A2,
+              SOM2=SOM2,
+              NOM_PARA='FREQ',)
 #
 
-SD3 = FORMULE(NOM_PARA='FREQ',VALE='''( A3 / SOM3(FREQ)
-                               )''')
+SD3 = FORMULE(VALE="""( A3 / SOM3(FREQ)
+                               )""",
+              A3=A3,
+              SOM3=SOM3,
+              NOM_PARA='FREQ',)
 #
 
-SD4 = FORMULE(NOM_PARA='FREQ',VALE='''( A4 / SOM4(FREQ)
-                               )''')
+SD4 = FORMULE(VALE="""( A4 / SOM4(FREQ)
+                               )""",
+              A4=A4,
+              SOM4=SOM4,
+              NOM_PARA='FREQ',)
 #
 
-SDEPL = FORMULE(NOM_PARA='FREQ',VALE='''SD1(FREQ) +
+SDEPL = FORMULE(VALE="""SD1(FREQ) +
                                   SD2(FREQ) +
                                   SD3(FREQ) +
-                                  SD4(FREQ)''')
+                                  SD4(FREQ)""",
+                SD1=SD1,
+                SD2=SD2,
+                SD3=SD3,
+                SD4=SD4,
+                NOM_PARA='FREQ',)
 #
 
 SDEPL1=CALC_FONC_INTERP(FONCTION=SDEPL,

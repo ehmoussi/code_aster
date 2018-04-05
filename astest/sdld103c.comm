@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -111,7 +111,8 @@ L_FREQ=DEFI_LIST_REEL(VALE=(0.10,0.20,0.30,0.41,0.52))
 #
 # DESCRIPTION DES ACCELEROGRAMMES:
 #---------------------------------
-ACCE1 = FORMULE(NOM_PARA='INST',VALE='2.E+05*INST**2')
+ACCE1 = FORMULE(VALE='2.E+05*INST**2',
+                NOM_PARA='INST',)
 ACCELER1=CALC_FONC_INTERP(FONCTION=ACCE1,
                           LIST_PARA=L_INST,
                           NOM_PARA = 'INST',
@@ -119,7 +120,8 @@ ACCELER1=CALC_FONC_INTERP(FONCTION=ACCE1,
                           PROL_GAUCHE='LINEAIRE',
                           NOM_RESU='ACCE')
 
-ACCE2 = FORMULE(NOM_PARA='INST',VALE='0.*INST ')
+ACCE2 = FORMULE(VALE='0.*INST ',
+                NOM_PARA='INST',)
 ACCELER2=CALC_FONC_INTERP(FONCTION=ACCE2,
                           LIST_PARA=L_INST,
                           NOM_PARA = 'INST',
@@ -130,7 +132,8 @@ ACCELER2=CALC_FONC_INTERP(FONCTION=ACCE2,
 #
 # INTEGRATION DES ACCELEROGRAMMES:
 #---------------------------------
-VITE1 = FORMULE(NOM_PARA='INST',VALE='(2.E+05*INST**3)/3.')
+VITE1 = FORMULE(VALE='(2.E+05*INST**3)/3.',
+                NOM_PARA='INST',)
 VITESSE1=CALC_FONC_INTERP(FONCTION=VITE1,
                           LIST_PARA=L_INST,
                           NOM_PARA='INST',
@@ -138,7 +141,8 @@ VITESSE1=CALC_FONC_INTERP(FONCTION=VITE1,
                           PROL_GAUCHE='LINEAIRE',
                           NOM_RESU='VITE')
 
-DEPL1 = FORMULE(NOM_PARA='INST',VALE='(2.E+05*INST**4)/12.')
+DEPL1 = FORMULE(VALE='(2.E+05*INST**4)/12.',
+                NOM_PARA='INST',)
 DEPLACE1=CALC_FONC_INTERP(FONCTION=DEPL1,
                           LIST_PARA=L_INST,
                           NOM_PARA='INST',
@@ -146,14 +150,16 @@ DEPLACE1=CALC_FONC_INTERP(FONCTION=DEPL1,
                           PROL_GAUCHE='LINEAIRE',
                           NOM_RESU='DEPL')
 
-VITE2 = FORMULE(NOM_PARA='INST',VALE='0.*INST')
+VITE2 = FORMULE(VALE='0.*INST',
+                NOM_PARA='INST',)
 VITESSE2=CALC_FONC_INTERP(FONCTION=VITE2, LIST_PARA=L_INST,
                           NOM_PARA='INST',
                           PROL_DROITE='LINEAIRE',
                           PROL_GAUCHE='LINEAIRE',
                           NOM_RESU='VITE')
 
-DEPL2 = FORMULE(NOM_PARA='INST',VALE='0.*INST')
+DEPL2 = FORMULE(VALE='0.*INST',
+                NOM_PARA='INST',)
 DEPLACE2=CALC_FONC_INTERP(FONCTION=DEPL2, LIST_PARA=L_INST,
                           NOM_PARA='INST',
                           PROL_DROITE='LINEAIRE',

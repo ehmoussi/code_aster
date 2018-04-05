@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -436,7 +436,8 @@ l_vale_calc = [0.10599446601277,0.013197789660486,0.044461076195249,0.0361609230
 0.019368273869697,0.066471443012318,0.16758897333428,0.070572731608666,0.050192251175030,0.079785689428245,
 0.034838238460752,1.2595167423121E-04,1.4583949109771E-04,2.414248810516E-05,]
 
-RAPPORT = FORMULE( NOM_PARA = ('REFE','DELTA'), VALE = 'DELTA/REFE')
+RAPPORT = FORMULE(VALE='DELTA/REFE',
+                  NOM_PARA=['REFE', 'DELTA'],)
 
 for ind in range(len(test_no)):
 

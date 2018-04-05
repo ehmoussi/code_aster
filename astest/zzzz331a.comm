@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -42,11 +42,15 @@ model=AFFE_MODELE(
 )
 
 # Coques
-epais   = FORMULE(VALE='0.001*Z', NOM_PARA=('X','Y','Z',),)
-decal   = FORMULE(VALE='0.002*Z', NOM_PARA=('X','Y','Z',),)
+epais = FORMULE(VALE='0.001*Z',
+                NOM_PARA=['X', 'Y', 'Z'],)
+decal = FORMULE(VALE='0.002*Z',
+                NOM_PARA=['X', 'Y', 'Z'],)
 # Grilles
-section = FORMULE(VALE='0.001*Z+0.001*X*Y', NOM_PARA=('X','Y','Z',),)
-excent  = FORMULE(VALE='0.002*(Z+X+Y)',  NOM_PARA=('X','Y','Z',),)
+section = FORMULE(VALE='0.001*Z+0.001*X*Y',
+                  NOM_PARA=['X', 'Y', 'Z'],)
+excent = FORMULE(VALE='0.002*(Z+X+Y)',
+                 NOM_PARA=['X', 'Y', 'Z'],)
 
 # Pour vérifier que cela fonctionne sur les COQUE et/ou GRILLE
 caraco=AFFE_CARA_ELEM(MODELE=modelco,

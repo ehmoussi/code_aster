@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -240,7 +240,8 @@ IMPR_TABLE(TABLE=TAB_FZ,);
 
 ###################################################################################
 # insertion de test de non-regression en comparant ELAS avec IMPLEX
-DIFF = FORMULE(NOM_PARA=('A','B',), VALE="abs(A-B)" )
+DIFF = FORMULE(VALE='abs(A-B)',
+               NOM_PARA=['A', 'B'],)
 
 TAB_FZ_I = CALC_TABLE(reuse=TAB_FZ_I,
     TABLE=TAB_FZ_I,

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -59,10 +59,10 @@ nb_step = 2
 FISS = [None]*(nb_step+1)
 MODX = [None]*(nb_step+1)
 
-fLSN=FORMULE(NOM_PARA='Z',
-             VALE='Z')
-fLST=FORMULE(NOM_PARA='Y',
-             VALE='Y-1.0')
+fLSN = FORMULE(VALE='Z',
+               NOM_PARA='Z',)
+fLST = FORMULE(VALE='Y-1.0',
+               NOM_PARA='Y',)
 
 FISS[0]=DEFI_FISS_XFEM(DEFI_FISS=_F(FONC_LN=fLSN,
                                     FONC_LT=fLST),

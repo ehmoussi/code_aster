@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -92,8 +92,7 @@ DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
 #-- Synthese des FRF analytiques :
 #
 
-FRF1_F=FORMULE(NOM_PARA='FREQ',
-             VALE_C='''
+FRF1_F = FORMULE(VALE_C="""
 (-1.8195E-005-9.9969e-004j)*(-3.2902E-001-5.9883e-003j)/(2*1j*pi*FREQ-(-2.3040E+000+1.2659e+002j))+
 (-1.8195E-005+9.9969e-004j)*(-3.2902E-001+5.9883e-003j)/(2*1j*pi*FREQ-(-2.3040E+000-1.2659e+002j))+
 (4.4987E-005+3.2514e-003j)*(2.5430E-001-3.5186e-003j)/(2*1j*pi*FREQ-(-1.2430E+000+8.9841e+001j))+
@@ -102,7 +101,8 @@ FRF1_F=FORMULE(NOM_PARA='FREQ',
 (-3.6933E-004+3.3643e-002j)*(1.8836E-001-2.0677e-003j)/(2*1j*pi*FREQ-(-2.2044E-001-2.0080e+001j))+
 (8.2844E-005+8.0103e-003j)*(2.5810E-002+2.6694e-004j)/(2*1j*pi*FREQ-(-5.6589E-001+5.4716e+001j))+
 (8.2844E-005-8.0103e-003j)*(2.5810E-002-2.6694e-004j)/(2*1j*pi*FREQ-(-5.6589E-001-5.4716e+001j))
-                          ''',)
+                          """,
+                 NOM_PARA='FREQ',)
 
 lis_freq=DEFI_LIST_REEL( DEBUT=0.,
                          INTERVALLE=_F( JUSQU_A=50,

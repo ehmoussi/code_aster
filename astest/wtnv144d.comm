@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -51,7 +51,8 @@ MODELE=AFFE_MODELE(MAILLAGE=MAIL,
                            PHENOMENE='MECANIQUE',
                            MODELISATION='3D_HM',),);
 
-LS_N=FORMULE(NOM_PARA=('X','Y','Z'),VALE='X-2.6');
+LS_N = FORMULE(VALE='X-2.6',
+               NOM_PARA=['X', 'Y', 'Z'],)
 
 FISS=DEFI_FISS_XFEM(MAILLAGE=MAIL,
                     TYPE_DISCONTINUITE='INTERFACE',
@@ -134,14 +135,16 @@ def depn(x,y,z) :
    return 0.
 
 DEPL_N = FORMULE(VALE='depn(X,Y,Z)',
-                  NOM_PARA=('X','Y','Z'),);
+                 depn=depn,
+                 NOM_PARA=['X', 'Y', 'Z'],)
 
 def pres(x,y,z) :
    if x < 2.6:           return  1.0
    if x > 2.6:           return  1.54
 
 PRES_R = FORMULE(VALE='pres(X,Y,Z)',
-                  NOM_PARA=('X','Y','Z',),);
+                 pres=pres,
+                 NOM_PARA=['X', 'Y', 'Z'],)
 
 CHAR=AFFE_CHAR_MECA(MODELE=MODELEK,
                       DDL_IMPO=( _F(GROUP_NO='BAS',

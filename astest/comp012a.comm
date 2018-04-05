@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -150,8 +150,10 @@ CALC_ESSAI_GEOMECA(INFO=1,
 #IMPR_TABLE(TABLE=TABISO1,)
 
 # trace de sigma : p = trace(sig)/3.
-FORMU1   = FORMULE(NOM_PARA='P',  VALE='3.*P'  )
-FORMU2   = FORMULE(NOM_PARA='P_1',VALE='3.*P_1')
+FORMU1 = FORMULE(VALE='3.*P',
+                 NOM_PARA='P',)
+FORMU2 = FORMULE(VALE='3.*P_1',
+                 NOM_PARA='P_1',)
 TABTND2  = CALC_TABLE(TABLE=TABTND,
                       ACTION= _F(OPERATION='OPER',NOM_PARA='TRSIG',FORMULE=FORMU1),)
 TABTNDC3 = CALC_TABLE(TABLE=TABTNDC1,

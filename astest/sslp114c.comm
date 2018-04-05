@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -229,21 +229,121 @@ for K in range(len(alphaREF)):
 #PROGRAMMATION : IL FAUT FORCER PYTHON A EVALUER K EN GLOBAL LORS DE L APPEL DE L OPERATEUR FORMULE ! => EN LOCAL K A UNE VALEUR QUELCONQUE
 #EN SEQUENTIEL : PAS DE PB CAR K PREND UNE VALEUR A LA FOIS
 #EN PARALLELE : IL Y A CARTON
-   U1[K]=FORMULE(NOM_PARA=('X','Y',),VALE='Vx(X,Y,'+str(alpha[K])+')');
-   U2[K]=FORMULE(NOM_PARA=('X','Y',),VALE='Vy(X,Y,'+str(alpha[K])+')');
+   U1_0 = FORMULE(VALE='Vx(X,Y,0.0)',
+                  Vx=Vx,
+                  NOM_PARA=['X', 'Y'],)
+   U2_0 = FORMULE(VALE='Vy(X,Y,0.0)',
+                  Vy=Vy,
+                  NOM_PARA=['X', 'Y'],)
+                  NOM_PARA=['X', 'Y'],)
+   U2_1 = FORMULE(VALE='Vy(X,Y,0.523598775598)',
+   FXX_0 = FORMULE(VALE='SIGMA(X,Y,0,0.0)',
+                   SIGMA=SIGMA,
+                   NOM_PARA=['X', 'Y'],)
+   FXY_0 = FORMULE(VALE='SIGMA(X,Y,2,0.0)',
+                   SIGMA=SIGMA,
+                   NOM_PARA=['X', 'Y'],)
+                  NOM_PARA=['X', 'Y'],)
+   FYX_0 = FORMULE(VALE='SIGMA(X,Y,2,0.0)',
+                   SIGMA=SIGMA,
+                   NOM_PARA=['X', 'Y'],)
+   FYY_0 = FORMULE(VALE='SIGMA(X,Y,1,0.0)',
+                   SIGMA=SIGMA,
+                   NOM_PARA=['X', 'Y'],)
+                   SIGMA=SIGMA,
+   FXXF_0 = FORMULE(VALE='-SIGMA(X,Y,0,0.0)',
+                    SIGMA=SIGMA,
+                    NOM_PARA=['X', 'Y'],)
+   FXYF_0 = FORMULE(VALE='-SIGMA(X,Y,2,0.0)',
+                    SIGMA=SIGMA,
+                    NOM_PARA=['X', 'Y'],)
+                   SIGMA=SIGMA,
+   FYXF_0 = FORMULE(VALE='-SIGMA(X,Y,2,0.0)',
+                    SIGMA=SIGMA,
+                    NOM_PARA=['X', 'Y'],)
+   FYYF_0 = FORMULE(VALE='-SIGMA(X,Y,1,0.0)',
+                    SIGMA=SIGMA,
+                    NOM_PARA=['X', 'Y'],)
+   FYX_1 = FORMULE(VALE='SIGMA(X,Y,2,0.523598775598)',
+                   SIGMA=SIGMA,
+                   NOM_PARA=['X', 'Y'],)
+   FYY_1 = FORMULE(VALE='SIGMA(X,Y,1,0.523598775598)',
+                   SIGMA=SIGMA,
+                   NOM_PARA=['X', 'Y'],)
+                   SIGMA=SIGMA,
+   FXXF_1 = FORMULE(VALE='-SIGMA(X,Y,0,0.523598775598)',
+                    SIGMA=SIGMA,
+                    NOM_PARA=['X', 'Y'],)
+   FXYF_1 = FORMULE(VALE='-SIGMA(X,Y,2,0.523598775598)',
+                    SIGMA=SIGMA,
+                    NOM_PARA=['X', 'Y'],)
+                   SIGMA=SIGMA,
+   FYXF_1 = FORMULE(VALE='-SIGMA(X,Y,2,0.523598775598)',
+                    SIGMA=SIGMA,
+                    NOM_PARA=['X', 'Y'],)
+   FYYF_1 = FORMULE(VALE='-SIGMA(X,Y,1,0.523598775598)',
+                    SIGMA=SIGMA,
+                    NOM_PARA=['X', 'Y'],)
+   FYX_2 = FORMULE(VALE='SIGMA(X,Y,2,1.0471975512)',
+                   SIGMA=SIGMA,
+                   NOM_PARA=['X', 'Y'],)
+   FYY_2 = FORMULE(VALE='SIGMA(X,Y,1,1.0471975512)',
+                   SIGMA=SIGMA,
+                   NOM_PARA=['X', 'Y'],)
+                   SIGMA=SIGMA,
+   FXXF_2 = FORMULE(VALE='-SIGMA(X,Y,0,1.0471975512)',
+                    SIGMA=SIGMA,
+                    NOM_PARA=['X', 'Y'],)
+   FXYF_2 = FORMULE(VALE='-SIGMA(X,Y,2,1.0471975512)',
+                    SIGMA=SIGMA,
+                    NOM_PARA=['X', 'Y'],)
+                   SIGMA=SIGMA,
+   FYXF_2 = FORMULE(VALE='-SIGMA(X,Y,2,1.0471975512)',
+                    SIGMA=SIGMA,
+                    NOM_PARA=['X', 'Y'],)
+   FYYF_2 = FORMULE(VALE='-SIGMA(X,Y,1,1.0471975512)',
+                    SIGMA=SIGMA,
+                    NOM_PARA=['X', 'Y'],)
+   FYX_3 = FORMULE(VALE='SIGMA(X,Y,2,1.57079632679)',
+                   SIGMA=SIGMA,
+                   NOM_PARA=['X', 'Y'],)
+   FYY_3 = FORMULE(VALE='SIGMA(X,Y,1,1.57079632679)',
+                   SIGMA=SIGMA,
+                   NOM_PARA=['X', 'Y'],)
+                   SIGMA=SIGMA,
+   FXXF_3 = FORMULE(VALE='-SIGMA(X,Y,0,1.57079632679)',
+                    SIGMA=SIGMA,
+                    NOM_PARA=['X', 'Y'],)
+   FXYF_3 = FORMULE(VALE='-SIGMA(X,Y,2,1.57079632679)',
+                    SIGMA=SIGMA,
+                    NOM_PARA=['X', 'Y'],)
+                   SIGMA=SIGMA,
+   FYXF_3 = FORMULE(VALE='-SIGMA(X,Y,2,1.57079632679)',
+                    SIGMA=SIGMA,
+                    NOM_PARA=['X', 'Y'],)
+   FYYF_3 = FORMULE(VALE='-SIGMA(X,Y,1,1.57079632679)',
+                    SIGMA=SIGMA,
+                    NOM_PARA=['X', 'Y'],)
+   FYX_4 = FORMULE(VALE='SIGMA(X,Y,2,2.09439510239)',
+                   SIGMA=SIGMA,
+                   NOM_PARA=['X', 'Y'],)
+   FYY_4 = FORMULE(VALE='SIGMA(X,Y,1,2.09439510239)',
+                   SIGMA=SIGMA,
+                   NOM_PARA=['X', 'Y'],)
 
-#Calcul des densites de force suivant les normales ex,ey,-ex,-ey
-   FXX[K]=FORMULE(NOM_PARA=('X','Y',),VALE='SIGMA(X,Y,0,'+str(alpha[K])+')');
-   FXY[K]=FORMULE(NOM_PARA=('X','Y',),VALE='SIGMA(X,Y,2,'+str(alpha[K])+')');
+   FXXF_4 = FORMULE(VALE='-SIGMA(X,Y,0,2.09439510239)',
+                    SIGMA=SIGMA,
+                    NOM_PARA=['X', 'Y'],)
+   FXYF_4 = FORMULE(VALE='-SIGMA(X,Y,2,2.09439510239)',
+                    SIGMA=SIGMA,
+                    NOM_PARA=['X', 'Y'],)
 
-   FYX[K]=FORMULE(NOM_PARA=('X','Y',),VALE='SIGMA(X,Y,2,'+str(alpha[K])+')');
-   FYY[K]=FORMULE(NOM_PARA=('X','Y',),VALE='SIGMA(X,Y,1,'+str(alpha[K])+')');
-
-   FXXF[K]=FORMULE(NOM_PARA=('X','Y',),VALE='-SIGMA(X,Y,0,'+str(alpha[K])+')');
-   FXYF[K]=FORMULE(NOM_PARA=('X','Y',),VALE='-SIGMA(X,Y,2,'+str(alpha[K])+')');
-
-   FYXF[K]=FORMULE(NOM_PARA=('X','Y',),VALE='-SIGMA(X,Y,2,'+str(alpha[K])+')');
-   FYYF[K]=FORMULE(NOM_PARA=('X','Y',),VALE='-SIGMA(X,Y,1,'+str(alpha[K])+')');
+   FYXF_4 = FORMULE(VALE='-SIGMA(X,Y,2,2.09439510239)',
+                    SIGMA=SIGMA,
+                    NOM_PARA=['X', 'Y'],)
+   FYYF_4 = FORMULE(VALE='-SIGMA(X,Y,1,2.09439510239)',
+                    SIGMA=SIGMA,
+                    NOM_PARA=['X', 'Y'],)
 
 #Conditions limites: Diriclet + Neumann
 #Neumann => fissure

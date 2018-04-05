@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -154,9 +154,8 @@ WHOL=DEFI_FONCTION(       NOM_PARA='SIGM',
                                 2210.,         20.,
                                 2900.,         10.,  )  )
 
-WHOL_F =   FORMULE(
-           NOM_PARA=('NBRUP'),
-           VALE=''' 4098.3*(NBRUP**(-0.2693)) '''
+WHOL_F = FORMULE(VALE=' 4098.3*(NBRUP**(-0.2693)) ',
+                 NOM_PARA='NBRUP',)
            )
 
 
@@ -322,16 +321,14 @@ CRIT[1] = 'DANG_VAN_MODI_AC'
 ### POUR CALCULER 'NORMOY','EPNMAX', 'EPNMOY', IL NOUS FAUT AJOUTER DANS LA LISTE
 ### DES PARATMETRES MEME SI ON N4UTISE PAS DANS LA FORMULE
 #POUR RETROUVER 'MATAKE_MODI_AC'
-CRIT[2] =   FORMULE(
-           NOM_PARA=('DTAUMA','NORMAX','NORMOY','EPNMAX', 'EPNMOY'),
-           VALE=''' 1.5*( DTAUMA + max(0,NORMAX) ) '''
+CRIT_2 = FORMULE(VALE=' 1.5*( DTAUMA + max(0,NORMAX) ) ',
+                 NOM_PARA=['DTAUMA', 'NORMAX', 'NORMOY', 'EPNMAX', 'EPNMOY'],)
            )
 
 
 #POUR RETROUVER 'DANG_VAN_MODI_AC'
-CRIT[3] =  FORMULE(
-           NOM_PARA=('DTAUMA','PHYDRM','NORMOY','EPNMAX', 'EPNMOY'),
-           VALE=''' 1.5*(DTAUMA + max(PHYDRM,0)) '''
+CRIT_3 = FORMULE(VALE=' 1.5*(DTAUMA + max(PHYDRM,0)) ',
+                 NOM_PARA=['DTAUMA', 'PHYDRM', 'NORMOY', 'EPNMAX', 'EPNMOY'],)
            )
 
 ## -----------------------------------------------------------------------
@@ -1176,9 +1173,8 @@ TEST_RESU(CHAM_NO=(_F(NOEUD='N206',
           )
 
 # TEST CRITER VONMISES AVEC LA FORMULE
-CRIT_FAT =   FORMULE(
-           NOM_PARA=('DSIGEQ'),
-           VALE= ''' 2*DSIGEQ '''
+CRIT_FAT = FORMULE(VALE=' 2*DSIGEQ ',
+                   NOM_PARA='DSIGEQ',)
            )
 
 # CALCUL DE LA FATIGUE SUR L'ENSEMBLE DE LA STRUCTURE AUX POINTS DE GAUSS
