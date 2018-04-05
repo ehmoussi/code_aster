@@ -18,7 +18,9 @@
 # --------------------------------------------------------------------
 
 from Contrib.veri_matr_tang import VERI_MATR_TANG
-from comp002i import RENOMME, TEST_ECART
+from Contrib.testcomp_utils import rename_components
+
+from comp002i import TEST_ECART
 
 
 POURSUITE(PAR_LOT='NON', CODE='OUI')
@@ -95,7 +97,7 @@ for i in range(Ncal):
                                           EPXY=eps_imp[3], EPXZ=eps_imp[4], EPYZ=eps_imp[5]),
                          INFO=1);
 
-   R_SI=RENOMME(i,N_pas,label_cal,ch_param,RESU,R_SI)
+   R_SI=rename_components(i,N_pas,label_cal,ch_param,RESU,R_SI)
 
    DETRUIRE ( CONCEPT = _F (NOM = temps,),)
    DETRUIRE ( CONCEPT = _F (NOM = DEFLIST,),)

@@ -7,4 +7,5 @@ P testlist verification sequential
 
 F comm comp003a.comm D 1
 F libr comp003a.91 D 91
-F libr comp002j.93 D 93
+F comm comp002j.com1 D 1
+F comm comp003a.com2 D 1

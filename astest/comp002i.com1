@@ -19,7 +19,7 @@
 
 POURSUITE(PAR_LOT='NON', CODE='OUI')
 
-from comp002i import PROD_ROT
+from Contrib.testcomp_utils import vect_prod_rot
 #######################################################################
 
 # definition du trajet de chargement 3D
@@ -116,7 +116,7 @@ VI = [[V1,V1],[V2,V2],[V3,V3],[V1,V2],[V1,V3],[V2,V3]]
 eps_rot = [None]*6
 for vect_i in VI:
     i = VI.index(vect_i)
-    V_COEF = PROD_ROT(vect_i[0],vect_i[1])
+    V_COEF = vect_prod_rot(vect_i[0],vect_i[1])
     eps_rot [i] =CALC_FONCTION(COMB=(
             _F(FONCTION=eps_xx,COEF=V_COEF[0],),
             _F(FONCTION=eps_yy,COEF=V_COEF[1],),
