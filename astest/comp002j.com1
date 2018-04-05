@@ -1,12 +1,32 @@
-# -*- coding: utf-8 -*-
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+POURSUITE(PAR_LOT='NON', CODE='OUI')
+
 #######################################################################
 
 # definition du trajet de chargement 3D
-        
+
 #######################################################################
 
 
-#fonctions chargement  
+#fonctions chargement
 Ctau = ((2 * calibrage) * ((1 + CALIB_NU) / (2 * CALIB_E)));
 Ctrac = (calibrage * (1 / CALIB_E));
 
@@ -44,14 +64,12 @@ eps_yy=CALC_FONCTION(COMB=(_F(FONCTION=Trace,COEF=Ctrac,),
 
 eps_zz=CALC_FONCTION(COMB=(_F(FONCTION=Trace,COEF=Ctrac,),
                            _F(FONCTION=Devi_2,COEF=-(Ctrac),),),)
-                           
+
 eps_def = [eps_xx, eps_yy, eps_zz, eps_xy, eps_xz, eps_yz]
 
 #trace chargement
 
-
-IMPR_FONCTION(FORMAT='XMGRACE',
-           #   PILOTE='INTERACTIF',
+IMPR_FONCTION(#FORMAT='XMGRACE',PILOTE='INTERACTIF',
               COURBE=(_F(FONCTION=eps_def[0],),
                       _F(FONCTION=eps_def[1],),
                       _F(FONCTION=eps_def[2],),
@@ -60,3 +78,5 @@ IMPR_FONCTION(FORMAT='XMGRACE',
                       _F(FONCTION=eps_def[5],),
                       ),
               UNITE=29,);
+
+FIN()

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -16,6 +16,8 @@
 # You should have received a copy of the GNU General Public License
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
+import os
+os.rename('fort.91', 'comp003a.py')
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),DEBUG=_F(SDVERI='NON'),IMPR_MACRO='OUI')
 # SDVERI='NON' car la verification est trop couteuse en CPU
@@ -144,9 +146,6 @@ ch_param2=['V12','VMIS','TRACE']
 # coefficients pour ch_param2 pour calculer l'erreur sur le cas "Pa"
 coef_para=[1.,C_Pa,C_Pa]
 
-# utilitaires divers : calcul de l'erreur, renommage
-INCLUDE(UNITE=91)
-
 # definition de la temperature imposee
 TIMP=DEFI_FONCTION(
                       NOM_PARA='INST',  NOM_RESU='TEMP',
@@ -173,60 +172,4 @@ RESU=[None]*Ncal
 R_SI=[None]*len(ch_param)
 TMP_S=[None]
 
-# definition du chargement 3D
-INCLUDE(UNITE=93)
-
-#Boucle sur l'ensemble des calculs
-for i in range(Ncal):
-        N = N_pas[i]
-        imat = P_imat[i]
-        temps=DEFI_LIST_REEL(DEBUT=0.0,
-                     INTERVALLE=(_F(JUSQU_A=t_0,NOMBRE=N,),
-                                 _F(JUSQU_A=2.0*t_0,NOMBRE=N,),
-                                 _F(JUSQU_A=3.0*t_0,NOMBRE=N,),
-                                 _F(JUSQU_A=4.0*t_0,NOMBRE=N,),
-                                 _F(JUSQU_A=5.0*t_0,NOMBRE=N,),
-                                 _F(JUSQU_A=6.0*t_0,NOMBRE=N,),
-                                 _F(JUSQU_A=7.0*t_0,NOMBRE=N,),
-                                 _F(JUSQU_A=8.0*t_0,NOMBRE=N,),),);
-#       DEFLIST =DEFI_LIST_INST(DEFI_LIST=_F(LIST_INST = temps,),
-#                          ECHEC=_F(SUBD_METHODE='UNIFORME',
-#                                   SUBD_PAS=10,
-#                                   SUBD_NIVEAU=2,),);
-#       Resout le pb a deformation imposee
-        RESU[i]=SIMU_POINT_MAT(
-                   COMPORTEMENT=_F(RELATION=compor),
-                   ANGLE=angles[i],
-                   SUPPORT='POINT',
-                   AFFE_VARC=(
-                   _F(  NOM_VARC='TEMP',
-                        VALE_FONC=TIMP,
-                        VALE_REF=20.0),
-                   _F(  NOM_VARC='SECH',
-                        VALE_FONC=SECHIMP,
-                        VALE_REF=1.0),
-                        ),
-                   NEWTON=_F(MATRICE='TANGENTE',
-                             REAC_ITER=1,),
-                   CONVERGENCE=_F(ITER_GLOB_MAXI=50,),
-                   MATER      = BETON[imat],
-                   INCREMENT=_F(LIST_INST=temps),
-#                  SUBD_METHODE='UNIFORME',SUBD_PAS=10,SUBD_NIVEAU=2,
-                   EPSI_IMPOSE=_F(EPXX=eps_def[0], EPYY=eps_def[1], EPZZ=eps_def[2],
-                                  EPXY=eps_def[3], EPXZ=eps_def[4], EPYZ=eps_def[5]),
-                        );
-        DETRUIRE(CONCEPT=_F(NOM=temps))
-#       DETRUIRE(CONCEPT=_F(NOM=DEFLIST))
-# On renomme les composantes en fonction de  l'ordre de discretisation
-        R_SI=RENOMME(i,N_pas,label_cal,ch_param,RESU,R_SI)
-#        IMPR_TABLE(TABLE=RESU[i]);
-# TEST_RESU sur les erreurs relatives
-TEST_ECART(ch_param2,label_cal,N_pas,Ncal,nbequi,R_SI,prec_ecart,vale_calc,prec_zero,coef_para)
-
-###############################################################################
-# impressions
-#for i in range(len(ch_param)):
-#        IMPR_TABLE(TABLE=R_SI[i])
-
-FIN();
-#
+FIN()
