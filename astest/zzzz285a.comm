@@ -135,29 +135,11 @@ for bord in ('BDRO', 'BCOU',) :
 
           # F1 : formule utilisee pour imposer les valeurs du champ a projeter :
           if typch == 'DEG1' :
-             F1 = FORMULE(VALE='((X+1.)/2.) + ((Y+1.)/2.)',
-                          NOM_PARA=['X', 'Y'],)
-                          NOM_PARA=['X', 'Y'],)
-             F1 = FORMULE(VALE='((X+1.)/2.)**2 + ((Y+1.)/2.)**2 +2.*X*Y',
-                          NOM_PARA=['X', 'Y'],)
-             F1 = FORMULE(VALE='((X+1.)/2.)**2 + ((Y+1.)/2.)**2 +2.*X*Y',
-             F1 = FORMULE(VALE='((X+1.+Y)/2.)**1.7 + ((Y+1.)/2.)**0.7',
-                          NOM_PARA=['X', 'Y'],)
-             F1 = FORMULE(VALE='((X+1.)/2.)**2 + ((Y+1.)/2.)**2 +2.*X*Y',
-             F1 = FORMULE(VALE='((X+1.+Y)/2.)**1.7 + ((Y+1.)/2.)**0.7',
-                          NOM_PARA=['X', 'Y'],)
-             F1 = FORMULE(VALE='((X+1.)/2.)**2 + ((Y+1.)/2.)**2 +2.*X*Y',
-             F1 = FORMULE(VALE='((X+1.+Y)/2.)**1.7 + ((Y+1.)/2.)**0.7',
-                          NOM_PARA=['X', 'Y'],)
-             F1 = FORMULE(VALE='((X+1.)/2.)**2 + ((Y+1.)/2.)**2 +2.*X*Y',
-             F1 = FORMULE(VALE='((X+1.+Y)/2.)**1.7 + ((Y+1.)/2.)**0.7',
-                          NOM_PARA=['X', 'Y'],)
-             F1 = FORMULE(VALE='((X+1.)/2.)**2 + ((Y+1.)/2.)**2 +2.*X*Y',
-             F1 = FORMULE(VALE='((X+1.+Y)/2.)**1.7 + ((Y+1.)/2.)**0.7',
-                          NOM_PARA=['X', 'Y'],)
+             F1 = FORMULE(NOM_PARA=('X','Y'),VALE='((X+1.)/2.) + ((Y+1.)/2.)')                  # fonction lineaire
+          elif typch == 'DEG2' :
+             F1 = FORMULE(NOM_PARA=('X','Y'),VALE='((X+1.)/2.)**2 + ((Y+1.)/2.)**2 +2.*X*Y')    # fonction quadratique
           elif typch == 'DEGP' :
-             F1 = FORMULE(VALE='((X+1.+Y)/2.)**1.7 + ((Y+1.)/2.)**0.7',
-                          NOM_PARA=['X', 'Y'],)
+             F1 = FORMULE(NOM_PARA=('X','Y'),VALE='((X+1.+Y)/2.)**1.7 + ((Y+1.)/2.)**0.7')      # fonction quelconque
           else :
              assert 0, typch
 
