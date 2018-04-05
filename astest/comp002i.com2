@@ -1,0 +1,194 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+from Contrib.veri_matr_tang import VERI_MATR_TANG
+from comp002i import RENOMME, TEST_ECART
+
+
+POURSUITE(PAR_LOT='NON', CODE='OUI')
+
+#Discretisation du calcul
+# 10 calculs en tout : changement d'unite, thermique, symetrie, rotation, N1, N5, ... , N3125
+N_pas = 4*[1] + [1, 5, 25, 125, 625, 3125]
+N_cas = len(N_pas)
+
+label_cal=['_Pa_','_Th_','_sym_','_rot_'] + 6* ['_N']
+prec_ecart=3*[1.E-10]+ [1.]  + [3.] + [0.8] +(N_cas-4)*[11.E-2]
+prec_tgt=1.e-3
+
+ch_param=['V13','VMIS','TRACE','V16','SIXX','SIYY','SIZZ','SIXY','SIXZ','SIYZ',]
+ch_param2=['V13','VMIS','TRACE','V16']
+
+# nombre de calculs a effectuer
+Ncal = 7
+
+RESU=[None]*Ncal
+R_SI=[None]*len(ch_param)
+TMP_S=[None]
+
+
+#pointeur materiau [0, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+P_imat = [0] + [1] + (N_cas-2)*[1]
+
+# pointeur deformation [0, 0, 1, 2, 0, 0, 0, 0, 0, 0]
+# 0 : ref
+# 1 : sym
+# 2 : rot
+P_idef = 2*[0] + [1] + [2] + (N_cas-4)*[0]
+
+#pointeur Option thermique ['NON', 'OUI', 'NON', 'NON', 'NON', 'NON', 'NON', 'NON', 'NON', 'NON']
+P_opt_ther = ["NON", "OUI"] + (N_cas-2)*["NON"]
+
+# conditions du calcul thermique
+(inst_th, temp_th) = (3.0*t_0, 100.)
+
+
+#Boucle sur l'ensemble des calculs
+for i in range(Ncal):
+
+   N = N_pas[i]
+   imat = P_imat[i]
+   idef = P_idef[i]
+   eps_imp = V_EPS[idef]
+   opt_ther = P_opt_ther[i]
+   temps=DEFI_LIST_REEL(DEBUT=0.0,
+                        INTERVALLE=(_F(JUSQU_A=1.0*t_0,NOMBRE=N,),
+                                    _F(JUSQU_A=2.0*t_0,NOMBRE=N,),
+                                    _F(JUSQU_A=3.0*t_0,NOMBRE=N,),
+                                    _F(JUSQU_A=4.0*t_0,NOMBRE=N,),
+                                    _F(JUSQU_A=5.0*t_0,NOMBRE=N,),
+                                    _F(JUSQU_A=6.0*t_0,NOMBRE=N,),
+                                    _F(JUSQU_A=7.0*t_0,NOMBRE=N,),
+                                    _F(JUSQU_A=8.0*t_0,NOMBRE=N,),),);
+
+   DEFLIST =DEFI_LIST_INST(DEFI_LIST=_F(LIST_INST = temps,),
+                        ECHEC=_F(ACTION       = 'DECOUPE',
+                             SUBD_METHODE = 'AUTO',
+
+                                 ),)
+   # Resout le pb a deformation imposee
+   RESU[i]=SIMU_POINT_MAT(
+                          COMPORTEMENT   =_F(RELATION=compor,ITER_INTE_MAXI=1500),
+                          NEWTON      =_F(MATRICE='TANGENTE',REAC_ITER=1),
+                          CONVERGENCE =_F(ITER_GLOB_MAXI=10,),
+                          MATER       = ACIER[imat],
+                          ARCHIVAGE   =_F(LIST_INST = temps_ar),
+                        #  INCREMENT   =_F(LIST_INST=temps),
+                          INCREMENT   =_F(LIST_INST=DEFLIST,),
+                          EPSI_IMPOSE =_F(EPXX=eps_imp[0], EPYY=eps_imp[1], EPZZ=eps_imp[2],
+                                          EPXY=eps_imp[3], EPXZ=eps_imp[4], EPYZ=eps_imp[5]),
+                         INFO=1);
+
+   R_SI=RENOMME(i,N_pas,label_cal,ch_param,RESU,R_SI)
+
+   DETRUIRE ( CONCEPT = _F (NOM = temps,),)
+   DETRUIRE ( CONCEPT = _F (NOM = DEFLIST,),)
+
+
+# TEST_RESU sur les erreurs relatives
+prec_zero=[1.E-10, 0.01, 0.01, 0.01]
+
+TEST_ECART(ch_param2,label_cal,N_pas,Ncal,ch_param,R_SI,prec_ecart,prec_zero,C_Pa)
+
+for i in range(Ncal):
+   IMPR_TABLE(TABLE=R_SI[i])
+
+
+IMPR_TABLE(TABLE=RESU[0])
+
+# Test de la matrice tangente sur le calcul le plus fin
+
+i=Ncal-1
+N = N_pas[i]
+imat = P_imat[i]
+idef = P_idef[i]
+eps_imp = V_EPS[idef]
+opt_ther = P_opt_ther[i]
+Linst=DEFI_LIST_REEL(DEBUT=0.0,
+                     INTERVALLE=(_F(JUSQU_A=t_0,NOMBRE=N,),
+                                 _F(JUSQU_A=2.0*t_0,NOMBRE=N,),
+                                 _F(JUSQU_A=3.0*t_0,NOMBRE=N,),
+                                 _F(JUSQU_A=4.0*t_0,NOMBRE=N,),
+                                 _F(JUSQU_A=5.0*t_0,NOMBRE=N,),
+                                 _F(JUSQU_A=6.0*t_0,NOMBRE=N,),
+                                 _F(JUSQU_A=7.0*t_0,NOMBRE=N,),
+                                 _F(JUSQU_A=8.0*t_0,NOMBRE=N,),),);
+
+DEBUG(SDVERI='NON')
+RESU_TGT=SIMU_POINT_MAT(
+                        COMPORTEMENT=_F(RELATION=compor,
+                                     ITER_INTE_MAXI=100,
+                                     TYPE_MATR_TANG='VERIFICATION',
+                                     VALE_PERT_RELA=1.E-5,
+                                    ),
+                        NEWTON=_F(MATRICE='TANGENTE',REAC_ITER=1,),
+                        CONVERGENCE=_F(ITER_GLOB_MAXI=10,),
+                        MATER      = ACIER[1],
+                        INCREMENT=_F(LIST_INST=Linst,),
+                        EPSI_IMPOSE=_F(EPXX=eps_imp[0], EPYY=eps_imp[1], EPZZ=eps_imp[2],
+                                       EPXY=eps_imp[3], EPXZ=eps_imp[4], EPYZ=eps_imp[5]),
+                        );
+
+DIFF_MAT=VERI_MATR_TANG()
+
+IMPR_TABLE(TABLE=DIFF_MAT)
+
+TEST_TABLE(CRITERE='ABSOLU',
+           REFERENCE='ANALYTIQUE',
+           PRECISION=2.0E-4,
+           VALE_CALC=0.,
+           VALE_REFE=0.0,
+           NOM_PARA='MAT_DIFF',
+           TYPE_TEST='MAX',
+           TABLE=DIFF_MAT,)
+
+# TESTS DE NON REGRESSION DES QUANTITES SIGNIFICATIVES
+TEST_TABLE(
+           VALE_CALC=0.012641849565623,
+           NOM_PARA='V13_Pa_1',
+           TABLE=R_SI_0,
+           FILTRE=_F(NOM_PARA='INST',
+                     VALE=5000.0,),
+           )
+
+TEST_TABLE(
+           VALE_CALC=7.1973325291788E8,
+           NOM_PARA='VMIS_Pa_1',
+           TABLE=R_SI_1,
+           FILTRE=_F(NOM_PARA='INST',
+                     VALE=5000.0,),
+           )
+
+TEST_TABLE(
+           VALE_CALC=-3.5164225238106E-3,
+           NOM_PARA='V16_Pa_1',
+           TABLE=R_SI_3,
+           FILTRE=_F(NOM_PARA='INST',
+                     VALE=5000.0,),
+           )
+
+TEST_TABLE(
+           VALE_CALC=1.5427502539398E8,
+           NOM_PARA='SIXX_Pa_1',
+           TABLE=R_SI_4,
+           FILTRE=_F(NOM_PARA='INST',
+                     VALE=5000.0,),
+           )
+
+FIN()
