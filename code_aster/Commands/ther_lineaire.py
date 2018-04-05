@@ -34,7 +34,10 @@ class LinearThermalAnalysisBuild(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        self._result = EvolutiveThermalLoad()
+        if keywords.get("reuse") != None:
+            self._result = keywords["reuse"]
+        else:
+            self._result = EvolutiveThermalLoad()
     
     def post_exec(self, keywords):
         """Execute the command.
@@ -42,6 +45,7 @@ class LinearThermalAnalysisBuild(ExecuteCommand):
         Arguments:
             keywords (dict): User's keywords.
         """
+        self._result.update()
         self._result.appendModelOnAllRanks(keywords["MODELE"])
         self._result.appendMaterialOnMeshOnAllRanks(keywords["CHAM_MATER"])
 
