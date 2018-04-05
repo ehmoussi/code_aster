@@ -62,12 +62,24 @@ class formule(ASSD):
         self.code = None
         self.ctxt = None
 
-    def __call__(self, *val):
-        """Evaluation de la formule"""
+    def __call__(self, *val, **dval):
+        """Evaluation of the formula.
+
+        Arguments:
+            val (tuple[float]): Value of each parameter in the order of
+                the `nompar` attribute.
+            dval (dict): Values passed as keyword arguments.
+
+        Returns:
+            float/complex: Value of the formula.
+        """
         context = {}
         context.update(self.get_context())
-        for param, value in zip(self.nompar, val):
-            context[param] = value
+        if val:
+            for param, value in zip(self.nompar, val):
+                context[param] = value
+        else:
+            context.update(dval)
         try:
             res = eval(self.code, context, self._initial_context)
         except Exception, exc:

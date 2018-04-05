@@ -558,9 +558,11 @@ class ETAPE(B_OBJECT.OBJECT, B_CODE.CODE):
                 _print_msg(coderr, nom_fonction, 3, valk=args)
                 return 4, None
 
+        # parameters as dict
+        dval = dict(zip(nom_param, val))
         # evaluation de la formule
         try:
-            res = objet_sd(*val)
+            res = objet_sd(**dval)
         except:
             _print_msg(coderr, nom_fonction, 4, valk=traceback.format_exc())
             return 4, None
