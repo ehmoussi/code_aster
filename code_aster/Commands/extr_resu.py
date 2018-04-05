@@ -45,8 +45,9 @@ class ExtrResu(ExecuteCommand):
             keywords (dict): User's keywords.
         """
         resultat = keywords["RESULTAT"]
-        if(resultat):
+        if resultat != None:
             self._result.update()
             self._result.appendModelOnAllRanks(resultat.getModel())
+            self._result.appendMaterialOnMeshOnAllRanks(resultat.getMaterialOnMesh())
 
 EXTR_RESU = ExtrResu.run
