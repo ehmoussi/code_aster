@@ -81,7 +81,7 @@ class formule(ASSD):
         else:
             context.update(dval)
         try:
-            res = eval(self.code, context, self._initial_context)
+            res = eval(self.code, self._initial_context, context)
         except Exception, exc:
             message.error(SUPERV, "ERREUR LORS DE L'ÉVALUATION DE LA FORMULE '%s' "
                           ":\n>> %s", self.nom, str(exc))
