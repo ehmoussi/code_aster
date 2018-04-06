@@ -170,19 +170,19 @@ RES_XFEM=POST_CHAM_XFEM( MODELE_VISU  = MOD_VISU,
 LAG=[None]*11
 inst=[0.0,0.25,0.50,0.75,1.0]
 
-a=-9.7799511e-3
-b=0.0880195599
-LAGS_A = E*a-(E*b)/(8*8)
+a2=-9.7799511e-3
+b2=0.0880195599
+LAGS_A = E*a2-(E*b2)/(8*8)
 
 VALE_CALC=[
- -881695.571978,
- -1237533.70885,
- -9.2115268715311E+05,
- -1.2704004587724E+06,
- -8.817394495597E+05,
- -1.2375079728171E+06,
- -1.0121339487718E+06,
- -1.1061971613657E+06,
+    -920563.248073,
+    -1278725.32478,
+    -963259.585787,
+    -1312546.79009,
+    -920607.787216,
+    -1278692.48549,
+    -1047055.76523,
+    -1145412.41678,
 ]
 
 for i in [1,2,3,4]: #Boucle sur les increments
@@ -231,16 +231,15 @@ TEST_RESU(RESU=_F(INST=1.0,
                   NOM_CHAM='DEPL',
                   NOEUD='NM3D',
                   NOM_CMP='DX',
-                  VALE_CALC=9.9863363659732E-4,
+                  VALE_CALC=0.00104046946311,
                   ),
           )
-
 TEST_RESU(RESU=_F(INST=1.0,
                   RESULTAT=RES_XFEM,
                   NOM_CHAM='DEPL',
                   NOEUD='NM3D',
                   NOM_CMP='DY',
-                  VALE_CALC=0.068527720481006,
+                  VALE_CALC=0.071182292326,
                   ),
           )
 
@@ -249,7 +248,7 @@ TEST_RESU(RESU=_F(INST=1.0,
                   NOM_CHAM='DEPL',
                   NOEUD='NM12H',
                   NOM_CMP='DX',
-                  VALE_CALC=0.068503841454940,
+                  VALE_CALC=0.0711574307204,
                   ),
           )
 
@@ -258,7 +257,7 @@ TEST_RESU(RESU=_F(INST=1.0,
                   NOM_CHAM='DEPL',
                   NOEUD='NM12H',
                   NOM_CMP='DY',
-                  VALE_CALC=-2.2902554698403E-3,
+                  VALE_CALC=-0.0023732513034,
                   ),
           )
 
@@ -267,7 +266,7 @@ TEST_RESU(RESU=_F(INST=1.0,
                   NOM_CHAM='DEPL',
                   NOEUD='NM12W',
                   NOM_CMP='DX',
-                  VALE_CALC=-0.068503841454939,
+                  VALE_CALC=-0.0711574307204,
                   ),
           )
 
@@ -276,7 +275,7 @@ TEST_RESU(RESU=_F(INST=1.0,
                   NOM_CHAM='DEPL',
                   NOEUD='NM12W',
                   NOM_CMP='DY',
-                  VALE_CALC=2.2902554698402E-3,
+                  VALE_CALC=0.0023732513034,
                   ),
           )
 
@@ -285,7 +284,7 @@ TEST_RESU(RESU=_F(INST=1.0,
                   NOM_CHAM='DEPL',
                   NOEUD='NM21Z',
                   NOM_CMP='DX',
-                  VALE_CALC=-9.9863363659688E-4,
+                  VALE_CALC=-0.00104046946311,
                   ),
           )
 
@@ -294,7 +293,7 @@ TEST_RESU(RESU=_F(INST=1.0,
                   NOM_CHAM='DEPL',
                   NOEUD='NM21Z',
                   NOM_CMP='DY',
-                  VALE_CALC=-0.068527720481006,
+                  VALE_CALC=-0.071182292326,
                   ),
           )
 
