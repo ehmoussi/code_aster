@@ -63,8 +63,14 @@ SOMME2 = FORMULE(VALE='SIXX+SIYY+SIZZ',
                  NOM_PARA=['SIXX', 'SIYY', 'SIZZ'],)
 RAYON = FORMULE(VALE='(COOR_X*COOR_X+COOR_Y*COOR_Y)**(0.5)',
                 NOM_PARA=['COOR_X', 'COOR_Y'],)
-SOL_ANA=FORMULE(NOM_PARA=('RAYON'),VALE='(3.*(K*(1-(1-4.*SIGY/K*log(RAYON/RB_FIN))**0.5))+2.*SIGY)/exp(2.*SIGY/(3.*K)+1-(1-4.*SIGY/K*(log(RAYON/RB_FIN)))**0.5)');
-INTEG=FORMULE(NOM_PARA=('RAYON'),VALE='(3.*RAYON**2.)/(exp(2.*SIGY/(3.*K)+1-(1.-4.*SIGY/K*(log(RAYON/RB_FIN)))**0.5))');
+SOL_ANA=FORMULE(NOM_PARA=('RAYON'),
+                VALE='''
+(3.*(K*(1-(1-4.*SIGY/K*log(RAYON/RB_FIN))**0.5))+2.*SIGY)/exp(2.*SIGY/(3.*K)+1-(1-4.*SIGY/K*(log(RAYON/RB_FIN)))**0.5)''',
+                K=K, SIGY=SIGY, RB_FIN=RB_FIN);
+INTEG=FORMULE(NOM_PARA=('RAYON'),
+              VALE='''
+(3.*RAYON**2.)/(exp(2.*SIGY/(3.*K)+1-(1.-4.*SIGY/K*(log(RAYON/RB_FIN)))**0.5))''',
+              K=K, SIGY=SIGY, RB_FIN=RB_FIN);
 
 MA=LIRE_MAILLAGE(FORMAT='MED');
 

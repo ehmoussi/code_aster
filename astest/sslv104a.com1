@@ -19,7 +19,7 @@
 
 #
 import numpy as NP
-import math 
+import math
 
 POURSUITE(CODE='OUI', PAR_LOT='NON',
           DEBUG=_F(SDVERI='OUI',),
@@ -61,7 +61,7 @@ TEST_RESU(RESU=(_F(NUME_ORDRE=1,
                    NOM_CHAM='SIEQ_ELGA',
                    NOM_CMP='VMIS',
                    VALE_CALC=1.8939143292115E13,
-                   
+
                    ),
                 _F(NUME_ORDRE=1,
                    REFERENCE='AUTRE_ASTER',
@@ -239,15 +239,6 @@ TEST_RESU(RESU=(_F(NUME_ORDRE=1,
 
 # comparaison EPEQ_ELNO vs INVA_2(EPSI_ELNO)
 # plusieurs variantes à titre d'exemple
-fEpsEq0 = FORMULE(VALE="""sqrt(2./3. * (
-                (EPXX**2 + EPYY**2 + EPZZ**2 + 2*EPXY**2 + 2*EPXZ**2 + 2*EPYZ**2 )
-      - 1./3. * (EPXX + EPYY + EPZZ)**2 ))""",
-                  NOM_PARA=['EPXX', 'EPYY', 'EPZZ', 'EPXY', 'EPXZ', 'EPYZ'],)
-
-fEpsEq1 = FORMULE(VALE='form(EPXX, EPYY, EPZZ, EPXY, EPXZ, EPYZ)',
-                  form=form,
-                  NOM_PARA=['EPXX', 'EPYY', 'EPZZ', 'EPXY', 'EPXZ', 'EPYZ'],)
-
 def form(*veps):
     e11, e22, e33, e12, e13, e23 = veps
     trace = e11 + e22 + e33
@@ -275,6 +266,15 @@ def inva2(mat):
     dm = dev(mat)
     prod = dm * NP.transpose(dm)
     return sqrt(2./3.*prod.sum())
+
+fEpsEq0 = FORMULE(VALE="""sqrt(2./3. * (
+                (EPXX**2 + EPYY**2 + EPZZ**2 + 2*EPXY**2 + 2*EPXZ**2 + 2*EPYZ**2 )
+      - 1./3. * (EPXX + EPYY + EPZZ)**2 ))""",
+                  NOM_PARA=['EPXX', 'EPYY', 'EPZZ', 'EPXY', 'EPXZ', 'EPYZ'],)
+
+fEpsEq1 = FORMULE(VALE='form(EPXX, EPYY, EPZZ, EPXY, EPXZ, EPYZ)',
+                  form=form,
+                  NOM_PARA=['EPXX', 'EPYY', 'EPZZ', 'EPXY', 'EPXZ', 'EPYZ'],)
 
 fEpsEq = FORMULE(VALE='inva2(vec2mat([EPXX, EPYY, EPZZ, EPXY, EPXZ, EPYZ]))',
                  inva2=inva2,
