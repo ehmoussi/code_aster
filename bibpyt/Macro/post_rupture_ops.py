@@ -994,7 +994,7 @@ def post_rupture_ops(self, TABLE, OPERATION, **args):
                     VALE='(K2**2)*(1.-nu**2)/E',
                     **const_context)
             elif args['MODELISATION'] == 'C_PLAN':
-                __formul_G = FORMULE(NOM_PARA=('K2'), VALE='(K2**2)/E', E=E)
+                __formul_G = FORMULE(NOM_PARA=('K2'), VALE='(K2**2)/E', E=young)
 
 # creation de la table de sortie avec les nouvelles valeurs de K1 et de G
 # et/ou de G_IRWIN
