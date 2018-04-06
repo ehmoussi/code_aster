@@ -174,7 +174,8 @@ void ResultsContainerInstance::addTimeValue( double value,
 };
 
 void ResultsContainerInstance::listFields() const
-{   std::cout<<"Content of DataStructure : ";
+{
+    std::cout << "Content of DataStructure : ";
     for ( auto curIter : _dictOfVectorOfFieldsNodes )
     {
         std::cout << curIter.first << " - " ;
@@ -189,7 +190,8 @@ void ResultsContainerInstance::listFields() const
 bool ResultsContainerInstance::update() throw ( std::runtime_error )
 {
     _serialNumber->updateValuePointer();
-    _namesOfFields->buildFromJeveux();
+    auto boolRet = _namesOfFields->buildFromJeveux( true );
+    std::cout << "boolRet " << boolRet << std::endl;
     const auto numberOfSerialNum = _serialNumber->usedSize();
     _nbRanks = numberOfSerialNum;
 
