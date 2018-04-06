@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -109,16 +109,16 @@ class Coeur(object):
     def position_fromthyc(self, posX, posY):
         """Retourne la position Aster correspondant à la position Thyc."""
         raise NotImplementedError
-        
+
     def get_length(self) :
         return len(self.ALPHA_MAC)
-        
+
     def get_letter(self,index) :
         return self.ALPHA_MAC[index]
-        
+
     def get_index(self,letter) :
         return self.ALPHA_MAC.index(letter)
-        
+
     def get_XY(self,position) :
         raise NotImplementedError
 
@@ -466,7 +466,7 @@ class Coeur(object):
         from code_aster.Cata.Syntax import _F
         DEFI_FONCTION = self.macro.get_cmd('DEFI_FONCTION')
         AFFE_CHAR_MECA_F = self.macro.get_cmd('AFFE_CHAR_MECA_F')
-        
+
         if compression_init :
             _FXpsc = DEFI_FONCTION(NOM_PARA='INST',
                                VALE=(-2.0,   0.,
@@ -724,7 +724,7 @@ class Coeur(object):
 
         _LI = DEFI_LIST_REEL(DEBUT=-1, INTERVALLE=_list,)
 
-        
+
         if nbSubdEchec == 1 :
             return _LI
         else :
@@ -848,7 +848,7 @@ class Coeur(object):
             mcfm.append(mtmpm)
             mcf0.append(mtmp0)
             mcf1.append(mtmp1)
-            
+
         _INST_M = CREA_CHAMP(
             OPERATION='AFFE', TYPE_CHAM='NOEU_INST_R', MAILLAGE=MAILLAGE,
             #AFFE=(_F(GROUP_MA=('T_GUIDE', 'CRAYON', 'ELA', 'MAINTIEN',), NOM_CMP='INST', VALE=0.0),),)
@@ -1048,9 +1048,9 @@ class Coeur(object):
         else:
             _M_RES = DEFI_MATERIAU(DIS_CONTACT=_F(RIGI_NOR=1.E1))
 
- 
+
         _M_BCR = DEFI_MATERIAU( DIS_CONTACT = _F( RIGI_NOR = 1.E9, JEU=.0),);
- 
+
         mcf_affe_mater = self.mcf_coeur_mater(_M_RES,_M_BCR)
         # Affectation des materiau dans le coeur
         _A_MAT = AFFE_MATERIAU(MAILLAGE=MAILLAGE,
@@ -1233,28 +1233,40 @@ class Coeur(object):
             ' * (' + _TEMPENV.nom + '(INST)-%(TP_REFlocal)f) '
         f_DthY = Dcth + '*' + COSTE
         f_DthZ = Dcth + '*' + SINTE
+
+        const_context = {
+            _TEMPENV.nom: _TEMPENV,
+            _TEMPPIC.nom: _TEMPPIC,
+            _TEMPPSC.nom: _TEMPPSC
+        }
         _DthY = FORMULE(
-            NOM_PARA=('X', 'Y', 'Z', 'INST'), VALE=f_DthY % locals())
+            NOM_PARA=('X', 'Y', 'Z', 'INST'), VALE=f_DthY % locals(),
+            **const_context)
         _DthZ = FORMULE(
-            NOM_PARA=('X', 'Y', 'Z', 'INST'), VALE=f_DthZ % locals())
+            NOM_PARA=('X', 'Y', 'Z', 'INST'), VALE=f_DthZ % locals(),
+            **const_context)
 
         Dthpic = L + ' * ' + ALPHPIC + \
             ' * (' + _TEMPPIC.nom + '(INST)-%(TP_REFlocal)f) '
         f_DthYpic = Dthpic + '*' + COSTE
         f_DthZpic = Dthpic + '*' + SINTE
         _DthYpic = FORMULE(
-            NOM_PARA=('X', 'Y', 'Z', 'INST'), VALE=f_DthYpic % locals())
+            NOM_PARA=('X', 'Y', 'Z', 'INST'), VALE=f_DthYpic % locals(),
+            **const_context)
         _DthZpic = FORMULE(
-            NOM_PARA=('X', 'Y', 'Z', 'INST'), VALE=f_DthZpic % locals())
+            NOM_PARA=('X', 'Y', 'Z', 'INST'), VALE=f_DthZpic % locals(),
+            **const_context)
 
         Dthpsc = L + ' * ' + ALPHPSC + \
             ' * (' + _TEMPPSC.nom + '(INST)-%(TP_REFlocal)f) '
         f_DthYpsc = Dthpsc + '*' + COSTE
         f_DthZpsc = Dthpsc + '*' + SINTE
         _DthYpsc = FORMULE(
-            NOM_PARA=('X', 'Y', 'Z', 'INST'), VALE=f_DthYpsc % locals())
+            NOM_PARA=('X', 'Y', 'Z', 'INST'), VALE=f_DthYpsc % locals(),
+            **const_context)
         _DthZpsc = FORMULE(
-            NOM_PARA=('X', 'Y', 'Z', 'INST'), VALE=f_DthZpsc % locals())
+            NOM_PARA=('X', 'Y', 'Z', 'INST'), VALE=f_DthZpsc % locals(),
+            **const_context)
 
         #---------------------------------------------------------------
         #--                  Deplacements verticaux                   --
@@ -1317,8 +1329,13 @@ class Coeur(object):
         f_DthXpic = '( (' + _DthXpicPeriph.nom + '(INST) -'  + _DthXpicCentre.nom + \
             '(INST) ) /(%(Rpsc)f)**2   )*(' +  L + \
             ')**2   +' + _DthXpicCentre.nom + '(INST)'
+        const_context = {
+            _DthXpicPeriph.nom: _DthXpicPeriph,
+            _DthXpicCentre.nom: _DthXpicCentre,
+        }
         _DthXpic = FORMULE(
-            NOM_PARA=('X', 'Y', 'Z', 'INST'), VALE=f_DthXpic % locals())
+            NOM_PARA=('X', 'Y', 'Z', 'INST'), VALE=f_DthXpic % locals(),
+            **const_context)
 
         #---------------------------------------------------------------
         #--                Deplacements  verticaux                    --
@@ -1329,16 +1346,17 @@ class Coeur(object):
         f_DthX = '(-1.*'  + _DthXpicPeriph.nom + \
             '(INST)/(%(XSUPCUVElocal)f-%(XINFCUVElocal)f) * X  +'  + \
             _DthXpicPeriph.nom + '(INST))'
-        _DthX = FORMULE(NOM_PARA=('X', 'INST'), VALE=f_DthX % locals())
+        _DthX = FORMULE(NOM_PARA=('X', 'INST'), VALE=f_DthX % locals(),
+            **const_context)
 
         #---------------------------------------------------------------
         #--                  chargement resultant                     --
         #---------------------------------------------------------------
         if (is_char_ini) :
             _dilatation = AFFE_CHAR_MECA_F( MODELE   = MODEL,
-                                           DDL_IMPO = (_F(GROUP_NO = 'FIX', 
+                                           DDL_IMPO = (_F(GROUP_NO = 'FIX',
                                                           DX=_DthXpic,),
-                                                       _F(GROUP_NO = 'P_CUV',  
+                                                       _F(GROUP_NO = 'P_CUV',
                                                           DX=_DthX,   ),),)
         else :
             _dilatation = AFFE_CHAR_MECA_F(MODELE=MODEL,
