@@ -389,7 +389,7 @@ def calc_gp_ops(self, **args):
 # formules
             const_context = {
                 'origine': TRANCHE_2D['CENTRE'],
-                'rayon': TRANCHE_2D['RAYON']})
+                'rayon': TRANCHE_2D['RAYON'],
                 'taille': taille,
                 'theta': theta,
                 'NRJ': NRJ,
@@ -424,7 +424,8 @@ def calc_gp_ops(self, **args):
                     __seuil[cop] = FORMULE(
                         VALE='''SEUIL(X,Y,origine[0],origine[1],rayon,taille,%d,ccos,ssin)''' % (
                             cop + 1),
-                        NOM_PARA=('X', 'Y'),, **const_context)
+                        NOM_PARA=('X', 'Y'),
+                        **const_context)
 
                 __formule_seuil = CREA_CHAMP(TYPE_CHAM='ELGA_NEUT_F',
                                              MODELE=__model,
@@ -445,7 +446,7 @@ def calc_gp_ops(self, **args):
                 __ener[cop] = FORMULE(
                     VALE='''NRJ(TOTALE,X,Y,origine[0],origine[1],rayon,taille,%d,ccos,ssin)''' % (
                         cop + 1),
-                    NOM_PARA=('TOTALE', 'X', 'Y'),, **const_context)
+                    NOM_PARA=('TOTALE', 'X', 'Y'), **const_context)
 
             __formule_ener = CREA_CHAMP(TYPE_CHAM='ELGA_NEUT_F',
                                         MODELE=__model,
