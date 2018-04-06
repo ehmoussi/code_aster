@@ -218,4 +218,6 @@ TEST_RESU(RESU=(_F(GROUP_NO='PT01',
                 ),
           )
 
+DETRUIRE(CONCEPT=_F(NOM=(PRESS, DEPLA)))
+
 FIN(FORMAT_HDF='OUI');

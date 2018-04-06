@@ -47,7 +47,10 @@ PRES_IMP=DEFI_CONSTANTE(VALE=0.,);
 
 DEPLX = FORMULE(VALE=
                        '0.5*p_g*(p_rhom-p_biot*p_rhol)/(p_lambda+2.*p_mu)*COOR_X*(COOR_X-2.*p_long)+1./(p_lambda+2.*p_mu)*p_biot*p_atm*COOR_X',
-                NOM_PARA='COOR_X',);
+                NOM_PARA='COOR_X',
+                p_g=p_g, p_rhom=p_rhom, p_biot=p_biot, p_rhol=p_rhol,
+                p_lambda=p_lambda, p_mu=p_mu, p_long=p_long, p_atm=p_atm,
+                );
 
 #####################################################
 # Affectation des chargements sur le maillage
