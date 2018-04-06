@@ -412,7 +412,7 @@ form = FORMULE(VALE='a0 + a1*X + a2*X**2 + a3*X**3 + a4*X**4 + a5*X**5',
                a3=a3,
                a4=a4,
                a5=a5,
-               NOM_PARA='X',)
+               NOM_PARA='X'
 )
 
 absc_in = DEFI_LIST_REEL(DEBUT=-2.55,

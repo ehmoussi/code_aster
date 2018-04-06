@@ -162,8 +162,8 @@ time = 0.
 
 #  Formules pour la comparaison calcul 1  / calcul 2
 #
-VERIF = FORMULE(VALE='abs (VAL_CAL - VAL_REF)/VAL_REF',
-                NOM_PARA=['VAL_REF', 'VAL_CAL'],)
+VERIF=FORMULE(NOM_PARA=('VAL_REF', 'VAL_CAL'),
+              VALE='abs (VAL_CAL - VAL_REF)/VAL_REF')
 
 for i in range(NCAL):
 
@@ -230,11 +230,8 @@ for i in range(NCAL):
              # don cil faut faire au choix :
              # NOR = FORMULE(NOM_PARA='N',VALE='YOUN(%f)/YOUN(%f)*N' % (Ti, Tm))
              # ou bien :
-              NOR = FORMULE(VALE='YOUN(212.000000)/YOUN(116.000000)*N',
-                            YOUN=YOUN,
-                            NOM_PARA='N',)
-                            NOM_PARA='N',)
-                            NOM_PARA='N',)
+              NOR = FORMULE(VALE='YOUN(Ti)/YOUN(Tm)*N',
+                            YOUN=YOUN, Ti=Ti, Tm=Tm,
                             NOM_PARA='N',)
 
               SIG1=CREA_CHAMP(OPERATION='AFFE', TYPE_CHAM='ELGA_NEUT_F',

@@ -345,29 +345,17 @@ for k in range(p_npas+1) :
 
   instant = str(eval('linst[k]'));
 
-  FMX = FORMULE(VALE='FXME(0.0,X,Y,Z)',
-                FXME=FXME,
-                NOM_PARA=['X', 'Y', 'Z'],)
-                NOM_PARA=['X', 'Y', 'Z'],)
-  FMY = FORMULE(VALE='FYME(0.0,X,Y,Z)',
-                FYME=FYME,
-                NOM_PARA=['X', 'Y', 'Z'],)
-                FYME=FYME,
-  FMZ = FORMULE(VALE='FZME(0.0,X,Y,Z)',
-                FZME=FZME,
-                NOM_PARA=['X', 'Y', 'Z'],)
-  FMZ = FORMULE(VALE='FZME(0.0025,X,Y,Z)',
-                FZME=FZME,
-                NOM_PARA=['X', 'Y', 'Z'],)
-  FMZ = FORMULE(VALE='FZME(0.005,X,Y,Z)',
-                FZME=FZME,
-                NOM_PARA=['X', 'Y', 'Z'],)
-  FMZ = FORMULE(VALE='FZME(0.0075,X,Y,Z)',
-                FZME=FZME,
-                NOM_PARA=['X', 'Y', 'Z'],)
-  FMZ = FORMULE(VALE='FZME(0.01,X,Y,Z)',
-                FZME=FZME,
-                NOM_PARA=['X', 'Y', 'Z'],)
+  FMX = FORMULE(VALE='FXME('+instant+',X,Y,Z)',
+                NOM_PARA=('X','Y','Z'),
+                FXME=FXME);
+
+  FMY = FORMULE(VALE='FYME('+instant+',X,Y,Z)',
+                NOM_PARA=('X','Y','Z'),
+                FYME=FYME);
+
+  FMZ = FORMULE(VALE='FZME('+instant+',X,Y,Z)',
+                NOM_PARA=('X','Y','Z'),
+                FZME=FZME);
 
   FORF=CREA_CHAMP(TYPE_CHAM='NOEU_FORC_F',
                  OPERATION='AFFE',

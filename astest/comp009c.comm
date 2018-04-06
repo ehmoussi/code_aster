@@ -345,43 +345,7 @@ for i in range(1,NCAL+1):
              # Faux en PAR_LOT='OUI' car la formule est evaluee avec le dernier i
              # NOR = FORMULE(NOM_PARA='N',VALE='YOUN(Ti)/YOUN(Tm)*N')
              # donc il faut faire au choix :
-              NOR = FORMULE(VALE='YOUN(68.000000)/YOUN(44.000000)*N',
-                            YOUN=YOUN,
-                            NOM_PARA='N',)
-                            YOUN=YOUN,
-                            NOM_PARA='N',)
-                            YOUN=YOUN,
-                            NOM_PARA='N',)
-                            YOUN=YOUN,
-                            NOM_PARA='N',)
-                            YOUN=YOUN,
-                            NOM_PARA='N',)
-                            YOUN=YOUN,
-                            NOM_PARA='N',)
-                            YOUN=YOUN,
-                            NOM_PARA='N',)
-                            YOUN=YOUN,
-                            NOM_PARA='N',)
-                            YOUN=YOUN,
-                            NOM_PARA='N',)
-                            YOUN=YOUN,
-                            NOM_PARA='N',)
-                            YOUN=YOUN,
-                            NOM_PARA='N',)
-                            YOUN=YOUN,
-                            NOM_PARA='N',)
-                            YOUN=YOUN,
-                            NOM_PARA='N',)
-                            YOUN=YOUN,
-                            NOM_PARA='N',)
-                            YOUN=YOUN,
-                            NOM_PARA='N',)
-                            YOUN=YOUN,
-                            NOM_PARA='N',)
-                            YOUN=YOUN,
-                            NOM_PARA='N',)
-                            YOUN=YOUN,
-                            NOM_PARA='N',)
+              NOR = FORMULE(VALE='YOUN(%f)/YOUN(%f)*N' % (Ti, Tm),
                             YOUN=YOUN,
                             NOM_PARA='N',)
              # ou bien :

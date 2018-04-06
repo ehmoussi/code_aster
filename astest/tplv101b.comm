@@ -62,7 +62,7 @@ H2=DEFI_CONSTANTE(VALE=1.,);
 
 #S1=DEFI_CONSTANTE(VALE=-5.,);
 S1 = FORMULE(VALE='-5.*NEUT1',
-             NOM_PARA='NEUT1',)
+             NOM_PARA='NEUT1',
                        )
 
 

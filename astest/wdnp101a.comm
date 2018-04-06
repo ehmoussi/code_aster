@@ -421,77 +421,32 @@ for n in range(1,nbcouche-1):
                       ASSE=_F(GROUP_MA=list_group_ma[:n+1],
                                CHAM_GD=DEP[n-1]),);
 
-    FX = FORMULE(VALE='X',
-                 NOM_PARA='X',)
-    FY = FORMULE(VALE='PROJ(Y,7.000000)',
-                 PROJ=PROJ,
-                 NOM_PARA='Y',)
-    FY = FORMULE(VALE='PROJ(Y,9.000000)',
-                 PROJ=PROJ,
-                 NOM_PARA='Y',)
-    FY = FORMULE(VALE='PROJ(Y,11.000000)',
-                 PROJ=PROJ,
-                 NOM_PARA='Y',)
-    FY = FORMULE(VALE='PROJ(Y,13.000000)',
-                 PROJ=PROJ,
-                 NOM_PARA='Y',)
-    FY = FORMULE(VALE='PROJ(Y,15.000000)',
-                 PROJ=PROJ,
-                 NOM_PARA='Y',)
-    FY = FORMULE(VALE='PROJ(Y,17.000000)',
-                 PROJ=PROJ,
-                 NOM_PARA='Y',)
-    FY = FORMULE(VALE='PROJ(Y,19.000000)',
-                 PROJ=PROJ,
-                 NOM_PARA='Y',)
-    FY = FORMULE(VALE='PROJ(Y,21.000000)',
-                 PROJ=PROJ,
-                 NOM_PARA='Y',)
-    FY = FORMULE(VALE='PROJ(Y,23.000000)',
-    DXN = FORMULE(VALE='DX*(9.000000-Y)/(9.000000-7.000000)',
-                  NOM_PARA=['DX', 'Y'],)
-    DYN = FORMULE(VALE='DY*(9.000000-Y)/(9.000000-7.000000)',
-                  NOM_PARA=['DY', 'Y'],)
+    FX = FORMULE(NOM_PARA=('X'),VALE='X')
+    FY = FORMULE(NOM_PARA=('Y'),VALE='PROJ(Y,%f)'%Height[n], PROJ=PROJ)
 
-    DXN = FORMULE(VALE='DX*(11.000000-Y)/(11.000000-9.000000)',
-                  NOM_PARA=['DX', 'Y'],)
-    DYN = FORMULE(VALE='DY*(11.000000-Y)/(11.000000-9.000000)',
-                  NOM_PARA=['DY', 'Y'],)
+    DEPL_PJ = PROJ_CHAMP(INFO=1,
+                         PROJECTION = 'OUI',
                          METHODE    = 'COLLOCATION',
-    DXN = FORMULE(VALE='DX*(13.000000-Y)/(13.000000-11.000000)',
-                  NOM_PARA=['DX', 'Y'],)
-    DYN = FORMULE(VALE='DY*(13.000000-Y)/(13.000000-11.000000)',
-                  NOM_PARA=['DY', 'Y'],)
+                         MODELE_1   = MOD[n-1],
+                         MODELE_2   = MOD[n],
                          CHAM_GD    = DEP[n-1],
-    DXN = FORMULE(VALE='DX*(15.000000-Y)/(15.000000-13.000000)',
-                  NOM_PARA=['DX', 'Y'],)
-    DYN = FORMULE(VALE='DY*(15.000000-Y)/(15.000000-13.000000)',
-                  NOM_PARA=['DY', 'Y'],)
+                         VIS_A_VIS  = _F(GROUP_MA_1 = list_group_ma[:n+1],
+                                         GROUP_MA_2 = list_group_ma[:n+2],
                                          TRANSF_GEOM_2 = (FX, FY),),);
-    DXN = FORMULE(VALE='DX*(17.000000-Y)/(17.000000-15.000000)',
-                  NOM_PARA=['DX', 'Y'],)
-    DYN = FORMULE(VALE='DY*(17.000000-Y)/(17.000000-15.000000)',
-                  NOM_PARA=['DY', 'Y'],)
+
+    CH_BID = CREA_CHAMP(INFO=1,
                          TYPE_CHAM='NOEU_DEPL_R',
-    DXN = FORMULE(VALE='DX*(19.000000-Y)/(19.000000-17.000000)',
-                  NOM_PARA=['DX', 'Y'],)
-    DYN = FORMULE(VALE='DY*(19.000000-Y)/(19.000000-17.000000)',
-                  NOM_PARA=['DY', 'Y'],)
+                         OPERATION='ASSE',
+                         MODELE = MOD[n],
                          ASSE=_F(GROUP_MA=list_group_ma[:n+2],
-    DXN = FORMULE(VALE='DX*(21.000000-Y)/(21.000000-19.000000)',
-                  NOM_PARA=['DX', 'Y'],)
-    DYN = FORMULE(VALE='DY*(21.000000-Y)/(21.000000-19.000000)',
-                  NOM_PARA=['DY', 'Y'],)
+                                CHAM_GD = DEPL_PJ,
+                                NOM_CMP = ('DX','DY'),),);
 
-    DXN = FORMULE(VALE='DX*(23.000000-Y)/(23.000000-21.000000)',
-                  NOM_PARA=['DX', 'Y'],)
-    DYN = FORMULE(VALE='DY*(23.000000-Y)/(23.000000-21.000000)',
-                  NOM_PARA=['DY', 'Y'],)
+    Y1 = Height[n+1];
+    Y0 = Height[n];
 
-    DXN = FORMULE(VALE='DX*(25.000000-Y)/(25.000000-23.000000)',
-                  NOM_PARA=['DX', 'Y'],)
-    DYN = FORMULE(VALE='DY*(25.000000-Y)/(25.000000-23.000000)',
-                  NOM_PARA=['DY', 'Y'],)
+    DXN = FORMULE(NOM_PARA=('DX','Y'),VALE='DX*(%f-Y)/(%f-%f)'%(Y1,Y1,Y0))
+    DYN = FORMULE(NOM_PARA=('DY','Y'),VALE='DY*(%f-Y)/(%f-%f)'%(Y1,Y1,Y0))
 
     CH_GEOM = CREA_CHAMP(INFO=1,
                          TYPE_CHAM = 'NOEU_GEOM_R',

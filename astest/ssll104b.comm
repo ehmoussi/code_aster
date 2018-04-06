@@ -206,15 +206,12 @@ def escalier(x):
 EPX = FORMULE(VALE='1.E-3*escalier(X)*INST',
               escalier=escalier,
               NOM_PARA=['X', 'INST'],)
-                       )
 KY = FORMULE(VALE='2.E-3*escalier(Y)*INST',
              escalier=escalier,
              NOM_PARA=['Y', 'INST'],)
-                       )
 KZ = FORMULE(VALE='3.E-3*escalier(Z)*INST',
              escalier=escalier,
              NOM_PARA=['Z', 'INST'],)
-                       )
 
 CHF1=AFFE_CHAR_MECA_F(  MODELE=MO1,
                         PRE_EPSI=_F( MAILLE=('E1','E2','E4','E5','E7','E8'),

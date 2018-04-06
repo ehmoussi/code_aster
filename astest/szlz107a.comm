@@ -197,19 +197,22 @@ TEST_TABLE(
 # POUR RETROUVER LE CRITERE DANG VAN - PAPADOPOULOUS
 # b = TAU0 = 352
 # a = (TAU0-D0/SQRT(3))/D0/3 = 0.22
-CRIT_FAT = FORMULE(VALE=' (RAYSPH + 0.22*(max(PHYDRM,0))) - 352 ',
-                   NOM_PARA=['RAYSPH', 'PHYDRM'],)
+CRIT_FAT =   FORMULE(
+           NOM_PARA=('RAYSPH','PHYDRM'),
+           VALE=''' (RAYSPH + 0.22*(max(PHYDRM,0))) - 352 '''
            )
            
 # POUR RETROUVER LE CRITERE CROSSLAND
 # b = TAU0 = 352
 # a = (TAU0-D0/SQRT(3))/D0/3 = 0.22
-CRIT_FA2 = FORMULE(VALE=' (AMPCIS + 0.22*(max(PHYDRM,0)) ) - 352 ',
-                   NOM_PARA=['AMPCIS', 'PHYDRM'],)
+CRIT_FA2 =   FORMULE(
+           NOM_PARA=('AMPCIS','PHYDRM'),
+           VALE=''' (AMPCIS + 0.22*(max(PHYDRM,0)) ) - 352 '''
            )
 
-WHOL_F = FORMULE(VALE=' 4098.3*(NBRUP**(-0.2693)) ',
-                 NOM_PARA='NBRUP',)
+WHOL_F =   FORMULE(
+           NOM_PARA=('NBRUP'),
+           VALE=''' 4098.3*(NBRUP**(-0.2693)) '''
            )
 
 ###WHOL_Fb EST UNE FONCTION TABULEE DE WHOL_F

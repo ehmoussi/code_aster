@@ -19,10 +19,10 @@
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),PAR_LOT='OUI',DEBUG=_F(SDVERI='OUI'))
 
-######## PARAMETRES ############# 
+######## PARAMETRES #############
 # LES INSTANT PARAMETRISE DIRECTEMENT LE NIVEAU D'EAU
 
-telas=3.34         # niveau d'eau pour le chargement sans pilotage (charge max avant non convergence) 
+telas=3.34         # niveau d'eau pour le chargement sans pilotage (charge max avant non convergence)
 tpilot=telas+1     # chargement en pilotage (temps non physique)
 tfin=tpilot+0.5    # niveau d'eau final
 tpost=tpilot       # niveau d'eau pour le posttraitement des ouvertures de joint
@@ -37,7 +37,6 @@ rho_t=0.
 rho_e=1000.
 ap=9.81
 h=10.
-long=5.
 
 
 # PARAMETRES MECANIQUES DES JOINTS
@@ -167,7 +166,7 @@ EVOL=STAT_NON_LINE(MODELE=MO,
                          _F(CHARGE=TERRE),
                          _F(CHARGE=PESBAR),
                          _F(CHARGE=PESTER),
-                         _F(CHARGE=PAMONT), 
+                         _F(CHARGE=PAMONT),
                          ),
                   COMPORTEMENT=(_F(RELATION='JOINT_MECA_RUPT',
                                 GROUP_MA='JOINT',),
@@ -217,10 +216,10 @@ EVOL=STAT_NON_LINE(reuse = EVOL,
                   EXCIT=(
                          _F(CHARGE=TERRE),
                          _F(CHARGE=PESBAR),
-                         _F(CHARGE=PESTER),   
-                         _F(CHARGE=PAMONT), 
+                         _F(CHARGE=PESTER),
+                         _F(CHARGE=PAMONT),
                          ),
-                  RECH_LINEAIRE=_F(ITER_LINE_MAXI=5,),                         
+                  RECH_LINEAIRE=_F(ITER_LINE_MAXI=5,),
                   COMPORTEMENT=(_F(RELATION='JOINT_MECA_RUPT',
                                 GROUP_MA='JOINT',),
                              _F(RELATION='ELAS',
@@ -290,26 +289,26 @@ EVOL = CALC_CHAMP(reuse = EVOL,
 FPILO = POST_RELEVE_T(
  ACTION = _F(
    INTITULE     = 'F_PILOTE',
-   OPERATION    = 'EXTRACTION',   
+   OPERATION    = 'EXTRACTION',
    GROUP_NO     = 'BAR_AMON',
    NOM_CHAM     = 'FORC_NODA',
    RESULTANTE   =  ('DX','DY'),
    RESULTAT     =  EVOL,
    TOUT_ORDRE   = 'OUI',
-    )) 
-    
-    
+    ))
+
+
 # DEPLACEMENT DU NOEUD DE LA LEVRE SUP. DU JOINT EN AMONT DE BARRAGE
 U_HAUT = POST_RELEVE_T(
  ACTION = _F(
    INTITULE     = 'DEPL',
-   OPERATION    = 'EXTRACTION',   
+   OPERATION    = 'EXTRACTION',
    NOEUD        = noeud_joint,
    NOM_CHAM     = 'DEPL',
    NOM_CMP      =  'DY',
    RESULTAT     =  EVOL,
    TOUT_ORDRE   = 'OUI',
-    )) 
+    ))
 
 #IMPR_TABLE(TABLE=FPILO)
 #IMPR_TABLE(TABLE=U_HAUT)
@@ -323,22 +322,22 @@ T_U=CALC_TABLE(TABLE=U_HAUT,
                             ),
                         ),
                     );
-#CHANGEMENT DE NOM DE LA COLONNE POUR LE DEPLACEMENT        
+#CHANGEMENT DE NOM DE LA COLONNE POUR LE DEPLACEMENT
 T_U=CALC_TABLE(TABLE=T_U,reuse=T_U,
                     ACTION=_F(OPERATION='RENOMME',
                             NOM_PARA=('DY','DEPL'),
                            ),
                 );
-                           
-# CREATION DE LA COLONNE AVEC LES FORCES                           
+
+# CREATION DE LA COLONNE AVEC LES FORCES
 T_F=CALC_TABLE(TABLE=FPILO,
                  ACTION=(
                          _F(OPERATION='EXTR',
                             NOM_PARA=('NUME_ORDRE','DX'),
                             ),
                         ),
-                    );                 
-#CHANGEMENT DE NOM DE COLONNE POUR LES FORCES        
+                    );
+#CHANGEMENT DE NOM DE COLONNE POUR LES FORCES
 T_F=CALC_TABLE(TABLE=T_F,reuse=T_F,
                     ACTION=_F(OPERATION='RENOMME',
                             NOM_PARA=('DX','FORCE'),
@@ -350,7 +349,7 @@ T_F=CALC_TABLE(reuse =T_F,
           TABLE=T_F,
           ACTION=_F(OPERATION='COMB',
                     TABLE=T_U,
-                    NOM_PARA='NUME_ORDRE'));  
+                    NOM_PARA='NUME_ORDRE'));
 
 # CREATION DU TABLEAU FORCES-DEPL AVEC LES DEPLACEMENTS
 T_FU=CALC_TABLE(TABLE=T_F,
@@ -361,9 +360,9 @@ T_FU=CALC_TABLE(TABLE=T_F,
                         ),
                     );
 
- 
 
-IMPR_TABLE(TABLE=T_FU,COMM_PARA='#')  
+
+IMPR_TABLE(TABLE=T_FU,COMM_PARA='#')
 
 ################### TESTS NON REGRESSION #######################
 

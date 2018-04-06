@@ -95,7 +95,7 @@ CHGEOM=CREA_CHAMP(TYPE_CHAM='NOEU_GEOM_R', OPERATION='EXTR', MAILLAGE=MAIL, NOM_
 
 CHMAT=AFFE_MATERIAU(MAILLAGE=MAIL,
                     AFFE=(_F(TOUT='OUI',MATER=MAT,),),
-                    AFFE_VARC=_F(NOM_VARC='GEOM', CHAM_GD=CHGEOM), 
+                    AFFE_VARC=_F(NOM_VARC='GEOM', CHAM_GD=CHGEOM),
                     );
 
 CELE1=AFFE_CARA_ELEM(MODELE=MOD1,
@@ -142,7 +142,6 @@ ffonc = FORMULE(VALE=' F0*sin(FREQ*INST) ',
                 F0=F0,
                 FREQ=FREQ,
                 NOM_PARA='INST',)
-                  )
 
 INST1=DEFI_LIST_REEL(DEBUT=0.0,INTERVALLE=(
                           _F(JUSQU_A = TMAX,PAS = DT),

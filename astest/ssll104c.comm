@@ -160,7 +160,7 @@ TEST_RESU(RESU=(_F(NOEUD='N11',
 
 EPXX = FORMULE(VALE='1.E-5*(X+Y+Z)*INST',
                NOM_PARA=['X', 'Y', 'Z', 'INST'],)
-                       )
+
 xyz = [
 0.0000000000E+00,
 5.7735026919E+00,
