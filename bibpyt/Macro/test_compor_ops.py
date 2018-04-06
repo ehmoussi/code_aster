@@ -99,8 +99,8 @@ def TEST_ECART(self, ch_param2, label_cal, N_pas, Ncal, ch_param, __RSI, prec_ec
                 if (i == 0):
                     CH_V1.append(ch_cal)
 #               calcul de l'erreur (ecart relatif)
-            valfor = 'relative_error(%s,%s,%e,%f)' % (
-                ch_cal, chref[iref], preczero, coef)
+            valfor = 'relative_error(%s,%s,%f,%e)' % (
+                ch_cal, chref[iref], coef, preczero)
             nompar1 = '%s' % (ch_cal)
             nompar2 = '%s' % (chref[iref])
             __errrel = FORMULE(NOM_PARA=(nompar1, nompar2),
