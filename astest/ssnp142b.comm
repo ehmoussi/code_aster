@@ -30,7 +30,7 @@ rho_t=0.
 rho_e=1000.
 ap=9.81
 h=10.
-long=5.
+length=5.
 
 # NIVEAU D'EAU
 niv_am=DEFI_FONCTION(NOM_PARA='INST',NOM_RESU='NRT_AM',VALE=(0,0, 1,3, 2,6, 3,8, 4,9),);
@@ -50,7 +50,11 @@ pres_ent = FORMULE(VALE='rho_e*ap*(niv_am(INST))',
 pres_sor = FORMULE(VALE='0.0',
                    NOM_PARA='INST',)
 
-f_flu = FORMULE(NOM_PARA=('X','Y','Z','INST'),VALE='(1/long)*(pres_sor(INST) - pres_ent(INST))*X + pres_ent(INST)');
+f_flu = FORMULE(NOM_PARA=('X','Y','INST'),
+                VALE='(1/length)*(pres_sor(INST) - pres_ent(INST))*X + pres_ent(INST)',
+                length=length,
+                pres_ent=pres_ent,
+                pres_sor=pres_sor)
 
 ##################################
 
@@ -93,7 +97,7 @@ MA=MODI_MAILLAGE(reuse =MA,
                    INFO=1)
 
 MO=AFFE_MODELE(MAILLAGE=MA,
-               
+
                AFFE=(_F(GROUP_MA=('BARRAGE','TERRE','BAR_AMON','BAR_AVAL'),
                         PHENOMENE='MECANIQUE',
                         MODELISATION='3D',),
@@ -157,8 +161,10 @@ PESTER = AFFE_CHAR_MECA(
   );
 
 # PRESSION D'EAU SUR LE BARRAGE
-p_am = FORMULE(VALE='max(rho_e*ap*(niv_am(INST)-Y),0)',NOM_PARA=('Y','INST',),);
-p_av = FORMULE(VALE='max(rho_e*ap*(niv_av(INST)-Y),0)',NOM_PARA=('Y','INST',),);
+p_am = FORMULE(VALE='max(rho_e*ap*(niv_am(INST)-Y),0)',NOM_PARA=('Y','INST',),
+               rho_e=rho_e, ap=ap, niv_am=niv_am)
+p_av = FORMULE(VALE='max(rho_e*ap*(niv_av(INST)-Y),0)',NOM_PARA=('Y','INST',),
+               rho_e=rho_e, ap=ap, niv_av=niv_av)
 
 PAMONT=AFFE_CHAR_MECA_F(MODELE=MO,PRES_REP=_F(GROUP_MA=('BAR_AMON',),PRES=p_am,),);
 PAVAL =AFFE_CHAR_MECA_F(MODELE=MO,PRES_REP=_F(GROUP_MA=('BAR_AVAL', ),PRES=p_av,),);

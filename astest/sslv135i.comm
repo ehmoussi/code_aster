@@ -147,11 +147,9 @@ MAT_ELAS   = AFFE_MATERIAU    ( MAILLAGE    =   CUBE,
 
 CRIT1 = FORMULE(VALE='abs((EPSN1_1-EPSN1_2)/2)',
                 NOM_PARA=['EPSN1_1', 'EPSN1_2'],)
-           )
 
 MANCO1 = FORMULE(VALE=' 0.022524751*(NBRUP**(-0.1619)) ',
                  NOM_PARA='NBRUP',)
-           )
 
 # CHARGEMENT SELON LES 2 AXES X ET Y
 # ----------------------------------

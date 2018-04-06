@@ -503,98 +503,35 @@ for n in range(1,nbcouche-1):
                       ASSE=_F(GROUP_MA=list_group_ma[:n+1],
                               CHAM_GD=DEP[n-1],),);
 
-    FX = FORMULE(VALE='X',
-                 NOM_PARA='X',)
-    FY = FORMULE(VALE='Y',
-                 NOM_PARA='Y',)
-    FZ = FORMULE(VALE='PROJ(Z,4.000000)',
-                 PROJ=PROJ,
-                 NOM_PARA='Z',)
-                 NOM_PARA='Y',)
-    FZ = FORMULE(VALE='PROJ(Z,6.000000)',
-                 PROJ=PROJ,
-                 NOM_PARA='Z',)
-                 NOM_PARA='Y',)
-    FZ = FORMULE(VALE='PROJ(Z,8.000000)',
-                 PROJ=PROJ,
-                 NOM_PARA='Z',)
-                 NOM_PARA='Y',)
-    FZ = FORMULE(VALE='PROJ(Z,10.000000)',
-                 PROJ=PROJ,
-                 NOM_PARA='Z',)
-                 NOM_PARA='Y',)
-    FZ = FORMULE(VALE='PROJ(Z,12.000000)',
-                 PROJ=PROJ,
-                 NOM_PARA='Z',)
-                 NOM_PARA='Y',)
-    FZ = FORMULE(VALE='PROJ(Z,14.000000)',
-                 PROJ=PROJ,
-                 NOM_PARA='Z',)
-                 NOM_PARA='Y',)
-    FZ = FORMULE(VALE='PROJ(Z,16.000000)',
-                 PROJ=PROJ,
-    DXN = FORMULE(VALE='DX*(6.000000-Z)/(6.000000-4.000000)',
-                  NOM_PARA=['DX', 'Z'],)
-    DYN = FORMULE(VALE='DY*(6.000000-Z)/(6.000000-4.000000)',
-                  NOM_PARA=['DY', 'Z'],)
-    DZN = FORMULE(VALE='DZ*(6.000000-Z)/(6.000000-4.000000)',
-                  NOM_PARA=['DZ', 'Z'],)
-                 PROJ=PROJ,
-    DXN = FORMULE(VALE='DX*(8.000000-Z)/(8.000000-6.000000)',
-                  NOM_PARA=['DX', 'Z'],)
-    DYN = FORMULE(VALE='DY*(8.000000-Z)/(8.000000-6.000000)',
-                  NOM_PARA=['DY', 'Z'],)
-    DZN = FORMULE(VALE='DZ*(8.000000-Z)/(8.000000-6.000000)',
-                  NOM_PARA=['DZ', 'Z'],)
-                 PROJ=PROJ,
-    DXN = FORMULE(VALE='DX*(10.000000-Z)/(10.000000-8.000000)',
-                  NOM_PARA=['DX', 'Z'],)
-    DYN = FORMULE(VALE='DY*(10.000000-Z)/(10.000000-8.000000)',
-                  NOM_PARA=['DY', 'Z'],)
-    DZN = FORMULE(VALE='DZ*(10.000000-Z)/(10.000000-8.000000)',
-                  NOM_PARA=['DZ', 'Z'],)
-                         PROJECTION = 'OUI',
-    DXN = FORMULE(VALE='DX*(12.000000-Z)/(12.000000-10.000000)',
-                  NOM_PARA=['DX', 'Z'],)
-    DYN = FORMULE(VALE='DY*(12.000000-Z)/(12.000000-10.000000)',
-                  NOM_PARA=['DY', 'Z'],)
-    DZN = FORMULE(VALE='DZ*(12.000000-Z)/(12.000000-10.000000)',
-                  NOM_PARA=['DZ', 'Z'],)
-                         CHAM_GD    = DEP[n-1],
-    DXN = FORMULE(VALE='DX*(14.000000-Z)/(14.000000-12.000000)',
-                  NOM_PARA=['DX', 'Z'],)
-    DYN = FORMULE(VALE='DY*(14.000000-Z)/(14.000000-12.000000)',
-                  NOM_PARA=['DY', 'Z'],)
-    DZN = FORMULE(VALE='DZ*(14.000000-Z)/(14.000000-12.000000)',
-                  NOM_PARA=['DZ', 'Z'],)
-                                           ),);
-    DXN = FORMULE(VALE='DX*(16.000000-Z)/(16.000000-14.000000)',
-                  NOM_PARA=['DX', 'Z'],)
-    DYN = FORMULE(VALE='DY*(16.000000-Z)/(16.000000-14.000000)',
-                  NOM_PARA=['DY', 'Z'],)
-    DZN = FORMULE(VALE='DZ*(16.000000-Z)/(16.000000-14.000000)',
-                  NOM_PARA=['DZ', 'Z'],)
-                         OPERATION='ASSE',
-    DXN = FORMULE(VALE='DX*(18.000000-Z)/(18.000000-16.000000)',
-                  NOM_PARA=['DX', 'Z'],)
-    DYN = FORMULE(VALE='DY*(18.000000-Z)/(18.000000-16.000000)',
-                  NOM_PARA=['DY', 'Z'],)
-    DZN = FORMULE(VALE='DZ*(18.000000-Z)/(18.000000-16.000000)',
-                  NOM_PARA=['DZ', 'Z'],)
-                                NOM_CMP = ('DX','DY','DZ'),
-    DXN = FORMULE(VALE='DX*(20.000000-Z)/(20.000000-18.000000)',
-                  NOM_PARA=['DX', 'Z'],)
-    DYN = FORMULE(VALE='DY*(20.000000-Z)/(20.000000-18.000000)',
-                  NOM_PARA=['DY', 'Z'],)
-    DZN = FORMULE(VALE='DZ*(20.000000-Z)/(20.000000-18.000000)',
-                  NOM_PARA=['DZ', 'Z'],)
+    FX = FORMULE(NOM_PARA=('X'),VALE='X')
+    FY = FORMULE(NOM_PARA=('Y'),VALE='Y')
+    FZ = FORMULE(NOM_PARA=('Z'),VALE='PROJ(Z,%f)'%Height[n], PROJ=PROJ)
 
-    DXN = FORMULE(VALE='DX*(22.000000-Z)/(22.000000-20.000000)',
-                  NOM_PARA=['DX', 'Z'],)
-    DYN = FORMULE(VALE='DY*(22.000000-Z)/(22.000000-20.000000)',
-                  NOM_PARA=['DY', 'Z'],)
-    DZN = FORMULE(VALE='DZ*(22.000000-Z)/(22.000000-20.000000)',
-                  NOM_PARA=['DZ', 'Z'],)
+    DEPL_PJ = PROJ_CHAMP(INFO =1,
+                         PROJECTION = 'OUI',
+                         METHODE    = 'COLLOCATION',
+                         MODELE_1   = MOD[n-1],
+                         MODELE_2   = MOD[n],
+                         CHAM_GD    = DEP[n-1],
+                         VIS_A_VIS  = _F(GROUP_MA_1 = list_group_ma[:n+1],
+                                         GROUP_MA_2 = list_group_ma[:n+2],
+                                         TRANSF_GEOM_2 = (FX, FY, FZ),
+                                           ),);
+
+    CH_BID = CREA_CHAMP(INFO=1,
+                         TYPE_CHAM='NOEU_DEPL_R',
+                         OPERATION='ASSE',
+                         MODELE = MOD[n],
+                         ASSE=_F(GROUP_MA=list_group_ma[:n+2],
+                                CHAM_GD = DEPL_PJ,
+                                NOM_CMP = ('DX','DY','DZ'),
+                         ),);
+    Z1 = Height[n+1];
+    Z0 = Height[n];
+
+    DXN = FORMULE(NOM_PARA=('DX','Z'),VALE='DX*(%f-Z)/(%f-%f)'%(Z1,Z1,Z0))
+    DYN = FORMULE(NOM_PARA=('DY','Z'),VALE='DY*(%f-Z)/(%f-%f)'%(Z1,Z1,Z0))
+    DZN = FORMULE(NOM_PARA=('DZ','Z'),VALE='DZ*(%f-Z)/(%f-%f)'%(Z1,Z1,Z0))
 
     CH_GEOM = CREA_CHAMP(INFO=1,
                          TYPE_CHAM = 'NOEU_GEOM_R',

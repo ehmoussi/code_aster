@@ -263,11 +263,13 @@ MAT0=DEFI_MATERIAU(
                       TAU0 = 352.),);
                               
 # PROPRIETES MATERIAUX
-WHOL_F = FORMULE(VALE=' 4098.3*(NBRUP**(-0.2693)) ',
-                 NOM_PARA='NBRUP',)
+WHOL_F =   FORMULE(
+           NOM_PARA=('NBRUP'),
+           VALE=''' 4098.3*(NBRUP**(-0.2693)) '''
            )
-MANCO1 = FORMULE(VALE=' 0.01*(NBRUP**(-0.1619)) ',
-                 NOM_PARA='NBRUP',)
+MANCO1=   FORMULE(
+           NOM_PARA=('NBRUP'),
+           VALE=''' 0.01*(NBRUP**(-0.1619)) '''
            ) 
 
 NBPR = 12
@@ -320,8 +322,20 @@ RESC = [100, 1.0277056600669E-06, 9.73041E+05, 0.70710678118655, 0.7071067811865
 # TEST CRITERE FORMULE 
 #########################################NOEUD
 for i in range(NBPR) :
-    CRIT_0 = FORMULE(VALE='(DTAUCR)',
-                     NOM_PARA='DTAUCR',)
+    CRIT[i] = FORMULE(
+           NOM_PARA=(NPAR[i]),
+           VALE = NCRI[i]
+           )
+    FATN[i]=POST_FATIGUE(    CHARGEMENT='MULTIAXIAL',
+                       HISTOIRE=_F(  
+                                     SIGM_XX = SIGMXX,
+                                     SIGM_YY = ZERO,
+                                     SIGM_ZZ = ZERO,
+                                     SIGM_XY = ZERO,
+                                     SIGM_XZ = ZERO,
+                                     SIGM_YZ = ZERO,
+                                     
+                                     EPS_XX  = EPSTXX,
                                      EPS_YY  = EPSTYY,
                                      EPS_ZZ  = EPSTZZ,
                                      EPS_XY  = ZERO,
@@ -454,17 +468,20 @@ EPSTZZ2=DEFI_FONCTION(    NOM_PARA='INST',
 CRIT2 = [None]*2
 
 #POUR RETROUVER 'MATAKE_MODI_AC'
-CRIT2_0 = FORMULE(VALE=' 1.5*( DTAUCR + max(0,MSINCR) ) ',
-                  NOM_PARA=['DTAUCR', 'MSINCR'],)
+CRIT2[0] =   FORMULE(
+           NOM_PARA=('DTAUCR','MSINCR'),
+           VALE=''' 1.5*( DTAUCR + max(0,MSINCR) ) '''
            )
            
 #POUR RETROUVER 'DANG_VAN_MODI_AC'
-CRIT2_1 = FORMULE(VALE=' 1.5*(DTAUCR + max(PHYDRM,0)) ',
-                  NOM_PARA=['DTAUCR', 'PHYDRM'],)
+CRIT2[1] =  FORMULE(
+           NOM_PARA=('DTAUCR','PHYDRM'),
+           VALE=''' 1.5*(DTAUCR + max(PHYDRM,0)) '''
            )
            
-FORCRI = FORMULE(VALE='DTAUCR',
-                 NOM_PARA='DTAUCR',)
+FORCRI = FORMULE(
+           NOM_PARA=('DTAUCR'),
+           VALE = '''DTAUCR'''
            )
 ## -----------------------------------------------------------------------
 

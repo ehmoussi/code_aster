@@ -42,7 +42,7 @@ TEMP_IMP=DEFI_CONSTANTE(   VALE=0.E0)
 
 
 SOURCE = FORMULE(VALE='NEUT1*1E6',
-                 NOM_PARA='NEUT1',)
+                 NOM_PARA='NEUT1',
                        );    
 
 #

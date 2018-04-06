@@ -30,7 +30,6 @@ rho_t=0.
 rho_e=1000.
 ap=9.81
 h=10.
-long=5.
 
 # NIVEAU D'EAU
 niv_am=DEFI_FONCTION(NOM_PARA='INST',NOM_RESU='NRT_AM',VALE=(0,0, 1,3, 2,6, 3,8, 4,9));
@@ -90,7 +89,7 @@ MA=MODI_MAILLAGE(reuse =MA,
 
 
 MO=AFFE_MODELE(MAILLAGE=MA,
-               
+
                AFFE=(_F(GROUP_MA=('BARRAGE','TERRE','BAR_AM','BAR_AV'),
                         PHENOMENE='MECANIQUE',
                         MODELISATION='D_PLAN'),

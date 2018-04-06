@@ -270,102 +270,28 @@ for i in range(1,NCAL+1):
              # Faux en PAR_LOT='OUI' car la formule est evaluee avec le dernier i
              # NOR = FORMULE(NOM_PARA='N',VALE='YOUN(Ti)/YOUN(Tm)*N')
              # donc il faut faire au choix :
-              NOR = FORMULE(VALE='YOUN(68.000000)/YOUN(44.000000)*N',
-                            YOUN=YOUN,
-                            NOM_PARA='N',)
-                            YOUN=YOUN,
-                            NOM_PARA='N',)
-                            YOUN=YOUN,
-                            NOM_PARA='N',)
-                            YOUN=YOUN,
-                            NOM_PARA='N',)
-                            YOUN=YOUN,
-                            NOM_PARA='N',)
-                            YOUN=YOUN,
-                            NOM_PARA='N',)
-                            YOUN=YOUN,
-                            NOM_PARA='N',)
-                            YOUN=YOUN,
-                            NOM_PARA='N',)
-                            YOUN=YOUN,
-                            NOM_PARA='N',)
-                            YOUN=YOUN,
-                            NOM_PARA='N',)
-              CORCIN = FORMULE(VALE='DSDE(68.000000)/DSDE(44.000000)*V1',
-                               DSDE=DSDE,
-                               NOM_PARA='V1',)
-                            NOM_PARA='N',)
-              CORCIN = FORMULE(VALE='DSDE(92.000000)/DSDE(68.000000)*V1',
-                               DSDE=DSDE,
-                               NOM_PARA='V1',)
-                            NOM_PARA='N',)
-              CORCIN = FORMULE(VALE='DSDE(116.000000)/DSDE(92.000000)*V1',
-                               DSDE=DSDE,
-                               NOM_PARA='V1',)
-                            NOM_PARA='N',)
-              CORCIN = FORMULE(VALE='DSDE(140.000000)/DSDE(116.000000)*V1',
-                               DSDE=DSDE,
-                               NOM_PARA='V1',)
-                            NOM_PARA='N',)
-              CORCIN = FORMULE(VALE='DSDE(164.000000)/DSDE(140.000000)*V1',
-                               DSDE=DSDE,
-                               NOM_PARA='V1',)
-                            NOM_PARA='N',)
-              CORCIN = FORMULE(VALE='DSDE(188.000000)/DSDE(164.000000)*V1',
-                               DSDE=DSDE,
-                               NOM_PARA='V1',)
-                            NOM_PARA='N',)
-              CORCIN = FORMULE(VALE='DSDE(212.000000)/DSDE(188.000000)*V1',
-                               DSDE=DSDE,
-                               NOM_PARA='V1',)
-                            NOM_PARA='N',)
-              CORCIN = FORMULE(VALE='DSDE(236.000000)/DSDE(212.000000)*V1',
-                               DSDE=DSDE,
-                               NOM_PARA='V1',)
-                            NOM_PARA='N',)
-              CORCIN = FORMULE(VALE='DSDE(260.000000)/DSDE(236.000000)*V1',
-                               DSDE=DSDE,
-                               NOM_PARA='V1',)
-                            NOM_PARA='N',)
-              CORCIN = FORMULE(VALE='DSDE(284.000000)/DSDE(260.000000)*V1',
-                               DSDE=DSDE,
-                               NOM_PARA='V1',)
+              NOR = FORMULE(NOM_PARA='N',VALE='YOUN(%f)/YOUN(%f)*N' % (Ti, Tm),
+                            YOUN=YOUN)
+             # ou bien :
              # NOR = FORMULE(NOM_PARA='N',VALE='YOUN(%(Ti)f)/YOUN(%(Tm)f)*N' \
-              CORCIN = FORMULE(VALE='DSDE(308.000000)/DSDE(284.000000)*V1',
-                               DSDE=DSDE,
-                               NOM_PARA='V1',)
+             #    % { 'Ti' : Ti, 'Tm' : Tm })
               SIG1=CREA_CHAMP(OPERATION='AFFE', TYPE_CHAM='ELGA_NEUT_F',
-              CORCIN = FORMULE(VALE='DSDE(332.000000)/DSDE(308.000000)*V1',
-                               DSDE=DSDE,
-                               NOM_PARA='V1',)
+                              MODELE=MOMECA,  PROL_ZERO='OUI',   INFO=1,
                               AFFE=_F( TOUT = 'OUI', NOM_CMP = ('X1'),
-              CORCIN = FORMULE(VALE='DSDE(356.000000)/DSDE(332.000000)*V1',
-                               DSDE=DSDE,
-                               NOM_PARA='V1',)
+                                          VALE_F  = (NOR)))
 
-              CORCIN = FORMULE(VALE='DSDE(380.000000)/DSDE(356.000000)*V1',
-                               DSDE=DSDE,
-                               NOM_PARA='V1',)
+              SIG2=CREA_CHAMP(OPERATION='EVAL', TYPE_CHAM='ELGA_NEUT_R', INFO=1,
                               CHAM_F=SIG1,  CHAM_PARA=SM   )
-              CORCIN = FORMULE(VALE='DSDE(404.000000)/DSDE(380.000000)*V1',
-                               DSDE=DSDE,
-                               NOM_PARA='V1',)
+
               SM1  =CREA_CHAMP(OPERATION='ASSE', TYPE_CHAM='ELGA_SIEF_R',
-              CORCIN = FORMULE(VALE='DSDE(428.000000)/DSDE(404.000000)*V1',
-                               DSDE=DSDE,
-                               NOM_PARA='V1',)
+                                MODELE=MOMECA,  PROL_ZERO='OUI',
                                 ASSE=_F( TOUT = 'OUI',   CHAM_GD = SIG2,
-              CORCIN = FORMULE(VALE='DSDE(452.000000)/DSDE(428.000000)*V1',
-                               DSDE=DSDE,
-                               NOM_PARA='V1',)
+                                NOM_CMP = ('X1',  ),
                                 NOM_CMP_RESU = ('N')))
-              CORCIN = FORMULE(VALE='DSDE(476.000000)/DSDE(452.000000)*V1',
-                               DSDE=DSDE,
-                               NOM_PARA='V1',)
+
               # idem NOR CORCIN = FORMULE(NOM_PARA='V1',VALE='DSDE(Ti)/DSDE(Tm)*V1')
-              CORCIN = FORMULE(VALE='DSDE(500.000000)/DSDE(476.000000)*V1',
-                               DSDE=DSDE,
-                               NOM_PARA='V1',)
+              CORCIN = FORMULE(NOM_PARA='V1',VALE='DSDE(%f)/DSDE(%f)*V1' % (Ti, Tm),
+                               DSDE=DSDE)
 
               VINT1=CREA_CHAMP(OPERATION='AFFE', TYPE_CHAM='ELGA_NEUT_F',
                               MODELE=MOMECA,  PROL_ZERO='OUI',   INFO=1,

@@ -8,6 +8,5 @@ P testlist verification sequential
 F comm supv001a.comm D 1
 F comm supv001a.com1 D 1
 F comm supv001a.com2 D 1
-F comm supv001a.com3 D 1
 F libr supv001a.11 D 11
 F libr supv001a.33 D 33

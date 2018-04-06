@@ -194,21 +194,24 @@ ACIER[1]   = DEFI_MATERIAU   ( ELAS           =_F( E        = 200000.,
                                                 D_VAN_B = 2.0,
                                                 COEF_CISA_TRAC = 1.5 )
                           )
-WHOL_F = FORMULE(VALE=' 4098.3*(NBRUP**(-0.2693)) ',
-                 NOM_PARA='NBRUP',)
+WHOL_F =   FORMULE(
+           NOM_PARA=('NBRUP'),
+           VALE=''' 4098.3*(NBRUP**(-0.2693)) '''
            )
            
 ## CRITERES A TESTER
 CRIT = [None]*4
 
 #POUR RETROUVER 'MATAKE_MODI_AV'
-CRIT_0 = FORMULE(VALE=' 1.5*( abs(TAUPR_1-TAUPR_2)/2.0 + max(0,SIGN_1, SIGN_2) ) ',
-                 NOM_PARA=['TAUPR_1', 'TAUPR_2', 'SIGN_1', 'SIGN_2'],)
+CRIT[0] =   FORMULE(
+           NOM_PARA=('TAUPR_1','TAUPR_2','SIGN_1','SIGN_2'),
+           VALE=''' 1.5*( abs(TAUPR_1-TAUPR_2)/2.0 + max(0,SIGN_1, SIGN_2) ) '''
            )
            
 #POUR RETROUVER 'DANG_VAN_MODI_AV'
-CRIT_1 = FORMULE(VALE=' 1.5*( abs(TAUPR_1-TAUPR_2)/2.0 + max(0,PHYDR_1, PHYDR_2) ) ',
-                 NOM_PARA=['TAUPR_1', 'TAUPR_2', 'PHYDR_1', 'PHYDR_2'],)
+CRIT[1] =   FORMULE(
+           NOM_PARA=('TAUPR_1','TAUPR_2','PHYDR_1','PHYDR_2'),
+           VALE=''' 1.5*( abs(TAUPR_1-TAUPR_2)/2.0 + max(0,PHYDR_1, PHYDR_2) ) '''
            )
 CRIT[2] =  'MATAKE_MODI_AV'
 CRIT[3] =  'DANG_VAN_MODI_AV'
@@ -416,15 +419,17 @@ ACIER2   = DEFI_MATERIAU   ( ELAS           =_F( E        = 200000.,
                                                 COEF_CISA_TRAC = 1.5 )
                           )
 
-MANCO1 = FORMULE(VALE=' 0.2*(NBRUP**(-0.1619)) ',
-                 NOM_PARA='NBRUP',)
+MANCO1=   FORMULE(
+           NOM_PARA=('NBRUP'),
+           VALE=''' 0.2*(NBRUP**(-0.1619)) '''
            )
 
 # Pour le critère FS, il faut multiplier la déformatipn par 2 car on trouve 
 # la déformation du type d'ingénieurie dans le critère
 
-CRIT_FAT = FORMULE(VALE=' 1.5*( abs(EPSPR_1-EPSPR_2) * (1+ max(0,SIGN_1, SIGN_2) )) ',
-                   NOM_PARA=['EPSPR_1', 'EPSPR_2', 'SIGN_1', 'SIGN_2'],)
+CRIT_FAT =   FORMULE(
+           NOM_PARA=('EPSPR_1','EPSPR_2','SIGN_1','SIGN_2'),
+           VALE=''' 1.5*( abs(EPSPR_1-EPSPR_2) * (1+ max(0,SIGN_1, SIGN_2) )) '''
            )
 
 RESU2 = [(-0.43051109680829,0.43051109680830), 0.90258528434986, 0, 0.43649132038876,

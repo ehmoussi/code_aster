@@ -156,7 +156,6 @@ WHOL=DEFI_FONCTION(       NOM_PARA='SIGM',
 
 WHOL_F = FORMULE(VALE=' 4098.3*(NBRUP**(-0.2693)) ',
                  NOM_PARA='NBRUP',)
-           )
 
 
 #               _____________________________
@@ -321,15 +320,13 @@ CRIT[1] = 'DANG_VAN_MODI_AC'
 ### POUR CALCULER 'NORMOY','EPNMAX', 'EPNMOY', IL NOUS FAUT AJOUTER DANS LA LISTE
 ### DES PARATMETRES MEME SI ON N4UTISE PAS DANS LA FORMULE
 #POUR RETROUVER 'MATAKE_MODI_AC'
-CRIT_2 = FORMULE(VALE=' 1.5*( DTAUMA + max(0,NORMAX) ) ',
+CRIT[2] = FORMULE(VALE=' 1.5*( DTAUMA + max(0,NORMAX) ) ',
                  NOM_PARA=['DTAUMA', 'NORMAX', 'NORMOY', 'EPNMAX', 'EPNMOY'],)
-           )
 
 
 #POUR RETROUVER 'DANG_VAN_MODI_AC'
-CRIT_3 = FORMULE(VALE=' 1.5*(DTAUMA + max(PHYDRM,0)) ',
+CRIT[3] = FORMULE(VALE=' 1.5*(DTAUMA + max(PHYDRM,0)) ',
                  NOM_PARA=['DTAUMA', 'PHYDRM', 'NORMOY', 'EPNMAX', 'EPNMOY'],)
-           )
 
 ## -----------------------------------------------------------------------
 
@@ -1175,7 +1172,6 @@ TEST_RESU(CHAM_NO=(_F(NOEUD='N206',
 # TEST CRITER VONMISES AVEC LA FORMULE
 CRIT_FAT = FORMULE(VALE=' 2*DSIGEQ ',
                    NOM_PARA='DSIGEQ',)
-           )
 
 # CALCUL DE LA FATIGUE SUR L'ENSEMBLE DE LA STRUCTURE AUX POINTS DE GAUSS
 # -----------------------------------------------------------------------

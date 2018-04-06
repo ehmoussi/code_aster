@@ -32,11 +32,6 @@ if os.path.exists('fort.33'):
 sys.path.insert(0, '.')
 from ma_macro import MON_INCLUDE
 
-# form n'est utilisable que dans l'INCLUDE, la ou est defini 'para'
-form = FORMULE(VALE='para * INST',
-               para=para,
-               NOM_PARA='INST',)
-
 # vérifie que l'INCLUDE ne crée pas de conflit avec les concepts du jdc
 fonc = DEFI_FONCTION(NOM_PARA='X',
                      VALE=(1., 0.),
@@ -52,8 +47,6 @@ MON_INCLUDE(UNITE=11,
             # permet de produire une table pour vérifier qu'elle a bien
             # été créée dans l'INCLUDE.
 )
-
-DETRUIRE(CONCEPT=_F(NOM=form))
 
 # tester que fonc est bien celui du jdc
 TEST_FONCTION(VALEUR=_F(VALE_CALC=0.0,

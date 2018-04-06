@@ -102,7 +102,6 @@ ffonc = FORMULE(VALE=' F0*sin(FREQ*INST) ',
                 F0=F0,
                 FREQ=FREQ,
                 NOM_PARA='INST',)
-                  )
 
 INST1=DEFI_LIST_REEL(DEBUT=0.0,INTERVALLE=(
                           _F(JUSQU_A = TMAX,PAS = DT),
@@ -166,7 +165,7 @@ EFFOELEM=CALC_VECT_ELEM(  OPTION='CHAR_MECA',
                           CHAM_MATER=CHMAT, CARA_ELEM=CELE1,
                             CHARGE=COND_L1)
 
-NUMEROTA=NUME_DDL(  MATR_RIGI=RIGIELEM) 
+NUMEROTA=NUME_DDL(  MATR_RIGI=RIGIELEM)
 
 MATRRIGI=ASSE_MATRICE(  MATR_ELEM=RIGIELEM,  NUME_DDL=NUMEROTA )
 

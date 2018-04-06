@@ -304,33 +304,13 @@ for k in range(p_npas+1) :
 
   instant = str(eval('linst[k]'));
 
-  FMX = FORMULE(VALE='FXME(0.0,X,Y)',
-                FXME=FXME,
-                NOM_PARA=['X', 'Y'],)
-                NOM_PARA=['X', 'Y'],)
-  FMY = FORMULE(VALE='FYME(0.0,X,Y)',
-                FYME=FYME,
-                NOM_PARA=['X', 'Y'],)
-                FYME=FYME,
-                NOM_PARA=['X', 'Y'],)
-                FYME=FYME,
-                NOM_PARA=['X', 'Y'],)
-                FYME=FYME,
-                NOM_PARA=['X', 'Y'],)
-                FYME=FYME,
-                NOM_PARA=['X', 'Y'],)
-                FYME=FYME,
-                NOM_PARA=['X', 'Y'],)
-                FYME=FYME,
-                NOM_PARA=['X', 'Y'],)
-                FYME=FYME,
-                NOM_PARA=['X', 'Y'],)
-                FYME=FYME,
-                NOM_PARA=['X', 'Y'],)
-                FYME=FYME,
-                NOM_PARA=['X', 'Y'],)
-                FYME=FYME,
-                NOM_PARA=['X', 'Y'],)
+  FMX = FORMULE(VALE='FXME('+instant+',X,Y)',
+                NOM_PARA=('X','Y',),
+                FXME=FXME);
+
+  FMY = FORMULE(VALE='FYME('+instant+',X,Y)',
+               NOM_PARA=('X','Y',),
+               FYME=FYME);
 
   FORF=CREA_CHAMP(TYPE_CHAM='NOEU_FORC_F',
                  OPERATION='AFFE',
