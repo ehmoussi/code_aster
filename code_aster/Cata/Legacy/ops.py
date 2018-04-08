@@ -347,6 +347,8 @@ def INCLUDE(self, UNITE, DONNEE, **args):
     self.show_children = args.get('INFO', 1) != 0
     if not (UNITE or DONNEE) or hasattr(self, '_mark'):
         return
+    if args.get("ALARME", "OUI"):
+        UTMESS('A', 'SUPERVIS_25', valk=("AsterStudy", "import"))
     self._mark = 1
     if self.jdc and self.jdc.par_lot == 'NON':
         # On est en mode commande par commande, on appelle la methode speciale
