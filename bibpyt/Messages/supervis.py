@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -132,6 +132,18 @@ La vérification de syntaxe seule n'est pas disponible en mode PAR_LOT='NON'.
 
     24: _(u"""
   Débogage SDVERI demandé
+"""),
+
+    25: _(u"""
+L'usage de la commande INCLUDE n'est pas conseillé.
+
+Une étude utilisant la commande INCLUDE ne peut pas être éditée en mode
+graphique dans %(k1)s. Il est alors conseillé de remplacer INCLUDE par
+un "Stage" supplémentaire.
+
+De plus, cette commande ne sera plus disponible à partir de la version 15.
+S'il s'agit d'exécuter des commandes Python, il sera alors possible d'utiliser
+l'instruction "%(k2)s".
 """),
 
     31: _(u"""
