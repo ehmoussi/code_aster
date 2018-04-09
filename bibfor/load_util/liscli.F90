@@ -158,12 +158,6 @@ integer, intent(out) :: i_neum_lapl
         list_info_type(i_info_type) = 'NEUM_ONDE'
     endif
 !
-    if (v_load_info(nb_load+i_load+1) .eq. 7) then
-        i_info_type = i_info_type+1
-        ASSERT(i_info_type.le.nb_info_maxi)
-        list_info_type(i_info_type) = 'NEUM_ONDF'
-    endif
-!
     if ((v_load_info(nb_load+i_load+1) .eq. 55) .and. (v_load_info(4*nb_load+5) .eq. 99) ) then
         i_info_type = i_info_type+1
         ASSERT(i_info_type.le.nb_info_maxi)

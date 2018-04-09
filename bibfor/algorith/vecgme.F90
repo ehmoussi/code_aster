@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -166,7 +166,7 @@ character(len=*), intent(in) :: strx_prevz
 !
 ! ----- Standard undead Neumann loads 
 !
-        if (load_nume .eq. 4) then  
+        if (load_nume .eq. 4) then
             call load_neum_comp(stop       , i_load    , load_name , load_nume, 'Suiv',&
                                 ligrel_calc, nb_in_maxi, nb_in_prep, lpain    , lchin ,&
                                 base       , resu_elem , vect_elem )

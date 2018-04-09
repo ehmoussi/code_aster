@@ -450,7 +450,7 @@ subroutine ccfnrn(option, resuin, resuou, lisord, nbordr,&
             if (typesd .eq. 'EVOL_NOLI') then
 ! - CHARGES PILOTEES (TYPE_CHARGE: 'FIXE_PILO')
                 call vefpme(modele, carac, mater, charge, infoch,&
-                            partps, k24bid, vefpip, ligrel)
+                            partps, k24bid, vefpip, ligrel, chdepl, bidon)
                 call asasve(vefpip, nume, 'R', vafpip)
                 call ascova('D', vafpip, fomult, 'INST', time,&
                             'R', cnfpip)

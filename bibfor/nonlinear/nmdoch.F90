@@ -205,7 +205,7 @@ character(len=19), optional, intent(in) :: list_load_resu_
 !
 ! --------- Check loads "PILOTAGE"
 !
-            if (load_apply .eq. 'FIXE_PILO') then
+            if (load_apply .eq. 'FIXE_PILO' .or. load_apply .eq. 'SUIV_PILO') then
                 npilo = npilo + 1
                 if (load_func .ne. const_func) then
                     call utmess('F', 'CHARGES_38', sk=load_name)
@@ -324,6 +324,19 @@ character(len=19), optional, intent(in) :: list_load_resu_
                                 info_type = 'NEUM_PILO'
                             endif
                         endif
+                    else if (load_apply .eq. 'SUIV_PILO') then
+                        if (nomlig(i_type_neum) .eq. '.VEASS') then
+                            info_type = 'NEUM_SUIP'
+                        else
+                            if (load_type(5:7).eq.'_FO') then
+                                info_type = 'NEUM_SUIP_F'
+                                if (func_para_inst(1:3) .eq. 'OUI') then
+                                    call utmess('F', 'CHARGES_28', sk=load_name)
+                                endif
+                            else
+                                info_type = 'NEUM_SUIP'
+                            endif
+                        endif
                     else if (load_apply .eq. 'SUIV') then
                         info_type = 'NEUM_SUIV'
                     else if (load_apply .eq. 'FIXE_CSTE') then
@@ -383,6 +396,8 @@ character(len=19), optional, intent(in) :: list_load_resu_
                     call utmess('F', 'CHARGES_34', sk=load_name)
                 else if (load_apply .eq. 'DIDI') then
                     call utmess('F', 'CHARGES_31', sk=load_name)
+                else if (load_apply .eq. 'SUIV_PILO') then
+                    call utmess('F', 'CHARGES_34', sk=load_name)
                 else
                     ASSERT(.false.)
                 endif
@@ -416,6 +431,8 @@ character(len=19), optional, intent(in) :: list_load_resu_
                         call utmess('F', 'CHARGES_54', sk=load_name)
                     endif
                     info_type = 'EXCIT_SOL'
+                else if (load_apply .eq. 'SUIV_PILO') then
+                    call utmess('F', 'CHARGES_34', sk=load_name)
                 else
                     ASSERT(.false.)
                 endif
@@ -453,6 +470,7 @@ character(len=19), optional, intent(in) :: list_load_resu_
 !
 ! --------- Add new load(s) in list
 !
+            
             if (nb_info_type .gt. 0) then
                 i_load_new = i_load_new+1
                 call liscad('MECA'      , list_load     , i_load_new, load_name, load_func, &

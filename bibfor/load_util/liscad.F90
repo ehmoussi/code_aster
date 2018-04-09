@@ -111,10 +111,7 @@ integer, optional, intent(in) :: i_neum_laplz
                 v_load_info(i_load+1) = -2
             else if (info_type .eq. 'CINE_FT') then
                 v_load_info(i_load+1) = -3
-            else if (info_type .eq. 'DIRI_PILO ') then
-                v_load_info(i_load+1) = 5
-            else if (info_type .eq. 'DIRI_PILO_F') then
-                v_load_info(i_load+1) = 6
+! --------------------------------------------------------------------------------------------------
             else if (info_type .eq. 'DIRI_CSTE') then
                 v_load_info(i_load+1) = 1
             else if (info_type .eq. 'DIRI_CSTE_DIDI') then
@@ -127,40 +124,46 @@ integer, optional, intent(in) :: i_neum_laplz
                 v_load_info(3*nb_load+2+i_load+1) = 1
             else if (info_type .eq. 'DIRI_FT') then
                 v_load_info(i_load+1) = 3
-            else if (info_type .eq.'DIRI_FT_DIDI') then
+            else if (info_type .eq. 'DIRI_FT_DIDI') then
                 v_load_info(i_load+1) = 3
                 v_load_info(3*nb_load+2+i_load+1) = 1
             else if (info_type .eq. 'DIRI_SUIV') then
                 v_load_info(i_load+1) = 4
-            else if (info_type .eq. 'NEUM_ONDE') then
-                v_load_info(nb_load+i_load+1) = 6
-            else if (info_type .eq. 'NEUM_ONDF') then
-                v_load_info(nb_load+i_load+1) = 7
-            else if (info_type .eq. 'NEUM_SIGM_INT') then
-                v_load_info(nb_load+i_load+1) = 55
-                v_load_info(4*nb_load+5) = 99
-            else if (info_type .eq. 'NEUM_PILO') then
-                v_load_info(nb_load+i_load+1) = 5
-                v_load_info(4*nb_load+5) = 99
-            else if (info_type .eq.'NEUM_PILO_F') then
-                v_load_info(nb_load+i_load+1) = 8
-            else if (info_type .eq.'NEUM_SUIV') then
-                v_load_info(nb_load+i_load+1) = 4
-            else if (info_type .eq.'NEUM_FO') then
+            else if (info_type .eq. 'DIRI_PILO ') then
+                v_load_info(i_load+1) = 5
+            else if (info_type .eq. 'DIRI_PILO_F') then
+                v_load_info(i_load+1) = 6
+! --------------------------------------------------------------------------------------------------
+            else if (info_type .eq. 'NEUM_CSTE') then
+                v_load_info(nb_load+i_load+1) = 1
+            else if (info_type .eq. 'NEUM_FO') then
                 v_load_info(nb_load+i_load+1) = 2
             else if (info_type .eq. 'NEUM_FT') then
                 v_load_info(nb_load+i_load+1) = 3
-            else if (info_type .eq. 'NEUM_CSTE') then
-                v_load_info(nb_load+i_load+1) = 1
-            else if (info_type .eq. 'NEUM_LAPL') then
-                v_load_info(2*nb_load+3) = i_neum_laplz
+            else if (info_type .eq. 'NEUM_SUIV') then
+                v_load_info(nb_load+i_load+1) = 4
+            else if (info_type .eq. 'NEUM_PILO') then
+                v_load_info(nb_load+i_load+1) = 5
+            else if (info_type .eq. 'NEUM_ONDE') then
+                v_load_info(nb_load+i_load+1) = 6
+            else if (info_type .eq. 'NEUM_PILO_F') then
+                v_load_info(nb_load+i_load+1) = 8
+            else if (info_type .eq. 'NEUM_SUIP') then
+                v_load_info(nb_load+i_load+1) = 9
             else if (info_type .eq. 'ELEM_TARDIF') then
                 v_load_info(nb_load+i_load+1) = 10
+            else if (info_type .eq. 'NEUM_SUIP_F') then
+                v_load_info(nb_load+i_load+1) = 11
             else if (info_type .eq. 'EXCIT_SOL') then
                 v_load_info(nb_load+i_load+1) = 20
+            else if (info_type .eq. 'NEUM_SIGM_INT') then
+                v_load_info(nb_load+i_load+1) = 55
+                v_load_info(4*nb_load+5) = 99
+            else if (info_type .eq. 'NEUM_LAPL') then
+                v_load_info(2*nb_load+3) = i_neum_laplz
             else
                 write(6,*) 'LISCAD: ',info_type
-                ASSERT(.false.)
+                ASSERT(ASTER_FALSE)
             endif
         end do
     elseif (phenom.eq.'THER') then
@@ -190,11 +193,11 @@ integer, optional, intent(in) :: i_neum_laplz
                 v_load_info(nb_load+i_load+1) = 3
             else
                 write(6,*) 'LISCAD: ',info_type
-                ASSERT(.false.)
+                ASSERT(ASTER_FALSE)
             endif
         end do
     else
-        ASSERT(.false.)
+        ASSERT(ASTER_FALSE)
     endif
 !
     call jedema()
