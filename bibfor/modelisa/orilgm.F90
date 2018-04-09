@@ -79,6 +79,7 @@ subroutine orilgm(noma)
 !
     norit = 0
     reorie = .true.
+    vect(:) = 0.d0
 !
     mofa2d = 'ORIE_PEAU_2D'
     mofa3d = 'ORIE_PEAU_3D'
