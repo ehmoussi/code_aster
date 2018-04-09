@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -344,7 +344,7 @@ def get_valref(lafonc, kw, typ):
 # -----------------------------------------------------------------------------
 
 
-def test_fonction_ops(self, TEST_NOOK, VALEUR, ATTRIBUT, **args):
+def test_fonction_ops(self, VALEUR, ATTRIBUT, **args):
     """
        Corps de la macro TEST_FONCTION
     """
@@ -626,38 +626,15 @@ def test_fonction_ops(self, TEST_NOOK, VALEUR, ATTRIBUT, **args):
                 DictRef = TesterValeur(
                     nomLastPara, valLastPara, valoth, res, epsoth, crit, ssigne)
 
-            if TEST_NOOK == 'OUI':
-                if ier == 0:
-                    testOk = curDict['testOk']
-                    if testOk == ' OK ':
-                        txt.append(
-                            'NOOK PAS DE CHANCE LE TEST EST CORRECT !!!')
-                    else:
-                        AfficherResultat(
-                            curDict, nomLastPara, 'NON_REGRESSION', legende,
-                            crit, res, valLastPara, txt)
-                        if other_ref:
-                            AfficherResultat(
-                                DictRef, nomLastPara, ref, legende,
-                                crit, res, valLastPara, txt, label=False)
-                elif ier == 120:
-                    txt.append(' OK  PARAMETRE EN DOUBLE')
-                elif ier == 130:
-                    txt.append(' OK  PARAMETRE NON CORRECT')
-                elif ier == 150:
-                    txt.append(' OK  TYPE DE FONCTION NON TRAITE')
-                elif ier == 160:
-                    txt.append(' OK  PAS ASSEZ DE PARAMETRES')
+            if ier != 0:
+                txt.append('NOOK PB INTERPOLATION. VOIR MESSAGE CI-DESSUS')
             else:
-                if ier != 0:
-                    txt.append('NOOK PB INTERPOLATION. VOIR MESSAGE CI-DESSUS')
-                else:
-                    AfficherResultat(
-                        curDict, nomLastPara, 'NON_REGRESSION', legende,
-                        crit, res, valLastPara, txt)
-                    if other_ref:
-                        AfficherResultat(DictRef, nomLastPara, ref, legende,
-                                         crit, res, valLastPara, txt, label=False)
+                AfficherResultat(
+                    curDict, nomLastPara, 'NON_REGRESSION', legende,
+                    crit, res, valLastPara, txt)
+                if other_ref:
+                    AfficherResultat(DictRef, nomLastPara, ref, legende,
+                                        crit, res, valLastPara, txt, label=False)
             txt.append(' ')
 
     if ATTRIBUT != None:
@@ -756,11 +733,6 @@ def test_fonction_ops(self, TEST_NOOK, VALEUR, ATTRIBUT, **args):
             # Test de la valeur
             if (nompu == valAttrRef):
                 testOk = ' OK '
-            if TEST_NOOK == 'OUI':
-                if testOk == ' OK ':
-                    testOk = 'NOOK'
-                else:
-                    testOk = ' OK '
             if testOk == 'NOOK':
                 resu_test_attr = 'NOOK'
 

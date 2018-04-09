@@ -237,8 +237,7 @@ EPSP=CALC_FONCTION(COMB=(_F(FONCTION=FU,
                          _F(FONCTION=FN,
                             COEF=-5e-06,),),);
 
-TEST_FONCTION(TEST_NOOK='NON',
-              VALEUR=(_F(VALE_CALC=0.00210961826384,
+TEST_FONCTION(VALEUR=(_F(VALE_CALC=0.00210961826384,
                          VALE_REFE=2.1072E-3,
                          VALE_PARA=1.0,
                          REFERENCE='ANALYTIQUE',
@@ -298,8 +297,7 @@ EPSP3=CALC_FONCTION(COMB=(_F(FONCTION=FU3,
                           _F(FONCTION=FN3,
                              COEF=-5e-06,),),);
 
-TEST_FONCTION(TEST_NOOK='NON',
-              VALEUR=(_F(VALE_CALC=0.00210961826384,
+TEST_FONCTION(VALEUR=(_F(VALE_CALC=0.00210961826384,
                          VALE_REFE=2.1072E-3,
                          VALE_PARA=1.0,
                          REFERENCE='ANALYTIQUE',
@@ -431,8 +429,7 @@ EPSP2=CALC_FONCTION(COMB=(_F(FONCTION=FU2,
                           _F(FONCTION=FN2,
                              COEF=-5e-06,),),);
 
-TEST_FONCTION(TEST_NOOK='NON',
-              VALEUR=(_F(VALE_CALC=0.00210721102054,
+TEST_FONCTION(VALEUR=(_F(VALE_CALC=0.00210721102054,
                          VALE_REFE=2.1072E-3,
                          VALE_PARA=1.0,
                          REFERENCE='ANALYTIQUE',

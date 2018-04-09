@@ -381,8 +381,7 @@ DIFEPS=CALC_FONCTION(COMB=(_F(FONCTION=FEPXX,
                              COEF=-1.),
                              ),);
 
-TEST_FONCTION(TEST_NOOK='NON',
-              VALEUR=(_F(VALE_CALC=-6.81463077877e-08,
+TEST_FONCTION(VALEUR=(_F(VALE_CALC=-6.81463077877e-08,
                          VALE_REFE=0.0,
                          CRITERE='ABSOLU',
                          VALE_PARA=10.0,
@@ -417,8 +416,7 @@ DIFSIG=CALC_FONCTION(COMB=(_F(FONCTION=FSIXX,
 # c'est pourquoi la difference vat 3.1,
 # ce qui represente en relatif 0.8% de difference
 
-TEST_FONCTION(TEST_NOOK='NON',
-              VALEUR=(_F(VALE_CALC=-0.000138187785467,
+TEST_FONCTION(VALEUR=(_F(VALE_CALC=-0.000138187785467,
                          VALE_REFE=0.0,
                          CRITERE='ABSOLU',
                          VALE_PARA=10.0,
