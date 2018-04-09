@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -21,13 +21,15 @@ subroutine lc0165(fami, kpg, ksp, ndim, imate,&
                   deps, sigm, vim, option, angmas,&
                   sigp, vip, wkin, typmod, &
                   nvi, dsidep, codret)
-!
 implicit none
-!
-#include "asterfort/lcsflu.h"
+#include "asterfort/cfluendo3d.h"
 !
 ! person_in_charge: etienne.grimal at edf.fr
 ! aslint: disable=W1504,W0104
+!.......................................................................
+!     BUT: LOI DE FLUAGE FLUA_PORO_BETON
+!
+!          RELATION : 'FLUA_PORO_BETON'
 !
     character(len=*), intent(in) :: fami
     integer, intent(in) :: kpg
@@ -51,19 +53,11 @@ implicit none
     integer, intent(in) :: nvi
     real(kind=8), intent(out) :: dsidep(6,6)
     integer, intent(out) :: codret
-!
-! --------------------------------------------------------------------------------------------------
-!
-! Behaviour
-!
-! FLUA_PORO_BETON
-!
-! --------------------------------------------------------------------------------------------------
-!
-    call lcsflu(fami, kpg, ksp, ndim, imate,&
-                compor, carcri, instam, instap, epsm,&
-                deps, sigm, vim, option, angmas,&
-                sigp, vip, wkin, typmod, &
-                nvi, dsidep, codret)
+
+    call cfluendo3d(fami, kpg, ksp, ndim, imate,&
+                compor, instam, instap, epsm,&
+                deps, sigm, vim, option,&
+                sigp, vip, typmod,&
+                dsidep, codret)
 !
 end subroutine
