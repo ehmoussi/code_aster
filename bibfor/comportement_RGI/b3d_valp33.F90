@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,193 +16,204 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine b3d_valp33(x33, x3, v33)
-! person_in_charge: etienne.grimal at edf.fr
+subroutine b3d_valp33(x33,x3,v33)
+! person_in_charge: etienne.grimal@edf.fr
 !=====================================================================
-!=====================================================================
-!     A.Sellier jeu. 02 sept. 2010 18:13:24 CEST
-!     diagonalisagion 33 a partir de jacobi + quelques controles
-!     declarations externes
-!     une matrice est consideree comme deja diagonale si test 20 verifie
-!     fonction de la prescision relative epsv
-!     epsv est aussi utilise   dans jacob3 pour decider si deux valeurs
-!     propres petites par rapport a la troisieme peuvent etre consideree
-!     comme des doubles, ce qui evite de rechercher des vecteurs propres
-!     avec une matrice mal conditonnee
-!     enfin epsv est utilise en fin de programme pour tester si la matri
-!     de passage fonctionne correctement, pour cela on verifie si la pro
-!     vt*v est verifiee  a epsv pres hors diagonale si ce n est pas le c
-!     on affiche un message non bloquant
-!=====================================================================
-    implicit none
-#include "asterfort/assert.h"
-#include "asterfort/b3d_jacob3.h"
-#include "asterfort/matini.h"
+!   A.Sellier jeu. 02 sept. 2010 18:13:24 CEST 
+!   diagonalisagion 33 a partir de jacobi + quelques controles
+implicit none
+#include "asterf_types.h"
+#include "asterfort/b3d_jacobi.h"
+#include "asterfort/indice1.h"
 #include "asterfort/matmat.h"
-    real(kind=8) :: x33(3, 3)
-    real(kind=8) :: x3(3)
-    real(kind=8) :: v33(3, 3)
-!     declarations locales
-    real(kind=8) :: epsv, xmax, depsv
-    integer :: i, j
-    real(kind=8) :: un
-    real(kind=8) :: eps3(3), depsv2, eps1, xn2, xn3
-!
-    parameter(un=1.d0,epsv=1.d-4)
-    real(kind=8) :: v33t(3, 3)
-    real(kind=8) :: u33(3, 3)
-    logical :: vpmultiple, erreur, diago, ordre
-    integer :: imin, imax, imoy
-!
-!
-!     epsv*d(1) valeur en dessous la quelle un terme hors diagonale est
-!     lors du calcul des vecteurs propres
-    vpmultiple=.false.
-    diago=.false.
-    ordre=.true.
-!     on verifie si x33 n est pas deja diagonale ( a epsv*xmax pres)
-    xmax=max(abs(x33(1,1)),abs(x33(2,2)),abs(x33(3,3)))
-    depsv=epsv*xmax
-    if ((abs(x33(1,2)).le.depsv) .and. (abs(x33(1,3)).le.depsv) .and.&
-        (abs(x33(2,3)).le.depsv)) then
-        diago=.true.
-        call matini(3, 3, 0.D0, v33)
-!      mise en ordre des valeurs propres
-        imin=1
-        if (x33(2,2) .lt. x33(imin,imin)) imin=2
-        if (x33(3,3) .lt. x33(imin,imin)) imin=3
-        imax=1
-        if (x33(2,2) .ge. x33(imax,imax)) imax=2
-        if (x33(3,3) .ge. x33(imax,imax)) imax=3
-        if (imax .eq. imin) then
-            imax=1
-            imin=3
+#include "asterfort/matini.h"
+#include "asterfort/utmess.h"
+!   declarations externes
+
+      integer k,l
+      real(kind=8) :: x33(3,3),x3(3),v33(3,3),y33(3,3)
+!   declarations locales      
+      real(kind=8) :: epsv,eps1,xn
+      integer i,j
+      real(kind=8) :: un
+!   une matrice est consideree comme deja diagonale si test 20 verifie
+!   fonction de la prescision relative epsv
+!   epsv est aussi utilise   dans jacob3 pour decider si deux valeurs
+!   propres petites par rapport a la troisieme peuvent etre consideree
+!   comme des doubles, ce qui evite de rechercher des vecteurs propres
+!   avec une matrice mal conditonnee
+!   enfin epsv est utilise en fin de programme pour tester si la matrice
+!   de passage fonctionne correctement, pour cela on verifie si la propriete
+!   vt*v est verifiee  a epsv pres hors diagonale si ce n est pas le cas
+!   on affiche un message non bloquant
+      parameter(un=1.d0,epsv=1.d-6)
+      real(kind=8) :: v33t(3,3)
+      real(kind=8) :: u33(3,3)
+      aster_logical ::  vpmultiple,erreur,diago,ordre     
+      real(kind=8), dimension(9) :: valr
+
+     xn=0.d0
+     eps1=0.d0
+     u33(:,:)=0.d0
+
+!   epsv*d(1) valeur en dessous la quelle un terme hors diagonale est negligee
+!   lors du calcul des vecteurs propres
+      vpmultiple=.false.
+      diago=.false.
+      ordre=.true.  
+
+!     STOCKAGE de x33 dans y33 pour diagonalisation par jacobi iterative
+!     car cette methode ecrit sur y33
+      do i=1,3
+         do j=1,3
+            y33(i,j)=x33(i,j)
+         end do
+      end do
+      call b3d_jacobi(y33,v33,x3)
+        
+!   controle des normes de v33
+      do i=1,3
+        xn=dsqrt(v33(1,i)**2+v33(2,i)**2+v33(3,i)**2)
+        if(dabs(xn-1.d0).gt.1.d-4) then
+          call indice1(i,k,l)
+          v33(1,i)=v33(2,k)*v33(3,l)-v33(3,k)*v33(2,l)
+          v33(2,i)=v33(3,k)*v33(1,l)-v33(1,k)*v33(3,l)
+          v33(3,i)=v33(1,k)*v33(2,l)-v33(2,k)*v33(1,l) 
+          xn=dsqrt(v33(1,i)**2+v33(2,i)**2+v33(3,i)**2)
+            do k=1,3
+               v33(k,i)=v33(k,i)/xn
+            end do
         end if
-        imoy=6-imin-imax
-        x3(1)=x33(imax,imax)
-        x3(2)=x33(imoy,imoy)
-        x3(3)=x33(imin,imin)
-        v33(imax,1)=1.d0
-        v33(imoy,2)=1.d0
-        v33(imin,3)=1.d0
-!      verif de l ordre
-        if ((x3(1).ge.x3(2)) .and. (x3(2).ge.x3(3))) then
-            ordre=.true.
+      end do
+      
+      
+!   **verif produit scalaire entre v1 et v2*****
+      eps1=0.d0
+      do i=1,3
+       eps1=eps1+v33(i,1)*v33(i,2)
+      end do
+      if(dabs(eps1).gt.1.d-4) then
+!      test produit scalaire v1 v3         
+         eps1=0.d0
+         do i=1,3
+           eps1=eps1+v33(i,1)*v33(i,3)
+         end do
+         if(dabs(eps1).gt.1.d-4) then
+!         correction de v1
+            do i=1,3
+              v33(i,1)=v33(i,1)-eps1*v33(i,3)
+            end do
+!         renormalisation
+            xn=dsqrt(v33(1,1)**2+v33(2,1)**2+v33(3,1)**2)
+            do i=1,3
+               v33(i,1)=v33(i,1)/xn
+            end do               
+         end if
+!      v1 et v3 etant orthogonaux on reconstruit v2 par produit
+!      vectoriel
+         v33(1,2)=v33(2,1)*v33(3,3)-v33(3,1)*v33(2,3)
+         v33(2,2)=v33(3,1)*v33(1,3)-v33(1,1)*v33(3,3)
+         v33(3,2)=v33(1,1)*v33(2,3)-v33(2,1)*v33(1,3)
+      else
+!    test produit scalaire v2 v3
+       eps1=0.d0
+       do i=1,3
+        eps1=eps1+v33(i,2)*v33(i,3)
+       end do 
+       if(dabs(eps1).gt.1.d-4) then
+!      test produit scalaire v1 v3         
+         eps1=0.d0
+         do i=1,3
+           eps1=eps1+v33(i,1)*v33(i,3)
+         end do
+         if(dabs(eps1).gt.1.d-4) then
+!         correction de v3
+            do i=1,3
+              v33(i,3)=v33(i,3)-eps1*v33(i,1)
+            end do
+!         renormalisation
+            xn=dsqrt(v33(1,3)**2+v33(2,3)**2+v33(3,3)**2)
+            do i=1,3
+               v33(i,3)=v33(i,3)/xn
+            end do 
+         end if
+!      v1 et v3 etant orthogonaux on reconstruit v2 par produit
+!      vectoriel
+         v33(1,2)=v33(2,1)*v33(3,3)-v33(3,1)*v33(2,3)
+         v33(2,2)=v33(3,1)*v33(1,3)-v33(1,1)*v33(3,3)
+         v33(3,2)=v33(1,1)*v33(2,3)-v33(2,1)*v33(1,3)
         else
-            erreur=.true.
-            ordre=.false.
-        end if
-    else
-!      on teste si on est pas en contrainte plane ou axisym
-        depsv2=epsv*abs(x33(3,3))
-        if ((abs(x33(1,3)).le.depsv2) .and. (abs(x33(2,3)).le.depsv2)) then
-!        on utilise le fait que la matrice ne soit pas diagonale dans
-!        la base rz ou xy pour se ramener a un pb 2 d
-            ASSERT(.false.)
+!      test du produit scalaire entre v1 v3
+         eps1=0.d0
+         do i=1,3
+          eps1=eps1+v33(i,1)*v33(i,3)
+         end do 
+         if(dabs(eps1).gt.1.d-4) then
+!        test produit scalaire v3 v2         
+           eps1=0.d0
+           do i=1,3
+             eps1=eps1+v33(i,2)*v33(i,3)
+           end do
+           if(dabs(eps1).gt.1.d-4) then
+!         correction de v3 avec v2
+            do i=1,3
+              v33(i,3)=v33(i,3)-eps1*v33(i,2)
+            end do
+!         renormalisation
+            xn=dsqrt(v33(1,3)**2+v33(2,3)**2+v33(3,3)**2)
+            do i=1,3
+               v33(i,3)=v33(i,3)/xn
+            end do 
+!         v2 et v3 etant orthogonaux on reconstruit v1 par produit
+!         vectoriel
+            v33(1,1)=v33(2,2)*v33(3,3)-v33(3,2)*v33(2,3)
+            v33(2,1)=v33(3,2)*v33(1,3)-v33(1,2)*v33(3,3)
+            v33(3,1)=v33(1,2)*v33(2,3)-v33(2,2)*v33(1,3)             
+           end if 
+        end if        
+       end if
+      end if
+
+      do i=1,3
+       do j=1,3
+        v33t(i,j)=v33(j,i)
+       end do
+      end do 
+ 
+!   verif validite des matrice de passage
+!   (on change de nase une matrice unitaire)
+      erreur=.false.
+      call matmat(v33,v33t,3,3,3,u33)
+      do i=1,3
+       do j=1,3
+        if (i.eq.j)then
+         if( dabs(u33(i,i)-un) .gt. dsqrt(epsv))then
+          erreur=.true.
+          goto 10
+         endif
         else
-!        cas general
-            call b3d_jacob3(x33, 3, x3, v33, vpmultiple,&
-                            epsv)
+         if( dabs(u33(i,j)) .gt. dsqrt(epsv))then
+          erreur=.true.
+          goto 10
+         endif
         end if
-    end if
-!     **verif produit scalaire entre v1 et v2*****
-    eps1=0.d0
-    do i = 1, 3
-        eps1=eps1+v33(i,1)*v33(i,2)
-    end do
-!     correction v2 pour assurer le produit scalaire
-    xn2=0.d0
-    do i = 1, 3
-        v33(i,2)=v33(i,2)-eps1*v33(i,1)
-        xn2=xn2+v33(i,2)**2
-    end do
-    xn2=dsqrt(xn2)
-!     renormalisation de v2
-    if (xn2 .lt. 0.95) then
-        erreur=.true.
-        goto 10
-    end if
-    do i = 1, 3
-        v33(i,2)=v33(i,2)/xn2
-    end do
-    eps3(1)=v33(2,1)*v33(3,2)-v33(3,1)*v33(2,2)-v33(1,3)
-    eps3(2)=v33(3,1)*v33(1,2)-v33(1,1)*v33(3,2)-v33(2,3)
-    eps3(3)=v33(1,1)*v33(2,2)-v33(2,1)*v33(1,2)-v33(3,3)
-!
-!     correction produit vectoriel
-    xn3=0.d0
-    do i = 1, 3
-        v33(i,3)=v33(i,3)+eps3(i)
-        xn3=xn3+v33(i,3)**2
-    end do
-!     renormalisation de v3
-    xn3=dsqrt(xn3)
-    do i = 1, 3
-        v33(i,3)=v33(i,3)/xn3
-    end do
-    do i = 1, 3
-        do j = 1, 3
-            v33t(i,j)=v33(j,i)
-        end do
-    end do
-!     verif validite des matrice de passage
-!     (on change de nase une matrice unitaire)
-    erreur=.false.
-    call matmat(v33, v33t, 3, 3, 3,&
-                u33)
-    do i = 1, 3
-        do j = 1, 3
-            if (i .eq. j) then
-                if (abs(u33(i,i)-un) .gt. epsv) then
-                    erreur=.true.
-                    goto 10
-                endif
-            else
-                if (abs(u33(i,j)) .gt. epsv) then
-                    erreur=.true.
-                    goto 10
-                endif
-            end if
-        end do
-    end do
-!     affichage des variables en cas de pb de diagonalisation
-!10    continue
-    10 if(erreur)then
-        ASSERT(.false.)
-!        print*,'_______________________________'
-!        print*,'pb vecteur propre ds b3d_valp33'
-!        print*,'matrice deja digonale :',diago
-!        print*,'ordre :',ordre
-!        print*,'vp multiple :',vpmultiple
-!        print*,'matrice a diagonaliser :'
-!        call affiche33(x33)
-!        print*,'valeurs propres:',x3(1),x3(2),x3(3)
-!        print*,'x1-x2',x3(1)-x3(2)
-!        print*,'x2-x3',x3(2)-x3(3)
-!        print*,'|',epsv,'*x(1)|',abs(epsv * x3(1))
-!        print*,'|',epsv,'*x(2)|',abs(epsv * x3(2))
-!        print*,'matrice de passage:'
-!        call affiche33(v33)
-!        print*,'image matrice identite:'
-!        call affiche33(u33)
-!        print*,'Augmenter epsv dans b3d_valp33.eso'
-!      pour poursuivre le calcul on suppose la base principale
-!      confondu avec la base fixe
-!        do i = 1, 3
-!            do j = i, 3
-!                if (i .eq. j) then
-!                    v33(i,i)=1.d0
-!                else
-!                    v33(i,j)=0.d0
-!                    v33(j,i)=0.d0
-!                end if
-!            end do
-!            x3(i)=x33(i,i)
-!        end do
-!        print*,'on impose la base principale=la base fixe'
-!        call affiche33(x33)
-!        print*,'valeurs propres:',x3(1),x3(2),x3(3)
-!        print*,'matrice de passage:'
-!        call affiche33(v33)
-    end if
+       end do
+      end do 
+
+
+
+!   affichage des variables en cas de pb de diagonalisation  
+10    continue
+      if(erreur)then
+        valr(1) = v33(1,1)
+        valr(2) = v33(1,2)
+        valr(3) = v33(1,3)
+        valr(4) = v33(2,1)
+        valr(5) = v33(2,2)
+        valr(6) = v33(2,3)
+        valr(7) = v33(3,1)
+        valr(8) = v33(3,2)
+        valr(9) = v33(3,3)
+        call utmess('E', 'COMPOR3_12', nr=9, valr=valr)
+      end if
 end subroutine

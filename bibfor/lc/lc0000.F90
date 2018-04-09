@@ -116,6 +116,7 @@ implicit none
 #include "asterfort/lc0165.h"
 #include "asterfort/lc0166.h"
 #include "asterfort/lc0167.h"
+#include "asterfort/lc0168.h"
 #include "asterfort/lc1002.h"
 #include "asterfort/lc1015.h"
 #include "asterfort/lc1036.h"
@@ -828,8 +829,15 @@ integer :: codret
                     sigp, vip, wkin, typmod, icomp,&
                     nvi, dsidep, codret)
     case (167)
-!     RGI_BETON
+!     FLUENDO
         call lc0167(fami, kpg, ksp, ndim, imate,&
+                    compor, carcri, instam, instap, epsm,&
+                    deps, sigm, vim, option, angmas,&
+                    sigp, vip, wkin, typmod, icomp,&
+                    nvi, dsidep, codret)
+    case (168)
+!     RGI_FLUENDO
+        call lc0168(fami, kpg, ksp, ndim, imate,&
                     compor, carcri, instam, instap, epsm,&
                     deps, sigm, vim, option, angmas,&
                     sigp, vip, wkin, typmod, icomp,&

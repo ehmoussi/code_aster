@@ -1,0 +1,293 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+#  TEST LOI FLUA_PORO_BETON
+# -----------------------------------------------------
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='NON'))
+
+M=LIRE_MAILLAGE(FORMAT='MED',);
+
+mod=AFFE_MODELE(MAILLAGE=M,
+                AFFE=_F(TOUT='OUI',
+                        PHENOMENE='MECANIQUE',
+                        MODELISATION='3D',),);
+
+youn1=44700.;
+nu1=0.3;
+
+E=DEFI_CONSTANTE(VALE=youn1,);
+
+Nu=DEFI_CONSTANTE(VALE=nu1,);
+
+ALPHA=DEFI_CONSTANTE(VALE=0.0,);
+
+
+RHOF=DEFI_CONSTANTE(VALE = 2300.,)
+mat=DEFI_MATERIAU(ELAS_FO =_F(     E     = E,
+                                   NU    = Nu,
+                                   TEMP_DEF_ALPHA=20.,
+                                   ALPHA   =ALPHA,
+                                   K_DESSIC=0.,
+                                   B_ENDOGE=0.,RHO=RHOF),
+                                 RGI_FLUENDO=_F(
+                     HYDR            = 1.,
+                     HYDS            = 0.2,
+                     PORO            =  0.3,
+                     VW              =  0.25,
+                     BSHR            =  0.3,
+                     MSHR            =  10.,
+                     MVGN            =  0.5,
+                     SFLD            =  32,
+                     RT              =  1.,
+                     EPT             =  1.0e-4,
+                     RC              =  120.,
+                     EPC             =  2.0e-3,
+                     DELT            =  1.5,
+                     BETA            =  0.1,
+                     REF             =  18.,
+                     EKDC            =  1.e-2,
+                     GFT             =  1.0e-3,
+                     GFR             =  1.0e-4, 
+                     DT80            =  0.,
+                     TSTH            =  80.,
+                     TREF            =  38.,
+                     TAUK            =  250.,
+                     YKSY            =  1.,
+                     TAUM            =  250.,
+                     EKFL            =  0.000001,
+                     XFLU            =  5.,
+                     NRJM            =  200000.,
+                     DFMX            =  0.,
+                     VVRG            =  0.02e-2,
+                     BRGI            =  0.5,
+                     MRGI            =  2000.,
+                     KRGI            =  0.5,
+                     HRGI            =  0.3,
+                     EKRG            =  3.e-2,
+                     VRAG            =  5.e-2,
+                     TAUG            =  300.,
+                     SRSG            =  0.02,
+                     NRJG            =  20000,
+                     TRAG            =  12.,
+                     TDEF            =  0.,
+                     NRJP            =  0.,
+                     VDEF            =  0.,
+                     SRSD            =  0.,
+                     CNAD            =  0.,
+                     SSAD            =  10.,
+                     CNAK            =  0.1,
+                     CNAB            =  0.1,
+                     EXND            =  0.1,
+                     EXMD            =  0.1,
+                     TTDD            =  150,
+                     TDID            =  0.1,
+                     TFID            =  0.1,
+                     NRJD            =  250000.,
+                     TTRD            =  20.,
+                     DIM3            = 3.,),); 
+
+HYDRI=CREA_CHAMP(TYPE_CHAM='NOEU_HYDR_R',
+                 OPERATION='AFFE',
+                 MAILLAGE=M,
+                 AFFE=_F(TOUT='OUI',
+                         NOM_CMP='HYDR',
+                         VALE=1.0,),);
+
+HYDRF=CREA_CHAMP(TYPE_CHAM='NOEU_HYDR_R',
+                 OPERATION='AFFE',
+                 MAILLAGE=M,
+                 AFFE=_F(TOUT='OUI',
+                         NOM_CMP='HYDR',
+                         VALE=1.0,),);
+
+HYDR=CREA_RESU(OPERATION='AFFE',
+               TYPE_RESU='EVOL_VARC',
+               NOM_CHAM='HYDR_NOEU',
+               AFFE=(
+               _F(CHAM_GD=HYDRI,
+                  INST=0.0,),
+               _F(CHAM_GD=HYDRF,
+                  INST=350.,),),);
+
+SECHI=CREA_CHAMP(TYPE_CHAM='NOEU_TEMP_R',
+                 OPERATION='AFFE',
+                 MAILLAGE=M,
+                 AFFE=_F(TOUT='OUI',
+                         NOM_CMP='TEMP',
+                         VALE=0.12,),);
+
+SECHF=CREA_CHAMP(TYPE_CHAM='NOEU_TEMP_R',
+                 OPERATION='AFFE',
+                 MAILLAGE=M,
+                 AFFE=_F(TOUT='OUI',
+                         NOM_CMP='TEMP',
+                         VALE=0.12,),);
+
+SECH=CREA_RESU(OPERATION='AFFE',
+               TYPE_RESU='EVOL_THER',
+               NOM_CHAM='TEMP',
+               AFFE=(
+               _F(CHAM_GD=SECHI,
+                  INST=0.0,),
+               _F(CHAM_GD=SECHF,
+                  INST=350.0,),),);
+
+TEMPI=CREA_CHAMP(TYPE_CHAM='NOEU_TEMP_R',
+                 OPERATION='AFFE',
+                 MAILLAGE=M,
+                 AFFE=_F(TOUT='OUI',
+                         NOM_CMP='TEMP',
+                         VALE=20,),);
+
+TEMPF=CREA_CHAMP(TYPE_CHAM='NOEU_TEMP_R',
+                 OPERATION='AFFE',
+                 MAILLAGE=M,
+                 AFFE=_F(TOUT='OUI',
+                         NOM_CMP='TEMP',
+                         VALE=20,),);
+
+TEMP=CREA_RESU(OPERATION='AFFE',
+               TYPE_RESU='EVOL_THER',
+               NOM_CHAM='TEMP',
+               AFFE=(
+               _F(CHAM_GD=TEMPI,
+                  INST=0.0,),
+               _F(CHAM_GD=TEMPF,
+                  INST=350.,),),);
+
+afmat=AFFE_MATERIAU(MAILLAGE=M,
+                      AFFE=_F(TOUT='OUI',
+                              MATER=mat,),
+                      AFFE_VARC=(_F(TOUT='OUI',
+                                    NOM_VARC='HYDR',
+                                    EVOL=HYDR,
+                                    NOM_CHAM='HYDR_NOEU',),
+                                 _F(TOUT='OUI',
+                                    NOM_VARC='SECH',
+                                    EVOL=SECH,
+                                    NOM_CHAM='TEMP',
+                                    VALE_REF=0.12,),
+                                 _F(TOUT='OUI',
+                                    NOM_VARC='TEMP',
+                                    EVOL=TEMP,
+                                    NOM_CHAM='TEMP',
+                                    VALE_REF=20.,),
+                                ),
+                                    );
+
+Fonc1=DEFI_FONCTION(
+                      NOM_PARA='INST',
+                     VALE=(0.0,0.,
+                          0.1,1.,350.,1.0,
+                          ),
+                    PROL_DROITE='EXCLU',
+                    PROL_GAUCHE='EXCLU',);
+
+char1=AFFE_CHAR_MECA(MODELE=mod,
+                      PRES_REP=_F(GROUP_MA='SXY1',
+                                  PRES=1.,),);
+
+CL=AFFE_CHAR_MECA(MODELE=mod,
+                  DDL_IMPO=(_F(GROUP_NO='sxz0no',
+                               DY=0,),
+                            _F(GROUP_NO='sxy0no',
+                               DZ=0,),
+                            _F(GROUP_NO='syz0no',
+                               DX=0,),),
+);
+
+litps=DEFI_LIST_REEL(DEBUT=0,
+                     INTERVALLE=(_F(JUSQU_A=0.2,
+                                    PAS=0.025),
+                                 _F(JUSQU_A=10,
+                                    PAS=0.2),
+                                 _F(JUSQU_A=150,
+                                    PAS=0.25),
+                                 ),);
+
+liarc=DEFI_LIST_REEL(DEBUT=0,
+                     INTERVALLE=(_F(JUSQU_A=0.2,
+                                    PAS=0.025),
+                                 _F(JUSQU_A=10,
+                                    PAS=0.2),
+                                 _F(JUSQU_A=150,
+                                    PAS=2.),
+                                 ),);
+
+RESU=STAT_NON_LINE(MODELE=mod,
+                   CHAM_MATER=afmat,
+                   EXCIT=(_F(CHARGE=char1,
+                               FONC_MULT=Fonc1,),
+                          _F(CHARGE=CL,),),
+                   COMPORTEMENT=_F(RELATION ='RGI_FLUENDO'),
+                   INCREMENT=_F(LIST_INST=litps,
+                                INST_INIT=0,),
+                   NEWTON=_F(PREDICTION='EXTRAPOLE',
+                             MATRICE='TANGENTE',),
+                  CONVERGENCE=_F(ITER_GLOB_MAXI=100,
+                                 ARRET='OUI',),
+                  ARCHIVAGE=_F(LIST_INST = liarc),);
+
+RESU=CALC_CHAMP(reuse =RESU,
+                 MODELE=mod,
+                 RESULTAT=RESU,
+                 TOUT='OUI',
+                 CONTRAINTE='SIEF_ELNO',
+                 DEFORMATION='EPSI_ELNO',);
+
+IMPR_RESU(FORMAT='RESULTAT',
+          UNITE=80,
+          RESU=_F(RESULTAT=RESU,
+                  NOM_CHAM='DEPL',),);
+
+
+
+# VALEURS DE NON REGRESSION
+TEST_RESU(RESU=(_F(INST=1,
+                   RESULTAT=RESU,
+                   NOM_CHAM='DEPL',
+                   NOEUD='N7',
+                   NOM_CMP='DZ',
+                   VALE_CALC=-3.65601932635E-05,
+                   MAILLE='M1',),
+                _F(INST=50,
+                   RESULTAT=RESU,
+                   NOM_CHAM='DEPL',
+                   NOEUD='N7',
+                   NOM_CMP='DZ',
+                   VALE_CALC=-1.52695874331E-05,
+                   MAILLE='M1',),
+                _F(INST=100,
+                   RESULTAT=RESU,
+                   NOM_CHAM='DEPL',
+                   NOEUD='N7',
+                   NOM_CMP='DZ',
+                   VALE_CALC=6.58257343733E-06,
+                   MAILLE='M1',),
+                _F(INST=150,
+                   RESULTAT=RESU,
+                   NOM_CHAM='DEPL',
+                   NOEUD='N7',
+                   NOM_CMP='DZ',
+                   VALE_CALC=0.000151483938688,
+                   MAILLE='M1',),
+                ),
+          )
+
+FIN();
