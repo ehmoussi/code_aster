@@ -326,6 +326,7 @@ subroutine conori(ma)
 !     ------------------------------------------------------------------
                         lomod0=.false.
                         locor0=.false.
+                        loreo0=.false.
                         call contac(macor, nbcor, macoc, nbcoc, lface0,&
                                     lomod0, locor0, loreo0, ma)
                         if (loreo0) lface0= .not. lface0
