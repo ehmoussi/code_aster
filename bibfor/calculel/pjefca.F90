@@ -139,7 +139,7 @@ subroutine pjefca(moa1, lima1, iocc, ncas)
 !
 !     -- ON PARCOURT LES MAILLES DE LIMA1 POUR DETERMINER
 !        LA PLUS GRANDE DIMENSION TOPOLOGIQUE : 3,2,1 : DITOPO
-    ditopo=0
+    ditopo=-1
     do kma = 1, nbma1
         typm1=typmail(zi(iagma1-1+kma))
         dim1=tmdim(typm1)
@@ -149,7 +149,7 @@ subroutine pjefca(moa1, lima1, iocc, ncas)
     if (ditopo .eq. 3) then
         ASSERT(ndim.eq.3)
         ncas='3D'
-    else if (ditopo.eq.1) then
+    else if (ditopo.eq.1 .or. ditopo.eq.0) then
         ncas='1.5D'
     else if (ditopo.eq.2) then
         if (ndim .eq. 2) then
