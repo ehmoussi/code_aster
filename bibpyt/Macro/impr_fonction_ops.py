@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -58,8 +58,9 @@ def impr_fonction_ops(self, FORMAT, COURBE, INFO, **args):
 
     # 0.1. Fichier
     nomfich = None
-    if args['UNITE'] and args['UNITE'] != 6:
-        nomfich = UL.Nom(args['UNITE'])
+    UNITE = args.get('UNITE', 6)
+    if UNITE != 6:
+        nomfich = UL.Nom(UNITE)
         if INFO == 2:
             aster.affiche('MESSAGE', ' Nom du fichier :' + nomfich)
     if nomfich and os.path.exists(nomfich) and os.stat(nomfich).st_size != 0:
@@ -434,10 +435,7 @@ def impr_fonction_ops(self, FORMAT, COURBE, INFO, **args):
     else:
         UTMESS('S', 'FONCT0_8', valk=FORMAT)
 
-    # Traiter le cas des UL réservées
-    if args['UNITE'] and args['UNITE'] in ul_reserve:
-        UL.Etat(args['UNITE'], etat='F')
-    if FORMAT == 'AGRAF' and args['UNITE_DIGR'] != args['UNITE'] \
+    if FORMAT == 'AGRAF' and args['UNITE_DIGR'] != UNITE \
             and args['UNITE_DIGR'] in ul_reserve:
         UL.Etat(args['UNITE_DIGR'], etat='F')
 
