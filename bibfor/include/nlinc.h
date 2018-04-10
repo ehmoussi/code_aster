@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -24,8 +24,8 @@
     character(len=8)  :: params(_NL_NBPAR)
 
     data params /'ANG_INIT', 'ANG_ROTA', 'AS_C    ', 'AS_DX_MX', 'AS_K1   ', &
-                 'AS_K2   ', 'AS_ALPHA', 'AS_FX_0 ', 'BKL_FLIM', 'BKL_FCST', &
-                 'BKL_STIF', 'NOM_CMP ', 'COOR_NO1', 'COOR_NO2', 'COOR_ORI', &
+                 'AS_K2   ', 'AS_ALPHA', 'AS_FX_0 ', 'BKL_FLIM', 'BKL_FPFL', &
+                 'BKL_DEF ', 'NOM_CMP ', 'COOR_NO1', 'COOR_NO2', 'COOR_ORI', &
                  'DAMP_NOR', 'DAMP_TAN', 'DISO_DX ', 'DISO_DX0', 'DIST_NO1', &
                  'DIST_NO2', 'DVSC_A  ', 'DVSC_C  ', 'DVSC_K1 ', 'DVSC_K2 ', &
                  'DVSC_K3 ', 'FRIC_DYN', 'FRIC_STA', 'FRIC_UNI', 'FV_FONCT', &
@@ -37,7 +37,9 @@
                  'NO2_NAME', 'VEC_NORM', 'NUMDDL_1', 'NUMDDL_2', 'OBST_TYP', &
                  'PSI_DEL1', 'PSI_DEL2', 'RES_INTE', 'STIF_TAN', 'ROTR_DFK', &
                  'ROTR_FK ', 'SIGN_DYZ', 'SINCOS_A', 'SINCOS_B', 'SINCOS_G', &
-                 'SS1_NAME', 'SS2_NAME', 'STIF_NOR', 'FEXT_MPI'/
+                 'SS1_NAME', 'SS2_NAME', 'STIF_NOR', 'FEXT_MPI', 'BKLDEFT0', &
+                 'BKL_DEFP', 'BKL_RIGI', 'BKL_DEFT'/
+
 
     data partyp /'R  ', 'K24', 'R  ', 'R  ', 'R  ', &
                  'R  ', 'R  ', 'R  ', 'R  ', 'R  ', &
@@ -53,7 +55,8 @@
                  'K24', 'R  ', 'K24', 'K24', 'K24', &
                  'R  ', 'R  ', 'R  ', 'R  ', 'K24', &
                  'K24', 'R  ', 'R  ', 'R  ', 'R  ', &
-                 'K24', 'K24', 'R  ', 'R  '/  
+                 'K24', 'K24', 'R  ', 'R  ', 'R  ', &
+                 'R  ', 'R  ', 'R  ' /  
 
 ! -------------------------------------------------------------------------
 !   parind = -2 : vector global        ; = -1 : scalar global ;
@@ -74,4 +77,8 @@
                   1,  2,  1,  1,  1, &
                   2,  2,  1,  1,  1, &
                   1,  2,  2,  2,  2, &
-                  1,  1,  1, -2/
+                  1,  1,  1, -2,  1, &
+                  2,  2,  2/
+
+
+

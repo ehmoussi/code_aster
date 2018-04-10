@@ -20,7 +20,7 @@
 # PLASTIQUE
 # ----------------------------------------------------------------------
 #
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI')) 
+DEBUT(PAR_LOT = 'NON',CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI')) ######################" PAR_LOT = 'NON'"
 
 MAILLAG0=LIRE_MAILLAGE(FORMAT="ASTER", )
 
@@ -31,6 +31,10 @@ MAILLAGE=CREA_MAILLAGE(MAILLAGE=MAILLAG0,
     ),
 )
 
+MAILLAGE=DEFI_GROUP(reuse =MAILLAGE,      ################ FAB 
+                MAILLAGE=MAILLAGE,
+                CREA_GROUP_NO=(_F(NOM='N02', NOEUD='N02',),
+                    ),);
 
 
 
@@ -105,9 +109,10 @@ PROJ_BASE(  BASE=MODE_MEC,
                                 MATR_ASSE = RIGIDITE))
                                     )
 
-#
 
-V0=2.
+
+V0=2.828427125 
+
 
 VIT_INIT=CREA_CHAMP( OPERATION='AFFE', PROL_ZERO='OUI', TYPE_CHAM='NOEU_DEPL_R',
 MAILLAGE=MAILLAGE,
@@ -134,7 +139,10 @@ VIT_GENE=PROJ_VECT_BASE(  BASE=MODE_MEC,
 PLANY=DEFI_OBSTACLE(TYPE='PLAN_Y')
 
 #
-
+DEPL_POST_FL=[2., 3.,4.,5.]
+RIGI_POST_FL=[0.4,0.3,0.2,0.1]
+LARG_PLAT=1.
+ENFO_FL=1.
 
 TRAN_GEN=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='GENE',
                             MATR_MASS=MASS_GEN,   MATR_RIGI=RIGI_GEN,
@@ -150,9 +158,13 @@ TRAN_GEN=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='GENE',
                                        RIGI_NOR = 1.,
                                        FNOR_CRIT = 1.,
                                        FNOR_POST_FL = 0.5,
+                                       LARG_PLAT =LARG_PLAT,
+                                       ENFO_FL = ENFO_FL,
+                                       DEPL_POST_FL=DEPL_POST_FL,
+                                       RIGI_POST_FL=RIGI_POST_FL,
                                        ),
                       INCREMENT=_F(
-                                  INST_INIT = 0.,   INST_FIN = 0.5,
+                                  INST_INIT = 0.,   INST_FIN = 1.,
                                   PAS = 0.0002)
                             )
 
@@ -173,6 +185,10 @@ TRAN_GEN=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='GENE',
                                        RIGI_NOR = 1.,
                                        FNOR_CRIT = 1.,
                                        FNOR_POST_FL = 0.5,
+                                       LARG_PLAT =LARG_PLAT,
+                                       ENFO_FL = ENFO_FL,
+                                       DEPL_POST_FL=DEPL_POST_FL,
+                                       RIGI_POST_FL=RIGI_POST_FL,
                                        ),
                       INCREMENT=_F(INST_FIN = 1.,  PAS = 0.0002,)
                             )
@@ -191,29 +207,31 @@ TRAN_GEN=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='GENE',
                                        RIGI_NOR = 1.,
                                        FNOR_CRIT = 1.,
                                        FNOR_POST_FL = 0.5,
+                                       LARG_PLAT =LARG_PLAT,
+                                       ENFO_FL = ENFO_FL,
+                                       DEPL_POST_FL=DEPL_POST_FL,
+                                       RIGI_POST_FL=RIGI_POST_FL,
                                        ),
                       INCREMENT=_F(
-                                 INST_FIN = 12.,  PAS = 0.001)
+                                 INST_FIN = 9.,  PAS = 0.001)
                             )
 
+
+
 TRAN=REST_GENE_PHYS(   RESU_GENE=TRAN_GEN,
-                           NOM_CHAM='DEPL',
+                       NOM_CHAM=('VITE'),
                        )
 
 TABLE=POST_DYNA_MODA_T(   RESU_GENE=TRAN_GEN,
-                              CHOC=_F(  OPTION = 'IMPACT')
+                          CHOC=_F(  OPTION = 'IMPACT')
                           )
 IMPR_TABLE(TABLE=TABLE)
 
 # references
-tfl = pi/6
-dp = 3.
-t0 = pi/6 +2*sqrt(3.) +(pi+6)/sqrt(2.)
-
 TEST_TABLE(REFERENCE='ANALYTIQUE',
            PRECISION=1.E-3,
-           VALE_CALC=2.99863402847,
-           VALE_REFE=3.0,
+           VALE_CALC=3.9996442378,
+           VALE_REFE=4.,
            NOM_PARA='ECRAS_RESI',
            TABLE=TABLE,
            FILTRE=(_F(NOM_PARA='CALCUL',
@@ -223,28 +241,15 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
                    ),
            )
 
-TEST_TABLE(REFERENCE='ANALYTIQUE',
-           PRECISION=1.E-3,
-           VALE_CALC=0.523895026469,
-           VALE_REFE=0.52359877559829882,
-           NOM_PARA='INST_FLAMB',
-           TABLE=TABLE,
-           FILTRE=(_F(NOM_PARA='CALCUL',
-                      VALE_K='FLAMBAGE',),
-                   _F(NOM_PARA='NOEUD',
-                      VALE_K='N02',),
-                   ),
-           )
 
-TEST_RESU(RESU=_F(INST=10.45178254693452,
+TEST_RESU(RESU=_F(INST=9.,
                   REFERENCE='ANALYTIQUE',
                   RESULTAT=TRAN,
-                  NOM_CHAM='DEPL',
+                  NOM_CHAM='VITE',
                   NOEUD='N02',
                   NOM_CMP='DX',
-                  VALE_CALC=-0.00205677193395,
-                  TOLE_MACHINE=(1.E-6, 5.0E-05), # ce n'est pas un "vrai" TOLE_MACHINE ! (1.e-6)
-                  VALE_REFE=0.0,
+                  VALE_CALC=-1.11796957908,
+                  VALE_REFE=-1.118033989,
                   CRITERE=('ABSOLU', 'RELATIF'),
                   PRECISION=3.0E-3,  ),
           )
