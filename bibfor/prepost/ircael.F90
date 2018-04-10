@@ -54,6 +54,13 @@ subroutine ircael(jcesdi, jcesli, jcesvi, jcesci, nummai,&
 !
     nugrfi(1:nmaxfi)=0
 !
+    nbqcou = 0
+    nbtcou = 0
+    nbrsec = 0
+    nbrfib = 0
+    nbrgrf = 0
+    nugrfi = 0
+!
     nbrcmp = zi(jcesdi-1+5+4*(nummai-1)+3)
     numgrf = 1
     do icmp = 1, nbrcmp

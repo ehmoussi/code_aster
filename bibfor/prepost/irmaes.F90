@@ -174,7 +174,7 @@ subroutine irmaes(idfimd, nomaas, nomamd, nbimpr, caimpi,&
         if (icmp_tu_g4.eq.0) nbgamm = 3
     endif
 !
-!   DECOMPTE DU NOMBRE DE MAILLES PAR TYPE
+! DECOMPTE DU NOMBRE DE MAILLES PAR TYPE
     nmatyp(:) = 0
     do ima = 1, nbmail
         nmatyp(typmail(ima)) = nmatyp(typmail(ima)) + 1
