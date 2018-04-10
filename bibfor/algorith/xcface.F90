@@ -93,6 +93,7 @@ subroutine xcface(lsn, lst, jgrlsn, igeom, enr,&
 !
 !
     eps=-1.0d-10
+    minlst = 1*r8maem()
     zxain = xxmmvd('ZXAIN')
     call elrefe_info(fami='RIGI', ndim=ndim, nno=nno, nnos=nnos)
 !
@@ -149,7 +150,6 @@ subroutine xcface(lsn, lst, jgrlsn, igeom, enr,&
 !   A IA=IN=0 POUR LES MAILLES DU FRONT
     prec = 1000*r8prem()
     minlsn = 1*r8maem()
-    minlst = 1*r8maem()
 !
 !
     if (ndim .eq. 3) then
