@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -53,7 +53,7 @@ subroutine op9999()
 #include "asterfort/asmpi_info.h"
     mpi_int :: mrank, msize
     integer :: info, nbenre, nboct, iret, nbrank
-    integer :: ifm, iunerr, iunres, iunmes
+    integer :: ifm, iunres, iunmes
     integer :: i, jco, nbco
     integer :: nbext, nfhdf, nproc
     aster_logical :: bool
@@ -67,13 +67,13 @@ subroutine op9999()
 
     call asmpi_info(rank=mrank, size=msize)
     nbrank = to_aster_int(mrank)
-!       
+!
 !   --- PROC0 = 'OUI' pour effectuer les ecritures uniquement sur le processeur de rang 0 ---
-!       si PROC0 = 'NON' on force nbrank=0 
+!       si PROC0 = 'NON' on force nbrank=0
     call getvtx(' ', 'PROC0', scal=proc, nbret=nproc)
-    if ( proc .eq. 'NON' ) then 
-      nbrank = 0 
-    endif   
+    if ( proc .eq. 'NON' ) then
+      nbrank = 0
+    endif
     call getvis(' ', 'STATUT', scal=iret)
     bool = iret == ST_ER .or. iret == ST_OK .or. iret == ST_ER_PR0 .or. &
            iret == ST_ER_OTH .or. iret == ST_UN_OTH .or. iret == ST_EXCEPT
@@ -108,7 +108,6 @@ subroutine op9999()
         endif
     endif
 !
-    iunerr = iunifi('ERREUR')
     iunmes = iunifi('MESSAGE')
     iunres = iunifi('RESULTAT')
 !
@@ -140,7 +139,7 @@ subroutine op9999()
         endif
      endif
    endif
-     
+
 !
 ! --- RECUPERE LA POSITION D'UN ENREGISTREMENT SYSTEME CARACTERISTIQUE
 !
@@ -155,8 +154,6 @@ subroutine op9999()
 ! --- CLOTURE DES FICHIERS
 !
       call jelibf('SAUVE', 'G', info)
-      if (iunerr .gt. 0) write(iunerr,* ) '<I> <FIN> FERMETURE DE LA BASE "GLOBALE" EFFECTUEE.'
-      if (iunres .gt. 0) write(iunres,* ) '<I> <FIN> FERMETURE DE LA BASE "GLOBALE" EFFECTUEE.'
 !
       call jelibf('DETRUIT', 'V', info)
 !
@@ -164,9 +161,6 @@ subroutine op9999()
 !
       if (ouinon .eq. 'OUI') then
         call jxcopy('G', 'GLOBALE', 'V', 'VOLATILE', nbext)
-        if (iunerr .gt. 0) write(iunerr, '(A,I2,A)'&
-                           ) ' <I> <FIN> RETASSAGE DE LA BASE "GLOBALE" EFFECTUEE, ',&
-                           nbext, ' FICHIER(S) UTILISE(S).'
         if (iunres .gt. 0) write(iunres, '(A,I2,A)'&
                            ) ' <I> <FIN> RETASSAGE DE LA BASE "GLOBALE" EFFECTUEE, ',&
                            nbext, ' FICHIER(S) UTILISE(S).'
@@ -175,9 +169,8 @@ subroutine op9999()
 ! --- IMPRESSION DES STATISTIQUES ( AVANT CLOTURE DE JEVEUX )
 !
       call utmess('I', 'SUPERVIS2_97')
-      if (iunerr .gt. 0) write(iunerr, *) '<I> <FIN> ARRET NORMAL DANS "FIN" PAR APPEL A "JEFINI".'
       if (iunres .gt. 0) write(iunres, *) '<I> <FIN> ARRET NORMAL DANS "FIN" PAR APPEL A "JEFINI".'
-    endif  
+    endif
     call jedema()
 !
 ! --- CLOTURE DE JEVEUX
