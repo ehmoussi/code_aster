@@ -72,6 +72,9 @@ def options(self):
     group.add_option('--with-prog-xmgrace', action='store_true', default=None,
                      dest='with_prog_xmgrace',
                      help='Force support of xmgrace program')
+    group.add_option('--with-prog-mfront', action='store_true', default=None,
+                     dest='with_prog_mfront',
+                     help='Force support of mfront program')
 
 
 def configure(self):
@@ -235,6 +238,10 @@ def check_external_programs(self):
     _check_prog(self, 'ecrevisse', ['ecrevisse'],
                 add_paths=['${ECREVISSE_ROOT_DIR}'])
 
+    mfront='mfront-'+self.env.TFELVERS
+    _check_prog(self, 'mfront', [mfront],
+                add_paths=['${MFRONT_ROOT_DIR}'])
+
     _check_prog(self, 'xmgrace', ['xmgrace', 'gracebat'])
 
     dict_ext = {}
@@ -242,6 +249,8 @@ def check_external_programs(self):
         if not key.startswith('PROG_'):
             continue
         prog = re.sub('^PROG_', '', key)
+        if key.startswith('PROG_mfront'):
+            prog = 'mfront'
         dict_ext[prog] = self.env[key][0]
     self.env['EXTERNAL_PROGRAMS'] = dict_ext
 
