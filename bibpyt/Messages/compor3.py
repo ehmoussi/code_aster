@@ -33,7 +33,7 @@ cata_msg = {
     8 : _(u"""Vous avez demandé à utiliser un comportement avec des phases métallurgiques de type %(k1)s, mais le matériau est défini avec des variables de commande de type %(k2)s."""),
 
     11 : _(u"""
- Produit scalaire presque nul dans b3d_jacob2, entre les vecteurs :
+ Produit scalaire presque nul entre les vecteurs :
                 %(r1)f
                 %(r2)f
             et
@@ -42,64 +42,62 @@ cata_msg = {
 """),
 
     12 : _(u"""
- Erreur lors de la diagonalisation de la matrice dans b3d_valp33 :
+ Erreur lors de la diagonalisation de la matrice :
                 %(r1)f, %(r2)f, %(r3)f
                 %(r4)f, %(r5)f, %(r6)f
                 %(r7)f, %(r8)f, %(r9)f
 """),
 
     13 : _(u"""
- Norme nulle ds b3d_vectp, matrice à diagonaliser :
+ Norme nulle, matrice à diagonaliser :
                 %(r1)f, %(r2)f, %(r3)f
                 %(r4)f, %(r5)f, %(r6)f
                 %(r7)f, %(r8)f, %(r9)f
 """),
 
     14 : _(u"""
- MVGN ne devrait pas etre nul pour bwpw
- mise a zero de la pression capillaire dans bwpw
+ Ne devrait pas être nul
+ mise à zéro de la pression capillaire
 """),
 
     15 : _(u"""
- Attention srw= %(r1)f ds bwpw3d
+ Attention  %(r1)f
 """),
 
     16 : _(u"""
- Probleme de dimension des variables internes dans cfluage3d, %(i1)d != %(i2)d
+ Problème de dimension des variables internes, %(i1)d != %(i2)d
 """),
 
     17 : _(u"""
- Cas de pression intraporeuse imprevue dans criter3d :
-                bgpg = %(r1)f
-                bwpw = %(r2)f
+ Cas de pression intraporeuse imprévue : %(r1)f %(r2)f
 """),
 
     18 : _(u"""
- Delta plus grand que la racine carrée de 3 : impossible dans criter3d 
+ Delta plus grand que la racine carrée de 3 : impossible 
 """),
 
     19 : _(u"""
- DP atteignable par traction triaxiale ds criter3d
- Augmenter Rc ou diminuer Rt eff  (ou ept=rteff/E)
-                rt = %(r1)f
-                rc = %(r2)f
-                rc min nec = %(r3)f
+ DP atteignable par traction tri-axiale
+ Augmenter RC ou diminuer RT effective 
+                RT = %(r1)f
+                RC = %(r2)f
+                RC minimum = %(r3)f
 """),
 
     20 : _(u"""
  Sous itération radiale désactivée
- controler direction ecoulement dans criter3d
+ contrôler direction écoulement
 """),
 
     21 : _(u"""
- tau< taulim/1000 ds criter3d
- Atteinte du criter DP sans cisaillement
-                valeur reelle = %(r1)f
-                valeur adoptee = %(r2)f
+ TAU < TAU limite/1000
+ Atteinte du critère DP sans cisaillement
+                valeur réelle = %(r1)f
+                valeur adoptée = %(r2)f
 """),
 
     22 : _(u"""
- critere Dp annule alors que %(r1)f >%(r2)f
+ critère DP annulé alors que %(r1)f >%(r2)f
 """),
 
     23 : _(u"""
@@ -108,77 +106,73 @@ cata_msg = {
 
 
     25 : _(u"""
- Il est preferable que bg.Mg(%(r1)f) < %(r2)f
+ Il est préférable que BG.Mg(%(r1)f) < %(r2)f
 """),
 
     26 : _(u"""
- Problème lors du tir visco elastique ds fluendo3d
+ Problème lors du tir viscoélastique dans FLUA_ENDO_PORO
 """),
 
     27 : _(u"""
- Nombre d'itération maximum atteint : 
-            ipla = %(i1)d
+ Nombre d'itération maximum atteint :  %(i1)d
 """),
 
     28 : _(u"""
- Fluendo3d : cas elasticite anisotrope
+ FLUA_ENDO_PORO : cas élasticité anisotrope
  Changement de base pour la loi de comportement non programmé
 """),
 
     29 : _(u"""
- Fluendo3d : cas elasticite anisotrope
- Changement de base resistances non programmé
+ FLUA_ENDO_PORO : cas élasticité anisotrope
+ Changement de base résistances non programmé
 """),
 
     30 : _(u"""
-  Fluendo3d : problème dans la résolution du retour radial
+  FLUA_ENDO_PORO : problème dans la résolution du retour radial
 """),
 
     31 : _(u"""
- Fluendo3d : nombre maximum de sous itération annulant mult plast < 0 atteint :
-            ipla = %(i1)d
+ FLUA_ENDO_PORO : nombre maximum de sous itération atteint : %(i1)d
 """),
 
     32 : _(u"""
- Critere non prevu dans fluage3d
+ Critère non prévu dans fluage3d
 """),
 
     33 : _(u"""
- Fluendo3d : nombre d'itération maximum %(i1)d atteint :
-             compteur de sous iteration plastique = %(i1)d
+ FLUA_ENDO_PORO : nombre d'itération maximum %(i1)d atteint :
+             compteur de sous itération plastique = %(i1)d
              nombre d'itération multiplicateur < 0 = %(i1)d
              
- Essayé de réduire la vitesse de chargement ou augmenter imax dans fluage3d
+ Essayez de réduire la vitesse de chargement ou augmentez le nombre d'itérations maximum
 
 """),
 
     34 : _(u"""
- Fluendo3d : erreur dans endo3d
+ FLUA_ENDO_PORO : erreur 
 """),
 
     35 : _(u"""
- Taille du problème trop grand dans sellier gauss_3d :
-            n = %(i1)d
-            ngf = %(i1)d
+ Taille du problème trop grand %(i1)d et %(i1)d
 """),
 
     36 : _(u"""
- Fluendo3d : pivot nul dans gauss_3d :
-            pivot maxi = %(r1)f
+ FLUA_ENDO_PORO : pivot nul dans gauss_3d :
+            pivot maximum = %(r1)f
             ligne = %(i1)d
 """),
 
     37 : _(u"""
- Hydramat3d : matrices d'élasticité anisotropes non programmés
+ Matrices d'élasticité anisotropes non programmées
 """),
 
     38 : _(u"""
- Données incohérentes pour l hydratation
- 0<HYDR<1  0<HYDRS<1 i.e. hydra3d.eso
+ Données incohérentes pour l'hydratation
+ 0<HYDR<1  0<HYDR_S<1 
 """),
 
     39 : _(u"""
- calcul de 1-Dt dans umdt3 non vérifié
+ calcul de 1-DT non vérifié
 """),
 
 
