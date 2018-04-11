@@ -22,7 +22,7 @@
 from cata_comportement import LoiComportement
 
 loi = LoiComportement(
-    nom            = 'FLUENDO',
+    nom            = 'FLUA_ENDO_PORO',
     lc_type        = ('MECANIQUE',),
     doc            =   """lois de fluage et d'endommagement couplées pour le béton"""            ,
     num_lc         = 167,

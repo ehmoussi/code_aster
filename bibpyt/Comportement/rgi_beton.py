@@ -22,7 +22,7 @@
 from cata_comportement import LoiComportement
 
 loi = LoiComportement(
-    nom            = 'RGI_FLUENDO',
+    nom            = 'RGI_BETON',
     lc_type        = ('MECANIQUE',),
     doc            =   """lois de Réaction de Gonflement interne (RGI), de fluage et d'endommagement couplées pour le béton"""            ,
     num_lc         = 168,
