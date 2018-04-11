@@ -829,14 +829,14 @@ integer :: codret
                     sigp, vip, wkin, typmod, icomp,&
                     nvi, dsidep, codret)
     case (167)
-!     FLUENDO
+!     FLUA_ENDO_PORO
         call lc0167(fami, kpg, ksp, ndim, imate,&
                     compor, carcri, instam, instap, epsm,&
                     deps, sigm, vim, option, angmas,&
                     sigp, vip, wkin, typmod, icomp,&
                     nvi, dsidep, codret)
     case (168)
-!     RGI_FLUENDO
+!     RGI_BETON
         call lc0168(fami, kpg, ksp, ndim, imate,&
                     compor, carcri, instam, instap, epsm,&
                     deps, sigm, vim, option, angmas,&

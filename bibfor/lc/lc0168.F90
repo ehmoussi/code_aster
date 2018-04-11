@@ -28,7 +28,7 @@ implicit none
 ! person_in_charge: etienne.grimal at edf.fr
 ! ======================================================================
 !.......................................................................
-!     BUT: LOI DE RGI_FLUENDO
+!     BUT: LOI DE RGI_BETON
 !
     integer :: imate, ndim, kpg, ksp, codret, icomp, nvi
     real(kind=8) :: carcri(*), angmas(*)
