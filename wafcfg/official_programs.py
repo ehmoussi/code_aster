@@ -21,6 +21,11 @@
 Common to all official platforms: force support of essential external programs.
 """
 
+import os.path as osp
+
+from waflib import Errors
+
+
 def configure(self):
     opts = self.options
     # force to fail if a program is not found
@@ -31,3 +36,32 @@ def configure(self):
     opts.with_prog_homard = True
     opts.with_prog_ecrevisse = True
     opts.with_prog_xmgrace = True
+
+
+def check_prerequisites_package(self, yammdir, minvers):
+    """Check for version of the prerequisites package.
+
+    Can only be used if prerequisites are installed with a 'Yamm' package.
+
+    Arguments:
+        self (Configure): Configure object.
+        yammdir (str): Directory path of prerequisites installation.
+        minvers (str): Minimal required version of the prerequisites package.
+    """
+    self.start_msg("Checking prerequisites version >= {0}".format(minvers))
+
+    filename = osp.join(yammdir, 'VERSION')
+    if osp.isfile(filename):
+        with open(filename, 'rb') as fvers:
+            version = fvers.read().strip()
+        ok = version >= minvers
+    else:
+        version = "not found"
+        ok = False
+
+    self.end_msg(version, 'GREEN' if ok else 'YELLOW')
+    if not ok:
+        msg = ("Official prerequisites not found! "
+            "Please install updated prerequisites using: "
+            "install_env --prerequisites")
+        raise Errors.ConfigurationError(msg)
