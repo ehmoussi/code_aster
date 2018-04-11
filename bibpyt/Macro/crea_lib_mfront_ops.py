@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -27,13 +27,14 @@ def crea_lib_mfront_ops(self, UNITE_MFRONT, UNITE_LIBRAIRIE, **args):
     self.set_icmd(1)
 
     import os
+    import aster_core
     from Utilitai.UniteAster import UniteAster
     from Utilitai.Utmess import UTMESS
 
     UL = UniteAster()
     fichierMFront = UL.Nom(UNITE_MFRONT)
-
-    os.system("mfront --obuild "+fichierMFront+" --interface=aster")
+    mfront = aster_core.get_option('prog:mfront')
+    os.system(mfront+" --obuild "+fichierMFront+" --interface=aster")
     if not os.path.exists("src/libAsterBehaviour.so"):
         fileName = ("libAsterBehaviour.so")
         UTMESS('F', 'MFRONT_4', valk=fileName)

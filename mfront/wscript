@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -120,9 +120,22 @@ def check_mfront(self):
     self.env.TFELHOME = tfelhome
     # export TFELHOME for future checkings
     os.environ['TFELHOME'] = tfelhome[0]
+    # takes TFELHOME from env (wafcfg) or environment
+    if not self.env.TFELVERS:
+        self.add_os_flags('TFELVERS')
+    vers = self.env.TFELVERS
+    # Define suffix for version
+    if not vers:
+        self.env.TFELSUFFIX = ' '
+    else:
+        self.env.TFELSUFFIX = '-' + vers
+    # Define programs names mfront and tfel-config
+    mfront = 'mfront' + self.env.TFELSUFFIX
+    tfelconfig = 'tfel-config' + self.env.TFELSUFFIX
+    
+    self.find_program(mfront, path_list=paths, var='MFRONT')
+    self.find_program(tfelconfig, path_list=paths, var='TFEL_CONFIG')
 
-    self.find_program('mfront', path_list=paths)
-    self.find_program('tfel-config', path_list=paths)
     tfel_config = self.env.TFEL_CONFIG[0]
     self.check_cfg(path=tfel_config,
                    msg="Checking for '{0}'".format(osp.basename(tfel_config)),
@@ -176,7 +189,9 @@ def check_mfront_libs(self):
     _check = partial(self.check_cxx, mandatory=True, uselib_store='MFRONT',
                      use='MFRONT')
     check_lib = lambda lib: _check(lib=lib)
-    libs = ['AsterInterface', 'TFELSystem']
+    vers = self.env.TFELVERS
+    libs = ['AsterInterface' + self.env.TFELSUFFIX,
+            'TFELSystem' + self.env.TFELSUFFIX ]
     map(check_lib, Utils.to_list(libs))
 
 @Configure.conf
@@ -184,6 +199,7 @@ def check_mfront_py(self):
     import sys
     from distutils.sysconfig import get_python_lib
     mfr = get_python_lib(prefix=self.env.TFELHOME[0])
+    vers = self.env.TFELSUFFIX.replace(".","_").replace("-","_")
     try:
         sys.path.remove(mfr)
     except ValueError:
@@ -191,7 +207,7 @@ def check_mfront_py(self):
     sys.path.append(mfr)
     # for profile.sh
     self.env.append_value('CFG_PYTHONPATH', mfr)
-    self.check_python_module('tfel.material')
+    self.check_python_module('tfel'+vers+'.material')
 
 @Configure.conf
 def check_cxx11_abi(self):
@@ -199,7 +215,7 @@ def check_cxx11_abi(self):
     # LD_LIBRARY_PATH is not reread now.
     # So 'libname' must not have dependencies out of initial LD_LIBRARY_PATH.
     # Use http://demangler.com/ to demangle names
-    libname = "./libTFELUtilities.so"
+    libname = "./libTFELUtilities"+self.env.TFELSUFFIX+".so"
     symbol = "replace_all"
     prev = os.getcwdu()
     os.chdir(osp.join(self.env.TFELHOME[0], "lib"))
@@ -300,6 +316,7 @@ class mfront_capy(Task.Task):
         """Create a .capy file for the MFront behaviours"""
         libpath = self.inputs[0].abspath()
         lst = self.generator.lst
+        suffix = self.generator.env['TFELSUFFIX']
         target = self.outputs[0]
         lines = [capy_header]
         for node in lst:
@@ -307,7 +324,7 @@ class mfront_capy(Task.Task):
             comport = osp.splitext(osp.basename(filename))[0]
             symbol = "aster" + comport.lower()
             try:
-                props = getMaterialProperties(libpath, filename, symbol)
+                props = getMaterialProperties(libpath, filename, symbol,suffix)
             except RuntimeError as exc:
                 Logs.error("Errors occurred with behaviour '{name}' searched "
                     "in file '{filename}'.\nDetails: {exc}"
@@ -338,10 +355,12 @@ class fake_mfront_capy(Task.Task):
         target.sig = Utils.h_file(target.abspath())
 
 ###############################################################################
-def getMaterialProperties(lib, mfront_filename, symbol):
+def getMaterialProperties(lib, mfront_filename, symbol,suffix):
     """Return the list of material properties"""
-    from tfel.material import ModellingHypothesis
-    import mfront
+    suf = suffix.replace('-','_').replace('.','_')
+    tfel = __import__("tfel"+suf+".material", fromlist=[])
+    ModellingHypothesis = getattr(tfel.material,'ModellingHypothesis') 
+    mfront = __import__("mfront"+suf)
     os.environ['MFRONT_INCLUDE_PATH'] = osp.dirname(mfront_filename)
     props = []
 
