@@ -3404,6 +3404,7 @@ class EndoFissExpMaterialBehaviourInstance: public GeneralMaterialBehaviourInsta
             this->addDoubleProperty( "Tau", ElementaryMaterialPropertyDouble( "TAU" , true ) );
             this->addDoubleProperty( "Sig0", ElementaryMaterialPropertyDouble( "SIG0" , true ) );
             this->addDoubleProperty( "Beta", ElementaryMaterialPropertyDouble( "BETA" , 0.1 , false ) );
+            this->addDoubleProperty( "Rest_rigidite", ElementaryMaterialPropertyDouble( "REST_RIGIDITE" , true ) );
             this->addDoubleProperty( "Coef_rigi_mini", ElementaryMaterialPropertyDouble( "COEF_RIGI_MINI" , 1.E-5 , false ) );
         };
 
