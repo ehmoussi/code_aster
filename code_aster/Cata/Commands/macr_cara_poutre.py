@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -38,13 +38,25 @@ MACR_CARA_POUTRE=MACRO(nom="MACR_CARA_POUTRE",
          ),
 
          MAILLAGE = SIMP(statut='f',typ=maillage_sdaster, fr=tr("Nom du concept maillage")),
-         UNITE = SIMP(statut='f',typ=UnitType(), inout='in',
-                      fr=tr("Unité correspondant au format du fichier maillage")),
+ 
          b_maillage = BLOC(
             condition = """not exists("MAILLAGE")""",
             FORMAT = SIMP(statut='f',typ='TXM',defaut="MED",into=("ASTER","MED"),
                            fr=tr("Format du fichier")),
          ),
+
+         b_format_med =BLOC( condition = """ ( equal_to("FORMAT", 'MED') ) """ ,
+                             fr=tr("Informations complémentaires pour le format MED."),
+           UNITE           =SIMP(statut='f',typ=UnitType('med') , inout='in'),               
+ 
+         ),
+
+         b_format_autre =BLOC( condition = """ ( not equal_to("FORMAT", 'MED') ) """ ,
+                             fr=tr("Informations complémentaires pour les autres formats."),
+           UNITE           =SIMP(statut='f',typ=UnitType() , inout='in'),               
+ 
+         ),
+
 
          ORIG_INER      =SIMP(statut='f',typ='R',max=3,defaut=(0.E+0,0.E+0),
                               fr=tr("Point par rapport auquel sont calculées les inerties")),

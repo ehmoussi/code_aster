@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -28,8 +28,6 @@ LIRE_MAILLAGE=OPER(nom="LIRE_MAILLAGE",op=   1,sd_prod=maillage_sdaster,
                    
                    reentrant='n',
 
-         UNITE           =SIMP(statut='f',typ=UnitType(),defaut= 20 , inout='in'),
-
          FORMAT          =SIMP(statut='f',typ='TXM',defaut="MED",into=("ASTER","MED"),
                             fr=tr("Format du fichier : ASTER ou MED."),
                             ),
@@ -39,9 +37,15 @@ LIRE_MAILLAGE=OPER(nom="LIRE_MAILLAGE",op=   1,sd_prod=maillage_sdaster,
                APLAT         =SIMP(statut='f',typ='R',defaut= 1.0E-3 ),
          ),
 
+         b_format_autre =BLOC( condition = """ ( not equal_to("FORMAT", 'MED') ) """ ,
+                             fr=tr("Informations complémentaires pour la lecture ASTER."),
+                             
+            UNITE           =SIMP(statut='f',typ=UnitType(),defaut= 20 , inout='in'),         
+         ),
          b_format_med =BLOC( condition = """ ( equal_to("FORMAT", 'MED') ) """ ,
                              fr=tr("Informations complémentaires pour la lecture MED."),
                              
+            UNITE           =SIMP(statut='f',typ=UnitType('med'),defaut= 20 , inout='in'),               
 
 # Pour une lecture dans un fichier MED, on peut préciser le nom sous lequel
 # le maillage y a été enregistré. Par défaut, on va le chercher sous le nom du concept à créer.
