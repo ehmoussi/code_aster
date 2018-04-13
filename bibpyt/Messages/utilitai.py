@@ -143,7 +143,7 @@ Erreur utilisateur dans la commande CREA_RESU / TYPE_MAXI= ...
   La commande exige que tous les champs pour lesquels on veut extraire
   le maximum aient la même numérotation pour leurs composantes.
   Ce n'est pas le cas pour cette structure de donnée SD_RESULTAT.
-  
+
   Cela est certainement du à la présence de mailles tardives à certains instants
   de calcul et pas à d'autres.
 """),
@@ -263,8 +263,6 @@ Contactez le support technique.
     56 : _(u"""
  Le partitionneur SCOTCH a fait remonter l'erreur %(i1)d. Veuillez contacter l'équipe de
  développement.
- Pour contourner ce problème, vous pouvez néanmoins:
-   - changer de partitionneur (METHODE=KMETIS ou PMETIS),
 """),
 
 
