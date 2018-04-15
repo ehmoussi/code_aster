@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -24,10 +24,11 @@ Code_Aster Syntax Utilities
 List of utilities for syntax objects.
 """
 
-import os
-from functools import partial
+from array import array
 from collections import OrderedDict
+from functools import partial
 import math
+import os
 
 import numpy
 
@@ -50,7 +51,7 @@ def mixedcopy(obj):
     return new
 
 def remove_none(obj):
-    """"Remove None values from dict **in place**, do not change values of
+    """Remove None values from dict **in place**, do not change values of
     other types."""
     if isinstance(obj, (list, tuple)):
         for i in obj:
@@ -62,15 +63,30 @@ def remove_none(obj):
             else:
                 remove_none(obj[key])
 
+def search_for(obj, predicate):
+    """Return all values that verify the predicate function."""
+    found = []
+    if isinstance(obj, (list, tuple)):
+        for i in obj:
+            found.extend(search_for(i, predicate))
+    elif isinstance(obj, dict):
+        for key, value in obj.items():
+            if predicate(value):
+                found.append(value)
+            else:
+                found.extend(search_for(obj[key], predicate))
+    return found
+
 def force_list(values):
-    """Ensure `values` is a list or tuple."""
+    """Ensure `values` is iterable (list, tuple, array...) and return it as
+    a list."""
     if not value_is_sequence(values):
         values = [values]
-    return values
+    return list(values)
 
 def value_is_sequence(value):
     """Tell if *value* is a valid object if max > 1."""
-    return type(value) in (list, tuple, numpy.ndarray)
+    return type(value) in (list, tuple, array, numpy.ndarray)
 
 # same function exist in asterstudy.datamodel.aster_parser
 def old_complex(value):
