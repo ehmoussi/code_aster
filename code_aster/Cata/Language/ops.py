@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -24,10 +24,21 @@ This module only exists for compatibility for the *legacy* syntax.
 """
 
 DEBUT = None
-build_detruire = None
-build_formule = None
-build_gene_vari_alea = None
-INCLUDE = None
-INCLUDE_context = None
+build_debut = None
+
 POURSUITE = None
+build_poursuite = None
 POURSUITE_context = None
+
+INCLUDE = None
+build_include = None
+INCLUDE_context = None
+
+DETRUIRE = None
+build_detruire = None
+
+build_procedure = None
+
+build_DEFI_FICHIER = None
+
+build_formule = None

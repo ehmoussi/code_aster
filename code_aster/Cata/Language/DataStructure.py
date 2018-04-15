@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -20,8 +20,8 @@
 """
 This package is only used to check the *legacy* syntax.
 
-It is not important to use the real class (defined in Cython).
-Cython objects must defined a `getType()` function that is compared to
+It is not important to use the real class (defined in Boost-Python).
+Boost-Python objects must defined a `getType()` function that is compared to
 the return of the class method `getType()` of datastructures.
 
 Ex.: maillage_sdaster.getType() = Mesh().getType() = "MAILLAGE"
@@ -39,6 +39,14 @@ class DataStructure(object):
         """Return the type of DataStructure"""
         # use for static checking (with fake datastructures)
         return cls.__name__.replace("_sdaster", "").upper()
+
+    @classmethod
+    def getSubtypes(cls):
+        """Return the type of DataStructure and all its subtypes."""
+        types = [cls.getType()]
+        for subclass in cls.__subclasses__():
+            types.extend(subclass.getSubtypes())
+        return types
 
     @classmethod
     def register_deepcopy_callback(cls, callback):
@@ -65,13 +73,25 @@ class DataStructure(object):
                 copied.__dict__[k] = deepcopy(v, memodict)
         return copied
 
+    # for compatibility in sdprod functions
+    def is_typco(self):
+        """Tell if it is an auxiliary result."""
+        return False
+
 
 def AsType(obj):
     """Return the type of `obj`"""
-    # AsterStudy Command objects
+    # AsterStudy Command objects: return the underlying DataStructure
     if hasattr(obj, "gettype"):
         try:
             return obj.gettype()
+        except:
+            return
+    # BoostPython objects: return a name to find the DataStructure class
+    elif hasattr(obj, "getType"):
+        try:
+            typn = obj.getType().lower()
+            return globals().get(typn + "_sdaster") or globals().get(typn)
         except:
             return
     elif isinstance(obj, (list, tuple)) and len(obj) > 0:
@@ -216,7 +236,11 @@ class formule_c(formule):
 
 # Objects provided in the header of cata.py
 class GEOM(object):
-    pass
+
+    @classmethod
+    def getType(cls):
+        """Return the type of DataStructure"""
+        return 'TX'
 
 class grma(GEOM):
     pass
@@ -249,7 +273,11 @@ class cham_gd_sdaster(ASSD):
     pass
 
 class carte_sdaster(cham_gd_sdaster):
-    pass
+
+    @classmethod
+    def getType(cls):
+        """Return the type of DataStructure"""
+        return "CART_"
 
 class cham_elem(cham_gd_sdaster):
     pass

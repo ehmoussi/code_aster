@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -26,36 +26,17 @@ It mainly converts new objects to old ones for backward compatibility.
 import __builtin__
 import types
 
-from . import DataStructure as DS, ops
+from . import DataStructure as DS
+from . import ops
 from .DataStructure import AsType
+from .Rules import (AllTogether, AtLeastOne, AtMostOne, ExactlyOne,
+                    IfFirstAllPresent, OnlyFirstPresent)
 from .SyntaxChecker import SyntaxCheckerVisitor
-from .SyntaxObjects import (
-    SimpleKeyword, FactorKeyword, Bloc,
-    Operator, Macro, Procedure, Formule,
-    CataError,
-)
-from .Rules import (
-    AtLeastOne,
-    ExactlyOne,
-    AtMostOne,
-    IfFirstAllPresent,
-    OnlyFirstPresent,
-    AllTogether,
-)
+from .SyntaxObjects import (_F, Bloc, CataError, FactorKeyword, Formule, Macro,
+                            Operator, Procedure, SimpleKeyword)
+from .Validators import (Absent, AndVal, Compulsory, LongStr, NoRepeat,
+                         NotEqualTo, OrdList, OrVal, Together)
 
-from .Validators import (
-    Absent,
-    AndVal,
-    Compulsory,
-    LongStr,
-    NoRepeat,
-    NotEqualTo,
-    OrdList,
-    OrVal,
-    Together,
-)
-
-_F = dict
 __builtin__._F = _F
 
 
