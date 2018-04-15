@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -112,6 +112,7 @@ class SyntaxCheckerVisitor(object):
         """Initialization"""
         self._stack = []
         self._parent_context = []
+        self._default_command = False
 
     @property
     def stack(self):
@@ -135,6 +136,7 @@ class SyntaxCheckerVisitor(object):
                          "_RESULT_OF_MACRO"):
             return
         keywords = mixedcopy(userDict)
+        self._default_command = True
         step.addDefaultKeywords(keywords)
         debug_message2("checking syntax of", step.name, "with", keywords)
         self._parent_context.append(keywords)
@@ -294,6 +296,9 @@ class SyntaxCheckerVisitor(object):
         # loop on occurrences filled by the user
         for userOcc in userDict:
             ctxt = self._parent_context[-1] if self._parent_context else {}
+            if not self._default_command:
+                userOcc = mixedcopy(userOcc)
+                step.addDefaultKeywords(userOcc, ctxt)
             # check rules
             for rule in step.getRules(userOcc, ctxt):
                 self._stack.append(rule)
@@ -305,7 +310,8 @@ class SyntaxCheckerVisitor(object):
             for key, value in userOcc.iteritems():
                 # print key, value
                 if key == "reuse":
-                    if step.definition.get("reentrant") not in ("o", "f"):
+                    reentr = step.definition.get("reentrant", "").split(':')
+                    if reentr and reentr[0] not in ("o", "f"):
                         self._stack.append(key)
                         raise KeyError("reuse is not allowed!")
                     continue
