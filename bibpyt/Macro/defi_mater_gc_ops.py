@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -200,21 +200,9 @@ def Mazars_Unil(DMATER, args):
                 SIGM_LIM = 0.6 * FCJ
             elif (xx == 'EPSI_LIM'):
                 EPSI_LIM = 3.5 / 1000.0
-    #
-    mclef = {}
-    #
-    mclef['INFO'] = 1
-    if (args.has_key('INFO')):
-        mclef['INFO'] = args['INFO']
-    #
-    # Mot clef ELAS
-    mclef['ELAS'] = {'E': EIJ, 'NU': NU}
-    listepara = ['RHO', 'ALPHA', 'AMOR_ALPHA', 'AMOR_BETA', 'AMOR_HYST']
-    for xx in listepara:
-        if (args.has_key(xx)):
-            if (args[xx] != None):
-                mclef['ELAS'][xx] = args[xx]
+
     # Mot clef MATER
+    mclef = elastic_properties(EIJ, NU, args)
     mclef[
         'MAZARS'] = {'K': K, 'EPSD0': EPSD0, 'AC': AC, 'AT': AT, 'BC': BC, 'BT': BT,
                      'SIGM_LIM': SIGM_LIM, 'EPSI_LIM': EPSI_LIM}
@@ -271,21 +259,9 @@ def Acier_Cine_Line(DMATER, args):
                 SIGM_LIM = SY / 1.1
             elif (xx == 'EPSI_LIM'):
                 EPSI_LIM = 10.0 / 1000.0
-    #
-    mclef = {}
-    #
-    mclef['INFO'] = 1
-    if (args.has_key('INFO')):
-        mclef['INFO'] = args['INFO']
-    #
-    # Mot clef ELAS
-    mclef['ELAS'] = {'E': E, 'NU': NU}
-    listepara = ['RHO', 'ALPHA', 'AMOR_ALPHA', 'AMOR_BETA', 'AMOR_HYST']
-    for xx in listepara:
-        if (args.has_key(xx)):
-            if (args[xx] != None):
-                mclef['ELAS'][xx] = args[xx]
+
     # Mot clef MATER
+    mclef = elastic_properties(E, NU, args)
     mclef['ECRO_LINE'] = {'D_SIGM_EPSI': D_SIGM_EPSI, 'SY': SY,
                           'SIGM_LIM': SIGM_LIM, 'EPSI_LIM': EPSI_LIM}
     # On affiche dans tous les cas
@@ -300,56 +276,60 @@ def Acier_Cine_Line(DMATER, args):
     return mclef
 
 
-def Ident_Endo_Fiss_Exp(ft,fc,beta,prec=1E-10,itemax=100):
+def Ident_Endo_Fiss_Exp(ft, fc, beta, prec=1E-10, itemax=100):
     # Estimation initiale
-    A = (2.0/3.0 + 3*beta**2)**0.5
-    r = fc/ft
-    C = 3**0.5
-    L = A*(r-1)
-    p0 = 2*(1-C)
-    pp = (1-L)
-    delta = pp**2-p0
-    x = -pp+delta**0.5
+    A = (2.0 / 3.0 + 3 * beta ** 2) ** 0.5
+    r = fc / ft
+    C = 3 ** 0.5
+    L = A * (r - 1)
+    p0 = 2 * (1 - C)
+    pp = (1 - L)
+    delta = pp ** 2 - p0
+    x = -pp + delta ** 0.5
 
     # Resolution de l'equation par methode de Newton
     for i in range(itemax):
-        f  = L*x + (2+NP.exp(-2*r*x))**0.5 - (2+NP.exp(2*x))**0.5
-        if abs(f) < prec: break
-        df = L - r*NP.exp(-2*r*x)/(2+NP.exp(-2*r*x))**0.5 - NP.exp(2*x)/(2+NP.exp(2*x))**0.5
-        x  = x - f/df
+        f  = L * x + \
+            (2 + NP.exp(-2 * r * x)) ** 0.5 - (2 + NP.exp(2 * x)) ** 0.5
+        if abs(f) < prec:
+            break
+        df = L - r * \
+            NP.exp(-2 * r * x) / (2 + NP.exp(-2 * r * x)) ** 0.5 - \
+            NP.exp(2 * x) / (2 + NP.exp(2 * x)) ** 0.5
+        x = x - f / df
     else:
-        UTMESS('F', 'COMPOR1_87' )
+        UTMESS('F', 'COMPOR1_87')
     #
-    tau  = A*x + (2+NP.exp(2*x))**0.5
-    sig0 = ft/x
-    return (sig0,tau)
+    tau = A * x + (2 + NP.exp(2 * x)) ** 0.5
+    sig0 = ft / x
+    return (sig0, tau)
 
 
-
-def ConfinedTension(nu,sig0,tau,beta,prec=1E-10,itemax=100):
+def ConfinedTension(nu, sig0, tau, beta, prec=1E-10, itemax=100):
     # Initialisation
-    s = NP.array((1-nu,nu,nu))
-    L  = (2.0/3.0*(1-2*nu)**2 + 3*beta**2*(1+nu)**2)**0.5
+    s = NP.array((1 - nu, nu, nu))
+    L = (2.0 / 3.0 * (1 - 2 * nu) ** 2 + 3 * beta ** 2 * (1 + nu) ** 2) ** 0.5
     # Estimation initiale
-    xe = NP.log(tau**2-2)/(2*s[0])
-    xl = tau/L
-    x  = min(xe,xl)
+    xe = NP.log(tau ** 2 - 2) / (2 * s[0])
+    xl = tau / L
+    x = min(xe, xl)
     # Résolution de l'équation par méthode de Newton
     for i in range(itemax):
-        ep  = NP.exp(x*s)
-        epr = NP.dot(ep,ep)**0.5
-        f  = L*x + epr - tau
-        if abs(f) < prec: break
-        df = L + NP.add.reduce(ep*ep*s)/epr
-        x  = x - f/df
+        ep = NP.exp(x * s)
+        epr = NP.dot(ep, ep) ** 0.5
+        f = L * x + epr - tau
+        if abs(f) < prec:
+            break
+        df = L + NP.add.reduce(ep * ep * s) / epr
+        x = x - f / df
     else:
-        UTMESS('F', 'COMPOR1_87' )
+        UTMESS('F', 'COMPOR1_87')
     #
-    sig1 = x*sig0*(1-nu)
+    sig1 = x * sig0 * (1 - nu)
     return sig1
 
 
-def Endo_Fiss_Exp(DMATER,args):
+def Endo_Fiss_Exp(DMATER, args):
     """
     ENDO_FISS_EXP = Paramètres utilisateurs de la loi ENDO_FISS_EXP
       E              = Module de Young
@@ -367,61 +347,84 @@ def Endo_Fiss_Exp(DMATER,args):
     #
     MATER = DMATER.cree_dict_valeurs(DMATER.mc_liste)
     # Lecture et interprétation des paramètres utilisateurs
-    E   = float(MATER['E'])
-    NU  = float(MATER['NU'])
-    GF  = float(MATER['GF'])
-    FT  = float(MATER['FT'])
-    FC  = float(MATER['FC'])
+    E = float(MATER['E'])
+    NU = float(MATER['NU'])
+    GF = float(MATER['GF'])
+    FT = float(MATER['FT'])
+    FC = float(MATER['FC'])
     CRM = float(MATER['COEF_RIGI_MINI'])
-    D   = float(MATER['LARG_BANDE']/2.0)
+    D = float(MATER['LARG_BANDE'] / 2.0)
     rrc = float(MATER['REST_RIGI_FC'])
     # Valeur par défaut
     beta = 0.1
     # Paramètres de la fonction seuil
-    if FC/FT < 5.83 :
-        UTMESS('F', 'COMPOR1_86', valr=(float(FC)/float(FT),) )
-    (sig0,tau) = Ident_Endo_Fiss_Exp(FT,FC,beta)
-    sigc = ConfinedTension(NU,sig0,tau,beta)
+    if FC / FT < 5.83:
+        UTMESS('F', 'COMPOR1_86', valr=(float(FC) / float(FT),))
+    (sig0, tau) = Ident_Endo_Fiss_Exp(FT, FC, beta)
+    sigc = ConfinedTension(NU, sig0, tau, beta)
     # Paramètres de la fonction d'adoucissement
     if MATER['P'] <> None:
         P = float(MATER['P'])
     else:
         G1 = float(MATER['G_INIT'])
-        P  = ((3*NP.pi*GF)/(4*G1))**(2.0/3.0) - 2
-        if P<1: UTMESS('F','COMPOR1_93')
+        P = ((3 * NP.pi * GF) / (4 * G1)) ** (2.0 / 3.0) - 2
+        if P < 1:
+            UTMESS('F', 'COMPOR1_93')
     #
     if MATER['Q'] <> None:
         Q = float(MATER['Q'])
     elif MATER['Q_REL'] <> None:
-        qmax = (1.11375+0.565239*P-0.003322*P**2)*(1-NP.exp(-1.98935*P)) - 0.01
+        qmax = (1.11375 + 0.565239 * P - 0.003322 * P ** 2) * \
+            (1 - NP.exp(-1.98935 * P)) - 0.01
         Q = qmax * float(MATER['Q_REL'])
     else:
         Q = 0.0
     #
     # Paramètres internes au modèle
-    rig = E*(1-NU)/((1+NU)*(1-2*NU))
-    K = 0.75*GF/D
-    C = 0.375*GF*D
-    M = 1.5*rig*GF/(D*sigc**2)
+    rig = E * (1 - NU) / ((1 + NU) * (1 - 2 * NU))
+    K = 0.75 * GF / D
+    C = 0.375 * GF * D
+    M = 1.5 * rig * GF / (D * sigc ** 2)
     #
-    if M < P+2 :
-        UTMESS('F','COMPOR1_94',valr=(float(M),float(P)))
+    if M < P + 2:
+        UTMESS('F', 'COMPOR1_94', valr=(float(M), float(P)))
     # Restauration de rigidité
     if rrc == 0.0:
         gamma = 0
     else:
-        gamma = -1.0/(FC/E*NP.log(rrc))
+        gamma = -1.0 / (FC / E * NP.log(rrc))
+
     # Paramètres pour DEFI_MATERIAU
+    mclef = elastic_properties(E, NU, args)
+    mclef.update({
+        'ENDO_FISS_EXP': {'M': M, 'P': P, 'Q': Q, 'K': K, 'TAU': tau,
+                          'SIG0': sig0, 'BETA': beta, 'COEF_RIGI_MINI': CRM,
+                          'REST_RIGIDITE': gamma},
+        'NON_LOCAL': {'C_GRAD_VARI': C, 'PENA_LAGR': 1.E3 * K},
+    })
+
+    return mclef
+
+
+def elastic_properties(E, NU, args):
+    """Returns the properties for elasticity.
+
+    Also add generic keywords (INFO).
+
+    Arguments:
+        args (dict): User arguments.
+
+    Returns:
+        dict: Updated `mclef` dict.
+    """
     mclef = {
-        'ELAS':            {'E':E, 'NU':NU},
-        'ENDO_FISS_EXP':   {'M':M,'P':P,'Q':Q,'K':K,'TAU':tau,'SIG0':sig0, 'BETA':beta,
-                            'COEF_RIGI_MINI':CRM, 'REST_RIGIDITE':gamma},
-        'NON_LOCAL':       {'C_GRAD_VARI':C, 'PENA_LAGR':1.E3*K},
+        'INFO': args.get('INFO', 1),
+        'ELAS': {'E': E, 'NU': NU},
     }
-    #
-    mclef['INFO'] = 1
-    if 'INFO' in args:
-        mclef['INFO'] = args['INFO']
+    list_para = ['RHO', 'ALPHA', 'AMOR_ALPHA', 'AMOR_BETA', 'AMOR_HYST']
+    for para in list_para:
+        if args.get(para) is not None:
+            mclef['ELAS'][para] = args[para]
     return mclef
 
 
@@ -433,16 +436,17 @@ def defi_mater_gc_ops(self, MAZARS, ACIER, ENDO_FISS_EXP, **args):
     # La macro compte pour 1 dans la numérotation des commandes
     self.set_icmd(1)
     DEFI_MATERIAU = self.get_cmd('DEFI_MATERIAU')
-    #
+
     # Le concept sortant (de type mater_sdaster) est nommé 'Materiau' dans le
     # contexte de la macro
     self.DeclareOut('Materiau', self.sd)
     #
-    if (MAZARS != None):
+    if MAZARS != None:
         mclef = Mazars_Unil(MAZARS[0], args)
-    if (ACIER != None):
+    if ACIER != None:
         mclef = Acier_Cine_Line(ACIER[0], args)
-    if (ENDO_FISS_EXP != None):
+    if ENDO_FISS_EXP != None:
         mclef = Endo_Fiss_Exp(ENDO_FISS_EXP[0], args)
-    # Définition du matériau
+
     Materiau = DEFI_MATERIAU(**mclef)
+    return ier
