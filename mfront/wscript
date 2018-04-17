@@ -126,7 +126,7 @@ def check_mfront(self):
     vers = self.env.TFELVERS
     # Define suffix for version
     if not vers:
-        self.env.TFELSUFFIX = ' '
+        self.env.TFELSUFFIX = ''
     else:
         self.env.TFELSUFFIX = '-' + vers
     # Define programs names mfront and tfel-config
