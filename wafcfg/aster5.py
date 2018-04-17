@@ -39,7 +39,7 @@ def configure(self):
 
     intel.configure(self)
     official_programs.configure(self)
-    official_programs.check_prerequisites_package(self, YAMMROOT, '20180413')
+    official_programs.check_prerequisites_package(self, YAMMROOT, '20180417')
     opts.with_prog_salome = True
     opts.with_prog_europlexus = True
 
@@ -51,7 +51,7 @@ def configure(self):
         '. /etc/profile.d/lmod.sh',
         'module load ifort/2016.0.047 icc/2016.0.047 mkl/2016.0.047'])
 
-    TFELHOME = YAMMROOT + '/prerequisites/Mfront-TFEL311'
+    TFELHOME = YAMMROOT + '/prerequisites/Mfront-TFEL311_aster'
     TFELVERS = '3.1.1'
     self.env.TFELHOME = TFELHOME
     self.env.TFELVERS = TFELVERS

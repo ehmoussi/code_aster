@@ -34,7 +34,7 @@ def crea_lib_mfront_ops(self, UNITE_MFRONT, UNITE_LIBRAIRIE, **args):
     UL = UniteAster()
     fichierMFront = UL.Nom(UNITE_MFRONT)
     mfront = aster_core.get_option('prog:mfront')
-    os.system(mfront+" --obuild "+fichierMFront+" --interface=aster")
+    os.system(mfront + " --obuild " + fichierMFront + " --interface=aster")
     if not os.path.exists("src/libAsterBehaviour.so"):
         fileName = ("libAsterBehaviour.so")
         UTMESS('F', 'MFRONT_4', valk=fileName)

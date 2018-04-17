@@ -37,17 +37,17 @@ def configure(self):
     opts = self.options
 
     official_programs.configure(self)
-    official_programs.check_prerequisites_package(self, YAMMROOT, '20180413')
+    official_programs.check_prerequisites_package(self, YAMMROOT, '20180417')
 
 #   for using metis with standard integer (since Metis_aster-510_aster4)
     self.env.append_value('CFLAGS', ['-DINTSIZE32'])
     self.env['ADDMEM'] = 300
 
-    TFELHOME = YAMMROOT + '/prerequisites/Mfront-TFEL311'
+    TFELHOME = YAMMROOT + '/prerequisites/Mfront-TFEL311_aster'
     TFELVERS = '3.1.1'
     self.env.TFELHOME = TFELHOME
     self.env.TFELVERS = TFELVERS
-    
+
     self.env.append_value('LIBPATH', [
         YAMMROOT + '/prerequisites/Python-2710/lib',
         YAMMROOT + '/prerequisites/Hdf5-1814/lib',
