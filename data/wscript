@@ -215,9 +215,6 @@ def getAsrunTmp(self):
 
 @Configure.conf
 def check_external_programs(self):
-#    _check_prog(self, 'metis', ['gpmetis'],
-#                add_paths=[osp.join('${METISDIR}', 'bin')])
-
     _check_prog(self, 'gmsh', ['gmsh'],
                 add_paths=['${GMSH_BIN_DIR}'])
 
@@ -237,8 +234,8 @@ def check_external_programs(self):
 
     _check_prog(self, 'ecrevisse', ['ecrevisse'],
                 add_paths=['${ECREVISSE_ROOT_DIR}'])
-    
-    mfront='mfront'+self.env.TFELSUFFIX
+
+    mfront='mfront' + self.env.TFELSUFFIX
     _check_prog(self, 'mfront', [mfront],
                 add_paths=['${MFRONT_ROOT_DIR}'])
 
