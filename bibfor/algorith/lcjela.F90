@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -40,7 +40,7 @@ subroutine lcjela(loi, mod, nmat, mater, vin,&
         call rslpli('ISOTROPE', mod, mater, dsde, nmat,&
                     vin)
 !
-    else if (loi(1:8) .eq. 'MONOCRIS') then
+    else if ((loi(1:8) .eq. 'MONOCRIS') .or. (loi(1:8) .eq. 'MONO2RIS')) then
 !
         if (mater(nmat,1) .eq. 0) then
             call lcopli('ISOTROPE', mod, mater(1, 1), dsde)

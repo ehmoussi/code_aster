@@ -58,7 +58,7 @@ subroutine psvari(compor, nbvari, dimens, ipop1, ipop2)
     then
         ipop1=1
         ipop2=nbvari
-    else if (compor.eq.'MONOCRISTAL') then
+    else if (compor.eq.'MONOCRISTAL' .or. compor .eq. 'MONO2RISTAL') then
         ipop1 = nbvari-1
         ipop2 = nbvari
     else if (compor.eq.'POLYCRISTAL') then

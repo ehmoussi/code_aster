@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -63,7 +63,7 @@ subroutine lcdpeq(vind, vinf, rela_comp, nbcomm, cpmono,&
     common/polycr/irr,decirr,nbsyst,decal,gdef
     data    id/1.d0,0.d0,0.d0, 0.d0,1.d0,0.d0, 0.d0,0.d0,1.d0/
 !
-    if (rela_comp(1:8) .eq. 'MONOCRIS') then
+    if ((rela_comp(1:8) .eq. 'MONOCRIS') .or. (rela_comp(1:8) .eq. 'MONO2RIS')) then
         nvi = nvi +3
         if (gdef .eq. 1) then
             nvi=nvi+9
@@ -73,7 +73,7 @@ subroutine lcdpeq(vind, vinf, rela_comp, nbcomm, cpmono,&
     epseq = 0.d0
     nbsys = 0
 !
-    if (rela_comp(1:8) .eq. 'MONOCRIS') then
+    if ((rela_comp(1:8) .eq. 'MONOCRIS') .or. (rela_comp(1:8) .eq. 'MONO2RIS')) then
 !
         nbfsys=nbcomm(nmat,2)
 !        NSFV : debut de la famille IFA dans les variables internes
