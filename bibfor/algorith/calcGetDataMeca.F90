@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -136,8 +136,8 @@ integer, intent(out) :: nume_harm
 !
 ! - Prepare constitutive laws management datastructure
 !
+    call nonlinDSConstitutiveCreate(ds_constitutive)
     if (l_elem_nonl) then
-        call nonlinDSConstitutiveCreate(ds_constitutive)
         call nmdorc(model, mate, l_etat_init,&
                     ds_constitutive%compor, ds_constitutive%carcri, ds_constitutive%mult_comp,&
                     l_implex_ = .false._1)
