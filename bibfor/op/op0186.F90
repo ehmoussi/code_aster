@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -236,8 +236,7 @@ implicit none
 ! --- NEWTON-KRYLOV : COPIE DANS LA SD SOLVEUR DE LA PRECISION DE LA
 !                     RESOLUTION POUR LA PREDICTION (FORCING-TERM)
     if (lnkry) then
-        iterat=-1
-        call nmnkft(solver, sddisc, iterat)
+        call nmnkft(solver, sddisc)
     endif
 !
 ! --- MATRICE TANGENTE REACTUALISEE POUR UN NOUVEAU DT
