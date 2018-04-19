@@ -97,23 +97,49 @@ character(len=19), intent(in) :: cnpilo, cndonn
 ! - Get dead Neumann loads and multi-step dynamic schemes forces
 !
     call nmasfi(list_func_acti, hval_veasse, cnffdo, sddyna)
-    call nonlinDSVectCombAddAny(cnffdo, +1.d0, ds_vectcomb)
 !
 ! - Get Dirichlet loads
 !
     call nmasdi(list_func_acti, hval_veasse, cndfdo)
-    call nonlinDSVectCombAddAny(cndfdo, +1.d0, ds_vectcomb)
 !
 ! - Get undead Neumann loads and multi-step dynamic schemes forces
 !
     call nmasva(list_func_acti, hval_veasse, cnfvdo, sddyna)
-    call nonlinDSVectCombAddAny(cnfvdo, +1.d0, ds_vectcomb)
 !
 ! - Get undead Neumann loads for dynamic
 !
     if (l_dyna) then
-        coeequ = ndynre(sddyna,'COEF_MPAS_EQUI_COUR')
         call ndasva(sddyna, hval_veasse, cnvady)
+    endif
+!
+! - Add dead Neumann loads and multi-step dynamic schemes forces
+!
+    call nonlinDSVectCombAddAny(cnffdo, +1.d0, ds_vectcomb)
+!
+! - Add undead Neumann loads and multi-step dynamic schemes forces
+!
+    call nonlinDSVectCombAddAny(cnfvdo, +1.d0, ds_vectcomb)
+!
+! - Add internal forces to second member
+!
+    call nonlinDSVectCombAddHat(hval_veasse, 'CNFINT', -1.d0, ds_vectcomb)
+!
+! - Add Dirichlet boundary conditions - B.U
+!
+    call nonlinDSVectCombAddHat(hval_veasse, 'CNBUDI', -1.d0, ds_vectcomb)
+!
+! - Add force for Dirichlet boundary conditions (dualized) - BT.LAMBDA
+!
+    call nonlinDSVectCombAddHat(hval_veasse, 'CNDIRI', -1.d0, ds_vectcomb)
+!
+! - Add Dirichlet loads
+!
+    call nonlinDSVectCombAddAny(cndfdo, +1.d0, ds_vectcomb)
+!
+! - Add undead Neumann loads for dynamic
+!
+    if (l_dyna) then
+        coeequ = ndynre(sddyna,'COEF_MPAS_EQUI_COUR')
         call nonlinDSVectCombAddAny(cnvady, coeequ, ds_vectcomb)
     endif
 !
@@ -128,18 +154,6 @@ character(len=19), intent(in) :: cnpilo, cndonn
     if (l_macr) then
         call nonlinDSVectCombAddHat(hval_veasse, 'CNSSTR', -1.d0, ds_vectcomb)
     endif
-!
-! - Add internal forces to second member
-!
-    call nonlinDSVectCombAddHat(hval_veasse, 'CNFINT', -1.d0, ds_vectcomb)
-!
-! - Add Dirichlet boundary conditions - B.U
-!
-    call nonlinDSVectCombAddHat(hval_veasse, 'CNBUDI', -1.d0, ds_vectcomb)
-!
-! - Add force for Dirichlet boundary conditions (dualized) - BT.LAMBDA
-!
-    call nonlinDSVectCombAddHat(hval_veasse, 'CNDIRI', -1.d0, ds_vectcomb)
 !
 ! - Add CONTINUE/XFEM contact force
 !
