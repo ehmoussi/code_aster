@@ -114,7 +114,8 @@ subroutine lcotan(opt, angmas, etatd, etatf, fami,&
             call lcjela(loi, mod, nmat, materd, vind,&
                         dsde)
 !
-        else if ((etatd.eq.'PLASTIC').and.(loi.eq.'MONOCRISTAL')) then
+        else if (((etatd.eq.'PLASTIC').and.(loi.eq.'MONOCRISTAL')) .or. &
+        ((etatd.eq.'PLASTIC').and.(loi.eq.'MONO2RISTAL'))) then
 !
             call lcjplc(loi, mod, angmas, imat, nmat,&
                         materf, timed, timef, comp, nbcomm,&

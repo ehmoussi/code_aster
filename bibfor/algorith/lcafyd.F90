@@ -76,7 +76,7 @@ subroutine lcafyd(comp, materd, materf, nbcomm, cpmono,&
 !
     call lceqvn(ndt, sigd, yd)
 !
-    if (loi(1:8) .eq. 'MONOCRIS') then
+    if ((loi(1:8) .eq. 'MONOCRIS') .or. (loi(1:8) .eq. 'MONO2RIS')) then
 ! ATTENTION !         NS=(NVI-8)/3
         ns=nr-ndt
         irr=0

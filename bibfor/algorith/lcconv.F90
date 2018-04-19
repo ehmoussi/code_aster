@@ -87,7 +87,7 @@ subroutine lcconv(loi, yd, dy, ddy, ye,&
                     iter, intg, typess, essai, icomp,&
                     iret)
 !
-    else if (loi(1:8) .eq. 'MONOCRIS') then
+    else if ((loi(1:8) .eq. 'MONOCRIS') .or. (loi(1:8) .eq. 'MONO2RIS')) then
 !
         call lcmmcv(yd, dy, ddy, nr, itmax,&
                     toler, iter, r, rini, epstr,&

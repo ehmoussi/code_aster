@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -247,7 +247,7 @@ implicit none
     endif
 !
     if (option(1:10) .eq. 'RIGI_MECA_' .and. gdef .eq. 1 .and.&
-        compor(1) .eq. 'MONOCRISTAL') then
+        compor(1) .eq. 'MONO2RISTAL') then
         call lcsmelas(epsd, deps, dsidep,&
                       nmat = nmat, materd_ = materd)
         codret = 0

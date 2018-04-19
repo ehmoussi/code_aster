@@ -21,7 +21,7 @@
 from cata_comportement import LoiComportement
 
 loi = LoiComportement(
-    nom            = 'MONOCRISTAL',
+    nom            = 'MONO2RISTAL',
     lc_type        = ('MECANIQUE',),
     doc            =   """Ce modèle permet de décrire le comportement d'un monocristal dont les relations de comportement
             sont fournies via le concept compor, issu de DEFI_COMPOR.
@@ -32,7 +32,7 @@ loi = LoiComportement(
     nom_vari       = None,
     mc_mater       = None,
     modelisation   = ('3D','AXIS','D_PLAN',),
-    deformation    = ('PETIT','PETIT_REAC',),
+    deformation    = ('SIMO_MIEHE',),
     algo_inte      = ('NEWTON','NEWTON_RELI','RUNGE_KUTTA','NEWTON_PERT',),
     type_matr_tang = ('PERTURBATION','VERIFICATION',),
     proprietes     = None,

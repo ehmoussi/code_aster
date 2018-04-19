@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -77,7 +77,7 @@ implicit none
                     neps, epsm, deps, sigm, vim,&
                     option, angmas, sigp, vip, dsidep,&
                     codret, mult_comp)
-    elseif (compor(1).eq.'MONOCRISTAL') then
+    elseif (compor(1).eq.'MONO2RISTAL') then
         call utlcal('VALE_NOM', algo_inte, carcri(6))
         if (algo_inte(1:6) .eq. 'NEWTON') then
             meting = algo_inte(1:11)

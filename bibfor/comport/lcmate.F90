@@ -131,7 +131,7 @@ subroutine lcmate(fami, kpg, ksp, comp, mod,&
                     materf, matcst, ndt, ndi, nr,&
                     nvi)
 !
-    else if (rela_comp(1:8) .eq. 'MONOCRIS') then
+    else if (rela_comp(1:8) .eq. 'MONOCRIS' .or. rela_comp(1:8) .eq. 'MONO2RIS') then
         ASSERT(mult_comp .ne. ' ')
         call lcmmat(fami, kpg, ksp, mult_comp, mod,&
                     imat, nmat, angmas, pgl, materd,&

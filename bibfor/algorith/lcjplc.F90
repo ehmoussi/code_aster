@@ -64,7 +64,7 @@ subroutine lcjplc(loi, mod, angmas, imat, nmat,&
         call cvmjpl(mod, nmat, mater, timed, timef,&
                     epsd, deps, sigf, vinf, sigd,&
                     vind, nvi, nr, dsde)
-    else if (loi(1:8) .eq. 'MONOCRIS') then
+    else if ((loi(1:8) .eq. 'MONOCRIS') .or. (loi(1:8) .eq. 'MONO2RIS')) then
         call lcmmjp(mod, nmat, mater, timed, timef,&
                     comp, nbcomm, cpmono, pgl, nfs,&
                     nsg, toutms, hsr, nr, nvi, sigd,&

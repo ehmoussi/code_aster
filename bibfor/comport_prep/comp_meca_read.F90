@@ -116,7 +116,7 @@ character(len=8), intent(in), optional :: model
 !
 ! ----- If SIMO_MIEHE, switch to a specific version of the behaviour catalog for some laws
 !
-        l_ldc_sm = ((rela_comp .eq. 'MFRONT') .or. (rela_comp .eq. 'MONOCRISTAL') &
+        l_ldc_sm = ((rela_comp .eq. 'MFRONT') &
         .or. (rela_comp .eq. 'VISC_ISOT_TRAC') .or. (rela_comp .eq. 'VISC_ISOT_LINE') &
         .or. (rela_comp .eq. 'ROUSSELIER') .or. (rela_comp .eq. 'SIMO_MIEHE'))
 !
