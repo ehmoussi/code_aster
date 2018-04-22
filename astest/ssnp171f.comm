@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'),PAR_LOT='OUI');              
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'),PAR_LOT='OUI');
 #----------------------------------------------
 #                   PARAMETRES
 #----------------------------------------------
@@ -79,7 +79,7 @@ COULOM = 0. ;
 ALGOLAG='VERSION1' ;
 
 # K1 ANALYTIQUES DU TEST DE BUI
-if not contact : 
+if not contact :
    K1REF = 0.8862925 * A**(3/2.)
 else :
    K1REF = 0.9648017 * A**(3/2.)
@@ -138,7 +138,7 @@ MAILLAG1=DEFI_GROUP( reuse =MAILLAG1,
                                         RAYON=PRECIS),
                                     ),
                       INFO=1, );
-                      
+
 if blocage == 2 :
    MAILLAG1=DEFI_GROUP( reuse =MAILLAG1,
                         MAILLAGE=MAILLAG1,
@@ -160,7 +160,7 @@ if blocage == 2 :
                                        ),
                       INFO=1, );
 
-                   
+
 MAILLAG1=DEFI_GROUP( reuse =MAILLAG1,
                      MAILLAGE=MAILLAG1,
                      CREA_GROUP_NO=(_F(NOM='NFISSU',
@@ -219,7 +219,7 @@ FISS=DEFI_FISS_XFEM(MAILLAGE=MAILLAG1,
 #               MODELE FISSURE
 #----------------------------------------------
 
-         
+
 if not contact :
    MODELEK=MODI_MODELE_XFEM(MODELE_IN=MODELEIN,
                          FISSURE=FISS,
@@ -230,15 +230,15 @@ else :
                          CONTACT='STANDARD',DECOUPE_FACETTE='SOUS_ELEMENTS',
                          INFO=1,);
    CTXFEM = DEFI_CONTACT(MODELE  = MODELEK,
-                          FORMULATION    = 'XFEM', 
+                          FORMULATION    = 'XFEM',
                           #ELIM_ARETE = 'ELIM',
                           ZONE = (_F(INTEGRATION   = 'NOEUD',
                                      FISS_MAIT     = FISS,
                                      #ALGO_LAGR     = 'VERSION2',
                                      ),));
-                         
+
 MA_XFEM=POST_MAIL_XFEM(MODELE=MODELEK,);
-                    
+
 #----------------------------------------------
 #                   MATERIAU
 #----------------------------------------------
@@ -252,7 +252,7 @@ CHAMPMA1=AFFE_MATERIAU(MAILLAGE=MAILLAG1,
                        AFFE=_F(TOUT='OUI',
                                MATER=ACIER,
                                ),);
-                               
+
 #----------------------------------------------
 #         BLOCAGE DES MODES RIGIDES
 #----------------------------------------------
@@ -283,7 +283,7 @@ elif blocage == 2 :
                                          DDL=('DZ','DZ',),
                                          COEF_MULT=(1.0,1.0),
                                          COEF_IMPO=0.0,),
-                                     
+
                                       _F(GROUP_NO=('NOEUD2','NOEUD2S',),
                                          DDL=('DX','DX',),
                                          COEF_MULT=(1.0,1.0),
@@ -292,7 +292,7 @@ elif blocage == 2 :
                                          DDL=('DZ','DZ',),
                                          COEF_MULT=(1.0,1.0),
                                          COEF_IMPO=0.0,),
-                                     
+
                                       _F(GROUP_NO=('NOEUD3','NOEUD3S',),
                                          DDL=('DZ','DZ',),
                                          COEF_MULT=(1.0,1.0),
@@ -337,12 +337,12 @@ else :
                     INCREMENT=_F(LIST_INST=L_INS1,
                                  INST_FIN=1.0,),
                     NEWTON=_F(REAC_ITER=1,),
-                    SOLVEUR=_F(METHODE='MULT_FRONT',
-                               ),
+                    #~ SOLVEUR=_F(METHODE='MULT_FRONT',
+                               #~ ),
                     ARCHIVAGE=_F(CHAM_EXCLU='VARI_ELGA',),
                     INFO=1,);
-                    
- 
+
+
 #----------------------------------------------
 #         EDITION DE FICHIER XMGRACE
 #----------------------------------------------
@@ -394,7 +394,7 @@ RES_XFEM=CALC_CHAMP(reuse =RES_XFEM,
                    CRITERES=('SIEQ_ELGA','SIEQ_ELNO'),
                    INFO=2,
                    );
-                   
+
 IMPR_RESU(FORMAT='GMSH',
 #          UNITE=37,
           RESU=_F(RESULTAT=RES_XFEM,
@@ -424,7 +424,7 @@ for i in range(0,n) :
                INFO=1,);
 
    #IMPR_TABLE(TABLE=SIF1[i],);
-   
+
    SIF2[i]=CALC_G(
                RESULTAT=RESU1,
                OPTION='CALC_K_G',
@@ -436,15 +436,14 @@ for i in range(0,n) :
                            LISSAGE_G='LAGRANGE',),
                INFO=1,);
 
-   IMPR_TABLE(TABLE=SIF2[i],);   
+   IMPR_TABLE(TABLE=SIF2[i],);
 
 #
 #tests exhaustifs sur le fond en ouverture
 #
-K1_CALC =[0.950926842302, 0.951531991293, 0.951229416797];
-K2_CALC =[0.00173023756219, 0.00165831853625, 0.00169427804922];
-G_CALC =[9.03200305131E-07, 9.04226609263E-07, 9.03713457197E-07];
-
+K1_CALC =[0.950525480107, 0.951130832524, 0.950828156315];
+K2_CALC =[0.00173279193896, 0.00166085659047, 0.00169682426472];
+G_CALC =[9.02436914736E-07, 9.03462725896E-07, 9.02949820316E-07];
 
 for i in range(0,n) :
    TEST_TABLE(TABLE=SIF2[i],
@@ -460,7 +459,7 @@ for i in range(0,n) :
                    VALE_CALC=K2_CALC[i],
               CRITERE='ABSOLU',TYPE_TEST='MAX',
               PRECISION=0.004,
-              REFERENCE='ANALYTIQUE',);              
+              REFERENCE='ANALYTIQUE',);
    TEST_TABLE(TABLE=SIF2[i],
               NOM_PARA='G',
               VALE_REFE=GREF,
