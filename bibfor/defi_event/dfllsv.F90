@@ -167,22 +167,24 @@ real(kind=8), intent(in) :: coef_maxi
 !
 ! - Parameters for ACTION = 'DECOUPE'
 !
-    if (subd_methode .eq. 'MANUEL') then
-        v_sdlist_esubdr(SIZE_LESUR*(i_fail_save-1)+1) = 1.d0
-        v_sdlist_esubdr(SIZE_LESUR*(i_fail_save-1)+2) = subd_pas
-        v_sdlist_esubdr(SIZE_LESUR*(i_fail_save-1)+3) = subd_pas_mini
-        v_sdlist_esubdr(SIZE_LESUR*(i_fail_save-1)+4) = subd_niveau
-    else if (subd_methode.eq.'AUTO') then
-        v_sdlist_esubdr(SIZE_LESUR*(i_fail_save-1)+1) = 2.d0
-        v_sdlist_esubdr(SIZE_LESUR*(i_fail_save-1)+3) = subd_pas_mini
-        v_sdlist_esubdr(SIZE_LESUR*(i_fail_save-1)+5) = subd_inst
-        v_sdlist_esubdr(SIZE_LESUR*(i_fail_save-1)+6) = subd_duree
-        if (subd_auto .eq. 'COLLISION') then
-            v_sdlist_esubdr(SIZE_LESUR*(i_fail_save-1)+10) = 1.d0
-        else if (subd_auto.eq.'EXTRAPOLE') then
-            v_sdlist_esubdr(SIZE_LESUR*(i_fail_save-1)+10) = 2.d0
-        else
-            ASSERT(.false.)
+    if (action_typek .ne. failActionKeyword(FAIL_ACT_STOP)) then
+        if (subd_methode .eq. 'MANUEL') then
+            v_sdlist_esubdr(SIZE_LESUR*(i_fail_save-1)+1) = 1.d0
+            v_sdlist_esubdr(SIZE_LESUR*(i_fail_save-1)+2) = subd_pas
+            v_sdlist_esubdr(SIZE_LESUR*(i_fail_save-1)+3) = subd_pas_mini
+            v_sdlist_esubdr(SIZE_LESUR*(i_fail_save-1)+4) = subd_niveau
+        else if (subd_methode.eq.'AUTO') then
+            v_sdlist_esubdr(SIZE_LESUR*(i_fail_save-1)+1) = 2.d0
+            v_sdlist_esubdr(SIZE_LESUR*(i_fail_save-1)+3) = subd_pas_mini
+            v_sdlist_esubdr(SIZE_LESUR*(i_fail_save-1)+5) = subd_inst
+            v_sdlist_esubdr(SIZE_LESUR*(i_fail_save-1)+6) = subd_duree
+            if (subd_auto .eq. 'COLLISION') then
+                v_sdlist_esubdr(SIZE_LESUR*(i_fail_save-1)+10) = 1.d0
+            else if (subd_auto.eq.'EXTRAPOLE') then
+                v_sdlist_esubdr(SIZE_LESUR*(i_fail_save-1)+10) = 2.d0
+            else
+                ASSERT(.false.)
+            endif
         endif
     endif
 !
