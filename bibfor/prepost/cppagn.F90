@@ -396,6 +396,8 @@ implicit none
                         call jeecra(jexnum(limane, inc), 'LONMAX', ival=4)
                         call jeecra(jexnum(limane, inc), 'LONUTI', ival=4)
                     else
+                        call utmess('A', 'CREALAC_1')
+                        ASSERT(.false.)
                     endif
                 case (4, 6, 16)
                     call jeecra(jexnum(limane, inc), 'LONMAX', ival=2)
