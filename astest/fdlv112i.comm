@@ -217,8 +217,11 @@ deplx0=CALC_FONCTION(INTEGRE=_F(FONCTION=vitex,));
 #
 # Correction de la derive d'integration
 #
-deplxF=FORMULE(NOM_PARA='INST',
-            VALE='deplx0(INST)-(INST*deplx0(TFIN-dt)/(TFIN-dt))')
+deplxF = FORMULE(VALE='deplx0(INST)-(INST*deplx0(TFIN-dt)/(TFIN-dt))',
+                 deplx0=deplx0,
+                 TFIN=TFIN,
+                 dt=dt,
+                 NOM_PARA='INST',)
 
 deplx=CALC_FONC_INTERP(FONCTION=deplxF, NOM_PARA = 'INST',
                         PROL_DROITE='CONSTANT',

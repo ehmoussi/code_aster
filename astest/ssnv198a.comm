@@ -49,8 +49,12 @@ MODELEIN=AFFE_MODELE(MAILLAGE=MAILLAG1,
                     );
 
 
-LN=FORMULE(NOM_PARA=('X','Y','Z'),VALE='Z-lz/2.',lz=lz);
-LT=FORMULE(NOM_PARA=('X','Y','Z'),VALE='Y-ly/2.',ly=ly);
+LN = FORMULE(VALE='Z-lz/2.',
+             lz=lz,
+             NOM_PARA=['X', 'Y', 'Z'],)
+LT = FORMULE(VALE='Y-ly/2.',
+             ly=ly,
+             NOM_PARA=['X', 'Y', 'Z'],)
 
 FISS=DEFI_FISS_XFEM(MAILLAGE=MAILLAG1,
                     DEFI_FISS=_F(FONC_LT=LT,FONC_LN=LN),

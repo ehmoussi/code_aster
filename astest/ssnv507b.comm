@@ -41,7 +41,9 @@ MODELEIN=AFFE_MODELE(MAILLAGE=MAILLAG,
                               PHENOMENE='MECANIQUE',
                               MODELISATION='C_PLAN')));
 
-LN1=FORMULE(NOM_PARA=('X','Y'),VALE='-X*X-Y*Y+R*R',R=R);
+LN1 = FORMULE(VALE='-X*X-Y*Y+R*R',
+              R=R,
+              NOM_PARA=['X', 'Y'],)
 
 FISS1=DEFI_FISS_XFEM(MAILLAGE=MAILLAG,
                     TYPE_DISCONTINUITE='INTERFACE',
@@ -74,13 +76,13 @@ CH1=AFFE_CHAR_MECA(MODELE=MODELEK,
                    DDL_IMPO=(_F(GROUP_MA=('LB','LH','LD','LG'),DX=0,DY=0)),
                    INFO=1);
 
-tournex = FORMULE(NOM_PARA=('X','Y','INST'),
-          VALE='sqrt(X*X+Y*Y)*cos(atan2(Y,X)+DTH*INST)-X',
-          a=a,sqrt=sqrt,b=b,cos=cos,atan2=atan2,DTH=DTH);
+tournex = FORMULE(VALE='sqrt(X*X+Y*Y)*cos(atan2(Y,X)+DTH*INST)-X',
+                  DTH=DTH,
+                  NOM_PARA=['X', 'Y', 'INST'],)
 
-tourney = FORMULE(NOM_PARA=('X','Y','INST'),
-          VALE='sqrt(X*X+Y*Y)*sin(atan2(Y,X)+DTH*INST)-Y',
-          a=a,sqrt=sqrt,b=b,sin=sin,atan2=atan2,DTH=DTH);
+tourney = FORMULE(VALE='sqrt(X*X+Y*Y)*sin(atan2(Y,X)+DTH*INST)-Y',
+                  DTH=DTH,
+                  NOM_PARA=['X', 'Y', 'INST'],)
 
 ROT=AFFE_CHAR_MECA_F(MODELE=MODELEK,
                     DDL_IMPO=(_F(GROUP_NO='INTER',
@@ -141,8 +143,8 @@ RES_XFEM=POST_CHAM_XFEM(
 
 DEP=[None]*5
 inst=[0.0,0.25,0.5,0.75,1.0]
-distance = FORMULE(NOM_PARA=('DX','DY','DX_C','DY_C'),
-                   VALE='sqrt((DX-DX_C)**2+(DY-DY_C)**2)',sqrt=sqrt);
+distance = FORMULE(VALE='sqrt((DX-DX_C)**2+(DY-DY_C)**2)',
+                   NOM_PARA=['DX', 'DY', 'DX_C', 'DY_C'],)
 
 for i in [1,2,3,4]: #Boucle sur les increments
   DEP[i]=POST_RELEVE_T(ACTION=_F(INTITULE='DEPLE',

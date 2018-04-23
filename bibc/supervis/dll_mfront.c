@@ -178,6 +178,46 @@ int mfront_get_number_of_internal_state_variables(char* nomlib, STRING_SIZE lnom
 #endif
 }
 
+
+int mfront_get_strain_model(char* nomlib, STRING_SIZE lnomlib,
+                            char* nomsub, STRING_SIZE lnomsub,
+                            char* nommod, STRING_SIZE lnommod)
+{
+#ifdef _POSIX
+    /* MFRONT Wrapper
+    */
+    char *libname, *symbol, *model, *symbname=NULL;
+    char * name1;
+    int retour = 0;
+    PyObject* DLL_DICT;
+    DLL_DICT = get_dll_register_dict();
+
+    libname = MakeCStrFromFStr(nomlib, lnomlib);
+    symbol = MakeCStrFromFStr(nomsub, lnomsub);
+    model = MakeCStrFromFStr(nommod, lnommod);
+
+    mfront_name(libname, symbol, model, "_FiniteStrainFormulation", &symbname);
+    if ( symbname == NULL )
+    {
+        FreeStr(libname);
+        FreeStr(symbol);
+        FreeStr(symbname);
+        return 0;
+    }
+    else
+    {
+        unsigned short* type = (unsigned short*)libsymb_get_symbol(DLL_DICT, libname, symbname);
+        FreeStr(libname);
+        FreeStr(symbol);
+        FreeStr(symbname);
+        return *type;
+    }
+#else
+    printf("Not available under Windows.\n");
+    abort();
+#endif
+}
+
 void DEFSSSP(MFRONT_GET_NUMBER_OF_INTERNAL_STATE_VARIABLES,
              mfront_get_number_of_internal_state_variables,
              char* nomlib, STRING_SIZE lnomlib,
@@ -192,6 +232,26 @@ void DEFSSSP(MFRONT_GET_NUMBER_OF_INTERNAL_STATE_VARIABLES,
                                                                 nomsub, lnomsub,
                                                                 nommod, lnommod);
     *nbvari = nbvari2;
+#else
+    printf("Not available under Windows.\n");
+    abort();
+#endif
+}
+
+void DEFSSSP(MFRONT_GET_STRAIN_MODEL,
+             mfront_get_strain_model,
+             char* nomlib, STRING_SIZE lnomlib,
+             char* nomsub, STRING_SIZE lnomsub,
+             char* nommod, STRING_SIZE lnommod,
+             ASTERINTEGER* strain_model)
+{
+#ifdef _POSIX
+    /* MFRONT Wrapper
+    */
+    int strain_model2 = mfront_get_strain_model(nomlib, lnomlib,
+                                                nomsub, lnomsub,
+                                                nommod, lnommod);
+    *strain_model = strain_model2;
 #else
     printf("Not available under Windows.\n");
     abort();

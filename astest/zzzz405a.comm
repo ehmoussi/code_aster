@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -1512,7 +1512,9 @@ L_INST=DEFI_LIST_REEL(  DEBUT=0.,
 
 OMEGAA=2.*pi*20.
 
-ACCE1 = FORMULE(NOM_PARA='INST',VALE='10.*sin(OMEGAA*INST) ')
+ACCE1 = FORMULE(VALE='10.*sin(OMEGAA*INST) ',
+                OMEGAA=OMEGAA,
+                NOM_PARA='INST',)
 FCT2=CALC_FONC_INTERP( FONCTION=ACCE1, LIST_PARA=L_INST,
 NOM_PARA='INST',
                                PROL_DROITE='LINEAIRE',
@@ -1520,7 +1522,9 @@ NOM_PARA='INST',
                                NOM_RESU='ACCE',
                              INFO=1)
 
-ACCE2 = FORMULE(NOM_PARA='INST',VALE='10.*cos(OMEGAA*INST) ')
+ACCE2 = FORMULE(VALE='10.*cos(OMEGAA*INST) ',
+                OMEGAA=OMEGAA,
+                NOM_PARA='INST',)
 FCT3=CALC_FONC_INTERP( FONCTION=ACCE2, LIST_PARA=L_INST,
 NOM_PARA='INST',
                                PROL_DROITE='LINEAIRE',

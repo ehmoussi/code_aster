@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -202,7 +202,8 @@ L_INST=DEFI_LIST_REEL(DEBUT=0.0,
 OMEGAA=2.*pi*10.
 
 ACCE1 = FORMULE(VALE = 'sin(OMEGAA*INST)',
-                NOM_PARA='INST')
+                NOM_PARA='INST',
+                OMEGAA=OMEGAA)
 
 ACCELER1=CALC_FONC_INTERP(FONCTION=ACCE1,
                           NOM_RESU='ACCE',
@@ -212,7 +213,8 @@ ACCELER1=CALC_FONC_INTERP(FONCTION=ACCE1,
                           PROL_GAUCHE='LINEAIRE',)
 
 ACCE2 = FORMULE(VALE = '-sin(OMEGAA*INST)',
-                NOM_PARA='INST')
+                NOM_PARA='INST',
+                OMEGAA=OMEGAA)
 
 ACCELER2=CALC_FONC_INTERP(FONCTION=ACCE2,
                           NOM_RESU='ACCE',
@@ -222,7 +224,8 @@ ACCELER2=CALC_FONC_INTERP(FONCTION=ACCE2,
                           PROL_GAUCHE='LINEAIRE',)
 
 VITE1 = FORMULE(VALE = '-cos(OMEGAA*INST)/OMEGAA',
-                NOM_PARA='INST')
+                NOM_PARA='INST',
+                OMEGAA=OMEGAA)
 
 VITESSE1=CALC_FONC_INTERP(FONCTION=VITE1,
                           NOM_RESU='VITE',
@@ -232,7 +235,8 @@ VITESSE1=CALC_FONC_INTERP(FONCTION=VITE1,
                           PROL_GAUCHE='LINEAIRE',)
 
 DEPL1 = FORMULE(VALE = '-sin(OMEGAA*INST)/(OMEGAA**2)',
-                NOM_PARA='INST')
+                NOM_PARA='INST',
+                OMEGAA=OMEGAA)
 
 DEPLACE1=CALC_FONC_INTERP(FONCTION=DEPL1,
                           NOM_RESU='DEPL',
@@ -242,7 +246,8 @@ DEPLACE1=CALC_FONC_INTERP(FONCTION=DEPL1,
                           PROL_GAUCHE='LINEAIRE',)
 
 VITE2 = FORMULE(VALE = 'cos(OMEGAA*INST)/OMEGAA',
-                NOM_PARA='INST')
+                NOM_PARA='INST',
+                OMEGAA=OMEGAA)
 
 VITESSE2=CALC_FONC_INTERP(FONCTION=VITE2,
                           NOM_RESU='VITE',

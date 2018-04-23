@@ -63,9 +63,11 @@ INSTANTS=DEFI_LIST_REEL(
 
 # CALCUL DE LA ROTATION RIGIDE
 
-ROT_Xa = FORMULE(NOM_PARA='INST',VALE='- 1000. * sin(INST*pi/2.)')
+ROT_Xa = FORMULE(VALE='- 1000. * sin(INST*pi/2.)',
+                 NOM_PARA='INST',)
 
-ROT_Ya = FORMULE(NOM_PARA='INST',VALE='- 1000. * (1. - cos(INST*pi/2.))')
+ROT_Ya = FORMULE(VALE='- 1000. * (1. - cos(INST*pi/2.))',
+                 NOM_PARA='INST',)
 
 ROT_X=CALC_FONC_INTERP(
                  FONCTION=ROT_Xa,

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -45,8 +45,12 @@ def RaideurK2L(TEMP):
    xxx = 2.0E+06*(50 - TEMP)
    return xxx
 #
-FRK1L = FORMULE(NOM_PARA=('TEMP') , VALE='RaideurK1L(TEMP)');
-FRK2L = FORMULE(NOM_PARA=('TEMP') , VALE='RaideurK2L(TEMP)');
+FRK1L = FORMULE(VALE='RaideurK1L(TEMP)',
+                RaideurK1L=RaideurK1L,
+                NOM_PARA='TEMP',)
+FRK2L = FORMULE(VALE='RaideurK2L(TEMP)',
+                RaideurK2L=RaideurK2L,
+                NOM_PARA='TEMP',)
 #
 RK1L = CALC_FONC_INTERP(FONCTION = FRK1L, NOM_RESU ='RK1L', NOM_PARA = 'TEMP',
    LIST_PARA = LTEM, PROL_DROITE ='LINEAIRE', PROL_GAUCHE ='LINEAIRE',)

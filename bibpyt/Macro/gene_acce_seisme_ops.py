@@ -221,7 +221,7 @@ class Generator(object):
         self.modulator.run(self.sampler.liste_temps, self.sampler.DUREE_SIGNAL)
 
     def build_output(self):
-        """run modulation"""
+        """run simulation"""
         self.simulator.run(self)
 
     def process_TimeHistory(self, Xt):

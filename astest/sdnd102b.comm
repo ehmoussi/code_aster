@@ -59,7 +59,8 @@ OMEGAA = ((2.0 * pi) * 10.0);
 
 
 ACCE1 = FORMULE(VALE='sin(OMEGAA*INST) ',
-                NOM_PARA='INST',);
+                OMEGAA=OMEGAA,
+                NOM_PARA='INST',)
 
 ACCELER1=CALC_FONC_INTERP(FONCTION=ACCE1,
                           LIST_PARA=L_INST,
@@ -70,7 +71,8 @@ ACCELER1=CALC_FONC_INTERP(FONCTION=ACCE1,
                           INFO=1,);
 
 ACCE2 = FORMULE(VALE='- sin(OMEGAA*INST) ',
-                NOM_PARA='INST',);
+                OMEGAA=OMEGAA,
+                NOM_PARA='INST',)
 
 ACCELER2=CALC_FONC_INTERP(FONCTION=ACCE2,
                           LIST_PARA=L_INST,
@@ -81,7 +83,8 @@ ACCELER2=CALC_FONC_INTERP(FONCTION=ACCE2,
                           INFO=1,);
 
 VITE1 = FORMULE(VALE='-cos(OMEGAA*INST)/OMEGAA ',
-                NOM_PARA='INST',);
+                OMEGAA=OMEGAA,
+                NOM_PARA='INST',)
 
 VITESSE1=CALC_FONC_INTERP(FONCTION=VITE1,
                           LIST_PARA=L_INST,
@@ -92,7 +95,8 @@ VITESSE1=CALC_FONC_INTERP(FONCTION=VITE1,
                           INFO=1,);
 
 DEPL1 = FORMULE(VALE='-sin(OMEGAA*INST)/(OMEGAA**2) ',
-                NOM_PARA='INST',);
+                OMEGAA=OMEGAA,
+                NOM_PARA='INST',)
 
 DEPLACE1=CALC_FONC_INTERP(FONCTION=DEPL1,
                           LIST_PARA=L_INST,
@@ -105,7 +109,8 @@ DEPLACE1=CALC_FONC_INTERP(FONCTION=DEPL1,
 #
 
 VITE2 = FORMULE(VALE='cos(OMEGAA*INST)/OMEGAA ',
-                NOM_PARA='INST',);
+                OMEGAA=OMEGAA,
+                NOM_PARA='INST',)
 
 VITESSE2=CALC_FONC_INTERP(FONCTION=VITE2,
                           LIST_PARA=L_INST,
@@ -116,7 +121,8 @@ VITESSE2=CALC_FONC_INTERP(FONCTION=VITE2,
                           INFO=1,);
 
 DEPL2 = FORMULE(VALE='sin(OMEGAA*INST)/(OMEGAA**2) ',
-                NOM_PARA='INST',);
+                OMEGAA=OMEGAA,
+                NOM_PARA='INST',)
 
 DEPLACE2=CALC_FONC_INTERP(FONCTION=DEPL2,
                           LIST_PARA=L_INST,

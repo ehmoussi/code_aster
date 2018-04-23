@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -48,7 +48,8 @@ EPSINI=DEFI_FONCTION(   NOM_PARA='X',
                          PROL_GAUCHE='LINEAIRE'
                          )
 
-ZERO = FORMULE(NOM_PARA=('X','Y'),VALE='0.')
+ZERO = FORMULE(VALE='0.',
+               NOM_PARA=['X', 'Y'],)
 
 CH=AFFE_CHAR_MECA_F(       MODELE=MO,DDL_IMPO=(
                            _F(  GROUP_NO = 'GRNM2',      DY = ZERO),

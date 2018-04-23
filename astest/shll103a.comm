@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -171,8 +171,10 @@ GYAS=ASSE_MATRICE(MATR_ELEM=GYELEM,
                   NUME_DDL=NUMEDDL,);
 
 
-module = FORMULE(NOM_PARA=("REEL", "IMAG"), VALE="""sqrt(REEL**2 + IMAG**2)""")
-phase = FORMULE(NOM_PARA=("REEL", "IMAG"), VALE="""atan2(IMAG, REEL)/pi*180""")
+module = FORMULE(VALE='sqrt(REEL**2 + IMAG**2)',
+                 NOM_PARA=['REEL', 'IMAG'],)
+phase = FORMULE(VALE='atan2(IMAG, REEL)/pi*180',
+                NOM_PARA=['REEL', 'IMAG'],)
 
 
 # ROTOR A L'ARRET

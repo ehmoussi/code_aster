@@ -172,6 +172,7 @@
     Richard Michel
     Alexandre Micol
     Alexei Mikchevitch
+    Pierre Morenon
     Patrick Morilhat
     Stéphane Moulin
     El-Hadi Moussi
@@ -256,4 +257,7 @@
     Alain Leufroy <alain.leufroy .at. logilab.fr>
     Stefan H. Reiterer <stefan.harald.reiterer .at. gmail.com>
     Thierry Thomas <thierry .at. FreeBSD.org>
+    Joachim Kopp
+    Alain Sellier <sellier .at. insa-toulouse.fr>
+    Stephane Multon <multon .at. insa-toulouse.fr>
 

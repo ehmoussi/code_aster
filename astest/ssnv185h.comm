@@ -20,7 +20,6 @@
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),DEBUG=_F(SDVERI='OUI'))
 
 import numpy, math
-from math import *
 
 # MODELISATION H : X-FEM INCLINEE - TRACTION (FACE SUP)
 
@@ -140,12 +139,15 @@ MAILLAG1=MODI_MAILLAGE(reuse =MAILLAG1,
                        ORIE_PEAU_3D=_F(GROUP_MA=('SURFSUP','SURFINF')),
                        );
 
-LN=FORMULE(NOM_PARA=('X','Y','Z'),
-           VALE='(Z-L)*cos(ALPHA)-Y*sin(ALPHA)',
-           L=L,cos=cos,sin=sin,ALPHA=ALPHA);
-LT=FORMULE(NOM_PARA=('X','Y','Z'),
-           VALE='(Z-L-A*sin(ALPHA))*sin(ALPHA)+(Y-A*cos(ALPHA))*cos(ALPHA)',
-           L=L,cos=cos,sin=sin,ALPHA=ALPHA,A=A);
+LN = FORMULE(VALE='(Z-L)*cos(ALPHA)-Y*sin(ALPHA)',
+             L=L,
+             ALPHA=ALPHA,
+             NOM_PARA=['X', 'Y', 'Z'],)
+LT = FORMULE(VALE='(Z-L-A*sin(ALPHA))*sin(ALPHA)+(Y-A*cos(ALPHA))*cos(ALPHA)',
+             L=L,
+             A=A,
+             ALPHA=ALPHA,
+             NOM_PARA=['X', 'Y', 'Z'],)
 
 XFONI = 0. ;
 YFONI = A*cos(ALPHA) ;
@@ -220,7 +222,8 @@ nbc=len(RI)
 SIF = [None]*(nbc+1)
 
 # Conversion degre radian pour beta
-BETA_RAD=FORMULE(NOM_PARA='BETA',VALE = 'BETA*pi/180',pi=pi),
+BETA_RAD = FORMULE(VALE='BETA*pi/180',
+                   NOM_PARA='BETA',)
 
 for i in range(0,nbc) :
 

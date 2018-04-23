@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -95,9 +95,14 @@ LIPC = DEFI_LIST_REEL ( DEBUT      = 0.0,
                        INTERVALLE = (
                          _F( JUSQU_A = 100. , PAS =  0.1 ,),
                                     ),)
-SATC   = FORMULE ( NOM_PARA='PCAP' ,VALE='''
+SATC = FORMULE(VALE="""
                    (((1.-SRCOX)/
-                     (((PCAP/PRCOX)**NCOX+1.)**MCOX) )+SRCOX) ''');
+                     (((PCAP/PRCOX)**NCOX+1.)**MCOX) )+SRCOX) """,
+               SRCOX=SRCOX,
+               PRCOX=PRCOX,
+               NCOX=NCOX,
+               MCOX=MCOX,
+               NOM_PARA='PCAP',)
 
 SATCOX = CALC_FONC_INTERP ( FONCTION     =  SATC      ,
                             LIST_PARA    =  LIPC       ,
@@ -106,11 +111,16 @@ SATCOX = CALC_FONC_INTERP ( FONCTION     =  SATC      ,
                             PROL_DROITE  = 'CONSTANT' ,
                             INFO         = 2          , );
 
-DSATC = FORMULE ( NOM_PARA='PCAP' ,VALE='''
+DSATC = FORMULE(VALE="""
                        ( (SRCOX-1.)*MCOX*NCOX*(1./PRCOX)
                         *(((PCAP/PRCOX)**NCOX+1.)**(MCOX-1.))
                        *((PCAP/PRCOX)**(NCOX-1.)) )/
-                        ( (((PCAP/PRCOX)**NCOX+1.)**MCOX)**2. )''');
+                        ( (((PCAP/PRCOX)**NCOX+1.)**MCOX)**2. )""",
+                SRCOX=SRCOX,
+                MCOX=MCOX,
+                NCOX=NCOX,
+                PRCOX=PRCOX,
+                NOM_PARA='PCAP',)
 
 DSATCOX  = CALC_FONC_INTERP ( FONCTION     =  DSATC      ,
                               LIST_PARA    =  LIPC        ,

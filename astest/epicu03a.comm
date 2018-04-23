@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -240,7 +240,18 @@ polynom = a0+a1*(angle)+a2*(angle)**2.+a3*(angle)**3.+a4*(angle)**4.+a5*(angle)*
 
 # TEMPERATURE EN PAROI INTERNE DE LA CUVE EN FONCTION DE L'INSTANT
 
-T_INT = FORMULE(NOM_PARA=('INST'),VALE='thetais+theta1*exp(-INST/((polynom)*(trg*(1-(altitude+8.100)/hcuve)+trgcuve*(altitude+8.100)/hcuve)))+theta2*sin(fsecond*INST)*exp(-INST/tsecond)')
+T_INT = FORMULE(VALE='thetais+theta1*exp(-INST/((polynom)*(trg*(1-(altitude+8.100)/hcuve)+trgcuve*(altitude+8.100)/hcuve)))+theta2*sin(fsecond*INST)*exp(-INST/tsecond)',
+                thetais=thetais,
+                theta1=theta1,
+                polynom=polynom,
+                trg=trg,
+                altitude=altitude,
+                hcuve=hcuve,
+                trgcuve=trgcuve,
+                theta2=theta2,
+                fsecond=fsecond,
+                tsecond=tsecond,
+                NOM_PARA='INST',)
 
 
 # 2.5 AFFECTATION DU CHARGEMENT THERMIQUE
@@ -1079,9 +1090,13 @@ TEMP_G=MACR_LIGN_COUPE(RESULTAT=TEMP,
                                  COOR_ORIG=(debut,0.0,),
                                  COOR_EXTR=(fin,0.0,),),);
 
-FCT_L = FORMULE(VALE='SIYY+L_SG_R_L(COOR_X*1000)',NOM_PARA=('COOR_X','SIYY',),);
+FCT_L = FORMULE(VALE='SIYY+L_SG_R_L(COOR_X*1000)',
+                L_SG_R_L=L_SG_R_L,
+                NOM_PARA=['COOR_X', 'SIYY'],)
 
-FCT_C = FORMULE(VALE='SIZZ+L_SG_R_C(COOR_X*1000)',NOM_PARA=('COOR_X','SIZZ',),);
+FCT_C = FORMULE(VALE='SIZZ+L_SG_R_C(COOR_X*1000)',
+                L_SG_R_C=L_SG_R_C,
+                NOM_PARA=['COOR_X', 'SIZZ'],)
 #                 
 
 S1_G=CALC_TABLE(TABLE=S1M_G,

@@ -91,10 +91,11 @@ AA0=DEFI_FONCTION(NOM_PARA='HYDR',VALE=(0.,6510.,
                         0.99,15.,
                         1.,0.,
                         ),PROL_DROITE='CONSTANT',PROL_GAUCHE='EXCLU',);
-from math import *
 AA = FORMULE(VALE='exp(-Ar/(TZ0+TEMP))*(AA0(HYDR))',
-             NOM_PARA=('HYDR','TEMP',),
-             exp=exp,Ar=Ar,TZ0=TZ0,AA0=AA0);
+             Ar=Ar,
+             TZ0=TZ0,
+             AA0=AA0,
+             NOM_PARA=['HYDR', 'TEMP'],)
 
 LL=DEFI_LIST_REEL(VALE=(0.,
                         0.008,

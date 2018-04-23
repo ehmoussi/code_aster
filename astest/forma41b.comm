@@ -89,10 +89,20 @@ a0 = 2.43;
 #CALCUL DE LA FONCTION A ET TABULATTION EN FONCTION DE HYDR
 #---------------------------------------------------------
 AA0 = FORMULE(VALE='a6*HYDR**6+a5*HYDR**5+a4*HYDR**4+a3*HYDR**3+a2*HYDR**2+a1*HYDR+a0',
-              NOM_PARA='HYDR',);
+              a6=a6,
+              a5=a5,
+              a4=a4,
+              a3=a3,
+              a2=a2,
+              a1=a1,
+              a0=a0,
+              NOM_PARA='HYDR',)
 
 AA = FORMULE(VALE='exp(-Ar/(TZ0+TEMP))*(AA0(HYDR))',
-             NOM_PARA=('TEMP','HYDR',),);
+             Ar=Ar,
+             TZ0=TZ0,
+             AA0=AA0,
+             NOM_PARA=['TEMP', 'HYDR'],)
 
 LL=DEFI_LIST_REEL(DEBUT=0,
                   INTERVALLE=_F(JUSQU_A=1,
@@ -117,7 +127,9 @@ AFF=CALC_FONC_INTERP(FONCTION=AA,
 CONDBET=DEFI_CONSTANTE(VALE=LAMBDA,);
 
 beta = FORMULE(VALE='RCP*(TEMP+TZ0)',
-               NOM_PARA='TEMP',);
+               RCP=RCP,
+               TZ0=TZ0,
+               NOM_PARA='TEMP',)
 
 ENTH=CALC_FONC_INTERP(FONCTION=beta,
                       LIST_PARA=LT,

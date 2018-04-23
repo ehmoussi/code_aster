@@ -181,8 +181,9 @@ def verif(VAL_CAL,VAL_REF):
       diff=abs (VAL_CAL - VAL_REF)
    return diff
 
-VERIF=FORMULE(NOM_PARA=('VAL_REF', 'VAL_CAL'),VALE='verif(VAL_CAL,VAL_REF)',
-              verif=verif)
+VERIF = FORMULE(VALE='verif(VAL_CAL,VAL_REF)',
+                verif=verif,
+                NOM_PARA=['VAL_REF', 'VAL_CAL'],)
             #  VALE='abs (VAL_CAL - VAL_REF)/max(VAL_REF')
 
 MATER  = [None]*(NCAL+1)

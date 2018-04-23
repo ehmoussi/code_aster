@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -694,8 +694,8 @@ T_RETRO=POST_RELEVE_T(ACTION=_F(INTITULE='RETRO',
                       OPERATION='EXTRACTION',
                       ),);
 
-F1=FORMULE(NOM_PARA=('DY_DIR', 'DY_RETRO',),
-                VALE='abs (DY_DIR - DY_RETRO)')
+F1 = FORMULE(VALE='abs (DY_DIR - DY_RETRO)',
+             NOM_PARA=['DY_DIR', 'DY_RETRO'],)
 
 T1=CALC_TABLE(TABLE=T_DIR,
               ACTION=(_F(OPERATION='RENOMME',

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -31,30 +31,30 @@ CREA_LIB_MFRONT(UNITE_MFRONT=38,UNITE_LIBRAIRIE=39)
 
 
 Y_F = FORMULE(VALE='2.E5 - (1.E5*((TEMP - 100.)/960.)**2)',
-              NOM_PARA='TEMP',);
+              NOM_PARA='TEMP',)
 
 AL_F = FORMULE(VALE='1.E-5 + (1.E-5  * ((TEMP - 100.)/960.) ** 4)',
-               NOM_PARA='TEMP',);
+               NOM_PARA='TEMP',)
 
 POISS=DEFI_CONSTANTE(VALE=0.3,);
 
 SIGY=DEFI_CONSTANTE(VALE=200.0,);
 
 K_F = FORMULE(VALE='(4900./(4200.*(TEMP+20.)-3.*(TEMP+20.)**2))',
-              NOM_PARA='TEMP',);
+              NOM_PARA='TEMP',)
 
 N_F = FORMULE(VALE='(7. - (TEMP - 100.) / 160.)',
-              NOM_PARA='TEMP',);
+              NOM_PARA='TEMP',)
 
 Q=DEFI_CONSTANTE(VALE=-100.,);
 
 B=DEFI_CONSTANTE(VALE=20.,);
 
 C_F = FORMULE(VALE='(1.E6 - (98500. * (TEMP - 100.) / 96.))',
-              NOM_PARA='TEMP',);
+              NOM_PARA='TEMP',)
 
 D_F = FORMULE(VALE='(5000. - 5. * (TEMP - 100.) )',
-              NOM_PARA='TEMP',);
+              NOM_PARA='TEMP',)
 
 TEMPE1=DEFI_LIST_REEL(DEBUT=0.,
                       INTERVALLE=_F(JUSQU_A=1060.,
@@ -226,7 +226,7 @@ SOLMF=SIMU_POINT_MAT( MATER=MATF,INFO=1,
                      )
 
 RAC2 = FORMULE(VALE='SIXY*sqrt(2.)',
-                 NOM_PARA=('SIXY',),);
+               NOM_PARA='SIXY',)
 
 
 SOLMF=CALC_TABLE(TABLE=SOLMF,reuse=SOLMF,
@@ -332,8 +332,12 @@ def ecart_relatif(diff, ref):
 TEST1=CALC_TABLE(TABLE=TDIF1,ACTION= _F(OPERATION='COMB',TABLE= TREF1, NOM_PARA ='INST'))
 TEST2=CALC_TABLE(TABLE=TDIF2,ACTION= _F(OPERATION='COMB',TABLE= TREF2, NOM_PARA ='INST'))
 
-ecarela1=FORMULE(NOM_PARA=('NEUT1','SIXX'),VALE=("""ecart_relatif(NEUT1,SIXX)"""))
-ecarela2=FORMULE(NOM_PARA=('NEUT1','SIXY'),VALE=("""ecart_relatif(NEUT1,SIXY)"""))
+ecarela1 = FORMULE(VALE='ecart_relatif(NEUT1,SIXX)',
+                   ecart_relatif=ecart_relatif,
+                   NOM_PARA=['NEUT1', 'SIXX'],)
+ecarela2 = FORMULE(VALE='ecart_relatif(NEUT1,SIXY)',
+                   ecart_relatif=ecart_relatif,
+                   NOM_PARA=['NEUT1', 'SIXY'],)
 
 TEST1=CALC_TABLE(TABLE=TEST1,reuse=TEST1,ACTION= _F(OPERATION='OPER',FORMULE=ecarela1, NOM_PARA ='ECART'))
 TEST2=CALC_TABLE(TABLE=TEST2,reuse=TEST2,ACTION= _F(OPERATION='OPER',FORMULE=ecarela2, NOM_PARA ='ECART'))

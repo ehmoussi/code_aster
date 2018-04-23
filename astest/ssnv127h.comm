@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -198,8 +198,8 @@ IMPR_TABLE(TABLE=TCONT)
 #_____________________________________________________________________
 #
 
-COS    = FORMULE( NOM_PARA=('COOR_X','COOR_Y'),
-                  VALE='-180.*atan2(COOR_X,COOR_Y)/pi')
+COS = FORMULE(VALE='-180.*atan2(COOR_X,COOR_Y)/pi',
+              NOM_PARA=['COOR_X', 'COOR_Y'],)
 
 TPRESS = CALC_TABLE(TABLE=TPRESS,reuse=TPRESS,
                     ACTION=_F(OPERATION='OPER',
@@ -214,8 +214,8 @@ TPRES  = CALC_TABLE(TABLE=TPRESS,
 
 IMPR_TABLE(TABLE=TPRESS)
 
-CONT  = FORMULE(NOM_PARA=('CONT'),
-                VALE='-1.E6*CONT')
+CONT = FORMULE(VALE='-1.E6*CONT',
+               NOM_PARA='CONT',)
 
 TCONT = CALC_TABLE(TABLE=TCONT,reuse=TCONT,
                    ACTION=(_F(OPERATION='OPER',

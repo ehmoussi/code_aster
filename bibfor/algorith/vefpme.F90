@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,8 @@
 ! --------------------------------------------------------------------
 
 subroutine vefpme(modelz, cara_elem, mate      , lload_namez , lload_infoz,&
-                  inst  , varc_curr, vect_elemz, ligrel_calcz)
+                  inst  , varc_curr, vect_elemz, ligrel_calcz,&
+                  disp_prevz  , disp_cumu_instz)
 !
 implicit none
 !
@@ -35,16 +36,17 @@ implicit none
 #include "asterfort/memare.h"
 #include "asterfort/reajre.h"
 !
-!
-    character(len=*), intent(in) :: modelz
-    character(len=*), intent(in) :: lload_namez
-    character(len=*), intent(in) :: lload_infoz
-    real(kind=8), intent(in) :: inst(3)
-    character(len=*), intent(in) :: cara_elem
-    character(len=*), intent(in) :: mate
-    character(len=*), intent(in) :: varc_curr
-    character(len=*), intent(in) :: ligrel_calcz
-    character(len=*), intent(inout) :: vect_elemz
+character(len=*), intent(in) :: modelz
+character(len=*), intent(in) :: lload_namez
+character(len=*), intent(in) :: lload_infoz
+real(kind=8), intent(in) :: inst(3)
+character(len=*), intent(in) :: cara_elem
+character(len=*), intent(in) :: mate
+character(len=*), intent(in) :: varc_curr
+character(len=*), intent(in) :: ligrel_calcz
+character(len=*), intent(inout) :: vect_elemz
+character(len=*), intent(in) :: disp_prevz
+character(len=*), intent(in) :: disp_cumu_instz
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -64,6 +66,8 @@ implicit none
 ! In  ligrel_calc    : LIGREL to compute 
 ! In  varc_curr      : command variable for current time
 ! IO  vect_elem      : name of vect_elem result
+! In  disp_prev      : displacement at beginning of current time
+! In  disp_cumu_inst : displacement increment from beginning of current time
 !
 ! ATTENTION :
 !   LE VECT_ELEM (VECELZ) RESULTAT A 1 PARTICULARITE :
@@ -80,7 +84,8 @@ implicit none
     integer :: nb_load, i_load
     integer :: load_nume
     integer :: nb_in_prep
-    real(kind=8) :: inst_prev, inst_curr, inst_theta 
+    real(kind=8) :: inst_prev, inst_curr, inst_theta
+    character(len=19) :: disp_prev, disp_cumu_inst
     character(len=8) :: load_name
     character(len=24) :: ligrel_calc, model
     character(len=19) :: vect_elem, resu_elem
@@ -103,6 +108,8 @@ implicit none
     lload_name  = lload_namez
     lload_info  = lload_infoz
     ligrel_calc = ligrel_calcz
+    disp_prev      = disp_prevz
+    disp_cumu_inst = disp_cumu_instz
     if (ligrel_calc .eq. ' ') then
         ligrel_calc = model(1:8)//'.MODELE'
     endif
@@ -142,7 +149,8 @@ implicit none
 !
     call load_neum_prep(model    , cara_elem , mate      , 'Pilo'      , inst_prev,&
                         inst_curr, inst_theta, nb_in_maxi, nb_in_prep  , lchin    ,&
-                        lpain    , varc_curr = varc_curr)
+                        lpain    , disp_prev = disp_prev, disp_cumu_inst = disp_cumu_inst,&
+                        varc_curr = varc_curr)
 !
 ! - Computation
 !
@@ -151,6 +159,11 @@ implicit none
         load_nume = v_load_info(nb_load+i_load+1)
         if ((load_nume .eq. 5).or.(load_nume .eq. 8)) then
             call load_neum_comp(stop       , i_load    , load_name , load_nume, 'Pilo',&
+                                ligrel_calc, nb_in_maxi, nb_in_prep, lpain    , lchin ,&
+                                base       , resu_elem , vect_elem)
+        endif
+        if ((load_nume .eq. 9).or.(load_nume .eq. 11)) then
+            call load_neum_comp(stop       , i_load    , load_name , load_nume, 'Suiv',&
                                 ligrel_calc, nb_in_maxi, nb_in_prep, lpain    , lchin ,&
                                 base       , resu_elem , vect_elem)
         endif

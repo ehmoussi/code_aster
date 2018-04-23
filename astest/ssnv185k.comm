@@ -20,8 +20,6 @@
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',
           ),DEBUG=_F(SDVERI='OUI'));
 
-from math import *
-
 # MODELISATION K : X-FEM MULTI-FISSURE - TRACTION
 
 MAILLAG1=LIRE_MAILLAGE(FORMAT='MED',INFO=1);
@@ -94,11 +92,19 @@ MAILLAG1=MODI_MAILLAGE(reuse =MAILLAG1,
 #                            b = 10.
 a=3.
 b=10.
-LN1=FORMULE(NOM_PARA=('X','Y','Z'),VALE='Z-15.');
-LT1=FORMULE(NOM_PARA=('X','Y','Z'),VALE='b-a-Y',a=a,b=b);
+LN1 = FORMULE(VALE='Z-15.',
+              NOM_PARA=['X', 'Y', 'Z'],)
+LT1 = FORMULE(VALE='b-a-Y',
+              b=b,
+              a=a,
+              NOM_PARA=['X', 'Y', 'Z'],)
 
-LN2=FORMULE(NOM_PARA=('X','Y','Z'),VALE='Z+15.');
-LT2=FORMULE(NOM_PARA=('X','Y','Z'),VALE='b-a-Y',a=a,b=b);
+LN2 = FORMULE(VALE='Z+15.',
+              NOM_PARA=['X', 'Y', 'Z'],)
+LT2 = FORMULE(VALE='b-a-Y',
+              b=b,
+              a=a,
+              NOM_PARA=['X', 'Y', 'Z'],)
 
 FISS1=DEFI_FISS_XFEM(MAILLAGE=MAILLAG1,
                     DEFI_FISS=_F(FONC_LT=LT1,FONC_LN=LN1),

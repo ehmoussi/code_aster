@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -239,8 +239,12 @@ def ecart_relatif(diff, ref):
 TEST1=CALC_TABLE(TABLE=TDIF1,ACTION= _F(OPERATION='COMB',TABLE= TEP, NOM_PARA ='INST'))
 TEST2=CALC_TABLE(TABLE=TDIF2,ACTION= _F(OPERATION='COMB',TABLE= TSI, NOM_PARA ='INST'))
 
-ecarela1=FORMULE(NOM_PARA=('NEUT1','EPZZ'),VALE=("""ecart_relatif(NEUT1,EPZZ)"""))
-ecarela2=FORMULE(NOM_PARA=('NEUT1','SIZZ'),VALE=("""ecart_relatif(NEUT1,SIZZ)"""))
+ecarela1 = FORMULE(VALE='ecart_relatif(NEUT1,EPZZ)',
+                   ecart_relatif=ecart_relatif,
+                   NOM_PARA=['NEUT1', 'EPZZ'],)
+ecarela2 = FORMULE(VALE='ecart_relatif(NEUT1,SIZZ)',
+                   ecart_relatif=ecart_relatif,
+                   NOM_PARA=['NEUT1', 'SIZZ'],)
 
 TEST1=CALC_TABLE(TABLE=TEST1,reuse=TEST1,ACTION= _F(OPERATION='OPER',FORMULE=ecarela1, NOM_PARA ='ECART'))
 TEST2=CALC_TABLE(TABLE=TEST2,reuse=TEST2,ACTION= _F(OPERATION='OPER',FORMULE=ecarela2, NOM_PARA ='ECART'))

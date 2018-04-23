@@ -84,8 +84,9 @@ def escalier(x):
     else:
         return 0.
 
-EXX_X=FORMULE(NOM_PARA = ('X','INST'),
-            VALE     = '1.E-3*escalier(X)*INST',escalier=escalier)
+EXX_X = FORMULE(VALE='1.E-3*escalier(X)*INST',
+                escalier=escalier,
+                NOM_PARA=['X', 'INST'],)
  
 
 #-----------------------------------------------------------------------

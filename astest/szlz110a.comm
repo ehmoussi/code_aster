@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -330,7 +330,8 @@ MOTHER=AFFE_MODELE(MAILLAGE=MAILLAGE,
 # RHO_CP ET LAMBDA DEPENDENT DU TEMPS
 # <RESUTHER>
 # ============================================
-T_CONST = FORMULE(NOM_PARA='INST',VALE='20.0 ');
+T_CONST = FORMULE(VALE='20.0 ',
+                  NOM_PARA='INST',)
 TEMPCSTE=AFFE_CHAR_THER_F(MODELE=MOTHER,
                           TEMP_IMPO=_F(TOUT='OUI',
                                        TEMP=T_CONST,),);
@@ -398,7 +399,9 @@ BLOCAGES=AFFE_CHAR_MECA(MODELE=MODMECA,
                                       DZ=0.0,),),);
 
 STRESS=100.E+6;
-FCREEP_Z = FORMULE(NOM_PARA='INST',VALE='STRESS/1.E-4 ');
+FCREEP_Z = FORMULE(VALE='STRESS/1.E-4 ',
+                   STRESS=STRESS,
+                   NOM_PARA='INST',)
 
 # VITESSE DE DEPLACEMENT IMPOSE
 # ------------------------------------

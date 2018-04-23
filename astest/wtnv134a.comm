@@ -686,8 +686,10 @@ TAB_SIG2=POST_RELEVE_T(ACTION=_F(INTITULE = 'SIGM_NOEU',
                                  TOUT_CMP = 'OUI',
                                  OPERATION= 'EXTRACTION'));
 
-SIGMA_N = FORMULE(NOM_PARA=('SIXX','SIZZ'), VALE='0.5*(SIXX+SIZZ)');
-SIGMA_D = FORMULE(NOM_PARA=('SIXX','SIZZ'), VALE='0.5*(SIXX-SIZZ)');
+SIGMA_N = FORMULE(VALE='0.5*(SIXX+SIZZ)',
+                  NOM_PARA=['SIXX', 'SIZZ'],)
+SIGMA_D = FORMULE(VALE='0.5*(SIXX-SIZZ)',
+                  NOM_PARA=['SIXX', 'SIZZ'],)
 
 TAB_EPS2=POST_RELEVE_T(ACTION=_F(INTITULE = 'EPSI_NOEU',
                                  GROUP_NO = 'C',

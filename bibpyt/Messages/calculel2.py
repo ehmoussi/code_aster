@@ -267,6 +267,10 @@ Erreur utilisateur :
   Le champ %(k1)s n'est pas associé au maillage %(k2)s.
 """),
 
+    51: _(u"""
+  La méthode ECLA_PG de PROJ_CHAMP ne peut pas traiter les champs de plus de %(i1)d composantes.
+  Le champ à traiter en comporte %(i2)d.
+"""),
 
 
 

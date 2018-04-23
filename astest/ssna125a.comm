@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -107,7 +107,9 @@ def sin(X,Y):
 # pression (-sig rr) dans la zone elastique, en r=RF
 PR=(-PINT*RI**3/(RE**3-RI**3)*(1.-RE**3/RF**3))*-1
 
-PRES=FORMULE(NOM_PARA=('X','Y',),VALE='PR')
+PRES = FORMULE(VALE='PR',
+               PR=PR,
+               NOM_PARA=['X', 'Y'],)
 
 # elasticite deplacement   
 # indices 1:ux,2:uy  
@@ -122,10 +124,15 @@ def UREF(X,Y,IND) :
 
     return UREF[IND]
    
-UX=FORMULE(NOM_PARA=('X','Y',),VALE='UREF(X,Y,0)'); 
-UY=FORMULE(NOM_PARA=('X','Y',),VALE='UREF(X,Y,1)');
+UX = FORMULE(VALE='UREF(X,Y,0)',
+             UREF=UREF,
+             NOM_PARA=['X', 'Y'],)
+UY = FORMULE(VALE='UREF(X,Y,1)',
+             UREF=UREF,
+             NOM_PARA=['X', 'Y'],)
 U=PINT*RI**3/(RE**3-RI**3)*(RF/(2*mu+3*lam)+RE**3/(4*mu*RF**2))        
-ZERO=FORMULE(NOM_PARA=('X','Y',),VALE='0.');     
+ZERO = FORMULE(VALE='0.',
+               NOM_PARA=['X', 'Y'],)
 
 #elasticite energie
 def EPSREF(X,Y,IND) : 
@@ -142,10 +149,18 @@ def EPSREF(X,Y,IND) :
 
     return EPSREF[IND]
       
-EXX=FORMULE(NOM_PARA=('X','Y',),VALE='EPSREF(X,Y,0)'); 
-EYY=FORMULE(NOM_PARA=('X','Y',),VALE='EPSREF(X,Y,1)');
-EXY=FORMULE(NOM_PARA=('X','Y',),VALE='EPSREF(X,Y,2)');
-EZZ=FORMULE(NOM_PARA=('X','Y',),VALE='EPSREF(X,Y,3)');   
+EXX = FORMULE(VALE='EPSREF(X,Y,0)',
+              EPSREF=EPSREF,
+              NOM_PARA=['X', 'Y'],)
+EYY = FORMULE(VALE='EPSREF(X,Y,1)',
+              EPSREF=EPSREF,
+              NOM_PARA=['X', 'Y'],)
+EXY = FORMULE(VALE='EPSREF(X,Y,2)',
+              EPSREF=EPSREF,
+              NOM_PARA=['X', 'Y'],)
+EZZ = FORMULE(VALE='EPSREF(X,Y,3)',
+              EPSREF=EPSREF,
+              NOM_PARA=['X', 'Y'],)
 
 #plasticite contraintes
 def SIGREF(X,Y,IND) : 
@@ -162,10 +177,18 @@ def SIGREF(X,Y,IND) :
 
     return SIGREF[IND]
       
-SXX=FORMULE(NOM_PARA=('X','Y',),VALE='SIGREF(X,Y,0)'); 
-SYY=FORMULE(NOM_PARA=('X','Y',),VALE='SIGREF(X,Y,1)');
-SXY=FORMULE(NOM_PARA=('X','Y',),VALE='SIGREF(X,Y,2)');
-SZZ=FORMULE(NOM_PARA=('X','Y',),VALE='SIGREF(X,Y,3)');   
+SXX = FORMULE(VALE='SIGREF(X,Y,0)',
+              SIGREF=SIGREF,
+              NOM_PARA=['X', 'Y'],)
+SYY = FORMULE(VALE='SIGREF(X,Y,1)',
+              SIGREF=SIGREF,
+              NOM_PARA=['X', 'Y'],)
+SXY = FORMULE(VALE='SIGREF(X,Y,2)',
+              SIGREF=SIGREF,
+              NOM_PARA=['X', 'Y'],)
+SZZ = FORMULE(VALE='SIGREF(X,Y,3)',
+              SIGREF=SIGREF,
+              NOM_PARA=['X', 'Y'],)
 
 
 # - blocages mouvements de corps rigide
@@ -269,8 +292,8 @@ RES_XFEM=POST_CHAM_XFEM(
 #----------------------------------------------
 
 DEP=[None]*1
-distance = FORMULE(NOM_PARA=('DX','DY'),
-                   VALE='sqrt((DX)**2+(DY)**2)');
+distance = FORMULE(VALE='sqrt((DX)**2+(DY)**2)',
+                   NOM_PARA=['DX', 'DY'],)
 
 #Boucle sur les increments
 DEP=POST_RELEVE_T(ACTION=_F(INTITULE='DEPLE',

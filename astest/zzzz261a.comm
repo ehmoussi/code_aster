@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -45,7 +45,8 @@ MA2=LIRE_MAILLAGE(FORMAT='MED',UNITE=18 )
 #------------------------------------------------
 LINST=DEFI_LIST_REEL( DEBUT=0.,INTERVALLE=  _F( JUSQU_A = 10.,   NOMBRE = 3))
 
-TFONC = FORMULE(NOM_PARA=('X','Y','INST'),VALE=' INST*(1. + 2.*(X-0.5)**2 +3.*(Y-0.25)**2)')
+TFONC = FORMULE(VALE=' INST*(1. + 2.*(X-0.5)**2 +3.*(Y-0.25)**2)',
+                NOM_PARA=['X', 'Y', 'INST'],)
 
 CHFONC=CREA_CHAMP( OPERATION='AFFE', TYPE_CHAM='NOEU_TEMP_F', MAILLAGE=MA1,
               AFFE=_F(  TOUT = 'OUI', NOM_CMP = ('TEMP', ), VALE_F = (TFONC,)))

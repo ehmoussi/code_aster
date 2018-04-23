@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -33,13 +33,6 @@ from cataelem.Options.options import OP
 CCAMASS  = LocatedComponents(phys=PHY.CAMASS, type='ELEM',
     components=('C','ALPHA','BETA','KAPPA','X',
           'Y','Z',))
-
-
-CCARCRI  = LocatedComponents(phys=PHY.CARCRI, type='ELEM',
-    components=('ITECREL','MACOMP','RESCREL','THETA','ITEDEC',
-          'INTLOC','PERTURB','TOLDEBO','ITEDEBO','TSSEUIL',
-          'TSAMPL','TSRETOUR','POSTITER','LC_EXT[3]','MODECALC',
-          'ALPHA','LC_EXT2[2]','POSTINCR',))
 
 NDEPLAC  = LocatedComponents(phys=PHY.DEPL_C, type='ELNO',
     components=('DX','DY','DZ',))
@@ -763,7 +756,7 @@ class MECA_HEXA20(Element):
         ),
 
         OP.FULL_MECA(te=139,
-            para_in=((SP.PCAMASS, CCAMASS), (SP.PCARCRI, CCARCRI), (SP.PMULCOM, LC.CMLCOMP),
+            para_in=((SP.PCAMASS, CCAMASS), (SP.PCARCRI, LC.CCARCRI), (SP.PMULCOM, LC.CMLCOMP),
                      (OP.FULL_MECA.PCOMPOR, LC.CCOMPOR), (OP.FULL_MECA.PCONTMR, ECONTPG),
                      (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
                      (SP.PGEOMER, NGEOMER), (SP.PINSTMR, CTEMPSR),
@@ -779,7 +772,7 @@ class MECA_HEXA20(Element):
         ),
 
         OP.FULL_MECA_ELAS(te=139,
-            para_in=((SP.PCAMASS, CCAMASS), (SP.PCARCRI, CCARCRI), (SP.PMULCOM, LC.CMLCOMP),
+            para_in=((SP.PCAMASS, CCAMASS), (SP.PCARCRI, LC.CCARCRI), (SP.PMULCOM, LC.CMLCOMP),
                      (OP.FULL_MECA_ELAS.PCOMPOR, LC.CCOMPOR), (OP.FULL_MECA_ELAS.PCONTMR, ECONTPG),
                      (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
                      (SP.PGEOMER, NGEOMER), (SP.PINSTMR, CTEMPSR),
@@ -909,7 +902,7 @@ class MECA_HEXA20(Element):
 
         OP.PILO_PRED_DEFO(te=543,
             para_in=((OP.PILO_PRED_DEFO.PCOMPOR, LC.CCOMPOR), (OP.PILO_PRED_DEFO.PCONTMR, ECONTPG),
-                     (SP.PDDEPLR, DDL_MECA), (SP.PDEPL0R, DDL_MECA), (SP.PCARCRI, CCARCRI),
+                     (SP.PDDEPLR, DDL_MECA), (SP.PDEPL0R, DDL_MECA), (SP.PCARCRI, LC.CCARCRI),
                      (SP.PDEPL1R, DDL_MECA), (SP.PDEPLMR, DDL_MECA),
                      (SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
                      (SP.PTYPEPI, LC.CTYPEPI), (OP.PILO_PRED_DEFO.PVARIMR, ZVARIPG),
@@ -920,7 +913,7 @@ class MECA_HEXA20(Element):
         OP.PILO_PRED_ELAS(te=543,
             para_in=((SP.PBORNPI, LC.CBORNPI), (SP.PCDTAU, LC.CCDTAU),
                      (OP.PILO_PRED_ELAS.PCOMPOR, LC.CCOMPOR), (OP.PILO_PRED_ELAS.PCONTMR, ECONTPG),
-                     (SP.PDDEPLR, DDL_MECA), (SP.PDEPL0R, DDL_MECA), (SP.PCARCRI, CCARCRI),
+                     (SP.PDDEPLR, DDL_MECA), (SP.PDEPL0R, DDL_MECA), (SP.PCARCRI, LC.CCARCRI),
                      (SP.PDEPL1R, DDL_MECA), (SP.PDEPLMR, DDL_MECA),
                      (SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
                      (SP.PTYPEPI, LC.CTYPEPI), (OP.PILO_PRED_ELAS.PVARIMR, ZVARIPG),
@@ -948,7 +941,7 @@ class MECA_HEXA20(Element):
         ),
 
         OP.RAPH_MECA(te=139,
-            para_in=((SP.PCAMASS, CCAMASS), (SP.PCARCRI, CCARCRI), (SP.PMULCOM, LC.CMLCOMP),
+            para_in=((SP.PCAMASS, CCAMASS), (SP.PCARCRI, LC.CCARCRI), (SP.PMULCOM, LC.CMLCOMP),
                      (OP.RAPH_MECA.PCOMPOR, LC.CCOMPOR), (OP.RAPH_MECA.PCONTMR, ECONTPG),
                      (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
                      (SP.PGEOMER, NGEOMER), (SP.PINSTMR, CTEMPSR),
@@ -976,7 +969,7 @@ class MECA_HEXA20(Element):
         ),
 
         OP.REST_ECRO(te=116,
-            para_in=((SP.PCARCRI, CCARCRI), (OP.REST_ECRO.PCOMPOR, LC.CCOMPOR),
+            para_in=((SP.PCARCRI, LC.CCARCRI), (OP.REST_ECRO.PCOMPOR, LC.CCOMPOR),
                      (SP.PMATERC, LC.CMATERC), (SP.PTEMPSR, CTEMPSR),
                      (SP.PVARCMR, LC.ZVARCPG), (OP.REST_ECRO.PVARCPR, LC.ZVARCPG),
                      (OP.REST_ECRO.PVARIMR, ZVARIPG), ),
@@ -1007,7 +1000,7 @@ class MECA_HEXA20(Element):
         ),
 
         OP.RIGI_MECA_ELAS(te=139,
-            para_in=((SP.PCAMASS, CCAMASS), (SP.PCARCRI, CCARCRI), (SP.PMULCOM, LC.CMLCOMP),
+            para_in=((SP.PCAMASS, CCAMASS), (SP.PCARCRI, LC.CCARCRI), (SP.PMULCOM, LC.CMLCOMP),
                      (OP.RIGI_MECA_ELAS.PCOMPOR, LC.CCOMPOR), (OP.RIGI_MECA_ELAS.PCONTMR, ECONTPG),
                      (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
                      (SP.PGEOMER, NGEOMER), (SP.PINSTMR, CTEMPSR),
@@ -1033,7 +1026,7 @@ class MECA_HEXA20(Element):
         ),
 
         OP.RIGI_MECA_IMPLEX(te=139,
-            para_in=((SP.PCAMASS, CCAMASS), (SP.PCARCRI, CCARCRI), (SP.PMULCOM, LC.CMLCOMP),
+            para_in=((SP.PCAMASS, CCAMASS), (SP.PCARCRI, LC.CCARCRI), (SP.PMULCOM, LC.CMLCOMP),
                      (OP.RIGI_MECA_IMPLEX.PCOMPOR, LC.CCOMPOR), (OP.RIGI_MECA_IMPLEX.PCONTMR, ECONTPG),
                      (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
                      (SP.PGEOMER, NGEOMER), (SP.PINSTMR, CTEMPSR),
@@ -1053,7 +1046,7 @@ class MECA_HEXA20(Element):
         ),
 
         OP.RIGI_MECA_TANG(te=139,
-            para_in=((SP.PCAMASS, CCAMASS), (SP.PCARCRI, CCARCRI),(SP.PMULCOM, LC.CMLCOMP),
+            para_in=((SP.PCAMASS, CCAMASS), (SP.PCARCRI, LC.CCARCRI),(SP.PMULCOM, LC.CMLCOMP),
                      (OP.RIGI_MECA_TANG.PCOMPOR, LC.CCOMPOR), (OP.RIGI_MECA_TANG.PCONTMR, ECONTPG),
                      (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
                      (SP.PGEOMER, NGEOMER), (SP.PINSTMR, CTEMPSR),

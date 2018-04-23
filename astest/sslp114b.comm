@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -171,9 +171,13 @@ def Vy(X,Y) :
     global alpha
     return Ux(X,Y)*math.sin(alpha)+Uy(X,Y)*math.cos(alpha)
 
-U1=FORMULE(NOM_PARA=('X','Y',),VALE='Vx(X,Y)');
+U1 = FORMULE(VALE='Vx(X,Y)',
+             Vx=Vx,
+             NOM_PARA=['X', 'Y'],)
 
-U2=FORMULE(NOM_PARA=('X','Y',),VALE='Vy(X,Y)');
+U2 = FORMULE(VALE='Vy(X,Y)',
+             Vy=Vy,
+             NOM_PARA=['X', 'Y'],)
 
 #TENSEUR DES CONTTRAINTES ANALYTIQUE ::
 def SIGMA(X,Y,IND) :
@@ -201,17 +205,33 @@ def SIGMA(X,Y,IND) :
     return SIGMAREF[IND]
 
 #Calcul des densites de force suivant les normales ex,ey,-ex,-ey
-FXX=FORMULE(NOM_PARA=('X','Y',),VALE='SIGMA(X,Y,0)');
-FXY=FORMULE(NOM_PARA=('X','Y',),VALE='SIGMA(X,Y,2)');
+FXX = FORMULE(VALE='SIGMA(X,Y,0)',
+              SIGMA=SIGMA,
+              NOM_PARA=['X', 'Y'],)
+FXY = FORMULE(VALE='SIGMA(X,Y,2)',
+              SIGMA=SIGMA,
+              NOM_PARA=['X', 'Y'],)
 
-FYX=FORMULE(NOM_PARA=('X','Y',),VALE='SIGMA(X,Y,2)');
-FYY=FORMULE(NOM_PARA=('X','Y',),VALE='SIGMA(X,Y,1)');
+FYX = FORMULE(VALE='SIGMA(X,Y,2)',
+              SIGMA=SIGMA,
+              NOM_PARA=['X', 'Y'],)
+FYY = FORMULE(VALE='SIGMA(X,Y,1)',
+              SIGMA=SIGMA,
+              NOM_PARA=['X', 'Y'],)
 
-FXXF=FORMULE(NOM_PARA=('X','Y',),VALE='-SIGMA(X,Y,0)');
-FXYF=FORMULE(NOM_PARA=('X','Y',),VALE='-SIGMA(X,Y,2)');
+FXXF = FORMULE(VALE='-SIGMA(X,Y,0)',
+               SIGMA=SIGMA,
+               NOM_PARA=['X', 'Y'],)
+FXYF = FORMULE(VALE='-SIGMA(X,Y,2)',
+               SIGMA=SIGMA,
+               NOM_PARA=['X', 'Y'],)
 
-FYXF=FORMULE(NOM_PARA=('X','Y',),VALE='-SIGMA(X,Y,2)');
-FYYF=FORMULE(NOM_PARA=('X','Y',),VALE='-SIGMA(X,Y,1)');
+FYXF = FORMULE(VALE='-SIGMA(X,Y,2)',
+               SIGMA=SIGMA,
+               NOM_PARA=['X', 'Y'],)
+FYYF = FORMULE(VALE='-SIGMA(X,Y,1)',
+               SIGMA=SIGMA,
+               NOM_PARA=['X', 'Y'],)
 
 #Conditions limites: Diriclet + Neumann
 #Neumann => fissure
@@ -337,9 +357,15 @@ DIFF=CREA_CHAMP(OPERATION='ASSE', TYPE_CHAM='NOEU_DEPL_R',MODELE=MODELEIN,
 tab_du=POST_ELEM(NORME=(_F(TYPE_NORM='L2', GROUP_MA='TEST_MA',CHAM_GD=DIFF, MODELE=MODELEIN),),INFO=2);
 
 # champ de contrainte analytique
-SXX=FORMULE(NOM_PARA=('X','Y',),VALE='SIGMA(X,Y,0)');
-SYY=FORMULE(NOM_PARA=('X','Y',),VALE='SIGMA(X,Y,1)');
-SXY=FORMULE(NOM_PARA=('X','Y',),VALE='SIGMA(X,Y,2)');
+SXX = FORMULE(VALE='SIGMA(X,Y,0)',
+              SIGMA=SIGMA,
+              NOM_PARA=['X', 'Y'],)
+SYY = FORMULE(VALE='SIGMA(X,Y,1)',
+              SIGMA=SIGMA,
+              NOM_PARA=['X', 'Y'],)
+SXY = FORMULE(VALE='SIGMA(X,Y,2)',
+              SIGMA=SIGMA,
+              NOM_PARA=['X', 'Y'],)
 
 # calcul de l'erreur en termes de norme de l'energie
 Scal=CREA_CHAMP(OPERATION='EXTR',

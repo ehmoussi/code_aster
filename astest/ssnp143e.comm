@@ -45,9 +45,14 @@ delta_sci= sig_m/k_n/100.
 # SCIAGE EN FONCTION DU TEMPS
 sci_ins=DEFI_FONCTION(NOM_PARA='INST',VALE=( 0.,-1. , i_sci-eps,-1 , i_sci,1. , i_sci+eps,-1 ,  tfin,-1.));
 # SCIAGE EN FONCTION DE L'ESPACE
-sci_y = FORMULE(NOM_PARA=('Y',),VALE='delta_sci',delta_sci=delta_sci);
+sci_y = FORMULE(VALE='delta_sci',
+                delta_sci=delta_sci,
+                NOM_PARA='Y',)
 # SCIAGE FONCTION DU TEMPS ET DE L'ESPACE
-fonc_sci = FORMULE(NOM_PARA=('Y','INST'),VALE='sci_y(Y)*sci_ins(INST)',sci_y=sci_y,sci_ins=sci_ins);
+fonc_sci = FORMULE(VALE='sci_y(Y)*sci_ins(INST)',
+                   sci_y=sci_y,
+                   sci_ins=sci_ins,
+                   NOM_PARA=['Y', 'INST'],)
 
 ##################################
 

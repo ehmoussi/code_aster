@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -25,7 +25,7 @@ POURSUITE(CODE='OUI',);
 # POUR AVOIR DES VALEURS POSITIVES ET NEGATIVES
 
 oper = FORMULE(VALE='SIXX - 0.5',
-               NOM_PARA='SIXX',);
+               NOM_PARA='SIXX',)
 
 ttest=CALC_TABLE(TABLE=ML1,
                  ACTION=(_F(OPERATION='FILTRE',
@@ -106,7 +106,7 @@ tlu5=LIRE_TABLE(UNITE=55,
                 NUME_TABLE=5,);
 
 fdiff = FORMULE(VALE='COL - OTHER',
-                NOM_PARA=('COL','OTHER',),);
+                NOM_PARA=['COL', 'OTHER'],)
 
 tdif23=CALC_TABLE(TABLE=tlu3,
                   ACTION=(_F(OPERATION='RENOMME',

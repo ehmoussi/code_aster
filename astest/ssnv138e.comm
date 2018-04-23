@@ -21,8 +21,6 @@
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),DEBUG=_F(SDVERI='OUI'))
 
-from math import *
-
 MA=LIRE_MAILLAGE(FORMAT='MED',UNITE=17,);
 
 MA=DEFI_GROUP(reuse =MA,
@@ -200,10 +198,10 @@ TPS_CALC=DEFI_LIST_REEL(DEBUT=0.005,
                                       PAS=0.005,),);
 
 U_REFE = FORMULE(VALE='10*(sin(INST)/INST-1)',
-                 NOM_PARA='INST',sin=sin);
+                 NOM_PARA='INST',)
 
 V_REFE = FORMULE(VALE='10*(1-cos(INST))/INST',
-                 NOM_PARA='INST',cos=cos);
+                 NOM_PARA='INST',)
 
 U_REF_FO=CALC_FONC_INTERP(FONCTION=U_REFE,
                           LIST_PARA=TPS_CALC,

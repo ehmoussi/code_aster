@@ -109,8 +109,12 @@ IMPR_RESU(FORMAT='MED',
           UNITE=81,
           RESU=_F(MAILLAGE=MAILLAG2))
 
-LN=FORMULE(NOM_PARA=('X','Y','Z'),VALE='Z-h',h=h);
-LT=FORMULE(NOM_PARA=('X','Y','Z'),VALE='-Y+a',a=a);
+LN = FORMULE(VALE='Z-h',
+             h=h,
+             NOM_PARA=['X', 'Y', 'Z'],)
+LT = FORMULE(VALE='-Y+a',
+             a=a,
+             NOM_PARA=['X', 'Y', 'Z'],)
 
 FISS=DEFI_FISS_XFEM(MAILLAGE=MAILLAG2,
                     DEFI_FISS=_F(FONC_LT=LT,FONC_LN=LN),
@@ -319,13 +323,17 @@ TEST_TABLE(CRITERE='ABSOLU',
 def uz(X,Y,Z): 
     return -PRES/E*(Z-h)
 
-UZ=FORMULE(NOM_PARA=('X','Y','Z'),VALE='uz(X,Y,Z)',uz=uz)
+UZ = FORMULE(VALE='uz(X,Y,Z)',
+             uz=uz,
+             NOM_PARA=['X', 'Y', 'Z'],)
 
 #    - contraintes
 def Szz(X,Y,Z):
     return -PRES
 
-SZZ=FORMULE(NOM_PARA=('X','Y','Z'),VALE='Szz(X,Y,Z)',Szz=Szz)
+SZZ = FORMULE(VALE='Szz(X,Y,Z)',
+              Szz=Szz,
+              NOM_PARA=['X', 'Y', 'Z'],)
 
 # calcul de l'erreur en terme de norme en energie
 Scal=CREA_CHAMP(OPERATION='EXTR',

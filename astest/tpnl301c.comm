@@ -52,10 +52,11 @@ Ar = 4700;
 
 TZ0 = 273.15;
 
-from math import *
+
 AA = FORMULE(VALE='exp(-Ar/(TZ0+TEMP))*(1586000*HYDR*HYDR*HYDR*HYDR*HYDR-5224000*HYDR*HYDR*HYDR*HYDR+6432000*HYDR*HYDR*HYDR-3530500*HYDR*HYDR+730000*HYDR+6510)',
-             NOM_PARA=('HYDR','TEMP',),
-             exp=exp,Ar=Ar,TZ0=TZ0);
+             Ar=Ar,
+             TZ0=TZ0,
+             NOM_PARA=['HYDR', 'TEMP'],)
 
 LL=DEFI_LIST_REEL(DEBUT=0.0,
                   INTERVALLE=_F(JUSQU_A=1.0,

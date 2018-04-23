@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -120,7 +120,8 @@ LI2 = DEFI_LIST_REEL ( DEBUT      = 0.8,
 FICKARG = DEFI_CONSTANTE ( VALE = 3.8475e-5);
 
 #
-FFVPPG = FORMULE(NOM_PARA='PG', VALE='(101000.0/PG)')
+FFVPPG = FORMULE(VALE='(101000.0/PG)',
+                 NOM_PARA='PG',)
 #
 FVPPG = CALC_FONC_INTERP ( FONCTION      =  FFVPPG       ,
                             LIST_PARA    =  LI1       ,
@@ -129,7 +130,8 @@ FVPPG = CALC_FONC_INTERP ( FONCTION      =  FFVPPG       ,
                             PROL_DROITE  = 'CONSTANT' ,
                             INFO         = 2          , );
 #
-FDFVPPG = FORMULE(NOM_PARA='PG', VALE='-101000.0/(PG**2)');
+FDFVPPG = FORMULE(VALE='-101000.0/(PG**2)',
+                  NOM_PARA='PG',)
 #
 DFVPPG = CALC_FONC_INTERP ( FONCTION     =  FDFVPPG,
                             LIST_PARA    =  LI1       ,
@@ -140,7 +142,8 @@ DFVPPG = CALC_FONC_INTERP ( FONCTION     =  FDFVPPG,
 
 FICKWAR=DEFI_CONSTANTE ( VALE = 2.14206E-10);
 
-FFAS  = FORMULE(NOM_PARA='SAT', VALE='SAT');
+FFAS = FORMULE(VALE='SAT',
+               NOM_PARA='SAT',)
 FAS   = CALC_FONC_INTERP ( FONCTION     =  FFAS       ,
                            LIST_PARA    =  LI2       ,
                            NOM_PARA     = 'SAT'      ,

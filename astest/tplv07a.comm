@@ -194,8 +194,8 @@ CHNORM=CREA_CHAMP(TYPE_CHAM='NOEU_GEOM_R',
                   GROUP_MA='F_NPJI',
                   );
 
-FO_FLUN=FORMULE(NOM_PARA=('FLUX','FLUY','FLUZ','X','Y','Z',),
-                VALE='FLUX*X+FLUY*Y+FLUZ*Z',);
+FO_FLUN = FORMULE(VALE='FLUX*X+FLUY*Y+FLUZ*Z',
+                  NOM_PARA=['FLUX', 'FLUY', 'FLUZ', 'X', 'Y', 'Z'],)
 
 FLUN_F=CREA_CHAMP(TYPE_CHAM='NOEU_NEUT_F',
                   OPERATION='AFFE',

@@ -218,12 +218,13 @@ character(len=19), intent(in) :: hval_veelem(*), hval_veasse(*)
 ! - Dirichlet (PILOTAGE)
 !
     if (l_pilo) then
-        if (mode .eq. 'FIXE') then
+        if (mode .eq. 'FIXE' .or. mode .eq. 'VARI') then
             call nmchex(hval_veelem, 'VEELEM', 'CNFEPI', vect_elem)
             call nmchex(hval_veasse, 'VEASSE', 'CNFEPI', vect_asse)
             call vefpme(model     , cara_elem , ds_material%field_mate,&
                         lload_name, lload_info,&
-                        time_list , vrcplu    , vect_elem, ' ')
+                        time_list , vrcplu    , vect_elem, ' ',&
+                        disp_prev, disp_cumu_inst)
             call asasve(vect_elem, nume_dof, 'R', vect_alem)
             call ascova('D', vect_alem, lload_func, 'INST', time_curr,&
                         'R', vect_asse)

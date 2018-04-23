@@ -22,8 +22,6 @@ DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),
       IGNORE_ALARM=('MODELE1_63'),
       PAR_LOT='NON')
 
-from math import *
-
 # le PAR_LOT='NON' est necessaire a la recuperation dans un entier du nombre de fonds de fissure (EXTR_TABLE)
 
 #----------------------------------------------
@@ -92,7 +90,9 @@ fonction = 0;
 # fonction=1 : la pression PRES est une fonction de l espace
 #
 PRES = -1.;
-FCTPRES = FORMULE(NOM_PARA=('X','Y','Z'),VALE='PRES*Y',PRES=PRES);
+FCTPRES = FORMULE(VALE='PRES*Y',
+                  PRES=PRES,
+                  NOM_PARA=['X', 'Y', 'Z'],)
 #************************************************************
 
 
@@ -176,11 +176,12 @@ MAILLAG1=MODI_MAILLAGE(reuse =MAILLAG1,
 #----------------------------------------------
 
 LN = FORMULE(VALE='Z*cos(ALPHA)-Y*sin(ALPHA)',
-             NOM_PARA=('X','Y','Z'),
-             cos=cos,sin=sin,ALPHA=ALPHA);
+             ALPHA=ALPHA,
+             NOM_PARA=['X', 'Y', 'Z'],)
 LT = FORMULE(VALE='abs(Z*sin(ALPHA)+Y*cos(ALPHA))-A',
-             NOM_PARA=('X','Y','Z'),
-             cos=cos,sin=sin,ALPHA=ALPHA,A=A);
+             ALPHA=ALPHA,
+             A=A,
+             NOM_PARA=['X', 'Y', 'Z'],)
 
 XFONI = 0. ;
 YFONI = -A*cos(ALPHA) ;

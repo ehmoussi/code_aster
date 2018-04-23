@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -60,7 +60,10 @@ NU     = DEFI_CONSTANTE(VALE=0.2,)
 ALPHA  = DEFI_CONSTANTE(VALE=1e-05,)
 TAUS   = [2.e-3, 2.e-2, 2.e-1, 2., 2.e1, 2.e2, 2.e3, 2.e4] #days
 JS     = [1.2e-13, 2.6e-13, 2.7e-12, 2.71e-12, 8.08e-12, 1.808e-11, 1.901e-11, 1.139e-11]
-foncV  = FORMULE(VALE='agingGranger(INST/day)', NOM_PARA='INST',);
+foncV = FORMULE(VALE='agingGranger(INST/day)',
+                agingGranger=agingGranger,
+                day=day,
+                NOM_PARA='INST',)
 FONC_D = DEFI_CONSTANTE(VALE=1.0,) # Desorption function ( C --> h )
 
 
