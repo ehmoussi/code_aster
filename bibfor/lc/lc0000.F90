@@ -65,7 +65,6 @@ implicit none
 #include "asterfort/lc0038.h"
 #include "asterfort/lc0039.h"
 #include "asterfort/lc0042.h"
-#include "asterfort/lc0044.h"
 #include "asterfort/lc0050.h"
 #include "asterfort/lc0054.h"
 #include "asterfort/lc0055.h"
@@ -112,10 +111,12 @@ implicit none
 #include "asterfort/lc0115.h"
 #include "asterfort/lc0120.h"
 #include "asterfort/lc0137.h"
+#include "asterfort/lc0145.h"
 #include "asterfort/lc0152.h"
 #include "asterfort/lc0165.h"
 #include "asterfort/lc0166.h"
 #include "asterfort/lc0167.h"
+#include "asterfort/lc0168.h"
 #include "asterfort/lc1002.h"
 #include "asterfort/lc1015.h"
 #include "asterfort/lc1036.h"
@@ -148,7 +149,6 @@ implicit none
 #include "asterfort/lc8057.h"
 #include "asterfort/lc8146.h"
 #include "asterfort/lc8331.h"
-#include "asterfort/lc13029.h"
 #include "asterfort/lc20015.h"
 #include "asterfort/lc21015.h"
 #include "asterfort/lc30015.h"
@@ -513,12 +513,6 @@ integer :: codret
                     deps, sigm, vim, option, angmas,&
                     sigp, vip, typmod, icomp,&
                     nvi, dsidep, codret)
-    case (44)
-        call lc0044(fami, kpg, ksp, ndim, imate,&
-                    compor, carcri, instam, instap, epsm,&
-                    deps, sigm, vim, option, angmas,&
-                    sigp, vip, typmod, icomp,&
-                    nvi, dsidep, codret)
     case (50)
 !     UMAT
         call lc0050(fami, kpg, ksp, ndim, typmod,&
@@ -804,6 +798,15 @@ integer :: codret
                     angmas, sigp, vip, &
                     typmod, icomp, nvi,&
                     dsidep, codret)
+
+    case (145)
+!       BETON_RAG : nouvelle
+        call lc0145(fami, kpg, ksp, ndim, imate,&
+                    compor, carcri, instam, instap, epsm,&
+                    deps, sigm, vim, option, angmas,&
+                    sigp, vip, typmod, icomp,&
+                    nvi, dsidep, codret)
+
     case (152)
 !     CABLE_GAINE
         call lc0152(fami, kpg, ksp, ndim, imate,&
@@ -826,8 +829,15 @@ integer :: codret
                     sigp, vip, wkin, typmod, icomp,&
                     nvi, dsidep, codret)
     case (167)
-!     RGI_BETON
+!     FLUA_ENDO_PORO
         call lc0167(fami, kpg, ksp, ndim, imate,&
+                    compor, carcri, instam, instap, epsm,&
+                    deps, sigm, vim, option, angmas,&
+                    sigp, vip, wkin, typmod, icomp,&
+                    nvi, dsidep, codret)
+    case (168)
+!     RGI_BETON
+        call lc0168(fami, kpg, ksp, ndim, imate,&
                     compor, carcri, instam, instap, epsm,&
                     deps, sigm, vim, option, angmas,&
                     sigp, vip, wkin, typmod, icomp,&
@@ -1105,13 +1115,6 @@ integer :: codret
                     wkin, typmod,icomp, ndsde,&
                     dsidep, nwkout, wkout, codret)
 !
-    case (13029)
-        call lc13029(fami, kpg, ksp, ndim, imate,&
-                    compor, mult_comp, carcri, instam, instap, neps,&
-                    epsm, deps, nsig, sigm, vim,&
-                    option, angmas,sigp, nvi, vip, nwkin,&
-                    wkin, typmod,icomp, ndsde,&
-                    dsidep, nwkout, wkout, codret)
 !
 ! --------------------------------------------------------------------------------------------------
 ! - For metallurgy/steel
@@ -1148,7 +1151,6 @@ integer :: codret
                      deps, sigm, vim, option, angmas,&
                      sigp, vip, typmod, icomp,&
                      nvi, dsidep, codret)
-!
 ! --------------------------------------------------------------------------------------------------
 ! - Error
 ! --------------------------------------------------------------------------------------------------

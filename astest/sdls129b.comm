@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -268,7 +268,8 @@ TAB_IM3=POST_RELEVE_T(ACTION=_F(
                   TOUT_ORDRE='OUI',
                   TOUT_CMP='OUI',),)          
 
-extrZ=FORMULE(NOM_PARA=('DZ'),VALE='DZ',)
+extrZ = FORMULE(VALE='DZ',
+                NOM_PARA='DZ',)
 
 TAB_RE1=CALC_TABLE(reuse=TAB_RE1,
                   TABLE=TAB_RE1,
@@ -324,12 +325,12 @@ TAB_TOT=CALC_TABLE(TABLE=TAB_RE1,
                              NOM_PARA='NUME_ORDRE',
                              TABLE=TAB_IM3,),),)
                   
-reln1=FORMULE(NOM_PARA=('N1ZR','N1ZI'),
-                VALE='N1ZI/N1ZR',)
-reln2=FORMULE(NOM_PARA=('N2ZR','N2ZI'),
-                VALE='N2ZI/N2ZR',)
-reln3=FORMULE(NOM_PARA=('N3ZR','N3ZI'),
-                VALE='N3ZI/N3ZR',)
+reln1 = FORMULE(VALE='N1ZI/N1ZR',
+                NOM_PARA=['N1ZR', 'N1ZI'],)
+reln2 = FORMULE(VALE='N2ZI/N2ZR',
+                NOM_PARA=['N2ZR', 'N2ZI'],)
+reln3 = FORMULE(VALE='N3ZI/N3ZR',
+                NOM_PARA=['N3ZR', 'N3ZI'],)
 
 TAB_REL=CALC_TABLE(TABLE=TAB_TOT,
                   ACTION=(_F(OPERATION='OPER',

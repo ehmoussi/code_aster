@@ -61,8 +61,12 @@ MAILLAG2=MODI_MAILLAGE(reuse =MAILLAG2,
                        ORIE_PEAU_3D=_F(GROUP_MA=('SURFSUP','SURFINF')),
                        );
 
-LN=FORMULE(NOM_PARA=('X','Y','Z'),VALE='Z-h',h=h);
-LT=FORMULE(NOM_PARA=('X','Y','Z'),VALE='-Y+a'a=a);
+LN = FORMULE(VALE='Z-h',
+             h=h,
+             NOM_PARA=['X', 'Y', 'Z'],)
+LT = FORMULE(VALE='-Y+a',
+             a=a,
+             NOM_PARA=['X', 'Y', 'Z'],)
 
 FISS=DEFI_FISS_XFEM(MAILLAGE=MAILLAG2,
                     DEFI_FISS=_F(FONC_LT=LT,FONC_LN=LN),

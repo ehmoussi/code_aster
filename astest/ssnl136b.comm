@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -116,10 +116,10 @@ TAB_DEPL=POST_RELEVE_T(ACTION=_F(INTITULE='DEPLA',
                                  OPERATION='EXTRACTION',),);
 
 GEOM_DX = FORMULE(VALE='DX+29.3',
-                  NOM_PARA='DX',);
+                  NOM_PARA='DX',)
 
 GEOM_DY = FORMULE(VALE='DY+70.7',
-                  NOM_PARA='DY',);
+                  NOM_PARA='DY',)
 
 TAB_DEPL=CALC_TABLE(reuse=TAB_DEPL,
                     TABLE=TAB_DEPL,

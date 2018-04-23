@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -47,7 +47,8 @@ MODELE   = AFFE_MODELE(  MAILLAGE =    MAILLAGE, INFO=2,
           ))
 
 
-SIGXX = FORMULE(VALE='2.*(X+0.2) +5.*(Y+1.2)*(Y+1.2)', NOM_PARA=('X','Y'),);
+SIGXX = FORMULE(VALE='2.*(X+0.2) +5.*(Y+1.2)*(Y+1.2)',
+                NOM_PARA=['X', 'Y'],)
 CHXN=CREA_CHAMP(TYPE_CHAM='NOEU_GEOM_R', OPERATION='EXTR',
                 MAILLAGE=MAILLAGE, NOM_CHAM='GEOMETRIE',);
 CHXG=CREA_CHAMP(TYPE_CHAM='ELGA_GEOM_R', OPERATION='DISC',

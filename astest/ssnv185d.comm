@@ -56,8 +56,12 @@ MAILLAG1=MODI_MAILLAGE(reuse =MAILLAG1,
 #                            b = 10.
 a=5.-0.1666
 b=10.
-LN=FORMULE(NOM_PARA=('X','Y','Z'),VALE='Z-15.');
-LT=FORMULE(NOM_PARA=('X','Y','Z'),VALE='b-a-Y',a=a,b=b);
+LN = FORMULE(VALE='Z-15.',
+             NOM_PARA=['X', 'Y', 'Z'],)
+LT = FORMULE(VALE='b-a-Y',
+             b=b,
+             a=a,
+             NOM_PARA=['X', 'Y', 'Z'],)
 
 FISS=DEFI_FISS_XFEM(MAILLAGE=MAILLAG1,
                     DEFI_FISS=_F(FONC_LT=LT,FONC_LN=LN,),

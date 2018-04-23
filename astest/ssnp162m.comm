@@ -214,7 +214,8 @@ TFORCE=POST_RELEVE_T(ACTION=_F(OPERATION='EXTRACTION',
 
 # PROJECTEUR SUR LA NORMALE
 PNOR = FORMULE(VALE='DX*cos(angle)+DY*sin(angle)',
-              NOM_PARA=('DX','DY',),cos=cos,sin=sin,angle=angle);
+               angle=angle,
+               NOM_PARA=['DX', 'DY'],)
 
 # INSERTION D'UNE COLONNE AVEC LA PROJECTION NORMALE DE LA FORCE NODALE
 TFORCE=CALC_TABLE(reuse =TFORCE,

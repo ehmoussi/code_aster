@@ -32,6 +32,7 @@ implicit none
 #include "asterfort/comp_meca_l.h"
 #include "asterfort/comp_read_exte.h"
 #include "asterfort/comp_read_typmod.h"
+#include "asterc/mfront_get_strain_model.h"
 !
 character(len=8), intent(in) :: mesh
 integer, intent(in), pointer :: v_model_elem(:)
@@ -75,13 +76,13 @@ character(len=16), optional, intent(out) :: type_cpla_out_
     character(len=255) :: libr_name, subr_name
     integer :: nb_vari_umat
     character(len=16) :: model_mfront, type_cpla_out, type_cpla_in
-    integer :: model_dim, elem_type
+    integer :: model_dim, elem_type, strain_model
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    l_umat         = .false._1
-    l_mfront_proto = .false._1
-    l_mfront_offi  = .false._1
+    l_umat         = ASTER_FALSE
+    l_mfront_proto = ASTER_FALSE
+    l_mfront_offi  = ASTER_FALSE
     keywf          = 'None'
     i_comp         = 0
     libr_name      = ' '
@@ -97,6 +98,7 @@ character(len=16), optional, intent(out) :: type_cpla_out_
     if (present(elem_type_)) then
         elem_type = elem_type_ 
     endif
+    strain_model   = 0
 !
 ! - Read from command file or not ?
 !
@@ -141,6 +143,13 @@ character(len=16), optional, intent(out) :: type_cpla_out_
         endif
     endif
 !
+! - Get strain model for MFRONT
+!
+    if (l_mfront_proto .or. l_mfront_offi) then
+        call mfront_get_strain_model(libr_name   , subr_name,&
+                                     model_mfront, strain_model)
+    endif
+!
 ! - Global flag
 !
     l_comp_external = l_mfront_proto .or. l_mfront_offi .or. l_umat
@@ -158,5 +167,6 @@ character(len=16), optional, intent(out) :: type_cpla_out_
     comp_exte%l_umat         = l_umat
     comp_exte%l_mfront_proto = l_mfront_proto
     comp_exte%l_mfront_offi  = l_mfront_offi
+    comp_exte%strain_model   = strain_model
 !
 end subroutine

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,16 +15,15 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine deprecated_algom(algo)
 !
 implicit none
+!
 #include "asterfort/assert.h"
 #include "asterfort/utmess.h"
 !
-! person_in_charge: nicolas.sellenet at edf.fr
-!
-    character(len=*), intent(in) :: algo
+character(len=*), intent(in) :: algo
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -43,9 +42,9 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    if (algo .eq. 'ENSIGHT') then
+    if (algo .eq. 'MON_ALGO') then
         vali = 14
-        valk = "LIRE_RESU/FORMAT='ENSIGHT'"
+        valk = "MONALGO"
     else
         goto 999
     endif

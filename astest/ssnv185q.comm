@@ -99,8 +99,12 @@ CHAMPMA1=AFFE_MATERIAU(MAILLAGE=MAILLAG1,
 # PARAMETRES DE LA FISSURE
 a=4.9
 b=10.
-LN=FORMULE(NOM_PARA=('X','Y','Z'),VALE='Z-15.');
-LT=FORMULE(NOM_PARA=('X','Y','Z'),VALE='b-a-Y',a=a,b=b);
+LN = FORMULE(VALE='Z-15.',
+             NOM_PARA=['X', 'Y', 'Z'],)
+LT = FORMULE(VALE='b-a-Y',
+             b=b,
+             a=a,
+             NOM_PARA=['X', 'Y', 'Z'],)
 
 FISS = [None]*5
 

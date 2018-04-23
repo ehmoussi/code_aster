@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,11 +19,11 @@
 subroutine dtmprep_noli_decr(sd_dtm_, sd_nl_, icomp)
     implicit none
 ! dtmprep_noli_decr : prepare the calculations for a localized nonlinearity
-!                     of type : discrete model with isotropic behavior. This   
+!                     of type : discrete model with isotropic behavior. This
 !                     routine adds a single occurence to sd_nl and increments
 !                     NB_NOLI in sd_dtm
 !
-!             icomp : an integer giving the index of occurence of the 
+!             icomp : an integer giving the index of occurence of the
 !                     nonlinearity to be treated under the factor kw
 !                     COMPORTEMENT of the command DYNA_VIBRA.
 !
@@ -116,7 +116,7 @@ subroutine dtmprep_noli_decr(sd_dtm_, sd_nl_, icomp)
     sd_dtm = sd_dtm_
     sd_nl  = sd_nl_
 !
-    lnoeu2 = .false.   
+    lnoeu2 = .false.
     one = 1.d0
  !
     motfac = 'COMPORTEMENT'
@@ -127,7 +127,7 @@ subroutine dtmprep_noli_decr(sd_dtm_, sd_nl_, icomp)
     call infmaj()
     call infniv(ibid, info)
 !
-!   --- 1 - Basic information about the mesh and numbering 
+!   --- 1 - Basic information about the mesh and numbering
 !
     call dtmget(sd_dtm, _NUM_DDL, kscal=nume)
     call dtmget(sd_dtm, _NB_MODES, iscal=nbmode)
@@ -196,7 +196,7 @@ subroutine dtmprep_noli_decr(sd_dtm_, sd_nl_, icomp)
         call nlsav(sd_nl, _MESH_2, 1, iocc=i, kscal=mesh2)
     end if
 !
-!   --- 3 - Filling up the sd_nl with further information regarding the 
+!   --- 3 - Filling up the sd_nl with further information regarding the
 !           nonlinearity(ies)
 !
     AS_ALLOCATE(vi=ddlcho, size=6)
@@ -280,7 +280,7 @@ subroutine dtmprep_noli_decr(sd_dtm_, sd_nl_, icomp)
     call getvr8(motfac, 'RESI_INTE_RELA', iocc=icomp, scal=res_inte, nbret=n1)
     call nlsav(sd_nl, _RES_INTE, 1, iocc=i, rscal=res_inte)
 !
-!   --- 3.4 - Calculation of geometrical properties : 
+!   --- 3.4 - Calculation of geometrical properties :
 !             play, orientation, local coordinates, distances
 !             Vector x1x2 must not be zero
     call nlget(sd_nl, _COOR_NO1, iocc=i, vr=coor_no1)
@@ -297,7 +297,7 @@ subroutine dtmprep_noli_decr(sd_dtm_, sd_nl_, icomp)
     call angvx(axe, alpha, beta)
     call nlsav(sd_nl, _SINCOS_ANGLE_A, 2, iocc=i, rvect=[sin(alpha), cos(alpha)])
     call nlsav(sd_nl, _SINCOS_ANGLE_B, 2, iocc=i, rvect=[sin(beta), cos(beta)])
-    call nlsav(sd_nl, _SINCOS_ANGLE_G, 2, iocc=i, rvect=[0.d0, 0.d0])
+    call nlsav(sd_nl, _SINCOS_ANGLE_G, 2, iocc=i, rvect=[0.d0, 1.0d0])
 
     obst_typ = 'BI_PLANY'
     call nlsav(sd_nl, _OBST_TYP, 1, iocc=i, kscal=obst_typ)
@@ -393,7 +393,7 @@ subroutine dtmprep_noli_decr(sd_dtm_, sd_nl_, icomp)
         defmod1(3*(j-1)+1) = bmodal(ddlcho(1),j)
         defmod1(3*(j-1)+2) = bmodal(ddlcho(2),j)
         defmod1(3*(j-1)+3) = bmodal(ddlcho(3),j)
-        
+
         if (obst_typ(1:2).eq.'BI') then
             defmod2(3*(j-1)+1) = bmodal(ddlcho(4),j)
             defmod2(3*(j-1)+2) = bmodal(ddlcho(5),j)

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -64,8 +64,13 @@ Rinf = 2*h
 # definition des formules utiles pour le calcul des level sets
 Rp = R * tan(alpha)
 Yh = R - R/cos(alpha)
-LN = FORMULE(NOM_PARA=('X','Y'),VALE='(X**2+(Y-R)**2-R**2)')
-LT = FORMULE(NOM_PARA=('X','Y'),VALE='sqrt(X**2+(Y-Yh)**2)-Rp')
+LN = FORMULE(VALE='(X**2+(Y-R)**2-R**2)',
+             R=R,
+             NOM_PARA=['X', 'Y'],)
+LT = FORMULE(VALE='sqrt(X**2+(Y-Yh)**2)-Rp',
+             Yh=Yh,
+             Rp=Rp,
+             NOM_PARA=['X', 'Y'],)
 
 # initialisation
 nb_iter = nb_raff+1

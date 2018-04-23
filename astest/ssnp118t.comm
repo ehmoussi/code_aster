@@ -48,7 +48,8 @@ THETA = 30.*pi/180.
 
 # formule analytique pour la fissure
 LN = FORMULE(VALE='X*cos(THETA)+Y*sin(THETA)-0.4',
-             NOM_PARA=('X','Y',),cos=cos,sin=sin,THETA=THETA);
+             THETA=THETA,
+             NOM_PARA=['X', 'Y'],)
 
 # definition de la fissure
 FISS=DEFI_FISS_XFEM(MAILLAGE=MA,

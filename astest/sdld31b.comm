@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -59,7 +59,14 @@ C1 = -(MMM);
 C2 = (-(((omegex * NNN) + (AM * MMM))) / omegaa);
 
 solex = FORMULE(VALE='exp(-AM*INST)*(C1*cos(omegaa*INST)+C2*sin(omegaa*INST)) + MMM*cos(omegex*INST)+NNN*sin(omegex*INST)',
-                NOM_PARA='INST',);
+                AM=AM,
+                C1=C1,
+                omegaa=omegaa,
+                C2=C2,
+                MMM=MMM,
+                omegex=omegex,
+                NNN=NNN,
+                NOM_PARA='INST',)
 
 
 
@@ -123,7 +130,8 @@ OMEGA = (omega0 * 1.1);
 
 
 SINOMEGT = FORMULE(VALE='sin(OMEGA*INST)',
-                   NOM_PARA='INST',);
+                   OMEGA=OMEGA,
+                   NOM_PARA='INST',)
 
 FSIN=CALC_FONC_INTERP(FONCTION=SINOMEGT,
                       LIST_PARA=L_INST,

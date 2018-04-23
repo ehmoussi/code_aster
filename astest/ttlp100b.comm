@@ -159,15 +159,31 @@ TSTAT=CREA_CHAMP(TYPE_CHAM='NOEU_TEMP_R',
 
 GRAD = FORMULE(VALE="""
 COEFH*(TEMPD-TEMPG)/(CONDUC+COEFH*LONTOT)""",
-               NOM_PARA='BIDON',);
+               COEFH=COEFH,
+               TEMPD=TEMPD,
+               TEMPG=TEMPG,
+               CONDUC=CONDUC,
+               LONTOT=LONTOT,
+               NOM_PARA='BIDON',)
 
 TINTG = FORMULE(VALE="""
 TEMPG + COEFH*(TEMPD-TEMPG)/(CONDUC+COEFH*LONTOT)*X """,
-                NOM_PARA='X',);
+                TEMPG=TEMPG,
+                COEFH=COEFH,
+                TEMPD=TEMPD,
+                CONDUC=CONDUC,
+                LONTOT=LONTOT,
+                NOM_PARA='X',)
 
 TINTD = FORMULE(VALE="""
 TEMPD - COEFH*(TEMPD-TEMPG)/(CONDUC+COEFH*LONTOT)*(LONMAX-X)""",
-                NOM_PARA='X',);
+                TEMPD=TEMPD,
+                COEFH=COEFH,
+                TEMPG=TEMPG,
+                CONDUC=CONDUC,
+                LONTOT=LONTOT,
+                LONMAX=LONMAX,
+                NOM_PARA='X',)
 #
 
 TEST_RESU(CHAM_NO=(_F(NOEUD='N46',

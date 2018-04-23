@@ -17,8 +17,6 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: josselin.delmas at edf.fr
-
 cata_msg = {
 
     1: _(u"""
@@ -38,6 +36,9 @@ Comportement - Occurrence  %(i1)d"""),
 
     9: _(u"""  Nombre total de variables internes   : %(i1)d"""),
 
+   10: _(u"""  Relation                             : prototype (MFRONT ou UMAT)"""),
+
+   11: _(u"""  Relation                             : défini par DEFI_COMPOR"""),
 
     13: _(u"""
   Il y a deux types de modélisations différents pour une même affectation du comportement MFRONT.
@@ -59,7 +60,6 @@ Comportement - Occurrence  %(i1)d"""),
 """),
 
     16: _(u"""
-  Il y a %(i1)d variables internes.
   Pour les comportements externes prototypes (MFRONT ou UMAT), on n'a pas d'informations sur le nom des variables internes.
 """),
 
@@ -84,6 +84,8 @@ Ce n'est actuellement pas possible.
     25: _(u"""
 La variable de commande %(k1)s a été définie dans AFFE_MATERIAU mais n'est pas définie dans le comportement MFront. 
 """),
+
+    35: _(u"""Le modèle de déformation utilisé dans MFront est incompatible avec %(k1)s."""),
 
     53: _(u"""
 Comportement POLYCRISTAL

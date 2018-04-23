@@ -33,7 +33,9 @@ def LN(x,y):
   else :
     return y-2*x-cte
 
-LSN=FORMULE(NOM_PARA=('X','Y'),VALE='LN(X,Y)',LN=LN);
+LSN = FORMULE(VALE='LN(X,Y)',
+              LN=LN,
+              NOM_PARA=['X', 'Y'],)
 
 MAILLAGE=MODI_MAILLAGE(reuse =MAILLAGE,
                        MAILLAGE=MAILLAGE,

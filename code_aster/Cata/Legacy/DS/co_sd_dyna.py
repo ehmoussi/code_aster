@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -84,10 +84,11 @@ class tran_gene  (dyna_gene) :
                                               'IND_ADHE', 'VINT_FR1', 'VINT_FR2',
                                               'VINT_FR3', 'VINT_FR4', 'VINT_FR5',
                                               'VINT_FR6', 'VINT_FR7'],
-                           'FLAMBAGE'      : ['F_NORMAL',
-                                              'DXLOC_N1', 'DYLOC_N1', 'DZLOC_N1',
-                                              'DXLOC_N2', 'DYLOC_N2', 'DZLOC_N2',
-                                              'V_NORMAL', 'DEF_PLAS'],
+                          'FLAMBAGE'      : ['F_NORMAL',
+                                              'DXLOC_N1', 'DYLOC_N1', 'DZLOC_N1', 
+                                              'DXLOC_N2', 'DYLOC_N2', 'DZLOC_N2', 
+                                              'V_NORMAL', 'ENFO_PLA', 'RIGI_P_F',
+                                              'ENFO_MAX'],
                            'ANTI_SISM'     : ['F_AXIAL',
                                               'DXLOC_N1', 'DYLOC_N1', 'DZLOC_N1',
                                               'DXLOC_N2', 'DYLOC_N2', 'DZLOC_N2',
@@ -288,6 +289,53 @@ class tran_gene  (dyna_gene) :
 
         return output
 
+    def VARI_INTERNE_FIN (self, inoli=-1, describe=True):
+        """
+        Returns a 2D numpy array of all internal variables for a given non linearity of index <inoli>
+
+        Output ARRAY : -----------------------------------------
+                      | VINT1    VINT2    VINT3    ...  VINTn
+               -------------------------------------------------
+              | INSTn |
+               -------------------------------------------------
+
+        ARRAY[J] => Instant INSTn, Internal Variable J
+                      Use python's convention for indices, they range from 0 -> n-1
+
+        ex. Print the internal variables for the first nonlinearity (index 1) calculated at
+            the final (last archived) instant
+         ----------------------------------------
+        | ARRAY = RESUGENE.VARI_INTERNE(1)
+        | print ARRAY
+         ----------------------------------------
+        """
+        if not self.accessible():
+            raise AsException("Erreur dans tran_gene.VARI_INTERNE() en PAR_LOT='OUI'")
+
+        inoli = self.__check_input_inoli(inoli)
+        i = inoli-1
+
+        vindx  = self.sdj.sd_nl.VIND.get()
+        nbvint = vindx[-1]-1    # number of internal variables saved for all nonlinearities : record length of VINT
+
+        vint    = self.sdj.sd_nl.VINT.get()
+        nbsaves = len(vint)/nbvint
+
+        start  = vindx[i  ]-1
+        finish = vindx[i+1]-1
+        outputLength = (finish-start)*nbsaves
+
+        cntr = 0
+        output = [0.]*(finish-start)
+        iord = nbsaves-1
+        for i in range(start, finish):
+                output[cntr] = vint[iord*(nbvint)+i]
+                cntr += 1
+
+        if describe : dummy = self.__print_vint_description(inoli)
+
+        return output
+
     def FORCE_NORMALE (self, inoli=-1):
         """
         Returns a 1D numpy array giving the evolution of the normal force at the archived instants"""
@@ -306,6 +354,10 @@ class tran_gene  (dyna_gene) :
         vint = self.VARI_INTERNE(inoli, describe=False)
         #The normal force is saved in the first position (ind=0) of the internal variables for DIS_CHOC and FLAMBAGE nonlinearities
         return vint[:,0]
+
+
+
+
 
     def FORCE_TANGENTIELLE (self, inoli=-1):
         """

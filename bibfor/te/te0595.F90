@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,10 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine te0595(option, nomte)
-! person_in_charge: sebastien.fayolle at edf.fr
-    implicit none
+!
+implicit none
+!
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterfort/assert.h"
@@ -146,9 +148,8 @@ subroutine te0595(option, nomte)
             else
                 mini = .false.
             endif
-!
-! - ACCES AUX COMPOSANTES DU VECTEUR DDL
-            call niinit(nomte, typmod, ndim, nno1, 0,&
+! --------- Get index of dof
+            call niinit(typmod, ndim, nno1, 0,&
                         nno2, 0, vu, vg, vp,&
                         vpi)
             nddl = nno1*ndim + nno2
@@ -161,8 +162,8 @@ subroutine te0595(option, nomte)
                         zr(ivarip), resi, rigi, mini, zr(ivectu),&
                         zr(imatuu), codret)
         else if (lteatt('INCO','C2O')) then
-! - ACCES AUX COMPOSANTES DU VECTEUR DDL
-            call niinit(nomte, typmod, ndim, nno1, 0,&
+! --------- Get index of dof
+            call niinit(typmod, ndim, nno1, 0,&
                         nno2, nno2, vu, vg, vp,&
                         vpi)
             nddl = nno1*ndim + nno2 + nno2*ndim
@@ -195,9 +196,8 @@ subroutine te0595(option, nomte)
                 valk = zk16(icompo+2)
                 call utmess('F', 'MODELISA10_18', sk=valk)
             endif
-!
-! - ACCES AUX COMPOSANTES DU VECTEUR DDL
-            call niinit(nomte, typmod, ndim, nno1, 0,&
+! --------- Get index of dof
+            call niinit(typmod, ndim, nno1, 0,&
                         nno2, 0, vu, vg, vp,&
                         vpi)
             nddl = nno1*ndim + nno2

@@ -171,24 +171,16 @@ nu.setGlossaryName("PoissonRatio");
 
 
 // calcul de la jacobienne analytique
-    real crit = 1e-6;
-    Stensor4 aux4=Stensor4(0.);
-    Stensor4 dphideel=Stensor4(0.);
-    Stensor4 dppdeel=Stensor4(0.);
-    Stensor4 dsigdeel=lambda*(Stensor::Id()^Stensor::Id())+2.*mu*Stensor4::Id();
-    Stensor4 dSdeel=dsigdeel-(1./3.)*(9.*lambda+6.*mu)*Stensor4::Id();
+    const real crit = 1e-16;
     for (unsigned short i=0;i<Ns;i++){
         if (qn[i]<eps){
-            dphideel=Stensor4(0.);
-            dppdeel=Stensor4(0.);
+            dfeel_ddeel    += 2*mu*dpp[i]*theta*(1/eps)*(Stensor4::M()-(PSI[i]^PSI[i]));
         }
         else{
-            dphideel=-(2./3./qn[i])*(dSdeel);
-            dppdeel=dpp[i]*(1./(qn[i]*qn[i]*qn[i]))*(((S-X[i])|dSdeel)^(S-X[i]));
+            dfeel_ddeel    += 2*mu*dpp[i]*theta*(1/qn[i])*(Stensor4::M()-(PSI[i]^PSI[i]));
         }
-        aux4=dpp[i]*dphideel+dppdeel+aux4;
     }
-    dfeel_ddeel = aux4+Stensor4::Id();
+
     for (unsigned short i=0;i<Ns;i++){
         dfeel_ddpp(i) = PSI[i];
         dfpp_ddpp(i,i) = 1.;

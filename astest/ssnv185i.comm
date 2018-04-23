@@ -20,8 +20,6 @@
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),DEBUG=_F(SDVERI='OUI'),
       IGNORE_ALARM=('MODELE1_63'))
 
-from math import *
-
 # <MODELE1_63> : DANS UN MODELE, IL EXISTE DES ELEMENTS DE TYPE "BORD" QUI N'ONT PAS DE VOISIN AVEC RIGIDITE
 #  LE MODELE PROVOQUANT CES ALARMES NE SERT QU'A LA VISUALISATION
 
@@ -68,8 +66,10 @@ MAILLAG1=MODI_MAILLAGE(reuse =MAILLAG1,
                        ORIE_PEAU_3D=_F(GROUP_MA=('SURFSUP','SURFINF',),),
                        );
 
-LN=FORMULE(NOM_PARA=('X','Y','Z'),VALE='Z-15.');
-LT=FORMULE(NOM_PARA=('X','Y','Z'),VALE='-Y+5.');
+LN = FORMULE(VALE='Z-15.',
+             NOM_PARA=['X', 'Y', 'Z'],)
+LT = FORMULE(VALE='-Y+5.',
+             NOM_PARA=['X', 'Y', 'Z'],)
 
 FISS=DEFI_FISS_XFEM(MAILLAGE=MAILLAG1,
                     DEFI_FISS=_F(FONC_LT=LT,FONC_LN=LN,),
@@ -129,29 +129,56 @@ CH=AFFE_CHAR_MECA(MODELE=MODELEK,
                                    COEF_IMPO=0.0,),
                              ),);
 
-R = FORMULE(NOM_PARA=('X','Y','Z'),VALE='sqrt((Y-5.)**2+(Z-15.)**2)',sqrt=sqrt);
-T = FORMULE(NOM_PARA=('X','Y','Z'),VALE='atan2(Z-15.,-Y+5.)',atan2=atan2);
+R = FORMULE(VALE='sqrt((Y-5.)**2+(Z-15.)**2)',
+            NOM_PARA=['X', 'Y', 'Z'],)
+T = FORMULE(VALE='atan2(Z-15.,-Y+5.)',
+            NOM_PARA=['X', 'Y', 'Z'],)
 
 coef=1./sqrt(2.*pi)
 
 # formules des contraintes et de leurs opposees
 
-SIG11 = FORMULE(NOM_PARA=('X','Y','Z'),VALE='coef*1./sqrt(R(X,Y,Z))*cos(T(X,Y,Z)/2.)*(1-sin(T(X,Y,Z)/2.)*sin(3.*T(X,Y,Z)/2.))',
-                coef=coef,sqrt=sqrt,R=R,sin=sin,cos=cos,T=T);
-SIG22 = FORMULE(NOM_PARA=('X','Y','Z'),VALE='coef*1./sqrt(R(X,Y,Z))*cos(T(X,Y,Z)/2.)*(1+sin(T(X,Y,Z)/2.)*sin(3.*T(X,Y,Z)/2.))'
-                coef=coef,sqrt=sqrt,R=R,sin=sin,cos=cos,T=T);
-SIG12 = FORMULE(NOM_PARA=('X','Y','Z'),VALE='coef*1./sqrt(R(X,Y,Z))*cos(T(X,Y,Z)/2.)*sin(T(X,Y,Z)/2.)*cos(3.*T(X,Y,Z)/2.)'
-                coef=coef,sqrt=sqrt,R=R,sin=sin,cos=cos,T=T);
-SIG33 = FORMULE(NOM_PARA=('X','Y','Z'),VALE='nu*(SIG11(X,Y,Z)+SIG22(X,Y,Z))',nu=nu,SIG11=SIG11,SIG22=SIG22);
+SIG11 = FORMULE(VALE='coef*1./sqrt(R(X,Y,Z))*cos(T(X,Y,Z)/2.)*(1-sin(T(X,Y,Z)/2.)*sin(3.*T(X,Y,Z)/2.))',
+                coef=coef,
+                R=R,
+                T=T,
+                NOM_PARA=['X', 'Y', 'Z'],)
+SIG22 = FORMULE(VALE='coef*1./sqrt(R(X,Y,Z))*cos(T(X,Y,Z)/2.)*(1+sin(T(X,Y,Z)/2.)*sin(3.*T(X,Y,Z)/2.))',
+                coef=coef,
+                R=R,
+                T=T,
+                NOM_PARA=['X', 'Y', 'Z'],)
+SIG12 = FORMULE(VALE='coef*1./sqrt(R(X,Y,Z))*cos(T(X,Y,Z)/2.)*sin(T(X,Y,Z)/2.)*cos(3.*T(X,Y,Z)/2.)',
+                coef=coef,
+                R=R,
+                T=T,
+                NOM_PARA=['X', 'Y', 'Z'],)
+SIG33 = FORMULE(VALE='nu*(SIG11(X,Y,Z)+SIG22(X,Y,Z))',
+                nu=nu,
+                SIG11=SIG11,
+                SIG22=SIG22,
+                NOM_PARA=['X', 'Y', 'Z'],)
 
-OSIG11 = FORMULE(NOM_PARA=('X','Y','Z'),VALE='-coef*1./sqrt(R(X,Y,Z))*cos(T(X,Y,Z)/2.)*(1-sin(T(X,Y,Z)/2.)*sin(3.*T(X,Y,Z)/2.))'
-                 coef=coef,sqrt=sqrt,R=R,sin=sin,cos=cos,T=T);
-OSIG22 = FORMULE(NOM_PARA=('X','Y','Z'),VALE='-coef*1./sqrt(R(X,Y,Z))*cos(T(X,Y,Z)/2.)*(1+sin(T(X,Y,Z)/2.)*sin(3.*T(X,Y,Z)/2.))'
-                 coef=coef,sqrt=sqrt,R=R,sin=sin,cos=cos,T=T);
-OSIG12 = FORMULE(NOM_PARA=('X','Y','Z'),VALE='-coef*1./sqrt(R(X,Y,Z))*cos(T(X,Y,Z)/2.)*sin(T(X,Y,Z)/2.)*cos(3.*T(X,Y,Z)/2.)'
-                 coef=coef,sqrt=sqrt,R=R,sin=sin,cos=cos,T=T);
-OSIG33 = FORMULE(NOM_PARA=('X','Y','Z'),VALE='-nu*(SIG11(X,Y,Z)+SIG22(X,Y,Z))',
-                 nu=nu,SIG11=SIG11,SIG22=SIG22);
+OSIG11 = FORMULE(VALE='-coef*1./sqrt(R(X,Y,Z))*cos(T(X,Y,Z)/2.)*(1-sin(T(X,Y,Z)/2.)*sin(3.*T(X,Y,Z)/2.))',
+                 coef=coef,
+                 R=R,
+                 T=T,
+                 NOM_PARA=['X', 'Y', 'Z'],)
+OSIG22 = FORMULE(VALE='-coef*1./sqrt(R(X,Y,Z))*cos(T(X,Y,Z)/2.)*(1+sin(T(X,Y,Z)/2.)*sin(3.*T(X,Y,Z)/2.))',
+                 coef=coef,
+                 R=R,
+                 T=T,
+                 NOM_PARA=['X', 'Y', 'Z'],)
+OSIG12 = FORMULE(VALE='-coef*1./sqrt(R(X,Y,Z))*cos(T(X,Y,Z)/2.)*sin(T(X,Y,Z)/2.)*cos(3.*T(X,Y,Z)/2.)',
+                 coef=coef,
+                 R=R,
+                 T=T,
+                 NOM_PARA=['X', 'Y', 'Z'],)
+OSIG33 = FORMULE(VALE='-nu*(SIG11(X,Y,Z)+SIG22(X,Y,Z))',
+                 nu=nu,
+                 SIG11=SIG11,
+                 SIG22=SIG22,
+                 NOM_PARA=['X', 'Y', 'Z'],)
 
 
 CHF=AFFE_CHAR_MECA_F(MODELE=MODELEK,

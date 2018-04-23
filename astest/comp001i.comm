@@ -57,11 +57,12 @@ ACIER[1]=DEFI_MATERIAU(ELAS=_F(E=YOUNG,
 # courbe de traction equivalente
 
 # courbe R(p)
-Rdep = FORMULE(VALE='SY+SY*(YOUNG*p/APUI/SY)**(1./NPUI)',NOM_PARA='p',
+Rdep = FORMULE(VALE='SY+SY*(YOUNG*p/APUI/SY)**(1./NPUI)',
                SY=SY,
                YOUNG=YOUNG,
                APUI=APUI,
-               NPUI=NPUI);
+               NPUI=NPUI,
+               NOM_PARA='p',)
 
 LISTE=DEFI_LIST_REEL(DEBUT=0.,INFO=1,
                         INTERVALLE=_F(JUSQU_A=1.,
@@ -75,7 +76,9 @@ Rdep2=CALC_FONC_INTERP(FONCTION=Rdep,
 
 TRdep=CREA_TABLE(FONCTION=_F(FONCTION=Rdep2,PARA=('p','SIGM')))
 
-EPSI = FORMULE(VALE='p+SIGM/YOUNG',NOM_PARA=('p','SIGM'),YOUNG=YOUNG)
+EPSI = FORMULE(VALE='p+SIGM/YOUNG',
+               YOUNG=YOUNG,
+               NOM_PARA=['p', 'SIGM'],)
 
 TTRAC = CALC_TABLE(TABLE = TRdep,
 ACTION = _F (OPERATION = 'OPER',FORMULE = EPSI,NOM_PARA = ('EPSI')))

@@ -65,7 +65,9 @@ def reparti(x) :
     x2=x*2*pi/10.
     return -1.E6*sin(x2)
 
-F1=FORMULE(NOM_PARA=('X'),VALE='reparti(X)',reparti=reparti)
+F1 = FORMULE(VALE='reparti(X)',
+             reparti=reparti,
+             NOM_PARA='X',)
 CHARG1=AFFE_CHAR_MECA_F(MODELE=MO1,  FORCE_INTERNE=_F( GROUP_MA = 'BARR1', FX=F1))
 CHARG2=AFFE_CHAR_MECA_F(MODELE=MO2,  FORCE_INTERNE=_F( GROUP_MA = 'BARR2', FX=F1))
 

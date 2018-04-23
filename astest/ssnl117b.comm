@@ -386,12 +386,24 @@ ALPHAF = pi/4*GAMMAD
 
 # Definition des formules pour le calcul de EN, ET, EFY, EFZ et ESTAR
 
-form_EN  = FORMULE(NOM_PARA=('EPXX'),VALE='(EPXX)')
-form_ET  = FORMULE(NOM_PARA=('GAT'), VALE='(RMOY*GAT/2.)')
-form_EFY = FORMULE(NOM_PARA=('KY'),  VALE='(RMOY*KY/K1)')
-form_EFZ = FORMULE(NOM_PARA=('KZ'),  VALE='(RMOY*KZ/K1)')
-fo_ESTAR = FORMULE(NOM_PARA=('ET','EN','EFY','EFZ'),
-                   VALE='((ALPHAN*EN)**2+(ALPHAT*ET)**2+(ALPHAF*EFY)**2+(ALPHAF*EFZ)**2)**(0.5)')
+form_EN = FORMULE(VALE='(EPXX)',
+                  NOM_PARA='EPXX',)
+form_ET = FORMULE(VALE='(RMOY*GAT/2.)',
+                  RMOY=RMOY,
+                  NOM_PARA='GAT',)
+form_EFY = FORMULE(VALE='(RMOY*KY/K1)',
+                   RMOY=RMOY,
+                   K1=K1,
+                   NOM_PARA='KY',)
+form_EFZ = FORMULE(VALE='(RMOY*KZ/K1)',
+                   RMOY=RMOY,
+                   K1=K1,
+                   NOM_PARA='KZ',)
+fo_ESTAR = FORMULE(VALE='((ALPHAN*EN)**2+(ALPHAT*ET)**2+(ALPHAF*EFY)**2+(ALPHAF*EFZ)**2)**(0.5)',
+                   ALPHAN=ALPHAN,
+                   ALPHAT=ALPHAT,
+                   ALPHAF=ALPHAF,
+                   NOM_PARA=['ET', 'EN', 'EFY', 'EFZ'],)
 
 # Partie droite
 
@@ -455,10 +467,19 @@ ALPHAF2 = pi/4*GAMMA
 
 # Definition des formules pour le calcul de EFY, EFZ et ESTAR
 
-for_EFY = FORMULE(NOM_PARA=('KY'),  VALE='(RMOY*KY/K2)')
-for_EFZ = FORMULE(NOM_PARA=('KZ'),  VALE='(RMOY*KZ/K2)')
-f_ESTAR = FORMULE(NOM_PARA=('ET','EN','EFY','EFZ'),
-                   VALE='((ALPHAN*EN)**2+(ALPHAT*ET)**2+(ALPHAF2*EFY)**2+(ALPHAF2*EFZ)**2)**(0.5)')
+for_EFY = FORMULE(VALE='(RMOY*KY/K2)',
+                  RMOY=RMOY,
+                  K2=K2,
+                  NOM_PARA='KY',)
+for_EFZ = FORMULE(VALE='(RMOY*KZ/K2)',
+                  RMOY=RMOY,
+                  K2=K2,
+                  NOM_PARA='KZ',)
+f_ESTAR = FORMULE(VALE='((ALPHAN*EN)**2+(ALPHAT*ET)**2+(ALPHAF2*EFY)**2+(ALPHAF2*EFZ)**2)**(0.5)',
+                  ALPHAN=ALPHAN,
+                  ALPHAT=ALPHAT,
+                  ALPHAF2=ALPHAF2,
+                  NOM_PARA=['ET', 'EN', 'EFY', 'EFZ'],)
 
 # A l entree C du coude
 

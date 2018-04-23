@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,14 +17,15 @@
 ! --------------------------------------------------------------------
 
 !
+#include "asterf_types.h"
 interface 
-    subroutine b3d_jacob3(a, idim, d, x, control,&
+    subroutine b3d_jacob3(a, idim1, d, x, control,&
                           epsv)
         real(kind=8) :: a(3, 3)
-        integer :: idim
+        integer :: idim1
         real(kind=8) :: d(3)
         real(kind=8) :: x(3, 3)
-        logical :: control
+        aster_logical :: control
         real(kind=8) :: epsv
     end subroutine b3d_jacob3
 end interface 

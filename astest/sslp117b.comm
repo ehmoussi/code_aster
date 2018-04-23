@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -46,9 +46,12 @@ MODELE=AFFE_MODELE(MAILLAGE=MAIL,
 # DEFINITION DES FONCTIONS DE TEMPERATURE
 # ---------------------------------------
 
-T_SUP = FORMULE(NOM_PARA=('X','Y'),VALE=' 100-5*abs(X)-5*abs(Y)+0.5*abs(X*Y)')
-T_MOY = FORMULE(NOM_PARA=('X','Y'),VALE='0.')
-T_INF = FORMULE(NOM_PARA=('X','Y'),VALE='-100+5*abs(X)+5*abs(Y)-0.5*abs(X*Y)')
+T_SUP = FORMULE(VALE=' 100-5*abs(X)-5*abs(Y)+0.5*abs(X*Y)',
+                NOM_PARA=['X', 'Y'],)
+T_MOY = FORMULE(VALE='0.',
+                NOM_PARA=['X', 'Y'],)
+T_INF = FORMULE(VALE='-100+5*abs(X)+5*abs(Y)-0.5*abs(X*Y)',
+                NOM_PARA=['X', 'Y'],)
 
 
 # CONSTRUCTION DES CHAMPS DE GEOMETRIE

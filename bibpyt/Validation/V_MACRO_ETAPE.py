@@ -89,7 +89,8 @@ class MACRO_ETAPE(V_ETAPE.ETAPE):
             valid = valid * self.valid_child()
             valid = valid * self.valid_regles(cr)
 
-            if self.reste_val != {}:
+            # exception for FORMULE for forward compatibility
+            if self.reste_val != {} and self.nom != "FORMULE":
                 if cr == 'oui':
                     self.cr.fatal(
                         _(u"Mots clés inconnus : %s"), ','.join(self.reste_val.keys()))

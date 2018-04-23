@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -347,8 +347,12 @@ for num_calc in range(0,nb_calc1) :
 #        On teste une variable PYTHON (erreur en energie)
 #-------------------------------------------------------------------
 
-ERREEN0=FORMULE(VALE='eren0*1.',NOM_PARA='BIDON')
-ERREEN2=FORMULE(VALE='eren2*1.',NOM_PARA='BIDON')
+ERREEN0 = FORMULE(VALE='eren0*1.',
+                  eren0=eren0,
+                  NOM_PARA='BIDON',)
+ERREEN2 = FORMULE(VALE='eren2*1.',
+                  eren2=eren2,
+                  NOM_PARA='BIDON',)
 TEST_FONCTION(VALEUR=(_F(VALE_CALC=10.077761341,
                          VALE_PARA=0.0,
                          NOM_PARA='BIDON',

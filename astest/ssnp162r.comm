@@ -249,7 +249,8 @@ TFORCE=POST_RELEVE_T(ACTION=_F(OPERATION='EXTRACTION',
 
 # projecteur sur la direction tangente
 PNOR = FORMULE(VALE='-DX*sin(angle)+DY*cos(angle)',
-              NOM_PARA=('DX','DY',),cos=cos,sin=sin,angle=angle);
+               angle=angle,
+               NOM_PARA=['DX', 'DY'],)
 
 # rajout d'une cologne dans le tableau avec la partie tangente de la force nodale
 TFORCE=CALC_TABLE(reuse =TFORCE,

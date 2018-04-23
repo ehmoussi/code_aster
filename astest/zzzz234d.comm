@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -108,7 +108,8 @@ TEST_RESU(RESU=_F(GROUP_NO='B',
 
 # --- validation CREA_CHAMP/'NEUT' aux points de GAUSS  ---
 
-FFDEUX = FORMULE(NOM_PARA=('X1','X2','X3'),VALE='3*X1 + 2*X2 - X3')
+FFDEUX = FORMULE(VALE='3*X1 + 2*X2 - X3',
+                 NOM_PARA=['X1', 'X2', 'X3'],)
 
 FELG01=CREA_CHAMP(
    OPERATION='AFFE', TYPE_CHAM='ELGA_NEUT_F',

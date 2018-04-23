@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -47,16 +47,18 @@ h = 0.5;
 
 
 LN = FORMULE(VALE='Y-h',
-             NOM_PARA=('X','Y',),);
+             h=h,
+             NOM_PARA=['X', 'Y'],)
 
 LT = FORMULE(VALE='-X+a',
-             NOM_PARA=('X','Y',),);
+             a=a,
+             NOM_PARA=['X', 'Y'],)
 
 ZERO = FORMULE(VALE='0.',
-               NOM_PARA=('X','Y',),);
+               NOM_PARA=['X', 'Y'],)
 
 EFFORT = FORMULE(VALE='-20.',
-                 NOM_PARA=('X','Y',),);
+                 NOM_PARA=['X', 'Y'],)
 
 L_INS1=DEFI_LIST_REEL(DEBUT=0.0,
                       INTERVALLE=_F(JUSQU_A=3.0,

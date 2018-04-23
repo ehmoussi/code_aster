@@ -175,13 +175,25 @@ def u_imp(icmp,x,y,z,t) :
     else :
         return phi[icmp-4]
 
-DXIMP = FORMULE(NOM_PARA=('X','Y','Z','INST'),VALE='u_imp(1,X,Y,Z,INST)',u_imp=u_imp)
-DYIMP = FORMULE(NOM_PARA=('X','Y','Z','INST'),VALE='u_imp(2,X,Y,Z,INST)',u_imp=u_imp)
-DZIMP = FORMULE(NOM_PARA=('X','Y','Z','INST'),VALE='u_imp(3,X,Y,Z,INST)',u_imp=u_imp)
+DXIMP = FORMULE(VALE='u_imp(1,X,Y,Z,INST)',
+                u_imp=u_imp,
+                NOM_PARA=['X', 'Y', 'Z', 'INST'],)
+DYIMP = FORMULE(VALE='u_imp(2,X,Y,Z,INST)',
+                u_imp=u_imp,
+                NOM_PARA=['X', 'Y', 'Z', 'INST'],)
+DZIMP = FORMULE(VALE='u_imp(3,X,Y,Z,INST)',
+                u_imp=u_imp,
+                NOM_PARA=['X', 'Y', 'Z', 'INST'],)
 
-DRXIMP = FORMULE(NOM_PARA=('X','Y','Z','INST'),VALE='u_imp(4,X,Y,Z,INST)',u_imp=u_imp)
-DRYIMP = FORMULE(NOM_PARA=('X','Y','Z','INST'),VALE='u_imp(5,X,Y,Z,INST)',u_imp=u_imp)
-DRZIMP = FORMULE(NOM_PARA=('X','Y','Z','INST'),VALE='u_imp(6,X,Y,Z,INST)',u_imp=u_imp)
+DRXIMP = FORMULE(VALE='u_imp(4,X,Y,Z,INST)',
+                 u_imp=u_imp,
+                 NOM_PARA=['X', 'Y', 'Z', 'INST'],)
+DRYIMP = FORMULE(VALE='u_imp(5,X,Y,Z,INST)',
+                 u_imp=u_imp,
+                 NOM_PARA=['X', 'Y', 'Z', 'INST'],)
+DRZIMP = FORMULE(VALE='u_imp(6,X,Y,Z,INST)',
+                 u_imp=u_imp,
+                 NOM_PARA=['X', 'Y', 'Z', 'INST'],)
 
 #--------------------------------------------------------------------------------------
 PRE_GIBI()

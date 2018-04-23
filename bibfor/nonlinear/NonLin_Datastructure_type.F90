@@ -413,6 +413,91 @@ implicit none
         type(NL_DS_Table)     :: table
     end type NL_DS_Energy
 !
+! - Type: for external comportement
+! 
+    type NL_DS_ComporExte
+! ----- Flag for UMAT law
+        aster_logical      :: l_umat
+! ----- Flag for non-official MFront law
+        aster_logical      :: l_mfront_proto
+! ----- Flag for official MFront law
+        aster_logical      :: l_mfront_offi
+! ----- Name of subroutine for external law
+        character(len=255) :: subr_name
+! ----- Name of library for external law
+        character(len=255) :: libr_name
+! ----- Model for MFront law
+        character(len=16)  :: model_mfront
+! ----- Number of dimension for MFront law
+        integer            :: model_dim
+! ----- Number of internal variables for UMAT
+        integer            :: nb_vari_umat
+! ----- Identifier for strains model
+        integer            :: strain_model
+    end type NL_DS_ComporExte
+!
+! - Type: for comportement
+! 
+    type NL_DS_Compor
+        character(len=16) :: rela_comp
+        character(len=16) :: defo_comp
+        character(len=16) :: type_comp
+        character(len=16) :: type_cpla
+        character(len=16) :: kit_comp(4)
+        character(len=16) :: mult_comp
+        character(len=16) :: post_iter
+        integer           :: nb_vari
+        integer           :: nb_vari_comp(4)
+        integer           :: nume_comp(4)
+    end type NL_DS_Compor
+!
+! - Type: for preparation of comportment
+! 
+    type NL_DS_ComporPrep
+! ----- Number of comportements
+        integer                         :: nb_comp
+! ----- List of comportements
+        type(NL_DS_Compor), pointer     :: v_comp(:)
+! ----- List of external comportements
+        type(NL_DS_ComporExte), pointer :: v_exte(:)
+! ----- Flag for IMPLEX method
+        aster_logical                   :: l_implex
+    end type NL_DS_ComporPrep
+!
+! - Type: for parameters for constitutive laws
+! 
+    type NL_DS_ComporPara
+        aster_logical :: l_comp_external
+        integer       :: type_matr_t
+        real(kind=8)  :: parm_theta
+        integer       :: iter_inte_pas
+        real(kind=8)  :: vale_pert_rela
+        real(kind=8)  :: resi_deborst_max
+        integer       :: iter_deborst_max
+        real(kind=8)  :: resi_radi_rela
+        integer       :: ipostiter
+        integer       :: ipostincr
+        integer       :: iveriborne
+        aster_logical :: l_matr_unsymm
+        character(len=16)         :: rela_comp
+        character(len=16)         :: meca_comp
+        character(len=16)         :: defo_comp
+        character(len=16)         :: kit_comp(4)
+        type(NL_DS_ComporExte)    :: comp_exte
+    end type NL_DS_ComporPara
+!
+! - Type: for preparation of parameters for constitutive laws
+! 
+    type NL_DS_ComporParaPrep
+! ----- Number of comportements
+        integer                         :: nb_comp
+! ----- Parameters for THM scheme
+        real(kind=8)                    :: parm_alpha_thm
+        real(kind=8)                    :: parm_theta_thm
+! ----- List of parameters
+        type(NL_DS_ComporPara), pointer :: v_para(:)
+    end type NL_DS_ComporParaPrep
+!
 ! - Type: constitutive laws management
 ! 
     type NL_DS_Constitutive
@@ -459,18 +544,18 @@ implicit none
 ! 
     type NL_DS_Stability
 ! ----- Use geometric matrix (only CRIT_STAB)
-        aster_logical             :: l_geom_matr
+        aster_logical             :: l_geom_matr = ASTER_FALSE
 ! ----- Use modified rigidity matrix (only CRIT_STAB)
-        aster_logical             :: l_modi_rigi
+        aster_logical             :: l_modi_rigi = ASTER_FALSE
 ! ----- Excluded DOF (only CRIT_STAB)
-        integer                   :: nb_dof_excl
+        integer                   :: nb_dof_excl = 0
         character(len=8), pointer :: list_dof_excl(:) => null()
 ! ----- Stabilized DOF (only CRIT_STAB)
-        integer                   :: nb_dof_stab
+        integer                   :: nb_dof_stab = 0
         character(len=8), pointer :: list_dof_stab(:) => null()
 ! ----- Instability parameters
-        character(len=16)         :: instab_sign
-        real(kind=8)              :: instab_prec
+        character(len=16)         :: instab_sign = ' '
+        real(kind=8)              :: instab_prec = 0.d0
 ! ----- Previous frequency
         real(kind=8)              :: prev_freq = 1.d50
     end type NL_DS_Stability
@@ -479,22 +564,22 @@ implicit none
 ! 
     type NL_DS_Spectral
 ! ----- Name of option to compute
-        character(len=16)      :: option
+        character(len=16)      :: option = ' '
 ! ----- Type of rigidity matrix
-        character(len=16)      :: type_matr_rigi
+        character(len=16)      :: type_matr_rigi = ' '
 ! ----- Type of eigenvalues research
-        aster_logical          :: l_small
-        aster_logical          :: l_strip
+        aster_logical          :: l_small = ASTER_FALSE
+        aster_logical          :: l_strip = ASTER_FALSE
 ! ----- Bounds of strip (STRIP option)
         real(kind=8)           :: strip_bounds(2)
 ! ----- Number of eigenvalues to search (SMALL option)
-        integer                :: nb_eigen
+        integer                :: nb_eigen = 0
 ! ----- Parameter for eigen solver
-        integer                :: coef_dim_espace
+        integer                :: coef_dim_espace = 0
 ! ----- Selector (when spectral analysis occurs)
         type(NL_DS_SelectList) :: selector
 ! ----- Level of computation (number of eigenvalues or eigenvalue+eigenvector)
-        character(len=16)      :: level
+        character(len=16)      :: level = ' '
     end type NL_DS_Spectral
 !
 ! - Type: post_treatment at each time step
@@ -503,38 +588,38 @@ implicit none
 ! ----- Table in output datastructure
         type(NL_DS_TableIO)   :: table_io
 ! ----- Compute CRIT_STAB / MODE_VIBR
-        aster_logical         :: l_crit_stab
-        aster_logical         :: l_mode_vibr
+        aster_logical         :: l_crit_stab = ASTER_FALSE
+        aster_logical         :: l_mode_vibr = ASTER_FALSE
 ! ----- Spectral analyses
         type(NL_DS_Spectral)  :: crit_stab
         type(NL_DS_Spectral)  :: mode_vibr
         type(NL_DS_Stability) :: stab_para
 ! ----- Small strain hypothese for geometry matrix
-        aster_logical         :: l_hpp
+        aster_logical         :: l_hpp = ASTER_FALSE
     end type NL_DS_PostTimeStep
 !
 ! - Type: material properties
 ! 
     type NL_DS_Material
 ! ----- Field of material parameters
-        character(len=24) :: field_mate
+        character(len=24) :: field_mate = ' '
 ! ----- Field for reference of external state variables
-        character(len=24) :: varc_refe
+        character(len=24) :: varc_refe = ' '
 ! ----- Field for initial value of external state variables
-        character(len=24) :: varc_init
+        character(len=24) :: varc_init = ' '
 ! ----- Force for initial value of external state variables
-        character(len=24) :: fvarc_init
+        character(len=24) :: fvarc_init = ' '
 ! ----- Force from external state variables for predictor
-        character(len=24) :: fvarc_pred
+        character(len=24) :: fvarc_pred = ' '
 ! ----- Force from external state variables for convergence criteria
-        character(len=24) :: fvarc_curr
+        character(len=24) :: fvarc_curr = ' '
 
     end type NL_DS_Material
 !
 ! - Type: combine vectors
 ! 
     type NL_DS_VectComb
-        integer            :: nb_vect
+        integer            :: nb_vect = 0
         real(kind=8)       :: vect_coef(20)
         character(len=19)  :: vect_name(20)
     end type NL_DS_VectComb

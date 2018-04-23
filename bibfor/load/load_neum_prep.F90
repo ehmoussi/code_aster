@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -191,7 +191,22 @@ implicit none
         nb_in_prep = nb_in_prep + 1
         lpain(nb_in_prep) = 'PABSCUR'
         lchin(nb_in_prep) = mesh(1:8)//'.ABSC_CURV'
-    elseif (load_type.eq.'Suiv') then
+    endif
+    if (load_type.eq.'Pilo') then
+        nb_in_prep = nb_in_prep + 1
+        lpain(nb_in_prep) = 'PDEPLMR'
+        lchin(nb_in_prep) = disp_prev(1:19)
+        nb_in_prep = nb_in_prep + 1
+        lpain(nb_in_prep) = 'PDEPLPR'
+        lchin(nb_in_prep) = disp_cumu_inst(1:19)
+        nb_in_prep = nb_in_prep + 1
+        lpain(nb_in_prep) = 'PINSTMR'
+        lchin(nb_in_prep) = chinst_prev(1:19)
+        nb_in_prep = nb_in_prep + 1
+        lpain(nb_in_prep) = 'PINSTPR'
+        lchin(nb_in_prep) = chinst_curr(1:19)
+    endif
+    if (load_type.eq.'Suiv') then
         nb_in_prep = nb_in_prep + 1
         lpain(nb_in_prep) = 'PDEPLMR'
         lchin(nb_in_prep) = disp_prev(1:19)
@@ -217,8 +232,6 @@ implicit none
             lpain(nb_in_prep) = 'PSTRXMR'
             lchin(nb_in_prep) = strx_prev_(1:19)
         endif
-    else
-        ASSERT(.false.)
     endif
 !
 ! - XFEM fields

@@ -46,7 +46,6 @@ implicit none
 #include "asterfort/nmmuap.h"
 #include "asterfort/nmondp.h"
 #include "asterfort/utmess.h"
-#include "asterfort/deprecated_algom.h"
 !
 character(len=19) :: sddyna
 character(len=24) :: modele, mate, carele
@@ -443,8 +442,7 @@ character(len=19) :: lischa
     zl(jlosd+15-1) = lviss
 !
     if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE> ... '//&
-     &                'FONCTIONNALITES ACTIVEES EN DYNAMIQUE '
+        write (ifm,*) '<MECANONLINE> ... FONCTIONNALITES ACTIVEES EN DYNAMIQUE '
 !
         if (ndynlo(sddyna,'IMPLICITE')) then
             write (ifm,*) '<MECANONLINE> ...... SCHEMA IMPLICITE'

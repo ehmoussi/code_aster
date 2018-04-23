@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -28,7 +28,6 @@ TEST_FONCTION=MACRO(nom="TEST_FONCTION",
                     op=OPS('Macro.test_fonction_ops.test_fonction_ops'),
                     sd_prod=None,
             fr=tr("Extraction d'une valeur numérique ou d'un attribut de fonction pour comparaison à une valeur de référence"),
-         TEST_NOOK       =SIMP(statut='f',typ='TXM',defaut="NON",into=("OUI","NON") ),
          VALEUR          =FACT(statut='f',max='**',
                                fr=tr("Tester la valeur d une fonction ou d une nappe"),
            regles=(UN_PARMI('VALE_PARA','INTERVALLE'),),

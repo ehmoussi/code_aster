@@ -50,6 +50,8 @@ implicit none
         integer            :: model_dim
 ! ----- Number of internal variables for UMAT
         integer            :: nb_vari_umat
+! ----- Identifier for strains model
+        integer            :: strain_model
     end type Behaviour_External
 !
 ! - Type: parameters for behaviour

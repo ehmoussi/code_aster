@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -419,9 +419,10 @@ MODEL2=AFFE_MODELE(    MAILLAGE=MAYA,
 #                                VALE=( 0.,     195.E9,
 #                                       100.,   175.5E9,    )
 #                     )
-E_FO = FORMULE(NOM_PARA='TEMP',VALE='''
+E_FO = FORMULE(VALE="""
         195.E9 + ( TEMP * ( 175.5E9 - 195.E9 ) / 100. )
-                    ''')
+                    """,
+               NOM_PARA='TEMP',)
 
 NU_FO=DEFI_FONCTION(       NOM_PARA='TEMP',
                                  VALE=( 0.,     0.3,
@@ -437,17 +438,19 @@ ALPHA_FO=DEFI_FONCTION(       NOM_PARA='TEMP',
 #                                 VALE=( 0.,     2857.504E6,
 #                                        100.,   1979.695E6, )
 #                     )
-ET_FO = FORMULE(NOM_PARA='TEMP',VALE='''
+ET_FO = FORMULE(VALE="""
         2857.504E6 + ( TEMP * ( 1979.695E6 - 2857.504E6 ) / 100. )
-                    ''')
+                    """,
+                NOM_PARA='TEMP',)
 #
 #SY_FO=DEFI_FONCTION(       NOM_PARA='TEMP',
 #                                 VALE=( 0.,     181.E6,
 #                                        100.,   145.E6,     )
 #                     )
-SY_FO = FORMULE(NOM_PARA='TEMP',VALE='''
+SY_FO = FORMULE(VALE="""
         181.E6 + ( TEMP * ( 145.E6 - 181.E6 ) / 100. )
-                    ''')
+                    """,
+                NOM_PARA='TEMP',)
 
 RHOF=DEFI_CONSTANTE(VALE = 7860.,)
 MAT2=DEFI_MATERIAU(      ELAS_FO=_F(  E = E_FO,

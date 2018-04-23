@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -151,7 +151,8 @@ SRCOX  = 0.01   ;
 #**********************************************************************
 # Pour le jeu (JEU)
 #=======================
-FVP_SR = FORMULE(NOM_PARA='SAT' ,VALE=''' ( 0.999-SAT)''');
+FVP_SR = FORMULE(VALE=' ( 0.999-SAT)',
+                 NOM_PARA='SAT',)
 
 FVPSR = CALC_FONC_INTERP ( FONCTION  = FVP_SR  ,
               LIST_PARA  = LIJEU  ,
@@ -160,7 +161,8 @@ FVPSR = CALC_FONC_INTERP ( FONCTION  = FVP_SR  ,
               PROL_DROITE = 'CONSTANT' ,
               INFO    = 2     ,);
 
-FA_SR = FORMULE(NOM_PARA='SAT' ,VALE=' SAT');
+FA_SR = FORMULE(VALE=' SAT',
+                NOM_PARA='SAT',)
 
 FASR = CALC_FONC_INTERP ( FONCTION  = FA_SR   ,
               LIST_PARA  = LIJEU  ,
@@ -170,7 +172,8 @@ FASR = CALC_FONC_INTERP ( FONCTION  = FA_SR   ,
               INFO    = 2     ,);
 # Pour la ZE et COX
 #==================
-FVP_S = FORMULE(NOM_PARA='SAT' ,VALE=''' ( 0.999-SAT)''');
+FVP_S = FORMULE(VALE=' ( 0.999-SAT)',
+                NOM_PARA='SAT',)
 
 FVPS = CALC_FONC_INTERP ( FONCTION  = FVP_S   ,
               LIST_PARA  = LI2    ,
@@ -179,7 +182,8 @@ FVPS = CALC_FONC_INTERP ( FONCTION  = FVP_S   ,
               PROL_DROITE = 'CONSTANT' ,
               INFO    = 2     ,);
 
-FA_S = FORMULE(NOM_PARA='SAT' ,VALE=' SAT');
+FA_S = FORMULE(VALE=' SAT',
+               NOM_PARA='SAT',)
 
 FAS = CALC_FONC_INTERP ( FONCTION  = FA_S   ,
               LIST_PARA  = LI2  ,
@@ -196,7 +200,8 @@ LAMBLIQ = DEFI_CONSTANTE ( VALE = 0.6 ) ;         # LAMB_T (liquide)
 # Pour le Jeu (JEU)
 #***********************
 #
-LS_RB = FORMULE(NOM_PARA='SAT' ,VALE='''( 0.45*SAT)''');
+LS_RB = FORMULE(VALE='( 0.45*SAT)',
+                NOM_PARA='SAT',)
 
 LSRB = CALC_FONC_INTERP ( FONCTION  = LS_RB   ,
               LIST_PARA  = LIJEU  ,
@@ -212,7 +217,8 @@ LCTRB  = DEFI_CONSTANTE ( VALE = 1.13 );        # LAMB_CT ((1 - PHI0) x LAMBSoli
 # Pour la ZE
 #************
 #
-LS_ZE = FORMULE(NOM_PARA='SAT' ,VALE=''' ( 0.15*SAT)''');
+LS_ZE = FORMULE(VALE=' ( 0.15*SAT)',
+                NOM_PARA='SAT',)
 
 LSZE = CALC_FONC_INTERP ( FONCTION  = LS_ZE   ,
               LIST_PARA  = LI2    ,
@@ -228,7 +234,8 @@ LCTZE = DEFI_CONSTANTE ( VALE = 1.81 );         # LAMB_CT ((1 - PHI0) x LAMBSoli
 # Pour le COX
 #**************
 #
-LSCX  = FORMULE(NOM_PARA='SAT' ,VALE=''' ( 0.15*SAT)''');
+LSCX = FORMULE(VALE=' ( 0.15*SAT)',
+               NOM_PARA='SAT',)
 
 LSCOX = CALC_FONC_INTERP ( FONCTION  = LSCX   ,
               LIST_PARA  = LI2    ,

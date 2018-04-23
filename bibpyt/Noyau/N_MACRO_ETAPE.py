@@ -67,7 +67,6 @@ class MACRO_ETAPE(N_ETAPE.ETAPE):
         self.g_context = {}
         # Contexte courant
         self.current_context = {}
-        self.macro_const_context = {}
         self.index_etape_courante = 0
         self.etapes = []
         self.index_etapes = {}
@@ -650,16 +649,13 @@ Le type demande (%s) et le type du concept (%s) devraient etre derives""" % (t, 
         # le contexte de l etape pere (global au sens Python)
         # et le contexte de l etape (local au sens Python)
         code = compile(text, f, 'exec')
-        d = self.g_context = self.macro_const_context
+        d = self.g_context
         globs = self.get_global_contexte()
         d.update(globs)
         try:
             exec code in globs, d
         except Exception as exc:
             raise AsException(traceback.format_exc())
-
-        # pour ne pas conserver des références sur tout
-        self.macro_const_context = {}
 
     def get_global_contexte(self):
         """
@@ -763,17 +759,6 @@ Le type demande (%s) et le type du concept (%s) devraient etre derives""" % (t, 
             concept.jdc = self.jdc
         for e in self.etapes:
             e.reparent(self)
-
-    def update_const_context(self, d):
-        """
-           Met à jour le contexte des constantes pour l'évaluation de
-           formules dans la macro.
-        """
-        # Dans le jdc, const_context est mis à jour par exec_compile
-        # Dans la macro, on n'a pas le code à compiler pour récupèrer les
-        # constantes locales à la macro. On demande donc explicitement de
-        # définir les constantes "locales".
-        self.macro_const_context.update(d)
 
     def sd_accessible(self):
         """On peut acceder aux "valeurs" (jeveux) des ASSD dans

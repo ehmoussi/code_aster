@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -31,7 +31,7 @@ interface
         real(kind=8), intent(in) :: carcri(*)
         real(kind=8), intent(in) :: instam, instap
         integer, intent(in) :: neps
-        real(kind=8), intent(in) :: epsm(6), deps(6)
+        real(kind=8), intent(in) :: epsm(*), deps(*)
         integer, intent(in) :: nsig
         real(kind=8), intent(in) :: sigm(6)
         integer, intent(in) :: nvi

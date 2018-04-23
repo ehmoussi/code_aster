@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -246,7 +246,7 @@ subroutine load_neum_spec(load_name    , load_nume  , load_type  , ligrel_calc, 
 !
 ! ----- Special for undeads loads
 !
-        if (load_nume .eq. 4) then
+        if (load_nume .eq. 4 .or. load_nume .eq. 9 .or. load_nume .eq. 11) then
             l_constant = .true.
             call dismoi('TYPE_CHARGE', load_name, 'CHARGE', repk=affcha)
             if (affcha(5:7) .eq. '_FO') then

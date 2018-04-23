@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: sebastien.fayolle at edf.fr
+! aslint: disable=W1306,W1504
+!
 subroutine nbfism(ndim, nno1, nno2, nno3, npg,&
                   iw, vff1, vff2, vff3, idff1,&
                   idff2, vu, vg, vp, geomi,&
@@ -23,9 +25,8 @@ subroutine nbfism(ndim, nno1, nno2, nno3, npg,&
                   crit, instm, instp, ddlm, ddld,&
                   angmas, sigm, vim, sigp, vip,&
                   resi, rigi, vect, matr, codret)
-! person_in_charge: sebastien.fayolle at edf.fr
-! aslint: disable=W1306,W1504
-    implicit none
+!
+implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/codere.h"
@@ -40,25 +41,24 @@ subroutine nbfism(ndim, nno1, nno2, nno3, npg,&
 #include "blas/dcopy.h"
 #include "blas/ddot.h"
 #include "blas/dscal.h"
-    aster_logical :: resi, rigi
-    integer :: ndim, nno1, nno2, nno3, npg, iw, idff1, idff2, lgpg
-    integer :: mate
-    integer :: vu(3, 27), vg(27), vp(27)
-    integer :: codret
-    real(kind=8) :: vff1(nno1, npg), vff2(nno2, npg), vff3(nno3, npg)
-    real(kind=8) :: instm, instp
-    real(kind=8) :: geomi(ndim, nno1), ddlm(*), ddld(*), angmas(*)
-    real(kind=8) :: sigm(2*ndim, npg), sigp(2*ndim, npg)
-    real(kind=8) :: vim(lgpg, npg), vip(lgpg, npg)
-    real(kind=8) :: vect(*), matr(*)
-    real(kind=8) :: crit(*)
-    character(len=8) :: typmod(*)
-    character(len=16) :: compor(*), option
+aster_logical :: resi, rigi
+integer :: ndim, nno1, nno2, nno3, npg, iw, idff1, idff2, lgpg
+integer :: mate
+integer :: vu(3, 27), vg(27), vp(27)
+integer :: codret
+real(kind=8) :: vff1(nno1, npg), vff2(nno2, npg), vff3(nno3, npg)
+real(kind=8) :: instm, instp
+real(kind=8) :: geomi(ndim, nno1), ddlm(*), ddld(*), angmas(*)
+real(kind=8) :: sigm(2*ndim, npg), sigp(2*ndim, npg)
+real(kind=8) :: vim(lgpg, npg), vip(lgpg, npg)
+real(kind=8) :: vect(*), matr(*)
+real(kind=8) :: crit(*)
+character(len=8) :: typmod(*)
+character(len=16) :: compor(*), option
 !-----------------------------------------------------------------------
 !          CALCUL DES FORCES INTERNES POUR LES ELEMENTS
 !          INCOMPRESSIBLES POUR LES GRANDES DEFORMATIONS
 !          3D/D_PLAN/AXIS
-!          ROUTINE APPELEE PAR TE0590
 !-----------------------------------------------------------------------
 ! IN  RESI    : CALCUL DES FORCES INTERNES
 ! IN  RIGI    : CALCUL DE LA MATRICE DE RIGIDITE
@@ -112,8 +112,8 @@ subroutine nbfism(ndim, nno1, nno2, nno3, npg,&
     real(kind=8) :: gonfm(27), gonfd(27)
     real(kind=8) :: sigm_ldc(2*ndim)
     real(kind=8) :: gm, gd, gp, pm, pd, pp
-    real(kind=8) :: fm(3, 3), jm, ftm(3, 3), corm, epsm(6)
-    real(kind=8) :: fd(3, 3), jd, jp, ftd(3, 3), cord, epsd(6)
+    real(kind=8) :: fm(3, 3), jm, ftm(3, 3), corm
+    real(kind=8) :: fd(3, 3), jd, jp, ftd(3, 3), cord
     real(kind=8) :: taup(6), taudv(6), tauhy, tauldc(6)
     real(kind=8) :: dsidep(6, 3, 3)
     real(kind=8) :: d(6, 3, 3), hdv(3, 3), dhy(6), h(3, 3), hhy
@@ -178,9 +178,9 @@ subroutine nbfism(ndim, nno1, nno2, nno3, npg,&
 !
 ! - CALCUL DES DEFORMATIONS
         call dfdmip(ndim, nno1, axi, geomi, g, iw, vff1(1, g), idff1, r, w, dff1)
-        call nmepsi(ndim, nno1, axi, grand, vff1(1, g), r, dff1, deplm, fm, epsm)
+        call nmepsi(ndim, nno1, axi, grand, vff1(1, g), r, dff1, deplm, fm)
         call dfdmip(ndim, nno1, axi, geomm, g, iw, vff1(1, g), idff1, r, wm, dff1)
-        call nmepsi(ndim, nno1, axi, grand, vff1(1, g), r, dff1, depld, fd, epsd)
+        call nmepsi(ndim, nno1, axi, grand, vff1(1, g), r, dff1, depld, fd)
         call dfdmip(ndim, nno1, axi, geomp, g, iw, vff1(1, g), idff1, r, wp, dff1)
 !
         call nmmalu(nno1, axi, r, vff1(1, g), dff1, lij)

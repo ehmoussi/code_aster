@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -255,8 +255,8 @@ T_UE=CALC_TABLE(TABLE=U_E,
                     );
                     
                     
-Depl=FORMULE(NOM_PARA = ('DY'),
-                 VALE = '-DY')
+Depl = FORMULE(VALE='-DY',
+               NOM_PARA='DY',)
                     
 T_UE=CALC_TABLE(TABLE = T_UE,
                reuse = T_UE,
@@ -274,8 +274,8 @@ T_F=CALC_TABLE(TABLE=FPILO,
                     );  
                     
                     
-Force=FORMULE(NOM_PARA = ('DY'),
-                 VALE = '-DY*50')
+Force = FORMULE(VALE='-DY*50',
+                NOM_PARA='DY',)
                     
 T_F=CALC_TABLE(TABLE = T_F,
                reuse = T_F,

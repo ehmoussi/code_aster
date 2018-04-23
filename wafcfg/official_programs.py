@@ -24,7 +24,6 @@ Common to all official platforms: force support of essential external programs.
 def configure(self):
     opts = self.options
     # force to fail if a program is not found
-#    opts.with_prog_metis = True
     opts.with_prog_gmsh = True
     # salome: only required by few testcases
     # europlexus: not available on all platforms

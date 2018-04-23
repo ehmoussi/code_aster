@@ -20,8 +20,6 @@
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET', ),
       IGNORE_ALARM='CALCULEL4_9');
 
-from math import *
-
 # Redimensionnement du probleme hydromecanique
 P0=1.E+6;
 K0=1.E-5;
@@ -433,7 +431,7 @@ for n in range(1,nbcouche-1):
                               CHAM_GD=DEP[n-1]));
 
     FX = FORMULE(NOM_PARA=('X'),VALE='X')
-    FY = FORMULE(NOM_PARA=('Y'),VALE='PROJ(Y,%f)'%Height[n],PROJ=PROJ)
+    FY = FORMULE(NOM_PARA=('Y'),VALE='PROJ(Y,%f)'%Height[n] ,PROJ=PROJ)
 
     DEPL_PJ = PROJ_CHAMP(INFO = 1,
                          PROJECTION = 'OUI',

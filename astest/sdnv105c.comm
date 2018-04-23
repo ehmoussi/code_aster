@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -118,7 +118,8 @@ L_INST_A=DEFI_LIST_REEL(DEBUT=T000,
 OMEGA = 2.*pi*10.;
 
 ACCE = FORMULE(VALE='2*sin(OMEGA*INST)',
-               NOM_PARA='INST');
+               OMEGA=OMEGA,
+               NOM_PARA='INST',)
 
 ACCE1=CALC_FONC_INTERP(FONCTION=ACCE,
                        LIST_PARA=L_INST,
@@ -129,7 +130,8 @@ ACCE1=CALC_FONC_INTERP(FONCTION=ACCE,
 #VITE = FORMULE(REEL = '''(REEL:INST) = -2*COS(OMEGA*INST)/OMEGA''');
 
 VITE = FORMULE(VALE='-2*cos(OMEGA*INST)/OMEGA',
-               NOM_PARA='INST');
+               OMEGA=OMEGA,
+               NOM_PARA='INST',)
 
 VITE1=CALC_FONC_INTERP(FONCTION=VITE,
                        LIST_PARA=L_INST,
@@ -139,7 +141,8 @@ VITE1=CALC_FONC_INTERP(FONCTION=VITE,
 
 
 DEPL = FORMULE(VALE='2*sin(OMEGA*INST)/(OMEGA**2)',
-               NOM_PARA='INST');
+               OMEGA=OMEGA,
+               NOM_PARA='INST',)
 
 DEPL1=CALC_FONC_INTERP(FONCTION=DEPL,
                        LIST_PARA=L_INST,

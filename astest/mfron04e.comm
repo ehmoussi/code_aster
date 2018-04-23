@@ -16,8 +16,9 @@
 # You should have received a copy of the GNU General Public License
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
-
 # person_in_charge: sofiane.hendili at edf.fr
+import os
+os.rename('fort.91', 'comp003a.py')
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),DEBUG=_F(SDVERI='NON'),
 IMPR_MACRO='OUI',
@@ -39,7 +40,7 @@ RNU=0.35
 C_Pa=1.e6
 MATF[0]=DEFI_MATERIAU(
                   ELAS=_F( E=80000.*C_Pa, NU=0.35, ALPHA=0.),
-                  
+
                   MFRONT=_F(LISTE_COEF=(80000.*C_Pa,0.35,2.40*C_Pa,0.20*C_Pa,9.40*C_Pa,0.0,0.80E-04,0.99E-04,4.40,3.0,6.1,19900.,21000.,6200.,1.,1.,1.,0.75,0.75,0.75,1.,1.,1.,0.75,0.75,0.75,
                             ),)
                         ,)
@@ -71,7 +72,7 @@ MATF[0]=DEFI_MATERIAU(
 
 MATF[1]=DEFI_MATERIAU(
                   ELAS=_F( E=80000., NU=0.35, ALPHA=0.),
-                  
+
                   MFRONT=_F(LISTE_COEF=(80000.,0.35,2.40,0.20,9.40,0.0,0.80E-04,0.99E-04,4.40,3.0,6.1,19900.,21000.,6200.,1.,1.,1.,0.75,0.75,0.75,1.,1.,1.,0.75,0.75,0.75,
                             ),)
                         ,)
@@ -123,94 +124,11 @@ coef_para=[1.,C_Pa,C_Pa]
 CALIB_E=RYOUNG
 CALIB_NU=RNU
 
-# utilitaires divers : calcul de l'erreur, renommage
-INCLUDE(UNITE=91)
-
 # definition de la temperature imposee et des phase metallurgiques
-
 TEMP=DEFI_CONSTANTE(VALE=700.)
 
 phase1=DEFI_CONSTANTE(VALE=1)
 
 phase0=DEFI_CONSTANTE(VALE=0)
 
-# definition du chargement 3D
-
-INCLUDE(UNITE=93)
-
-tempsar=DEFI_LIST_REEL( VALE =[t_0*i for i in range(9)],)
-
-
-
-###################################################################################
-#  TEST 3D MFRONT
-##################################################################################
-
-# les quantites extraites du calcul
-ch_param=['V7','VMIS','TRACE','SIXX','SIYY','SIZZ','SIXY','SIXZ','SIYZ']
-ch_param2=['V7','VMIS','TRACE']
-# resultats
-RESM=[None]*Ncal
-R_SI=[None]*len(ch_param)
-
-#Boucle sur l'ensemble des calculs
-for i in range(Ncal):
-        N = N_pas[i]
-        imat = P_imat[i]
-        temps=DEFI_LIST_REEL(DEBUT=0.0,
-                     INTERVALLE=(_F(JUSQU_A=t_0,NOMBRE=N,),
-                                 _F(JUSQU_A=2.0*t_0,NOMBRE=N,),
-                                 _F(JUSQU_A=3.0*t_0,NOMBRE=N,),
-                                 _F(JUSQU_A=4.0*t_0,NOMBRE=N,),
-                                 _F(JUSQU_A=5.0*t_0,NOMBRE=N,),
-                                 _F(JUSQU_A=6.0*t_0,NOMBRE=N,),
-                                 _F(JUSQU_A=7.0*t_0,NOMBRE=N,),
-                                 _F(JUSQU_A=8.0*t_0,NOMBRE=N,),),);
-
-#       Resout le pb a deformation imposee
-        RESM[i]=SIMU_POINT_MAT(
-
-                COMPORTEMENT=_F(RELATION='MFRONT',
-                                NOM_ROUTINE='asteranisolemaitre',
-                                UNITE_LIBRAIRIE=39,
-                                RESI_INTE_MAXI=1e-10,
-                        ),
-
-                   ANGLE=angles[i],
-                   #SUPPORT='ELEMENT',
-                   AFFE_VARC=(
-                          _F(V1=phase1,V2=phase0,V3=phase0,V4=phase0,V5=phase0,NOM_VARC='M_ZIRC',),
-                          _F(VALE_FONC=TEMP,
-                              VALE_REF=700.,
-                              NOM_VARC='TEMP',),),
-                   NEWTON=_F(MATRICE='TANGENTE',
-                             REAC_ITER=1,),
-                   CONVERGENCE=_F(ITER_GLOB_MAXI=50,),
-                   MATER      = MATF[imat],
-                   INCREMENT=_F(LIST_INST=temps),
-                   ARCHIVAGE = _F(LIST_INST = tempsar),
-                   EPSI_IMPOSE=_F(EPXX=eps_def[0], EPYY=eps_def[1], EPZZ=eps_def[2],
-                                  EPXY=eps_def[3], EPXZ=eps_def[4], EPYZ=eps_def[5]),
-                        );
-        DETRUIRE(CONCEPT=_F(NOM=temps))
-        #IMPR_TABLE(TABLE=RESF[i])
-#       DETRUIRE(CONCEPT=_F(NOM=DEFLIST))
-# On renomme les composantes en fonction de  l'ordre de discretisation
-        R_SI=RENOMME(i,N_pas,label_cal,ch_param,RESM,R_SI)
-
-# TEST_RESU sur les erreurs relatives
-TEST_ECART(ch_param2,label_cal,N_pas,Ncal,nbequi,R_SI,prec_ecart,vale_calc,prec_zero,coef_para)
-
-###############################################################################
-# impressions
-for i in range(len(ch_param)):
-       IMPR_TABLE(TABLE=R_SI[i])
-       DETRUIRE(CONCEPT=_F(NOM=R_SI[i]))
-
-
-
-
-
-
-FIN();
-#
+FIN()

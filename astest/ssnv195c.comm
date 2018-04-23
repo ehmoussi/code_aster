@@ -97,9 +97,15 @@ PENTE2=0.57735
 B1=12.-2.*PENTE1
 B2=37.5-2.5*PENTE2
 
-LN1=FORMULE(NOM_PARA=('X','Y','Z'),VALE='Z-PENTE1*Y-B1',PENTE1=PENTE1,B1=B1);
+LN1 = FORMULE(VALE='Z-PENTE1*Y-B1',
+              PENTE1=PENTE1,
+              B1=B1,
+              NOM_PARA=['X', 'Y', 'Z'],)
 
-LN2=FORMULE(NOM_PARA=('X','Y','Z'),VALE='Z-PENTE2*Y-B2',PENTE2=PENTE2,B2=B2);
+LN2 = FORMULE(VALE='Z-PENTE2*Y-B2',
+              PENTE2=PENTE2,
+              B2=B2,
+              NOM_PARA=['X', 'Y', 'Z'],)
 
 
 

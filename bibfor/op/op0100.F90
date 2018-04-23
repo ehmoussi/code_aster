@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -41,7 +41,6 @@ subroutine op0100()
 #include "asterfort/cgleco.h"
 #include "asterfort/cglect.h"
 #include "asterfort/cglemu.h"
-#include "asterfort/deprecated_algom.h"
 #include "asterfort/detrsd.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/gcou2d.h"
@@ -135,7 +134,6 @@ subroutine op0100()
                 typfis, nomfis, fonoeu, chfond, basfon,&
                 taillr, config, lnoff, liss, ndeg, typdis)
 !
-    call deprecated_algom(option)
     call dismoi('NOM_MAILLA', modele, 'MODELE', repk=noma)
     nomno = noma//'.NOMNOE'
     coorn = noma//'.COORDO    .VALE'

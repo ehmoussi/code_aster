@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -52,7 +52,11 @@ def Sinus(t,freq):
 
 Freq01=1.0 ; U01=2.00
 # Le déplacement imposé
-Depla01 =FORMULE(VALE='U01*Sinus(INST,Freq01)',   NOM_PARA='INST')
+Depla01 = FORMULE(VALE='U01*Sinus(INST,Freq01)',
+                  U01=U01,
+                  Sinus=Sinus,
+                  Freq01=Freq01,
+                  NOM_PARA='INST',)
 # Liste d'instant
 TempsMaxi=1.50
 DeltaPas =0.05

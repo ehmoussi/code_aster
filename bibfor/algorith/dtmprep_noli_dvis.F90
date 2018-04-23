@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -297,7 +297,7 @@ subroutine dtmprep_noli_dvis(sd_dtm_, sd_nl_, icomp)
     call angvx(axe, alpha, beta)
     call nlsav(sd_nl, _SINCOS_ANGLE_A, 2, iocc=i, rvect=[sin(alpha), cos(alpha)])
     call nlsav(sd_nl, _SINCOS_ANGLE_B, 2, iocc=i, rvect=[sin(beta), cos(beta)])
-    call nlsav(sd_nl, _SINCOS_ANGLE_G, 2, iocc=i, rvect=[0.0d0, 0.0d0])
+    call nlsav(sd_nl, _SINCOS_ANGLE_G, 2, iocc=i, rvect=[0.0d0, 1.0d0])
 
     obst_typ = 'BI_PLANY'
     call nlsav(sd_nl, _OBST_TYP, 1, iocc=i, kscal=obst_typ)

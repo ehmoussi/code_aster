@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,12 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine vefpme(modelz, cara_elem, mate      , lload_namez , lload_infoz,&
-                      inst  , varc_curr, vect_elemz, ligrel_calcz)
+    subroutine vefpme(modelz    , cara_elem      , mate      , lload_namez , lload_infoz,&
+                      inst      , varc_curr      , vect_elemz, ligrel_calcz,&
+                      disp_prevz, disp_cumu_instz)
         character(len=*), intent(in) :: modelz
         character(len=*), intent(in) :: lload_namez
         character(len=*), intent(in) :: lload_infoz
@@ -30,5 +29,7 @@ interface
         character(len=*), intent(in) :: varc_curr
         character(len=*), intent(in) :: ligrel_calcz
         character(len=*), intent(inout) :: vect_elemz
+        character(len=*), intent(in) :: disp_prevz
+        character(len=*), intent(in) :: disp_cumu_instz
     end subroutine vefpme
 end interface
