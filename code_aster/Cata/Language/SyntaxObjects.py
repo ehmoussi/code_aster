@@ -650,7 +650,7 @@ class Command(PartOfSyntax):
 
     def can_reuse(self):
         """Tell if the result can be a reused one."""
-        reentr = step.definition.get("reentrant", "").split(':')
+        reentr = self.definition.get("reentrant", "").split(':')
         return reentr and reentr[0] in ('o', 'f')
 
     def accept(self, visitor, syntax=None):
