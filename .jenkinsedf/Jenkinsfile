@@ -115,7 +115,7 @@ EOF
 <p>Congratulations! Your changes have been integrated in the main branch of the official repository.</p>
 <p>Read the <a href="${env.BUILD_URL}/display/redirect">job page</a> or open the attached log file for details.</p>
                  """,
-                to: emailextrecipients([[$class: 'DevelopersRecipientProvider']]),
+                to: emailextrecipients([[$class: 'RequesterRecipientProvider']]),
                 mimeType: 'text/html',
                 attachLog: true
             )
@@ -131,7 +131,7 @@ EOF
 <p>Please fix the errors and try again.</p>
 <p>Read the <a href="${env.BUILD_URL}/display/redirect">job page</a> or open the attached log file to see the reasons of the failure.</p>
                  """,
-                to: emailextrecipients([[$class: 'DevelopersRecipientProvider']]),
+                to: emailextrecipients([[$class: 'RequesterRecipientProvider']]),
                 mimeType: 'text/html',
                 attachLog: true
             )
