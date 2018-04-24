@@ -273,10 +273,10 @@ Conseil :
     42 : _(u"""
  Utilisation de COEF_RIGI_DRZ en mode rotation plane :
    Vous avez affecté une valeur négative de COEF_RIGI_DRZ sur des mailles ou groupes de mailles TRIA3 et QUAD4. Ce mode d'utilisation est permis,
-   mais le mode rotation plane ne s'activera pas sur les triangles. Le rotation plane permet d'associer une signification 
+   mais le mode rotation plane ne s'activera pas sur les triangles. Le rotation plane permet d'associer une signification
    physique à la troisième rotation contrairement aux modèles classiques des plaques minces.
    Il s'agit peut-être d'une erreur d'affectation.
- Conseils : 
+ Conseils :
    On conseille que cette valeur soit -1.E-2 < COEF_RIGI_DRZ < -1.E-12.
 
  Champ : '%(k1)s'
@@ -292,10 +292,10 @@ Conseil :
     43 : _(u"""
  Utilisation de COEF_RIGI_DRZ en mode rotation plane :
    Vous avez affecté une valeur négative de COEF_RIGI_DRZ sur des mailles uniquement TRIA3.
-   Le mode d'utilisation n'est pas possible actuellement pour ces types de mailles. Le rotation plane permet d'associer une signification 
+   Le mode d'utilisation n'est pas possible actuellement pour ces types de mailles. Le rotation plane permet d'associer une signification
    physique à la troisième rotation contrairement aux modèles classiques des plaques minces.
    Il s'agit peut-être d'une erreur d'affectation.
- Conseils : 
+ Conseils :
    On conseille que cette valeur soit -1.E-2 < COEF_RIGI_DRZ < -1.E-12.
 
  Champ : '%(k1)s'
@@ -310,9 +310,9 @@ Conseil :
 
     44 : _(u"""
  Utilisation de COEF_RIGI_DRZ en mode rotation plane :
-   Vous avez affecté une valeur négative de COEF_RIGI_DRZ.  Le rotation plane permet d'associer une signification physique à la troisième rotation 
+   Vous avez affecté une valeur négative de COEF_RIGI_DRZ.  Le rotation plane permet d'associer une signification physique à la troisième rotation
    contrairement aux modèles classiques des plaques minces.
- Conseils : 
+ Conseils :
    On conseille que cette valeur soit -1.E-2 < COEF_RIGI_DRZ < -1.E-12.
 
  Champ : '%(k1)s'
@@ -506,9 +506,9 @@ Risques et conseils :
  Commande CALC_FERRAILLAGE :
    ELU : On n'a pas réussi à calculer la densité de ferraillage sur l'élément.
    Pour une des facettes de Capra Maury au moins, le béton est trop cisaillé.
-   La densité de féraillage transversale est fixé à -1 pour l'élément.
+   La densité de ferraillage transversale est fixé à -1 pour l'élément.
    Conseil : on suggère soit de changer la classe de béton soit de revoir le coffrage.
-   
+
 """),
 
     82 : _(u"""
@@ -564,7 +564,7 @@ Risques et conseils :
 """),
 
     88 : _(u"""
- Commande CALC_FERRAILLAGE : ATTENTION un chanmp de ferraillage existe déjà au numéro d'ordre %(i1)d du résultat %(k1)s
+ Commande CALC_FERRAILLAGE : ATTENTION un champ de ferraillage existe déjà au numéro d'ordre %(i1)d du résultat %(k1)s
    Ce champ de ferraillage sera écrasé !
 """),
 
