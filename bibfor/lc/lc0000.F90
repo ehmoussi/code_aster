@@ -176,7 +176,7 @@ character(len=16) :: compor(*), option
 character(len=16), intent(in) :: mult_comp
 character(len=8) :: typmod(*)
 character(len=*) :: fami
-aster_logical :: cp
+aster_logical :: cp, l_large_strains
 integer :: icomp
 integer :: numlc
 integer :: codret
@@ -302,10 +302,11 @@ integer :: codret
 !    -> If defo_ldc = 'TOTALE' or 'OLD', keep total strain
 !
     read (compor(21),'(A16)') defo_ldc
+    defo_comp = compor(3)
+    l_large_strains = (defo_comp .eq. 'SIMO_MIEHE') .or. (defo_comp .eq. 'GROT_GDEP')
+!
     if (defo_ldc .eq. 'MECANIQUE') then 
-    
-        defo_comp = compor(3)
-        if (defo_comp .ne. 'SIMO_MIEHE') then
+        if (.not. l_large_strains) then
 !
 !       * Compute "thermic" strains for some external state variables
             call lcExternalStateVariable(carcri, compor, &
@@ -1205,7 +1206,7 @@ integer :: codret
 ! - Restore total strain
 !
     if (defo_ldc .eq. 'MECANIQUE') then 
-        if (defo_comp .ne. 'SIMO_MIEHE') then
+        if (.not. l_large_strains) then
             call lcRestoreStrain(option, typmod,&
                                  neps , epsth , depsth,&
                                  epsm , deps)
