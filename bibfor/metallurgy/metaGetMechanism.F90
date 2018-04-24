@@ -49,7 +49,7 @@ aster_logical, optional, intent(out) :: l_plas_tran
 ! Out l_hard_isot  : ASTER_TRUE if isotropic hardening
 ! Out l_hard_kine  : ASTER_TRUE if kinematic hardening
 ! Out l_hard_line  : ASTER_TRUE if linear hardening
-! Out l_anneal  : ASTER_TRUE if restoration hardening
+! Out l_anneal     : ASTER_TRUE if restoration hardening
 ! Out l_plas_tran  : ASTER_TRUE if transformation plasticity
 !
 ! --------------------------------------------------------------------------------------------------
@@ -77,7 +77,15 @@ aster_logical, optional, intent(out) :: l_plas_tran
             rela_comp(1:13) .eq. 'META_P_INL_RE'    .or.&
             rela_comp(1:16) .eq. 'META_P_INL_PT_RE' .or.&
             rela_comp(1:13) .eq. 'META_V_INL_RE'    .or.&
-            rela_comp(1:16) .eq. 'META_V_INL_PT_RE') then
+            rela_comp(1:16) .eq. 'META_V_INL_PT_RE' .or.&
+            rela_comp(1:12) .eq. 'META2P_IL_RE'     .or.&
+            rela_comp(1:15) .eq. 'META2P_IL_PT_RE'  .or.&
+            rela_comp(1:12) .eq. 'META2V_IL_RE'     .or.&
+            rela_comp(1:15) .eq. 'META2V_IL_PT_RE'  .or.&
+            rela_comp(1:13) .eq. 'META2P_INL_RE'    .or.&
+            rela_comp(1:16) .eq. 'META2P_INL_PT_RE' .or.&
+            rela_comp(1:13) .eq. 'META2V_INL_RE'    .or.&
+            rela_comp(1:16) .eq. 'META2V_INL_PT_RE') then
             l_anneal = ASTER_TRUE
         endif
     endif
@@ -91,7 +99,15 @@ aster_logical, optional, intent(out) :: l_plas_tran
             rela_comp(1:12) .eq. 'META_V_IL_PT'     .or.&
             rela_comp(1:13) .eq. 'META_V_INL_PT'    .or.&
             rela_comp(1:15) .eq. 'META_V_IL_PT_RE'  .or.&
-            rela_comp (1:16) .eq.'META_V_INL_PT_RE') then
+            rela_comp(1:16) .eq. 'META_V_INL_PT_RE' .or.&
+            rela_comp(1:12) .eq. 'META2P_IL_PT'     .or.&
+            rela_comp(1:13) .eq. 'META2P_INL_PT'    .or.&
+            rela_comp(1:15) .eq. 'META2P_IL_PT_RE'  .or.&
+            rela_comp(1:16) .eq. 'META2P_INL_PT_RE' .or.&
+            rela_comp(1:12) .eq. 'META2V_IL_PT'     .or.&
+            rela_comp(1:13) .eq. 'META2V_INL_PT'    .or.&
+            rela_comp(1:15) .eq. 'META2V_IL_PT_RE'  .or.&
+            rela_comp(1:16) .eq. 'META2V_INL_PT_RE') then
             l_plas_tran = ASTER_TRUE
         endif
     endif
@@ -99,7 +115,9 @@ aster_logical, optional, intent(out) :: l_plas_tran
     if (present(l_hard_isotline)) then
         l_hard_isotline = ASTER_FALSE
         if (rela_comp(1:9) .eq. 'META_P_IL' .or.&
-            rela_comp(1:9) .eq. 'META_V_IL') then
+            rela_comp(1:9) .eq. 'META_V_IL' .or.&
+            rela_comp(1:9) .eq. 'META2P_IL' .or.&
+            rela_comp(1:9) .eq. 'META2V_IL') then
             l_hard_isotline = ASTER_TRUE
         endif
     endif
@@ -107,7 +125,9 @@ aster_logical, optional, intent(out) :: l_plas_tran
     if (present(l_hard_isotnlin)) then
         l_hard_isotnlin = ASTER_FALSE
         if (rela_comp(1:10) .eq. 'META_P_INL' .or.&
-            rela_comp(1:10) .eq. 'META_V_INL') then
+            rela_comp(1:10) .eq. 'META_V_INL' .or.&
+            rela_comp(1:10) .eq. 'META2P_INL' .or.&
+            rela_comp(1:10) .eq. 'META2V_INL') then
             l_hard_isotnlin = ASTER_TRUE
         endif
     endif
@@ -115,7 +135,9 @@ aster_logical, optional, intent(out) :: l_plas_tran
     if (present(l_hard_kine)) then
         l_hard_kine = ASTER_FALSE
         if (rela_comp(1:9) .eq. 'META_P_CL' .or.&
-            rela_comp(1:9) .eq. 'META_V_CL') then
+            rela_comp(1:9) .eq. 'META_V_CL' .or.&
+            rela_comp(1:9) .eq. 'META2P_CL' .or.&
+            rela_comp(1:9) .eq. 'META2V_CL') then
             l_hard_kine = ASTER_TRUE
         endif
     endif
@@ -125,7 +147,11 @@ aster_logical, optional, intent(out) :: l_plas_tran
         if (rela_comp(1:9) .eq. 'META_P_IL' .or.&
             rela_comp(1:9) .eq. 'META_V_IL' .or.&
             rela_comp(1:9) .eq. 'META_P_CL' .or.&
-            rela_comp(1:9) .eq. 'META_V_CL') then
+            rela_comp(1:9) .eq. 'META_V_CL' .or.&
+            rela_comp(1:9) .eq. 'META2P_IL' .or.&
+            rela_comp(1:9) .eq. 'META2V_IL' .or.&
+            rela_comp(1:9) .eq. 'META2P_CL' .or.&
+            rela_comp(1:9) .eq. 'META2V_CL') then
             l_hard_line = ASTER_TRUE
         endif
     endif

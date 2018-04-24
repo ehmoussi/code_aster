@@ -127,13 +127,14 @@ integer, intent(out) :: codret
     pfcmfr         = nint(carcri(16))
     jvariexte      = nint(carcri(IVARIEXTE))
     jstrainexte    = nint(carcri(ISTRAINEXTE))
-    l_simomiehe    = ASTER_FALSE
+    l_simomiehe    = defo_comp .eq. 'SIMO_MIEHE'
     l_grotgdep     = ASTER_FALSE
     if (jstrainexte .eq. MFRONT_STRAIN_GROTGDEP_L) then
         l_grotgdep     = ASTER_TRUE
     endif
     l_czm          = typmod(2).eq.'ELEMJOIN'
     ASSERT(.not. l_czm)
+    ASSERT(.not. l_simomiehe)
 !
 ! - Get material properties
 !

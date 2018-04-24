@@ -183,4 +183,5 @@ loi = LoiComportement(
     proprietes     = None,
     syme_matr_tang = ('Yes',),
     exte_vari      = ('ELTSIZE2',),
+    deform_ldc     = ('OLD',),
 )
