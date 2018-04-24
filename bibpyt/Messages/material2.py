@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -36,6 +36,15 @@ cata_msg = {
 
  Conseil :
   Il faut corriger AFFE_MATERIAU.
+"""),
+
+    20 : _(u"""
+ La matrice d'élasticité orthotrope ou isotrope transverse est non définie positive
+  (au moins une valeur propre négative). Si vous êtes sur une modélisation
+  isoparamétrique (pas d'éléments de structure), vous avez probablement fait une erreur.
+
+ Conseil :
+  Vérifiez vos données matériau.
 """),
 
     50 : _(u"""
