@@ -45,6 +45,7 @@ class CheckerError(Exception):
     """
 
     def __init__(self, orig, msg, stack):
+        super(CheckerError, self).__init__(msg)
         self._orig = orig
         self._msg = msg
         self._stack = "/".join(force_list(stack))
