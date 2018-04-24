@@ -55,8 +55,8 @@ subroutine aniver(mater)
 ! ---- INITIALISATIONS
 !      ---------------
 !-----------------------------------------------------------------------
-    integer :: i, iel, ien, iet, igln, iglt, igtn, iret
-    integer :: inuln, inult, inutn, j, jtypfo
+    integer :: iel, ien, iet, igln, iglt, igtn, iret
+    integer :: inuln, inult, inutn, jtypfo
     integer ::  k, nbcrme, nbr, ndim
     real(kind=8) :: c1, delta, deux, e1, e2, e3, g12
     real(kind=8) :: g13, g23, un, undemi, zero
