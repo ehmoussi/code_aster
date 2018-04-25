@@ -34,10 +34,8 @@ import pickle
 
 import numpy
 
-from Noyau.N_utils import Singleton
 
-
-class VariableSupport(Singleton):
+class VariableSupport(object):
     """Implementation of the VARIABLE feature for parametic study."""
 
     nom = 'VARIABLE' # for vocab01a

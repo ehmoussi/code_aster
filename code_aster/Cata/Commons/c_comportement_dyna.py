@@ -22,9 +22,9 @@ from code_aster.Cata.DataStructure import *
 
 
 def C_COMPORTEMENT_DYNA(COMMAND=None) : #COMMUN#
-    
+
     assert COMMAND in ('DYNA_VIBRA', 'DYNA_LINE', None)
-    
+
     mcfact = FACT(statut='f',max='**',
             RELATION    =     SIMP(statut='o', typ='TXM', into=('DIS_CHOC', 'ROTOR_FISS', 'PALIER_EDYOS', 'FLAMBAGE', 'ANTI_SISM',
                                                                 'DIS_VISC', 'DIS_ECRO_TRAC', 'RELA_EFFO_DEPL', 'RELA_EFFO_VITE',
@@ -168,15 +168,24 @@ def C_COMPORTEMENT_DYNA(COMMAND=None) : #COMMUN#
             ITER_INTE_MAXI=   SIMP(statut='o',typ='I',defaut= 20),
             RESI_INTE_RELA=   SIMP(statut='o',typ='R',defaut= 1.0E-6),
         ), # end b_disvisc
-#       C.2.6.2 Discrete nonlinear behavior
+#       C.2.6.2 Discrete nonlinear behavior in axial OR tangent direction
         b_disecro       = BLOC(condition="""equal_to("RELATION", 'DIS_ECRO_TRAC')""",
-                               regles=(UN_PARMI('NOEUD_1','GROUP_NO_1'),
-                                       UN_PARMI('NOEUD_2','GROUP_NO_2'),),
+            fr=tr("Loi pour un discret avec écrouissage isotrope ."),
+            regles=(UN_PARMI('NOEUD_1','GROUP_NO_1'),
+                    UN_PARMI('NOEUD_2','GROUP_NO_2'),
+                    UN_PARMI('FX','FTAN'),),
             NOEUD_1     =   SIMP(statut='c',typ=no),
             NOEUD_2     =   SIMP(statut='c',typ=no),
             GROUP_NO_1  =   SIMP(statut='f',typ=grno),
             GROUP_NO_2  =   SIMP(statut='f',typ=grno),
-            FX          =   SIMP(statut='o',typ=(fonction_sdaster), fr=tr("Comportement en fonction du déplacement relatif."),),
+            FX =SIMP(statut='f',typ=(fonction_sdaster),
+                fr=tr("Comportement axial en fonction du déplacement relatif."),),
+            FTAN=SIMP(statut='f',typ=(fonction_sdaster),
+                fr=tr("Comportement tangent en fonction du déplacement relatif."),),
+            b_ftan=BLOC(condition = """ exists("FTAN") """,
+                fr=tr("Type de l'écrouissage : isotrope ou cinématique"),
+                ECROUISSAGE =SIMP(statut='o',typ='TXM', into=('ISOTROPE','CINEMATIQUE'),),
+            ),
             ITER_INTE_MAXI = SIMP(statut='o',typ='I',defaut= 20),
             RESI_INTE_RELA = SIMP(statut='o',typ='R',defaut= 1.0E-6),
         ), # end b_disecro
@@ -199,5 +208,5 @@ def C_COMPORTEMENT_DYNA(COMMAND=None) : #COMMUN#
             FONCTION    =     SIMP(statut='o',typ=(fonction_sdaster,nappe_sdaster,formule),),
         ), # end b_refv
     ) # end fkw_comportement
-    
+
     return mcfact

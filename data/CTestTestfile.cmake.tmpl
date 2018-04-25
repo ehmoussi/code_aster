@@ -86,9 +86,9 @@ foreach(testname ${ASTER_TEST_FILES_ALL})
         endif()
 
         if(${_valid} GREATER -1)
-          string(CONCAT _props "${_props}" ";" "SMECA_VALIDATION")
+          string(CONCAT _props "${_props}" ";" "ASTER_VALIDATION")
         else()
-          string(CONCAT _props "${_props}" ";" "SMECA_VERIFICATION")
+          string(CONCAT _props "${_props}" ";" "ASTER_VERIFICATION")
         endif()
 
         if(${_par} GREATER -1)

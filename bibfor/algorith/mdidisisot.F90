@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -27,7 +27,6 @@ subroutine mdidisisot(sd_nl_, nbnoli, nomres, nbsauv, temps)
 !
 #include "jeveux.h"
 #include "asterc/getfac.h"
-#include "asterfort/assert.h"
 #include "asterfort/getvis.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jeveuo.h"
@@ -52,9 +51,9 @@ subroutine mdidisisot(sd_nl_, nbnoli, nomres, nbsauv, temps)
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ific, nbocc, iocc, iret, ii
-    integer :: nbvint, nbvdisc, it, indx, jvint
-    integer :: vv, nltype_i, start, finish, jvindx, jdesc
-    integer :: imprredir(5)
+    integer :: nbvint, it, indx, jvint
+    integer :: vv, nltype_i, start, jvindx, jdesc
+    integer :: imprredir(7)
     character(len=8) :: noeud1, noeud2, sd_nl
 !
     call jemarq()
@@ -70,10 +69,14 @@ subroutine mdidisisot(sd_nl_, nbnoli, nomres, nbsauv, temps)
     call jeveuo(nomres//'           .DESC', 'L', jdesc)
     nbvint  = zi(jdesc-1+4)
     if (nbvint.eq.0) goto 999
-
     call jeveuo(nomres//'        .NL.VINT', 'L', jvint)
     call jeveuo(nomres//'        .NL.VIND', 'L', jvindx)
-    imprredir(1:5) = [1,3,4,2,5]
+!
+!   Internal variables
+!                    1 2 3       4 5 6  7      8         9 10 11  12 13 14
+!       vari : force(x,y,z) depl(x,y,z) Dissip pcum deplp(x,y,z)  X(x,y,z)
+!
+    imprredir(1:7) = [1,4,2,5,3,6,7]
 !
     do iocc = 1, nbocc
         call getvis('IMPRESSION', 'UNITE_DIS_ECRO_TRAC', iocc=iocc, scal=ific, nbret=iret)
@@ -86,29 +89,18 @@ subroutine mdidisisot(sd_nl_, nbnoli, nomres, nbsauv, temps)
         do ii = 1 , nbnoli
             call nlget(sd_nl, _NL_TYPE, iocc=ii, iscal=nltype_i)
             if ( nltype_i.ne.NL_DIS_ECRO_TRAC ) cycle
-
-            start  = zi(jvindx-1+ii) + 7
-            finish = zi(jvindx-1+ii+1)
-
-            nbvdisc = finish - start
-            ASSERT(nbvdisc.eq.5)
-
+            start  = zi(jvindx-1+ii) + 6
 !           Noeuds du discret
             call nlget(sd_nl, _NO1_NAME, iocc=ii, kscal=noeud1)
             call nlget(sd_nl, _NO2_NAME, iocc=ii, kscal=noeud2)
-
-!           Impressions des variables internes
-!               variables internes   : 1        2       3       4       5
-!                               vari : force    Up      U       puiss   ip
-!               Ordre d'impression   : 1 3 4 2 5
             write(ific,100) '#'
             write(ific,100) '#--------------------------------------------------'
             write(ific,100) '#RESULTAT '//nomres
             write(ific,101) '#DIS_ECRO_TRAC ',ii,' '//noeud1//' '//noeud2
-            write(ific,102) 'INST','FORCE','U','PUISS','UP','PCUM'
+            write(ific,102) 'INST','FX','UX','FY','UY','FZ','UZ','PUISS'
             do it = 1 , nbsauv
                 indx = jvint-1 +(it-1)*nbvint + start
-                write(ific,103) temps(it), (zr(indx+imprredir(vv)-1),vv=1,nbvdisc)
+                write(ific,103) temps(it), (zr(indx+imprredir(vv)-1),vv=1,7)
             enddo
         enddo
 !       On ferme le fichier pour être sûr que le flush soit fait
@@ -116,8 +108,8 @@ subroutine mdidisisot(sd_nl_, nbnoli, nomres, nbsauv, temps)
     enddo
 100 format(A)
 101 format(A,I5,A)
-102 format(6(1X,A18))
-103 format(6(1X,1pE18.10E3))
+102 format(8(1X,A18))
+103 format(8(1X,1pE18.10E3))
 !
 999 continue
     call jedema()

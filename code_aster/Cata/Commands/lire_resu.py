@@ -144,7 +144,7 @@ LIRE_RESU=OPER(nom="LIRE_RESU",op=150,sd_prod=lire_resu_prod,reentrant='n',
 # 1-4 med :
 # ---------
          b_med           =BLOC(condition = """equal_to("FORMAT", 'MED')""",fr=tr("Nom du champ dans le fichier MED"),
-           UNITE           =SIMP(statut='f',typ=UnitType(),defaut= 81, inout='in', fr=tr("Le fichier est : fort.n."),),
+           UNITE           =SIMP(statut='f',typ=UnitType('med'),defaut= 81, inout='in', fr=tr("Le fichier est : fort.n."),),
            FORMAT_MED      =FACT(statut='o',max='**',
              regles=(ENSEMBLE('NOM_CMP','NOM_CMP_MED'),UN_PARMI('NOM_CHAM_MED','NOM_RESU'),),
              NOM_CHAM        =SIMP(statut='o',typ='TXM',validators=NoRepeat(),into=C_NOM_CHAM_INTO(),),

@@ -45,6 +45,7 @@ class CheckerError(Exception):
     """
 
     def __init__(self, orig, msg, stack):
+        super(CheckerError, self).__init__(msg)
         self._orig = orig
         self._msg = msg
         self._stack = "/".join(force_list(stack))
@@ -363,8 +364,8 @@ class SyntaxCheckerVisitor(object):
             for key, value in userOcc.iteritems():
                 # print key, value
                 if key == "reuse":
-                    orig = step.definition.get("reentrant", "").split(':')
-                    if orig and orig[0] not in ("o", "f"):
+                    reentr = step.definition.get("reentrant", "").split(':')
+                    if reentr and reentr[0] not in ("o", "f"):
                         self._stack.append(key)
                         self.error(KeyError, "reuse is not allowed!")
                     continue

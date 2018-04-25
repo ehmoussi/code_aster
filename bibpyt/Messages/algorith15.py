@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -28,9 +28,10 @@ cata_msg = {
 """),
 
     2 : _(u"""
- arrêt sur dimension matrice TETA incorrecte
- dimension effective :  %(i1)d
- dimension en argument:  %(i2)d
+La dimension de la matrice de changement de base est incorrecte ;
+
+- dimension effective   :  %(i1)d
+- dimension en argument :  %(i2)d
 """),
 
     3 : _(u"""
@@ -65,7 +66,7 @@ cata_msg = {
 
     9 : _(u"""
   arrêt pour cause de ddls interdits :
-  seules les composantes DX, DY, DZ, DRX, DRY, DRZ sont autorisées 
+  seules les composantes DX, DY, DZ, DRX, DRY, DRZ sont autorisées
 """),
 
     10 : _(u"""
@@ -161,7 +162,7 @@ On a %(i1)d. Il faudrait un nombre supérieur à :  %(r1)f
 
 
     45 : _(u"""
-  on ne trouve pas 
+  on ne trouve pas
 Ce message est un message d'erreur développeur.
 Contactez le support technique.
 """),
