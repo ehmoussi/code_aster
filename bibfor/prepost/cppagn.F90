@@ -801,7 +801,7 @@ implicit none
                     if (lgma+1 .gt. 8) then
                         call utmess('F', 'ALGELINE_16')
                     endif
-                    nomma = knuzo(1:1)// knume(1:lgma)
+                    nomma ='M'// knume(1:lgma)
                     call jecroc(jexnom(maout//'.NOMMAI',nomma))
                     ind1=ind1+1
                 end if
