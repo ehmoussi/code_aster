@@ -789,7 +789,7 @@ implicit none
                 call jeveuo(jexnum(conloc,zi(jlimane+incc)),'L',jconloc)
                 zi(jlimane+incc)=ind+incc
 ! ---------------------- NOM DE LA MAILLE
-                if (nbnwma .eq. 1) then
+                if (incc .eq. 0) then
                     call jenuno(jexnum(main//'.NOMMAI',inc),nomma)
                     call jecroc(jexnom(maout//'.NOMMAI',nomma))
                 else
