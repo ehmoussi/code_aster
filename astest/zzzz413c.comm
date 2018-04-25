@@ -1,0 +1,238 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),PAR_LOT='NON',DEBUG=_F(SDVERI='OUI'))
+
+Mail=LIRE_MAILLAGE(FORMAT='MED',UNITE=20)
+
+Mail=MODI_MAILLAGE(reuse=Mail,
+    MAILLAGE=Mail,
+    ORIE_NORM_COQUE=(
+        _F(GROUP_MA = ('GToleSurf',),   VECT_NORM = (0.0, 0.0, 1.0), GROUP_NO= 'GTolePt00',),
+        _F(GROUP_MA = ('GBeton',),      VECT_NORM = (0.0, 0.0, 1.0), GROUP_NO= 'GTolePt00',),
+        _F(GROUP_MA = ('GAcierLongi',), VECT_NORM = (0.0, 0.0, 1.0), GROUP_NO= 'GTolePt00',),
+        _F(GROUP_MA = ('GAcierTrans',), VECT_NORM = (0.0, 0.0, 1.0), GROUP_NO= 'GTolePt00',),
+    ),
+)
+#
+# -----------------------------------------------------
+# DEFINITION DES MATERIAUX
+# -----------------------------------------------------
+ACIER=DEFI_MATERIAU(
+    ELAS=_F(E=2.0E+11, NU=0.0, RHO=7800.,),
+)
+
+BETON=DEFI_MATERIAU(
+    ELAS=_F(E=3.0E+10, NU=0.0, RHO=2500., ),
+)
+
+# -------------------------------------------------
+# AFFECTATION DES MATERIAUX
+# -------------------------------------------------
+ChMat=AFFE_MATERIAU(
+    MAILLAGE=Mail,
+    AFFE=(
+        _F(GROUP_MA=('GToleSurf',  'GRaidSurf'),    MATER=ACIER,),
+        _F(GROUP_MA=('GAcierLongi','GAcierTrans'),  MATER=ACIER,),
+        _F(GROUP_MA=('GBeton',),                    MATER=BETON,),
+    ),
+)
+
+# -------------------------------------------------
+# AFFECTATION DES MODELES
+# -------------------------------------------------
+Model=AFFE_MODELE(
+    MAILLAGE=Mail,
+    AFFE=(
+        _F(GROUP_MA=('GAcierLongi','GAcierTrans',),
+           PHENOMENE='MECANIQUE', MODELISATION='GRILLE_EXCENTRE',),
+        _F(GROUP_MA=('GToleSurf', 'GRaidSurf',  'GBeton',
+                     'GToleBord1','GToleBord2', 'GRaidBord1','GRaidBord2',),
+           PHENOMENE='MECANIQUE', MODELISATION='DKT',),
+    ),
+)
+
+# -------------------------------------------------
+# AFFECTATION DES CARACTERISTIQUES
+# -------------------------------------------------
+carelem=AFFE_CARA_ELEM(
+    MODELE=Model,
+    COQUE=(
+        _F(GROUP_MA=('GToleSurf',),    EPAIS= 8.0000000000e-03, VECTEUR=( 0.0, 1.0,  0.0), COQUE_NCOU=3,),
+        _F(GROUP_MA=('GRaidSurfSem',), EPAIS= 5.0000000000e-03, VECTEUR=( 0.0, 1.0,  0.0), COQUE_NCOU=2,),
+        _F(GROUP_MA=('GRaidSurfAme',), EPAIS= 5.0000000000e-03, VECTEUR=( 0.0, 1.0,  0.0), COQUE_NCOU=4,),
+        _F(GROUP_MA=('GBeton',),       EPAIS= 3.0000000000e-01, VECTEUR=( 0.0, 1.0,  0.0),
+           EXCENTREMENT= 1.5400000000e-01, COQUE_NCOU=6, INER_ROTA='OUI', ),
+    ),
+    GRILLE=(
+        _F(GROUP_MA=('GAcierLongi',),  SECTION= 1.5707963268e-03, VECT_1=( 0.0, 1.0,  0.0),
+           EXCENTREMENT= 2.4400000000e-01,),
+        _F(GROUP_MA=('GAcierTrans',),  SECTION= 1.5707963268e-03, VECT_1=( 1.0, 0.0,  0.0),
+           EXCENTREMENT= 2.2400000000e-01,),
+    ),
+)
+
+# ----------------------------------------------
+# CHARGEMENT
+# ----------------------------------------------
+inst_fin = 10.0
+
+CLIM=AFFE_CHAR_MECA(
+    MODELE=Model,
+    DDL_IMPO=(
+        _F(GROUP_MA=('GToleBord2','GRaidBord2'), DX=0.0, DY=0.0, DZ= 0.0, DRX=0.0, DRY=0.0, DRZ=0.0,),
+        _F(GROUP_MA=('GToleBord1','GRaidBord1'), DZ= -1.0E-02, ),
+    ),
+)
+
+FMULT=DEFI_FONCTION(
+    NOM_PARA='INST',
+    VALE=( 0.0      ,    0.0 ,
+           inst_fin ,   10.0 ,),
+)
+
+# ----------------------------------------------
+# CALCUL
+# ----------------------------------------------
+Linst=DEFI_LIST_REEL(DEBUT=0.0, INTERVALLE=_F(JUSQU_A=10.0, NOMBRE=10,),)
+
+Rstnl=STAT_NON_LINE(
+    MODELE=Model,
+    CHAM_MATER=ChMat,
+    CARA_ELEM=carelem,
+    EXCIT=(
+        _F(CHARGE=CLIM, FONC_MULT=FMULT,),
+    ),
+    COMPORTEMENT=(
+        _F(GROUP_MA=('GBeton',),                    RELATION='ELAS',),
+        _F(GROUP_MA=('GToleSurf',),                 RELATION='ELAS',),
+        _F(GROUP_MA=('GRaidSurf',),                 RELATION='ELAS',),
+        _F(GROUP_MA=('GAcierLongi', 'GAcierTrans'), RELATION='ELAS',),
+
+    ),
+    INCREMENT=_F(LIST_INST=Linst, INST_FIN=inst_fin,),
+)
+
+
+import os
+NomFicMed  = './REPE_OUT/sief_elga.med'
+NomFicDump = './REPE_OUT/sief_elga.dump'
+LGroupe = ['GRaidSurf','GRaidSurfSem','GRaidSurfAme','GBeton','GToleSurf','GAcierLongi',]
+#
+# Tout les groupes
+unit = DEFI_FICHIER(ACTION='ASSOCIER', FICHIER=NomFicMed, ACCES='NEW', TYPE='LIBRE')
+IMPR_RESU(FORMAT='MED',UNITE=unit,
+    RESU=_F(RESULTAT=Rstnl, INST=(5.0, 8.0, inst_fin), CARA_ELEM=carelem,
+            GROUP_MA=(LGroupe), NOM_CHAM =("SIEF_ELGA",),NOM_CMP =('SIXX'), ),
+)
+DEFI_FICHIER(ACTION='LIBERER', UNITE=unit)
+DETRUIRE(CONCEPT=_F(NOM=unit,),)
+
+cmd = "printf '1\n1\n1\n' | mdump3 %s | sed '1,20d' > %s" % (NomFicMed,NomFicDump)
+os.system(cmd)
+TEST_FICHIER(
+    FICHIER     = NomFicDump,
+    NB_VALE     =  42909,
+    VALE_CALC   =  -8.63646007133E+12,
+)
+
+
+LGroupe = [
+    ('GRaidSurf',    23984, -4.65786935225E+12,),
+    ('GRaidSurfSem',  7817,  6.45420833395E+11,),
+    ('GRaidSurfAme', 17903, -5.30329018512E+12,),
+    ('GBeton',       13877,  2.22184182527E+11,),
+    ('GToleSurf',     7820, -4.63193195493E+12,),
+    ('GAcierLongi',   2436,  4.31157054898E+11,),
+]
+
+# Groupe par Groupe
+for grp,nbvale,valec in LGroupe:
+    NomFicMed  = './REPE_OUT/plancher_scs_%s.med'  % grp
+    NomFicDump = './REPE_OUT/plancher_scs_%s.dump' % grp
+    unit = DEFI_FICHIER(ACTION='ASSOCIER', FICHIER=NomFicMed, ACCES='NEW', TYPE='LIBRE')
+    IMPR_RESU(FORMAT='MED',UNITE=unit,
+        RESU=_F(RESULTAT=Rstnl, INST=(5.0, 8.0, inst_fin), CARA_ELEM=carelem,
+                GROUP_MA=grp, NOM_CHAM =("SIEF_ELGA",),NOM_CMP =('SIXX'), ),
+    )
+    DEFI_FICHIER(ACTION='LIBERER', UNITE=unit)
+    DETRUIRE(CONCEPT=_F(NOM=unit,),)
+
+    cmd = "printf '1\n1\n1\n' | mdump3 %s | sed '1,20d' > %s" % (NomFicMed,NomFicDump)
+    os.system(cmd)
+    TEST_FICHIER(
+        FICHIER     = NomFicDump,
+        NB_VALE     =  nbvale,
+        VALE_CALC   =  valec,
+    )
+
+FIN()
+
+"""
+import tarfile,os,os.path
+
+Nom_Fic = './REPE_OUT/plancher_scs'
+Nom_Fic_tar = Nom_Fic+'.tar'
+unit = DEFI_FICHIER(ACTION='ASSOCIER', FICHIER=Nom_Fic_tar, ACCES='NEW', TYPE='ASCII')
+IMPR_RESU_SP(
+    RESULTAT = Rstnl, INST=(5.0, 8.0, inst_fin),
+    GROUP_MA = LGroupe,
+    RESU =_F(NOM_CHAM = ('SIEF_ELGA',),NOM_CMP  = ('SIXX',), ),
+    UNITE = unit,
+)
+DEFI_FICHIER(ACTION='LIBERER', UNITE=unit)
+DETRUIRE(CONCEPT=_F(NOM=unit,),)
+if ( os.path.exists(Nom_Fic_tar) ):
+    try:
+        os.mkdir(Nom_Fic)
+    except:
+        pass
+    tt = tarfile.open(Nom_Fic_tar,'r')
+    tt.extractall(Nom_Fic)
+
+
+for grp in LGroupe:
+    Nom_Fic = './REPE_OUT/plancher_scs_%s' % grp
+    Nom_Fic_tar = Nom_Fic+'.tar'
+    unit = DEFI_FICHIER(ACTION='ASSOCIER', FICHIER=Nom_Fic_tar, ACCES='NEW', TYPE='ASCII')
+    IMPR_RESU_SP(
+        RESULTAT = Rstnl, INST=(5.0, 8.0, inst_fin),
+        GROUP_MA = (grp),
+        RESU =_F(
+            NOM_CHAM = ('SIEF_ELGA',),
+            NOM_CMP  = ('SIXX',),
+        ),
+        UNITE = unit,
+    )
+    DEFI_FICHIER(ACTION='LIBERER', UNITE=unit)
+    DETRUIRE(CONCEPT=_F(NOM=unit,),)
+    if ( os.path.exists(Nom_Fic_tar) ):
+        try:
+            os.mkdir(Nom_Fic)
+        except:
+            pass
+        tt = tarfile.open(Nom_Fic_tar,'r')
+        tt.extractall(Nom_Fic)
+"""
+
+
+
+
+
+
