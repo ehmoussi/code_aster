@@ -121,6 +121,7 @@ RESUGM=STAT_NON_LINE(
 
 NomFicMed  = './REPE_OUT/sief_elga.med'
 NomFicDump = './REPE_OUT/sief_elga.dump'
+ftmp       = './REPE_OUT/tmp.dump'
 
 unit = DEFI_FICHIER(ACTION='ASSOCIER', FICHIER=NomFicMed, ACCES='NEW', TYPE='LIBRE')
 IMPR_RESU(FORMAT='MED',UNITE=unit,
@@ -132,7 +133,7 @@ DETRUIRE(CONCEPT=_F(NOM=unit,),)
 
 
 import os
-cmd = "printf '1\n1\n1\n' | mdump3 %s | sed '1,20d' > %s" % (NomFicMed,NomFicDump)
+cmd="printf '1\n1\n1\n'|mdump3 {0}|sed '1,20d'>{1};cp {1} {2}".format(NomFicMed,NomFicDump,ftmp)
 os.system(cmd)
 
 TEST_FICHIER(

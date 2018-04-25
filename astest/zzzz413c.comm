@@ -133,6 +133,8 @@ Rstnl=STAT_NON_LINE(
 import os
 NomFicMed  = './REPE_OUT/sief_elga.med'
 NomFicDump = './REPE_OUT/sief_elga.dump'
+ftmp       = './REPE_OUT/tmp.dump'
+
 LGroupe = ['GRaidSurf','GRaidSurfSem','GRaidSurfAme','GBeton','GToleSurf','GAcierLongi',]
 #
 # Tout les groupes
@@ -144,7 +146,7 @@ IMPR_RESU(FORMAT='MED',UNITE=unit,
 DEFI_FICHIER(ACTION='LIBERER', UNITE=unit)
 DETRUIRE(CONCEPT=_F(NOM=unit,),)
 
-cmd = "printf '1\n1\n1\n' | mdump3 %s | sed '1,20d' > %s" % (NomFicMed,NomFicDump)
+cmd="printf '1\n1\n1\n'|mdump3 {0}|sed '1,20d'>{1};cp {1} {2}".format(NomFicMed,NomFicDump,ftmp)
 os.system(cmd)
 TEST_FICHIER(
     FICHIER     = NomFicDump,
@@ -174,7 +176,7 @@ for grp,nbvale,valec in LGroupe:
     DEFI_FICHIER(ACTION='LIBERER', UNITE=unit)
     DETRUIRE(CONCEPT=_F(NOM=unit,),)
 
-    cmd = "printf '1\n1\n1\n' | mdump3 %s | sed '1,20d' > %s" % (NomFicMed,NomFicDump)
+    cmd="printf '1\n1\n1\n'|mdump3 {0}|sed '1,20d'>{1};cp {1} {2}".format(NomFicMed,NomFicDump,ftmp)
     os.system(cmd)
     TEST_FICHIER(
         FICHIER     = NomFicDump,
@@ -230,8 +232,6 @@ for grp in LGroupe:
         tt = tarfile.open(Nom_Fic_tar,'r')
         tt.extractall(Nom_Fic)
 """
-
-
 
 
 
