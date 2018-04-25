@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of Code_Aster.
 #
 # Code_Aster is free software: you can redistribute it and/or modify
@@ -56,6 +56,15 @@ class FileType(object):
             2: "LIBRE",
         }[value]
 
+    @staticmethod
+    def value(name):
+        """Return type as string."""
+        return {
+            "ASCII": 0,
+            "BINARY": 1,
+            "LIBRE": 2,
+        }[name]
+
 
 class FileAccess(object):
     """Enumeration for file access."""
@@ -71,6 +80,15 @@ class FileAccess(object):
             1: "APPEND",
             2: "OLD",
         }[value]
+
+    @staticmethod
+    def value(name):
+        """Return type as string."""
+        return {
+            "NEW": 0,
+            "APPEND": 1,
+            "OLD": 2,
+        }[name]
 
 
 class Action(object):
@@ -88,6 +106,15 @@ class Action(object):
             2: "LIBERER",
         }[value]
 
+    @staticmethod
+    def value(name):
+        """Return type as string."""
+        return {
+            "ASSOCIER": 0,
+            "RESERVER": 1,
+            "LIBERER": 2,
+        }[name]
+
 
 class LogicalUnitFile(object):
     """This class defines a file associated to a fortran logical unit"""
@@ -96,11 +123,13 @@ class LogicalUnitFile(object):
     # keep in memory: {unit_number: LogicalUnitFile objects}
     _used_unit = {}
 
-    def __init__(self, unit, filename, action, typ, access):
+    def __init__(self, unit, filename, action, typ, access,
+                 to_register = True):
         self._logicalUnit = unit
         self._filename = filename
         self._register(self)
-        self.register(self._logicalUnit, filename, action, typ, access)
+        if to_register:
+            self.register(self._logicalUnit, filename, action, typ, access)
 
     @classmethod
     def open(cls, filename, typ=FileType.Ascii, access=FileAccess.New):
