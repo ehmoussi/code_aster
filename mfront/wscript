@@ -120,14 +120,15 @@ def check_mfront(self):
     self.env.TFELHOME = tfelhome
     # export TFELHOME for future checkings
     os.environ['TFELHOME'] = tfelhome[0]
-    # takes TFELHOME from env (wafcfg) or environment
+    # takes TFELVERS from env (wafcfg) or environment
     if not self.env.TFELVERS:
         self.add_os_flags('TFELVERS')
+    tfelvers = Utils.to_list(self.env.TFELVERS)
     # Define suffix for version
-    if not self.env.TFELVERS:
+    if not tfelvers:
         self.env.TFELSUFFIX = ''
     else:
-        self.env.TFELSUFFIX = '-' + self.env.TFELVERS
+        self.env.TFELSUFFIX = '-' + tfelvers[0]
     # Define programs names mfront and tfel-config
     self.find_program('mfront' + self.env.TFELSUFFIX,
                       path_list=paths, var='MFRONT')
