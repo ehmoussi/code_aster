@@ -256,21 +256,26 @@ class LogicalUnitFile(object):
         cls._used_unit[logicalUnit.unit] = logicalUnit
 
     @classmethod
-    def release_from_number(cls, unit):
+    def release_from_number(cls, unit, to_register = True):
         """Release a logical unit from its number.
 
         Arguments:
             unit (int): Number of logical unit to release.
+            to_register (bool): Boolean to avoid calling of register.
         """
         logger.debug("LogicalUnit: release unit {0}".format(unit))
         logicalUnit = cls.from_number(unit)
         if not logicalUnit:
+            if unit in RESERVED_UNIT:
+                return
             msg = "Unable to free the logical unit {}".format(unit)
             raise KeyError(msg)
 
-        cls.register(unit, logicalUnit.filename, Action.Close)
+        if to_register:
+            cls.register(unit, logicalUnit.filename, Action.Close)
         cls._free_number.append(unit)
-        del cls._used_unit[unit]
+        if cls._used_unit.has_key(unit):
+            del cls._used_unit[unit]
 
     @classmethod
     def release_from_name(cls, filename):
