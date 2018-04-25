@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -26,5 +26,19 @@ class DefineUnitFile(ExecuteCommandOps):
     """Execute legacy operator DEFI_FICHIER."""
     command_name = "DEFI_FICHIER"
     command_op = 26
+
+    def post_exec(self, keywords):
+        """Execute the command.
+
+        Arguments:
+            keywords (dict): User's keywords.
+        """
+        from code_aster.RunManager.LogicalUnit import LogicalUnitFile, FileType, FileAccess, Action
+        if keywords["ACTION"] == "ASSOCIER":
+            action = Action.value(keywords["ACTION"])
+            typ = FileType.value(keywords["TYPE"])
+            access = FileAccess.value(keywords["ACCES"])
+            newFile = LogicalUnitFile(keywords["UNITE"], keywords["FICHIER"], action,
+                                      typ, access, False)
 
 DEFI_FICHIER = DefineUnitFile.run
