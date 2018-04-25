@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -45,6 +45,8 @@ NACCELR  = LocatedComponents(phys=PHY.DEPL_R, type='ELNO',
 CFLUXNF  = LocatedComponents(phys=PHY.FLUN_F, type='ELEM',
     components=('FLUN',))
 
+CFLUXVF = LocatedComponents(phys=PHY.FLUX_F, type='ELEM',
+                            components=('FLUX', 'FLUY', 'FLUZ'))
 
 CFLUXNR  = LocatedComponents(phys=PHY.FLUN_R, type='ELEM',
     components=('FLUN',))
@@ -159,6 +161,12 @@ class THER_FACE3(Element):
                      (SP.PTEMPEI, DDL_THER), (SP.PTEMPER, DDL_THER),
                      (SP.PTEMPSR, CTEMPSR), ),
             para_out=((SP.PRESIDU, MVECTTR), ),
+        ),
+        
+        OP.CHAR_THER_FLUX_F(te=95,
+            para_in=((SP.PFLUXVF, CFLUXVF), (SP.PGEOMER, NGEOMER),
+                     (SP.PTEMPSR, CTEMPSR), ),
+            para_out=((SP.PVECTTR, MVECTTR), ),
         ),
 
         OP.CHAR_THER_PHID_R(te=326,

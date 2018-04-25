@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,7 +18,7 @@
 
 subroutine nmcvci(charge, infoch, fomult, numedd, depmoi,&
                   instap, cncine)
-! person_in_charge: jacques.pellet at edf.fr
+
     implicit none
 !
 !
@@ -42,8 +42,8 @@ subroutine nmcvci(charge, infoch, fomult, numedd, depmoi,&
 #include "asterfort/jeveuo.h"
 #include "asterfort/vtcmbl.h"
 #include "asterfort/vtcreb.h"
-    character(len=24) :: charge, infoch, fomult, numedd, cncine
-    character(len=19) :: depmoi
+    character(len=24) :: charge, infoch, fomult, numedd
+    character(len=19) :: depmoi, cncine
     character(len=24) :: l2cnci(2), cncinm, cncinp
     character(len=8) :: char1
     real(kind=8) :: instap, coefr(2)

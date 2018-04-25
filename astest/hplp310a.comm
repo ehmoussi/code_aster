@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -60,18 +60,28 @@ RHO=2.
 TP=0.
 
 #
-T1F = FORMULE(NOM_PARA='TPV',
-              VALE='''TPV+((4.*SIGMA0*(1.-NU)*log(RHO/R1))
-                                /(sqrt(3.)*E*ALPHA)) ''')
+T1F = FORMULE(VALE="""TPV+((4.*SIGMA0*(1.-NU)*log(RHO/R1))
+                                /(sqrt(3.)*E*ALPHA)) """,
+              SIGMA0=SIGMA0,
+              NU=NU,
+              RHO=RHO,
+              R1=R1,
+              E=E,
+              ALPHA=ALPHA,
+              NOM_PARA='TPV',)
 
 #
 # ATTENTION : LA GENERATION DU MAILLAGE .MGIB A PARTIR DU FICHIER
 # .DATG FAIT APPARAITRE DES NOEUDS EN 0. A SUPPRIMER, SINON LE
 # LOG N'EST PAS DEFINI.
 #
-F_T = FORMULE(NOM_PARA=('X','Y'),
-              VALE='''(T1F(TP)-((T1F(TP)-TP)*
-               log((sqrt((X*X)+(Y*Y)))/R1))/(log(RHO/R1)))''')
+F_T = FORMULE(VALE="""(T1F(TP)-((T1F(TP)-TP)*
+               log((sqrt((X*X)+(Y*Y)))/R1))/(log(RHO/R1)))""",
+              T1F=T1F,
+              TP=TP,
+              R1=R1,
+              RHO=RHO,
+              NOM_PARA=['X', 'Y'],)
 
 TEMP0=CREA_CHAMP(  OPERATION='AFFE', TYPE_CHAM='NOEU_TEMP_R',
                          MAILLAGE=MA,
@@ -91,7 +101,9 @@ TEMP_EV=CREA_RESU(    OPERATION='AFFE', TYPE_RESU='EVOL_THER',
                         AFFE=_F(  CHAM_GD = TEMP0,
                                   INST = 0.)
                     )
-TEMP_EV=CREA_RESU(    reuse=TEMP_EV,OPERATION='AFFE', TYPE_RESU='EVOL_THER',
+TEMP_EV=CREA_RESU(    reuse=TEMP_EV,
+                      RESULTAT=TEMP_EV,
+                      OPERATION='AFFE', TYPE_RESU='EVOL_THER',
                         NOM_CHAM='TEMP',
                         AFFE=_F(  CHAM_GD = TEMP_IMP,
                                   INST = (1.,10.,),)

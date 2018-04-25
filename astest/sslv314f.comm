@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -103,7 +103,7 @@ for i_raff in range(nb_raff+1) :
 
       MACR_ADAP_MAIL(ADAPTATION         = 'RAFFINEMENT',
                      GROUP_MA           = 'VOL',
-                     VERSION_HOMARD     = 'V11_7',
+                     VERSION_HOMARD     = 'V11_10',
                      NIVE_MAX           = nb_raff,
                      CHAM_GD            = CHERR,
                      CRIT_RAFF_ABS      = -2*h,

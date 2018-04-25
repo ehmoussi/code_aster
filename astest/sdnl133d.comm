@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -81,8 +81,10 @@ CHAMPMAT=AFFE_MATERIAU(MAILLAGE=MAILLAGE,
 #                          CONDITIONS AUX LIMITES                    *
 #*********************************************************************
 
-SINUS = FORMULE(NOM_PARA='INST',VALE='sin(INST*pi/180.)')
-COSINUS = FORMULE(NOM_PARA='INST',VALE='cos(INST*pi/180.)')
+SINUS = FORMULE(VALE='sin(INST*pi/180.)',
+                NOM_PARA='INST',)
+COSINUS = FORMULE(VALE='cos(INST*pi/180.)',
+                  NOM_PARA='INST',)
 
 CHARBLO=AFFE_CHAR_MECA(MODELE=MODELE,
                        DDL_IMPO=_F(GROUP_NO='PCOUPE2',

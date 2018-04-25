@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -237,8 +237,7 @@ EPSP=CALC_FONCTION(COMB=(_F(FONCTION=FU,
                          _F(FONCTION=FN,
                             COEF=-5e-06,),),);
 
-TEST_FONCTION(TEST_NOOK='NON',
-              VALEUR=(_F(VALE_CALC=0.00210961826384,
+TEST_FONCTION(VALEUR=(_F(VALE_CALC=0.00210961826384,
                          VALE_REFE=2.1072E-3,
                          VALE_PARA=1.0,
                          REFERENCE='ANALYTIQUE',
@@ -298,8 +297,7 @@ EPSP3=CALC_FONCTION(COMB=(_F(FONCTION=FU3,
                           _F(FONCTION=FN3,
                              COEF=-5e-06,),),);
 
-TEST_FONCTION(TEST_NOOK='NON',
-              VALEUR=(_F(VALE_CALC=0.00210961826384,
+TEST_FONCTION(VALEUR=(_F(VALE_CALC=0.00210961826384,
                          VALE_REFE=2.1072E-3,
                          VALE_PARA=1.0,
                          REFERENCE='ANALYTIQUE',
@@ -340,13 +338,19 @@ UN=DEFI_CONSTANTE(VALE=1.0,);
 
 ZERO=DEFI_CONSTANTE(VALE=0.0,);
 
-Q_F = FORMULE(NOM_PARA='TEMP',VALE='100.+1.7*TEMP')
+Q_F = FORMULE(VALE='100.+1.7*TEMP',
+              NOM_PARA='TEMP',)
 
-B_F = FORMULE(NOM_PARA='TEMP',VALE='50.+2.*TEMP')
+B_F = FORMULE(VALE='50.+2.*TEMP',
+              NOM_PARA='TEMP',)
 
-S_F = FORMULE(NOM_PARA='TEMP',VALE='200.- 1.7*TEMP')
+S_F = FORMULE(VALE='200.- 1.7*TEMP',
+              NOM_PARA='TEMP',)
 
-RI_F = FORMULE(NOM_PARA='TEMP',VALE='S_F(TEMP)+ Q_F(TEMP)')
+RI_F = FORMULE(VALE='S_F(TEMP)+ Q_F(TEMP)',
+               S_F=S_F,
+               Q_F=Q_F,
+               NOM_PARA='TEMP',)
 
 TEMPE1=DEFI_LIST_REEL(DEBUT=-10.0,
                       INTERVALLE=_F(JUSQU_A=120.0,
@@ -425,8 +429,7 @@ EPSP2=CALC_FONCTION(COMB=(_F(FONCTION=FU2,
                           _F(FONCTION=FN2,
                              COEF=-5e-06,),),);
 
-TEST_FONCTION(TEST_NOOK='NON',
-              VALEUR=(_F(VALE_CALC=0.00210721102054,
+TEST_FONCTION(VALEUR=(_F(VALE_CALC=0.00210721102054,
                          VALE_REFE=2.1072E-3,
                          VALE_PARA=1.0,
                          REFERENCE='ANALYTIQUE',

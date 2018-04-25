@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -24,12 +24,16 @@ DEBUG=_F(SDVERI='OUI'))
 
 
 # F2 : formule utilisee pour calculer l'erreur relative :
-F2 = FORMULE(NOM_PARA=('X1','X3',),VALE='abs(X3/X1)')
+F2 = FORMULE(VALE='abs(X3/X1)',
+             NOM_PARA=['X1', 'X3'],)
 
 # F3,F4,F5 : formules utilisees pour deformer les maillages MA1 et MA2 :
-F3 = FORMULE(NOM_PARA=('X','Y','Z'),VALE='(X)**1.7 -X ')
-F4 = FORMULE(NOM_PARA=('X','Y','Z'),VALE='(Y)**1.7 -Y ')
-F5 = FORMULE(NOM_PARA=('X','Y','Z'),VALE='(Z)**1.7 -Z ')
+F3 = FORMULE(VALE='(X)**1.7 -X ',
+             NOM_PARA=['X', 'Y', 'Z'],)
+F4 = FORMULE(VALE='(Y)**1.7 -Y ',
+             NOM_PARA=['X', 'Y', 'Z'],)
+F5 = FORMULE(VALE='(Z)**1.7 -Z ',
+             NOM_PARA=['X', 'Y', 'Z'],)
 
 
 # Tolerances pour les TEST_TABLE :

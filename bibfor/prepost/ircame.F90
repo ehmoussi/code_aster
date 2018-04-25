@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -20,11 +20,11 @@ subroutine ircame(ifi, nochmd, chanom, typech, modele,&
                   nbcmp, nomcmp, etiqcp, partie, numpt,&
                   instan, numord, adsk, adsd, adsc,&
                   adsv, adsl, nbenec, lienec, sdcarm,&
-                  codret)
-!_______________________________________________________________________
-! person_in_charge: nicolas.sellenet at edf.fr
+                  carael, codret)
+! --------------------------------------------------------------------------------------------------
+!
 !     ECRITURE D'UN CHAMP - FORMAT MED
-!        -  -       - -            --
+!
 !-----------------------------------------------------------------------
 !     ENTREES :
 !       IFI    : UNITE LOGIQUE D'IMPRESSION DU CHAMP
@@ -47,12 +47,13 @@ subroutine ircame(ifi, nochmd, chanom, typech, modele,&
 !       SDCARM : CARA_ELEM (UTILE POUR LES SOUS-POINTS)
 !     SORTIES:
 !       CODRET : CODE DE RETOUR (0 : PAS DE PB, NON NUL SI PB)
-!_______________________________________________________________________
+!
+! --------------------------------------------------------------------------------------------------
+!
+! person_in_charge: nicolas.sellenet at edf.fr
 !
 ! aslint: disable=W1504
-    implicit none
-!
-! 0.1. ==> ARGUMENTS
+implicit none
 !
 #include "asterf_types.h"
 #include "jeveux.h"
@@ -76,7 +77,7 @@ subroutine ircame(ifi, nochmd, chanom, typech, modele,&
 #include "asterfort/ulisog.h"
 #include "asterfort/utlicm.h"
 #include "asterfort/utmess.h"
-    character(len=8) :: typech, modele, sdcarm
+    character(len=8) :: typech, modele, sdcarm, carael
     character(len=19) :: chanom
     character(len=64) :: nochmd
     character(len=*) :: nomcmp(*), partie, etiqcp
@@ -91,10 +92,7 @@ subroutine ircame(ifi, nochmd, chanom, typech, modele,&
 !
     integer :: codret
 !
-! 0.2. ==> COMMUNS
-!
-!
-! 0.3. ==> VARIABLES LOCALES
+! --------------------------------------------------------------------------------------------------
 !
     character(len=6) :: nompro
     parameter ( nompro = 'IRCAME' )
@@ -112,14 +110,11 @@ subroutine ircame(ifi, nochmd, chanom, typech, modele,&
     integer :: typnoe
     parameter (typnoe=0)
 !
-    character(len=1) :: saux01
-    character(len=8) :: saux08, k8bid
-    character(len=8) :: nomaas
-    character(len=8) :: nomtyp(ntymax)
-    character(len=16) :: formar
-    character(len=24) :: ntlcmp, ntncmp, ntucmp, ntproa, nmcmfi
-    character(len=24) :: ncaimi, ncaimk
-    character(len=64) :: nomamd
+    character(len=1)   :: saux01
+    character(len=8)   :: saux08, k8bid, nomaas, nomtyp(ntymax)
+    character(len=16)  :: formar
+    character(len=24)  :: ntlcmp, ntncmp, ntucmp, ntproa, nmcmfi, ncaimi, ncaimk
+    character(len=64)  :: nomamd
     character(len=200) :: nofimd
     character(len=255) :: kfic
 !
@@ -128,32 +123,26 @@ subroutine ircame(ifi, nochmd, chanom, typech, modele,&
     integer :: modnum(ntymax)
     integer :: numnoa(ntymax, nnomax), nuanom(ntymax, nnomax)
     integer :: renumd(ntymax)
-    integer :: ifm, nivinf, ifimed
-    integer :: lnomam
-    integer :: ncmpve, nvalec, nbprof
-    integer :: nbvato, ncmprf
+    integer :: ifm, nivinf, ifimed, lnomam
+    integer :: ncmpve, nvalec, nbprof, nbvato, ncmprf
     integer :: nbimpr, jnocm1, jnocm2, nbcmp2, icmp1, icmp2
     integer :: adcaii, adcaik
 !
-    integer :: iaux, jaux
-    integer :: nrimpr
+    integer :: iaux, jaux, nrimpr
     integer :: existc, nbcmfi, nbval
 !
     aster_logical :: lgaux
     aster_logical :: existm
 !
+! --------------------------------------------------------------------------------------------------
+!
     call jemarq()
 !
-!====
 ! 1. PREALABLES
-!====
-!
-! 1.1. ==> RECUPERATION DU NIVEAU D'IMPRESSION
-!
+!   1.1. ==> RECUPERATION DU NIVEAU D'IMPRESSION
     call infniv(ifm, nivinf)
-!
-! 1.2. ==> NOMS DES TABLEAUX DE TRAVAIL
-!               12   345678   9012345678901234
+!   1.2. ==> NOMS DES TABLEAUX DE TRAVAIL
+!             12   345678   9012345678901234
     ntlcmp = '&&'//nompro//'.LISTE_N0MCMP   '
     ntncmp = '&&'//nompro//'.NOMCMP         '
     ntucmp = '&&'//nompro//'.UNITECMP       '
@@ -161,9 +150,7 @@ subroutine ircame(ifi, nochmd, chanom, typech, modele,&
     nmcmfi = '&&'//nompro//'.NOMCMP_FICHIER '
     ncaimi = '&&'//nompro//'.CARAC_NOMBRES__'
     ncaimk = '&&'//nompro//'.CARAC_CHAINES__'
-!
-! 1.3. ==> NOM DU FICHIER MED
-!
+!   1.3. ==> NOM DU FICHIER MED
     call ulisog(ifi, kfic, saux01)
     if (kfic(1:1) .eq. ' ') then
         call codent(ifi, 'G', saux08)
@@ -175,58 +162,38 @@ subroutine ircame(ifi, nochmd, chanom, typech, modele,&
     if (nivinf .gt. 1) then
         write (ifm,*) '<',nompro,'> NOM DU FICHIER MED : ',nofimd
     endif
-!
-! 1.4. ==> LES NOMBRES CARACTERISTIQUES
-!
+!   1.4. ==> LES NOMBRES CARACTERISTIQUES
     nbvato = zi(adsd)
     ncmprf = zi(adsd+1)
 !
-!====
 ! 2. LE MAILLAGE
-!====
-!
-! 2.1. ==> NOM ET DIMENSION DU MAILLAGE ASTER
-!
+!   2.1. ==> NOM ET DIMENSION DU MAILLAGE ASTER
     nomaas = zk8(adsk-1+1)
     call dismoi('DIM_GEOM_B', nomaas, 'MAILLAGE', repi=ndim)
-!
-! - Generate name of mesh for MED
-!
+!   Generate name of mesh for MED
     call mdnoma(nomamd, lnomam, nomaas, codret)
-!
-! 2.3. ==> CE MAILLAGE EST-IL DEJA PRESENT DANS LE FICHIER ?
-!
+!   2.3. ==> CE MAILLAGE EST-IL DEJA PRESENT DANS LE FICHIER ?
     iaux = 0
     ifimed = 0
-    call mdexma(nofimd, ifimed, nomamd, iaux, existm,&
-                jaux, codret)
-!
-! 2.4. ==> SI LE MAILLAGE EST ABSENT, ON L'ECRIT
-!
+    call mdexma(nofimd, ifimed, nomamd, iaux, existm, jaux, codret)
+!   2.4. ==> SI LE MAILLAGE EST ABSENT, ON L'ECRIT
     if (.not.existm) then
         saux08 = 'MED     '
         lgaux = .false.
         k8bid = '        '
         formar=' '
-        call irmail(saux08, ifi, iaux, nomaas, lgaux,&
-                    k8bid, nivinf, formar)
+        call irmail(saux08, ifi, iaux, nomaas, lgaux, k8bid, nivinf, formar)
     endif
 !
-!====
 ! 3. PREPARATION DU CHAMP A ECRIRE
-!====
-!
-! 3.1. ==> NUMEROS, NOMS ET UNITES DES COMPOSANTES A ECRIRE
-!
+!   3.1. ==> NUMEROS, NOMS ET UNITES DES COMPOSANTES A ECRIRE
     call utlicm(nbcmp, nomcmp, zk8(adsk+1), ncmprf, zk8(adsc),&
                 ncmpve, ntlcmp, ntncmp, ntucmp)
-!
     if (ncmpve .gt. 80) then
         call utmess('A', 'MED_99', sk=nochmd)
         goto 999
     endif
-!
-!     ON REMPLACE LES NOMS DES COMPOSANTES
+!   ON REMPLACE LES NOMS DES COMPOSANTES
     if (etiqcp .ne. ' ') then
         call jeveuo(ntncmp, 'L', jnocm1)
         call jeveuo(etiqcp, 'L', jnocm2)
@@ -238,21 +205,16 @@ subroutine ircame(ifi, nochmd, chanom, typech, modele,&
                     zk16(jnocm1+icmp1-1) = zk16(jnocm2+2*icmp2-1)
                     goto 10
                 endif
-            end do
+            enddo
  10         continue
-        end do
+        enddo
     endif
-!
-! 3.2. ==> . RECUPERATION DES NB/NOMS/NBNO/NBITEM DES TYPES DE MAILLES
-!            DANS CATALOGUE
-!          . RECUPERATION DES TYPES GEOMETRIE CORRESPONDANT POUR MED
-!          . VERIF COHERENCE AVEC LE CATALOGUE
-!
+!   3.2. ==> RECUPERATION DES NB/NOMS/NBNO/NBITEM DES TYPES DE MAILLESDANS CATALOGUE
+!            RECUPERATION DES TYPES GEOMETRIE CORRESPONDANT POUR MED
+!            VERIF COHERENCE AVEC LE CATALOGUE
     call lrmtyp(nbtyp, nomtyp, nnotyp, typgeo, renumd,&
                 modnum, nuanom, numnoa)
-!
-! 3.3. ==> DEFINITIONS DES IMPRESSIONS ET CREATION DES PROFILS EVENTUELS
-!
+!   3.3. ==> DEFINITIONS DES IMPRESSIONS ET CREATION DES PROFILS EVENTUELS
     call ircmpr(nofimd, typech, nbimpr, ncaimi, ncaimk,&
                 ncmprf, ncmpve, ntlcmp, nbvato, nbenec,&
                 lienec, adsd, adsl, nomaas, modele,&
@@ -261,34 +223,21 @@ subroutine ircame(ifi, nochmd, chanom, typech, modele,&
     if ( nbimpr.gt.0 ) then
         call jeveuo(ncaimi, 'L', adcaii)
         call jeveuo(ncaimk, 'L', adcaik)
-!
-! 3.4. ==> CARACTERISATION DES SUPPORTS QUAND CE NE SONT PAS DES NOEUDS
-!
+!       3.4. ==> CARACTERISATION DES SUPPORTS QUAND CE NE SONT PAS DES NOEUDS
         if (typech(1:4) .eq. 'ELGA' .or. typech(1:4) .eq. 'ELEM') then
-!
             if (sdcarm .ne. ' ' .and. typech(1:4) .eq. 'ELGA') then
-                call irelst(nofimd, chanom, nochmd, typech, nomaas,&
-                            nomamd, nbimpr, zi( adcaii), zk80(adcaik),&
-                            sdcarm)
+                call irelst(nofimd, chanom, nochmd,     typech,       nomaas,&
+                            nomamd, nbimpr, zi(adcaii), zk80(adcaik), sdcarm, carael)
             endif
-!
-            call irmpga(nofimd, chanom, nochmd, typech, nomtyp,&
-                        nbimpr, zi( adcaii), zk80(adcaik), modnum, nuanom,&
-                        sdcarm, codret)
-!
+            call irmpga(nofimd, chanom,     nochmd,       typech, nomtyp,&
+                        nbimpr, zi(adcaii), zk80(adcaik), modnum, nuanom, sdcarm, codret)
         endif
 !
-!====
-! 4. REPERAGE DU CHAMP : EXISTE-T-IL DEJA ?
-!    ON DOIT PARCOURIR TOUTES LES IMPRESSIONS POSSIBLES POUR CE CHAMP
-!====
-!
+!       Reperage du champ : existe-t-il deja ?
+!       on doit parcourir toutes les impressions possibles pour ce champ
         existc = 0
-!
         do nrimpr = 1 , nbimpr
-!
             if (codret .eq. 0) then
-!
                 tygeom = zi(adcaii+10*nrimpr-2)
                 if (tygeom .eq. typnoe) then
                     typent = ednoeu
@@ -300,53 +249,36 @@ subroutine ircame(ifi, nochmd, chanom, typech, modele,&
                     endif
                 endif
                 nvalec = zi(adcaii+10*nrimpr-4)
-!
                 call jedetr(nmcmfi)
-!
                 ifimed = 0
                 call mdexch(nofimd, ifimed, nochmd, numpt, numord,&
                             ncmpve, ntncmp, nvalec, typent, tygeom,&
                             jaux, nbcmfi, nmcmfi, nbval, nbprof,&
                             codret)
-!
                 existc = max ( existc, jaux )
-!
             endif
+        enddo
 !
-        end do
-!
-!====
-! 5. ECRITURE SI C'EST POSSIBLE
-!====
-!
+!       ECRITURE SI C'EST POSSIBLE
         if ( existc.le.2 ) then
-!
             call ircam1(nofimd, nochmd, existc, ncmprf, numpt,&
                         instan, numord, adsd, adsv, adsl,&
                         adsk, partie, ncmpve, ntlcmp, ntncmp,&
                         ntucmp, ntproa, nbimpr, zi(adcaii), zk80(adcaik),&
                         typech, nomamd, nomtyp, modnum, numnoa,&
                         codret)
-!
         else
-!
             call utmess('F', 'MED2_4', sk=nochmd, sr=instan)
-!
         endif
     else
         call utmess('A', 'MED_82', sk=nochmd)
     endif
-!
-!====
-! 6. LA FIN
-!====
 !
 999 continue
     if (nivinf .gt. 1) then
         write (ifm,*) ' '
     endif
 !
-! --- MENAGE
     call jedetr('&&'//nompro//'.LISTE_N0MCMP   ')
     call jedetr('&&'//nompro//'.NOMCMP         ')
     call jedetr('&&'//nompro//'.UNITECMP       ')

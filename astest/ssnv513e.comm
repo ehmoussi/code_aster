@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -29,14 +29,16 @@ MODELEIN=AFFE_MODELE(MAILLAGE=MAILLAG,
                               PHENOMENE='MECANIQUE',
                               MODELISATION='D_PLAN')));
 
-LN1=FORMULE(NOM_PARA=('X','Y'),VALE='Y-1-0.5*X');
+LN1 = FORMULE(VALE='Y-1-0.5*X',
+              NOM_PARA=['X', 'Y'],)
 
 FISS1=DEFI_FISS_XFEM(MAILLAGE=MAILLAG,
                     TYPE_DISCONTINUITE='INTERFACE',
                     DEFI_FISS=_F(FONC_LN=LN1),
                     INFO=1);
 
-LN2=FORMULE(NOM_PARA=('X','Y'),VALE='X');
+LN2 = FORMULE(VALE='X',
+              NOM_PARA=['X', 'Y'],)
 
 FISS2=DEFI_FISS_XFEM(MAILLAGE=MAILLAG,
                     TYPE_DISCONTINUITE='INTERFACE',
@@ -44,7 +46,8 @@ FISS2=DEFI_FISS_XFEM(MAILLAGE=MAILLAG,
                     JONCTION=_F(FISSURE=(FISS1),POINT=(0,-5)),
                     INFO=1);
 
-LN3=FORMULE(NOM_PARA=('X','Y'),VALE='Y');
+LN3 = FORMULE(VALE='Y',
+              NOM_PARA=['X', 'Y'],)
 FISS3=DEFI_FISS_XFEM(MAILLAGE=MAILLAG,
                     TYPE_DISCONTINUITE='INTERFACE',
                     DEFI_FISS=_F(FONC_LN=LN3),
@@ -104,9 +107,11 @@ def pres_h(x) :
    return 1E6
 
 PRES_H = FORMULE(VALE='pres_h(X)',
-                  NOM_PARA=('X'));
+                 pres_h=pres_h,
+                 NOM_PARA='X',)
 PRES_D = FORMULE(VALE='pres_d(Y)',
-                  NOM_PARA=('Y'));
+                 pres_d=pres_d,
+                 NOM_PARA='Y',)
 
 CH1=AFFE_CHAR_MECA_F(MODELE=MODELEK,
                    PRES_REP=(_F(GROUP_MA='LH',PRES = PRES_H),
@@ -248,10 +253,10 @@ DEPMLY = CALC_TABLE(TABLE = DEPM,
 
 # Definition des zones
 
-depl_y = FORMULE(NOM_PARA=('DY','COOR_Y'),
-                 VALE='DY+(COOR_Y+5)/100');
-depl_x = FORMULE(NOM_PARA=('DX','COOR_X'),
-                 VALE='DX+(COOR_X+5)/100');
+depl_y = FORMULE(VALE='DY+(COOR_Y+5)/100',
+                 NOM_PARA=['DY', 'COOR_Y'],)
+depl_x = FORMULE(VALE='DX+(COOR_X+5)/100',
+                 NOM_PARA=['DX', 'COOR_X'],)
 DEPZON=[None]*5
 
 DEPZON[1] = CALC_TABLE(TABLE = DEPMLX,

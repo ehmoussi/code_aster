@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -41,17 +41,23 @@ NEUT1  = CREA_CHAMP(TYPE_CHAM='NOEU_NEUT_R',
                     MAILLAGE=MAILLAGE,
                     AFFE=_F(TOUT='OUI', NOM_CMP='X1', VALE=2.,),
                    )
-LAMBDA_R = FORMULE(NOM_PARA=('NEUT1',),VALE='0.5*NEUT1')
-RHOCP_R  = FORMULE(NOM_PARA=('NEUT1',),VALE='0.5*NEUT1')
+LAMBDA_R = FORMULE(VALE='0.5*NEUT1',
+                   NOM_PARA='NEUT1',)
+RHOCP_R = FORMULE(VALE='0.5*NEUT1',
+                  NOM_PARA='NEUT1',)
 MAT_R    = DEFI_MATERIAU(THER_FO=_F( RHO_CP = RHOCP_R,LAMBDA = LAMBDA_R),)
 CHMAT_R  = AFFE_MATERIAU(MAILLAGE=MAILLAGE,AFFE=_F(TOUT= 'OUI', MATER= MAT_R),AFFE_VARC=_F(NOM_VARC='NEUT1', CHAM_GD=NEUT1,),)
 
 
 # Material - Mass
 LAMBDA_M = DEFI_CONSTANTE( VALE=1.0 )
-RHOCP_M  = FORMULE(NOM_PARA=('NEUT1',),VALE='NEUT1')
+RHOCP_M = FORMULE(VALE='NEUT1',
+                  NOM_PARA='NEUT1',)
 MAT_M    = DEFI_MATERIAU(THER_FO=_F( RHO_CP = RHOCP_M,LAMBDA = LAMBDA_M),)
-FPOTV    = FORMULE(NOM_PARA='X',VALE='0.5*k*(X**2)/c1')
+FPOTV = FORMULE(VALE='0.5*k*(X**2)/c1',
+                k=k,
+                c1=c1,
+                NOM_PARA='X',)
 CHXY     = CREA_CHAMP(OPERATION='EXTR',TYPE_CHAM='NOEU_GEOM_R',NOM_CHAM='GEOMETRIE',MAILLAGE=MAILLAGE)
 CHFPOTV  = CREA_CHAMP(OPERATION='AFFE',TYPE_CHAM='NOEU_NEUT_F',MAILLAGE=MAILLAGE,AFFE= (_F(TOUT='OUI', NOM_CMP='X1',VALE_F=FPOTV,),))
 CHPOTV   = CREA_CHAMP(OPERATION='EVAL',TYPE_CHAM='NOEU_NEUT_R',CHAM_F=CHFPOTV, CHAM_PARA=CHXY )
@@ -115,10 +121,17 @@ MODES = CALC_MODES(
 
 LIMODE = RECU_TABLE(CO=MODES,NOM_PARA = 'FREQ')
 
-TOLAM = FORMULE(VALE='(2*pi*FREQ)**2',NOM_PARA='FREQ',)
-ENERGY = FORMULE(VALE='c1*LAMBDA',NOM_PARA='LAMBDA',)
-EXPECT = FORMULE(VALE='(NUME_ORDRE-1+0.5)*ht*om',NOM_PARA='NUME_ORDRE',)
-DIFF = FORMULE(VALE='ENERGY-EXPECT',NOM_PARA=('ENERGY','EXPECT'),)
+TOLAM = FORMULE(VALE='(2*pi*FREQ)**2',
+                NOM_PARA='FREQ',)
+ENERGY = FORMULE(VALE='c1*LAMBDA',
+                 c1=c1,
+                 NOM_PARA='LAMBDA',)
+EXPECT = FORMULE(VALE='(NUME_ORDRE-1+0.5)*ht*om',
+                 ht=ht,
+                 om=om,
+                 NOM_PARA='NUME_ORDRE',)
+DIFF = FORMULE(VALE='ENERGY-EXPECT',
+               NOM_PARA=['ENERGY', 'EXPECT'],)
 
 LIMODE=CALC_TABLE(reuse =LIMODE,
                   TABLE=LIMODE,

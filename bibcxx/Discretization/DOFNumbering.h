@@ -35,6 +35,7 @@
 #include "Loads/MechanicalLoad.h"
 #include "Loads/KinematicsLoad.h"
 #include "Loads/ListOfLoads.h"
+#include "LinearAlgebra/MatrixStorage.h"
 
 /**
  * @class BaseDOFNumberingInstance
@@ -45,6 +46,87 @@
 class BaseDOFNumberingInstance: public DataStructure
 {
 private:
+    class MultFrontGarbageInstance
+    {
+        /** @brief Objet Jeveux '.ADNT' */
+        JeveuxVectorShort             _adnt;
+        /** @brief Objet Jeveux '.GLOB' */
+        JeveuxVectorShort             _glob;
+        /** @brief Objet Jeveux '.LOCL' */
+        JeveuxVectorShort             _locl;
+        /** @brief Objet Jeveux '.PNTI' */
+        JeveuxVectorShort             _pnti;
+        /** @brief Objet Jeveux '.RENU' */
+        JeveuxVectorChar8             _renu;
+        /** @brief Objet Jeveux '.ADPI' */
+        JeveuxVectorLong              _adpi;
+        /** @brief Objet Jeveux '.ADRE' */
+        JeveuxVectorLong              _adre;
+        /** @brief Objet Jeveux '.ANCI' */
+        JeveuxVectorLong              _anci;
+        /** @brief Objet Jeveux '.LFRN' */
+        JeveuxVectorLong              _debf;
+        /** @brief Objet Jeveux '.DECA' */
+        JeveuxVectorLong              _deca;
+        /** @brief Objet Jeveux '.DEFS' */
+        JeveuxVectorLong              _defs;
+        /** @brief Objet Jeveux '.DESC' */
+        JeveuxVectorLong              _desc;
+        /** @brief Objet Jeveux '.DIAG' */
+        JeveuxVectorLong              _diag;
+        /** @brief Objet Jeveux '.FILS' */
+        JeveuxVectorLong              _fils;
+        /** @brief Objet Jeveux '.FRER' */
+        JeveuxVectorLong              _frer;
+        /** @brief Objet Jeveux '.LGBL' */
+        JeveuxVectorLong              _lgbl;
+        /** @brief Objet Jeveux '.LGSN' */
+        JeveuxVectorLong              _lgsn;
+        /** @brief Objet Jeveux '.NBAS' */
+        JeveuxVectorLong              _nbas;
+        /** @brief Objet Jeveux '.NBLI' */
+        JeveuxVectorLong              _nbli;
+        /** @brief Objet Jeveux '.NCBL' */
+        JeveuxVectorLong              _nbcl;
+        /** @brief Objet Jeveux '.NOUV' */
+        JeveuxVectorLong              _nouv;
+        /** @brief Objet Jeveux '.PARE' */
+        JeveuxVectorLong              _pare;
+        /** @brief Objet Jeveux '.SEQU' */
+        JeveuxVectorLong              _sequ;
+        /** @brief Objet Jeveux '.SUPN' */
+        JeveuxVectorLong              _supn;
+
+        MultFrontGarbageInstance( const std::string& DOFNumName ):
+            _adnt( DOFNumName + ".ADNT" ),
+            _glob( DOFNumName + ".GLOB" ),
+            _locl( DOFNumName + ".LOCL" ),
+            _pnti( DOFNumName + ".PNTI" ),
+            _renu( DOFNumName + ".RENU" ),
+            _adpi( DOFNumName + ".ADPI" ),
+            _adre( DOFNumName + ".ADRE" ),
+            _anci( DOFNumName + ".ANCI" ),
+            _debf( DOFNumName + ".LFRN" ),
+            _deca( DOFNumName + ".DECA" ),
+            _defs( DOFNumName + ".DEFS" ),
+            _desc( DOFNumName + ".DESC" ),
+            _diag( DOFNumName + ".DIAG" ),
+            _fils( DOFNumName + ".FILS" ),
+            _frer( DOFNumName + ".FRER" ),
+            _lgbl( DOFNumName + ".LGBL" ),
+            _lgsn( DOFNumName + ".LGSN" ),
+            _nbas( DOFNumName + ".NBAS" ),
+            _nbli( DOFNumName + ".NBLI" ),
+            _nbcl( DOFNumName + ".NCBL" ),
+            _nouv( DOFNumName + ".NOUV" ),
+            _pare( DOFNumName + ".PARE" ),
+            _sequ( DOFNumName + ".SEQU" ),
+            _supn( DOFNumName + ".SUPN" )
+        {};
+        friend class BaseDOFNumberingInstance;
+    };
+    typedef boost::shared_ptr< MultFrontGarbageInstance > MultFrontGarbagePtr;
+
     class GlobalEquationNumberingInstance
     {
         /** @brief Objet Jeveux '.NEQU' */
@@ -70,10 +152,7 @@ private:
             _namesOfGroupOfElements( DOFNumName + ".LILI" ),
             _indexationVector( DOFNumName + ".NUEQ" ),
             _nodeAndComponentsNumberFromDOF( DOFNumName + ".DEEQ" )
-        {
-            if ( DOFNumName.size() != 19 )
-                throw std::runtime_error( "Catastrophic error" );
-        };
+        {};
         friend class BaseDOFNumberingInstance;
     };
     typedef boost::shared_ptr< GlobalEquationNumberingInstance > GlobalEquationNumberingPtr;
@@ -100,10 +179,7 @@ private:
             _indexationVector( DOFNumName + ".NUEQ" ),
             _globalToLocal( DOFNumName + ".NULG" ),
             _LocalToGlobal( DOFNumName + ".NUGL" )
-        {
-            if ( DOFNumName.size() != 19 )
-                throw std::runtime_error( "Catastrophic error" );
-        };
+        {};
         friend class BaseDOFNumberingInstance;
     };
     typedef boost::shared_ptr< LocalEquationNumberingInstance > LocalEquationNumberingPtr;
@@ -121,6 +197,12 @@ private:
     ElementaryMatrixPtr        _supportMatrix;
     /** @brief Chargements */
     ListOfLoadsPtr             _listOfLoads;
+    /** @brief Objet Jeveux '.SMOS' */
+    MorseStoragePtr            _smos;
+    /** @brief Objet Jeveux '.SLCS' */
+    LigneDeCielPtr             _slcs;
+    /** @brief Objet Jeveux '.MLTF' */
+    MultFrontGarbagePtr        _mltf;
     /** @brief Booleen permettant de preciser sur la sd est vide */
     bool                       _isEmpty;
 

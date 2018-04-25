@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -34,13 +34,6 @@ CCAMASS = LocatedComponents(phys=PHY.CAMASS, type='ELEM',
                             components=('C', 'ALPHA', 'BETA', 'KAPPA', 'X',
                                         'Y', 'Z',))
 
-
-CCARCRI = LocatedComponents(phys=PHY.CARCRI, type='ELEM',
-                            components=(
-                                'ITECREL', 'MACOMP', 'RESCREL', 'THETA', 'ITEDEC',
-                            'INTLOC', 'PERTURB', 'TOLDEBO', 'ITEDEBO', 'TSSEUIL',
-                            'TSAMPL', 'TSRETOUR', 'POSTITER', 'LC_EXT[3]', 'MODECALC',
-                            'ALPHA', 'LC_EXT2[2]',))
 
 DDL_MECA = LocatedComponents(phys=PHY.DEPL_R, type='ELNO', diff=True,
                              components=(
@@ -142,7 +135,7 @@ class H_HEXA20S(Element):
                      ),
 
         OP.FULL_MECA(te=600,
-                     para_in=((SP.PCAMASS, CCAMASS), (SP.PCARCRI, CCARCRI),
+                     para_in=((SP.PCAMASS, CCAMASS), (SP.PCARCRI, LC.CCARCRI),
                               (OP.FULL_MECA.PCOMPOR, LC.CCOMPOR), (
                               OP.FULL_MECA.PCONTMR, ECONTPG),
                               (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
@@ -167,7 +160,7 @@ class H_HEXA20S(Element):
                      ),
 
         OP.RAPH_MECA(te=600,
-                     para_in=((SP.PCAMASS, CCAMASS), (SP.PCARCRI, CCARCRI),
+                     para_in=((SP.PCAMASS, CCAMASS), (SP.PCARCRI, LC.CCARCRI),
                               (OP.RAPH_MECA.PCOMPOR, LC.CCOMPOR), (
                               OP.RAPH_MECA.PCONTMR, ECONTPG),
                               (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
@@ -191,7 +184,7 @@ class H_HEXA20S(Element):
 
         OP.RIGI_MECA_TANG(te=600,
                           para_in=(
-                              (SP.PCAMASS, CCAMASS), (SP.PCARCRI, CCARCRI),
+                              (SP.PCAMASS, CCAMASS), (SP.PCARCRI, LC.CCARCRI),
                           (OP.RIGI_MECA_TANG.PCOMPOR, LC.CCOMPOR), (
                           OP.RIGI_MECA_TANG.PCONTMR, ECONTPG),
                               (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),

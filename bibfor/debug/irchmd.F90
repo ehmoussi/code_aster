@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -59,6 +59,6 @@ subroutine irchmd(ifichi, chanom, partie, nochmd, codret)
     call irchme(ifichi, chan19, partie, noch64, noresu,&
                 nomsym, typech, numord, 0, [' '],&
                 0, [0], 0, [0], .false._1,&
-                sdcarm, nopara, codret)
+                sdcarm, sdcarm, nopara, codret)
 !
 end subroutine

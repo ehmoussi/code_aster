@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,8 +17,8 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine mmmres(mesh       , time_incr, ds_contact, disp_cumu_inst, sddisc, &
-                  hval_veasse, cnsinr   , cnsper)
+subroutine mmmres(mesh  , time_incr, ds_contact, disp_cumu_inst, sddisc, &
+                  cnsinr, cnsper)
 !
 use NonLin_Datastructure_type
 !
@@ -45,7 +45,6 @@ implicit none
 #include "asterfort/mminfm.h"
 #include "asterfort/mmmred.h"
 #include "asterfort/mmmreg.h"
-#include "asterfort/nmchex.h"
 #include "asterfort/utmess.h"
 #include "asterfort/as_allocate.h"
 #include "asterfort/as_deallocate.h"
@@ -56,7 +55,6 @@ real(kind=8), intent(in) :: time_incr
 type(NL_DS_Contact), intent(in) :: ds_contact
 character(len=19), intent(in) :: disp_cumu_inst
 character(len=19), intent(in) :: sddisc
-character(len=19), intent(in) :: hval_veasse(*)
 character(len=19), intent(in) :: cnsinr
 character(len=19), intent(in) :: cnsper
 !
@@ -73,7 +71,6 @@ character(len=19), intent(in) :: cnsper
 ! In  ds_contact       : datastructure for contact management
 ! In  disp_cumu_inst   : displacement increment from beginning of current time
 ! In  sddisc           : datastructure for discretization
-! In  hval_veasse      : hat-variable for vectors (node fields)
 ! In  cnsinr           : nodal field (CHAM_NO_S) for CONT_NOEU 
 ! In  cnsper           : nodal field (CHAM_NO_S) to save percussions
 !
@@ -154,8 +151,8 @@ character(len=19), intent(in) :: cnsper
 !
 ! - Get fields
 !
-    call nmchex(hval_veasse, 'VEASSE', 'CNELTC', cneltc)
-    call nmchex(hval_veasse, 'VEASSE', 'CNELTF', cneltf)
+    cneltc = ds_contact%cneltc
+    cneltf = ds_contact%cneltf
 !
 ! - Prepare nodal fields (select right components)
 !

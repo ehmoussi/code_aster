@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -86,7 +86,7 @@ class creation_donnees_homard:
 # 2. Données generales de cette initialisation
 #
            # for mot_cle in mots_cles.keys() :
-              # print "mots_cles[", mot_cle, "] = ", mots_cles[mot_cle]
+              # print "mots_cles.get(", mot_cle, "] = ", mots_cles.get(mot_cle]
            # for mot_cle in dico_configuration.keys() :
               # print "dico_configuration[", mot_cle, "] = ", dico_configuration[mot_cle]
 #
@@ -97,7 +97,7 @@ class creation_donnees_homard:
 # 3. Quel type de traitement des mailles incompatibles
 #
         if mots_cles.has_key("ELEMENTS_ACCEPTES"):
-            self.elements_acceptes = mots_cles["ELEMENTS_ACCEPTES"]
+            self.elements_acceptes = mots_cles.get("ELEMENTS_ACCEPTES")
         else:
             self.elements_acceptes = None
 #
@@ -163,7 +163,7 @@ class creation_donnees_homard:
                 self.ModeHOMA = 2
                 self.Action = "info"
             else:
-                if self.mots_cles["ADAPTATION"] == "MODIFICATION":
+                if self.mots_cles.get("ADAPTATION") == "MODIFICATION":
                     self.ModeHOMA = 3
                     self.Action = "modi"
                     self.ModDegre = "non"
@@ -193,7 +193,7 @@ class creation_donnees_homard:
             l_aux = dico_aux.keys()
             for choix in l_aux:
                 if self.mots_cles.has_key(choix):
-                    if self.mots_cles[choix] == "OUI":
+                    if self.mots_cles.get(choix) == "OUI":
                         aux = aux * dico_aux[choix]
             if aux == 1:
                 aux = 0
@@ -227,22 +227,22 @@ class creation_donnees_homard:
 #
 #     7.1. Le type d'adaptation
 #
-                if self.mots_cles["ADAPTATION"] == "RAFFINEMENT":
+                if self.mots_cles.get("ADAPTATION") == "RAFFINEMENT":
                     self.TypeRaff = "libre"
                     self.TypeDera = "non"
-                elif self.mots_cles["ADAPTATION"] == "DERAFFINEMENT":
+                elif self.mots_cles.get("ADAPTATION") == "DERAFFINEMENT":
                     self.TypeRaff = "non"
                     self.TypeDera = "libre"
-                elif self.mots_cles["ADAPTATION"] == "RAFF_DERA" or self.mots_cles["ADAPTATION"] == "RAFF_DERA_ZONE":
+                elif self.mots_cles.get("ADAPTATION") == "RAFF_DERA" or self.mots_cles.get("ADAPTATION") == "RAFF_DERA_ZONE":
                     self.TypeRaff = "libre"
                     self.TypeDera = "libre"
-                elif self.mots_cles["ADAPTATION"] == "RAFFINEMENT_UNIFORME":
+                elif self.mots_cles.get("ADAPTATION") == "RAFFINEMENT_UNIFORME":
                     self.TypeRaff = "uniforme"
                     self.TypeDera = "non"
-                elif self.mots_cles["ADAPTATION"] == "DERAFFINEMENT_UNIFORME":
+                elif self.mots_cles.get("ADAPTATION") == "DERAFFINEMENT_UNIFORME":
                     self.TypeRaff = "non"
                     self.TypeDera = "uniforme"
-                elif self.mots_cles["ADAPTATION"] == "RIEN":
+                elif self.mots_cles.get("ADAPTATION") == "RIEN":
                     self.TypeRaff = "non"
                     self.TypeDera = "non"
                     # print "... self.TypeRaff = ",self.TypeRaff
@@ -250,7 +250,7 @@ class creation_donnees_homard:
 #
 #     7.2. L'éventuel seuil de raffinement
 #
-                if self.TypeRaff == "libre" and self.mots_cles["ADAPTATION"] != "RAFF_DERA_ZONE":
+                if self.TypeRaff == "libre" and self.mots_cles.get("ADAPTATION") != "RAFF_DERA_ZONE":
                     d_aux = {}
                     d_aux["CRIT_RAFF_ABS"] = ("SeuilHau",   1)
                     d_aux["CRIT_RAFF_REL"] = ("SeuilHRe", 100)
@@ -258,14 +258,14 @@ class creation_donnees_homard:
                     d_aux["CRIT_RAFF_MS"] = ("SeuilHMS",   1)
                     l_aux = d_aux.keys()
                     for mot_cle in l_aux:
-                        if self.mots_cles[mot_cle] != None:
-                            aux = self.mots_cles[mot_cle] * d_aux[mot_cle][1]
+                        if self.mots_cles.get(mot_cle) != None:
+                            aux = self.mots_cles.get(mot_cle) * d_aux[mot_cle][1]
                             self.critere_raffinement = (d_aux[mot_cle][0], aux)
                             # print "... self.critere_raffinement = ", self.critere_raffinement
 #
 #     7.3. L'éventuel seuil de deraffinement
 #
-                if self.TypeDera == "libre" and self.mots_cles["ADAPTATION"] != "RAFF_DERA_ZONE":
+                if self.TypeDera == "libre" and self.mots_cles.get("ADAPTATION") != "RAFF_DERA_ZONE":
                     d_aux = {}
                     d_aux["CRIT_DERA_ABS"] = ("SeuilBas",   1)
                     d_aux["CRIT_DERA_REL"] = ("SeuilBRe", 100)
@@ -273,8 +273,8 @@ class creation_donnees_homard:
                     d_aux["CRIT_DERA_MS"] = ("SeuilBMS",   1)
                     l_aux = d_aux.keys()
                     for mot_cle in l_aux:
-                        if self.mots_cles[mot_cle] != None:
-                            aux = self.mots_cles[mot_cle] * d_aux[mot_cle][1]
+                        if self.mots_cles.get(mot_cle) != None:
+                            aux = self.mots_cles.get(mot_cle) * d_aux[mot_cle][1]
                             self.critere_deraffinement = (
                                 d_aux[mot_cle][0], aux)
                             # print "... self.critere_deraffinement = ", self.critere_deraffinement
@@ -284,33 +284,33 @@ class creation_donnees_homard:
                 saux = " "
                 for mot_cle in ["NIVE_MIN", "NIVE_MAX", "DIAM_MIN"]:
                     if self.mots_cles.has_key(mot_cle):
-                        if self.mots_cles[mot_cle] != None:
+                        if self.mots_cles.get(mot_cle) != None:
                             if mot_cle == "NIVE_MIN":
                                 aux = "NiveauMi"
                             elif mot_cle == "NIVE_MAX":
                                 aux = "NiveauMa"
                             else:
                                 aux = "DiametMi"
-                            self.niveau.append((aux, self.mots_cles[mot_cle]))
+                            self.niveau.append((aux, self.mots_cles.get(mot_cle)))
                             saux += aux
                 # print "saux =", saux
 #
                 if ("DiametMi" in saux):
-                    # print self.mots_cles["DIAM_MIN"]
-                    if self.mots_cles["DIAM_MIN"] < 0:
+                    # print self.mots_cles.get("DIAM_MIN"]
+                    if self.mots_cles.get("DIAM_MIN") < 0:
                         message_erreur = "Le diametre minimal doit etre strictement positif. " +\
-                                         "La valeur %e est incorrecte." % self.mots_cles[
-                                             "DIAM_MIN"]
+                                         "La valeur %e est incorrecte." % self.mots_cles.get(
+                                             "DIAM_MIN")
                         break
 #
                 if (("NiveauMi" in saux) and ("NiveauMa" in saux)):
-                    # print self.mots_cles["NIVE_MIN"]
-                    # print self.mots_cles["NIVE_MAX"]
-                    if self.mots_cles["NIVE_MIN"] >= self.mots_cles["NIVE_MAX"]:
-                        message_erreur = "Le niveau mini, %d, " % self.mots_cles[
-                            "NIVE_MIN"]
-                        message_erreur += "doit etre inferieur au niveau maxi, %d." % self.mots_cles[
-                            "NIVE_MAX"]
+                    # print self.mots_cles.get("NIVE_MIN"]
+                    # print self.mots_cles.get("NIVE_MAX"]
+                    if self.mots_cles.get("NIVE_MIN") >= self.mots_cles.get("NIVE_MAX"):
+                        message_erreur = "Le niveau mini, %d, " % self.mots_cles.get(
+                            "NIVE_MIN")
+                        message_erreur += "doit etre inferieur au niveau maxi, %d." % self.mots_cles.get(
+                            "NIVE_MAX")
                         break
 #
 #     7.5. Les éventuelles zones de raffinement
@@ -348,13 +348,13 @@ class creation_donnees_homard:
             if self.ModeHOMA == 3:
                 mot_cle = "DEGRE"
                 if self.mots_cles.has_key(mot_cle):
-                    if self.mots_cles[mot_cle] != None:
-                        self.ModDegre = self.mots_cles[mot_cle]
+                    if self.mots_cles.get(mot_cle) != None:
+                        self.ModDegre = self.mots_cles.get(mot_cle)
 #
                 mot_cle = "JOINT"
                 if self.mots_cles.has_key(mot_cle):
-                    if self.mots_cles[mot_cle] != None:
-                        self.CreJoint = self.mots_cles[mot_cle]
+                    if self.mots_cles.get(mot_cle) != None:
+                        self.CreJoint = self.mots_cles.get(mot_cle)
                     # print self.ModDegre, self.CreJoint
 #
 #     9. Options annexes
@@ -582,14 +582,14 @@ class creation_donnees_homard:
                             "CCNumPTI", self.dico_configuration["Indicateur"]["NUME_ORDRE"])
                     if self.mots_cles.has_key("USAGE_CMP"):
                         self.ecrire_ligne_configuration_2(
-                            "CCUsCmpI", self.mots_cles["USAGE_CMP"])
+                            "CCUsCmpI", self.mots_cles.get("USAGE_CMP"))
                     if self.mots_cles.has_key("ADAP_INIT"):
                         dico_aux = {}
                         dico_aux["GARDER"] = 0
                         dico_aux["RAFFINER"] = 1
                         dico_aux["DERAFFINER"] = -1
                         self.ecrire_ligne_configuration_2(
-                            "AdapInit", dico_aux[self.mots_cles["ADAP_INIT"]])
+                            "AdapInit", dico_aux[self.mots_cles.get("ADAP_INIT")])
 #
 #     5.3. Les eventuelles zones de raffinement
 #
@@ -648,20 +648,20 @@ class creation_donnees_homard:
 #     5.5. L'usage de l'indicateur
 #
                 if self.mots_cles.has_key("USAGE_CHAMP"):
-                    if self.mots_cles["USAGE_CHAMP"] != None:
+                    if self.mots_cles.get("USAGE_CHAMP") != None:
                         self.ecrire_ligne_configuration_2(
-                            "CCModeFI", self.mots_cles["USAGE_CHAMP"])
+                            "CCModeFI", self.mots_cles.get("USAGE_CHAMP"))
 #
 #     5.6. Les eventuels groupes de filtrage du raffinement/deraffinement
 #
                 for cle in ("GROUP_MA", "GROUP_NO"):
                     if self.mots_cles.has_key(cle):
-                        if self.mots_cles[cle] != None:
-                            if not type(self.mots_cles[cle]) in EnumTypes:
+                        if self.mots_cles.get(cle) != None:
+                            if not type(self.mots_cles.get(cle)) in EnumTypes:
                                 self.ecrire_ligne_configuration_2(
-                                    "CCGroAda", self.mots_cles[cle])
+                                    "CCGroAda", self.mots_cles.get(cle))
                             else:
-                                for group in self.mots_cles[cle]:
+                                for group in self.mots_cles.get(cle):
                                     self.ecrire_ligne_configuration_2(
                                         "CCGroAda", group)
 #
@@ -737,12 +737,12 @@ class creation_donnees_homard:
                 self.ecrire_ligne_configuration_2(
                     "CCNoMFro", self.dico_configuration["NOM_MED_MAILLAGE_FRONTIERE"])
                 if self.mots_cles.has_key("GROUP_MA_FRONT"):
-                    if self.mots_cles["GROUP_MA_FRONT"] != None:
-                        if not type(self.mots_cles["GROUP_MA_FRONT"]) in EnumTypes:
+                    if self.mots_cles.get("GROUP_MA_FRONT") != None:
+                        if not type(self.mots_cles.get("GROUP_MA_FRONT")) in EnumTypes:
                             self.ecrire_ligne_configuration_2(
-                                "CCGroFro", self.mots_cles["GROUP_MA_FRONT"])
+                                "CCGroFro", self.mots_cles.get("GROUP_MA_FRONT"))
                         else:
-                            for group_ma in self.mots_cles["GROUP_MA_FRONT"]:
+                            for group_ma in self.mots_cles.get("GROUP_MA_FRONT"):
                                 self.ecrire_ligne_configuration_2(
                                     "CCGroFro", group_ma)
 #
@@ -809,7 +809,7 @@ class creation_donnees_homard:
             self.ecrire_ligne_configuration_0("Autres options")
             if self.mots_cles.has_key("LANGUE"):
                 self.ecrire_ligne_configuration_2(
-                    "Langue", self.mots_cles["LANGUE"])
+                    "Langue", self.mots_cles.get("LANGUE"))
             if self.MessInfo != None:
                 self.ecrire_ligne_configuration_2("MessInfo", self.MessInfo)
             if self.dico_configuration["version_perso"]:

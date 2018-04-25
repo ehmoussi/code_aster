@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -33,13 +33,17 @@ TITRE = 'PHI2AS TEST 2 VISC_CIN2_MEMO ';
 
 
 
-Y_F = FORMULE(NOM_PARA='TEMP',VALE='2.E5 - (1.E5*((TEMP - 100.)/960.)**2)')
+Y_F = FORMULE(VALE='2.E5 - (1.E5*((TEMP - 100.)/960.)**2)',
+              NOM_PARA='TEMP',)
 
-AL_F = FORMULE(NOM_PARA='TEMP',VALE='1.E-5 + (1.E-5  * ((TEMP - 100.)/960.) ** 4)')
+AL_F = FORMULE(VALE='1.E-5 + (1.E-5  * ((TEMP - 100.)/960.) ** 4)',
+               NOM_PARA='TEMP',)
 
-C_F = FORMULE(NOM_PARA='TEMP',VALE='(2.E6 - (192500. * (TEMP - 100.) / 96.))')
+C_F = FORMULE(VALE='(2.E6 - (192500. * (TEMP - 100.) / 96.))',
+              NOM_PARA='TEMP',)
 
-D_F = FORMULE(NOM_PARA='TEMP',VALE='(5000. - ( 450. * (TEMP - 100.)/96.) )')
+D_F = FORMULE(VALE='(5000. - ( 450. * (TEMP - 100.)/96.) )',
+              NOM_PARA='TEMP',)
 
 TEMPE1=DEFI_LIST_REEL(  DEBUT=20.,
                           INTERVALLE=_F(  JUSQU_A = 1060.,    NOMBRE = 1040,  )
@@ -73,7 +77,9 @@ Q=DEFI_CONSTANTE(VALE=0.,);
 
 ETA=DEFI_FONCTION(NOM_PARA='TEMP', VALE=(0.,0.5,2000.,0.5))
 
-C2_F = FORMULE(NOM_PARA='TEMP',VALE='C_F(TEMP)/2.')
+C2_F = FORMULE(VALE='C_F(TEMP)/2.',
+               C_F=C_F,
+               NOM_PARA='TEMP',)
 
 C2_T=CALC_FONC_INTERP(    FONCTION=C2_F,
                              LIST_PARA=TEMPE1,

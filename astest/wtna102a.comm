@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -96,7 +96,8 @@ LI1=DEFI_LIST_REEL(DEBUT=0.1,
 #
 
 
-SLO = FORMULE(NOM_PARA='PCAP',VALE='0.4');
+SLO = FORMULE(VALE='0.4',
+              NOM_PARA='PCAP',)
 
 SATUBO=CALC_FONC_INTERP(FONCTION=SLO,
                         LIST_PARA=LI2,
@@ -123,7 +124,8 @@ FICK=DEFI_CONSTANTE(VALE=6.E-10,);
 LIPA=DEFI_LIST_REEL(DEBUT=0.1,
                    INTERVALLE=_F(JUSQU_A=1.000001E5,
                                  PAS=1.E3,),);
-FA_PA = FORMULE(NOM_PARA='PAD',VALE='1.+PAD-PAD');
+FA_PA = FORMULE(VALE='1.+PAD-PAD',
+                NOM_PARA='PAD',)
 
 FAPA  = CALC_FONC_INTERP ( FONCTION    =  FA_PA     ,
                             LIST_PARA   =  LIPA    ,

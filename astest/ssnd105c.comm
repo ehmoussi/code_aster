@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -147,7 +147,9 @@ def epsimp(INST):
             epsi = EPSMIN + vit*(t3-DT)
     return epsi
 
-epsi = FORMULE(NOM_PARA='INST',VALE='epsimp(INST)');
+epsi = FORMULE(VALE='epsimp(INST)',
+               epsimp=epsimp,
+               NOM_PARA='INST',)
 
 lisn=DEFI_LIST_REEL(DEBUT=TINI,
                     INTERVALLE=_F(JUSQU_A=TFIN,
@@ -378,8 +380,7 @@ DIFEPS=CALC_FONCTION(COMB=(_F(FONCTION=FEPXX,
                              COEF=-1.),
                              ),);
 
-TEST_FONCTION(TEST_NOOK='NON',
-              VALEUR=(_F(VALE_CALC=-4.80029373889e-10,
+TEST_FONCTION(VALEUR=(_F(VALE_CALC=-4.80029373889e-10,
                          VALE_REFE=0.0,
                          CRITERE='ABSOLU',
                          VALE_PARA=10.0,
@@ -414,8 +415,7 @@ DIFSIG=CALC_FONCTION(COMB=(_F(FONCTION=FSIXX,
 # c'est pourquoi la difference vat 3.1,
 # ce qui represente en relatif 0.8% de difference
 
-TEST_FONCTION(TEST_NOOK='NON',
-              VALEUR=(_F(VALE_CALC=-9.49796287841e-07,
+TEST_FONCTION(VALEUR=(_F(VALE_CALC=-9.49796287841e-07,
                          VALE_REFE=0.0,
                          CRITERE='ABSOLU',
                          VALE_PARA=10.0,

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -151,5 +151,20 @@ type(NL_DS_Contact), intent(out) :: ds_contact
 ! - Total number of contact pairs
 !
     ds_contact%nb_cont_pair = 0
+!
+! - Force for DISCRETE contact
+!
+    ds_contact%l_cnctdf     = ASTER_FALSE
+    ds_contact%cnctdf       = '&&OP0070.CNCTDF'
+    ds_contact%l_cnctdc     = ASTER_FALSE
+    ds_contact%cnctdc       = '&&OP0070.CNCTDC'
+    ds_contact%l_cnunil     = ASTER_FALSE
+    ds_contact%cnunil       = '&&OP0070.CNUNIL'
+    ds_contact%l_cneltc     = ASTER_FALSE
+    ds_contact%cneltc       = '&&OP0070.CNELTC'
+    ds_contact%veeltc       = '&&OP0070.VEELTC'
+    ds_contact%l_cneltf     = ASTER_FALSE
+    ds_contact%cneltf       = '&&OP0070.CNELTF'
+    ds_contact%veeltf       = '&&OP0070.VEELTF'
 !
 end subroutine

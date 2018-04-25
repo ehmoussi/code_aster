@@ -58,4 +58,5 @@ void exportMaterialOnMeshToPython()
               &MaterialOnMeshInstance::addMaterialOnGroupOfElements );
     c1.def( "buildWithoutInputVariables", &MaterialOnMeshInstance::buildWithoutInputVariables );
     c1.def( "getSupportMesh", &MaterialOnMeshInstance::getSupportMesh );
+    c1.def( "getVectorOfMaterial", &MaterialOnMeshInstance::getVectorOfMaterial );
 };

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -151,7 +151,7 @@ subroutine focrr2(nomfon, resu, base, nomcha, maille,&
     else
         zk24(lpro) = 'FONCTION'
     endif
-    zk24(lpro+1) = 'NON NON '
+    zk24(lpro+1) = 'LIN LIN '
     zk24(lpro+2) = nomacc
     zk24(lpro+3) = cmp
     zk24(lpro+4) = 'EE      '

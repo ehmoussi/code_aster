@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,8 +19,8 @@
 !
 !
 interface
-    subroutine te0095(nomopt, nomte)
-        character(len=16) :: nomopt
+    subroutine te0095(option, nomte)
+        character(len=16) :: option
         character(len=16) :: nomte
     end subroutine te0095
 end interface

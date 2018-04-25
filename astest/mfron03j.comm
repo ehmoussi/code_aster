@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -190,7 +190,7 @@ LIS2DD=DEFI_LIST_INST(INFO=1,METHODE='MANUEL',
 
 
 NORME = FORMULE(VALE='sqrt(DX*DX+DY*DY+DZ*DZ)',
-              NOM_PARA=('DX','DY','DZ',));
+                NOM_PARA=['DX', 'DY', 'DZ'],)
 
 # Calcul des angles d'Euler correspondant a une orientation cristallographique donnee
 

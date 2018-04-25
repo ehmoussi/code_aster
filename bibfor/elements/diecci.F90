@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -22,7 +22,7 @@ subroutine diecci(option, nomte, ndim, nbt, nno,&
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterfort/dinon3.h"
-#include "asterfort/dinona.h"
+#include "asterfort/diklvraid.h"
 #include "asterfort/dinonc.h"
 #include "asterfort/infdis.h"
 #include "asterfort/jevech.h"
@@ -129,7 +129,7 @@ subroutine diecci(option, nomte, ndim, nbt, nno,&
                 nc, zr(ivarim), raide, nbparc, coeflo,&
                 okdire, vardnl)
 !   actualisation de la matrice quasi-tangente
-    call dinona(nomte, raide, klv)
+    call diklvraid(nomte, klv, raide)
 !   actualisation de la matrice quasi-tangente
     if (option .eq. 'FULL_MECA' .or. option .eq. 'RIGI_MECA_TANG') then
         call jevech('PMATUUR', 'E', imat)

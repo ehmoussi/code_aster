@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -396,6 +396,8 @@ implicit none
                         call jeecra(jexnum(limane, inc), 'LONMAX', ival=4)
                         call jeecra(jexnum(limane, inc), 'LONUTI', ival=4)
                     else
+                        call utmess('A', 'CREALAC_1')
+                        ASSERT(.false.)
                     endif
                 case (4, 6, 16)
                     call jeecra(jexnum(limane, inc), 'LONMAX', ival=2)

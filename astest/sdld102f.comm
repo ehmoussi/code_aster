@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -344,8 +344,9 @@ PROJ_BASE(BASE=RESGEN,
 def KX(X) :
     return -k*X
 
-FOR_EFDE = FORMULE(NOM_PARA='DX',
-                   VALE='KX(DX)')
+FOR_EFDE = FORMULE(VALE='KX(DX)',
+                   KX=KX,
+                   NOM_PARA='DX',)
 #
 
 TRANGEN1=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='GENE',

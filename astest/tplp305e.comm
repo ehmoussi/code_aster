@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -73,7 +73,10 @@ NBZ = 7
 h = LZ/float(NBZ)
 delta = 0.05
 
-LN1=FORMULE(NOM_PARA=('X','Y','Z'),VALE='-X+Y+Z-h*(-0.5+delta)');
+LN1 = FORMULE(VALE='-X+Y+Z-h*(-0.5+delta)',
+              h=h,
+              delta=delta,
+              NOM_PARA=['X', 'Y', 'Z'],)
 
 FISS1=DEFI_FISS_XFEM(MAILLAGE=MAILLAG1,
                      TYPE_DISCONTINUITE='INTERFACE',

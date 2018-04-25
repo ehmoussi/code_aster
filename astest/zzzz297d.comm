@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -145,9 +145,15 @@ TDEPL2=CALC_TABLE(TABLE=DEPL2,
       _F(OPERATION='RENOMME',NOM_PARA=('DZ','DZ2'),),
    ),
 )
-DIFFDX=FORMULE(NOM_PARA=('DX1','DX2'),VALE='(DX1-DX2)/Uimpose')
-DIFFDY=FORMULE(NOM_PARA=('DY1','DY2'),VALE='(DY1-DY2)/Uimpose')
-DIFFDZ=FORMULE(NOM_PARA=('DZ1','DZ2'),VALE='(DZ1-DZ2)/Uimpose')
+DIFFDX = FORMULE(VALE='(DX1-DX2)/Uimpose',
+                 Uimpose=Uimpose,
+                 NOM_PARA=['DX1', 'DX2'],)
+DIFFDY = FORMULE(VALE='(DY1-DY2)/Uimpose',
+                 Uimpose=Uimpose,
+                 NOM_PARA=['DY1', 'DY2'],)
+DIFFDZ = FORMULE(VALE='(DZ1-DZ2)/Uimpose',
+                 Uimpose=Uimpose,
+                 NOM_PARA=['DZ1', 'DZ2'],)
 DDEPL=CALC_TABLE(
    TABLE=TDEPL1,
    ACTION=(
@@ -201,12 +207,24 @@ TSIGM2=CALC_TABLE(TABLE=SIGM2,
    ),
 )
 Sigmaref = 1.0E+06
-DIFFSIXX=FORMULE(NOM_PARA=('SIXX1','SIXX2'),VALE='(SIXX1-SIXX2)/Sigmaref')
-DIFFSIYY=FORMULE(NOM_PARA=('SIYY1','SIYY2'),VALE='(SIYY1-SIYY2)/Sigmaref')
-DIFFSIZZ=FORMULE(NOM_PARA=('SIZZ1','SIZZ2'),VALE='(SIZZ1-SIZZ2)/Sigmaref')
-DIFFSIXY=FORMULE(NOM_PARA=('SIXY1','SIXY2'),VALE='(SIXY1-SIXY2)/Sigmaref')
-DIFFSIXZ=FORMULE(NOM_PARA=('SIXZ1','SIXZ2'),VALE='(SIXZ1-SIXZ2)/Sigmaref')
-DIFFSIYZ=FORMULE(NOM_PARA=('SIYZ1','SIYZ2'),VALE='(SIYZ1-SIYZ2)/Sigmaref')
+DIFFSIXX = FORMULE(VALE='(SIXX1-SIXX2)/Sigmaref',
+                   Sigmaref=Sigmaref,
+                   NOM_PARA=['SIXX1', 'SIXX2'],)
+DIFFSIYY = FORMULE(VALE='(SIYY1-SIYY2)/Sigmaref',
+                   Sigmaref=Sigmaref,
+                   NOM_PARA=['SIYY1', 'SIYY2'],)
+DIFFSIZZ = FORMULE(VALE='(SIZZ1-SIZZ2)/Sigmaref',
+                   Sigmaref=Sigmaref,
+                   NOM_PARA=['SIZZ1', 'SIZZ2'],)
+DIFFSIXY = FORMULE(VALE='(SIXY1-SIXY2)/Sigmaref',
+                   Sigmaref=Sigmaref,
+                   NOM_PARA=['SIXY1', 'SIXY2'],)
+DIFFSIXZ = FORMULE(VALE='(SIXZ1-SIXZ2)/Sigmaref',
+                   Sigmaref=Sigmaref,
+                   NOM_PARA=['SIXZ1', 'SIXZ2'],)
+DIFFSIYZ = FORMULE(VALE='(SIYZ1-SIYZ2)/Sigmaref',
+                   Sigmaref=Sigmaref,
+                   NOM_PARA=['SIYZ1', 'SIYZ2'],)
 DSIGM=CALC_TABLE(
    TABLE=TSIGM1,
    ACTION=(

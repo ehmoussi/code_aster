@@ -1014,8 +1014,9 @@ class PostMissFichierTemps(PostMissFichier):
                         PROL_GAUCHE='CONSTANT',
                          )
 
-        self.parent.update_const_context({ '__fH' : __fH, '__fdepl' : fdepl })
-        __fF = FORMULE(NOM_PARA='FREQ', VALE_C='__fdepl(FREQ) * __fH(FREQ)')
+        __fF = FORMULE(NOM_PARA='FREQ',
+                       VALE_C='__fdepl(FREQ) * __fH(FREQ)',
+                       __fdepl=fdepl, __fH=__fH)
 
         __fT0 = CALC_FONC_INTERP(FONCTION=__fF, NOM_PARA = 'FREQ',
                         PROL_DROITE='CONSTANT',
@@ -1026,8 +1027,9 @@ class PostMissFichierTemps(PostMissFichier):
         __fTT = CALC_FONCTION( FFT=_F(FONCTION=__fT0, METHODE='COMPLET',
                             SYME='NON'))
 
-        self.parent.update_const_context({'__fTT' : __fTT})
-        __fTTF = FORMULE(NOM_PARA='INST', VALE='__fTT(INST) - __fTT(0)')
+        __fTTF = FORMULE(NOM_PARA='INST',
+                         VALE='__fTT(INST) - __fTT(0)',
+                         __fTT=__fTT)
 
         __fT1 = CALC_FONC_INTERP(FONCTION=__fTTF, NOM_PARA = 'INST',
                         PROL_DROITE='CONSTANT',
@@ -1195,7 +1197,7 @@ class PostMissChar(PostMiss):
                 self.List_Noeu_Fictif.append(linomno[nuno].strip())
         else:
             self.List_Noeu_Fictif = []
-        
+
         self.nbno = len(self.List_Noeu_Fictif)
         self.ncols = 6*self.nbno
         self.dt = self.param['PAS_INST']

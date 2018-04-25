@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -37,10 +37,12 @@ MO=AFFE_MODELE(
                                    PHENOMENE = 'MECANIQUE',    )
                                 )
 
-Y_F = FORMULE(NOM_PARA='TEMP',VALE='2.E5 - (1.E5*((TEMP - 100.)/960.)**2)')
+Y_F = FORMULE(VALE='2.E5 - (1.E5*((TEMP - 100.)/960.)**2)',
+              NOM_PARA='TEMP',)
 
 # Alpha donne par PHI2AS, TDEF=20
-AL_F20 = FORMULE(NOM_PARA='TEMP',VALE='(1.E-5+(1.E-5 *((TEMP-100.)/960.)**4))')
+AL_F20 = FORMULE(VALE='(1.E-5+(1.E-5 *((TEMP-100.)/960.)**4))',
+                 NOM_PARA='TEMP',)
 
 C1 = 1.E-5
 TDEF=-100.
@@ -52,14 +54,23 @@ CST = (C1+(C1 *(TDEF-100./960.)**4))*DT
 # Alpha pour test TEMP_DEF_ALPHA, TDEF=-100
 #  doit conduire aux memes resultats
 
-AL_F100 = FORMULE(NOM_PARA='TEMP',VALE='''
-((C1+(C1*((TEMP-100.)/960.)**4))*(TEMP-TREF)+CST)/(TEMP-TDEF)''')
+AL_F100 = FORMULE(VALE="""
+((C1+(C1*((TEMP-100.)/960.)**4))*(TEMP-TREF)+CST)/(TEMP-TDEF)""",
+                  C1=C1,
+                  TREF=TREF,
+                  CST=CST,
+                  TDEF=TDEF,
+                  NOM_PARA='TEMP',)
 
 # C(100)=15000
 
-C_F = FORMULE(NOM_PARA='TEMP',VALE='(40000. - (25000. * (TEMP - 100.) / 960.))')
+C_F = FORMULE(VALE='(40000. - (25000. * (TEMP - 100.) / 960.))',
+              NOM_PARA='TEMP',)
 
-DSDE_F = FORMULE(NOM_PARA='TEMP',VALE='Y_F(TEMP)*C_F(TEMP)/(Y_F(TEMP)+C_F(TEMP))')
+DSDE_F = FORMULE(VALE='Y_F(TEMP)*C_F(TEMP)/(Y_F(TEMP)+C_F(TEMP))',
+                 Y_F=Y_F,
+                 C_F=C_F,
+                 NOM_PARA='TEMP',)
 
 TEMPE1=DEFI_LIST_REEL(  DEBUT=20.,
                           INTERVALLE=_F(  JUSQU_A = 1060.,    NOMBRE = 1040,  )

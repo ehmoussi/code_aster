@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,9 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmprca(modele, numedd         , numfix     , mate       , carele    ,&
-                  comref, ds_constitutive, lischa     , ds_algopara, solveu    ,&
+! person_in_charge: mickael.abbas at edf.fr
+! aslint: disable=W1504
+!
+subroutine nmprca(modele, numedd         , numfix     , ds_material, carele    ,&
+                  ds_constitutive, lischa     , ds_algopara, solveu    ,&
                   fonact, ds_print       , ds_measure , ds_algorom, sddisc     , numins    ,&
                   valinc, solalg         , matass     , maprec     , ds_contact,&
                   sddyna, meelem         , measse     , veelem     , veasse    ,&
@@ -39,26 +41,25 @@ implicit none
 #include "asterfort/nmprma.h"
 #include "asterfort/nmreso.h"
 #include "asterfort/vtzero.h"
+#include "asterfort/nonlinLoadDirichletCompute.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-! aslint: disable=W1504
-!
-    integer :: fonact(*)
-    integer :: numins, ldccvg, faccvg, rescvg
-    type(NL_DS_AlgoPara), intent(in) :: ds_algopara
-    character(len=19) :: maprec, matass
-    type(NL_DS_Measure), intent(inout) :: ds_measure
-    type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-    type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
-    character(len=19) :: lischa, solveu, sddisc, sddyna
-    character(len=24) :: modele, mate, carele, comref
-    character(len=24) :: numedd, numfix
-    type(NL_DS_Print), intent(inout) :: ds_print
-    type(NL_DS_Contact), intent(inout) :: ds_contact
-    character(len=19) :: veelem(*), veasse(*)
-    character(len=19) :: meelem(*), measse(*)
-    character(len=19) :: solalg(*), valinc(*)
-    character(len=19) :: depest
+integer :: fonact(*)
+integer :: numins, ldccvg, faccvg, rescvg
+type(NL_DS_AlgoPara), intent(in) :: ds_algopara
+type(NL_DS_Material), intent(in) :: ds_material
+character(len=19) :: maprec, matass
+type(NL_DS_Measure), intent(inout) :: ds_measure
+type(NL_DS_Constitutive), intent(in) :: ds_constitutive
+type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
+character(len=19) :: lischa, solveu, sddisc, sddyna
+character(len=24) :: modele, carele
+character(len=24) :: numedd, numfix
+type(NL_DS_Print), intent(inout) :: ds_print
+type(NL_DS_Contact), intent(inout) :: ds_contact
+character(len=19) :: veelem(*), veasse(*)
+character(len=19) :: meelem(*), measse(*)
+character(len=19) :: solalg(*), valinc(*)
+character(len=19) :: depest
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -72,9 +73,8 @@ implicit none
 ! IN  MODELE : MODELE
 ! IN  NUMEDD : NUME_DDL (VARIABLE AU COURS DU CALCUL)
 ! IN  NUMFIX : NUME_DDL (FIXE AU COURS DU CALCUL)
-! IN  MATE   : CHAMP MATERIAU
 ! IN  CARELE : CARACTERISTIQUES DES ELEMENTS DE STRUCTURE
-! IN  COMREF : VARI_COM DE REFERENCE
+! In  ds_material      : datastructure for material parameters
 ! In  ds_constitutive  : datastructure for constitutive laws management
 ! IN  LISCHA : LISTE DES CHARGES
 ! In  ds_algopara      : datastructure for algorithm parameters
@@ -124,7 +124,7 @@ implicit none
     real(kind=8), pointer :: sol2(:) => null()
     integer, pointer :: delg(:) => null()
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
     solu1 = '&&CNPART.CHP2'
     solu2 = '&&CNPART.CHP3'
@@ -148,23 +148,28 @@ implicit none
 !
 ! --- CALCUL DE LA MATRICE GLOBALE
 !
-    call nmprma(modele     , mate    , carele, ds_constitutive,&
+    call nmprma(modele     , ds_material, carele, ds_constitutive,&
                 ds_algopara, lischa  , numedd, numfix, solveu,&
-                comref     , ds_print, ds_measure, ds_algorom, sddisc,&
+                ds_print, ds_measure, ds_algorom, sddisc,&
                 sddyna     , numins  , fonact, ds_contact,&
                 valinc     , solalg  , veelem, meelem, measse,&
                 maprec     , matass  , faccvg, ldccvg)
 !
 ! --- ERREUR SANS POSSIBILITE DE CONTINUER
 !
-    if ((faccvg.eq.1) .or. (faccvg.eq.2)) goto 999
-    if (ldccvg .eq. 1) goto 999
+    if ((faccvg .eq. 1) .or. (faccvg .eq. 2) .or. (ldccvg .eq. 1)) then
+        goto 999
+    endif
 !
-! --- CALCUL DU SECOND MEMBRE
-! --- PRISE EN COMPTE DES CL DUALISEES
+! - Compute values of Dirichlet conditions
 !
-    call nmassd(modele, numedd, lischa, fonact, depest,&
-                veasse, matass, cnpilo, cndonn)
+    call nonlinLoadDirichletCompute(lischa    , modele, numedd,&
+                                    ds_measure, matass, depest,&
+                                    veelem    , veasse)
+!
+! - Evaluate second member for Dirichlet loads (AFFE_CHAR_MECA)
+!
+    call nmassd(fonact, veasse, cnpilo, cndonn)
 !
 ! --- PRISE EN COMPTE DES CL ELIMINEES
 !

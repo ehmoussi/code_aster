@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -342,10 +342,10 @@ TFYA4_G=CALC_TABLE(reuse =TFYA4_G,
                          ),),);
 
 FORM_Y = FORMULE(VALE='(DY-DYG)/DY',
-                 NOM_PARA=('DY','DYG',),);
+                 NOM_PARA=['DY', 'DYG'],)
 
 FORM_X = FORMULE(VALE='(DX-DXG)/DX',
-                 NOM_PARA=('DX','DXG',),);
+                 NOM_PARA=['DX', 'DXG'],)
 
 TDXA4_G0=CALC_TABLE(TABLE=TDXA4_G,
                     ACTION=_F(OPERATION='EXTR',

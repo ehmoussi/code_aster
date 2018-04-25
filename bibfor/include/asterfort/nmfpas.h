@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,12 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
     subroutine nmfpas(fonact, sddyna, sdpilo, sddisc, nbiter,&
-                      numins, eta, valinc, solalg, veasse)
+                      numins, eta, valinc, solalg, veasse, ds_contact)
+        use NonLin_Datastructure_type
         integer :: fonact(*)
         character(len=19) :: sddyna
         character(len=19) :: sdpilo
@@ -31,5 +30,6 @@ interface
         character(len=19) :: valinc(*)
         character(len=19) :: solalg(*)
         character(len=19) :: veasse(*)
+        type(NL_DS_Contact), intent(in) :: ds_contact
     end subroutine nmfpas
 end interface

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,18 +15,15 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine tempeq(z, tdeq, tfeq, k, n,&
-                      teq, dvteq)
-        real(kind=8) :: z
-        real(kind=8) :: tdeq
-        real(kind=8) :: tfeq
-        real(kind=8) :: k
-        real(kind=8) :: n
-        real(kind=8) :: teq
-        real(kind=8) :: dvteq
+    subroutine tempeq(zbeta,&
+                      tdeq , tfeq ,&
+                      k    , n    ,&
+                      teq  , dvteq)
+        real(kind=8), intent(in) :: zbeta
+        real(kind=8), intent(in) :: tdeq, tfeq
+        real(kind=8), intent(in) :: k, n
+        real(kind=8), intent(out) :: teq, dvteq
     end subroutine tempeq
 end interface

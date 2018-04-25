@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -187,6 +187,7 @@ def perm_mac3coeur_ops(self, **args):
                                    COEF_R=0.0),),)
 
     CREA_RESU(reuse=BIDON,
+              RESULTAT=BIDON,
               OPERATION='AFFE',
               TYPE_RESU='EVOL_NOLI',
               NOM_CHAM='SIEF_ELGA',
@@ -210,6 +211,7 @@ def perm_mac3coeur_ops(self, **args):
                                     COEF_R=0.0),),)
 
     CREA_RESU(reuse=BIDON,
+              RESULTAT=BIDON,
               OPERATION='AFFE',
               TYPE_RESU='EVOL_NOLI',
               NOM_CHAM='VARI_ELGA',

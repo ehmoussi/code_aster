@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -129,10 +129,6 @@ Le mode statique n'est pas nécessaire.
 
     37 : _(u"""
 La fréquence minimale doit être plus petite que la fréquence maximale.
-"""),
-
-    73 : _(u"""
-Le paramètre matériau taille limite D10 n'est pas défini.
 """),
 
     79 : _(u"""

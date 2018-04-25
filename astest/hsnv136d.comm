@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -83,7 +83,7 @@ VL=SIMU_POINT_MAT(INFO=1,
                       NEWTON=_F(REAC_ITER=1,),
                       SUPPORT='ELEMENT',
                       AFFE_VARC=(
-                              _F(V1=phase1,V2=phase0,V3=phase0,V4=phase0,NOM_VARC='M_ZIRC',),
+                              _F(V1=phase1,V2=phase0,V3=phase0,V4=phase0,V5=phase0,NOM_VARC='M_ZIRC',),
                               _F(VALE_FONC=TEMP,
                                  VALE_REF=700.,
                                  NOM_VARC='TEMP',),),

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -215,7 +215,7 @@ TSIGTANG=SIMU_POINT_MAT(INFO=2,
 # ================================================================
 
 DIFF = FORMULE(VALE='NB_ITER1-NB_ITER',
-               NOM_PARA=('NB_ITER1','NB_ITER',),);
+               NOM_PARA=['NB_ITER1', 'NB_ITER'],)
                  
 TSIGTANG=CALC_TABLE(reuse=TSIGTANG,TABLE=TSIGTANG,
                     ACTION=(_F(OPERATION='RENOMME',

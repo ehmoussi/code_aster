@@ -33,6 +33,7 @@ from .datastructure_ext import DataStructure
 
 # extend DataStructures using metaclasses
 from .assemblymatrix_ext import AssemblyMatrixDouble
+from .cracktip_ext import CrackTip
 from .elementarycharacteristics_ext import ElementaryCharacteristics
 from .elementarymatrix_ext import ElementaryMatrix
 from .fieldonelements_ext import FieldOnElementsDouble
@@ -40,8 +41,10 @@ from .fieldonnodes_ext import FieldOnNodesDouble
 from .formula_ext import Formula
 from .function_ext import Function
 from .generalizedassemblymatrix_ext import GeneralizedAssemblyMatrixDouble
+from .material_ext import Material
 from .materialonmesh_ext import MaterialOnMesh
 from .mechanicalload_ext import GenericMechanicalLoad
+from .mesh_ext import Mesh
 from .meshcoordinatesfield_ext import MeshCoordinatesField
 from .model_ext import Model
 from .resultscontainer_ext import ResultsContainer

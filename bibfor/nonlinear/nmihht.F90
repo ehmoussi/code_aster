@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,11 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmihht(model    , nume_dof , mate       , ds_constitutive,&
-                  cara_elem, list_load, varc_refe  , list_func_acti, ds_measure,&
-                  sddyna   , sdnume   , ds_contact , hval_incr,&
-                  sddisc   , hval_algo, hval_veasse, hval_measse   , ds_inout)
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine nmihht(model    , nume_dof , ds_material, ds_constitutive,&
+                  cara_elem, list_load, list_func_acti, ds_measure,&
+                  sddyna   , sdnume   , hval_incr,&
+                  sddisc   , hval_algo, hval_measse, ds_inout)
 !
 use NonLin_Datastructure_type
 !
@@ -29,27 +30,21 @@ implicit none
 #include "asterfort/isfonc.h"
 #include "asterfort/nmchht.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-! aslint: disable=W1504
-!
-    character(len=24), intent(in) :: model
-    character(len=24), intent(in) :: mate
-    character(len=24), intent(in) :: cara_elem
-    type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-    character(len=24), intent(in) :: nume_dof
-    character(len=19), intent(in) :: list_load
-    character(len=24), intent(in) :: varc_refe
-    integer, intent(in) :: list_func_acti(*)
-    type(NL_DS_Measure), intent(inout) :: ds_measure
-    character(len=19), intent(in) :: sddyna
-    character(len=19), intent(in) :: sddisc
-    character(len=19), intent(in) :: sdnume
-    type(NL_DS_Contact), intent(in) :: ds_contact
-    character(len=19), intent(in) :: hval_incr(*)
-    character(len=19), intent(in) :: hval_algo(*)
-    character(len=19), intent(in) :: hval_veasse(*)
-    character(len=19), intent(in) :: hval_measse(*)
-    type(NL_DS_InOut), intent(in) :: ds_inout
+character(len=24), intent(in) :: model
+type(NL_DS_Material), intent(in) :: ds_material
+character(len=24), intent(in) :: cara_elem
+type(NL_DS_Constitutive), intent(in) :: ds_constitutive
+character(len=24), intent(in) :: nume_dof
+character(len=19), intent(in) :: list_load
+integer, intent(in) :: list_func_acti(*)
+type(NL_DS_Measure), intent(inout) :: ds_measure
+character(len=19), intent(in) :: sddyna
+character(len=19), intent(in) :: sddisc
+character(len=19), intent(in) :: sdnume
+character(len=19), intent(in) :: hval_incr(*)
+character(len=19), intent(in) :: hval_algo(*)
+character(len=19), intent(in) :: hval_measse(*)
+type(NL_DS_InOut), intent(in) :: ds_inout
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -60,21 +55,18 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  model            : name of the model
-! In  mate             : name of material characteristics (field)
+! In  ds_material      : datastructure for material parameters
 ! In  cara_elem        : name of elementary characteristics (field)
 ! In  ds_constitutive  : datastructure for constitutive laws management
 ! In  nume_dof         : name of numbering (NUME_DDL)
 ! In  list_load        : name of datastructure for list of loads
-! In  varc_refe        : name of reference command variables vector
 ! In  list_func_acti   : list of active functionnalities
 ! IO  ds_measure       : datastructure for measure and statistics management
 ! In  sddyna           : dynamic parameters datastructure
 ! In  sddisc           : datastructure for time discretization
 ! In  sdnume           : datastructure for dof positions
-! In  ds_contact       : datastructure for contact management
 ! In  hval_incr        : hat-variable for incremental values fields
 ! In  hval_algo        : hat-variable for algorithms fields
-! In  hval_veasse      : hat-variable for vectors (node fields)
 ! In  hval_measse      : hat-variable for matrix
 ! In  ds_inout         : datastructure for input/output management
 !
@@ -97,10 +89,10 @@ implicit none
 ! - Compute previous second member for multi-step schemes
 !
     if (l_reuse .or. l_init_state) then
-        call nmchht(model    , mate     , cara_elem  , ds_constitutive,&
-                    list_load, nume_dof , varc_refe  , list_func_acti, ds_measure ,&
-                    sddyna   , sddisc   , sdnume     , ds_contact,&
-                    hval_incr, hval_algo, hval_veasse, hval_measse   , ds_inout)
+        call nmchht(model    , ds_material, cara_elem     , ds_constitutive,&
+                    list_load, nume_dof   , list_func_acti, ds_measure     ,&
+                    sddyna   , sddisc     , sdnume        , &
+                    hval_incr, hval_algo  , hval_measse   , ds_inout)
     endif
 
 end subroutine

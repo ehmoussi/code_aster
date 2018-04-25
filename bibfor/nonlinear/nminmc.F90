@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,11 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nminmc(fonact, lischa, sddyna    , modele     , ds_constitutive,&
-                  numedd, numfix, ds_contact, ds_algopara, solalg         ,&
-                  valinc, mate  , carele    , sddisc     , ds_measure     ,&
-                  comref, meelem, measse    , veelem)
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine nminmc(fonact, lischa     , sddyna    , modele     , ds_constitutive,&
+                  numedd, numfix     , ds_contact, ds_algopara, solalg         ,&
+                  valinc, ds_material, carele    , sddisc     , ds_measure     ,&
+                  meelem, measse     , veelem)
 !
 use NonLin_Datastructure_type
 !
@@ -33,23 +34,20 @@ implicit none
 #include "asterfort/nmxmat.h"
 #include "asterfort/utmess.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-! aslint: disable=W1504
-!
-    integer :: fonact(*)
-    character(len=19) :: lischa, sddyna
-    character(len=24) :: numedd, numfix
-    type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-    type(NL_DS_Contact), intent(in) :: ds_contact
-    character(len=24) :: modele
-    character(len=24) :: mate, carele
-    character(len=19) :: meelem(*), measse(*)
-    character(len=19) :: veelem(*)
-    character(len=19) :: solalg(*), valinc(*)
-    character(len=19) :: sddisc
-    type(NL_DS_Measure), intent(inout) :: ds_measure
-    character(len=24) :: comref
-    type(NL_DS_AlgoPara), intent(in) :: ds_algopara
+integer :: fonact(*)
+character(len=19) :: lischa, sddyna
+character(len=24) :: numedd, numfix
+type(NL_DS_Constitutive), intent(in) :: ds_constitutive
+type(NL_DS_Contact), intent(in) :: ds_contact
+type(NL_DS_Material), intent(in) :: ds_material
+character(len=24) :: modele
+character(len=24) :: carele
+character(len=19) :: meelem(*), measse(*)
+character(len=19) :: veelem(*)
+character(len=19) :: solalg(*), valinc(*)
+character(len=19) :: sddisc
+type(NL_DS_Measure), intent(inout) :: ds_measure
+type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 !
 ! ----------------------------------------------------------------------
 !
@@ -64,13 +62,12 @@ implicit none
 ! IN  MODELE : NOM DU MODELE
 ! IN  NUMEDD : NUME_DDL (VARIABLE AU COURS DU CALCUL)
 ! IN  NUMFIX : NUME_DDL (FIXE AU COURS DU CALCUL)
-! IN  COMREF : VARIABLES DE COMMANDE DE REFERENCE
 ! IN  LISCHA : LISTE DES CHARGEMENTS
-! IN  MATE   : NOM DU CHAMP DE MATERIAU
 ! IN  VALINC : VARIABLE CHAPEAU POUR INCREMENTS VARIABLES
 ! IN  SOLALG : VARIABLE CHAPEAU POUR DEPLACEMENTS
 ! In  ds_constitutive  : datastructure for constitutive laws management
 ! In  ds_algopara      : datastructure for algorithm parameters
+! In  ds_material      : datastructure for material parameters
 ! IN  CARELE : CARACTERISTIQUES DES ELEMENTS DE STRUCTURE
 ! IN  SDDISC : SD DISCRETISATION TEMPORELLE
 ! IO  ds_measure       : datastructure for measure and statistics management
@@ -112,11 +109,11 @@ implicit none
 !
     nb_matr              = 0
     list_matr_type(1:20) = ' '
-    lelas                = .false.
-    lcfint               = .false.
+    lelas                = ASTER_FALSE
+    lcfint               = ASTER_FALSE
     ldccvg               = -1
     if (lamra .and. .not.lktan) then
-        lelas = .true.
+        lelas = ASTER_TRUE
     endif
 !
 ! --- INSTANT INITIAL
@@ -193,9 +190,9 @@ implicit none
 ! --- CALCUL ET ASSEMBLAGE DES MATR_ELEM DE LA LISTE
 !
     if (nb_matr .gt. 0) then
-        call nmxmat(modele, mate, carele, ds_constitutive,&
+        call nmxmat(modele, ds_material, carele, ds_constitutive,&
                     sddisc, sddyna, fonact, numins, iterat,&
-                    valinc, solalg, lischa, comref,&
+                    valinc, solalg, lischa,&
                     numedd, numfix, ds_measure, ds_algopara,&
                     nb_matr, list_matr_type, list_calc_opti, list_asse_opti,&
                     list_l_calc, list_l_asse, lcfint, meelem, measse,&

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,11 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine tanbul(option, ndim, g, mate, compor,&
                   resi, mini, alpha, dsbdep, trepst)
-! person_in_charge: sebastien.fayolle at edf.fr
-    implicit none
+!
+implicit none
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterc/r8miem.h"
@@ -29,10 +30,10 @@ subroutine tanbul(option, ndim, g, mate, compor,&
 #include "asterfort/tecach.h"
 #include "asterfort/utmess.h"
 !
-    aster_logical :: resi, mini
-    integer :: ndim, g, mate
-    real(kind=8) :: alpha, dsbdep(2*ndim, 2*ndim), trepst
-    character(len=16) :: option, compor
+aster_logical :: resi, mini
+integer :: ndim, g, mate
+real(kind=8) :: alpha, dsbdep(2*ndim, 2*ndim), trepst
+character(len=16) :: option, compor
 !-----------------------------------------------------------------------
 !          CALCUL DE LA MATRICE TANGENTE BULLE
 !-----------------------------------------------------------------------
@@ -72,7 +73,7 @@ subroutine tanbul(option, ndim, g, mate, compor,&
 ! - POUR L INSTANT.
 ! - POUR L ANISOTROPIE IL FAUDRAIT CALCULER XYZGAU ET REPERE
     if (.not.( compor(1:4) .eq. 'ELAS'.or. compor(1:9) .eq. 'VMIS_ISOT' )) then
-        call utmess('F', 'ALGORITH4_50', sk=compor)
+        call utmess('F', 'ELEMENTSINCO_1')
     endif
 !
 ! - RECUPERATION DE L INSTANT
@@ -128,14 +129,14 @@ subroutine tanbul(option, ndim, g, mate, compor,&
 ! - TEST DE LA NULLITE DES DEFORMATIONS DUES AUX VARIABLES DE COMMANDE
         iepsv = 0
         trepst = 0.d0
-        do 90 k = 1, 6
+        do k = 1, 6
             if (abs(epsth(k)) .gt. r8miem()) iepsv=1
- 90     continue
+        end do
 ! - TOUTES DES COMPOSANTES SONT NULLES. ON EVITE DE CALCULER TREPST
         if (iepsv .ne. 0) then
-            do 50 k = 1, 3
+            do k = 1, 3
                 trepst = trepst + epsth(k)
- 50         continue
+            end do
         endif
     endif
 !

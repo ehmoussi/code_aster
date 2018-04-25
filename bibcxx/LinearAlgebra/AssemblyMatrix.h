@@ -73,6 +73,28 @@ class AssemblyMatrixInstance: public DataStructure
         JeveuxCollection< ValueType > _matrixValues;
         /** @brief Objet '.CONL' */
         JeveuxVectorDouble            _scaleFactorLagrangian;
+        /** @brief Objet Jeveux '.LIME' */
+        JeveuxVectorChar24            _listOfElementaryMatrix;
+        /** @brief Objet Jeveux '.VALF' */
+        JeveuxVector< ValueType >     _valf;
+        /** @brief Objet Jeveux '.WALF' */
+        JeveuxVector< ValueType >     _walf;
+        /** @brief Objet Jeveux '.UALF' */
+        JeveuxVector< ValueType >     _ualf;
+        /** @brief Objet Jeveux '.PERM' */
+        JeveuxVectorLong              _perm;
+        /** @brief Objet Jeveux '.DIGS' */
+        JeveuxVector< ValueType >     _digs;
+
+        /** @brief Objet Jeveux '.CCID' */
+        JeveuxVectorLong              _ccid;
+        /** @brief Objet Jeveux '.CCLL' */
+        JeveuxVectorLong              _ccll;
+        /** @brief Objet Jeveux '.CCVA' */
+        JeveuxVector< ValueType >     _ccva;
+        /** @brief Objet Jeveux '.CCII' */
+        JeveuxVectorLong              _ccii;
+
         /** @brief ElementaryMatrix sur lesquelles sera construit la matrice */
         std::vector< ElementaryMatrixPtr > _elemMatrix;
         /** @brief Objet nume_ddl */
@@ -222,6 +244,16 @@ AssemblyMatrixInstance< ValueType, PhysicalQuantity >::AssemblyMatrixInstance( c
     _description( JeveuxVectorChar24( getName() + ".REFA" ) ),
     _matrixValues( JeveuxCollection< ValueType >( getName() + ".VALM" ) ),
     _scaleFactorLagrangian( JeveuxVectorDouble( getName() + ".CONL" ) ),
+    _listOfElementaryMatrix( JeveuxVectorChar24( getName() + ".LIME" ) ),
+    _valf( JeveuxVector< ValueType >( getName() + ".VALF" ) ),
+    _walf( JeveuxVector< ValueType >( getName() + ".WALF" ) ),
+    _ualf( JeveuxVector< ValueType >( getName() + ".UALF" ) ),
+    _perm( JeveuxVectorLong( getName() + ".PERM" ) ),
+    _digs( JeveuxVector< ValueType >( getName() + ".DIGS" ) ),
+    _ccid( JeveuxVectorLong( getName() + ".CCID" ) ),
+    _ccll( JeveuxVectorLong( getName() + ".CCLL" ) ),
+    _ccva( JeveuxVector< ValueType >( getName() + ".CCVA" ) ),
+    _ccii( JeveuxVectorLong( getName() + ".CCII" ) ),
     _isEmpty( true ),
     _isFactorized( false ),
     _listOfLoads( ListOfLoadsPtr( new ListOfLoadsInstance( memType ) ) )
@@ -233,6 +265,16 @@ AssemblyMatrixInstance< ValueType, PhysicalQuantity >::AssemblyMatrixInstance( c
     _description( JeveuxVectorChar24( getName() + ".REFA" ) ),
     _matrixValues( JeveuxCollection< ValueType >( getName() + ".VALM" ) ),
     _scaleFactorLagrangian( JeveuxVectorDouble( getName() + ".CONL" ) ),
+    _listOfElementaryMatrix( JeveuxVectorChar24( getName() + ".LIME" ) ),
+    _valf( JeveuxVector< ValueType >( getName() + ".VALF" ) ),
+    _walf( JeveuxVector< ValueType >( getName() + ".WALF" ) ),
+    _ualf( JeveuxVector< ValueType >( getName() + ".UALF" ) ),
+    _perm( JeveuxVectorLong( getName() + ".PERM" ) ),
+    _digs( JeveuxVector< ValueType >( getName() + ".DIGS" ) ),
+    _ccid( JeveuxVectorLong( getName() + ".CCID" ) ),
+    _ccll( JeveuxVectorLong( getName() + ".CCLL" ) ),
+    _ccva( JeveuxVector< ValueType >( getName() + ".CCVA" ) ),
+    _ccii( JeveuxVectorLong( getName() + ".CCII" ) ),
     _isEmpty( true ),
     _isFactorized( false ),
     _listOfLoads( ListOfLoadsPtr( new ListOfLoadsInstance() ) )

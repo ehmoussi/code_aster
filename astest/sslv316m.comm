@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -114,11 +114,12 @@ beta=30.0/180.0*3.1415
 
 # FUNCTION POUR IMPOSER L'ANGLE DE PROPAGATION CI-DESSUS
 # DANS LA TABLE ISSUE PAR CALC_G
-ZERO=FORMULE(NOM_PARA='G',
-             VALE='0.0*G+beta',);
+ZERO = FORMULE(VALE='0.0*G+beta',
+               beta=beta,
+               NOM_PARA='G',)
 
-ZERO_GAM=FORMULE(NOM_PARA='G',
-                   VALE='0.0*G',);
+ZERO_GAM = FORMULE(VALE='0.0*G',
+                   NOM_PARA='G',)
 
 RS = 0.8
 

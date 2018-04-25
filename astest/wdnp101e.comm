@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -423,7 +423,7 @@ for n in range(1,nbcouche-1):
                                CHAM_GD=DEP[n-1]),);
 
     FX = FORMULE(NOM_PARA=('X'),VALE='X')
-    FY = FORMULE(NOM_PARA=('Y'),VALE='PROJ(Y,%f)'%Height[n])
+    FY = FORMULE(NOM_PARA=('Y'),VALE='PROJ(Y,%f)'%Height[n], PROJ=PROJ)
 
     DEPL_PJ = PROJ_CHAMP(INFO=1,
                          PROJECTION = 'OUI',

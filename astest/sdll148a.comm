@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -100,8 +100,8 @@ MODES=NORM_MODE(reuse=MODES,MODE=MODES,AVEC_CMP='DX')
 
 import numpy as NP
 pi = NP.pi
-SXX = FORMULE(NOM_PARA=('X1','Y1','Z1','X2','Y2','Z2','FREQ'),
-              VALE_C='FREQ*sin(pi*Y1)*sin(pi*Y2)',)
+SXX = FORMULE(VALE_C='FREQ*sin(pi*Y1)*sin(pi*Y2)',
+              NOM_PARA=['X1', 'Y1', 'Z1', 'X2', 'Y2', 'Z2', 'FREQ'],)
 
 # INTER-SPECTRE AVEC EFFORTS X ET Y CORRELES
 INTESPEC=CREA_TABLE(LISTE=(_F(LISTE_K=('SXX'),PARA='FONCTION_C'),

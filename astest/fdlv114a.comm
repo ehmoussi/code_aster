@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,9 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),
-      IGNORE_ALARM=('MODELE1_63','MODELE1_64'))
-# IGNORE_ALARM SYSTEMATIQUE POUR LE CALCUL DES MASSES AJOUTEES 3D
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',))
 
 
 # FREQUENCE MAX DES MODES EN AIR

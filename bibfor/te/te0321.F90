@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,139 +15,147 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine te0321(option, nomte)
-    implicit none
+!
+implicit none
+!
 #include "jeveux.h"
 #include "asterc/r8vide.h"
+#include "asterfort/assert.h"
 #include "asterfort/elrefe_info.h"
 #include "asterfort/jevech.h"
 #include "asterfort/rcvalb.h"
 #include "asterfort/utmess.h"
+#include "asterfort/Metallurgy_type.h"
 !
-    character(len=16) :: option, nomte
-! ......................................................................
+character(len=16), intent(in) :: option, nomte
 !
-!    - FONCTION REALISEE:  INITIALISATION DU CALCUL DE Z EN 3D
-!                          OPTION : 'META_INIT','META_INIT_ELNO'
+! --------------------------------------------------------------------------------------------------
 !
-!    - ARGUMENTS:
-!        DONNEES:      OPTION       -->  OPTION DE CALCUL
-!                      NOMTE        -->  NOM DU TYPE ELEMENT
-! ......................................................................
+! Elementary computation
 !
+! Elements: THERMIQUE - 3D
+! Option: META_INIT_ELNO
 !
+! --------------------------------------------------------------------------------------------------
 !
+! In  option           : name of option to compute
+! In  nomte            : type of finite element
+!
+! --------------------------------------------------------------------------------------------------
+!
+    integer, parameter :: nbv_steel = 8
+    integer, parameter :: nbv_zirc  = 5
+    integer, parameter :: nb_nd_max = 27
     character(len=24) :: nomres
-    character(len=16) :: compor(3)
+    character(len=16) :: phase_type
     character(len=8) :: fami, poum
+    integer :: icodre(1)
+    real(kind=8) :: metaac(nb_nd_max*nbv_steel), metazi(nb_nd_max*nbv_zirc)
+    real(kind=8) :: zero, ms0(1), zalpha, zbeta
+    real(kind=8) :: tno0, phase_tot
+    integer :: nno
+    integer :: jv_compo, j, i_node, kpg, spt
+    integer :: imate, itempe, iphasi, iphasn
 !
-    integer :: icodre(1), kpg, spt
-    real(kind=8) :: tno0, ms0(1), zalpha, zbeta
-    real(kind=8) :: metapg(189)
-    integer :: jgano, nno, kn, j, itempe, nnos, npg1
-    integer :: iphasi, iphasn, idfde, nval
-    integer :: ipoids, ivf, imate, ndim, icompo
-!     -----------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
-    call elrefe_info(fami='RIGI',ndim=ndim,nno=nno,nnos=nnos,&
-  npg=npg1,jpoids=ipoids,jvf=ivf,jdfde=idfde,jgano=jgano)
+    zero = 0.d0
+    fami = 'FPG1'
+    kpg  = 1
+    spt  = 1
+    poum = '+'
+    call elrefe_info(fami='RIGI',nno=nno)
+    ASSERT(nno .le. nb_nd_max)
+    ASSERT(nbv_steel .eq. STEEL_NBVARI)
+    ASSERT(nbv_zirc .eq. ZIRC_NBVARI)
 !
-!     PARAMETRES EN ENTREE
-!    ---------------------
-    call jevech('PMATERC', 'L', imate)
+! - Input fields
+!
+    call jevech('PMATERC', 'L', imate) 
     call jevech('PTEMPER', 'L', itempe)
     call jevech('PPHASIN', 'L', iphasi)
-    call jevech('PCOMPOR', 'L', icompo)
+    call jevech('PCOMPOR', 'L', jv_compo)
 !
-    compor(1) = zk16(icompo)
+! - Output fields
 !
-!     PARAMETRES EN SORTIE
-!    ----------------------
     call jevech('PPHASNOU', 'E', iphasn)
 !
-!     -- ON VERIFIE QUE LES VALEURS INITIALES SONT BIEN INITIALISEES:
-    if (compor(1) .eq. 'ACIER') then
-        nval=5
-        do 10, j=1,nval
-        if (zr(iphasi-1+j) .eq. r8vide()) then
-            call utmess('F', 'ELEMENTS5_44')
+! - Type of phase
+!
+    phase_type = zk16(jv_compo)
+!
+! - Values required for META_INIT_ELNO vector
+!
+    phase_tot = 0.d0
+    if (phase_type .eq. 'ACIER') then
+! ----- All phases
+        do j = 1, 5
+            if (zr(iphasi-1+j) .eq. r8vide() .or. isnan(zr(iphasi-1+j))) then
+                call utmess('F', 'META1_44')
+            endif
+            phase_tot = phase_tot + zr(iphasi-1+j)
+        end do
+! ----- Grain size
+        if (zr(iphasi-1+SIZE_GRAIN) .eq. r8vide() .or. isnan(zr(iphasi-1+SIZE_GRAIN))) then
+            call utmess('F', 'META1_46')
         endif
-10      continue
-    else if (compor(1).eq.'ZIRC') then
-        if (zr(iphasi-1+1) .eq. r8vide()) then
-            call utmess('F', 'ELEMENTS5_44')
-        endif
-        if (zr(iphasi-1+2) .eq. r8vide()) then
-            call utmess('F', 'ELEMENTS5_44')
-        endif
-        if (zr(iphasi-1+4) .eq. r8vide()) then
-            call utmess('F', 'ELEMENTS5_44')
+    else if (phase_type.eq.'ZIRC') then
+! ----- All phases
+        do j = 1, 3
+            if (zr(iphasi-1+j) .eq. r8vide() .or. isnan(zr(iphasi-1+j))) then
+                call utmess('F', 'META1_45')
+            endif
+            phase_tot = phase_tot + zr(iphasi-1+j)
+        end do
+! ----- Transition time
+        if (zr(iphasi-1+TIME_TRAN) .eq. r8vide() .or. isnan(zr(iphasi-1+TIME_TRAN))) then
+            call utmess('F', 'META1_47')
         endif
     endif
 !
-    fami='FPG1'
-    kpg=1
-    spt=1
-    poum='+'
+    if (abs(phase_tot-1.d0).gt. 1.d-2) then
+        call utmess('A', 'META1_46', sr = phase_tot)
+    endif 
 !
-    if (compor(1) .eq. 'ACIER') then
-!        MATERIAU FERRITIQUE
-!        ---------------------
-!     ON RECALCULE DIRECTEMENT A PARTIR DES TEMPERATURES AUX NOEUDS
+    if (phase_type .eq. 'ACIER') then
         nomres = 'MS0'
         call rcvalb(fami, kpg, spt, poum, zi(imate),&
                     ' ', 'META_ACIER', 0, ' ', [0.d0],&
                     1, nomres, ms0, icodre, 1)
-!
-        do 50 kn = 1, nno
-            tno0 = zr(itempe+kn-1)
-!
-            do 30 j = 0, 4
-                metapg(1+7* (kn-1)+j) = zr(iphasi+j)
-30          continue
-!
-            metapg(1+7* (kn-1)+6) = ms0(1)
-            metapg(1+7* (kn-1)+5) = tno0
-!
-            do 40 j = 1, 7
-                zr(iphasn+7* (kn-1)+j-1) = metapg(1+7* (kn-1)+j-1)
-40          continue
-50      continue
-!
-    else if (compor(1) (1:4).eq.'ZIRC') then
-!
-        do 80 kn = 1, nno
-!
-            tno0 = zr(itempe+kn-1)
-!
-! ----------PROPORTION TOTALE DE LA PHASE ALPHA
-!
-            metapg(1+4* (kn-1)) = zr(iphasi-1+1)
-            metapg(1+4* (kn-1)+1) = zr(iphasi-1+2)
-            metapg(1+4* (kn-1)+2) = tno0
-            metapg(1+4* (kn-1)+3) = zr(iphasi-1+4)
-!
-            zalpha = metapg(1+4* (kn-1)+1) + metapg(1+4* (kn-1))
-!
-!-----------DECOMPOSITION DE LA PHASE ALPHA POUR LA MECANIQUE
-!
-            zbeta = 1 - zalpha
+        do i_node = 1, nno
+            tno0 = zr(itempe+i_node-1)
+            do j = 1, 6
+                metaac(STEEL_NBVARI*(i_node-1)+j) = zr(iphasi-1+j)
+            end do
+            metaac(STEEL_NBVARI*(i_node-1)+TEMP_MARTENSITE) = ms0(1)
+            metaac(STEEL_NBVARI*(i_node-1)+STEEL_TEMP)      = tno0
+            do j = 1, STEEL_NBVARI
+                zr(iphasn+STEEL_NBVARI*(i_node-1)-1+j) = metaac(STEEL_NBVARI*(i_node-1)+j)
+            end do
+        end do
+    else if (phase_type .eq. 'ZIRC') then
+        do i_node = 1, nno
+            tno0 = zr(itempe+i_node-1)
+            metazi(ZIRC_NBVARI*(i_node-1)+PALPHA1) = zr(iphasi-1+PALPHA1)
+            metazi(ZIRC_NBVARI*(i_node-1)+PALPHA2) = zr(iphasi-1+PALPHA2)
+            metazi(ZIRC_NBVARI*(i_node-1)+ZIRC_TEMP) = tno0
+            metazi(ZIRC_NBVARI*(i_node-1)+TIME_TRAN) = zr(iphasi-1+TIME_TRAN)
+            zalpha = metazi(ZIRC_NBVARI*(i_node-1)+PALPHA1) + metazi(ZIRC_NBVARI*(i_node-1)+PALPHA2)
+            zbeta  = 1.d0-zalpha
             if (zbeta .gt. 0.1d0) then
-                metapg(1+4* (kn-1)) = 0.d0
+                metazi(ZIRC_NBVARI*(i_node-1)+PALPHA1) = 0.d0
             else
-                metapg(1+4* (kn-1)) = 10.d0* (zalpha-0.9d0)*zalpha
+                metazi(ZIRC_NBVARI*(i_node-1)+PALPHA1) = 10.d0*(zalpha-0.9d0)*zalpha
             endif
-            metapg(1+4* (kn-1)+1) = zalpha - metapg(1+4* (kn-1))
-!
-            do 70 j = 1, 4
-                zr(iphasn+4* (kn-1)+j-1) = metapg(1+4* (kn-1)+j-1)
-70          continue
-!
-!
-80      continue
+            metazi(ZIRC_NBVARI* (i_node-1)+PALPHA2) = zalpha -&
+                                                      metazi(ZIRC_NBVARI*(i_node-1)+PALPHA1)
+            metazi(ZIRC_NBVARI* (i_node-1)+PBETA)   = zbeta
+            do j = 1, ZIRC_NBVARI
+                zr(iphasn+ZIRC_NBVARI*(i_node-1)-1+j) = metazi(ZIRC_NBVARI*(i_node-1)+j)
+            end do
+        end do
     endif
-!
-!
 !
 end subroutine

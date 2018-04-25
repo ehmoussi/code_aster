@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -57,7 +57,8 @@ CH_MATER=AFFE_MATERIAU(MAILLAGE=MA,
 
 zero = DEFI_CONSTANTE(VALE=0.0);
 
-hy=FORMULE(NOM_PARA=('Y'),VALE='15.*(1-(Y*Y)/4.)')
+hy = FORMULE(VALE='15.*(1-(Y*Y)/4.)',
+             NOM_PARA='Y',)
 
 
 ch=AFFE_CHAR_MECA_F(MODELE=MO,

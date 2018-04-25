@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -72,8 +72,10 @@ MAILLAG1=MODI_MAILLAGE(reuse =MAILLAG1,
                        ORIE_PEAU_3D=_F(GROUP_MA=('SURFSUP','SURFINF')),
                        );
 
-LN=FORMULE(NOM_PARA=('X','Y','Z'),VALE='Z-15.');
-LT=FORMULE(NOM_PARA=('X','Y','Z'),VALE='-Y+5.');
+LN = FORMULE(VALE='Z-15.',
+             NOM_PARA=['X', 'Y', 'Z'],)
+LT = FORMULE(VALE='-Y+5.',
+             NOM_PARA=['X', 'Y', 'Z'],)
 
 FISS=DEFI_FISS_XFEM(MAILLAGE=MAILLAG1,
                     DEFI_FISS=_F(FONC_LT=LT,FONC_LN=LN),#TYPE_ENRI_FOND='TOPOLOGIQUE',
@@ -102,14 +104,27 @@ CHAMPMA1=AFFE_MATERIAU(MAILLAGE=MAILLAG1,
 #                   CHARGEMENT : CHAMP AUXILIAIRE MODE I
 #--------------------------------------------------------
 
-R = FORMULE(NOM_PARA=('X','Y','Z'),VALE='sqrt((Y-5.)**2+(Z-15.)**2)');
-T = FORMULE(NOM_PARA=('X','Y','Z'),VALE='atan2(Z-15.,-Y+5.)');
+R = FORMULE(VALE='sqrt((Y-5.)**2+(Z-15.)**2)',
+            NOM_PARA=['X', 'Y', 'Z'],)
+T = FORMULE(VALE='atan2(Z-15.,-Y+5.)',
+            NOM_PARA=['X', 'Y', 'Z'],)
 
 coef=(1+nu)/(E*sqrt(2.*pi))
 
-OUAUX1 = FORMULE(NOM_PARA=('X','Y','Z'),VALE='-1.*coef*sqrt(R(X,Y,Z))*cos(T(X,Y,Z)/2.)*(3.-4.*nu-cos(T(X,Y,Z)))');
-UAUX2 = FORMULE(NOM_PARA=('X','Y','Z'),VALE=' coef*sqrt(R(X,Y,Z))*sin(T(X,Y,Z)/2.)*(3.-4.*nu-cos(T(X,Y,Z)))');
-UAUX3 = FORMULE(NOM_PARA=('X','Y','Z'),VALE='0.');
+OUAUX1 = FORMULE(VALE='-1.*coef*sqrt(R(X,Y,Z))*cos(T(X,Y,Z)/2.)*(3.-4.*nu-cos(T(X,Y,Z)))',
+                 coef=coef,
+                 R=R,
+                 T=T,
+                 nu=nu,
+                 NOM_PARA=['X', 'Y', 'Z'],)
+UAUX2 = FORMULE(VALE=' coef*sqrt(R(X,Y,Z))*sin(T(X,Y,Z)/2.)*(3.-4.*nu-cos(T(X,Y,Z)))',
+                coef=coef,
+                R=R,
+                T=T,
+                nu=nu,
+                NOM_PARA=['X', 'Y', 'Z'],)
+UAUX3 = FORMULE(VALE='0.',
+                NOM_PARA=['X', 'Y', 'Z'],)
 
 CHF=AFFE_CHAR_MECA_F(MODELE=MODELEK,DDL_IMPO=_F(GROUP_NO=('NCLA','NXFEM'),DX=UAUX3,DY=OUAUX1,DZ=UAUX2));
 CHK=AFFE_CHAR_MECA(MODELE=MODELEK,DDL_IMPO=_F(TOUT='OUI',K2=0.,K3=0.));

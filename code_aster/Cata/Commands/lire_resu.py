@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -42,7 +42,7 @@ def l_nom_cham_pas_elga() :
      return list(set(C_NOM_CHAM_INTO())-set(C_NOM_CHAM_INTO('ELGA',)))
 
 LIRE_RESU=OPER(nom="LIRE_RESU",op=150,sd_prod=lire_resu_prod,reentrant='n',
-               fr=tr("Lire dans un fichier, soit format IDEAS, soit au format ENSIGHT soit au format MED,"
+               fr=tr("Lire dans un fichier, soit format IDEAS, soit au format MED,"
                   " des champs et les stocker dans une SD résultat"),
 
 
@@ -52,7 +52,7 @@ LIRE_RESU=OPER(nom="LIRE_RESU",op=150,sd_prod=lire_resu_prod,reentrant='n',
                                                           "MODE_MECA_C","DYNA_TRANS","DYNA_HARMO",
                                                           "EVOL_CHAR","EVOL_VARC","MODE_EMPI") ),
 
-         FORMAT          =SIMP(statut='o',typ='TXM',into=("IDEAS","IDEAS_DS58","ENSIGHT","MED") ),
+         FORMAT          =SIMP(statut='o',typ='TXM',into=("IDEAS","IDEAS_DS58","MED") ),
 
          INFO            =SIMP(statut='f',typ='I',into=(1,2) ),
          TITRE           =SIMP(statut='f',typ='TXM'),
@@ -141,17 +141,10 @@ LIRE_RESU=OPER(nom="LIRE_RESU",op=150,sd_prod=lire_resu_prod,reentrant='n',
              NOM_CMP         =SIMP(statut='o',typ='TXM',max='**'),),
          ),
 
-# 1-3 ensight :
-# -------------
-         b_ensight       =BLOC(condition="""equal_to("FORMAT", 'ENSIGHT')""",
-           NOM_FICHIER     =SIMP(statut='f',typ='TXM'),
-           NOM_CHAM        =SIMP(statut='o',typ='TXM',validators=NoRepeat(),max='**',into=l_nom_cham_pas_elga()),
-         ),
-
 # 1-4 med :
 # ---------
          b_med           =BLOC(condition = """equal_to("FORMAT", 'MED')""",fr=tr("Nom du champ dans le fichier MED"),
-           UNITE           =SIMP(statut='f',typ=UnitType(),defaut= 81, inout='in', fr=tr("Le fichier est : fort.n."),),
+           UNITE           =SIMP(statut='f',typ=UnitType('med'),defaut= 81, inout='in', fr=tr("Le fichier est : fort.n."),),
            FORMAT_MED      =FACT(statut='o',max='**',
              regles=(ENSEMBLE('NOM_CMP','NOM_CMP_MED'),UN_PARMI('NOM_CHAM_MED','NOM_RESU'),),
              NOM_CHAM        =SIMP(statut='o',typ='TXM',validators=NoRepeat(),into=C_NOM_CHAM_INTO(),),

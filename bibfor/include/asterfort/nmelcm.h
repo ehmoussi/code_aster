@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,20 +15,18 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 #include "asterf_types.h"
 !
 interface
-    subroutine nmelcm(phase    , mesh     , model    , mate     , ds_contact    , &
+    subroutine nmelcm(phase    , mesh     , model    , ds_material, ds_contact    , &
                       disp_prev, vite_prev, acce_prev, vite_curr, disp_cumu_inst,&
                       disp_newt_curr,matr_elem, time_prev, time_curr, ds_constitutive, l_xthm)
         use NonLin_Datastructure_type
         character(len=4), intent(in) :: phase
         character(len=8), intent(in) :: mesh
         character(len=24), intent(in) :: model
-        character(len=24), intent(in) :: mate
+        type(NL_DS_Material), intent(in) :: ds_material
         type(NL_DS_Contact), intent(in) :: ds_contact
         character(len=19), intent(in) :: disp_prev
         character(len=19), intent(in) :: vite_prev

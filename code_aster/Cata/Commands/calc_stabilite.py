@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -25,7 +25,7 @@ from code_aster.Cata.Commons import *
 CALC_STABILITE=MACRO(nom="CALC_STABILITE",sd_prod=table_container,
                op=OPS('Macro.calc_stabilite_ops.calc_stabilite_ops'),
                fr=tr("post-traitement modes non-linéaires : filtre resultats et calcul de stabilité"),
-               reentrant='f',
+               reentrant='f:MODE_NON_LINE',
 
                reuse =SIMP(statut='c',typ=CO),
 

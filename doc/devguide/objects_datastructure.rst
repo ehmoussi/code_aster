@@ -623,10 +623,37 @@
 
 
 ================================================================================
+:py:class:`~code_aster.Objects.KinematicsAcousticLoad` object
+================================================================================
+
+.. autoclass:: code_aster.Objects.KinematicsAcousticLoad
+   :show-inheritance:
+   :members:
+
+
+================================================================================
 :py:class:`~code_aster.Objects.KinematicsLoad` object
 ================================================================================
 
 .. autoclass:: code_aster.Objects.KinematicsLoad
+   :show-inheritance:
+   :members:
+
+
+================================================================================
+:py:class:`~code_aster.Objects.KinematicsMechanicalLoad` object
+================================================================================
+
+.. autoclass:: code_aster.Objects.KinematicsMechanicalLoad
+   :show-inheritance:
+   :members:
+
+
+================================================================================
+:py:class:`~code_aster.Objects.KinematicsThermalLoad` object
+================================================================================
+
+.. autoclass:: code_aster.Objects.KinematicsThermalLoad
    :show-inheritance:
    :members:
 
@@ -663,6 +690,15 @@
 ================================================================================
 
 .. autoclass:: code_aster.Objects.ListOfFloats
+   :show-inheritance:
+   :members:
+
+
+================================================================================
+:py:class:`~code_aster.Objects.ListOfIntegers` object
+================================================================================
+
+.. autoclass:: code_aster.Objects.ListOfIntegers
    :show-inheritance:
    :members:
 

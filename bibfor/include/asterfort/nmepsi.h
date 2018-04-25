@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,23 +15,16 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 #include "asterf_types.h"
 !
 interface
-    subroutine nmepsi(ndim, nno, axi, grand, vff,&
-                      r, dfdi, depl, f, eps)
-        integer :: nno
-        integer :: ndim
-        aster_logical :: axi
-        aster_logical :: grand
-        real(kind=8) :: vff(nno)
-        real(kind=8) :: r
-        real(kind=8) :: dfdi(nno, ndim)
-        real(kind=8) :: depl(ndim, nno)
-        real(kind=8) :: f(3, 3)
-        real(kind=8) :: eps(6)
+    subroutine nmepsi(ndim, nno, l_axi, l_large, vff,&
+                      r, dfdi, disp, f, epsi_)
+        aster_logical, intent(in) :: l_axi, l_large
+        integer, intent(in) :: ndim, nno
+        real(kind=8), intent(in) :: vff(nno), r, dfdi(nno, ndim), disp(ndim, nno)
+        real(kind=8), intent(out) :: f(3, 3)
+        real(kind=8), optional, intent(out) :: epsi_(6)
     end subroutine nmepsi
 end interface

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -112,19 +112,37 @@ def distance(x1,y1,z1,x2,y2,z2):
 
 def correl(puls):
     return exp(-puls/freq1)
-SXX = FORMULE(NOM_PARA=('X1','Y1','Z1','X2','Y2','Z2','FREQ'),
-              VALE_C='exp(-FREQ/freq0)*exp(distance(X1,Y1,Z1,X2,Y2,Z2)/correl(FREQ))*complex(cos(2*pi*FREQ*(Y2-Y1)/Uc),sin(2*pi*FREQ*(Y2-Y1)/Uc))',)
+SXX = FORMULE(VALE_C='exp(-FREQ/freq0)*exp(distance(X1,Y1,Z1,X2,Y2,Z2)/correl(FREQ))*complex(cos(2*pi*FREQ*(Y2-Y1)/Uc),sin(2*pi*FREQ*(Y2-Y1)/Uc))',
+              freq0=freq0,
+              distance=distance,
+              correl=correl,
+              Uc=Uc,
+              NOM_PARA=['X1', 'Y1', 'Z1', 'X2', 'Y2', 'Z2', 'FREQ'],)
 
 
-SYY = FORMULE(NOM_PARA=('X1','Y1','Z1','X2','Y2','Z2','FREQ'),
-              VALE_C='exp(-FREQ/freq0)*exp(distance(X1,Y1,Z1,X2,Y2,Z2)/correl(FREQ))*complex(cos(2*pi*FREQ*(Y2-Y1)/Uc),sin(2*pi*FREQ*(Y2-Y1)/Uc))');
+SYY = FORMULE(VALE_C='exp(-FREQ/freq0)*exp(distance(X1,Y1,Z1,X2,Y2,Z2)/correl(FREQ))*complex(cos(2*pi*FREQ*(Y2-Y1)/Uc),sin(2*pi*FREQ*(Y2-Y1)/Uc))',
+              freq0=freq0,
+              distance=distance,
+              correl=correl,
+              Uc=Uc,
+              NOM_PARA=['X1', 'Y1', 'Z1', 'X2', 'Y2', 'Z2', 'FREQ'],)
 
-SXY = FORMULE(NOM_PARA=('X1','Y1','Z1','X2','Y2','Z2','FREQ'),
-              VALE_C='rho*exp(-FREQ/freq0)*exp(distance(X1,Y1,Z1,X2,Y2,Z2)/correl(FREQ))*complex(cos(2*pi*FREQ*(Y2-Y1)/Uc),sin(2*pi*FREQ*(Y2-Y1)/Uc))');
+SXY = FORMULE(VALE_C='rho*exp(-FREQ/freq0)*exp(distance(X1,Y1,Z1,X2,Y2,Z2)/correl(FREQ))*complex(cos(2*pi*FREQ*(Y2-Y1)/Uc),sin(2*pi*FREQ*(Y2-Y1)/Uc))',
+              rho=rho,
+              freq0=freq0,
+              distance=distance,
+              correl=correl,
+              Uc=Uc,
+              NOM_PARA=['X1', 'Y1', 'Z1', 'X2', 'Y2', 'Z2', 'FREQ'],)
 
 # SYX = CONJUGUE DE SXY
-SYX = FORMULE(NOM_PARA=('X1','Y1','Z1','X2','Y2','Z2','FREQ'),
-              VALE_C='rho*exp(-FREQ/freq0)*exp(distance(X1,Y1,Z1,X2,Y2,Z2)/correl(FREQ))*complex(cos(2*pi*FREQ*(Y2-Y1)/Uc),-sin(2*pi*FREQ*(Y2-Y1)/Uc))');
+SYX = FORMULE(VALE_C='rho*exp(-FREQ/freq0)*exp(distance(X1,Y1,Z1,X2,Y2,Z2)/correl(FREQ))*complex(cos(2*pi*FREQ*(Y2-Y1)/Uc),-sin(2*pi*FREQ*(Y2-Y1)/Uc))',
+              rho=rho,
+              freq0=freq0,
+              distance=distance,
+              correl=correl,
+              Uc=Uc,
+              NOM_PARA=['X1', 'Y1', 'Z1', 'X2', 'Y2', 'Z2', 'FREQ'],)
 
 # INTER-SPECTRE AVEC EFFORTS X ET Y CORRELES
 INTESPEC=CREA_TABLE(LISTE=(_F(LISTE_K=('SXX','SYY','SXY','SYX'),PARA='FONCTION_C'),

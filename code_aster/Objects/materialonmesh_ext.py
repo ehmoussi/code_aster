@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -30,7 +30,7 @@ from ..Utilities import injector
 
 
 class ExtendedMaterialOnMesh(injector(MaterialOnMesh), MaterialOnMesh):
-    cata_sdj = "SD.sd_materiau.sd_materiau"
+    cata_sdj = "SD.sd_cham_mater.sd_cham_mater"
 
     def __getinitargs__(self):
         """Returns the argument required to reinitialize a MaterialOnMesh

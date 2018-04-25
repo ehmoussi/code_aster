@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -39,10 +39,12 @@ subroutine irmase(nofimd, typsec, nbrcou, nbsect, nummai,&
     character(len=*) :: nofimd, typsec, nomase
     integer :: nbrcou, nbsect, nummai
 ! person_in_charge: nicolas.sellenet at edf.fr
-! ----------------------------------------------------------------------
+!
+! --------------------------------------------------------------------------------------------------
+!
 !  IMPR_RESU - IMPRESSION DES MAILLAGES DE SECTION
-!  -    -                     --           --
-! ----------------------------------------------------------------------
+!
+! --------------------------------------------------------------------------------------------------
 !
 ! IN  :
 !   NOFIMD  K*   ENTIER LIE AU FICHIER MED OUVERT
@@ -53,39 +55,44 @@ subroutine irmase(nofimd, typsec, nbrcou, nbsect, nummai,&
 !   SDCARM  K8   CARA_ELEM CONVERTIT EN CHAM_ELEM_S
 !   NOMASE  K*   NOM MED DU MAILLAGE SECTION
 !
+! --------------------------------------------------------------------------------------------------
 !
-    integer :: idfimd, nbpoin, ipoint, jcoopt, nbrayo, icouch, irayon
-    integer :: edleaj, postmp, codret, edcart, jmasup, jcesd
+    integer :: idfimd, nbpoin, jcoopt, icouch, irayon
+    integer :: edleaj, postmp, codret, edcart, jmasup, jcesd, ibid
     integer :: edfuin, ndim, nbmasu, imasup, edcar2, jcesl
     integer :: nbcmp, isp, icmp, iad
+!
     parameter    (edleaj = 1)
     parameter    (edcart = 0)
     parameter    (edfuin = 0)
 !
-    character(len=8) :: saux08
-    character(len=16) :: nocoor(3), uncoor(3), nocoo2(3), uncoo2(3)
-    character(len=64) :: nomasu
+    character(len=8)   :: saux08
+    character(len=16)  :: nocoor(3), uncoor(3), nocoo2(3), uncoo2(3)
+    character(len=64)  :: nomasu
     character(len=200) :: desmed
 !
-    real(kind=8) :: xmin, xmax, delta, rmin, rmax, theta, dtheta
+    real(kind=8) :: delta, theta, dtheta, rayon
 !
     aster_logical :: lmstro
-    real(kind=8), pointer :: cesv(:) => null()
-    character(len=8), pointer :: cesc(:) => null()
+    real(kind=8),     pointer :: cesv(:)     => null()
+    character(len=8), pointer :: cesc(:)     => null()
 !
     data nocoor  /'X               ', 'Y               ', 'Z               '/
     data uncoor  /'INCONNU         ', 'INCONNU         ', 'INCONNU         '/
 !
-    desmed = ' '
-    if (nbrcou .eq. 0 .and. nbsect .eq. 0 .and. nummai .eq. 0) goto 9999
+! --------------------------------------------------------------------------------------------------
 !
+    if ((typsec.ne.'COQUE').and.(typsec.ne.'GRILLE').and. &
+        (typsec.ne.'TUYAU').and.(typsec.ne.'PMF')) goto 9999
+!
+    desmed = ' '
     call as_mfiope(idfimd, nofimd, edleaj, codret)
     if (codret .ne. 0) then
         saux08='mfiope'
         call utmess('F', 'DVP_97', sk=saux08, si=codret)
     endif
 !
-!     -- RELECTURE DES ELEMENTS DE STRUCTURES DEJA PRESENTS
+!   RELECTURE DES ELEMENTS DE STRUCTURES DEJA PRESENTS
     nbmasu = 0
     call as_msmnsm(idfimd, nbmasu, codret)
     if (codret .ne. 0) then
@@ -95,7 +102,7 @@ subroutine irmase(nofimd, typsec, nbrcou, nbsect, nummai,&
     lmstro = .false.
     if (nbmasu .ne. 0) then
         call wkvect('&&IRMASE.MAIL_SUPP', 'V V K80', nbmasu, jmasup)
-        do 40 imasup = 1, nbmasu
+        do imasup = 1, nbmasu
             call as_msmsmi(idfimd, imasup, nomasu, ndim, desmed,&
                            edcar2, nocoo2, uncoo2, codret)
             if (codret .ne. 0) then
@@ -103,63 +110,55 @@ subroutine irmase(nofimd, typsec, nbrcou, nbsect, nummai,&
                 call utmess('F', 'DVP_97', sk=saux08, si=codret)
             endif
             if (nomasu .eq. nomase) lmstro = .true.
- 40     continue
+        enddo
         call jedetr('&&IRMASE.MAIL_SUPP')
         if (lmstro) goto 9999
     endif
 !
     ndim = 0
     if (typsec .eq. 'COQUE') then
-!
-        ndim = 1
+        ndim   = 1
         nbpoin = 3*nbrcou
         call wkvect('&&IRMASE.COOR_PTS', 'V V R', nbpoin, jcoopt)
         delta = 2.d0/nbrcou
-        xmin = -1.d0
-        xmax = -1.d0+delta
-        do 10 ipoint = 1, nbrcou
-            zr(jcoopt+(ipoint-1)*3)=xmin
-            zr(jcoopt+(ipoint-1)*3+1)=(xmax+xmin)/2.d0
-            zr(jcoopt+(ipoint-1)*3+2)=xmax
-            xmin = xmin+delta
-            xmax = xmax+delta
- 10     continue
+        do icouch = 1, nbrcou
+            ibid = jcoopt+(icouch-1)*3
+            zr(ibid+2) = -1.0d0 + icouch*delta
+            zr(ibid)   = zr(ibid+2) - delta
+            zr(ibid+1) = 0.5d0*(zr(ibid+2)+zr(ibid))
+        enddo
 !
-    else if (typsec.eq.'TUYAU') then
+    else if (typsec .eq. 'GRILLE') then
+        ndim   = 1
+        nbpoin = 1
+        call wkvect('&&IRMASE.COOR_PTS', 'V V R', nbpoin, jcoopt)
+        zr(jcoopt) = 0.0d0
 !
-
-        call utmess('F', 'MED2_10')
-
-        ndim = 2
-        nbrayo = (nbsect*2)+1
-        nbpoin = 3*nbrayo*nbrcou
+    else if (typsec .eq. 'TUYAU') then
+!       SUPER IMPORTANT SUPER IMPORTANT SUPER IMPORTANT
+!           La convention des angles de vrilles entre les poutres et tuyaux est différente
+!           Il y a un repère indirect pour les tuyaux ==> c'est pas bien
+!               - On décale les angles de 90°.
+!               - Quand tout sera dans l'ordre, il faudra calculer correctement yy et zz
+!
+!       A FAIRE DANS : te0478  irmase
+!
+        ndim   = 2
+        nbpoin = (2*nbsect+1)*(2*nbrcou+1)
         call wkvect('&&IRMASE.COOR_PTS', 'V V R', 2*nbpoin, jcoopt)
-!
-        dtheta = r8pi()/nbsect
-        theta = 0.d0
-!
-        rmin = 0.5d0
-        rmax = 1.d0
         postmp = 0
-        do 20 icouch = 1, nbrcou
-            do 30 irayon = 1, nbrayo
-                zr(jcoopt+postmp) = rmin*cos(theta)
-                zr(jcoopt+postmp+1) = rmin*sin(theta)
-                zr(jcoopt+postmp+2) = (rmin+rmax)/2.d0*cos(theta)
-                zr(jcoopt+postmp+3) = (rmin+rmax)/2.d0*sin(theta)
-                zr(jcoopt+postmp+4) = rmax*cos(theta)
-                zr(jcoopt+postmp+5) = rmax*sin(theta)
-                postmp = postmp+6
-                theta = theta+dtheta
- 30         continue
-            rmin = rmin+0.5d0
-            rmax = rmax+0.5d0
-            theta = 0.d0
- 20     continue
-        ASSERT(postmp.eq.2*nbpoin)
+        dtheta = r8pi()/nbsect
+        do icouch = 1 , 2*nbrcou+1
+            rayon = 0.5d0 + 0.25d0*(icouch-1)/nbrcou
+            do irayon = 1 , 2*nbsect+1
+                theta = -(irayon-1)*dtheta - 0.50*r8pi()
+                zr(jcoopt+postmp)   = rayon*cos(theta)
+                zr(jcoopt+postmp+1) = rayon*sin(theta)
+                postmp = postmp+2
+            enddo
+        enddo
 !
     else if (typsec.eq.'PMF') then
-!
         ndim = 2
         call jeveuo(sdcarm//'.CAFIBR    .CESC', 'L', vk8=cesc)
         call jeveuo(sdcarm//'.CAFIBR    .CESD', 'L', jcesd)
@@ -178,30 +177,24 @@ subroutine irmase(nofimd, typsec, nbrcou, nbsect, nummai,&
         ASSERT(cesc(7).eq.'NUMGR   ')
 !
         postmp = 0
-        do 50 isp = 1, nbpoin
-            do 60 icmp = 1, 2
-                call cesexi('S', jcesd, jcesl, nummai, 1,&
-                            isp, icmp, iad)
+        do isp = 1, nbpoin
+            do icmp = 1, 2
+                call cesexi('S', jcesd, jcesl, nummai, 1, isp, icmp, iad)
                 zr(jcoopt+postmp) = cesv(iad)
                 postmp = postmp+1
- 60         continue
- 50     continue
+            enddo
+        enddo
 !
-    else
-        ASSERT(.false.)
     endif
 !
-!     -- DEFINITION DU MAILLAGE SUPPORT MED
-    call as_msmcre(idfimd, nomase, ndim, desmed, edcart,&
-                   nocoor, uncoor, codret)
+!   Définition du maillage support MED
+    call as_msmcre(idfimd, nomase, ndim, desmed, edcart, nocoor, uncoor, codret)
     if (codret .ne. 0) then
         saux08='msmcre'
         call utmess('F', 'DVP_97', sk=saux08, si=codret)
     endif
-!
-!     -- DEFINITION DES NOEUDS DU MAILLAGE SUPPORT MED
-    call as_mmhcow(idfimd, nomase, zr(jcoopt), edfuin, nbpoin,&
-                   codret)
+!   Définition des noeuds du maillage support MED
+    call as_mmhcow(idfimd, nomase, zr(jcoopt), edfuin, nbpoin, codret)
     if (codret .ne. 0) then
         saux08='mmhcow'
         call utmess('F', 'DVP_97', sk=saux08, si=codret)

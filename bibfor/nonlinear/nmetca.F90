@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,12 +15,14 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmetca(modele, noma, mate, sddisc, sdcriq,&
+!
+subroutine nmetca(modele, noma, ds_material, sddisc, sdcriq,&
                   numins, valinc)
 !
+use NonLin_Datastructure_type
 !
-    implicit none
+implicit none
+!
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterfort/calcul.h"
@@ -40,11 +42,12 @@ subroutine nmetca(modele, noma, mate, sddisc, sdcriq,&
 #include "asterfort/nmchex.h"
 #include "asterfort/utmess.h"
 !
-    character(len=8) :: noma
-    character(len=24) :: modele, mate, sdcriq
-    character(len=19) :: valinc(*)
-    integer :: numins
-    character(len=19) :: sddisc
+character(len=8) :: noma
+character(len=24) :: modele, sdcriq
+type(NL_DS_Material), intent(in) :: ds_material
+character(len=19) :: valinc(*)
+integer :: numins
+character(len=19) :: sddisc
 !
 ! ----------------------------------------------------------------------
 !
@@ -55,9 +58,8 @@ subroutine nmetca(modele, noma, mate, sddisc, sdcriq,&
 !
 ! ----------------------------------------------------------------------
 !
-!
 ! IN  MODELE : NOM DU MODELE
-! IN  MATE   : NOM DU MATERIAU
+! In  ds_material      : datastructure for material parameters
 ! IN  SDDISC : SD DISCRETISATION TEMPORELLE
 ! IN  SDERRO : SD ERREUR
 ! IN  NUMINS : NUMERO INSTANT COURANT
@@ -110,7 +112,7 @@ subroutine nmetca(modele, noma, mate, sddisc, sdcriq,&
     endif
     base = 'V'
     cartca = '&&NMETCA.GRDCA'
-    chelem = '&&NMETCA_ERRE_TEMPS_THM'
+    chelem = '&&NMETCA_ERRE_TEMPS'
 !
 ! --- INSTANTS
 !
@@ -159,7 +161,7 @@ subroutine nmetca(modele, noma, mate, sddisc, sdcriq,&
     lpain(1) = 'PGEOMER'
     lchin(1) = chgeom(1:19)
     lpain(2) = 'PMATERC'
-    lchin(2) = mate(1:19)
+    lchin(2) = ds_material%field_mate(1:19)
     lpain(3) = 'PCONTGP'
     lchin(3) = sigmap(1:19)
     lpain(4) = 'PCONTGM'

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -354,7 +354,7 @@ TB01=CREA_TABLE(
 )
 
 NORM = FORMULE(VALE='(COOR_X*COOR_X+COOR_Y*COOR_Y)**0.5',
-               NOM_PARA=('COOR_X','COOR_Y',),);
+               NOM_PARA=['COOR_X', 'COOR_Y'],)
 
 TB01=CALC_TABLE(reuse=TB01,
                 TABLE=TB01,

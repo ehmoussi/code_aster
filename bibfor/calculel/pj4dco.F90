@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,7 +18,7 @@
 
 subroutine pj4dco(mocle, moa1, moa2, nbma1, lima1,&
                   nbno2, lino2, geom1, geom2, corres,&
-                  l_dmax, dmax, dala)
+                  l_dmax, dmax, dala, listIntercz, nbIntercz)
 !
 
 ! --------------------------------------------------------------------------------------------------
@@ -47,10 +47,12 @@ implicit none
 
     integer :: nbma1, lima1(*), nbno2, lino2(*)
     real(kind=8) :: dmax, dala
-    character(len=16) :: corres
+    character(len=16) :: corres, charbid
     character(len=*) :: geom1, geom2
     character(len=8) :: moa1, moa2
     character(len=*) :: mocle
+    character(len=16), optional :: listIntercz
+    integer, optional :: nbIntercz
 
 #include "asterf_types.h"
 #include "jeveux.h"
@@ -90,7 +92,7 @@ implicit none
     character(len=8) :: elrf(nbtmx)
 
     integer :: ifm, niv, nno1, nno2, nma1, nma2, k
-    integer :: ima, ino2, ico
+    integer :: ima, ino2, ico, ino
     integer :: iatr3, iacoo1, iacoo2
     integer :: iabtco, jxxk1, iaconu, iacocf, iacotr
     integer :: ialim1, ialin1, ilcnx1, ialin2
@@ -110,6 +112,7 @@ implicit none
     integer, pointer :: bt3ddi(:) => null()
     integer, pointer :: typmail(:) => null()
     integer, pointer :: lino_loin(:) => null()
+    integer, pointer :: vinterc(:) => null()
 
 ! --------------------------------------------------------------------------------------------------
 
@@ -289,6 +292,29 @@ implicit none
                     bt3dnb, bt3dlc, zi( iabtco),&
                     l_dmax, dmax, dala, loin, dmin)
         if (loin) then
+!           on regarde si le noeud est deja projete par une autre
+!           occurrence de VIS_A_VIS
+            if (present(nbIntercz))then
+                if (nbIntercz .ne. 0)then
+                    ASSERT(present(listIntercz))
+                    call jeveuo(listIntercz, 'L', vi=vinterc)
+                    do ino = 1,nbIntercz
+                        if (ino2 .eq. vinterc(ino))then
+                            loin = .false.
+!                       
+                            l_dmax = .true.
+                            nbtrou = 0
+!
+                            call jenuno(jexnum(m2//'.NOMNOE', ino2), nono2)
+                            call utmess('A','CALCULEL5_47', si=vinterc(nbIntercz+1),&
+                                        sk=nono2)
+                            exit
+                        endif
+                    enddo
+                endif
+            endif
+        endif
+        if (loin)then
             loin2=.true.
             nbnodm = nbnodm + 1
             lino_loin(nbnodm)=ino2
@@ -323,7 +349,9 @@ implicit none
 !   5. on transforme cortr3 en corres (retour aux vraies mailles)
 !   -------------------------------------------------------------
     lraff=.false.
-    call pj2dtr(cortr3, corres, nutm, elrf, zr(iacoo1), zr(iacoo2), lraff, dala)
+    charbid = ' '
+    call pj2dtr(cortr3, corres, nutm, elrf, zr(iacoo1), zr(iacoo2), lraff, dala,&
+               charbid, 0)
     dbg=.false.
     if (dbg) then
         call utimsd(ifm, 2, ASTER_FALSE, ASTER_TRUE, '&&PJ4DCO', 1, ' ')

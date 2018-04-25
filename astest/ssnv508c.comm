@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -74,7 +74,8 @@ MO=AFFE_MODELE(MAILLAGE=MAILLAG1,
                        MODELISATION='3D'));
 
 
-LN = FORMULE(NOM_PARA=('X','Y','Z'),VALE='Y');
+LN = FORMULE(VALE='Y',
+             NOM_PARA=['X', 'Y', 'Z'],)
 
 FISS=DEFI_FISS_XFEM(MAILLAGE=MAILLAG1,
                     TYPE_DISCONTINUITE='INTERFACE',
@@ -127,8 +128,10 @@ def deplv(x) :
    if x==0. :  return d2*x*x + d0
 
 FCTDEPLV = FORMULE(VALE='deplv(X)',
-                  NOM_PARA=('X','Y','Z'));
-ZERO = FORMULE(VALE='0.',NOM_PARA=('X','Y','Z'));
+                   deplv=deplv,
+                   NOM_PARA=['X', 'Y', 'Z'],)
+ZERO = FORMULE(VALE='0.',
+               NOM_PARA=['X', 'Y', 'Z'],)
 
 
 # CONDITION LIMITE SUR LA SURFACE S3
@@ -145,14 +148,16 @@ def pr1(y) :
    if y>0.  :  return  - p1*y - p2
    if y==0.  :  return  0.
 FCTPR1 = FORMULE(VALE='pr1(Y)',
-                  NOM_PARA=('X','Y','Z'));
+                 pr1=pr1,
+                 NOM_PARA=['X', 'Y', 'Z'],)
 
 def pr2(y) :
    if y<0.  :  return 0.
    if y>0.  :  return   p1*y + p2
    if y==0.  :  return  0.
 FCTPR2 = FORMULE(VALE='pr2(Y)',
-                  NOM_PARA=('X','Y','Z'));
+                 pr2=pr2,
+                 NOM_PARA=['X', 'Y', 'Z'],)
 
 
 

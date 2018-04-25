@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -36,8 +36,10 @@ def initial_context():
     Returns:
         dict: pairs of name per corresponding Python instance.
     """
+    import __builtin__
     import math
     context = {}
+    context.update(__builtin__.__dict__)
     for func in dir(math):
         if not func.startswith('_'):
             context[func] = getattr(math, func)
@@ -58,26 +60,28 @@ class formule(ASSD):
         self.nompar = None
         self.expression = None
         self.code = None
-        self.ctxt = []
-        ctxt = {}
-        ctxt.update(getattr(self.parent, 'const_context', {}))
-        ctxt.update(getattr(self.parent, 'macro_const_context', {}))
-        self.parent_context = self.filter_context(ctxt)
-        # message.debug(SUPERV, "add parent_context %s %s", self.nom,
-        # self.parent_context)
+        self.ctxt = None
 
-    def __call__(self, *val):
-        """Evaluation de la formule"""
-        # en POURSUITE, self.parent_context is None, on essaie de reprendre
-        # const_context
-        context = getattr(self, 'parent_context') or getattr(
-            self.parent, 'const_context', {})
-        if self.ctxt:
-            context.update(pickle.loads(self.ctxt))
-        for param, value in zip(self.nompar, val):
-            context[param] = value
+    def __call__(self, *val, **dval):
+        """Evaluation of the formula.
+
+        Arguments:
+            val (tuple[float]): Value of each parameter in the order of
+                the `nompar` attribute.
+            dval (dict): Values passed as keyword arguments.
+
+        Returns:
+            float/complex: Value of the formula.
+        """
+        context = {}
+        context.update(self.get_context())
+        if val:
+            for param, value in zip(self.nompar, val):
+                context[param] = value
+        else:
+            context.update(dval)
         try:
-            res = eval(self.code, context, self._initial_context)
+            res = eval(self.code, self._initial_context, context)
         except Exception, exc:
             message.error(SUPERV, "ERREUR LORS DE L'ÉVALUATION DE LA FORMULE '%s' "
                           ":\n>> %s", self.nom, str(exc))
@@ -98,8 +102,25 @@ class formule(ASSD):
             raise
 
     def set_context(self, objects):
-        """Stocke des objets de contexte"""
-        self.ctxt = objects
+        """Stocke des objets de contexte.
+
+        Il est conseillé de passer les objets sous forme d'une 'pickled string'
+        pour en faire une copie connue uniquement de la formule.
+
+        Avec le superviseur actuel, une fonction du jeu de commandes n'est pas
+        'picklable'. On ne peut donc que stocker une référence vers ces objets.
+        On passe alors `objects` en tant que dictionnaire.
+        """
+        if not isinstance(objects, dict):
+            self.ctxt = pickle.loads(objects)
+        else:
+            self.ctxt = objects
+
+    def get_context(self):
+        """Retourne le contexte stocké avec la formule."""
+        if self.ctxt is None:
+            return {}
+        return self.ctxt
 
     def __setstate__(self, state):
         """Cette methode sert a restaurer l'attribut code lors d'un unpickle."""
@@ -119,8 +140,7 @@ class formule(ASSD):
         'force' est utilisée pour faire des suppressions complémentaires.
 
         Pour être évaluées, les formules ont besoin du contexte des "constantes"
-        (objets autres que les concepts) qui sont soit dans (jdc).const_context,
-        soit dans (macro).macro_const_context.
+        (objets autres que les concepts) qui sont soit dans (jdc).const_context.
         On le stocke dans 'parent_context'.
         Deux précautions valent mieux qu'une : on retire tous les concepts.
 

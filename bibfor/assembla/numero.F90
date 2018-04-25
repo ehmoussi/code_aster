@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -117,11 +117,13 @@ implicit none
     call numer2(nb_ligr, list_ligr, base, nume_ddlz,&
                 old_nume_ddl, modeloc  , sd_iden_rela)
 !
-    call dismoi('NOM_MAILLA', modelz, 'MODELE', repk=nommai)
-    call gettco(nommai, typsd)
-    if( typsd.eq.'MAILLAGE_P' ) then
-        nume_ddl = nume_ddlz
-        call crnulg(nume_ddl)
+    if ( present(modelz) ) then
+        call dismoi('NOM_MAILLA', modelz, 'MODELE', repk=nommai)
+        call gettco(nommai, typsd)
+        if( typsd.eq.'MAILLAGE_P' ) then
+            nume_ddl = nume_ddlz
+            call crnulg(nume_ddl)
+        endif
     endif
 !
     AS_DEALLOCATE(vk24 = list_ligr)

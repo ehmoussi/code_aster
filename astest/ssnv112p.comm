@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -76,7 +76,9 @@ EVOL=STAT_NON_LINE(MODELE=MO,
                    COMPORTEMENT=_F(RELATION='VMIS_ISOT_LINE',
                                 DEFORMATION='SIMO_MIEHE'),
                    INCREMENT=_F(LIST_INST=INSTANTS),
-                   NEWTON=_F(REAC_ITER=1),
+                   NEWTON=_F(REAC_ITER=1,
+                             MATR_RIGI_SYME='OUI',
+                             ),
                    CONVERGENCE=_F(SIGM_REFE=60.0,
                                   EPSI_REFE=3.E-4,
                                   RESI_REFE_RELA=1.E-3),
@@ -344,7 +346,8 @@ EVOL_L=STAT_NON_LINE(MODELE=MO,
                    COMPORTEMENT=_F(RELATION='VMIS_ISOT_LINE',
                                 DEFORMATION='SIMO_MIEHE'),
                    INCREMENT=_F(LIST_INST=INSTANTS),
-                   NEWTON=_F(REAC_ITER=1),
+                   NEWTON=_F(REAC_ITER=1,
+                             MATR_RIGI_SYME='OUI'),
                    CONVERGENCE=_F(SIGM_REFE=60.0,
                                   EPSI_REFE=3.E-4,
                                   RESI_REFE_RELA=1.E-3),

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -58,7 +58,6 @@ implicit none
 !  OUT
 !     VINF   :  VARIABLES INTERNES A T+DT
 ! ----------------------------------------------------------------
-#include "asterfort/burlnf.h"
 #include "asterfort/hujlnf.h"
 #include "asterfort/irrlnf.h"
 #include "asterfort/lcdpec.h"
@@ -96,10 +95,6 @@ implicit none
 !
     else if (rela_comp(1:7).eq.'IRRAD3M') then
         call irrlnf(nmat, materf, yf(ndt+1), 1.0d0, vinf)
-    else if (rela_comp(1:12) .eq. 'BETON_BURGER') then
-        call burlnf(nvi, vind, nmat, materd, materf,&
-                    dt, nr, yd, yf, vinf,&
-                    sigf)
     else if (rela_comp(1:4) .eq. 'LETK') then
         call lkilnf(nvi, vind, nmat, materf, dt,&
                     sigd, nr, yd, yf, deps,&

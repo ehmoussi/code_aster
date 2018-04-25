@@ -139,7 +139,8 @@ OMEGA = 121.0;
 # DEFINITION DE LA FONCTION D'EVOLUTION DE FY
 
 EVOL_FY = FORMULE(VALE='cos(OMEGA*INST)',
-                  NOM_PARA='INST',);
+                  OMEGA=OMEGA,
+                  NOM_PARA='INST',)
 
 #
 

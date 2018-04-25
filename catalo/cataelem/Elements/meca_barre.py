@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -32,13 +32,6 @@ from cataelem.Options.options import OP
 
 CCAORIE  = LocatedComponents(phys=PHY.CAORIE, type='ELEM',
     components=('ALPHA','BETA','GAMMA',))
-
-
-CCARCRI  = LocatedComponents(phys=PHY.CARCRI, type='ELEM',
-    components=('ITECREL','MACOMP','RESCREL','THETA','ITEDEC',
-          'INTLOC','PERTURB','TOLDEBO','ITEDEBO','TSSEUIL',
-          'TSAMPL','TSRETOUR','POSTITER','LC_EXT[3]','MODECALC',
-          'ALPHA','LC_EXT2[2]',))
 
 
 NDEPLAC  = LocatedComponents(phys=PHY.DEPL_C, type='ELNO',
@@ -373,7 +366,7 @@ class MECA_BARRE(Element):
 
         OP.FULL_MECA(te=248,
             para_in=((SP.PCAGNBA, LC.CCAGNBA), (OP.FULL_MECA.PCAORIE, CCAORIE),
-                     (SP.PCARCRI, CCARCRI), (OP.FULL_MECA.PCOMPOR, LC.CCOMPOR),
+                     (SP.PCARCRI, LC.CCARCRI), (OP.FULL_MECA.PCOMPOR, LC.CCOMPOR),
                      (OP.FULL_MECA.PCONTMR, EEFGEGA), (SP.PDEPLMR, DDL_MECA),
                      (SP.PDEPLPR, DDL_MECA), (SP.PGEOMER, NGEOMER),
                      (SP.PINSTMR, CTEMPSR), (SP.PINSTPR, CTEMPSR),
@@ -388,7 +381,7 @@ class MECA_BARRE(Element):
 
         OP.FULL_MECA_ELAS(te=248,
             para_in=((SP.PCAGNBA, LC.CCAGNBA), (OP.FULL_MECA_ELAS.PCAORIE, CCAORIE),
-                     (SP.PCARCRI, CCARCRI), (OP.FULL_MECA_ELAS.PCOMPOR, LC.CCOMPOR),
+                     (SP.PCARCRI, LC.CCARCRI), (OP.FULL_MECA_ELAS.PCOMPOR, LC.CCOMPOR),
                      (OP.FULL_MECA_ELAS.PCONTMR, EEFGEGA), (SP.PDEPLMR, DDL_MECA),
                      (SP.PDEPLPR, DDL_MECA), (SP.PGEOMER, NGEOMER),
                      (SP.PINSTMR, CTEMPSR), (SP.PINSTPR, CTEMPSR),
@@ -454,7 +447,7 @@ class MECA_BARRE(Element):
 
         OP.RAPH_MECA(te=248,
             para_in=((SP.PCAGNBA, LC.CCAGNBA), (OP.RAPH_MECA.PCAORIE, CCAORIE),
-                     (SP.PCARCRI, CCARCRI), (OP.RAPH_MECA.PCOMPOR, LC.CCOMPOR),
+                     (SP.PCARCRI, LC.CCARCRI), (OP.RAPH_MECA.PCOMPOR, LC.CCOMPOR),
                      (OP.RAPH_MECA.PCONTMR, EEFGEGA), (SP.PDEPLMR, DDL_MECA),
                      (SP.PDEPLPR, DDL_MECA), (SP.PGEOMER, NGEOMER),
                      (SP.PINSTMR, CTEMPSR), (SP.PINSTPR, CTEMPSR),
@@ -487,7 +480,7 @@ class MECA_BARRE(Element):
 
         OP.RIGI_MECA_ELAS(te=248,
             para_in=((SP.PCAGNBA, LC.CCAGNBA), (OP.RIGI_MECA_ELAS.PCAORIE, CCAORIE),
-                     (SP.PCARCRI, CCARCRI), (OP.RIGI_MECA_ELAS.PCOMPOR, LC.CCOMPOR),
+                     (SP.PCARCRI, LC.CCARCRI), (OP.RIGI_MECA_ELAS.PCOMPOR, LC.CCOMPOR),
                      (OP.RIGI_MECA_ELAS.PCONTMR, EEFGEGA), (SP.PDEPLMR, DDL_MECA),
                      (SP.PDEPLPR, DDL_MECA), (SP.PGEOMER, NGEOMER),
                      (SP.PINSTMR, CTEMPSR), (SP.PINSTPR, CTEMPSR),
@@ -510,7 +503,7 @@ class MECA_BARRE(Element):
 
         OP.RIGI_MECA_IMPLEX(te=248,
             para_in=((SP.PCAGNBA, LC.CCAGNBA), (OP.RIGI_MECA_IMPLEX.PCAORIE, CCAORIE),
-                     (SP.PCARCRI, CCARCRI), (OP.RIGI_MECA_IMPLEX.PCOMPOR, LC.CCOMPOR),
+                     (SP.PCARCRI, LC.CCARCRI), (OP.RIGI_MECA_IMPLEX.PCOMPOR, LC.CCOMPOR),
                      (OP.RIGI_MECA_IMPLEX.PCONTMR, EEFGEGA), (SP.PDEPLMR, DDL_MECA),
                      (SP.PDEPLPR, DDL_MECA), (SP.PGEOMER, NGEOMER),
                      (SP.PINSTMR, CTEMPSR), (SP.PINSTPR, CTEMPSR),
@@ -523,7 +516,7 @@ class MECA_BARRE(Element):
 
         OP.RIGI_MECA_TANG(te=248,
             para_in=((SP.PCAGNBA, LC.CCAGNBA), (OP.RIGI_MECA_TANG.PCAORIE, CCAORIE),
-                     (SP.PCARCRI, CCARCRI), (OP.RIGI_MECA_TANG.PCOMPOR, LC.CCOMPOR),
+                     (SP.PCARCRI, LC.CCARCRI), (OP.RIGI_MECA_TANG.PCOMPOR, LC.CCOMPOR),
                      (OP.RIGI_MECA_TANG.PCONTMR, EEFGEGA), (SP.PDEPLMR, DDL_MECA),
                      (SP.PDEPLPR, DDL_MECA), (SP.PGEOMER, NGEOMER),
                      (SP.PINSTMR, CTEMPSR), (SP.PINSTPR, CTEMPSR),

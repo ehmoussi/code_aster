@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -35,7 +35,7 @@ subroutine amumpu(option, type, kxmps, usersm, nprec,&
 ! OPTION=31 IDEM MAIS ON CREE UNE OCCURENCE MUMPS TEMPORAIRE. OPERATION
 !    UN PEU COUTEUSE A NE FAIRE QU'UNE FOIS PAR OPERATEUR(SD_SOLVEUR).
 ! DANS CES DEUX MODES, ON CONTROLE LE CARACTERE LICITE DU NUMERO DE
-! VERSIONS: 5.2.0/5.1.1(consortium) SINON UTMESS_F.
+! VERSIONS: 5.1.1/5.1.2(consortium) SINON UTMESS_F.
 !
 ! OPTION=4 RECUPERE LE DETERMINANT ET ON LE STOCKE DS L'OBJET JEVEUX
 !          '&&AMUMP.DETERMINANT' (V V R DIM=3)
@@ -565,7 +565,7 @@ subroutine amumpu(option, type, kxmps, usersm, nprec,&
         kvers=''
         kvers=trim(adjustl(nvers))
         select case (kvers)
-        case('5.0.2','5.0.2consortium','5.1.1','5.1.1consortium')
+        case('5.1.1','5.1.1consortium','5.1.2','5.1.2consortium')
         case default
             call utmess('F', 'FACTOR_72', sk=kvers)
         end select

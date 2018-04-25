@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -229,21 +229,29 @@ for K in range(len(alphaREF)):
 #PROGRAMMATION : IL FAUT FORCER PYTHON A EVALUER K EN GLOBAL LORS DE L APPEL DE L OPERATEUR FORMULE ! => EN LOCAL K A UNE VALEUR QUELCONQUE
 #EN SEQUENTIEL : PAS DE PB CAR K PREND UNE VALEUR A LA FOIS
 #EN PARALLELE : IL Y A CARTON
-   U1[K]=FORMULE(NOM_PARA=('X','Y',),VALE='Vx(X,Y,'+str(alpha[K])+')');
-   U2[K]=FORMULE(NOM_PARA=('X','Y',),VALE='Vy(X,Y,'+str(alpha[K])+')');
+   U1[K]=FORMULE(NOM_PARA=('X','Y',),VALE='Vx(X,Y,'+str(alpha[K])+')', Vx=Vx)
+   U2[K]=FORMULE(NOM_PARA=('X','Y',),VALE='Vy(X,Y,'+str(alpha[K])+')', Vy=Vy)
 
 #Calcul des densites de force suivant les normales ex,ey,-ex,-ey
-   FXX[K]=FORMULE(NOM_PARA=('X','Y',),VALE='SIGMA(X,Y,0,'+str(alpha[K])+')');
-   FXY[K]=FORMULE(NOM_PARA=('X','Y',),VALE='SIGMA(X,Y,2,'+str(alpha[K])+')');
+   FXX[K]=FORMULE(NOM_PARA=('X','Y',),VALE='SIGMA(X,Y,0,'+str(alpha[K])+')',
+                  SIGMA=SIGMA)
+   FXY[K]=FORMULE(NOM_PARA=('X','Y',),VALE='SIGMA(X,Y,2,'+str(alpha[K])+')',
+                  SIGMA=SIGMA)
 
-   FYX[K]=FORMULE(NOM_PARA=('X','Y',),VALE='SIGMA(X,Y,2,'+str(alpha[K])+')');
-   FYY[K]=FORMULE(NOM_PARA=('X','Y',),VALE='SIGMA(X,Y,1,'+str(alpha[K])+')');
+   FYX[K]=FORMULE(NOM_PARA=('X','Y',),VALE='SIGMA(X,Y,2,'+str(alpha[K])+')',
+                  SIGMA=SIGMA)
+   FYY[K]=FORMULE(NOM_PARA=('X','Y',),VALE='SIGMA(X,Y,1,'+str(alpha[K])+')',
+                  SIGMA=SIGMA)
 
-   FXXF[K]=FORMULE(NOM_PARA=('X','Y',),VALE='-SIGMA(X,Y,0,'+str(alpha[K])+')');
-   FXYF[K]=FORMULE(NOM_PARA=('X','Y',),VALE='-SIGMA(X,Y,2,'+str(alpha[K])+')');
+   FXXF[K]=FORMULE(NOM_PARA=('X','Y',),VALE='-SIGMA(X,Y,0,'+str(alpha[K])+')',
+                   SIGMA=SIGMA)
+   FXYF[K]=FORMULE(NOM_PARA=('X','Y',),VALE='-SIGMA(X,Y,2,'+str(alpha[K])+')',
+                   SIGMA=SIGMA)
 
-   FYXF[K]=FORMULE(NOM_PARA=('X','Y',),VALE='-SIGMA(X,Y,2,'+str(alpha[K])+')');
-   FYYF[K]=FORMULE(NOM_PARA=('X','Y',),VALE='-SIGMA(X,Y,1,'+str(alpha[K])+')');
+   FYXF[K]=FORMULE(NOM_PARA=('X','Y',),VALE='-SIGMA(X,Y,2,'+str(alpha[K])+')',
+                   SIGMA=SIGMA)
+   FYYF[K]=FORMULE(NOM_PARA=('X','Y',),VALE='-SIGMA(X,Y,1,'+str(alpha[K])+')',
+                   SIGMA=SIGMA)
 
 #Conditions limites: Diriclet + Neumann
 #Neumann => fissure

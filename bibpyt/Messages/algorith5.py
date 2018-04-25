@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -145,9 +145,7 @@ On n'a pas trouvé le ddl DZ pour le noeud  %(k1)s .
 """),
 
     41 : _(u"""
- incohérence dans les données de la loi de flambage :
- les caractéristiques introduites peuvent conduire à
- un écrasement résiduel négatif
+ les listes DEPL_POST_FL et RIGI_POST_FL doivent avoir la même longueur
 """),
 
     42 : _(u"""
@@ -222,6 +220,22 @@ La nature, les noeuds du des non-linéarités localisées sont différents.
 
 Conseil :
    Vérifier vos données concernant les dispositifs de choc.
+"""),
+
+
+    84 : _(u"""
+ les données dans la liste DEPL_POST_FL doivent être classées par ordre croissant
+"""),
+
+    85 : _(u"""
+ les données dans listes DEPL_POST_FL et RIGI_POST_FL conduisent à des déformations
+ totales qui ne sont pas classées par ordre croissant.
+ le résultat de DEPL_POST_FL+FNOR_POST_FL/RIGI_POST_FL doit être croissant
+"""),
+
+    86 : _(u"""
+ la déformation courante est supérieure à la dernière valeur spécifiée dans RIGI_POST_FL
+ La raideur utilisée est à présent constante
 """),
 
 }

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -30,10 +30,14 @@ MODELEIN=AFFE_MODELE(MAILLAGE=MAILLAG,
                               PHENOMENE='MECANIQUE',
                               MODELISATION='D_PLAN')));
 
-LN1=FORMULE(NOM_PARA=('X','Y'),VALE='Y-0.5');
-LN2=FORMULE(NOM_PARA=('X','Y'),VALE='Y-1.5');
-LN3=FORMULE(NOM_PARA=('X','Y'),VALE='Y-2.5');
-LN4=FORMULE(NOM_PARA=('X','Y'),VALE='Y-3.5');
+LN1 = FORMULE(VALE='Y-0.5',
+              NOM_PARA=['X', 'Y'],)
+LN2 = FORMULE(VALE='Y-1.5',
+              NOM_PARA=['X', 'Y'],)
+LN3 = FORMULE(VALE='Y-2.5',
+              NOM_PARA=['X', 'Y'],)
+LN4 = FORMULE(VALE='Y-3.5',
+              NOM_PARA=['X', 'Y'],)
 
 FISS1=DEFI_FISS_XFEM(MAILLAGE=MAILLAG,
                      TYPE_DISCONTINUITE='INTERFACE',
@@ -111,7 +115,9 @@ def pression(y) :
    if y < 1.5 and y >= 0.5 : return 10e6
    if y < 0.5 : return 0
 
-PRESSION = FORMULE(VALE='pression(Y)',NOM_PARA='Y');
+PRESSION = FORMULE(VALE='pression(Y)',
+                   pression=pression,
+                   NOM_PARA='Y',)
 
 def depx(y) :
    return y/5
@@ -170,8 +176,8 @@ TABDEP=POST_RELEVE_T(ACTION=_F(INTITULE='DEPLACEMENT SUR LES LEVRES',
                                TOUT_CMP='OUI',
                                OPERATION='EXTRACTION'));
 
-depl_y = FORMULE(NOM_PARA=('DY','COOR_Y'),
-                 VALE='DY+COOR_Y/10');
+depl_y = FORMULE(VALE='DY+COOR_Y/10',
+                 NOM_PARA=['DY', 'COOR_Y'],)
 
 TABDEP = CALC_TABLE(reuse = TABDEP,
                      TABLE = TABDEP,
@@ -184,8 +190,9 @@ TABDEP = CALC_TABLE(reuse = TABDEP,
 
 # FILTRE SUR LES NOMS DES NOEUDS POUR NE GARDER QUE LES NP (COTE MAITRE)
 
-depl_p = FORMULE(NOM_PARA=('DX','COOR_X','COOR_Y'),
-                   VALE='DX+depx(COOR_Y+0.5)*(COOR_X-2)/2');
+depl_p = FORMULE(VALE='DX+depx(COOR_Y+0.5)*(COOR_X-2)/2',
+                 depx=depx,
+                 NOM_PARA=['DX', 'COOR_X', 'COOR_Y'],)
 
 TABDEPP = CALC_TABLE(TABLE = TABDEP,
                      ACTION =(_F(OPERATION = 'FILTRE',
@@ -204,8 +211,9 @@ IMPR_TABLE(TABLE=TABDEPP,
 
 # FILTRE SUR LES NOMS DES NOEUDS POUR NE GARDER QUE LES NM (COTE ESCLAVE)
 
-depl_m = FORMULE(NOM_PARA=('DX','COOR_X','COOR_Y'),
-                   VALE='DX+depx(COOR_Y-0.5)*(COOR_X-2)/2');
+depl_m = FORMULE(VALE='DX+depx(COOR_Y-0.5)*(COOR_X-2)/2',
+                 depx=depx,
+                 NOM_PARA=['DX', 'COOR_X', 'COOR_Y'],)
 
 TABDEPM = CALC_TABLE(TABLE = TABDEP,
                      ACTION =(_F(OPERATION = 'FILTRE',

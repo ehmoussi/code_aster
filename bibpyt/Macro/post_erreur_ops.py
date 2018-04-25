@@ -509,6 +509,7 @@ def post_erreur_ops(self, OPTION, CHAM_GD, MODELE, GROUP_MA, **args):
                                      INST = (1.0),), );
 
         __SIanaRES=CREA_RESU(reuse=__SIanaRES,
+                             RESULTAT=__SIanaRES,
                              OPERATION='AFFE',
                              TYPE_RESU='EVOL_NOLI',
                              NOM_CHAM='DEPL',
@@ -533,6 +534,7 @@ def post_erreur_ops(self, OPTION, CHAM_GD, MODELE, GROUP_MA, **args):
                                      INST = (1.0),), );
 
         __SI_DIFFR=CREA_RESU(reuse=__SI_DIFFR,
+                             RESULTAT=__SI_DIFFR,
                              OPERATION='AFFE',
                              TYPE_RESU='EVOL_NOLI',
                              NOM_CHAM='DEPL',

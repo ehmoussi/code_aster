@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -57,7 +57,8 @@ U_COMP=DEFI_FONCTION(NOM_PARA='INST',
                      PROL_DROITE='CONSTANT');
 
 
-F_DIFF = FORMULE(NOM_PARA=('SIXX','SIXX_L'),VALE='(SIXX-SIXX_L)/SIXX')
+F_DIFF = FORMULE(VALE='(SIXX-SIXX_L)/SIXX',
+                 NOM_PARA=['SIXX', 'SIXX_L'],)
 
 MO=[None]*2
 C_RIG=[None]*2

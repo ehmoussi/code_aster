@@ -77,7 +77,7 @@ class MechanicalSolver(ExecuteCommand):
 
         inst = keywords.get("INST")
         if inst != None:
-            mechaSolv.setTimeStepManager(list(inst))
+            mechaSolv.setTimeStepManager([inst])
         listInst = keywords.get("LIST_INST")
         if listInst != None:
             mechaSolv.setTimeStepManager(listInst.getValues())

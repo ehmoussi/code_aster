@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! aslint: disable=W1501,W1504
+!
 subroutine lc0000(fami, kpg, ksp, ndim, typmod,&
                   imate, compor, mult_comp, carcri,&
                   instam, instap,&
@@ -41,7 +42,6 @@ implicit none
 #include "asterfort/lc0009.h"
 #include "asterfort/lc0012.h"
 #include "asterfort/lc0014.h"
-#include "asterfort/lc0015.h"
 #include "asterfort/lc0016.h"
 #include "asterfort/lc0017.h"
 #include "asterfort/lc0018.h"
@@ -65,7 +65,6 @@ implicit none
 #include "asterfort/lc0038.h"
 #include "asterfort/lc0039.h"
 #include "asterfort/lc0042.h"
-#include "asterfort/lc0044.h"
 #include "asterfort/lc0050.h"
 #include "asterfort/lc0054.h"
 #include "asterfort/lc0055.h"
@@ -112,10 +111,12 @@ implicit none
 #include "asterfort/lc0115.h"
 #include "asterfort/lc0120.h"
 #include "asterfort/lc0137.h"
+#include "asterfort/lc0145.h"
 #include "asterfort/lc0152.h"
 #include "asterfort/lc0165.h"
 #include "asterfort/lc0166.h"
 #include "asterfort/lc0167.h"
+#include "asterfort/lc0168.h"
 #include "asterfort/lc1002.h"
 #include "asterfort/lc1015.h"
 #include "asterfort/lc1036.h"
@@ -123,16 +124,10 @@ implicit none
 #include "asterfort/lc1058.h"
 #include "asterfort/lc2001.h"
 #include "asterfort/lc2002.h"
-#include "asterfort/lc2005.h"
 #include "asterfort/lc2036.h"
 #include "asterfort/lc2038.h"
 #include "asterfort/lc3053.h"
 #include "asterfort/lc4047.h"
-#include "asterfort/lc5007.h"
-#include "asterfort/lc5008.h"
-#include "asterfort/lc5016.h"
-#include "asterfort/lc5021.h"
-#include "asterfort/lc5036.h"
 #include "asterfort/lc6036.h"
 #include "asterfort/lc6046.h"
 #include "asterfort/lc6057.h"
@@ -154,32 +149,33 @@ implicit none
 #include "asterfort/lc8057.h"
 #include "asterfort/lc8146.h"
 #include "asterfort/lc8331.h"
-#include "asterfort/lc13029.h"
+#include "asterfort/lc20015.h"
+#include "asterfort/lc21015.h"
+#include "asterfort/lc30015.h"
+#include "asterfort/lc31015.h"
 #include "asterfort/lc9999.h"
 #include "asterfort/utmess.h"
 #include "asterfort/vrcpto.h"
 #include "asterfort/isdeco.h"
 #include "asterfort/calcExternalStateVariable5.h"
 !
-! aslint: disable=W1501,W1504
-!
-    integer :: imate, ndim, nvi, kpg, ksp
-    integer :: neps, nsig, nwkin, nwkout, ndsde
-    real(kind=8) :: carcri(*), angmas(3)
-    real(kind=8) :: instam, instap
-    real(kind=8) :: wkin(nwkin), wkout(nwkout)
-    real(kind=8) :: epsm(neps), deps(neps)
-    real(kind=8) :: sigm(nsig), sigp(nsig)
-    real(kind=8) :: vim(nvi), vip(nvi)
-    real(kind=8) :: dsidep(ndsde)
-    character(len=16) :: compor(*), option
-    character(len=16), intent(in) :: mult_comp
-    character(len=8) :: typmod(*)
-    character(len=*) :: fami
-    aster_logical :: cp
-    integer :: icomp
-    integer :: numlc
-    integer :: codret
+integer :: imate, ndim, nvi, kpg, ksp
+integer :: neps, nsig, nwkin, nwkout, ndsde
+real(kind=8) :: carcri(*), angmas(3)
+real(kind=8) :: instam, instap
+real(kind=8) :: wkin(nwkin), wkout(nwkout)
+real(kind=8) :: epsm(neps), deps(neps)
+real(kind=8) :: sigm(nsig), sigp(nsig)
+real(kind=8) :: vim(nvi), vip(nvi)
+real(kind=8) :: dsidep(ndsde)
+character(len=16) :: compor(*), option
+character(len=16), intent(in) :: mult_comp
+character(len=8) :: typmod(*)
+character(len=*) :: fami
+aster_logical :: cp
+integer :: icomp
+integer :: numlc
+integer :: codret
 !
 ! ======================================================================
 !     INTEGRATION DES LOIS DE COMPORTEMENT NON LINEAIRE POUR LES
@@ -301,9 +297,6 @@ implicit none
     if (typmod(2) .eq. 'GRADSIGM') then
         numlc = numlc + 4000
     endif
-    if (typmod(2) .eq. 'GRADEPSI') then
-        numlc = numlc + 5000
-    endif
     if (typmod(2) .eq. 'GRADVARI') then
         numlc = numlc + 6000
     endif
@@ -345,13 +338,6 @@ implicit none
                     deps, sigm, vim, option, angmas,&
                     sigp, vip, typmod, icomp,&
                     nvi, dsidep, codret)
-    case (5)
-!     ENDO_FRAGILE
-        call lc0005(fami, kpg, ksp, ndim, imate,&
-                    compor, carcri, instam, instap, epsm,&
-                    deps, sigm, vim, option, angmas,&
-                    sigp, vip, typmod, icomp,&
-                    nvi, dsidep, codret)
     case (7)
 !     ENDO_ORTH_BETON
         call lc0007(fami, kpg, ksp, ndim, imate,&
@@ -376,13 +362,6 @@ implicit none
     case (14)
 !     ROUSSELIER
         call lc0014(fami, kpg, ksp, ndim, imate,&
-                    compor, carcri, instam, instap, epsm,&
-                    deps, sigm, vim, option, angmas,&
-                    sigp, vip, typmod, icomp,&
-                    nvi, dsidep, codret)
-    case (15)
-!     META_XXX
-        call lc0015(fami, kpg, ksp, ndim, imate,&
                     compor, carcri, instam, instap, epsm,&
                     deps, sigm, vim, option, angmas,&
                     sigp, vip, typmod, icomp,&
@@ -530,12 +509,6 @@ implicit none
                     nvi, dsidep, codret)
     case (42)
         call lc0042(fami, kpg, ksp, ndim, imate,&
-                    compor, carcri, instam, instap, epsm,&
-                    deps, sigm, vim, option, angmas,&
-                    sigp, vip, typmod, icomp,&
-                    nvi, dsidep, codret)
-    case (44)
-        call lc0044(fami, kpg, ksp, ndim, imate,&
                     compor, carcri, instam, instap, epsm,&
                     deps, sigm, vim, option, angmas,&
                     sigp, vip, typmod, icomp,&
@@ -825,6 +798,15 @@ implicit none
                     angmas, sigp, vip, &
                     typmod, icomp, nvi,&
                     dsidep, codret)
+
+    case (145)
+!       BETON_RAG : nouvelle
+        call lc0145(fami, kpg, ksp, ndim, imate,&
+                    compor, carcri, instam, instap, epsm,&
+                    deps, sigm, vim, option, angmas,&
+                    sigp, vip, typmod, icomp,&
+                    nvi, dsidep, codret)
+
     case (152)
 !     CABLE_GAINE
         call lc0152(fami, kpg, ksp, ndim, imate,&
@@ -847,8 +829,15 @@ implicit none
                     sigp, vip, wkin, typmod, icomp,&
                     nvi, dsidep, codret)
     case (167)
-!     RGI_BETON
+!     FLUA_ENDO_PORO
         call lc0167(fami, kpg, ksp, ndim, imate,&
+                    compor, carcri, instam, instap, epsm,&
+                    deps, sigm, vim, option, angmas,&
+                    sigp, vip, wkin, typmod, icomp,&
+                    nvi, dsidep, codret)
+    case (168)
+!     RGI_BETON
+        call lc0168(fami, kpg, ksp, ndim, imate,&
                     compor, carcri, instam, instap, epsm,&
                     deps, sigm, vim, option, angmas,&
                     sigp, vip, wkin, typmod, icomp,&
@@ -919,14 +908,6 @@ implicit none
                     option, sigp, vip, typmod, ndsde,&
                     dsidep, codret)
 
-    case (2005)
-!     ENDO_FRAGILE+GRAD_EPSI
-        call lc2005(fami, kpg, ksp, ndim, imate,&
-                    compor, carcri, instam, instap, epsm,&
-                    deps, sigm, vim, option, angmas,&
-                    sigp, vip, typmod, icomp,&
-                    nvi, dsidep, codret)
-
     case (2036)
 !     ENDO_ISOT_BETON
         call lc2036(fami, kpg, ksp, ndim, imate,&
@@ -968,47 +949,6 @@ implicit none
                     deps, sigm, vim, option, angmas,&
                     sigp, vip, wkin, wkout, typmod,&
                     icomp, nvi, dsidep, codret)
-!
-! --------------------------------------------------------------------------------------------------
-! - With GRADEPSI
-! --------------------------------------------------------------------------------------------------
-!
-    case (5007)
-!     ENDO_ORTH_BETON
-        call lc5007(fami, kpg, ksp, ndim, imate,&
-                    compor, carcri, instam, instap, epsm,&
-                    deps, sigm, vim, option, angmas,&
-                    sigp, vip, wkin, typmod, icomp,&
-                    nvi, dsidep, codret)
-    case (5008)
-!     MAZARS
-        call lc5008(fami, kpg, ksp, ndim, imate,&
-                    compor, carcri, instam, instap, epsm,&
-                    deps, sigm, vim, option, angmas,&
-                    sigp, vip, wkout, typmod, icomp,&
-                    nvi, dsidep, codret)
-    case (5016)
-!     DRUCK_PRAGER
-        call lc5016(fami, kpg, ksp, ndim, imate,&
-                    compor, carcri, instam, instap, epsm,&
-                    deps, sigm, vim, option, angmas,&
-                    sigp, vip, wkout, typmod, icomp,&
-                    nvi, dsidep, codret)
-    case (5021)
-!     BETON_UMLV
-        call lc5021(fami, kpg, ksp, ndim, imate,&
-                    compor, carcri, instam, instap, epsm,&
-                    deps, sigm, vim, option, angmas,&
-                    sigp, vip, wkout, typmod, icomp,&
-                    nvi, dsidep, codret)
-    case (5036)
-!     ENDO_ISOT_BETON
-        call lc5036(fami, kpg, ksp, ndim, imate,&
-                    compor, carcri, instam, instap, neps,&
-                    epsm, deps, nsig, sigm, vim,&
-                    option, angmas, sigp, vip, nwkin,&
-                    wkin, typmod, icomp, nvi, ndsde,&
-                    dsidep, nwkout, wkout, codret)
 !
 ! --------------------------------------------------------------------------------------------------
 ! - With GRADVARI
@@ -1175,14 +1115,42 @@ implicit none
                     wkin, typmod,icomp, ndsde,&
                     dsidep, nwkout, wkout, codret)
 !
-    case (13029)
-        call lc13029(fami, kpg, ksp, ndim, imate,&
-                    compor, mult_comp, carcri, instam, instap, neps,&
-                    epsm, deps, nsig, sigm, vim,&
-                    option, angmas,sigp, nvi, vip, nwkin,&
-                    wkin, typmod,icomp, ndsde,&
-                    dsidep, nwkout, wkout, codret)
 !
+! --------------------------------------------------------------------------------------------------
+! - For metallurgy/steel
+! --------------------------------------------------------------------------------------------------
+!
+    case (20015)
+        call lc20015(fami, kpg, ksp, ndim, imate,&
+                     compor, carcri, instam, instap, epsm,&
+                     deps, sigm, vim, option, angmas,&
+                     sigp, vip, typmod, icomp,&
+                     nvi, dsidep, codret)
+    case (21015)
+! ----- SIMO_MIEHE
+        call lc21015(fami, kpg, ksp, ndim, imate,&
+                     compor, carcri, instam, instap, epsm,&
+                     deps, sigm, vim, option, angmas,&
+                     sigp, vip, typmod, icomp,&
+                     nvi, dsidep, codret)
+!
+! --------------------------------------------------------------------------------------------------
+! - For metallurgy/zircaloy
+! --------------------------------------------------------------------------------------------------
+!
+    case (30015)
+        call lc30015(fami, kpg, ksp, ndim, imate,&
+                     compor, carcri, instam, instap, epsm,&
+                     deps, sigm, vim, option, angmas,&
+                     sigp, vip, typmod, icomp,&
+                     nvi, dsidep, codret)
+    case (31015)
+! ----- SIMO_MIEHE
+        call lc31015(fami, kpg, ksp, ndim, imate,&
+                     compor, carcri, instam, instap, epsm,&
+                     deps, sigm, vim, option, angmas,&
+                     sigp, vip, typmod, icomp,&
+                     nvi, dsidep, codret)
 ! --------------------------------------------------------------------------------------------------
 ! - Error
 ! --------------------------------------------------------------------------------------------------

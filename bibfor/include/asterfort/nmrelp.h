@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,36 +15,24 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
-!
-! aslint: disable=W1504
 !
 interface
-    subroutine nmrelp(modele         , numedd, mate       , carele    , comref    ,&
-                      ds_constitutive, lischa, fonact     , iterat    , ds_measure,&
-                      sdnume         , sddyna, ds_algopara, ds_contact, valinc    ,&
-                      solalg         , veelem, veasse     , ds_conv   , ldccvg)
+    subroutine nmrelp(model          , nume_dof , ds_material, cara_elem ,&
+                      ds_constitutive, list_load, list_func_acti, iter_newt , ds_measure,&
+                      sdnume         , sddyna   , ds_algopara, ds_contact, valinc    ,&
+                      solalg         , veelem   , veasse     , ds_conv   , ldccvg)
         use NonLin_Datastructure_type
-        character(len=24) :: modele
-        character(len=24) :: numedd
-        character(len=24) :: mate
-        character(len=24) :: carele
-        character(len=24) :: comref
-        type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-        character(len=19) :: lischa
-        integer :: fonact(*)
-        integer :: iterat
-        type(NL_DS_Measure), intent(inout) :: ds_measure
-        character(len=19) :: sdnume
-        character(len=19) :: sddyna
+        integer :: list_func_acti(*)
+        integer :: iter_newt, ldccvg
         type(NL_DS_AlgoPara), intent(in) :: ds_algopara
         type(NL_DS_Contact), intent(in) :: ds_contact
-        character(len=19) :: valinc(*)
-        character(len=19) :: solalg(*)
-        character(len=19) :: veelem(*)
-        character(len=19) :: veasse(*)
+        type(NL_DS_Measure), intent(inout) :: ds_measure
+        character(len=19) :: list_load, sddyna, sdnume
+        type(NL_DS_Material), intent(in) :: ds_material
+        character(len=24) :: model, nume_dof, cara_elem
+        type(NL_DS_Constitutive), intent(in) :: ds_constitutive
+        character(len=19) :: veelem(*), veasse(*)
+        character(len=19) :: solalg(*), valinc(*)
         type(NL_DS_Conv), intent(inout) :: ds_conv
-        integer :: ldccvg
     end subroutine nmrelp
 end interface

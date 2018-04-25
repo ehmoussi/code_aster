@@ -1307,6 +1307,15 @@
 
 
 ================================================================================
+:py:class:`~code_aster.Objects.ThmAirDissMaterialBehaviour` object
+================================================================================
+
+.. autoclass:: code_aster.Objects.ThmAirDissMaterialBehaviour
+   :show-inheritance:
+   :members:
+
+
+================================================================================
 :py:class:`~code_aster.Objects.ThmDiffuMaterialBehaviour` object
 ================================================================================
 

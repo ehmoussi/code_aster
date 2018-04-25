@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -241,7 +241,7 @@ EXTR1=POST_RELEVE_T(ACTION=_F(OPERATION='EXTRACTION',
                               NOM_CMP='PRE1'));
 
 INCNUM = FORMULE(VALE='NUMAUX+1',
-                 NOM_PARA='NUMAUX');
+                 NOM_PARA='NUMAUX',)
 
 EXTR1=CALC_TABLE(   reuse=EXTR1,
                     TABLE=EXTR1,
@@ -273,7 +273,7 @@ EXTR1=CALC_TABLE(reuse=EXTR1,TABLE=EXTR1,
                   )
 
 DIFF = FORMULE(VALE='abs(PREPROJ-PRE1)',
-                 NOM_PARA=('PREPROJ','PRE1'));
+               NOM_PARA=['PREPROJ', 'PRE1'],)
 
 TBDIF=CALC_TABLE(   TABLE=EXTR1,
                     ACTION=_F(OPERATION='OPER',

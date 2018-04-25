@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine calcExternalStateVariable4(nno     , npg   ,&
+subroutine calcExternalStateVariable4(nno     , npg   , ndim,&
                                       jv_dfunc,&
                                       geom    , typmod)
 !
@@ -26,15 +26,16 @@ implicit none
 !
 #include "asterf_types.h"
 #include "jeveux.h"
+#include "asterc/r8vide.h"
 #include "asterfort/assert.h"
 #include "asterfort/utmess.h"
 #include "asterfort/mgauss.h"
 #include "asterfort/r8inir.h"
 !
-integer, intent(in) :: nno, npg
+integer, intent(in) :: nno, npg, ndim
 integer, intent(in) :: jv_dfunc
 character(len=8), intent(in) :: typmod(2)
-real(kind=8), intent(in) :: geom(3, nno)
+real(kind=8), intent(in) :: geom(ndim, nno)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -45,7 +46,8 @@ real(kind=8), intent(in) :: geom(3, nno)
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  nno              : number of nodes 
-! In  npg              : number of Gauss points 
+! In  npg              : number of Gauss points
+! In  ndim             : dimension of problem (2 or 3)
 ! In  jv_dfunc         : JEVEUX adress for derivative of shape functions
 ! In  typmod2          : type of modelization (TYPMOD2)
 ! In  geom             : initial coordinates of nodes
@@ -95,7 +97,7 @@ real(kind=8), intent(in) :: geom(3, nno)
         end do
 !
     else
-        call utmess('F', 'COMPOR1_92')
+        ca_vext_eltsize2_(:) = r8vide()
     endif
 !
 end subroutine

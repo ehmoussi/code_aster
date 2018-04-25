@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -48,8 +48,12 @@ subroutine pjefco(moa1, moa2, corres, base)
 #include "asterfort/pjefca.h"
 #include "asterfort/pjeftg.h"
 #include "asterfort/pjfuco.h"
+#include "asterfort/pjreco.h"
+#include "asterfort/pjxxu2.h"
 #include "asterfort/reliem.h"
+#include "asterfort/utlisi.h"
 #include "asterfort/utmess.h"
+#include "asterfort/wkvect.h"
     character(len=8) :: moa1, moa2
     character(len=16) :: corres
     character(len=1) :: base
@@ -63,15 +67,19 @@ subroutine pjefco(moa1, moa2, corres, base)
 !
     character(len=8) :: noma1, noma2, nomo1, nomo2, ncas
     character(len=16) :: corre1, corre2, corre3
-    character(len=16) :: tymocl(5), motcle(5)
+    character(len=16) :: tymocl(5), motcle(5), nameListInterc
     character(len=24) :: geom2, geom1
-    integer :: n1, nbocc, iocc, nbno2, nbma1
-    integer :: iexi
+    character(len=2) :: dim
+    integer :: n1, nbocc, iocc, nbno2, nbma1, nbma2
+    integer :: iexi, nbNodeInterc, nbnoma2, nbnono2
 !
-    aster_logical :: l_dmax, dbg
+    aster_logical :: l_dmax, dbg, final_occ
     real(kind=8) :: dmax, dala
     integer, pointer :: limanu1(:) => null()
     integer, pointer :: linonu2(:) => null()
+    integer, pointer :: limanu2(:) => null()
+    integer, pointer :: linotmp(:) => null()
+    integer, pointer :: linotm2(:) => null()
 !----------------------------------------------------------------------
     call jemarq()
     ASSERT(base.eq.'V')
@@ -171,6 +179,8 @@ subroutine pjefco(moa1, moa2, corres, base)
         endif
 !
         do iocc = 1, nbocc
+           final_occ = .false.
+           if (iocc.eq. nbocc) final_occ = .true.
 !
 !           -- RECUPERATION DE LA LISTE DE MAILLES LMA1 :
 !           ----------------------------------------------
@@ -186,6 +196,41 @@ subroutine pjefco(moa1, moa2, corres, base)
             call reliem(nomo1, noma1, 'NU_MAILLE', 'VIS_A_VIS', iocc,&
                         3, motcle, tymocl, '&&PJEFCO.LIMANU1', nbma1)
             call jeveuo('&&PJEFCO.LIMANU1', 'L', vi=limanu1)
+            
+!
+!           -- SI PRESENT : RECUPERATION DE LA LISTE DE MAILLE LMA2 
+!              POUR VERIFICATION :
+!           --------------------------------------------------------
+            motcle(1) = 'MAILLE_2'
+            tymocl(1) = 'MAILLE'
+            motcle(2) = 'GROUP_MA_2'
+            tymocl(2) = 'GROUP_MA'
+            motcle(3) = 'TOUT_2'
+            tymocl(3) = 'TOUT'
+            call reliem(' ', noma2, 'NU_MAILLE', 'VIS_A_VIS', iocc,&
+                        3, motcle, tymocl, '&&PJEFCO.LIMANU2', nbma2)
+            
+            nbnoma2 = 0
+            if (nbma2 .gt. 0) then
+                call jeveuo('&&PJEFCO.LIMANU2', 'L', vi=limanu2)
+                call pjefca(moa2, '&&PJEFCO.LIMANU2', -iocc, ncas)
+                
+                if (ncas .eq. '2D') then
+                    dim = '2D'
+                else if (ncas.eq.'3D') then
+                    dim='3D'
+                else if (ncas.eq.'2.5D') then
+                    dim='2D'
+                else if (ncas.eq.'1.5D') then
+                    dim='1D'
+                else
+                    ASSERT(.false.)
+                endif
+
+                call pjxxu2(dim, moa2, limanu2, nbma2, '&&PJEFCO.LINOTMP',&
+                            nbnoma2)
+                call jedetr('&&PJEFCO.LIMANU2')
+            endif
 !
 !           -- RECUPERATION DE LA LISTE DE NOEUDS LNO2 :
 !           ----------------------------------------------
@@ -193,15 +238,39 @@ subroutine pjefco(moa1, moa2, corres, base)
             tymocl(1) = 'NOEUD'
             motcle(2) = 'GROUP_NO_2'
             tymocl(2) = 'GROUP_NO'
-            motcle(3) = 'MAILLE_2'
-            tymocl(3) = 'MAILLE'
-            motcle(4) = 'GROUP_MA_2'
-            tymocl(4) = 'GROUP_MA'
-            motcle(5) = 'TOUT_2'
-            tymocl(5) = 'TOUT'
+
             call reliem(' ', noma2, 'NU_NOEUD', 'VIS_A_VIS', iocc,&
-                        5, motcle, tymocl, '&&PJEFCO.LINONU2', nbno2)
-            call jeveuo('&&PJEFCO.LINONU2', 'L', vi=linonu2)
+                        2, motcle, tymocl, '&&PJEFCO.LINOTM2', nbnono2)
+            
+            call wkvect('&&PJEFCO.LINONU2', 'V V I', nbnono2+nbnoma2, vi=linonu2)
+            
+            if (nbnono2.gt.0 .and. nbnoma2.eq.0) then
+                call jeveuo('&&PJEFCO.LINOTM2', 'L', vi=linotm2)
+                nbno2 = nbnono2
+                linonu2(1:nbno2) = linotm2(1:nbno2)
+                call jedetr('&&PJEFCO.LINOTM2')
+            elseif (nbnono2.eq.0 .and. nbnoma2.gt.0) then
+                call jeveuo('&&PJEFCO.LINOTMP', 'L', vi=linotmp)
+                nbno2 = nbnoma2
+                linonu2(1:nbno2) = linotmp(1:nbno2)
+                call jedetr('&&PJEFCO.LINOTMP')
+            elseif (nbnono2.gt.0 .and. nbnoma2.gt.0)then
+                call jeveuo('&&PJEFCO.LINOTM2', 'L', vi=linotm2)
+                call jeveuo('&&PJEFCO.LINOTMP', 'L', vi=linotmp)
+                call utlisi('UNION', linotm2, nbnono2, linotmp, nbnoma2,&
+                            linonu2, nbnono2+nbnoma2, nbno2)
+                ASSERT(nbno2.gt.0)
+                call jedetr('&&PJEFCO.LINOTM2')
+                call jedetr('&&PJEFCO.LINOTMP')
+            else
+                ASSERT(.false.)
+            endif
+! 
+!
+!           intersection entre les noeuds2 des occurrences precedentes
+!           et de l'occurrence courante
+            call pjreco(linonu2, nbno2, iocc, final_occ, nameListInterc,&
+                        nbNodeInterc)
 !
 !           PRISE EN COMPTE DU MOT-CLE TRANSF_GEOM_[1|2]
 !           --------------------------------------------
@@ -216,22 +285,27 @@ subroutine pjefco(moa1, moa2, corres, base)
             if (ncas .eq. '2D') then
                 call pj2dco('PARTIE', moa1, moa2, nbma1, limanu1,&
                             nbno2, linonu2, geom1, geom2, corre1,&
-                            l_dmax, dmax, dala)
+                            l_dmax, dmax, dala, listIntercz = nameListInterc,& 
+                            nbIntercz = nbNodeInterc)
             else if (ncas.eq.'3D') then
                 call pj3dco('PARTIE', moa1, moa2, nbma1, limanu1,&
                             nbno2, linonu2, geom1, geom2, corre1,&
-                            l_dmax, dmax, dala)
+                            l_dmax, dmax, dala, listIntercz = nameListInterc,& 
+                            nbIntercz = nbNodeInterc)
             else if (ncas.eq.'2.5D') then
                 call pj4dco('PARTIE', moa1, moa2, nbma1, limanu1,&
                             nbno2, linonu2, geom1, geom2, corre1,&
-                            l_dmax, dmax, dala)
+                            l_dmax, dmax, dala, listIntercz = nameListInterc,& 
+                            nbIntercz = nbNodeInterc)
             else if (ncas.eq.'1.5D') then
                 call pj6dco('PARTIE', moa1, moa2, nbma1, limanu1,&
                             nbno2, linonu2, geom1, geom2, corre1,&
-                            l_dmax, dmax, dala)
+                            l_dmax, dmax, dala, listIntercz = nameListInterc,& 
+                            nbIntercz = nbNodeInterc)
             else
                 ASSERT(.false.)
             endif
+            if (final_occ) call jedetr(nameListInterc)
 !
 !
 !           -- SURCHARGE DU CORRESP_2_MAILLA :

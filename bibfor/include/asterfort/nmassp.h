@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,37 +15,20 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-! aslint: disable=W1504
 !
 interface
-    subroutine nmassp(modele         , numedd, mate  , carele    , comref    ,&
-                      ds_constitutive, lischa, fonact, ds_measure, ds_contact,&
-                      sddyna         , valinc, solalg, veelem    , veasse    ,&
-                      ldccvg         , cnpilo, cndonn, sdnume    , matass    ,&
-                      ds_algorom)
+    subroutine nmassp(ds_material   ,list_func_acti,&
+                      ds_algorom    , sddyna        ,&
+                      ds_contact    , hval_veasse   ,&
+                      cnpilo        , cndonn)
         use NonLin_Datastructure_type
         use Rom_Datastructure_type  
-        character(len=24) :: modele
-        character(len=24) :: numedd
-        character(len=24) :: mate
-        character(len=24) :: carele
-        character(len=24) :: comref
-        type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-        character(len=19) :: lischa
-        integer :: fonact(*)
-        type(NL_DS_Measure), intent(inout) :: ds_measure
-        type(NL_DS_Contact), intent(in) :: ds_contact
-        character(len=19) :: sddyna
-        character(len=19) :: valinc(*)
-        character(len=19) :: solalg(*)
-        character(len=19) :: veelem(*)
-        character(len=19) :: veasse(*)
-        integer :: ldccvg
-        character(len=24) :: codere
-        character(len=19) :: cnpilo
-        character(len=19) :: cndonn
-        character(len=19) :: sdnume
-        character(len=19) :: matass
+        type(NL_DS_Material), intent(in) :: ds_material
+        integer, intent(in) :: list_func_acti(*)
         type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
+        character(len=19), intent(in) :: sddyna
+        type(NL_DS_Contact), intent(in) :: ds_contact
+        character(len=19), intent(in) :: hval_veasse(*)
+        character(len=19), intent(in) :: cnpilo, cndonn
     end subroutine nmassp
 end interface
