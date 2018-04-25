@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -72,7 +72,9 @@ TRACTION=AFFE_CHAR_MECA(MODELE=MO,
 #   Chargement sinusoidal
 #
 OMEGA=omega0*1.1
-SINOMEGT = FORMULE(NOM_PARA='INST',VALE='sin(OMEGA*INST)')
+SINOMEGT = FORMULE(VALE='sin(OMEGA*INST)',
+                   OMEGA=OMEGA,
+                   NOM_PARA='INST',)
 FSIN=CALC_FONC_INTERP(         FONCTION=SINOMEGT,
                                LIST_PARA=L_INST,
                                NOM_PARA = 'INST',

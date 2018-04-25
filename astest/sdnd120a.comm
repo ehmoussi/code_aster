@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -99,7 +99,9 @@ L_INST=DEFI_LIST_REEL(  DEBUT=0.,
 #---------------------------------
 OMEGAA=2.*pi*1.
 
-ACCE1 = FORMULE(NOM_PARA='INST',VALE='-0.66*sin(OMEGAA*INST) ')
+ACCE1 = FORMULE(VALE='-0.66*sin(OMEGAA*INST) ',
+                OMEGAA=OMEGAA,
+                NOM_PARA='INST',)
 ACCELER1=CALC_FONC_INTERP( FONCTION=ACCE1, LIST_PARA=L_INST,
 NOM_PARA = 'INST',
                                PROL_DROITE='LINEAIRE',
@@ -111,7 +113,9 @@ NOM_PARA = 'INST',
 # INTEGRATION DES ACCELEROGRAMMES:
 #---------------------------------
 
-VITE1 = FORMULE(NOM_PARA='INST',VALE='0.66*cos(OMEGAA*INST)/OMEGAA ')
+VITE1 = FORMULE(VALE='0.66*cos(OMEGAA*INST)/OMEGAA ',
+                OMEGAA=OMEGAA,
+                NOM_PARA='INST',)
 VITESSE1=CALC_FONC_INTERP( FONCTION=VITE1, LIST_PARA=L_INST,
 NOM_PARA = 'INST',
                        PROL_DROITE='LINEAIRE',
@@ -119,7 +123,9 @@ NOM_PARA = 'INST',
                       NOM_RESU='VITE',
                      INFO=1)
 
-DEPL1 = FORMULE(NOM_PARA='INST',VALE='0.66*sin(OMEGAA*INST)/(OMEGAA**2)')
+DEPL1 = FORMULE(VALE='0.66*sin(OMEGAA*INST)/(OMEGAA**2)',
+                OMEGAA=OMEGAA,
+                NOM_PARA='INST',)
 DEPLACE1=CALC_FONC_INTERP( FONCTION=DEPL1, LIST_PARA=L_INST,
 NOM_PARA = 'INST',
                        PROL_DROITE='LINEAIRE',
@@ -127,7 +133,8 @@ NOM_PARA = 'INST',
                       NOM_RESU='DEPL',
                      INFO=1)
 
-ACCE2 = FORMULE(NOM_PARA='INST',VALE='0.*INST ')
+ACCE2 = FORMULE(VALE='0.*INST ',
+                NOM_PARA='INST',)
 ACCELER2=CALC_FONC_INTERP( FONCTION=ACCE2, LIST_PARA=L_INST,
 NOM_PARA = 'INST',
                        PROL_DROITE='LINEAIRE',
@@ -136,7 +143,8 @@ NOM_PARA = 'INST',
                      INFO=1)
 
 #
-VITE2 = FORMULE(NOM_PARA='INST',VALE='0.*INST ')
+VITE2 = FORMULE(VALE='0.*INST ',
+                NOM_PARA='INST',)
 VITESSE2=CALC_FONC_INTERP( FONCTION=VITE2, LIST_PARA=L_INST,
 NOM_PARA = 'INST',
                        PROL_DROITE='LINEAIRE',
@@ -144,7 +152,8 @@ NOM_PARA = 'INST',
                       NOM_RESU='VITE',
                      INFO=1)
 
-DEPL2 = FORMULE(NOM_PARA='INST',VALE='0.*INST ')
+DEPL2 = FORMULE(VALE='0.*INST ',
+                NOM_PARA='INST',)
 DEPLACE2=CALC_FONC_INTERP( FONCTION=DEPL2, LIST_PARA=L_INST,
 NOM_PARA = 'INST',
                        PROL_DROITE='LINEAIRE',

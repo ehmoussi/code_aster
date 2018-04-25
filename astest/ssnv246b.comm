@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -60,7 +60,8 @@ MO=AFFE_MODELE(MAILLAGE=MAILLAG2,
                        MODELISATION='D_PLAN',),
               );
 
-LS_N=FORMULE(NOM_PARA=('X','Y'),VALE='(Y+7)**2+X**2-81');
+LS_N = FORMULE(VALE='(Y+7)**2+X**2-81',
+               NOM_PARA=['X', 'Y'],)
 #LS_N=FORMULE(NOM_PARA=('X','Y'),VALE='Y-2.3*cos(X/3+0.3)');
 #LS_N=FORMULE(NOM_PARA=('X','Y'),VALE='(Y+5)**2+(X+5)**2-49');
 
@@ -138,8 +139,12 @@ def cisa(x, y):
 
    return tau
 
-P_N =FORMULE(NOM_PARA=('X','Y'),VALE='pres(X,Y)');
-CISA=FORMULE(NOM_PARA=('X','Y'),VALE='cisa(X,Y)');
+P_N = FORMULE(VALE='pres(X,Y)',
+              pres=pres,
+              NOM_PARA=['X', 'Y'],)
+CISA = FORMULE(VALE='cisa(X,Y)',
+               cisa=cisa,
+               NOM_PARA=['X', 'Y'],)
 
 
 CH=AFFE_CHAR_MECA(MODELE=MODELEK,

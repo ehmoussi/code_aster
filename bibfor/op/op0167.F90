@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -1107,7 +1107,7 @@ subroutine op0167()
 ! ------ BOUCLE SUR LES GROUP_MA ------------------------------------------------------------------
         do izone = 1,nbgrma
 ! ------ LISTE DE MAILLE DU GROUP_MA
-            call gtgrma(nomaax, zk24(jlgrma+izone-1), lima, nbma)
+            call gtgrma(nomain, nomaax, zk24(jlgrma+izone-1), lima, nbma)
 ! ------ CREATION DES PATCHS ET RAFFINEMENT LOCAL
             call cppagn(nomaax, nomaou,  nbma, lima, izone,typ_dec)
 ! ------ COPIE DES DONNEES DANS LE MAILLAGE AUXILIAIRE

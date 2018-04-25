@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,12 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine ndlect(modele, mate, carele, lischa, sddyna)
-!
 ! person_in_charge: mickael.abbas at edf.fr
 !
-    implicit none
+subroutine ndlect(modele, mate, carele, lischa, sddyna)
+!
+implicit none
+!
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterc/getfac.h"
@@ -46,10 +46,10 @@ subroutine ndlect(modele, mate, carele, lischa, sddyna)
 #include "asterfort/nmmuap.h"
 #include "asterfort/nmondp.h"
 #include "asterfort/utmess.h"
-#include "asterfort/deprecated_algom.h"
-    character(len=19) :: sddyna
-    character(len=24) :: modele, mate, carele
-    character(len=19) :: lischa
+!
+character(len=19) :: sddyna
+character(len=24) :: modele, mate, carele
+character(len=19) :: lischa
 !
 ! ----------------------------------------------------------------------
 !
@@ -100,19 +100,21 @@ subroutine ndlect(modele, mate, carele, lischa, sddyna)
     character(len=19) :: vefsdo, vefint, vedido, vesstf
     character(len=19) :: vefedo, veondp, vedidi, velapl
 !
-    character(len=19) :: cnfedo, cnfsdo, cndidi, cnfint
-    character(len=19) :: cndido, cncine
-    character(len=19) :: cnondp, cnlapl
-    character(len=19) :: cnsstf, cnviss
+    character(len=19) :: cdfedo, cdfsdo, cddidi, cdfint
+    character(len=19) :: cddido, cdcine
+    character(len=19) :: cdondp, cdlapl, cdeltc, cdeltf
+    character(len=19) :: cdsstf, cdviss, cdsstr
 !
     character(len=19) :: depent, vitent, accent
     character(len=19) :: depabs, vitabs, accabs
 !
-    data cnfedo,cnfsdo    /'&&NDLECT.CNFEDO','&&NDLECT.CNFSDO'/
-    data cndido,cndidi    /'&&NDLECT.CNDIDO','&&NDLECT.CNDIDI'/
-    data cnfint,cnviss    /'&&NDLECT.CNFINT','&&NDLECT.CNVISS'/
-    data cnondp,cnlapl    /'&&NDLECT.CNONDP','&&NDLECT.CNLAPL'/
-    data cncine,cnsstf    /'&&NDLECT.CNCINE','&&NDLECT.CNSSTF'/
+    data cdfedo,cdfsdo    /'&&NDLECT.CNFEDO','&&NDLECT.CNFSDO'/
+    data cddido,cddidi    /'&&NDLECT.CNDIDO','&&NDLECT.CNDIDI'/
+    data cdfint,cdviss    /'&&NDLECT.CNFINT','&&NDLECT.CNVISS'/
+    data cdondp,cdlapl    /'&&NDLECT.CNONDP','&&NDLECT.CNLAPL'/
+    data cdcine,cdsstf    /'&&NDLECT.CNCINE','&&NDLECT.CNSSTF'/
+    data cdsstr           /'&&NDLECT.CNSSTR'/
+    data cdeltc,cdeltf    /'&&NDLECT.CNELTC','&&NDLECT.CNELTF'/
 !
     data vefedo,vefsdo    /'&&NDLECT.VEFEDO','&&NDLECT.VEFSDO'/
     data vedido,vedidi    /'&&NDLECT.VEDIDO','&&NDLECT.VEDIDI'/
@@ -378,16 +380,19 @@ subroutine ndlect(modele, mate, carele, lischa, sddyna)
         zk24(jveol+6-1) = veondp
         zk24(jveol+7-1) = velapl
         zk24(jveol+8-1) = vesstf
-        zk24(jvaol+1-1) = cnfedo
-        zk24(jvaol+2-1) = cnfsdo
-        zk24(jvaol+3-1) = cndido
-        zk24(jvaol+4-1) = cndidi
-        zk24(jvaol+5-1) = cnfint
-        zk24(jvaol+6-1) = cnondp
-        zk24(jvaol+7-1) = cnlapl
-        zk24(jvaol+8-1) = cnsstf
-        zk24(jvaol+9-1) = cncine
-        zk24(jvaol+10-1) = cnviss
+        zk24(jvaol+1-1) = cdfedo
+        zk24(jvaol+2-1) = cdfsdo
+        zk24(jvaol+3-1) = cddido
+        zk24(jvaol+4-1) = cddidi
+        zk24(jvaol+5-1) = cdfint
+        zk24(jvaol+6-1) = cdondp
+        zk24(jvaol+7-1) = cdlapl
+        zk24(jvaol+8-1) = cdsstf
+        zk24(jvaol+9-1) = cdcine
+        zk24(jvaol+10-1) = cdviss
+        zk24(jvaol+11-1) = cdsstr
+        zk24(jvaol+12-1) = cdeltc
+        zk24(jvaol+13-1) = cdeltf
     endif
 !
 ! --- CARTE STADYN POUR POUTRES
@@ -437,8 +442,7 @@ subroutine ndlect(modele, mate, carele, lischa, sddyna)
     zl(jlosd+15-1) = lviss
 !
     if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE> ... '//&
-     &                'FONCTIONNALITES ACTIVEES EN DYNAMIQUE '
+        write (ifm,*) '<MECANONLINE> ... FONCTIONNALITES ACTIVEES EN DYNAMIQUE '
 !
         if (ndynlo(sddyna,'IMPLICITE')) then
             write (ifm,*) '<MECANONLINE> ...... SCHEMA IMPLICITE'

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -223,10 +223,10 @@ force=POST_RELEVE_T(ACTION=_F(OPERATION='EXTRACTION',
                                RESULTANTE='DY'));
 
 coefDX = FORMULE(VALE='-2*DX',
-                NOM_PARA='DX');
+                 NOM_PARA='DX',)
 
 coefDY = FORMULE(VALE='2*DY*3.1415926/1000',
-                NOM_PARA='DY');
+                 NOM_PARA='DY',)
 
 #-----------------------------------------------------------
 # CONTRACTION DU DIAMETRE

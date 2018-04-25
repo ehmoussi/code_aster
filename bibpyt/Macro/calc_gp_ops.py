@@ -251,20 +251,20 @@ def calc_gp_ops(self, **args):
             UTMESS('F', 'RUPTURE1_19', ['TRANCHE_3D', '3D'])
 
 #    liste des noeuds du fond de fissure
-        l_noeuds_fissure = self['FOND_FISS'].sdj.FOND_NOEU.get()
+        l_noeuds_fissure = args['FOND_FISS'].sdj.FOND_NOEU.get()
         if l_noeuds_fissure == None:
 # Cas double fond de fissure : par convention les noeuds sont ceux de
 # fond_inf
-            l_noeuds_fissure = self['FOND_FISS'].sdj.FONDINF_NOEU.get()
+            l_noeuds_fissure = args['FOND_FISS'].sdj.FONDINF_NOEU.get()
 
 #    normale au plan de la fissure
-        lnormale = self['FOND_FISS'].sdj.NORMALE.get()
+        lnormale = args['FOND_FISS'].sdj.NORMALE.get()
         if (lnormale == None):
             UTMESS('F', 'POST0_39')
 
 #    symetrie
         iret, ibid, syme = aster.dismoi(
-            'SYME', self['FOND_FISS'].nom, 'FOND_FISS', 'F')
+            'SYME', args['FOND_FISS'].nom, 'FOND_FISS', 'F')
         if syme == 'OUI':
             mult = 2
 

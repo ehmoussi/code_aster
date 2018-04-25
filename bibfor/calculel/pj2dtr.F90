@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 
 subroutine pj2dtr(cortr3, corres, nutm2d, elrf2d, geom1,&
-                  geom2, lraff, dala)
+                  geom2, lraff, dala, listInterc, nbInterc)
     implicit none
 #include "asterf_types.h"
 #include "jeveux.h"
@@ -45,11 +45,11 @@ subroutine pj2dtr(cortr3, corres, nutm2d, elrf2d, geom1,&
 #include "asterfort/as_deallocate.h"
 
 !
-    character(len=16), intent(in) :: corres, cortr3
+    character(len=16), intent(in) :: corres, cortr3, listInterc
     integer :: nbtm
     parameter    (nbtm=6)
     character(len=8), intent(in) :: elrf2d(nbtm)
-    integer, intent(in) :: nutm2d(nbtm)
+    integer, intent(in) :: nutm2d(nbtm), nbInterc
     real(kind=8), intent(in) :: geom1(*), geom2(*)
     aster_logical, intent(in) :: lraff
     real(kind=8), intent(in) :: dala
@@ -72,7 +72,7 @@ subroutine pj2dtr(cortr3, corres, nutm2d, elrf2d, geom1,&
     aster_logical :: lext
     integer :: nbnomx, nbfamx
     parameter    ( nbnomx=27, nbfamx=20)
-    character(len=8) :: m1, m2, elrefa, fapg(nbfamx)
+    character(len=8) :: m1, m2, elrefa, fapg(nbfamx), nomnoe
     integer :: nbpg(nbfamx), cnquad(3, 2)
     real(kind=8) :: crrefe(3*nbnomx), ksi, eta, xr1(2), xr2(2), xr3(2)
     real(kind=8) :: ff(nbnomx), cooele(3*nbnomx), x1, x2, vol
@@ -93,6 +93,7 @@ subroutine pj2dtr(cortr3, corres, nutm2d, elrf2d, geom1,&
     integer, pointer :: tria3(:) => null()
     integer, pointer :: typmail(:) => null()
     integer, pointer :: connex(:) => null()
+    integer, pointer :: vinterc(:) => null()
     real(kind=8), pointer :: pjef_cf(:) => null()
 ! --- DEB --------------------------------------------------------------
 
@@ -265,10 +266,29 @@ subroutine pj2dtr(cortr3, corres, nutm2d, elrf2d, geom1,&
                 if (nint(disprj) .eq. 999) then
                     loin2=.true.
                 else if (disprj .gt. 1.0d-01) then
-                    loin2=.true.
-                    nbnodm = nbnodm + 1
-                    lino_loin(nbnodm)=ino2
-                    call inslri(nbmax, nbnod, tdmin2, tino2m, distv,ino2)
+!                   on regarde si le noeud est deja projete par une autre
+!                   occurrence de VIS_A_VIS
+                    if (nbInterc .ne. 0)then
+                        call jeveuo(listInterc, 'L', vi=vinterc)
+                        do ino = 1,nbInterc
+                            if (ino2 .eq. vinterc(ino))then
+                                zi(i2conb-1+ino2)=0
+                                call jenuno(jexnum(m2//'.NOMNOE', ino2), nomnoe)
+                                call utmess('A','CALCULEL5_47', si=vinterc(nbInterc+1),&
+                                            sk=nomnoe)
+                                exit
+                            endif
+                        enddo
+                    endif
+                    if (zi(i2conb-1+ino2).ne.0)then
+                        loin2=.true.
+                        nbnodm = nbnodm + 1
+                        lino_loin(nbnodm)=ino2
+                        call inslri(nbmax, nbnod, tdmin2, tino2m, distv,ino2)
+                    else
+                        ideca1=ideca1+3
+                        cycle
+                    endif
                 endif
             endif
         else

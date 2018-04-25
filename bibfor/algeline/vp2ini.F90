@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -143,6 +143,8 @@ subroutine vp2ini(ldynam, lmasse, ldynfa, neq, nbvect,&
         do ieq = 1, neq
             xikxi = xikxi + vect(ieq,isto)*zr(lkxsto+ieq-1)
         end do
+! GARDE-FOU POUR EVITER LA DIVISON PAR ZERO
+        if (abs(xikxi).lt.rmin) xikxi=rmin
         signes(isto) = sign(1.d0,xikxi)
         coef = 1.d0/sqrt(abs(xikxi))
         do ieq = 1, neq
@@ -203,6 +205,10 @@ subroutine vp2ini(ldynam, lmasse, ldynfa, neq, nbvect,&
     do ieq = 1, neq
         xikxi = xikxi + vect(ieq,ivecd)*zr(lkx1+ieq-1)
     end do
+
+! GARDE-FOU POUR EVITER LA DIVISON PAR ZERO
+    if (abs(xikxi).lt.rmin) xikxi=rmin
+
     signes(ivecd) = sign(1.d0,xikxi)
     coef = 1.d0/sqrt(abs(xikxi))
     do ieq = 1, neq
@@ -273,12 +279,16 @@ subroutine vp2ini(ldynam, lmasse, ldynfa, neq, nbvect,&
         do ieq = 1, neq
             xikxi = xikxi + vect(ieq,ivecp1)*zr(lkxp1+ieq-1)
         end do
+
+! GARDE-FOU POUR EVITER LA DIVISON PAR ZERO
+        if (abs(xikxi).lt.rmin) xikxi=rmin
+
         signes(ivecp1) = sign(1.d0,xikxi)
         coef = 1.d0/sqrt(abs(xikxi))
         do ieq = 1, neq
-            vect(ieq,ivecp1) = coef*vect(ieq,ivecp1)
-            zr(lkxp1+ieq-1) = coef*zr(lkxp1+ieq-1)
-        end do
+          vect(ieq,ivecp1) = coef*vect(ieq,ivecp1)
+          zr(lkxp1+ieq-1) = coef*zr(lkxp1+ieq-1)
+        enddo
 !
 !         --- K-REORTHOGONALISATION COMPLETE DU VECTEUR IVECP1
 !

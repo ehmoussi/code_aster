@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,17 +15,17 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine nmrecz(numedd, cndiri, cnfint, cnfext, ddepla,&
-                      fonc)
-        character(len=24) :: numedd
-        character(len=19) :: cndiri
-        character(len=19) :: cnfint
-        character(len=19) :: cnfext
-        character(len=19) :: ddepla
-        real(kind=8) :: fonc
+    subroutine nmrecz(nume_dof , ds_contact, list_func_acti,&
+                      cndiri   , cnfint    , cnfext, cnsstr,&
+                      disp_iter,&
+                      func)
+        use NonLin_Datastructure_type
+        character(len=24), intent(in) :: nume_dof
+        type(NL_DS_Contact), intent(in) :: ds_contact
+        integer, intent(in) :: list_func_acti(*)
+        character(len=19), intent(in) :: cndiri, cnfint, cnfext, cnsstr, disp_iter
+        real(kind=8), intent(out) :: func
     end subroutine nmrecz
 end interface

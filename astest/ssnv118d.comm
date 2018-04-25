@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -238,7 +238,7 @@ TEST_RESU(RESU=(_F(NUME_ORDRE=11,
           )
 
 NORME = FORMULE(VALE='sqrt(DX*DX+DY*DY+DZ*DZ)',
-              NOM_PARA=('DX','DY','DZ',));
+                NOM_PARA=['DX', 'DY', 'DZ'],)
 
 SOLMEMO=STAT_NON_LINE(
                 TITRE='TEST TRAC MODELE VISCOCHAB',

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -53,8 +53,6 @@ subroutine lcelpl(mod, loi, nmat, materd, materf,&
 !     DRDY   :  MATRICE JACOBIENNE POUR BETON_BURGER
 ! ----------------------------------------------------------------
 !     ------------------------------------------------------------
-#include "asterfort/burjac.h"
-#include "asterfort/burlnf.h"
 #include "asterfort/irrlnf.h"
 #include "asterfort/lceqvn.h"
 #include "asterfort/srilnf.h"
@@ -70,20 +68,6 @@ subroutine lcelpl(mod, loi, nmat, materd, materf,&
 ! ----------------------------------------------------------------
     if (loi(1:7) .eq. 'IRRAD3M') then
         call irrlnf(nmat, materf, vind, 0.0d0, vinf)
-    else if (loi(1:12) .eq. 'BETON_BURGER') then
-        dt = timef-timed
-        call burlnf(nvi, vind, nmat, materd, materf,&
-                    dt, nr, yd, yf, vinf,&
-                    sigf)
-        do 10 i = 1, nr
-            dy(i) = yf(i)-yd(i)
-            do 20 j = 1, nr
-                drdy(i,j) = 0.d0
-20          continue
-10      continue
-        call burjac(mod, nmat, materd, materf, nvi,&
-                    vind, timed, timef, yd, yf,&
-                    dy, nr, drdy)
     else if (loi(1:4).eq.'LETK') then
         call lceqvn(nvi-3, vind, vinf)
         vinf(5) = 0.d0

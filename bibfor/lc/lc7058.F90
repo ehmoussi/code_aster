@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -48,7 +48,7 @@ character(len=16), intent(in) :: compor(*)
 real(kind=8), intent(in) :: carcri(*)
 real(kind=8), intent(in) :: instam, instap
 integer, intent(in) :: neps
-real(kind=8), intent(in) :: epsm(6), deps(6)
+real(kind=8), intent(in) :: epsm(*), deps(*)
 integer, intent(in) :: nsig
 real(kind=8), intent(in) :: sigm(6)
 integer, intent(in) :: nvi
@@ -110,7 +110,7 @@ integer, intent(out) :: codret
     real(kind=8) :: dtime, temp, dtemp, pnewdt
     real(kind=8) :: depsth(6), epsth(6), drott(3, 3)
     character(len=16) :: rela_comp, defo_comp
-    aster_logical :: l_pred, l_large_strain, l_czm
+    aster_logical :: l_pred, l_simomiehe, l_grotgdep, l_czm
     integer :: ntens, ndi
     common/tdim/  ntens  , ndi
 !
@@ -120,12 +120,13 @@ integer, intent(out) :: codret
     ndi            = 3
     codret         = 0
     nprops         = npropmax
-    rela_comp      = compor(NAME)
+    rela_comp      = compor(RELA_NAME)
     defo_comp      = compor(DEFO)
     pfcmfr         = nint(carcri(16))
     jvariexte      = nint(carcri(IVARIEXTE))
     l_pred         = option(1:9).eq. 'RIGI_MECA'
-    l_large_strain = .false.
+    l_simomiehe    = ASTER_FALSE
+    l_grotgdep     = ASTER_FALSE
     l_czm          = typmod(2).eq.'ELEMJOIN'
     ASSERT(l_czm)
     if (l_czm) then
@@ -162,10 +163,10 @@ integer, intent(out) :: codret
 !
 ! - Prepare strains
 !
-    call mfrontPrepareStrain(l_large_strain, l_pred, l_czm,&
-                             neps          , epsm  , deps ,&
-                             epsth         , depsth,&
-                             stran         , dstran)
+    call mfrontPrepareStrain(l_simomiehe, l_grotgdep, l_pred, l_czm,&
+                             neps       , epsm      , deps  ,&
+                             epsth      , depsth    ,&
+                             stran      , dstran)
 !
 ! - Modify number of internal state variables
 !

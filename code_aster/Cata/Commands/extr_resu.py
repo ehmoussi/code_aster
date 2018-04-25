@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -25,22 +25,12 @@ from code_aster.Cata.Commons import *
 
 
 def extr_resu_prod(RESULTAT,**args):
-  if AsType(RESULTAT) == evol_elas    : return evol_elas
-  if AsType(RESULTAT) == evol_noli    : return evol_noli
-  if AsType(RESULTAT) == evol_ther    : return evol_ther
-  if AsType(RESULTAT) == evol_varc    : return evol_varc
-  if AsType(RESULTAT) == dyna_trans   : return dyna_trans
-  if AsType(RESULTAT) == dyna_harmo   : return dyna_harmo
-  if AsType(RESULTAT) == acou_harmo   : return acou_harmo
-  if AsType(RESULTAT) == mode_meca    : return mode_meca
-  if AsType(RESULTAT) == mode_acou    : return mode_acou
-  if AsType(RESULTAT) == mult_elas    : return mult_elas
-  if AsType(RESULTAT) == fourier_elas : return fourier_elas
+    return AsType(RESULTAT)
 
-  raise AsException("type de concept resultat non prevu")
 
-EXTR_RESU=OPER(nom="EXTR_RESU",op=176,sd_prod=extr_resu_prod,reentrant='f',
-            fr=tr("Extraire des champs au sein d'une SD Résultat"),
+EXTR_RESU=OPER(nom="EXTR_RESU",op=176,sd_prod=extr_resu_prod,
+               reentrant='f:RESULTAT',
+               fr=tr("Extraire des champs au sein d'une SD Résultat"),
          reuse=SIMP(statut='c', typ=CO),
          RESULTAT        =SIMP(statut='o',typ=(evol_elas,dyna_trans,dyna_harmo,acou_harmo,mode_meca,
                                                mode_acou,evol_ther,evol_noli,evol_varc,

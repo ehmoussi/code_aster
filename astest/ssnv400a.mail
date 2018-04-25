@@ -1,0 +1,60 @@
+COOR_3D
+N1        0.0  0.0  0.0
+N2        1.0  0.0  0.0
+N3        1.0  1.0  0.0
+N4        0.0  1.0  0.0
+N5        0.0  0.0  1.0
+N6        1.0  0.0  1.0
+N7        1.0  1.0  1.0
+N8        0.0  1.0  1.0
+FINSF
+%
+HEXA8
+M1      N1  N2  N3  N4  N5  N6  N7  N8
+FINSF
+%
+QUAD4
+MXZ1  N1  N2   N6  N5
+MXZ2  N3  N4   N8  N7
+MXY2  N5  N6   N7  N8
+MXY1  N1  N2   N3  N4
+MYZ1  N1  N4   N8  N5
+MYZ2  N2  N3   N7  N6
+FINSF
+%
+GROUP_MA
+COTEG
+MXZ1
+FINSF
+%
+GROUP_MA
+COTED
+MXZ2
+FINSF
+%
+GROUP_MA
+HAUT
+MXY2
+FINSF
+%
+GROUP_MA
+BAS
+MXY1
+FINSF
+%
+GROUP_MA
+ARRIERE
+MYZ1
+FINSF
+%
+GROUP_MA
+AVANT
+MYZ2
+FINSF
+%
+GROUP_MA
+G3D
+M1
+FINSF
+%
+FIN

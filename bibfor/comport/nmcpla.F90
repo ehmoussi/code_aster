@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -155,14 +155,14 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
     l_inte_forc = option .eq. 'RAPH_MECA' .or. option .eq. 'FULL_MECA'
-    rela_flua   = compor_creep(NAME)
-    rela_plas   = compor_plas(NAME)
+    rela_flua   = compor_creep(RELA_NAME)
+    rela_plas   = compor_plas(RELA_NAME)
     elem_model  = typmod(1)
     read (compor_creep(NVAR),'(I16)') nvi_flua
     read (compor_plas(NVAR) ,'(I16)') nvi_plas
     read (compor_plas(NUME) ,'(I16)') nume_plas
     read (compor_creep(NUME),'(I16)') nume_flua
-    ASSERT(compor_creep(NAME)(1:13) .eq. 'BETON_GRANGER')
+    ASSERT(compor_creep(RELA_NAME)(1:13) .eq. 'BETON_GRANGER')
 !
 ! - Get size for tensors
 !

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -270,13 +270,11 @@ TABEPSP=POST_RELEVE_T(ACTION=_F(INTITULE='EPSP_XX',
                                 OPERATION='EXTRACTION',),);
 IMPR_TABLE(TABLE=TABEPSP);
 # PROPRIETES MATERIAUX
-WHOL_F =   FORMULE(
-           NOM_PARA=('NBRUP'),
-           VALE=''' 4098.3*(NBRUP**(-0.2693)) '''
+WHOL_F = FORMULE(VALE=' 4098.3*(NBRUP**(-0.2693)) ',
+                 NOM_PARA='NBRUP',
            )
-MANCO1=   FORMULE(
-           NOM_PARA=('NBRUP'),
-           VALE=''' 0.01*(NBRUP**(-0.1619)) '''
+MANCO1 = FORMULE(VALE=' 0.01*(NBRUP**(-0.1619)) ',
+                 NOM_PARA='NBRUP',
            )
 
 NBPR = 12

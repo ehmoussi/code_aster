@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -238,7 +238,8 @@ SPPROJ1=PROJ_SPEC_BASE( SPEC_TURB=SPECTRE,
 # A 4 M /S
 # ET FONCTION DE LA PULSATION
 
-GAUSS = FORMULE(NOM_PARA='PULS',VALE='1.E+10*exp(-(PULS/0.1)**2)')
+GAUSS = FORMULE(VALE='1.E+10*exp(-(PULS/0.1)**2)',
+                NOM_PARA='PULS',)
 
 SPECTREP=DEFI_SPEC_TURB(
                   SPEC_CORR_CONV_2=_F(

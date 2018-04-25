@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -189,17 +189,17 @@ AFFE_MATERIAU=OPER(nom="AFFE_MATERIAU",op=6,sd_prod=cham_mater,
          VARC_M_ACIER  =FACT(statut='c',
            NOM_VARC        =SIMP(statut='c',typ='TXM',defaut="M_ACIER"),
            GRANDEUR        =SIMP(statut='c',typ='TXM',defaut="VARI_R"),
-           CMP_GD          =SIMP(statut='c',typ='TXM',max=7,min=7,defaut=("V1","V2","V3","V4","V5","V6","V7")),
-           CMP_VARC        =SIMP(statut='c',typ='TXM',max=7,min=7,defaut=("PFERRITE","PPERLITE","PBAINITE",
-                                                                          "PMARTENS","TAUSTE","TRANSF","TACIER",)),
+           CMP_GD          =SIMP(statut='c',typ='TXM',max=8,min=8,defaut=("V1","V2","V3","V4","V5","V6","V7","V8")),
+           CMP_VARC        =SIMP(statut='c',typ='TXM',max=8,min=8,defaut=("PFERRITE","PPERLITE","PBAINITE",
+                                                                          "PMARTENS","PAUSTENI","TAUSTE","TRANSF","TACIER",)),
          ),
          #  mots clés cachés pour variable de commande metallurgique ZIRCALOY :
          #  --------------------------------------------------------------------
          VARC_M_ZIRC  =FACT(statut='c',
            NOM_VARC        =SIMP(statut='c',typ='TXM',defaut="M_ZIRC"),
            GRANDEUR        =SIMP(statut='c',typ='TXM',defaut="VARI_R"),
-           CMP_GD          =SIMP(statut='c',typ='TXM',max=4,min=4,defaut=("V1","V2","V3","V4")),
-           CMP_VARC        =SIMP(statut='c',typ='TXM',max=4,min=4,defaut=("ALPHPUR","ALPHBETA","TZIRC","TEMPS")),
+           CMP_GD          =SIMP(statut='c',typ='TXM',max=5,min=5,defaut=("V1","V2","V3","V4","V5")),
+           CMP_VARC        =SIMP(statut='c',typ='TXM',max=5,min=5,defaut=("ALPHPUR","ALPHBETA","BETA","TZIRC","TEMPS")),
          ),
 
          INFO            =SIMP(statut='f',typ='I',defaut=1,into=(1,2) ),

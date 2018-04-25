@@ -102,6 +102,10 @@ class MaterialDefinition(ExecuteCommand):
                     raise NotImplementedError("Unsupported type for keyword: "
                                               "{0} <{1}>"
                                               .format(skwName, type(skw)))
+                if not cRet:
+                    raise NotImplementedError("Unsupported keyword: "
+                                              "{0}"
+                                              .format(iName))
             self._result.addMaterialBehaviour(matBehav)
 
         self._result.build()

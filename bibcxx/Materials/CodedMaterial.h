@@ -27,7 +27,6 @@
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 #include "astercxx.h"
-#include "DataStructures/DataStructure.h"
 #include "Materials/MaterialOnMesh.h"
 #include "Modeling/Model.h"
 #include "DataFields/PCFieldOnMesh.h"
@@ -37,9 +36,11 @@
  * @brief Coded material
  * @author Nicolas Sellenet
  */
-class CodedMaterialInstance: public DataStructure
+class CodedMaterialInstance
 {
 private:
+    std::string          _name;
+    std::string          _type;
     MaterialOnMeshPtr    _mater;
     ModelPtr             _model;
     PCFieldOnMeshLongPtr _field;
@@ -57,7 +58,8 @@ public:
      * @brief Constructeur
      */
     CodedMaterialInstance( const MaterialOnMeshPtr& mater, const ModelPtr& model ):
-        DataStructure( "MATER_CODE", Permanent, 8 ),
+        _name( mater->getName() ),
+        _type( "MATER_CODE" ),
         _mater( mater ),
         _model( model ),
         _field( new PCFieldOnMeshLongInstance( getName() + ".MATE_CODE",
@@ -93,6 +95,24 @@ public:
     {
         _field->updateValuePointers();
         return _field;
+    };
+
+    /**
+     * @brief Function membre getName
+     * @return une chaine contenant le nom de la sd
+     */
+    const std::string& getName() const
+    {
+        return _name;
+    };
+
+    /**
+     * @brief Function membre getType
+     * @return le type de la sd
+     */
+    const std::string getType() const
+    {
+        return _type;
     };
 };
 

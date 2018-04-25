@@ -1,0 +1,159 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),PAR_LOT='NON',DEBUG=_F(SDVERI='OUI'))
+
+MAIL=LIRE_MAILLAGE(UNITE=20, FORMAT='MED',)
+
+MODELE=AFFE_MODELE(
+    MAILLAGE=MAIL,
+    AFFE=_F(TOUT='OUI', PHENOMENE='MECANIQUE', MODELISATION='POU_D_TGM',),
+)
+
+import math
+def TuyauFibre(Rext,ep, NbCouche=5, NbSecteur=4, AngleVrille=0.0):
+    # Angle de vrille en Radian
+    al = AngleVrille*math.pi/180.0;
+    # Nombre de secteur total
+    NbSecteurTotal = NbSecteur*4
+    # Section totale
+    Section = math.pi*(Rext*Rext - (Rext-ep)*(Rext-ep))
+    # Section d'une fibre
+    Sfibre = Section/((2*NbCouche+1)*(2*NbSecteurTotal+1))
+    # Rayon min
+    Rayon1 = Rext - ep
+    Fibres = [ ]
+    for icou in range(2*NbCouche+1):
+        Ra = Rayon1 + icou*ep/(2.0*NbCouche)
+        for isec in range(2*NbSecteurTotal+1):
+            tet = isec*math.pi/NbSecteurTotal
+            Fibres += [ Ra*math.cos(tet+al) , Ra*math.sin(tet+al) , Sfibre ]
+    #
+    return Fibres
+
+Cfibres = TuyauFibre(0.10 , 0.05, NbCouche=3, NbSecteur=2)
+
+GF=DEFI_GEOM_FIBRE(
+   INFO=1,
+   FIBRE = (
+      _F(GROUP_FIBRE='SACIER', CARA = 'SURFACE', COOR_AXE_POUTRE = (0.,0.,),
+         VALE = Cfibres ),
+    )
+)
+
+
+CAREL=AFFE_CARA_ELEM(
+    MODELE=MODELE,
+    POUTRE=(
+        _F(SECTION='CERCLE', GROUP_MA='TOUT', CARA=('R','EP',), VALE=(0.10,0.05,),),
+    ),
+   GEOM_FIBRE=GF,
+   MULTIFIBRE=_F(GROUP_MA=('TOUT'), GROUP_FIBRE=('SACIER',),PREC_INERTIE=1.2E-01),
+)
+
+MAT=DEFI_MATERIAU(ELAS=_F(E=2.1e+11, NU=0.3, RHO=7800.0,),)
+
+compor=DEFI_COMPOR(
+   GEOM_FIBRE=GF,
+   MATER_SECT=MAT,
+   MULTIFIBRE=(
+      _F(GROUP_FIBRE='SACIER',  MATER=MAT,  RELATION='ELAS'),
+    )
+)
+
+CHMAT=AFFE_MATERIAU(
+    MAILLAGE=MAIL,
+    AFFE=_F(TOUT='OUI', MATER=MAT,),
+    AFFE_COMPOR=_F(GROUP_MA='TOUT',COMPOR=compor),
+)
+
+BLOCAGE=AFFE_CHAR_MECA(
+    MODELE=MODELE,
+    DDL_IMPO=(
+        _F(GROUP_NO='ENC', DX=0.0, DY=0.0, DZ=0.0, DRX=0.0, DRY=0.0, DRZ=0.0,),
+    ),
+    FORCE_NODALE=_F(GROUP_NO='CHG', FX= -1000.0, FY=  5000.0, FZ= 10000.0),
+)
+
+
+L_INIT=DEFI_LIST_REEL(
+    DEBUT=0.0,
+    INTERVALLE=_F(JUSQU_A=1, NOMBRE=10,),
+)
+
+
+FOMULT=DEFI_FONCTION(
+   NOM_PARA='INST',
+   VALE=( 0.0, 0.0,
+          1.0, 1.0,),
+   PROL_DROITE='EXCLU',
+   PROL_GAUCHE='EXCLU',
+)
+
+
+RESUGM=STAT_NON_LINE(
+    MODELE=MODELE,
+    CHAM_MATER=CHMAT,
+    CARA_ELEM=CAREL,
+    EXCIT=_F(CHARGE=BLOCAGE,FONC_MULT=FOMULT),
+    COMPORTEMENT=_F(RELATION='MULTIFIBRE'),
+    INCREMENT=_F(LIST_INST=L_INIT,),
+    NEWTON=_F(REAC_INCR=1, MATRICE='TANGENTE', REAC_ITER=3,),
+    SOLVEUR=_F(METHODE='MUMPS',),
+)
+
+
+NomFicMed  = './REPE_OUT/sief_elga.med'
+NomFicDump = './REPE_OUT/sief_elga.dump'
+
+unit = DEFI_FICHIER(ACTION='ASSOCIER', FICHIER=NomFicMed, ACCES='NEW', TYPE='LIBRE')
+IMPR_RESU(FORMAT='MED',UNITE=unit,
+    RESU=_F(RESULTAT=RESUGM, CARA_ELEM=CAREL,
+            GROUP_MA=('TOUT',), NOM_CHAM =("SIEF_ELGA",), NOM_CMP=('SIXX',),),
+)
+DEFI_FICHIER(ACTION='LIBERER', UNITE=unit)
+DETRUIRE(CONCEPT=_F(NOM=unit,),)
+
+
+import os
+cmd = "printf '1\n1\n1\n' | mdump3 %s | sed '1,20d' > %s" % (NomFicMed,NomFicDump)
+os.system(cmd)
+
+TEST_FICHIER(
+    FICHIER     = NomFicDump,
+    NB_VALE     =  122135,
+    VALE_CALC   =  11733961334.1,
+)
+
+FIN()
+
+"""
+Nom_Fic = './REPE_OUT/Poutre'
+Nom_Fic_tar = Nom_Fic+'.tar'
+unit = DEFI_FICHIER(ACTION='ASSOCIER', FICHIER=Nom_Fic_tar, ACCES='NEW', TYPE='ASCII')
+IMPR_RESU_SP(
+    RESULTAT = RESUGM, GROUP_MA = ('TOUT',),
+    RESU =_F(
+            NOM_CHAM = ('SIEF_ELGA',), NOM_CMP  = ('SIXX',),
+    ),
+    UNITE = unit,
+)
+DEFI_FICHIER(ACTION='LIBERER', UNITE=unit)
+DETRUIRE(CONCEPT=_F(NOM=unit,),)
+"""

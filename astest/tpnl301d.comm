@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -76,7 +76,9 @@ TZ0 = 273.15;
 
 
 AA = FORMULE(VALE='exp(-Ar/(TZ0+TEMP))*(1586000*HYDR*HYDR*HYDR*HYDR*HYDR-5224000*HYDR*HYDR*HYDR*HYDR+6432000*HYDR*HYDR*HYDR-3530500*HYDR*HYDR+730000*HYDR+6510)',
-             NOM_PARA=('HYDR','TEMP',),);
+             Ar=Ar,
+             TZ0=TZ0,
+             NOM_PARA=['HYDR', 'TEMP'],)
 
 LL=DEFI_LIST_REEL(DEBUT=0.0,
                   INTERVALLE=_F(JUSQU_A=1.0,

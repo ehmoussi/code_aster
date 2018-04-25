@@ -3,7 +3,7 @@
  * @brief Implementation de ResultsContainer
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -174,7 +174,8 @@ void ResultsContainerInstance::addTimeValue( double value,
 };
 
 void ResultsContainerInstance::listFields() const
-{   std::cout<<"Content of DataStructure : ";
+{
+    std::cout << "Content of DataStructure : ";
     for ( auto curIter : _dictOfVectorOfFieldsNodes )
     {
         std::cout << curIter.first << " - " ;
@@ -189,7 +190,8 @@ void ResultsContainerInstance::listFields() const
 bool ResultsContainerInstance::update() throw ( std::runtime_error )
 {
     _serialNumber->updateValuePointer();
-    _namesOfFields->buildFromJeveux();
+    auto boolRet = _namesOfFields->buildFromJeveux( true );
+    std::cout << "boolRet " << boolRet << std::endl;
     const auto numberOfSerialNum = _serialNumber->usedSize();
     _nbRanks = numberOfSerialNum;
 
@@ -228,9 +230,8 @@ bool ResultsContainerInstance::update() throw ( std::runtime_error )
                             FieldOnNodesDoublePtr( nullptr ) );
                     else if( curIter2->second.size() != numberOfSerialNum )
                     {
-                        curIter2->second.clear();
-                        _dictOfVectorOfFieldsNodes[ nomSymb ] = VectorOfFieldsNodes( numberOfSerialNum,
-                            FieldOnNodesDoublePtr( nullptr ) );
+                        curIter2->second.resize( numberOfSerialNum,
+                                                 FieldOnNodesDoublePtr( nullptr ) );
                     }
 
                     long test2 = _dictOfVectorOfFieldsNodes[ nomSymb ][ rank ].use_count();
@@ -248,9 +249,8 @@ bool ResultsContainerInstance::update() throw ( std::runtime_error )
                             FieldOnElementsDoublePtr( nullptr ) );
                     else if( curIter2->second.size() != numberOfSerialNum )
                     {
-                        curIter2->second.clear();
-                       _dictOfVectorOfFieldsElements [ nomSymb ] = VectorOfFieldsElements( numberOfSerialNum,
-                            FieldOnElementsDoublePtr( nullptr ) );
+                        curIter2->second.resize( numberOfSerialNum,
+                                                 FieldOnElementsDoublePtr( nullptr ) );
                     }
 
                     long test2 = _dictOfVectorOfFieldsElements[ nomSymb ][ rank ].use_count();

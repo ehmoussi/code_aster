@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -108,7 +108,7 @@ def check_mumps_headers(self):
 @Configure.conf
 def check_mumps_version(self):
     # translate special tags, not yet used
-    dict_vers = { '5.0.2consortium' : '5.0.2','5.1.1consortium' : '5.1.1' }
+    dict_vers = { '5.1.1consortium' : '5.1.1' ,'5.1.2consortium' : '5.1.2' }
     fragment = r'''
 #include <stdio.h>
 #include "smumps_c.h"
@@ -122,9 +122,9 @@ int main(void){
         ret = self.check_cc(fragment=fragment, use='MUMPS',
                             mandatory=True, execute=True, define_ret=True)
         self.env['MUMPS_VERSION'] = ret
-        if dict_vers.get(ret, ret) != '5.0.2' and dict_vers.get(ret, ret) != '5.0.2consortium' and dict_vers.get(ret, ret) != '5.1.1' and dict_vers.get(ret, ret) != '5.1.1consortium':
+        if dict_vers.get(ret, ret) != '5.1.1' and dict_vers.get(ret, ret) != '5.1.1consortium' and dict_vers.get(ret, ret) != '5.1.2' and dict_vers.get(ret, ret) != '5.1.2consortium':
             raise Errors.ConfigurationError("expected versions: {0}".
-                                             format('5.0.2/5.1.1(consortium)'))
+                                             format('5.1.1/5.1.2(consortium)'))
     except:
         self.end_msg('no', 'YELLOW')
         raise

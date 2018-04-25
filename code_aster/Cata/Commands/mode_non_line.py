@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -24,7 +24,7 @@ from code_aster.Cata.Commons import *
 
 MODE_NON_LINE=OPER(nom="MODE_NON_LINE",op=  61,sd_prod=table_container,
                      fr=tr("Calcul des modes non-linéaires"),
-                     reentrant='f',
+                     reentrant='f:ETAT_INIT:MODE_NON_LINE',
 
         reuse =SIMP(statut='c',typ=CO),
 

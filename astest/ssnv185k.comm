@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -92,11 +92,19 @@ MAILLAG1=MODI_MAILLAGE(reuse =MAILLAG1,
 #                            b = 10.
 a=3.
 b=10.
-LN1=FORMULE(NOM_PARA=('X','Y','Z'),VALE='Z-15.');
-LT1=FORMULE(NOM_PARA=('X','Y','Z'),VALE='b-a-Y');
+LN1 = FORMULE(VALE='Z-15.',
+              NOM_PARA=['X', 'Y', 'Z'],)
+LT1 = FORMULE(VALE='b-a-Y',
+              b=b,
+              a=a,
+              NOM_PARA=['X', 'Y', 'Z'],)
 
-LN2=FORMULE(NOM_PARA=('X','Y','Z'),VALE='Z+15.');
-LT2=FORMULE(NOM_PARA=('X','Y','Z'),VALE='b-a-Y');
+LN2 = FORMULE(VALE='Z+15.',
+              NOM_PARA=['X', 'Y', 'Z'],)
+LT2 = FORMULE(VALE='b-a-Y',
+              b=b,
+              a=a,
+              NOM_PARA=['X', 'Y', 'Z'],)
 
 FISS1=DEFI_FISS_XFEM(MAILLAGE=MAILLAG1,
                     DEFI_FISS=_F(FONC_LT=LT1,FONC_LN=LN1),

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -39,55 +39,102 @@ A0=8.6602540379999E-01
 
 A1=0.5
 
-UXTEST = FORMULE(NOM_PARA=('X','Y'),VALE='atan2(-X*A1+Y*A0,X*A0+Y*A1)')
+UXTEST = FORMULE(VALE='atan2(-X*A1+Y*A0,X*A0+Y*A1)',
+                 A1=A1,
+                 A0=A0,
+                 NOM_PARA=['X', 'Y'],)
 
-UXDP = FORMULE(NOM_PARA=('X','Y'),VALE='''
+UXDP = FORMULE(VALE="""
 2.593124823E-5 *
         ( K1*cos(atan2(-X*A1+Y*A0,X*A0+Y*A1)*0.5)
             *(KDP-cos(atan2(-X*A1+Y*A0,X*A0+Y*A1)))
          +K2* sin(atan2(-X*A1+Y*A0,X*A0+Y*A1)*0.5)
             *(KDP+2.0+cos(atan2(-X*A1+Y*A0,X*A0+Y*A1))))
-                 ''')
+                 """,
+               K1=K1,
+               A1=A1,
+               A0=A0,
+               KDP=KDP,
+               K2=K2,
+               NOM_PARA=['X', 'Y'],)
 
-UYDP = FORMULE(NOM_PARA=('X','Y'),VALE='''
+UYDP = FORMULE(VALE="""
 2.593124823E-5 *
       (   K1* sin(atan2(-X*A1+Y*A0,X*A0+Y*A1)*0.5)
             *(KDP-cos(atan2(-X*A1+Y*A0,X*A0+Y*A1)))
          -K2* cos(atan2(-X*A1+Y*A0,X*A0+Y*A1)*0.5)
             *(KDP-2.0+cos(atan2(-X*A1+Y*A0,X*A0+Y*A1))))
-                 ''')
+                 """,
+               K1=K1,
+               A1=A1,
+               A0=A0,
+               KDP=KDP,
+               K2=K2,
+               NOM_PARA=['X', 'Y'],)
 
-UXCP = FORMULE(NOM_PARA=('X','Y'),VALE='''
+UXCP = FORMULE(VALE="""
 2.593124823E-5 *
       (   K1* cos(atan2(-X*A1+Y*A0,X*A0+Y*A1)*0.5)
             *(KCP-cos(atan2(-X*A1+Y*A0,X*A0+Y*A1)))
          +K2* sin(atan2(-X*A1+Y*A0,X*A0+Y*A1)*0.5)
             *(KCP+2.0+cos(atan2(-X*A1+Y*A0,X*A0+Y*A1))))
-                 ''')
+                 """,
+               K1=K1,
+               A1=A1,
+               A0=A0,
+               KCP=KCP,
+               K2=K2,
+               NOM_PARA=['X', 'Y'],)
 
-UYCP = FORMULE(NOM_PARA=('X','Y'),VALE='''
+UYCP = FORMULE(VALE="""
 2.593124823E-5 *
       (   K1* sin(atan2(-X*A1+Y*A0,X*A0+Y*A1)*0.5)
             *(KCP-cos(atan2(-X*A1+Y*A0,X*A0+Y*A1)))
          -K2* cos(atan2(-X*A1+Y*A0,X*A0+Y*A1)*0.5)
             *(KCP-2.0+cos(atan2(-X*A1+Y*A0,X*A0+Y*A1))))
-                 ''')
+                 """,
+               K1=K1,
+               A1=A1,
+               A0=A0,
+               KCP=KCP,
+               K2=K2,
+               NOM_PARA=['X', 'Y'],)
 
-U1CP = FORMULE(NOM_PARA=('X','Y'),VALE='''
+U1CP = FORMULE(VALE="""
 A0*UXCP(X,Y)- A1*UYCP(X,Y)
-                 ''')
+                 """,
+               A0=A0,
+               UXCP=UXCP,
+               A1=A1,
+               UYCP=UYCP,
+               NOM_PARA=['X', 'Y'],)
 
-U2CP = FORMULE(NOM_PARA=('X','Y'),VALE='''
+U2CP = FORMULE(VALE="""
 +A1*UXCP(X,Y)+ A0*UYCP(X,Y)
-                 ''')
+                 """,
+               A1=A1,
+               UXCP=UXCP,
+               A0=A0,
+               UYCP=UYCP,
+               NOM_PARA=['X', 'Y'],)
 
-U1DP = FORMULE(NOM_PARA=('X','Y'),VALE='''
+U1DP = FORMULE(VALE="""
 A0*UXDP(X,Y)- A1*UYDP(X,Y)
-                 ''')
+                 """,
+               A0=A0,
+               UXDP=UXDP,
+               A1=A1,
+               UYDP=UYDP,
+               NOM_PARA=['X', 'Y'],)
 
-U2DP = FORMULE(NOM_PARA=('X','Y'),VALE='''
+U2DP = FORMULE(VALE="""
 +A1*UXDP(X,Y)+ A0*UYDP(X,Y)
-                 ''')
+                 """,
+               A1=A1,
+               UXDP=UXDP,
+               A0=A0,
+               UYDP=UYDP,
+               NOM_PARA=['X', 'Y'],)
 
 # ---------------------------------------------------------------------
 M=LIRE_MAILLAGE(FORMAT='MED',)

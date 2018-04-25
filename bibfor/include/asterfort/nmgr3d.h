@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,44 +15,38 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
+! aslint: disable=W1504
 !
 #include "asterf_types.h"
 !
 interface
-    subroutine nmgr3d(nno  , npg   , ipoids, ivf   , idfde ,&
-                      geomi, typmod, option, imate , compor, mult_comp,&
-                      lgpg , carcri, instam, instap, deplm ,&
-                      deplp, angmas, sigm  , vim   , matsym,&
-                      dfdi , pff   , def   , sigp  , vip   ,&
-                      matuu, vectu , codret)
-        integer, intent(in) :: nno
-        integer, intent(in) :: npg
-        integer, intent(in) :: ipoids
-        integer, intent(in) :: ivf
-        integer, intent(in) :: idfde
-        real(kind=8), intent(in) :: geomi(3, nno)
-        character(len=8), intent(in) :: typmod(*)
+    subroutine nmgr3d(option   , typmod    ,&
+                      fami     , imate     ,&
+                      nno      , npg       , lgpg     ,&
+                      ipoids   , ivf       , vff      , idfde,&
+                      compor   , carcri    , mult_comp,&
+                      instam   , instap    ,&
+                      geom_init, disp_prev , disp_incr,&
+                      sigm     , sigp      ,&
+                      vim      , vip       ,&
+                      matsym   , matuu     , vectu    ,&
+                      codret)
         character(len=16), intent(in) :: option
+        character(len=8), intent(in) :: typmod(*)
+        character(len=*), intent(in) :: fami
         integer, intent(in) :: imate
-        character(len=16), intent(in) :: compor(*)
-        character(len=16), intent(in) :: mult_comp
+        integer, intent(in) :: nno, npg, lgpg
+        integer, intent(in) :: ipoids, ivf, idfde
+        real(kind=8), intent(in) :: vff(*)
+        character(len=16), intent(in) :: compor(*)        
         real(kind=8), intent(in) :: carcri(*)
-        integer, intent(in) :: lgpg
-        real(kind=8), intent(in) :: instam
-        real(kind=8), intent(in) :: instap
-        real(kind=8), intent(inout) :: deplm(1:3, 1:nno)
-        real(kind=8), intent(inout) :: deplp(1:3, 1:nno)
-        real(kind=8), intent(in) :: angmas(*)
-        real(kind=8), intent(inout) :: sigm(6, npg)
-        real(kind=8), intent(inout) :: vim(lgpg, npg)
+        character(len=16), intent(in) :: mult_comp
+        real(kind=8), intent(in) :: instam, instap
+        real(kind=8), intent(in) :: geom_init(3, nno)
+        real(kind=8), intent(inout) :: disp_prev(3*nno),  disp_incr(3*nno)
+        real(kind=8), intent(inout) :: sigm(6, npg), sigp(6, npg)
+        real(kind=8), intent(inout) :: vim(lgpg, npg), vip(lgpg, npg)
         aster_logical, intent(in) :: matsym
-        real(kind=8), intent(inout) :: dfdi(nno, 3)
-        real(kind=8), intent(inout) :: pff(6, nno, nno)
-        real(kind=8), intent(inout) :: def(6, nno, 3)
-        real(kind=8), intent(inout) :: sigp(6, npg)
-        real(kind=8), intent(inout) :: vip(lgpg, npg)
         real(kind=8), intent(inout) :: matuu(*)
         real(kind=8), intent(inout) :: vectu(3, nno)
         integer, intent(inout) :: codret

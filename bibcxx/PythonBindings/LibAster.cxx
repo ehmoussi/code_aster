@@ -121,6 +121,7 @@
 #include "PythonBindings/GeneralizedModeContainerInterface.h"
 #include "PythonBindings/FluidStructureModalBasisInterface.h"
 #include "PythonBindings/ListOfFloatsInterface.h"
+#include "PythonBindings/ListOfIntegersInterface.h"
 #include "PythonBindings/InputVariableDefinitionInterface.h"
 #include "PythonBindings/ModeEmpiContainerInterface.h"
 #include "PythonBindings/ElasticEvolutionContainerInterface.h"
@@ -274,6 +275,7 @@ BOOST_PYTHON_MODULE(libaster)
     exportPartialMeshToPython();
     exportResultNamingToPython();
     exportListOfFloatsToPython();
+    exportListOfIntegersToPython();
     exportInputVariableDefinitionToPython();
     exportModeEmpiContainerToPython();
     exportElasticEvolutionContainerToPython();

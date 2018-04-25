@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -146,11 +146,11 @@ GLO1=CALC_G(RESULTAT=CHAMDEPL,
 # solution de reference : calcul ANSYS
 # polynome interpolateur de la solution ANSYS :
 # K1ref(s) = -7.932e14.s^5 + 8.607e13.s^4 - 2.540e12.s^3 - 2.185e10.x^2 + 2.554e9.s + 6.087e7
-K1ref = FORMULE(NOM_PARA='ABSC_CURV',
-                VALE='-7.932e14*ABSC_CURV**5 +  8.607e13*ABSC_CURV**4 - 2.540e12*ABSC_CURV**3 - 2.185e10*ABSC_CURV**2 + 2.554e9*ABSC_CURV + 6.087e7')
+K1ref = FORMULE(VALE='-7.932e14*ABSC_CURV**5 +  8.607e13*ABSC_CURV**4 - 2.540e12*ABSC_CURV**3 - 2.185e10*ABSC_CURV**2 + 2.554e9*ABSC_CURV + 6.087e7',
+                NOM_PARA='ABSC_CURV',)
 
-Ecart = FORMULE(NOM_PARA=('K1','K1REF'),
-                VALE='abs(K1REF-K1)/K1REF')
+Ecart = FORMULE(VALE='abs(K1REF-K1)/K1REF',
+                NOM_PARA=['K1', 'K1REF'],)
 
 GLO1=CALC_TABLE(TABLE=GLO1,
                 reuse=GLO1,

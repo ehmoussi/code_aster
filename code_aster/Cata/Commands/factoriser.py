@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -33,10 +33,11 @@ def factoriser_prod(MATR_ASSE,**args):
   if AsType(MATR_ASSE) == matr_asse_pres_c : return matr_asse_pres_c
   raise AsException("type de concept resultat non prevu")
 
-FACTORISER=OPER(nom="FACTORISER",op=14,sd_prod=factoriser_prod,
-               fr=tr("Factoriser une matrice assemblée en un produit de deux matrices triangulaires"
-                  "ou construire une matrice de préconditionnement pour une résolution par gradient conjugué"),
-               reentrant='f',
+FACTORISER=OPER(nom="FACTORISER",op=14,
+                sd_prod=factoriser_prod,
+                fr=tr("Factoriser une matrice assemblée en un produit de deux matrices triangulaires"
+                      "ou construire une matrice de préconditionnement pour une résolution par gradient conjugué"),
+                reentrant='f:MATR_ASSE',
          reuse=SIMP(statut='c', typ=CO),
          MATR_ASSE       =SIMP(statut='o',typ=(matr_asse_depl_r,matr_asse_depl_c,matr_asse_temp_r,
                                                matr_asse_temp_c,matr_asse_pres_r,matr_asse_pres_c) ),

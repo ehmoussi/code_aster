@@ -1,12 +1,12 @@
 def funct3(x):
     return 3. * x
 
-mult3 = FORMULE(NOM_PARA='INST', VALE="funct3(INST)")
+mult3 = FORMULE(NOM_PARA='INST', VALE="funct3(INST)", funct3=funct3)
 
 assert mult3(3.) == 9.
 print "mult3(3.) = ", mult3(3.)
 
-mult2inc = FORMULE(NOM_PARA='INST', VALE="mult2(INST)")
+mult2inc = FORMULE(NOM_PARA='INST', VALE="mult2(INST)", mult2=mult2)
 
 assert mult2(2.) == 4.
 assert mult2inc(2.) == 4.

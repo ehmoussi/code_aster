@@ -32,6 +32,7 @@
 #include "Modeling/Model.h"
 #include "Materials/MaterialOnMesh.h"
 #include "Loads/MechanicalLoad.h"
+#include "DataFields/ElementaryResult.h"
 
 /**
  * @class ElementaryMatrixInstance
@@ -50,6 +51,9 @@ private:
     JeveuxVectorChar24 _description;
     /** @brief Objet Jeveux '.RELR' */
     JeveuxVectorChar24 _listOfElementaryResults;
+    /** @brief Vectors of RESUELEM */
+    std::vector< ElementaryResultDoublePtr >  _realVector;
+    std::vector< ElementaryResultComplexPtr > _complexVector;
     /** @brief Booleen indiquant si la sd est vide */
     bool               _isEmpty;
     /** @brief Modele support */
@@ -139,6 +143,25 @@ public:
     void setSupportModel( const ModelPtr& currentModel )
     {
         _supportModel = currentModel;
+    };
+
+    /**
+     * @brief function to update ElementaryResultInstance
+     */
+    bool update() throw ( std::runtime_error )
+    {
+        _listOfElementaryResults->updateValuePointer();
+        _realVector.clear();
+        for( int pos = 0; pos < _listOfElementaryResults->size(); ++pos )
+        {
+            const std::string name = (*_listOfElementaryResults)[pos].toString();
+            if( trim( name ) != "" )
+            {
+                ElementaryResultDoublePtr toPush( new ElementaryResultInstance< double >( name ) );
+                _realVector.push_back( toPush );
+            }
+        }
+        return true;
     };
 
     friend class DiscreteProblemInstance;

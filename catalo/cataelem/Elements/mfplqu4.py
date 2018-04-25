@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -29,13 +29,6 @@ import cataelem.Commons.attributes as AT
 #----------------
 # Modes locaux :
 #----------------
-
-
-CCARCRI  = LocatedComponents(phys=PHY.CARCRI, type='ELEM',
-    components=('ITECREL','MACOMP','RESCREL','THETA','ITEDEC',
-          'INTLOC','PERTURB','TOLDEBO','ITEDEBO','TSSEUIL',
-          'TSAMPL','TSRETOUR','POSTITER','LC_EXT[3]','MODECALC',
-          'ALPHA','LC_EXT2[2]',))
 
 
 DDL_MECA = LocatedComponents(phys=PHY.DEPL_R, type='ELNO',
@@ -115,7 +108,7 @@ class MFPLQU4(Element):
         ),
 
         OP.FULL_MECA(te=201,
-            para_in=((SP.PCARCRI, CCARCRI), (OP.FULL_MECA.PCOMPOR, LC.CCOMPOR),
+            para_in=((SP.PCARCRI, LC.CCARCRI), (OP.FULL_MECA.PCOMPOR, LC.CCOMPOR),
                      (OP.FULL_MECA.PCONTMR, ECONTPG), (SP.PDEPLMR, DDL_MECA),
                      (SP.PDEPLPR, DDL_MECA), (SP.PGEOMER, NGEOMER),
                      (SP.PINSTMR, CTEMPSR), (SP.PINSTPR, CTEMPSR),
@@ -129,7 +122,7 @@ class MFPLQU4(Element):
         ),
 
         OP.FULL_MECA_ELAS(te=201,
-            para_in=((SP.PCARCRI, CCARCRI), (OP.FULL_MECA_ELAS.PCOMPOR, LC.CCOMPOR),
+            para_in=((SP.PCARCRI, LC.CCARCRI), (OP.FULL_MECA_ELAS.PCOMPOR, LC.CCOMPOR),
                      (OP.FULL_MECA_ELAS.PCONTMR, ECONTPG), (SP.PDEPLMR, DDL_MECA),
                      (SP.PDEPLPR, DDL_MECA), (SP.PGEOMER, NGEOMER),
                      (SP.PINSTMR, CTEMPSR), (SP.PINSTPR, CTEMPSR),
@@ -160,7 +153,7 @@ class MFPLQU4(Element):
         OP.PILO_PRED_ELAS(te=203,
             para_in=((SP.PBORNPI, LC.CBORNPI), (SP.PCDTAU, LC.CCDTAU),
                      (OP.PILO_PRED_ELAS.PCOMPOR, LC.CCOMPOR), (OP.PILO_PRED_ELAS.PCONTMR, ECONTPG),
-                     (SP.PDDEPLR, DDL_MECA), (SP.PDEPL0R, DDL_MECA), (SP.PCARCRI, CCARCRI),
+                     (SP.PDDEPLR, DDL_MECA), (SP.PDEPL0R, DDL_MECA), (SP.PCARCRI, LC.CCARCRI),
                      (SP.PDEPL1R, DDL_MECA), (SP.PDEPLMR, DDL_MECA),
                      (SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
                      (SP.PTYPEPI, LC.CTYPEPI), (OP.PILO_PRED_ELAS.PVARIMR, ZVARIPG),
@@ -169,7 +162,7 @@ class MFPLQU4(Element):
         ),
 
         OP.RAPH_MECA(te=201,
-            para_in=((SP.PCARCRI, CCARCRI), (OP.RAPH_MECA.PCOMPOR, LC.CCOMPOR),
+            para_in=((SP.PCARCRI, LC.CCARCRI), (OP.RAPH_MECA.PCOMPOR, LC.CCOMPOR),
                      (OP.RAPH_MECA.PCONTMR, ECONTPG), (SP.PDEPLMR, DDL_MECA),
                      (SP.PDEPLPR, DDL_MECA), (SP.PGEOMER, NGEOMER),
                      (SP.PINSTMR, CTEMPSR), (SP.PINSTPR, CTEMPSR),
@@ -182,7 +175,7 @@ class MFPLQU4(Element):
         ),
 
         OP.RIGI_MECA_ELAS(te=201,
-            para_in=((SP.PCARCRI, CCARCRI), (OP.RIGI_MECA_ELAS.PCOMPOR, LC.CCOMPOR),
+            para_in=((SP.PCARCRI, LC.CCARCRI), (OP.RIGI_MECA_ELAS.PCOMPOR, LC.CCOMPOR),
                      (OP.RIGI_MECA_ELAS.PCONTMR, ECONTPG), (SP.PDEPLMR, DDL_MECA),
                      (SP.PDEPLPR, DDL_MECA), (SP.PGEOMER, NGEOMER),
                      (SP.PINSTMR, CTEMPSR), (SP.PINSTPR, CTEMPSR),
@@ -194,7 +187,7 @@ class MFPLQU4(Element):
         ),
 
         OP.RIGI_MECA_TANG(te=201,
-            para_in=((SP.PCARCRI, CCARCRI), (OP.RIGI_MECA_TANG.PCOMPOR, LC.CCOMPOR),
+            para_in=((SP.PCARCRI, LC.CCARCRI), (OP.RIGI_MECA_TANG.PCOMPOR, LC.CCOMPOR),
                      (OP.RIGI_MECA_TANG.PCONTMR, ECONTPG), (SP.PDEPLMR, DDL_MECA),
                      (SP.PDEPLPR, DDL_MECA), (SP.PGEOMER, NGEOMER),
                      (SP.PINSTMR, CTEMPSR), (SP.PINSTPR, CTEMPSR),

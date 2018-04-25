@@ -29,61 +29,78 @@ void exportKinematicsLoadToPython()
 {
     using namespace boost::python;
 
-    bool (KinematicsLoadInstance::*c1)(const PhysicalQuantityComponent&,
+    bool (KinematicsMechanicalLoadInstance::*c1)(const PhysicalQuantityComponent&,
                                        const double&,
                                        const std::string&) =
-            &KinematicsLoadInstance::addImposedMechanicalDOFOnElements;
-    bool (KinematicsLoadInstance::*c2)(const PhysicalQuantityComponent&,
+            &KinematicsMechanicalLoadInstance::addImposedMechanicalDOFOnElements;
+    bool (KinematicsMechanicalLoadInstance::*c2)(const PhysicalQuantityComponent&,
                                        const double&,
                                        const std::vector< std::string >&) =
-            &KinematicsLoadInstance::addImposedMechanicalDOFOnElements;
+            &KinematicsMechanicalLoadInstance::addImposedMechanicalDOFOnElements;
 
-    bool (KinematicsLoadInstance::*c3)(const PhysicalQuantityComponent&,
+    bool (KinematicsMechanicalLoadInstance::*c3)(const PhysicalQuantityComponent&,
                                        const double&,
                                        const std::string&) =
-            &KinematicsLoadInstance::addImposedMechanicalDOFOnNodes;
-    bool (KinematicsLoadInstance::*c4)(const PhysicalQuantityComponent&,
+            &KinematicsMechanicalLoadInstance::addImposedMechanicalDOFOnNodes;
+    bool (KinematicsMechanicalLoadInstance::*c4)(const PhysicalQuantityComponent&,
                                        const double&,
                                        const std::vector< std::string >&) =
-            &KinematicsLoadInstance::addImposedMechanicalDOFOnNodes;
+            &KinematicsMechanicalLoadInstance::addImposedMechanicalDOFOnNodes;
 
-    bool (KinematicsLoadInstance::*c5)(const PhysicalQuantityComponent&,
+    bool (KinematicsThermalLoadInstance::*c5)(const PhysicalQuantityComponent&,
                                        const double&,
                                        const std::string&) =
-            &KinematicsLoadInstance::addImposedThermalDOFOnElements;
-    bool (KinematicsLoadInstance::*c6)(const PhysicalQuantityComponent&,
+            &KinematicsThermalLoadInstance::addImposedThermalDOFOnElements;
+    bool (KinematicsThermalLoadInstance::*c6)(const PhysicalQuantityComponent&,
                                        const double&,
                                        const std::vector< std::string >&) =
-            &KinematicsLoadInstance::addImposedThermalDOFOnElements;
+            &KinematicsThermalLoadInstance::addImposedThermalDOFOnElements;
 
-    bool (KinematicsLoadInstance::*c7)(const PhysicalQuantityComponent&,
+    bool (KinematicsThermalLoadInstance::*c7)(const PhysicalQuantityComponent&,
                                        const double&,
                                        const std::string&) =
-            &KinematicsLoadInstance::addImposedThermalDOFOnNodes;
-    bool (KinematicsLoadInstance::*c8)(const PhysicalQuantityComponent&,
+            &KinematicsThermalLoadInstance::addImposedThermalDOFOnNodes;
+    bool (KinematicsThermalLoadInstance::*c8)(const PhysicalQuantityComponent&,
                                        const double&,
                                        const std::vector< std::string >&) =
-            &KinematicsLoadInstance::addImposedThermalDOFOnNodes;
-    bool (KinematicsLoadInstance::*c9)(const PhysicalQuantityComponent&,
+            &KinematicsThermalLoadInstance::addImposedThermalDOFOnNodes;
+    bool (KinematicsThermalLoadInstance::*c9)(const PhysicalQuantityComponent&,
                                        const FunctionPtr&,
                                        const std::vector< std::string >&) =
-            &KinematicsLoadInstance::addImposedThermalDOFOnNodes;
-            
+            &KinematicsThermalLoadInstance::addImposedThermalDOFOnNodes;
+
     class_< KinematicsLoadInstance, KinematicsLoadInstance::KinematicsLoadPtr,
             bases< DataStructure > > ( "KinematicsLoad", no_init )
+        .def( "build", &KinematicsLoadInstance::build )
+        .def( "setSupportModel", &KinematicsLoadInstance::setSupportModel )
+    ;
+
+    class_< KinematicsMechanicalLoadInstance,
+            KinematicsMechanicalLoadInstance::KinematicsMechanicalLoadPtr,
+            bases< KinematicsLoadInstance > > ( "KinematicsMechanicalLoad", no_init )
         .def( "__init__", make_constructor(
-            &initFactoryPtr< KinematicsLoadInstance > ) )
+            &initFactoryPtr< KinematicsMechanicalLoadInstance > ) )
         .def( "addImposedMechanicalDOFOnElements", c1 )
         .def( "addImposedMechanicalDOFOnElements", c2 )
         .def( "addImposedMechanicalDOFOnNodes", c3 )
         .def( "addImposedMechanicalDOFOnNodes", c4 )
+    ;
+
+    class_< KinematicsThermalLoadInstance, KinematicsThermalLoadInstance::KinematicsThermalLoadPtr,
+            bases< KinematicsLoadInstance > > ( "KinematicsThermalLoad", no_init )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< KinematicsThermalLoadInstance > ) )
         .def( "addImposedThermalDOFOnElements", c5 )
         .def( "addImposedThermalDOFOnElements", c6 )
         .def( "addImposedThermalDOFOnNodes", c7 )
         .def( "addImposedThermalDOFOnNodes", c8 )
         .def( "addImposedThermalDOFOnNodes", c9 )
-        .def( "build", &KinematicsLoadInstance::build )
-        .def( "setSupportModel", &KinematicsLoadInstance::setSupportModel )
-        .def( "setType", &KinematicsLoadInstance::setType )
+    ;
+
+    class_< KinematicsAcousticLoadInstance,
+            KinematicsAcousticLoadInstance::KinematicsAcousticLoadPtr,
+            bases< KinematicsLoadInstance > > ( "KinematicsAcousticLoad", no_init )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< KinematicsAcousticLoadInstance > ) )
     ;
 };

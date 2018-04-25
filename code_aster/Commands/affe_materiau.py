@@ -205,8 +205,7 @@ class MaterialAssignment(ExecuteCommand):
             for grp in kwGrMa:
                 inputVarOnMesh.addInputVariableOnGroupOfElements(inputVar, grp)
         else:
-            raise TypeError("At least {0} or {1} is required"
-                            .format("TOUT", "GROUP_MA"))
+            inputVarOnMesh.addInputVariableOnAllMesh(inputVar)
 
     def _addMaterial(self, fkw):
         kwTout = fkw.get("TOUT")

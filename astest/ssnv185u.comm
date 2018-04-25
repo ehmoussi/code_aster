@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -82,8 +82,12 @@ MAILLAG2=MODI_MAILLAGE(reuse =MAILLAG2,
                        ORIE_PEAU_2D=_F(GROUP_MA=('SURFSUP','SURFINF')),
                        );
 
-LN=FORMULE(NOM_PARA=('X','Y'),VALE='Y-h');
-LT=FORMULE(NOM_PARA=('X','Y'),VALE='-X+a');
+LN = FORMULE(VALE='Y-h',
+             h=h,
+             NOM_PARA=['X', 'Y'],)
+LT = FORMULE(VALE='-X+a',
+             a=a,
+             NOM_PARA=['X', 'Y'],)
 
 FISS=DEFI_FISS_XFEM(MAILLAGE=MAILLAG2,
                     DEFI_FISS=_F(FONC_LT=LT,FONC_LN=LN),
@@ -214,13 +218,17 @@ TEST_TABLE(CRITERE='ABSOLU',
 def uy(X,Y): 
     return -PRES/E*(Y-h)
 
-UY=FORMULE(NOM_PARA=('X','Y'),VALE='uy(X,Y)')
+UY = FORMULE(VALE='uy(X,Y)',
+             uy=uy,
+             NOM_PARA=['X', 'Y'],)
 
 #    - contraintes
 def Syy(X,Y):
     return -PRES
 
-SYY=FORMULE(NOM_PARA=('X','Y'),VALE='Syy(X,Y)')
+SYY = FORMULE(VALE='Syy(X,Y)',
+              Syy=Syy,
+              NOM_PARA=['X', 'Y'],)
 
 # calcul de l'erreur en terme de norme en energie
 Scal=CREA_CHAMP(OPERATION='EXTR',

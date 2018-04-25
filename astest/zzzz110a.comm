@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -46,7 +46,8 @@ DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',), DEBUG=_F(SDVERI='OUI'))
 #     3.2 : projection d'un cham_elem de contraintes
 #---------------------------------------------------------------------------------
 
-FTEMP = FORMULE(NOM_PARA=('X','Y','INST'),VALE='3. + X + Y')
+FTEMP = FORMULE(VALE='3. + X + Y',
+                NOM_PARA=['X', 'Y', 'INST'],)
 MA2D=LIRE_MAILLAGE(FORMAT='MED',UNITE=17)
 
 MA3D=LIRE_MAILLAGE(FORMAT='MED',UNITE=18)
@@ -183,8 +184,10 @@ DETRUIRE(CONCEPT=_F(NOM=XX))
 #=================================================================================
 # 2.3) projection d'un maillage 2D sur un maillage filaire  (CARRE2 -> AC)
 #=================================================================================
-FX = FORMULE(NOM_PARA=('X','Y'),VALE=' 2.*X + 3.*Y + 4.')
-FY = FORMULE(NOM_PARA=('X','Y'),VALE='-3.*X + 2.*Y + 7.')
+FX = FORMULE(VALE=' 2.*X + 3.*Y + 4.',
+             NOM_PARA=['X', 'Y'],)
+FY = FORMULE(VALE='-3.*X + 2.*Y + 7.',
+             NOM_PARA=['X', 'Y'],)
 
 XX=PROJ_CHAMP(RESULTAT=T_CARRE2,METHODE='COLLOCATION',  MODELE_1=CARRE2,MODELE_2=AC, CAS_FIGURE='2D', INFO=2,
               # On en profite pour tester TRANSF_GEOM_1 qui doit annuler TRANSF_GEOM_2 :
@@ -276,8 +279,10 @@ DETRUIRE(CONCEPT=_F(NOM=XX))
 #=================================================================================
 #   fx= sqrt(x**2 + y**2)
 #   fy= z
-FX = FORMULE(NOM_PARA=('X','Y'),VALE='sqrt(X**2+Y**2)')
-FY = FORMULE(NOM_PARA=('Z'),VALE='Z')
+FX = FORMULE(VALE='sqrt(X**2+Y**2)',
+             NOM_PARA=['X', 'Y'],)
+FY = FORMULE(VALE='Z',
+             NOM_PARA='Z',)
 
 # 3.1) Projection d'un champ de temperature :
 #--------------------------------------------
@@ -318,10 +323,14 @@ DETRUIRE(CONCEPT=_F(NOM=(CARRE2,CUBE1)))
 CARRE2=AFFE_MODELE(MAILLAGE=MA2D, AFFE=_F( GROUP_MA='CARRE2',PHENOMENE='MECANIQUE',MODELISATION='D_PLAN'))
 CUBE1 =AFFE_MODELE(MAILLAGE=MA3D, AFFE=_F( GROUP_MA='CUBE1' ,PHENOMENE='MECANIQUE',MODELISATION='3D'))
 
-sixx = FORMULE(NOM_PARA=('X','Y'),VALE='2.')
-siyy = FORMULE(NOM_PARA=('X','Y'),VALE='Y')
-sizz = FORMULE(NOM_PARA=('X','Y'),VALE='1.')
-sixy = FORMULE(NOM_PARA=('X','Y'),VALE='0.')
+sixx = FORMULE(VALE='2.',
+               NOM_PARA=['X', 'Y'],)
+siyy = FORMULE(VALE='Y',
+               NOM_PARA=['X', 'Y'],)
+sizz = FORMULE(VALE='1.',
+               NOM_PARA=['X', 'Y'],)
+sixy = FORMULE(VALE='0.',
+               NOM_PARA=['X', 'Y'],)
 
 XX1=  CREA_CHAMP(OPERATION='AFFE', TYPE_CHAM='ELNO_NEUT_F', MODELE=CARRE2,  PROL_ZERO='OUI',   INFO=1,
                  AFFE=_F( GROUP_MA = 'CARRE2', NOM_CMP = ('X1','X2','X3','X4'), VALE_F  = (sixx,siyy,sizz,sixy)))
@@ -411,12 +420,24 @@ def fff(cmp,x,y,sixx,siyy,sizz,sixy):
     if cmp=='SIYZ' : return float(result[4])
     if cmp=='SIXZ' : return float(result[5])
 
-SIXX = FORMULE(NOM_PARA=('X','Y','SIXX','SIYY','SIZZ','SIXY'),VALE='fff("SIXX",X,Y,SIXX,SIYY,SIZZ,SIXY)')
-SIYY = FORMULE(NOM_PARA=('X','Y','SIXX','SIYY','SIZZ','SIXY'),VALE='fff("SIYY",X,Y,SIXX,SIYY,SIZZ,SIXY)')
-SIZZ = FORMULE(NOM_PARA=('X','Y','SIXX','SIYY','SIZZ','SIXY'),VALE='fff("SIZZ",X,Y,SIXX,SIYY,SIZZ,SIXY)')
-SIXY = FORMULE(NOM_PARA=('X','Y','SIXX','SIYY','SIZZ','SIXY'),VALE='fff("SIXY",X,Y,SIXX,SIYY,SIZZ,SIXY)')
-SIYZ = FORMULE(NOM_PARA=('X','Y','SIXX','SIYY','SIZZ','SIXY'),VALE='fff("SIYZ",X,Y,SIXX,SIYY,SIZZ,SIXY)')
-SIXZ = FORMULE(NOM_PARA=('X','Y','SIXX','SIYY','SIZZ','SIXY'),VALE='fff("SIXZ",X,Y,SIXX,SIYY,SIZZ,SIXY)')
+SIXX = FORMULE(VALE='fff("SIXX",X,Y,SIXX,SIYY,SIZZ,SIXY)',
+               fff=fff,
+               NOM_PARA=['X', 'Y', 'SIXX', 'SIYY', 'SIZZ', 'SIXY'],)
+SIYY = FORMULE(VALE='fff("SIYY",X,Y,SIXX,SIYY,SIZZ,SIXY)',
+               fff=fff,
+               NOM_PARA=['X', 'Y', 'SIXX', 'SIYY', 'SIZZ', 'SIXY'],)
+SIZZ = FORMULE(VALE='fff("SIZZ",X,Y,SIXX,SIYY,SIZZ,SIXY)',
+               fff=fff,
+               NOM_PARA=['X', 'Y', 'SIXX', 'SIYY', 'SIZZ', 'SIXY'],)
+SIXY = FORMULE(VALE='fff("SIXY",X,Y,SIXX,SIYY,SIZZ,SIXY)',
+               fff=fff,
+               NOM_PARA=['X', 'Y', 'SIXX', 'SIYY', 'SIZZ', 'SIXY'],)
+SIYZ = FORMULE(VALE='fff("SIYZ",X,Y,SIXX,SIYY,SIZZ,SIXY)',
+               fff=fff,
+               NOM_PARA=['X', 'Y', 'SIXX', 'SIYY', 'SIZZ', 'SIXY'],)
+SIXZ = FORMULE(VALE='fff("SIXZ",X,Y,SIXX,SIYY,SIZZ,SIXY)',
+               fff=fff,
+               NOM_PARA=['X', 'Y', 'SIXX', 'SIYY', 'SIZZ', 'SIXY'],)
 
 XX6=CREA_CHAMP(OPERATION='AFFE', TYPE_CHAM='ELNO_NEUT_F', MODELE=CUBE1,  PROL_ZERO='OUI',   INFO=1,
      AFFE=_F( GROUP_MA = 'CUBE1', NOM_CMP = ('X1','X2','X3','X4','X5','X6'), VALE_F  = (SIXX,SIYY,SIZZ,SIXY,SIYZ,SIXZ)))

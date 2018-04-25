@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -151,13 +151,11 @@ subroutine dtmprep_noli(sd_dtm_)
             case(NL_CRACKED_ROTOR)
                 call dtmprep_noli_rotf(sd_dtm, sd_nl, icomp)
 !
-
             case(NL_LUBRICATION)
                  call dtmprep_noli_lub(sd_dtm, sd_nl, icomp)
 !
             case(NL_YACS)
                  call dtmprep_noli_yacs(sd_dtm, sd_nl, icomp)
-
 !
              case(NL_FX_RELATIONSHIP)
                  call dtmprep_noli_rede(sd_dtm, sd_nl, icomp)

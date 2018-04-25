@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -132,7 +132,8 @@ MULT_X=CALC_CHAR_SEISME(   MATR_MASS=MASSE,   DIRECTION=( 1., 0., 0.,),
                               MODE_STAT=MODE_STA,  NOEUD='N01'
                              )
 
-ACCELERO = FORMULE(NOM_PARA='INST',VALE='2.E+05*INST**2')
+ACCELERO = FORMULE(VALE='2.E+05*INST**2',
+                   NOM_PARA='INST',)
 
 #-----------------------------------------------------------------------
 L_INST=DEFI_LIST_REEL(  DEBUT=0.,
@@ -246,9 +247,12 @@ TEST_FONCTION(VALEUR=(_F(VALE_CALC=-2.666665554879E-03,
 # CHAQUE MODE EN MULTIPLIANT ACCELERO PAR LA VALEUR DU CHARGEMENT
 # GENERALISE (OBTENU PAR IMPR_CO(VECT_X) )
 
-F1 = FORMULE(NOM_PARA='INST',VALE='-1.65597E+00*2.E+05*INST**2')
-F2 = FORMULE(NOM_PARA='INST',VALE='-4.73952E-01*2.E+05*INST**2')
-F3 = FORMULE(NOM_PARA='INST',VALE='1.82018E-01*2.E+05*INST**2')
+F1 = FORMULE(VALE='-1.65597E+00*2.E+05*INST**2',
+             NOM_PARA='INST',)
+F2 = FORMULE(VALE='-4.73952E-01*2.E+05*INST**2',
+             NOM_PARA='INST',)
+F3 = FORMULE(VALE='1.82018E-01*2.E+05*INST**2',
+             NOM_PARA='INST',)
 
 TRAN_NUM=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='GENE',
                   MATR_MASS=MASS_GEN,   MATR_RIGI=RIGI_GEN,
@@ -406,8 +410,10 @@ MODE_CS=EXTR_MODE( FILTRE_MODE=_F( MODE = MODE_ICS,
                       IMPRESSION=_F( CUMUL = 'OUI')
                      )
 
-DERI_PRE = FORMULE(NOM_PARA='INST',VALE='4.E+05*INST')
-DERI_SEC = FORMULE(NOM_PARA='INST',VALE='4.E+05')
+DERI_PRE = FORMULE(VALE='4.E+05*INST',
+                   NOM_PARA='INST',)
+DERI_SEC = FORMULE(VALE='4.E+05',
+                   NOM_PARA='INST',)
 #
 PROJ_BASE(  BASE=MODE_CS,   NB_VECT=2,MATR_ASSE_GENE=(
        _F(  MATRICE = CO("MASG_CS2"),  MATR_ASSE = MASS_CS),

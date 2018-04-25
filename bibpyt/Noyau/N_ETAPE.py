@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -67,13 +67,17 @@ class ETAPE(N_MCCOMPO.MCCOMPO):
         """
         self.definition = oper
         self.reuse = reuse
+        self.appel = N_utils.callee_where(niveau)
+        try:
+            self._identifier = "cmd{0}".format(args.pop('identifier'))
+        except KeyError:
+            self._identifier = "txt{0}".format(self.appel[0])
         self.valeur = args
         self.nettoiargs()
         self.parent = CONTEXT.get_current_step()
         self.etape = self
         self.nom = oper.nom
         self.idracine = oper.label
-        self.appel = N_utils.callee_where(niveau)
         self.mc_globaux = {}
         self.sd = None
         self.actif = 1
@@ -190,7 +194,7 @@ class ETAPE(N_MCCOMPO.MCCOMPO):
         else:
             sd_prod = self.definition.sd_prod
         # on teste maintenant si la SD est réutilisée ou s'il faut la créer
-        if self.definition.reentrant != 'n' and self.reuse:
+        if self.definition.reentrant[0] != 'n' and self.reuse:
             # Le concept produit est specifie reutilise (reuse=xxx). C'est une erreur mais non fatale.
             # Elle sera traitee ulterieurement.
             self.sd = self.reuse

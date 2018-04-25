@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -99,7 +99,7 @@ implicit none
 !
 ! ----- Set options in COMPOR <CARTE>
 !
-        v_compor_valv(NAME) = rela_comp
+        v_compor_valv(RELA_NAME) = rela_comp
         write (v_compor_valv(NVAR),'(I16)') nb_vari
         v_compor_valv(DEFO) = defo_comp
         v_compor_valv(INCRELAS) = type_comp

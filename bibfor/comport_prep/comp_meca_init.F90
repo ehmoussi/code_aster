@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,15 +18,15 @@
 ! aslint: disable=W1403
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine comp_meca_init(ds_compor)
+subroutine comp_meca_init(ds_comporPara)
 !
-use NonLin_Datastructure_type
+use Behaviour_type
 !
 implicit none
 !
 #include "asterc/getfac.h"
 !
-type(NL_DS_Compor), intent(out) :: ds_compor
+type(Behaviour_Parameters), intent(out) :: ds_comporPara
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -36,19 +36,19 @@ type(NL_DS_Compor), intent(out) :: ds_compor
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! Out ds_compor        : datastructure to describe comportement
+! Out ds_comporPara    : datastructure to describe comportement
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    ds_compor%rela_comp       = 'VIDE'
-    ds_compor%defo_comp       = 'VIDE'
-    ds_compor%type_comp       = 'VIDE'
-    ds_compor%type_cpla       = 'VIDE'
-    ds_compor%kit_comp(:)     = 'VIDE'
-    ds_compor%mult_comp       = 'VIDE'
-    ds_compor%post_iter       = 'VIDE'
-    ds_compor%nb_vari         = 0
-    ds_compor%nb_vari_comp(:) = 0
-    ds_compor%nume_comp(:)    = 0
+    ds_comporPara%rela_comp       = 'VIDE'
+    ds_comporPara%defo_comp       = 'VIDE'
+    ds_comporPara%type_comp       = 'VIDE'
+    ds_comporPara%type_cpla       = 'VIDE'
+    ds_comporPara%kit_comp(:)     = 'VIDE'
+    ds_comporPara%mult_comp       = 'VIDE'
+    ds_comporPara%post_iter       = 'VIDE'
+    ds_comporPara%nb_vari         = 0
+    ds_comporPara%nb_vari_comp(:) = 0
+    ds_comporPara%nume_comp(:)    = 0
 !
 end subroutine

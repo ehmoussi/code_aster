@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -37,13 +37,6 @@ from cataelem.Options.options import OP
 CCAMASS = LocatedComponents(phys=PHY.CAMASS, type='ELEM',
                             components=('C', 'ALPHA', 'BETA', 'KAPPA', 'X',
                                         'Y', 'Z',))
-
-
-CCARCRI = LocatedComponents(phys=PHY.CARCRI, type='ELEM',
-                            components=(
-                                'ITECREL', 'MACOMP', 'RESCREL', 'THETA', 'ITEDEC',
-                            'INTLOC', 'PERTURB', 'TOLDEBO', 'ITEDEBO', 'TSSEUIL',
-                            'TSAMPL', 'TSRETOUR', 'POSTITER', 'LC_EXT[3]', 'MODECALC',))
 
 DDL_MECA = LocatedComponents(phys=PHY.DEPL_R, type='ELNO', diff=True,
                              components=(
@@ -342,7 +335,7 @@ class HM_HEXA20_XH1(Element):
                      para_in=(
                      (OP.FULL_MECA.PBASLOR, LC.N9NEUT_R), (
                          SP.PCAMASS, CCAMASS),
-                     (SP.PCARCRI, CCARCRI), (OP.FULL_MECA.PCNSETO, E1280NEI),
+                     (SP.PCARCRI, LC.CCARCRI), (OP.FULL_MECA.PCNSETO, E1280NEI),
                      (OP.FULL_MECA.PCOMPOR, LC.CCOMPOR), (
                      OP.FULL_MECA.PCONTMR, ECONTPG),
                      (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
@@ -388,7 +381,7 @@ class HM_HEXA20_XH1(Element):
                      para_in=(
                      (OP.RAPH_MECA.PBASLOR, LC.N9NEUT_R), (
                          SP.PCAMASS, CCAMASS),
-                     (SP.PCARCRI, CCARCRI), (OP.RAPH_MECA.PCNSETO, E1280NEI),
+                     (SP.PCARCRI, LC.CCARCRI), (OP.RAPH_MECA.PCNSETO, E1280NEI),
                      (OP.RAPH_MECA.PCOMPOR, LC.CCOMPOR), (
                      OP.RAPH_MECA.PCONTMR, ECONTPG),
                      (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
@@ -417,7 +410,7 @@ class HM_HEXA20_XH1(Element):
                           para_in=(
                           (OP.RIGI_MECA_TANG.PBASLOR, LC.N9NEUT_R), (
                           SP.PCAMASS, CCAMASS),
-                          (SP.PCARCRI, CCARCRI), (
+                          (SP.PCARCRI, LC.CCARCRI), (
                           OP.RIGI_MECA_TANG.PCNSETO, E1280NEI),
                           (OP.RIGI_MECA_TANG.PCOMPOR, LC.CCOMPOR), (
                           OP.RIGI_MECA_TANG.PCONTMR, ECONTPG),

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -21,25 +21,23 @@
 
 """
 """
+import os
 # Modules Python
 import sys
-import os
-from os import times
 import time
+from os import times
 
+import aster
+import aster_core
+import checksd
+from code_file import CodeVisitor
+from command_text import CommandTextVisitor
+from Noyau.N_Exception import AsException
+from Noyau.N_info import SUPERV, message
+from Noyau.N_MACRO_ETAPE import MACRO_ETAPE
 # Modules Eficas
 from Noyau.N_utils import prbanner
-from Noyau.N_Exception import AsException
-from Noyau.N_MACRO_ETAPE import MACRO_ETAPE
-from Noyau.N_info import message, SUPERV
-
 from strfunc import convert
-
-import aster_core
-import aster
-import checksd
-from command_text import CommandTextVisitor
-from code_file import CodeVisitor
 
 
 class ETAPE:
@@ -51,6 +49,8 @@ class ETAPE:
        - Exec, realise la phase d'execution, en mode par lot
        - Execute, realise la phase d'execution, en mode commande par commande
     """
+    def __init__(self, oper=None, reuse=None, args={}):
+        self._stage_number = aster_core.get_option('stage_number')
 
     def Exec(self):
         """
@@ -170,6 +170,10 @@ class ETAPE:
                 type_concept = '-'
 
             UTMESS('I', 'VIDE_1')
+            UTMESS('I', 'SUPERVIS2_69',
+                   valk="_stg{0}_{1}".format(self._stage_number,
+                                             self._identifier))
+
             UTMESS('I', 'SUPERVIS2_70')
             if self.icmd != None:
                 UTMESS('I', 'SUPERVIS2_71', vali=self.icmd, valk=type_concept)

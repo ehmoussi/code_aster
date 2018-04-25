@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,8 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmelcm(phase    , mesh     , model    , mate     , ds_contact    ,&
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine nmelcm(phase    , mesh     , model    , ds_material, ds_contact    ,&
                   disp_prev, vite_prev, acce_prev, vite_curr, disp_cumu_inst,&
                   disp_newt_curr,matr_elem, time_prev, time_curr, ds_constitutive, l_xthm)
 !
@@ -39,24 +40,22 @@ implicit none
 #include "asterfort/nmelco_prep.h"
 #include "asterfort/reajre.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=4), intent(in) :: phase
-    character(len=8), intent(in) :: mesh
-    character(len=24), intent(in) :: model
-    character(len=24), intent(in) :: mate
-    type(NL_DS_Contact), intent(in) :: ds_contact
-    character(len=19), intent(in) :: disp_prev
-    character(len=19), intent(in) :: vite_prev
-    character(len=19), intent(in) :: acce_prev
-    character(len=19), intent(in) :: vite_curr
-    character(len=19), intent(in) :: disp_cumu_inst
-    character(len=19), intent(in) :: disp_newt_curr
-    character(len=19), intent(out) :: matr_elem
-    character(len=19), intent(in) :: time_prev
-    character(len=19), intent(in) :: time_curr
-    type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-    aster_logical, intent(in) :: l_xthm
+character(len=4), intent(in) :: phase
+character(len=8), intent(in) :: mesh
+character(len=24), intent(in) :: model
+type(NL_DS_Material), intent(in) :: ds_material
+type(NL_DS_Contact), intent(in) :: ds_contact
+character(len=19), intent(in) :: disp_prev
+character(len=19), intent(in) :: vite_prev
+character(len=19), intent(in) :: acce_prev
+character(len=19), intent(in) :: vite_curr
+character(len=19), intent(in) :: disp_cumu_inst
+character(len=19), intent(in) :: disp_newt_curr
+character(len=19), intent(out) :: matr_elem
+character(len=19), intent(in) :: time_prev
+character(len=19), intent(in) :: time_curr
+type(NL_DS_Constitutive), intent(in) :: ds_constitutive
+aster_logical, intent(in) :: l_xthm
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -69,7 +68,7 @@ implicit none
 ! In  phase            : phase (contact or friction)
 ! In  mesh             : name of mesh
 ! In  model            : name of model
-! In  mate             : name of material characteristics (field)
+! In  ds_material      : datastructure for material parameters
 ! In  ds_contact       : datastructure for contact management
 ! In  disp_prev        : displacement at beginning of current time
 ! In  vite_prev        : speed at beginning of current time
@@ -131,7 +130,7 @@ implicit none
 ! ----- Prepare input fields
 !
         call nmelco_prep(phase    , 'MATR'   ,&
-                         mesh     , model    , mate     , ds_contact,&
+                         mesh     , model    , ds_material, ds_contact,&
                          disp_prev, vite_prev, acce_prev, vite_curr , disp_cumu_inst,&
                          disp_newt_curr,nbin     , lpain    , lchin    ,&
                          option   , time_prev, time_curr , ds_constitutive,&

@@ -1,0 +1,10 @@
+P ncpus 
+P mpi_nbcpu 1
+P mpi_nbnoeud 1
+P time_limit 60
+P memory_limit 256.0
+P testlist verification sequential
+
+F comm ssnp176a.comm D 1
+F mmed ssnp176a.mmed D 20
+

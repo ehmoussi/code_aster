@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -57,7 +57,7 @@ subroutine epslmc(nno  , ndim  , nbsig,&
     real(kind=8) :: r, w
     real(kind=8), dimension(nno, ndim) :: dfdi
     real(kind=8), dimension(3, 3)      :: f, gn
-    real(kind=8), dimension(6)         :: tbid, epsl
+    real(kind=8), dimension(6)         :: epsl
     real(kind=8), dimension(3)         :: lamb, logl
     aster_logical :: axi, grand
     real(kind=8), parameter :: zero = 0.0d0, sqrt2 = sqrt(2.0d0)
@@ -76,7 +76,7 @@ subroutine epslmc(nno  , ndim  , nbsig,&
                     dfdi)
 !
         call nmepsi(ndim, nno, axi, grand, zr(ivf+k),&
-                    r, dfdi, depl, f, tbid)
+                    r, dfdi, depl, f)
 !
         call deflog(ndim, f, epsl, gn, lamb,&
                     logl, iret)

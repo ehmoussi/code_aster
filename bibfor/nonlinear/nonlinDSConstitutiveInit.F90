@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -30,6 +30,7 @@ implicit none
 #include "asterfort/nmcpqu.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/jeveuo.h"
+#include "asterfort/utmess.h"
 #include "asterfort/Behaviour_type.h"
 !
 character(len=24), intent(in) :: model
@@ -60,7 +61,7 @@ type(NL_DS_Constitutive), intent(inout) :: ds_constitutive
 !
     call infdbg('MECANONLINE', ifm, niv)
     if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE> . Initializations for constitutive laws'
+        call utmess('I', 'MECANONLINE11_24')
     endif
 !
 ! - Construct CHAM_ELEM_S

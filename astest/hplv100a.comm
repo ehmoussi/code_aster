@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -64,7 +64,7 @@ CH_1=AFFE_CHAR_THER_F(
           _F( GROUP_MA = 'YZO', FLUN = YZO,  ),
           _F( GROUP_MA = 'XZP', FLUN = XZP,  ),
           _F( GROUP_MA = 'XZM', FLUN = XZM,  ),
-          _F( GROUP_MA = 'XYC', FLUN = XYC,  ),
+          _F( GROUP_MA = 'XYC', FLUX_Z = XYC,  ),
           _F( GROUP_MA = 'XYM', FLUN = XYM,  )),
           TEMP_IMPO=_F( GROUP_NO = 'A',  TEMP = TE,   )
           )

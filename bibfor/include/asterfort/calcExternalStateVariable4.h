@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,12 +17,12 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine calcExternalStateVariable4(nno     , npg   ,&
+    subroutine calcExternalStateVariable4(nno     , npg   , ndim,&
                                           jv_dfunc,&
                                           geom    , typmod)
-        integer, intent(in) :: nno, npg
+        integer, intent(in) :: nno, npg, ndim
         integer, intent(in) :: jv_dfunc
         character(len=8), intent(in) :: typmod(2)
-        real(kind=8), intent(in) :: geom(3, nno)
+        real(kind=8), intent(in) :: geom(ndim, nno)
     end subroutine calcExternalStateVariable4
 end interface

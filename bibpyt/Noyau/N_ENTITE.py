@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -194,13 +194,34 @@ class ENTITE:
 
     def check_reentrant(self):
         """Vérifie l'attribut reentrant."""
-        if self.reentrant not in ('o', 'n', 'f'):
+        status = self.reentrant[0]
+        if status not in ('o', 'n', 'f'):
             self.cr.fatal(
                 _(u"L'attribut 'reentrant' doit valoir 'o','n' ou 'f' : %r"),
-                self.reentrant)
-        if self.reentrant != 'n' and 'reuse' not in self.entites.keys():
+                status)
+        if status != 'n' and 'reuse' not in self.entites.keys():
             self.cr.fatal(_(u"L'opérateur est réentrant, il faut ajouter "
                             u"le mot-clé 'reuse'."))
+        if status != 'n':
+            orig = self.reentrant.split(':')
+            try:
+                assert len(orig) in (2, 3), u"un ou deux mots-clés attendus"
+                orig.pop(0)
+                msg = u"Mot-clé inexistant {0!r}"
+                for k1 in orig[0].split("|"):
+                    key1 = self.get_entite(k1)
+                    assert key1 is not None, msg.format(k1)
+                    if len(orig) > 1:
+                        key2 = key1.get_entite(orig[1])
+                        assert key2 is not None, msg.format("/".join([k1, orig[1]]))
+            except AssertionError as exc:
+                self.cr.fatal(_(u"'reentrant' doit indiquer quel mot-clé "
+                                u"fournit le concept réentrant.\nPar exemple: "
+                                u"'o:MAILLAGE' pour un mot-clé simple ou "
+                                u"'o:ETAT_INIT:EVOL_NOLI' pour un mot-clé "
+                                u"facteur. Les mots-clés doivent exister.\n"
+                                u"Erreur: {0}"
+                                .format(exc)))
 
     def check_statut(self, into=('o', 'f', 'c', 'd')):
         """Vérifie l'attribut statut."""
@@ -291,9 +312,9 @@ class ENTITE:
         from code_aster.Cata.DataStructure import UnitType
         if self.inout is None:
             return
-        elif self.inout not in ('in', 'out', 'inout'):
+        elif self.inout not in ('in', 'out'):
             self.cr.fatal(
-                _(u"L'attribut 'inout' doit valoir 'in','out' ou 'inout' : %r"),
+                _(u"L'attribut 'inout' doit valoir 'in' ou 'out' : %r"),
                 self.inout)
         elif UnitType() not in self.type or len(self.type) != 1:
             self.cr.fatal(

@@ -298,8 +298,6 @@ def C_COMPORTEMENT(COMMAND=None) :  #COMMUN#
                                                         "BETON_DOUBLE_DP",
                                                         "ENDO_ISOT_BETON",
                                                         "MAZARS",
-                                                        "ENDO_PORO_BETON",
-                                                        "FLUA_PORO_BETON"
                                                         ),
                                                       ),
                               ),

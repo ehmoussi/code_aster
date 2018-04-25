@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,36 +15,36 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine rcvalb(fami, kpg, ksp, poum, jmat, nomat,&
                   phenom, nbpar, nompar, valpar,&
                   nbres, nomres, valres, codret, iarret,nan)
-
+!
 use calcul_module, only : ca_jvcnom_, ca_nbcvrc_
-
+!
 implicit none
-! person_in_charge: jacques.pellet at edf.fr
-
+!
 #include "jeveux.h"
+#include "asterfort/assert.h"
 #include "asterfort/rcvala.h"
 #include "asterfort/rcvarc.h"
-
-    integer, intent(in) :: nbres
-    integer, intent(in) :: nbpar
-    character(len=*), intent(in) :: fami
-    integer, intent(in) :: kpg
-    integer, intent(in) :: ksp
-    character(len=*), intent(in) :: poum
-    integer, intent(in) :: jmat
-    character(len=*), intent(in) :: nomat
-    character(len=*), intent(in) :: phenom
-    character(len=*), intent(in) :: nompar(nbpar)
-    real(kind=8), intent(in) :: valpar(nbpar)
-    character(len=*), intent(in) :: nomres(nbres)
-    real(kind=8), intent(out) :: valres(nbres)
-    integer, intent(out) :: codret(nbres)
-    integer, intent(in) :: iarret
-    character(len=3), intent(in), optional :: nan
+!
+integer, intent(in) :: nbres
+integer, intent(in) :: nbpar
+character(len=*), intent(in) :: fami
+integer, intent(in) :: kpg
+integer, intent(in) :: ksp
+character(len=*), intent(in) :: poum
+integer, intent(in) :: jmat
+character(len=*), intent(in) :: nomat
+character(len=*), intent(in) :: phenom
+character(len=*), intent(in) :: nompar(nbpar)
+real(kind=8), intent(in) :: valpar(nbpar)
+character(len=*), intent(in) :: nomres(nbres)
+real(kind=8), intent(out) :: valres(nbres)
+integer, intent(out) :: codret(nbres)
+integer, intent(in) :: iarret
+character(len=3), intent(in), optional :: nan
 
 ! ----------------------------------------------------------------------
 ! But : Recuperation des valeurs d'une liste de coefficients d'une relation de
@@ -75,8 +75,8 @@ implicit none
 !        icodre(*) : pour chaque resultat, 0 si on a trouve, 1 sinon
 ! ----------------------------------------------------------------------
 
-    integer :: nbpamx, nbpar2, ipar, nbpart, ier
-    parameter (nbpamx=10)
+    integer, parameter :: nbpamx=20
+    integer :: nbpar2, ipar, nbpart, ier
     real(kind=8) :: valpa2(nbpamx), valvrc
     character(len=8) :: nompa2(nbpamx), novrc
 ! ----------------------------------------------------------------------
@@ -92,7 +92,7 @@ implicit none
                     valpar, nbres, nomres, valres, codret,&
                     iarret)
         endif
-        goto 9999
+        goto 999
     endif
 
 
@@ -109,13 +109,13 @@ implicit none
             valpa2(nbpar2)=valvrc
         endif
     enddo
-
+    nbpart=nbpar+nbpar2
+    ASSERT(nbpart .le. nbpamx)
     do ipar=1,nbpar
         nompa2(nbpar2+ipar) = nompar(ipar)
         valpa2(nbpar2+ipar) = valpar(ipar)
     enddo
 
-    nbpart=nbpar+nbpar2
 
     if (present(nan)) then
         call rcvala(jmat, nomat, phenom, nbpart, nompa2,&
@@ -127,5 +127,5 @@ implicit none
                 iarret)
     endif
 
-9999  continue
+999 continue
 end subroutine

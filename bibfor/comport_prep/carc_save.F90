@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,7 +19,7 @@
 !
 subroutine carc_save(model, mesh, carcri, nb_cmp, ds_compor_para)
 !
-use NonLin_Datastructure_type
+use Behaviour_type
 !
 implicit none
 !
@@ -40,12 +40,13 @@ implicit none
 #include "asterfort/getExternalBehaviourPntr.h"
 #include "asterfort/setMFrontPara.h"
 #include "asterfort/getExternalStateVariable.h"
+#include "asterfort/getExternalStrainModel.h"
 !
 character(len=8), intent(in) :: model
 character(len=8), intent(in) :: mesh
 character(len=19), intent(in) :: carcri
 integer, intent(in) :: nb_cmp
-type(NL_DS_ComporParaPrep), intent(in) :: ds_compor_para
+type(Behaviour_PrepCrit), intent(in) :: ds_compor_para
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -79,7 +80,7 @@ type(NL_DS_ComporParaPrep), intent(in) :: ds_compor_para
     aster_logical :: plane_stress, l_mfront_proto, l_mfront_offi, l_kit_thm
     integer :: cptr_nbvarext=0, cptr_namevarext=0, cptr_fct_ldc=0
     integer :: cptr_nameprop=0, cptr_nbprop=0
-    integer :: jvariexte = 0
+    integer :: jvariexte = 0, jstrainexte = 0
     character(len=16) :: kit_comp(4) = (/'VIDE','VIDE','VIDE','VIDE'/)
     character(len=16) :: rela_code_py=' ', defo_code_py=' ', meca_code_py=' ', comp_code_py=' '
 !
@@ -186,6 +187,12 @@ type(NL_DS_ComporParaPrep), intent(in) :: ds_compor_para
                                       cptr_nbvarext, cptr_namevarext,&
                                       jvariexte)
 !
+! ----- Get model of strains for external programs (MFRONT)
+!
+        call getExternalStrainModel(l_mfront_offi, l_mfront_proto,&
+                                    ds_compor_para%v_para(i_comp)%comp_exte,&
+                                    defo_comp, jstrainexte)
+!
 ! ----- Set in <CARTE>
 !
         p_carc_valv(1)  = iter_inte_maxi
@@ -198,7 +205,8 @@ type(NL_DS_ComporParaPrep), intent(in) :: ds_compor_para
         p_carc_valv(8)  = resi_deborst_max
         p_carc_valv(9)  = iter_deborst_max
         p_carc_valv(10) = resi_radi_rela
-        p_carc_valv(IVARIEXTE) = jvariexte
+        p_carc_valv(IVARIEXTE)   = jvariexte
+        p_carc_valv(ISTRAINEXTE) = jstrainexte
         p_carc_valv(13) = post_iter
         p_carc_valv(21) = post_incr
 !       exte_comp UMAT / MFRONT

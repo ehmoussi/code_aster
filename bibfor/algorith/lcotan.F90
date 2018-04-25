@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -75,7 +75,6 @@ subroutine lcotan(opt, angmas, etatd, etatf, fami,&
 !        DSDE    MATRICE DE COMPORTEMENT TANGENT A T+DT OU T
 !        CODRET  CODE RETOUR =0 OK, =1 => REDECOUPAGE DU PAS DE TEMPS
 !
-#include "asterfort/burjpl.h"
 #include "asterfort/lchbvp.h"
 #include "asterfort/lcjela.h"
 #include "asterfort/lcjpla.h"
@@ -110,7 +109,7 @@ subroutine lcotan(opt, angmas, etatd, etatf, fami,&
 !
     if (opt(1:9) .eq. 'RIGI_MECA') then
 !
-        if ((loi.eq.'LAIGLE') .or. (loi.eq.'BETON_BURGER')) then
+        if (loi.eq.'LAIGLE') then
 !
             call lcjela(loi, mod, nmat, materd, vind,&
                         dsde)
@@ -151,12 +150,7 @@ subroutine lcotan(opt, angmas, etatd, etatf, fami,&
     else if (opt(1:9) .eq. 'FULL_MECA') then
 !
         if (etatf .eq. 'ELASTIC') then
-            if (loi(1:12) .eq. 'BETON_BURGER') then
-                call burjpl(nmat, materf, nr, drdy, dsde)
-            else
-                call lcjela(loi, mod, nmat, materf, vinf,&
-                            dsde)
-            endif
+            call lcjela(loi, mod, nmat, materf, vinf, dsde)
 !
         else if (etatf .eq. 'PLASTIC') then
 !   --->    ELASTOPLASTICITE ==>  TYPMA = 'VITESSE '

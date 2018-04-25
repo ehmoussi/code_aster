@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -31,9 +31,10 @@ INCLUDE=MACRO(nom="INCLUDE",
               op_init=ops.INCLUDE_context,
               fichier_ini=1,
               regles=(UN_PARMI('UNITE', 'DONNEE')),
-         UNITE = SIMP(statut='f', typ=UnitType(), inout='in',
+         UNITE=SIMP(statut='f', typ=UnitType(), inout='in',
                       fr=tr("Unité logique à inclure")),
-         DONNEE = SIMP(statut='f', typ='TXM',
+         DONNEE=SIMP(statut='f', typ='TXM',
                        fr=tr("Nom du fichier de données à inclure")),
-         INFO  = SIMP(statut='f', typ='I', defaut=1, into=(0, 1, 2)),
+         ALARME=SIMP(statut='f',typ='TXM',defaut="OUI",into=("OUI","NON") ),
+         INFO=SIMP(statut='f', typ='I', defaut=1, into=(0, 1, 2)),
 );

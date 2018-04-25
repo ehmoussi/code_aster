@@ -23,6 +23,7 @@
 
 #include "PythonBindings/VectorUtilities.h"
 #include "Loads/PhysicalQuantity.h"
+#include "Materials/Material.h"
 
 void exportVectorUtilitiesToPython()
 {
@@ -32,4 +33,5 @@ void exportVectorUtilitiesToPython()
     exportVectorUtilities< double >();
     exportVectorUtilities< std::string >();
     exportVectorUtilities< PhysicalQuantityComponent >();
+    exportVectorUtilities< MaterialPtr >();
 };

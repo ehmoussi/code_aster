@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,12 +15,14 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmfcor(modele         , numedd    , mate    , carele     , comref,&
-                  ds_constitutive, lischa    , fonact  , ds_algopara, numins,&
-                  iterat         , ds_measure, sddisc  , sddyna     , sdnume,&
-                  sderro         , ds_contact, ds_inout, valinc     , solalg,&
-                  veelem         , veasse    , meelem  , measse     , matass,&
+! person_in_charge: mickael.abbas at edf.fr
+! aslint: disable=W1504
+!
+subroutine nmfcor(model          , nume_dof   , ds_material   , cara_elem  ,&
+                  ds_constitutive, list_load  , list_func_acti, ds_algopara, nume_inst,&
+                  iter_newt         , ds_measure , sddisc        , sddyna     , sdnume   ,&
+                  sderro         , ds_contact , hval_incr     , hval_algo  ,&
+                  hval_veelem    , hval_veasse, hval_meelem   , hval_measse, matass   ,&
                   lerrit)
 !
 use NonLin_Datastructure_type
@@ -28,85 +30,88 @@ use NonLin_Datastructure_type
 implicit none
 !
 #include "asterf_types.h"
+#include "asterfort/assert.h"
 #include "asterfort/infdbg.h"
 #include "asterfort/isfonc.h"
-#include "asterfort/nmadir.h"
 #include "asterfort/nmaint.h"
-#include "asterfort/nmbudi.h"
-#include "asterfort/nmchar.h"
+#include "asterfort/nonlinLoadDirichletCompute.h"
+#include "asterfort/nmforc_corr.h"
 #include "asterfort/nmchex.h"
 #include "asterfort/nmchfi.h"
 #include "asterfort/nmcret.h"
 #include "asterfort/nmctcd.h"
-#include "asterfort/nmdiri.h"
+#include "asterfort/ndynin.h"
+#include "asterfort/ndynlo.h"
+#include "asterfort/nonlinRForceCompute.h"
 #include "asterfort/nmfint.h"
 #include "asterfort/nmfocc.h"
 #include "asterfort/nmltev.h"
 #include "asterfort/nmrigi.h"
 #include "asterfort/nmtime.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-! aslint: disable=W1504
+integer :: list_func_acti(*)
+integer :: iter_newt, nume_inst
+type(NL_DS_AlgoPara), intent(in) :: ds_algopara
+type(NL_DS_Measure), intent(inout) :: ds_measure
+character(len=19) :: sddisc, sddyna, sdnume
+character(len=19) :: list_load, matass
+character(len=24) :: model, nume_dof, cara_elem
+type(NL_DS_Material), intent(in) :: ds_material
+type(NL_DS_Constitutive), intent(in) :: ds_constitutive
+character(len=24) :: sderro
+character(len=19) :: hval_meelem(*), hval_veelem(*)
+character(len=19) :: hval_measse(*), hval_veasse(*)
+character(len=19) :: hval_algo(*), hval_incr(*)
+type(NL_DS_Contact), intent(in) :: ds_contact
+aster_logical :: lerrit
 !
-    integer :: fonact(*)
-    integer :: iterat, numins
-    type(NL_DS_AlgoPara), intent(in) :: ds_algopara
-    type(NL_DS_Measure), intent(inout) :: ds_measure
-    character(len=19) :: sddisc, sddyna, sdnume
-    character(len=19) :: lischa, matass
-    character(len=24) :: modele, numedd, mate, carele, comref
-    type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-    character(len=24) :: sderro
-    type(NL_DS_InOut), intent(in) :: ds_inout
-    character(len=19) :: meelem(*), veelem(*), measse(*), veasse(*)
-    character(len=19) :: solalg(*), valinc(*)
-    type(NL_DS_Contact), intent(in) :: ds_contact
-    aster_logical :: lerrit
-!
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
 ! ROUTINE MECA_NON_LINE (ALGORITHME)
 !
 ! MISE A JOUR DES EFFORTS APRES CALCUL DE LA CORRECTION DES CHAMPS
 ! DEPLACEMENTS/VITESSES ACCELERATIONS
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
-! IN  MODELE : MODELE
-! IN  NUMEDD : NUME_DDL
-! IN  MATE   : CHAMP MATERIAU
-! IN  CARELE : CARACTERISTIQUES DES ELEMENTS DE STRUCTURE
-! IN  COMREF : VARI_COM DE REFERENCE
+! In  model            : name of model
+! In  cara_elem        : name of elementary characteristics (field)
+! In  ds_material      : datastructure for material parameters
+! In  list_load        : name of datastructure for list of loads
+! In  nume_dof         : name of numbering object (NUME_DDL)
+! In  ds_material      : datastructure for material parameters
 ! In  ds_constitutive  : datastructure for constitutive laws management
-! IN  SDDYNA : SD POUR LA DYNAMIQUE
+! In  sddyna           : datastructure for dynamic
 ! IO  ds_measure       : datastructure for measure and statistics management
-! IN  FONACT : FONCTIONNALITES ACTIVEES
+! In  list_func_acti   : list of active functionnalities
 ! In  ds_algopara      : datastructure for algorithm parameters
 ! IN  ITERAT : NUMERO D'ITERATION DE NEWTON
-! IN  NUMINS : NUMERO D'INSTANT
-! IN  SDDISC : SD DISCRETISATION TEMPORELLE
+! In  sddisc           : datastructure for time discretization
+! In  nume_inst        : index of current time step
 ! IN  SDERRO : GESTION DES ERREURS
 ! In  ds_contact       : datastructure for contact management
-! IN  VALINC : VARIABLE CHAPEAU POUR INCREMENTS VARIABLES
-! IN  SOLALG : VARIABLE CHAPEAU POUR INCREMENTS SOLUTIONS
-! IN  VEELEM : VARIABLE CHAPEAU POUR NOM DES VECT_ELEM
-! IN  VEASSE : VARIABLE CHAPEAU POUR NOM DES VECT_ASSE
-! IN  MEELEM : VARIABLE CHAPEAU POUR NOM DES MATR_ELEM
-! IN  MEASSE : VARIABLE CHAPEAU POUR NOM DES MATR_ASSE
+! In  hval_incr        : hat-variable for incremental values fields
+! In  hval_algo        : hat-variable for algorithms fields
+! In  hval_veelem      : hat-variable for elementary vectors
+! In  hval_veasse      : hat-variable for vectors (node fields)
+! In  hval_meelem      : hat-variable for elementary matrix
+! In  hval_measse      : hat-variable for matrix
 ! IN  SDNUME : SD NUMEROTATION
 ! OUT LERRIT : .TRUE. SI ERREUR PENDANT CORRECTION
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
-    aster_logical :: lcfint, lcrigi, lcdiri, lcbudi
-    character(len=19) :: vefint, vediri, vebudi, cnfint, cndiri, cnbudi
-    character(len=19) :: depplu, vitplu, accplu
-    character(len=16) :: option
-    aster_logical :: lctcd, lunil, leltc
-    integer :: ldccvg
     integer :: ifm, niv
+    character(len=24) :: mate, varc_refe
+    aster_logical :: lcfint, lcrigi, lcdiri, lcbudi
+    character(len=19) :: vefint, cnfint
+    character(len=19) :: disp_curr, vite_curr, acce_curr, vect_lagr
+    character(len=16) :: option
+    aster_logical :: l_cont_disc, l_unil, leltc
+    aster_logical :: l_disp, l_vite, l_acce, l_dyna
+    integer :: ldccvg
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
     call infdbg('MECA_NON_LINE', ifm, niv)
     if (niv .ge. 2) then
@@ -115,97 +120,113 @@ implicit none
 !
 ! --- INITIALISATIONS CODES RETOURS
 !
-    ldccvg = -1
+    mate      = ds_material%field_mate
+    varc_refe = ds_material%varc_refe
+    ldccvg    = -1
 !
 ! --- FONCTIONNALITES ACTIVEES
 !
-    lunil = isfonc(fonact,'LIAISON_UNILATER')
-    lctcd = isfonc(fonact,'CONT_DISCRET')
-    leltc = isfonc(fonact,'ELT_CONTACT')
+    l_unil      = isfonc(list_func_acti,'LIAISON_UNILATER')
+    l_cont_disc = isfonc(list_func_acti,'CONT_DISCRET')
+    leltc       = isfonc(list_func_acti,'ELT_CONTACT')
 !
-! --- DECOMPACTION DES VARIABLES CHAPEAUX
+! - Get hat-variables
 !
-    call nmchex(valinc, 'VALINC', 'DEPPLU', depplu)
-    call nmchex(valinc, 'VALINC', 'VITPLU', vitplu)
-    call nmchex(valinc, 'VALINC', 'ACCPLU', accplu)
-    call nmchex(veelem, 'VEELEM', 'CNDIRI', vediri)
-    call nmchex(veelem, 'VEELEM', 'CNBUDI', vebudi)
-    call nmchex(veelem, 'VEELEM', 'CNFINT', vefint)
-    call nmchex(veasse, 'VEASSE', 'CNDIRI', cndiri)
-    call nmchex(veasse, 'VEASSE', 'CNFINT', cnfint)
-    call nmchex(veasse, 'VEASSE', 'CNBUDI', cnbudi)
+    call nmchex(hval_incr, 'VALINC', 'DEPPLU', disp_curr)
+    call nmchex(hval_incr, 'VALINC', 'VITPLU', vite_curr)
+    call nmchex(hval_incr, 'VALINC', 'ACCPLU', acce_curr)
+    call nmchex(hval_veelem, 'VEELEM', 'CNFINT', vefint)
+    call nmchex(hval_veasse, 'VEASSE', 'CNFINT', cnfint)
 !
-! --- CALCUL DES CHARGEMENTS VARIABLES AU COURS DU PAS DE TEMPS
+! - Compute forces for second member at correction
 !
-    call nmchar('VARI', 'CORRECTION'   , modele, numedd  , mate      ,&
-                carele, ds_constitutive, lischa, numins  , ds_measure,&
-                sddisc, fonact         , comref, ds_inout, valinc    ,&
-                solalg, veelem         , measse, veasse  , sddyna)
+    call nmforc_corr(list_func_acti,&
+                     model         , cara_elem      , nume_dof,&
+                     list_load     , sddyna         ,&
+                     ds_material   , ds_constitutive,&
+                     ds_measure    , &
+                     sddisc        , nume_inst      ,&
+                     hval_incr     , hval_algo      ,&
+                     hval_veelem   , hval_veasse    ,&
+                     hval_measse)
 !
 ! --- CALCUL DU SECOND MEMBRE POUR CONTACT/XFEM
 !
     if (leltc) then
-        call nmfocc('CONVERGENC', modele    , mate  , numedd, fonact,&
-                    ds_contact  , ds_measure, solalg, valinc, veelem,&
-                    veasse, ds_constitutive)
+        call nmfocc('CONVERGENC', model     , ds_material, nume_dof , list_func_acti,&
+                    ds_contact  , ds_measure, hval_algo  , hval_incr, ds_constitutive)
     endif
 !
-! --- OPTION POUR MERIMO
+! - Get option for update internal forces
 !
-    call nmchfi(ds_algopara, fonact, sddisc, sddyna, numins,&
-                iterat     , ds_contact, lcfint, lcdiri, lcbudi,&
-                lcrigi     , option)
+    call nmchfi(ds_algopara, list_func_acti, sddyna   , ds_contact,&
+                sddisc     , nume_inst     , iter_newt,&
+                lcfint     , lcdiri        , lcbudi   , lcrigi    ,&
+                option)
 !
-! --- CALCUL DES FORCES INTERNES ET DE LA RIGIDITE SI NECESSAIRE
+! - Compute internal forces / matrix rigidity
 !
     if (lcfint) then
         if (lcrigi) then
-            call nmrigi(modele    , mate  , carele, ds_constitutive, sddyna,&
-                        ds_measure, fonact, iterat, valinc         , solalg,&
-                        comref    , meelem, veelem, option         , ldccvg)
+            call nmrigi(model    , mate  , cara_elem, ds_constitutive, sddyna,&
+                        ds_measure, list_func_acti, iter_newt, hval_incr, hval_algo,&
+                        varc_refe, hval_meelem, hval_veelem, option         , ldccvg)
         else
-            call nmfint(modele, mate  , carele, comref    , ds_constitutive,&
-                        fonact, iterat, sddyna, ds_measure, valinc         ,&
-                        solalg, ldccvg, vefint)
+            call nmfint(model          , cara_elem      ,&
+                        ds_material    , ds_constitutive,&
+                        list_func_acti , iter_newt      , sddyna, ds_measure,&
+                        hval_incr      , hval_algo      ,&
+                        vefint         , ldccvg   )
         endif
     endif
 !
-! --- ERREUR SANS POSSIBILITE DE CONTINUER
+! - Get type of unknowns
 !
-    if (ldccvg .eq. 1) goto 999
-!
-! - Compute vectors for DISCRETE contact
-!
-    if (lctcd .or. lunil) then
-        call nmctcd(fonact, ds_contact, numedd, veasse)
+    l_disp = ASTER_TRUE
+    l_vite = ASTER_FALSE
+    l_acce = ASTER_FALSE
+    l_dyna  = ndynlo(sddyna,'DYNAMIQUE')
+    if (l_dyna) then
+        l_disp = ndynin(sddyna,'FORMUL_DYNAMIQUE') .eq. 1
+        l_vite = ndynin(sddyna,'FORMUL_DYNAMIQUE') .eq. 2
+        l_acce = ndynin(sddyna,'FORMUL_DYNAMIQUE') .eq. 3
     endif
 !
-! --- ASSEMBLAGE DES FORCES INTERIEURES
+! - Which unknowns for Lagrange multipliers ?
 !
-    call nmtime(ds_measure, 'Init', '2nd_Member')
-    call nmtime(ds_measure, 'Launch', '2nd_Member')
-    if (lcfint) then
-        call nmaint(numedd, fonact, ds_contact, veasse, vefint,&
-                    cnfint, sdnume)
+    if (l_disp) then
+        vect_lagr = disp_curr
+    else if (l_vite) then
+        vect_lagr = disp_curr
+    else if (l_acce) then
+        vect_lagr = acce_curr
+    else
+        ASSERT(ASTER_FALSE)
     endif
 !
-! --- CALCUL ET ASSEMBLAGE DES REACTIONS D'APPUI BT.LAMBDA
+! - No error => continue
 !
-    if (lcdiri) then
-        call nmdiri(modele, mate, carele, lischa, sddyna,&
-                    depplu, vitplu, accplu, vediri)
-        call nmadir(numedd, fonact, ds_contact, veasse, vediri,&
-                    cndiri)
+    if (ldccvg .ne. 1) then
+! ----- Compute vectors for DISCRETE contact
+        if (l_cont_disc .or. l_unil) then
+            call nmctcd(list_func_acti, ds_contact, nume_dof)
+        endif
+! ----- Assemble internal forces
+        if (lcfint) then
+            call nmaint(nume_dof, list_func_acti, sdnume,&
+                        vefint  , cnfint)
+        endif
+! ----- Compute force for Dirichlet boundary conditions (dualized) - BT.LAMBDA
+        if (lcdiri) then
+            call nonlinRForceCompute(model      , ds_material, cara_elem, list_load,&
+                                     nume_dof   , ds_measure , vect_lagr,&
+                                     hval_veelem, hval_veasse)
+        endif
+! ----- Compute Dirichlet boundary conditions - B.U
+        call nonlinLoadDirichletCompute(list_load  , model      , nume_dof ,&
+                                        ds_measure , matass     , disp_curr,&
+                                        hval_veelem, hval_veasse)
     endif
-!
-! --- CALCUL ET ASSEMBLAGE DE B.U
-!
-    call nmbudi(modele, numedd, lischa, depplu, vebudi,&
-                cnbudi, matass)
-!
-    call nmtime(ds_measure, 'Stop', '2nd_Member')
-!
-999 continue
 !
 ! --- TRANSFORMATION DES CODES RETOURS EN EVENEMENTS
 !

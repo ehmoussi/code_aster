@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -217,7 +217,8 @@ LINST=DEFI_LIST_REEL(DEBUT=0.0,
                                    NOMBRE=n,),);
 
 FONC = FORMULE(VALE='sin(2.*pi*FREQ*INST)',
-               NOM_PARA='INST',);
+               FREQ=FREQ,
+               NOM_PARA='INST',)
 
 FMULT=CALC_FONC_INTERP(FONCTION=FONC,
                        LIST_PARA=LINST,

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -48,7 +48,6 @@ subroutine lcresi(fami, kpg, ksp, rela_comp, typmod,&
 !       OUT R      :  SYSTEME NL A T + DT
 !       ----------------------------------------------------------------
 !
-#include "asterfort/burres.h"
 #include "asterfort/cvmres.h"
 #include "asterfort/hayres.h"
 #include "asterfort/huresi.h"
@@ -90,10 +89,6 @@ subroutine lcresi(fami, kpg, ksp, rela_comp, typmod,&
         call irrres(fami, kpg, ksp, typmod, nmat,&
                     materd, materf, yd, yf, deps,&
                     dy, r)
-    else if (rela_comp(1:12) .eq. 'BETON_BURGER') then
-        call burres(typmod, nmat, materd, materf, timed,&
-                    timef, nvi, vind, yd, yf,&
-                    deps, dy, nr, r)
     else if (rela_comp(1:4) .eq. 'LETK') then
         call lkresi(typmod, nmat, materf, timed, timef,&
                     nvi, vind, vinf, yd, yf,&

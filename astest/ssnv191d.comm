@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -68,7 +68,8 @@ MODELEIN=AFFE_MODELE(MAILLAGE=MAILLAG1,
                               MODELISATION='3D'),
                      );
 
-LN=FORMULE(NOM_PARA=('X','Y','Z'),VALE='Z-1.5');
+LN = FORMULE(VALE='Z-1.5',
+             NOM_PARA=['X', 'Y', 'Z'],)
 
 FISS=DEFI_FISS_XFEM(MAILLAGE=MAILLAG1,
                     TYPE_DISCONTINUITE='INTERFACE',
@@ -118,7 +119,9 @@ def pr(z) :
    if z<1.5  :  return -10000.
    if z>1.5  :  return  10000.
    if z==1.5  :  return  0.
-FCTPRES=FORMULE(NOM_PARA=('X','Y','Z'),VALE='pr(Z)');
+FCTPRES = FORMULE(VALE='pr(Z)',
+                  pr=pr,
+                  NOM_PARA=['X', 'Y', 'Z'],)
 # pour tester l'option CHAR_MECA_PRES_F
 CH2=AFFE_CHAR_MECA_F(MODELE=MODELEK,PRES_REP=_F(GROUP_MA=('SURFGAU','SURFDRO'),PRES=FCTPRES));
 
@@ -133,7 +136,9 @@ def prinv(z) :
    if z<1.5  :  return  10000.
    if z>1.5  :  return -10000.
    if z==1.5  :  return  0.
-FCTPRES2=FORMULE(NOM_PARA=('X','Y','Z'),VALE='prinv(Z)');
+FCTPRES2 = FORMULE(VALE='prinv(Z)',
+                   prinv=prinv,
+                   NOM_PARA=['X', 'Y', 'Z'],)
 CH4=AFFE_CHAR_MECA_F(MODELE=MODELEK,
                      FORCE_FACE=(_F(GROUP_MA='SURFGAU',FY=FCTPRES),
                                _F(GROUP_MA='SURFDRO',FY=FCTPRES2),

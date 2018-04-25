@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -62,8 +62,9 @@ MO=AFFE_MODELE(MAILLAGE=POUTRE,
                        PHENOMENE   = 'MECANIQUE',
                        MODELISATION= 'POU_D_T'));
 
-SINO = FORMULE(NOM_PARA='INST',
-               VALE    ='sin (OMEGA *INST)');
+SINO = FORMULE(VALE='sin (OMEGA *INST)',
+               OMEGA=OMEGA,
+               NOM_PARA='INST',)
 
 LINST=DEFI_LIST_REEL(DEBUT=0.,
                      INTERVALLE=_F(JUSQU_A= TFIN,
@@ -362,11 +363,26 @@ VY_G1X = RECU_FONCTION(TABLE=T_SIPO,
                              ),
            )
 
-DIF_SVY  = FORMULE(VALE='(SVY_N1(t)-SVY_N1X(t))**2', NOM_PARA = 't',)
-DIF_MFZ  = FORMULE(VALE='(MFZ_N1(t)-MFZ_N1X(t))**2', NOM_PARA = 't',)
-DIF_DY  = FORMULE(VALE='(DY_N3(t)-DY_N3X(t))**2', NOM_PARA = 't',)
-DIF_ADRZ  = FORMULE(VALE='(ADRZ_N3(t)-ADRZ_N3X(t))**2', NOM_PARA = 't',)
-DIF_VY  = FORMULE(VALE='(VY_G1(t)-VY_G1X(t))**2', NOM_PARA = 't',)
+DIF_SVY = FORMULE(VALE='(SVY_N1(t)-SVY_N1X(t))**2',
+                  SVY_N1=SVY_N1,
+                  SVY_N1X=SVY_N1X,
+                  NOM_PARA='t',)
+DIF_MFZ = FORMULE(VALE='(MFZ_N1(t)-MFZ_N1X(t))**2',
+                  MFZ_N1=MFZ_N1,
+                  MFZ_N1X=MFZ_N1X,
+                  NOM_PARA='t',)
+DIF_DY = FORMULE(VALE='(DY_N3(t)-DY_N3X(t))**2',
+                 DY_N3=DY_N3,
+                 DY_N3X=DY_N3X,
+                 NOM_PARA='t',)
+DIF_ADRZ = FORMULE(VALE='(ADRZ_N3(t)-ADRZ_N3X(t))**2',
+                   ADRZ_N3=ADRZ_N3,
+                   ADRZ_N3X=ADRZ_N3X,
+                   NOM_PARA='t',)
+DIF_VY = FORMULE(VALE='(VY_G1(t)-VY_G1X(t))**2',
+                 VY_G1=VY_G1,
+                 VY_G1X=VY_G1X,
+                 NOM_PARA='t',)
 
 #pour limiter le temps calcul, on ne fait le calcul que sur 10 points
 echant = 10

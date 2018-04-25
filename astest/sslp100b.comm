@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -75,12 +75,14 @@ S_1=MACR_ELEM_STAT(
 
 S_1=MACR_ELEM_STAT(reuse=S_1,
 #  ---------------------
+    MACR_ELEM=S_1,
     RIGI_MECA=_F(),
     CAS_CHARGE=_F( NOM_CAS = 'CHF1', CHARGE = (CHBL_1,CHF1_1,), SUIV = 'OUI')
     )
 
 S_1=MACR_ELEM_STAT(reuse=S_1,
 #  ---------------------
+    MACR_ELEM=S_1,
     CAS_CHARGE=_F( NOM_CAS = 'CHF2', CHARGE = CHF2_1, SUIV = 'NON')
     )
 
@@ -187,7 +189,7 @@ CHMATG=AFFE_MATERIAU(MAILLAGE=MAG,  AFFE=_F( TOUT = 'OUI', MATER = ACIER))
 MELGR=CALC_MATR_ELEM(   OPTION='RIGI_MECA',
            MODELE=MOG,  CHARGE=CHAGBL,   CHAM_MATER=CHMATG)
 
-NUG=NUME_DDL(  MATR_RIGI=MELGR)                 
+NUG=NUME_DDL(  MATR_RIGI=MELGR)
 
 MATAS=ASSE_MATRICE(   NUME_DDL=NUG,  MATR_ELEM=MELGR)
 

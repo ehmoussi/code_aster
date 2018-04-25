@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -96,11 +96,13 @@ def dist_crack_path(x1,y1) :
     return dist
 
 
-CRACKPNT = FORMULE(VALE     = 'crack_point(COORX)',
-                   NOM_PARA = ('COORX',),)
+CRACKPNT = FORMULE(VALE='crack_point(COORX)',
+                   crack_point=crack_point,
+                   NOM_PARA='COORX',)
 
-DIST = FORMULE(VALE     = 'dist_crack_path(COORX, COORY)',
-               NOM_PARA = ('COORX','COORY'),)
+DIST = FORMULE(VALE='dist_crack_path(COORX, COORY)',
+               dist_crack_path=dist_crack_path,
+               NOM_PARA=['COORX', 'COORY'],)
 
 TAB_FISS = CALC_TABLE(reuse  = TAB_FISS,
                       TABLE  = TAB_FISS,

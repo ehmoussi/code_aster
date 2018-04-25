@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -127,82 +127,11 @@ TEST_RESU(RESU=_F(NUME_ORDRE=1,
                   VALE_CALC=2430.555556,
                   MAILLE='M5',),);
 
-# MODELISATION D_PLAN_GRAD_EPSI
+
+# MODELISATION D_PLAN_GRAD_SIGM__
 
 MA2 = CREA_MAILLAGE(MAILLAGE = MA,
                     LINE_QUAD = _F(TOUT = 'OUI'),)
-
-MO2=AFFE_MODELE(MAILLAGE=MA2,
-               AFFE=_F(TOUT='OUI',
-                       PHENOMENE='MECANIQUE',
-                       MODELISATION='D_PLAN_GRAD_EPSI',),);
-
-MAT2=DEFI_MATERIAU(ELAS=_F(E=1e9,
-                           NU=0.2,),
-                   ENDO_ORTH_BETON=_F(K0=3000e6,
-                                      K1=10500000.0,
-                                      ECROB=1000.0,
-                                      ECROD=60000.0,),
-                   NON_LOCAL = _F(LONG_CARA=0.0,),);
-
-MOMAT2=AFFE_MATERIAU(MAILLAGE=MA2,
-                    AFFE=_F(TOUT='OUI',
-                            MATER=MAT2,),);
-
-NS1X=(AX+DX)*0.5
-NS1Y=(AY+DY)*0.5
-NS2X=(AX+BX)*0.5
-NS2Y=(AY+BY)*0.5
-NS3X=(BX+CX)*0.5
-NS3Y=(BY+CY)*0.5
-NS4X=(CX+DX)*0.5
-NS4Y=(CY+DY)*0.5
-
-BLOC2=AFFE_CHAR_MECA(MODELE=MO2,
-                       DDL_IMPO=(_F(GROUP_NO='A',
-                                    DX=AX,
-                                    DY=AY,),
-                                 _F(GROUP_NO='B',
-                                    DX=BX,
-                                    DY=BY,),
-                                 _F(GROUP_NO='C',
-                                    DX=CX,
-                                    DY=CY,),
-                                 _F(GROUP_NO='D',
-                                    DX=DX,
-                                    DY=DY,),
-                                 _F(NOEUD='NS1',
-                                    DX=NS1X,
-                                    DY=NS1Y,),
-                                 _F(NOEUD='NS2',
-                                    DX=NS2X,
-                                    DY=NS2Y,),
-                                 _F(NOEUD='NS3',
-                                    DX=NS3X,
-                                    DY=NS3Y,),
-                                 _F(NOEUD='NS4',
-                                    DX=NS4X,
-                                    DY=NS4Y,),),);
-
-U2=STAT_NON_LINE(MODELE=MO2,
-                CHAM_MATER=MOMAT2,
-                EXCIT=_F(CHARGE=BLOC2,),NEWTON=_F(REAC_ITER=0),
-                COMPORTEMENT=_F(RELATION='ENDO_ORTH_BETON',),
-                INCREMENT=_F(LIST_INST=L_TPS,),
-                ARCHIVAGE=_F(LIST_INST=L_ARCH,),);
-
-U2=CALC_CHAMP(reuse = U2, ENERGIE='ENEL_ELEM', RESULTAT=U2, );
-
-TEST_RESU(RESU=_F(NUME_ORDRE=1,
-                  REFERENCE='ANALYTIQUE',
-                  RESULTAT=U2,
-                  NOM_CHAM='ENEL_ELEM',
-                  NOM_CMP='TOTALE',
-                  VALE_REFE=2430.555556,
-                  VALE_CALC=2430.555556,
-                  MAILLE='M5',),);
-
-# MODELISATION D_PLAN_GRAD_SIGM
 
 MO3=AFFE_MODELE(MAILLAGE=MA2,
                AFFE=_F(TOUT='OUI',
@@ -226,6 +155,15 @@ MAT3=DEFI_MATERIAU(
 MOMAT3=AFFE_MATERIAU(MAILLAGE=MA2,
                     AFFE=_F(TOUT='OUI',
                             MATER=MAT3,),);
+
+NS1X=(AX+DX)*0.5
+NS1Y=(AY+DY)*0.5
+NS2X=(AX+BX)*0.5
+NS2Y=(AY+BY)*0.5
+NS3X=(BX+CX)*0.5
+NS3Y=(BY+CY)*0.5
+NS4X=(CX+DX)*0.5
+NS4Y=(CY+DY)*0.5
 
 BLOC3=AFFE_CHAR_MECA(MODELE=MO3,
                        DDL_IMPO=(_F(GROUP_NO='A',

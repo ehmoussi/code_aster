@@ -1146,21 +1146,12 @@ void exportMaterialBehaviourToPython()
         .staticmethod( "getName" )
     ;
 
-    class_< ThmGazMaterialBehaviourInstance, ThmGazMaterialBehaviourPtr,
+    class_< ThmAirDissMaterialBehaviourInstance, ThmAirDissMaterialBehaviourPtr,
             bases< GeneralMaterialBehaviourInstance > >
-        ( "ThmGazMaterialBehaviour", no_init )
+        ( "ThmAirDissMaterialBehaviour", no_init )
         .def( "__init__", make_constructor(
-            &initFactoryPtr< ThmGazMaterialBehaviourInstance > ) )
-        .def( "getName", &ThmGazMaterialBehaviourInstance::getName )
-        .staticmethod( "getName" )
-    ;
-
-    class_< ThmVapeGazMaterialBehaviourInstance, ThmVapeGazMaterialBehaviourPtr,
-            bases< GeneralMaterialBehaviourInstance > >
-        ( "ThmVapeGazMaterialBehaviour", no_init )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< ThmVapeGazMaterialBehaviourInstance > ) )
-        .def( "getName", &ThmVapeGazMaterialBehaviourInstance::getName )
+            &initFactoryPtr< ThmAirDissMaterialBehaviourInstance > ) )
+        .def( "getName", &ThmAirDissMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
     ;
 
@@ -1179,6 +1170,24 @@ void exportMaterialBehaviourToPython()
         .def( "__init__", make_constructor(
             &initFactoryPtr< ThmLiquMaterialBehaviourInstance > ) )
         .def( "getName", &ThmLiquMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
+    ;
+
+    class_< ThmGazMaterialBehaviourInstance, ThmGazMaterialBehaviourPtr,
+            bases< GeneralMaterialBehaviourInstance > >
+        ( "ThmGazMaterialBehaviour", no_init )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< ThmGazMaterialBehaviourInstance > ) )
+        .def( "getName", &ThmGazMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
+    ;
+
+    class_< ThmVapeGazMaterialBehaviourInstance, ThmVapeGazMaterialBehaviourPtr,
+            bases< GeneralMaterialBehaviourInstance > >
+        ( "ThmVapeGazMaterialBehaviour", no_init )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< ThmVapeGazMaterialBehaviourInstance > ) )
+        .def( "getName", &ThmVapeGazMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
     ;
 

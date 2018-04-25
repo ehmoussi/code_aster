@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,10 +16,10 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine mfrontPrepareStrain(l_large_strain, l_pred, l_czm,&
-                               neps          , epsm  , deps ,&
-                               epsth         , depsth,&
-                               stran         , dstran,&
+subroutine mfrontPrepareStrain(l_simomiehe, l_grotgdep, l_pred, l_czm,&
+                               neps       , epsm      , deps  ,&
+                               epsth      , depsth    ,&
+                               stran      , dstran    ,&
                                detf_)
 !
 implicit none
@@ -33,10 +33,10 @@ implicit none
 #include "blas/dcopy.h"
 #include "blas/dscal.h"
 !
-aster_logical, intent(in) :: l_large_strain
+aster_logical, intent(in) :: l_simomiehe, l_grotgdep
 aster_logical, intent(in) :: l_pred, l_czm
 integer, intent(in) :: neps
-real(kind=8), intent(in) :: epsm(6), deps(6)
+real(kind=8), intent(in) :: epsm(*), deps(*)
 real(kind=8), intent(in) :: epsth(neps), depsth(neps)
 real(kind=8), intent(out) :: stran(9), dstran(9)
 real(kind=8), optional, intent(out) :: detf_
@@ -49,7 +49,8 @@ real(kind=8), optional, intent(out) :: detf_
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  l_large_strain   : .true. if large strains
+! In  l_simomiehe      : .true. if large strains with SIMO_MIEHE
+! In  l_grotgdep       : .true. if large strains with GROT_GDEP
 ! In  l_pred           : .true. of prediction (first Newton's iteration)
 ! In  l_czm            : .true. if cohesive zone model
 ! In  neps             : number of components of strains
@@ -71,7 +72,7 @@ real(kind=8), optional, intent(out) :: detf_
     stran(:)  = 0.d0
     dstran(:) = 0.d0
 !
-    if (l_large_strain) then
+    if (l_simomiehe) then
         ASSERT(neps .eq. 9)
         dfgrd0(:,:) = 0.d0
         dfgrd1(:,:) = 0.d0
@@ -84,6 +85,18 @@ real(kind=8), optional, intent(out) :: detf_
         call dcopy(neps, dfgrd0, 1, stran, 1)
         call dcopy(neps, dfgrd1, 1, dstran, 1)
         call lcdetf(3, dfgrd1, detf_)
+    elseif (l_grotgdep) then
+        ASSERT(neps .eq. 9)
+        dfgrd0(:,:) = 0.d0
+        dfgrd1(:,:) = 0.d0
+        call dcopy(neps, epsm, 1, dfgrd0, 1)
+        if (l_pred) then
+            call dcopy(neps, epsm, 1, dfgrd1, 1)
+        else
+            call dcopy(neps, deps, 1, dfgrd1, 1)
+        endif
+        call dcopy(neps, dfgrd0, 1, stran, 1)
+        call dcopy(neps, dfgrd1, 1, dstran, 1)
     else
         ASSERT(neps .ne. 9)
         if ((neps .eq. 6) .or. (neps .eq. 4)) then
@@ -97,7 +110,7 @@ real(kind=8), optional, intent(out) :: detf_
             call dcopy(neps, epsm, 1, stran, 1)
             call daxpy(neps, -1.d0, epsth, 1, stran, 1)
             call dscal(3, rac2, stran(4), 1)
-        else if ( (neps .eq. 3) .and. l_czm) then
+        else if ((neps .eq. 3) .and. l_czm) then
             if (l_pred) then
                 call r8inir(neps, 0.d0, dstran, 1)
             else
