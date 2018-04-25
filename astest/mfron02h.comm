@@ -28,7 +28,7 @@ CREA_LIB_MFRONT(UNITE_MFRONT=38,UNITE_LIBRAIRIE=39)
 from subprocess import Popen, PIPE
 
 
-proc = Popen(['mtest', 'fort.22'], stdout=PIPE)
+proc = Popen(['mtest-3.1.1', 'fort.22'], stdout=PIPE)
 
 out = proc.communicate()[0]
 
