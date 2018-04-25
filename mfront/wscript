@@ -132,7 +132,7 @@ def check_mfront(self):
     # Define programs names mfront and tfel-config
     mfront = 'mfront' + self.env.TFELSUFFIX
     tfelconfig = 'tfel-config' + self.env.TFELSUFFIX
-    
+
     self.find_program(mfront, path_list=paths, var='MFRONT')
     self.find_program(tfelconfig, path_list=paths, var='TFEL_CONFIG')
 
@@ -153,7 +153,7 @@ def check_mfront(self):
         self.safe_remove('CXXFLAGS_MFRONT', flag)
         # these options are not relevant for C
         self.env.append_value('CXXFLAGS_MFRONT_ONLY', flag)
-    self.check_mfront_version( (3, 0, 0) )
+    self.check_mfront_version( (3, 1, 1) )
     self.check_mfront_libs()
     self.check_mfront_py()
     self.check_cxx11_abi()
@@ -359,7 +359,7 @@ def getMaterialProperties(lib, mfront_filename, symbol,suffix):
     """Return the list of material properties"""
     suf = suffix.replace('-','_').replace('.','_')
     tfel = __import__("tfel"+suf+".material", fromlist=[])
-    ModellingHypothesis = getattr(tfel.material,'ModellingHypothesis') 
+    ModellingHypothesis = getattr(tfel.material,'ModellingHypothesis')
     mfront = __import__("mfront"+suf)
     os.environ['MFRONT_INCLUDE_PATH'] = osp.dirname(mfront_filename)
     props = []
