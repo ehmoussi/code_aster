@@ -34,11 +34,16 @@ class DefineUnitFile(ExecuteCommandOps):
             keywords (dict): User's keywords.
         """
         from code_aster.RunManager.LogicalUnit import LogicalUnitFile, FileType, FileAccess, Action
-        if keywords["ACTION"] == "ASSOCIER":
+        if keywords["ACTION"] in ("ASSOCIER", "RESERVER"):
             action = Action.value(keywords["ACTION"])
             typ = FileType.value(keywords["TYPE"])
             access = FileAccess.value(keywords["ACCES"])
-            newFile = LogicalUnitFile(keywords["UNITE"], keywords["FICHIER"], action,
+            file_name = keywords.get("FICHIER")
+            if file_name == None:
+                file_name = "fort."+str(keywords["UNITE"])
+            newFile = LogicalUnitFile(keywords["UNITE"], file_name, action,
                                       typ, access, False)
+        if keywords["ACTION"] == "LIBERER":
+            LogicalUnitFile.release_from_number(keywords["UNITE"], False)
 
 DEFI_FICHIER = DefineUnitFile.run
