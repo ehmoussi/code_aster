@@ -26,7 +26,10 @@ from code_aster.Cata.Commons import *
 
 def assemblage_prod(self,NUME_DDL,MATR_ASSE,VECT_ASSE,**args):
   if args.get('__all__'):
-      return None
+      return ([None],
+              [None, matr_asse_depl_r, matr_asse_pres_c, matr_asse_temp_r,
+               matr_asse_depl_c],
+              [None, cham_no_sdaster])
 
   if ((not MATR_ASSE) and (not VECT_ASSE)):  raise AsException("Aucun concept a assembler")
   if not NUME_DDL :  raise AsException("Impossible de typer les concepts resultats")

@@ -27,7 +27,8 @@ from code_aster.Cata.Commons import *
 
 def macro_matr_ajou_prod(self,MATR_AMOR_AJOU,MATR_MASS_AJOU,MATR_RIGI_AJOU,FORC_AJOU,**args):
   if args.get('__all__'):
-      return None
+      return ([None], [matr_asse_gene_r], [matr_asse_gene_r],
+              [matr_asse_gene_r], [None, vect_asse_gene])
 
   self.type_sdprod(MATR_AMOR_AJOU,matr_asse_gene_r)
   self.type_sdprod(MATR_MASS_AJOU,matr_asse_gene_r)

@@ -27,7 +27,7 @@ from code_aster.Cata.Commons import *
 
 def macro_expans_prod(self, MODELE_MESURE, RESU_NX, RESU_EX, RESU_ET, RESU_RD, **args):
     if args.get('__all__'):
-      return None
+      return ([None], [mode_meca], [None, mode_meca, dyna_harmo])
 
     RESU_EXP = MODELE_MESURE['MESURE']
     self.type_sdprod(RESU_NX, mode_meca)

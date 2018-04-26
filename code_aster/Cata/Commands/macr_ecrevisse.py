@@ -27,7 +27,7 @@ from code_aster.Cata.Commons import *
 
 def macr_ecrevisse_prod(self,TABLE,TEMPER,DEBIT,**args):
     if args.get('__all__'):
-        return (evol_noli, )
+        return ([evol_noli], [table_sdaster], [evol_ther], [table_sdaster])
 
     # On definit ici les concepts produits
     self.type_sdprod(TABLE,table_sdaster)

@@ -498,6 +498,10 @@ def check_sdprod(command, func_prod, sd_prod, verbose=True):
                      "by the 'sd_prod' function with '__all__=True': {2}"
                      .format(command, _name(sd_prod),
                              [_name(i) for i in allowed]))
+        islist = [isinstance(i, (list, tuple)) for i in allowed]
+        if True in islist and False in islist:
+            cr.fatal("Error: {0}: for macro-commands, each element must be a "
+                     "list of possible types for each result".format(command))
     except Exception as exc:
         cr.fatal("Error: {0}: the 'sd_prod' function must support "
                  "the '__all__=True' argument".format(command))
