@@ -26,7 +26,7 @@ from code_aster.Cata.Commons import *
 
 def calc_modes_prod( self, TYPE_RESU, **args) :
    if args.get('__all__'):
-       return (mode_flamb, mode_meca, mode_meca_c, mode_acou, mode_gene)
+       return (mode_flamb, mode_meca, mode_meca_c, mode_acou, mode_gene, ASSD)
 
    if (TYPE_RESU not in ("DYNAMIQUE","MODE_FLAMB","GENERAL")):
       # on retourne un type fictif pour que le plantage aie lieu dans la lecture du catalogue

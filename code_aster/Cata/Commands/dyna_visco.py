@@ -24,7 +24,7 @@ from code_aster.Cata.Commons import *
 
 def dyna_visco_prod(self,TYPE_RESU,TYPE_MODE,**args):
     if args.get('__all__'):
-        return ([dyna_harmo, mode_meca_c, mode_meca],
+        return ([dyna_harmo, mode_meca_c, mode_meca, ASSD],
                 [None, mode_meca])
 
     if (TYPE_RESU not in ['HARM','MODE']):
