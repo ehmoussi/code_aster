@@ -32,7 +32,7 @@ from code_aster.Cata.Commons import *
 
 def post_endo_fiss_prod(self,TABLE,**args) :
     if args.get('__all__'):
-        return (maillage_sdaster, )
+        return ([maillage_sdaster], [table_sdaster])
     self.type_sdprod(TABLE,table_sdaster)
     return maillage_sdaster
 

@@ -29,7 +29,16 @@ from code_aster.Cata.Commands.affe_char_meca import AFFE_CHAR_MECA
 
 def pre_seisme_nonl_sdprod(self, RESULTAT, **args):
    if args.get('__all__'):
-      return None
+      return ([None],
+              [None, evol_noli],
+              [None, modele_sdaster],
+              [None, maillage_sdaster],
+              [None, cham_mater],
+              [None, cara_elem],
+              [None, mode_meca],
+              [None, macr_elem_dyna],
+              [None, char_meca])
+
    if RESULTAT[0]['RESULTAT'] :
        self.type_sdprod(RESULTAT[0]['RESULTAT'], evol_noli)
    if RESULTAT[0]['MODELE'] :

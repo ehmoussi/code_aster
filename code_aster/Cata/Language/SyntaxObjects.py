@@ -45,8 +45,8 @@ from collections import OrderedDict
 
 from .DataStructure import DataStructure, UnitBaseType
 from .SyntaxUtils import (add_none_sdprod, block_utils, debug_message2,
-                          disable_0key, enable_0key, mixedcopy, sorted_dict,
-                          value_is_sequence)
+                          disable_0key, enable_0key, force_list, mixedcopy,
+                          sorted_dict, value_is_sequence)
 
 
 class SyntaxId(object):
@@ -703,6 +703,23 @@ class Command(PartOfSyntax):
         resultType = sdprodFunc(**ctxt)
         disable_0key(ctxt)
         return resultType
+
+    def get_all_types(self):
+        """Return the list of all possible types that the command can return.
+
+        Returns:
+            list[DataStructure] or list[list[DataStructure]]: List of possible
+            types or a list of list if there are additional results for
+            macro-commands.
+        """
+        sd_prod = self.definition.get('sd_prod')
+        if type(sd_prod) is types.FunctionType:
+            args = {}
+            add_none_sdprod(sd_prod, args)
+            args['__all__'] = True
+            return force_list(sd_prod(**args))
+        else:
+            return (sd_prod, )
 
 
 class Operator(Command):

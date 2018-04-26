@@ -26,7 +26,10 @@ from code_aster.Cata.Commons import *
 
 def chainage_thm_prod(self,TYPE_CHAINAGE,TYPE_RESU = None,**args) :
   if args.get('__all__'):
-      return (None, evol_varc, cham_no_sdaster)
+      return ([None, evol_varc, cham_no_sdaster],
+              [None, corresp_2_mailla],
+              [None, corresp_2_mailla],
+              [None, corresp_2_mailla])
 
   if TYPE_CHAINAGE == "MECA_HYDR" : return evol_varc
 

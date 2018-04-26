@@ -27,7 +27,7 @@ from code_aster.Cata.Commons import *
 
 def macr_ecla_pg_prod(self,RESULTAT,MAILLAGE,RESU_INIT,**args):
   if args.get('__all__'):
-      return None
+      return [[None], [resultat_sdaster], [maillage_sdaster]]
 
   self.type_sdprod(RESULTAT,AsType(RESU_INIT))
   self.type_sdprod(MAILLAGE,maillage_sdaster)
