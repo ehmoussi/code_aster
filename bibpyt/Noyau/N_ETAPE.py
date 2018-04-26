@@ -240,11 +240,11 @@ Causes possibles :
             sd_prod = self.definition.sd_prod
         return sd_prod
 
-    def check_allowed_type(self, sd_prod, args=None):
+    def check_allowed_type(self, sd_prod):
         """Check that 'sd_prod' is type declared by the function with '__all__'
         argument.
         """
-        check_sdprod(self.nom, self.definition.sd_prod, sd_prod, args)
+        check_sdprod(self.nom, self.definition.sd_prod, sd_prod)
 
 
     def get_etape(self):
@@ -474,7 +474,7 @@ Causes possibles :
         return self.parent.get_concept(nomsd)
 
 
-def check_sdprod(command, func_prod, sd_prod, args=None, verbose=True):
+def check_sdprod(command, func_prod, sd_prod, verbose=True):
     """Check that 'sd_prod' is type allowed by the function 'func_prod'
     with '__all__' argument.
     """
@@ -487,7 +487,7 @@ def check_sdprod(command, func_prod, sd_prod, args=None, verbose=True):
         return
 
     cr = CR()
-    args = args or {}
+    args = {}
     add_none_sdprod(func_prod, args)
     args['__all__'] = True
     # eval sd_prod with __all__=True + None for other arguments
