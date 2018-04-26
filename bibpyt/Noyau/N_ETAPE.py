@@ -474,7 +474,7 @@ Causes possibles :
         return self.parent.get_concept(nomsd)
 
 
-def check_sdprod(command, func_prod, sd_prod, args=None):
+def check_sdprod(command, func_prod, sd_prod, args=None, verbose=True):
     """Check that 'sd_prod' is type allowed by the function 'func_prod'
     with '__all__' argument.
     """
@@ -499,9 +499,9 @@ def check_sdprod(command, func_prod, sd_prod, args=None):
                      .format(command, _name(sd_prod),
                              [_name(i) for i in allowed]))
     except Exception as exc:
-        print "ERROR:", str(exc)
         cr.fatal("Error: {0}: the 'sd_prod' function must support "
                  "the '__all__=True' argument".format(command))
     if not cr.estvide():
-        print(str(cr))
+        if verbose:
+            print(str(cr))
         raise TypeError(str(cr))

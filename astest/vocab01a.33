@@ -41,7 +41,7 @@ def check_sd_prod(cmd):
     """Check sd_prod function."""
     try:
         check_sdprod(cmd.nom, getattr(cmd, 'sd_prod', None),
-                     None, dict(self=cmd))
+                     None, dict(self=cmd), verbose=False)
     except TypeError as exc:
         return str(exc)
 
