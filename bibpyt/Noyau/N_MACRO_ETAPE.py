@@ -174,6 +174,10 @@ class MACRO_ETAPE(N_ETAPE.ETAPE):
                 self.sdprods = []
                 d['__only_type__'] = True
                 sd_prod = apply(sd_prod, (self,), d)
+                if self.jdc.fico:
+                    d['self'] = self
+                    self.check_allowed_type(sd_prod, keywords=d)
+
             except (EOFError, self.UserError):
                 raise
             except OpsError:

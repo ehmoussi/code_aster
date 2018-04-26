@@ -41,6 +41,7 @@ import N_utils
 from N_utils import AsType
 from N_ASSD import ASSD
 from N_info import message, SUPERV
+from N_types import force_list
 
 
 class ETAPE(N_MCCOMPO.MCCOMPO):
@@ -183,6 +184,9 @@ class ETAPE(N_MCCOMPO.MCCOMPO):
             try:
                 d['__only_type__'] = True
                 sd_prod = apply(self.definition.sd_prod, (), d)
+                if self.jdc.fico:
+                    self.check_allowed_type(sd_prod, keywords=d)
+
             except EOFError:
                 raise
             except Exception, exc:
@@ -235,6 +239,30 @@ Causes possibles :
         else:
             sd_prod = self.definition.sd_prod
         return sd_prod
+
+    def check_allowed_type(self, sd_prod, keywords):
+        """Check that 'sd_prod' is type declared by the function with '__all__'
+        argument.
+        """
+        from Noyau.N_CR import CR
+        cr = CR()
+        d = dict(__all__=True)
+        d.update(keywords)
+        try:
+            # print "DEBUG:", self.nom, d
+            allowed = force_list(apply(self.definition.sd_prod, (), d))
+            if sd_prod not in allowed:
+                cr.fatal("Error: {0}: type '{1}' is not in the list returned "
+                        "by the 'sd_prod' function with '__all__=True': {2}"
+                        .format(self.nom, sd_prod.__name__,
+                                [i.__name__ for i in allowed]))
+        except Exception as exc:
+            print "ERROR:", str(exc)
+            cr.fatal("Error: {0}: the 'sd_prod' function must support "
+                     "the '__all__=True' argument".format(self.nom))
+        if not cr.estvide():
+            print(str(cr))
+            raise TypeError
 
     def get_etape(self):
         """
