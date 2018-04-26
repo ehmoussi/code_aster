@@ -79,7 +79,7 @@ pipeline {
                 cp  .hg/hgrc .hg/hgrc.bck
                 cat << EOF >> .hg/hgrc
 [ui]
-username = 'mergerobot <no-reply@edf.fr>'
+username = mergerobot <no-reply@edf.fr>
 
 [extensions]
 strip =
