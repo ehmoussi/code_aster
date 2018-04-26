@@ -24,6 +24,9 @@ from code_aster.Cata.Commons import *
 
 
 def defi_group_prod(MAILLAGE,GRILLE,**args):
+  if args.get('__all__'):
+      return (maillage_sdaster, squelette, grille_sdaster)
+
   if ( MAILLAGE != None ) :
      if AsType(MAILLAGE) == maillage_sdaster : return maillage_sdaster
      if AsType(MAILLAGE) == squelette : return squelette

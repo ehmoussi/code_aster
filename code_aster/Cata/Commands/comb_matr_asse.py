@@ -24,6 +24,11 @@ from code_aster.Cata.Commons import *
 
 
 def comb_matr_asse_prod(COMB_R,COMB_C,CALC_AMOR_GENE,**args):
+  if args.get('__all__'):
+      return (matr_asse_depl_c, matr_asse_gene_c, matr_asse_temp_c,
+              matr_asse_pres_c, matr_asse_depl_r, matr_asse_gene_r,
+              matr_asse_temp_r, matr_asse_pres_r)
+
   if COMB_C:
     type_mat = AsType(COMB_C[0]['MATR_ASSE'])
     if type_mat in  (matr_asse_depl_c,matr_asse_depl_r) : return matr_asse_depl_c

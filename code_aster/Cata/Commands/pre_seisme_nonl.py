@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -28,6 +28,8 @@ from code_aster.Cata.Commands.affe_char_meca import AFFE_CHAR_MECA
 
 
 def pre_seisme_nonl_sdprod(self, RESULTAT, **args):
+   if args.get('__all__'):
+      return None
    if RESULTAT[0]['RESULTAT'] :
        self.type_sdprod(RESULTAT[0]['RESULTAT'], evol_noli)
    if RESULTAT[0]['MODELE'] :

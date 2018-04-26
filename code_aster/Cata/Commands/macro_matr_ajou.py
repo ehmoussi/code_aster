@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -26,6 +26,9 @@ from code_aster.Cata.Commons import *
 
 
 def macro_matr_ajou_prod(self,MATR_AMOR_AJOU,MATR_MASS_AJOU,MATR_RIGI_AJOU,FORC_AJOU,**args):
+  if args.get('__all__'):
+      return None
+
   self.type_sdprod(MATR_AMOR_AJOU,matr_asse_gene_r)
   self.type_sdprod(MATR_MASS_AJOU,matr_asse_gene_r)
   self.type_sdprod(MATR_RIGI_AJOU,matr_asse_gene_r)

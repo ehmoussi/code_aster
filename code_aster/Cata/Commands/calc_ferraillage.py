@@ -25,6 +25,9 @@ from code_aster.Cata.Commons import *
 
 
 def calc_ferraillage_prod(RESULTAT,**args):
+   if args.get('__all__'):
+       return (evol_elas, evol_noli, dyna_trans)
+
    if AsType(RESULTAT) != None : return AsType(RESULTAT)
    raise AsException("type de concept resultat non prevu")
 

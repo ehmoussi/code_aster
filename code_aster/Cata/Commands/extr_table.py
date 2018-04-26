@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -25,11 +25,19 @@ from code_aster.Cata.Commons import *
 
 
 def extr_table_prod(TYPE_RESU,**args):
-  defs = globals()
-  typ = TYPE_RESU.lower()
-  if defs.get(typ) is not None:
-     return defs[typ]
-  raise AsException("type de concept resultat non prevu")
+    alltypes = (matr_asse_gene_r, matr_elem_depl_r, vect_elem_depl_r,
+                matr_elem_temp_r, vect_elem_temp_r, cham_gd_sdaster,
+                cham_no_sdaster, carte_sdaster, cham_elem, mode_meca,
+                table_sdaster, fonction_sdaster, fonction_c, nappe_sdaster,
+                entier, reel)
+    if args.get('__all__'):
+      return alltypes
+
+    defs = locals()
+    typ = TYPE_RESU.lower()
+    if defs.get(typ) is not None:
+        return defs[typ]
+    raise AsException("type de concept resultat non prevu")
 
 EXTR_TABLE=OPER(nom="EXTR_TABLE",
                 op=173,

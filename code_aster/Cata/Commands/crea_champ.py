@@ -25,6 +25,9 @@ from code_aster.Cata.Commons import *
 
 
 def crea_champ_prod(TYPE_CHAM,**args):
+  if args.get('__all__'):
+      return (carte_sdaster, cham_no_sdaster, cham_elem)
+
   if TYPE_CHAM[0:5] == "CART_" :
      return carte_sdaster
   elif TYPE_CHAM[0:5] == "NOEU_" :

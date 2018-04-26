@@ -26,6 +26,9 @@ from code_aster.Cata.Commons import *
 
 
 def macro_elas_mult_prod(self,NUME_DDL,CAS_CHARGE,**args ):
+  if args.get('__all__'):
+      return (mult_elas, fourier_elas)
+
   if NUME_DDL is not None and NUME_DDL.is_typco():
     self.type_sdprod(NUME_DDL,nume_ddl_sdaster)
   if CAS_CHARGE[0]['NOM_CAS']      != None : return mult_elas
