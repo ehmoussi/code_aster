@@ -81,7 +81,7 @@ def add_none_sdprod(sd_prod, dictargs):
         required = required[:-len(argspec.defaults)]
     args = dictargs.keys()
     # add 'self' for macro
-    args.append('self')
+    required.append('self')
     miss = set(required).difference(args)
     if len(miss) > 0:
         # miss = sorted(list(miss))

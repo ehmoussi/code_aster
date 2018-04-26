@@ -175,7 +175,7 @@ class MACRO_ETAPE(N_ETAPE.ETAPE):
                 d['__only_type__'] = True
                 sd_prod = apply(sd_prod, (self,), d)
                 if self.jdc.fico:
-                    self.check_allowed_type(sd_prod, dict(self=self))
+                    self.check_allowed_type(sd_prod)
 
             except (EOFError, self.UserError):
                 raise
