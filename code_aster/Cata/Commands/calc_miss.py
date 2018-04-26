@@ -26,6 +26,9 @@ from code_aster.Cata.Commons import *
 
 def calc_miss_sdprod(self, TYPE_RESU, **kwargs):
     """Typage des structures de données produites"""
+    if kwargs.get('__all__'):
+        return (None, table_sdaster, harm_gene, tran_gene, char_meca)
+
     if TYPE_RESU in ('TABLE', 'TABLE_CONTROL'):
         return table_sdaster
     elif TYPE_RESU == 'HARM_GENE':
@@ -200,7 +203,7 @@ CALC_MISS = MACRO(nom="CALC_MISS",
                                fr=tr("Groupe de mailles sol-sol")),
         UNITE_IMPR_ASTER = SIMP(statut='f', typ=UnitType(), inout='out',
                                 fr=tr("Unité des résultats transmis par Code_Aster à Miss")),
-        UNITE_RESU_IMPE  = SIMP(statut='f', typ=UnitType(), inout='out',   
+        UNITE_RESU_IMPE  = SIMP(statut='f', typ=UnitType(), inout='out',
                                 fr=tr("Unité logique des impédances à relire.")),
         UNITE_RESU_FORC  = SIMP(statut='f', typ=UnitType(), inout='out',
                                 fr=tr("Unité logique des forces sismiques à relire")),
@@ -224,31 +227,31 @@ CALC_MISS = MACRO(nom="CALC_MISS",
         OFFSET_MAX     = SIMP(statut='f', typ='R'),
         OFFSET_NB      = SIMP(statut='f', typ='I'),
         AUTO           = SIMP(statut='f', typ='TXM', into=("OUI","NON",), defaut="NON"),
-    b_auto =    BLOC(condition="""equal_to("AUTO", 'OUI')""", 
+    b_auto =    BLOC(condition="""equal_to("AUTO", 'OUI')""",
         OPTION_DREF    = SIMP(statut='f', typ='TXM', into=("OUI","NON",), defaut="NON"),
         OPTION_RFIC    = SIMP(statut='f', typ='TXM', into=("OUI","NON",), defaut="NON"),
         RFIC           = SIMP(statut='f', typ='R'),
         SPEC_MAX       = SIMP(statut='f', typ='R'),
         SPEC_NB        = SIMP(statut='f', typ='I', defaut=16384),
-        COEF_OFFSET    = SIMP(statut='f', typ='I', defaut=12),       
-        ),    
+        COEF_OFFSET    = SIMP(statut='f', typ='I', defaut=12),
+        ),
     b_noauto =    BLOC(condition="""equal_to("AUTO", 'NON')""",
-                       regles=(PRESENT_PRESENT('SPEC_MAX', 'SPEC_NB'),), 
+                       regles=(PRESENT_PRESENT('SPEC_MAX', 'SPEC_NB'),),
         ALGO           = SIMP(statut='f', typ='TXM', into=("DEPL","REGU")),
         RFIC           = SIMP(statut='f', typ='R', defaut=0.),
         SPEC_MAX       = SIMP(statut='f', typ='R'),
-        SPEC_NB        = SIMP(statut='f', typ='I'),        
-        ),    
+        SPEC_NB        = SIMP(statut='f', typ='I'),
+        ),
     ),
     # Post-traitement type 1 - tran_gene
     b_post_tran_gene = BLOC(condition="""equal_to("TYPE_RESU", 'TRAN_GENE')""",
                        regles=(ENSEMBLE('INST_FIN', 'PAS_INST'),),
-                       
+
         MODELE         = SIMP(statut='o', typ=(modele_sdaster),),
         GROUP_NO       = SIMP(statut='f', typ=grno, max='**',),
         INST_FIN       = SIMP(statut='f', typ='R', fr=tr("Instant final du calcul")),
         PAS_INST       = SIMP(statut='f', typ='R', fr=tr("Pas de temps du calcul")),
-        
+
         b_post_tran_gene_temp = BLOC(condition="""exists("INST_FIN")""",
                                regles=(AU_MOINS_UN('ACCE_X', 'ACCE_Y', 'ACCE_Z','DEPL_X', 'DEPL_Y', 'DEPL_Z',),
                                        PRESENT_ABSENT('ACCE_X','DEPL_X', 'DEPL_Y', 'DEPL_Z',),
@@ -262,7 +265,7 @@ CALC_MISS = MACRO(nom="CALC_MISS",
             DEPL_Y         = SIMP(statut='f', typ=fonction_sdaster,),
             DEPL_Z         = SIMP(statut='f', typ=fonction_sdaster,),
         ),
-        
+
         b_post_tran_gene_frreq = BLOC(condition="""not exists("INST_FIN")""",
                                regles=(AU_MOINS_UN('ACCE_X', 'ACCE_Y', 'ACCE_Z','DEPL_X', 'DEPL_Y', 'DEPL_Z',),
                                        PRESENT_ABSENT('ACCE_X','DEPL_X', 'DEPL_Y', 'DEPL_Z',),
@@ -276,7 +279,7 @@ CALC_MISS = MACRO(nom="CALC_MISS",
             DEPL_Y         = SIMP(statut='f', typ=fonction_c,),
             DEPL_Z         = SIMP(statut='f', typ=fonction_c,),
         ),
-        
+
     ),
     # Post-traitement type 1 - harm_gene
     b_post_harm_gene  = BLOC(condition="""equal_to("TYPE_RESU", 'HARM_GENE')""",
@@ -300,8 +303,8 @@ CALC_MISS = MACRO(nom="CALC_MISS",
             PHAS_DEG      = SIMP(statut='f', typ='R', defaut=0.),
             PUIS_PULS     = SIMP(statut='f', typ='I', defaut=0),
         ),
-        
-        
+
+
         b_post_harm_gene_temp = BLOC(condition="""not exists("EXCIT_HARMO") and exists("INST_FIN")""",
                                regles=(AU_MOINS_UN('ACCE_X', 'ACCE_Y', 'ACCE_Z','DEPL_X', 'DEPL_Y', 'DEPL_Z',),
                                        PRESENT_ABSENT('ACCE_X','DEPL_X', 'DEPL_Y', 'DEPL_Z',),
@@ -315,7 +318,7 @@ CALC_MISS = MACRO(nom="CALC_MISS",
             DEPL_Y         = SIMP(statut='f', typ=fonction_sdaster,),
             DEPL_Z         = SIMP(statut='f', typ=fonction_sdaster,),
         ),
-        
+
         b_post_harm_gene_freq = BLOC(condition="""not exists("EXCIT_HARMO") and not exists("INST_FIN")""",
                                regles=(AU_MOINS_UN('ACCE_X', 'ACCE_Y', 'ACCE_Z','DEPL_X', 'DEPL_Y', 'DEPL_Z',),
                                        PRESENT_ABSENT('ACCE_X','DEPL_X', 'DEPL_Y', 'DEPL_Z',),
@@ -329,8 +332,8 @@ CALC_MISS = MACRO(nom="CALC_MISS",
             DEPL_Y         = SIMP(statut='f', typ=fonction_c,),
             DEPL_Z         = SIMP(statut='f', typ=fonction_c,),
         ),
-        
-        
+
+
     ),
     # Post-traitement type 2
     b_post_table = BLOC(condition="""equal_to("TYPE_RESU", 'TABLE')""",
@@ -346,7 +349,7 @@ CALC_MISS = MACRO(nom="CALC_MISS",
                                    fr=tr("Amortissement du spectre d'oscillateur")),
         LIST_FREQ_SPEC_OSCI = SIMP(statut='f', typ=listr8_sdaster,
                                    fr=tr("Fréquences utilisées pour le calcul du spectre d'oscillateur")),
-                                   
+
         b_post_table_temp = BLOC(condition="""exists("INST_FIN")""",
                                regles=(AU_MOINS_UN('ACCE_X', 'ACCE_Y', 'ACCE_Z',),
                               ),
@@ -354,7 +357,7 @@ CALC_MISS = MACRO(nom="CALC_MISS",
             ACCE_Y         = SIMP(statut='f', typ=fonction_sdaster,),
             ACCE_Z         = SIMP(statut='f', typ=fonction_sdaster,),
         ),
-        
+
         b_post_table_freq = BLOC(condition="""not exists("INST_FIN")""",
                                regles=(AU_MOINS_UN('ACCE_X', 'ACCE_Y', 'ACCE_Z',),
                               ),
@@ -362,7 +365,7 @@ CALC_MISS = MACRO(nom="CALC_MISS",
             ACCE_Y         = SIMP(statut='f', typ=fonction_c,),
             ACCE_Z         = SIMP(statut='f', typ=fonction_c,),
         ),
-                                   
+
     ),
 
     # Post-traitement type 3 - points de controle
@@ -386,7 +389,7 @@ CALC_MISS = MACRO(nom="CALC_MISS",
             ACCE_Y         = SIMP(statut='f', typ=fonction_sdaster,),
             ACCE_Z         = SIMP(statut='f', typ=fonction_sdaster,),
         ),
-        
+
         b_post_controle_freq = BLOC(condition="""not exists("INST_FIN")""",
             ACCE_X         = SIMP(statut='f', typ=fonction_c,),
             ACCE_Y         = SIMP(statut='f', typ=fonction_c,),

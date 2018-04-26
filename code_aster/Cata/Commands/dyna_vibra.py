@@ -26,6 +26,9 @@ from code_aster.Cata.Commons import *
 
 
 def dyna_vibra_sdprod(BASE_CALCUL, TYPE_CALCUL, MATR_RIGI,**args):
+    if args.get('__all__'):
+        return (dyna_trans, dyna_harmo, acou_harmo, tran_gene, harm_gene)
+
     if BASE_CALCUL == 'PHYS':
         if TYPE_CALCUL == 'TRAN'                   : return dyna_trans
         if (AsType(MATR_RIGI) == matr_asse_pres_c) : return acou_harmo
