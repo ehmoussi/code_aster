@@ -244,30 +244,8 @@ Causes possibles :
         """Check that 'sd_prod' is type declared by the function with '__all__'
         argument.
         """
-        from Noyau.N_CR import CR
-        from code_aster.Cata.Language.SyntaxUtils import add_none_sdprod
-        def _name(class_):
-            return getattr(class_, '__name__', class_)
+        check_sdprod(self.nom, self.definition.sd_prod, sd_prod, args)
 
-        cr = CR()
-        args = args or {}
-        add_none_sdprod(self.definition.sd_prod, args)
-        args['__all__'] = True
-        # eval sd_prod with __all__=True + None for other arguments
-        try:
-            allowed = force_list(apply(self.definition.sd_prod, (), args))
-            if sd_prod not in allowed:
-                cr.fatal("Error: {0}: type '{1}' is not in the list returned "
-                         "by the 'sd_prod' function with '__all__=True': {2}"
-                         .format(self.nom, _name(sd_prod),
-                                [_name(i) for i in allowed]))
-        except Exception as exc:
-            print "ERROR:", str(exc)
-            cr.fatal("Error: {0}: the 'sd_prod' function must support "
-                     "the '__all__=True' argument".format(self.nom))
-        if not cr.estvide():
-            print(str(cr))
-            raise TypeError
 
     def get_etape(self):
         """
@@ -494,3 +472,36 @@ Causes possibles :
         # pourrait être appelée par une commande fortran faisant appel à des fonctions python
         # on passe la main au parent
         return self.parent.get_concept(nomsd)
+
+
+def check_sdprod(command, func_prod, sd_prod, args=None):
+    """Check that 'sd_prod' is type allowed by the function 'func_prod'
+    with '__all__' argument.
+    """
+    from Noyau.N_CR import CR
+    from code_aster.Cata.Language.SyntaxUtils import add_none_sdprod
+    def _name(class_):
+        return getattr(class_, '__name__', class_)
+
+    if type(func_prod) != types.FunctionType:
+        return
+
+    cr = CR()
+    args = args or {}
+    add_none_sdprod(func_prod, args)
+    args['__all__'] = True
+    # eval sd_prod with __all__=True + None for other arguments
+    try:
+        allowed = force_list(apply(func_prod, (), args))
+        if sd_prod and sd_prod not in allowed:
+            cr.fatal("Error: {0}: type '{1}' is not in the list returned "
+                     "by the 'sd_prod' function with '__all__=True': {2}"
+                     .format(command, _name(sd_prod),
+                             [_name(i) for i in allowed]))
+    except Exception as exc:
+        print "ERROR:", str(exc)
+        cr.fatal("Error: {0}: the 'sd_prod' function must support "
+                 "the '__all__=True' argument".format(command))
+    if not cr.estvide():
+        print(str(cr))
+        raise TypeError(str(cr))
