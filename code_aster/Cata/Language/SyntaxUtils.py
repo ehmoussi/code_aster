@@ -24,11 +24,12 @@ Code_Aster Syntax Utilities
 List of utilities for syntax objects.
 """
 
+import inspect
+import math
+import os
 from array import array
 from collections import OrderedDict
 from functools import partial
-import math
-import os
 
 import numpy
 
@@ -62,6 +63,35 @@ def remove_none(obj):
                 del obj[key]
             else:
                 remove_none(obj[key])
+
+def add_none_sdprod(sd_prod, dictargs):
+    """Check if some arguments are missing to call *sd_prod* function and
+    add them with the *None* value.
+
+    It could be considered as a catalog error. *sd_prod* function should
+    not take optional keywords as arguments.
+
+    Arguments:
+        sd_prod (callable): *sd_prod* function to inspect.
+        dictargs (dict): Dict of keywords, changed in place.
+    """
+    argspec = inspect.getargspec(sd_prod)
+    required = argspec.args
+    if argspec.defaults:
+        required = required[:-len(argspec.defaults)]
+    args = dictargs.keys()
+    # add 'self' for macro
+    args.append('self')
+    miss = set(required).difference(args)
+    if len(miss) > 0:
+        # miss = sorted(list(miss))
+        # raise ValueError("Arguments required by the function:\n    {0}\n"
+        #                  "Provided in dict:    {1}\n"
+        #                  "Missing:    {2}\n"\
+        #                  .format(sorted(required), sorted(args), miss))
+        for i in miss:
+            dictargs[i] = None
+
 
 def search_for(obj, predicate):
     """Return all values that verify the predicate function."""
