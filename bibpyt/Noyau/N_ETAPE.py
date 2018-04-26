@@ -185,7 +185,7 @@ class ETAPE(N_MCCOMPO.MCCOMPO):
                 d['__only_type__'] = True
                 sd_prod = apply(self.definition.sd_prod, (), d)
                 if self.jdc.fico:
-                    self.check_allowed_type(sd_prod, keywords=d)
+                    self.check_allowed_type(sd_prod)
 
             except EOFError:
                 raise
@@ -240,22 +240,27 @@ Causes possibles :
             sd_prod = self.definition.sd_prod
         return sd_prod
 
-    def check_allowed_type(self, sd_prod, keywords):
+    def check_allowed_type(self, sd_prod, args=None):
         """Check that 'sd_prod' is type declared by the function with '__all__'
         argument.
         """
         from Noyau.N_CR import CR
+        from code_aster.Cata.Language.SyntaxUtils import add_none_sdprod
+        def _name(class_):
+            return getattr(class_, '__name__', class_)
+
         cr = CR()
-        d = dict(__all__=True)
-        d.update(keywords)
+        args = args or {}
+        add_none_sdprod(self.definition.sd_prod, args)
+        args['__all__'] = True
+        # eval sd_prod with __all__=True + None for other arguments
         try:
-            # print "DEBUG:", self.nom, d
-            allowed = force_list(apply(self.definition.sd_prod, (), d))
+            allowed = force_list(apply(self.definition.sd_prod, (), args))
             if sd_prod not in allowed:
                 cr.fatal("Error: {0}: type '{1}' is not in the list returned "
-                        "by the 'sd_prod' function with '__all__=True': {2}"
-                        .format(self.nom, sd_prod.__name__,
-                                [i.__name__ for i in allowed]))
+                         "by the 'sd_prod' function with '__all__=True': {2}"
+                         .format(self.nom, _name(sd_prod),
+                                [_name(i) for i in allowed]))
         except Exception as exc:
             print "ERROR:", str(exc)
             cr.fatal("Error: {0}: the 'sd_prod' function must support "
