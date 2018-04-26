@@ -501,17 +501,27 @@ def check_sdprod(command, func_prod, sd_prod, verbose=True):
                         .format(command))
             else:
                 # can not know which occurrence should be tested
-                alltypes = set()
-                allowed = tuple(alltypes.union(*allowed))
+                allowed = tuple(set().union(*allowed))
+        allowed = tuple(set().union(*[subtypes(i) for i in allowed]))
         if sd_prod and sd_prod not in allowed:
             cr.fatal("Error: {0}: type '{1}' is not in the list returned "
                      "by the 'sd_prod' function with '__all__=True': {2}"
                      .format(command, _name(sd_prod),
                              [_name(i) for i in allowed]))
     except Exception as exc:
+        print("Error: {0}".format(exc))
         cr.fatal("Error: {0}: the 'sd_prod' function must support "
                  "the '__all__=True' argument".format(command))
     if not cr.estvide():
         if verbose:
             print(str(cr))
         raise TypeError(str(cr))
+
+def subtypes(cls):
+    """Return subclasses of 'cls'."""
+    types = [cls]
+    if not cls:
+        return types
+    for subclass in cls.__subclasses__():
+        types.extend(subtypes(subclass))
+    return types
