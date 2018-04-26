@@ -28,7 +28,7 @@ def exec_logiciel_prod(self, SALOME, MAILLAGE, **args):
     if args.get('__all__'):
         return (None, maillage_sdaster)
     if SALOME != None:
-        if len(SALOME['NOM_PARA'] or []) != len(SALOME['VALE'] or []):
+        if len(SALOME.get('NOM_PARA') or []) != len(SALOME.get('VALE') or []):
             raise AsException(tr("SALOME: NOM_PARA et VALE doivent avoir le "
                                  "même cardinal"))
     if MAILLAGE != None:
