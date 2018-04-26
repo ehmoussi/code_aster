@@ -25,6 +25,9 @@ from code_aster.Cata.Commons import *
 
 
 def elim_lagr_prod(MATR_RIGI,**args):
+  if args.get('__all__'):
+      return (matr_asse_depl_r, )
+
   if AsType(MATR_RIGI) == matr_asse_depl_r : return matr_asse_depl_r
   raise AsException("type de concept resultat non prevu")
 

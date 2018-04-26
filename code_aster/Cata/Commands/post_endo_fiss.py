@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -31,6 +31,8 @@ from code_aster.Cata.Commons import *
 
 
 def post_endo_fiss_prod(self,TABLE,**args) :
+    if args.get('__all__'):
+        return (maillage_sdaster, )
     self.type_sdprod(TABLE,table_sdaster)
     return maillage_sdaster
 

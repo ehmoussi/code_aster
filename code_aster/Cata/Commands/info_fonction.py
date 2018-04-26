@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -24,13 +24,11 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 
-def info_fonction_prod(self,ECART_TYPE,RMS,NOCI_SEISME,MAX,NORME, **args):
-   if (RMS         != None): return table_sdaster
-   if (MAX         != None): return table_sdaster
-   if (NOCI_SEISME != None): return table_sdaster
-   if (ECART_TYPE  != None): return table_sdaster
-   if (NORME       != None): return table_sdaster
-   raise AsException("type de concept resultat non prevu")
+def info_fonction_prod(self, **args):
+    if args.get('__all__'):
+        return (table_sdaster, )
+    return table_sdaster
+
 
 INFO_FONCTION=MACRO(nom="INFO_FONCTION",
                     op=OPS('Macro.info_fonction_ops.info_fonction_ops'),

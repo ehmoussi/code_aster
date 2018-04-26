@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -24,13 +24,16 @@ from code_aster.Cata.Commons import *
 
 
 def proj_mesu_modal_prod(MODELE_MESURE,**args):
-     vale=MODELE_MESURE['MESURE']
-     if  AsType(vale) == dyna_trans   : return tran_gene
-     if  AsType(vale) == dyna_harmo   : return harm_gene
-     if  AsType(vale) == mode_meca    : return mode_gene
-     if  AsType(vale) == mode_meca_c  : return mode_gene
+    if args.get('__all__'):
+        return (tran_gene, harm_gene, mode_gene)
+
+    vale = MODELE_MESURE['MESURE']
+    if  AsType(vale) == dyna_trans   : return tran_gene
+    if  AsType(vale) == dyna_harmo   : return harm_gene
+    if  AsType(vale) == mode_meca    : return mode_gene
+    if  AsType(vale) == mode_meca_c  : return mode_gene
 #     if  AsType(vale) == base_modale  : return mode_gene
-     raise AsException("type de concept resultat non prevu")
+    raise AsException("type de concept resultat non prevu")
 
 PROJ_MESU_MODAL=OPER(nom="PROJ_MESU_MODAL",op= 193,
                      sd_prod=proj_mesu_modal_prod,
@@ -39,7 +42,7 @@ PROJ_MESU_MODAL=OPER(nom="PROJ_MESU_MODAL",op= 193,
 
          MODELE_CALCUL   =FACT(statut='o',
            MODELE          =SIMP(statut='o',typ=(modele_sdaster) ),
-#           BASE            =SIMP(statut='o',typ=(mode_meca,base_modale,) ),          
+#           BASE            =SIMP(statut='o',typ=(mode_meca,base_modale,) ),
            BASE            =SIMP(statut='o',typ= mode_meca, ),
                          ),
          MODELE_MESURE   =FACT(statut='o',
@@ -63,7 +66,7 @@ PROJ_MESU_MODAL=OPER(nom="PROJ_MESU_MODAL",op= 193,
            REGUL           =SIMP(statut='f',typ='TXM',defaut="NON",into=("NON","NORM_MIN","TIK_RELA",) ),
            b_regul =BLOC(condition="""not equal_to("REGUL", 'NON')""",
                          regles=(PRESENT_ABSENT('COEF_PONDER','COEF_PONDER_F', ),),
-                         COEF_PONDER   =SIMP(statut='f',typ='R',defaut=0.     ,max='**' ),  
+                         COEF_PONDER   =SIMP(statut='f',typ='R',defaut=0.     ,max='**' ),
                          COEF_PONDER_F =SIMP(statut='f',typ=(fonction_sdaster,nappe_sdaster,formule),max='**' ),
                         ),
              ),

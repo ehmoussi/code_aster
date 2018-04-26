@@ -26,6 +26,9 @@ from code_aster.Cata.Commons import *
 def calc_table_prod(self, TABLE, ACTION, **kargs):
    """Typage du concept produit.
    """
+   if kargs.get('__all__'):
+       return (table_sdaster, table_container, table_fonction)
+
    l_typ = [AsType(TABLE),]
    for mcf in ACTION:
       if mcf.get('TABLE') is not None:
