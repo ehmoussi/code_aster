@@ -24,6 +24,9 @@ from code_aster.Cata.Commons import *
 
 
 def modi_repere_prod(RESULTAT,CHAM_GD,**args):
+  if args.get('__all__'):
+      return (None, resultat_sdaster, cham_gd_sdaster)
+
   if AsType(RESULTAT) != None : return AsType(RESULTAT)
   if AsType(CHAM_GD)  != None : return AsType(CHAM_GD)
 
