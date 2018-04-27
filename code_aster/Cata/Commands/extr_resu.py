@@ -25,6 +25,11 @@ from code_aster.Cata.Commons import *
 
 
 def extr_resu_prod(RESULTAT,**args):
+    if args.get('__all__'):
+        return (evol_elas, dyna_trans, dyna_harmo, acou_harmo, mode_meca,
+                mode_acou, evol_ther, evol_noli, evol_varc, mult_elas,
+                fourier_elas, fourier_ther)
+
     return AsType(RESULTAT)
 
 

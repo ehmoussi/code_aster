@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -24,6 +24,9 @@ from code_aster.Cata.Commons import *
 
 
 def calc_fatigue_prod(TYPE_CALCUL,OPTION,**args):
+  if args.get('__all__'):
+      return (cham_elem, cham_no_sdaster)
+
   if TYPE_CALCUL == "CUMUL_DOMMAGE" : return cham_elem
   if TYPE_CALCUL == "FATIGUE_MULTI" and OPTION == "DOMA_ELGA": return cham_elem
   if TYPE_CALCUL == "FATIGUE_MULTI" and OPTION == "DOMA_NOEUD": return cham_no_sdaster

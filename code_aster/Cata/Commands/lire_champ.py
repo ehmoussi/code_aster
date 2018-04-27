@@ -26,6 +26,9 @@ from code_aster.Cata.Commons import *
 def lire_champ_prod(TYPE_CHAM=None,**args):
 # Remarque : si cette liste évolue, il faut penser à mettre à jour son
 #            homologue dans macr_adap_mail
+  if args.get('__all__'):
+      return (cham_no_sdaster, carte_sdaster, cham_elem)
+
   if TYPE_CHAM[0:5] == "NOEU_" : return cham_no_sdaster
   if TYPE_CHAM[0:5] == "CART_" : return carte_sdaster
   if TYPE_CHAM[0:2] == "EL"    : return cham_elem

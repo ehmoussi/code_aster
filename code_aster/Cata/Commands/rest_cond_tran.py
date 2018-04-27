@@ -24,6 +24,8 @@ from code_aster.Cata.Commons import *
 
 
 def rest_cond_tran_prod(RESULTAT,TYPE_RESU,**args ):
+  if args.get('__all__'):
+      return (dyna_trans, evol_noli)
 
   if AsType(RESULTAT) == dyna_trans  : return dyna_trans
   if (AsType(RESULTAT) == evol_noli and TYPE_RESU == "DYNA_TRANS") : return dyna_trans

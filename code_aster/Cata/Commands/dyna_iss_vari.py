@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -25,6 +25,9 @@ from code_aster.Cata.Commons import *
 
 
 def dyna_iss_vari_prod(self, EXCIT_SOL,**args):
+   if args.get('__all__'):
+       return (tran_gene, interspectre)
+
    if EXCIT_SOL !=None :
        return tran_gene
    else:
@@ -52,7 +55,7 @@ DYNA_ISS_VARI=MACRO(nom="DYNA_ISS_VARI",
               MODE_INTERF  =SIMP(statut='o',typ='TXM',into=("CORP_RIGI", "TOUT", "QUELCONQUE")),
          ),
          MATR_COHE       =FACT(statut='o',
-              TYPE = SIMP(statut='o',typ='TXM' , into=("MITA_LUCO","ABRAHAMSON", "ABRA_ROCHER", "ABRA_SOLMOYEN")   ),            
+              TYPE = SIMP(statut='o',typ='TXM' , into=("MITA_LUCO","ABRAHAMSON", "ABRA_ROCHER", "ABRA_SOLMOYEN")   ),
               b_type_coh = BLOC(condition="""equal_to("TYPE", 'MITA_LUCO') """,
                  VITE_ONDE       =SIMP(statut='o',typ='R', val_min=0.0 ),
                  PARA_ALPHA     =SIMP(statut='f',typ='R',defaut=0.1),),
