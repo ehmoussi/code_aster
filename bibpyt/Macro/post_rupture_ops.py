@@ -316,7 +316,7 @@ def post_rupture_ops(self, TABLE, OPERATION, **args):
     nb_tabin = verif_nb_table(OPERATION, TABLE)
 
     # verification que reuse est correctement employe
-    verif_reuse(OPERATION, self.reuse)
+    verif_reuse(OPERATION, args["reuse"])
 
     # extraction de la ou des tables en entree dans l'espace python -> table
     # python
