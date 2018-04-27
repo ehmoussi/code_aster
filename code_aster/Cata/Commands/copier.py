@@ -24,11 +24,8 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 
-def copier_prod(CONCEPT,**args):
-   return AsType(CONCEPT)
-
 # liste des types de concept acceptes par la commande :
-copier_ltyp=(
+copier_ltyp = (
   cabl_precont,
   listr8_sdaster,
   listis_sdaster,
@@ -41,6 +38,13 @@ copier_ltyp=(
   evol_noli,
   evol_ther,
 )
+
+def copier_prod(CONCEPT,**args):
+    if args.get('__all__'):
+        return copier_ltyp
+
+    return AsType(CONCEPT)
+
 
 COPIER=OPER(nom="COPIER",op= 185,sd_prod=copier_prod,
             reentrant='f:CONCEPT',

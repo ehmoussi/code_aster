@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -24,6 +24,10 @@ from code_aster.Cata.Commons import *
 
 
 def asse_matrice_prod(MATR_ELEM,**args):
+  if args.get('__all__'):
+      return (matr_asse_depl_r, matr_asse_depl_c, matr_asse_temp_r,
+              matr_asse_pres_c)
+
   if AsType(MATR_ELEM) == matr_elem_depl_r : return matr_asse_depl_r
   if AsType(MATR_ELEM) == matr_elem_depl_c : return matr_asse_depl_c
   if AsType(MATR_ELEM) == matr_elem_temp_r : return matr_asse_temp_r

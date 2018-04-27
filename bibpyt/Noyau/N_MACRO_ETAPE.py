@@ -174,6 +174,9 @@ class MACRO_ETAPE(N_ETAPE.ETAPE):
                 self.sdprods = []
                 d['__only_type__'] = True
                 sd_prod = apply(sd_prod, (self,), d)
+                if self.jdc.fico:
+                    self.check_allowed_type(sd_prod)
+
             except (EOFError, self.UserError):
                 raise
             except OpsError:
@@ -352,6 +355,7 @@ Impossible de changer le type du concept (%s). Le mot cle associe ne supporte pa
             # %s --> %s", co, t)
             co.change_type(t)
             self.sdprods.append(co)
+            self.check_allowed_type(t)
 
         elif co.etape == self:
             # Cas 2 : le concept est produit par la macro (self)
@@ -372,6 +376,7 @@ Impossible de changer le type du concept (%s). Le mot cle associe ne supporte pa
 Le type demande (%s) et le type du concept (%s) devraient etre derives""" % (t, co.__class__))
 
             self.sdprods.append(co)
+            self.check_allowed_type(t)
 
         elif co.etape == self.parent:
             # Cas 3 : le concept est produit par la macro parente (self.parent)
@@ -397,6 +402,7 @@ Impossible de changer le type du concept (%s). Le mot cle associe ne supporte pa
             # On ne change pas le type car il respecte la condition isinstance(co,t)
             # co.__class__ = t
             self.sdprods.append(co)
+            self.check_allowed_type(t)
 
         elif self.issubstep(co.etape):
             # Cas 4 : Le concept est propriété d'une sous etape de la macro (self).
@@ -409,6 +415,7 @@ Impossible de changer le type du concept (%s). Le mot cle associe ne supporte pa
                 raise AsException("""Erreur interne.
 Le type demande (%s) et le type du concept (%s) devraient etre derives""" % (t, co.__class__))
             self.sdprods.append(co)
+            self.check_allowed_type(t)
 
         else:
             # Cas 5 : le concept est produit par une autre étape

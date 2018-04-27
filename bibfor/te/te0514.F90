@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -20,6 +20,9 @@ subroutine te0514(option, nomte)
     implicit none
 #include "asterf_types.h"
 #include "jeveux.h"
+#include "asterc/r8prem.h"
+#include "asterfort/as_allocate.h"
+#include "asterfort/as_deallocate.h"
 #include "asterfort/assert.h"
 #include "asterfort/conare.h"
 #include "asterfort/dismoi.h"
@@ -74,26 +77,30 @@ subroutine te0514(option, nomte)
     integer :: ndim, ibid, ndime, iad, jtab(7), jtab2(2), vali(2)
     integer :: nnc, npm, nmilie, nmfis, nbar, ar(12,3)
     integer :: iret, nfiss, ifiss, ncomb, ninmax, nmmax, nbars, ars(12,3)
-    integer :: a1, a2, b1, b2, ncompm, exit(2), joncno, jonact(8)
+    integer :: a1, a2, b1, b2, ncompm, iexit(2), joncno, jonact(8)
     parameter(ptmaxi=6,zintmx=5,pmmaxi=17,nsemax=6,nfimax=10)
-    parameter(ninmax=44,nmmax=264)
     real(kind=8) :: nmil(3, 7), txlsn(28), ainter(ptmaxi*zintmx), rainter(4)
     real(kind=8) :: newpt(3), p(3), lonref, pinter(3*ptmaxi), lsn(3)
     real(kind=8) :: pmilie(3*pmmaxi), heav(nsemax*nfimax), u(3), v(3), normal(3)
     real(kind=8) :: xg(3), cridist, xref(81), ff(27), ptref(3), norme
+    integer :: fisco(2*nfimax), fisc(2*nfimax), coupe(nfimax), zxain, ai, nnos
+    parameter(ninmax=44,nmmax=264)
+    integer, pointer :: ndoubl(:) => null(), ndoub2(:) => null()
+    integer, pointer :: ndoub3(:) => null()
     parameter(cridist=1.d-9)
-    integer :: fisco(2*nfimax), fisc(2*nfimax), zxain, ai, nnos
-    integer :: ndoubl(ninmax*(2**nfimax)), ndoub2(ninmax*(2**nfimax))
-    integer :: ndoub3(nmmax*(2**nfimax)), coupe(nfimax)
     aster_logical :: deja, ajn, cut, lconnec_ok, pre1, jonc
 !
     data            elrese /'SEG3','TRIA6','TETRA10'/
 !......................................................................
-!     LES TABLEAUX FISC, FISCO, NDOUBL, NDOUB2, PMILIE, PINTER ONT ETE
-!     ALLOUE DE FACON STATIQUE POUR OPTIMISER LE CPU (CAR LES APPELS A
-!     WKVECT DANS LES TE SONT COUTEUX).
+!   LES TABLEAUX FISC, FISCO, PMILIE, PINTER ONT ETE
+!   ALLOUE DE FACON STATIQUE POUR OPTIMISER LE CPU (CAR LES APPELS A
+!   WKVECT DANS LES TE SONT COUTEUX).
 !
-    nomte=nomte
+!   On the other hand ndoubl, ndoub2, ndoub3 are too big to be allocated on the stack.
+!   Hence the use of AS_ALLOCATE.
+    AS_ALLOCATE(vi= ndoubl, size=ninmax*(2**nfimax))
+    AS_ALLOCATE(vi= ndoub2, size=ninmax*(2**nfimax))
+    AS_ALLOCATE(vi= ndoub3, size= nmmax*(2**nfimax))
 !
     ASSERT(option.eq.'TOPOSE')
     call vecini(51, 0.d0, pmilie)
@@ -188,7 +195,7 @@ subroutine te0514(option, nomte)
                     nnc)
     end if
 !
- exit(1:2) = 0
+ iexit(1:2) = 0
  73 continue
 !
     npi=0
@@ -201,7 +208,7 @@ subroutine te0514(option, nomte)
     call loncar(ndim, typma, zr(igeom), lonref)
 !
 !     ON SUBDIVISE L'ELEMENT PARENT EN NIT SOUS-ELEMENTS
-    call xdivte(elp, zi(jcnset), nit, nnose, exit)
+    call xdivte(elp, zi(jcnset), nit, nnose, iexit)
     cpt = nit
 !     PROBLEME DE DIMENSSIONNEMENT DANS LES CATALOGUES
         ASSERT(ncompc.ge.nnose*ncomph)
@@ -247,8 +254,8 @@ subroutine te0514(option, nomte)
                             igeom, pinter, ninter, npts, ainter,&
                             pmilie, nmilie, nmfis, nmil, txlsn,&
                             zr(jpintt), zr(jpmilt), ifiss, nfiss,&
-                            fisc, nfisc, cut, coupe, exit, joncno)
-                if (exit(1).eq.1) goto 73
+                            fisc, nfisc, cut, coupe, iexit, joncno)
+                if (iexit(1).eq.1) goto 73
 !
                 call xdecqv(nnose, it, zi(jcnset), zi(jheavt), zr(jlsn), igeom,&
                             ninter, npts, ndim, ainter, nse, cnse,&
@@ -269,7 +276,7 @@ subroutine te0514(option, nomte)
 ! ----- - BOUCLE SUR LES NINTER POINTS D'INTER : ARCHIVAGE DE PINTTO
             do 200 ipt = 1, ninter
                 do 210 j = 1, ndim
-                    newpt(j)=pinter(ndim*(ipt-1)+j) 
+                    newpt(j)=pinter(ndim*(ipt-1)+j)
 210              continue
                 do i = 1, 4
                     rainter(i) = ainter(zxain*(ipt-1)+i)
@@ -308,7 +315,9 @@ subroutine te0514(option, nomte)
                        end do
                        if (ifiss.gt.1) then
 !             MARQUAGE POINT DE JONCTION DE FISSURES
-                          if (rainter(4).eq.-1.d0) zr(jout6-1+zxain*(npi-1)+4)=-1.d0
+                          if (abs(rainter(4)+1.d0) .le. r8prem()) then
+                             zr(jout6-1+zxain*(npi-1)+4)=-1.d0
+                          endif
                           call conare(typma, ar, nbar)
                           call xelrex(elp, nno, xref)
                           call reeref(elp, nno, zr(igeom), newpt, ndim,&
@@ -427,7 +436,7 @@ subroutine te0514(option, nomte)
                 ise-1)+i))
                 end do
 !           ARCHIVAGE DE PCNSETO
-                lconnec_ok=.true.   
+                lconnec_ok=.true.
                 do in = 1, nnose
                     lconnec_ok=lconnec_ok.and.&
                                 ((cnse(ise,in).gt.0.and.cnse(ise,in).le.nno+nnc).or.&
@@ -437,7 +446,7 @@ subroutine te0514(option, nomte)
                 end do
                 if (.not. lconnec_ok) then
                   call utmess('F', 'XFEMPRECOND_8')
-                endif 
+                endif
             end do
 !
         end do
@@ -466,11 +475,11 @@ subroutine te0514(option, nomte)
              lsn(1)=zr(jlsn-1+(ar(i,1)-1)*nfiss+1)
              lsn(2)=zr(jlsn-1+(ar(i,2)-1)*nfiss+1)
              lsn(3)=zr(jlsn-1+(ar(i,3)-1)*nfiss+1)
-             if (lsn(1).eq.0.d0) then
+             if (abs(lsn(1)) .le. r8prem()) then
                 jonact(ar(i,1))=1
-             elseif (lsn(2).eq.0.d0) then
+             elseif (abs(lsn(2)) .le. r8prem()) then
                 jonact(ar(i,2))=1
-             elseif (lsn(3).eq.0.d0) then
+             elseif (abs(lsn(3)) .le. r8prem()) then
                 jonact(ar(i,1))=1
                 jonact(ar(i,2))=1
              elseif (lsn(1)*lsn(2).lt.0.d0) then
@@ -486,7 +495,7 @@ subroutine te0514(option, nomte)
           end do
        endif
     endif
-! 
+!
 !     ARCHIVAGE DE LONCHAM POINTS D'INTERSECTION
     zi(jlonch-1+2)=npi
 !
@@ -608,5 +617,10 @@ subroutine te0514(option, nomte)
     if (.not.iselli(elp)) then
        zi(jlonch-1+4)=npm
     endif
+!
+!   Deallocation of temporary arrays on heap
+    AS_DEALLOCATE(vi=ndoubl)
+    AS_DEALLOCATE(vi=ndoub2)
+    AS_DEALLOCATE(vi=ndoub3)
 !
 end subroutine

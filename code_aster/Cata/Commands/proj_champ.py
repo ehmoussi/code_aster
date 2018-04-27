@@ -24,6 +24,10 @@ from code_aster.Cata.Commons import *
 
 
 def proj_champ_prod(RESULTAT=None,CHAM_GD=None,METHODE=None,**args ):
+    if args.get('__all__'):
+        return (corresp_2_mailla, resultat_sdaster,
+                cham_no_sdaster, cham_elem)
+
     if (RESULTAT == None and CHAM_GD == None) : return corresp_2_mailla
     if  RESULTAT != None                      : return AsType(RESULTAT)
     if  CHAM_GD  != None and METHODE == 'SOUS_POINT' :

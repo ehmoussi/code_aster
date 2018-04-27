@@ -25,6 +25,9 @@ from code_aster.Cata.Commons import *
 
 
 def norm_mode_prod(MODE,**args ):
+  if args.get('__all__'):
+      return (mode_meca, mode_meca_c, mode_flamb)
+
   if AsType(MODE) == mode_meca   : return mode_meca
   if AsType(MODE) == mode_meca_c : return mode_meca_c
   if AsType(MODE) == mode_flamb  : return mode_flamb

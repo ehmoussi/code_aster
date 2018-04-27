@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -30,19 +30,19 @@ lisi=DEFI_LIST_REEL(DEBUT=0,
                                   PAS=1,),);
 LINST=DEFI_LIST_INST(DEFI_LIST=_F(LIST_INST=lisi,),
                          ECHEC=_F(EVENEMENT='ERREUR',
-                         ACTION='DECOUPE',),);                  
-RAMPE=DEFI_FONCTION(NOM_PARA='INST',VALE=(0,0,1,1),); 
+                         ACTION='DECOUPE',),);
+RAMPE=DEFI_FONCTION(NOM_PARA='INST',VALE=(0,0,1,1),);
 
 Mail=LIRE_MAILLAGE(UNITE=20,
                    FORMAT='MED',);
-                   
+
 Mail=MODI_MAILLAGE(reuse=Mail,
                    MAILLAGE=Mail,
-                   ORIE_PEAU_3D=_F(GROUP_MA=('Group_2','Group_1','Group_3','Group_4',),),);                       
+                   ORIE_PEAU_3D=_F(GROUP_MA=('Group_2','Group_1','Group_3','Group_4',),),);
 
 Mail2=CREA_MAILLAGE(MAILLAGE=Mail,
                     DECOUPE_LAC=_F(GROUP_MA_ESCL='Group_1',),)
-                    
+
 mat1=DEFI_MATERIAU(ELAS=_F(E=2000,
                            NU=0.3,),);
 
@@ -78,7 +78,7 @@ CHAR2= AFFE_CHAR_MECA(MODELE=MODI,
                              PRES_REP=_F(GROUP_MA='Group_4',
                              PRES=25,), );
 
- 
+
 
 RES=STAT_NON_LINE(INFO=2,
                   AFFICHAGE=_F(INFO_RESIDU='OUI',),
@@ -89,10 +89,10 @@ RES=STAT_NON_LINE(INFO=2,
                          _F(CHARGE=CHAR2,
                               FONC_MULT=RAMPE,
                             #TYPE_CHARGE='SUIV',
-                            ), ),  
+                            ), ),
                   CONTACT=DEFICO,
                   NEWTON=_F(MATRICE='TANGENTE',
-                            REAC_ITER=1,),    
+                            REAC_ITER=1,),
                   COMPORTEMENT=_F(RELATION='ELAS',
                                     DEFORMATION='PETIT',
                                   TOUT='OUI',),
@@ -105,14 +105,14 @@ RES=STAT_NON_LINE(INFO=2,
                                _F(OBSE_ETAT_INIT = 'NON',
                                   NOM_CMP    = ('PRES', 'JEU', 'CONT', 'COEFSURF', 'PRESCOOR'),
                                   NOM_CHAM   ='CONT_ELEM',
-                                  MAILLE='1Z1527',
+                                  MAILLE='M1527',
                                   INST=(1.),
                                   EVAL_CHAM  ='VALE',),
                                   ),
                   CONVERGENCE=_F(RESI_GLOB_RELA=1.E-6,
                                  ITER_GLOB_MAXI=50,));
 
-IMPR_RESU(FORMAT="RESULTAT",RESU=_F(RESULTAT=RES, NOM_CHAM=('SIEF_ELGA','CONT_ELEM'), INST=1.0, MAILLE=('1Z1527'),))
+IMPR_RESU(FORMAT="RESULTAT",RESU=_F(RESULTAT=RES, NOM_CHAM=('SIEF_ELGA','CONT_ELEM'), INST=1.0, MAILLE=('M1527'),))
 
 TAB= RECU_TABLE(CO=RES, NOM_TABLE='OBSERVATION')
 
@@ -168,7 +168,7 @@ TEST_RESU(RESU=(_F(INST=1.0,
                    VALE_CALC=-25.0,
                    ),
                 ),
-          ); 
+          );
 
 TEST_RESU(RESU=(_F(INST=1.0,
                    TYPE_TEST='MIN',
@@ -195,7 +195,7 @@ TEST_RESU(RESU=(_F(INST=1.0,
                    REFERENCE = 'ANALYTIQUE',
                    NOM_CHAM='CONT_ELEM',
                    LEGENDE='CONT_ELEM',
-                   MAILLE='1Z1527',
+                   MAILLE='M1527',
                    NOM_CMP='PRES',
                    VALE_REFE=-25.0,
                    VALE_CALC=-25.00,

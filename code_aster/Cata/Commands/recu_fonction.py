@@ -28,6 +28,8 @@ def recu_fonction_prod(RESULTAT=None,TABLE=None,RESU_GENE=None,
                        INTE_SPEC=None,NOEUD_J=None,NUME_ORDRE_J=None,
                        NOM_CMP_J=None,NOM_CMP_I=None,NUME_ORDRE_I=None,NOEUD_I=None,
                        NOM_PARA_TABL=None,PARA_Y=None,**args):
+    if args.get('__all__'):
+        return (fonction_c, fonction_sdaster)
 
     if AsType(RESULTAT) == dyna_harmo:
         return fonction_c

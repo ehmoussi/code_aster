@@ -116,6 +116,8 @@ def DEBUT(self, PAR_LOT, IMPR_MACRO, CODE, DEBUG, IGNORE_ALARM, LANG, INFO, **ar
     """
        Fonction sdprod de la macro DEBUT
     """
+    if args.get('__all__'):
+        return None
     # La commande DEBUT ne peut exister qu'au niveau jdc
     if self.jdc is not self.parent:
         raise Accas.AsException(
@@ -159,6 +161,8 @@ def POURSUITE(self, PAR_LOT, IMPR_MACRO, CODE, DEBUG, IGNORE_ALARM, LANG, INFO, 
     """
         Fonction sdprod de la macro POURSUITE
     """
+    if args.get('__all__'):
+        return None
     # La commande POURSUITE ne peut exister qu'au niveau jdc
     if self.jdc is not self.parent:
         raise Accas.AsException(
@@ -344,6 +348,8 @@ def build_poursuite(self, **args):
 
 def INCLUDE(self, UNITE, DONNEE, **args):
     """Fonction sd_prod pour la macro INCLUDE"""
+    if args.get('__all__'):
+        return None
     self.show_children = args.get('INFO', 1) != 0
     if not (UNITE or DONNEE) or hasattr(self, '_mark'):
         return

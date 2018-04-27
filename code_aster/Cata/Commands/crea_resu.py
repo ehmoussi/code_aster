@@ -24,6 +24,11 @@ from code_aster.Cata.Commons import *
 
 
 def crea_resu_prod(TYPE_RESU,**args):
+    if args.get('__all__'):
+        return (evol_elas, evol_noli, evol_ther, mult_elas, mode_meca,
+                mode_meca_c, dyna_trans, dyna_harmo, fourier_elas,
+                fourier_ther, evol_varc, evol_char)
+
     if TYPE_RESU == "EVOL_ELAS"    : return evol_elas
     if TYPE_RESU == "EVOL_NOLI"    : return evol_noli
     if TYPE_RESU == "EVOL_THER"    : return evol_ther

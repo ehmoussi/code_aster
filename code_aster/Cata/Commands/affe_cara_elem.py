@@ -37,6 +37,10 @@ def affe_cara_elem_prod(self, POUTRE, BARRE, COQUE, CABLE, DISCRET, DISCRET_2D,
     # phase de typage seul
     if args.get('__only_type__'):
         return cara_elem
+
+    if args.get('__all__'):
+        return cara_elem
+
     # fonctions locales pour le sdprod de AFFE_CARA_ELEM
     def valeurCara(cara, Lcara, Lvale, valdefaut=None):
         """Retourne la valeur de la caractéristiques 'cara' dans 'Lcara'."""
