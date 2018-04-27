@@ -25,6 +25,10 @@ from code_aster.Cata.Commons import *
 
 
 def factoriser_prod(MATR_ASSE,**args):
+  if args.get('__all__'):
+      return (matr_asse_depl_r, matr_asse_depl_c, matr_asse_temp_r,
+              matr_asse_temp_c, matr_asse_pres_r, matr_asse_pres_c)
+
   if AsType(MATR_ASSE) == matr_asse_depl_r : return matr_asse_depl_r
   if AsType(MATR_ASSE) == matr_asse_depl_c : return matr_asse_depl_c
   if AsType(MATR_ASSE) == matr_asse_temp_r : return matr_asse_temp_r
