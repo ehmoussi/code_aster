@@ -1,0 +1,434 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
+
+MAIL=LIRE_MAILLAGE(FORMAT='MED',);
+
+# NOMBRE DE NOEUDS                         981
+#
+# NOMBRE DE MAILLES                        380
+#                               SEG3                   80
+#                               QUAD8                 300
+#
+# NOMBRE DE GROUPES DE MAILLES               7
+#                               BLOC                               300
+#                               GAUCHE                              30
+#                               HAUT                                10
+#                               DROIT                               30
+#                               TROU                                 5
+#                               BAS                                 10
+#                               PAROI                               25
+
+MODELE=AFFE_MODELE(MAILLAGE=MAIL,
+                   AFFE=_F(TOUT='OUI',
+                           PHENOMENE='MECANIQUE',
+                           MODELISATION='D_PLAN_HHMS',),);
+
+MAIL=MODI_MAILLAGE(reuse =MAIL,
+                 MAILLAGE=MAIL,
+                 ORIE_PEAU_2D=_F(GROUP_MA='TROU',),);
+
+viscoliq=DEFI_CONSTANTE(VALE=1.E-3,);
+
+ZERO=DEFI_CONSTANTE(VALE=0.,);
+
+UN=DEFI_CONSTANTE(VALE=1.,);
+
+KINT=DEFI_CONSTANTE(VALE=1.E-9,);
+
+KHENRY  = DEFI_CONSTANTE(VALE=1.E+14,);
+
+BBG=0.412
+PRBG = 1.E7
+NBG  = 1./(1.-BBG)
+MBG  = 1.-1./NBG
+SRBG = 0.
+SMAX=0.999
+
+MAT=DEFI_MATERIAU(ELAS=_F(E    =515.E6,
+                          NU   =0.3,
+                          RHO  =2.67E3,
+                          ALPHA=0.,),
+
+                  COMP_THM='LIQU_GAZ',
+
+                  THM_INIT=_F(PRE1=0.,
+                              PRE2=1.,
+                              PORO=.4,
+                              TEMP     =293.,
+                              PRES_VAPE=2300.,),
+
+                  THM_DIFFU=_F(R_GAZ    =8.315,
+                               RHO      =1.E3,
+                               BIOT_COEF=1.,
+                               PESA_X   =0.,
+                               PESA_Y   =-9.81,
+                               PESA_Z   =0.,
+                               PERM_IN  =KINT,
+                               VG_N      =NBG ,
+                               VG_PR     =PRBG,
+                               VG_SR     =SRBG,
+                               VG_SMAX   =SMAX,
+                               VG_SATUR  =0.9999,),
+
+                  THM_GAZ     = _F(MASS_MOL   =29.965E-3,
+                                   VISC       =viscoliq,
+                                   D_VISC_TEMP=ZERO,),
+
+                  THM_LIQU=_F(RHO       =1.E3,
+                              UN_SUR_K  =0.,
+                              VISC      =viscoliq,
+                              D_VISC_TEMP=ZERO,),);
+
+CHMATO=AFFE_MATERIAU(MAILLAGE=MAIL,
+                     AFFE=_F(TOUT='OUI',
+                             MATER=MAT,),);
+
+CHAR0=AFFE_CHAR_CINE(MODELE=MODELE,
+        MECA_IMPO=(_F(GROUP_MA='BAS', DY=0.,),
+                   _F(GROUP_MA=('GAUCHE','DROIT'), DX=0.,),
+                   _F(GROUP_MA=('HAUT','GAUCHE','DROIT'), PRE2=0.,),
+                  ),);
+
+CHAR2=AFFE_CHAR_CINE(MODELE=MODELE,
+        MECA_IMPO=_F(GROUP_MA='HAUT', PRE1=0.,),);
+
+# =================================
+#
+#    Conditions de suintement
+#
+# =================================
+F_IMPO = DEFI_CONSTANTE(VALE= 0.);
+F_MULT = DEFI_CONSTANTE(VALE= -1.);
+F_ZERO = DEFI_CONSTANTE(VALE= 0.);
+
+CHAR1 = DEFI_CONTACT(MODELE      = MODELE,
+                     FORMULATION = 'LIAISON_UNIL',
+                     ZONE        =
+                       _F(GROUP_MA  = 'TROU',
+                         NOM_CMP    = 'PRE1',
+                         COEF_IMPO  = F_IMPO,
+                         COEF_MULT  = F_MULT,),);
+
+CHARG0=AFFE_CHAR_MECA(MODELE=MODELE,
+                      PESANTEUR=_F(GRAVITE=9.81,
+                                   DIRECTION=(0.,-1.,0.,),),);
+
+# Définition des Champs initiaux
+# --------------------------------------
+CHGEOMG = CREA_CHAMP(TYPE_CHAM = 'NOEU_GEOM_R',
+                     OPERATION = 'EXTR',
+                     MAILLAGE  = MAIL,
+                     NOM_CHAM  = 'GEOMETRIE',);
+
+CHGEOMG0 = CREA_CHAMP(TYPE_CHAM = 'ELGA_GEOM_R',
+                      OPERATION = 'DISC',
+                      MODELE    = MODELE,
+                      CHAM_GD   = CHGEOMG,
+                      PROL_ZERO='OUI');
+y_surf =3.
+
+GrMa= 'BLOC'
+
+PRE10 = FORMULE(VALE = '9.81*1000.*(Y-y_surf)', NOM_PARA=('X','Y',),y_surf=y_surf);
+
+SIP0 = FORMULE(VALE = 'PRE10(X,Y)', NOM_PARA=('X','Y',),PRE10=PRE10);
+
+SIYY0 = FORMULE(NOM_PARA =('X','Y',),
+                VALE    = '(2.67E3-1.E3)*(Y-y_surf)',y_surf=y_surf);
+
+SIGMA0a = CREA_CHAMP(TYPE_CHAM = 'ELGA_NEUT_F',
+                    OPERATION = 'AFFE',
+                    MODELE    = MODELE,
+                    PROL_ZERO = 'OUI',
+                    AFFE      = _F(GROUP_MA=GrMa,
+                                    NOM_CMP=('X1','X2','X3',
+                                             'X4','X5','X6',),
+                                    VALE_F =(SIYY0,SIYY0,SIYY0,
+                                             SIP0,SIP0,SIP0,),),);
+
+DEPL0a = CREA_CHAMP(TYPE_CHAM = 'NOEU_NEUT_F',
+                  OPERATION = 'AFFE',
+                  MODELE         = MODELE,
+                  AFFE           =_F(GROUP_MA = GrMa,
+                                   NOM_CMP    = ('X1','X2','X3','X4',),
+                                   VALE_F     = (ZERO,ZERO,PRE10,UN,),),);
+
+SIGMA0b = CREA_CHAMP(TYPE_CHAM = 'ELGA_NEUT_R',
+                    OPERATION = 'EVAL',
+                    CHAM_F    = SIGMA0a,
+                    CHAM_PARA = CHGEOMG0,);
+
+DEPL0b = CREA_CHAMP(TYPE_CHAM   = 'NOEU_NEUT_R',
+                    OPERATION = 'EVAL',
+                    CHAM_F      = DEPL0a,
+                    CHAM_PARA   = CHGEOMG,);
+
+SIGMA0c = CREA_CHAMP(TYPE_CHAM = 'ELGA_SIEF_R',
+              OPERATION = 'ASSE',
+              MODELE    =  MODELE,
+              PROL_ZERO = 'OUI',
+              ASSE      = _F(GROUP_MA     = GrMa,
+                              CHAM_GD     = SIGMA0b,
+                              NOM_CMP     = ('X1','X2','X3',
+                                            'X4','X5','X6',),
+                              NOM_CMP_RESU= ('SIXX','SIYY','SIZZ',
+                                            'SIPXX','SIPYY','SIPZZ',),),
+              INFO=1,);
+
+DEPL0c=CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R',
+                  OPERATION='ASSE',
+                  MODELE   =MODELE,
+                  ASSE=_F(GROUP_MA=GrMa,
+                           CHAM_GD=DEPL0b,
+                           NOM_CMP=('X1','X2','X3','X4',),
+                           NOM_CMP_RESU=('DX','DY','PRE1','PRE2',),),
+                   INFO=1,);
+nume1 = 5
+
+LI1=DEFI_LIST_REEL(DEBUT=-1.e4,
+                  INTERVALLE=_F(JUSQU_A=0., NOMBRE=nume1,),);
+
+CINIT=STAT_NON_LINE(MODELE=MODELE,
+                     CHAM_MATER=CHMATO,
+
+                     #SOLVEUR=_F(METHODE='MUMPS',PCENT_PIVOT=100,NPREC=-1,),
+                     SOLVEUR=_F(METHODE='MULT_FRONT',RENUM='MDA',),
+
+                     EXCIT=(_F(CHARGE=CHAR0,),
+                            _F(CHARGE=CHAR2,),
+                            _F(CHARGE=CHARG0,),),
+
+       COMPORTEMENT=_F(RELATION='KIT_HHM',
+                       RELATION_KIT=('ELAS','LIQU_GAZ','HYDR_VGM',),
+                       ITER_INTE_MAXI=5,),
+
+                     ETAT_INIT    = _F(SIGM = SIGMA0c,
+                                       DEPL = DEPL0c,),
+
+                     INCREMENT=_F(LIST_INST    =LI1,
+                                  NUME_INST_FIN=nume1,),
+
+                     ARCHIVAGE=_F(LIST_INST =LI1,),
+
+                     NEWTON=_F(MATRICE='TANGENTE', REAC_ITER=1,),
+
+                     CONVERGENCE=_F(RESI_GLOB_RELA=1.E-8,
+                                    ITER_GLOB_MAXI=5,
+                                    ARRET='OUI',),
+                     INFO=1,);
+tint = .02
+tfin = .2
+npas1= 20
+npas2= 10
+pas1 = tint/npas1
+pas2 = (tfin-tint)/npas2
+
+LI2=DEFI_LIST_REEL(DEBUT=0.0,
+                  INTERVALLE=(_F(JUSQU_A=tint, NOMBRE=npas1,),
+                              _F(JUSQU_A=tfin, NOMBRE=npas2,),),);
+
+DEFLIST = DEFI_LIST_INST(DEFI_LIST = _F(LIST_INST    = LI2,),
+                         ECHEC     = _F(EVENEMENT    = 'ERREUR',
+                                        SUBD_METHODE = 'MANUEL',
+                                        SUBD_PAS     =  4,
+                                        SUBD_NIVEAU  =  2,),);
+MESTAT=STAT_NON_LINE(MODELE=MODELE,
+                     CHAM_MATER=CHMATO,
+
+                     #SOLVEUR=_F(METHODE='MUMPS',PCENT_PIVOT=100,NPREC=8,),
+                     SOLVEUR=_F(METHODE='MULT_FRONT',RENUM='MDA',),
+
+                     EXCIT=(_F(CHARGE=CHAR0,),
+                            _F(CHARGE=CHARG0,),),
+
+                     ETAT_INIT=_F(EVOL_NOLI=CINIT,
+                                  NUME_ORDRE=nume1,),
+
+                     CONTACT  =  CHAR1,
+
+       COMPORTEMENT=_F(RELATION='KIT_HHM',
+                       PARM_THETA=1.,
+                       RELATION_KIT=('ELAS','LIQU_GAZ','HYDR_VGM',),
+                       ITER_INTE_MAXI=5,),
+
+                     INCREMENT=_F(LIST_INST     =DEFLIST,
+                                  NUME_INST_INIT=0,
+                                  INST_FIN      =tfin,),
+
+                     ARCHIVAGE=_F(LIST_INST=LI2,),
+
+                     NEWTON=_F(MATRICE='TANGENTE', REAC_ITER=1,),
+
+                     CONVERGENCE=_F(RESI_GLOB_RELA=1.E-8,
+                                    ITER_GLOB_MAXI=10,
+                                    ARRET='OUI',),
+
+                     OBSERVATION=(_F(GROUP_NO=('NTROU','NBASE','NSUP',),
+                                     NOM_CHAM='DEPL',
+                                     NOM_CMP ='PRE1',),),
+                     INFO=1,);
+
+TAB_OBS = RECU_TABLE(CO=MESTAT, NOM_TABLE='OBSERVATION')
+
+IMPR_TABLE(FORMAT='ASTER',
+           TABLE =TAB_OBS,
+           TITRE ='Pression eau',
+           UNITE =8,);
+
+TEST_RESU(RESU=(_F(INST     =5.e-3,
+                   RESULTAT =MESTAT,
+                   NOM_CHAM ='DEPL',
+                   GROUP_NO ='NTROU',
+                   NOM_CMP  ='PRE1',
+                   VALE_CALC=-0.000162358283642,
+                   CRITERE  ='ABSOLU',
+                   REFERENCE='ANALYTIQUE',
+                   VALE_REFE=0.,
+                   PRECISION=1e-3,),
+
+                _F(INST     =tfin,
+                   RESULTAT =MESTAT,
+                   NOM_CHAM ='DEPL',
+                   GROUP_NO ='NBASE',
+                   NOM_CMP  ='PRE1',
+                   VALE_CALC=-9.80865412149e+3,
+                   CRITERE  ='RELATIF',
+                   REFERENCE='ANALYTIQUE',
+                   VALE_REFE=-9.81e+3,
+                   PRECISION=1e-3,),
+
+                _F(INST     =tfin,
+                   RESULTAT =MESTAT,
+                   NOM_CHAM ='DEPL',
+                   GROUP_NO ='NTROU',
+                   NOM_CMP  ='PRE1',
+                   VALE_CALC=4.9063456839e+3,
+                   CRITERE  ='RELATIF',
+                   REFERENCE='ANALYTIQUE',
+                   VALE_REFE=0.5*9.81e+3,
+                   PRECISION=1e-3,),
+
+                _F(INST     =tfin,
+                   RESULTAT =MESTAT,
+                   NOM_CHAM ='DEPL',
+                   GROUP_NO ='NSUP',
+                   NOM_CMP  ='PRE1',
+                   VALE_CALC=1.96213454837e+4,
+                   CRITERE  ='RELATIF',
+                   REFERENCE='ANALYTIQUE',
+                   VALE_REFE=2.*9.81e+3,
+                   PRECISION=1e-3,),
+                ),);
+"""
+CALC_CHAMP(RESULTAT = MESTAT,
+           reuse=MESTAT,
+           CONTRAINTE= ('SIEF_NOEU',),);
+
+#############################################
+#                                           #
+# POST-TRAITEMENT POUR MODELISATION REDUITE #
+#                                           #
+#############################################
+
+MAILLIN = CREA_MAILLAGE(MAILLAGE  = MAIL,
+                        QUAD_LINE = _F(TOUT = 'OUI'),);
+
+MODELIN=AFFE_MODELE(MAILLAGE=MAILLIN,
+                   AFFE=_F(TOUT='OUI',
+                           PHENOMENE='MECANIQUE',
+                           MODELISATION='D_PLAN',),);
+
+RESAUX=PROJ_CHAMP(METHODE='COLLOCATION',
+                        MODELE_1=MODELE,
+                        MODELE_2=MODELIN,
+                        RESULTAT=MESTAT,
+                        PROL_ZERO='OUI',
+                        ALARME='NON',);
+
+IMPR_RESU(FORMAT='MED',
+          UNITE =80,
+          RESU=(_F(RESULTAT=RESAUX,),),);
+
+POST=[MESTAT,MESTAT,MESTAT,];
+
+T = [1.*pas,5.*pas,10.*pas,20.,]
+
+DEPL,EPSI,SIGM,VARI=\
+[None]*len(POST),[None]*len(POST),[None]*len(POST),[None]*len(POST)
+
+for c,u in enumerate(POST):
+
+   DEPL[c]=CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R',
+                OPERATION='EXTR',
+                RESULTAT=u,
+                NOM_CHAM='DEPL',
+                INST=T[c],
+                INFO=1,);
+
+   SIGM[c]=CREA_CHAMP(TYPE_CHAM='NOEU_SIEF_R',
+                OPERATION='EXTR',
+                RESULTAT=u,
+                NOM_CHAM='SIEF_NOEU',
+                INST=T[c],
+                INFO=1,);
+unit =38
+
+# coupe verticale passant par le cote gauche
+xc,yc,     =1.,1.,
+DIR        ='DY'
+prec       =.01
+Group_Ma   ='GM14'
+composante =['PRE1']*len(DEPL);
+
+coupe1 = Post_Coupe(DEPL,composante,X=xc,Y=yc,Z=0,Precision =prec,\
+                    DIR=DIR,grma=Group_Ma,codim=P0,);
+
+# coupe verticale passant par le milieu
+xc,yc, =1.5,1.,
+Group_Ma   ='MAIL'
+
+coupe2 = Post_Coupe(DEPL,composante,X=xc,Y=yc,Z=0,Precision =prec,\
+                    DIR=DIR,grma=Group_Ma,codim=P0,);
+
+DEFI_FICHIER(ACTION='ASSOCIER',
+               FICHIER='./REPE_OUT/late_pre1.agr',
+               UNITE=unit,);
+
+IMPR_FONCTION(FORMAT='XMGRACE',
+              UNITE=unit,
+              COURBE=coupe1.COURBE);
+
+DEFI_FICHIER(ACTION='LIBERER', UNITE=unit,);
+
+DEFI_FICHIER(ACTION='ASSOCIER',
+               FICHIER='./REPE_OUT/midle_pre1.agr',
+               UNITE=unit,);
+
+IMPR_FONCTION(FORMAT='XMGRACE',
+              UNITE=unit,
+              COURBE=coupe2.COURBE);
+
+DEFI_FICHIER(ACTION='LIBERER', UNITE=unit,);
+
+# IMPR_TABLE(UNITE=8,TABLE=coupe1.TABLE,);
+# IMPR_TABLE(UNITE=8,TABLE=coupe2.TABLE,);
+"""
+FIN();
