@@ -33,11 +33,12 @@ def extr_table_prod(TYPE_RESU,**args):
     if args.get('__all__'):
       return alltypes
 
-    defs = locals()
+    defs = dict([(typ.__name__, typ) for typ in alltypes])
     typ = TYPE_RESU.lower()
     if defs.get(typ) is not None:
         return defs[typ]
-    raise AsException("type de concept resultat non prevu")
+    raise AsException("type de concept resultat non prevu: TYPE_RESU='{0}'"
+                      .format(TYPE_RESU))
 
 EXTR_TABLE=OPER(nom="EXTR_TABLE",
                 op=173,
