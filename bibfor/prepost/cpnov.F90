@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -22,6 +22,7 @@ subroutine cpnov(main,numa,coor,ind,nomnoe, conneo)
     implicit none
 !
 #include "jeveux.h"
+#include "asterfort/assert.h"
 #include "asterfort/codent.h"
 #include "asterfort/jecroc.h"
 #include "asterfort/jeexin.h"
@@ -41,14 +42,14 @@ subroutine cpnov(main,numa,coor,ind,nomnoe, conneo)
 !
 !
 ! ----------------------------------------------------------------------
-!         CREATION DU NOEUD SUPPLEMENTAIRE 
+!         CREATION DU NOEUD SUPPLEMENTAIRE
 !         SUR LE VOLUME 'DE LA ZONE DE CONTACT ESCLAVE'
 ! ----------------------------------------------------------------------
 ! IN        NUMA    NUMERO DE LA MAILLE COURANTE
 ! IN        IND     INDICE DU PREMIER NOEUD AJOUTE
 ! IN/JXVAR  NOMNOE  REPERTOIRE DE NOMS DES NOEUDS
 ! VAR       COOR    COORDONNEES DES NOEUDS
-! IN        CONNEO  CONNECTIVIT2 DES ORDRE DES NOEUDS DU VOLUME 
+! IN        CONNEO  CONNECTIVIT2 DES ORDRE DES NOEUDS DU VOLUME
 !                   ET DE LA FACE CORRESPONDANTE
 ! ----------------------------------------------------------------------
 !
@@ -59,19 +60,22 @@ subroutine cpnov(main,numa,coor,ind,nomnoe, conneo)
 !
     character(len=8) :: nomnd,eletyp
     character(len=24) :: valk
-    character(len=6) :: knume
-   
+    character(len=16) :: knume
+
 ! ----------------------------------------------------------------------
 !
 ! - INSERTION DU NOUVEAU NOEUD
 !
 !      NOM DU NOEUD CREE
      call codent(ind, 'G', knume)
+     if (knume(1:1)=='*') then
+         ASSERT(.false.)
+     endif
      lgnd = lxlgut(knume)
-     if (lgnd+2 .gt. 8) then
+     if (lgnd+1 .gt. 8) then
          call utmess('F', 'ALGELINE_16')
      endif
-     nomnd = 'DL' // knume
+     nomnd = 'C' // knume(1:lgnd)
 !
 !      DECLARATION DU NOEUD CREE
      call jeexin(jexnom(nomnoe, nomnd), iret)
@@ -85,15 +89,15 @@ subroutine cpnov(main,numa,coor,ind,nomnoe, conneo)
 ! - CALCUL DES COORDONNEES DU NOUVEAU NOEUD
     call jeveuo(jexnum(main//'.CONNEX',numa),'L',jtab)
     do  inc1=1, 10
-        lino(inc1)= zi(jtab+inc1-1) 
+        lino(inc1)= zi(jtab+inc1-1)
     end do
     aux=1
     do inc1=1,10
         do inc2=1,3
-            tabar(aux+inc2-1) =  coor(inc2,lino(inc1))      
+            tabar(aux+inc2-1) =  coor(inc2,lino(inc1))
         end do
         aux=aux+3
-    end do 
+    end do
     if (conneo(1) .eq. 0) then
         xe(1)=1.d0/6.d0
         xe(2)=1.d0/2.d0

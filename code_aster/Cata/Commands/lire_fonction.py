@@ -26,6 +26,9 @@ from code_aster.Cata.Commons import *
 
 
 def lire_fonction_prod(self,TYPE,**args):
+  if args.get('__all__'):
+      return (fonction_sdaster, fonction_c, nappe_sdaster)
+
   if   (TYPE == 'FONCTION')  : return fonction_sdaster
   elif (TYPE == 'FONCTION_C'): return fonction_c
   elif (TYPE == 'NAPPE'   )  : return nappe_sdaster

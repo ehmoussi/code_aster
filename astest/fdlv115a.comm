@@ -27,8 +27,8 @@ def calc_matr_ifs_ops(self,MAILLAGE, MODELE,CHAR_CINE,NUME_DDL,
     import aster
     from Utilitai.Utmess import UTMESS
 
-# Numerotation de la macro 
-    self.set_icmd(1)  
+# Numerotation de la macro
+    self.set_icmd(1)
 
 # Concepts en sortie
     self.DeclareOut('MASS_E', MASS_E)
@@ -40,7 +40,7 @@ def calc_matr_ifs_ops(self,MAILLAGE, MODELE,CHAR_CINE,NUME_DDL,
     self.DeclareOut('IMPE_R', IMPE_R)
     self.DeclareOut('IMPE_I', IMPE_I)
     self.DeclareOut('NUME_DDL', NUME_DDL)
- 
+
 # Commandes utilisées dans la macro
     DEFI_MATERIAU  = self.get_cmd('DEFI_MATERIAU')
     AFFE_CHAR_MECA = self.get_cmd('AFFE_CHAR_MECA')
@@ -67,32 +67,32 @@ def calc_matr_ifs_ops(self,MAILLAGE, MODELE,CHAR_CINE,NUME_DDL,
 
 # Materiaux pour matrices de masse
     if GROUP_MA_VISC == None:
-        _MAT_MSE=AFFE_MATERIAU(MAILLAGE=MAILLAGE, 
+        _MAT_MSE=AFFE_MATERIAU(MAILLAGE=MAILLAGE,
                                AFFE=(_F(GROUP_MA=GROUP_MA_ELAS, MATER=_ELAS_11,),
                                      _F(GROUP_MA=GROUP_MA_FLUI, MATER=_FLUI_00,),
                                      ),);
-        _MAT_MSF=AFFE_MATERIAU(MAILLAGE=MAILLAGE, 
+        _MAT_MSF=AFFE_MATERIAU(MAILLAGE=MAILLAGE,
                                AFFE=(_F(GROUP_MA=GROUP_MA_ELAS, MATER=_ELAS_00,),
                                      _F(GROUP_MA=GROUP_MA_FLUI, MATER=_FLUI,),
                                      ),);
     else:
-        _MAT_MSE=AFFE_MATERIAU(MAILLAGE=MAILLAGE, 
+        _MAT_MSE=AFFE_MATERIAU(MAILLAGE=MAILLAGE,
                                AFFE=(_F(GROUP_MA=GROUP_MA_ELAS, MATER=_ELAS_11,),
                                      _F(GROUP_MA=GROUP_MA_FLUI, MATER=_FLUI_00,),
                                      _F(GROUP_MA=GROUP_MA_VISC, MATER=_VISC_00,),),);
-        _MAT_MSF=AFFE_MATERIAU(MAILLAGE=MAILLAGE, 
+        _MAT_MSF=AFFE_MATERIAU(MAILLAGE=MAILLAGE,
                                AFFE=(_F(GROUP_MA=GROUP_MA_ELAS, MATER=_ELAS_00,),
                                      _F(GROUP_MA=GROUP_MA_FLUI, MATER=_FLUI,),
                                      _F(GROUP_MA=GROUP_MA_VISC, MATER=_VISC_0,),),);
-    
+
 # Materiaux pour matrices de raideur
     if GROUP_MA_VISC == None:
-        _MAT_MK1=AFFE_MATERIAU(MAILLAGE=MAILLAGE, 
+        _MAT_MK1=AFFE_MATERIAU(MAILLAGE=MAILLAGE,
                                AFFE=(_F(GROUP_MA=GROUP_MA_ELAS, MATER=_ELAS_0,),
                                      _F(GROUP_MA=GROUP_MA_FLUI, MATER=_FLUI,),
                                      ),);
 
-        _MAT_MK2=AFFE_MATERIAU(MAILLAGE=MAILLAGE, 
+        _MAT_MK2=AFFE_MATERIAU(MAILLAGE=MAILLAGE,
                                AFFE=(_F(GROUP_MA=GROUP_MA_ELAS, MATER=_ELAS_1,),
                                       _F(GROUP_MA=GROUP_MA_FLUI, MATER=_FLUI_0,),
                                     ),);
@@ -102,12 +102,12 @@ def calc_matr_ifs_ops(self,MAILLAGE, MODELE,CHAR_CINE,NUME_DDL,
                                       _F(GROUP_MA=GROUP_MA_FLUI, MATER=_FLUI_0,),
                                     ),);
     else:
-        _MAT_MK1=AFFE_MATERIAU(MAILLAGE=MAILLAGE, 
+        _MAT_MK1=AFFE_MATERIAU(MAILLAGE=MAILLAGE,
                                AFFE=(_F(GROUP_MA=GROUP_MA_ELAS, MATER=_ELAS_0,),
                                      _F(GROUP_MA=GROUP_MA_FLUI, MATER=_FLUI,),
                                      _F(GROUP_MA=GROUP_MA_VISC, MATER=_VISC_0,),),);
 
-        _MAT_MK2=AFFE_MATERIAU(MAILLAGE=MAILLAGE, 
+        _MAT_MK2=AFFE_MATERIAU(MAILLAGE=MAILLAGE,
                                AFFE=(_F(GROUP_MA=GROUP_MA_ELAS, MATER=_ELAS_1,),
                                      _F(GROUP_MA=GROUP_MA_FLUI, MATER=_FLUI_0,),
                                      _F(GROUP_MA=GROUP_MA_VISC, MATER=_VISC_0,),),);
@@ -136,32 +136,32 @@ def calc_matr_ifs_ops(self,MAILLAGE, MODELE,CHAR_CINE,NUME_DDL,
                               NUME_DDL=NUME_DDL,
                               CHAR_CINE=CHAR_CINE,)
 
-        IMPE_R=ASSE_MATRICE(MATR_ELEM=_ElIMPEr, 
+        IMPE_R=ASSE_MATRICE(MATR_ELEM=_ElIMPEr,
                             NUME_DDL=NUME_DDL,
                             CHAR_CINE=CHAR_CINE,)
 
 # Calcul des matrices de masse
 
     _ElMASSe=CALC_MATR_ELEM(OPTION='MASS_MECA',
-                            MODELE=MODELE, 
+                            MODELE=MODELE,
                             CHAM_MATER=_MAT_MSE,)
     _ElMASSf=CALC_MATR_ELEM(OPTION='MASS_MECA',
-                            MODELE=MODELE, 
+                            MODELE=MODELE,
                             CHAM_MATER=_MAT_MSF,)
 
     MASS_E=ASSE_MATRICE(MATR_ELEM=_ElMASSe,
-                        NUME_DDL=NUME_DDL, 
+                        NUME_DDL=NUME_DDL,
                         CHAR_CINE=CHAR_CINE,)
 
     MASS_F=ASSE_MATRICE(MATR_ELEM=_ElMASSf,
                         NUME_DDL=NUME_DDL,
-                        CHAR_CINE=CHAR_CINE,) 
+                        CHAR_CINE=CHAR_CINE,)
 
     if GROUP_MA_IMPE != None:
         MASS_FI=COMB_MATR_ASSE(COMB_R=(_F(MATR_ASSE=MASS_F, COEF_R=1.0,),
                                        _F(MATR_ASSE=IMPE_I, COEF_R=1.0,),),);
 
- 
+
 # Calcul des matrices de rigidité
 
     _ElRIGIf=CALC_MATR_ELEM(OPTION='RIGI_MECA',
@@ -185,7 +185,7 @@ def calc_matr_ifs_ops(self,MAILLAGE, MODELE,CHAR_CINE,NUME_DDL,
                                 CHAM_MATER=_MAT_MK3,)
 
         _ElRIGf2=CALC_MATR_ELEM(OPTION='RIGI_MECA_HYST',
-                                MODELE=MODELE, 
+                                MODELE=MODELE,
                                 CHAM_MATER=_MAT_MK3,
                                 RIGI_MECA=_ElRIGf1,)
         RIGI_V=ASSE_MATRICE(MATR_ELEM=_ElRIGf2,
@@ -194,6 +194,15 @@ def calc_matr_ifs_ops(self,MAILLAGE, MODELE,CHAR_CINE,NUME_DDL,
 
 
 def calc_matr_ifs_prod(self, NUME_DDL, MASS_E, MASS_F, MASS_FI, RIGI_E, RIGI_F, RIGI_V, IMPE_R, IMPE_I, **args):
+    if args.get('__all__'):
+        return ([None],
+                [None, nume_ddl_sdaster],
+                [None, matr_asse_depl_r], [None, matr_asse_depl_r],
+                [None, matr_asse_depl_r], [None, matr_asse_depl_r],
+                [None, matr_asse_depl_r],
+                [None, matr_asse_depl_c], [None, matr_asse_depl_r],
+                [None, matr_asse_depl_r])
+
     if not NUME_DDL :  raise AsException("Impossible de typer les concepts resultats")
 
     if NUME_DDL.is_typco():
@@ -216,29 +225,29 @@ def calc_matr_ifs_prod(self, NUME_DDL, MASS_E, MASS_F, MASS_FI, RIGI_E, RIGI_F, 
 
     if RIGI_V:
         self.type_sdprod(RIGI_V,matr_asse_depl_c)
-    
-    if IMPE_R: 
+
+    if IMPE_R:
         self.type_sdprod(IMPE_R,matr_asse_depl_r)
 
-    if IMPE_I: 
+    if IMPE_I:
         self.type_sdprod(IMPE_I,matr_asse_depl_r)
-    
+
     return
 
 CALC_MATR_IFS=MACRO(nom="CALC_MATR_IFS",
-                 op=calc_matr_ifs_ops, 
+                 op=calc_matr_ifs_ops,
                  sd_prod=calc_matr_ifs_prod,
                  reentrant='n',
-                
+
 # INPUT GENERAL DATA
                  MAILLAGE        =SIMP(statut='o',typ=maillage_sdaster),
                  MODELE          =SIMP(statut='o',typ=modele_sdaster),
                  CHAR_CINE       =SIMP(statut='f',typ=char_cine_meca),
                  INFO            =SIMP(statut='f',typ='I',defaut=1,into=(1,2)),
                  NUME_DDL        =SIMP(statut='o',typ=(nume_ddl_sdaster,CO)),
- 
+
 # Zones d'affectation
-                 GROUP_MA_ELAS   =SIMP(statut='o',typ=grma,validators=NoRepeat(),max='**'),                              
+                 GROUP_MA_ELAS   =SIMP(statut='o',typ=grma,validators=NoRepeat(),max='**'),
                  GROUP_MA_FLUI   =SIMP(statut='o',typ=grma,validators=NoRepeat(),max='**'),
                  GROUP_MA_VISC   =SIMP(statut='f',typ=grma,validators=NoRepeat(),max='**'),
                  GROUP_MA_IMPE   =SIMP(statut='f',typ=grma,validators=NoRepeat(),max='**'),
@@ -249,17 +258,17 @@ CALC_MATR_IFS=MACRO(nom="CALC_MATR_IFS",
                  RHO_FLUI        =SIMP(statut='o',typ='R'),
                  C_FLUI          =SIMP(statut='o',typ='R'),
                  RHO_VISC        =SIMP(statut='f',typ='R'),
-                 NU_VISC         =SIMP(statut='f',typ='R'), 
+                 NU_VISC         =SIMP(statut='f',typ='R'),
                  CHAR_IMPE_R     =SIMP(statut='f',typ='R'),
-                 CHAR_IMPE_C     =SIMP(statut='f',typ='R'), 
-                
+                 CHAR_IMPE_C     =SIMP(statut='f',typ='R'),
+
 # Sorties (matrices)
                  MASS_E          =SIMP(statut='f',typ= CO),
                  MASS_F          =SIMP(statut='f',typ= CO),
                  MASS_FI         =SIMP(statut='f',typ= CO),
                  RIGI_E          =SIMP(statut='f',typ= CO),
                  RIGI_F          =SIMP(statut='f',typ= CO),
-                 RIGI_V          =SIMP(statut='f',typ= CO),        
+                 RIGI_V          =SIMP(statut='f',typ= CO),
                  IMPE_R          =SIMP(statut='f',typ= CO),
                  IMPE_I          =SIMP(statut='f',typ= CO),
 );
@@ -328,15 +337,15 @@ Press =AFFE_CHAR_MECA(MODELE=model, FORCE_NODALE=_F(GROUP_NO='effort1', FX=1.0e-
 
 # CALCUL DES MATRICES
 CALC_MATR_IFS(
-                
+
 # INPUT GENERAL DATA
                  MAILLAGE        = mesh,
                  MODELE          = model,
                  CHAR_CINE       = Encast,
                  NUME_DDL        = CO('NDDL'),
- 
+
 # Zones d'affectation
-                 GROUP_MA_ELAS   = ('acier1','acier2'),                         
+                 GROUP_MA_ELAS   = ('acier1','acier2'),
                  GROUP_MA_FLUI   = ('fluide','ifspar','fluext',),
                  GROUP_MA_VISC   = ('visco',),
                  GROUP_MA_IMPE   = ('fluext',),
@@ -347,10 +356,10 @@ CALC_MATR_IFS(
                  RHO_FLUI        = rho_eau_ad,
                  C_FLUI          = cele_eau_ad,
                  RHO_VISC        = rho_visc_ad,
-                 NU_VISC         = nu_visc, 
+                 NU_VISC         = nu_visc,
                  CHAR_IMPE_R     = ZrAd,
-                 CHAR_IMPE_C     = ZiAd, 
-                
+                 CHAR_IMPE_C     = ZiAd,
+
 # Sorties (matrices)
                  MASS_E          = CO('MASS_E'),
                  MASS_F          = CO('MASS_F'),
@@ -399,7 +408,7 @@ Eetaisd  = Eisd*Etaisd
 # ------------------------
 
 fRIGI_V = FORMULE(VALE_C="""complex(NEUT1*2.0*(1.0+nu_visc)*(((Gzer+Ginf*(1.0j*cele_eau*PULS*Tau)**Alp)/(1+(1.0j*cele_eau*PULS*Tau)**Alp)).real)/
-                                (rho_eau*cele_eau**2), 
+                                (rho_eau*cele_eau**2),
                                     NEUT1*2.0*(1.0+nu_visc)*(((Gzer+Ginf*(1.0j*cele_eau*PULS*Tau)**Alp)/(1+(1.0j*cele_eau*PULS*Tau)**Alp)).real)/
                                 (rho_eau*cele_eau**2)*
            (((Gzer+Ginf*(1.0j*cele_eau*PULS*Tau)**Alp)/(1+(1.0j*cele_eau*PULS*Tau)**Alp)).imag)/(((Gzer+Ginf*(1.0j*cele_eau*PULS*Tau)**Alp)/(1+(1.0j*cele_eau*PULS*Tau)**Alp)).real))""",
@@ -439,7 +448,7 @@ fRIGI_F = FORMULE(VALE='1.',
 RESH=DEFI_BASE_REDUITE(OPERATION='GLOUTON',
                         INFO=2,
                         NB_VARI_COEF = 10,
-                        VARI_PARA   = (_F(  
+                        VARI_PARA   = (_F(
                                             NOM_PARA        = 'PULS',
                                             VALE_PARA       = [0.06793398887721781, 0.04670317913914212, 0.058898609133860795, 0.0774393304172544, 0.06738951811664812, 0.07531317108105949, 0.013436395928245769, 0.039595388909262196, 0.061052801926139835, 0.07441852903420372,0.04268221227870314, 0.017919840689420898, 0.02030171628085756, 0.03442784796356188, 0.04934088828223367, 0.07796240563382252, 0.004637470055022012, 0.015770818115330147, 0.024821794279337374, 0.004752584949016053,0.07185551246717739, 0.07731641254540125, 0.08248345374787067, 0.006939244975024346, 0.04320147379774347, 0.07475899301941687, 0.042164548957108715, 0.06543615042819306, 0.054006730650614294, 0.03892713535505883],
                                             VALE_INIT       = 0.06283185307179585,
@@ -485,7 +494,7 @@ RESH=DEFI_BASE_REDUITE(OPERATION='GLOUTON',
                                 FONC_C    = fIMPE_R,
                                ),
                             ),
-                       VECTEUR=Force, 
+                       VECTEUR=Force,
                        COEF_R   = 1.0,
                        NB_MODE  = 3,
 
@@ -497,8 +506,8 @@ RESH=DEFI_BASE_REDUITE(OPERATION='GLOUTON',
 # TESTS POUR LE MODE 1
 TEST_RESU(RESU=_F(RESULTAT=RESH,
                   NUME_ORDRE = 1,
-                  NOM_CHAM='DEPL', 
-                  NOM_CMP='DX', 
+                  NOM_CHAM='DEPL',
+                  NOM_CMP='DX',
                   NOEUD='N5',
                   VALE_CALC_C=-0.0136385180883-0.000474962272047j,
                  ),
@@ -506,8 +515,8 @@ TEST_RESU(RESU=_F(RESULTAT=RESH,
 
 TEST_RESU(RESU=_F(RESULTAT=RESH,
                   NUME_ORDRE = 1,
-                  NOM_CHAM='DEPL', 
-                  NOM_CMP='DY', 
+                  NOM_CHAM='DEPL',
+                  NOM_CMP='DY',
                   NOEUD='N5',
                   VALE_CALC_C=-0.0193494227735-0.0028016143354j,
                  ),
@@ -515,8 +524,8 @@ TEST_RESU(RESU=_F(RESULTAT=RESH,
 
 TEST_RESU(RESU=_F(RESULTAT=RESH,
                   NUME_ORDRE = 1,
-                  NOM_CHAM='DEPL', 
-                  NOM_CMP='PRES', 
+                  NOM_CHAM='DEPL',
+                  NOM_CMP='PRES',
                   NOEUD='N9',
                   VALE_CALC_C=1.95864154058E-06+2.00405811648E-07j,
                  ),
@@ -525,8 +534,8 @@ TEST_RESU(RESU=_F(RESULTAT=RESH,
 # TESTS POUR LE MODE 2
 TEST_RESU(RESU=_F(RESULTAT=RESH,
                   NUME_ORDRE = 2,
-                  NOM_CHAM='DEPL', 
-                  NOM_CMP='DX', 
+                  NOM_CHAM='DEPL',
+                  NOM_CMP='DX',
                   NOEUD='N5',
                   VALE_CALC_C=0.0112017561722+0.0057578691246j,
                  ),
@@ -534,8 +543,8 @@ TEST_RESU(RESU=_F(RESULTAT=RESH,
 
 TEST_RESU(RESU=_F(RESULTAT=RESH,
                   NUME_ORDRE = 2,
-                  NOM_CHAM='DEPL', 
-                  NOM_CMP='DY', 
+                  NOM_CHAM='DEPL',
+                  NOM_CMP='DY',
                   NOEUD='N5',
                   VALE_CALC_C=0.0169643999163+0.010121610701j,
                  ),
@@ -543,8 +552,8 @@ TEST_RESU(RESU=_F(RESULTAT=RESH,
 
 TEST_RESU(RESU=_F(RESULTAT=RESH,
                   NUME_ORDRE = 2,
-                  NOM_CHAM='DEPL', 
-                  NOM_CMP='PRES', 
+                  NOM_CHAM='DEPL',
+                  NOM_CMP='PRES',
                   NOEUD='N9',
                   VALE_CALC_C=-1.74160068333E-06-9.32369901577E-07j,
                  ),
@@ -553,8 +562,8 @@ TEST_RESU(RESU=_F(RESULTAT=RESH,
 # TESTS POUR LE MODE 3
 TEST_RESU(RESU=_F(RESULTAT=RESH,
                   NUME_ORDRE = 3,
-                  NOM_CHAM='DEPL', 
-                  NOM_CMP='DX', 
+                  NOM_CHAM='DEPL',
+                  NOM_CMP='DX',
                   NOEUD='N5',
                   VALE_CALC_C=-0.0166651439271+0.00435755217448j,
                  ),
@@ -562,8 +571,8 @@ TEST_RESU(RESU=_F(RESULTAT=RESH,
 
 TEST_RESU(RESU=_F(RESULTAT=RESH,
                   NUME_ORDRE = 3,
-                  NOM_CHAM='DEPL', 
-                  NOM_CMP='DY', 
+                  NOM_CHAM='DEPL',
+                  NOM_CMP='DY',
                   NOEUD='N5',
                   VALE_CALC_C=-0.00624081113084+0.00299417646461j,
                  ),
@@ -571,8 +580,8 @@ TEST_RESU(RESU=_F(RESULTAT=RESH,
 
 TEST_RESU(RESU=_F(RESULTAT=RESH,
                   NUME_ORDRE = 3,
-                  NOM_CHAM='DEPL', 
-                  NOM_CMP='PRES', 
+                  NOM_CHAM='DEPL',
+                  NOM_CMP='PRES',
                   NOEUD='N9',
                   VALE_CALC_C=7.5005029263E-07-2.49245326488E-07j,
                  ),

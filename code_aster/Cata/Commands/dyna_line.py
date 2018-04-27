@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -25,10 +25,15 @@ from code_aster.Cata.Commons import *
 
 
 def dyna_line_sdprod(self, TYPE_CALCUL, BASE_RESU=None, RESU_GENE=None, **args):
+    if args.get('__all__'):
+        return ([dyna_trans, dyna_harmo],
+                [None, mode_meca],
+                [None, tran_gene, harm_gene])
+
     if BASE_RESU != None:
         self.type_sdprod(BASE_RESU, mode_meca)
     if RESU_GENE != None:
-        if TYPE_CALCUL == 'TRAN': 
+        if TYPE_CALCUL == 'TRAN':
             self.type_sdprod(RESU_GENE, tran_gene)
         else:
             self.type_sdprod(RESU_GENE, harm_gene)
@@ -53,14 +58,14 @@ DYNA_LINE = MACRO(nom      = "DYNA_LINE",
         CHAM_MATER      =     SIMP(statut='f',typ=cham_mater),
         CARA_ELEM       =     SIMP(statut='f',typ=cara_elem),
         CHARGE          =     SIMP(statut='o',typ=(char_meca,char_cine_meca), max='**'),
-        
-        # if no value, F_max computed automaticaly, F_min set to 0 
+
+        # if no value, F_max computed automaticaly, F_min set to 0
         # if only one value => F_max, F_min set to 0
         # if two value F_min set to the first one, F_max set to the second one
         # F_max is used to compute the time step automatically
         # if 2 values  , sinon F_min et F_max
         BANDE_ANALYSE=SIMP(statut= 'f',typ= 'R',min= 1 ,max= 2),
-        
+
         PCENT_COUP   = SIMP(fr = tr("Pourcentage du cumul quadratique pour calculer frequence de coupure"),
                                            statut            = 'f',
                                            typ               = 'I',
@@ -69,7 +74,7 @@ DYNA_LINE = MACRO(nom      = "DYNA_LINE",
                                            max               = 1,
                                            defaut            = 90,
                                            ),
-        
+
         b_param_gene    = BLOC(condition= """equal_to("BASE_CALCUL", 'GENE')""",
           BASE_RESU     = SIMP(statut='f',typ=CO,validators=NoRepeat()),
           RESU_GENE     = SIMP(statut='f',typ=CO,validators=NoRepeat()),
@@ -92,21 +97,21 @@ DYNA_LINE = MACRO(nom      = "DYNA_LINE",
                 b_newmark   =         BLOC(condition = """equal_to("SCHEMA", 'NEWMARK')""",
                 BETA        =             SIMP(statut='f',typ='R',defaut= 0.25),
                 GAMMA       =             SIMP(statut='f',typ='R',defaut= 0.5),),
-    
+
                 b_wilson    =         BLOC(condition = """equal_to("SCHEMA", 'WILSON')""",
                 THETA       =             SIMP(statut='f',typ='R',defaut= 1.4),),
-    
+
                 b_rk_devo   =         BLOC(condition="""equal_to("SCHEMA", 'RUNGE_KUTTA_54') or equal_to("SCHEMA", 'RUNGE_KUTTA_32') or equal_to("SCHEMA", 'DEVOGE')""",
                 TOLERANCE   =             SIMP(statut='f',typ='R',defaut= 1.E-5),
                 ALPHA       =             SIMP(statut='f',typ='R',defaut= 0.),),
-    
+
                 b_adapt_ord =         BLOC(condition = """equal_to("SCHEMA", 'ADAPT_ORDRE1') or  equal_to("SCHEMA", 'ADAPT_ORDRE2')""",
                 VITE_MIN    =             SIMP(statut='f',typ='TXM',defaut="NORM",into=("MAXI","NORM"),),
                 COEF_MULT_PAS=            SIMP(statut='f',typ='R',defaut= 1.1),
                 COEF_DIVI_PAS=            SIMP(statut='f',typ='R',defaut= 1.3333334),
                 PAS_LIMI_RELA=            SIMP(statut='f',typ='R',defaut= 1.E-6),
                 NB_POIN_PERIODE=          SIMP(statut='f',typ='I',defaut= 50),),
-    
+
                 b_alladapt  =         BLOC(condition = """is_in("SCHEMA", ('RUNGE_KUTTA_54','RUNGE_KUTTA_32','DEVOGE','ADAPT_ORDRE1','ADAPT_ORDRE2'))""",
                 PAS_MINI    =             SIMP(statut='f',typ='R'),
                 PAS_MAXI    =             SIMP(statut='f',typ='R'),
@@ -145,7 +150,7 @@ DYNA_LINE = MACRO(nom      = "DYNA_LINE",
 #               CHAM_EXCLU  =     SIMP(statut='f',typ='TXM',validators=NoRepeat(),max=2,into=("DEPL","VITE","ACCE"),),
           ), # end fkw_archivage
         ), # end b_not_dlt_prec
-        
+
 #       Transient case
         b_excit_line_tran= BLOC(condition="""equal_to("TYPE_CALCUL", 'TRAN')""",
             regles=AU_MOINS_UN('ETAT_INIT', 'EXCIT'),
@@ -164,14 +169,14 @@ DYNA_LINE = MACRO(nom      = "DYNA_LINE",
                 #PRECISION   =                     SIMP(statut='o',typ='R',),),),),
                 DEPL        =         SIMP(statut='f',typ=cham_no_sdaster),
                 VITE        =         SIMP(statut='f',typ=cham_no_sdaster),),
-            
+
             EXCIT            = FACT(statut='f',max='**',
                 TYPE_APPUI   =     SIMP(statut='f',typ='TXM',into=("MONO","MULTI"),),
                 b_no_appui   =     BLOC(condition = """not exists("TYPE_APPUI")""",
                                         CHARGE       =     SIMP(statut='o',typ=char_meca),
                                         FONC_MULT    =     SIMP(statut='o',typ=(fonction_sdaster,nappe_sdaster,formule),)
                 ),
-                
+
                 b_mult_mono  =     BLOC(condition = """equal_to("TYPE_APPUI", 'MONO')""",
                                         regles=(PRESENT_ABSENT('NOEUD','GROUP_NO'), PRESENT_PRESENT('ACCE','VITE','DEPL'), PRESENT_ABSENT('ACCE','FONC_MULT'),),
                                         DIRECTION    =     SIMP(statut='o',typ='R',max=6),
@@ -181,9 +186,9 @@ DYNA_LINE = MACRO(nom      = "DYNA_LINE",
                                         DEPL         =     SIMP(statut='f',typ=(fonction_sdaster,nappe_sdaster,formule),),
                                         NOEUD        =     SIMP(statut='f',typ=no,validators=NoRepeat(),max='**'),
                                         GROUP_NO     =     SIMP(statut='f',typ=grno,validators=NoRepeat(),max='**'),
-                                        
+
                 ),
-                                        
+
                 b_mult_appui =     BLOC(condition = """equal_to("TYPE_APPUI", 'MULTI')""",
                                         regles=(UN_PARMI('NOEUD','GROUP_NO' ), PRESENT_PRESENT('ACCE','VITE','DEPL'), PRESENT_ABSENT('ACCE','FONC_MULT'),),
                                         DIRECTION    =     SIMP(statut='o',typ='R',max=6),
@@ -207,14 +212,14 @@ DYNA_LINE = MACRO(nom      = "DYNA_LINE",
                 PUIS_PULS   =     SIMP(statut='f',typ='I',defaut= 0),
                 b_no_appui   =     BLOC(condition = """not exists("TYPE_APPUI")""",
                                         CHARGE       =     SIMP(statut='o',typ=char_meca),),
-    
+
                 b_mult_mono  =     BLOC(condition = """equal_to("TYPE_APPUI", 'MONO')""",
                                         regles=(PRESENT_ABSENT('NOEUD','GROUP_NO' )),
                                         DIRECTION    =     SIMP(statut='o',typ='R',max=6),
                                         NOEUD        =     SIMP(statut='f',typ=no,validators=NoRepeat(),max='**'),
                                         GROUP_NO     =     SIMP(statut='f',typ=grno,validators=NoRepeat(),max='**'),
                                         ),
-                                        
+
                 b_mult_appui =     BLOC(condition = """equal_to("TYPE_APPUI", 'MULTI')""",
                                         regles=(UN_PARMI('NOEUD','GROUP_NO' )),
                                         DIRECTION    =     SIMP(statut='o',typ='R',max=6),
@@ -222,7 +227,7 @@ DYNA_LINE = MACRO(nom      = "DYNA_LINE",
                                         GROUP_NO     =     SIMP(statut='f',typ=grno,validators=NoRepeat(),max='**'),),
                 ),
             ), # end b_excit_line_harm
-        
+
         # Damping
         b_amor_tran_phys = BLOC(condition="""equal_to("TYPE_CALCUL", 'TRAN') and equal_to("BASE_CALCUL", 'PHYS')""",
             AMORTISSEMENT = FACT(statut='f',
@@ -250,18 +255,18 @@ DYNA_LINE = MACRO(nom      = "DYNA_LINE",
                                                 ),
                                 ),
         ), # end b_amor_harm_gene
-        
+
         b_harm_phys = BLOC(condition = """equal_to("BASE_CALCUL", 'PHYS') and equal_to("TYPE_CALCUL", 'HARM')""",
           SOLVEUR         =     C_SOLVEUR('DYNA_LINE_HARM','PHYS'),),
-        
+
         b_tran_phys = BLOC(condition = """equal_to("BASE_CALCUL", 'PHYS') and equal_to("TYPE_CALCUL", 'TRAN')""",
           SOLVEUR         =     C_SOLVEUR('DYNA_LINE_TRAN'),),
-        
+
         b_harm_gene = BLOC(condition="""equal_to("TYPE_CALCUL", 'HARM') and equal_to("BASE_CALCUL", 'GENE')""",
             regles=EXCLUS('ISS', 'IFS'),
             ISS = SIMP(statut='f', typ='TXM', into=("OUI",)),
             IFS = SIMP(statut='f', typ='TXM', into=("OUI",)),
-            
+
             b_no_ifs = BLOC(condition="""not exists("IFS")""",
                             SOLVEUR   = C_SOLVEUR('DYNA_LINE_HARM','GENE'),
                             ENRI_STAT = SIMP(statut='f',typ='TXM',into=("OUI","NON"),defaut='OUI'),
@@ -271,13 +276,13 @@ DYNA_LINE = MACRO(nom      = "DYNA_LINE",
                                                      ),
                             ),
             b_iss_harm = BLOC(condition="""equal_to("ISS", 'OUI')""",
-                              
-                              
+
+
                               VERSION_MISS     = SIMP(statut='f', typ='TXM', into=("V6.6","V6.5"), defaut="V6.6",
                                                 fr=tr("Version de Miss utilisée")),
-                              
+
                               CALC_IMPE_FORC = SIMP(statut='f', typ='TXM', into=("OUI","NON",), defaut="OUI"),
-                              
+
                               GROUP_MA_INTERF  = SIMP(statut='o', typ=grma, max='**',
                                                                         fr=tr("Groupe de mailles de l'interface")),
                               GROUP_NO_INTERF  = SIMP(statut='o', typ=grno, max='**',
@@ -286,17 +291,17 @@ DYNA_LINE = MACRO(nom      = "DYNA_LINE",
                               b_nb_mode_interf = BLOC(condition = """equal_to("TYPE_MODE",'INTERF')""",
                                                       NB_MODE_INTERF = SIMP(statut='o', typ='I'),
                                                       ),
-                              
+
                               b_not_calc_impe_forc =  BLOC(condition="""equal_to("CALC_IMPE_FORC", 'NON')""",
                                                 UNITE_RESU_IMPE     = SIMP(statut='o', typ=UnitType(), inout='in',
                                                                         fr=tr("Unité logique des impédances écrites par Miss")),
                                                 UNITE_RESU_FORC     = SIMP(statut='o', typ=UnitType(), inout='in',
                                                                         fr=tr("Unité logique des forces sismiques écrites par Miss")),
                                                            ),
-                              
+
                               b_calc_impe_forc =  BLOC(condition="""equal_to("CALC_IMPE_FORC", 'OUI')""",
 
-                                    regles=(EXCLUS('TABLE_SOL', 'MATER_SOL'),),  
+                                    regles=(EXCLUS('TABLE_SOL', 'MATER_SOL'),),
 
                                     UNITE_IMPR_ASTER    = SIMP(statut='f', typ=UnitType(), inout='out',
                                                             fr=tr("Unité des résultats transmis par Code_Aster à Miss")),
@@ -305,7 +310,7 @@ DYNA_LINE = MACRO(nom      = "DYNA_LINE",
                                     UNITE_RESU_FORC     = SIMP(statut='f', typ=UnitType(), inout='out',
                                                             fr=tr("Unité logique des forces sismiques écrites par Miss")),
 
-                              
+
                                   TABLE_SOL  = SIMP(statut='f', typ=table_sdaster,
                                                     fr=tr("Table des propriétés du sol stratifié")),
                                   MATER_SOL = FACT(statut='f',
@@ -315,7 +320,7 @@ DYNA_LINE = MACRO(nom      = "DYNA_LINE",
                                                    RHO       = SIMP(statut='o', typ='R', val_min=0.),
                                                    AMOR_HYST = SIMP(statut='f', typ='R', val_min=0., val_max=1.),
                                                    ),
-                                                   
+
                                   # Paramètres du calcul Miss
                                   PARAMETRE = FACT(statut='f',
                                                 regles=(PRESENT_PRESENT('OFFSET_MAX', 'OFFSET_NB'),
@@ -334,7 +339,7 @@ DYNA_LINE = MACRO(nom      = "DYNA_LINE",
                                                 OFFSET_MAX    = SIMP(statut='f', typ='R'),
                                                 OFFSET_NB     = SIMP(statut='f', typ='I'),
                                                 AUTO          = SIMP(statut='f', typ='TXM', into=("OUI","NON",), defaut="NON"),
-                                                b_auto_harm   = BLOC(condition="""equal_to("AUTO", 'OUI')""", 
+                                                b_auto_harm   = BLOC(condition="""equal_to("AUTO", 'OUI')""",
                                                                      OPTION_DREF = SIMP(statut='f', typ='TXM', into=("OUI","NON",), defaut="NON"),
                                                                      OPTION_RFIC = SIMP(statut='f', typ='TXM', into=("OUI","NON",), defaut="NON"),
                                                                      RFIC        = SIMP(statut='f', typ='R'),
@@ -342,7 +347,7 @@ DYNA_LINE = MACRO(nom      = "DYNA_LINE",
                                                                      SPEC_NB     = SIMP(statut='f', typ='I', defaut=16384),
                                                                      COEF_OFFSET = SIMP(statut='f', typ='I', defaut=12),),
                                                 b_noauto_harm = BLOC(condition="""equal_to("AUTO", 'NON')""",
-                                                                     regles=(PRESENT_PRESENT('SPEC_MAX', 'SPEC_NB'),), 
+                                                                     regles=(PRESENT_PRESENT('SPEC_MAX', 'SPEC_NB'),),
                                                                      ALGO     = SIMP(statut='f', typ='TXM', into=("DEPL","REGU")),
                                                                      RFIC     = SIMP(statut='f', typ='R', defaut=0.),
                                                                      SPEC_MAX = SIMP(statut='f', typ='R'),
@@ -350,11 +355,11 @@ DYNA_LINE = MACRO(nom      = "DYNA_LINE",
                                               ),
                               ),
                               ), # end b_iss_harm
-            
+
             b_ifs_harm = BLOC(condition="""equal_to("IFS", 'OUI')""",
-                              
+
                               FORC_AJOU = SIMP(statut='f', typ='TXM', into=("OUI",)),
-                              
+
                               GROUP_MA_INTERF  = SIMP(statut='o', typ=grma, max='**',
                                                       fr=tr("Groupe de mailles de l'interface")),
                               GROUP_MA_FLUIDE  = SIMP(statut='o', typ=grma, max='**',
@@ -375,12 +380,12 @@ DYNA_LINE = MACRO(nom      = "DYNA_LINE",
                                                        ),
                               ),# end b_ifs_harm
         ), # end b_harm_gene
-        
+
         b_tran_gene = BLOC(condition="""equal_to("TYPE_CALCUL", 'TRAN') and equal_to("BASE_CALCUL", 'GENE')""",
             regles=EXCLUS('ISS', 'IFS'),
             ISS = SIMP(statut='f', typ='TXM', into=("OUI",)),
             IFS = SIMP(statut='f', typ='TXM', into=("OUI",)),
-            
+
             b_no_ifs = BLOC(condition="""not exists("IFS")""",
                             SOLVEUR = C_SOLVEUR('DYNA_TRAN_MODAL'),
                             ENRI_STAT = SIMP(statut='f',typ='TXM',into=("OUI","NON"),defaut='OUI'),
@@ -400,7 +405,7 @@ DYNA_LINE = MACRO(nom      = "DYNA_LINE",
                                                 fr=tr("Version de Miss utilisée")),
 
                               CALC_IMPE_FORC = SIMP(statut='f', typ='TXM', into=("OUI","NON",), defaut="OUI"),
-                              
+
                               GROUP_MA_INTERF  = SIMP(statut='o', typ=grma, max='**',
                                                                         fr=tr("Groupe de mailles de l'interface")),
                               GROUP_NO_INTERF  = SIMP(statut='o', typ=grno, max='**',
@@ -416,7 +421,7 @@ DYNA_LINE = MACRO(nom      = "DYNA_LINE",
                                                 UNITE_RESU_FORC     = SIMP(statut='o', typ=UnitType(), inout='in',
                                                                         fr=tr("Unité logique des forces sismiques écrites par Miss")),
                                                            ),
-                              
+
                               b_calc_impe_forc =  BLOC(condition="""equal_to("CALC_IMPE_FORC", 'OUI')""",
 
                                     regles=(EXCLUS('TABLE_SOL', 'MATER_SOL'),),
@@ -428,7 +433,7 @@ DYNA_LINE = MACRO(nom      = "DYNA_LINE",
                                     UNITE_RESU_FORC     = SIMP(statut='f', typ=UnitType(), inout='out',
                                                             fr=tr("Unité logique des forces sismiques écrites par Miss")),
 
-                              
+
                                   TABLE_SOL  = SIMP(statut='f', typ=table_sdaster,
                                                     fr=tr("Table des propriétés du sol stratifié")),
                                   MATER_SOL = FACT(statut='f',
@@ -438,7 +443,7 @@ DYNA_LINE = MACRO(nom      = "DYNA_LINE",
                                                    RHO       = SIMP(statut='o', typ='R', val_min=0.),
                                                    AMOR_HYST = SIMP(statut='f', typ='R', val_min=0., val_max=1.),
                                                    ),
-                              
+
                                   # Paramètres du calcul Miss
                                   PARAMETRE = FACT(statut='f',
                                                 regles=(PRESENT_PRESENT('OFFSET_MAX', 'OFFSET_NB'),
@@ -457,7 +462,7 @@ DYNA_LINE = MACRO(nom      = "DYNA_LINE",
                                                 OFFSET_MAX     = SIMP(statut='f', typ='R'),
                                                 OFFSET_NB      = SIMP(statut='f', typ='I'),
                                                 AUTO           = SIMP(statut='f', typ='TXM', into=("OUI","NON",), defaut="NON"),
-                                                b_auto_tran    = BLOC(condition="""equal_to("AUTO", 'OUI')""", 
+                                                b_auto_tran    = BLOC(condition="""equal_to("AUTO", 'OUI')""",
                                                                       OPTION_DREF    = SIMP(statut='f', typ='TXM', into=("OUI","NON",), defaut="NON"),
                                                                       OPTION_RFIC    = SIMP(statut='f', typ='TXM', into=("OUI","NON",), defaut="NON"),
                                                                       RFIC           = SIMP(statut='f', typ='R'),
@@ -465,7 +470,7 @@ DYNA_LINE = MACRO(nom      = "DYNA_LINE",
                                                                       SPEC_NB        = SIMP(statut='f', typ='I', defaut=16384),
                                                                       COEF_OFFSET    = SIMP(statut='f', typ='I', defaut=12),),
                                                 b_noauto_tran = BLOC(condition="""equal_to("AUTO", 'NON')""",
-                                                                     regles=(PRESENT_PRESENT('SPEC_MAX', 'SPEC_NB'),), 
+                                                                     regles=(PRESENT_PRESENT('SPEC_MAX', 'SPEC_NB'),),
                                                                      ALGO     = SIMP(statut='f', typ='TXM', into=("DEPL","REGU")),
                                                                      RFIC     = SIMP(statut='f', typ='R', defaut=0.),
                                                                      SPEC_MAX = SIMP(statut='f', typ='R'),
@@ -478,9 +483,9 @@ DYNA_LINE = MACRO(nom      = "DYNA_LINE",
                               DEPL_X = SIMP(statut='f', typ=fonction_c,),
                               DEPL_Y = SIMP(statut='f', typ=fonction_c,),
                               DEPL_Z = SIMP(statut='f', typ=fonction_c,),
-                              
+
                               ), # end b_iss_tran
-            
+
             b_ifs_tran = BLOC(condition="""equal_to("IFS", 'OUI')""",
                               FORC_AJOU = SIMP(statut='f', typ='TXM', into=("OUI",)),
                               GROUP_MA_INTERF  = SIMP(statut='o', typ=grma, max='**',
