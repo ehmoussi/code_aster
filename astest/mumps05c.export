@@ -1,8 +1,8 @@
 P time_limit 300
 P memory_limit 1024
 P ncpus 2
-P mpi_nbcpu 8
-P mpi_nbnoeud 2
+P mpi_nbcpu 4
+P mpi_nbnoeud 1
 P testlist verification parallel
 
 F comm mumps05a.comm D 1
