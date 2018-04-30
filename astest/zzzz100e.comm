@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -46,10 +46,9 @@ spectre=LIRE_FONCTION(TYPE='NAPPE',
                       PROL_GAUCHE='CONSTANT',
                       TITRE='essai de lecture de spectre',)
 
-# test du lissage pour une nappe unique                      
+# test du lissage pour une nappe unique
 res=CALC_FONCTION(LISS_ENVELOP=_F(NAPPE=spectre,
-                                  OPTION = 'CONCEPTION',
-                                  NB_FREQ_LISS = 10),
+                                  OPTION = 'CONCEPTION'),
                                   NOM_PARA='AMOR',
                                   NOM_RESU='ACCE',
                                   NOM_PARA_FONC='FREQ',)
@@ -103,7 +102,7 @@ TEST_FONCTION(VALEUR=(_F(VALE_CALC=2.027688367455347113e-02,
                          NOM_PARA=('AMOR', 'FREQ'),
                          FONCTION=res,
                          ),
-                    
+
                       ),
               )
 
@@ -125,13 +124,13 @@ try:
 except:
     print "L'impression doit se faire sous Salome-Meca avec la librairie Matplotlib"
     pass
-                
+
 
 # IMPR_FONCTION(FORMAT='TABLEAU',
               # COURBE=_F(FONCTION=res,),
               # UNITE=8,)
-              
-# test des mot cles ZPA, FMIN, FMAX, ZPA  
+
+# test des mot cles ZPA, FMIN, FMAX, ZPA
 
 res2=CALC_FONCTION(LISS_ENVELOP=_F(NAPPE=spectre,
                                   OPTION = 'CONCEPTION',
@@ -143,12 +142,12 @@ res2=CALC_FONCTION(LISS_ENVELOP=_F(NAPPE=spectre,
                                   ),
                                   NOM_PARA='AMOR',
                                   NOM_RESU='ACCE',
-                                  NOM_PARA_FONC='FREQ',)  
+                                  NOM_PARA_FONC='FREQ',)
 
 #IMPR_FONCTION(FORMAT='TABLEAU',
 #              COURBE=_F(FONCTION=res2,),
 #              UNITE=8,)
-              
+
 TEST_FONCTION(VALEUR=(_F(VALE_CALC=0.14448959481538,
                          CRITERE='ABSOLU',
                          VALE_PARA=(0.005, 0.5),
@@ -174,7 +173,7 @@ TEST_FONCTION(VALEUR=(_F(VALE_CALC=0.14448959481538,
                          FONCTION=res2,
                          ),
                        )
-)                         
+)
 
 
 # Test fonction simple
@@ -184,12 +183,12 @@ res3=CALC_FONCTION(LISS_ENVELOP=_F(FONCTION =(spectre3),
                                   NB_FREQ_LISS = 3,
                                   ),
                                   NOM_RESU='ACCE',
-                                  NOM_PARA_FONC='FREQ',) 
-  
+                                  NOM_PARA_FONC='FREQ',)
+
 IMPR_FONCTION(FORMAT='TABLEAU',
               COURBE=_F(FONCTION=res3,),
-              UNITE=8,)  
-                                  
+              UNITE=8,)
+
 TEST_FONCTION(VALEUR=(_F(VALE_CALC=3,
                          CRITERE='ABSOLU',
                          VALE_PARA=(0, 5),
@@ -197,8 +196,8 @@ TEST_FONCTION(VALEUR=(_F(VALE_CALC=3,
                          FONCTION=res3,
                          ),
                        )
-)     
-                                  
+)
+
 # Test plusieurs nappes ( methode VERIFICATION )
 res4 = CALC_FONCTION(LISS_ENVELOP=_F(NAPPE=(spectre,spectre),
                                   OPTION = 'VERIFICATION',
@@ -206,15 +205,15 @@ res4 = CALC_FONCTION(LISS_ENVELOP=_F(NAPPE=(spectre,spectre),
                                   NOM_PARA='AMOR',
                                   NOM_RESU='ACCE',
                                   NOM_PARA_FONC='FREQ',)
-                                  
-    
+
+
 # Test plusieurs tables
 TABLE = LIRE_TABLE(UNITE = 39)
- 
+
 TABLE_H = CALC_TABLE(TABLE = TABLE,
                         ACTION=_F(OPERATION='EXTR',
                                     NOM_PARA = ('FREQ','eH_0_P_1','eH_1_P_1')))
- 
+
 TABLE_X = CALC_TABLE(TABLE = TABLE,
                         ACTION=_F(OPERATION='EXTR',
                                     NOM_PARA = ('FREQ','eX_0_P_1','eX_1_P_1')))
@@ -222,20 +221,20 @@ TABLE_X = CALC_TABLE(TABLE = TABLE,
 TABLE_Y = CALC_TABLE(TABLE = TABLE,
                         ACTION=_F(OPERATION='EXTR',
                                     NOM_PARA = ('FREQ','eY_0_P_1','eY_1_P_1')))
-                                    
+
 res5 = CALC_FONCTION(LISS_ENVELOP=_F(TABLE =(TABLE_H),
                                   OPTION = 'CONCEPTION',
                                   NB_FREQ_LISS = 3,
                                   LIST_AMOR =(0.,1.)
                                   ),
                                   NOM_RESU='ACCE',
-                                  NOM_PARA_FONC='FREQ',) 
-    
-# IMPR_TABLE(TABLE=TABLE_X,UNITE=8,) 
+                                  NOM_PARA_FONC='FREQ',)
 
-# IMPR_TABLE(TABLE=TABLE_Y,UNITE=8,) 
+# IMPR_TABLE(TABLE=TABLE_X,UNITE=8,)
 
-IMPR_TABLE(TABLE=TABLE_H,UNITE=8,)               
+# IMPR_TABLE(TABLE=TABLE_Y,UNITE=8,)
+
+IMPR_TABLE(TABLE=TABLE_H,UNITE=8,)
 
 # test enveloppe (sans faire de lissage, ni elargissement)
 res6 = CALC_FONCTION(LISS_ENVELOP=_F(TABLE =(TABLE_X,TABLE_Y),
@@ -244,27 +243,27 @@ res6 = CALC_FONCTION(LISS_ENVELOP=_F(TABLE =(TABLE_X,TABLE_Y),
                                   LIST_AMOR =(0.,1.)
                                   ),
                                   NOM_RESU='ACCE',
-                                  NOM_PARA_FONC='FREQ',) 
-              
-   
+                                  NOM_PARA_FONC='FREQ',)
+
+
 IMPR_FONCTION(FORMAT='TABLEAU',
               COURBE=_F(FONCTION=res6,),
               UNITE=8,
               FORMAT_R='E16.9')
-              
+
 TAB1 = CREA_TABLE(LISTE=(_F(LISTE_R=(0.5,1,3) , PARA = 'FREQ'),
                           _F(LISTE_R=(1,2,3) , PARA = 'AMOR_0'),
                          _F(LISTE_R=(1,2,1) , PARA = 'AMOR_1'),
-                        ))              
-   
+                        ))
+
 TAB2 = CREA_TABLE(LISTE=(_F(LISTE_R=(0.5,2,3) , PARA = 'FREQ'),
-                         _F(LISTE_R=(3,2,1) , PARA = 'AMOR_0'),   
+                         _F(LISTE_R=(3,2,1) , PARA = 'AMOR_0'),
                          _F(LISTE_R=(2,1,2) , PARA = 'AMOR_1'),
-                         )) 
-                         
-# IMPR_TABLE(TABLE=TAB1,UNITE=8,)                         
-# IMPR_TABLE(TABLE=TAB2,UNITE=8,)                         
-    
+                         ))
+
+# IMPR_TABLE(TABLE=TAB1,UNITE=8,)
+# IMPR_TABLE(TABLE=TAB2,UNITE=8,)
+
 # test enveloppe (sans faire de lissage, ni elargissement) pour le mode CONCEPTION
 res7 = CALC_FONCTION(LISS_ENVELOP=_F(TABLE =(TAB1,TAB2),
                                   OPTION = 'CONCEPTION',
@@ -272,13 +271,13 @@ res7 = CALC_FONCTION(LISS_ENVELOP=_F(TABLE =(TAB1,TAB2),
                                   LIST_AMOR =(0.,1.)
                                   ),
                                   NOM_RESU='ACCE',
-                                  NOM_PARA_FONC='FREQ',) 
-              
-   
+                                  NOM_PARA_FONC='FREQ',)
+
+
 IMPR_FONCTION(FORMAT='TABLEAU',
               COURBE=_F(FONCTION=res7,),
-              UNITE=8,) 
-              
+              UNITE=8,)
+
 TEST_FONCTION(VALEUR=(_F(VALE_CALC=2.449489742783,
                          CRITERE='ABSOLU',
                          VALE_PARA=(0., 1.),
@@ -292,7 +291,7 @@ TEST_FONCTION(VALEUR=(_F(VALE_CALC=2.449489742783,
                          FONCTION=res7,
                          ),
                        )
-)   
+)
 
 # test enveloppe (sans faire de lissage, ni elargissement) pour le mode VERIFICATION
 res8 = CALC_FONCTION(LISS_ENVELOP=_F(TABLE =(TAB1,TAB2),
@@ -301,13 +300,13 @@ res8 = CALC_FONCTION(LISS_ENVELOP=_F(TABLE =(TAB1,TAB2),
                                   LIST_AMOR =(0.,1.)
                                   ),
                                   NOM_RESU='ACCE',
-                                  NOM_PARA_FONC='FREQ',) 
-              
-   
+                                  NOM_PARA_FONC='FREQ',)
+
+
 IMPR_FONCTION(FORMAT='TABLEAU',
               COURBE=_F(FONCTION=res8,),
-              UNITE=8,) 
-              
+              UNITE=8,)
+
 TEST_FONCTION(VALEUR=(_F(VALE_CALC=2.449489742783,
                          CRITERE='ABSOLU',
                          VALE_PARA=(0., 1.),
@@ -321,8 +320,8 @@ TEST_FONCTION(VALEUR=(_F(VALE_CALC=2.449489742783,
                          FONCTION=res8,
                          ),
                        )
-)     
-             
+)
+
 # test elargissement (sans faire de lissage, ni enveloppe) pour le mode VERIFICATION
 res9 = CALC_FONCTION(LISS_ENVELOP=_F(TABLE =(TAB1),
                                   OPTION = 'VERIFICATION',
@@ -331,14 +330,14 @@ res9 = CALC_FONCTION(LISS_ENVELOP=_F(TABLE =(TAB1),
                                   LIST_AMOR =(0.,1.)
                                   ),
                                   NOM_RESU='ACCE',
-                                  NOM_PARA_FONC='FREQ',) 
-              
-   
+                                  NOM_PARA_FONC='FREQ',)
+
+
 # IMPR_FONCTION(FORMAT='TABLEAU',
               # COURBE=_F(FONCTION=res9,),
-              # UNITE=8,) 
+              # UNITE=8,)
 
-    
+
 TEST_FONCTION(VALEUR=(_F(VALE_CALC=2.637305315418,
                          CRITERE='ABSOLU',
                          VALE_PARA=(0., 0.5),
@@ -352,9 +351,9 @@ TEST_FONCTION(VALEUR=(_F(VALE_CALC=2.637305315418,
                          FONCTION=res9,
                          ),
                        )
-)     
+)
 
-    
+
 # TEST LIRE_FONCTION COMPLEXE
 fc1 = LIRE_FONCTION(TYPE='FONCTION_C',
                     UNITE=38,
