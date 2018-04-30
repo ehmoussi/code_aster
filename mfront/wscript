@@ -47,6 +47,7 @@ def configure(self):
             raise
         self.define('_DISABLE_MFRONT', 1)
         self.undefine('HAVE_MFRONT')
+        self.env.TFELSUFFIX = ''
     else:
         self.define('HAVE_MFRONT', 1)
         self.env.BUILD_MFRONT = True
