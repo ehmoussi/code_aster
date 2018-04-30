@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -57,7 +57,7 @@ function iunifi(name)
     character(len=16) :: nompr (mximpr)
     integer :: unitpr (mximpr)
     data          nompr  /'MESSAGE'  , 'RESULTAT', 'ERREUR'/
-    data          unitpr /    6      ,     8     ,      9  /
+    data          unitpr /    6      ,     6     ,      6  /
 !     ------------------------------------------------------------------
 !
     if (first .ne. 17111990) call ulinit()
