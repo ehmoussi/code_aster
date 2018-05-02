@@ -21,8 +21,7 @@ subroutine cucpes(deficu, resocu, jsecmb, neq, nbliac_new)
 !
     implicit     none
 #include "jeveux.h"
-#include "asterc/r8prem.h"
-#include "asterfort/calatm.h"
+#include "asterfort/compute_ineq_conditions_vector.h"
 #include "asterfort/cudisi.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jemarq.h"
@@ -45,8 +44,7 @@ subroutine cucpes(deficu, resocu, jsecmb, neq, nbliac_new)
 !
 !
 !
-    real(kind=8) :: jeuini, coefpn, lambdc
-    integer :: iliai
+    integer :: iliac
     character(len=19) :: mu
     integer :: jmu
     character(len=24) :: apcoef, apddl, appoin
@@ -55,8 +53,7 @@ subroutine cucpes(deficu, resocu, jsecmb, neq, nbliac_new)
     integer :: jcoef_pena
     character(len=24) :: jeux
     integer :: jjeux
-    integer :: nbliai, i
-    integer :: nbddl, jdecal
+    integer :: nbliai
 !
 ! ----------------------------------------------------------------------
 !
@@ -64,7 +61,7 @@ subroutine cucpes(deficu, resocu, jsecmb, neq, nbliac_new)
 !
 ! --- INITIALISATION DES VARIABLES
 !
-    nbliai = cudisi(deficu,'NNOCU')
+    nbliai = cudisi(deficu, 'NNOCU')
 !
 ! --- LECTURE DES STRUCTURES DE DONNEES DE CONTACT
 !
@@ -83,36 +80,15 @@ subroutine cucpes(deficu, resocu, jsecmb, neq, nbliac_new)
     call jeveuo(coefpe, 'L', jcoef_pena)
     call jeveuo(mu, 'E', jmu)
 !
-! --- INITIALISATION DES MU
-! --- OK ON LAISSE TEL QUEL
-!
-    do iliai = 1, nbliai
-        zr(jmu +iliai-1) = 0.d0
-        zr(jmu+3*nbliai+iliai-1) = 0.d0
-    end do
-!
 ! --- RAZ VECTEUR SECMB
-    do i=1,neq
-        zr(jsecmb-1+i) = 0.d0
-    end do
-!
-! --- CALCUL DES FORCES DE CONTACT
-!
-    nbliac_new = 0
-    do iliai = 1, nbliai
-        jeuini = zr(jjeux-1+iliai)
-        coefpn = zr(jcoef_pena)
-        if (jeuini .lt. 0.d0) then
-            jdecal = zi(japptr+iliai-1)
-            nbddl = zi(japptr+iliai) - zi(japptr+iliai-1)
-            lambdc = -jeuini*coefpn
-            nbliac_new = nbliac_new + 1
-            zr(jmu+nbliac_new-1) = lambdc
-            call calatm(neq, nbddl, lambdc, zr(japcoe+jdecal), zi(japddl+ jdecal),&
-                        zr(jsecmb))
-        endif
-    end do
-    write(6,*)'PENALISATION - NOMBRE LIAISONS ACTIVES : ', nbliac_new
+    zr(jsecmb:jsecmb-1+neq) = 0.d0
+    
+    call compute_ineq_conditions_vector(jsecmb, nbliai      , neq,   &
+                                        japptr, japddl      , japcoe,&
+                                        jjeux , jcoef_pena-1, jmu,   &
+                                        1     , 0           , iliac  )
+    
+    nbliac_new = iliac - 1
 !
     call jedema()
 !
