@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine cucpma(deficu, resocu, neq, nbliai, numedd, matrcf)
+subroutine cucpma(deficu, resocu, neq, nbliai, numedd, matrcu)
 !
 !
     implicit     none
@@ -27,7 +27,7 @@ subroutine cucpma(deficu, resocu, neq, nbliai, numedd, matrcf)
     integer :: neq, nbliai
     character(len=24) :: deficu, resocu
     character(len=14) :: numedd
-    character(len=19) :: matrcf
+    character(len=19) :: matrcu
 !
 ! ----------------------------------------------------------------------
 !
@@ -49,7 +49,7 @@ subroutine cucpma(deficu, resocu, neq, nbliai, numedd, matrcf)
 !
     integer :: nmult
     character(len=24) :: enat
-    character(len=14) :: numecf
+    character(len=14) :: numecu
 !
 ! ----------------------------------------------------------------------
 !
@@ -61,10 +61,10 @@ subroutine cucpma(deficu, resocu, neq, nbliai, numedd, matrcf)
 !
 ! --- CONSTRUCTION NOUVELLE MATRICE
 !
-    numecf = '&&CFCPMA.NUFR'
+    numecu = '&&CUCPMA.NUCU'
     nmult = 1
     call cumata(deficu, resocu, neq, nbliai, nmult, numedd,&
-                enat, numecf, matrcf)
+                enat, numecu, matrcu)
 !
     call jedema()
 !
