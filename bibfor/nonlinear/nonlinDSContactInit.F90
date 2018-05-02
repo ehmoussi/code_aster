@@ -233,7 +233,9 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
            call dismoi('EXI_THM', model, 'MODELE', repk=answer)
            l_thm = answer .eq. 'OUI' 
            ds_contact%l_thm = l_thm
-           
+           if (l_thm) then
+             ds_contact%nume_dof_unil = '&&NMASUN.NUME'
+           endif
 !            write(6,*) '(@_@) MODELE THM = ',ds_contact%l_thm
         endif
 !

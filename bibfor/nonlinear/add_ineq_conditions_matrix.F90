@@ -16,16 +16,12 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine nmasun(ds_contact, matass)
-!
-use NonLin_Datastructure_type
+subroutine add_ineq_conditions_matrix(matass, matr, nume_ddl)
 !
 implicit none
 !
 #include "asterf_types.h"
 #include "jeveux.h"
-#include "asterfort/add_ineq_conditions_matrix.h"
-#include "asterfort/cudisd.h"
 #include "asterfort/detrsd.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/infbav.h"
@@ -39,8 +35,8 @@ implicit none
 !
 ! person_in_charge: mickael.abbas at edf.fr
 !
-    type(NL_DS_Contact), intent(in) :: ds_contact
-    character(len=19) :: matass
+    character(len=19) :: matass, matr
+    character(len=14) :: nume_ddl
 !
 ! ----------------------------------------------------------------------
 !
@@ -50,7 +46,6 @@ implicit none
 !
 ! ----------------------------------------------------------------------
 !
-! In  ds_contact       : datastructure for contact management
 ! I/O MATASS  : IN  MATR_ASSE TANGENTE
 !               OUT MATR_ASSE TANGENTE + MATRICE CONTACT/FROTTEMENT
 !                  (EVENTUELLE)
@@ -58,36 +53,45 @@ implicit none
 ! ----------------------------------------------------------------------
 !
     integer :: ifm, niv
-    character(len=14) :: numedu
-    integer :: nbliac
-    character(len=19) :: matrcu
-    aster_logical :: lmodim
+    character(len=24) :: limat(2)
+    real(kind=8) :: coefmu(2)
+    character(len=1) :: typcst(2)
+    character(len=8) ::  kmpic1
 !
 ! ----------------------------------------------------------------------
 !
     call jemarq()
-    call infdbg('CONTACT', ifm, niv)
 !
-! --- INITIALISATIONS
-!
-!   A modifier dans une version plus aboutie
-    lmodim = .true.
-    nbliac = cudisd(ds_contact%sdunil_solv,'NBLIAC')
-    if (nbliac .eq. 0) then
-        goto 999
+    if (niv .ge. 2) then
+        write (ifm,*) '<CONTACT> AJOUT MATRICE CONTACT/FROTTEMENT'
     endif
-    if (.not.lmodim) then
-        goto 999
+!
+    limat(1) = matass
+    limat(2) = matr
+    coefmu(1) = 1.d0
+    coefmu(2) = 1.d0
+    typcst(1) = 'R'
+    typcst(2) = 'R'
+!
+    call detrsd('NUME_DDL', nume_ddl)
+!
+    call infmue()
+    call dismoi('MPI_COMPLET', matass, 'MATR_ASSE', repk=kmpic1)
+    if (kmpic1 .eq. 'NON') then 
+        call sdmpic('MATR_ASSE', matass)
     endif
-    matrcu = ds_contact%sdunil_solv(1:14)//'.MATR'
-!
-! - Get numbering object
-! 
-    numedu = ds_contact%nume_dof_unil
-!
-    call add_ineq_conditions_matrix(matass, matrcu, numedu)
-!
-999 continue
+    
+    call dismoi('MPI_COMPLET', matr, 'MATR_ASSE', repk=kmpic1)
+    if (kmpic1 .eq. 'NON') then 
+        call sdmpic('MATR_ASSE', matr)
+    endif
+    
+    call mtcmbl(2, typcst, coefmu, limat, matass,&
+                ' ', nume_ddl, 'ELIM1')
+    call infbav()
+    call dismoi('NOM_NUME_DDL', matr, 'MATR_ASSE', repk=nume_ddl)
+    call detrsd('MATR_ASSE', matr)
+    call detrsd('NUME_DDL', nume_ddl)
 !
     call jedema()
 !

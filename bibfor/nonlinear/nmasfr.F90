@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -24,6 +24,7 @@ implicit none
 !
 #include "asterf_types.h"
 #include "jeveux.h"
+#include "asterfort/add_ineq_conditions_matrix.h"
 #include "asterfort/cfdisd.h"
 #include "asterfort/cfdisl.h"
 #include "asterfort/detrsd.h"
@@ -61,11 +62,7 @@ implicit none
     character(len=14) :: numedf
     integer :: nbliac
     character(len=19) :: matrcf
-    character(len=24) :: limat(2)
-    real(kind=8) :: coefmu(2)
-    character(len=1) :: typcst(2)
     aster_logical :: lmodim
-    character(len=8) ::  kmpic1
 !
 ! ----------------------------------------------------------------------
 !
@@ -82,41 +79,13 @@ implicit none
     if (.not.lmodim) then
         goto 999
     endif
-!
-    if (niv .ge. 2) then
-        write (ifm,*) '<CONTACT> AJOUT MATRICE CONTACT/FROTTEMENT'
-    endif
-!
     matrcf = ds_contact%sdcont_solv(1:14)//'.MATR'
-    limat(1) = matass
-    limat(2) = matrcf
-    coefmu(1) = 1.d0
-    coefmu(2) = 1.d0
-    typcst(1) = 'R'
-    typcst(2) = 'R'
 !
 ! - Get numbering object for discrete friction methods
 ! 
     numedf = ds_contact%nume_dof_frot
-    call detrsd('NUME_DDL', numedf)
 !
-    call infmue()
-    call dismoi('MPI_COMPLET', matass, 'MATR_ASSE', repk=kmpic1)
-    if (kmpic1 .eq. 'NON') then 
-        call sdmpic('MATR_ASSE', matass)
-    endif
-    
-    call dismoi('MPI_COMPLET', matrcf, 'MATR_ASSE', repk=kmpic1)
-    if (kmpic1 .eq. 'NON') then 
-        call sdmpic('MATR_ASSE', matrcf)
-    endif
-    
-    call mtcmbl(2, typcst, coefmu, limat, matass,&
-                ' ', numedf, 'ELIM1')
-    call infbav()
-    call dismoi('NOM_NUME_DDL', matrcf, 'MATR_ASSE', repk=numedf)
-    call detrsd('MATR_ASSE', matrcf)
-    call detrsd('NUME_DDL', numedf)
+    call add_ineq_conditions_matrix(matass, matrcf, numedf)
 !
 999 continue
 !

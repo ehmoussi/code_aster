@@ -235,9 +235,7 @@ implicit none
 ! --- AVEC LES LIAISONS UNILATERALES
 !
     if (lunil .and. (phase.eq.'CORRECTION')) then
-!
-!       A remplacer par un appel plus propre
-        call nmasun(ds_contact%sdunil_solv, matass)
+        call nmasun(ds_contact, matass)
     endif
 !
 999 continue

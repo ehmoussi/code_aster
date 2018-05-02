@@ -287,6 +287,8 @@ implicit none
         character(len=19) :: field_input
 ! ----- NUME_DOF for discrete friction methods 
         character(len=14) :: nume_dof_frot
+! ----- NUME_DOF for unil methods 
+        character(len=14) :: nume_dof_unil
 ! ----- Fields for CONT_NODE 
         character(len=19) :: field_cont_node
         character(len=19) :: fields_cont_node
