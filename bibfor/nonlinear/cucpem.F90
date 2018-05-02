@@ -22,13 +22,10 @@ subroutine cucpem(deficu, resocu, nbliai)
     implicit     none
 #include "jeveux.h"
 !
-#include "asterc/r8prem.h"
+#include "asterfort/compute_ineq_conditions_elem_matrix.h"
 #include "asterfort/jedema.h"
-#include "asterfort/jelibe.h"
 #include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
-#include "asterfort/jexnum.h"
-#include "asterfort/r8inir.h"
 #include "blas/daxpy.h"
     character(len=24) :: deficu, resocu
     integer :: nbliai
@@ -42,17 +39,13 @@ subroutine cucpem(deficu, resocu, nbliai)
 ! ----------------------------------------------------------------------
 !
 !
-! IN  RESOCO : SD DE TRAITEMENT NUMERIQUE DU CONTACT
+! IN  DEFICU : SD DE DEFINITION (ISSUE D'AFFE_CHAR_MECA)
+! IN  RESOCU : SD DE TRAITEMENT NUMERIQUE DU CONTACT
 ! IN  NBLIAI : NOMBRE DE LIAISONS DE CONTACT
 !
 !
 !
 !
-    integer :: ndlmax
-    parameter   (ndlmax = 30)
-    real(kind=8) :: jeuini
-    real(kind=8) :: coefpn, xmu
-    integer :: iliai
     character(len=24) :: apcoef, appoin
     integer :: japcoe, japptr
     character(len=24) :: coefpe
@@ -60,8 +53,6 @@ subroutine cucpem(deficu, resocu, nbliai)
     character(len=24) :: jeux
     integer :: jjeux
     character(len=24) :: enat
-    integer :: jenat
-    integer :: nbddl, jdecal
 !
 ! ----------------------------------------------------------------------
 !
@@ -81,20 +72,9 @@ subroutine cucpem(deficu, resocu, nbliai)
 !
 ! --- CALCUL DE LA MATRICE DE CONTACT PENALISEE
 !
-    do iliai = 1, nbliai
-        jdecal = zi(japptr+iliai-1)
-        nbddl = zi(japptr+iliai) - zi(japptr+iliai-1)
-        jeuini = zr(jjeux+iliai-1)
-        coefpn = zr(jcoef_pena)
-        call jeveuo(jexnum(enat, iliai), 'E', jenat)
-        call r8inir(ndlmax, 0.d0, zr(jenat), 1)
-        if (jeuini .lt. 0.d0) then
-            xmu = sqrt(coefpn)
-            call daxpy(nbddl, xmu, zr(japcoe+jdecal), 1, zr(jenat),&
-                       1)
-        endif
-        call jelibe(jexnum(enat, iliai))
-     end do
+    call compute_ineq_conditions_elem_matrix(enat  , nbliai, japptr      ,&
+                                             japcoe, jjeux , jcoef_pena-1,&
+                                             1     , 0     )
 !
     call jedema()
 !
