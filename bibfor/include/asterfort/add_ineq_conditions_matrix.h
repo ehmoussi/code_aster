@@ -19,9 +19,8 @@
 !
 !
 interface
-    subroutine nmasun(ds_contact, matass)
-        use NonLin_Datastructure_type
-        type(NL_DS_Contact), intent(in) :: ds_contact
-        character(len=19) :: matass
-    end subroutine nmasun
+    subroutine add_ineq_conditions_matrix(matass, matr, nume_ddl)
+        character(len=19) :: matass, matr
+        character(len=14) :: nume_ddl
+    end subroutine add_ineq_conditions_matrix
 end interface
