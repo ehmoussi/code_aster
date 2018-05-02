@@ -734,6 +734,8 @@ class Macro(Command):
     def build_sd_prod(self, sdprodFunc, ctxt):
         """Call the `sd_prod` function"""
         enable_0key(ctxt)
+        if 'self' in ctxt:
+            del ctxt['self']
         resultType = sdprodFunc(self, **ctxt)
         disable_0key(ctxt)
         return resultType
