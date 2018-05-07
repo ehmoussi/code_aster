@@ -28,6 +28,7 @@ implicit none
 #include "asterf_types.h"
 #include "asterfort/assert.h"
 #include "asterfort/isfonc.h"
+#include "asterfort/cfdisl.h"
 #include "asterfort/nmasdi.h"
 #include "asterfort/nmasfi.h"
 #include "asterfort/nmasva.h"
@@ -68,6 +69,7 @@ character(len=19), intent(in) :: cnpilo, cndonn
     character(len=19) :: cnffdo, cndfdo, cnfvdo, cnffpi, cndfpi
     aster_logical :: l_macr, l_pilo
     type(NL_DS_VectComb) :: ds_vectcomb
+    aster_logical :: l_unil_pena
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -114,7 +116,10 @@ character(len=19), intent(in) :: cnpilo, cndonn
 ! - Add LIAISON_UNIL penalized force
 !
     if (ds_contact%l_cnunil) then
-        call nonlinDSVectCombAddAny(ds_contact%cnunil, -1.d0, ds_vectcomb)
+        l_unil_pena = cfdisl(ds_contact%sdcont_defi, 'UNIL_PENA')
+        if (l_unil_pena) then
+            call nonlinDSVectCombAddAny(ds_contact%cnunil, -1.d0, ds_vectcomb)
+        endif
     endif
 !
 ! - Add CONTINUE/XFEM contact force
