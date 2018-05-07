@@ -24,6 +24,9 @@ from code_aster.Cata.Commons import *
 
 
 def calc_fonc_interp_prod(FONCTION, NOM_PARA_FONC, **args):
+   if args.get('__all__'):
+       return (nappe_sdaster, fonction_sdaster, fonction_c, formule)
+
    if   AsType(FONCTION) == nappe_sdaster:
       return nappe_sdaster
    elif AsType(FONCTION) == fonction_sdaster:

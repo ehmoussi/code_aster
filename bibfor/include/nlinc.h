@@ -23,10 +23,16 @@
     character(len=3)  :: partyp(_NL_NBPAR)
     character(len=8)  :: params(_NL_NBPAR)
 
+!   Pour faire un trou dans les paramètres à l'emplacement (ip) :
+!       params(ip) = 'XXXXXXXX'   ASSERT dans nlsave
+!       partyp(ip) = 'XXX'
+!       parind(ip) = 0
+!
+
     data params /'ANG_INIT', 'ANG_ROTA', 'AS_C    ', 'AS_DX_MX', 'AS_K1   ', &
                  'AS_K2   ', 'AS_ALPHA', 'AS_FX_0 ', 'BKL_FLIM', 'BKL_FPFL', &
                  'BKL_DEF ', 'NOM_CMP ', 'COOR_NO1', 'COOR_NO2', 'COOR_ORI', &
-                 'DAMP_NOR', 'DAMP_TAN', 'DISO_DX ', 'DISO_DX0', 'DIST_NO1', &
+                 'DAMP_NOR', 'DAMP_TAN', 'ISOTFXDX', 'XXXXXXXX', 'DIST_NO1', &
                  'DIST_NO2', 'DVSC_A  ', 'DVSC_C  ', 'DVSC_K1 ', 'DVSC_K2 ', &
                  'DVSC_K3 ', 'FRIC_DYN', 'FRIC_STA', 'FRIC_UNI', 'FV_FONCT', &
                  'FX_FONCT', 'F_TAN_WK', 'F_TOT_WK', 'GAP     ', 'VAR_INTR', &
@@ -44,7 +50,7 @@
     data partyp /'R  ', 'K24', 'R  ', 'R  ', 'R  ', &
                  'R  ', 'R  ', 'R  ', 'R  ', 'R  ', &
                  'R  ', 'K24', 'R  ', 'R  ', 'R  ', &
-                 'R  ', 'R  ', 'R  ', 'R  ', 'R  ', &
+                 'R  ', 'R  ', 'R  ', 'XXX', 'R  ', &
                  'R  ', 'R  ', 'R  ', 'R  ', 'R  ', &
                  'R  ', 'R  ', 'R  ', 'I  ', 'K24', &
                  'K24', 'R  ', 'R  ', 'R  ', 'R  ', &
@@ -66,7 +72,7 @@
     data parind / 1,  1,  1,  1,  1, &
                   1,  1,  1,  1,  1, &
                   1,  1,  2,  2,  2, &
-                  1,  1,  1,  1,  1, &
+                  1,  1,  2,  0,  1, &
                   1,  1,  1,  1,  1, &
                   1,  1,  1,  1,  1, &
                   1, -2, -2,  1, -2, &
@@ -79,6 +85,5 @@
                   1,  2,  2,  2,  2, &
                   1,  1,  1, -2,  1, &
                   2,  2,  2/
-
 
 

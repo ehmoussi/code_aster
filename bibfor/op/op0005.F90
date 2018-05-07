@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -153,9 +153,16 @@ subroutine op0005()
             call utmess('F', 'MODELISA9_80', sk=nomrc)
         endif
 !
-        if (nomrc .eq. 'THER_NL') nbobm = nbobm + 1
-
-!       -- les objets .VALR, .VALC et .VALK sont sur-dimensionnes :
+!       Pour les cas suivant, il faut créer ou pas une caractéristique matériau supplémentaire :
+!       THER_NL         :   Création si nécessaire d'une fonction pour stocker beta
+!                           (enthalpie volumique) calculee a partir de RHO_CP
+!       DIS_ECRO_TRAC   :   Création si nécessaire de ECRO, permettant de connaître le cas
+!                           traité par la loi.
+        if ((nomrc .eq. 'THER_NL') .or. &
+            (nomrc .eq. 'DIS_ECRO_TRAC') ) then
+            nbobm = nbobm + 1
+        endif
+!       Les objets .VALR, .VALC et .VALK sont sur-dimensionnes
         call wkvect(noobrc//'.VALR', 'G V R', nbobm, jvalrm)
         call wkvect(noobrc//'.VALC', 'G V C', nbobm, jvalcm)
         call wkvect(noobrc//'.VALK', 'G V K16', 2*nbobm, jvalkm)

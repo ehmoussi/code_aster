@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -307,7 +307,7 @@ function lcgtn_compute(resi,rigi,elas, itemax, prec, m, dt, eps, phi, ep, ka, f,
                 goto 999
             end if        
             fg2 = equint-offset
-            ASSERT(fg1*fg2 .lt. 0)
+            ASSERT(fg1*fg2 .le. 0)
         end if
 
         ! Valeur de p optimale (corde)

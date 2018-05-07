@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -26,6 +26,9 @@ from code_aster.Cata.Commons import *
 def lire_champ_prod(TYPE_CHAM=None,**args):
 # Remarque : si cette liste évolue, il faut penser à mettre à jour son
 #            homologue dans macr_adap_mail
+  if args.get('__all__'):
+      return (cham_no_sdaster, carte_sdaster, cham_elem)
+
   if TYPE_CHAM[0:5] == "NOEU_" : return cham_no_sdaster
   if TYPE_CHAM[0:5] == "CART_" : return carte_sdaster
   if TYPE_CHAM[0:2] == "EL"    : return cham_elem
@@ -36,7 +39,7 @@ LIRE_CHAMP=OPER(nom="LIRE_CHAMP",op= 192,sd_prod=lire_champ_prod,
                 reentrant='n',
          MAILLAGE        =SIMP(statut='o',typ=maillage_sdaster,),
          FORMAT          =SIMP(statut='f',typ='TXM',defaut="MED",into=("MED",),),
-         UNITE           =SIMP(statut='f',typ=UnitType(),defaut= 81, inout='in',),
+         UNITE           =SIMP(statut='f',typ=UnitType('med'),defaut= 81, inout='in',),
          b_format =BLOC(condition = """equal_to("FORMAT", 'MED')""",
          regles=( UN_PARMI('NOM_CMP_IDEM','NOM_CMP'),
                   PRESENT_PRESENT('NOM_CMP','NOM_CMP_MED' ),

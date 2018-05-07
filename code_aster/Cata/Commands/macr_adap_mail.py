@@ -25,6 +25,13 @@ from code_aster.Cata.Commons import *
 
 
 def macr_adap_mail_prod(self, MAJ_CHAM, ADD_CHAM, ADAPTATION, **args):
+  if args.get('__all__'):
+      return ([None],
+              [None, maillage_sdaster],
+              [None, maillage_sdaster],
+              [None, cham_no_sdaster],
+              [None, cham_elem],
+              [None, carte_sdaster])
 #
 # 0. Typage des structures produites
 #

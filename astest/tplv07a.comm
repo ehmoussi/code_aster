@@ -20,7 +20,7 @@
 #
 # MAILLES : HEXA8 (ET QUAD4)
 
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'), DEBUG=_F(SDVERI='OUI'))
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'), DEBUG=_F(SDVERI='OUI'), IMPR_MACRO='OUI')
 
 #
 # LECTURE DU MAILLAGE --------------------------------------------------

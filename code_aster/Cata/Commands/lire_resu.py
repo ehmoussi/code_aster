@@ -25,6 +25,10 @@ from code_aster.Cata.Commons import *
 
 
 def lire_resu_prod(TYPE_RESU,**args):
+  if args.get('__all__'):
+      return (evol_char, evol_ther, evol_elas, evol_noli, dyna_trans,
+              dyna_harmo, mode_meca, mode_empi, mode_meca_c, evol_varc)
+
   if TYPE_RESU == "EVOL_CHAR" :  return evol_char
   if TYPE_RESU == "EVOL_THER" :  return evol_ther
   if TYPE_RESU == "EVOL_ELAS" :  return evol_elas
@@ -144,7 +148,7 @@ LIRE_RESU=OPER(nom="LIRE_RESU",op=150,sd_prod=lire_resu_prod,reentrant='n',
 # 1-4 med :
 # ---------
          b_med           =BLOC(condition = """equal_to("FORMAT", 'MED')""",fr=tr("Nom du champ dans le fichier MED"),
-           UNITE           =SIMP(statut='f',typ=UnitType(),defaut= 81, inout='in', fr=tr("Le fichier est : fort.n."),),
+           UNITE           =SIMP(statut='f',typ=UnitType('med'),defaut= 81, inout='in', fr=tr("Le fichier est : fort.n."),),
            FORMAT_MED      =FACT(statut='o',max='**',
              regles=(ENSEMBLE('NOM_CMP','NOM_CMP_MED'),UN_PARMI('NOM_CHAM_MED','NOM_RESU'),),
              NOM_CHAM        =SIMP(statut='o',typ='TXM',validators=NoRepeat(),into=C_NOM_CHAM_INTO(),),

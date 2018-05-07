@@ -22,7 +22,7 @@
 cata_msg = {
 
     2 : _(u"""
- --------------------PARAMETRES DE CHOC--------------------
+ -------------------- PARAMÈTRES DE CHOC --------------------
  Informations sur les noeuds de choc
  lieu de choc   :  %(i1)d
  noeud de choc  :  %(k1)s
@@ -129,7 +129,7 @@ cata_msg = {
     22 : _(u"""
  La matrice de masse fournie est singulière, un pivot nul a été détecté, au moins pour le mode numéro %(i1)d.
  Le calcul va poursuivre avec l'extrait diagonal de la matrice de masse. La dynamique associée aux modes
- sans masses sera artificiellement supprimée en imposant une valeur critique de l'amortissement.  
+ sans masses sera artificiellement supprimée en imposant une valeur critique de l'amortissement.
 """),
 
     44 : _(u"""
@@ -294,7 +294,7 @@ Risques & conseils :
 
 
     97 : _(u"""
- Comportement unidirectionnel activé : 
+ Comportement unidirectionnel activé :
  Le coefficient de frottement est nul suivant l'axe X local.
  En repère global cet axe correspond à :  x :  %(r1)f
                                           y :  %(r2)f

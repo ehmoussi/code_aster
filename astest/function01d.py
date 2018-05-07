@@ -19,6 +19,7 @@ SIYY = DEFI_FONCTION(NOM_PARA='EPSI',
                      0.106404,  5.276E+08,
                      )
                      )
+SIYY.Trace()
 
 TABF1 = CREA_TABLE(FONCTION=_F(FONCTION=SIYY,
                                PARA=('EPSI', 'SIYY',),
