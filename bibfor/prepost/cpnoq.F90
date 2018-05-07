@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -22,6 +22,7 @@ subroutine cpnoq(main,numa,coor,ind,nomnoe)
     implicit none
 !
 #include "jeveux.h"
+#include "asterfort/assert.h"
 #include "asterfort/codent.h"
 #include "asterfort/jecroc.h"
 #include "asterfort/jeexin.h"
@@ -58,7 +59,7 @@ subroutine cpnoq(main,numa,coor,ind,nomnoe)
 !
     character(len=8) :: nomnd,eletyp
     character(len=24) :: valk
-    character(len=6) :: knume
+    character(len=16) :: knume
 ! ----------------------------------------------------------------------
 !
     call jemarq()
@@ -67,11 +68,14 @@ subroutine cpnoq(main,numa,coor,ind,nomnoe)
     do inc1=1,4
 ! ------ NOM DU NOEUD CREE
         call codent(ind+inc1-1, 'G', knume)
+        if (knume(1:1)=='*') then
+            ASSERT(.false.)
+        endif
         lgnd = lxlgut(knume)
-        if (lgnd+2 .gt. 8) then
+        if (lgnd+1 .gt. 8) then
             call utmess('F', 'ALGELINE_16')
         endif
-        nomnd = 'C' // knume
+        nomnd = 'C' // knume(1:lgnd)
 ! ------ DECLARATION DU NOEUD CREE
         call jeexin(jexnom(nomnoe, nomnd), iret)
         if (iret .eq. 0) then

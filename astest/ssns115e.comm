@@ -180,7 +180,7 @@ TEST_RESU(RESU=_F(LEGENDE='Depl point O',
                   NOM_CHAM='DEPL',
                   NOM_CMP='DZ',
                   GROUP_NO='point_O',
-                  VALE_CALC=1056.91461045,
+                  VALE_CALC=1056.91501045,
                   REFERENCE='SOURCE_EXTERNE',
                   VALE_REFE=1047.,
                   PRECISION=1E-2,),);

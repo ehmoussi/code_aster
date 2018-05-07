@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -254,6 +254,7 @@ TEST_TABLE(TABLE = SXX21,
        NOM_PARA = 'SIXX',
            TYPE_TEST = 'MAX',
            VALE_CALC = 410.074019453,
+           TOLE_MACHINE = 1.e-5,
            REFERENCE= 'SOURCE_EXTERNE',
            VALE_REFE= 4.099964e+02,
        PRECISION = 0.01,
@@ -262,6 +263,7 @@ TEST_TABLE(TABLE = SXX22,
        NOM_PARA = 'SIXX',
            TYPE_TEST = 'MAX',
            VALE_CALC = 758.512792586,
+           TOLE_MACHINE = 1.e-4,
            REFERENCE= 'SOURCE_EXTERNE',
            VALE_REFE=7.586364e+02,
        PRECISION = 0.01,

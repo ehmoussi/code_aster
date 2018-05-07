@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -23,6 +23,7 @@ subroutine op0175()
 !
 #include "jeveux.h"
 #include "asterfort/assert.h"
+#include "asterc/getres.h"
 #include "asterfort/getvid.h"
 #include "asterfort/getvr8.h"
 #include "asterfort/getvtx.h"
@@ -38,23 +39,26 @@ subroutine op0175()
 #include "asterfort/rsutnu.h"
 #include "asterfort/w175af.h"
 #include "asterfort/w175ca.h"
+#include "asterfort/utmess.h"
+!
     integer :: ifm, niv, n0, nuord
     integer :: iret, jpara, ie, nbordr, i, nuordr
     character(len=8) :: resu, modele, cara, k8b
-    character(len=16) :: crit
-    character(len=19) :: chfer1, chfer2, chefge, resu19
+    character(len=16) :: crit, concep, nomcmd
+    character(len=19) :: chfer1, chfer2, chefge, resu19, resuc1
     real(kind=8) :: prec
     integer, pointer :: nume_ordre(:) => null()
 !     ------------------------------------------------------------------
 !
     call jemarq()
 !
-!
     call infmaj()
     call infniv(ifm, niv)
 !
+    call getres(resuc1, concep, nomcmd)
     call getvid(' ', 'RESULTAT', scal=resu, nbret=n0)
     resu19=resu
+!
 !
 !     -- CHOIX DES INSTANTS DE CALCUL :
 !     ---------------------------------
@@ -81,7 +85,6 @@ subroutine op0175()
     ASSERT(cara.ne.' ')
 !
 !
-!
 !     -- 1. ON CREE LE CHAMP DE DONNEES (CHFER1) :
 !     ---------------------------------------------
     chfer1='&&OP0175.CHFER1'
@@ -89,21 +92,24 @@ subroutine op0175()
     if (niv .gt. 1) call imprsd('CHAMP', chfer1, 6, 'CHFER1=')
 !
 !
-!
 !     -- 2. ON APPELLE L'OPTION FERRAILLAGE :
 !     -------------------------------------------
     do 20,i = 1,nbordr
-    nuordr = nume_ordre(i)
-    call rsexch('F', resu19, 'EFGE_ELNO', nuordr, chefge,&
-                iret)
-    call rsexch(' ', resu19, 'FERRAILLAGE', nuordr, chfer2,&
-                iret)
-    call w175ca(modele, cara, chfer1, chefge, chfer2)
+        nuordr = nume_ordre(i)
+        call rsexch('F', resu19, 'EFGE_ELNO', nuordr, chefge,&
+                    iret)
+        call rsexch(' ', resu19, 'FERRAILLAGE', nuordr, chfer2,&
+                    iret)
+        if (resu19.eq.resuc1) then
+            if (iret.eq.0.d0) then
+                call utmess('A', 'CALCULEL_88', si=nuordr ,sk=resu19)
+            endif
+        endif
+        call w175ca(modele, cara, chfer1, chefge, chfer2)
 !
-    if (niv .gt. 1) call imprsd('CHAMP', chfer2, 6, 'CHFER2=')
-    call rsnoch(resu19, 'FERRAILLAGE', nuordr)
+        if (niv .gt. 1) call imprsd('CHAMP', chfer2, 6, 'CHFER2=')
+        call rsnoch(resu19, 'FERRAILLAGE', nuordr)
     20 end do
-!
 !
     call jedema()
 end subroutine

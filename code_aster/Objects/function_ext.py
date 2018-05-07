@@ -23,6 +23,7 @@
 ****************************************
 """
 
+import os
 import numpy as np
 
 import aster
@@ -118,15 +119,13 @@ class ExtendedFunction(injector(Function), Function):
 
     def Trace(self, FORMAT='TABLEAU', **kargs):
         """Tracé d'une fonction"""
-        if not self.accessible():
-            raise AsException("Erreur dans fonction.Trace en PAR_LOT='OUI'")
         from Utilitai.Graph import Graph
         gr = Graph()
-        gr.AjoutCourbe(Val=self.Valeurs(),
-                       Lab=[
-            self.Parametres(
-            )['NOM_PARA'], self.Parametres()['NOM_RESU']],
-            Leg=os.linesep.join(self.sdj.TITR.get()))
+        para = self.Parametres()
+        gr.AjoutCourbe(
+            Val=self.Valeurs(),
+            Lab=[para['NOM_PARA'], para['NOM_RESU']],
+            Leg=os.linesep.join(self.sdj.TITR.get() or []))
         gr.Trace(FORMAT=FORMAT, **kargs)
 
 
@@ -232,13 +231,11 @@ class ExtendedFunctionComplex(injector(FunctionComplex), FunctionComplex):
 
     def Trace(self, FORMAT='TABLEAU', **kargs):
         """Tracé d'une fonction"""
-        if not self.accessible():
-            raise AsException("Erreur dans fonction.Trace en PAR_LOT='OUI'")
         from Utilitai.Graph import Graph
         gr = Graph()
-        gr.AjoutCourbe(Val=self.Valeurs(),
-                       Lab=[
-            self.Parametres(
-            )['NOM_PARA'], self.Parametres()['NOM_RESU']],
-            Leg=os.linesep.join(self.sdj.TITR.get()))
+        para = self.Parametres()
+        gr.AjoutCourbe(
+            Val=self.Valeurs(),
+            Lab=[para['NOM_PARA'], para['NOM_RESU']],
+            Leg=os.linesep.join(self.sdj.TITR.get() or []))
         gr.Trace(FORMAT=FORMAT, **kargs)

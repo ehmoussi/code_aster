@@ -38,8 +38,8 @@
 #define _COOR_ORIGIN_OBSTACLE 15
 #define _DAMP_NORMAL 16
 #define _DAMP_TANGENTIAL 17
-#define _DISC_ISOT_DX 18
-#define _DISC_ISOT_DX0 19
+#define _DISC_ISOT_FX0DX0 18
+
 #define _DIST_NO1 20
 #define _DIST_NO2 21
 #define _DISVISC_A 22
@@ -140,7 +140,7 @@
 #define NBVARINT_FLAM 11
 #define NBVARINT_ANTS 8
 #define NBVARINT_DVIS 11
-#define NBVARINT_DECR 12
+#define NBVARINT_DECR 20
 #define NBVARINT_ROTF 3
 #define NBVARINT_YACS 1
 #define NBVARINT_FXRL 3

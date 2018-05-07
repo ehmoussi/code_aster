@@ -128,7 +128,7 @@ TABDEP=POST_RELEVE_T(ACTION=_F(INTITULE='DEPLACEMENT SUR LES LEVRES',
 
 # solution analytique :
 #    - deplacement
-def ux(X,Y): 
+def ux(X,Y):
     return (2.-X)*pression(Y)/E
 
 UX=FORMULE(NOM_PARA=('X','Y',),VALE='ux(X,Y)',ux=ux)
@@ -138,6 +138,10 @@ def Sxx(X,Y):
     return -pression(Y)
 
 SXX=FORMULE(NOM_PARA=('X','Y',),VALE='Sxx(X,Y)',Sxx=Sxx);
+
+# objects needed for evaluation are hold by the formulas themself.
+del ux
+del Sxx
 
 # calcul de l'erreur en terme de norme en energie
 Scal=CREA_CHAMP(OPERATION='EXTR',

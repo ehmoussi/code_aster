@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -16,10 +16,6 @@
 # You should have received a copy of the GNU General Public License
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
-
-#
-# DATE   : 05/12/2014
-# AUTEUR : Francis LEBOUVIER (DeltaCAD)
 # 
 # MODELISATION : C_PLAN
 # MAILLE       : QUAD4
@@ -27,7 +23,7 @@
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
 
-mail=LIRE_MAILLAGE(FORMAT='MED',INFO=2);
+mail=LIRE_MAILLAGE(FORMAT='MED');
 
 
 mail=MODI_MAILLAGE(reuse =mail,
@@ -67,53 +63,10 @@ contact=DEFI_CONTACT(MODELE=modele,
                      ZONE=_F(GROUP_MA_MAIT='Haut_Contact',
                              GROUP_MA_ESCL='Bas_Contact',
                              CONTACT_INIT='OUI',
-                             COEF_FROT=1.E7,COEF_CONT=1.E9,
+                             COEF_FROT=2.E7,COEF_CONT=2.E9,
                              SANS_NOEUD = ('N6'), 
                              COULOMB=0.2),);
 
-#contact2 = NEWTON_PARTIEL
-contact2=DEFI_CONTACT(MODELE=modele,
-                     FORMULATION='CONTINUE',
-                     FROTTEMENT='COULOMB',
-                     ALGO_RESO_GEOM='POINT_FIXE',
-                     ALGO_RESO_CONT='NEWTON',
-                     ALGO_RESO_FROT='NEWTON',
-                     ZONE=_F(GROUP_MA_MAIT='Haut_Contact',
-                             GROUP_MA_ESCL='Bas_Contact',
-                             CONTACT_INIT='OUI',
-                             COEF_FROT=1.E7,COEF_CONT=1.E9,
-                             SANS_NOEUD = ('N6'), 
-                             COULOMB=0.2),  );
-
-#contact3 = PENALISE+NEWTON_PARTIEL
-contact3=DEFI_CONTACT(MODELE=modele,
-                     FORMULATION='CONTINUE',
-                     FROTTEMENT='COULOMB',
-                     ALGO_RESO_GEOM='POINT_FIXE',
-                     ALGO_RESO_CONT='NEWTON',
-                     ALGO_RESO_FROT='NEWTON',
-                     ZONE=_F(ALGO_CONT='PENALISATION',ALGO_FROT='PENALISATION',
-                             GROUP_MA_MAIT='Haut_Contact',
-                             GROUP_MA_ESCL='Bas_Contact',
-                             CONTACT_INIT='OUI',
-                             COEF_PENA_FROT=1.E7,COEF_PENA_CONT=1.E9,
-                             SANS_NOEUD = ('N6'), 
-                             COULOMB=0.2), );
-
-#contact4 = PENALISE+POINT_FIXE
-contact4=DEFI_CONTACT(MODELE=modele,
-                     FORMULATION='CONTINUE',
-                     FROTTEMENT='COULOMB',
-                     ALGO_RESO_GEOM='POINT_FIXE',
-                     ALGO_RESO_CONT='POINT_FIXE',
-                     ALGO_RESO_FROT='POINT_FIXE',
-                     ZONE=_F(ALGO_CONT='PENALISATION',ALGO_FROT='PENALISATION',
-                             GROUP_MA_MAIT='Haut_Contact',
-                             GROUP_MA_ESCL='Bas_Contact',
-                             CONTACT_INIT='OUI',
-                             COEF_PENA_FROT=1.E7,COEF_PENA_CONT=1.E9,
-                             SANS_NOEUD = ('N6'), 
-                             COULOMB=0.2),);
 
 res=MECA_STATIQUE(MODELE=modele,
                    CHAM_MATER=affe_mat,

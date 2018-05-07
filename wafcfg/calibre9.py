@@ -37,17 +37,20 @@ def configure(self):
     opts = self.options
 
     official_programs.configure(self)
+    official_programs.check_prerequisites_package(self, YAMMROOT, '20180417')
 
     self.env.append_value('CXXFLAGS', ['-D_GLIBCXX_USE_CXX11_ABI=0',
                                        '-Wno-literal-suffix'])
     self.env['ADDMEM'] = 350
 
-    TFELHOME = YAMMROOT + '/prerequisites/Mfront-TFEL311'
+    TFELHOME = YAMMROOT + '/prerequisites/Mfront-TFEL311_aster'
+    TFELVERS = '3.1.1'
     self.env.TFELHOME = TFELHOME
+    self.env.TFELVERS = TFELVERS
 
     self.env.append_value('LIBPATH', [
         YAMMROOT + '/prerequisites/Hdf5-1814/lib',
-        YAMMROOT + '/tools/Medfichier-331/lib',
+        YAMMROOT + '/prerequisites/Medfichier-331/lib',
         YAMMROOT + '/prerequisites/Metis_aster-510_aster4/lib',
         YAMMROOT + '/prerequisites/Scotch_aster-604_aster7/SEQ/lib',
         YAMMROOT + '/prerequisites/Mumps-512_consortium_aster3/SEQ/lib',
@@ -56,7 +59,7 @@ def configure(self):
 
     self.env.append_value('INCLUDES', [
         YAMMROOT + '/prerequisites/Hdf5-1814/include',
-        YAMMROOT + '/tools/Medfichier-331/include',
+        YAMMROOT + '/prerequisites/Medfichier-331/include',
         YAMMROOT + '/prerequisites/Metis_aster-510_aster4/include',
         YAMMROOT + '/prerequisites/Scotch_aster-604_aster7/SEQ/include',
         YAMMROOT + '/prerequisites/Mumps-512_consortium_aster3/SEQ/include',

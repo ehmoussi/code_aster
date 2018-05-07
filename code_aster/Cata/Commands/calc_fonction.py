@@ -27,6 +27,8 @@ def calc_fonction_prod(self, DERIVE, EXTRACTION, INTEGRE, INVERSE, COMB, COMB_C,
                        ENVELOPPE, FRACTILE, PROL_SPEC_OSCI, SPEC_OSCI, ASSE, FFT, COMPOSE, CORR_ACCE, COHERENCE,
                        PUISSANCE, LISS_ENVELOP, ABS, REGR_POLYNOMIALE, DSP, MOYENNE,
                        INTERPOL_FFT, **args):
+   if args.get('__all__'):
+       return (fonction_sdaster, fonction_c, nappe_sdaster)
 
    if (INTEGRE     != None): return fonction_sdaster
    if (DERIVE      != None): return fonction_sdaster
@@ -54,7 +56,7 @@ def calc_fonction_prod(self, DERIVE, EXTRACTION, INTEGRE, INVERSE, COMB, COMB_C,
    if (MOYENNE    != None): return AsType(MOYENNE[0] ['FONCTION'])
    if (EXTRACTION  != None): return fonction_sdaster
    if (PROL_SPEC_OSCI   != None): return fonction_sdaster
-   if (SPEC_OSCI   != None): 
+   if (SPEC_OSCI   != None):
        if (SPEC_OSCI[0]['TYPE_RESU'] == "NAPPE"):
            return nappe_sdaster
        else:
@@ -120,7 +122,7 @@ CALC_FONCTION=MACRO(nom="CALC_FONCTION",
            COEF            =SIMP(statut='f',typ='R',defaut= 0.E+0,fr=tr("Valeur de la constante d intégration") ),
          ),
          LISS_ENVELOP    = FACT(statut='f',fr=tr("Lissage d une enveloppe"),
-           regles=(UN_PARMI('NAPPE', 'FONCTION', 'TABLE'),), 
+           regles=(UN_PARMI('NAPPE', 'FONCTION', 'TABLE'),),
            NAPPE           =SIMP(statut='f',typ=nappe_sdaster ,max='**'),
            TABLE           =SIMP(statut='f',typ=table_sdaster ,max='**'),
            FONCTION        =SIMP(statut='f',typ=fonction_sdaster ,min=1,max=1),
@@ -131,14 +133,14 @@ CALC_FONCTION=MACRO(nom="CALC_FONCTION",
            FREQ_MIN        =SIMP(statut='f',typ='R'),
            FREQ_MAX        =SIMP(statut='f',typ='R'),
            LIST_FREQ       =SIMP(statut='f',typ='R',max='**',defaut =[]),
-           NB_FREQ_LISS    =SIMP(statut='f',typ='I',max=2, val_min=1, defaut=10, fr=tr("Nb de points pour le lissage ") ), 
-           ZPA             =SIMP(statut='f',typ='R'), 
+           NB_FREQ_LISS    =SIMP(statut='f',typ='I',max=2, val_min=1, defaut=10, fr=tr("Nb de points pour le lissage ") ),
+           ZPA             =SIMP(statut='f',typ='R'),
          ),
          REGR_POLYNOMIALE = FACT(statut='f',fr=tr("Régression polynomiale d'une fonction"),
            FONCTION        =SIMP(statut='o',typ=fonction_sdaster),
            DEGRE           =SIMP(statut='o',typ='I'),
          ),
-        PROL_SPEC_OSCI  = FACT(statut='f',fr=tr("Prolonger un Spectre d'oscillateur par DEPL_MAX"), 
+        PROL_SPEC_OSCI  = FACT(statut='f',fr=tr("Prolonger un Spectre d'oscillateur par DEPL_MAX"),
            FONCTION     = SIMP(statut='o',typ=fonction_sdaster,fr=tr("Spectre d'oscillateur" ),),
            NORME        = SIMP(statut='o', typ='R',fr=tr("Valeur de la norme du spectre d oscillateur")),
            DEPL_MAX     = SIMP(statut='o',typ='R', val_min=0., fr=tr("Deplacement maximal pour la prolongation" ) ),
@@ -164,7 +166,7 @@ CALC_FONCTION=MACRO(nom="CALC_FONCTION",
            AMOR_REDUIT     =SIMP(statut='o', typ='R', val_min=0., val_max=1.),
            NORME           =SIMP(statut='o', typ='R'),
            LIST_FREQ       =SIMP(statut='f', typ=listr8_sdaster ),
-           NB_ITER       =SIMP(statut='f',typ='I' , val_min=0, defaut =10, 
+           NB_ITER       =SIMP(statut='f',typ='I' , val_min=0, defaut =10,
                                    fr=tr("nombre d'iterations pour fitter le spectre") ,),
            FREQ_PAS            =SIMP(statut='f', typ='R'),
                 regles=(UN_PARMI('FREQ_PAS','LIST_FREQ'),),

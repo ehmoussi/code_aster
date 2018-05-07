@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -289,12 +289,6 @@ Conseil et solution : Utilisez la méthode de Craig & Bampton
 La mise en oeuvre de la méthode de Mac Neal en sous structuration cyclique
 conduit à un problème singulier pour le cas particulier où on a 2 ou 4 secteurs
 Conseil et solution : Utilisez la méthode de Craig & Bampton
-"""),
-
-    93 : _(u"""
- arrêt sur dimension matrice TETA incorrecte
- dimension effective   :  %(i1)d
- dimension en argument :  %(i2)d
 """),
 
     94: _(u"""

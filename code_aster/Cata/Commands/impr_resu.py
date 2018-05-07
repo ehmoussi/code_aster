@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -49,7 +49,7 @@ IMPR_RESU=PROC(nom="IMPR_RESU",op=39,
          ),
 
          b_format_med  =BLOC(condition="""equal_to("FORMAT", 'MED')""",fr=tr("unité logique d'impression au format MED"),
-           UNITE           =SIMP(statut='f',typ=UnitType(),defaut=80, inout='out'),
+           UNITE           =SIMP(statut='f',typ=UnitType('med'),defaut=80, inout='out'),
          ),
 
          b_format_gmsh  =BLOC(condition="""equal_to("FORMAT", 'GMSH')""",fr=tr("unité logique d'impression et version GMSH"),

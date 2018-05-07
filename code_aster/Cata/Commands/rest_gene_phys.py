@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -25,6 +25,8 @@ from code_aster.Cata.Commons import *
 
 
 def rest_gene_phys_prod(RESU_GENE,**args ):
+  if args.get('__all__'):
+      return (dyna_trans, mode_meca, dyna_harmo)
   if AsType(RESU_GENE) == tran_gene : return dyna_trans
   if AsType(RESU_GENE) == mode_gene : return mode_meca
   if AsType(RESU_GENE) == harm_gene : return dyna_harmo

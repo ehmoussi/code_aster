@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -120,8 +120,13 @@ implicit none
         isst      = p_deeq(2*(i_equa-1)+2)
         if (isst .gt. 0) then
             type_equa = 'D'
-            call jeveuo(jexnum(orig, 1), 'L', vi = p_orig)
-            nume_subs = p_orig(isst)
+            call jeexin(jexnum(orig, 1), iexi)
+            if (iexi .gt. 0) then
+                call jeveuo(jexnum(orig, 1), 'L', vi = p_orig)
+                nume_subs = p_orig(isst)
+            else
+                nume_subs = 0
+            endif
         else
             type_equa = 'E'
             isst = -isst

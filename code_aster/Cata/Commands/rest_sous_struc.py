@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -24,6 +24,8 @@ from code_aster.Cata.Commons import *
 
 
 def rest_sous_struc_prod(RESU_GENE,RESULTAT,**args ):
+  if args.get('__all__'):
+      return (dyna_trans, mode_meca, dyna_harmo, evol_noli)
   if AsType(RESU_GENE) == tran_gene : return dyna_trans
   if AsType(RESU_GENE) == mode_gene : return mode_meca
   if AsType(RESU_GENE) == mode_cycl : return mode_meca
@@ -55,12 +57,12 @@ REST_SOUS_STRUC=OPER(nom="REST_SOUS_STRUC",op=  77,sd_prod=rest_sous_struc_prod,
          NUME_DDL        =SIMP(statut='f',typ=nume_ddl_sdaster ),
          MODE_MECA       =SIMP(statut='f',typ=mode_meca ),
          TOUT_ORDRE      =SIMP(statut='f',typ='TXM',into=("OUI",) ),
-         NUME_ORDRE      =SIMP(statut='f',typ='I',validators=NoRepeat(),max='**' ),  
-         NUME_MODE       =SIMP(statut='f',typ='I',validators=NoRepeat(),max='**' ),  
+         NUME_ORDRE      =SIMP(statut='f',typ='I',validators=NoRepeat(),max='**' ),
+         NUME_MODE       =SIMP(statut='f',typ='I',validators=NoRepeat(),max='**' ),
          TOUT_INST       =SIMP(statut='f',typ='TXM',into=("OUI",) ),
-         INST            =SIMP(statut='f',typ='R',validators=NoRepeat(),max='**' ),  
+         INST            =SIMP(statut='f',typ='R',validators=NoRepeat(),max='**' ),
          LIST_INST       =SIMP(statut='f',typ=listr8_sdaster ),
-         FREQ            =SIMP(statut='f',typ='R',validators=NoRepeat(),max='**' ),  
+         FREQ            =SIMP(statut='f',typ='R',validators=NoRepeat(),max='**' ),
          LIST_FREQ       =SIMP(statut='f',typ=listr8_sdaster ),
          CRITERE         =SIMP(statut='f',typ='TXM',defaut="RELATIF",into=("ABSOLU","RELATIF") ),
          b_prec_rela=BLOC(condition="""(equal_to("CRITERE", 'RELATIF'))""",
@@ -84,7 +86,7 @@ REST_SOUS_STRUC=OPER(nom="REST_SOUS_STRUC",op=  77,sd_prod=rest_sous_struc_prod,
          ),
 
          SQUELETTE       =SIMP(statut='f',typ=squelette ),
-         SOUS_STRUC      =SIMP(statut='f',typ='TXM' ),  
-         SECTEUR         =SIMP(statut='f',typ='I'),  
-         TITRE           =SIMP(statut='f',typ='TXM' ),  
+         SOUS_STRUC      =SIMP(statut='f',typ='TXM' ),
+         SECTEUR         =SIMP(statut='f',typ='I'),
+         TITRE           =SIMP(statut='f',typ='TXM' ),
 )  ;

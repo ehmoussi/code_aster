@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -100,7 +100,7 @@ implicit none
     character(len=24) :: nomnoi, nomnoe, limane, conloc
     character(len=24) :: nomnd, nomma, cninv, cnivax, rgma, gpptnn
     character(len=19) :: coordo
-    character(len=6) :: knume,knuzo
+    character(len=16) :: knume,knuzo
     character(len=8) :: typmail,typmail_trait
     aster_logical :: false
 ! -------------------------------------------------------------------------------------------------
@@ -396,6 +396,8 @@ implicit none
                         call jeecra(jexnum(limane, inc), 'LONMAX', ival=4)
                         call jeecra(jexnum(limane, inc), 'LONUTI', ival=4)
                     else
+                        call utmess('A', 'CREALAC_1')
+                        ASSERT(.false.)
                     endif
                 case (4, 6, 16)
                     call jeecra(jexnum(limane, inc), 'LONMAX', ival=2)
@@ -787,16 +789,19 @@ implicit none
                 call jeveuo(jexnum(conloc,zi(jlimane+incc)),'L',jconloc)
                 zi(jlimane+incc)=ind+incc
 ! ---------------------- NOM DE LA MAILLE
-                if (nbnwma .eq. 1) then
+                if (incc .eq. 0) then
                     call jenuno(jexnum(main//'.NOMMAI',inc),nomma)
                     call jecroc(jexnom(maout//'.NOMMAI',nomma))
                 else
                     call codent(nma+ind1, 'G', knume)
+                    if (knume(1:1)=='*') then
+                        ASSERT(.false.)
+                    endif
                     lgma = lxlgut(knume)
-                    if (lgma+2 .gt. 8) then
+                    if (lgma+1 .gt. 8) then
                         call utmess('F', 'ALGELINE_16')
                     endif
-                    nomma = knuzo(1:1)//'Z'// knume
+                    nomma ='M'// knume(1:lgma)
                     call jecroc(jexnom(maout//'.NOMMAI',nomma))
                     ind1=ind1+1
                 end if
