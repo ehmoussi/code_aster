@@ -29,6 +29,7 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/assert.h"
+#include "asterfort/cfdisl.h"
 #include "asterfort/infdbg.h"
 #include "asterfort/nmdebg.h"
 #include "asterfort/nonlinDSVectCombCompute.h"
@@ -61,6 +62,7 @@ real(kind=8), optional, intent(in) :: eta_
 !
     integer :: ifm, niv
     type(NL_DS_VectComb) :: ds_vectcomb
+    aster_logical :: l_unil_pena
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -83,7 +85,10 @@ real(kind=8), optional, intent(in) :: eta_
             call nonlinDSVectCombAddAny(ds_contact_%cnctdf, +1.d0, ds_vectcomb)
         endif
         if (ds_contact_%l_cnunil) then
-            call nonlinDSVectCombAddAny(ds_contact_%cnunil, +1.d0, ds_vectcomb)
+            l_unil_pena = cfdisl(ds_contact_%sdcont_defi, 'UNIL_PENA')
+            if (l_unil_pena) then
+                call nonlinDSVectCombAddAny(ds_contact_%cnunil, +1.d0, ds_vectcomb)
+            endif
         endif
         if (ds_contact_%l_cneltc) then
             call nonlinDSVectCombAddAny(ds_contact_%cneltc, +1.d0, ds_vectcomb)
