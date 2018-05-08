@@ -230,6 +230,10 @@ type(NL_DS_AlgoPara), intent(in) :: ds_algopara
                  call utmess('F', 'CONTACT_88')
               endif
            endif
+        else
+            if (.not.l_matr_rigi_syme) then
+                call utmess('A', 'UNILATER_1')
+            endif
         endif
         if (l_pilo) then
             call utmess('F', 'MECANONLINE3_94')
@@ -239,9 +243,6 @@ type(NL_DS_AlgoPara), intent(in) :: ds_algopara
         endif
         if (lgcpc .or. lpetsc) then
             call utmess('F', 'MECANONLINE3_96', sk=slvk(1))
-        endif
-        if (.not.l_matr_rigi_syme) then
-            call utmess('A', 'UNILATER_1')
         endif
     endif
 !
