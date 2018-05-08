@@ -54,7 +54,7 @@ A cause des erreurs précédentes, le code s'arrête.
 """),
 
     5 : _(u"""
- Vous utilisez une méthode de contact (contact discret avec pénalisation ou élément DIS_CHOC)
+ Vous utilisez une méthode de contact (contact discret ou unilateral avec pénalisation ou élément DIS_CHOC)
   qui apporte une contribution à la matrice tangente à chaque itération. La réactualisation est donc forcée (REAC_ITER=1) et ce même si vous utilisez la matrice
  'ELASTIQUE'.
 
