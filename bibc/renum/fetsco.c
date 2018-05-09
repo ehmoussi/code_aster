@@ -53,8 +53,9 @@ void DEFPPPPPPPPPP(FETSCO,fetsco, ASTERINTEGER *nbmato, ASTERINTEGER *nblien,
     printf("\n");*/
   }  
   if ( err == 0 )
-    err = SCOTCH_graphBuild(&grafdat, 1, (int)*nbmato, idconnect, NULL, velo, NULL,
-                            (int)*nblien, connect, edlo);
+    err = SCOTCH_graphBuild(&grafdat, 1, (int)*nbmato, (const SCOTCH_Num *const) idconnect, NULL,
+                            (const SCOTCH_Num *const) velo, NULL, (int)*nblien, 
+                            (const SCOTCH_Num *const) connect, (const SCOTCH_Num *const) edlo);
 
 /* VERIFICATION DE GRAPHE DEBRANCHABLE SUR DE GROS GRAPHES CAR POTENTIELLEMENT COUTEUSE */
   if ( err == 0 ) 
@@ -64,7 +65,7 @@ void DEFPPPPPPPPPP(FETSCO,fetsco, ASTERINTEGER *nbmato, ASTERINTEGER *nblien,
     err = SCOTCH_stratInit (&mapstrat);                     
   
   if ( err == 0 )
-    err=SCOTCH_graphPart(&grafdat, (int)*nbpart, &mapstrat, mapsd);  
+    err=SCOTCH_graphPart(&grafdat, (int)*nbpart, &mapstrat, (SCOTCH_Num *const) mapsd);  
 
   if ( err == 0 ) {
     SCOTCH_stratExit(&mapstrat);
