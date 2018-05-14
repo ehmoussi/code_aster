@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -21,6 +21,7 @@
 
 from ..Objects import Mesh
 from .ExecuteCommand import ExecuteCommand
+from code_aster.RunManager import LogicalUnitFile
 
 
 class MeshReader(ExecuteCommand):
@@ -28,7 +29,7 @@ class MeshReader(ExecuteCommand):
     command_name = "LIRE_MAILLAGE"
 
 
-    def create_result(self, _):
+    def create_result(self, keywords):
         """Create the :class:`~code_aster.Objects.Mesh`.
 
         Arguments:
@@ -43,16 +44,16 @@ class MeshReader(ExecuteCommand):
             keywords (dict): User's keywords.
         """
         mesh = self._result
-        fileName = "fort.{UNITE}".format(**keywords)
+        fileName = LogicalUnitFile.filename_from_unit(keywords['UNITE'])
         format = keywords["FORMAT"]
         if format == "MED":
-            mesh.readMedFile( fileName )
+            mesh.readMedFile(fileName)
         elif format == "GMSH":
-            mesh.readGmshFile( fileName )
+            mesh.readGmshFile(fileName)
         elif format == "GIBI":
-            mesh.readGibiFile( fileName )
+            mesh.readGibiFile(fileName)
         elif format == "ASTER":
-            mesh.readAsterMeshFile( fileName )
+            mesh.readAsterMeshFile(fileName)
         return mesh
 
 

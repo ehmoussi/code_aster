@@ -42,6 +42,8 @@ class LogicalUnitFileCython
         std::string _fileName;
         /** @brief Booleen pour savoir si un fichier est utilisable */
         bool _isUsable;
+        /** @brief Associated logical unit */
+        int _logicalUnit;
 
     public:
         /**
@@ -66,7 +68,7 @@ class LogicalUnitFileCython
             _fileName( name ),
             _isUsable( true )
         {
-            openLogicalUnitFile( name.c_str(), type, access );
+            _logicalUnit = openLogicalUnitFile( name.c_str(), type, access );
         };
 
         /**
@@ -74,7 +76,7 @@ class LogicalUnitFileCython
          */
         ~LogicalUnitFileCython()
         {
-            if( _isUsable ) releaseLogicalUnitFile( _fileName.c_str() );
+            if( _isUsable ) releaseLogicalUnitFile( _logicalUnit );
         };
 
         /**
@@ -94,10 +96,7 @@ class LogicalUnitFileCython
         {
             if( !_isUsable )
                 throw std::runtime_error( "File not initialized" );
-            int unit = getNumberOfLogicalUnitFile( _fileName.c_str() );
-            if ( unit < 0 )
-                throw std::runtime_error("can not get logical unit number");
-            return unit;
+            return _logicalUnit;
         };
 };
 

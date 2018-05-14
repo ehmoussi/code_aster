@@ -191,7 +191,6 @@ bool ResultsContainerInstance::update() throw ( std::runtime_error )
 {
     _serialNumber->updateValuePointer();
     auto boolRet = _namesOfFields->buildFromJeveux( true );
-    std::cout << "boolRet " << boolRet << std::endl;
     const auto numberOfSerialNum = _serialNumber->usedSize();
     _nbRanks = numberOfSerialNum;
 
