@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -602,48 +602,56 @@ instp = DEFI_LIST_REEL(DEBUT=textr,
 # Comparaisons des resultats pour validation
 #
 # Ecarts entre EPX et DNL explicites (avant bascules et poursuites) :
-D_UZ_E1 = FORMULE(NOM_PARA='INST',VALE='''abs((UZ_DNL_E(INST)-UZ_EPX(INST))/UZ_EPX(INST))''') ;
+D_UZ_E1 = FORMULE(NOM_PARA='INST',VALE='''abs((UZ_DNL_E(INST)-UZ_EPX(INST))/UZ_EPX(INST))''',
+                  UZ_DNL_E=UZ_DNL_E, UZ_EPX=UZ_EPX) ;
 D_UZ_E2 = CALC_FONC_INTERP(FONCTION=D_UZ_E1, NOM_PARA = 'INST',NOM_RESU='DEPLACEMENT',
                         PROL_DROITE='CONSTANT',INTERPOL='LIN',TITRE='ERREUR DEPL EXPL',
                         PROL_GAUCHE='CONSTANT',
                         LIST_PARA=inst_te);
-D_AZ_E1 = FORMULE(NOM_PARA='INST',VALE='''abs((AZ_DNL_E(INST)-AZ_EPX(INST))/AZ_EPX(INST))''') ;
+D_AZ_E1 = FORMULE(NOM_PARA='INST',VALE='''abs((AZ_DNL_E(INST)-AZ_EPX(INST))/AZ_EPX(INST))''',
+                  AZ_DNL_E=AZ_DNL_E, AZ_EPX=UZ_EPX) ;
 D_AZ_E2 = CALC_FONC_INTERP(FONCTION=D_AZ_E1, NOM_PARA = 'INST',NOM_RESU='ACCELERATION',
                         PROL_DROITE='CONSTANT',INTERPOL='LIN',TITRE='ERREUR ACCE EXPL',
                         PROL_GAUCHE='CONSTANT',
                         LIST_PARA=inst_te);
 #
 # Ecarts entre la poursuite DNL explicite depuis EPX et un calcul full-DNL explicite :
-D_UZ_EP1 = FORMULE(NOM_PARA='INST',VALE='''abs((UZDNLEPX(INST)-UZ_DNL_E(INST))/UZ_DNL_E(INST))''') ;
+D_UZ_EP1 = FORMULE(NOM_PARA='INST',VALE='''abs((UZDNLEPX(INST)-UZ_DNL_E(INST))/UZ_DNL_E(INST))''',
+                   UZDNLEPX=UZDNLEPX, UZ_DNL_E=UZ_DNL_E) ;
 D_UZ_EP2 = CALC_FONC_INTERP(FONCTION=D_UZ_EP1, NOM_PARA = 'INST',NOM_RESU='DEPLACEMENT',
                         PROL_DROITE='CONSTANT',INTERPOL='LIN',TITRE='ERREUR DEPL POUR',
                         PROL_GAUCHE='CONSTANT',
                         LIST_PARA=instpf);
-D_AZ_EP1 = FORMULE(NOM_PARA='INST',VALE='''abs((AZDNLEPX(INST)-AZ_DNL_E(INST))/AZ_DNL_E(INST))''') ;
+D_AZ_EP1 = FORMULE(NOM_PARA='INST',VALE='''abs((AZDNLEPX(INST)-AZ_DNL_E(INST))/AZ_DNL_E(INST))''',
+                   AZDNLEPX=AZDNLEPX, AZ_DNL_E=AZ_DNL_E) ;
 D_AZ_EP2 = CALC_FONC_INTERP(FONCTION=D_AZ_EP1, NOM_PARA = 'INST',NOM_RESU='ACCELERATION',
                         PROL_DROITE='CONSTANT',INTERPOL='LIN',TITRE='ERREUR ACCE POUR',
                         PROL_GAUCHE='CONSTANT',
                         LIST_PARA=instpf);
 #
 # Ecarts entre la bascule EPX vers DNL implicite et la bascule DNL explicite vers implicite :
-D_UZ_B1 = FORMULE(NOM_PARA='INST',VALE='''abs((UZ_B_EPX(INST)-UZ_B_AST(INST))/UZ_B_AST(INST))''') ;
+D_UZ_B1 = FORMULE(NOM_PARA='INST',VALE='''abs((UZ_B_EPX(INST)-UZ_B_AST(INST))/UZ_B_AST(INST))''',
+                  UZ_B_EPX=UZ_B_EPX, UZ_B_AST=UZ_B_AST) ;
 D_UZ_B2 = CALC_FONC_INTERP(FONCTION=D_UZ_B1, NOM_PARA = 'INST',NOM_RESU='DEPLACEMENT',
                         PROL_DROITE='CONSTANT',INTERPOL='LIN',TITRE='ERREUR DEPL BASC',
                         PROL_GAUCHE='CONSTANT',
                         LIST_PARA=instp);
-D_AZ_B1 = FORMULE(NOM_PARA='INST',VALE='''abs((AZ_B_EPX(INST)-AZ_B_AST(INST))/AZ_B_AST(INST))''') ;
+D_AZ_B1 = FORMULE(NOM_PARA='INST',VALE='''abs((AZ_B_EPX(INST)-AZ_B_AST(INST))/AZ_B_AST(INST))''',
+                  AZ_B_EPX=AZ_B_EPX, AZ_B_AST=AZ_B_AST) ;
 D_AZ_B2 = CALC_FONC_INTERP(FONCTION=D_AZ_B1, NOM_PARA = 'INST',NOM_RESU='ACCELERATION',
                         PROL_DROITE='CONSTANT',INTERPOL='LIN',TITRE='ERREUR ACCE BASC',
                         PROL_GAUCHE='CONSTANT',
                         LIST_PARA=instp);
 #
 # Ecarts entre la bascule EPX vers DNL implicite et le calcul full-DNL explicite :
-D_UZ_BE1 = FORMULE(NOM_PARA='INST',VALE='''abs((UZ_B_EPX(INST)-UZ_DNL_E(INST))/UZ_DNL_E(INST))''') ;
+D_UZ_BE1 = FORMULE(NOM_PARA='INST',VALE='''abs((UZ_B_EPX(INST)-UZ_DNL_E(INST))/UZ_DNL_E(INST))''',
+                  UZ_B_EPX=UZ_B_EPX, UZ_DNL_E=UZ_DNL_E) ;
 D_UZ_BE2 = CALC_FONC_INTERP(FONCTION=D_UZ_BE1, NOM_PARA = 'INST',NOM_RESU='DEPLACEMENT',
                         PROL_DROITE='CONSTANT',INTERPOL='LIN',TITRE='ERREUR DEPL BASC2',
                         PROL_GAUCHE='CONSTANT',
                         LIST_PARA=instp);
-D_AZ_BE1 = FORMULE(NOM_PARA='INST',VALE='''abs((AZ_B_EPX(INST)-AZ_DNL_E(INST))/AZ_DNL_E(INST))''') ;
+D_AZ_BE1 = FORMULE(NOM_PARA='INST',VALE='''abs((AZ_B_EPX(INST)-AZ_DNL_E(INST))/AZ_DNL_E(INST))''',
+                   AZ_B_EPX=AZ_B_EPX, AZ_DNL_E=AZ_DNL_E) ;
 D_AZ_BE2 = CALC_FONC_INTERP(FONCTION=D_AZ_BE1, NOM_PARA = 'INST',NOM_RESU='ACCELERATION',
                         PROL_DROITE='CONSTANT',INTERPOL='LIN',TITRE='ERREUR ACCE BASC2',
                         PROL_GAUCHE='CONSTANT',
@@ -750,11 +758,13 @@ SRO_OBSR = CALC_FONCTION(SPEC_OSCI=_F(NATURE='ACCE',
 FSRO_OBS=RECU_FONCTION(NAPPE=SRO_OBS,VALE_PARA_FONC=0.05,);
 FSRO_OBR=RECU_FONCTION(NAPPE=SRO_OBSR,VALE_PARA_FONC=0.05,);
 FSRO_ARC=RECU_FONCTION(NAPPE=SRO_ARCH,VALE_PARA_FONC=0.05,);
-D_SRO = FORMULE(NOM_PARA='FREQ',VALE='''abs((FSRO_OBS(FREQ)-FSRO_ARC(FREQ))/FSRO_OBS(FREQ))''') ;
+D_SRO = FORMULE(NOM_PARA='FREQ',VALE='''abs((FSRO_OBS(FREQ)-FSRO_ARC(FREQ))/FSRO_OBS(FREQ))''',
+                FSRO_OBS=FSRO_OBS, FSRO_ARC=FSRO_ARC) ;
 FD_SRO = CALC_FONC_INTERP(FONCTION=D_SRO, NOM_PARA = 'FREQ',NOM_RESU='ACCELERATION',
                         INTERPOL='LIN',TITRE='ERREUR SRO',
                         LIST_PARA=LFREQ);
-D_SROR = FORMULE(NOM_PARA='FREQ',VALE='''abs((FSRO_OBR(FREQ)-FSRO_OBS(FREQ))/FSRO_OBR(FREQ))''') ;
+D_SROR = FORMULE(NOM_PARA='FREQ',VALE='''abs((FSRO_OBR(FREQ)-FSRO_OBS(FREQ))/FSRO_OBR(FREQ))''',
+                 FSRO_OBS=FSRO_OBS, FSRO_OBR=FSRO_OBR) ;
 FD_SROR = CALC_FONC_INTERP(FONCTION=D_SROR, NOM_PARA = 'FREQ',NOM_RESU='ACCELERATION',
                         INTERPOL='LIN',TITRE='ERREUR SRO',
                         LIST_PARA=LFREQ);
