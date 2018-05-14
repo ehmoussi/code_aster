@@ -51,6 +51,7 @@ from .resultscontainer_ext import ResultsContainer
 from .surface_ext import Surface
 from .table_ext import Table
 from .timestepmanager_ext import TimeStepManager
+from .xfemcrack_ext import XfemCrack
 
 # objects without C++ mirror
 from .listoffloats import ListOfFloats

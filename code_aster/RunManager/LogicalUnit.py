@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of Code_Aster.
 #
 # Code_Aster is free software: you can redistribute it and/or modify
@@ -56,6 +56,15 @@ class FileType(object):
             2: "LIBRE",
         }[value]
 
+    @staticmethod
+    def value(name):
+        """Return type as string."""
+        return {
+            "ASCII": 0,
+            "BINARY": 1,
+            "LIBRE": 2,
+        }[name]
+
 
 class FileAccess(object):
     """Enumeration for file access."""
@@ -71,6 +80,15 @@ class FileAccess(object):
             1: "APPEND",
             2: "OLD",
         }[value]
+
+    @staticmethod
+    def value(name):
+        """Return type as string."""
+        return {
+            "NEW": 0,
+            "APPEND": 1,
+            "OLD": 2,
+        }[name]
 
 
 class Action(object):
@@ -88,6 +106,15 @@ class Action(object):
             2: "LIBERER",
         }[value]
 
+    @staticmethod
+    def value(name):
+        """Return type as string."""
+        return {
+            "ASSOCIER": 0,
+            "RESERVER": 1,
+            "LIBERER": 2,
+        }[name]
+
 
 class LogicalUnitFile(object):
     """This class defines a file associated to a fortran logical unit"""
@@ -96,11 +123,13 @@ class LogicalUnitFile(object):
     # keep in memory: {unit_number: LogicalUnitFile objects}
     _used_unit = {}
 
-    def __init__(self, unit, filename, action, typ, access):
+    def __init__(self, unit, filename, action, typ, access,
+                 to_register = True):
         self._logicalUnit = unit
         self._filename = filename
         self._register(self)
-        self.register(self._logicalUnit, filename, action, typ, access)
+        if to_register:
+            self.register(self._logicalUnit, filename, action, typ, access)
 
     @classmethod
     def open(cls, filename, typ=FileType.Ascii, access=FileAccess.New):
@@ -129,8 +158,8 @@ class LogicalUnitFile(object):
             LogicalUnitFile: New logical unit.
         """
         unit = cls._get_free_number()
-        return cls(unit, filename, Action.Register, FileType.Ascii,
-                   FileAccess.Old)
+        return cls(unit, filename, Action.Open, FileType.Ascii,
+                   FileAccess.New)
 
     @staticmethod
     def register(unit, filename, action,
@@ -186,27 +215,6 @@ class LogicalUnitFile(object):
         return logicalUnit.filename if logicalUnit else "fort.{0}".format(unit)
 
     @classmethod
-    def from_name(cls, filename):
-        """Return the logical unit associated to a unit number.
-
-        Arguments:
-            filename (str): Filename to search in the registered files.
-
-        Returns:
-            LogicalUnitFile: Object corresponding to the given filename. *None*
-                otherwise.
-        """
-        def _predicate(item):
-            return item[1].filename == filename
-
-        try:
-            item = ifilter(_predicate, cls._used_unit.items()).next()
-            unit = item[0]
-        except StopIteration:
-            unit = -1
-        return cls.from_number(unit)
-
-    @classmethod
     def from_number(cls, unit):
         """Return the logical unit associated to a unit number.
 
@@ -227,35 +235,27 @@ class LogicalUnitFile(object):
         cls._used_unit[logicalUnit.unit] = logicalUnit
 
     @classmethod
-    def release_from_number(cls, unit):
+    def release_from_number(cls, unit, to_register = True):
         """Release a logical unit from its number.
 
         Arguments:
             unit (int): Number of logical unit to release.
+            to_register (bool): Boolean to avoid calling of register.
         """
         logger.debug("LogicalUnit: release unit {0}".format(unit))
         logicalUnit = cls.from_number(unit)
         if not logicalUnit:
+            if unit in RESERVED_UNIT:
+                return
             msg = "Unable to free the logical unit {}".format(unit)
             raise KeyError(msg)
 
-        cls.register(unit, logicalUnit.filename, Action.Close)
-        cls._free_number.append(unit)
-        del cls._used_unit[unit]
-
-    @classmethod
-    def release_from_name(cls, filename):
-        """Release a logical unit by file name.
-
-        Arguments:
-            filename (str): Filename of the logical unit to release.
-        """
-        logger.debug("LogicalUnit: release {0!r}".format(filename))
-        logicalUnit = cls.from_name(filename)
-        if not logicalUnit:
-            msg = "file {!r} not associated".format(filename)
-            raise KeyError(msg)
-        cls.release_from_number(logicalUnit.unit)
+        if to_register:
+            cls.register(unit, logicalUnit.filename, Action.Close)
+        if cls._used_unit.has_key(unit):
+            if unit not in RESERVED_UNIT:
+                cls._free_number.append(unit)
+            del cls._used_unit[unit]
 
     @classmethod
     def _get_free_number(cls):
