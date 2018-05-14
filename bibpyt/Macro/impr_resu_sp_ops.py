@@ -182,7 +182,7 @@ def impr_resu_sp_ops(self,
     # Extraction des INST, NUME_ORDRE, CHAMP du résultat
     Resultemps=aster.GetResu(RESULTAT.get_name(), "PARAMETRES")['INST']
     Resulordre=aster.GetResu(RESULTAT.get_name(), "PARAMETRES")['NUME_ORDRE']
-    ResuName = RESULTAT.nom
+    ResuName = RESULTAT.nom[:8]
     #
     # lestemps : les temps d'extraction des champs
     if   ( INST != None ):

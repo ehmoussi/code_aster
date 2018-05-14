@@ -39,8 +39,8 @@ class DefineUnitFile(ExecuteCommandOps):
             typ = FileType.value(keywords["TYPE"])
             access = FileAccess.value(keywords["ACCES"])
             file_name = keywords.get("FICHIER")
-            if file_name == None:
-                file_name = "fort."+str(keywords["UNITE"])
+            #if file_name == None:
+                #file_name = ""
             newFile = LogicalUnitFile(keywords["UNITE"], file_name, action,
                                       typ, access, False)
         if keywords["ACTION"] == "LIBERER":
