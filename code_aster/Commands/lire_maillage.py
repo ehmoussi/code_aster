@@ -29,7 +29,7 @@ class MeshReader(ExecuteCommand):
     command_name = "LIRE_MAILLAGE"
 
 
-    def create_result(self, _):
+    def create_result(self, keywords):
         """Create the :class:`~code_aster.Objects.Mesh`.
 
         Arguments:
@@ -47,13 +47,13 @@ class MeshReader(ExecuteCommand):
         fileName = LogicalUnitFile.filename_from_unit(keywords['UNITE'])
         format = keywords["FORMAT"]
         if format == "MED":
-            mesh.readMedFile( fileName )
+            mesh.readMedFile(fileName)
         elif format == "GMSH":
-            mesh.readGmshFile( fileName )
+            mesh.readGmshFile(fileName)
         elif format == "GIBI":
-            mesh.readGibiFile( fileName )
+            mesh.readGibiFile(fileName)
         elif format == "ASTER":
-            mesh.readAsterMeshFile( fileName )
+            mesh.readAsterMeshFile(fileName)
         return mesh
 
 

@@ -158,8 +158,8 @@ class LogicalUnitFile(object):
             LogicalUnitFile: New logical unit.
         """
         unit = cls._get_free_number()
-        return cls(unit, filename, Action.Register, FileType.Ascii,
-                   FileAccess.Old)
+        return cls(unit, filename, Action.Open, FileType.Ascii,
+                   FileAccess.New)
 
     @staticmethod
     def register(unit, filename, action,
@@ -215,27 +215,6 @@ class LogicalUnitFile(object):
         return logicalUnit.filename if logicalUnit else "fort.{0}".format(unit)
 
     @classmethod
-    def from_name(cls, filename):
-        """Return the logical unit associated to a unit number.
-
-        Arguments:
-            filename (str): Filename to search in the registered files.
-
-        Returns:
-            LogicalUnitFile: Object corresponding to the given filename. *None*
-                otherwise.
-        """
-        def _predicate(item):
-            return item[1].filename == filename
-
-        try:
-            item = ifilter(_predicate, cls._used_unit.items()).next()
-            unit = item[0]
-        except StopIteration:
-            unit = -1
-        return cls.from_number(unit)
-
-    @classmethod
     def from_number(cls, unit):
         """Return the logical unit associated to a unit number.
 
@@ -273,23 +252,10 @@ class LogicalUnitFile(object):
 
         if to_register:
             cls.register(unit, logicalUnit.filename, Action.Close)
-        cls._free_number.append(unit)
         if cls._used_unit.has_key(unit):
+            if unit not in RESERVED_UNIT:
+                cls._free_number.append(unit)
             del cls._used_unit[unit]
-
-    @classmethod
-    def release_from_name(cls, filename):
-        """Release a logical unit by file name.
-
-        Arguments:
-            filename (str): Filename of the logical unit to release.
-        """
-        logger.debug("LogicalUnit: release {0!r}".format(filename))
-        logicalUnit = cls.from_name(filename)
-        if not logicalUnit:
-            msg = "file {!r} not associated".format(filename)
-            raise KeyError(msg)
-        cls.release_from_number(logicalUnit.unit)
 
     @classmethod
     def _get_free_number(cls):
