@@ -17,12 +17,13 @@
 ! --------------------------------------------------------------------
 
 subroutine caraun(char, motfac, nzocu, nbgdcu, coefcu,&
-                  compcu, multcu, ntcmp)
+                  compcu, multcu, penacu, ntcmp)
 !
 !
     implicit none
 #include "jeveux.h"
 #include "asterfort/assert.h"
+#include "asterfort/getvr8.h"
 #include "asterfort/getvid.h"
 #include "asterfort/getvtx.h"
 #include "asterfort/jedema.h"
@@ -37,6 +38,7 @@ subroutine caraun(char, motfac, nzocu, nbgdcu, coefcu,&
     character(len=24) :: coefcu
     character(len=24) :: compcu
     character(len=24) :: multcu
+    character(len=24) :: penacu
 !
 ! ----------------------------------------------------------------------
 !
@@ -71,6 +73,8 @@ subroutine caraun(char, motfac, nzocu, nbgdcu, coefcu,&
 !              DE GAUCHE
 !              VECTEUR TYPE ZR OU ZK8 SUIVANT FONREE
 !              MEME ACCES QUE COMPCU
+! IN  PENACU : NOM JEVEUX DE LA SD CONTENANT LES COEF DE PENALITE
+!              VECTEUR TYPE ZR, MEME ACCES QUE COEFCU
 ! OUT NTCMP  : NOMBRE TOTAL DE COMPOSANTES SUR TOUTES LES ZONES
 !
 !
@@ -85,8 +89,9 @@ subroutine caraun(char, motfac, nzocu, nbgdcu, coefcu,&
     character(len=24) :: defico
     character(len=24) :: paraci
     integer :: jparci
-    integer :: jcoef, jnbgd, jcmpg, jmult
+    integer :: jcoef, jnbgd, jcmpg, jmult, jpena
     character(len=16) :: vale_k, s_algo_cont
+    real*8 :: pena
 !
 ! ----------------------------------------------------------------------
 !
@@ -123,6 +128,14 @@ subroutine caraun(char, motfac, nzocu, nbgdcu, coefcu,&
         zi(jparci+30-1) = 1
     else if (s_algo_cont .eq. 'PENALISATION') then
         zi(jparci+30-1) = 4
+!
+! --- COEFFICIENTS DE PENALISATION
+!
+        call wkvect(penacu, 'V V R', nzocu, jpena)
+        do izone = 1, nzocu
+            call getvr8(motfac, 'COEF_PENA', iocc=izone, scal=pena)
+            zr(jpena-1+izone) = pena
+        enddo
     else
         ASSERT(.false.)
     endif

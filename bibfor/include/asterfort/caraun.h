@@ -20,7 +20,7 @@
 !
 interface
     subroutine caraun(char, motfac, nzocu, nbgdcu, coefcu,&
-                      compcu, multcu, ntcmp)
+                      compcu, multcu, penacu, ntcmp)
         character(len=8) :: char
         character(len=16) :: motfac
         integer :: nzocu
@@ -28,6 +28,7 @@ interface
         character(len=24) :: coefcu
         character(len=24) :: compcu
         character(len=24) :: multcu
+        character(len=24) :: penacu
         integer :: ntcmp
     end subroutine caraun
 end interface

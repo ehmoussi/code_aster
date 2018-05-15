@@ -71,7 +71,7 @@ subroutine cucpes(deficu, resocu, jsecmb, neq, nbliac_new)
 !   Attention, on attend ici le jeu sans correction du contact
 !   i.e. jeu le plus actuel possible par rapport à ce que l'on sait calculer
     jeux = resocu(1:14)//'.APJEU'
-    coefpe = resocu(1:14)//'.COEFPE'
+    coefpe = deficu(1:16)//'.COEFPE'
     mu = resocu(1:14)//'.MU'
     call jeveuo(appoin, 'L', japptr)
     call jeveuo(apddl, 'L', japddl)
@@ -86,7 +86,7 @@ subroutine cucpes(deficu, resocu, jsecmb, neq, nbliac_new)
     call compute_ineq_conditions_vector(jsecmb, nbliai      , neq,   &
                                         japptr, japddl      , japcoe,&
                                         jjeux , jcoef_pena-1, jmu,   &
-                                        1     , 0           , iliac  )
+                                        1     , 1           , iliac  )
     
     nbliac_new = iliac - 1
 !

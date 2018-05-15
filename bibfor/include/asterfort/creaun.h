@@ -21,7 +21,7 @@
 interface
     subroutine creaun(char, noma, nomo, nzocu, nnocu,&
                       lisnoe, poinoe, nbgdcu, coefcu, compcu,&
-                      multcu)
+                      multcu, penacu)
         character(len=8) :: char
         character(len=8) :: noma
         character(len=8) :: nomo
@@ -33,5 +33,6 @@ interface
         character(len=24) :: coefcu
         character(len=24) :: compcu
         character(len=24) :: multcu
+        character(len=24) :: penacu
     end subroutine creaun
 end interface

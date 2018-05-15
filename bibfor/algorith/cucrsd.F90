@@ -267,15 +267,6 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
        do inoe = 1, nnocu
           call jecroc(jexnum(enat, inoe))
        end do
-!
-! --- COEFFICIENT DE PENALISATION
-!
-! En dur pour l'instant, à changer dans une version plus aboutie
-! Voir deplacer dans sdunil_defi
-!
-       coefpe = sdunil_solv(1:14)//'.COEFPE'
-       call wkvect(coefpe, 'V V R', 1, jcoe_pena)
-       zr(jcoe_pena) = 1.
     endif
 !
 ! ----------------------------------------------------------------------

@@ -59,7 +59,7 @@ subroutine caliun(charz, nomaz, nomoz)
     integer :: nzocu, nnocu, ntcmp
     character(len=24) :: nolino, nopono
     character(len=24) :: lisnoe, poinoe
-    character(len=24) :: nbgdcu, coefcu, compcu, multcu
+    character(len=24) :: nbgdcu, coefcu, compcu, multcu, penacu
     character(len=24) :: deficu, defico
     character(len=24) :: paraci, paracr, ndimcu
     integer :: jparci, jparcr, jdim
@@ -106,8 +106,9 @@ subroutine caliun(charz, nomaz, nomoz)
     compcu = '&&CARAUN.COMPCU'
     multcu = '&&CARAUN.MULTCU'
     coefcu = '&&CARAUN.COEFCU'
+    penacu = '&&CARAUN.PENACU'
     call caraun(char, motfac, nzocu, nbgdcu, coefcu,&
-                compcu, multcu, ntcmp)
+                compcu, multcu, penacu, ntcmp)
 !
 ! --- EXTRACTION DES NOEUDS
 !
@@ -130,7 +131,7 @@ subroutine caliun(charz, nomaz, nomoz)
 !
     call creaun(char, noma, nomo, nzocu, nnocu,&
                 lisnoe, poinoe, nbgdcu, coefcu, compcu,&
-                multcu)
+                multcu, penacu)
 !
 ! --- AFFICHAGE DES INFORMATIONS
 !
@@ -146,6 +147,7 @@ subroutine caliun(charz, nomaz, nomoz)
     call jedetr(coefcu)
     call jedetr(compcu)
     call jedetr(multcu)
+    call jedetr(penacu)
 !
 999  continue
 !
