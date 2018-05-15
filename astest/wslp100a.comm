@@ -124,6 +124,7 @@ CHAR1 = DEFI_CONTACT(MODELE      = MODELE,
                      ZONE        =
                        _F(GROUP_MA  = 'TROU',
                          ALGO_CONT = "PENALISATION",
+                         COEF_PENA = 1.,
                          NOM_CMP    = 'PRE1',
                          COEF_IMPO  = F_IMPO,
                          COEF_MULT  = F_MULT,),);

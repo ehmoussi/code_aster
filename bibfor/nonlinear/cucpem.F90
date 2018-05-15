@@ -63,7 +63,7 @@ subroutine cucpem(deficu, resocu, nbliai)
     appoin = deficu(1:16)//'.POINOE'
     apcoef = resocu(1:14)//'.APCOEF'
     jeux = resocu(1:14)//'.APJEU'
-    coefpe = resocu(1:14)//'.COEFPE'
+    coefpe = deficu(1:16)//'.COEFPE'
     enat = resocu(1:14)//'.ENAT'
     call jeveuo(appoin, 'L', japptr)
     call jeveuo(apcoef, 'L', japcoe)
@@ -74,7 +74,7 @@ subroutine cucpem(deficu, resocu, nbliai)
 !
     call compute_ineq_conditions_elem_matrix(enat  , nbliai, japptr      ,&
                                              japcoe, jjeux , jcoef_pena-1,&
-                                             1     , 0     )
+                                             1     , 1     )
 !
     call jedema()
 !

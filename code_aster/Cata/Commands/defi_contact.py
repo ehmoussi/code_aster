@@ -194,6 +194,10 @@ DEFI_CONTACT=OPER(nom       = "DEFI_CONTACT", op=30, sd_prod   = char_contact, r
 # --- Résolution
                                           ALGO_CONT       =SIMP(statut='o',typ='TXM',defaut="CONTRAINTE",
                                                               into=("CONTRAINTE","PENALISATION"),),
+                                          b_cont_pen=BLOC(condition = """equal_to("ALGO_CONT", 'PENALISATION') """,
+                                                          fr=tr("Paramètre de la méthode pénalisée"),
+                                                          COEF_PENA =SIMP(statut='o',typ='R'),
+                                       ),
                                 ), # fin mot-clé facteur ZONE
          ), # fin b_affe_unil
 

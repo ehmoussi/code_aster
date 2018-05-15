@@ -93,6 +93,7 @@ class sd_contact(AsBase):
     COEFG = Facultatif(AsVK8(SDNom(nomj='.UNILATE.COEFG')))
     LISNOE = Facultatif(AsVI(SDNom(nomj='.UNILATE.LISNOE')))
     POINOE = Facultatif(AsVI(SDNom(nomj='.UNILATE.POINOE')))
+    COEFPE = Facultatif(AsVR(SDNom(nomj='.UNILATE.COEFPE')))
 
 #   Infos sur la formulation unilatérale
     def dimeCU(self):

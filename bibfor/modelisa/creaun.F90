@@ -18,7 +18,7 @@
 
 subroutine creaun(char, noma, nomo, nzocu, nnocu,&
                   lisnoe, poinoe, nbgdcu, coefcu, compcu,&
-                  multcu)
+                  multcu, penacu)
 !
 !
     implicit none
@@ -28,6 +28,7 @@ subroutine creaun(char, noma, nomo, nzocu, nnocu,&
 #include "asterfort/infniv.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jedetr.h"
+#include "asterfort/jeexin.h"
 #include "asterfort/jemarq.h"
 #include "asterfort/jenuno.h"
 #include "asterfort/jeveuo.h"
@@ -47,6 +48,7 @@ subroutine creaun(char, noma, nomo, nzocu, nnocu,&
     character(len=24) :: coefcu
     character(len=24) :: compcu
     character(len=24) :: multcu
+    character(len=24) :: penacu
 !
 ! ----------------------------------------------------------------------
 !
@@ -73,7 +75,7 @@ subroutine creaun(char, noma, nomo, nzocu, nnocu,&
 !              DE GAUCHE
 ! IN  MULTCU : NOM JEVEUX DE LA SD CONTENANT LES COEFFICIENTS DU MEMBRE
 !              DE GAUCHE
-!
+! IN  PENACU : NOM JEVEUX DE LA SD CONTENANT LES COEFFICIENTS DE PENALITE
 !
 !
 !
@@ -92,12 +94,13 @@ subroutine creaun(char, noma, nomo, nzocu, nnocu,&
     character(len=8) :: cmp, k8bla, nomno
     integer :: cptd, ncmpg, cptnd
     character(len=24) :: cmpgcu, ndimcu, coegcu, coedcu, poincu
-    integer :: jcmpg, jdim, jcoefg, jcoefd, jpoin
+    integer :: jcmpg, jdim, jcoefg, jcoefd, jpoin, jpena
     integer :: ifm, niv
     character(len=8), pointer :: cmpg(:) => null()
     character(len=8), pointer :: coefd(:) => null()
     character(len=8), pointer :: coefg(:) => null()
     integer, pointer :: indir(:) => null()
+    real*8, pointer :: cpena(:) => null()
 !
 ! ----------------------------------------------------------------------
 !
@@ -115,6 +118,11 @@ subroutine creaun(char, noma, nomo, nzocu, nnocu,&
     call jeveuo(nbgdcu, 'L', jnbgd)
     call jeveuo(compcu, 'L', jncmp)
     call jeveuo(coefcu, 'L', jcoef)
+    call jeexin(penacu, jpena)
+    if (jpena.ne.0) then
+        call jeveuo(penacu, 'L', jpena)
+    endif
+    
 !
 ! --- CALCUL DU NOMBRE TOTAL DE GRANDEURS A GAUCHE
 !
@@ -136,6 +144,9 @@ subroutine creaun(char, noma, nomo, nzocu, nnocu,&
     AS_ALLOCATE(vk8=cmpg, size=nbgau)
     AS_ALLOCATE(vk8=coefg, size=nbgau)
     AS_ALLOCATE(vk8=coefd, size=nnocu)
+    if (jpena.ne.0) then
+        AS_ALLOCATE(vr=cpena, size=nnocu)
+    endif
     indir(1) = 1
 !
 ! ---
@@ -186,6 +197,9 @@ subroutine creaun(char, noma, nomo, nzocu, nnocu,&
             zi(jnoeu-1+cptnd) = numnd
             coefd(cptd) = zk8(jcoef+izone-1)
             indir(cptnd+1) = indir(cptnd) + nbcmp - nbsup
+            if (jpena.ne.0) then
+                cpena(cptd) = zr(jpena+izone-1)
+            endif
 !
             cptd = cptd + 1
             cptnd = cptnd + 1
@@ -238,12 +252,23 @@ subroutine creaun(char, noma, nomo, nzocu, nnocu,&
         zk8(jcoefd-1+icmp) = coefd(icmp)
 4004  end do
 !
+! --- LISTE DES COEFFICIENTS DE PENALITE
+!
+    if (jpena.ne.0) then
+        call wkvect(deficu(1:16)//'.COEFPE', 'G V R', nnocu, jpena)
+        zr(jpena:jpena+nnocu-1) = cpena(1:nnocu)
+    endif
+!
 ! --- NETTOYAGE
 !
     AS_DEALLOCATE(vi=indir)
     AS_DEALLOCATE(vk8=cmpg)
     AS_DEALLOCATE(vk8=coefg)
     AS_DEALLOCATE(vk8=coefd)
+    AS_DEALLOCATE(vk8=coefd)
+    if (jpena.ne.0) then
+        AS_DEALLOCATE(vr=cpena)
+    endif
 !
 ! ======================================================================
     call jedema()
