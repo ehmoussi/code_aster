@@ -68,9 +68,9 @@ def list_unit(code):
     # 'D' pour afficher un diagnostic 'F' sans les effets
     # 'Z' levée d'exception
     d = {
-        'E': ('ERREUR', 'MESSAGE', 'RESULTAT'),
+        'E': ('MESSAGE',),
         'I': ('MESSAGE',),
-        'A': ('MESSAGE', 'RESULTAT'),
+        'A': ('MESSAGE',),
     }
     d['F'] = d['S'] = d['Z'] = d['D'] = d['E']
     d['X'] = d['A']
