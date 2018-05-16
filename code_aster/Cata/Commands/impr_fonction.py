@@ -113,7 +113,7 @@ IMPR_FONCTION=MACRO(nom="IMPR_FONCTION",
          # Mise en page du tableau ou du graphique
          b_tableau = BLOC(condition = """equal_to("FORMAT", 'TABLEAU')""",
                           fr=tr("Mots-clés propres au format Tableau"),
-           UNITE           =SIMP(statut='o',typ=UnitType(),defaut=6, inout='out',
+           UNITE           =SIMP(statut='o',typ=UnitType(),defaut=8, inout='out',
                                  fr=tr("Unité logique définissant le fichier (fort.N) dans lequel on écrit")),
            TITRE           =SIMP(statut='f',typ='TXM',
                                  fr=tr("Titre associé au graphique") ),

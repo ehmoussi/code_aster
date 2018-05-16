@@ -36,7 +36,7 @@ IMPR_RESU=PROC(nom="IMPR_RESU",op=39,
          ),
 
          b_format_resultat  =BLOC(condition="""equal_to("FORMAT", 'RESULTAT')""",fr=tr("unité logique d'impression au format RESULTAT"),
-           UNITE           =SIMP(statut='f',typ=UnitType(),defaut=6, inout='out'),
+           UNITE           =SIMP(statut='f',typ=UnitType(),defaut=8, inout='out'),
          ),
 
          b_format_ideas  =BLOC(condition="""equal_to("FORMAT", 'IDEAS')""",fr=tr("unité logique d'impression et version IDEAS"),

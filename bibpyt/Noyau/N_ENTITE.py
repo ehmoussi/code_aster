@@ -331,3 +331,7 @@ class ENTITE:
                 self.cr.fatal(
                     _(u"L'attribut 'inout' est obligatoire pour le type "
                       u"UnitType()."))
+            if self.defaut == 6 :                 
+                self.cr.fatal(
+                    _(u"La vaveur par défaut doit être différente de 6" ))
+

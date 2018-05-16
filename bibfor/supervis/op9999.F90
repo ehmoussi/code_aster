@@ -58,7 +58,7 @@ subroutine op9999()
     integer :: nbext, nfhdf, nproc
     aster_logical :: bool
     character(len=8) :: k8b, ouinon, infr, proc
-    character(len=16) :: fchier, fhdf, typres
+    character(len=16) :: fhdf, typres
     character(len=80) :: fich
 !-----------------------------------------------------------------------
 !
@@ -88,12 +88,7 @@ subroutine op9999()
 !
     call getvtx(' ', 'INFO_RESU', scal=infr)
     if (infr.eq.'OUI') then
-        ifm = 0
-        fchier = ' '
-        call getvis(' ', 'UNITE', scal=ifm)
-        if (.not. ulexis( ifm )) then
-            call ulopen(ifm, ' ', fchier, 'NEW', 'O')
-        endif
+        ifm = iunifi('MESSAGE')
 !
         typres = 'RESULTAT_SDASTER'
         nbco = 0

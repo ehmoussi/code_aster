@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -26,5 +26,5 @@ from code_aster.Cata.Commons import *
 INFO_RESU=PROC(nom="INFO_RESU",op=40,
                fr=tr("Imprimer tous les champs présents dans une structure de données résultat"),
                RESULTAT=SIMP(statut='f',typ=resultat_sdaster),
-               UNITE=SIMP(statut='f',typ=UnitType(),defaut=6, inout='out'),
+               UNITE=SIMP(statut='f',typ=UnitType(),defaut=8, inout='out'),
 );
