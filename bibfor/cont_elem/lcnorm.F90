@@ -58,11 +58,11 @@ real(kind=8), intent(out) :: norm(3)
         signe = -1.d0
     end if 
 
-!        norm(1) = signe * norm_line(1)
-!        norm(2) = signe * norm_line(2)
-!        norm(3) = signe * norm_line(3)
-    norm(1) = norm_g(1)
-    norm(2) = norm_g(2)
-    norm(3) = norm_g(3)
+        norm(1) = signe * norm_line(1)
+        norm(2) = signe * norm_line(2)
+        norm(3) = signe * norm_line(3)
+!    norm(1) = norm_g(1)
+!    norm(2) = norm_g(2)
+!    norm(3) = norm_g(3)
 !
 end subroutine
