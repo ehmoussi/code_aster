@@ -131,10 +131,9 @@ IMPR_RESU(FORMAT='MED',UNITE=unit,
 DEFI_FICHIER(ACTION='LIBERER', UNITE=unit)
 DETRUIRE(CONCEPT=_F(NOM=unit,),)
 
-
-import os
-cmd="printf '1\n1\n1\n'|mdump3 {0}|sed '1,20d'>{1};cp {1} {2}".format(NomFicMed,NomFicDump,ftmp)
-os.system(cmd)
+EXEC_LOGICIEL(LOGICIEL="mdump3 {0} NODALE FULL_INTERLACE 1 | sed '1,20d'> {1}"
+                  .format(NomFicMed, NomFicDump),
+              SHELL='OUI')
 
 TEST_FICHIER(
     FICHIER     = NomFicDump,
