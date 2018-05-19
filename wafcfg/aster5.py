@@ -41,7 +41,6 @@ def configure(self):
     official_programs.configure(self)
     official_programs.check_prerequisites_package(self, YAMMROOT, '20180417')
     opts.with_prog_salome = True
-    opts.with_prog_europlexus = True
 
     # enable TEST_STRICT on the reference server
     self.env.append_value('DEFINES', ['TEST_STRICT'])
