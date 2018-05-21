@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -170,7 +170,6 @@ implicit none
                 end do
                 if (r .le. r8prem()) then
                     r=1.d-7
-                    call utmess('A', 'CONTACT2_14')
                 endif
                 jacobian = jacobian*abs(r)
             endif
