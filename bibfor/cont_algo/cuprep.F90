@@ -24,6 +24,7 @@ implicit none
 !
 #include "jeveux.h"
 #include "asterfort/caladu.h"
+#include "asterfort/cfdisl.h"
 #include "asterfort/cudisi.h"
 #include "asterfort/cusign.h"
 #include "asterfort/fointe.h"
@@ -69,6 +70,7 @@ implicit none
     real(kind=8), pointer :: coor(:) => null()
     real(kind=8), pointer :: depp(:) => null()
     real(kind=8), pointer :: vale(:) => null()
+    aster_logical :: l_unil_pena
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -84,6 +86,7 @@ implicit none
     call jeveuo(apcoef, 'E', japcoe)
     call jeveuo(apddl, 'L', japddl)
     call jeveuo(noeucu, 'L', jnoeu)
+    l_unil_pena = cfdisl(ds_contact%sdcont_defi, 'UNIL_PENA')
 !
 ! --- NOMBRE TOTAL DE DDLS ET NOMBRE TOTAL DE NOEUDS
 !
@@ -141,7 +144,7 @@ implicit none
 ! --- PENALISATION : RESTE A MULTIPLIER PAR L INCREMENT
 ! ---    SANS PRISE EN COMPTE DU CONTACT
 !
-    if (ds_contact%l_thm) then
+    if (l_unil_pena) then
        call jeveuo(disp_iter(1:19)//'.VALE', 'L', vr=vale)
        do inoe = 1, nnocu
           jdecal = zi(jpoi+inoe-1)

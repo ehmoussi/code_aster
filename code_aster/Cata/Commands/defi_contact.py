@@ -191,6 +191,9 @@ DEFI_CONTACT=OPER(nom       = "DEFI_CONTACT", op=30, sd_prod   = char_contact, r
 # -- Incompatibilité avec CL
                                           SANS_NOEUD      =SIMP(statut='c',typ=no   ,validators=NoRepeat(),max='**'),
                                           SANS_GROUP_NO   =SIMP(statut='f',typ=grno ,validators=NoRepeat(),max='**'),
+# --- Résolution
+                                          ALGO_CONT       =SIMP(statut='o',typ='TXM',defaut="CONTRAINTE",
+                                                              into=("CONTRAINTE","PENALISATION"),),
                                 ), # fin mot-clé facteur ZONE
          ), # fin b_affe_unil
 

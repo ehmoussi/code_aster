@@ -32,7 +32,7 @@ class sd_contact(AsBase):
     nomj = SDNom(fin=8)
 
 #   Longueurs des vecteurs fixes (voir CFMMVD.F)
-    zpari = 29
+    zpari = 30
     zparr = 6
     zdime = 18
     zmeth = 23

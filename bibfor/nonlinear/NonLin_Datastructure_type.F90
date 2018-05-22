@@ -261,7 +261,6 @@ implicit none
         aster_logical     :: l_contact
         aster_logical     :: l_meca_cont
         aster_logical     :: l_meca_unil
-        aster_logical     :: l_thm
         character(len=8)  :: sdcont
         character(len=24) :: sdcont_defi
         character(len=24) :: sdcont_solv
