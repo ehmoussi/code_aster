@@ -22,6 +22,7 @@ subroutine caraun(char, motfac, nzocu, nbgdcu, coefcu,&
 !
     implicit none
 #include "jeveux.h"
+#include "asterfort/assert.h"
 #include "asterfort/getvid.h"
 #include "asterfort/getvtx.h"
 #include "asterfort/jedema.h"
@@ -85,6 +86,7 @@ subroutine caraun(char, motfac, nzocu, nbgdcu, coefcu,&
     character(len=24) :: paraci
     integer :: jparci
     integer :: jcoef, jnbgd, jcmpg, jmult
+    character(len=16) :: vale_k, s_algo_cont
 !
 ! ----------------------------------------------------------------------
 !
@@ -105,9 +107,25 @@ subroutine caraun(char, motfac, nzocu, nbgdcu, coefcu,&
 !
     zi(jparci+4-1) = iform
 !
-! --- METHODE: CONTRAINTES ACTIVES
+! --- METHODE: CONTRAINTES ACTIVES OU PENALISATION
 !
-    zi(jparci+17-1) = 0
+    do izone = 1, nzocu
+        call getvtx(motfac, 'ALGO_CONT', iocc=izone, scal=vale_k)
+        if (izone.eq.1) then
+            s_algo_cont = vale_k
+        else
+            if (vale_k.ne.s_algo_cont) then
+                call utmess('F', 'CONTACT3_4', sk='ALGO_CONT')
+            endif
+        endif
+    enddo
+    if (s_algo_cont .eq. 'CONTRAINTE') then
+        zi(jparci+30-1) = 1
+    else if (s_algo_cont .eq. 'PENALISATION') then
+        zi(jparci+30-1) = 4
+    else
+        ASSERT(.false.)
+    endif
 !
 ! --- PARAMETRES
 !

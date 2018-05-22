@@ -57,9 +57,10 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
     integer :: cont_form
     character(len=8) :: sdcont, answer
     character(len=24) :: iden_rela
-    aster_logical :: l_cont, l_unil, l_thm
+    aster_logical :: l_cont, l_unil
     aster_logical :: l_form_disc, l_form_cont, l_form_xfem, l_form_lac
     aster_logical :: l_cont_xfem_gg, l_edge_elim, l_all_verif, l_iden_rela
+    aster_logical :: l_unil_pena
     integer :: nt_patch
     integer :: i_exist
     character(len=8), pointer :: v_load_type(:) => null()
@@ -227,16 +228,13 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
             ds_contact%l_first_geom = ASTER_TRUE
         endif
 !
-! ----- Flag for pairing
+! ----- Special for UNIL contact
 !
         if (l_unil) then
-           call dismoi('EXI_THM', model, 'MODELE', repk=answer)
-           l_thm = answer .eq. 'OUI' 
-           ds_contact%l_thm = l_thm
-           if (l_thm) then
+           l_unil_pena = cfdisl(ds_contact%sdcont_defi, 'UNIL_PENA')
+           if (l_unil_pena) then
              ds_contact%nume_dof_unil = '&&NMASUN.NUME'
            endif
-!            write(6,*) '(@_@) MODELE THM = ',ds_contact%l_thm
         endif
 !
 ! ----- Save parameters

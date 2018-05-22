@@ -110,6 +110,9 @@ implicit none
     else if (question.eq.'ALGO_CONT') then
         call jeveuo(sdcont_paraci, 'L', vi = v_sdcont_paraci)
         cfdisi = v_sdcont_paraci(17)
+    else if (question.eq.'ALGO_UNIL') then
+        call jeveuo(sdcont_paraci, 'L', vi = v_sdcont_paraci)
+        cfdisi = v_sdcont_paraci(30)
     else if (question.eq.'ALGO_FROT') then
         call jeveuo(sdcont_paraci, 'L', vi = v_sdcont_paraci)
         cfdisi = v_sdcont_paraci(18)

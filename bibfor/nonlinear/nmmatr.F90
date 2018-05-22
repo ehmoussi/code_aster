@@ -25,6 +25,7 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/ascoma.h"
+#include "asterfort/cfdisl.h"
 #include "asterfort/detrsd.h"
 #include "asterfort/infdbg.h"
 #include "asterfort/isfonc.h"
@@ -85,7 +86,7 @@ implicit none
     integer :: nbmat
     character(len=10) :: phase
     character(len=19) :: rigid, masse, amort
-    aster_logical :: lunil
+    aster_logical :: lunil, l_unil_pena
 !
 ! ----------------------------------------------------------------------
 !
@@ -108,8 +109,7 @@ implicit none
 ! --- FONCTIONNALITES ACTIVEES
 !
     lctcd         = isfonc(fonact,'CONT_DISCRET')
-!     lunil         = isfonc(fonact,'LIAISON_UNILATER')
-    lunil         = ds_contact%l_thm
+    lunil         = isfonc(fonact,'LIAISON_UNILATER')
     l_neum_undead = isfonc(fonact,'NEUM_UNDEAD')
     l_cont_lac    = isfonc(fonact,'CONT_LAC')
     lamor         = ndynlo(sddyna,'MAT_AMORT')
@@ -235,7 +235,10 @@ implicit none
 ! --- AVEC LES LIAISONS UNILATERALES
 !
     if (lunil .and. (phase.eq.'CORRECTION')) then
-        call nmasun(ds_contact, matass)
+        l_unil_pena = cfdisl(ds_contact%sdcont_defi, 'UNIL_PENA')
+        if (l_unil_pena) then
+            call nmasun(ds_contact, matass)
+        endif
     endif
 !
 999 continue

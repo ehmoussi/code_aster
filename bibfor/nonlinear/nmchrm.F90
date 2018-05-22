@@ -78,7 +78,7 @@ implicit none
     aster_logical :: l_matr_cont
     aster_logical :: l_cont_elem, l_cont_disc, l_matr_elas
     aster_logical :: l_first_step, l_dyna, l_amor, l_dischoc, l_varc, l_elas_fo
-    aster_logical :: l_unil, l_thm
+    aster_logical :: l_unil, l_unil_pena
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -113,7 +113,6 @@ implicit none
     l_amor      = ndynlo(sddyna,'MAT_AMORT')
     l_cont_disc = isfonc(list_func_acti,'CONT_DISCRET')
     l_unil      = isfonc(list_func_acti,'LIAISON_UNILATER')
-    l_thm       = ds_contact%l_thm
     l_cont_elem = isfonc(list_func_acti,'ELT_CONTACT')
     l_dischoc   = isfonc(list_func_acti,'DIS_CHOC')
     l_varc      = isfonc(list_func_acti,'EXI_VARC' )
@@ -127,8 +126,11 @@ implicit none
 !
 ! - Add unilateral links matrix in global matrix ?
 !   Peut mieux faire pour choisir la methode de resolution
-    if (l_thm) then
-        l_matr_cont = .true.
+    if (l_unil) then
+        l_unil_pena = cfdisl(ds_contact%sdcont_defi, 'UNIL_PENA')
+        if (l_unil_pena) then
+            l_matr_cont = .true.
+        endif
     endif
 !
 !

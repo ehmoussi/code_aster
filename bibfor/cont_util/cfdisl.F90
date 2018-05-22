@@ -131,6 +131,8 @@ implicit none
     else if (question.eq.'CONT_PENA') then
         algo_cont = cfdisi(sdcont_defi,'ALGO_CONT')
         cfdisl = algo_cont.eq.4
+    else if (question.eq.'UNIL_PENA') then
+        cfdisl = cfdisi(sdcont_defi,'ALGO_UNIL').eq.4
     else if (question.eq.'CONT_ACTI') then
         algo_cont = cfdisi(sdcont_defi,'ALGO_CONT')
         cfdisl = algo_cont.eq.1

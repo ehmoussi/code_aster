@@ -28,6 +28,7 @@ implicit none
 #include "asterfort/algocu.h"
 #include "asterfort/algocup.h"
 #include "asterfort/assert.h"
+#include "asterfort/cfdisl.h"
 #include "asterfort/cuprep.h"
 #include "asterfort/infniv.h"
 #include "asterfort/jeveuo.h"
@@ -46,7 +47,7 @@ implicit none
     real(kind=8), intent(in) :: time_curr
     type(NL_DS_Contact), intent(in) :: ds_contact
     integer, intent(out) :: ctccvg
-    aster_logical :: l_thm
+    aster_logical :: l_unil_pena
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -100,16 +101,16 @@ implicit none
 !
 ! - Prepare unilateral constraints
 !
-    l_thm = ds_contact%l_thm
+    l_unil_pena = cfdisl(ds_contact%sdcont_defi, 'UNIL_PENA')
 !
-    if ((iter_newt.eq.0) .or. l_thm) then
+    if ((iter_newt.eq.0) .or. l_unil_pena) then
        nb_equa = zi(lmat+2)
        call cuprep(mesh, nb_equa, ds_contact, disp_curr, disp_iter, time_curr)
     endif
 !
 ! - Solve
 !
-    if (l_thm) then
+    if (l_unil_pena) then
 !   Toujours algorithme de penalisation
 !   Arguments à changer
 !   A changer dans une version plus aboutie du code

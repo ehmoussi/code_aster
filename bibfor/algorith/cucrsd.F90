@@ -25,6 +25,7 @@ implicit none
 #include "jeveux.h"
 #include "asterfort/assert.h"
 #include "asterfort/cfcrma.h"
+#include "asterfort/cfdisl.h"
 #include "asterfort/cudisi.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/infdbg.h"
@@ -81,6 +82,7 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
     character(len=24) :: coefpe
     integer :: jcoe_pena, inoe
     character(len=19) :: enat
+    aster_logical :: l_unil_pena
 ! --------------------------------------------------------------------------------------------------
 !
     call jemarq()
@@ -95,6 +97,7 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
     sdunil_solv = ds_contact%sdunil_solv
     mesh_nomnoe = mesh // '.NOMNOE'
     call dismoi('NB_EQUA', nume_dof, 'NUME_DDL', repi=neq)
+    l_unil_pena = cfdisl(ds_contact%sdcont_defi, 'UNIL_PENA')
 !
 ! --- VECTEUR AT.MU (FORCES NODALES)
 !
@@ -256,8 +259,7 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
 ! ---   MATRICE STOCKEE CREUSE E_N*AT (POUR CONTACT PENALISE)
 ! ---   TAILLE : NBENAT*30
 
-!     write(6,*) 'cucrsd :: l_thm =',ds_contact%l_thm
-    if (ds_contact%l_thm) then
+    if (l_unil_pena) then
        enat = sdunil_solv(1:14)//'.ENAT'
        call jecrec(enat, 'V V R', 'NU', 'DISPERSE', 'CONSTANT',&
                 nnocu)

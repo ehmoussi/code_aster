@@ -69,6 +69,7 @@ type(NL_DS_AlgoPara), intent(in) :: ds_algopara
     aster_logical :: lgcpc, lpetsc, lamg, limpex, l_matr_rigi_syme, l_matr_distr
     aster_logical :: londe, l_dyna, l_grot_gdep, l_newt_krylov, l_mumps, l_rom
     aster_logical :: l_energy, lproj, lmatdi, lldsp, lctgcp, l_comp_rela, lammo, lthms, limpl
+    aster_logical :: l_unil_pena
     character(len=24) :: typilo, metres, char24
     character(len=16) :: reli_meth, matrix_pred, partit
     character(len=3) :: mfdet
@@ -220,9 +221,8 @@ type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 ! - Unilateral link
 !
     if (l_unil) then
-    
-        write(6,*) 'exfonc :: l_thm =',ds_contact%l_thm
-        if (ds_contact%l_thm) then
+        l_unil_pena = cfdisl(ds_contact%sdcont_defi, 'UNIL_PENA')
+        if (l_unil_pena) then
            ! Guilhem:  A modifier dans la version aboutie
            lmodim = .true.
            if (reac_incr .eq. 0) then
