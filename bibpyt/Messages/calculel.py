@@ -338,6 +338,10 @@ Conseil :
  Type de l'élément affecté sur la première maille imprimée : %(k5)s
 """),
 
+    46 : _(u"""
+  EXCENTREMENT NON POSSIBLE POUR LES COQUE_3D:  %(k1)s.
+"""),
+
     47 : _(u"""
   le CHAM_ELEM:  %(k1)s  n'existe pas.
 """),
