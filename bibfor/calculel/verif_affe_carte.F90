@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -44,6 +44,7 @@ subroutine verif_affe_carte(ligrmo,carte,comment,non_lin)
 #include "asterfort/etenca.h"
 #include "asterfort/jeexin.h"
 #include "asterfort/jxveri.h"
+#include "asterc/r8prem.h"
 !
     character(len=19), intent(in) :: ligrmo
     character(len=19), intent(in) :: carte
@@ -76,10 +77,10 @@ subroutine verif_affe_carte(ligrmo,carte,comment,non_lin)
     integer, pointer :: ptma(:) => null()
     integer, pointer :: dg(:) => null()
     integer, pointer :: typmail(:) => null()
-    integer :: list_ma_pb(5),typq4,typt3
-    aster_logical    :: verif_coef_drz = .false.
+    integer :: list_ma_pb(5),typq4,typt3,typq9,typt7
+    aster_logical    :: verif_coef_drz = .false., verif_excent_cq3 = .false.
     aster_logical    :: exiq4_drz_nook = .false.,exiq4_coef_drz = .false.
-    aster_logical    :: exit3_coef_drz = .false.
+    aster_logical    :: exit3_coef_drz = .false.,exi_excent_cq3 = .false.
 
 !-----------------------------------------------------------------------
 !
@@ -219,6 +220,7 @@ subroutine verif_affe_carte(ligrmo,carte,comment,non_lin)
         if (nomgd.eq.'CACOQU' .and. nocmp.eq.'KAPPA') cycle
 !        if (nomgd.eq.'CACOQU' .and. nocmp.eq.'CTOR') cycle
         if (nomgd.eq.'CACOQU' .and. nocmp.eq.'CTOR') verif_coef_drz = .true.
+        if (nomgd.eq.'CACOQU' .and. nocmp.eq.'EXCENT') verif_excent_cq3 = .true.
         if (nomgd.eq.'CAORIE' .and. nocmp.eq.'ALPHA') cycle
         
 
@@ -249,7 +251,7 @@ subroutine verif_affe_carte(ligrmo,carte,comment,non_lin)
             ient=ptma(ima)
             decal=3+2*nbgdmx+nec*(ient-1)
             dg=>desc(decal+1:decal+nec)
-            if (.not.exisdg(dg, kcmp)) cycle
+            if (.not.exisdg(dg, kcmp) .and. .not. verif_excent_cq3) cycle
 
 
 !           -- si la cmp est nulle, on n'alarme pas :
@@ -282,6 +284,17 @@ subroutine verif_affe_carte(ligrmo,carte,comment,non_lin)
                     endif
                 else
                     if (zr(jvale-1+iad1).eq.0.d0) cycle
+                endif
+                
+                if (verif_excent_cq3) then
+                    if (abs(zr(jvale-1+iad1-1)).le.r8prem()) cycle
+                    call jeveuo(mailla//'.TYPMAIL', 'L', vi=typmail)
+                    call jenonu(jexnom('&CATA.TM.NOMTM', 'QUAD9'), typq9)
+                    call jenonu(jexnom('&CATA.TM.NOMTM', 'TRIA7'), typt7)
+                    call jenuno(jexnum('&CATA.TE.NOMTE', te), nomte)
+                    if (nomte(1:2) .eq. 'TH' ) cycle
+                    if (typmail(ima) .eq. typt7 .or. typmail(ima) .eq. typq9)&
+                        exi_excent_cq3 = .true.
                 endif
             else if (tsca.eq.'C') then
                 if (abs(zc(jvale-1+iad1)).eq.0.d0) cycle
@@ -323,6 +336,9 @@ subroutine verif_affe_carte(ligrmo,carte,comment,non_lin)
                     call utmess('F','CALCULEL_45',nk=5,valk=valk,si=nbmapb) 
             elseif (exit3_coef_drz .and. exiq4_coef_drz) then 
                 call utmess('A','CALCULEL_42',nk=5,valk=valk,si=nbmapb)
+                cycle
+            elseif (exi_excent_cq3) then 
+                call utmess('F','CALCULEL_46',nk=5,valk=valk,si=nbmapb)
                 cycle
             elseif (exit3_coef_drz .and. .not. exiq4_coef_drz) then  
                 call utmess('F','CALCULEL_43',nk=5,valk=valk,si=nbmapb)
