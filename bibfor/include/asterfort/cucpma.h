@@ -19,12 +19,12 @@
 !
 !
 interface
-    subroutine cucpma(deficu, resocu, neq, nbliai, numedd, matrcf)
+    subroutine cucpma(deficu, resocu, neq, nbliai, numedd, matrcu)
         character(len=24) :: deficu
         character(len=24) :: resocu
         integer :: neq
         integer :: nbliai
         character(len=14) :: numedd
-        character(len=19) :: matrcf
+        character(len=19) :: matrcu
     end subroutine cucpma
 end interface

@@ -79,8 +79,7 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
     character(len=24) :: cm1a, coco, liac, mu, delt0, delta, liot
     integer :: jcoco, jliac, jmu, jdelt0, jdelta, jliot
 !
-    character(len=24) :: coefpe
-    integer :: jcoe_pena, inoe
+    integer :: inoe
     character(len=19) :: enat
     aster_logical :: l_unil_pena
 ! --------------------------------------------------------------------------------------------------

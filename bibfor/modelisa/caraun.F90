@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -91,7 +91,7 @@ subroutine caraun(char, motfac, nzocu, nbgdcu, coefcu,&
     integer :: jparci
     integer :: jcoef, jnbgd, jcmpg, jmult, jpena
     character(len=16) :: vale_k, s_algo_cont
-    real*8 :: pena
+    real(kind=8) :: pena
 !
 ! ----------------------------------------------------------------------
 !
@@ -148,10 +148,10 @@ subroutine caraun(char, motfac, nzocu, nbgdcu, coefcu,&
 !
     coefcu = '&&CARAUN.COEFCU'
     call wkvect(coefcu, 'V V K8', nzocu, jcoef)
-    do 1001 izone = 1, nzocu
+    do izone = 1, nzocu
         call getvid(motfac, 'COEF_IMPO', iocc=izone, scal=ccoef, nbret=noc)
         zk8(jcoef-1+izone) = ccoef
-1001  end do
+    end do
 !
 ! --- MEMBRE DE GAUCHE DE L'INEGALITE
 ! --- COMPTAGE PREALABLE DU NOMBRE DE DDLS
@@ -159,7 +159,7 @@ subroutine caraun(char, motfac, nzocu, nbgdcu, coefcu,&
     call wkvect(nbgdcu, 'V V I', nzocu+1, jnbgd)
     zi(jnbgd) = 1
     ntcmp = 0
-    do 1002 izone = 1, nzocu
+    do izone = 1, nzocu
         call getvtx(motfac, 'NOM_CMP', iocc=izone, scal=k8bid, nbret=nbcmp)
         call getvid(motfac, 'COEF_MULT', iocc=izone, scal=k8bid, nbret=nbcmul)
         if (nbcmp .ne. nbcmul) then
@@ -172,7 +172,7 @@ subroutine caraun(char, motfac, nzocu, nbgdcu, coefcu,&
             call utmess('F', 'UNILATER_43')
         endif
         zi(jnbgd+izone) = zi(jnbgd+izone-1) + nbcmp
-1002  end do
+    end do
 !
 ! --- MEMBRE DE GAUCHE DE L'INEGALITE: CREATION DES OBJETS
 !
@@ -181,7 +181,7 @@ subroutine caraun(char, motfac, nzocu, nbgdcu, coefcu,&
 !
 ! --- MEMBRE DE GAUCHE DE L'INEGALITE: REMPLISSAGE DES OBJETS
 !
-    do 2000 izone = 1, nzocu
+    do izone = 1, nzocu
         nbcmp = zi(jnbgd+izone) - zi(jnbgd+izone-1)
         call getvtx(motfac, 'NOM_CMP', iocc=izone, nbval=nbcmp, vect=cmpgd,&
                     nbret=noc)
@@ -191,7 +191,7 @@ subroutine caraun(char, motfac, nzocu, nbgdcu, coefcu,&
             zk8(jcmpg-1+zi(jnbgd+izone-1)+icmp-1) = cmpgd(icmp)
             zk8(jmult-1+zi(jnbgd+izone-1)+icmp-1) = ccmult(icmp)
 11      continue
-2000  end do
+    end do
 !
     call jedema()
 !

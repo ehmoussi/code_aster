@@ -52,7 +52,6 @@ implicit none
 !
 ! ----------------------------------------------------------------------
 !
-    integer :: ifm, niv
     character(len=24) :: limat(2)
     real(kind=8) :: coefmu(2)
     character(len=1) :: typcst(2)
@@ -61,10 +60,6 @@ implicit none
 ! ----------------------------------------------------------------------
 !
     call jemarq()
-!
-    if (niv .ge. 2) then
-        write (ifm,*) '<CONTACT> AJOUT MATRICE CONTACT/FROTTEMENT'
-    endif
 !
     limat(1) = matass
     limat(2) = matr
