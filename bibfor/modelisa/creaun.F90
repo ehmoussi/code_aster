@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -100,7 +100,7 @@ subroutine creaun(char, noma, nomo, nzocu, nnocu,&
     character(len=8), pointer :: coefd(:) => null()
     character(len=8), pointer :: coefg(:) => null()
     integer, pointer :: indir(:) => null()
-    real*8, pointer :: cpena(:) => null()
+    real(kind=8), pointer :: cpena(:) => null()
 !
 ! ----------------------------------------------------------------------
 !
@@ -155,19 +155,19 @@ subroutine creaun(char, noma, nomo, nzocu, nnocu,&
     cptd = 1
     ncmpg = 1
 !
-    do 1000 izone = 1, nzocu
+    do izone = 1, nzocu
 !
         nbno = zi(jpoi+izone) - zi(jpoi+izone-1)
         jdebnd = zi(jpoi+izone-1)
         nbcmp = zi(jnbgd+izone) - zi(jnbgd+izone-1)
         jdebcp = zi(jnbgd+izone-1)
 !
-        do 2000 ino = 1, nbno
+        do ino = 1, nbno
 !
             numnd = zi(jnoe-1+jdebnd+ino-1)
             nbsup = 0
 !
-            do 3000 icmp = 1, nbcmp
+            do icmp = 1, nbcmp
 !
                 cmp = zk8(jncmp-1+jdebcp+icmp-1)
 !
@@ -192,7 +192,7 @@ subroutine creaun(char, noma, nomo, nzocu, nnocu,&
                     call utmess('I', 'UNILATER_75', nk=2, valk=valk)
                 endif
 !
-3000          continue
+            enddo 
 !
             zi(jnoeu-1+cptnd) = numnd
             coefd(cptd) = zk8(jcoef+izone-1)
@@ -204,8 +204,8 @@ subroutine creaun(char, noma, nomo, nzocu, nnocu,&
             cptd = cptd + 1
             cptnd = cptnd + 1
 !
-2000      continue
-1000  end do
+        enddo
+    end do
 !
     cptd = cptd - 1
     cptnd = cptnd - 1
@@ -225,17 +225,17 @@ subroutine creaun(char, noma, nomo, nzocu, nnocu,&
 !
     poincu = deficu(1:16)//'.POINOE'
     call wkvect(poincu, 'G V I', nnocu+1, jpoin)
-    do 4000 ino = 1, nnocu+1
+    do ino = 1, nnocu+1
         zi(jpoin-1+ino) = indir(ino)
-4000  end do
+    end do
 !
 ! --- LISTE DES NOMS DE COMPOSANTES A GAUCHE
 !
     cmpgcu = deficu(1:16)//'.CMPGCU'
     call wkvect(cmpgcu, 'G V K8', ncmpg, jcmpg)
-    do 4001 icmp = 1, ncmpg
+    do icmp = 1, ncmpg
         zk8(jcmpg-1+icmp) = cmpg(icmp)
-4001  end do
+    end do
 !
 ! --- LISTE DES COEFFICIENTS A DROITE ET A GAUCHE
 !
@@ -244,13 +244,13 @@ subroutine creaun(char, noma, nomo, nzocu, nnocu,&
     call wkvect(coegcu, 'G V K8', ncmpg, jcoefg)
     call wkvect(coedcu, 'G V K8', nnocu, jcoefd)
 !
-    do 4003 icmp = 1, ncmpg
+    do icmp = 1, ncmpg
         zk8(jcoefg-1+icmp) = coefg(icmp)
-4003  end do
+    end do
 !
-    do 4004 icmp = 1, cptd
+    do icmp = 1, cptd
         zk8(jcoefd-1+icmp) = coefd(icmp)
-4004  end do
+    end do
 !
 ! --- LISTE DES COEFFICIENTS DE PENALITE
 !

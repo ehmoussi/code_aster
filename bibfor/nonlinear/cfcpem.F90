@@ -22,7 +22,7 @@ subroutine cfcpem(resoco, nbliai)
     implicit     none
 #include "jeveux.h"
 !
-#include "asterfort/compute_ineq_conditions_elem_matrix.h"
+#include "asterfort/compute_ineq_conditions_matrix.h"
 #include "asterfort/cfmmvd.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jemarq.h"
@@ -74,7 +74,7 @@ subroutine cfcpem(resoco, nbliai)
 !
 ! --- CALCUL DE LA MATRICE DE CONTACT PENALISEE
 !
-    call compute_ineq_conditions_elem_matrix(enat  , nbliai, japptr,&
+    call compute_ineq_conditions_matrix(enat  , nbliai, japptr,&
                                              japcoe, jjeux , jtacf ,&
                                              3     , ztacf )
 !

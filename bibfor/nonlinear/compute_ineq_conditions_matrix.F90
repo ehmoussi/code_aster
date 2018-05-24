@@ -16,9 +16,9 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine compute_ineq_conditions_elem_matrix(enat  , nbliai, japptr, &
-                                               japcoe, jjeux , jtacf , &
-                                               njeux , ztacf )
+subroutine compute_ineq_conditions_matrix(enat  , nbliai, japptr, &
+                                          japcoe, jjeux , jtacf , &
+                                          njeux , ztacf )
 !
 !
     implicit     none

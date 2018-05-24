@@ -55,7 +55,7 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
 !
     integer :: ifm, niv
     integer :: cont_form
-    character(len=8) :: sdcont, answer
+    character(len=8) :: sdcont
     character(len=24) :: iden_rela
     aster_logical :: l_cont, l_unil
     aster_logical :: l_form_disc, l_form_cont, l_form_xfem, l_form_lac

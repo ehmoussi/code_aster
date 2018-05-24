@@ -23,6 +23,7 @@ interface
                                             japptr, japddl, japcoe,&
                                             jjeux , jtacf , jmu   ,&
                                             njeux , ztacf , iliac )
+        integer :: jsecmb
         real(kind=8) :: jeuini, coefpn, lambdc
         integer :: iliai, iliac
         integer :: jmu

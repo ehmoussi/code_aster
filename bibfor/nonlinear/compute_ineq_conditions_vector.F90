@@ -26,10 +26,10 @@ subroutine compute_ineq_conditions_vector(jsecmb, nbliai, neq   ,&
 #include "jeveux.h"
 #include "asterc/r8prem.h"
 #include "asterfort/calatm.h"
-    integer :: jsecmb
 !
 ! ----------------------------------------------------------------------
 !
+    integer :: jsecmb
     real(kind=8) :: jeuini, coefpn, lambdc
     integer :: iliai, iliac
     integer :: jmu

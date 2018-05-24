@@ -22,7 +22,7 @@ subroutine cucpem(deficu, resocu, nbliai)
     implicit     none
 #include "jeveux.h"
 !
-#include "asterfort/compute_ineq_conditions_elem_matrix.h"
+#include "asterfort/compute_ineq_conditions_matrix.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
@@ -72,7 +72,7 @@ subroutine cucpem(deficu, resocu, nbliai)
 !
 ! --- CALCUL DE LA MATRICE DE CONTACT PENALISEE
 !
-    call compute_ineq_conditions_elem_matrix(enat  , nbliai, japptr      ,&
+    call compute_ineq_conditions_matrix(enat  , nbliai, japptr      ,&
                                              japcoe, jjeux , jcoef_pena-1,&
                                              1     , 1     )
 !

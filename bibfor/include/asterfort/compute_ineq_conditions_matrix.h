@@ -19,11 +19,11 @@
 !
 !
 interface
-    subroutine compute_ineq_conditions_elem_matrix(enat  , nbliai, japptr, &
-                                                   japcoe, jjeux , jtacf , &
-                                                   njeux , ztacf )
+    subroutine compute_ineq_conditions_matrix(enat  , nbliai, japptr, &
+                                              japcoe, jjeux , jtacf , &
+                                              njeux , ztacf )
         character(len=24) :: enat
         integer :: nbliai
         integer :: japptr, japcoe, jjeux, jtacf, njeux, ztacf
-    end subroutine compute_ineq_conditions_elem_matrix
+    end subroutine compute_ineq_conditions_matrix
 end interface
