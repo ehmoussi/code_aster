@@ -446,6 +446,15 @@ class GeneralMaterialBehaviourInstance
         {};
 
         /**
+         * @brief Constructeur
+         */
+        GeneralMaterialBehaviourInstance( const std::string asterName,
+                                          const std::string asterNewName = "" ):
+            _asterName( asterName ),
+            _asterNewName( asterNewName )
+        {};
+
+        /**
          * @brief Recuperation du nom Aster du GeneralMaterialBehaviourInstance
          *        ex : 'ELAS', 'ELASFo', ...
          * @return Chaine contenant le nom Aster
@@ -681,18 +690,6 @@ class GeneralMaterialBehaviourInstance
             return true;
         };
 
-        bool addSurfaceProperty( std::string key, ElementaryMaterialPropertyDataStructure value )
-        {
-            _mapOfFunctionMaterialProperties[ key ] = value;
-            return true;
-        };
-
-        bool addFormulaProperty( std::string key, ElementaryMaterialPropertyDataStructure value )
-        {
-            _mapOfFunctionMaterialProperties[ key ] = value;
-            return true;
-        };
-
         bool addVectorOfDoubleProperty( std::string key,
                                         ElementaryMaterialPropertyVectorDouble value )
         {
@@ -713,6 +710,105 @@ class GeneralMaterialBehaviourInstance
             return true;
         };
 };
+
+/**
+ * @class MaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance
+ * @author Jean-Pierre Lefebvre
+ */
+class MaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+{
+    std::string capitalizeName( const std::string& nameInit )
+    {
+        std::string name( nameInit );
+        if( ! name.empty() )
+        {
+            name[0] = std::toupper( name[0] );
+
+            for( std::size_t i = 1 ; i < name.length() ; ++i )
+                name[i] = std::tolower( name[i] );
+        }
+        return name;
+    };
+
+public:
+    /**
+     * @brief Constructeur
+     */
+    MaterialBehaviourInstance( const std::string asterName,
+                               const std::string asterNewName = "" ):
+        GeneralMaterialBehaviourInstance( asterName, asterNewName )
+    {};
+
+    bool addNewDoubleProperty( std::string name, const bool mandatory )
+    {
+        return addDoubleProperty( capitalizeName( name ),
+                                  ElementaryMaterialPropertyDouble( name, mandatory ) );
+    };
+
+    bool addNewDoubleProperty( std::string name, const double& value,
+                               const bool mandatory )
+    {
+        return addDoubleProperty( capitalizeName( name ),
+                                  ElementaryMaterialPropertyDouble( name, value, mandatory ) );
+    };
+
+    bool addNewComplexProperty( std::string name, const bool mandatory )
+    {
+        return addComplexProperty( capitalizeName( name ), ElementaryMaterialPropertyComplex( name, mandatory ) );
+    };
+
+    bool addNewStringProperty( std::string name, const bool mandatory )
+    {
+        return addStringProperty( capitalizeName( name ),
+                                  ElementaryMaterialPropertyString( name, mandatory ) );
+    };
+
+    bool addNewStringProperty( std::string name, const std::string& value,
+                               const bool mandatory )
+    {
+        return addStringProperty( capitalizeName( name ),
+                                  ElementaryMaterialPropertyString( name, value, mandatory ) );
+    };
+
+    bool addNewFunctionProperty( std::string name, const bool mandatory )
+    {
+        return addFunctionProperty( capitalizeName( name ),
+                                    ElementaryMaterialPropertyDataStructure( name, mandatory ) );
+    };
+
+    bool addNewTableProperty( std::string name, const bool mandatory )
+    {
+        return addTableProperty( capitalizeName( name ),
+                                 ElementaryMaterialPropertyTable( name, mandatory ) );
+    };
+
+    bool addNewVectorOfDoubleProperty( std::string name, const bool mandatory )
+    {
+        return addVectorOfDoubleProperty( capitalizeName( name ),
+                                          ElementaryMaterialPropertyVectorDouble( name,
+                                                                                    mandatory ) );
+    };
+
+    bool addNewVectorOfFunctionProperty( std::string name, const bool mandatory )
+    {
+        return addVectorOfFunctionProperty( capitalizeName( name ),
+                ElementaryMaterialPropertyVectorFunction( name, mandatory ) );
+    };
+
+    /**
+     * @brief Get name link to the class
+     * @return name
+     */
+    std::string getName()
+    {
+        return _asterName;
+    };
+};
+
+/** @typedef Pointeur intelligent vers un comportement materiau */
+typedef boost::shared_ptr< MaterialBehaviourInstance > MaterialBehaviourPtr;
+
 
 /**
  * @class ElasMaterialBehaviourInstance
@@ -8239,8 +8335,5 @@ typedef boost::shared_ptr< UMatFoMaterialBehaviourInstance > UMatFoMaterialBehav
 
 /** @typedef Pointeur intellignet vers un comportement materiau quelconque */
 typedef boost::shared_ptr< GeneralMaterialBehaviourInstance > GeneralMaterialBehaviourPtr;
-
-
-
 
 #endif
