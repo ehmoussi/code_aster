@@ -48,6 +48,36 @@ void exportMaterialBehaviourToPython()
               &GeneralMaterialBehaviourInstance::setSortedListParameters )
     ;
 
+    bool (MaterialBehaviourInstance::*c1)( std::string, const bool ) =
+            &MaterialBehaviourInstance::addNewDoubleProperty;
+    bool (MaterialBehaviourInstance::*c2)( std::string, const double&, const bool ) =
+            &MaterialBehaviourInstance::addNewDoubleProperty;
+    bool (MaterialBehaviourInstance::*c3)( std::string, const bool ) =
+            &MaterialBehaviourInstance::addNewStringProperty;
+    bool (MaterialBehaviourInstance::*c4)( std::string, const std::string&, const bool ) =
+            &MaterialBehaviourInstance::addNewStringProperty;
+
+    class_< MaterialBehaviourInstance, MaterialBehaviourPtr,
+            bases< GeneralMaterialBehaviourInstance > >
+        ( "MaterialBehaviour", no_init )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< MaterialBehaviourInstance, std::string >) )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< MaterialBehaviourInstance, std::string, std::string >) )
+        .def( "addNewDoubleProperty", c1 )
+        .def( "addNewDoubleProperty", c2 )
+        .def( "addNewComplexProperty", &MaterialBehaviourInstance::addNewComplexProperty )
+        .def( "addNewStringProperty", c3 )
+        .def( "addNewStringProperty", c4 )
+        .def( "addNewFunctionProperty", &MaterialBehaviourInstance::addNewFunctionProperty )
+        .def( "addNewTableProperty", &MaterialBehaviourInstance::addNewTableProperty )
+        .def( "addNewVectorOfDoubleProperty",
+              &MaterialBehaviourInstance::addNewVectorOfDoubleProperty )
+        .def( "addNewVectorOfFunctionProperty",
+              &MaterialBehaviourInstance::addNewVectorOfFunctionProperty )
+        .def( "getName", &MaterialBehaviourInstance::getName )
+    ;
+
     class_< ElasMaterialBehaviourInstance, ElasMaterialBehaviourPtr,
             bases< GeneralMaterialBehaviourInstance > >
         ( "ElasMaterialBehaviour", no_init )
