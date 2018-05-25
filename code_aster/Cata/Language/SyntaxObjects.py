@@ -567,7 +567,7 @@ class FactorKeyword(PartOfSyntax):
         if self._def_status() not in ("c", "d"):
             return None
         if self.is_list():
-            return []
+            return [_F()]
         return _F()
 
 
