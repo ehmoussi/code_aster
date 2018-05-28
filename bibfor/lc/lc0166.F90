@@ -19,20 +19,19 @@
 subroutine lc0166(fami, kpg, ksp, ndim, imate,&
                   compor, carcri, instam, instap, epsm,&
                   deps, sigm, vim, option, angmas,&
-                  sigp, vip, wkin, typmod, icomp,&
+                  sigp, vip,  typmod, icomp,&
                   nvi, dsidep, codret)
 implicit none
 #include "asterfort/cfluendo3d.h"
 !
 ! person_in_charge: etienne.grimal at edf.fr
-! aslint: disable=W1504,W0104
 !.......................................................................
 !     BUT: LOI D'ENDOMMAGEMENT ENDO_PORO_BETON
 !
 !          RELATION : 'ENDO_PORO_BETON'
     integer :: imate, ndim, kpg, ksp, codret, icomp, nvi
     real(kind=8) :: carcri(*), angmas(*)
-    real(kind=8) :: instam, instap, wkin(*)
+    real(kind=8) :: instam, instap
     real(kind=8) :: epsm(6), deps(6)
     real(kind=8) :: sigm(6), sigp(6)
     real(kind=8) :: vim(*), vip(*)
