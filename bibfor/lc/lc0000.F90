@@ -826,21 +826,21 @@ integer :: codret
         call lc0166(fami, kpg, ksp, ndim, imate,&
                     compor, carcri, instam, instap, epsm,&
                     deps, sigm, vim, option, angmas,&
-                    sigp, vip, wkin, typmod, icomp,&
+                    sigp, vip,  typmod, icomp,&
                     nvi, dsidep, codret)
     case (167)
 !     FLUA_ENDO_PORO
         call lc0167(fami, kpg, ksp, ndim, imate,&
                     compor, carcri, instam, instap, epsm,&
                     deps, sigm, vim, option, angmas,&
-                    sigp, vip, wkin, typmod, icomp,&
+                    sigp, vip,  typmod, icomp,&
                     nvi, dsidep, codret)
     case (168)
 !     RGI_BETON
         call lc0168(fami, kpg, ksp, ndim, imate,&
                     compor, carcri, instam, instap, epsm,&
                     deps, sigm, vim, option, angmas,&
-                    sigp, vip, wkin, typmod, icomp,&
+                    sigp, vip, typmod, icomp,&
                     nvi, dsidep, codret)
 !
 ! --------------------------------------------------------------------------------------------------

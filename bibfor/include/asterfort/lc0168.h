@@ -23,7 +23,7 @@ interface
     subroutine lc0168(fami, kpg, ksp, ndim, imate,&
                       compor, carcri, instam, instap, epsm,&
                       deps, sigm, vim, option, angmas,&
-                      sigp, vip, wkin, typmod, icomp,&
+                      sigp, vip,  typmod, icomp,&
                       nvi, dsidep, codret)
         character(len=*) :: fami
         integer :: kpg
@@ -42,7 +42,6 @@ interface
         real(kind=8) :: angmas(*)
         real(kind=8) :: sigp(6)
         real(kind=8) :: vip(*)
-        real(kind=8) :: wkin(*)
         character(len=8) :: typmod(*)
         integer :: icomp
         integer :: nvi

@@ -19,7 +19,7 @@
 subroutine lc0168(fami, kpg, ksp, ndim, imate,&
                   compor, carcri, instam, instap, epsm,&
                   deps, sigm, vim, option, angmas,&
-                  sigp, vip, wkin, typmod, icomp,&
+                  sigp, vip,  typmod, icomp,&
                   nvi, dsidep, codret)
 implicit none
 #include "asterfort/cfluendo3d.h"
@@ -32,7 +32,7 @@ implicit none
 !
     integer :: imate, ndim, kpg, ksp, codret, icomp, nvi
     real(kind=8) :: carcri(*), angmas(*)
-    real(kind=8) :: instam, instap, wkin(*)
+    real(kind=8) :: instam, instap
     real(kind=8) :: epsm(6), deps(6)
     real(kind=8) :: sigm(6), sigp(6)
     real(kind=8) :: vim(*), vip(*)

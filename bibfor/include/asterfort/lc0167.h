@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,13 +17,12 @@
 ! --------------------------------------------------------------------
 
 !
-! aslint: disable=W1504
 !
 interface
     subroutine lc0167(fami, kpg, ksp, ndim, imate,&
                       compor, carcri, instam, instap, epsm,&
                       deps, sigm, vim, option, angmas,&
-                      sigp, vip, wkin, typmod, icomp,&
+                      sigp, vip,  typmod, icomp,&
                       nvi, dsidep, codret)
         character(len=*) :: fami
         integer :: kpg
@@ -42,7 +41,6 @@ interface
         real(kind=8) :: angmas(*)
         real(kind=8) :: sigp(6)
         real(kind=8) :: vip(*)
-        real(kind=8) :: wkin(*)
         character(len=8) :: typmod(*)
         integer :: icomp
         integer :: nvi
