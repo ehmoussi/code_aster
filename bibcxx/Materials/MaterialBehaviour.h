@@ -787,7 +787,7 @@ public:
     {
         return addVectorOfDoubleProperty( capitalizeName( name ),
                                           ElementaryMaterialPropertyVectorDouble( name,
-                                                                                    mandatory ) );
+                                                                                  mandatory ) );
     };
 
     bool addNewVectorOfFunctionProperty( std::string name, const bool mandatory )

@@ -21,6 +21,9 @@
 
 from ..Objects import Material, GeneralMaterialBehaviour, Table, Function
 from ..Objects import Surface, Formula, MaterialBehaviour
+from code_aster.Cata.Language.SyntaxObjects import FactorKeyword, SimpleKeyword, Bloc
+from code_aster.Cata.Language.DataStructure import fonction_sdaster, formule
+from code_aster.Cata.Language.DataStructure import nappe_sdaster, table_sdaster
 from .ExecuteCommand import ExecuteCommand
 import numpy
 
@@ -116,67 +119,97 @@ class MaterialDefinition(ExecuteCommand):
 
         self._result.build()
 
+    def _enrichMaterialBehaviour(self, propName, sKeyword, mater):
+        """Build a dict with MaterialBehaviour
+
+        Returns:
+            dict: Behaviour instances from keywords of command.
+        """
+        keywordType = sKeyword.definition['typ']
+        if type(keywordType) is not tuple:
+            keywordType=(keywordType,)
+
+        default = sKeyword.defaultValue()
+        mandatory = sKeyword.isMandatory()
+        if len(keywordType) > 1 and "R" in keywordType:
+            mandatory = False
+        print "   propName", propName, default, mandatory
+        mandatory = False
+
+        dsTypeAlreadyPresent = False
+        for curType in keywordType:
+            if default is None:
+                if curType == "R":
+                    mater.addNewDoubleProperty(propName, mandatory)
+                elif curType == "C":
+                    mater.addNewComplexProperty(propName, mandatory)
+                elif curType == "TXM":
+                    mater.addNewStringProperty(propName, mandatory)
+                elif issubclass(curType, fonction_sdaster) or\
+                        issubclass(curType, nappe_sdaster) or\
+                        issubclass(curType, formule):
+                    if not dsTypeAlreadyPresent:
+                            mater.addNewFunctionProperty(propName, mandatory)
+                    dsTypeAlreadyPresent = True
+                elif issubclass(curType, table_sdaster):
+                    mater.addNewTableProperty(propName, mandatory)
+                else:
+                    raise NotImplementedError("Type not implemented for"
+                                                " material property: '{0}'"
+                                                .format(propName))
+            else:
+                if curType == "R":
+                    mater.addNewDoubleProperty(propName, default, mandatory)
+                elif curType == "TXM":
+                    mater.addNewStringProperty(propName, default, mandatory)
+                if type(default) not in (float, str):
+                    raise NotImplementedError("No default value allowed for"
+                                                " material property: '{0}'"
+                                                .format(propName))
+        return mater
+
     def _buildInstance(self, keywords):
         """Build a dict with MaterialBehaviour
 
         Returns:
             dict: Behaviour instances from keywords of command.
         """
-        from code_aster.Cata.Language.SyntaxObjects import FactorKeyword, SimpleKeyword
-        from code_aster.Cata.Language.DataStructure import fonction_sdaster, formule
-        from code_aster.Cata.Language.DataStructure import nappe_sdaster, table_sdaster
 
         objects = {}
         for materName, value in keywords.iteritems():
-            keyword = self._cata.definition[materName]
+            print "Ici", self._cata.getKeyword(materName, keywords)
+            keyword = self._cata.getKeyword(materName, keywords)
+            print "value", value
+            #keyword = None
+            #try:
+                #keyword = self._cata.definition[materName]
+            #except:
+                #for key, val in self._cata.definition.iteritems():
+                    #if isinstance(val, Bloc):
+                        #try:
+                            #keyword = val._definition[materName]
+                            #break
+                        #except:
+                            #pass
+
             asterName = materName
             asterNewName = ""
-            if asterName[-2:] == "_FO": asterNewName = asterName[:-3]
-            print asterName, asterNewName
+            if asterName[-2:] == "FO": asterNewName = asterName[:-3]
             mater = MaterialBehaviour(asterName, asterNewName)
+            print "asterName", asterName
             if isinstance(keyword, FactorKeyword):
                 for propName, sKeyword in keyword.definition.iteritems():
                     if isinstance(sKeyword, SimpleKeyword):
-                        keywordType = sKeyword.definition['typ']
-                        if type(keywordType) is not tuple:
-                            keywordType=(keywordType,)
-
-                        default = sKeyword.defaultValue()
-                        mandatory = sKeyword.isMandatory()
-                        if len(keywordType) > 1 and "R" in keywordType:
-                            mandatory = False
-
-                        dsTypeAlreadyPresent = False
-                        for curType in keywordType:
-                            print propName, curType
-                            if default is None:
-                                if curType == "R":
-                                    mater.addNewDoubleProperty(propName, mandatory)
-                                elif curType == "C":
-                                    mater.addNewComplexProperty(propName, mandatory)
-                                elif curType == "TXM":
-                                    mater.addNewStringProperty(propName, mandatory)
-                                elif issubclass(curType, fonction_sdaster) or\
-                                     issubclass(curType, nappe_sdaster) or\
-                                     issubclass(curType, formule):
-                                    if not dsTypeAlreadyPresent:
-                                         mater.addNewFunctionProperty(propName, mandatory)
-                                    dsTypeAlreadyPresent = True
-                                elif issubclass(curType, table_sdaster):
-                                    mater.addNewTableProperty(propName, mandatory)
-                                else:
-                                    raise NotImplementedError("Type not implemented for"
-                                                              " material property: '{0}'"
-                                                              .format(propName))
-                            else:
-                                if curType == "R":
-                                    mater.addNewDoubleProperty(propName, mandatory)
-                                elif curType == "C":
-                                    mater.addNewComplexProperty(propName, mandatory)
-                                else:
-                                    raise NotImplementedError("No default value allowed for"
-                                                              " material property: '{0}'"
-                                                              .format(propName))
+                        mater = self._enrichMaterialBehaviour(propName, sKeyword, mater)
+                    elif isinstance(sKeyword, Bloc):
+                        for key, value in sKeyword._definition.iteritems():
+                            if isinstance(value, SimpleKeyword):
+                                mater = self._enrichMaterialBehaviour(key, value, mater)
+                            elif isinstance(value, FactorKeyword):
+                                for propName2, sKeyword2 in value.definition.iteritems():
+                                    if isinstance(sKeyword2, SimpleKeyword):
+                                        mater = self._enrichMaterialBehaviour(propName2, sKeyword2,
+                                                                              mater)
             objects[materName] = mater
         return objects
 
