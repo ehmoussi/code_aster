@@ -18,32 +18,37 @@
 # --------------------------------------------------------------------
 
 """
-Configuration for clap0f0q (gfortran + openblas)
+Configuration for eole
 
 . $HOME/dev/codeaster/devtools/etc/env_unstable.sh
 
-waf configure --use-config=clap0f0q --prefix=../install/std
+waf configure --use-config=eole_std --prefix=../install/std
 waf install -p
 """
 
 import os
 ASTER_ROOT = os.environ['ASTER_ROOT']
-YAMMROOT = ASTER_ROOT + '/public/default'
+YAMMROOT = os.environ['ROOT_SALOME']
 
+import intel
 import official_programs
 
 
 def configure(self):
     opts = self.options
 
+    intel.configure(self)
     official_programs.configure(self)
-    official_programs.check_prerequisites_package(self, YAMMROOT, '20180413')
+    official_programs.check_prerequisites_package(self, YAMMROOT, '20180417')
+    opts.with_prog_salome = True
+    opts.with_prog_europlexus = True
 
-#   for using metis with standard integer (since Metis_aster-510_aster4)
-    self.env.append_value('CFLAGS', ['-DINTSIZE32'])
+    self.env['ADDMEM'] = 700
     self.env.append_value('OPT_ENV', [
-        'export PATH=' + YAMMROOT + '/prerequisites/Medfichier-331/bin:$PATH'])
-    self.env['ADDMEM'] = 300
+        'module unload mkl',
+        'module load ifort/2016.0.047 icc/2016.0.047 mkl/2016.0.047',
+        'export PATH=' + YAMMROOT + '/prerequisites/Medfichier-331/bin:$PATH',
+        'export OPENBLAS_CORETYPE=SANDYBRIDGE'])
 
     TFELHOME = YAMMROOT + '/prerequisites/Mfront-TFEL311_aster'
     TFELVERS = '3.1.1'
@@ -51,19 +56,15 @@ def configure(self):
     self.env.TFELVERS = TFELVERS
 
     self.env.append_value('LIBPATH', [
-        YAMMROOT + '/prerequisites/Python-2710/lib',
         YAMMROOT + '/prerequisites/Hdf5-1814/lib',
         YAMMROOT + '/prerequisites/Medfichier-331/lib',
         YAMMROOT + '/prerequisites/Metis_aster-510_aster4/lib',
         YAMMROOT + '/prerequisites/Scotch_aster-604_aster7/SEQ/lib',
         YAMMROOT + '/prerequisites/Mumps-512_consortium_aster3/SEQ/lib',
         TFELHOME + '/lib',
-        # for openblas
-        ASTER_ROOT + '/public/lib',
     ])
 
     self.env.append_value('INCLUDES', [
-        YAMMROOT + '/prerequisites/Python-2710/include/python2.7',
         YAMMROOT + '/prerequisites/Hdf5-1814/include',
         YAMMROOT + '/prerequisites/Medfichier-331/include',
         YAMMROOT + '/prerequisites/Metis_aster-510_aster4/include',
@@ -73,9 +74,8 @@ def configure(self):
         TFELHOME + '/include',
     ])
 
-    # openblas from $ASTER_ROOT/public/lib embeds lapack
-    opts.maths_libs = 'openblas'
-
+    self.env.append_value('LIB', ('pthread', 'util'))
+    self.env.append_value('LIB_SCOTCH', ('scotcherrexit'))
     # to fail if not found
     opts.enable_hdf5 = True
     opts.enable_med = True

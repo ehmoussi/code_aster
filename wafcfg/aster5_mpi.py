@@ -26,16 +26,16 @@ waf_mpi configure --use-config=aster5_mpi --prefix=../install/mpi
 waf_mpi install -p
 """
 
-import aster5
-ASTER_ROOT = aster5.ASTER_ROOT
-YAMMROOT = aster5.YAMMROOT
+import aster5_std
+ASTER_ROOT = aster5_std.ASTER_ROOT
+YAMMROOT = aster5_std.YAMMROOT
 
 def configure(self):
     opts = self.options
 
     # parallel must be set before calling intel.configure() to use MPI wrappers
     opts.parallel = True
-    aster5.configure(self)
+    aster5_std.configure(self)
     self.env['ADDMEM'] = 800
 
     self.env.append_value('OPT_ENV_FOOTER', [

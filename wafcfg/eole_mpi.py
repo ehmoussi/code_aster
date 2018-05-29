@@ -26,16 +26,16 @@ waf_mpi configure --use-config=eole_mpi --prefix=../install/mpi
 waf_mpi install -p
 """
 
-import eole
-ASTER_ROOT = eole.ASTER_ROOT
-YAMMROOT = eole.YAMMROOT
+import eole_std
+ASTER_ROOT = eole_std.ASTER_ROOT
+YAMMROOT = eole_std.YAMMROOT
 
 def configure(self):
     opts = self.options
 
     # parallel must be set before calling intel.configure() to use MPI wrappers
     opts.parallel = True
-    eole.configure(self)
+    eole_std.configure(self)
     self.env['ADDMEM'] = 900
 
     # suppress too aggressive optimization with Intel impi/2017.0.98 : I_MPI_DAPL_TRANSLATION_CACHE=0
