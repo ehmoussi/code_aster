@@ -824,24 +824,24 @@ integer :: codret
     case (166)
 !     ENDO_PORO_BETON
         call lc0166(fami, kpg, ksp, ndim, imate,&
-                    compor, carcri, instam, instap, epsm,&
-                    deps, sigm, vim, option, angmas,&
-                    sigp, vip,  typmod, icomp,&
-                    nvi, dsidep, codret)
+                    compor,  instam, instap, epsm,&
+                    deps, sigm, vim, option, &
+                    sigp, vip,  typmod, &
+                     dsidep, codret)
     case (167)
 !     FLUA_ENDO_PORO
         call lc0167(fami, kpg, ksp, ndim, imate,&
-                    compor, carcri, instam, instap, epsm,&
-                    deps, sigm, vim, option, angmas,&
-                    sigp, vip,  typmod, icomp,&
-                    nvi, dsidep, codret)
+                    compor,  instam, instap, epsm,&
+                    deps, sigm, vim, option, &
+                    sigp, vip,  typmod, &
+                    dsidep, codret)
     case (168)
 !     RGI_BETON
         call lc0168(fami, kpg, ksp, ndim, imate,&
-                    compor, carcri, instam, instap, epsm,&
-                    deps, sigm, vim, option, angmas,&
-                    sigp, vip, typmod, icomp,&
-                    nvi, dsidep, codret)
+                    compor,  instam, instap, epsm,&
+                    deps, sigm, vim, option, &
+                    sigp, vip, typmod, &
+                    dsidep, codret)
 !
 ! --------------------------------------------------------------------------------------------------
 ! - With SIMO_MIEHE
