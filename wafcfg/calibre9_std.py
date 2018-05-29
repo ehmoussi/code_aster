@@ -22,7 +22,7 @@ Configuration for Calibre 9
 
 . $HOME/dev/codeaster/devtools/etc/env_unstable.sh
 
-waf configure --use-config=calibre9 --prefix=../install/std
+waf configure --use-config=calibre9_std --prefix=../install/std
 waf install -p
 """
 
