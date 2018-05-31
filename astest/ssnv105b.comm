@@ -109,9 +109,9 @@ FONC_T = DEFI_CONSTANTE(VALE = 20.0,)   # Constant temperature equal to the refe
  
 L_INST=DEFI_LIST_REEL(DEBUT=0.0,
                     INTERVALLE=(_F(JUSQU_A=2.*day,
-                                   NOMBRE=1000.,),
+                                   NOMBRE=1000,),
                                 _F(JUSQU_A=instFin*day,
-                                   NOMBRE=1000.,),
+                                   NOMBRE=1000,),
                                    ),)
 
 DEFLIST =DEFI_LIST_INST(DEFI_LIST=_F(LIST_INST = L_INST,),)
