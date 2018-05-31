@@ -46,8 +46,8 @@ class MaterialDefinition(ExecuteCommand):
         Arguments:
             keywords (dict): User's keywords.
         """
-        materByName = self._buildInstance(keywords)
         classByName = MaterialDefinition._byKeyword()
+        materByName = self._buildInstance(keywords, classByName)
         for fkwName, fkw in keywords.iteritems():
             # only see factor keyword
             if not isinstance(fkw, dict):
@@ -117,7 +117,7 @@ class MaterialDefinition(ExecuteCommand):
 
         self._result.build()
 
-    def _buildInstance(self, keywords):
+    def _buildInstance(self, keywords, dictClasses):
         """Build a dict with MaterialBehaviour
 
         Returns:
@@ -126,7 +126,11 @@ class MaterialDefinition(ExecuteCommand):
 
         objects = {}
         for materName, skws in keywords.iteritems():
-            keyword = self._cata.getKeyword(materName, keywords)
+            if dictClasses.has_key(materName):
+                materClass = dictClasses[materName]
+                if materClass.hasConvertibleValues():
+                    objects[materName] = materClass()
+                    continue
             asterNewName = ""
             if materName[-2:] == "FO": asterNewName = materName[:-3]
             mater = MaterialBehaviour(materName, asterNewName)

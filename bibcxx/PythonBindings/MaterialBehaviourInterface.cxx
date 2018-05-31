@@ -85,6 +85,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< ElasMaterialBehaviourInstance > ) )
         .def( "getName", &ElasMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &ElasMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< ElasFoMaterialBehaviourInstance, ElasFoMaterialBehaviourPtr,
@@ -94,6 +97,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< ElasFoMaterialBehaviourInstance > ) )
         .def( "getName", &ElasFoMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &ElasFoMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< ElasFluiMaterialBehaviourInstance, ElasFluiMaterialBehaviourPtr,
@@ -103,6 +109,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< ElasFluiMaterialBehaviourInstance > ) )
         .def( "getName", &ElasFluiMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &ElasFluiMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< ElasIstrMaterialBehaviourInstance, ElasIstrMaterialBehaviourPtr,
@@ -112,6 +121,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< ElasIstrMaterialBehaviourInstance > ) )
         .def( "getName", &ElasIstrMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &ElasIstrMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< ElasIstrFoMaterialBehaviourInstance, ElasIstrFoMaterialBehaviourPtr,
@@ -121,6 +133,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< ElasIstrFoMaterialBehaviourInstance > ) )
         .def( "getName", &ElasIstrFoMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &ElasIstrFoMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< ElasOrthMaterialBehaviourInstance, ElasOrthMaterialBehaviourPtr,
@@ -130,6 +145,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< ElasOrthMaterialBehaviourInstance > ) )
         .def( "getName", &ElasOrthMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &ElasOrthMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< ElasOrthFoMaterialBehaviourInstance, ElasOrthFoMaterialBehaviourPtr,
@@ -139,6 +157,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< ElasOrthFoMaterialBehaviourInstance > ) )
         .def( "getName", &ElasOrthFoMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &ElasOrthFoMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< ElasHyperMaterialBehaviourInstance, ElasHyperMaterialBehaviourPtr,
@@ -148,6 +169,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< ElasHyperMaterialBehaviourInstance > ) )
         .def( "getName", &ElasHyperMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &ElasHyperMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< ElasCoqueMaterialBehaviourInstance, ElasCoqueMaterialBehaviourPtr,
@@ -157,6 +181,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< ElasCoqueMaterialBehaviourInstance > ) )
         .def( "getName", &ElasCoqueMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &ElasCoqueMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< ElasCoqueFoMaterialBehaviourInstance, ElasCoqueFoMaterialBehaviourPtr,
@@ -166,6 +193,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< ElasCoqueFoMaterialBehaviourInstance > ) )
         .def( "getName", &ElasCoqueFoMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &ElasCoqueFoMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< ElasMembraneMaterialBehaviourInstance, ElasMembraneMaterialBehaviourPtr,
@@ -175,6 +205,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< ElasMembraneMaterialBehaviourInstance > ) )
         .def( "getName", &ElasMembraneMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &ElasMembraneMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< Elas2ndgMaterialBehaviourInstance, Elas2ndgMaterialBehaviourPtr,
@@ -184,6 +217,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< Elas2ndgMaterialBehaviourInstance > ) )
         .def( "getName", &Elas2ndgMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &Elas2ndgMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< ElasGlrcMaterialBehaviourInstance, ElasGlrcMaterialBehaviourPtr,
@@ -193,6 +229,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< ElasGlrcMaterialBehaviourInstance > ) )
         .def( "getName", &ElasGlrcMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &ElasGlrcMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< ElasGlrcFoMaterialBehaviourInstance, ElasGlrcFoMaterialBehaviourPtr,
@@ -202,6 +241,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< ElasGlrcFoMaterialBehaviourInstance > ) )
         .def( "getName", &ElasGlrcFoMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &ElasGlrcFoMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< ElasDhrcMaterialBehaviourInstance, ElasDhrcMaterialBehaviourPtr,
@@ -211,6 +253,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< ElasDhrcMaterialBehaviourInstance > ) )
         .def( "getName", &ElasDhrcMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &ElasDhrcMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< CableMaterialBehaviourInstance, CableMaterialBehaviourPtr,
@@ -220,6 +265,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< CableMaterialBehaviourInstance > ) )
         .def( "getName", &CableMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &CableMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< VeriBorneMaterialBehaviourInstance, VeriBorneMaterialBehaviourPtr,
@@ -229,6 +277,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< VeriBorneMaterialBehaviourInstance > ) )
         .def( "getName", &VeriBorneMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &VeriBorneMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< TractionMaterialBehaviourInstance, TractionMaterialBehaviourPtr,
@@ -238,6 +289,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< TractionMaterialBehaviourInstance > ) )
         .def( "getName", &TractionMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &TractionMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< EcroLineMaterialBehaviourInstance, EcroLineMaterialBehaviourPtr,
@@ -247,6 +301,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< EcroLineMaterialBehaviourInstance > ) )
         .def( "getName", &EcroLineMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &EcroLineMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< EndoHeterogeneMaterialBehaviourInstance, EndoHeterogeneMaterialBehaviourPtr,
@@ -256,6 +313,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< EndoHeterogeneMaterialBehaviourInstance > ) )
         .def( "getName", &EndoHeterogeneMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &EndoHeterogeneMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< EcroLineFoMaterialBehaviourInstance, EcroLineFoMaterialBehaviourPtr,
@@ -265,6 +325,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< EcroLineFoMaterialBehaviourInstance > ) )
         .def( "getName", &EcroLineFoMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &EcroLineFoMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< EcroPuisMaterialBehaviourInstance, EcroPuisMaterialBehaviourPtr,
@@ -274,6 +337,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< EcroPuisMaterialBehaviourInstance > ) )
         .def( "getName", &EcroPuisMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &EcroPuisMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< EcroPuisFoMaterialBehaviourInstance, EcroPuisFoMaterialBehaviourPtr,
@@ -283,6 +349,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< EcroPuisFoMaterialBehaviourInstance > ) )
         .def( "getName", &EcroPuisFoMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &EcroPuisFoMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< EcroCookMaterialBehaviourInstance, EcroCookMaterialBehaviourPtr,
@@ -292,6 +361,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< EcroCookMaterialBehaviourInstance > ) )
         .def( "getName", &EcroCookMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &EcroCookMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< EcroCookFoMaterialBehaviourInstance, EcroCookFoMaterialBehaviourPtr,
@@ -301,6 +373,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< EcroCookFoMaterialBehaviourInstance > ) )
         .def( "getName", &EcroCookFoMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &EcroCookFoMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< BetonEcroLineMaterialBehaviourInstance, BetonEcroLineMaterialBehaviourPtr,
@@ -310,6 +385,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< BetonEcroLineMaterialBehaviourInstance > ) )
         .def( "getName", &BetonEcroLineMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &BetonEcroLineMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< BetonReglePrMaterialBehaviourInstance, BetonReglePrMaterialBehaviourPtr,
@@ -319,6 +397,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< BetonReglePrMaterialBehaviourInstance > ) )
         .def( "getName", &BetonReglePrMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &BetonReglePrMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< EndoOrthBetonMaterialBehaviourInstance, EndoOrthBetonMaterialBehaviourPtr,
@@ -328,6 +409,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< EndoOrthBetonMaterialBehaviourInstance > ) )
         .def( "getName", &EndoOrthBetonMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &EndoOrthBetonMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< PragerMaterialBehaviourInstance, PragerMaterialBehaviourPtr,
@@ -337,6 +421,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< PragerMaterialBehaviourInstance > ) )
         .def( "getName", &PragerMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &PragerMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< PragerFoMaterialBehaviourInstance, PragerFoMaterialBehaviourPtr,
@@ -346,6 +433,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< PragerFoMaterialBehaviourInstance > ) )
         .def( "getName", &PragerFoMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &PragerFoMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< TaheriMaterialBehaviourInstance, TaheriMaterialBehaviourPtr,
@@ -355,6 +445,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< TaheriMaterialBehaviourInstance > ) )
         .def( "getName", &TaheriMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &TaheriMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< TaheriFoMaterialBehaviourInstance, TaheriFoMaterialBehaviourPtr,
@@ -364,6 +457,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< TaheriFoMaterialBehaviourInstance > ) )
         .def( "getName", &TaheriFoMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &TaheriFoMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< RousselierMaterialBehaviourInstance, RousselierMaterialBehaviourPtr,
@@ -373,6 +469,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< RousselierMaterialBehaviourInstance > ) )
         .def( "getName", &RousselierMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &RousselierMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< RousselierFoMaterialBehaviourInstance, RousselierFoMaterialBehaviourPtr,
@@ -382,6 +481,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< RousselierFoMaterialBehaviourInstance > ) )
         .def( "getName", &RousselierFoMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &RousselierFoMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< ViscSinhMaterialBehaviourInstance, ViscSinhMaterialBehaviourPtr,
@@ -391,6 +493,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< ViscSinhMaterialBehaviourInstance > ) )
         .def( "getName", &ViscSinhMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &ViscSinhMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< ViscSinhFoMaterialBehaviourInstance, ViscSinhFoMaterialBehaviourPtr,
@@ -400,6 +505,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< ViscSinhFoMaterialBehaviourInstance > ) )
         .def( "getName", &ViscSinhFoMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &ViscSinhFoMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< Cin1ChabMaterialBehaviourInstance, Cin1ChabMaterialBehaviourPtr,
@@ -409,6 +517,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< Cin1ChabMaterialBehaviourInstance > ) )
         .def( "getName", &Cin1ChabMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &Cin1ChabMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< Cin1ChabFoMaterialBehaviourInstance, Cin1ChabFoMaterialBehaviourPtr,
@@ -418,6 +529,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< Cin1ChabFoMaterialBehaviourInstance > ) )
         .def( "getName", &Cin1ChabFoMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &Cin1ChabFoMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< Cin2ChabMaterialBehaviourInstance, Cin2ChabMaterialBehaviourPtr,
@@ -427,6 +541,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< Cin2ChabMaterialBehaviourInstance > ) )
         .def( "getName", &Cin2ChabMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &Cin2ChabMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< Cin2ChabFoMaterialBehaviourInstance, Cin2ChabFoMaterialBehaviourPtr,
@@ -436,6 +553,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< Cin2ChabFoMaterialBehaviourInstance > ) )
         .def( "getName", &Cin2ChabFoMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &Cin2ChabFoMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< Cin2NradMaterialBehaviourInstance, Cin2NradMaterialBehaviourPtr,
@@ -445,6 +565,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< Cin2NradMaterialBehaviourInstance > ) )
         .def( "getName", &Cin2NradMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &Cin2NradMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< MemoEcroMaterialBehaviourInstance, MemoEcroMaterialBehaviourPtr,
@@ -454,6 +577,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< MemoEcroMaterialBehaviourInstance > ) )
         .def( "getName", &MemoEcroMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &MemoEcroMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< MemoEcroFoMaterialBehaviourInstance, MemoEcroFoMaterialBehaviourPtr,
@@ -463,6 +589,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< MemoEcroFoMaterialBehaviourInstance > ) )
         .def( "getName", &MemoEcroFoMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &MemoEcroFoMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< ViscochabMaterialBehaviourInstance, ViscochabMaterialBehaviourPtr,
@@ -472,6 +601,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< ViscochabMaterialBehaviourInstance > ) )
         .def( "getName", &ViscochabMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &ViscochabMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< ViscochabFoMaterialBehaviourInstance, ViscochabFoMaterialBehaviourPtr,
@@ -481,6 +613,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< ViscochabFoMaterialBehaviourInstance > ) )
         .def( "getName", &ViscochabFoMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &ViscochabFoMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< LemaitreMaterialBehaviourInstance, LemaitreMaterialBehaviourPtr,
@@ -490,6 +625,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< LemaitreMaterialBehaviourInstance > ) )
         .def( "getName", &LemaitreMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &LemaitreMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< LemaitreIrraMaterialBehaviourInstance, LemaitreIrraMaterialBehaviourPtr,
@@ -499,6 +637,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< LemaitreIrraMaterialBehaviourInstance > ) )
         .def( "getName", &LemaitreIrraMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &LemaitreIrraMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< LmarcIrraMaterialBehaviourInstance, LmarcIrraMaterialBehaviourPtr,
@@ -508,6 +649,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< LmarcIrraMaterialBehaviourInstance > ) )
         .def( "getName", &LmarcIrraMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &LmarcIrraMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< ViscIrraLogMaterialBehaviourInstance, ViscIrraLogMaterialBehaviourPtr,
@@ -517,6 +661,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< ViscIrraLogMaterialBehaviourInstance > ) )
         .def( "getName", &ViscIrraLogMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &ViscIrraLogMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< GranIrraLogMaterialBehaviourInstance, GranIrraLogMaterialBehaviourPtr,
@@ -526,6 +673,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< GranIrraLogMaterialBehaviourInstance > ) )
         .def( "getName", &GranIrraLogMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &GranIrraLogMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< LemaSeuilMaterialBehaviourInstance, LemaSeuilMaterialBehaviourPtr,
@@ -535,6 +685,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< LemaSeuilMaterialBehaviourInstance > ) )
         .def( "getName", &LemaSeuilMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &LemaSeuilMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< LemaSeuilFoMaterialBehaviourInstance, LemaSeuilFoMaterialBehaviourPtr,
@@ -544,6 +697,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< LemaSeuilFoMaterialBehaviourInstance > ) )
         .def( "getName", &LemaSeuilFoMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &LemaSeuilFoMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< Irrad3mMaterialBehaviourInstance, Irrad3mMaterialBehaviourPtr,
@@ -553,6 +709,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< Irrad3mMaterialBehaviourInstance > ) )
         .def( "getName", &Irrad3mMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &Irrad3mMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< LemaitreFoMaterialBehaviourInstance, LemaitreFoMaterialBehaviourPtr,
@@ -562,6 +721,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< LemaitreFoMaterialBehaviourInstance > ) )
         .def( "getName", &LemaitreFoMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &LemaitreFoMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< MetaLemaAniMaterialBehaviourInstance, MetaLemaAniMaterialBehaviourPtr,
@@ -571,6 +733,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< MetaLemaAniMaterialBehaviourInstance > ) )
         .def( "getName", &MetaLemaAniMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &MetaLemaAniMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< MetaLemaAniFoMaterialBehaviourInstance, MetaLemaAniFoMaterialBehaviourPtr,
@@ -580,6 +745,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< MetaLemaAniFoMaterialBehaviourInstance > ) )
         .def( "getName", &MetaLemaAniFoMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &MetaLemaAniFoMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< ArmeMaterialBehaviourInstance, ArmeMaterialBehaviourPtr,
@@ -589,6 +757,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< ArmeMaterialBehaviourInstance > ) )
         .def( "getName", &ArmeMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &ArmeMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< AsseCornMaterialBehaviourInstance, AsseCornMaterialBehaviourPtr,
@@ -598,6 +769,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< AsseCornMaterialBehaviourInstance > ) )
         .def( "getName", &AsseCornMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &AsseCornMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< DisContactMaterialBehaviourInstance, DisContactMaterialBehaviourPtr,
@@ -607,6 +781,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< DisContactMaterialBehaviourInstance > ) )
         .def( "getName", &DisContactMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &DisContactMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< EndoScalaireMaterialBehaviourInstance, EndoScalaireMaterialBehaviourPtr,
@@ -616,6 +793,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< EndoScalaireMaterialBehaviourInstance > ) )
         .def( "getName", &EndoScalaireMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &EndoScalaireMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< EndoScalaireFoMaterialBehaviourInstance, EndoScalaireFoMaterialBehaviourPtr,
@@ -625,6 +805,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< EndoScalaireFoMaterialBehaviourInstance > ) )
         .def( "getName", &EndoScalaireFoMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &EndoScalaireFoMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< EndoFissExpMaterialBehaviourInstance, EndoFissExpMaterialBehaviourPtr,
@@ -634,6 +817,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< EndoFissExpMaterialBehaviourInstance > ) )
         .def( "getName", &EndoFissExpMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &EndoFissExpMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< EndoFissExpFoMaterialBehaviourInstance, EndoFissExpFoMaterialBehaviourPtr,
@@ -643,6 +829,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< EndoFissExpFoMaterialBehaviourInstance > ) )
         .def( "getName", &EndoFissExpFoMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &EndoFissExpFoMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< DisGricraMaterialBehaviourInstance, DisGricraMaterialBehaviourPtr,
@@ -652,6 +841,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< DisGricraMaterialBehaviourInstance > ) )
         .def( "getName", &DisGricraMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &DisGricraMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< BetonDoubleDpMaterialBehaviourInstance, BetonDoubleDpMaterialBehaviourPtr,
@@ -661,6 +853,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< BetonDoubleDpMaterialBehaviourInstance > ) )
         .def( "getName", &BetonDoubleDpMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &BetonDoubleDpMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< MazarsMaterialBehaviourInstance, MazarsMaterialBehaviourPtr,
@@ -670,6 +865,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< MazarsMaterialBehaviourInstance > ) )
         .def( "getName", &MazarsMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &MazarsMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< MazarsFoMaterialBehaviourInstance, MazarsFoMaterialBehaviourPtr,
@@ -679,6 +877,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< MazarsFoMaterialBehaviourInstance > ) )
         .def( "getName", &MazarsFoMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &MazarsFoMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< JointBaMaterialBehaviourInstance, JointBaMaterialBehaviourPtr,
@@ -688,6 +889,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< JointBaMaterialBehaviourInstance > ) )
         .def( "getName", &JointBaMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &JointBaMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< VendochabMaterialBehaviourInstance, VendochabMaterialBehaviourPtr,
@@ -697,6 +901,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< VendochabMaterialBehaviourInstance > ) )
         .def( "getName", &VendochabMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &VendochabMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< VendochabFoMaterialBehaviourInstance, VendochabFoMaterialBehaviourPtr,
@@ -706,6 +913,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< VendochabFoMaterialBehaviourInstance > ) )
         .def( "getName", &VendochabFoMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &VendochabFoMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< HayhurstMaterialBehaviourInstance, HayhurstMaterialBehaviourPtr,
@@ -715,6 +925,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< HayhurstMaterialBehaviourInstance > ) )
         .def( "getName", &HayhurstMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &HayhurstMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< ViscEndoMaterialBehaviourInstance, ViscEndoMaterialBehaviourPtr,
@@ -724,6 +937,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< ViscEndoMaterialBehaviourInstance > ) )
         .def( "getName", &ViscEndoMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &ViscEndoMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< ViscEndoFoMaterialBehaviourInstance, ViscEndoFoMaterialBehaviourPtr,
@@ -733,6 +949,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< ViscEndoFoMaterialBehaviourInstance > ) )
         .def( "getName", &ViscEndoFoMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &ViscEndoFoMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< PintoMenegottoMaterialBehaviourInstance, PintoMenegottoMaterialBehaviourPtr,
@@ -742,6 +961,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< PintoMenegottoMaterialBehaviourInstance > ) )
         .def( "getName", &PintoMenegottoMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &PintoMenegottoMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< BpelBetonMaterialBehaviourInstance, BpelBetonMaterialBehaviourPtr,
@@ -751,6 +973,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< BpelBetonMaterialBehaviourInstance > ) )
         .def( "getName", &BpelBetonMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &BpelBetonMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< BpelAcierMaterialBehaviourInstance, BpelAcierMaterialBehaviourPtr,
@@ -760,6 +985,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< BpelAcierMaterialBehaviourInstance > ) )
         .def( "getName", &BpelAcierMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &BpelAcierMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< EtccBetonMaterialBehaviourInstance, EtccBetonMaterialBehaviourPtr,
@@ -769,6 +997,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< EtccBetonMaterialBehaviourInstance > ) )
         .def( "getName", &EtccBetonMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &EtccBetonMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< EtccAcierMaterialBehaviourInstance, EtccAcierMaterialBehaviourPtr,
@@ -778,6 +1009,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< EtccAcierMaterialBehaviourInstance > ) )
         .def( "getName", &EtccAcierMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &EtccAcierMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< MohrCoulombMaterialBehaviourInstance, MohrCoulombMaterialBehaviourPtr,
@@ -787,6 +1021,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< MohrCoulombMaterialBehaviourInstance > ) )
         .def( "getName", &MohrCoulombMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &MohrCoulombMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< CamClayMaterialBehaviourInstance, CamClayMaterialBehaviourPtr,
@@ -796,6 +1033,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< CamClayMaterialBehaviourInstance > ) )
         .def( "getName", &CamClayMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &CamClayMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< BarceloneMaterialBehaviourInstance, BarceloneMaterialBehaviourPtr,
@@ -805,6 +1045,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< BarceloneMaterialBehaviourInstance > ) )
         .def( "getName", &BarceloneMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &BarceloneMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< CjsMaterialBehaviourInstance, CjsMaterialBehaviourPtr,
@@ -814,6 +1057,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< CjsMaterialBehaviourInstance > ) )
         .def( "getName", &CjsMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &CjsMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< HujeuxMaterialBehaviourInstance, HujeuxMaterialBehaviourPtr,
@@ -823,6 +1069,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< HujeuxMaterialBehaviourInstance > ) )
         .def( "getName", &HujeuxMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &HujeuxMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< EcroAsymLineMaterialBehaviourInstance, EcroAsymLineMaterialBehaviourPtr,
@@ -832,6 +1081,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< EcroAsymLineMaterialBehaviourInstance > ) )
         .def( "getName", &EcroAsymLineMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &EcroAsymLineMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< GrangerFpMaterialBehaviourInstance, GrangerFpMaterialBehaviourPtr,
@@ -841,6 +1093,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< GrangerFpMaterialBehaviourInstance > ) )
         .def( "getName", &GrangerFpMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &GrangerFpMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< GrangerFp_indtMaterialBehaviourInstance, GrangerFp_indtMaterialBehaviourPtr,
@@ -850,6 +1105,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< GrangerFp_indtMaterialBehaviourInstance > ) )
         .def( "getName", &GrangerFp_indtMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &GrangerFp_indtMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< VGrangerFpMaterialBehaviourInstance, VGrangerFpMaterialBehaviourPtr,
@@ -859,15 +1117,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< VGrangerFpMaterialBehaviourInstance > ) )
         .def( "getName", &VGrangerFpMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
-    ;
-
-    class_< BetonBurgerFpMaterialBehaviourInstance, BetonBurgerFpMaterialBehaviourPtr,
-            bases< GeneralMaterialBehaviourInstance > >
-        ( "BetonBurgerFpMaterialBehaviour", no_init )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< BetonBurgerFpMaterialBehaviourInstance > ) )
-        .def( "getName", &BetonBurgerFpMaterialBehaviourInstance::getName )
-        .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &VGrangerFpMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< BetonUmlvFpMaterialBehaviourInstance, BetonUmlvFpMaterialBehaviourPtr,
@@ -877,6 +1129,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< BetonUmlvFpMaterialBehaviourInstance > ) )
         .def( "getName", &BetonUmlvFpMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &BetonUmlvFpMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< BetonRagMaterialBehaviourInstance, BetonRagMaterialBehaviourPtr,
@@ -886,6 +1141,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< BetonRagMaterialBehaviourInstance > ) )
         .def( "getName", &BetonRagMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &BetonRagMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< PoroBetonMaterialBehaviourInstance, PoroBetonMaterialBehaviourPtr,
@@ -895,6 +1153,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< PoroBetonMaterialBehaviourInstance > ) )
         .def( "getName", &PoroBetonMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &PoroBetonMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< GlrcDmMaterialBehaviourInstance, GlrcDmMaterialBehaviourPtr,
@@ -904,6 +1165,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< GlrcDmMaterialBehaviourInstance > ) )
         .def( "getName", &GlrcDmMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &GlrcDmMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< DhrcMaterialBehaviourInstance, DhrcMaterialBehaviourPtr,
@@ -913,6 +1177,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< DhrcMaterialBehaviourInstance > ) )
         .def( "getName", &DhrcMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &DhrcMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< GattMonerieMaterialBehaviourInstance, GattMonerieMaterialBehaviourPtr,
@@ -922,6 +1189,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< GattMonerieMaterialBehaviourInstance > ) )
         .def( "getName", &GattMonerieMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &GattMonerieMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< CorrAcierMaterialBehaviourInstance, CorrAcierMaterialBehaviourPtr,
@@ -931,6 +1201,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< CorrAcierMaterialBehaviourInstance > ) )
         .def( "getName", &CorrAcierMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &CorrAcierMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< CableGaineFrotMaterialBehaviourInstance, CableGaineFrotMaterialBehaviourPtr,
@@ -940,6 +1213,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< CableGaineFrotMaterialBehaviourInstance > ) )
         .def( "getName", &CableGaineFrotMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &CableGaineFrotMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< DisEcroCineMaterialBehaviourInstance, DisEcroCineMaterialBehaviourPtr,
@@ -949,6 +1225,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< DisEcroCineMaterialBehaviourInstance > ) )
         .def( "getName", &DisEcroCineMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &DisEcroCineMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< DisViscMaterialBehaviourInstance, DisViscMaterialBehaviourPtr,
@@ -958,6 +1237,21 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< DisViscMaterialBehaviourInstance > ) )
         .def( "getName", &DisViscMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &DisViscMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
+    ;
+
+    class_< DisEcroTracMaterialBehaviourInstance, DisEcroTracMaterialBehaviourPtr,
+            bases< GeneralMaterialBehaviourInstance > >
+        ( "DisEcroTracMaterialBehaviour", no_init )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< DisEcroTracMaterialBehaviourInstance > ) )
+        .def( "getName", &DisEcroTracMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &DisEcroTracMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< DisBiliElasMaterialBehaviourInstance, DisBiliElasMaterialBehaviourPtr,
@@ -967,6 +1261,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< DisBiliElasMaterialBehaviourInstance > ) )
         .def( "getName", &DisBiliElasMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &DisBiliElasMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< TherNlMaterialBehaviourInstance, TherNlMaterialBehaviourPtr,
@@ -976,6 +1273,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< TherNlMaterialBehaviourInstance > ) )
         .def( "getName", &TherNlMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &TherNlMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< TherHydrMaterialBehaviourInstance, TherHydrMaterialBehaviourPtr,
@@ -985,6 +1285,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< TherHydrMaterialBehaviourInstance > ) )
         .def( "getName", &TherHydrMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &TherHydrMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< TherMaterialBehaviourInstance, TherMaterialBehaviourPtr,
@@ -994,6 +1297,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< TherMaterialBehaviourInstance > ) )
         .def( "getName", &TherMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &TherMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< TherFoMaterialBehaviourInstance, TherFoMaterialBehaviourPtr,
@@ -1003,6 +1309,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< TherFoMaterialBehaviourInstance > ) )
         .def( "getName", &TherFoMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &TherFoMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< TherOrthMaterialBehaviourInstance, TherOrthMaterialBehaviourPtr,
@@ -1012,6 +1321,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< TherOrthMaterialBehaviourInstance > ) )
         .def( "getName", &TherOrthMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &TherOrthMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< TherCoqueMaterialBehaviourInstance, TherCoqueMaterialBehaviourPtr,
@@ -1021,6 +1333,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< TherCoqueMaterialBehaviourInstance > ) )
         .def( "getName", &TherCoqueMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &TherCoqueMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< TherCoqueFoMaterialBehaviourInstance, TherCoqueFoMaterialBehaviourPtr,
@@ -1030,6 +1345,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< TherCoqueFoMaterialBehaviourInstance > ) )
         .def( "getName", &TherCoqueFoMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &TherCoqueFoMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< SechGrangerMaterialBehaviourInstance, SechGrangerMaterialBehaviourPtr,
@@ -1039,6 +1357,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< SechGrangerMaterialBehaviourInstance > ) )
         .def( "getName", &SechGrangerMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &SechGrangerMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< SechMensiMaterialBehaviourInstance, SechMensiMaterialBehaviourPtr,
@@ -1048,6 +1369,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< SechMensiMaterialBehaviourInstance > ) )
         .def( "getName", &SechMensiMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &SechMensiMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< SechBazantMaterialBehaviourInstance, SechBazantMaterialBehaviourPtr,
@@ -1057,6 +1381,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< SechBazantMaterialBehaviourInstance > ) )
         .def( "getName", &SechBazantMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &SechBazantMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< SechNappeMaterialBehaviourInstance, SechNappeMaterialBehaviourPtr,
@@ -1066,6 +1393,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< SechNappeMaterialBehaviourInstance > ) )
         .def( "getName", &SechNappeMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &SechNappeMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< MetaAcierMaterialBehaviourInstance, MetaAcierMaterialBehaviourPtr,
@@ -1075,6 +1405,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< MetaAcierMaterialBehaviourInstance > ) )
         .def( "getName", &MetaAcierMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &MetaAcierMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< MetaZircMaterialBehaviourInstance, MetaZircMaterialBehaviourPtr,
@@ -1084,6 +1417,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< MetaZircMaterialBehaviourInstance > ) )
         .def( "getName", &MetaZircMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &MetaZircMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< DurtMetaMaterialBehaviourInstance, DurtMetaMaterialBehaviourPtr,
@@ -1093,6 +1429,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< DurtMetaMaterialBehaviourInstance > ) )
         .def( "getName", &DurtMetaMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &DurtMetaMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< ElasMetaMaterialBehaviourInstance, ElasMetaMaterialBehaviourPtr,
@@ -1102,6 +1441,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< ElasMetaMaterialBehaviourInstance > ) )
         .def( "getName", &ElasMetaMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &ElasMetaMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< ElasMetaFoMaterialBehaviourInstance, ElasMetaFoMaterialBehaviourPtr,
@@ -1111,6 +1453,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< ElasMetaFoMaterialBehaviourInstance > ) )
         .def( "getName", &ElasMetaFoMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &ElasMetaFoMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< MetaEcroLineMaterialBehaviourInstance, MetaEcroLineMaterialBehaviourPtr,
@@ -1120,6 +1465,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< MetaEcroLineMaterialBehaviourInstance > ) )
         .def( "getName", &MetaEcroLineMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &MetaEcroLineMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< MetaTractionMaterialBehaviourInstance, MetaTractionMaterialBehaviourPtr,
@@ -1129,6 +1477,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< MetaTractionMaterialBehaviourInstance > ) )
         .def( "getName", &MetaTractionMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &MetaTractionMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< MetaViscFoMaterialBehaviourInstance, MetaViscFoMaterialBehaviourPtr,
@@ -1138,6 +1489,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< MetaViscFoMaterialBehaviourInstance > ) )
         .def( "getName", &MetaViscFoMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &MetaViscFoMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< MetaPtMaterialBehaviourInstance, MetaPtMaterialBehaviourPtr,
@@ -1147,6 +1501,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< MetaPtMaterialBehaviourInstance > ) )
         .def( "getName", &MetaPtMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &MetaPtMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< MetaReMaterialBehaviourInstance, MetaReMaterialBehaviourPtr,
@@ -1156,6 +1513,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< MetaReMaterialBehaviourInstance > ) )
         .def( "getName", &MetaReMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &MetaReMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< FluideMaterialBehaviourInstance, FluideMaterialBehaviourPtr,
@@ -1165,6 +1525,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< FluideMaterialBehaviourInstance > ) )
         .def( "getName", &FluideMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &FluideMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< ThmInitMaterialBehaviourInstance, ThmInitMaterialBehaviourPtr,
@@ -1174,6 +1537,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< ThmInitMaterialBehaviourInstance > ) )
         .def( "getName", &ThmInitMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &ThmInitMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< ThmAirDissMaterialBehaviourInstance, ThmAirDissMaterialBehaviourPtr,
@@ -1183,6 +1549,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< ThmAirDissMaterialBehaviourInstance > ) )
         .def( "getName", &ThmAirDissMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &ThmAirDissMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< ThmDiffuMaterialBehaviourInstance, ThmDiffuMaterialBehaviourPtr,
@@ -1192,6 +1561,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< ThmDiffuMaterialBehaviourInstance > ) )
         .def( "getName", &ThmDiffuMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &ThmDiffuMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< ThmLiquMaterialBehaviourInstance, ThmLiquMaterialBehaviourPtr,
@@ -1201,6 +1573,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< ThmLiquMaterialBehaviourInstance > ) )
         .def( "getName", &ThmLiquMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &ThmLiquMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< ThmGazMaterialBehaviourInstance, ThmGazMaterialBehaviourPtr,
@@ -1210,6 +1585,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< ThmGazMaterialBehaviourInstance > ) )
         .def( "getName", &ThmGazMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &ThmGazMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< ThmVapeGazMaterialBehaviourInstance, ThmVapeGazMaterialBehaviourPtr,
@@ -1219,6 +1597,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< ThmVapeGazMaterialBehaviourInstance > ) )
         .def( "getName", &ThmVapeGazMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &ThmVapeGazMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< FatigueMaterialBehaviourInstance, FatigueMaterialBehaviourPtr,
@@ -1228,6 +1609,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< FatigueMaterialBehaviourInstance > ) )
         .def( "getName", &FatigueMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &FatigueMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< DommaLemaitreMaterialBehaviourInstance, DommaLemaitreMaterialBehaviourPtr,
@@ -1237,6 +1621,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< DommaLemaitreMaterialBehaviourInstance > ) )
         .def( "getName", &DommaLemaitreMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &DommaLemaitreMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< CisaPlanCritMaterialBehaviourInstance, CisaPlanCritMaterialBehaviourPtr,
@@ -1246,6 +1633,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< CisaPlanCritMaterialBehaviourInstance > ) )
         .def( "getName", &CisaPlanCritMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &CisaPlanCritMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< ThmRuptMaterialBehaviourInstance, ThmRuptMaterialBehaviourPtr,
@@ -1255,6 +1645,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< ThmRuptMaterialBehaviourInstance > ) )
         .def( "getName", &ThmRuptMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &ThmRuptMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< WeibullMaterialBehaviourInstance, WeibullMaterialBehaviourPtr,
@@ -1264,6 +1657,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< WeibullMaterialBehaviourInstance > ) )
         .def( "getName", &WeibullMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &WeibullMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< WeibullFoMaterialBehaviourInstance, WeibullFoMaterialBehaviourPtr,
@@ -1273,6 +1669,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< WeibullFoMaterialBehaviourInstance > ) )
         .def( "getName", &WeibullFoMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &WeibullFoMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< NonLocalMaterialBehaviourInstance, NonLocalMaterialBehaviourPtr,
@@ -1282,6 +1681,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< NonLocalMaterialBehaviourInstance > ) )
         .def( "getName", &NonLocalMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &NonLocalMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< RuptFragMaterialBehaviourInstance, RuptFragMaterialBehaviourPtr,
@@ -1291,6 +1693,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< RuptFragMaterialBehaviourInstance > ) )
         .def( "getName", &RuptFragMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &RuptFragMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< RuptFragFoMaterialBehaviourInstance, RuptFragFoMaterialBehaviourPtr,
@@ -1300,6 +1705,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< RuptFragFoMaterialBehaviourInstance > ) )
         .def( "getName", &RuptFragFoMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &RuptFragFoMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< CzmLabMixMaterialBehaviourInstance, CzmLabMixMaterialBehaviourPtr,
@@ -1309,6 +1717,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< CzmLabMixMaterialBehaviourInstance > ) )
         .def( "getName", &CzmLabMixMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &CzmLabMixMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< RuptDuctMaterialBehaviourInstance, RuptDuctMaterialBehaviourPtr,
@@ -1318,6 +1729,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< RuptDuctMaterialBehaviourInstance > ) )
         .def( "getName", &RuptDuctMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &RuptDuctMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< JointMecaRuptMaterialBehaviourInstance, JointMecaRuptMaterialBehaviourPtr,
@@ -1327,6 +1741,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< JointMecaRuptMaterialBehaviourInstance > ) )
         .def( "getName", &JointMecaRuptMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &JointMecaRuptMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< JointMecaFrotMaterialBehaviourInstance, JointMecaFrotMaterialBehaviourPtr,
@@ -1336,6 +1753,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< JointMecaFrotMaterialBehaviourInstance > ) )
         .def( "getName", &JointMecaFrotMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &JointMecaFrotMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< RccmMaterialBehaviourInstance, RccmMaterialBehaviourPtr,
@@ -1345,6 +1765,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< RccmMaterialBehaviourInstance > ) )
         .def( "getName", &RccmMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &RccmMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< RccmFoMaterialBehaviourInstance, RccmFoMaterialBehaviourPtr,
@@ -1354,6 +1777,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< RccmFoMaterialBehaviourInstance > ) )
         .def( "getName", &RccmFoMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &RccmFoMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< LaigleMaterialBehaviourInstance, LaigleMaterialBehaviourPtr,
@@ -1363,6 +1789,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< LaigleMaterialBehaviourInstance > ) )
         .def( "getName", &LaigleMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &LaigleMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< LetkMaterialBehaviourInstance, LetkMaterialBehaviourPtr,
@@ -1372,6 +1801,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< LetkMaterialBehaviourInstance > ) )
         .def( "getName", &LetkMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &LetkMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< DruckPragerMaterialBehaviourInstance, DruckPragerMaterialBehaviourPtr,
@@ -1381,6 +1813,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< DruckPragerMaterialBehaviourInstance > ) )
         .def( "getName", &DruckPragerMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &DruckPragerMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< DruckPragerFoMaterialBehaviourInstance, DruckPragerFoMaterialBehaviourPtr,
@@ -1390,6 +1825,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< DruckPragerFoMaterialBehaviourInstance > ) )
         .def( "getName", &DruckPragerFoMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &DruckPragerFoMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< ViscDrucPragMaterialBehaviourInstance, ViscDrucPragMaterialBehaviourPtr,
@@ -1399,6 +1837,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< ViscDrucPragMaterialBehaviourInstance > ) )
         .def( "getName", &ViscDrucPragMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &ViscDrucPragMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< HoekBrownMaterialBehaviourInstance, HoekBrownMaterialBehaviourPtr,
@@ -1408,6 +1849,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< HoekBrownMaterialBehaviourInstance > ) )
         .def( "getName", &HoekBrownMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &HoekBrownMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< ElasGonfMaterialBehaviourInstance, ElasGonfMaterialBehaviourPtr,
@@ -1417,6 +1861,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< ElasGonfMaterialBehaviourInstance > ) )
         .def( "getName", &ElasGonfMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &ElasGonfMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< JointBandisMaterialBehaviourInstance, JointBandisMaterialBehaviourPtr,
@@ -1426,6 +1873,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< JointBandisMaterialBehaviourInstance > ) )
         .def( "getName", &JointBandisMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &JointBandisMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< MonoVisc1MaterialBehaviourInstance, MonoVisc1MaterialBehaviourPtr,
@@ -1435,6 +1885,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< MonoVisc1MaterialBehaviourInstance > ) )
         .def( "getName", &MonoVisc1MaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &MonoVisc1MaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< MonoVisc2MaterialBehaviourInstance, MonoVisc2MaterialBehaviourPtr,
@@ -1444,6 +1897,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< MonoVisc2MaterialBehaviourInstance > ) )
         .def( "getName", &MonoVisc2MaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &MonoVisc2MaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< MonoIsot1MaterialBehaviourInstance, MonoIsot1MaterialBehaviourPtr,
@@ -1453,6 +1909,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< MonoIsot1MaterialBehaviourInstance > ) )
         .def( "getName", &MonoIsot1MaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &MonoIsot1MaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< MonoIsot2MaterialBehaviourInstance, MonoIsot2MaterialBehaviourPtr,
@@ -1462,6 +1921,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< MonoIsot2MaterialBehaviourInstance > ) )
         .def( "getName", &MonoIsot2MaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &MonoIsot2MaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< MonoCine1MaterialBehaviourInstance, MonoCine1MaterialBehaviourPtr,
@@ -1471,6 +1933,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< MonoCine1MaterialBehaviourInstance > ) )
         .def( "getName", &MonoCine1MaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &MonoCine1MaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< MonoCine2MaterialBehaviourInstance, MonoCine2MaterialBehaviourPtr,
@@ -1480,6 +1945,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< MonoCine2MaterialBehaviourInstance > ) )
         .def( "getName", &MonoCine2MaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &MonoCine2MaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< MonoDdKrMaterialBehaviourInstance, MonoDdKrMaterialBehaviourPtr,
@@ -1489,6 +1957,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< MonoDdKrMaterialBehaviourInstance > ) )
         .def( "getName", &MonoDdKrMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &MonoDdKrMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< MonoDdCfcMaterialBehaviourInstance, MonoDdCfcMaterialBehaviourPtr,
@@ -1498,6 +1969,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< MonoDdCfcMaterialBehaviourInstance > ) )
         .def( "getName", &MonoDdCfcMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &MonoDdCfcMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< MonoDdCfcIrraMaterialBehaviourInstance, MonoDdCfcIrraMaterialBehaviourPtr,
@@ -1507,6 +1981,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< MonoDdCfcIrraMaterialBehaviourInstance > ) )
         .def( "getName", &MonoDdCfcIrraMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &MonoDdCfcIrraMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< MonoDdFatMaterialBehaviourInstance, MonoDdFatMaterialBehaviourPtr,
@@ -1516,6 +1993,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< MonoDdFatMaterialBehaviourInstance > ) )
         .def( "getName", &MonoDdFatMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &MonoDdFatMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< MonoDdCcMaterialBehaviourInstance, MonoDdCcMaterialBehaviourPtr,
@@ -1525,6 +2005,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< MonoDdCcMaterialBehaviourInstance > ) )
         .def( "getName", &MonoDdCcMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &MonoDdCcMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< MonoDdCcIrraMaterialBehaviourInstance, MonoDdCcIrraMaterialBehaviourPtr,
@@ -1534,6 +2017,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< MonoDdCcIrraMaterialBehaviourInstance > ) )
         .def( "getName", &MonoDdCcIrraMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &MonoDdCcIrraMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< UMatMaterialBehaviourInstance, UMatMaterialBehaviourPtr,
@@ -1543,6 +2029,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< UMatMaterialBehaviourInstance > ) )
         .def( "getName", &UMatMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &UMatMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< UMatFoMaterialBehaviourInstance, UMatFoMaterialBehaviourPtr,
@@ -1552,6 +2041,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< UMatFoMaterialBehaviourInstance > ) )
         .def( "getName", &UMatFoMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &UMatFoMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< CritRuptMaterialBehaviourInstance, CritRuptMaterialBehaviourPtr,
@@ -1561,6 +2053,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< CritRuptMaterialBehaviourInstance > ) )
         .def( "getName", &CritRuptMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &CritRuptMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< MFrontMaterialBehaviourInstance, MFrontMaterialBehaviourPtr,
@@ -1570,6 +2065,9 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< MFrontMaterialBehaviourInstance > ) )
         .def( "getName", &MFrontMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &MFrontMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 
     class_< MFrontFoMaterialBehaviourInstance, MFrontFoMaterialBehaviourPtr,
@@ -1579,5 +2077,8 @@ void exportMaterialBehaviourToPython()
             &initFactoryPtr< MFrontFoMaterialBehaviourInstance > ) )
         .def( "getName", &MFrontFoMaterialBehaviourInstance::getName )
         .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &MFrontFoMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
     ;
 };

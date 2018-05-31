@@ -97,21 +97,6 @@ bool GeneralMaterialBehaviourInstance::buildJeveuxVectors( JeveuxVectorComplex& 
     else
         complexValues->setUsedSize(pos3);
 
-    for( auto curIter : _mapOfStringMaterialProperties ){
-        std::string nameOfProperty = curIter.second.getName();
-        if( curIter.second.hasValue() )
-        {
-            nameOfProperty.resize( 16, ' ' );
-            (*char16Values)[position] = nameOfProperty.c_str();
-            (*char16Values)[position2] = curIter.second.getValue();
-            ++position;
-            ++position2;
-        }
-
-        if( curIter.second.isMandatory() && ! curIter.second.hasValue() )
-            throw std::runtime_error( "Mandatory material property " + nameOfProperty + " is missing" );
-    }
-
     for( auto curIter : _mapOfTableMaterialProperties ){
         std::string nameOfProperty = curIter.second.getName();
         if( curIter.second.hasValue() )
