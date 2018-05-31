@@ -85,6 +85,7 @@ public:
 
     void operator=( const ValueType1& toSet )
     {
+        _existsValue = true;
         _valToConvert = toSet;
     };
 
@@ -289,7 +290,22 @@ class MaterialPropertyInstance: private AllowedMaterialPropertyType< ValueType >
          * @brief Cette propriété a-t-elle une valeur fixée par l'utilisateur ?
          * @return true si la valeur a été précisée
          */
-        bool hasValue() const
+        template< typename T = ValueType >
+        typename std::enable_if< std::is_same< T, StringToDoubleValue >::value,
+                                 bool >::type
+        hasValue() const
+        {
+            return _value.hasValue();
+        };
+
+        /**
+         * @brief Cette propriété a-t-elle une valeur fixée par l'utilisateur ?
+         * @return true si la valeur a été précisée
+         */
+        template< typename T = ValueType >
+        typename std::enable_if< !std::is_same< T, StringToDoubleValue >::value,
+                                 bool >::type
+        hasValue() const
         {
             return _existsValue;
         };
@@ -846,6 +862,14 @@ class ElasMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
         {
             return "ELAS";
         };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
+        };
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau Elas */
@@ -893,6 +917,14 @@ class ElasFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
         {
             return "ELAS_FO";
         };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
+        };
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau ElasFo */
@@ -931,6 +963,14 @@ class ElasFluiMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
         static std::string getName()
         {
             return "ELAS_FLUI";
+        };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
         };
 };
 
@@ -972,6 +1012,14 @@ class ElasIstrMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
         static std::string getName()
         {
             return "ELAS_ISTR";
+        };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
         };
 };
 
@@ -1016,6 +1064,14 @@ class ElasIstrFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
         static std::string getName()
         {
             return "ELAS_ISTR_FO";
+        };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
         };
 };
 
@@ -1071,6 +1127,14 @@ class ElasOrthMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
         {
             return "ELAS_ORTH";
         };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
+        };
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau ElasOrth */
@@ -1123,6 +1187,14 @@ class ElasOrthFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
         {
             return "ELAS_ORTH_FO";
         };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
+        };
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau ElasOrthFo */
@@ -1161,6 +1233,14 @@ class ElasHyperMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
         static std::string getName()
         {
             return "ELAS_HYPER";
+        };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
         };
 };
 
@@ -1241,6 +1321,14 @@ class ElasCoqueMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
         {
             return "ELAS_COQUE";
         };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
+        };
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau ElasCoque */
@@ -1320,6 +1408,14 @@ class ElasCoqueFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInsta
         {
             return "ELAS_COQUE_FO";
         };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
+        };
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau ElasCoqueFo */
@@ -1361,6 +1457,14 @@ class ElasMembraneMaterialBehaviourInstance: public GeneralMaterialBehaviourInst
         {
             return "ELAS_MEMBRANE";
         };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
+        };
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau ElasMembrane */
@@ -1398,6 +1502,14 @@ class Elas2ndgMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
         static std::string getName()
         {
             return "ELAS_2NDG";
+        };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
         };
 };
 
@@ -1442,6 +1554,14 @@ class ElasGlrcMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
         static std::string getName()
         {
             return "ELAS_GLRC";
+        };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
         };
 };
 
@@ -1488,6 +1608,14 @@ class ElasGlrcFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
         static std::string getName()
         {
             return "ELAS_GLRC_FO";
+        };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
         };
 };
 
@@ -1548,6 +1676,14 @@ class ElasDhrcMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
         {
             return "ELAS_DHRC";
         };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
+        };
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau ElasDhrc */
@@ -1581,6 +1717,14 @@ class CableMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
         static std::string getName()
         {
             return "CABLE";
+        };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
         };
 };
 
@@ -1619,6 +1763,14 @@ class VeriBorneMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
         static std::string getName()
         {
             return "VERI_BORNE";
+        };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
         };
 };
 
@@ -1661,6 +1813,14 @@ class TractionMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
         {
             return "TRACTION";
         };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
+        };
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau Traction */
@@ -1697,6 +1857,14 @@ class EcroLineMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
         static std::string getName()
         {
             return "ECRO_LINE";
+        };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
         };
 };
 
@@ -1735,6 +1903,14 @@ class EndoHeterogeneMaterialBehaviourInstance: public GeneralMaterialBehaviourIn
         static std::string getName()
         {
             return "ENDO_HETEROGENE";
+        };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
         };
 };
 
@@ -1778,6 +1954,14 @@ class EcroLineFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
         {
             return "ECRO_LINE_FO";
         };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
+        };
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau EcroLineFo */
@@ -1813,6 +1997,14 @@ class EcroPuisMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
         static std::string getName()
         {
             return "ECRO_PUIS";
+        };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
         };
 };
 
@@ -1850,6 +2042,14 @@ class EcroPuisFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
         static std::string getName()
         {
             return "ECRO_PUIS_FO";
+        };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
         };
 };
 
@@ -1891,6 +2091,14 @@ class EcroCookMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
         static std::string getName()
         {
             return "ECRO_COOK";
+        };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
         };
 };
 
@@ -1934,6 +2142,14 @@ class EcroCookFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
         {
             return "ECRO_COOK_FO";
         };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
+        };
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau EcroCookFo */
@@ -1969,6 +2185,14 @@ class BetonEcroLineMaterialBehaviourInstance: public GeneralMaterialBehaviourIns
         static std::string getName()
         {
             return "BETON_ECRO_LINE";
+        };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
         };
 };
 
@@ -2007,6 +2231,14 @@ class BetonReglePrMaterialBehaviourInstance: public GeneralMaterialBehaviourInst
         static std::string getName()
         {
             return "BETON_REGLE_PR";
+        };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
         };
 };
 
@@ -2047,6 +2279,14 @@ class EndoOrthBetonMaterialBehaviourInstance: public GeneralMaterialBehaviourIns
         {
             return "ENDO_ORTH_BETON";
         };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
+        };
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau EndoOrthBeton */
@@ -2080,6 +2320,14 @@ class PragerMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
         static std::string getName()
         {
             return "PRAGER";
+        };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
         };
 };
 
@@ -2115,6 +2363,14 @@ class PragerFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
         static std::string getName()
         {
             return "PRAGER_FO";
+        };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
         };
 };
 
@@ -2157,6 +2413,14 @@ class TaheriMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
         {
             return "TAHERI";
         };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
+        };
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau Taheri */
@@ -2198,6 +2462,14 @@ class TaheriFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
         static std::string getName()
         {
             return "TAHERI_FO";
+        };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
         };
 };
 
@@ -2242,6 +2514,14 @@ class RousselierMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
         static std::string getName()
         {
             return "ROUSSELIER";
+        };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
         };
 };
 
@@ -2288,6 +2568,14 @@ class RousselierFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInst
         {
             return "ROUSSELIER_FO";
         };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
+        };
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau RousselierFo */
@@ -2323,6 +2611,14 @@ class ViscSinhMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
         static std::string getName()
         {
             return "VISC_SINH";
+        };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
         };
 };
 
@@ -2360,6 +2656,14 @@ class ViscSinhFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
         static std::string getName()
         {
             return "VISC_SINH_FO";
+        };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
         };
 };
 
@@ -2401,6 +2705,14 @@ class Cin1ChabMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
         static std::string getName()
         {
             return "CIN1_CHAB";
+        };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
         };
 };
 
@@ -2444,6 +2756,14 @@ class Cin1ChabFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
         {
             return "CIN1_CHAB_FO";
         };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
+        };
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau Cin1ChabFo */
@@ -2486,6 +2806,14 @@ class Cin2ChabMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
         static std::string getName()
         {
             return "CIN2_CHAB";
+        };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
         };
 };
 
@@ -2531,6 +2859,14 @@ class Cin2ChabFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
         {
             return "CIN2_CHAB_FO";
         };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
+        };
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau Cin2ChabFo */
@@ -2565,6 +2901,14 @@ class Cin2NradMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
         static std::string getName()
         {
             return "CIN2_NRAD";
+        };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
         };
 };
 
@@ -2603,6 +2947,14 @@ class MemoEcroMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
         {
             return "MEMO_ECRO";
         };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
+        };
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau MemoEcro */
@@ -2640,6 +2992,14 @@ class MemoEcroFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
         static std::string getName()
         {
             return "MEMO_ECRO_FO";
+        };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
         };
 };
 
@@ -2698,6 +3058,14 @@ class ViscochabMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
         static std::string getName()
         {
             return "VISCOCHAB";
+        };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
         };
 };
 
@@ -2758,6 +3126,14 @@ class ViscochabFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInsta
         {
             return "VISCOCHAB_FO";
         };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
+        };
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau ViscochabFo */
@@ -2793,6 +3169,14 @@ class LemaitreMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
         static std::string getName()
         {
             return "LEMAITRE";
+        };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
         };
 };
 
@@ -2834,6 +3218,14 @@ class LemaitreIrraMaterialBehaviourInstance: public GeneralMaterialBehaviourInst
         static std::string getName()
         {
             return "LEMAITRE_IRRA";
+        };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
         };
 };
 
@@ -2898,6 +3290,14 @@ class LmarcIrraMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
         {
             return "LMARC_IRRA";
         };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
+        };
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau LmarcIrra */
@@ -2934,6 +3334,14 @@ class ViscIrraLogMaterialBehaviourInstance: public GeneralMaterialBehaviourInsta
         static std::string getName()
         {
             return "VISC_IRRA_LOG";
+        };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
         };
 };
 
@@ -2974,6 +3382,14 @@ class GranIrraLogMaterialBehaviourInstance: public GeneralMaterialBehaviourInsta
         {
             return "GRAN_IRRA_LOG";
         };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
+        };
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau GranIrraLog */
@@ -3008,6 +3424,14 @@ class LemaSeuilMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
         static std::string getName()
         {
             return "LEMA_SEUIL";
+        };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
         };
 };
 
@@ -3044,6 +3468,14 @@ class LemaSeuilFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInsta
         static std::string getName()
         {
             return "LEMA_SEUIL_FO";
+        };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
         };
 };
 
@@ -3090,6 +3522,14 @@ class Irrad3mMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
         {
             return "IRRAD3M";
         };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
+        };
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau Irrad3m */
@@ -3126,6 +3566,14 @@ class LemaitreFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
         static std::string getName()
         {
             return "LEMAITRE_FO";
+        };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
         };
 };
 
@@ -3193,6 +3641,14 @@ class MetaLemaAniMaterialBehaviourInstance: public GeneralMaterialBehaviourInsta
         static std::string getName()
         {
             return "META_LEMA_ANI";
+        };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
         };
 };
 
@@ -3262,6 +3718,14 @@ class MetaLemaAniFoMaterialBehaviourInstance: public GeneralMaterialBehaviourIns
         {
             return "META_LEMA_ANI_FO";
         };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
+        };
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau MetaLemaAniFo */
@@ -3299,6 +3763,14 @@ class ArmeMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
         static std::string getName()
         {
             return "ARME";
+        };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
         };
 };
 
@@ -3348,6 +3820,14 @@ class AsseCornMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
         {
             return "ASSE_CORN";
         };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
+        };
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau AsseCorn */
@@ -3389,6 +3869,14 @@ class DisContactMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
         {
             return "DIS_CONTACT";
         };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
+        };
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau DisContact */
@@ -3428,6 +3916,14 @@ class EndoScalaireMaterialBehaviourInstance: public GeneralMaterialBehaviourInst
         static std::string getName()
         {
             return "ENDO_SCALAIRE";
+        };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
         };
 };
 
@@ -3469,6 +3965,14 @@ class EndoScalaireFoMaterialBehaviourInstance: public GeneralMaterialBehaviourIn
         static std::string getName()
         {
             return "ENDO_SCALAIRE_FO";
+        };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
         };
 };
 
@@ -3512,6 +4016,14 @@ class EndoFissExpMaterialBehaviourInstance: public GeneralMaterialBehaviourInsta
         {
             return "ENDO_FISS_EXP";
         };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
+        };
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau EndoFissExp */
@@ -3553,6 +4065,14 @@ class EndoFissExpFoMaterialBehaviourInstance: public GeneralMaterialBehaviourIns
         static std::string getName()
         {
             return "ENDO_FISS_EXP_FO";
+        };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
         };
 };
 
@@ -3603,6 +4123,14 @@ class DisGricraMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
         static std::string getName()
         {
             return "DIS_GRICRA";
+        };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
         };
 };
 
@@ -3656,6 +4184,14 @@ public:
     {
         return "BETON_DOUBLE_DP";
     };
+
+    /**
+     * @brief To know if a MaterialBehaviour has ConvertibleValues
+     */
+    static bool hasConvertibleValues()
+    {
+        return true;
+    };
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau BetonDoubleDp */
@@ -3697,6 +4233,14 @@ class MazarsMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
         static std::string getName()
         {
             return "MAZARS";
+        };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
         };
 };
 
@@ -3750,6 +4294,14 @@ class MazarsFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
         {
             return "MAZARS_FO";
         };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
+        };
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau MazarsFo */
@@ -3797,6 +4349,14 @@ class JointBaMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
         {
             return "JOINT_BA";
         };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
+        };
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau JointBa */
@@ -3835,6 +4395,14 @@ class VendochabMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
         static std::string getName()
         {
             return "VENDOCHAB";
+        };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
         };
 };
 
@@ -3875,6 +4443,14 @@ class VendochabFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInsta
         static std::string getName()
         {
             return "VENDOCHAB_FO";
+        };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
         };
 };
 
@@ -3922,6 +4498,14 @@ class HayhurstMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
         {
             return "HAYHURST";
         };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
+        };
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau Hayhurst */
@@ -3957,6 +4541,14 @@ class ViscEndoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
         static std::string getName()
         {
             return "VISC_ENDO";
+        };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
         };
 };
 
@@ -3994,6 +4586,14 @@ class ViscEndoFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
         static std::string getName()
         {
             return "VISC_ENDO_FO";
+        };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
         };
 };
 
@@ -4040,6 +4640,14 @@ class PintoMenegottoMaterialBehaviourInstance: public GeneralMaterialBehaviourIn
         {
             return "PINTO_MENEGOTTO";
         };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
+        };
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau PintoMenegotto */
@@ -4074,6 +4682,14 @@ class BpelBetonMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
         static std::string getName()
         {
             return "BPEL_BETON";
+        };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
         };
 };
 
@@ -4113,6 +4729,14 @@ class BpelAcierMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
         {
             return "BPEL_ACIER";
         };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
+        };
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau BpelAcier */
@@ -4146,6 +4770,14 @@ class EtccBetonMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
         static std::string getName()
         {
             return "ETCC_BETON";
+        };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
         };
 };
 
@@ -4183,6 +4815,14 @@ class EtccAcierMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
         static std::string getName()
         {
             return "ETCC_ACIER";
+        };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
         };
 };
 
@@ -4225,6 +4865,14 @@ class RelaxAcierMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
         {
             return "RELAX_ACIER";
         };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
+        };
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau EtccAcier */
@@ -4260,6 +4908,14 @@ class MohrCoulombMaterialBehaviourInstance: public GeneralMaterialBehaviourInsta
         static std::string getName()
         {
             return "MOHR_COULOMB";
+        };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
         };
 };
 
@@ -4301,6 +4957,14 @@ class CamClayMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
         static std::string getName()
         {
             return "CAM_CLAY";
+        };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
         };
 };
 
@@ -4349,6 +5013,14 @@ class BarceloneMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
         {
             return "BARCELONE";
         };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
+        };
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau Barcelone */
@@ -4395,6 +5067,14 @@ class CjsMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
         static std::string getName()
         {
             return "CJS";
+        };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
         };
 };
 
@@ -4450,6 +5130,14 @@ class HujeuxMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
         {
             return "HUJEUX";
         };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
+        };
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau Hujeux */
@@ -4486,6 +5174,14 @@ class EcroAsymLineMaterialBehaviourInstance: public GeneralMaterialBehaviourInst
         static std::string getName()
         {
             return "ECRO_ASYM_LINE";
+        };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
         };
 };
 
@@ -4537,6 +5233,14 @@ class GrangerFpMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
         {
             return "GRANGER_FP";
         };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
+        };
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau GrangerFp */
@@ -4586,6 +5290,14 @@ class GrangerFp_indtMaterialBehaviourInstance: public GeneralMaterialBehaviourIn
         {
             return "GRANGER_FP_INDT";
         };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
+        };
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau GrangerFp_indt */
@@ -4621,51 +5333,18 @@ class VGrangerFpMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
         {
             return "V_GRANGER_FP";
         };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
+        };
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau VGrangerFp */
 typedef boost::shared_ptr< VGrangerFpMaterialBehaviourInstance > VGrangerFpMaterialBehaviourPtr;
-
-
-/**
- * @class BetonBurgerFpMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau BetonBurgerFp
- * @author Jean-Pierre Lefebvre
- */
-class BetonBurgerFpMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
-{
-    public:
-        /**
-         * @brief Constructeur
-         */
-        BetonBurgerFpMaterialBehaviourInstance()
-        {
-            // Mot cle "BETON_BURGER_FP" dans Aster
-            _asterName = "BETON_BURGER_FP";
-
-            // Parametres matériau
-            this->addDoubleProperty( "K_rs", ElementaryMaterialPropertyDouble( "K_RS" , true ) );
-            this->addDoubleProperty( "Eta_rs", ElementaryMaterialPropertyDouble( "ETA_RS" , true ) );
-            this->addDoubleProperty( "Kappa", ElementaryMaterialPropertyDouble( "KAPPA" , true ) );
-            this->addDoubleProperty( "Eta_is", ElementaryMaterialPropertyDouble( "ETA_IS" , true ) );
-            this->addDoubleProperty( "K_rd", ElementaryMaterialPropertyDouble( "K_RD" , true ) );
-            this->addDoubleProperty( "Eta_rd", ElementaryMaterialPropertyDouble( "ETA_RD" , true ) );
-            this->addDoubleProperty( "Eta_id", ElementaryMaterialPropertyDouble( "ETA_ID" , true ) );
-            this->addDoubleProperty( "Eta_fd", ElementaryMaterialPropertyDouble( "ETA_FD" , false ) );
-        };
-
-        /**
-         * @brief Get name link to the class
-         * @return name
-         */
-        static std::string getName()
-        {
-            return "BETON_BURGER_FP";
-        };
-};
-
-/** @typedef Pointeur intelligent vers un comportement materiau BetonBurgerFp */
-typedef boost::shared_ptr< BetonBurgerFpMaterialBehaviourInstance > BetonBurgerFpMaterialBehaviourPtr;
 
 
 /**
@@ -4703,6 +5382,14 @@ class BetonUmlvFpMaterialBehaviourInstance: public GeneralMaterialBehaviourInsta
         {
             return "BETON_UMLV_FP";
         };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
+        };
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau BetonUmlvFp */
@@ -4716,59 +5403,88 @@ typedef boost::shared_ptr< BetonUmlvFpMaterialBehaviourInstance > BetonUmlvFpMat
  */
 class BetonRagMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
-    public:
-        /**
-         * @brief Constructeur
-         */
-        BetonRagMaterialBehaviourInstance()
-        {
-            // Mot cle "BETON_RAG" dans Aster
-            _asterName = "BETON_RAG";
+public:
+    /**
+     * @brief Constructeur
+     */
+    BetonRagMaterialBehaviourInstance()
+    {
+        // Mot cle "BETON_RAG" dans Aster
+        _asterName = "BETON_RAG";
 
-            // Parametres matériau
-            this->addDoubleProperty( "Activ_fl", ElementaryMaterialPropertyDouble( "ACTIV_FL" , 1.0 , false ) );
-            this->addDoubleProperty( "K_rs", ElementaryMaterialPropertyDouble( "K_RS" , true ) );
-            this->addDoubleProperty( "K_is", ElementaryMaterialPropertyDouble( "K_IS" , true ) );
-            this->addDoubleProperty( "Eta_rs", ElementaryMaterialPropertyDouble( "ETA_RS" , true ) );
-            this->addDoubleProperty( "Eta_is", ElementaryMaterialPropertyDouble( "ETA_IS" , true ) );
-            this->addDoubleProperty( "K_rd", ElementaryMaterialPropertyDouble( "K_RD" , true ) );
-            this->addDoubleProperty( "K_id", ElementaryMaterialPropertyDouble( "K_ID" , true ) );
-            this->addDoubleProperty( "Eta_rd", ElementaryMaterialPropertyDouble( "ETA_RD" , true ) );
-            this->addDoubleProperty( "Eta_id", ElementaryMaterialPropertyDouble( "ETA_ID" , true ) );
-            this->addDoubleProperty( "Eps_0", ElementaryMaterialPropertyDouble( "EPS_0" , true ) );
-            this->addDoubleProperty( "Tau_0", ElementaryMaterialPropertyDouble( "TAU_0" , true ) );
-            this->addDoubleProperty( "Eps_fl_l", ElementaryMaterialPropertyDouble( "EPS_FL_L" , 3.0e-2 , false ) );
-            this->addDoubleProperty( "Activ_lo", ElementaryMaterialPropertyDouble( "ACTIV_LO" , 1.0 , false ) );
-            this->addDoubleProperty( "F_c", ElementaryMaterialPropertyDouble( "F_C" , true ) );
-            this->addDoubleProperty( "F_t", ElementaryMaterialPropertyDouble( "F_T" , true ) );
-            this->addDoubleProperty( "Ang_crit", ElementaryMaterialPropertyDouble( "ANG_CRIT" , 8.594367 , false ) );
-            this->addDoubleProperty( "Eps_comp", ElementaryMaterialPropertyDouble( "EPS_COMP" , true ) );
-            this->addDoubleProperty( "Eps_trac", ElementaryMaterialPropertyDouble( "EPS_TRAC" , true ) );
-            this->addDoubleProperty( "Lc_comp", ElementaryMaterialPropertyDouble( "LC_COMP" , 1.0 , true ) );
-            this->addDoubleProperty( "Lc_trac", ElementaryMaterialPropertyDouble( "LC_TRAC" , 1.0 , true ) );
-            this->addDoubleProperty( "Hyd_pres", ElementaryMaterialPropertyDouble( "HYD_PRES" , 0. , false ) );
-            this->addDoubleProperty( "A_van_ge", ElementaryMaterialPropertyDouble( "A_VAN_GE" , 0.0 , false ) );
-            this->addDoubleProperty( "B_van_ge", ElementaryMaterialPropertyDouble( "B_VAN_GE" , 1.9 , false ) );
-            this->addDoubleProperty( "Biot_eau", ElementaryMaterialPropertyDouble( "BIOT_EAU" , 0.3 , true ) );
-            this->addDoubleProperty( "Modu_eau", ElementaryMaterialPropertyDouble( "MODU_EAU" , 0.0 , true ) );
-            this->addDoubleProperty( "W_eau_0", ElementaryMaterialPropertyDouble( "W_EAU_0" , true ) );
-            this->addDoubleProperty( "Biot_gel", ElementaryMaterialPropertyDouble( "BIOT_GEL" , true ) );
-            this->addDoubleProperty( "Modu_gel", ElementaryMaterialPropertyDouble( "MODU_GEL" , true ) );
-            this->addDoubleProperty( "Vol_gel", ElementaryMaterialPropertyDouble( "VOL_GEL" , true ) );
-            this->addDoubleProperty( "Avanc_li", ElementaryMaterialPropertyDouble( "AVANC_LI" , true ) );
-            this->addDoubleProperty( "Seuil_sr", ElementaryMaterialPropertyDouble( "SEUIL_SR" , true ) );
-            this->addDoubleProperty( "Para_cin", ElementaryMaterialPropertyDouble( "PARA_CIN" , true ) );
-            this->addDoubleProperty( "Enr_ac_g", ElementaryMaterialPropertyDouble( "ENR_AC_G" , true ) );
-        };
+        // Parametres matériau
+        this->addConvertibleProperty( "Comp_beton",
+            ElementaryMaterialPropertyConvertible( "TYPE_LOI",
+                                                   StringToDoubleValue( {{"ENDO", 1.},
+                                                                         {"ENDO_FLUA", 2.},
+                                                                         {"ENDO_FLUA_RAG", 3.}} ),
+                                                   true ) );
+        this->addDoubleProperty( "Endo_mc",
+                                 ElementaryMaterialPropertyDouble( "ENDO_MC" , false ) );
+        this->addDoubleProperty( "Endo_mt",
+                                 ElementaryMaterialPropertyDouble( "ENDO_MT" , false ) );
+        this->addDoubleProperty( "Endo_Siguc",
+                                 ElementaryMaterialPropertyDouble( "ENDO_SIGUC" , false ) );
+        this->addDoubleProperty( "Endo_sigut",
+                                 ElementaryMaterialPropertyDouble( "ENDO_SIGUT" , false ) );
+        this->addDoubleProperty( "Endo_drupra",
+                                 ElementaryMaterialPropertyDouble( "ENDO_DRUPRA" , false ) );
+        this->addDoubleProperty( "Flua_sph_kr",
+                                 ElementaryMaterialPropertyDouble( "FLUA_SPH_KR" , false ) );
+        this->addDoubleProperty( "Flua_sph_ki",
+                                 ElementaryMaterialPropertyDouble( "FLUA_SPH_KI" , false ) );
+        this->addDoubleProperty( "Flua_sph_nr",
+                                 ElementaryMaterialPropertyDouble( "FLUA_SPH_NR" , false ) );
+        this->addDoubleProperty( "Flua_sph_ni",
+                                 ElementaryMaterialPropertyDouble( "FLUA_SPH_NI" , false ) );
+        this->addDoubleProperty( "Flua_dev_kr",
+                                 ElementaryMaterialPropertyDouble( "FLUA_DEV_KR" , false ) );
+        this->addDoubleProperty( "Flua_dev_ki",
+                                 ElementaryMaterialPropertyDouble( "FLUA_DEV_KI" , false ) );
+        this->addDoubleProperty( "Flua_dev_nr",
+                                 ElementaryMaterialPropertyDouble( "FLUA_DEV_NR" , false ) );
+        this->addDoubleProperty( "Flua_dev_ni",
+                                 ElementaryMaterialPropertyDouble( "FLUA_DEV_NI" , false ) );
+        this->addDoubleProperty( "Gel_alpha0",
+                                 ElementaryMaterialPropertyDouble( "GEL_ALPHA0" , false ) );
+        this->addDoubleProperty( "Gel_tref",
+                                 ElementaryMaterialPropertyDouble( "GEL_TREF" , false ) );
+        this->addDoubleProperty( "Gel_ear",
+                                 ElementaryMaterialPropertyDouble( "GEL_EAR" , false ) );
+        this->addDoubleProperty( "Gel_sr0",
+                                 ElementaryMaterialPropertyDouble( "GEL_SR0" , false ) );
+        this->addDoubleProperty( "Gel_vg",
+                                 ElementaryMaterialPropertyDouble( "GEL_VG" , false ) );
+        this->addDoubleProperty( "Gel_mg",
+                                 ElementaryMaterialPropertyDouble( "GEL_MG" , false ) );
+        this->addDoubleProperty( "Gel_bg",
+                                 ElementaryMaterialPropertyDouble( "GEL_BG" , false ) );
+        this->addDoubleProperty( "Gel_a0",
+                                 ElementaryMaterialPropertyDouble( "GEL_A0" , false ) );
+        this->addDoubleProperty( "Rag_epsi0",
+                                 ElementaryMaterialPropertyDouble( "RAG_EPSI0" , false ) );
+        this->addDoubleProperty( "Pw_a",
+                                 ElementaryMaterialPropertyDouble( "PW_A" , false ) );
+        this->addDoubleProperty( "Pw_b",
+                                 ElementaryMaterialPropertyDouble( "PW_B" , false ) );
+    };
 
-        /**
-         * @brief Get name link to the class
-         * @return name
-         */
-        static std::string getName()
-        {
-            return "BETON_RAG";
-        };
+    /**
+     * @brief Get name link to the class
+     * @return name
+     */
+    static std::string getName()
+    {
+        return "BETON_RAG";
+    };
+
+    /**
+     * @brief To know if a MaterialBehaviour has ConvertibleValues
+     */
+    static bool hasConvertibleValues()
+    {
+        return true;
+    };
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau BetonRag */
@@ -4858,6 +5574,14 @@ class PoroBetonMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
         {
             return "PORO_BETON";
         };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
+        };
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau PoroBeton */
@@ -4897,6 +5621,14 @@ class GlrcDmMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
         static std::string getName()
         {
             return "GLRC_DM";
+        };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
         };
 };
 
@@ -5168,6 +5900,14 @@ class DhrcMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
         {
             return "DHRC";
         };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
+        };
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau Dhrc */
@@ -5205,6 +5945,14 @@ class GattMonerieMaterialBehaviourInstance: public GeneralMaterialBehaviourInsta
         {
             return "GATT_MONERIE";
         };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
+        };
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau GattMonerie */
@@ -5241,6 +5989,14 @@ class CorrAcierMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
         static std::string getName()
         {
             return "CORR_ACIER";
+        };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
         };
 };
 
@@ -5282,6 +6038,14 @@ class CableGaineFrotMaterialBehaviourInstance: public GeneralMaterialBehaviourIn
         static std::string getName()
         {
             return "CABLE_GAINE_FROT";
+        };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
         };
 };
 
@@ -5340,6 +6104,14 @@ class DisEcroCineMaterialBehaviourInstance: public GeneralMaterialBehaviourInsta
         {
             return "DIS_ECRO_CINE";
         };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
+        };
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau DisEcroCine */
@@ -5381,10 +6153,67 @@ class DisViscMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
         {
             return "DIS_VISC";
         };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
+        };
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau DisVisc */
 typedef boost::shared_ptr< DisViscMaterialBehaviourInstance > DisViscMaterialBehaviourPtr;
+
+
+/**
+ * @class DisEcroTracMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau DisEcroTrac
+ * @author Jean-Pierre Lefebvre
+ */
+class DisEcroTracMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
+{
+public:
+    /**
+     * @brief Constructeur
+     */
+    DisEcroTracMaterialBehaviourInstance()
+    {
+        // Mot cle "DIS_ECRO_TRAC" dans Aster
+        _asterName = "DIS_ECRO_TRAC";
+
+        // Parametres matériau
+        this->addFunctionProperty( "Fx", ElementaryMaterialPropertyDataStructure( "FX" , false ) );
+        this->addFunctionProperty( "Ftan",
+                                   ElementaryMaterialPropertyDataStructure( "FTAN" , false ) );
+        this->addConvertibleProperty( "Ecrouissage",
+            ElementaryMaterialPropertyConvertible( "ECRO",
+                                                   StringToDoubleValue( {{"ISOTROPE", 1.},
+                                                                         {"CINEMATIQUE", 2.}} ),
+                                                   false ) );
+    };
+
+    /**
+     * @brief Get name link to the class
+     * @return name
+     */
+    static std::string getName()
+    {
+        return "DIS_ECRO_TRAC";
+    };
+
+    /**
+     * @brief To know if a MaterialBehaviour has ConvertibleValues
+     */
+    static bool hasConvertibleValues()
+    {
+        return true;
+    };
+};
+
+/** @typedef Pointeur intelligent vers un comportement materiau DisEcroTrac */
+typedef boost::shared_ptr< DisEcroTracMaterialBehaviourInstance > DisEcroTracMaterialBehaviourPtr;
 
 
 /**
@@ -5423,6 +6252,14 @@ class DisBiliElasMaterialBehaviourInstance: public GeneralMaterialBehaviourInsta
         {
             return "DIS_BILI_ELAS";
         };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
+        };
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau DisBiliElas */
@@ -5458,6 +6295,14 @@ class TherNlMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
         static std::string getName()
         {
             return "THER_NL";
+        };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
         };
 };
 
@@ -5496,6 +6341,14 @@ class TherHydrMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
         {
             return "THER_HYDR";
         };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
+        };
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau TherHydr */
@@ -5530,6 +6383,14 @@ class TherMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
         static std::string getName()
         {
             return "THER";
+        };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
         };
 };
 
@@ -5567,6 +6428,14 @@ class TherFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
         {
             return "THER_FO";
         };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
+        };
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau TherFo */
@@ -5603,6 +6472,14 @@ class TherOrthMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
         static std::string getName()
         {
             return "THER_ORTH";
+        };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
         };
 };
 
@@ -5652,6 +6529,14 @@ class TherCoqueMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
         static std::string getName()
         {
             return "THER_COQUE";
+        };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
         };
 };
 
@@ -5703,6 +6588,14 @@ class TherCoqueFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInsta
         {
             return "THER_COQUE_FO";
         };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
+        };
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau TherCoqueFo */
@@ -5740,6 +6633,14 @@ class SechGrangerMaterialBehaviourInstance: public GeneralMaterialBehaviourInsta
         {
             return "SECH_GRANGER";
         };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
+        };
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau SechGranger */
@@ -5774,6 +6675,14 @@ class SechMensiMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
         static std::string getName()
         {
             return "SECH_MENSI";
+        };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
         };
 };
 
@@ -5812,6 +6721,14 @@ class SechBazantMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
         {
             return "SECH_BAZANT";
         };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
+        };
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau SechBazant */
@@ -5845,6 +6762,14 @@ class SechNappeMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
         static std::string getName()
         {
             return "SECH_NAPPE";
+        };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
         };
 };
 
@@ -5891,6 +6816,14 @@ class MetaAcierMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
         {
             return "META_ACIER";
         };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
+        };
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau MetaAcier */
@@ -5936,6 +6869,14 @@ class MetaZircMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
         {
             return "META_ZIRC";
         };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
+        };
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau MetaZirc */
@@ -5973,6 +6914,14 @@ class DurtMetaMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
         static std::string getName()
         {
             return "DURT_META";
+        };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
         };
 };
 
@@ -6029,6 +6978,14 @@ public:
     static std::string getName()
     {
         return "ELAS_META";
+    };
+
+    /**
+     * @brief To know if a MaterialBehaviour has ConvertibleValues
+     */
+    static bool hasConvertibleValues()
+    {
+        return true;
     };
 };
 
@@ -6088,6 +7045,14 @@ public:
     {
         return "ELAS_META_FO";
     };
+
+    /**
+     * @brief To know if a MaterialBehaviour has ConvertibleValues
+     */
+    static bool hasConvertibleValues()
+    {
+        return true;
+    };
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau ElasMetaFo */
@@ -6125,6 +7090,14 @@ class MetaEcroLineMaterialBehaviourInstance: public GeneralMaterialBehaviourInst
         static std::string getName()
         {
             return "META_ECRO_LINE";
+        };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
         };
 };
 
@@ -6170,6 +7143,14 @@ class MetaTractionMaterialBehaviourInstance: public GeneralMaterialBehaviourInst
         static std::string getName()
         {
             return "META_TRACTION";
+        };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
         };
 };
 
@@ -6225,6 +7206,14 @@ class MetaViscFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
         {
             return "META_VISC_FO";
         };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
+        };
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau MetaViscFo */
@@ -6265,6 +7254,14 @@ class MetaPtMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
         static std::string getName()
         {
             return "META_PT";
+        };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
         };
 };
 
@@ -6307,6 +7304,14 @@ class MetaReMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
         {
             return "META_RE";
         };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
+        };
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau MetaRe */
@@ -6344,6 +7349,14 @@ class FluideMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
         static std::string getName()
         {
             return "FLUIDE";
+        };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
         };
 };
 
@@ -6385,6 +7398,14 @@ class ThmInitMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
         {
             return "THM_INIT";
         };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
+        };
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau ThmInit */
@@ -6419,6 +7440,14 @@ class ThmAirDissMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
         static std::string getName()
         {
             return "THM_AIR_DISS";
+        };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
         };
 };
 
@@ -6505,6 +7534,14 @@ class ThmDiffuMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
         {
             return "THM_DIFFU";
         };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
+        };
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau ThmDiffu */
@@ -6544,6 +7581,14 @@ class ThmLiquMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
         {
             return "THM_LIQU";
         };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
+        };
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau ThmLiqu */
@@ -6581,6 +7626,14 @@ class ThmGazMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
         {
             return "THM_GAZ";
         };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
+        };
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau ThmGaz */
@@ -6617,6 +7670,14 @@ class ThmVapeGazMaterialBehaviourInstance: public GeneralMaterialBehaviourInstan
         static std::string getName()
         {
             return "THM_VAPE_GAZ";
+        };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
         };
 };
 
@@ -6662,6 +7723,14 @@ class FatigueMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
         {
             return "FATIGUE";
         };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
+        };
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau Fatigue */
@@ -6697,6 +7766,14 @@ class DommaLemaitreMaterialBehaviourInstance: public GeneralMaterialBehaviourIns
         static std::string getName()
         {
             return "DOMMA_LEMAITRE";
+        };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
         };
 };
 
@@ -6740,6 +7817,14 @@ class CisaPlanCritMaterialBehaviourInstance: public GeneralMaterialBehaviourInst
         {
             return "CISA_PLAN_CRIT";
         };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
+        };
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau CisaPlanCrit */
@@ -6774,6 +7859,14 @@ class ThmRuptMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
         static std::string getName()
         {
             return "THM_RUPT";
+        };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
         };
 };
 
@@ -6811,6 +7904,14 @@ class WeibullMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
         static std::string getName()
         {
             return "WEIBULL";
+        };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
         };
 };
 
@@ -6851,6 +7952,14 @@ class WeibullFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
         {
             return "WEIBULL_FO";
         };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
+        };
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau WeibullFo */
@@ -6888,6 +7997,14 @@ class NonLocalMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
         static std::string getName()
         {
             return "NON_LOCAL";
+        };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
         };
 };
 
@@ -6934,6 +8051,14 @@ public:
     static std::string getName()
     {
         return "RUPT_FRAG";
+    };
+
+    /**
+     * @brief To know if a MaterialBehaviour has ConvertibleValues
+     */
+    static bool hasConvertibleValues()
+    {
+        return true;
     };
 };
 
@@ -6982,6 +8107,14 @@ public:
     {
         return "RUPT_FRAG_FO";
     };
+
+    /**
+     * @brief To know if a MaterialBehaviour has ConvertibleValues
+     */
+    static bool hasConvertibleValues()
+    {
+        return true;
+    };
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau RuptFragFo */
@@ -6995,31 +8128,49 @@ typedef boost::shared_ptr< RuptFragFoMaterialBehaviourInstance > RuptFragFoMater
  */
 class CzmLabMixMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
 {
-    public:
-        /**
-         * @brief Constructeur
-         */
-        CzmLabMixMaterialBehaviourInstance()
-        {
-            // Mot cle "CZM_LAB_MIX" dans Aster
-            _asterName = "CZM_LAB_MIX";
+public:
+    /**
+     * @brief Constructeur
+     */
+    CzmLabMixMaterialBehaviourInstance()
+    {
+        // Mot cle "CZM_LAB_MIX" dans Aster
+        _asterName = "CZM_LAB_MIX";
 
-            // Parametres matériau
-            this->addDoubleProperty( "Sigm_c", ElementaryMaterialPropertyDouble( "SIGM_C" , true ) );
-            this->addDoubleProperty( "Glis_c", ElementaryMaterialPropertyDouble( "GLIS_C" , true ) );
-            this->addDoubleProperty( "Alpha", ElementaryMaterialPropertyDouble( "ALPHA" , 0.5 , false ) );
-            this->addDoubleProperty( "Beta", ElementaryMaterialPropertyDouble( "BETA" , 1. , false ) );
-            this->addDoubleProperty( "Pena_lagr", ElementaryMaterialPropertyDouble( "PENA_LAGR" , 100. , false ) );
-            this->addStringProperty( "Cinematique", ElementaryMaterialPropertyString( "CINEMATIQUE" , "UNILATER" , false ) );
-        };
+        // Parametres matériau
+        this->addDoubleProperty( "Sigm_c", ElementaryMaterialPropertyDouble( "SIGM_C", true ) );
+        this->addDoubleProperty( "Glis_c", ElementaryMaterialPropertyDouble( "GLIS_C", true ) );
+        this->addDoubleProperty( "Alpha", ElementaryMaterialPropertyDouble( "ALPHA",
+                                                                            0.5, false ) );
+        this->addDoubleProperty( "Beta", ElementaryMaterialPropertyDouble( "BETA",
+                                                                            1., false ) );
+        this->addDoubleProperty( "Pena_lagr",
+                                 ElementaryMaterialPropertyDouble( "PENA_LAGR" ,
+                                                                   100. , false ) );
+        this->addConvertibleProperty( "Cinematique",
+                    ElementaryMaterialPropertyConvertible( "CINEMATIQUE",
+                                                           StringToDoubleValue( {{"UNILATER", 0.},
+                                                                                 {"GLIS_1D", 1.},
+                                                                                 {"GLIS_2D", 2.}},
+                                                                                 "UNILATER" ),
+                                                           false ) );
+    };
+
+    /**
+     * @brief Get name link to the class
+     * @return name
+     */
+    static std::string getName()
+    {
+        return "CZM_LAB_MIX";
+    };
 
         /**
-         * @brief Get name link to the class
-         * @return name
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
          */
-        static std::string getName()
+        static bool hasConvertibleValues()
         {
-            return "CZM_LAB_MIX";
+            return false;
         };
 };
 
@@ -7059,6 +8210,14 @@ class RuptDuctMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
         static std::string getName()
         {
             return "RUPT_DUCT";
+        };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
         };
 };
 
@@ -7104,6 +8263,14 @@ class JointMecaRuptMaterialBehaviourInstance: public GeneralMaterialBehaviourIns
         static std::string getName()
         {
             return "JOINT_MECA_RUPT";
+        };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
         };
 };
 
@@ -7151,6 +8318,14 @@ class JointMecaFrotMaterialBehaviourInstance: public GeneralMaterialBehaviourIns
         {
             return "JOINT_MECA_FROT";
         };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
+        };
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau JointMecaFrot */
@@ -7195,6 +8370,14 @@ class RccmMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
         {
             return "RCCM";
         };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
+        };
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau Rccm */
@@ -7238,6 +8421,14 @@ class RccmFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
         static std::string getName()
         {
             return "RCCM_FO";
+        };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
         };
 };
 
@@ -7285,6 +8476,14 @@ class LaigleMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
         static std::string getName()
         {
             return "LAIGLE";
+        };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
         };
 };
 
@@ -7346,6 +8545,14 @@ class LetkMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
         {
             return "LETK";
         };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
+        };
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau Letk */
@@ -7387,6 +8594,14 @@ class DruckPragerMaterialBehaviourInstance: public GeneralMaterialBehaviourInsta
         static std::string getName()
         {
             return "DRUCK_PRAGER";
+        };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
         };
 };
 
@@ -7430,6 +8645,14 @@ class DruckPragerFoMaterialBehaviourInstance: public GeneralMaterialBehaviourIns
         static std::string getName()
         {
             return "DRUCK_PRAGER_FO";
+        };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
         };
 };
 
@@ -7478,6 +8701,14 @@ class ViscDrucPragMaterialBehaviourInstance: public GeneralMaterialBehaviourInst
         {
             return "VISC_DRUC_PRAG";
         };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
+        };
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau ViscDrucPrag */
@@ -7522,6 +8753,14 @@ class HoekBrownMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
         {
             return "HOEK_BROWN";
         };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
+        };
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau HoekBrown */
@@ -7556,6 +8795,14 @@ class ElasGonfMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
         static std::string getName()
         {
             return "ELAS_GONF";
+        };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
         };
 };
 
@@ -7594,6 +8841,14 @@ class JointBandisMaterialBehaviourInstance: public GeneralMaterialBehaviourInsta
         {
             return "JOINT_BANDIS";
         };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
+        };
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau JointBandis */
@@ -7630,6 +8885,14 @@ class MonoVisc1MaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
         static std::string getName()
         {
             return "MONO_VISC1";
+        };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
         };
 };
 
@@ -7669,6 +8932,14 @@ class MonoVisc2MaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
         static std::string getName()
         {
             return "MONO_VISC2";
+        };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
         };
 };
 
@@ -7713,6 +8984,14 @@ class MonoIsot1MaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
         static std::string getName()
         {
             return "MONO_ISOT1";
+        };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
         };
 };
 
@@ -7760,6 +9039,14 @@ class MonoIsot2MaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
         {
             return "MONO_ISOT2";
         };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
+        };
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau MonoIsot2 */
@@ -7794,6 +9081,14 @@ class MonoCine1MaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
         static std::string getName()
         {
             return "MONO_CINE1";
+        };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
         };
 };
 
@@ -7832,6 +9127,14 @@ class MonoCine2MaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
         static std::string getName()
         {
             return "MONO_CINE2";
+        };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
         };
 };
 
@@ -7883,6 +9186,14 @@ class MonoDdKrMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
         {
             return "MONO_DD_KR";
         };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
+        };
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau MonoDdKr */
@@ -7930,6 +9241,14 @@ class MonoDdCfcMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
         static std::string getName()
         {
             return "MONO_DD_CFC";
+        };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
         };
 };
 
@@ -7987,6 +9306,14 @@ class MonoDdCfcIrraMaterialBehaviourInstance: public GeneralMaterialBehaviourIns
         {
             return "MONO_DD_CFC_IRRA";
         };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
+        };
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau MonoDdCfcIrra */
@@ -8032,6 +9359,14 @@ class MonoDdFatMaterialBehaviourInstance: public GeneralMaterialBehaviourInstanc
         static std::string getName()
         {
             return "MONO_DD_FAT";
+        };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
         };
 };
 
@@ -8087,6 +9422,14 @@ class MonoDdCcMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
         static std::string getName()
         {
             return "MONO_DD_CC";
+        };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
         };
 };
 
@@ -8145,6 +9488,14 @@ class MonoDdCcIrraMaterialBehaviourInstance: public GeneralMaterialBehaviourInst
         {
             return "MONO_DD_CC_IRRA";
         };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
+        };
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau MonoDdCcIrra */
@@ -8181,6 +9532,14 @@ class CritRuptMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
         {
             return "CRIT_RUPT";
         };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
+        };
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau CritRupt */
@@ -8216,6 +9575,14 @@ class MFrontMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
         static std::string getName()
         {
             return "MFRONT";
+        };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
         };
 };
 
@@ -8254,6 +9621,14 @@ class MFrontFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
         {
             return "MFRONT_FO";
         };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
+        };
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau MFrontFo */
@@ -8289,6 +9664,14 @@ class UMatMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
         static std::string getName()
         {
             return "UMAT";
+        };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
         };
 };
 
@@ -8326,6 +9709,14 @@ class UMatFoMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
         static std::string getName()
         {
             return "UMAT_FO";
+        };
+
+        /**
+         * @brief To know if a MaterialBehaviour has ConvertibleValues
+         */
+        static bool hasConvertibleValues()
+        {
+            return false;
         };
 };
 
