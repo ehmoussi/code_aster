@@ -138,7 +138,7 @@ class MaterialDefinition(ExecuteCommand):
                 for kwName, kwValue in skws.iteritems():
                     curType = type(kwValue)
                     mandatory = False
-                    if curType in (float, int):
+                    if curType in (float, int, numpy.float64):
                         mater.addNewDoubleProperty(kwName, mandatory)
                     elif curType is complex:
                         mater.addNewComplexProperty(kwName, mandatory)
