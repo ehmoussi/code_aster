@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -142,7 +142,7 @@ IMPR_TABLE(TABLE=TABDEP,);
 
 
 TEST_TABLE(CRITERE='RELATIF',
-           VALE_CALC=0.864270887097,
+           VALE_CALC=0.864211781008,
            NOM_PARA='DY',
            TABLE=TABDEP,
            FILTRE=_F(NOM_PARA='NUME_ORDRE',
@@ -156,7 +156,7 @@ TEST_RESU(RESU=(_F(NUME_ORDRE=1,
                    ),
                 _F(NUME_ORDRE=1,
                    PARA='ITER_GLOB',
-                   VALE_CALC_I=8,
+                   VALE_CALC_I=7,
                    RESULTAT=U,
                    CRITERE='ABSOLU',
                    ),
@@ -235,19 +235,19 @@ GLOC3=CALC_G(        THETA=_F(FOND_FISS=FISS1,
 #----------------------------------------------------------------------
 
 TEST_TABLE(
-           VALE_CALC=4201.0642621,
+           VALE_CALC=4204.11272441,
 
            NOM_PARA='G',
            TABLE=G1,)
 
 TEST_TABLE(
-           VALE_CALC=4065.03423431,
+           VALE_CALC=4067.96458807,
 
            NOM_PARA='G',
            TABLE=G2,)
 
 TEST_TABLE(
-           VALE_CALC=4063.94524079,
+           VALE_CALC=4066.87923109,
 
            NOM_PARA='G',
            TABLE=G3,)
@@ -257,7 +257,7 @@ TEST_TABLE(
 #----------------------------------------------------------------------
 
 TEST_TABLE(
-           VALE_CALC=51.1432791877,
+           VALE_CALC=51.2075055193,
            NOM_PARA='G',
            TABLE=GLOC1,
            FILTRE=_F(NOM_PARA='ABSC_CURV',
@@ -265,7 +265,7 @@ TEST_TABLE(
            )
 
 TEST_TABLE(
-           VALE_CALC=54.2763053698,
+           VALE_CALC=54.3458221587,
 
            NOM_PARA='G',
            TABLE=GLOC2,
@@ -274,7 +274,7 @@ TEST_TABLE(
            )
 
 TEST_TABLE(
-           VALE_CALC=52.9809733163,
+           VALE_CALC=53.0554341155,
            NOM_PARA='G',
            TABLE=GLOC3,
            FILTRE=_F(NOM_PARA='ABSC_CURV',
