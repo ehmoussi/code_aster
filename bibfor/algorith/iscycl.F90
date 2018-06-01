@@ -52,8 +52,8 @@ function iscycl(ccycle, longcy)
         if ((ccycle.eq.20) .or. (ccycle.eq.10)) iscycl = .true.
     else if (longcy.eq.15) then
         if ((ccycle.eq.21844) .or. (ccycle.eq.43690)) iscycl = .true.
-    else if (longcy.eq.20) then
-        if ((ccycle.eq.1398100) .or. (ccycle.eq.699050)) iscycl = .true.
+    else if (longcy.eq.6) then
+        if ((ccycle.eq.21) .or. (ccycle.eq.42)) iscycl = .true.
     else
         ASSERT(.false.)
     endif

@@ -126,6 +126,7 @@ implicit none
 ! - Cycling informations printing in convergence table
 !
     if (l_cont_cont) then
+        ds_print%resi_pressure = ds_contact%resi_pressure
         call mm_cycl_print(ds_print, ds_measure)
     endif
 !

@@ -23,7 +23,7 @@ use NonLin_Datastructure_type
 implicit none
 !
 #include "asterfort/nmrvai.h"
-#include "asterfort/nmimci.h"
+#include "asterfort/nmimcr.h"
 !
 ! person_in_charge: mickael.abbas at edf.fr
 !
@@ -44,14 +44,16 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: cycl_nb(4),cycl_nb_tot
+    real(kind=8) :: resi_pressure
 !
 ! --------------------------------------------------------------------------------------------------
 !
+    resi_pressure = ds_print%resi_pressure
     call nmrvai(ds_measure, 'Cont_Cycl1', phasis = 'N', output_count = cycl_nb(1))
     call nmrvai(ds_measure, 'Cont_Cycl2', phasis = 'N', output_count = cycl_nb(2))
     call nmrvai(ds_measure, 'Cont_Cycl3', phasis = 'N', output_count = cycl_nb(3))
     call nmrvai(ds_measure, 'Cont_Cycl4', phasis = 'N', output_count = cycl_nb(4))
     cycl_nb_tot = cycl_nb(1) + cycl_nb(2) + cycl_nb(3) + cycl_nb(4)
-    call nmimci(ds_print, 'CTCC_CYCL', cycl_nb_tot, .true._1)
+    call nmimcr(ds_print, 'CTCC_CYCL', resi_pressure, .true._1)
 
 end subroutine

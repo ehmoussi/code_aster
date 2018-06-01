@@ -69,7 +69,7 @@ implicit none
 ! - Initializations
 !
     cycl_type = 4
-    cycl_long_acti = 20
+    cycl_long_acti = 6
     detect = .false.
 !
 ! - Access to cycling objects

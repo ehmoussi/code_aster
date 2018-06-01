@@ -81,7 +81,7 @@ type(NL_DS_Print), intent(out) :: ds_print
               '     MAXIMUM    ','    NB. ITER    ','  COEFFICIENT   ',&
               '  COEFFICIENT   ','   ASSEMBLAGE   ','                ',&
               '    DISCRET     ','   NEWTON GENE  ','   NEWTON GENE  ',&
-              '   NEWTON GENE  ','      INFOS     ','     CRITERE    ',&
+              '   NEWTON GENE  ','    PRESSURE    ','     CRITERE    ',&
               '     CRITERE    ','   NEWTON GENE  ','   NEWTON GENE  ',&
               '  PENETRATION   ','  TEMPS CALCUL  '/)
     character(len=16), parameter :: cols_title_3(nb_cols_defi) = (/&
@@ -92,7 +92,7 @@ type(NL_DS_Print), intent(out) :: ds_print
               '    AU POINT    ','                ','      RHO       ',&
               '      ETA       ','                ','                ',&
               '    NB. ITER    ','   VARI. CONT.  ','   CRIT. FROT.  ',&
-              '   CRIT. GEOM.  ','    CYCLAGES    ','    VALEUR      ',&
+              '   CRIT. GEOM.  ','    ERROR       ','    VALEUR      ',&
               '    MAX. LIEU   ',' LIEU MAX FROT. ',' LIEU MAX GEOM. ',&
               '                ','    VALEUR      '/)
 !
@@ -104,7 +104,7 @@ type(NL_DS_Print), intent(out) :: ds_print
                   'K','I','R',&
                   'R','K','K',&
                   'I','I','R',&
-                  'R','I','R',&
+                  'R','R','R',&
                   'K','K','K',&
                   'R','R'/)
 !

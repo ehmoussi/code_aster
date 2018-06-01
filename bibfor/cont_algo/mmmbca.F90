@@ -126,6 +126,7 @@ implicit none
     real(kind=8), pointer :: v_sdcont_jsupco(:) => null()
     real(kind=8), pointer :: v_sdcont_apjeu(:) => null()
     real(kind=8)  :: vale_pene = 0.0
+    real(kind=8)  :: sum_cont_pressure
     real(kind=8)  :: coor_escl_curr(3) = 0.0,coor_proj_curr(3) = 0.0
     aster_logical :: l_coef_adap
     character(len=8) :: iptxt
@@ -213,6 +214,7 @@ implicit none
 !
 ! - Loop on contact zones
 !
+    sum_cont_pressure = 0.0d0
     i_cont_poin = 1
     do i_zone = 1, nb_cont_zone
 !
@@ -435,10 +437,13 @@ implicit none
 ! ------------- Next contact point
 !
                 i_cont_poin = i_cont_poin + 1
+                sum_cont_pressure = sum_cont_pressure + lagr_cont_poin
             end do
         end do
  25     continue
     end do
+    ds_contact%resi_pressure = abs(ds_contact%cont_pressure - sum_cont_pressure)
+    ds_contact%cont_pressure = sum_cont_pressure
 !
 ! - Bilateral contact management
 !
