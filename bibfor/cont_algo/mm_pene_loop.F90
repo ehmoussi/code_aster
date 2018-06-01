@@ -94,8 +94,7 @@ implicit none
     aster_logical :: l_frot=.false._1,l_pena_cont=.false._1
     
     integer :: type_adap, continue_calcul
-    character(len=24) :: sdcont_cychis, sdcont_cyccoe, sdcont_cyceta
-    real(kind=8), pointer :: v_sdcont_cychis(:) => null()
+    character(len=24) :: sdcont_cyccoe, sdcont_cyceta
     real(kind=8), pointer :: v_sdcont_cyccoe(:) => null()
     integer, pointer :: v_sdcont_cyceta(:) => null()
     character(len=24) :: sdcont_tabfin, sdcont_jsupco, sdcont_apjeu
@@ -143,10 +142,8 @@ implicit none
 ! - Acces to cycling objects
 !
     sdcont_cyceta = ds_contact%sdcont_solv(1:14)//'.CYCETA'
-    sdcont_cychis = ds_contact%sdcont_solv(1:14)//'.CYCHIS'
     sdcont_cyccoe = ds_contact%sdcont_solv(1:14)//'.CYCCOE'
     call jeveuo(sdcont_cyceta, 'L', vi = v_sdcont_cyceta)
-    call jeveuo(sdcont_cychis, 'L', vr = v_sdcont_cychis)
     call jeveuo(sdcont_cyccoe, 'L', vr = v_sdcont_cyccoe)
 
 !
@@ -197,7 +194,7 @@ implicit none
 !
             do i_poin_elem = 1, nb_poin_elem
 !
-! ------------- Get informations from cychis
+! ------------- Get informations from 
 !
                 gap            = v_sdcont_apjeu(i_cont_poin)
                 indi_cont_curr = nint(v_sdcont_tabfin(ztabf*(i_cont_poin-1)+23))

@@ -54,6 +54,7 @@ implicit none
     real(kind=8), pointer :: p_sdcont_cychis(:) => null()
     character(len=24) :: sdcont_cyccoe
     real(kind=8), pointer :: p_sdcont_cyccoe(:) => null()
+    integer               :: n_cychis
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -61,6 +62,7 @@ implicit none
 !
 ! - Initializations
 !
+    n_cychis = ds_contact%n_cychis
     nb_cont_poin = cfdisi(ds_contact%sdcont_defi,'NTPC' )
     nb_cont_zone  = cfdisi(ds_contact%sdcont_defi,'NZOCO' )
 !
@@ -89,7 +91,7 @@ implicit none
     call wkvect(sdcont_cyclis, 'V V I', 4*nb_cont_poin, vi = p_sdcont_cyclis)
     call wkvect(sdcont_cycnbr, 'V V I', 4*nb_cont_poin, vi = p_sdcont_cycnbr)
     call wkvect(sdcont_cyceta, 'V V I', 4*nb_cont_poin, vi = p_sdcont_cyceta)
-    call wkvect(sdcont_cychis, 'V V R', 60*nb_cont_poin, vr = p_sdcont_cychis)
+    call wkvect(sdcont_cychis, 'V V R', n_cychis*nb_cont_poin, vr = p_sdcont_cychis)
     call wkvect(sdcont_cyccoe, 'V V R', 6*nb_cont_zone, vr = p_sdcont_cyccoe)
 !
     call jedema()
