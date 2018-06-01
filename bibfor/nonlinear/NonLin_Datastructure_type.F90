@@ -105,6 +105,7 @@ implicit none
         aster_logical :: l_tcvg_csv
         integer :: tcvg_unit
         integer :: reac_print
+        real(kind=8)      :: resi_pressure
         character(len=512) :: sep_line
     end type NL_DS_Print
 !
@@ -308,6 +309,8 @@ implicit none
         real(kind=8)      :: geom_maxi
         real(kind=8)      :: arete_min
         real(kind=8)      :: arete_max=0.0
+        real(kind=8)      :: cont_pressure=0.0
+        real(kind=8)      :: resi_pressure=1.0d3
 ! ----- Get-off indicator
         aster_logical     :: l_getoff
 ! ----- First geometric loop

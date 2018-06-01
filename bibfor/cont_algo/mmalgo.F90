@@ -113,7 +113,7 @@ implicit none
     integer :: i_reso_frot=0
     integer :: n_cychis
 !    real(kind=8) :: coef_bussetta=0.0, dist_max, coef_tmp
-    real(kind=8) ::  coef_tmp
+    real(kind=8) ::  coef_tmp,F_refe
 !    real(kind=8) ::  racine,racine1,racine2,racinesup
 !    real(kind=8) ::  a,b,c,discriminant
     real(kind=8) :: bound_coef(2)
@@ -388,6 +388,17 @@ implicit none
              v_sdcont_cychis(n_cychis*(i_cont_poin-1)+2)    = 1.d2
              v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+2) = 1.d2
              mmcvca =  indi_cont_prev .eq. indi_cont_curr
+             if ((ds_contact%cont_pressure .lt. 1.0) .or. (ds_contact%iteration_newton .eq. 1)) then 
+                F_refe = (ds_contact%arete_max/ds_contact%arete_min)*ds_contact%arete_max
+             else 
+                F_refe = ds_contact%cont_pressure
+             endif
+             if (i_cont_poin .eq. 1) then
+                write (6,*) "pres_cont_curr",pres_cont_curr
+                write (6,*) "pres_cont_prev",pres_cont_prev
+             endif
+             ds_contact%resi_pressure = abs(pres_cont_curr - pres_cont_prev)
+             if ((.not. mmcvca) .and. ((ds_contact%resi_pressure)/F_refe .lt. 1.d-6)) mmcvca = .true.
         endif
 !        ctcsta  = ctcsta + 1
     endif
