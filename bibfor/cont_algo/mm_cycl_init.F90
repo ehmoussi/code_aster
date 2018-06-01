@@ -62,6 +62,7 @@ implicit none
     integer :: slave_pt_index, slave_pt_nb
     real(kind=8) :: coef_cont, coef_frot, coef_init
     aster_logical :: lveri
+    integer               :: n_cychis
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -70,6 +71,7 @@ implicit none
 ! - Initializations
 !
     nb_cont_zone = cfdisi(ds_contact%sdcont_defi,'NZOCO' )
+    n_cychis     = ds_contact%n_cychis
 !
 ! - Access to cycling objects
 !
@@ -113,7 +115,7 @@ implicit none
 !
             do slave_pt_index = 1, slave_pt_nb
                 do i_cyc =1,60 
-                    p_sdcont_cychis(60*(i_cont_poin-1) + i_cyc) = 0
+                    p_sdcont_cychis(n_cychis*(i_cont_poin-1) + i_cyc) = 0
                 enddo
                 coef_init = p_sdcont_cyccoe(6*(zone_index-1)+1) 
                 if (nint(ds_contact%update_init_coefficient) .eq. 1) &
@@ -121,14 +123,14 @@ implicit none
                 do i_cyc =1,4 
                     p_sdcont_cyceta(4*(i_cont_poin-1) + i_cyc) = -1
                 enddo
-                p_sdcont_cychis(60*(i_cont_poin-1)+2) = coef_init
-                p_sdcont_cychis(60*(i_cont_poin-1)+6) = coef_frot
-                p_sdcont_cychis(60*(i_cont_poin-1)+60) = zone_index
-                p_sdcont_cychis(60*(i_cont_poin-1)+59) = 1.0
-                p_sdcont_cychis(60*(i_cont_poin-1)+56) = 1.0
-                p_sdcont_cychis(60*(i_cont_poin-1)+54) = 1.0
-                p_sdcont_cychis(60*(i_cont_poin-1)+55) = 1.0
-                p_sdcont_cychis(60*(i_cont_poin-1)+51) = 1.0
+                p_sdcont_cychis(n_cychis*(i_cont_poin-1)+2) = coef_init
+                p_sdcont_cychis(n_cychis*(i_cont_poin-1)+6) = coef_frot
+                p_sdcont_cychis(n_cychis*(i_cont_poin-1)+60) = zone_index
+                p_sdcont_cychis(n_cychis*(i_cont_poin-1)+59) = 1.0
+                p_sdcont_cychis(n_cychis*(i_cont_poin-1)+56) = 1.0
+                p_sdcont_cychis(n_cychis*(i_cont_poin-1)+54) = 1.0
+                p_sdcont_cychis(n_cychis*(i_cont_poin-1)+55) = 1.0
+                p_sdcont_cychis(n_cychis*(i_cont_poin-1)+51) = 1.0
                 i_cont_poin = i_cont_poin + 1
             end do
         end do

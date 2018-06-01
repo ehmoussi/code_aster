@@ -111,6 +111,7 @@ implicit none
     real(kind=8) :: coef_bussetta=0.0, dist_max=0.0
     integer      ::  i_algo_cont=0
     integer :: i_reso_frot=0
+    integer :: n_cychis
 !    real(kind=8) :: coef_bussetta=0.0, dist_max, coef_tmp
     real(kind=8) ::  coef_tmp
 !    real(kind=8) ::  racine,racine1,racine2,racinesup
@@ -129,6 +130,7 @@ implicit none
 !
 ! - Initializations
 !
+    n_cychis  = ds_contact%n_cychis
     
     l_coef_adap = ((type_adap .eq. 1) .or. (type_adap .eq. 2) .or. &
                   (type_adap .eq. 5) .or. (type_adap .eq. 6 ))
@@ -141,31 +143,32 @@ implicit none
 !
 ! - Save old history
 !
-    if (nint(v_sdcont_cychis(60*(i_cont_poin-1)+24)) .ne. &
-        nint(v_sdcont_cychis(60*(i_cont_poin-1)+24+24))) then
+    if (nint(v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24)) .ne. &
+        nint(v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+24))) then
 !        write (6,*) "la maille maitre a changé : on e fait rien "
         treatment =.false.
     endif
-    do hist_index = 1, 24
-        v_sdcont_cychis(60*(i_cont_poin-1)+24+hist_index) = &
-            v_sdcont_cychis(60*(i_cont_poin-1)+hist_index)
-    enddo
+
+!    do hist_index = 1, 12
+!        v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+hist_index) = &
+!            v_sdcont_cychis(n_cychis*(i_cont_poin-1)+hist_index)
+!    enddo
 !
 ! - Previous informations
 !
-    indi_cont_prev = nint(v_sdcont_cychis(60*(i_cont_poin-1)+24+1))
-    coef_cont_prev = v_sdcont_cychis(60*(i_cont_poin-1)+24+2)
-    pres_cont_prev = v_sdcont_cychis(60*(i_cont_poin-1)+24+3)
-    dist_cont_prev = v_sdcont_cychis(60*(i_cont_poin-1)+24+4)
+    indi_cont_prev = nint(v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+1))
+    coef_cont_prev = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+2)
+    pres_cont_prev = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+3)
+    dist_cont_prev = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+4)
 ! XXX next value seems uniniatiliased in ssnp121i
-    indi_frot_prev = nint(v_sdcont_cychis(60*(i_cont_poin-1)+24+5))
-    coef_frot_prev = v_sdcont_cychis(60*(i_cont_poin-1)+24+6)
-    pres_frot_prev(1) = v_sdcont_cychis(60*(i_cont_poin-1)+24+7)
-    pres_frot_prev(2) = v_sdcont_cychis(60*(i_cont_poin-1)+24+8)
-    pres_frot_prev(3) = v_sdcont_cychis(60*(i_cont_poin-1)+24+9)
-    dist_frot_prev(1) = v_sdcont_cychis(60*(i_cont_poin-1)+24+10)
-    dist_frot_prev(2) = v_sdcont_cychis(60*(i_cont_poin-1)+24+11)
-    dist_frot_prev(3) = v_sdcont_cychis(60*(i_cont_poin-1)+24+12)
+    indi_frot_prev = nint(v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+5))
+    coef_frot_prev = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+6)
+    pres_frot_prev(1) = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+7)
+    pres_frot_prev(2) = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+8)
+    pres_frot_prev(3) = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+9)
+    dist_frot_prev(1) = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+10)
+    dist_frot_prev(2) = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+11)
+    dist_frot_prev(3) = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+12)
 !
 ! - Current max/min ratio
 !
@@ -210,29 +213,29 @@ implicit none
 !
 ! - Save history for automatic cycling algorithm
 !
-    v_sdcont_cychis(60*(i_cont_poin-1)+1) = indi_cont_curr
-    v_sdcont_cychis(60*(i_cont_poin-1)+2) = coef_cont_curr
-    v_sdcont_cychis(60*(i_cont_poin-1)+3) = pres_cont_curr
-    v_sdcont_cychis(60*(i_cont_poin-1)+4) = dist_cont_curr
-    v_sdcont_cychis(60*(i_cont_poin-1)+5) = indi_frot_curr
-    v_sdcont_cychis(60*(i_cont_poin-1)+6) = coef_frot_curr
-    v_sdcont_cychis(60*(i_cont_poin-1)+7) = pres_frot_curr(1)
-    v_sdcont_cychis(60*(i_cont_poin-1)+8) = pres_frot_curr(2)
-    v_sdcont_cychis(60*(i_cont_poin-1)+9) = pres_frot_curr(3)
-    v_sdcont_cychis(60*(i_cont_poin-1)+10) = dist_frot_curr(1)
-    v_sdcont_cychis(60*(i_cont_poin-1)+11) = dist_frot_curr(2)
-    v_sdcont_cychis(60*(i_cont_poin-1)+12) = dist_frot_curr(3)
-!    v_sdcont_cychis(60*(i_cont_poin-1)+58) = dist_cont_prev                     
+    v_sdcont_cychis(n_cychis*(i_cont_poin-1)+1) = indi_cont_curr
+    v_sdcont_cychis(n_cychis*(i_cont_poin-1)+2) = coef_cont_curr
+    v_sdcont_cychis(n_cychis*(i_cont_poin-1)+3) = pres_cont_curr
+    v_sdcont_cychis(n_cychis*(i_cont_poin-1)+4) = dist_cont_curr
+    v_sdcont_cychis(n_cychis*(i_cont_poin-1)+5) = indi_frot_curr
+    v_sdcont_cychis(n_cychis*(i_cont_poin-1)+6) = coef_frot_curr
+    v_sdcont_cychis(n_cychis*(i_cont_poin-1)+7) = pres_frot_curr(1)
+    v_sdcont_cychis(n_cychis*(i_cont_poin-1)+8) = pres_frot_curr(2)
+    v_sdcont_cychis(n_cychis*(i_cont_poin-1)+9) = pres_frot_curr(3)
+    v_sdcont_cychis(n_cychis*(i_cont_poin-1)+10) = dist_frot_curr(1)
+    v_sdcont_cychis(n_cychis*(i_cont_poin-1)+11) = dist_frot_curr(2)
+    v_sdcont_cychis(n_cychis*(i_cont_poin-1)+12) = dist_frot_curr(3)
+!    v_sdcont_cychis(n_cychis*(i_cont_poin-1)+58) = dist_cont_prev                     
     if ((ds_contact%iteration_newton .ge. 3 ) .and. &
         (v_sdcont_cyceta(4*(i_cont_poin-1)+1) .gt. 0 .and. treatment )) then
        
        
 !ADAPTATION DE MATRICES, VECTEURS ET COEFF POUR LES TE :
 ! MATR_PREVIOUS + MATR_CURRENT       
-       v_sdcont_cychis(60*(i_cont_poin-1)+57) = 1.0d0
-       v_sdcont_cychis(60*(i_cont_poin-1)+59) = alpha_cont_matr
-       v_sdcont_cychis(60*(i_cont_poin-1)+56) = alpha_cont_vect
-!       coefficient = v_sdcont_cychis(60*(i_cont_poin-1)+2) /1.d4
+       v_sdcont_cychis(n_cychis*(i_cont_poin-1)+57) = 1.0d0
+       v_sdcont_cychis(n_cychis*(i_cont_poin-1)+59) = alpha_cont_matr
+       v_sdcont_cychis(n_cychis*(i_cont_poin-1)+56) = alpha_cont_vect
+!       coefficient = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+2) /1.d4
        coef_found = .false.
        indi(1) = indi_cont_curr
        indi(2) = indi_cont_prev
@@ -249,17 +252,17 @@ implicit none
            if (i_reso_cont .ne. 0) then
                indi_cont_curr =  indi(1)
                indi_cont_prev =  indi(2)  
-               v_sdcont_cychis(60*(i_cont_poin-1)+1)    = indi_cont_curr
-               v_sdcont_cychis(60*(i_cont_poin-1)+24+1) = indi_cont_prev
+               v_sdcont_cychis(n_cychis*(i_cont_poin-1)+1)    = indi_cont_curr
+               v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+1) = indi_cont_prev
            endif
            dist_cont_curr =  dist_cont(1)
            dist_cont_prev =  dist_cont(2)
-           v_sdcont_cychis(60*(i_cont_poin-1)+2)    = coef_opt
-           v_sdcont_cychis(60*(i_cont_poin-1)+24+2) = coef_opt       
-           v_sdcont_cychis(60*(i_cont_poin-1)+3)    = pres_cont_curr
-           v_sdcont_cychis(60*(i_cont_poin-1)+24+3) = pres_cont_prev
-           v_sdcont_cychis(60*(i_cont_poin-1)+4)    = dist_cont_curr
-           v_sdcont_cychis(60*(i_cont_poin-1)+24+4) = dist_cont_prev          
+           v_sdcont_cychis(n_cychis*(i_cont_poin-1)+2)    = coef_opt
+           v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+2) = coef_opt       
+           v_sdcont_cychis(n_cychis*(i_cont_poin-1)+3)    = pres_cont_curr
+           v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+3) = pres_cont_prev
+           v_sdcont_cychis(n_cychis*(i_cont_poin-1)+4)    = dist_cont_curr
+           v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+4) = dist_cont_prev          
 !           if (indi_cont_curr .ne. indi_cont_prev) write (6,*) "Traitement NOOK"
        endif
          
@@ -271,45 +274,45 @@ implicit none
        (v_sdcont_cyceta(4*(i_cont_poin-1)+2) .ge. 10 ) .and. treatment   ) then   
         
            if (v_sdcont_cyceta(4*(i_cont_poin-1)+1) .eq. 11) then
-               v_sdcont_cychis(60*(i_cont_poin-1)+50) = 0.0d0
+               v_sdcont_cychis(n_cychis*(i_cont_poin-1)+50) = 0.0d0
            else
-               v_sdcont_cychis(60*(i_cont_poin-1)+50) = 1.0d0
+               v_sdcont_cychis(n_cychis*(i_cont_poin-1)+50) = 1.0d0
            endif
          
-           if (nint(v_sdcont_cychis(60*(i_cont_poin-1)+50)) .eq. 1)  then
+           if (nint(v_sdcont_cychis(n_cychis*(i_cont_poin-1)+50)) .eq. 1)  then
        
                if (  v_sdcont_cyceta(4*(i_cont_poin-1)+2) .eq. 11   ) then  
                   indi_frot_curr = 1
-                  v_sdcont_cychis(60*(i_cont_poin-1)+5) = indi_frot_curr
+                  v_sdcont_cychis(n_cychis*(i_cont_poin-1)+5) = indi_frot_curr
                   alpha_frot_matr = 1.0
-                  v_sdcont_cychis(60*(i_cont_poin-1)+54) = alpha_frot_matr         
+                  v_sdcont_cychis(n_cychis*(i_cont_poin-1)+54) = alpha_frot_matr         
                   alpha_frot_vect = 1.0
-                  v_sdcont_cychis(60*(i_cont_poin-1)+55) = alpha_frot_vect
+                  v_sdcont_cychis(n_cychis*(i_cont_poin-1)+55) = alpha_frot_vect
                        
                elseif (  v_sdcont_cyceta(4*(i_cont_poin-1)+2) .eq. 12   ) then  
                   alpha_frot_matr = 1.0
-                  v_sdcont_cychis(60*(i_cont_poin-1)+54) = alpha_frot_matr         
+                  v_sdcont_cychis(n_cychis*(i_cont_poin-1)+54) = alpha_frot_matr         
                   alpha_frot_vect = 1.0
-                  v_sdcont_cychis(60*(i_cont_poin-1)+55) = alpha_frot_vect
+                  v_sdcont_cychis(n_cychis*(i_cont_poin-1)+55) = alpha_frot_vect
                        
                elseif (  v_sdcont_cyceta(4*(i_cont_poin-1)+2) .eq. 13   ) then  
                   alpha_frot_matr = 1.0
-                  v_sdcont_cychis(60*(i_cont_poin-1)+54) = alpha_frot_matr         
+                  v_sdcont_cychis(n_cychis*(i_cont_poin-1)+54) = alpha_frot_matr         
                   alpha_frot_vect = 1.0
-                  v_sdcont_cychis(60*(i_cont_poin-1)+55) = alpha_frot_vect
+                  v_sdcont_cychis(n_cychis*(i_cont_poin-1)+55) = alpha_frot_vect
                        
                elseif (  v_sdcont_cyceta(4*(i_cont_poin-1)+2) .eq. 14   ) then  
                   alpha_frot_matr = 0.5
-                  v_sdcont_cychis(60*(i_cont_poin-1)+54) = alpha_frot_matr         
+                  v_sdcont_cychis(n_cychis*(i_cont_poin-1)+54) = alpha_frot_matr         
                   alpha_frot_vect = 0.5
-                  v_sdcont_cychis(60*(i_cont_poin-1)+55) = alpha_frot_vect
+                  v_sdcont_cychis(n_cychis*(i_cont_poin-1)+55) = alpha_frot_vect
                endif
            endif    
          
        else 
-           v_sdcont_cychis(60*(i_cont_poin-1)+50) = 0.0d0
-           v_sdcont_cychis(60*(i_cont_poin-1)+54) = 1.0
-           v_sdcont_cychis(60*(i_cont_poin-1)+55) = 1.0
+           v_sdcont_cychis(n_cychis*(i_cont_poin-1)+50) = 0.0d0
+           v_sdcont_cychis(n_cychis*(i_cont_poin-1)+54) = 1.0
+           v_sdcont_cychis(n_cychis*(i_cont_poin-1)+55) = 1.0
        endif
     
                     
@@ -317,41 +320,41 @@ implicit none
        (v_sdcont_cyceta(4*(i_cont_poin-1)+3) .ge. 10 )  .and. treatment  ) then   
         
          if (v_sdcont_cyceta(4*(i_cont_poin-1)+1) .eq. 11) then
-             v_sdcont_cychis(60*(i_cont_poin-1)+50) = 0.0d0
+             v_sdcont_cychis(n_cychis*(i_cont_poin-1)+50) = 0.0d0
          else
-             v_sdcont_cychis(60*(i_cont_poin-1)+50) = 1.0d0
+             v_sdcont_cychis(n_cychis*(i_cont_poin-1)+50) = 1.0d0
          endif
          
-         if     (nint(v_sdcont_cychis(60*(i_cont_poin-1)+50)) .eq. 1)  then
+         if     (nint(v_sdcont_cychis(n_cychis*(i_cont_poin-1)+50)) .eq. 1)  then
              if (  v_sdcont_cyceta(4*(i_cont_poin-1)+3) .eq. 11   ) then  
            
                 alpha_frot_matr = 0.5
-                v_sdcont_cychis(60*(i_cont_poin-1)+54) = alpha_frot_matr            
+                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+54) = alpha_frot_matr            
                 alpha_frot_vect = 1.0
-                v_sdcont_cychis(60*(i_cont_poin-1)+55) = alpha_frot_vect
+                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+55) = alpha_frot_vect
                       
              elseif (  v_sdcont_cyceta(4*(i_cont_poin-1)+3) .eq. 12   ) then  
            
                 alpha_frot_matr = 0.5
-                v_sdcont_cychis(60*(i_cont_poin-1)+54) = alpha_frot_matr            
+                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+54) = alpha_frot_matr            
                 alpha_frot_vect = 1.0
-                v_sdcont_cychis(60*(i_cont_poin-1)+55) = alpha_frot_vect
+                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+55) = alpha_frot_vect
                       
                       
              elseif (  v_sdcont_cyceta(4*(i_cont_poin-1)+3) .eq. 13   ) then  
            
                 alpha_frot_matr = 0.5
-                v_sdcont_cychis(60*(i_cont_poin-1)+54) = alpha_frot_matr            
+                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+54) = alpha_frot_matr            
                 alpha_frot_vect = 1.0
-                v_sdcont_cychis(60*(i_cont_poin-1)+55) = alpha_frot_vect
+                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+55) = alpha_frot_vect
                 
              endif
          endif    
          
        else 
-          v_sdcont_cychis(60*(i_cont_poin-1)+50) = 0.0d0
-          v_sdcont_cychis(60*(i_cont_poin-1)+54) = 1.0
-          v_sdcont_cychis(60*(i_cont_poin-1)+55) = 1.0
+          v_sdcont_cychis(n_cychis*(i_cont_poin-1)+50) = 0.0d0
+          v_sdcont_cychis(n_cychis*(i_cont_poin-1)+54) = 1.0
+          v_sdcont_cychis(n_cychis*(i_cont_poin-1)+55) = 1.0
        endif
 
 ! WARNING CYCLAGE FROTTEMENT: END
@@ -369,21 +372,21 @@ implicit none
              if (i_reso_cont .ne. 0) then
                  call mmstac(dist_cont_curr, pres_cont_curr,coefficient,indi_cont_curr)
                  call mmstac(dist_cont_prev, pres_cont_prev,coefficient,indi_cont_prev)
-                 v_sdcont_cychis(60*(i_cont_poin-1)+1)    = indi_cont_curr
-                 v_sdcont_cychis(60*(i_cont_poin-1)+24+1) = indi_cont_prev
+                 v_sdcont_cychis(n_cychis*(i_cont_poin-1)+1)    = indi_cont_curr
+                 v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+1) = indi_cont_prev
              endif       
-             v_sdcont_cychis(60*(i_cont_poin-1)+3)    = pres_cont_curr
-             v_sdcont_cychis(60*(i_cont_poin-1)+24+3) = pres_cont_prev
-             v_sdcont_cychis(60*(i_cont_poin-1)+4)    = dist_cont_curr
-             v_sdcont_cychis(60*(i_cont_poin-1)+24+4) = dist_cont_prev      
-             v_sdcont_cychis(60*(i_cont_poin-1)+57) = 1.0
-             v_sdcont_cychis(60*(i_cont_poin-1)+59) = 0.999
-             v_sdcont_cychis(60*(i_cont_poin-1)+56) = 1.0
-             v_sdcont_cychis(60*(i_cont_poin-1)+51) = 4.0
-             v_sdcont_cychis(60*(i_cont_poin-1)+52) = 4.0
+             v_sdcont_cychis(n_cychis*(i_cont_poin-1)+3)    = pres_cont_curr
+             v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+3) = pres_cont_prev
+             v_sdcont_cychis(n_cychis*(i_cont_poin-1)+4)    = dist_cont_curr
+             v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+4) = dist_cont_prev      
+             v_sdcont_cychis(n_cychis*(i_cont_poin-1)+57) = 1.0
+             v_sdcont_cychis(n_cychis*(i_cont_poin-1)+59) = 0.999
+             v_sdcont_cychis(n_cychis*(i_cont_poin-1)+56) = 1.0
+             v_sdcont_cychis(n_cychis*(i_cont_poin-1)+51) = 4.0
+             v_sdcont_cychis(n_cychis*(i_cont_poin-1)+52) = 4.0
              v_sdcont_cyceta(4*(i_cont_poin-1)+1)   = 10
-             v_sdcont_cychis(60*(i_cont_poin-1)+2)    = 1.d2
-             v_sdcont_cychis(60*(i_cont_poin-1)+24+2) = 1.d2
+             v_sdcont_cychis(n_cychis*(i_cont_poin-1)+2)    = 1.d2
+             v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+2) = 1.d2
              mmcvca =  indi_cont_prev .eq. indi_cont_curr
         endif
 !        ctcsta  = ctcsta + 1
@@ -396,8 +399,8 @@ implicit none
     if ((type_adap .eq. 2) .or. (type_adap .eq. 3) .or. &
         (type_adap .eq. 6) .or. (type_adap .eq. 7)) then
         
-            coef_bussetta = v_sdcont_cychis(60*(i_cont_poin-1)+2)
-            coef_tmp = v_sdcont_cychis(60*(i_cont_poin-1)+2)
+            coef_bussetta = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+2)
+            coef_tmp = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+2)
             
             if (indi_cont_curr .eq. 1 .and. l_pena_cont) then
                 if (nint(vale_pene) .eq. -1) then 
@@ -410,8 +413,8 @@ implicit none
             
                 mmcvca = mmcvca .and. (ctcsta .eq. 0)
                 call bussetta_algorithm(dist_cont_curr, dist_cont_prev,dist_max, coef_bussetta)
-                v_sdcont_cychis(60*(i_cont_poin-1)+2) = max(coef_bussetta,&
-                                                        v_sdcont_cychis(60*(i_cont_poin-1)+2))
+                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+2) = max(coef_bussetta,&
+                                                        v_sdcont_cychis(n_cychis*(i_cont_poin-1)+2))
             !endif
                                                     
             ! Traitement de fortes interpenetrations         
@@ -429,7 +432,7 @@ implicit none
                         ! critere trop severe : risque de non convergence
                         ds_contact%continue_pene = 2.0
                     endif
-                    v_sdcont_cychis(60*(i_cont_poin-1)+2) = coef_bussetta
+                    v_sdcont_cychis(n_cychis*(i_cont_poin-1)+2) = coef_bussetta
                     ! critere trop lache
                     if (dist_max .gt. ds_contact%arete_min) &
                         ds_contact%continue_pene = 1.0
@@ -440,7 +443,7 @@ implicit none
        if ((.not. l_pena_frot .and. l_pena_cont ).and. indi_cont_curr .eq. 1) then 
            if ((dist_cont_curr .gt. dist_max) .and. (indi_frot_curr .eq. 0.)&
                 .and. (norm2(dist_frot_curr) .lt. 0.01*dist_max)) then 
-               v_sdcont_cychis(60*(i_cont_poin-1)+5)  = 2
+               v_sdcont_cychis(n_cychis*(i_cont_poin-1)+5)  = 2
            endif
        endif
        
@@ -448,7 +451,7 @@ implicit none
 !        if ( indi_cont_curr .eq. 1 .and. l_pena_frot .and. l_pena_cont) then   
 !           if (dist_cont_curr .gt. dist_max .and. indi_frot_curr .eq. 0.&
 !                .and. (norm2(dist_frot_curr) .lt. 1.d-6*dist_max)) then 
-!               v_sdcont_cychis(60*(i_cont_poin-1)+5)  = 2
+!               v_sdcont_cychis(n_cychis*(i_cont_poin-1)+5)  = 2
 
 !cas 1 : Forte interpenetrations : statut = adherent + recherche du coef_frot_curr optimale
 !        Statut doit etre adherent :
@@ -487,18 +490,18 @@ implicit none
                 
                 
 !            if (indi_frot_curr .eq. 1 .and. norm2(dist_frot_curr) .gt. 1.d-6*dist_max) then
-!               v_sdcont_cychis(60*(i_cont_poin-1)+5)  = 1
+!               v_sdcont_cychis(n_cychis*(i_cont_poin-1)+5)  = 1
 !                coef_frot_curr = coef_frot_curr*norm2(dist_frot_curr) / dist_max 
                 
 !                if (i_cont_poin .eq. 1) &
 !                write (6,*) "coef_frott adhe",coef_frot_curr, i_cont_poin
 !            elseif  (indi_frot_curr .eq. 0 .and. dist_cont_curr .gt. dist_max ) then
-!               v_sdcont_cychis(60*(i_cont_poin-1)+5)  = 1
+!               v_sdcont_cychis(n_cychis*(i_cont_poin-1)+5)  = 1
 !                coef_frot_curr = coef_frot_curr*norm2(dist_frot_curr) / dist_max 
 !                if (i_cont_poin .eq. 1) &
 !                 write (6,*) "coef_frott gliss",coef_frot_curr, i_cont_poin          
 !            endif
-!            v_sdcont_cychis(60*(i_cont_poin-1)+6)  = coef_frot_curr
+!            v_sdcont_cychis(n_cychis*(i_cont_poin-1)+6)  = coef_frot_curr
 !        endif
     endif
 end subroutine

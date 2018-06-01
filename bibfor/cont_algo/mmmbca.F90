@@ -26,6 +26,7 @@ implicit none
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterc/r8prem.h"
+#include "asterfort/codent.h"
 #include "asterfort/cfdisi.h"
 #include "asterfort/cfdisl.h"
 #include "asterfort/cfmmvd.h"
@@ -97,7 +98,9 @@ implicit none
     integer :: indi_cont_eval, indi_frot_eval
     integer :: indi_cont_init, indi_frot_init
     real(kind=8) :: ksipr1, ksipr2, ksipc1, ksipc2
+    real(kind=8) :: ksipr1_old, ksipr2_old,ksipc1_old, ksipc2_old,resi_geom
     real(kind=8) :: norm(3), tau1(3), tau2(3)
+    real(kind=8) :: norm_prev(3), tau1_prev(3), tau2_prev(3)
     real(kind=8) :: lagr_cont_node(9), lagr_fro1_node(9), lagr_fro2_node(9)
     real(kind=8) :: elem_slav_coor(27)
     real(kind=8) :: lagr_cont_poin, time_curr
@@ -123,7 +126,10 @@ implicit none
     real(kind=8), pointer :: v_sdcont_jsupco(:) => null()
     real(kind=8), pointer :: v_sdcont_apjeu(:) => null()
     real(kind=8)  :: vale_pene = 0.0
+    real(kind=8)  :: coor_escl_curr(3) = 0.0,coor_proj_curr(3) = 0.0
     aster_logical :: l_coef_adap
+    character(len=8) :: iptxt
+    integer :: hist_index,n_cychis,coun_bcle_geom
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -137,6 +143,9 @@ implicit none
 !
     loop_cont_conv = .true.
     loop_cont_vali = 0
+    ds_contact%critere_geom = 0.0
+    resi_geom = 0.0
+    n_cychis  = ds_contact%n_cychis
 !
 ! - Parameters
 !
@@ -270,11 +279,15 @@ implicit none
 !
                 ksipc1 = v_sdcont_tabfin(ztabf*(i_cont_poin-1)+4)
                 ksipc2 = v_sdcont_tabfin(ztabf*(i_cont_poin-1)+5)
+                ksipc1_old = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+19)
+                ksipc2_old = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+20)
 !
 ! ------------- Get coordinates of the projection of contact point 
 !
                 ksipr1 = v_sdcont_tabfin(ztabf*(i_cont_poin-1)+6)
                 ksipr2 = v_sdcont_tabfin(ztabf*(i_cont_poin-1)+7)
+                ksipr1_old = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+22)
+                ksipr2_old = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+23)
 !
 ! ------------- Get local basis
 !
@@ -288,20 +301,31 @@ implicit none
 ! ------------- Store current local basis :
 !               needed for previous cycling matrices and vectors computrations
 !
-                v_sdcont_cychis(60*(i_cont_poin-1)+13) = tau1(1) 
-                v_sdcont_cychis(60*(i_cont_poin-1)+14) = tau1(2) 
-                v_sdcont_cychis(60*(i_cont_poin-1)+15) = tau1(3) 
-                v_sdcont_cychis(60*(i_cont_poin-1)+16) = tau2(1) 
-                v_sdcont_cychis(60*(i_cont_poin-1)+17) = tau2(2) 
-                v_sdcont_cychis(60*(i_cont_poin-1)+18) = tau2(3) 
-                v_sdcont_cychis(60*(i_cont_poin-1)+19) = ksipc1 
-                v_sdcont_cychis(60*(i_cont_poin-1)+20) = ksipc2 
-                v_sdcont_cychis(60*(i_cont_poin-1)+22) = ksipr1
-                v_sdcont_cychis(60*(i_cont_poin-1)+23) = ksipr2 
-                v_sdcont_cychis(60*(i_cont_poin-1)+24) = elem_mast_nume
+                do hist_index = 1, 24
+                    v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+hist_index) = &
+                        v_sdcont_cychis(n_cychis*(i_cont_poin-1)+hist_index)
+                enddo
+                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+61+6) = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+61)
+                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+62+6) = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+62)
+                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+63+6) = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+63)
+                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+64+6) = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+64)
+                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+65+6) = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+65)
+                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+66+6) = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+66)
+                
+                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+13) = tau1(1) 
+                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+14) = tau1(2) 
+                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+15) = tau1(3) 
+                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+16) = tau2(1) 
+                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+17) = tau2(2) 
+                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+18) = tau2(3) 
+                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+19) = ksipc1 
+                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+20) = ksipc2 
+                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+22) = ksipr1
+                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+23) = ksipr2 
+                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24) = elem_mast_nume
 
 !
-! ------------- Compute gap and contact pressure
+! ------------- Compute gap and contact pressure : current configuration
 !
                 call mmeval_prep(mesh   , time_curr  , model_ndim     , ds_contact,&
                                   i_zone         ,&
@@ -312,7 +336,14 @@ implicit none
                                  elem_mast_nume,&
                                  lagr_cont_node,&
                                  norm   , &
-                                 gap    , gap_user,  lagr_cont_poin)
+                                 gap    , gap_user,  lagr_cont_poin,&
+                                 poin_slav_coor= coor_escl_curr,poin_proj_coor=coor_proj_curr)
+                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+61) = coor_escl_curr(1)
+                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+62) = coor_escl_curr(2)
+                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+63) = coor_escl_curr(3)
+                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+64) = coor_proj_curr(1)
+                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+65) = coor_proj_curr(2)
+                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+66) = coor_proj_curr(3)
 !
 ! ------------- Previous status and coefficients
 !
@@ -320,8 +351,8 @@ implicit none
                 if (l_frot_zone) then
                     indi_frot_init = nint(v_sdcont_tabfin(ztabf*(i_cont_poin-1)+24))
                 endif
-                coef_cont = v_sdcont_cychis(60*(i_cont_poin-1)+2)
-                coef_frot = v_sdcont_cychis(60*(i_cont_poin-1)+6)
+                coef_cont = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+2)
+                coef_frot = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+6)
 !
 ! ------------- Initial bilateral contact ?
 !
@@ -367,6 +398,24 @@ implicit none
                             loop_cont_conv,l_pena_frot,l_pena_cont, vale_pene)
 !
  19             continue
+                if (ds_contact%iteration_newton .ge. 2 .and. indi_cont_curr .eq. 1) then
+                    do coun_bcle_geom = 1,3
+                        resi_geom = sqrt(((v_sdcont_cychis(n_cychis*(i_cont_poin-1)+61+6)-coor_escl_curr(1))**2 +&
+                                     (v_sdcont_cychis(n_cychis*(i_cont_poin-1)+62+6)-coor_escl_curr(2))**2 +&
+                                     (v_sdcont_cychis(n_cychis*(i_cont_poin-1)+63+6)-coor_escl_curr(3))**2 &
+                                    )+&
+                                    ((v_sdcont_cychis(n_cychis*(i_cont_poin-1)+64+6)-coor_proj_curr(1))**2 +&
+                                     (v_sdcont_cychis(n_cychis*(i_cont_poin-1)+65+6)-coor_proj_curr(2))**2 +&
+                                     (v_sdcont_cychis(n_cychis*(i_cont_poin-1)+66+6)-coor_proj_curr(3))**2 &
+                                    ))
+                    enddo
+                    if (resi_geom .gt. ds_contact%critere_geom .and.&
+                        ds_contact%iteration_newton .ge. 2) then 
+                        ds_contact%critere_geom = resi_geom
+                        call codent(i_poin_elem, 'G', iptxt)
+                        ds_contact%crit_geom_noeu = 'NPOINCO'//iptxt//' '
+                    endif
+                endif
 !
 ! ------------- Save status
 !

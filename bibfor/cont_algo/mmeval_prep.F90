@@ -25,7 +25,8 @@ subroutine mmeval_prep(mesh   , time_curr  , model_ndim     , ds_contact,&
                        elem_mast_nume,&
                        lagr_cont_node,&
                        norm   , &
-                       gap    , gap_user,  lagr_cont_poin)
+                       gap    , gap_user,  lagr_cont_poin,&
+                        poin_slav_coor, poin_proj_coor)
 !
 use NonLin_Datastructure_type
 !
@@ -70,6 +71,7 @@ implicit none
     real(kind=8), intent(out) :: gap
     real(kind=8), intent(out) :: gap_user
     real(kind=8), intent(out) :: lagr_cont_poin
+    real(kind=8),intent(out),optional :: poin_slav_coor(3), poin_proj_coor(3)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -104,7 +106,6 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
     real(kind=8) :: noor
-    real(kind=8) :: poin_slav_coor(3), poin_proj_coor(3)
     character(len=19) :: newgeo
     character(len=8) :: elem_mast_name
 !

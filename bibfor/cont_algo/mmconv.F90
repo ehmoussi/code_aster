@@ -68,7 +68,7 @@ implicit none
 !
     integer :: ifm, niv
     character(len=19) :: depplu, depmoi, ddepla,depdel
-    aster_logical :: loop_cont_divec,loop_cont_diveg
+    aster_logical :: loop_cont_divec,loop_cont_diveg,l_cont_cont
     aster_logical :: lnewtf, lnewtg,lnewtc,l_exis_pena
     real(kind=8) :: time_curr
 
@@ -97,6 +97,7 @@ implicit none
     lnewtg = cfdisl(ds_contact%sdcont_defi,'GEOM_NEWTON')
     lnewtc = cfdisl(ds_contact%sdcont_defi,'CONT_NEWTON')
     l_exis_pena       = cfdisl(ds_contact%sdcont_defi,'EXIS_PENA')
+    l_cont_cont       = cfdisl(ds_contact%sdcont_defi,'FORMUL_CONTINUE')
     time_curr = ds_contact%time_curr
 
 !
@@ -130,6 +131,10 @@ implicit none
 ! ----- CALCUL RESIDU DE GEOMETRIE
 !
         call mmmcrg(noma, ddepla, depplu, ngeom, vgeom)
+        if (l_cont_cont) then 
+            ngeom = ds_contact%crit_geom_noeu
+            vgeom = ds_contact%critere_geom
+        endif
     endif
     
     if (l_exis_pena) then 

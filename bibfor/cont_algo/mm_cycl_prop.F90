@@ -59,10 +59,12 @@ implicit none
     aster_logical :: propa, l_frot_zone
     real(kind=8) :: tole_stick, tole_slide
     integer :: zone_frot=0, zone_frot_prop=0,it=0
+    integer :: n_cychis
 !
 ! --------------------------------------------------------------------------------------------------
 !
     nb_cont_poin = cfdisi(ds_contact%sdcont_defi,'NTPC' )
+    n_cychis     = ds_contact%n_cychis
     tole_stick   = 0.95
     tole_slide   = 1.05
 !
@@ -78,19 +80,19 @@ implicit none
 ! - Erasing cycling information
 !
     do i_cont_poin = 1, nb_cont_poin
-        i_zone      = nint(v_sdcont_cychis(60*(i_cont_poin-1)+60))
+        i_zone      = nint(v_sdcont_cychis(n_cychis*(i_cont_poin-1)+60))
         l_frot_zone = mminfl(ds_contact%sdcont_defi,'FROTTEMENT_ZONE',i_zone)
         if (l_frot_zone) then
             cycl_stat      = v_sdcont_cyceta(4*(i_cont_poin-1)+2)
             coef_frot_mini = v_sdcont_cyccoe(6*(i_zone-1)+5)
             coef_frot_maxi = v_sdcont_cyccoe(6*(i_zone-1)+6)
-            coef_frot      = v_sdcont_cychis(60*(i_cont_poin-1)+6)
-            pres_frot(1)   = v_sdcont_cychis(60*(i_cont_poin-1)+7)
-            pres_frot(2)   = v_sdcont_cychis(60*(i_cont_poin-1)+8)
-            pres_frot(3)   = v_sdcont_cychis(60*(i_cont_poin-1)+9)
-            dist_frot(1)   = v_sdcont_cychis(60*(i_cont_poin-1)+10)
-            dist_frot(2)   = v_sdcont_cychis(60*(i_cont_poin-1)+11)
-            dist_frot(3)   = v_sdcont_cychis(60*(i_cont_poin-1)+12)
+            coef_frot      = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+6)
+            pres_frot(1)   = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+7)
+            pres_frot(2)   = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+8)
+            pres_frot(3)   = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+9)
+            dist_frot(1)   = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+10)
+            dist_frot(2)   = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+11)
+            dist_frot(3)   = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+12)
             if (cycl_stat .ne. -1) then
 !
 ! ------------- Norm of augmented lagrangian for friction
@@ -151,7 +153,7 @@ implicit none
                     endif
                 endif
             endif
-            v_sdcont_cychis(60*(i_cont_poin-1)+6) = coef_frot
+            v_sdcont_cychis(n_cychis*(i_cont_poin-1)+6) = coef_frot
             
         endif
     enddo    
