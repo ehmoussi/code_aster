@@ -130,7 +130,7 @@ implicit none
     real(kind=8)  :: coor_escl_curr(3) = 0.0,coor_proj_curr(3) = 0.0
     aster_logical :: l_coef_adap
     character(len=8) :: iptxt
-    integer :: hist_index,n_cychis,coun_bcle_geom
+    integer :: hist_index,n_cychis,coun_bcle_geom,nb_cont_poin
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -156,6 +156,7 @@ implicit none
     type_adap    = cfdisi(ds_contact%sdcont_defi,'TYPE_ADAPT')
     model_ndim   = cfdisi(ds_contact%sdcont_defi,'NDIM' )
     nb_cont_zone = cfdisi(ds_contact%sdcont_defi,'NZOCO')
+    nb_cont_poin = cfdisi(ds_contact%sdcont_defi,'NTPC')
     l_frot       = cfdisl(ds_contact%sdcont_defi,'FROTTEMENT')
 !
 ! - Acces to contact objects
@@ -215,6 +216,7 @@ implicit none
 ! - Loop on contact zones
 !
     sum_cont_pressure = 0.0d0
+    ds_contact%resi_pressure =0.
     i_cont_poin = 1
     do i_zone = 1, nb_cont_zone
 !
@@ -437,13 +439,20 @@ implicit none
 ! ------------- Next contact point
 !
                 i_cont_poin = i_cont_poin + 1
-                sum_cont_pressure = sum_cont_pressure + lagr_cont_poin
+                if (indi_cont_curr .eq. 1) sum_cont_pressure = sum_cont_pressure + lagr_cont_poin
             end do
         end do
  25     continue
     end do
-    ds_contact%resi_pressure = abs(ds_contact%cont_pressure - sum_cont_pressure)
+! Moyenne des pressions de contact
+    sum_cont_pressure = sum_cont_pressure/nb_cont_poin
+!     write (6,*) "convergence globale",abs(ds_contact%cont_pressure),abs(sum_cont_pressure)
+    if  (abs(ds_contact%cont_pressure-sum_cont_pressure) .lt. 1.d-6*abs(sum_cont_pressure) .and. .not. loop_cont_conv  ) then
+        loop_cont_conv = .true.
+    endif
     ds_contact%cont_pressure = sum_cont_pressure
+!     write(6,*) "cont_pressure", ds_contact%cont_pressure, "iteration_newton", ds_contact%iteration_newton, &
+!     "resi_pressure", ds_contact%resi_pressure
 !
 ! - Bilateral contact management
 !

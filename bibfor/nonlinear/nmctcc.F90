@@ -119,10 +119,15 @@ integer, intent(in) :: list_func_acti(*)
 !
 ! - Compute convergence criterion
 ! 
-    if (iter_cont_mult .eq. -1) then
+    !on laisse ITER_CONT_MULT pour XFEM
+    if (l_cont_xfem .or. l_cont_xfem_gg) then 
+        if (iter_cont_mult .eq. -1) then
+            iter_cont_maxi = cfdisi(ds_contact%sdcont_defi, 'ITER_CONT_MAXI')
+        else
+            iter_cont_maxi = iter_cont_mult*nb_cont_poin
+        endif
+    else 
         iter_cont_maxi = cfdisi(ds_contact%sdcont_defi, 'ITER_CONT_MAXI')
-    else
-        iter_cont_maxi = iter_cont_mult*nb_cont_poin
     endif
 !
 ! - Management of contact loop
@@ -154,6 +159,10 @@ integer, intent(in) :: list_func_acti(*)
 ! - State of contact loop
 !
     call mmbouc(ds_contact, 'Cont', 'Read_Counter'  , loop_cont_count)
+    call mmbouc(ds_contact, 'Cont', 'Is_Convergence', loop_state_ = loop_cont_conv)
+    call mmbouc(ds_contact, 'Cont', 'Get_Vale' , loop_vale_ = loop_cont_vale)
+    write (6,*) "loop_cont_conv",loop_cont_conv,loop_cont_vale,ds_contact%resi_pressure,1.d-6*abs(ds_contact%cont_pressure)
+    if ((ds_contact%resi_pressure .lt. 1.d-4) .and. .not. loop_cont_conv)  call mmbouc(ds_contact, 'Cont', 'Set_Convergence')
     call mmbouc(ds_contact, 'Cont', 'Is_Convergence', loop_state_ = loop_cont_conv)
 !
 ! - Convergence of contact loop
