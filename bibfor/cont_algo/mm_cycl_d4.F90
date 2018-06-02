@@ -69,7 +69,7 @@ implicit none
 ! - Initializations
 !
     cycl_type = 4
-    cycl_long_acti = 6
+    cycl_long_acti = 3
     detect = .false.
 !
 ! - Access to cycling objects
@@ -99,6 +99,8 @@ implicit none
     if (cycl_long .eq. cycl_long_acti) then
         detect = iscycl(cycl_ecod(1), cycl_long_acti)
         if (detect) then
+!"Statut code en binaire sur 3 iterations"
+!"Cycle longueur"
             cycl_stat = 10
         endif
     endif
