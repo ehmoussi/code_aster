@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine nmunil(mesh  , disp_curr, disp_iter, solver    , matr_asse,&
                   cncine, iter_newt, time_curr, ds_contact, nume_dof ,&
                   ctccvg)
@@ -25,6 +26,7 @@ use NonLin_Datastructure_type
 implicit none
 !
 #include "jeveux.h"
+#include "asterf_types.h"
 #include "asterfort/algocu.h"
 #include "asterfort/algocup.h"
 #include "asterfort/assert.h"
@@ -33,21 +35,21 @@ implicit none
 #include "asterfort/infniv.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/mtdsc3.h"
+#include "asterfort/dismoi.h"
+#include "asterfort/utmess.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=8), intent(in) :: mesh
-    character(len=14), intent(in) :: nume_dof
-    character(len=19), intent(in) :: disp_curr
-    character(len=19), intent(in) :: disp_iter
-    character(len=19), intent(in) :: solver
-    character(len=19), intent(in) :: matr_asse
-    character(len=19), intent(in) :: cncine
-    integer, intent(in) :: iter_newt
-    real(kind=8), intent(in) :: time_curr
-    type(NL_DS_Contact), intent(in) :: ds_contact
-    integer, intent(out) :: ctccvg
-    aster_logical :: l_unil_pena
+character(len=8), intent(in) :: mesh
+character(len=14), intent(in) :: nume_dof
+character(len=19), intent(in) :: disp_curr
+character(len=19), intent(in) :: disp_iter
+character(len=19), intent(in) :: solver
+character(len=19), intent(in) :: matr_asse
+character(len=19), intent(in) :: cncine
+integer, intent(in) :: iter_newt
+real(kind=8), intent(in) :: time_curr
+type(NL_DS_Contact), intent(in) :: ds_contact
+integer, intent(out) :: ctccvg
+aster_logical :: l_unil_pena
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -74,9 +76,10 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    character(len=19) :: sdcond_matr
+    character(len=19) :: sdcond_matr, syme
     integer :: ldscon, lmat
     integer :: ifm, niv, nb_equa
+    aster_logical :: l_matr_syme
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -108,18 +111,23 @@ implicit none
        call cuprep(mesh, nb_equa, ds_contact, disp_curr, disp_iter, time_curr)
     endif
 !
+! - Type of matrix
+!
+    call dismoi('TYPE_MATRICE', matr_asse, 'MATR_ASSE', repk=syme)
+    l_matr_syme = (syme .eq. 'SYMETRI')
+!
 ! - Solve
 !
     if (l_unil_pena) then
-!   Toujours algorithme de penalisation
-!   Arguments à changer
-!   A changer dans une version plus aboutie du code
        call algocup(ds_contact, nume_dof, matr_asse)
        ctccvg = 0
-!
     else
-       call algocu(ds_contact, solver, lmat, ldscon, cncine,&
-                disp_iter , ctccvg)
+        if (.not. l_matr_syme) then
+            call utmess('F', 'UNILATER_1')
+        else
+            call algocu(ds_contact, solver, lmat, ldscon, cncine,&
+                        disp_iter , ctccvg)
+        endif
     endif
 !
 ! - Yes for computation

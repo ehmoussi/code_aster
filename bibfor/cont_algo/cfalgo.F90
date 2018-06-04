@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine cfalgo(mesh          , ds_measure, resi_glob_rela, iter_newt,&
                   solver        , nume_dof  , matr_asse     , disp_iter,&
                   disp_cumu_inst, ds_contact, ctccvg        )
@@ -37,20 +38,20 @@ implicit none
 #include "asterfort/cfprep.h"
 #include "asterfort/frogdp.h"
 #include "asterfort/infdbg.h"
+#include "asterfort/utmess.h"
+#include "asterfort/dismoi.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=8), intent(in) :: mesh
-    type(NL_DS_Measure), intent(inout) :: ds_measure
-    real(kind=8), intent(in) :: resi_glob_rela
-    integer, intent(in) :: iter_newt
-    character(len=19), intent(in) :: solver
-    character(len=14), intent(in) :: nume_dof
-    character(len=19), intent(in) :: matr_asse
-    character(len=19), intent(in) :: disp_iter
-    character(len=19), intent(in) :: disp_cumu_inst
-    type(NL_DS_Contact), intent(inout) :: ds_contact 
-    integer, intent(out) :: ctccvg 
+character(len=8), intent(in) :: mesh
+type(NL_DS_Measure), intent(inout) :: ds_measure
+real(kind=8), intent(in) :: resi_glob_rela
+integer, intent(in) :: iter_newt
+character(len=19), intent(in) :: solver
+character(len=14), intent(in) :: nume_dof
+character(len=19), intent(in) :: matr_asse
+character(len=19), intent(in) :: disp_iter
+character(len=19), intent(in) :: disp_cumu_inst
+type(NL_DS_Contact), intent(inout) :: ds_contact 
+integer, intent(out) :: ctccvg 
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -80,7 +81,8 @@ implicit none
 !
     integer :: ifm, niv
     integer :: algo_cont, algo_frot
-    aster_logical :: l_gliss, l_first_geom
+    character(len=19) :: syme
+    aster_logical :: l_gliss, l_first_geom, l_matr_syme
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -113,6 +115,11 @@ implicit none
         write (ifm,*) '<CONTACT> ...... DEBUT DE REALISATION DU CALCUL'
     endif
 !
+! - Type of matrix
+!
+    call dismoi('TYPE_MATRICE', matr_asse, 'MATR_ASSE', repk=syme)
+    l_matr_syme = (syme .eq. 'SYMETRI')
+!
 ! - Select algorithm
 !
     if (algo_cont .eq. 4) then
@@ -121,9 +128,12 @@ implicit none
         else if (algo_frot .eq. 1) then
             call frogdp(ds_measure, ds_contact%sdcont_solv, nume_dof, matr_asse, resi_glob_rela)
         else
-            ASSERT(.false.)
+            ASSERT(ASTER_FALSE)
         endif
     else if (algo_cont .eq. 1) then
+        if (.not. l_matr_syme) then
+            call utmess('F', 'CONTACT_1')
+        endif
         if (l_gliss) then
             call algogl(ds_measure, ds_contact%sdcont_defi, ds_contact%sdcont_solv,&
                         solver, matr_asse             , mesh                  ,&
@@ -134,14 +144,17 @@ implicit none
                         ctccvg)
         endif
     else if (algo_cont .eq. 2) then
+        if (.not. l_matr_syme) then
+            call utmess('F', 'CONTACT_1')
+        endif
         if (algo_frot .eq. 0) then
             call algocg(ds_measure, ds_contact%sdcont_defi, ds_contact%sdcont_solv,&
                         solver, matr_asse             , ctccvg)
         else
-            ASSERT(.false.)
+            ASSERT(ASTER_FALSE)
         endif
     else
-        ASSERT(.false.)
+        ASSERT(ASTER_FALSE)
     endif
 !
 ! - Print
