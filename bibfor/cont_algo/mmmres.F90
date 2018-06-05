@@ -513,9 +513,9 @@ character(len=19), intent(in) :: cnsper
 !
 ! - Alarm for penetration criteria
 !
-    if (ds_contact%calculated_penetration .le. 1.d-99) then
-        call utmess('A', 'CONTACT3_97')
-    endif    
+!     if (ds_contact%calculated_penetration .le. 1.d-99) then
+!         call utmess('A', 'CONTACT3_97')
+!     endif    
 !
     call jedema()
 end subroutine
