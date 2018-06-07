@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -61,8 +61,8 @@ subroutine crevge(ligrel, bas1)
     character(len=12) :: vge
     integer :: iaddvo, iadvoi
 !
-    character(len=24) :: typmai, connex, coninv, ptvois, elvois
-    character(len=8) :: ma, typem0, typemr
+    character(len=24) :: typmai, connex, coninv, ptvois, elvois, nommai
+    character(len=8) :: ma, typem0, typemr, noma
     aster_logical :: troisd
 !
 !
@@ -83,6 +83,7 @@ subroutine crevge(ligrel, bas1)
 !
     typmai=ma//'.TYPMAIL'
     connex=ma//'.CONNEX'
+    nommai=ma//'.NOMMAI'
     call jeveuo(connex, 'L', jconnex0)
     call jeveuo(jexatr(connex, 'LONCUM'), 'L', jconnexc)
 !
@@ -141,6 +142,7 @@ subroutine crevge(ligrel, bas1)
 !
     do m0 = 1, nbma
         call jenuno(jexnum('&CATA.TM.NOMTM', zi(iatyma-1+m0)), typem0)
+        call jenuno(jexnum(nommai, m0), noma)
         call dimmai(typem0, dimma)
 !
 !  ON NE TRAITE QUE LES MAILLES DONT LA DIM EST CELLE DE L ESPACE
@@ -177,7 +179,7 @@ subroutine crevge(ligrel, bas1)
                         if (numar .ne. m0 .and. (dimma.eq.dim)) then
 !                           -- AJOUT DE NUMAR A TOUVOI POUR M0
                             call adlivo(numar, is, nvtot, nvoima, nscoma,&
-                                        touvoi)
+                                        touvoi, noma)
                         endif
                     end do
                 endif
@@ -200,6 +202,7 @@ subroutine crevge(ligrel, bas1)
 !
     do m0 = 1, nbma
         call jenuno(jexnum('&CATA.TM.NOMTM', zi(iatyma-1+m0)), typem0)
+        call jenuno(jexnum(nommai, m0), noma)
         call dimmai(typem0, dimma)
 !
 !  ON NE TRAITE QUE LES MAILLES DONT LA DIM EST CELLE DE L ESPACE
@@ -230,7 +233,7 @@ subroutine crevge(ligrel, bas1)
                         if (numar .ne. m0 .and. (dimma.eq.dim)) then
 !                           -- AJOUT DE NUMAR A TOUVOI POUR M0
                             call adlivo(numar, is, nvtot, nvoima, nscoma,&
-                                        touvoi)
+                                        touvoi, noma)
                         endif
                     end do
                 endif
