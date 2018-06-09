@@ -438,10 +438,10 @@ implicit none
     endif
     if (resi_press_curr .gt. ds_contact%resi_pressure)    ds_contact%resi_pressure = resi_press_curr
 !     write (6,*) ds_contact%resi_pressure,pres_cont_curr,pres_cont_prev,F_refe,ds_contact%cont_pressure
-    if ( (mmcvca .and. (ds_contact%resi_pressure .gt. 1.d-6*abs(ds_contact%cont_pressure)) .and. indi_cont_curr .eq. 1 )) then 
-!         write (6,*) "ds_contact%resi_pressure", ds_contact%resi_pressure
-        mmcvca = .false.
-    endif
+!     if ( (mmcvca .and. (ds_contact%resi_pressure .gt. 1.d-6*abs(ds_contact%cont_pressure)) .and. indi_cont_curr .eq. 1 )) then 
+! !         write (6,*) "ds_contact%resi_pressure", ds_contact%resi_pressure
+!         mmcvca = .false.
+!     endif
     if ((.not. mmcvca) .and. (resi_press_curr .lt.1.d-6*abs(ds_contact%cont_pressure)) .and. (ds_contact%iteration_newton .gt. 1) ) then 
         mmcvca = .true.
         ctcsta = ctcsta+1 
