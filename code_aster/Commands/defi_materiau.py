@@ -134,7 +134,7 @@ class MaterialDefinition(ExecuteCommand):
             asterNewName = ""
             if materName[-2:] == "FO": asterNewName = materName[:-3]
             mater = MaterialBehaviour(materName, asterNewName)
-            if isinstance(skws, _F):
+            if isinstance(skws, _F) or type(skws) is dict:
                 for kwName, kwValue in skws.iteritems():
                     curType = type(kwValue)
                     mandatory = False
