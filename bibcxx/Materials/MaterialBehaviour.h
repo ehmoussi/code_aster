@@ -675,6 +675,15 @@ class GeneralMaterialBehaviourInstance
         virtual bool buildTractionFunction( FunctionPtr& doubleValues ) const
             throw ( std::runtime_error );
 
+        /**
+         * @brief Function to know if ".RDEP" is necessary
+         * @return true if ".RDEP" is necessary
+         */
+        virtual bool hasTractionFunction() const
+        {
+            return false;
+        };
+
     protected:
         bool addDoubleProperty( std::string key, ElementaryMaterialPropertyDouble value )
         {
@@ -1820,6 +1829,15 @@ class TractionMaterialBehaviourInstance: public GeneralMaterialBehaviourInstance
         static bool hasConvertibleValues()
         {
             return false;
+        };
+
+        /**
+         * @brief Function to know if ".RDEP" is necessary
+         * @return true if ".RDEP" is necessary
+         */
+        bool hasTractionFunction() const
+        {
+            return true;
         };
 };
 
@@ -7151,6 +7169,15 @@ class MetaTractionMaterialBehaviourInstance: public GeneralMaterialBehaviourInst
         static bool hasConvertibleValues()
         {
             return false;
+        };
+
+        /**
+         * @brief Function to know if ".RDEP" is necessary
+         * @return true if ".RDEP" is necessary
+         */
+        bool hasTractionFunction() const
+        {
+            return true;
         };
 };
 

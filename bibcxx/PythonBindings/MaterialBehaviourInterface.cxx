@@ -34,6 +34,8 @@ void exportMaterialBehaviourToPython()
         .def( "__init__", make_constructor(
             &initFactoryPtr< GeneralMaterialBehaviourInstance > ) )
         .def( "getAsterName", &GeneralMaterialBehaviourInstance::getAsterName )
+        .def( "hasTractionFunction",
+              &GeneralMaterialBehaviourInstance::hasTractionFunction )
         .def( "setComplexValue", &GeneralMaterialBehaviourInstance::setComplexValue )
         .def( "setDoubleValue", &GeneralMaterialBehaviourInstance::setDoubleValue )
         .def( "setStringValue", &GeneralMaterialBehaviourInstance::setStringValue )
@@ -292,6 +294,8 @@ void exportMaterialBehaviourToPython()
         .def( "hasConvertibleValues",
               &TractionMaterialBehaviourInstance::hasConvertibleValues )
         .staticmethod( "hasConvertibleValues" )
+        .def( "hasTractionFunction",
+              &TractionMaterialBehaviourInstance::hasTractionFunction )
     ;
 
     class_< EcroLineMaterialBehaviourInstance, EcroLineMaterialBehaviourPtr,
@@ -1480,6 +1484,8 @@ void exportMaterialBehaviourToPython()
         .def( "hasConvertibleValues",
               &MetaTractionMaterialBehaviourInstance::hasConvertibleValues )
         .staticmethod( "hasConvertibleValues" )
+        .def( "hasTractionFunction",
+              &MetaTractionMaterialBehaviourInstance::hasTractionFunction )
     ;
 
     class_< MetaViscFoMaterialBehaviourInstance, MetaViscFoMaterialBehaviourPtr,
