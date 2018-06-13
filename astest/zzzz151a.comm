@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -84,26 +84,6 @@ TEST_RESU(MAILLAGE=(
        PRECISION=0.10,
        VALE_CALC_I=2917,
        TOLE_MACHINE=0.10,
-      ),
-))
-
-magibi = EXEC_LOGICIEL(MAILLAGE=_F(FORMAT='GIBI',
-                                   UNITE_GEOM=14,),
-                       INFO=1)
-
-# Gibi ne bougeant plus, on peut ne pas prendre de marge!
-TEST_RESU(MAILLAGE=(
-    _F(MAILLAGE=magibi,
-       CARA='NB_MAILLE',
-       REFERENCE='ANALYTIQUE',
-       VALE_REFE_I=14,
-       VALE_CALC_I=14,
-      ),
-    _F(MAILLAGE=magibi,
-       CARA='NB_NOEUD',
-       REFERENCE='ANALYTIQUE',
-       VALE_REFE_I=27,
-       VALE_CALC_I=27,
       ),
 ))
 
