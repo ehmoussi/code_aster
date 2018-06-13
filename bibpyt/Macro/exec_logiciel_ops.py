@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -35,7 +35,7 @@ import traceback
 import aster_core
 from Utilitai.Utmess import UTMESS
 from Utilitai.UniteAster import UniteAster
-from code_aster.Cata.Commands import LIRE_MAILLAGE, PRE_GIBI
+from code_aster.Cata.Commands import LIRE_MAILLAGE
 
 
 class CommandLine( object ):
@@ -71,14 +71,12 @@ class ExecProgram( object ):
             class_ = ExecSalomeScript
         elif kwargs['MAILLAGE']:
             fmt = kwargs['MAILLAGE']['FORMAT']
-            if fmt not in ('GMSH', 'GIBI', 'SALOME'):
-                UTMESS('F', 'EXECLOGICIEL0_2', valk=fmt)
             if fmt == 'SALOME':
                 class_ = ExecSalome
             elif fmt == 'GMSH':
                 class_ = ExecGmsh
-            elif fmt == 'GIBI':
-                class_ = ExecGibi
+            else:
+                UTMESS('F', 'EXECLOGICIEL0_2', valk=fmt)
         else:
             class_ = ExecProgram
         return class_(macro)
@@ -242,31 +240,6 @@ class ExecGmsh( ExecMesher ):
         self.prog = self.prog or aster_core.get_option('prog:gmsh')
         self.args.extend( ['-3', '-format', 'med',
                            self.fileIn, '-o', self.fileOut] )
-
-
-class ExecGibi( ExecMesher ):
-    """Execute Gibi from Code_Aster
-
-    Additional attributes:
-    :fileTmp: intermediate file.
-    """
-
-    def configure( self, kwargs ):
-        """Pre-execution function, read the keywords"""
-        super(ExecGibi, self).configure( kwargs )
-        self.format = "ASTER"
-        self.fileTmp = tempfile.NamedTemporaryFile(dir='.', suffix='.mgib').name
-        self.fileOut = tempfile.NamedTemporaryFile(dir='.', suffix='.mail').name
-        self.prog = self.prog or aster_core.get_option('prog:gibi_aster.py')
-        self.args.extend( [self.fileIn, self.fileTmp] )
-
-    def post( self ):
-        """Convert the mesh in ASTER format"""
-        ulGibi = self.uniteAster.Libre(action='ASSOCIER', nom=self.fileTmp)
-        ulMesh = self.uniteAster.Libre(action='ASSOCIER', nom=self.fileOut)
-        PRE_GIBI(UNITE_GIBI=ulGibi,
-                 UNITE_MAILLAGE=ulMesh)
-        super(ExecGibi, self).post()
 
 
 class ExecSalomeScript( ExecProgram ):
