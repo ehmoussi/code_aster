@@ -292,9 +292,12 @@ subroutine verif_affe_carte(ligrmo,carte,comment,non_lin)
                     call jenonu(jexnom('&CATA.TM.NOMTM', 'QUAD9'), typq9)
                     call jenonu(jexnom('&CATA.TM.NOMTM', 'TRIA7'), typt7)
                     call jenuno(jexnum('&CATA.TE.NOMTE', te), nomte)
-                    if (nomte(1:2) .eq. 'TH' ) cycle
-                    if (typmail(ima) .eq. typt7 .or. typmail(ima) .eq. typq9)&
+                    if (nomte(1:4) .eq. 'MEC3') then
+!                     if (typmail(ima) .eq. typt7 .or. typmail(ima) .eq. typq9)&
+                        if (zr(jvale-1+iad1).eq.0.d0) cycle
                         exi_excent_cq3 = .true.
+                    endif
+                    if (.not. exi_excent_cq3) cycle
                 endif
             else if (tsca.eq.'C') then
                 if (abs(zc(jvale-1+iad1)).eq.0.d0) cycle
