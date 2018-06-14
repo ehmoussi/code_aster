@@ -17,6 +17,8 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+from math import *
+
 # Hartree Atomic Units
 me = 1.0 # [m_e]
 e = 1.0 # [e]
