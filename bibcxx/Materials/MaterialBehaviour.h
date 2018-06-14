@@ -453,6 +453,8 @@ class GeneralMaterialBehaviourInstance
         mapStrEMPCSD             _mapOfConvertibleMaterialProperties;
         /** @brief Liste contenant les infos du .ORDR */
         VectorString             _vectOrdr;
+        /** @brief Vector of ordered keywords */
+        VectorString             _vectKW;
 
     public:
         /**
@@ -664,6 +666,7 @@ class GeneralMaterialBehaviourInstance
                                  JeveuxVectorDouble& doubleValues,
                                  JeveuxVectorChar16& char16Values,
                                  JeveuxVectorChar16& ordr,
+                                 JeveuxVectorLong& kOrdr,
                                  JeveuxVectorDouble& userDoubles,
                                  JeveuxVectorChar8& userFunctions ) const
             throw ( std::runtime_error );
@@ -688,30 +691,40 @@ class GeneralMaterialBehaviourInstance
         bool addDoubleProperty( std::string key, ElementaryMaterialPropertyDouble value )
         {
             _mapOfDoubleMaterialProperties[ key ] = value;
+            _vectKW.push_back( key );
+            _vectKW.push_back( value.getName() );
             return true;
         };
 
         bool addComplexProperty( std::string key, ElementaryMaterialPropertyComplex value )
         {
             _mapOfComplexMaterialProperties[ key ] = value;
+            _vectKW.push_back( key );
+            _vectKW.push_back( value.getName() );
             return true;
         };
 
         bool addStringProperty( std::string key, ElementaryMaterialPropertyString value )
         {
             _mapOfStringMaterialProperties[ key ] = value;
+            _vectKW.push_back( key );
+            _vectKW.push_back( value.getName() );
             return true;
         };
 
         bool addFunctionProperty( std::string key, ElementaryMaterialPropertyDataStructure value )
         {
             _mapOfFunctionMaterialProperties[ key ] = value;
+            _vectKW.push_back( key );
+            _vectKW.push_back( value.getName() );
             return true;
         };
 
         bool addTableProperty( std::string key, ElementaryMaterialPropertyTable value )
         {
             _mapOfTableMaterialProperties[ key ] = value;
+            _vectKW.push_back( key );
+            _vectKW.push_back( value.getName() );
             return true;
         };
 
@@ -719,6 +732,8 @@ class GeneralMaterialBehaviourInstance
                                         ElementaryMaterialPropertyVectorDouble value )
         {
             _mapOfVectorDoubleMaterialProperties[ key ] = value;
+            _vectKW.push_back( key );
+            _vectKW.push_back( value.getName() );
             return true;
         };
 
@@ -726,12 +741,16 @@ class GeneralMaterialBehaviourInstance
                                           ElementaryMaterialPropertyVectorFunction value )
         {
             _mapOfVectorFunctionMaterialProperties[ key ] = value;
+            _vectKW.push_back( key );
+            _vectKW.push_back( value.getName() );
             return true;
         };
 
         bool addConvertibleProperty( std::string key, ElementaryMaterialPropertyConvertible value )
         {
             _mapOfConvertibleMaterialProperties[ key ] = value;
+            _vectKW.push_back( key );
+            _vectKW.push_back( value.getName() );
             return true;
         };
 };

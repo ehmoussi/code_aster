@@ -20,7 +20,7 @@
 # person_in_charge: nicolas.sellenet@edf.fr
 
 from ..Objects import Material, GeneralMaterialBehaviour, Table, Function
-from ..Objects import Surface, Formula, MaterialBehaviour
+from ..Objects import Surface, Formula, MaterialBehaviour, DataStructure
 from code_aster.Cata.Language.SyntaxObjects import _F
 from .ExecuteCommand import ExecuteCommand
 import numpy
@@ -141,6 +141,8 @@ class MaterialDefinition(ExecuteCommand):
                 for kwName, kwValue in skws.iteritems():
                     curType = type(kwValue)
                     mandatory = False
+                    if kwName == "ORDRE_PARAM":
+                        continue
                     if curType in (float, int, numpy.float64):
                         mater.addNewDoubleProperty(kwName, mandatory)
                     elif curType is complex:
@@ -153,10 +155,21 @@ class MaterialDefinition(ExecuteCommand):
                         mater.addNewFunctionProperty(kwName, mandatory)
                     elif isinstance(kwValue, Table):
                         mater.addNewTableProperty(kwName, mandatory)
+                    elif curType is tuple:
+                        if type(kwValue[0]) is float:
+                            mater.addNewVectorOfDoubleProperty(kwName, mandatory)
+                        elif isinstance(kwValue[0], DataStructure):
+                            mater.addNewVectorOfFunctionProperty(kwName, mandatory)
+                        elif type(kwValue[0]) is str:
+                            pass
+                        else:
+                            raise NotImplementedError("Type not implemented for"
+                                                      " material property: '{0}'"
+                                                      .format(kwName))
                     else:
                         raise NotImplementedError("Type not implemented for"
-                                                    " material property: '{0}'"
-                                                    .format(kwName))
+                                                  " material property: '{0}'"
+                                                  .format(kwName))
             objects[materName] = mater
         return objects
 
