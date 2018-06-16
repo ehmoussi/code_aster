@@ -270,14 +270,16 @@ implicit none
     if ((ds_contact%iteration_newton .ge. 3 ) .and. &
         (v_sdcont_cyceta(4*(i_cont_poin-1)+1) .gt. 0 .and. treatment )) then
 !    Cas 1 : Le point fait du FLIP-FLOP, meme traitement que POINT_FIXE
-!            Mais on adapte quand meme les matrices de contact
+!            Et Il ne faut surtout pas adapter les matrices de contact : ssnv504e
             if (v_sdcont_cyceta(4*(i_cont_poin-1)+4) .eq. -10) then
                 if (ds_contact%resi_pressure .lt. 1.d-4*ds_contact%cont_pressure)  mmcvca = .true.
+                goto 236
+            else 
+            !ADAPTATION DE MATRICES, VECTEURS ET COEFF POUR LES TE :
+                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+57) = 1.0d0
+                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+59) = 0.9
+                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+56) = 0.9
             endif
-!ADAPTATION DE MATRICES, VECTEURS ET COEFF POUR LES TE :
-       v_sdcont_cychis(n_cychis*(i_cont_poin-1)+51) = 1.0d0
-!        v_sdcont_cychis(n_cychis*(i_cont_poin-1)+59) = 1.0
-!        v_sdcont_cychis(n_cychis*(i_cont_poin-1)+56) = 1.0
 !        recherche de coefficients est-ce qu'on peut trouver coef tel que :
 !        Statut_Contact(Lag_prev-coef*Gap_prev) = Statut_Contact(Lag_curr-coef*Gap_curr)
        coef_found = .false.
@@ -323,11 +325,11 @@ implicit none
         v_sdcont_cychis(n_cychis*(i_cont_poin-1)+55) = 1.0
     endif
     
-! CYCLAGE FROTTEMENT: END
+! CYCLAGE FROTTEMENT: GLIAV_AR
     if ((ds_contact%iteration_newton .ge. 3 ) .and. &
        (v_sdcont_cyceta(4*(i_cont_poin-1)+3) .ge. 10 )  .and. treatment  ) then   
         v_sdcont_cychis(n_cychis*(i_cont_poin-1)+5) = 1
-          v_sdcont_cychis(n_cychis*(i_cont_poin-1)+50) = 0.0d0
+          v_sdcont_cychis(n_cychis*(i_cont_poin-1)+50) = 1.0d0
           v_sdcont_cychis(n_cychis*(i_cont_poin-1)+54) = 1.0
           v_sdcont_cychis(n_cychis*(i_cont_poin-1)+55) = 1.0
        endif
