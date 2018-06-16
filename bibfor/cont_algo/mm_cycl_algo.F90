@@ -138,6 +138,16 @@ implicit none
     l_coef_adap = ((type_adap .eq. 1) .or. (type_adap .eq. 2) .or. &
                   (type_adap .eq. 5) .or. (type_adap .eq. 6 ))
     
+
+!----------------------TRAITEMENT CYCLAGE -------------------------
+! Quand est-ce qu'on fait de l'adaptation des matrices de contact-frottement
+! MATRCF[Iteration_K]=ALPHA*MATRCF[Iteration_K-1]+(1-ALPHA)*MATRCF[Iteration_K]
+! type_adap vient de cazocc : v_sdcont_paraci(20)
+! CAS 1 : adaptation .eq. 'CYCLAGE' + Quelque soit ALGO_CONT/ALGO_FROT, type_adap=4
+! CAS 2 : adaptation .eq. 'TOUT' + NEWT_FROT , type_adap=5
+! CAS 3 : adaptation .eq. 'TOUT' + NEWT_FROT , ALGO_CONT = PENALISATION, type_adap=6
+! CAS 4 : adaptation .eq. 'TOUT' + POINT_FIXE_FROT OU PAS DE FROT + ALGO_CONT = PENALISATION, type_adap=7
+! CAS 5 : tous les autres cas du moment ou adaptation .eq. 'TOUT' actif, type_adap=4
     treatment =  ((type_adap .eq. 4) .or. (type_adap .eq. 5) .or. &
                   (type_adap .eq. 6) .or. (type_adap .eq. 7 ))
     i_reso_cont  = cfdisi(ds_contact%sdcont_defi,'ALGO_RESO_CONT')
@@ -193,17 +203,16 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
 
-!----------------------TRAITEMENT CYCLAGE -------------------------
-! Quand est-ce qu'on fait de l'adaptation des matrices de contact-frottement
-! MATRCF[Iteration_K]=ALPHA*MATRCF[Iteration_K-1]+(1-ALPHA)*MATRCF[Iteration_K]
-! type_adap vient de cazocc : v_sdcont_paraci(20)
-! CAS 1 : adaptation .eq. 'CYCLAGE' + Quelque soit ALGO_CONT/ALGO_FROT, type_adap=4
-! CAS 2 : adaptation .eq. 'TOUT' + NEWT_FROT , type_adap=5
-! CAS 3 : adaptation .eq. 'TOUT' + NEWT_FROT , ALGO_CONT = PENALISATION, type_adap=6
-! CAS 4 : adaptation .eq. 'TOUT' + POINT_FIXE_FROT OU PAS DE FROT + ALGO_CONT = PENALISATION, type_adap=7
-! CAS 5 : tous les autres cas du moment ou adaptation .eq. 'TOUT' actif, type_adap=4
-
-! 
+! L'ordre de traitement est le suivant : 
+! Step 1. Traitement de l'adaptation des coefficients
+! Step 2. Traitement spécial du mot-clef GLIISIERE=OUI, label 236
+! Step 3. Traitement du FLIP-FLOP : POINT_FIXE SUR LE CONTACT
+! Step 4. Traitement du CYCLAGE : NEWTON SUR LE CONTACT
+! Step 5 : adaptation du coefficient penalisation
+! --------------------------------------------------------------------------------------------------
+!
+! Step 1.  Traitement de l'adaptation des coefficients
+!
     if (l_coef_adap) then
         call mm_cycl_trait(ds_contact, i_cont_poin, coef_cont_prev, coef_frot_prev,&
                            pres_frot_prev, dist_frot_prev, pres_frot_curr, dist_frot_curr,&
@@ -215,20 +224,23 @@ implicit none
         indi_cont_curr = indi_cont_eval
         indi_frot_curr = indi_frot_eval
     endif
-!
-! - Saving max/min ratio
-!
+
+! - Saving max/min regularization coefficients
     if (coef_frot_curr .ge. coef_frot_maxi) coef_frot_maxi = coef_frot_curr
     if (coef_frot_curr .le. coef_frot_mini) coef_frot_mini = coef_frot_curr
     v_sdcont_cyccoe(6*(zone_index-1)+5) = coef_frot_mini
     v_sdcont_cyccoe(6*(zone_index-1)+6) = coef_frot_maxi
+    
 !
-! - Special treatment if bilateral contact : every point is in contact
+! Step 2. Traitement spécial du mot-clef GLIISIERE=OUI, label 236
 !
-    if (l_glis_init) indi_cont_curr = 1
-!
+    if (l_glis_init) then 
+        indi_cont_curr = 1
+        mmcvca = .true. 
+        goto 236
+    endif
+
 ! - Save history for automatic cycling algorithm
-!
     v_sdcont_cychis(n_cychis*(i_cont_poin-1)+1) = indi_cont_curr
     v_sdcont_cychis(n_cychis*(i_cont_poin-1)+2) = coef_cont_curr
     v_sdcont_cychis(n_cychis*(i_cont_poin-1)+3) = pres_cont_curr
@@ -242,28 +254,32 @@ implicit none
     v_sdcont_cychis(n_cychis*(i_cont_poin-1)+11) = dist_frot_curr(2)
     v_sdcont_cychis(n_cychis*(i_cont_poin-1)+12) = dist_frot_curr(3)
     
-    
+
+!
+! Step 3. Traitement du FLIP-FLOP : POINT_FIXE SUR LE CONTACT
+!
     if (i_reso_cont .eq. 0) then
-        if (v_sdcont_cyceta(4*(i_cont_poin-1)+1) .eq. -10) then
+        if (v_sdcont_cyceta(4*(i_cont_poin-1)+4) .eq. -10) then
             mmcvca = .true.
-!             write (6,*) "ON A DECLENCHE LE FLIP-FLOP AVANT LE TRAITEMENT DE CYCLAGE "
-!             write (6,*) "LE POINT QUI CYCLE PEUVENT ETRE TRAITE EN FLIP-FLOP SANS PASSER   "
-!             write (6,*) "PAR UNE METHODE QUI ADAPTE LES MATRICES DE CONTACT   "
-    !                 goto 911
+            goto 236
         endif
     endif
+    
+!
+! Step 4. Traitement du CYCLAGE : NEWTON SUR LE CONTACT
     if ((ds_contact%iteration_newton .ge. 3 ) .and. &
         (v_sdcont_cyceta(4*(i_cont_poin-1)+1) .gt. 0 .and. treatment )) then
-       
+!    Cas 1 : Le point fait du FLIP-FLOP, meme traitement que POINT_FIXE
+!            Mais on adapte quand meme les matrices de contact
             if (v_sdcont_cyceta(4*(i_cont_poin-1)+4) .eq. -10) then
                 mmcvca = .true.
             endif
 !ADAPTATION DE MATRICES, VECTEURS ET COEFF POUR LES TE :
-! MATR_PREVIOUS + MATR_CURRENT       
        v_sdcont_cychis(n_cychis*(i_cont_poin-1)+57) = 1.0d0
        v_sdcont_cychis(n_cychis*(i_cont_poin-1)+59) = alpha_cont_matr
        v_sdcont_cychis(n_cychis*(i_cont_poin-1)+56) = alpha_cont_vect
-!       coefficient = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+2) /1.d4
+       ! recherche de coefficients est-ce qu'on peut trouver coef tel que :
+       ! Statut_Contact(Lag_prev-coef*Gap_prev) = Statut_Contact(Lag_curr-coef*Gap_curr)
        coef_found = .false.
        indi(1) = indi_cont_curr
        indi(2) = indi_cont_prev
@@ -275,7 +291,6 @@ implicit none
        call search_opt_coef(bound_coef, &
                                        indi, pres_cont, dist_cont, &
                                        coef_opt,coef_found)
-!      write (6,*) "coefficient found" , coef_found                                
        if (coef_found) then
            if (i_reso_cont .ne. 0) then
                indi_cont_curr =  indi(1)
@@ -291,101 +306,32 @@ implicit none
            v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+3) = pres_cont_prev
            v_sdcont_cychis(n_cychis*(i_cont_poin-1)+4)    = dist_cont_curr
            v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+4) = dist_cont_prev          
-!           if (indi_cont_curr .ne. indi_cont_prev) write (6,*) "Traitement NOOK"
+           mmcvca = .true. 
+           goto 236 
        endif
          
     endif
 
-! WARNING CYCLAGE FROTTEMENT    : ADHE_GLIS
+! CYCLAGE FROTTEMENT    : ADHE_GLIS
                 
     if ((ds_contact%iteration_newton .ge. 3 ) .and. &
        (v_sdcont_cyceta(4*(i_cont_poin-1)+2) .ge. 10 ) .and. treatment   ) then   
-        
-           if (v_sdcont_cyceta(4*(i_cont_poin-1)+1) .eq. 11) then
-               v_sdcont_cychis(n_cychis*(i_cont_poin-1)+50) = 0.0d0
-           else
-               v_sdcont_cychis(n_cychis*(i_cont_poin-1)+50) = 1.0d0
-           endif
-         
-           if (nint(v_sdcont_cychis(n_cychis*(i_cont_poin-1)+50)) .eq. 1)  then
-       
-               if (  v_sdcont_cyceta(4*(i_cont_poin-1)+2) .eq. 11   ) then  
-                  indi_frot_curr = 1
-                  v_sdcont_cychis(n_cychis*(i_cont_poin-1)+5) = indi_frot_curr
-                  alpha_frot_matr = 1.0
-                  v_sdcont_cychis(n_cychis*(i_cont_poin-1)+54) = alpha_frot_matr         
-                  alpha_frot_vect = 1.0
-                  v_sdcont_cychis(n_cychis*(i_cont_poin-1)+55) = alpha_frot_vect
-                       
-               elseif (  v_sdcont_cyceta(4*(i_cont_poin-1)+2) .eq. 12   ) then  
-                  alpha_frot_matr = 1.0
-                  v_sdcont_cychis(n_cychis*(i_cont_poin-1)+54) = alpha_frot_matr         
-                  alpha_frot_vect = 1.0
-                  v_sdcont_cychis(n_cychis*(i_cont_poin-1)+55) = alpha_frot_vect
-                       
-               elseif (  v_sdcont_cyceta(4*(i_cont_poin-1)+2) .eq. 13   ) then  
-                  alpha_frot_matr = 1.0
-                  v_sdcont_cychis(n_cychis*(i_cont_poin-1)+54) = alpha_frot_matr         
-                  alpha_frot_vect = 1.0
-                  v_sdcont_cychis(n_cychis*(i_cont_poin-1)+55) = alpha_frot_vect
-                       
-               elseif (  v_sdcont_cyceta(4*(i_cont_poin-1)+2) .eq. 14   ) then  
-                  alpha_frot_matr = 0.5
-                  v_sdcont_cychis(n_cychis*(i_cont_poin-1)+54) = alpha_frot_matr         
-                  alpha_frot_vect = 0.5
-                  v_sdcont_cychis(n_cychis*(i_cont_poin-1)+55) = alpha_frot_vect
-               endif
-           endif    
-         
-       else 
-           v_sdcont_cychis(n_cychis*(i_cont_poin-1)+50) = 0.0d0
-           v_sdcont_cychis(n_cychis*(i_cont_poin-1)+54) = 1.0
-           v_sdcont_cychis(n_cychis*(i_cont_poin-1)+55) = 1.0
-       endif
+        ! Cyclage ADHE_GLIS purement et simplement debranchee :
+        ! Se referer a la version 14.1, mmalgo pur future branchement
+        v_sdcont_cychis(n_cychis*(i_cont_poin-1)+50) = 0.0d0
+        v_sdcont_cychis(n_cychis*(i_cont_poin-1)+54) = 1.0
+        v_sdcont_cychis(n_cychis*(i_cont_poin-1)+55) = 1.0
+    endif
     
-                    
+! CYCLAGE FROTTEMENT: END
     if ((ds_contact%iteration_newton .ge. 3 ) .and. &
        (v_sdcont_cyceta(4*(i_cont_poin-1)+3) .ge. 10 )  .and. treatment  ) then   
-        
-         if (v_sdcont_cyceta(4*(i_cont_poin-1)+1) .eq. 11) then
-             v_sdcont_cychis(n_cychis*(i_cont_poin-1)+50) = 0.0d0
-         else
-             v_sdcont_cychis(n_cychis*(i_cont_poin-1)+50) = 1.0d0
-         endif
-         
-         if     (nint(v_sdcont_cychis(n_cychis*(i_cont_poin-1)+50)) .eq. 1)  then
-             if (  v_sdcont_cyceta(4*(i_cont_poin-1)+3) .eq. 11   ) then  
-           
-                alpha_frot_matr = 0.5
-                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+54) = alpha_frot_matr            
-                alpha_frot_vect = 1.0
-                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+55) = alpha_frot_vect
-                      
-             elseif (  v_sdcont_cyceta(4*(i_cont_poin-1)+3) .eq. 12   ) then  
-           
-                alpha_frot_matr = 0.5
-                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+54) = alpha_frot_matr            
-                alpha_frot_vect = 1.0
-                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+55) = alpha_frot_vect
-                      
-                      
-             elseif (  v_sdcont_cyceta(4*(i_cont_poin-1)+3) .eq. 13   ) then  
-           
-                alpha_frot_matr = 0.5
-                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+54) = alpha_frot_matr            
-                alpha_frot_vect = 1.0
-                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+55) = alpha_frot_vect
-                
-             endif
-         endif    
-         
-       else 
+        v_sdcont_cychis(n_cychis*(i_cont_poin-1)+5) = 1
           v_sdcont_cychis(n_cychis*(i_cont_poin-1)+50) = 0.0d0
           v_sdcont_cychis(n_cychis*(i_cont_poin-1)+54) = 1.0
           v_sdcont_cychis(n_cychis*(i_cont_poin-1)+55) = 1.0
        endif
 
-! WARNING CYCLAGE FROTTEMENT: END
 ! - Convergence ?
 !
     mmcvca =  indi_cont_prev .eq. indi_cont_curr
@@ -425,34 +371,7 @@ implicit none
 !        ctcsta  = ctcsta + 1
     endif
     
-!     nb_cont_poin = cfdisi(ds_contact%sdcont_defi,'NTPC')
-!     if ((abs(ds_contact%cont_pressure) .lt. 1.d-15) .or. (ds_contact%iteration_newton .eq. 1)) then 
-!         F_refe = nb_cont_poin* (ds_contact%arete_max/ds_contact%arete_min)*ds_contact%arete_max
-!     else 
-!         F_refe = abs(ds_contact%cont_pressure)
-!     endif
-! !On verifie que le point est stabilise en pression, suivant le cas
-! !     if ((indi_cont_curr .eq. 1) .and. (indi_cont_prev .eq. 1)) resi_press_curr = abs(pres_cont_curr-pres_cont_prev)/F_refe
-! !     if ((indi_cont_curr .eq. 1) .and. (indi_cont_prev .eq. 0)) resi_press_curr = abs(pres_cont_curr)/F_refe
-! !     if ((indi_cont_curr .eq. 0) .and. (indi_cont_prev .eq. 1)) resi_press_curr = 1.d-100
-! !     if ((indi_cont_curr .eq. 0) .and. (indi_cont_prev .eq. 0)) resi_press_curr = 1.d-100
-!     if (indi_cont_curr .eq. 1 ) then 
-!         resi_press_curr = abs(abs(pres_cont_curr)-abs(pres_cont_prev))/F_refe
-!     else 
-!         resi_press_curr = 1.d-100
-!     endif
-!     if (resi_press_curr .gt. ds_contact%resi_pressure)    ds_contact%resi_pressure = resi_press_curr
-! !     write (6,*) ds_contact%resi_pressure,pres_cont_curr,pres_cont_prev,F_refe,ds_contact%cont_pressure
-! !     if ( (mmcvca .and. (ds_contact%resi_pressure .gt. 1.d-6*abs(ds_contact%cont_pressure)) .and. indi_cont_curr .eq. 1 )) then 
-! ! !         write (6,*) "ds_contact%resi_pressure", ds_contact%resi_pressure
-! !         mmcvca = .false.
-! !     endif
-!     if ((.not. mmcvca) .and. (resi_press_curr .lt.1.d-6*abs(ds_contact%cont_pressure)) .and. (ds_contact%iteration_newton .gt. 1) ) then 
-!         mmcvca = .true.
-!         ctcsta = ctcsta+1 
-!     endif
     if (.not. mmcvca ) ctcsta = ctcsta+1
-!     911 continue
     mmcvca = mmcvca .and. (ctcsta .eq. 0) 
 !
 !  Algorithm of Bussetta
@@ -508,61 +427,6 @@ implicit none
            endif
        endif
        
-       ! cas ALGO_CONT=PENALISATION, ALGO_FROT=PENALISATION
-!        if ( indi_cont_curr .eq. 1 .and. l_pena_frot .and. l_pena_cont) then   
-!           if (dist_cont_curr .gt. dist_max .and. indi_frot_curr .eq. 0.&
-!                .and. (norm2(dist_frot_curr) .lt. 1.d-6*dist_max)) then 
-!               v_sdcont_cychis(n_cychis*(i_cont_poin-1)+5)  = 2
-
-!cas 1 : Forte interpenetrations : statut = adherent + recherche du coef_frot_curr optimale
-!        Statut doit etre adherent :
-!        (Lamba+r*dt).(Lambda+r*dt) < 1
-!         On aboutit a une equation du 2nd degre : 
-!         Lambda.Lambda+2r*Lambda.dt+r2*dt.dt < 1
-!         Discriminant = (2Lambda.dt)**2 - 4(dt.dt)(Lambda*Lambda)
-!         Si Discriminant < 0 Alors c'est le pire cas  qui puisse arriver
-!         On ne fait rien. On laisse l'algorithme de Newton se débrouiller.
-!         Si Discriminant > 0  Alors
-!         Pour que l'inequation soit verifiee alors il faut prendre une valeur 
-!         legerement inferieure a la racine superieure. coef_frot_curr peut devenir negatif
-!         Dans ce dernier cas, cela veut dire qu'on a calculer un glissement dans une mauvaise
-!         direction tangentielle : coef_frot_curr*dist_frot_curr
-!                a = proscal(3,dist_frot_curr,dist_frot_curr)
-!                b = 2*proscal(3,pres_frot_curr,dist_frot_curr)
-!                c = proscal(3,pres_frot_curr,pres_frot_curr)
-!                discriminant = b**2 -4.0*a*c
-!                if (discriminant .gt. 0.0d0) then
-!                    racine1 = (-b - sqrt(discriminant))/(2*a)
-!                    racine2 = (-b + sqrt(discriminant))/(2*a)
-!                    racinesup =racine2 
-!                    if (racine1 .gt. racine2) racinesup = racine1 
-!                else
-!                    racinesup = ds_contact%estimated_coefficient**0.2
-!                endif               
-                
-!                if (racinesup .gt. 0.0) then 
-!                    coef_frot_curr = 0.99*racinesup
-!                else
-!                    coef_frot_curr = coef_frot_curr*norm2(dist_frot_curr) / dist_max 
-!                endif
-!                if (i_cont_poin .eq. 1) &
-!                   write (6,*) "coef_frott gliss",coef_frot_curr, i_cont_poin  
-!            endif    
-                
-                
-!            if (indi_frot_curr .eq. 1 .and. norm2(dist_frot_curr) .gt. 1.d-6*dist_max) then
-!               v_sdcont_cychis(n_cychis*(i_cont_poin-1)+5)  = 1
-!                coef_frot_curr = coef_frot_curr*norm2(dist_frot_curr) / dist_max 
-                
-!                if (i_cont_poin .eq. 1) &
-!                write (6,*) "coef_frott adhe",coef_frot_curr, i_cont_poin
-!            elseif  (indi_frot_curr .eq. 0 .and. dist_cont_curr .gt. dist_max ) then
-!               v_sdcont_cychis(n_cychis*(i_cont_poin-1)+5)  = 1
-!                coef_frot_curr = coef_frot_curr*norm2(dist_frot_curr) / dist_max 
-!                if (i_cont_poin .eq. 1) &
-!                 write (6,*) "coef_frott gliss",coef_frot_curr, i_cont_poin          
-!            endif
-!            v_sdcont_cychis(n_cychis*(i_cont_poin-1)+6)  = coef_frot_curr
-!        endif
     endif
+    236 continue
 end subroutine
