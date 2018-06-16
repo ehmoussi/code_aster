@@ -100,15 +100,8 @@ implicit none
     coef_frot_curr = coef_frot_prev
     indi_cont_curr = indi_cont_eval
     indi_frot_curr = indi_frot_eval
-!
-! - Cycling 1: no treatment
-!
-    cycl_type = 1
-    cycl_stat_prev = p_sdcont_cyceta(4*(i_cont_poin-1)+cycl_type)
-    if (cycl_stat_prev.gt.0) then
-        cycl_stat_curr = -2
-        p_sdcont_cyceta(4*(i_cont_poin-1)+cycl_type) = cycl_stat_curr
-    endif
+
+
 !
 ! - Cycling 2
 !
@@ -118,7 +111,7 @@ implicit none
         call mm_cycl_t2(pres_frot_prev, dist_frot_prev, coef_frot_prev, &
                         cycl_stat_prev, pres_frot_curr, dist_frot_curr, &
                         coef_frot_curr, cycl_stat_curr)
-        p_sdcont_cyceta(4*(i_cont_poin-1)+cycl_type) = cycl_stat_curr
+!         p_sdcont_cyceta(4*(i_cont_poin-1)+cycl_type) = cycl_stat_curr
         goto 99
     endif
 !
@@ -129,7 +122,7 @@ implicit none
     if (cycl_stat_prev.gt.0) then
         call mm_cycl_t3(pres_frot_prev, dist_frot_prev, coef_frot_prev, &
                         cycl_stat_curr)
-        p_sdcont_cyceta(4*(i_cont_poin-1)+cycl_type) = cycl_stat_curr
+!         p_sdcont_cyceta(4*(i_cont_poin-1)+cycl_type) = cycl_stat_curr
         goto 99
     endif
 !
