@@ -130,10 +130,10 @@ implicit none
 
 !
 ! --------------------------------------------------------------------------------------------------
-!
-!
 ! - Initializations
+! --------------------------------------------------------------------------------------------------
 !
+! type_adap vient de cazocc : v_sdcont_paraci(20)
     n_cychis  = ds_contact%n_cychis
     l_coef_adap = ((type_adap .eq. 1) .or. (type_adap .eq. 2) .or. &
                   (type_adap .eq. 5) .or. (type_adap .eq. 6 ))
@@ -144,23 +144,19 @@ implicit none
     
     i_reso_frot  = cfdisi(ds_contact%sdcont_defi,'ALGO_FROT')
     i_algo_cont  = cfdisi(ds_contact%sdcont_defi,'ALGO_CONT')
-!
-! - Save old history
-!
+
     if (nint(v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24)) .ne. &
         nint(v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+24))) then
 !        Precaution :  "la maille maitre a changé : on ne fait pas de cyclage
         treatment =.false.
     endif
-
-!
+    
 ! - Previous informations
-!
     indi_cont_prev = nint(v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+1))
     coef_cont_prev = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+2)
     pres_cont_prev = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+3)
     dist_cont_prev = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+4)
-! XXX next value seems uniniatiliased in ssnp121i
+    
     indi_frot_prev = nint(v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+5))
     coef_frot_prev = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+6)
     pres_frot_prev(1) = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+7)
@@ -169,14 +165,18 @@ implicit none
     dist_frot_prev(1) = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+10)
     dist_frot_prev(2) = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+11)
     dist_frot_prev(3) = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+12)
-!
 ! - Current max/min ratio
-!
     coef_frot_mini = v_sdcont_cyccoe(6*(zone_index-1)+5)
     coef_frot_maxi = v_sdcont_cyccoe(6*(zone_index-1)+6)
+    
+
+
 !
+! --------------------------------------------------------------------------------------------------
 ! - Cycling detection
+! --------------------------------------------------------------------------------------------------
 !
+
     call mm_cycl_detect(ds_contact, l_loop_cont, l_frot_zone, i_cont_poin,&
                          coef_cont_prev,coef_frot_prev, pres_cont_prev,&
                          dist_cont_prev, pres_frot_curr,pres_frot_prev ,& 
@@ -184,10 +184,26 @@ implicit none
                          indi_frot_eval, indi_cont_prev, dist_cont_curr, pres_cont_curr,&
                          dist_frot_curr,alpha_cont_matr, alpha_cont_vect,&
                          alpha_frot_matr, alpha_frot_vect)
-    
+
+
+
 !
+! --------------------------------------------------------------------------------------------------
 ! - Cycling treatment: automatic adaptation of augmented lagrangian ratio
+! --------------------------------------------------------------------------------------------------
 !
+
+!----------------------TRAITEMENT CYCLAGE -------------------------
+! Quand est-ce qu'on fait de l'adaptation des matrices de contact-frottement
+! MATRCF[Iteration_K]=ALPHA*MATRCF[Iteration_K-1]+(1-ALPHA)*MATRCF[Iteration_K]
+! type_adap vient de cazocc : v_sdcont_paraci(20)
+! CAS 1 : adaptation .eq. 'CYCLAGE' + Quelque soit ALGO_CONT/ALGO_FROT, type_adap=4
+! CAS 2 : adaptation .eq. 'TOUT' + NEWT_FROT , type_adap=5
+! CAS 3 : adaptation .eq. 'TOUT' + NEWT_FROT , ALGO_CONT = PENALISATION, type_adap=6
+! CAS 4 : adaptation .eq. 'TOUT' + POINT_FIXE_FROT OU PAS DE FROT + ALGO_CONT = PENALISATION, type_adap=7
+! CAS 5 : tous les autres cas du moment ou adaptation .eq. 'TOUT' actif, type_adap=4
+
+! 
     if (l_coef_adap) then
         call mm_cycl_trait(ds_contact, i_cont_poin, coef_cont_prev, coef_frot_prev,&
                            pres_frot_prev, dist_frot_prev, pres_frot_curr, dist_frot_curr,&
