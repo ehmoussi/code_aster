@@ -56,7 +56,7 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: i, j, ij
+    integer :: i, j, ij,count_consistency
     integer :: nb_node_slav, nb_node_mast, nb_lagr, nb_poin_inte, nb_dof, nb_tria, nb_gauss
     integer :: indi_lagc(10)
     integer :: elem_dime
@@ -379,10 +379,12 @@ implicit none
                 alpha = 1.0-abs(lagrc+100.d0*gap_curr)
             endif
 !            alpha = max(alpha,max_value)
+            count_consistency = 0
             50 continue
+            count_consistency = count_consistency+ 1
             alpha = 0.5*(alpha+1)
             mmat_ = alpha*mmat+(1-alpha)*mmat_prev
-            if ( norm2(mmat_-mmat) .gt. 1.d-6*norm2(mmat)  ) goto 50
+            if ( norm2(mmat_-mmat) .gt. 1.d-6*norm2(mmat) .and. count_consistency .lt. 30 ) goto 50
             mmat = mmat_
 
         endif
@@ -612,12 +614,14 @@ implicit none
             else 
                 alpha = 1.0-abs(lagrc+100.d0*gap_curr)
             endif
-
+            
+            count_consistency = 0
             51 continue
+            count_consistency = count_consistency + 1
             alpha = 0.5*(alpha+1.0)
             mmat_ = alpha*mmat+(1-alpha)*mmat_prev
 
-            if ( norm2(mmat_-mmat) .gt. 1.d-6*norm2(mmat) ) goto 51
+            if ( norm2(mmat_-mmat) .gt. 1.d-6*norm2(mmat) .and. count_consistency .lt. 30) goto 51
             mmat = mmat_
             
         endif

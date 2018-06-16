@@ -273,12 +273,12 @@ implicit none
 !            Et Il ne faut surtout pas adapter les matrices de contact : ssnv504e
             if (v_sdcont_cyceta(4*(i_cont_poin-1)+4) .eq. -10) then
                 if (ds_contact%resi_pressure .lt. 1.d-4*ds_contact%cont_pressure)  mmcvca = .true.
-                goto 236
+!                 goto 236
             else 
             !ADAPTATION DE MATRICES, VECTEURS ET COEFF POUR LES TE :
-                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+57) = 1.0d0
-                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+59) = 0.9
-                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+56) = 0.9
+                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+57) = 1.0
+                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+59) = 0.99
+                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+56) = 0.99
             endif
 !        recherche de coefficients est-ce qu'on peut trouver coef tel que :
 !        Statut_Contact(Lag_prev-coef*Gap_prev) = Statut_Contact(Lag_curr-coef*Gap_curr)
@@ -299,8 +299,8 @@ implicit none
                indi_cont_prev =  indi(2)  
                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+1)    = indi_cont_curr
                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+1) = indi_cont_prev
-               mmcvca = .true. 
-               goto 236 
+!                mmcvca = .true. 
+!                goto 236 
            endif
            dist_cont_curr =  dist_cont(1)
            dist_cont_prev =  dist_cont(2)
@@ -319,63 +319,26 @@ implicit none
     if ((ds_contact%iteration_newton .ge. 3 ) .and. &
        (v_sdcont_cyceta(4*(i_cont_poin-1)+2) .ge. 10 ) .and. treatment   ) then   
         ! Cyclage ADHE_GLIS purement et simplement debranchee :
-        ! Se referer a la version 14.1, mmalgo pur future branchement
+        ! Se déclenche tres rarement
+        ! Se referer a la version 14.1 mmalgo, pour rebranchement si besoin
         v_sdcont_cychis(n_cychis*(i_cont_poin-1)+50) = 0.0d0
         v_sdcont_cychis(n_cychis*(i_cont_poin-1)+54) = 1.0
         v_sdcont_cychis(n_cychis*(i_cont_poin-1)+55) = 1.0
+        write (6,*) "Cyclage GLI_ADHE_GLIS"
     endif
     
 ! CYCLAGE FROTTEMENT: GLIAV_AR
     if ((ds_contact%iteration_newton .ge. 3 ) .and. &
        (v_sdcont_cyceta(4*(i_cont_poin-1)+3) .ge. 10 )  .and. treatment  ) then   
+        ! Cyclage GLIAV_AR  : comme conseille dans un cours de IPSI 2004
+        ! Statut de frottement mis à adherence
         v_sdcont_cychis(n_cychis*(i_cont_poin-1)+5) = 1
           v_sdcont_cychis(n_cychis*(i_cont_poin-1)+50) = 1.0d0
-          v_sdcont_cychis(n_cychis*(i_cont_poin-1)+54) = 1.0
-          v_sdcont_cychis(n_cychis*(i_cont_poin-1)+55) = 1.0
+          v_sdcont_cychis(n_cychis*(i_cont_poin-1)+54) = 0.9
+          v_sdcont_cychis(n_cychis*(i_cont_poin-1)+55) = 0.9
+          write (6,*) "Cyclage GLIAV_AR"
        endif
 
-! - Convergence ?
-!
-    mmcvca =  indi_cont_prev .eq. indi_cont_curr
-    if (.not. mmcvca .and. treatment) then
-!       On Bascule en mode penalise automatiquement jusqu'à convergence puis 
-!       On revient en standard quand le statut de contact se stabilise : ssnv128z
-        mode_cycl = 1
-        if (mode_cycl .eq. 1 .and. &
-            ds_contact%iteration_newton .gt. ds_contact%it_cycl_maxi+3 ) then 
-            ! On fait la projection sur le cône négatif des valeurs admissibles
-             if (dist_cont_curr .gt. 1.d-6 )  dist_cont_curr = 0.0
-             if (pres_cont_curr .gt. 1.d-6 )  pres_cont_curr = -1.d-15
-             if (dist_cont_prev .gt. 1.d-6 )  dist_cont_prev = 0.0
-             if (pres_cont_prev .gt. 1.d-6 )  pres_cont_prev = -1.d-15
-             if (i_reso_cont .ne. 0) then
-                 call mmstac(dist_cont_curr, pres_cont_curr,coefficient,indi_cont_curr)
-                 call mmstac(dist_cont_prev, pres_cont_prev,coefficient,indi_cont_prev)
-                 v_sdcont_cychis(n_cychis*(i_cont_poin-1)+1)    = indi_cont_curr
-                 v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+1) = indi_cont_prev
-             endif       
-             v_sdcont_cychis(n_cychis*(i_cont_poin-1)+3)    = pres_cont_curr
-             v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+3) = pres_cont_prev
-             v_sdcont_cychis(n_cychis*(i_cont_poin-1)+4)    = dist_cont_curr
-             v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+4) = dist_cont_prev      
-             v_sdcont_cychis(n_cychis*(i_cont_poin-1)+57) = 1.0
-             v_sdcont_cychis(n_cychis*(i_cont_poin-1)+59) = 0.999
-             v_sdcont_cychis(n_cychis*(i_cont_poin-1)+56) = 1.0
-             v_sdcont_cychis(n_cychis*(i_cont_poin-1)+51) = 4.0
-             v_sdcont_cychis(n_cychis*(i_cont_poin-1)+52) = 4.0
-             v_sdcont_cyceta(4*(i_cont_poin-1)+1)   = 10
-             v_sdcont_cychis(n_cychis*(i_cont_poin-1)+2)    = 1.d2
-             v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+2) = 1.d2
-             mmcvca =  indi_cont_prev .eq. indi_cont_curr
-        endif
-!         write (6,*) "pres_cont_curr",pres_cont_curr
-!         write (6,*) "pres_cont_prev",pres_cont_prev
-!         write (6,*) "F_refe",F_refe
-!        ctcsta  = ctcsta + 1
-    endif
-    
-    if (.not. mmcvca ) ctcsta = ctcsta+1
-    mmcvca = mmcvca .and. (ctcsta .eq. 0) 
 !
 !  Algorithm of Bussetta
 !  
@@ -431,5 +394,49 @@ implicit none
        endif
        
     endif
+
+
+! - Convergence ?
+!
+    mmcvca =  indi_cont_prev .eq. indi_cont_curr
+    if (.not. mmcvca .and. treatment) then
+!       On Bascule en mode penalise automatiquement jusqu'à convergence puis 
+!       On revient en standard quand le statut de contact se stabilise : ssnv128z
+        mode_cycl = 1
+        if (mode_cycl .eq. 1 .and. &
+            ds_contact%iteration_newton .gt. ds_contact%it_cycl_maxi+3 ) then 
+            ! On fait la projection sur le cône négatif des valeurs admissibles
+             if (dist_cont_curr .gt. 1.d-6 )  dist_cont_curr = 0.0
+             if (pres_cont_curr .gt. 1.d-6 )  pres_cont_curr = -1.d-15
+             if (dist_cont_prev .gt. 1.d-6 )  dist_cont_prev = 0.0
+             if (pres_cont_prev .gt. 1.d-6 )  pres_cont_prev = -1.d-15
+             if (i_reso_cont .ne. 0) then
+                 call mmstac(dist_cont_curr, pres_cont_curr,coefficient,indi_cont_curr)
+                 call mmstac(dist_cont_prev, pres_cont_prev,coefficient,indi_cont_prev)
+                 v_sdcont_cychis(n_cychis*(i_cont_poin-1)+1)    = indi_cont_curr
+                 v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+1) = indi_cont_prev
+             endif       
+             v_sdcont_cychis(n_cychis*(i_cont_poin-1)+3)    = pres_cont_curr
+             v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+3) = pres_cont_prev
+             v_sdcont_cychis(n_cychis*(i_cont_poin-1)+4)    = dist_cont_curr
+             v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+4) = dist_cont_prev      
+             v_sdcont_cychis(n_cychis*(i_cont_poin-1)+57) = 1.0
+             v_sdcont_cychis(n_cychis*(i_cont_poin-1)+59) = 0.99
+             v_sdcont_cychis(n_cychis*(i_cont_poin-1)+56) = 1.0
+             v_sdcont_cychis(n_cychis*(i_cont_poin-1)+51) = 4.0
+             v_sdcont_cychis(n_cychis*(i_cont_poin-1)+52) = 4.0
+             v_sdcont_cyceta(4*(i_cont_poin-1)+1)   = 10
+             v_sdcont_cychis(n_cychis*(i_cont_poin-1)+2)    = 1.d2
+             v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+2) = 1.d2
+             mmcvca =  indi_cont_prev .eq. indi_cont_curr
+        endif
+!         write (6,*) "pres_cont_curr",pres_cont_curr
+!         write (6,*) "pres_cont_prev",pres_cont_prev
+!         write (6,*) "F_refe",F_refe
+!        ctcsta  = ctcsta + 1
+    endif
+    
+    if (.not. mmcvca ) ctcsta = ctcsta+1
+    mmcvca = mmcvca .and. (ctcsta .eq. 0) 
     236 continue
 end subroutine

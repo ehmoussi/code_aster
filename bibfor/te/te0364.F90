@@ -65,7 +65,7 @@ subroutine te0364(option, nomte)
     integer :: jmatt, jpcf
 !
 ! DECLARATION TYPES RESOLUTION    
-    integer :: iresof, iresog
+    integer :: iresof, iresog,count_consistency
     integer :: iresof_prev, iresog_prev
     integer :: ndexfr
     integer :: ndexfr_prev
@@ -120,6 +120,8 @@ subroutine te0364(option, nomte)
     real(kind=8) :: vech1_prev(3)=0.0, vech2_prev(3)=0.0
 !
 ! DECLARATION MATRICES CONTACT-FROTTEMENT
+    real(kind=8) :: mmat_tmp(81, 81)
+    
     real(kind=8) :: mmat(81, 81)
     real(kind=8) :: mmat_prev(81, 81)
 !
@@ -161,6 +163,7 @@ subroutine te0364(option, nomte)
 !
     call matini(81, 81, 0.d0, mmat)
     call matini(81, 81, 0.d0, mmat_prev)
+    call matini(81, 81, 0.d0, mmat_tmp)
 !
     call matini(9, 9, 0.d0, matrcc)
     call matini(9, 9, 0.d0, matrcc_prev)
@@ -555,6 +558,19 @@ subroutine te0364(option, nomte)
 
     alpha_cont = zr(jpcf-1+28)
     alpha_frot = zr(jpcf-1+42)
+    if (l_previous) then    
+!     write (6,*) "alpha_cont",alpha_cont
+            mmat_tmp = alpha_cont*mmat+(1-alpha_cont)*mmat_prev
+            count_consistency = 0 
+            51 continue
+            count_consistency = 1
+            alpha_cont = 0.5*(alpha_cont+1.0)
+            mmat_tmp = alpha_cont*mmat+(1.0-alpha_cont)*mmat_prev
+
+            if ( norm2(mmat_tmp-mmat) .gt. 1.d-6*norm2(mmat) .and. count_consistency .le. 30) goto 51
+            mmat = mmat_tmp
+!             write (6,*) "count_consistency",count_consistency,"norme",norm2(mmat_tmp-mmat)
+    endif
 !    do compte_l = 1, 81
 !       if mmat(compte_l,compte_l) .le. 1.d-50&
 !       write (6,*) "diagonal nul" , mmat(compte_l,compte_l)
@@ -575,27 +591,11 @@ subroutine te0364(option, nomte)
             do     i = 1, nddl
                 ij = j+nddl*(i-1)
                 if (lpenac.and.(option.eq.'RIGI_CONT')) then
-                    if (l_previous) then 
-                        zr(jmatt+ij-1) = alpha_cont * mmat(i,j) &
-                                         + (1-alpha_cont) * mmat_prev(i,j)
-                    else 
-                        zr(jmatt+ij-1) = 1.0 * mmat(i,j)
-                    endif
+                        zr(jmatt+ij-1) = mmat(i,j)
                 else if ((option.eq.'RIGI_FROT').and.(iresof.ne.0)) then 
-                    if (l_previous) then 
-                        zr(jmatt+ij-1) = alpha_frot * mmat(i,j) &
-                                         + (1-alpha_frot) * mmat_prev(i,j)
-                    else 
-                        zr(jmatt+ij-1) = 1.0 * mmat(i,j)                    
-                    endif
-                    
+                        zr(jmatt+ij-1) = mmat(i,j) 
                 else if (lpenaf.and.(option.eq.'RIGI_FROT')) then 
-                    if (l_previous) then 
-                        zr(jmatt+ij-1) = alpha_frot * mmat(i,j) &
-                                         + (1-alpha_frot) * mmat_prev(i,j)
-                    else     
                         zr(jmatt+ij-1) = 1.0 * mmat(i,j)        
-                    endif
                 endif
                 if (debug) then
                     call mmmtdb(mmat(i, j), 'IJ', i, j)
@@ -613,16 +613,8 @@ subroutine te0364(option, nomte)
         do 761 j = 1, nddl
             do 751 i = 1, j
                 ij = (j-1)*j/2 + i
-                if (l_previous) then 
-                    if ((option.ne.'RIGI_FROT')) then
-                        zr(jmatt+ij-1) = alpha_cont *  mmat(i,j) &
-                                         + (1-alpha_cont) * mmat_prev(i,j)
-                    else
-                        zr(jmatt+ij-1) = 1.0 *  mmat(i,j)
-                    endif
-                else 
-                    zr(jmatt+ij-1) = 1.0 *  mmat(i,j)
-                endif
+                    zr(jmatt+ij-1) = mmat(i,j)
+                    
                 if (debug) then
                     call mmmtdb(mmat(i, j), 'IJ', i, j)
                 endif
