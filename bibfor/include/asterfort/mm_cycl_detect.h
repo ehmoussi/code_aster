@@ -46,6 +46,7 @@ interface
         integer, intent(in) :: indi_frot_prev
         real(kind=8), intent(in) :: dist_frot_prev(3)
         integer, intent(in) :: indi_cont_eval
+        integer, intent(in) :: indi_cont_prev
         integer, intent(in) :: indi_frot_eval
         real(kind=8), intent(in) :: dist_cont_curr
         real(kind=8), intent(in) :: pres_cont_curr

@@ -323,6 +323,7 @@ implicit none
         integer           :: nb_cont_pair
 ! ----- Number of stored values from precedent Newton iteration
         integer           :: n_cychis = 72
+        integer           :: cycl_long_acti = 3
 ! ----- Automatic update of penalised coefficient
         real(kind=8)      :: estimated_coefficient = 100.0
         real(kind=8)      :: max_coefficient = 100.0
@@ -334,6 +335,7 @@ implicit none
 ! ----- Automatic update of resi_geom
         real(kind=8)      :: critere_geom  = 0.0
         character(len=16)      :: crit_geom_noeu  = ' '
+        integer           :: flag_mast_nume  = 1
 ! ----- Force for DISCRETE contact (friction)
         aster_logical     :: l_cnctdf
         character(len=19) :: cnctdf

@@ -37,7 +37,6 @@ implicit none
 #include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/mcomce.h"
-#include "asterfort/mmalgo.h"
 #include "asterfort/mmbouc.h"
 #include "asterfort/mm_cycl_prop.h"
 #include "asterfort/mm_cycl_stat.h"

@@ -90,7 +90,7 @@ implicit none
 ! - Detection of cycling: contact/no contact
 !
     call mm_cycl_d1(ds_contact, i_cont_poin, pres_cont_prev, dist_cont_prev, coef_cont,&
-                    indi_cont_eval, dist_cont_curr, pres_cont_curr,alpha_cont_matr,&
+                    indi_cont_eval,indi_cont_prev, dist_cont_curr, pres_cont_curr,alpha_cont_matr,&
                     alpha_cont_vect)
 !
 ! - Detection of cycling: sliding/sticking
@@ -110,9 +110,9 @@ implicit none
 !
 ! - Detection of cycling: old flip/flop
 !
-    if (l_loop_cont) then 
+!     if (l_loop_cont) then 
         call mm_cycl_d4(ds_contact, i_cont_poin, indi_cont_eval,indi_cont_prev,&
                         pres_cont_curr,pres_cont_prev)
-    endif
+!     endif
 !
 end subroutine
