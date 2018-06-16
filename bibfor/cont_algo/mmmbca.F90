@@ -39,7 +39,7 @@ implicit none
 #include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/mcomce.h"
-#include "asterfort/mmalgo.h"
+#include "asterfort/mm_cycl_algo.h"
 #include "asterfort/mmbouc.h"
 #include "asterfort/mm_cycl_prop.h"
 #include "asterfort/mm_cycl_stat.h"
@@ -394,7 +394,7 @@ implicit none
 !
 ! ------------- Status treatment
 !
-                call mmalgo(ds_contact, l_loop_cont, l_frot_zone, &
+                call mm_cycl_algo(ds_contact, l_loop_cont, l_frot_zone, &
                             l_glis_init, type_adap, i_zone, i_cont_poin, &
                             indi_cont_eval, indi_frot_eval, gap,  lagr_cont_poin,&
                             gap_user_frot, pres_frot, v_sdcont_cychis, v_sdcont_cyccoe, &
