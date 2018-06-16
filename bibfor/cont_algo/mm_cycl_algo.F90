@@ -68,6 +68,10 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
 ! ROUTINE CONTACT (METHODE CONTINUE - CONTRAINTES ACTIVES)
+! Cette routine va adapter le calcul des matrices de contact-frottement suivant les cas de cyclage. 
+! Il permet également de faire des heuristiques particulières (cas du flip-flop) pour aider à la convergence 
+! sur les statuts de contact. Cete routine permet également de faire une recherche optimale du coefficient de 
+! C'est également dans cette routine qu'on s'assure de la convergence de la boucle sur les statuts. 
 !
 ! TRAITEMENT DES DIFFERENTS CAS
 !
@@ -131,13 +135,13 @@ implicit none
 ! - Initializations
 !
     n_cychis  = ds_contact%n_cychis
-    
     l_coef_adap = ((type_adap .eq. 1) .or. (type_adap .eq. 2) .or. &
                   (type_adap .eq. 5) .or. (type_adap .eq. 6 ))
-! le cas type_adap = 3 est particulier : on adapte coef_cont avec bussetta mais pas coef_frot    
+    
     treatment =  ((type_adap .eq. 4) .or. (type_adap .eq. 5) .or. &
                   (type_adap .eq. 6) .or. (type_adap .eq. 7 ))
     i_reso_cont  = cfdisi(ds_contact%sdcont_defi,'ALGO_RESO_CONT')
+    
     i_reso_frot  = cfdisi(ds_contact%sdcont_defi,'ALGO_FROT')
     i_algo_cont  = cfdisi(ds_contact%sdcont_defi,'ALGO_CONT')
 !
@@ -145,14 +149,10 @@ implicit none
 !
     if (nint(v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24)) .ne. &
         nint(v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+24))) then
-!        write (6,*) "la maille maitre a changé : on e fait rien "
+!        Precaution :  "la maille maitre a changé : on ne fait pas de cyclage
         treatment =.false.
     endif
 
-!    do hist_index = 1, 12
-!        v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+hist_index) = &
-!            v_sdcont_cychis(n_cychis*(i_cont_poin-1)+hist_index)
-!    enddo
 !
 ! - Previous informations
 !
