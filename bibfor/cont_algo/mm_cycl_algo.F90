@@ -260,7 +260,7 @@ implicit none
 !
     if (i_reso_cont .eq. 0) then
         if (v_sdcont_cyceta(4*(i_cont_poin-1)+4) .eq. -10) then
-            mmcvca = .true.
+            if (ds_contact%resi_pressure .lt. 1.d-4*ds_contact%cont_pressure)  mmcvca = .true.
             goto 236
         endif
     endif
@@ -272,14 +272,14 @@ implicit none
 !    Cas 1 : Le point fait du FLIP-FLOP, meme traitement que POINT_FIXE
 !            Mais on adapte quand meme les matrices de contact
             if (v_sdcont_cyceta(4*(i_cont_poin-1)+4) .eq. -10) then
-                mmcvca = .true.
+                if (ds_contact%resi_pressure .lt. 1.d-4*ds_contact%cont_pressure)  mmcvca = .true.
             endif
 !ADAPTATION DE MATRICES, VECTEURS ET COEFF POUR LES TE :
-       v_sdcont_cychis(n_cychis*(i_cont_poin-1)+57) = 1.0d0
-       v_sdcont_cychis(n_cychis*(i_cont_poin-1)+59) = alpha_cont_matr
-       v_sdcont_cychis(n_cychis*(i_cont_poin-1)+56) = alpha_cont_vect
-       ! recherche de coefficients est-ce qu'on peut trouver coef tel que :
-       ! Statut_Contact(Lag_prev-coef*Gap_prev) = Statut_Contact(Lag_curr-coef*Gap_curr)
+!        v_sdcont_cychis(n_cychis*(i_cont_poin-1)+57) = 1.0d0
+!        v_sdcont_cychis(n_cychis*(i_cont_poin-1)+59) = 1.0
+!        v_sdcont_cychis(n_cychis*(i_cont_poin-1)+56) = 1.0
+!        recherche de coefficients est-ce qu'on peut trouver coef tel que :
+!        Statut_Contact(Lag_prev-coef*Gap_prev) = Statut_Contact(Lag_curr-coef*Gap_curr)
        coef_found = .false.
        indi(1) = indi_cont_curr
        indi(2) = indi_cont_prev
@@ -297,6 +297,8 @@ implicit none
                indi_cont_prev =  indi(2)  
                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+1)    = indi_cont_curr
                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+1) = indi_cont_prev
+               mmcvca = .true. 
+               goto 236 
            endif
            dist_cont_curr =  dist_cont(1)
            dist_cont_prev =  dist_cont(2)
@@ -306,8 +308,6 @@ implicit none
            v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+3) = pres_cont_prev
            v_sdcont_cychis(n_cychis*(i_cont_poin-1)+4)    = dist_cont_curr
            v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+4) = dist_cont_prev          
-           mmcvca = .true. 
-           goto 236 
        endif
          
     endif
@@ -336,7 +336,8 @@ implicit none
 !
     mmcvca =  indi_cont_prev .eq. indi_cont_curr
     if (.not. mmcvca .and. treatment) then
-!         write (6,*) "point traite ", (.not. mmcvca .and. treatment), i_cont_poin
+!       On Bascule en mode penalise automatiquement jusqu'à convergence puis 
+!       On revient en standard quand le statut de contact se stabilise : ssnv128z
         mode_cycl = 1
         if (mode_cycl .eq. 1 .and. &
             ds_contact%iteration_newton .gt. ds_contact%it_cycl_maxi+3 ) then 
