@@ -447,10 +447,10 @@ implicit none
 ! Moyenne des pressions de contact
     sum_cont_pressure = sum_cont_pressure/nb_cont_poin
 !     write (6,*) "convergence globale",abs(ds_contact%cont_pressure),abs(sum_cont_pressure)
-    if  (abs(ds_contact%cont_pressure-sum_cont_pressure) .lt. 1.d-6*abs(sum_cont_pressure) .and. .not. loop_cont_conv  ) then
-        loop_cont_conv = .true.
-    endif
-    ds_contact%cont_pressure = sum_cont_pressure
+!     if  (abs(ds_contact%cont_pressure-sum_cont_pressure) .lt. 1.d-6*abs(sum_cont_pressure) .and. .not. loop_cont_conv  ) then
+!         loop_cont_conv = .true.
+!     endif
+    ds_contact%cont_pressure = abs(sum_cont_pressure)
 !     write(6,*) "cont_pressure", ds_contact%cont_pressure, "iteration_newton", ds_contact%iteration_newton, &
 !     "resi_pressure", ds_contact%resi_pressure
 !

@@ -178,12 +178,12 @@ implicit none
 ! - Cycling detection
 !
     call mm_cycl_detect(ds_contact, l_loop_cont, l_frot_zone, i_cont_poin,&
-                        coef_cont_prev,coef_frot_prev, pres_cont_prev,&
-                        dist_cont_prev, pres_frot_curr,pres_frot_prev ,& 
-                        indi_frot_prev, dist_frot_prev, indi_cont_eval,&
-                        indi_frot_eval, dist_cont_curr, pres_cont_curr,&
-                        dist_frot_curr,alpha_cont_matr, alpha_cont_vect,&
-                        alpha_frot_matr, alpha_frot_vect)
+                         coef_cont_prev,coef_frot_prev, pres_cont_prev,&
+                         dist_cont_prev, pres_frot_curr,pres_frot_prev ,& 
+                         indi_frot_prev, dist_frot_prev, indi_cont_eval,&
+                         indi_frot_eval, indi_cont_prev, dist_cont_curr, pres_cont_curr,&
+                         dist_frot_curr,alpha_cont_matr, alpha_cont_vect,&
+                         alpha_frot_matr, alpha_frot_vect)
     
 !
 ! - Cycling treatment: automatic adaptation of augmented lagrangian ratio
@@ -225,33 +225,22 @@ implicit none
     v_sdcont_cychis(n_cychis*(i_cont_poin-1)+10) = dist_frot_curr(1)
     v_sdcont_cychis(n_cychis*(i_cont_poin-1)+11) = dist_frot_curr(2)
     v_sdcont_cychis(n_cychis*(i_cont_poin-1)+12) = dist_frot_curr(3)
-!    v_sdcont_cychis(n_cychis*(i_cont_poin-1)+58) = dist_cont_prev 
-!
-!   - Un point a fait du flip-flop
-    if ((ds_contact%iteration_newton .ge. 3 ) .and. &
-        (v_sdcont_cyceta(4*(i_cont_poin-1)+4) .eq. 10  )) then
-        write (6,*) "Point de contact en FLIP_FLOP : i_cont_poin",i_cont_poin
-        write (6,*) "Pression de contact en FLIP_FLOP courante   : ",pres_cont_curr
-        write (6,*) "Pression de contact en FLIP_FLOP précédente : ",pres_cont_prev
-        write (6,*) "JEU de contact en FLIP_FLOP courante   : ",dist_cont_curr
-        write (6,*) "JEU de contact en FLIP_FLOP précédente : ",dist_cont_prev
-        write (6,*) "SOMME TOTALE DES FORCES DE CONTACT : ",ds_contact%cont_pressure
-        if (abs(ds_contact%resi_pressure).gt. 1.D-2*ds_contact%arete_min) then 
-            v_sdcont_cyceta(4*(i_cont_poin-1)+4) = -1
-            write (6,*) "FORCES DE CONTACT NON STABLES POUR ACTIVER LE FLIP-FLOP: ",&
-                         ds_contact%cont_pressure,ds_contact%resi_pressure
-            write (6,*) "ON DESACTIVE LE FLIP-FLOP "
+    
+    
+    if (i_reso_cont .eq. 0) then
+        if (v_sdcont_cyceta(4*(i_cont_poin-1)+1) .eq. -10) then
+            mmcvca = .true.
+!             write (6,*) "ON A DECLENCHE LE FLIP-FLOP AVANT LE TRAITEMENT DE CYCLAGE "
+!             write (6,*) "LE POINT QUI CYCLE PEUVENT ETRE TRAITE EN FLIP-FLOP SANS PASSER   "
+!             write (6,*) "PAR UNE METHODE QUI ADAPTE LES MATRICES DE CONTACT   "
+    !                 goto 911
         endif
-    endif                    
+    endif
     if ((ds_contact%iteration_newton .ge. 3 ) .and. &
         (v_sdcont_cyceta(4*(i_cont_poin-1)+1) .gt. 0 .and. treatment )) then
        
-            if (v_sdcont_cyceta(4*(i_cont_poin-1)+1) .eq. 10) then
+            if (v_sdcont_cyceta(4*(i_cont_poin-1)+4) .eq. -10) then
                 mmcvca = .true.
-                write (6,*) "ON A DECLENCHE LE FLIP-FLOP AVANT LE TRAITEMENT DE CYCLAGE "
-                write (6,*) "LE POINT QUI CYCLE PEUVENT ETRE TRAITE EN FLIP-FLOP SANS PASSER   "
-                write (6,*) "PAR UNE METHODE QUI ADAPTE LES MATRICES DE CONTACT   "
-                goto 911
             endif
 !ADAPTATION DE MATRICES, VECTEURS ET COEFF POUR LES TE :
 ! MATR_PREVIOUS + MATR_CURRENT       
@@ -420,34 +409,34 @@ implicit none
 !        ctcsta  = ctcsta + 1
     endif
     
-    nb_cont_poin = cfdisi(ds_contact%sdcont_defi,'NTPC')
-    if ((abs(ds_contact%cont_pressure) .lt. 1.d-15) .or. (ds_contact%iteration_newton .eq. 1)) then 
-        F_refe = nb_cont_poin* (ds_contact%arete_max/ds_contact%arete_min)*ds_contact%arete_max
-    else 
-        F_refe = abs(ds_contact%cont_pressure)
-    endif
-!On verifie que le point est stabilise en pression, suivant le cas
-!     if ((indi_cont_curr .eq. 1) .and. (indi_cont_prev .eq. 1)) resi_press_curr = abs(pres_cont_curr-pres_cont_prev)/F_refe
-!     if ((indi_cont_curr .eq. 1) .and. (indi_cont_prev .eq. 0)) resi_press_curr = abs(pres_cont_curr)/F_refe
-!     if ((indi_cont_curr .eq. 0) .and. (indi_cont_prev .eq. 1)) resi_press_curr = 1.d-100
-!     if ((indi_cont_curr .eq. 0) .and. (indi_cont_prev .eq. 0)) resi_press_curr = 1.d-100
-    if (indi_cont_curr .eq. 1 ) then 
-        resi_press_curr = abs(abs(pres_cont_curr)-abs(pres_cont_prev))/F_refe
-    else 
-        resi_press_curr = 1.d-100
-    endif
-    if (resi_press_curr .gt. ds_contact%resi_pressure)    ds_contact%resi_pressure = resi_press_curr
-!     write (6,*) ds_contact%resi_pressure,pres_cont_curr,pres_cont_prev,F_refe,ds_contact%cont_pressure
-!     if ( (mmcvca .and. (ds_contact%resi_pressure .gt. 1.d-6*abs(ds_contact%cont_pressure)) .and. indi_cont_curr .eq. 1 )) then 
-! !         write (6,*) "ds_contact%resi_pressure", ds_contact%resi_pressure
-!         mmcvca = .false.
+!     nb_cont_poin = cfdisi(ds_contact%sdcont_defi,'NTPC')
+!     if ((abs(ds_contact%cont_pressure) .lt. 1.d-15) .or. (ds_contact%iteration_newton .eq. 1)) then 
+!         F_refe = nb_cont_poin* (ds_contact%arete_max/ds_contact%arete_min)*ds_contact%arete_max
+!     else 
+!         F_refe = abs(ds_contact%cont_pressure)
 !     endif
-    if ((.not. mmcvca) .and. (resi_press_curr .lt.1.d-6*abs(ds_contact%cont_pressure)) .and. (ds_contact%iteration_newton .gt. 1) ) then 
-        mmcvca = .true.
-        ctcsta = ctcsta+1 
-    endif
+! !On verifie que le point est stabilise en pression, suivant le cas
+! !     if ((indi_cont_curr .eq. 1) .and. (indi_cont_prev .eq. 1)) resi_press_curr = abs(pres_cont_curr-pres_cont_prev)/F_refe
+! !     if ((indi_cont_curr .eq. 1) .and. (indi_cont_prev .eq. 0)) resi_press_curr = abs(pres_cont_curr)/F_refe
+! !     if ((indi_cont_curr .eq. 0) .and. (indi_cont_prev .eq. 1)) resi_press_curr = 1.d-100
+! !     if ((indi_cont_curr .eq. 0) .and. (indi_cont_prev .eq. 0)) resi_press_curr = 1.d-100
+!     if (indi_cont_curr .eq. 1 ) then 
+!         resi_press_curr = abs(abs(pres_cont_curr)-abs(pres_cont_prev))/F_refe
+!     else 
+!         resi_press_curr = 1.d-100
+!     endif
+!     if (resi_press_curr .gt. ds_contact%resi_pressure)    ds_contact%resi_pressure = resi_press_curr
+! !     write (6,*) ds_contact%resi_pressure,pres_cont_curr,pres_cont_prev,F_refe,ds_contact%cont_pressure
+! !     if ( (mmcvca .and. (ds_contact%resi_pressure .gt. 1.d-6*abs(ds_contact%cont_pressure)) .and. indi_cont_curr .eq. 1 )) then 
+! ! !         write (6,*) "ds_contact%resi_pressure", ds_contact%resi_pressure
+! !         mmcvca = .false.
+! !     endif
+!     if ((.not. mmcvca) .and. (resi_press_curr .lt.1.d-6*abs(ds_contact%cont_pressure)) .and. (ds_contact%iteration_newton .gt. 1) ) then 
+!         mmcvca = .true.
+!         ctcsta = ctcsta+1 
+!     endif
     if (.not. mmcvca ) ctcsta = ctcsta+1
-    911 continue
+!     911 continue
     mmcvca = mmcvca .and. (ctcsta .eq. 0) 
 !
 !  Algorithm of Bussetta

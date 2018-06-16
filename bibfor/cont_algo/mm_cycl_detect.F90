@@ -23,6 +23,7 @@ subroutine mm_cycl_detect(ds_contact    , l_loop_cont   ,&
                           pres_frot_curr,pres_frot_prev ,&
                           indi_frot_prev, dist_frot_prev,&
                           indi_cont_eval, indi_frot_eval,&
+                          indi_cont_prev, &
                           dist_cont_curr, pres_cont_curr, dist_frot_curr,&
                           alpha_cont_matr,alpha_cont_vect,&
                           alpha_frot_matr,alpha_frot_vect)
@@ -39,7 +40,7 @@ implicit none
 !
 ! person_in_charge: ayaovi-dzifa.kudawoo at edf.fr
 !
-    type(NL_DS_Contact), intent(in) :: ds_contact
+    type(NL_DS_Contact), intent(inout) :: ds_contact
     aster_logical, intent(in) :: l_loop_cont
     aster_logical, intent(in) :: l_frot_zone
     integer, intent(in) :: i_cont_poin
@@ -49,6 +50,7 @@ implicit none
     real(kind=8), intent(in) :: pres_frot_prev(3), pres_frot_curr(3)
     real(kind=8), intent(in) :: dist_cont_prev
     integer, intent(in) :: indi_frot_prev
+    integer, intent(in) :: indi_cont_prev
     real(kind=8), intent(in) :: dist_frot_prev(3)
     integer, intent(in) :: indi_cont_eval
     integer, intent(in) :: indi_frot_eval
@@ -108,8 +110,9 @@ implicit none
 !
 ! - Detection of cycling: old flip/flop
 !
-    if (l_loop_cont) then
-        call mm_cycl_d4(ds_contact, i_cont_poin, indi_cont_eval)
+    if (l_loop_cont) then 
+        call mm_cycl_d4(ds_contact, i_cont_poin, indi_cont_eval,indi_cont_prev,&
+                        pres_cont_curr,pres_cont_prev)
     endif
 !
 end subroutine
