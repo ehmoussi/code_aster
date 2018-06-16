@@ -275,7 +275,7 @@ implicit none
                 if (ds_contact%resi_pressure .lt. 1.d-4*ds_contact%cont_pressure)  mmcvca = .true.
             endif
 !ADAPTATION DE MATRICES, VECTEURS ET COEFF POUR LES TE :
-!        v_sdcont_cychis(n_cychis*(i_cont_poin-1)+57) = 1.0d0
+       v_sdcont_cychis(n_cychis*(i_cont_poin-1)+51) = 1.0d0
 !        v_sdcont_cychis(n_cychis*(i_cont_poin-1)+59) = 1.0
 !        v_sdcont_cychis(n_cychis*(i_cont_poin-1)+56) = 1.0
 !        recherche de coefficients est-ce qu'on peut trouver coef tel que :
