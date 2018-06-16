@@ -462,7 +462,7 @@ implicit none
 !
 ! - Statistics for cycling
 !
-    call mm_cycl_stat(ds_measure, ds_contact)
+!     call mm_cycl_stat(ds_measure, ds_contact)
 !
 ! - Propagation of coefficient
 !
