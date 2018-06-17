@@ -80,11 +80,14 @@ subroutine mmmcrf(noma, ddepla, depplu, nfrot, vfrot)
 !
 ! --- CRITERE: VARIATION RELATIVE SUR LES LAGS_C
 !
-    if (vmax2 .gt. 0.d0) then
+   if (vmax2 .gt. 1.d0) then
         crilbd = vmax1/vmax2
+    elseif  (vmax2 .gt. 0.0) then
+        crilbd = vmax1
     else
         crilbd = 0.d0
     endif
+
 !
 ! --- INFORMATIONS SUR LE CRITERE
 !

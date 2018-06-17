@@ -389,9 +389,21 @@ implicit none
        if ((.not. l_pena_frot .and. l_pena_cont ).and. indi_cont_curr .eq. 1) then 
            if ((dist_cont_curr .gt. dist_max) .and. (indi_frot_curr .eq. 0.)&
                 .and. (norm2(dist_frot_curr) .lt. 0.01*dist_max)) then 
-               v_sdcont_cychis(n_cychis*(i_cont_poin-1)+5)  = 2
+               v_sdcont_cychis(n_cychis*(i_cont_poin-1)+5)  = 0
+!                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+5)  = 1
+!                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+6) = 1.d1*ds_contact%arete_max/ds_contact%arete_min*coef_frot_curr
            endif
        endif
+!        ! cas ALGO_CONT=PENALISATION, ALGO_FROT=PENALISATION
+!        ! On fixe un statut adherent en cas de fortes interpenetration
+!        if ((l_pena_frot .and. l_pena_cont ).and. indi_cont_curr .eq. 1) then 
+!            if ((dist_cont_curr .gt. dist_max) .and. (indi_frot_curr .eq. 0.)&
+!                 .and. (norm2(dist_frot_curr) .lt. 1.d-6*dist_max) .and. &
+!                 (indi_frot_curr .eq. indi_frot_prev )) then 
+!                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+5)  = 0
+!                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+6) = 1.d-1*ds_contact%arete_min/ds_contact%arete_max*coef_frot_curr
+!            endif
+!        endif
        
     endif
 
@@ -433,7 +445,7 @@ implicit none
 !         write (6,*) "pres_cont_curr",pres_cont_curr
 !         write (6,*) "pres_cont_prev",pres_cont_prev
 !         write (6,*) "F_refe",F_refe
-!        ctcsta  = ctcsta + 1
+       if (.not. mmcvca) ctcsta  = ctcsta + 1
     endif
     
     if (.not. mmcvca ) ctcsta = ctcsta+1
