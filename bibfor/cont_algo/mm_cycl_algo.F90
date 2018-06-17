@@ -319,8 +319,8 @@ implicit none
     if ((ds_contact%iteration_newton .ge. 3 ) .and. &
        (v_sdcont_cyceta(4*(i_cont_poin-1)+2) .ge. 10 ) .and. treatment   ) then   
         ! Cyclage ADHE_GLIS purement et simplement debranchee :
-        ! Se déclenche tres rarement
         ! Se referer a la version 14.1 mmalgo, pour rebranchement si besoin
+        ! test sur ssnv128p : on passe de 10 iterations a 182 itertions
         v_sdcont_cychis(n_cychis*(i_cont_poin-1)+50) = 0.0d0
         v_sdcont_cychis(n_cychis*(i_cont_poin-1)+54) = 1.0
         v_sdcont_cychis(n_cychis*(i_cont_poin-1)+55) = 1.0

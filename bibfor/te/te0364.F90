@@ -225,7 +225,7 @@ subroutine te0364(option, nomte)
     loptf           = option.eq.'RIGI_FROT'
     call jevech('PCONFR', 'L', jpcf)
     l_previous_cont = (nint(zr(jpcf-1+30)) .eq. 1 )
-    l_previous_frot = (nint(zr(jpcf-1+44)) .eq. 1 ) .and. .false.
+    l_previous_frot = (nint(zr(jpcf-1+44)) .eq. 1 )  
     if (option .eq. 'RIGI_CONT') l_previous = l_previous_cont
     if (option .eq. 'RIGI_FROT') l_previous = l_previous_frot
 !---------------------------------------------------------------
