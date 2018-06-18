@@ -82,7 +82,7 @@ bool BaseLinearSolverInstance::build()
     return true;
 };
 
-bool BaseLinearSolverInstance::matrixFactorization( AssemblyMatrixDoublePtr currentMatrix )
+bool BaseLinearSolverInstance::matrixFactorization( AssemblyMatrixDisplacementDoublePtr currentMatrix )
      throw( std::runtime_error )
 {
     if( _isEmpty ) build();
@@ -106,7 +106,7 @@ bool BaseLinearSolverInstance::matrixFactorization( AssemblyMatrixDoublePtr curr
 };
 
 FieldOnNodesDoublePtr BaseLinearSolverInstance::solveDoubleLinearSystem(
-            const AssemblyMatrixDoublePtr& currentMatrix,
+            const AssemblyMatrixDisplacementDoublePtr& currentMatrix,
             const FieldOnNodesDoublePtr& currentRHS,
             FieldOnNodesDoublePtr result ) const
 {
@@ -126,7 +126,7 @@ FieldOnNodesDoublePtr BaseLinearSolverInstance::solveDoubleLinearSystem(
 };
 
 FieldOnNodesDoublePtr BaseLinearSolverInstance::solveDoubleLinearSystemWithKinematicsLoad(
-            const AssemblyMatrixDoublePtr& currentMatrix,
+            const AssemblyMatrixDisplacementDoublePtr& currentMatrix,
             const FieldOnNodesDoublePtr& kinematicsField,
             const FieldOnNodesDoublePtr& currentRHS,
             FieldOnNodesDoublePtr result ) const

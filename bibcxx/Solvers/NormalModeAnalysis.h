@@ -34,8 +34,8 @@
 class NormalModeAnalysisInstance: public GenericSolver
 {
 private:
-    AssemblyMatrixDoublePtr  _rigidity;
-    AssemblyMatrixDoublePtr  _mass;
+    AssemblyMatrixDisplacementDoublePtr  _rigidity;
+    AssemblyMatrixDisplacementDoublePtr  _mass;
     int                      _numberOfFreq;
 
     CapyConvertibleContainer _container;
@@ -48,9 +48,9 @@ public:
     NormalModeAnalysisInstance(): _numberOfFreq( 10 ),
                                   _containerCalcFreq( "CALC_FREQ" )
     {
-        _container.add( new CapyConvertibleValue< AssemblyMatrixDoublePtr >
+        _container.add( new CapyConvertibleValue< AssemblyMatrixDisplacementDoublePtr >
                             ( false, "MATR_RIGI", _rigidity, false ) );
-        _container.add( new CapyConvertibleValue< AssemblyMatrixDoublePtr >
+        _container.add( new CapyConvertibleValue< AssemblyMatrixDisplacementDoublePtr >
                             ( false, "MATR_MASS", _mass, false ) );
         _container.add( new CapyConvertibleValue< int >
                             ( false, "NMAX_FREQ", _numberOfFreq, true ) );
@@ -58,7 +58,7 @@ public:
 
     MechanicalModeContainerPtr execute();
 
-    void setMassMatrix( const AssemblyMatrixDoublePtr& matr )
+    void setMassMatrix( const AssemblyMatrixDisplacementDoublePtr& matr )
     {
         _container[ "MATR_MASS" ]->enable();
         _mass = matr;
@@ -69,7 +69,7 @@ public:
         _numberOfFreq = number;
     };
 
-    void setRigidityMatrix( const AssemblyMatrixDoublePtr& matr )
+    void setRigidityMatrix( const AssemblyMatrixDisplacementDoublePtr& matr )
     {
         _container[ "MATR_RIGI" ]->enable();
         _rigidity = matr;

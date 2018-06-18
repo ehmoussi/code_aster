@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -19,8 +19,8 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import AssemblyMatrixDouble, AssemblyMatrixTemperatureDouble
-from ..Objects import AssemblyMatrixComplex
+from ..Objects import AssemblyMatrixDisplacementDouble, AssemblyMatrixTemperatureDouble
+from ..Objects import AssemblyMatrixDisplacementComplex
 from .ExecuteCommand import ExecuteCommand
 
 
@@ -37,9 +37,9 @@ class AssembleMatrixOperator(ExecuteCommand):
         if keywords['MATR_ELEM'].getType() == "MATR_ELEM_TEMP_R":
             self._result = AssemblyMatrixTemperatureDouble()
         elif keywords['MATR_ELEM'].getType() == "MATR_ELEM_DEPL_C":
-            self._result = AssemblyMatrixComplex()
+            self._result = AssemblyMatrixDisplacementComplex()
         else:
-            self._result = AssemblyMatrixDouble()
+            self._result = AssemblyMatrixDisplacementDouble()
 
     def post_exec(self, keywords):
         """Store references to ElementaryMatrix objects.

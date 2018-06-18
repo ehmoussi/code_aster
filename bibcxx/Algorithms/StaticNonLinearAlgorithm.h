@@ -164,7 +164,7 @@ void StaticNonLinearAlgorithm< Stepper >::doPrediction( DiscreteProblemPtr dProb
     DOFNumberingPtr dofNum1 = _results->getLastDOFNumbering();
     ElementaryMatrixPtr matrElem = _discreteProblem->buildElementaryTangentMatrix( _loadStep );
     // Build assembly matrix
-    AssemblyMatrixDoublePtr aMatrix( new AssemblyMatrixDoubleInstance( Temporary ) );
+    AssemblyMatrixDisplacementDoublePtr aMatrix( new AssemblyMatrixDisplacementDoubleInstance( Temporary ) );
     aMatrix->appendElementaryMatrix( matrElem );
     aMatrix->setDOFNumbering( dofNum1 );
     aMatrix->setListOfLoads( _listOfLoads );

@@ -68,7 +68,7 @@ nume_ddl_k.setElementaryMatrix(matr_elem_k)
 nume_ddl_k.computeNumerotation()
 
 
-matr_asse_k = code_aster.AssemblyMatrixDouble()
+matr_asse_k = code_aster.AssemblyMatrixDisplacementDouble()
 matr_asse_k.appendElementaryMatrix(matr_elem_k)
 matr_asse_k.setDOFNumbering(nume_ddl_k)
 matr_asse_k.build()

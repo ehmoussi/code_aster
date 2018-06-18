@@ -71,12 +71,12 @@ numeDDLM.setElementaryMatrix(matr_elemM)
 numeDDLM.computeNumerotation()
 
 
-matrAsseK = code_aster.AssemblyMatrixDouble()
+matrAsseK = code_aster.AssemblyMatrixDisplacementDouble()
 matrAsseK.appendElementaryMatrix(matr_elemK)
 matrAsseK.setDOFNumbering(numeDDLK)
 matrAsseK.build()
 
-matrAsseM = code_aster.AssemblyMatrixDouble()
+matrAsseM = code_aster.AssemblyMatrixDisplacementDouble()
 matrAsseM.appendElementaryMatrix(matr_elemM)
 matrAsseM.setDOFNumbering(numeDDLK)
 matrAsseM.build()

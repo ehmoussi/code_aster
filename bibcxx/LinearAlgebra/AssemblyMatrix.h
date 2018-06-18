@@ -226,17 +226,32 @@ class AssemblyMatrixInstance: public DataStructure
 
 /** @typedef Definition d'une matrice assemblee de double */
 template class AssemblyMatrixInstance< double, Displacement >;
-typedef AssemblyMatrixInstance< double, Displacement > AssemblyMatrixDoubleInstance;
+typedef AssemblyMatrixInstance< double, Displacement > AssemblyMatrixDisplacementDoubleInstance;
 /** @typedef Definition d'une matrice assemblee de complexe */
-typedef AssemblyMatrixInstance< DoubleComplex, Displacement > AssemblyMatrixComplexInstance;
+typedef AssemblyMatrixInstance< DoubleComplex, Displacement > AssemblyMatrixDisplacementComplexInstance;
 
 /** @typedef Definition d'une matrice assemblee de double temperature */
 template class AssemblyMatrixInstance< double, Temperature >;
 typedef AssemblyMatrixInstance< double, Temperature > AssemblyMatrixTemperatureDoubleInstance;
 
-typedef boost::shared_ptr< AssemblyMatrixDoubleInstance > AssemblyMatrixDoublePtr;
-typedef boost::shared_ptr< AssemblyMatrixComplexInstance > AssemblyMatrixComplexPtr;
+/** @typedef Definition d'une matrice assemblee de double pression */
+template class AssemblyMatrixInstance< double, Pressure >;
+typedef AssemblyMatrixInstance< double, Pressure > AssemblyMatrixPressureDoubleInstance;
+
+/** @typedef Definition d'une matrice assemblee de DoubleComplex temperature */
+template class AssemblyMatrixInstance< DoubleComplex, Temperature >;
+typedef AssemblyMatrixInstance< DoubleComplex, Temperature > AssemblyMatrixTemperatureComplexInstance;
+
+/** @typedef Definition d'une matrice assemblee de DoubleComplex pression */
+template class AssemblyMatrixInstance< DoubleComplex, Pressure >;
+typedef AssemblyMatrixInstance< DoubleComplex, Pressure > AssemblyMatrixPressureComplexInstance;
+
+typedef boost::shared_ptr< AssemblyMatrixDisplacementDoubleInstance > AssemblyMatrixDisplacementDoublePtr;
+typedef boost::shared_ptr< AssemblyMatrixDisplacementComplexInstance > AssemblyMatrixDisplacementComplexPtr;
 typedef boost::shared_ptr< AssemblyMatrixTemperatureDoubleInstance > AssemblyMatrixTemperatureDoublePtr;
+typedef boost::shared_ptr< AssemblyMatrixTemperatureComplexInstance > AssemblyMatrixTemperatureComplexPtr;
+typedef boost::shared_ptr< AssemblyMatrixPressureDoubleInstance > AssemblyMatrixPressureDoublePtr;
+typedef boost::shared_ptr< AssemblyMatrixPressureComplexInstance > AssemblyMatrixPressureComplexPtr;
 
 template< class ValueType, PhysicalQuantityEnum PhysicalQuantity >
 AssemblyMatrixInstance< ValueType, PhysicalQuantity >::AssemblyMatrixInstance( const JeveuxMemory memType ):
