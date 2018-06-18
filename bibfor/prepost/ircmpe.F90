@@ -328,7 +328,9 @@ subroutine ircmpe(nofimd, ncmpve, numcmp, exicmp, nbvato,&
                     zi(jaux+3) = nbqcou
                     zi(jaux+4) = 0
                 else
-                    ASSERT( .False. )
+                    ! Ce n'est pas un élément à sous-point
+                    zi(jaux+3) = 0
+                    zi(jaux+4) = 0
                 endif
             else
                 zi(jaux+3) = 0
