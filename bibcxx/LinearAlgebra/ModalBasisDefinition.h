@@ -78,8 +78,8 @@ protected:
         VectorInt                  _vecOfInt;
         MechanicalModeContainerPtr _interfaceModes;
         StructureInterfacePtr      _structInterf;
-        AssemblyMatrixDoublePtr    _matrD;
-        AssemblyMatrixComplexPtr   _matrC;
+        AssemblyMatrixDisplacementDoublePtr    _matrD;
+        AssemblyMatrixDisplacementComplexPtr   _matrC;
 
         CapyConvertibleContainer _container;
 
@@ -151,27 +151,27 @@ protected:
 
         UnitaryModalBasis( const std::string& name,
                            const MechanicalModeContainerPtr& basis,
-                           const AssemblyMatrixDoublePtr& matr ):
+                           const AssemblyMatrixDisplacementDoublePtr& matr ):
             _interfaceModes( basis ),
             _matrD( matr ),
             _container( CapyConvertibleContainer( name ) )
         {
             _container.add( new CapyConvertibleValue< MechanicalModeContainerPtr >
                                     ( true, "BASE", _interfaceModes, true ) );
-            _container.add( new CapyConvertibleValue< AssemblyMatrixDoublePtr >
+            _container.add( new CapyConvertibleValue< AssemblyMatrixDisplacementDoublePtr >
                                     ( true, "MATRICE", _matrD, true ) );
         };
 
         UnitaryModalBasis( const std::string& name,
                            const MechanicalModeContainerPtr& basis,
-                           const AssemblyMatrixComplexPtr& matr ):
+                           const AssemblyMatrixDisplacementComplexPtr& matr ):
             _interfaceModes( basis ),
             _matrC( matr ),
             _container( CapyConvertibleContainer( name ) )
         {
             _container.add( new CapyConvertibleValue< MechanicalModeContainerPtr >
                                     ( true, "BASE", _interfaceModes, true ) );
-            _container.add( new CapyConvertibleValue< AssemblyMatrixComplexPtr >
+            _container.add( new CapyConvertibleValue< AssemblyMatrixDisplacementComplexPtr >
                                     ( true, "MATRICE", _matrC, true ) );
         };
 
@@ -251,8 +251,8 @@ class RitzBasisInstance: public GenericModalBasisInstance
 private:
     StructureInterfacePtr    _interf;
     DOFNumberingPtr          _dofNum;
-    AssemblyMatrixDoublePtr  _matrD;
-    AssemblyMatrixComplexPtr _matrC;
+    AssemblyMatrixDisplacementDoublePtr  _matrD;
+    AssemblyMatrixDisplacementComplexPtr _matrC;
     bool                     _reortho;
     VectorDouble             _dampingVector;
 
@@ -310,19 +310,19 @@ public:
         _vectorOfModalBasis.emplace_back( "RITZ", interf, vecOfInt );
     };
 
-    void reorthonormalising( const AssemblyMatrixComplexPtr& matr )
+    void reorthonormalising( const AssemblyMatrixDisplacementComplexPtr& matr )
     {
         _matrC = matr;
         _reortho = true;
-        _container.add( new CapyConvertibleValue< AssemblyMatrixComplexPtr >
+        _container.add( new CapyConvertibleValue< AssemblyMatrixDisplacementComplexPtr >
                                 ( false, "MATRICE", _matrC, true ) );
     };
 
-    void reorthonormalising( const AssemblyMatrixDoublePtr& matr )
+    void reorthonormalising( const AssemblyMatrixDisplacementDoublePtr& matr )
     {
         _matrD = matr;
         _reortho = true;
-        _container.add( new CapyConvertibleValue< AssemblyMatrixDoublePtr >
+        _container.add( new CapyConvertibleValue< AssemblyMatrixDisplacementDoublePtr >
                                 ( false, "MATRICE", _matrD, true ) );
     };
 
@@ -360,8 +360,8 @@ class OrthonormalizedBasisInstance: public GenericModalBasisInstance
 {
 private:
     MechanicalModeContainerPtr _basis;
-    AssemblyMatrixDoublePtr    _matrD;
-    AssemblyMatrixComplexPtr   _matrC;
+    AssemblyMatrixDisplacementDoublePtr    _matrD;
+    AssemblyMatrixDisplacementComplexPtr   _matrC;
 
 public:
     /**
@@ -374,7 +374,7 @@ public:
      * @brief Constructeur
      */
     OrthonormalizedBasisInstance( const MechanicalModeContainerPtr& basis,
-                                  const AssemblyMatrixDoublePtr& matr ):
+                                  const AssemblyMatrixDisplacementDoublePtr& matr ):
         OrthonormalizedBasisInstance( ResultNaming::getNewResultName(),
                                       basis, matr )
     {};
@@ -384,7 +384,7 @@ public:
      */
     OrthonormalizedBasisInstance( const std::string name,
                                   const MechanicalModeContainerPtr& basis,
-                                  const AssemblyMatrixDoublePtr& matr ):
+                                  const AssemblyMatrixDisplacementDoublePtr& matr ):
         GenericModalBasisInstance( name ),
         _basis( basis ),
         _matrD( matr )
@@ -396,7 +396,7 @@ public:
      * @brief Constructeur
      */
     OrthonormalizedBasisInstance( const MechanicalModeContainerPtr& basis,
-                                  const AssemblyMatrixComplexPtr& matr ):
+                                  const AssemblyMatrixDisplacementComplexPtr& matr ):
         OrthonormalizedBasisInstance( ResultNaming::getNewResultName(),
                                       basis, matr )
     {};
@@ -406,7 +406,7 @@ public:
      */
     OrthonormalizedBasisInstance( const std::string name,
                                   const MechanicalModeContainerPtr& basis,
-                                  const AssemblyMatrixComplexPtr& matr ):
+                                  const AssemblyMatrixDisplacementComplexPtr& matr ):
         GenericModalBasisInstance( name ),
         _basis( basis ),
         _matrC( matr )

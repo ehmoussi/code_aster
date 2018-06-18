@@ -32,48 +32,48 @@ void exportAssemblyMatrixToPython()
 {
     using namespace boost::python;
 
-    void (AssemblyMatrixDoubleInstance::*c1)(const KinematicsLoadPtr& currentLoad) =
-            &AssemblyMatrixDoubleInstance::addLoad;
-    void (AssemblyMatrixDoubleInstance::*c2)(const KinematicsLoadPtr& currentLoad,
+    void (AssemblyMatrixDisplacementDoubleInstance::*c1)(const KinematicsLoadPtr& currentLoad) =
+            &AssemblyMatrixDisplacementDoubleInstance::addLoad;
+    void (AssemblyMatrixDisplacementDoubleInstance::*c2)(const KinematicsLoadPtr& currentLoad,
                                              const FunctionPtr& func) =
-            &AssemblyMatrixDoubleInstance::addLoad;
+            &AssemblyMatrixDisplacementDoubleInstance::addLoad;
 
-    class_< AssemblyMatrixDoubleInstance, AssemblyMatrixDoublePtr,
+    class_< AssemblyMatrixDisplacementDoubleInstance, AssemblyMatrixDisplacementDoublePtr,
             bases< DataStructure > >
-        ( "AssemblyMatrixDouble", no_init )
+        ( "AssemblyMatrixDisplacementDouble", no_init )
         .def( "__init__", make_constructor(
-            &initFactoryPtr< AssemblyMatrixDoubleInstance >) )
+            &initFactoryPtr< AssemblyMatrixDisplacementDoubleInstance >) )
         .def( "__init__", make_constructor(
-            &initFactoryPtr< AssemblyMatrixDoubleInstance,
+            &initFactoryPtr< AssemblyMatrixDisplacementDoubleInstance,
                              std::string >) )
         .def( "addKinematicsLoad", c1 )
         .def( "addKinematicsLoad", c2 )
-        .def( "build", &AssemblyMatrixDoubleInstance::build )
-        .def( "getDOFNumbering", &AssemblyMatrixDoubleInstance::getDOFNumbering )
-        .def( "setDOFNumbering", &AssemblyMatrixDoubleInstance::setDOFNumbering )
-        .def( "appendElementaryMatrix", &AssemblyMatrixDoubleInstance::appendElementaryMatrix )
+        .def( "build", &AssemblyMatrixDisplacementDoubleInstance::build )
+        .def( "getDOFNumbering", &AssemblyMatrixDisplacementDoubleInstance::getDOFNumbering )
+        .def( "setDOFNumbering", &AssemblyMatrixDisplacementDoubleInstance::setDOFNumbering )
+        .def( "appendElementaryMatrix", &AssemblyMatrixDisplacementDoubleInstance::appendElementaryMatrix )
     ;
 
-    void (AssemblyMatrixComplexInstance::*c3)(const KinematicsLoadPtr& currentLoad) =
-            &AssemblyMatrixComplexInstance::addLoad;
-    void (AssemblyMatrixComplexInstance::*c4)(const KinematicsLoadPtr& currentLoad,
+    void (AssemblyMatrixDisplacementComplexInstance::*c3)(const KinematicsLoadPtr& currentLoad) =
+            &AssemblyMatrixDisplacementComplexInstance::addLoad;
+    void (AssemblyMatrixDisplacementComplexInstance::*c4)(const KinematicsLoadPtr& currentLoad,
                                      const FunctionPtr& func) =
-            &AssemblyMatrixComplexInstance::addLoad;
+            &AssemblyMatrixDisplacementComplexInstance::addLoad;
 
-    class_< AssemblyMatrixComplexInstance, AssemblyMatrixComplexPtr,
+    class_< AssemblyMatrixDisplacementComplexInstance, AssemblyMatrixDisplacementComplexPtr,
             bases< DataStructure > >
-        ( "AssemblyMatrixComplex", no_init )
+        ( "AssemblyMatrixDisplacementComplex", no_init )
         .def( "__init__", make_constructor(
-            &initFactoryPtr< AssemblyMatrixComplexInstance >) )
+            &initFactoryPtr< AssemblyMatrixDisplacementComplexInstance >) )
         .def( "__init__", make_constructor(
-            &initFactoryPtr< AssemblyMatrixComplexInstance ,
+            &initFactoryPtr< AssemblyMatrixDisplacementComplexInstance ,
                              std::string >) )
         .def( "addKinematicsLoad", c3 )
         .def( "addKinematicsLoad", c4 )
-        .def( "build", &AssemblyMatrixComplexInstance::build )
-        .def( "getDOFNumbering", &AssemblyMatrixComplexInstance::getDOFNumbering )
-        .def( "setDOFNumbering", &AssemblyMatrixComplexInstance::setDOFNumbering )
-        .def( "appendElementaryMatrix", &AssemblyMatrixComplexInstance::appendElementaryMatrix )
+        .def( "build", &AssemblyMatrixDisplacementComplexInstance::build )
+        .def( "getDOFNumbering", &AssemblyMatrixDisplacementComplexInstance::getDOFNumbering )
+        .def( "setDOFNumbering", &AssemblyMatrixDisplacementComplexInstance::setDOFNumbering )
+        .def( "appendElementaryMatrix", &AssemblyMatrixDisplacementComplexInstance::appendElementaryMatrix )
     ;
 
     void (AssemblyMatrixTemperatureDoubleInstance::*c5)(const KinematicsLoadPtr& currentLoad) =
@@ -96,6 +96,72 @@ void exportAssemblyMatrixToPython()
         .def( "getDOFNumbering", &AssemblyMatrixTemperatureDoubleInstance::getDOFNumbering )
         .def( "setDOFNumbering", &AssemblyMatrixTemperatureDoubleInstance::setDOFNumbering )
         .def( "appendElementaryMatrix", &AssemblyMatrixTemperatureDoubleInstance::appendElementaryMatrix )
+    ;
+
+    void (AssemblyMatrixTemperatureComplexInstance::*c7)(const KinematicsLoadPtr& currentLoad) =
+            &AssemblyMatrixTemperatureComplexInstance::addLoad;
+    void (AssemblyMatrixTemperatureComplexInstance::*c8)(const KinematicsLoadPtr& currentLoad,
+                                             const FunctionPtr& func) =
+            &AssemblyMatrixTemperatureComplexInstance::addLoad;
+
+    class_< AssemblyMatrixTemperatureComplexInstance, AssemblyMatrixTemperatureComplexPtr,
+            bases< DataStructure > >
+        ( "AssemblyMatrixTemperatureComplex", no_init )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< AssemblyMatrixTemperatureComplexInstance >) )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< AssemblyMatrixTemperatureComplexInstance,
+                             std::string >) )
+        .def( "addKinematicsLoad", c7 )
+        .def( "addKinematicsLoad", c8 )
+        .def( "build", &AssemblyMatrixTemperatureComplexInstance::build )
+        .def( "getDOFNumbering", &AssemblyMatrixTemperatureComplexInstance::getDOFNumbering )
+        .def( "setDOFNumbering", &AssemblyMatrixTemperatureComplexInstance::setDOFNumbering )
+        .def( "appendElementaryMatrix", &AssemblyMatrixTemperatureComplexInstance::appendElementaryMatrix )
+    ;
+
+    void (AssemblyMatrixPressureDoubleInstance::*c9)(const KinematicsLoadPtr& currentLoad) =
+            &AssemblyMatrixPressureDoubleInstance::addLoad;
+    void (AssemblyMatrixPressureDoubleInstance::*c10)(const KinematicsLoadPtr& currentLoad,
+                                             const FunctionPtr& func) =
+            &AssemblyMatrixPressureDoubleInstance::addLoad;
+
+    class_< AssemblyMatrixPressureDoubleInstance, AssemblyMatrixPressureDoublePtr,
+            bases< DataStructure > >
+        ( "AssemblyMatrixPressureDouble", no_init )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< AssemblyMatrixPressureDoubleInstance >) )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< AssemblyMatrixPressureDoubleInstance,
+                             std::string >) )
+        .def( "addKinematicsLoad", c9 )
+        .def( "addKinematicsLoad", c10 )
+        .def( "build", &AssemblyMatrixPressureDoubleInstance::build )
+        .def( "getDOFNumbering", &AssemblyMatrixPressureDoubleInstance::getDOFNumbering )
+        .def( "setDOFNumbering", &AssemblyMatrixPressureDoubleInstance::setDOFNumbering )
+        .def( "appendElementaryMatrix", &AssemblyMatrixPressureDoubleInstance::appendElementaryMatrix )
+    ;
+
+    void (AssemblyMatrixPressureComplexInstance::*c11)(const KinematicsLoadPtr& currentLoad) =
+            &AssemblyMatrixPressureComplexInstance::addLoad;
+    void (AssemblyMatrixPressureComplexInstance::*c12)(const KinematicsLoadPtr& currentLoad,
+                                             const FunctionPtr& func) =
+            &AssemblyMatrixPressureComplexInstance::addLoad;
+
+    class_< AssemblyMatrixPressureComplexInstance, AssemblyMatrixPressureComplexPtr,
+            bases< DataStructure > >
+        ( "AssemblyMatrixPressureComplex", no_init )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< AssemblyMatrixPressureComplexInstance >) )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< AssemblyMatrixPressureComplexInstance,
+                             std::string >) )
+        .def( "addKinematicsLoad", c11 )
+        .def( "addKinematicsLoad", c12 )
+        .def( "build", &AssemblyMatrixPressureComplexInstance::build )
+        .def( "getDOFNumbering", &AssemblyMatrixPressureComplexInstance::getDOFNumbering )
+        .def( "setDOFNumbering", &AssemblyMatrixPressureComplexInstance::setDOFNumbering )
+        .def( "appendElementaryMatrix", &AssemblyMatrixPressureComplexInstance::appendElementaryMatrix )
     ;
 
 };

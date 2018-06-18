@@ -42,9 +42,9 @@ class StaticModeAnalysisInstance: public GenericSolver
 {
     protected:
         /** @brief Mass Matrix */
-        AssemblyMatrixDoublePtr    _MassMatrix;
+        AssemblyMatrixDisplacementDoublePtr    _MassMatrix;
         /** @brief Stiffness Matrix */
-        AssemblyMatrixDoublePtr    _StiffMatrix;
+        AssemblyMatrixDisplacementDoublePtr    _StiffMatrix;
         /** @brief Solveur lineaire */
         BaseLinearSolverPtr   _linearSolver;
         /** @brief factor keyword composant description */
@@ -112,7 +112,7 @@ class StaticModeAnalysisInstance: public GenericSolver
          * @brief Methode permettant de definir la matrice de masse
          * @param currentMatrix Matrice de masse
          */
-        void setMassMatrix( const AssemblyMatrixDoublePtr& currentMatrix )
+        void setMassMatrix( const AssemblyMatrixDisplacementDoublePtr& currentMatrix )
         {
             _MassMatrix = currentMatrix;
         };
@@ -121,7 +121,7 @@ class StaticModeAnalysisInstance: public GenericSolver
          * @brief Methode permettant de definir la matrice de rigidite
          * @param currentMatrix Matrice de masse
          */
-        void setStiffMatrix( const AssemblyMatrixDoublePtr& currentMatrix )
+        void setStiffMatrix( const AssemblyMatrixDisplacementDoublePtr& currentMatrix )
         {
             _StiffMatrix = currentMatrix;
         };
