@@ -103,7 +103,7 @@ implicit none
     real(kind=8) :: coef_cont_curr=0.0, coef_frot_curr=0.0
     real(kind=8) ::  coefficient=0.0
     aster_logical:: coef_found=.false._1,treatment =.true._1
-    aster_logical:: l_coef_adap = .false._1
+    aster_logical:: l_coef_adap = .false._1,mmcvca_frot=.true._1
     integer      ::  mode_cycl = 0
     real(kind=8) :: pres_frot_prev(3)=0.0, pres_cont_prev=0.0
     real(kind=8) :: dist_frot_prev(3)=0.0, dist_cont_prev=0.0
@@ -118,11 +118,13 @@ implicit none
     integer :: n_cychis,nb_cont_poin
 !    real(kind=8) :: coef_bussetta=0.0, dist_max, coef_tmp
     real(kind=8) ::  coef_tmp,F_refe,resi_press_curr
+    real(kind=8) ::  glis_max
 !    real(kind=8) ::  racine,racine1,racine2,racinesup
 !    real(kind=8) ::  a,b,c,discriminant
     real(kind=8) :: bound_coef(2)
     bound_coef(1)     = 1.d-8
     bound_coef(2)     = 1.d8
+    mmcvca_frot=.true._1
     
 
 
@@ -261,7 +263,12 @@ implicit none
     if (i_reso_cont .eq. 0) then
         if (v_sdcont_cyceta(4*(i_cont_poin-1)+4) .eq. -10) then
             if (ds_contact%resi_pressure .lt. 1.d-4*ds_contact%cont_pressure)  mmcvca = .true.
-            goto 236
+!             Idee de GD : Une fois que le point a cycle on fixe son statu jusqu'à la fin
+!                 if (v_sdcont_cychis(n_cychis*(i_cont_poin-1)+60) .eq. 1.) then 
+!                     goto 236 
+!                 else 
+!                     v_sdcont_cychis(n_cychis*(i_cont_poin-1)+60) = 1.
+!                 endif
         endif
     endif
     
@@ -272,8 +279,13 @@ implicit none
 !    Cas 1 : Le point fait du FLIP-FLOP, meme traitement que POINT_FIXE
 !            Et Il ne faut surtout pas adapter les matrices de contact : ssnv504e
             if (v_sdcont_cyceta(4*(i_cont_poin-1)+4) .eq. -10) then
-                if (ds_contact%resi_pressure .lt. 1.d-4*ds_contact%cont_pressure)  mmcvca = .true.
-!                 goto 236
+!                 if (ds_contact%resi_pressure .lt. 1.d-4*ds_contact%cont_pressure)  mmcvca = .true.
+! !                 Idee de GD : Une fois que le point a cycle on fixe son statu jusqu'à la fin
+!                 if (v_sdcont_cychis(n_cychis*(i_cont_poin-1)+60) .eq. 1.) then 
+!                     goto 236 
+!                 else 
+!                     v_sdcont_cychis(n_cychis*(i_cont_poin-1)+60) = 1.
+!                 endif
             else 
             !ADAPTATION DE MATRICES, VECTEURS ET COEFF POUR LES TE :
                 v_sdcont_cychis(n_cychis*(i_cont_poin-1)+57) = 1.0
@@ -407,9 +419,43 @@ implicit none
     endif
 
 
+
+!        ! cas ALGO_CONT=STANDARD, ALGO_FROT=PENALISATION
+!        ! On fixe un statut glissement en cas de fortes interpenetration
+    if ((l_pena_frot .and. (.not. l_pena_cont) ).and. indi_cont_curr .eq. 1) then 
+!             if (indi_frot_curr .ne. indi_frot_prev) mmcvca_frot = .false.
+! !                write (6,*) "indi_frot_curr : ",indi_frot_curr
+!             if (.not. mmcvca_frot) then 
+            if (indi_frot_curr .eq. 0) then                
+                if (pres_cont_curr .lt. -1.d-6*ds_contact%cont_pressure) then 
+                    if ( (norm2(dist_frot_curr) .gt. 1.d-5*ds_contact%arete_min)) then 
+                        ! coef_frot a une dimension : 1/glissement
+                        glis_max = ds_contact%arete_min
+                        v_sdcont_cychis(n_cychis*(i_cont_poin-1)+6) = 1.d-3*norm2(dist_frot_curr)/ds_contact%arete_min*1/glis_max
+                    endif
+                endif
+            endif
+            if (indi_frot_curr .eq. 1) then
+                if (pres_cont_curr .lt. -1.d-6*ds_contact%cont_pressure) then 
+                    if ((norm2(dist_frot_curr) .gt. 1.d-4*ds_contact%arete_min)) then
+                        glis_max = ds_contact%arete_min
+                        v_sdcont_cychis(n_cychis*(i_cont_poin-1)+6) = max(norm2(pres_frot_curr),0.1)*1.d2/glis_max
+!                         v_sdcont_cychis(n_cychis*(i_cont_poin-1)+6) = 1.d4*ds_contact%arete_max/ds_contact%arete_min
+!                         mmcvca_frot = .false.
+                    endif
+                endif
+            endif
+!             endif
+    endif
+
+
+
+
+
+
 ! - Convergence ?
 !
-    mmcvca =  indi_cont_prev .eq. indi_cont_curr
+    mmcvca =  (indi_cont_prev .eq. indi_cont_curr) .and. mmcvca_frot
     if (.not. mmcvca .and. treatment) then
 !       On Bascule en mode penalise automatiquement jusqu'à convergence puis 
 !       On revient en standard quand le statut de contact se stabilise : ssnv128z
@@ -444,7 +490,6 @@ implicit none
 !         write (6,*) "pres_cont_curr",pres_cont_curr
 !         write (6,*) "pres_cont_prev",pres_cont_prev
 !         write (6,*) "F_refe",F_refe
-       if (.not. mmcvca) ctcsta  = ctcsta + 1
     endif
     
     if (.not. mmcvca ) ctcsta = ctcsta+1

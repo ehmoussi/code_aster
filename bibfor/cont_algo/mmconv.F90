@@ -70,7 +70,7 @@ implicit none
     character(len=19) :: depplu, depmoi, ddepla,depdel
     aster_logical :: loop_cont_divec,loop_cont_diveg,l_cont_cont
     aster_logical :: lnewtf, lnewtg,lnewtc,l_exis_pena
-    real(kind=8) :: time_curr
+    real(kind=8) :: time_curr,sum_pressure
 
 !
 ! ----------------------------------------------------------------------
@@ -117,7 +117,7 @@ implicit none
 !
 ! ----- CALCUL RESIDU DE FROTTEMENT
 !
-        call mmmcrf(noma, ddepla, depplu, nfrot, vfrot)
+        call mmmcrf(noma, ddepla, depplu, nfrot, vfrot,sum_pressure)
     endif
 !
 ! --- EVALUATION RESIDU SEUIL GEOMETRIE
