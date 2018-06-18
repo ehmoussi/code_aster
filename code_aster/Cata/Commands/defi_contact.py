@@ -512,7 +512,7 @@ DEFI_CONTACT=OPER(nom       = "DEFI_CONTACT", op=30, sd_prod   = char_contact, r
                                                                   COEF_FROT  =SIMP(statut='f',typ='R',defaut=100.E+0),
                                           ),
                                           b_frot_pena=BLOC(condition = """(equal_to("ALGO_FROT", 'PENALISATION'))  """, fr=tr("Paramètres de la méthode pénalisée"),
-                                                           COEF_PENA_FROT  =SIMP(statut='o',typ='R'),
+                                                           COEF_PENA_FROT  =SIMP(statut='f',typ='R',defaut=1.0E-4),
                                                            #COEF_PENA_FROT  =SIMP(statut='f',typ='R',defaut=100.0E+0),
                                                            #ADAPTATION      =SIMP(statut='f',typ='TXM',defaut="TOUT", into=("ADAPT_COEF","CYCLAGE","TOUT","NON"),),
                                                            #PENE_MAXI  =SIMP(statut='f',typ='R',defaut=1.0E-2),

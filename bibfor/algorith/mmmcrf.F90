@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine mmmcrf(noma, ddepla, depplu, nfrot, vfrot)
+subroutine mmmcrf(noma, ddepla, depplu, nfrot, vfrot,sum_pressure)
 !
 !
     implicit     none
@@ -32,6 +32,7 @@ subroutine mmmcrf(noma, ddepla, depplu, nfrot, vfrot)
     character(len=19) :: depplu, ddepla
     character(len=16) :: nfrot
     real(kind=8) :: vfrot
+    real(kind=8) :: sum_pressure
 !
 ! ----------------------------------------------------------------------
 !

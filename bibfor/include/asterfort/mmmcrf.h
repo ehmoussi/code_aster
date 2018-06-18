@@ -19,11 +19,12 @@
 !
 !
 interface
-    subroutine mmmcrf(noma, ddepla, depplu, nfrot, vfrot)
+    subroutine mmmcrf(noma, ddepla, depplu, nfrot, vfrot,sum_pressure)
         character(len=8) :: noma
         character(len=19) :: ddepla
         character(len=19) :: depplu
         character(len=16) :: nfrot
         real(kind=8) :: vfrot
+        real(kind=8) :: sum_pressure
     end subroutine mmmcrf
 end interface
