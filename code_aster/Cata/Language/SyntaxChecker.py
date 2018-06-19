@@ -96,9 +96,9 @@ def _gettype(obj):
 
 def isValidType(obj, expected):
     """Check that `obj` has one of the `expected` type"""
-    # None means undefined: type is valid
+    # None means undefined and should have been treated before
     if obj is None:
-        return True
+        return False
 
     if DS.not_checked in expected:
         return True
@@ -261,12 +261,12 @@ class SyntaxCheckerVisitor(object):
                 continue
             if hasattr(i, "evaluation"):
                 i = i.evaluation
+                # if a Variable is not yet evaluated
+                if i is None:
+                    continue
                 # for lists and tuples, take the first element
                 if type(i) in (list, tuple) and i:
                     i = i[0]
-            # if a Variable is not yet evaluated
-            if i is None:
-                continue
 
             # Let expected types check for themselves
             for typeobj in validType:
@@ -293,7 +293,7 @@ class SyntaxCheckerVisitor(object):
                 step._context(i)
                 self.error(TypeError,
                            'Unexpected type: {0}, expecting: {1}'
-                               .format(type(i), validType))
+                           .format(type(i), validType))
             # into
             if step.definition.has_key("into"):
                 if i not in step.definition["into"]:
