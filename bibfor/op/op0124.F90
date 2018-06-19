@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -24,6 +24,9 @@ subroutine op0124()
 ! ----------------------------------------------------------------------
 #include "asterc/getfac.h"
 #include "asterfort/crasse.h"
+#include "asterfort/crcoch.h"
+#include "asterfort/crcore.h"
+#include "asterfort/crkucv.h"
 #include "asterfort/crperm.h"
 #include "asterfort/crprol.h"
 #include "asterfort/crtype.h"
@@ -138,6 +141,37 @@ subroutine op0124()
              call utmess ( 'F', 'ALGORITH17_41', nk=2, valk=valk )
         endif
         call crvrc2()
+        goto 9999
+    endif
+!
+! ----------------------------------------------------------------------
+!               TRAITEMENT DU MOT CLE "KUCV"
+! ----------------------------------------------------------------------
+!
+    call getfac('KUCV', nbfac)
+    if (nbfac .gt. 0) then
+        call crkucv()
+        goto 9999
+    endif
+!
+! ----------------------------------------------------------------------
+!               TRAITEMENT DU MOT CLE "CONV_CHAR"
+! ----------------------------------------------------------------------
+!
+    call getfac('CONV_CHAR', nbfac)
+    if (nbfac .gt. 0) then
+        call crcoch()
+        goto 9999
+    endif
+!
+!
+! ----------------------------------------------------------------------
+!               TRAITEMENT DU MOT CLE "CONV_RESU"
+! ----------------------------------------------------------------------
+!
+    call getfac('CONV_RESU', nbfac)
+    if (nbfac .gt. 0) then
+        call crcore()
         goto 9999
     endif
 !
