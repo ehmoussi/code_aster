@@ -38,6 +38,37 @@
 #include "LinearAlgebra/MatrixStorage.h"
 
 /**
+ * @class FieldOnNodesDescriptionInstance
+ * @brief This class describes the structure of dof stored in a field on nodes
+ * @author Nicolas Sellenet
+ */
+class FieldOnNodesDescriptionInstance: public DataStructure
+{
+    /** @brief Objet Jeveux '.PRNO' */
+    JeveuxCollectionLong         _componentsOnNodes;
+    /** @brief Objet Jeveux '.LILI' */
+    JeveuxBidirectionalMapChar24 _namesOfGroupOfElements;
+    /** @brief Objet Jeveux '.NUEQ' */
+    JeveuxVectorLong             _indexationVector;
+    /** @brief Objet Jeveux '.DEEQ' */
+    JeveuxVectorLong             _nodeAndComponentsNumberFromDOF;
+
+public:
+    /**
+     * @brief Constructeur
+     */
+    FieldOnNodesDescriptionInstance(  const JeveuxMemory memType = Permanent );
+
+    /**
+     * @brief Constructeur
+     * @param name nom souhaité de la sd (utile pour le FieldOnNodesDescriptionInstance d'une sd_resu)
+     */
+    FieldOnNodesDescriptionInstance( const std::string name,
+                                     const JeveuxMemory memType = Permanent );
+};
+typedef boost::shared_ptr< FieldOnNodesDescriptionInstance > FieldOnNodesDescriptionPtr;
+
+/**
  * @class BaseDOFNumberingInstance
  * @brief Class definissant un nume_ddl
  *        Cette classe est volontairement succinte car on n'en connait pas encore l'usage
@@ -135,23 +166,11 @@ private:
         JeveuxVectorLong             _informations;
         /** @brief Objet Jeveux '.DELG' */
         JeveuxVectorLong             _lagrangianInformations;
-        /** @brief Objet Jeveux '.PRNO' */
-        JeveuxCollectionLong         _componentsOnNodes;
-        /** @brief Objet Jeveux '.LILI' */
-        JeveuxBidirectionalMapChar24 _namesOfGroupOfElements;
-        /** @brief Objet Jeveux '.NUEQ' */
-        JeveuxVectorLong             _indexationVector;
-        /** @brief Objet Jeveux '.DEEQ' */
-        JeveuxVectorLong             _nodeAndComponentsNumberFromDOF;
 
         GlobalEquationNumberingInstance( const std::string& DOFNumName ):
             _numberOfEquations( DOFNumName + ".NEQU" ),
             _informations( DOFNumName + ".REFN" ),
-            _lagrangianInformations( DOFNumName + ".DELG" ),
-            _componentsOnNodes( DOFNumName + ".PRNO" ),
-            _namesOfGroupOfElements( DOFNumName + ".LILI" ),
-            _indexationVector( DOFNumName + ".NUEQ" ),
-            _nodeAndComponentsNumberFromDOF( DOFNumName + ".DEEQ" )
+            _lagrangianInformations( DOFNumName + ".DELG" )
         {};
         friend class BaseDOFNumberingInstance;
     };
@@ -189,6 +208,8 @@ private:
     JeveuxVectorChar24         _nameOfSolverDataStructure;
     /** @brief Objet '.NUME' */
     GlobalEquationNumberingPtr _globalNumbering;
+    /** @brief Objet prof_chno */
+    FieldOnNodesDescriptionPtr _dofDescription;
     /** @brief Objet '.NUML' */
     LocalEquationNumberingPtr  _localNumbering;
     /** @brief Modele support */

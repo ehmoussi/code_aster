@@ -238,6 +238,7 @@ bool ResultsContainerInstance::update() throw ( std::runtime_error )
                     {
                         FieldOnNodesDoublePtr result( new FieldOnNodesDoubleInstance( name ) );
                         _dictOfVectorOfFieldsNodes[ nomSymb ][ rank ] = result;
+                        result->update();
                     }
                 }
                 else if( resu == "ELEM" || resu == "ELNO" || resu == "ELGA" )
@@ -257,6 +258,7 @@ bool ResultsContainerInstance::update() throw ( std::runtime_error )
                     {
                         FieldOnElementsDoublePtr result( new FieldOnElementsDoubleInstance( name ) );
                         _dictOfVectorOfFieldsElements[ nomSymb ][ rank ] = result;
+                        result->update();
                     }
                 }
             }

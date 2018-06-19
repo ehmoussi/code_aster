@@ -49,6 +49,7 @@ void exportFieldOnNodesToPython()
             return v.operator[](i);
         })
         .def( "printMedFile", &FieldOnNodesDoubleInstance::printMedFile )
+        .def( "update", &FieldOnNodesDoubleInstance::update )
         .def( "updateValuePointers", &FieldOnNodesDoubleInstance::updateValuePointers )
     ;
     class_< FieldOnNodesComplexInstance, FieldOnNodesComplexPtr,
@@ -64,6 +65,7 @@ void exportFieldOnNodesToPython()
             return v.operator[](i);
          })
         .def( "printMedFile", &FieldOnNodesComplexInstance::printMedFile )
+        .def( "update", &FieldOnNodesComplexInstance::update )
         .def( "updateValuePointers", &FieldOnNodesComplexInstance::updateValuePointers )
     ;
 };
