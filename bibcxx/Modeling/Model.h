@@ -39,6 +39,7 @@
 #include "Loads/PhysicalQuantity.h"
 #include "Utilities/SyntaxDictionary.h"
 #include "Supervis/ResultNaming.h"
+#include "Modeling/FiniteElementDescriptor.h"
 
 /**
  * @enum ModelSplitingMethod
@@ -88,26 +89,28 @@ class ModelInstance: public DataStructure
         typedef listOfModsAndGrps::const_iterator listOfModsAndGrpsCIter;
 
         /** @brief Vecteur Jeveux '.MAILLE' */
-        JeveuxVectorLong     _typeOfElements;
+        JeveuxVectorLong           _typeOfElements;
         /** @brief Vecteur Jeveux '.NOEUD' */
-        JeveuxVectorLong     _typeOfNodes;
+        JeveuxVectorLong           _typeOfNodes;
         /** @brief Vecteur Jeveux '.PARTIT' */
-        JeveuxVectorChar8    _partition;
+        JeveuxVectorChar8          _partition;
         /** @brief Liste contenant les modelisations ajoutees par l'utilisateur */
-        listOfModsAndGrps    _modelisations;
+        listOfModsAndGrps          _modelisations;
         /** @brief Maillage sur lequel repose la modelisation */
-        BaseMeshPtr          _supportBaseMesh;
+        BaseMeshPtr                _supportBaseMesh;
         /**
          * @brief Maillage sur lequel repose la modelisation
          * @todo a supprimer en templatisant Model etc.
          */
 #ifdef _USE_MPI
-        PartialMeshPtr       _supportPartialMesh;
+        PartialMeshPtr             _supportPartialMesh;
 #endif /* _USE_MPI */
         /** @brief Méthode de parallélisation du modèle */
-        ModelSplitingMethod  _splitMethod;
+        ModelSplitingMethod        _splitMethod;
         /** @brief Graph partitioning */
-        GraphPartitioner     _graphPartitioner;
+        GraphPartitioner           _graphPartitioner;
+        /** @brief Object .MODELE */
+        FiniteElementDescriptorPtr _ligrel;
 
         /**
          * @brief Ajout d'une nouvelle modelisation sur tout le maillage
@@ -137,7 +140,9 @@ class ModelInstance: public DataStructure
             _partition( JeveuxVectorChar8( getName() + ".PARTIT    " ) ),
             _supportBaseMesh( MeshPtr() ),
             _splitMethod( SubDomain ),
-            _graphPartitioner( MetisPartitioner )
+            _graphPartitioner( MetisPartitioner ),
+            _ligrel( new FiniteElementDescriptorInstance( getName() + ".MODELE",
+                                                          _supportBaseMesh ) )
         {};
 
         /**
