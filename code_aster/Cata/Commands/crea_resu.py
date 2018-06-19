@@ -49,7 +49,7 @@ CREA_RESU=OPER(nom="CREA_RESU",op=124,sd_prod=crea_resu_prod,
 
          reuse=SIMP(statut='c', typ=CO),
 
-         OPERATION =SIMP(statut='o',typ='TXM',into=("AFFE","ASSE","ECLA_PG","PERM_CHAM","PROL_RTZ","PREP_VRC1","PREP_VRC2",),
+         OPERATION =SIMP(statut='o',typ='TXM',into=("AFFE","ASSE","ECLA_PG","PERM_CHAM","PROL_RTZ","PREP_VRC1","PREP_VRC2","KUCV","CONV_CHAR","CONV_RESU"),
                          fr=tr("choix de la fonction a activer"),),
 
          TYPE_RESU    =SIMP(statut='o',typ='TXM',
@@ -326,4 +326,43 @@ CREA_RESU=OPER(nom="CREA_RESU",op=124,sd_prod=crea_resu_prod,
 
            ),
          ),
+         b_prod_evol_char= BLOC(condition = """equal_to("OPERATION", 'KUCV') and is_in('TYPE_RESU', ('EVOL_CHAR', 'DYNA_TRANS'))""",
+           KUCV         =FACT(statut='o',max=1,
+             RESU_INIT    =SIMP(statut='o',typ=(dyna_trans)),
+             regles=(UN_PARMI('INST','LIST_INST'),),
+             MATR_RIGI    =SIMP(statut='f',typ=matr_asse_depl_r,),
+             MATR_AMOR    =SIMP(statut='o',typ=matr_asse_depl_r,),
+             INST          =SIMP(statut='f',typ='R',validators=NoRepeat(),max='**'),
+             LIST_INST     =SIMP(statut='f',typ=listr8_sdaster),
+             PRECISION     =SIMP(statut='f',typ='R',defaut= 1.E-6 ),
+             CRITERE       =SIMP(statut='f',typ='TXM',defaut="RELATIF",into=("RELATIF","ABSOLU") ),
+           ),
+         ), # fin bloc b_prod_evol_char
+
+         b_comb_evol_char= BLOC(condition = """equal_to("OPERATION", 'CONV_RESU') and is_in('TYPE_RESU', ('EVOL_CHAR', 'DYNA_TRANS'))""",
+           CONV_RESU      =FACT(statut='o',max=1,
+             RESU_INIT    =SIMP(statut='o',typ=(dyna_trans,evol_char)),
+             NOM_CHAM_INIT=SIMP(statut='f',typ='TXM',into=("DEPL","FORC_NODA","REAC_NODA") ),
+             regles=(UN_PARMI('MATR_RIGI', 'NUME_DDL'),UN_PARMI('INST','LIST_INST'),),
+             MATR_RIGI    =SIMP(statut='f',typ=matr_asse_depl_r,),
+             NUME_DDL      =SIMP(statut='f',typ=nume_ddl_sdaster ),
+             INST          =SIMP(statut='f',typ='R',validators=NoRepeat(),max='**'),
+             LIST_INST     =SIMP(statut='f',typ=listr8_sdaster),
+             PRECISION     =SIMP(statut='f',typ='R',defaut= 1.E-6 ),
+             COEF          =SIMP(statut='f',typ='R',defaut= 1.0 ),
+             CRITERE       =SIMP(statut='f',typ='TXM',defaut="RELATIF",into=("RELATIF","ABSOLU") ),
+           ),
+         ), # fin bloc b_comb_evol_char
+
+         b_char_evol_char= BLOC(condition = """equal_to("OPERATION", 'CONV_CHAR') and is_in('TYPE_RESU', 'DYNA_TRANS')""",
+           CONV_CHAR      =FACT(statut='o',max=1,
+             CHARGE       =SIMP(statut='o',typ=(char_meca,),max='**'),
+             MATR_RIGI    =SIMP(statut='o',typ=matr_asse_depl_r,),
+             regles=(UN_PARMI('INST','LIST_INST'),),
+             INST          =SIMP(statut='f',typ='R',validators=NoRepeat(),max='**'),
+             LIST_INST     =SIMP(statut='f',typ=listr8_sdaster),
+             PRECISION     =SIMP(statut='f',typ='R',defaut= 1.E-6 ),
+             CRITERE       =SIMP(statut='f',typ='TXM',defaut="RELATIF",into=("RELATIF","ABSOLU") ),
+           ),
+         ), # fin bloc b_char_evol_char
 )  ;
