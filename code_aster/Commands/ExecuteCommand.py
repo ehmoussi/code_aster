@@ -149,6 +149,8 @@ class ExecuteCommand(object):
         cmd.exec_(keywords)
         cmd.add_references(keywords)
         cmd.post_exec(keywords)
+        if cmd._result is not None:
+            cmd._result.update()
         cmd.print_result()
         return cmd._result
 

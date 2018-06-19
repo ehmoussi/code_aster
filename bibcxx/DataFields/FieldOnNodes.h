@@ -74,13 +74,15 @@ private:
     typedef boost::shared_ptr< SimpleFieldOnNodesValueTypeInstance > SimpleFieldOnNodesValueTypePtr;
 
     /** @brief Vecteur Jeveux '.DESC' */
-    JeveuxVectorLong        _descriptor;
+    JeveuxVectorLong           _descriptor;
     /** @brief Vecteur Jeveux '.REFE' */
-    JeveuxVectorChar24      _reference;
+    JeveuxVectorChar24         _reference;
     /** @brief Vecteur Jeveux '.VALE' */
-    JeveuxVector<ValueType> _valuesList;
-    /** @brief Numérotation attachée au FieldOnNodes */
-    BaseDOFNumberingPtr     _dofNum;
+    JeveuxVector<ValueType>    _valuesList;
+    /** @brief Numbering of a FieldOnNodes */
+    BaseDOFNumberingPtr        _dofNum;
+    /** @brief Dof description */
+    FieldOnNodesDescriptionPtr _dofDescription;
 
 public:
     /**
@@ -212,6 +214,20 @@ public:
     };
 
     bool printMedFile( const std::string fileName ) const throw ( std::runtime_error );
+
+    /**
+     * @brief Update field and link to a BaseDOFNumberingPtr
+     */
+    bool update() throw ( std::runtime_error )
+    {
+        if( updateValuePointers() )
+        {
+            const std::string name = trim( (*_reference)[1].toString() );
+            _dofDescription = FieldOnNodesDescriptionPtr(
+                new FieldOnNodesDescriptionInstance( name ) );
+        }
+        return true;
+    };
 
     /**
      * @brief Mise a jour des pointeurs Jeveux
