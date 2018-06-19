@@ -90,6 +90,16 @@ private:
     JeveuxVectorLong             _serialNumber;
     /** @brief Nombre de numéros d'ordre */
     int                          _nbRanks;
+    /** @brief Vecteur Jeveux '.RSPI' */
+    JeveuxVectorLong             _rspi;
+    /** @brief Vecteur Jeveux '.RS' */
+    JeveuxVectorDouble           _rspr;
+    /** @brief Vecteur Jeveux '.RSP8' */
+    JeveuxVectorChar8            _rsp8;
+    /** @brief Vecteur Jeveux '.RS16' */
+    JeveuxVectorChar16           _rs16;
+    /** @brief Vecteur Jeveux '.RS24' */
+    JeveuxVectorChar24           _rs24;
 
     /** @brief Liste des champs aux noeuds */
     mapStrVOFN                         _dictOfVectorOfFieldsNodes;
@@ -132,7 +142,12 @@ public:
         _accessVariables( JeveuxBidirectionalMapChar16( getName() + ".NOVA" ) ),
         _calculationParameter( JeveuxCollectionChar8( getName() + ".TAVA" ) ),
         _serialNumber( JeveuxVectorLong( getName() + ".ORDR" ) ),
-        _nbRanks( 0 )
+        _nbRanks( 0 ),
+        _rspi( JeveuxVectorLong( getName() + ".RSPI" ) ),
+        _rspr( JeveuxVectorDouble( getName() + ".RSPR" ) ),
+        _rsp8( JeveuxVectorChar8( getName() + ".RSP8" ) ),
+        _rs16( JeveuxVectorChar16( getName() + ".RS16" ) ),
+        _rs24( JeveuxVectorChar24( getName() + ".RS24" ) )
     {};
 
     /**
