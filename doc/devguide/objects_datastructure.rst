@@ -38,19 +38,19 @@
 
 
 ================================================================================
-:py:class:`~code_aster.Objects.AssemblyMatrixComplex` object
+:py:class:`~code_aster.Objects.AssemblyMatrixDisplacementComplex` object
 ================================================================================
 
-.. autoclass:: code_aster.Objects.AssemblyMatrixComplex
+.. autoclass:: code_aster.Objects.AssemblyMatrixDisplacementComplex
    :show-inheritance:
    :members:
 
 
 ================================================================================
-:py:class:`~code_aster.Objects.AssemblyMatrixDouble` object
+:py:class:`~code_aster.Objects.AssemblyMatrixDisplacementDouble` object
 ================================================================================
 
-.. autoclass:: code_aster.Objects.AssemblyMatrixDouble
+.. autoclass:: code_aster.Objects.AssemblyMatrixDisplacementDouble
    :show-inheritance:
    :members:
 
