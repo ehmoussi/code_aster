@@ -81,7 +81,7 @@ subroutine mmmvmm(phasez, ndim, nnm, norm, tau1,&
 !
 ! ----------------------------------------------------------------------
 !
-    integer :: inom, idim, ii, i, j, k
+    integer :: inom, idim, ii, i, j, k,granglis
     real(kind=8) :: dlagft(3), plagft(3), prese(3), prese1(3), prese2(3)
     real(kind=8) :: dvitet(3), pdvitt(3), g(3, 3), g1(3, 3), g2(3, 3)
     character(len=9) :: phasep
@@ -107,6 +107,8 @@ subroutine mmmvmm(phasez, ndim, nnm, norm, tau1,&
   mprt12(2,3) = mprt21(3,2)  
   mprt12(3,1) = mprt21(1,3)
   mprt12(3,2) = mprt21(2,3)  
+  matr = 0.
+  granglis = 1
 ! --- PROJECTION DU LAGRANGE DE FROTTEMENT SUR LE PLAN TANGENT
 !
     do 123 i = 1, ndim
@@ -126,7 +128,17 @@ subroutine mmmvmm(phasez, ndim, nnm, norm, tau1,&
     if (phasep(1:4) .eq. 'GLIS') then
         do 228 i = 1, ndim
             do 229 j = 1, ndim
-                prese(i) = mprojt(i,j)*rese(j)/nrese+prese(i)
+                if (granglis .eq. 1) then
+                   g(i,j) =kappa(1,1)*mprt11(i,j)+kappa(1,2)*mprt12(i,j)&
+                          +kappa(2,1)*mprt21(i,j)+kappa(2,2)*mprt22(i,j)
+                   g1(i,j)=kappa(1,1)*mprt1n(i,j)*jeu+kappa(2,1)*mprt2n(i,j)*jeu
+                   g2(i,j)=kappa(2,2)*mprt2n(i,j)*jeu+kappa(1,2)*mprt1n(i,j)*jeu
+                   prese(i)  = g(i,j)*rese(j)/nrese+prese(i)
+                   prese1(i) = g1(i,j)*rese(j)/nrese+prese1(i)
+                   prese2(i) = g2(i,j)*rese(j)/nrese+prese2(i)
+                else
+                    prese(i) = mprojt(i,j)*rese(j)/nrese+prese(i)
+                endif
 229          continue
 228      continue
     endif
@@ -173,7 +185,12 @@ subroutine mmmvmm(phasez, ndim, nnm, norm, tau1,&
         do 74 inom = 1, nnm
             do 64 idim = 1, ndim
                 ii = ndim*(inom-1)+idim
-                vectmm(ii) = vectmm(ii)+ wpg*ffm(inom)*jacobi*prese( idim)* lambda*coefff
+                if (granglis .eq. 1) then 
+                     matr(ii)=ffm(inom)*prese( idim)+1.* dffm(1,inom)*prese1( idim)+1.*dffm(2,inom)*prese2( idim)  
+                     vectmm(ii) = vectmm(ii)+ wpg*matr(ii)*jacobi* (lambda-0.*jeu)*coefff
+                else
+                    vectmm(ii) = vectmm(ii)+ wpg*ffm(inom)*jacobi*prese( idim)* lambda*coefff
+                endif
 64          continue
 74      continue
 !
@@ -190,7 +207,7 @@ subroutine mmmvmm(phasez, ndim, nnm, norm, tau1,&
             do 73 inom = 1, nnm
                 do 63 idim = 1, ndim
                     ii = ndim*(inom-1)+idim
-                    vectmm(ii) = vectmm(ii)+ wpg*ffm(inom)*jacobi* lambda*coefff* (plagft(idim)+p&
+                    vectmm(ii) = vectmm(ii)+ wpg*ffm(inom)*jacobi* (lambda-0.*jeu)*coefff* (plagft(idim)+p&
                                  &dvitt(idim)*coefaf)
 63              continue
 73          continue

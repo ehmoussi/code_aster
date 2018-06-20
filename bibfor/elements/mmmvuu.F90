@@ -92,6 +92,8 @@ subroutine mmmvuu(phasez, ndim, nne, nnm, norm,&
 !
 ! --- DEPL_ESCL
 !
+!     write (6,*) "jeu",jeu
+!     write (6,*) "kappa",kappa
     call mmmvee(phasep, ndim, nne, norm, tau1,&
                 tau2, mprojt, wpg, ffe, jacobi,&
                 jeu, coefac, coefaf, lambda, coefff,&

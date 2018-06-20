@@ -79,7 +79,7 @@ subroutine mmmvee(phasez, ndim, nne, norm, tau1,&
 !
 ! ----------------------------------------------------------------------
 !
-    integer :: inoe, idim, ii, i, j, k
+    integer :: inoe, idim, ii, i, j, k,granglis
     real(kind=8) :: dlagft(3), plagft(3), prese(3)
     real(kind=8) :: dvitet(3), pdvitt(3), g(3, 3), mprt12(3, 3)
     character(len=9) :: phasep
@@ -104,6 +104,7 @@ subroutine mmmvee(phasez, ndim, nne, norm, tau1,&
   mprt12(2,3) = mprt21(3,2)  
   mprt12(3,1) = mprt21(1,3)
   mprt12(3,2) = mprt21(2,3) 
+  granglis = 1
 ! --- PROJECTION DU LAGRANGE DE FROTTEMENT SUR LE PLAN TANGENT
 !
     do 123 i = 1, ndim
@@ -123,7 +124,13 @@ subroutine mmmvee(phasez, ndim, nne, norm, tau1,&
     if (phasep(1:4) .eq. 'GLIS') then
         do 228 i = 1, ndim
             do 229 j = 1, ndim
-                prese(i) = mprojt(i,j)*rese(j)/nrese+prese(i)
+                if (granglis .eq. 1) then 
+                   g(i,j)=kappa(1,1)*mprt11(i,j)+kappa(1,2)*mprt12(i,j)&
+                    +kappa(2,1)*mprt21(i,j)+kappa(2,2)*mprt22(i,j)
+                    prese(i) = g(i,j)*rese(j)/nrese+prese(i)
+                else
+                    prese(i) = mprojt(i,j)*rese(j)/nrese+prese(i)
+                endif
 229          continue
 228      continue
     endif
@@ -170,7 +177,7 @@ subroutine mmmvee(phasez, ndim, nne, norm, tau1,&
         do 74 inoe = 1, nne
             do 64 idim = 1, ndim
                 ii = ndim*(inoe-1)+idim
-                vectee(ii) = vectee(ii)- wpg*ffe(inoe)*jacobi*prese( idim)* lambda*coefff
+                vectee(ii) = vectee(ii)- wpg*ffe(inoe)*jacobi*prese( idim)*  (lambda-0.*jeu)*coefff
 64          continue
 74      continue
 !
@@ -187,7 +194,7 @@ subroutine mmmvee(phasez, ndim, nne, norm, tau1,&
             do 73 inoe = 1, nne
                 do 63 idim = 1, ndim
                     ii = ndim*(inoe-1)+idim
-                    vectee(ii) = vectee(ii)- wpg*ffe(inoe)*jacobi* lambda*coefff* (plagft(idim)+p&
+                    vectee(ii) = vectee(ii)- wpg*ffe(inoe)*jacobi*  (lambda-0.*jeu)*coefff* (plagft(idim)+p&
                                  &dvitt(idim)*coefaf)
 63              continue
 73          continue
