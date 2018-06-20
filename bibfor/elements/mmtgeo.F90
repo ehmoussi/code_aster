@@ -109,7 +109,12 @@ subroutine mmtgeo(phasep,ndim  ,nne   ,nnm   ,mprt1n, &
     elseif (phasep(1:4) .eq. 'GLIS') then
 !Implementation de la deuxième varitation de xi
 ! ROUTINE DE CALCUL SUPPLEMENTAIRE EN FROTTEMENT : INEXISTANT POUR LE MOMENT 
-
+      call mmgtuu(ndim  ,nne   ,nnm   ,mprt1n, &
+             mprt2n,mprojn,mprt11,mprt21,mprt22, &
+         wpg   ,ffe   ,ffm   ,dffm  ,jacobi, &
+         coefac,jeu   ,dlagrc,kappa ,vech1 , &
+         vech2 ,h     ,hah   , &
+         matree,matrmm,matrem, matrme)
     endif
 !
 end subroutine
