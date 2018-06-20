@@ -20,7 +20,7 @@ subroutine mmmvee(phasez, ndim, nne, norm, tau1,&
                   tau2, mprojt, wpg, ffe, jacobi,&
                   jeu, coefac, coefaf, lambda, coefff,&
                   dlagrc, dlagrf, dvite, rese, nrese,&
-                  vectee)
+                  vectee,mprt11,mprt21,mprt22,kappa)
 !
 ! person_in_charge: mickael.abbas at edf.fr
 !
@@ -36,8 +36,8 @@ subroutine mmmvee(phasez, ndim, nne, norm, tau1,&
     real(kind=8) :: tau1(3), tau2(3), mprojt(3, 3)
     real(kind=8) :: coefac, coefaf, jeu
     real(kind=8) :: lambda, coefff
-    real(kind=8) :: vectee(27)
-!
+    real(kind=8) :: vectee(27),kappa(2,2)
+    real(kind=8) :: mprt11(3, 3), mprt21(3, 3), mprt22(3, 3)
 ! ----------------------------------------------------------------------
 !
 ! ROUTINE CONTACT (METHODE CONTINUE - UTILITAIRE)
@@ -81,7 +81,7 @@ subroutine mmmvee(phasez, ndim, nne, norm, tau1,&
 !
     integer :: inoe, idim, ii, i, j, k
     real(kind=8) :: dlagft(3), plagft(3), prese(3)
-    real(kind=8) :: dvitet(3), pdvitt(3)
+    real(kind=8) :: dvitet(3), pdvitt(3), g(3, 3), mprt12(3, 3)
     character(len=9) :: phasep
 !
 ! ----------------------------------------------------------------------
@@ -95,6 +95,15 @@ subroutine mmmvee(phasez, ndim, nne, norm, tau1,&
         pdvitt(i) = 0.d0
 14  end do
 !
+ mprt12(1,1) = mprt21(1,1)
+  mprt12(2,2) = mprt21(2,2)  
+  mprt12(3,3) = mprt21(3,3)
+  mprt12(1,2) = mprt21(2,1)
+  mprt12(1,3) = mprt21(3,1)  
+  mprt12(2,1) = mprt21(1,2)
+  mprt12(2,3) = mprt21(3,2)  
+  mprt12(3,1) = mprt21(1,3)
+  mprt12(3,2) = mprt21(2,3) 
 ! --- PROJECTION DU LAGRANGE DE FROTTEMENT SUR LE PLAN TANGENT
 !
     do 123 i = 1, ndim
