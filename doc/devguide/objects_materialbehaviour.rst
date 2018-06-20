@@ -47,15 +47,6 @@
 
 
 ================================================================================
-:py:class:`~code_aster.Objects.BetonBurgerFpMaterialBehaviour` object
-================================================================================
-
-.. autoclass:: code_aster.Objects.BetonBurgerFpMaterialBehaviour
-   :show-inheritance:
-   :members:
-
-
-================================================================================
 :py:class:`~code_aster.Objects.BetonDoubleDpMaterialBehaviour` object
 ================================================================================
 
