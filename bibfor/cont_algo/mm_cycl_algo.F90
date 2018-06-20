@@ -336,7 +336,7 @@ implicit none
         v_sdcont_cychis(n_cychis*(i_cont_poin-1)+50) = 0.0d0
         v_sdcont_cychis(n_cychis*(i_cont_poin-1)+54) = 1.0
         v_sdcont_cychis(n_cychis*(i_cont_poin-1)+55) = 1.0
-        write (6,*) "Cyclage GLI_ADHE_GLIS"
+!         write (6,*) "Cyclage GLI_ADHE_GLIS"
     endif
     
 ! CYCLAGE FROTTEMENT: GLIAV_AR
@@ -348,7 +348,7 @@ implicit none
           v_sdcont_cychis(n_cychis*(i_cont_poin-1)+50) = 1.0d0
           v_sdcont_cychis(n_cychis*(i_cont_poin-1)+54) = 0.9
           v_sdcont_cychis(n_cychis*(i_cont_poin-1)+55) = 0.9
-          write (6,*) "Cyclage GLIAV_AR"
+!           write (6,*) "Cyclage GLIAV_AR"
        endif
 
 !

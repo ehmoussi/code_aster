@@ -30,6 +30,8 @@ subroutine te0365(option, nomte)
 #include "asterfort/mmmlav.h"
 #include "asterfort/mmmlcf.h"
 #include "asterfort/mmmpha.h"
+#include "asterfort/mmnsta.h"
+#include "asterfort/mngliss.h"
 #include "asterfort/mmmsta.h"
 #include "asterfort/mmmvas.h"
 #include "asterfort/mmmvex.h"
@@ -61,10 +63,11 @@ subroutine te0365(option, nomte)
     integer :: iresof_prev, iresog_prev
     integer :: ndexfr
     integer :: ndexfr_prev
+    integer :: granglis
 !    
     real(kind=8) :: norm(3)=0.0, tau1(3)=0.0, tau2(3)=0.0
     real(kind=8) :: norm_prev(3)=0.0, tau1_prev(3)=0.0, tau2_prev(3)=0.0
-    real(kind=8) :: mprojt(3, 3)=0.0
+    real(kind=8) :: mprojt(3, 3)=0.0,mprojn(3, 3)=0.0
     real(kind=8) ::  mprojt_prev(3, 3)=0.0
     real(kind=8) :: rese(3)=0.0, nrese=0.0
     real(kind=8) :: rese_prev(3)=0.0, nrese_prev=0.0
@@ -94,7 +97,8 @@ subroutine te0365(option, nomte)
     aster_logical :: l_previous_cont = .false. , l_previous_frot = .false. , l_previous = .false. 
 !    
     aster_logical :: debug = .false. 
-    real(kind=8) :: ffe(9), ffm(9), ffl(9)
+    real(kind=8) :: ffe(9), ffm(9), ffl(9), dffm(2, 9)
+    real(kind=8) :: ddffm(3, 9)
 !
     real(kind=8) :: vectcc(9)
     real(kind=8) :: vectcc_prev(9)
@@ -106,6 +110,23 @@ subroutine te0365(option, nomte)
     real(kind=8) :: vtmp_prev(81)
 !
     character(len=24) :: typelt
+    real(kind=8) :: dnepmait1 ,dnepmait2 ,taujeu1,taujeu2
+    real(kind=8) :: dnepmait1_prev ,dnepmait2_prev ,taujeu1_prev,taujeu2_prev
+!
+    real(kind=8) :: mprt1n(3, 3), mprt2n(3, 3)
+    real(kind=8) :: mprt1n_prev(3, 3), mprt2n_prev(3, 3)
+
+    real(kind=8) :: mprt11(3, 3), mprt21(3, 3), mprt22(3, 3)
+    real(kind=8) :: mprt11_prev(3, 3), mprt21_prev(3, 3), mprt22_prev(3, 3)
+!
+    real(kind=8) :: gene11(3, 3), gene21(3, 3), gene22(3, 3)
+    real(kind=8) :: kappa(2, 2), a(2, 2), h(2, 2), ha(2, 2), hah(2, 2)
+!
+    real(kind=8) :: vech1(3), vech2(3)
+! 
+! !
+!     real(kind=8) :: geomae(9, 3), geomam(9, 3),ddepmam(9, 3)
+    
 !
 ! ----------------------------------------------------------------------
 !
@@ -122,7 +143,14 @@ subroutine te0365(option, nomte)
     call vecini(27, 0.d0, vectee_prev)
     call vecini(27, 0.d0, vectmm)
     call vecini(27, 0.d0, vectmm_prev)
+    
+    dnepmait1 =0.0
+    dnepmait2 =0.0
+    taujeu1   =0.0
+    taujeu2   =0.0
+    
     debug = .false.
+    granglis = 1.0
 !
 ! --- TYPE DE MAILLE DE CONTACT
 !
@@ -184,19 +212,29 @@ subroutine te0365(option, nomte)
 ! ----- CALCUL DES QUANTITES
 !
         call mmvppe(typmae, typmam, iresog, ndim, nne,&
-                             nnm, nnl, nbdm, laxis, ldyna,&
-                             lpenac, jeusup, ffe, ffm, ffl,&
-                             norm, tau1, tau2, mprojt, jacobi,&
-                             wpg, dlagrc, dlagrf, jeu, djeu,&
-                             djeut, .false._1)
+                  nnm, nnl, nbdm, laxis, ldyna,&
+                  lpenac, jeusup, ffe, ffm, dffm, ffl,&
+                  norm, tau1, tau2, mprojt, jacobi,&
+                  wpg, dlagrc, dlagrf, jeu, djeu,&
+                  djeut, mprojn,&
+                   mprt1n, mprt2n, gene11, gene21,&
+                  gene22, kappa, h, vech1, vech2,&
+                  a, ha, hah, mprt11, mprt21,&
+                  mprt22,taujeu1, taujeu2, &
+                  dnepmait1,dnepmait2, l_previous)
                              
         if (l_previous) then
             call      mmvppe(typmae, typmam, iresog, ndim, nne,&
-                             nnm, nnl, nbdm, laxis, ldyna,&
-                             lpenac_prev, jeusup_prev, ffe, ffm, ffl,&
-                             norm_prev, tau1_prev, tau2_prev, mprojt_prev, jacobi,&
-                             wpg, dlagrc_prev, dlagrf_prev, jeu_prev, djeu_prev,&
-                             djeut_prev, l_previous)
+                  nnm, nnl, nbdm, laxis, ldyna,&
+                  lpenac, jeusup, ffe, ffm, dffm, ffl,&
+                  norm, tau1, tau2, mprojt, jacobi,&
+                  wpg, dlagrc, dlagrf, jeu, djeu,&
+                  djeut, mprojn,&
+                   mprt1n, mprt2n, gene11, gene21,&
+                  gene22, kappa, h, vech1, vech2,&
+                  a, ha, hah, mprt11, mprt21,&
+                  mprt22,taujeu1, taujeu2, &
+                  dnepmait1,dnepmait2, l_previous)
 !              call modification_quantity_previous(jeu_prev,dlagrc_prev) 
         endif
 !
@@ -276,6 +314,28 @@ subroutine te0365(option, nomte)
 !            debug = .false.
         endif
 !
+
+
+!
+! Modification du jeu tangent pour le grand glissement
+!
+!      write (6,*) "jeu",jeu
+     granglis=1.0
+     if (lcont .and.  (phasep(1:4) .eq. 'GLIS') .and. (granglis .eq. 1) .and. (abs(jeu) .lt. 1.d-6 )) then
+!         write (6,*) "djeu1",djeu
+!         write (6,*) "djeut1",djeut
+!         write (6,*) "nrese1",nrese
+        call mngliss(tau1  ,tau2  ,djeut,kappa ,taujeu1, taujeu2, &
+                     dnepmait1,dnepmait2,ndim )
+!         write (6,*) "djeut2",djeut
+!         write (6,*) "nrese1",nrese
+        call mmnsta(ndim, leltf, lpenaf, loptf, djeut,&
+                    dlagrf, coefaf, tau1, tau2, lcont,&
+                    ladhe, lambda, rese, nrese)
+!         write (6,*) "nrese2",nrese
+!         write (6,*) "dnepmait1",dnepmait1
+!         write (6,*) "dnepmait2",dnepmait2
+      endif
     else
         ASSERT(.false.)
     endif

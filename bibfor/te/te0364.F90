@@ -68,6 +68,7 @@ subroutine te0364(option, nomte)
     integer :: iresof, iresog,count_consistency
     integer :: iresof_prev, iresog_prev
     integer :: ndexfr
+    integer :: granglis
     integer :: ndexfr_prev
     aster_logical :: laxis, leltf
     aster_logical :: lpenac, lpenaf
@@ -100,6 +101,8 @@ subroutine te0364(option, nomte)
     real(kind=8) :: jeu=0.0, djeut(3)=0.0
     real(kind=8) :: jeu_prev=0.0, djeut_prev(3) = 0.0
     real(kind=8) :: alpha_cont=0.0 , alpha_frot=0.0
+    real(kind=8) :: dnepmait1 ,dnepmait2 ,taujeu1,taujeu2
+    real(kind=8) :: dnepmait1_prev ,dnepmait2_prev ,taujeu1_prev,taujeu2_prev
 !
     character(len=8) :: typmae, typmam
     character(len=9) :: phasep
@@ -289,7 +292,8 @@ subroutine te0364(option, nomte)
                     mprojt, mprt1n, mprt2n, gene11, gene21,&
                     gene22, kappa, h, vech1, vech2,&
                     a, ha, hah, mprt11, mprt21,&
-                    mprt22, .false._1)
+                    mprt22,taujeu1, taujeu2, &
+                  dnepmait1,dnepmait2, .false._1)
                     
         if (l_previous) then
             call mmtppe(typmae, typmam, ndim, nne, nnm,&
@@ -300,7 +304,8 @@ subroutine te0364(option, nomte)
                         mprojt_prev, mprt1n_prev, mprt2n_prev, gene11_prev, gene21_prev,&
                         gene22_prev, kappa_prev, h_prev, vech1_prev, vech2_prev,&
                         a_prev, ha_prev, hah_prev, mprt11_prev, mprt21_prev,&
-                        mprt22_prev, .true._1)  
+                        mprt22_prev,taujeu1_prev, taujeu2_prev, &
+                  dnepmait1_prev,dnepmait2_prev, .true._1)  
                               
 !            debug = .false.
 !            if (debug) then 
@@ -421,6 +426,21 @@ subroutine te0364(option, nomte)
 !            debug = .false.
         endif
 !
+        granglis=1.0
+     if (lcont .and.  (phasep(1:4) .eq. 'GLIS') .and. (granglis .eq. 1) .and. (abs(jeu) .lt. 1.d-6 )) then
+    !         write (6,*) "djeu1",djeu
+    !         write (6,*) "djeut1",djeut
+            call mngliss(tau1  ,tau2  ,djeut,kappa ,taujeu1, taujeu2, &
+                        dnepmait1,dnepmait2,ndim )
+    !         write (6,*) "djeut2",djeut
+    !         write (6,*) "nrese1",nrese
+            call mmnsta(ndim, leltf, lpenaf, loptf, djeut,&
+                        dlagrf, coefaf, tau1, tau2, lcont,&
+                        ladhe, lambda, rese, nrese)
+!             write (6,*) "nrese2",nrese
+    !         write (6,*) "dnepmait1",dnepmait1
+    !         write (6,*) "dnepmait2",dnepmait2
+        endif
     else
         ASSERT(.false.)
     endif
