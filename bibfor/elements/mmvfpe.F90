@@ -20,7 +20,7 @@ subroutine mmvfpe(phasep, ndim, nne, nnm, norm,&
                   tau1, tau2, mprojt, wpg, ffe,&
                   ffm, jacobi, jeu, coefac, coefaf,&
                   lambda, coefff, dlagrc, dlagrf, dvite,&
-                  rese, nrese, vectee, vectmm)
+                  rese, nrese, vectee, vectmm,mprt11,mprt21,mprt22,mprt1n,mprt2n,kappa)
 !
 ! person_in_charge: mickael.abbas at edf.fr
 !
@@ -30,13 +30,16 @@ subroutine mmvfpe(phasep, ndim, nne, nnm, norm,&
     character(len=9) :: phasep
     integer :: ndim, nne, nnm
     real(kind=8) :: wpg, ffe(9), ffm(9), jacobi
-    real(kind=8) :: dlagrc, dlagrf(2), dvite(3)
+    real(kind=8) :: dlagrc, dlagrf(2), dvite(3),kappa(2,2)
     real(kind=8) :: rese(3), nrese
     real(kind=8) :: norm(3)
     real(kind=8) :: tau1(3), tau2(3), mprojt(3, 3)
     real(kind=8) :: coefac, coefaf, jeu
     real(kind=8) :: lambda, coefff
     real(kind=8) :: vectee(27), vectmm(27)
+        real(kind=8) :: mprt11(3, 3), mprt21(3, 3), mprt22(3, 3)
+    real(kind=8) :: mprt1n(3,3),mprt2n(3,3)  
+
 !
 ! ----------------------------------------------------------------------
 !
@@ -86,6 +89,6 @@ subroutine mmvfpe(phasep, ndim, nne, nnm, norm,&
                 tau1, tau2, mprojt, wpg, ffe,&
                 ffm, jacobi, jeu, coefac, coefaf,&
                 lambda, coefff, dlagrc, dlagrf, dvite,&
-                rese, nrese, vectee, vectmm)
+                rese, nrese, vectee, vectmm,mprt11,mprt21,mprt22,mprt1n,mprt2n,kappa)
 !
 end subroutine

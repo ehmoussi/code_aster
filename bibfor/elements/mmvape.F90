@@ -20,7 +20,7 @@ subroutine mmvape(phasep, leltf, ndim, nnl, nbcps,&
                   coefac, coefaf, coefff, ffl, wpg,&
                   jeu, jacobi, lambda, tau1, tau2,&
                   mprojt, dlagrc, dlagrf, dvite, rese,&
-                  vectcc, vectff)
+                  vectcc, vectff,djeut)
 !
 ! person_in_charge: mickael.abbas at edf.fr
 !
@@ -36,7 +36,7 @@ subroutine mmvape(phasep, leltf, ndim, nnl, nbcps,&
     real(kind=8) :: coefac, coefaf
     real(kind=8) :: coefff
     real(kind=8) :: ffl(9)
-    real(kind=8) :: jeu, wpg
+    real(kind=8) :: jeu, wpg,djeut(3)
     real(kind=8) :: tau1(3), tau2(3), rese(3)
     real(kind=8) :: mprojt(3, 3)
     real(kind=8) :: jacobi, lambda
@@ -91,7 +91,7 @@ subroutine mmvape(phasep, leltf, ndim, nnl, nbcps,&
             call mmmvff(phasep, ndim, nnl, nbcps, wpg,&
                         ffl, tau1, tau2, jacobi, coefaf,&
                         dlagrf, rese, lambda, coefff, dvite,&
-                        mprojt, vectff)
+                        mprojt, vectff,jeu,coefac,djeut)
         else
             call mmmvcc(phasep, nnl, wpg, ffl, jacobi,&
                         jeu, coefac, dlagrc, vectcc)
@@ -103,12 +103,12 @@ subroutine mmvape(phasep, leltf, ndim, nnl, nbcps,&
         call mmmvff(phasep, ndim, nnl, nbcps, wpg,&
                     ffl, tau1, tau2, jacobi, coefaf,&
                     dlagrf, rese, lambda, coefff, dvite,&
-                    mprojt, vectff)
+                    mprojt, vectff,jeu,coefac,djeut)
     else if (phasep(1:4).eq.'GLIS') then
         call mmmvff(phasep, ndim, nnl, nbcps, wpg,&
                     ffl, tau1, tau2, jacobi, coefaf,&
                     dlagrf, rese, lambda, coefff, dvite,&
-                    mprojt, vectff)
+                    mprojt, vectff,jeu,coefac,djeut)
     else
         ASSERT(.false.)
     endif

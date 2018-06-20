@@ -19,7 +19,7 @@
 subroutine mmmvff(phasep, ndim, nnl, nbcps, wpg,&
                   ffl, tau1, tau2, jacobi, coefaf,&
                   dlagrf, rese, lambda, coefff, dvite,&
-                  mprojt, vectff)
+                  mprojt, vectff,jeu,coefac,djeut)
 !
 ! person_in_charge: mickael.abbas at edf.fr
 !
@@ -30,9 +30,9 @@ subroutine mmmvff(phasep, ndim, nnl, nbcps, wpg,&
     integer :: ndim, nnl, nbcps
     real(kind=8) :: wpg, ffl(9), jacobi, dlagrf(2)
     real(kind=8) :: tau1(3), tau2(3), rese(3)
-    real(kind=8) :: coefaf
+    real(kind=8) :: coefaf,coefac,jeu
     real(kind=8) :: lambda, coefff
-    real(kind=8) :: vectff(18)
+    real(kind=8) :: vectff(18),djeut(3)
     real(kind=8) :: dvite(3), mprojt(3, 3)
 !
 ! ----------------------------------------------------------------------

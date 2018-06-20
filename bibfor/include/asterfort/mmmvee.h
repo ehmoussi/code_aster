@@ -23,13 +23,14 @@ interface
                       tau2, mprojt, wpg, ffe, jacobi,&
                       jeu, coefac, coefaf, lambda, coefff,&
                       dlagrc, dlagrf, dvite, rese, nrese,&
-                      vectee)
+                      vectee,mprt11,mprt21,mprt22,kappa)
         character(len=*) :: phasez
         integer :: ndim
         integer :: nne
-        real(kind=8) :: norm(3)
+        real(kind=8) :: norm(3),kappa(2,2)
         real(kind=8) :: tau1(3)
         real(kind=8) :: tau2(3)
+        real(kind=8) :: mprt11(3, 3), mprt21(3, 3), mprt22(3, 3)
         real(kind=8) :: mprojt(3, 3)
         real(kind=8) :: wpg
         real(kind=8) :: ffe(9)
