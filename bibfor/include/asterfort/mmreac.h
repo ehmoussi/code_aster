@@ -20,7 +20,7 @@
 !
 interface
     subroutine mmreac(nbdm, ndim, nne, nnm, jgeom,&
-                      jdepm,jdepde,ppe, geomae, geomam)
+                      jdepm,jdepde,ppe, geomae, geomam,ddepmam)
         integer :: nbdm
         integer :: ndim
         integer :: nne
@@ -29,7 +29,7 @@ interface
         integer :: jdepm
     integer :: jdepde
         real(kind=8) :: ppe
-        real(kind=8) :: geomae(9, 3)
+        real(kind=8) :: geomae(9, 3),ddepmam(9, 3)
         real(kind=8) :: geomam(9, 3)
     end subroutine mmreac
 end interface

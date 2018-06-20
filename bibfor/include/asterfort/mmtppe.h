@@ -29,7 +29,8 @@ interface
                       mprojt,mprt1n,mprt2n,gene11,gene21, &
               gene22,kappa ,h     ,vech1 ,vech2 , &
               a     ,ha    ,hah   ,mprt11,mprt21, &
-              mprt22, l_previous)
+              mprt22,taujeu1, taujeu2, &
+                  dnepmait1,dnepmait2, l_previous)
               
         character(len=8) :: typmae
         character(len=8) :: typmam
