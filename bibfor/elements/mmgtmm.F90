@@ -1,8 +1,8 @@
-subroutine mmtnmm(ndim  ,nnm   ,mprt1n,mprt2n, &
+subroutine mmgtmm(ndim  ,nnm   ,norm,mprt1n,mprt2n, &
                   mprojn,wpg   , &
-          ffm    ,dffm,ddffm  ,jacobi,coefac,jeu   , &
+          ffm    ,dffm,ddffm, jacobi,coefac,jeu   , &
           dlagrc,kappa ,vech1 ,vech2 ,h     , &
-          matrmm)
+          mprt11,mprt21,mprt22,matrmm)
 !
 ! ======================================================================
 ! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
@@ -35,14 +35,15 @@ subroutine mmtnmm(ndim  ,nnm   ,mprt1n,mprt2n, &
     
     integer :: ndim,  nnm
     
-    real(kind=8) :: mprojn(3, 3),mprt1n(3,3),mprt2n(3,3)
+    real(kind=8) :: mprojn(3, 3),mprt1n(3,3),mprt2n(3,3),mprt22(3,3)
+        real(kind=8) :: mprt11(3, 3),mprt21(3, 3)
     
     real(kind=8) :: ffm(9),dffm(2,9),ddffm(3,9)
     real(kind=8) :: wpg, jacobi
     real(kind=8) :: coefac, jeu, dlagrc
     
     real(kind=8) :: kappa(2,2),h(2,2)
-    real(kind=8) :: vech1(3),vech2(3)
+    real(kind=8) :: vech1(3),vech2(3),norm(3)
     
     real(kind=8) :: matrmm(27, 27)
 !
@@ -89,7 +90,6 @@ subroutine mmtnmm(ndim  ,nnm   ,mprt1n,mprt2n, &
     real(kind=8) :: mprt12(3,3),mprnt1(3,3),mprnt2(3,3)
     integer :: inom1, inom2, idim1, idim2
     alpha = 1.d-5 
-!ETUDE HEURISTIQUE
     
     call matini(3, 3, 0.d0, e)
     call matini(3, 3, 0.d0, d)
@@ -166,6 +166,9 @@ subroutine mmtnmm(ndim  ,nnm   ,mprt1n,mprt2n, &
   mprnt2(2,3) = mprt2n(3,2)  
   mprnt2(3,1) = mprt2n(1,3)
   mprnt2(3,2) = mprt2n(2,3) 
+  
+!
+  mprt12      = mprt21
 
 ! LES MATRICES KAPPA INFLUENCENT LA CONVERGENCE DE LA METHODE :
 ! OUT KAPPA  : MATRICE DE SCALAIRES LIEES A LA CINEMATIQUE DU GLISSEMENT
@@ -175,64 +178,58 @@ subroutine mmtnmm(ndim  ,nnm   ,mprt1n,mprt2n, &
 
 
 
-
-
-
-
-
 !
 ! CONTRIBUTION 1 : 
 !    
 !
 
-!    do 160 i = 1, nnm
-!    do 150 j = 1, nnm
-!    do 155 kk = 1, nnm
-!        do 140 k = 1, ndim
-!        do 130 l = 1, ndim
+!    do  i = 1, nnm
+!    do  j = 1, nnm
+!        do  k = 1, ndim
+!        do  l = 1, ndim
 !            ii = ndim*(i-1)+l
 !            jj = ndim*(j-1)+k
-!terme  pour xi1
-!  matrmm(ii,jj) = matrmm(ii,jj)          + &
-!(dlagrc-coefac*jeu)*wpg*jacobi *(-1) *((-kappa(1,1))* (&
-!  2*mprt11(l,k)*ffm(i)*(kappa(1,1)*dffm(1,j)+kappa(2,1)*dffm(2,j))   + &
-!  mprt12(l,k)*ffm(i)*(kappa(1,1)*dffm(1,j)+kappa(2,1)*dffm(2,j))   + &
-!  mprt12(l,k)*ffm(i)*(kappa(1,2)*dffm(1,j)+kappa(2,2)*dffm(2,j)))   +(-kappa(1,2))* (&
-!  mprt21(l,k)*ffm(i)*(kappa(1,1)*dffm(1,j)+kappa(2,1)*dffm(2,j))   + &
-!  mprt21(l,k)*ffm(i)*(kappa(1,2)*dffm(1,j)+kappa(2,2)*dffm(2,j))   + &
-!  2*mprt22(l,k)*ffm(i)*(kappa(1,2)*dffm(1,j)+kappa(2,2)*dffm(2,j)))   + kappa(1,1)*&
-!  (mprt1n(l,k)*jeu*(dffm(1,i)*(kappa(1,1)*dffm(1,j)+kappa(1,2)*dffm(2,j)) )  + & 
-!  (dffm(2,i)*(kappa(2,1)*dffm(1,j)+kappa(2,2)*dffm(2,j)))  + &  
-!  mprnt1(l,k)*jeu*((dffm(1,i)*(kappa(1,1)*dffm(1,j)+kappa(1,2)*dffm(2,j)) )  + & 
-!  (dffm(2,i)*(kappa(2,1)*dffm(1,j)+kappa(2,2)*dffm(2,j))))) + kappa(1,2)*(&                 
-!  mprt2n(l,k)*jeu*(dffm(1,i)*((kappa(1,1)*dffm(1,j)+kappa(1,2)*dffm(2,j)))   + & 
-!  (dffm(2,i)*(kappa(2,1)*dffm(1,j)+kappa(2,2)*dffm(2,j)))) + & 
-!  mprnt2(l,k)*jeu*(dffm(1,i)*(kappa(1,1)*dffm(1,j)+kappa(1,2)*dffm(2,j))   + & 
-!  dffm(2,i)*(kappa(2,1)*dffm(1,j)+kappa(2,2)*dffm(2,j)) )))
-  
-!!terme  pour xi2 
-  
-!  matrmm(ii,jj) = matrmm(ii,jj)          + &
-!(dlagrc-coefac*jeu)*wpg*jacobi  *((-kappa(2,1))* (&
-!   2*mprt11(l,k)*ffm(i)*(kappa(1,1)*dffm(1,j)+kappa(2,1)*dffm(2,j))   + &
-!  mprt12(l,k)*ffm(i)*(kappa(1,1)*dffm(1,j)+kappa(2,1)*dffm(2,j))   + &
-!  mprt12(l,k)*ffm(i)*(kappa(1,2)*dffm(1,j)+kappa(2,2)*dffm(2,j)))   +(-kappa(2,2))* (&
-!  mprt21(l,k)*ffm(i)*(kappa(1,1)*dffm(1,j)+kappa(2,1)*dffm(2,j))   + &
-!  mprt21(l,k)*ffm(i)*(kappa(1,2)*dffm(1,j)+kappa(2,2)*dffm(2,j))   + &
-!  2*mprt22(l,k)*ffm(i)*(kappa(1,2)*dffm(1,j)+kappa(2,2)*dffm(2,j)))   + kappa(2,1)*&
-!  (mprt1n(l,k)*jeu*(dffm(1,i)*(kappa(1,1)*dffm(1,j)+kappa(1,2)*dffm(2,j)) )  + & 
-!  (dffm(2,i)*(kappa(2,1)*dffm(1,j)+kappa(2,2)*dffm(2,j)))  + &  
-!  mprnt1(l,k)*jeu*((dffm(1,i)*(kappa(1,1)*dffm(1,j)+kappa(1,2)*dffm(2,j)) )  + & 
-!  (dffm(2,i)*(kappa(2,1)*dffm(1,j)+kappa(2,2)*dffm(2,j))))) + kappa(2,2)*(&                 
-!  mprt2n(l,k)*jeu*(dffm(1,i)*((kappa(1,1)*dffm(1,j)+kappa(1,2)*dffm(2,j)))   + & 
-!  (dffm(2,i)*(kappa(2,1)*dffm(1,j)+kappa(2,2)*dffm(2,j)))) + & 
-!  mprnt2(l,k)*jeu*(dffm(1,i)*(kappa(1,1)*dffm(1,j)+kappa(1,2)*dffm(2,j))   + & 
-!  dffm(2,i)*(kappa(2,1)*dffm(1,j)+kappa(2,2)*dffm(2,j)) )))
-  
-!130         continue
-!140         continue
-!150     continue
-!160  continue
+! ! terme  pour xi1
+ matrmm(ii,jj) = matrmm(ii,jj)          + &
+(dlagrc-coefac*jeu)*wpg*jacobi *(-1) *((-kappa(1,1))* (&
+ 2*mprt11(l,k)*ffm(i)*(kappa(1,1)*dffm(1,j)+kappa(2,1)*dffm(2,j))   + &
+ mprt12(l,k)*ffm(i)*(kappa(1,1)*dffm(1,j)+kappa(2,1)*dffm(2,j))   + &
+ mprt12(l,k)*ffm(i)*(kappa(1,2)*dffm(1,j)+kappa(2,2)*dffm(2,j)))   +(-kappa(1,2))* (&
+ mprt21(l,k)*ffm(i)*(kappa(1,1)*dffm(1,j)+kappa(2,1)*dffm(2,j))   + &
+ mprt21(l,k)*ffm(i)*(kappa(1,2)*dffm(1,j)+kappa(2,2)*dffm(2,j))   + &
+ 2*mprt22(l,k)*ffm(i)*(kappa(1,2)*dffm(1,j)+kappa(2,2)*dffm(2,j)))   + kappa(1,1)*&
+ (mprt1n(l,k)*jeu*(dffm(1,i)*(kappa(1,1)*dffm(1,j)+kappa(1,2)*dffm(2,j)) )  + & 
+ (dffm(2,i)*(kappa(2,1)*dffm(1,j)+kappa(2,2)*dffm(2,j)))  + &  
+ mprnt1(l,k)*jeu*((dffm(1,i)*(kappa(1,1)*dffm(1,j)+kappa(1,2)*dffm(2,j)) )  + & 
+ (dffm(2,i)*(kappa(2,1)*dffm(1,j)+kappa(2,2)*dffm(2,j))))) + kappa(1,2)*(&                 
+ mprt2n(l,k)*jeu*(dffm(1,i)*((kappa(1,1)*dffm(1,j)+kappa(1,2)*dffm(2,j)))   + & 
+ (dffm(2,i)*(kappa(2,1)*dffm(1,j)+kappa(2,2)*dffm(2,j)))) + & 
+ mprnt2(l,k)*jeu*(dffm(1,i)*(kappa(1,1)*dffm(1,j)+kappa(1,2)*dffm(2,j))   + & 
+ dffm(2,i)*(kappa(2,1)*dffm(1,j)+kappa(2,2)*dffm(2,j)) )))
+!   
+! !!terme  pour xi2 
+!   
+ matrmm(ii,jj) = matrmm(ii,jj)          + &
+(dlagrc-coefac*jeu)*wpg*jacobi  *((-kappa(2,1))* (&
+  2*mprt11(l,k)*ffm(i)*(kappa(1,1)*dffm(1,j)+kappa(2,1)*dffm(2,j))   + &
+ mprt12(l,k)*ffm(i)*(kappa(1,1)*dffm(1,j)+kappa(2,1)*dffm(2,j))   + &
+ mprt12(l,k)*ffm(i)*(kappa(1,2)*dffm(1,j)+kappa(2,2)*dffm(2,j)))   +(-kappa(2,2))* (&
+ mprt21(l,k)*ffm(i)*(kappa(1,1)*dffm(1,j)+kappa(2,1)*dffm(2,j))   + &
+ mprt21(l,k)*ffm(i)*(kappa(1,2)*dffm(1,j)+kappa(2,2)*dffm(2,j))   + &
+ 2*mprt22(l,k)*ffm(i)*(kappa(1,2)*dffm(1,j)+kappa(2,2)*dffm(2,j)))   + kappa(2,1)*&
+ (mprt1n(l,k)*jeu*(dffm(1,i)*(kappa(1,1)*dffm(1,j)+kappa(1,2)*dffm(2,j)) )  + & 
+ (dffm(2,i)*(kappa(2,1)*dffm(1,j)+kappa(2,2)*dffm(2,j)))  + &  
+ mprnt1(l,k)*jeu*((dffm(1,i)*(kappa(1,1)*dffm(1,j)+kappa(1,2)*dffm(2,j)) )  + & 
+ (dffm(2,i)*(kappa(2,1)*dffm(1,j)+kappa(2,2)*dffm(2,j))))) + kappa(2,2)*(&                 
+ mprt2n(l,k)*jeu*(dffm(1,i)*((kappa(1,1)*dffm(1,j)+kappa(1,2)*dffm(2,j)))   + & 
+ (dffm(2,i)*(kappa(2,1)*dffm(1,j)+kappa(2,2)*dffm(2,j)))) + & 
+ mprnt2(l,k)*jeu*(dffm(1,i)*(kappa(1,1)*dffm(1,j)+kappa(1,2)*dffm(2,j))   + & 
+ dffm(2,i)*(kappa(2,1)*dffm(1,j)+kappa(2,2)*dffm(2,j)) )))
+!   
+!          enddo
+!          enddo
+!      enddo
+!   enddo
 
 
 
@@ -240,41 +237,42 @@ subroutine mmtnmm(ndim  ,nnm   ,mprt1n,mprt2n, &
 ! CONTRIBUTION 2 
 !
 
-!  do  i = 1, nnm
-!    do  j = 1, nnm
-!      do  k = 1, ndim
-!        do l = 1, ndim
-!            ii = ndim*(i-1)+l
-!            jj = ndim*(j-1)+k
+ do  i = 1, nnm
+   do  j = 1, nnm
+     do  k = 1, ndim
+       do l = 1, ndim
+           ii = ndim*(i-1)+l
+           jj = ndim*(j-1)+k
             !terme  pour xi1
-!  matrmm(ii,jj) = matrmm(ii,jj)          + &
-!(dlagrc-coefac*jeu)*wpg*jacobi )* (&
-!  mprt11(l,k)*ffm(j)*(kappa(1,1)*kappa(1,1)+kappa(1,2)*kappa(2,1))*(ddffm(1,i)+ddffm(3,i))  + &
-!  mprt12(l,k)*ffm(j)*(kappa(1,1)*kappa(1,1)+kappa(1,2)*kappa(2,1))*(ddffm(2,i)+ddffm(3,i))   + &
-!  mprt21(l,k)*ffm(j)*(kappa(1,2)*kappa(1,1)+kappa(2,2)*kappa(1,2))*(ddffm(1,i)+ddffm(3,i))   + &
-!  mprt22(l,k)*ffm(j)*(kappa(1,2)*kappa(1,1)+kappa(2,2)*kappa(1,2))*(ddffm(3,i)+ddffm(2,i)) - &
-!  mprnt1(l,k)*jeu*(kappa(1,1)*kappa(1,1)+kappa(1,2)*kappa(2,1))*dffm(1,j)*(ddffm(1,i)+ddffm(3,i)) - &  
-!  mprnt1(l,k)*jeu*(kappa(1,2)*kappa(1,1)+kappa(2,2)*kappa(1,2))*dffm(2,j)*(ddffm(1,i)+ddffm(3,i)) - &   
-!  mprnt2(l,k)*jeu*(kappa(1,1)*kappa(1,1)+kappa(1,2)*kappa(2,1))*dffm(1,j)*(ddffm(2,i)+ddffm(3,i)) - &  
-!  mprnt2(l,k)*jeu*(kappa(1,2)*kappa(1,1)+kappa(2,2)*kappa(1,2))*dffm(2,j)*(ddffm(2,i)+ddffm(3,i)) )              
+ matrmm(ii,jj) = matrmm(ii,jj)          - &
+(dlagrc-coefac*jeu)*wpg*jacobi &
+ * (&
+ mprt11(l,k)*ffm(j)*(kappa(1,1)*kappa(1,1)+kappa(1,2)*kappa(2,1))*(ddffm(1,i)+ddffm(3,i))  + &
+ mprt12(l,k)*ffm(j)*(kappa(1,1)*kappa(1,1)+kappa(1,2)*kappa(2,1))*(ddffm(2,i)+ddffm(3,i))   + &
+ mprt21(l,k)*ffm(j)*(kappa(1,2)*kappa(1,1)+kappa(2,2)*kappa(1,2))*(ddffm(1,i)+ddffm(3,i))   + &
+ mprt22(l,k)*ffm(j)*(kappa(1,2)*kappa(1,1)+kappa(2,2)*kappa(1,2))*(ddffm(3,i)+ddffm(2,i)) - &
+ mprnt1(l,k)*jeu*(kappa(1,1)*kappa(1,1)+kappa(1,2)*kappa(2,1))*dffm(1,j)*(ddffm(1,i)+ddffm(3,i)) - &  
+ mprnt1(l,k)*jeu*(kappa(1,2)*kappa(1,1)+kappa(2,2)*kappa(1,2))*dffm(2,j)*(ddffm(1,i)+ddffm(3,i)) - &   
+ mprnt2(l,k)*jeu*(kappa(1,1)*kappa(1,1)+kappa(1,2)*kappa(2,1))*dffm(1,j)*(ddffm(2,i)+ddffm(3,i)) - &  
+ mprnt2(l,k)*jeu*(kappa(1,2)*kappa(1,1)+kappa(2,2)*kappa(1,2))*dffm(2,j)*(ddffm(2,i)+ddffm(3,i)) )              
   
-! !terme  pour xi2 
-! matrmm(ii,jj) = matrmm(ii,jj)          + &
-!(dlagrc-coefac*jeu)*wpg*jacobi )* (&
-!  mprt11(l,k)*ffm(j)*(kappa(2,1)*kappa(1,1)+kappa(2,2)*kappa(2,1))*(ddffm(1,i)+ddffm(3,i))  + &
-!  mprt12(l,k)*ffm(j)*(kappa(2,1)*kappa(1,1)+kappa(2,2)*kappa(2,1))*(ddffm(2,i)+ddffm(3,i))   + &
-!  mprt21(l,k)*ffm(j)*(kappa(1,2)*kappa(2,1)+kappa(2,2)*kappa(2,2))*(ddffm(1,i)+ddffm(3,i))   + &
-!  mprt22(l,k)*ffm(j)*(kappa(1,2)*kappa(2,1)+kappa(2,2)*kappa(2,2))*(ddffm(3,i)+ddffm(2,i)) - &
-!  mprnt1(l,k)*jeu*(kappa(2,1)*kappa(1,1)+kappa(2,2)*kappa(2,1))*dffm(1,j)*(ddffm(1,i)+ddffm(3,i)) - &  
-!  mprnt1(l,k)*jeu*(kappa(1,2)*kappa(2,1)+kappa(2,2)*kappa(2,2))*dffm(2,j)*(ddffm(1,i)+ddffm(3,i)) - &   
-!  mprnt2(l,k)*jeu*(kappa(1,1)*kappa(2,1)+kappa(2,2)*kappa(2,1))*dffm(1,j)*(ddffm(2,i)+ddffm(3,i)) - &  
-!  mprnt2(l,k)*jeu*(kappa(1,2)*kappa(2,1)+kappa(2,2)*kappa(2,2))*dffm(2,j)*(ddffm(2,i)+ddffm(3,i)) )  
+!terme  pour xi2 
+matrmm(ii,jj) = matrmm(ii,jj)          - &
+(dlagrc-coefac*jeu)*wpg*jacobi* (&
+ mprt11(l,k)*ffm(j)*(kappa(2,1)*kappa(1,1)+kappa(2,2)*kappa(2,1))*(ddffm(1,i)+ddffm(3,i))  + &
+ mprt12(l,k)*ffm(j)*(kappa(2,1)*kappa(1,1)+kappa(2,2)*kappa(2,1))*(ddffm(2,i)+ddffm(3,i))   + &
+ mprt21(l,k)*ffm(j)*(kappa(1,2)*kappa(2,1)+kappa(2,2)*kappa(2,2))*(ddffm(1,i)+ddffm(3,i))   + &
+ mprt22(l,k)*ffm(j)*(kappa(1,2)*kappa(2,1)+kappa(2,2)*kappa(2,2))*(ddffm(3,i)+ddffm(2,i)) - &
+ mprnt1(l,k)*jeu*(kappa(2,1)*kappa(1,1)+kappa(2,2)*kappa(2,1))*dffm(1,j)*(ddffm(1,i)+ddffm(3,i)) - &  
+ mprnt1(l,k)*jeu*(kappa(1,2)*kappa(2,1)+kappa(2,2)*kappa(2,2))*dffm(2,j)*(ddffm(1,i)+ddffm(3,i)) - &   
+ mprnt2(l,k)*jeu*(kappa(1,1)*kappa(2,1)+kappa(2,2)*kappa(2,1))*dffm(1,j)*(ddffm(2,i)+ddffm(3,i)) - &  
+ mprnt2(l,k)*jeu*(kappa(1,2)*kappa(2,1)+kappa(2,2)*kappa(2,2))*dffm(2,j)*(ddffm(2,i)+ddffm(3,i)) )  
 
  
-!         enddo 
-!       enddo
-!    enddo
-!  enddo
+        enddo 
+      enddo
+   enddo
+ enddo
 
 
 

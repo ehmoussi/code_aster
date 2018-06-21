@@ -1,6 +1,6 @@
 subroutine mmgtuu(ndim  ,nne   ,norm, nnm   ,mprt1n, &
               mprt2n,mprojn,mprt11,mprt21,mprt22, &
-          wpg   ,ffe   ,ffm   ,dffm  ,jacobi, &
+          wpg   ,ffe   ,ffm   ,dffm  ,ddffm,jacobi, &
           coefac,jeu   ,dlagrc,kappa ,vech1 , &
           vech2 ,h     ,ha ,hah   , &
           matree,matrmm,matrem, matrme)
@@ -25,10 +25,9 @@ subroutine mmgtuu(ndim  ,nne   ,norm, nnm   ,mprt1n, &
 !
 ! aslint: disable=W1504
     implicit     none
-!#include "asterfort/mmgtee.h"
-!#include "asterfort/mmgtem.h"
-!#include "asterfort/mmgtme.h"
-!#include "asterfort/mmgtmm.h"
+#include "asterfort/mmgtem.h"
+#include "asterfort/mmgtme.h"
+#include "asterfort/mmgtmm.h"
     
     integer :: ndim, nne, nnm
     
@@ -36,7 +35,7 @@ subroutine mmgtuu(ndim  ,nne   ,norm, nnm   ,mprt1n, &
     real(kind=8) :: mprt1n(3, 3), mprt2n(3, 3)
     real(kind=8) :: mprt11(3, 3), mprt21(3, 3), mprt22(3, 3)
     
-    real(kind=8) :: ffe(9), ffm(9), dffm(2, 9)
+    real(kind=8) :: ffe(9), ffm(9), dffm(2, 9),ddffm(3,9)
     real(kind=8) :: wpg, jacobi
     real(kind=8) :: coefac, jeu, dlagrc
     
@@ -104,36 +103,32 @@ subroutine mmgtuu(ndim  ,nne   ,norm, nnm   ,mprt1n, &
 
 ! --- DEPL_ESCL/DEPL_ESCL
 
-
-!     call mmgtee(ndim  ,nne   ,wpg   ,ffe   , &
-!          jacobi,coefac,jeu   ,dlagrc,vech1 , &
-!          vech2 ,hah   ,kappa ,mprt11,mprt21, &
-!          mprt22,matree)
+ !  MATREE = Linearisation du 2eme terme du Dd xi glissement de Coulomb sur matree nul. On ne le cree pas
 
 
 ! --- DEPL_MAIT/DEPL_MAIT
 !
 !
-!     call mmgtmm(ndim  ,nnm ,norm, mprt1n,mprt2n, &
-!                  mprojn,wpg   , &
-!          ffm    ,dffm  ,jacobi,coefac,jeu   , &
-!          dlagrc,kappa ,vech1 ,vech2 ,a,h ,ha,hah    , &
-!          matrmm)
+    call mmgtmm(ndim  ,nnm ,norm, mprt1n,mprt2n, &
+                 mprojn,wpg   , &
+         ffm    ,dffm  ,ddffm,jacobi,coefac,jeu   , &
+         dlagrc,kappa ,vech1 ,vech2 ,h   , &
+         mprt11,mprt21,mprt22,matrmm)
 
 ! --- DEPL_ESCL/DEPL_MAIT
 !
-!~       call mmgtem(ndim  ,nnm,norm ,nne,mprt1n,mprt2n, &
-!~                    wpg   , &
-!~             ffm    ,ffe,dffm  ,jacobi,coefac,jeu   , &
-!~            dlagrc,kappa ,vech1 ,vech2 ,h     , &
-!~            matrem)
-!~  !
-!~  ! --- DEPL_MAIT/DEPL_ESCL
-!~  !
-!~       call mmgtme(ndim  ,nnm   ,norm,nne,mprt1n,mprt2n, &
-!~                   wpg   , &
-!~             ffm    ,ffe,dffm  ,jacobi,coefac,jeu   , &
-!~            dlagrc,kappa ,vech1 ,vech2 ,h     , &
-!~            matrme)
+       call mmgtem(ndim  ,nnm   ,nne,mprt1n,mprt2n, &
+                  wpg   , &
+          ffe,dffm  ,ddffm,jacobi,coefac,jeu   , &
+          dlagrc,kappa ,vech1 ,vech2 ,h     , &
+          mprt11,mprt21,mprt22,matrem)
+!
+! --- DEPL_MAIT/DEPL_ESCL
+!
+       call mmgtme(ndim  ,nnm   ,nne,mprt1n,mprt2n, &
+                  wpg   , &
+          ffe,dffm  ,ddffm,jacobi,coefac,jeu   , &
+          dlagrc,kappa ,vech1 ,vech2 ,h     , &
+          mprt11,mprt21,mprt22,matrme)
 !
 end subroutine

@@ -107,7 +107,7 @@ subroutine te0364(option, nomte)
     character(len=8) :: typmae, typmam
     character(len=9) :: phasep
     character(len=9) :: phasep_prev
-    real(kind=8) :: ffe(9), ffm(9), ffl(9), dffm(2, 9)
+    real(kind=8) :: ffe(9), ffm(9), ffl(9), dffm(2, 9), ddffm(3, 9)
 !
     real(kind=8) :: mprt1n(3, 3)=0.0, mprt2n(3, 3)=0.0
     real(kind=8) :: mprt1n_prev(3, 3)=0.0, mprt2n_prev(3, 3)=0.0
@@ -286,7 +286,7 @@ subroutine te0364(option, nomte)
 !
         call mmtppe(typmae, typmam, ndim, nne, nnm,&
                     nnl, nbdm, iresog, laxis, ldyna,&
-                    jeusup, ffe, ffm, dffm, ffl,&
+                    jeusup, ffe, ffm, dffm,ddffm, ffl,&
                     jacobi, wpg, jeu, djeut, dlagrc,&
                     dlagrf, norm, tau1, tau2, mprojn,&
                     mprojt, mprt1n, mprt2n, gene11, gene21,&
@@ -298,7 +298,7 @@ subroutine te0364(option, nomte)
         if (l_previous) then
             call mmtppe(typmae, typmam, ndim, nne, nnm,&
                         nnl, nbdm, iresog_prev, laxis, ldyna,&
-                        jeusup_prev, ffe, ffm, dffm, ffl,&
+                        jeusup_prev, ffe, ffm, dffm,ddffm, ffl,&
                         jacobi, wpg, jeu_prev, djeut_prev, dlagrc_prev,&
                         dlagrf_prev, norm_prev, tau1_prev, tau2_prev, mprojn_prev,&
                         mprojt_prev, mprt1n_prev, mprt2n_prev, gene11_prev, gene21_prev,&
@@ -487,17 +487,17 @@ subroutine te0364(option, nomte)
         if (iresog .eq. 1) then
             call mmtgeo(phasep, ndim, nne, nnm, mprt1n,&
                         mprt2n, mprojn, mprt11, mprt21, mprt22,&
-                        wpg, ffe, ffm, dffm, jacobi,&
+                        wpg, ffe, ffm, dffm,ddffm, jacobi,&
                         coefac, jeu, dlagrc, kappa, vech1,&
-                        vech2, h, hah, matree, matrmm,&
+                        vech2, h, hah,norm, matree, matrmm,&
                         matrem, matrme)
                      
             if (l_previous) then
                 call mmtgeo(phasep_prev, ndim, nne, nnm, mprt1n_prev,&
                             mprt2n_prev, mprojn_prev, mprt11_prev, mprt21_prev, mprt22_prev,&
-                            wpg, ffe, ffm, dffm, jacobi,&
+                            wpg, ffe, ffm, dffm,ddffm, jacobi,&
                             coefac_prev, jeu_prev, dlagrc_prev, kappa_prev, vech1_prev,&
-                            vech2_prev, h_prev, hah_prev, matree_prev, matrmm_prev,&
+                            vech2_prev, h_prev, hah_prev,norm_prev, matree_prev, matrmm_prev,&
                             matrem_prev, matrme_prev)
             
             endif

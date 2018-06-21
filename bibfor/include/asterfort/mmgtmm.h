@@ -16,11 +16,11 @@
 ! 1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
 !
 interface
-    subroutine mmgnmm(ndim  ,nnm   ,mprt1n,mprt2n, &
+    subroutine mmgtmm(ndim  ,nnm   ,norm,mprt1n,mprt2n, &
                   mprojn,wpg   , &
-          ffm    ,dffm  ,jacobi,coefac,jeu   , &
+          ffm    ,dffm  ,ddffm,jacobi,coefac,jeu   , &
           dlagrc,kappa ,vech1 ,vech2 ,h     , &
-          matrmm)
+          mprt11,mprt21,mprt22,matrmm)
           
     
         integer :: ndim
@@ -30,7 +30,7 @@ interface
         
         real(kind=8) :: wpg
         real(kind=8) :: ffm(9)
-        real(kind=8) :: dffm(2, 9)
+        real(kind=8) :: dffm(2, 9),ddffm(3,9)
         real(kind=8) :: jacobi
         real(kind=8) :: coefac        
         real(kind=8) :: jeu
@@ -40,7 +40,8 @@ interface
         real(kind=8) :: mprt2n(3, 3)
         real(kind=8) :: mprt11(3, 3)
         real(kind=8) :: mprt21(3, 3)
-    real(kind=8) :: mprt22(3, 3)
+        real(kind=8) :: mprt12(3, 3)
+        real(kind=8) :: mprt22(3, 3)
         
     real(kind=8) ::  kappa(2, 2)
     real(kind=8) ::  h(2,2)    
@@ -50,8 +51,9 @@ interface
     
     real(kind=8) :: vech1(3)
     real(kind=8) :: vech2(3)
+    real(kind=8) :: norm(3)
         
         real(kind=8) :: matrmm(27, 27)
 
-    end subroutine mmgnmm
+    end subroutine mmgtmm
 end interface

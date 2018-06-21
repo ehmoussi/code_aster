@@ -23,7 +23,7 @@
 interface
     subroutine mmtppe(typmae,typmam,ndim  ,nne   ,nnm   , &
                       nnl   ,nbdm  ,iresog,laxis ,ldyna , &
-                      jeusup,ffe   ,ffm   ,dffm  ,ffl   , &
+                      jeusup,ffe   ,ffm   ,dffm  ,ddffm,ffl   , &
                       jacobi,wpg   ,jeu   ,djeut ,dlagrc, &
                       dlagrf,norm  ,tau1  ,tau2  ,mprojn, &
                       mprojt,mprt1n,mprt2n,gene11,gene21, &
@@ -48,6 +48,7 @@ interface
         real(kind=8) :: ffe(9)
         real(kind=8) :: ffm(9)
         real(kind=8) :: dffm(2, 9)
+        real(kind=8) :: ddffm(3, 9)
         real(kind=8) :: ffl(9)
         real(kind=8) :: jacobi
         real(kind=8) :: wpg

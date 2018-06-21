@@ -21,9 +21,9 @@
 interface
     subroutine mmtgeo(phasep,ndim  ,nne   ,nnm   ,mprt1n, &
               mprt2n,mprojn,mprt11,mprt21,mprt22, &
-          wpg   ,ffe   ,ffm   ,dffm  ,jacobi, &
+          wpg   ,ffe   ,ffm   ,dffm  ,ddffm,jacobi, &
           coefac,jeu   ,dlagrc,kappa ,vech1 , &
-          vech2 ,h        ,hah  , &
+          vech2 ,h        ,hah  ,norm, &
           matree,matrmm,matrem, matrme)
           
         character(len=9) :: phasep
@@ -38,6 +38,7 @@ interface
         real(kind=8) :: ffe(9)
         real(kind=8) :: ffm(9)
         real(kind=8) :: dffm(2, 9)
+        real(kind=8) :: ddffm(3, 9)
         real(kind=8) :: jacobi
         real(kind=8) :: coefac        
         real(kind=8) :: jeu
@@ -55,6 +56,7 @@ interface
     
     real(kind=8) :: vech1(3)
     real(kind=8) :: vech2(3)
+    real(kind=8) :: norm(3)
         
     real(kind=8) :: matree(27, 27)
         real(kind=8) :: matrmm(27, 27)
