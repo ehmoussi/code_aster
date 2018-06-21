@@ -16,7 +16,8 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine cppagn(main, maout, nbma, lima, izone, typ_dec)
+subroutine cppagn(main, maout, nbma, lima, izone, typ_dec, jcninv, same_zone,&
+                  dec)
 !
 implicit none
 !
@@ -77,6 +78,9 @@ implicit none
     integer, intent(in) :: lima(nbma)
     integer, intent(in) :: izone
     integer, intent(in) :: typ_dec
+    integer, intent(in) :: jcninv
+    aster_logical, intent(in) :: same_zone
+    integer, intent(inout) :: dec
 !
 
 ! -------------------------------------------------------------------------------------------------
@@ -91,14 +95,14 @@ implicit none
 ! IN        TYP_DEC I  TYPE DE DECOUPE POUR LES HEXA 1:PYRA 2:HEXA
 ! -------------------------------------------------------------------------------------------------
     integer :: inc, patch, nbnot, nbmat, info, nma, nbno, ind1, nbnwma, nbpain
-    integer :: jdim, jrefe, macou, macsu, jcninv, jcivax, jcoor, jgmao
+    integer :: jdim, jrefe, macou, macsu, jcivax, jcoor, jgmao, nbnwmaes
     integer :: jmacsu, jmacou, jlimane, jconloc, lgma, inc2, jcnmpa, jcnnpa
     integer :: ind, res(1), ntrou, jtpmao, jtypma, aux, numa, laux(1)
     integer :: jcnmai, jcnmao, incc, ntrou1, jgma, jrgma
     integer :: conlen, cnlclg, idtpma(6), nbnoma(6), odcnpa, odcmpa,lenconloc, lenlimane, lenpat
 !
     character(len=24) :: nomnoi, nomnoe, limane, conloc
-    character(len=24) :: nomnd, nomma, cninv, cnivax, rgma, gpptnn
+    character(len=24) :: nomnd, nomma, cnivax, rgma, gpptnn
     character(len=19) :: coordo
     character(len=16) :: knume,knuzo
     character(len=8) :: typmail,typmail_trait
@@ -107,7 +111,7 @@ implicit none
     call jemarq()
     false=.false.
     nbpain = 0
-
+    nbnwmaes = 0
 ! --- DUPLICATION A L'IDENTIQUE DES GROUPES DE NOEUDS (PAS DE MISE A JOUR) ------------------------
     call cpclma(main, maout, 'GROUPENO', 'G')
 ! --- DIMENSION DU NOUVEAU MAILLAGE, DES CONNECTIVITE (AUXILAIRE ET NOUVELLE) ---------------------
@@ -122,12 +126,9 @@ implicit none
     lenconloc = 0
     lenpat    = 0
     lenlimane = nma-nbma*2
-    cninv='&&CPPAGN.CNINV'
-    call wkvect(cninv,'V V I', nbma, jcninv)
-    call cnmpmc(main,nbma, lima,zi(jcninv))
     do inc= 1, nbma
         macou=lima(inc)
-        macsu = zi(jcninv+inc-1)
+        macsu = zi(jcninv+ dec + inc-1)
         call jenuno(jexnum('&CATA.TM.NOMTM', zi(jtypma+macsu-1)), typmail)
         select case (typmail)
 ! -------- CAS 2D
@@ -147,6 +148,8 @@ implicit none
                 lenlimane = lenlimane + 3 + 2
                 !dimension du vecteur .patch
                 lenpat = lenpat + 2
+                !nombre de nouvelles mailles esclaves
+                nbnwmaes = nbnwmaes + 1
             case ('QUAD4')
                 nbnot = nbnot + 4
                 nbmat = nbmat + 5
@@ -155,6 +158,7 @@ implicit none
                 cnlclg = cnlclg + 7
                 lenlimane = lenlimane + 4 + 4
                 lenpat = lenpat + 3
+                nbnwmaes = nbnwmaes + 2
             case ('TRIA6')
                 nbnot = nbnot + 0
                 nbmat = nbmat + 0
@@ -163,6 +167,7 @@ implicit none
                 cnlclg = cnlclg + 2
                 lenlimane = lenlimane + 2 + 1
                 lenpat = lenpat + 2
+                nbnwmaes = nbnwmaes + 0
             case ('QUAD8')
                 nbnot = nbnot + 0
                 nbmat = nbmat + 0
@@ -171,6 +176,7 @@ implicit none
                 cnlclg = cnlclg + 2
                 lenlimane = lenlimane + 2 + 1
                 lenpat = lenpat + 2
+                nbnwmaes = nbnwmaes + 0
 ! -------- CAS 3D
             case ('TETRA4')
                 nbnot = nbnot + 1
@@ -180,6 +186,7 @@ implicit none
                 lenconloc = lenconloc + 3*3 + 4*3
                 lenlimane = lenlimane + 3 + 4
                 lenpat = lenpat + 2
+                nbnwmaes = nbnwmaes + 2
             case ('PENTA6')
                 if(zi(jtypma+macou-1).eq.7)then
                     nbnot = nbnot + 1
@@ -189,6 +196,7 @@ implicit none
                     cnlclg = cnlclg + 7
                     lenlimane = lenlimane + 3 + 4 +1
                     lenpat = lenpat + 2
+                    nbnwmaes = nbnwmaes + 2
                 else
                     nbnot = nbnot + 1
                     nbmat = nbmat + 6
@@ -197,6 +205,7 @@ implicit none
                     cnlclg = cnlclg + 8
                     lenlimane = lenlimane + 8 +1
                     lenpat = lenpat + 2
+                    nbnwmaes = nbnwmaes + 3
                 endif
             case ('PYRAM5')
                 if(zi(jtypma+macou-1).eq.12)then
@@ -207,6 +216,7 @@ implicit none
                     cnlclg = cnlclg + 8
                     lenlimane = lenlimane + 4 + 4 +1
                     lenpat = lenpat + 2
+                    nbnwmaes = nbnwmaes + 3
                 else
                     nbnot = nbnot + 1
                     nbmat = nbmat + 5
@@ -215,6 +225,7 @@ implicit none
                     cnlclg = cnlclg + 7
                     lenlimane = lenlimane + 7 +1
                     lenpat = lenpat + 2
+                    nbnwmaes = nbnwmaes + 2
                 endif
             case ('TETRA10')
                 nbnot = nbnot + 5
@@ -224,6 +235,7 @@ implicit none
                 lenconloc = lenconloc + 3*6 + 3*10
                 lenlimane = lenlimane + 3 + 3 +1
                 lenpat = lenpat + 2
+                nbnwmaes = nbnwmaes + 2
             case ('HEXA8')
                 if (typ_dec.eq.0) then
                     nbnot = nbnot + 8
@@ -233,6 +245,7 @@ implicit none
                     cnlclg = cnlclg + 11
                     lenlimane = lenlimane + 6 + 7
                     lenpat = lenpat + 5
+                    nbnwmaes = nbnwmaes + 4
                 else
                     nbnot = nbnot + 1
                     nbmat = nbmat + 7
@@ -241,6 +254,7 @@ implicit none
                     cnlclg = cnlclg + 9
                     lenlimane = lenlimane + 5 + 5
                     lenpat = lenpat + 2
+                    nbnwmaes = nbnwmaes + 3
                 end if
             case ('HEXA20')
                 if (typ_dec.eq.0) then
@@ -251,6 +265,7 @@ implicit none
                     cnlclg = cnlclg + 11
                     lenlimane = lenlimane + 6 + 7
                     lenpat = lenpat + 5
+                    nbnwmaes = nbnwmaes + 4
                 else
                     nbnot = nbnot + 9
                     nbmat = nbmat + 7
@@ -259,6 +274,7 @@ implicit none
                     cnlclg = cnlclg + 9
                     lenlimane = lenlimane + 5 + 5
                     lenpat = lenpat + 2
+                    nbnwmaes = nbnwmaes + 3
                 endif
             case ('HEXA27')
                 nbnot = nbnot + 0
@@ -268,6 +284,7 @@ implicit none
                 cnlclg = cnlclg + 2
                 lenlimane = lenlimane + 2 + 1
                 lenpat = lenpat + 2
+                nbnwmaes = nbnwmaes + 0
             case ('PENTA15')
                 if(zi(jtypma+macou-1).eq.9)then
                     nbnot = nbnot + 7
@@ -277,6 +294,7 @@ implicit none
                     cnlclg = cnlclg + 7
                     lenlimane = lenlimane + 3 + 4 +1
                     lenpat = lenpat + 2
+                    nbnwmaes = nbnwmaes + 2
                 else
                     nbnot = nbnot + 7
                     nbmat = nbmat + 6
@@ -285,6 +303,7 @@ implicit none
                     cnlclg = cnlclg + 8
                     lenlimane = lenlimane + 8 +1
                     lenpat = lenpat + 2
+                    nbnwmaes = nbnwmaes + 3
                 endif
             case ('PYRAM13')
                 if(zi(jtypma+macou-1).eq.14)then
@@ -295,6 +314,7 @@ implicit none
                     cnlclg = cnlclg + 8
                     lenlimane = lenlimane + 4 + 4 +1
                     lenpat = lenpat + 2
+                    nbnwmaes = nbnwmaes + 3
                 else
                     nbnot = nbnot + 6
                     nbmat = nbmat + 5
@@ -303,6 +323,7 @@ implicit none
                     cnlclg = cnlclg + 7
                     lenlimane = lenlimane + 7 +1
                     lenpat = lenpat + 2
+                    nbnwmaes = nbnwmaes + 2
                 endif
             case default
                 call utmess('A', 'CREALAC_1')
@@ -310,7 +331,7 @@ implicit none
         end select
     enddo
 ! --- CREATION OU RECUPERATION DE LA COLLECTION .PATCH --------------------------------------------
-    if (izone .eq. 1) then
+    if (izone .eq. 1 .and. .not. same_zone) then
         call jecrec(maout//'.PATCH','G V I', 'NU', 'CONTIG', 'VARIABLE', nbma+1)
         call jeecra(maout//'.PATCH', 'LONT', ival=2+lenpat)
         call jecroc(jexnum(maout//'.PATCH',1))
@@ -320,7 +341,7 @@ implicit none
         zi(patch+1-1)=2
         zi(patch+2-1)=nbma
     else
-        call coppat(main,maout,nbma,nbpain,lenpat)
+        call coppat(main,maout,nbma,nbpain,lenpat,same_zone)
     end if
 ! -------------------------------------------------------------------------------------------------
     call jedupo(main//'.DIME', 'G', maout//'.DIME', dupcol=false)
@@ -330,7 +351,7 @@ implicit none
 ! --- CONNECTIVITE INVERSE NOEUD PATCH ------------------------------------------------------------
     call jedetr(maout//'.CONOPA')
     call wkvect(maout//'.CONOPA', 'G V I',nbnot, jcnnpa)
-    if (izone .ne. 1) then
+    if (izone .ne. 1 .or. same_zone) then
         call jeveuo(main//'.CONOPA', 'L', odcnpa)
         do inc=1,nbno
             zi(jcnnpa+inc-1) = zi(odcnpa+inc-1)
@@ -374,12 +395,12 @@ implicit none
         ntrou = 0
         ntrou1 = 0
         call utlisi('INTER', laux, 1, lima, nbma, res, 1, ntrou)
-        call utlisi('INTER', laux, 1, zi(jcninv), nbma, res, 1, ntrou1)
+        call utlisi('INTER', laux, 1, zi(jcninv+ dec), nbma, res, 1, ntrou1)
         if (ntrou .eq. 1) then
             if (zi(jtypma+inc-1) .eq. 2) then
                 do incc=1,nbma
                     if (lima(incc) .eq. inc) then
-                        macsu=zi(jcninv+incc-1)
+                        macsu=zi(jcninv+ dec+incc-1)
                         goto 30
                     else
                         macsu=0
@@ -452,7 +473,7 @@ implicit none
     do inc =1,nbma
         macou = lima(inc)
         call jeveuo(jexnum(main//'.CONNEX',lima(inc)), 'L', jmacou)
-        macsu = zi(jcninv+inc-1)
+        macsu = zi(jcninv+ dec +inc-1)
         call jeveuo(jexnum(main//'.CONNEX',macsu), 'L', jmacsu)
         call jenuno(jexnum('&CATA.TM.NOMTM', zi(jtypma+macsu-1)), typmail)
         select case (typmail)
@@ -578,7 +599,7 @@ implicit none
                 nbmat)
     call jedetr(maout//'.COMAPA')
     call wkvect(maout//'.COMAPA', 'G V I', nbmat, jcnmpa)
-    if (izone .ne. 1) then
+    if (izone .ne. 1 .or. same_zone) then
         call jeveuo(main//'.COMAPA', 'L', odcmpa)
     end if
     call juveca(maout//'.TYPMAIL', nbmat)
@@ -595,7 +616,7 @@ implicit none
     do inc = 1, nma
         laux(1)=inc
         call utlisi('INTER', laux, 1, lima, nbma, res, 1, ntrou)
-        call utlisi('INTER', laux, 1, zi(jcninv), nbma, res, 1, ntrou1)
+        call utlisi('INTER', laux, 1, zi(jcninv+ dec), nbma, res, 1, ntrou1)
         if (ntrou .eq. 1 .or. ntrou1 .eq. 1) then
             call jeveuo(jexnum(limane,inc),'E',jlimane)
     select case(ntrou)
@@ -604,7 +625,7 @@ implicit none
                zi(jtypma+inc-1) .eq. 14) then
                do incc=1,nbma
                    if (lima(incc) .eq. inc) then
-                       macsu=zi(jcninv+incc-1)
+                       macsu=zi(jcninv+ dec+incc-1)
                        goto 10
                    else
                        macsu=0
@@ -671,7 +692,7 @@ implicit none
            if (zi(jtypma+inc-1) .eq. 20 .or. zi(jtypma+inc-1) .eq. 21 .or.&
                zi(jtypma+inc-1) .eq. 23 .or. zi(jtypma+inc-1) .eq. 24) then
                do incc=1,nbma
-                   if (zi(jcninv+incc-1) .eq. inc) then
+                   if (zi(jcninv+ dec+incc-1) .eq. inc) then
                        macou=lima(incc)
                        goto 20
                    else
@@ -832,7 +853,7 @@ implicit none
             do incc = 1,aux
                 zi(jcnmao+incc-1)=zi(jcnmai+incc-1)
             end do
-            if (izone .ne. 1) then
+            if (izone .ne. 1 .or. same_zone) then
                 if  (zi(odcmpa+inc-1) .ne. 0) then
                     zi(jcnmpa+ind-1) = zi(odcmpa+inc-1)
                 end if
@@ -862,7 +883,7 @@ implicit none
     call jelira(jexnum(main//'.GROUPEMA',inc),'LONUTI',lgma)
     call utlisi('INTER', lima, nbma, zi(jgma), lgma, zi(jrgma), nbma,&
                 ntrou)
-    call utlisi('INTER', zi(jgma), lgma, zi(jcninv), nbma, zi(jrgma), nbma,&
+    call utlisi('INTER', zi(jgma), lgma, zi(jcninv+ dec), nbma, zi(jrgma), nbma,&
                  ntrou1)
     call jecroc(jexnom(maout//'.GROUPEMA',nomma))
         if (ntrou .gt. 0 .or. ntrou1 .gt. 0 ) then
@@ -875,7 +896,7 @@ implicit none
 
          call utlisi('INTER',  zi(jgma+incc-1), 1,lima, nbma, res, 1,&
                      ntrou)
-         call utlisi('INTER',  zi(jgma+incc-1), 1, zi(jcninv), nbma, res, 1,&
+         call utlisi('INTER',  zi(jgma+incc-1), 1, zi(jcninv+ dec), nbma, res, 1,&
                      ntrou1)
 
          if (ntrou .eq. 1) then
@@ -939,7 +960,7 @@ implicit none
       macou = zi(jgma+incc-1)
       call utlisi('INTER',  zi(jgma+incc-1), 1,lima, nbma, res, 1,&
                   ntrou)
-      call utlisi('INTER',  zi(jgma+incc-1), 1, zi(jcninv), nbma, res, 1,&
+      call utlisi('INTER',  zi(jgma+incc-1), 1, zi(jcninv+ dec), nbma, res, 1,&
                   ntrou1)
       nbnwma = 1
       if (ntrou .eq. 1) then
@@ -1022,11 +1043,12 @@ implicit none
         call jedetr(cnivax)
         call jedetr(rgma)
     end do
+    dec = dec + nbnwmaes + nbma
+    write(*,*) "new dec", dec
 ! ---------------------------------------------------------------------
 !      DESTRUCTION DES VARIABLES AUXILIAIRES
 ! ---------------------------------------------------------------------
    call jedetr(limane)
    call jedetr(conloc)
-   call jedetr(cninv)
    call jedema()
 end subroutine

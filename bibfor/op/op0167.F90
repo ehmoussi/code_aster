@@ -59,6 +59,7 @@ subroutine op0167()
 #include "asterfort/jecroc.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jedetr.h"
+#include "asterfort/detrsd.h"
 #include "asterfort/jedupo.h"
 #include "asterfort/jeecra.h"
 #include "asterfort/jeexin.h"
@@ -83,10 +84,12 @@ subroutine op0167()
 #include "asterfort/cpifpa.h"
 #include "asterfort/gtgrma.h"
 #include "asterfort/cppagn.h"
+#include "asterfort/cnmpmc.h"
+#include "asterfort/def_list_test.h"
 !
-    integer :: i, lgno, lgnu, nbecla, nbmc, iret, iad, nbma, iqtr, nbvolu
-    integer :: n1, numma, nbjoin, nbrest, n1a, n1b, izone, jlgrma, jnompat
-! 
+    integer :: i, lgno, lgnu, nbecla, nbmc, iret, iad, nbma, iqtr, nbvolu, nbma_izone
+    integer :: n1, numma, nbjoin, nbrest, n1a, n1b, izone, jlgrma, jnompat, jcninv
+!
     parameter(nbmc=5)
     real(kind=8) :: epais
     character(len=4) :: cdim, repk
@@ -100,26 +103,27 @@ subroutine op0167()
     character(len=24) :: nommav, grpmav, typmav, connev, nodimv, grpnov, nomnov
     character(len=24) :: coovav, coodsv, coorev
     character(len=24) :: momanu, momano, crgrnu, crgrno, lisi
-    character(len=24) :: lisk,typ_dec_lac
+    character(len=24) :: lisk, typ_dec_lac, cninv
     character(len=24) :: nomg, valk(2), nogma, gpptnm, gpptnn
     character(len=24) :: prfn1, prfn2, nume2, iadr, nume1, momoto, momuto, prfn
     integer :: nn1, iaa, iagma, iatyma, ii, ima, in, ino, inumol, j, nfi
     integer :: jcrgno, jcrgnu, jgg, jlii, jlik, jmail, jmomto
     integer :: jmomtu, jnoeu, jnono, jnpt, jopt, jtom, jtrno, jvale, jvg, kvale
     integer :: nbcrp1, nbgma, nbgrma, nbgrmn, nbgrmt, nbgrmv
-    integer :: nbgrno, nbmain, nbmaj2, nbmaj3, nbno, nbnot
-    integer :: nbpt, nbptt, nori, nrep, ntab, ntpoi
+    integer :: nbgrno, nbmain, nbmaj2, nbmaj3, nbno, nbnot, nbtrav
+    integer :: nbpt, nbptt, nori, nrep, ntab, ntpoi, nb_ma_test
     integer :: ibid, icham, ifm, iocc, jdime, jiad, jlima, jma, jmomno, jmomnu
     integer :: jnommc, jnu2, jnum, joccmc, jpr2, jpro, jrefe, jtypmv
     integer :: nbmaiv, nbmoma, nbnoaj, nbnoev, nch, ndinit, niv, k, jgeofi
     integer :: dimcon, decala, iocct, typ_dec
     real(kind=8) :: shrink, lonmin
-    aster_logical :: lpb
+    aster_logical :: lpb, same_zone
     integer, pointer :: adrjvx(:) => null()
     integer, pointer :: nbnoma(:) => null()
     integer, pointer :: nbnomb(:) => null()
     integer, pointer :: nomnum(:) => null()
-    integer, pointer :: lima(:) => null() 
+    integer, pointer :: lima(:) => null()
+    integer, pointer :: li_trav(:) => null()
 !     ------------------------------------------------------------------
 !
     call jemarq()
@@ -1107,39 +1111,64 @@ subroutine op0167()
 ! ------ BOUCLE SUR LES GROUP_MA ------------------------------------------------------------------
         do izone = 1,nbgrma
 ! ------ LISTE DE MAILLE DU GROUP_MA
+            same_zone=.false.
+            nb_ma_test = 0
+            nbtrav = 0
             call gtgrma(nomain, nomaax, zk24(jlgrma+izone-1), lima, nbma)
+            nbma_izone = nbma
+            AS_ALLOCATE(vi=li_trav, size=nbma)
+            write(*,*)"nbma:", nbma
+! ------ Gestion du cas avec des mailles surfaciques possédant des mailles volumiques communes
+            do while (nb_ma_test .lt. nbma)
+                cninv='&&CPPAGN.CNINV'
+                call wkvect(cninv,'V V I', nbma, jcninv)
+                call cnmpmc(nomaax,nbma, lima,zi(jcninv))
+                call def_list_test(nbma, jcninv, lima, li_trav, nbtrav)
+                write(*,*)"nbtrav :", nbtrav
 ! ------ CREATION DES PATCHS ET RAFFINEMENT LOCAL
-            call cppagn(nomaax, nomaou,  nbma, lima, izone,typ_dec)
+                call cppagn(nomaax, nomaou,  nbtrav, li_trav, izone, typ_dec, jcninv,&
+                            same_zone, nb_ma_test)
 ! ------ COPIE DES DONNEES DANS LE MAILLAGE AUXILIAIRE
-            call jedetr(nomaax)
-            call copisd('MAILLAGE', 'V', nomaou, nomaax)
-            call cpifpa(nomaou, nomaax)
-! ------ IMPRESSIONS            
+                call detrsd('MAILLAGE', nomaax)
+                call copisd('MAILLAGE', 'V', nomaou, nomaax)
+                call cpifpa(nomaou, nomaax)
+                same_zone = .true.
+                nbtrav = nb_ma_test
+                call jedetr(cninv)
+                AS_DEALLOCATE(vi=lima)
+                AS_DEALLOCATE(vi=li_trav)
+                call gtgrma(nomain, nomaax, zk24(jlgrma+izone-1), lima, nbma)
+                AS_ALLOCATE(vi=li_trav, size=nbma)
+            enddo
+            AS_DEALLOCATE(vi=lima)
+            AS_DEALLOCATE(vi=li_trav)
+! ------ IMPRESSIONS
             if (niv .ge. 1) then
                write (ifm,904)izone
-               write (ifm,905)nbma
+               write (ifm,905)nbma_izone
             endif
 ! ------ NETTOYAGE
-            AS_DEALLOCATE(vi=lima)
+            AS_DEALLOCATE(vi=li_trav)
         enddo
 ! ------ CREATION DU POINTEUR VERS LES NOMS -------------------------------------------------------
         call wkvect(nomaou//'.PTRNOMPAT', 'G V K24',nbgrma,jnompat)
         do izone=1, nbgrma
            zk24(jnompat+izone-1)=zk24(jlgrma+izone-1)
-! ------ IMPRESSIONS            
+! ------ IMPRESSIONS
            if (.false.) then
                write (*,*)izone
                write (*,*)zk24(jnompat+izone-1)
-           endif             
+           endif
         end do
- 
-              
+
+
         call jedetr(nomaax//'.PATCH')
         call jedetr(nomaax//'.CONOPA')
         call jedetr(nomaax//'.COMAPA')
         call jedetr(nomaax)
         call jedetr(ligrma)
-        go to 350        
+
+        go to 350
 !
     endif
 

@@ -15,16 +15,15 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-#include "asterf_types.h"
+
 !
 !
 interface
-    subroutine coppat(main, maout, nbma, nbpain, lenpat,same_zone)
-        character(len=8), intent(in) :: main
-        character(len=8), intent(in) :: maout
-        integer, intent(in) :: nbma
-        integer, intent(out) :: nbpain
-        integer, intent(in) :: lenpat
-        aster_logical, intent(in) :: same_zone
-    end subroutine coppat
+    subroutine def_list_test(nbma,jcninv , lima, liout, nbout)
+        integer, intent(in)  :: nbma
+        integer, intent(in)  :: lima(nbma)
+        integer, intent(in)  :: jcninv
+        integer, intent(inout)  :: liout(nbma)
+        integer, intent(inout) :: nbout
+    end subroutine def_list_test
 end interface
