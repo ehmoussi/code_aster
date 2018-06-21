@@ -89,7 +89,7 @@ contact=DEFI_CONTACT(MODELE=modele,
                              #PENE_MAXI=1.E-2,
                              ADAPTATION='TOUT',
                              SANS_GROUP_NO = ('Clim_Bas', ),
-                             DIST_APPA = 0.2,
+                             #DIST_APPA = 0.2,
                              COULOMB=0.2),);
                              
 contac2=DEFI_CONTACT(MODELE=modele,
@@ -219,7 +219,7 @@ TEST_RESU(RESU=_F(INST=0.0006,
                   VALE_CALC=-0.0193792086576,
                   CRITERE='ABSOLU',),
           )
-
+IMPR_RESU(FORMAT='MED',RESU=_F(RESULTAT=evol1))
 
 FIN();
 #CHECKSUM:2af6539f8f0ef1542b8f866eb84ee269  -:FIN CHECKSUM
