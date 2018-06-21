@@ -19,15 +19,17 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import AssemblyMatrixDouble, AssemblyMatrixComplex, \
+from ..Objects import AssemblyMatrixDisplacementDouble, AssemblyMatrixDisplacementComplex, \
     GeneralizedAssemblyMatrixDouble, GeneralizedAssemblyMatrixComplex
+from ..Objects import AssemblyMatrixTemperatureDouble, AssemblyMatrixTemperatureComplex
+from ..Objects import AssemblyMatrixPressureDouble, AssemblyMatrixPressureComplex
 from .ExecuteCommand import ExecuteCommand
 
 
 class MatrixCombination(ExecuteCommand):
     """Command that creates the
-    :class:`~code_aster.Objects.AssemblyMatrixDouble`
-    :class:`~code_aster.Objects.AssemblyMatrixComplex`
+    :class:`~code_aster.Objects.AssemblyMatrixDisplacementDouble`
+    :class:`~code_aster.Objects.AssemblyMatrixDisplacementComplex`
     :class:`~code_aster.Objects.GeneralizedAssemblyMatrixDouble`
     :class:`~code_aster.Objects.GeneralizedAssemblyMatrixComplex`
     """
@@ -40,29 +42,41 @@ class MatrixCombination(ExecuteCommand):
             keywords (dict): Keywords arguments of user's keywords.
         """
         self._result = None
-        if("COMB_C" in keywords):
-            if(len(keywords["COMB_C"]) > 0):
-                if("MATR_ASSE" in keywords["COMB_C"][0]):
+        if "COMB_C" in keywords:
+            if len(keywords["COMB_C"]) > 0:
+                if "MATR_ASSE" in keywords["COMB_C"][0]:
                     matrix = keywords["COMB_C"][0]["MATR_ASSE"]
-                    if(type(matrix) in (AssemblyMatrixDouble,
-                                        AssemblyMatrixComplex)):
-                        self._result = AssemblyMatrixComplex()
-                    elif(type(matrix) in (GeneralizedAssemblyMatrixDouble,
-                                          GeneralizedAssemblyMatrixComplex)):
+                    if isinstance(matrix, AssemblyMatrixDisplacementDouble) or\
+                        isinstance(matrix, AssemblyMatrixDisplacementComplex):
+                        self._result = AssemblyMatrixDisplacementComplex()
+                    if isinstance(matrix, GeneralizedAssemblyMatrixDouble) or\
+                        isinstance(matrix, GeneralizedAssemblyMatrixComplex):
                         self._result = GeneralizedAssemblyMatrixComplex()
-        elif("COMB_R" in keywords):
-            if(len(keywords["COMB_R"]) > 0):
-                if("MATR_ASSE" in keywords["COMB_R"][0]):
+                    if isinstance(matrix, AssemblyMatrixTemperatureDouble) or\
+                        isinstance(matrix, AssemblyMatrixTemperatureComplex):
+                        self._result = AssemblyMatrixTemperatureComplex()
+                    if isinstance(matrix, AssemblyMatrixPressureDouble) or\
+                        isinstance(matrix, AssemblyMatrixPressureComplex):
+                        self._result = AssemblyMatrixPressureComplex()
+        elif "COMB_R" in keywords:
+            if len(keywords["COMB_R"]) > 0:
+                if "MATR_ASSE" in keywords["COMB_R"][0]:
                     matrix = keywords["COMB_R"][0]["MATR_ASSE"]
-                    if(type(matrix) in (AssemblyMatrixDouble,
-                                        AssemblyMatrixComplex)):
-                        self._result = AssemblyMatrixDouble()
-                    elif(type(matrix) in (GeneralizedAssemblyMatrixDouble,
-                                          GeneralizedAssemblyMatrixComplex)):
+                    if isinstance(matrix, AssemblyMatrixDisplacementDouble) or\
+                        isinstance(matrix, AssemblyMatrixDisplacementComplex):
+                        self._result = AssemblyMatrixDisplacementDouble()
+                    if isinstance(matrix, GeneralizedAssemblyMatrixDouble) or\
+                        isinstance(matrix, GeneralizedAssemblyMatrixComplex):
                         self._result = GeneralizedAssemblyMatrixDouble()
-        elif("CALC_AMOR_GENE" in keywords):
+                    if isinstance(matrix, AssemblyMatrixTemperatureDouble) or\
+                        isinstance(matrix, AssemblyMatrixTemperatureComplex):
+                        self._result = AssemblyMatrixTemperatureDouble()
+                    if isinstance(matrix, AssemblyMatrixPressureDouble) or\
+                        isinstance(matrix, AssemblyMatrixPressureComplex):
+                        self._result = AssemblyMatrixPressureDouble()
+        elif "CALC_AMOR_GENE" in keywords:
             self._result = GeneralizedAssemblyMatrixDouble()
-        if(self._result is None):
+        if self._result is None:
             raise NotImplementedError()
 
 

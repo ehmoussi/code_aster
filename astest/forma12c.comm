@@ -131,7 +131,7 @@ TRANPHY=DYNA_LINE(TYPE_CALCUL='TRAN', BASE_CALCUL='PHYS',
                     EXCIT=_F(CHARGE=GRAV,
                              FONC_MULT=sinom,
                              ),
-                    ARCHIVAGE=_F(LIST_INST=LISTR, PAS_ARCH=1.E8),
+                    ARCHIVAGE=_F(LIST_INST=LISTR, PAS_ARCH=int(1.E8)),
                     )
 
 UZ3=RECU_FONCTION(RESULTAT=TRANPHY,
@@ -183,7 +183,7 @@ TRANGEN2=DYNA_LINE(TYPE_CALCUL='TRAN', BASE_CALCUL='GENE',
                     EXCIT=_F(CHARGE=GRAV,
                              FONC_MULT=sinomv,),
                     
-                    ARCHIVAGE=_F(LIST_INST=LISTR, PAS_ARCH=1.E8),
+                    ARCHIVAGE=_F(LIST_INST=LISTR, PAS_ARCH=int(1.E8)),
                      
                     ORTHO = 'OUI',
                     

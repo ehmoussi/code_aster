@@ -69,6 +69,7 @@ def raff_xfem_ops(self, FISSURE, TYPE, **args):
     nbfiss = len(FISSURE)
 
     # on recupere le concept maillage "associe a la sd"
+    MA = FISSURE[0].getSupportMesh()
     nom_ma = get_nom_maillage_sdfiss(FISSURE[0])
 
     # on verifie que toutes les fissures/interfaces sont rattachees au meme
@@ -141,7 +142,7 @@ def raff_xfem_ops(self, FISSURE, TYPE, **args):
             elif typ_ds == 'INTERFACE':
                 __CHFOR = CREA_CHAMP(TYPE_CHAM='NOEU_NEUT_F',
                                      OPERATION='AFFE',
-                                     MAILLAGE=nom_ma,
+                                     MAILLAGE=MA,
                                      AFFE=_F(TOUT='OUI',
                                              NOM_CMP='X1',
                                              VALE_F=__MDISTI,),
@@ -168,7 +169,7 @@ def raff_xfem_ops(self, FISSURE, TYPE, **args):
             # champ d'Erreur de la fissure i
             __CERR[i] = CREA_CHAMP(TYPE_CHAM='NOEU_NEUT_R',
                                    OPERATION='ASSE',
-                                   MAILLAGE=nom_ma,
+                                   MAILLAGE=MA,
                                    ASSE=_F(TOUT='OUI',
                                            CHAM_GD=__CERRB,
                                            NOM_CMP='X1',
@@ -194,7 +195,7 @@ def raff_xfem_ops(self, FISSURE, TYPE, **args):
         # Définition de l'erreur en chaque noeud du maillage
         __CHFORM = CREA_CHAMP(TYPE_CHAM='NOEU_NEUT_F',
                               OPERATION='AFFE',
-                              MAILLAGE=nom_ma,
+                              MAILLAGE=MA,
                               AFFE=_F(TOUT='OUI',
                                       NOM_CMP='X1',
                                       VALE_F=__Erreur,),
@@ -231,7 +232,7 @@ def raff_xfem_ops(self, FISSURE, TYPE, **args):
         # champ de sortie
         chamout = CREA_CHAMP(TYPE_CHAM='CART_NEUT_R',
                              OPERATION='ASSE',
-                             MAILLAGE=nom_ma,
+                             MAILLAGE=MA,
                              ASSE=list_asse
                              )
 

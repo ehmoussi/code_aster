@@ -32,7 +32,7 @@ from ..Utilities import objects_from_context
 from .datastructure_ext import DataStructure
 
 # extend DataStructures using metaclasses
-from .assemblymatrix_ext import AssemblyMatrixDouble
+from .assemblymatrix_ext import AssemblyMatrixDisplacementDouble
 from .cracktip_ext import CrackTip
 from .elementarycharacteristics_ext import ElementaryCharacteristics
 from .elementarymatrix_ext import ElementaryMatrix

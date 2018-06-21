@@ -55,7 +55,7 @@ private:
     /** @brief rank */
     int                          _rank;
     /** @brief Assembly matrix */
-    AssemblyMatrixDoublePtr      _aMatrix;
+    AssemblyMatrixDisplacementDoublePtr      _aMatrix;
     /** @brief Are elastic properties constant */
     bool                         _isConst;
     /** @brief Input variables */
@@ -77,7 +77,7 @@ public:
         _results( container ),
         _time( 0. ),
         _rank( 1 ),
-        _aMatrix( new AssemblyMatrixDoubleInstance( Temporary ) ),
+        _aMatrix( new AssemblyMatrixDisplacementDoubleInstance( Temporary ) ),
         _isConst( _discreteProblem->getStudyDescription()->getCodedMaterial()->constant() ),
         _varCom( new CalculationInputVariablesInstance
                     ( _discreteProblem->getStudyDescription()->getSupportModel(),

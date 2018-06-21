@@ -20,7 +20,8 @@
 # person_in_charge: nicolas.sellenet@edf.fr
 
 from ..Objects import Material, GeneralMaterialBehaviour, Table, Function
-from ..Objects import Surface, Formula
+from ..Objects import Surface, Formula, MaterialBehaviour, DataStructure
+from code_aster.Cata.Language.SyntaxObjects import _F
 from .ExecuteCommand import ExecuteCommand
 import numpy
 
@@ -45,16 +46,22 @@ class MaterialDefinition(ExecuteCommand):
         Arguments:
             keywords (dict): User's keywords.
         """
-        classByName = self._byKeyword()
+        classByName = MaterialDefinition._byKeyword()
+        materByName = self._buildInstance(keywords, classByName)
         for fkwName, fkw in keywords.iteritems():
             # only see factor keyword
             if not isinstance(fkw, dict):
                 continue
-            klass = classByName.get(fkwName)
-            if not klass:
-                raise NotImplementedError("Unsupported behaviour: '{0}'"
-                                          .format(fkwName))
-            matBehav = klass()
+            if materByName.has_key(fkwName):
+                matBehav = materByName[fkwName]
+                klassName = matBehav.getName()
+            else:
+                klass = classByName.get(fkwName)
+                if not klass:
+                    raise NotImplementedError("Unsupported behaviour: '{0}'"
+                                            .format(fkwName))
+                matBehav = klass()
+                klassName = klass.__name__
             for skwName, skw in fkw.iteritems():
                 if skwName == "ORDRE_PARAM":
                     matBehav.setSortedListParameters(list(skw))
@@ -72,14 +79,14 @@ class MaterialDefinition(ExecuteCommand):
                         print ValueError("Can not assign keyword '{1}'/'{0}' "
                                          "(as '{3}'/'{2}') "
                                          .format(skwName, fkwName, iName,
-                                                 klass.__name__))
+                                                 klassName))
                 elif type(skw) is complex:
                     cRet = matBehav.setComplexValue(iName, skw)
                     if not cRet:
                         print ValueError("Can not assign keyword '{1}'/'{0}' "
                                          "(as '{3}'/'{2}') "
                                          .format(skwName, fkwName, iName,
-                                                 klass.__name__))
+                                                 klassName))
                 elif type(skw) is str:
                     cRet = matBehav.setStringValue(iName, skw)
                 elif type(skw) is Table:
@@ -110,6 +117,62 @@ class MaterialDefinition(ExecuteCommand):
 
         self._result.build()
 
+    def _buildInstance(self, keywords, dictClasses):
+        """Build a dict with MaterialBehaviour
+
+        Returns:
+            dict: Behaviour instances from keywords of command.
+        """
+
+        objects = {}
+        for materName, skws in keywords.iteritems():
+            if dictClasses.has_key(materName):
+                materClass = dictClasses[materName]
+                if materClass.hasConvertibleValues():
+                    objects[materName] = materClass()
+                    continue
+                if materClass().hasTractionFunction():
+                    objects[materName] = materClass()
+                    continue
+            asterNewName = ""
+            if materName[-2:] == "FO": asterNewName = materName[:-3]
+            mater = MaterialBehaviour(materName, asterNewName)
+            if isinstance(skws, _F) or type(skws) is dict:
+                for kwName, kwValue in skws.iteritems():
+                    curType = type(kwValue)
+                    mandatory = False
+                    if kwName == "ORDRE_PARAM":
+                        continue
+                    if curType in (float, int, numpy.float64):
+                        mater.addNewDoubleProperty(kwName, mandatory)
+                    elif curType is complex:
+                        mater.addNewComplexProperty(kwName, mandatory)
+                    elif curType is str:
+                        mater.addNewStringProperty(kwName, mandatory)
+                    elif isinstance(kwValue, Function) or\
+                            isinstance(kwValue, Surface) or\
+                            isinstance(kwValue, Formula):
+                        mater.addNewFunctionProperty(kwName, mandatory)
+                    elif isinstance(kwValue, Table):
+                        mater.addNewTableProperty(kwName, mandatory)
+                    elif curType is tuple:
+                        if type(kwValue[0]) is float:
+                            mater.addNewVectorOfDoubleProperty(kwName, mandatory)
+                        elif isinstance(kwValue[0], DataStructure):
+                            mater.addNewVectorOfFunctionProperty(kwName, mandatory)
+                        elif type(kwValue[0]) is str:
+                            pass
+                        else:
+                            raise NotImplementedError("Type not implemented for"
+                                                      " material property: '{0}'"
+                                                      .format(kwName))
+                    else:
+                        raise NotImplementedError("Type not implemented for"
+                                                  " material property: '{0}'"
+                                                  .format(kwName))
+            objects[materName] = mater
+        return objects
+
     @staticmethod
     def _byKeyword():
         """Build a dict of all behaviours subclasses, indexed by keyword.
@@ -123,6 +186,8 @@ class MaterialDefinition(ExecuteCommand):
             if not isinstance(obj, type):
                 continue
             if not issubclass(obj, GeneralMaterialBehaviour):
+                continue
+            if issubclass(obj, MaterialBehaviour):
                 continue
             key = ""
             try:

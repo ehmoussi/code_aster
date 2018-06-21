@@ -130,14 +130,7 @@ class ModelInstance: public DataStructure
         /**
          * @brief Constructeur
          */
-        ModelInstance():
-            ModelInstance( ResultNaming::getNewResultName() )
-        {};
-
-        /**
-         * @brief Constructeur
-         */
-        ModelInstance( const std::string name ):
+        ModelInstance( const std::string name = ResultNaming::getNewResultName() ):
             DataStructure( name, 8, "MODELE" ),
             _typeOfElements( JeveuxVectorLong( getName() + ".MAILLE    " ) ),
             _typeOfNodes( JeveuxVectorLong( getName() + ".NOEUD     " ) ),

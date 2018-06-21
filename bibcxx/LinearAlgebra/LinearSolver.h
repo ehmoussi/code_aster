@@ -390,7 +390,7 @@ class BaseLinearSolverInstance: public DataStructure
          * @brief Factorisation d'une matrice
          * @param currentMatrix Matrice assemblee
          */
-        bool matrixFactorization( AssemblyMatrixDoublePtr currentMatrix )
+        bool matrixFactorization( AssemblyMatrixDisplacementDoublePtr currentMatrix )
             throw( std::runtime_error );
 
         /**
@@ -401,7 +401,7 @@ class BaseLinearSolverInstance: public DataStructure
          * @param result champ aux noeuds résultat (optionnel)
          * @return champ aux noeuds resultat
          */
-        FieldOnNodesDoublePtr solveDoubleLinearSystem( const AssemblyMatrixDoublePtr& currentMatrix,
+        FieldOnNodesDoublePtr solveDoubleLinearSystem( const AssemblyMatrixDisplacementDoublePtr& currentMatrix,
                                                        const FieldOnNodesDoublePtr& currentRHS,
                                                        FieldOnNodesDoublePtr result = FieldOnNodesDoublePtr( new FieldOnNodesDoubleInstance( Permanent ) ) ) const;
 
@@ -414,7 +414,7 @@ class BaseLinearSolverInstance: public DataStructure
          * @return champ aux noeuds resultat
          */
         FieldOnNodesDoublePtr solveDoubleLinearSystemWithKinematicsLoad
-            ( const AssemblyMatrixDoublePtr& currentMatrix,
+            ( const AssemblyMatrixDisplacementDoublePtr& currentMatrix,
               const FieldOnNodesDoublePtr& kinematicsField,
               const FieldOnNodesDoublePtr& currentRHS,
               FieldOnNodesDoublePtr result = FieldOnNodesDoublePtr( new FieldOnNodesDoubleInstance( Permanent ) ) ) const;
