@@ -1,8 +1,8 @@
 subroutine mmgtme(ndim  ,nnm   ,nne,mprt1n,mprt2n, &
-                 wpg   , &
-          ffe,dffm  ,jacobi,coefac,jeu   , &
+                  wpg   , &
+          ffe,dffm  ,ddffm,jacobi,coefac,jeu   , &
           dlagrc,kappa ,vech1 ,vech2 ,h     , &
-          matrme)
+          mprt11,mprt21,mprt22,matrme)
 !
 ! ======================================================================
 ! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
@@ -30,8 +30,10 @@ subroutine mmgtme(ndim  ,nnm   ,nne,mprt1n,mprt2n, &
     integer :: ndim,  nnm, nne
     
     real(kind=8) :: mprt1n(3,3),mprt2n(3,3)
+    real(kind=8) :: mprtnt1(3,3),mprnt2(3,3)
+    real(kind=8) :: mprt11(3,3),mprt22(3,3),mprt21(3,3),mprt12(3,3)
     
-    real(kind=8) :: ffe(9),dffm(2,9)
+    real(kind=8) :: ffe(9),dffm(2,9),ddffm(3,9)
     real(kind=8) :: wpg, jacobi
     real(kind=8) :: coefac, jeu, dlagrc
     
@@ -93,11 +95,10 @@ subroutine mmgtme(ndim  ,nnm   ,nne,mprt1n,mprt2n, &
 
     integer :: i, j, k,l, ii, jj
     real(kind=8) :: g(3, 3), e(3, 3), d(3, 3), f(3, 3)
-    real(kind=8) :: mprt12(3,3),mprnt1(3,3),mprnt2(3,3)
+     real(kind=8) :: mprnt1(3,3)
     real(kind=8) :: supkap,supmat,alpha
     alpha = 1.d-5 
-!ETUDE HEURISTIQUE
-
+    
     call matini(3, 3, 0.d0, e)
     call matini(3, 3, 0.d0, d)
     call matini(3, 3, 0.d0, g)
@@ -150,7 +151,7 @@ subroutine mmgtme(ndim  ,nnm   ,nne,mprt1n,mprt2n, &
    f(3,2) = h(2,2)*vech2(3)*vech2(2)
    f(3,3) = h(2,2)*vech2(3)*vech2(3) 
 
-     
+ 
 
 !-----------mprnt1
   mprnt1(1,1) = mprt1n(1,1)
@@ -173,6 +174,10 @@ subroutine mmgtme(ndim  ,nnm   ,nne,mprt1n,mprt2n, &
   mprnt2(2,3) = mprt2n(3,2)  
   mprnt2(3,1) = mprt2n(1,3)
   mprnt2(3,2) = mprt2n(2,3) 
+  
+  
+!
+  mprt12      = mprt21
 
 ! LES MATRICES KAPPA INFLUENCENT LA CONVERGENCE DE LA METHODE :
 ! OUT KAPPA  : MATRICE DE SCALAIRES LIEES A LA CINEMATIQUE DU GLISSEMENT
@@ -217,20 +222,20 @@ do 260 i = 1, nne
         do 230 l = 1, ndim
             ii = ndim*(i-1)+l
             jj = ndim*(j-1)+k
-!  matrme(ii,jj) = matrme(ii,jj)         -&
-!(dlagrc-coefac*jeu)*wpg*jacobi )* (&
-!  mprt11(l,k)*ffe(i)*(kappa(1,1)*kappa(1,1)+kappa(1,2)*kappa(2,1))*(ddffm(1,j)+ddffm(3,j))  + &
-!  mprt12(l,k)*ffe(i)*(kappa(1,1)*kappa(1,1)+kappa(1,2)*kappa(2,1))*(ddffm(2,j)+ddffm(3,j))   + &
-!  mprt21(l,k)*ffe(i)*(kappa(1,2)*kappa(1,1)+kappa(2,2)*kappa(1,2))*(ddffm(1,j)+ddffm(3,j))   + &
-!  mprt22(l,k)*ffe(i)*(kappa(1,2)*kappa(1,1)+kappa(2,2)*kappa(1,2))*(ddffm(3,j)+ddffm(2,j)) 
+ matrme(ii,jj) = matrme(ii,jj)         -&
+(dlagrc-coefac*jeu)*wpg*jacobi * (&
+ mprt11(l,k)*ffe(i)*(kappa(1,1)*kappa(1,1)+kappa(1,2)*kappa(2,1))*(ddffm(1,j)+ddffm(3,j))  + &
+ mprt12(l,k)*ffe(i)*(kappa(1,1)*kappa(1,1)+kappa(1,2)*kappa(2,1))*(ddffm(2,j)+ddffm(3,j))   + &
+ mprt21(l,k)*ffe(i)*(kappa(1,2)*kappa(1,1)+kappa(2,2)*kappa(1,2))*(ddffm(1,j)+ddffm(3,j))   + &
+ mprt22(l,k)*ffe(i)*(kappa(1,2)*kappa(1,1)+kappa(2,2)*kappa(1,2))*(ddffm(3,j)+ddffm(2,j)) )
   
   
-!  matrme(ii,jj) = matrme(ii,jj)          - &
-!(dlagrc-coefac*jeu)*wpg*jacobi )* (&
-!  mprt11(l,k)*ffe(i)*(kappa(2,1)*kappa(1,1)+kappa(2,2)*kappa(2,1))*(ddffm(1,j)+ddffm(3,j))  + &
-!  mprt12(l,k)*ffe(i)*(kappa(2,1)*kappa(1,1)+kappa(2,2)*kappa(2,1))*(ddffm(2,j)+ddffm(3,j))   + &
-!  mprt21(l,k)*ffe(i)*(kappa(1,2)*kappa(2,1)+kappa(2,2)*kappa(2,2))*(ddffm(1,j)+ddffm(3,j))   + &
-!  mprt22(l,k)*ffe(i)*(kappa(1,2)*kappa(2,1)+kappa(2,2)*kappa(2,2))*(ddffm(3,j)+ddffm(2,j)) 
+ matrme(ii,jj) = matrme(ii,jj)          - &
+(dlagrc-coefac*jeu)*wpg*jacobi* (&
+ mprt11(l,k)*ffe(i)*(kappa(2,1)*kappa(1,1)+kappa(2,2)*kappa(2,1))*(ddffm(1,j)+ddffm(3,j))  + &
+ mprt12(l,k)*ffe(i)*(kappa(2,1)*kappa(1,1)+kappa(2,2)*kappa(2,1))*(ddffm(2,j)+ddffm(3,j))   + &
+ mprt21(l,k)*ffe(i)*(kappa(1,2)*kappa(2,1)+kappa(2,2)*kappa(2,2))*(ddffm(1,j)+ddffm(3,j))   + &
+ mprt22(l,k)*ffe(i)*(kappa(1,2)*kappa(2,1)+kappa(2,2)*kappa(2,2))*(ddffm(3,j)+ddffm(2,j)) )
   
   
   

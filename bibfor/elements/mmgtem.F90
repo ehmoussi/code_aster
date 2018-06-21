@@ -1,8 +1,8 @@
 subroutine mmgtem(ndim  ,nnm   ,nne,mprt1n,mprt2n, &
                   wpg   , &
-          ffe,dffm  ,jacobi,coefac,jeu   , &
+          ffe,dffm  ,ddffm,jacobi,coefac,jeu   , &
           dlagrc,kappa ,vech1 ,vech2 ,h     , &
-          matrem)
+          mprt11,mprt21,mprt22,matrem)
 !
 ! ======================================================================
 ! COPYRIGHT (C) 1991 - 2015  EDF R&D                  WWW.CODE-ASTER.ORG
@@ -31,8 +31,10 @@ subroutine mmgtem(ndim  ,nnm   ,nne,mprt1n,mprt2n, &
     integer :: ndim,  nnm, nne
     
     real(kind=8) :: mprt1n(3,3),mprt2n(3,3)
+    real(kind=8) :: mprt11(3,3),mprt22(3,3),mprt21(3,3),mprt12(3,3)
+    real(kind=8) :: norm(3)
     
-    real(kind=8) :: ffe(9),dffm(2,9)
+    real(kind=8) :: ffe(9),dffm(2,9),ddffm(3,9)
     real(kind=8) :: wpg, jacobi
     real(kind=8) :: coefac, jeu, dlagrc
     
@@ -96,12 +98,12 @@ subroutine mmgtem(ndim  ,nnm   ,nne,mprt1n,mprt2n, &
     real(kind=8) :: supkap,supmat,alpha
     real(kind=8) :: mprnt1(3,3),mprnt2(3,3)
     alpha = 1.d-5 
-!ETUDE HEURISTIQUE
-
+    
     call matini(3, 3, 0.d0, e)
     call matini(3, 3, 0.d0, d)
     call matini(3, 3, 0.d0, g)
     call matini(3, 3, 0.d0, f)
+    call matini(3, 3, 0.d0, mprt12)
     call matini(3, 3, 0.d0, mprnt1)
     call matini(3, 3, 0.d0, mprnt2)
 
@@ -128,15 +130,15 @@ subroutine mmgtem(ndim  ,nnm   ,nne,mprt1n,mprt2n, &
    d(3,3) = h(1,2)*vech1(3)*vech2(3)
    
 !-------g =vech2/vech1  
-   g(1,1) = h(2,1)*vech2(1)*vech1(1)
-   g(1,2) = h(2,1)*vech2(1)*vech1(2) 
-   g(1,3) = h(2,1)*vech2(1)*vech1(3) 
-   g(2,1) = h(2,1)*vech2(2)*vech1(1)
-   g(2,2) = h(2,1)*vech2(2)*vech1(2)
-   g(2,3) = h(2,1)*vech2(2)*vech1(3)
-   g(3,1) = h(2,1)*vech2(3)*vech1(1)
-   g(3,2) = h(2,1)*vech2(3)*vech1(2)
-   g(3,3) = h(2,1)*vech2(3)*vech1(3)      
+   g(1,1) = h(2,1)*vech2(1)*vech2(1)
+   g(1,2) = h(2,1)*vech2(1)*vech2(2) 
+   g(1,3) = h(2,1)*vech2(1)*vech2(3) 
+   g(2,1) = h(2,1)*vech2(2)*vech2(1)
+   g(2,2) = h(2,1)*vech2(2)*vech2(2)
+   g(2,3) = h(2,1)*vech2(2)*vech2(3)
+   g(3,1) = h(2,1)*vech2(3)*vech2(1)
+   g(3,2) = h(2,1)*vech2(3)*vech2(2)
+   g(3,3) = h(2,1)*vech2(3)*vech2(3)      
 
 !-------f =vech2/vech2  
    f(1,1) = h(2,2)*vech2(1)*vech2(1)
@@ -149,7 +151,7 @@ subroutine mmgtem(ndim  ,nnm   ,nne,mprt1n,mprt2n, &
    f(3,2) = h(2,2)*vech2(3)*vech2(2)
    f(3,3) = h(2,2)*vech2(3)*vech2(3) 
 
-     
+ 
 
 !-----------mprnt1
   mprnt1(1,1) = mprt1n(1,1)
@@ -174,6 +176,8 @@ subroutine mmgtem(ndim  ,nnm   ,nne,mprt1n,mprt2n, &
   mprnt2(3,2) = mprt2n(2,3) 
   
   
+!
+  mprt12      = mprt21
 ! LES MATRICES KAPPA INFLUENCENT LA CONVERGENCE DE LA METHODE :
 ! OUT KAPPA  : MATRICE DE SCALAIRES LIEES A LA CINEMATIQUE DU GLISSEMENT
 ! OUT KAPPA(i,j) = INVERSE[TAU_i.TAU_j-JEU*(ddFFM*geomm)](matrice 2*2) 
@@ -194,33 +198,33 @@ subroutine mmgtem(ndim  ,nnm   ,nne,mprt1n,mprt2n, &
 !
 ! CONTRIBUTION 2 :  DELTA XI*H*delta XI MATREM = 0
 !
-do 260 i = 1, nne
-    do 250 j = 1, nnm
-        do 240 k = 1, ndim
-        do 230 l = 1, ndim
+do  i = 1, nne
+    do  j = 1, nnm
+        do  k = 1, ndim
+        do  l = 1, ndim
             ii = ndim*(i-1)+l
             jj = ndim*(j-1)+k
-!  matrem(ii,jj) = matrem(ii,jj)         -&
-!(dlagrc-coefac*jeu)*wpg*jacobi )* (&
-!  mprt11(l,k)*ffe(j)*(kappa(1,1)*kappa(1,1)+kappa(1,2)*kappa(2,1))*(ddffm(1,i)+ddffm(3,i))  + &
-!  mprt12(l,k)*ffe(j)*(kappa(1,1)*kappa(1,1)+kappa(1,2)*kappa(2,1))*(ddffm(2,i)+ddffm(3,i))   + &
-!  mprt21(l,k)*ffe(j)*(kappa(1,2)*kappa(1,1)+kappa(2,2)*kappa(1,2))*(ddffm(1,i)+ddffm(3,i))   + &
-!  mprt22(l,k)*ffe(j)*(kappa(1,2)*kappa(1,1)+kappa(2,2)*kappa(1,2))*(ddffm(3,i)+ddffm(2,i)) 
+ matrem(ii,jj) = matrem(ii,jj)         -&
+(dlagrc-coefac*jeu)*wpg*jacobi* (&
+ mprt11(l,k)*ffe(j)*(kappa(1,1)*kappa(1,1)+kappa(1,2)*kappa(2,1))*(ddffm(1,i)+ddffm(3,i))  + &
+ mprt12(l,k)*ffe(j)*(kappa(1,1)*kappa(1,1)+kappa(1,2)*kappa(2,1))*(ddffm(2,i)+ddffm(3,i))   + &
+ mprt21(l,k)*ffe(j)*(kappa(1,2)*kappa(1,1)+kappa(2,2)*kappa(1,2))*(ddffm(1,i)+ddffm(3,i))   + &
+ mprt22(l,k)*ffe(j)*(kappa(1,2)*kappa(1,1)+kappa(2,2)*kappa(1,2))*(ddffm(3,i)+ddffm(2,i)) )
   
   
-!  matrem(ii,jj) = matrem(ii,jj)          - &
-!(dlagrc-coefac*jeu)*wpg*jacobi )* (&
-!  mprt11(l,k)*ffe(j)*(kappa(2,1)*kappa(1,1)+kappa(2,2)*kappa(2,1))*(ddffm(1,i)+ddffm(3,i))  + &
-!  mprt12(l,k)*ffe(j)*(kappa(2,1)*kappa(1,1)+kappa(2,2)*kappa(2,1))*(ddffm(2,i)+ddffm(3,i))   + &
-!  mprt21(l,k)*ffe(j)*(kappa(1,2)*kappa(2,1)+kappa(2,2)*kappa(2,2))*(ddffm(1,i)+ddffm(3,i))   + &
-!  mprt22(l,k)*ffe(j)*(kappa(1,2)*kappa(2,1)+kappa(2,2)*kappa(2,2))*(ddffm(3,i)+ddffm(2,i)) 
+ matrem(ii,jj) = matrem(ii,jj)          - &
+(dlagrc-coefac*jeu)*wpg*jacobi * (&
+ mprt11(l,k)*ffe(j)*(kappa(2,1)*kappa(1,1)+kappa(2,2)*kappa(2,1))*(ddffm(1,i)+ddffm(3,i))  + &
+ mprt12(l,k)*ffe(j)*(kappa(2,1)*kappa(1,1)+kappa(2,2)*kappa(2,1))*(ddffm(2,i)+ddffm(3,i))   + &
+ mprt21(l,k)*ffe(j)*(kappa(1,2)*kappa(2,1)+kappa(2,2)*kappa(2,2))*(ddffm(1,i)+ddffm(3,i))   + &
+ mprt22(l,k)*ffe(j)*(kappa(1,2)*kappa(2,1)+kappa(2,2)*kappa(2,2))*(ddffm(3,i)+ddffm(2,i))) 
   
   
   
-230         continue
-240         continue
-250     continue
-260  continue
+         enddo
+         enddo
+     enddo
+  enddo
 
 
 !

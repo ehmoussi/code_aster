@@ -18,7 +18,7 @@
 
 subroutine mmtppe(typmae, typmam, ndim, nne, nnm,&
                   nnl, nbdm, iresog, laxis, ldyna,&
-                  jeusup, ffe, ffm, dffm, ffl,&
+                  jeusup, ffe, ffm, dffm,ddffm, ffl,&
                   jacobi, wpg, jeu, djeut, dlagrc,&
                   dlagrf, norm, tau1, tau2, mprojn,&
                   mprojt, mprt1n, mprt2n, gene11, gene21,&

@@ -18,9 +18,9 @@
 interface
     subroutine mmgtuu(ndim  ,nne   ,norm, nnm   ,mprt1n, &
               mprt2n,mprojn,mprt11,mprt21,mprt22, &
-          wpg   ,ffe   ,ffm   ,dffm  ,jacobi, &
+          wpg   ,ffe   ,ffm   ,dffm  ,ddffm,jacobi, &
           coefac,jeu   ,dlagrc,kappa ,vech1 , &
-          vech2 ,a,h    ,ha ,hah   , &
+          vech2 ,h    ,ha ,hah   , &
           matree,matrmm,matrem, matrme)
               
     
@@ -33,7 +33,7 @@ interface
         real(kind=8) :: wpg
         real(kind=8) :: ffe(9)
         real(kind=8) :: ffm(9)
-        real(kind=8) :: dffm(2, 9)
+        real(kind=8) :: dffm(2, 9),ddffm(3,9)
         real(kind=8) :: jacobi
         real(kind=8) :: coefac
         real(kind=8) :: jeu
@@ -46,8 +46,7 @@ interface
     real(kind=8) :: mprt22(3, 3)
 
     real(kind=8) :: kappa(2,2)
-    real(kind=8) :: h(2,2)    
-    real(kind=8) :: a(2,2)        
+    real(kind=8) :: h(2,2)   
     real(kind=8) :: ha(2,2)    
     real(kind=8) :: hah(2,2)
     
