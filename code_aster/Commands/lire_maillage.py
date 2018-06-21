@@ -37,24 +37,5 @@ class MeshReader(ExecuteCommand):
         """
         self._result = Mesh()
 
-    def exec_(self, keywords):
-        """Execute the command.
-
-        Arguments:
-            keywords (dict): User's keywords.
-        """
-        mesh = self._result
-        fileName = LogicalUnitFile.filename_from_unit(keywords['UNITE'])
-        format = keywords["FORMAT"]
-        if format == "MED":
-            mesh.readMedFile(fileName)
-        elif format == "GMSH":
-            mesh.readGmshFile(fileName)
-        elif format == "GIBI":
-            mesh.readGibiFile(fileName)
-        elif format == "ASTER":
-            mesh.readAsterMeshFile(fileName)
-        return mesh
-
 
 LIRE_MAILLAGE = MeshReader.run

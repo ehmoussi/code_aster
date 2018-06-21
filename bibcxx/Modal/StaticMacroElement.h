@@ -99,13 +99,13 @@ private:
     /** @brief Objet Jeveux '.CONX' */
     JeveuxVectorLong        _conx;
     /** @brief Objet Jeveux '.RIGIMECA' */
-    AssemblyMatrixDoublePtr _rigiMeca;
+    AssemblyMatrixDisplacementDoublePtr _rigiMeca;
     /** @brief Objet Jeveux '.MAEL_RAID_VALE' */
     JeveuxVectorDouble      _maelRaidVale;
     /** @brief Objet Jeveux '.PHI_IE' */
     JeveuxCollectionDouble  _phiIe;
     /** @brief Objet Jeveux '.MASSMECA' */
-    AssemblyMatrixDoublePtr _masseMeca;
+    AssemblyMatrixDisplacementDoublePtr _masseMeca;
     /** @brief Objet Jeveux '.MAEL_MASS_VALE' */
     JeveuxVectorDouble      _maelMassVale;
     /** @brief Objet Jeveux '.MAEL_AMOR_VALE' */
@@ -134,10 +134,10 @@ public:
         _refm( JeveuxVectorChar8( getName() + ".REFM" ) ),
         _varm( JeveuxVectorDouble( getName() + ".VARM" ) ),
         _conx( JeveuxVectorLong( getName() + ".CONX" ) ),
-        _rigiMeca( new AssemblyMatrixDoubleInstance( getName() + ".RIGIMECA" ) ),
+        _rigiMeca( new AssemblyMatrixDisplacementDoubleInstance( getName() + ".RIGIMECA" ) ),
         _maelRaidVale( JeveuxVectorDouble( getName() + ".MAEL_RAID_VALE" ) ),
         _phiIe( JeveuxCollectionDouble( getName() + ".PHI_IE" ) ),
-        _masseMeca( new AssemblyMatrixDoubleInstance( getName() + ".MASSMECA" ) ),
+        _masseMeca( new AssemblyMatrixDisplacementDoubleInstance( getName() + ".MASSMECA" ) ),
         _maelMassVale( JeveuxVectorDouble( getName() + ".MAEL_MASS_VALE" ) ),
         _maelAmorVale( JeveuxVectorDouble( getName() + ".MAEL_AMOR_VALE" ) ),
         _lica( JeveuxCollectionDouble( getName() + ".LICA" ) ),

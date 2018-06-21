@@ -38,19 +38,46 @@
 
 
 ================================================================================
-:py:class:`~code_aster.Objects.AssemblyMatrixComplex` object
+:py:class:`~code_aster.Objects.AssemblyMatrixDisplacementComplex` object
 ================================================================================
 
-.. autoclass:: code_aster.Objects.AssemblyMatrixComplex
+.. autoclass:: code_aster.Objects.AssemblyMatrixDisplacementComplex
    :show-inheritance:
    :members:
 
 
 ================================================================================
-:py:class:`~code_aster.Objects.AssemblyMatrixDouble` object
+:py:class:`~code_aster.Objects.AssemblyMatrixDisplacementDouble` object
 ================================================================================
 
-.. autoclass:: code_aster.Objects.AssemblyMatrixDouble
+.. autoclass:: code_aster.Objects.AssemblyMatrixDisplacementDouble
+   :show-inheritance:
+   :members:
+
+
+================================================================================
+:py:class:`~code_aster.Objects.AssemblyMatrixPressureComplex` object
+================================================================================
+
+.. autoclass:: code_aster.Objects.AssemblyMatrixPressureComplex
+   :show-inheritance:
+   :members:
+
+
+================================================================================
+:py:class:`~code_aster.Objects.AssemblyMatrixPressureDouble` object
+================================================================================
+
+.. autoclass:: code_aster.Objects.AssemblyMatrixPressureDouble
+   :show-inheritance:
+   :members:
+
+
+================================================================================
+:py:class:`~code_aster.Objects.AssemblyMatrixTemperatureComplex` object
+================================================================================
+
+.. autoclass:: code_aster.Objects.AssemblyMatrixTemperatureComplex
    :show-inheritance:
    :members:
 

@@ -36,6 +36,7 @@ from numpy.linalg import norm
 # from soluce import *
 # print 'rho final', rho_solb2[-1]
 # juste pour en verifier la syntaxe
+import os
 assert os.path.isfile("fort.30")
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))

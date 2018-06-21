@@ -60,6 +60,8 @@ class MaterialInstance: public DataStructure
         std::vector< JeveuxVectorChar16 >  _vectorOfChar16Values;
         /** @brief Vector of JeveuxVectorChar16 named '.ORDR' */
         std::vector< JeveuxVectorChar16 >  _vectorOrdr;
+        /** @brief Vector of JeveuxVectorLong named '.KORD' */
+        std::vector< JeveuxVectorLong >    _vectorKOrdr;
         /** @brief Vector of JeveuxVectorDouble named '.XXXXXXX.LISV_R8' */
         std::vector< JeveuxVectorDouble >  _vectorOfUserDoubleValues;
         /** @brief Vector of JeveuxVectorChar8 named '.XXXXXXX.LISV_FO' */
@@ -106,6 +108,7 @@ class MaterialInstance: public DataStructure
             _vectorOfDoubleValues.push_back( JeveuxVectorDouble( currentName + ".VALR" ) );
             _vectorOfChar16Values.push_back( JeveuxVectorChar16( currentName + ".VALK" ) );
             _vectorOrdr.push_back( JeveuxVectorChar16( currentName + ".ORDR" ) );
+            _vectorKOrdr.push_back( JeveuxVectorLong( currentName + ".KORD" ) );
 
             numUser << std::setw( 7 ) << std::setfill( '0' ) << _nbMaterialBehaviour;
             const std::string currentName2 = _jeveuxName + numUser.str() + ".LISV_R8";

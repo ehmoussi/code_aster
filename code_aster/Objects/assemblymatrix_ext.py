@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -19,19 +19,19 @@
 
 # person_in_charge: mathieu.courtois@edf.fr
 """
-:py:class:`AssemblyMatrixDouble` --- Assembly matrix
+:py:class:`AssemblyMatrixDisplacementDouble` --- Assembly matrix
 ****************************************************
 """
 
-from libaster import AssemblyMatrixDouble
+from libaster import AssemblyMatrixDisplacementDouble
 
 from ..Utilities import injector
 
-_orig_getType = AssemblyMatrixDouble.getType
+_orig_getType = AssemblyMatrixDisplacementDouble.getType
 
 
-class ExtendedAssemblyMatrixDouble(injector(AssemblyMatrixDouble),
-                                   AssemblyMatrixDouble):
+class ExtendedAssemblyMatrixDisplacementDouble(injector(AssemblyMatrixDisplacementDouble),
+                                   AssemblyMatrixDisplacementDouble):
     cata_sdj = "SD.sd_matr_asse.sd_matr_asse"
 
     def getType(self):

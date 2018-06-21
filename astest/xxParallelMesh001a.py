@@ -66,7 +66,7 @@ numeDDL.setElementaryMatrix(matr_elem)
 numeDDL.computeNumerotation()
 numeDDL.debugPrint(rank+30)
 
-matrAsse = code_aster.AssemblyMatrixDouble()
+matrAsse = code_aster.AssemblyMatrixDisplacementDouble()
 matrAsse.appendElementaryMatrix(matr_elem)
 matrAsse.setDOFNumbering(numeDDL)
 matrAsse.addKinematicsLoad(charCine)
