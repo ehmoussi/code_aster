@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -45,26 +45,26 @@ subroutine cpqu04(main  , maout , inc   , jcoor , jcnnpa, conloc,&
 !
     character(len=8), intent(in) :: main
     character(len=8), intent(in) :: maout
-    integer, intent(in) :: inc 
+    integer, intent(in) :: inc
     integer, intent(in) :: jcoor
     integer, intent(in) :: jcnnpa
     character(len=24), intent(in) :: conloc
     character(len=24), intent(in) :: limane
     character(len=24), intent(in) :: nomnoe
-    integer, intent(in) :: nbno 
+    integer, intent(in) :: nbno
     integer, intent(in) :: jmacou
     integer, intent(in) :: jmacsu
     integer, intent(in) :: macou
     integer, intent(in) :: macsu
-    integer, intent(out) :: ind 
-    integer, intent(out) :: ind1     
+    integer, intent(out) :: ind
+    integer, intent(out) :: ind1
 ! -------------------------------------------------------------------------------------------------
 !        CREATION DES NOUVEAUS NOUEDS ET NOUVELLE MAILLE CAS TETRA 10
 ! -------------------------------------------------------------------------------------------------
 ! -------------------------------------------------------------------------------------------------
     integer :: patch
     integer :: jlimane
-    integer :: jconneo    
+    integer :: jconneo
     character(len=24) :: conneo
 ! -------------------------------------------------------------------------------------------------
     call jemarq()
@@ -78,10 +78,10 @@ subroutine cpqu04(main  , maout , inc   , jcoor , jcnnpa, conloc,&
 ! --- DDL INTERNE
      zi(patch-1+2)=nbno+ind1
     zi(jcnnpa+nbno+ind1-1) = inc
-! --- DDLs SUPPLEMENTAIRES 
+! --- DDLs SUPPLEMENTAIRES
     zi(patch-1+3)=nbno+ind1+1
     zi(jcnnpa+nbno+ind1+1-1) = inc
-! --- CREATION DES NOEUDS DDL INTERNE      
+! --- CREATION DES NOEUDS DDL INTERNE
     call cpnpq4(main,macou,zr(jcoor),nbno+ind1,nomnoe)
 ! --- NOUVEAUX ELEMENTS DE PEAU
     call cpmpq4(conloc, jmacou, nbno+ind1, ind)
@@ -91,7 +91,7 @@ subroutine cpqu04(main  , maout , inc   , jcoor , jcnnpa, conloc,&
     call jeveuo(conneo,'L',jconneo)
     call cpncq4(main, macsu, zr(jcoor), nbno+ind1+2, nomnoe, zi(jconneo))
 ! --- NOUVEAUX ELEMENTS DE CORPS
-    call cpmcq4(conloc, jmacsu, nbno+ind1, ind+3, zi(jconneo))        
+    call cpmcq4(conloc, jmacsu, nbno+ind1, ind+3, zi(jconneo))
 ! --- CONNECTIVITE ANCIENS NOUVEAUX ELEMENTS (Peau)
 
     call jeveuo(jexnum(limane, macou), 'E', jlimane)
@@ -110,7 +110,7 @@ subroutine cpqu04(main  , maout , inc   , jcoor , jcnnpa, conloc,&
 ! --- Nettoyage / mis à jour
     ind=ind+7
     ind1=ind1+4
-    call jedetr(conneo)  
+    call jedetr(conneo)
 !
     call jedema()
 end subroutine
