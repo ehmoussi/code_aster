@@ -275,6 +275,22 @@ public:
     bool computeNumerotation() throw ( std::runtime_error );
 
     /**
+     * @brief Get support FieldOnNodesDescription
+     */
+    FieldOnNodesDescriptionPtr getFieldOnNodesDescription()
+    {
+        return _dofDescription;
+    };
+
+    /**
+     * @brief Get model
+     */
+    ModelPtr getSupportModel() throw ( std::runtime_error )
+    {
+        return _supportModel;
+    };
+
+    /**
      * @brief Methode permettant de savoir si la numerotation est vide
      * @return true si la numerotation est vide
      */
@@ -323,12 +339,6 @@ public:
         if ( ! _supportMatrix.use_count() == 0 )
             throw std::runtime_error( "It is not allowed to defined Model and ElementaryMatrix together" );
         _supportModel = currentModel;
-    };
-    /**
-     * @brief Get model
-     */
-    ModelPtr getSupportModel() throw ( std::runtime_error ){
-        return _supportModel;
     };
 };
 

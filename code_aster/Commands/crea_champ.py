@@ -57,6 +57,20 @@ class FieldCreator(ExecuteCommand):
         else:
             # ELGA_
             self._result = FieldOnElementsDouble()
+        numeDdl = keywords.get("NUME_DDL")
+        if numeDdl is not None:
+            self._result.setDescription(numeDdl)
+        modele = keywords.get("MODELE")
+        if modele is not None and location[:2] == "EL":
+            self._result.setModel(modele)
+
+    def post_exec(self, keywords):
+        """Execute the command.
+
+        Arguments:
+            keywords (dict): User's keywords.
+        """
+        self._result.update()
 
 
 CREA_CHAMP = FieldCreator.run

@@ -78,6 +78,14 @@ class ResultCreator(ExecuteCommand):
         Arguments:
             keywords (dict): User's keywords.
         """
+        fkw = keywords.get("AFFE")
+        if fkw is None:
+            fkw = keywords.get("ASSE")
+        if fkw is not None:
+            modele = fkw[0].get("MODELE")
+            if modele is not None:
+                self._result.appendModelOnAllRanks(modele)
+
         self._result.update()
 
 

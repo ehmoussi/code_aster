@@ -48,15 +48,12 @@ class ComputeAdditionalField(ExecuteCommand):
         Arguments:
             keywords (dict): User's keywords.
         """
-        if keywords.has_key("reuse"):
-            self._result.update()
-        else:
-            self._result.update()
-            try:
-                model = keywords["RESULTAT"].getModel()
-                self._result.appendModelOnAllRanks(model)
-            except:
-                pass
+        modele = keywords.get("MODELE")
+        if modele is None:
+            modele = keywords["RESULTAT"].getModel()
+        if modele is not None:
+            self._result.appendModelOnAllRanks(modele)
+        self._result.update()
 
 
 CALC_CHAMP = ComputeAdditionalField.run

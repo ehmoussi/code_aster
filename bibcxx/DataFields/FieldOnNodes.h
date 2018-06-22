@@ -61,6 +61,9 @@ template<> struct AllowedFieldType< DoubleComplex >
 {
     static const unsigned short numTypeJeveux = Complex;
 };
+
+class FieldBuilder;
+
 /**
  * @class FieldOnNodesInstance
  * @brief Cette classe template permet de definir un champ aux noeuds Aster
@@ -83,6 +86,8 @@ private:
     BaseDOFNumberingPtr        _dofNum;
     /** @brief Dof description */
     FieldOnNodesDescriptionPtr _dofDescription;
+    /** @brief jeveux vector '.TITR' */
+    JeveuxVectorChar80         _title;
 
 public:
     /**
@@ -99,9 +104,11 @@ public:
                     GenericDataFieldInstance( name, "CHAM_NO" ),
                     _descriptor( JeveuxVectorLong( getName() + ".DESC" ) ),
                     _reference( JeveuxVectorChar24( getName() + ".REFE" ) ),
-                    _valuesList( JeveuxVector< ValueType >( getName() + ".VALE" ) )
-    {
-    };
+                    _valuesList( JeveuxVector< ValueType >( getName() + ".VALE" ) ),
+                    _dofNum( nullptr ),
+                    _dofDescription( nullptr ),
+                    _title( JeveuxVectorChar80( getName() + ".TITR" ) )
+    {};
 
     /**
      * @brief Constructeur
@@ -111,9 +118,11 @@ public:
                     GenericDataFieldInstance( memType,  "CHAM_NO" ),
                     _descriptor( JeveuxVectorLong( getName() + ".DESC" ) ),
                     _reference( JeveuxVectorChar24( getName() + ".REFE" ) ),
-                    _valuesList( JeveuxVector< ValueType >( getName() + ".VALE" ) )
-    {
-    };
+                    _valuesList( JeveuxVector< ValueType >( getName() + ".VALE" ) ),
+                    _dofNum( nullptr ),
+                    _dofDescription( nullptr ),
+                    _title( JeveuxVectorChar80( getName() + ".TITR" ) )
+    {};
 
     /**
      * @brief Constructeur from a MeshCoordinatesFieldPtr&
@@ -122,7 +131,10 @@ public:
                     GenericDataFieldInstance( toCopy->getMemoryType(), "CHAM_NO" ),
                     _descriptor( toCopy->_descriptor ),
                     _reference( toCopy->_reference ),
-                    _valuesList( toCopy->_valuesList )
+                    _valuesList( toCopy->_valuesList ),
+                    _dofNum( nullptr ),
+                    _dofDescription( nullptr ),
+                    _title( JeveuxVectorChar80( getName() + ".TITR" ) )
     {};
 
     ~FieldOnNodesInstance()
@@ -216,15 +228,44 @@ public:
     bool printMedFile( const std::string fileName ) const throw ( std::runtime_error );
 
     /**
-     * @brief Update field and link to a BaseDOFNumberingPtr
+     * @brief Set support DOFNumering
+     */
+    void setDOFNumering( const BaseDOFNumberingPtr& dofNum )
+        throw( std::runtime_error )
+    {
+        if( _dofNum )
+            throw std::runtime_error( "DOFNumbering already set" );
+        _dofNum = dofNum;
+    };
+
+    /**
+     * @brief Set FieldOnNodes description
+     * @param desc object FieldOnNodesDescriptionPtr
+     */
+    void setDescription( const FieldOnNodesDescriptionPtr& desc )
+        throw( std::runtime_error )
+    {
+        if( _dofDescription )
+            throw std::runtime_error( "FieldOnNodesDescription already set" );
+        _dofDescription = desc;
+    };
+
+    /**
+     * @brief Update field and build FieldOnNodesDescription if necessary
      */
     bool update() throw ( std::runtime_error )
     {
-        if( updateValuePointers() )
+        if( _dofNum != nullptr )
         {
-            const std::string name = trim( (*_reference)[1].toString() );
-            _dofDescription = FieldOnNodesDescriptionPtr(
-                new FieldOnNodesDescriptionInstance( name ) );
+            _dofDescription = _dofNum->getFieldOnNodesDescription();
+        }
+        else if( _dofDescription == nullptr && updateValuePointers() )
+        {
+            typedef FieldOnNodesDescriptionInstance FONDesc;
+            typedef FieldOnNodesDescriptionPtr FONDescP;
+
+            const std::string name2 = trim( (*_reference)[1].toString() );
+            _dofDescription = FONDescP( new FONDesc( name2, getMemoryType() ) );
         }
         return true;
     };
@@ -240,6 +281,8 @@ public:
         retour = ( retour && _valuesList->updateValuePointer() );
         return retour;
     };
+
+    friend class FieldBuilder;
 };
 
 template< class ValueType >
