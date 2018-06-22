@@ -193,6 +193,9 @@ bool ResultsContainerInstance::update() throw ( std::runtime_error )
     auto boolRet = _namesOfFields->buildFromJeveux( true );
     const auto numberOfSerialNum = _serialNumber->usedSize();
     _nbRanks = numberOfSerialNum;
+    BaseMeshPtr curMesh( nullptr );
+    if( _mapModel.find( _nbRanks ) != _mapModel.end() )
+        curMesh = _mapModel[ _nbRanks ]->getSupportMesh();
 
     int cmpt = 1;
     for( const auto curIter : _namesOfFields->getVectorOfObjects() )
@@ -236,9 +239,9 @@ bool ResultsContainerInstance::update() throw ( std::runtime_error )
                     long test2 = _dictOfVectorOfFieldsNodes[ nomSymb ][ rank ].use_count();
                     if( test2 == 0 )
                     {
-                        FieldOnNodesDoublePtr result( new FieldOnNodesDoubleInstance( name ) );
+                        FieldOnNodesDoublePtr result = _fieldBuidler.buildFieldOnNodes< double >
+                            ( name );
                         _dictOfVectorOfFieldsNodes[ nomSymb ][ rank ] = result;
-                        result->update();
                     }
                 }
                 else if( resu == "ELEM" || resu == "ELNO" || resu == "ELGA" )
@@ -256,9 +259,12 @@ bool ResultsContainerInstance::update() throw ( std::runtime_error )
                     long test2 = _dictOfVectorOfFieldsElements[ nomSymb ][ rank ].use_count();
                     if( test2 == 0 )
                     {
-                        FieldOnElementsDoublePtr result( new FieldOnElementsDoubleInstance( name ) );
+                        if( curMesh == nullptr )
+                            throw std::runtime_error( "No mesh, impossible to build FieldOnElements" );
+                        FieldOnElementsDoublePtr result =_fieldBuidler.buildFieldOnElements<double>
+                            ( name, curMesh );
+                        ( new FieldOnElementsDoubleInstance( name ) );
                         _dictOfVectorOfFieldsElements[ nomSymb ][ rank ] = result;
-                        result->update();
                     }
                 }
             }

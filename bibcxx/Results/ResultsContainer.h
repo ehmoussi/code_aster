@@ -42,6 +42,7 @@
 #include "Supervis/ResultNaming.h"
 #include "Discretization/ElementaryCharacteristics.h"
 #include "Loads/ListOfLoads.h"
+#include "Results/FieldBuilder.h"
 
 /**
  * @class ResultsContainerInstance
@@ -100,6 +101,8 @@ private:
     JeveuxVectorChar16           _rs16;
     /** @brief Vecteur Jeveux '.RS24' */
     JeveuxVectorChar24           _rs24;
+    /** @brief jeveux vector '.TITR' */
+    JeveuxVectorChar80         _title;
 
     /** @brief Liste des champs aux noeuds */
     mapStrVOFN                         _dictOfVectorOfFieldsNodes;
@@ -115,6 +118,8 @@ private:
     mapRankMaterial                    _mapMaterial;
     /** @brief List of ModelPtr */
     mapRankModel                       _mapModel;
+    /** @brief Object to correctly manage fields and field descriptions */
+    FieldBuilder                       _fieldBuidler;
 
 public:
     /**
@@ -147,7 +152,9 @@ public:
         _rspr( JeveuxVectorDouble( getName() + ".RSPR" ) ),
         _rsp8( JeveuxVectorChar8( getName() + ".RSP8" ) ),
         _rs16( JeveuxVectorChar16( getName() + ".RS16" ) ),
-        _rs24( JeveuxVectorChar24( getName() + ".RS24" ) )
+        _rs24( JeveuxVectorChar24( getName() + ".RS24" ) ),
+        _title( JeveuxVectorChar80( getName() + ".TITR" ) ),
+        _fieldBuidler( FieldBuilder() )
     {};
 
     /**

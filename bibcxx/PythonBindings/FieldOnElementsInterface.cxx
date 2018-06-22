@@ -44,5 +44,6 @@ void exportFieldOnElementsToPython()
               &FieldOnElementsDoubleInstance::exportToSimpleFieldOnElements )
         .def( "setModel",
               &FieldOnElementsDoubleInstance::setModel )
+        .def( "update", &FieldOnElementsDoubleInstance::update )
         ;
 };
