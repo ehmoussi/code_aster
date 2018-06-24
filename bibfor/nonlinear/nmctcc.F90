@@ -161,8 +161,9 @@ integer, intent(in) :: list_func_acti(*)
     call mmbouc(ds_contact, 'Cont', 'Read_Counter'  , loop_cont_count)
     call mmbouc(ds_contact, 'Cont', 'Is_Convergence', loop_state_ = loop_cont_conv)
     call mmbouc(ds_contact, 'Cont', 'Get_Vale' , loop_vale_ = loop_cont_vale)
-    write (6,*) "loop_cont_conv",loop_cont_conv,loop_cont_vale,ds_contact%resi_pressure,1.d-6*abs(ds_contact%cont_pressure)
-    if ((ds_contact%resi_pressure .lt. 1.d-4) .and. .not. loop_cont_conv)  call mmbouc(ds_contact, 'Cont', 'Set_Convergence')
+    !write (6,*) "loop_cont_conv",loop_cont_conv,loop_cont_vale,ds_contact%resi_pressure,1.d-6*abs(ds_contact%cont_pressure)
+    if ((ds_contact%resi_pressure .lt. 1.d-6) .and. .not. loop_cont_conv .and. &
+         ds_contact%iteration_newton .gt. 3)   call mmbouc(ds_contact, 'Cont', 'Set_Convergence')
     call mmbouc(ds_contact, 'Cont', 'Is_Convergence', loop_state_ = loop_cont_conv)
 !
 ! - Convergence of contact loop
