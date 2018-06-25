@@ -80,7 +80,7 @@ implicit none
     cycl_stat = 0 
     detect = .false.
     !on definit une pression rasante proche du zero
-    pres_near_zero = 1.d-6 * ds_contact%arete_min
+    pres_near_zero = 1.d-3 * ds_contact%arete_min
 !
 ! - Access to cycling objects
 !

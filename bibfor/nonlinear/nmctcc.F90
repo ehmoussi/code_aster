@@ -147,22 +147,21 @@ integer, intent(in) :: list_func_acti(*)
         ASSERT(.false.)
     endif
 !
-! - Flip-flop: forced convergence
-!
-    if (l_cont_cont) then
-        call mm_cycl_flip(ds_contact, cycl_flip)
-        if (cycl_flip) then
-            call mmbouc(ds_contact, 'Cont', 'Set_Convergence')
-        endif
-    endif
-!
 ! - State of contact loop
 !
     call mmbouc(ds_contact, 'Cont', 'Read_Counter'  , loop_cont_count)
     call mmbouc(ds_contact, 'Cont', 'Is_Convergence', loop_state_ = loop_cont_conv)
     call mmbouc(ds_contact, 'Cont', 'Get_Vale' , loop_vale_ = loop_cont_vale)
-    if ((ds_contact%resi_pressure .lt. 1.d-6) .and. .not. loop_cont_conv .and. &
-         loop_cont_count .ge. 3)   call mmbouc(ds_contact, 'Cont', 'Set_Convergence')
+!
+! - Flip-flop: forced convergence
+!
+    if (l_cont_cont) then
+        call mm_cycl_flip(ds_contact, cycl_flip)
+        if (cycl_flip) then
+            write (6,*) "cyclage activé"
+            if ((ds_contact%resi_pressure .lt. 1.d-4*ds_contact%cont_pressure .and. loop_cont_count .ge. 2) .and. .not. loop_cont_conv)  call mmbouc(ds_contact, 'Cont', 'Set_Convergence')
+        endif
+    endif
     call mmbouc(ds_contact, 'Cont', 'Is_Convergence', loop_state_ = loop_cont_conv)
 !
 ! - Convergence of contact loop
