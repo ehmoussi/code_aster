@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,12 +19,11 @@
 !
 !
 interface
-    subroutine mmmcrf(noma, ddepla, depplu, nfrot, vfrot,sum_pressure)
+    subroutine mmmcrf(noma, ddepla, depplu, nfrot, vfrot)
         character(len=8) :: noma
         character(len=19) :: ddepla
         character(len=19) :: depplu
         character(len=16) :: nfrot
         real(kind=8) :: vfrot
-        real(kind=8) :: sum_pressure
     end subroutine mmmcrf
 end interface

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -52,7 +52,7 @@ implicit none
 !
 ! Detection: sliding forward/backward
 !
-! --------------------------------------------------------------------------------------------------
+! -----------------------------------------------------------------
 !
 ! In  ds_contact       : datastructure for contact management
 ! In  i_cont_poin      : contact point index
@@ -62,7 +62,7 @@ implicit none
 ! In  indi_frot_eval   : evaluation of new friction status
 ! In  dist_frot_curr   : current friction distance
 !
-! --------------------------------------------------------------------------------------------------
+! --------------------------------------------------------------------------
 !
     character(len=24) :: sdcont_cyclis
     integer, pointer :: p_sdcont_cyclis(:) => null()
@@ -140,7 +140,6 @@ implicit none
 !
     cycl_stat = 0
     if ((abs(angle) .ge. 180.-tole_angl) .and. (abs(angle) .le. 180.d0+tole_angl))  then
-!     write (6,*) "module_curr",module_curr,"module_prev",module_prev,"angle",angle,"ipoint",i_cont_poin
         cycl_stat = 10
         if (module_curr  .lt. 1.d-6  .and. module_prev .lt. 1.d-6) cycl_stat = 11
         
@@ -149,7 +148,6 @@ implicit none
              
         if (module_curr  .gt. 1.d-6  .and. module_prev .gt. 1.d-6) cycl_stat = 13
              
-!        write (6,*) "cyclage avant-arrière de type ", cycl_stat
     endif
 
 !
