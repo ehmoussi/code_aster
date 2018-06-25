@@ -61,30 +61,29 @@ subroutine crkucv()
 #include "asterfort/vtcreb.h"
 #include "asterfort/wkvect.h"
 !
-    integer :: ibid, ier, lg, icompt, iret, numini, numfin
-    integer :: n0, n1, n2, n3, nis, nbinst, ip, nbval, nume, igd, l, i, j, jc
+    integer :: ibid, ier, icompt, iret, numini, numfin
+    integer :: n1, nis, nbinst, nbval, nume, j
     integer :: iad, jinst, jchin, jchout
-    integer :: ino, nbv(1), jrefe, nb_load, icmpd, icmpi
-    integer :: nbtrou, jcpt, nbr, ivmx, k, iocc, nboini, iexi
-    integer :: valii(2), jnmo, nmode, tnum(1)
-    integer :: nbordr1, nbordr2, ier1, numei
+    integer :: nbv(1), jrefe
+    integer :: jcpt, nbr, ivmx, k, iocc, nboini
+    integer :: tnum(1)
+    integer :: nbordr1, nbordr2, numei
     integer :: lmat, lma2, nr, neq
 !
-    real(kind=8) :: rbid, tps, prec, valrr(3), coef(3)
+    real(kind=8) :: rbid, tps, prec
     complex(kind=8) :: cbid
 !
     character(len=1) :: typmat
     character(len=4) :: typabs
-    character(len=8) :: k8b, resu, typmod, criter, matr, resui
+    character(len=8) :: k8b, resu, criter, matr, resui
     character(len=8) :: modele, materi, carele, blan8
     character(len=14) :: numem
-    character(len=16) :: type, oper, acces, k16b
-    character(len=19) :: nomch, champ, listr8, list_load, resu19, profch
+    character(len=16) :: type, oper
+    character(len=19) :: nomch, listr8, list_load, resu19, profch
     character(len=19) :: chamno, chamn2
     character(len=19) :: mrigi, mamor
-    character(len=24) :: k24, linst, nsymb, typres, lcpt, o1, o2
-    character(len=24) :: valkk(4), matric(3)
-    real(kind=8), pointer :: coor(:) => null()
+    character(len=24) :: linst, nsymb, typres, lcpt, o1, o2
+    character(len=24) :: matric(3)
     real(kind=8), pointer :: val(:) => null()
 !
     data linst,listr8,lcpt/'&&CRKUCV_LINST','&&CRKUCV_LISR8',&

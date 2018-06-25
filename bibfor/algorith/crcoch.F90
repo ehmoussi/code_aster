@@ -67,34 +67,31 @@ subroutine crcoch()
 #include "asterfort/wkvect.h"
 #include "blas/dcopy.h"
 !
-    integer :: ibid, ier, lg, icompt, iret, numini, numfin
-    integer :: n0, n1, n2, n3, nis, nbinst, ip, nbval, nume, igd, l, i, j, jc
-    integer :: iad, jinst, jchin, jchout, jvachm
-    integer :: ino, nbv(1), jrefe, nb_load
-    integer :: jcpt, nbr, ivmx, k, iocc, nboini, iexi
-    integer :: valii(2), jnmo, nondp, nchar, tnum(1)
-    integer :: nbordr1, nbordr2, ier1, jondp, jchar, jinf, jfon
-    integer :: nr, neq
+    integer :: ibid, ier, icompt, iret, numini, numfin
+    integer :: n1, nis, nbinst, nbval, nume, j
+    integer :: iad, jinst, jchout
+    integer :: nbv(1), jrefe
+    integer :: jcpt, nbr, ivmx, k, iocc, nboini
+    integer :: nondp, nchar, tnum(1)
+    integer :: nbordr1, nbordr2, jondp, jchar, jinf, jfon
+    integer :: neq
 
 !
-    real(kind=8) :: rbid, tps, prec, valrr(3), coef(3), partps(3)
+    real(kind=8) :: rbid, tps, prec, partps(3)
     complex(kind=8) :: cbid
 !
     character(len=1) :: typmat
     character(len=4) :: typabs
-    character(len=8) :: k8b, resu, typmod, criter, matr
+    character(len=8) :: k8b, resu, criter, matr
     character(len=8) :: materi, carele, blan8, noma
-    character(len=14) :: numem
-    character(len=16) :: type, oper, acces, k16b
-    character(len=19) :: nomch, champ, listr8, list_load, resu19, profch
-    character(len=24) :: k24, linst, nsymb, typres, lcpt, londp, typcha
-    character(len=24) :: valkk(4), matric(3)
+    character(len=16) :: type, oper
+    character(len=19) :: nomch, listr8, list_load, resu19, profch
+    character(len=24) :: linst, nsymb, typres, lcpt, londp
+    character(len=24) :: matric(3)
     character(len=24) :: modele, mate, numedd, vecond
     character(len=24) :: veonde, vaonde, charge, infoch, fomult
-    character(len=24) :: vechmp, vachmp, cnchmp, k24bid
+    character(len=24) :: vechmp, vachmp, cnchmp
     real(kind=8), pointer :: val(:) => null()
-    real(kind=8), pointer :: f1(:) => null()
-    real(kind=8), pointer :: vale(:) => null()
 !
     data linst,listr8,lcpt,londp/'&&CRCOCH_LINST','&&CRCOCH_LISR8',&
      &     '&&CPT_CRCOCH','&&CRCOCH_LONDP'/
