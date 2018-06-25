@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -27,9 +27,9 @@ interface
         character(len=8), intent(in) :: mesh
         type(NL_DS_Contact), intent(in) :: ds_contact
         integer, intent(out) :: nb_cont_pair
-        integer, intent(out), pointer :: v_list_pair(:)
+        integer, pointer :: v_list_pair(:)
         integer, intent(out) :: nb_type
-        integer, intent(out), pointer :: v_list_type(:)
+        integer, pointer :: v_list_type(:)
         integer, intent(out) :: nt_node
         integer, intent(out) :: nb_grel
     end subroutine mmlige

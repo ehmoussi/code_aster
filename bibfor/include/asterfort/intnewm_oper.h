@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -23,12 +23,12 @@ interface
                             ktilda, ftild1, ftild2, ftild3)
         integer     , intent(in)  :: nbequ
         real(kind=8)              :: par(:)
-        real(kind=8), pointer, intent(in)  :: mgen(:)
-        real(kind=8), pointer, intent(in)  :: kgen(:)
-        real(kind=8), pointer, intent(in)  :: agen(:)
-        real(kind=8), pointer, intent(out) :: ktilda(:)
-        real(kind=8), pointer, intent(out) :: ftild1(:)
-        real(kind=8), pointer, intent(out) :: ftild2(:)
-        real(kind=8), pointer, intent(out) :: ftild3(:)
+        real(kind=8), pointer  :: mgen(:)
+        real(kind=8), pointer  :: kgen(:)
+        real(kind=8), pointer  :: agen(:)
+        real(kind=8), pointer :: ktilda(:)
+        real(kind=8), pointer :: ftild1(:)
+        real(kind=8), pointer :: ftild2(:)
+        real(kind=8), pointer :: ftild3(:)
     end subroutine intnewm_oper
 end interface

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -27,7 +27,7 @@ implicit none
 !
 
     integer, intent(in) :: jv_geom
-    integer, pointer, intent(in) :: list_node(:)
+    integer, pointer :: list_node(:)
     integer, intent(in) :: nb_node
     real(kind=8), intent(in) :: testnode(3)
     integer, intent(out) :: nume_node_cl

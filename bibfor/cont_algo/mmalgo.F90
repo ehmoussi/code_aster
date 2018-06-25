@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -57,9 +57,9 @@ implicit none
     real(kind=8), intent(inout) :: pres_cont_curr
     real(kind=8), intent(inout) :: dist_frot_curr(3)
     real(kind=8), intent(in) :: pres_frot_curr(3)
-    real(kind=8), pointer, intent(in) :: v_sdcont_cychis(:)
-    real(kind=8), pointer, intent(in) :: v_sdcont_cyccoe(:)
-    integer, pointer, intent(in) :: v_sdcont_cyceta(:)
+    real(kind=8), pointer :: v_sdcont_cychis(:)
+    real(kind=8), pointer :: v_sdcont_cyccoe(:)
+    integer, pointer :: v_sdcont_cyceta(:)
     integer, intent(out) :: indi_cont_curr
     integer, intent(out) :: indi_frot_curr
     integer, intent(out) :: ctcsta

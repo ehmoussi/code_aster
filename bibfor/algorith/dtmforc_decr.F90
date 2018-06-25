@@ -56,13 +56,13 @@ subroutine dtmforc_decr(nl_ind, sd_dtm_, sd_nl_, buffdtm, buffnl,&
     integer               , intent(in)  :: nl_ind
     character(len=*)      , intent(in)  :: sd_dtm_
     character(len=*)      , intent(in)  :: sd_nl_
-    integer     , pointer , intent(in)  :: buffdtm  (:)
-    integer     , pointer , intent(in)  :: buffnl   (:)
+    integer     , pointer  :: buffdtm  (:)
+    integer     , pointer  :: buffnl   (:)
     real(kind=8)          , intent(in)  :: time
     real(kind=8)          , intent(in)  :: step
-    real(kind=8), pointer , intent(in)  :: depl     (:)
-    real(kind=8), pointer , intent(in)  :: vite     (:)
-    real(kind=8), pointer , intent(out) :: fext     (:)
+    real(kind=8), pointer  :: depl     (:)
+    real(kind=8), pointer  :: vite     (:)
+    real(kind=8), pointer :: fext     (:)
 !
 !   -0.2- Local variables
     aster_logical     :: multi_support

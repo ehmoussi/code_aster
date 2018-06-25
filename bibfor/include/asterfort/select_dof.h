@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -23,14 +23,14 @@ interface
                           nume_ddlz, chamnoz   ,&
                           nb_nodez , list_nodez,&
                           nb_cmpz  , list_cmpz)
-        integer, pointer, optional, intent(inout) :: list_equa(:)
-        integer, pointer, optional, intent(inout) :: tabl_equa(:,:)
-        integer, pointer, optional, intent(inout) :: list_idx_dof(:)
+        integer, pointer, optional :: list_equa(:)
+        integer, pointer, optional :: tabl_equa(:,:)
+        integer, pointer, optional :: list_idx_dof(:)
         character(len=*), optional, intent(in) :: nume_ddlz
         character(len=*), optional, intent(in) :: chamnoz
         integer, optional, intent(in) :: nb_nodez
-        integer, optional, pointer, intent(in) :: list_nodez(:)
+        integer, pointer, optional :: list_nodez(:)
         integer, optional, intent(in) :: nb_cmpz
-        character(len=8), optional, pointer, intent(in) :: list_cmpz(:)
+        character(len=8), pointer, optional :: list_cmpz(:)
     end subroutine select_dof
 end interface

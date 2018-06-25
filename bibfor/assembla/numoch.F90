@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -29,7 +29,7 @@ implicit none
 !
     character(len=24), intent(in) :: list_matr_elem(*)
     integer, intent(in) :: nb_matr_elem
-    character(len=24), pointer, intent(out) :: list_ligr(:)
+    character(len=24), pointer :: list_ligr(:)
     integer, intent(out) :: nb_ligr
 !
 ! --------------------------------------------------------------------------------------------------

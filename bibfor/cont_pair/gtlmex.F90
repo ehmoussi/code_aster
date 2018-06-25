@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -26,8 +26,8 @@ implicit none
 #include "asterfort/assert.h"
 
 !
-    integer, pointer, intent(in) :: v_cninv(:) 
-    integer, pointer, intent(in) :: v_cninv_lcum(:)
+    integer, pointer :: v_cninv(:) 
+    integer, pointer :: v_cninv_lcum(:)
     integer, intent(in) :: nume_node_cl
     integer, intent(in) :: nb_elem_mast
     integer, intent(in) :: list_elem_mast(nb_elem_mast)
