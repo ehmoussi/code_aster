@@ -43,7 +43,7 @@ implicit none
     integer, optional, intent(out) :: nume_linkz
     integer, optional, intent(out) :: nume_cmp_lagrz
     integer, optional, intent(out) :: nb_node_lagr
-    integer, optional, pointer, intent(out) :: list_node_lagr(:)
+    integer, optional, pointer :: list_node_lagr(:)
     character(len=*), optional, intent(out) :: ligrelz
 !
 ! --------------------------------------------------------------------------------------------------

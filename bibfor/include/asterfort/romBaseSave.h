@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -32,9 +32,9 @@ interface
         integer, intent(in) :: nb_snap
         character(len=1), intent(in) :: mode_type
         character(len=24), intent(in) :: field_iden
-        real(kind=8), optional, intent(in), pointer :: mode_vectr_(:)
-        complex(kind=8), optional, intent(in), pointer :: mode_vectc_(:)
-        real(kind=8), optional, intent(in), pointer :: v_mode_freq_(:)
-        integer, optional, intent(in), pointer      :: v_nume_slice_(:)
+        real(kind=8), optional, pointer :: mode_vectr_(:)
+        complex(kind=8), optional, pointer :: mode_vectc_(:)
+        real(kind=8), optional, pointer :: v_mode_freq_(:)
+        integer, optional, pointer      :: v_nume_slice_(:)
     end subroutine romBaseSave
 end interface

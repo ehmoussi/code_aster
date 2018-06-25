@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -22,11 +22,11 @@ interface
     subroutine romAlgoNLCorrEFMecaResidual(v_fint, v_fext, ds_algorom, l_cine, v_ccid,&
                                            resi)
         use Rom_Datastructure_type
-        real(kind=8), intent(in), pointer :: v_fint(:)
-        real(kind=8), intent(in), pointer :: v_fext(:)
+        real(kind=8), pointer :: v_fint(:)
+        real(kind=8), pointer :: v_fext(:)
         type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
         aster_logical, intent(in) :: l_cine
-        integer, intent(in), pointer :: v_ccid(:)
+        integer, pointer :: v_ccid(:)
         real(kind=8), intent(out) :: resi
     end subroutine romAlgoNLCorrEFMecaResidual
 end interface

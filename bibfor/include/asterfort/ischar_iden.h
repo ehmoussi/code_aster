@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -22,7 +22,7 @@
 !
 interface
     function ischar_iden(v_load_info, i_load, nb_load, load_type_1, load_type_2)
-        integer, intent(in), pointer :: v_load_info(:)
+        integer, pointer :: v_load_info(:)
         integer, intent(in) :: i_load
         integer, intent(in) :: nb_load
         aster_logical :: ischar_iden

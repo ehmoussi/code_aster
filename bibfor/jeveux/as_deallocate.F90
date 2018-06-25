@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -34,16 +34,16 @@ subroutine as_deallocate(vl, vi, vi4, vr, vc,&
 #include "asterfort/jxlocs.h"
 #include "asterfort/utmess.h"
 !
-    aster_logical, optional, pointer, intent(inout) :: vl(:)
-    integer, optional, pointer, intent(inout) :: vi(:)
-    integer(kind=4), optional, pointer, intent(inout) :: vi4(:)
-    real(kind=8), optional, pointer, intent(inout) :: vr(:)
-    complex(kind=8), optional, pointer, intent(inout) :: vc(:)
-    character(len=8), optional, pointer, intent(inout) :: vk8(:)
-    character(len=16), optional, pointer, intent(inout) :: vk16(:)
-    character(len=24), optional, pointer, intent(inout) :: vk24(:)
-    character(len=32), optional, pointer, intent(inout) :: vk32(:)
-    character(len=80), optional, pointer, intent(inout) :: vk80(:)
+    aster_logical, optional, pointer :: vl(:)
+    integer, optional, pointer :: vi(:)
+    integer(kind=4), optional, pointer :: vi4(:)
+    real(kind=8), optional, pointer :: vr(:)
+    complex(kind=8), optional, pointer :: vc(:)
+    character(len=8), optional, pointer :: vk8(:)
+    character(len=16), optional, pointer :: vk16(:)
+    character(len=24), optional, pointer :: vk24(:)
+    character(len=32), optional, pointer :: vk32(:)
+    character(len=80), optional, pointer :: vk80(:)
 !
     character(len=*) :: strdbg
 !

@@ -98,7 +98,7 @@ module yacs_module
 !--
 
       logical function are_ports_equals( p1, p2)
-        type(port), pointer, intent(in) :: p1, p2
+        type(port), pointer :: p1, p2
 
         are_ports_equals = .false.
 
@@ -119,7 +119,7 @@ module yacs_module
 
       subroutine get_port_by_name(port_name, fport)
           character(len=*), intent(in) :: port_name
-          type(port), intent(out), pointer :: fport
+          type(port), pointer :: fport
           logical :: exist
           call is_port_exist(port_name, exist, fport)
           ASSERT( exist )          
@@ -243,7 +243,7 @@ module yacs_module
        subroutine is_port_exist(  name, exist, current )
            character(len=*), intent(in) :: name
            logical , intent(out) :: exist
-           type(port), pointer, intent(out), optional :: current 
+           type(port), pointer, optional :: current 
            current =>null()
            exist = .false.
 
@@ -274,7 +274,7 @@ module yacs_module
 
 
         subroutine delete_port(  fport )
-            type(port), pointer, intent(inout) :: fport
+            type(port), pointer :: fport
 
             type(port), pointer :: precedent => null()
 
@@ -305,8 +305,8 @@ module yacs_module
 
         subroutine get_previous_element(element, backele)
             ! return the element before
-            type(port), pointer, intent(in)  :: element
-            type(port), pointer, intent(out) :: backele 
+            type(port), pointer  :: element
+            type(port), pointer :: backele 
             type(port), pointer              :: current => null()
             backele => null()
             current => first_port
@@ -324,7 +324,7 @@ module yacs_module
 !--
 
         subroutine clean_port(fport)
-            type(port), pointer, intent(inout) :: fport
+            type(port), pointer :: fport
 
             if(associated(fport%vr)) then
                 AS_DEALLOCATE( vr = fport%vr )

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -23,13 +23,13 @@ interface
                             dt, invm_c, op_h1, op_h2, invm_k)
         integer     , intent(in)  :: nbequ
         real(kind=8), intent(in)  :: par(:)
-        real(kind=8), pointer, intent(in)  :: mgen(:)
-        real(kind=8), pointer, intent(in)  :: kgen(:)
-        real(kind=8), pointer, intent(in)  :: agen(:)
+        real(kind=8), pointer  :: mgen(:)
+        real(kind=8), pointer  :: kgen(:)
+        real(kind=8), pointer  :: agen(:)
         real(kind=8), intent(in)           :: dt
-        real(kind=8), pointer, intent(out) :: invm_c(:)
-        real(kind=8), pointer, intent(out) :: op_h1(:)
-        real(kind=8), pointer, intent(out) :: op_h2(:)
-        real(kind=8), pointer, intent(out) :: invm_k(:)
+        real(kind=8), pointer :: invm_c(:)
+        real(kind=8), pointer :: op_h1(:)
+        real(kind=8), pointer :: op_h2(:)
+        real(kind=8), pointer :: invm_k(:)
     end subroutine intdevo_oper
 end interface

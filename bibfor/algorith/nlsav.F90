@@ -72,7 +72,7 @@ subroutine nlsav(sd_nl_, ip, lonvec, iocc, kscal,&
     integer,          optional, intent(in) :: ivect(lonvec)
     real(kind=8),     optional, intent(in) :: rvect(lonvec)
     complex(kind=8),  optional, intent(in) :: cvect(lonvec)
-    integer, pointer, optional, intent(in) :: buffer(:)
+    integer, pointer, optional :: buffer(:)
 !
 !   -0.2- Local variables
 !   --- For strings copying

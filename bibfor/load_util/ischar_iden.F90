@@ -25,7 +25,7 @@ implicit none
 #include "asterfort/assert.h"
 !
 aster_logical :: ischar_iden
-integer, intent(in), pointer :: v_load_info(:)
+integer, pointer :: v_load_info(:)
 integer, intent(in) :: i_load
 integer, intent(in) :: nb_load
 character(len=4), intent(in) :: load_type_1

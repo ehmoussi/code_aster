@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -25,8 +25,8 @@ interface
         character(len=8), intent(in) :: mesh
         type(NL_DS_Contact), intent(in) :: ds_contact
         integer, intent(in) :: nb_dof
-        real(kind=8), pointer, intent(in) :: v_disp_cumu(:)
-        real(kind=8), pointer, intent(inout) :: v_slav_slide(:)
-        real(kind=8), pointer, intent(inout) :: v_mast_slide(:)
+        real(kind=8), pointer :: v_disp_cumu(:)
+        real(kind=8), pointer :: v_slav_slide(:)
+        real(kind=8), pointer :: v_mast_slide(:)
     end subroutine mmmreg
 end interface

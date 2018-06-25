@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -21,7 +21,7 @@
 interface
     subroutine intbuff(sd_int, addrs, level)
         character(len=*) , intent(in)  :: sd_int
-        integer, pointer , intent(out) :: addrs(:)
+        integer, pointer :: addrs(:)
         integer, optional, intent(in)  :: level
     end subroutine intbuff
 end interface

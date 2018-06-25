@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -29,10 +29,10 @@ subroutine tophys_ms(dplmod, psidel, coef, xgene, xphys)
 !
 #include "jeveux.h"
 !-----------------------------------------------------------------------
-    real(kind=8), pointer, intent(in)  :: dplmod(:)
-    real(kind=8), pointer, intent(in)  :: psidel(:)
-    real(kind=8), pointer, intent(in)  :: coef(:)
-    real(kind=8), pointer, intent(in)  :: xgene(:)
+    real(kind=8), pointer  :: dplmod(:)
+    real(kind=8), pointer  :: psidel(:)
+    real(kind=8), pointer  :: coef(:)
+    real(kind=8), pointer  :: xgene(:)
     real(kind=8),          intent(out) :: xphys(:)
 !-----------------------------------------------------------------------
     integer :: i, j, nbmode, nbexci

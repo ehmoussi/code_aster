@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -30,7 +30,7 @@
         integer,intent(in) :: elem_slav_nume
         real(kind=8),intent(in) :: pair_tole
         real(kind=8),intent(out) :: inte_weight
-        integer, pointer, intent(in) :: v_mesh_connex(:)
-        integer, pointer, intent(in) :: v_connex_lcum(:)      
+        integer, pointer :: v_mesh_connex(:)
+        integer, pointer :: v_connex_lcum(:)      
    end subroutine testvois
 end interface

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -25,8 +25,8 @@ interface
         type(NL_DS_InOut), intent(in) :: ds_inout
         integer, intent(in) :: nb_keyw_fact
         character(len=16), intent(in) :: keyw_fact
-        character(len=24), intent(out), pointer :: list_field(:)
-        integer, intent(out), pointer :: rela_field_keyw(:)
+        character(len=24), pointer :: list_field(:)
+        integer, pointer :: rela_field_keyw(:)
         integer, intent(out) :: nb_field
         integer, intent(out) :: nb_field_comp
     end subroutine nmextr_read_1

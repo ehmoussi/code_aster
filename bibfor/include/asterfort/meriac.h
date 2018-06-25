@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -22,7 +22,7 @@ interface
     subroutine meriac(model_, nb_load, v_list_load8, mate, matr_elem_, base)
         character(len=*), intent(in) :: model_
         integer, intent(in) :: nb_load
-        character(len=8), pointer, intent(in) :: v_list_load8(:)
+        character(len=8), pointer :: v_list_load8(:)
         character(len=*), intent(in) :: mate
         character(len=*), intent(in) :: matr_elem_
         character(len=1), intent(in) :: base

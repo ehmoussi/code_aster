@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -24,9 +24,9 @@ interface
                               load_type   , ligrch     , load_apply_  )
     character(len=4), intent(in) :: phenom
     aster_logical, intent(in) :: l_load_user
-    character(len=8), pointer, intent(in) :: v_list_dble(:)
-    integer, intent(in), pointer :: v_llresu_info(:)
-    character(len=24), intent(in), pointer :: v_llresu_name(:)
+    character(len=8), pointer :: v_list_dble(:)
+    integer, pointer :: v_llresu_info(:)
+    character(len=24), pointer :: v_llresu_name(:)
     character(len=16), intent(in) :: load_keyword
     integer, intent(in) :: i_load
     integer, intent(in) :: nb_load

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -48,9 +48,9 @@ subroutine dtmforc_yacs(sd_dtm_, sd_nl_, itime, time, dt, depl, vite, fext)
 !     1. Input / output arguments
       character(len=*) , intent(in) :: sd_dtm_
       character(len=*) , intent(in) :: sd_nl_
-      real(kind=8), pointer , intent(in)  :: depl     (:)
-      real(kind=8), pointer , intent(in)  :: vite     (:)
-      real(kind=8), pointer , intent(out) :: fext     (:)
+      real(kind=8), pointer  :: depl     (:)
+      real(kind=8), pointer  :: vite     (:)
+      real(kind=8), pointer :: fext     (:)
       real(kind=8),           intent(in)  :: time
       real(kind=8),           intent(in)  :: dt
       integer               , intent(in)  :: itime
