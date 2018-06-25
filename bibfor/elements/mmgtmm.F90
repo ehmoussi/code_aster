@@ -185,12 +185,12 @@ subroutine mmgtmm(ndim  ,nnm   ,norm,mprt1n,mprt2n, &
 !    
 !
 
-!    do  i = 1, nnm
-!    do  j = 1, nnm
-!        do  k = 1, ndim
-!        do  l = 1, ndim
-!            ii = ndim*(i-1)+l
-!            jj = ndim*(j-1)+k
+   do  i = 1, nnm
+   do  j = 1, nnm
+       do  k = 1, ndim
+       do  l = 1, ndim
+           ii = ndim*(i-1)+l
+           jj = ndim*(j-1)+k
 ! ! terme  pour xi1
  matrmm(ii,jj) = matrmm(ii,jj)          + &
 (dlagrc-coefac*jeu)*wpg*jacobi *(-1) *((-kappa(1,1))* (&
@@ -228,10 +228,10 @@ subroutine mmgtmm(ndim  ,nnm   ,norm,mprt1n,mprt2n, &
  mprnt2(l,k)*jeu*(dffm(1,i)*(kappa(1,1)*dffm(1,j)+kappa(1,2)*dffm(2,j))   + & 
  dffm(2,i)*(kappa(2,1)*dffm(1,j)+kappa(2,2)*dffm(2,j)) )))
 !   
-!          enddo
-!          enddo
-!      enddo
-!   enddo
+         enddo
+         enddo
+     enddo
+  enddo
 
 
 
