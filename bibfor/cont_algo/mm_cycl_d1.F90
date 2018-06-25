@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -73,7 +73,6 @@ implicit none
     integer, pointer :: p_sdcont_cycnbr(:) => null()
     character(len=24) :: sdcont_cyceta
     integer, pointer :: p_sdcont_cyceta(:) => null()
-    integer :: statut(30)
     integer :: cycl_type, cycl_long_acti
     integer :: cycl_ecod, cycl_long, cycl_sub_type, cycl_stat
     aster_logical :: detect
@@ -123,9 +122,6 @@ implicit none
 ! - Cycling detection
 !
     cycl_stat = 0
-!     write (6,*) "(2**cycl_long)*indi_cont_eval",(2**cycl_long)*indi_cont_eval,cycl_long,indi_cont_eval
-!     write (6,*) "p_sdcont_cyclis(4*(i_cont_poin-1)+cycl_type)",p_sdcont_cyclis(4*(i_cont_poin-1)+cycl_type)
-!     write (6,*) "cycl_long",cycl_long
     if (cycl_long+1  .eq. cycl_long_acti) then
         detect = iscycl(cycl_ecod, cycl_long_acti)
         if (p_sdcont_cyceta(4*(i_cont_poin-1)+cycl_type) .ge. 10) then
@@ -140,8 +136,6 @@ implicit none
             alpha_cont_matr = 0.99d0
             alpha_cont_vect = 0.99d0
         endif
-!         if (cycl_stat .ge. 10) &
-!                 write (6,*) "Point de contact en CYCLAGE CONTACT : i_cont_poin",i_cont_poin
     endif
 
 

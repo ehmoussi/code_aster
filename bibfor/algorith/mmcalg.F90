@@ -18,10 +18,10 @@
 
 subroutine mmcalg(ndim  ,nnm   ,dffm ,  &
           ddffm ,geomam, &
-          tau1  ,tau2  ,jeu   ,djeu,djeut, ddepmam, norm  , &
+          tau1  ,tau2  ,jeu   ,djeu, ddepmam, norm  , &
           gene11,gene21,gene22,kappa ,h        , &
           vech1 ,vech2 ,a     ,ha    ,hah   , &
-          mprt11,mprt21,mprt22,mprt1n,mprt2n,mprojt, iresog,granglis ,taujeu1, taujeu2, &
+          mprt11,mprt21,mprt22,mprt1n,mprt2n, granglis ,taujeu1, taujeu2, &
                   dnepmait1,dnepmait2)
 !
 ! person_in_charge: mickael.abbas at edf.fr
@@ -34,7 +34,7 @@ subroutine mmcalg(ndim  ,nnm   ,dffm ,  &
     
     integer :: ndim,  nnm
 
-    integer :: iresog,granglis
+    integer :: granglis
     
     
 
@@ -42,7 +42,7 @@ subroutine mmcalg(ndim  ,nnm   ,dffm ,  &
 
 
 
-    real(kind=8) :: jeu,djeu(3),djeut(3),mprojt(3,3)
+    real(kind=8) :: jeu,djeu(3)
     
 
     real(kind=8) :: ddffm(3,9),dffm(2, 9)
@@ -68,9 +68,6 @@ subroutine mmcalg(ndim  ,nnm   ,dffm ,  &
 ! IN  NDIM   : DIMENSION DE LA MAILLE DE CONTACT
 ! IN  NNE    : NOMBRE DE NOEUDS DE LA MAILLE ESCLAVE
 ! IN  NNM    : NOMBRE DE NOEUDS DE LA MAILLE MAITRE
-! IN  IRESOG : ALGO. DE RESOLUTION POUR LA GEOMETRIE
-!              0 - POINT FIXE
-!              1 - NEWTON
 ! IN FFE    : FONCTIONS DE FORMES DEPL. ESCL.
 ! IN FFM    : FONCTIONS DE FORMES DEPL. MAIT.
 ! IN DFFM   : DERIVEES PREMIERE DES FONCTIONS DE FORME MAITRES 
@@ -118,9 +115,6 @@ subroutine mmcalg(ndim  ,nnm   ,dffm ,  &
 ! 
 ! OUT VECH_i = KAPPA(i,m)*tau_m
 !
-! OUT IRESOG EST REMIS AUTOMATIQUEMENT A ZERO SI DET(KAPPA) = 0 
-!              0 - POINT FIXE
-!              1 - NEWTON
 ! ----------------------------------------------------------------------
 
 !
@@ -130,7 +124,7 @@ subroutine mmcalg(ndim  ,nnm   ,dffm ,  &
     real(kind=8) :: ddgeo1(3),ddgeo2(3),ddgeo3(3),detkap,ddepmait1(3),ddepmait2(3)
     real(kind=8) :: dnepmait1 ,dnepmait2 ,taujeu1,taujeu2
     aster_logical :: no_large_slip
-    real(kind=8) :: long_mmait(24) ,valmax=0.0,valmin=0.0,valmoy=0.0
+    real(kind=8) :: long_mmait(24) 
 
 !
 ! ----------------------------------------------------------------------
@@ -172,13 +166,9 @@ subroutine mmcalg(ndim  ,nnm   ,dffm ,  &
     call vecini(24, 0.d0, long_mmait)
     
 if (granglis .eq. 1) then   
-
-
 !
 !---CALCUL DE DDEPMAIT1,2
 !
-
-
       do  idim = 1, ndim
           do  inom = 1, nnm
             ddepmait1(idim) = ddepmait1(idim) + dffm(1,inom)*ddepmam(inom,idim)
@@ -192,72 +182,17 @@ if (granglis .eq. 1) then
 !
 !---CALCUL DE DNEPMAIT1,2 ; TAUJEU
 !
- 
-! Sur la géométrie courante de l'élément esclave on calcule la distance du Noeud I=2,9 par rapport à au noeud 1 
-! Puis on calcule la moyenne
-!       write (6,*) "GEOMAM",geomam(1,1)
-    long_mmait(1) = sqrt(abs(geomam(1,1) - geomam(2,1)))**2 
-    long_mmait(2) = sqrt(abs(geomam(1,2) - geomam(2,2)))**2
-    long_mmait(3) = sqrt(abs(geomam(1,3) - geomam(2,3)))**2
-    long_mmait(4) = sqrt(abs(geomam(1,1) - geomam(3,1)))**2 
-    long_mmait(5) = sqrt(abs(geomam(1,2) - geomam(3,2)))**2
-    long_mmait(6) = sqrt(abs(geomam(1,3) - geomam(3,3)))**2
-    long_mmait(7) = sqrt(abs(geomam(1,3) - geomam(4,1)))**2
-    long_mmait(8) = sqrt(abs(geomam(1,3) - geomam(4,2)))**2
-    long_mmait(9) = sqrt(abs(geomam(1,3) - geomam(4,3)))**2
-    long_mmait(10) = sqrt(abs(geomam(1,3) - geomam(5,1)))**2
-    long_mmait(11) = sqrt(abs(geomam(1,3) - geomam(5,2)))**2
-    long_mmait(12) = sqrt(abs(geomam(1,3) - geomam(5,3)))**2
-    long_mmait(13) = sqrt(abs(geomam(1,3) - geomam(6,1)))**2
-    long_mmait(14) = sqrt(abs(geomam(1,3) - geomam(6,2)))**2
-    long_mmait(15) = sqrt(abs(geomam(1,3) - geomam(6,3)))**2
-    long_mmait(16) = sqrt(abs(geomam(1,3) - geomam(7,1)))**2
-    long_mmait(17) = sqrt(abs(geomam(1,3) - geomam(7,2)))**2
-    long_mmait(18) = sqrt(abs(geomam(1,3) - geomam(7,3)))**2
-    long_mmait(19) = sqrt(abs(geomam(1,3) - geomam(8,1)))**2
-    long_mmait(20) = sqrt(abs(geomam(1,3) - geomam(8,2)))**2
-    long_mmait(21) = sqrt(abs(geomam(1,3) - geomam(8,3)))**2
-    long_mmait(22) = sqrt(abs(geomam(1,3) - geomam(9,1)))**2
-    long_mmait(23) = sqrt(abs(geomam(1,3) - geomam(9,2)))**2
-    long_mmait(24) = sqrt(abs(geomam(1,3) - geomam(9,3)))**2
-    valmax =  0.
-    valmin =  0.
-    valmoy =  0.
-    do i = 1,24
-        valmoy = valmax + long_mmait(i)/24
-    enddo
-
-      do  idim = 1, ndim
-!           if ((abs(jeu) .lt. 1.d-6) .and. (norm2(ddepmait1) .lt. 1.d-1*valmoy) .and. (norm2(ddepmait2) .lt. 1.d-1*valmoy)) then 
-          ! On rajoute ce terme au grand glissement seulement si on est sur d'avoir converge en DEPDEL
-          ! increment de deplacement
-          ! Test : ssnp154d, ssnv128r --> Débrancher la condition if et tester ces 2 cas. 
-          ! Ici on implante une strategie qui consiste a dire que ce terme n'est rajoute que 
-          ! si le depdel est < 1.d-1*la logueur de la maille maître courante
-            dnepmait1 = dnepmait1 + ddepmait1(idim)*norm(idim)*jeu          
+    do  idim = 1, ndim
+            dnepmait1 = dnepmait1 + ddepmait1(idim)*norm(idim)*jeu
             dnepmait2 = dnepmait2 + ddepmait2(idim)*norm(idim)*jeu
-!             write (6,*)  "jeu",jeu
-!             write (6,*)  "ddepmait1",ddepmait1
-!             write (6,*)  "norm",norm
-!           endif
-          
             taujeu1 = taujeu1 + tau1(idim)*djeu(idim)
             taujeu2 = taujeu2 + tau2(idim)*djeu(idim)
-
-    end do    
-
-
-
-
-
-
+    end do
 endif
 
 !
 !---CALCUL DE DDGEOMM
 !
-
-
       do  idim = 1, ndim
           do 222 inom = 1, nnm
 
@@ -370,10 +305,6 @@ endif
 !
 ! --- MATRICES KAPPA
 !
-!      write (6,*) "kappa11_label1",kappa(1,1),a(1,1),h(1,1)
-!      write (6,*) "kappa12_label1",kappa(1,2),a(1,2),h(1,2)
-!      write (6,*) "kappa21_label1",kappa(2,1),a(2,1),h(2,1)
-!      write (6,*) "kappa22_label1",kappa(2,2),a(2,2),h(2,2)
 
      ! Matrice H depend du jeu : Il doit être petit en contact glissant
      no_large_slip = (&
@@ -384,16 +315,8 @@ endif
      
      if (no_large_slip) then 
         kappa = a 
-!         write (6,*) "kappa11_label2",kappa(1,1),a(1,1),h(1,1)
-!         write (6,*) "kappa12_label2",kappa(1,2),a(1,2),h(1,2)
-!         write (6,*) "kappa21_label2",kappa(2,1),a(2,1),h(2,1)
-!         write (6,*) "kappa22_label2",kappa(2,2),a(2,2),h(2,2)
      else
         kappa = a - h
-!         write (6,*) "kappa11_label3",kappa(1,1),a(1,1),h(1,1)
-!         write (6,*) "kappa12_label3",kappa(1,2),a(1,2),h(1,2)
-!         write (6,*) "kappa21_label3",kappa(2,1),a(2,1),h(2,1)
-!         write (6,*) "kappa22_label3",kappa(2,2),a(2,2),h(2,2)
      endif
      if (ndim .eq. 2) then
         if (kappa(1,1) .ge. 1.0d-16) then
@@ -413,10 +336,6 @@ endif
             kappa = 1.
         endif
      endif
-!      write (6,*) "kappa11_label4",kappa(1,1),a(1,1),h(1,1)
-!      write (6,*) "kappa12_label4",kappa(1,2),a(1,2),h(1,2)
-!      write (6,*) "kappa21_label4",kappa(2,1),a(2,1),h(2,1)
-!      write (6,*) "kappa22_label4",kappa(2,2),a(2,2),h(2,2)
 
 
 !

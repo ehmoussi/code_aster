@@ -264,10 +264,10 @@ subroutine mmvppe(typmae, typmam, iresog, ndim, nne,&
 !     if (iresog .eq. 1) then
 
         call mmcalg(ndim, nnm, dffm, ddffm, geomam, tau1,&
-                    tau2, jeu,djeu ,djeut, ddepmam , norm, gene11, gene21,&
+                    tau2, jeu,djeu , ddepmam , norm, gene11, gene21,&
                     gene22, kappa, h, vech1, vech2,&
                     a, ha, hah, mprt11, mprt21,&
-                    mprt22, mprt1n, mprt2n,mprojt, iresog,granglis,taujeu1, taujeu2, &
+                    mprt22, mprt1n, mprt2n, granglis,taujeu1, taujeu2, &
                   dnepmait1,dnepmait2)
 
 !     endif

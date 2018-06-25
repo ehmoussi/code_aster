@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -70,7 +70,7 @@ implicit none
     character(len=19) :: depplu, depmoi, ddepla,depdel
     aster_logical :: loop_cont_divec,loop_cont_diveg,l_cont_cont
     aster_logical :: lnewtf, lnewtg,lnewtc,l_exis_pena
-    real(kind=8) :: time_curr,sum_pressure
+    real(kind=8) :: time_curr
 
 !
 ! ----------------------------------------------------------------------
@@ -117,7 +117,7 @@ implicit none
 !
 ! ----- CALCUL RESIDU DE FROTTEMENT
 !
-        call mmmcrf(noma, ddepla, depplu, nfrot, vfrot,sum_pressure)
+        call mmmcrf(noma, ddepla, depplu, nfrot, vfrot)
     endif
 !
 ! --- EVALUATION RESIDU SEUIL GEOMETRIE

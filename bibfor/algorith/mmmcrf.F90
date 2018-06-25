@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine mmmcrf(noma, ddepla, depplu, nfrot, vfrot,sum_pressure)
+subroutine mmmcrf(noma, ddepla, depplu, nfrot, vfrot)
 !
 !
     implicit     none
@@ -32,7 +32,6 @@ subroutine mmmcrf(noma, ddepla, depplu, nfrot, vfrot,sum_pressure)
     character(len=19) :: depplu, ddepla
     character(len=16) :: nfrot
     real(kind=8) :: vfrot
-    real(kind=8) :: sum_pressure
 !
 ! ----------------------------------------------------------------------
 !
