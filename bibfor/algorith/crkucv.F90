@@ -18,7 +18,6 @@
 
 subroutine crkucv()
     implicit none
-! aslint: disable=W1501
 !
 !     COMMANDE:  CREA_RESU /KUCV
 !     CREE UNE STRUCTURE DE DONNEE DE TYPE

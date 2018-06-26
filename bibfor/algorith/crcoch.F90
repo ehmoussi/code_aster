@@ -18,7 +18,6 @@
 
 subroutine crcoch()
     implicit none
-! aslint: disable=W1501
 !
 !     COMMANDE:  CREA_RESU /CONV_CHAR
 !     CREE UNE STRUCTURE DE DONNEE DE TYPE
