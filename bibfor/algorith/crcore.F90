@@ -18,7 +18,6 @@
 
 subroutine crcore()
     implicit none
-! aslint: disable=W1501
 !
 !     COMMANDE:  CREA_RESU /CONV_RESU
 !     CREE UNE STRUCTURE DE DONNEE DE TYPE
