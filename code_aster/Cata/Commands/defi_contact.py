@@ -497,7 +497,8 @@ DEFI_CONTACT=OPER(nom       = "DEFI_CONTACT", op=30, sd_prod   = char_contact, r
                                                           CONTACT_INIT    =SIMP(statut='f',typ='TXM',defaut="INTERPENETRE", into=("OUI","INTERPENETRE","NON"),),
                                           ), # fin b_pair_morta
 # --- Method for friction
-                                          COULOMB    = SIMP(statut='o',typ='R',),
+                                          COULOMB          = SIMP(statut='o',typ='R',),
+                                          GRAND_GLIS       =SIMP(statut='f',typ='TXM',defaut="NON",into=("OUI","NON"),),
                                           SEUIL_INIT = SIMP(statut='f',typ='R'),
                                           regles=(EXCLUS('SANS_NOEUD_FR','SANS_GROUP_NO_FR'),),
                                           SANS_NOEUD_FR    =SIMP(statut='c',typ=no  ,validators=NoRepeat(),max='**'),

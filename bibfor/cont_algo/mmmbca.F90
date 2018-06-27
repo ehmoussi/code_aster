@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -131,6 +131,7 @@ implicit none
     aster_logical :: l_coef_adap
     character(len=8) :: iptxt
     integer :: hist_index,n_cychis,coun_bcle_geom,nb_cont_poin
+    aster_logical :: l_granglis
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -230,6 +231,7 @@ implicit none
         l_pena_frot  = mminfl(ds_contact%sdcont_defi,'ALGO_FROT_PENA' , i_zone)
         l_pena_cont  = mminfl(ds_contact%sdcont_defi,'ALGO_CONT_PENA' , i_zone)
         vale_pene    = mminfr(ds_contact%sdcont_defi,'PENE_MAXI' , i_zone)
+        l_granglis   = mminfl(ds_contact%sdcont_defi,'GRAND_GLIS' , i_zone)
 !
 ! ----- No computation: no contact point
 !
@@ -348,6 +350,8 @@ implicit none
                 v_sdcont_cychis(n_cychis*(i_cont_poin-1)+64) = coor_proj_curr(1)
                 v_sdcont_cychis(n_cychis*(i_cont_poin-1)+65) = coor_proj_curr(2)
                 v_sdcont_cychis(n_cychis*(i_cont_poin-1)+66) = coor_proj_curr(3)
+!
+                if (l_granglis) v_sdcont_cychis(n_cychis*(i_cont_poin-1)+60) = 1
 !
 ! ------------- Previous status and coefficients
 !

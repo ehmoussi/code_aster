@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -231,6 +231,8 @@ subroutine te0364(option, nomte)
     l_previous_frot = (nint(zr(jpcf-1+44)) .eq. 1 )  
     if (option .eq. 'RIGI_CONT') l_previous = l_previous_cont
     if (option .eq. 'RIGI_FROT') l_previous = l_previous_frot
+    granglis = nint(zr(jpcf-1+48))
+    
 !---------------------------------------------------------------
 !------------- PREPARATION DES CALCULS -------------------------
 !---------------------------------------------------------------
@@ -293,7 +295,7 @@ subroutine te0364(option, nomte)
                     gene22, kappa, h, vech1, vech2,&
                     a, ha, hah, mprt11, mprt21,&
                     mprt22,taujeu1, taujeu2, &
-                  dnepmait1,dnepmait2, .false._1)
+                  dnepmait1,dnepmait2, .false._1,granglis)
                     
         if (l_previous) then
             call mmtppe(typmae, typmam, ndim, nne, nnm,&
@@ -305,7 +307,7 @@ subroutine te0364(option, nomte)
                         gene22_prev, kappa_prev, h_prev, vech1_prev, vech2_prev,&
                         a_prev, ha_prev, hah_prev, mprt11_prev, mprt21_prev,&
                         mprt22_prev,taujeu1_prev, taujeu2_prev, &
-                  dnepmait1_prev,dnepmait2_prev, .true._1)  
+                  dnepmait1_prev,dnepmait2_prev, .true._1,granglis)  
                               
 !            debug = .false.
 !            if (debug) then 
@@ -426,7 +428,7 @@ subroutine te0364(option, nomte)
 !            debug = .false.
         endif
 !
-        granglis=1.0
+
      if (lcont .and.  (phasep(1:4) .eq. 'GLIS') .and. (granglis .eq. 1) .and. (abs(jeu) .lt. 1.d-6 )) then
     !         write (6,*) "djeu1",djeu
     !         write (6,*) "djeut1",djeut
