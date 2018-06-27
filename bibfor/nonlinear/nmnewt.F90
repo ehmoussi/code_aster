@@ -391,7 +391,7 @@ integer :: nbiter
 ! --- GESTION FIN DE BOUCLE POINTS FIXES
 !
     call nmtble(niveau, model, mesh    , ds_material, ds_contact, &
-                fonact, ds_print, ds_measure,&
+                fonact, ds_print, &
                 sderro, ds_conv , sddisc, numins, valinc,&
                 solalg,  ds_constitutive, ds_algorom)
 !

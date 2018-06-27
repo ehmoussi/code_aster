@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine mmstat(mesh  , iter_newt, nume_inst     , ds_measure,&
+subroutine mmstat(mesh  , iter_newt, nume_inst     , &
                   sddisc, disp_curr, disp_cumu_inst, ds_contact)
 !
 use NonLin_Datastructure_type
@@ -34,7 +34,6 @@ implicit none
     character(len=8), intent(in) :: mesh
     integer, intent(in) :: iter_newt
     integer, intent(in) :: nume_inst
-    type(NL_DS_Measure), intent(inout) :: ds_measure
     character(len=19), intent(in) :: sddisc
     character(len=19), intent(in) :: disp_curr
     character(len=19), intent(in) :: disp_cumu_inst
@@ -70,7 +69,7 @@ implicit none
     l_cont_lac   = cfdisl(ds_contact%sdcont_defi, 'FORMUL_LAC')
 !
     if (l_cont_cont) then
-        call mmmbca(mesh  , iter_newt, nume_inst     , ds_measure,&
+        call mmmbca(mesh  , iter_newt, nume_inst     , &
                     sddisc, disp_curr, disp_cumu_inst, ds_contact)
     elseif (l_cont_lac) then
         call mmmbca_lac(mesh, disp_curr, ds_contact)

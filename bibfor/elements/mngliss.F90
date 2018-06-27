@@ -30,31 +30,15 @@ subroutine mngliss(tau1  ,tau2  ,djeut,kappa ,taujeu1, taujeu2, &
     
 #include "asterfort/assert.h" 
     
-    integer :: ndim,  nnm
+    integer :: ndim
 
-    integer :: iresog
+    
+    real(kind=8) ::  tau1(3), tau2(3)
+    real(kind=8) ::  djeut(3)
     
     
-
-    real(kind=8) :: geomam(9, 3),depmam(9, 3)
-
-
-
-    real(kind=8) :: jeu,djeu(3),djeut(3),mprojt(3,3)
+    real(kind=8) :: kappa(2,2)
     
-
-    real(kind=8) :: ddffm(3,9),dffm(2, 9)
-    
-    real(kind=8) :: norm(3), tau1(3), tau2(3)
-    
-    real(kind=8) :: mprt1n(3, 3), mprt2n(3, 3)
-    real(kind=8) :: mprt11(3, 3), mprt21(3, 3), mprt22(3, 3)
-       
-    real(kind=8) :: gene11(3, 3), gene21(3, 3),gene22(3,3)
-    
-    real(kind=8) :: kappa(2,2),a(2,2),h(2,2),ha(2,2),hah(2,2)
-    
-    real(kind=8) :: vech1(3),vech2(3)
 !
 ! ----------------------------------------------------------------------
 !
@@ -124,10 +108,9 @@ subroutine mngliss(tau1  ,tau2  ,djeut,kappa ,taujeu1, taujeu2, &
 !
 ! ----------------------------------------------------------------------
 !
-    integer :: i, j, inom,idim
-    real(kind=8) :: ddgeo1(3),ddgeo2(3),ddgeo3(3),detkap,ddepmait1(3),ddepmait2(3)
+    integer :: i, idim
     real(kind=8) :: dnepmait1,dnepmait2,taujeu1,taujeu2
-    real(kind=8) :: djeung(3),dxi1,dxi2
+    real(kind=8) :: dxi1,dxi2
 
     djeut = 0.
     dxi1  = 0.

@@ -22,23 +22,23 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine mm_cycl_algo(ds_contact, l_loop_cont   , l_frot_zone   ,  &
+    subroutine mm_cycl_algo(ds_contact,  l_frot_zone   ,  &
                   l_glis_init   , type_adap   , zone_index    , i_cont_poin , &
                    indi_cont_eval, indi_frot_eval, dist_cont_curr, &
                    pres_cont_curr, dist_frot_curr, pres_frot_curr, &
                   v_sdcont_cychis, v_sdcont_cyccoe, v_sdcont_cyceta, indi_cont_curr,&
                   indi_frot_curr, ctcsta        , mmcvca               ,l_pena_frot,l_pena_cont,&
-                  vale_pene)
+                  vale_pene,glis_maxi)
 
         use NonLin_Datastructure_type
         type(NL_DS_Contact), intent(inout) :: ds_contact
-        aster_logical, intent(in) :: l_loop_cont
         aster_logical, intent(in) :: l_frot_zone
         aster_logical, intent(in) :: l_glis_init
         integer, intent(in) :: type_adap
         integer, intent(in) :: i_cont_poin
         integer, intent(in) :: zone_index
         real(kind=8), intent(in) :: vale_pene
+        real(kind=8), intent(in) :: glis_maxi
         aster_logical, intent(in) :: l_pena_frot
         aster_logical, intent(in) :: l_pena_cont
         integer, intent(inout) :: indi_cont_eval
@@ -47,9 +47,9 @@ interface
         real(kind=8), intent(inout) :: pres_cont_curr
         real(kind=8), intent(inout) :: dist_frot_curr(3)
         real(kind=8), intent(in) :: pres_frot_curr(3)
-        real(kind=8), pointer, intent(in) :: v_sdcont_cychis(:)
-        real(kind=8), pointer, intent(in) :: v_sdcont_cyccoe(:)
-        integer, pointer, intent(in) :: v_sdcont_cyceta(:)
+        real(kind=8), pointer :: v_sdcont_cychis(:)
+        real(kind=8), pointer :: v_sdcont_cyccoe(:)
+        integer, pointer :: v_sdcont_cyceta(:)
         integer, intent(out) :: indi_cont_curr
         integer, intent(out) :: indi_frot_curr
         integer, intent(out) :: ctcsta

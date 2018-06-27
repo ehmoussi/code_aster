@@ -16,12 +16,12 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine mm_cycl_algo(ds_contact, l_loop_cont, l_frot_zone, &
+subroutine mm_cycl_algo(ds_contact,  l_frot_zone, &
                   l_glis_init, type_adap, zone_index, i_cont_poin, &
                   indi_cont_eval, indi_frot_eval, dist_cont_curr,  &
                   pres_cont_curr, dist_frot_curr, pres_frot_curr, v_sdcont_cychis,&
                   v_sdcont_cyccoe, v_sdcont_cyceta, indi_cont_curr,indi_frot_curr,&
-                  ctcsta, mmcvca,l_pena_frot,l_pena_cont,vale_pene)
+                  ctcsta, mmcvca,l_pena_frot,l_pena_cont,vale_pene,glis_max)
 !
 use NonLin_Datastructure_type
 !
@@ -42,7 +42,6 @@ implicit none
 ! aslint: disable=W1504
 !
     type(NL_DS_Contact), intent(inout) :: ds_contact
-    aster_logical, intent(in) :: l_loop_cont
     aster_logical, intent(in) :: l_frot_zone
     aster_logical, intent(in) :: l_glis_init
     aster_logical, intent(in) :: l_pena_frot
@@ -57,9 +56,9 @@ implicit none
     real(kind=8), intent(inout) :: pres_cont_curr
     real(kind=8), intent(inout) :: dist_frot_curr(3)
     real(kind=8), intent(in) :: pres_frot_curr(3)
-    real(kind=8), pointer, intent(in) :: v_sdcont_cychis(:)
-    real(kind=8), pointer, intent(in) :: v_sdcont_cyccoe(:)
-    integer, pointer, intent(in) :: v_sdcont_cyceta(:)
+    real(kind=8), pointer :: v_sdcont_cychis(:)
+    real(kind=8), pointer :: v_sdcont_cyccoe(:)
+    integer, pointer :: v_sdcont_cyceta(:)
     integer, intent(out) :: indi_cont_curr
     integer, intent(out) :: indi_frot_curr
     integer, intent(out) :: ctcsta
@@ -83,7 +82,6 @@ implicit none
 !
 ! In  ds_contact       : datastructure for contact management
 ! In  l_frot_zone      : .true. if friction on zone
-! In  l_loop_cont      : .true. if fixed poitn on contact loop
 ! In  l_coef_adap      : .true. if automatic lagrangian adaptation
 ! In  l_glis_init      : .true. if bilateral contact for first step
 ! In  i_cont_poin      : contact point index
@@ -266,12 +264,12 @@ implicit none
 !
 ! Step 3. Traitement du FLIP-FLOP : POINT_FIXE SUR LE CONTACT
 !
-    if (i_reso_cont .eq. 0) then
-        if (v_sdcont_cyceta(4*(i_cont_poin-1)+4) .eq. -10) then
-            if (ds_contact%resi_pressure .lt. 1.d-4*ds_contact%cont_pressure) &
-            mmcvca = .true.
-        endif
-    endif
+!     if (i_reso_cont .eq. 0) then
+!         if (v_sdcont_cyceta(4*(i_cont_poin-1)+4) .eq. -10) then
+!             if (ds_contact%resi_pressure .lt. 1.d-4*ds_contact%cont_pressure) &
+!             mmcvca = .true.
+!         endif
+!     endif
     
 !
 ! Step 4. Traitement du CYCLAGE : NEWTON SUR LE CONTACT
@@ -284,8 +282,8 @@ implicit none
             else 
             !ADAPTATION DE MATRICES, VECTEURS ET COEFF POUR LES TE :
                 v_sdcont_cychis(n_cychis*(i_cont_poin-1)+57) = 1.0
-                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+59) = 0.99
-                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+56) = 0.99
+                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+59) = 0.9
+                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+56) = 0.9
             endif
 !        recherche de coefficients est-ce qu'on peut trouver coef tel que :
 !        Statut_Contact(Lag_prev-coef*Gap_prev) = Statut_Contact(Lag_curr-coef*Gap_curr)
@@ -364,7 +362,7 @@ implicit none
                     dist_max = vale_pene
                 endif
             
-                mmcvca = mmcvca .and. (ctcsta .eq. 0)
+!                 mmcvca = mmcvca .and. (ctcsta .eq. 0)
                 call bussetta_algorithm(dist_cont_curr, dist_cont_prev,dist_max, coef_bussetta)
                 v_sdcont_cychis(n_cychis*(i_cont_poin-1)+2) = max(coef_bussetta,&
                                                         v_sdcont_cychis(n_cychis*(i_cont_poin-1)+2))
@@ -423,11 +421,16 @@ implicit none
 !             if (indi_frot_curr .ne. indi_frot_prev) mmcvca_frot = .false.
 ! !                write (6,*) "indi_frot_curr : ",indi_frot_curr
 !             if (.not. mmcvca_frot) then 
+            if (ds_contact%iteration_newton .eq. 1) then 
+!                         glis_max = ds_contact%arete_min
+                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+6) =&
+                    1.d3/glis_max
+            endif
             if (indi_frot_curr .eq. 0) then                
                 if (pres_cont_curr .lt. -1.d-6*ds_contact%cont_pressure) then 
                     if ( (norm2(dist_frot_curr) .gt. 1.d-5*ds_contact%arete_min)) then 
                         ! coef_frot a une dimension : 1/glissement
-                        glis_max = ds_contact%arete_min
+!                         glis_max = ds_contact%arete_min
                         v_sdcont_cychis(n_cychis*(i_cont_poin-1)+6) =&
                         1.d-3*norm2(dist_frot_curr)/ds_contact%arete_min*1/glis_max
                     endif
@@ -435,14 +438,15 @@ implicit none
             endif
             if (indi_frot_curr .eq. 1) then
                 if (pres_cont_curr .lt. -1.d-6*ds_contact%cont_pressure) then 
-                    if ((norm2(dist_frot_curr) .gt. 1.d-4*ds_contact%arete_min)) then
-                        glis_max = ds_contact%arete_min
+                    if ((norm2(dist_frot_curr) .lt. 1.d-5*ds_contact%arete_min)) then
+!                        glis_max = ds_contact%arete_min
                         v_sdcont_cychis(n_cychis*(i_cont_poin-1)+6) =&
-                        max(norm2(pres_frot_curr),0.1)*1.d2/glis_max
+                        max(norm2(pres_frot_curr),0.1)*1.d4/glis_max
                     endif
                 endif
             endif
 !             endif
+           
     endif
 
 
@@ -460,28 +464,29 @@ implicit none
         if (mode_cycl .eq. 1 .and. &
             ds_contact%iteration_newton .gt. ds_contact%it_cycl_maxi+3 ) then 
             ! On fait la projection sur le cône négatif des valeurs admissibles
-             if (dist_cont_curr .gt. 1.d-6 )  dist_cont_curr = 0.0
-             if (pres_cont_curr .gt. 1.d-6 )  pres_cont_curr = -1.d-15
-             if (dist_cont_prev .gt. 1.d-6 )  dist_cont_prev = 0.0
-             if (pres_cont_prev .gt. 1.d-6 )  pres_cont_prev = -1.d-15
+!              if (dist_cont_curr .gt. 1.d-6 )  dist_cont_curr = 0.0
+!              if (pres_cont_curr .gt. 1.d-6 )  pres_cont_curr = -1.d-15
+!              if (dist_cont_prev .gt. 1.d-6 )  dist_cont_prev = 0.0
+!              if (pres_cont_prev .gt. 1.d-6 )  pres_cont_prev = -1.d-15
              if (i_reso_cont .ne. 0) then
-                 call mmstac(dist_cont_curr, pres_cont_curr,coefficient,indi_cont_curr)
-                 call mmstac(dist_cont_prev, pres_cont_prev,coefficient,indi_cont_prev)
+                 call mmstac(dist_cont_curr, pres_cont_curr,1.d-12,indi_cont_curr)
+                 call mmstac(dist_cont_prev, pres_cont_prev,1.d-12,indi_cont_prev)
                  v_sdcont_cychis(n_cychis*(i_cont_poin-1)+1)    = indi_cont_curr
                  v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+1) = indi_cont_prev
              endif       
-             v_sdcont_cychis(n_cychis*(i_cont_poin-1)+3)    = pres_cont_curr
-             v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+3) = pres_cont_prev
-             v_sdcont_cychis(n_cychis*(i_cont_poin-1)+4)    = dist_cont_curr
-             v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+4) = dist_cont_prev      
+!              v_sdcont_cychis(n_cychis*(i_cont_poin-1)+3)    = pres_cont_curr
+!              v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+3) = pres_cont_prev
+!              v_sdcont_cychis(n_cychis*(i_cont_poin-1)+4)    = dist_cont_curr
+!              v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+4) = dist_cont_prev      
              v_sdcont_cychis(n_cychis*(i_cont_poin-1)+57) = 1.0
              v_sdcont_cychis(n_cychis*(i_cont_poin-1)+59) = 0.99
              v_sdcont_cychis(n_cychis*(i_cont_poin-1)+56) = 1.0
              v_sdcont_cychis(n_cychis*(i_cont_poin-1)+51) = 4.0
              v_sdcont_cychis(n_cychis*(i_cont_poin-1)+52) = 4.0
              v_sdcont_cyceta(4*(i_cont_poin-1)+1)   = 10
-             v_sdcont_cychis(n_cychis*(i_cont_poin-1)+2)    = 1.d2
-             v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+2) = 1.d2
+             coef_tmp =1.d4/ds_contact%arete_min
+             v_sdcont_cychis(n_cychis*(i_cont_poin-1)+2)    = coef_tmp
+             v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+2) = coef_tmp
              mmcvca =  indi_cont_prev .eq. indi_cont_curr
         endif
     endif

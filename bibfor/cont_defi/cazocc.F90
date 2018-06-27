@@ -65,7 +65,7 @@ implicit none
     real(kind=8) :: dire_excl_frot_i, dire_excl_frot(3)
     real(kind=8) :: coef_cont, coef_frot, seuil_init, coef_coul_frot
     real(kind=8) :: coef_augm_frot, coef_augm_cont
-    real(kind=8) :: coef_pena_frot, coef_pena_cont,pene_maxi
+    real(kind=8) :: coef_pena_frot, coef_pena_cont,pene_maxi,glis_maxi
     real(kind=8) :: algo_cont, algo_frot
     real(kind=8) :: type_inte, cont_init, seuil_auto
     integer :: inte_order
@@ -118,6 +118,7 @@ implicit none
     l_cont_cont= .false.
     s_algo_frot       = ' '
     pene_maxi         =1.d3
+    glis_maxi         =1.d3
 !
 ! - Datastructure for contact
 !
@@ -164,7 +165,7 @@ implicit none
 !
 ! - Contact method
 ! - Traitement de PENE_MAXI :
-!      - Dans le cas  ADAPTATION=NON+PENALISATION,
+!      - Dans le cas  ADAPTATION=NON ou CYCLAGE+PENALISATION,
 !        le critere PENE_MAXI n'a pas de sens. Au moment de la résolution,
 !        dans STAT_NON_LINE, on ne cherche pas à le vérifier. La parade c'est
 !        de prendre le critère volontairement tres grand pour ne pas avoir à le vérifier. 
@@ -230,7 +231,9 @@ implicit none
             algo_frot = 1.d0
             coef_frot = coef_augm_frot
         else if (s_algo_frot .eq. 'PENALISATION') then
+            call getvtx(keywf, 'ADAPTATION', iocc=i_zone, scal=adaptation)
             call getvr8(keywf, 'COEF_PENA_FROT', iocc=i_zone, scal=coef_pena_frot)
+            call getvr8(keywf, 'GLIS_MAXI', iocc=i_zone, scal=glis_maxi,nbret=nbret)
             algo_frot = 3.d0
             coef_frot = coef_pena_frot
         else
@@ -247,6 +250,7 @@ implicit none
         coef_frot = 0.d0
         algo_frot = 0.d0
     endif
+    v_sdcont_caracf(zcmcf*(i_zone-1)+16) = glis_maxi
 !
 ! - Get friction parameters
 !

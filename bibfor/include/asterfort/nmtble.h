@@ -18,7 +18,7 @@
 !
 interface
     subroutine nmtble(loop_exte     , model   , mesh  , ds_material, ds_contact,&
-                      list_func_acti, ds_print, ds_measure, &
+                      list_func_acti, ds_print,  &
                       sderro        , ds_conv , sddisc, nume_inst,hval_incr  ,&
                       hval_algo, ds_constitutive, ds_algorom)
         use NonLin_Datastructure_type
@@ -30,7 +30,6 @@ interface
         type(NL_DS_Contact), intent(inout) :: ds_contact
         integer, intent(in) :: list_func_acti(*)
         type(NL_DS_Print), intent(inout) :: ds_print
-        type(NL_DS_Measure), intent(inout) :: ds_measure
         character(len=24), intent(in) :: sderro
         type(NL_DS_Conv), intent(in) :: ds_conv
         character(len=19), intent(in) :: sddisc

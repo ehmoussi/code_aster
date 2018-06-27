@@ -111,7 +111,8 @@ CHA3=DEFI_CONTACT(MODELE=MO,
                           SEUIL_INIT=1e-1,
                           ALGO_FROT ='PENALISATION',
                           COEF_CONT =1.e2,
-                          COEF_PENA_FROT =1.e7,
+                          GLIS_MAXI = 1.e-3,
+                          #COEF_PENA_FROT =1.e7,
                              ADAPTATION    = 'ADAPT_COEF',
                            ),
                               );
@@ -279,10 +280,11 @@ TEST_RESU(RESU=(_F(GROUP_NO='PPA',
                    RESULTAT=U3M,
                    NOM_CHAM='DEPL',
                    NOM_CMP='DX',
-                   VALE_CALC= 2.8665824439E-05,
+                   VALE_CALC= 2.98850330837E-05,
                    VALE_REFE=2.8600000000000001E-05,
                    PRECISION=0.050000000000000003,
                    ),));
 
 FIN();
 #
+

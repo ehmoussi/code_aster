@@ -16,8 +16,8 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine mmgtmm(ndim  ,nnm   ,norm,mprt1n,mprt2n, &
-                  mprojn,wpg   , &
+subroutine mmgtmm(ndim  ,nnm   ,mprt1n,mprt2n, &
+                  wpg   , &
           ffm    ,dffm,ddffm, jacobi,coefac,jeu   , &
           dlagrc,kappa ,vech1 ,vech2 ,h     , &
           mprt11,mprt21,mprt22,matrmm)
@@ -37,7 +37,7 @@ subroutine mmgtmm(ndim  ,nnm   ,norm,mprt1n,mprt2n, &
     
     integer :: ndim,  nnm
     
-    real(kind=8) :: mprojn(3, 3),mprt1n(3,3),mprt2n(3,3),mprt22(3,3)
+    real(kind=8) :: mprt1n(3,3),mprt2n(3,3),mprt22(3,3)
         real(kind=8) :: mprt11(3, 3),mprt21(3, 3)
     
     real(kind=8) :: ffm(9),dffm(2,9),ddffm(3,9)
@@ -45,7 +45,7 @@ subroutine mmgtmm(ndim  ,nnm   ,norm,mprt1n,mprt2n, &
     real(kind=8) :: coefac, jeu, dlagrc
     
     real(kind=8) :: kappa(2,2),h(2,2)
-    real(kind=8) :: vech1(3),vech2(3),norm(3)
+    real(kind=8) :: vech1(3),vech2(3)
     
     real(kind=8) :: matrmm(27, 27)
 !
@@ -88,10 +88,7 @@ subroutine mmgtmm(ndim  ,nnm   ,norm,mprt1n,mprt2n, &
 
     integer :: i, j, k,l, ii, jj
     real(kind=8) :: g(3, 3), e(3, 3), d(3, 3), f(3, 3)
-    real(kind=8) :: supkap,supmat,alpha
     real(kind=8) :: mprt12(3,3),mprnt1(3,3),mprnt2(3,3)
-    integer :: inom1, inom2, idim1, idim2
-    alpha = 1.d-5 
     
     call matini(3, 3, 0.d0, e)
     call matini(3, 3, 0.d0, d)
@@ -172,15 +169,6 @@ subroutine mmgtmm(ndim  ,nnm   ,norm,mprt1n,mprt2n, &
 !
   mprt12      = mprt21
 
-! LES MATRICES KAPPA INFLUENCENT LA CONVERGENCE DE LA METHODE :
-! OUT KAPPA  : MATRICE DE SCALAIRES LIEES A LA CINEMATIQUE DU GLISSEMENT
-! OUT KAPPA(i,j) = INVERSE[TAU_i.TAU_j-JEU*(ddFFM*geomm)](matrice 2*2) 
-! ON LE DEBRANCHE AUTOMATIQUEMENT SI SA VALEUR EST TROP 
-!GRANDE COMPARATIVEMENT A MATRMM
-
-
-
-!
 ! CONTRIBUTION 1 : 
 !    
 !
@@ -253,10 +241,14 @@ subroutine mmgtmm(ndim  ,nnm   ,norm,mprt1n,mprt2n, &
  mprt12(l,k)*ffm(j)*(kappa(1,1)*kappa(1,1)+kappa(1,2)*kappa(2,1))*(ddffm(2,i)+ddffm(3,i))   + &
  mprt21(l,k)*ffm(j)*(kappa(1,2)*kappa(1,1)+kappa(2,2)*kappa(1,2))*(ddffm(1,i)+ddffm(3,i))   + &
  mprt22(l,k)*ffm(j)*(kappa(1,2)*kappa(1,1)+kappa(2,2)*kappa(1,2))*(ddffm(3,i)+ddffm(2,i)) - &
- mprnt1(l,k)*jeu*(kappa(1,1)*kappa(1,1)+kappa(1,2)*kappa(2,1))*dffm(1,j)*(ddffm(1,i)+ddffm(3,i)) - &  
- mprnt1(l,k)*jeu*(kappa(1,2)*kappa(1,1)+kappa(2,2)*kappa(1,2))*dffm(2,j)*(ddffm(1,i)+ddffm(3,i)) - &   
- mprnt2(l,k)*jeu*(kappa(1,1)*kappa(1,1)+kappa(1,2)*kappa(2,1))*dffm(1,j)*(ddffm(2,i)+ddffm(3,i)) - &  
- mprnt2(l,k)*jeu*(kappa(1,2)*kappa(1,1)+kappa(2,2)*kappa(1,2))*dffm(2,j)*(ddffm(2,i)+ddffm(3,i)) )              
+ mprnt1(l,k)*jeu*(kappa(1,1)*kappa(1,1)+&
+                  kappa(1,2)*kappa(2,1))*dffm(1,j)*(ddffm(1,i)+ddffm(3,i)) - &  
+ mprnt1(l,k)*jeu*(kappa(1,2)*&
+                  kappa(1,1)+kappa(2,2)*kappa(1,2))*dffm(2,j)*(ddffm(1,i)+ddffm(3,i)) - &   
+ mprnt2(l,k)*jeu*&
+ (kappa(1,1)*kappa(1,1)+kappa(1,2)*kappa(2,1))*dffm(1,j)*(ddffm(2,i)+ddffm(3,i)) - &  
+ mprnt2(l,k)*jeu*(kappa(1,2)*kappa(1,1)+&
+                  kappa(2,2)*kappa(1,2))*dffm(2,j)*(ddffm(2,i)+ddffm(3,i)) )              
   
 !terme  pour xi2 
 matrmm(ii,jj) = matrmm(ii,jj)          - &
@@ -265,9 +257,12 @@ matrmm(ii,jj) = matrmm(ii,jj)          - &
  mprt12(l,k)*ffm(j)*(kappa(2,1)*kappa(1,1)+kappa(2,2)*kappa(2,1))*(ddffm(2,i)+ddffm(3,i))   + &
  mprt21(l,k)*ffm(j)*(kappa(1,2)*kappa(2,1)+kappa(2,2)*kappa(2,2))*(ddffm(1,i)+ddffm(3,i))   + &
  mprt22(l,k)*ffm(j)*(kappa(1,2)*kappa(2,1)+kappa(2,2)*kappa(2,2))*(ddffm(3,i)+ddffm(2,i)) - &
- mprnt1(l,k)*jeu*(kappa(2,1)*kappa(1,1)+kappa(2,2)*kappa(2,1))*dffm(1,j)*(ddffm(1,i)+ddffm(3,i)) - &  
- mprnt1(l,k)*jeu*(kappa(1,2)*kappa(2,1)+kappa(2,2)*kappa(2,2))*dffm(2,j)*(ddffm(1,i)+ddffm(3,i)) - &   
- mprnt2(l,k)*jeu*(kappa(1,1)*kappa(2,1)+kappa(2,2)*kappa(2,1))*dffm(1,j)*(ddffm(2,i)+ddffm(3,i)) - &  
+ mprnt1(l,k)*jeu*(kappa(2,1)*kappa(1,1)+kappa(2,2)*&
+                  kappa(2,1))*dffm(1,j)*(ddffm(1,i)+ddffm(3,i)) - &  
+ mprnt1(l,k)*jeu*&
+ (kappa(1,2)*kappa(2,1)+kappa(2,2)*kappa(2,2))*dffm(2,j)*(ddffm(1,i)+ddffm(3,i)) - &   
+ mprnt2(l,k)*jeu*&
+ (kappa(1,1)*kappa(2,1)+kappa(2,2)*kappa(2,1))*dffm(1,j)*(ddffm(2,i)+ddffm(3,i)) - &  
  mprnt2(l,k)*jeu*(kappa(1,2)*kappa(2,1)+kappa(2,2)*kappa(2,2))*dffm(2,j)*(ddffm(2,i)+ddffm(3,i)) )  
 
  

@@ -18,7 +18,7 @@
 
 subroutine mmgtme(ndim  ,nnm   ,nne,mprt1n,mprt2n, &
                   wpg   , &
-          ffe,dffm  ,ddffm,jacobi,coefac,jeu   , &
+          ffe,ddffm,jacobi,coefac,jeu   , &
           dlagrc,kappa ,vech1 ,vech2 ,h     , &
           mprt11,mprt21,mprt22,matrme)
 !
@@ -32,10 +32,10 @@ subroutine mmgtme(ndim  ,nnm   ,nne,mprt1n,mprt2n, &
     integer :: ndim,  nnm, nne
     
     real(kind=8) :: mprt1n(3,3),mprt2n(3,3)
-    real(kind=8) :: mprtnt1(3,3),mprnt2(3,3)
+    real(kind=8) :: mprnt2(3,3)
     real(kind=8) :: mprt11(3,3),mprt22(3,3),mprt21(3,3),mprt12(3,3)
     
-    real(kind=8) :: ffe(9),dffm(2,9),ddffm(3,9)
+    real(kind=8) :: ffe(9),ddffm(3,9)
     real(kind=8) :: wpg, jacobi
     real(kind=8) :: coefac, jeu, dlagrc
     
@@ -97,9 +97,7 @@ subroutine mmgtme(ndim  ,nnm   ,nne,mprt1n,mprt2n, &
 
     integer :: i, j, k,l, ii, jj
     real(kind=8) :: g(3, 3), e(3, 3), d(3, 3), f(3, 3)
-     real(kind=8) :: mprnt1(3,3)
-    real(kind=8) :: supkap,supmat,alpha
-    alpha = 1.d-5 
+    real(kind=8) :: mprnt1(3,3)
     
     call matini(3, 3, 0.d0, e)
     call matini(3, 3, 0.d0, d)
@@ -186,34 +184,6 @@ subroutine mmgtme(ndim  ,nnm   ,nne,mprt1n,mprt2n, &
 ! OUT KAPPA(i,j) = INVERSE[TAU_i.TAU_j-JEU*(ddFFM*geomm)](matrice 2*2) 
 ! ON LE DEBRANCHE AUTOMATIQUEMENT SI SA VALEUR EST TROP GRANDE COMPARATIVEMENT A MATRME
 
-
-supkap = kappa(1,1)
-do 1 i = 1,2
-  do 2 j= 1,2
-    if (kappa(i,j) .ge. supkap) supkap = kappa(i,j)
-2 continue
-1 continue
-
-supmat = matrme(1,1)
-do 11 i = 1,27
-  do 21  j= 1,27
-    if (matrme(i,j) .ge. supmat) supmat = matrme(i,j)
-21 continue
-11 continue
-
-
-  
-if (supkap .le. (alpha*supmat)) then 
-  
- 
-
-!
-! CONTRIBUTION 1 :
-
-!    
-!
-
-
 !
 !
 ! CONTRIBUTION 2 : 
@@ -254,9 +224,6 @@ do 260 i = 1, nne
 !
 
 
-
-
-endif
 
 
 end subroutine

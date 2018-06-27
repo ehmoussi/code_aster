@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine mmmbca(mesh  , iter_newt, nume_inst     , ds_measure,&
+subroutine mmmbca(mesh  , iter_newt, nume_inst   ,&
                   sddisc, disp_curr, disp_cumu_inst, ds_contact)
 !
 use NonLin_Datastructure_type
@@ -63,30 +63,28 @@ implicit none
     character(len=8), intent(in) :: mesh
     integer, intent(in) :: iter_newt
     integer, intent(in) :: nume_inst
-    type(NL_DS_Measure), intent(inout) :: ds_measure
     character(len=19), intent(in) :: sddisc
     character(len=19), intent(in) :: disp_curr
     character(len=19), intent(in) :: disp_cumu_inst
     type(NL_DS_Contact), intent(inout) :: ds_contact
 !
-! --------------------------------------------------------------------------------------------------
+! --------------------------------------------------------------------
 !
 ! Contact - Solve
 !
 ! Continue method - Management of contact loop
 !
-! --------------------------------------------------------------------------------------------------
+! --------------------------------------------------------
 !
 ! In  mesh             : name of mesh
 ! In  iter_newt        : index of current Newton iteration
 ! In  nume_inst        : index of current time step
-! IO  ds_measure       : datastructure for measure and statistics management
 ! In  sddisc           : datastructure for time discretization
 ! In  disp_curr        : current displacements
 ! In  disp_cumu_inst   : displacement increment from beginning of current time
 ! IO  ds_contact       : datastructure for contact management
 !
-! --------------------------------------------------------------------------------------------------
+! ------------------------------------------------------
 !
     integer :: ztabf
     integer :: ifm, niv
@@ -100,7 +98,6 @@ implicit none
     real(kind=8) :: ksipr1, ksipr2, ksipc1, ksipc2
     real(kind=8) :: ksipr1_old, ksipr2_old,ksipc1_old, ksipc2_old,resi_geom
     real(kind=8) :: norm(3), tau1(3), tau2(3)
-    real(kind=8) :: norm_prev(3), tau1_prev(3), tau2_prev(3)
     real(kind=8) :: lagr_cont_node(9), lagr_fro1_node(9), lagr_fro2_node(9)
     real(kind=8) :: elem_slav_coor(27)
     real(kind=8) :: lagr_cont_poin, time_curr
@@ -125,8 +122,8 @@ implicit none
     real(kind=8), pointer :: v_sdcont_tabfin(:) => null()
     real(kind=8), pointer :: v_sdcont_jsupco(:) => null()
     real(kind=8), pointer :: v_sdcont_apjeu(:) => null()
-    real(kind=8)  :: vale_pene = 0.0
-    real(kind=8)  :: sum_cont_pressure
+    real(kind=8)  :: vale_pene = 0.0, glis_maxi = 0.
+    real(kind=8)  :: sum_cont_press
     real(kind=8)  :: coor_escl_curr(3) = 0.0,coor_proj_curr(3) = 0.0
     aster_logical :: l_coef_adap
     character(len=8) :: iptxt
@@ -216,7 +213,7 @@ implicit none
 !
 ! - Loop on contact zones
 !
-    sum_cont_pressure = 0.0d0
+    sum_cont_press = 0.0d0
     ds_contact%resi_pressure =0.
     i_cont_poin = 1
     do i_zone = 1, nb_cont_zone
@@ -231,6 +228,9 @@ implicit none
         l_pena_frot  = mminfl(ds_contact%sdcont_defi,'ALGO_FROT_PENA' , i_zone)
         l_pena_cont  = mminfl(ds_contact%sdcont_defi,'ALGO_CONT_PENA' , i_zone)
         vale_pene    = mminfr(ds_contact%sdcont_defi,'PENE_MAXI' , i_zone)
+        glis_maxi    = mminfr(ds_contact%sdcont_defi,'GLIS_MAXI' , i_zone)
+        ! l'utilisateur n'a pas renseigne glis_maxi
+        if  (glis_maxi .le. r8prem()) glis_maxi   = ds_contact%arete_min
         l_granglis   = mminfl(ds_contact%sdcont_defi,'GRAND_GLIS' , i_zone)
 !
 ! ----- No computation: no contact point
@@ -311,12 +311,18 @@ implicit none
                     v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+hist_index) = &
                         v_sdcont_cychis(n_cychis*(i_cont_poin-1)+hist_index)
                 enddo
-                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+61+6) = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+61)
-                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+62+6) = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+62)
-                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+63+6) = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+63)
-                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+64+6) = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+64)
-                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+65+6) = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+65)
-                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+66+6) = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+66)
+                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+61+6) =&
+                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+61)
+                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+62+6) =&
+                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+62)
+                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+63+6) =&
+                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+63)
+                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+64+6) =&
+                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+64)
+                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+65+6) =&
+                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+65)
+                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+66+6) =&
+                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+66)
                 
                 v_sdcont_cychis(n_cychis*(i_cont_poin-1)+13) = tau1(1) 
                 v_sdcont_cychis(n_cychis*(i_cont_poin-1)+14) = tau1(2) 
@@ -398,23 +404,29 @@ implicit none
 !
 ! ------------- Status treatment
 !
-                call mm_cycl_algo(ds_contact, l_loop_cont, l_frot_zone, &
+                call mm_cycl_algo(ds_contact, l_frot_zone, &
                             l_glis_init, type_adap, i_zone, i_cont_poin, &
                             indi_cont_eval, indi_frot_eval, gap,  lagr_cont_poin,&
                             gap_user_frot, pres_frot, v_sdcont_cychis, v_sdcont_cyccoe, &
                             v_sdcont_cyceta,indi_cont_curr,indi_frot_curr, loop_cont_vali,&
-                            loop_cont_conv,l_pena_frot,l_pena_cont, vale_pene)
+                            loop_cont_conv,l_pena_frot,l_pena_cont, vale_pene,glis_maxi)
 !
  19             continue
                 if (ds_contact%iteration_newton .ge. 2 .and. indi_cont_curr .eq. 1) then
                     do coun_bcle_geom = 1,3
-                        resi_geom = sqrt(((v_sdcont_cychis(n_cychis*(i_cont_poin-1)+61+6)-coor_escl_curr(1))**2 +&
-                                     (v_sdcont_cychis(n_cychis*(i_cont_poin-1)+62+6)-coor_escl_curr(2))**2 +&
-                                     (v_sdcont_cychis(n_cychis*(i_cont_poin-1)+63+6)-coor_escl_curr(3))**2 &
+                        resi_geom = sqrt(((v_sdcont_cychis(n_cychis*(i_cont_poin-1)+61+6)&
+                                           -coor_escl_curr(1))**2 +&
+                                     (v_sdcont_cychis(n_cychis*(i_cont_poin-1)+62+6)&
+                                      -coor_escl_curr(2))**2 +&
+                                     (v_sdcont_cychis(n_cychis*(i_cont_poin-1)+63+6)&
+                                      -coor_escl_curr(3))**2 &
                                     )+&
-                                    ((v_sdcont_cychis(n_cychis*(i_cont_poin-1)+64+6)-coor_proj_curr(1))**2 +&
-                                     (v_sdcont_cychis(n_cychis*(i_cont_poin-1)+65+6)-coor_proj_curr(2))**2 +&
-                                     (v_sdcont_cychis(n_cychis*(i_cont_poin-1)+66+6)-coor_proj_curr(3))**2 &
+                                    ((v_sdcont_cychis(n_cychis*(i_cont_poin-1)+64+6)&
+                                      -coor_proj_curr(1))**2 +&
+                                     (v_sdcont_cychis(n_cychis*(i_cont_poin-1)+65+6)&
+                                      -coor_proj_curr(2))**2 +&
+                                     (v_sdcont_cychis(n_cychis*(i_cont_poin-1)+66+6)&
+                                      -coor_proj_curr(3))**2 &
                                     ))
                     enddo
                     if (resi_geom .gt. ds_contact%critere_geom .and.&
@@ -443,20 +455,14 @@ implicit none
 ! ------------- Next contact point
 !
                 i_cont_poin = i_cont_poin + 1
-                if (indi_cont_curr .eq. 1) sum_cont_pressure = sum_cont_pressure + lagr_cont_poin
+                if (indi_cont_curr .eq. 1) sum_cont_press = sum_cont_press + lagr_cont_poin
             end do
         end do
  25     continue
     end do
 ! Moyenne des pressions de contact
-    sum_cont_pressure = sum_cont_pressure/nb_cont_poin
-!     write (6,*) "convergence globale",abs(ds_contact%cont_pressure),abs(sum_cont_pressure)
-!     if  (abs(ds_contact%cont_pressure-sum_cont_pressure) .lt. 1.d-6*abs(sum_cont_pressure) .and. .not. loop_cont_conv  ) then
-!         loop_cont_conv = .true.
-!     endif
-    ds_contact%cont_pressure = abs(sum_cont_pressure)
-!     write(6,*) "cont_pressure", ds_contact%cont_pressure, "iteration_newton", ds_contact%iteration_newton, &
-!     "resi_pressure", ds_contact%resi_pressure
+    sum_cont_press = sum_cont_press/nb_cont_poin
+    ds_contact%cont_pressure = abs(sum_cont_press)
 !
 ! - Bilateral contact management
 !

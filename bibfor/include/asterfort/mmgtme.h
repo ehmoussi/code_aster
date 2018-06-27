@@ -21,7 +21,7 @@
 interface
     subroutine mmgtme(ndim  ,nnm   ,nne,mprt1n,mprt2n, &
                   wpg   , &
-          ffe,dffm  ,ddffm,jacobi,coefac,jeu   , &
+          ffe,ddffm,jacobi,coefac,jeu   , &
           dlagrc,kappa ,vech1 ,vech2 ,h     , &
           mprt11,mprt21,mprt22,matrme)
 
@@ -34,7 +34,6 @@ interface
         real(kind=8) :: wpg
         real(kind=8) :: ffe(9)
     real(kind=8) :: ffm(9)
-        real(kind=8) :: dffm(2, 9)
         real(kind=8) :: ddffm(3, 9)
         real(kind=8) :: jacobi
         real(kind=8) :: coefac        

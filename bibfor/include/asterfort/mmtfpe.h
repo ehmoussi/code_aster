@@ -24,7 +24,8 @@ interface
                   ffe   ,ffm    ,norm  ,tau1  , &
                   tau2  ,mprojn,mprojt,rese  ,nrese , &
                   lambda,coefff,coefaf,coefac, &
-                  dlagrf,djeut ,matree,matrmm, &
+                  dlagrf,djeut ,&
+                  matree,matrmm, &
                   matrem,matrme,matrec,matrmc,matref, &
                   matrmf)
         character(len=9) :: phasep
