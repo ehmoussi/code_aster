@@ -294,7 +294,8 @@ subroutine te0365(option, nomte)
 ! Modification du jeu tangent pour le grand glissement
 !
 
-     if (lcont .and.  (phasep(1:4) .eq. 'GLIS') .and. (granglis .eq. 1) .and. (abs(jeu) .lt. 1.d-6 )) then
+     if (lcont .and.  (phasep(1:4) .eq. 'GLIS') .and. (granglis .eq. 1)&
+         .and. (abs(jeu) .lt. 1.d-6 )) then
         call mngliss(tau1  ,tau2  ,djeut,kappa ,taujeu1, taujeu2, &
                      dnepmait1,dnepmait2,ndim )
         call mmnsta(ndim, leltf, lpenaf, loptf, djeut,&
