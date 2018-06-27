@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -25,7 +25,7 @@ subroutine mmtppe(typmae, typmam, ndim, nne, nnm,&
                   gene22, kappa, h, vech1, vech2,&
                   a, ha, hah, mprt11, mprt21,&
                   mprt22,taujeu1, taujeu2, &
-                  dnepmait1,dnepmait2,l_previous)
+                  dnepmait1,dnepmait2,l_previous,granglis)
 !
 ! person_in_charge: ayaovi-dzifa.kudawoo at edf.fr
 !
@@ -178,7 +178,6 @@ subroutine mmtppe(typmae, typmam, ndim, nne, nnm,&
     tau2(2) = zr(jpcf-1+9)
     tau2(3) = zr(jpcf-1+10)
     wpg = zr(jpcf-1+11)
-    granglis = 1.0
     ppe = 0.d0
     geomae = 0.
     geomam = 0.

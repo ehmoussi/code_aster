@@ -30,7 +30,7 @@ interface
               gene22,kappa ,h     ,vech1 ,vech2 , &
               a     ,ha    ,hah   ,mprt11,mprt21, &
               mprt22,taujeu1, taujeu2, &
-                  dnepmait1,dnepmait2, l_previous)
+                  dnepmait1,dnepmait2, l_previous,granglis)
               
         character(len=8) :: typmae
         character(len=8) :: typmam
@@ -39,6 +39,7 @@ interface
         integer :: nnm
         integer :: nnl
         integer :: nbdm
+        integer :: granglis
         integer :: iresog
         aster_logical :: laxis
         aster_logical :: ldyna

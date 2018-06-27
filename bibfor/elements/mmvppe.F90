@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -26,7 +26,7 @@ subroutine mmvppe(typmae, typmam, iresog, ndim, nne,&
                   gene22, kappa, h, vech1, vech2,&
                   a, ha, hah, mprt11, mprt21,&
                   mprt22,taujeu1, taujeu2, &
-                  dnepmait1,dnepmait2, l_previous)
+                  dnepmait1,dnepmait2, l_previous,granglis)
 !
 ! person_in_charge: ayaovi-dzifa.kudawoo at edf.fr
 !
@@ -151,7 +151,6 @@ subroutine mmvppe(typmae, typmam, iresog, ndim, nne,&
     djeut = 0.
     ddeple = 0.
     ddeplm = 0.
-    granglis = 1.
 !
 ! TRAITEMENT CYCLAGE : ON REMPLACE LES VALEURS DE JEUX et DE NORMALES
 !                      POUR AVOIR UNE MATRICE CONSISTANTE

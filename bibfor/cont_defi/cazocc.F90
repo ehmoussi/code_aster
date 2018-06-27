@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -59,6 +59,7 @@ implicit none
     integer :: nb_cont_excl_1, nb_cont_excl_2, nb_cont_excl_3, nb_cont_excl_4
     integer :: nb_dire_excl, noc
     character(len=16) :: s_cont_excl, s_frot_excl
+    character(len=16) :: s_grglis
     character(len=16) :: s_gliss, s_type_inte, s_cont_init, s_algo_cont, s_algo_frot
     character(len=16) :: adaptation
     real(kind=8) :: dire_excl_frot_i, dire_excl_frot(3)
@@ -79,6 +80,7 @@ implicit none
     character(len=24) :: sdcont_paraci
     integer, pointer :: v_sdcont_paraci(:) => null()
     aster_logical ::  l_newt_fr = .false._1, l_cont_cont = .false._1,l_pena_cont = .false._1
+    aster_logical ::  l_granglis = .false._1
     character(len=24) :: sdcont_paracr
     real(kind=8), pointer :: v_sdcont_paracr(:) => null()
     real(kind=8) :: pene_critere
@@ -110,6 +112,7 @@ implicit none
     l_node_excl       = .false.
     l_frot_excl       = .false.
     l_gliss           = .false.
+    l_granglis        = .false.
     l_dire_excl_frot  = .false.
     l_newt_fr  = .false.
     l_cont_cont= .false.
@@ -359,6 +362,32 @@ implicit none
         endif
     endif
 !
+
+!
+! --- GRAND_GLISSEMENT 
+!
+    if (l_frot .and. l_cont_cont) then 
+        call getvtx(keywf, 'GRAND_GLIS', iocc=i_zone, scal=s_grglis, nbret=noc)
+        if (noc .ge. 1) then  
+            if (s_grglis(1:3) .eq. 'OUI') then
+                l_granglis = .true.
+            elseif (s_grglis(1:3) .eq. 'NON') then
+                l_granglis = .false.
+            else
+                print s_grglis(1:3)
+                ASSERT(.false.)
+        endif
+        endif
+    !
+        if (l_granglis) then
+            v_sdcont_caracf(zcmcf*(i_zone-1)+15) = 1.d0
+        else
+            v_sdcont_caracf(zcmcf*(i_zone-1)+15) = 0.d0
+        endif
+    endif
+
+
+
     v_sdcont_caracf(zcmcf*(i_zone-1)+8) = cont_init
     if (l_gliss) then
        v_sdcont_caracf(zcmcf*(i_zone-1)+9) = 1.d0

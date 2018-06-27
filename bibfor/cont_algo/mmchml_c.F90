@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -221,6 +221,7 @@ implicit none
             if ((i_algo_cont .eq. 3) .and. (i_algo_fric .eq. 1) ) then
                 zr(vale_indx-1+47) = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+5)
             endif
+            zr(vale_indx-1+48) = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+60)
         enddo
         nt_liel = nt_liel + nb_liel
     enddo

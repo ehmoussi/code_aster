@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -162,6 +162,7 @@ subroutine te0365(option, nomte)
     l_previous_frot = (nint(zr(jpcf-1+44)) .eq. 1 ) .and. .false.
     if (option .eq. 'RIGI_CONT') l_previous = l_previous_cont
     if (option .eq. 'RIGI_FROT') l_previous = l_previous_frot
+    granglis = nint(zr(jpcf-1+48))
     
 !
 ! --- PREPARATION DES CALCULS - INFOS SUR LA MAILLE DE CONTACT
@@ -222,7 +223,7 @@ subroutine te0365(option, nomte)
                   gene22, kappa, h, vech1, vech2,&
                   a, ha, hah, mprt11, mprt21,&
                   mprt22,taujeu1, taujeu2, &
-                  dnepmait1,dnepmait2, l_previous)
+                  dnepmait1,dnepmait2, l_previous,granglis)
                              
 !         if (l_previous) then
 !             call      mmvppe(typmae, typmam, iresog, ndim, nne,&
@@ -321,7 +322,7 @@ subroutine te0365(option, nomte)
 ! Modification du jeu tangent pour le grand glissement
 !
 !      write (6,*) "jeu",jeu
-     granglis=1.0
+
      if (lcont .and.  (phasep(1:4) .eq. 'GLIS') .and. (granglis .eq. 1) .and. (abs(jeu) .lt. 1.d-6 )) then
 !         write (6,*) "djeu1",djeu
 !         write (6,*) "djeut1",djeut
