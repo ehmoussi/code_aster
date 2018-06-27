@@ -48,7 +48,7 @@ subroutine mmtppe(typmae, typmam, ndim, nne, nnm,&
 !
     integer :: ndim, nne, nnm, nnl, nbdm
 !
-    integer :: iresog,granglis,indgli
+    integer :: iresog,granglis
     aster_logical :: laxis, ldyna,l_previous
 !
     real(kind=8) :: jeusup

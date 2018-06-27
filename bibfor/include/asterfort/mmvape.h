@@ -25,7 +25,7 @@ interface
                       coefac, coefaf, coefff, ffl, wpg,&
                       jeu, jacobi, lambda, tau1, tau2,&
                       mprojt, dlagrc, dlagrf, dvite, rese,&
-                      vectcc, vectff,djeut)
+                      vectcc, vectff)
         character(len=9) :: phasep
         aster_logical :: leltf
         integer :: ndim
@@ -39,7 +39,7 @@ interface
         real(kind=8) :: jeu
         real(kind=8) :: jacobi
         real(kind=8) :: lambda
-        real(kind=8) :: tau1(3),djeut(3)
+        real(kind=8) :: tau1(3)
         real(kind=8) :: tau2(3)
         real(kind=8) :: mprojt(3, 3)
         real(kind=8) :: dlagrc

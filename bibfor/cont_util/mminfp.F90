@@ -510,6 +510,14 @@ implicit none
         else
             ASSERT(.false.)
         endif
+    else if (question.eq.'GLIS_MAXI') then
+        if (cont_form .eq. 2) then
+            call jeveuo(sdcont_caracf, 'L', vr = v_sdcont_caracf)
+            vale_r = v_sdcont_caracf(zcmcf*(i_zone-1)+16)
+            if (vale_r .ge. 1000) vale_r = -1
+        else
+            ASSERT(.false.)
+        endif
     else if (question.eq.'GRAND_GLIS') then
         if (cont_form .eq. 2) then
             call jeveuo(sdcont_caracf, 'L', vr = v_sdcont_caracf)

@@ -100,7 +100,7 @@ subroutine mmvppe(typmae, typmam, iresog, ndim, nne,&
 !
 ! ----------------------------------------------------------------------
 !
-    integer :: jpcf,i
+    integer :: jpcf
     integer :: jgeom, jdepde, jdepm
     integer :: jaccm, jvitm, jvitp
     real(kind=8) :: geomae(9, 3), geomam(9, 3)
@@ -114,7 +114,7 @@ subroutine mmvppe(typmae, typmam, iresog, ndim, nne,&
     real(kind=8) :: dffl(2, 9), ddffl(3, 9)
     real(kind=8) :: xpc, ypc, xpr, ypr
     real(kind=8) :: mprojn(3, 3)
-    real(kind=8) :: tmp,vec(3),valmax,valmin
+    real(kind=8) :: tmp
     
     real(kind=8) :: dnepmait1 ,dnepmait2 ,taujeu1,taujeu2
     
@@ -147,7 +147,6 @@ subroutine mmvppe(typmae, typmam, iresog, ndim, nne,&
     wpg = zr(jpcf-1+11)
     ppe = 0.d0
     tmp=0.0
-    valmax=0.0
     djeut = 0.
     ddeple = 0.
     ddeplm = 0.

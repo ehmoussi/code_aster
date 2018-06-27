@@ -18,7 +18,7 @@
 
 subroutine mmgtem(ndim  ,nnm   ,nne,mprt1n,mprt2n, &
                   wpg   , &
-          ffe,dffm  ,ddffm,jacobi,coefac,jeu   , &
+          ffe,ddffm,jacobi,coefac,jeu   , &
           dlagrc,kappa ,vech1 ,vech2 ,h     , &
           mprt11,mprt21,mprt22,matrem)
 !
@@ -34,9 +34,8 @@ subroutine mmgtem(ndim  ,nnm   ,nne,mprt1n,mprt2n, &
     
     real(kind=8) :: mprt1n(3,3),mprt2n(3,3)
     real(kind=8) :: mprt11(3,3),mprt22(3,3),mprt21(3,3),mprt12(3,3)
-    real(kind=8) :: norm(3)
     
-    real(kind=8) :: ffe(9),dffm(2,9),ddffm(3,9)
+    real(kind=8) :: ffe(9),ddffm(3,9)
     real(kind=8) :: wpg, jacobi
     real(kind=8) :: coefac, jeu, dlagrc
     
@@ -97,9 +96,7 @@ subroutine mmgtem(ndim  ,nnm   ,nne,mprt1n,mprt2n, &
 !
     integer :: i, j, k,l, ii, jj
     real(kind=8) :: g(3, 3), e(3, 3), d(3, 3), f(3, 3)
-    real(kind=8) :: supkap,supmat,alpha
     real(kind=8) :: mprnt1(3,3),mprnt2(3,3)
-    alpha = 1.d-5 
     
     call matini(3, 3, 0.d0, e)
     call matini(3, 3, 0.d0, d)
@@ -180,15 +177,6 @@ subroutine mmgtem(ndim  ,nnm   ,nne,mprt1n,mprt2n, &
   
 !
   mprt12      = mprt21
-! LES MATRICES KAPPA INFLUENCENT LA CONVERGENCE DE LA METHODE :
-! OUT KAPPA  : MATRICE DE SCALAIRES LIEES A LA CINEMATIQUE DU GLISSEMENT
-! OUT KAPPA(i,j) = INVERSE[TAU_i.TAU_j-JEU*(ddFFM*geomm)](matrice 2*2) 
-! ON LE DEBRANCHE AUTOMATIQUEMENT SI SA VALEUR EST TROP GRANDE COMPARATIVEMENT A MATREM
-
-
-
-  
-
 
 !
 ! CONTRIBUTION 1 :

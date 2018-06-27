@@ -32,6 +32,8 @@ subroutine te0364(option, nomte)
 #include "asterfort/mmmlcf.h"
 #include "asterfort/mmmpha.h"
 #include "asterfort/mmmsta.h"
+#include "asterfort/mmnsta.h"
+#include "asterfort/mngliss.h"
 #include "asterfort/mmmtas.h"
 #include "asterfort/mmmtdb.h"
 #include "asterfort/mmmtex.h"
@@ -68,7 +70,7 @@ subroutine te0364(option, nomte)
     integer :: iresof, iresog,count_consistency
     integer :: iresof_prev, iresog_prev
     integer :: ndexfr
-    integer :: granglis
+    integer :: granglis=0
     integer :: ndexfr_prev
     aster_logical :: laxis, leltf
     aster_logical :: lpenac, lpenaf
@@ -430,18 +432,11 @@ subroutine te0364(option, nomte)
 !
 
      if (lcont .and.  (phasep(1:4) .eq. 'GLIS') .and. (granglis .eq. 1) .and. (abs(jeu) .lt. 1.d-6 )) then
-    !         write (6,*) "djeu1",djeu
-    !         write (6,*) "djeut1",djeut
             call mngliss(tau1  ,tau2  ,djeut,kappa ,taujeu1, taujeu2, &
                         dnepmait1,dnepmait2,ndim )
-    !         write (6,*) "djeut2",djeut
-    !         write (6,*) "nrese1",nrese
             call mmnsta(ndim, leltf, lpenaf, loptf, djeut,&
                         dlagrf, coefaf, tau1, tau2, lcont,&
                         ladhe, lambda, rese, nrese)
-!             write (6,*) "nrese2",nrese
-    !         write (6,*) "dnepmait1",dnepmait1
-    !         write (6,*) "dnepmait2",dnepmait2
         endif
     else
         ASSERT(.false.)
@@ -490,16 +485,18 @@ subroutine te0364(option, nomte)
             call mmtgeo(phasep, ndim, nne, nnm, mprt1n,&
                         mprt2n, mprojn, mprt11, mprt21, mprt22,&
                         wpg, ffe, ffm, dffm,ddffm, jacobi,&
-                        coefac, jeu, dlagrc, kappa, vech1,&
-                        vech2, h, hah,norm, matree, matrmm,&
+                        coefac, jeu, dlagrc, kappa, vech1,vech2, h, &
+                            matree, matrmm,&
                         matrem, matrme)
                      
             if (l_previous) then
                 call mmtgeo(phasep_prev, ndim, nne, nnm, mprt1n_prev,&
                             mprt2n_prev, mprojn_prev, mprt11_prev, mprt21_prev, mprt22_prev,&
                             wpg, ffe, ffm, dffm,ddffm, jacobi,&
-                            coefac_prev, jeu_prev, dlagrc_prev, kappa_prev, vech1_prev,&
-                            vech2_prev, h_prev, hah_prev,norm_prev, matree_prev, matrmm_prev,&
+                            coefac_prev, jeu_prev, dlagrc_prev, kappa_prev,&
+                            vech1_prev,&
+                            vech2_prev, h_prev, &
+                            matree_prev, matrmm_prev,&
                             matrem_prev, matrme_prev)
             
             endif
@@ -521,7 +518,8 @@ subroutine te0364(option, nomte)
                     nnm, nbcps, wpg, jacobi, ffl,&
                     ffe, ffm, norm, tau1, tau2,&
                     mprojt, rese, nrese, lambda, coefff,&
-                    coefaf, coefac, matrcc, matrff, matrce,&
+                    coefaf, coefac,&
+                    matrcc, matrff, matrce,&
                     matrcm, matrfe, matrfm)
                     
         if (l_previous) then 
@@ -529,7 +527,8 @@ subroutine te0364(option, nomte)
                         nnm, nbcps, wpg, jacobi, ffl,&
                         ffe, ffm, norm, tau1_prev, tau2_prev,&
                         mprojt_prev, rese_prev, nrese_prev, lambda_prev, coefff,&
-                        coefaf_prev, coefac_prev, matrcc_prev, matrff_prev, matrce_prev,&
+                        coefaf_prev, coefac_prev,&
+                    matrcc_prev, matrff_prev, matrce_prev,&
                         matrcm_prev, matrfe_prev, matrfm_prev)        
         endif
     else
@@ -589,9 +588,9 @@ subroutine te0364(option, nomte)
             alpha_cont = 0.5*(alpha_cont+1.0)
             mmat_tmp = alpha_cont*mmat+(1.0-alpha_cont)*mmat_prev
 
-            if ( norm2(mmat_tmp-mmat) .gt. 1.d-6*norm2(mmat) .and. count_consistency .le. 30) goto 51
+            if ( norm2(mmat_tmp-mmat) &
+                .gt. 1.d-6*norm2(mmat) .and. count_consistency .le. 30) goto 51
             mmat = mmat_tmp
-!             write (6,*) "count_consistency",count_consistency,"norme",norm2(mmat_tmp-mmat)
     endif
 !    do compte_l = 1, 81
 !       if mmat(compte_l,compte_l) .le. 1.d-50&

@@ -23,7 +23,7 @@ interface
               mprt2n,mprojn,mprt11,mprt21,mprt22, &
           wpg   ,ffe   ,ffm   ,dffm  ,ddffm,jacobi, &
           coefac,jeu   ,dlagrc,kappa ,vech1 , &
-          vech2 ,h        ,hah  ,norm, &
+          vech2 ,h        ,  &
           matree,matrmm,matrem, matrme)
           
         character(len=9) :: phasep
@@ -56,7 +56,6 @@ interface
     
     real(kind=8) :: vech1(3)
     real(kind=8) :: vech2(3)
-    real(kind=8) :: norm(3)
         
     real(kind=8) :: matree(27, 27)
         real(kind=8) :: matrmm(27, 27)

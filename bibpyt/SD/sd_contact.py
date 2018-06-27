@@ -42,7 +42,7 @@ class sd_contact(AsBase):
     ztypm = 2
     zmaes = 4
     zcmdf = 6
-    zcmcf = 15
+    zcmcf = 16
     zexcl = 3
     zcmxf = 16
     zmesx = 5

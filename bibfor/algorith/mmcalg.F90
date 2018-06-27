@@ -183,7 +183,8 @@ if (granglis .eq. 1) then
 !---CALCUL DE DNEPMAIT1,2 ; TAUJEU
 !
  
-! Sur la géométrie courante de l'élément esclave on calcule la distance du Noeud I=2,9 par rapport à au noeud 1 
+! Sur la géométrie courante de l'élément esclave on calcule la 
+! distance du Noeud I=2,9 par rapport à au noeud 1 
 ! Puis on calcule la moyenne
 !       write (6,*) "GEOMAM",geomam(1,1)
     long_mmait(1) = sqrt(abs(geomam(1,1) - geomam(2,1)))**2 
@@ -218,8 +219,10 @@ if (granglis .eq. 1) then
     enddo
 
       do  idim = 1, ndim
-           if ((abs(jeu) .lt. 1.d-6) .and. (norm2(ddepmait1) .lt. 1.d-1*valmoy) .and. (norm2(ddepmait2) .lt. 1.d-1*valmoy)) then 
-          ! On rajoute ce terme au grand glissement seulement si on est sur d'avoir converge en DEPDEL
+           if ((abs(jeu) .lt. 1.d-6) .and. (norm2(ddepmait1) .lt. 1.d-1*valmoy) .and.&
+               (norm2(ddepmait2) .lt. 1.d-1*valmoy)) then 
+          ! On rajoute ce terme au grand glissement seulement si on est sur 
+          ! d'avoir converge en DEPDEL
           ! increment de deplacement
           ! Test : ssnp154d, ssnv128r, ssnv128p --> Débrancher la condition if et tester ces 2 cas. 
           ! Ici on implante une strategie qui consiste a dire que ce terme n'est rajoute que 
@@ -240,13 +243,13 @@ endif
 !---CALCUL DE DDGEOMM
 !
       do  idim = 1, ndim
-          do 222 inom = 1, nnm
+          do  inom = 1, nnm
 
             ddgeo1(idim) = ddgeo1(idim) + ddffm(1,inom)*geomam(inom,idim)
             ddgeo2(idim) = ddgeo2(idim) + ddffm(2,inom)*geomam(inom,idim)
             ddgeo3(idim) = ddgeo3(idim) + ddffm(3,inom)*geomam(inom,idim)
 
-222        continue
+        enddo
     end do    
 
 
@@ -255,9 +258,9 @@ endif
 !
 
     do  i = 1, ndim
-        do 116 j = 1, ndim
+        do  j = 1, ndim
             mprt1n(i,j) = 1.d0*tau1(i)*norm(j)
-116      continue
+      enddo
   end do
 
 
@@ -265,9 +268,9 @@ endif
 ! --- MATRICE DE PROJECTION TANGENTE2/NORMALE
 !
     do  i = 1, ndim
-        do 117 j = 1, ndim
+        do  j = 1, ndim
             mprt2n(i,j) = 1.d0*tau2(i)*norm(j)
-117      continue
+      enddo
   end do
 
 
@@ -276,9 +279,9 @@ endif
 ! --- MATRICE DE PROJECTION TANGENTE1/TANGENTE1
 !
     do  i = 1, ndim
-        do 217 j = 1, ndim
+        do  j = 1, ndim
             mprt11(i,j) = 1.d0*tau1(i)*tau1(j)
-217      continue
+      enddo
   end do
 
 
@@ -286,9 +289,9 @@ endif
 ! --- MATRICE DE PROJECTION TANGENTE2/TANGENTE1
 !
     do i = 1, ndim
-        do 317 j = 1, ndim
+        do  j = 1, ndim
             mprt21(i,j) = 1.d0*tau2(i)*tau1(j)
-317      continue
+      enddo
   end do
 
 
@@ -297,35 +300,35 @@ endif
 ! --- MATRICE DE PROJECTION TANGENTE2/TANGENTE2
 !
     do  i = 1, ndim
-        do 417 j = 1, ndim
+        do  j = 1, ndim
             mprt22(i,j) = 1.d0*tau2(i)*tau2(j)
-417      continue
+      enddo
   end do
 
 
     do  i = 1, ndim
-        do 717 j = 1, ndim
+        do  j = 1, ndim
             mprt1n(i,j) = 1.d0*tau1(i)*norm(j)
-717      continue
+      enddo
   end do
 
     do  i = 1, ndim
-        do 817 j = 1, ndim
+        do  j = 1, ndim
             mprt2n(i,j) = 1.d0*tau2(i)*norm(j)
-817      continue
+      enddo
   end do
 
 !
 ! --- MATRICE GENE11,GENE21,GENE22
 !
     do  i = 1, ndim
-        do 25 j = 1, ndim
-            do 27 inom = 1, nnm
+        do  j = 1, ndim
+            do  inom = 1, nnm
                 gene11(i,j) = gene11(i,j)+ ddffm(1,inom)*geomam(inom, i)*norm(j)
                 gene22(i,j) = gene11(i,j)+ ddffm(2,inom)*geomam(inom, i)*norm(j)
                 gene21(i,j) = gene21(i,j)+ ddffm(3,inom)*geomam(inom, i)*norm(j)
-27          continue
-25      continue
+          enddo
+      enddo
   end do
 
 

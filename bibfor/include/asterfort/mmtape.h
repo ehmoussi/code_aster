@@ -25,7 +25,8 @@ interface
                       nnm, nbcps, wpg, jacobi, ffl,&
                       ffe, ffm, norm, tau1, tau2,&
                       mprojt, rese, nrese, lambda, coefff,&
-                      coefaf, coefac, matrcc, matrff, matrce,&
+                      coefaf, coefac,&
+                            matrcc, matrff, matrce,&
                       matrcm, matrfe, matrfm)
         character(len=9) :: phasep
         aster_logical :: leltf

@@ -20,7 +20,7 @@ subroutine mmtgeo(phasep,ndim  ,nne   ,nnm   ,mprt1n, &
               mprt2n,mprojn,mprt11,mprt21,mprt22, &
           wpg   ,ffe   ,ffm   ,dffm  ,ddffm,jacobi, &
           coefac,jeu   ,dlagrc,kappa ,vech1 , &
-          vech2 ,h        ,hah  ,norm, &
+          vech2 ,h        , &
           matree,matrmm,matrem, matrme)
 !
 ! person_in_charge: mickael.abbas at edf.fr
@@ -29,6 +29,7 @@ subroutine mmtgeo(phasep,ndim  ,nne   ,nnm   ,mprt1n, &
     implicit     none
 #include "asterfort/matini.h"
 #include "asterfort/mmgnuu.h"
+#include "asterfort/mmgtuu.h"
 
     character(len=9) :: phasep
     
@@ -43,7 +44,7 @@ subroutine mmtgeo(phasep,ndim  ,nne   ,nnm   ,mprt1n, &
     real(kind=8) :: coefac, jeu, dlagrc
     
     real(kind=8) :: kappa(2,2),h(2,2),hah(2,2)
-    real(kind=8) :: vech1(3),vech2(3),norm(3)
+    real(kind=8) :: vech1(3),vech2(3)
     
     real(kind=8) :: matrem(27, 27), matrme(27, 27)
     real(kind=8) :: matree(27, 27), matrmm(27, 27)
@@ -109,12 +110,12 @@ subroutine mmtgeo(phasep,ndim  ,nne   ,nnm   ,mprt1n, &
     elseif (phasep(1:4) .eq. 'GLIS') then
 !Implementation de la deuxième varitation de xi
 ! ROUTINE DE CALCUL SUPPLEMENTAIRE EN FROTTEMENT : INEXISTANT POUR LE MOMENT 
-      call mmgtuu(ndim  ,nne   ,norm,nnm   ,mprt1n, &
-                  mprt2n,mprojn,mprt11,mprt21,mprt22, &
+      call mmgtuu(ndim  ,nne   ,nnm   ,mprt1n, &
+                  mprt2n,mprt11,mprt21,mprt22, &
                   wpg   ,ffe   ,ffm   ,dffm  ,ddffm,jacobi, &
                   coefac,jeu   ,dlagrc,kappa ,vech1 , &
-                  vech2 ,h     ,hah   , &
-                  matree,matrmm,matrem, matrme)
+                  vech2 ,h     , &
+                  matrmm,matrem, matrme)
     endif
 !
 end subroutine

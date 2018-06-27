@@ -16,12 +16,12 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine mmgtuu(ndim  ,nne   ,norm, nnm   ,mprt1n, &
-              mprt2n,mprojn,mprt11,mprt21,mprt22, &
+subroutine mmgtuu(ndim  ,nne   , nnm   ,mprt1n, &
+              mprt2n,mprt11,mprt21,mprt22, &
           wpg   ,ffe   ,ffm   ,dffm  ,ddffm,jacobi, &
           coefac,jeu   ,dlagrc,kappa ,vech1 , &
-          vech2 ,h     ,ha ,hah   , &
-          matree,matrmm,matrem, matrme)
+          vech2 ,h     , &
+          matrmm,matrem, matrme)
 !
 ! person_in_charge: mickael.abbas at edf.fr
 !
@@ -33,7 +33,6 @@ subroutine mmgtuu(ndim  ,nne   ,norm, nnm   ,mprt1n, &
     
     integer :: ndim, nne, nnm
     
-    real(kind=8) :: mprojn(3, 3)
     real(kind=8) :: mprt1n(3, 3), mprt2n(3, 3)
     real(kind=8) :: mprt11(3, 3), mprt21(3, 3), mprt22(3, 3)
     
@@ -41,11 +40,11 @@ subroutine mmgtuu(ndim  ,nne   ,norm, nnm   ,mprt1n, &
     real(kind=8) :: wpg, jacobi
     real(kind=8) :: coefac, jeu, dlagrc
     
-    real(kind=8) :: kappa(2,2),h(2,2),hah(2,2),ha(2,2),a(2,2)
-    real(kind=8) :: vech1(3),vech2(3),norm(3)
+    real(kind=8) :: kappa(2,2),h(2,2)
+    real(kind=8) :: vech1(3),vech2(3)
     
     real(kind=8) :: matrem(27, 27), matrme(27, 27)
-    real(kind=8) :: matree(27, 27), matrmm(27, 27)
+    real(kind=8) ::  matrmm(27, 27)
 !
 ! ----------------------------------------------------------------------
 !
@@ -105,14 +104,15 @@ subroutine mmgtuu(ndim  ,nne   ,norm, nnm   ,mprt1n, &
 
 ! --- DEPL_ESCL/DEPL_ESCL
 
- !  MATREE = Linearisation du 2eme terme du Dd xi glissement de Coulomb sur matree nul. On ne le cree pas
+ !  MATREE = Linearisation du 2eme terme du 
+ ! Dd xi glissement de Coulomb sur matree nul. On ne le cree pas
 
 
 ! --- DEPL_MAIT/DEPL_MAIT
 !
 !
-    call mmgtmm(ndim  ,nnm ,norm, mprt1n,mprt2n, &
-                 mprojn,wpg   , &
+    call mmgtmm(ndim  ,nnm , mprt1n,mprt2n, &
+                 wpg   , &
          ffm    ,dffm  ,ddffm,jacobi,coefac,jeu   , &
          dlagrc,kappa ,vech1 ,vech2 ,h   , &
          mprt11,mprt21,mprt22,matrmm)
@@ -121,7 +121,7 @@ subroutine mmgtuu(ndim  ,nne   ,norm, nnm   ,mprt1n, &
 !
        call mmgtem(ndim  ,nnm   ,nne,mprt1n,mprt2n, &
                   wpg   , &
-          ffe,dffm  ,ddffm,jacobi,coefac,jeu   , &
+          ffe, ddffm,jacobi,coefac,jeu   , &
           dlagrc,kappa ,vech1 ,vech2 ,h     , &
           mprt11,mprt21,mprt22,matrem)
 !
@@ -129,7 +129,7 @@ subroutine mmgtuu(ndim  ,nne   ,norm, nnm   ,mprt1n, &
 !
        call mmgtme(ndim  ,nnm   ,nne,mprt1n,mprt2n, &
                   wpg   , &
-          ffe,dffm  ,ddffm,jacobi,coefac,jeu   , &
+          ffe,  ddffm,jacobi,coefac,jeu   , &
           dlagrc,kappa ,vech1 ,vech2 ,h     , &
           mprt11,mprt21,mprt22,matrme)
 !

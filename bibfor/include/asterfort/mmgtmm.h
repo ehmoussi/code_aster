@@ -19,8 +19,8 @@
 !
 !
 interface
-    subroutine mmgtmm(ndim  ,nnm   ,norm,mprt1n,mprt2n, &
-                  mprojn,wpg   , &
+    subroutine mmgtmm(ndim  ,nnm   ,mprt1n,mprt2n, &
+                  wpg   , &
           ffm    ,dffm  ,ddffm,jacobi,coefac,jeu   , &
           dlagrc,kappa ,vech1 ,vech2 ,h     , &
           mprt11,mprt21,mprt22,matrmm)

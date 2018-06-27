@@ -19,19 +19,18 @@
 !
 !
 interface
-    subroutine mmgtuu(ndim  ,nne   ,norm, nnm   ,mprt1n, &
-              mprt2n,mprojn,mprt11,mprt21,mprt22, &
+    subroutine mmgtuu(ndim  ,nne   , nnm   ,mprt1n, &
+              mprt2n,mprt11,mprt21,mprt22, &
           wpg   ,ffe   ,ffm   ,dffm  ,ddffm,jacobi, &
           coefac,jeu   ,dlagrc,kappa ,vech1 , &
-          vech2 ,h    ,ha ,hah   , &
-          matree,matrmm,matrem, matrme)
+          vech2 ,h    , &
+          matrmm,matrem, matrme)
               
     
         integer :: ndim
         integer :: nne
         integer :: nnm
 
-        real(kind=8) :: mprojn(3, 3)
     
         real(kind=8) :: wpg
         real(kind=8) :: ffe(9)
@@ -50,15 +49,11 @@ interface
 
     real(kind=8) :: kappa(2,2)
     real(kind=8) :: h(2,2)   
-    real(kind=8) :: ha(2,2)    
-    real(kind=8) :: hah(2,2)
     
     real(kind=8) :: vech1(3)
     real(kind=8) :: vech2(3)
-    real(kind=8) :: norm(3)
 
 
-        real(kind=8) :: matree(27, 27)
         real(kind=8) :: matrmm(27, 27)
         real(kind=8) :: matrem(27, 27)
         real(kind=8) :: matrme(27, 27)

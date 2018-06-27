@@ -17,6 +17,7 @@
 ! --------------------------------------------------------------------
 
 !
+#include "asterf_types.h"
 !
 interface
     subroutine mngliss(tau1  ,tau2  ,djeut,kappa ,taujeu1, taujeu2, &
