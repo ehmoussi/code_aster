@@ -21,7 +21,7 @@ subroutine mm_cycl_algo(ds_contact,  l_frot_zone, &
                   indi_cont_eval, indi_frot_eval, dist_cont_curr,  &
                   pres_cont_curr, dist_frot_curr, pres_frot_curr, v_sdcont_cychis,&
                   v_sdcont_cyccoe, v_sdcont_cyceta, indi_cont_curr,indi_frot_curr,&
-                  ctcsta, mmcvca,l_pena_frot,l_pena_cont,vale_pene,glis_max)
+                  ctcsta, mmcvca,l_pena_frot,l_pena_cont,vale_pene,glis_maxi)
 !
 use NonLin_Datastructure_type
 !
@@ -52,6 +52,7 @@ implicit none
     integer, intent(inout) :: indi_cont_eval
     integer, intent(inout) :: indi_frot_eval
     real(kind=8), intent(in) :: vale_pene
+    real(kind=8), intent(in) :: glis_maxi
     real(kind=8), intent(inout) :: dist_cont_curr
     real(kind=8), intent(inout) :: pres_cont_curr
     real(kind=8), intent(inout) :: dist_frot_curr(3)
@@ -119,7 +120,6 @@ implicit none
     integer :: n_cychis
 !    real(kind=8) :: coef_bussetta=0.0, dist_max, coef_tmp
     real(kind=8) ::  coef_tmp
-    real(kind=8) ::  glis_max
 !    real(kind=8) ::  racine,racine1,racine2,racinesup
 !    real(kind=8) ::  a,b,c,discriminant
     real(kind=8) :: bound_coef(2)
@@ -422,26 +422,26 @@ implicit none
 ! !                write (6,*) "indi_frot_curr : ",indi_frot_curr
 !             if (.not. mmcvca_frot) then 
             if (ds_contact%iteration_newton .eq. 1) then 
-!                         glis_max = ds_contact%arete_min
+!                         glis_maxi = ds_contact%arete_min
                 v_sdcont_cychis(n_cychis*(i_cont_poin-1)+6) =&
-                    1.d3/glis_max
+                    1.d3/glis_maxi
             endif
             if (indi_frot_curr .eq. 0) then                
                 if (pres_cont_curr .lt. -1.d-6*ds_contact%cont_pressure) then 
                     if ( (norm2(dist_frot_curr) .gt. 1.d-5*ds_contact%arete_min)) then 
                         ! coef_frot a une dimension : 1/glissement
-!                         glis_max = ds_contact%arete_min
+!                         glis_maxi = ds_contact%arete_min
                         v_sdcont_cychis(n_cychis*(i_cont_poin-1)+6) =&
-                        1.d-3*norm2(dist_frot_curr)/ds_contact%arete_min*1/glis_max
+                        1.d-3*norm2(dist_frot_curr)/ds_contact%arete_min*1/glis_maxi
                     endif
                 endif
             endif
             if (indi_frot_curr .eq. 1) then
                 if (pres_cont_curr .lt. -1.d-6*ds_contact%cont_pressure) then 
                     if ((norm2(dist_frot_curr) .lt. 1.d-5*ds_contact%arete_min)) then
-!                        glis_max = ds_contact%arete_min
+!                        glis_maxi = ds_contact%arete_min
                         v_sdcont_cychis(n_cychis*(i_cont_poin-1)+6) =&
-                        max(norm2(pres_frot_curr),0.1)*1.d4/glis_max
+                        max(norm2(pres_frot_curr),0.1)*1.d4/glis_maxi
                     endif
                 endif
             endif
