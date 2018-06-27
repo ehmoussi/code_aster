@@ -19,7 +19,7 @@
 subroutine mmmvff(phasep, ndim, nnl, nbcps, wpg,&
                   ffl, tau1, tau2, jacobi, coefaf,&
                   dlagrf, rese, lambda, coefff, dvite,&
-                  mprojt, vectff,jeu,coefac,djeut)
+                  mprojt, vectff)
 !
 ! person_in_charge: mickael.abbas at edf.fr
 !
@@ -30,9 +30,9 @@ subroutine mmmvff(phasep, ndim, nnl, nbcps, wpg,&
     integer :: ndim, nnl, nbcps
     real(kind=8) :: wpg, ffl(9), jacobi, dlagrf(2)
     real(kind=8) :: tau1(3), tau2(3), rese(3)
-    real(kind=8) :: coefaf,coefac,jeu
+    real(kind=8) :: coefaf
     real(kind=8) :: lambda, coefff
-    real(kind=8) :: vectff(18),djeut(3)
+    real(kind=8) :: vectff(18)
     real(kind=8) :: dvite(3), mprojt(3, 3)
 !
 ! ----------------------------------------------------------------------
@@ -82,31 +82,31 @@ subroutine mmmvff(phasep, ndim, nnl, nbcps, wpg,&
 !
 ! --- INITIALISATIONS
 !
-    do 306 i = 1, 3
+    do  i = 1, 3
         dvitet(i) = 0.0d0
-306  end do
-    do 305 i = 1, 2
+  end do
+    do  i = 1, 2
         tt(i) = 0.d0
         inter(i) = 0.d0
-305  end do
+  end do
     nbcpf = nbcps-1
 !
 ! --- MATRICE DE CHANGEMENT DE REPERE DES LAGR. DE FROTTEMENT
 !
     if (ndim .eq. 2) then
-        do 301 k = 1, ndim
+        do  k = 1, ndim
             tt(1) = tau1(k)*tau1(k) +tt(1)
-301      continue
+        enddo
         tt(1) = dlagrf(1)*tt(1)
         tt(2) = 0.d0
 !
     else if (ndim.eq.3) then
-        do 31 k = 1, ndim
+        do  k = 1, ndim
             tt(1) = (dlagrf(1)*tau1(k)+dlagrf(2)*tau2(k))*tau1(k)+tt( 1)
-31      continue
-        do 32 k = 1, ndim
+        enddo
+        do  k = 1, ndim
             tt(2) = (dlagrf(1)*tau1(k)+dlagrf(2)*tau2(k))*tau2(k)+tt( 2)
-32      continue
+        enddo
     else
         ASSERT(.false.)
     endif
@@ -117,21 +117,21 @@ subroutine mmmvff(phasep, ndim, nnl, nbcps, wpg,&
 !
 ! --- PROJECTION DU SAUT SUR LE PLAN TANGENT
 !
-        do 21 i = 1, ndim
-            do 22 k = 1, ndim
+        do  i = 1, ndim
+            do  k = 1, ndim
                 dvitet(i) = mprojt(i,k)*dvite(k)+dvitet(i)
-22          continue
-21      continue
+            enddo
+        enddo
 !
         if (ndim .eq. 2) then
-            do 140 i = 1, 2
+            do  i = 1, 2
                 inter(1)= dvitet(i)*tau1(i)+inter(1)
-140          continue
+            enddo
         else if (ndim.eq.3) then
-            do 150 i = 1, 3
+            do  i = 1, 3
                 inter(1)= dvitet(i)*tau1(i)+inter(1)
                 inter(2)= dvitet(i)*tau2(i)+inter(2)
-150          continue
+            enddo
         endif
     endif
 !
@@ -141,16 +141,16 @@ subroutine mmmvff(phasep, ndim, nnl, nbcps, wpg,&
 !
         call normev(rese, nrese)
         if (ndim .eq. 2) then
-            do 228 i = 1, 2
+            do  i = 1, 2
                 inter(1) = (dlagrf(1)*tau1(i)-rese(i))*tau1(i)+inter( 1)
-228          continue
+            enddo
         else if (ndim.eq.3) then
-            do 233 i = 1, 3
+            do  i = 1, 3
                 inter(1)=(dlagrf(1)*tau1(i)+ dlagrf(2)*tau2(i)-rese(i)&
                 )*tau1(i)+inter(1)
                 inter(2)=(dlagrf(1)*tau1(i)+ dlagrf(2)*tau2(i)-rese(i)&
                 )*tau2(i)+inter(2)
-233          continue
+            enddo
         else
             ASSERT(.false.)
         endif
@@ -160,48 +160,48 @@ subroutine mmmvff(phasep, ndim, nnl, nbcps, wpg,&
 ! --- CALCUL DU VECTEUR
 !
     if (phasep .eq. 'SANS') then
-        do 101 i = 1, nnl
-            do 102 l = 1, nbcpf
+        do  i = 1, nnl
+            do  l = 1, nbcpf
                 ii = (i-1)*nbcpf+l
                 vectff(ii) = vectff(ii)+ wpg*ffl(i)*jacobi* tt(l)
-102          continue
-101      continue
+            enddo
+        enddo
     else if (phasep.eq.'SANS_PENA') then
-        do 201 i = 1, nnl
-            do 202 l = 1, nbcpf
+        do  i = 1, nnl
+            do  l = 1, nbcpf
                 ii = (i-1)*nbcpf+l
                 vectff(ii) = vectff(ii)- wpg*ffl(i)*jacobi* tt(l)/ coefaf
-202          continue
-201      continue
+          enddo
+      enddo
     else if (phasep.eq.'ADHE') then
-        do 53 i = 1, nnl
-            do 54 l = 1, nbcpf
+        do  i = 1, nnl
+            do  l = 1, nbcpf
                 ii = (i-1)*nbcpf+l
                 vectff(ii) = vectff(ii)- wpg*ffl(i)*jacobi* coefff* lambda*inter(l)
-54          continue
-53      continue
+          enddo
+      enddo
     else if (phasep.eq.'GLIS') then
-        do 63 i = 1, nnl
-            do 64 l = 1, nbcpf
+        do  i = 1, nnl
+            do  l = 1, nbcpf
                 ii = (i-1)*nbcpf+l
                 vectff(ii) = vectff(ii)+ wpg*ffl(i)*jacobi* coefff* lambda*inter(l)/coefaf
-64          continue
-63      continue
+             enddo
+         enddo
     else if (phasep.eq.'ADHE_PENA') then
-        do 73 i = 1, nnl
-            do 74 l = 1, nbcpf
+        do  i = 1, nnl
+            do  l = 1, nbcpf
                 ii = (i-1)*nbcpf+l
                 vectff(ii) = vectff(ii) + wpg*ffl(i)*jacobi*coefff* lambda*((tt(l)/coefaf)-inter(&
                              &l))
-74          continue
-73      continue
+            enddo
+        enddo
     else if (phasep.eq.'GLIS_PENA') then
-        do 83 i = 1, nnl
-            do 84 l = 1, nbcpf
+        do  i = 1, nnl
+            do  l = 1, nbcpf
                 ii = (i-1)*nbcpf+l
                 vectff(ii) = vectff(ii)+ wpg*ffl(i)*jacobi* coefff* lambda*inter(l)/coefaf
-84          continue
-83      continue
+            enddo
+        enddo
     else
         ASSERT(.false.)
     endif
