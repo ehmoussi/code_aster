@@ -322,7 +322,7 @@ implicit none
 ! ----- Total number of contact pairs
         integer           :: nb_cont_pair
 ! ----- Number of stored values from precedent Newton iteration
-        integer           :: n_cychis = 72
+        integer           :: n_cychis = 73
         integer           :: cycl_long_acti = 3
 ! ----- Automatic update of penalised coefficient
         real(kind=8)      :: estimated_coefficient = 100.0

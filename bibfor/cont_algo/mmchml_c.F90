@@ -224,9 +224,8 @@ implicit none
             if (ds_contact%iteration_newton .le. 2) then  
                 zr(vale_indx-1+48) = 0
             else
-                zr(vale_indx-1+48) = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+60)
+                zr(vale_indx-1+48) = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+73)
             endif
-    write (6,*) "granglis mmchml_c", zr(vale_indx-1+48)
         enddo
         nt_liel = nt_liel + nb_liel
     enddo
