@@ -357,7 +357,12 @@ implicit none
                 v_sdcont_cychis(n_cychis*(i_cont_poin-1)+65) = coor_proj_curr(2)
                 v_sdcont_cychis(n_cychis*(i_cont_poin-1)+66) = coor_proj_curr(3)
 !
-                if (l_granglis) v_sdcont_cychis(n_cychis*(i_cont_poin-1)+60) = 1
+                if (l_granglis) then 
+                     v_sdcont_cychis(n_cychis*(i_cont_poin-1)+60) = 1
+                else
+                     v_sdcont_cychis(n_cychis*(i_cont_poin-1)+60) = 0
+                endif
+    write (6,*) "granglis mmmbca", v_sdcont_cychis(n_cychis*(i_cont_poin-1)+60)
 !
 ! ------------- Previous status and coefficients
 !

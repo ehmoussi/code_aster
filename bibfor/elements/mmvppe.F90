@@ -150,6 +150,7 @@ subroutine mmvppe(typmae, typmam, iresog, ndim, nne,&
     djeut = 0.
     ddeple = 0.
     ddeplm = 0.
+    ddepmam = 0.
 !
 ! TRAITEMENT CYCLAGE : ON REMPLACE LES VALEURS DE JEUX et DE NORMALES
 !                      POUR AVOIR UNE MATRICE CONSISTANTE
@@ -204,6 +205,7 @@ subroutine mmvppe(typmae, typmam, iresog, ndim, nne,&
 !
     call mmreac(nbdm, ndim, nne, nnm, jgeom,&
                 jdepm, jdepde, ppe, geomae, geomam,ddepmam)
+!    write (6,*) "ddepmam",ddepmam
 !
 ! --- CALCUL DES COORDONNEES ACTUALISEES
 !

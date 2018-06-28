@@ -20,7 +20,7 @@ subroutine mmmvee(phasez, ndim, nne, norm, tau1,&
                   tau2, mprojt, wpg, ffe, jacobi,&
                   jeu, coefac, coefaf, lambda, coefff,&
                   dlagrc, dlagrf, dvite, rese, nrese,&
-                  vectee,mprt11,mprt21,mprt22,kappa)
+                  vectee,mprt11,mprt21,mprt22,kappa,granglis)
 !
 ! person_in_charge: mickael.abbas at edf.fr
 !
@@ -29,6 +29,7 @@ subroutine mmmvee(phasez, ndim, nne, norm, tau1,&
 #include "asterfort/assert.h"
     character(len=*) :: phasez
     integer :: ndim, nne
+    integer :: granglis
     real(kind=8) :: wpg, ffe(9), jacobi
     real(kind=8) :: dlagrc, dlagrf(2), dvite(3)
     real(kind=8) :: rese(3), nrese
@@ -79,7 +80,7 @@ subroutine mmmvee(phasez, ndim, nne, norm, tau1,&
 !
 ! ----------------------------------------------------------------------
 !
-    integer :: inoe, idim, ii, i, j, k,granglis
+    integer :: inoe, idim, ii, i, j, k
     real(kind=8) :: dlagft(3), plagft(3), prese(3)
     real(kind=8) :: dvitet(3), pdvitt(3), g(3, 3), mprt12(3, 3)
     character(len=9) :: phasep
@@ -104,7 +105,7 @@ subroutine mmmvee(phasez, ndim, nne, norm, tau1,&
   mprt12(2,3) = mprt21(3,2)  
   mprt12(3,1) = mprt21(1,3)
   mprt12(3,2) = mprt21(2,3) 
-  granglis = 1
+!  granglis = 0
 ! --- PROJECTION DU LAGRANGE DE FROTTEMENT SUR LE PLAN TANGENT
 !
     do  i = 1, ndim
