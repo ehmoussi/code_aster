@@ -215,27 +215,27 @@ if (granglis .eq. 1) then
     valmin =  0.
     valmoy =  0.
     do i = 1,24
-        valmoy = valmax + long_mmait(i)/24
+        valmoy = valmoy + long_mmait(i)/24
     enddo
 
       do  idim = 1, ndim
-           if ((abs(jeu) .lt. 1.d-6) .and. (norm2(ddepmait1) .lt. 1.d-1*valmoy) .and.&
-               (norm2(ddepmait2) .lt. 1.d-1*valmoy)) then 
+           if ((abs(jeu) .lt. 1.d-6) .and. (norm2(ddepmait1) .lt. 1.d-2*valmoy) .and.&
+               (norm2(ddepmait2) .lt. 1.d-2*valmoy)) then 
           ! On rajoute ce terme au grand glissement seulement si on est sur 
           ! d'avoir converge en DEPDEL
           ! increment de deplacement
           ! Test : ssnp154d, ssnv128r, ssnv128p --> Débrancher la condition if et tester ces 2 cas. 
           ! Ici on implante une strategie qui consiste a dire que ce terme n'est rajoute que 
           ! si le depdel est < 1.d-1*la logueur de la maille maître courante
-!             dnepmait1 = dnepmait1 + ddepmait1(idim)*norm(idim)*jeu          
-!             dnepmait2 = dnepmait2 + ddepmait2(idim)*norm(idim)*jeu
+             dnepmait1 = dnepmait1 + ddepmait1(idim)*norm(idim)*jeu          
+             dnepmait2 = dnepmait2 + ddepmait2(idim)*norm(idim)*jeu
 !             write (6,*)  "jeu",jeu
 !             write (6,*)  "ddepmait1",ddepmait1
 !             write (6,*)  "norm",norm
            endif
           
-            taujeu1 = taujeu1 + tau1(idim)*djeu(idim)
-            taujeu2 = taujeu2 + tau2(idim)*djeu(idim)
+            taujeu1 = taujeu1 + tau1(idim)*djeu(idim) 
+            taujeu2 = taujeu2 + tau2(idim)*djeu(idim) 
     end do
 endif
 
@@ -332,6 +332,7 @@ endif
   end do
 
 
+
 !
 ! --- MATRICES A
 !
@@ -350,41 +351,29 @@ endif
      h(2,1) =      h(1,2) 
      h(2,2) = jeu*(ddgeo2(1)*norm(1)+ddgeo2(2)*norm(2)+ddgeo2(3)*norm(3))
 
+!
+! --- MATRICES HA
+!
+     ha(1,1) = h(1,1)*a(1,1)+h(1,2)*a(2,1)
+     ha(1,2) = h(1,1)*a(1,2)+h(1,2)*a(2,2)
+     ha(2,1) = h(2,1)*a(1,1)+h(2,2)*a(2,1)    
+     ha(2,2) = h(2,1)*a(1,2)+h(2,2)*a(2,2)
+
+!
+! --- MATRICES HAH
+!
+
+     hah(1,1) = ha(1,1)*h(1,1)+ha(1,2)*h(2,1)
+     hah(1,2) = ha(1,1)*h(1,2)+ha(1,2)*h(2,2)
+     hah(2,1) = ha(2,1)*h(1,1)+ha(2,2)*h(2,1)    
+     hah(2,2) = ha(2,1)*h(1,2)+ha(2,2)*h(2,2)
+
 
 !
 ! --- MATRICES KAPPA
 !
-
-     ! Matrice H depend du jeu : Il doit être petit en contact glissant
-     no_large_slip = (&
-                   (abs(h(1,1)) .gt. 5.d-1) .or. &
-                   (abs(h(1,2)) .gt. 5.d-1) .or. &
-                   (abs(h(2,1)) .gt. 5.d-1) .or. &
-                   (abs(h(2,2)) .gt. 5.d-1) )
-     
-     if (no_large_slip) then 
-        kappa = a 
-     else
         kappa = a - h
-     endif
-     if (ndim .eq. 2) then
-        if (kappa(1,1) .ge. 1.0d-16) then
-          kappa(1,1) = 1.0d0/kappa(1,1)
-          kappa(1,2) = 0
-          kappa(2,1) = 0
-          kappa(2,2) = 0 
-        else 
-          kappa(1,1) = 1.0d0
-          kappa(1,2) = 0
-          kappa(2,1) = 0
-          kappa(2,2) = 0 
-        endif
-     else 
         call matinv('C',2,kappa,  kappa,detkap)
-        if (detkap .gt. 0.5d1) then
-            kappa = 1.
-        endif
-     endif
 
 
 !

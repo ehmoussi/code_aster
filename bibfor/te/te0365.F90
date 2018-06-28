@@ -123,7 +123,7 @@ subroutine te0365(option, nomte)
     taujeu2   =0.0
     
     debug = .false.
-    granglis = 1.0
+    granglis = 0
 !
 ! --- TYPE DE MAILLE DE CONTACT
 !
@@ -135,6 +135,7 @@ subroutine te0365(option, nomte)
     if (option .eq. 'RIGI_CONT') l_previous = l_previous_cont
     if (option .eq. 'RIGI_FROT') l_previous = l_previous_frot
     granglis = nint(zr(jpcf-1+48))
+    write (6,*) "granglis te0365",granglis
     
 !
 ! --- PREPARATION DES CALCULS - INFOS SUR LA MAILLE DE CONTACT
@@ -313,7 +314,8 @@ subroutine te0365(option, nomte)
                     tau1, tau2, mprojt, wpg, ffe,&
                     ffm, jacobi, jeu, coefac, coefaf,&
                     lambda, coefff, dlagrc, dlagrf, djeu,&
-                    rese, nrese, vectee, vectmm,mprt11,mprt21,mprt22,mprt1n,mprt2n,kappa)
+                    rese, nrese, &
+                    vectee, vectmm,mprt11,mprt21,mprt22,mprt1n,mprt2n,kappa,granglis)
                     
 !         if (l_previous) then
 !             call mmvfpe(phasep_prev, ndim, nne, nnm, norm_prev,&

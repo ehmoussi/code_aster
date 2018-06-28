@@ -20,7 +20,7 @@ subroutine mmmvmm(phasez, ndim, nnm, norm, tau1,&
                   tau2, mprojt, wpg, ffm, jacobi,&
                   jeu, coefac, coefaf, lambda, coefff,&
                   dlagrc, dlagrf, dvite, rese, nrese,&
-                  vectmm,mprt11,mprt21,mprt22,mprt1n,mprt2n,kappa)
+                  vectmm,mprt11,mprt21,mprt22,mprt1n,mprt2n,kappa,granglis)
 !
 ! person_in_charge: mickael.abbas at edf.fr
 !
@@ -28,7 +28,7 @@ subroutine mmmvmm(phasez, ndim, nnm, norm, tau1,&
     implicit none
 #include "asterfort/assert.h"
     character(len=*) :: phasez
-    integer :: ndim, nnm
+    integer :: ndim, nnm,granglis
     real(kind=8) :: wpg, ffm(9), jacobi
     real(kind=8) :: dlagrc, dlagrf(2), dvite(3)
     real(kind=8) :: rese(3), nrese
@@ -81,7 +81,7 @@ subroutine mmmvmm(phasez, ndim, nnm, norm, tau1,&
 !
 ! ----------------------------------------------------------------------
 !
-    integer :: inom, idim, ii, i, j, k,granglis
+    integer :: inom, idim, ii, i, j, k
     real(kind=8) :: dlagft(3), plagft(3), prese(3), prese1(3), prese2(3)
     real(kind=8) :: dvitet(3), pdvitt(3), g(3, 3), g1(3, 3), g2(3, 3)
     character(len=9) :: phasep
@@ -108,7 +108,7 @@ subroutine mmmvmm(phasez, ndim, nnm, norm, tau1,&
   mprt12(3,1) = mprt21(1,3)
   mprt12(3,2) = mprt21(2,3)  
   matr = 0.
-  granglis = 1
+!   granglis = 0
 ! --- PROJECTION DU LAGRANGE DE FROTTEMENT SUR LE PLAN TANGENT
 !
     do  i = 1, ndim

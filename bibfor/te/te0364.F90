@@ -234,6 +234,7 @@ subroutine te0364(option, nomte)
     if (option .eq. 'RIGI_CONT') l_previous = l_previous_cont
     if (option .eq. 'RIGI_FROT') l_previous = l_previous_frot
     granglis = nint(zr(jpcf-1+48))
+    write (6,*) "granglis te0364", granglis
     
 !---------------------------------------------------------------
 !------------- PREPARATION DES CALCULS -------------------------

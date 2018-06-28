@@ -380,7 +380,9 @@ implicit none
             else
                 print s_grglis(1:3)
                 ASSERT(.false.)
-        endif
+            endif
+        else 
+            l_granglis = .false.
         endif
     !
         if (l_granglis) then
@@ -389,7 +391,7 @@ implicit none
             v_sdcont_caracf(zcmcf*(i_zone-1)+15) = 0.d0
         endif
     endif
-
+    write (6,*) "granglis cazocc", v_sdcont_caracf(zcmcf*(i_zone-1)+15)
 
 
     v_sdcont_caracf(zcmcf*(i_zone-1)+8) = cont_init
