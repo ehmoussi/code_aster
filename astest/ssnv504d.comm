@@ -114,16 +114,22 @@ CH0=AFFE_CHAR_MECA(MODELE=MO,
 CH2  = DEFI_CONTACT(MODELE         = MO,
                     FORMULATION    = 'CONTINUE',
                     ALGO_RESO_CONT = 'POINT_FIXE',
-                    ALGO_RESO_GEOM = 'POINT_FIXE',
+                    ALGO_RESO_GEOM = 'POINT_FIXE',REAC_GEOM='CONTROLE',NB_ITER_GEOM=6,
                     LISSAGE        = 'OUI',
                     ZONE =(
                            _F(
                              GROUP_MA_MAIT = 'SMAI1',
                              GROUP_MA_ESCL = 'SESC1',
+                             #ALGO_CONT='PENALISATION',
+                             #ADAPTATION = 'NON',
+                             #COEF_PENA_CONT=1.E7,
                              ),
                            _F(
                              GROUP_MA_ESCL = 'SMAI2',
                              GROUP_MA_MAIT = 'SESC2',
+                             #ALGO_CONT='PENALISATION',
+                             #ADAPTATION = 'NON',
+                             #COEF_PENA_CONT=1.E7,
                              ),
                           ),
                    );
@@ -184,7 +190,7 @@ TEST_RESU(RESU=(_F(NUME_ORDRE=1,
                    RESULTAT=U,
                    NOM_CHAM='DEPL',
                    NOM_CMP='DY',
-                   VALE_CALC=10.1924561844,
+                   VALE_CALC=10.192432173,
                    VALE_REFE=10.192587610759,
                    PRECISION=1.E-3,),
                 _F(NUME_ORDRE=1,
@@ -225,3 +231,4 @@ TEST_RESU(RESU=_F(INST=155.0,
 
 FIN();
 #
+
