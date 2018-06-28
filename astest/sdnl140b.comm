@@ -215,6 +215,6 @@ TEST_RESU(RESU=_F(INST=0.0006,
                   NOM_CHAM='DEPL',
                   NOM_CMP = 'DY',
                   GROUP_NO='relev_haut',
-                  VALE_CALC=-0.0200939065056,),);
+                  VALE_CALC=-0.019895387958,),);
 
 FIN();

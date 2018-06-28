@@ -216,7 +216,7 @@ TEST_RESU(RESU=_F(INST=0.0006,
                   NOM_CHAM='DEPL',
                   NOM_CMP = 'DY',
                   GROUP_NO='relev_haut',
-                  VALE_CALC=-0.0194922095761,
+                  VALE_CALC=-0.0191637825862,
                   CRITERE='ABSOLU',),
           )
 IMPR_RESU(FORMAT='MED',RESU=_F(RESULTAT=evol1))
