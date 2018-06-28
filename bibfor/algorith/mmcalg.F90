@@ -234,8 +234,8 @@ if (granglis .eq. 1) then
 !             write (6,*)  "norm",norm
            endif
           
-            taujeu1 = taujeu1 + tau1(idim)*djeu(idim) 
-            taujeu2 = taujeu2 + tau2(idim)*djeu(idim) 
+            taujeu1 = taujeu1 + tau1(idim)*djeu(idim) + dnepmait1
+            taujeu2 = taujeu2 + tau2(idim)*djeu(idim) + dnepmait2
     end do
 endif
 
