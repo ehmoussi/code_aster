@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -46,6 +46,9 @@ interface
         real(kind=8) :: norm(3)
         real(kind=8) :: tau1(3)
         real(kind=8) :: tau2(3)
+        
+        real(kind=8) :: dnepmait1 ,dnepmait2 ,taujeu1,taujeu2
+        
         real(kind=8) :: mprojt(3, 3)
         real(kind=8) :: jacobi
         real(kind=8) :: wpg
