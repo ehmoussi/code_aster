@@ -103,7 +103,6 @@ implicit none
 !
     real(kind=8) :: coef_cont_prev = 0.0, coef_frot_prev=0.0
     real(kind=8) :: coef_cont_curr=0.0, coef_frot_curr=0.0
-    real(kind=8) ::  coefficient=0.0
     aster_logical:: coef_found=.false._1,treatment =.true._1
     aster_logical:: l_coef_adap = .false._1,mmcvca_frot=.true._1
     integer      ::  mode_cycl = 0
