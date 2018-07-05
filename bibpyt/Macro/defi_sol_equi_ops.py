@@ -150,7 +150,6 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
     lmassp = 'NON'
     ltranin = 'NON'
     llcara = 'NON'
-    #ldevi = 'NON'
 
     # type de modelisation : 2D ou 3D
     dime = "2D"
@@ -178,7 +177,6 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
         # lmassp ='OUI' ou 'NON'
       if dime == "2D":
           if args['UNITE_TRAN_INIT'] != None :
-            #ldevi = 'OUI'
             ltranin = 'OUI'
             input = 'RA'
             lliaison = 'NON'
@@ -1508,9 +1506,6 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
                                 STOP_SINGULIER='NON',
                                 NPREC=15,
                                 METHODE='MUMPS',),
-                        #EXCIT   = _F( VECT_ASSE = __VECASX,
-                        #              COEF_MULT = 0.
-                        #               ),
                         EXCIT_RESU=(
                                  _F( RESULTAT = __CHAONF,
                                      COEF_MULT_C= -1.0 -0.0j,),
@@ -1597,8 +1592,8 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
                                                   NPREC=17,
                                                   ),
                                        )
-
-        __DYNHARM=CALC_CHAMP(reuse =__DYNHARM,
+        if ( (dime == "2D") and (ldevi=='OUI') ):
+          __DYNHARM=CALC_CHAMP(reuse =__DYNHARM,
                              RESULTAT=__DYNHARM,
                              MODELE=__MODELE,
                              CHAM_MATER=__CHAMPMAH,
@@ -1666,14 +1661,16 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
                                       INTERPOL='LIN',
                                       PROL_DROITE='CONSTANT', PROL_GAUCHE='CONSTANT',)
 
-            __FHuXrCL[0] = RECU_FONCTION(RESULTAT=__DYNHARM,
+            if ldevi=='OUI':
+
+              __FHuXrCL[0] = RECU_FONCTION(RESULTAT=__DYNHARM,
                                       NOM_CHAM='FORC_NODA',
                                       NOM_CMP=CMP2,
                                       GROUP_NO='PN0',
                                       INTERPOL='LIN',
                                       PROL_DROITE='CONSTANT', PROL_GAUCHE='CONSTANT',)
 
-            __FHuXrBH[0] = RECU_FONCTION(RESULTAT=__DYNHARM,
+              __FHuXrBH[0] = RECU_FONCTION(RESULTAT=__DYNHARM,
                                       NOM_CHAM='FORC_NODA',
                                       NOM_CMP=CMP2,
                                       GROUP_NO='PNRA',
@@ -1956,12 +1953,13 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
                  MULT=(_F(FONCTION=__AHX_RA[n],), _F(FONCTION=__AHuXrBH[n],), _F(FONCTION=__FILTRE,)),
                  LIST_PARA=__lfreq, NOM_PARA='FREQ',)
               if dime == "2D":
-                __FHXrCL[n] = CALC_FONCTION(
-                 MULT=(_F(FONCTION=__AHX_RA[n],), _F(FONCTION=__FHuXrCL[n],), _F(FONCTION=__FILTRE,)),
-                 LIST_PARA=__lfreq, NOM_PARA='FREQ',)
-                __FHXrBH[n] = CALC_FONCTION(
-                 MULT=(_F(FONCTION=__AHX_RA[n],), _F(FONCTION=__FHuXrBH[n],), _F(FONCTION=__FILTRE,)),
-                 LIST_PARA=__lfreq, NOM_PARA='FREQ',)
+                if ldevi=='OUI':
+                  __FHXrCL[n] = CALC_FONCTION(
+                   MULT=(_F(FONCTION=__AHX_RA[n],), _F(FONCTION=__FHuXrCL[n],), _F(FONCTION=__FILTRE,)),
+                   LIST_PARA=__lfreq, NOM_PARA='FREQ',)
+                  __FHXrBH[n] = CALC_FONCTION(
+                   MULT=(_F(FONCTION=__AHX_RA[n],), _F(FONCTION=__FHuXrBH[n],), _F(FONCTION=__FILTRE,)),
+                   LIST_PARA=__lfreq, NOM_PARA='FREQ',)
             else:
               if input == 'CL':
                 __AHXrCL[n] = CALC_FONCTION(
@@ -1970,11 +1968,12 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
                 __AHXrBH[n] = CALC_FONCTION(
                    MULT=(_F(FONCTION=__FDT_RACL[n],), _F(FONCTION=__AHuXrBH[n],), _F(FONCTION=__FILTRE,)), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
                 if dime == "2D":
-                  __FHXrCL[n] = CALC_FONCTION(
-                   MULT=(_F(FONCTION=__FDT_RACL[n],), _F(FONCTION=__FHuXrCL[n]), _F(FONCTION=__FILTRE,)),
-                   LIST_PARA=__lfreq, NOM_PARA='FREQ',)
-                  __FHXrBH[n] = CALC_FONCTION(
-                   MULT=(_F(FONCTION=__FDT_RACL[n],), _F(FONCTION=__FHuXrBH[n],), _F(FONCTION=__FILTRE,)), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
+                  if ldevi=='OUI':
+                    __FHXrCL[n] = CALC_FONCTION(
+                     MULT=(_F(FONCTION=__FDT_RACL[n],), _F(FONCTION=__FHuXrCL[n]), _F(FONCTION=__FILTRE,)),
+                     LIST_PARA=__lfreq, NOM_PARA='FREQ',)
+                    __FHXrBH[n] = CALC_FONCTION(
+                     MULT=(_F(FONCTION=__FDT_RACL[n],), _F(FONCTION=__FHuXrBH[n],), _F(FONCTION=__FILTRE,)), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
               if input == 'RA':
                 __AHXrCL[n] = CALC_FONCTION(
                   MULT=(_F(FONCTION=__AHuXrCL[n]), _F(FONCTION=__FILTRE,)),
@@ -1983,12 +1982,13 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
                   MULT=(_F(FONCTION=__AHuXrBH[n]), _F(FONCTION=__FILTRE,)),
                   LIST_PARA=__lfreq, NOM_PARA='FREQ',)
                 if dime == "2D":
-                  __FHXrCL[n] = CALC_FONCTION(
-                   MULT=(_F(FONCTION=__FHuXrCL[n]), _F(FONCTION=__FILTRE,)),
-                   LIST_PARA=__lfreq, NOM_PARA='FREQ',)
-                  __FHXrBH[n] = CALC_FONCTION(
-                   MULT=(_F(FONCTION=__FHuXrBH[n]), _F(FONCTION=__FILTRE,)),
-                   LIST_PARA=__lfreq, NOM_PARA='FREQ',)
+                  if ldevi=='OUI':
+                    __FHXrCL[n] = CALC_FONCTION(
+                     MULT=(_F(FONCTION=__FHuXrCL[n]), _F(FONCTION=__FILTRE,)),
+                     LIST_PARA=__lfreq, NOM_PARA='FREQ',)
+                    __FHXrBH[n] = CALC_FONCTION(
+                     MULT=(_F(FONCTION=__FHuXrBH[n]), _F(FONCTION=__FILTRE,)),
+                     LIST_PARA=__lfreq, NOM_PARA='FREQ',)
 
             #MODIF POUR DSP: on reste en domaine fréquentiel
             if 'DSP' in args:
@@ -2013,14 +2013,15 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
                 __AXrBH[n] = CALC_FONCTION(
                     FFT=_F(FONCTION=__AHXrBH[n], METHODE='COMPLET', SYME='NON',),PROL_DROITE='CONSTANT',)
                 if dime == "2D":
-                  __FXrCL[n] = CALC_FONCTION(
-                    FFT=_F(FONCTION=__FHXrCL[n], METHODE='COMPLET', SYME='NON',),PROL_DROITE='CONSTANT',)
-                  __FXrBH[n] = CALC_FONCTION(
-                    FFT=_F(FONCTION=__FHXrBH[n], METHODE='COMPLET', SYME='NON',),PROL_DROITE='CONSTANT',)
-                  __FX_CL[n] = CALC_FONCTION(
-                    COMB=(_F(FONCTION=__FXrCL[n], COEF=1.,), ), LIST_PARA=__linst,)
-                  __FX_BH[n] = CALC_FONCTION(
-                    COMB=(_F(FONCTION=__FXrBH[n], COEF=1.,), ), LIST_PARA=__linst,)
+                  if ldevi=='OUI':
+                    __FXrCL[n] = CALC_FONCTION(
+                     FFT=_F(FONCTION=__FHXrCL[n], METHODE='COMPLET', SYME='NON',),PROL_DROITE='CONSTANT',)
+                    __FXrBH[n] = CALC_FONCTION(
+                     FFT=_F(FONCTION=__FHXrBH[n], METHODE='COMPLET', SYME='NON',),PROL_DROITE='CONSTANT',)
+                    __FX_CL[n] = CALC_FONCTION(
+                     COMB=(_F(FONCTION=__FXrCL[n], COEF=1.,), ), LIST_PARA=__linst,)
+                    __FX_BH[n] = CALC_FONCTION(
+                     COMB=(_F(FONCTION=__FXrBH[n], COEF=1.,), ), LIST_PARA=__linst,)
 
                 if args['CHARGEMENT'] == 'MONO_APPUI':
                   __AX_CL[n] = CALC_FONCTION(
@@ -2174,17 +2175,17 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
             if ldevi=='OUI':
               __vix = [None] * (NCOU + 1)
               __dex = [None] * (NCOU + 1)
+              __foy = [None] * (NCOU + 1)
             __epxy = [None] * (NCOU + 1)
             __gam = [None] * (NCOU + 1)
             __tau = [None] * (NCOU + 1)
-            __foy = [None] * (NCOU + 1)
             __axa.append(0)
             if ldevi=='OUI':
               __vix.append(0)
               __dex.append(0)
+              __foy.append(0)
             __epxy.append(0)
             __tau.append(0)
-            __foy.append(0)
             lmaccx = []
             lmaccx.append(maccxcl[0])
 
@@ -2266,30 +2267,34 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
                   __dex[k]=CALC_FONCTION(INTEGRE=_F(FONCTION=__vix[k],),
                      PROL_DROITE='CONSTANT',PROL_GAUCHE='CONSTANT',);
 
+                  __ftfy = RECU_FONCTION(
+                    GROUP_NO=('PN' + str(k)), RESULTAT=__DYNHARM, NOM_CHAM='FORC_NODA', NOM_CMP=CMP2, INTERPOL='LIN',
+                              PROL_DROITE='CONSTANT', PROL_GAUCHE='CONSTANT')
+
                 __ftep = RECU_FONCTION(
                     GROUP_MA=__TMAT['M', k], RESULTAT=__DYNHARM, NOM_CHAM='EPSI_ELGA', POINT=1, NOM_CMP='EPXY', INTERPOL='LIN',
                     PROL_DROITE='CONSTANT', PROL_GAUCHE='CONSTANT')
 
-                __ftfy = RECU_FONCTION(
-                    GROUP_NO=('PN' + str(k)), RESULTAT=__DYNHARM, NOM_CHAM='FORC_NODA', NOM_CMP=CMP2, INTERPOL='LIN',
-                              PROL_DROITE='CONSTANT', PROL_GAUCHE='CONSTANT')
 
                 if args['CHARGEMENT'] == 'ONDE_PLANE':
                   if input == 'CL':
                     __eph = CALC_FONCTION(
                       MULT=(_F(FONCTION=__FDT_RACL[0],), _F(FONCTION=__ftep,), _F(FONCTION=__FILTRE,)), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
-                    __fyh = CALC_FONCTION(
-                      MULT=(_F(FONCTION=__FDT_RACL[0],), _F(FONCTION=__ftfy,), _F(FONCTION=__FILTRE,)), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
+                    if ldevi == 'OUI':
+                      __fyh = CALC_FONCTION(
+                       MULT=(_F(FONCTION=__FDT_RACL[0],), _F(FONCTION=__ftfy,), _F(FONCTION=__FILTRE,)), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
                   if input == 'RA':
                     __eph = CALC_FONCTION(
                       MULT=(_F(FONCTION=__ftep,), _F(FONCTION=__FILTRE,)), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
-                    __fyh = CALC_FONCTION(
-                      MULT=(_F(FONCTION=__ftfy,), _F(FONCTION=__FILTRE,)), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
+                    if ldevi == 'OUI':
+                      __fyh = CALC_FONCTION(
+                       MULT=(_F(FONCTION=__ftfy,), _F(FONCTION=__FILTRE,)), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
                 else:
                   __eph = CALC_FONCTION(
                     MULT=(_F(FONCTION=__AHX_RA[0],), _F(FONCTION=__ftep,), _F(FONCTION=__FILTRE,)), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
-                  __fyh = CALC_FONCTION(
-                    MULT=(_F(FONCTION=__AHX_RA[0],), _F(FONCTION=__ftfy,), _F(FONCTION=__FILTRE,)), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
+                  if ldevi == 'OUI':
+                    __fyh = CALC_FONCTION(
+                     MULT=(_F(FONCTION=__AHX_RA[0],), _F(FONCTION=__ftfy,), _F(FONCTION=__FILTRE,)), LIST_PARA=__lfreq, NOM_PARA='FREQ',)
 
                 if formulation == 'LYSMER':
                   f2Getoil = E[iter][k] / (1+ __TMAT['NU',k]) * (1.-AH[iter][k]*AH[iter][k]/2 + (AH[iter][k]*sqrt(1-AH[iter][k]*AH[iter][k]/4))*1.j) ;
@@ -2305,13 +2310,13 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
                   __tauh = CALC_FONCTION(COMB_C=_F(FONCTION=__eph,COEF_C = f2Getoil),LIST_PARA=__lfreq,NOM_PARA='FREQ',);
 
                   __tau[k] = CALC_FONCTION(FFT=_F(FONCTION=__tauh,METHODE='COMPLET',SYME='NON',),PROL_DROITE='CONSTANT',);
-                  __foy[k] = CALC_FONCTION(FFT=_F(FONCTION=__fyh,METHODE='COMPLET',SYME='NON',),PROL_DROITE='CONSTANT',); 
+                  if ldevi == 'OUI':
+                    __foy[k] = CALC_FONCTION(FFT=_F(FONCTION=__fyh,METHODE='COMPLET',SYME='NON',),PROL_DROITE='CONSTANT',); 
                 else:
                   __gam[k] = CALC_FONCTION( LIST_PARA=__lfreq,
                           COMB_C=(_F(FONCTION=__eph, COEF_R=(2),), )    ,)
 
                   __tau[k] = CALC_FONCTION(COMB_C=_F(FONCTION=__eph,COEF_C = f2Getoil),LIST_PARA=__lfreq,NOM_PARA='FREQ',);
-
 
                 # Calcul des max
                 if 'DSP' in args:
@@ -2667,7 +2672,8 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
                         CONCEPT=_F(NOM=(__SOLH[k], __gam[k], __tau[k]),), INFO = 1)
                     if 'DSP' not in args:
                         DETRUIRE( CONCEPT=_F(NOM=( __epxy[k],),), )
-                        if dime == "2D":
+                        if dime == "2D" :
+                          if ldevi == 'OUI':
                             DETRUIRE( CONCEPT=_F(NOM=(__foy[k],),), )
 
               if dime == "2D":
@@ -2943,7 +2949,7 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
                 Les valeurs max sont calculees au 1er Point de Gauss de la couche definie par sa cote inferieure Y'),
                               COURBE=(iftau
                                       ))
-                if 'DSP' not in args:
+                if ldevi == 'OUI':
                   iffoy = []
                   iffoy.append(
                     _F(FONCTION=__FX_CL[0], MARQUEUR=0, LEGENDE='FY_CL' + legende + 'deltaE =' + str(deltaE)),)
@@ -3448,11 +3454,11 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
                 for k in range(1, NCOU + 1):
                     if ldevi == 'OUI':
                       DETRUIRE(
-                        CONCEPT=_F(NOM=(__vix[k], __dex[k], ),), INFO = 1)
+                        CONCEPT=_F(NOM=(__vix[k], __dex[k], __foy[k],),), INFO = 1)
                     DETRUIRE(
                             CONCEPT=_F(NOM=(__SPEC[k],__axa[k]),), INFO = 1)
                     if 'DSP' not in args:
-                        DETRUIRE( CONCEPT=_F(NOM=(__epxy[k], __foy[k],)), INFO = 1)
+                        DETRUIRE( CONCEPT=_F(NOM=(__epxy[k],)), INFO = 1)
             elif dime == "3D":
                 for k in range(1, NCOU + 1):
                     DETRUIRE(
