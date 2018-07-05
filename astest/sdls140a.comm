@@ -19,7 +19,7 @@
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),);
 
-Esol = 18885000000;
+Esol = 18885000000.0;
 
 Nusol = 0.33;
 
@@ -29,7 +29,7 @@ alpha = 1.0;
 
 beta=1.0 ;
 
-rb = 100;
+rb = 100.0;
 
 Gsol = (Esol / (2 * (1 + Nusol)));
 
