@@ -211,7 +211,7 @@ CHA_ON2=CREA_RESU(OPERATION='CONV_RESU',
                   CONV_RESU=_F(
                           MATR_RIGI=RIGI, 
                           NOM_CHAM_INIT='DEPL',
-                          COEF=-1.0,
+                          COEF=1.0,
                           PRECISION=1.E-6,CRITERE='RELATIF',
                           LIST_INST=LINST,
                           RESU_INIT=CHA_ON),
@@ -366,6 +366,7 @@ FSEISVY = DEFI_CHAR_SOL (
 
    # Unite d entree de table de signaux
    UNITE_TRAN_INIT = 42,
+   LONG_CARA=lcara,
    NOM_CMP    ='DY',
    GROUP_MA_DROITE = 'FOND_RD',
    GROUP_MA_GAUCHE = 'FOND_RG',
@@ -379,12 +380,21 @@ FSEISVX = DEFI_CHAR_SOL (
 
    # Unite d entree de table de signaux
    UNITE_TRAN_INIT = 42,
+   LONG_CARA=lcara,
    NOM_CMP    ='DY',
    GROUP_MA_DROITE = 'FOND_RD',
    GROUP_MA_GAUCHE = 'FOND_RG',
 
    TABLE_MATER_ELAS =tmatela,
 )
+
+CHA_ONB=CREA_RESU(OPERATION='CONV_CHAR',
+                  TYPE_RESU='DYNA_TRANS',
+                  CONV_CHAR=_F(MATR_RIGI=RIGI,
+                          CHARGE=(ONDEP1,FSEISVX,FSEISVY),
+                          PRECISION=1.E-6,CRITERE='RELATIF',
+                          LIST_INST=LINST,),
+                );
 
 BlancP1=DYNA_VIBRA(BASE_CALCUL='PHYS',
                   TYPE_CALCUL='TRAN',
@@ -395,11 +405,9 @@ BlancP1=DYNA_VIBRA(BASE_CALCUL='PHYS',
                   MATR_AMOR=AMOR,
                   SCHEMA_TEMPS=_F(SCHEMA='NEWMARK',),
                   INCREMENT=_F(LIST_INST=LINST,),
-                  EXCIT=(
-                         _F(  CHARGE = ONDEP1),
-                         _F(  CHARGE = FSEISVY),
-                         _F(  CHARGE = FSEISVX),
-                         ),
+                  EXCIT_RESU=(
+                              _F( RESULTAT = CHA_ONB,COEF_MULT= 1.0 ,),               
+                             ),
                   );
 
 maxP1=CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R',
@@ -415,27 +423,27 @@ TEST_RESU(
                    _F(CHAM_GD=maxP1,
                       NOM_CMP='DY',
                       NOEUD='N785',
-                      VALE_CALC=2.58652706539,
+                      VALE_CALC=2.59323067305,
                       ),
                    _F(CHAM_GD=maxP1,
                       NOM_CMP='DX',
                       NOEUD='N408',
-                      VALE_CALC=0.186898971791,
+                      VALE_CALC=0.191432291027,
                       ),
                    _F(CHAM_GD=maxP1,
                       NOM_CMP='DY',
                       NOEUD='N408',
-                      VALE_CALC=2.22486947443,
+                      VALE_CALC=2.32585353037,
                       ),
                    _F(CHAM_GD=maxP1,
                       NOM_CMP='DX',
                       NOEUD='N775',
-                      VALE_CALC=0.901102857989,
+                      VALE_CALC=0.835586380404,
                       ),
                    _F(CHAM_GD=maxP1,
                       NOM_CMP='DY',
                       NOEUD='N775',
-                      VALE_CALC=1.29483953852,
+                      VALE_CALC=1.34976686437,
                       ),
                   ),
            );
@@ -453,7 +461,6 @@ FSEISMX = DEFI_CHAR_SOL (
 
    # Unite d entree de table de signaux
    UNITE_TRAN_INIT = 41,
-   LONG_CARA=lcara,
    NOM_CMP    ='DX',
    GROUP_MA_DROITE = 'FOND_RD',
    GROUP_MA_GAUCHE = 'FOND_RG',
@@ -467,7 +474,6 @@ FSEISMXG = DEFI_CHAR_SOL (
 
    # Unite d entree de table de signaux
    UNITE_TRAN_INIT = 41,
-   LONG_CARA=lcara,
    NOM_CMP    ='DX',
    #GROUP_MA_DROITE = 'FOND_RD',
    GROUP_MA_GAUCHE = 'FOND_RG',
@@ -481,7 +487,6 @@ FSEISMXD = DEFI_CHAR_SOL (
 
    # Unite d entree de table de signaux
    UNITE_TRAN_INIT = 41,
-   LONG_CARA=lcara,
    NOM_CMP    ='DX',
    GROUP_MA_DROITE = 'FOND_RD',
    #GROUP_MA_GAUCHE = 'FOND_RG',
@@ -496,7 +501,6 @@ FSEISMY = DEFI_CHAR_SOL (
 
    # Unite d entree de table de signaux
    UNITE_TRAN_INIT = 41,
-   LONG_CARA=lcara,
    NOM_CMP    ='DX',
    GROUP_MA_DROITE = 'FOND_RD',
    GROUP_MA_GAUCHE = 'FOND_RG',
@@ -535,27 +539,27 @@ TEST_RESU(
                    _F(CHAM_GD=maxS1,
                       NOM_CMP='DX',
                       NOEUD='N785',
-                      VALE_CALC=1.49448705301,
+                      VALE_CALC=1.51614650015,
                       ),
                    _F(CHAM_GD=maxS1,
                       NOM_CMP='DX',
                       NOEUD='N408',
-                      VALE_CALC=2.48037093812,
+                      VALE_CALC=2.67332765681,
                       ),
                    _F(CHAM_GD=maxS1,
                       NOM_CMP='DY',
                       NOEUD='N408',
-                      VALE_CALC=1.60477310453,
+                      VALE_CALC=1.53203131622,
                       ),
                    _F(CHAM_GD=maxS1,
                       NOM_CMP='DX',
                       NOEUD='N775',
-                      VALE_CALC=1.28203182938,
+                      VALE_CALC=1.37577672843,
                       ),
                    _F(CHAM_GD=maxS1,
                       NOM_CMP='DY',
                       NOEUD='N775',
-                      VALE_CALC=1.3401035091,
+                      VALE_CALC=1.32796528567,
                       ),
                   ),
            );

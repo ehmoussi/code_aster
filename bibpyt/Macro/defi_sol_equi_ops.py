@@ -898,7 +898,7 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
                    );
            l_para.append(0.0)
          if lmassp == 'OUI':
-           __faccX=CALC_FONCTION(COMB=_F(FONCTION=__faccex0,COEF=-1.0*args['MASS_PENA'],),);
+           __faccX=CALC_FONCTION(COMB=_F(FONCTION=__faccex0,COEF=1.0*args['MASS_PENA'],),);
            DETRUIRE(CONCEPT=_F(NOM=(__faccex0,),), INFO = 1);
            l_foncx.append(__faccX)
          else:
@@ -1437,40 +1437,16 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
             # On excite la base de la colonne avec un bruit blanc
 
         if args['CHARGEMENT'] == 'ONDE_PLANE':
-          #for k in range(1,nbdt+1):
-          #  if ltranin == 'OUI' :
 
           if ltranin == 'OUI' :
-            for k in range(1,nbdt+1):
-            #cas non traité en 3D pour l'instant
-              if lmassp == 'OUI':
-                __VECTEL1=CALC_VECT_ELEM(INST=(k-1)*dt, OPTION='CHAR_MECA', CARA_ELEM=__ELEM,
-                                       CHAM_MATER=__CHAMPMAH, CHARGE=(__ONDEX[0],__FSEISMX))
-              else:
-                __VECTEL1=CALC_VECT_ELEM(INST=(k-1)*dt, OPTION='CHAR_MECA',
-                                       CHAM_MATER=__CHAMPMAH, CHARGE=(__ONDEX[0],__FSEISMX))
-
-
-
-              __VECA1=ASSE_VECTEUR(VECT_ELEM=__VECTEL1, NUME_DDL=__NUMEDDL)
-
-              if k==1:
-                __CHA_ON=CREA_RESU(OPERATION='AFFE',
+            __CHA_ON=CREA_RESU(OPERATION='CONV_CHAR',
                   TYPE_RESU='DYNA_TRANS',
-                  MATR_RIGI=__RIGIDITE,
-                  MATR_MASS=__MASSEH,
-                  NOM_CHAM='DEPL',
-                  AFFE=(_F(CHAM_GD=__VECA1,INST=0.0,),),);
-              else:
-                __CHA_ON=CREA_RESU(reuse=__CHA_ON,
-                  RESULTAT=__CHA_ON,
-                  OPERATION='AFFE',
-                  TYPE_RESU='DYNA_TRANS',
-                  MATR_RIGI=__RIGIDITE,
-                  MATR_MASS=__MASSEH,
-                  NOM_CHAM='DEPL',
-                  AFFE=(_F(CHAM_GD=__VECA1,INST=(k-1)*dt,),),);
-              DETRUIRE(INFO=1,CONCEPT=_F(NOM=(__VECTEL1,__VECA1)));
+                  CONV_CHAR=_F(
+                          MATR_RIGI=__RIGIDITE,
+                          CHARGE=(__ONDEX[0],__FSEISMX),
+                          PRECISION=1.E-6,CRITERE='RELATIF',
+                          LIST_INST=__linst,),
+                );
           else:
             if dime == "2D":
               __CHA_ON=CREA_RESU(OPERATION='CONV_CHAR',
@@ -1508,7 +1484,7 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
                                 METHODE='MUMPS',),
                         EXCIT_RESU=(
                                  _F( RESULTAT = __CHAONF,
-                                     COEF_MULT_C= -1.0 -0.0j,),
+                                     COEF_MULT_C= 1.0 -0.0j,),
                                  ),
                         LIST_FREQ= __lfreq0,
                         TOUT_CHAM= 'OUI'
