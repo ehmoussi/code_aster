@@ -62,7 +62,9 @@ BIOTAGO   = 1.
 EAGO      = 150.E6
 PATM=1.E5
 RHOW0=1000.
-P2THMINIT=10.
+P2THMINIT=0.
+TTHMINIT = 0.
+TEMP0 = 303.
 
 #AGO = argile gonflante
 NAGO     =1.61
@@ -75,6 +77,7 @@ SITOTAGO0 = -0.1E6
 SATAGO0   = 0.5
 PCAGO0    = Pcdesat(PRAGO,SRAGO,NAGO,SATAGO0)
 PGAGO0    = PATM-P2THMINIT
+
 PWAGO0    = PGAGO0+P2THMINIT-PCAGO0
 SIPAGO0   = Sipinit_de_Pg(BIOTAGO,PGAGO0+P2THMINIT)
 SINETAGO0  = Sinetinit(SITOTAGO0,SIPAGO0)
@@ -199,9 +202,7 @@ MATAGO=DEFI_MATERIAU(ELAS=_F(
                                 COEF_HENRY              = HENRYCF
                                       ),
 
-                     THM_INIT=_F(TEMP           = 303.0,
-                                 PRE1           = 0.0,
-                                 PRE2           = P2THMINIT,
+                     THM_INIT=_F(
                                  PORO           = 0.366,
                                  PRES_VAPE      = 1.5,
                                   ),
@@ -242,10 +243,10 @@ DEP_FIX=AFFE_CHAR_MECA(    MODELE=MODELE,
                               _F(  GROUP_MA = 'BAS',       DY = 0.,   ),
                               _F(  GROUP_MA = 'GAUCHE',    DX = 0.,   ),
 
-                              _F(  GROUP_MA = 'HAUT',      TEMP = 0.,   ),
-                              _F(  GROUP_MA = 'DROITE',    TEMP = 0.,   ),
-                              _F(  GROUP_MA = 'BAS',       TEMP = 0.,   ),
-                              _F(  GROUP_MA = 'GAUCHE',    TEMP = 0.,   ),
+                              _F(  GROUP_MA = 'HAUT',      TEMP = TEMP0,   ),
+                              _F(  GROUP_MA = 'DROITE',    TEMP = TEMP0,   ),
+                              _F(  GROUP_MA = 'BAS',       TEMP = TEMP0,   ),
+                              _F(  GROUP_MA = 'GAUCHE',    TEMP = TEMP0,   ),
                                 ),
                            DDL_IMPO=(
                              _F(TOUT='OUI',       PRE2= PGAGO0), )
@@ -267,7 +268,7 @@ DEPINAR=CREA_CHAMP(MAILLAGE=MAILLAGE,
                      _F(TOUT='OUI', NOM_CMP=('DX','DY'),VALE=    (0.,0.),),
                      _F(TOUT='OUI', NOM_CMP=('PRE1',),VALE=     PCAGO0,),
                      _F(TOUT='OUI', NOM_CMP=('PRE2',),VALE=    PGAGO0  ,),
-                     _F(TOUT='OUI', NOM_CMP=('TEMP',),VALE=    0.  ,),
+                     _F(TOUT='OUI', NOM_CMP=('TEMP',),VALE=   TEMP0  ,),
                         ),
                 );
 

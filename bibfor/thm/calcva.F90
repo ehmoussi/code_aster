@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -38,6 +38,7 @@ implicit none
 #include "asterfort/rcvarc.h"
 #include "asterfort/tecael.h"
 #include "asterfort/utmess.h"
+#include "asterc/r8prem.h"
 !
 integer, intent(in) :: kpi, ndim
 real(kind=8), intent(in) :: defgem(*), defgep(*)
@@ -128,6 +129,12 @@ integer, intent(out) :: retcom
         end do
         if (ds_thm%ds_elem%l_dof_pre2) then
             p2  = defgep(addep2) + ds_thm%ds_parainit%pre2_init
+            if (abs(p2) .le. r8prem()) then
+              call tecael(iadzi, iazk24)
+              nomail = zk24(iazk24-1+3) (1:8)
+              call utmess('A', 'THM2_7', sk=nomail)
+            retcom = 1
+        endif
             dp2 = defgep(addep2) - defgem(addep2)
             do i = 1, ndim
                 grad_p2(i) = defgep(addep2+i)
