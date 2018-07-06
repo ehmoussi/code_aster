@@ -381,5 +381,184 @@ TEST_FONCTION(VALEUR=(
                          FONCTION=DXN31B,),
                      )
               )
+MAIL=MODI_MAILLAGE(reuse=MAIL,
+                   MAILLAGE=MAIL,
+                   ROTATION=_F(POIN_1=(0,0,0,),
+                               DIR=(1,0,0,),
+                               ANGLE=270,),);
+
+MAIL=MODI_MAILLAGE(reuse=MAIL,
+                   MAILLAGE=MAIL,
+                   SYMETRIE=_F(POINT=(0,0,0,),
+                               AXE_1=(1,0,0,),
+                               AXE_2=(0,1,0,),),);
+
+MAIL=MODI_MAILLAGE(reuse =MAIL,
+                MAILLAGE=MAIL,
+                ORIE_PEAU_3D=_F(GROUP_MA='CONTOUR',GROUP_MA_VOLU='VOLU',),
+                );
+MAIL=MODI_MAILLAGE(reuse =MAIL,
+                MAILLAGE=MAIL,
+                ORIE_PEAU_3D=_F(GROUP_MA=('FAXZ_Y0','FAXZ_Y5','FAYZ_X0','FAYZ_X5',),GROUP_MA_VOLU='VOLU',),
+                );
+
+ONDE3=AFFE_CHAR_MECA_F(  MODELE=MODELE,
+
+                ONDE_PLANE=_F( DIRECTION = (0., 1., 0.,), TYPE_ONDE = 'SH',
+                 DIST=-50., DIST_REFLECHI = 0., 
+                 FONC_SIGNAL = VITEX,
+                 GROUP_MA=('ABSO',),
+                  ))
+
+DETRUIRE(CONCEPT=_F(NOM=(RIGI_ELE,MASS_ELE,AMOR_ELE)))
+
+DETRUIRE(CONCEPT=_F(NOM=(NUMEDDL, RIGIDITE, AMORT, MASSE)))
+
+RIGI_ELE=CALC_MATR_ELEM(    MODELE=MODELE,
+                              OPTION='RIGI_MECA',
+                              CHAM_MATER=CHAMPMAT,
+                            )
+
+MASS_ELE=CALC_MATR_ELEM(    MODELE=MODELE,
+                              OPTION='MASS_MECA',
+                              CHAM_MATER=CHAMPMAT,
+                            )
+
+AMOR_ELE=CALC_MATR_ELEM(    MODELE=MODELE,
+                              OPTION='AMOR_MECA',
+                              CHAM_MATER=CHAMPMAT,
+                              RIGI_MECA=RIGI_ELE,
+                              MASS_MECA=MASS_ELE,
+                            )
+
+NUMEDDL=NUME_DDL(    MATR_RIGI=RIGI_ELE,   )
+
+
+#------------------------------------------------------------------------------------
+
+RIGIDITE=ASSE_MATRICE(    MATR_ELEM=RIGI_ELE,
+                            NUME_DDL=NUMEDDL
+                          )
+
+AMORT=ASSE_MATRICE(    MATR_ELEM=AMOR_ELE,
+                            NUME_DDL=NUMEDDL
+                          )
+
+MASSE=ASSE_MATRICE(    MATR_ELEM=MASS_ELE,
+                         NUME_DDL=NUMEDDL
+                       )
+
+DETRUIRE(CONCEPT=_F(NOM=(FSEISMX1, FSEISMX2)))
+
+FSEISMX1 = DEFI_CHAR_SOL (
+   CHARGEMENT    ='ONDE_PLANE',
+   MODELE        = MODELE,
+
+   # Unite d entree de table de signaux
+   UNITE_TRAN_INIT = 41,
+   NOM_CMP    ='DX',
+   AXE='X',
+   NOM_PARA='Y',
+   GROUP_MA_DROITE = 'FAYZ_X5', #'FA5', #
+   GROUP_MA_GAUCHE = 'FAYZ_X0', #'FA0', #
+
+   TABLE_MATER_ELAS =tmatela,
+)
+
+FSEISMX2 = DEFI_CHAR_SOL (
+   CHARGEMENT    ='ONDE_PLANE',
+   MODELE        = MODELE,
+
+   # Unite d entree de table de signaux
+   UNITE_TRAN_INIT = 41,
+   NOM_CMP    ='DX',
+   AXE='X',
+   NOM_PARA='Y',
+   GROUP_MA_DROITE = 'FAXZ_Y5',
+   GROUP_MA_GAUCHE = 'FAXZ_Y0',
+
+   TABLE_MATER_ELAS =tmatela,
+)
+
+FSEISMY1 = DEFI_CHAR_SOL (
+   CHARGEMENT    ='FORCE',
+   MODELE        = MODELE,
+
+   # Unite d entree de table de signaux
+   UNITE_TRAN_INIT = 41,
+   NOM_CMP    ='DX',
+   AXE='Y',
+   NOM_PARA='Y',
+   GROUP_MA_DROITE = 'LI_X0', 
+   GROUP_MA_GAUCHE = 'LI_X5', 
+
+   TABLE_MATER_ELAS =tmatela,
+)
+
+FSEISMY2 = DEFI_CHAR_SOL (
+   CHARGEMENT    ='FORCE',
+   MODELE        = MODELE,
+
+   # Unite d entree de table de signaux
+   UNITE_TRAN_INIT = 41,
+   NOM_CMP    ='DX',
+   AXE='Y',
+   NOM_PARA='Y',
+   GROUP_MA_DROITE = 'LI_Y0',
+   GROUP_MA_GAUCHE = 'LI_Y5',
+
+   TABLE_MATER_ELAS =tmatela,
+)
+
+DYNA3=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='PHYS',
+                        MODELE=MODELE,
+                        MATR_MASS=MASSE,
+                        MATR_RIGI=RIGIDITE,
+                        MATR_AMOR=AMORT,
+                        EXCIT=(
+                          _F(  CHARGE = ONDE3),
+                          _F(  CHARGE = FSEISMX1),
+                          _F(  CHARGE = FSEISMX2),
+                          _F(  CHARGE = FSEISMY1),
+                          _F(  CHARGE = FSEISMY2),
+                              ),
+                        INCREMENT=_F( LIST_INST = TEMPLI),
+                        SCHEMA_TEMPS=_F(SCHEMA='NEWMARK',),
+                        )
+                
+DXN26C=RECU_FONCTION(     RESULTAT=DYNA3,   NOEUD='N26',
+                         NOM_CHAM='DEPL',
+                         NOM_CMP='DX',
+                       )
+
+DXN31C=RECU_FONCTION(     RESULTAT=DYNA3,   NOEUD='N31',
+                         NOM_CHAM='DEPL',
+                         NOM_CMP='DX',
+                       )
+
+TEST_FONCTION(VALEUR=(
+                      _F(VALE_CALC=1.016176825599E-03,
+                         VALE_REFE=1.E-3,
+                         PRECISION=2.0E-2,
+                         REFERENCE='ANALYTIQUE',
+                         CRITERE='RELATIF',
+                         VALE_PARA=0.2656,
+                         FONCTION=DXN26C,),
+                      _F(VALE_CALC=1.004308004902E-03,
+                         VALE_REFE=1.E-3,
+                         PRECISION=1.0E-2,
+                         REFERENCE='ANALYTIQUE',
+                         CRITERE='RELATIF',
+                         VALE_PARA=0.44,
+                         FONCTION=DXN26C,),
+                      _F(VALE_CALC=1.969131129072E-03,
+                         VALE_REFE=2.E-3,
+                         PRECISION=2.0E-2,
+                         REFERENCE='ANALYTIQUE',
+                         CRITERE='RELATIF',
+                         VALE_PARA=0.3544,
+                         FONCTION=DXN31C,),
+                     )
+              )
 
 FIN( );
