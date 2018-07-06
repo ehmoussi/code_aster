@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -75,40 +75,7 @@ aster_logical, optional, intent(in) :: l_check_
     l_temp_init                  = icodre(1) .eq. 0
     l_pre2_init                  = icodre(3) .eq. 0
 !
-! - Check: domain of parameters
-!
-    if (ds_thm%ds_behaviour%l_temp) then
-        if (l_temp_init) then
-            if (ds_thm%ds_parainit%temp_init .le. r8prem()) then
-                call utmess('F', 'THM2_3')
-            endif
-        endif
-    endif
-    if (ds_thm%ds_behaviour%nb_pres .eq. 2) then
-        if (l_pre2_init) then
-            if (abs(ds_thm%ds_parainit%pre2_init) .le. r8prem()) then
-                call utmess('F', 'THM2_4')
-            endif
-        endif
-    endif
-!
-! - Check: compatibility coupling law with initial parameters
-!
-    if (ds_thm%ds_behaviour%l_temp) then
-        if (.not. l_temp_init) then
-            call utmess('F', 'THM2_1', sk=ds_thm%ds_behaviour%rela_thmc)
-        endif
-    endif
-    if (ds_thm%ds_behaviour%nb_pres .eq. 2) then
-        if (.not. l_pre2_init) then
-            call utmess('F', 'THM2_2', sk=ds_thm%ds_behaviour%rela_thmc)
-        endif
-    endif
-    if (ds_thm%ds_elem%l_dof_ther) then
-        if (.not. l_temp_init) then
-            call utmess('F', 'THM2_5')
-        endif
-    endif
+
 !
 ! - Check: compatibility coupling law with initial parameters
 !
