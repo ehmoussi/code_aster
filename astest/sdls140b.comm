@@ -209,7 +209,7 @@ CHA_ON=CREA_RESU(OPERATION='CONV_CHAR',
 CHA_ON2=CREA_RESU(OPERATION='CONV_RESU',
                   TYPE_RESU='EVOL_CHAR',
                   CONV_RESU=_F(
-                          NUME_DDL=NUMEDDL,
+                          MATR_RIGI=RIGI, 
                           NOM_CHAM_INIT='DEPL',
                           COEF=-1.0,
                           PRECISION=1.E-6,CRITERE='RELATIF',
@@ -453,6 +453,7 @@ FSEISMX = DEFI_CHAR_SOL (
 
    # Unite d entree de table de signaux
    UNITE_TRAN_INIT = 41,
+   LONG_CARA=lcara,
    NOM_CMP    ='DX',
    GROUP_MA_DROITE = 'FOND_RD',
    GROUP_MA_GAUCHE = 'FOND_RG',
@@ -466,6 +467,7 @@ FSEISMXG = DEFI_CHAR_SOL (
 
    # Unite d entree de table de signaux
    UNITE_TRAN_INIT = 41,
+   LONG_CARA=lcara,
    NOM_CMP    ='DX',
    #GROUP_MA_DROITE = 'FOND_RD',
    GROUP_MA_GAUCHE = 'FOND_RG',
@@ -479,6 +481,7 @@ FSEISMXD = DEFI_CHAR_SOL (
 
    # Unite d entree de table de signaux
    UNITE_TRAN_INIT = 41,
+   LONG_CARA=lcara,
    NOM_CMP    ='DX',
    GROUP_MA_DROITE = 'FOND_RD',
    #GROUP_MA_GAUCHE = 'FOND_RG',
@@ -493,6 +496,7 @@ FSEISMY = DEFI_CHAR_SOL (
 
    # Unite d entree de table de signaux
    UNITE_TRAN_INIT = 41,
+   LONG_CARA=lcara,
    NOM_CMP    ='DX',
    GROUP_MA_DROITE = 'FOND_RD',
    GROUP_MA_GAUCHE = 'FOND_RG',
@@ -531,27 +535,27 @@ TEST_RESU(
                    _F(CHAM_GD=maxS1,
                       NOM_CMP='DX',
                       NOEUD='N785',
-                      VALE_CALC=1.51614650015,
+                      VALE_CALC=1.49448705301,
                       ),
                    _F(CHAM_GD=maxS1,
                       NOM_CMP='DX',
                       NOEUD='N408',
-                      VALE_CALC=2.67332765681,
+                      VALE_CALC=2.48037093812,
                       ),
                    _F(CHAM_GD=maxS1,
                       NOM_CMP='DY',
                       NOEUD='N408',
-                      VALE_CALC=1.53203131622,
+                      VALE_CALC=1.60477310453,
                       ),
                    _F(CHAM_GD=maxS1,
                       NOM_CMP='DX',
                       NOEUD='N775',
-                      VALE_CALC=1.37577672843,
+                      VALE_CALC=1.28203182938,
                       ),
                    _F(CHAM_GD=maxS1,
                       NOM_CMP='DY',
                       NOEUD='N775',
-                      VALE_CALC=1.32796528567,
+                      VALE_CALC=1.3401035091,
                       ),
                   ),
            );
@@ -644,6 +648,14 @@ DYNA0=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='PHYS',
                         SCHEMA_TEMPS=_F(SCHEMA='NEWMARK',),
                         )
 
+DYNA0=CALC_CHAMP(reuse =DYNA0,
+                             RESULTAT=DYNA0,
+                             MODELE=MODELE0,
+                             CHAM_MATER=CHAMPMA0,
+                             GROUP_MA=('SURF',),
+                             FORCE=('FORC_NODA',),
+                            );
+
 MATN=DEFI_MATERIAU( ELAS=_F(  E=0.001E0, NU=Nusol,
                           RHO=0.0001, AMOR_HYST=0.0,
                           #AMOR_ALPHA=1.46E-04, AMOR_BETA=8.64E-02
@@ -664,7 +676,7 @@ FX = FORMULE(NOM_PARA=('X','Y'),VALE='X+201.')
 FY = FORMULE(NOM_PARA=('X','Y'),VALE='Y')
 FX2 = FORMULE(NOM_PARA=('X','Y'),VALE='X-200.')
 
-XX=PROJ_CHAMP(RESULTAT=DYNA0,METHODE='COLLOCATION',  NOM_CHAM=('DEPL','VITE',),
+XX=PROJ_CHAMP(RESULTAT=DYNA0,METHODE='COLLOCATION',  NOM_CHAM=('DEPL','VITE','FORC_NODA'),
               MODELE_1=MODELE0, MODELE_2=MODELE,
               VIS_A_VIS=(_F(GROUP_MA_2='FOND_RG',GROUP_MA_1='SURF', CAS_FIGURE='2D', TRANSF_GEOM_2=(FX,FY),),
                          _F(GROUP_MA_2='FOND_RD',GROUP_MA_1='SURF', CAS_FIGURE='2D', TRANSF_GEOM_2=(FX2,FY),),
@@ -863,6 +875,80 @@ IMPR_RESU(FORMAT="RESULTAT",UNITE=8,
                   NOM_CMP=('DX','DY',),
                   GROUP_NO='LSURF',
                   IMPR_COOR='OUI',),);
+
+EVOLCHSC=DEFI_CHAR_SOL (
+   CHARGEMENT    ='FORCE',
+   MODELE        = MODELE,
+   COEF=-0.5,
+   RESU_INIT=XX,
+   NUME_DDL=NUMEDDL,
+   PRECISION=1.E-6,CRITERE='RELATIF',
+   LIST_INST=LINST,
+                );
+
+EVOLCHSD=DEFI_CHAR_SOL (
+   CHARGEMENT    ='ONDE_PLANE',
+   MODELE        = MODELE,
+   RESU_INIT=XX,
+   MATR_RIGI=RIGIDITB,
+   MATR_AMOR=AMORTB,
+   PRECISION=1.E-6,CRITERE='RELATIF',
+   LIST_INST=LINST,
+                );
+
+BlancS4=DYNA_VIBRA(BASE_CALCUL='PHYS',
+                  TYPE_CALCUL='TRAN',
+                  MODELE=MODELE,
+                  CHAM_MATER=CHMAT,
+                  MATR_MASS=MASSE,
+                  MATR_RIGI=RIGI,
+                  MATR_AMOR=AMOR,
+                  SCHEMA_TEMPS=_F(SCHEMA='NEWMARK',),
+                  INCREMENT=_F(LIST_INST=LINST,),
+                  EXCIT=(
+                         _F(  CHARGE = ONDES1),
+                         _F(  CHARGE = EVOLCHSC),
+                         _F(  CHARGE = EVOLCHSD),
+                         ),
+                 );
+
+maxS4=CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R',
+                OPERATION='EXTR',
+                RESULTAT=BlancS4,
+                NOM_CHAM='DEPL',
+                TYPE_MAXI='MAXI',
+                TYPE_RESU='VALE',
+                LIST_INST=LINST2,);
+
+TEST_RESU(
+          CHAM_NO=(
+                   _F(CHAM_GD=maxS4,
+                      NOM_CMP='DX',
+                      NOEUD='N785',
+                      VALE_CALC=1.44366320686,
+                      ),
+                   _F(CHAM_GD=maxS4,
+                      NOM_CMP='DX',
+                      NOEUD='N408',
+                      VALE_CALC=2.64658204631,
+                      ),
+                   _F(CHAM_GD=maxS4,
+                      NOM_CMP='DY',
+                      NOEUD='N408',
+                      VALE_CALC=1.68862697482,
+                      ),
+                   _F(CHAM_GD=maxS4,
+                      NOM_CMP='DX',
+                      NOEUD='N775',
+                      VALE_CALC=1.34715118032,
+                      ),
+                   _F(CHAM_GD=maxS4,
+                      NOM_CMP='DY',
+                      NOEUD='N775',
+                      VALE_CALC=1.26955249447,
+                      ),
+                  ),
+           );
 
 FIN();
 #CHECKSUM:f950638f4b15c0cc2a3c5a312d5bb429  -:FIN CHECKSUM
