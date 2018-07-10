@@ -23,7 +23,7 @@ interface
               mprt2n,mprt11,mprt21,mprt22, &
           wpg   ,ffe   ,ffm   ,dffm  ,ddffm,jacobi, &
           coefac,jeu   ,dlagrc,kappa ,vech1 , &
-          vech2 ,h    , &
+          vech2 ,h    ,coefff, &
           matrmm,matrem, matrme)
               
     
@@ -40,6 +40,7 @@ interface
         real(kind=8) :: coefac
         real(kind=8) :: jeu
         real(kind=8) :: dlagrc
+        real(kind=8) :: coefff
     
         real(kind=8) :: mprt1n(3, 3)
         real(kind=8) :: mprt2n(3, 3)

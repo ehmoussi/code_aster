@@ -70,7 +70,7 @@ subroutine te0364(option, nomte)
     integer :: iresof, iresog,count_consistency
     integer :: iresof_prev, iresog_prev
     integer :: ndexfr
-    integer :: granglis=0
+    integer :: granglis
     integer :: ndexfr_prev
     aster_logical :: laxis, leltf
     aster_logical :: lpenac, lpenaf
@@ -487,6 +487,7 @@ subroutine te0364(option, nomte)
                         mprt2n, mprojn, mprt11, mprt21, mprt22,&
                         wpg, ffe, ffm, dffm,ddffm, jacobi,&
                         coefac, jeu, dlagrc, kappa, vech1,vech2, h, &
+                        coefff,granglis,&
                             matree, matrmm,&
                         matrem, matrme)
                      
@@ -497,6 +498,7 @@ subroutine te0364(option, nomte)
                             coefac_prev, jeu_prev, dlagrc_prev, kappa_prev,&
                             vech1_prev,&
                             vech2_prev, h_prev, &
+                        coefff,granglis,&
                             matree_prev, matrmm_prev,&
                             matrem_prev, matrme_prev)
             
@@ -590,7 +592,7 @@ subroutine te0364(option, nomte)
             mmat_tmp = alpha_cont*mmat+(1.0-alpha_cont)*mmat_prev
 
             if ( norm2(mmat_tmp-mmat) &
-                .gt. 1.d-6*norm2(mmat) .and. count_consistency .le. 30) goto 51
+                .gt. 1.d-4*norm2(mmat) .and. count_consistency .le. 30) goto 51
             mmat = mmat_tmp
     endif
 !    do compte_l = 1, 81
