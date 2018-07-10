@@ -60,8 +60,6 @@ character(len=16), intent(in) :: option, nomte
     integer :: iresof, iresog, ialgoc, ialgof
     integer :: count_consistency
     integer :: ndexfr
-    integer :: iresof_prev, iresog_prev
-    integer :: ndexfr_prev
     character(len=8) :: typmae, typmam
     character(len=9) :: phasep
     character(len=9) :: phasep_prev
@@ -77,8 +75,7 @@ character(len=16), intent(in) :: option, nomte
     real(kind=8) :: coefff = 0.0
     real(kind=8) :: lambda = 0.0, lambds = 0.0
     real(kind=8) :: lambda_prev = 0.0 , lambds_prev =0.0
-    real(kind=8) :: coefac = 0.0 , coefaf = 0.0
-    real(kind=8) :: coefac_prev =0.0, coefaf_prev=0.0
+    real(kind=8) :: coefac = 0.0, coefaf = 0.0
     real(kind=8) :: wpg, jacobi
     real(kind=8) :: norm(3) = 0.0, tau1(3) = 0.0, tau2(3) = 0.0
     real(kind=8) :: jeusup=0.0
@@ -100,6 +97,7 @@ character(len=16), intent(in) :: option, nomte
     real(kind=8) :: xpc_prev, ypc_prev, xpr_prev, ypr_prev
     real(kind=8) :: mprojn_prev(3, 3)=0.0, mprojt_prev(3, 3)=0.0
     real(kind=8) :: norm_prev(3) = 0.0 , tau1_prev(3) = 0.0 , tau2_prev(3)=0.0
+    real(kind=8) :: coefac_prev =0.0, coefaf_prev=0.0
     real(kind=8) :: rese_prev(3)=0.0, nrese_prev=0.0
     real(kind=8) :: dlagrc_prev=0.0, dlagrf_prev(2)=0.0
     real(kind=8) :: hah(2,2)=0.0, hah_prev(2,2)=0.0
@@ -206,7 +204,6 @@ character(len=16), intent(in) :: option, nomte
     l_previous_frot = (nint(zr(jpcf-1+44)) .eq. 1 )
     if (option .eq. 'RIGI_CONT') l_previous = l_previous_cont
     if (option .eq. 'RIGI_FROT') l_previous = l_previous_frot
-    l_large_slip = nint(zr(jpcf-1+48)) .eq. 1
 !
 ! - Get coefficients
 !
@@ -255,7 +252,7 @@ character(len=16), intent(in) :: option, nomte
                 
     if (l_previous) then
         call mmtppe(typmae, typmam, ndim, nne, nnm,&
-                    nnl, nbdm, iresog_prev, laxis, &
+                    nnl, nbdm, iresog, laxis, &
                     xpc           , ypc      , xpr   , ypr     ,&
                     tau1_prev     , tau2_prev,&
                     jeusup_prev, ffe, ffm, dffm,ddffm, ffl,&
@@ -273,7 +270,7 @@ character(len=16), intent(in) :: option, nomte
 !
     call mmlagc(lambds, dlagrc, iresof, lambda)
     if (l_previous) then
-        call mmlagc(lambds_prev, dlagrc_prev, iresof_prev, lambda_prev)
+        call mmlagc(lambds_prev, dlagrc_prev, iresof, lambda_prev)
     endif
 !
 ! - Compute state of contact and friction
@@ -297,16 +294,19 @@ character(len=16), intent(in) :: option, nomte
 !
 ! ----- PHASE DE CALCUL : previous
 !
-        call mmmpha(loptf, lcont_prev, ladhe_prev, ndexfr_prev, lpenac_prev,&
+        call mmmpha(loptf, lcont_prev, ladhe_prev, ndexfr, lpenac_prev,&
                     lpenaf_prev, phasep_prev)
     endif
 !
 ! - Large sliding hypothesis
 !
     if (lcont .and.  (phasep(1:4) .eq. 'GLIS') .and. (l_large_slip) &
-         .and. (abs(jeu) .lt. 1.d-6 )) then
-        call mngliss(tau1  ,tau2  ,djeut,kappa ,taujeu1, taujeu2, &
-                    dnepmait1,dnepmait2,ndim )
+        .and. (abs(jeu) .lt. 1.d-6 )) then
+        call mngliss(ndim     , kappa    ,&
+                     tau1     , tau2     ,&
+                     taujeu1  , taujeu2  ,&
+                     dnepmait1, dnepmait2,&
+                     djeut )
         call mmnsta(ndim, leltf, lpenaf, loptf, djeut,&
                     dlagrf, coefaf, tau1, tau2, lcont,&
                     ladhe, lambda, rese, nrese)
@@ -322,7 +322,7 @@ character(len=16), intent(in) :: option, nomte
                 matree, matrmm, matrem, matrme, matrec,&
                 matrmc, matref, matrmf)
     if (l_previous) then
-        call mmtfpe(phasep_prev, iresof_prev, ndim, nne, nnm,&
+        call mmtfpe(phasep_prev, iresof, ndim, nne, nnm,&
                     nnl, nbcps, wpg, jacobi, ffl,&
                     ffe, ffm, norm, tau1_prev, tau2_prev,&
                     mprojn_prev, mprojt_prev, rese_prev, nrese_prev, lambda_prev,&
@@ -401,8 +401,7 @@ character(len=16), intent(in) :: option, nomte
                     matrff_prev, matrfe_prev, matrfm_prev, matrmf_prev, matref_prev,&
                     mmat_prev)
     endif
-
-    alpha_cont = zr(jpcf-1+28)
+!
     if (l_previous) then
             mmat_tmp = alpha_cont*mmat+(1-alpha_cont)*mmat_prev
             count_consistency = 0

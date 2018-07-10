@@ -82,7 +82,7 @@ character(len=16), intent(in) :: option, nomte
     real(kind=8) :: vech1(3)=0.0, vech2(3)=0.0
     real(kind=8) :: ffe(9), ffm(9), ffl(9)
     real(kind=8) :: dffm(2, 9)
-    real(kind=8) :: alpha_cont=1.0
+    real(kind=8) :: alpha_cont=0.0
     real(kind=8) :: dnepmait1, dnepmait2, taujeu1, taujeu2
     real(kind=8) :: xpc, ypc, xpr, ypr
     aster_logical :: l_large_slip = ASTER_FALSE
@@ -108,7 +108,6 @@ character(len=16), intent(in) :: option, nomte
     l_previous_frot = (nint(zr(jpcf-1+44)) .eq. 1 ) .and. .false.
     if (option .eq. 'RIGI_CONT') l_previous = l_previous_cont
     if (option .eq. 'RIGI_FROT') l_previous = l_previous_frot
-    l_large_slip = nint(zr(jpcf-1+48)) .eq. 1
 !
 ! - Get coefficients
 !
@@ -169,8 +168,11 @@ character(len=16), intent(in) :: option, nomte
 !
     if (lcont .and.  (phasep(1:4) .eq. 'GLIS') .and. (l_large_slip)&
          .and. (abs(jeu) .lt. 1.d-6 )) then
-        call mngliss(tau1  ,tau2  ,djeut,kappa ,taujeu1, taujeu2, &
-                     dnepmait1,dnepmait2,ndim )
+        call mngliss(ndim     , kappa    ,&
+                     tau1     , tau2     ,&
+                     taujeu1  , taujeu2  ,&
+                     dnepmait1, dnepmait2,&
+                     djeut )
         call mmnsta(ndim, leltf, lpenaf, loptf, djeut,&
                     dlagrf, coefaf, tau1, tau2, lcont,&
                     ladhe, lambda, rese, nrese)
