@@ -70,7 +70,7 @@ subroutine te0364(option, nomte)
     integer :: iresof, iresog,count_consistency
     integer :: iresof_prev, iresog_prev
     integer :: ndexfr
-    integer :: granglis
+    integer :: granglis=0
     integer :: ndexfr_prev
     aster_logical :: laxis, leltf
     aster_logical :: lpenac, lpenaf
@@ -587,13 +587,19 @@ subroutine te0364(option, nomte)
             mmat_tmp = alpha_cont*mmat+(1-alpha_cont)*mmat_prev
             count_consistency = 0 
             51 continue
-            count_consistency = 1
+            count_consistency = count_consistency+1
             alpha_cont = 0.5*(alpha_cont+1.0)
             mmat_tmp = alpha_cont*mmat+(1.0-alpha_cont)*mmat_prev
 
             if ( norm2(mmat_tmp-mmat) &
-                .gt. 1.d-4*norm2(mmat) .and. count_consistency .le. 30) goto 51
-            mmat = mmat_tmp
+                .gt. 1.d-6*norm2(mmat) .and. count_consistency .le. 15) then 
+                       goto 51
+            elseif ( norm2(mmat_tmp-mmat) .lt. 1.d-6*norm2(mmat)) then 
+                       mmat = mmat_tmp
+            else 
+                       mmat = 0.9999d0*mmat + 0.0001d0*mmat_tmp
+            endif
+            ! Ce critere peut influencer les perfs : ssnv505l 26s a 35s. 
     endif
 !    do compte_l = 1, 81
 !       if mmat(compte_l,compte_l) .le. 1.d-50&
@@ -648,3 +654,4 @@ subroutine te0364(option, nomte)
     endif
 !
 end subroutine
+
