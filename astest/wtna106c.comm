@@ -237,7 +237,7 @@ CHAMNO=CREA_CHAMP(MAILLAGE=MAIL,
                     AFFE=(
                           _F(TOUT='OUI',
                              NOM_CMP=('DX','DY','PRE1','PRE2','TEMP'),
-                             VALE=(0.0,0.0,0.0,0.E5,0.0,)),
+                             VALE=(0.0,0.0,0.0,1.E5,0.0,)),
                           _F(GROUP_NO='ROCHES',
                              NOM_CMP='TEMP',
                              VALE=0.0,),
