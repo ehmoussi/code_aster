@@ -21,7 +21,7 @@ subroutine mm_cycl_algo(ds_contact,  l_frot_zone, &
                   indi_cont_eval, indi_frot_eval, dist_cont_curr,  &
                   pres_cont_curr, dist_frot_curr, pres_frot_curr, v_sdcont_cychis,&
                   v_sdcont_cyccoe, v_sdcont_cyceta, indi_cont_curr,indi_frot_curr,&
-                  ctcsta, mmcvca,l_pena_frot,l_pena_cont,vale_pene,glis_maxi)
+                  ctcsta, mmcvca,l_pena_frot,l_pena_cont,vale_pene,glis_maxi,nb_cont_point)
 !
 use NonLin_Datastructure_type
 !
@@ -116,7 +116,7 @@ implicit none
     real(kind=8) :: coef_bussetta=0.0, dist_max=0.0
     integer      ::  i_algo_cont=0
     integer :: i_reso_frot=0
-    integer :: n_cychis
+    integer :: n_cychis,nb_cont_point
 !    real(kind=8) :: coef_bussetta=0.0, dist_max, coef_tmp
     real(kind=8) ::  coef_tmp
 !    real(kind=8) ::  racine,racine1,racine2,racinesup
@@ -259,6 +259,14 @@ implicit none
     v_sdcont_cychis(n_cychis*(i_cont_poin-1)+11) = dist_frot_curr(2)
     v_sdcont_cychis(n_cychis*(i_cont_poin-1)+12) = dist_frot_curr(3)
     
+!
+! - Traitement spécifique
+!
+!     if ((i_cont_poin .eq. nb_cont_point) .and.  &
+!         (ds_contact%resi_pressure .lt. 1.d-8*ds_contact%cont_pressure) )  then
+!         mmcvca = .true.
+!         ctcsta = 0
+!     endif
 
 !
 ! Step 3. Traitement du FLIP-FLOP : POINT_FIXE SUR LE CONTACT
@@ -269,7 +277,6 @@ implicit none
 !             mmcvca = .true.
 !         endif
 !     endif
-    
 !
 ! Step 4. Traitement du CYCLAGE : NEWTON SUR LE CONTACT
     if ((ds_contact%iteration_newton .ge. 3 ) .and. &
@@ -347,6 +354,7 @@ implicit none
 !
 !  Algorithm of Bussetta
 !  
+
     if ((type_adap .eq. 2) .or. (type_adap .eq. 3) .or. &
         (type_adap .eq. 6) .or. (type_adap .eq. 7)) then
         
@@ -478,20 +486,23 @@ implicit none
 !              v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+3) = pres_cont_prev
 !              v_sdcont_cychis(n_cychis*(i_cont_poin-1)+4)    = dist_cont_curr
 !              v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+4) = dist_cont_prev      
-             v_sdcont_cychis(n_cychis*(i_cont_poin-1)+57) = 1.0
-             v_sdcont_cychis(n_cychis*(i_cont_poin-1)+59) = 0.99
-             v_sdcont_cychis(n_cychis*(i_cont_poin-1)+56) = 1.0
-             v_sdcont_cychis(n_cychis*(i_cont_poin-1)+51) = 4.0
-             v_sdcont_cychis(n_cychis*(i_cont_poin-1)+52) = 4.0
-             v_sdcont_cyceta(4*(i_cont_poin-1)+1)   = 10
-             coef_tmp =1.d0/ds_contact%arete_min
-             v_sdcont_cychis(n_cychis*(i_cont_poin-1)+2)    = coef_tmp
-             v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+2) = coef_tmp
+!             if (pres_cont_curr .lt. 1.d-2*ds_contact%cont_pressure) then 
+                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+57) = 1.0
+                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+59) = 0.99
+                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+56) = 1.0
+                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+51) = 4.0
+                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+52) = 4.0
+                v_sdcont_cyceta(4*(i_cont_poin-1)+1)   = 10
+                coef_tmp =1.d0/ds_contact%arete_min
+                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+2)    = coef_tmp
+                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+2) = coef_tmp
+!             endif
              mmcvca =  indi_cont_prev .eq. indi_cont_curr
         endif
     endif
     
     if (.not. mmcvca ) ctcsta = ctcsta+1
-    mmcvca = mmcvca .and. (ctcsta .eq. 0) 
+    mmcvca = (mmcvca .and. (ctcsta .eq. 0))
+! Ne pas effracer ce comment &  .or. (ds_contact%resi_pressure .lt. 1.d-6*ds_contact%cont_pressure))
     236 continue
 end subroutine

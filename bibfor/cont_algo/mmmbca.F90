@@ -414,7 +414,7 @@ implicit none
                             indi_cont_eval, indi_frot_eval, gap,  lagr_cont_poin,&
                             gap_user_frot, pres_frot, v_sdcont_cychis, v_sdcont_cyccoe, &
                             v_sdcont_cyceta,indi_cont_curr,indi_frot_curr, loop_cont_vali,&
-                            loop_cont_conv,l_pena_frot,l_pena_cont, vale_pene,glis_maxi)
+                            loop_cont_conv,l_pena_frot,l_pena_cont, vale_pene,glis_maxi,nb_cont_poin)
 !
  19             continue
                 if (ds_contact%iteration_newton .ge. 2 .and. indi_cont_curr .eq. 1) then
@@ -434,6 +434,12 @@ implicit none
                                       -coor_proj_curr(3))**2 &
                                     ))
                     enddo
+                    if (ds_contact%arete_max .gt. 1.d-15 ) then 
+                        resi_geom = resi_geom/ds_contact%arete_max
+                    else
+                        resi_geom = resi_geom
+                    endif
+
                     if (resi_geom .gt. ds_contact%critere_geom .and.&
                         ds_contact%iteration_newton .ge. 2) then 
                         ds_contact%critere_geom = resi_geom

@@ -20,7 +20,7 @@ subroutine mmgtme(ndim  ,nnm   ,nne,mprt1n,mprt2n, &
                   wpg   , &
           ffe,ddffm,jacobi,coefac,jeu   , &
           dlagrc,kappa ,vech1 ,vech2 ,h     , &
-          mprt11,mprt21,mprt22,matrme)
+          mprt11,mprt21,mprt22,coefff,matrme)
 !
 ! person_in_charge: mickael.abbas at edf.fr
 !
@@ -36,7 +36,7 @@ subroutine mmgtme(ndim  ,nnm   ,nne,mprt1n,mprt2n, &
     real(kind=8) :: mprt11(3,3),mprt22(3,3),mprt21(3,3),mprt12(3,3)
     
     real(kind=8) :: ffe(9),ddffm(3,9)
-    real(kind=8) :: wpg, jacobi
+    real(kind=8) :: wpg, jacobi,coefff
     real(kind=8) :: coefac, jeu, dlagrc
     
     real(kind=8) :: kappa(2,2),h(2,2)
@@ -194,16 +194,14 @@ do 260 i = 1, nne
         do 230 l = 1, ndim
             ii = ndim*(i-1)+l
             jj = ndim*(j-1)+k
- matrme(ii,jj) = matrme(ii,jj)         -&
-(dlagrc-coefac*jeu)*wpg*jacobi * (&
+ matrme(ii,jj) = matrme(ii,jj)         +&
+(dlagrc-coefac*jeu)*wpg*jacobi *coefff* (&
  mprt11(l,k)*ffe(i)*(kappa(1,1)*kappa(1,1)+kappa(1,2)*kappa(2,1))*(ddffm(1,j)+ddffm(3,j))  + &
  mprt12(l,k)*ffe(i)*(kappa(1,1)*kappa(1,1)+kappa(1,2)*kappa(2,1))*(ddffm(2,j)+ddffm(3,j))   + &
  mprt21(l,k)*ffe(i)*(kappa(1,2)*kappa(1,1)+kappa(2,2)*kappa(1,2))*(ddffm(1,j)+ddffm(3,j))   + &
- mprt22(l,k)*ffe(i)*(kappa(1,2)*kappa(1,1)+kappa(2,2)*kappa(1,2))*(ddffm(3,j)+ddffm(2,j)) )
-  
-  
- matrme(ii,jj) = matrme(ii,jj)          - &
-(dlagrc-coefac*jeu)*wpg*jacobi* (&
+ mprt22(l,k)*ffe(i)*(kappa(1,2)*kappa(1,1)+kappa(2,2)*kappa(1,2))*(ddffm(3,j)+ddffm(2,j)) ) &
+  + &
+(dlagrc-coefac*jeu)*wpg*jacobi*coefff* (&
  mprt11(l,k)*ffe(i)*(kappa(2,1)*kappa(1,1)+kappa(2,2)*kappa(2,1))*(ddffm(1,j)+ddffm(3,j))  + &
  mprt12(l,k)*ffe(i)*(kappa(2,1)*kappa(1,1)+kappa(2,2)*kappa(2,1))*(ddffm(2,j)+ddffm(3,j))   + &
  mprt21(l,k)*ffe(i)*(kappa(1,2)*kappa(2,1)+kappa(2,2)*kappa(2,2))*(ddffm(1,j)+ddffm(3,j))   + &

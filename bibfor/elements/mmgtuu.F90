@@ -20,7 +20,7 @@ subroutine mmgtuu(ndim  ,nne   , nnm   ,mprt1n, &
               mprt2n,mprt11,mprt21,mprt22, &
           wpg   ,ffe   ,ffm   ,dffm  ,ddffm,jacobi, &
           coefac,jeu   ,dlagrc,kappa ,vech1 , &
-          vech2 ,h     , &
+          vech2 ,h     ,coefff, &
           matrmm,matrem, matrme)
 !
 ! person_in_charge: mickael.abbas at edf.fr
@@ -39,6 +39,7 @@ subroutine mmgtuu(ndim  ,nne   , nnm   ,mprt1n, &
     real(kind=8) :: ffe(9), ffm(9), dffm(2, 9),ddffm(3,9)
     real(kind=8) :: wpg, jacobi
     real(kind=8) :: coefac, jeu, dlagrc
+    real(kind=8) :: coefff
     
     real(kind=8) :: kappa(2,2),h(2,2)
     real(kind=8) :: vech1(3),vech2(3)
@@ -115,6 +116,7 @@ subroutine mmgtuu(ndim  ,nne   , nnm   ,mprt1n, &
                  wpg   , &
          ffm    ,dffm  ,ddffm,jacobi,coefac,jeu   , &
          dlagrc,kappa ,vech1 ,vech2 ,h   , &
+                        coefff,&
          mprt11,mprt21,mprt22,matrmm)
 
 ! --- DEPL_ESCL/DEPL_MAIT
@@ -123,7 +125,7 @@ subroutine mmgtuu(ndim  ,nne   , nnm   ,mprt1n, &
                   wpg   , &
           ffe, ddffm,jacobi,coefac,jeu   , &
           dlagrc,kappa ,vech1 ,vech2 ,h     , &
-          mprt11,mprt21,mprt22,matrem)
+          mprt11,mprt21,mprt22,coefff,matrem)
 !
 ! --- DEPL_MAIT/DEPL_ESCL
 !
@@ -131,6 +133,6 @@ subroutine mmgtuu(ndim  ,nne   , nnm   ,mprt1n, &
                   wpg   , &
           ffe,  ddffm,jacobi,coefac,jeu   , &
           dlagrc,kappa ,vech1 ,vech2 ,h     , &
-          mprt11,mprt21,mprt22,matrme)
+          mprt11,mprt21,mprt22,coefff,matrme)
 !
 end subroutine

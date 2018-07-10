@@ -23,7 +23,7 @@ interface
                   wpg   , &
           ffe,ddffm,jacobi,coefac,jeu   , &
           dlagrc,kappa ,vech1 ,vech2 ,h     , &
-          mprt11,mprt21,mprt22,matrem)
+          mprt11,mprt21,mprt22,coefff,matrem)
     
         integer :: ndim
         integer :: nnm, nne
@@ -35,6 +35,7 @@ interface
         real(kind=8) :: ddffm(3, 9)
         real(kind=8) :: jacobi
         real(kind=8) :: coefac        
+        real(kind=8) :: coefff        
         real(kind=8) :: jeu
         real(kind=8) :: dlagrc
     

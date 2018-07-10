@@ -24,6 +24,7 @@ interface
           wpg   ,ffe   ,ffm   ,dffm  ,ddffm,jacobi, &
           coefac,jeu   ,dlagrc,kappa ,vech1 , &
           vech2 ,h        ,  &
+                        coefff,granglis,&
           matree,matrmm,matrem, matrme)
           
         character(len=9) :: phasep
@@ -40,9 +41,11 @@ interface
         real(kind=8) :: dffm(2, 9)
         real(kind=8) :: ddffm(3, 9)
         real(kind=8) :: jacobi
-        real(kind=8) :: coefac        
+        real(kind=8) :: coefac   
+        integer :: granglis     
         real(kind=8) :: jeu
         real(kind=8) :: dlagrc
+        real(kind=8) :: coefff
     
         real(kind=8) :: mprt1n(3, 3)
         real(kind=8) :: mprt2n(3, 3)
