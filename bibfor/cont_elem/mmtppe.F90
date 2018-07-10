@@ -22,7 +22,7 @@ subroutine mmtppe(typmae, typmam,&
                   ndim, nne, nnm, nnl, nbdm,&
                   iresog, laxis, &
                   xpc        , ypc      , xpr     , ypr     ,&
-                  tau1       , tau2     ,&                  
+                  tau1       , tau2     ,&
                   jeusup, ffe, ffm, dffm, ddffm, ffl,&
                   jacobi, jeu, djeut, dlagrc,&
                   dlagrf, norm, mprojn,&
@@ -249,17 +249,17 @@ real(kind=8) :: dnepmait1, dnepmait2, taujeu1, taujeu2
 ! - Compute geometric quantities for second variation of gap
 !
     call mmcalg(ndim     , l_large_slip,&
-                nnm      , dffm     , ddffm ,&
-                geomam   , ddepmam  ,&
-                tau1     , tau2     , norm  ,&
-                jeu      , djeu     ,&
-                gene11   , gene21   , gene22,&
-                kappa    , h        ,&
-                vech1    , vech2    ,&
-                a        , ha       , hah   ,&
-                mprt11   , mprt12   , mprt21, mprt22,&
-                mprt1n   , mprt2n   , mprnt1, mprnt2,&
-                taujeu1  , taujeu2  ,&
+                nnm      , dffm        , ddffm ,&
+                geomam   , ddepmam     ,&
+                tau1     , tau2        , norm  ,&
+                jeu      , djeu        ,&
+                gene11   , gene21      , gene22,&
+                kappa    , h           ,&
+                vech1    , vech2       ,&
+                a        , ha          , hah   ,&
+                mprt11   , mprt12      , mprt21, mprt22,&
+                mprt1n   , mprt2n      , mprnt1, mprnt2,&
+                taujeu1  , taujeu2     ,&
                 dnepmait1, dnepmait2)
 !
 end subroutine

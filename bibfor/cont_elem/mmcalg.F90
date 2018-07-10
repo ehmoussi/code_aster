@@ -19,16 +19,16 @@
 ! aslint: disable=W1504
 !
 subroutine mmcalg(ndim     , l_large_slip,&
-                  nnm      , dffm     , ddffm ,&
-                  geomam   , ddepmam  ,&
-                  tau1     , tau2     , norm  ,&
-                  jeu      , djeu     ,&
-                  gene11   , gene21   , gene22,&
-                  kappa    , h        ,&
-                  vech1    , vech2    ,&
-                  a        , ha       , hah   ,&
-                  mprt11   , mprt12   , mprt21, mprt22,&
-                  mprt1n   , mprt2n   , mprnt1, mprnt2,&
+                  nnm      , dffm        , ddffm ,&
+                  geomam   , ddepmam     ,&
+                  tau1     , tau2        , norm  ,&
+                  jeu      , djeu        ,&
+                  gene11   , gene21      , gene22,&
+                  kappa    , h           ,&
+                  vech1    , vech2       ,&
+                  a        , ha          , hah   ,&
+                  mprt11   , mprt12      , mprt21, mprt22,&
+                  mprt1n   , mprt2n      , mprnt1, mprnt2,&
                   taujeu1  , taujeu2  ,&
                   dnepmait1, dnepmait2)
 !
@@ -237,15 +237,15 @@ real(kind=8), intent(out) :: dnepmait1, dnepmait2
 !
 ! - Projection matrix normal/second tangent
 !
-      mprnt2(1,1) = mprt2n(1,1)
-      mprnt2(2,2) = mprt2n(2,2)
-      mprnt2(3,3) = mprt2n(3,3)
-      mprnt2(1,2) = mprt2n(2,1)
-      mprnt2(1,3) = mprt2n(3,1)
-      mprnt2(2,1) = mprt2n(1,2)
-      mprnt2(2,3) = mprt2n(3,2)
-      mprnt2(3,1) = mprt2n(1,3)
-      mprnt2(3,2) = mprt2n(2,3)
+    mprnt2(1,1) = mprt2n(1,1)
+    mprnt2(2,2) = mprt2n(2,2)
+    mprnt2(3,3) = mprt2n(3,3)
+    mprnt2(1,2) = mprt2n(2,1)
+    mprnt2(1,3) = mprt2n(3,1)
+    mprnt2(2,1) = mprt2n(1,2)
+    mprnt2(2,3) = mprt2n(3,2)
+    mprnt2(3,1) = mprt2n(1,3)
+    mprnt2(3,2) = mprt2n(2,3)
 !
 ! - Projection matrix first tangent/first tangent
 !
