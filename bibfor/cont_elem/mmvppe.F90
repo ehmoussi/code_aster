@@ -131,10 +131,10 @@ real(kind=8) :: vech1(3), vech2(3)
 ! ----------------------------------------------------------------------
 !
     call jevech('PCONFR', 'L', jpcf)
-    djeut = 0.
-    ddeple = 0.
-    ddeplm = 0.
-    ddepmam = 0.
+    djeut   = 0.d0
+    ddeple  = 0.d0
+    ddeplm  = 0.d0
+    ddepmam = 0.d0
 !
 ! --- RECUPERATION DE LA GEOMETRIE ET DES CHAMPS DE DEPLACEMENT
 !
@@ -237,17 +237,17 @@ real(kind=8) :: vech1(3), vech2(3)
 ! - Compute projection matrices for second variation of gap
 !
     call mmcalg(ndim     , l_large_slip,&
-                nnm      , dffm     , ddffm ,&
-                geomam   , ddepmam  ,&
-                tau1     , tau2     , norm  ,&
-                jeu      , djeu     ,&
-                gene11   , gene21   , gene22,&
-                kappa    , h        ,&
-                vech1    , vech2    ,&
-                a        , ha       , hah   ,&
-                mprt11   , mprt12   , mprt21, mprt22,&
-                mprt1n   , mprt2n   , mprnt1, mprnt2,&
-                taujeu1  , taujeu2  ,&
+                nnm      , dffm        , ddffm ,&
+                geomam   , ddepmam     ,&
+                tau1     , tau2        , norm  ,&
+                jeu      , djeu        ,&
+                gene11   , gene21      , gene22,&
+                kappa    , h           ,&
+                vech1    , vech2       ,&
+                a        , ha          , hah   ,&
+                mprt11   , mprt12      , mprt21, mprt22,&
+                mprt1n   , mprt2n      , mprnt1, mprnt2,&
+                taujeu1  , taujeu2     ,&
                 dnepmait1, dnepmait2)
 !
 end subroutine
