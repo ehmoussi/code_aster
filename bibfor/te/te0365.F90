@@ -56,12 +56,12 @@ character(len=16), intent(in) :: option, nomte
     integer :: nddl, ndim, nbcps, nbdm
     integer :: iresof, iresog, ialgoc, ialgof
     integer :: ndexfr
+    integer :: indco
     character(len=8) :: typmae, typmam
     character(len=9) :: phasep
     aster_logical :: laxis = .false. , leltf = .false.
     aster_logical :: lpenac = .false. , lpenaf = .false.
     aster_logical :: loptf = .false. , ldyna = .false., lcont = .false., ladhe = .false.
-    aster_logical :: l_previous = .false.
     aster_logical :: debug = .false.
     real(kind=8) :: coefff = 0.0
     real(kind=8) :: lambda = 0.0, lambds = 0.0
@@ -119,6 +119,10 @@ character(len=16), intent(in) :: option, nomte
                    ialgoc      , ialgof, iresof, iresog,&
                    lpenac      , lpenaf)
 !
+! - Get status
+!
+    call mmGetStatus(option, indco)
+!
 ! - Get informations on cell (slave and master)
 !
     call mmelem(nomte , ndim , nddl,&
@@ -141,7 +145,7 @@ character(len=16), intent(in) :: option, nomte
                 kappa, h, vech1, vech2,&
                 mprt11, mprt12, mprt21,&
                 mprt22,taujeu1, taujeu2, &
-                dnepmait1,dnepmait2, l_previous,l_large_slip)
+                dnepmait1,dnepmait2, l_large_slip)
 !
 !  --- PREPARATION DES DONNEES - CHOIX DU LAGRANGIEN DE CONTACT
 !
