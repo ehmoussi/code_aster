@@ -17,8 +17,8 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine mmGetStatus(option    ,&
-                       l_previous, indco, indco_prev, indadhe_prev, indadhe2_prev)
+subroutine mmGetStatus(option     , indco      ,&
+                       l_previous_, indco_prev_, indadhe_prev_, indadhe2_prev_)
 !
 implicit none
 !
@@ -27,8 +27,9 @@ implicit none
 #include "asterfort/jevech.h"
 !
 character(len=16), intent(in) :: option
-aster_logical, intent(out) :: l_previous
-integer, intent(out) :: indco, indco_prev, indadhe_prev, indadhe2_prev
+integer, intent(out) :: indco
+aster_logical, optional, intent(out) :: l_previous_
+integer, optional, intent(out) :: indco_prev_, indadhe_prev_, indadhe2_prev_
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -48,7 +49,8 @@ integer, intent(out) :: indco, indco_prev, indadhe_prev, indadhe2_prev
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: jpcf
-    aster_logical :: l_previous_cont, l_previous_fric
+    aster_logical :: l_previous_cont, l_previous_fric, l_previous
+    integer :: indco_prev, indadhe_prev, indadhe2_prev
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -61,5 +63,10 @@ integer, intent(out) :: indco, indco_prev, indadhe_prev, indadhe2_prev
     indco_prev    = nint(zr(jpcf-1+27))
     indadhe_prev  = nint(zr(jpcf-1+44))
     indadhe2_prev = nint(zr(jpcf-1+47))
+    if (present(l_previous_)) l_previous_ = l_previous
+    if (present(indco_prev_)) indco_prev_ = indco_prev
+    if (present(indadhe_prev_)) indadhe_prev_ = indadhe_prev
+    if (present(indadhe2_prev_)) indadhe2_prev_ = indadhe2_prev
+
 !
 end subroutine

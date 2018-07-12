@@ -199,8 +199,8 @@ character(len=16), intent(in) :: option, nomte
 !
 ! - Get status
 !
-    call mmGetStatus(option    ,&
-                     l_previous, indco, indco_prev, indadhe_prev, indadhe2_prev)
+    call mmGetStatus(option    , indco     , &
+                     l_previous, indco_prev, indadhe_prev, indadhe2_prev)
 !
 ! - Get coefficients
 !

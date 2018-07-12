@@ -15,8 +15,6 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 #include "asterf_types.h"
 !
@@ -33,7 +31,7 @@ interface
                   kappa, h, vech1, vech2,&
                   mprt11, mprt12, mprt21,&
                   mprt22,taujeu1, taujeu2, &
-                  dnepmait1,dnepmait2, l_previous,l_large_slip)
+                  dnepmait1,dnepmait2, l_large_slip)
         character(len=8) :: typmae
         character(len=8) :: typmam
         integer :: iresog
@@ -45,7 +43,6 @@ interface
         aster_logical, intent(in) :: l_large_slip
         aster_logical :: laxis
         aster_logical :: ldyna
-        aster_logical :: l_previous
         real(kind=8) :: jeusup
         real(kind=8) :: ffe(9)
         real(kind=8) :: ffm(9)
