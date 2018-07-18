@@ -31,6 +31,7 @@
 #include "DataStructures/DataStructure.h"
 #include "MemoryManager/JeveuxVector.h"
 #include "Modeling/Model.h"
+#include "Modeling/FiniteElementDescriptor.h"
 #include "LinearAlgebra/ElementaryMatrix.h"
 #include "Loads/MechanicalLoad.h"
 #include "Loads/KinematicsLoad.h"
@@ -57,7 +58,13 @@ public:
     /**
      * @brief Constructeur
      */
-    FieldOnNodesDescriptionInstance(  const JeveuxMemory memType = Permanent );
+    FieldOnNodesDescriptionInstance( const JeveuxMemory memType = Permanent );
+
+    /**
+     * @brief Destructor
+     */
+    ~FieldOnNodesDescriptionInstance()
+    {};
 
     /**
      * @brief Constructeur
@@ -227,6 +234,10 @@ private:
     /** @brief Booleen permettant de preciser sur la sd est vide */
     bool                       _isEmpty;
 
+    /** @brief Vectors of FiniteElementDescriptor */
+    std::vector< FiniteElementDescriptorPtr > _FEDVector;
+    std::set< std::string >                   _FEDNames;
+
 protected:
     /**
      * @brief Constructeur
@@ -260,6 +271,22 @@ public:
     typedef boost::shared_ptr< BaseDOFNumberingInstance > BaseDOFNumberingPtr;
 
     /**
+     * @brief Add a FiniteElementDescriptor to elementary matrix
+     * @param FiniteElementDescriptorPtr support FiniteElementDescriptor
+     */
+    bool addFiniteElementDescriptor( const FiniteElementDescriptorPtr& curFED )
+    {
+        const auto name = trim( curFED->getName() );
+        if( _FEDNames.find( name ) == _FEDNames.end() )
+        {
+            _FEDVector.push_back( _supportModel->getFiniteElementDescriptor() );
+            _FEDNames.insert( name );
+            return true;
+        }
+        return false;
+    };
+
+    /**
      * @brief Function d'ajout d'un chargement
      * @param Args... Liste d'arguments template
      */
@@ -275,6 +302,14 @@ public:
     bool computeNumerotation() throw ( std::runtime_error );
 
     /**
+     * @brief Get elementary matrix
+     */
+    ElementaryMatrixPtr getElementaryMatrix()
+    {
+        return _supportMatrix;
+    };
+
+    /**
      * @brief Get support FieldOnNodesDescription
      */
     FieldOnNodesDescriptionPtr getFieldOnNodesDescription()
@@ -283,9 +318,18 @@ public:
     };
 
     /**
+     * @brief Get all support FiniteElementDescriptors
+     * @return vector of all FiniteElementDescriptors
+     */
+    std::vector< FiniteElementDescriptorPtr > getFiniteElementDescriptors()
+    {
+        return _FEDVector;
+    };
+
+    /**
      * @brief Get model
      */
-    ModelPtr getSupportModel() throw ( std::runtime_error )
+    ModelPtr getSupportModel()
     {
         return _supportModel;
     };
@@ -339,6 +383,13 @@ public:
         if ( ! _supportMatrix.use_count() == 0 )
             throw std::runtime_error( "It is not allowed to defined Model and ElementaryMatrix together" );
         _supportModel = currentModel;
+        auto curFED = _supportModel->getFiniteElementDescriptor();
+        const auto name = trim( curFED->getName() );
+        if( _FEDNames.find( name ) == _FEDNames.end() )
+        {
+            _FEDVector.push_back( _supportModel->getFiniteElementDescriptor() );
+            _FEDNames.insert( name );
+        }
     };
 };
 

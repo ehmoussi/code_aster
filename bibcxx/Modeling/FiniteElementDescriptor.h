@@ -79,6 +79,12 @@ public:
                                      const JeveuxMemory memType = Permanent );
 
     /**
+     * @brief Destructor
+     */
+    ~FiniteElementDescriptorInstance()
+    {};
+
+    /**
      * @typedef FiniteElementDescriptorPtr
      * @brief Pointeur intelligent vers un FiniteElementDescriptor
      */

@@ -53,6 +53,22 @@ public:
     {};
 
     /**
+     * @brief Add a existing FieldOnNodesDescription in FieldBuilder
+     */
+    void addFieldOnNodesDescription( const FieldOnNodesDescriptionPtr& fond )
+    {
+        _mapProfChno[ trim( fond->getName() ) ] = fond;
+    };
+
+    /**
+     * @brief Add a existing FiniteElementDescriptor in FieldBuilder
+     */
+    void addFiniteElementDescriptor( const FiniteElementDescriptorPtr& fed )
+    {
+        _mapLigrel[ trim( fed->getName() ) ] = fed;
+    };
+
+    /**
      * @brief Build a FieldOnElements with a FiniteElementDescriptor
      */
     template< typename ValueType >

@@ -28,6 +28,7 @@
 
 #include "Results/FullResultsContainer.h"
 #include "LinearAlgebra/StructureInterface.h"
+#include "LinearAlgebra/AssemblyMatrix.h"
 
 /**
  * @class MechanicalModeComplexContainerInstance
@@ -48,17 +49,27 @@ private:
     /** @typedef Valeur contenue dans mapStrVOFN */
     typedef mapStrVOCFN::value_type mapStrVOCFNValue;
     /** @brief Liste des champs aux noeuds */
-    mapStrVOCFN                         _dictOfVectorOfComplexFieldsNodes;
+    mapStrVOCFN                          _dictOfVectorOfComplexFieldsNodes;
     /** */
-    StructureInterfacePtr _structureInterface;
-    
+    StructureInterfacePtr                _structureInterface;
+    /** @brief Damping matrix */
+    AssemblyMatrixDisplacementDoublePtr  _dampingMatrix;
+    /** @brief Rigidity complex matrix */
+    AssemblyMatrixDisplacementComplexPtr _rigidityCMatrix;
+    /** @brief Rigidity double matrix */
+    AssemblyMatrixDisplacementDoublePtr  _rigidityDMatrix;
+
 public:
     /**
      * @brief Constructeur
      */
-    MechanicalModeComplexContainerInstance(): FullResultsContainerInstance( "MODE_MECA_C" ), 
-    _structureInterface( StructureInterfacePtr() )
+    MechanicalModeComplexContainerInstance(): FullResultsContainerInstance( "MODE_MECA_C" ),
+        _structureInterface( StructureInterfacePtr() ),
+        _dampingMatrix( nullptr ),
+        _rigidityCMatrix( nullptr ),
+        _rigidityDMatrix( nullptr )
     {};
+
     /**
      * @brief Obtenir un champ aux noeuds complexe vide à partir de son nom et de son numéro d'ordre
      * @param name nom Aster du champ
@@ -76,7 +87,39 @@ public:
      */
     FieldOnNodesComplexPtr getComplexFieldOnNodes( const std::string name, const int rank ) const
         throw ( std::runtime_error );
-    
+
+    /**
+     * @brief Set the damping matrix
+     * @param matr AssemblyMatrixDisplacementDoublePtr
+     */
+    bool setDampingMatrix( const AssemblyMatrixDisplacementDoublePtr& matr )
+    {
+        _dampingMatrix = matr;
+        return true;
+    };
+
+    /**
+     * @brief Set the rigidity matrix
+     * @param matr AssemblyMatrixDisplacementComplexPtr
+     */
+    bool setRigidityMatrix( const AssemblyMatrixDisplacementComplexPtr& matr )
+    {
+        _rigidityCMatrix = matr;
+        _rigidityDMatrix = nullptr;
+        return true;
+    };
+
+    /**
+     * @brief Set the rigidity matrix
+     * @param matr AssemblyMatrixDisplacementDoublePtr
+     */
+    bool setRigidityMatrix( const AssemblyMatrixDisplacementDoublePtr& matr )
+    {
+        _rigidityDMatrix = matr;
+        _rigidityCMatrix = nullptr;
+        return true;
+    };
+
     /**
      * @brief set interf_dyna
      * @param structureInterface objet StructureInterfacePtr
@@ -85,6 +128,28 @@ public:
     {
         _structureInterface = structureInterface;
         return true;
+    };
+
+    bool update() throw ( std::runtime_error )
+    {
+        BaseDOFNumberingPtr numeDdl( nullptr );
+        if( _dampingMatrix != nullptr )
+            numeDdl = _dampingMatrix->getDOFNumbering();
+        if( _rigidityCMatrix != nullptr )
+            numeDdl = _rigidityCMatrix->getDOFNumbering();
+        if( _rigidityDMatrix != nullptr )
+            numeDdl = _rigidityDMatrix->getDOFNumbering();
+
+        if( numeDdl != nullptr )
+        {
+            const auto model = numeDdl->getSupportModel();
+            const auto matrElem = numeDdl->getElementaryMatrix();
+            if( model != nullptr )
+                _mesh = model->getSupportMesh();
+            if( matrElem != nullptr )
+                _mesh = matrElem->getSupportModel()->getSupportMesh();
+        }
+        return ResultsContainerInstance::update();
     };
 };
 
