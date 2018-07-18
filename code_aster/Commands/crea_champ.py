@@ -20,7 +20,7 @@
 # person_in_charge: nicolas.sellenet@edf.fr
 
 from ..Objects import PCFieldOnMeshDouble, FieldOnNodesDouble, FieldOnElementsDouble
-from ..Objects import FieldOnNodesComplex
+from ..Objects import FieldOnNodesComplex, FullResultsContainer
 from .ExecuteCommand import ExecuteCommand
 
 
@@ -59,10 +59,22 @@ class FieldCreator(ExecuteCommand):
             self._result = FieldOnElementsDouble()
         numeDdl = keywords.get("NUME_DDL")
         if numeDdl is not None:
-            self._result.setDescription(numeDdl)
+            self._result.setDOFNumering(numeDdl)
         modele = keywords.get("MODELE")
-        if modele is not None and location[:2] == "EL":
-            self._result.setModel(modele)
+        if location[:2] == "EL":
+            modele = keywords.get("MODELE")
+            resultat = keywords.get("RESULTAT")
+            chamF = keywords.get("CHAM_F")
+            if modele is not None:
+                self._result.setModel(modele)
+            elif resultat is not None:
+                if isinstance(resultat, FullResultsContainer):
+                    dofNum = resultat.getDOFNumbering()
+                    self._result.setDescription(dofNum.getFiniteElementDescriptors()[0])
+                else:
+                    self._result.setModel(resultat.getModel())
+            elif chamF is not None:
+                self._result.setModel(chamF.getModel())
 
     def post_exec(self, keywords):
         """Execute the command.

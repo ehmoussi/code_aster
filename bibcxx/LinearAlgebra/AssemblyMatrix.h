@@ -119,6 +119,7 @@ class AssemblyMatrixInstance: public DataStructure
          * @brief Constructeur
          */
         AssemblyMatrixInstance( const JeveuxMemory memType = Permanent );
+
         /**
          * @brief Constructeur
          */
@@ -145,9 +146,26 @@ class AssemblyMatrixInstance: public DataStructure
         };
 
         /**
+         * @brief Methode permettant de definir les matrices elementaires
+         * @param currentElemMatrix objet ElementaryMatrix
+         */
+        void appendElementaryMatrix( const ElementaryMatrixPtr& currentElemMatrix )
+        {
+            _elemMatrix.push_back( currentElemMatrix );
+        };
+
+        /**
          * @brief Assemblage de la matrice
          */
         bool build() throw ( std::runtime_error );
+
+        /**
+         * @brief Clear all ElementaryMatrixPtr
+         */
+        void clearElementaryMatrix()
+        {
+            _elemMatrix.clear();
+        };
 
         /**
          * @brief Get the internal DOFNumbering
@@ -196,23 +214,6 @@ class AssemblyMatrixInstance: public DataStructure
 //             _dofNum = currentNum;
 //         };
 #endif /* _USE_MPI */
-
-        /**
-         * @brief Methode permettant de definir les matrices elementaires
-         * @param currentElemMatrix objet ElementaryMatrix
-         */
-        void appendElementaryMatrix( const ElementaryMatrixPtr& currentElemMatrix )
-        {
-            _elemMatrix.push_back( currentElemMatrix );
-        };
-
-        /**
-         * @brief Clear all ElementaryMatrixPtr
-         */
-        void clearElementaryMatrix()
-        {
-            _elemMatrix.clear();
-        };
 
         /**
          * @brief Methode permettant de definir la liste de chargement

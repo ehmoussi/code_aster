@@ -208,15 +208,24 @@ class ModelInstance: public DataStructure
          */
         bool existsThm();
 
-        BaseMeshPtr getSupportMesh() throw ( std::runtime_error )
+        /**
+         * @brief Get FiniteElementDescriptor
+         */
+        FiniteElementDescriptorPtr getFiniteElementDescriptor() const
         {
-            if ( ( ! _supportBaseMesh ) || _supportBaseMesh->isEmpty() )
-                throw std::runtime_error( "Support mesh of current model is empty" );
-            return _supportBaseMesh;
+            return _ligrel;
+        };
+
+        /**
+         * @brief Obtention de la methode du partitioner
+         */
+        GraphPartitioner getGraphPartitioner() const
+        {
+            return _graphPartitioner;
         };
 
 #ifdef _USE_MPI
-        PartialMeshPtr getPartialMesh() throw ( std::runtime_error )
+        PartialMeshPtr getPartialMesh() const throw ( std::runtime_error )
         {
             if ( ( ! _supportPartialMesh ) || _supportPartialMesh->isEmpty() )
                 throw std::runtime_error( "Support mesh of current model is empty" );
@@ -225,10 +234,25 @@ class ModelInstance: public DataStructure
 #endif /* _USE_MPI */
 
         /**
+         * @brief Obtention de la methode de partition
+         */
+        ModelSplitingMethod getSplittingMethod() const
+        {
+            return _splitMethod;
+        };
+
+        BaseMeshPtr getSupportMesh() const throw ( std::runtime_error )
+        {
+            if ( ( ! _supportBaseMesh ) || _supportBaseMesh->isEmpty() )
+                throw std::runtime_error( "Support mesh of current model is empty" );
+            return _supportBaseMesh;
+        };
+
+        /**
          * @brief Methode permettant de savoir si le modele est vide
          * @return true si le modele est vide
          */
-        bool isEmpty()
+        bool isEmpty() const
         {
             return ! _typeOfElements->exists();
         };
@@ -248,22 +272,6 @@ class ModelInstance: public DataStructure
         void setSplittingMethod( ModelSplitingMethod split )
         {
             _splitMethod = split;
-        };
-
-        /**
-         * @brief Obtention de la methode de partition
-         */
-        ModelSplitingMethod getSplittingMethod( )
-        {
-            return _splitMethod ;
-        };
-
-        /**
-         * @brief Obtention de la methode du partitioner
-         */
-        GraphPartitioner getGraphPartitioner( )
-        {
-            return _graphPartitioner ;
         };
 
         /**

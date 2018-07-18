@@ -77,8 +77,6 @@ private:
     typedef mapStrVOFE::iterator mapStrVOFEIterator;
     /** @typedef Valeur contenue dans mapStrVOFE */
     typedef mapStrVOFE::value_type mapStrVOFEValue;
-    /** @brief Model sur lequel repose la resultat */
-    BaseMeshPtr                  _mesh;
     /** @brief Pointeur de nom Jeveux '.DESC' */
     JeveuxBidirectionalMapChar16 _symbolicNamesOfFields;
     /** @brief Collection '.TACH' */
@@ -93,7 +91,7 @@ private:
     int                          _nbRanks;
     /** @brief Vecteur Jeveux '.RSPI' */
     JeveuxVectorLong             _rspi;
-    /** @brief Vecteur Jeveux '.RS' */
+    /** @brief Vecteur Jeveux '.RSPR' */
     JeveuxVectorDouble           _rspr;
     /** @brief Vecteur Jeveux '.RSP8' */
     JeveuxVectorChar8            _rsp8;
@@ -118,6 +116,10 @@ private:
     mapRankMaterial                    _mapMaterial;
     /** @brief List of ModelPtr */
     mapRankModel                       _mapModel;
+
+protected:
+    /** @brief Maillage sur lequel repose la resultat */
+    BaseMeshPtr                        _mesh;
     /** @brief Object to correctly manage fields and field descriptions */
     FieldBuilder                       _fieldBuidler;
 
@@ -141,7 +143,6 @@ public:
     ResultsContainerInstance( const std::string &name,
                               const std::string resuTyp ):
         DataStructure( name, 19, resuTyp ),
-        _mesh( nullptr ),
         _symbolicNamesOfFields( JeveuxBidirectionalMapChar16( getName() + ".DESC" ) ),
         _namesOfFields( JeveuxCollectionChar24( getName() + ".TACH" ) ),
         _accessVariables( JeveuxBidirectionalMapChar16( getName() + ".NOVA" ) ),
@@ -154,6 +155,7 @@ public:
         _rs16( JeveuxVectorChar16( getName() + ".RS16" ) ),
         _rs24( JeveuxVectorChar24( getName() + ".RS24" ) ),
         _title( JeveuxVectorChar80( getName() + ".TITR" ) ),
+        _mesh( nullptr ),
         _fieldBuidler( FieldBuilder() )
     {};
 

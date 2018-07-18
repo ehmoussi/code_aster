@@ -50,7 +50,10 @@ class ComputeAdditionalField(ExecuteCommand):
         """
         modele = keywords.get("MODELE")
         if modele is None:
-            modele = keywords["RESULTAT"].getModel()
+            try:
+                modele = keywords["RESULTAT"].getModel()
+            except:
+                modele = None
         if modele is not None:
             self._result.appendModelOnAllRanks(modele)
         self._result.update()

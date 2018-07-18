@@ -36,6 +36,8 @@ void exportFullResultsContainerToPython()
                              std::string , std::string> ) )
         .def( "__init__", make_constructor(
             &initFactoryPtr< FullResultsContainerInstance, std::string> ) )
+        .def( "getDOFNumbering", &FullResultsContainerInstance::getDOFNumbering )
         .def( "printMedFile", &FullResultsContainerInstance::printMedFile )
+        .def( "setDOFNumbering", &FullResultsContainerInstance::setDOFNumbering )
     ;
 };

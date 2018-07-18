@@ -29,11 +29,18 @@ void exportMechanicalModeContainerToPython()
 {
     using namespace boost::python;
 
+    bool (MechanicalModeContainerInstance::*c1)( const AssemblyMatrixDisplacementDoublePtr& ) =
+        &MechanicalModeContainerInstance::setRigidityMatrix;
+    bool (MechanicalModeContainerInstance::*c2)( const AssemblyMatrixTemperatureDoublePtr& ) =
+        &MechanicalModeContainerInstance::setRigidityMatrix;
+
     class_< MechanicalModeContainerInstance, MechanicalModeContainerPtr,
             bases< FullResultsContainerInstance > > ( "MechanicalModeContainer", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< MechanicalModeContainerInstance > ) )
-    .def( "setStructureInterface", &MechanicalModeContainerInstance::setStructureInterface )
+        .def( "setRigidityMatrix", c1 )
+        .def( "setRigidityMatrix", c2 )
+        .def( "setStructureInterface", &MechanicalModeContainerInstance::setStructureInterface )
     ;
 };
 
@@ -41,10 +48,19 @@ void exportMechanicalModeComplexContainerToPython()
 {
     using namespace boost::python;
 
+    bool (MechanicalModeComplexContainerInstance::*c1)(const AssemblyMatrixDisplacementDoublePtr&)=
+        &MechanicalModeComplexContainerInstance::setRigidityMatrix;
+    bool (MechanicalModeComplexContainerInstance::*c2)(const AssemblyMatrixDisplacementComplexPtr&)=
+        &MechanicalModeComplexContainerInstance::setRigidityMatrix;
+
     class_< MechanicalModeComplexContainerInstance, MechanicalModeComplexContainerPtr,
             bases< FullResultsContainerInstance > > ( "MechanicalModeComplexContainer", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< MechanicalModeComplexContainerInstance > ) )
-    .def( "setStructureInterface", &MechanicalModeComplexContainerInstance::setStructureInterface )
+        .def( "setDampingMatrix", &MechanicalModeComplexContainerInstance::setDampingMatrix )
+        .def( "setRigidityMatrix", c1 )
+        .def( "setRigidityMatrix", c2 )
+        .def( "setStructureInterface",
+              &MechanicalModeComplexContainerInstance::setStructureInterface )
     ;
 };

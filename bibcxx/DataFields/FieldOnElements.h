@@ -79,7 +79,7 @@ public:
                     _descriptor( JeveuxVectorLong( getName() + ".CELD" ) ),
                     _reference( JeveuxVectorChar24( getName() + ".CELK" ) ),
                     _valuesList( JeveuxVector< ValueType >( getName() + ".CELV" ) ),
-                    _supportModel( ModelPtr() ),
+                    _supportModel( nullptr ),
                     _title( JeveuxVectorChar80( getName() + ".TITR" ) )
     {};
 
@@ -92,7 +92,7 @@ public:
                     _descriptor( JeveuxVectorLong( getName() + ".CELD" ) ),
                     _reference( JeveuxVectorChar24( getName() + ".CELK" ) ),
                     _valuesList( JeveuxVector< ValueType >( getName() + ".CELV" ) ),
-                    _supportModel( ModelPtr() ),
+                    _supportModel( nullptr ),
                     _title( JeveuxVectorChar80( getName() + ".TITR" ) )
     {};
 
@@ -130,6 +130,16 @@ public:
     };
 
     /**
+     * @brief Get the support model
+     */
+    ModelPtr getModel() const
+    {
+        if ( _supportModel->isEmpty() )
+            throw std::runtime_error( "Model is empty" );
+        return _supportModel;
+    };
+
+    /**
      * @brief Set the description of finite elements
      * @param curDesc object FiniteElementDescriptorPtr
      */
@@ -161,12 +171,7 @@ public:
         {
             if( _supportModel == nullptr )
                 throw std::runtime_error( "Model is empty" );
-            typedef FiniteElementDescriptorInstance FEDDesc;
-            typedef FiniteElementDescriptorPtr FEDDescP;
-
-            const std::string name2 = trim( (*_reference)[0].toString() );
-            const auto mesh = _supportModel->getSupportMesh();
-            _dofDescription = FEDDescP( new FEDDesc( name2, mesh, getMemoryType() ) );
+            _dofDescription = _supportModel->getFiniteElementDescriptor();
         }
         return true;
     };

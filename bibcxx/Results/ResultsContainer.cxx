@@ -92,6 +92,8 @@ void ResultsContainerInstance::addModel( const ModelPtr& model,
     long rang = rank;
     std::string type("MODELE");
     CALLO_RSADPA_ZK8_WRAP( getName(), &rang, model->getName(), type );
+    const auto fed = model->getFiniteElementDescriptor();
+    _fieldBuidler.addFiniteElementDescriptor( fed );
 };
 
 void ResultsContainerInstance::appendMaterialOnMeshOnAllRanks( const MaterialOnMeshPtr& mater )
@@ -101,7 +103,7 @@ void ResultsContainerInstance::appendMaterialOnMeshOnAllRanks( const MaterialOnM
     for( int rank = 0; rank < nbRanks; ++rank )
     {
         const long iordr = (*_serialNumber)[rank];
-        if( _mapMaterial.find( rank ) == _mapMaterial.end() )
+        if( _mapMaterial.find( iordr ) == _mapMaterial.end() )
             addMaterialOnMesh( mater, iordr );
     }
 };
@@ -113,7 +115,7 @@ void ResultsContainerInstance::appendModelOnAllRanks( const ModelPtr& model )
     for( int rank = 0; rank < nbRanks; ++rank )
     {
         const long iordr = (*_serialNumber)[rank];
-        if( _mapModel.find( rank ) == _mapModel.end() )
+        if( _mapModel.find( iordr ) == _mapModel.end() )
             addModel( model, iordr );
     }
 };
@@ -194,8 +196,11 @@ bool ResultsContainerInstance::update() throw ( std::runtime_error )
     const auto numberOfSerialNum = _serialNumber->usedSize();
     _nbRanks = numberOfSerialNum;
     BaseMeshPtr curMesh( nullptr );
-    if( _mapModel.find( _nbRanks ) != _mapModel.end() )
-        curMesh = _mapModel[ _nbRanks ]->getSupportMesh();
+    const long iordr = (*_serialNumber)[_nbRanks-1];
+    if( _mapModel.find( iordr ) != _mapModel.end() )
+        curMesh = _mapModel[ iordr ]->getSupportMesh();
+    else if( _mesh != nullptr )
+        curMesh = _mesh;
 
     int cmpt = 1;
     for( const auto curIter : _namesOfFields->getVectorOfObjects() )
