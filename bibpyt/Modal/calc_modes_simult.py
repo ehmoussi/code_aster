@@ -67,7 +67,10 @@ class ModalCalculationSimult(ExecuteCommand):
         """
         matrRigi = keywords.get("MATR_RIGI")
         if matrRigi is not None:
-            self._result.setDOFNumbering(matrRigi.getDOFNumbering())
+            if isinstance(self._result, GeneralizedModeContainer):
+                self._result.setGeneralizedDOFNumbering(matrRigi.getGeneralizedDOFNumbering())
+            else:
+                self._result.setDOFNumbering(matrRigi.getDOFNumbering())
             self._result.setRigidityMatrix(matrRigi)
         matrAmor = keywords.get("MATR_AMOR")
         if matrAmor is not None:

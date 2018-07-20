@@ -29,6 +29,7 @@
 #include "Results/FullResultsContainer.h"
 #include "Supervis/ResultNaming.h"
 #include "LinearAlgebra/GeneralizedAssemblyMatrix.h"
+#include "Discretization/GeneralizedDOFNumbering.h"
 
 /**
  * @class GeneralizedModeContainerInstance
@@ -42,16 +43,19 @@ private:
     GeneralizedAssemblyMatrixDoublePtr   _rigidityDoubleMatrix;
     /** @brief Rigidity complex matrix */
     GeneralizedAssemblyMatrixComplexPtr  _rigidityComplexMatrix;
+    /** @brief generalized support DOFNumbering */
+    GeneralizedDOFNumberingPtr           _genDOFNum;
 
 public:
     /**
      * @brief Constructeur
      * @todo  Ajouter les objets Jeveux de la SD
      */
-    GeneralizedModeContainerInstance( const std::string &name):
+    GeneralizedModeContainerInstance( const std::string &name ):
         FullResultsContainerInstance( name, "MODE_GENE" ),
         _rigidityDoubleMatrix( nullptr ),
-        _rigidityComplexMatrix( nullptr )
+        _rigidityComplexMatrix( nullptr ),
+        _genDOFNum( nullptr )
     {};
 
     /**
@@ -61,6 +65,30 @@ public:
     GeneralizedModeContainerInstance():
         GeneralizedModeContainerInstance( ResultNaming::getNewResultName())
     {};
+
+    /**
+     * @brief Get support GeneralizedDOFNumering
+     */
+    GeneralizedDOFNumberingPtr getGeneralizedDOFNumbering() const throw ( std::runtime_error )
+    {
+        if( _genDOFNum != nullptr )
+            return _genDOFNum;
+        throw std::runtime_error( "GeneralizedDOFNumbering is empty" );
+    };
+
+    /**
+     * @brief Set support GeneralizedDOFNumering
+     */
+    bool setGeneralizedDOFNumbering( const GeneralizedDOFNumberingPtr& dofNum )
+    {
+        if( dofNum != nullptr )
+        {
+            _genDOFNum = dofNum;
+//             _fieldBuidler.addFieldOnNodesDescription( _genDOFNum->getFieldOnNodesDescription() );
+            return true;
+        }
+        return false;
+    };
 
     /**
      * @brief Set the rigidity matrix
