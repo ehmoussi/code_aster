@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -43,5 +43,26 @@ class DynamicMacroElementDefinition(ExecuteCommand):
             keywords (dict): User's keywords.
         """
         self._result.setSupportMechanicalMode(keywords["BASE_MODALE"])
+        matrRigi = keywords.get("MATR_RIGI")
+        if matrRigi is not None:
+            self._result.setRigidityMatrix(matrRigi)
+        matrMass = keywords.get("MATR_MASS")
+        if matrMass is not None:
+            self._result.setMassMatrix(matrMass)
+        matrAmor = keywords.get("MATR_AMOR")
+        if matrAmor is not None:
+            self._result.setDampingMatrix(matrAmor)
+        matrImpe = keywords.get("MATR_IMPE")
+        if matrImpe is not None:
+            self._result.setImpedanceMatrix(matrImpe)
+        matrImpeRigi = keywords.get("MATR_IMPE_RIGI")
+        if matrImpeRigi is not None:
+            self._result.setImpedanceRigidityMatrix(matrImpeRigi)
+        matrImpeMass = keywords.get("MATR_IMPE_MASS")
+        if matrImpeMass is not None:
+            self._result.setMassMatrix(matrImpeMass)
+        matrImpeAmor = keywords.get("MATR_IMPE_AMOR")
+        if matrImpeAmor is not None:
+            self._result.setImpedanceDampingMatrix(matrImpeAmor)
 
 MACR_ELEM_DYNA = DynamicMacroElementDefinition.run

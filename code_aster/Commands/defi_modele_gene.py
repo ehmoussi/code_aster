@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -35,6 +35,18 @@ class GeneralizedModelDefinition(ExecuteCommand):
         """
 
         self._result = GeneralizedModel()
+
+    def post_exec(self, keywords):
+        """Execute the command.
+
+        Arguments:
+            keywords (dict): User's keywords.
+        """
+        sousStruct = keywords.get("SOUS_STRUC")
+        if type(sousStruct) is not tuple:
+            sousStruct = (sousStruct,)
+        for occur in sousStruct:
+            self._result.addDynamicMacroElement(occur["NOM"], occur["MACR_ELEM_DYNA"])
 
 
 DEFI_MODELE_GENE = GeneralizedModelDefinition.run
