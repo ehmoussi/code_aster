@@ -45,6 +45,9 @@ class ExtrMode(ExecuteCommand):
         Arguments:
             keywords (dict): User's keywords.
         """
-        self._result.setDOFNumbering(keywords['FILTRE_MODE'][0]['MODE'].getDOFNumbering())
+        try:
+            self._result.setDOFNumbering(keywords['FILTRE_MODE'][0]['MODE'].getDOFNumbering())
+        except:
+            pass
 
 EXTR_MODE = ExtrMode.run
