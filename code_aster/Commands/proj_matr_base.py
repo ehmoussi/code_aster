@@ -43,4 +43,13 @@ class ProjMatrBase(ExecuteCommand):
             else:
                 self._result = GeneralizedAssemblyMatrixComplex()
 
+    def post_exec(self, keywords):
+        """Execute the command.
+
+        Arguments:
+            keywords (dict): User's keywords.
+        """
+        self._result.setGeneralizedDOFNumbering(keywords['NUME_DDL_GENE'])
+
+
 PROJ_MATR_BASE = ProjMatrBase.run
