@@ -40,6 +40,8 @@ void exportGeneralizedModeContainerToPython()
             &initFactoryPtr< GeneralizedModeContainerInstance , std::string > ) )
         .def( "__init__", make_constructor(
             &initFactoryPtr< GeneralizedModeContainerInstance > ) )
+        .def( "setDampingMatrix",
+              &GeneralizedModeContainerInstance::setDampingMatrix )
         .def( "getGeneralizedDOFNumbering",
               &GeneralizedModeContainerInstance::getGeneralizedDOFNumbering )
         .def( "setGeneralizedDOFNumbering",

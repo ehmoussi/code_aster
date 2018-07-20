@@ -39,6 +39,8 @@
 class GeneralizedModeContainerInstance: public FullResultsContainerInstance
 {
 private:
+    /** @brief Damping matrix */
+    GeneralizedAssemblyMatrixDoublePtr   _dampingMatrix;
     /** @brief Rigidity double matrix */
     GeneralizedAssemblyMatrixDoublePtr   _rigidityDoubleMatrix;
     /** @brief Rigidity complex matrix */
@@ -77,6 +79,16 @@ public:
     };
 
     /**
+     * @brief Set the damping matrix
+     * @param matr GeneralizedAssemblyMatrixDoublePtr
+     */
+    bool setDampingMatrix( const GeneralizedAssemblyMatrixDoublePtr& matr )
+    {
+        _dampingMatrix = matr;
+        return true;
+    };
+
+    /**
      * @brief Set support GeneralizedDOFNumering
      */
     bool setGeneralizedDOFNumbering( const GeneralizedDOFNumberingPtr& dofNum )
@@ -84,7 +96,6 @@ public:
         if( dofNum != nullptr )
         {
             _genDOFNum = dofNum;
-//             _fieldBuidler.addFieldOnNodesDescription( _genDOFNum->getFieldOnNodesDescription() );
             return true;
         }
         return false;
