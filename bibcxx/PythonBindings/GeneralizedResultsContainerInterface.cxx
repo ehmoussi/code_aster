@@ -53,6 +53,8 @@ void exportGeneralizedResultsContainerToPython()
         .def( "__init__", make_constructor(
             &initFactoryPtr< TransientGeneralizedResultsContainerInstance,
                              std::string >) )
+        .def( "getDOFNumbering", &TransientGeneralizedResultsContainerInstance::getDOFNumbering )
+        .def( "setDOFNumbering", &TransientGeneralizedResultsContainerInstance::setDOFNumbering )
     ;
 
     class_< HarmoGeneralizedResultsContainerInstance,
