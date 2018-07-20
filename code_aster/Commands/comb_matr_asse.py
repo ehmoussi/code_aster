@@ -89,8 +89,13 @@ class MatrixCombination(ExecuteCommand):
         if comb is None:
             comb = keywords.get("COMB_C")
         if comb is not None:
-            dofNum = comb[0]["MATR_ASSE"].getDOFNumbering()
-            self._result.setDOFNumbering(dofNum)
+            if isinstance(self._result, GeneralizedAssemblyMatrixDouble) or \
+                isinstance(self._result, GeneralizedAssemblyMatrixComplex):
+                dofNum = comb[0]["MATR_ASSE"].getGeneralizedDOFNumbering()
+                self._result.setGeneralizedDOFNumbering(dofNum)
+            else:
+                dofNum = comb[0]["MATR_ASSE"].getDOFNumbering()
+                self._result.setDOFNumbering(dofNum)
 
 
 COMB_MATR_ASSE = MatrixCombination.run
