@@ -32,6 +32,8 @@
 #include "MemoryManager/JeveuxVector.h"
 #include "Modal/StaticMacroElement.h"
 #include "Results/DynamicResultsIndexing.h"
+#include "Discretization/DOFNumbering.h"
+
 /**
  * @class GeneralizedResultsContainerInstance
  * @brief Cette classe correspond a la sd_dyna_gene de Code_Aster.
@@ -133,6 +135,8 @@ private:
     JeveuxVectorLong           _ipsd;
     /** @brief Description des nonlinéarités (si mot-clé COMPORTEMENT) */
     NonLinearDescriptor        _nonLinDesc;
+    /** @brief Support DOFNumbering */
+    DOFNumberingPtr            _dofNum;
   
 public:
     /**
@@ -158,8 +162,19 @@ public:
         _acceExcitFunction(  JeveuxVectorChar8( getName() +".FACC"  ) ),
         _veloExcitFunction(  JeveuxVectorChar8( getName() +".FVIT"  ) ),
         _displExcitFunction(  JeveuxVectorChar8( getName() +".FDEP"  ) ),
-        _ipsd( JeveuxVectorLong( getName() + ".IPSD" ) )
+        _ipsd( JeveuxVectorLong( getName() + ".IPSD" ) ),
+        _dofNum( nullptr )
     {};
+
+    DOFNumberingPtr getDOFNumbering() const
+    {
+        return _dofNum;
+    };
+
+    bool setDOFNumbering( const DOFNumberingPtr& dofNum )
+    {
+        _dofNum = dofNum;
+    };
 };
 typedef boost::shared_ptr< TransientGeneralizedResultsContainerInstance > TransientGeneralizedResultsContainerPtr;
 

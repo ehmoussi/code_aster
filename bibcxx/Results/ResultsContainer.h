@@ -100,7 +100,7 @@ private:
     /** @brief Vecteur Jeveux '.RS24' */
     JeveuxVectorChar24           _rs24;
     /** @brief jeveux vector '.TITR' */
-    JeveuxVectorChar80         _title;
+    JeveuxVectorChar80          _title;
 
     /** @brief Liste des champs aux noeuds */
     mapStrVOFN                         _dictOfVectorOfFieldsNodes;

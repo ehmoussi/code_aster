@@ -48,14 +48,20 @@ class ComputeAdditionalField(ExecuteCommand):
         Arguments:
             keywords (dict): User's keywords.
         """
-        modele = keywords.get("MODELE")
-        if modele is None:
-            try:
-                modele = keywords["RESULTAT"].getModel()
-            except:
-                modele = None
-        if modele is not None:
-            self._result.appendModelOnAllRanks(modele)
+        if keywords.get("reuse") is None:
+            modele = keywords.get("MODELE")
+            if modele is None:
+                try:
+                    modele = keywords["RESULTAT"].getModel()
+                except:
+                    modele = None
+            if modele is None:
+                try:
+                    modele = keywords["RESULTAT"].getDOFNumbering().getSupportModel()
+                except:
+                    modele = None
+            if modele is not None:
+                self._result.appendModelOnAllRanks(modele)
         self._result.update()
 
 

@@ -40,7 +40,7 @@ class FullResultsContainerInstance: public ResultsContainerInstance
 private:
     /** @brief indexage des résultats de calcul dynamiques */
     DynamicResultsIndexingPtr _index;
-    /** @brief the support */
+    /** @brief the support DOFNumbering */
     DOFNumberingPtr           _dofNum;
 
 public:
@@ -75,6 +75,8 @@ public:
         if( dofNum != nullptr )
         {
             _dofNum = dofNum;
+            if( _dofNum->getSupportModel() != nullptr )
+                _mesh = _dofNum->getSupportModel()->getSupportMesh();
             _fieldBuidler.addFieldOnNodesDescription( _dofNum->getFieldOnNodesDescription() );
             return true;
         }
