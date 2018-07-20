@@ -263,6 +263,15 @@
 
 
 ================================================================================
+:py:class:`~code_aster.Objects.DisEcroTracMaterialBehaviour` object
+================================================================================
+
+.. autoclass:: code_aster.Objects.DisEcroTracMaterialBehaviour
+   :show-inheritance:
+   :members:
+
+
+================================================================================
 :py:class:`~code_aster.Objects.DisGricraMaterialBehaviour` object
 ================================================================================
 
@@ -834,6 +843,15 @@
 ================================================================================
 
 .. autoclass:: code_aster.Objects.MFrontMaterialBehaviour
+   :show-inheritance:
+   :members:
+
+
+================================================================================
+:py:class:`~code_aster.Objects.MaterialBehaviour` object
+================================================================================
+
+.. autoclass:: code_aster.Objects.MaterialBehaviour
    :show-inheritance:
    :members:
 

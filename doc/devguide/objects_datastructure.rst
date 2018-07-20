@@ -56,6 +56,33 @@
 
 
 ================================================================================
+:py:class:`~code_aster.Objects.AssemblyMatrixPressureComplex` object
+================================================================================
+
+.. autoclass:: code_aster.Objects.AssemblyMatrixPressureComplex
+   :show-inheritance:
+   :members:
+
+
+================================================================================
+:py:class:`~code_aster.Objects.AssemblyMatrixPressureDouble` object
+================================================================================
+
+.. autoclass:: code_aster.Objects.AssemblyMatrixPressureDouble
+   :show-inheritance:
+   :members:
+
+
+================================================================================
+:py:class:`~code_aster.Objects.AssemblyMatrixTemperatureComplex` object
+================================================================================
+
+.. autoclass:: code_aster.Objects.AssemblyMatrixTemperatureComplex
+   :show-inheritance:
+   :members:
+
+
+================================================================================
 :py:class:`~code_aster.Objects.AssemblyMatrixTemperatureDouble` object
 ================================================================================
 
@@ -276,6 +303,15 @@
 ================================================================================
 
 .. autoclass:: code_aster.Objects.FieldOnNodesDouble
+   :show-inheritance:
+   :members:
+
+
+================================================================================
+:py:class:`~code_aster.Objects.FiniteElementDescriptor` object
+================================================================================
+
+.. autoclass:: code_aster.Objects.FiniteElementDescriptor
    :show-inheritance:
    :members:
 
