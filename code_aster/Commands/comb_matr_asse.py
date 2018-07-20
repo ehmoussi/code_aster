@@ -97,5 +97,4 @@ class MatrixCombination(ExecuteCommand):
                 dofNum = comb[0]["MATR_ASSE"].getDOFNumbering()
                 self._result.setDOFNumbering(dofNum)
 
-
 COMB_MATR_ASSE = MatrixCombination.run

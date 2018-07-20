@@ -43,9 +43,13 @@ class GeneralizedModelDefinition(ExecuteCommand):
             keywords (dict): User's keywords.
         """
         sousStruct = keywords.get("SOUS_STRUC")
-        if type(sousStruct) is not tuple:
+        print sousStruct
+        print "Ici1", type(sousStruct)
+        if type(sousStruct) not in (tuple, list):
             sousStruct = (sousStruct,)
+        print "Ici2", type(sousStruct)
         for occur in sousStruct:
+            print occur
             self._result.addDynamicMacroElement(occur["NOM"], occur["MACR_ELEM_DYNA"])
 
 
