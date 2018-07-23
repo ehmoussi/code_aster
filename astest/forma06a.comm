@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -51,25 +51,29 @@ MODEF=AFFE_MODELE(MAILLAGE=MA,
 
 # ecart entre les fissures : b
 b = 0.4
+bs2 = b/2.
+b_m = -1.*b
+b_ms2 = b_m/2.
 # longueurs des fissures : 2a
 a = 0.15
+a_m = -1.*a
 
 FISS1=DEFI_FISS_XFEM(MAILLAGE=MA,
                      DEFI_FISS=_F(FORM_FISS  = 'SEGMENT',
-                                  PFON_ORIG  = (-a,-b/2.,0.),
-                                  PFON_EXTR  = ( a,-b/2.,0.),),
+                                  PFON_ORIG  = (a_m,b_ms2,0.),
+                                  PFON_EXTR  = (  a,b_ms2,0.),),
                      )
 
 FISS2=DEFI_FISS_XFEM(MAILLAGE=MA,
                      DEFI_FISS=_F(FORM_FISS  = 'SEGMENT',
-                                  PFON_ORIG  = (-a,b/2.,0.),
-                                  PFON_EXTR  = ( a,b/2.,0.),),
+                                  PFON_ORIG  = (a_m,bs2,0.),
+                                  PFON_EXTR  = (  a,bs2,0.),),
                      )
 
 FISS=DEFI_FISS_XFEM(MAILLAGE=MA,
                      DEFI_FISS=_F(FORM_FISS  = 'SEGMENT',
-                                  PFON_ORIG  = (-a,0.,0.),
-                                  PFON_EXTR  = ( a,0.,0.),),
+                                  PFON_ORIG  = (a_m,0.,0.),
+                                  PFON_EXTR  = (  a,0.,0.),),
                      )
 
 MODXFEM=MODI_MODELE_XFEM(MODELE_IN=MODEF,FISSURE=(FISS1,FISS2))
@@ -144,21 +148,24 @@ N = 100.
 # taille des elements
 h = L/N
 
+rinf = 2*h
+rsup = 5*h
+
 SIF1=CALC_G(RESULTAT=RESU,
             INST=1.,
             OPTION='CALC_K_G',
             THETA=_F(FISSURE=FISS1,
                      NUME_FOND=1,
-                     R_INF=2*h,
-                     R_SUP=5*h,))
+                     R_INF=rinf,
+                     R_SUP=rsup,))
 
 SIF2=CALC_G(RESULTAT=RESU,
             INST=1.,
             OPTION='CALC_K_G',
             THETA=_F(FISSURE=FISS1,
                      NUME_FOND=2,
-                     R_INF=2*h,
-                     R_SUP=5*h,))
+                     R_INF=rinf,
+                     R_SUP=rsup,))
 
 IMPR_TABLE(TABLE=SIF1)
 IMPR_TABLE(TABLE=SIF2)
