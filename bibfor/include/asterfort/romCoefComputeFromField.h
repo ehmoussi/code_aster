@@ -15,15 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-#include "asterf_types.h"
 !
-interface 
-    subroutine romAlgoNLSystemSolve(matr_asse, vect_2mbr, ds_algorom, vect_solu, l_update_redu_)
+interface
+    subroutine romCoefComputeFromField(ds_empi, v_field, v_vect)
         use Rom_Datastructure_type
-        character(len=24), intent(in) :: matr_asse
-        character(len=24), intent(in) :: vect_2mbr
-        type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
-        character(len=19), intent(in) :: vect_solu
-        aster_logical, optional, intent(in) :: l_update_redu_
-    end subroutine romAlgoNLSystemSolve
-end interface 
+        type(ROM_DS_Empi), intent(in) :: ds_empi
+        real(kind=8), pointer :: v_field(:)
+        real(kind=8), pointer :: v_vect(:)
+    end subroutine romCoefComputeFromField
+end interface

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,10 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmresd(fonact, sddyna, ds_measure, solveu,&
-                  numedd, instan, maprec    , matass     , cndonn,&
-                  cnpilo, cncine, solalg    , rescvg, ds_algorom_)
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine nmresd(fonact     , sddyna        , ds_measure, solveu,&
+                  numedd     , instan        , maprec    , matass, cndonn,&
+                  cnpilo     , cncine        , solalg    , rescvg,&
+                  ds_algorom_)
 !
 use NonLin_Datastructure_type
 use ROM_Datastructure_type
@@ -39,26 +41,24 @@ implicit none
 #include "asterfort/romAlgoNLCorrEFMatrixModify.h"
 #include "asterfort/romAlgoNLCorrEFResiduModify.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
+integer :: fonact(*)
+character(len=19) :: solalg(*)
+character(len=19) :: maprec, matass
+type(ROM_DS_AlgoPara), optional, intent(in) :: ds_algorom_
+type(NL_DS_Measure), intent(inout) :: ds_measure
+character(len=19) :: solveu, sddyna
+character(len=19) :: cncine, cndonn, cnpilo
+character(len=24) :: numedd
+real(kind=8) :: instan
+integer :: rescvg
 !
-    integer :: fonact(*)
-    character(len=19) :: solalg(*)
-    character(len=19) :: maprec, matass
-    type(ROM_DS_AlgoPara), optional, intent(in) :: ds_algorom_
-    type(NL_DS_Measure), intent(inout) :: ds_measure
-    character(len=19) :: solveu, sddyna
-    character(len=19) :: cncine, cndonn, cnpilo
-    character(len=24) :: numedd
-    real(kind=8) :: instan
-    integer :: rescvg
-!
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
 ! ROUTINE MECA_NON_LINE (ALGORITHME - CALCUL)
 !
 ! RESOLUTION DU SYSTEME LINEAIRE K.dU = F
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
 ! IN  FONACT : FONCTIONNALITES ACTIVEES (VOIR NMFONC)
 ! IN  SDDYNA : SD DYNAMIQUE
@@ -80,13 +80,14 @@ implicit none
 !                 0 : CAS DU FONCTIONNEMENT NORMAL
 !                 1 : NOMBRE MAXIMUM D'ITERATIONS ATTEINT
 !
+! --------------------------------------------------------------------------------------------------
 !
     aster_logical :: lprmo, l_rom
     character(len=19) :: depso1, depso2
     character(len=24) :: mata24, vect24
     integer :: ifm, niv
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
     call infdbg('MECA_NON_LINE', ifm, niv)
     if (niv .ge. 2) then

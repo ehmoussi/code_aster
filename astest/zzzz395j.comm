@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -248,7 +248,7 @@ redu=STAT_NON_LINE(MODELE=model_r,
                          ),
                    INCREMENT=_F(LIST_INST=list_i,),
                     METHODE='MODELE_REDUIT',
-                   MODELE_REDUIT=_F(
+                   MODELE_REDUIT=_F(PREDICTION='TANGENTE',
                     REAC_ITER=1,
                     BASE_PRIMAL     = base_t,
                     DOMAINE_REDUIT  = 'OUI',
@@ -333,10 +333,63 @@ TEST_RESU(RESU=(
 
 coor_red=RECU_TABLE(CO=redu,NOM_TABLE='COOR_REDUIT',);
 
-IMPR_TABLE(TABLE=coor_red)
+IMPR_TABLE(TABLE=coor_red, UNITE=6)
 
 IMPR_RESU(FORMAT='MED', UNITE=80,RESU=_F(RESULTAT=stnl),)
 IMPR_RESU(FORMAT='MED', UNITE=81,RESU=_F(RESULTAT=redu),)
+
+
+# Calcul hyper-réduit - Test EXTRAPOLE
+reduX=STAT_NON_LINE(MODELE=model_r,
+                   CHAM_MATER=chmat,
+                   EXCIT=(_F(CHARGE=chg_b_r,),
+                          _F(CHARGE=chg_p_r,FONC_MULT=rampe),
+                         ),
+                   INCREMENT=_F(LIST_INST=list_i,),
+                    METHODE='MODELE_REDUIT',
+                   MODELE_REDUIT=_F(PREDICTION='EXTRAPOLE',
+                    REAC_ITER=1,
+                    BASE_PRIMAL     = base_t,
+                    DOMAINE_REDUIT  = 'OUI',
+                    GROUP_NO_INTERF = 'INF',
+                    ),
+                   COMPORTEMENT=_F(RELATION='VMIS_ISOT_LINE',),)
+
+
+# Test calcul hyper-réduit/complet - Dans RID - Test EXTRAPOLE
+TEST_RESU(RESU=(
+                _F(RESULTAT=reduX,
+                   NUME_ORDRE= 10,
+                   NOM_CHAM='DEPL',
+                   NOEUD='N27',
+                   NOM_CMP='DX',
+                   REFERENCE='AUTRE_ASTER',
+                   VALE_REFE=0.0696319525128,
+                   VALE_CALC=0.069534484695,
+                   PRECISION = 0.0015
+                   ),
+                _F(RESULTAT=reduX,
+                   NUME_ORDRE= 10,
+                   NOM_CHAM='DEPL',
+                   NOEUD='N27',
+                   NOM_CMP='DY',
+                   REFERENCE='AUTRE_ASTER',
+                   VALE_REFE=0.199062276741,
+                   VALE_CALC=0.198457380735,
+                   PRECISION=0.0035
+                   ),
+                _F(RESULTAT=reduX,
+                   NUME_ORDRE= 10,
+                   NOM_CHAM='DEPL',
+                   NOEUD='N27',
+                   NOM_CMP='DZ',
+                   REFERENCE='AUTRE_ASTER',
+                   VALE_REFE=0.529606351907,
+                   VALE_CALC=0.528525693574,
+                   PRECISION=0.0025
+                   ),
+                ),
+          );
 
 ####################################################################################################
 #
