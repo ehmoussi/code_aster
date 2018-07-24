@@ -166,6 +166,7 @@ redu=STAT_NON_LINE(MODELE=model,
                    INCREMENT=_F(LIST_INST=list_i,),
                     METHODE='MODELE_REDUIT',
                    MODELE_REDUIT=_F(
+                    PREDICTION='TANGENTE',
                     REAC_ITER=1,
                     BASE_PRIMAL     = base_p,
                     DOMAINE_REDUIT  = 'NON',
@@ -178,7 +179,7 @@ redu=CALC_CHAMP(reuse=redu,
 
 coor_red=RECU_TABLE(CO=redu,NOM_TABLE='COOR_REDUIT',);
 
-IMPR_TABLE(TABLE=coor_red)
+IMPR_TABLE(TABLE=coor_red, UNITE=6)
 
 TEST_TABLE(
            VALE_CALC = -9.92350E-03,
@@ -207,6 +208,88 @@ TEST_TABLE(
                               VALE_I    = 10,),
                        ),
            )
+
+# TEST EXTRAPOLE
+reduX=STAT_NON_LINE(MODELE=model,
+                   CHAM_MATER=chmat,
+                   EXCIT=(_F(CHARGE=chg_b,),
+                          _F(CHARGE=chg_p,FONC_MULT=rampe),
+                         ),
+                   INCREMENT=_F(LIST_INST=list_i,),
+                    METHODE='MODELE_REDUIT',
+                   MODELE_REDUIT=_F(
+                    PREDICTION='EXTRAPOLE',
+                    REAC_ITER=1,
+                    BASE_PRIMAL     = base_p,
+                    DOMAINE_REDUIT  = 'NON',
+                    ),
+                   COMPORTEMENT=_F(RELATION='VMIS_ISOT_LINE',),)
+
+
+coor_reX=RECU_TABLE(CO=reduX,NOM_TABLE='COOR_REDUIT',);
+
+IMPR_TABLE(TABLE=coor_reX, UNITE=6)
+
+TEST_TABLE(
+           VALE_CALC = -9.92350E-03,
+           NOM_PARA  = 'COOR_REDUIT',
+           TABLE     = coor_reX,
+           FILTRE    = (
+                           _F(CRIT_COMP = 'EQ',
+                              NOM_PARA  = 'NUME_MODE',
+                              VALE_I    = 1,),
+                           _F(CRIT_COMP = 'EQ',
+                              NOM_PARA  = 'NUME_ORDRE',
+                              VALE_I    = 1,),
+                       ),
+           )
+
+TEST_TABLE(
+           VALE_CALC = -0.00620775648739,
+           NOM_PARA  = 'COOR_REDUIT',
+           TABLE     = coor_reX,
+           FILTRE    = (
+                           _F(CRIT_COMP = 'EQ',
+                              NOM_PARA  = 'NUME_MODE',
+                              VALE_I    = 2,),
+                           _F(CRIT_COMP = 'EQ',
+                              NOM_PARA  = 'NUME_ORDRE',
+                              VALE_I    = 10,),
+                       ),
+           )
+
+TEST_RESU(RESU=(
+                _F(RESULTAT=reduX,
+                   REFERENCE='AUTRE_ASTER',
+                   VALE_REFE=0.0696319525128,
+                   NUME_ORDRE= 10,
+                   NOM_CHAM='DEPL',
+                   NOEUD='N27',
+                   NOM_CMP='DX',
+                   VALE_CALC=0.0697022675078,
+                   PRECISION = 0.0015
+                   ),
+                _F(RESULTAT=reduX,
+                   REFERENCE='AUTRE_ASTER',
+                   VALE_REFE=0.199062276741,
+                   NUME_ORDRE= 10,
+                   NOM_CHAM='DEPL',
+                   NOEUD='N27',
+                   NOM_CMP='DY',
+                   VALE_CALC=0.198932466312,
+                   ),
+                _F(RESULTAT=reduX,
+                   REFERENCE='AUTRE_ASTER',
+                   VALE_REFE=0.529606351907,
+                   NUME_ORDRE= 10,
+                   NOM_CHAM='DEPL',
+                   NOEUD='N27',
+                   NOM_CMP='DZ',
+                   VALE_CALC=0.529809828586,
+                   ),
+                ),
+          );
+
 
 # Test du modèle réduit par rapport au modèle complet
 TEST_RESU(RESU=(

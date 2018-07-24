@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine romAlgoNLSystemSolve(matr_asse, vect_2mbr, ds_algorom, vect_solu)
+subroutine romAlgoNLSystemSolve(matr_asse, vect_2mbr, ds_algorom, vect_solu, l_update_redu_)
 !
 use Rom_Datastructure_type
 !
@@ -43,6 +43,7 @@ character(len=24), intent(in) :: matr_asse
 character(len=24), intent(in) :: vect_2mbr
 type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
 character(len=19), intent(in) :: vect_solu
+aster_logical, optional, intent(in) :: l_update_redu_
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -56,6 +57,7 @@ character(len=19), intent(in) :: vect_solu
 ! In  vect_2mbr        : second member
 ! In  ds_algorom       : datastructure for ROM parameters
 ! In  vect_solu        : solution
+! In  l_update_redu    : flag for update reduced coordinates
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -66,7 +68,7 @@ character(len=19), intent(in) :: vect_solu
     integer :: nb_equa_2mbr, nb_equa_matr, nb_equa, nb_mode
     integer :: i_mode, j_mode, i_equa
     integer :: jv_matr, iret
-    aster_logical :: l_hrom, l_rom
+    aster_logical :: l_hrom, l_rom, l_update_redu
     character(len=8) :: base
     character(len=19) :: mode
     real(kind=8) :: term1, term2, det, term
@@ -92,6 +94,10 @@ character(len=19), intent(in) :: vect_solu
     nb_equa     = ds_algorom%ds_empi%nb_equa
     field_name  = ds_algorom%ds_empi%field_name
     ASSERT(l_rom)
+    l_update_redu = ASTER_TRUE
+    if (present(l_update_redu_)) then
+        l_update_redu = l_update_redu_
+    endif
 !
 ! - Access to reduced coordinates
 !
@@ -151,7 +157,9 @@ character(len=19), intent(in) :: vect_solu
 ! - Solve system
 !    
     call mgauss('NFSP', v_matr_rom, v_vect_rom, nb_mode, nb_mode, 1, det, iret)
-    v_gamma = v_gamma + v_vect_rom
+    if (l_update_redu) then
+        v_gamma = v_gamma + v_vect_rom
+    endif
 !
 ! - Project in physical space
 !    
