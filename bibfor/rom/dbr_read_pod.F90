@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -54,7 +54,7 @@ type(ROM_DS_ParaDBR_POD), intent(inout) :: ds_para_pod
     character(len=8)  :: axe_line = ' '
     character(len=8)  :: surf_num = ' '
     character(len=8)  :: base_type = ' '
-    character(len=8)  :: result_in = ' '
+    character(len=8)  :: result_in = ' ', model = ' '
     integer :: nb_mode_maxi = 0
     type(ROM_DS_Snap) :: ds_snap
 !
@@ -70,6 +70,10 @@ type(ROM_DS_ParaDBR_POD), intent(inout) :: ds_para_pod
     call getvid(' ', 'RESULTAT', scal = result_in)
     call getvtx(' ', 'NOM_CHAM', scal = field_name, nbret = nocc)
     ASSERT(nocc .eq. 1)
+    call getvid(' ', 'MODELE'  , scal = model, nbret = nocc)
+    if (nocc .ne. 1) then
+        model = ' '
+    endif
 !
 ! - Maximum number of modes
 !
@@ -111,5 +115,6 @@ type(ROM_DS_ParaDBR_POD), intent(inout) :: ds_para_pod
     ds_para_pod%tole_incr    = tole_incr
     ds_para_pod%ds_snap      = ds_snap
     ds_para_pod%nb_mode_maxi = nb_mode_maxi
+    ds_para_pod%model        = model
 !
 end subroutine

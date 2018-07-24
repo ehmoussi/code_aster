@@ -49,6 +49,7 @@ DEFI_BASE_REDUITE=OPER(
                                SECTION   = SIMP(statut='o',typ=grno ,max=1)),
         TOLE_SVD        =SIMP(statut='f',typ='R',defaut=1.E-6),
         NB_MODE         =SIMP(statut='f',typ='I'),
+        MODELE          =SIMP(statut='f',typ=modele_sdaster),
     ),
 
     b_incr = BLOC(condition ="""(equal_to("OPERATION", 'POD_INCR'))""",
@@ -66,6 +67,7 @@ DEFI_BASE_REDUITE=OPER(
         TOLE            =SIMP(statut='f',typ='R',defaut=1.E-10),
         TOLE_SVD        =SIMP(statut='f',typ='R',defaut=1.E-6),
         NB_MODE         =SIMP(statut='f',typ='I'),
+        MODELE          =SIMP(statut='f',typ=modele_sdaster),
     ),
 
     b_type_rb       =BLOC(condition ="""(equal_to("OPERATION", 'GLOUTON'))""",

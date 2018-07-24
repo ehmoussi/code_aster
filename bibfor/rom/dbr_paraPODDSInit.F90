@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -65,5 +65,6 @@ type(ROM_DS_ParaDBR_POD), intent(out) :: ds_para_pod
     ds_para_pod%ds_snap      = ds_snap
     ds_para_pod%tabl_name    = ' '
     ds_para_pod%nb_mode_maxi = 0
+    ds_para_pod%model        = ' '
 !
 end subroutine
