@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -125,6 +125,8 @@ cata_msg = {
    52 : _(u"""Le paramètre %(k1)s vaut %(r1)19.12e."""),
 
    53 : _(u"""Le nombre de composantes dans le modèle est incorrect. Vérifiez que vous n'avez pas de chargements de Dirichlet appliqués avec AFFE_CHAR_MECA."""),
+
+   54 : _(u"""Il n'y a pas de modèle attaché à la structure de données résultat en entrée, il faut renseigner le modèle dans la commande avec le mot-clef MODELE."""),
 
    60 : _(u"""Calcul par la méthode GLOUTON."""),
 
