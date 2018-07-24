@@ -50,6 +50,7 @@ PREP_VRC = Option(
     condition=(
       CondCalcul('+', ((AT.PHENO,'ME'),(AT.COQUE,'OUI'),(AT.BORD,'0'),)),
       CondCalcul('-', ((AT.PHENO,'ME'),(AT.MODELI,'GRC'),)),
+      CondCalcul('-', ((AT.PHENO,'ME'),(AT.MODELI,'GRM'),)),
     ),
     comment=""" CALCUL DE LA TEMPERATURE SUR LES COUCHES DES COQUES MULTICOUCHE
    UTILISE PAR CREA_RESU/PREP_VRC EN PREVISION D'UN CALCUL MECANIQUE
