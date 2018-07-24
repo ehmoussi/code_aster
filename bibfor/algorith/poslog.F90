@@ -89,6 +89,7 @@ subroutine poslog(resi, rigi, tn, tp, fm,&
 !     PERTINENCE DES GRANDEURS
     if (detf .le. 1.d-2 .or. detf .gt. 1.d2) then
         codret = 1
+        write (6,*) "codret = 1,detf",detf
         goto 999
     endif
 !

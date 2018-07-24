@@ -70,7 +70,7 @@ implicit none
     integer :: vale_indx, decal
     aster_logical :: l_dyna
     integer :: dyna_form
-    real(kind=8) :: coef_fric
+    real(kind=8) :: coef_fric, glis_maxi = 0.
     integer :: i_algo_cont, i_algo_fric, i_reso_fric, i_reso_geom
     integer :: nt_liel, nb_grel, nb_liel, i_grel, i_liel
     character(len=24) :: chmlcf_celv
@@ -175,6 +175,12 @@ implicit none
             zr(vale_indx-1+25) = i_reso_geom
             zr(vale_indx-1+18) = i_algo_fric
             zr(vale_indx-1+19) = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+6)
+            if ((i_algo_cont .ne. 3) .and. (i_algo_fric .eq. 3) .and. &
+                (ds_contact%iteration_newton .eq. 1)) then 
+                        glis_maxi    = mminfr(ds_contact%sdcont_defi,'GLIS_MAXI' , i_zone)
+                        v_sdcont_cychis(n_cychis*(i_cont_poin-1)+6) =&
+                            1.d-3*ds_contact%estimated_coefficient*ds_contact%arete_min/glis_maxi
+            endif
             zr(vale_indx-1+20) = coef_fric
             zr(vale_indx-1+21) = v_sdcont_tabfin(ztabf*(i_cont_poin-1)+20)
             zr(vale_indx-1+22) = dyna_form
