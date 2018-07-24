@@ -46,7 +46,7 @@ implicit none
     aster_logical, intent(in) :: l_glis_init
     aster_logical, intent(in) :: l_pena_frot
     aster_logical, intent(in) :: l_pena_cont
-    integer, intent(in) :: type_adap
+    integer, intent(inout) :: type_adap
     integer, intent(in) :: i_cont_poin
     integer, intent(in) :: zone_index
     integer, intent(inout) :: indi_cont_eval
@@ -119,8 +119,8 @@ implicit none
     integer :: n_cychis
 !    real(kind=8) :: coef_bussetta=0.0, dist_max, coef_tmp
     real(kind=8) ::  coef_tmp
-!    real(kind=8) ::  racine,racine1,racine2,racinesup
-!    real(kind=8) ::  a,b,c,discriminant
+   real(kind=8) ::  rt_plus=1.d2,rt_moins=1.d2,coef_frot_calc=1.d2
+   real(kind=8) ::  a,b,c,discriminant
     real(kind=8) :: bound_coef(2)
     bound_coef(1)     = 1.d-8
     bound_coef(2)     = 1.d8
@@ -138,7 +138,7 @@ implicit none
 ! type_adap vient de cazocc : v_sdcont_paraci(20)
     n_cychis  = ds_contact%n_cychis
     l_coef_adap = ((type_adap .eq. 1) .or. (type_adap .eq. 2) .or. &
-                  (type_adap .eq. 5) .or. (type_adap .eq. 6 ))
+                  (type_adap .eq. 5) .or. (type_adap .eq. 6 ) )
     
 
 !----------------------TRAITEMENT CYCLAGE -------------------------
@@ -152,7 +152,8 @@ implicit none
 ! ALGO_CONT = PENALISATION, type_adap=7
 ! CAS 5 : tous les autres cas du moment ou adaptation .eq. 'TOUT' actif, type_adap=4
     treatment =  ((type_adap .eq. 4) .or. (type_adap .eq. 5) .or. &
-                  (type_adap .eq. 6) .or. (type_adap .eq. 7 ))
+                  (type_adap .eq. 6) .or. (type_adap .eq. 7 ) .or.&
+                  (type_adap .eq. 7 ) .or. (type_adap .eq. 11 ))
     i_reso_cont  = cfdisi(ds_contact%sdcont_defi,'ALGO_RESO_CONT')
     
     i_reso_frot  = cfdisi(ds_contact%sdcont_defi,'ALGO_FROT')
@@ -419,34 +420,10 @@ implicit none
 !        ! cas ALGO_CONT=STANDARD, ALGO_FROT=PENALISATION
 !        ! On fixe un statut glissement en cas de fortes interpenetration
     if ((l_pena_frot .and. (.not. l_pena_cont) ).and. indi_cont_curr .eq. 1) then 
-!             if (indi_frot_curr .ne. indi_frot_prev) mmcvca_frot = .false.
-! !                write (6,*) "indi_frot_curr : ",indi_frot_curr
-!             if (.not. mmcvca_frot) then 
-!            if (ds_contact%iteration_newton .eq. 1) then 
-!                         glis_maxi = ds_contact%arete_min
-!                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+6) =&
-!                    1.d3/glis_maxi
-!            endif
-            if (indi_frot_curr .eq. 0) then                
-                if (pres_cont_curr .lt. -1.d-6*ds_contact%cont_pressure) then 
-                    if ( (norm2(dist_frot_curr) .gt. 1.d-5*ds_contact%arete_min)) then 
-                        ! coef_frot a une dimension : 1/glissement
-!                         glis_max = ds_contact%arete_min
-                        v_sdcont_cychis(n_cychis*(i_cont_poin-1)+6) =&
-                        1.d-3*norm2(dist_frot_curr)/ds_contact%arete_min*1/glis_maxi
-                    endif
-                endif
-            endif
-            if (indi_frot_curr .eq. 1) then
-                if (pres_cont_curr .lt. -1.d-6*ds_contact%cont_pressure) then 
-                    if ((norm2(dist_frot_curr) .lt. 1.d-5*ds_contact%arete_min)) then
-!                        glis_max = ds_contact%arete_min
-                        v_sdcont_cychis(n_cychis*(i_cont_poin-1)+6) =&
-                        max(norm2(pres_frot_curr),0.1)*1.d2/glis_maxi
-                    endif
-                endif
-            endif
-!             endif
+        if ((norm2(dist_frot_curr) .gt. 1.d-6*glis_maxi)  ) then 
+            v_sdcont_cychis(n_cychis*(i_cont_poin-1)+6) =&
+               1.d1*ds_contact%arete_max/ds_contact%arete_min*1/glis_maxi
+        endif 
            
     endif
 

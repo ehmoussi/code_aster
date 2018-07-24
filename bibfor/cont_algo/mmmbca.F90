@@ -230,7 +230,7 @@ implicit none
         vale_pene    = mminfr(ds_contact%sdcont_defi,'PENE_MAXI' , i_zone)
         glis_maxi    = mminfr(ds_contact%sdcont_defi,'GLIS_MAXI' , i_zone)
         ! l'utilisateur n'a pas renseigne glis_maxi
-        if  (glis_maxi .le. r8prem()) glis_maxi   = ds_contact%arete_min
+        if  (glis_maxi .le. r8prem()) glis_maxi   = 0.1*ds_contact%arete_min
         l_granglis   = mminfl(ds_contact%sdcont_defi,'GRAND_GLIS' , i_zone)
 !
 ! ----- No computation: no contact point
@@ -489,6 +489,7 @@ implicit none
 !
     l_coef_adap = ((type_adap .eq. 1) .or. (type_adap .eq. 2)  .or.  &
                   (type_adap .eq. 5) .or. (type_adap .eq. 6) )
+!     .or.  (type_adap .eq. 7) .or. (type_adap .eq. 11))
     if (l_coef_adap) then
         call mm_cycl_prop(ds_contact)
     endif
