@@ -218,10 +218,10 @@ CREA_CHAMP=OPER(nom="CREA_CHAMP",op= 195,sd_prod=crea_champ_prod,
                  # si TYPE_MAXI, on spécifie en général plusieurs numéros d'ordre :
 
                  b_type_abs =BLOC(condition = """(equal_to("TYPE_MAXI", 'MAXI_ABS') or equal_to("TYPE_MAXI", 'MINI_ABS'))""",
-                        TYPE_RESU       =SIMP(statut='o',typ='TXM',defaut="VALE",into=("VALE","INST","VALE_ABS") ),
+                        TYPE_RESU       =SIMP(statut='f',typ='TXM',defaut="VALE",into=("VALE","INST","VALE_ABS") ),
                       ),
                  b_type_non_abs =BLOC(condition = """(equal_to("TYPE_MAXI", 'MAXI') or equal_to("TYPE_MAXI", 'MINI') or equal_to("TYPE_MAXI", 'NORM_TRAN'))""",
-                        TYPE_RESU       =SIMP(statut='o',typ='TXM',defaut="VALE",into=("VALE","INST") ),
+                        TYPE_RESU       =SIMP(statut='f',typ='TXM',defaut="VALE",into=("VALE","INST") ),
                       ),
 
                  b_type_maxi =BLOC(condition = """exists("TYPE_MAXI")""",

@@ -32,7 +32,7 @@ def C_COMPORTEMENT(COMMAND=None) :  #COMMUN#
     if COMMAND =='CALC_EUROPLEXUS':
         mcfact = FACT(statut='o',min=1,max='**',  #COMMUN#
 
-           RELATION  = SIMP( statut='o',typ='TXM',defaut="ELAS",into=('ELAS',
+           RELATION  = SIMP( statut='f',typ='TXM',defaut="ELAS",into=('ELAS',
                                                                       'GLRC_DAMAGE',
                                                                       'VMIS_ISOT_TRAC',
                                                                       'VMIS_JOHN_COOK',
@@ -104,7 +104,7 @@ def C_COMPORTEMENT(COMMAND=None) :  #COMMUN#
             TOUT        = SIMP( statut='f',typ='TXM',into=("OUI",) ),
             GROUP_MA    = SIMP( statut='f',typ=grma,validators=NoRepeat(),max='**'),
             MAILLE      = SIMP( statut='f',typ=ma  ,validators=NoRepeat(),max='**'),
-            RELATION    = SIMP( statut='o',typ='TXM',defaut="ELAS",into=C_RELATION(COMMAND)),
+            RELATION    = SIMP( statut='f',typ='TXM',defaut="ELAS",into=C_RELATION(COMMAND)),
             b_monox     = BLOC( condition = """equal_to("RELATION", 'MONOCRISTAL') """,
                                 fr=tr("SD issue de DEFI_COMPOR"),
                                 COMPOR          = SIMP(statut='o',typ=compor_sdaster,max=1),
@@ -249,7 +249,7 @@ def C_COMPORTEMENT(COMMAND=None) :  #COMMUN#
             TOUT        = SIMP( statut='f',typ='TXM',into=("OUI",) ),
             GROUP_MA    = SIMP( statut='f',typ=grma,validators=NoRepeat(),max='**'),
             MAILLE      = SIMP( statut='f',typ=ma  ,validators=NoRepeat(),max='**'),
-            RELATION    = SIMP( statut='o',typ='TXM',defaut="ELAS",into=C_RELATION(COMMAND)),
+            RELATION    = SIMP( statut='f',typ='TXM',defaut="ELAS",into=C_RELATION(COMMAND)),
             b_monox     = BLOC( condition = """equal_to("RELATION", 'MONOCRISTAL') """,
                                 fr=tr("SD issue de DEFI_COMPOR"),
                                 COMPOR =SIMP(statut='o',typ=compor_sdaster,max=1),

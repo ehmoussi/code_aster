@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -44,19 +44,19 @@ DEFI_CABLE_BP=MACRO(nom="DEFI_CABLE_BP",
            GROUP_NO_ANCRAGE=SIMP(statut='f',typ=grno,validators=NoRepeat(),max=2),
            TENSION_CT      =SIMP(statut='f',typ=table_sdaster),
          ),
-         ADHERENT        =SIMP(statut='o',typ='TXM',defaut='OUI',into=("OUI","NON") ),
+         ADHERENT        =SIMP(statut='f',typ='TXM',defaut='OUI',into=("OUI","NON") ),
          TYPE_ANCRAGE    =SIMP(statut='o',typ='TXM',min=2,max=2,into=("ACTIF","PASSIF") ),
          TENSION_INIT    =SIMP(statut='o',typ='R',val_min=0.E+0 ),
          RECUL_ANCRAGE   =SIMP(statut='o',typ='R',val_min=0.E+0 ),
          b_adherent=BLOC(condition="""(equal_to("ADHERENT", 'OUI'))""",
-            TYPE_RELAX      =SIMP(statut='o',typ='TXM',into=("SANS","BPEL","ETCC_DIRECT","ETCC_REPRISE"),defaut="SANS",),
+            TYPE_RELAX      =SIMP(statut='f',typ='TXM',into=("SANS","BPEL","ETCC_DIRECT","ETCC_REPRISE"),defaut="SANS",),
                 b_relax_bpel  =BLOC(condition = """equal_to("TYPE_RELAX", 'BPEL')""",
                        R_J   =SIMP(statut='o',typ='R',val_min=0.E+0),
                                                 ),
                 b_relax_etcc  =BLOC(condition = """((equal_to("TYPE_RELAX", 'ETCC_DIRECT')) or (equal_to("TYPE_RELAX", 'ETCC_REPRISE')))""",
                       NBH_RELAX   =SIMP(statut='o',typ='R',val_min=0.E+0),
                        ),
-#         PERT_ELAS       =SIMP(statut='o',typ='TXM',into=("OUI","NON"),defaut="NON"),
+#         PERT_ELAS       =SIMP(statut='f',typ='TXM',into=("OUI","NON"),defaut="NON"),
 #           b_pert_elas   =BLOC(condition = """equal_to("PERT_ELAS", 'OUI')""",
 #                  EP_BETON  = SIMP(statut='o',typ='R',val_min=0.E+0),
 #                  ESP_CABLE = SIMP(statut='o',typ='R',val_min=0.E+0)

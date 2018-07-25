@@ -109,7 +109,7 @@ CALC_G=OPER(nom="CALC_G",op=100,sd_prod=table_sdaster,
                 ),
          ),
 
-         OPTION          =SIMP(statut='o',typ='TXM',max=1,defaut='CALC_G',
+         OPTION          =SIMP(statut='f',typ='TXM',max=1,defaut='CALC_G',
                                into=("CALC_G",
                                      "CALC_G_GLOB",
                                      "CALC_K_G",

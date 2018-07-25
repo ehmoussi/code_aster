@@ -392,7 +392,7 @@ AFFE_CHAR_MECA=OPER(nom="AFFE_CHAR_MECA",op=   7,sd_prod=char_meca,
               DISTANCE_MAX    =SIMP(statut='f',typ='R'),
               DISTANCE_ALARME =SIMP(statut='f',typ='R'),
 
-              TYPE_RACCORD    =SIMP(statut='o',typ='TXM',defaut="MASSIF",into=("MASSIF","COQUE","COQUE_MASSIF","MASSIF_COQUE",)),
+              TYPE_RACCORD    =SIMP(statut='f',typ='TXM',defaut="MASSIF",into=("MASSIF","COQUE","COQUE_MASSIF","MASSIF_COQUE",)),
 
               b_MASSIF     =BLOC ( condition = """equal_to("TYPE_RACCORD", 'MASSIF')""",
                  regles=( PRESENT_PRESENT('DDL_MAIT','DDL_ESCL'),),
@@ -478,7 +478,7 @@ AFFE_CHAR_MECA=OPER(nom="AFFE_CHAR_MECA",op=   7,sd_prod=char_meca,
             ),
 
             b_plaq_pout_orth =BLOC( condition = """equal_to("OPTION", 'PLAQ_POUT_ORTH')""",
-               VERIF_EXCENT   =SIMP(statut='o',typ='TXM',defaut="OUI",into=("OUI","NON") ),
+               VERIF_EXCENT   =SIMP(statut='f',typ='TXM',defaut="OUI",into=("OUI","NON") ),
             ),
 
             b_cara_pout =BLOC( condition = """equal_to("OPTION", 'COQ_POU') or equal_to("OPTION", '3D_TUYAU') or equal_to("OPTION", 'COQ_TUYAU')""",
