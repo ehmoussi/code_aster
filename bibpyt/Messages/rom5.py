@@ -96,7 +96,7 @@ cata_msg = {
 
    38 : _(u"""Création de la table pour sauver les coordonnées réduites."""),
 
-   39 : _(u"""Sauvegarde des coordonnées réduites pour le calcul non-linéaire avec réduction de modèle."""),
+   39 : _(u"""Sauvegarde des %(i1)d coordonnées réduites pour %(i2)d modes empiriques."""),
 
    40 : _(u"""Résolution du problème réduit."""),
 
@@ -127,6 +127,8 @@ cata_msg = {
    53 : _(u"""Le nombre de composantes dans le modèle est incorrect. Vérifiez que vous n'avez pas de chargements de Dirichlet appliqués avec AFFE_CHAR_MECA."""),
 
    54 : _(u"""Il n'y a pas de modèle attaché à la structure de données résultat en entrée, il faut renseigner le modèle dans la commande avec le mot-clef MODELE."""),
+
+   55 : _(u"""    Sauvegarde des coordonnées réduites pour %(i1)d modes empiriques dans la table."""),
 
    60 : _(u"""Calcul par la méthode GLOUTON."""),
 

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine romTableSave(tabl_name  , nb_mode   , v_gamma   ,&
                         nume_store_, time_curr_, nume_snap_)
 !
@@ -24,18 +25,14 @@ use Rom_Datastructure_type
 implicit none
 !
 #include "asterf_types.h"
-#include "asterfort/infniv.h"
 #include "asterfort/tbajli.h"
-#include "asterfort/utmess.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=19), intent(in) :: tabl_name
-    integer, intent(in) :: nb_mode
-    real(kind=8), pointer :: v_gamma(:)
-    integer, optional, intent(in) :: nume_store_
-    real(kind=8), optional, intent(in) :: time_curr_
-    integer, optional, intent(in) :: nume_snap_
+character(len=19), intent(in) :: tabl_name
+integer, intent(in) :: nb_mode
+real(kind=8), pointer :: v_gamma(:)
+integer, optional, intent(in) :: nume_store_
+real(kind=8), optional, intent(in) :: time_curr_
+integer, optional, intent(in) :: nume_snap_
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -54,7 +51,6 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: ifm, niv
     integer, parameter :: nb_para = 5
     character(len=16), parameter :: para_name(nb_para) = (/'NUME_MODE  ','NUME_ORDRE ',&
                                                            'INST       ','NUME_SNAP  ',&
@@ -63,13 +59,6 @@ implicit none
     real(kind=8) :: v_real(2), time_curr
 !
 ! --------------------------------------------------------------------------------------------------
-!
-    call infniv(ifm, niv)
-    if (niv .ge. 2) then
-        call utmess('I', 'ROM5_39')
-    endif
-!
-! - Get parameters
 !
     nume_snap   = 1
     if (present(nume_snap_)) then

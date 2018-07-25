@@ -257,6 +257,9 @@ integer, intent(out) :: nb_snap_redu
     if (l_reuse) then
         call romTableCreate(base, tabl_name)
     endif
+    if (niv .ge. 2) then
+        call utmess('I', 'ROM5_39', ni = 2, vali = [incr_end, nb_mode])
+    endif
     do i_snap = 1, incr_end
         call romTableSave(tabl_name  , nb_mode, v_gamma   ,&
                           nume_snap_ = i_snap)
