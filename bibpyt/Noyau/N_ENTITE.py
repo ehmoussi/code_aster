@@ -306,6 +306,9 @@ class ENTITE:
                     self.cr.fatal(
                         _(u"La valeur de l'attribut 'defaut' n'est pas "
                           u"cohérente avec le type %r : %r"), self.type, val)
+            if self.statut == 'o':
+                self.cr.fatal(_(u"Un mot-clé avec valeur par défaut doit être "
+                                u"facultatif."))
 
     def check_inout(self):
         """Vérifie l'attribut inout."""
@@ -331,7 +334,6 @@ class ENTITE:
                 self.cr.fatal(
                     _(u"L'attribut 'inout' est obligatoire pour le type "
                       u"UnitType()."))
-            if self.defaut == 6 :                 
+            if self.defaut == 6 :
                 self.cr.fatal(
-                    _(u"La vaveur par défaut doit être différente de 6" ))
-
+                    _(u"La valeur par défaut doit être différente de 6" ))

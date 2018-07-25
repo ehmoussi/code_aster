@@ -127,7 +127,7 @@ DYNA_VIBRA = OPER (nom      = "DYNA_VIBRA",
 
            # 1. Integration schemes
            SCHEMA_TEMPS    =     FACT(statut='d',
-               SCHEMA      =         SIMP(statut='o', typ='TXM', defaut="DIFF_CENTRE",
+               SCHEMA      =         SIMP(statut='f', typ='TXM', defaut="DIFF_CENTRE",
                                           into=("NEWMARK", "WILSON", "DIFF_CENTRE",
                                                 "DEVOGE", "ADAPT_ORDRE1", "ADAPT_ORDRE2",
                                                 "RUNGE_KUTTA_32", "RUNGE_KUTTA_54", "ITMI"),),
@@ -337,9 +337,9 @@ DYNA_VIBRA = OPER (nom      = "DYNA_VIBRA",
             SEUIL       =         SIMP(statut='f',typ='R',defaut= 0.5),),
 #            Implicit or explicit treatment of choc non-linearities in integration
         b_nl_wet        =     BLOC(condition="""exists("BASE_ELAS_FLUI")""",
-          TRAITEMENT_NONL =         SIMP(statut='o',typ='TXM', defaut='IMPLICITE', into=('IMPLICITE',),),),
+          TRAITEMENT_NONL =         SIMP(statut='f',typ='TXM', defaut='IMPLICITE', into=('IMPLICITE',),),),
         b_nl_dry        =     BLOC(condition="""not exists("BASE_ELAS_FLUI")""",
-          TRAITEMENT_NONL =         SIMP(statut='o',typ='TXM', defaut='EXPLICITE', into=('IMPLICITE','EXPLICITE'),),),
+          TRAITEMENT_NONL =         SIMP(statut='f',typ='TXM', defaut='EXPLICITE', into=('IMPLICITE','EXPLICITE'),),),
 
         ), # end b_excit_tran_mod
 ##########################################################################################

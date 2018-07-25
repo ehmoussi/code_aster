@@ -70,7 +70,7 @@ CALC_TRANSFERT=MACRO(nom="CALC_TRANSFERT",
               MESURE_Y      =SIMP(statut='o',typ=(fonction_sdaster,fonction_c)),
               MESURE_Z      =SIMP(statut='f',typ=(fonction_sdaster,fonction_c)),
               TABLE_RESU    =SIMP(statut='o',typ=CO),
-              TYPE_RESU     =SIMP(statut='o',typ='TXM',defaut="HARMONIQUE",into=("HARMONIQUE","TEMPOREL")),
+              TYPE_RESU     =SIMP(statut='f',typ='TXM',defaut="HARMONIQUE",into=("HARMONIQUE","TEMPOREL")),
               ),
 
 )

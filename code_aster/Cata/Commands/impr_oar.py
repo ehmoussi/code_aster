@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -32,13 +32,13 @@ IMPR_OAR =MACRO(nom="IMPR_OAR",
    b_composant =BLOC(condition = """equal_to("TYPE_CALC", 'COMPOSANT') """,
       regles = (AU_MOINS_UN('RESU_MECA','RESU_THER')),
       DIAMETRE = SIMP(statut='o', typ='R'),
-      ORIGINE  = SIMP(statut='o', typ='TXM', defaut='INTERNE', into=('INTERNE', 'EXTERNE')),
+      ORIGINE  = SIMP(statut='f', typ='TXM', defaut='INTERNE', into=('INTERNE', 'EXTERNE')),
       COEF_U   = SIMP(statut='f', typ='R',   defaut=1.0),
-      ANGLE_C  = SIMP(statut='o', typ='R',   defaut=0.0),
+      ANGLE_C  = SIMP(statut='f', typ='R',   defaut=0.0),
       REVET    = SIMP(statut='f', typ='TXM', defaut='NON', into=('OUI', 'NON')),
       RESU_MECA = FACT(statut='f', max='**',
          NUM_CHAR  = SIMP(statut='o', typ='I'),
-         TYPE      = SIMP(statut='o', typ='TXM', defaut='FX', into=('FX', 'FY', 'FZ', 'MX', 'MY', 'MZ', 'PRE')),
+         TYPE      = SIMP(statut='f', typ='TXM', defaut='FX', into=('FX', 'FY', 'FZ', 'MX', 'MY', 'MZ', 'PRE')),
          TABLE     = SIMP(statut='o', typ=table_sdaster),
          TABLE_S   = SIMP(statut='f', typ=table_sdaster)),
       RESU_THER = FACT(statut='f', max='**',
@@ -51,7 +51,7 @@ IMPR_OAR =MACRO(nom="IMPR_OAR",
    b_mef = BLOC(condition = """equal_to("TYPE_CALC", 'MEF') """,
       regles = (AU_MOINS_UN('RESU_MECA','RESU_THER')),
       DIAMETRE = SIMP(statut='o', typ='R'),
-      ORIGINE  = SIMP(statut='o', typ='TXM', defaut='INTERNE', into=('INTERNE', 'EXTERNE')),
+      ORIGINE  = SIMP(statut='f', typ='TXM', defaut='INTERNE', into=('INTERNE', 'EXTERNE')),
       COEF_U   = SIMP(statut='f', typ='R',   defaut=1.0),
       RESU_MECA = FACT(statut='f', max='**',
          AZI       = SIMP(statut='o', typ='R'),

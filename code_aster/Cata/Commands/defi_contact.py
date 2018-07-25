@@ -31,7 +31,7 @@ DEFI_CONTACT=OPER(nom       = "DEFI_CONTACT", op=30, sd_prod   = char_contact, r
          MODELE          =SIMP(statut='o',typ=modele_sdaster,),
          INFO            =SIMP(statut='f',typ='I',into=(1,2),),
 # FORMULATION (UNIQUE PAR OCCURRENCE DE DEFI_CONTACT)
-         FORMULATION     =SIMP(statut='o', typ='TXM',     
+         FORMULATION     =SIMP(statut='f', typ='TXM',
                                fr=tr("Choix d'une formulation de contact ou de liaisons unilatérales"),
                                defaut="DISCRETE", into=("DISCRETE","CONTINUE","XFEM","LIAISON_UNIL",),),
 # PARAMETRE GENERAL : FROTTEMENT
@@ -49,7 +49,7 @@ DEFI_CONTACT=OPER(nom       = "DEFI_CONTACT", op=30, sd_prod   = char_contact, r
 #          VERIFICATION DE L'ORIENTATION ET DE LA COHERENCE DES NORMALES
            VERI_NORM       =SIMP(statut='f', typ='TXM', defaut="OUI", into=("OUI","NON"),
                                  fr=tr("Vérification de l'orientation (sortante) des normales aux surfaces"),),
-         ), 
+         ),
 ### PARAMETRES GENERAUX (UNIQUEMENT POUR LE CONTACT, NE DEPENDENT PAS DE LA ZONE DE CONTACT)
 
 # PARAMETRE GENERAL : BOUCLE DE GEOMETRIE - Cas discret
@@ -192,7 +192,7 @@ DEFI_CONTACT=OPER(nom       = "DEFI_CONTACT", op=30, sd_prod   = char_contact, r
                                           SANS_NOEUD      =SIMP(statut='c',typ=no   ,validators=NoRepeat(),max='**'),
                                           SANS_GROUP_NO   =SIMP(statut='f',typ=grno ,validators=NoRepeat(),max='**'),
 # --- Résolution
-                                          ALGO_CONT       =SIMP(statut='o',typ='TXM',defaut="CONTRAINTE",
+                                          ALGO_CONT       =SIMP(statut='f',typ='TXM',defaut="CONTRAINTE",
                                                               into=("CONTRAINTE","PENALISATION"),),
                                           b_cont_pen=BLOC(condition = """equal_to("ALGO_CONT", 'PENALISATION') """,
                                                           fr=tr("Paramètre de la méthode pénalisée"),
@@ -265,7 +265,7 @@ DEFI_CONTACT=OPER(nom       = "DEFI_CONTACT", op=30, sd_prod   = char_contact, r
                                             TOLE_INTERP   = SIMP(statut='f',typ='R',defaut = 0., val_min=0.),
                                           ),
 # --- Résolution
-                                          ALGO_CONT       =SIMP(statut='o',typ='TXM',defaut="CONTRAINTE",
+                                          ALGO_CONT       =SIMP(statut='f',typ='TXM',defaut="CONTRAINTE",
                                                                 into=("CONTRAINTE","PENALISATION","GCP"),),
 
                                           b_active=BLOC(condition = """equal_to("ALGO_CONT", 'CONTRAINTE') """,
@@ -283,11 +283,11 @@ DEFI_CONTACT=OPER(nom       = "DEFI_CONTACT", op=30, sd_prod   = char_contact, r
 #
                                           COULOMB       =SIMP(statut='o',typ='R',),
                                           COEF_MATR_FROT=SIMP(statut='f',typ='R',defaut=0.E+0),
-                                          ALGO_FROT     =SIMP(statut='o',typ='TXM',defaut="PENALISATION", into=("PENALISATION",),),
+                                          ALGO_FROT     =SIMP(statut='f',typ='TXM',defaut="PENALISATION", into=("PENALISATION",),),
                                           E_T           =SIMP(statut='o',typ='R'),
                                 ), #fin mot-clé facteur ZONE
          ), # fin bloc b_affe_discret
-         
+
          b_affe_discret_frot  = BLOC(condition = """equal_to("FORMULATION", 'DISCRETE') and not equal_to("FROTTEMENT", 'COULOMB')""",
                                 ZONE=FACT(statut='o', max='**',
 # --- Appariement
@@ -350,7 +350,7 @@ DEFI_CONTACT=OPER(nom       = "DEFI_CONTACT", op=30, sd_prod   = char_contact, r
                                             TOLE_INTERP   = SIMP(statut='f',typ='R',defaut = 0., val_min=0.),
                                           ),
 # --- Résolution
-                                          ALGO_CONT       =SIMP(statut='o',typ='TXM',defaut="CONTRAINTE",
+                                          ALGO_CONT       =SIMP(statut='f',typ='TXM',defaut="CONTRAINTE",
                                                                 into=("CONTRAINTE","PENALISATION","GCP"),),
 
                                           b_active=BLOC(condition = """equal_to("ALGO_CONT", 'CONTRAINTE') """,
@@ -364,19 +364,19 @@ DEFI_CONTACT=OPER(nom       = "DEFI_CONTACT", op=30, sd_prod   = char_contact, r
                                           b_penal_contact=BLOC(condition = """equal_to("ALGO_CONT", 'PENALISATION') """,
                                                                fr=tr("Paramètres de la méthode pénalisée (contact)"),
                                                                E_N=SIMP(statut='o',typ='R'),
-                                          ), 
-                                ), #fin mot-clé facteur ZONE                                
+                                          ),
+                                ), #fin mot-clé facteur ZONE
          ), #fin bloc b_affe_discret_frot
 
 # AFFECTATION - CAS CONTINUE et FROTTEMENT = COULOMB
 
-         b_affe_continue_frot = BLOC(condition = """equal_to("FORMULATION", 'CONTINUE') and equal_to("FROTTEMENT", 'COULOMB')""", 
+         b_affe_continue_frot = BLOC(condition = """equal_to("FORMULATION", 'CONTINUE') and equal_to("FROTTEMENT", 'COULOMB')""",
                                      ZONE=FACT(statut='o', max='**',
 # --- Method for contact
 
                                           ALGO_CONT       =SIMP(statut='f',typ='TXM',defaut="STANDARD",
                                                                 into=("STANDARD","PENALISATION","LAC"),),
-                                                                
+
                                           #ADAPTATION      =SIMP(statut='f',typ='TXM',defaut="CYCLAGE",
                                                                 #into=("ADAPT_COEF","CYCLAGE","TOUT","NON"),),
 
@@ -384,9 +384,9 @@ DEFI_CONTACT=OPER(nom       = "DEFI_CONTACT", op=30, sd_prod   = char_contact, r
                                                           fr=tr("Paramètres de la formulation Lagrangienne"),
                                                           COEF_CONT = SIMP(statut='f',typ='R',defaut=100.E+0),
                                                           ADAPTATION      =SIMP(statut='f',typ='TXM',defaut="CYCLAGE", into=("ADAPT_COEF","CYCLAGE","TOUT","NON"),),
-                                                          
+
                                           ),
-                                          
+
                                           b_cont_lac_adapt=BLOC(condition = """equal_to("ALGO_CONT", 'LAC') """,
                                                           fr=tr("Paramètres de la formulation LAC"),
                                                           ADAPTATION      =SIMP(statut='f',typ='TXM',defaut="NON", into=("CYCLAGE","NON"),),
@@ -512,7 +512,7 @@ DEFI_CONTACT=OPER(nom       = "DEFI_CONTACT", op=30, sd_prod   = char_contact, r
                                                                   fr=tr("Paramètres de la formulation Lagrangienne"),
                                                                   COEF_FROT  =SIMP(statut='f',typ='R',defaut=100.E+0),
                                           ),
-                                          
+
                                           b_frot_pena=BLOC(condition = """equal_to("ALGO_FROT", 'PENALISATION')  """, fr=tr("Paramètres de la méthode pénalisée"),
                                                            ADAPTATION      =SIMP(statut='f',typ='TXM',defaut="ADAPT_COEF", into=("ADAPT_COEF","CYCLAGE","TOUT","NON"),),
                                                            GLIS_MAXI  =SIMP(statut='f',typ='R'),
@@ -543,23 +543,23 @@ DEFI_CONTACT=OPER(nom       = "DEFI_CONTACT", op=30, sd_prod   = char_contact, r
 
                                      ), # fin mot-clé facteur ZONE
          ), # fin bloc b_affe_continue_frot
-                                
+
 # AFFECTATION - CAS CONTINUE et FROTTEMENT != COULOMB
 
          b_affe_continue = BLOC(condition = """equal_to("FORMULATION", 'CONTINUE') and not equal_to("FROTTEMENT", 'COULOMB')""",
                                 ZONE=FACT(statut='o', max='**',
 # --- Method for contact
                                           ALGO_CONT       =SIMP(statut='f',typ='TXM',defaut="STANDARD", into=("STANDARD","PENALISATION","LAC"),),
-                                                                
+
                                           #ADAPTATION      =SIMP(statut='f',typ='TXM',defaut="CYCLAGE",
                                                                 #into=("ADAPT_COEF","CYCLAGE","TOUT","NON"),),
-                                                                                                          
+
 
                                           b_cont_std=BLOC(condition = """equal_to("ALGO_CONT", 'STANDARD') """, fr=tr("Paramètres de la formulation Lagrangienne"),
                                                            COEF_CONT = SIMP(statut='f',typ='R',defaut=100.E+0),
                                                            ADAPTATION      =SIMP(statut='f',typ='TXM',defaut="CYCLAGE", into=("ADAPT_COEF","CYCLAGE","TOUT","NON"),),
                                           ),
-                                          
+
                                           b_cont_lac_adapt=BLOC(condition = """equal_to("ALGO_CONT", 'LAC') """,
                                                           fr=tr("Paramètres de la formulation LAC"),
                                                           ADAPTATION      =SIMP(statut='f',typ='TXM',defaut="NON", into=("CYCLAGE","NON"),),
@@ -661,7 +661,7 @@ DEFI_CONTACT=OPER(nom       = "DEFI_CONTACT", op=30, sd_prod   = char_contact, r
                                                           GROUP_MA_ESCL   =SIMP(statut='o',typ=grma ,max=1),
                                                           CONTACT_INIT    =SIMP(statut='f',typ='TXM',defaut="INTERPENETRE", into=("OUI","INTERPENETRE","NON"),),
                                           ),
-                                    
+
                                      ), # fin mot-clé facteur ZONE
          ), # fin bloc b_affe_continue
 # AFFECTATION - CAS XFEM
@@ -718,8 +718,8 @@ DEFI_CONTACT=OPER(nom       = "DEFI_CONTACT", op=30, sd_prod   = char_contact, r
                                        ),
 
                              ), #fin mot-clé facteur ZONE
-         ), #fin bloc b_affe_xfem 
-                                       
+         ), #fin bloc b_affe_xfem
+
          b_affe_xfem_frot =BLOC(condition = """equal_to("FORMULATION", 'XFEM') and equal_to("FROTTEMENT", 'SANS')""",
                              ZONE=FACT(statut='o',max='**',
 # --- Fissure
@@ -759,6 +759,6 @@ DEFI_CONTACT=OPER(nom       = "DEFI_CONTACT", op=30, sd_prod   = char_contact, r
                                                                  into=("CZM_EXP_REG","CZM_LIN_REG","CZM_TAC_MIX","CZM_OUV_MIX","CZM_LIN_MIX"),)
                                        ),
 
-                             ), #fin mot-clé facteur ZONE 
+                             ), #fin mot-clé facteur ZONE
          ), #fin bloc b_affe_xfem_frot
 ) #fin OPER

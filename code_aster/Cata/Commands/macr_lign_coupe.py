@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -88,7 +88,7 @@ MACR_LIGN_COUPE=MACRO(nom="MACR_LIGN_COUPE",
                     PRESENT_PRESENT("TRAC_NOR","NOM_CMP"),),
 
            INTITULE        =SIMP(statut='f',typ='TXM',),
-           TYPE            =SIMP(statut='o',typ='TXM',max=1,
+           TYPE            =SIMP(statut='f',typ='TXM',max=1,
                                  into=("GROUP_NO","SEGMENT","ARC","GROUP_MA"),defaut="SEGMENT"),
            REPERE          =SIMP(statut='f',typ='TXM',defaut="GLOBAL",
                                 into=("GLOBAL","LOCAL","POLAIRE","UTILISATEUR","CYLINDRIQUE"),),

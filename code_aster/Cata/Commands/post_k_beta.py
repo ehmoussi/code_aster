@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -33,7 +33,7 @@ POST_K_BETA=OPER(nom="POST_K_BETA",op=198,sd_prod=table_sdaster,
          MATER_MDB     = SIMP(statut='f',typ=mater_sdaster),
          EPAIS_MDB     = SIMP(statut='f',typ='R'),
          FISSURE       = FACT(statut='o',
-            FORM_FISS      =SIMP(statut='o',typ='TXM',defaut="ELLIPSE",
+            FORM_FISS      =SIMP(statut='f',typ='TXM',defaut="ELLIPSE",
                                  into=("ELLIPSE","SEMI_ELLIPSE") ),
             b_fissure=BLOC(condition="""equal_to("FORM_FISS", 'ELLIPSE')""",
               DECALAGE       = SIMP(statut='f',typ='R',defaut=-2.e-04),

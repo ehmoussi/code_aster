@@ -90,7 +90,7 @@ DYNA_LINE = MACRO(nom      = "DYNA_LINE",
         b_param_tran    = BLOC(condition = """equal_to("TYPE_CALCUL", 'TRAN')""",
             # 1. Integration schemes
             SCHEMA_TEMPS    =     FACT(statut='d',
-                SCHEMA      =         SIMP(statut='o', typ='TXM', defaut="DEVOGE",
+                SCHEMA      =         SIMP(statut='f', typ='TXM', defaut="DEVOGE",
                                             into=("NEWMARK", "WILSON", "DIFF_CENTRE",
                                                     "DEVOGE", "ADAPT_ORDRE1", "ADAPT_ORDRE2",
                                                     "RUNGE_KUTTA_32", "RUNGE_KUTTA_54", "ITMI"),),
