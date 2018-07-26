@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,31 +15,15 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine dltini(lcrea, nume, result, depini, vitini,&
                   accini, fexini, famini, fliini, neq,&
-                  numedd, inchac, baseno, ds_energy)
-!     CALCUL MECANIQUE TRANSITOIRE PAR INTEGRATION DIRECTE
-!     RECUPERATION DES CONDITIONS INITIALES
-!     ------------------------------------------------------------------
-! OUT : LCREA  : CREATION OU NON DU RESULTAT
-! OUT : NUME   : NUMERO D'ORDRE DE REPRISE
-! OUT : DEPINI : CHAMP DE DEPLACEMENT INITIAL OU DE REPRISE
-! OUT : VITINI : CHAMP DE VITESSE INITIALE OU DE REPRISE
-! OUT : ACCINI : CHAMP D'ACCELERATION INITIALE OU DE REPRISE
-! IN  : NEQ    : NOMBRE D'EQUATIONS
-! IN  : NUMEDD : NUMEROTATION DDL
-! IN  : BASENO : BASE DES NOMS DE STRUCTURES
-! VAR : INCHAC : CALCUL OU NON DE L'ACCELERATION INITIALE
-!     ------------------------------------------------------------------
-! CORPS DU PROGRAMME
+                  numedd, inchac, ds_energy)
 !
 use NonLin_Datastructure_type
 !
 implicit none
 !
-!
-! DECLARATION PARAMETRES D'APPELS
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterc/getfac.h"
@@ -55,10 +39,29 @@ implicit none
 #include "asterfort/vtcopy.h"
 #include "asterfort/vtcreb.h"
 #include "blas/dcopy.h"
+!
+! --------------------------------------------------------------------------------------------------
+!
+!     CALCUL MECANIQUE TRANSITOIRE PAR INTEGRATION DIRECTE
+!     RECUPERATION DES CONDITIONS INITIALES
+!
+! --------------------------------------------------------------------------------------------------
+!
+! OUT : LCREA  : CREATION OU NON DU RESULTAT
+! OUT : NUME   : NUMERO D'ORDRE DE REPRISE
+! OUT : DEPINI : CHAMP DE DEPLACEMENT INITIAL OU DE REPRISE
+! OUT : VITINI : CHAMP DE VITESSE INITIALE OU DE REPRISE
+! OUT : ACCINI : CHAMP D'ACCELERATION INITIALE OU DE REPRISE
+! IN  : NEQ    : NOMBRE D'EQUATIONS
+! IN  : NUMEDD : NUMEROTATION DDL
+! VAR : INCHAC : CALCUL OU NON DE L'ACCELERATION INITIALE
+!
+! --------------------------------------------------------------------------------------------------
+!
     real(kind=8) :: depini(*), vitini(*), accini(*)
     real(kind=8) :: fexini(*), famini(*), fliini(*)
     type(NL_DS_Energy), intent(in) :: ds_energy
-    character(len=8) :: baseno, result
+    character(len=8) :: result
     character(len=24) :: numedd
     aster_logical :: lcrea, lener, linfo
     integer :: nume
@@ -69,7 +72,8 @@ implicit none
     integer :: ierr
     character(len=8) :: reuse, dep, vit
     character(len=19) :: champ, cham2
-!     ------------------------------------------------------------------
+!
+! --------------------------------------------------------------------------------------------------
 !
     call jemarq()
     lcrea = .true.
@@ -161,7 +165,7 @@ implicit none
             endif
             call chpver('F', champ, 'NOEU', 'DEPL_R', ierr)
             inchac = 1
-            cham2 = baseno//'.DEPINI'
+            cham2 = '&&COMDLT.DEPINI'
             call vtcreb(cham2, 'V', 'R',&
                         nume_ddlz = numedd,&
                         nb_equa_outz = neq)
@@ -180,7 +184,7 @@ implicit none
             endif
             call chpver('F', champ, 'NOEU', 'DEPL_R', ierr)
             inchac = 1
-            cham2 = baseno//'.VITINI'
+            cham2 = '&&COMDLT.VITINI'
             call vtcreb(cham2, 'V', 'R',&
                         nume_ddlz = numedd,&
                         nb_equa_outz = neq)
@@ -201,7 +205,7 @@ implicit none
             endif
             call chpver('F', champ, 'NOEU', 'DEPL_R', ierr)
             inchac = 0
-            cham2 = baseno//'.ACCINI'
+            cham2 = '&&COMDLT.ACCINI'
             call vtcreb(cham2, 'V', 'R',&
                         nume_ddlz = numedd,&
                         nb_equa_outz = neq)

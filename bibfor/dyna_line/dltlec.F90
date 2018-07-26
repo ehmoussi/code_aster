@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,19 +15,44 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! aslint: disable=W1504
+!
 subroutine dltlec(result, modele, numedd, materi, mate,&
                   carael, carele, imat, masse, rigid,&
                   amort, lamort, nchar, nveca, lischa,&
                   charge, infoch, fomult, iaadve, ialifo,&
                   nondp, iondp, solveu, iinteg, t0,&
-                  nume, baseno, numrep)
+                  nume, numrep)
 !
+implicit none
+!
+#include "asterf_types.h"
+#include "jeveux.h"
+#include "asterc/getfac.h"
+#include "asterc/getres.h"
+#include "asterfort/chpver.h"
+#include "asterfort/codent.h"
+#include "asterfort/cresol.h"
+#include "asterfort/dismoi.h"
+#include "asterfort/dltp0.h"
+#include "asterfort/focste.h"
+#include "asterfort/getvid.h"
+#include "asterfort/getvr8.h"
+#include "asterfort/getvtx.h"
+#include "asterfort/infniv.h"
+#include "asterfort/jeveuo.h"
+#include "asterfort/mtdscr.h"
+#include "asterfort/nmarnr.h"
+#include "asterfort/nmdome.h"
+#include "asterfort/rcmfmc.h"
+#include "asterfort/utmess.h"
+#include "asterfort/wkvect.h"
+!
+! --------------------------------------------------------------------------------------------------
 !
 !       DYNAMIQUE LINEAIRE TRANSITOIRE - LECTURE DES DONNEES
-!       -         -        -             ---
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
 !      OUT RESULT : NOM UTILISATEUR DU RESULTAT DE STAT_NON_LINE
 !      OUT MODELE : NOM DU MODELE
@@ -58,71 +83,35 @@ subroutine dltlec(result, modele, numedd, materi, mate,&
 !                   4 : ADAPT
 !      OUT T0     : INSTANT INITIAL
 !      OUT NUME   : NUMERO D'ORDRE DE REPRISE
-!      IN  BASENO : BASE DU NOM DES STRUCTURES
 !      OUT NUMREP : NUMERO DE REUSE POUR LA TABLE PARA_CALC
-! ----------------------------------------------------------------------
 !
-! aslint: disable=W1504
-    implicit none
+! --------------------------------------------------------------------------------------------------
 !
-#include "asterf_types.h"
-#include "jeveux.h"
-#include "asterc/getfac.h"
-#include "asterc/getres.h"
-#include "asterfort/chpver.h"
-#include "asterfort/codent.h"
-#include "asterfort/cresol.h"
-#include "asterfort/dismoi.h"
-#include "asterfort/dltp0.h"
-#include "asterfort/focste.h"
-#include "asterfort/getvid.h"
-#include "asterfort/getvr8.h"
-#include "asterfort/getvtx.h"
-#include "asterfort/infniv.h"
-#include "asterfort/jeveuo.h"
-#include "asterfort/mtdscr.h"
-#include "asterfort/nmarnr.h"
-#include "asterfort/nmdome.h"
-#include "asterfort/rcmfmc.h"
-#include "asterfort/utmess.h"
-#include "asterfort/wkvect.h"
     integer :: imat(3)
     integer :: nveca, nchar, ierc
     integer :: iaadve, ialifo, iondp, iener
     integer :: iinteg, nondp
     integer :: nume, numrep
-!
     real(kind=8) :: t0
-!
     aster_logical :: lamort
-!
-    character(len=8) :: result, baseno
+    character(len=8) :: result
     character(len=8) :: masse, rigid, amort
     character(len=8) :: materi, carael
     character(len=19) :: lischa, solveu
     character(len=24) :: modele, numedd, mate, carele
     character(len=24) :: charge, infoch, fomult
-!
-!
-!
     integer :: niv, ifm
     integer :: nr, nm, na, nvect, ivec, n1
     integer :: iaux, ibid
     integer :: indic, nond, jinf, ialich, ich
-!
     real(kind=8) :: rval
-!
     character(len=8) :: k8b
     character(len=8) :: blan8
     character(len=16) :: method
     character(len=16) :: k16bid, nomcmd
     character(len=19) :: channo
 !
-!     -----------------------------------------------------------------
-!
-!====
-! 1. PREALABLES
-!====
+! --------------------------------------------------------------------------------------------------
 !
     modele = ' '
     blan8 = ' '
@@ -142,7 +131,7 @@ subroutine dltlec(result, modele, numedd, materi, mate,&
 !
 ! 2.3. ==> CALCUL DES ENERGIES
 !
-    call wkvect(baseno//'.ENER      .VALE', 'V V R', 6, iener)
+    call wkvect('&&COMDLT.ENER      .VALE', 'V V R', 6, iener)
 !
 ! 2.4. ==> --- LES MATRICES ---
     call getvid(' ', 'MATR_RIGI', scal=rigid, nbret=nr)
@@ -174,32 +163,32 @@ subroutine dltlec(result, modele, numedd, materi, mate,&
 !
         nveca = 0
         nchar = 0
-        do 311 , ivec = 1 , nvect
-        call getvid('EXCIT', 'VECT_ASSE', iocc=ivec, scal=channo, nbret=iaux)
-        if (iaux .eq. 1) then
-            nveca = nveca + 1
-        endif
-        call getvid('EXCIT', 'CHARGE', iocc=ivec, scal=channo, nbret=iaux)
-        if (iaux .eq. 1) then
-            nchar = nchar + 1
-        endif
-311     continue
+        do ivec = 1 , nvect
+            call getvid('EXCIT', 'VECT_ASSE', iocc=ivec, scal=channo, nbret=iaux)
+            if (iaux .eq. 1) then
+                nveca = nveca + 1
+            endif
+            call getvid('EXCIT', 'CHARGE', iocc=ivec, scal=channo, nbret=iaux)
+            if (iaux .eq. 1) then
+                nchar = nchar + 1
+            endif
+        end do
 !
 ! 3.1.2. ==> LISTE DE VECT_ASSE DECRIVANT LE CHARGEMENT
 !
         if (nveca .ne. 0) then
 !
-            call wkvect(baseno//'.LIFONCT', 'V V K24', nveca, ialifo)
-            call wkvect(baseno//'.ADVECASS', 'V V I  ', nveca, iaadve)
+            call wkvect('&&COMDLT.LIFONCT', 'V V K24', nveca, ialifo)
+            call wkvect('&&COMDLT.ADVECASS', 'V V I  ', nveca, iaadve)
 !
             indic = 0
             do ivec = 1, nveca
                 indic = indic + 1
-3121             continue
+10              continue
                 call getvid('EXCIT', 'VECT_ASSE', iocc=indic, scal=channo, nbret=iaux)
                 if (iaux .eq. 0) then
                     indic = indic + 1
-                    goto 3121
+                    goto 10
                 endif
                 call chpver('F', channo, 'NOEU', 'DEPL_R', ibid)
                 call jeveuo(channo//'.VALE', 'L', zi(iaadve+ivec-1))
@@ -211,7 +200,7 @@ subroutine dltlec(result, modele, numedd, materi, mate,&
                     if (iaux .eq. 0) then
                         rval = 1.d0
                         call getvr8('EXCIT', 'COEF_MULT', iocc=indic, scal=rval, nbret=iaux)
-                        zk24(ialifo+ivec-1) = baseno//'.F_'
+                        zk24(ialifo+ivec-1) = '&&COMDLT.F_'
                         call codent(ivec, 'G', zk24(ialifo+ivec-1)(12: 19))
                         call focste(zk24(ialifo+ivec-1), 'INST', rval, 'V')
                     endif
@@ -264,9 +253,9 @@ subroutine dltlec(result, modele, numedd, materi, mate,&
 ! 3.3. ==> RECUPERATION DES DONNEES DE CHARGEMENT PAR ONDE PLANE
 !
     if (nondp .eq. 0) then
-        call wkvect(baseno//'.ONDP', 'V V K8', 1, iondp)
+        call wkvect('&&COMDLT.ONDP', 'V V K8', 1, iondp)
     else
-        call wkvect(baseno//'.ONDP', 'V V K8', nondp, iondp)
+        call wkvect('&&COMDLT.ONDP', 'V V K8', nondp, iondp)
         nond = 0
         do ich = 1, nchar
             if (zi(jinf+nchar+ich) .eq. 6) then

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,45 +15,15 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! aslint: disable=W1504
+!
 subroutine dltali(neq, result, imat, masse, rigid,&
                   liad, lifo, nchar, nveca, lcrea,&
                   lprem, lamort, t0, mate, carele,&
                   charge, infoch, fomult, modele, numedd,&
                   nume, solveu, criter, dep0, vit0,&
-                  acc0, fexte0, famor0, fliai0, baseno,&
+                  acc0, fexte0, famor0, fliai0, &
                   tabwk, force0, force1, ds_energy)
-!
-!
-!       DYNAMIQUE LINEAIRE TRANSITOIRE - ALGORITHME - INITIALISATION
-!       -         -        -             --           -
-! ----------------------------------------------------------------------
-!  IN  : NEQ       : NOMBRE D'EQUATIONS
-!  IN  : IMAT      : TABLEAU D'ADRESSES POUR LES MATRICES
-!  IN  : MASSE     : MATRICE DE MASSE
-!  IN  : RIGID     : MATRICE DE RIGIDITE
-!  IN  : LIAD      : LISTE DES ADRESSES DES VECTEURS CHARGEMENT (NVECT)
-!  IN  : LIFO      : LISTE DES NOMS DES FONCTIONS EVOLUTION (NVECT)
-!  IN  : NCHAR     : NOMBRE D'OCCURENCES DU MOT CLE CHARGE
-!  IN  : NVECA     : NOMBRE D'OCCURENCES DU MOT CLE VECT_ASSE
-!  IN  : LCREA     : LOGIQUE INDIQUANT SI IL Y A REPRISE
-!  IN  : LAMORT    : LOGIQUE INDIQUANT SI IL Y A AMORTISSEMENT
-!  IN  : MATE      : NOM DU CHAMP DE MATERIAU
-!  IN  : CARELE    : CARACTERISTIQUES DES POUTRES ET COQUES
-!  IN  : CHARGE    : LISTE DES CHARGES
-!  IN  : INFOCH    : INFO SUR LES CHARGES
-!  IN  : FOMULT    : LISTE DES FONC_MULT ASSOCIES A DES CHARGES
-!  IN  : MODELE    : MODELE
-!  IN  : NUMEDD    : NUME_DDL DE LA MATR_ASSE RIGID
-!  IN  : NUME      : NUMERO D'ORDRE DE REPRISE
-!  IN  : SOLVEU    : NOM DU SOLVEUR
-!  VAR : DEP0      : TABLEAU DES DEPLACEMENTS A L'INSTANT N
-!  VAR : VIT0      : TABLEAU DES VITESSES A L'INSTANT N
-!  VAR : ACC0      : TABLEAU DES ACCELERATIONS A L'INSTANT N
-!  IN  : BASENO    : BASE DES NOMS DE STRUCTURES
-! ----------------------------------------------------------------------
-! CORPS DU PROGRAMME
-! aslint: disable=W1504
 !
 use NonLin_Datastructure_type
 !
@@ -76,18 +46,48 @@ implicit none
 #include "asterfort/vtcreb.h"
 #include "asterfort/wkvect.h"
 #include "blas/dcopy.h"
+!
+! --------------------------------------------------------------------------------------------------
+!
+!       DYNAMIQUE LINEAIRE TRANSITOIRE - ALGORITHME - INITIALISATION
+!
+! --------------------------------------------------------------------------------------------------
+!
+!  IN  : NEQ       : NOMBRE D'EQUATIONS
+!  IN  : IMAT      : TABLEAU D'ADRESSES POUR LES MATRICES
+!  IN  : MASSE     : MATRICE DE MASSE
+!  IN  : RIGID     : MATRICE DE RIGIDITE
+!  IN  : LIAD      : LISTE DES ADRESSES DES VECTEURS CHARGEMENT (NVECT)
+!  IN  : LIFO      : LISTE DES NOMS DES FONCTIONS EVOLUTION (NVECT)
+!  IN  : NCHAR     : NOMBRE D'OCCURENCES DU MOT CLE CHARGE
+!  IN  : NVECA     : NOMBRE D'OCCURENCES DU MOT CLE VECT_ASSE
+!  IN  : LCREA     : LOGIQUE INDIQUANT SI IL Y A REPRISE
+!  IN  : LAMORT    : LOGIQUE INDIQUANT SI IL Y A AMORTISSEMENT
+!  IN  : MATE      : NOM DU CHAMP DE MATERIAU
+!  IN  : CARELE    : CARACTERISTIQUES DES POUTRES ET COQUES
+!  IN  : CHARGE    : LISTE DES CHARGES
+!  IN  : INFOCH    : INFO SUR LES CHARGES
+!  IN  : FOMULT    : LISTE DES FONC_MULT ASSOCIES A DES CHARGES
+!  IN  : MODELE    : MODELE
+!  IN  : NUMEDD    : NUME_DDL DE LA MATR_ASSE RIGID
+!  IN  : NUME      : NUMERO D'ORDRE DE REPRISE
+!  IN  : SOLVEU    : NOM DU SOLVEUR
+!  VAR : DEP0      : TABLEAU DES DEPLACEMENTS A L'INSTANT N
+!  VAR : VIT0      : TABLEAU DES VITESSES A L'INSTANT N
+!  VAR : ACC0      : TABLEAU DES ACCELERATIONS A L'INSTANT N
+!
+! --------------------------------------------------------------------------------------------------
+!
     integer :: neq
     integer :: nveca, nchar
     integer :: liad(*)
     integer :: imat(3), nume
-!
     real(kind=8) :: dep0(*), vit0(*), acc0(*)
     real(kind=8) :: fexte0(*), famor0(*), fliai0(*)
     real(kind=8) :: t0
     real(kind=8) :: tabwk(*)
     type(NL_DS_Energy), intent(inout) :: ds_energy
-!
-    character(len=8) :: baseno, result
+    character(len=8) :: result
     character(len=8) :: masse, rigid
     character(len=19) :: solveu
     character(len=24) :: charge, infoch, fomult, mate, carele
@@ -95,28 +95,19 @@ implicit none
     character(len=24) :: lifo(*)
     character(len=24) :: criter
     character(len=19) :: force0, force1
-!
     aster_logical :: lcrea, lprem
     aster_logical :: lamort
-!
     complex(kind=8) :: cbid
-!
     integer :: inchac
-!
     integer :: ibid, icode, ieq, ndy, ifextm, ifextc
     character(len=8) :: matrei, maprei, dyna
     character(len=19) :: chsol
-!
     integer :: iforc0, iforc1
     character(len=24) :: cine
     integer :: iret
     cbid = dcmplx(0.d0, 0.d0)
 !
-!     -----------------------------------------------------------------
-!
-!====
-! 1. CREATION DES STRUCTURES
-!====
+! --------------------------------------------------------------------------------------------------
 !
     call vtcreb(force0, 'V', 'R',&
                 nume_ddlz = numedd,&
@@ -141,7 +132,7 @@ implicit none
     lcrea = .true.
     call dltini(lcrea, nume, result, dep0, vit0,&
                 acc0, fexte0, famor0, fliai0, neq,&
-                numedd, inchac, baseno, ds_energy)
+                numedd, inchac, ds_energy)
 !
 !
 !====

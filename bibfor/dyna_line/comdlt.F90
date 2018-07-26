@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,29 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine comdlt()
-!     DYNA_VIBRA // TYPE_CALCUL = 'TRAN'  BASE_CALCUL = 'PHYS'
-!     CALCUL MECANIQUE TRANSITOIRE PAR INTEGRATION DIRECTE
-!     DIFFERENTS TYPES D'INTEGRATION SONT POSSIBLES:
-!     - IMPLICITES :  THETA-WILSON
-!                     NEWMARK
-!     - EXPLICITE  :  A PAS CONSTANT  : DIFFERENCES CENTREES
-!                           ADAPATATIF: ADAPT ORDRE 2   
-!     ------------------------------------------------------------------
-!
-!  HYPOTHESES :                                                "
-!  ----------   SYSTEME CONSERVATIF DE LA FORME  K.U    +    M.U = F
-!           OU                                           '     "
-!               SYSTEME DISSIPATIF  DE LA FORME  K.U + C.U + M.U = F
-!
-!     ------------------------------------------------------------------
 !
 use NonLin_Datastructure_type
 !
 implicit none
-!
-!
 !
 #include "asterf_types.h"
 #include "jeveux.h"
@@ -71,15 +54,21 @@ implicit none
 #include "asterfort/rsadpa.h"
 #include "asterfort/rsexch.h"
 #include "asterfort/rsnoch.h"
+#include "asterfort/titre.h"
 #include "asterfort/utmess.h"
 #include "asterfort/vrcins.h"
 #include "asterfort/vrcref.h"
 #include "asterfort/wkvect.h"
 #include "asterfort/as_allocate.h"
 #include "asterfort/as_deallocate.h"
-
-    character(len=6) :: nompro
-    parameter ( nompro = 'COMDLT' )
+!
+! --------------------------------------------------------------------------------------------------
+!
+! DYNA_VIBRA
+!
+! TYPE_CALCUL = 'TRAN' + BASE_CALCUL = 'PHYS'
+!
+! --------------------------------------------------------------------------------------------------
 !
     integer :: nveca, nchar
     integer :: imat(3), nume, niv, ibid, ifm, iondp, ladpa, numrep
@@ -94,7 +83,7 @@ implicit none
     real(kind=8) :: nbpas_max_r, epsi
     character(len=1) :: base, typcoe
     character(len=2) :: codret
-    character(len=8) :: k8b, masse, rigid, amort, baseno, result
+    character(len=8) :: k8b, masse, rigid, amort, result
     character(len=8) :: materi, carael, kstr, nomfon, charep
     character(len=9) :: nomsym(6)
     character(len=19) :: solveu, infcha, ligrel, linst
@@ -108,42 +97,28 @@ implicit none
     character(len=19) :: force0, force1
     character(len=46) :: champs
     type(NL_DS_Energy) :: ds_energy
-
-!
     aster_logical :: lamort, lcrea, lprem, exipou
     integer, pointer :: ordr(:) => null()
     character(len=8), pointer :: chexc(:) => null()
-
-!     -----------------------------------------------------------------
     data modele   /'                        '/
     data allschemes /'NEWMARK', 'WILSON', 'DIFF_CENTRE', 'ADAPT_ORDRE2'/
 !
+! --------------------------------------------------------------------------------------------------
+!
     call jemarq()
+!
+    call titre()
+    call infmaj()
+    call infniv(ifm,niv)
+!
+! - Initializations
+!
     rundf = r8vide()
     epsi  = 1000.d0*r8prem()
-!
-!====
-! 1. LES DONNEES DU CALCUL
-!====
-!
-! 1.1. ==> RECUPERATION DU NIVEAU D'IMPRESSION
-!
-    call getvis(' ', 'INFO', scal=niv, nbret=ibid)
-    call infmaj()
-!
-    call infniv(ifm, niv)
-!
-! 1.2. ==> NOM DES STRUCTURES
-!
-    baseno = '&&'//nompro
-!
-!               12   345678   9012345678901234
-    solveu = '&&'//nompro//'.SOLVEUR   '
-    infcha = '&&'//nompro//'.INFCHA    '
-    charge = '&&'//nompro//'.INFCHA    .LCHA'
-    infoch = '&&'//nompro//'.INFCHA    .INFC'
-    chvarc = '&&COMDLT.VARC'
-    chvref = '&&COMDLT.VREF'
+    lprem = .true.
+    lamort = .true.
+    amort = ' '
+    criter = '&&RESGRA_GCPC'
     alpha = 0.d0
     calpha = (0.d0 , 0.d0)
     nfon = 0
@@ -153,11 +128,14 @@ implicit none
     k24bla = ' '
     base = 'G'
 !
+! - Names of datastructures
 !
-    lprem = .true.
-    lamort = .true.
-    amort = ' '
-    criter = '&&RESGRA_GCPC'
+    solveu = '&&COMDLT.SOLVEUR   '
+    infcha = '&&COMDLT.INFCHA    '
+    charge = '&&COMDLT.INFCHA    .LCHA'
+    infoch = '&&COMDLT.INFCHA    .INFC'
+    chvarc = '&&COMDLT.VARC'
+    chvref = '&&COMDLT.VREF'
 !
 !====
 ! 2. LES DONNEES DU CALCUL
@@ -168,7 +146,7 @@ implicit none
                 amort, lamort, nchar, nveca, infcha,&
                 charge, infoch, fomult, iaadve, ialifo,&
                 nondp, iondp, solveu, iinteg, t0,&
-                nume, baseno, numrep)
+                nume, numrep)
 !
     neq = zi(imat(1)+2)
 !
@@ -176,18 +154,18 @@ implicit none
 ! 3. CREATION DES VECTEURS DE TRAVAIL SUR BASE VOLATILE
 !====
 !
-    call wkvect(baseno//'.DEPL0', 'V V R', neq, idepl0)
-    call wkvect(baseno//'.VITE0', 'V V R', neq, ivite0)
-    call wkvect(baseno//'.ACCE0', 'V V R', neq, iacce0)
-    call wkvect(baseno//'.FEXTE', 'V V R', 2*neq, ifexte)
-    call wkvect(baseno//'.FAMOR', 'V V R', 2*neq, ifamor)
-    call wkvect(baseno//'.FLIAI', 'V V R', 2*neq, ifliai)
-    call wkvect(baseno//'.TRAV', 'V V R', neq, iwk)
+    call wkvect('&&COMDLT.DEPL0', 'V V R', neq, idepl0)
+    call wkvect('&&COMDLT.VITE0', 'V V R', neq, ivite0)
+    call wkvect('&&COMDLT.ACCE0', 'V V R', neq, iacce0)
+    call wkvect('&&COMDLT.FEXTE', 'V V R', 2*neq, ifexte)
+    call wkvect('&&COMDLT.FAMOR', 'V V R', 2*neq, ifamor)
+    call wkvect('&&COMDLT.FLIAI', 'V V R', 2*neq, ifliai)
+    call wkvect('&&COMDLT.TRAV', 'V V R', neq, iwk)
 !
     call getfac('EXCIT_RESU', nbexre)
     if (nbexre .ne. 0) then
-        call wkvect(baseno//'.COEF_RRE', 'V V R  ', nbexre, lcrre)
-        call wkvect(baseno//'.LISTRESU', 'V V K8 ', nbexre, lresu)
+        call wkvect('&&COMDLT.COEF_RRE', 'V V R  ', nbexre, lcrre)
+        call wkvect('&&COMDLT.LISTRESU', 'V V K8 ', nbexre, lresu)
         do iresu = 1, nbexre
             call getvid('EXCIT_RESU', 'RESULTAT', iocc=iresu, scal=zk8( lresu+iresu-1), nbret=l)
             call getvr8('EXCIT_RESU', 'COEF_MULT', iocc=iresu, scal=zr(lcrre+iresu-1), nbret=l)
@@ -262,7 +240,7 @@ implicit none
                 lprem, lamort, t0, mate, carele,&
                 charge, infoch, fomult, modele, numedd,&
                 nume, solveu, criter, zr(idepl0), zr(ivite0),&
-                zr(iacce0), zr(ifexte+neq), zr(ifamor+neq), zr(ifliai+neq), baseno,&
+                zr(iacce0), zr(ifexte+neq), zr(ifamor+neq), zr(ifliai+neq), &
                 zr(iwk), force0, force1, ds_energy)
 
     call utmess('I', 'DYNAMIQUE_80', nr=2, valr=[tinit, tfin])
