@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,15 +15,13 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 #include "asterf_types.h"
 !
 interface
     subroutine dltini(lcrea, nume, result, depini, vitini,&
                       accini, fexini, famini, fliini, neq,&
-                      numedd, inchac, baseno, ds_energy)
+                      numedd, inchac, ds_energy)
         use NonLin_Datastructure_type
         aster_logical :: lcrea
         integer :: nume
@@ -37,7 +35,6 @@ interface
         integer :: neq
         character(len=24) :: numedd
         integer :: inchac
-        character(len=8) :: baseno
         type(NL_DS_Energy), intent(in) :: ds_energy
     end subroutine dltini
 end interface

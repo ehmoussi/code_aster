@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,10 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine dyarch(nbpas, lisins, lisarc, nbarch, ich,&
                   nbexcl, type)
-    implicit none
+!
+implicit none
+!
 #include "jeveux.h"
 #include "asterc/getfac.h"
 #include "asterfort/dyarc1.h"
@@ -32,9 +34,15 @@ subroutine dyarch(nbpas, lisins, lisarc, nbarch, ich,&
 #include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/wkvect.h"
-    integer :: nbpas, nbarch, ich, nbexcl
-    character(len=*) :: lisins, lisarc, type(*)
+!
+integer :: nbpas, nbarch, ich, nbexcl
+character(len=*) :: lisins, lisarc, type(*)
+!
+! --------------------------------------------------------------------------------------------------
+!
 !     SAISIE DU MOT CLE FACTEUR "ARCHIVAGE"
+!
+! --------------------------------------------------------------------------------------------------
 !
 ! IN  : NBPAS  : NOMBRE DE PAS DE CALCUL
 ! IN  : LISINS : NOM DE LA LISTE DES INSTANTS DE CALCUL
@@ -43,12 +51,15 @@ subroutine dyarch(nbpas, lisins, lisarc, nbarch, ich,&
 ! IN  : ICH    : PRISE EN COMPTE DU MOT CLE "CHAM_EXCLU"
 ! OUT : NBEXCL : NOMBRE DE NOMS DES CHAMPS EXCLUS
 ! OUT : TYPE   : NOMS DES CHAMPS EXCLUS
-! ----------------------------------------------------------------------
+!
+! --------------------------------------------------------------------------------------------------
+!
     integer :: jarch, nbocc, n1, jnum, lnum, k, ipach, jinsc
     real(kind=8) :: epsi
     character(len=8) ::  rela
     character(len=19) :: numarc
-!     ------------------------------------------------------------------
+!
+! --------------------------------------------------------------------------------------------------
 !
     call jemarq()
     nbexcl = 0
@@ -57,8 +68,6 @@ subroutine dyarch(nbpas, lisins, lisarc, nbarch, ich,&
     call getfac('ARCHIVAGE', nbocc)
 !
     if (nbocc .ne. 0) then
-!
-!
         call getvid('ARCHIVAGE', 'LIST_INST', iocc=1, scal=numarc, nbret=n1)
         if (n1 .ne. 0) then
             call jeveuo(lisins, 'L', jinsc)
@@ -91,16 +100,14 @@ subroutine dyarch(nbpas, lisins, lisarc, nbarch, ich,&
         call getvis('ARCHIVAGE', 'PAS_ARCH', iocc=1, scal=ipach, nbret=n1)
         if (n1 .eq. 0) ipach = 1
 !
-        do 10 k = ipach, nbpas, ipach
+        do k = ipach, nbpas, ipach
             zi(jarch+k-1) = 1
-10      continue
+        end do
         zi(jarch+nbpas-1) = 1
 !
-100      continue
+100     continue
 !
         if (ich .ne. 0) then
-!
-!        --- LES SORTIES ---
             call getvtx('ARCHIVAGE', 'CHAM_EXCLU', iocc=1, nbval=0, nbret=n1)
             if (n1 .ne. 0) then
                 nbexcl = -n1
@@ -108,19 +115,17 @@ subroutine dyarch(nbpas, lisins, lisarc, nbarch, ich,&
                             nbret=n1)
             endif
         endif
-!
     else
-!
-        do 30 k = 1, nbpas
+        do k = 1, nbpas
             zi(jarch+k-1) = 1
-30      continue
+        end do
     endif
 !
 !     --- 1 : CONDITIONS INITIALES ---
     nbarch = 1
-    do 40 k = 1, nbpas
+    do k = 1, nbpas
         nbarch = nbarch + zi(jarch+k-1)
-40  end do
+    end do
 !
     call jedema()
 end subroutine

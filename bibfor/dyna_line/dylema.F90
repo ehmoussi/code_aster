@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine dylema(baseno, nbmat, nomat, raide, masse,&
+subroutine dylema(nbmat, nomat, raide, masse,&
                   amor, impe)
 !
 ! DYNAMIQUE: LECTURE DES MATRICES ASSEMBLEES EN ENTREE DE DYNA_VIBRA//HARM
@@ -56,7 +56,6 @@ subroutine dylema(baseno, nbmat, nomat, raide, masse,&
 #include "asterfort/wkvect.h"
 !
     integer :: nbmat
-    character(len=8) :: baseno
     character(len=19) :: masse, raide, amor, impe
     character(len=24) :: nomat(*)
 !
@@ -156,7 +155,7 @@ subroutine dylema(baseno, nbmat, nomat, raide, masse,&
         nbmode = neq
         nbmod2 = neq*(neq+1)/2
         nbmat = nbmat+1
-        amort = baseno//'.AMORT_MATR'
+        amort = '&&COMDLH.AMORT_MATR'
         call mtdefs(amort, masse, 'V', 'R')
         call mtdscr(amort)
         nomat(nbmat)=amort(1:19)//'.&INT'
@@ -179,7 +178,7 @@ subroutine dylema(baseno, nbmat, nomat, raide, masse,&
             vali (2) = nbamor
             vali (3) = nbmode
             call utmess('A', 'ALGORITH15_96', ni=3, vali=vali)
-            call wkvect(baseno//'.AMORTI', 'V V R8', nbmode, jamog)
+            call wkvect('&&COMDLH.AMORTI', 'V V R8', nbmode, jamog)
             if (n1 .ne. 0) then
                 call getvr8('AMOR_MODAL', 'AMOR_REDUIT', iocc=1, nbval=nbmode, vect=zr(jamog),&
                             nbret=n)
@@ -191,7 +190,7 @@ subroutine dylema(baseno, nbmat, nomat, raide, masse,&
             endif
         else if (nbamor.lt.nbmode) then
 !
-            call wkvect(baseno//'.AMORTI', 'V V R8', nbamor, jamog)
+            call wkvect('&&COMDLH.AMORTI', 'V V R8', nbamor, jamog)
             if (n1 .ne. 0) then
                 call getvr8('AMOR_MODAL', 'AMOR_REDUIT', iocc=1, nbval=nbamor, vect=zr(jamog),&
                             nbret=n)
@@ -206,7 +205,7 @@ subroutine dylema(baseno, nbmat, nomat, raide, masse,&
             vali (2) = nbmode
             vali (3) = idiff
             call utmess('I', 'ALGORITH15_97', ni=3, vali=vali)
-            call wkvect(baseno//'.AMORTI2', 'V V R8', nbmode, jamo2)
+            call wkvect('&&COMDLH.AMORTI2', 'V V R8', nbmode, jamo2)
             do 20 iam = 1, nbamor
                 zr(jamo2+iam-1) = zr(jamog+iam-1)
  20         continue
@@ -215,7 +214,7 @@ subroutine dylema(baseno, nbmat, nomat, raide, masse,&
  22         continue
             jamog = jamo2
         else if (nbamor.eq.nbmode) then
-            call wkvect(baseno//'.AMORTI', 'V V R8', nbamor, jamog)
+            call wkvect('&&COMDLH.AMORTI', 'V V R8', nbamor, jamog)
             if (n1 .ne. 0) then
                 call getvr8('AMOR_MODAL', 'AMOR_REDUIT', iocc=1, nbval=nbamor, vect=zr(jamog),&
                             nbret=n)

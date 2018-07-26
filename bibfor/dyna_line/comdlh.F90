@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,22 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! aslint: disable=W1501
+!
 subroutine comdlh()
 !
-!
-    implicit none
-!
-! ----------------------------------------------------------------------
-!
-!  COMMANDE DYNA_VIBRA // OPTION TYPE_CALCUL = HARMONIQUE
-!
-!  CALCUL DYNAMIQUE HARMONIQUE POUR UN SYSTEME CONSERVATIF
-!  OU DISSIPATIF Y COMPRIS LES SYSTEMES COUPLES FLUIDE-STRUCTURE
-!
-!
-!
-!
+implicit none
 !
 #include "asterf_types.h"
 #include "jeveux.h"
@@ -90,13 +79,21 @@ subroutine comdlh()
 #include "blas/zcopy.h"
 #include "asterfort/as_allocate.h"
 #include "asterfort/as_deallocate.h"
-
+!
+! --------------------------------------------------------------------------------------------------
+!
+! DYNA_VIBRA
+!
+! TYPE_CALCUL = 'HARM' + BASE_CALCUL = 'PHYS'
+!
+! --------------------------------------------------------------------------------------------------
+!
     integer :: ibid, nbold, isto1
     real(kind=8) :: r8bid
     complex(kind=8) :: c16bid
     character(len=8) :: k8bid
     character(len=19) :: k19bid
-    character(len=8) :: baseno, resuco, result, resu1
+    character(len=8) :: resuco, result, resu1
     character(len=19) :: cn2mbr, vediri, veneum, vevoch, vassec
     character(len=19) :: lischa
     integer :: nbsym, i, n1, n2
@@ -138,17 +135,16 @@ subroutine comdlh()
     real(kind=8), pointer :: mass_dia(:) => null()
     real(kind=8), pointer :: rigi_dia(:) => null()
     real(kind=8), pointer :: puls(:)     => null()
-
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
     call jemarq()
-    call titre()
 !
+    call titre()
     call infmaj()
     call infniv(ifm,niv)
 !
-! --- INITIALISATIONS DIVERSES
+! - Initializations
 !
     depi = r8depi()
     epsi = r8prem()
@@ -156,9 +152,8 @@ subroutine comdlh()
     lamor1 = 0
     czero = dcmplx(0.d0,0.d0)
 !
-! --- NOM DES STRUCTURES
+! - Names of datastructures
 !
-    baseno = '&&COMDLH'
     maprec = '&&COMDLH.MAPREC'
     soluti = '&&COMDLH.SOLUTI'
     vezero = '&&COMDLH.VEZERO'
@@ -216,7 +211,7 @@ subroutine comdlh()
     else
         call getvr8(' ', 'FREQ', nbval=0, nbret=nbfreq)
         nbfreq = - nbfreq
-        call wkvect(baseno//'.LISTE.FREQ', 'V V R', nbfreq, lfreq)
+        call wkvect('&&COMDLH.LISTE.FREQ', 'V V R', nbfreq, lfreq)
         call getvr8(' ', 'FREQ', nbval=nbfreq, vect=zr(lfreq))
     endif
 !
@@ -245,7 +240,7 @@ subroutine comdlh()
     raide = ' '
     masse = ' '
     amor = ' '
-    call dylema(baseno, nbmat, nomat, raide, masse,&
+    call dylema(nbmat, nomat, raide, masse,&
                 amor, impe)
     ASSERT(nbmat.le.4)
     call getvid(' ', 'MATR_AMOR', scal=k19bid, nbret=lamor)
@@ -362,7 +357,7 @@ subroutine comdlh()
 !
 ! --- CREATION DE LA MATRICE DYNAMIQUE
 !
-    dynam = baseno//'.DYNAMIC_MX'
+    dynam = '&&COMDLH.DYNAMIC_MX'
 !
     jpomr=0
     do icomb = 1, nbmat
@@ -739,7 +734,7 @@ subroutine comdlh()
                         0, sjv=ladpa, styp=k8bid)
                 zk8(ladpa) = mate(1:8)
             endif
-            
+
             call rsadpa(result, 'E', 1, 'CARAELEM', ordr(i),&
                         0, sjv=ladpa, styp=k8bid)
             zk8(ladpa) = carele(1:8)
