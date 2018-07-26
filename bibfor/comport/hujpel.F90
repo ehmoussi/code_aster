@@ -58,10 +58,10 @@ subroutine hujpel(fami, kpg, ksp, etatd, mod,&
     parameter      (un   = 1.d0)
 !       ----------------------------------------------------------------
     if (mod(1:6) .eq. 'D_PLAN') then
-        do 10 i = 5, 6
+        do i = 5, 6
             deps(i) = zero
             sigd(i) = zero
- 10     continue
+        enddo
     endif
 !
     if (( (vind(24) .eq. zero) .or. (vind(24) .eq. -un .and. vind(28) .eq. zero) ) .and.&
@@ -84,10 +84,10 @@ subroutine hujpel(fami, kpg, ksp, etatd, mod,&
     call hujori('LOCAL', 1, reorie, angmas, deps,&
                 bid66)
 !
-    do 20 i = 1, 22
+    do i = 1, 22
         matert(i,1) = materf(i,1)
         matert(i,2) = materf(i,2)
- 20 continue
+    enddo
 !
     call hujpre(fami, kpg, ksp, etatd, mod,&
                 crit, imat, matert, deps, sigd,&

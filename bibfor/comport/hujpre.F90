@@ -124,15 +124,15 @@ subroutine hujpre(fami, kpg, ksp, etat, mod,&
 !
 !
 ! ---> CONTROLE QU'AUCUNE COMPOSANTE DU VECTEUR SIGF NE SOIT POSITIVE
-    do 10 i = 1, ndt
+    do i = 1, ndt
         dsig(i)= sigf(i) - sigd(i)
-10  continue
+    enddo
 !
     maxi = un
     cohes = -rtrac+ptrac
     factor = un
 !
-    do 20 i = 1, ndi
+    do i = 1, ndi
         call hujprj(i, sigf, dev, pf(i), q)
         call hujprj(i, sigd, dev, pd(i), q)
         call hujprj(i, dsig, dev, dp(i), q)
@@ -142,14 +142,14 @@ subroutine hujpre(fami, kpg, ksp, etat, mod,&
                 maxi = factor
             endif
         endif
-20  continue
+    enddo
 !
 !
 ! ---> SI IL EXISTE PF(I)>0, ALORS MODIFICATION DE LA PREDICTION
     if (maxi .lt. un) then
-        do 30 i = 1, ndt
+        do i = 1, ndt
             dsig(i) = maxi * dsig(i)
-30      continue
+        enddo
         call lcsovn(ndt, sigd, dsig, sigf)
         if (debug) then
             write (6,'(A,A,E12.5)')&

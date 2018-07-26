@@ -56,15 +56,15 @@ subroutine hujcvx(mod, nmat, materf, vinf, deps,&
 !
 ! --- CONTROLE DE LA NORME DE DEFORMATION
     somme = zero
-    do 10 i = 1, 6
+    do i = 1, 6
         somme = somme + abs(deps(i))
- 10 end do
+    end do
     if (somme .lt. r8prem()) goto 999
 !
-    do 20 i = 1, 22
+    do i = 1, 22
         matert(i,1) = materf(i,1)
         matert(i,2) = materf(i,2)
- 20 end do
+    end do
 !
 ! --- DEFINITION DU DOMAINE POTENTIEL DES MECANISMES ACTIFS
     call hujpot(mod, matert, vinf, deps, sigd,&

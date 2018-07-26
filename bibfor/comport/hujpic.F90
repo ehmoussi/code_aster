@@ -63,9 +63,9 @@ subroutine hujpic(kk, k, tin, vin, mater,&
 ! ======================================================================
 !
     i1 = zero
-    do 10 i = 1, ndi
+    do i = 1, ndi
         i1=i1+d13*tin(i)
-10  continue
+    enddo
 !
 ! ======================================================================
 ! ------------ CONSTRUCTION PRESSION ISOTROPE CYCLIQUE -----------------

@@ -81,7 +81,6 @@ subroutine hujdp(mod, deps, sigd, sigf, mater,&
     depsv = deps(1)+deps(2)+deps(3)
     tole1 = 0.05d0
 !
-!
 ! ----------------------------------------------------
 ! 1 --- CRITERE LIMITANT L EVOLUTION DE P: DP/P < TOLE1
 ! ----------------------------------------------------
@@ -155,14 +154,15 @@ subroutine hujdp(mod, deps, sigd, sigf, mater,&
             demu = e /(un+nu)
             la = e*nu/(un+nu)/(un-deux*nu)
 !
-            do 30 i = 1, ndi
-                do 30 j = 1, ndi
+            do i = 1, ndi
+                do j = 1, ndi
                     if (i .eq. j) hooknl(i,j) = al
                     if (i .ne. j) hooknl(i,j) = la
- 30             continue
-            do 35 i = ndi+1, ndt
+                enddo
+            enddo
+            do i = ndi+1, ndt
                 hooknl(i,i) = demu
- 35         continue
+            enddo
 !
         else if (mater(17,1).eq.deux) then
 !
@@ -205,16 +205,15 @@ subroutine hujdp(mod, deps, sigd, sigf, mater,&
 !
     call lcprmv(hooknl, deps, dsig)
 !
-!
 ! ====================================================================
 ! -------------- 2.2 CALCUL DE FIDSIG = DFDS*DSIG --------------------
 ! ====================================================================
 !
 ! 1- MECANISME ISOTROPE
     fidsig = zero
-    do 40 i = 1, ndi
+    do i = 1, ndi
         fidsig = fidsig - d13*dsig(i)
- 40 continue
+    enddo
     fr = d*pco*exp(-beta*epsvp)
     ri = abs(fidsig/fr)
 !
@@ -227,23 +226,23 @@ subroutine hujdp(mod, deps, sigd, sigf, mater,&
     if (ndec .lt. ni) ndec = ni
 !
 ! 2- MECANISME DEVIATOIRE
-    do 41 i = 1, ndt
+    do i = 1, ndt
         dfds(i) = zero
- 41 continue
+    enddo
 !
-    do 42 i = 1, 18
+    do i = 1, 18
         yf(i) = zero
- 42 continue
+    enddo
 !
-    do 43 i = 1, 7
+    do i = 1, 7
         indi(i) = 0
- 43 continue
+    enddo
 !
     yf(7) = epsvp
     call lceqvn(ndt, sigd, yf)
 !
     nbmeca = 0
-    do 44 i = 1, 8
+    do i = 1, 8
         if (vin(23+i) .eq. un) then
             nbmeca = nbmeca + 1
             indi(nbmeca) = i
@@ -253,9 +252,9 @@ subroutine hujdp(mod, deps, sigd, sigf, mater,&
             indi(nbmeca) = i
             yf(ndt+1+nbmeca) = vin(i)
         endif
- 44 end do
+    end do
 !
-    do 47 i = 1, 3
+    do i = 1, 3
 !
         call hujprj(i, sigd, taud, pd, qd)
 !
@@ -272,9 +271,9 @@ subroutine hujdp(mod, deps, sigd, sigf, mater,&
         endif
 !
         fidsig = 0
-        do 46 j = 1, ndt
+        do j = 1, ndt
             fidsig = fidsig + dfds(j)*dsig(j)
- 46     continue
+        enddo
 !
         ri = abs(fidsig/fr)
         if (ri .gt. un) then
@@ -285,12 +284,12 @@ subroutine hujdp(mod, deps, sigd, sigf, mater,&
         ni = nint(ri/tole1)
         if (ndec .lt. ni) ndec = ni
 !
- 47 continue
+    enddo
 !
 ! -------------------------------------------------------
 ! 3 --- CRITERE LIMITANT L EVOLUTION DE Q: DQ/PREF < TOLE1
 ! -------------------------------------------------------
-    do 45 i = 1, 3
+    do i = 1, 3
 !
 ! 1- CAS DEVIATOIRE CYCLIQUE
         if (vin(27+i) .eq. un) then
@@ -351,7 +350,7 @@ subroutine hujdp(mod, deps, sigd, sigf, mater,&
             if (ndec .lt. ni) ndec = ni
         endif
 !
- 45 end do
+    end do
 !
 !KH ----
 !KH ON CONTROLE L'INCREMENT DE CONTRAINTE: DS/S- <= 10%
@@ -359,10 +358,10 @@ subroutine hujdp(mod, deps, sigd, sigf, mater,&
     prodd = 0.d0
     prodf = 0.d0
 !
-    do 451 i = 1, ndt
+    do i = 1, ndt
         prodd = prodd + sigd(i)**deux
         prodf = prodf + (sigf(i)-sigd(i))**deux
-451 end do
+    end do
     prodd = sqrt(prodd)
     prodf = sqrt(prodf)
 !

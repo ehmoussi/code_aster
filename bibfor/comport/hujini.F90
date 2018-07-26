@@ -71,14 +71,14 @@ subroutine hujini(mod, nmat, mater, intg, deps,&
 ! --- GESTION DES BOUCLES
     if (iret .eq. 2) then
         loop = .true.
-        do 10 i = 1, 7
+        do i = 1, 7
             indis(i) = indi(i)
- 10     continue
+        enddo
     else
         loop = .false.
-        do 20 i = 1, 7
+        do i = 1, 7
             indis(i) = 0
- 20     continue
+        enddo
     endif
 !
     iret = 0
@@ -89,20 +89,20 @@ subroutine hujini(mod, nmat, mater, intg, deps,&
     if (iret .eq. 3) goto 999
 !
 ! ---  INITIALISATION VECTEUR D'INDICE INDI(I=1,7)
-    do 30 i = 1, 7
+    do i = 1, 7
         indi(i) = 0
- 30 end do
+    end do
 !
 ! ---  DEFINITION DU NOMBRE DE MECANISMES POTENTIELS ACTIFS
     nbmeca = 0
-    do 40 i = 1, 8
+    do i = 1, 8
         if (vind(23+i) .eq. un) nbmeca = nbmeca + 1
- 40 end do
+    end do
 !
 ! --- REMPLISSAGE DES MECANISMES POTENTIELLEMENT ACTIFS
 !
     ii = 1
-    do 50 i = 1, 8
+    do i = 1, 8
         if (vind(23+i) .eq. un) then
 !
             if (i .ne. 4) then
@@ -117,31 +117,31 @@ subroutine hujini(mod, nmat, mater, intg, deps,&
             endif
 !
         endif
- 50 end do
+    end do
 !
 ! --- REDIMENSIONNEMENT DE YD POUR S'ADAPTER A HUJIID
 ! --- COPIE A PARTIR DU TRAITEMENT DE HUJMID
-    do 60 i = 1, 6
+    do i = 1, 6
         yd(i) = yd(i)*e0
- 60 end do
+    end do
 !
 !
 ! --- PREPARATION DE L'INCREMENT DE CONTRAINTES
 !
     diff = 0
-    do 70 i = 1, 7
+    do i = 1, 7
         diff = diff + indi(i)-indis(i)
- 70 end do
+    end do
     if ((diff.eq.0) .and. (nbmeca.eq.1)) loop=.false.
 !
     if (loop) then
-        do 80 i = 1, ndt
+        do i = 1, ndt
             dsig(i) = sigf(i) - sigd(i)
- 80     continue
+        enddo
     else
-        do 90 i = 1, ndt
+        do i = 1, ndt
             dsig(i) = zero
- 90     continue
+        enddo
     endif
 !
     i1f = (sigf(1)+sigf(2)+sigf(3))/trois
@@ -149,10 +149,10 @@ subroutine hujini(mod, nmat, mater, intg, deps,&
 !
 ! --- APPEL A HUJIID
 !
-    do 100 i = 1, 22
+    do i = 1, 22
         matert(i,1) = mater(i,1)
         matert(i,2) = mater(i,2)
-100 end do
+    end do
 !
     call hujiid(mod, matert, indi, deps, i1f,&
                 yd, vind, dy, loop, dsig,&
@@ -162,28 +162,28 @@ subroutine hujini(mod, nmat, mater, intg, deps,&
 ! --- CONTROLE SUR LA SOLUTION INITIALE PROPOSEE
 !
     nbmect = nbmeca
-    do 110 i = 1, 7
+    do i = 1, 7
         if (indi(i) .gt. 8) then
             nbmect = nbmect + 1
         endif
-110 end do
+    end do
 !
     nodef = .false.
     if (nbmeca .ne. nbmect) then
-        do 120 i = 1, ndi
+        do i = 1, ndi
             if (abs(yd(i)+dsig(i)) .gt. pref**2.d0) nodef = .true.
-120     continue
+        enddo
         if (nodef) then
             iret = 3
             if (intg .gt. 5) then
                 goto 999
             else
-                do 130 i = nbmeca+1, nbmect
+                do i = nbmeca+1, nbmect
                     if (dy(ndt+1+nbmeca+i) .eq. zero) then
                         bnews(indi(i)-8) = .true.
                         iret = 2
                     endif
-130             continue
+                enddo
                 goto 1
             endif
         endif
@@ -191,21 +191,21 @@ subroutine hujini(mod, nmat, mater, intg, deps,&
 !
 ! --- REDIMENSIONNEMENT DE YD POUR S'ADAPTER A LCPLNL
 ! --- COPIE A PARTIR DU TRAITEMENT DE HUJMID
-    do 140 i = 1, 6
+    do i = 1, 6
         yd(i) = yd(i)/e0
         dy(i) = dy(i)/e0
-140 end do
+    end do
 !
-    do 150 i = 1, nbmeca
+    do i = 1, nbmeca
         yd(ndt+1+i) = yd(ndt+1+i)/e0*abs(pref)
         dy(ndt+1+i) = dy(ndt+1+i)/e0*abs(pref)
-150 end do
+    end do
 !
     nr = ndt+1+nbmeca+nbmect
 !
-    do 160 i = nr+1, 18
+    do i = nr+1, 18
         dy(i) = zero
-160 end do
+    end do
 !
 999 continue
 !

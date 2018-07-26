@@ -153,12 +153,12 @@ subroutine hujela(mod, crit, mater, deps, sigd,&
 !      ( JUSTE AU-DELA DE LA TOLERANCE )
   5 continue
     if (tract) then
-        do 10 i = 1, ndi
+        do i = 1, ndi
             sigf(i) = pref*tole*1.01d0 +piso
- 10     continue
-        do 20 i = ndi+1, ndt
+        enddo
+        do i = ndi+1, ndt
             sigf(i) = zero
- 20     continue
+        enddo
         goto 9999
     endif
  30 continue
@@ -179,14 +179,15 @@ subroutine hujela(mod, crit, mater, deps, sigd,&
             demu = e /(un+nu)
             la = e*nu/(un+nu)/(un-deux*nu)
 !
-            do 32 i = 1, ndi
-                do 32 j = 1, ndi
+            do i = 1, ndi
+                do j = 1, ndi
                     if (i .eq. j) hook(i,j) = al
                     if (i .ne. j) hook(i,j) = la
- 32             continue
-            do 35 i = ndi+1, ndt
+                enddo
+            enddo
+            do i = ndi+1, ndt
                 hook(i,i) = demu
- 35         continue
+            enddo
 !
         else if (mater(17,1).eq.deux) then
 !

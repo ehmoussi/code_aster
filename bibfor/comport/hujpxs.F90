@@ -51,9 +51,9 @@ subroutine hujpxs(mater, sig, vin, prox)
     pc = pco*exp(-beta*epsvpm)
 !
     i1 = zero
-    do 10 i = 1, ndi
+    do i = 1, ndi
         i1 = i1 + d13*sig(i)
- 10 continue
+    enddo
 !
     r4 = abs(i1)/abs(d*pc)
 !

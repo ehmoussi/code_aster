@@ -99,9 +99,9 @@ subroutine hujiid(mod, mater, indi, deps, i1e,&
 ! ====================================================================
     call infniv(ifm, niv)
 !
-    do 7 i = 1, 18
+    do i = 1, 18
         ye(i) = zero
-  7 continue
+    enddo
 ! ====================================================================
 ! --- PROPRIETES HUJEUX MATERIAU -------------------------------------
 ! ====================================================================
@@ -130,11 +130,11 @@ subroutine hujiid(mod, mater, indi, deps, i1e,&
     iret = 0
     nbmeca = 0
 !
-    do 4 k = 1, 4
+    do k = 1, 4
         if (indi(k) .gt. 0) nbmeca=nbmeca+1
         q(k) = zero
         qe(k) = zero
-  4 continue
+    enddo
 !
 !
 ! ====================================================================
@@ -159,14 +159,15 @@ subroutine hujiid(mod, mater, indi, deps, i1e,&
             demu = e /(un+nu)
             la = e*nu/(un+nu)/(un-deux*nu)
 !
-            do 30 i = 1, ndi
-                do 30 j = 1, ndi
+            do i = 1, ndi
+                do j = 1, ndi
                     if (i .eq. j) hooknl(i,j) = al
                     if (i .ne. j) hooknl(i,j) = la
- 30             continue
-            do 35 i = ndi+1, ndt
+                enddo
+            enddo
+            do i = ndi+1, ndt
                 hooknl(i,i) = demu
- 35         continue
+            enddo
 !
         else if (mater(17,1).eq.deux) then
 !
@@ -234,7 +235,7 @@ subroutine hujiid(mod, mater, indi, deps, i1e,&
 !
 !
     if (debug) write(6,*)'BNEWS =',(bnews(i),i=1,3)
-    do 36 i = 1, 3
+    do i = 1, 3
         call hujprj(i, sigt, sigd, pt, qt)
         if ((((pt+deux*rtrac-ptrac)/abs(pref)).ge.-r8prem()) .and. ( .not.bnews(i))) then
             nbmect = nbmect + 1
@@ -243,7 +244,7 @@ subroutine hujiid(mod, mater, indi, deps, i1e,&
             nbmect = nbmect + 1
             indi(nbmect) = 8 + i
         endif
- 36 continue
+    enddo
 !
     maxi = un
     cohes = -rtrac+ptrac
@@ -251,7 +252,7 @@ subroutine hujiid(mod, mater, indi, deps, i1e,&
 !
     if ((nbmect.ne.nbmeca) .and. (nbmeca.eq.0)) goto 51
 !
-    do 50 i = 1, ndi
+    do i = 1, ndi
         call hujprj(i, sige, sigd, pe(i), qe(i))
         call hujprj(i, yd, sigd, p(i), q(i))
         call hujprj(i, dsig, sigd, dp(i), q(i))
@@ -261,13 +262,13 @@ subroutine hujiid(mod, mater, indi, deps, i1e,&
                 maxi = factor
             endif
         endif
- 50 continue
+    enddo
 !
 ! ---> SI IL EXISTE SIG(I)>0, ALORS MODIFICATION DE LA PREDICTION
     if (maxi .lt. un) then
-        do 60 i = 1, ndt
+        do i = 1, ndt
             dsig(i) = maxi * dsig(i)
- 60     continue
+        enddo
         if (debug) then
             write (6,'(A,A,E12.5)')&
      &   'HUJIID DEBUT : APPLICATION DE FACTOR POUR MODIFIER ',&
@@ -280,29 +281,29 @@ subroutine hujiid(mod, mater, indi, deps, i1e,&
 !
     if ((nbmeca .eq. 1) .and. ((indi(1).eq.4) .or. (indi(1).eq.8))) then
 !
-        do 31 i = ndt+1, 18
+        do i = ndt+1, 18
             dy(i)=zero
- 31     continue
-        do 32 i = 1, ndt
+        enddo
+        do i = 1, ndt
             dy(i) = dsig(i)
- 32     continue
+        enddo
 !
         goto 9999
 !
     endif
 !
-    do 3 k = 1, 42
+    do k = 1, 42
         psi(k) = zero
-  3 continue
+    enddo
 !
-    do 6 k = 1, 7
+    do k = 1, 7
         pe(k) = zero
         q(k) = zero
         qe(k) = zero
         p(k) = zero
-  6 continue
+    enddo
 !
-    do 5 k = 1, nbmect
+    do k = 1, nbmect
 !
         call hujddd('PSI   ', indi(k), mater, indi, yd,&
                     vind, psi((k-1)*ndt+1), dpsids, iret)
@@ -361,7 +362,7 @@ subroutine hujiid(mod, mater, indi, deps, i1e,&
 !
         endif
 !
-  5 end do
+    end do
 !
     epsvp = yd(ndt+1)
     ye(ndt+1) = yd(ndt+1)
@@ -386,30 +387,34 @@ subroutine hujiid(mod, mater, indi, deps, i1e,&
 !       (_  D DLAMBD           D DLAMBI
 !
 ! ====================================================================
-    do 45 k = 1, nbmect
-        do 45 l = 1, nbmect
+    do k = 1, nbmect
+        do l = 1, nbmect
             dfdl(k,l) = zero
- 45     continue
+        enddo
+    enddo
 !
 !
 ! ---> I. CALCUL DE DF. / DDLAMB. POUR DDLAMB. = 0
 ! ---> I.1. CALCUL DE DFDSE(K)*HOOKNL*PSI-(L)
-    do 40 k = 1, nbmect
+    do k = 1, nbmect
         kk = indi(k)
         call hujddd('DFDS  ', kk, mater, indi, ye,&
                     vind, dfds, dpsids, iret)
         if (iret .eq. 1) goto 999
-        do 40 l = 1, nbmect
+        do l = 1, nbmect
             ll = (l-1)*ndt
-            do 40 i = 1, ndt
-                do 40 j = 1, ndt
+            do i = 1, ndt
+                do j = 1, ndt
                     dfdl(k,l) = dfdl(k,l) - hooknl(i,j)*dfds(i)*psi( ll+j)
- 40             continue
+                enddo
+            enddo
+        enddo
+    enddo
 !
 ! ---- FIN I.1.
 ! ---> I.2. CALCUL DE DFDEVPE(K)*DEVPDDLAMB-(L)
 ! ----  I.2.1. MECANISME DEVIATOIRE MONOTONE
-    do 11 k = 1, nbmect
+    do k = 1, nbmect
 !
         kk = indi(k)
         pek =pe(k) -ptrac
@@ -418,7 +423,7 @@ subroutine hujiid(mod, mater, indi, deps, i1e,&
             f2(k) = -qe(k) - m*pek*rc(k) * ( un - b*log(pek/pc) )
             if (f2(k) .gt. zero) f2(k) = zero
 !
-            do 12 l = 1, nbmeca
+            do l = 1, nbmeca
 !
                 ll = indi(l)
 !
@@ -461,7 +466,7 @@ subroutine hujiid(mod, mater, indi, deps, i1e,&
 !
                 endif
 !
- 12         continue
+           enddo
 !
 ! ---- I.2.2. MECANISME ISOTROPE MONOTONE
         else if (kk .eq. 4) then
@@ -475,7 +480,7 @@ subroutine hujiid(mod, mater, indi, deps, i1e,&
 !
             dfdl(k,k) = dfdl(k,k) + rc(k)*d*pc*beta
 !
-            do 13 l = 1, nbmeca-1, 1
+            do l = 1, nbmeca-1, 1
                 ll = indi(l)
                 if (ll .lt. 4) then
 !
@@ -503,7 +508,7 @@ subroutine hujiid(mod, mater, indi, deps, i1e,&
                     endif
                     dfdl(k,l) = dfdl(k,l) + rc(k)*d*pc*beta * ksi(l)* coef*mdil
                 endif
- 13         continue
+            enddo
 !
 ! --- I.2.3. MECANISME DEVIATOIRE CYCLIQUE
         else if ((kk .lt. 8) .and. (kk .gt. 4)) then
@@ -517,7 +522,7 @@ subroutine hujiid(mod, mater, indi, deps, i1e,&
             th(2) = vind(4*kk-8)
             prod = sigdce(3*k-2)*(xk(1)-rc(k)*th(1)) + sigdce(3*k)*( xk(2)-rc(k)*th(2))/deux
 !
-            do 14 l = 1, nbmeca
+            do l = 1, nbmeca
 !
                 ll = indi(l)
                 if (ll .lt. 4) then
@@ -582,7 +587,7 @@ subroutine hujiid(mod, mater, indi, deps, i1e,&
                     endif
                 endif
 !
- 14         continue
+            enddo
 !
 ! --- I.2.4. MECANISME ISOTROPE CYCLIQUE
         else if (kk .eq. 8) then
@@ -596,7 +601,7 @@ subroutine hujiid(mod, mater, indi, deps, i1e,&
                 dfdl(k,k) = dfdl(k,k) + d*pc*beta* (rc(k)+vind(21))
             endif
 !
-            do 15 l = 1, nbmeca-1, 1
+            do l = 1, nbmeca-1, 1
 !
                 ll = indi(l)
                 if (ll .lt. 4) then
@@ -635,19 +640,19 @@ subroutine hujiid(mod, mater, indi, deps, i1e,&
                         dfdl(k,l) = dfdl(k,l) + d*pc*beta* (rc(k)+ vind(21)) *ksi(l)*coef*dpsi
                     endif
                 endif
- 15         continue
+            enddo
 !
         else if (kk.gt.8) then
             call hujprj(kk-8, ye, vec, tp, tp1)
             f2(k) = -tp - deux*rtrac + ptrac
             if (f2(k) .gt. zero) f2(k) = zero
         endif
- 11 continue
+    enddo
 !
 ! ---- FIN I.2.
 ! ---> I.3. CALCUL DE DFDRE(K)*DRDLAMB-(K)
     if (nbmeca .eq. 0) goto 160
-    do 16 k = 1, nbmeca, 1
+    do k = 1, nbmeca, 1
 !
         kk = indi(k)
         pek =pe(k) -ptrac
@@ -682,7 +687,7 @@ subroutine hujiid(mod, mater, indi, deps, i1e,&
             dfdl(k,k) = dfdl(k,k) + d*pc*(un-rc(k))**deux /ccyc
 !
         endif
- 16 continue
+    enddo
 !
 160 continue
 ! ---- RESOLUTION PAR PIVOT DE GAUSS
@@ -692,23 +697,24 @@ subroutine hujiid(mod, mater, indi, deps, i1e,&
     if (iret .eq. 1) goto 9999
 !
 ! --- MULTIPLICATEUR PLASTIQUE NEGATIF NON AUTORISE
-    do 17 k = 1, nbmect
+    do k = 1, nbmect
         if (f2(k) .lt. zero) f2(k)=zero
- 17 continue
+    enddo
 !
 !
 ! ====================================================================
 ! --- CALCUL DES INCREMENTS DE DEFORMATIONS ELASTIQUE ----------------
 ! ====================================================================
-    do 240 i = 1, ndt
+    do i = 1, ndt
         depse(i) = deps(i)
-240 continue
+    enddo
 !
-    do 242 k = 1, nbmect
+    do k = 1, nbmect
         kk = (k-1)*ndt
-        do 242 i = 1, ndt
+        do i = 1, ndt
             depse(i) = depse(i) - f2(k)*psi(kk+i)
-242     continue
+        enddo
+    enddo
 !
 ! ====================================================================
 ! --- CALCUL INCREMENT DE CONTRAINTES  DSIG = HOOKNL-.DEPSE ----------
@@ -720,7 +726,7 @@ subroutine hujiid(mod, mater, indi, deps, i1e,&
     cohes = -rtrac+ptrac
     factor = un
 !
-    do 280 i = 1, ndi
+    do i = 1, ndi
         call hujprj(i, ye, sigd, pe(i), qe(i))
         call hujprj(i, yd, sigd, p(i), q(i))
         call hujprj(i, dsig, sigd, dp(i), q(i))
@@ -730,7 +736,7 @@ subroutine hujiid(mod, mater, indi, deps, i1e,&
                 maxi = factor
             endif
         endif
-280 continue
+    enddo
 !
 !KH ON IMPOSE UNE VARIATION DE DSIGMA < 50% DE SIGMA_INIT
 !AF A CONDITION QU'IL N'Y AIT PAS DE MECANISMES DE TRACTION ACTIVES
@@ -738,10 +744,10 @@ subroutine hujiid(mod, mater, indi, deps, i1e,&
         s=0.d0
         ds=0.d0
         tol = .5d0
-        do 282 i = 1, ndt
+        do i = 1, ndt
             s = s+yd(i)**2.d0
             ds= ds+dsig(i)**2.d0
-282     continue
+        enddo
         s=sqrt(s)
         ds=sqrt(ds)
 !
@@ -756,9 +762,9 @@ subroutine hujiid(mod, mater, indi, deps, i1e,&
     endif
 ! ---> SI IL EXISTE SIG(I)>0, ALORS MODIFICATION DE LA PREDICTION
     if (maxi .lt. un) then
-        do 290 i = 1, ndt
+        do i = 1, ndt
             dsig(i) = maxi * dsig(i)
-290     continue
+        enddo
         if (debug) then
             write (6,'(A,A,E12.5)')&
      &     'HUJIID FIN:: APPLICATION DE FACTOR POUR MODIFIER ',&
@@ -772,7 +778,7 @@ subroutine hujiid(mod, mater, indi, deps, i1e,&
 ! ====================================================================
     if (nbmeca .eq. 0) goto 281
 !
-    do 250 k = 1, nbmeca
+    do k = 1, nbmeca
         kk = indi(k)
         if (kk .lt. 4) then
             dr(k) = f2(k) *(un-rc(k))**deux /ad(k)
@@ -794,14 +800,14 @@ subroutine hujiid(mod, mater, indi, deps, i1e,&
             dr(k) = f2(k) *(un-rc(k))**deux /ccyc
 !
         endif
-250 continue
+    enddo
 !
 281 continue
 ! ====================================================================
 ! --- CALCUL INCREMENT DE LA VARIABLE INTERNE DEPSVP -----------------
 ! ====================================================================
     depsvp = zero
-    do 251 k = 1, nbmect
+    do k = 1, nbmect
         kk=indi(k)
         if (kk .lt. 4) then
 !
@@ -842,18 +848,18 @@ subroutine hujiid(mod, mater, indi, deps, i1e,&
 !
         endif
 !
-251 continue
+    enddo
 !
 ! ====================================================================
 ! --- SOLUTION D ESSAI -----------------------------------------------
 ! ====================================================================
-    do 259 i = 1, 18
+    do i = 1, 18
         dy(i) = zero
-259 continue
+    enddo
 !
-    do 260 i = 1, ndt
+    do i = 1, ndt
         dy(i) = dsig(i)
-260 continue
+    enddo
 !
     if (abs(depsvp) .lt. 1.d-1) then
         dy(ndt+1) = depsvp
@@ -862,17 +868,17 @@ subroutine hujiid(mod, mater, indi, deps, i1e,&
     endif
 !
     if (nbmeca .eq. 0) goto 271
-    do 270 k = 1, nbmeca
+    do k = 1, nbmeca
         dy(ndt+1+k) = dr(k)
         dy(ndt+1+nbmeca+k) = f2(k)
-270 continue
+    enddo
 !
 271 continue
 !
     if (nbmeca .lt. nbmect) then
-        do 272 i = 1, nbmect
+        do i = 1, nbmect
             if (indi(i) .gt. 8) dy(ndt+1+nbmeca+i) = f2(i)
-272     continue
+        enddo
     endif
 !
     goto 9999
@@ -887,9 +893,9 @@ subroutine hujiid(mod, mater, indi, deps, i1e,&
         write (ifm,'(A)') '          ON NE FAIT PAS LA PREDICTION'
     endif
 !
-    do 300 i = 1, 18
+    do i = 1, 18
         dy(i) = zero
-300 continue
+    enddo
 !
 9999 continue
 !

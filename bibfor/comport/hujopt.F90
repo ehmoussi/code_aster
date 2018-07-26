@@ -82,21 +82,21 @@ subroutine hujopt(fami, kpg, ksp, mod, angmas,&
     if (norm .eq. 0) goto 5
 !
     maxi = 0.d0
-    do 1 i = 1, nr
-        do 2 j = 1, nr
+    do i = 1, nr
+        do j = 1, nr
             if(abs(drdy(i,j)).gt.maxi)maxi = abs(drdy(i,j))
-  2     end do
-  1 end do
+        end do
+    end do
 !
 ! === =================================================================
 ! --- DIMENSIONNEMENT A R8PREM
 ! === =================================================================
     mini = r8prem()*maxi
-    do 3 i = 1, nr
-        do 4 j = 1, nr
+    do i = 1, nr
+        do j = 1, nr
             if(abs(drdy(i,j)).lt.mini)drdy(i,j) = 0.d0
-  4     end do
-  3 end do
+        end do
+    end do
 !
   5 continue
 !
@@ -105,9 +105,9 @@ subroutine hujopt(fami, kpg, ksp, mod, angmas,&
 ! === =================================================================
 ! --- DETERMINATION DU NOMBRE DE MECANISMES ACTIFS - NBMECA
     nbmeca = 0
-    do 10 i = 1, 8
+    do i = 1, 8
         if (vinf(23+i) .eq. un) nbmeca = nbmeca + 1
- 10 continue
+    enddo
 !
     nz = 1+2*nbmeca
 !
@@ -118,86 +118,80 @@ subroutine hujopt(fami, kpg, ksp, mod, angmas,&
     pref = mater(8,2)
 !
 ! --- DLEDR
-    do 20 i = 1, nbmeca
-        do 30 j = 1, ndt
+    do i = 1, nbmeca
+        do j = 1, ndt
             drdy(j,ndt+1+i) = drdy(j,ndt+1+i)*abs(pref)
- 30     continue
- 20 end do
+        enddo
+    end do
 !
 ! --- DLEDLA
-    do 40 i = 1, nbmeca
-        do 50 j = 1, ndt
+    do i = 1, nbmeca
+        do j = 1, ndt
             drdy(j,ndt+1+nbmeca+i) = drdy(j,ndt+1+nbmeca+i)*ccond
- 50     continue
- 40 end do
+        enddo
+    end do
 !
 ! --- DLRDLA
-    do 60 i = 1, nbmeca
+    do i = 1, nbmeca
         drdy(ndt+1+i,ndt+1+nbmeca+i) = drdy(ndt+1+i,ndt+1+nbmeca+i) *ccond/abs(pref)
- 60 end do
+    end do
 !
 ! --- DLRDEVP
-    do 70 i = 1, nbmeca
+    do i = 1, nbmeca
         drdy(ndt+1+i,ndt+1) = drdy(ndt+1+i,ndt+1)*ccond/abs(pref)
- 70 end do
+    end do
 !
 ! --- DLEVPDS
-    do 80 i = 1, ndt
+    do i = 1, ndt
         drdy(ndt+1,i) = drdy(ndt+1,i)*ccond
- 80 end do
+    end do
 !
 ! --- DLEVPDR
-    do 90 i = 1, nbmeca
+    do i = 1, nbmeca
         drdy(ndt+1,ndt+1+i) = drdy(ndt+1,ndt+1+i)/ccond*abs(pref)
- 90 end do
+    end do
 !
 ! --- DLFDR
-    do 100 i = 1, nbmeca
+    do i = 1, nbmeca
         drdy(ndt+1+nbmeca+i,ndt+1+i) = drdy(ndt+1+nbmeca+i,ndt+1+i) *abs(pref)
-100 end do
+    end do
 !
 ! --- DLFDEVP
-    do 110 i = 1, nbmeca
+    do i = 1, nbmeca
         drdy(ndt+1+nbmeca+i,ndt+1) = drdy(ndt+1+nbmeca+i,ndt+1) *ccond
-110 end do
+    end do
 !
 ! ----------------------------------------------
 ! --- CONSTRUCTION DE L'OPERATEUR CONSISTANT ---
 ! ----------------------------------------------
     call lcinma(zero, y0)
-    do 310 i = 1, 9
-        do 320 j = 1, ndt
+    do i = 1, 9
+        do j = 1, ndt
             y1(j,i) = zero
             y2(i,j) = zero
-320     continue
-310 end do
-!
-    do 330 i = 1, 9
-        do 340 j = 1, 9
+        enddo
+        do j = 1, 9
             y3(i,j) = zero
-340     continue
-330 end do
+        enddo
+    end do
 !
-    do 120 i = 1, ndt
-        do 130 j = 1, ndt
+    do i = 1, ndt
+        do j = 1, ndt
             y0(i,j) = drdy(i,j)
-130     continue
-120 end do
-    do 140 i = 1, ndt
-        do 150 j = 1, nz
+        enddo
+        do j = 1, nz
             y1(i,j) = drdy(i,j+ndt)
-150     continue
-140 continue
-    do 160 i = 1, nz
-        do 170 j = 1, ndt
+        enddo
+    end do
+!
+    do i = 1, nz
+        do j = 1, ndt
             y2(i,j) = drdy(i+ndt,j)
-170     continue
-160 continue
-    do 180 i = 1, nz
-        do 190 j = 1, nz
+        enddo
+        do j = 1, nz
             y3(i,j) = drdy(i+ndt,j+ndt)
-190     continue
-180 continue
+        enddo
+    enddo
 !
 ! === =================================================================
 ! --- CONSTRUCTION TENSEUR RIGIDITE ELASTIQUE A T+DT
@@ -217,14 +211,15 @@ subroutine hujopt(fami, kpg, ksp, mod, angmas,&
             demu = e /(un+nu)
             la = e*nu/(un+nu)/(un-deux*nu)
 !
-            do 200 i = 1, ndi
-                do 200 j = 1, ndi
+            do i = 1, ndi
+                do j = 1, ndi
                     if (i .eq. j) hook(i,j) = al
                     if (i .ne. j) hook(i,j) = la
-200             continue
-            do 210 i = ndi+1, ndt
+                enddo
+            enddo
+            do i = ndi+1, ndt
                 hook(i,i) = demu
-210         continue
+            enddo
 !
         else if (mater(17,1).eq.deux) then
 !
@@ -269,10 +264,11 @@ subroutine hujopt(fami, kpg, ksp, mod, angmas,&
     if ((i1f/pref) .lt. 1.d-6) i1f = 1.d-6*pref
 !
     coef0 = (i1f/pref) ** ne
-    do 220 i = 1, ndt
-        do 220 j = 1, ndt
+    do i = 1, ndt
+        do j = 1, ndt
             hooknl(i,j) = coef0*hook(i,j)
-220     continue
+        enddo
+    enddo
 !
 !     CHOIX DES PARAMETRES DE LANCEMENT DE MGAUSS
 !     METHODE 'S' : SURE
@@ -295,17 +291,17 @@ subroutine hujopt(fami, kpg, ksp, mod, angmas,&
                 9, 9, ndt, y4)
 !
 ! --- DIFFERENCE DE MATRICE (DR1DY1 - Y4) = Y5
-    do 230 i = 1, ndt
-        do 240 j = 1, ndt
+    do i = 1, ndt
+        do j = 1, ndt
             y5(i,j)=y0(i,j)-y4(i,j)
-240     continue
-230 end do
+        enddo
+    end do
 !
 ! --- INVERSION DU TERME Y5
     call r8inir(ndt*ndt, 0.d0, dsdeb, 1)
-    do 250 i = 1, ndt
+    do i = 1, ndt
         dsdeb(i,i) = un
-250 end do
+    end do
     call mgauss(cargau, y5, dsdeb, ndt, ndt,&
                 ndt, det, iret)
 !
@@ -332,10 +328,10 @@ subroutine hujopt(fami, kpg, ksp, mod, angmas,&
                     bid66)
         if (iret .ne. 0) then
             iret = 0
-            do 260 i = 1, 22
+            do i = 1, 22
                 matert(i,1) = mater(i,1)
                 matert(i,2) = mater(i,2)
-260         continue
+            enddo
             call hujtel(mod, matert, sigf, dsde)
         endif
     endif

@@ -58,13 +58,13 @@ subroutine hujdrc(k, mater, sig, vin, pst)
 !
     p = p -ptrac
 !
-    do 5 i = 1, 3
+    do i = 1, 3
         if (q .gt. tole1) then
             posf(i) = sigd(i)/(m*p*(un-b*log(p/pc)))
         else
             posf(i) = zero
         endif
- 5  continue
+    enddo
     norm(1) = vin(4*k+7)
     norm(2) = vin(4*k+8)
     ref(1) = vin(4*k+5)

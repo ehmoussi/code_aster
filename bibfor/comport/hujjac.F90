@@ -67,11 +67,11 @@ subroutine hujjac(mod, nmat, mater, indi, deps,&
     parameter     (deux = 2.d0)
 !     ----------------------------------------------------------------
 ! --- INITIALISATION DE LA JACOBIENNE A ZERO
-    do 10 i = 1, nr
-        do 20 j = 1, nr
+    do i = 1, nr
+        do j = 1, nr
             drdy(i,j) = zero
- 20     continue
- 10 end do
+        enddo
+    enddo
 !
 ! --- PROPRIETES MATERIAU
     pref = mater(8,2)
@@ -85,36 +85,36 @@ subroutine hujjac(mod, nmat, mater, indi, deps,&
     call lceqvn(nr, yf, yft)
     call lceqvn(nr, ye, yet)
 !
-    do 30 i = 1, 6
+    do i = 1, 6
         ydt(i) = yd(i)*e0
         yft(i) = yf(i)*e0
         yet(i) = ye(i)*e0
- 30 end do
+    end do
 !
     nbmeca = 0
-    do 40 k = 1, 7
+    do k = 1, 7
         if (indi(k) .gt. 0) then
             if (indi(k) .le. 8) nbmeca = nbmeca + 1
         endif
- 40 end do
+    end do
 !
     nbmect = nbmeca
-    do 50 i = 1, 7
+    do i = 1, 7
         if (indi(i) .gt. 8) then
             nbmect = nbmect + 1
         endif
- 50 end do
+    end do
 !
-    do 60 i = 1, nbmeca
+    do i = 1, nbmeca
         ydt(ndt+1+i) = yd(ndt+1+i)*e0/abs(pref)
         yft(ndt+1+i) = yf(ndt+1+i)*e0/abs(pref)
         yet(ndt+1+i) = ye(ndt+1+i)*e0/abs(pref)
- 60 end do
+    end do
 !
-    do 70 i = 1, 22
+    do i = 1, 22
         matert(i,1) = mater(i,1)
         matert(i,2) = mater(i,2)
- 70 end do
+    end do
 !
     call hujjid(mod, matert, indi, deps, prox,&
                 proxc, ydt, yft, vind, r,&
@@ -130,7 +130,7 @@ subroutine hujjac(mod, nmat, mater, indi, deps,&
     probt = .false.
     if (iret .eq. 1) then
         iret = 3
-        do 80 i = 1, 3
+        do i = 1, 3
             if (prox(i)) then
                 prob(i) = un
                 probt = .true.
@@ -138,18 +138,18 @@ subroutine hujjac(mod, nmat, mater, indi, deps,&
                 prob(i) = deux
                 probt = .true.
             endif
- 80     continue
-        do 90 i = 1, 3
+        enddo
+        do i = 1, 3
             call hujprj(i, yft, dev, pf, qf)
             if (((rtrac+pf-ptrac)/abs(pref)) .ge. -r8prem()) then
                 tracti = .true.
             endif
- 90     continue
+        enddo
     endif
 !
     if (probt) then
         call lceqvn(nvi, vins, vind)
-        do 100 i = 1, 3
+        do i = 1, 3
             if (prob(i) .eq. un) then
                 vind(i+4) = mater(18,2)
                 vind(23+i) = un
@@ -166,7 +166,7 @@ subroutine hujjac(mod, nmat, mater, indi, deps,&
             else if (prob(i).eq.deux) then
                 vind(27+i) = zero
             endif
-100     continue
+        enddo
         iret = 2
         probt = .false.
 !
@@ -177,18 +177,18 @@ subroutine hujjac(mod, nmat, mater, indi, deps,&
         msup(3) = 0
         msup(4) = 0
         j = 0
-        do 110 i = 5, 8
+        do i = 5, 8
             if ((vind(23+i).ne.vins(23+i)) .and. (vind(23+i).eq.zero)) then
                 j = j+1
                 msup(j) = i
             endif
-110     end do
+        end do
 ! --- MECANISME CYCLIQUE A DESACTIVE
 ! --- ET DEJA DESACTIVE ANTERIEUREMENT
         if (j .ne. 0) then
-            do 120 i = 1, j
+            do i = 1, j
                 vind(23+msup(i)) = zero
-120         continue
+            enddo
         endif
 !
         call lceqvn(nvi, vind, vinf)
@@ -198,7 +198,7 @@ subroutine hujjac(mod, nmat, mater, indi, deps,&
     if (tracti) then
         call lceqvn(nvi, vins, vind)
         modif = .false.
-        do 130 i = 1, nbmect
+        do i = 1, nbmect
             if (yet(ndt+1+nbmeca+i) .eq. zero) then
                 modif = .true.
                 if (indi(i) .le. 8) then
@@ -218,17 +218,17 @@ subroutine hujjac(mod, nmat, mater, indi, deps,&
                 endif
                 tracti = .false.
             endif
-130     continue
+        enddo
 !
-        do 140 i = 1, nbmect
+        do i = 1, nbmect
             if (indi(i) .eq. 8) then
                 vind(23+indi(i)) = zero
                 modif = .true.
             endif
-140     continue
+        enddo
 !
         mtrac = .false.
-        do 150 i = 1, 3
+        do i = 1, 3
 ! --- ON NE DOIT PAS REACTIVE UN MECANISME DE TRACTION QUI DONNE
 !     COMME PREDICTEUR UN MULTIPLICATEUR PLASTIQUE NEGATIF
             if (.not.neglam(i)) then
@@ -241,7 +241,7 @@ subroutine hujjac(mod, nmat, mater, indi, deps,&
                     if(.not.modif)mtrac = .true.
                 endif
             endif
-150     continue
+        enddo
         call lceqvn(nvi, vind, vinf)
         iret = 2
     endif

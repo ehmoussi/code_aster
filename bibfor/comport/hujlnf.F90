@@ -63,10 +63,10 @@ subroutine hujlnf(toler, nmat, mater, nvi, vind,&
 !
 ! --- CONSTRUCTION DE NBMECA + NEGMUL
     nbmeca = 0
-    do 10 k = 1, 8
+    do k = 1, 8
         if (vind(23+k) .eq. un) nbmeca = nbmeca + 1
         negmul(k) = .false.
- 10 end do
+    end do
 !
 ! ---------------------------------------------
 ! --- COPIE A PARTIR DU TRAITEMENT DE HUJMID
@@ -75,14 +75,14 @@ subroutine hujlnf(toler, nmat, mater, nvi, vind,&
     call lceqvn(nr, yd, ydt)
     call lceqvn(nr, yf, yft)
 !
-    do 20 i = 1, ndt
+    do i = 1, ndt
         ydt(i) = yd(i)*e0
         yft(i) = yf(i)*e0
- 20 end do
-    do 30 i = 1, nbmeca
+    end do
+    do i = 1, nbmeca
         ydt(ndt+1+i) = yd(ndt+1+i)*e0/abs(pref)
         yft(ndt+1+i) = yf(ndt+1+i)*e0/abs(pref)
- 30 end do
+    end do
 !
 ! ---------------------------------------
 ! --- REMPLISSAGE DE VINF A PARTIR DE YFT
@@ -95,7 +95,7 @@ subroutine hujlnf(toler, nmat, mater, nvi, vind,&
 ! ---> AFFECTATION DES RAYONS DE YF VERS VINF
 ! --- ON S'ASSURE QUE (R+>=R-) ET (R+CYC<=RMON)
 ! ----------------------------------------------
-    do 40 k = 1, nbmeca
+    do k = 1, nbmeca
         kk = indi(k)
         if (yft(ndt+1+k) .gt. vind(kk)) then
             if ((kk.gt.4) .and. (kk.lt.8)) then
@@ -110,7 +110,7 @@ subroutine hujlnf(toler, nmat, mater, nvi, vind,&
         else
             vinf(kk) = vind(kk)
         endif
- 40 end do
+    end do
 !
 ! ----------------------------------------------
 ! --- CONSTRUCTION DE NEGMUL POUR HUJACT
@@ -120,27 +120,27 @@ subroutine hujlnf(toler, nmat, mater, nvi, vind,&
 !        IF (YF(NDT+1+NBMECA+K).GT.MAXI) MAXI = YF(NDT+1+NBMECA+K)
 ! 50   CONTINUE
 !
-    do 60 k = 1, nbmeca
+    do k = 1, nbmeca
         ratio = yf(ndt+1+nbmeca+k)/maxi
         if (ratio .lt. -un) then
             negmul(indi(k)) = .true.
         endif
- 60 end do
+    end do
 !
 ! ----------------------------------------------
 ! --- CONSTRUCTION DE SIGF POUR HUJACT
 ! ----------------------------------------------
-    do 70 i = 1, ndt
+    do i = 1, ndt
         sigf(i) = yft(i)
- 70 end do
+    end do
 !
 ! --- APPEL A LA ROUTINE HUJACT
     chgmec = .false.
 !
-    do 80 i = 1, 22
+    do i = 1, 22
         matert(i,1) = mater(i,1)
         matert(i,2) = mater(i,2)
- 80 end do
+    end do
 !
     call hujact(matert, vind, vinf, vins, sigd,&
                 sigf, negmul, chgmec, indi)

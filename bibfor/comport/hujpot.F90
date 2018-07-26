@@ -83,10 +83,10 @@ subroutine hujpot(mod, mater, vind, depsh, sigd,&
     if (debug) write(6,'(A)')' ==> HUJPOT'
     if (debug) write(6,*)'     INIT - VIND=',(vind(23+i),i=1,8)
 ! --- MISE A ZERO POUR CORRIGER ZERO NUMERIQUE
-    do 10 i = 1, ndt
+    do i = 1, ndt
         deps(i) = depsh(i)
         if (abs(deps(i)) .lt. r8prem()) deps(i)=zero
- 10 continue
+    enddo
     elas = 0
     rdctps = .false.
 !
@@ -94,7 +94,7 @@ subroutine hujpot(mod, mater, vind, depsh, sigd,&
 ! --- CONSTRUCTION DES SURFACES CYCLIQUES PRECEDENTES -----------
 ! ====================================================================
     call lceqvn(50, vind, vinm)
-    do 50 i = 1, 3
+    do i = 1, 3
         if ((vind(5*i+31).ne.zero) .or. (vind(5*i+32).ne.zero)) then
             vinm(4*i+5) = vind(5*i+31)
             vinm(4*i+6) = vind(5*i+32)
@@ -102,7 +102,7 @@ subroutine hujpot(mod, mater, vind, depsh, sigd,&
             vinm(4*i+8) = vind(5*i+34)
             vinm(i+4) = vind(5*i+35)
         endif
- 50 continue
+    enddo
 !
 ! ====================================================================
 ! --- PROPRIETES MATERIAU HUJEUX -------------------------------------
@@ -116,19 +116,19 @@ subroutine hujpot(mod, mater, vind, depsh, sigd,&
 ! ------------------ INITIALISATION VARIABLES ------------------------
 ! ====================================================================
 !
-    do 14 i = 1, 7
+    do i = 1, 7
         mono(i) = 0
         indi(i) = 0
- 14 continue
-    do 15 i = 1, 4
+    enddo
+    do i = 1, 4
         hist(i,1) = 0
         hist(i,2) = 0
         mono(i) = i
- 15 continue
-    do 25 i = 1, ndt
+    enddo
+    do i = 1, ndt
         ye(i) = sige(i)
         yd(i) = sigd(i)
- 25 continue
+    enddo
     ye(ndt+1) = vind(23)
     yd(ndt+1) = vind(23)
 !
@@ -148,14 +148,15 @@ subroutine hujpot(mod, mater, vind, depsh, sigd,&
             demu = e /(un+nu)
             la = e*nu/(un+nu)/(un-deux*nu)
 !
-            do 30 i = 1, ndi
-                do 30 j = 1, ndi
+            do i = 1, ndi
+                do j = 1, ndi
                     if (i .eq. j) hooknl(i,j) = al
                     if (i .ne. j) hooknl(i,j) = la
- 30             continue
-            do 35 i = ndi+1, ndt
+                enddo
+            enddo
+            do i = ndi+1, ndt
                 hooknl(i,i) = demu
- 35         continue
+            enddo
 !
         else if (mater(17,1).eq.deux) then
 !
@@ -249,9 +250,9 @@ subroutine hujpot(mod, mater, vind, depsh, sigd,&
             endif
         endif
         actif = zero
-        do 45 jj = 1, ndt
+        do jj = 1, ndt
             actif = actif + dsig(jj)*dfds(jj)
- 45     continue
+        enddo
 !
         actif = actif/mater(1,1)
         charge = -un
@@ -274,9 +275,9 @@ subroutine hujpot(mod, mater, vind, depsh, sigd,&
             endif
 !
             charge = zero
-            do 46 jj = 1, ndt
+            do jj = 1, ndt
                 charge = charge + dsig(jj)*dfds(jj)
- 46         continue
+            enddo
             charge = charge/mater(1,1)
         endif
 !

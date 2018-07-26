@@ -87,12 +87,12 @@ subroutine hujprc(kk, k, tin, vin, mater,&
 ! ----------------- CONSTRUCTION DU DEVIATEUR DES CONTRAINTES ------
 ! ==================================================================
     j = 1
-    do 10 i = 1, ndi
+    do i = 1, ndi
         if (i .ne. k) then
             tou(j) = tin(i)
             j = j+1
         endif
- 10 continue
+    enddo
 !
     tou(3) = tin(ndt+1-k)
     dd = d12*(tou(1)-tou(2))
