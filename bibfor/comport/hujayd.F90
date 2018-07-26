@@ -48,9 +48,9 @@ subroutine hujayd(nmat, mater, nvi, vind, vinf,&
 !     ----------------------------------------------------------------
 ! ---  DEFINITION DU NOMBRE DE MECANISMES POTENTIELS ACTIFS
     nbmeca = 0
-    do 10 i = 1, 8
+    do i = 1, 8
         if (vinf(23+i) .eq. un) nbmeca = nbmeca + 1
- 10 end do
+    end do
 ! ---  DIMENSION DU SYSTEME NL A RESOUDRE FONCTION DE NBMECA
     nr = ndt + 1 + 2*nbmeca
 !
@@ -63,7 +63,7 @@ subroutine hujayd(nmat, mater, nvi, vind, vinf,&
     yd(ndt+1) = vind(23)
 !
     ii = 1
-    do 30 i = 1, 8
+    do i = 1, 8
         if (vind(23+i) .eq. un) then
 !
             if (i .ne. 4) then
@@ -76,22 +76,22 @@ subroutine hujayd(nmat, mater, nvi, vind, vinf,&
             endif
 !
         endif
- 30 end do
+    enddo
 !
 ! --- REDIMENSIONNEMENT DE YD ET YF POUR S'ADAPTER A HUJJID
 ! --- SIGMA/E0, R * PREF/ E0
-    do 40 i = 1, 6
+    do i = 1, 6
         yd(i) = yd(i)/mater(1,1)
- 40 end do
+    end do
 !
-    do 50 i = 1, nbmeca
+    do i = 1, nbmeca
         yd(ndt+1+i) = yd(ndt+1+i)/mater(1,1)*abs(mater(8,2))
- 50 end do
+    end do
 !
 ! --- VARIABLE DE GESTION DES MECANISMES DE TRACTION
-    do 60 i = 1, 3
+    do i = 1, 3
         bnews(i) = .true.
- 60 end do
+    end do
     mtrac = .false.
 !
 ! --- MISE A ZERO DU COMPTEUR D'ITERATIONS LOCALES

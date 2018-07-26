@@ -80,12 +80,12 @@ subroutine hujcdc(k, mater, sig, vin, seuil)
 ! --- PROJECTION DANS LE PLAN DEVIATEUR K --------------------------
 ! ==================================================================
     j = 1
-    do 10 i = 1, ndi
+    do i = 1, ndi
         if (i .ne. k) then
             tou(j) = sig(i)
             j = j+1
         endif
- 10 continue
+    enddo
 !
     tou(3) = sig(ndt+1-k)
     dd = d12*( tou(1)-tou(2) )

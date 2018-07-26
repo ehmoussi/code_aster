@@ -54,9 +54,9 @@ subroutine hujcic(mater, sig, vin, seuil)
     pc = pco*exp(-beta*epsvpm)
 !
     i1 = zero
-    do 10 i = 1, ndi
+    do i = 1, ndi
         i1 = i1 + d13*sig(i)
-10  continue
+    enddo
 !
     seuil = - abs(abs(i1)+d*pc*x4)/(d*pc) - r4c
 !

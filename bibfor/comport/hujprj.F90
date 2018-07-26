@@ -38,12 +38,12 @@ subroutine hujprj(k, tin, toud, p, q)
     data   d12, deux /0.5d0, 2.d0/
 !
     j = 1
-    do 10 i = 1, ndi
+    do i = 1, ndi
         if (i .ne. k) then
             tou(j) = tin(i)
             j = j+1
         endif
-10  continue
+    enddo
 !
     tou(3) = tin(ndt+1-k)
 !

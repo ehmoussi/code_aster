@@ -60,14 +60,15 @@ subroutine hujori(sens, nmat, reorie, angl, vec,&
 !
     if (.not.reorie) goto 9999
 !
-    do 20 i = 1, 3
-        do 20 j = 1, 3
+    do i = 1, 3
+        do j = 1, 3
             p(i,j) = zero
- 20     continue
+        enddo
+    enddo
 !
-    do 21 i = 1, 6
+    do i = 1, 6
         vec1(i) = zero
- 21 continue
+    enddo
 !
 !
 ! ----   CONSTRUCTION DE LA MATRICE DE PASSAGE (POUR DES VECTEURS)
@@ -123,10 +124,11 @@ subroutine hujori(sens, nmat, reorie, angl, vec,&
             passal(6,5) = p(2,1)*p(3,3) + p(2,3)*p(3,1)
             passal(6,6) = p(2,2)*p(3,3) + p(2,3)*p(3,2)
 !
-            do 22 i = 1, 6
-                do 22 j = 1, 6
+            do i = 1, 6
+                do j = 1, 6
                     vec1(i) = vec1(i) + passal(i,j)*vec(j)
- 22             continue
+                enddo
+            enddo
 !
         else if (sens.eq.'GLOBA') then
 !
@@ -172,16 +174,17 @@ subroutine hujori(sens, nmat, reorie, angl, vec,&
             passag(6,5) = p(1,2)*p(3,3) + p(3,2)*p(1,3)
             passag(6,6) = p(2,2)*p(3,3) + p(3,2)*p(2,3)
 !
-            do 23 i = 1, 6
-                do 23 j = 1, 6
+            do i = 1, 6
+                do j = 1, 6
                     vec1(i) = vec1(i) + passag(i,j)*vec(j)
- 23             continue
+                enddo
+            enddo
 !
         endif
 !
-        do 25 i = 1, 6
+        do i = 1, 6
             vec(i) = vec1(i)
- 25     continue
+        enddo
 !
 !
 ! calcul de PASSAG * DSDE *PASSAL et PASSAG * DEPS *PASSAL
@@ -283,10 +286,11 @@ subroutine hujori(sens, nmat, reorie, angl, vec,&
 !
         endif
 !
-        do 30 j = 1, 6
-            do 30 i = 1, 6
+        do j = 1, 6
+            do i = 1, 6
                 mat(i,j) = mat1(i,j)
- 30         continue
+            enddo
+        enddo
 !
     endif
 !

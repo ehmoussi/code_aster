@@ -81,12 +81,12 @@ subroutine hujma2(fami, kpg, ksp, mod, imat,&
     call hujmat(fami, kpg, ksp, mod, imat,&
                 tempf, matert, ndt, ndi, nvi)
 !
-    do 10 i = 1, 22
-        do 20 j = 1, 2
+    do i = 1, 22
+        do j = 1, 2
             materd(i,j) = matert(i,j)
             materf(i,j) = matert(i,j)
- 20     continue
- 10 end do
+        enddo
+    end do
 !
 ! ----------------------------------------------------------------------
 ! --- CONTROLE DE LA DIMENSION DE LA MODELISATION
@@ -111,7 +111,7 @@ subroutine hujma2(fami, kpg, ksp, mod, imat,&
 !
 ! --- 2 INITIALISATION SEUIL DEVIATOIRE SI NUL
     ptrac = materf(21,2)
-    do 30 i = 1, ndi
+    do i = 1, ndi
         if (vind(i) .eq. zero) then
             if (materf(13, 2) .eq. zero) then
                 vind(i) = 1.d-3
@@ -135,7 +135,7 @@ subroutine hujma2(fami, kpg, ksp, mod, imat,&
                 vind(23+i) = un
             endif
         endif
- 30 continue
+    enddo
 !
 ! ---> 3 INITIALISATION SEUIL ISOTROPE SI NUL
     if (vind(4) .eq. zero) then
@@ -164,7 +164,7 @@ subroutine hujma2(fami, kpg, ksp, mod, imat,&
     endif
 !
 ! ---> 4 INITIALISATION SEUIL CYCLIQUE SI NUL
-    do 40 i = 1, ndi
+    do i = 1, ndi
         if (vind(4+i) .eq. zero) then
             if (materf(18, 2) .eq. zero) then
                 vind(4+i) = 1.d-3
@@ -172,7 +172,7 @@ subroutine hujma2(fami, kpg, ksp, mod, imat,&
                 vind(4+i) = materf(18,2)
             endif
         endif
- 40 continue
+    enddo
 !
     if (vind(8) .eq. zero) then
         if (materf(19, 2) .eq. zero) then
@@ -183,9 +183,9 @@ subroutine hujma2(fami, kpg, ksp, mod, imat,&
     endif
 !
 ! --- 5 CONTROLE DES INDICATEURS DE PLASTICITE
-    do 50 i = 1, 4
+    do i = 1, 4
         if (abs(vind(27+i)-un) .lt. r8prem()) vind(23+i)=-un
- 50 continue
+    enddo
 !
 ! --- 7 ORIENTATION DES CONTRAINTES SELON ANGMAS VERS REPERE GLOBAL
     call hujori('GLOBA', 1, reorie, angmas, sigd,&

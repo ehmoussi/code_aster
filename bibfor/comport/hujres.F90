@@ -80,9 +80,9 @@ subroutine hujres(fami, kpg, ksp, mod, crit,&
     loop = .false.
     nodec=.false.
 !
-    do 70 i = 1, 7
+    do i = 1, 7
         indi(i) = 0
-70  continue
+    enddo
 !
     ptrac = mater(21,2)
     pref = mater(8,2)
@@ -137,7 +137,10 @@ subroutine hujres(fami, kpg, ksp, mod, crit,&
     subd = .false.
     rdctps = .false.
 !
-500  continue
+! ============================
+500 continue
+! ============================
+!
     if (noconv) then
         ndec = 3
         iret = 0
@@ -163,9 +166,9 @@ subroutine hujres(fami, kpg, ksp, mod, crit,&
     call lceqve(sigd0, sigd)
     call lceqvn(nvi, vind0, vind)
 !
-    do 10 i = 1, ndt
+    do i = 1, ndt
         deps(i) = deps0(i)/ndec
-10  continue
+    enddo
 !
     call hujpre(fami, kpg, ksp,'ELASTIC', mod,&
                 crit, imat, mater, deps, sigd,&
@@ -176,10 +179,10 @@ subroutine hujres(fami, kpg, ksp, mod, crit,&
     asig = 0.d0
     adsig= 0.d0
 !
-    do 12 i = 1, ndt
+    do i = 1, ndt
         asig = asig + sigd(i)**2.d0
         adsig= adsig+ (sigf(i)-sigd(i))**2.d0
-12  end do
+    end do
     asig = sqrt(asig)
     adsig= sqrt(adsig)
 !
@@ -187,9 +190,9 @@ subroutine hujres(fami, kpg, ksp, mod, crit,&
         nsubd = nint(adsig/asig/tol)
         if (nsubd .gt. 1) then
             ndec = min(ndec*nsubd,100)
-            do 11 i = 1, ndt
+            do i = 1, ndt
                 deps(i) = deps0(i)/ndec
-11          continue
+            enddo
         endif
     endif
 !
@@ -205,7 +208,7 @@ subroutine hujres(fami, kpg, ksp, mod, crit,&
 !
 !               INIT BOUCLE SUR LES DECOUPAGES
 !  =============================================================
-    do 400 idec = 1, ndec
+    do idec = 1, ndec
 !
 ! --- MISE A JOUR DU COMPTEUR D'ITERATIONS LOCALES
         loop = .false.
@@ -221,9 +224,9 @@ subroutine hujres(fami, kpg, ksp, mod, crit,&
         maj = 0
         call lceqve(sigf, predic)
 !
-        do 20 k = 1, 8
+        do k = 1, 8
             negmul(k)=.false.
-20      continue
+        enddo
 !
 ! ---> SAUVEGARDE DES SURFACES DE CHARGE AVANT MODIFICATION
         call lceqvn(nvi, vind, vins)
@@ -244,18 +247,18 @@ subroutine hujres(fami, kpg, ksp, mod, crit,&
 ! ---> SI ELASTICITE PASSAGE A L'ITERATION SUIVANTE
         plas = .false.
         if (etatf .eq. 'ELASTIC') then
-            do 29 i = 1, 3
+            do i = 1, 3
                 call hujprj(i, sigf, vec, pf, qf)
                 if (((pf+deux*rtrac-ptrac)/abs(pref)) .ge. zero) then
                     plas = .true.
                     etatf = 'PLASTIC'
                 endif
-29          continue
+            enddo
 !
             if (.not.plas) then
-                do 30 i = 1, nvi
+                do i = 1, nvi
                     vinf(i)=vind(i)
-30              continue
+                enddo
                 chgmec = .false.
                 goto 40
             endif
@@ -280,18 +283,18 @@ subroutine hujres(fami, kpg, ksp, mod, crit,&
 !
 ! --- ON CONTROLE QUE LES PRESSIONS ISOTROPES PAR PLAN
 !     NE PRESENTENT PAS DE TRACTION
-        do 48 i = 1, ndi
+        do i = 1, ndi
             call hujprj(i, sigf, vec, pf, qf)
             if (((pf+rtrac-ptrac)/abs(pref)) .gt. zero) then
                 noconv=.true.
                 if (debug) write(6,'(A)')'HUJRES :: SOL EN TRACTION'
             endif
-48      continue
+        enddo
 ! --- SI TRACTION DETECTEE ET NON CONVERGENCE, ON IMPOSE
 ! --- ETAT DE CONTRAINTES ISOTROPE
         if ((noconv) .and. (tract)) then
             noconv=.false.
-            do 51 i = 1, 3
+            do i = 1, 3
                 sigf(i) = -deux*rtrac
                 sigf(3+i) = zero
                 vind(23+i) = zero
@@ -300,7 +303,7 @@ subroutine hujres(fami, kpg, ksp, mod, crit,&
                 vind(6+4*i) = zero
                 vind(7+4*i) = zero
                 vind(8+4*i) = zero
-51          continue
+            enddo
             call lceqvn(nvi, vind, vinf)
             iret = 0
             if (debug) write(6,'(A)')'HUJRES :: CORRECTION SIGMA'
@@ -309,16 +312,16 @@ subroutine hujres(fami, kpg, ksp, mod, crit,&
 ! --- ETAT DE CONTRAINTES ISOTROPE
         if (noconv) then
             impose = .false.
-            do 49 i = 1, ndi
+            do i = 1, ndi
                 call hujprj(i, sigf, vec, pf, qf)
-                if ((abs(pf-ptrac)/abs(pref)) .lt. 1d-5) then
+                if ((abs(pf-ptrac)/abs(pref)) .lt. 1.d-5) then
                     impose = .true.
                     if (debug) write(6,'(A)')'HUJRES :: SOL LIQUEFIE'
                 endif
-49          continue
+            enddo
             if (impose) then
                 noconv = .false.
-                do 47 i = 1, 3
+                do i = 1, 3
                     sigf(i) = -deux*rtrac
                     sigf(3+i) = zero
                     vind(23+i) = zero
@@ -327,7 +330,7 @@ subroutine hujres(fami, kpg, ksp, mod, crit,&
                     vind(6+4*i) = zero
                     vind(7+4*i) = zero
                     vind(8+4*i) = zero
-47              continue
+                enddo
                 call lceqvn(nvi, vind, vinf)
                 iret = 0
             endif
@@ -393,19 +396,19 @@ subroutine hujres(fami, kpg, ksp, mod, crit,&
         maj = 0
         if (idec .lt. ndec) then
             call lceqve(sigf, sigd)
-            do 50 i = 1, nvi
+            do i = 1, nvi
                 vind(i) = vinf(i)
-50          continue
-            do 60 i = 1, ndt
+            enddo
+            do i = 1, ndt
                 deps(i) = deps0(i)/ndec
-60          continue
+            enddo
 ! --- APPLICATION DE L'INCREMENT DE DÉFORMATIONS, SUPPOSE ELASTIQUE
             call hujpre(fami, kpg, ksp, 'ELASTIC', mod,&
                         crit, imat, mater, deps, sigd,&
                         sigf, vind, iret)
         endif
 !
-400  continue
+    enddo
 ! End - Boucle sur les redecoupages
 !
 !

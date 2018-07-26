@@ -92,10 +92,10 @@ subroutine hujmat(fami, kpg, ksp, mod, imat,&
     nomc(24)= 'PTRAC   '
 !af fin
 !
-    do 10 i = 1, 22
+    do i = 1, 22
         materf(i,1)=0.d0
         materf(i,2)=0.d0
-10  continue
+    enddo
 !
 !
 ! --- RECUPERATION DES PROPRIETES DE LA LOI DE HUJEUX

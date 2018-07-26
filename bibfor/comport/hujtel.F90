@@ -48,9 +48,9 @@ subroutine hujtel(mod, mater, sig, hook)
 ! ----------------------------------------------------------------
 ! --->   CALCUL PREMIER INVARIANT DES CONTRAINTES
     i1 = zero
-    do 10 i = 1, ndi
+    do i = 1, ndi
         i1 = i1 + d13*sig(i)
-10  end do
+    end do
 !
 !
 ! --->   CALCUL DES COEF. UTILES
@@ -70,14 +70,15 @@ subroutine hujtel(mod, mater, sig, hook)
             demu = e /(un+nu)
             la = e*nu/(un+nu)/(un-deux*nu)
 !
-            do 30 i = 1, ndi
-                do 30 j = 1, ndi
+            do i = 1, ndi
+                do j = 1, ndi
                     if (i .eq. j) hook(i,j) = al
                     if (i .ne. j) hook(i,j) = la
-30              continue
-            do 35 i = ndi+1, ndt
+                enddo
+            enddo
+            do i = ndi+1, ndt
                 hook(i,i) = demu
-35          continue
+            enddo
 !
         else if (mater(17,1).eq.deux) then
 !

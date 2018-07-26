@@ -21,6 +21,7 @@ subroutine hujjid(mod, mater, indi, deps, prox,&
                   drdy, iret)
 ! aslint: disable=W1501
     implicit none
+!
 !  INTEGRATION PLASTIQUE (MECANISME DEVIATOIRE SEUL) DE LA LOI HUJEUX
 !
 !  RESOLUTION PAR METHODE DE NEWTON   DRDY(DY).DDY = - R(DY)
@@ -33,6 +34,7 @@ subroutine hujjid(mod, mater, indi, deps, prox,&
 !          ( DLEVPDS , DLEVPDEVP , DLEVPDR , DLEVPDLA )
 !          ( DLRDS   , DLRDEVP   , DLRDR   , DLRDLA   )
 !          ( DLFDS   , DLFDEVP   , DLFDR   , DLFDLA   )
+!
 ! =====================================================================
 !  IN   MOD   :  MODELISATION
 !       MATER :  COEFFICIENTS MATERIAU
@@ -48,7 +50,6 @@ subroutine hujjid(mod, mater, indi, deps, prox,&
 !                = 0 OK
 !                = 1 NOOK : SI LA SUBDIVISION DU PAS DE TEMPS EST ACTIV
 !                           DANS STAT_NON_LINE, IL Y A SUBDIVISION
-! =====================================================================
 ! =====================================================================
 #include "asterf_types.h"
 #include "jeveux.h"
@@ -96,6 +97,7 @@ subroutine hujjid(mod, mater, indi, deps, prox,&
     real(kind=8) :: sc(6), tc(6), xc(6), scxc, xctc, rtrac
     character(len=8) :: mod, nomail
     aster_logical :: debug, prox(4), proxc(4), dila
+!
 ! =====================================================================
     parameter   ( d12    = 0.5d0  )
     parameter   ( d13    = 0.333333333334d0  )
@@ -110,42 +112,44 @@ subroutine hujjid(mod, mater, indi, deps, prox,&
     common /meshuj/ debug
 ! =====================================================================
     call infniv(ifm, niv)
+!
 ! =====================================================================
 ! --- PROPRIETES HUJEUX MATERIAU --------------------------------------
 ! =====================================================================
-    n = mater(1,2)
+    n    = mater(1,2)
     beta = mater(2,2)
-    d = mater(3,2)
-    b = mater(4,2)
-    phi = mater(5,2)
-    angdil = mater(6,2)
-    pco = mater(7,2)
+    d    = mater(3,2)
+    b    = mater(4,2)
+    phi  = mater(5,2)
+    angdil=mater(6,2)
+    pco  = mater(7,2)
     pref = mater(8,2)
     acyc = mater(9,2)
     amon = mater(10,2)
     ccyc = deux*mater(11,2)
     cmon = mater(12,2)
-    m = sin(degr*phi)
+    m    = sin(degr*phi)
     mdil = sin(degr*angdil)
     coef = mater(20,2)
-    alpha = coef*d12
-    ptrac = mater(21,2)
+    alpha= coef*d12
+    ptrac= mater(21,2)
     piso = zero
 !
 ! --- PARAMETRE NECESSAIRE POUR GERER LA TRACTION
     rtrac = 1.d-6 * abs(pref)
+!
 ! =====================================================================
 ! --- PREMIER INVARIANT ET AUTRES GRANDEURS UTILES --------------------
 ! =====================================================================
     i1f = d13 * trace(ndi,yf)
     if ((i1f/pref) .lt. tole1) i1f = tole1*pref
 !
-    do 11 i = 1, 4
+    do i = 1, 4
         prox(i) = .false.
-        proxc(i) = .false.
- 11 continue
+        proxc(i)= .false.
+    enddo
 !
-    do 6 i = 1, ndt
+    do i = 1, ndt
         sigf(i) = yf(i)
         psi(i) = zero
         psi(ndt+i) = zero
@@ -154,25 +158,25 @@ subroutine hujjid(mod, mater, indi, deps, prox,&
         psi(4*ndt+i) = zero
         psi(5*ndt+i) = zero
         psi(6*ndt+i) = zero
-  6 continue
+    enddo
 !
-    do 3 i = 1, 9
-        sigdc(i)=zero
-  3 continue
+    do i = 1, 9
+       sigdc(i)=zero
+    enddo
 !
     nbmeca = 0
     nbmect = 0
-    do 4 k = 1, 7
-        if (indi(k) .gt. 0) then
-            nbmect = nbmect + 1
-            if (indi(k) .le. 8) nbmeca = nbmeca + 1
-        endif
-        dlambd(k) = zero
-        ad(k) = zero
-        ksi(k) = zero
-        q(k) = zero
-        p(k) = zero
-  4 continue
+    do k = 1, 7
+       if (indi(k) .gt. 0) then
+           nbmect = nbmect + 1
+           if (indi(k) .le. 8) nbmeca = nbmeca + 1
+       endif
+       dlambd(k) = zero
+       ad(k) = zero
+       ksi(k) = zero
+       q(k) = zero
+       p(k) = zero
+    enddo
 !
     do 5 k = 1, nbmect
         kk = indi(k)
@@ -182,7 +186,7 @@ subroutine hujjid(mod, mater, indi, deps, prox,&
         if (kk .le. 8) rc(k) = yf(ndt+1+k)
 !
         call hujddd('PSI   ', indi(k), mater, indi, yf,&
-                    vind, psi((k-1)*ndt+1), dpsids, iret)
+             vind, psi((k-1)*ndt+1), dpsids, iret)
         if (iret .eq. 1) goto 1000
 !
         if (indi(k) .lt. 4) then
@@ -234,15 +238,16 @@ subroutine hujjid(mod, mater, indi, deps, prox,&
             call utmess('F', 'COMPOR1_8')
         endif
 !
-  5 continue
+ 5  continue
 !
-    epsvp = yf(ndt+1)
-    pc = pco*exp(-beta*epsvp)
+    epsvp= yf(ndt+1)
+    pc   = pco*exp(-beta*epsvp)
     cmon = cmon * pc/pref
     ccyc = ccyc * pc/pref
 !
 ! --- CONDITIONNEMENT DE LA MATRICE JACOBIENNE
     ccond= mater(1,1)
+!
 ! =====================================================================
 ! --- OPERATEURS DE RIGIDITE ET DE SOUPLESSE (LINEAIRES OU NON LINEA.)
 ! =====================================================================
@@ -260,14 +265,15 @@ subroutine hujjid(mod, mater, indi, deps, prox,&
             demu = e /(un+nu)
             la = e*nu/(un+nu)/(un-deux*nu)
 !
-            do 30 i = 1, ndi
-                do 30 j = 1, ndi
+            do i = 1, ndi
+                do j = 1, ndi
                     if (i .eq. j) hook(i,j) = al
                     if (i .ne. j) hook(i,j) = la
- 30             continue
-            do 35 i = ndi+1, ndt
+                enddo
+            enddo
+            do i = ndi+1, ndt
                 hook(i,i) = demu
- 35         continue
+            enddo
 !
         else if (mater(17,1).eq.deux) then
 !
@@ -302,7 +308,6 @@ subroutine hujjid(mod, mater, indi, deps, prox,&
             call utmess('F', 'COMPOR1_38')
         endif
 !
-!
 ! =====================================================================
 ! --- CP/1D -----------------------------------------------------------
 ! =====================================================================
@@ -310,101 +315,102 @@ subroutine hujjid(mod, mater, indi, deps, prox,&
         call utmess('F', 'COMPOR1_4')
     endif
 !
-!
 ! =====================================================================
 ! --- OPERATEUR NON LINEAIRE ------------------------------------------
 ! =====================================================================
     coef0 = ((i1f -piso)/pref) ** n
-    do 40 i = 1, ndt
-        do 40 j = 1, ndt
+    do i = 1, ndt
+        do j = 1, ndt
             hooknl(i,j) = coef0*hook(i,j)
- 40     continue
-!
+        enddo
+    enddo
 !
 ! =====================================================================
 ! --- DERIVEE PAR RAPPORT A DS DE L'OPERATEUR NON LINEAIRE: DHOOKDS ---
 ! =====================================================================
     dcoef0 = d13*n/pref * ((i1f -piso)/pref)**(n-1)
-    do 41 i = 1, ndt
-        do 41 j = 1, ndt
+    do i = 1, ndt
+        do j = 1, ndt
             dhokds(i,j) = dcoef0*hook(i,j)
- 41     continue
-!
+        enddo
+    enddo
 !
 ! =====================================================================
 ! --- I. CALCUL DE DLEDS (6X6) ----------------------------------------
 ! =====================================================================
 ! ---> I.1. CALCUL DE CTILD = DHOOKDS*(DEPS - DEPSP)
 ! ---> I.1.1. CALCUL DE DEPSP A T+DT
-    do 50 i = 1, ndt
+    do i = 1, ndt
         depsp(i) = zero
- 50 continue
+    enddo
 !
-    do 51 k = 1, nbmect
+    do k = 1, nbmect
         kk = (k-1)*ndt
-        do 53 i = 1, ndt
+        do i = 1, ndt
             depsp(i) = depsp(i) + dlambd(k)*psi(kk+i)
- 53     continue
- 51 continue
+        enddo
+    enddo
 !
 ! ------------ FIN I.1.1.
-    do 52 i = 1, ndt
+    do i = 1, ndt
         depse(i) = deps(i) - depsp(i)
- 52 continue
+    enddo
     call lcprmv(dhokds, depse, ctild)
 ! ------------ FIN I.1.
 ! ---> I.2. CALCUL DE CD2FDS = HOOK * DEPSDS
 !                     (6X6)    (6X6)  (6X6)
     call lcinma(zero, depsds)
 !
-    do 60 k = 1, nbmect
+    do k = 1, nbmect
         kk = indi(k)
-        if ((kk .eq. 4) .or. (kk.eq.8)) goto 610
-!
-        if (kk .gt. 8) goto 610
+        if ((kk .eq. 4) .or. (kk.ge.8)) goto 610
 !
         call hujddd('DPSIDS', kk, mater, indi, yf,&
                     vind, dfds, dpsids, iret)
         if (iret .eq. 1) goto 1000
-        do 60 i = 1, ndt
-            do 60 j = 1, ndt
+!
+        do i = 1, ndt
+            do j = 1, ndt
                 depsds(i,j) = depsds(i,j) + dlambd(k)*dpsids(i,j)
- 60         continue
+            enddo
+        enddo
+    enddo
 610 continue
 !
     call lcprmm(hooknl, depsds, cd2fds)
 !
 ! ------------ FIN I.2.
     call lcinma(zero, dleds)
-    do 63 i = 1, ndt
+    do i = 1, ndt
         dleds(i,i) = un
- 63 continue
+    enddo
 !
-    do 61 i = 1, ndt
-        do 62 j = 1, ndi
+    do i = 1, ndt
+        do j = 1, ndi
             dleds(i,j) = dleds(i,j) - (ctild(i) - cd2fds(i,j))
- 62     continue
-        do 61 j = ndi+1, ndt
+        enddo
+        do j = ndi+1, ndt
             dleds(i,j) = dleds(i,j) + cd2fds(i,j)
- 61     continue
+        enddo
+    enddo
 !
 ! =====================================================================
 ! --- II. CALCUL DE DLEDR (6XNBMEC) -----------------------------------
 ! =====================================================================
 !
-    do 70 i = 1, ndt
-        do 70 k = 1, 4
+    do i = 1, ndt
+        do k = 1, 4
             dledr(i,k) = zero
- 70     continue
+        enddo
+    enddo
 !
     if (nbmeca .eq. 0) goto 710
 !
-    do 71 k = 1, nbmeca
+    do k = 1, nbmeca
         kk = indi(k)
         pk = p(k) -ptrac
 !
-        if ((kk.eq.4) .or. (kk.eq.8)) goto 710
-        if (kk .gt. 8) goto 710
+        if ((kk.eq.4) .or. (kk.ge.8)) goto 710
 !
         if (kk .lt. 4) then
 !
@@ -418,17 +424,17 @@ subroutine hujjid(mod, mater, indi, deps, prox,&
 !
             mul = - dlambd(k)*alpha*dpsi*dksidr(k)
 !
-            do 72 i = 1, ndi
+            do i = 1, ndi
                 if (i .ne. kk) then
                     delta(i) = mul
                 else
                     delta(i) = zero
                 endif
- 72         continue
+            enddo
 !
-            do 73 i = ndi+1, ndt
+            do i = ndi+1, ndt
                 delta(i) = zero
- 73         continue
+            enddo
 !
         else if ((kk .lt. 8) .and. (kk .gt. 4)) then
 ! ---> MECANISME CYCLIQUE DEVIATOIRE
@@ -457,13 +463,13 @@ subroutine hujjid(mod, mater, indi, deps, prox,&
             endif
 !
             si = un
-            do 74 i = 1, ndi
+            do i = 1, ndi
                 if (i .ne. (kk-4)) then
                     if ((-q(k)/pref) .gt. tole1) then
                         delta(i) = dlambd(k)*(m*pk*(un-b*log(pk/pc))/ (2.d0*q(k))*(th(1)*si-sigdc&
-                                   &(3*k-2)*si*prodc/ (2.d0*q(k)**2.d0)) -alpha* (dksidr(k)*dpsi+&
-                                   & ksi(k)/2.d0*m*(un-b*log(pk/pc))*(prodm -ps*prodc/(2.d0*q(k)*&
-                                   &*2.d0))/q(k)))
+                        &(3*k-2)*si*prodc/ (2.d0*q(k)**2.d0)) -alpha* (dksidr(k)*dpsi+&
+                        & ksi(k)/2.d0*m*(un-b*log(pk/pc))*(prodm -ps*prodc/(2.d0*q(k)*&
+                        &*2.d0))/q(k)))
                     else
                         delta(i) = dlambd(k)*(-alpha)*dksidr(k)*mdil
                     endif
@@ -471,16 +477,15 @@ subroutine hujjid(mod, mater, indi, deps, prox,&
                 else
                     delta(i) = zero
                 endif
- 74         continue
+            enddo
 !
-            do 75 i = ndi+1, ndt
+            do i = ndi+1, ndt
                 delta(i) = zero
- 75         continue
+            enddo
 !
             if ((-q(k)/pref) .gt. tole1) then
                 delta(ndt+5-kk)= dlambd(k)*(m*pk*(un-b*log(pk/pc))/&
-                (2.d0*q(k))*(th(2)-sigdc(3*k)*prodc/ (2.d0*q(k)**2.d0)&
-                ))
+                (2.d0*q(k))*(th(2)-sigdc(3*k)*prodc/ (2.d0*q(k)**2.d0)))
             else
                 delta(ndt+5-kk)= zero
             endif
@@ -488,62 +493,66 @@ subroutine hujjid(mod, mater, indi, deps, prox,&
         endif
 !
         call lcprmv(hooknl, delta, dledr1)
-        do 76 i = 1, ndt
+        do i = 1, ndt
             dledr(i,k) = dledr1(i) /abs(pref)
- 76     continue
+        enddo
 !
- 71 end do
+    enddo
 !
 710 continue
 !
 ! =====================================================================
 ! --- III. CALCUL DE DLEDEVP (6X1) ------------------------------------
 ! =====================================================================
-    do 80 i = 1, ndt
+    do i = 1, ndt
         dledev(i) = zero
- 80 continue
-!
+    enddo
 !
 ! =====================================================================
 ! --- IV. CALCUL DE DLEDLA (6XNBMEC) ----------------------------------
 ! =====================================================================
-    do 90 k = 1, 6
-        do 90 l = 1, 7
+    do k = 1, 6
+        do l = 1, 7
             dledla(k,l) = zero
- 90     continue
+        enddo
+    enddo
 !
-    do 91 k = 1, nbmect
+    do k = 1, nbmect
         kk = (k-1)*ndt+1
         call lcprmv(hooknl, psi(kk), dlek)
-        do 91 i = 1, ndt
+        do i = 1, ndt
             dledla(i,k) = dlek(i) /ccond
- 91     continue
+        enddo
+    enddo
 !
 ! =====================================================================
 ! --- V. CALCUL DE DLRDS (NBMECX6) ------------------------------------
 ! =====================================================================
-    do 100 k = 1, 4
-        do 100 i = 1, ndt
+    do k = 1, 4
+        do i = 1, ndt
             dlrds(k,i) = zero
-100     continue
+        enddo
+    enddo
 !
 ! =====================================================================
 ! --- VI. CALCUL DE DLRDR (NBMECXNBMEC) -------------------------------
 ! =====================================================================
-    do 110 k = 1, 4
-        do 110 l = 1, 4
+    do k = 1, 4
+        do l = 1, 4
             dlrdr(k,l) = zero
-110     continue
+        enddo
+    enddo
 !
     if (nbmeca .eq. 0) goto 101
 !
-    do 111 k = 1, nbmeca
+    do k = 1, nbmeca
 !
         kk = indi(k)
 !
         if (kk .lt. 4) then
             mul = (un-rc(k))/ad(k)
             dlrdr(k,k) = un + deux*dlambd(k)*mul + dlambd(k)*dksidr(k) *(amon-acyc)*mul**deux
+!
         else if (kk.eq.4) then
             dlrdr(k,k) = un + deux*dlambd(k)*(un-rc(k))/cmon
 !
@@ -559,24 +568,26 @@ subroutine hujjid(mod, mater, indi, deps, prox,&
 !        DLRDR(K,K) = DLRDR(K,K)*CCOND/PREF
         dlrdr(k,k) = dlrdr(k,k)
 !
-111 continue
+    enddo
 !
 101 continue
 !
 ! =====================================================================
 ! --- VII. CALCUL DE DLRDLA (NBMECXNBMEC) -----------------------------
 ! =====================================================================
-    do 112 k = 1, 4
-        do 112 l = 1, 7
+    do k = 1, 4
+        do l = 1, 7
             dlrdla(k,l) = zero
-112     continue
+        enddo
+    enddo
 !
     if (nbmeca .eq. 0) goto 102
 !
-    do 113 k = 1, nbmeca
+    do k = 1, nbmeca
         kk = indi(k)
         if (kk .lt. 4) then
             dlrdla(k,k) = -( un-rc(k) )**deux /ad(k)
+!
         else if (kk.eq.4) then
             dlrdla(k,k) = -( un-rc(k) )**deux /cmon
 !
@@ -588,20 +599,20 @@ subroutine hujjid(mod, mater, indi, deps, prox,&
 !
         endif
         dlrdla(k,k) = dlrdla(k,k)/ccond*abs(pref)
-113 end do
+    end do
 !
 102 continue
 !
 ! =====================================================================
 ! --- VIII. CALCUL DE DLRDEVP (NBMECX1) -------------------------------
 ! =====================================================================
-    do 103 k = 1, 4
+    do k = 1, 4
         dlrdle(k) = zero
-103 continue
+    enddo
 !
     if (nbmeca .eq. 0) goto 104
 !
-    do 120 k = 1, nbmeca
+    do k = 1, nbmeca
         kk = indi(k)
         if (kk .lt. 4) then
             dlrdle(k) = zero
@@ -617,36 +628,36 @@ subroutine hujjid(mod, mater, indi, deps, prox,&
             th(2) = vind(4*kk-8)
 !
 ! --- CALCUL DE F = M(1-BLOG((PK-PTRAC)/PC))
-            pk =p(k) -ptrac
+            pk  = p(k) -ptrac
             fac = m*b*pk*beta
 !
 ! --- CALCUL DE D(SIG-CYC)/D(EVP)
-            do 121 i = 1, ndt
+            do i = 1, ndt
                 xc(i) = zero
                 sc(i) = zero
                 tc(i) = zero
-121         continue
+            enddo
 !
             si = un
-            do 122 i = 1, ndi
+            do i = 1, ndi
                 if (i .ne. (kk-4)) then
                     sc(i) = sigdc(3*k-2)*si
                     tc(i) = th(1)*si
                     xc(i) = xh(1)*si
-                    si = -si
+                    si    = -si
                 endif
-122         continue
+            enddo
             sc(ndt+5-kk) = sigdc(3*k)
             tc(ndt+5-kk) = th(2)
             xc(ndt+5-kk) = xh(2)
 !
             scxc = zero
             xctc = zero
-            do 123 i = 1, ndt
-                xc(i) = fac*(xc(i)-tc(i)*rc(k))
+            do i = 1, ndt
+                xc(i)= fac*(xc(i)-tc(i)*rc(k))
                 scxc = scxc + sc(i)*xc(i)
                 xctc = xctc + xc(i)*tc(i)
-123         continue
+            enddo
 !
 ! --- CALCUL DU PRODUIT SCALAIRE ENTRE TH ET SIG-CYC
             prod = deux*sigdc(3*k-2)*th(1) + sigdc(3*k)*th(2)
@@ -664,21 +675,21 @@ subroutine hujjid(mod, mater, indi, deps, prox,&
 !
         endif
         dlrdle(k) = dlrdle(k)*abs(pref)/ccond
-120 end do
+    enddo
 !
 104 continue
+!
 ! =====================================================================
 ! --- IX. CALCUL DE DLEVPDS (1X6) -------------------------------------
 ! =====================================================================
-    do 130 i = 1, ndt
+    do i = 1, ndt
         dlevds(i) = zero
-130 continue
+    enddo
 !
     do 131 k = 1, nbmect
         kk =indi(k)
         pk =p(k) -ptrac
-        if ((kk.eq.4) .or. (kk.eq.8)) goto 1310
-        if (kk .gt. 8) goto 1310
+        if ((kk.eq.4) .or. (kk.ge.8)) goto 1310
 !
 !kh --- traction
         if ((p(k)/pref) .lt. tole1) then
@@ -692,27 +703,29 @@ subroutine hujjid(mod, mater, indi, deps, prox,&
         if (kk .lt. 4) then
 !
             call hujprj(kk, sigf, sigd, coef0, mul)
+!
             if ((-q(k)/pref) .le. tole1) goto 131
-            dlevds(ndt+1-kk) = dlevds(ndt+1-kk) + dlambd(k) * ksi(k)* coef*sigd(3) /pcoh/q(k)/2.d&
-                               &0
+!
+            dlevds(ndt+1-kk) = dlevds(ndt+1-kk) + dlambd(k) * ksi(k)* coef*sigd(3) /pcoh/q(k)/2.d0
 !
             si = un
-            do 132 i = 1, ndi
+            do i = 1, ndi
                 if (i .ne. kk .and. (.not.dila)) then
-                    dlevds(i) = dlevds(i) + dlambd(k)*ksi(k)*coef*( sigd(1)*si /p(k)/q(k)/2.d0 - &
+                    dlevds(i) = dlevds(i) + dlambd(k)*ksi(k)*coef*( sigd(1)*si /p(k)/q(k)/2.d0 -&
                                 &d12*q(k) /p(k)**deux)
                     si = -si
                 else if (i.ne.kk .and. dila) then
                     dlevds(i) = dlevds(i) + dlambd(k)*ksi(k)*coef* sigd(1)*si /pcoh/q(k)/2.d0
                     si = -si
                 endif
-132         continue
+            enddo
 !
         else if ((kk.lt. 8) .and. (kk.gt. 4)) then
 !
             if ((-q(k)/pref) .le. tole1) goto 131
 !
             call hujprj(kk-4, sigf, sigd, coef0, mul)
+!
             ps = 2.d0*sigd(1)*sigdc(3*k-2)+sigd(3)*sigdc(3*k)
 !
             xh(1) = vind(4*kk-11)
@@ -731,7 +744,7 @@ subroutine hujjid(mod, mater, indi, deps, prox,&
             endif
 !
             si = un
-            do 133 i = 1, ndi
+            do i = 1, ndi
                 if (i .ne. (kk-4)) then
                     if ((-q(k)/pref) .gt. tole1) then
                         dlevds(i) = dlevds(i) + dlambd(k)*ksi(k)*coef/ (2.d0*pcoh*q(k))* (sigdc(3&
@@ -740,24 +753,26 @@ subroutine hujjid(mod, mater, indi, deps, prox,&
                         si = -si
                     endif
                 endif
-133         continue
+            enddo
         endif
 !
-        do 134 i = 1, ndt
+        do i = 1, ndt
             dlevds(i) = dlevds(i)/ccond
-134     continue
+        enddo
 !
-131 continue
+131  continue
 1310 continue
+!
 ! =====================================================================
 ! --- X. CALCUL DE DLEVPDEVP (1X1) ------------------------------------
 ! =====================================================================
     dlevde = un
-    do 140 k = 1, nbmeca
+    do k = 1, nbmeca
         kk = indi(k)
         if ((kk.gt.4) .and. (kk.lt.8)) then
 !
             call hujprj(kk-4, sigf, sigd, coef0, mul)
+!
             if (q(k) .gt. tole1) then
                 xh(1) = vind(4*kk-11)
                 xh(2) = vind(4*kk-10)
@@ -765,25 +780,26 @@ subroutine hujjid(mod, mater, indi, deps, prox,&
                 th(2) = vind(4*kk-8)
                 prodc = 2.d0*sigdc(3*k-2)*(xh(1)-rc(k)*th(1)) + (sigdc(3*k)*(xh(2)-rc(k)*th(2)))
                 prodm = 2.d0*sigd(1)*(xh(1)-rc(k)*th(1)) + (sigd(3)*( xh(2)-rc(k)*th(2)))
-                ps = 2.d0*sigd(1)*sigdc(3*k-2)+sigd(3)+sigdc(3*k)
+                ps    = 2.d0*sigd(1)*sigdc(3*k-2)+sigd(3)+sigdc(3*k)
+!
                 if ((-q(k)/pref) .gt. tole1) then
                     dlevde = dlevde + dlambd(k)*coef*ksi(k)/q(k)/2.d0* m*b*beta*(prodm - ps/2.d0/&
                              &q(k)**2.d0* prodc)
                 endif
             endif
         endif
-140 continue
+    enddo
 !
 ! =====================================================================
 ! --- XI. CALCUL DE DLEVPDR (1XNBMEC) ---------------------------------
 ! =====================================================================
-    do 141 i = 1, 4
+    do i = 1, 4
         dlevdr(i) = zero
-141 end do
+    end do
 !
     if (nbmeca .eq. 0) goto 152
 !
-    do 151 k = 1, nbmeca
+    do k = 1, nbmeca
 !
         kk = indi(k)
         pk =p(k) -ptrac
@@ -842,17 +858,18 @@ subroutine hujjid(mod, mater, indi, deps, prox,&
 !
         endif
         dlevdr(k) = dlevdr(k)*ccond/abs(pref)
-151 continue
+    enddo
 !
 152 continue
+!
 ! =====================================================================
 ! --- XII. CALCUL DE DLEVPDLA (1XNBMEC) -------------------------------
 ! =====================================================================
-    do 153 k = 1, 7
+    do k = 1, 7
         dlevdl(k) = zero
-153 end do
+    enddo
 !
-    do 161 k = 1, nbmect
+    do k = 1, nbmect
 !
         kk = indi(k)
         pk =p(k) -ptrac
@@ -868,6 +885,7 @@ subroutine hujjid(mod, mater, indi, deps, prox,&
             endif
 !
             dlevdl(k) = ksi(k)*coef*dpsi
+!
         else if (kk .eq. 4) then
             dlevdl(k) = un
 !
@@ -903,38 +921,39 @@ subroutine hujjid(mod, mater, indi, deps, prox,&
             endif
 !
         endif
-161 continue
-!
+    enddo
 !
 ! =====================================================================
 ! --- XIII. CALCUL DE DLFDS (NBMECX6) ---------------------------------
 ! =====================================================================
-    do 162 k = 1, 7
-        do 162 i = 1, 6
+    do k = 1, 7
+        do i = 1, 6
             dlfds(k,i) = zero
-162     continue
+        enddo
+    enddo
 !
-    do 171 k = 1, nbmect
+    do k = 1, nbmect
         kk = indi(k)
         call hujddd('DFDS  ', kk, mater, indi, yf,&
                     vind, dfds, dpsids, iret)
         if (iret .eq. 1) goto 1000
-        do 171 i = 1, ndt
+        do i = 1, ndt
             dlfds(k,i) = dfds(i)
-171     continue
-!
+        enddo
+    enddo
 !
 ! =====================================================================
 ! --- XIV. CALCUL DE DLFDR (NBMECXNBMEC) ------------------------------
 ! =====================================================================
-    do 180 k = 1, 7
-        do 180 l = 1, 4
+    do k = 1, 7
+        do l = 1, 4
             dlfdr(k,l) = zero
-180     continue
+        enddo
+    enddo
 !
     if (nbmeca .eq. 0) goto 182
 !
-    do 181 k = 1, nbmeca
+    do k = 1, nbmeca
 !
         kk = indi(k)
         pk =p(k) -ptrac
@@ -960,17 +979,18 @@ subroutine hujjid(mod, mater, indi, deps, prox,&
             endif
         endif
         dlfdr(k,k) = dlfdr(k,k)/abs(pref)
-181 continue
+    enddo
 !
 182 continue
+!
 ! =====================================================================
 ! --- XV. CALCUL DE DLFDEVP (NBMECX1) ---------------------------------
 ! =====================================================================
-    do 183 k = 1, 7
+    do k = 1, 7
         dlfdle(k) = zero
-183 continue
+    enddo
 !
-    do 190 k = 1, nbmect
+    do k = 1, nbmect
 !
         kk = indi(k)
         pk = p(k) -ptrac
@@ -1004,16 +1024,16 @@ subroutine hujjid(mod, mater, indi, deps, prox,&
             endif
 !
         endif
-190 continue
-!
+    enddo
 !
 ! =====================================================================
 ! --- XVI. CALCUL DE DLFDLA (NBMECXNBMEC) -----------------------------
 ! =====================================================================
-    do 200 k = 1, 7
-        do 200 l = 1, 7
+    do k = 1, 7
+        do l = 1, 7
             dlfdla(k,l) = zero
-200     continue
+        enddo
+    enddo
 !
 ! =====================================================================
 ! --- XVII. CALCUL DE LE (6) ---------------------------------------
@@ -1022,16 +1042,15 @@ subroutine hujjid(mod, mater, indi, deps, prox,&
 !                        6X1
 ! REMARQUE: ON A DEJA DEPSE CALCULE AU I.1.
     call lcprmv(hooknl, depse, cde)
-    do 210 i = 1, ndt
+    do i = 1, ndt
         le(i) = yf(i) - yd(i) - cde(i)
-210 continue
-!
+    enddo
 !
 ! =====================================================================
 ! --- XVIII. CALCUL DE LEVP (1X1) -------------------------------------
 ! =====================================================================
     levp = yf(ndt+1) - yd(ndt+1)
-    do 220 k = 1, nbmect
+    do k = 1, nbmect
 !
         kk = indi(k)
         pk =p(k) -ptrac
@@ -1084,18 +1103,17 @@ subroutine hujjid(mod, mater, indi, deps, prox,&
 !
         endif
 !
-220 continue
-!
+    enddo
 !
 ! =====================================================================
 ! --- XIX. CALCUL DE LR (NBMECX1) -------------------------------------
 ! =====================================================================
-    do 221 k = 1, 4
+    do k = 1, 4
         lr(k) = zero
-221 continue
+    enddo
 !
     if (nbmeca .eq. 0) goto 231
-    do 230 k = 1, nbmeca
+    do k = 1, nbmeca
         kk = indi(k)
         if (kk .lt. 4) then
             lr(k) = yf(ndt+1+k) - yd(ndt+1+k) - dlambd(k)/ad(k)*(un- rc(k))**deux
@@ -1117,17 +1135,18 @@ subroutine hujjid(mod, mater, indi, deps, prox,&
             lr(k) = yf(ndt+1+k) - yd(ndt+1+k) - dlambd(k)/ccyc*(un-rc( k))**deux
 !
         endif
-230 continue
+    enddo
 !
 231 continue
+!
 ! =====================================================================
 ! --- XX. CALCUL DE LF (NBMECX1) --------------------------------------
 ! =====================================================================
-    do 232 k = 1, 7
+    do k = 1, 7
         lf(k) = zero
-232 continue
+    enddo
 !
-    do 240 k = 1, nbmect
+    do k = 1, nbmect
         kk = indi(k)
         pk =p(k) -ptrac
         if (kk .lt. 4) then
@@ -1142,8 +1161,7 @@ subroutine hujjid(mod, mater, indi, deps, prox,&
             call hujprj(kk-8, yf, sigd, pk, ps)
             lf(k) = pk + deux*rtrac - ptrac
         endif
-240 continue
-!
+    enddo
 !
 ! =====================================================================
 ! --- ASSEMBLAGE DE R : -----------------------------------------------
@@ -1159,24 +1177,24 @@ subroutine hujjid(mod, mater, indi, deps, prox,&
 ! =====================================================================
 ! --- ASSEMBLAGE DE R -------------------------------------------------
 ! =====================================================================
-    do 850 i = 1, ndt
+    do i = 1, ndt
         r(i) = -le(i) /ccond
-850 continue
+    enddo
     r(ndt+1) = -levp
 !
     if (nbmeca .eq. 0) goto 951
-    do 950 k = 1, nbmeca
+    do k = 1, nbmeca
         r(ndt+1+k) = -lr(k) /ccond*abs(pref)
         r(ndt+1+nbmeca+k) = -lf(k) /ccond
-950 continue
+    enddo
 951 continue
 !
     if (nbmeca .lt. nbmect) then
-        do 952 k = 1, nbmect
+        do k = 1, nbmect
             if (indi(k) .gt. 8) then
                 r(ndt+1+nbmeca+k) = -lf(k)/ccond
             endif
-952     continue
+        enddo
     endif
 ! =====================================================================
 ! --- ASSEMBLAGE DE DRDY ----------------------------------------------

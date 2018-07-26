@@ -104,10 +104,10 @@ subroutine hujmid(mod, crit, mater, nvi, deps,&
 ! ----------------------------------------------------------------
 ! --- INITIALISATION VECTEUR GESTION MECANISMES TRACTION: PK-DP<=0
 ! ----------------------------------------------------------------
-    do 10 i = 1, 3
+    do i = 1, 3
         bnews(i) = .true.
         dev(i) = zero
- 10 continue
+    enddo
 !
     mectra = .false.
     mtrac = .false.
@@ -127,10 +127,10 @@ subroutine hujmid(mod, crit, mater, nvi, deps,&
     loop0 = loop
     compt = 0
     probt = .false.
-    do 20 i = 1, 4
+    do i = 1, 4
         prox(i) = .false.
         proxc(i) = .false.
- 20 continue
+    enddo
 !
  30 continue
     if (compt .gt. 5) goto 9999
@@ -149,29 +149,29 @@ subroutine hujmid(mod, crit, mater, nvi, deps,&
     tracti = .false.
     nodef = .false.
 !
-    do 40 k = 1, 4
+    do k = 1, 4
         prob(k) = zero
- 40 continue
+    enddo
 !
     ptrac = mater(21,2)
 !
     nbmeca = 0
-    do 50 k = 1, 8
+    do k = 1, 8
         if (vind(23+k) .eq. un) nbmeca = nbmeca + 1
         negmul(k) = .false.
- 50 continue
+    enddo
     nr = ndt + 1 + 2*nbmeca
 !
 ! ----------------------------
 ! ---> MISE A ZERO DES DATAS
 ! ----------------------------
-    do 60 i = 1, nmod
+    do i = 1, nmod
         ddy(i) = zero
         dy(i) = zero
         yd(i) = zero
         yf(i) = zero
         r(i) = zero
- 60 continue
+    enddo
 !
 !
 ! --------------------------------------------------
@@ -181,12 +181,12 @@ subroutine hujmid(mod, crit, mater, nvi, deps,&
 !
     yd(ndt+1) = vind(23)
 !
-    do 70 k = 1, 7
+    do k = 1, 7
         indi(k)=0
- 70 continue
+    enddo
 !
     kk = 1
-    do 80 k = 1, 8
+    do k = 1, 8
         if (vind(23+k) .eq. un) then
 !
             if (k .ne. 4) then
@@ -201,7 +201,7 @@ subroutine hujmid(mod, crit, mater, nvi, deps,&
             endif
 !
         endif
- 80 continue
+    enddo
 !
     if (debug) then
         write(6,*)'INDI = ',(indi(i),i=1,nbmeca)
@@ -224,13 +224,13 @@ subroutine hujmid(mod, crit, mater, nvi, deps,&
 ! ------------------------------------------------------------
 !
     if (loop) then
-        do 90 i = 1, ndt
+        do i = 1, ndt
             dsig(i) = sigf(i) - sigd(i)
- 90     continue
+        enddo
     else
-        do 100 i = 1, ndt
+        do i = 1, ndt
             dsig(i) = zero
-100     continue
+        enddo
     endif
 !
 ! ------------------------------------------------------------------
@@ -248,12 +248,12 @@ subroutine hujmid(mod, crit, mater, nvi, deps,&
 ! ---> SI OUI, REDIMENSIONNEMENT DE YF
 ! -------------------------------------------
     nbmect = nbmeca
-    do 110 i = 1, 7
+    do i = 1, 7
         if (indi(i) .gt. 8) then
             nr = nr + 1
             nbmect = nbmect + 1
         endif
-110 continue
+    enddo
     if(nbmect.ne.nbmeca)mectra = .true.
 ! ------------------------------------
 ! ---> INCREMENTATION DE YF = YD + DY
@@ -280,9 +280,9 @@ subroutine hujmid(mod, crit, mater, nvi, deps,&
 ! ---  SONT DESACTIVES
 ! ----------------------------------------------------
     if (nbmeca .ne. nbmect) then
-        do 120 i = 1, ndi
+        do i = 1, ndi
             if (abs(ye(i)) .gt. pref**2.d0) nodef = .true.
-120     continue
+        enddo
         if (nodef) then
             iret = 1
             goto 9999
@@ -297,12 +297,12 @@ subroutine hujmid(mod, crit, mater, nvi, deps,&
 130 continue
 !
     iter = iter + 1
-    do 140 i = 1, nmod
+    do i = 1, nmod
         r(i) = zero
-        do 150 j = 1, nmod
+        do j = 1, nmod
             drdy(i,j) = zero
-150     continue
-140 continue
+        enddo
+    enddo
 ! ---> CALCUL DU SECOND MEMBRE A T+DT : -R(DY)
 !      ET CALCUL DU JACOBIEN DU SYSTEME A T+DT : DRDY(DY)
 !
@@ -315,7 +315,7 @@ subroutine hujmid(mod, crit, mater, nvi, deps,&
 ! --- PROB = UN ---> PROXIMITE CYCLIQUE/MONOTONE
 ! --- PROB = DEUX ---> PROXIMITE CYCLIQUES: FILS/PERE
 ! -----------------------------------------------------
-    do 160 i = 1, 3
+    do i = 1, 3
         neglam(i) = .false.
         if (prox(i)) then
             prob(i) = un
@@ -324,7 +324,7 @@ subroutine hujmid(mod, crit, mater, nvi, deps,&
             prob(i) = deux
             probt = .true.
         endif
-160 continue
+    enddo
 !
 !
 ! ------------------------------------------------------------
@@ -335,12 +335,12 @@ subroutine hujmid(mod, crit, mater, nvi, deps,&
 ! ------------------------------------------------------------
     if (iret .eq. 1) then
         if (debug) write(6,'(A)')'HUJMID :: ERREUR DANS HUJJID'
-        do 170 i = 1, 3
+        do i = 1, 3
             call hujprj(i, yf, dev, pf, qf)
             if (((rtrac+pf-ptrac)/abs(pref)) .ge. -r8prem()) then
                 tracti = .true.
             endif
-170     continue
+        enddo
         goto 9999
     endif
 !
@@ -366,12 +366,12 @@ subroutine hujmid(mod, crit, mater, nvi, deps,&
 ! - TEST SUR LES VALEURS MAXIMUM DU RESIDU
 ! SI LES VALEURS SONT TROP GRANDES(>PREF**2), ON ASSUME L ECHEC
 ! DE L INTEGRATION LOCALE AVEC UN RETOUR A 9999
-    do 180 i = 1, nr
+    do i = 1, nr
         if (abs(r(i)) .gt. pref**2) then
             iret = 1
             goto 9999
         endif
-180 end do
+    end do
     call lcnrvn(nr, r, err)
     if (debug) write(6,*)'ERREUR =',err
 !
@@ -400,20 +400,20 @@ subroutine hujmid(mod, crit, mater, nvi, deps,&
 ! --- SIGMA * E0, R * E0/PREF
 ! ------------------------------------
 !
-            do 190 i = 1, ndt
+            do i = 1, ndt
                 ddy(i) = ddy(i)*mater(1,1)
-190         continue
-            do 200 i = 1, nbmeca
+            enddo
+            do i = 1, nbmeca
                 ddy(ndt+1+i) = ddy(ndt+1+i)*mater(1,1)/ abs(mater(8,2) )
-200         continue
+            enddo
 !
 ! -----------------------------------
 ! --- MISE A JOUR DU VECTEUR SOLUTION
 ! -----------------------------------
-            do 210 i = 1, nr
+            do i = 1, nr
                 dy(i) = dy(i) + ddy(i)
                 yf(i) = yd(i) + dy(i)
-210         continue
+            enddo
 !
             if (debug) then
 !
@@ -436,17 +436,17 @@ subroutine hujmid(mod, crit, mater, nvi, deps,&
                 endif
                 goto 240
             else
-                do 220 i = 1, 3
+                do i = 1, 3
                     call hujprj(i, yf, dev, pf, qf)
                     if (((pf+rtrac-ptrac)/abs(pref)) .ge. -r8prem()) then
-                        do 230 j = 1, nbmeca
+                        do j = 1, nbmeca
                             if ((indi(j).eq.i) .or. (indi(j).eq.(i+4))) then
                                 tracti = .true.
                                 goto 9999
                             endif
-230                     continue
+                        enddo
                     endif
-220             continue
+                enddo
             endif
 !
 240         continue
@@ -468,6 +468,7 @@ subroutine hujmid(mod, crit, mater, nvi, deps,&
         endif
 !
     endif
+!
 250 continue
 !
 ! ---------------------------------------------------
@@ -479,13 +480,13 @@ subroutine hujmid(mod, crit, mater, nvi, deps,&
 ! ---- VERIFICATION DES MULTIPLICATEURS PLASTIQUES
 ! -------------------------------------------------
     maxi = abs(crit(3))
-    do 260 k = 1, nbmect
+    do k = 1, nbmect
         if (yf(ndt+1+nbmeca+k) .gt. maxi) maxi = yf(ndt+1+nbmeca+k)
-260 continue
+    enddo
 !
     negtra = .false.
 !
-    do 270 k = 1, nbmect
+    do k = 1, nbmect
         ratio = yf(ndt+1+nbmeca+k)/maxi
         if (ratio .lt. (-tole1)) then
             if (indi(k) .le. 8) then
@@ -500,7 +501,7 @@ subroutine hujmid(mod, crit, mater, nvi, deps,&
                 negtra = .true.
             endif
         endif
-270 continue
+    enddo
 !
 !
 ! -------------------------------------------------------
@@ -540,7 +541,7 @@ subroutine hujmid(mod, crit, mater, nvi, deps,&
 ! -------------------------------------------------------
 !
     call lceqvn(ndt, yf, sigf)
-    do 280 i = 1, 3
+    do i = 1, 3
         call hujprj(i, sigf, dev, pf, qf)
 ! ------------------------------------------------------
 ! ---> CONTROLE QUE MECANISME DE TRACTION RESPECTE MEME
@@ -550,7 +551,7 @@ subroutine hujmid(mod, crit, mater, nvi, deps,&
             bnews(i) = .false.
             tracti = .true.
         endif
-280 end do
+    end do
     if ((tracti) .and. (nbmeca.gt.0)) then
         iret = 1
         goto 9999
@@ -575,7 +576,7 @@ subroutine hujmid(mod, crit, mater, nvi, deps,&
 ! ---> AFFECTATION DES RAYONS DE YF VERS VINF
 ! --- ON S'ASSURE QUE (R+>=R-) ET (R+CYC<=RMON)
 ! ----------------------------------------------
-    do 290 k = 1, nbmeca
+    do k = 1, nbmeca
         kk = indi(k)
         if (yf(ndt+1+k) .gt. vind(kk)) then
             if ((kk.gt.4) .and. (kk.lt.8)) then
@@ -590,7 +591,7 @@ subroutine hujmid(mod, crit, mater, nvi, deps,&
         else
             vinf(kk) = vind(kk)
         endif
-290 end do
+    end do
 !
 ! -------------------------------------
 ! --- CONTROLE DE L'EVOLUTION DE R(K)
@@ -599,7 +600,7 @@ subroutine hujmid(mod, crit, mater, nvi, deps,&
     evol = 0.1d0
     subd = .false.
     ndec0 = 1
-    do 300 k = 1, nbmeca
+    do k = 1, nbmeca
         kk = indi(k)
         ratio = (vinf(kk)-vind(kk))/vind(kk)
         if (ratio .gt. evol) then
@@ -609,7 +610,7 @@ subroutine hujmid(mod, crit, mater, nvi, deps,&
             if (ndec .gt. nmax) ndec=nmax
             ndec0 = max(ndec, ndec0)
         endif
-300 end do
+    end do
 !
 ! -------------------------------------------------
 ! --- CONTROLE DE L'EVOLUTION DE EPS_V^P
@@ -636,13 +637,13 @@ subroutine hujmid(mod, crit, mater, nvi, deps,&
         noconv = .true.
 ! --- ON REGARDE SI L'ETAT INITIAL MATERIAU AVAIT SOLLICITE
 ! --- UN MECANISME DE TRACTION : ETAT INIT = SIGD0
-        do 310 i = 1, ndi
+        do i = 1, ndi
             call hujprj(i, sigd0, dev, pf, qf)
             if (((pf+deux*rtrac-ptrac)/abs(pref)) .gt. -r8prem()) then
                 noconv=.false.
                 iret = 0
             endif
-310     continue
+        enddo
         if (.not.noconv) then
 ! --- EN POSANT NOCONV = .TRUE., ON CONDUIT L'ALGORITHME PRESENT
 ! --- DANS HUJRES A IMPOSER UN ETAT DE CONTRAINTES ISOTROPE COMMUN
@@ -666,12 +667,12 @@ subroutine hujmid(mod, crit, mater, nvi, deps,&
     msup(3) = 0
     msup(4) = 0
     j = 0
-    do 320 i = 5, 8
+    do i = 5, 8
         if ((vind(23+i).ne.vind0(23+i)) .and. (vind(23+i).eq.zero)) then
             j = j+1
             msup(j) = i
         endif
-320 end do
+    end do
 !
     if (probt) then
         if (debug) write(6,'(A)')'HUJMID :: 9999 PROBT'
@@ -683,7 +684,7 @@ subroutine hujmid(mod, crit, mater, nvi, deps,&
         aredec = arede0
         stopnc = stopn0
         loop = loop0
-        do 330 i = 1, 3
+        do i = 1, 3
             if (prob(i) .eq. un) then
                 vind(i+4) = mater(18,2)
                 vind(23+i) = un
@@ -700,16 +701,16 @@ subroutine hujmid(mod, crit, mater, nvi, deps,&
             else if (prob(i).eq.deux) then
                 vind(27+i) = zero
             endif
-330     continue
+        enddo
         iret = 0
         probt = .false.
 !
 ! --- MECANISME CYCLIQUE A DESACTIVE
 ! --- ET DEJA DESACTIVE ANTERIEUREMENT
         if (j .ne. 0) then
-            do 340 i = 1, j
+            do i = 1, j
                 vind(23+msup(i)) = zero
-340         continue
+            enddo
         endif
 !
         call lceqvn(nvi, vind, vinf)
@@ -721,7 +722,7 @@ subroutine hujmid(mod, crit, mater, nvi, deps,&
         call lceqve(deps0, deps)
         call lceqvn(nvi, vind0, vind)
         modif = .false.
-        do 350 i = 1, nbmect
+        do i = 1, nbmect
             if (ye(ndt+1+nbmeca+i) .eq. zero) then
                 modif = .true.
                 if (indi(i) .le. 8) then
@@ -741,18 +742,18 @@ subroutine hujmid(mod, crit, mater, nvi, deps,&
                 endif
                 tracti = .false.
             endif
-350     continue
+        enddo
 !
-        do 360 i = 1, nbmect
+        do i = 1, nbmect
             if (indi(i) .eq. 8) then
                 vind(23+indi(i)) = zero
                 modif = .true.
             endif
-360     continue
+        enddo
 !
         if (debug) write(6,*)'NEGLAM =',(neglam(i),i=1,3)
         mtrac = .false.
-        do 370 i = 1, 3
+        do i = 1, 3
 ! --- ON NE DOIT PAS REACTIVE UN MECANISME DE TRACTION QUI DONNE
 !     COMME PREDICTEUR UN MULTIPLICATEUR PLASTIQUE NEGATIF
             if (.not.neglam(i)) then
@@ -767,7 +768,7 @@ subroutine hujmid(mod, crit, mater, nvi, deps,&
                     if(.not.modif)mtrac = .true.
                 endif
             endif
-370     continue
+        enddo
         call lceqve(predi0, sigf)
         call lceqve(sigd0, sigd)
         call lceqvn(nvi, vind, vinf)
@@ -784,18 +785,18 @@ subroutine hujmid(mod, crit, mater, nvi, deps,&
 !-----------------------------------------------------------
     maxi = zero
     resi = 0
-    do 380 i = 1, nr
+    do i = 1, nr
         if (abs(r(i)) .gt. maxi) then
             maxi = abs(r(i))
             resi = i
         endif
-380 end do
+    end do
     cycl = .false.
-    do 390 i = 1, nbmeca
+    do i = 1, nbmeca
         if ((indi(i).gt.4) .and. (indi(i).lt.8) .and. (vind(indi(i)) .eq.mater(18,2))) then
             cycl = .true.
         endif
-390 end do
+    end do
     if (debug) write(6,*) '9999 RESI:',resi
 !
 ! ---------------------------------------------------------------
@@ -815,19 +816,19 @@ subroutine hujmid(mod, crit, mater, nvi, deps,&
             loop = loop0
             vind(23+indi(resi)) = zero
             if (j .ne. 0) then
-                do 410 i = 1, j
+                do i = 1, j
                     vind(23+msup(i)) = zero
-410             continue
+                enddo
             endif
 !
 ! --- EXISTE-T-IL UN MECANISME DEVIATOIRE AYANT LE MEME COMPORTEMENT
 !     QUE CELUI IDENTIFIE PRECEDEMMENT COMME POSANT PROBLEME ?
-            do 420 i = 1, nbmeca
+            do i = 1, nbmeca
                 if ((indi(i).gt.4) .and. (indi(i).lt.8) .and.&
                     (((maxi- abs(r(7+i)))/tole1).lt.tole1) .and. (i.ne.resi)) then
                     vind(23+indi(i)) = zero
                 endif
-420         continue
+            enddo
 !
             iret = 0
             probt = .false.
@@ -853,11 +854,11 @@ subroutine hujmid(mod, crit, mater, nvi, deps,&
         aredec = arede0
         stopnc = stopn0
         loop = loop0
-        do 430 i = 1, nbmeca
+        do i = 1, nbmeca
             if ((indi(i).gt.4) .and. (indi(i).lt.8) .and. (vind(indi( i)).eq.mater(18,2))) then
                 vind(23+indi(i)) = zero
             endif
-430     continue
+        enddo
         iret = 0
         probt = .false.
         call lceqvn(nvi, vind, vinf)
@@ -878,11 +879,11 @@ subroutine hujmid(mod, crit, mater, nvi, deps,&
         stopnc = stopn0
         loop = loop0
         iret = 0
-        do 440 i = nbmeca+1, nbmect
+        do i = nbmeca+1, nbmect
             if (ye(ndt+1+nbmeca+i) .eq. zero) then
                 bnews(indi(i)-8) = .true.
             endif
-440     continue
+        enddo
         probt = .false.
         call lceqvn(nvi, vind, vinf)
         goto 30
@@ -903,7 +904,7 @@ subroutine hujmid(mod, crit, mater, nvi, deps,&
     euler = .true.
     lamin = 1.d2
     imin = 0
-    do 450 i = 1, nbmeca
+    do i = 1, nbmeca
         if (ye(ndt+1+nbmeca+i) .eq. zero) then
             if ((indi(i).gt.4) .and. (indi(i).lt.9)) then
                 vind(indi(i)+23) = 0
@@ -921,15 +922,15 @@ subroutine hujmid(mod, crit, mater, nvi, deps,&
             lamin = ye(ndt+1+nbmeca+i)
             imin = i
         endif
-450 end do
+    end do
 !
     if (.not.euler) then
 ! --- MECANISME CYCLIQUE A DESACTIVE
 ! --- ET DEJA DESACTIVE ANTERIEUREMENT
         if (j .ne. 0) then
-            do 455 i = 1, j
+            do i = 1, j
                 vind(23+msup(i)) = zero
-455         continue
+            enddo
         endif
 !
         call lceqvn(nvi, vind, vinf)
@@ -950,7 +951,7 @@ subroutine hujmid(mod, crit, mater, nvi, deps,&
 ! --- DERNIER ESSAI: VALEUR DES CONTRAINTES PRE, DURANT ET POST
 ! ---------------------------------------------------------------
     ltry = .false.
-    do 460 i = 1, ndi
+    do i = 1, ndi
         call hujprj(i, sigd0, dev, pf, qf)
         if (((pf+deux*rtrac-ptrac)/abs(pref)) .gt. -r8prem()) then
             noconv=.false.
@@ -979,7 +980,7 @@ subroutine hujmid(mod, crit, mater, nvi, deps,&
             bnews(i) = .false.
             ltry = .true.
         endif
-460 end do
+    end do
 !
     if (ltry) then
         call lceqvn(nvi, vind, vinf)

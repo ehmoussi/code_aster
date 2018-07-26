@@ -143,7 +143,7 @@ subroutine hujtid(fami, kpg, ksp, mod, imat,&
 ! --- MODIFICATION A APPORTER POUR MECANISMES CYCLIQUES
     yd(ndt+1) = vin(23)
     nbmeca = 0
-    do 16 k = 1, 8
+    do k = 1, 8
         if (vin(23+k) .eq. un) then
 !
             nbmeca = nbmeca+1
@@ -180,27 +180,27 @@ subroutine hujtid(fami, kpg, ksp, mod, imat,&
 !
             ind(nbmeca) = k
         endif
-16  continue
+    enddo
 !
     nbmect = nbmeca
-    do 8 i = 1, 3
+    do i = 1, 3
         call hujprj(i, sig, dev, pt, qt)
         if (abs((pt+2*50.d0-ptrac)/pref) .lt. tole1) then
             nbmect = nbmect + 1
             ind(nbmect) = 8+i
         endif
- 8  continue
+    enddo
 !
     call lceqvn(ndt, sig, yd)
 !
-    do 17 k = 1, nbmeca
+    do k = 1, nbmeca
         call hujddd('DFDS  ', ind(k), mater, ind, yd,&
                     vin, dfds((k-1)*ndt+1), dpsids, iret)
         if (iret .eq. 1) goto 999
         call hujddd('PSI   ', ind(k), mater, ind, yd,&
                     vin, psi((k-1)*ndt+1), dpsids, iret)
         if (iret .eq. 1) goto 999
-17  continue
+    enddo
     pc = pco*exp(-beta*yd(ndt+1))
     cmon = cmon * pc/pref
     ccyc = ccyc * pc/pref
@@ -220,14 +220,15 @@ subroutine hujtid(fami, kpg, ksp, mod, imat,&
             demu = e /(un+nu)
             la = e*nu/(un+nu)/(un-deux*nu)
 !
-            do 30 i = 1, ndi
-                do 30 j = 1, ndi
+            do i = 1, ndi
+                do j = 1, ndi
                     if (i .eq. j) hook(i,j) = al
                     if (i .ne. j) hook(i,j) = la
-30              continue
-            do 35 i = ndi+1, ndt
+                enddo
+            enddo
+            do i = ndi+1, ndt
                 hook(i,i) = demu
-35          continue
+            enddo
 !
         else if (mater(17,1).eq.deux) then
 !
@@ -274,24 +275,28 @@ subroutine hujtid(fami, kpg, ksp, mod, imat,&
 ! =====================================================================
 ! ---> I.1. CALCUL DE B1(K,L) = E(K)*HOOK*PSI(L)
 !             (TERME SYMETRIQUE)
-    do 45 k = 1, nbmect
-        do 45 l = 1, nbmect
+    do k = 1, nbmect
+        do l = 1, nbmect
             b1(k,l) = zero
-45      continue
+        enddo
+    enddo
 !
-    do 40 k = 1, nbmeca
+    do k = 1, nbmeca
         kk = (k-1)*ndt
-        do 40 l = 1, nbmeca
+        do l = 1, nbmeca
             ll = (l-1)*ndt
-            do 40 i = 1, ndt
-                do 40 j = 1, ndt
+            do i = 1, ndt
+                do j = 1, ndt
                     b1(k,l) = b1(k,l) - hook(i,j)*dfds(kk+i)*psi(ll+j)
-40              continue
+                enddo
+            enddo
+        enddo
+    enddo
 !
 ! ------------ FIN I.1.
 ! ---> I.2. CALCUL DE B2(K,L) = DFDEVP(K)*EVL(L)
 !           TERME NON SYMETRIQUE
-    do 41 k = 1, nbmeca
+    do k = 1, nbmeca
 !
         kk = ind(k)
         pk = p(k) -ptrac
@@ -330,7 +335,7 @@ subroutine hujtid(fami, kpg, ksp, mod, imat,&
 !
         endif
 !
-        do 41 l = 1, nbmeca
+        do l = 1, nbmeca
 !
             ll = ind(l)
             evl = zero
@@ -382,12 +387,13 @@ subroutine hujtid(fami, kpg, ksp, mod, imat,&
 !
             b2(k,l) = dfdevp*evl
 !
-41      continue
+        enddo
+    enddo
 !
 ! ------------ FIN I.2.
 ! ---> I.3. CALCUL DE B3(K) = DFDR(K) * [ (1 -RK)**2 /AK ]
 !           TERME DIAGONAL
-    do 43 k = 1, nbmeca
+    do k = 1, nbmeca
 !
         kk = ind(k)
         pk = p(k) -ptrac
@@ -416,30 +422,33 @@ subroutine hujtid(fami, kpg, ksp, mod, imat,&
 !
         endif
 !
-43  continue
+    enddo
 ! ------------ FIN I.3.
 !
-    do 42 k = 1, nbmeca
-        do 44 l = 1, nbmeca
+    do k = 1, nbmeca
+        do l = 1, nbmeca
             b(k,l) = b1(k,l) + b2(k,l)
-44      continue
+        enddo
         b(k,k) = b(k,k) + b3(k)
-42  continue
+    enddo
 !
 ! =====================================================================
 ! --- II. CALCUL DE D(K,I) = E(K)*HOOK (NBMECAXNDT) -----------------
 ! =====================================================================
-    do 51 k = 1, nbmeca
-        do 51 i = 1, ndt
+    do k = 1, nbmeca
+        do i = 1, ndt
             d(k,i) = zero
-51      continue
+        enddo
+    enddo
 !
-    do 50 k = 1, nbmeca
+    do k = 1, nbmeca
         kk = (k-1)*ndt
-        do 50 i = 1, ndt
-            do 50 j = 1, ndt
+        do i = 1, ndt
+            do j = 1, ndt
                 d(k,i) = d(k,i) - hook(j,i)*dfds(kk+j)
-50          continue
+            enddo
+        enddo
+    enddo
 !
 ! =====================================================================
 ! --- III. CALCUL DE D = B-1*D ----------------------------------------
@@ -454,16 +463,18 @@ subroutine hujtid(fami, kpg, ksp, mod, imat,&
 ! --- IV. CALCUL DE TE = IDEN6 - E*D (6X6) ----------------------------
 ! =====================================================================
     call lcinma(zero, te)
-    do 61 i = 1, ndt
+    do i = 1, ndt
         te(i,i) = un
-61  continue
+    enddo
 !
-    do 60 k = 1, nbmeca
+    do k = 1, nbmeca
         kk = (k-1)*ndt
-        do 60 i = 1, ndt
-            do 60 j = 1, ndt
+        do i = 1, ndt
+            do j = 1, ndt
                 te(i,j) = te(i,j) - psi(kk+i)*d(k,j)
-60          continue
+            enddo
+        enddo
+    enddo
 !
 !
 ! =====================================================================
@@ -473,10 +484,11 @@ subroutine hujtid(fami, kpg, ksp, mod, imat,&
 !    HOOK(I,J,K,L) - HOOK(I,J,P,Q)*TE(P,Q,K,L)
 !
 ! =====================================================================
-    do 820 j = 1, ndt
-        do 820 i = 1, ndt
+    do j = 1, ndt
+        do i = 1, ndt
             dsde(i,j) = zero
-820      continue
+        enddo
+    enddo
     call lcprmm(hook, te, dsde)
 !
     goto 1000

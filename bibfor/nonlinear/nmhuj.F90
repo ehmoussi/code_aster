@@ -17,8 +17,7 @@
 ! --------------------------------------------------------------------
 
 subroutine nmhuj(fami, kpg, ksp, typmod, imat,&
-                 carcri,&
-                 angmas, epsd,&
+                 carcri, angmas, epsd,&
                  deps, sigd, vind, opt, sigf,&
                  vinf, dsde, iret)
     implicit none
@@ -171,12 +170,9 @@ subroutine nmhuj(fami, kpg, ksp, typmod, imat,&
     endif
     reorie =(angmas(1).ne.zero) .or. (angmas(2).ne.zero)&
      &         .or. (angmas(3).ne.zero)
-    call hujori('LOCAL', 1, reorie, angmas, sigd,&
-                bid66)
-    call hujori('LOCAL', 1, reorie, angmas, epsd,&
-                bid66)
-    call hujori('LOCAL', 1, reorie, angmas, deps,&
-                bid66)
+    call hujori('LOCAL', 1, reorie, angmas, sigd, bid66)
+    call hujori('LOCAL', 1, reorie, angmas, epsd, bid66)
+    call hujori('LOCAL', 1, reorie, angmas, deps, bid66)
 !
 ! --- ON TRAVAILLE TOUJOURS AVEC UN TENSEUR CONTRAINTES
 !     DEFINI EN 3D
@@ -187,13 +183,13 @@ subroutine nmhuj(fami, kpg, ksp, typmod, imat,&
         ndt = 6
     endif
 !
-!
 !     CALCUL DE DEPSTH ET EPSDTH
 !     --------------------------
 ! ---> COEF DE DILATATION LE MEME A TPLUS ET TMOINS
     if (materf(17,1) .eq. un) then
 !
-        if (((isnan(tempm)) .or. (isnan(tref))) .and. ( materf(3,1).ne.zero)) then
+        if (((isnan(tempm)) .or. (isnan(tref))) .and.&
+           (materf(3,1).ne.zero)) then
             call utmess('F', 'CALCULEL_15')
         endif
 !
@@ -207,7 +203,8 @@ subroutine nmhuj(fami, kpg, ksp, typmod, imat,&
         alpha(2) = materf(11,1)
         alpha(3) = materf(12,1)
         if (((isnan(tempm)) .or. (isnan(tref))) .and.&
-            ( (alpha(1).ne.zero) .or. (alpha(2).ne.zero) .or. (alpha(3) .ne.zero) )) then
+            ((alpha(1).ne.zero) .or. (alpha(2).ne.zero) .or.&
+            (alpha(3) .ne.zero) )) then
             call utmess('F', 'CALCULEL_15')
         endif
 !
@@ -363,8 +360,11 @@ subroutine nmhuj(fami, kpg, ksp, typmod, imat,&
 ! -----------------------------------------------------
 ! ---> PREDICTION VIA TENSEUR ELASTIQUE DES CONTRAINTES
 ! -----------------------------------------------------
-        inc = 0
+        inc    = 0
         incmax = 1
+        limsup = 20
+        if (abs(carcri(5)) .gt. limsup) limsup = int(abs(carcri(5)))
+!
 100     continue
 !
         inc = inc + 1
@@ -380,11 +380,10 @@ subroutine nmhuj(fami, kpg, ksp, typmod, imat,&
         iret1 =0
         call hujdp(mod, depsr, sigd, sigf, materf,&
                    vind, incmax, iret1)
-        if (debug .and. iret1 .eq. 1) write (6, '(A)' ) 'NMHUJ :: HUJDP :: PAS DE RESUBDIVISON'
+        if (debug .and. iret1 .eq. 1) &
+        write (6, '(A)' ) 'NMHUJ :: HUJDP :: PAS DE RESUBDIVISON'
 !
-! --- ON LIMITE LE REDECOUPAGE LOCAL A 20 POUR HUJDP
-        limsup = 20
-        if (abs(carcri(5)) .gt. limsup) limsup = int(abs(carcri(5)))
+! --- ON LIMITE LE REDECOUPAGE LOCAL A MAX(20,ITER_INTE_MAXI)
         if (incmax .ge. limsup) then
             incmax = limsup
         else if (incmax.le.1) then
@@ -405,6 +404,7 @@ subroutine nmhuj(fami, kpg, ksp, typmod, imat,&
 ! CALCUL DE L'ETAT DE CONTRAINTES CORRESPONDANT
 ! ---------------------------------------------
         if (debug) write(6,*)'NMHUJ -- VINF =',(vinf(i),i=24,31)
+!
         call hujres(fami, kpg, ksp, mod, carcri,&
                     materf, imat, nvi, depsr, sigd,&
                     vind, sigf, vinf, iret, etatf)
@@ -499,8 +499,7 @@ subroutine nmhuj(fami, kpg, ksp, typmod, imat,&
 !
         call lcinma(zero, dsde)
         call hujtel(mod, materf, sigd, dsde)
-        call hujori('GLOBA', 2, reorie, angmas, bid16,&
-                    dsde)
+        call hujori('GLOBA', 2, reorie, angmas, bid16, dsde)
 !
     endif
 ! fin <IF RIGI_MECA_TANG>
@@ -544,20 +543,25 @@ subroutine nmhuj(fami, kpg, ksp, typmod, imat,&
 !     POUR MODELISATION D_PLAN
     if (ndtt .eq. 4) ndt = 4
 !
-    if (opt .eq. 'RAPH_MECA' .or. opt(1:9) .eq. 'FULL_MECA') call hujori('GLOBA', 1, reorie,&
-                                                                         angmas, sigf, bid66)
+    if (opt .eq. 'RAPH_MECA' .or. opt(1:9) .eq. 'FULL_MECA') &
+       call hujori('GLOBA', 1, reorie, angmas, sigf, bid66)
 !
 999  continue
 !
-    if (opt(1:9) .eq. 'RAPH_MECA' .or. opt(1:9) .eq. 'FULL_MECA') then
+    if (opt(1:9) .eq. 'RAPH_MECA' .or. opt(1:9) .eq. 'FULL_MECA' &
+        .or. opt(1:14) .eq. 'RIGI_MECA_ELAS') then
         if (iret .eq. 1) then
             if (.not.tract) then
                 call lcinma(zero, dsde)
-                call hujtel(mod, materf, sigd, dsde)
+                call hujtid(fami, kpg, ksp, mod, imat,&
+                            sigd, vind, dsde, iret1)
+                if (iret1 .eq. 1) then
+                   call hujtel(mod, materf, sigd, dsde)
+                endif
                 call lceqve(sigd0, sigf)
-                call lceqve(sigd0, sigd)
+!                 call lceqve(sigd0, sigd)
                 call lceqvn(50, vind0, vinf)
-                call lceqvn(50, vind0, vind)
+!                 call lceqvn(50, vind0, vind)
 !
                 if (debug) then
                     write(6,*)'************************************'

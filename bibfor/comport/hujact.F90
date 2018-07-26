@@ -19,6 +19,7 @@
 subroutine hujact(mater, vind, vinf, vins, sigd,&
                   sigf, negmul, chgmec, indi)
     implicit none
+!
 !   DEFINITION DU DOMAINE POTENTIEL DES MECANISMES ACTIFS
 !   IN  MATER    :  COEFFICIENTS MATERIAU A T+DT
 !       VIND     :  VARIABLES INTERNES  A T
@@ -57,40 +58,41 @@ subroutine hujact(mater, vind, vinf, vins, sigd,&
     common /tdim/   ndt, ndi
     common /meshuj/ debug
 ! --------------------------------------------------------------------
-    parameter     (tole1= 1.d-7)
-    parameter     (deux = 2.d0)
-    parameter     (un   = 1.d0)
-    parameter     (zero = 0.d0)
+    parameter  (tole1= 1.d-7)
+    parameter  (deux = 2.d0)
+    parameter  (un   = 1.d0)
+    parameter  (zero = 0.d0)
 !
 ! ====================================================================
 ! --- CONSTRUCTION DES SURFACES CYCLIQUES PRECEDENTES -----------
 ! ====================================================================
 !
     call lceqvn(50, vind, vinm)
-    do 50 i = 1, 3
-        if ((vind(5*i+31).ne.zero) .or. (vind(5*i+32).ne.zero)) then
-            vinm(4*i+5) = vind(5*i+31)
-            vinm(4*i+6) = vind(5*i+32)
-            vinm(4*i+7) = vind(5*i+33)
-            vinm(4*i+8) = vind(5*i+34)
-            vinm(i+4) = vind(5*i+35)
-        endif
- 50 end do
+    do i = 1, 3
+       if ((vind(5*i+31).ne.zero) .or. (vind(5*i+32).ne.zero)) then
+           vinm(4*i+5) = vind(5*i+31)
+           vinm(4*i+6) = vind(5*i+32)
+           vinm(4*i+7) = vind(5*i+33)
+           vinm(4*i+8) = vind(5*i+34)
+           vinm(i+4) = vind(5*i+35)
+       endif
+    enddo
 !
 ! ===================================================================
 ! -------------- DETERMINATION DES CRITERES ACTIFS A T+DT -----------
 ! ===================================================================
     miso = .false.
-    do 20 i = 1, 7
+    do i = 1, 7
         if (indi(i) .eq. 4) miso = .true.
         if (indi(i) .eq. 8) miso = .true.
- 20 continue
+    enddo
 !
-    do 30 i = 1, 50
+    do i = 1, 50
         vint(i) = vind(i)
- 30 continue
+    enddo
 !
     do 40 i = 1, 4
+!
 ! ====================================================================
 ! ---------------- MECANISME MONOTONE SUPPOS  ACTIF ------------------
 ! ====================================================================
@@ -202,7 +204,6 @@ subroutine hujact(mater, vind, vinf, vins, sigd,&
                 vind(27+i) = zero
                 goto 40
             endif
-!
 !
 ! *************************************
 ! --- VERIFICATION DES SEUILS MONOTONES
@@ -331,9 +332,10 @@ subroutine hujact(mater, vind, vinf, vins, sigd,&
                                 vind(27+i) = un
                             endif
                         endif
-                        elseif(((vins(4*i+5).ne.vind(4*i+5)).and. (vins(4*&
-                    i+5).eq.zero)).or. ((vins(4*i+6).ne.vind(4*i+6))&
-                    .and. (vins(4*i+6).eq.zero)))then
+                        elseif(((vins(4*i+5).ne.vind(4*i+5)).and.&
+                                (vins(4*i+5).eq.zero)).or.&
+                                ((vins(4*i+6).ne.vind(4*i+6))&
+                                .and. (vins(4*i+6).eq.zero)))then
 !
                         call hujdrc(i, mater, sigf, vinf, psf)
 !
@@ -354,6 +356,7 @@ subroutine hujact(mater, vind, vinf, vins, sigd,&
                         endif
                     endif
                     goto 40
+!
 ! ------------------------------
 ! --- MECANISME DE CONSOLIDATION
 ! ------------------------------
@@ -374,8 +377,7 @@ subroutine hujact(mater, vind, vinf, vins, sigd,&
 !
                             if (vins(22) .eq. zero) vinf(27)=zero
                         endif
-                        elseif((vind(22).eq.-un).and.((rd-rf).lt.r8prem())&
-                    )then
+                        elseif((vind(22).eq.-un).and.((rd-rf).lt.r8prem()))then
                         if (seuil .gt. tole1) then
                             chgmec = .true.
                             vind(31) = un
@@ -417,8 +419,8 @@ subroutine hujact(mater, vind, vinf, vins, sigd,&
                                 vind(31) = un
                             endif
                         endif
-                        elseif ((vind(22).eq.-un).and. ((rd-rf).gt.r8prem(&
-                    ))) then
+                        elseif ((vind(22).eq.-un).and.&
+                                ((rd-rf).gt.r8prem())) then
                         if (vins(22) .ne. vinf(22)) then
                             vinf(21) = vins(21)
                             vinf(22) = vins(22)
