@@ -384,6 +384,8 @@ CALC_MISS = MACRO(nom="CALC_MISS",
                                    fr=tr("Amortissement du spectre d'oscillateur")),
         LIST_FREQ_SPEC_OSCI = SIMP(statut='f', typ=listr8_sdaster,
                                    fr=tr("Fréquences utilisées pour le calcul du spectre d'oscillateur")),
+        TOUT_CHAM     =SIMP(statut='f',typ='TXM',into=("OUI",),),
+
         b_post_controle_temp = BLOC(condition="""exists("INST_FIN")""",
             ACCE_X         = SIMP(statut='f', typ=fonction_sdaster,),
             ACCE_Y         = SIMP(statut='f', typ=fonction_sdaster,),

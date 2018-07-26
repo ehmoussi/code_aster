@@ -24,6 +24,7 @@
 import os
 import os.path as osp
 import re
+import aster
 from pprint import pformat
 from math import sqrt
 import tempfile
@@ -179,15 +180,88 @@ class MissCmdeGenerator(object):
                               'UI TOUS',
                               'FINP'])
         else:
+            macr_elem = self.param['MACR_ELEM_DYNA']
+            basemo = macr_elem.sdj.MAEL_REFE.get()[0]
+            iret,nbmodd,kbid=aster.dismoi('NB_MODES_DYN', basemo,'RESULTAT','F')
+            iret,nbmods,kbid=aster.dismoi('NB_MODES_STA', basemo,'RESULTAT','F')
+            iret,nbmodt,kbid=aster.dismoi('NB_MODES_TOT',basemo,'RESULTAT','F')
+            if self.param['ISSF'] == 'OUI' :
+               nbmode = nbmodt
+            else:
+               nbmode = nbmods
+            lcham = False
+            if self.param['TOUT_CHAM'] is not None :
+                lcham = True
+            print 'lcham=',lcham
+            if self.param['_calc_impe']:
+                lines.extend(['*',
+                              '* Post-traitement des impédances',
+                              '* ------------------------------',
+                              'POST',
+                              'FICH %s  %s'
+                              % (self.dinf['fich_impe'], self.dinf['binaire']),
+                              'IMPDC',
+                              'FREQ TOUTES',
+                              'CHPU  DE    1 A    %d  PAS 1' % nbmode,
+                              'CHPT DE    1 A    %d  PAS 1' % nbmode,
+                              'FINP'])
+            if self.param['_calc_forc']:
+                lines.extend(['*',
+                              '* Post-traitement des forces sismiques',
+                              '* ------------------------------------',
+                              'POST',
+                              'FICH %s' % self.dinf['fich_forc'],
+                              'FORCE',
+                              'FREQ TOUTES',
+                              'DDL  DE    1 A    %d  PAS 1' % nbmode,
+                              'UI TOUS',
+                              'FINP'])
             lines.extend(['*',
                           '* Definition du signal',
                           '* --------------------',
                           'SIGNAL LIRE %s' % self.fname("01.sign")])
             lines.extend(self._chargement_domaine('sol'))
-            lines.extend(['*',
-                          '* Post-traitement aux points de controle',
-                          '* --------------------------------------',
-                          'POST',
+            if lcham :
+              lines.extend(['*',
+                            '* Post-traitement aux points de controle',
+                            '* --------------------------------------',
+                            'POST',
+                        ('SPEC NF=%%%(I)s FMAX=%%%(R)s' % dict_format)
+                % (self.param['_nbfreq'], self.param['FREQ_MAX']),
+                'FICH %s' % self.fname("01.csol.a"),
+                'CSOL LEGENDE ACCELERATIONS',
+                'FREQ TOUTES',
+                'CHAMP DE    1 A    3  PAS 1',
+                'POINTS DE    1 A    %d  PAS 1' % self.param['_nbPC'],
+                'DDL TOUS',
+                'FINS',
+                '*',
+                        ('SPEC NF=%%%(I)s FMAX=%%%(R)s' % dict_format)
+                % (self.param['_nbfreq'], self.param['FREQ_MAX']),
+                'FICH %s' % self.fname("01.csol.v"),
+                'CSOL LEGENDE VITESSES',
+                'FREQ TOUTES',
+                'CHAMP DE    1 A    3  PAS 1',
+                'POINTS DE    1 A    %d  PAS 1' % self.param['_nbPC'],
+                'DDL TOUS',
+                'FINS',
+                '*',
+                        ('SPEC NF=%%%(I)s FMAX=%%%(R)s' % dict_format)
+                % (self.param['_nbfreq'], self.param['FREQ_MAX']),
+                'FICH %s' % self.fname("01.csol.d"),
+                'CSOL LEGENDE DEPLACEMENTS',
+                'FREQ TOUTES',
+                'CHAMP DE    1 A    3  PAS 1',
+                'POINTS DE    1 A    %d  PAS 1' % self.param['_nbPC'],
+                'DDL TOUS',
+                'FINS',
+                '*',
+                'FINP'])
+            else:
+              lines.extend(['*',
+                            '* Post-traitement aux points de controle',
+                            '* --------------------------------------',
+                            'POST',
                         ('SPEC NF=%%%(I)s FMAX=%%%(R)s' % dict_format)
                 % (self.param['_nbfreq'], self.param['FREQ_MAX']),
                 'FICH %s' % self.fname("01.csol.a"),

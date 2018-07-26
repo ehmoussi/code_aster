@@ -203,6 +203,9 @@ tabctr = CALC_MISS(TYPE_RESU='TABLE_CONTROL',
                    MACR_ELEM_DYNA=mael,
                    GROUP_MA_INTERF='SHAUT',
                    GROUP_MA_CONTROL='PC',
+                   TOUT_CHAM='OUI',
+                   #UNITE_RESU_IMPE=25,
+                   #UNITE_RESU_FORC=28,
                    PARAMETRE=_F(FREQ_MIN=df,
                                 FREQ_MAX=fmax,
                                 FREQ_PAS=df,
@@ -302,6 +305,9 @@ acce_z3 = EXTR_TABLE(TABLE     = tabctr,
                              _F(NOM_PARA   = 'NOM_PARA',
                                   VALE_K   = 'INST'),),)
 
+kv = 1.0 / omega
+kd = -1.0*kv/omega
+
 # solution AUTRE_ASTER est obtenue avec zzzz108b
 # sans DIRE_ONDE et en retirant EXCIT_SOL en X et Y
 TEST_FONCTION(VALEUR=(_F(VALE_CALC=0.99504235,
@@ -327,6 +333,115 @@ TEST_FONCTION(VALEUR=(_F(VALE_CALC=0.99504235,
                          FONCTION=acce_z3,),
                       ),
               )
+
+depl_z1 = EXTR_TABLE(TABLE     = tabctr,
+                     TYPE_RESU = 'FONCTION_SDASTER',
+                     NOM_PARA  = 'FONC_Z',
+                     FILTRE = (_F(NOM_PARA = 'GROUP_NO',
+                                  VALE_K   = 'PC1'),
+                             _F(NOM_PARA   = 'NOM_CHAM',
+                                  VALE_K   = 'DEPL'),
+                             _F(NOM_PARA   = 'NOM_PARA',
+                                  VALE_K   = 'INST'),),)
+
+depl_z2 = EXTR_TABLE(TABLE     = tabctr,
+                     TYPE_RESU = 'FONCTION_SDASTER',
+                     NOM_PARA  = 'FONC_Z',
+                     FILTRE = (_F(NOM_PARA = 'GROUP_NO',
+                                  VALE_K   = 'PC2'),
+                             _F(NOM_PARA   = 'NOM_CHAM',
+                                  VALE_K   = 'DEPL'),
+                             _F(NOM_PARA   = 'NOM_PARA',
+                                  VALE_K   = 'INST'),),)
+
+depl_z3 = EXTR_TABLE(TABLE     = tabctr,
+                     TYPE_RESU = 'FONCTION_SDASTER',
+                     NOM_PARA  = 'FONC_Z',
+                     FILTRE = (_F(NOM_PARA = 'GROUP_NO',
+                                  VALE_K   = 'PC3'),
+                             _F(NOM_PARA   = 'NOM_CHAM',
+                                  VALE_K   = 'DEPL'),
+                             _F(NOM_PARA   = 'NOM_PARA',
+                                  VALE_K   = 'INST'),),)
+
+TEST_FONCTION(VALEUR=(_F(VALE_CALC=-1.041417570891E-03,
+                         VALE_REFE=1.0*kd,
+                         CRITERE='RELATIF',
+                         VALE_PARA=0.05,
+                         REFERENCE='AUTRE_ASTER',
+                         PRECISION=3.e-2,
+                         FONCTION=depl_z1,),
+                      _F(VALE_CALC=-8.076207972800E-05,
+                         VALE_REFE=0.0781346*kd,
+                         CRITERE='RELATIF',
+                         VALE_PARA=0.20,
+                         REFERENCE='AUTRE_ASTER',
+                         PRECISION=2.5e-2,
+                         FONCTION=depl_z2,),
+                      _F(VALE_CALC=1.054160485997E-03,
+                         VALE_REFE=-1.01214*kd,
+                         CRITERE='RELATIF',
+                         VALE_PARA=0.05,
+                         REFERENCE='AUTRE_ASTER',
+                         PRECISION=3.e-2,
+                         FONCTION=depl_z3,),
+                      ),
+              )
+
+vite_z1 = EXTR_TABLE(TABLE     = tabctr,
+                     TYPE_RESU = 'FONCTION_SDASTER',
+                     NOM_PARA  = 'FONC_Z',
+                     FILTRE = (_F(NOM_PARA = 'GROUP_NO',
+                                  VALE_K   = 'PC1'),
+                             _F(NOM_PARA   = 'NOM_CHAM',
+                                  VALE_K   = 'VITE'),
+                             _F(NOM_PARA   = 'NOM_PARA',
+                                  VALE_K   = 'INST'),),)
+
+vite_z2 = EXTR_TABLE(TABLE     = tabctr,
+                     TYPE_RESU = 'FONCTION_SDASTER',
+                     NOM_PARA  = 'FONC_Z',
+                     FILTRE = (_F(NOM_PARA = 'GROUP_NO',
+                                  VALE_K   = 'PC2'),
+                             _F(NOM_PARA   = 'NOM_CHAM',
+                                  VALE_K   = 'VITE'),
+                             _F(NOM_PARA   = 'NOM_PARA',
+                                  VALE_K   = 'INST'),),)
+
+vite_z3 = EXTR_TABLE(TABLE     = tabctr,
+                     TYPE_RESU = 'FONCTION_SDASTER',
+                     NOM_PARA  = 'FONC_Z',
+                     FILTRE = (_F(NOM_PARA = 'GROUP_NO',
+                                  VALE_K   = 'PC3'),
+                             _F(NOM_PARA   = 'NOM_CHAM',
+                                  VALE_K   = 'VITE'),
+                             _F(NOM_PARA   = 'NOM_PARA',
+                                  VALE_K   = 'INST'),),)
+
+TEST_FONCTION(VALEUR=(_F(VALE_CALC=0.03219335714586,
+                         VALE_REFE=1.0*kv,
+                         CRITERE='RELATIF',
+                         VALE_PARA=0.0,
+                         REFERENCE='AUTRE_ASTER',
+                         PRECISION=1.5e-2,
+                         FONCTION=vite_z1,),
+                      _F(VALE_CALC=2.496919263097E-03,
+                         VALE_REFE=0.0781346*kv,
+                         CRITERE='RELATIF',
+                         VALE_PARA=0.15,
+                         REFERENCE='AUTRE_ASTER',
+                         PRECISION=1.e-2,
+                         FONCTION=vite_z2,),
+                      _F(VALE_CALC=-0.03257754617155,
+                         VALE_REFE=-1.01214*kv,
+                         CRITERE='RELATIF',
+                         VALE_PARA=0.0,
+                         REFERENCE='AUTRE_ASTER',
+                         PRECISION=1.5e-2,
+                         FONCTION=vite_z3,),
+                      ),
+              )
+
 
 IMPR_TABLE(TABLE=tabctr,)
 
@@ -431,15 +546,6 @@ TEST_FONCTION(VALEUR=_F(
     REFERENCE = 'AUTRE_ASTER',
 ))
 
-
-# En attente issue24202 sinon besoin de TOLE_MACHINE 
-#TEST_FONCTION(VALEUR=_F(
-    #FONCTION=ftz3,
-    #NOM_PARA='FREQ',
-    #VALE_PARA=50.0,
-    #VALE_CALC_C=2.43119E+00 - 5.10146E-01j,
-
-#))
 
 acce_z1f = EXTR_TABLE(TABLE     = tabctrfr,
                      TYPE_RESU = 'FONCTION_SDASTER',
