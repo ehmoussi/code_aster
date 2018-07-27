@@ -23,46 +23,57 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 
-LIRE_MAILLAGE=OPER(nom="LIRE_MAILLAGE",op=   1,sd_prod=maillage_sdaster,
-                   fr=tr("Crée un maillage par lecture d'un fichier au format Aster ou Med"),
-                   
-                   reentrant='n',
+keywords = dict(
+    FORMAT=SIMP(statut='f', typ='TXM', defaut="MED",
+                into=('ASTER', 'GIBI', 'GMSH', 'IDEAS', 'MED'),
+                fr=tr("Format du fichier : ASTER ou MED."),
+                ),
 
-         FORMAT          =SIMP(statut='f',typ='TXM',defaut="MED",into=("ASTER","MED"),
-                            fr=tr("Format du fichier : ASTER ou MED."),
-                            ),
+    VERI_MAIL=FACT(statut='d',
+        VERIF=SIMP(statut='f', typ='TXM', defaut="OUI", into=("OUI", "NON")),
+        APLAT=SIMP(statut='f', typ='R', defaut=1.0E-3),
+    ),
 
-         VERI_MAIL       =FACT(statut='d',
-               VERIF         =SIMP(statut='f',typ='TXM',defaut="OUI",into=("OUI","NON") ),
-               APLAT         =SIMP(statut='f',typ='R',defaut= 1.0E-3 ),
-         ),
+    b_format_autre=BLOC(
+        condition = """ ( not equal_to("FORMAT", 'MED') ) """,
+        fr=tr("Informations complémentaires pour la lecture ASTER."),
 
-         b_format_autre =BLOC( condition = """ ( not equal_to("FORMAT", 'MED') ) """ ,
-                             fr=tr("Informations complémentaires pour la lecture ASTER."),
-                             
-            UNITE           =SIMP(statut='f',typ=UnitType(),defaut= 20 , inout='in'),         
-         ),
-         b_format_med =BLOC( condition = """ ( equal_to("FORMAT", 'MED') ) """ ,
-                             fr=tr("Informations complémentaires pour la lecture MED."),
-                             
-            UNITE           =SIMP(statut='f',typ=UnitType('med'),defaut= 20 , inout='in'),               
+        UNITE =SIMP(statut='f', typ=UnitType(), defaut=20, inout='in'),
+    ),
 
-# Pour une lecture dans un fichier MED, on peut préciser le nom sous lequel
-# le maillage y a été enregistré. Par défaut, on va le chercher sous le nom du concept à créer.
-            NOM_MED    = SIMP(statut='f',typ='TXM',
-                              fr=tr("Nom du maillage dans le fichier MED."),
-                              ),
-            INFO_MED   = SIMP(statut='f',typ='I',defaut= 1,into=(1,2,3) ),
+    b_format_med=BLOC(
+        condition = """ ( equal_to("FORMAT", 'MED') ) """,
+        fr=tr("Informations complémentaires pour la lecture MED."),
 
-         ),
+        UNITE =SIMP(statut='f', typ=UnitType('med'), defaut=20, inout='in'),
 
-         INFO            =SIMP(statut='f',typ='I',defaut= 1,into=(1,2) ),
-         translation={
-            "LIRE_MAILLAGE": "Read a mesh",
-            "FORMAT": "Mesh file format",
-            "UNITE": "Mesh file location",
-            "VERI_MAIL": "Mesh check",
-            "VERIF": "Check",
-            "APLAT": "Flat criterion",
-         }
-)  ;
+        # Pour une lecture dans un fichier MED, on peut préciser le nom sous lequel
+        # le maillage y a été enregistré. Par défaut, on va le chercher sous le
+        # nom du concept à créer.
+        NOM_MED = SIMP(statut='f', typ='TXM',
+                       fr=tr("Nom du maillage dans le fichier MED."),
+        ),
+        INFO_MED = SIMP(statut='f', typ='I', defaut=1, into=(1, 2, 3)),
+
+    ),
+
+    INFO=SIMP(statut='f', typ='I', defaut=1, into=(1, 2)),
+
+    translation={
+        "LIRE_MAILLAGE": "Read a mesh",
+        "FORMAT": "Mesh file format",
+        "UNITE": "Mesh file location",
+        "VERI_MAIL": "Mesh check",
+        "VERIF": "Check",
+        "APLAT": "Flat criterion",
+    }
+)
+
+
+LIRE_MAILLAGE = MACRO(nom="LIRE_MAILLAGE",
+                      op=OPS('Macro.lire_maillage_ops.lire_maillage_ops'),
+                      sd_prod=maillage_sdaster,
+                      fr=tr("Crée un maillage par lecture d'un fichier"),
+                      reentrant='n',
+                      **keywords
+                      )

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -24,9 +24,7 @@ DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'), DEBUG=_F(SDVERI='OUI'),)
 # 1ER CALCUL SUR LE MAILLAGE MA1 :
 # --------------------------------
 
-PRE_GIBI(UNITE_GIBI=19, UNITE_MAILLAGE=20)
-
-MA1=LIRE_MAILLAGE(FORMAT="ASTER",UNITE=20, INFO=2)
+MA1=LIRE_MAILLAGE(FORMAT="GIBI",UNITE=19, INFO=2)
 
 MA1=DEFI_GROUP(reuse=MA1,MAILLAGE=MA1,CREA_GROUP_NO=(
  _F( NOM = 'BAS',  OPTION = 'PLAN', POINT = (0., 0., 1.,),
