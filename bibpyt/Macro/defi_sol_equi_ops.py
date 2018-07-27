@@ -19,7 +19,7 @@
 
 import os
 import copy
-from math import log, sqrt, floor, pi, sin
+from math import log, sqrt, floor, pi, sin, exp
 from numpy import sqrt as nsqrt
 
 def epeq(eps1, eps2, eps3):
@@ -40,6 +40,103 @@ def epeq(eps1, eps2, eps3):
     _epteq = DEFI_FONCTION(VALE=eptq.tabul(),
                                 **eptq.para)
     return _epteq
+
+#===================================================
+#   FONCTION BYRNE POUR CALCULER RU MAX ET Ev
+#===================================================
+
+def fByrne (inst,GAMMA,E,NU,Y,RHO,N1):
+    Liste_pos =[]
+    Liste_ind_pos =[]
+    Liste_neg =[]
+    Liste_ind_neg =[]
+    L_pos =[]
+    L_neg =[]
+    L_pos_ind =[]
+    L_neg_ind =[]
+    GAM_MAX=[]
+
+    instant=[]
+    EpsiV=[]
+    Ru=[]
+
+    # Boucle pour extraire et stocker les max de la liste des points positifs   
+    for indice,valeur in enumerate(GAMMA):
+        if valeur > 0 :
+            
+           Liste_pos.append(valeur)
+           Liste_ind_pos.append(indice)
+        else:
+            #stock = Liste_pos[0:i]
+             # indice= Liste_pos.index
+            if Liste_pos !=[]:
+                L_pos.append(max(Liste_pos))
+                # attention liste de liste de liste
+                L_pos_ind.append(inst[Liste_ind_pos[Liste_pos.index(max(Liste_pos))]])
+                Liste_pos =[]
+                Liste_ind_pos =[]
+
+
+    # Boucle pour extraire et stocker les max de la liste des points negatifs        
+    for indice,valeur in enumerate(GAMMA):
+        if valeur <0 :
+        
+            Liste_neg.append(valeur)
+            Liste_ind_neg.append(indice) 
+        else:
+             if Liste_neg !=[]:
+                L_neg.append(abs(min(Liste_neg)))
+                L_neg_ind.append(inst[Liste_ind_neg[Liste_neg.index(min(Liste_neg))]])
+                Liste_neg =[]
+                Liste_ind_neg =[]
+                
+    L=min(len(L_neg),len(L_pos))
+
+     # Boucle pour remmettre tous les sommets (+ et -) dans la meme liste et stocker les instants des maximums et minimums
+
+    if L_pos_ind[0] < L_neg_ind[0]:
+       for k in range (L):
+           GAM_MAX.append(L_pos[k])
+           GAM_MAX.append(L_neg[k])
+       for k in range(L):
+           instant.append(L_pos_ind[k])
+           instant.append(L_neg_ind[k])
+    else:
+        for k in range (L):
+            GAM_MAX.append(L_neg[k])
+            GAM_MAX.append(L_pos[k])
+        for k in range(L):
+            instant.append(L_neg_ind[k])
+            instant.append(L_pos_ind[k])
+    
+    # determiner la constante du module de recharge decharge proposée par Wu 2001   
+    K0=(10*N1+160)
+    
+    #initialisation des variables de déformations et ru 
+    EpsiV.append(0)
+    Ru.append(0)
+
+####identification des paramètres du modèle#####
+    if N1==0:
+       C1=0
+       C2=0
+    else:
+        C1=8.7/(N1**1.25)
+        C2=0.4/C1
+
+   # Boucle  pour calculer les déformations et ru de chaque demi-cycle
+    for i in range(1,len(GAM_MAX)):
+        Gam=GAM_MAX[i]
+        DeltaEpsi=0.5*Gam*C1*exp(-1*C2*(EpsiV[i-1]/Gam))
+        EpsiV.append(EpsiV[i-1]+DeltaEpsi)
+        Ru.append(1-exp(-1*K0*EpsiV[i])) 
+            
+    return Ru, EpsiV, instant
+
+#================================================
+#            FIN DE LA FONCTION  BYRNE
+#================================================
+
 
 def defi_sol_equi_ops(self, TITRE, INFO, **args):
     """
@@ -126,6 +223,7 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
     else:
       formulation = 'SCHNABEL'
 
+
 # definition de l'operation a effectuer :
 # input = 'CL' : l'accelerogramme est defini en champ libre et
 # on calcule le signal deconvolue au Rocher Affleurant defini au toit du substratum
@@ -189,6 +287,15 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
 
 # Possibilite de faire une verification en temporel avec coeff Rayleigh :
 # veriftmp ='OUI' ou 'NON'
+
+# formulation Byrne
+    Byrne = False
+    if dime == "2D":
+        if args['CORRECTION'] == 'BYRNE':
+          Byrne = True
+    #Coefficient pour calculer ru eff / ru max
+          xsieff = args['COEF_KSI']
+          #0.66666667
 
     if 'DSP' in args:
       PARATAB = 'FREQ'
@@ -536,8 +643,11 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
     legendeT = 's' + str(s) + 'v' + str(v) + 'a' + str(a)
     legende = '-acce' + str(a) + '-sol' + str(s) + '-cvar=' + str(v)
     if args['TABLE_MATER_ELAS'] != None:
+        nom_para_table_elas = ['Y','M','RHO','Emax','NU','AH','GDgam']        
+        if Byrne :
+            nom_para_table_elas.append('N1')
         __TMAT = CALC_TABLE( TABLE=args['TABLE_MATER_ELAS'],
-         ACTION=_F(OPERATION='EXTR',NOM_PARA=('Y','M','RHO','Emax','NU','AH','GDgam')));
+         ACTION=_F(OPERATION='EXTR',NOM_PARA=nom_para_table_elas));
         tmat = __TMAT.EXTR_TABLE()
         NCOU = len(tmat) - 1
         text = ('NCOU=' + str(NCOU) )
@@ -664,15 +774,25 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
     # para/typ pre-trie les colonnes
         tabini = Table(para=["Y", "M", "RHO", "Emax", "NU", "AH", "GDgam"],
                        typ=["R", "K8", "R", "R", "R", "R", "I"])
+        if Byrne:
+            tabini = Table(para=["Y", "M", "RHO", "Emax", "NU", "AH", "GDgam", "N1"],
+               typ=["R", "K8", "R", "R", "R", "R", "I", "R"])
 
         Y = 0.
         for couche in l_couche:
             Y = Y + couche["EPAIS"]
             id_mate = couche["NUME_MATE"]
-            tabini.append(
+            if not Byrne:
+                tabini.append(
                 {'RHO': couche["RHO"], 'NU': couche["NU"], 'Emax': couche["E"],
                  'M': couche["GROUP_MA"], 'Y': Y, 'GDgam': id_mate,
                  'AH': couche["AMOR_HYST"]})
+            if Byrne:
+                tabini.append(
+                {'RHO': couche["RHO"], 'NU': couche["NU"], 'Emax': couche["E"],
+                 'M': couche["GROUP_MA"], 'Y': Y, 'GDgam': id_mate,
+                 'AH': couche["AMOR_HYST"],
+                 'N1': couche["N1"]})
 
      # creation de la table
         dprod = tabini.dict_CREA_TABLE()
@@ -2122,6 +2242,10 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
 
         gamax = []
         gamax.append(0)
+        rumax=[]
+        rumax.append(0)
+        evmax=[]
+        evmax.append(0)
 
         maccxcl = [None] * num_dime
 
@@ -2155,6 +2279,9 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
             __epxy = [None] * (NCOU + 1)
             __gam = [None] * (NCOU + 1)
             __tau = [None] * (NCOU + 1)
+            __ru = [None] * (NCOU + 1)
+            __ev = [None] * (NCOU + 1)       
+            __foy = [None] * (NCOU + 1)
             __axa.append(0)
             if ldevi=='OUI':
               __vix.append(0)
@@ -2162,6 +2289,9 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
               __foy.append(0)
             __epxy.append(0)
             __tau.append(0)
+            __ru.append(0)
+            __ev.append(0)
+            __foy.append(0)
             lmaccx = []
             lmaccx.append(maccxcl[0])
 
@@ -2183,6 +2313,8 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
             __epxy = [None] * (NCOU + 1)
             __gam = [None] * (NCOU + 1)
             __tau = [None] * (NCOU + 1)
+            __ru = [None] * (NCOU + 1)
+            __ev = [None] * (NCOU + 1)
             lmaccxX = []
             lmaccxY = []
             lmaccxZ = []
@@ -2493,6 +2625,28 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
                                          __ephYY,__ephYZ,__ephXY,
                                          __ftepYY,__ftepYZ,__ftepXY,
                                          )), INFO = 1)
+            
+            #===================================
+            # APPLICATION DE LA FONCTION BYRNE
+            #===================================
+            if Byrne:            
+                Ru,EpsiV,instant = fByrne(__gam[k].Absc(),__gam[k].Ordo(),__TMAT['E0', k],
+                                        __TMAT['NU', k],__TMAT['Y', k],__TMAT['RHO', k],__TMAT['N1', k],)
+
+                rumax.append(max(Ru))
+                evmax.append(max(EpsiV))
+
+                __ru[k] = DEFI_FONCTION(NOM_PARA='INST', NOM_RESU='RU',
+                                    ORDONNEE=tuple(Ru),
+                                    ABSCISSE=tuple(instant,),
+                                    PROL_DROITE='CONSTANT',
+                                    PROL_GAUCHE='CONSTANT',)
+
+                __ev[k] = DEFI_FONCTION(NOM_PARA='INST', NOM_RESU='EV',
+                                     ORDONNEE=tuple(EpsiV),
+                                     ABSCISSE=tuple(instant,),
+                                     PROL_DROITE='CONSTANT',
+                                     PROL_GAUCHE='CONSTANT',)               
 
         # construction des profils
         __paccx = [None] * num_dime
@@ -2513,6 +2667,15 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
 
         __pgamax = DEFI_FONCTION(NOM_PARA='Y', NOM_RESU='gamma_max',
                                      ORDONNEE=tuple(gamax),
+                                     ABSCISSE=tuple(lprof,))
+
+        if Byrne:
+            __prumax = DEFI_FONCTION(NOM_PARA='Y', NOM_RESU='ru_max',
+                                    ORDONNEE=tuple(rumax),
+                                    ABSCISSE=tuple(lprof,))
+
+            __pevmax = DEFI_FONCTION(NOM_PARA='Y', NOM_RESU='ev_max',
+                                     ORDONNEE=tuple(evmax),
                                      ABSCISSE=tuple(lprof,))
 
         # Lecture sur les courbes G/Gmax et D
@@ -2538,8 +2701,14 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
         for k in range(1, NCOU + 1):
 
             ind.append(__TMAT['GDgam', k])
+            if Byrne :
+                if rumax[k]>0.95:                          #condition dans le cas de la liquefaction pour avoir un G résiduel non nul
+                   rat[iter].append(0.05)
+                else: 
+                 rat[iter].append(__GG[ind[k]](geff * gamax[k])*(1-(xsieff*rumax[k]))**0.5)
 
-            rat[iter].append(__GG[ind[k]](geff * gamax[k]))
+            else:
+                rat[iter].append(__GG[ind[k]](geff * gamax[k]))
 
             AH[iter].append(2 * __DG[ind[k]](geff * gamax[k]))
 
@@ -2668,6 +2837,11 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
 
             __tabred = CREA_TABLE(FONCTION=_F(FONCTION=__rGold),)
             __tabgam = CREA_TABLE(FONCTION=_F(FONCTION=__pgamax),)
+
+            if Byrne:
+                __tabru = CREA_TABLE(FONCTION=_F(FONCTION=__prumax),)      #ajout des profils de rumax et ev max dans le fichier resu / unite=39
+                __tabev = CREA_TABLE(FONCTION=_F(FONCTION=__pevmax),)            
+
             if dime == "2D":
                 __tabacc = CREA_TABLE(FONCTION=_F(FONCTION=__paccx[0]),)
             elif dime == "3D":
@@ -2692,60 +2866,48 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
                 VALE = 'sqrt(Efin*(1-NU)/((1-2.0*NU)*(1+NU)*RHO))',
                 **const_context)
 
+            act_table = []
+            act_table.append(_F(OPERATION='COMB',
+                                TABLE=__tabred, NOM_PARA='Y'),)
+            act_table.append(_F(OPERATION='COMB',
+                                TABLE=__tabgam, NOM_PARA='Y'),)
             if dime == "2D":
-                __TMAT = CALC_TABLE(reuse=__TMAT, TABLE=__TMAT,
-                                    ACTION=(
-                                    _F(OPERATION='COMB',
-                                       TABLE=__tabred, NOM_PARA='Y'),
-                                    _F(OPERATION='COMB',
-                                       TABLE=__tabgam, NOM_PARA='Y'),
-                                        _F(OPERATION='COMB',
-                                           TABLE=__tabacc, NOM_PARA='Y'),
-                                        _F(OPERATION='RENOMME', NOM_PARA=(
-                                          ('E' + str(iter - 1)), 'Efin'),),
-                                        _F(OPERATION='RENOMME', NOM_PARA=(
-                                          ('AH' + str(iter - 1)), 'AHfin'),),
-                                        _F(OPERATION = 'OPER',
-                                           FORMULE=__fAA, NOM_PARA = 'AAfin',),
-                                        _F(OPERATION = 'OPER',
-                                           FORMULE=__fAB, NOM_PARA = 'ABfin',),
-                                        _F(OPERATION = 'OPER',
-                                           FORMULE=__fGf, NOM_PARA = 'Gfin',),
-                                        _F(OPERATION = 'OPER',
-                                           FORMULE=__fVSf, NOM_PARA = 'VSfin',),
-                                        _F(OPERATION = 'OPER',
-                                           FORMULE=__fVPf, NOM_PARA = 'VPfin',),
-                                    ))
+                act_table.append(_F(OPERATION='COMB',
+                                    TABLE=__tabacc, NOM_PARA='Y'),)
+            elif dime == "3D":
+                act_table.append(_F(OPERATION='COMB',
+                                   TABLE=__tabaccX, NOM_PARA='Y'),)
+                act_table.append(_F(OPERATION='COMB',
+                                   TABLE=__tabaccY, NOM_PARA='Y'),)
+                act_table.append(_F(OPERATION='COMB',
+                                   TABLE=__tabaccZ, NOM_PARA='Y'),)
+            if Byrne:
+                act_table.append(_F(OPERATION='COMB',
+                                    TABLE=__tabru, NOM_PARA='Y'),)
+                act_table.append(_F(OPERATION='COMB',
+                                    TABLE=__tabev, NOM_PARA='Y'),),
+            act_table.append(_F(OPERATION='RENOMME', NOM_PARA=(
+                               ('E' + str(iter - 1)), 'Efin'),),)
+            act_table.append(_F(OPERATION='RENOMME', NOM_PARA=(
+                               ('AH' + str(iter - 1)), 'AHfin'),),)
+            act_table.append(_F(OPERATION = 'OPER',
+                                FORMULE=__fAA, NOM_PARA = 'AAfin',),)
+            act_table.append(_F(OPERATION = 'OPER',
+                                FORMULE=__fAB, NOM_PARA = 'ABfin',),)
+            act_table.append(_F(OPERATION = 'OPER',
+                                FORMULE=__fGf, NOM_PARA = 'Gfin',),)
+            act_table.append(_F(OPERATION = 'OPER',
+                                FORMULE=__fVSf, NOM_PARA = 'VSfin',),)
+            act_table.append(_F(OPERATION = 'OPER',
+                                FORMULE=__fVPf, NOM_PARA = 'VPfin',),)
+
+            __TMAT = CALC_TABLE(reuse=__TMAT, TABLE=__TMAT,
+                                ACTION=act_table)
+
+            if dime == "2D":
                 DETRUIRE(
                 CONCEPT=_F(NOM=(__tabacc),))
             elif dime == "3D":
-                __TMAT = CALC_TABLE(reuse=__TMAT, TABLE=__TMAT,
-                                    ACTION=(
-                                    _F(OPERATION='COMB',
-                                       TABLE=__tabred, NOM_PARA='Y'),
-                                    _F(OPERATION='COMB',
-                                       TABLE=__tabgam, NOM_PARA='Y'),
-                                        _F(OPERATION='COMB',
-                                           TABLE=__tabaccX, NOM_PARA='Y'),
-                                        _F(OPERATION='COMB',
-                                           TABLE=__tabaccY, NOM_PARA='Y'),
-                                        _F(OPERATION='COMB',
-                                           TABLE=__tabaccZ, NOM_PARA='Y'),
-                                        _F(OPERATION='RENOMME', NOM_PARA=(
-                                          ('E' + str(iter - 1)), 'Efin'),),
-                                        _F(OPERATION='RENOMME', NOM_PARA=(
-                                          ('AH' + str(iter - 1)), 'AHfin'),),
-                                        _F(OPERATION = 'OPER',
-                                           FORMULE=__fAA, NOM_PARA = 'AAfin',),
-                                        _F(OPERATION = 'OPER',
-                                           FORMULE=__fAB, NOM_PARA = 'ABfin',),
-                                        _F(OPERATION = 'OPER',
-                                           FORMULE=__fGf, NOM_PARA = 'Gfin',),
-                                        _F(OPERATION = 'OPER',
-                                           FORMULE=__fVSf, NOM_PARA = 'VSfin',),
-                                        _F(OPERATION = 'OPER',
-                                           FORMULE=__fVPf, NOM_PARA = 'VPfin',),
-                                    ))
                 DETRUIRE(
                 CONCEPT=_F(NOM=(__tabaccX,__tabaccY,__tabaccZ,),))
 
@@ -2944,6 +3106,35 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
                   Les forces sont calculees a la base de la couche definie par sa cote inferieure Y'),
                               COURBE=(iffoy
                                       ))
+
+                if Byrne:
+                    ifru = []
+
+                    for d in range(1, NCOU + 1):
+                        ifru.append(
+                            _F(FONCTION=__ru[d], MARQUEUR=0, LEGENDE='RU_' + str(d) + legende + 'deltaE =' + str(deltaE),),)
+
+                    IMPR_FONCTION(UNITE=utabtran,
+                                  FORMAT='TABLEAU',
+                                  SOUS_TITRE=titre,
+                                  TITRE=('Resultats du calcul lineaire equivalent pour le sol' + str(s) + 'avec E=' + str(cvar) + '*E0 \
+                    Les valeurs max sont calculees au 1er Point de Gauss de la couche definie par sa cote inferieure Y'),
+                                  COURBE=(ifru
+                                          ))
+
+                    ifev = []
+
+                    for d in range(1, NCOU + 1):
+                        ifev.append(
+                            _F(FONCTION=__ev[d], MARQUEUR=0, LEGENDE='EV_' + str(d) + legende + 'deltaE =' + str(deltaE)),)
+
+                    IMPR_FONCTION(UNITE=utabtran,
+                                  FORMAT='TABLEAU',
+                                  SOUS_TITRE=titre,
+                                  TITRE=('Resultats du calcul lineaire equivalent pour le sol' + str(s) + 'avec E=' + str(cvar) + '*E0 \
+                    Les valeurs max sont calculees au 1er Point de Gauss de la couche definie par sa cote inferieure Y'),
+                                  COURBE=(ifev
+                                          ))
 
             if dime == "2D" :
                 ifspec = []
@@ -3204,6 +3395,35 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
                 Les valeurs max sont calculees au 1er Point de Gauss de la couche definie par sa cote inferieure Y'),
                               COURBE=(iftau
                                       ))
+
+                if Byrne:
+                    ifru = []
+
+                    for d in range(1, NCOU + 1):
+                        ifru.append(
+                            _F(FONCTION=__ru[d], MARQUEUR=0, LEGENDE='RU_' + str(d) + legende + 'deltaE =' + str(deltaE)),)
+
+                    IMPR_FONCTION(UNITE=utabtran,
+                                  FORMAT='TABLEAU',
+                                  SOUS_TITRE=titre,
+                                  TITRE=('Resultats du calcul lineaire equivalent pour le sol' + str(s) + 'avec E=' + str(cvar) + '*E0 \
+                    Les valeurs max sont calculees au 1er Point de Gauss de la couche definie par sa cote inferieure Y'),
+                                  COURBE=(ifru
+                                          ))
+
+                    ifev = []
+
+                    for d in range(1, NCOU + 1):
+                        ifru.append(
+                            _F(FONCTION=__ev[d], MARQUEUR=0, LEGENDE='RU_' + str(d) + legende + 'deltaE =' + str(deltaE)),)
+
+                    IMPR_FONCTION(UNITE=utabtran,
+                                  FORMAT='TABLEAU',
+                                  SOUS_TITRE=titre,
+                                  TITRE=('Resultats du calcul lineaire equivalent pour le sol' + str(s) + 'avec E=' + str(cvar) + '*E0 \
+                    Les valeurs max sont calculees au 1er Point de Gauss de la couche definie par sa cote inferieure Y'),
+                                  COURBE=(ifev
+                                          ))
 
                 ifspecX = []
                 ifspecY = []
