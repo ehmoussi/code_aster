@@ -350,7 +350,8 @@ implicit none
 !  
 
     if ((type_adap .eq. 2) .or. (type_adap .eq. 3) .or. &
-        (type_adap .eq. 6) .or. (type_adap .eq. 7)) then
+        (type_adap .eq. 6) .or. (type_adap .eq. 7) .or. &
+        v_sdcont_cychis(n_cychis*(i_cont_poin-1)+51) .eq.  4.0) then
         
             coef_bussetta = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+2)
             coef_tmp = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+2)
@@ -467,7 +468,11 @@ implicit none
                 v_sdcont_cychis(n_cychis*(i_cont_poin-1)+2)    = coef_tmp
                 v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+2) = coef_tmp
 !             endif
-             mmcvca =  indi_cont_prev .eq. indi_cont_curr
+                mmcvca =  indi_cont_prev .eq. indi_cont_curr
+                if (ds_contact%resi_pressure .lt. 1.d-6*ds_contact%cont_pressure) then 
+                     mmcvca = .true. 
+!                      ctcsta = 0
+                endif
         endif
     endif
     

@@ -474,6 +474,7 @@ implicit none
 ! Moyenne des pressions de contact
     sum_cont_press = sum_cont_press/nb_cont_poin
     ds_contact%cont_pressure = abs(sum_cont_press)
+    write (6,*) "somme des pressions",  ds_contact%cont_pressure
 !
 ! - Bilateral contact management
 !
