@@ -311,6 +311,7 @@ implicit none
         real(kind=8)      :: arete_max=0.0
         real(kind=8)      :: cont_pressure=0.0
         real(kind=8)      :: resi_pressure=1.0d3
+        real(kind=8)      :: resi_press_glob=1.0d3
 ! ----- Get-off indicator
         aster_logical     :: l_getoff
 ! ----- First geometric loop

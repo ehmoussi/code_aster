@@ -21,7 +21,7 @@ subroutine mm_cycl_algo(ds_contact,  l_frot_zone, &
                   indi_cont_eval, indi_frot_eval, dist_cont_curr,  &
                   pres_cont_curr, dist_frot_curr, pres_frot_curr, v_sdcont_cychis,&
                   v_sdcont_cyccoe, v_sdcont_cyceta, indi_cont_curr,indi_frot_curr,&
-                  ctcsta, mmcvca,l_pena_frot,l_pena_cont,vale_pene,glis_maxi)
+                  ctcsta, mmcvca,l_pena_frot,l_pena_cont,vale_pene,glis_maxi,nb_cont_poin)
 !
 use NonLin_Datastructure_type
 !
@@ -53,6 +53,7 @@ implicit none
     integer, intent(inout) :: indi_frot_eval
     real(kind=8), intent(in) :: vale_pene
     real(kind=8), intent(in) :: glis_maxi
+    integer, intent(in) :: nb_cont_poin
     real(kind=8), intent(inout) :: dist_cont_curr
     real(kind=8), intent(inout) :: pres_cont_curr
     real(kind=8), intent(inout) :: dist_frot_curr(3)
@@ -366,23 +367,23 @@ implicit none
                 endif
             
 !                 mmcvca = mmcvca .and. (ctcsta .eq. 0)
-                call bussetta_algorithm(dist_cont_curr, dist_cont_prev,dist_max, coef_bussetta)
-                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+2) = max(coef_bussetta,&
-                                                        v_sdcont_cychis(n_cychis*(i_cont_poin-1)+2))
+!                 call bussetta_algorithm(dist_cont_curr, dist_cont_prev,dist_max, coef_bussetta)
+!                 v_sdcont_cychis(n_cychis*(i_cont_poin-1)+2) = max(coef_bussetta,&
+!                                                         v_sdcont_cychis(n_cychis*(i_cont_poin-1)+2))
             !endif
                                                     
             ! Traitement de fortes interpenetrations         
             !if (indi_cont_curr .eq. 1 .and. l_pena_cont) then            
                     
                 if (dist_cont_curr .gt. dist_max) then 
-                    coef_tmp =coef_tmp*(abs(dist_cont_curr)/dist_max)*100
+                    coef_tmp =coef_tmp*(abs(dist_cont_curr)/dist_max)
                     call bussetta_algorithm(dist_cont_curr, dist_cont_prev,dist_max, coef_bussetta)
                     if (coef_bussetta .lt. coef_tmp) coef_bussetta = coef_tmp
                     ! On approche de la fin des iterations de Newton mais penetration pas satisfait
                     ! Le calcul du coefficient n'est pas satisfaisant on l'augmente
-                    if (nint(ds_contact%continue_pene) .eq. 1) coef_bussetta = coef_bussetta*10
+                    if (nint(ds_contact%continue_pene) .eq. 1) coef_bussetta = coef_bussetta*3
                     if (coef_bussetta .gt. ds_contact%max_coefficient)  then
-                        coef_bussetta = coef_bussetta *0.1
+                        coef_bussetta = coef_bussetta *0.01
                         ! critere trop severe : risque de non convergence
                         ds_contact%continue_pene = 2.0
                     endif
@@ -469,9 +470,12 @@ implicit none
                 v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+2) = coef_tmp
 !             endif
                 mmcvca =  indi_cont_prev .eq. indi_cont_curr
-                if (ds_contact%resi_pressure .lt. 1.d-6*ds_contact%cont_pressure) then 
+                if ((ds_contact%resi_press_glob .lt. 1.d-4*ds_contact%cont_pressure) .and.&
+                    (i_cont_poin .eq. nb_cont_poin)) then 
                      mmcvca = .true. 
-!                      ctcsta = 0
+                     ctcsta = 0
+!                      goto 236
+                    write (6,*) "resi_press_glob",  ds_contact%resi_press_glob
                 endif
         endif
     endif

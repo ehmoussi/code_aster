@@ -123,7 +123,7 @@ implicit none
     real(kind=8), pointer :: v_sdcont_jsupco(:) => null()
     real(kind=8), pointer :: v_sdcont_apjeu(:) => null()
     real(kind=8)  :: vale_pene = 0.0, glis_maxi = 0.
-    real(kind=8)  :: sum_cont_press
+    real(kind=8)  :: sum_cont_press,resi_press_curr
     real(kind=8)  :: coor_escl_curr(3) = 0.0,coor_proj_curr(3) = 0.0
     aster_logical :: l_coef_adap
     character(len=8) :: iptxt
@@ -414,7 +414,7 @@ implicit none
                             indi_cont_eval, indi_frot_eval, gap,  lagr_cont_poin,&
                             gap_user_frot, pres_frot, v_sdcont_cychis, v_sdcont_cyccoe, &
                             v_sdcont_cyceta,indi_cont_curr,indi_frot_curr, loop_cont_vali,&
-                            loop_cont_conv,l_pena_frot,l_pena_cont, vale_pene,glis_maxi)
+                            loop_cont_conv,l_pena_frot,l_pena_cont, vale_pene,glis_maxi,nb_cont_poin)
 !
  19             continue
                 if (ds_contact%iteration_newton .ge. 2 .and. indi_cont_curr .eq. 1) then
@@ -473,6 +473,9 @@ implicit none
     end do
 ! Moyenne des pressions de contact
     sum_cont_press = sum_cont_press/nb_cont_poin
+    resi_press_curr = (ds_contact%cont_pressure-sum_cont_press)
+    if (resi_press_curr .gt. ds_contact%resi_press_glob) &
+        ds_contact%resi_press_glob = resi_press_curr
     ds_contact%cont_pressure = abs(sum_cont_press)
     write (6,*) "somme des pressions",  ds_contact%cont_pressure
 !
