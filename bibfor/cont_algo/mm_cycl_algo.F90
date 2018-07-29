@@ -442,7 +442,7 @@ implicit none
 !       On revient en standard quand le statut de contact se stabilise : ssnv128z
         mode_cycl = 1
         if (mode_cycl .eq. 1 .and. &
-            ds_contact%iteration_newton .gt. ds_contact%it_cycl_maxi+3 ) then 
+            ds_contact%iteration_newton .gt. ds_contact%it_cycl_maxi+3 ) then  
             ! On fait la projection sur le cône négatif des valeurs admissibles
 !              if (dist_cont_curr .gt. 1.d-6 )  dist_cont_curr = 0.0
 !              if (pres_cont_curr .gt. 1.d-6 )  pres_cont_curr = -1.d-15
@@ -470,13 +470,6 @@ implicit none
                 v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+2) = coef_tmp
 !             endif
                 mmcvca =  indi_cont_prev .eq. indi_cont_curr
-                if ((ds_contact%resi_press_glob .lt. 1.d-4*ds_contact%cont_pressure) .and.&
-                    (i_cont_poin .eq. nb_cont_poin)) then 
-                     mmcvca = .true. 
-                     ctcsta = 0
-!                      goto 236
-                    write (6,*) "resi_press_glob",  ds_contact%resi_press_glob
-                endif
         endif
     endif
     

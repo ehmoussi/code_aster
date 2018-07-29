@@ -123,7 +123,7 @@ implicit none
     real(kind=8), pointer :: v_sdcont_jsupco(:) => null()
     real(kind=8), pointer :: v_sdcont_apjeu(:) => null()
     real(kind=8)  :: vale_pene = 0.0, glis_maxi = 0.
-    real(kind=8)  :: sum_cont_press,resi_press_curr
+    real(kind=8)  :: sum_cont_press=-1.0,resi_press_curr=1.D6
     real(kind=8)  :: coor_escl_curr(3) = 0.0,coor_proj_curr(3) = 0.0
     aster_logical :: l_coef_adap
     character(len=8) :: iptxt
@@ -473,11 +473,17 @@ implicit none
     end do
 ! Moyenne des pressions de contact
     sum_cont_press = sum_cont_press/nb_cont_poin
-    resi_press_curr = (ds_contact%cont_pressure-sum_cont_press)
-    if (resi_press_curr .gt. ds_contact%resi_press_glob) &
-        ds_contact%resi_press_glob = resi_press_curr
+    if (max(ds_contact%cont_pressure,abs(sum_cont_press)) .gt. 1.d-15) then 
+        resi_press_curr = abs(ds_contact%cont_pressure-abs(sum_cont_press))/abs(max(ds_contact%cont_pressure,abs(sum_cont_press)))
+    else
+        resi_press_curr = abs(ds_contact%cont_pressure-abs(sum_cont_press))
+    endif
+    ds_contact%resi_press_glob = resi_press_curr
     ds_contact%cont_pressure = abs(sum_cont_press)
-    write (6,*) "somme des pressions",  ds_contact%cont_pressure
+    if ((ds_contact%resi_press_glob .lt. 1.d-4*ds_contact%cont_pressure) ) then 
+            loop_cont_conv = .true.
+        write (6,*) "resi_press_glob converge",  ds_contact%resi_press_glob
+    endif
 !
 ! - Bilateral contact management
 !
