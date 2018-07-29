@@ -480,7 +480,8 @@ implicit none
     endif
     ds_contact%resi_press_glob = resi_press_curr
     ds_contact%cont_pressure = abs(sum_cont_press)
-    if ((ds_contact%resi_press_glob .lt. 1.d-4*ds_contact%cont_pressure) ) then 
+    if ((ds_contact%resi_press_glob .lt. 1.d-4*ds_contact%cont_pressure) .and. & 
+        .not. l_loop_cont) then 
             loop_cont_conv = .true.
         write (6,*) "resi_press_glob converge",  ds_contact%resi_press_glob
     endif
