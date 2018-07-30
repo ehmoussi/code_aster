@@ -79,6 +79,7 @@ implicit none
 #include "blas/zcopy.h"
 #include "asterfort/as_allocate.h"
 #include "asterfort/as_deallocate.h"
+#include "asterfort/dl_MatrixPrepare.h"
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -92,41 +93,40 @@ implicit none
     real(kind=8) :: r8bid
     complex(kind=8) :: c16bid
     character(len=8) :: k8bid
-    character(len=19) :: k19bid
     character(len=8) :: resuco, result, resu1
     character(len=19) :: cn2mbr, vediri, veneum, vevoch, vassec
     character(len=19) :: lischa
-    integer :: nbsym, i, n1, n2
-    integer :: lamor1, lamor, limpe, lfreq, nbfreq
-    integer :: neq, nbmat, ifm, niv
+    integer :: nbsym, i, n1
+    integer :: lfreq, nbfreq
+    integer :: nb_equa, nb_matr, ifm, niv
     integer :: ifreq, ieq, inom, ier, ierc
     integer :: lsecmb, jvezer, nbmodi, nbmody, nbbas, j
     integer :: icoef, icode, nbmode, jrefe
     integer :: linst, iret, ladpa, dec
     integer :: ldgec, lvgec, lagec, jordr, jfreq
     integer :: jdepl, jvite, jacce
-    integer :: lmat(4), nbord, icomb, sstruct, nbsst
-    integer :: jpomr, freqpr, last_prperc, perc, nbpheq
+    integer :: nbord, sstruct, nbsst
+    integer :: freqpr, last_prperc, perc, nbpheq
     aster_logical :: newcal, calgen
+    aster_logical :: l_damp, l_damp_modal, l_impe
     real(kind=8) :: depi, freq, omega, omeg2, fmin, fmax
-    real(kind=8) :: rval, coef(6), tps1(4), rtab(2)
+    real(kind=8) :: rval, coef_vale(6), tps1(4), rtab(2)
     real(kind=8) :: fcal_min, fcal_max, epsi
     complex(kind=8) :: cval, czero
-    character(len=1) :: typres, typcst(4)
+    character(len=1) :: typres, coef_type(4)
     character(len=4) :: typcal, nomsym(4)
     character(len=8) :: nomo, matass, modgen
     character(len=24) :: carele, mate
-    character(len=14) :: numddl, numdl1, numdl2, numdl3, nddlphys
+    character(len=14) :: numddl, nddlphys
     character(len=16) :: typcon, nomcmd, tysd, champs
     character(len=19) :: lifreq, masse, raide, amor, dynam, impe, chamno
     character(len=19) :: solveu, maprec, secmbr, soluti, vezero, crgc
-    character(len=19) :: nomt, nomi, print_type
-    character(len=24) :: nomat(4), basemo, nume24, typco
+    character(len=19) :: print_type
+    character(len=24) :: matr_list(4), basemo, nume24, typco
     character(len=24) :: exreco, exresu
     integer :: nbexre, tmod(1)
     integer, pointer :: ordr(:) => null()
     character(len=24), pointer :: refa(:) => null()
-    character(len=24), pointer :: refe(:) => null()
     character(len=24), pointer :: nlmasse(:) => null()
     complex(kind=8), pointer :: secmb(:) => null()
     complex(kind=8), pointer :: solut(:) => null()
@@ -146,11 +146,10 @@ implicit none
 !
 ! - Initializations
 !
-    depi = r8depi()
-    epsi = r8prem()
+    depi   = r8depi()
+    epsi   = r8prem()
     typres = 'C'
-    lamor1 = 0
-    czero = dcmplx(0.d0,0.d0)
+    czero  = dcmplx(0.d0,0.d0)
 !
 ! - Names of datastructures
 !
@@ -162,7 +161,7 @@ implicit none
     veneum = '&&VENEUM'
     vevoch = '&&VEVOCH'
     vassec = '&&VASSEC'
-    crgc = '&&COMDLH_GCPC'
+    crgc   = '&&COMDLH_GCPC'
 !
 ! --- NOM UTILISATEUR DU CONCEPT RESULTAT CREE PAR LA COMMANDE
 !
@@ -217,9 +216,7 @@ implicit none
 !
 ! --- NOM DES CHAMPS CALCULES
 !
-    nomsym(1) = ' '
-    nomsym(2) = ' '
-    nomsym(3) = ' '
+    nomsym(:) = ' '
     call getvtx(' ', 'NOM_CHAM', nbval=3, nbret=nbsym)
     ASSERT(nbsym.le.3)
     if (typcon .eq. 'ACOU_HARMO') then
@@ -237,36 +234,11 @@ implicit none
 !
 ! --- RECUPERATION DES DESCRIPTEURS DES MATRICES ET DES MATRICES
 !
-    raide = ' '
-    masse = ' '
-    amor = ' '
-    call dylema(nbmat, nomat, raide, masse,&
-                amor, impe)
-    ASSERT(nbmat.le.4)
-    call getvid(' ', 'MATR_AMOR', scal=k19bid, nbret=lamor)
-    call getvid(' ', 'MATR_IMPE_PHI', scal=k19bid, nbret=limpe)
-    call getvr8('AMOR_MODAL', 'AMOR_REDUIT', iocc=1, nbval=0, nbret=n1)
-    call getvid('AMOR_MODAL', 'LIST_AMOR', iocc=1, nbval=0, nbret=n2)
-    if (n1 .ne. 0 .or. n2 .ne. 0) lamor1 = 1
-!
-! --- TEST: LES MATRICES SONT TOUTES BASEES SUR LA MEME NUMEROTATION ?
-!
-    numdl1 = ' '
-    numdl2 = ' '
-    numdl3 = ' '
-    call dismoi('NOM_NUME_DDL', raide, 'MATR_ASSE', repk=numdl1)
-    call dismoi('NOM_NUME_DDL', masse, 'MATR_ASSE', repk=numdl2)
-    if (lamor .ne. 0) then
-        call dismoi('NOM_NUME_DDL', amor, 'MATR_ASSE', repk=numdl3)
-    else
-        numdl3 = numdl2
-    endif
-!
-    if ((numdl1.ne.numdl2) .or. (numdl1.ne.numdl3) .or. (numdl2.ne.numdl3)) then
-        call utmess('F', 'DYNALINE1_34')
-    else
-        numddl = numdl2
-    endif
+    call dylema(raide       , masse    , amor  , impe,&
+                l_damp_modal, l_damp   , l_impe   ,&
+                nb_matr     , matr_list, coef_type, coef_vale,&
+                dynam       , numddl   , nb_equa)
+    ASSERT(nb_matr.le.4)
 !
 ! --- LECTURE INFORMATIONS MECANIQUES
 !
@@ -291,13 +263,10 @@ implicit none
         call jeveuo(masse(1:19)//'.REFA', 'L', vk24=nlmasse)
         basemo = nlmasse(1)
 !
-        call jeveuo(nomat(1), 'L', ibid)
-        neq = zi(ibid+2)
-!
 !       - ALLOUER LES VECTEURS DE TRAVAIL
-        call wkvect('&&COMDLH.DEPGEC', 'G V C', neq, ldgec)
-        call wkvect('&&COMDLH.VITGEC', 'G V C', neq, lvgec)
-        call wkvect('&&COMDLH.ACCGEC', 'G V C', neq, lagec)
+        call wkvect('&&COMDLH.DEPGEC', 'G V C', nb_equa, ldgec)
+        call wkvect('&&COMDLH.VITGEC', 'G V C', nb_equa, lvgec)
+        call wkvect('&&COMDLH.ACCGEC', 'G V C', nb_equa, lagec)
 !       - ALLOUER LES VECTEURS DE STOCKAGE DES RESULTATS
 !       - ON RECHERCHE LES CHAMPS A REMPLIR POUR LE CAS HARMONIQUE
         if (nbsym .eq. 0) then
@@ -308,7 +277,7 @@ implicit none
         endif
 !
         call mdallo(result, 'HARM', nbfreq, sauve='GLOB', base=basemo,&
-                    mass=masse, rigi=raide, amor=amor, nbmodes=neq, jordr=jordr,&
+                    mass=masse, rigi=raide, amor=amor, nbmodes=nb_equa, jordr=jordr,&
                     jdisc=jfreq, jdepl=jdepl, jvite=jvite, jacce=jacce, nbsym=nbsym,&
                     nomsym=nomsym)
 !
@@ -341,49 +310,10 @@ implicit none
 !         DU SYSTEME FREQUENCE PAR FREQUENCE
 !============================================
 !
-!====
-! 4.1. ==> PREPARATION DU CALCUL ---
-!====
-!
-    do i = 1, nbmat
-        call jeveuo(nomat(i), 'L', lmat(i))
-    end do
-    neq = zi(lmat(1)+2)
-    typcst(1) = 'R'
-    typcst(2) = 'R'
-    typcst(3) = 'C'
-    typcst(4) = 'C'
-    coef(1) = 1.d0
-!
-! --- CREATION DE LA MATRICE DYNAMIQUE
-!
-    dynam = '&&COMDLH.DYNAMIC_MX'
-!
-    jpomr=0
-    do icomb = 1, nbmat
-!        ON RECHERCHE UNE EVENTUELLE MATRICE NON SYMETRIQUE
-        nomi =nomat(icomb)(1:19)
-        call jeveuo(nomi//'.REFA', 'L', vk24=refe)
-        if (refe(9) .eq. 'MR') then
-            jpomr=icomb
-        endif
-    end do
-    if (jpomr .eq. 0) then
-        if (lamor .ne. 0) then
-            call mtdefs(dynam, amor, 'V', typres)
-        else
-            call mtdefs(dynam, raide, 'V', typres)
-        endif
-    else
-        nomt = nomat(jpomr)(1:19)
-        call mtdefs(dynam, nomt, 'V', typres)
-    endif
-    call mtdscr(dynam)
-!
 ! --- CREATION DU VECTEUR SECOND-MEMBRE
 !
     cn2mbr = '&&COMDLH.SECOND.MBR'
-    call wkvect(cn2mbr, 'V V C', neq, lsecmb)
+    call wkvect(cn2mbr, 'V V C', nb_equa, lsecmb)
 !
 ! --- CREATION SD TEMPORAIRES
 !
@@ -392,7 +322,7 @@ implicit none
     call copisd('CHAMP_GD', 'V', secmbr, vezero)
     call jeveuo(secmbr(1:19)//'.VALE', 'E', vc=secmb)
     call jeveuo(vezero(1:19)//'.VALE', 'E', jvezer)
-    call vecinc(neq, czero, zc(jvezer))
+    call vecinc(nb_equa, czero, zc(jvezer))
 !
 ! --- INFORMATIONS SOLVEUR
     solveu = '&&COMDLH.SOLVEUR'
@@ -416,7 +346,7 @@ implicit none
             sstruct = 1
         endif
 
-        nbmode = neq
+        nbmode = nb_equa
         nume24 = numddl
         AS_ALLOCATE(vr=mass_dia, size=nbmode)
         AS_ALLOCATE(vr=rigi_dia, size=nbmode)
@@ -497,20 +427,22 @@ implicit none
         call utmess('I', 'DYNAMIQUE_59', ni=1, vali=[nbmode],&
                                          nr=2, valr=[fmin, fmax])
     else
-        call utmess('I', 'DYNAMIQUE_82', sk=nomo, si=neq)
+        call utmess('I', 'DYNAMIQUE_82', sk=nomo, si=nb_equa)
     end if
 
 !   3 - Dynamic matrices
     call utmess('I', 'DYNAMIQUE_60')
     call utmess('I', 'DYNAMIQUE_61', nk=2, valk=[masse, raide])
-    if (lamor.ne.0) then
+    if (l_damp) then
         call utmess('I', 'DYNAMIQUE_62', sk=amor)
-    else if (lamor1.ne.0) then
+    else if (l_damp_modal) then
         call utmess('I', 'DYNAMIQUE_63')
     else
         call utmess('I', 'DYNAMIQUE_64')
     end if
-    if (limpe.ne.0) call utmess('I', 'DYNAMIQUE_87', sk=impe)
+    if (l_impe) then
+        call utmess('I', 'DYNAMIQUE_87', sk=impe)
+    endif
 
 !   4 - Calculation and saving parameters
     champs = ' '
@@ -539,21 +471,21 @@ implicit none
 !
         freq = zr(lfreq-1+ifreq)
         omega = depi*freq
-        coef(2) = - omega2(freq)
+        coef_vale(2) = - omega2(freq)
         icoef = 2
-        if ((lamor.ne.0) .or. (lamor1.ne.0)) then
-            coef(3) = 0.d0
-            coef(4) = omega
+        if ((l_damp) .or. (l_damp_modal)) then
+            coef_vale(3) = 0.d0
+            coef_vale(4) = omega
             icoef = 4
         endif
-        if (limpe .ne. 0) then
-            coef(icoef+1) = 0.d0
-            coef(icoef+2) = coef(2) * depi * freq
+        if (l_impe) then
+            coef_vale(icoef+1) = 0.d0
+            coef_vale(icoef+2) = coef_vale(2) * depi * freq
         endif
 !
 ! ----- CALCUL DU SECOND MEMBRE
 !
-        call dy2mbr(numddl, neq, lischa, freq, vediri,&
+        call dy2mbr(numddl, nb_equa, lischa, freq, vediri,&
                     veneum, vevoch, vassec, lsecmb)
 !
 ! ----- APPLICATION EVENTUELLE EXCIT_RESU
@@ -565,7 +497,7 @@ implicit none
 !
 ! ----- CALCUL DE LA MATRICE DYNAMIQUE
 !
-        call mtcmbl(nbmat, typcst, coef, nomat, dynam,&
+        call mtcmbl(nb_matr, coef_type, coef_vale, matr_list, dynam,&
                     ' ', ' ', 'ELIM=')
         call jeveuo(dynam(1:19)//'.REFA', 'E', vk24=refa)
         refa(7) = solveu
@@ -581,12 +513,12 @@ implicit none
 !
 ! ----- RESOLUTION DU SYSTEME, CELUI DU CHARGEMENT STANDARD
 !
-        call zcopy(neq, zc(lsecmb), 1, secmb, 1)
+        call zcopy(nb_equa, zc(lsecmb), 1, secmb, 1)
         call resoud(dynam, maprec, solveu, vezero, 0,&
                     secmbr, soluti, 'V', [0.d0], [c16bid],&
                     crgc, .true._1, 0, iret)
         call jeveuo(soluti(1:19)//'.VALE', 'L', vc=solut)
-        call zcopy(neq, solut, 1, zc(lsecmb), 1)
+        call zcopy(nb_equa, solut, 1, zc(lsecmb), 1)
         call jedetr(soluti)
 !
 ! ----- IMPRESSION DE L'ETAT D'AVANCEMENT DU CALCUL FREQUENTIEL
@@ -634,17 +566,17 @@ implicit none
 !           --- RECOPIE DANS L'OBJET RESULTAT
                 call jeveuo(chamno//'.VALE', 'E', vc=nlvale)
                 if ((nomsym(inom) .eq. 'DEPL' ) .or. ( nomsym(inom) .eq. 'PRES' )) then
-                    do ieq = 0, neq-1
+                    do ieq = 0, nb_equa-1
                         nlvale(ieq+1) = zc(lsecmb+ieq)
                     end do
                 else if (nomsym(inom) .eq. 'VITE') then
                     cval = dcmplx(0.d0,depi*freq)
-                    do ieq = 0, neq-1
+                    do ieq = 0, nb_equa-1
                         nlvale(ieq+1) = cval * zc(lsecmb+ieq)
                     end do
                 else if (nomsym(inom) .eq. 'ACCE') then
-                    rval = coef(2)
-                    do ieq = 0, neq-1
+                    rval = coef_vale(2)
+                    do ieq = 0, nb_equa-1
                         nlvale(ieq+1) = rval * zc(lsecmb+ieq)
                     end do
                 endif
@@ -663,23 +595,23 @@ implicit none
 !         - REMPLISSAGE DES VECTEURS DE TRAVAIL: DEPGEC,VITGEC,ACCGEC
             do inom = 1, nbsym
                 if (nomsym(inom) .eq. 'DEPL') then
-                    do ieq = 0, neq-1
+                    do ieq = 0, nb_equa-1
                         zc(ldgec+ieq) = zc(lsecmb+ieq)
                     end do
                 else if (nomsym(inom) .eq. 'VITE') then
                     cval = dcmplx(0.d0,depi*freq)
-                    do ieq = 0, neq-1
+                    do ieq = 0, nb_equa-1
                         zc(lvgec+ieq) = cval * zc(lsecmb+ieq)
                     end do
                 else if (nomsym(inom) .eq. 'ACCE') then
-                    rval = coef(2)
-                    do ieq = 0, neq-1
+                    rval = coef_vale(2)
+                    do ieq = 0, nb_equa-1
                         zc(lagec+ieq) = rval * zc(lsecmb+ieq)
                     end do
                 endif
 !
             end do
-            call mdarch('HARM', isto1, ifreq-1, freq, neq,&
+            call mdarch('HARM', isto1, ifreq-1, freq, nb_equa,&
                         zi(jordr), zr(jfreq), nbsym=nbsym, nomsym=nomsym, depgec=zc(ldgec),&
                         vitgec=zc(lvgec), accgec=zc(lagec), depstc=zc(jdepl), vitstc=zc(jvite),&
                         accstc=zc(jacce))

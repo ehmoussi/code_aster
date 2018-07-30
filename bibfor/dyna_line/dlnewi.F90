@@ -67,6 +67,7 @@ implicit none
 #include "asterfort/vtcreb.h"
 #include "asterfort/wkvect.h"
 #include "asterfort/zerlag.h"
+#include "asterfort/dl_MatrixPrepare.h"
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -108,8 +109,11 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: iinteg, neq, imat(3), nchar, nveca, liad(*), nume, nondp
-    integer :: numrep
-    character(len=8) :: masse, rigid, amort, chondp(nondp)
+    integer :: numrep, nb_matr
+    character(len=1) :: coef_type(3), resu_type
+    real(kind=8) :: coef_vale(3)
+    character(len=24) :: matr_list(3)
+    character(len=8) :: masse, rigid, amort, impe, chondp(nondp)
     character(len=8) :: result
     character(len=19) :: force0, force1
     character(len=19) :: solveu
@@ -117,11 +121,11 @@ implicit none
     character(len=24) :: criter
     character(len=24) :: lifo(*)
     real(kind=8) :: dep0(*), vit0(*), acc0(*), t0, fexte(*), famor(*), fliai(*)
-    aster_logical :: lcrea, lamort, limped, lmodst
+    aster_logical :: lcrea, lamort, limped, lmodst, l_harm, l_matr_impe, l_damp_modal
     type(NL_DS_Energy), intent(inout) :: ds_energy
     integer, parameter :: nbtyar = 6
     integer :: igrpa, ipepa, perc, freqpr, last_prperc
-    integer :: ibmat, iddeeq, ierr
+    integer :: iddeeq, ierr
     integer :: igrel, iexci, iexcl
     integer :: ifimpe
     integer :: idepla
@@ -136,13 +140,12 @@ implicit none
     integer :: ipas, istop, itypel, istoc, jstoc
     integer :: jbint, jlpas, jmltap, jnbpa
     integer :: jnoacc, jnodep, jnovit, jpsdel
-    integer :: jrefs
-    integer :: n1, na, nbexci, nbexcl, nbgrel, nbgrpa, nbmat, nbordr
+    integer :: n1, na, nbexci, nbexcl, nbgrel, nbgrpa, nbordr
     integer :: nbptpa, nbv, nd, nel, nmodam, npatot, nv, ierc
     character(len=3) :: repk
-    character(len=4) :: typ1(nbtyar), typmat
-    character(len=8) :: k8b, matres, modsta
-    character(len=8) :: typcst(3), nomddl =' '
+    character(len=4) :: typ1(nbtyar)
+    character(len=8) :: k8b, matr_resu, modsta
+    character(len=8) :: nomddl =' '
     character(len=8) :: mailla
     character(len=19) :: nolig
     character(len=16) :: typear(nbtyar), nomte, k16bid, typres
@@ -157,8 +160,7 @@ implicit none
     character(len=24) :: vitent = '&&VITENT'
     character(len=24) :: veanec, vaanec, deeq, vaonde, veonde
     character(len=24) :: valmod = '&&VALMOD', basmod = '&&BASMOD', famomo = '&&FAMOMO'
-    character(len=24) :: nmtres, nmat(3)
-    real(kind=8) :: lcoef(3), lastarch
+    real(kind=8) :: lastarch
     real(kind=8) :: tps1(4), tps2(4)
     real(kind=8) :: a0, a1, a2, a3, a4, a5, a6, a7, a8
     real(kind=8) :: c0, c1, c2, c3, c4, c5
@@ -166,7 +168,7 @@ implicit none
     real(kind=8) :: tempm, temps
     integer :: vali(2)
     real(kind=8) :: valr(2)
-    aster_logical :: gasymr, gsyrie, ener
+    aster_logical :: ener
     real(kind=8), pointer :: epl1(:) => null()
     real(kind=8), pointer :: fammo(:) => null()
     real(kind=8), pointer :: vien(:) => null()
@@ -187,8 +189,13 @@ implicit none
 !
 ! 1.2. ==> NOM DES STRUCTURES
 !
-    maprec = '&&DLNEWI.MAPREC    '
-    lmodst = .false.
+    maprec       = '&&DLNEWI.MAPREC'
+    lmodst       = ASTER_FALSE
+    l_harm       = ASTER_FALSE
+    l_damp_modal = ASTER_FALSE
+    l_matr_impe  = ASTER_FALSE
+    impe         = ' '
+    resu_type    = 'R'
 !
 ! N: SAISIE DES DONNEES AMOR_MODAL
 !    (  MOT CLE FACTEUR: AMOR_MODAL  )
@@ -326,16 +333,6 @@ implicit none
 !
 ! 1.9. ==> INTIALISATIONS DIVERSES
 !
-    lcoef(1) = 1.d0
-    typcst(1) = 'R'
-    typcst(2) = 'R'
-    typcst(3) = 'R'
-    typmat = 'R'
-    if (lamort) then
-        nbmat = 3
-    else
-        nbmat = 2
-    endif
     iarchi = nume
     lisins = ' '
     ener   = ds_energy%l_comp
@@ -414,26 +411,13 @@ implicit none
 ! 3. CALCUL
 !====
 !
-! 3.1. ==> CREATION DE LA MATRICE KTILD
-    matres = '&&KTILD'
-    if (lamort) then
-        call jeveuo(amort//'           .REFA', 'L', jrefs)
-        gasymr=zk24(jrefs-1+9) .eq. 'MR'
-    else
-        gasymr=.false.
-    endif
-    call jeveuo(rigid//'           .REFA', 'L', jrefs)
-    gsyrie=zk24(jrefs-1+9) .eq. 'MS'
-! SI LA MATRICE DE RIGIDITE EST SYMETRIQUE
-! ET SI LA LA MATRICE AMORTISSEMENT EST ASYMETRIQUE ON CONSTRUIT
-! LA MATRICE KTILDE SUR LE MODELE DE LA MATRICE AMORTISSEMENT
-    if (gasymr .and. gsyrie) then
-        call mtdefs(matres, amort, 'V', typmat)
-    else
-        call mtdefs(matres, rigid, 'V', typmat)
-    endif
-    call mtdscr(matres)
-    call jeveuo(matres//'           .&INT', 'E', imtres)
+! - Prepare matrix container
+!
+    call dl_MatrixPrepare(l_harm , lamort   , l_damp_modal, l_matr_impe, resu_type,&
+                          masse  , rigid    , amort       , impe       ,&
+                          nb_matr, matr_list, coef_type   , coef_vale  ,&
+                          matr_resu)
+    call jeveuo(matr_resu//'           .&INT', 'E', imtres)
 !
 ! 3.2. ==> BOUCLE SUR LES GROUPES DE PAS DE TEMPS
     istoc = 0
@@ -484,18 +468,13 @@ implicit none
 !
 ! 3.2.2. ==> CALCUL DE LA MATRICE DE PSEUDO-RAIDEUR
 !                  K*  = K + A0*M + A1*C
-        lcoef(2) = a0
-        lcoef(3) = a1
-!
-        do ibmat = 1, nbmat
-            nmat(ibmat) = zk24(zi(imat(ibmat)+1))
-        end do
-        nmtres = zk24(zi(imtres+1))
-        call mtcmbl(nbmat, typcst, lcoef, nmat, nmtres,&
+        coef_vale(2) = a0
+        coef_vale(3) = a1
+        call mtcmbl(nb_matr, coef_type, coef_vale, matr_list, matr_resu,&
                     nomddl, ' ', 'ELIM=')
 !
 ! 3.2.3. ==> DECOMPOSITION OU CALCUL DE LA MATRICE DE PRECONDITIONNEMENT
-        call preres(solveu, 'V', ierr, maprec, matres,&
+        call preres(solveu, 'V', ierr, maprec, matr_resu,&
                     ibid, -9999)
 !
 ! 3.2.4. ==> BOUCLE SUR LES NBPTPA "PETITS" PAS DE TEMPS
@@ -525,7 +504,7 @@ implicit none
                         a3, a4, a5, a6, a7,&
                         a8, c0, c1, c2, c3,&
                         c4, c5, zk8(jnodep), zk8(jnovit), zk8(jnoacc),&
-                        matres, maprec, solveu, criter, chondp,&
+                        matr_resu, maprec, solveu, criter, chondp,&
                         vitini, vitent, valmod, basmod,&
                         veanec, vaanec, vaonde, veonde, dt,&
                         theta, tempm, temps, iforc2, zr(iwk1),&
@@ -614,7 +593,7 @@ implicit none
         call jedetr(criter(1:19)//'.CRTR')
         call jedetr(criter(1:19)//'.CRDE')
     endif
-    call detrsd('MATR_ASSE', matres)
+    call detrsd('MATR_ASSE', matr_resu)
 !
     call jedema()
 !
