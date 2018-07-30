@@ -19,29 +19,10 @@
 subroutine dylema(nbmat, nomat, raide, masse,&
                   amor, impe)
 !
-! DYNAMIQUE: LECTURE DES MATRICES ASSEMBLEES EN ENTREE DE DYNA_VIBRA//HARM
-! **         **          *        *
-!
-! ----------------------------------------------------------------------
-!
-!      IN BASENO : BASE DU NOM DES STRUCTURES
-!      OUT NBMAT : NOMBRE DE MATRICES 2, 3 OU 4
-!      OUT NOMAT : TABLEAU DES NOMS UTILISATEUR DES MATRICES
-!      OUT RAIDE : NOM DE LA MATRICE DE RAIDEUR
-!      OUT MASSE : NOM DE LA MATRICE DE MASSE
-!      OUT AMOR  : NOM DE LA MATRICE D AMORTISSEMENT
-!      OUT IMPE  : NOM DE LA MATRICE D IMPEDANCE
-!
-! ----------------------------------------------------------------------
-!
-!
-    implicit none
-!
-! 0.1. ==> ARGUMENTS
+implicit none
 !
 #include "asterf_types.h"
 #include "jeveux.h"
-#include "asterc/getres.h"
 #include "asterfort/gettco.h"
 #include "asterfort/getvid.h"
 #include "asterfort/getvr8.h"
@@ -55,17 +36,25 @@ subroutine dylema(nbmat, nomat, raide, masse,&
 #include "asterfort/utmess.h"
 #include "asterfort/wkvect.h"
 !
-    integer :: nbmat
-    character(len=19) :: masse, raide, amor, impe
-    character(len=24) :: nomat(*)
+integer :: nbmat
+character(len=19) :: masse, raide, amor, impe
+character(len=24) :: nomat(*)
 !
-! 0.2. ==> COMMUNS
+! --------------------------------------------------------------------------------------------------
 !
+! DYNAMIQUE: LECTURE DES MATRICES ASSEMBLEES EN ENTREE DE DYNA_VIBRA//HARM
+! **         **          *        *
 !
-! 0.3. ==> VARIABLES LOCALES
+! --------------------------------------------------------------------------------------------------
 !
-    character(len=8) :: k8bid
-    character(len=16) :: k16bid, nomcmd
+!      OUT NBMAT : NOMBRE DE MATRICES 2, 3 OU 4
+!      OUT NOMAT : TABLEAU DES NOMS UTILISATEUR DES MATRICES
+!      OUT RAIDE : NOM DE LA MATRICE DE RAIDEUR
+!      OUT MASSE : NOM DE LA MATRICE DE MASSE
+!      OUT AMOR  : NOM DE LA MATRICE D AMORTISSEMENT
+!      OUT IMPE  : NOM DE LA MATRICE D IMPEDANCE
+!
+! --------------------------------------------------------------------------------------------------
 !
     character(len=1) :: bl
     integer :: n1, n2, lamor, limpe
@@ -73,12 +62,8 @@ subroutine dylema(nbmat, nomat, raide, masse,&
     integer :: n, nbmode, nbmod2, neq, nbbloc, lgbloc, idiff
     integer :: nbamor, i2, nterm
     integer :: iam, ibloc, i
-!
     integer :: lmat(4)
-    integer :: vali(3)
-!
     real(kind=8) :: acrit
-!
     character(len=1) :: ktyp
     character(len=8) :: listam
     character(len=16) :: typobj
@@ -87,26 +72,12 @@ subroutine dylema(nbmat, nomat, raide, masse,&
     character(len=24) :: valk(2)
     aster_logical :: cpx
 !
-! ----------------------------------------------------------------------
-!
-!
-!===============
-! 1. PREALABLES
-!===============
+! --------------------------------------------------------------------------------------------------
 !
     call jemarq()
 !
-!====
-! 1.1  ==> INITIALISATIONS DIVERSES
-!====
     bl = ' '
     cpx=.false.
-!
-!====
-! 1.2 ==> DONNEES,  RECUPERATION D OPERANDES
-!====
-!
-    call getres(k8bid, k16bid, nomcmd)
 !
 !
 !  1.2.1    --- NOM DES MATRICES
@@ -150,7 +121,7 @@ subroutine dylema(nbmat, nomat, raide, masse,&
         call gettco(raide, typobj)
         if (typobj(1:14) .ne. 'MATR_ASSE_GENE') then
             valk (1) = typobj
-            call utmess('F', 'ALGORITH15_95', sk=valk(1))
+            call utmess('F', 'DYNALINE1_95')
         endif
         nbmode = neq
         nbmod2 = neq*(neq+1)/2
@@ -173,20 +144,16 @@ subroutine dylema(nbmat, nomat, raide, masse,&
 !
         endif
         if (nbamor .gt. nbmode) then
-!
-            vali (1) = nbmode
-            vali (2) = nbamor
-            vali (3) = nbmode
-            call utmess('A', 'ALGORITH15_96', ni=3, vali=vali)
+            call utmess('A', 'DYNALINE1_96', ni=3, vali=[nbmode, nbamor, nbmode])
             call wkvect('&&COMDLH.AMORTI', 'V V R8', nbmode, jamog)
             if (n1 .ne. 0) then
                 call getvr8('AMOR_MODAL', 'AMOR_REDUIT', iocc=1, nbval=nbmode, vect=zr(jamog),&
                             nbret=n)
             else
                 call jeveuo(listam//'           .VALE', 'L', iamog)
-                do 201 iam = 1, nbmode
+                do iam = 1, nbmode
                     zr(jamog+iam-1) = zr(iamog+iam-1)
-201             continue
+                end do
             endif
         else if (nbamor.lt.nbmode) then
 !
@@ -196,22 +163,19 @@ subroutine dylema(nbmat, nomat, raide, masse,&
                             nbret=n)
             else
                 call jeveuo(listam//'           .VALE', 'L', iamog)
-                do 210 iam = 1, nbamor
+                do iam = 1, nbamor
                     zr(jamog+iam-1) = zr(iamog+iam-1)
-210             continue
+                end do
             endif
             idiff = nbmode - nbamor
-            vali (1) = idiff
-            vali (2) = nbmode
-            vali (3) = idiff
-            call utmess('I', 'ALGORITH15_97', ni=3, vali=vali)
+            call utmess('I', 'DYNALINE1_97', ni=3, vali=[idiff, nbmode, idiff])
             call wkvect('&&COMDLH.AMORTI2', 'V V R8', nbmode, jamo2)
-            do 20 iam = 1, nbamor
+            do iam = 1, nbamor
                 zr(jamo2+iam-1) = zr(jamog+iam-1)
- 20         continue
-            do 22 iam = nbamor+1, nbmode
+            end do
+            do iam = nbamor+1, nbmode
                 zr(jamo2+iam-1) = zr(jamog+nbamor-1)
- 22         continue
+            end do
             jamog = jamo2
         else if (nbamor.eq.nbmode) then
             call wkvect('&&COMDLH.AMORTI', 'V V R8', nbamor, jamog)
@@ -220,13 +184,13 @@ subroutine dylema(nbmat, nomat, raide, masse,&
                             nbret=n)
             else
                 call jeveuo(listam//'           .VALE', 'L', iamog)
-                do 220 iam = 1, nbamor
+                do iam = 1, nbamor
                     zr(jamog+iam-1) = zr(iamog+iam-1)
-220             continue
+                end do
             endif
         endif
 !
-        do 230 ibloc = 1, nbbloc
+        do ibloc = 1, nbbloc
 !
             matir=zk24(zi(lmat(1)+1))(1:19)
             valer=matir//'.VALM'
@@ -239,7 +203,7 @@ subroutine dylema(nbmat, nomat, raide, masse,&
             matia=zk24(zi(lmat(nbmat)+1))(1:19)
             valea=matia//'.VALM'
             call jeveuo(jexnum(valea, ibloc), 'E', iatmat)
-            do 14 i = 1, nbmode
+            do i = 1, nbmode
                 if (lgbloc .eq. nbmode) then
                     if (cpx) then
                         acrit = 2.d0*sqrt(abs(zc(iatmar-1+i)*zr( iatmam-1+i)))
@@ -256,9 +220,8 @@ subroutine dylema(nbmat, nomat, raide, masse,&
                     endif
                     zr(iatmat-1+i2) = zr(jamog-1+i)*acrit
                 endif
- 14         continue
-230     continue
-!
+            end do
+        end do
     endif
 !
 !===============
@@ -272,7 +235,6 @@ subroutine dylema(nbmat, nomat, raide, masse,&
         call jeveuo(nomat(nbmat), 'L', lmat(nbmat))
     endif
 !
-! FIN ------------------------------------------------------------------
     call jedema()
 !
 end subroutine

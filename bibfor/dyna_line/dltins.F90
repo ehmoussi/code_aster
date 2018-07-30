@@ -90,7 +90,7 @@ character(len=24) :: lispas, libint, linbpa, lisins
             end do
             valr (1) = tinit
             valr (2) = zr(jbint+nbgrpa)
-            call utmess('F', 'ALGORITH12_89', nr=2, valr=valr)
+            call utmess('F', 'DYNALINE1_89', nr=2, valr=valr)
 102         continue
             eps = zr(jlpas+iint-1) / 10.d0
             if (abs(zr(jbint+iint)-tinit) .lt. eps) iint = iint + 1
@@ -129,7 +129,7 @@ character(len=24) :: lispas, libint, linbpa, lisins
             valr (2) = zr(jlpas+iint-1)
             valr (3) = zr(jbint+iint-1)
             valr (4) = zr(jbint+iint)
-            call utmess('F', 'ALGORITH12_90', nr=4, valr=valr)
+            call utmess('F', 'DYNALINE1_90', nr=4, valr=valr)
 122         continue
             zi(jnbp2) = nbpf - iv
             zr(jlpa2) = zr(jlpas+iint-1)
@@ -174,7 +174,7 @@ character(len=24) :: lispas, libint, linbpa, lisins
         if (tfin .lt. zr(jbint)) then
             valr (1) = tfin
             valr (2) = zr(jbint)
-            call utmess('F', 'ALGORITH12_91', nr=2, valr=valr)
+            call utmess('F', 'DYNALINE1_91', nr=2, valr=valr)
         else if (tfin.ge.zr(jbint+nbgrpa)) then
             goto 999
         endif
@@ -209,7 +209,7 @@ character(len=24) :: lispas, libint, linbpa, lisins
         valr (2) = zr(jlpas+iint-1)
         valr (3) = zr(jbint+iint-1)
         valr (4) = zr(jbint+iint)
-        call utmess('F', 'ALGORITH12_92', nr=4, valr=valr)
+        call utmess('F', 'DYNALINE1_92', nr=4, valr=valr)
 232      continue
         zi(jnbp2+iint-1) = iv - nbpd
         lispas = '&&COMDLT.LI_LPASF'
@@ -246,7 +246,7 @@ character(len=24) :: lispas, libint, linbpa, lisins
     call getvr8('INCREMENT', 'INST_FIN', iocc=1, scal=tfin, nbret=ibid)
     call getvr8('INCREMENT', 'PAS', iocc=1, scal=dt, nbret=ibid)
     if (dt .eq. 0.d0) then
-        call utmess('F', 'ALGORITH3_12')
+        call utmess('F', 'DYNALINE1_12')
     endif
     call wkvect('&&COMDLT.LI_BINT', 'V V R', 2, jbin2)
     call wkvect('&&COMDLT.LI_LPAS', 'V V R', 1, jlpa2)

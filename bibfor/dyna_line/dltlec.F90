@@ -215,7 +215,7 @@ implicit none
         if (nchar .ne. 0) then
             call getvid(' ', 'MODELE', scal=k8b, nbret=iaux)
             if (iaux .eq. 0) then
-                call utmess('F', 'ALGORITH9_26')
+                call utmess('F', 'DYNALINE1_24')
             endif
             call nmdome(modele, mate, carele, lischa, blan8,&
                         ibid)
@@ -246,7 +246,7 @@ implicit none
 !
     if (nveca .ne. 0 .and. nchar .ne. 0) then
         if (nchar .ne. nondp) then
-            call utmess('F', 'ALGORITH9_27')
+            call utmess('F', 'DYNALINE1_22')
         endif
     endif
 !
@@ -277,7 +277,6 @@ implicit none
     call dismoi('CARA_ELEM', rigid, 'MATR_ASSE', repk=carael)
     materi = ' '
     call dismoi('CHAM_MATER', rigid, 'MATR_ASSE', repk=materi, arret = 'C', ier = ierc)
-    ! call dismoi('CHAM_MATER', rigid, 'MATR_ASSE', repk=materi)
     if (ierc .ne. 0) then
         materi = ' '
     endif

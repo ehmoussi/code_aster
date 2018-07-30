@@ -211,9 +211,9 @@ implicit none
                                          ni=1, vali=[nbpas])
     else
         call getvr8('SCHEMA_TEMPS', 'PAS_MINI', iocc=1, scal=dtmin, nbret=iret)
-        if (iret.eq.0) dtmin = dt*1.d-6 
+        if (iret.eq.0) dtmin = dt*1.d-6
         call getvr8('SCHEMA_TEMPS', 'PAS_MAXI', iocc=1, scal=dt, nbret=iret)
-        if (iret.eq.0) dtmax = dt*1.d6 
+        if (iret.eq.0) dtmax = dt*1.d6
         call utmess('I', 'DYNAMIQUE_66', nk=1, valk=[schema],&
                                          nr=3, valr=[dt, dtmin, dtmax])
         call getvr8('SCHEMA_TEMPS', 'COEF_DIVI_PAS', iocc=1, scal=cdivi)
@@ -221,7 +221,7 @@ implicit none
 
         nbpas_min = nint((tfin-tinit)/dtmax)
         nbpas_max = 1000000000
-        if (dtmin.gt.epsi) then     
+        if (dtmin.gt.epsi) then
             nbpas_max_r = min(1.d0*nbpas_max,(tfin-tinit-epsi)/dtmin)
             nbpas_max   = int(nbpas_max_r) + 1
         end if
@@ -367,7 +367,7 @@ implicit none
         else
             call utmess('A', 'CHAMPS_21')
         endif
-        
+
         call rsadpa(result, 'E', 1, 'CARAELEM', ordr(iordr),&
                     0, sjv=ladpa, styp=k8b)
         zk8(ladpa)=carael

@@ -102,7 +102,7 @@ implicit none
         call rsexch(' ', reuse, 'DEPL', nume, champ,&
                     iret)
         if (iret .ne. 0) then
-            call utmess('F', 'ALGORITH3_25', sk=reuse)
+            call utmess('F', 'DYNALINE1_25')
         else
             call jeveuo(champ//'.VALE', 'L', jvale)
             call dcopy(neq, zr(jvale), 1, depini, 1)
@@ -110,7 +110,7 @@ implicit none
         call rsexch(' ', reuse, 'VITE', nume, champ,&
                     iret)
         if (iret .ne. 0) then
-            call utmess('F', 'ALGORITH3_26', sk=reuse)
+            call utmess('F', 'DYNALINE1_26')
         else
             call jeveuo(champ//'.VALE', 'L', jvale)
             call dcopy(neq, zr(jvale), 1, vitini, 1)
@@ -118,7 +118,7 @@ implicit none
         call rsexch(' ', reuse, 'ACCE', nume, champ,&
                     iret)
         if (iret .ne. 0) then
-            call utmess('F', 'ALGORITH3_27', sk=reuse)
+            call utmess('F', 'DYNALINE1_27')
         else
             call jeveuo(champ//'.VALE', 'L', jvale)
             call dcopy(neq, zr(jvale), 1, accini, 1)

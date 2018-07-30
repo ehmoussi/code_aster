@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,8 +18,8 @@
 
 subroutine nmimpe(modele, limped)
 !
+implicit none
 !
-    implicit none
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterfort/jedema.h"
@@ -30,8 +30,8 @@ subroutine nmimpe(modele, limped)
 #include "asterfort/jexnum.h"
 #include "asterfort/utmess.h"
 !
-    character(len=24) :: modele
-    aster_logical :: limped
+character(len=24) :: modele
+aster_logical :: limped
 !
 !
 !
@@ -59,7 +59,7 @@ subroutine nmimpe(modele, limped)
         call jenuno(jexnum('&CATA.TE.NOMTE', itypel), nomte)
         if ((nomte(1:9).eq.'MEFA_FACE') .or. (nomte(1:6).eq.'MEFASE')) then
             repk = 'OUI'
-            goto 20
+            exit
         endif
     end do
 !
@@ -67,9 +67,8 @@ subroutine nmimpe(modele, limped)
         limped = .false.
     endif
 !
- 20 continue
     if (limped) then
-        call utmess('I', 'ALGORITH3_23')
+        call utmess('I', 'DYNALINE1_23')
     endif
     call jedema()
 end subroutine

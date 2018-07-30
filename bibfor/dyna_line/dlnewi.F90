@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! aslint: disable=W1504
+!
 subroutine dlnewi(result, force0, force1, lcrea, lamort,&
                   iinteg, neq, imat, masse, rigid,&
                   amort, dep0, vit0, acc0, fexte,&
@@ -23,56 +24,11 @@ subroutine dlnewi(result, force0, force1, lcrea, lamort,&
                   liad, lifo, modele, mate, carele,&
                   charge, infoch, fomult, numedd, nume,&
                   solveu, criter, chondp, nondp, numrep, ds_energy)
-!     CALCUL MECANIQUE TRANSITOIRE PAR INTEGRATION DIRECTE
-!     AVEC METHODES IMPLICITES :                  - THETA-WILSON
-!                                                 - NEWMARK
-!
-!     ------------------------------------------------------------------
-!
-!  HYPOTHESES :                                                "
-!  ----------   SYSTEME CONSERVATIF DE LA FORME  K.U    +    M.U = F
-!           OU                                           '     "
-!               SYSTEME DISSIPATIF  DE LA FORME  K.U + C.U + M.U = F
-!
-!     ------------------------------------------------------------------
-!  IN  : LCREA     : LOGIQUE INDIQUANT SI IL Y A REPRISE
-!  IN  : LAMORT    : LOGIQUE INDIQUANT SI IL Y A AMORTISSEMENT
-!  IN  : IINTEG    : ENTIER INDIQUANT LA METHODE D'INTEGRATION
-!  IN  : NEQ       : NOMBRE D'EQUATIONS
-!  IN  : IMAT      : TABLEAU D'ADRESSES POUR LES MATRICES
-!  IN  : MASSE     : MATRICE DE MASSE
-!  IN  : RIGID     : MATRICE DE RIGIDITE
-!  IN  : AMORT     : MATRICE D'AMORTISSEMENT
-!  IN  : T0        : INSTANT DE CALCUL INITIAL
-!  IN  : NCHAR     : NOMBRE D'OCCURENCES DU MOT CLE CHARGE
-!  IN  : NVECA     : NOMBRE D'OCCURENCES DU MOT CLE VECT_ASSE
-!  IN  : LIAD      : LISTE DES ADRESSES DES VECTEURS CHARGEMENT (NVECT)
-!  IN  : LIFO      : LISTE DES NOMS DES FONCTIONS EVOLUTION (NVECT)
-!  IN  : MODELE    : NOM DU MODELE
-!  IN  : MATE      : NOM DU CHAMP DE MATERIAU
-!  IN  : CARELE    : CARACTERISTIQUES DES POUTRES ET COQUES
-!  IN  : CHARGE    : LISTE DES CHARGES
-!  IN  : INFOCH    : INFO SUR LES CHARGES
-!  IN  : FOMULT    : LISTE DES FONC_MULT ASSOCIES A DES CHARGES
-!  IN  : NUMEDD    : NUME_DDL DE LA MATR_ASSE RIGID
-!  IN  : NUME      : NUMERO D'ORDRE DE REPRISE
-!  IN  : SOLVEU    : NOM DU SOLVEUR
-!  IN  : CHONDP    : NOMS DES ONDES PLANES
-!  IN  : NONDP     : NOMBRE D'ONDES PLANES
-!  VAR : DEP0      : TABLEAU DES DEPLACEMENTS A L'INSTANT N
-!  VAR : VIT0      : TABLEAU DES VITESSES A L'INSTANT N
-!  VAR : ACC0      : TABLEAU DES ACCELERATIONS A L'INSTANT N
-! IN  NUMREP : NUMERO DE REUSE POUR LA TABLE PARA_CALC
-!
-! CORPS DU PROGRAMME
-! aslint: disable=W1504
 !
 use NonLin_Datastructure_type
 !
 implicit none
 !
-!
-! DECLARATION PARAMETRES D'APPELS
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterc/etausr.h"
@@ -112,9 +68,47 @@ implicit none
 #include "asterfort/wkvect.h"
 #include "asterfort/zerlag.h"
 !
+! --------------------------------------------------------------------------------------------------
+!
+!     CALCUL MECANIQUE TRANSITOIRE PAR INTEGRATION DIRECTE
+!     AVEC METHODES IMPLICITES :                  - THETA-WILSON
+!                                                 - NEWMARK
+!
+! --------------------------------------------------------------------------------------------------
+!
+!  IN  : LCREA     : LOGIQUE INDIQUANT SI IL Y A REPRISE
+!  IN  : LAMORT    : LOGIQUE INDIQUANT SI IL Y A AMORTISSEMENT
+!  IN  : IINTEG    : ENTIER INDIQUANT LA METHODE D'INTEGRATION
+!  IN  : NEQ       : NOMBRE D'EQUATIONS
+!  IN  : IMAT      : TABLEAU D'ADRESSES POUR LES MATRICES
+!  IN  : MASSE     : MATRICE DE MASSE
+!  IN  : RIGID     : MATRICE DE RIGIDITE
+!  IN  : AMORT     : MATRICE D'AMORTISSEMENT
+!  IN  : T0        : INSTANT DE CALCUL INITIAL
+!  IN  : NCHAR     : NOMBRE D'OCCURENCES DU MOT CLE CHARGE
+!  IN  : NVECA     : NOMBRE D'OCCURENCES DU MOT CLE VECT_ASSE
+!  IN  : LIAD      : LISTE DES ADRESSES DES VECTEURS CHARGEMENT (NVECT)
+!  IN  : LIFO      : LISTE DES NOMS DES FONCTIONS EVOLUTION (NVECT)
+!  IN  : MODELE    : NOM DU MODELE
+!  IN  : MATE      : NOM DU CHAMP DE MATERIAU
+!  IN  : CARELE    : CARACTERISTIQUES DES POUTRES ET COQUES
+!  IN  : CHARGE    : LISTE DES CHARGES
+!  IN  : INFOCH    : INFO SUR LES CHARGES
+!  IN  : FOMULT    : LISTE DES FONC_MULT ASSOCIES A DES CHARGES
+!  IN  : NUMEDD    : NUME_DDL DE LA MATR_ASSE RIGID
+!  IN  : NUME      : NUMERO D'ORDRE DE REPRISE
+!  IN  : SOLVEU    : NOM DU SOLVEUR
+!  IN  : CHONDP    : NOMS DES ONDES PLANES
+!  IN  : NONDP     : NOMBRE D'ONDES PLANES
+!  VAR : DEP0      : TABLEAU DES DEPLACEMENTS A L'INSTANT N
+!  VAR : VIT0      : TABLEAU DES VITESSES A L'INSTANT N
+!  VAR : ACC0      : TABLEAU DES ACCELERATIONS A L'INSTANT N
+! IN  NUMREP : NUMERO DE REUSE POUR LA TABLE PARA_CALC
+!
+! --------------------------------------------------------------------------------------------------
+!
     integer :: iinteg, neq, imat(3), nchar, nveca, liad(*), nume, nondp
     integer :: numrep
-!
     character(len=8) :: masse, rigid, amort, chondp(nondp)
     character(len=8) :: result
     character(len=19) :: force0, force1
@@ -122,17 +116,10 @@ implicit none
     character(len=24) :: modele, mate, carele, charge, infoch, fomult, numedd
     character(len=24) :: criter
     character(len=24) :: lifo(*)
-!
     real(kind=8) :: dep0(*), vit0(*), acc0(*), t0, fexte(*), famor(*), fliai(*)
-!
     aster_logical :: lcrea, lamort, limped, lmodst
     type(NL_DS_Energy), intent(inout) :: ds_energy
-!
-    character(len=6) :: nompro
-    parameter (nompro = 'DLNEWI')
-!
-    integer :: nbtyar
-    parameter ( nbtyar = 6 )
+    integer, parameter :: nbtyar = 6
     integer :: igrpa, ipepa, perc, freqpr, last_prperc
     integer :: ibmat, iddeeq, ierr
     integer :: igrel, iexci, iexcl
@@ -155,7 +142,7 @@ implicit none
     character(len=3) :: repk
     character(len=4) :: typ1(nbtyar), typmat
     character(len=8) :: k8b, matres, modsta
-    character(len=8) :: typcst(3), nomddl
+    character(len=8) :: typcst(3), nomddl =' '
     character(len=8) :: mailla
     character(len=19) :: nolig
     character(len=16) :: typear(nbtyar), nomte, k16bid, typres
@@ -164,12 +151,12 @@ implicit none
     character(len=19) :: lisarc
     character(len=24) :: lispas, libint, linbpa
     character(len=24) :: lisins
-    character(len=24) :: k24amo
+    character(len=24) :: k24amo = '&&K24AMO'
     character(len=24) :: ligrel
-    character(len=24) :: vitini
-    character(len=24) :: vitent
+    character(len=24) :: vitini = '&&VITINI'
+    character(len=24) :: vitent = '&&VITENT'
     character(len=24) :: veanec, vaanec, deeq, vaonde, veonde
-    character(len=24) :: valmod, basmod, famomo
+    character(len=24) :: valmod = '&&VALMOD', basmod = '&&BASMOD', famomo = '&&FAMOMO'
     character(len=24) :: nmtres, nmat(3)
     real(kind=8) :: lcoef(3), lastarch
     real(kind=8) :: tps1(4), tps2(4)
@@ -185,12 +172,8 @@ implicit none
     real(kind=8), pointer :: vien(:) => null()
     real(kind=8), pointer :: vite(:) => null()
 !
-    data nomddl/'        '/
-    data vitini/'&&VITINI'/
-    data vitent/'&&VITENT'/
-    data k24amo/'&&K24AMO'/
-    data valmod,basmod,famomo/'&&VALMOD','&&BASMOD','&&FAMOMO'/
-!     -----------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
+!
     call jemarq()
 !
 !====
@@ -204,7 +187,7 @@ implicit none
 !
 ! 1.2. ==> NOM DES STRUCTURES
 !
-    maprec = '&&'//nompro//'.MAPREC    '
+    maprec = '&&DLNEWI.MAPREC    '
     lmodst = .false.
 !
 ! N: SAISIE DES DONNEES AMOR_MODAL
@@ -245,10 +228,8 @@ implicit none
 !
 ! 1.4. ==> ???
 !
-    
-    ! call dismoi('CHAM_MATER', rigid, 'MATR_ASSE', repk=k8b)
+
     call dismoi('CHAM_MATER', rigid, 'MATR_ASSE', repk=k8b, arret = 'C', ier = ierc)
-    ! call dismoi('CHAM_MATER', rigid, 'MATR_ASSE', repk=materi)
     if (ierc .ne. 0) then
         k8b = ' '
     endif
@@ -256,7 +237,7 @@ implicit none
     if (k8b .eq. ' ') limped = .false.
 !
     if (limped) then
-        call utmess('I', 'ALGORITH3_23')
+        call utmess('I', 'DYNALINE1_23')
     endif
 !
 !     --- CHARGEMENT PAR ONDES PLANES
@@ -276,31 +257,31 @@ implicit none
 !
 ! 1.7. ==> VECTEURS DE TRAVAIL SUR BASE VOLATILE ---
 !                  1234567890123456789
-    call wkvect('&&'//nompro//'.F1', 'V V R', neq, iwk1)
-    call wkvect('&&'//nompro//'.F2', 'V V R', neq, iwk2)
-    call wkvect('&&'//nompro//'.FORCE2', 'V V R', neq, iforc2)
-    call vtcreb('&&'//nompro//'.DEPL1', 'V', 'R', nume_ddlz = numedd, nb_equa_outz = neq)
+    call wkvect('&&DLNEWI.F1', 'V V R', neq, iwk1)
+    call wkvect('&&DLNEWI.F2', 'V V R', neq, iwk2)
+    call wkvect('&&DLNEWI.FORCE2', 'V V R', neq, iforc2)
+    call vtcreb('&&DLNEWI.DEPL1', 'V', 'R', nume_ddlz = numedd, nb_equa_outz = neq)
 !
-    call jeveuo('&&'//nompro//'.DEPL1     '//'.VALE', 'E', vr=epl1)
-    call wkvect('&&'//nompro//'.VITE1', 'V V R', neq, ivite1)
-    call wkvect('&&'//nompro//'.ACCE1', 'V V R', neq, iacce1)
+    call jeveuo('&&DLNEWI.DEPL1     '//'.VALE', 'E', vr=epl1)
+    call wkvect('&&DLNEWI.VITE1', 'V V R', neq, ivite1)
+    call wkvect('&&DLNEWI.ACCE1', 'V V R', neq, iacce1)
     veanec = '&&VEANEC           '
     vaanec = '?????'
     veonde = '&&VEONDE           '
     vaonde = '?????'
-    call wkvect('&&'//nompro//'.FOIMPE', 'V V R', neq, ifimpe)
-    call wkvect('&&'//nompro//'.FOONDE', 'V V R', neq, ifonde)
-    call wkvect('&&'//nompro//'.DEPLA', 'V V R', neq, idepla)
-    call wkvect('&&'//nompro//'.VITEA', 'V V R', neq, ivitea)
-    call wkvect('&&'//nompro//'.VITA1', 'V V R', neq, ivita1)
-    call wkvect('&&'//nompro//'.ACCEA', 'V V R', neq, iaccea)
+    call wkvect('&&DLNEWI.FOIMPE', 'V V R', neq, ifimpe)
+    call wkvect('&&DLNEWI.FOONDE', 'V V R', neq, ifonde)
+    call wkvect('&&DLNEWI.DEPLA', 'V V R', neq, idepla)
+    call wkvect('&&DLNEWI.VITEA', 'V V R', neq, ivitea)
+    call wkvect('&&DLNEWI.VITA1', 'V V R', neq, ivita1)
+    call wkvect('&&DLNEWI.ACCEA', 'V V R', neq, iaccea)
 !    Verification de presence des modes_statiques
     call getvid(' ', 'MODE_STAT', scal=modsta, nbret=nbv)
     call getfac('EXCIT', nbexci)
     do iexci = 1, nbexci
         call getvtx('EXCIT', 'MULT_APPUI', iocc=iexci, scal=k8b, nbret=nd)
         if (k8b .eq. 'OUI' .and. nbv .eq. 0) then
-            call utmess('F', 'ALGORITH13_46')
+            call utmess('F', 'DYNALINE1_46')
         endif
     end do
 !
@@ -314,11 +295,11 @@ implicit none
         deeq = numddl//'.NUME.DEEQ'
         call jeveuo(deeq, 'L', iddeeq)
         call getfac('EXCIT', nbexci)
-        call wkvect('&&'//nompro//'.FDEP', 'V V K8', nbexci, jnodep)
-        call wkvect('&&'//nompro//'.FVIT', 'V V K8', nbexci, jnovit)
-        call wkvect('&&'//nompro//'.FACC', 'V V K8', nbexci, jnoacc)
-        call wkvect('&&'//nompro//'.MLTP', 'V V I', nbexci, jmltap)
-        call wkvect('&&'//nompro//'.IPSD', 'V V R', nbexci*neq, jpsdel)
+        call wkvect('&&DLNEWI.FDEP', 'V V K8', nbexci, jnodep)
+        call wkvect('&&DLNEWI.FVIT', 'V V K8', nbexci, jnovit)
+        call wkvect('&&DLNEWI.FACC', 'V V K8', nbexci, jnoacc)
+        call wkvect('&&DLNEWI.MLTP', 'V V I', nbexci, jmltap)
+        call wkvect('&&DLNEWI.IPSD', 'V V R', nbexci*neq, jpsdel)
         do iexci = 1, nbexci
 !     --- CAS D'UN ACCELEROGRAMME
             call getvtx('EXCIT', 'MULT_APPUI', iocc=iexci, scal=k8b, nbret=nd)
@@ -371,7 +352,7 @@ implicit none
      &      'CAS CONDITIONNELLEMENT STABLE.'
         endif
         if (abs(beta) .lt. r8prem()) then
-            call utmess('F', 'ALGORITH9_2')
+            call utmess('F', 'DYNALINE1_2')
         endif
     else
         call getvr8('SCHEMA_TEMPS', 'THETA', iocc=1, scal=theta, nbret=n1)
@@ -388,7 +369,7 @@ implicit none
 !
 ! 1.12. ==> --- ARCHIVAGE ---
 !
-    lisarc = '&&'//nompro//'.ARCHIVAGE'
+    lisarc = '&&DLNEWI.ARCHIVAGE'
     call dyarch(npatot, lisins, lisarc, nbordr, 1,&
                 nbexcl, typ1)
     call jeveuo(lisarc, 'E', jstoc)
@@ -406,7 +387,7 @@ implicit none
         typear(6) = '         '
     endif
     if (nbexcl .eq. nbtyar) then
-        call utmess('F', 'ALGORITH3_14')
+        call utmess('F', 'ARCHIVAGE_14')
     endif
     do iexcl = 1, nbexcl
         if (typ1(iexcl) .eq. 'DEPL') then

@@ -175,16 +175,16 @@ implicit none
     if (iret .gt. 0) then
         call getvid(' ', 'RESULTAT', scal=resuco, nbret=ibid)
         if (ibid .eq. 0) then
-            call utmess('F', 'ALGORITH9_31')
+            call utmess('F', 'DYNALINE1_31')
         else
             call gettco(resuco, tysd)
             if (tysd .eq. typcon) then
                 newcal = .false.
                 if (result .ne. resuco) then
-                    call utmess('F', 'ALGORITH9_28')
+                    call utmess('F', 'DYNALINE1_28')
                 endif
             else
-                call utmess('F', 'ALGORITH9_29')
+                call utmess('F', 'DYNALINE1_29')
             endif
         endif
     endif
@@ -263,7 +263,7 @@ implicit none
     endif
 !
     if ((numdl1.ne.numdl2) .or. (numdl1.ne.numdl3) .or. (numdl2.ne.numdl3)) then
-        call utmess('F', 'ALGORITH9_34')
+        call utmess('F', 'DYNALINE1_34')
     else
         numddl = numdl2
     endif
@@ -628,8 +628,7 @@ implicit none
 !               - DE LA MATRICE ASSEMBLEE DE MASSE
 !
                 else
-!           --- SI IL N'EST PAS POSSIBLE DE CREER LE CHAMP, ERR. FATALE
-                    call utmess('F', 'ALGORITH2_65')
+                    ASSERT(ASTER_FALSE)
                 endif
 !
 !           --- RECOPIE DANS L'OBJET RESULTAT

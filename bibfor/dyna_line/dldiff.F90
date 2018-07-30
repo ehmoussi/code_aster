@@ -15,57 +15,19 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! aslint: disable=W1504
+!
 subroutine dldiff(result, force1, lcrea, lamort, neq,&
                   imat, masse, rigid, amort, dep0,&
                   vit0, acc0, fexte, famor, fliai,&
                   t0, nchar, nveca, liad, lifo,&
                   modele, mate, carele, charge, infoch,&
                   fomult, numedd, nume, numrep, ds_energy)
-!     CALCUL MECANIQUE TRANSITOIRE PAR INTEGRATION DIRECTE
-!     AVEC  METHODE EXPLICITE :  DIFFERENCES CENTREES
-!
-!     ------------------------------------------------------------------
-!
-!  HYPOTHESES :                                                "
-!  ----------   SYSTEME CONSERVATIF DE LA FORME  K.U    +    M.U = F
-!           OU                                           '     "
-!               SYSTEME DISSIPATIF  DE LA FORME  K.U + C.U + M.U = F
-!
-!     ------------------------------------------------------------------
-!  IN  : LCREA     : LOGIQUE INDIQUANT SI IL Y A REPRISE
-!  IN  : LAMORT    : LOGIQUE INDIQUANT SI IL Y A AMORTISSEMENT
-!  IN  : NEQ       : NOMBRE D'EQUATIONS
-!  IN  : IMAT      : TABLEAU D'ADRESSES POUR LES MATRICES
-!  IN  : MASSE     : MATRICE DE MASSE
-!  IN  : RIGID     : MATRICE DE RIGIDITE
-!  IN  : AMORT     : MATRICE D'AMORTISSEMENT
-!  IN  : NCHAR     : NOMBRE D'OCCURENCES DU MOT CLE CHARGE
-!  IN  : NVECA     : NOMBRE D'OCCURENCES DU MOT CLE VECT_ASSE
-!  IN  : LIAD      : LISTE DES ADRESSES DES VECTEURS CHARGEMENT (NVECT)
-!  IN  : LIFO      : LISTE DES NOMS DES FONCTIONS EVOLUTION (NVECT)
-!  IN  : T0        : INSTANT DE CALCUL INITIAL
-!  IN  : MODELE    : NOM DU MODELE
-!  IN  : MATE      : NOM DU CHAMP DE MATERIAU
-!  IN  : CARELE    : CARACTERISTIQUES DES POUTRES ET COQUES
-!  IN  : CHARGE    : LISTE DES CHARGES
-!  IN  : INFOCH    : INFO SUR LES CHARGES
-!  IN  : FOMULT    : LISTE DES FONC_MULT ASSOCIES A DES CHARGES
-!  IN  : NUMEDD    : NUME_DDL DE LA MATR_ASSE RIGID
-!  IN  : NUME      : NUMERO D'ORDRE DE REPRISE
-!  VAR : DEP0      : TABLEAU DES DEPLACEMENTS A L'INSTANT N
-!  VAR : VIT0      : TABLEAU DES VITESSES A L'INSTANT N
-!  VAR : ACC0      : TABLEAU DES ACCELERATIONS A L'INSTANT N
-! IN  NUMREP : NUMERO DE REUSE POUR LA TABLE PARA_CALC
-! CORPS DU PROGRAMME
-! aslint: disable=W1504
 !
 use NonLin_Datastructure_type
 !
 implicit none
 !
-!
-! DECLARATION PARAMETRES D'APPELS
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterc/etausr.h"
@@ -91,22 +53,51 @@ implicit none
 #include "asterfort/uttcpu.h"
 #include "asterfort/vtcreb.h"
 #include "asterfort/wkvect.h"
+!
+! --------------------------------------------------------------------------------------------------
+!
+!     CALCUL MECANIQUE TRANSITOIRE PAR INTEGRATION DIRECTE
+!     AVEC  METHODE EXPLICITE :  DIFFERENCES CENTREES
+!
+! --------------------------------------------------------------------------------------------------
+!
+!  IN  : LCREA     : LOGIQUE INDIQUANT SI IL Y A REPRISE
+!  IN  : LAMORT    : LOGIQUE INDIQUANT SI IL Y A AMORTISSEMENT
+!  IN  : NEQ       : NOMBRE D'EQUATIONS
+!  IN  : IMAT      : TABLEAU D'ADRESSES POUR LES MATRICES
+!  IN  : MASSE     : MATRICE DE MASSE
+!  IN  : RIGID     : MATRICE DE RIGIDITE
+!  IN  : AMORT     : MATRICE D'AMORTISSEMENT
+!  IN  : NCHAR     : NOMBRE D'OCCURENCES DU MOT CLE CHARGE
+!  IN  : NVECA     : NOMBRE D'OCCURENCES DU MOT CLE VECT_ASSE
+!  IN  : LIAD      : LISTE DES ADRESSES DES VECTEURS CHARGEMENT (NVECT)
+!  IN  : LIFO      : LISTE DES NOMS DES FONCTIONS EVOLUTION (NVECT)
+!  IN  : T0        : INSTANT DE CALCUL INITIAL
+!  IN  : MODELE    : NOM DU MODELE
+!  IN  : MATE      : NOM DU CHAMP DE MATERIAU
+!  IN  : CARELE    : CARACTERISTIQUES DES POUTRES ET COQUES
+!  IN  : CHARGE    : LISTE DES CHARGES
+!  IN  : INFOCH    : INFO SUR LES CHARGES
+!  IN  : FOMULT    : LISTE DES FONC_MULT ASSOCIES A DES CHARGES
+!  IN  : NUMEDD    : NUME_DDL DE LA MATR_ASSE RIGID
+!  IN  : NUME      : NUMERO D'ORDRE DE REPRISE
+!  VAR : DEP0      : TABLEAU DES DEPLACEMENTS A L'INSTANT N
+!  VAR : VIT0      : TABLEAU DES VITESSES A L'INSTANT N
+!  VAR : ACC0      : TABLEAU DES ACCELERATIONS A L'INSTANT N
+!
+! --------------------------------------------------------------------------------------------------
+!
     integer :: neq, imat(*), liad(*), nchar, nveca, nume, numrep
     character(len=8) :: masse, rigid, amort
     character(len=24) :: modele, carele, charge, fomult, mate, numedd
     character(len=24) :: infoch, lifo(*)
     character(len=8) :: result
     character(len=19) :: force1
-!
     real(kind=8) :: dep0(*), vit0(*), acc0(*), t0
     real(kind=8) :: fexte(*), famor(*), fliai(*)
-!
     aster_logical :: lamort, lcrea
     type(NL_DS_Energy), intent(inout) :: ds_energy
-!
-!
-    integer :: nbtyar
-    parameter ( nbtyar = 6 )
+    integer, parameter :: nbtyar  = 6
     integer :: iwk0, iwk1, iwk2
     integer :: ifm, niv
     integer :: ieq, iexcl, perc, freqpr, last_prperc
@@ -133,8 +124,8 @@ implicit none
     aster_logical :: ener
     real(kind=8), pointer :: vale(:) => null()
 !
+! --------------------------------------------------------------------------------------------------
 !
-!     -----------------------------------------------------------------
     call jemarq()
 !
 !====
@@ -179,7 +170,7 @@ implicit none
     if (sop .eq. 'MASS_MECA_DIAG') then
         call extdia(masse, numedd, 2, zr(iwk1))
     else
-        call utmess('F', 'ALGORITH3_13')
+        call utmess('F', 'DYNALINE1_13')
     endif
 !
     dt1 = zr(jlpas)
@@ -211,7 +202,7 @@ implicit none
         typear(6) = '         '
     endif
     if (nbexcl .eq. nbtyar) then
-        call utmess('F', 'ALGORITH3_14')
+        call utmess('F', 'ARCHIVAGE_14')
     endif
     do iexcl = 1, nbexcl
         if (typ1(iexcl) .eq. 'DEPL') then
