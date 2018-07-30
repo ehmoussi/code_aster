@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -60,16 +60,18 @@ DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'), DEBUG=_F(SDVERI='OUI'))
 
 # MAILLAGE PLEXUS ;
 
-PRE_IDEAS(   UNITE_IDEAS=18,  UNITE_MAILLAGE=22 )
 
-MAILPLEX=LIRE_MAILLAGE(FORMAT="ASTER",UNITE=22  )
+MAILPLEX = LIRE_MAILLAGE(FORMAT='IDEAS',
+                         UNITE=18,
+                         )
 
 MAILPLEX=DEFI_GROUP( reuse=MAILPLEX,   MAILLAGE=MAILPLEX,
   CREA_GROUP_MA=_F(  NOM = 'TOUTPL', TOUT = 'OUI'))
 
 # MAILLAGE ASTER ;
 
-MAILAST=LIRE_MAILLAGE(FORMAT='MED',)
+MAILAST = LIRE_MAILLAGE(FORMAT='MED',
+                        )
 
 MAILAST=DEFI_GROUP( reuse=MAILAST,   MAILLAGE=MAILAST,
   CREA_GROUP_MA=_F(  NOM = 'TOUTAST', TOUT = 'OUI'))
@@ -173,9 +175,10 @@ TEST_RESU(RESU=(_F(INST=1.0,
 #TEST MATERIAU MULT DATASET 56
 # MAILLAGE PLEXUS ;
 
-PRE_IDEAS(   UNITE_IDEAS=23,  UNITE_MAILLAGE=24 )
 
-MAIPLEX2=LIRE_MAILLAGE(FORMAT="ASTER",UNITE=24  )
+MAIPLEX2 = LIRE_MAILLAGE(FORMAT='IDEAS',
+                         UNITE=23,
+                         )
 
 MAIPLEX2=DEFI_GROUP( reuse=MAIPLEX2,   MAILLAGE=MAIPLEX2,
   CREA_GROUP_MA=_F(  NOM = 'TOUT', TOUT = 'OUI'))

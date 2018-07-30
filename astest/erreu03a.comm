@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -48,8 +48,9 @@ fmt_raison='-'*80+"""
 
 """+'-'*80+'\n'
 
-PRE_GIBI()
-MA=LIRE_MAILLAGE(FORMAT="ASTER", )
+MA = LIRE_MAILLAGE(FORMAT='GIBI',
+                   UNITE=19,
+                   )
 DEFI_GROUP(reuse=MA, MAILLAGE=MA, CREA_GROUP_NO=_F(TOUT_GROUP_MA='OUI',))
 MO=AFFE_MODELE(   MAILLAGE=MA,
            AFFE=_F( TOUT = 'OUI',  PHENOMENE = 'MECANIQUE', MODELISATION = '3D')

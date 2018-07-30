@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -25,7 +25,8 @@
 
 DEBUT( CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
 
-TUBE=LIRE_MAILLAGE(FORMAT='MED')
+TUBE = LIRE_MAILLAGE(FORMAT='MED',
+                     )
 MODI_MAILLAGE(reuse=TUBE, MAILLAGE=TUBE,ABSC_CURV=_F(NOEUD_ORIG='N_01_001',TOUT='OUI'))
 
 TUBE=DEFI_GROUP( reuse=TUBE,   MAILLAGE=TUBE,
@@ -35,10 +36,10 @@ TUBE=DEFI_GROUP( reuse=TUBE,   MAILLAGE=TUBE,
 TUBE=DEFI_GROUP( reuse=TUBE,   MAILLAGE=TUBE,
                        CREA_GROUP_NO=_F(  GROUP_MA = 'POUTRE',)  )
 
-PRE_GMSH(UNITE_GMSH=19,
-         UNITE_MAILLAGE=21,);
 
-MASEC=LIRE_MAILLAGE(FORMAT="ASTER",UNITE=21,)
+MASEC = LIRE_MAILLAGE(FORMAT='GMSH',
+                      UNITE=19,
+                      )
 
 MASEC=DEFI_GROUP( reuse=MASEC,   MAILLAGE=MASEC,
                        CREA_GROUP_MA=_F(  NOM = 'TOUT', TOUT = 'OUI') )

@@ -19,13 +19,14 @@
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'), DEBUG=_F(SDVERI='OUI'))
 
-PRE_GMSH();
 
 #---------------------------------------------------------------------
 # -- MAILLAGE LINEAIRE , MODELISATION D_PLAN
 #---------------------------------------------------------------------
 
-MA_INIT=LIRE_MAILLAGE(FORMAT="ASTER",)
+MA_INIT = LIRE_MAILLAGE(FORMAT='GMSH',
+                        UNITE=19,
+                        )
 
 MA=CREA_MAILLAGE(MAILLAGE=MA_INIT,LINE_QUAD=_F(TOUT='OUI'))
 
