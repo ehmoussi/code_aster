@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -39,16 +39,9 @@ DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),
 
 #
 
-PRE_IDEAS(UNITE_MAILLAGE=20,
-          UNITE_IDEAS=19,
-          );
+MAILLA1 = LIRE_MAILLAGE(FORMAT='IDEAS', UNITE=19)
 
-PRE_IDEAS(UNITE_MAILLAGE=30,
-          UNITE_IDEAS=29,
-          );
-
-MAILLA1=LIRE_MAILLAGE(UNITE=20,FORMAT='ASTER',)
-MAILLA2=LIRE_MAILLAGE(UNITE=30,FORMAT='ASTER',)
+MAILLA2 = LIRE_MAILLAGE(FORMAT='IDEAS', UNITE=29)
                                                                                                                             
 # Pertubation legere des coordonnes des maillages pour eviter les modes multiples ou retournes :
 MAILLA1=MODI_MAILLAGE(reuse =MAILLA1, MAILLAGE=MAILLA1, DEFORME=_F(OPTION='TRAN', ALEA=1.e-8,),) 

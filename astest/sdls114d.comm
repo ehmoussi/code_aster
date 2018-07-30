@@ -28,9 +28,10 @@ tfin = 0.004
 pas = 5E-7
 
 
-PRE_GIBI();
 
-M = LIRE_MAILLAGE(FORMAT="ASTER",);
+M = LIRE_MAILLAGE(FORMAT='GIBI',
+                  UNITE=19,
+                  )
 
 MODELIN=AFFE_MODELE(MAILLAGE=M,
                AFFE=(_F(GROUP_MA = ('VOL'),

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -33,9 +33,10 @@
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'), DEBUG=_F(SDVERI='OUI'))
 
-PRE_GIBI()
 
-M=LIRE_MAILLAGE(FORMAT="ASTER",)
+M = LIRE_MAILLAGE(FORMAT='GIBI',
+                  UNITE=19,
+                  )
 
 DEFI_GROUP(reuse=M,       MAILLAGE=M,
                   CREA_GROUP_NO=_F( NOM = 'DIRI', GROUP_MA = 'DIRI'))

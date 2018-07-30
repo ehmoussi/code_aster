@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -28,9 +28,10 @@ DEBUT( CODE=_F(
 # CREATION DU MODELE EXPERIMENTAL
 #**********************************
 
-PRE_IDEAS( UNITE_IDEAS = 21, UNITE_MAILLAGE = 22)
 
-MAILEXP=LIRE_MAILLAGE(FORMAT="ASTER",UNITE=22);
+MAILEXP = LIRE_MAILLAGE(FORMAT='IDEAS',
+                        UNITE=21,
+                        )
 
 
 MODLEXP=AFFE_MODELE(MAILLAGE=MAILEXP,
@@ -101,7 +102,8 @@ MODEIDE=EXTR_MODE(FILTRE_MODE=_F(MODE=MODMESU,
 # CREATION MODELE SUPPORT
 #********************************
 
-MAILSUP=LIRE_MAILLAGE(FORMAT="ASTER",UNITE=20);
+MAILSUP = LIRE_MAILLAGE(FORMAT='ASTER',
+                        UNITE=20,)
 
 MODLSUP=AFFE_MODELE(MAILLAGE=MAILSUP,
                     AFFE=(_F(GROUP_MA=('POUTRE','VISUAL',),
@@ -218,7 +220,8 @@ MAILCOND=DEFI_MAILLAGE(
 # CREATION DU MODELE COUPLE (MESURE + MODIFICATION)
 #**********************************
 
-MAILX=LIRE_MAILLAGE(FORMAT="ASTER",UNITE=24);
+MAILX = LIRE_MAILLAGE(FORMAT='ASTER',
+                      UNITE=24,)
 
 MAILCPL=ASSE_MAILLAGE(
             MAILLAGE_1=MAILCOND,
@@ -302,7 +305,8 @@ MODERETR=DEPL_INTERNE(DEPL_GLOBAL=MODECPL,SUPER_MAILLE='SUMAIL')
 
 # CREATION MODELE FICTIF DE L INTERFACE
 
-MAILINT=LIRE_MAILLAGE(FORMAT="ASTER",UNITE=26);
+MAILINT = LIRE_MAILLAGE(FORMAT='ASTER',
+                        UNITE=26,)
 
 MODLINT=AFFE_MODELE(MAILLAGE=MAILINT,
                    AFFE=_F(GROUP_MA='VISUAL',

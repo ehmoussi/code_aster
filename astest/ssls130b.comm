@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -25,9 +25,10 @@ DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'), DEBUG=_F(SDVERI='OUI'))
 # CALCUL INITIAL SUR MAILLAGE 'GROSSIER'
 #***************************************
 
-PRE_IDEAS();
 
-MAYAGRO=LIRE_MAILLAGE(FORMAT="ASTER",);
+MAYAGRO = LIRE_MAILLAGE(FORMAT='IDEAS',
+                        UNITE=19,
+                        )
 
 MATELAS=DEFI_MATERIAU(ELAS=_F(E=71000000000.0,
                               NU=0.3,),);
@@ -63,10 +64,10 @@ MECASTAT=MECA_STATIQUE(MODELE=MODELGRO,
 #***************************************
 # CALCUL SUR PARTIE ZOOMEE
 #***************************************
-PRE_IDEAS(UNITE_IDEAS=21,
-          UNITE_MAILLAGE=22,);
 
-MAYAFIN=LIRE_MAILLAGE(FORMAT="ASTER",UNITE=22,);
+MAYAFIN = LIRE_MAILLAGE(FORMAT='IDEAS',
+                        UNITE=21,
+                        )
 
 MODELFIN=AFFE_MODELE(MAILLAGE=MAYAFIN,
                      AFFE=_F(GROUP_MA='INT_EL',
