@@ -203,8 +203,8 @@ class JDC:
         sign = self.signature(base)
         UTMESS('I', 'SUPERVIS_68', valk=sign, vali=self.jeveux_sysaddr)
 
-        if self.fico is None:
-            aster.affiche('MESSAGE', convert(repr(self.timer)))
+
+        aster.affiche('MESSAGE', convert(repr(self.timer)))
         if self.ctree:
             txt = self.ctree.get_stats(level=2)
             aster.affiche('MESSAGE', convert(txt))
