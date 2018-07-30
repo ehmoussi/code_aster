@@ -31,6 +31,7 @@ def catalog_op():
 
     keywords = dict()
     keywords.update(main_keywords)
+    del keywords['b_format_ideas']
     keywords['FORMAT'] = SIMP(statut='f', typ='TXM',
                             defaut='MED',
                             into=('ASTER', 'MED'))
@@ -69,7 +70,9 @@ def lire_maillage_ops(self, **args):
     elif fmt == 'GMSH':
         PRE_GMSH(UNITE_GMSH=unit, UNITE_MAILLAGE=unit_op)
     elif fmt == 'IDEAS':
-        PRE_IDEAS(UNITE_IDEAS=unit, UNITE_MAILLAGE=unit_op)
+        coul = args.pop('CREA_GROUP_COUL', 'NON')
+        PRE_IDEAS(UNITE_IDEAS=unit, UNITE_MAILLAGE=unit_op,
+                  CREA_GROUP_COUL=coul)
 
     args['UNITE'] = unit_op
 
