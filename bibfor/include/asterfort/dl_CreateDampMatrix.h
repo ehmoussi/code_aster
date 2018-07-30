@@ -18,18 +18,13 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine dylema(matr_rigi   , matr_mass, matr_damp, matr_impe,&
-                      l_damp_modal, l_damp   , l_impe   ,&
-                      nb_matr     , matr_list, coef_type, coef_vale,&
-                      matr_resu   , numddl   , nb_equa)
-        character(len=19), intent(out) :: matr_mass, matr_rigi, matr_damp, matr_impe
-        aster_logical, intent(out) :: l_damp_modal, l_damp, l_impe
-        integer, intent(out) :: nb_matr
-        character(len=24), intent(out) :: matr_list(*)
-        character(len=1), intent(out) :: coef_type(*)
-        real(kind=8), intent(out) :: coef_vale(*)
-        character(len=19), intent(out) :: matr_resu
-        character(len=14), intent(out) :: numddl
-        integer, intent(out) :: nb_equa
-    end subroutine dylema
+    subroutine dl_CreateDampMatrix(matr_rigi   , matr_mass  , l_cplx,&
+                                   nb_damp_read, l_damp_read,&
+                                   matr_damp)
+        character(len=19), intent(in) :: matr_rigi, matr_mass
+        aster_logical, intent(in) :: l_cplx
+        real(kind=8), pointer :: l_damp_read(:)
+        integer, intent(in) :: nb_damp_read
+        character(len=19), intent(out)  :: matr_damp
+    end subroutine dl_CreateDampMatrix
 end interface

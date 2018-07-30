@@ -15,14 +15,15 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine dylema(nbmat, nomat, raide, masse,&
-                  amor, impe)
+!
+subroutine dylema(matr_rigi   , matr_mass, matr_damp, matr_impe,&
+                  l_damp_modal, l_damp   , l_impe   ,&
+                  nb_matr     , matr_list, coef_type, coef_vale,&
+                  matr_resu   , numddl   , nb_equa)
 !
 implicit none
 !
 #include "asterf_types.h"
-#include "jeveux.h"
 #include "asterfort/gettco.h"
 #include "asterfort/getvid.h"
 #include "asterfort/getvr8.h"
@@ -30,210 +31,176 @@ implicit none
 #include "asterfort/jelira.h"
 #include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
-#include "asterfort/jexnum.h"
-#include "asterfort/mtdefs.h"
 #include "asterfort/mtdscr.h"
 #include "asterfort/utmess.h"
-#include "asterfort/wkvect.h"
+#include "asterfort/dismoi.h"
+#include "asterfort/as_allocate.h"
+#include "asterfort/as_deallocate.h"
+#include "asterfort/dl_CreateDampMatrix.h"
+#include "asterfort/dl_MatrixPrepare.h"
 !
-integer :: nbmat
-character(len=19) :: masse, raide, amor, impe
-character(len=24) :: nomat(*)
-!
-! --------------------------------------------------------------------------------------------------
-!
-! DYNAMIQUE: LECTURE DES MATRICES ASSEMBLEES EN ENTREE DE DYNA_VIBRA//HARM
-! **         **          *        *
-!
-! --------------------------------------------------------------------------------------------------
-!
-!      OUT NBMAT : NOMBRE DE MATRICES 2, 3 OU 4
-!      OUT NOMAT : TABLEAU DES NOMS UTILISATEUR DES MATRICES
-!      OUT RAIDE : NOM DE LA MATRICE DE RAIDEUR
-!      OUT MASSE : NOM DE LA MATRICE DE MASSE
-!      OUT AMOR  : NOM DE LA MATRICE D AMORTISSEMENT
-!      OUT IMPE  : NOM DE LA MATRICE D IMPEDANCE
+character(len=19), intent(out) :: matr_mass, matr_rigi, matr_damp, matr_impe
+aster_logical, intent(out) :: l_damp_modal, l_damp, l_impe
+integer, intent(out) :: nb_matr
+character(len=24), intent(out) :: matr_list(*)
+character(len=1), intent(out) :: coef_type(*)
+real(kind=8), intent(out) :: coef_vale(*)
+character(len=19), intent(out) :: matr_resu
+character(len=14), intent(out) :: numddl
+integer, intent(out) :: nb_equa
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    character(len=1) :: bl
-    integer :: n1, n2, lamor, limpe
-    integer :: iamog, jamog, jamo2, iatmat, iatmar, iatmam
-    integer :: n, nbmode, nbmod2, neq, nbbloc, lgbloc, idiff
-    integer :: nbamor, i2, nterm
-    integer :: iam, ibloc, i
-    integer :: lmat(4)
-    real(kind=8) :: acrit
-    character(len=1) :: ktyp
-    character(len=8) :: listam
+! DYNA_VIBRA
+!
+! Read matrixes
+!
+! --------------------------------------------------------------------------------------------------
+!
+! Out matr_rigi        : matrix of rigidity
+! Out matr_mass        : matrix of mass
+! Out matr_damp        : matrix of damping
+! Out matr_impe        : matrix of impedance
+! Out l_damp           : flag if damping
+! Out l_damp_modal     : flag if modal damping
+! Out l_impe           : flag for impedance
+! Out nb_matr          : number of matrixes in linear combination
+! Out matr_list        : list of matrixes in linear combination
+! Out coef_type        : type of coefficient (R ou C) for each matrix in linear combination
+! Out coef_vale        : value of coefficient for each matrix in linear combination
+! Out matr_resu        : resultant matrix of linear combination
+! Out numddl           : object for numbering matrixes
+! Out nb_equa          : total number of equations
+!
+! --------------------------------------------------------------------------------------------------
+!
+    integer :: n1, n2, n
+    integer :: nb_damp_read
+    character(len=1) :: ktyp, resu_type
+    character(len=8) :: list_damp, matr_res8
     character(len=16) :: typobj
-    character(len=19) :: matir, matim, matia, amort
-    character(len=24) :: valer, valem, valea
-    character(len=24) :: valk(2)
-    aster_logical :: cpx
+    character(len=14) :: numdl1, numdl2, numdl3
+    aster_logical :: l_cplx, l_harm
+    real(kind=8), pointer :: l_damp_read(:) => null()
+    real(kind=8), pointer :: v_list(:) => null()
+    integer, pointer :: v_matr_desc(:) => null()
 !
 ! --------------------------------------------------------------------------------------------------
 !
     call jemarq()
 !
-    bl = ' '
-    cpx=.false.
+! - Initializations
 !
+    resu_type    = 'C'
+    nb_equa      = 0
+    nb_matr      = 0
+    matr_rigi    = ' '
+    matr_mass    = ' '
+    matr_damp    = ' '
+    matr_impe    = ' '
+    matr_resu    = ' '
+    numddl       = ' '
+    l_cplx       = ASTER_FALSE
+    l_damp_modal = ASTER_FALSE
+    l_damp       = ASTER_FALSE
+    l_impe       = ASTER_FALSE
+    l_harm       = ASTER_TRUE
 !
-!  1.2.1    --- NOM DES MATRICES
-    call getvid(bl, 'MATR_MASS', scal=masse, nbret=n1)
-    call getvid(bl, 'MATR_RIGI', scal=raide, nbret=n1)
-    call getvid(bl, 'MATR_AMOR', scal=amor, nbret=lamor)
-    call getvid(bl, 'MATR_IMPE_PHI', scal=impe, nbret=limpe)
+! - Get matrixes
 !
+    call getvid(' ', 'MATR_MASS', scal=matr_mass, nbret=n1)
+    call getvid(' ', 'MATR_RIGI', scal=matr_rigi, nbret=n1)
+    call getvid(' ', 'MATR_AMOR', scal=matr_damp, nbret=n1)
+    l_damp = n1 .ne. 0
+    call getvid(' ', 'MATR_IMPE_PHI', scal=matr_impe, nbret=n1)
+    l_impe = n1 .ne. 0
 !
-!===============
-!  2. RECUPERATION DES DESCRIPTEURS DES MATRICES M, K , C
-!===============
-    call mtdscr(raide)
-    nomat(1)=raide(1:19)//'.&INT'
-    call jeveuo(nomat(1), 'L', lmat(1))
-! ON TESTE SI LA MATRICE DE RAIDEUR EST COMPLEXE
-    call jelira(raide//'.VALM', 'TYPE', cval=ktyp)
+! - Add rigidity matrix
+!
+    call mtdscr(matr_rigi)
+    call jelira(matr_rigi//'.VALM', 'TYPE', cval=ktyp)
     if (ktyp .eq. 'C') then
-        cpx=.true.
+        l_cplx = ASTER_TRUE
     endif
-    call mtdscr(masse)
-    nomat(2)=masse(1:19)//'.&INT'
-    call jeveuo(nomat(2), 'L', lmat(2))
+    call jeveuo(matr_rigi(1:19)//'.&INT', 'L', vi = v_matr_desc)
+    nb_equa = v_matr_desc(3)
 !
-    nbmat = 2
-    if (lamor .ne. 0) then
-        nbmat = nbmat + 1
-        call mtdscr(amor)
-        nomat(nbmat)=amor(1:19)//'.&INT'
-        call jeveuo(nomat(nbmat), 'L', lmat(nbmat))
+! - Add mass matrix
+!
+    call mtdscr(matr_mass)
+!
+! - Add damping matrix (given matrix)
+!
+    if (l_damp) then
+        call mtdscr(matr_damp)
     endif
-    neq = zi(lmat(1)+2)
 !
-!===============
-!  3. RECUPERATION DE L AMORTISSEMENT
-!===============
+! --- TEST: LES MATRICES SONT TOUTES BASEES SUR LA MEME NUMEROTATION ?
+!
+    call dismoi('NOM_NUME_DDL', matr_rigi, 'MATR_ASSE', repk=numdl1)
+    call dismoi('NOM_NUME_DDL', matr_mass, 'MATR_ASSE', repk=numdl2)
+    if (l_damp) then
+        call dismoi('NOM_NUME_DDL', matr_damp, 'MATR_ASSE', repk=numdl3)
+    else
+        numdl3 = numdl2
+    endif
+!
+    if ((numdl1.ne.numdl2) .or. (numdl1.ne.numdl3) .or. (numdl2.ne.numdl3)) then
+        call utmess('F', 'DYNALINE1_34')
+    else
+        numddl = numdl2
+    endif
+!
+! - Create damping matrix from reduced modal damping
 !
     call getvr8('AMOR_MODAL', 'AMOR_REDUIT', iocc=1, nbval=0, nbret=n1)
-    call getvid('AMOR_MODAL', 'LIST_AMOR', iocc=1, nbval=0, nbret=n2)
+    call getvid('AMOR_MODAL', 'LIST_AMOR'  , iocc=1, nbval=0, nbret=n2)
     if (n1 .ne. 0 .or. n2 .ne. 0) then
-        call gettco(raide, typobj)
+        l_damp_modal = ASTER_TRUE
+        call gettco(matr_rigi, typobj)
         if (typobj(1:14) .ne. 'MATR_ASSE_GENE') then
-            valk (1) = typobj
             call utmess('F', 'DYNALINE1_95')
         endif
-        nbmode = neq
-        nbmod2 = neq*(neq+1)/2
-        nbmat = nbmat+1
-        amort = '&&COMDLH.AMORT_MATR'
-        call mtdefs(amort, masse, 'V', 'R')
-        call mtdscr(amort)
-        nomat(nbmat)=amort(1:19)//'.&INT'
-        call jeveuo(nomat(nbmat), 'L', lmat(nbmat))
-!
-        nbbloc=1
-        lgbloc=zi(lmat(nbmat)+14)
-!
-        if (n1 .ne. 0) then
-            nbamor = -n1
+! ----- Number of reduced damping coefficients
+        if (n1 .eq. 0) then
+            call getvid('AMOR_MODAL', 'LIST_AMOR', iocc=1, scal=list_damp, nbret=n)
+            call jelira(list_damp//'           .VALE', 'LONMAX', nb_damp_read)
         else
-            call getvid('AMOR_MODAL', 'LIST_AMOR', iocc=1, scal=listam, nbret=n)
-            call jelira(listam//'           .VALE', 'LONMAX', nbamor)
-!
-!
+            nb_damp_read = -n1
         endif
-        if (nbamor .gt. nbmode) then
-            call utmess('A', 'DYNALINE1_96', ni=3, vali=[nbmode, nbamor, nbmode])
-            call wkvect('&&COMDLH.AMORTI', 'V V R8', nbmode, jamog)
-            if (n1 .ne. 0) then
-                call getvr8('AMOR_MODAL', 'AMOR_REDUIT', iocc=1, nbval=nbmode, vect=zr(jamog),&
-                            nbret=n)
-            else
-                call jeveuo(listam//'           .VALE', 'L', iamog)
-                do iam = 1, nbmode
-                    zr(jamog+iam-1) = zr(iamog+iam-1)
-                end do
-            endif
-        else if (nbamor.lt.nbmode) then
-!
-            call wkvect('&&COMDLH.AMORTI', 'V V R8', nbamor, jamog)
-            if (n1 .ne. 0) then
-                call getvr8('AMOR_MODAL', 'AMOR_REDUIT', iocc=1, nbval=nbamor, vect=zr(jamog),&
-                            nbret=n)
-            else
-                call jeveuo(listam//'           .VALE', 'L', iamog)
-                do iam = 1, nbamor
-                    zr(jamog+iam-1) = zr(iamog+iam-1)
-                end do
-            endif
-            idiff = nbmode - nbamor
-            call utmess('I', 'DYNALINE1_97', ni=3, vali=[idiff, nbmode, idiff])
-            call wkvect('&&COMDLH.AMORTI2', 'V V R8', nbmode, jamo2)
-            do iam = 1, nbamor
-                zr(jamo2+iam-1) = zr(jamog+iam-1)
-            end do
-            do iam = nbamor+1, nbmode
-                zr(jamo2+iam-1) = zr(jamog+nbamor-1)
-            end do
-            jamog = jamo2
-        else if (nbamor.eq.nbmode) then
-            call wkvect('&&COMDLH.AMORTI', 'V V R8', nbamor, jamog)
-            if (n1 .ne. 0) then
-                call getvr8('AMOR_MODAL', 'AMOR_REDUIT', iocc=1, nbval=nbamor, vect=zr(jamog),&
-                            nbret=n)
-            else
-                call jeveuo(listam//'           .VALE', 'L', iamog)
-                do iam = 1, nbamor
-                    zr(jamog+iam-1) = zr(iamog+iam-1)
-                end do
-            endif
+! ----- Get list of reduced damping coefficients
+        AS_ALLOCATE(vr = l_damp_read, size = nb_damp_read)
+        if (n1 .eq. 0) then
+            call jeveuo(list_damp//'           .VALE', 'L', vr = v_list)
+        else
+            call getvr8('AMOR_MODAL', 'AMOR_REDUIT', iocc=1, nbval=nb_damp_read, vect=l_damp_read,&
+                        nbret=n)
         endif
-!
-        do ibloc = 1, nbbloc
-!
-            matir=zk24(zi(lmat(1)+1))(1:19)
-            valer=matir//'.VALM'
-            call jeveuo(jexnum(valer, ibloc), 'L', iatmar)
-            call jelira(jexnum(valer, ibloc), 'LONMAX', nterm)
-!
-            matim=zk24(zi(lmat(2)+1))(1:19)
-            valem=matim//'.VALM'
-            call jeveuo(jexnum(valem, ibloc), 'L', iatmam)
-            matia=zk24(zi(lmat(nbmat)+1))(1:19)
-            valea=matia//'.VALM'
-            call jeveuo(jexnum(valea, ibloc), 'E', iatmat)
-            do i = 1, nbmode
-                if (lgbloc .eq. nbmode) then
-                    if (cpx) then
-                        acrit = 2.d0*sqrt(abs(zc(iatmar-1+i)*zr( iatmam-1+i)))
-                    else
-                        acrit = 2.d0*sqrt(abs(zr(iatmar-1+i)*zr( iatmam-1+i)))
-                    endif
-                    zr(iatmat-1+i) = zr(jamog-1+i)*acrit
-                else if (lgbloc.eq.nbmod2) then
-                    i2 = i*(i+1)/2
-                    if (cpx) then
-                        acrit = 2.d0*sqrt(abs(zc(iatmar-1+i2)* zr(iatmam-1+i2)) )
-                    else
-                        acrit = 2.d0*sqrt(abs(zr(iatmar-1+i2)* zr(iatmam-1+i2)) )
-                    endif
-                    zr(iatmat-1+i2) = zr(jamog-1+i)*acrit
-                endif
-            end do
-        end do
+! ----- Create damping matrix from reduced modal damping
+        call dl_CreateDampMatrix(matr_rigi   , matr_mass  , l_cplx,&
+                                 nb_damp_read, l_damp_read,&
+                                 matr_damp)
+        AS_DEALLOCATE(vr = l_damp_read)
     endif
 !
-!===============
-!  4. RECUPERATION DE L "IMPEDANCE"
-!===============
+! - Impedance
 !
-    if (limpe .ne. 0) then
-        nbmat = nbmat + 1
-        call mtdscr(impe)
-        nomat(nbmat)=impe(1:19)//'.&INT'
-        call jeveuo(nomat(nbmat), 'L', lmat(nbmat))
+    if (l_impe) then
+        call mtdscr(matr_impe)
     endif
+!
+! - Linear combiantion
+!
+    l_harm = ASTER_TRUE
+    call dl_MatrixPrepare(l_harm   , l_damp   , l_damp_modal, l_impe   , resu_type,&
+                          matr_mass, matr_rigi, matr_damp   , matr_impe,&
+                          nb_matr  , matr_list, coef_type   , coef_vale,&
+                          matr_res8)
+    if (l_damp_modal) then
+        matr_damp = ' '
+    endif
+!
+    matr_resu = matr_res8
 !
     call jedema()
 !
