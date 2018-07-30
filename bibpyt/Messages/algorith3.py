@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,6 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: josselin.delmas at edf.fr
 
 cata_msg = {
 
@@ -43,33 +42,15 @@ cata_msg = {
      générer des erreurs dans l'orientation des forces de contact.
 """),
 
-    11 : _(u"""
- méthode à pas adaptatif : la donnée du pas est obligatoire
-"""),
 
-    12 : _(u"""
- le pas de temps ne peut pas être nul
-"""),
 
-    13 : _(u"""
- les matrices de masse élémentaires doivent obligatoirement avoir été calculées
- avec l'option MASS_MECA_DIAG
-"""),
 
-    14 : _(u"""
- on archive au moins un champ.
-"""),
 
-    16 : _(u"""
-A l'instant %(r1)f, l'erreur vaut %(r2)f
-Cette erreur est supérieure à 1.
-Le pas de temps vaut %(r3)f
-On arrête de le réduire, car le nombre de réductions a atteint %(i1)d, qui est le maximum possible.
-"""),
 
-    17 : _(u"""
- méthode à pas adaptatif : pas de temps minimal atteint
-"""),
+
+
+
+
 
     18 : _(u"""
  La liste des instants de calcul ne doit contenir qu'un seul pas
@@ -77,30 +58,12 @@ On arrête de le réduire, car le nombre de réductions a atteint %(i1)d, qui es
  veillez à ce que le pas soit constant dans tout l'intervalle.
 """),
 
-    20 : _(u"""
- le chargement de type DIRICHLET nécessite la résolution par le schéma de NEWMARK
-"""),
 
-    21 : _(u"""
-Nombre de pas de calcul : %(i1)d
-Nombre d'itérations     : %(i2)d
-"""),
 
-    23 : _(u"""
- vous calculez une impédance absorbante
-"""),
 
-    25 : _(u"""
- le champ "DEPL" n'est pas trouvé dans le concept DYNA_TRANS  %(k1)s
-"""),
 
-    26 : _(u"""
- le champ "VITE" n'est pas trouvé dans le concept DYNA_TRANS  %(k1)s
-"""),
 
-    27 : _(u"""
- le champ "ACCE" n'est pas trouve dans le concept DYNA_TRANS  %(k1)s
-"""),
+
 
     36 : _(u"""
  NUME_INIT: on n'a pas trouvé le NUME_INIT dans le résultat  %(k1)s
@@ -121,10 +84,6 @@ Nombre d'itérations     : %(i2)d
 
     41 : _(u"""
  erreur(s) dans les données
-"""),
-
-    42 : _(u"""
- critère inconnu :  %(k1)s
 """),
 
     43 : _(u"""

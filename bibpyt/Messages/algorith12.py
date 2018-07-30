@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,6 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: josselin.delmas at edf.fr
 
 cata_msg = {
 
@@ -137,13 +136,13 @@ cata_msg = {
 """),
 
     35 : _(u"""
- un ddl non prévu est présent sur l'interface de liaison 
+ un ddl non prévu est présent sur l'interface de liaison
  type du DDL  -->  %(k1)s
  nom du noeud -->  %(k2)s
- 
+
  Il ne sera pas pris en compte dans le calcul des matrices réduites de liaison
  Seules les composantes DX, DY, DZ, DRX, DRY, DRZ sont prévues
- 
+
 """),
 
     36 : _(u"""
@@ -156,7 +155,7 @@ Contactez le support technique.
 """),
 
     37 : _(u"""
- arrêt sur problème cohérence 
+ arrêt sur problème cohérence
 Ce message est un message d'erreur développeur.
 Contactez le support technique.
 """),
@@ -353,42 +352,14 @@ Contactez le support technique.
  accès "INST" :  %(r1)f
 """),
 
-    89 : _(u"""
- instant de reprise supérieur à la liste des instants
- instant de reprise :  %(r1)f
- instant max        :  %(r2)f
-"""),
 
-    90 : _(u"""
- on n'a pas trouvé l'instant
- instant de reprise:  %(r1)f
- pas de temps      :  %(r2)f
- borne min         :  %(r3)f
- borne max         :  %(r4)f
-"""),
 
-    91 : _(u"""
- instant final inférieur à la liste des instants
- instant final:  %(r1)f
- instant min  :  %(r2)f
-"""),
 
-    92 : _(u"""
- on n'a pas trouvé l'instant
- instant final:  %(r1)f
- pas de temps :  %(r2)f
- borne min    :  %(r3)f
- borne max    :  %(r4)f
-"""),
 
-    97 : _(u"""
- Les données sont erronées.
- Pas d'instant de calcul pour l'instant d'archivage :  %(r1)f
-"""),
 
-    98 : _(u"""
- Les données sont erronées.
- Plusieurs instants de calcul pour l'instant d'archivage:  %(r1)f
-"""),
+
+
+
+
 
 }

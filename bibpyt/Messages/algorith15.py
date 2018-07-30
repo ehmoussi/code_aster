@@ -17,8 +17,6 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: josselin.delmas at edf.fr
-
 cata_msg = {
 
     1 : _(u"""
@@ -370,26 +368,7 @@ Contactez le support technique.
 
 
 
-    95 : _(u"""
- l'entrée d'amortissements réduits est incompatible
- avec des matrices de type  %(k1)s
- Il faut des matrices de type MATR_ASSE_GENE_*
-"""),
 
-    96 : _(u"""
- le nombre d'amortissements réduits est trop grand
- le nombre de modes propres vaut  %(i1)d
- et le nombre de coefficients :  %(i2)d
- on ne garde donc que les  %(i3)d premiers coefficients
-
-"""),
-
-    97 : _(u"""
- le nombre d'amortissements réduits est insuffisant
- il en manque :  %(i1)d
- car le nombre de modes vaut :  %(i2)d
- on rajoute  %(i3)d amortissement réduits avec la valeur du dernier mode propre.
-"""),
 
     98 : _(u"""
  incohérence dans le DATASET 58

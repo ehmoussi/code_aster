@@ -19,7 +19,9 @@
 subroutine dlfext(nveca, nchar, temps, neq, liad,&
                   lifo, charge, infoch, fomult, modele,&
                   mate, carele, numedd, f)
-    implicit none
+!
+implicit none
+!
 #include "jeveux.h"
 #include "asterc/r8prem.h"
 #include "asterc/r8vide.h"
@@ -38,14 +40,19 @@ subroutine dlfext(nveca, nchar, temps, neq, liad,&
 #include "asterfort/vechme.h"
 #include "asterfort/vedime.h"
 #include "blas/dcopy.h"
-    integer :: nveca, nchar, neq, liad(*)
-    real(kind=8) :: temps, f(*)
-    character(len=24) :: lifo(*), infoch, fomult
-    character(len=24) :: modele, carele, charge, mate, numedd
+!
+integer :: nveca, nchar, neq, liad(*)
+real(kind=8) :: temps, f(*)
+character(len=24) :: lifo(*), infoch, fomult
+character(len=24) :: modele, carele, charge, mate, numedd
+!
+! --------------------------------------------------------------------------------------------------
 !
 !  CALCUL DU SECOND MEMBRE F* A PARTIR DE :
 !      - VECT_ASSE
 !      - CHARGE
+!
+! --------------------------------------------------------------------------------------------------
 !
 !  INPUT:
 !        NVECA    : NOMBRE D'OCCURENCES DU MOT CLE VECT_ASSE
@@ -64,7 +71,9 @@ subroutine dlfext(nveca, nchar, temps, neq, liad,&
 !
 !  OUTPUT:
 !        F        : VECTEUR FORCE EXTERIEURE (NEQ)
-! ----------------------------------------------------------------------
+!
+! --------------------------------------------------------------------------------------------------
+!
     integer :: jinf, lonch
     integer :: iret, ieq
     integer :: n1
@@ -72,18 +81,11 @@ subroutine dlfext(nveca, nchar, temps, neq, liad,&
     character(len=4) :: typmat, para
     character(len=16) :: method
     character(len=19) :: lischa
-    character(len=24) :: vechmp, vachmp, cnchmp, k24bid
+    character(len=24) :: vechmp = ' ', vachmp = ' ', cnchmp = ' '
     real(kind=8), pointer :: f1(:) => null()
     real(kind=8), pointer :: f2(:) => null()
 !
-    data vechmp,vachmp,cnchmp/3*' '/
-    data k24bid/' '/
-!
-! DEB ------------------------------------------------------------------
-!
-!====
-! 1. PREALABLES
-!====
+! --------------------------------------------------------------------------------------------------
 !
     call jemarq()
 !
@@ -105,8 +107,7 @@ subroutine dlfext(nveca, nchar, temps, neq, liad,&
 !
     if (nveca .ne. 0) then
 !
-        call fext(temps, neq, nveca, liad, lifo,&
-                  f)
+        call fext(temps, neq, nveca, liad, lifo, f)
 !
 ! 2.2. ==> --- CAS D'UN CHARGEMENT DEFINI PAR CHARGE ---
 !
@@ -142,7 +143,7 @@ subroutine dlfext(nveca, nchar, temps, neq, liad,&
             if (abs(f2(ieq)) .gt. r8prem()) iret = 1
         enddo
         if ((iret.eq.1) .and. (method.ne.'NEWMARK')) then
-            call utmess('F', 'ALGORITH3_20')
+            call utmess('F', 'DYNALINE1_20')
         endif
 !
         do ieq = 1, lonch

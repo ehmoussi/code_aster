@@ -22,6 +22,7 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterc/getres.h"
+#include "asterfort/assert.h"
 #include "asterfort/utmess.h"
 !
 integer :: nbpas, nbinst, arch(*)
@@ -88,7 +89,7 @@ character(len=8) :: crit
                     trouve = .false.
                 endif
             else
-                call utmess('F', 'ALGORITH3_42', sk=crit)
+                ASSERT(ASTER_FALSE)
             endif
             if (trouve) then
                 nbtrou = nbtrou + 1
@@ -98,10 +99,10 @@ character(len=8) :: crit
         end do
         if (nbtrou .eq. 0) then
             valr = rval
-            call utmess('F', 'ALGORITH12_97', sr=valr)
+            call utmess('F', 'ARCHIVAGE_97', sr=valr)
         else if (nbtrou .ne. 1) then
             valr = rval
-            call utmess('F', 'ALGORITH12_98', sr=valr)
+            call utmess('F', 'ARCHIVAGE_98', sr=valr)
         endif
     end do
 !

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,6 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: josselin.delmas at edf.fr
 
 # Attention a ne pas faire de retour à la ligne !
 
@@ -38,5 +37,14 @@ cata_msg = {
 
     6 : _(u"""    Champ stocké <%(k1)s> à l'instant %(r1)19.12e pour le numéro d'ordre %(i1)d"""),
 
+    14 : _(u"""Il faut archiver au moins un champ."""),
 
+
+    97 : _(u"""
+Erreur lors de l'archivage. Il n'y a pas d'instant de calcul pour l'instant d'archivage %(r1)f.
+"""),
+
+    98 : _(u"""
+Erreur lors de l'archivage. Il y a plusieurs instants de calcul pour l'instant d'archivage %(r1)f.
+"""),
 }

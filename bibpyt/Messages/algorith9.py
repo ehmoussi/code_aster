@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -26,10 +26,7 @@ cata_msg = {
    Contactez l'équipe de développement CODE-ASTER.
  """),
 
-    2 : _(u"""
- la méthode de Newmark est programmée sous sa forme implicite:
- le paramètre BETA ne doit pas être nul.
- """),
+
 
     8 : _(u"""
  nombre de vecteurs demandé inférieur au nombre de modes du concept MODE_MECA
@@ -61,33 +58,16 @@ cata_msg = {
  Le nombre de pas est négatif.
 """),
 
-    26 : _(u"""
- le modèle est obligatoire
-"""),
 
-    27 : _(u"""
- impossible de combiner les mots clés CHARGE et VECT_ASSE en dehors des ondes planes
-"""),
 
-    28 : _(u"""
- concept réentrant : "RESULTAT" doit porter le même nom que la sortie
-"""),
 
-    29 : _(u"""
- concept réentrant : "RESULTAT" est d'un type différent
-"""),
- 
     30 : _(u"""
  argument en double pour "NOM_CHAM"
 """),
 
-    31 : _(u"""
- concept réentrant et TYPE_CALCUL="HARM" : le mot-clé "RESULTAT" est obligatoire
-"""),
-
 
     34 : _(u"""
- les matrices ne possèdent pas toutes la même numérotation
+Les matrices ne possèdent pas toutes la même numérotation.
 """),
 
     39 : _(u"""
