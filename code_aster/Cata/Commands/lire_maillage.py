@@ -35,26 +35,32 @@ keywords = dict(
     ),
 
     b_format_autre=BLOC(
-        condition = """ ( not equal_to("FORMAT", 'MED') ) """,
+        condition=""" ( not equal_to("FORMAT", 'MED') ) """,
         fr=tr("Informations complémentaires pour la lecture ASTER."),
 
-        UNITE =SIMP(statut='f', typ=UnitType(), defaut=20, inout='in'),
+        UNITE=SIMP(statut='f', typ=UnitType(), defaut=20, inout='in'),
     ),
 
     b_format_med=BLOC(
-        condition = """ ( equal_to("FORMAT", 'MED') ) """,
+        condition=""" ( equal_to("FORMAT", 'MED') ) """,
         fr=tr("Informations complémentaires pour la lecture MED."),
 
-        UNITE =SIMP(statut='f', typ=UnitType('med'), defaut=20, inout='in'),
+        UNITE=SIMP(statut='f', typ=UnitType('med'), defaut=20, inout='in'),
 
         # Pour une lecture dans un fichier MED, on peut préciser le nom sous lequel
         # le maillage y a été enregistré. Par défaut, on va le chercher sous le
         # nom du concept à créer.
-        NOM_MED = SIMP(statut='f', typ='TXM',
-                       fr=tr("Nom du maillage dans le fichier MED."),
+        NOM_MED=SIMP(statut='f', typ='TXM',
+                     fr=tr("Nom du maillage dans le fichier MED."),
         ),
-        INFO_MED = SIMP(statut='f', typ='I', defaut=1, into=(1, 2, 3)),
+        INFO_MED=SIMP(statut='f', typ='I', defaut=1, into=(1, 2, 3)),
 
+    ),
+
+    b_format_ideas=BLOC(
+        condition=""" ( equal_to("FORMAT", 'IDEAS') ) """,
+        CREA_GROUP_COUL=SIMP(statut='f', typ='TXM',
+                             defaut="NON", into=("OUI", "NON")),
     ),
 
     INFO=SIMP(statut='f', typ='I', defaut=1, into=(1, 2)),
