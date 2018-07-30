@@ -58,7 +58,7 @@ from Noyau.N_utils import cur_frame
 from Noyau.N_FONCTION import initial_context
 
 ALL = False
-COMMANDS = ('FORMULE', )
+COMMANDS = ('PRE_GIBI', 'PRE_GMSH', 'PRE_IDEAS', 'LIRE_MAILLAGE')
 FILENAME = 'change_syntax'
 DEST = osp.join(os.environ['HOME'], 'change_syntax')
 STX = Category()
@@ -168,7 +168,10 @@ class SyntaxVisitor(CommandTextVisitor):
         inf = step.frame_info
         assert inf, 'ERROR: command:%s, can not get line numbers' % self.cmdname
         start, end, indent, fname = inf
-        values = (start, end, indent, self.get_text(), )
+        cmdtext = self.get_text()
+        if self.command.empty:
+            cmdtext = ""
+        values = (start, end, indent, cmdtext, )
         self.text[fname] = self.text.get(fname, [])
         self.text[fname].append(values)
         message.debug(STX, "stored: %s : %r", fname, values)
@@ -221,6 +224,8 @@ class ChangeCommand(object):
         self.kwval = {}
         self.mcfact_id = None
         self.cur_vale_calc = None
+        # Set to *True* to removed the command
+        self.empty = False
 
     def _cur_dict(self):
         """Return the current storage."""
@@ -363,13 +368,89 @@ class ChangeFormule27515(ChangeCommand):
         return res
 
 
+class InfoStorage(object):
+
+    def __init__(self):
+        self.infos = {}
+        self.last = None
+
+    def store(self, key, value):
+        print "DEBUG: store", value
+        self.infos[key] = value
+        self.last = key
+
+    def pop(self, key):
+        return self.infos.pop(key)
+
+storage = InfoStorage()
+
+
+class ChangePreXXX(ChangeCommand):
+    """Change PRE_xxxx commands for 27911"""
+
+    def __init__(self):
+        super(ChangePreXXX, self).__init__()
+        self.empty = True
+        storage.store(id(self), (self.name, '19'))
+
+    def get_value(self, keyword):
+        """Return the couples (new keyword, new value)."""
+        dico = self._cur_dict()
+        value = dico[keyword]
+        unit = dico.get('UNITE_' + self.name, '19')
+
+        storage.store(id(self), (self.name, unit))
+        return [(keyword, value), ]
+
+
+class ChangePreGibi(ChangePreXXX):
+    name = 'GIBI'
+
+class ChangePreGmsh(ChangePreXXX):
+    name = 'GMSH'
+
+class ChangePreIdeas(ChangePreXXX):
+    name = 'IDEAS'
+
+
+class ChangeLireMaillage(ChangeCommand):
+    """Change PRE_xxxx commands for 27911"""
+
+    def __init__(self):
+        super(ChangeLireMaillage, self).__init__()
+        self.done = False
+        try:
+            self.fmt, self.unit = storage.pop(storage.last)
+        except KeyError:
+            self.fmt, self.unit = None, '19'
+
+    def get_value(self, keyword):
+        """Return the couples (new keyword, new value)."""
+        if self.done:
+            return []
+
+        dico = self._cur_dict()
+        value = dico[keyword]
+        if self.fmt is None:
+            return [(keyword, value), ]
+
+        current = [('FORMAT', repr(self.fmt)), ('UNITE', self.unit)]
+        dconv = {'FORMAT': current, 'UNITE': current}
+        self.done = True
+
+        res = dconv.get(keyword, [(keyword, value), ])
+        return res
+
+
 def ChangeFactory(cmdname):
-    # if cmdname == 'TEST_FONCTION':
-    #     return ChangeTestFonction()
-    # elif cmdname == 'TEST_RESU':
-    #     return ChangeTestResu()
-    if cmdname == 'FORMULE':
-        return ChangeFormule27515()
+    if cmdname == 'PRE_GIBI':
+        return ChangePreGibi()
+    elif cmdname == 'PRE_GMSH':
+        return ChangePreGmsh()
+    elif cmdname == 'PRE_IDEAS':
+        return ChangePreIdeas()
+    elif cmdname == 'LIRE_MAILLAGE':
+        return ChangeLireMaillage()
     else:
         return NoChange()
 
