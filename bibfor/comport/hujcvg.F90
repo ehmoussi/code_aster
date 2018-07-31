@@ -64,7 +64,7 @@ subroutine hujcvg(nmat, mater, nvi, vind, vinf,&
     integer :: indi(7), iter, iret, itmax, intg
     aster_logical :: bnews(3), mtrac, lreli
 !
-    integer :: nbmeca, nbmect, ndt, k, i, j, msup(2), resi, imin, ndi
+    integer :: nbmeca, nbmect, ndt, k, i, j, msup(4), resi, imin, ndi
     integer :: kk, jj
     real(kind=8) :: err, yf(nr), ydt(nr), yft(nr), dev(3), pf, qf
     real(kind=8) :: e0, pref, rtrac, ptrac, zero, maxi, ratio
@@ -341,6 +341,8 @@ subroutine hujcvg(nmat, mater, nvi, vind, vinf,&
 !     DURANT CETTE TENTATIVE?
     msup(1) = 0
     msup(2) = 0
+    msup(3) = 0
+    msup(4) = 0
     jj = 0
     do i = 5, 8
         if ((vind(23+i).ne.vins(23+i)) .and. (vind(23+i).eq.zero)) then

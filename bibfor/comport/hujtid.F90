@@ -70,9 +70,9 @@ subroutine hujtid(fami, kpg, ksp, mod, imat,&
     tempf = 0.d0
     call hujmat(fami, kpg, ksp, mod, imat,&
                 tempf, mater, ndt, ndi, nvi)
-    do 5 i = 1, ndt
+    do i = 1, ndt
         sig(i) = sigr(i)
- 5  continue
+    enddo
 !
     if (ndt .lt. 6) then
         sig(5)=zero
@@ -80,9 +80,9 @@ subroutine hujtid(fami, kpg, ksp, mod, imat,&
         ndt = 6
     endif
 !
-    do 6 i = 1, 7
+    do i = 1, 7
         ind(i) = 0
- 6  continue
+    enddo
 !
 !
 ! ======================================================================
@@ -116,31 +116,29 @@ subroutine hujtid(fami, kpg, ksp, mod, imat,&
 !
 !
 ! ---> INITIALISATION DE NBMECA, IND ET YD PAR VIN
-    do 11 k = 1, 6
-        psi(k) = zero
-        psi(6+k) = zero
-        dfds(12+k) = zero
-        dfds(18+k) = zero
-        dfds(24+k) = zero
-        dfds(30+k) = zero
-        dfds(36+k) = zero
-11  continue
+    do k = 1, 6
+        psi(k)    = zero
+        psi(6+k)  = zero
+        dfds(12+k)= zero
+        dfds(18+k)= zero
+        dfds(24+k)= zero
+        dfds(30+k)= zero
+        dfds(36+k)= zero
+        yd(k)     = zero
+        yd(6+k)   = zero
+        yd(12+k)  = zero
+    enddo
 !
-    do 9 i = 1, 21
-        sigd(k) = zero
- 9  continue
-!
-    do 12 k = 1, 7
-        rc(k) = zero
-        p(k) = zero
-        q(k) = zero
-        ad(k) = zero
-        ksi(k) = zero
-12  continue
-!
-    do 13 k = 1, 18
-        yd(k) = zero
-13  continue
+    do k = 1, 7
+        rc(k)     = zero
+        p(k)      = zero
+        q(k)      = zero
+        ad(k)     = zero
+        ksi(k)    = zero
+        sigd(k)   = zero
+        sigd(7+k) = zero
+        sigd(14+k)= zero
+    enddo
 !
 ! --- MODIFICATION A APPORTER POUR MECANISMES CYCLIQUES
     yd(ndt+1) = vin(23)
