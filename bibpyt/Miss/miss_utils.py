@@ -85,13 +85,15 @@ class MISS_PARAMETER(object):
         self._defaults = {
             '_INIDIR': initial_dir,
             '_WRKDIR': get_shared_tmpdir('tmp_miss3d', initial_dir),
-            '_NBM_DYN': None,
-            '_NBM_STAT': None,
+            'NBM_TOT': None,
+            'NBM_DYN': None,
+            'NBM_STA': None,
             '_exec_Miss': False,
             'EXCIT_HARMO': None,
             'INST_FIN': None,
             'PAS_INST': None,
             'FICHIER_SOL_INCI': 'NON',
+            'TOUT_CHAM': 'NON',
             # tâches élémentaires à la demande
             '_calc_impe': False,
             '_calc_forc': False,
@@ -145,47 +147,55 @@ class MISS_PARAMETER(object):
             self.set('_exec_Miss', True)
             self['UNITE_RESU_IMPE'] = self.UL.Libre(action='ASSOCIER',
                  ascii=self._keywords['TYPE'] == 'ASCII')
-        elif self['TYPE_RESU'] in ('TABLE_CONTROL'):
+        elif self['TYPE_RESU'] in ('TABLE_CONTROL', ):
             self.set('_exec_Miss', True)
 
         if self.get('UNITE_RESU_FORC') is None:
             self.set('_exec_Miss', True)
             self['UNITE_RESU_FORC'] = self.UL.Libre(action='ASSOCIER')
-        elif self['TYPE_RESU'] in ('TABLE_CONTROL'):
+        elif self['TYPE_RESU'] in ('TABLE_CONTROL', ):
             self.set('_exec_Miss', True)
 
         # fréquences
-        if self['TYPE_RESU'] not in ('CHARGE'):
-            if self['LIST_FREQ'] is not None \
-                    and self['TYPE_RESU'] not in ('FICHIER', 'HARM_GENE', 'TABLE_CONTROL'):
+        if self['TYPE_RESU'] not in ('CHARGE', ):
+            if (self['LIST_FREQ'] is not None and
+                    self['TYPE_RESU'] not in ('FICHIER', 'HARM_GENE', 'TABLE_CONTROL')):
                 raise aster.error('MISS0_17')
 
-        # si base modale, vérifier/compléter les amortissements réduits
-        if self['TYPE_RESU'] not in ('CHARGE'):
+            # récupération des infos sur les modes
             if self['BASE_MODALE']:
-                res = aster.dismoi(
-                    'NB_MODES_DYN', self['BASE_MODALE'].nom, 'RESULTAT', 'C')
-                ASSERT(res[0] == 0)
-                self['_NBM_DYN'] = res[1]
-                res = aster.dismoi(
-                    'NB_MODES_STA', self['BASE_MODALE'].nom, 'RESULTAT', 'C')
-                ASSERT(res[0] == 0)
-                self['_NBM_STAT'] = res[1]
+                basemo = self['BASE_MODALE'].nom
+            elif self['MACR_ELEM_DYNA']:
+                basemo = self['MACR_ELEM_DYNA'].sdj.MAEL_REFE.get()[0]
+            else:
+                ASSERT(False)
+
+            res = aster.dismoi('NB_MODES_TOT', basemo, 'RESULTAT', 'C')
+            ASSERT(res[0] == 0)
+            self['NBM_TOT'] = res[1]
+            res = aster.dismoi('NB_MODES_STA', basemo, 'RESULTAT', 'C')
+            ASSERT(res[0] == 0)
+            self['NBM_STA'] = res[1]
+            res = aster.dismoi('NB_MODES_DYN', basemo, 'RESULTAT', 'C')
+            ASSERT(res[0] == 0)
+            self['NBM_DYN'] = res[1]
+
+            # si base modale, vérifier/compléter les amortissements réduits
+            if self['BASE_MODALE']:
                 if self['AMOR_REDUIT']:
                     self.set('AMOR_REDUIT', force_list(self['AMOR_REDUIT']))
                     nval = len(self['AMOR_REDUIT'])
-                    if nval < self['_NBM_DYN']:
+                    if nval < self['NBM_DYN']:
                         # complète avec le dernier
-                        nadd = self['_NBM_DYN'] - nval
+                        nadd = self['NBM_DYN'] - nval
                         self._keywords['AMOR_REDUIT'].extend(
                             [self['AMOR_REDUIT'][-1], ] * nadd)
-                        nval = self['_NBM_DYN']
-                    if nval < self['_NBM_DYN'] + self['_NBM_STAT']:
+                        nval = self['NBM_DYN']
+                    if nval < self['NBM_DYN'] + self['NBM_STA']:
                         # on ajoute 0.
                         self._keywords['AMOR_REDUIT'].append(0.)
-        # la règle ENSEMBLE garantit que les 3 GROUP_MA_xxx sont tous absents
-        # ou tous présents
-        if self['TYPE_RESU'] not in ('CHARGE'):
+            # la règle ENSEMBLE garantit que les 3 GROUP_MA_xxx sont tous absents
+            # ou tous présents
             if self['ISSF'] != 'NON':
                 if self['GROUP_MA_FLU_STR'] is None:
                     UTMESS('F', 'MISS0_22')
