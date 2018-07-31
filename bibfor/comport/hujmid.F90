@@ -58,7 +58,7 @@ subroutine hujmid(mod, crit, mater, nvi, deps,&
 #include "asterfort/mgauss.h"
     integer :: ndt, ndi, nvi, nr, nmod, iret, nbmect
     integer :: i, j, k, kk, iter, indi(7), ndec0, ndec
-    integer :: nitimp, nbmeca, compt, msup(2)
+    integer :: nitimp, nbmeca, compt, msup(4)
     integer :: umess, ifm, niv
     integer :: essai, essmax, resi, nmax, imin
     aster_logical :: debug, noconv, aredec, stopnc, negmul(8), subd
@@ -663,6 +663,8 @@ subroutine hujmid(mod, crit, mater, nvi, deps,&
 !     DURANT CETTE TENTATIVE?
     msup(1) = 0
     msup(2) = 0
+    msup(3) = 0
+    msup(4) = 0
     j = 0
     do 320 i = 5, 8
         if ((vind(23+i).ne.vind0(23+i)) .and. (vind(23+i).eq.zero)) then

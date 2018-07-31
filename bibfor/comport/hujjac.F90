@@ -59,7 +59,7 @@ subroutine hujjac(mod, nmat, mater, indi, deps,&
     real(kind=8) :: r(nr), ydt(nr), yft(nr), dev(3), pf, qf
     real(kind=8) :: pref, e0, ptrac, rtrac, un, deux, zero, yet(nr), prob(3)
     real(kind=8) :: matert(22, 2)
-    integer :: nbmeca, nbmect, i, j, ndt, msup(2), k
+    integer :: nbmeca, nbmect, i, j, ndt, msup(4), k
 !
     parameter     (ndt  = 6   )
     parameter     (zero = 0.d0)
@@ -174,6 +174,8 @@ subroutine hujjac(mod, nmat, mater, indi, deps,&
 !     DURANT CETTE TENTATIVE?
         msup(1) = 0
         msup(2) = 0
+        msup(3) = 0
+        msup(4) = 0
         j = 0
         do 110 i = 5, 8
             if ((vind(23+i).ne.vins(23+i)) .and. (vind(23+i).eq.zero)) then
