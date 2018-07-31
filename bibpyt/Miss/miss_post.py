@@ -709,53 +709,34 @@ class PostMissControl(PostMiss):
     def execute(self):
         """Lecture du fichier produit par Miss"""
         reader = MissCsolReader(self.param['_nbPC'], self.param['_nbfreq'])
-        ncham = 3
-        if self.param['TOUT_CHAM'] is None :
-          ncham = 1
-        for k in range(0, ncham):
-          if k==0:
-            lfreq, values = reader.read(self.fname("01.csol.a"))
-            self.tab = tab = Table()
-            self.set_fft_accelero()
-            self.recombinaison()
-          if k==1:
-            lfreq, values = reader.read(self.fname("01.csol.v"))
-          if k==2:
-            lfreq, values = reader.read(self.fname("01.csol.d"))
-        # stockage des accéléro et leur fft
-          for ipc, respc in enumerate(values):
-            nompc = 'PC%d' % (ipc + 1)
-            # stocke les fonctions de transfert telles quelles
-            fct = []
-            for iddl, comp in enumerate(('X', 'Y', 'Z')):
-                valpc = respc.comp[iddl]
-                fct.append(self._fonct_transfert('FREQ', lfreq, *valpc))
-            if k==0:
-              self.add_line(nompc, 'TRANSFERT', 'FREQ',
-                          FONC_X=fct[0].nom,
-                          FONC_Y=fct[1].nom,
-                          FONC_Z=fct[2].nom)
-            if self.acce_x:
-              if k==0:
-                self.gen_funct(nompc, 'ACCE', 'FONC_X', fct[0], self.tf_xff)
-              if k==1:
-                self.gen_funct(nompc, 'VITE', 'FONC_X', fct[0], self.tf_xff)
-              if k==2:
-                self.gen_funct(nompc, 'DEPL', 'FONC_X', fct[0], self.tf_xff)
-            if self.acce_y:
-              if k==0:
-                self.gen_funct(nompc, 'ACCE', 'FONC_Y', fct[1], self.tf_yff)
-              if k==1:
-                self.gen_funct(nompc, 'VITE', 'FONC_Y', fct[1], self.tf_yff)
-              if k==2:
-                self.gen_funct(nompc, 'DEPL', 'FONC_Y', fct[1], self.tf_yff)
-            if self.acce_z:
-              if k==0:
-                self.gen_funct(nompc, 'ACCE', 'FONC_Z', fct[2], self.tf_zff)
-              if k==1:
-                self.gen_funct(nompc, 'VITE', 'FONC_Z', fct[2], self.tf_zff)
-              if k==2:
-                self.gen_funct(nompc, 'DEPL', 'FONC_Z', fct[2], self.tf_zff)
+        l_nom_cham = ('ACCE', )
+        if self.param['TOUT_CHAM'] == 'OUI':
+            l_nom_cham = ('ACCE', 'VITE', 'DEPL')
+        for cham in l_nom_cham:
+            filename = self.fname("01.csol." + cham[0].lower())
+            lfreq, values = reader.read(filename)
+            if cham == 'ACCE':
+                self.set_fft_accelero()
+                self.recombinaison()
+            # stockage des accéléro et leur fft
+            for ipc, respc in enumerate(values):
+                nompc = 'PC%d' % (ipc + 1)
+                # stocke les fonctions de transfert telles quelles
+                fct = []
+                for iddl, comp in enumerate(('X', 'Y', 'Z')):
+                    valpc = respc.comp[iddl]
+                    fct.append(self._fonct_transfert('FREQ', lfreq, *valpc))
+                if cham == 'ACCE':
+                    self.add_line(nompc, 'TRANSFERT', 'FREQ',
+                                  FONC_X=fct[0].nom,
+                                  FONC_Y=fct[1].nom,
+                                  FONC_Z=fct[2].nom)
+                if self.acce_x:
+                    self.gen_funct(nompc, cham, 'FONC_X', fct[0], self.tf_xff)
+                if self.acce_y:
+                    self.gen_funct(nompc, cham, 'FONC_Y', fct[1], self.tf_yff)
+                if self.acce_z:
+                    self.gen_funct(nompc, cham, 'FONC_Z', fct[2], self.tf_zff)
 
     def sortie(self):
         """Prépare et produit les concepts de sortie"""
