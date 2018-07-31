@@ -1,0 +1,141 @@
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),);
+
+from math import sqrt
+
+E       =   2029431300.40069     
+NU      =  0.450000000000000     
+ALPHA   =  0.
+
+MAT = DEFI_MATERIAU(ELAS= _F(E=E, NU=NU, RHO=1.,),
+                    HUJEUX = _F(N     =  0.,
+                                BETA  =  200.,
+                                D     =  3.5,
+                                B     =  0.6,
+                                PHI   =  40.,
+                                ANGDIL=  30.,
+                                PCO   =  -2240000.,
+                                PREF  =  -1000000.,
+                                ACYC  =  1.E-5,
+                                AMON  =  3.E-2,
+                                CCYC  =  3.E-4,
+                                CMON  =  3.E-4,
+                                RD_ELA=  1.E-2,
+                                RI_ELA=  1.E-2,
+                                RHYS  =  0.1,
+                                RMOB  =  0.9,
+                                XM    =  2.,
+                                RD_CYC=  1.E-2,
+                                RI_CYC=  1.E-2,
+                                DILA  =  1.,
+                                PTRAC =  0.,),);
+               
+epxx0 =-1.350354802792579E-021
+epyy0 =-3.980032078861482E-007
+epzz0 =0.
+epxy0 =8.492341581286122E-008/sqrt(2.)
+epxz0 =0./sqrt(2.)
+epyz0 =0./sqrt(2.)
+                    
+depxx = 7.372770706199615E-006
+depyy =4.632919275111915E-005
+depzz =0.000000000000000E+000
+depxy =1.733367998412452E-006/sqrt(2.)
+depxz =0.000000000000000E+000/sqrt(2.)
+depyz =0.000000000000000E+000/sqrt(2.)
+               
+vari_init = [0.]*50
+
+LIST=DEFI_LIST_REEL(DEBUT= 0.,
+                    INTERVALLE=_F(JUSQU_A=1., NOMBRE=1,),);
+
+EPXX=DEFI_FONCTION(NOM_PARA='INST',VALE=(0., epxx0, 1., epxx0+depxx),);
+
+EPYY=DEFI_FONCTION(NOM_PARA='INST',VALE=(0., epyy0, 1., epyy0+depyy),);
+
+EPZZ=DEFI_FONCTION(NOM_PARA='INST',VALE=(0., epzz0, 1., epzz0+depzz),);
+
+EPXY=DEFI_FONCTION(NOM_PARA='INST',VALE=(0., epxy0, 1., epxy0+depxy),);
+
+EPXZ=DEFI_FONCTION(NOM_PARA='INST',VALE=(0., epxz0, 1., epxz0+depxz),);
+
+EPYZ=DEFI_FONCTION(NOM_PARA='INST',VALE=(0., epyz0, 1., epyz0+depyz),);
+
+RESU=SIMU_POINT_MAT(INFO=1,
+
+                    MATER=MAT,
+                    
+                    INCREMENT=_F(LIST_INST=LIST),
+                    
+                    EPSI_IMPOSE=_F(EPXX=EPXX, EPYY=EPYY, EPZZ=EPZZ,
+                                   EPXY=EPXY, EPXZ=EPXZ, EPYZ=EPYZ),
+
+                    EPSI_INIT= _F(EPXX=epxx0,
+                                  EPYY=epyy0,
+                                  EPZZ=epzz0,
+                                  EPXY=epxy0,
+                                  EPXZ=epxz0,
+                                  EPYZ=epyz0,),
+
+                    SIGM_INIT=_F(SIXX=-125000.,
+                                 SIYY=-125000.,
+                                 SIZZ=-125000.,
+                                 SIXY=0./sqrt(2.),
+                                 SIXZ=0./sqrt(2.),
+                                 SIYZ=0./sqrt(2.),),
+                    
+                    VARI_INIT=_F(VALE=vari_init,),
+
+                    COMPORTEMENT=_F(RELATION      ='HUJEUX',
+                                    ITER_INTE_MAXI=10,
+                                    RESI_INTE_RELA=1.E-07,
+                                    ALGO_INTE     ='SPECIFIQUE',
+                                    ITER_INTE_PAS =-10,
+                                    PARM_THETA    =1.,
+                                    DEFORMATION   ='PETIT',),
+                    
+                    NEWTON=_F(REAC_ITER=1,),);
+
+IMPR_TABLE(TABLE=RESU);
+
+TEST_TABLE(VALE_CALC   =-2.,
+           TOLE_MACHINE=1.E-6,
+           NOM_PARA    ='SIXX',
+           TABLE       =RESU,
+           FILTRE      =_F(NOM_PARA='INST', VALE=1.,),);
+           
+TEST_TABLE(VALE_CALC   =-2.,
+           TOLE_MACHINE=1.E-6,
+           NOM_PARA    ='SIYY',
+           TABLE       =RESU,
+           FILTRE      =_F(NOM_PARA='INST', VALE=1.,),);
+
+TEST_TABLE(VALE_CALC   =-2.,
+           TOLE_MACHINE=1.E-6,
+           NOM_PARA    ='SIZZ',
+           TABLE       =RESU,
+           FILTRE      =_F(NOM_PARA='INST', VALE=1.,),);
+           
+TEST_TABLE(VALE_CALC   =8.05131752866E-06,
+           TOLE_MACHINE=1.E-6,
+           NOM_PARA    ='V23',
+           TABLE       =RESU,
+           FILTRE      =_F(NOM_PARA='INST', VALE=1.,),);
+
+FIN();
