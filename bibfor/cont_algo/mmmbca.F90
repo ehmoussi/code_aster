@@ -485,6 +485,7 @@ implicit none
             loop_cont_conv = .true.
         write (6,*) "resi_press_glob converge",  ds_contact%resi_press_glob
     endif
+        write (6,*) "plus petite arete de maillage",  ds_contact%arete_min
 !
 ! - Bilateral contact management
 !
