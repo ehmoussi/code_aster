@@ -465,10 +465,10 @@ implicit none
                 v_sdcont_cychis(n_cychis*(i_cont_poin-1)+51) = 4.0
                 v_sdcont_cychis(n_cychis*(i_cont_poin-1)+52) = 4.0
                 v_sdcont_cyceta(4*(i_cont_poin-1)+1)   = 10
-!                 coef_tmp =1.d0/ds_contact%arete_min
-!                 v_sdcont_cychis(n_cychis*(i_cont_poin-1)+2)    = coef_tmp
-!                 v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+2) = coef_tmp
-!             endif
+                coef_tmp =max(1.d0/ds_contact%arete_min,&
+                              v_sdcont_cychis(n_cychis*(i_cont_poin-1)+2))
+                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+2)    = coef_tmp
+                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+2) = coef_tmp
                 mmcvca =  indi_cont_prev .eq. indi_cont_curr
         endif
     endif
