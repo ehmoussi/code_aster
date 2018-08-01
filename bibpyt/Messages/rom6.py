@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -21,15 +21,13 @@
 
 cata_msg = {
 
-   1  : _(u"""Création des structures de données pour le post-traitement du calcul réduit."""), 
+   1  : _(u"""Création des structures de données pour le post-traitement du calcul réduit."""),
 
    2  : _(u"""Le modèle doit être le même sur les deux bases."""),
 
-   3  : _(u"""Initialisations pour le post-traitement du calcul réduit."""), 
+   3  : _(u"""Initialisations pour le post-traitement du calcul réduit."""),
 
-   4  : _(u"""On ne trouve pas la table des coordonnées réduites dans la structure de données résultat. Vérifiez qu'il vient bien d'un calcul réduit."""), 
-
-   5  : _(u"""Création du résultat de nom %(k1)s sur le modèle complet de nom %(k2)s."""), 
+   4  : _(u"""On ne trouve pas la table des coordonnées réduites dans la structure de données résultat. Vérifiez qu'il vient bien d'un calcul réduit."""),
 
    7  : _(u"""Le résultat sur le modèle complet sera de type %(k1)s."""),
 
@@ -37,20 +35,18 @@ cata_msg = {
 
    9  : _(u"""Le modèle de la base %(k1)s n'est pas celui du modèle complet. Vérifiez que vous n'utilisez pas la base tronquée."""),
 
-   10 : _(u"""Le résultat sur le modèle complet sera construit à partir du résultat réduit de nom %(k1)s sur le modèle %(k2)s."""),  
+   11 : _(u"""Le résultat sur le modèle réduit contient %(i1)d numéros d'ordre."""),
 
-   11 : _(u"""Le résultat sur le modèle réduit contient %(i1)d numéros d'ordre."""), 
+   12 : _(u"""La base empirique est construite sur un maillage différent du modèle. Ce n'est pas possible."""),
 
-   12 : _(u"""La base empirique est construite sur le maillage %(k1)s alors que le modèle repose sur le maillage %(k2)s. Ce n'est pas possible."""), 
-
-   13 : _(u"""Les deux modèles sont identiques, on ne peut rien tronquer !"""), 
+   13 : _(u"""Les deux modèles sont identiques, on ne peut rien tronquer !"""),
 
    14 : _(u"""On évalue le champ dual."""),
 
    15 : _(u"""Correction par le calcul éléments finis."""),
 
    20 : _(u"""Reconstruction des champs sur tout le domaine."""),
- 
+
    21 : _(u"""Reconstruction du champ primal."""),
 
    22 : _(u"""Reconstruction du champ dual."""),
@@ -61,6 +57,17 @@ cata_msg = {
 
    32 : _(u"""Échec lors du calcul des coordonnées réduites."""),
 
-   33 : _(u"""Le mode empirique de numéro d'ordre %(i1)d dans la base %(k1)s est mis à zéro."""),
+   33 : _(u"""Le mode empirique de numéro d'ordre %(i1)d dans la base est mis à zéro."""),
 
+   34 : _(u"""Création de la liste des noeuds appartenant au domaine réduit."""),
+
+   35 : _(u"""Le nombre de composantes par noeud n'est pas constant."""),
+
+   36 : _(u"""Le modèle est variable pendant le calcul, ce n'est pas possible en réduction de modèle."""),
+
+   37 : _(u"""Préparation de la liste des équations appartenant au domaine réduit."""),
+
+   38 : _(u"""Initialisations pour le post-traitement du calcul réduit, quantités primales."""),
+
+   39 : _(u"""Initialisations pour le post-traitement du calcul réduit, quantités duales."""),
 }

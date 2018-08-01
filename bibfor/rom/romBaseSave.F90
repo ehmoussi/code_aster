@@ -75,7 +75,7 @@ implicit none
 !
     call infniv(ifm, niv)
     if (niv .ge. 2) then
-        call utmess('I', 'ROM5_2', si = nb_mode, sk = ds_empi%base)
+        call utmess('I', 'ROM5_2', si = nb_mode)
     endif
 !
 ! - Initializations

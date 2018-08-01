@@ -17,8 +17,8 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine romEquationListCreate(ds_empi, v_equa  , nume_dof    ,&
-                                 grnode_, nb_node_, v_list_node_)
+subroutine romCreateEquationFromNode(ds_empi, v_equa  , nume_dof    ,&
+                                     grnode_, nb_node_, v_list_node_)
 !
 use Rom_Datastructure_type
 !
@@ -125,3 +125,4 @@ integer, pointer, optional :: v_list_node_(:)
     AS_DEALLOCATE(vk8 = v_list_cmp)
 !
 end subroutine
+

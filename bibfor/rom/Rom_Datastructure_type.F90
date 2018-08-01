@@ -38,7 +38,7 @@ implicit none
         character(len=8)  :: result
 ! ----- Number of snapshots
         integer           :: nb_snap
-! ----- Name of JEVEUX object for list of snapshots 
+! ----- Name of JEVEUX object for list of snapshots
         character(len=24) :: list_snap
     end type ROM_DS_Snap
 !
@@ -46,46 +46,53 @@ implicit none
 !
     type ROM_DS_LineicNumb
 ! ----- Number of slices
-        integer           :: nb_slice
+        integer           :: nb_slice = 0
 ! ----- For each node => which slice ?
-        integer, pointer  :: v_nume_pl(:)
+        integer, pointer  :: v_nume_pl(:) => null()
 ! ----- For each node => which IN slice ?
-        integer, pointer  :: v_nume_sf(:)
+        integer, pointer  :: v_nume_sf(:) => null()
 ! ----- Tolerance for separating nodes
-        real(kind=8)      :: tole_node
+        real(kind=8)      :: tole_node = 0.d0
+! ----- Number of components by node
+        integer           :: nb_cmp = 0
     end type ROM_DS_LineicNumb
 !
 ! - Datastructure for empiric modes
 !
     type ROM_DS_Empi
 ! ----- Name of empiric base to save
-        character(len=8)  :: base
+        character(len=8)  :: base = ' '
 ! ----- Type of field for (NOM_CHAM)
-        character(len=24) :: field_name
+        character(len=24) :: field_name = ' '
 ! ----- A field for reference (to manipulate real field)
-        character(len=24) :: field_refe
+        character(len=24) :: field_refe = ' '
 ! ----- Mesh
-        character(len=8)  :: mesh
+        character(len=8)  :: mesh = ' '
 ! ----- Model
-        character(len=8)  :: model
+        character(len=8)  :: model = ' '
 ! ----- Type of reduced base
-        character(len=8)  :: base_type
+        character(len=8)  :: base_type = ' '
 ! ----- Direction of the linear model
-        character(len=8)  :: axe_line
+        character(len=8)  :: axe_line = ' '
 ! ----- First section of the linear model
-        character(len=24) :: surf_num
+        character(len=24) :: surf_num = ' '
 ! ----- Number of equations
-        integer           :: nb_equa
+        integer           :: nb_equa = 0
 ! ----- Number of nodes
-        integer           :: nb_node
+        integer           :: nb_node = 0
 ! ----- Number of components by node
-        integer           :: nb_cmp
+        !integer           :: nb_cmp = 0
 ! ----- Number of modes in base
-        integer           :: nb_mode
+        integer           :: nb_mode = 0
 ! ----- Number of snapshots when created base
-        integer           :: nb_snap
+        integer           :: nb_snap = 0
 ! ----- Datastructure for lineic base numbering
         type(ROM_DS_LineicNumb) :: ds_lineic
+! ----- Number of components by node
+        integer           :: nb_cmp_by_node = 0
+        character(len=8)  :: cmp_by_node(10) = ' '
+! ----- Flag for Lagrange multiplier
+        aster_logical     :: l_lagr = ASTER_FALSE
     end type ROM_DS_Empi
 !
 ! - Parameters for REST_REDUIT_COMPLET operator
@@ -268,7 +275,7 @@ implicit none
         character(len=8)        :: model_rom
 ! ----- List of equations into RID
         integer, pointer        :: v_equa_rom(:)
-! ----- Profile of nodal field 
+! ----- Profile of nodal field
         character(len=24)       :: prof_chno_rom
 ! ----- Number of equation for RID
         integer                 :: nb_equa_rom
@@ -291,6 +298,8 @@ implicit none
         type(ROM_DS_ParaDBR_RB ) :: para_rb
 ! ----- Parameters for truncation method
         type(ROM_DS_ParaDBR_TR ) :: para_tr
+! ----- Datastructure for empiric modes
+        aster_logical            :: l_base
 ! ----- Datastructure for empiric modes
         type(ROM_DS_Empi)        :: ds_empi
 ! ----- If operator is "reuse"
@@ -326,7 +335,7 @@ implicit none
         integer           :: nb_layer_sub
         integer           :: nb_rid_mini
 ! ----- List of nodes for minimal rid
-        integer, pointer  :: v_rid_mini(:) 
+        integer, pointer  :: v_rid_mini(:)
     end type ROM_DS_ParaDDR
 !
 ! - Parameters for non_linear operator
@@ -359,5 +368,5 @@ implicit none
 ! ----- Penalisation parameter for EF correction
         real(kind=8)      :: vale_pena
     end type ROM_DS_AlgoPara
-!     
+!
 end module

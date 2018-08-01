@@ -15,8 +15,6 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
     subroutine dbr_calcpod_save(ds_empi, nb_mode, nb_snap_redu, field_iden, s, v)

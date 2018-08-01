@@ -34,6 +34,7 @@ implicit none
 #include "asterfort/infniv.h"
 #include "asterfort/jelira.h"
 #include "asterfort/uttrir.h"
+#include "asterfort/romLineicNumberComponents.h"
 #include "asterfort/romLineicIndexList.h"
 #include "asterfort/romLineicIndexSurf.h"
 #include "asterfort/utmess.h"
@@ -54,7 +55,7 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
 !
     integer :: niv, ifm
     type(ROM_DS_LineicNumb) :: ds_line
-    integer :: nb_node, nb_slice, i_node, nb_node_slice
+    integer :: nb_node, nb_slice, i_node, nb_node_slice, nb_cmp, nb_equa
     real(kind=8) :: tole_node
     character(len=8) :: axe_line = ' ', mesh= ' '
     character(len=24) :: surf_num = ' '
@@ -82,7 +83,15 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
     surf_num  = ds_empi%surf_num
     ds_line   = ds_empi%ds_lineic
     nb_node   = ds_empi%nb_node
+    nb_equa   = ds_empi%nb_equa
     tole_node = ds_line%tole_node
+    if (niv .ge. 2) then
+        call utmess('I', 'ROM2_6', sr = tole_node)
+    endif
+!
+! - Count number of components by node for lineic model
+!
+    call romLineicNumberComponents(nb_node, nb_equa, nb_cmp)
 !
 ! - Allocate pointers for lineic objects
 !
@@ -145,7 +154,7 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
         call romLineicIndexSurf(tole_node        ,&
                                 nb_node          , v_coor_z , v_coor_x,&
                                 nb_node_slice    , v_coor_1 , v_coor_2,&
-                                ds_line%v_nume_sf)   
+                                ds_line%v_nume_sf)
     elseif (axe_line .eq. 'OZ') then
         v_coor_w(1:nb_node) = v_coor_z(1:nb_node)
         call uttrir(nb_slice, v_coor_w, tole_node)
@@ -164,7 +173,7 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
                                 nb_node_slice    , v_coor_1 , v_coor_2,&
                                 ds_line%v_nume_sf)
     else
-        ASSERT(.false.)
+        ASSERT(ASTER_FALSE)
     endif
 !
 ! - Clean
@@ -177,9 +186,10 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
     AS_DEALLOCATE(vr = v_coor_1)
     AS_DEALLOCATE(vr = v_coor_2)
 !
-! - Save 
+! - Save
 !
     ds_line%nb_slice  = nb_slice
+    ds_line%nb_cmp    = nb_cmp
     ds_empi%ds_lineic = ds_line
 !
 end subroutine

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -93,7 +93,6 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
 ! ----- Create new mode (reduced)
         call rsexch(' ', ds_empi%base, field_name, i_mode,&
                     mode_rom, iret)
-        WRITE(6,*) 'mode_rom <',mode_rom,'>'
         ASSERT(iret .eq. 100)
         call vtcreb(mode_rom, 'G', 'R',&
                     meshz = ds_para_tr%ds_empi_init%mesh,&

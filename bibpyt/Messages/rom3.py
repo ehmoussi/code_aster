@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -21,21 +21,13 @@
 
 cata_msg = {
 
-    1 : _(u"""Nom de la base empirique:  %(k1)s"""),
-
-    2 : _(u"""La base empirique est construite sur le modèle %(k1)s"""),
-
-    3 : _(u"""La base empirique est construite sur le maillage %(k1)s"""),
-
-    4 : _(u"""La base empirique contient des champs de type %(k1)s"""),
+    4 : _(u"""La base empirique contient des champs de type %(k1)s."""),
 
     5 : _(u"""La base contient %(i1)d modes empiriques."""),
 
     6 : _(u"""Un mode est défini sur %(i1)d noeuds."""),
 
     7 : _(u"""Un mode contient %(i1)d équations."""),
-
-    8 : _(u"""Un mode est défini sur %(i1)d composantes."""),
 
     9 : _(u"""La base empirique a été construite avec %(i1)d clichés."""),
 
@@ -80,7 +72,7 @@ cata_msg = {
    46 : _(u"""Type de définition pour la variation des coefficients: %(k1)s."""),
 
    47 : _(u"""Nombre de variations des coefficients: %(i1)d par mode calculé."""),
-    
+
    48 : _(u"""Nombre de paramètres définis pour la variation des coefficients:  %(i1)d."""),
 
    50 : _(u"""Nom du paramètre: %(k1)s."""),
@@ -88,4 +80,10 @@ cata_msg = {
    51 : _(u"""Nombre total de valeurs pour le paramètre: %(i1)d."""),
 
    52 : _(u"""Valeur initiale du paramètre : %(r1)19.12e."""),
+
+   53 : _(u"""Les modes contiennent %(i1)d composantes par noeud."""),
+
+   54 : _(u"""Les modes contiennent des multiplicateurs de Lagrange."""),
+
+   55 : _(u"""Les modes ne contiennent pas de multiplicateurs de Lagrange."""),
 }

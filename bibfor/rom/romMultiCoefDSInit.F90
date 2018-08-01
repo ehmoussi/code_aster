@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,8 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine romMultiCoefDSInit(object_type, ds_multicoef)
+! person_in_charge: mickael.abbas at edf.fr
+! aslint: disable=W1403
+!
+subroutine romMultiCoefDSInit(ds_multicoef)
 !
 use Rom_Datastructure_type
 !
@@ -24,13 +26,8 @@ implicit none
 !
 #include "asterc/r8vide.h"
 #include "asterfort/assert.h"
-#include "asterfort/infniv.h"
-#include "asterfort/utmess.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=1), intent(in)       :: object_type
-    type(ROM_DS_MultiCoef), intent(out) :: ds_multicoef
+type(ROM_DS_MultiCoef), intent(out) :: ds_multicoef
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -40,30 +37,14 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  object_type      : type of object (VECT or MATR)
 ! Out ds_multicoef     : datastructure for multiparametric problems - Coefficients
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: ifm, niv
-!
-! --------------------------------------------------------------------------------------------------
-!
-    call infniv(ifm, niv)
-    if (niv .ge. 2) then
-        if (object_type .eq. 'V') then
-            call utmess('I', 'ROM5_90')
-        elseif (object_type .eq. 'M') then
-            call utmess('I', 'ROM5_91')
-        else
-            ASSERT(.false.)
-        endif
-    endif
-!
-    ds_multicoef%l_func         = .false.
-    ds_multicoef%l_cste         = .false.
-    ds_multicoef%l_cplx         = .false.
-    ds_multicoef%l_real         = .false.
+    ds_multicoef%l_func         = ASTER_FALSE
+    ds_multicoef%l_cste         = ASTER_FALSE
+    ds_multicoef%l_cplx         = ASTER_FALSE
+    ds_multicoef%l_real         = ASTER_FALSE
     ds_multicoef%func_name      = ' '
     ds_multicoef%coef_cste_cplx = dcmplx(0.d0, 0.d0)
     ds_multicoef%coef_cste_real = 0.d0

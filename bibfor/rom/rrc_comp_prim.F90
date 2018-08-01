@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -97,7 +97,7 @@ type(ROM_DS_ParaRRC), intent(in) :: ds_para
 !
     call romBaseCreateMatrix(ds_para%ds_empi_prim, v_prim)
 !
-! - Create [PHI] matrix for primal base on RID
+! - Reduce [PHI] matrix on RID
 !
     if (l_corr_ef) then
         AS_ALLOCATE(vr = v_prim_rom, size = nb_equa_ridp*nb_mode)
@@ -116,7 +116,7 @@ type(ROM_DS_ParaRRC), intent(in) :: ds_para
     nume_store = 0
     call romResultSetZero(result_dom, nume_store, ds_para%ds_empi_prim)
 !
-! - Reduced coordinates: Gappy POD if necessary 
+! - Reduced coordinates: Gappy POD if necessary
 !
     if (l_corr_ef) then
         call romEvalGappyPOD(ds_para, result_rom, nb_store, v_prim_rom,&
@@ -134,8 +134,8 @@ type(ROM_DS_ParaRRC), intent(in) :: ds_para
 ! - Compute new field
 !
     do i_store = 1, nb_store-1
-! ----- Get field to save
         nume_store = i_store
+! ----- Get field to save
         call rsexch(' ', result_dom, ds_para%ds_empi_prim%field_name,&
                     nume_store, field_save, iret)
         ASSERT(iret .eq. 100)
@@ -149,7 +149,7 @@ type(ROM_DS_ParaRRC), intent(in) :: ds_para
 ! ----- Set field
         do i_equa = 1, nb_equa
             nume_equa = ds_para%v_equa_ridp(i_equa)
-            if (nume_equa.eq. 0) then
+            if (ds_para%v_equa_ridp(i_equa).eq. 0) then
                 v_field_save(i_equa) = v_disp_dom(i_equa+nb_equa*(nume_store-1))
             else
                 v_field_save(i_equa) = v_disp_rid(nume_equa)

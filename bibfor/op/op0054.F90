@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -26,7 +26,7 @@ implicit none
 #include "asterfort/as_deallocate.h"
 #include "asterfort/infmaj.h"
 #include "asterfort/titre.h"
-#include "asterfort/rrc_ini0.h"
+#include "asterfort/rrc_DSInit.h"
 #include "asterfort/rrc_read.h"
 #include "asterfort/rrc_init.h"
 #include "asterfort/rrc_chck.h"
@@ -48,7 +48,7 @@ implicit none
 !
 ! - Initialization of datastructures
 !
-    call rrc_ini0(ds_para)
+    call rrc_DSInit(ds_para)
 !
 ! - Read parameters
 !

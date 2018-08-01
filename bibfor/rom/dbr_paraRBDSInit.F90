@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,6 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
+! aslint: disable=W1403
 !
 subroutine dbr_paraRBDSInit(ds_multipara, ds_solveDOM, ds_solveROM, ds_para_rb)
 !
@@ -25,8 +26,6 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterc/r8vide.h"
-#include "asterfort/infniv.h"
-#include "asterfort/utmess.h"
 !
 type(ROM_DS_Solve), intent(in)       :: ds_solveDOM
 type(ROM_DS_Solve), intent(in)       :: ds_solveROM
@@ -47,17 +46,6 @@ type(ROM_DS_ParaDBR_RB), intent(out) :: ds_para_rb
 ! Out ds_para_rb       : datastructure for RB parameters
 !
 ! --------------------------------------------------------------------------------------------------
-!
-    integer :: ifm, niv
-!
-! --------------------------------------------------------------------------------------------------
-!
-    call infniv(ifm, niv)
-    if (niv .ge. 2) then
-        call utmess('I', 'ROM5_26')
-    endif
-!
-! - General initialisations of datastructure
 !
     ds_para_rb%coef_redu       = '&&OP0053.COEF_REDU'
     ds_para_rb%solver          = '&&OP0053.SOLVER'

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -59,7 +59,7 @@ type(ROM_DS_Empi), intent(in) :: ds_empi
 !
     call infniv(ifm, niv)
     if (niv .ge. 2) then
-        call utmess('I', 'ROM6_33', si = nume_store, sk = ds_empi%base)
+        call utmess('I', 'ROM6_33', si = nume_store)
     endif
 !
 ! - Set zero

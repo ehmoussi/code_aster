@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -20,8 +20,6 @@
 # person_in_charge: mickael.abbas at edf.fr
 
 cata_msg = {
-
-   1  : _(u"""Création d'une base empirique à partir du résultat %(k1)s."""), 
 
    2  : _(u"""Création d'une base empirique à partir de champs de type %(k1)s."""), 
 
@@ -45,7 +43,7 @@ cata_msg = {
 
    14 : _(u"""Nombre final de clichés retenus dans l'algorithme incrémental: %(i1)d."""), 
 
-   15 : _(u"""Enrichissement de la base empirique %(k1)s."""), 
+   15 : _(u"""Enrichissement de la base empirique."""), 
 
    16 : _(u"""Création de nouveaux modes empiriques."""), 
 
@@ -55,9 +53,7 @@ cata_msg = {
 
    22 : _(u"""Paramètres spécifiques à la méthode de troncature."""),
 
-   23 : _(u"""On tronque la base empirique %(k1)s sur le modèle %(k2)s."""),
-
-   24 : _(u"""Le calcul de type POD_INCR nécessite de récupérer la table des coordonnées réduites dans la base %(k1)s.
+   24 : _(u"""Le calcul de type POD_INCR nécessite de récupérer la table des coordonnées réduites dans la base.
               Conseil: si vous récupérez la base d'un fichier externe (LIRE_RESU), ça ne peut pas fonctionner, il faut que la création de la base soit dans la même étude."""),
 
    25 : _(u"""Vous demandez à calculer un champ de type %(k1)s par REST_REDUIT_COMPLET alors que ce champ n'existe pas dans le résultat réduit.

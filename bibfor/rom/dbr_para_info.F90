@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -49,7 +49,7 @@ type(ROM_DS_ParaDBR), intent(in) :: ds_para
     integer :: ifm, niv
     character(len=16) :: operation = ' '
     character(len=8)  :: result_out = ' '
-    aster_logical :: l_reuse
+    aster_logical :: l_reuse, l_base
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -60,6 +60,7 @@ type(ROM_DS_ParaDBR), intent(in) :: ds_para
     operation    = ds_para%operation
     result_out   = ds_para%result_out
     l_reuse      = ds_para%l_reuse
+    l_base       = ds_para%l_base
 !
 ! - Print - General for DBR
 !
@@ -67,7 +68,7 @@ type(ROM_DS_ParaDBR), intent(in) :: ds_para
         call utmess('I', 'ROM5_24')
         call utmess('I', 'ROM5_16', sk = operation)
         if (l_reuse) then
-            call utmess('I', 'ROM7_15', sk = result_out)
+            call utmess('I', 'ROM7_15')
         else
             call utmess('I', 'ROM7_16')
         endif
@@ -76,7 +77,9 @@ type(ROM_DS_ParaDBR), intent(in) :: ds_para
 ! - Print about empiric base
 !
     if (niv .ge. 2) then
-        call romBaseInfo(ds_para%ds_empi)
+        if (l_base) then
+            call romBaseInfo(ds_para%ds_empi)
+        endif
     endif
 !
 ! - Print / method

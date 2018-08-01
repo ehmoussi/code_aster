@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine rrc_ini0(ds_para)
+subroutine rrc_DSInit(ds_para)
 !
 use Rom_Datastructure_type
 !
@@ -76,13 +76,13 @@ type(ROM_DS_ParaRRC), intent(out) :: ds_para
     ds_para%grnode_int    = ' '
     ds_para%ds_empi_prim  = empi_prim
     ds_para%ds_empi_dual  = empi_dual
-    ds_para%l_prev_dual   = .false._1
+    ds_para%l_prev_dual   = ASTER_FALSE
     ds_para%nb_equa_ridi  = 0
     ds_para%v_equa_ridi   => null()
     ds_para%nb_equa_ridd  = 0
     ds_para%v_equa_ridd   => null()
     ds_para%nb_equa_ridp  = 0
     ds_para%v_equa_ridp   => null()
-    ds_para%l_corr_ef     = .false._1
+    ds_para%l_corr_ef     = ASTER_FALSE
 !
 end subroutine

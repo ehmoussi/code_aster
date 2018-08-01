@@ -31,6 +31,7 @@ implicit none
 #include "asterfort/modelNodeEF.h"
 #include "asterfort/rsexch.h"
 #include "asterfort/rscrsd.h"
+#include "asterfort/romBaseComponents.h"
 !
 character(len=8), intent(in) :: base
 type(ROM_DS_ParaDBR_POD), intent(in) :: ds_para_pod
@@ -54,11 +55,13 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
 !
     integer :: ifm, niv
     integer :: iret, nume_first
-    integer :: nb_equa = 0, nb_node = 0, nb_mode_crea = 0, nb_mode_maxi = 0, nb_cmp = 0
+    integer :: nb_equa = 0, nb_node = 0, nb_mode_crea = 0, nb_mode_maxi = 0
     character(len=8)  :: model = ' ', mesh = ' '
-    character(len=16) :: field_name = ' '
     character(len=8)  :: axe_line = ' ', surf_num = ' ', base_type = ' ', result_in = ' '
-    character(len=24) :: field_refe = '&&ROM_COMP.FIELD'
+    character(len=24) :: field_refe = '&&ROM_COMP.FIELD', field_name = ' '
+    integer :: nb_cmp_by_node
+    character(len=8) :: cmp_by_node(10)
+    aster_logical :: l_lagr
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -70,7 +73,7 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
 ! - Get informations from parameters
 !
     result_in    = ds_para_pod%result_in
-    field_name   = ds_para_pod%field_name(1:16)
+    field_name   = ds_para_pod%field_name
     base_type    = ds_para_pod%base_type
     axe_line     = ds_para_pod%axe_line
     surf_num     = ds_para_pod%surf_num(1:8)
@@ -79,7 +82,6 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
 ! - Get information about model
 !
     call dismoi('NOM_MODELE', result_in, 'RESULTAT', repk = model)
-    WRITE(6,*) 'Mounoune: ',result_in,model
     if (model .eq. '#AUCUN' .or. model .eq. ' ') then
         if (ds_para_pod%model .eq. ' ') then
             call utmess('F', 'ROM5_54')
@@ -95,16 +97,21 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
     if (iret .ne. 0) then
         call utmess('F', 'ROM5_11', sk = field_name)
     endif
-    call dismoi('NB_EQUA'     , field_refe, 'CHAM_NO' , repi = nb_equa) 
+    call dismoi('NB_EQUA'     , field_refe, 'CHAM_NO' , repi = nb_equa)
     call dismoi('NOM_MAILLA'  , field_refe, 'CHAM_NO' , repk = mesh)
+!
+! - Get components in fields
+!
+    call romBaseComponents(mesh          , nb_equa    ,&
+                           field_name    , field_refe ,&
+                           nb_cmp_by_node, cmp_by_node, l_lagr)
+    if (l_lagr) then
+        call utmess('F', 'ROM5_22')
+    endif
 !
 ! - Get number of nodes affected by model
 !
     call modelNodeEF(model, nb_node)
-    if (mod(nb_equa, nb_node) .ne. 0) then
-        call utmess('I', 'ROM5_53')
-    endif
-    nb_cmp = nb_equa/nb_node
 !
 ! - Create empiric base
 !
@@ -132,7 +139,6 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
     ds_empi%surf_num     = surf_num
     ds_empi%nb_equa      = nb_equa
     ds_empi%nb_node      = nb_node
-    ds_empi%nb_cmp       = nb_cmp
     ds_empi%nb_mode      = 0
 !
 end subroutine

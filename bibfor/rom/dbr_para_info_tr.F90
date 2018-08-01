@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -56,11 +56,5 @@ type(ROM_DS_ParaDBR_TR), intent(in) :: ds_para_tr
 !
     base_init = ds_para_tr%base_init
     model_rom = ds_para_tr%model_rom
-!
-! - Print - General for POD
-!
-    if (niv .ge. 2) then
-        call utmess('I', 'ROM7_23' , nk = 2, valk = [base_init, model_rom])
-    endif
 !
 end subroutine

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -21,19 +21,13 @@
 
 cata_msg = {
 
-    1 : _(u"""La base empirique %(k1)s est copiée dans la base empirique %(k2)s."""),
+    1 : _(u"""La base empirique est copiée."""),
 
-    2 : _(u"""Lecture de la base empirique de nom %(k1)s."""),
-
-    3 : _(u"""Initialisation de la base empirique."""),
+    2 : _(u"""Lecture de la base empirique."""),
 
     4 : _(u"""Lecture des données pour sélectionner les clichés."""),
 
-    5 : _(u"""Initialisation de la structure de données pour sélectionner les clichés."""),
-
-    6 : _(u"""Initialisation de la structure de données pour les modes linéiques."""),
-
-    7 : _(u"""Troncature des modes de la base empirique."""),
+    6 : _(u"""Tolérance pour détecter les noeuds: %(r1)19.12e."""),
 
     8 : _(u"""Création de la liste des équations sur la base empirique %(k1)s."""),
 

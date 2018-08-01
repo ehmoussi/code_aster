@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+! aslint: disable=W1403
+!
 subroutine romMultiParaDSInit(ds_multicoef_v, ds_multicoef_m, ds_varipara, ds_evalcoef,&
                               ds_multipara)
 !
@@ -24,16 +26,12 @@ use Rom_Datastructure_type
 implicit none
 !
 #include "asterc/r8vide.h"
-#include "asterfort/infniv.h"
-#include "asterfort/utmess.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    type(ROM_DS_MultiCoef), intent(in)  :: ds_multicoef_v
-    type(ROM_DS_MultiCoef), intent(in)  :: ds_multicoef_m
-    type(ROM_DS_VariPara), intent(in)   :: ds_varipara
-    type(ROM_DS_EvalCoef), intent(in)   :: ds_evalcoef
-    type(ROM_DS_MultiPara), intent(out) :: ds_multipara
+type(ROM_DS_MultiCoef), intent(in)  :: ds_multicoef_v
+type(ROM_DS_MultiCoef), intent(in)  :: ds_multicoef_m
+type(ROM_DS_VariPara), intent(in)   :: ds_varipara
+type(ROM_DS_EvalCoef), intent(in)   :: ds_evalcoef
+type(ROM_DS_MultiPara), intent(out) :: ds_multipara
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -50,17 +48,6 @@ implicit none
 ! Out ds_multipara     : datastructure for multiparametric problems
 !
 ! --------------------------------------------------------------------------------------------------
-!
-    integer :: ifm, niv
-!
-! --------------------------------------------------------------------------------------------------
-!
-    call infniv(ifm, niv)
-    if (niv .ge. 2) then
-        call utmess('I', 'ROM5_43')
-    endif
-!
-! - General
 !
     ds_multipara%syst_type       = ' '
     ds_multipara%nb_matr         = 0

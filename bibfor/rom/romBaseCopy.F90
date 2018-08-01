@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -47,20 +47,17 @@ type(ROM_DS_Empi), intent(out) :: ds_empi_out
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    character(len=8) :: valk(2)
 !
 ! --------------------------------------------------------------------------------------------------
 !
     call infniv(ifm, niv)
     if (niv .ge. 2) then
-        valk(1) = ds_empi_in%base
-        valk(2) = base
-        call utmess('I', 'ROM2_1', nk = 2, valk = valk)
+        call utmess('I', 'ROM2_1')
     endif
 !
 ! - Initialisation of datastructure
 !
-    call romBaseDSInit(ds_empi_in%ds_lineic, ds_empi_out) 
+    call romBaseDSInit(ds_empi_in%ds_lineic, ds_empi_out)
 !
 ! - Copy informations
 !
@@ -74,7 +71,6 @@ type(ROM_DS_Empi), intent(out) :: ds_empi_out
     ds_empi_out%surf_num   = ds_empi_in%surf_num
     ds_empi_out%nb_equa    = ds_empi_in%nb_equa
     ds_empi_out%nb_node    = ds_empi_in%nb_node
-    ds_empi_out%nb_cmp     = ds_empi_in%nb_cmp
     ds_empi_out%nb_mode    = ds_empi_in%nb_mode
 !
 ! - Change base

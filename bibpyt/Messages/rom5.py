@@ -23,11 +23,11 @@ cata_msg = {
 
     1 : _(u"""Création de la matrice des clichés."""),
 
-    2 : _(u"""Sauvegarde des %(i1)d modes empiriques dans la base empirique %(k1)s."""),
+    2 : _(u"""Sauvegarde des %(i1)d modes empiriques dans la base empirique."""),
 
-    4 : _(u"""Comptage du nombre de modes empiriques à sélectionner."""), 
+    4 : _(u"""Comptage du nombre de modes empiriques à sélectionner."""),
 
-    5 : _(u"""On a %(i1)d valeurs singulières comprises entre %(r1)13.6G et %(r2)13.6G . Avec les paramètres, on a retenu %(i2)d modes empiriques."""),   
+    5 : _(u"""On a %(i1)d valeurs singulières comprises entre %(r1)13.6G et %(r2)13.6G . Avec les paramètres, on a retenu %(i2)d modes empiriques."""),
 
     6 : _(u"""Le critère de sélection des valeurs singulières ne permet pas d'extraire au moins un mode empirique. Il faut changer la tolérance ou le nombre de modes."""),
 
@@ -45,8 +45,6 @@ cata_msg = {
 
    13 : _(u"""On a détecté %(i1)d tranches pour la définition des modes linéiques."""),
 
-   14 : _(u"""Initialisation des structures de données pour les paramètres du calcul."""),
-
    15 : _(u"""Le nombre de couches du domaine est inférieur au nombre de couches de l'interface, on aura peut-être un problème de convergence"""),
 
    16 : _(u"""Méthode de construction de la base empirique: %(k1)s """),
@@ -55,26 +53,18 @@ cata_msg = {
 
    18 : _(u"""Lecture des paramètres pour la méthode POD ou POD_INCR."""),
 
-   19 : _(u"""Vérifications de la conformité de la structure de données résultat utilisée de nom %(k1)s."""),
+   19 : _(u"""Vérifications de la conformité de la structure de données résultat utilisée."""),
 
    20 : _(u"""On ne peut utiliser des bases empiriques qu'avec des maillages tridimensionnels."""),
- 
-   21 : _(u"""Un mode empirique de type %(k1)s ne doit contenir que %(i1)d composantes."""),
- 
-   22 : _(u"""Un mode empirique contient des conditions limites dualisés (AFFE_CHAR_THER ou AFFE_CHAR_MECA). 
+
+   22 : _(u"""Un mode empirique contient des conditions limites dualisés (AFFE_CHAR_THER ou AFFE_CHAR_MECA).
               Ce n'est pas possible, utilisez AFFE_CHAR_CINE"""),
 
-   23 : _(u"""Un mode empirique contient une composante au noeud %(k1)s qui n'est pas utilisable."""),
+   23 : _(u"""Un mode empirique contient une composante au noeud %(k1)s qui n'est pas autorisée."""),
 
    24 : _(u"""Paramètres généraux de DEFI_BASE_REDUITE."""),
 
-   25 : _(u"""Initialisation des structures de données pour les paramètres POD du calcul."""),
-
-   26 : _(u"""Initialisation des structures de données pour les paramètres GLOUTON du calcul."""),
-
    27 : _(u"""Lecture des paramètres pour la méthode GLOUTON."""),
-
-   28 : _(u"""Initialisation des structures de données pour les paramètres de troncature."""),
 
    29 : _(u"""Lecture des paramètres pour la méthode de troncature."""),
 
@@ -104,8 +94,6 @@ cata_msg = {
 
    42 : _(u"""Suppression de la structure de données pour réaliser le calcul non-linéaire avec réduction de modèle."""),
 
-   43 : _(u"""Initialisation de la structure de données pour le calcul multi-paramétrique avec réduction de modèle."""),
-
    44 : _(u"""Évaluation des coefficients pour la valeur %(i1)d des paramètres."""),
 
    45 : _(u"""Valeur du coefficient réel pour le vecteur de nom %(k1)s : %(r1)19.12e."""),
@@ -118,13 +106,11 @@ cata_msg = {
 
    49 : _(u"""La base empirique ne repose pas sur le même modèle sur le calcul non-linéaire."""),
 
-   50 : _(u"""Initialisation de la structure de données pour résoudre le système %(k1)s."""),
-
    51 : _(u"""Valeur des paramètres pour la variation d'indice %(i1)d."""),
 
    52 : _(u"""Le paramètre %(k1)s vaut %(r1)19.12e."""),
 
-   53 : _(u"""Le nombre de composantes dans le modèle est incorrect. Vérifiez que vous n'avez pas de chargements de Dirichlet appliqués avec AFFE_CHAR_MECA."""),
+   53 : _(u"""Pour les modèles linéiques, le nombre de composantes par noeud doit être constant. Vérifiez que vous n'avez pas de chargements de Dirichlet appliqués avec AFFE_CHAR_MECA."""),
 
    54 : _(u"""Il n'y a pas de modèle attaché à la structure de données résultat en entrée, il faut renseigner le modèle dans la commande avec le mot-clef MODELE."""),
 
@@ -148,13 +134,11 @@ cata_msg = {
 
    68 : _(u"""Troncature de la base empirique."""),
 
-   81 : _(u"""Initialisation de la structure de données pour la variation des coefficients pour le calcul multi-paramétrique."""),
+   69 : _(u"""Le pilotage est interdit avec la réduction de modèle."""),
 
-   82 : _(u"""Initialisation de la structure de données pour l'évaluation des coefficients pour le calcul multi-paramétrique."""),
+   70 : _(u"""La dynamique est interdite avec la réduction de modèle."""),
 
-   90 : _(u"""Initialisation de la structure de données des coefficients pour le calcul multi-paramétrique (second membre)."""),
-
-   91 : _(u"""Initialisation de la structure de données des coefficients pour le calcul multi-paramétrique (matrice)."""),
+   71 : _(u"""Le contact est interdit avec la réduction de modèle."""),
 
    92 : _(u"""Calcul du mode empirique initial."""),
 
