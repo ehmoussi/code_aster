@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -25,7 +25,7 @@ cata_msg = {
 
     9 : _(u"""Les bases ne sont pas définies sur le même maillage."""),
 
-   10 : _(u"""Les bases ne sont pas définies sur le maillage %(k1)s."""),
+   10 : _(u"""Les bases ne sont pas définies sur le même maillage que le résultat."""),
 
    11 : _(u"""Le modèle doit être le même sur tous les modes des bases."""),
 
@@ -37,7 +37,7 @@ cata_msg = {
 
    17 : _(u"""Les modes empiriques ne sont pas des champs gradients du type attendu (on attend %(k1)s). """),
 
-   20 : _(u"""Calcul du domaine réduit sur la base %(k1)s. """),
+   20 : _(u"""Calcul du domaine réduit. """),
 
    21 : _(u"""Création des groupes dans le maillage pour l'estimation du domaine réduit."""),  
 

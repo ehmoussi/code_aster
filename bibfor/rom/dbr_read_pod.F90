@@ -51,9 +51,7 @@ type(ROM_DS_ParaDBR_POD), intent(inout) :: ds_para_pod
     integer :: nocc, ifm, niv
     real(kind=8) :: tole_svd = 0.d0, tole_incr = 0.d0
     character(len=16) :: field_name = ' '
-    character(len=8)  :: axe_line = ' '
-    character(len=8)  :: surf_num = ' '
-    character(len=8)  :: base_type = ' '
+    character(len=8)  :: axe_line = ' ', surf_num = ' ', base_type = ' '
     character(len=8)  :: result_in = ' ', model = ' '
     integer :: nb_mode_maxi = 0
     type(ROM_DS_Snap) :: ds_snap

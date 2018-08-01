@@ -15,14 +15,13 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine dbr_calcpod_q(ds_empi, ds_snap, q)
+    subroutine dbr_calcpod_q(ds_empi, ds_snap, m, n, q)
         use Rom_Datastructure_type
         type(ROM_DS_Empi), intent(in) :: ds_empi
         type(ROM_DS_Snap), intent(in) :: ds_snap
+        integer, intent(in) :: m, n
         real(kind=8), pointer :: q(:)
     end subroutine dbr_calcpod_q
 end interface

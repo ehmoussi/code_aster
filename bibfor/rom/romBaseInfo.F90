@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine romBaseInfo(ds_empi)
 !
 use Rom_Datastructure_type
@@ -26,9 +27,7 @@ implicit none
 #include "asterfort/assert.h"
 #include "asterfort/utmess.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    type(ROM_DS_Empi), intent(in) :: ds_empi
+type(ROM_DS_Empi), intent(in) :: ds_empi
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -43,9 +42,6 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
     call utmess('I', 'ROM7_8')
-    call utmess('I', 'ROM3_1', sk = ds_empi%base)
-    call utmess('I', 'ROM3_2', sk = ds_empi%model)
-    call utmess('I', 'ROM3_3', sk = ds_empi%mesh)
     call utmess('I', 'ROM3_4', sk = ds_empi%field_name)
     if (ds_empi%base_type .eq. 'LINEIC') then
         call utmess('I', 'ROM3_10')
@@ -60,9 +56,14 @@ implicit none
     endif
     call utmess('I', 'ROM3_6', si = ds_empi%nb_node)
     call utmess('I', 'ROM3_7', si = ds_empi%nb_equa)
-    call utmess('I', 'ROM3_8', si = ds_empi%nb_cmp)
     if (ds_empi%nb_snap .ne. 0) then
         call utmess('I', 'ROM3_9', si = ds_empi%nb_snap)
+    endif
+    call utmess('I', 'ROM3_53', si = ds_empi%nb_cmp_by_node)
+    if (ds_empi%l_lagr) then
+        call utmess('I', 'ROM3_54')
+    else
+        call utmess('I', 'ROM3_55')
     endif
 !
 end subroutine

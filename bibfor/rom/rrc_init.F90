@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -28,17 +28,14 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/ltnotb.h"
 #include "asterfort/tbexve.h"
-#include "asterfort/jeveuo.h"
-#include "asterfort/jexnom.h"
 #include "asterfort/rs_get_liststore.h"
 #include "asterfort/rscrsd.h"
 #include "asterfort/rrc_info.h"
 #include "asterfort/dismoi.h"
-#include "asterfort/rsexch.h"
-#include "asterfort/jelira.h"
-#include "asterfort/select_dof_3.h"
 #include "asterfort/as_allocate.h"
 #include "asterfort/as_deallocate.h"
+#include "asterfort/rrc_init_prim.h"
+#include "asterfort/rrc_init_dual.h"
 !
 type(ROM_DS_ParaRRC), intent(inout) :: ds_para
 !
@@ -58,14 +55,10 @@ type(ROM_DS_ParaRRC), intent(inout) :: ds_para
     integer :: iret
     character(len=24) :: typval, field_name
     integer :: nbval, nb_store
-    integer :: nb_equa_dual, nb_cmp_dual, nb_equa_ridd
-    integer :: nb_equa_prim, nb_cmp_prim, nb_equa_ridp
-    integer :: nb_node_grno, i_cmp, i_node, i_eq, noeq = 0, nord = 0
+    integer :: nb_equa_dual, nb_equa_prim
     aster_logical :: l_prev_dual
     character(len=8) :: result_rom, mesh
-    character(len=24) :: field
-    integer, pointer  :: v_grno(:) => null()
-    integer, pointer  :: v_int_dual(:) => null()
+    character(len=24) :: mode_prim, mode_dual
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -78,11 +71,11 @@ type(ROM_DS_ParaRRC), intent(inout) :: ds_para
 !
     l_prev_dual  = ds_para%l_prev_dual
     result_rom   = ds_para%result_rom
-    nb_equa_dual = ds_para%ds_empi_dual%nb_equa
-    nb_cmp_dual  = ds_para%ds_empi_dual%nb_cmp
+    mesh         = ds_para%ds_empi_prim%mesh
     nb_equa_prim = ds_para%ds_empi_prim%nb_equa
-    nb_cmp_prim  = ds_para%ds_empi_prim%nb_cmp
-    mesh         = ds_para%ds_empi_dual%mesh
+    mode_prim    = ds_para%ds_empi_prim%field_refe
+    nb_equa_dual = ds_para%ds_empi_dual%nb_equa
+    mode_dual    = ds_para%ds_empi_dual%field_refe
 !
 ! - Get table for reduced coordinates
 !
@@ -115,57 +108,30 @@ type(ROM_DS_ParaRRC), intent(inout) :: ds_para
     ds_para%nb_store = nb_store
     call rscrsd('G', ds_para%result_dom, ds_para%type_resu, nb_store)
 !
-! - Set models
+! - Get model
 !
     call dismoi('MODELE', ds_para%result_rom, 'RESULTAT', repk=ds_para%model_rom)
-!
-! - List of equations in RID (for primal)
-!
-    AS_ALLOCATE(vi = ds_para%v_equa_ridp, size = nb_equa_prim)
-    call rsexch(' ', result_rom, ds_para%ds_empi_prim%field_name,&
-                1, field, iret)
-    call jelira(field(1:19)//'.VALE', 'LONMAX', nb_equa_ridp)
-    call select_dof_3(field, nb_cmp_prim, ds_para%v_equa_ridp)
-    ds_para%nb_equa_ridp = nb_equa_ridp
-!
-! - List of equations in RID (for dual)
-!
-    if (l_prev_dual) then
-        AS_ALLOCATE(vi = ds_para%v_equa_ridd, size = nb_equa_dual)
-        call rsexch(' ', result_rom, ds_para%ds_empi_dual%field_name,&
-                    1, field, iret)
-        if (iret .ne. 0) then
-            call utmess('F', 'ROM7_25', sk = ds_para%ds_empi_dual%field_name)
-        endif
-        call jelira(field(1:19)//'.VALE', 'LONMAX', nb_equa_ridd)
-        call select_dof_3(field, nb_cmp_dual, ds_para%v_equa_ridd)
-        ds_para%nb_equa_ridd = nb_equa_ridd
-        AS_ALLOCATE(vi = ds_para%v_equa_ridi, size = nb_equa_ridd)
-        call jelira(jexnom(mesh//'.GROUPENO',ds_para%grnode_int), 'LONUTI', nb_node_grno)
-        call jeveuo(jexnom(mesh//'.GROUPENO',ds_para%grnode_int), 'L'     , vi = v_grno)
-        AS_ALLOCATE(vi = v_int_dual, size = nb_equa_dual)
-        do i_node = 1, nb_node_grno
-            do i_cmp = 1, nb_cmp_dual
-                v_int_dual(i_cmp+nb_cmp_dual*(v_grno(i_node)-1)) = 1
-            enddo
-        enddo
-        do i_eq = 1, nb_equa_dual
-            if (ds_para%v_equa_ridd(i_eq) .ne. 0) then
-                nord = nord + 1
-                if (v_int_dual(i_eq) .eq. 0) then
-                    noeq = noeq + 1
-                    ds_para%v_equa_ridd(i_eq) = noeq
-                    ds_para%v_equa_ridi(nord) = noeq
-                else
-                    ds_para%v_equa_ridd(i_eq) = 0
-                endif
-            endif
-        enddo
-        ds_para%nb_equa_ridi = nb_equa_ridd - nb_node_grno*nb_cmp_dual
-        AS_DEALLOCATE(vi = v_int_dual)
+    if (ds_para%model_rom .eq. '#PLUSIEURS') then
+        call utmess('F', 'ROM6_36')
     endif
 !
-! - Print parameters
+! - Initializations for primal base
+!
+    call rrc_init_prim(mesh               , result_rom , field_name,&
+                       nb_equa_prim       , mode_prim  ,&
+                       ds_para%v_equa_ridp, ds_para%nb_equa_ridp)
+!
+! - Initializations for dual base
+!
+    if (l_prev_dual) then
+        field_name = ds_para%ds_empi_dual%field_name
+        call rrc_init_dual(mesh        , result_rom , field_name,&
+                           nb_equa_dual, mode_dual  , ds_para%grnode_int,&
+                           ds_para%v_equa_ridd, ds_para%nb_equa_ridd,&
+                           ds_para%v_equa_ridi, ds_para%nb_equa_ridi)
+    endif
+!
+! - Print parameters (debug)
 !
     if (niv .ge. 2) then
         call rrc_info(ds_para)

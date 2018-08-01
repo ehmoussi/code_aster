@@ -44,6 +44,7 @@ implicit none
 #include "blas/dgemm.h"
 #include "blas/dgesv.h"
 #include "blas/dgesvd.h"
+#include "asterc/r8prem.h"
 !
 aster_logical, intent(in) :: l_reuse
 integer, intent(in) :: nb_mode_maxi
@@ -62,14 +63,14 @@ integer, intent(out) :: nb_snap_redu
 ! Incremental POD method
 !
 ! --------------------------------------------------------------------------------------------------
-!  
+!
 ! In  l_reuse          : .true. if reuse
 ! In  nb_mode_maxi     : maximum number of emprical modes
 ! IO  ds_empi          : datastructure for empiric modes
 ! In  ds_para_pod      : datastructure for parameters (POD)
 ! IO  q                : pointer to snapshots matrix (be modified after SVD)
-! Out s                : singular values 
-! Out v                : singular vectors 
+! Out s                : singular values
+! Out v                : singular vectors
 ! Out nb_mode          : number of modes selected
 ! Out nb_snap_redu     : number of snapshots used in incremental algorithm
 !
@@ -125,7 +126,7 @@ integer, intent(out) :: nb_snap_redu
         call romBaseRead(base, ds_empi)
         call ltnotb(base, 'COOR_REDUIT', tabl_name_r, iret)
         if (iret .gt. 0) then
-            call utmess('F', 'ROM7_24', sk = base)
+            call utmess('F', 'ROM7_24')
         endif
         call tbexve(tabl_name_r, 'COOR_REDUIT', '&&COORHR', 'V', nbval, typval)
         call jeveuo('&&COORHR', 'E', vr = v_gm)
@@ -155,7 +156,7 @@ integer, intent(out) :: nb_snap_redu
     else
         qi(1:nb_equa) = q(1:nb_equa)
         call norm_frobenius(nb_equa, qi, norm_q)
-        if (norm_q .eq. 0) then
+        if (norm_q .le. r8prem()) then
             norm_q = 1.d-16*sqrt(nb_equa*1.d0)
             vt(1:nb_equa)=1.d0/sqrt(nb_equa*1.d0)
         else

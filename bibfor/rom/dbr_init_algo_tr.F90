@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -32,7 +32,7 @@ implicit none
 #include "asterfort/dismoi.h"
 #include "asterfort/numero.h"
 #include "asterfort/modelNodeEF.h"
-#include "asterfort/romEquationListCreate.h"
+#include "asterfort/romCreateEquationFromNode.h"
 !
 type(ROM_DS_ParaDBR_TR), intent(inout) :: ds_para_tr
 !
@@ -88,11 +88,11 @@ type(ROM_DS_ParaDBR_TR), intent(inout) :: ds_para_tr
 !
 ! - Prepare the list of equations from list of nodes
 !
-    call romEquationListCreate(ds_para_tr%ds_empi_init,&
-                               ds_para_tr%v_equa_rom,&
-                               nume_dom     ,&
-                               nb_node_     = nb_node_rom,&
-                               v_list_node_ = v_node_rom)
+    call romCreateEquationFromNode(ds_para_tr%ds_empi_init,&
+                                   ds_para_tr%v_equa_rom,&
+                                   nume_dom     ,&
+                                   nb_node_     = nb_node_rom,&
+                                   v_list_node_ = v_node_rom)
 !
 ! - Save parameters
 !

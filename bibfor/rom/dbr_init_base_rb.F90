@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -48,7 +48,7 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    integer :: nb_equa = 0, nb_node = 0, nb_mode = 0, nb_cmp = 0
+    integer :: nb_equa = 0, nb_node = 0, nb_mode = 0
     character(len=8)  :: model = ' ', mesh = ' ', matr_name = ' '
     character(len=24) :: field_refe
     character(len=24) :: field_name = ' '
@@ -71,16 +71,12 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
 !
 ! - Get informations about fields
 !
-    call dismoi('NB_EQUA'     , matr_name, 'MATR_ASSE', repi = nb_equa) 
+    call dismoi('NB_EQUA'     , matr_name, 'MATR_ASSE', repi = nb_equa)
     call dismoi('NOM_MAILLA'  , model    , 'MODELE'   , repk = mesh)
 !
 ! - Get number of nodes affected by model
 !
     call modelNodeEF(model, nb_node)
-    if (mod(nb_equa, nb_node) .ne. 0) then
-        call utmess('I', 'ROM5_53')
-    endif
-    nb_cmp = nb_equa/nb_node
 !
 ! - For greedy algorithm: only displacements
 !
@@ -100,7 +96,6 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
     ds_empi%nb_node      = nb_node
     ds_empi%nb_mode      = 0
     ds_empi%nb_equa      = nb_equa
-    ds_empi%nb_cmp       = nb_cmp
 !
 ! - Create output datastructure
 !

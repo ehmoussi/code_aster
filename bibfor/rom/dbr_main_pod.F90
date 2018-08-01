@@ -31,9 +31,8 @@ implicit none
 #include "asterfort/dbr_calcpod_sele.h"
 #include "asterfort/dbr_calcpod_save.h"
 #include "asterfort/dbr_calcpod_redu.h"
+#include "asterfort/dbr_calcpod_size.h"
 #include "asterfort/romTableSave.h"
-#include "asterfort/infniv.h"
-#include "asterfort/utmess.h"
 !
 character(len=24), intent(in) :: field_iden
 type(ROM_DS_ParaDBR_POD), intent(in) :: ds_para_pod
@@ -53,8 +52,7 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: ifm, niv
-    integer :: nb_sing, nb_mode, nb_snap_redu, nb_line_svd, i_snap, nb_mode_maxi
+    integer :: nb_sing, nb_mode, nb_snap_redu, nb_line_svd, i_snap, nb_mode_maxi, m, n
     real(kind=8), pointer :: q(:) => null()
     real(kind=8), pointer :: v(:) => null()
     real(kind=8), pointer :: s(:) => null() 
@@ -63,19 +61,23 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call infniv(ifm, niv)
     tabl_name    = ds_para_pod%tabl_name
     nb_snap_redu = ds_para_pod%ds_snap%nb_snap
     nb_mode_maxi = ds_para_pod%nb_mode_maxi
     nb_line_svd  = 0
 !
+! - Get size of snapshots matrix
+!
+    call dbr_calcpod_size(ds_empi, ds_para_pod%ds_snap,&
+                          m      , n )
+!
 ! - Create snapshots matrix Q
 !    
-    call dbr_calcpod_q(ds_empi, ds_para_pod%ds_snap, q)
+    call dbr_calcpod_q(ds_empi, ds_para_pod%ds_snap, m, n, q)
 !
 ! - Compute empiric modes by SVD
 !
-    call dbr_calcpod_svd(ds_empi, ds_para_pod%ds_snap, q, s, v, nb_sing, nb_line_svd)
+    call dbr_calcpod_svd(m, n, q, s, v, nb_sing, nb_line_svd)
 !
 ! - Select empiric modes
 !
@@ -91,9 +93,6 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
 !
 ! - Save the reduced coordinates in a table
 !
-    if (niv .ge. 2) then
-        call utmess('I', 'ROM5_39', ni = 2, vali = [nb_snap_redu, nb_mode])
-    endif
     do i_snap = 1, nb_snap_redu
         call romTableSave(tabl_name  , nb_mode, v_gamma   ,&
                           nume_snap_ = i_snap)

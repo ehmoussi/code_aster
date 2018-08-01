@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -26,7 +26,7 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/infniv.h"
-#include "asterfort/romEquationListCreate.h"
+#include "asterfort/romCreateEquationFromNode.h"
 #include "asterfort/romAlgoNLCheck.h"
 #include "asterfort/romAlgoNLTableCreate.h"
 #include "asterfort/utmess.h"
@@ -84,15 +84,15 @@ aster_logical, intent(in), optional :: l_line_search_
 ! - Prepare the list of equations at interface
 !
     if (l_hrom) then
-        call romEquationListCreate(ds_algorom%ds_empi, ds_algorom%v_equa_int, nume_dof,&
-                                   grnode_ = ds_algorom%grnode_int)
+        call romCreateEquationFromNode(ds_algorom%ds_empi, ds_algorom%v_equa_int, nume_dof,&
+                                       grnode_ = ds_algorom%grnode_int)
     endif
 !
 ! - Prepare the list of equation of internal interface
 !
     if (l_hrom_corref) then
-        call romEquationListCreate(ds_algorom%ds_empi, ds_algorom%v_equa_sub, nume_dof,&
-                                   grnode_ = ds_algorom%grnode_sub)
+        call romCreateEquationFromNode(ds_algorom%ds_empi, ds_algorom%v_equa_sub, nume_dof,&
+                                       grnode_ = ds_algorom%grnode_sub)
     endif
 !
 ! - Initializations for EF correction

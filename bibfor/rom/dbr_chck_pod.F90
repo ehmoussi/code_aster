@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine dbr_chck_pod(operation, ds_para_pod, ds_empi, l_reuse)
+subroutine dbr_chck_pod(operation, ds_para_pod, l_reuse)
 !
 use Rom_Datastructure_type
 !
@@ -27,12 +27,10 @@ implicit none
 #include "asterfort/assert.h"
 #include "asterfort/infniv.h"
 #include "asterfort/utmess.h"
-#include "asterfort/romBaseChck.h"
 #include "asterfort/rs_paraonce.h"
 !
 character(len=16), intent(in) :: operation
 type(ROM_DS_ParaDBR_POD), intent(in) :: ds_para_pod
-type(ROM_DS_Empi), intent(in) :: ds_empi
 aster_logical, intent(in) :: l_reuse
 !
 ! --------------------------------------------------------------------------------------------------
@@ -45,7 +43,6 @@ aster_logical, intent(in) :: l_reuse
 !
 ! In  operation        : type of method
 ! In  ds_para_pod      : datastructure for parameters (POD)
-! In  ds_empi          : datastructure for empiric modes
 ! In  l_reuse          : .true. if reuse
 !
 ! --------------------------------------------------------------------------------------------------
@@ -62,7 +59,7 @@ aster_logical, intent(in) :: l_reuse
 !
     call infniv(ifm, niv)
     if (niv .ge. 2) then
-        call utmess('I','ROM5_19', sk = ds_para_pod%result_in)
+        call utmess('I','ROM5_19')
     endif
 !
 ! - General checks
@@ -71,12 +68,12 @@ aster_logical, intent(in) :: l_reuse
         call utmess('F','ROM2_13', sk = operation)
     endif
 !
-! - Check empiric base
-!
-    call romBaseChck(ds_empi)
-!
-! - Check results datastructures
+! - Check results datastructures: parameters required
 !
     call rs_paraonce(ds_para_pod%result_in, nb_para, list_para)
+!
+! - Check results datastructures: type of field
+!
+    
 !
 end subroutine

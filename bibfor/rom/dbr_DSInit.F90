@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -91,8 +91,8 @@ type(ROM_DS_ParaDBR), intent(out) :: ds_para
 !
 ! - Initialisation of datastructure for multiparametric problems - Coefficients
 !
-    call romMultiCoefDSInit('V', ds_multicoef_v)
-    call romMultiCoefDSInit('M', ds_multicoef_m)
+    call romMultiCoefDSInit(ds_multicoef_v)
+    call romMultiCoefDSInit(ds_multicoef_m)
 !
 ! - Initializations of variation of parameters for multiparametric problems
 !
@@ -117,7 +117,7 @@ type(ROM_DS_ParaDBR), intent(out) :: ds_para
 !
 ! - Initialization of datastructures for truncation parameters
 !
-    call dbr_paraTRDSInit(ds_para_tr)   
+    call dbr_paraTRDSInit(ds_para_tr)
 !
 ! - Initialization of datastructures for parameters
 !

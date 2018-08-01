@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -24,8 +24,6 @@ use Rom_Datastructure_type
 implicit none
 !
 #include "asterf_types.h"
-#include "asterfort/infniv.h"
-#include "asterfort/utmess.h"
 #include "asterfort/romLineicBaseDSInit.h"
 #include "asterfort/romBaseDSInit.h"
 !
@@ -43,16 +41,12 @@ type(ROM_DS_ParaDBR_TR), intent(out) :: ds_para_tr
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: ifm, niv
     type(ROM_DS_Empi) :: ds_empi_init
     type(ROM_DS_LineicNumb)  :: ds_lineicnumb
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call infniv(ifm, niv)
-    if (niv .ge. 2) then
-        call utmess('I', 'ROM5_28')
-    endif
+
 !
 ! - Initialization of datastructure for lineic base numbering
 !

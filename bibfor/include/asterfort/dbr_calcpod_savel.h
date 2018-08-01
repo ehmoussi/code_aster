@@ -15,13 +15,16 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine select_dof_3(chamnoz, nb_cmp_in, list_equa)
-        character(len=*), intent(in) :: chamnoz
-        integer, intent(in) :: nb_cmp_in
-        integer, pointer :: list_equa(:)
-    end subroutine select_dof_3
+    subroutine dbr_calcpod_savel(ds_empi, nb_mode, nb_snap_redu, field_iden, nb_equa, s, v)
+        use Rom_Datastructure_type
+        type(ROM_DS_Empi), intent(in) :: ds_empi
+        integer, intent(in) :: nb_mode
+        integer, intent(in) :: nb_snap_redu
+        character(len=24), intent(in) :: field_iden
+        integer, intent(in) :: nb_equa
+        real(kind=8), pointer :: v(:)
+        real(kind=8), pointer :: s(:)
+    end subroutine dbr_calcpod_savel
 end interface

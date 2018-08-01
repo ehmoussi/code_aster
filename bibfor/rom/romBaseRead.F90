@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -23,6 +23,7 @@ use Rom_Datastructure_type
 !
 implicit none
 !
+#include "asterf_types.h"
 #include "asterfort/assert.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/infniv.h"
@@ -36,6 +37,7 @@ implicit none
 #include "asterfort/rs_get_liststore.h"
 #include "asterfort/rsexch.h"
 #include "asterfort/modelNodeEF.h"
+#include "asterfort/romBaseComponents.h"
 !
 character(len=8), intent(in)     :: base
 type(ROM_DS_Empi), intent(inout) :: ds_empi
@@ -55,15 +57,17 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
 !
     integer :: ifm, niv
     integer :: iret, nume_first, nume_pl, nb_snap, i_mode
-    integer :: nb_equa = 0, nb_mode = 0, nb_node = 0, nb_cmp = 0
-    character(len=8)  :: mesh = ' ', model = ' ', base_type = ' ', axe_line = ' '
+    integer :: nb_equa = 0, nb_mode = 0, nb_node = 0, nb_cmp_by_node = 0
+    character(len=8)  :: mesh = ' ', model = ' ', axe_line = ' ', base_type = ' '
+    character(len=8)  :: cmp_by_node(10) = ' '
     character(len=24) :: surf_num = ' ', field_refe = ' ', field_name = ' '
+    aster_logical :: l_lagr = ASTER_FALSE
 !
 ! --------------------------------------------------------------------------------------------------
 !
     call infniv(ifm, niv)
     if (niv .ge. 2) then
-        call utmess('I', 'ROM2_2', sk = base)
+        call utmess('I', 'ROM2_2')
     endif
 !
 ! - Get informations about empiric modes - Parameters
@@ -75,7 +79,6 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
                          field_name_ = field_name, &
                          nume_slice_ = nume_pl,&
                          nb_snap_    = nb_snap)
-    base_type    = ' '
     if (nume_pl .ne. 0) then
         base_type = 'LINEIQUE'
     endif
@@ -95,26 +98,30 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
 ! - Get number of nodes affected by model
 !
     call modelNodeEF(model, nb_node)
-    if (mod(nb_equa, nb_node) .ne. 0) then
-        call utmess('I', 'ROM5_53')
-    endif
-    nb_cmp = nb_equa/nb_node
+!
+! - Get components in empiric modes
+!
+    call romBaseComponents(mesh          , nb_equa    ,&
+                           field_name    , field_refe ,&
+                           nb_cmp_by_node, cmp_by_node, l_lagr)
 !
 ! - Save informations about empiric modes
 !
-    ds_empi%base       = base
-    ds_empi%field_name = field_name
-    ds_empi%field_refe = field_refe
-    ds_empi%mesh       = mesh
-    ds_empi%model      = model
-    ds_empi%base_type  = base_type
-    ds_empi%axe_line   = axe_line
-    ds_empi%surf_num   = surf_num
-    ds_empi%nb_equa    = nb_equa
-    ds_empi%nb_node    = nb_node
-    ds_empi%nb_cmp     = nb_cmp
-    ds_empi%nb_mode    = nb_mode
-    ds_empi%nb_snap    = nb_snap
+    ds_empi%base           = base
+    ds_empi%field_name     = field_name
+    ds_empi%field_refe     = field_refe
+    ds_empi%mesh           = mesh
+    ds_empi%model          = model
+    ds_empi%base_type      = base_type
+    ds_empi%axe_line       = axe_line
+    ds_empi%surf_num       = surf_num
+    ds_empi%nb_equa        = nb_equa
+    ds_empi%nb_node        = nb_node
+    ds_empi%nb_mode        = nb_mode
+    ds_empi%nb_snap        = nb_snap
+    ds_empi%l_lagr         = l_lagr
+    ds_empi%nb_cmp_by_node = nb_cmp_by_node
+    ds_empi%cmp_by_node    = cmp_by_node
 !
 ! - Print
 !

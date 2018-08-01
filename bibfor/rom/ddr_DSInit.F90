@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -23,6 +23,7 @@ use Rom_Datastructure_type
 !
 implicit none
 !
+#include "asterf_types.h"
 #include "asterfort/infniv.h"
 #include "asterfort/romBaseDSInit.h"
 #include "asterfort/romLineicBaseDSInit.h"
@@ -70,11 +71,11 @@ type(ROM_DS_ParaDDR), intent(out) :: ds_para
     ds_para%grelem_rid    = ' '
     ds_para%nb_layer_rid  = 0
     ds_para%grnode_int    = ' '
-    ds_para%l_corr_ef     = .false._1
+    ds_para%l_corr_ef     = ASTER_FALSE
     ds_para%grnode_sub    = ' '
     ds_para%nb_rid_mini   = 0
     ds_para%v_rid_mini    => null()
-    ds_para%l_rid_maxi    = .false._1
+    ds_para%l_rid_maxi    = ASTER_FALSE
     ds_para%v_rid_maxi    => null()
     ds_para%nb_rid_maxi   = 0
     ds_para%nb_layer_sub  = 0

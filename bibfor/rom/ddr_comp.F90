@@ -77,7 +77,7 @@ integer, pointer  :: v_equa(:)
 !
     call infniv(ifm, niv)
     if (niv .ge. 2) then
-        call utmess('I', 'ROM4_20', sk = ds_empi%base)
+        call utmess('I', 'ROM4_20')
     endif
 !
 ! - Get parameters
@@ -93,15 +93,16 @@ integer, pointer  :: v_equa(:)
     AS_ALLOCATE(vi = v_npl , size = nb_mode)
     AS_ALLOCATE(vi = v_tuan, size = nb_mode)
 !
-! - Get informations from the reduced base
+! - Get index of slice in reduced basis
 !
     do i_mode = 1, nb_mode
         call rsadpa(base, 'L', 1, 'NUME_PLAN', i_mode, 0, sjv=jv_para)
         v_npl(i_mode) = zi(jv_para)
     enddo
+!
     ntp = 1
     do i_mode = 2, nb_mode
-        if(v_npl(i_mode).ne.v_npl(i_mode-1)) then
+        if (v_npl(i_mode) .ne. v_npl(i_mode-1)) then
             ntm = ntp
             ntp = 1
             v_tuan(i_mode - ntm) = ntm
@@ -116,7 +117,7 @@ integer, pointer  :: v_equa(:)
 !
     do i_mode = 1, nb_mode
 ! - Check the mode (linear or 3D, how many slices?)
-        if (v_tuan(i_mode).ne. 0) then
+        if (v_tuan(i_mode) .ne. 0) then
             nb_motr = v_tuan(i_mode)
             AS_ALLOCATE(vr=v_base, size=nb_equa*nb_motr)
             AS_ALLOCATE(vi=v_list_loca, size=nb_motr)

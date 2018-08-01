@@ -16,6 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
+! aslint: disable=W1403
 !
 subroutine dbr_paraPODDSInit(ds_snap, ds_para_pod)
 !
@@ -25,8 +26,6 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterc/r8vide.h"
-#include "asterfort/infniv.h"
-#include "asterfort/utmess.h"
 !
 type(ROM_DS_Snap), intent(in) :: ds_snap
 type(ROM_DS_ParaDBR_POD), intent(out) :: ds_para_pod
@@ -43,17 +42,6 @@ type(ROM_DS_ParaDBR_POD), intent(out) :: ds_para_pod
 ! Out ds_para_pod      : datastructure for POD parameters
 !
 ! --------------------------------------------------------------------------------------------------
-!
-    integer :: ifm, niv
-!
-! --------------------------------------------------------------------------------------------------
-!
-    call infniv(ifm, niv)
-    if (niv .ge. 2) then
-        call utmess('I', 'ROM5_25')
-    endif
-!
-! - General initialisations of datastructure
 !
     ds_para_pod%result_in    = ' '
     ds_para_pod%field_name   = ' '

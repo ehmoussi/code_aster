@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,17 +15,14 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 #include "asterf_types.h"
 !
 interface
-    subroutine dbr_chck_pod(operation, ds_para_pod, ds_empi, l_reuse)
+    subroutine dbr_chck_pod(operation, ds_para_pod, l_reuse)
         use Rom_Datastructure_type
         character(len=16), intent(in) :: operation
         type(ROM_DS_ParaDBR_POD), intent(in) :: ds_para_pod
-        type(ROM_DS_Empi), intent(in) :: ds_empi
         aster_logical, intent(in) :: l_reuse
     end subroutine dbr_chck_pod
 end interface

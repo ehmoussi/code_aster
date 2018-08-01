@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -77,7 +77,6 @@ type(ROM_DS_ParaDBR_POD), intent(in) :: ds_para_pod
         if (operation .eq. 'POD_INCR') then
             call utmess('I', 'ROM7_13' , sr = tole_incr)
         endif
-        call utmess('I', 'ROM7_1' , sk = result_in)
         call utmess('I', 'ROM7_2' , sk = field_name)
     endif
 !

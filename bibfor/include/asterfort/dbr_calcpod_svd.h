@@ -15,14 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine dbr_calcpod_svd(ds_empi, ds_snap, q, s, v, nb_sing, nb_line_svd)
+    subroutine dbr_calcpod_svd(m, n, q, s, v, nb_sing, nb_line_svd)
         use Rom_Datastructure_type
-        type(ROM_DS_Empi), intent(in) :: ds_empi
-        type(ROM_DS_Snap), intent(in) :: ds_snap
+        integer, intent(in) :: m, n
         real(kind=8), pointer :: q(:)
         real(kind=8), pointer :: v(:)
         real(kind=8), pointer :: s(:)

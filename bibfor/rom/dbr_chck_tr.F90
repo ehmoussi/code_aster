@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -26,6 +26,7 @@ implicit none
 #include "asterf_types.h"
 #include "asterfort/utmess.h"
 #include "asterfort/dismoi.h"
+#include "asterfort/romBaseChck.h"
 !
 type(ROM_DS_ParaDBR_TR), intent(in) :: ds_para_tr
 !
@@ -51,10 +52,14 @@ type(ROM_DS_ParaDBR_TR), intent(in) :: ds_para_tr
     mesh_init  = ds_para_tr%ds_empi_init%mesh
     call dismoi('NOM_MAILLA', model_rom, 'MODELE'  , repk = mesh_rom)
     if (mesh_init .ne. mesh_rom) then
-        call utmess('F', 'ROM6_12', nk = 2, valk = [mesh_init, mesh_rom])
+        call utmess('F', 'ROM6_12')
     endif
     if (model_init .eq. model_rom) then
         call utmess('F', 'ROM6_13')
     endif
+!
+! - Check empiric base
+!
+    call romBaseChck(ds_para_tr%ds_empi_init)
 !
 end subroutine

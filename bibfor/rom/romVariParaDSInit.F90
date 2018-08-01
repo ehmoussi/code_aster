@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+! aslint: disable=W1403
+!
 subroutine romVariParaDSInit(ds_varipara)
 !
 use Rom_Datastructure_type
@@ -23,12 +25,8 @@ use Rom_Datastructure_type
 implicit none
 !
 #include "asterc/r8vide.h"
-#include "asterfort/infniv.h"
-#include "asterfort/utmess.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    type(ROM_DS_VariPara), intent(out) :: ds_varipara
+type(ROM_DS_VariPara), intent(out) :: ds_varipara
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -41,15 +39,6 @@ implicit none
 ! IO  ds_varipara      : datastructure for multiparametric problems - Variations
 !
 ! --------------------------------------------------------------------------------------------------
-!
-    integer :: ifm, niv
-!
-! --------------------------------------------------------------------------------------------------
-!
-    call infniv(ifm, niv)
-    if (niv .ge. 2) then
-        call utmess('I', 'ROM5_81')
-    endif
 !
     ds_varipara%nb_vale_para = 0
     ds_varipara%para_name    = ' '

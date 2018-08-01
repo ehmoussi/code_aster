@@ -16,7 +16,9 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine dbr_calcpod_svd(ds_empi, ds_snap, q, s, v, nb_sing, nb_line_svd)
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine dbr_calcpod_svd(m, n, q, s, v, nb_sing, nb_line_svd)
 !
 use Rom_Datastructure_type
 !
@@ -29,15 +31,12 @@ implicit none
 #include "asterfort/as_allocate.h"
 #include "asterfort/as_deallocate.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    type(ROM_DS_Empi), intent(in) :: ds_empi
-    type(ROM_DS_Snap), intent(in) :: ds_snap
-    real(kind=8), pointer :: q(:)
-    real(kind=8), pointer :: v(:)
-    real(kind=8), pointer :: s(:)  
-    integer, intent(out) :: nb_sing
-    integer, intent(out) :: nb_line_svd 
+integer, intent(in) :: m, n
+real(kind=8), pointer :: q(:)
+real(kind=8), pointer :: v(:)
+real(kind=8), pointer :: s(:)  
+integer, intent(out) :: nb_sing
+integer, intent(out) :: nb_line_svd 
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -47,8 +46,8 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  ds_empi          : datastructure for empiric modes
-! In  ds_snap          : datastructure for snapshot selection
+! In  m                : first dimension of snapshot matrix
+! In  m                : second dimension of snapshot matrix
 ! In  q                : pointer to [q] matrix
 ! Out s                : singular values 
 ! Out v                : singular vectors
@@ -58,10 +57,7 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    integer :: m, n
-    integer :: nb_equa, nb_slice, nb_snap, nb_cmp
     integer :: lda, lwork
-    character(len=8)  :: base_type
     real(kind=8), pointer :: w(:) => null()
     real(kind=8), pointer :: qq(:) => null()
     real(kind=8), pointer :: work(:) => null()
@@ -80,23 +76,8 @@ implicit none
     v            => null()
     s            => null()
 !
-! - Get parameters
-!
-    nb_snap      = ds_snap%nb_snap
-    base_type    = ds_empi%base_type
-    nb_slice     = ds_empi%ds_lineic%nb_slice
-    nb_equa      = ds_empi%nb_equa
-    nb_cmp       = ds_empi%nb_cmp
-!
 ! - Prepare parameters for LAPACK
 !
-    if (base_type .eq. 'LINEIQUE') then
-        m      = nb_equa/nb_slice
-        n      = nb_slice*nb_snap        
-    else
-        m      = nb_equa
-        n      = nb_snap
-    endif
     nb_line_svd = m
     lda         = max(1, m)
     nb_sing     = min(m, n)
