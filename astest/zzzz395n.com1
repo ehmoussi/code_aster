@@ -1,0 +1,353 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+# person_in_charge: mickael.abbas at edf.fr
+
+POURSUITE(CODE='OUI')
+
+####################################################################################################
+#
+# Calcul complet de référence
+#
+####################################################################################################
+
+# Valeurs de référence (calcul complet) - HORS RID
+TEST_RESU(RESU=(
+                _F(RESULTAT=stnl,
+                   NUME_ORDRE= 10,
+                   NOM_CHAM='DEPL',
+                   NOEUD='N168',
+                   NOM_CMP='DX',
+                   VALE_CALC=0.497612858925,
+                   ),
+                _F(RESULTAT=stnl,
+                   NUME_ORDRE= 10,
+                   NOM_CHAM='DEPL',
+                   NOEUD='N168',
+                   NOM_CMP='DY',
+                   VALE_CALC=-0.736173981172,
+                   ),
+                _F(RESULTAT=stnl,
+                   NUME_ORDRE= 10,
+                   NOM_CHAM='DEPL',
+                   NOEUD='N168',
+                   NOM_CMP='DZ',
+                   VALE_CALC=1.5401647755,
+                   ),
+                ),
+          );
+
+TEST_RESU(RESU=(
+                _F(RESULTAT=stnl,
+                   NUME_ORDRE= 10,
+                   NOM_CHAM='SIEF_NOEU',
+                   NOEUD='N143',
+                   NOM_CMP='SIXX',
+                   VALE_CALC=-2526.26537982,
+                   ),
+                _F(RESULTAT=stnl,
+                   NUME_ORDRE= 10,
+                   NOM_CHAM='SIEF_NOEU',
+                   NOEUD='N143',
+                   NOM_CMP='SIYY',
+                   VALE_CALC=-2524.79824979,
+                   ),
+                _F(RESULTAT=stnl,
+                   NUME_ORDRE= 10,
+                   NOM_CHAM='SIEF_NOEU',
+                   NOEUD='N143',
+                   NOM_CMP='SIZZ',
+                   VALE_CALC=-2327.65322131,
+                   ),
+                ),
+          );
+
+# Valeurs de référence (calcul complet) - Dans RID
+TEST_RESU(RESU=(
+                _F(RESULTAT=stnl,
+                   NUME_ORDRE= 10,
+                   NOM_CHAM='DEPL',
+                   NOEUD='N112',
+                   NOM_CMP='DX',
+                   VALE_CALC=-0.412778695928,
+                   ),
+                _F(RESULTAT=stnl,
+                   NUME_ORDRE= 10,
+                   NOM_CHAM='DEPL',
+                   NOEUD='N112',
+                   NOM_CMP='DY',
+                   VALE_CALC=-0.149415897318,
+                   ),
+                _F(RESULTAT=stnl,
+                   NUME_ORDRE= 10,
+                   NOM_CHAM='DEPL',
+                   NOEUD='N112',
+                   NOM_CMP='DZ',
+                   VALE_CALC=0.306532333698,
+                   ),
+                ),
+          );
+
+TEST_RESU(RESU=(
+                _F(RESULTAT=stnl,
+                   NUME_ORDRE= 10,
+                   NOM_CHAM='SIEF_NOEU',
+                   NOEUD='N316',
+                   NOM_CMP='SIXX',
+                   VALE_CALC=-2607.04528612,
+                   ),
+                _F(RESULTAT=stnl,
+                   NUME_ORDRE= 10,
+                   NOM_CHAM='SIEF_NOEU',
+                   NOEUD='N316',
+                   NOM_CMP='SIYY',
+                   VALE_CALC=-2606.7177583,
+                   ),
+                _F(RESULTAT=stnl,
+                   NUME_ORDRE= 10,
+                   NOM_CHAM='SIEF_NOEU',
+                   NOEUD='N316',
+                   NOM_CMP='SIZZ',
+                   VALE_CALC=-2455.1448814,
+                   ),
+                ),
+          );
+
+####################################################################################################
+#
+# Calcul hyper-réduit (avec CORR_COMPLET)
+#
+####################################################################################################
+
+# Test calcul hyper-réduit/complet - Dans RID
+TEST_RESU(RESU=(
+                _F(RESULTAT=redu,
+                   NUME_ORDRE= 10,
+                   NOM_CHAM='DEPL',
+                   NOEUD='N112',
+                   NOM_CMP='DX',
+                   REFERENCE='AUTRE_ASTER',
+                   VALE_REFE=-0.412778695928,
+                   VALE_CALC=-0.414665551489,
+                   PRECISION = 0.005
+                   ),
+                _F(RESULTAT=redu,
+                   NUME_ORDRE= 10,
+                   NOM_CHAM='DEPL',
+                   NOEUD='N112',
+                   NOM_CMP='DY',
+                   REFERENCE='AUTRE_ASTER',
+                   VALE_REFE=-0.149415897318,
+                   VALE_CALC=-0.150363569749,
+                   PRECISION=0.007
+                   ),
+                _F(RESULTAT=redu,
+                   NUME_ORDRE= 10,
+                   NOM_CHAM='DEPL',
+                   NOEUD='N112',
+                   NOM_CMP='DZ',
+                   REFERENCE='AUTRE_ASTER',
+                   VALE_REFE=0.306532333698,
+                   VALE_CALC=0.308149611227,
+                   PRECISION=0.006
+                   ),
+                ),
+          );
+
+TEST_RESU(RESU=(
+                _F(RESULTAT=redu,
+                   NUME_ORDRE= 10,
+                   NOM_CHAM='SIEF_NOEU',
+                   NOEUD='N316',
+                   NOM_CMP='SIXX',
+                   REFERENCE='AUTRE_ASTER',
+                   VALE_CALC=-2610.70959338,
+                   VALE_REFE=-2607.04528612,
+                   PRECISION=0.0015
+                   ),
+                _F(RESULTAT=redu,
+                   NUME_ORDRE= 10,
+                   NOM_CHAM='SIEF_NOEU',
+                   NOEUD='N316',
+                   NOM_CMP='SIYY',
+                   REFERENCE='AUTRE_ASTER',
+                   VALE_CALC=-2610.01710219,
+                   VALE_REFE=-2606.7177583,
+                   PRECISION=0.0013
+                   ),
+                _F(RESULTAT=redu,
+                   NUME_ORDRE= 10,
+                   NOM_CHAM='SIEF_NOEU',
+                   NOEUD='N316',
+                   NOM_CMP='SIZZ',
+                   REFERENCE='AUTRE_ASTER',
+                   VALE_CALC=-2458.28040641,
+                   VALE_REFE=-2455.1448814,
+                   PRECISION=0.0013
+                   ),
+                ),
+          );
+
+# Test calcul hyper-réduit/complet - Hors RID
+TEST_RESU(RESU=(
+                _F(RESULTAT=reduR,
+                   NUME_ORDRE= 10,
+                   NOM_CHAM='DEPL',
+                   NOEUD='N168',
+                   NOM_CMP='DX',
+                   REFERENCE='AUTRE_ASTER',
+                   VALE_REFE=0.497612858925,
+                   VALE_CALC=0.500115502937,
+                   PRECISION = 0.0055
+                   ),
+                _F(RESULTAT=reduR,
+                   NUME_ORDRE= 10,
+                   NOM_CHAM='DEPL',
+                   NOEUD='N168',
+                   NOM_CMP='DY',
+                   REFERENCE='AUTRE_ASTER',
+                   VALE_REFE=-0.736173981172,
+                   VALE_CALC=-0.740033569251,
+                   PRECISION=0.0055
+                   ),
+                _F(RESULTAT=reduR,
+                   NUME_ORDRE= 10,
+                   NOM_CHAM='DEPL',
+                   NOEUD='N168',
+                   NOM_CMP='DZ',
+                   REFERENCE='AUTRE_ASTER',
+                   VALE_REFE=1.5401647755,
+                   VALE_CALC=1.54821923637,
+                   PRECISION=0.0055
+                   ),
+                ),
+          );
+
+TEST_RESU(RESU=(
+                _F(RESULTAT=reduR,
+                   NUME_ORDRE= 10,
+                   NOM_CHAM='SIEF_NOEU',
+                   NOEUD='N143',
+                   NOM_CMP='SIXX',
+                   REFERENCE='AUTRE_ASTER',
+                   VALE_CALC=-2531.65556515,
+                   VALE_REFE=-2526.26537982,
+                   PRECISION=0.0022
+                   ),
+                _F(RESULTAT=reduR,
+                   NUME_ORDRE= 10,
+                   NOM_CHAM='SIEF_NOEU',
+                   NOEUD='N143',
+                   NOM_CMP='SIYY',
+                   REFERENCE='AUTRE_ASTER',
+                   VALE_CALC=-2530.01379624,
+                   VALE_REFE=-2524.79824979,
+                   PRECISION=0.0021
+                   ),
+                _F(RESULTAT=reduR,
+                   NUME_ORDRE= 10,
+                   NOM_CHAM='SIEF_NOEU',
+                   NOEUD='N143',
+                   NOM_CMP='SIZZ',
+                   REFERENCE='AUTRE_ASTER',
+                   VALE_CALC=-2337.63426835,
+                   VALE_REFE=-2327.65322131,
+                   PRECISION=0.0043
+                   ),
+                ),
+          );
+
+
+####################################################################################################
+#
+# Calcul hyper-réduit (sans CORR_COMPLET)
+#
+####################################################################################################
+
+# Test calcul hyper-réduit/complet - Dans RID
+TEST_RESU(RESU=(
+                _F(RESULTAT=redu2,
+                   NUME_ORDRE= 10,
+                   NOM_CHAM='DEPL',
+                   NOEUD='N112',
+                   NOM_CMP='DX',
+                   REFERENCE='AUTRE_ASTER',
+                   VALE_REFE=-0.412778695928,
+                   VALE_CALC=-0.414615778496,
+                   PRECISION = 0.0045
+                   ),
+                _F(RESULTAT=redu2,
+                   NUME_ORDRE= 10,
+                   NOM_CHAM='DEPL',
+                   NOEUD='N112',
+                   NOM_CMP='DY',
+                   REFERENCE='AUTRE_ASTER',
+                   VALE_REFE=-0.149415897318,
+                   VALE_CALC=-0.150347597213,
+                   PRECISION=0.0065
+                   ),
+                _F(RESULTAT=redu2,
+                   NUME_ORDRE= 10,
+                   NOM_CHAM='DEPL',
+                   NOEUD='N112',
+                   NOM_CMP='DZ',
+                   REFERENCE='AUTRE_ASTER',
+                   VALE_REFE=0.306532333698,
+                   VALE_CALC=0.308118160795,
+                   PRECISION=0.0055
+                   ),
+                ),
+          );
+
+TEST_RESU(RESU=(
+                _F(RESULTAT=redu2,
+                   NUME_ORDRE= 10,
+                   NOM_CHAM='SIEF_NOEU',
+                   NOEUD='N316',
+                   NOM_CMP='SIXX',
+                   REFERENCE='AUTRE_ASTER',
+                   VALE_CALC=-2610.94309164,
+                   VALE_REFE=-2607.04528612,
+                   PRECISION=0.0015
+                   ),
+                _F(RESULTAT=redu2,
+                   NUME_ORDRE= 10,
+                   NOM_CHAM='SIEF_NOEU',
+                   NOEUD='N316',
+                   NOM_CMP='SIYY',
+                   REFERENCE='AUTRE_ASTER',
+                   VALE_CALC=-2610.24653428,
+                   VALE_REFE=-2606.7177583,
+                   PRECISION=0.0014
+                   ),
+                _F(RESULTAT=redu2,
+                   NUME_ORDRE= 10,
+                   NOM_CHAM='SIEF_NOEU',
+                   NOEUD='N316',
+                   NOM_CMP='SIZZ',
+                   REFERENCE='AUTRE_ASTER',
+                   VALE_CALC=-2458.52133585,
+                   VALE_REFE=-2455.1448814,
+                   PRECISION=0.0014
+                   ),
+                ),
+          );
+
+
+
+FIN()

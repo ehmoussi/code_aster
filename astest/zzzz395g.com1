@@ -1,0 +1,252 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+# person_in_charge: mickael.abbas at edf.fr
+
+POURSUITE(CODE='OUI')
+
+# Test du calcul de référence
+TEST_RESU(RESU=(
+                _F(RESULTAT=stnl,
+                   NUME_ORDRE= 10,
+                   NOM_CHAM='DEPL',
+                   NOEUD='N27',
+                   NOM_CMP='DX',
+                   VALE_CALC=0.0696319525128,
+                   ),
+                _F(RESULTAT=stnl,
+                   NUME_ORDRE= 10,
+                   NOM_CHAM='DEPL',
+                   NOEUD='N27',
+                   NOM_CMP='DY',
+                   VALE_CALC=0.199062276741,
+                   ),
+                _F(RESULTAT=stnl,
+                   NUME_ORDRE= 10,
+                   NOM_CHAM='DEPL',
+                   NOEUD='N27',
+                   NOM_CMP='DZ',
+                   VALE_CALC=0.529606351907,
+                   ),
+                ),
+          );
+
+TEST_RESU(RESU=(
+                _F(RESULTAT=stnl,
+                   NUME_ORDRE= 10,
+                   NOM_CHAM='SIEF_NOEU',
+                   NOEUD='N27',
+                   NOM_CMP='SIXX',
+                   VALE_CALC=-2739.13961277,
+                   ),
+                _F(RESULTAT=stnl,
+                   NUME_ORDRE= 10,
+                   NOM_CHAM='SIEF_NOEU',
+                   NOEUD='N27',
+                   NOM_CMP='SIYY',
+                   VALE_CALC=-2737.51235419,
+                   ),
+                _F(RESULTAT=stnl,
+                   NUME_ORDRE= 10,
+                   NOM_CHAM='SIEF_NOEU',
+                   NOEUD='N27',
+                   NOM_CMP='SIZZ',
+                   VALE_CALC=-2612.22311229,
+                   ),
+                _F(RESULTAT=stnl,
+                   NUME_ORDRE= 10,
+                   NOM_CHAM='SIEF_NOEU',
+                   NOEUD='N27',
+                   NOM_CMP='SIXY',
+                   VALE_CALC=-1.01905904477,
+                   ),
+                _F(RESULTAT=stnl,
+                   NUME_ORDRE= 10,
+                   NOM_CHAM='SIEF_NOEU',
+                   NOEUD='N27',
+                   NOM_CMP='SIXZ',
+                   VALE_CALC=0.358496226016,
+                   ),
+                _F(RESULTAT=stnl,
+                   NUME_ORDRE= 10,
+                   NOM_CHAM='SIEF_NOEU',
+                   NOEUD='N27',
+                   NOM_CMP='SIYZ',
+                   VALE_CALC=1.80949985804,
+                   ),
+                ),
+          );
+
+# Test des coordonnées réduites (calcul réduit avec prédiction standard)
+TEST_TABLE(
+           VALE_CALC = -9.92350E-03,
+           NOM_PARA  = 'COOR_REDUIT',
+           TABLE     = coor_red,
+           FILTRE    = (
+                           _F(CRIT_COMP = 'EQ',
+                              NOM_PARA  = 'NUME_MODE',
+                              VALE_I    = 1,),
+                           _F(CRIT_COMP = 'EQ',
+                              NOM_PARA  = 'NUME_ORDRE',
+                              VALE_I    = 1,),
+                       ),
+           )
+
+TEST_TABLE(
+           VALE_CALC = -0.00620775648739,
+           NOM_PARA  = 'COOR_REDUIT',
+           TABLE     = coor_red,
+           FILTRE    = (
+                           _F(CRIT_COMP = 'EQ',
+                              NOM_PARA  = 'NUME_MODE',
+                              VALE_I    = 2,),
+                           _F(CRIT_COMP = 'EQ',
+                              NOM_PARA  = 'NUME_ORDRE',
+                              VALE_I    = 10,),
+                       ),
+           )
+
+# Test du modèle réduit par rapport au modèle complet (calcul réduit avec prédiction standard)
+TEST_RESU(RESU=(
+                _F(RESULTAT=redu,
+                   REFERENCE='AUTRE_ASTER',
+                   VALE_REFE=0.0696319525128,
+                   NUME_ORDRE= 10,
+                   NOM_CHAM='DEPL',
+                   NOEUD='N27',
+                   NOM_CMP='DX',
+                   VALE_CALC=0.0697022675078,
+                   PRECISION = 0.0015
+                   ),
+                _F(RESULTAT=redu,
+                   REFERENCE='AUTRE_ASTER',
+                   VALE_REFE=0.199062276741,
+                   NUME_ORDRE= 10,
+                   NOM_CHAM='DEPL',
+                   NOEUD='N27',
+                   NOM_CMP='DY',
+                   VALE_CALC=0.198932466312,
+                   ),
+                _F(RESULTAT=redu,
+                   REFERENCE='AUTRE_ASTER',
+                   VALE_REFE=0.529606351907,
+                   NUME_ORDRE= 10,
+                   NOM_CHAM='DEPL',
+                   NOEUD='N27',
+                   NOM_CMP='DZ',
+                   VALE_CALC=0.529809828586,
+                   ),
+                ),
+          );
+
+TEST_RESU(RESU=(
+                _F(RESULTAT=redu,
+                   REFERENCE='AUTRE_ASTER',
+                   VALE_REFE=-2739.13961277,
+                   NUME_ORDRE= 10,
+                   NOM_CHAM='SIEF_NOEU',
+                   NOEUD='N27',
+                   NOM_CMP='SIXX',
+                   VALE_CALC=-2734.67787213,
+                   PRECISION = 0.002,
+                   ),
+                _F(RESULTAT=redu,
+                   REFERENCE='AUTRE_ASTER',
+                   VALE_REFE=-2737.51235419,
+                   NUME_ORDRE= 10,
+                   NOM_CHAM='SIEF_NOEU',
+                   NOEUD='N27',
+                   NOM_CMP='SIYY',
+                   VALE_CALC=-2732.47780529,
+                   PRECISION = 0.002,
+                   ),
+                _F(RESULTAT=redu,
+                   REFERENCE='AUTRE_ASTER',
+                   VALE_REFE=-2612.22311229,
+                   NUME_ORDRE= 10,
+                   NOM_CHAM='SIEF_NOEU',
+                   NOEUD='N27',
+                   NOM_CMP='SIZZ',
+                   VALE_CALC=-2607.46423995,
+                   PRECISION = 0.002,
+                   ),
+                ),
+          );
+
+# Test des coordonnées réduites (calcul réduit avec prédiction EXTRAPOLE)
+TEST_TABLE(
+           VALE_CALC = -9.92350E-03,
+           NOM_PARA  = 'COOR_REDUIT',
+           TABLE     = coor_reX,
+           FILTRE    = (
+                           _F(CRIT_COMP = 'EQ',
+                              NOM_PARA  = 'NUME_MODE',
+                              VALE_I    = 1,),
+                           _F(CRIT_COMP = 'EQ',
+                              NOM_PARA  = 'NUME_ORDRE',
+                              VALE_I    = 1,),
+                       ),
+           )
+
+TEST_TABLE(
+           VALE_CALC = -0.00620775648739,
+           NOM_PARA  = 'COOR_REDUIT',
+           TABLE     = coor_reX,
+           FILTRE    = (
+                           _F(CRIT_COMP = 'EQ',
+                              NOM_PARA  = 'NUME_MODE',
+                              VALE_I    = 2,),
+                           _F(CRIT_COMP = 'EQ',
+                              NOM_PARA  = 'NUME_ORDRE',
+                              VALE_I    = 10,),
+                       ),
+           )
+
+# Test du modèle réduit par rapport au modèle complet (calcul réduit avec prédiction EXTRAPOLE)
+TEST_RESU(RESU=(
+                _F(RESULTAT=reduX,
+                   REFERENCE='AUTRE_ASTER',
+                   VALE_REFE=0.0696319525128,
+                   NUME_ORDRE= 10,
+                   NOM_CHAM='DEPL',
+                   NOEUD='N27',
+                   NOM_CMP='DX',
+                   VALE_CALC=0.0697022675078,
+                   PRECISION = 0.0015
+                   ),
+                _F(RESULTAT=reduX,
+                   REFERENCE='AUTRE_ASTER',
+                   VALE_REFE=0.199062276741,
+                   NUME_ORDRE= 10,
+                   NOM_CHAM='DEPL',
+                   NOEUD='N27',
+                   NOM_CMP='DY',
+                   VALE_CALC=0.198932466312,
+                   ),
+                _F(RESULTAT=reduX,
+                   REFERENCE='AUTRE_ASTER',
+                   VALE_REFE=0.529606351907,
+                   NUME_ORDRE= 10,
+                   NOM_CHAM='DEPL',
+                   NOEUD='N27',
+                   NOM_CMP='DZ',
+                   VALE_CALC=0.529809828586,
+                   ),
+                ),
+          );
+FIN()

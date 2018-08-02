@@ -16,9 +16,11 @@
 # You should have received a copy of the GNU General Public License
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
+# person_in_charge: mickael.abbas at edf.fr
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),DEBUG=_F(SDVERI='OUI'));
 
+# Read the mesh (with GROUP_MA for RID)
 mesh=LIRE_MAILLAGE(FORMAT='MED',);
 
 mesh=MODI_MAILLAGE(reuse =mesh,
@@ -62,8 +64,12 @@ rampe=DEFI_FONCTION(NOM_PARA='INST',VALE=(0.0,0.0,
                                           10.,1.,
                    ),);
 
+####################################################################################################
+#
+# Calcul complet de référence
+#
+####################################################################################################
 
-# Complete 
 stnl=STAT_NON_LINE(MODELE=model,
                    CHAM_MATER=chmat,
                    EXCIT=(_F(CHARGE=chg_b,),
@@ -76,78 +82,13 @@ stnl=CALC_CHAMP(reuse=stnl,
                 RESULTAT=stnl,
                 CONTRAINTE='SIEF_NOEU',);
 
-# Valeurs de référence (calcul complet)
-TEST_RESU(RESU=(
-                _F(RESULTAT=stnl,
-                   NUME_ORDRE= 10,
-                   NOM_CHAM='DEPL',
-                   NOEUD='N27',
-                   NOM_CMP='DX',
-                   VALE_CALC=0.0696319525128,
-                   ),
-                _F(RESULTAT=stnl,
-                   NUME_ORDRE= 10,
-                   NOM_CHAM='DEPL',
-                   NOEUD='N27',
-                   NOM_CMP='DY',
-                   VALE_CALC=0.199062276741,
-                   ),
-                _F(RESULTAT=stnl,
-                   NUME_ORDRE= 10,
-                   NOM_CHAM='DEPL',
-                   NOEUD='N27',
-                   NOM_CMP='DZ',
-                   VALE_CALC=0.529606351907,
-                   ),
-                ),
-          );
+####################################################################################################
+#
+# Lecture de la base et préparation des données (troncature,...)
+#
+####################################################################################################
 
-TEST_RESU(RESU=(
-                _F(RESULTAT=stnl,
-                   NUME_ORDRE= 10,
-                   NOM_CHAM='SIEF_NOEU',
-                   NOEUD='N27',
-                   NOM_CMP='SIXX',
-                   VALE_CALC=-2739.13961277,
-                   ),
-                _F(RESULTAT=stnl,
-                   NUME_ORDRE= 10,
-                   NOM_CHAM='SIEF_NOEU',
-                   NOEUD='N27',
-                   NOM_CMP='SIYY',
-                   VALE_CALC=-2737.51235419,
-                   ),
-                _F(RESULTAT=stnl,
-                   NUME_ORDRE= 10,
-                   NOM_CHAM='SIEF_NOEU',
-                   NOEUD='N27',
-                   NOM_CMP='SIZZ',
-                   VALE_CALC=-2612.22311229,
-                   ),
-                _F(RESULTAT=stnl,
-                   NUME_ORDRE= 10,
-                   NOM_CHAM='SIEF_NOEU',
-                   NOEUD='N27',
-                   NOM_CMP='SIXY',
-                   VALE_CALC=-1.01905904477,
-                   ),
-                _F(RESULTAT=stnl,
-                   NUME_ORDRE= 10,
-                   NOM_CHAM='SIEF_NOEU',
-                   NOEUD='N27',
-                   NOM_CMP='SIXZ',
-                   VALE_CALC=0.358496226016,
-                   ),
-                _F(RESULTAT=stnl,
-                   NUME_ORDRE= 10,
-                   NOM_CHAM='SIEF_NOEU',
-                   NOEUD='N27',
-                   NOM_CMP='SIYZ',
-                   VALE_CALC=1.80949985804,
-                   ),
-                ),
-          );
-
+# Read the primal base
 base_p=LIRE_RESU(TYPE_RESU  = 'MODE_EMPI',
                  FORMAT     = 'MED',
                  MODELE     = model,
@@ -156,7 +97,7 @@ base_p=LIRE_RESU(TYPE_RESU  = 'MODE_EMPI',
                                 NOM_CHAM     = 'DEPL',),
                  NUME_ORDRE=(1,2,3),);
 
-# Define HROM
+# Re-create GROUP_MA
 mesh=DEFI_GROUP(reuse=mesh,
                 MAILLAGE=mesh,
                 CREA_GROUP_MA=_F(NOM='S_e_rid',
@@ -190,6 +131,11 @@ chg_p_r=AFFE_CHAR_MECA(MODELE=model_r,
                                  PRES = 1000,),
                     )
 
+####################################################################################################
+#
+# Calcul hyper-réduit
+#
+####################################################################################################
 redu=STAT_NON_LINE(MODELE=model_r,
                    CHAM_MATER=chmat,
                    EXCIT=(_F(CHARGE=chg_b_r,),
@@ -209,72 +155,5 @@ redu=CALC_CHAMP(reuse=redu,
                 RESULTAT=redu,
                 CONTRAINTE='SIEF_NOEU',);
 
-# Test du modèle réduit par rapport au modèle complet
-TEST_RESU(RESU=(
-                _F(RESULTAT=redu,
-                   REFERENCE='AUTRE_ASTER',
-                   VALE_REFE=0.0696319525128,
-                   NUME_ORDRE= 10,
-                   NOM_CHAM='DEPL',
-                   NOEUD='N27',
-                   NOM_CMP='DX',
-                   VALE_CALC=0.0695351164226,
-                   PRECISION = 0.0015
-                   ),
-                _F(RESULTAT=redu,
-                   REFERENCE='AUTRE_ASTER',
-                   VALE_REFE=0.199062276741,
-                   NUME_ORDRE= 10,
-                   NOM_CHAM='DEPL',
-                   NOEUD='N27',
-                   NOM_CMP='DY',
-                   VALE_CALC=0.198459188339,
-                   PRECISION = 0.0035
-                   ),
-                _F(RESULTAT=redu,
-                   REFERENCE='AUTRE_ASTER',
-                   VALE_REFE=0.529606351907,
-                   NUME_ORDRE= 10,
-                   NOM_CHAM='DEPL',
-                   NOEUD='N27',
-                   NOM_CMP='DZ',
-                   VALE_CALC=0.528530484536,
-                   PRECISION = 0.0025
-                   ),
-                ),
-          );
 
-TEST_RESU(RESU=(
-                _F(RESULTAT=redu,
-                   REFERENCE='AUTRE_ASTER',
-                   VALE_REFE=-2739.13961277,
-                   NUME_ORDRE= 10,
-                   NOM_CHAM='SIEF_NOEU',
-                   NOEUD='N27',
-                   NOM_CMP='SIXX',
-                   VALE_CALC=-2731.12905064,
-                   PRECISION = 0.003,
-                   ),
-                _F(RESULTAT=redu,
-                   REFERENCE='AUTRE_ASTER',
-                   VALE_REFE=-2737.51235419,
-                   NUME_ORDRE= 10,
-                   NOM_CHAM='SIEF_NOEU',
-                   NOEUD='N27',
-                   NOM_CMP='SIYY',
-                   VALE_CALC=-2728.93093287,
-                   PRECISION = 0.0035,
-                   ),
-                _F(RESULTAT=redu,
-                   REFERENCE='AUTRE_ASTER',
-                   VALE_REFE=-2612.22311229,
-                   NUME_ORDRE= 10,
-                   NOM_CHAM='SIEF_NOEU',
-                   NOEUD='N27',
-                   NOM_CMP='SIZZ',
-                   VALE_CALC=-2603.9782507,
-                   PRECISION = 0.0035,
-                   ),
-                ),
-          );
 FIN()

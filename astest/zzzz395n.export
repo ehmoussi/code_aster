@@ -6,6 +6,7 @@ P mpi_nbnoeud 1
 P testlist verification sequential
 
 F comm zzzz395n.comm D 1
+F comm zzzz395n.com1 D 1
 F mmed zzzz395n.mmed D 20
 F mmed zzzz395n.70 D 70
 F mmed zzzz395n.71 D 71
