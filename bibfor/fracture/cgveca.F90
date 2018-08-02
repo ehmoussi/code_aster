@@ -15,12 +15,39 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
+
+subroutine cgveca(ndim, option, cas)
+    implicit none
 !
-#include "asterf_types.h"
+    integer :: ndim
+    character(len=16) :: option, cas
 !
-interface
-    subroutine cgvein(compor, l_temp)
-        character(len=19), intent(in) :: compor
-        aster_logical, intent(in) :: l_temp
-    end subroutine cgvein
-end interface
+! person_in_charge: samuel.geniaut at edf.fr
+!
+!     SOUS-ROUTINE DE L'OPERATEUR CALC_G
+!
+!     BUT : DETERMINATION DU CAS : 2D, 3D LOCAL OU 3D GLOBAL
+!
+!  IN :
+!    NDIM   : DIMENSION DU PROBLEME
+!    OPTION : OPTION DE CALC_G
+!  OUT :
+!    CAS    : '2D', '3D LOCAL' OU '3D GLOBAL'
+! ======================================================================
+!
+!     DETERMINATION DU CAS : 2D, 3D LOCAL OU 3D GLOBAL
+    if (ndim .eq. 3) then
+!
+        if (option .eq. 'CALC_G_GLOB') then
+            cas = '3D_GLOBAL'
+        else
+            cas = '3D_LOCAL'
+        endif
+!
+    else if (ndim.eq.2) then
+!
+        cas = '2D'
+!
+    endif
+!
+end subroutine
