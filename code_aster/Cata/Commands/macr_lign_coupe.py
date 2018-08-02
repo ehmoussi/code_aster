@@ -34,7 +34,7 @@ MACR_LIGN_COUPE=MACRO(nom="MACR_LIGN_COUPE",
             regles=(UN_PARMI("RESULTAT","CHAM_GD"),),
 
          RESULTAT        =SIMP(statut='f',typ=(evol_elas,evol_noli,evol_ther,mode_meca,
-                                               comb_fourier, mult_elas, fourier_elas) ),
+                                               comb_fourier, mult_elas, fourier_elas, dyna_trans) ),
          CHAM_GD         =SIMP(statut='f',typ=(cham_gd_sdaster)),
 
          b_extrac        =BLOC(condition = """exists("RESULTAT")""",fr=tr("extraction des résultats"),
@@ -55,7 +55,7 @@ MACR_LIGN_COUPE=MACRO(nom="MACR_LIGN_COUPE",
 
 # extraction des résultats
          b_meca        =BLOC(condition = """is_type("RESULTAT") in (evol_elas,evol_noli,mode_meca, comb_fourier,
-                                            mult_elas, fourier_elas)""",fr=tr("résultat mécanique"),
+                                            mult_elas, fourier_elas, dyna_trans)""",fr=tr("résultat mécanique"),
            NOM_CHAM        =SIMP(statut='f',typ='TXM',validators=NoRepeat(),defaut='SIGM_NOEU',into=C_NOM_CHAM_INTO(),),
          ),
          b_ther        =BLOC(condition = """is_type("RESULTAT") in (evol_ther,)""",fr=tr("résultat thermique"),

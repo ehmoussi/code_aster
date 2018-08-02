@@ -993,7 +993,7 @@ def macr_lign_coupe_ops(self, RESULTAT, CHAM_GD, LIGN_COUPE,
     angtab = []
 
     if AsType(RESULTAT).__name__ in ('evol_ther', 'evol_elas', 'evol_noli', 'mode_meca', 'evol_varc',
-                                     'comb_fourier', 'mult_elas', 'fourier_elas'):
+                                     'comb_fourier', 'mult_elas', 'fourier_elas','dyna_trans'):
 
         if NOM_CHAM in ('DEPL', 'SIEF_ELNO', 'SIGM_NOEU', 'SIGM_ELNO', 'FLUX_ELNO', 'FLUX_NOEU'):
             icham = 1
