@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -120,6 +120,7 @@ def check_i18n_tool(self, program, varname, argtest=['-h']):
     """Check a tool for a i18n program and store it using varname"""
     self.start_msg('Check for %s programs' % program)
     try:
+        self.env.stash()
         reason = 'not found'
         self.find_program(program, var=varname)
         # check the tool works, at least it is callable
@@ -129,6 +130,7 @@ def check_i18n_tool(self, program, varname, argtest=['-h']):
             reason = '{} found but does not work!'.format(self.env[varname])
             raise Errors.ConfigurationError
     except Errors.ConfigurationError:
+        self.env.revert()
         self.end_msg(reason, 'YELLOW')
         if self.options.install_i18n is True:
             raise

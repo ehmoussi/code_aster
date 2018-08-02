@@ -41,8 +41,10 @@ def options(self):
 def configure(self):
     opts = self.options
     try:
+        self.env.stash()
         self.check_mfront()
     except Errors.ConfigurationError:
+        self.env.revert()
         if opts.enable_mfront == True:
             raise
         self.define('_DISABLE_MFRONT', 1)
