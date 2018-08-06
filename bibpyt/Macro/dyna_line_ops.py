@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -61,11 +61,17 @@ class DynaLineFEM:
                  ISS = 'NON', **args):
         self.parent = parent
         self.keywords = {"MODELE" : MODELE}
-        charge = tuple(filter(lambda x: type(x)==DataStructure.char_meca, CHARGE))
+        try:
+            charge = tuple(filter(lambda x: type(x)==DataStructure.char_meca, CHARGE))
+        except TypeError:
+            charge = None
         if charge:
             self.keywords["CHARGE"] = charge
         self.char_cine = {}
-        char_cine = tuple(filter(lambda x: type(x)==DataStructure.char_cine_meca, CHARGE))
+        try:
+            char_cine = tuple(filter(lambda x: type(x)==DataStructure.char_cine_meca, CHARGE))
+        except TypeError:
+            char_cine = None
         if char_cine:
             self.char_cine["CHAR_CINE"] = char_cine
         if CHAM_MATER:
@@ -836,7 +842,10 @@ class DynaLineBasis:
                                           )
         else:
             keywords = self.dynaLineFEM.keywords.copy()
-            char_meca_global = keywords.pop("CHARGE")
+            try:
+                char_meca_global = keywords.pop("CHARGE")
+            except KeyError:
+                char_meca_global = None
             if char_meca_global:
                 keywords["CHAR_MECA_GLOBAL"] = char_meca_global
             else:

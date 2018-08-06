@@ -57,7 +57,7 @@ DYNA_LINE = MACRO(nom      = "DYNA_LINE",
         MODELE          =     SIMP(statut='o',typ=modele_sdaster),
         CHAM_MATER      =     SIMP(statut='f',typ=cham_mater),
         CARA_ELEM       =     SIMP(statut='f',typ=cara_elem),
-        CHARGE          =     SIMP(statut='o',typ=(char_meca,char_cine_meca), max='**'),
+        CHARGE          =     SIMP(statut='f',typ=(char_meca,char_cine_meca), max='**'),
 
         # if no value, F_max computed automaticaly, F_min set to 0
         # if only one value => F_max, F_min set to 0
