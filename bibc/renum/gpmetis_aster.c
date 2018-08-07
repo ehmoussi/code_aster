@@ -20,12 +20,11 @@
 #include "aster.h"
 #include "aster_fort.h"
 
-/*#ifdef _HAVE_METIS */
+#ifdef _HAVE_METIS
 #include "programs/metisbin.h"
 #include "libmetis/rename.h"
 #include "libmetis/proto.h"
 #include "programs/struct.h"
-/*#endif*/
 
 /* Prototypes of internal functions */
 
@@ -36,10 +35,12 @@ int ComputeFillInL(graph_t *, idx_t *, idx_t *, idx_t *, int *,
 int smbfctl(int, idx_t *, idx_t *, idx_t *, idx_t *, idx_t *, int *, idx_t *,
             idx_t *, int *, idx_t *, idx_t *, int *, int *, double *);
 
-void DEFPPPPPP(GPMETIS_ASTER, gpmetis_aster, ASTERINTEGER *nbnd, ASTERINTEGER *nadj, 
-               ASTERINTEGER4 *xadjd, ASTERINTEGER4 *adjncy, ASTERINTEGER *nbpart, 
-               ASTERINTEGER *partout )
+#endif
 
+
+void DEFPPPPPP(GPMETIS_ASTER, gpmetis_aster, ASTERINTEGER *nbnd, ASTERINTEGER *nadj,
+               ASTERINTEGER4 *xadjd, ASTERINTEGER4 *adjncy, ASTERINTEGER *nbpart,
+               ASTERINTEGER *partout )
 {
 #ifdef _HAVE_METIS
 
@@ -50,10 +51,10 @@ void DEFPPPPPP(GPMETIS_ASTER, gpmetis_aster, ASTERINTEGER *nbnd, ASTERINTEGER *n
   idx_t *part;
   idx_t objval;
   params_t *params;
-  int status=0; 
-  int wgtflag, ret;  
+  int status=0;
+  int wgtflag, ret;
   long k,l;
-  
+
   params = (params_t *)gk_malloc(sizeof(params_t), "parse_cmdline: params");
   memset((void *)params, 0, sizeof(params_t));
   /* initialize the params data structure */
@@ -79,7 +80,7 @@ void DEFPPPPPP(GPMETIS_ASTER, gpmetis_aster, ASTERINTEGER *nbnd, ASTERINTEGER *n
   params->nparts        = 1;
   params->ufactor       = -1;
   params->nparts        = *nbpart;
-/* 
+/*
   Set the ptype-specific defaults from cmdline_gpmetis.c
 */
   if (params->ptype == METIS_PTYPE_RB) {
@@ -120,7 +121,7 @@ void DEFPPPPPP(GPMETIS_ASTER, gpmetis_aster, ASTERINTEGER *nbnd, ASTERINTEGER *n
     for (i=0; i<graph->ncon; i++) {
       params->ubvec[i] = strtoreal(curptr, &newptr);
       if (curptr == newptr)
-        errexit("Error parsing entry #%"PRIDX" of ubvec [%s] (possibly missing).\n",i, 
+        errexit("Error parsing entry #%"PRIDX" of ubvec [%s] (possibly missing).\n",i,
                 params->ubvecstr);
       curptr = newptr;
     }
@@ -159,16 +160,16 @@ void DEFPPPPPP(GPMETIS_ASTER, gpmetis_aster, ASTERINTEGER *nbnd, ASTERINTEGER *n
 
   switch (params->ptype) {
     case METIS_PTYPE_RB:
-      status = METIS_PartGraphRecursive(&graph->nvtxs, &graph->ncon, graph->xadj, 
-                   graph->adjncy, graph->vwgt, graph->vsize, graph->adjwgt, 
-                   &params->nparts, params->tpwgts, params->ubvec, options, 
+      status = METIS_PartGraphRecursive(&graph->nvtxs, &graph->ncon, graph->xadj,
+                   graph->adjncy, graph->vwgt, graph->vsize, graph->adjwgt,
+                   &params->nparts, params->tpwgts, params->ubvec, options,
                    &objval, part);
       break;
 
     case METIS_PTYPE_KWAY:
-      status = METIS_PartGraphKway(&graph->nvtxs, &graph->ncon, graph->xadj, 
-                   graph->adjncy, graph->vwgt, graph->vsize, graph->adjwgt, 
-                   &params->nparts, params->tpwgts, params->ubvec, options, 
+      status = METIS_PartGraphKway(&graph->nvtxs, &graph->ncon, graph->xadj,
+                   graph->adjncy, graph->vwgt, graph->vsize, graph->adjwgt,
+                   &params->nparts, params->tpwgts, params->ubvec, options,
                    &objval, part);
       break;
 
@@ -200,7 +201,7 @@ void DEFPPPPPP(GPMETIS_ASTER, gpmetis_aster, ASTERINTEGER *nbnd, ASTERINTEGER *n
 
   FreeGraph(&graph);
   gk_free((void **)&part, LTERM);
-  gk_free((void **)&params->filename, &params->tpwgtsfile, &params->tpwgts, 
+  gk_free((void **)&params->filename, &params->tpwgtsfile, &params->tpwgts,
       &params->ubvecstr, &params->ubvec, &params, LTERM);
 
 }
@@ -226,7 +227,7 @@ graph_t *AffectGraph(ASTERINTEGER *nbnd,ASTERINTEGER *nadj,ASTERINTEGER4 *xadjd,
         }
         printf("\n");
     }
-     printf("\nfin impression arguments\n"); 
+     printf("\nfin impression arguments\n");
 */
   graph = CreateGraph();
   graph->nvtxs = *nbnd;
@@ -265,7 +266,7 @@ graph_t *AffectGraph(ASTERINTEGER *nbnd,ASTERINTEGER *nadj,ASTERINTEGER4 *xadjd,
         printf("\n");
     }
 
-     printf("\nfin impression graphe\n"); 
+     printf("\nfin impression graphe\n");
 */
   return graph;
 
@@ -279,8 +280,10 @@ graph_t *AffectGraph(ASTERINTEGER *nbnd,ASTERINTEGER *nadj,ASTERINTEGER4 *xadjd,
 #endif
 }
 
+
+#ifdef _HAVE_METIS
 /*************************************************************************/
-/*! This function reads in the target partition weights. If no file is 
+/*! This function reads in the target partition weights. If no file is
     specified the weights are set to 1/nparts */
 /*************************************************************************/
 void ReadTPwgts(params_t *params, idx_t ncon)
@@ -301,7 +304,7 @@ void ReadTPwgts(params_t *params, idx_t ncon)
     return;
   }
 
-  if (!gk_fexists(params->tpwgtsfile)) 
+  if (!gk_fexists(params->tpwgtsfile))
     errexit("Graph file %s does not exist!\n", params->tpwgtsfile);
 
   fpin = gk_fopen(params->tpwgtsfile, "r", "ReadTPwgts: tpwgtsfile");
@@ -365,7 +368,7 @@ void ReadTPwgts(params_t *params, idx_t ncon)
     if (from < 0 || to < 0 || from >= params->nparts || to >= params->nparts)
       errexit("Invalid partition range for %"PRIDX":%"PRIDX"\n", from, to);
     if (fromcnum < 0 || tocnum < 0 || fromcnum >= ncon || tocnum >= ncon)
-      errexit("Invalid constraint number range for %"PRIDX":%"PRIDX"\n", 
+      errexit("Invalid constraint number range for %"PRIDX":%"PRIDX"\n",
           fromcnum, tocnum);
     if (awgt <= 0.0 || awgt >= 1.0)
       errexit("Invalid partition weight of %"PRREAL"\n", awgt);
@@ -373,7 +376,7 @@ void ReadTPwgts(params_t *params, idx_t ncon)
       for (j=fromcnum; j<=tocnum; j++)
         params->tpwgts[i*ncon+j] = awgt;
     }
-  } 
+  }
 
   gk_fclose(fpin);
 
@@ -388,18 +391,18 @@ void ReadTPwgts(params_t *params, idx_t ncon)
     }
 
     /* Rescale the weights to be on the safe side */
-    if (nleft == 0) 
+    if (nleft == 0)
       rscale(params->nparts, 1.0/twgt, params->tpwgts+j, ncon);
-  
+
     /* Assign the left-over weight to the remaining partitions */
     if (nleft > 0) {
       if (twgt > 1)
         errexit("The total specified target partition weights for constraint #%"PRIDX
                 " of %"PRREAL" exceeds 1.0.\n", j, twgt);
-  
+
       awgt = (1.0 - twgt)/nleft;
       for (i=0; i<params->nparts; i++)
-        params->tpwgts[i*ncon+j] = 
+        params->tpwgts[i*ncon+j] =
             (params->tpwgts[i*ncon+j] < 0 ? awgt : params->tpwgts[i*ncon+j]);
     }
   }
@@ -415,7 +418,7 @@ void ReadTPwgts(params_t *params, idx_t ncon)
 /*! This function prints run parameters */
 /*************************************************************************/
 void GPPrintInfo(params_t *params, graph_t *graph)
-{ 
+{
   idx_t i;
 
   if (params->ufactor == -1) {
@@ -430,11 +433,11 @@ void GPPrintInfo(params_t *params, graph_t *graph)
   printf("******************************************************************************\n");
   printf("%s", METISTITLE);
   printf(" (Built on: %s, %s)\n", __DATE__, __TIME__);
-  printf(" size of idx_t: %zubits, real_t: %zubits, idx_t *: %zubits\n", 
+  printf(" size of idx_t: %zubits, real_t: %zubits, idx_t *: %zubits\n",
       8*sizeof(idx_t), 8*sizeof(real_t), 8*sizeof(idx_t *));
   printf("\n");
   printf("Graph Information -----------------------------------------------------------\n");
-  printf(" Name: %s, #Vertices: %"PRIDX", #Edges: %"PRIDX", #Parts: %"PRIDX"\n", 
+  printf(" Name: %s, #Vertices: %"PRIDX", #Edges: %"PRIDX", #Parts: %"PRIDX"\n",
       params->filename, graph->nvtxs, graph->nedges/2, params->nparts);
   if (graph->ncon > 1)
     printf(" Balancing constraints: %"PRIDX"\n", graph->ncon);
@@ -442,19 +445,19 @@ void GPPrintInfo(params_t *params, graph_t *graph)
   printf("\n");
   printf("Options ---------------------------------------------------------------------\n");
   printf(" ptype=%s, objtype=%s, ctype=%s, rtype=%s, iptype=%s\n",
-      ptypenames[params->ptype], objtypenames[params->objtype], ctypenames[params->ctype], 
+      ptypenames[params->ptype], objtypenames[params->objtype], ctypenames[params->ctype],
       rtypenames[params->rtype], iptypenames[params->iptype]);
 
   printf(" dbglvl=%"PRIDX", ufactor=%.3f, no2hop=%s, minconn=%s, contig=%s, nooutput=%s\n",
       params->dbglvl,
       I2RUBFACTOR(params->ufactor),
-      (params->no2hop   ? "YES" : "NO"), 
-      (params->minconn  ? "YES" : "NO"), 
+      (params->no2hop   ? "YES" : "NO"),
+      (params->minconn  ? "YES" : "NO"),
       (params->contig   ? "YES" : "NO"),
       (params->nooutput ? "YES" : "NO")
       );
 
-  printf(" seed=%"PRIDX", niter=%"PRIDX", ncuts=%"PRIDX"\n", 
+  printf(" seed=%"PRIDX", niter=%"PRIDX", ncuts=%"PRIDX"\n",
       params->seed, params->niter, params->ncuts);
 
   if (params->ubvec) {
@@ -478,7 +481,7 @@ void GPPrintInfo(params_t *params, graph_t *graph)
 /*! This function does any post-partitioning reporting */
 /*************************************************************************/
 void GPReportResults(params_t *params, graph_t *graph, idx_t *part, idx_t objval)
-{ 
+{
   gk_startcputimer(params->reporttimer);
   ComputePartitionInfo(params, graph, part);
 
@@ -486,7 +489,7 @@ void GPReportResults(params_t *params, graph_t *graph, idx_t *part, idx_t objval
 
   printf("\nTiming Information ----------------------------------------------------------\n");
   printf("  I/O:          \t\t %7.3"PRREAL" sec\n", gk_getcputimer(params->iotimer));
-  printf("  Partitioning: \t\t %7.3"PRREAL" sec   (METIS time)\n", 
+  printf("  Partitioning: \t\t %7.3"PRREAL" sec   (METIS time)\n",
          gk_getcputimer(params->parttimer));
   printf("  Reporting:    \t\t %7.3"PRREAL" sec\n", gk_getcputimer(params->reporttimer));
   printf("\nMemory Information ----------------------------------------------------------\n");
@@ -516,7 +519,7 @@ void ComputePartitionInfo(params_t *params, graph_t *graph, idx_t *where)
   tpwgts = params->tpwgts;
 
   /* Compute objective-related infomration */
-  printf(" - Edgecut: %"PRIDX", communication volume: %"PRIDX".\n\n", 
+  printf(" - Edgecut: %"PRIDX", communication volume: %"PRIDX".\n\n",
       ComputeCut(graph, where), ComputeVolume(graph, where));
 
 
@@ -524,7 +527,7 @@ void ComputePartitionInfo(params_t *params, graph_t *graph, idx_t *where)
   kpwgts = ismalloc(ncon*nparts, 0, "ComputePartitionInfo: kpwgts");
 
   for (i=0; i<nvtxs; i++) {
-    for (j=0; j<ncon; j++) 
+    for (j=0; j<ncon; j++)
       kpwgts[where[i]*ncon+j] += vwgt[i*ncon+j];
   }
 
@@ -538,7 +541,7 @@ void ComputePartitionInfo(params_t *params, graph_t *graph, idx_t *where)
         k = i;
       }
     }
-    printf("     constraint #%"PRIDX":  %5.3"PRREAL" out of %5.3"PRREAL"\n", 
+    printf("     constraint #%"PRIDX":  %5.3"PRREAL" out of %5.3"PRREAL"\n",
         j, unbalance,
          1.0*nparts*vwgt[ncon*iargmax_strd(nvtxs, vwgt+j, ncon)+j]/
             (1.0*isum(nparts, kpwgts+j, ncon)));
@@ -590,7 +593,7 @@ void ComputePartitionInfo(params_t *params, graph_t *graph, idx_t *where)
 
   printf(" - Subdomain connectivity: max: %"PRIDX", min: %"PRIDX", avg: %.2"PRREAL"\n\n",
       maxndom, minndom, 1.0*tndom/nparts);
-      
+
   gk_free((void **)&pptr, &pind, &pdom, LTERM);
 
 
@@ -622,6 +625,6 @@ void ComputePartitionInfo(params_t *params, graph_t *graph, idx_t *where)
   }
 
   gk_free((void **)&cptr, &cind, &cpwgts, LTERM);
-             
-}
 
+}
+#endif
