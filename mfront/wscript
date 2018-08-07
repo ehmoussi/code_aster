@@ -113,9 +113,15 @@ def check_mfront(self):
     if opts.enable_mfront == False:
         raise Errors.ConfigurationError('MFRONT disabled')
 
+    self.start_msg('Checking for TFELHOME variable')
     # takes TFELHOME from env (wafcfg) or environment
     if not self.env.TFELHOME:
         self.add_os_flags('TFELHOME')
+    if not self.env.TFELHOME:
+        self.end_msg('no', 'YELLOW')
+        raise Errors.ConfigurationError('TFELHOME must be defined!')
+    self.end_msg(self.env.TFELHOME)
+
     tfelhome = Utils.to_list(self.env.TFELHOME)
     paths = self.environ.get('PATH', '').split(os.pathsep)
     if tfelhome:

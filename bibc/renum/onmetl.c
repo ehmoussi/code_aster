@@ -21,7 +21,6 @@
 
 #ifdef _HAVE_METIS
 #include "programs/metisbin.h"
-#endif
 
 /* Prototypes of internal functions */
 int ReadGraphL(graph_t *, int *, int *, int *, int *, int *, int *);
@@ -29,6 +28,8 @@ int ComputeFillInL(graph_t *, idx_t *, int *, int *, int *,
                    int *, double *, int *, int *);
 int smbfctl(int, idx_t *, idx_t *, idx_t *, idx_t *, idx_t *, int *, idx_t *,
             idx_t *, int *, int *, int *, int *, int *, double *);
+
+#endif
 
 
 void DEFPPPPPPPPPPPPP(ONMETL,onmetl,nbnd,nadj,xadjd,adjncy,
@@ -72,7 +73,7 @@ lgind  : longueur de tableaux de pointeurs
    idx_t lll, options[METIS_NOPTIONS], *perm, *iperm;
    float TOTALTmr, METISTmr, IOTmr, SMBTmr;
    graph_t *graph=NULL;
-   
+
    debug1=0; /* si 1 affiche les resultats intermediaires ds .mess*/
    debug2=0; /* si 1, force la permutation identite pour bypasser METIS*/
 
@@ -132,7 +133,7 @@ lgind  : longueur de tableaux de pointeurs
    options[METIS_OPTION_NSEPS]    = 1; /* why ?*/
    options[METIS_OPTION_NUMBERING] = 0;
 
-/* Appel effectif a METIS pour reduire le profil de la matrice associee au graphe 
+/* Appel effectif a METIS pour reduire le profil de la matrice associee au graphe
    Algo par dissections emboitees recursives*/
    gk_startcputimer(METISTmr);
    ret=METIS_OK;
@@ -160,7 +161,7 @@ lgind  : longueur de tableaux de pointeurs
    ComputeFillInL(graph, iperm, parent, supnd, (int *) &graph->nvtxs, nbsn, nbops, lgind, fctnzs);
    gk_stopcputimer(SMBTmr);
    gk_stopcputimer(TOTALTmr);
-     
+
 /* Temps de calcul des differentes etapes de METIS*/
    if (*niv > 1 ) {
      printf("\nTiming Information --------------------------------------------------\n");
@@ -234,7 +235,7 @@ int ReadGraphL(graph_t *graph,int *nbnd,int *nadj,int *xadjd,int *adjnci,int *wg
   int ll=graph->nedges;
   for(k=0;k<ll;k++)
     {adjncy[k]=adjnci[k]-1; /*  on est en C */}
-   
+
 /* Pour tester et sortir le graphe dans le .mess*/
   if (*debug1==1) {
     printf("\nDebut impression graphe\n");
