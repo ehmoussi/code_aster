@@ -150,7 +150,8 @@ def configure(self):
     self.msg('Setting prefix to', self.env.PREFIX)
 
     self.load('ext_aster', tooldir='waftools')
-    if not self.options.use_config and os.environ.get('DEVTOOLS_COMPUTER_ID'):
+    computer_id = os.environ.get('DEVTOOLS_COMPUTER_ID', 'None')
+    if not self.options.use_config and computer_id != 'None':
         suffix = os.environ.get('WAF_SUFFIX', '')
         if suffix:
             suffix = '_' + suffix
