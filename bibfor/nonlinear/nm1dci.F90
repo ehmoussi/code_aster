@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -44,7 +44,10 @@ subroutine nm1dci(fami, kpg, ksp, imate, em,&
 !     ------------------------------------------------------------------
 !     ARGUMENTS
 !     ------------------------------------------------------------------
+!
 #include "asterfort/rcvalb.h"
+#include "asterfort/utmess.h"
+!
     real(kind=8) :: ep, em, sigy
     real(kind=8) :: sigm, deps, vim(2)
     real(kind=8) :: sigp, vip(2), dsde, sieleq
@@ -55,6 +58,7 @@ subroutine nm1dci(fami, kpg, ksp, imate, em,&
 !     VARIABLES LOCALES
 !     ------------------------------------------------------------------
     real(kind=8) :: sige, dp, valres(2), etm, etp, xp, xm, hm, hp
+    real(kind=8) :: valrm(2)
 !
     integer :: icodre(2)
     character(len=16) :: nomecl(2)
@@ -65,6 +69,13 @@ subroutine nm1dci(fami, kpg, ksp, imate, em,&
                 materi, 'ECRO_LINE', 0, ' ', [0.d0],&
                 1, nomecl, valres, icodre, 1)
     etm = valres(1)
+!
+    if (etm .le. 0.) then
+        valrm(1)=etm
+        valrm(2)=em
+        call utmess('F', 'COMPOR1_53', nr=2, valr=valrm)
+    endif
+!
     hm = em*etm/ (em-etm)
 !
     call rcvalb(fami, kpg, ksp, '+', imate,&
