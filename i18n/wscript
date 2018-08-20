@@ -28,7 +28,7 @@ Content of src/i18n
 
 * These files are created by ``msginit`` from the ``.pot`` file::
 
-    msginit -i build/release/i18n/aster_messages.pot --locale=$LANG --no-translator
+    msginit -i build/std/release/i18n/aster_messages.pot --locale=$LANG --no-translator
 
   or by adding a new language on crowdin and download a fresh package.
 
@@ -67,7 +67,7 @@ Build steps
 
   - update the 'src' tree by running::
 
-      cp -r build/release/i18n_updated/* i18n/
+      cp -r build/std/release/i18n_updated/* i18n/
       hg add i18n/*/*.po
       hg ci -m '[i18n] update translations from Crowdin code_aster project' i18n
 

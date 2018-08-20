@@ -47,7 +47,7 @@ elif [[ "$1" =~ ^\- ]]; then
 elif [ "$1" = "reconfigure" ]; then
     wafscript=$0
     [ "${WAF_SUFFIX}" = "mpi" ] && wafscript=${wafscript}_${WAF_SUFFIX}
-    python -c "from subprocess import call ; $(grep WAFCMDLINE build/c4che/release_cache.py) ; call(['${wafscript}'] + WAFCMDLINE)"
+    python -c "from subprocess import call ; $(grep WAFCMDLINE build/${WAF_SUFFIX}/c4che/release_cache.py) ; call(['${wafscript}'] + WAFCMDLINE)"
     exit $?
 else
     # is the first argument a waf command ?
