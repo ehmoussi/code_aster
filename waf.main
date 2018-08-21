@@ -45,9 +45,14 @@ elif [[ "$1" =~ ^\- ]]; then
     # start with hiphen: suppose to be a waf option
     true
 elif [ "$1" = "reconfigure" ]; then
-    wafscript=$0
+    wafscript=./waf
     [ "${WAF_SUFFIX}" = "mpi" ] && wafscript=${wafscript}_${WAF_SUFFIX}
-    python -c "from subprocess import call ; $(grep WAFCMDLINE build/${WAF_SUFFIX}/c4che/release_cache.py) ; call(['${wafscript}'] + WAFCMDLINE)"
+    if [ -f build/${WAF_SUFFIX}/c4che/release_cache.py ]; then
+        WAFCMDLINE=$(grep WAFCMDLINE build/${WAF_SUFFIX}/c4che/release_cache.py)
+    else
+        WAFCMDLINE="WAFCMDLINE = []"
+    fi
+    python -c "from subprocess import call; ${WAFCMDLINE}; call(['${wafscript}'] + WAFCMDLINE)"
     exit $?
 else
     # is the first argument a waf command ?
