@@ -96,10 +96,11 @@ integer, intent(out) :: nb_snap_redu
     real(kind=8), pointer :: v_gamma(:)    => null()
     character(len=19) :: tabl_name, tabl_name_r
     character(len=24) :: typval
-    integer :: nbval, iret
+    integer :: nbval, iret, nb_line
     real(kind=8), pointer :: v_gm(:) => null()
     character(len=24) :: mode = '&&IPOD_MODE'
     real(kind=8), pointer :: v_mode(:) => null()
+    integer, pointer :: v_tbnp(:) => null()
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -125,7 +126,10 @@ integer, intent(out) :: nb_snap_redu
     if (l_reuse) then
         call romBaseRead(base, ds_empi)
         call ltnotb(base, 'COOR_REDUIT', tabl_name_r, iret)
-        if (iret .gt. 0) then
+        ASSERT(iret .eq. 0)
+        call jeveuo(tabl_name_r//'.TBNP', 'L', vi=v_tbnp)
+        nb_line = v_tbnp(2)
+        if (nb_line .eq. 0) then
             call utmess('F', 'ROM7_24')
         endif
         call tbexve(tabl_name_r, 'COOR_REDUIT', '&&COORHR', 'V', nbval, typval)
