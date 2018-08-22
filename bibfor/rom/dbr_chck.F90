@@ -59,7 +59,7 @@ type(ROM_DS_ParaDBR), intent(in) :: ds_para
     elseif (ds_para%operation .eq. 'GLOUTON') then
         call dbr_chck_rb(ds_para%operation, ds_para%para_rb, ds_para%l_reuse)
     elseif (ds_para%operation .eq. 'TRONCATURE') then
-        call dbr_chck_tr(ds_para%para_tr)
+        call dbr_chck_tr(ds_para%para_tr, ds_para%l_reuse)
     else
         ASSERT(.false.)
     endif

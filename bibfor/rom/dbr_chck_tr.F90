@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine dbr_chck_tr(ds_para_tr)
+subroutine dbr_chck_tr(ds_para_tr, l_reuse)
 !
 use Rom_Datastructure_type
 !
@@ -29,6 +29,7 @@ implicit none
 #include "asterfort/romBaseChck.h"
 !
 type(ROM_DS_ParaDBR_TR), intent(in) :: ds_para_tr
+aster_logical, intent(in) :: l_reuse
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -39,17 +40,19 @@ type(ROM_DS_ParaDBR_TR), intent(in) :: ds_para_tr
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  ds_para_tr       : datastructure for truncation parameters
+! In  l_reuse          : .true. if reuse
 !
 ! --------------------------------------------------------------------------------------------------
 !
     character(len=8) :: model_rom, model_init
-    character(len=8) :: mesh_rom, mesh_init
+    character(len=8) :: mesh_rom, mesh_init, base_init
 !
 ! --------------------------------------------------------------------------------------------------
 !
     model_init = ds_para_tr%ds_empi_init%model
     model_rom  = ds_para_tr%model_rom
     mesh_init  = ds_para_tr%ds_empi_init%mesh
+    base_init  = ds_para_tr%base_init
     call dismoi('NOM_MAILLA', model_rom, 'MODELE'  , repk = mesh_rom)
     if (mesh_init .ne. mesh_rom) then
         call utmess('F', 'ROM6_12')
@@ -61,5 +64,13 @@ type(ROM_DS_ParaDBR_TR), intent(in) :: ds_para_tr
 ! - Check empiric base
 !
     call romBaseChck(ds_para_tr%ds_empi_init)
+!
+! - No reuse:
+!
+    if (l_reuse) then
+        if (base_init .ne. ' ') then
+            call utmess('F', 'ROM6_40')
+        endif
+    endif
 !
 end subroutine

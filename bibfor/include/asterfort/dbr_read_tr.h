@@ -17,9 +17,8 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine dbr_read_tr(ds_para_tr, l_base)
+    subroutine dbr_read_tr(ds_para_tr)
         use Rom_Datastructure_type
         type(ROM_DS_ParaDBR_TR), intent(inout) :: ds_para_tr
-        aster_logical, intent(out) :: l_base
     end subroutine dbr_read_tr
 end interface

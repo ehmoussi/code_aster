@@ -70,4 +70,6 @@ cata_msg = {
    38 : _(u"""Initialisations pour le post-traitement du calcul réduit, quantités primales."""),
 
    39 : _(u"""Initialisations pour le post-traitement du calcul réduit, quantités duales."""),
+
+   40 : _(u"""Vous avez donné le nom de la base à tronquer (BASE_INIT) alors que vous voulez tronquer une base déjà existante."""),
 }

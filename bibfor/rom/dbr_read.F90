@@ -53,7 +53,7 @@ type(ROM_DS_ParaDBR), intent(inout) :: ds_para
     character(len=16) :: k16bid, operation = ' '
     character(len=8) :: result_out = ' '
     integer :: ireuse
-    aster_logical :: l_reuse, l_base
+    aster_logical :: l_reuse
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -76,12 +76,10 @@ type(ROM_DS_ParaDBR), intent(inout) :: ds_para
     call getvtx(' ', 'OPERATION', scal = operation)
     if (operation(1:3) .eq. 'POD') then
         call dbr_read_pod(operation, ds_para%para_pod)
-        l_base = ASTER_FALSE
     elseif (operation .eq. 'GLOUTON') then
         call dbr_read_rb(ds_para%para_rb)
-        l_base = ASTER_FALSE
     elseif (operation .eq. 'TRONCATURE') then
-        call dbr_read_tr(ds_para%para_tr, l_base)
+        call dbr_read_tr(ds_para%para_tr)
     else
         ASSERT(.false.)
     endif
@@ -91,6 +89,5 @@ type(ROM_DS_ParaDBR), intent(inout) :: ds_para
     ds_para%operation    = operation
     ds_para%result_out   = result_out
     ds_para%l_reuse      = l_reuse
-    ds_para%l_base       = l_base
 !
 end subroutine

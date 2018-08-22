@@ -30,7 +30,6 @@ implicit none
 #include "asterfort/dbr_para_info_pod.h"
 #include "asterfort/dbr_para_info_rb.h"
 #include "asterfort/dbr_para_info_tr.h"
-#include "asterfort/romBasePrintInfo.h"
 !
 type(ROM_DS_ParaDBR), intent(in) :: ds_para
 !
@@ -49,7 +48,7 @@ type(ROM_DS_ParaDBR), intent(in) :: ds_para
     integer :: ifm, niv
     character(len=16) :: operation = ' '
     character(len=8)  :: result_out = ' '
-    aster_logical :: l_reuse, l_base
+    aster_logical :: l_reuse
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -60,7 +59,6 @@ type(ROM_DS_ParaDBR), intent(in) :: ds_para
     operation    = ds_para%operation
     result_out   = ds_para%result_out
     l_reuse      = ds_para%l_reuse
-    l_base       = ds_para%l_base
 !
 ! - Print - General for DBR
 !
@@ -71,14 +69,6 @@ type(ROM_DS_ParaDBR), intent(in) :: ds_para
             call utmess('I', 'ROM7_15')
         else
             call utmess('I', 'ROM7_16')
-        endif
-    endif
-!
-! - Print about empiric base
-!
-    if (niv .ge. 2) then
-        if (l_base) then
-            call romBasePrintInfo(ds_para%ds_empi)
         endif
     endif
 !

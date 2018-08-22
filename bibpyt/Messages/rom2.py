@@ -120,4 +120,12 @@ cata_msg = {
 
    55 : _(u"""Création du nouveau profil de numérotation du champ tronqué."""),
 
+   56 : _(u"""Lecture de la base à tronquer. La base tronquée aura le même nom que la base à tronquer."""),
+
+   57 : _(u"""Lecture de la base à tronquer. La base tronquée sera nouvelle."""),
+
+   58 : _(u"""Création de la nouvelle base tronquée."""),
+
+   59 : _(u"""Création de la nouvelle numérotation sur le domaine complet."""),
+
 }
