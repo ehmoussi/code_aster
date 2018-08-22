@@ -56,7 +56,6 @@ type(ROM_DS_ParaDBR), intent(out) :: ds_para
     ds_para%para_pod     = ds_para_pod
     ds_para%para_rb      = ds_para_rb
     ds_para%para_tr      = ds_para_tr
-    ds_para%l_base       = ASTER_FALSE
     ds_para%ds_empi      = ds_empi
     ds_para%l_reuse      = ASTER_FALSE
 !

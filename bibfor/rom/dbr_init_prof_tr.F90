@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -24,8 +24,6 @@ use Rom_Datastructure_type
 implicit none
 !
 #include "asterf_types.h"
-#include "asterfort/infniv.h"
-#include "asterfort/utmess.h"
 #include "asterfort/assert.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/gnomsd.h"
@@ -49,17 +47,12 @@ type(ROM_DS_ParaDBR_TR), intent(inout) :: ds_para_tr
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: ifm, niv
     integer :: i_mode, iret, idx_gd
     character(len=24) :: prno_new, field_name, mode_ref
     character(len=19) :: prno_old
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call infniv(ifm, niv)
-    if (niv .ge. 2) then
-        call utmess('I', 'ROM2_55')
-    endif
 !
 ! - Get mode (complete)
 !

@@ -76,6 +76,9 @@ type(ROM_DS_ParaDBR_TR), intent(inout) :: ds_para_tr
     call gnomsd(' ', noojb, 10, 14)
     nume_rom = noojb(1:14)
     call numero(nume_rom, 'VV', modelz = model_rom)
+    if (niv .ge. 2) then
+        call utmess('I', 'ROM2_59')
+    endif
     nume_dom = '12345678.NUMED'
     call gnomsd(' ', noojb, 10, 14)
     nume_dom = noojb(1:14)

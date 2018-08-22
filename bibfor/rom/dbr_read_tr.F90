@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine dbr_read_tr(ds_para_tr, l_base)
+subroutine dbr_read_tr(ds_para_tr)
 !
 use Rom_Datastructure_type
 !
@@ -30,7 +30,6 @@ implicit none
 #include "asterfort/getvid.h"
 !
 type(ROM_DS_ParaDBR_TR), intent(inout) :: ds_para_tr
-aster_logical, intent(out) :: l_base
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -61,14 +60,11 @@ aster_logical, intent(out) :: l_base
     call getvid(' ', 'BASE', scal = base_init, nbret = nocc)
     if (nocc .eq. 0) then
         base_init   = ' '
-        l_base = ASTER_FALSE
-    else
-        l_base = ASTER_TRUE
     endif
 !
 ! - Save parameters in datastructure
 !
-    ds_para_tr%model_rom   = model_rom
-    ds_para_tr%base_init   = base_init
+    ds_para_tr%model_rom = model_rom
+    ds_para_tr%base_init = base_init
 !
 end subroutine

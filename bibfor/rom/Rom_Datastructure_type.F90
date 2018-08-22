@@ -299,8 +299,6 @@ implicit none
 ! ----- Parameters for truncation method
         type(ROM_DS_ParaDBR_TR ) :: para_tr
 ! ----- Datastructure for empiric modes
-        aster_logical            :: l_base
-! ----- Datastructure for empiric modes
         type(ROM_DS_Empi)        :: ds_empi
 ! ----- If operator is "reuse"
         aster_logical            :: l_reuse
