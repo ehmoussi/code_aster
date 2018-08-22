@@ -17,15 +17,13 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine romBaseCopy(ds_empi_in, base, ds_empi_out)
+subroutine romBaseDSCopy(ds_empi_in, base, ds_empi_out)
 !
 use Rom_Datastructure_type
 !
 implicit none
 !
 #include "asterfort/assert.h"
-#include "asterfort/infniv.h"
-#include "asterfort/utmess.h"
 #include "asterfort/romBaseDSInit.h"
 !
 type(ROM_DS_Empi), intent(in)  :: ds_empi_in
@@ -36,7 +34,7 @@ type(ROM_DS_Empi), intent(out) :: ds_empi_out
 !
 ! Model reduction
 !
-! Copy empiric modes base
+! Copy datastructure of empiric modes base
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -45,17 +43,6 @@ type(ROM_DS_Empi), intent(out) :: ds_empi_out
 ! Out ds_empi_out      : datastructure for output empiric modes
 !
 ! --------------------------------------------------------------------------------------------------
-!
-    integer :: ifm, niv
-!
-! --------------------------------------------------------------------------------------------------
-!
-    call infniv(ifm, niv)
-    if (niv .ge. 2) then
-        call utmess('I', 'ROM2_1')
-    endif
-!
-! - Initialisation of datastructure
 !
     call romBaseDSInit(ds_empi_in%ds_lineic, ds_empi_out)
 !

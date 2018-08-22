@@ -21,10 +21,6 @@
 
 cata_msg = {
 
-    1 : _(u"""La base empirique est copiée."""),
-
-    2 : _(u"""Lecture de la base empirique."""),
-
     4 : _(u"""Lecture des données pour sélectionner les clichés."""),
 
     6 : _(u"""Tolérance pour détecter les noeuds: %(r1)19.12e."""),
