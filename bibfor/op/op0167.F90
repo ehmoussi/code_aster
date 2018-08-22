@@ -1117,14 +1117,12 @@ subroutine op0167()
             call gtgrma(nomain, nomaax, zk24(jlgrma+izone-1), lima, nbma)
             nbma_izone = nbma
             AS_ALLOCATE(vi=li_trav, size=nbma)
-            write(*,*)"nbma:", nbma
 ! ------ Gestion du cas avec des mailles surfaciques possédant des mailles volumiques communes
             do while (nb_ma_test .lt. nbma)
                 cninv='&&CPPAGN.CNINV'
                 call wkvect(cninv,'V V I', nbma, jcninv)
                 call cnmpmc(nomaax,nbma, lima,zi(jcninv))
                 call def_list_test(nbma, jcninv, lima, li_trav, nbtrav)
-                write(*,*)"nbtrav :", nbtrav
 ! ------ CREATION DES PATCHS ET RAFFINEMENT LOCAL
                 call cppagn(nomaax, nomaou,  nbtrav, li_trav, izone, typ_dec, jcninv,&
                             same_zone, nb_ma_test)

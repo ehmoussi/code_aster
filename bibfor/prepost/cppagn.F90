@@ -23,6 +23,8 @@ implicit none
 !
 #include "jeveux.h"
 #include "asterf_types.h"
+#include "asterfort/as_deallocate.h"
+#include "asterfort/as_allocate.h"
 #include "asterfort/assert.h"
 #include "asterfort/copisd.h"
 #include "asterfort/dismoi.h"
@@ -47,7 +49,6 @@ implicit none
 #include "asterfort/jelira.h"
 #include "asterfort/codent.h"
 #include "asterfort/lxlgut.h"
-#include "asterfort/utlisi.h"
 #include "asterfort/cpclma.h"
 #include "asterfort/jenonu.h"
 #include "asterfort/cpte04.h"
@@ -95,29 +96,35 @@ implicit none
 ! IN        TYP_DEC I  TYPE DE DECOUPE POUR LES HEXA 1:PYRA 2:HEXA
 ! -------------------------------------------------------------------------------------------------
     integer :: inc, patch, nbnot, nbmat, info, nma, nbno, ind1, nbnwma, nbpain
-    integer :: jdim, jrefe, macou, macsu, jcivax, jcoor, jgmao, nbnwmaes
+    integer :: jdim, jrefe, macou, macsu, jcoor, jgmao, nbnwmaes
     integer :: jmacsu, jmacou, jlimane, jconloc, lgma, inc2, jcnmpa, jcnnpa
-    integer :: ind, res(1), ntrou, jtpmao, jtypma, aux, numa, laux(1)
-    integer :: jcnmai, jcnmao, incc, ntrou1, jgma, jrgma
+    integer :: ind, ntrouv, jtpmao, jtypma, aux, numa, laux(1)
+    integer :: jcnmai, jcnmao, incc, ntrouv1, jgma
     integer :: conlen, cnlclg, idtpma(6), nbnoma(6), odcnpa, odcmpa,lenconloc, lenlimane, lenpat
 !
     character(len=24) :: nomnoi, nomnoe, limane, conloc
-    character(len=24) :: nomnd, nomma, cnivax, rgma, gpptnn
+    character(len=24) :: nomnd, nomma, gpptnn
     character(len=19) :: coordo
     character(len=16) :: knume,knuzo
     character(len=8) :: typmail,typmail_trait
     aster_logical :: false
+    integer, pointer :: ntrou(:)   => null()
+    integer, pointer :: lmasu(:)   => null()
 ! -------------------------------------------------------------------------------------------------
     call jemarq()
     false=.false.
-    nbpain = 0
-    nbnwmaes = 0
+    nbpain    = 0
+    nbnwmaes  = 0
 ! --- DUPLICATION A L'IDENTIQUE DES GROUPES DE NOEUDS (PAS DE MISE A JOUR) ------------------------
     call cpclma(main, maout, 'GROUPENO', 'G')
 ! --- DIMENSION DU NOUVEAU MAILLAGE, DES CONNECTIVITE (AUXILAIRE ET NOUVELLE) ---------------------
     call jeveuo(main//'.DIME', 'L', info)
     nbno = zi(info-1+1)
     nma = zi(info-1+3)
+    AS_ALLOCATE(vi=ntrou, size= nma)
+    AS_ALLOCATE(vi=lmasu, size= nma)
+    lmasu(:) = 0
+    ntrou(:) = 0
     call jeveuo(main//'.TYPMAIL','L',jtypma)
     nbnot= nbno
     nbmat= nma
@@ -129,6 +136,9 @@ implicit none
     do inc= 1, nbma
         macou=lima(inc)
         macsu = zi(jcninv+ dec + inc-1)
+        ntrou(macou)  = 1
+        ntrou(macsu)  = 2
+        lmasu(macou)  = macsu
         call jenuno(jexnum('&CATA.TM.NOMTM', zi(jtypma+macsu-1)), typmail)
         select case (typmail)
 ! -------- CAS 2D
@@ -392,11 +402,7 @@ implicit none
     call jeecra(limane,'LONT', lenlimane)
     do inc = 1, nma
         laux(1)=inc
-        ntrou = 0
-        ntrou1 = 0
-        call utlisi('INTER', laux, 1, lima, nbma, res, 1, ntrou)
-        call utlisi('INTER', laux, 1, zi(jcninv+ dec), nbma, res, 1, ntrou1)
-        if (ntrou .eq. 1) then
+        if (ntrou(inc) .eq. 1) then
             if (zi(jtypma+inc-1) .eq. 2) then
                 do incc=1,nbma
                     if (lima(incc) .eq. inc) then
@@ -437,7 +443,7 @@ implicit none
                         call jeecra(jexnum(limane, inc), 'LONUTI', ival=5)
                     end if
             end select
-        elseif (ntrou1 .eq. 1) then
+        elseif (ntrou(inc) .eq. 2) then
             select case (zi(jtypma+inc-1))
                 case (7)
                     call jeecra(jexnum(limane, inc), 'LONMAX', ival=2)
@@ -463,7 +469,7 @@ implicit none
                     call jeecra(jexnum(limane, inc), 'LONMAX', ival=4)
                     call jeecra(jexnum(limane, inc), 'LONUTI', ival=4)
             end select
-        elseif (ntrou1.eq.0 .and. ntrou .eq. 0) then
+        elseif (ntrou(inc).eq.0) then
             call jeecra(jexnum(limane, inc), 'LONMAX', ival=1)
             call jeecra(jexnum(limane, inc), 'LONUTI', ival=1)
         end if
@@ -615,11 +621,9 @@ implicit none
     macou = 0
     do inc = 1, nma
         laux(1)=inc
-        call utlisi('INTER', laux, 1, lima, nbma, res, 1, ntrou)
-        call utlisi('INTER', laux, 1, zi(jcninv+ dec), nbma, res, 1, ntrou1)
-        if (ntrou .eq. 1 .or. ntrou1 .eq. 1) then
+        if (ntrou(inc) .eq. 1 .or. ntrou(inc) .eq. 2) then
             call jeveuo(jexnum(limane,inc),'E',jlimane)
-    select case(ntrou)
+    select case(ntrou(inc))
        case(1)
            if (zi(jtypma+inc-1) .eq. 2 .or. zi(jtypma+inc-1) .eq. 12 .or. &
                zi(jtypma+inc-1) .eq. 14) then
@@ -827,7 +831,7 @@ implicit none
                     ind1=ind1+1
                 end if
 ! ----------------------- CONNECTIVITE MAILLE-PATCH
-                if (ntrou .eq. 1) then
+                if (ntrou(inc) .eq. 1) then
                     zi(jcnmpa+ind+incc-1)=zi(jlimane-1+nbnwma+1)
                 endif
 ! ----------------------- NOUVELLES MAILLES
@@ -864,8 +868,8 @@ implicit none
 ! ----------------------------------------------------------------------
 !      MISE A JOUR DES GROUPES DE MAILLE
 ! ----------------------------------------------------------------------
-  ntrou=0
-  ntrou1=0
+  ntrouv=0
+  ntrouv1=0
   gpptnn=maout//'.PTRNOMMAI      '
   call jedetr(maout//'.GROUPEMA')
   call jedetr(maout//'.PTRNOMMAI')
@@ -875,35 +879,19 @@ implicit none
   call jecrec(maout//'.GROUPEMA','G V I', 'NO '//gpptnn, 'DISPERSE', 'VARIABLE', aux)
   do inc = 1,aux
     ind=1
-    rgma='&&CPPAGN.RGMA'
-    cnivax='&&CPPAGN.CNIVAX'
-    call wkvect(rgma,'V V I',nbma,jrgma)
     call jenuno(jexnum(main//'.GROUPEMA',inc),nomma)
     call jeveuo(jexnum(main//'.GROUPEMA',inc),'L',jgma)
     call jelira(jexnum(main//'.GROUPEMA',inc),'LONUTI',lgma)
-    call utlisi('INTER', lima, nbma, zi(jgma), lgma, zi(jrgma), nbma,&
-                ntrou)
-    call utlisi('INTER', zi(jgma), lgma, zi(jcninv+ dec), nbma, zi(jrgma), nbma,&
-                 ntrou1)
     call jecroc(jexnom(maout//'.GROUPEMA',nomma))
-        if (ntrou .gt. 0 .or. ntrou1 .gt. 0 ) then
 ! ----- DIMENSION DU NOUVEAU GROUPE_MA ------------------------------------------------------------
      nbnwma = 0
-     call wkvect(cnivax,'V V I', nma, jcivax)
-     call cnmpmc(main,lgma, zi(jgma),zi(jcivax))
      do incc =1, lgma
          macou = zi(jgma+incc-1)
-
-         call utlisi('INTER',  zi(jgma+incc-1), 1,lima, nbma, res, 1,&
-                     ntrou)
-         call utlisi('INTER',  zi(jgma+incc-1), 1, zi(jcninv+ dec), nbma, res, 1,&
-                     ntrou1)
-
-         if (ntrou .eq. 1) then
+         if (ntrou(macou) .eq. 1) then
              call jenuno(jexnum('&CATA.TM.NOMTM', zi(jtypma+macou-1)), typmail_trait)
              select case (typmail_trait)
                  case ('SEG2')
-                     call jenuno(jexnum('&CATA.TM.NOMTM', zi(jtypma+zi(jcivax+incc-1)-1)), typmail)
+                     call jenuno(jexnum('&CATA.TM.NOMTM', zi(jtypma+lmasu(macou)-1)), typmail)
                      if (typmail.eq. 'TRIA3' ) then
                          nbnwma = nbnwma + 2
                      elseif (typmail.eq. 'QUAD4' ) then
@@ -915,8 +903,8 @@ implicit none
                      nbnwma = nbnwma + 3
                  case ('QUAD4', 'QUAD8')
                      if (typ_dec.eq.0 .and.&
-                         (zi(jtypma+zi(jcivax+incc-1)-1) .eq. 25.or.&
-                          zi(jtypma+zi(jcivax+incc-1)-1) .eq. 26)) then
+                         (zi(jtypma+lmasu(macou)-1) .eq. 25.or.&
+                          zi(jtypma+lmasu(macou)-1) .eq. 26)) then
                          nbnwma = nbnwma + 5
                      else
                          nbnwma = nbnwma + 4
@@ -924,7 +912,7 @@ implicit none
                  case default
                      ASSERT(.false.)
              end select
-         elseif (ntrou1 .eq. 1) then
+         elseif (ntrou(macou) .eq. 2) then
              call jenuno(jexnum('&CATA.TM.NOMTM', zi(jtypma+macou-1)), typmail_trait)
              select case (typmail_trait)
                  case ('TRIA3')
@@ -958,17 +946,13 @@ implicit none
 ! ----- REMPLISSAGE NOUVEAU GROUPE_MAI ------------------------------------------------------------
   do incc =1, lgma
       macou = zi(jgma+incc-1)
-      call utlisi('INTER',  zi(jgma+incc-1), 1,lima, nbma, res, 1,&
-                  ntrou)
-      call utlisi('INTER',  zi(jgma+incc-1), 1, zi(jcninv+ dec), nbma, res, 1,&
-                  ntrou1)
       nbnwma = 1
-      if (ntrou .eq. 1) then
+      if (ntrou(macou) .eq. 1) then
           call jenuno(jexnum('&CATA.TM.NOMTM', zi(jtypma+macou-1)), typmail_trait)
           select case (typmail_trait)
 ! NTROU : MAILLES DE PEAU
            case ('SEG2')
-               call jenuno(jexnum('&CATA.TM.NOMTM', zi(jtypma+zi(jcivax+incc-1)-1)), typmail)
+               call jenuno(jexnum('&CATA.TM.NOMTM', zi(jtypma+lmasu(macou)-1)), typmail)
                if (typmail .eq. 'TRIA3' ) then
                    nbnwma = 2
                elseif (typmail .eq. 'QUAD4' ) then
@@ -980,8 +964,8 @@ implicit none
                nbnwma = 3
            case ('QUAD4', 'QUAD8')
                if (typ_dec.eq.0 .and. &
-                   (zi(jtypma+zi(jcivax+incc-1)-1) .eq. 25 .or.&
-                    zi(jtypma+zi(jcivax+incc-1)-1) .eq. 26)) then
+                   (zi(jtypma+lmasu(macou)-1) .eq. 25 .or.&
+                    zi(jtypma+lmasu(macou)-1) .eq. 26)) then
                    nbnwma =  5
                else
                    nbnwma =  4
@@ -989,8 +973,8 @@ implicit none
            case default
                ASSERT(.false.)
      end select
-    elseif (ntrou1 .eq. 1) then
-        call jenuno(jexnum('&CATA.TM.NOMTM', zi(jtypma+macou-1)), typmail_trait)
+    elseif (ntrou(macou) .eq. 2) then
+        call jenuno(jexnum('&CATA.TM.NOMTM', zi(jtypma+macou-1)), typmail_trait)!!
         select case (typmail_trait)
 ! NTROU1 : MAILLES DE CORPS
             case ('TRIA3')
@@ -1014,41 +998,28 @@ implicit none
         end select
     endif
     if (nbnwma .gt. 1) then
-    call jeveuo(jexnum(limane,macou),'L', jlimane)
+    call jeveuo(jexnum(limane,macou),'L', jlimane)!!
         do ind1= 1, nbnwma
             zi(jgmao+ind-1+ind1-1)=zi(jlimane+ind1-1)
         end do
     ind=ind+nbnwma
     else
 ! ---------------------- RECOPIE A L'IDENTIQUE
-                    call jenuno(jexnum(main//'.NOMMAI',zi(jgma+incc-1)),&
+                    call jenuno(jexnum(main//'.NOMMAI',zi(jgma+incc-1)),&!??
                                 nomma)
-                    call jenonu(jexnom(maout//'.NOMMAI',nomma),numa)
+                    call jenonu(jexnom(maout//'.NOMMAI',nomma),numa)!??
                     zi(jgmao+ind-1)=numa
                     ind=ind+1
                 end if
             end do
-        else
-! ------ RECOPIE A L'IDENTIQUE
-            call jeecra(jexnum(maout//'.GROUPEMA',inc),'LONUTI',lgma)
-            call jeecra(jexnum(maout//'.GROUPEMA',inc),'LONMAX',lgma)
-            call jeveuo(jexnum(maout//'.GROUPEMA',inc),'E',jgmao)
-            do incc= 1, lgma
-                call jenuno(jexnum(main//'.NOMMAI',zi(jgma+incc-1)),&
-                            nomma)
-                call jenonu(jexnom(maout//'.NOMMAI',nomma),numa)
-                zi(jgmao+incc-1)=numa
-            end do
-        endif
-        call jedetr(cnivax)
-        call jedetr(rgma)
     end do
     dec = dec + nbnwmaes + nbma
-    write(*,*) "new dec", dec
 ! ---------------------------------------------------------------------
 !      DESTRUCTION DES VARIABLES AUXILIAIRES
 ! ---------------------------------------------------------------------
    call jedetr(limane)
    call jedetr(conloc)
+   AS_DEALLOCATE(vi=ntrou)
+   AS_DEALLOCATE(vi=lmasu)
    call jedema()
 end subroutine
