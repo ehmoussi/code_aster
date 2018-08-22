@@ -86,13 +86,13 @@ implicit none
     integer :: elem_type_nume
     integer :: elem_slav_nbnode, elem_slav_dime, elem_slav_nume, elem_slav_indx
     character(len=24) :: conx_inve
-    character(len=8) :: elem_slav_type, elem_slav_code, knuzo 
+    character(len=8) :: elem_slav_type, elem_slav_code, knuzo
     real(kind=8) :: elem_slav_coor(27)
-    integer :: elin_slav_nbsub, elin_slav_sub(8,9), elin_slav_nbnode(8)
+    integer :: elin_slav_nbsub, elin_slav_sub(2,3), elin_slav_nbnode(2)
     integer :: elem_mast_nbnode, elem_mast_dime, elem_mast_nume, elem_mast_indx
     character(len=8) :: elem_mast_type, elem_mast_code, elem_slav_name, elem_mast_name
     real(kind=8) :: elem_mast_coor(27)
-    integer :: elin_mast_nbsub, elin_mast_sub(8,4), elin_mast_nbnode(8)
+    integer :: elin_mast_nbsub, elin_mast_sub(2,3), elin_mast_nbnode(2)
     character(len=8) :: elin_mast_code, elin_slav_code
     real(kind=8) :: elin_mast_coor(27), elin_slav_coor(27)
     integer :: slav_indx_mini, mast_indx_mini
@@ -191,7 +191,7 @@ implicit none
 !
             call gtlmex(v_cninv,v_cninv_lcum, nume_node_cl,nb_elem_mast,list_elem_mast,&
                         list_el_ma_ax, nb_el_ma_ax)
-            
+
             do i_elem_mast = 1, nb_el_ma_ax
 !
 ! ------------- Current master element
@@ -233,7 +233,7 @@ implicit none
 ! --------------------- Code for current linearized master sub-element
 !
                         if (elin_mast_nbnode(i_elin_mast) .eq. 2) then
-                            elin_mast_code = 'SE2' 
+                            elin_mast_code = 'SE2'
                         elseif (elin_mast_nbnode(i_elin_mast) .eq. 3) then
                             elin_mast_code = 'TR3'
                         else
@@ -246,9 +246,9 @@ implicit none
                         do i_node = 1, elin_mast_nbnode(i_elin_mast)
                             do i_dime = 1, elem_slav_dime
                                 elin_mast_coor(3*(i_node-1)+i_dime) =&
-                                    elem_mast_coor(3*(elin_mast_sub(i_elin_mast,i_node)-1)+i_dime) 
-                            end do 
-                        end do 
+                                    elem_mast_coor(3*(elin_mast_sub(i_elin_mast,i_node)-1)+i_dime)
+                            end do
+                        end do
 !
 ! --------------------- Loop on linearized slave sub-elements
 !
@@ -309,8 +309,8 @@ implicit none
                 write(*,*) "Slave element already tracked"
             endif
         endif
-        elem_slav_flag(elem_slav_indx)=2 
+        elem_slav_flag(elem_slav_indx)=2
     end do
-100 continue 
+100 continue
 !
 end subroutine
