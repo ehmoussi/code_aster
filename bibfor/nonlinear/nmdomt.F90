@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine nmdomt(ds_algopara, ds_algorom_)
 !
 use NonLin_Datastructure_type
@@ -35,10 +36,8 @@ implicit none
 #include "asterfort/infniv.h"
 #include "asterfort/utmess.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    type(NL_DS_AlgoPara), intent(inout) :: ds_algopara
-    type(ROM_DS_AlgoPara), optional, intent(inout) :: ds_algorom_
+type(NL_DS_AlgoPara), intent(inout) :: ds_algopara
+type(ROM_DS_AlgoPara), optional, intent(inout) :: ds_algorom_
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -128,7 +127,7 @@ implicit none
         call getvis(keywf, 'REAC_ITER', iocc=1, scal=reac_iter)
         ASSERT(reac_iter .ge. 0)
         ds_algopara%reac_iter = reac_iter
-        call romAlgoNLRead('MECA', ds_algorom_)
+        call romAlgoNLRead(ds_algorom_)
     else
         ASSERT(.false.)
     endif

@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine romBaseInfo(ds_empi)
+subroutine romBasePrintInfo(ds_empi)
 !
 use Rom_Datastructure_type
 !
@@ -33,7 +33,7 @@ type(ROM_DS_Empi), intent(in) :: ds_empi
 !
 ! Model reduction
 !
-! Informations about empiric modes base
+! Print informations about empiric modes base
 !
 ! --------------------------------------------------------------------------------------------------
 !

@@ -30,7 +30,7 @@ implicit none
 #include "asterfort/dbr_para_info_pod.h"
 #include "asterfort/dbr_para_info_rb.h"
 #include "asterfort/dbr_para_info_tr.h"
-#include "asterfort/romBaseInfo.h"
+#include "asterfort/romBasePrintInfo.h"
 !
 type(ROM_DS_ParaDBR), intent(in) :: ds_para
 !
@@ -78,7 +78,7 @@ type(ROM_DS_ParaDBR), intent(in) :: ds_para
 !
     if (niv .ge. 2) then
         if (l_base) then
-            call romBaseInfo(ds_para%ds_empi)
+            call romBasePrintInfo(ds_para%ds_empi)
         endif
     endif
 !

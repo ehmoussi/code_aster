@@ -35,7 +35,7 @@ implicit none
 #include "asterfort/dbr_calcpod_sele.h"
 #include "asterfort/romTableSave.h"
 #include "asterfort/romTableCreate.h"
-#include "asterfort/romBaseRead.h"
+#include "asterfort/romBaseGetInfo.h"
 #include "asterfort/ltnotb.h"
 #include "asterfort/tbexve.h"
 #include "asterfort/jeveuo.h"
@@ -124,7 +124,7 @@ integer, intent(out) :: nb_snap_redu
     AS_ALLOCATE(vr = ri, size = nb_equa)
     AS_ALLOCATE(vr = rt, size = nb_equa)
     if (l_reuse) then
-        call romBaseRead(base, ds_empi)
+        call romBaseGetInfo(base, ds_empi)
         call ltnotb(base, 'COOR_REDUIT', tabl_name_r, iret)
         ASSERT(iret .eq. 0)
         call jeveuo(tabl_name_r//'.TBNP', 'L', vi=v_tbnp)

@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine romBaseRead(base, ds_empi)
+subroutine romBaseGetInfo(base, ds_empi)
 !
 use Rom_Datastructure_type
 !
@@ -26,12 +26,10 @@ implicit none
 #include "asterf_types.h"
 #include "asterfort/assert.h"
 #include "asterfort/dismoi.h"
-#include "asterfort/infniv.h"
 #include "asterfort/jeexin.h"
 #include "asterfort/jenonu.h"
 #include "asterfort/jexnom.h"
 #include "asterfort/utmess.h"
-#include "asterfort/romBaseInfo.h"
 #include "asterfort/romModeParaRead.h"
 #include "asterfort/rs_getfirst.h"
 #include "asterfort/rs_get_liststore.h"
@@ -46,7 +44,7 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
 !
 ! Model reduction
 !
-! Read empiric modes base
+! Get informations about empiric modes base
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -55,7 +53,6 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: ifm, niv
     integer :: iret, nume_first, nume_pl, nb_snap, i_mode
     integer :: nb_equa = 0, nb_mode = 0, nb_node = 0, nb_cmp_by_node = 0
     character(len=8)  :: mesh = ' ', model = ' ', axe_line = ' ', base_type = ' '
@@ -65,10 +62,7 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call infniv(ifm, niv)
-    if (niv .ge. 2) then
-        call utmess('I', 'ROM2_2')
-    endif
+
 !
 ! - Get informations about empiric modes - Parameters
 !
@@ -122,11 +116,5 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
     ds_empi%l_lagr         = l_lagr
     ds_empi%nb_cmp_by_node = nb_cmp_by_node
     ds_empi%cmp_by_node    = cmp_by_node
-!
-! - Print
-!
-    if (niv .ge. 2) then
-       call romBaseInfo(ds_empi)
-    endif
 !
 end subroutine
