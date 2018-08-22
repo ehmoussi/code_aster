@@ -45,7 +45,6 @@ implicit none
 #include "asterfort/apdcma.h"
 #include "asterfort/ap_infast.h"
 #include "asterfort/apprin.h"
-#include "asterfort/apdmae.h"
 #include "asterfort/aprtpe.h"
 #include "asterfort/cncinv.h"
 #include "asterfort/wkvect.h"
@@ -107,8 +106,8 @@ implicit none
     integer :: patch_indx
     real(kind=8) :: total_weight, inte_weight, gap_moy, elem_slav_weight
     real(kind=8) :: poin_inte(32)
-    integer :: elin_mast_nbsub, elin_mast_sub(8,4), elin_mast_nbnode(8)
-    integer :: elin_slav_nbsub, elin_slav_sub(8,9), elin_slav_nbnode(8)
+    integer :: elin_mast_nbsub, elin_mast_sub(2,3), elin_mast_nbnode(2)
+    integer :: elin_slav_nbsub, elin_slav_sub(2,3), elin_slav_nbnode(2)
     real(kind=8) :: elin_mast_coor(27), elin_slav_coor(27)
     character(len=8) :: elin_mast_code, elin_slav_code, elem_slav_name, elem_mast_name, elem_name
     integer :: nb_slav_start, nb_find_mast, nb_mast_start
@@ -145,7 +144,7 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
     call jemarq()
-! 
+!
 ! - Initializations
 !
     debug                          = .false.
@@ -166,12 +165,12 @@ implicit none
         valk(1)='MPI_INCOMPLET'
         call wkvect(sdappa(1:19)//'.MPIE','V V K16',1,vk16=valk)
         valk(1)='MPI_INCOMPLET'
-    else 
+    else
         call jeveuo(sdappa(1:19)//'.MPID', 'E',vk16=valk)
         valk(1)='MPI_INCOMPLET'
         call jeveuo(sdappa(1:19)//'.MPIE', 'E',vk16=valk)
         valk(1)='MPI_INCOMPLET'
-    endif   
+    endif
     mast_indx_maxi = maxval(list_elem_mast)
     slav_indx_maxi = maxval(list_elem_slav)
     mast_indx_mini = minval(list_elem_mast)
@@ -215,7 +214,7 @@ implicit none
 ! - Find initial elements for pairing by PANG method
 !
 120 continue
-    if (debug) then 
+    if (debug) then
         write(*,*)'Recherche mailles de départ'
     end if
     if (pair_method .eq. "RAPIDE") then
@@ -240,7 +239,7 @@ implicit none
         else
             call jenuno(jexnum(mesh//'.NOMMAI', elem_mast_start(1)), elem_mast_name)
             write(*,*) ". Start master element: ", elem_mast_name
-        endif     
+        endif
     endif
     if (nb_slav_start.eq.0) then
         goto 110
@@ -248,7 +247,7 @@ implicit none
 !
 ! - Pairing
 !
-    if (debug) then 
+    if (debug) then
         write(*,*)'Boucle appariement PANG'
     end if
     do while(nb_slav_start .gt. 0)
@@ -281,14 +280,14 @@ implicit none
                     elem_slav_nume, elem_slav_coor, elem_slav_nbnode,&
                     elem_slav_code, elem_slav_dime, v_mesh_connex   ,&
                     v_connex_lcum)
-        if (debug) then 
+        if (debug) then
             write(*,*) "Current slave element: ", elem_slav_nume, elem_slav_name,&
-                       '(type : ', elem_slav_code, ')' 
+                       '(type : ', elem_slav_code, ')'
         endif
 !
 ! ----- Cut element in linearized sub-elements
 !
-        call apdmae(elem_slav_code, elin_slav_sub, elin_slav_nbnode, elin_slav_nbsub)
+        call apdcma(elem_slav_code, elin_slav_sub, elin_slav_nbnode, elin_slav_nbsub)
 !
 ! ----- Compute weight of element
 !
@@ -300,7 +299,7 @@ implicit none
         endif
 !
 ! ----- Total weight for patch
-!                    
+!
         patch_weight_t(patch_indx) = patch_weight_t(patch_indx) + elem_slav_weight
 !
 ! ----- Number of neighbours
@@ -331,8 +330,8 @@ implicit none
                 write(*,*) "Current slave element neighbours: ", elem_name
             end do
         endif
-        list_slav_master(1:nb_slav_neigh) = 0 
-        list_slav_weight(1:4)             = 0.d0   
+        list_slav_master(1:nb_slav_neigh) = 0
+        list_slav_weight(1:4)             = 0.d0
 !
 ! ----- Get master element to start
 !
@@ -373,13 +372,13 @@ implicit none
             elem_type_nume = v_mesh_typmail(elem_mast_nume)
             call jenuno(jexnum('&CATA.TM.NOMTM', elem_type_nume), elem_mast_type)
             call jenuno(jexnum(mesh//'.NOMMAI', elem_mast_nume), elem_mast_name)
-            if (debug) then 
+            if (debug) then
                 write(*,*) "Current master element: ", elem_mast_nume, elem_mast_name,&
-                           '(type : ', elem_mast_type, ')' 
+                           '(type : ', elem_mast_type, ')'
             endif
 !
 ! --------- Access to neighbours
-!        
+!
             if (debug) then
                 do i_mast_neigh = 1, 4
                     elem_nume = v_sdappa_mane((elem_mast_indx-1)*4+i_mast_neigh)
@@ -427,7 +426,7 @@ implicit none
                     elin_slav_code = 'SE2'
                 elseif (elin_slav_nbnode(i_elin_slav) .eq. 3 .and.&
                         elem_slav_dime .eq. 2) then
-                    elin_slav_code = 'SE3'        
+                    elin_slav_code = 'SE3'
                 elseif (elin_slav_nbnode(i_elin_slav) .eq. 3 .and.&
                         elem_slav_dime .eq. 3) then
                     elin_slav_code = 'TR3'
@@ -440,7 +439,7 @@ implicit none
                 elseif (elin_slav_nbnode(i_elin_slav) .eq. 9 .and.&
                         elem_slav_dime .eq. 3) then
                     elin_slav_code = 'QU9'
-                else 
+                else
                     ASSERT(.false.)
                 end if
 !
@@ -480,7 +479,7 @@ implicit none
                         end do
                     end do
 !
-! ----------------- Projection/intersection of elements in slave parametric space     
+! ----------------- Projection/intersection of elements in slave parametric space
 !
                     call prjint(pair_tole     , elem_slav_dime,&
                                 elin_slav_coor, elin_slav_nbnode(i_elin_slav), elin_slav_code,&
@@ -495,44 +494,32 @@ implicit none
                         write(*,*) "Intersection - Points: ", poin_inte
                     endif
 !
-! ----------------- Non-void intersection  
-!            
+! ----------------- Non-void intersection
+!
                     if (inte_weight .gt. pair_tole) then
 !
 ! --------------------- Set neighbours
 !
                         if (elin_slav_code .ne. elem_slav_code .and.&
-                            elem_slav_code .eq. 'QU4' ) then
+                            (elem_slav_code .eq. 'QU4' .or. &
+                             elem_slav_code .eq. 'QU8' .or. &
+                             elem_slav_code .eq. 'QU9' &
+                            )) then
                             if (i_elin_slav .eq. 1) then
                                 inte_neigh(1) = inte_neigh_aux(1)
                                 inte_neigh(2) = inte_neigh_aux(2)
-                            elseif (i_elin_slav .eq. 2) then 
+                            elseif (i_elin_slav .eq. 2) then
                                 inte_neigh(3) = inte_neigh_aux(1)
                                 inte_neigh(4) = inte_neigh_aux(2)
-                            else 
+                            else
                                 ASSERT(.false.)
-                            end if
-                        elseif (elin_slav_code .ne. elem_slav_code .and.&
-                                elem_slav_code .eq. 'QU8') then
-                            if (i_elin_slav .eq. 1) then
-                                inte_neigh(1) = inte_neigh_aux(2)
-                                inte_neigh(4) = inte_neigh_aux(3)
-                            elseif (i_elin_slav .eq. 2) then 
-                                inte_neigh(1) = inte_neigh_aux(1)
-                                inte_neigh(2) = inte_neigh_aux(2)
-                            elseif (i_elin_slav .eq. 3) then 
-                                inte_neigh(2) = inte_neigh_aux(1)
-                                inte_neigh(3) = inte_neigh_aux(2)
-                            elseif (i_elin_slav .eq. 4) then 
-                                inte_neigh(3) = inte_neigh_aux(1)
-                                inte_neigh(4) = inte_neigh_aux(2)
                             end if
                         else
                             do i_neigh = 1,nb_slav_neigh
                                 if (inte_neigh_aux(i_neigh).ne.0) then
                                     inte_neigh(i_neigh) = inte_neigh_aux(i_neigh)
                                 endif
-                            end do     
+                            end do
                         end if
 !
                         total_weight = total_weight+inte_weight
@@ -600,9 +587,9 @@ implicit none
                 end do
 !
 ! ------------- Prepare next slave element: higher weight
-!  
+!
                 do i_slav_neigh = 1, nb_slav_neigh
-                    elem_slav_neigh = v_sdappa_slne((elem_slav_indx-1)*4+i_slav_neigh) 
+                    elem_slav_neigh = v_sdappa_slne((elem_slav_indx-1)*4+i_slav_neigh)
                     elem_neigh_indx = elem_slav_neigh+1-slav_indx_mini
                     if ( elem_slav_neigh .ne. 0 .and.&
                          inte_neigh(i_slav_neigh) .eq. 1 &
@@ -634,16 +621,16 @@ implicit none
 !
 ! ----- Next elements
 !
-        if (debug) then 
+        if (debug) then
             write(*,*)'Next elements - Nb: ',nb_slav_neigh
         endif
         do i_slav_neigh = 1, nb_slav_neigh
             elem_slav_neigh = v_sdappa_slne((elem_slav_indx-1)*4+i_slav_neigh)
             elem_neigh_indx = elem_slav_neigh+1-slav_indx_mini
-            if (debug) then 
+            if (debug) then
                 write(*,*)'Next elements - Current: ',i_slav_neigh,elem_slav_neigh,&
                    list_slav_master(i_slav_neigh), elem_slav_flag(elem_neigh_indx)
-            end if  
+            end if
             if (elem_slav_neigh .ne. 0  .and.&
                 list_slav_master(i_slav_neigh).ne. 0 .and.&
                 elem_slav_flag(elem_neigh_indx) .ne. 1 ) then
@@ -656,15 +643,15 @@ implicit none
         end do
         mast_find_flag(1:mast_indx_maxi+1-mast_indx_mini) = 0
     end do
-    if (debug) then 
+    if (debug) then
         write(*,*)'Fin boucle appariement PANG'
         write(*,*)'maille contact trouvee',nb_pair_zmpi
     end if
     goto 120
 110 continue
-    if (debug) then 
+    if (debug) then
         write(*,*)'Fin appariement PANG RAPIDE'
-    end if 
+    end if
 !
 ! - Save values for patch
 !
@@ -682,5 +669,5 @@ implicit none
     call jedetr(njv_weight_c)
     call jedetr(njv_weight_t)
     call jedetr(njv_nb_pair_zmpi)
-    call jedema() 
+    call jedema()
 end subroutine
