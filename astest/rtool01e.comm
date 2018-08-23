@@ -1,0 +1,164 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+#
+# Cas Test pour la validation de l'outil de relachement de DDLs 'Rtool'
+# person_in_charge : stefano.cherubini@edf.fr
+#
+
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
+
+# Lecture du maillage
+
+MA    = LIRE_MAILLAGE(FORMAT='MED')
+
+# Definition des modèles mécaniques
+
+MODEL = AFFE_MODELE(MAILLAGE=MA,
+                    AFFE    =(_F(GROUP_MA     = 'SEMELLE'  ,
+                                 PHENOMENE    = 'MECANIQUE',
+                                 MODELISATION = '3D'       ,
+                                 ),
+                              _F(GROUP_MA     =('DALLES','VOILES'),
+                                 PHENOMENE    = 'MECANIQUE'       ,
+                                 MODELISATION = 'DKT'             ,
+                                 ),
+                              _F(GROUP_MA     =('POUTRES','POTEAUX'),
+                                 PHENOMENE    = 'MECANIQUE'         ,
+                                 MODELISATION = 'POU_D_E'           ,
+                                 ),
+                              )
+                   )
+
+# Définition des caractéristiques des éléments coque et poutre
+
+CAREL  = AFFE_CARA_ELEM(MODELE = MODEL, 
+                        COQUE  = _F(GROUP_MA=('DALLES','VOILES')  ,
+                                    EPAIS   =0.30                 ,
+                                    ),
+                        POUTRE = _F(GROUP_MA=('POUTRES','POTEAUX'),
+                                    SECTION = 'RECTANGLE'         ,
+                                    CARA    = 'H'                 ,
+                                    VALE    = 0.4                 ,
+                                    )
+                        )
+
+# Définition et affectation du matériau
+
+MAT1  = DEFI_MATERIAU(ELAS=_F(E   = 3.E10,
+                              NU  = 0.3  ,
+                              RHO = 2500.,
+                              )
+                      )
+
+CHMAT = AFFE_MATERIAU(MAILLAGE =MA,
+                      AFFE     =_F(TOUT  = 'OUI',
+                                   MATER = MAT1 ,
+                                   )
+                      )
+
+INCLUDE(UNITE = 70)
+
+# Definition des conditions limites d'encastrement
+
+BLOQ2 = AFFE_CHAR_MECA(MODELE   = MODEL,
+                       DDL_IMPO =(_F(GROUP_MA = 'jonct' ,
+                                     DX       = 0.      ,
+                                     DY       = 0.      ,
+                                     DZ       = 0.      ,
+                                     DRX      = 0.      ,
+                                     DRY      = 0.      ,
+                                     DRZ      = 0.      ,
+                                     ),
+                                  _F(GROUP_NO = 'NO_POT',
+                                     DX       = 0.      ,
+                                     DY       = 0.      ,
+                                     DZ       = 0.      ,
+                                     DRX      = 0.      ,
+                                     DRY      = 0.      ,
+                                     DRZ      = 0.      ,
+                                     ),
+                                  )
+                       )
+
+# Assemblage des matrices
+
+ASSEMBLAGE(MODELE     = MODEL        ,
+           CHAM_MATER = CHMAT        ,
+           CARA_ELEM  = CAREL        ,
+           CHARGE     = (BLOQ, BLOQ2),
+           NUME_DDL   = CO('NUMDDL') ,
+           MATR_ASSE  = (_F(MATRICE = CO('RAIDASS'),
+                            OPTION  = 'RIGI_MECA'  ,
+                            ),
+                         _F(MATRICE = CO('MASSASS'),
+                            OPTION  = 'MASS_MECA'  ,
+                            ),
+                         ),
+           )
+
+# Calcul des modes propres
+
+MODES=CALC_MODES(CALC_FREQ = _F(FREQ=( 0.,1000.)),
+                 OPTION    = 'BANDE'             ,
+                 MATR_RIGI = RAIDASS             ,
+                 MATR_MASS = MASSASS             ,
+                 )
+
+# Test de non regression
+
+TEST_RESU(RESU=(_F(NUME_ORDRE = 1            ,
+                   PARA       = 'FREQ'       ,
+                   RESULTAT   = MODES        ,
+                   VALE_CALC  = 24.7733782588,
+                   VALE_REFE  = 24.7734      ,
+                   REFERENCE  = 'AUTRE_ASTER',
+                   CRITERE    = 'RELATIF'    ,
+                   ),
+                _F(NUME_ORDRE = 2            ,
+                   PARA       = 'FREQ'       ,
+                   RESULTAT   = MODES        ,
+                   VALE_CALC  = 36.3760587496,
+                   VALE_REFE  = 36.3761      ,
+                   REFERENCE  = 'AUTRE_ASTER',
+                   CRITERE    = 'RELATIF'    ,
+                   ),
+                _F(NUME_ORDRE = 3            ,
+                   PARA       = 'FREQ'       ,
+                   RESULTAT   = MODES        ,
+                   VALE_CALC  = 65.1450365332,
+                   VALE_REFE  = 65.1450      ,
+                   REFERENCE  = 'AUTRE_ASTER',
+                   CRITERE    = 'RELATIF'    ,
+                   ),
+                ),
+         )
+
+FIN()
+
+
+
+
+
+
+
+
+
+
+
