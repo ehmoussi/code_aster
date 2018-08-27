@@ -133,7 +133,7 @@ TEST_TABLE(VALE_CALC   =-2.,
            FILTRE      =_F(NOM_PARA='INST', VALE=1.,),);
            
 TEST_TABLE(VALE_CALC   =8.05131752866E-06,
-           TOLE_MACHINE=1.E-6,
+           TOLE_MACHINE=5.E-2,
            NOM_PARA    ='V23',
            TABLE       =RESU,
            FILTRE      =_F(NOM_PARA='INST', VALE=1.,),);
