@@ -80,8 +80,6 @@ cata_msg = {
 
    35 : _(u"""La base empirique est vide."""),
 
-   36 : _(u"""Création de la structure de données pour réaliser le calcul non-linéaire avec réduction de modèle."""),
-
    37 : _(u"""Initialisation pour réaliser le calcul non-linéaire avec réduction de modèle."""),
 
    38 : _(u"""Création de la table pour sauver les coordonnées réduites."""),

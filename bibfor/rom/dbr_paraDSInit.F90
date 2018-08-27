@@ -18,17 +18,14 @@
 ! person_in_charge: mickael.abbas at edf.fr
 ! aslint: disable=W1403
 !
-subroutine dbr_paraDSInit(ds_empi, ds_para_pod, ds_para_rb, ds_para_tr,&
-                          ds_para)
+subroutine dbr_paraDSInit(ds_para_pod, ds_para_rb, ds_para_tr, ds_para)
 !
 use Rom_Datastructure_type
 !
 implicit none
 !
 #include "asterf_types.h"
-#include "asterc/r8vide.h"
 !
-type(ROM_DS_Empi), intent(in) :: ds_empi
 type(ROM_DS_ParaDBR_POD), intent(in) :: ds_para_pod
 type(ROM_DS_ParaDBR_RB), intent(in) :: ds_para_rb
 type(ROM_DS_ParaDBR_TR), intent(in) :: ds_para_tr
@@ -50,13 +47,8 @@ type(ROM_DS_ParaDBR), intent(out) :: ds_para
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    ds_para%operation    = ' '
-    ds_para%result_out   = ' '
-    ds_para%field_iden   = ' '
     ds_para%para_pod     = ds_para_pod
     ds_para%para_rb      = ds_para_rb
     ds_para%para_tr      = ds_para_tr
-    ds_para%ds_empi      = ds_empi
-    ds_para%l_reuse      = ASTER_FALSE
 !
 end subroutine

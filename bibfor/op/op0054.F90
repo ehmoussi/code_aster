@@ -23,10 +23,8 @@ use Rom_Datastructure_type
 implicit none
 !
 #include "asterf_types.h"
-#include "asterfort/as_deallocate.h"
 #include "asterfort/infmaj.h"
 #include "asterfort/titre.h"
-#include "asterfort/rrc_DSInit.h"
 #include "asterfort/rrc_read.h"
 #include "asterfort/rrc_init.h"
 #include "asterfort/rrc_chck.h"
@@ -45,10 +43,6 @@ implicit none
 !
     call titre()
     call infmaj()
-!
-! - Initialization of datastructures
-!
-    call rrc_DSInit(ds_para)
 !
 ! - Read parameters
 !

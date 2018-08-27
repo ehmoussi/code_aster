@@ -21,8 +21,6 @@
 
 cata_msg = {
 
-   1  : _(u"""Création des structures de données pour le post-traitement du calcul réduit."""),
-
    2  : _(u"""Le modèle doit être le même sur les deux bases."""),
 
    3  : _(u"""Initialisations pour le post-traitement du calcul réduit."""),

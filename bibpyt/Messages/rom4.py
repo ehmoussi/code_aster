@@ -45,8 +45,6 @@ cata_msg = {
 
    23 : _(u"""Nombre de noeuds sur l'interface du domaine réduit: %(i1)d"""),
 
-   24 : _(u"""Création des structures de données pour l'estimation du domaine réduit."""), 
-
    25 : _(u"""Nombre total de points magiques pour l'estimation du domaine réduit: %(i1)d"""),
 
    26 : _(u"""Nombre de noeuds dans la zone rigide pour le correcteur éléments finis : %(i1)d"""),
