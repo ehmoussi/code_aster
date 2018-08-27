@@ -140,6 +140,8 @@ cata_msg = {
 
    71 : _(u"""Le contact est interdit avec la réduction de modèle."""),
 
+   80 : _(u"""Vérification de la conformité de la table des coordonnées réduites fournies par l'utilisateur."""),
+
    92 : _(u"""Calcul du mode empirique initial."""),
 
    93 : _(u"""Évaluation des coefficients pour la valeur initiale des paramètres."""),

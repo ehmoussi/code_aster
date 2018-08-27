@@ -75,7 +75,7 @@ type(ROM_DS_ParaDBR), intent(in) :: ds_para
 ! - Print / method
 !
     if (operation(1:3) .eq. 'POD') then
-        call dbr_para_info_pod(ds_para%para_pod)
+        call dbr_para_info_pod(operation, ds_para%para_pod)
         
     elseif (operation .eq. 'GLOUTON') then
         call dbr_para_info_rb(ds_para%para_rb)

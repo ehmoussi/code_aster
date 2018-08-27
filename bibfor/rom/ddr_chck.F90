@@ -67,8 +67,8 @@ type(ROM_DS_ParaDDR), intent(in) :: ds_para
 !
 ! - Check mesh
 !
-    mesh_prim = empi_prim%mesh
-    mesh_dual = empi_dual%mesh
+    mesh_prim = empi_prim%ds_mode%mesh
+    mesh_dual = empi_dual%ds_mode%mesh
     if (mesh_prim .ne. mesh_dual) then
         call utmess('F','ROM4_9')
     endif
@@ -78,8 +78,8 @@ type(ROM_DS_ParaDDR), intent(in) :: ds_para
 !
 ! - Check model
 !
-    model_prim = empi_prim%model
-    model_dual = empi_dual%model
+    model_prim = empi_prim%ds_mode%model
+    model_dual = empi_dual%ds_mode%model
     if (model_prim .eq. '#PLUSIEURS' .or. model_dual .eq. '#PLUSIEURS') then
         call utmess('F','ROM4_11')
     endif
@@ -103,12 +103,12 @@ type(ROM_DS_ParaDDR), intent(in) :: ds_para
 !
 ! - Check fields for empiric modes
 !
-    if (empi_prim%field_name .eq. 'TEMP') then
-        if (empi_dual%field_name .ne. 'FLUX_NOEU') then
+    if (empi_prim%ds_mode%field_name .eq. 'TEMP') then
+        if (empi_dual%ds_mode%field_name .ne. 'FLUX_NOEU') then
             call utmess('F', 'ROM4_17', sk = 'FLUX_NOEU')
         endif
-    elseif (empi_prim%field_name .eq. 'DEPL') then
-        if (empi_dual%field_name .ne. 'SIEF_NOEU') then
+    elseif (empi_prim%ds_mode%field_name .eq. 'DEPL') then
+        if (empi_dual%ds_mode%field_name .ne. 'SIEF_NOEU') then
             call utmess('F', 'ROM4_17', sk = 'SIEF_NOEU')
         endif
     else

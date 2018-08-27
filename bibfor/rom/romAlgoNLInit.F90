@@ -84,14 +84,14 @@ aster_logical, intent(in), optional :: l_line_search_
 ! - Prepare the list of equations at interface
 !
     if (l_hrom) then
-        call romCreateEquationFromNode(ds_algorom%ds_empi, ds_algorom%v_equa_int, nume_dof,&
+        call romCreateEquationFromNode(ds_algorom%ds_empi%ds_mode, ds_algorom%v_equa_int, nume_dof,&
                                        grnode_ = ds_algorom%grnode_int)
     endif
 !
 ! - Prepare the list of equation of internal interface
 !
     if (l_hrom_corref) then
-        call romCreateEquationFromNode(ds_algorom%ds_empi, ds_algorom%v_equa_sub, nume_dof,&
+        call romCreateEquationFromNode(ds_algorom%ds_empi%ds_mode, ds_algorom%v_equa_sub, nume_dof,&
                                        grnode_ = ds_algorom%grnode_sub)
     endif
 !

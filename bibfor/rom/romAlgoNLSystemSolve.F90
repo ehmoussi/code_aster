@@ -91,8 +91,8 @@ aster_logical, optional, intent(in) :: l_update_redu_
     gamma       = ds_algorom%gamma
     base        = ds_algorom%ds_empi%base
     nb_mode     = ds_algorom%ds_empi%nb_mode
-    nb_equa     = ds_algorom%ds_empi%nb_equa
-    field_name  = ds_algorom%ds_empi%field_name
+    nb_equa     = ds_algorom%ds_empi%ds_mode%nb_equa
+    field_name  = ds_algorom%ds_empi%ds_mode%field_name
     ASSERT(l_rom)
     l_update_redu = ASTER_TRUE
     if (present(l_update_redu_)) then

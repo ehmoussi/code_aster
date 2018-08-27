@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine romResultSetZero(result, nume_store, ds_empi)
+subroutine romResultSetZero(result, nume_store, ds_mode)
 !
 use Rom_Datastructure_type
 !
@@ -34,7 +34,7 @@ implicit none
 !
 character(len=8), intent(in) :: result
 integer, intent(in) :: nume_store
-type(ROM_DS_Empi), intent(in) :: ds_empi
+type(ROM_DS_Field), intent(in) :: ds_mode
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -46,7 +46,7 @@ type(ROM_DS_Empi), intent(in) :: ds_empi
 !
 ! In  result           : name of results datastructure
 ! In  nume_store       : index to set zero in results
-! In  ds_empi          : datastructure for empiric modes
+! In  ds_mode          : datastructure for empiric mode
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -64,11 +64,11 @@ type(ROM_DS_Empi), intent(in) :: ds_empi
 !
 ! - Set zero
 !
-    call rsexch(' ', result, ds_empi%field_name, nume_store, field_save, iret)
+    call rsexch(' ', result, ds_mode%field_name, nume_store, field_save, iret)
     ASSERT(iret .eq. 100)
-    call copisd('CHAMP_GD', 'G', ds_empi%field_refe, field_save)
+    call copisd('CHAMP_GD', 'G', ds_mode%field_refe, field_save)
     call jeveuo(field_save(1:19)//'.VALE', 'E', vr = v_field_save)
     v_field_save(:) = 0.d0
-    call rsnoch(result, ds_empi%field_name, nume_store)
+    call rsnoch(result, ds_mode%field_name, nume_store)
 !
 end subroutine

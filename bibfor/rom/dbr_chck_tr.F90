@@ -26,7 +26,7 @@ implicit none
 #include "asterf_types.h"
 #include "asterfort/utmess.h"
 #include "asterfort/dismoi.h"
-#include "asterfort/romBaseChck.h"
+#include "asterfort/romModeChck.h"
 !
 type(ROM_DS_ParaDBR_TR), intent(in) :: ds_para_tr
 aster_logical, intent(in) :: l_reuse
@@ -44,29 +44,31 @@ aster_logical, intent(in) :: l_reuse
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    character(len=8) :: model_rom, model_init
-    character(len=8) :: mesh_rom, mesh_init, base_init
+    character(len=8) :: model_rom, model_mode
+    character(len=8) :: mesh_rom, mesh_mode, base_init
+    type(ROM_DS_Field) :: ds_mode
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    model_init = ds_para_tr%ds_empi_init%model
+    ds_mode    = ds_para_tr%ds_empi_init%ds_mode
+    model_mode = ds_mode%model
+    mesh_mode  = ds_mode%mesh
     model_rom  = ds_para_tr%model_rom
-    mesh_init  = ds_para_tr%ds_empi_init%mesh
-    base_init  = ds_para_tr%base_init
     call dismoi('NOM_MAILLA', model_rom, 'MODELE'  , repk = mesh_rom)
-    if (mesh_init .ne. mesh_rom) then
+    if (mesh_mode .ne. mesh_rom) then
         call utmess('F', 'ROM6_12')
     endif
-    if (model_init .eq. model_rom) then
+    if (model_mode .eq. model_rom) then
         call utmess('F', 'ROM6_13')
     endif
 !
-! - Check empiric base
+! - Check empiric mode
 !
-    call romBaseChck(ds_para_tr%ds_empi_init)
+    call romModeChck(ds_mode)
 !
 ! - No reuse:
 !
+    base_init  = ds_para_tr%base_init
     if (l_reuse) then
         if (base_init .ne. ' ') then
             call utmess('F', 'ROM6_40')

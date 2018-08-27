@@ -15,29 +15,33 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine norm_frobenius(nb, tab, norm)
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine romModePrintInfo(ds_mode)
+!
+use Rom_Datastructure_type
 !
 implicit none
 !
-integer, intent(in)       :: nb
-real(kind=8), intent(in)  :: tab(*)
-real(kind=8), intent(out) :: norm
+#include "asterfort/assert.h"
+#include "asterfort/utmess.h"
+!
+type(ROM_DS_Field), intent(in) :: ds_mode
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! Compute Frobenius norm
+! Model reduction
+!
+! Print informations about empiric mode
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: i
+! In  ds_mode          : datastructure for empiric mode
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    norm = 0.d0
-    do i = 1, nb
-        norm = norm + tab(i)**2
-    enddo
-    norm = sqrt(norm)
+    call utmess('I', 'ROM3_4', sk = ds_mode%field_name)
+    call utmess('I', 'ROM3_6', si = ds_mode%nb_node)
+    call utmess('I', 'ROM3_7', si = ds_mode%nb_equa)
 !
 end subroutine

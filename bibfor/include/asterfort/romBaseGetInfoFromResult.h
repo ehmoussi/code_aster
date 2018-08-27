@@ -15,29 +15,14 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine norm_frobenius(nb, tab, norm)
 !
-implicit none
+#include "asterf_types.h"
 !
-integer, intent(in)       :: nb
-real(kind=8), intent(in)  :: tab(*)
-real(kind=8), intent(out) :: norm
-!
-! --------------------------------------------------------------------------------------------------
-!
-! Compute Frobenius norm
-!
-! --------------------------------------------------------------------------------------------------
-!
-    integer :: i
-!
-! --------------------------------------------------------------------------------------------------
-!
-    norm = 0.d0
-    do i = 1, nb
-        norm = norm + tab(i)**2
-    enddo
-    norm = sqrt(norm)
-!
-end subroutine
+interface
+    subroutine romBaseGetInfoFromResult(ds_result_in, base, ds_empi)
+        use Rom_Datastructure_type
+        type(ROM_DS_Result), intent(in)  :: ds_result_in
+        character(len=8), intent(in)     :: base
+        type(ROM_DS_Empi), intent(inout) :: ds_empi
+    end subroutine romBaseGetInfoFromResult
+end interface

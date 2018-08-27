@@ -65,6 +65,7 @@ type(ROM_DS_ParaRRC), intent(in) :: ds_para
     real(kind=8), pointer :: v_cohr(:) => null()
     character(len=24) :: field_save, sigm_rid
     real(kind=8), pointer :: v_field_save(:) => null()
+    type(ROM_DS_Field) :: ds_mode
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -76,8 +77,9 @@ type(ROM_DS_ParaRRC), intent(in) :: ds_para
 ! - Get parameters
 !
     nb_store     = ds_para%nb_store
+    ds_mode      = ds_para%ds_empi_dual%ds_mode
     nb_mode      = ds_para%ds_empi_dual%nb_mode
-    nb_equa      = ds_para%ds_empi_dual%nb_equa
+    nb_equa      = ds_mode%nb_equa
     result_rom   = ds_para%result_rom
     result_dom   = ds_para%result_dom
     nb_equa_ridi = ds_para%nb_equa_ridi
@@ -106,7 +108,7 @@ type(ROM_DS_ParaRRC), intent(in) :: ds_para
 ! - Initial state
 !
     nume_store = 0
-    call romResultSetZero(result_dom, nume_store, ds_para%ds_empi_dual)
+    call romResultSetZero(result_dom, nume_store, ds_mode)
 !
 ! - Compute new fields
 !
@@ -119,13 +121,13 @@ type(ROM_DS_ParaRRC), intent(in) :: ds_para
     do i_store = 1, nb_store-1
         nume_store = i_store
 ! ----- Get field to save
-        call rsexch(' ', result_dom, ds_para%ds_empi_dual%field_name,&
+        call rsexch(' ', result_dom, ds_mode%field_name,&
                     nume_store, field_save, iret)
         ASSERT(iret .eq. 100)
-        call copisd('CHAMP_GD', 'G', ds_para%ds_empi_dual%field_refe, field_save)
+        call copisd('CHAMP_GD', 'G', ds_mode%field_refe, field_save)
         call jeveuo(field_save(1:19)//'.VALE', 'E', vr = v_field_save)
 ! ----- Get field on RID
-        call rsexch(' ', result_rom, ds_para%ds_empi_dual%field_name,&
+        call rsexch(' ', result_rom, ds_mode%field_name,&
                     nume_store, sigm_rid, iret)
         ASSERT(iret .eq. 0)
         call jeveuo(sigm_rid(1:19)//'.VALE', 'L', vr = v_sigm_rid)
@@ -145,7 +147,7 @@ type(ROM_DS_ParaRRC), intent(in) :: ds_para
                 v_field_save(i_equa) = v_sigm_rom(nume_equa)
             endif
         enddo
-        call rsnoch(result_dom, ds_para%ds_empi_dual%field_name, nume_store)
+        call rsnoch(result_dom, ds_mode%field_name, nume_store)
         AS_DEALLOCATE(vr = v_sigm_rom)
     enddo
 !

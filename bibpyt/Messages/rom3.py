@@ -80,10 +80,4 @@ cata_msg = {
    51 : _(u"""Nombre total de valeurs pour le paramètre: %(i1)d."""),
 
    52 : _(u"""Valeur initiale du paramètre : %(r1)19.12e."""),
-
-   53 : _(u"""Les modes contiennent %(i1)d composantes par noeud."""),
-
-   54 : _(u"""Les modes contiennent des multiplicateurs de Lagrange."""),
-
-   55 : _(u"""Les modes ne contiennent pas de multiplicateurs de Lagrange."""),
 }

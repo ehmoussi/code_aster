@@ -15,29 +15,59 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine norm_frobenius(nb, tab, norm)
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine romModeChck(ds_mode)
+!
+use Rom_Datastructure_type
 !
 implicit none
 !
-integer, intent(in)       :: nb
-real(kind=8), intent(in)  :: tab(*)
-real(kind=8), intent(out) :: norm
+#include "asterfort/assert.h"
+#include "asterfort/utmess.h"
+#include "asterfort/dismoi.h"
+#include "asterfort/jelira.h"
+#include "asterfort/jeveuo.h"
+#include "asterfort/jenuno.h"
+#include "asterfort/jexnom.h"
+#include "asterfort/jexnum.h"
+#include "asterc/indik8.h"
+!
+type(ROM_DS_Field), intent(in) :: ds_mode
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! Compute Frobenius norm
+! Model reduction
+!
+! Check empiric mode
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: i
+! In  ds_mode          : datastructure for mode
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    norm = 0.d0
-    do i = 1, nb
-        norm = norm + tab(i)**2
-    enddo
-    norm = sqrt(norm)
+    character(len=8) :: mesh, model
+    character(len=16) :: modeli
+    integer :: nb_dime
+!
+! --------------------------------------------------------------------------------------------------
+!
+    mesh       = ds_mode%mesh
+    model      = ds_mode%model
+!
+! - Check mesh
+!
+    call dismoi('DIM_GEOM', mesh, 'MAILLAGE', repi = nb_dime)
+    if (nb_dime .ne. 3) then
+        call utmess('F','ROM5_20')
+    endif
+!
+! - Check model
+!
+    call dismoi('MODELISATION', model, 'MODELE', repk=modeli)
+    if (modeli .ne. '3D' .and. modeli .ne. '3D_DIAG' .and. modeli .ne. '3D_SI') then
+        call utmess('F','ROM5_20')
+    endif
 !
 end subroutine

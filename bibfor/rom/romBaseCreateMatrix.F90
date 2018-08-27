@@ -59,7 +59,7 @@ real(kind=8), pointer :: v_matr_phi(:)
 !
 ! - Get parameters
 !
-    nb_equa = ds_empi%nb_equa
+    nb_equa = ds_empi%ds_mode%nb_equa
     nb_mode = ds_empi%nb_mode
     if (niv .ge. 2) then
         call utmess('I', 'ROM6_30', ni = 2, vali = [nb_equa,nb_mode])
@@ -69,7 +69,7 @@ real(kind=8), pointer :: v_matr_phi(:)
 !
     AS_ALLOCATE(vr = v_matr_phi, size = nb_equa*nb_mode)
     do i_mode = 1, nb_mode
-        call rsexch(' ', ds_empi%base, ds_empi%field_name, i_mode, mode, iret)
+        call rsexch(' ', ds_empi%base, ds_empi%ds_mode%field_name, i_mode, mode, iret)
         ASSERT(iret .eq. 0)
         call jeveuo(mode(1:19)//'.VALE', 'L', vr = v_mode)
         do i_equa = 1, nb_equa

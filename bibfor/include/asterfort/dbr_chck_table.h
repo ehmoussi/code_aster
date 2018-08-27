@@ -15,29 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine norm_frobenius(nb, tab, norm)
 !
-implicit none
-!
-integer, intent(in)       :: nb
-real(kind=8), intent(in)  :: tab(*)
-real(kind=8), intent(out) :: norm
-!
-! --------------------------------------------------------------------------------------------------
-!
-! Compute Frobenius norm
-!
-! --------------------------------------------------------------------------------------------------
-!
-    integer :: i
-!
-! --------------------------------------------------------------------------------------------------
-!
-    norm = 0.d0
-    do i = 1, nb
-        norm = norm + tab(i)**2
-    enddo
-    norm = sqrt(norm)
-!
-end subroutine
+interface
+    subroutine dbr_chck_table(tabl_namez, nb_mode_in, nb_snap_in)
+        character(len=*), intent(in) :: tabl_namez
+        integer, intent(in) :: nb_mode_in, nb_snap_in
+    end subroutine dbr_chck_table
+end interface

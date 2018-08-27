@@ -55,7 +55,7 @@ type(ROM_DS_ParaDBR), intent(in) :: ds_para
     endif
 !
     if (ds_para%operation(1:3) .eq. 'POD') then
-        call dbr_chck_pod(ds_para%operation, ds_para%para_pod, ds_para%l_reuse)
+        call dbr_chck_pod(ds_para%operation, ds_para%para_pod, ds_para%l_reuse, ds_para%ds_empi)
     elseif (ds_para%operation .eq. 'GLOUTON') then
         call dbr_chck_rb(ds_para%operation, ds_para%para_rb, ds_para%l_reuse)
     elseif (ds_para%operation .eq. 'TRONCATURE') then

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -50,10 +50,10 @@ character(len=19), intent(out) :: tabl_name
     integer :: ifm, niv
     type(NL_DS_TableIO) :: tableio
     integer, parameter :: nb_para = 5
-    character(len=8), parameter :: type_para(nb_para) = (/'I','I','R','I','R'/)
-    character(len=24), parameter :: list_para(nb_para) = (/'NUME_MODE  ','NUME_ORDRE ',&
-                                                           'INST       ','NUME_SNAP  ',&
-                                                           'COOR_REDUIT'/)
+    character(len=8), parameter :: type_para(nb_para) = (/'R','R','I','I','I'/)
+    character(len=24), parameter :: list_para(nb_para) = (/'COOR_REDUIT','INST       ',&
+                                                           'NUME_MODE  ','NUME_ORDRE ',&
+                                                           'NUME_SNAP  '/)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -70,7 +70,7 @@ character(len=19), intent(out) :: tabl_name
                                 list_para_ = list_para,&
                                 type_para_ = type_para)
 !
-! - Create table in results datastructure
+! - Create table in results datastructure (if necessary)
 !
     call nonlinDSTableIOCreate(result, 'COOR_REDUIT', tableio)
 !
@@ -78,7 +78,7 @@ character(len=19), intent(out) :: tabl_name
 !
     tabl_name = tableio%table_name
 !
-! - Clean table in results datastructure
+! - Clean tableio datastructure
 !
     call nonlinDSTableIOClean(tableio)
 !

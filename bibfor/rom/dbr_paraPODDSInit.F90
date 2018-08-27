@@ -43,16 +43,16 @@ type(ROM_DS_ParaDBR_POD), intent(out) :: ds_para_pod
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    ds_para_pod%result_in    = ' '
     ds_para_pod%field_name   = ' '
+    ds_para_pod%model_user   = ' '
     ds_para_pod%base_type    = ' '
     ds_para_pod%axe_line     = ' '
     ds_para_pod%surf_num     = ' '
     ds_para_pod%tole_svd     = r8vide()
     ds_para_pod%tole_incr    = r8vide()
-    ds_para_pod%ds_snap      = ds_snap
-    ds_para_pod%tabl_name    = ' '
+    ds_para_pod%l_tabl_user  = ASTER_FALSE
+    ds_para_pod%tabl_user    = ' '
     ds_para_pod%nb_mode_maxi = 0
-    ds_para_pod%model        = ' '
+    ds_para_pod%ds_snap      = ds_snap
 !
 end subroutine

@@ -25,8 +25,6 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/infniv.h"
-#include "asterfort/romBaseDSInit.h"
-#include "asterfort/romLineicBaseDSInit.h"
 #include "asterfort/utmess.h"
 !
 type(ROM_DS_ParaRRC), intent(out) :: ds_para
@@ -45,7 +43,6 @@ type(ROM_DS_ParaRRC), intent(out) :: ds_para
 !
     integer :: ifm, niv
     type(ROM_DS_Empi) :: empi_prim, empi_dual
-    type(ROM_DS_LineicNumb) :: ds_lineicnumb
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -53,15 +50,6 @@ type(ROM_DS_ParaRRC), intent(out) :: ds_para
     if (niv .ge. 2) then
         call utmess('I', 'ROM6_1')
     endif
-!
-! - Creation of datastructure for lineic base numbering
-!
-    call romLineicBaseDSInit(ds_lineicnumb)
-!
-! - Create datastructure for empiric modes
-!
-    call romBaseDSInit(ds_lineicnumb, empi_prim)
-    call romBaseDSInit(ds_lineicnumb, empi_dual)
 !
 ! - Create parameters datastructure
 !

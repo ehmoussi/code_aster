@@ -24,7 +24,8 @@ interface
                                  nb_cmp_by_node, cmp_by_node, l_lagr)
         character(len=8), intent(in) :: mesh
         integer, intent(in) :: nb_equa
-        character(len=24), intent(in) :: field_name, field_refe
+        character(len=16), intent(in) :: field_name
+        character(len=24), intent(in) :: field_refe
         integer, intent(out) :: nb_cmp_by_node
         character(len=8), intent(out)  :: cmp_by_node(10)
         aster_logical, intent(out) :: l_lagr

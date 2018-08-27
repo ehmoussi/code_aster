@@ -69,9 +69,9 @@ real(kind=8), intent(out) :: resi
 !
     l_hrom     = ds_algorom%l_hrom
     base       = ds_algorom%ds_empi%base
-    nb_equa    = ds_algorom%ds_empi%nb_equa
+    nb_equa    = ds_algorom%ds_empi%ds_mode%nb_equa
     nb_mode    = ds_algorom%ds_empi%nb_mode
-    field_name = ds_algorom%ds_empi%field_name
+    field_name = ds_algorom%ds_empi%ds_mode%field_name
 !
 ! - Compute equilibrium residual
 !

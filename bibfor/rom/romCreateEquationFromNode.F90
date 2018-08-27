@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine romCreateEquationFromNode(ds_empi, v_equa  , nume_dof    ,&
+subroutine romCreateEquationFromNode(ds_mode, v_equa  , nume_dof    ,&
                                      grnode_, nb_node_, v_list_node_)
 !
 use Rom_Datastructure_type
@@ -35,7 +35,7 @@ implicit none
 #include "asterfort/select_dof.h"
 #include "asterfort/utmess.h"
 !
-type(ROM_DS_Empi), intent(in) :: ds_empi
+type(ROM_DS_Field), intent(in) :: ds_mode
 integer, pointer :: v_equa(:)
 character(len=24), intent(in) :: nume_dof
 character(len=24), optional, intent(in) :: grnode_
@@ -50,7 +50,7 @@ integer, pointer, optional :: v_list_node_(:)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  ds_empi          : datastructure for empiric modes
+! In  ds_mode          : datastructure for empiric mode
 ! In  nume_dof         : name of numbering (NUME_DDL)
 ! Out v_equa           : pointer to list of equations for nodes
 !
@@ -72,13 +72,13 @@ integer, pointer, optional :: v_list_node_(:)
 !
     call infniv(ifm, niv)
     if (niv .ge. 2) then
-        call utmess('I', 'ROM2_8', sk = ds_empi%base)
+        call utmess('I', 'ROM2_8')
     endif
 !
 ! - Get parameters
 !
-    mesh       = ds_empi%mesh
-    field_name = ds_empi%field_name
+    mesh       = ds_mode%mesh
+    field_name = ds_mode%field_name
 !
 ! - Access to list of nodes
 !

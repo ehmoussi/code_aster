@@ -57,11 +57,11 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
     real(kind=8), pointer :: v(:) => null()
     real(kind=8), pointer :: s(:) => null() 
     real(kind=8), pointer :: v_gamma(:) => null()
-    character(len=19) :: tabl_name
+    character(len=19) :: tabl_coor
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    tabl_name    = ds_para_pod%tabl_name
+    tabl_coor    = ds_empi%tabl_coor
     nb_snap_redu = ds_para_pod%ds_snap%nb_snap
     nb_mode_maxi = ds_para_pod%nb_mode_maxi
     nb_line_svd  = 0
@@ -94,7 +94,7 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
 ! - Save the reduced coordinates in a table
 !
     do i_snap = 1, nb_snap_redu
-        call romTableSave(tabl_name  , nb_mode, v_gamma   ,&
+        call romTableSave(tabl_coor  , nb_mode, v_gamma   ,&
                           nume_snap_ = i_snap)
     end do
 !

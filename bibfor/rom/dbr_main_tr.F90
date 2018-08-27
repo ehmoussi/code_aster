@@ -72,7 +72,7 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
 ! - Get parameters
 !
     nb_mode     = ds_para_tr%ds_empi_init%nb_mode
-    nb_equa_dom = ds_para_tr%ds_empi_init%nb_equa
+    nb_equa_dom = ds_para_tr%ds_empi_init%ds_mode%nb_equa
     nb_equa_rom = ds_para_tr%nb_equa_rom
     model_rom   = ds_para_tr%model_rom
 !
@@ -95,7 +95,7 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
                     mode_rom, iret)
         ASSERT(iret .eq. 100)
         call vtcreb(mode_rom, 'G', 'R',&
-                    meshz = ds_para_tr%ds_empi_init%mesh,&
+                    meshz = ds_para_tr%ds_empi_init%ds_mode%mesh,&
                     prof_chnoz = ds_para_tr%prof_chno_rom,&
                     idx_gdz = ds_para_tr%idx_gd,&
                     nb_equa_inz = ds_para_tr%nb_equa_rom)
