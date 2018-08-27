@@ -39,7 +39,7 @@ implicit none
 #include "asterfort/ltnotb.h"
 #include "asterfort/tbexve.h"
 #include "asterfort/jeveuo.h"
-#include "asterfort/detrsd.h"
+#include "asterfort/tbSuppressAllLines.h"
 #include "asterfort/rsexch.h"
 #include "blas/dgemm.h"
 #include "blas/dgesv.h"
@@ -94,13 +94,13 @@ integer, intent(out) :: nb_snap_redu
     integer(kind=4), pointer :: IPIV(:) => null()
     real(kind=8), pointer :: b(:)    => null()
     real(kind=8), pointer :: v_gamma(:)    => null()
-    character(len=19) :: tabl_name, tabl_name_r
+    aster_logical :: l_tabl_user
+    character(len=19) :: tabl_user, tabl_coor
     character(len=24) :: typval
-    integer :: nbval, iret, nb_line
+    integer :: nbval, iret
     real(kind=8), pointer :: v_gm(:) => null()
     character(len=24) :: mode = '&&IPOD_MODE'
     real(kind=8), pointer :: v_mode(:) => null()
-    integer, pointer :: v_tbnp(:) => null()
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -108,32 +108,30 @@ integer, intent(out) :: nb_snap_redu
 !
 ! - Get parameters
 !
-    nb_equa      = ds_empi%nb_equa
-    base         = ds_empi%base
-    tabl_name    = ds_para_pod%tabl_name
-    base_type    = ds_para_pod%base_type
-    nb_snap      = ds_para_pod%ds_snap%nb_snap
-    tole_incr    = ds_para_pod%tole_incr
-    tole_svd     = ds_para_pod%tole_svd
+    nb_equa     = ds_empi%ds_mode%nb_equa
+    base        = ds_empi%base
+    tabl_coor   = ds_empi%tabl_coor
+    base_type   = ds_para_pod%base_type
+    nb_snap     = ds_para_pod%ds_snap%nb_snap
+    tole_incr   = ds_para_pod%tole_incr
+    tole_svd    = ds_para_pod%tole_svd
+    tabl_user   = ds_para_pod%tabl_user
+    l_tabl_user = ds_para_pod%l_tabl_user
     ASSERT(base_type .eq. '3D')
 !
 ! - Allocate objects
 !
-    nb_snap      = nb_snap
     AS_ALLOCATE(vr = qi, size = nb_equa)
     AS_ALLOCATE(vr = ri, size = nb_equa)
     AS_ALLOCATE(vr = rt, size = nb_equa)
     if (l_reuse) then
-        call romBaseGetInfo(base, ds_empi)
-        call ltnotb(base, 'COOR_REDUIT', tabl_name_r, iret)
-        ASSERT(iret .eq. 0)
-        call jeveuo(tabl_name_r//'.TBNP', 'L', vi=v_tbnp)
-        nb_line = v_tbnp(2)
-        if (nb_line .eq. 0) then
-            call utmess('F', 'ROM7_24')
+        if (l_tabl_user) then
+            call tbexve(tabl_user, 'COOR_REDUIT', '&&COORHR', 'V', nbval, typval)
+        else
+            call tbexve(tabl_coor, 'COOR_REDUIT', '&&COORHR', 'V', nbval, typval)
         endif
-        call tbexve(tabl_name_r, 'COOR_REDUIT', '&&COORHR', 'V', nbval, typval)
         call jeveuo('&&COORHR', 'E', vr = v_gm)
+        call tbSuppressAllLines(tabl_coor)
         AS_ALLOCATE(vr = vt, size = nb_equa*(nb_snap+ds_empi%nb_mode))
         AS_ALLOCATE(vr = gt, size = (nb_snap+ds_empi%nb_mode)*(nb_snap+ds_empi%nb_snap))
         AS_ALLOCATE(vr = g , size = (nb_snap+ds_empi%nb_mode)*(nb_snap+ds_empi%nb_snap))
@@ -147,7 +145,7 @@ integer, intent(out) :: nb_snap_redu
 !
     if (l_reuse) then
         do i_mode = 1, ds_empi%nb_mode
-            call rsexch(' ', ds_empi%base, ds_empi%field_name, i_mode, mode, iret)
+            call rsexch(' ', ds_empi%base, ds_empi%ds_mode%field_name, i_mode, mode, iret)
             call jeveuo(mode(1:19)//'.VALE', 'E', vr = v_mode)
             do i_equa = 1, nb_equa
                 vt(i_equa+nb_equa*(i_mode-1)) = v_mode(i_equa)
@@ -156,20 +154,19 @@ integer, intent(out) :: nb_snap_redu
         do i_equa = 1, ds_empi%nb_mode*ds_empi%nb_snap
             gt(i_equa) = v_gm(i_equa)
         enddo
-        call detrsd('TABLE', tabl_name_r)
     else
         qi(1:nb_equa) = q(1:nb_equa)
         call norm_frobenius(nb_equa, qi, norm_q)
         if (norm_q .le. r8prem()) then
             norm_q = 1.d-16*sqrt(nb_equa*1.d0)
-            vt(1:nb_equa)=1.d0/sqrt(nb_equa*1.d0)
+            vt(1:nb_equa) = 1.d0/sqrt(nb_equa*1.d0)
         else
-            vt(1:nb_equa)=qi(1:nb_equa)/norm_q
+            vt(1:nb_equa) = qi(1:nb_equa)/norm_q
         endif
-
         vt(1:nb_equa) = qi(1:nb_equa)/norm_q
-        gt(1)   = norm_q
+        gt(1)         = norm_q
     endif
+!
     if (l_reuse) then
         p        = ds_empi%nb_mode
         incr_ini = ds_empi%nb_snap+1
@@ -183,6 +180,7 @@ integer, intent(out) :: nb_snap_redu
 ! - Main algorithm
 !
     do i_incr = incr_ini, incr_end
+! ----- Get current snapshot for matrix of snapshots
         if (l_reuse) then
             do i_equa = 1, nb_equa
                 qi(i_equa) = q(i_equa+nb_equa*(i_incr-ds_empi%nb_snap-1))
@@ -192,16 +190,32 @@ integer, intent(out) :: nb_snap_redu
                 qi(i_equa) = q(i_equa+nb_equa*(i_incr-1))
             enddo
         endif
+! ----- Compute norm of current snapshot
         call norm_frobenius(nb_equa, qi, norm_q)
-        AS_ALLOCATE(vr  = kv  , size = p*p)
+! ----- Compute kt = v^T q (projection of current snaphot on empiric base)
         AS_ALLOCATE(vr  = kt  , size = p)
+        call dgemm('T', 'N', p, 1, nb_equa, 1.d0,&
+                   vt, nb_equa,&
+                   qi, nb_equa,&
+                   0.d0, kt, p)
+! ----- Compute kv = v^T v
+        AS_ALLOCATE(vr  = kv  , size = p*p)
+        call dgemm('T', 'N', p, p, nb_equa, 1.d0,&
+                   vt, nb_equa,&
+                   vt, nb_equa,&
+                   0.d0, kv, p)
+! ----- Make SVD on kv x singu = kt
         AS_ALLOCATE(vi4 = IPIV, size = p)
-        call dgemm('T', 'N', p, p, nb_equa, 1.d0, vt, nb_equa, vt, nb_equa, 0.d0, kv, p)
-        call dgemm('T', 'N', p, 1, nb_equa, 1.d0, vt, nb_equa, qi, nb_equa, 0.d0, kt, p)
         call dgesv(p, 1, kv, p, IPIV, kt, p, info)
-        call dgemm('N', 'N', nb_equa, 1, p, 1.d0, vt, nb_equa, kt, p, 0.d0, rt, nb_equa)
+! ----- Compute residu r = v kt
+        call dgemm('N', 'N', nb_equa, 1, p, 1.d0,&
+                   vt, nb_equa,&
+                   kt, p,&
+                   0.d0, rt, nb_equa)
         ri = qi - rt
+! ----- Compute norm of residu
         call norm_frobenius(nb_equa, ri, norm_r)
+! ----- Select vector or not ?
         if (norm_r/norm_q .ge. tole_incr) then
             do i_equa = 1, nb_equa
                 vt(i_equa+nb_equa*p) = ri(i_equa)/norm_r
@@ -229,6 +243,9 @@ integer, intent(out) :: nb_snap_redu
         AS_DEALLOCATE(vr = kv)
         AS_DEALLOCATE(vi4 = IPIV)
     enddo
+!
+! - Deallocate objects
+!
     AS_DEALLOCATE(vr = qi)
     AS_DEALLOCATE(vr = ri)
     AS_DEALLOCATE(vr = rt)
@@ -250,23 +267,26 @@ integer, intent(out) :: nb_snap_redu
 ! - Compute matrix V
 !
     AS_ALLOCATE(vr = v, size = nb_equa*nb_mode)
-    call dgemm('N', 'N', nb_equa, nb_mode, p, 1.d0, vt, nb_equa, b, p, 0.d0, v, nb_equa)
+    call dgemm('N', 'N', nb_equa, nb_mode, p, 1.d0,&
+               vt, nb_equa,&
+               b, p,&
+               0.d0, v, nb_equa)
 !
 ! - Compute reduced coordinates
 !
     AS_ALLOCATE(vr = v_gamma, size = nb_mode*incr_end)
-    call dgemm('T', 'N', nb_mode, incr_end, p, 1.d0, b, p, gt, p, 0.d0, v_gamma, nb_mode)
+    call dgemm('T', 'N', nb_mode, incr_end, p, 1.d0,&
+               b, p,&
+               gt, p,&
+               0.d0, v_gamma, nb_mode)
 !
 ! - Save the reduced coordinates in a table
 !
-    if (l_reuse) then
-        call romTableCreate(base, tabl_name)
-    endif
     if (niv .ge. 2) then
         call utmess('I', 'ROM5_39', ni = 2, vali = [incr_end, nb_mode])
     endif
     do i_snap = 1, incr_end
-        call romTableSave(tabl_name  , nb_mode, v_gamma   ,&
+        call romTableSave(tabl_coor, nb_mode, v_gamma   ,&
                           nume_snap_ = i_snap)
     end do
 !

@@ -15,31 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-! person_in_charge: mickael.abbas at edf.fr
-! aslint: disable=W1403
 !
-subroutine romBaseDSInit(ds_lineicnumb, ds_empi)
+#include "asterf_types.h"
 !
-use Rom_Datastructure_type
-!
-implicit none
-!
-type(ROM_DS_LineicNumb), intent(in) :: ds_lineicnumb
-type(ROM_DS_Empi), intent(out) :: ds_empi
-!
-! --------------------------------------------------------------------------------------------------
-!
-! Model reduction - Initializations
-!
-! Initialization of datastructure for empiric modes
-!
-! --------------------------------------------------------------------------------------------------
-!
-! In  ds_lineicnumb    : datastructure for lineic base numbering
-! Out ds_empi          : datastructure for empiric modes
-!
-! --------------------------------------------------------------------------------------------------
-!
-    ds_empi%ds_lineic = ds_lineicnumb
-!
-end subroutine
+interface
+    subroutine romModeChck(ds_mode)
+        use Rom_Datastructure_type
+        type(ROM_DS_Field), intent(in) :: ds_mode
+    end subroutine romModeChck
+end interface

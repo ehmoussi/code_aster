@@ -52,47 +52,53 @@ implicit none
 ! ----- For each node => which IN slice ?
         integer, pointer  :: v_nume_sf(:) => null()
 ! ----- Tolerance for separating nodes
-        real(kind=8)      :: tole_node = 0.d0
+        real(kind=8)      :: tole_node = 1.d-7
 ! ----- Number of components by node
         integer           :: nb_cmp = 0
     end type ROM_DS_LineicNumb
 !
-! - Datastructure for empiric modes
+! - Parameters for field
 !
+    type ROM_DS_Field
+! ----- Name of field for read (NOM_CHAM)
+        character(len=24)       :: field_name = ' '
+! ----- A field for reference (to manipulate)
+        character(len=24)       :: field_refe = ' '
+! ----- Model
+        character(len=8)        :: model = ' '
+! ----- Mesh
+        character(len=8)        :: mesh  = ' '
+! ----- Number of components by node
+        integer                 :: nb_cmp_by_node = 0
+        character(len=8)        :: cmp_by_node(10) = ' '
+! ----- Flag if has Lagrange multipliers
+        aster_logical           :: l_lagr = ASTER_FALSE
+! ----- Number of nodes with dof
+        integer                 :: nb_node = 0
+! ----- Number of equations
+        integer                 :: nb_equa = 0
+    end type ROM_DS_Field
+!
+! - Datastructure for empiric base
     type ROM_DS_Empi
 ! ----- Name of empiric base to save
-        character(len=8)  :: base = ' '
-! ----- Type of field for (NOM_CHAM)
-        character(len=24) :: field_name = ' '
-! ----- A field for reference (to manipulate real field)
-        character(len=24) :: field_refe = ' '
-! ----- Mesh
-        character(len=8)  :: mesh = ' '
-! ----- Model
-        character(len=8)  :: model = ' '
+        character(len=8)        :: base = ' '
+! ----- Name of table to save reduced coordinates
+        character(len=19)       :: tabl_coor = ' '
+! ----- Datastructure for mode
+        type(ROM_DS_Field)      :: ds_mode
 ! ----- Type of reduced base
-        character(len=8)  :: base_type = ' '
+        character(len=8)        :: base_type = ' '
 ! ----- Direction of the linear model
-        character(len=8)  :: axe_line = ' '
+        character(len=8)        :: axe_line = ' '
 ! ----- First section of the linear model
-        character(len=24) :: surf_num = ' '
-! ----- Number of equations
-        integer           :: nb_equa = 0
-! ----- Number of nodes
-        integer           :: nb_node = 0
-! ----- Number of components by node
-        !integer           :: nb_cmp = 0
+        character(len=24)       :: surf_num = ' '
 ! ----- Number of modes in base
-        integer           :: nb_mode = 0
+        integer                 :: nb_mode = 0
 ! ----- Number of snapshots when created base
-        integer           :: nb_snap = 0
+        integer                 :: nb_snap = 0
 ! ----- Datastructure for lineic base numbering
         type(ROM_DS_LineicNumb) :: ds_lineic
-! ----- Number of components by node
-        integer           :: nb_cmp_by_node = 0
-        character(len=8)  :: cmp_by_node(10) = ' '
-! ----- Flag for Lagrange multiplier
-        aster_logical     :: l_lagr = ASTER_FALSE
     end type ROM_DS_Empi
 !
 ! - Parameters for REST_REDUIT_COMPLET operator
@@ -214,15 +220,37 @@ implicit none
         integer                  :: syst_size
     end type ROM_DS_Solve
 !
+! - Parameters for DEFI_BASE_REDUITE operator - About (non-linear) results datastructure
+!
+    type ROM_DS_Result
+! ----- Name of datastructure
+        character(len=8)        :: name  = ' '
+! ----- Model
+        character(len=8)        :: model = ' '
+! ----- Mesh
+        character(len=8)        :: mesh  = ' '
+! ----- Name of field for read (NOM_CHAM)
+        character(len=24)       :: field_name = ' '
+! ----- A field for reference (to manipulate real field)
+        character(len=24)       :: field_refe = ' '
+! ----- Number of components by node
+        integer                 :: nb_cmp_by_node = 0
+        character(len=8)        :: cmp_by_node(10) = ' '
+! ----- Flag if has Lagrange multipliers
+        aster_logical           :: l_lagr = ASTER_FALSE
+! ----- Number of nodes with dof
+        integer                 :: nb_node = 0
+    end type ROM_DS_Result
+!
 ! - Parameters for DEFI_BASE_REDUITE operator (POD)
 !
     type ROM_DS_ParaDBR_POD
-! ----- Name of result datastructures to read
-        character(len=8)        :: result_in
+! ----- Datastructure for result datastructures to read
+        type(ROM_DS_Result)     :: ds_result_in
 ! ----- Name of field for read (NOM_CHAM)
         character(len=24)       :: field_name
-! ----- Model
-        character(len=8)        :: model
+! ----- Model from user
+        character(len=8)        :: model_user
 ! ----- Type of reduced base
         character(len=8)        :: base_type
 ! ----- Direction of the linear model
@@ -233,12 +261,14 @@ implicit none
         real(kind=8)            :: tole_svd
 ! ----- Tolerance for incremental POD
         real(kind=8)            :: tole_incr
-! ----- Datastructure for snapshot selection
-        type(ROM_DS_Snap)       :: ds_snap
-! ----- Name of table to save reduced coordinates
-        character(len=19)       :: tabl_name
+! ----- Flag if table is given by user
+        aster_logical           :: l_tabl_user
+        character(len=19)       :: tabl_user
 ! ----- Maximum number of modes
         integer                 :: nb_mode_maxi
+! ----- Datastructure for snapshot selection
+        type(ROM_DS_Snap)       :: ds_snap
+
     end type ROM_DS_ParaDBR_POD
 !
 ! - Parameters for DEFI_BASE_REDUITE operator (RB)

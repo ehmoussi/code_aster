@@ -25,7 +25,6 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/romLineicBaseDSInit.h"
-#include "asterfort/romBaseDSInit.h"
 !
 type(ROM_DS_ParaDBR_TR), intent(out) :: ds_para_tr
 !
@@ -51,10 +50,6 @@ type(ROM_DS_ParaDBR_TR), intent(out) :: ds_para_tr
 ! - Initialization of datastructure for lineic base numbering
 !
     call romLineicBaseDSInit(ds_lineicnumb)
-!
-! - Initialization of datastructure for empiric modes
-!
-    call romBaseDSInit(ds_lineicnumb, ds_empi_init)
 !
 ! - General initialisations of datastructure
 !

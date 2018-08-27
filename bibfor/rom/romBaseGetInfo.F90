@@ -26,16 +26,14 @@ implicit none
 #include "asterf_types.h"
 #include "asterfort/assert.h"
 #include "asterfort/dismoi.h"
-#include "asterfort/jeexin.h"
-#include "asterfort/jenonu.h"
-#include "asterfort/jexnom.h"
 #include "asterfort/utmess.h"
 #include "asterfort/romModeParaRead.h"
 #include "asterfort/rs_getfirst.h"
 #include "asterfort/rs_get_liststore.h"
 #include "asterfort/rsexch.h"
-#include "asterfort/modelNodeEF.h"
-#include "asterfort/romBaseComponents.h"
+#include "asterfort/ltnotb.h"
+#include "asterfort/jeexin.h"
+#include "asterfort/romFieldGetInfo.h"
 !
 character(len=8), intent(in)     :: base
 type(ROM_DS_Empi), intent(inout) :: ds_empi
@@ -54,19 +52,29 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: iret, nume_first, nume_pl, nb_snap, i_mode
-    integer :: nb_equa = 0, nb_mode = 0, nb_node = 0, nb_cmp_by_node = 0
-    character(len=8)  :: mesh = ' ', model = ' ', axe_line = ' ', base_type = ' '
-    character(len=8)  :: cmp_by_node(10) = ' '
+    integer :: nb_mode = 0
+    character(len=8)  :: model = ' ', axe_line = ' ', base_type = ' '
     character(len=24) :: surf_num = ' ', field_refe = ' ', field_name = ' '
-    aster_logical :: l_lagr = ASTER_FALSE
+    character(len=19) :: tabl_coor = ' '
+    type(ROM_DS_Field) :: ds_field
 !
 ! --------------------------------------------------------------------------------------------------
 !
-
 !
-! - Get informations about empiric modes - Parameters
+! - Get name of COOR_REDUIT table
+!
+    call jeexin(base//'           .LTNT', iret)
+    if (iret .ne. 0) then
+        call ltnotb(base, 'COOR_REDUIT', tabl_coor, iret)
+        ASSERT(iret .ne. 1)
+    endif
+!
+! - Number of modes
 !
     call rs_get_liststore(base, nb_mode)
+!
+! - Get main parameters in empiric base
+!
     i_mode = 1
     call romModeParaRead(base  , i_mode     ,&
                          model_      = model,&
@@ -77,44 +85,27 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
         base_type = 'LINEIQUE'
     endif
 !
-! - Get informations about empiric modes - Field
+! - Get _representative_ field in empiric base
 !
     call rs_getfirst(base, nume_first)
     field_refe = base(1:8)//'FIELD_REFE'
     call rsexch(' ', base, field_name, nume_first, field_refe, iret)
     ASSERT(iret.eq.0)
 !
-! - Get informations about empiric modes - Others
+! - Get informations from field
 !
-    call dismoi('NB_EQUA'     , field_refe, 'CHAM_NO' , repi = nb_equa)
-    call dismoi('NOM_MAILLA'  , model     , 'MODELE'  , repk = mesh)
-!
-! - Get number of nodes affected by model
-!
-    call modelNodeEF(model, nb_node)
-!
-! - Get components in empiric modes
-!
-    call romBaseComponents(mesh          , nb_equa    ,&
-                           field_name    , field_refe ,&
-                           nb_cmp_by_node, cmp_by_node, l_lagr)
+    ds_field = ds_empi%ds_mode
+    call romFieldGetInfo(model, field_name, field_refe, ds_field)
 !
 ! - Save informations about empiric modes
 !
-    ds_empi%base           = base
-    ds_empi%field_name     = field_name
-    ds_empi%field_refe     = field_refe
-    ds_empi%mesh           = mesh
-    ds_empi%model          = model
-    ds_empi%base_type      = base_type
-    ds_empi%axe_line       = axe_line
-    ds_empi%surf_num       = surf_num
-    ds_empi%nb_equa        = nb_equa
-    ds_empi%nb_node        = nb_node
-    ds_empi%nb_mode        = nb_mode
-    ds_empi%nb_snap        = nb_snap
-    ds_empi%l_lagr         = l_lagr
-    ds_empi%nb_cmp_by_node = nb_cmp_by_node
-    ds_empi%cmp_by_node    = cmp_by_node
+    ds_empi%base      = base
+    ds_empi%tabl_coor = tabl_coor
+    ds_empi%ds_mode   = ds_field
+    ds_empi%base_type = base_type
+    ds_empi%axe_line  = axe_line
+    ds_empi%surf_num  = surf_num
+    ds_empi%nb_mode   = nb_mode
+    ds_empi%nb_snap   = nb_snap
 !
 end subroutine

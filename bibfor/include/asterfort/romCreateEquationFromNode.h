@@ -19,10 +19,10 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine romCreateEquationFromNode(ds_empi, v_equa  , nume_dof    ,&
+    subroutine romCreateEquationFromNode(ds_mode, v_equa  , nume_dof    ,&
                                          grnode_, nb_node_, v_list_node_)
         use Rom_Datastructure_type
-        type(ROM_DS_Empi), intent(in) :: ds_empi
+        type(ROM_DS_Field), intent(in) :: ds_mode
         integer, pointer :: v_equa(:)
         character(len=24), intent(in) :: nume_dof
         character(len=24), optional, intent(in) :: grnode_

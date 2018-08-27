@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine romMultiParaModeSave(ds_multipara, ds_empi,&
                                 i_mode      , mode   )
 !
@@ -31,12 +32,10 @@ implicit none
 #include "asterfort/romModeSave.h"
 #include "asterfort/romModeProd.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    type(ROM_DS_MultiPara), intent(in) :: ds_multipara
-    type(ROM_DS_Empi), intent(inout) :: ds_empi
-    integer, intent(in) :: i_mode
-    character(len=19), intent(in) :: mode
+type(ROM_DS_MultiPara), intent(in) :: ds_multipara
+type(ROM_DS_Empi), intent(inout) :: ds_empi
+integer, intent(in) :: i_mode
+character(len=19), intent(in) :: mode
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -65,10 +64,10 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
     base           = ds_empi%base
-    model          = ds_empi%model
-    nb_equa        = ds_empi%nb_equa
-    field_name     = ds_empi%field_name
-    field_refe     = ds_empi%field_refe
+    model          = ds_empi%ds_mode%model
+    nb_equa        = ds_empi%ds_mode%nb_equa
+    field_name     = ds_empi%ds_mode%field_name
+    field_refe     = ds_empi%ds_mode%field_refe
     syst_type      = ds_multipara%syst_type
     field_iden     = 'DEPL'
 !
@@ -89,7 +88,7 @@ implicit none
                          field_name , field_iden, field_refe, nb_equa,&
                          mode_vectr_ = v_moder)
     else
-        ASSERT(.false.)
+        ASSERT(ASTER_FALSE)
     endif
 !
     ds_empi%nb_mode = ds_empi%nb_mode + 1

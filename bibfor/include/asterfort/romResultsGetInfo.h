@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,14 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
-!
-#include "asterf_types.h"
 !
 interface
-    subroutine romBaseChck(ds_empi)
+    subroutine romResultsGetInfo(result, field_name, ds_result)
         use Rom_Datastructure_type
-        type(ROM_DS_Empi), intent(in) :: ds_empi
-    end subroutine romBaseChck
+        character(len=8), intent(in)  :: result
+        character(len=16), intent(in) :: field_name
+        type(ROM_DS_Result), intent(inout) :: ds_result
+    end subroutine romResultsGetInfo
 end interface

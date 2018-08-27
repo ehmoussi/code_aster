@@ -17,21 +17,15 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine dbr_init_algo_pod(base, ds_empi, tabl_name)
+subroutine dbr_init_algo_pod()
 !
 use Rom_Datastructure_type
 !
 implicit none
 !
 #include "asterfort/assert.h"
-#include "asterfort/dbr_rnum.h"
-#include "asterfort/romTableCreate.h"
 #include "asterfort/infniv.h"
 #include "asterfort/utmess.h"
-!
-character(len=8), intent(in) :: base
-type(ROM_DS_Empi), intent(inout) :: ds_empi
-character(len=19), intent(out) :: tabl_name
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -41,9 +35,6 @@ character(len=19), intent(out) :: tabl_name
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  base             : name of empiric base
-! IO  ds_empi          : datastructure for empiric modes
-! Out tabl_name        : name of table in results datastructure
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -58,12 +49,6 @@ character(len=19), intent(out) :: tabl_name
 !
 ! - Create numbering of nodes for the lineic model
 !
-    if (ds_empi%base_type .eq. 'LINEIQUE') then
-        call dbr_rnum(ds_empi)
-    endif
-!
-! - Create table for the reduced coordinates in results datatructure
-!
-    call romTableCreate(base, tabl_name)
+    ! Nothing to do
 !
 end subroutine

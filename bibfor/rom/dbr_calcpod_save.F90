@@ -59,7 +59,7 @@ real(kind=8), pointer :: s(:)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    nb_equa      = ds_empi%nb_equa
+    nb_equa      = ds_empi%ds_mode%nb_equa
     base_type    = ds_empi%base_type
 !
     if (base_type .eq. 'LINEIQUE') then

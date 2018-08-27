@@ -86,16 +86,16 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
 ! - Save in empiric base
 !
     ds_empi%base         = base
-    ds_empi%field_name   = field_name
-    ds_empi%field_refe   = field_refe
-    ds_empi%mesh         = mesh
-    ds_empi%model        = model
     ds_empi%base_type    = ' '
     ds_empi%axe_line     = ' '
     ds_empi%surf_num     = ' '
-    ds_empi%nb_node      = nb_node
     ds_empi%nb_mode      = 0
-    ds_empi%nb_equa      = nb_equa
+    ds_empi%ds_mode%field_name   = field_name
+    ds_empi%ds_mode%field_refe   = field_refe
+    ds_empi%ds_mode%mesh         = mesh
+    ds_empi%ds_mode%model        = model
+    ds_empi%ds_mode%nb_node      = nb_node
+    ds_empi%ds_mode%nb_equa      = nb_equa
 !
 ! - Create output datastructure
 !

@@ -15,29 +15,35 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine norm_frobenius(nb, tab, norm)
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine romModeDSCopy(ds_mode_in, ds_mode_out)
+!
+use Rom_Datastructure_type
 !
 implicit none
 !
-integer, intent(in)       :: nb
-real(kind=8), intent(in)  :: tab(*)
-real(kind=8), intent(out) :: norm
+type(ROM_DS_Field), intent(in)  :: ds_mode_in
+type(ROM_DS_Field), intent(out) :: ds_mode_out
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! Compute Frobenius norm
+! Model reduction
+!
+! Copy datastructure of empiric mode
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: i
+! In  ds_mode_in       : datastructure for empiric mode
+! Out ds_mode_out      : datastructure for output empiric mode
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    norm = 0.d0
-    do i = 1, nb
-        norm = norm + tab(i)**2
-    enddo
-    norm = sqrt(norm)
+    ds_mode_out%field_name = ds_mode_in%field_name
+    ds_mode_out%field_refe = ds_mode_in%field_refe
+    ds_mode_out%mesh       = ds_mode_in%mesh
+    ds_mode_out%model      = ds_mode_in%model
+    ds_mode_out%nb_equa    = ds_mode_in%nb_equa
+    ds_mode_out%nb_node    = ds_mode_in%nb_node
 !
 end subroutine

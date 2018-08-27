@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine romMultiParaROMMatrCreate(ds_empi  , ds_multipara, i_coef,&
                                      syst_matr)
 !
@@ -32,12 +33,10 @@ implicit none
 #include "asterfort/utmess.h"
 #include "blas/zdotc.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    type(ROM_DS_Empi), intent(in) :: ds_empi
-    type(ROM_DS_MultiPara), intent(inout) :: ds_multipara
-    integer, intent(in) :: i_coef
-    character(len=19), intent(in) :: syst_matr
+type(ROM_DS_Empi), intent(in) :: ds_empi
+type(ROM_DS_MultiPara), intent(inout) :: ds_multipara
+integer, intent(in) :: i_coef
+character(len=19), intent(in) :: syst_matr
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -80,7 +79,7 @@ implicit none
 !
     base           = ds_empi%base
     nb_mode        = ds_empi%nb_mode
-    nb_equa        = ds_empi%nb_equa
+    nb_equa        = ds_empi%ds_mode%nb_equa
     nb_matr        = ds_multipara%nb_matr
 !
 ! - Compute matrix
@@ -109,7 +108,6 @@ implicit none
                 v_syst_matr(nb_mode*(i_mode-1)+j_mode) = v_syst_matr(nb_mode*(i_mode-1)+j_mode)+&
                                                          term * coef_cplx
             end do
-            !WRITE(6,*) 'Matrix: ', i_mode, j_mode, v_syst_matr(nb_mode*(i_mode-1)+j_mode)
         end do 
     end do
 !

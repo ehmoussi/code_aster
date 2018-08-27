@@ -60,7 +60,7 @@ real(kind=8), pointer :: v_vect(:)
 ! --------------------------------------------------------------------------------------------------
 !
     nb_mode = ds_empi%nb_mode
-    nb_equa = ds_empi%nb_equa
+    nb_equa = ds_empi%ds_mode%nb_equa
 !
 ! - Allocate objects
 !

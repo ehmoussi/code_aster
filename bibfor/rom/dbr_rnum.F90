@@ -78,12 +78,12 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
 !
 ! - Get parameters
 !
-    mesh      = ds_empi%mesh
+    mesh      = ds_empi%ds_mode%mesh
     axe_line  = ds_empi%axe_line
     surf_num  = ds_empi%surf_num
     ds_line   = ds_empi%ds_lineic
-    nb_node   = ds_empi%nb_node
-    nb_equa   = ds_empi%nb_equa
+    nb_node   = ds_empi%ds_mode%nb_node
+    nb_equa   = ds_empi%ds_mode%nb_equa
     tole_node = ds_line%tole_node
     if (niv .ge. 2) then
         call utmess('I', 'ROM2_6', sr = tole_node)

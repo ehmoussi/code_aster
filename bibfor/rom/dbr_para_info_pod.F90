@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine dbr_para_info_pod(ds_para_pod)
+subroutine dbr_para_info_pod(operation, ds_para_pod)
 !
 use Rom_Datastructure_type
 !
@@ -29,6 +29,7 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/romSnapInfo.h"
 !
+character(len=16), intent(in) :: operation
 type(ROM_DS_ParaDBR_POD), intent(in) :: ds_para_pod
 !
 ! --------------------------------------------------------------------------------------------------
@@ -44,11 +45,12 @@ type(ROM_DS_ParaDBR_POD), intent(in) :: ds_para_pod
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    character(len=16) :: operation = ' '
+
     character(len=24) :: field_name = ' ', surf_num = ' '
-    character(len=8)  :: result_in = ' ', axe_line = ' '
+    character(len=8)  :: axe_line = ' '
     real(kind=8) :: tole_svd, tole_incr
     integer :: nb_mode_maxi
+    aster_logical :: l_tabl_user
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -61,11 +63,11 @@ type(ROM_DS_ParaDBR_POD), intent(in) :: ds_para_pod
 !
     tole_svd     = ds_para_pod%tole_svd
     tole_incr    = ds_para_pod%tole_incr
-    result_in    = ds_para_pod%result_in
     field_name   = ds_para_pod%field_name
     axe_line     = ds_para_pod%axe_line
     surf_num     = ds_para_pod%surf_num
     nb_mode_maxi = ds_para_pod%nb_mode_maxi
+    l_tabl_user  = ds_para_pod%l_tabl_user
 !
 ! - Print - General for POD
 !
@@ -76,6 +78,9 @@ type(ROM_DS_ParaDBR_POD), intent(in) :: ds_para_pod
         call utmess('I', 'ROM7_3' , sr = tole_svd)
         if (operation .eq. 'POD_INCR') then
             call utmess('I', 'ROM7_13' , sr = tole_incr)
+            if (l_tabl_user) then
+                call utmess('I', 'ROM7_26')
+            endif
         endif
         call utmess('I', 'ROM7_2' , sk = field_name)
     endif

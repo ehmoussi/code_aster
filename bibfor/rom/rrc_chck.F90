@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -25,7 +25,7 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/assert.h"
-#include "asterfort/romBaseChck.h"
+#include "asterfort/romModeChck.h"
 #include "asterfort/utmess.h"
 !
 type(ROM_DS_ParaRRC), intent(in) :: ds_para
@@ -45,6 +45,7 @@ type(ROM_DS_ParaRRC), intent(in) :: ds_para
     character(len=8) :: mesh_prim, mesh_dual, model_prim, model_dual
     character(len=8) :: model_rom, model_dom
     aster_logical :: l_corr_ef, l_prev_dual
+    type(ROM_DS_Field) :: ds_mode_prim, ds_mode_dual
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -56,10 +57,12 @@ type(ROM_DS_ParaRRC), intent(in) :: ds_para
 !
     l_corr_ef   = ds_para%l_corr_ef
     l_prev_dual = ds_para%l_prev_dual
-    mesh_prim   = ds_para%ds_empi_prim%mesh
-    mesh_dual   = ds_para%ds_empi_dual%mesh
-    model_prim  = ds_para%ds_empi_prim%model
-    model_dual  = ds_para%ds_empi_dual%model
+    ds_mode_prim = ds_para%ds_empi_prim%ds_mode
+    ds_mode_dual = ds_para%ds_empi_dual%ds_mode
+    mesh_prim   = ds_mode_prim%mesh
+    mesh_dual   = ds_mode_dual%mesh
+    model_prim  = ds_mode_prim%model
+    model_dual  = ds_mode_dual%model
     model_rom   = ds_para%model_rom
     model_dom   = ds_para%model_dom
 !
@@ -95,11 +98,11 @@ type(ROM_DS_ParaRRC), intent(in) :: ds_para
         endif
     endif
 !
-! - Check empiric modes base
+! - Check empiric mode
 !
-    call romBaseChck(ds_para%ds_empi_prim)
+    call romModeChck(ds_mode_prim)
     if (l_prev_dual) then
-        call romBaseChck(ds_para%ds_empi_dual)
+        call romModeChck(ds_mode_dual)
     endif
 !
 end subroutine

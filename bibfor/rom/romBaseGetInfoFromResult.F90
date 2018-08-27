@@ -17,57 +17,66 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine romBaseChck(ds_empi)
+subroutine romBaseGetInfoFromResult(ds_result_in, base, ds_empi)
 !
 use Rom_Datastructure_type
 !
 implicit none
 !
+#include "asterf_types.h"
 #include "asterfort/assert.h"
 #include "asterfort/utmess.h"
-#include "asterfort/dismoi.h"
-#include "asterfort/jelira.h"
-#include "asterfort/jeveuo.h"
-#include "asterfort/jenuno.h"
-#include "asterfort/jexnom.h"
-#include "asterfort/jexnum.h"
-#include "asterc/indik8.h"
+#include "asterfort/ltnotb.h"
+#include "asterfort/romFieldGetInfo.h"
 !
-type(ROM_DS_Empi), intent(in) :: ds_empi
+type(ROM_DS_Result), intent(in)  :: ds_result_in
+character(len=8), intent(in)     :: base
+type(ROM_DS_Empi), intent(inout) :: ds_empi
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! Model reduction
 !
-! Check empiric modes base
+! Get informations about empiric modes base from input results to reduce
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  ds_empi          : datastructure for empiric modes
+! In  ds_result_in     : input results to reduce
+! In  base             : name of empiric base
+! IO  ds_empi          : datastructure for empiric modes
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    character(len=8) :: mesh, model
-    character(len=16) :: modeli
-    integer :: nb_dime
+    integer :: iret
+    character(len=8) :: model = ' '
+    character(len=24) :: field_refe = ' ', field_name = ' '
+    character(len=19) :: tabl_coor = ' '
+    type(ROM_DS_Field) :: ds_field
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    mesh       = ds_empi%mesh
-    model      = ds_empi%model
+
 !
-! - Check mesh
+! - Get name of COOR_REDUIT table
 !
-    call dismoi('DIM_GEOM', mesh, 'MAILLAGE', repi = nb_dime)
-    if (nb_dime .ne. 3) then
-        call utmess('F','ROM5_20')
-    endif
+    call ltnotb(base, 'COOR_REDUIT', tabl_coor, iret)
+    ASSERT(iret .ne. 1)
 !
-! - Check model
+! - Get parameters from input results datastructure
 !
-    call dismoi('MODELISATION', model, 'MODELE', repk=modeli)
-    if (modeli .ne. '3D' .and. modeli .ne. '3D_DIAG' .and. modeli .ne. '3D_SI') then
-        call utmess('F','ROM5_20')
-    endif
+    field_name = ds_result_in%field_name
+    field_refe = ds_result_in%field_refe
+    model      = ds_result_in%model
+!
+! - Get informations from field
+!
+    ds_field = ds_empi%ds_mode
+    call romFieldGetInfo(model, field_name, field_refe, ds_field)
+!
+! - Save informations about empiric modes
+!
+    ds_empi%base      = base
+    ds_empi%tabl_coor = tabl_coor
+    ds_empi%ds_mode   = ds_field
 !
 end subroutine

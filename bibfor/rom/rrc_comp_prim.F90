@@ -74,6 +74,7 @@ type(ROM_DS_ParaRRC), intent(in) :: ds_para
     character(len=24) :: materi, cara_elem, model_dom
     real(kind=8) :: time
     aster_logical :: l_corr_ef
+    type(ROM_DS_Field)      :: ds_mode
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -85,8 +86,9 @@ type(ROM_DS_ParaRRC), intent(in) :: ds_para
 ! - Get parameters
 !
     nb_store     = ds_para%nb_store
+    ds_mode      = ds_para%ds_empi_prim%ds_mode
     nb_mode      = ds_para%ds_empi_prim%nb_mode
-    nb_equa      = ds_para%ds_empi_prim%nb_equa
+    nb_equa      = ds_mode%nb_equa
     nb_equa_ridp = ds_para%nb_equa_ridp
     result_rom   = ds_para%result_rom
     result_dom   = ds_para%result_dom
@@ -114,7 +116,7 @@ type(ROM_DS_ParaRRC), intent(in) :: ds_para
 ! - Initial state
 !
     nume_store = 0
-    call romResultSetZero(result_dom, nume_store, ds_para%ds_empi_prim)
+    call romResultSetZero(result_dom, nume_store, ds_mode)
 !
 ! - Reduced coordinates: Gappy POD if necessary
 !
@@ -136,13 +138,13 @@ type(ROM_DS_ParaRRC), intent(in) :: ds_para
     do i_store = 1, nb_store-1
         nume_store = i_store
 ! ----- Get field to save
-        call rsexch(' ', result_dom, ds_para%ds_empi_prim%field_name,&
+        call rsexch(' ', result_dom, ds_mode%field_name,&
                     nume_store, field_save, iret)
         ASSERT(iret .eq. 100)
-        call copisd('CHAMP_GD', 'G', ds_para%ds_empi_prim%field_refe, field_save)
+        call copisd('CHAMP_GD', 'G', ds_mode%field_refe, field_save)
         call jeveuo(field_save(1:19)//'.VALE', 'E', vr = v_field_save)
 ! ----- Get field on RID
-        call rsexch(' ', result_rom, ds_para%ds_empi_prim%field_name,&
+        call rsexch(' ', result_rom, ds_mode%field_name,&
                     nume_store, disp_rid, iret)
         ASSERT(iret .eq. 0)
         call jeveuo(disp_rid(1:19)//'.VALE', 'L', vr = v_disp_rid)
@@ -167,7 +169,7 @@ type(ROM_DS_ParaRRC), intent(in) :: ds_para
                     list_load)
         call rsadpa(result_dom, 'E', 1, 'INST', nume_store, 0, sjv=jv_para)
         zr(jv_para) = time
-        call rsnoch(result_dom, ds_para%ds_empi_prim%field_name,&
+        call rsnoch(result_dom, ds_mode%field_name,&
                     nume_store)
     end do
 !

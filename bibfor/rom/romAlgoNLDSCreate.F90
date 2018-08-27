@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -25,7 +25,6 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/infniv.h"
-#include "asterfort/romBaseDSInit.h"
 #include "asterfort/romLineicBaseDSInit.h"
 #include "asterfort/utmess.h"
 !
@@ -57,10 +56,6 @@ type(ROM_DS_AlgoPara), intent(out) :: ds_algorom
 ! - Initialization of datastructure for lineic base numbering
 !
     call romLineicBaseDSInit(ds_lineicnumb)
-!
-! - Initialization of datastructure for empiric modes
-!
-    call romBaseDSInit(ds_lineicnumb, ds_empi)   
 !
 ! - General parameters
 !

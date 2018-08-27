@@ -53,7 +53,7 @@ integer, intent(out) :: m, n
     nb_snap      = ds_snap%nb_snap
     base_type    = ds_empi%base_type
     nb_slice     = ds_empi%ds_lineic%nb_slice
-    nb_equa      = ds_empi%nb_equa
+    nb_equa      = ds_empi%ds_mode%nb_equa
 !
 ! - Prepare parameters for LAPACK
 !

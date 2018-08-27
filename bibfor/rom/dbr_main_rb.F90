@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -100,7 +100,8 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
 !
 ! - Normalization of mode
 !
-    call romNormalize(ds_para_rb%solveDOM%syst_type, ds_para_rb%solveDOM%syst_solu, ds_empi%nb_equa)
+    call romNormalize(ds_para_rb%solveDOM%syst_type, ds_para_rb%solveDOM%syst_solu,&
+                      ds_empi%ds_mode%nb_equa)
 !
 ! - Save
 !
@@ -151,7 +152,7 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
         call romSolveDOMSystSolve(ds_para_rb%solver, ds_para_rb%solveDOM)
 ! ----- Normalization of mode
         call romNormalize(ds_para_rb%solveDOM%syst_type,&
-                          ds_para_rb%solveDOM%syst_solu, ds_empi%nb_equa)
+                          ds_para_rb%solveDOM%syst_solu, ds_empi%ds_mode%nb_equa)
 ! ----- Save
         call romGreedyModeSave(ds_para_rb%multipara, ds_empi,&
                                i_mode              , ds_para_rb%solveDOM%syst_solu,&

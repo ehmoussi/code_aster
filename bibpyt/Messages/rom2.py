@@ -25,7 +25,7 @@ cata_msg = {
 
     6 : _(u"""Tolérance pour détecter les noeuds: %(r1)19.12e."""),
 
-    8 : _(u"""Création de la liste des équations sur la base empirique %(k1)s."""),
+    8 : _(u"""Création de la liste des équations sur le mode empirique."""),
 
     9 : _(u"""Base empirique créée à partir de %(i1)d clichés."""),
 

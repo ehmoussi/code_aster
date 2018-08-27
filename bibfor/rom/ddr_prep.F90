@@ -76,9 +76,9 @@ integer, intent(out) :: nb_node_rid
 ! - Get parameters
 !
     nb_mode_prim  = ds_para%ds_empi_prim%nb_mode
-    mode_prim     = ds_para%ds_empi_prim%field_refe
+    mode_prim     = ds_para%ds_empi_prim%ds_mode%field_refe
     nb_mode_dual  = ds_para%ds_empi_dual%nb_mode
-    mode_dual     = ds_para%ds_empi_dual%field_refe
+    mode_dual     = ds_para%ds_empi_dual%ds_mode%field_refe
     nb_mode_total = nb_mode_prim + nb_mode_dual
     nb_rid_mini   = ds_para%nb_rid_mini
 !
@@ -105,7 +105,7 @@ integer, intent(out) :: nb_node_rid
 !
     if (nb_rid_mini .gt. 0) then
         call utlisi('UNION'     ,&
-                    v_list_unio1      , nb_node_rid ,&
+                    v_list_unio1      , nb_node_rid,&
                     ds_para%v_rid_mini, nb_rid_mini,&
                     v_list_unio2      , nb_mode_total+nb_rid_mini, nb_node_rid)
     endif

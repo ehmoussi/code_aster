@@ -64,7 +64,7 @@ type(ROM_DS_ParaDBR_TR), intent(inout) :: ds_para_tr
 ! - Get parameters
 !
     noojb     = '12345678.00000.NUME.PRNO'
-    model_dom = ds_para_tr%ds_empi_init%model
+    model_dom = ds_para_tr%ds_empi_init%ds_mode%model
     model_rom = ds_para_tr%model_rom
 !
 ! - Create numbering
@@ -91,7 +91,7 @@ type(ROM_DS_ParaDBR_TR), intent(inout) :: ds_para_tr
 !
 ! - Prepare the list of equations from list of nodes
 !
-    call romCreateEquationFromNode(ds_para_tr%ds_empi_init,&
+    call romCreateEquationFromNode(ds_para_tr%ds_empi_init%ds_mode,&
                                    ds_para_tr%v_equa_rom,&
                                    nume_dom     ,&
                                    nb_node_     = nb_node_rom,&

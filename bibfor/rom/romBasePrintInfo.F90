@@ -23,9 +23,9 @@ use Rom_Datastructure_type
 !
 implicit none
 !
-#include "jeveux.h"
 #include "asterfort/assert.h"
 #include "asterfort/utmess.h"
+#include "asterfort/romModePrintInfo.h"
 !
 type(ROM_DS_Empi), intent(in) :: ds_empi
 !
@@ -42,8 +42,7 @@ type(ROM_DS_Empi), intent(in) :: ds_empi
 ! --------------------------------------------------------------------------------------------------
 !
     call utmess('I', 'ROM7_8')
-    call utmess('I', 'ROM3_4', sk = ds_empi%field_name)
-    if (ds_empi%base_type .eq. 'LINEIC') then
+    if (ds_empi%base_type .eq. 'LINEIQUE') then
         call utmess('I', 'ROM3_10')
         call utmess('I', 'ROM3_11', sk = ds_empi%axe_line)
         call utmess('I', 'ROM3_12', sk = ds_empi%surf_num)
@@ -54,16 +53,9 @@ type(ROM_DS_Empi), intent(in) :: ds_empi
     if (ds_empi%nb_mode .ne. 0) then
         call utmess('I', 'ROM3_5', si = ds_empi%nb_mode)
     endif
-    call utmess('I', 'ROM3_6', si = ds_empi%nb_node)
-    call utmess('I', 'ROM3_7', si = ds_empi%nb_equa)
     if (ds_empi%nb_snap .ne. 0) then
         call utmess('I', 'ROM3_9', si = ds_empi%nb_snap)
     endif
-    call utmess('I', 'ROM3_53', si = ds_empi%nb_cmp_by_node)
-    if (ds_empi%l_lagr) then
-        call utmess('I', 'ROM3_54')
-    else
-        call utmess('I', 'ROM3_55')
-    endif
+    call romModePrintInfo(ds_empi%ds_mode)
 !
 end subroutine

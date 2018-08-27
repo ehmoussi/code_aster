@@ -100,7 +100,7 @@ integer, intent(in) :: ind_dual
     if (ind_dual .eq. 0) then
         do i_store = 1, nb_store-1
             nume_store = i_store
-            call rsexch(' ', result, ds_empi%field_name,&
+            call rsexch(' ', result, ds_empi%ds_mode%field_name,&
                         nume_store, field_rom, iret)
             ASSERT(iret .eq. 0)
             call jeveuo(field_rom(1:19)//'.VALE', 'L', vr = v_field_rom)
@@ -121,7 +121,7 @@ integer, intent(in) :: ind_dual
         nb_equa_ridi =  ds_para%nb_equa_ridi
         do i_store = 1, nb_store-1
             nume_store = i_store
-            call rsexch(' ', result, ds_empi%field_name,&
+            call rsexch(' ', result, ds_empi%ds_mode%field_name,&
                         nume_store, field_rom, iret)
             ASSERT(iret .eq. 0)
             call jeveuo(field_rom(1:19)//'.VALE', 'L', vr = v_field_rom)

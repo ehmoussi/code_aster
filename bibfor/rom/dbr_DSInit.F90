@@ -24,7 +24,6 @@ use Rom_Datastructure_type
 implicit none
 !
 #include "asterfort/infniv.h"
-#include "asterfort/romBaseDSInit.h"
 #include "asterfort/romLineicBaseDSInit.h"
 #include "asterfort/romSnapDSInit.h"
 #include "asterfort/dbr_paraPODDSInit.h"
@@ -79,10 +78,6 @@ type(ROM_DS_ParaDBR), intent(out) :: ds_para
 ! - Initialization of datastructure for snapshot selection
 !
     call romSnapDSInit(ds_snap)
-!
-! - Initialization of datastructure for empiric modes
-!
-    call romBaseDSInit(ds_lineicnumb, ds_empi)
 !
 ! - Initialisation of datastructure for solving problems
 !
