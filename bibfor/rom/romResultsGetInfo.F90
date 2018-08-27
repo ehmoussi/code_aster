@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine romResultsGetInfo(result, field_name, ds_result)
+subroutine romResultsGetInfo(result, field_name, model_user, ds_result)
 !
 use Rom_Datastructure_type
 !
@@ -35,6 +35,7 @@ implicit none
 !
 character(len=8), intent(in)  :: result
 character(len=16), intent(in) :: field_name
+character(len=8), intent(in)  :: model_user
 type(ROM_DS_Result), intent(inout) :: ds_result
 !
 ! --------------------------------------------------------------------------------------------------
@@ -47,6 +48,8 @@ type(ROM_DS_Result), intent(inout) :: ds_result
 !
 ! In  result           : name of results datastructure (EVOL_*)
 ! In  field_name       : name of field where empiric modes have been constructed (NOM_CHAM)
+! In  model_user       : model from user (if required)
+! IO  ds_result        : results datastructure
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -65,6 +68,13 @@ type(ROM_DS_Result), intent(inout) :: ds_result
 ! - Get information about model
 !
     call dismoi('NOM_MODELE', result, 'RESULTAT', repk = model)
+    if (model .eq. '#AUCUN' .or. model .eq. ' ') then
+        if (model_user .eq. ' ') then
+            call utmess('F', 'ROM5_54')
+        else
+            model = model_user
+        endif
+    endif
 !
 ! - Get informations about fields
 !

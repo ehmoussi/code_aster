@@ -110,7 +110,7 @@ type(ROM_DS_ParaDBR_POD), intent(inout) :: ds_para_pod
 ! - Get parameters for result datastructure
 !
     ds_result = ds_para_pod%ds_result_in
-    call romResultsGetInfo(result_in, field_name, ds_result)
+    call romResultsGetInfo(result_in, field_name, model_user, ds_result)
 !
 ! - Save parameters in datastructure
 !

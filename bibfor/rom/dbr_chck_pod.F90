@@ -61,7 +61,6 @@ type(ROM_DS_Empi), intent(in) :: ds_empi
     character(len=19) :: tabl_user, tabl_coor
     aster_logical :: l_tabl_user, l_lagr
     integer :: nb_mode, nb_snap, nb_line
-    character(len=8) :: model = ' '
     integer, pointer :: v_tbnp(:) => null()
 !
 ! --------------------------------------------------------------------------------------------------
@@ -75,15 +74,6 @@ type(ROM_DS_Empi), intent(in) :: ds_empi
 !
     if (l_reuse .and. operation .eq. 'POD') then
         call utmess('F','ROM2_13', sk = operation)
-    endif
-!
-! - Get information about model
-!
-    model = ds_para_pod%ds_result_in%model
-    if (model .eq. '#AUCUN' .or. model .eq. ' ') then
-        if (ds_para_pod%model_user .eq. ' ') then
-            call utmess('F', 'ROM5_54')
-        endif
     endif
 !
 ! - Get components in fields
