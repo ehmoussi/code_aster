@@ -120,7 +120,15 @@ type(ROM_DS_AlgoPara), optional, intent(inout) :: ds_algorom_
             matrix_pred = matrix_corr
         endif
         ds_algopara%matrix_pred = matrix_pred
-        ds_algopara%matrix_corr = matrix_corr 
+        ds_algopara%matrix_corr = matrix_corr
+        if (matrix_pred .eq. 'DEPL_CALCULE') then
+            call utmess('A', 'MECANONLINE5_57')
+            call getvid(keywf, 'EVOL_NOLI', iocc=1, scal=result_prev_disp, nbret=iret)
+            if (iret .le. 0) then
+                call utmess('F', 'MECANONLINE5_45')
+            endif
+            ds_algopara%result_prev_disp = result_prev_disp
+        endif
         call getvis(keywf, 'REAC_INCR', iocc=1, scal=reac_incr)
         ASSERT(reac_incr .ge. 0)
         ds_algopara%reac_incr = reac_incr

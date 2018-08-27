@@ -194,6 +194,31 @@ IMPR_TABLE(TABLE=coor_rex, UNITE=6)
 
 ####################################################################################################
 #
+# Calcul hyper-réduit (prédiction DEPL_CALCULE)
+#
+####################################################################################################
+reduD=STAT_NON_LINE(MODELE=model_r,
+                   CHAM_MATER=chmat,
+                   EXCIT=(_F(CHARGE=chg_b_r,),
+                          _F(CHARGE=chg_p_r,FONC_MULT=rampe),
+                         ),
+                   INCREMENT=_F(LIST_INST=list_t,),
+                    METHODE='MODELE_REDUIT',
+                   MODELE_REDUIT=_F(PREDICTION='DEPL_CALCULE',
+                    EVOL_NOLI=reduX,
+                    REAC_ITER=1,
+                    BASE_PRIMAL     = base_t,
+                    DOMAINE_REDUIT  = 'OUI',
+                    GROUP_NO_INTERF = 'INF',
+                    ),
+                   COMPORTEMENT=_F(RELATION='VMIS_ISOT_LINE',),)
+
+coor_rec=RECU_TABLE(CO=reduD,NOM_TABLE='COOR_REDUIT',);
+
+IMPR_TABLE(TABLE=coor_rec, UNITE=6)
+
+####################################################################################################
+#
 # Reconstruction des déplacements "à la main"
 #
 ####################################################################################################
