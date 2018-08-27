@@ -47,16 +47,12 @@ type(ROM_DS_ParaDBR_RB), intent(out) :: ds_para_rb
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    ds_para_rb%coef_redu       = '&&OP0053.COEF_REDU'
-    ds_para_rb%solver          = '&&OP0053.SOLVER'
-    ds_para_rb%resi_type       = ' '
-    ds_para_rb%resi_vect       = '&&OP0053.RESI_VECT'
-    ds_para_rb%vect_2mbr_init  = '&&OP0053.2MBR_INIT'
-    ds_para_rb%resi_norm       => null()
-    ds_para_rb%resi_refe       = 0.d0
-    ds_para_rb%multipara       = ds_multipara
-    ds_para_rb%solveROM        = ds_solveROM
-    ds_para_rb%solveDOM        = ds_solveDOM
-    ds_para_rb%nb_mode_maxi    = 0
+    ds_para_rb%coef_redu      = '&&OP0053.COEF_REDU'
+    ds_para_rb%solver         = '&&OP0053.SOLVER'
+    ds_para_rb%resi_vect      = '&&OP0053.RESI_VECT'
+    ds_para_rb%vect_2mbr_init = '&&OP0053.2MBR_INIT'
+    ds_para_rb%solveDOM       = ds_solveDOM
+    ds_para_rb%solveROM       = ds_solveROM
+    ds_para_rb%multipara      = ds_multipara
 !
 end subroutine
