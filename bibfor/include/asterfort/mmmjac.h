@@ -19,15 +19,16 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine mmmjac(l_axis   , nb_node  , elem_dime,&
-                      elem_code, elem_coor,&
-                      ff       , dff      ,&
-                      jacobi)
+    subroutine mmmjac(l_axis   , nb_node     , elem_dime,&
+                      elem_code, elem_coor   ,&
+                      ff       , dff         ,&
+                      jacobi   , l_axis_warn_)
         aster_logical, intent(in) :: l_axis
         character(len=8), intent(in) :: elem_code
         integer, intent(in) :: elem_dime, nb_node
         real(kind=8), intent(in) :: elem_coor(3, 9)
         real(kind=8), intent(in) :: ff(9), dff(2, 9)
         real(kind=8), intent(out) :: jacobi
+        aster_logical, intent(out), optional :: l_axis_warn_
     end subroutine mmmjac
 end interface

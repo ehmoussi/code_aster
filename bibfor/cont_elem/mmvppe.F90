@@ -122,6 +122,7 @@ real(kind=8) :: vech1(3), vech2(3)
     real(kind=8) :: dffl(2, 9), ddffl(3, 9)
     real(kind=8) :: xpc, ypc, xpr, ypr
     real(kind=8) :: mprojn(3, 3)
+    aster_logical :: l_axis_warn
 !
 ! ----------------------------------------------------------------------
 !
@@ -197,7 +198,10 @@ real(kind=8) :: vech1(3), vech2(3)
     call mmmjac(laxis , nne           , ndim,&
                 typmae, slav_coor_init,&
                 ffe   , dffe,&
-                jacobi)
+                jacobi, l_axis_warn)
+    if (l_axis_warn) then
+        call utmess('A', 'CONTACT2_14')
+    endif
 !
 ! --- REACTUALISATION DE LA GEOMETRIE  (MAILLAGE+DEPMOI)+PPE*DEPDEL
 !     POINT_FIXE          --> PPE=0.0d0
