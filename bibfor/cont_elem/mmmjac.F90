@@ -17,10 +17,10 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine mmmjac(l_axis   , nb_node  , elem_dime,&
-                  elem_code, elem_coor,&
-                  ff       , dff      ,&
-                  jacobi)
+subroutine mmmjac(l_axis   , nb_node     , elem_dime,&
+                  elem_code, elem_coor   ,&
+                  ff       , dff         ,&
+                  jacobi   , l_axis_warn_)
 !
 implicit none
 !
@@ -36,6 +36,7 @@ integer, intent(in) :: elem_dime, nb_node
 real(kind=8), intent(in) :: elem_coor(3, 9)
 real(kind=8), intent(in) :: ff(9), dff(2, 9)
 real(kind=8), intent(out) :: jacobi
+aster_logical, intent(out), optional :: l_axis_warn_
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -53,6 +54,7 @@ real(kind=8), intent(out) :: jacobi
 ! In  ff               : shape functions at integration point
 ! In  dff              : derivatives of shape functions at integration point
 ! Out jacobian         : jacobian at integration point
+! Out l_axis_warn      : flag for warning if axisymmetric
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -67,6 +69,9 @@ real(kind=8), intent(out) :: jacobi
     dxdk   = 0.d0
     dydk   = 0.d0
     dzdk   = 0.d0
+    if (present(l_axis_warn_)) then
+        l_axis_warn_ = ASTER_FALSE
+    endif
 !
     if (elem_code(1:2) .eq. 'SE') then
         do i_node = 1, nb_node
@@ -84,7 +89,9 @@ real(kind=8), intent(out) :: jacobi
             end do
             if (r .eq. 0.d0) then
                 r=1.d-7
-                call utmess('A', 'CONTACT2_14')
+                if (present(l_axis_warn_)) then
+                    l_axis_warn_ = ASTER_TRUE
+                endif
             endif
             jacobi = jacobi*abs(r)
         endif
