@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,35 +15,34 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine mmlagc(lambds, dlagrc, iresof, lambda)
-!
 ! person_in_charge: mickael.abbas at edf.fr
 !
-    implicit none
-    integer :: iresof
-    real(kind=8) :: lambds, lambda, dlagrc
+subroutine mmlagc(lambds, dlagrc, iresof, lambda)
 !
-! ----------------------------------------------------------------------
+implicit none
 !
-! ROUTINE CONTACT (METHODE CONTINUE - CALCUL)
+real(kind=8), intent(in) :: lambds, dlagrc
+integer, intent(in) :: iresof
+real(kind=8), intent(out) :: lambda
 !
-! CHOIX DU SEUIL DE FROTTEMENT (PRESSION DE CONTACT)
+! --------------------------------------------------------------------------------------------------
 !
-! ----------------------------------------------------------------------
+! Contact - Elementary computations
 !
+! Get contact pressure
 !
-! IN  IRESOF : ALGO. DE RESOLUTION POUR LE FROTTEMENT
-!              0 - POINT FIXE
-!              1 - NEWTON COMPLET
-! IN  LAMBDS : VALEUR DU MULT. DE CONTACT (SEUIL FIXE)
-! IN  DLAGRC : INCREMENT DEPDEL DU LAGRANGIEN DE CONTACT
-! OUT LAMBDA : LAGRANGIEN DE CONTACT
+! --------------------------------------------------------------------------------------------------
 !
-! ----------------------------------------------------------------------
+! In  lambds           : contact pressure (fixed trigger)
+! In  dlagrc           : increment of contact Lagrange from beginning of time step
+! In  iresof           : algorithm for friction
+!                        0 - Fixed point
+!                        1 - Newton
+! Out lambda           : contact pressure
+!
+! --------------------------------------------------------------------------------------------------
 !
     lambda = lambds
-!
     if (iresof .ne. 0) then
         if (dlagrc .ne. 0) lambda = dlagrc
     endif

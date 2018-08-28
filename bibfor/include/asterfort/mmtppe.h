@@ -19,7 +19,7 @@
 !
 interface
     subroutine mmtppe(typmae,typmam,ndim  ,nne   ,nnm   , &
-                      nnl   ,nbdm  ,iresog,laxis ,ldyna , &
+                      nnl   ,nbdm  ,iresog,laxis ,&
                       jeusup,ffe   ,ffm   ,dffm  ,ddffm,ffl   , &
                       jacobi,wpg   ,jeu   ,djeut ,dlagrc, &
                       dlagrf,norm  ,tau1  ,tau2  ,mprojn, &
@@ -40,7 +40,6 @@ interface
         aster_logical, intent(in) :: l_large_slip
         integer :: iresog
         aster_logical :: laxis
-        aster_logical :: ldyna
         aster_logical :: l_previous
     
         real(kind=8) :: jeusup
