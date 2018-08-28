@@ -19,7 +19,7 @@
 ! aslint: disable=W1504
 !
 subroutine mmtppe(typmae, typmam, ndim, nne, nnm,&
-                  nnl, nbdm, iresog, laxis, ldyna,&
+                  nnl, nbdm, iresog, laxis,&
                   jeusup, ffe, ffm, dffm,ddffm, ffl,&
                   jacobi, wpg, jeu, djeut, dlagrc,&
                   dlagrf, norm, tau1, tau2, mprojn,&
@@ -49,7 +49,7 @@ character(len=8) :: typmae, typmam
 integer :: ndim, nne, nnm, nnl, nbdm
 integer :: iresog
 aster_logical, intent(in) :: l_large_slip
-aster_logical :: laxis, ldyna, l_previous
+aster_logical :: laxis, l_previous
 real(kind=8) :: jeusup
 real(kind=8) :: jacobi, wpg
 real(kind=8) :: dlagrc, dlagrf(2)
@@ -86,7 +86,6 @@ real(kind=8) :: dnepmait1, dnepmait2, taujeu1, taujeu2
 !              0 - POINT FIXE
 !              1 - NEWTON
 ! IN  LAXIS  : .TRUE. SI AXISYMETRIE
-! IN  LDYNA  : .TRUE. SI DYNAMIQUE
 ! IN  JEUSUP : JEU SUPPLEMENTAIRE PAR DIST_ESCL/DIST_MAIT
 ! ----
 ! ----INCONNUES STANDARDS
@@ -119,7 +118,7 @@ real(kind=8) :: dnepmait1, dnepmait2, taujeu1, taujeu2
 ! OUT          DDGEOMM(1,1)/NORMALE  (matrice 3*3)
 !
 ! OUT GENE21 : MATRICE EULERIENNE DUE A LA REGULARITE DE LA SURFACE MAITRE
-! OUT          DDGEOMM(2,1)/NORMALE  (matrice 3*3) 
+! OUT          DDGEOMM(2,1)/NORMALE  (matrice 3*3)
 !
 ! OUT GENE22 : MATRICE EULERIENNE DUE A LA REGULARITE DE LA SURFACE MAITRE
 ! OUT          DDGEOMM(2,2)/NORMALE  (matrice 3*3)
@@ -141,7 +140,6 @@ real(kind=8) :: dnepmait1, dnepmait2, taujeu1, taujeu2
 !
     integer :: jpcf, i_node, i_dime
     integer :: jgeom, jdepde, jdepm
-    integer :: jaccm, jvitm, jvitp
     real(kind=8) :: ppe
     real(kind=8) :: ddepmam(9, 3)
     real(kind=8) :: geomae(9, 3), geomam(9, 3)
@@ -173,8 +171,8 @@ real(kind=8) :: dnepmait1, dnepmait2, taujeu1, taujeu2
 !
 ! TRAITEMENT CYCLAGE : ON REMPLACE LES VALEURS DE JEUX et DE NORMALES
 !                      POUR AVOIR UNE MATRICE CONSISTANTE
-!     
-    if (l_previous) then 
+!
+    if (l_previous) then
         if (iresog .eq. 1) then
             xpc = zr(jpcf-1+38)
             ypc = zr(jpcf-1+39)
@@ -196,11 +194,6 @@ real(kind=8) :: dnepmait1, dnepmait2, taujeu1, taujeu2
     call jevech('PGEOMER', 'L', jgeom)
     call jevech('PDEPL_P', 'L', jdepde)
     call jevech('PDEPL_M', 'L', jdepm)
-    if (ldyna) then
-        call jevech('PVITE_P', 'L', jvitp)
-        call jevech('PVITE_M', 'L', jvitm)
-        call jevech('PACCE_M', 'L', jaccm)
-    endif
     if (iresog .eq. 1) then
         ppe = 1.0d0
     endif
@@ -255,17 +248,18 @@ real(kind=8) :: dnepmait1, dnepmait2, taujeu1, taujeu2
                 jdepde, ffe, ffm, ddeple, ddeplm,&
                 deplme, deplmm)
 !
-! --- CALCUL DES JEUX
+! - Compute gaps
 !
-    call mmmjeu(ndim, jeusup, norm, geome, geomm,&
-                ddeple, ddeplm, mprojt, jeu, djeu,&
-                djeut, iresog)
+    call mmmjeu(ndim  , iresog, jeusup,&
+                geome , geomm ,&
+                ddeple, ddeplm,&
+                norm  , mprojt,&
+                jeu   , djeu  , djeut )
 !
 ! TRAITEMENT CYCLAGE : ON REMPLACE LES VALEURS DE JEUX et DE NORMALES
 !                      POUR AVOIR UNE MATRICE CONSISTANTE
-!     
-    
-    if (l_previous) then 
+!
+    if (l_previous) then
         jeu    = zr(jpcf-1+29)
         dlagrc = zr(jpcf-1+26)
     endif

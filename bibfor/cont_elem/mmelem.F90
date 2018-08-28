@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,63 +15,55 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine mmelem(nomte, ndim, nddl, typmae, nne,&
-                  typmam, nnm, nnl, nbcps, nbdm,&
-                  laxis, leltf)
-!
 ! person_in_charge: mickael.abbas at edf.fr
 !
-    implicit none
+subroutine mmelem(nomte , ndim , nddl,&
+                  typmae, nne  ,&
+                  typmam, nnm  ,&
+                  nnl   , nbcps, nbdm,&
+                  laxis , leltf)
+!
+implicit none
+!
 #include "asterf_types.h"
 #include "asterfort/assert.h"
 #include "asterfort/lteatt.h"
-    integer :: ndim, nddl, nne, nnm, nnl
-    integer :: nbcps, nbdm
-    character(len=8) :: typmae, typmam
-    character(len=16) :: nomte
-    aster_logical :: laxis, leltf
 !
-! ----------------------------------------------------------------------
+character(len=16), intent(in) :: nomte
+integer, intent(out) :: ndim, nddl, nne, nnm, nnl
+integer, intent(out) :: nbcps, nbdm
+character(len=8), intent(out) :: typmae, typmam
+aster_logical, intent(out) :: laxis, leltf
 !
-! ROUTINE CONTACT (METHODE CONTINUE - UTILITAIRE)
+! --------------------------------------------------------------------------------------------------
 !
-! RETOURNE DES INFOS SUR LES ELEMENTS DE CONTACT FORMES ENTRE
-! DEUX ELEMENTS DE SURFACE
+! Contact - Elementary computations
 !
-! ----------------------------------------------------------------------
+! Get informations on cells (slave and master)
 !
+! --------------------------------------------------------------------------------------------------
 !
-! IN  NOMTE  : NOM DU TE DE L'ELEMENT DE CONTACT EN JEU
-! OUT NDIM   : DIMENSION DE LA MAILLE DE CONTACT
-! OUT NDDL   : NOMBRE TOTAL DE DEGRES DE LIBERTE DE LA MAILLE DE CONTACT
-! OUT TYPMAE : TYPE DE LA MAILLE ESCLAVE
-! OUT NNE    : NOMBRE DE NOEUDS DE LA MAILLE ESCLAVE
-! OUT TYPMAM : TYPE DE LA MAILLE MAITRE
-! OUT NNM    : NOMBRE DE NOEUDS DE LA MAILLE MAITRE
-! OUT NNL    : NOMBRE DE NOEUDS PORTANT UN LAGRANGE DE CONTACT/FROTT
-! OUT NBCPS  : NOMBRE DE COMPOSANTES/NOEUD DES LAGR_C+LAGR_F
-! OUT NBDM   : NOMBRE DE COMPOSANTES/NOEUD DES DEPL+LAGR_C+LAGR_F
-! OUT LAXIS  : .TRUE. SI MODELE AXISYMETRIQUE
-! OUT LELTF  : .TRUE. SI ELEMENT COMPORTANT DES DDL DE FROTTEMENT
+! In  nomte            : type of finite element
+! Out ndim             : dimension of problem (2 or 3)
+! Out nddl             : total number of dof
+! Out nne              : number of slave nodes
+! Out nnm              : number of master nodes
+! Out nnl              : number of nodes with Lagrange multiplicators (contact and friction)
+! Out nbcps            : number of components by node for Lagrange multiplicators
+! Out nbdm             : number of components by node for all dof
+! Out typmae           : type of slave element
+! Out typmam           : type of master element
+! Out laxis            : flag for axisymmetric
+! Out leltf            : flag for friction
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
     integer :: i2d, i3d
 !
-! ----------------------------------------------------------------------
-!
-!
-!
-! --- MODELE AXISYMETRIQUE ?
+! --------------------------------------------------------------------------------------------------
 !
     laxis = lteatt('AXIS','OUI')
-!
-! --- ELEMENT AVEC DDL DE FROTTEMENT ?
-!
     leltf = lteatt('FROTTEMENT','OUI')
-!
-! --- NOMBRE DE COMPOSANTES LAGRANGIENS (NON DEPLACEMENT)
 !
     if (leltf) then
 ! ----- COMPOSANTES 2D : LAGS_C   LAGS_F1

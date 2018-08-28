@@ -292,7 +292,7 @@ subroutine te0364(option, nomte)
 ! ----- CALCUL DES QUANTITES
 !
         call mmtppe(typmae, typmam, ndim, nne, nnm,&
-                    nnl, nbdm, iresog, laxis, ldyna,&
+                    nnl, nbdm, iresog, laxis, &
                     jeusup, ffe, ffm, dffm,ddffm, ffl,&
                     jacobi, wpg, jeu, djeut, dlagrc,&
                     dlagrf, norm, tau1, tau2, mprojn,&
@@ -305,7 +305,7 @@ subroutine te0364(option, nomte)
                     
         if (l_previous) then
             call mmtppe(typmae, typmam, ndim, nne, nnm,&
-                        nnl, nbdm, iresog_prev, laxis, ldyna,&
+                        nnl, nbdm, iresog_prev, laxis, &
                         jeusup_prev, ffe, ffm, dffm,ddffm, ffl,&
                         jacobi, wpg, jeu_prev, djeut_prev, dlagrc_prev,&
                         dlagrf_prev, norm_prev, tau1_prev, tau2_prev, mprojn_prev,&

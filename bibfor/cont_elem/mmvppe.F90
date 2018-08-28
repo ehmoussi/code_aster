@@ -110,7 +110,6 @@ real(kind=8) :: vech1(3), vech2(3)
 !
     integer :: jpcf, i_node, i_dime
     integer :: jgeom, jdepde, jdepm
-    integer :: jaccm, jvitm, jvitp
     real(kind=8) :: geomae(9, 3), geomam(9, 3)
     real(kind=8) :: slav_coor_init(3,9)
     real(kind=8) :: geomm(3), geome(3)
@@ -147,8 +146,8 @@ real(kind=8) :: vech1(3), vech2(3)
 !
 ! TRAITEMENT CYCLAGE : ON REMPLACE LES VALEURS DE JEUX et DE NORMALES
 !                      POUR AVOIR UNE MATRICE CONSISTANTE
-!     
-    if (l_previous) then 
+!
+    if (l_previous) then
         if (iresog .eq. 1) then
             xpc = zr(jpcf-1+38)
             ypc = zr(jpcf-1+39)
@@ -170,11 +169,6 @@ real(kind=8) :: vech1(3), vech2(3)
     call jevech('PGEOMER', 'L', jgeom)
     call jevech('PDEPL_P', 'L', jdepde)
     call jevech('PDEPL_M', 'L', jdepm)
-    if (ldyna) then
-        call jevech('PVITE_P', 'L', jvitp)
-        call jevech('PVITE_M', 'L', jvitm)
-        call jevech('PACCE_M', 'L', jaccm)
-    endif
     if (iresog .eq. 1) then
         ppe = 1.0d0
     endif
@@ -231,28 +225,31 @@ real(kind=8) :: vech1(3), vech2(3)
                 jdepde, ffe, ffm, ddeple, ddeplm,&
                 deplme, deplmm)
 !
-! --- CALCUL DES VITESSES/ACCELERATIONS
+! - Compute increment of speeds/accelerations
 !
     if (ldyna) then
-        call mmvitm(nbdm, ndim, nne, nnm, ffe,&
-                    ffm, jvitm, jaccm, jvitp, vitme,&
-                    vitmm, vitpe, vitpm, accme, accmm)
+        call mmvitm(nbdm , ndim , nne  , nnm  ,&
+                    ffe  , ffm  ,&
+                    vitme, vitmm, vitpe, vitpm,&
+                    accme, accmm)
     endif
 !
-! --- CALCUL DU JEU NORMAL
+! - Compute gaps
 !
-    call mmmjeu(ndim, jeusup, norm, geome, geomm,&
-                ddeple, ddeplm, mprojt, jeu, djeu,&
-                djeut, iresog)
+    call mmmjeu(ndim  , iresog, jeusup,&
+                geome , geomm ,&
+                ddeple, ddeplm,&
+                norm  , mprojt,&
+                jeu   , djeu  , djeut )
 
 
 
 !
 ! TRAITEMENT CYCLAGE : ON REMPLACE LES VALEURS DE JEUX et DE NORMALES
 !                      POUR AVOIR UNE MATRICE CONSISTANTE
-!     
-    
-    if (l_previous) then 
+!
+
+    if (l_previous) then
         jeu    = zr(jpcf-1+29)
         dlagrc = zr(jpcf-1+26)
     endif
