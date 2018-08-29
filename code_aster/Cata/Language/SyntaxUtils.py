@@ -226,7 +226,7 @@ def debug_message(*args, **kwargs):
     message, you may pass any printable object(s) as parameter.
 
     Example:
-        >>> from common.utilities import debug_message, debug_mode
+        >>> from asterstudy.common.utilities import debug_message, debug_mode
         >>> previous = debug_mode()
         >>> debug_mode.DEBUG = 1
         >>> debug_message("Start operation:", "Compute", "[args]", 100)

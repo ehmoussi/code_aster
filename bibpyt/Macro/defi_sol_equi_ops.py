@@ -2872,7 +2872,7 @@ def defi_sol_equi_ops(self, TITRE=None, INFO=None, **args):
 
                 for n in xrange(num_dime):
 
-                    IMPR_FONCTION(UNITE=8,
+                    IMPR_FONCTION(UNITE=6,
                                   FORMAT='TABLEAU',
                                   TITRE='Spectre CL et RA - input =' + input,
                                   COURBE=(
@@ -3661,7 +3661,7 @@ def defi_sol_equi_ops(self, TITRE=None, INFO=None, **args):
              'RECEPTEUR': 'NON', 'AMOR_HYST': __TMAT['AH0', k]})
 
     DETRUIRE(CONCEPT=_F(NOM=__TMAT), INFO=1)
-    IMPR_RESU(RESU=_F(MAILLAGE=__mailla,),FORMAT='ASTER',UNITE=8);
+    IMPR_RESU(RESU=_F(MAILLAGE=__mailla,),FORMAT='ASTER',UNITE=6);
 
     # creation de la table
     dprod = tab.dict_CREA_TABLE()

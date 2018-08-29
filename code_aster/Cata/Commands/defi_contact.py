@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -191,6 +191,13 @@ DEFI_CONTACT=OPER(nom       = "DEFI_CONTACT", op=30, sd_prod   = char_contact, r
 # -- Incompatibilité avec CL
                                           SANS_NOEUD      =SIMP(statut='c',typ=no   ,validators=NoRepeat(),max='**'),
                                           SANS_GROUP_NO   =SIMP(statut='f',typ=grno ,validators=NoRepeat(),max='**'),
+# --- Résolution
+                                          ALGO_CONT       =SIMP(statut='o',typ='TXM',defaut="CONTRAINTE",
+                                                              into=("CONTRAINTE","PENALISATION"),),
+                                          b_cont_pen=BLOC(condition = """equal_to("ALGO_CONT", 'PENALISATION') """,
+                                                          fr=tr("Paramètre de la méthode pénalisée"),
+                                                          COEF_PENA =SIMP(statut='o',typ='R'),
+                                       ),
                                 ), # fin mot-clé facteur ZONE
          ), # fin b_affe_unil
 

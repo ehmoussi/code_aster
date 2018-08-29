@@ -240,7 +240,7 @@ type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
 !
 ! - Initializations for algorithm parameters
 !
-    call nonlinDSAlgoParaInit(fonact, ds_algopara)
+    call nonlinDSAlgoParaInit(fonact, ds_algopara, ds_contact)
 !
 ! - Initializations for convergence management
 !

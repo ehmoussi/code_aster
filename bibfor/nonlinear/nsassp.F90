@@ -28,6 +28,7 @@ implicit none
 #include "asterf_types.h"
 #include "asterfort/assert.h"
 #include "asterfort/isfonc.h"
+#include "asterfort/cfdisl.h"
 #include "asterfort/nmasdi.h"
 #include "asterfort/nmasfi.h"
 #include "asterfort/nmasva.h"
@@ -68,9 +69,10 @@ character(len=19), intent(in) :: cnpilo, cndonn
     character(len=19) :: cnffdo, cndfdo, cnfvdo, cnffpi, cndfpi
     aster_logical :: l_macr, l_pilo
     type(NL_DS_VectComb) :: ds_vectcomb
+    aster_logical :: l_unil_pena
 !
 ! --------------------------------------------------------------------------------------------------
-!    
+!
     call infdbg('MECANONLINE', ifm, niv)
     if (niv .ge. 2) then
         call utmess('I', 'MECANONLINE11_19')
@@ -109,6 +111,15 @@ character(len=19), intent(in) :: cnpilo, cndonn
 !
     if (ds_contact%l_cnctdf) then
         call nonlinDSVectCombAddAny(ds_contact%cnctdf, -1.d0, ds_vectcomb)
+    endif
+!
+! - Add LIAISON_UNIL penalized force
+!
+    if (ds_contact%l_cnunil) then
+        l_unil_pena = cfdisl(ds_contact%sdcont_defi, 'UNIL_PENA')
+        if (l_unil_pena) then
+            call nonlinDSVectCombAddAny(ds_contact%cnunil, -1.d0, ds_vectcomb)
+        endif
     endif
 !
 ! - Add CONTINUE/XFEM contact force
@@ -158,7 +169,7 @@ character(len=19), intent(in) :: cnpilo, cndonn
 ! ----- Get dead Neumann loads (for PILOTAGE)
         call nonlinDSVectCombAddHat(hval_veasse, 'CNFEPI', +1.d0, ds_vectcomb)
 ! ----- Get Dirichlet loads (for PILOTAGE)
-        call nonlinDSVectCombAddHat(hval_veasse, 'CNDIPI', +1.d0, ds_vectcomb)   
+        call nonlinDSVectCombAddHat(hval_veasse, 'CNDIPI', +1.d0, ds_vectcomb)
     endif
 !
 ! - Second member (PILOTAGE)
