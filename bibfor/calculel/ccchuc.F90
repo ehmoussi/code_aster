@@ -357,7 +357,7 @@ subroutine ccchuc(sdresu_in, sdresu_out, field_type, nume_field_out, type_comp,&
                 call copisd('CHAMP_GD', 'G', field_out, field_out_sd)
                 call detrsd('CHAMP', field_out)
             else
-                call cescel(field_out_s, ligrel_new, ' ', ' ', 'NAN',&
+                call cescel(field_out_s, ligrel_new, ' ', ' ', 'OUI',&
                             ibid, 'G', field_out_sd, 'F', iret)
             endif
         endif

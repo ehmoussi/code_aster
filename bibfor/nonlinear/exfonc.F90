@@ -66,9 +66,10 @@ type(NL_DS_AlgoPara), intent(in) :: ds_algopara
     aster_logical :: l_cont, lallv, l_cont_cont, l_cont_disc, lpena, leltc, l_cont_lac, l_iden_rela
     aster_logical :: l_pilo, l_line_search, lmacr, l_unil, l_diri_undead, l_cont_xfem
     aster_logical :: l_vibr_mode, l_buckling, lexpl, lxfem, lmodim, l_mult_front
-    aster_logical :: lgcpc, lpetsc, lamg, limpex, l_matr_rigi_syme, l_matr_distr
+    aster_logical :: l_cont_gcp, lpetsc, lamg, limpex, l_matr_distr, lgcpc
     aster_logical :: londe, l_dyna, l_grot_gdep, l_newt_krylov, l_mumps, l_rom
-    aster_logical :: l_energy, lproj, lmatdi, lldsp, lctgcp, l_comp_rela, lammo, lthms, limpl
+    aster_logical :: l_energy, lproj, lmatdi, lldsp, l_comp_rela, lammo, lthms, limpl
+    aster_logical :: l_unil_pena, l_cont_acti
     character(len=24) :: typilo, metres, char24
     character(len=16) :: reli_meth, matrix_pred, partit
     character(len=3) :: mfdet
@@ -121,7 +122,6 @@ type(NL_DS_AlgoPara), intent(in) :: ds_algopara
     reac_incr        = ds_algopara%reac_incr
     matrix_pred      = ds_algopara%matrix_pred
     reli_meth        = ds_algopara%line_search%method
-    l_matr_rigi_syme = ds_algopara%l_matr_rigi_syme
 !
 ! - Get solver parameters
 !
@@ -133,10 +133,11 @@ type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 ! - Contact (DISCRETE)
 !
     if (l_cont_disc) then
-        lmodim = cfdisl(ds_contact%sdcont_defi,'MODI_MATR_GLOB')
-        lallv = cfdisl(ds_contact%sdcont_defi,'ALL_VERIF')
-        lpena = cfdisl(ds_contact%sdcont_defi,'CONT_PENA')
-        lctgcp = cfdisl(ds_contact%sdcont_defi,'CONT_GCP')
+        lmodim      = cfdisl(ds_contact%sdcont_defi,'MODI_MATR_GLOB')
+        lallv       = cfdisl(ds_contact%sdcont_defi,'ALL_VERIF')
+        lpena       = cfdisl(ds_contact%sdcont_defi,'CONT_PENA')
+        l_cont_gcp  = cfdisl(ds_contact%sdcont_defi,'CONT_GCP')
+        l_cont_acti = cfdisl(ds_contact%sdcont_defi,'CONT_ACTI')
         if (l_pilo) then
             call utmess('F', 'MECANONLINE_43')
         endif
@@ -144,10 +145,10 @@ type(NL_DS_AlgoPara), intent(in) :: ds_algopara
             call utmess('A', 'MECANONLINE3_89')
         endif
         if (lgcpc .or. lpetsc) then
-            if (.not.(lallv.or.lpena.or.lctgcp)) then
+            if (.not.(lallv.or.lpena.or.l_cont_gcp)) then
                 call utmess('F', 'MECANONLINE3_90', sk=metres)
             endif
-            if (lctgcp .and. .not.lldsp) then
+            if (l_cont_gcp .and. .not.lldsp) then
                 call utmess('F', 'MECANONLINE3_88')
             endif
         endif
@@ -155,9 +156,6 @@ type(NL_DS_AlgoPara), intent(in) :: ds_algopara
             if (lmodim) then
                 call utmess('F', 'CONTACT_88')
             endif
-        endif
-        if (.not.(l_matr_rigi_syme.or.lallv)) then
-            call utmess('A', 'CONTACT_1')
         endif
         if ((l_vibr_mode.or.l_buckling) .and. lmodim) then
             call utmess('F', 'MECANONLINE5_14')
@@ -220,6 +218,15 @@ type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 ! - Unilateral link
 !
     if (l_unil) then
+        l_unil_pena = cfdisl(ds_contact%sdcont_defi, 'UNIL_PENA')
+        if (l_unil_pena) then
+           lmodim = .true.
+           if (reac_incr .eq. 0) then
+              if (lmodim) then
+                 call utmess('F', 'CONTACT_88')
+              endif
+           endif
+        endif
         if (l_pilo) then
             call utmess('F', 'MECANONLINE3_94')
         endif
@@ -228,9 +235,6 @@ type(NL_DS_AlgoPara), intent(in) :: ds_algopara
         endif
         if (lgcpc .or. lpetsc) then
             call utmess('F', 'MECANONLINE3_96', sk=slvk(1))
-        endif
-        if (.not.l_matr_rigi_syme) then
-            call utmess('A', 'UNILATER_1')
         endif
     endif
 !

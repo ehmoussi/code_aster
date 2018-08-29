@@ -44,6 +44,7 @@ subroutine op0039()
 #include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/mdexma.h"
+#include "asterfort/ulaffe.h"
 #include "asterfort/ulexis.h"
 #include "asterfort/ulisog.h"
 #include "asterfort/ulopen.h"
@@ -157,7 +158,11 @@ subroutine op0039()
        call getvis(' ', 'UNITE', scal=ifi, nbret=n11)
        ifc = ifi
        if (.not. ulexis( ifi )) then
-           call ulopen(ifi, ' ', fich, 'NEW', 'O')
+           if (form .eq.'MED')then
+               call ulaffe(ifi, ' ', fich, 'NEW', 'O')
+           else
+               call ulopen(ifi, ' ', fich, 'NEW', 'O')
+           endif
        endif
 !
 !     -- VERIFICATIONS POUR GMSH :

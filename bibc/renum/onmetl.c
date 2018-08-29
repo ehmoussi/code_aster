@@ -31,11 +31,10 @@ int smbfctl(int, idx_t *, idx_t *, idx_t *, idx_t *, idx_t *, int *, idx_t *,
             idx_t *, int *, int *, int *, int *, int *, double *);
 
 
-void DEFPPPPPPPPPPPPP(ONMETL,onmetl,nbnd,nadj,
-                        xadjd,adjncy,
-                       invpnd,permnd,supnd,parent,
-          nbsn,nbops,fctnzs,lgind,
-          niv)
+void DEFPPPPPPPPPPPPP(ONMETL,onmetl,nbnd,nadj,xadjd,adjncy,
+                      invpnd,permnd,supnd,parent,
+                      nbsn,nbops,fctnzs,lgind,niv)
+
      ASTERINTEGER4 *nbnd,*nadj,  *xadjd, *adjncy;
      ASTERINTEGER4 *invpnd, *permnd,*supnd, *parent,*nbsn;
      ASTERDOUBLE   *nbops;
@@ -158,7 +157,7 @@ lgind  : longueur de tableaux de pointeurs
    gk_stopcputimer(IOTmr);
    gk_startcputimer(SMBTmr);
    ret=METIS_OK;
-   ComputeFillInL(graph, iperm, parent, supnd, &graph->nvtxs, nbsn, nbops, lgind, fctnzs);
+   ComputeFillInL(graph, iperm, parent, supnd, (int *) &graph->nvtxs, nbsn, nbops, lgind, fctnzs);
    gk_stopcputimer(SMBTmr);
    gk_stopcputimer(TOTALTmr);
      
