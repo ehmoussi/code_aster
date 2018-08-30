@@ -45,9 +45,9 @@ class LinearThermalAnalysisBuild(ExecuteCommand):
         Arguments:
             keywords (dict): User's keywords.
         """
-        self._result.update()
         self._result.appendModelOnAllRanks(keywords["MODELE"])
         self._result.appendMaterialOnMeshOnAllRanks(keywords["CHAM_MATER"])
+        self._result.update()
 
 
 THER_LINEAIRE = LinearThermalAnalysisBuild.run

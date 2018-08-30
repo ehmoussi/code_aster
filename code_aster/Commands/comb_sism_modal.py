@@ -19,7 +19,7 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import StandardModalBasis
+from ..Objects import MechanicalModeContainer
 from .ExecuteCommand import ExecuteCommand
 
 
@@ -33,7 +33,17 @@ class ModalSeismicCombination(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        self._result = StandardModalBasis()
+        self._result = MechanicalModeContainer()
+
+    def post_exec(self, keywords):
+        """Execute the command.
+
+        Arguments:
+            keywords (dict): User's keywords.
+        """
+        dofNum = keywords["MODE_MECA"].getDOFNumbering()
+        if dofNum is not None:
+            self._result.setDOFNumbering(dofNum)
 
 
 COMB_SISM_MODAL = ModalSeismicCombination.run

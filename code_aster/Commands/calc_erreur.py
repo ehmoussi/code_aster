@@ -50,6 +50,11 @@ class ComputeError(ExecuteCommand):
         Arguments:
             keywords (dict): User's keywords.
         """
+        modele = keywords.get("MODELE")
+        if modele is None:
+            modele = keywords["RESULTAT"].getModel()
+        if modele is not None:
+            self._result.appendModelOnAllRanks(modele)
         self._result.update()
 
 CALC_ERREUR = ComputeError.run

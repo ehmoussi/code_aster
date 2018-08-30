@@ -33,5 +33,6 @@ void exportAcousticModeContainerToPython()
             bases< FullResultsContainerInstance > > ( "AcousticModeContainer", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< AcousticModeContainerInstance > ) )
+        .def( "setRigidityMatrix", &AcousticModeContainerInstance::setRigidityMatrix )
     ;
 };

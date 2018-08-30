@@ -31,6 +31,7 @@
 #include "DataStructures/DataStructure.h"
 #include "MemoryManager/JeveuxVector.h"
 #include "MemoryManager/JeveuxCollection.h"
+#include "Modal/DynamicMacroElement.h"
 
 
 /**
@@ -57,6 +58,10 @@ private:
     JeveuxVectorDouble     _modgSsor;
     /** @brief Objet Jeveux '.MODG.SSTR' */
     JeveuxVectorDouble     _modgSstr;
+    typedef std::map< std::string, DynamicMacroElementPtr > MapStrMacroElem;
+    typedef MapStrMacroElem::iterator MapStrMacroElemIter;
+    /** @brief Map which associates a name to a DynamicMacroElementPtr */
+    MapStrMacroElem        _map;
 
 public:
     /**
@@ -80,6 +85,22 @@ public:
         _modgSstr( JeveuxVectorDouble( getName() + ".MODG.DESC" ) )
     {};
 
+    /**
+     * @brief Add a DynamicMacroElement associated to a name
+     */
+    bool addDynamicMacroElement( const std::string& name, const DynamicMacroElementPtr& elem )
+    {
+        _map[ name ] = elem;
+        return true;
+    };
+
+    /**
+     * @brief Get DynamicMacroElementPtr from name
+     */
+    DynamicMacroElementPtr getDynamicMacroElementFromName( const std::string& name )
+    {
+        return _map[ name ];
+    };
 };
 
 /**

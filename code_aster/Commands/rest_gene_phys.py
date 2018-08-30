@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -31,16 +31,24 @@ class RestGenePhys(ExecuteCommand):
 
     def create_result(self, keywords):
         """Initialize the result.
-        
+
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        
         if keywords["RESU_GENE"].getType() == "TRAN_GENE":
             self._result = FullTransientResultsContainer()
         elif keywords["RESU_GENE"].getType() == "HARM_GENE":
             self._result = FullHarmonicResultsContainer()
         elif keywords["RESU_GENE"].getType() == "MODE_GENE":
             self._result = MechanicalModeContainer()
+
+    def post_exec(self, keywords):
+        """Execute the command.
+
+        Arguments:
+            keywords (dict): User's keywords.
+        """
+        if keywords["RESU_GENE"].getType() == "TRAN_GENE":
+            self._result.setDOFNumbering(keywords["RESU_GENE"].getDOFNumbering())
 
 REST_GENE_PHYS = RestGenePhys.run

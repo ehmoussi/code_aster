@@ -36,6 +36,7 @@
 #include "MemoryManager/JeveuxVector.h"
 #include "DataFields/PCFieldOnMesh.h"
 #include "Supervis/ResultNaming.h"
+#include "Modeling/FiniteElementDescriptor.h"
 
 extern const char SANS_GROUP_MA[];
 extern const char SANS_GROUP_NO[];
@@ -139,6 +140,8 @@ private:
     PCFieldOnMeshComplexPtr                     _multiplier;
     PCFieldOnMeshComplexPtr                     _impedanceValues;
     PCFieldOnMeshComplexPtr                     _speedValues;
+    /** @brief FiniteElementDescriptor of load */
+    FiniteElementDescriptorPtr                  _FEDesc;
 
 public:
     /**
@@ -170,7 +173,8 @@ public:
         _impedanceValues( PCFieldOnMeshComplexPtr(
             new PCFieldOnMeshComplexInstance( getName()+ ".CHAC.IMPED", _mesh ) ) ),
         _speedValues( PCFieldOnMeshComplexPtr(
-            new PCFieldOnMeshComplexInstance( getName()+ ".CHAC.VITFA", _mesh ) ) )
+            new PCFieldOnMeshComplexInstance( getName()+ ".CHAC.VITFA", _mesh ) ) ),
+        _FEDesc( new FiniteElementDescriptorInstance( name + "CHAC.LIGRE", _mesh ) )
     {
         _toCapyConverter.add( new CapyConvertibleValue< ModelPtr >
                                                       ( true, "MODELE", _supportModel, true ) );
@@ -261,6 +265,14 @@ public:
     };
 
     bool build();
+
+    /**
+     * @brief Get the support finite element descriptor
+     */
+    FiniteElementDescriptorPtr getFiniteElementDescriptor() const
+    {
+        return _FEDesc;
+    };
 };
 
 typedef boost::shared_ptr< AcousticsLoadInstance > AcousticsLoadPtr;

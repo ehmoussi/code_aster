@@ -33,7 +33,7 @@
 
 /**
  * @class FiniteElementDescriptorInstance
- * @brief Classe definissant une charge dualisée parallèle
+ * @brief Class which describes the finite elements
  * @author Nicolas Sellenet
  */
 class FiniteElementDescriptorInstance: public DataStructure
@@ -63,7 +63,7 @@ protected:
     JeveuxVectorLong                          _superElementsDescriptor;
     /** @brief Vecteur Jeveux '.NVGE' */
     JeveuxVectorChar16                        _nameOfNeighborhoodStructure;
-    /** @brief Vecteur Jeveux '.NVGE' */
+    /** @brief Base mesh */
     BaseMeshPtr                               _mesh;
     /** @brief Object to allow loop over connectivity of delayed numbered elements */
     const ConnectivityDelayedElementsExplorer _explorer;
@@ -77,6 +77,12 @@ public:
     FiniteElementDescriptorInstance( const std::string& name,
                                      const BaseMeshPtr mesh,
                                      const JeveuxMemory memType = Permanent );
+
+    /**
+     * @brief Destructor
+     */
+    ~FiniteElementDescriptorInstance()
+    {};
 
     /**
      * @typedef FiniteElementDescriptorPtr
