@@ -458,6 +458,7 @@ implicit none
         character(len=16) :: kit_comp(4)
         character(len=16) :: mult_comp
         character(len=16) :: post_iter
+        character(len=16) :: defo_ldc
         integer           :: nb_vari
         integer           :: nb_vari_comp(4)
         integer           :: nume_comp(4)

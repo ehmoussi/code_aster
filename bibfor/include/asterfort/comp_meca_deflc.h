@@ -18,23 +18,12 @@
 
 !
 !
+#include "asterf_types.h"
+!
 interface
-    subroutine setBehaviourValue(rela_comp, defo_comp   , type_comp, type_cpla,&
-                                 mult_comp, post_iter   , defo_ldc,  kit_comp ,&
-                                 nb_vari  , nb_vari_comp, nume_comp,&
-                                 l_compor_, v_compor_)
+    subroutine comp_meca_deflc(rela_comp, defo_comp, defo_ldc)
         character(len=16), intent(in) :: rela_comp
         character(len=16), intent(in) :: defo_comp
-        character(len=16), intent(in) :: type_comp
-        character(len=16), intent(in) :: type_cpla
-        character(len=16), intent(in) :: mult_comp
-        character(len=16), intent(in) :: post_iter
-        character(len=16), intent(in) :: defo_ldc
-        character(len=16), intent(in) :: kit_comp(4)
-        integer, intent(in)  :: nb_vari
-        integer, intent(in)  :: nb_vari_comp(4)
-        integer, intent(in)  :: nume_comp(4)
-        character(len=16), intent(out), optional :: l_compor_(:)
-        character(len=16), pointer, optional :: v_compor_(:)
-    end subroutine setBehaviourValue
+        character(len=16), intent(out) :: defo_ldc
+    end subroutine comp_meca_deflc
 end interface

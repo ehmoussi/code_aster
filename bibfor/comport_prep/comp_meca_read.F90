@@ -33,6 +33,7 @@ implicit none
 #include "asterfort/assert.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/comp_meca_incr.h"
+#include "asterfort/comp_meca_deflc.h"
 #include "asterfort/getExternalBehaviourPara.h"
 #include "asterfort/comp_meca_rkit.h"
 #include "asterfort/comp_meca_l.h"
@@ -45,7 +46,7 @@ character(len=8), intent(in), optional :: model
 !
 ! Preparation of comportment (mechanics)
 !
-! Read informations from command file
+! Read informations from command file and catalog
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -59,7 +60,7 @@ character(len=8), intent(in), optional :: model
     character(len=16) :: keywordfact
     integer :: i_comp, nb_comp, model_dim, iret
     character(len=16) :: defo_comp, rela_comp, type_cpla, mult_comp, type_comp
-    character(len=16) :: post_iter, model_mfront
+    character(len=16) :: post_iter, model_mfront, defo_ldc
     character(len=16) :: kit_comp(4)
     character(len=255) :: libr_name, subr_name
     integer :: unit_comp, nb_vari_umat
@@ -96,6 +97,7 @@ character(len=8), intent(in), optional :: model
         type_cpla      = 'VIDE'
         libr_name      = ' '
         post_iter      = ' '
+        defo_ldc       = ' '
         kit_comp(1:4)  = 'VIDE'
 !
 ! ----- Get RELATION from command file
@@ -144,6 +146,10 @@ character(len=8), intent(in), optional :: model
 !
         call comp_meca_incr(rela_comp, defo_comp, type_comp, l_etat_init)
 !
+! ----- Select type of strain (mechanical or total) from catalog
+!
+        call comp_meca_deflc(rela_comp, defo_comp, defo_ldc)
+!
 ! ----- Save parameters
 !
         ds_compor_prep%v_comp(i_comp)%rela_comp      = rela_comp
@@ -153,6 +159,8 @@ character(len=8), intent(in), optional :: model
         ds_compor_prep%v_comp(i_comp)%kit_comp(:)    = kit_comp(:)
         ds_compor_prep%v_comp(i_comp)%mult_comp      = mult_comp
         ds_compor_prep%v_comp(i_comp)%post_iter      = post_iter
+        ds_compor_prep%v_comp(i_comp)%defo_ldc       = defo_ldc
+        
     end do
 !
 end subroutine
