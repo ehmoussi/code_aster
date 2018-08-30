@@ -26,13 +26,32 @@
 #include "Supervis/CommandSyntax.h"
 #include "Supervis/ResultNaming.h"
 
+FieldOnNodesDescriptionInstance::FieldOnNodesDescriptionInstance( const JeveuxMemory memType ):
+    DataStructure( ResultNaming::getNewResultName(), 19, "PROF_CHNO", memType ),
+    _componentsOnNodes( getName() + ".PRNO" ),
+    _namesOfGroupOfElements( getName() + ".LILI" ),
+    _indexationVector( getName() + ".NUEQ" ),
+    _nodeAndComponentsNumberFromDOF( getName() + ".DEEQ" )
+{};
+
+FieldOnNodesDescriptionInstance::FieldOnNodesDescriptionInstance( const std::string name,
+                                                                  const JeveuxMemory memType ):
+    DataStructure( name, 19, "PROF_CHNO", memType ),
+    _componentsOnNodes( getName() + ".PRNO" ),
+    _namesOfGroupOfElements( getName() + ".LILI" ),
+    _indexationVector( getName() + ".NUEQ" ),
+    _nodeAndComponentsNumberFromDOF( getName() + ".DEEQ" )
+{};
+
 BaseDOFNumberingInstance::BaseDOFNumberingInstance( const std::string& type,
                                                     const JeveuxMemory memType ):
     DataStructure( ResultNaming::getNewResultName(), 14, type, memType ),
     _nameOfSolverDataStructure( JeveuxVectorChar24( getName() + ".NSLV" ) ),
     _globalNumbering( new GlobalEquationNumberingInstance( getName() + ".NUME" ) ),
+    _dofDescription( new FieldOnNodesDescriptionInstance( getName() + ".NUME" ) ),
     _localNumbering( new LocalEquationNumberingInstance( getName() + ".NUML" ) ),
-    _supportModel( ModelPtr() ),
+    _supportModel( ModelPtr( nullptr ) ),
+    _supportMatrix( nullptr ),
     _listOfLoads( new ListOfLoadsInstance() ),
     _smos( new MorseStorageInstance( getName() + ".SMOS" ) ),
     _slcs( new LigneDeCielInstance( getName() + ".SLCS" ) ),
@@ -46,8 +65,10 @@ BaseDOFNumberingInstance::BaseDOFNumberingInstance( const std::string name,
     DataStructure( name, 14, type, memType ),
     _nameOfSolverDataStructure( JeveuxVectorChar24( getName() + ".NSLV" ) ),
     _globalNumbering( new GlobalEquationNumberingInstance( getName() + ".NUME" ) ),
+    _dofDescription( new FieldOnNodesDescriptionInstance( getName() + ".NUME" ) ),
     _localNumbering( new LocalEquationNumberingInstance( getName() + ".NUML" ) ),
-    _supportModel( ModelPtr() ),
+    _supportModel( ModelPtr( nullptr ) ),
+    _supportMatrix( nullptr ),
     _listOfLoads( new ListOfLoadsInstance() ),
     _smos( new MorseStorageInstance( getName() + ".SMOS" ) ),
     _slcs( new LigneDeCielInstance( getName() + ".SLCS" ) ),

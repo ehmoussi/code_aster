@@ -3,7 +3,7 @@
  * @brief Interface python de GeneralizedDOFNumbering
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -32,12 +32,15 @@ void exportGeneralizedDOFNumberingToPython()
 {
     using namespace boost::python;
 
-    class_< GeneralizedDOFNumberingInstance, GeneralizedDOFNumberingInstance::GeneralizedDOFNumberingPtr,
+    class_< GeneralizedDOFNumberingInstance,
+            GeneralizedDOFNumberingInstance::GeneralizedDOFNumberingPtr,
             bases< DataStructure > > ( "GeneralizedDOFNumbering", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< GeneralizedDOFNumberingInstance >) )
         .def( "__init__", make_constructor(
             &initFactoryPtr< GeneralizedDOFNumberingInstance,
                              std::string >) )
+        .def( "getGeneralizedModel", &GeneralizedDOFNumberingInstance::getGeneralizedModel )
+        .def( "setGeneralizedModel", &GeneralizedDOFNumberingInstance::setGeneralizedModel )
     ;
 };

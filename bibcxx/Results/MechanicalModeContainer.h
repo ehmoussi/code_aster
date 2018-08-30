@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe MechanicalModeContainer
  * @author Natacha Béreux 
  * @section LICENCE
- *   Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -28,6 +28,7 @@
 
 #include "Results/FullResultsContainer.h"
 #include "LinearAlgebra/StructureInterface.h"
+#include "LinearAlgebra/AssemblyMatrix.h"
 
 /**
  * @class MechanicalModeContainerInstance
@@ -37,15 +38,44 @@
 class MechanicalModeContainerInstance: public FullResultsContainerInstance
 {
 private:
-    StructureInterfacePtr _structureInterface;
+    StructureInterfacePtr               _structureInterface;
+    /** @brief Rigidity displacement matrix */
+    AssemblyMatrixDisplacementDoublePtr _rigidityDispMatrix;
+    /** @brief Rigidity temperature matrix */
+    AssemblyMatrixTemperatureDoublePtr  _rigidityTempMatrix;
+
 public:
     /**
      * @brief Constructeur
      */
-    MechanicalModeContainerInstance(): FullResultsContainerInstance( "MODE_MECA" ), 
-    _structureInterface( StructureInterfacePtr() )
+    MechanicalModeContainerInstance(): FullResultsContainerInstance( "MODE_MECA" ),
+        _structureInterface( StructureInterfacePtr() ),
+        _rigidityDispMatrix( nullptr ),
+        _rigidityTempMatrix( nullptr )
     {};
-    
+
+    /**
+     * @brief Set the rigidity matrix
+     * @param matr AssemblyMatrixDisplacementDoublePtr
+     */
+    bool setRigidityMatrix( const AssemblyMatrixDisplacementDoublePtr& matr )
+    {
+        _rigidityTempMatrix = nullptr;
+        _rigidityDispMatrix = matr;
+        return true;
+    };
+
+    /**
+     * @brief Set the rigidity matrix
+     * @param matr AssemblyMatrixTemperatureDoublePtr
+     */
+    bool setRigidityMatrix( const AssemblyMatrixTemperatureDoublePtr& matr )
+    {
+        _rigidityDispMatrix = nullptr;
+        _rigidityTempMatrix = matr;
+        return true;
+    };
+
     /**
      * @brief set interf_dyna
      * @param structureInterface objet StructureInterfacePtr
@@ -55,7 +85,26 @@ public:
         _structureInterface = structureInterface;
         return true;
     };
-    
+
+    bool update() throw ( std::runtime_error )
+    {
+        BaseDOFNumberingPtr numeDdl( nullptr );
+        if( _rigidityDispMatrix != nullptr )
+            numeDdl = _rigidityDispMatrix->getDOFNumbering();
+        if( _rigidityTempMatrix != nullptr )
+            numeDdl = _rigidityTempMatrix->getDOFNumbering();
+
+        if( numeDdl != nullptr )
+        {
+            const auto model = numeDdl->getSupportModel();
+            const auto matrElem = numeDdl->getElementaryMatrix();
+            if( model != nullptr )
+                _mesh = model->getSupportMesh();
+            if( matrElem != nullptr )
+                _mesh = matrElem->getSupportModel()->getSupportMesh();
+        }
+        return ResultsContainerInstance::update();
+    };
 };
 
 /**

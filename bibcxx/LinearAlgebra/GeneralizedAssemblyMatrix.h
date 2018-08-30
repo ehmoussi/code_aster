@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe GeneralizedAssemblyMatrix
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -31,7 +31,7 @@
 #include "DataStructures/DataStructure.h"
 #include "MemoryManager/JeveuxVector.h"
 #include "MemoryManager/JeveuxCollection.h"
-
+#include "Discretization/ForwardGeneralizedDOFNumbering.h"
 
 /**
  * @class GenericGeneralizedAssemblyMatrixInstance
@@ -42,9 +42,11 @@ class GenericGeneralizedAssemblyMatrixInstance: public DataStructure
 {
 private:
     /** @brief Objet Jeveux '.DESC' */
-    JeveuxVectorDouble _desc;
+    JeveuxVectorDouble         _desc;
     /** @brief Objet Jeveux '.REFE' */
-    JeveuxVectorChar24 _refe;
+    JeveuxVectorChar24         _refe;
+    /** @brief Support GeneralizedDOFNumbering */
+    ForwardGeneralizedDOFNumberingPtr _dofNum;
 
 public:
     /**
@@ -59,10 +61,32 @@ public:
      */
     GenericGeneralizedAssemblyMatrixInstance( const std::string name ):
         DataStructure( name, 19, "MATR_ASSE_GENE", Permanent ),
-        // FIXME: is it not ".DESC" (cf. sd_matr_asse_gene.py) ?
-        _desc( JeveuxVectorDouble( getName() + ".DISC" ) ),
+        _desc( JeveuxVectorDouble( getName() + ".DESC" ) ),
         _refe( JeveuxVectorChar24( getName() + ".REFE" ) )
     {};
+
+    /**
+     * @brief Get support GeneralizedDOFNumering
+     */
+    GeneralizedDOFNumberingPtr getGeneralizedDOFNumbering() throw ( std::runtime_error )
+    {
+        if( _dofNum.isSet() )
+            return _dofNum.getPointer();
+        throw std::runtime_error( "GeneralizedDOFNumbering is empty" );
+    };
+
+    /**
+     * @brief Set support GeneralizedDOFNumering
+     */
+    bool setGeneralizedDOFNumbering( const GeneralizedDOFNumberingPtr& dofNum )
+    {
+        if( dofNum != nullptr )
+        {
+            _dofNum = dofNum;
+            return true;
+        }
+        return false;
+    };
 };
 
 /**

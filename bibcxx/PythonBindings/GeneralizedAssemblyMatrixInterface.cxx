@@ -3,7 +3,7 @@
  * @brief Interface python de GeneralizedAssemblyMatrix
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -26,6 +26,7 @@
 #include <boost/python.hpp>
 #include <PythonBindings/factory.h>
 #include "PythonBindings/GeneralizedAssemblyMatrixInterface.h"
+#include "Discretization/GeneralizedDOFNumbering.h"
 
 
 void exportGeneralizedAssemblyMatrixToPython()
@@ -35,6 +36,10 @@ void exportGeneralizedAssemblyMatrixToPython()
     class_< GenericGeneralizedAssemblyMatrixInstance,
             GenericGeneralizedAssemblyMatrixPtr,
             bases< DataStructure > > ( "GeneralizedAssemblyMatrix", no_init )
+        .def( "getGeneralizedDOFNumbering",
+              &GenericGeneralizedAssemblyMatrixInstance::getGeneralizedDOFNumbering )
+        .def( "setGeneralizedDOFNumbering",
+              &GenericGeneralizedAssemblyMatrixInstance::setGeneralizedDOFNumbering )
     ;
 
     class_< GeneralizedAssemblyMatrixDoubleInstance,

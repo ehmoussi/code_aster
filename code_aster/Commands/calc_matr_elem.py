@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -57,5 +57,10 @@ class ComputeElementaryMatrix(ExecuteCommand):
                 in place.
         """
         self._result.setSupportModel(keywords['MODELE'])
+        charge = keywords.get("CHARGE")
+        if charge is not None:
+            for curLoad in charge:
+                curFED = curLoad.getFiniteElementDescriptor()
+                self._result.addFiniteElementDescriptor(curFED)
 
 CALC_MATR_ELEM = ComputeElementaryMatrix.run

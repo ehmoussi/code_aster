@@ -308,6 +308,15 @@
 
 
 ================================================================================
+:py:class:`~code_aster.Objects.FiniteElementDescriptor` object
+================================================================================
+
+.. autoclass:: code_aster.Objects.FiniteElementDescriptor
+   :show-inheritance:
+   :members:
+
+
+================================================================================
 :py:class:`~code_aster.Objects.FluidStructureInteraction` object
 ================================================================================
 

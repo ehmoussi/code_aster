@@ -56,8 +56,8 @@ class VibrationDynamics(ExecuteCommand):
             keywords (dict): User's keywords.
         """
         if keywords["BASE_CALCUL"] == "PHYS":
-            self._result.update()
             self._result.appendModelOnAllRanks(keywords["MATR_MASS"].getDOFNumbering().getSupportModel())
+            self._result.update()
 
 
 DYNA_VIBRA = VibrationDynamics.run

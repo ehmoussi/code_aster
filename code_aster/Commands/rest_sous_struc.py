@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -53,6 +53,34 @@ class RestSousStrucOper(ExecuteCommand):
                 self._result = FullTransientResultsContainer()
             if resultat.getType() == "MODE_MECA":
                 self._result = MechanicalModeContainer()
+
+    def post_exec(self, keywords):
+        """Execute the command.
+
+        Arguments:
+            keywords (dict): User's keywords.
+        """
+        sousStruc = keywords.get("SOUS_STRUC")
+        if sousStruc is not None:
+            resuGene = keywords.get("RESU_GENE")
+            if resuGene is not None:
+                dofNum = resuGene.getGeneralizedDOFNumbering()
+                modeleGene = dofNum.getGeneralizedModel()
+                macroElem = modeleGene.getDynamicMacroElementFromName(sousStruc)
+                mat = macroElem.getDampingMatrix()
+                if mat is None: mat = macroElem.getImpedanceDampingMatrix()
+                if mat is None: mat = macroElem.getImpedanceMatrix()
+                if mat is None: mat = macroElem.getImpedanceMassMatrix()
+                if mat is None: mat = macroElem.getImpedanceRigidityMatrix()
+                if mat is not None:
+                    raise NameError("Not yet implemented")
+
+                if mat is None: mat = macroElem.getMassMatrix()
+                if mat is None: mat = macroElem.getComplexRigidityMatrix()
+                if mat is None: mat = macroElem.getDoubleRigidityMatrix()
+                if mat is not None:
+                    modele = mat.getDOFNumbering().getSupportModel()
+                    self._result.appendModelOnAllRanks(modele)
 
 
 REST_SOUS_STRUC = RestSousStrucOper.run

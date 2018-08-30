@@ -29,10 +29,46 @@ void exportDynamicMacroElementToPython()
 {
     using namespace boost::python;
 
+    bool (DynamicMacroElementInstance::*c1)( const AssemblyMatrixDisplacementComplexPtr& matrix ) =
+            &DynamicMacroElementInstance::setRigidityMatrix;
+    bool (DynamicMacroElementInstance::*c2)( const AssemblyMatrixDisplacementDoublePtr& matrix ) =
+            &DynamicMacroElementInstance::setRigidityMatrix;
+
     class_< DynamicMacroElementInstance, DynamicMacroElementInstance::DynamicMacroElementPtr,
             bases< DataStructure > > ( "DynamicMacroElement", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< DynamicMacroElementInstance > ) )
-    .def( "setSupportMechanicalMode", &DynamicMacroElementInstance::setSupportMechanicalMode )
+        .def( "getDampingMatrix",
+              &DynamicMacroElementInstance::getDampingMatrix )
+        .def( "getImpedanceDampingMatrix",
+              &DynamicMacroElementInstance::getImpedanceDampingMatrix )
+        .def( "getImpedanceMatrix",
+              &DynamicMacroElementInstance::getImpedanceMatrix )
+        .def( "getImpedanceMassMatrix",
+              &DynamicMacroElementInstance::getImpedanceMassMatrix )
+        .def( "getImpedanceRigidityMatrix",
+              &DynamicMacroElementInstance::getImpedanceRigidityMatrix )
+        .def( "getMassMatrix",
+              &DynamicMacroElementInstance::getMassMatrix )
+        .def( "getComplexRigidityMatrix",
+              &DynamicMacroElementInstance::getComplexRigidityMatrix )
+        .def( "getDoubleRigidityMatrix",
+              &DynamicMacroElementInstance::getDoubleRigidityMatrix )
+        .def( "setDampingMatrix",
+              &DynamicMacroElementInstance::setDampingMatrix )
+        .def( "setImpedanceDampingMatrix",
+              &DynamicMacroElementInstance::setImpedanceDampingMatrix )
+        .def( "setImpedanceMatrix",
+              &DynamicMacroElementInstance::setImpedanceMatrix )
+        .def( "setImpedanceMassMatrix",
+              &DynamicMacroElementInstance::setImpedanceMassMatrix )
+        .def( "setImpedanceRigidityMatrix",
+              &DynamicMacroElementInstance::setImpedanceRigidityMatrix )
+        .def( "setMassMatrix",
+              &DynamicMacroElementInstance::setMassMatrix )
+        .def( "setSupportMechanicalMode",
+              &DynamicMacroElementInstance::setSupportMechanicalMode )
+        .def( "setRigidityMatrix", c1 )
+        .def( "setRigidityMatrix", c2 )
     ;
 };

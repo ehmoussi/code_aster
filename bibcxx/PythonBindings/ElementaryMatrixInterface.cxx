@@ -43,7 +43,10 @@ void exportElementaryMatrixToPython()
             &initFactoryPtr< ElementaryMatrixInstance,
                              std::string,
                              std::string >) )
-        .def( "setSupportModel", &ElementaryMatrixInstance::setSupportModel )
+        .def( "addFiniteElementDescriptor", &ElementaryMatrixInstance::addFiniteElementDescriptor )
+        .def( "getFiniteElementDescriptors",
+              &ElementaryMatrixInstance::getFiniteElementDescriptors )
         .def( "getSupportModel", &ElementaryMatrixInstance::getSupportModel )
+        .def( "setSupportModel", &ElementaryMatrixInstance::setSupportModel )
     ;
 };

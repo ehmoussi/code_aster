@@ -24,8 +24,7 @@ monModel.build()
 
 # @@@@
 
-CHA = code_aster.ThermalLoad()
-CHA.setModel(monModel)
+CHA = code_aster.ThermalLoad(monModel)
 
 a = code_aster.DoubleImposedTemperature(456.0)
 a.addGroupOfNodes("test_node")
