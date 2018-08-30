@@ -1,0 +1,27 @@
+TITRE
+%MAILLAGE
+FINSF
+% coordonnees des noeuds
+COOR_3D NOBJ=5
+N1Z1 0.000000E+00 0.000000E+00 0.000000E+00
+N2Z1 0.000000E+00 0.000000E+00 1.000000E+00
+FINSF
+%
+% definition des mailles
+SEG2 NOBJ=1
+E1Z1 N1Z1 N2Z1
+FINSF
+
+%Groupe de mailles de la ligne d'arbres
+GROUP_MA NOM=MA_AR
+E1Z1
+FINSF
+
+
+%Groupe de noeuds de la ligne d'arbres
+GROUP_NO NOM=NO_AR
+N1Z1
+N2Z1
+FINSF
+
+FIN
