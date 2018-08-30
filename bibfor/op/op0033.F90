@@ -83,7 +83,7 @@ implicit none
     parameter    (dimaki=9)
 !    DIMANV = DIMENSION MAX DE LA LISTE DU NOMBRE DE VAR INT EN THM
     parameter    (dimanv=4)
-    parameter    (ncmpma=7+dimaki+dimanv)
+    parameter    (ncmpma=8+dimaki+dimanv)
     character(len=4) :: fami, cargau
     character(len=8) :: typmod(2), mater(30), table, fonimp(9), typpar(ntamax)
     character(len=16) :: option, compor(ncmpma), nompar(ntamax), opt2, mult_comp

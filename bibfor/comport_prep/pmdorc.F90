@@ -48,7 +48,7 @@ implicit none
 #include "asterfort/setBehaviourValue.h"
 #include "asterfort/setMFrontPara.h"
 !
-character(len=16), intent(out) :: compor(20)
+character(len=16), intent(out) :: compor(21)
 real(kind=8), intent(out) :: carcri(22)
 integer, intent(out) :: nb_vari
 integer, intent(out) :: incela
@@ -74,7 +74,7 @@ character(len=16), intent(out) :: mult_comp
     integer :: nbocc1, nbocc2, nbocc3
     character(len=16) :: keywordfact
     character(len=16) :: rela_comp, algo_inte, defo_comp, type_comp, meca_comp
-    character(len=16) :: kit_comp(4), type_cpla, post_iter
+    character(len=16) :: kit_comp(4), type_cpla, post_iter, defo_ldc
     aster_logical :: l_etat_init, l_implex, plane_stress, l_comp_external
     aster_logical :: l_kit_thm, l_mfront_proto, l_mfront_offi
     real(kind=8) :: algo_inte_r, iter_inte_maxi, resi_inte_rela
@@ -91,7 +91,7 @@ character(len=16), intent(out) :: mult_comp
 !
     compor_info  = '&&PMDORC.LIST_VARI'
     keywordfact  = 'COMPORTEMENT'
-    compor(1:20) = 'VIDE'
+    compor(1:21) = 'VIDE'
     l_implex     = .false.
 !
 ! - Initial state
@@ -129,6 +129,7 @@ character(len=16), intent(out) :: mult_comp
     kit_comp(:)     = ds_compor_prep%v_comp(i_comp)%kit_comp(:)
     mult_comp       = ds_compor_prep%v_comp(i_comp)%mult_comp
     post_iter       = ds_compor_prep%v_comp(i_comp)%post_iter
+    defo_ldc        = ds_compor_prep%v_comp(i_comp)%defo_ldc
 !
 ! - Detection of specific cases
 !
@@ -149,7 +150,7 @@ character(len=16), intent(out) :: mult_comp
 ! - Save in list
 !
     call setBehaviourValue(rela_comp, defo_comp   , type_comp, type_cpla,&
-                           mult_comp, post_iter   , kit_comp ,&
+                           mult_comp, post_iter   , defo_ldc, kit_comp ,&
                            nb_vari  , nb_vari_comp, nume_comp,&
                            l_compor_ = compor)
 !

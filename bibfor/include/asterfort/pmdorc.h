@@ -18,7 +18,7 @@
 !
 interface
     subroutine pmdorc(compor, carcri, nb_vari, incela, mult_comp)
-        character(len=16), intent(out) :: compor(20)
+        character(len=16), intent(out) :: compor(21)
         real(kind=8), intent(out) :: carcri(22)
         integer, intent(out) :: nb_vari
         integer, intent(out) :: incela
