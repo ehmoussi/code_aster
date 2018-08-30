@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -116,7 +116,7 @@ def build_cata_ele(self, ojb, install_path):
     try:
         #  generate the command line
         exec_pyaster(self, comm.abspath(), cwd=bldnode.abspath(),
-                     args=['--build-elem --memory=1400'])
+                     args=['--build-elem --memory=1600'])
     finally: # fort.4 -> .ojb
         os.rename(after, before)
 
