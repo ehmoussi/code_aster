@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # Copyright (C) 2014 STEFAN H. REITERER stefan.harald.reiterer@gmail.com
 # This file is part of code_aster.
 #
@@ -49,9 +49,9 @@ class matr_asse(ASSD):
         valm = self.sdj.VALM.get()
         smhc = smos.SMHC.get()
         smdi = smos.SMDI.get()
-        sym = len(valm) == 1
+        sym = refa[8].strip() == "MS"
         dim = len(smdi)
-        nnz = smdi[dim-1]
+        nnz = len(smhc)
         triang_sup = NP.array(valm[1])
         if sym:
             triang_inf = triang_sup
@@ -63,51 +63,53 @@ class matr_asse(ASSD):
             dtype = float
 
         if sparse :
-            smhc = NP.array(smhc)-1
-            smdi = NP.array(smdi)-1
-            class SparseMatrixIterator :
+            rows = NP.array(smhc) - 1
+            diag = NP.array(smdi) - 1
+            class SparseMatrixIterator:
                 """classe d'itération pour la liste de la colonne"""
-                def __init__(self) :
-                    self.jcol=0
-                    self.kterm=0
+                def __init__(self):
+                    self.jcol = 0
+                    self.kterm = 0
 
-                def __iter__(self) :
+                def __iter__(self):
                     return self
 
-                def next(self) :
+                def next(self):
                     if self.kterm == 0:
                         self.kterm += 1
                         return self.jcol
-                    if smdi[self.jcol] < self.kterm:
+                    if diag[self.jcol] < self.kterm:
                         self.jcol += 1
                     self.kterm += 1
                     return self.jcol
 
             col_iter = SparseMatrixIterator()
-            # générer la liste de colonnes
+            # generate the columns indices
             cols = NP.fromiter(col_iter, count=nnz, dtype=int)
-            # entrées filtre de pivot de triang_inf
-            helper = smhc - cols
-            indices_to_filter = NP.where(helper == 0)[0]
-            smdi_inf = NP.copy(smhc)
-            smdi_inf = NP.delete(smdi_inf, indices_to_filter)
-            smhc_inf = NP.copy(cols)
-            smhc_inf = NP.delete(smhc_inf, indices_to_filter)
-            triang_inf = NP.delete(triang_inf, indices_to_filter)
-            # joindre les listes
-            lignes = NP.concatenate((cols,smdi_inf))
-            colonnes = NP.concatenate((smhc,smhc_inf))
+
+            # diag is where "row == col"
+            helper = rows - cols
+            diag_indices = NP.where(helper == 0)[0]
+
+            # transpose indices in 'inf' part and remove diagonal terms
+            cols_inf = NP.delete(rows, diag_indices)
+            rows_inf = NP.delete(cols, diag_indices)
+            triang_inf = NP.delete(triang_inf, diag_indices)
+
+            # join 'sup' and 'inf' parts
+            lignes = NP.concatenate((rows, rows_inf))
+            colonnes = NP.concatenate((cols, cols_inf))
             valeurs = NP.concatenate((triang_sup, triang_inf))
             return valeurs, lignes, colonnes, dim
         else :
             valeur = NP.zeros([dim, dim], dtype=dtype)
             jcol = 1
             for kterm in xrange(1,nnz+1):
-                ilig=smhc[kterm-1]
+                ilig = smhc[kterm-1]
                 if smdi[jcol-1] < kterm:
                     jcol += 1
-                valeur[jcol-1,ilig-1] = triang_inf[kterm-1]
-                valeur[ilig-1,jcol-1] = triang_sup[kterm-1]
+                valeur[jcol-1, ilig-1] = triang_inf[kterm-1]
+                valeur[ilig-1, jcol-1] = triang_sup[kterm-1]
             return valeur
 
 class matr_asse_gd(matr_asse):

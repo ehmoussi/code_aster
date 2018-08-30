@@ -1,0 +1,94 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'))
+
+NTRIM = 1500.
+
+FREQ = NTRIM / 60.
+
+OM = (FREQ * 2) * pi
+
+MAIL = LIRE_MAILLAGE(FORMAT='ASTER',
+                     INFO=2,
+                     UNITE=20)
+
+MODELE = AFFE_MODELE(AFFE=_F(GROUP_MA='MA_AR',
+                             MODELISATION='POU_D_T',
+                             PHENOMENE='MECANIQUE'),
+                     MAILLAGE=MAIL)
+
+CEK = AFFE_CARA_ELEM(MODELE=MODELE,
+                     POUTRE=_F(CARA=('R', 'EP'),
+                               GROUP_MA=('MA_AR', ),
+                               SECTION='CERCLE',
+                               VALE=(0.05, 0.05),
+                               VARI_SECT='CONSTANT'))
+
+MAT = DEFI_MATERIAU(ELAS=_F(E=2e+11,
+                            NU=0.3,
+                            RHO=7800.0))
+
+CHMAT = AFFE_MATERIAU(AFFE=_F(GROUP_MA=('MA_AR', ),
+                              MATER=(MAT, )),
+                      MAILLAGE=MAIL)
+
+BCR = AFFE_CHAR_MECA(DDL_IMPO=_F(DX=0.0,
+                                 DY=0.0,
+                                 DZ=0.0,
+                                 GROUP_NO=('NO_AR', )),
+                     MODELE=MODELE)
+
+Ke = CALC_MATR_ELEM(CARA_ELEM=CEK,
+                    CHAM_MATER=CHMAT,
+                    MODELE=MODELE,
+                    OPTION='RIGI_MECA')
+
+NDDL = NUME_DDL(MATR_RIGI=Ke)
+
+Me = CALC_MATR_ELEM(CARA_ELEM=CEK,
+                    CHAM_MATER=CHMAT,
+                    MODELE=MODELE,
+                    OPTION='MASS_MECA')
+
+Ae = CALC_MATR_ELEM(CARA_ELEM=CEK,
+                    CHAM_MATER=CHMAT,
+                    MASS_MECA=Me,
+                    MODELE=MODELE,
+                    OPTION='AMOR_MECA',
+                    RIGI_MECA=Ke)
+
+A = ASSE_MATRICE(MATR_ELEM=Ae,
+                 NUME_DDL=NDDL)
+
+Ge = CALC_MATR_ELEM(CARA_ELEM=CEK,
+                    CHAM_MATER=CHMAT,
+                    CHARGE=BCR,
+                    MODELE=MODELE,
+                    OPTION='MECA_GYRO')
+
+G = ASSE_MATRICE(MATR_ELEM=Ge,
+                 NUME_DDL=NDDL)
+
+GOM = COMB_MATR_ASSE(COMB_R=(_F(COEF_R=OM,
+                                MATR_ASSE=G),
+                             _F(COEF_R=1,
+                                MATR_ASSE=A)))
+
+FIN()
