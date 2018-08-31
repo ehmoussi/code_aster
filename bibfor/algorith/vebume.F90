@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -51,7 +51,7 @@ implicit none
 !
 ! Compute Dirichlet loads
 !
-! For Lagrange elements (AFFE_CHAR_MECA) - B . U
+! For Lagrange elements (AFFE_CHAR_MECA) - B . U 
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -108,7 +108,7 @@ implicit none
 !
 ! - Cart for Lagrange conditionner
 !
-    call conlag(matass, alpha)
+    call conlag(matass, alpha)  
     call mecact('V', chalph, 'MODELE', model, 'NEUT_R  ',&
                 ncmp=1, nomcmp='X1', sr=alpha)
 !
@@ -120,22 +120,22 @@ implicit none
     call reajre(vect_elem, ' ', 'V')
 !
 ! - Input fields
-!
+! 
     lpain(1) = 'PDDLIMR'
     lchin(1) = disp
     lpain(2) = 'PALPHAR'
     lchin(2) = chalph(1:19)
 !
 ! - Output fields
-!
+! 
     lpaout(1) = 'PVECTUR'
 !
 ! - Computation
 !
     do i_load = 1, nb_load
-        load_name = v_load_name(i_load)(1:8)
-        if (      ischar_iden(v_load_info, i_load, nb_load, 'DIRI', 'DUAL', load_name=v_load_name(i_load)) .and.&
-            .not. ischar_iden(v_load_info, i_load, nb_load, 'DIRI', 'SUIV', load_name=v_load_name(i_load))) then
+        load_name = v_load_name(i_load)(1:8) 
+        if (      ischar_iden(v_load_info, i_load, nb_load, 'DIRI', 'DUAL') .and.&
+            .not. ischar_iden(v_load_info, i_load, nb_load, 'DIRI', 'SUIV')) then
             ligrch = load_name//'.CHME.LIGRE'
             call jeexin(load_name//'.CHME.LIGRE.LIEL', iret)
             if (iret .le. 0) cycle
