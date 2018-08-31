@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -16,87 +16,6 @@
 # You should have received a copy of the GNU General Public License
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
-
-import aster_core
-import os
-
-########################################################################
-# Generation du nom du fichier pour l unite logique unite
-def name_file(unite):
-    cur_dir = os.getcwd()
-    nomFichier = cur_dir+'/fort.'+str(unite)
-    return nomFichier
-########################################################################
-
-########################################################################
-# creation des fichiers de commande GIBI dans les unites UNITD et UNITP
-def macr_gouj2e_mail(TYPE,VARIANTE,NB_FILET,H_CORP_BRID,R_EXT_BRID,
-                     H_HAUT_BRID,H_BAS_BRID,FILET_ABST,
-                     UNITD=70,UNITP=71) :
-    texte =         '***************************************************************\n'
-    texte = texte + '*                                                              \n'
-    texte = texte + '* CREATION DU MAILLAGE DE GOUJON, FILETS ET BRIDE 2D AXIS      \n'
-    texte = texte + '* -------------------------------------------------------------\n'
-    texte = texte + '*************************************************              \n'
-    texte = texte + '*                VERSION 1.0                    *              \n'
-    texte = texte + '*            VERSION DU 15/07/1999              *              \n'
-    texte = texte + '*************************************************              \n'
-    texte = texte + '*                                                              \n'
-    texte = texte + '***************************************************************\n'
-    texte = texte + '*****              PROGRAMME  PRINCIPAL                 *******\n'
-    texte = texte + '***************************************************************\n'
-    texte = texte + '*                                                              \n'
-    texte = texte + 'OPTION DIME 2 ELEM QUA4 NIVE 10 ECHO 0;                        \n'
-    texte = texte + '* DEBUT PARAMETRES UTILISATEUR                                 \n'
-    texte = texte + '*                                                              \n'
-    texte = texte + '* PARAMETRES GENERAUX                                          \n'
-    texte = texte + '*                                                              \n'
-    texte = texte + 'RI_BRI       = '+str(eval('RIB'+TYPE+VARIANTE)) +';'+'         \n'
-    texte = texte + 'RE_GOUJ      = '+str(eval('REG'+TYPE+VARIANTE)) +';'+'         \n'
-    texte = texte + 'PAS          = '+str(eval('HF' +TYPE+VARIANTE)) +';'+'         \n'
-    texte = texte + 'RE_BRI       = '+str(R_EXT_BRID )+';                           \n'
-    texte = texte + 'HTE_BRI      = '+str(H_CORP_BRID)+';                           \n'
-    texte = texte + 'NFIL         = '+str(NB_FILET   )+';                           \n'
-    texte = texte + 'H_MINFI      = '+str(H_BAS_BRID )+';                           \n'
-    texte = texte + 'H_HTBRI      = '+str(H_HAUT_BRID)+';                           \n'
-    texte = texte + '* FIN PARAMETRES UTILISATEUR                                   \n'
-    textp = ''
-    if FILET_ABST!=None :
-       for num in FILET_ABST :
-           textp = textp + 'FILETS = DIFF FILETS FIL00'+str(num)+';                 \n'
-    ref_datg = aster_core.get_option("repdex")
-    loc_datg = os.path.join(os.getcwdu(), 'datg')
-    os.symlink(ref_datg, loc_datg)
-
-    # Decoupe de la chaine GIBI
-    length = 50
-
-    seq = os.path.join("..", "datg", "gouj2.datg")
-    assert len(seq) <= 72, "Gibi does not support paths longer than 72 characters\npath:%s" % seq
-    tt = [seq[i:i+length] for i in range(0, len(seq), length)]
-    textp = textp + "PDATG = CHAINE '" + "'\n'".join(tt) + "'" + ";\n"
-    textp = textp + "OPTI DONN PDATG;\n"
-
-    seq = os.path.join("..", "datg", "gouj1.datg")
-    assert len(seq) <= 72, "Gibi does not support paths longer than 72 characters\npath:%s" % seq
-    tt = [seq[i:i+length] for i in range(0, len(seq), length)]
-    texte = texte + "PDATG = CHAINE '" + "'\n'".join(tt) + "'" + ";\n"
-    texte = texte + "OPTI DONN PDATG;\n"
-
-    # Nom du fichier de commandes pour GIBI
-    nomFichierDATG = name_file(UNITD)
-    nomFichierDATP = name_file(UNITP)
-
-    # Ouverture du fichier d entree de commandes gibi
-    fdgib=open(nomFichierDATG,'w')
-    fdgip=open(nomFichierDATP,'w')
-    fdgib.write(texte)
-    fdgip.write(textp)
-    fdgib.close()
-    fdgip.close()
-
-    return
-########################################################################
 
 ########################################################################
 # macro commande de post-traitement (ex POST_GOUJ2E)
@@ -161,39 +80,8 @@ DEBUT(CODE=_F(NIV_PUB_WEB='INTRANET',),PAR_LOT='NON',
 # LA BRIDE N A PAS DE BAS DE BRIDE
 
 INCLUDE(DONNEE='zzzz120.datg')
-VARIANTE     = 'A'
-H_HAUT_BRID  = 200.0
 
-
-macr_gouj2e_mail(TYPE,VARIANTE,NB_FILET,H_CORP_BRID,R_EXT_BRID,
-                 H_HAUT_BRID,H_BAS_BRID,FILET_ABST,)
-
-EXEC_LOGICIEL(LOGICIEL=aster_core.get_option('prog:gibi_aster.py'),
-              ARGUMENT=('fort.70', 'fort.19'), );
-
-PRE_GIBI()
-
-MAIL=LIRE_MAILLAGE(FORMAT="ASTER",)
-
-MAIL=DEFI_GROUP(reuse = MAIL,
-                MAILLAGE=MAIL,
-                CREA_GROUP_NO=(_F(NOM='NDFILETS',
-                                  GROUP_MA='CORPSGOU',
-                                  CRIT_NOEUD='TOUS')), )
-
-IMPR_RESU(FORMAT='MED',UNITE=53,RESU=_F(MAILLAGE=MAIL,),)
-
-MAIL=DEFI_GROUP(reuse =MAIL,
-                MAILLAGE=MAIL,
-                CREA_GROUP_NO=(_F(GROUP_MA='GOUJON',
-                                  NOM='GOUJ_NO',
-                                  CRIT_NOEUD='TOUS',),
-                               _F(GROUP_MA='FILETS',
-                                  NOM='FILET_NO',
-                                  CRIT_NOEUD='TOUS',),
-                               _F(GROUP_MA='BRIDE',
-                                  NOM='BRIDE_NO',
-                                  CRIT_NOEUD='TOUS',),),);
+MAIL=LIRE_MAILLAGE()
 
 modele=AFFE_MODELE(MAILLAGE=MAIL,
                    AFFE=(_F(GROUP_MA='GOUJON',

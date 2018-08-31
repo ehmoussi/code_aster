@@ -54,7 +54,8 @@ def impr_fonction_ops(self, FORMAT, COURBE, INFO, **args):
     # 0. Traitement des arguments, initialisations
     # 0.1. Fichier
     nomfich = None
-    if args['UNITE'] and args['UNITE'] != 6:
+    UNITE = args.get('UNITE', 6)
+    if UNITE != 6:
         nomfich = LogicalUnitFile.filename_from_unit(args['UNITE'])
         if INFO == 2:
             aster.affiche('MESSAGE', ' Nom du fichier :' + nomfich)
@@ -433,6 +434,6 @@ def impr_fonction_ops(self, FORMAT, COURBE, INFO, **args):
 
     # 2.4. On trace !
     with ReservedUnitUsed(args['UNITE'], args.get('UNITE_DIGR')):
-            graph.Trace(**kargs)
+        graph.Trace(**kargs)
 
     return

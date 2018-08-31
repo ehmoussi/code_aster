@@ -26,6 +26,7 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/assert.h"
+#include "asterfort/cfdisl.h"
 #include "asterfort/infdbg.h"
 #include "asterfort/utmess.h"
 #include "asterfort/ndasva.h"
@@ -70,6 +71,7 @@ character(len=19), intent(in) :: cnpilo, cndonn
     real(kind=8) :: coeequ
     aster_logical :: l_dyna, l_pilo, l_macr
     type(NL_DS_VectComb) :: ds_vectcomb
+    aster_logical :: l_unil_pena
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -149,6 +151,15 @@ character(len=19), intent(in) :: cnpilo, cndonn
         call nonlinDSVectCombAddAny(ds_contact%cnctdf, -1.d0, ds_vectcomb)
     endif
 !
+! - Add LIAISON_UNIL penalized force
+!
+    if (ds_contact%l_cnunil) then
+        l_unil_pena = cfdisl(ds_contact%sdcont_defi, 'UNIL_PENA')
+        if (l_unil_pena) then
+            call nonlinDSVectCombAddAny(ds_contact%cnunil, -1.d0, ds_vectcomb)
+        endif
+    endif
+!
 ! - Force from sub-structuring
 !
     if (l_macr) then
@@ -176,7 +187,7 @@ character(len=19), intent(in) :: cnpilo, cndonn
 ! ----- Get dead Neumann loads (for PILOTAGE)
         call nonlinDSVectCombAddHat(hval_veasse, 'CNFEPI', +1.d0, ds_vectcomb)
 ! ----- Get Dirichlet loads (for PILOTAGE)
-        call nonlinDSVectCombAddHat(hval_veasse, 'CNDIPI', +1.d0, ds_vectcomb)   
+        call nonlinDSVectCombAddHat(hval_veasse, 'CNDIPI', +1.d0, ds_vectcomb)
     endif
 !
 ! - Second member (PILOTAGE)

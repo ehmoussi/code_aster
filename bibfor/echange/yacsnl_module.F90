@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -173,9 +173,10 @@ contains
         subroutine get_previous_element(element, backele)
             ! return the element before
             type(trandata), pointer, intent(in)  :: element
-            type(trandata), pointer, intent(out) :: backele => null()
+            type(trandata), pointer, intent(out) :: backele 
             type(trandata), pointer              :: current => null()
-
+            
+            backele => null()
             current => first_trandata
 
             do while ( associated( current ) )
@@ -194,8 +195,9 @@ contains
         subroutine is_trandata_exist(num, exist, current)
             integer , intent(in) :: num
             logical , intent(out) :: exist
-            type(trandata), pointer, intent (out), optional :: current => null()
-
+            type(trandata), pointer, intent (out), optional :: current 
+            
+            current => null()
             exist = .false.
 
             if(associated(first_trandata)) then

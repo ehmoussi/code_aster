@@ -54,7 +54,7 @@ EXEC_LOGICIEL = MACRO(nom="EXEC_LOGICIEL",
                          "des redirections ou des caractères de completions")),
 
       MAILLAGE = FACT(statut='f',
-         FORMAT     = SIMP(statut='o', typ='TXM', into=("GMSH", "GIBI", "SALOME")),
+         FORMAT     = SIMP(statut='o', typ='TXM', into=("GMSH", "SALOME")),
          UNITE_GEOM = SIMP(statut='f', typ=UnitType(), val_min=10, val_max=90, defaut=16, inout='in',
                            fr=tr("Unité logique définissant le fichier (fort.N) "
                                  "contenant les données géométriques (datg)")),

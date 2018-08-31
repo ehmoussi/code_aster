@@ -3,6 +3,7 @@ P memory_limit 512
 P ncpus 1
 P mpi_nbcpu 1
 P mpi_nbnoeud 1
-P testlist verif_interact sequential
+P testlist verification sequential
 
 F comm zzzz120a.comm D 1
+F libr zzzz120a.mmed D 20

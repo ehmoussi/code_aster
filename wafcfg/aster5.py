@@ -41,7 +41,6 @@ def configure(self):
     official_programs.configure(self)
     official_programs.check_prerequisites_package(self, YAMMROOT, '20180417')
     opts.with_prog_salome = True
-    opts.with_prog_europlexus = True
 
     # enable TEST_STRICT on the reference server
     self.env.append_value('DEFINES', ['TEST_STRICT'])
@@ -50,8 +49,8 @@ def configure(self):
     self.env.append_value('OPT_ENV', [
         '. /etc/profile.d/lmod.sh',
         'module load ifort/2016.0.047 icc/2016.0.047 mkl/2016.0.047',
-        'module load ifort/2016.0.047 icc/2016.0.047 mkl/2016.0.047',
         'export LD_PRELOAD=/opt/intel/2016.0.047/compilers_and_libraries_2016.0.109/linux/mkl/lib/intel64_lin/libmkl_scalapack_lp64.so:/opt/intel/2016.0.047/compilers_and_libraries_2016.0.109/linux/mkl/lib/intel64_lin/libmkl_intel_lp64.so:/opt/intel/2016.0.047/compilers_and_libraries_2016.0.109/linux/mkl/lib/intel64_lin/libmkl_intel_thread.so:/opt/intel/2016.0.047/compilers_and_libraries_2016.0.109/linux/mkl/lib/intel64_lin/libmkl_core.so:/opt/intel/2016.0.047/compilers_and_libraries_2016.0.109/linux/mkl/lib/intel64_lin/libmkl_blacs_intelmpi_lp64.so:/opt/intel/2016.0.047/compilers_and_libraries_2016.0.109/linux/compiler/lib/intel64_lin/libiomp5.so',
+        'export PATH=' + YAMMROOT + '/prerequisites/Medfichier-331/bin:$PATH',
     ])
 
     TFELHOME = YAMMROOT + '/prerequisites/Mfront-TFEL311_aster'

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -25,6 +25,7 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/ascoma.h"
+#include "asterfort/cfdisl.h"
 #include "asterfort/detrsd.h"
 #include "asterfort/infdbg.h"
 #include "asterfort/isfonc.h"
@@ -33,6 +34,7 @@ implicit none
 #include "asterfort/ndynlo.h"
 #include "asterfort/ndynre.h"
 #include "asterfort/nmasfr.h"
+#include "asterfort/nmasun.h"
 #include "asterfort/nmchex.h"
 #include "asterfort/lccmst.h"
 !
@@ -84,6 +86,7 @@ implicit none
     integer :: nbmat
     character(len=10) :: phase
     character(len=19) :: rigid, masse, amort
+    aster_logical :: lunil, l_unil_pena
 !
 ! ----------------------------------------------------------------------
 !
@@ -106,6 +109,7 @@ implicit none
 ! --- FONCTIONNALITES ACTIVEES
 !
     lctcd         = isfonc(fonact,'CONT_DISCRET')
+    lunil         = isfonc(fonact,'LIAISON_UNILATER')
     l_neum_undead = isfonc(fonact,'NEUM_UNDEAD')
     l_cont_lac    = isfonc(fonact,'CONT_LAC')
     lamor         = ndynlo(sddyna,'MAT_AMORT')
@@ -225,6 +229,16 @@ implicit none
 !
     if (l_cont_lac) then
         call lccmst(ds_contact, matass)
+    endif
+!
+! --- PRISE EN COMPTE DE LA MATRICE TANGENTE DE PENALISATION
+! --- AVEC LES LIAISONS UNILATERALES
+!
+    if (lunil .and. (phase.eq.'CORRECTION')) then
+        l_unil_pena = cfdisl(ds_contact%sdcont_defi, 'UNIL_PENA')
+        if (l_unil_pena) then
+            call nmasun(ds_contact, matass)
+        endif
     endif
 !
 999 continue

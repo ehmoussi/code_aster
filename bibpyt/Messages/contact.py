@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -24,12 +24,8 @@ cata_msg = {
     1 : _(u"""
 Contact méthodes discrètes.
  -> Les méthodes de contact discrètes supposent la symétrie de la matrice obtenue après assemblage.
-    Si votre modélisation produit une matrice non-symétrique, cela peut conduire à des difficultés
-    de convergence dans le processus de Newton mais en aucun cas il ne produit des résultats faux.
 
-    Si la matrice de rigidité de votre structure est symétrique, vous pouvez ignorer ce qui précède.
-    Enfin, il est possible de supprimer l'affichage de cette alarme en renseignant
-    MATR_RIGI_SYME  ='OUI' sous le mot-clé facteur NEWTON.
+Il est possible de forcer la matrice à être symétrique en renseignant MATR_RIGI_SYME='OUI' sous le mot-clé facteur NEWTON ou d'utiliser la formulation CONTINUE du contact ou la méthode pénalisée par ALGO_CONT='PENALISATION'.
 """),
 
     3 : _(u"""

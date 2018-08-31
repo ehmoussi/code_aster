@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,11 +17,13 @@
 ! --------------------------------------------------------------------
 
 subroutine caraun(char, motfac, nzocu, nbgdcu, coefcu,&
-                  compcu, multcu, ntcmp)
+                  compcu, multcu, penacu, ntcmp)
 !
 !
     implicit none
 #include "jeveux.h"
+#include "asterfort/assert.h"
+#include "asterfort/getvr8.h"
 #include "asterfort/getvid.h"
 #include "asterfort/getvtx.h"
 #include "asterfort/jedema.h"
@@ -36,6 +38,7 @@ subroutine caraun(char, motfac, nzocu, nbgdcu, coefcu,&
     character(len=24) :: coefcu
     character(len=24) :: compcu
     character(len=24) :: multcu
+    character(len=24) :: penacu
 !
 ! ----------------------------------------------------------------------
 !
@@ -70,6 +73,8 @@ subroutine caraun(char, motfac, nzocu, nbgdcu, coefcu,&
 !              DE GAUCHE
 !              VECTEUR TYPE ZR OU ZK8 SUIVANT FONREE
 !              MEME ACCES QUE COMPCU
+! IN  PENACU : NOM JEVEUX DE LA SD CONTENANT LES COEF DE PENALITE
+!              VECTEUR TYPE ZR, MEME ACCES QUE COEFCU
 ! OUT NTCMP  : NOMBRE TOTAL DE COMPOSANTES SUR TOUTES LES ZONES
 !
 !
@@ -84,7 +89,9 @@ subroutine caraun(char, motfac, nzocu, nbgdcu, coefcu,&
     character(len=24) :: defico
     character(len=24) :: paraci
     integer :: jparci
-    integer :: jcoef, jnbgd, jcmpg, jmult
+    integer :: jcoef, jnbgd, jcmpg, jmult, jpena
+    character(len=16) :: vale_k, s_algo_cont
+    real(kind=8) :: pena
 !
 ! ----------------------------------------------------------------------
 !
@@ -105,9 +112,33 @@ subroutine caraun(char, motfac, nzocu, nbgdcu, coefcu,&
 !
     zi(jparci+4-1) = iform
 !
-! --- METHODE: CONTRAINTES ACTIVES
+! --- METHODE: CONTRAINTES ACTIVES OU PENALISATION
 !
-    zi(jparci+17-1) = 0
+    do izone = 1, nzocu
+        call getvtx(motfac, 'ALGO_CONT', iocc=izone, scal=vale_k)
+        if (izone.eq.1) then
+            s_algo_cont = vale_k
+        else
+            if (vale_k.ne.s_algo_cont) then
+                call utmess('F', 'CONTACT3_4', sk='ALGO_CONT')
+            endif
+        endif
+    enddo
+    if (s_algo_cont .eq. 'CONTRAINTE') then
+        zi(jparci+30-1) = 1
+    else if (s_algo_cont .eq. 'PENALISATION') then
+        zi(jparci+30-1) = 4
+!
+! --- COEFFICIENTS DE PENALISATION
+!
+        call wkvect(penacu, 'V V R', nzocu, jpena)
+        do izone = 1, nzocu
+            call getvr8(motfac, 'COEF_PENA', iocc=izone, scal=pena)
+            zr(jpena-1+izone) = pena
+        enddo
+    else
+        ASSERT(.false.)
+    endif
 !
 ! --- PARAMETRES
 !
@@ -117,10 +148,10 @@ subroutine caraun(char, motfac, nzocu, nbgdcu, coefcu,&
 !
     coefcu = '&&CARAUN.COEFCU'
     call wkvect(coefcu, 'V V K8', nzocu, jcoef)
-    do 1001 izone = 1, nzocu
+    do izone = 1, nzocu
         call getvid(motfac, 'COEF_IMPO', iocc=izone, scal=ccoef, nbret=noc)
         zk8(jcoef-1+izone) = ccoef
-1001  end do
+    end do
 !
 ! --- MEMBRE DE GAUCHE DE L'INEGALITE
 ! --- COMPTAGE PREALABLE DU NOMBRE DE DDLS
@@ -128,7 +159,7 @@ subroutine caraun(char, motfac, nzocu, nbgdcu, coefcu,&
     call wkvect(nbgdcu, 'V V I', nzocu+1, jnbgd)
     zi(jnbgd) = 1
     ntcmp = 0
-    do 1002 izone = 1, nzocu
+    do izone = 1, nzocu
         call getvtx(motfac, 'NOM_CMP', iocc=izone, scal=k8bid, nbret=nbcmp)
         call getvid(motfac, 'COEF_MULT', iocc=izone, scal=k8bid, nbret=nbcmul)
         if (nbcmp .ne. nbcmul) then
@@ -141,7 +172,7 @@ subroutine caraun(char, motfac, nzocu, nbgdcu, coefcu,&
             call utmess('F', 'UNILATER_43')
         endif
         zi(jnbgd+izone) = zi(jnbgd+izone-1) + nbcmp
-1002  end do
+    end do
 !
 ! --- MEMBRE DE GAUCHE DE L'INEGALITE: CREATION DES OBJETS
 !
@@ -150,7 +181,7 @@ subroutine caraun(char, motfac, nzocu, nbgdcu, coefcu,&
 !
 ! --- MEMBRE DE GAUCHE DE L'INEGALITE: REMPLISSAGE DES OBJETS
 !
-    do 2000 izone = 1, nzocu
+    do izone = 1, nzocu
         nbcmp = zi(jnbgd+izone) - zi(jnbgd+izone-1)
         call getvtx(motfac, 'NOM_CMP', iocc=izone, nbval=nbcmp, vect=cmpgd,&
                     nbret=noc)
@@ -160,7 +191,7 @@ subroutine caraun(char, motfac, nzocu, nbgdcu, coefcu,&
             zk8(jcmpg-1+zi(jnbgd+izone-1)+icmp-1) = cmpgd(icmp)
             zk8(jmult-1+zi(jnbgd+izone-1)+icmp-1) = ccmult(icmp)
 11      continue
-2000  end do
+    end do
 !
     call jedema()
 !

@@ -26,6 +26,7 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/assert.h"
+#include "asterfort/cfdisl.h"
 #include "asterfort/isfonc.h"
 #include "asterfort/ndasva.h"
 #include "asterfort/ndynin.h"
@@ -71,6 +72,7 @@ character(len=19), intent(in) :: cndonn
     aster_logical :: l_macr
     real(kind=8) :: coeequ
     type(NL_DS_VectComb) :: ds_vectcomb
+    aster_logical :: l_unil_pena
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -116,6 +118,15 @@ character(len=19), intent(in) :: cndonn
 !
     if (ds_contact%l_cnctdf) then
         call nonlinDSVectCombAddAny(ds_contact%cnctdf, -1.d0, ds_vectcomb)
+    endif
+!
+! - Add LIAISON_UNIL penalized force
+!
+    if (ds_contact%l_cnunil) then
+        l_unil_pena = cfdisl(ds_contact%sdcont_defi, 'UNIL_PENA')
+        if (l_unil_pena) then
+            call nonlinDSVectCombAddAny(ds_contact%cnunil, -1.d0, ds_vectcomb)
+        endif
     endif
 !
 ! - Add CONTINUE/XFEM contact force

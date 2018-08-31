@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -90,7 +90,7 @@ IMPR_TABLE(TABLE=TWEIB45,
            TITRE='CT : failure probabilities',);
 
 TEST_TABLE(
-           VALE_CALC=0.783372368758,
+           VALE_CALC=0.783625250054,
            NOM_PARA='PROBA_WEIBULL',
            TABLE=TWEIB45,
            FILTRE=_F(NOM_PARA='INST',

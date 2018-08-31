@@ -26,6 +26,7 @@ implicit none
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterfort/assert.h"
+#include "asterfort/cfdisl.h"
 #include "asterfort/infdbg.h"
 #include "asterfort/isfonc.h"
 #include "asterfort/jedema.h"
@@ -66,7 +67,7 @@ character(len=19) :: cnfext
 !
     integer :: ifm, niv
     character(len=19) :: cnffdo, cnffpi, cnfvdo, cnvady
-    aster_logical :: lctcd, lunil
+    aster_logical :: lctcd, lunil, l_unil_pena
     real(kind=8) :: coeequ
     aster_logical :: ldyna, lallv, l_pilo
     integer :: ifdo, n
@@ -112,9 +113,13 @@ character(len=19) :: cnfext
 ! --- FORCES DE LIAISON_UNILATER
 !
     if (lunil) then
-        ifdo = ifdo + 1
-        coef(ifdo) = -1.d0
-        vect(ifdo) = ds_contact_%cnunil
+!    On desactive pour l'instant en penalisation
+        l_unil_pena = cfdisl(ds_contact_%sdcont_defi, 'UNIL_PENA')
+        if (.not.l_unil_pena) then
+            ifdo = ifdo + 1
+            coef(ifdo) = -1.d0
+            vect(ifdo) = ds_contact_%cnunil
+        endif
     endif
 !
 ! - Get dead Neumann loads and multi-step dynamic schemes forces
