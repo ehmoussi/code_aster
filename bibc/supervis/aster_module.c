@@ -450,7 +450,6 @@ void DEFSPS(GETTYP,gettyp, _IN char *typaster, _IN STRING_SIZE ltyp,
 
     FreeStr(typ);
     Py_XDECREF(res);
-    Py_XDECREF(tup);
 }
 
 /* ------------------------------------------------------------------ */
@@ -2590,7 +2589,7 @@ void DEFPSS(LCKITREAD, lckitread,_IN ASTERINTEGER *nbkit,
 
     // Call C function
     res = PyObject_CallMethod(catalc, "get_kit", "O", tup_lkit);
-                        
+
     if (res == NULL) {
         MYABORT("Echec lors de la lecture du kit (lckitread/get_kit) !");
         DEBUG_ASSERT(PyTuple_Check(res)) ;
