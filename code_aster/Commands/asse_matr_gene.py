@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -42,6 +42,15 @@ class GeneralizedMatrixBuilder(ExecuteCommand):
             self._result = GeneralizedAssemblyMatrixComplex()
         else:
             self._result = GeneralizedAssemblyMatrixDouble()
+
+    def post_exec(self, keywords):
+        """Store references to ElementaryMatrix objects.
+
+        Arguments:
+            keywords (dict): Keywords arguments of user's keywords, changed
+                in place.
+        """
+        self._result.setGeneralizedDOFNumbering(keywords['NUME_DDL_GENE'])
 
 
 ASSE_MATR_GENE = GeneralizedMatrixBuilder.run

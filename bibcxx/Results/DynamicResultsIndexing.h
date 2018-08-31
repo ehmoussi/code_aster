@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe DynamicResultsIndexing
  * @author Natacha Béreux
  * @section LICENCE
- *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -46,10 +46,12 @@ private:
         et rigidité mais également d’autres informations telles que la numérotation (NUME_DDL)
         ou encore la liste d’interfaces dynamiques et statiques ayant servi au calcul produisant le concept*/
     JeveuxCollectionChar24       _refd;
+
     /** @brief Vecteur Jeveux '.INDI' */
     /** Cet objet définit l’indirection entre le numéro d’ordre des champs enregistrés et les objets
         enregistrés dans  la collection .REFD */
     JeveuxVectorLong             _indi;
+
 public:
     /**
      * @typedef DynamicResultsIndexingPtr
@@ -61,14 +63,14 @@ public:
      * @brief Constructeur
      */
     DynamicResultsIndexingInstance( const std::string resuTyp ):
-        DynamicResultsIndexingInstance( ResultNaming::getNewResultName(), resuTyp ) 
+        DynamicResultsIndexingInstance( ResultNaming::getNewResultName(), resuTyp )
     {};
 
     /**
      * @brief Constructeur
      */
     DynamicResultsIndexingInstance( const std::string &name,
-                                     std::string resuTyp ):
+                                    std::string resuTyp ):
         DataStructure( name, 19, resuTyp ),
         _refd( JeveuxCollectionChar24( getName() + ".REFD" ) ),
         _indi( JeveuxVectorLong( getName() + ".INDI" ) )

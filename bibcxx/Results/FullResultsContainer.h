@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe FullResultsContainer
  * @author Natacha Béreux 
  * @section LICENCE
- *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -28,6 +28,7 @@
 
 #include "Results/DynamicResultsIndexing.h"
 #include "Results/ResultsContainer.h"
+#include "Discretization/DOFNumbering.h"
 
 /**
  * @class FullResultsContainerInstance
@@ -37,25 +38,50 @@
 class FullResultsContainerInstance: public ResultsContainerInstance
 {
 private:
-     /** @brief indexage des résultats de calcul dynamiques */
-     DynamicResultsIndexingPtr _index;
+    /** @brief indexage des résultats de calcul dynamiques */
+    DynamicResultsIndexingPtr _index;
+    /** @brief the support DOFNumbering */
+    DOFNumberingPtr           _dofNum;
+
 public:
     /**
      * @brief Constructeur
      * @todo  Ajouter les objets Jeveux de la SD
      */
-    FullResultsContainerInstance( const std::string &name, const std::string &resuTyp ): 
-       ResultsContainerInstance( name, resuTyp ),
-       _index( new DynamicResultsIndexingInstance( name, resuTyp ) )
-    {};
-    FullResultsContainerInstance( const std::string &resuTyp ): 
-        FullResultsContainerInstance( ResultNaming::getNewResultName(), resuTyp ) 
+    FullResultsContainerInstance( const std::string &name, const std::string &resuTyp ):
+        ResultsContainerInstance( name, resuTyp ),
+        _index( new DynamicResultsIndexingInstance( name, resuTyp ) ),
+        _dofNum( nullptr )
     {};
 
-    bool printMedFile( std::string fileName ) const throw ( std::runtime_error ){
-    return ResultsContainerInstance::printMedFile( fileName );
-    }
+    FullResultsContainerInstance( const std::string &resuTyp ):
+        FullResultsContainerInstance( ResultNaming::getNewResultName(), resuTyp )
+    {};
 
+    DOFNumberingPtr getDOFNumbering() const throw ( std::runtime_error )
+    {
+        if( _dofNum != nullptr )
+            return _dofNum;
+        throw std::runtime_error( "DOFNumbering is empty" );
+    };
+
+    bool printMedFile( std::string fileName ) const throw ( std::runtime_error )
+    {
+        return ResultsContainerInstance::printMedFile( fileName );
+    };
+
+    bool setDOFNumbering( const DOFNumberingPtr& dofNum )
+    {
+        if( dofNum != nullptr )
+        {
+            _dofNum = dofNum;
+            if( _dofNum->getSupportModel() != nullptr )
+                _mesh = _dofNum->getSupportModel()->getSupportMesh();
+            _fieldBuidler.addFieldOnNodesDescription( _dofNum->getFieldOnNodesDescription() );
+            return true;
+        }
+        return false;
+    };
 };
 
 /**

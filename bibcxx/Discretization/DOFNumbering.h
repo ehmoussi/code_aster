@@ -31,11 +31,49 @@
 #include "DataStructures/DataStructure.h"
 #include "MemoryManager/JeveuxVector.h"
 #include "Modeling/Model.h"
+#include "Modeling/FiniteElementDescriptor.h"
 #include "LinearAlgebra/ElementaryMatrix.h"
 #include "Loads/MechanicalLoad.h"
 #include "Loads/KinematicsLoad.h"
 #include "Loads/ListOfLoads.h"
 #include "LinearAlgebra/MatrixStorage.h"
+
+/**
+ * @class FieldOnNodesDescriptionInstance
+ * @brief This class describes the structure of dof stored in a field on nodes
+ * @author Nicolas Sellenet
+ */
+class FieldOnNodesDescriptionInstance: public DataStructure
+{
+    /** @brief Objet Jeveux '.PRNO' */
+    JeveuxCollectionLong         _componentsOnNodes;
+    /** @brief Objet Jeveux '.LILI' */
+    JeveuxBidirectionalMapChar24 _namesOfGroupOfElements;
+    /** @brief Objet Jeveux '.NUEQ' */
+    JeveuxVectorLong             _indexationVector;
+    /** @brief Objet Jeveux '.DEEQ' */
+    JeveuxVectorLong             _nodeAndComponentsNumberFromDOF;
+
+public:
+    /**
+     * @brief Constructeur
+     */
+    FieldOnNodesDescriptionInstance( const JeveuxMemory memType = Permanent );
+
+    /**
+     * @brief Destructor
+     */
+    ~FieldOnNodesDescriptionInstance()
+    {};
+
+    /**
+     * @brief Constructeur
+     * @param name nom souhaité de la sd (utile pour le FieldOnNodesDescriptionInstance d'une sd_resu)
+     */
+    FieldOnNodesDescriptionInstance( const std::string name,
+                                     const JeveuxMemory memType = Permanent );
+};
+typedef boost::shared_ptr< FieldOnNodesDescriptionInstance > FieldOnNodesDescriptionPtr;
 
 /**
  * @class BaseDOFNumberingInstance
@@ -135,23 +173,11 @@ private:
         JeveuxVectorLong             _informations;
         /** @brief Objet Jeveux '.DELG' */
         JeveuxVectorLong             _lagrangianInformations;
-        /** @brief Objet Jeveux '.PRNO' */
-        JeveuxCollectionLong         _componentsOnNodes;
-        /** @brief Objet Jeveux '.LILI' */
-        JeveuxBidirectionalMapChar24 _namesOfGroupOfElements;
-        /** @brief Objet Jeveux '.NUEQ' */
-        JeveuxVectorLong             _indexationVector;
-        /** @brief Objet Jeveux '.DEEQ' */
-        JeveuxVectorLong             _nodeAndComponentsNumberFromDOF;
 
         GlobalEquationNumberingInstance( const std::string& DOFNumName ):
             _numberOfEquations( DOFNumName + ".NEQU" ),
             _informations( DOFNumName + ".REFN" ),
-            _lagrangianInformations( DOFNumName + ".DELG" ),
-            _componentsOnNodes( DOFNumName + ".PRNO" ),
-            _namesOfGroupOfElements( DOFNumName + ".LILI" ),
-            _indexationVector( DOFNumName + ".NUEQ" ),
-            _nodeAndComponentsNumberFromDOF( DOFNumName + ".DEEQ" )
+            _lagrangianInformations( DOFNumName + ".DELG" )
         {};
         friend class BaseDOFNumberingInstance;
     };
@@ -189,6 +215,8 @@ private:
     JeveuxVectorChar24         _nameOfSolverDataStructure;
     /** @brief Objet '.NUME' */
     GlobalEquationNumberingPtr _globalNumbering;
+    /** @brief Objet prof_chno */
+    FieldOnNodesDescriptionPtr _dofDescription;
     /** @brief Objet '.NUML' */
     LocalEquationNumberingPtr  _localNumbering;
     /** @brief Modele support */
@@ -205,6 +233,10 @@ private:
     MultFrontGarbagePtr        _mltf;
     /** @brief Booleen permettant de preciser sur la sd est vide */
     bool                       _isEmpty;
+
+    /** @brief Vectors of FiniteElementDescriptor */
+    std::vector< FiniteElementDescriptorPtr > _FEDVector;
+    std::set< std::string >                   _FEDNames;
 
 protected:
     /**
@@ -239,6 +271,22 @@ public:
     typedef boost::shared_ptr< BaseDOFNumberingInstance > BaseDOFNumberingPtr;
 
     /**
+     * @brief Add a FiniteElementDescriptor to elementary matrix
+     * @param FiniteElementDescriptorPtr support FiniteElementDescriptor
+     */
+    bool addFiniteElementDescriptor( const FiniteElementDescriptorPtr& curFED )
+    {
+        const auto name = trim( curFED->getName() );
+        if( _FEDNames.find( name ) == _FEDNames.end() )
+        {
+            _FEDVector.push_back( _supportModel->getFiniteElementDescriptor() );
+            _FEDNames.insert( name );
+            return true;
+        }
+        return false;
+    };
+
+    /**
      * @brief Function d'ajout d'un chargement
      * @param Args... Liste d'arguments template
      */
@@ -252,6 +300,39 @@ public:
      * @brief Determination de la numerotation
      */
     bool computeNumerotation() throw ( std::runtime_error );
+
+    /**
+     * @brief Get elementary matrix
+     */
+    ElementaryMatrixPtr getElementaryMatrix()
+    {
+        return _supportMatrix;
+    };
+
+    /**
+     * @brief Get support FieldOnNodesDescription
+     */
+    FieldOnNodesDescriptionPtr getFieldOnNodesDescription()
+    {
+        return _dofDescription;
+    };
+
+    /**
+     * @brief Get all support FiniteElementDescriptors
+     * @return vector of all FiniteElementDescriptors
+     */
+    std::vector< FiniteElementDescriptorPtr > getFiniteElementDescriptors()
+    {
+        return _FEDVector;
+    };
+
+    /**
+     * @brief Get model
+     */
+    ModelPtr getSupportModel()
+    {
+        return _supportModel;
+    };
 
     /**
      * @brief Methode permettant de savoir si la numerotation est vide
@@ -302,12 +383,13 @@ public:
         if ( ! _supportMatrix.use_count() == 0 )
             throw std::runtime_error( "It is not allowed to defined Model and ElementaryMatrix together" );
         _supportModel = currentModel;
-    };
-    /**
-     * @brief Get model
-     */
-    ModelPtr getSupportModel() throw ( std::runtime_error ){
-        return _supportModel;
+        auto curFED = _supportModel->getFiniteElementDescriptor();
+        const auto name = trim( curFED->getName() );
+        if( _FEDNames.find( name ) == _FEDNames.end() )
+        {
+            _FEDVector.push_back( _supportModel->getFiniteElementDescriptor() );
+            _FEDNames.insert( name );
+        }
     };
 };
 

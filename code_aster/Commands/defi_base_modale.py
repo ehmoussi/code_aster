@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -44,6 +44,7 @@ class ModalBasisDef(ExecuteCommand):
         """
         if keywords.has_key("CLASSIQUE") and keywords["CLASSIQUE"]:
             self._result.setStructureInterface(keywords["CLASSIQUE"][0]["INTERF_DYNA"])
+            self._result.setDOFNumbering(keywords["CLASSIQUE"][0]["MODE_MECA"][0].getDOFNumbering())
         elif keywords.has_key("RITZ") and keywords["RITZ"] and keywords["RITZ"][0].has_key("INTERF_DYNA"):
             self._result.setStructureInterface(keywords["RITZ"][0]["INTERF_DYNA"])
 

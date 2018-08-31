@@ -151,6 +151,7 @@ NonLinearEvolutionContainerPtr StaticNonLinearAnalysisInstance::execute()
     }
 // Return result 
 //    resultSNL->debugPrint(6);
+    resultSNL->appendModelOnAllRanks( _supportModel );
     resultSNL->update(); 
     return resultSNL;
 };

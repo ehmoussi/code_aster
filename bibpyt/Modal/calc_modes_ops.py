@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -19,6 +19,7 @@
 
 # person_in_charge: nicolas.brie at edf.fr
 
+from code_aster.Objects import GeneralizedModeContainer
 
 def calc_modes_ops(self, TYPE_RESU, OPTION, AMELIORATION, INFO, **args):
     """
@@ -137,5 +138,16 @@ def calc_modes_ops(self, TYPE_RESU, OPTION, AMELIORATION, INFO, **args):
                 impression = args['IMPRESSION']
             if (norme_mode != None) or (filtre_mode != None) or (impression != None):
                 modes = calc_modes_post(self, modes, lmatphys, norme_mode, filtre_mode, impression)
+
+    matrRigi = args.get("MATR_RIGI")
+    if matrRigi is not None:
+        if isinstance(modes, GeneralizedModeContainer):
+            modes.setGeneralizedDOFNumbering(matrRigi.getGeneralizedDOFNumbering())
+        else:
+            modes.setDOFNumbering(matrRigi.getDOFNumbering())
+        modes.setRigidityMatrix(matrRigi)
+    matrAmor = args.get("MATR_AMOR")
+    if matrAmor is not None:
+        modes.setDampingMatrix(matrAmor)
 
     return modes

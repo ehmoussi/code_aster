@@ -942,7 +942,6 @@ def macr_lign_coupe_ops(self, LIGN_COUPE, RESULTAT=None, CHAM_GD=None,
 
     if (l_mode_meca_sans_modele == False):
         # on utilise le modèle pour projeter le champ
-        print "RESULTAT", RESULTAT
         if CHAM_GD != None:
             MODELE_1 = MODELE
         elif RESULTAT != None:
