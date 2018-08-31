@@ -27,16 +27,21 @@ from code_aster.Cata.Syntax import ASSD, AsException
 class matr_asse(ASSD):
     cata_sdj = "SD.sd_matr_asse.sd_matr_asse"
 
-    def EXTR_MATR(self, sparse=False) :
-        """Retourne les valeurs de la matrice dans un format numpy
-        Si sparse=True, la valeur de retour est un triplet de numpy.array.
-        Attributs retourne si sparse=False:
-        - valeurs : numpy.array contenant les valeurs
-        ou si sparse=True:
-        - valeurs : numpy.array contenant les valeurs
-        - lignes : numpy.array numpy.array contenant les indices des lignes
-        - colonnes : numpy.array contenant les indices des colonnes
-        - dim : int qui donne la dimension de la matrice
+    def EXTR_MATR(self, sparse=False, epsilon=None) :
+        """Returns the matrix values as `numpy.array`.
+
+        Arguments:
+            sparse (bool): By default, the returned matrix is dense. If *True*
+                the returned matrix is sparse.
+            epsilon (float): Terms less than this value is considered null.
+                By default, it is 10^-8 * the mean of the absolute values.
+                Only used if *sparse=True*.
+
+        Returns:
+            misc: A single `numpy.array` of the dense matrix if *sparse=False*.
+            Or if *sparse=True* a tuple `(data, rows, cols, dim)`. `data`
+            contains the values, `rows` the rows indices, `cols` the columns
+            indices and `dim` the number of terms.
         """
         import numpy as NP
         from SD.sd_stoc_morse import sd_stoc_morse
@@ -97,20 +102,27 @@ class matr_asse(ASSD):
             triang_inf = NP.delete(triang_inf, diag_indices)
 
             # join 'sup' and 'inf' parts
-            lignes = NP.concatenate((rows, rows_inf))
-            colonnes = NP.concatenate((cols, cols_inf))
-            valeurs = NP.concatenate((triang_sup, triang_inf))
-            return valeurs, lignes, colonnes, dim
+            rows = NP.concatenate((rows, rows_inf))
+            cols = NP.concatenate((cols, cols_inf))
+            data = NP.concatenate((triang_sup, triang_inf))
+
+            if epsilon is None:
+                epsilon = abs(data).mean() * 1e-8
+            nulls = NP.where(abs(data) < epsilon)
+            rows = NP.delete(rows, nulls)
+            cols = NP.delete(cols, nulls)
+            data = NP.delete(data, nulls)
+            return data, rows, cols, dim
         else :
-            valeur = NP.zeros([dim, dim], dtype=dtype)
+            data = NP.zeros([dim, dim], dtype=dtype)
             jcol = 1
             for kterm in xrange(1,nnz+1):
                 ilig = smhc[kterm-1]
                 if smdi[jcol-1] < kterm:
                     jcol += 1
-                valeur[jcol-1, ilig-1] = triang_inf[kterm-1]
-                valeur[ilig-1, jcol-1] = triang_sup[kterm-1]
-            return valeur
+                data[jcol-1, ilig-1] = triang_inf[kterm-1]
+                data[ilig-1, jcol-1] = triang_sup[kterm-1]
+            return data
 
 class matr_asse_gd(matr_asse):
     cata_sdj = "SD.sd_matr_asse.sd_matr_asse"
