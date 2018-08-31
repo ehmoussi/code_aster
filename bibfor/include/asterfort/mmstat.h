@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -21,13 +21,12 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine mmstat(mesh  , iter_newt, nume_inst     , ds_measure,&
+    subroutine mmstat(mesh  , iter_newt, nume_inst     , &
                       sddisc, disp_curr, disp_cumu_inst, ds_contact)
         use NonLin_Datastructure_type
         character(len=8), intent(in) :: mesh
         integer, intent(in) :: iter_newt
         integer, intent(in) :: nume_inst
-        type(NL_DS_Measure), intent(inout) :: ds_measure
         character(len=19), intent(in) :: sddisc
         character(len=19), intent(in) :: disp_curr
         character(len=19), intent(in) :: disp_cumu_inst

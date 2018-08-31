@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -33,10 +33,10 @@ implicit none
 !
     integer              , intent(in)  :: nb_snap
     integer              , intent(in)  :: m
-    real(kind=8), pointer, intent(in)  :: q(:)
-    real(kind=8), pointer, intent(in)  :: v(:)
+    real(kind=8), pointer  :: q(:)
+    real(kind=8), pointer  :: v(:)
     integer              , intent(in)  :: nb_mode
-    real(kind=8), pointer, intent(out) :: v_gamma(:)
+    real(kind=8), pointer :: v_gamma(:)
 !
 ! --------------------------------------------------------------------------------------------------
 !

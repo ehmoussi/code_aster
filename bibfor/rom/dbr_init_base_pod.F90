@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -79,6 +79,14 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
 ! - Get information about model
 !
     call dismoi('NOM_MODELE', result_in, 'RESULTAT', repk = model)
+    WRITE(6,*) 'Mounoune: ',result_in,model
+    if (model .eq. '#AUCUN' .or. model .eq. ' ') then
+        if (ds_para_pod%model .eq. ' ') then
+            call utmess('F', 'ROM5_54')
+        else
+            model = ds_para_pod%model
+        endif
+    endif
 !
 ! - Get informations about fields
 !

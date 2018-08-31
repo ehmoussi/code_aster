@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -27,7 +27,7 @@ DEFI_LIST_ENTI=OPER(nom="DEFI_LIST_ENTI",op=22,sd_prod=listis_sdaster,
                     fr=tr("Définir une liste d'entiers strictement croissante"),
                     reentrant='n',
 
-         OPERATION    =SIMP(statut='o',typ='TXM',defaut='DEFI',into=('DEFI','NUME_ORDRE',)),
+         OPERATION    =SIMP(statut='f',typ='TXM',defaut='DEFI',into=('DEFI','NUME_ORDRE',)),
 
 
          # définition d'une liste d'entiers

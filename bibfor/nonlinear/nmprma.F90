@@ -285,7 +285,10 @@ integer :: faccvg, ldccvg
             if (abs(log(minmat)) .ne. 0.0) then 
             
                 if (abs(log(maxmat))/abs(log(minmat)) .lt. 4.0) then 
-                        ds_contact%estimated_coefficient = 10**(abs(log(maxmat))/3.0)
+!                     Le rapport d'arete max/min est
+!  un bon compromis pour initialiser le coefficient
+                    ds_contact%estimated_coefficient =&
+                    ((1.D3*ds_contact%arete_max)/(1.D-2*ds_contact%arete_min))
                     ds_contact%update_init_coefficient = 1.0
                 else
                     exponent_val = min(abs(log(minmat)),abs(log(maxmat)))/10
@@ -296,8 +299,8 @@ integer :: faccvg, ldccvg
                ds_contact%estimated_coefficient = 1.d16*ds_contact%arete_min
                     ds_contact%update_init_coefficient = 1.0
             endif
-            write (6,*) "min,max,coef estime,abs(log(maxmat))/abs(log(minmat))", &
-                minmat,maxmat,ds_contact%estimated_coefficient,abs(log(maxmat))/abs(log(minmat))
+!             write (6,*) "min,max,coef estime,abs(log(maxmat))/abs(log(minmat))", &
+!                 minmat,maxmat,ds_contact%estimated_coefficient,abs(log(maxmat))/abs(log(minmat))
         endif
     endif
 !

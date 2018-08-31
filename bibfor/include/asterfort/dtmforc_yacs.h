@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -24,9 +24,9 @@ interface
         character(len=*)      , intent(in)  :: sd_nl_
         real(kind=8)          , intent(in)  :: time
         real(kind=8)          , intent(in)  :: dt
-        real(kind=8), pointer , intent(in)  :: depl     (:)
-        real(kind=8), pointer , intent(in)  :: vite     (:)
+        real(kind=8), pointer  :: depl     (:)
+        real(kind=8), pointer  :: vite     (:)
         integer               , intent(in)  :: itime
-        real(kind=8), pointer , intent(out) :: fext     (:)
+        real(kind=8), pointer :: fext     (:)
     end subroutine dtmforc_yacs
 end interface

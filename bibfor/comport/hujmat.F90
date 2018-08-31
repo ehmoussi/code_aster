@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -92,10 +92,10 @@ subroutine hujmat(fami, kpg, ksp, mod, imat,&
     nomc(24)= 'PTRAC   '
 !af fin
 !
-    do 10 i = 1, 22
+    do i = 1, 22
         materf(i,1)=0.d0
         materf(i,2)=0.d0
-10  continue
+    enddo
 !
 !
 ! --- RECUPERATION DES PROPRIETES DE LA LOI DE HUJEUX

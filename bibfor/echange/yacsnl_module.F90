@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -87,8 +87,8 @@ contains
         subroutine add_trandata(num, port_name, cham, list_ddl,  mdefmod )
             integer , intent(in) :: num
             character(len=*), intent(in) :: port_name
-            integer , pointer , intent(in) :: list_ddl(:)
-            real(kind=8), pointer , intent(in) :: mdefmod(:)
+            integer , pointer :: list_ddl(:)
+            real(kind=8), pointer :: mdefmod(:)
             character(len=*), intent(in) :: cham
             integer :: nele, n
             logical :: exist = .false.
@@ -142,7 +142,7 @@ contains
 
         subroutine delete_trandata(mtd)
 
-            type(trandata), pointer, intent(inout) :: mtd
+            type(trandata), pointer :: mtd
             type(trandata), pointer :: precedent => null()
 
 
@@ -172,10 +172,11 @@ contains
 
         subroutine get_previous_element(element, backele)
             ! return the element before
-            type(trandata), pointer, intent(in)  :: element
-            type(trandata), pointer, intent(out) :: backele => null()
+            type(trandata), pointer  :: element
+            type(trandata), pointer :: backele 
             type(trandata), pointer              :: current => null()
-
+            
+            backele => null()
             current => first_trandata
 
             do while ( associated( current ) )
@@ -194,8 +195,9 @@ contains
         subroutine is_trandata_exist(num, exist, current)
             integer , intent(in) :: num
             logical , intent(out) :: exist
-            type(trandata), pointer, intent (out), optional :: current => null()
-
+            type(trandata), pointer, optional :: current 
+            
+            current => null()
             exist = .false.
 
             if(associated(first_trandata)) then
@@ -252,8 +254,8 @@ contains
        subroutine send_values( td, values, itime, time )
 
             ! project values into physical base and then send it through yacs
-            real(kind=8), pointer, intent(in) :: values(:)
-            type(trandata), pointer, intent(in):: td
+            real(kind=8), pointer :: values(:)
+            type(trandata), pointer:: td
             integer, intent(in) :: itime
             real(kind=8), intent(in) :: time
 
@@ -279,7 +281,7 @@ contains
 !--
 
         subroutine retrieve_values( td, values, itime, time )
-            type(trandata), pointer , intent(in) :: td
+            type(trandata), pointer :: td
             real(kind=8), intent(out) :: values(:)
             real(kind=8), intent(in) :: time
             integer, intent(in) :: itime
@@ -356,7 +358,7 @@ contains
 
 !
         subroutine clean_trandata(mtd)
-            type(trandata), pointer , intent(inout) :: mtd
+            type(trandata), pointer :: mtd
 
             if(.not.associated( mtd )) return 
 
@@ -385,7 +387,7 @@ contains
             integer, intent(in) :: type_cham
             character(len=*), intent(in) :: typ
             integer, intent(in) :: nele
-            type(trandata), pointer, intent(out) :: trd
+            type(trandata), pointer :: trd
 
             integer :: dir
 
@@ -426,7 +428,7 @@ contains
 
         logical function are_trandata_equals( b1, b2)
 
-            type(trandata), pointer, intent(in) :: b1, b2
+            type(trandata), pointer :: b1, b2
 
             are_trandata_equals = .false.
 

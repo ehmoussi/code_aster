@@ -20,8 +20,6 @@
 #
 POURSUITE(CODE='OUI')
 
-TFIN  = 230.0;
-
 ########################################################################
 #
 # POST-TRAITEMENT: VALEURS MAXI DES CONTRAINTES EQUIVALENTES ET DES
@@ -96,9 +94,6 @@ IMPR_TABLE(TABLE=SIGBAS,
 # POST-TRAITEMENT: CONTRAINTES SUR LE BORD DU TROU EN ELASTICITE
 #
 ########################################################################
-
-
-TELAS = 10.0
 
 
 STHETA=MACR_LIGN_COUPE(RESULTAT=RESUNL, INST=TELAS, NOM_CHAM='SIGM_ELNO',

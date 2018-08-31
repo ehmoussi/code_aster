@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -32,7 +32,7 @@ class sd_contact(AsBase):
     nomj = SDNom(fin=8)
 
 #   Longueurs des vecteurs fixes (voir CFMMVD.F)
-    zpari = 29
+    zpari = 30
     zparr = 6
     zdime = 18
     zmeth = 23
@@ -42,7 +42,7 @@ class sd_contact(AsBase):
     ztypm = 2
     zmaes = 4
     zcmdf = 6
-    zcmcf = 14
+    zcmcf = 16
     zexcl = 3
     zcmxf = 16
     zmesx = 5
@@ -93,6 +93,7 @@ class sd_contact(AsBase):
     COEFG = Facultatif(AsVK8(SDNom(nomj='.UNILATE.COEFG')))
     LISNOE = Facultatif(AsVI(SDNom(nomj='.UNILATE.LISNOE')))
     POINOE = Facultatif(AsVI(SDNom(nomj='.UNILATE.POINOE')))
+    COEFPE = Facultatif(AsVR(SDNom(nomj='.UNILATE.COEFPE')))
 
 #   Infos sur la formulation unilatérale
     def dimeCU(self):

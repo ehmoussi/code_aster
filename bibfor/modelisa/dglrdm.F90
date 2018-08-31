@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -78,6 +78,7 @@ subroutine dglrdm()
 #include "asterfort/getvis.h"
 #include "asterfort/getvr8.h"
 #include "asterfort/getvtx.h"
+#include "asterfort/iunifi.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jeecra.h"
 #include "asterfort/jemarq.h"
@@ -131,7 +132,7 @@ subroutine dglrdm()
     call getvis(' ', 'INFO', scal=impr, nbret=ibid1)
     if (impr .eq. 2) then
         nimpr = 1
-        ifr = 8
+        ifr = iunifi('RESULTAT')
         fichie = ' '
         if (.not. ulexis( impr )) then
             call ulopen(impr, ' ', fichie, 'NEW', 'O')

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,8 +15,7 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
+! aslint: disable=W1504
 !
 #include "asterf_types.h"
 !
@@ -26,7 +25,7 @@ interface
                       amort, lamort, nchar, nveca, lischa,&
                       charge, infoch, fomult, iaadve, ialifo,&
                       nondp, iondp, solveu, iinteg, t0,&
-                      nume, baseno, numrep)
+                      nume, numrep)
         character(len=8) :: result
         character(len=24) :: modele
         character(len=24) :: numedd
@@ -53,7 +52,6 @@ interface
         integer :: iinteg
         real(kind=8) :: t0
         integer :: nume
-        character(len=8) :: baseno
         integer :: numrep
     end subroutine dltlec
 end interface

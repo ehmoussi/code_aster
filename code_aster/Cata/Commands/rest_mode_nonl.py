@@ -34,7 +34,7 @@ REST_MODE_NONL=OPER(nom="REST_MODE_NONL", op=63,
          fr=tr("Post traitement de mode_non_line : récuperation résultats"),
 
          MODE_NON_LINE    =SIMP(statut='o',typ=table_container,max=1),
-         TYPE_RESU    =SIMP(statut='o',typ='TXM',into=('MODE_MECA','DYNA_TRANS'),defaut='DYNA_TRANS',max=1),
+         TYPE_RESU    =SIMP(statut='f',typ='TXM',into=('MODE_MECA','DYNA_TRANS'),defaut='DYNA_TRANS',max=1),
          NUME_ORDRE      =SIMP(statut='o',typ='I',max=1),
          b_dyna_trans  =BLOC(condition="""equal_to("TYPE_RESU", 'DYNA_TRANS')""",
                 NB_INST =SIMP(statut='f',typ='I',max=1,defaut=512),),

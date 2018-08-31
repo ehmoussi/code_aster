@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -36,9 +36,10 @@ IGNORE_ALARM=('MODELE1_63'),DEBUG=_F(SDVERI='OUI'))
 #  PLAQUE AVEC CONTACT ET FROTTEMENT SUR UN PLAN RIGIDE
 #......................................................................
 
-PRE_GIBI()
 #
-MA=LIRE_MAILLAGE(FORMAT="ASTER",VERI_MAIL=_F(VERIF='OUI'),)
+MA = LIRE_MAILLAGE(FORMAT='GIBI',
+                   UNITE=19,
+                   )
 #
 MO=AFFE_MODELE(MAILLAGE=MA,
                AFFE=_F(TOUT = 'OUI',

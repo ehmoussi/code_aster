@@ -65,7 +65,7 @@ CALC_FERRAILLAGE=OPER(nom="CALC_FERRAILLAGE",op=175,sd_prod=calc_ferraillage_pro
 #====
 #
          TYPE_COMB    =SIMP(statut='o',typ='TXM',into=('ELU','ELS')),
-         CODIFICATION =SIMP(statut='o',typ='TXM', defaut='UTILISATEUR',into=('UTILISATEUR','BAEL91','EC2')),
+         CODIFICATION =SIMP(statut='f',typ='TXM', defaut='UTILISATEUR',into=('UTILISATEUR','BAEL91','EC2')),
 
          b_UTILISATEUR = BLOC(condition = """ equal_to("CODIFICATION", 'UTILISATEUR')""",
                           fr=tr("utilisation sans réglementation spécifique. Version aster <= 13"),

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -36,11 +36,11 @@ implicit none
 #include "asterfort/utmess.h"
 !
 type(ROM_DS_Empi), intent(in) :: ds_empi
-integer, pointer, intent(out) :: v_equa(:)
+integer, pointer :: v_equa(:)
 character(len=24), intent(in) :: nume_dof
 character(len=24), optional, intent(in) :: grnode_
 integer, optional, intent(in) :: nb_node_
-integer, optional, pointer, intent(in) :: v_list_node_(:)
+integer, pointer, optional :: v_list_node_(:)
 !
 ! --------------------------------------------------------------------------------------------------
 !

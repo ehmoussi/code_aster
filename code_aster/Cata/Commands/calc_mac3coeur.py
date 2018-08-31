@@ -40,8 +40,8 @@ CALC_MAC3COEUR = MACRO(nom="CALC_MAC3COEUR",
          # TYPE DE COEUR A CONSIDERER
          TABLE_N      = SIMP(statut='o',typ=table_sdaster),         # TABLE INITIALE DES DAMAC A L INSTANT N
          MAILLAGE_N   = SIMP(statut='f',typ=maillage_sdaster),      # MAILLAGE EN ATTENDANT MIEUX ???
-         RESU_DEF     = SIMP(statut='f',typ=CO,defaut=None),
-         FLUENCE_CYCLE = SIMP(statut='o',typ='R',max=1,defaut=0.),
+         RESU_DEF     = SIMP(statut='f',typ=CO),
+         FLUENCE_CYCLE = SIMP(statut='f',typ='R',max=1,defaut=0.),
 
          ETAT_INITIAL = FACT(statut='f',max=1,
                           fr=tr("Estimation d'un etat initial a partir d un DAMAC"),

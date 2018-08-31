@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -26,23 +26,26 @@
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'), DEBUG=_F(SDVERI='OUI'))
 
-MA=LIRE_MAILLAGE(FORMAT="ASTER",  )
+MA = LIRE_MAILLAGE(FORMAT='ASTER',
+                   )
 
 # lecture du maillage de la premiere section de type couronne
 # Epaisseur, Rayon
 E2=0.006
 R2=(2.E-04 + pi*E2*E2) / (2.*pi*E2)
 
-PRE_GMSH(UNITE_GMSH=18, UNITE_MAILLAGE=21,)
-MASEC1=LIRE_MAILLAGE(FORMAT="ASTER",UNITE=21,)
+MASEC1 = LIRE_MAILLAGE(FORMAT='GMSH',
+                       UNITE=18,
+                       )
 
 # lecture du maillage de la deuxieme section de type couronne
 # Epaisseur, Rayon
 E1=0.005
 R1=(1.E-04 + pi*E1*E1) / (2.*pi*E1)
 
-PRE_GMSH(UNITE_GMSH=19, UNITE_MAILLAGE=22,)
-MASEC2=LIRE_MAILLAGE(FORMAT="ASTER",UNITE=22,)
+MASEC2 = LIRE_MAILLAGE(FORMAT='GMSH',
+                       UNITE=19,
+                       )
 
 MOD=AFFE_MODELE(   MAILLAGE=MA,
                        AFFE=_F(  TOUT = 'OUI',  PHENOMENE = 'MECANIQUE',

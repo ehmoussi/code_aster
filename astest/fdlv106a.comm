@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -35,10 +35,10 @@ DEBUT(CODE=_F(
 # <MODELE1_64> : DANS UN MODELE, IL N'Y A AUCUN ELEMENT AVEC AVEC RIGIDITE
 #  LE MODELE PROVOQUANT CES ALARMES EST UN MODELE D'INTERFACE
 
-PRE_IDEAS(UNITE_IDEAS=19,
-          UNITE_MAILLAGE=23,);
 
-MAYA=LIRE_MAILLAGE(FORMAT="ASTER",UNITE=23,);
+MAYA = LIRE_MAILLAGE(FORMAT='IDEAS',
+                     UNITE=19,
+                     )
 
 # CARACTERISTIQUES DE LA STRUCTURE: CYLINDRES CONCENTRIQUES
 # SEPARES PAR UN FLUIDE ANNULAIRE
@@ -363,10 +363,10 @@ TEST_RESU(OBJET=(_F(VALE_CALC= 1.66014403E+09,
 # SYSTEME A UN DDL EQUIVALENT SUR LEQUEL ON CALCULE LES MODES
 # COMPLEXES
 
-PRE_IDEAS(UNITE_IDEAS=21,
-          UNITE_MAILLAGE=22,);
 
-MAYA2=LIRE_MAILLAGE(FORMAT="ASTER",UNITE=22,);
+MAYA2 = LIRE_MAILLAGE(FORMAT='IDEAS',
+                      UNITE=21,
+                      )
 
 SYSTEQ=AFFE_MODELE(MAILLAGE=MAYA2,
                    AFFE=_F(TOUT='OUI',

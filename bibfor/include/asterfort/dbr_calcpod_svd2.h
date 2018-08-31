@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -23,9 +23,9 @@ interface
         use Rom_Datastructure_type
         integer, intent(in) :: p
         integer, intent(in) :: incr_end
-        real(kind=8), pointer, intent(in) :: g(:)
-        real(kind=8), intent(out), pointer :: b(:)
-        real(kind=8), intent(out), pointer :: s(:)
+        real(kind=8), pointer :: g(:)
+        real(kind=8), pointer :: b(:)
+        real(kind=8), pointer :: s(:)
         integer, intent(out) :: nb_sing
     end subroutine dbr_calcpod_svd2
 end interface

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -507,6 +507,21 @@ implicit none
         if (cont_form .eq. 2) then
             call jeveuo(sdcont_caracf, 'L', vr = v_sdcont_caracf)
             vale_r = v_sdcont_caracf(zcmcf*(i_zone-1)+14)
+        else
+            ASSERT(.false.)
+        endif
+    else if (question.eq.'GLIS_MAXI') then
+        if (cont_form .eq. 2) then
+            call jeveuo(sdcont_caracf, 'L', vr = v_sdcont_caracf)
+            vale_r = v_sdcont_caracf(zcmcf*(i_zone-1)+16)
+            if (vale_r .ge. 1000) vale_r = -1
+        else
+            ASSERT(.false.)
+        endif
+    else if (question.eq.'GRAND_GLIS') then
+        if (cont_form .eq. 2) then
+            call jeveuo(sdcont_caracf, 'L', vr = v_sdcont_caracf)
+            vale_r = v_sdcont_caracf(zcmcf*(i_zone-1)+15)
         else
             ASSERT(.false.)
         endif
