@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -29,7 +29,7 @@ interface
         integer, intent(in) :: list_elem_mast(nb_elem_mast)
         integer, intent(in) :: nb_elem_slav
         integer, intent(in) :: list_elem_slav(nb_elem_slav)
-        integer, pointer, intent(inout) :: elem_slav_flag(:)
+        integer, pointer :: elem_slav_flag(:)
         integer, intent(out) :: nb_mast_start
         integer, intent(out) :: elem_mast_start(nb_elem_slav)
         integer, intent(out) :: nb_slav_start

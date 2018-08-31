@@ -18,7 +18,7 @@
 ! person_in_charge: mickael.abbas at edf.fr
 !
 subroutine nmctcc(mesh      , model_    , ds_material, nume_inst, &
-                  sderro    , ds_measure, sddisc, hval_incr, hval_algo,&
+                  sderro    ,  sddisc, hval_incr, hval_algo,&
                   ds_contact, ds_constitutive   , list_func_acti)
 !
 use NonLin_Datastructure_type
@@ -45,7 +45,6 @@ character(len=24), intent(in) :: model_
 type(NL_DS_Material), intent(in) :: ds_material
 integer, intent(in) :: nume_inst
 character(len=24), intent(in) :: sderro
-type(NL_DS_Measure), intent(inout) :: ds_measure
 character(len=19), intent(in) :: sddisc
 character(len=19), intent(in) :: hval_incr(*)
 character(len=19), intent(in) :: hval_algo(*)
@@ -66,7 +65,6 @@ integer, intent(in) :: list_func_acti(*)
 ! In  ds_material      : datastructure for material parameters
 ! In  nume_inst        : index of current time step
 ! In  sderro           : datastructure for errors during algorithm
-! IO  ds_measure       : datastructure for measure and statistics management
 ! In  sddisc           : datastructure for time discretization
 ! In  hval_incr        : hat-variable for incremental values fields
 ! In  hval_algo        : hat-variable for algorithms fields
@@ -119,10 +117,15 @@ integer, intent(in) :: list_func_acti(*)
 !
 ! - Compute convergence criterion
 ! 
-    if (iter_cont_mult .eq. -1) then
+    !on laisse ITER_CONT_MULT pour XFEM
+    if (l_cont_xfem .or. l_cont_xfem_gg) then 
+        if (iter_cont_mult .eq. -1) then
+            iter_cont_maxi = cfdisi(ds_contact%sdcont_defi, 'ITER_CONT_MAXI')
+        else
+            iter_cont_maxi = iter_cont_mult*nb_cont_poin
+        endif
+    else 
         iter_cont_maxi = cfdisi(ds_contact%sdcont_defi, 'ITER_CONT_MAXI')
-    else
-        iter_cont_maxi = iter_cont_mult*nb_cont_poin
     endif
 !
 ! - Management of contact loop
@@ -136,24 +139,28 @@ integer, intent(in) :: list_func_acti(*)
                         list_func_acti)
         endif
     else if (l_cont_cont) then
-        call mmstat(mesh  , iter_newt, nume_inst     , ds_measure,&
+        call mmstat(mesh  , iter_newt, nume_inst     , &
                     sddisc, disp_curr, disp_cumu_inst, ds_contact)
     else
         ASSERT(.false.)
     endif
+!
+! - State of contact loop
+!
+    call mmbouc(ds_contact, 'Cont', 'Read_Counter'  , loop_cont_count)
+    call mmbouc(ds_contact, 'Cont', 'Is_Convergence', loop_state_ = loop_cont_conv)
+    call mmbouc(ds_contact, 'Cont', 'Get_Vale' , loop_vale_ = loop_cont_vale)
 !
 ! - Flip-flop: forced convergence
 !
     if (l_cont_cont) then
         call mm_cycl_flip(ds_contact, cycl_flip)
         if (cycl_flip) then
+            if ((ds_contact%resi_pressure .lt. 1.d-4*ds_contact%cont_pressure&
+                 .and. loop_cont_count .ge. 2) .and. .not. loop_cont_conv)  &
             call mmbouc(ds_contact, 'Cont', 'Set_Convergence')
         endif
     endif
-!
-! - State of contact loop
-!
-    call mmbouc(ds_contact, 'Cont', 'Read_Counter'  , loop_cont_count)
     call mmbouc(ds_contact, 'Cont', 'Is_Convergence', loop_state_ = loop_cont_conv)
 !
 ! - Convergence of contact loop

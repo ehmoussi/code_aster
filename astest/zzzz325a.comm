@@ -29,8 +29,9 @@
 #########################################################################
 
 DEBUT(  CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
-PRE_GIBI()
-MA=LIRE_MAILLAGE(FORMAT="ASTER",)
+MA = LIRE_MAILLAGE(FORMAT='GIBI',
+                   UNITE=19,
+                   )
 
 # ORIENTATION DES FACES 'FAC1' et 'FAC2' :
 MA=MODI_MAILLAGE(reuse=MA, MAILLAGE=MA,

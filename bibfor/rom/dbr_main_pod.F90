@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -32,6 +32,8 @@ implicit none
 #include "asterfort/dbr_calcpod_save.h"
 #include "asterfort/dbr_calcpod_redu.h"
 #include "asterfort/romTableSave.h"
+#include "asterfort/infniv.h"
+#include "asterfort/utmess.h"
 !
 character(len=24), intent(in) :: field_iden
 type(ROM_DS_ParaDBR_POD), intent(in) :: ds_para_pod
@@ -51,6 +53,7 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
 !
 ! --------------------------------------------------------------------------------------------------
 !
+    integer :: ifm, niv
     integer :: nb_sing, nb_mode, nb_snap_redu, nb_line_svd, i_snap, nb_mode_maxi
     real(kind=8), pointer :: q(:) => null()
     real(kind=8), pointer :: v(:) => null()
@@ -60,6 +63,7 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
 !
 ! --------------------------------------------------------------------------------------------------
 !
+    call infniv(ifm, niv)
     tabl_name    = ds_para_pod%tabl_name
     nb_snap_redu = ds_para_pod%ds_snap%nb_snap
     nb_mode_maxi = ds_para_pod%nb_mode_maxi
@@ -87,6 +91,9 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
 !
 ! - Save the reduced coordinates in a table
 !
+    if (niv .ge. 2) then
+        call utmess('I', 'ROM5_39', ni = 2, vali = [nb_snap_redu, nb_mode])
+    endif
     do i_snap = 1, nb_snap_redu
         call romTableSave(tabl_name  , nb_mode, v_gamma   ,&
                           nume_snap_ = i_snap)

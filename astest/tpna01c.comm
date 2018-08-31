@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -21,7 +21,6 @@ DEBUT(CODE=_F(
               NIV_PUB_WEB='INTERNET',),
       DEBUG=_F(SDVERI='OUI',),);
 
-PRE_IDEAS();
 
 T20=DEFI_FONCTION(NOM_PARA='INST',NOM_RESU='TEMP',VALE=(0.0,20.0,
                         1200.0,20.0,
@@ -145,7 +144,9 @@ RAYO=DEFI_FONCTION(NOM_PARA='TEMP',VALE=(0.0,12093.210046,
 MATER=DEFI_MATERIAU(THER_NL=_F(LAMBDA=CONDUC,
                                BETA=ENTHAL,),);
 
-MAIL=LIRE_MAILLAGE(FORMAT="ASTER",);
+MAIL = LIRE_MAILLAGE(FORMAT='IDEAS',
+                     UNITE=19,
+                     )
 
 CHMAT=AFFE_MATERIAU(MAILLAGE=MAIL,
                     AFFE=_F(TOUT='OUI',

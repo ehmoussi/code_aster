@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -34,10 +34,10 @@ implicit none
 #include "asterfort/jemarq.h"
 #include "asterfort/utmess.h"
 !
-real(kind=8), intent(in), pointer :: v_sdlist_linfor(:)
-real(kind=8), intent(in), pointer :: v_sdlist_eevenr(:)
-character(len=16), intent(in), pointer :: v_sdlist_eevenk(:)
-real(kind=8), intent(in), pointer :: v_sdlist_esubdr(:)
+real(kind=8), pointer :: v_sdlist_linfor(:)
+real(kind=8), pointer :: v_sdlist_eevenr(:)
+character(len=16), pointer :: v_sdlist_eevenk(:)
+real(kind=8), pointer :: v_sdlist_esubdr(:)
 integer, intent(in) :: i_fail_save
 character(len=16), intent(in) :: event_typek
 real(kind=8), intent(in) :: vale_ref
@@ -167,22 +167,24 @@ real(kind=8), intent(in) :: coef_maxi
 !
 ! - Parameters for ACTION = 'DECOUPE'
 !
-    if (subd_methode .eq. 'MANUEL') then
-        v_sdlist_esubdr(SIZE_LESUR*(i_fail_save-1)+1) = 1.d0
-        v_sdlist_esubdr(SIZE_LESUR*(i_fail_save-1)+2) = subd_pas
-        v_sdlist_esubdr(SIZE_LESUR*(i_fail_save-1)+3) = subd_pas_mini
-        v_sdlist_esubdr(SIZE_LESUR*(i_fail_save-1)+4) = subd_niveau
-    else if (subd_methode.eq.'AUTO') then
-        v_sdlist_esubdr(SIZE_LESUR*(i_fail_save-1)+1) = 2.d0
-        v_sdlist_esubdr(SIZE_LESUR*(i_fail_save-1)+3) = subd_pas_mini
-        v_sdlist_esubdr(SIZE_LESUR*(i_fail_save-1)+5) = subd_inst
-        v_sdlist_esubdr(SIZE_LESUR*(i_fail_save-1)+6) = subd_duree
-        if (subd_auto .eq. 'COLLISION') then
-            v_sdlist_esubdr(SIZE_LESUR*(i_fail_save-1)+10) = 1.d0
-        else if (subd_auto.eq.'EXTRAPOLE') then
-            v_sdlist_esubdr(SIZE_LESUR*(i_fail_save-1)+10) = 2.d0
-        else
-            ASSERT(.false.)
+    if (action_typek .ne. failActionKeyword(FAIL_ACT_STOP)) then
+        if (subd_methode .eq. 'MANUEL') then
+            v_sdlist_esubdr(SIZE_LESUR*(i_fail_save-1)+1) = 1.d0
+            v_sdlist_esubdr(SIZE_LESUR*(i_fail_save-1)+2) = subd_pas
+            v_sdlist_esubdr(SIZE_LESUR*(i_fail_save-1)+3) = subd_pas_mini
+            v_sdlist_esubdr(SIZE_LESUR*(i_fail_save-1)+4) = subd_niveau
+        else if (subd_methode.eq.'AUTO') then
+            v_sdlist_esubdr(SIZE_LESUR*(i_fail_save-1)+1) = 2.d0
+            v_sdlist_esubdr(SIZE_LESUR*(i_fail_save-1)+3) = subd_pas_mini
+            v_sdlist_esubdr(SIZE_LESUR*(i_fail_save-1)+5) = subd_inst
+            v_sdlist_esubdr(SIZE_LESUR*(i_fail_save-1)+6) = subd_duree
+            if (subd_auto .eq. 'COLLISION') then
+                v_sdlist_esubdr(SIZE_LESUR*(i_fail_save-1)+10) = 1.d0
+            else if (subd_auto.eq.'EXTRAPOLE') then
+                v_sdlist_esubdr(SIZE_LESUR*(i_fail_save-1)+10) = 2.d0
+            else
+                ASSERT(.false.)
+            endif
         endif
     endif
 !

@@ -26,7 +26,7 @@ interface
                                         type_cpla_in_  , type_cpla_out_)
         use Behaviour_type
         character(len=8), intent(in) :: mesh
-        integer, intent(in), pointer :: v_model_elem(:)
+        integer, pointer :: v_model_elem(:)
         character(len=16), intent(in) :: rela_comp
         character(len=16), intent(in) :: kit_comp(4)
         aster_logical, intent(out) :: l_comp_external

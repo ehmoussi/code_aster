@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -205,7 +205,10 @@ Contactez le support technique.
 """),
 
     57 : _(u"""
- Il n'y a pas de mailles a projeter.
+ Aucune des mailles du maillage 1 fournies ne permet d'effectuer la projection souhaitée.    
+ 
+ Conseil :
+    Vérifiez que les mailles fournies ne sont pas toutes ponctuelles (POI1).
 """),
 
     58 : _(u"""

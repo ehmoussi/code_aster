@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -47,7 +47,7 @@ type(ROM_DS_Empi), intent(in) :: ds_empi
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    character(len=8) :: mesh, model, gran_name, node_name, cmp_name
+    character(len=8) :: mesh, model, gran_name, node_name
     character(len=16) :: modeli
     character(len=19) :: pfchno
     integer :: nb_dime, nb_cmp, nb_cmp_maxi, nb_equa
@@ -147,8 +147,7 @@ type(ROM_DS_Empi), intent(in) :: ds_empi
         l_find    = .false._1
         do i_cmp = 1, nb_cmp_chck
             if (nume_cmp .ne. indx_cmp_chck(i_cmp)) then
-                cmp_name = v_list_cmp(nume_cmp)
-                if (cmp_name .eq. 'LAGR') then
+                if (nume_cmp .lt. 0) then
                     call utmess('F', 'ROM5_22')
                 endif
             else

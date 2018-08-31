@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -64,7 +64,7 @@ implicit none
     nb_cont_poin = cfdisi(ds_contact%sdcont_defi,'NTPC' )
     do i_cont_poin = 1, nb_cont_poin
         cycl_stat = p_sdcont_cyceta(4*(i_cont_poin-1)+cycl_index)
-        if (cycl_stat .gt. 0) cycl_flip = .true.
+        if (cycl_stat .eq. -10) cycl_flip = .true.
     end do
 !
 end subroutine

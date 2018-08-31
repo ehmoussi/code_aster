@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -25,6 +25,7 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/assert.h"
+#include "asterfort/dismoi.h"
 #include "asterfort/infdbg.h"
 #include "asterfort/cfdisi.h"
 #include "asterfort/cfdisl.h"
@@ -34,8 +35,8 @@ implicit none
 #include "asterfort/lac_rela.h"
 #include "asterfort/wkvect.h"
 !
-character(len=8), intent(in) :: mesh
-character(len=8), intent(in) :: model
+    character(len=8), intent(in) :: mesh
+    character(len=8), intent(in) :: model
 type(NL_DS_Contact), intent(inout) :: ds_contact
 !
 ! --------------------------------------------------------------------------------------------------
@@ -59,6 +60,7 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
     aster_logical :: l_cont, l_unil
     aster_logical :: l_form_disc, l_form_cont, l_form_xfem, l_form_lac
     aster_logical :: l_cont_xfem_gg, l_edge_elim, l_all_verif, l_iden_rela
+    aster_logical :: l_unil_pena
     integer :: nt_patch
     integer :: i_exist
     character(len=8), pointer :: v_load_type(:) => null()
@@ -224,6 +226,15 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
         if (l_form_disc) then
             ds_contact%l_pair       = ASTER_TRUE
             ds_contact%l_first_geom = ASTER_TRUE
+        endif
+!
+! ----- Special for UNIL contact
+!
+        if (l_unil) then
+           l_unil_pena = cfdisl(ds_contact%sdcont_defi, 'UNIL_PENA')
+           if (l_unil_pena) then
+             ds_contact%nume_dof_unil = '&&NMASUN.NUME'
+           endif
         endif
 !
 ! ----- Save parameters

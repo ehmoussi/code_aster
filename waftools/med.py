@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -52,8 +52,10 @@ def options(self):
 def configure(self):
     opts = self.options
     try:
+        self.env.stash()
         self.check_hdf5()
     except Errors.ConfigurationError:
+        self.env.revert()
         if opts.enable_hdf5 == True:
             raise
         self.define('_DISABLE_HDF5', 1)
@@ -64,8 +66,10 @@ def configure(self):
         self.define('HAVE_HDF5', 1)
 
     try:
+        self.env.stash()
         self.check_med()
-    except Errors.ConfigurationError, err:
+    except Errors.ConfigurationError:
+        self.env.revert()
         if opts.enable_med == True:
             raise
         self.define('_DISABLE_MED', 1)

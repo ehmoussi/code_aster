@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,10 +19,9 @@
 !
 !
 interface
-    subroutine rc32s0(option, sig, lieu, trescamax)
+    subroutine rc32s0(option, lieu, seis)
         character(len=4) :: option
-        real(kind=8) :: sig(6)
         character(len=4) :: lieu
-        real(kind=8) :: trescamax
+        real(kind=8) :: seis(72)
     end subroutine rc32s0
 end interface

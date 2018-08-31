@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -39,6 +39,6 @@ CALC_PRESSION=MACRO(nom="CALC_PRESSION",
          GROUP_MA        =SIMP(statut='o',typ=grma ,validators=NoRepeat(),max='**'),
          INST            =SIMP(statut='o',typ='R',max='**'),
          MODELE          =SIMP(statut='f',typ=modele_sdaster),
-         GEOMETRIE      = SIMP(statut='o',typ='TXM',defaut="INITIALE",into=("INITIALE","DEFORMEE")),
+         GEOMETRIE      = SIMP(statut='f',typ='TXM',defaut="INITIALE",into=("INITIALE","DEFORMEE")),
          INFO            =SIMP(statut='f',typ='I',defaut=1,into=(1,2)),
 );

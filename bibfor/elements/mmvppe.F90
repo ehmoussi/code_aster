@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,10 +18,15 @@
 
 subroutine mmvppe(typmae, typmam, iresog, ndim, nne,&
                   nnm, nnl, nbdm, laxis, ldyna,&
-                  lpenac, jeusup, ffe, ffm, ffl,&
+                  lpenac, jeusup, ffe, ffm, dffm, ffl,&
                   norm, tau1, tau2, mprojt, jacobi,&
                   wpg, dlagrc, dlagrf, jeu, djeu,&
-                  djeut, l_previous)
+                  djeut, mprojn,&
+                  mprt1n, mprt2n, gene11, gene21,&
+                  gene22, kappa, h, vech1, vech2,&
+                  a, ha, hah, mprt11, mprt21,&
+                  mprt22,taujeu1, taujeu2, &
+                  dnepmait1,dnepmait2, l_previous,granglis)
 !
 ! person_in_charge: ayaovi-dzifa.kudawoo at edf.fr
 !
@@ -36,6 +41,7 @@ subroutine mmvppe(typmae, typmam, iresog, ndim, nne,&
 #include "asterfort/mmlagm.h"
 #include "asterfort/mmmjac.h"
 #include "asterfort/mmmjeu.h"
+#include "asterfort/mmcalg.h"
 #include "asterfort/mmreac.h"
 #include "asterfort/mmvitm.h"
 #include "asterfort/utmess.h"
@@ -51,7 +57,8 @@ subroutine mmvppe(typmae, typmam, iresog, ndim, nne,&
     real(kind=8) :: jacobi, wpg
     real(kind=8) :: jeusup
     real(kind=8) :: dlagrc, dlagrf(2)
-    real(kind=8) :: jeu, djeu(3), djeut(3)
+    real(kind=8) :: jeu, djeu(3), djeut(3),ddepmam(9, 3)
+    integer      :: granglis
 !
 ! ----------------------------------------------------------------------
 !
@@ -93,7 +100,7 @@ subroutine mmvppe(typmae, typmam, iresog, ndim, nne,&
 !
 ! ----------------------------------------------------------------------
 !
-    integer :: jpcf,i
+    integer :: jpcf
     integer :: jgeom, jdepde, jdepm
     integer :: jaccm, jvitm, jvitp
     real(kind=8) :: geomae(9, 3), geomam(9, 3)
@@ -107,7 +114,19 @@ subroutine mmvppe(typmae, typmam, iresog, ndim, nne,&
     real(kind=8) :: dffl(2, 9), ddffl(3, 9)
     real(kind=8) :: xpc, ypc, xpr, ypr
     real(kind=8) :: mprojn(3, 3)
-    real(kind=8) :: tmp,vec(3),valmax,valmin
+    real(kind=8) :: tmp
+    
+    real(kind=8) :: dnepmait1 ,dnepmait2 ,taujeu1,taujeu2
+    
+    real(kind=8) :: mprt1n(3, 3), mprt2n(3, 3)
+
+    real(kind=8) :: mprt11(3, 3), mprt21(3, 3), mprt22(3, 3)
+!
+    real(kind=8) :: gene11(3, 3), gene21(3, 3), gene22(3, 3)
+    
+    real(kind=8) :: kappa(2, 2), a(2, 2), h(2, 2), ha(2, 2), hah(2, 2)
+!
+    real(kind=8) :: vech1(3), vech2(3)
 !
 ! ----------------------------------------------------------------------
 !
@@ -128,7 +147,10 @@ subroutine mmvppe(typmae, typmam, iresog, ndim, nne,&
     wpg = zr(jpcf-1+11)
     ppe = 0.d0
     tmp=0.0
-    valmax=0.0
+    djeut = 0.
+    ddeple = 0.
+    ddeplm = 0.
+    ddepmam = 0.
 !
 ! TRAITEMENT CYCLAGE : ON REMPLACE LES VALEURS DE JEUX et DE NORMALES
 !                      POUR AVOIR UNE MATRICE CONSISTANTE
@@ -182,7 +204,8 @@ subroutine mmvppe(typmae, typmam, iresog, ndim, nne,&
 !     NEWTON_GENE INEXACT --> 0.0d0<PPE<1.0d0
 !
     call mmreac(nbdm, ndim, nne, nnm, jgeom,&
-                jdepm, jdepde, ppe, geomae, geomam)
+                jdepm, jdepde, ppe, geomae, geomam,ddepmam)
+!    write (6,*) "ddepmam",ddepmam
 !
 ! --- CALCUL DES COORDONNEES ACTUALISEES
 !
@@ -217,37 +240,6 @@ subroutine mmvppe(typmae, typmam, iresog, ndim, nne,&
                 ddeple, ddeplm, mprojt, jeu, djeu,&
                 djeut, iresog)
 
-    vec(1) = (geomae(1,1) - geomae(2,1))**2 
-    vec(2) = (geomae(1,2) - geomae(2,2))**2
-    vec(3) = (geomae(1,3) - geomae(2,3))**2
-    valmax =  sqrt(vec(1)+vec(2)+vec(3)) 
-    valmin =  sqrt(vec(1)+vec(2)+vec(3)) 
- 
- ! Evaluation de la plus grande longueur de la maille
-     if (lpenac) then
-         do  i = 3,9
-             vec(1) = (geomae(1,1) - geomae(i,1))**2 
-             vec(2) = (geomae(1,2) - geomae(i,2))**2
-             vec(3) = (geomae(1,3) - geomae(i,3))**2
-             tmp =  sqrt(vec(1)+vec(2)+vec(3))
-    
-             if (tmp .le. valmin)  then
-                 valmin = tmp
-             elseif  (tmp .ge. valmin)  then
-                 valmax = tmp 
-             endif
-         enddo
-         
-         if (valmin .lt. 1.d-10) then
-             tmp = jeu/valmax
-         else 
-             tmp = jeu/valmin
-         endif
-    
-!         if ( (jeu .gt. valmin)  )  then 
-!              call utmess('A', 'CONTACT_22',sr=tmp)
-!         endif   
-    endif
 
 
 !
@@ -268,6 +260,19 @@ subroutine mmvppe(typmae, typmam, iresog, ndim, nne,&
 !       dlagrf(2) = zr(jpcf-1+26)
         
     endif
+
+
+!     if (iresog .eq. 1) then
+
+        call mmcalg(ndim, nnm, dffm, ddffm, geomam, tau1,&
+                    tau2, jeu,djeu , ddepmam , norm, gene11, gene21,&
+                    gene22, kappa, h, vech1, vech2,&
+                    a, ha, hah, mprt11, mprt21,&
+                    mprt22, mprt1n, mprt2n, granglis,taujeu1, taujeu2, &
+                  dnepmait1,dnepmait2)
+
+!     endif
+
 
 !
 !

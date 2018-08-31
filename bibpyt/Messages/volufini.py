@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -26,7 +26,10 @@ Le sommet de numéro global %(i1)i n'appartient pas à la maille %(i2)i
 """),
 
     3 : _(u"""
-Le nombre de voisins %(i1)i est trop grand
+Une des modélisations utilisée nécessite la création d'un voisinage des mailles.
+Or, pour une maille donnée il n'est pas autorisé de dépasser le seuil de 200 voisines.
+
+Avec le maillage fourni, ce seuil est dépassé pour la maille %(k1)s.
 """),
 
     4 : _(u"""
@@ -36,9 +39,11 @@ Le nombre de sommets communs %(i1)i est trop grand
     5 : _(u"""
 Le nombre de mailles %(i1)i est inférieur à un.
 """),
+
     6 : _(u"""
 Le type de voisinage %(k1)s est inconnu.
 """),
+
     7 : _(u"""
 Le type de voisinage %(k1)s a une longueur %(i1)i trop grande
 """),

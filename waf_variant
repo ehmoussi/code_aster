@@ -18,9 +18,13 @@
 # --------------------------------------------------------------------
 
 export WAF_SUFFIX=`basename $0 | sed 's/^waf_//'`
+if [ ${WAF_SUFFIX} = "waf" ]; then
+    WAF_SUFFIX=$(readlink $0 | sed 's/^waf_//')
+fi
+
 export WAFLOCK=.lock-${WAF_SUFFIX}_build
 if [ `echo "$*" | grep -c -- --out` -eq 0 ]; then
-    ./waf "$@" --out=build/${WAF_SUFFIX}
+    ./waf.main "$@" --out=build/${WAF_SUFFIX}
 else
-    ./waf "$@"
+    ./waf.main "$@"
 fi

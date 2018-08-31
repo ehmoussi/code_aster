@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -21,13 +21,12 @@
 #include "asterf_types.h"
 !
 interface
-    function ischar_iden(v_load_info, i_load, nb_load, load_type_1, load_type_2, load_name)
-        integer, intent(in), pointer :: v_load_info(:)
+    function ischar_iden(v_load_info, i_load, nb_load, load_type_1, load_type_2)
+        integer, pointer :: v_load_info(:)
         integer, intent(in) :: i_load
         integer, intent(in) :: nb_load
         aster_logical :: ischar_iden
         character(len=4), intent(in) :: load_type_1
         character(len=4), intent(in) :: load_type_2
-        character(len=24), optional, intent(in) :: load_name
     end function ischar_iden
 end interface

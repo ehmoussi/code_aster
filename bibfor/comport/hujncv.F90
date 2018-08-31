@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -30,9 +30,9 @@ subroutine hujncv(rouhuj, nitimp, iter, ndt, nvi,&
     write(umess,2001)
     2001   format(t3,' ITER',t10,' ERR1=DDY',&
      &          t30,'ERR2=DY',t50,'ERR=DDY/DY')
-    do 300 i = 1, min(nitimp, iter)
+    do i = 1, min(nitimp, iter)
         write(umess,1000) i,erimp(i,1),erimp(i,2),erimp(i,3)
-300  continue
+    enddo
     1000   format(t3,i4,t10,e12.5,&
      &          t30,e12.5,t50,e12.5)
     call utmess('F', 'MODELISA9_10')

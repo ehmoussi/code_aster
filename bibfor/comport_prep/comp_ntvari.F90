@@ -44,7 +44,7 @@ character(len=19), intent(in) :: compor_info
 integer, intent(out) :: nt_vari
 integer, intent(out) :: nb_vari_maxi
 integer, intent(out) :: nb_zone
-type(Behaviour_External), pointer, intent(out) :: v_exte(:)
+type(Behaviour_External), pointer :: v_exte(:)
 !
 ! --------------------------------------------------------------------------------------------------
 !

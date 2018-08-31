@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -68,7 +68,7 @@ implicit none
     integer, intent(in) :: list_elem_mast(nb_elem_mast)
     integer, intent(in) :: list_elem_slav(nb_elem_slav)
     integer, intent(inout) :: nb_pair_zone
-    integer, pointer, intent(inout) :: list_pair_zone(:)
+    integer, pointer :: list_pair_zone(:)
     integer, intent(in) :: i_proc
     integer, intent(in) :: nb_proc
     character(len=24), intent(in) :: pair_method

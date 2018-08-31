@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -96,7 +96,7 @@ cata_msg = {
 
    38 : _(u"""Création de la table pour sauver les coordonnées réduites."""),
 
-   39 : _(u"""Sauvegarde des coordonnées réduites pour le calcul non-linéaire avec réduction de modèle."""),
+   39 : _(u"""Sauvegarde des %(i1)d coordonnées réduites pour %(i2)d modes empiriques."""),
 
    40 : _(u"""Résolution du problème réduit."""),
 
@@ -125,6 +125,10 @@ cata_msg = {
    52 : _(u"""Le paramètre %(k1)s vaut %(r1)19.12e."""),
 
    53 : _(u"""Le nombre de composantes dans le modèle est incorrect. Vérifiez que vous n'avez pas de chargements de Dirichlet appliqués avec AFFE_CHAR_MECA."""),
+
+   54 : _(u"""Il n'y a pas de modèle attaché à la structure de données résultat en entrée, il faut renseigner le modèle dans la commande avec le mot-clef MODELE."""),
+
+   55 : _(u"""    Sauvegarde des coordonnées réduites pour %(i1)d modes empiriques dans la table."""),
 
    60 : _(u"""Calcul par la méthode GLOUTON."""),
 

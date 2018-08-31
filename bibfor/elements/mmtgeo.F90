@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,9 +18,10 @@
 
 subroutine mmtgeo(phasep,ndim  ,nne   ,nnm   ,mprt1n, &
               mprt2n,mprojn,mprt11,mprt21,mprt22, &
-          wpg   ,ffe   ,ffm   ,dffm  ,jacobi, &
+          wpg   ,ffe   ,ffm   ,dffm  ,ddffm,jacobi, &
           coefac,jeu   ,dlagrc,kappa ,vech1 , &
-          vech2 ,h        ,hah  , &
+          vech2 ,h        ,  &
+                        coefff,granglis,&
           matree,matrmm,matrem, matrme)
 !
 ! person_in_charge: mickael.abbas at edf.fr
@@ -29,16 +30,19 @@ subroutine mmtgeo(phasep,ndim  ,nne   ,nnm   ,mprt1n, &
     implicit     none
 #include "asterfort/matini.h"
 #include "asterfort/mmgnuu.h"
+#include "asterfort/mmgtuu.h"
 
     character(len=9) :: phasep
     
     integer :: ndim, nne, nnm
+    integer :: granglis
     
     real(kind=8) :: mprojn(3, 3)
     real(kind=8) :: mprt1n(3, 3), mprt2n(3, 3)
     real(kind=8) :: mprt11(3, 3), mprt21(3, 3), mprt22(3, 3)
     
-    real(kind=8) :: ffe(9), ffm(9), dffm(2, 9)
+    real(kind=8) :: ffe(9), ffm(9), dffm(2, 9),ddffm(3,9)
+    real(kind=8) :: coefff
     real(kind=8) :: wpg, jacobi
     real(kind=8) :: coefac, jeu, dlagrc
     
@@ -106,10 +110,15 @@ subroutine mmtgeo(phasep,ndim  ,nne   ,nnm   ,mprt1n, &
           vech2 ,h     ,hah   , &
           matree,matrmm,matrem, matrme)
    
-    elseif (phasep(1:4) .eq. 'GLIS') then
+    elseif (phasep(1:4) .eq. 'GLIS' .and. granglis .eq. 1) then
 !Implementation de la deuxième varitation de xi
 ! ROUTINE DE CALCUL SUPPLEMENTAIRE EN FROTTEMENT : INEXISTANT POUR LE MOMENT 
-
+      call mmgtuu(ndim  ,nne   ,nnm   ,mprt1n, &
+                  mprt2n,mprt11,mprt21,mprt22, &
+                  wpg   ,ffe   ,ffm   ,dffm  ,ddffm,jacobi, &
+                  coefac,jeu   ,dlagrc,kappa ,vech1 , &
+                  vech2 ,h     , coefff,&
+                  matrmm,matrem, matrme)
     endif
 !
 end subroutine

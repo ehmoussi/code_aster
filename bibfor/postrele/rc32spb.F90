@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -25,7 +25,7 @@ subroutine rc32spb(ze200, lieu, iocc1, iocc2, ns,&
 #include "asterfort/jedema.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/rcZ2s0.h"
-#include "asterfort/rc32s0.h"
+#include "asterfort/rc32s0b.h"
 #include "asterfort/codent.h"
 #include "asterfort/jeexin.h"
 #include "asterfort/jexnom.h"
@@ -56,7 +56,7 @@ subroutine rc32spb(ze200, lieu, iocc1, iocc2, ns,&
     integer :: jchara, jcharb, k, j, jtranp, jsigu, i0, i1, e0(2)
     integer :: jtemp, i, l, nbinstp, nmecaq, npresq, ntherq, nbinstq
     integer :: jtranq, instp(4), tmax, n1, tmin, ntrav, vtrav(1000)
-    integer :: ntrav2, vtrav2(1000)
+    integer :: ntrav2, vtrav2(1000), jspseis
     real(kind=8) :: presap, presbp, map(12), mbp(12), s2pp, sb(6)
     real(kind=8) :: tresca, sa(6), st(6), sc(6), tempa, tempb, A1p(12)
     real(kind=8) :: B1p(12), mij(12), trescamax, presaq, presbq, maq(12)
@@ -67,10 +67,12 @@ subroutine rc32spb(ze200, lieu, iocc1, iocc2, ns,&
     real(kind=8) :: sb01(6), sb02(6), sb12(6), tresca01, tresca02, tresca12
     real(kind=8) :: sb23(6), tresca23, trescaprin
     character(len=8) ::  knumec, sscyc
-    aster_logical :: tranp, tranq, lresi, cycprinok
+    aster_logical :: tranp, tranq, lresi, cycprinok, unitaire
 !
 ! DEB ------------------------------------------------------------------
     call jemarq()
+!
+    if(.not. ze200 .and. ns .ne. 0) call jeveuo('&&RC3200.SPSEISME.'//lieu, 'L', jspseis)
 !
     sp(1)  = 0.d0
     sp(2)  = 0.d0
@@ -111,6 +113,11 @@ subroutine rc32spb(ze200, lieu, iocc1, iocc2, ns,&
     nmecap = zi(jinfoi+27*(iocc1-1)+23)
     npresp = zi(jinfoi+27*(iocc1-1)+22)
     ntherp = zi(jinfoi+27*(iocc1-1)+26)
+!
+    unitaire = .false.
+!
+!---- Mot clé pour accélerer les calculs si aucun chargement en unitaire
+    if(npresp .eq. 1 .or. nmecap .eq. 1) unitaire = .true.
 !
     presap = zr(jinfor+4*(iocc1-1))
     presbp = zr(jinfor+4*(iocc1-1)+1)
@@ -237,7 +244,6 @@ subroutine rc32spb(ze200, lieu, iocc1, iocc2, ns,&
                 do 68 l = 1, nbinstp
                     do 69 j = 1,6
                         sb(j) = zr(jtranp+50*(i-1)+1+j)- zr(jtranp+50*(l-1)+1+j)
-                        sbm(j) = zr(jtranp+50*(i-1)+1+6+j)- zr(jtranp+50*(l-1)+1+6+j)
 69                  continue
                     call rctres(sb,tresca)
                     if(tresca .gt. trescamax) then
@@ -246,11 +252,14 @@ subroutine rc32spb(ze200, lieu, iocc1, iocc2, ns,&
                         instsp(2) = zr(jtranp+50*(l-1)+1)
                         tmin = min(i,l)
                         tmax = max(i,l)
-                        call rctres(sbm, trescamecmax)
                     endif
 68              continue
 67          continue         
             sp(1) = s2pp+trescamax
+            do 64 j = 1,6
+                sbm(j) = zr(jtranp+50*(tmax-1)+1+6+j)- zr(jtranp+50*(tmin-1)+1+6+j)
+64          continue
+            call rctres(sbm, trescamecmax)            
             spmeca(1) = s2pp+trescamecmax
         else
             sp(1) = s2pp
@@ -289,14 +298,15 @@ subroutine rc32spb(ze200, lieu, iocc1, iocc2, ns,&
                       call rctres(stm, trescamecmax)
                   endif
                 else
-                  call rc32s0('SPSP', st, lieu, tresca)
+                  call rc32s0b(zr(jspseis), st, tresca)
                   if(tresca .gt. trescamax) then
                       trescamax=tresca
                       instsp(1) = zr(jtranp+50*(i-1)+1)
                       instsp(2) = zr(jtranp+50*(l-1)+1)
-                      call rc32s0('SPSP', stm, lieu, trescamecmax)
+                      call rc32s0b(zr(jspseis), stm, trescamecmax)
                   endif
                 endif
+                if(.not. unitaire) exit
 72            continue
 71          continue
 70        continue
@@ -310,7 +320,7 @@ subroutine rc32spb(ze200, lieu, iocc1, iocc2, ns,&
                   trescamax=max(tresca, trescamax)
                   trescamecmax= trescamax
                 else
-                  call rc32s0('SPSP', st, lieu, tresca)
+                  call rc32s0b(zr(jspseis), st, tresca)
                   trescamax=max(tresca, trescamax)
                   trescamecmax= trescamax
                 endif
@@ -638,6 +648,11 @@ subroutine rc32spb(ze200, lieu, iocc1, iocc2, ns,&
       trescamax = -1.d0
       s2(1) = 0.d0
       s2(2) = 0.d0
+      unitaire = .false.
+!
+!---- Mot clé pour accélerer les calculs si aucun chargement en unitaire
+      if(npresp .eq. 1 .or. nmecap .eq. 1) unitaire = .true.
+      if(npresq .eq. 1 .or. nmecaq .eq. 1) unitaire = .true.
 !
       if (ze200) then
 ! ----- si on est en ZE200
@@ -740,59 +755,64 @@ subroutine rc32spb(ze200, lieu, iocc1, iocc2, ns,&
                           endif
 483                     continue
                         st1(j) = sb(j)+sc(j)+e0(i0)*sa1(j)
-                        st2(j) = sb(j)+sc(j)+e0(i0)*sa2(j)
-                        st3(j) = sb(j)+sc(j)+e0(i0)*sa3(j)
-                        st4(j) = sb(j)+sc(j)+e0(i0)*sa4(j)
                         stm1(j) = sbm(j)+sc(j)+e0(i0)*sa1(j)
-                        stm2(j) = sbm(j)+sc(j)+e0(i0)*sa2(j)
-                        stm3(j) = sbm(j)+sc(j)+e0(i0)*sa3(j)
-                        stm4(j) = sbm(j)+sc(j)+e0(i0)*sa4(j)
+                        if(unitaire) then
+                          st2(j) = sb(j)+sc(j)+e0(i0)*sa2(j)
+                          st3(j) = sb(j)+sc(j)+e0(i0)*sa3(j)
+                          st4(j) = sb(j)+sc(j)+e0(i0)*sa4(j)
+                          stm2(j) = sbm(j)+sc(j)+e0(i0)*sa2(j)
+                          stm3(j) = sbm(j)+sc(j)+e0(i0)*sa3(j)
+                          stm4(j) = sbm(j)+sc(j)+e0(i0)*sa4(j)
+                        endif
 470                 continue
 !                    
                     if (ns .eq. 0) call rctres(st1,tresca)
-                    if (ns .ne. 0) call rc32s0('SPSP', st1, lieu, tresca)
+                    if (ns .ne. 0) call rc32s0b(zr(jspseis), st1, tresca)
                     if(tresca .gt. trescamax) then
                         trescamax=tresca
                         if(ns .eq. 0) call rctres(stm1, trescamecmax)
-                        if(ns .ne. 0) call rc32s0('SPSP', stm1, lieu, trescamecmax)
+                        if(ns .ne. 0) call rc32s0b(zr(jspseis), stm1, trescamecmax)
                         instp(1) = i
                         instp(2) = l
                         instsp(1) = zr(jtranp+50*(i-1)+1)
                         instsp(2) = zr(jtranq+50*(l-1)+1)
                     endif
-                    if (ns .eq. 0) call rctres(st2,tresca)
-                    if (ns .ne. 0) call rc32s0('SPSP', st2, lieu, tresca)
-                    if(tresca .gt. trescamax) then
+                    if(unitaire) then
+                      if (ns .eq. 0) call rctres(st2,tresca)
+                      if (ns .ne. 0) call rc32s0b(zr(jspseis), st2, tresca)
+                      if(tresca .gt. trescamax) then
                         if(ns .eq. 0) call rctres(stm2, trescamecmax)
-                        if(ns .ne. 0) call rc32s0('SPSP', stm2, lieu, trescamecmax)
+                        if(ns .ne. 0) call rc32s0b(zr(jspseis), stm2, trescamecmax)
                         trescamax=tresca
                         instp(1) = i
                         instp(2) = l
                         instsp(1) = zr(jtranp+50*(i-1)+1)
                         instsp(2) = zr(jtranq+50*(l-1)+1)
-                    endif
-                    if (ns .eq. 0) call rctres(st3,tresca)
-                    if (ns .ne. 0) call rc32s0('SPSP', st3, lieu, tresca)
-                    if(tresca .gt. trescamax) then
+                      endif
+                      if (ns .eq. 0) call rctres(st3,tresca)
+                      if (ns .ne. 0) call rc32s0b(zr(jspseis), st3, tresca)
+                      if(tresca .gt. trescamax) then
                         if(ns .eq. 0) call rctres(stm3, trescamecmax)
-                        if(ns .ne. 0) call rc32s0('SPSP', stm3, lieu, trescamecmax)
+                        if(ns .ne. 0) call rc32s0b(zr(jspseis), stm3, trescamecmax)
                         trescamax=tresca
                         instp(1) = i
                         instp(2) = l
                         instsp(1) = zr(jtranp+50*(i-1)+1)
                         instsp(2) = zr(jtranq+50*(l-1)+1)
-                    endif
-                    if (ns .eq. 0) call rctres(st4,tresca)
-                    if (ns .ne. 0) call rc32s0('SPSP', st4, lieu, tresca)
-                    if(tresca .gt. trescamax) then
+                      endif
+                      if (ns .eq. 0) call rctres(st4,tresca)
+                      if (ns .ne. 0) call rc32s0b(zr(jspseis), st4, tresca)
+                      if(tresca .gt. trescamax) then
                         if(ns .eq. 0) call rctres(stm4, trescamecmax)
-                        if(ns .ne. 0) call rc32s0('SPSP', stm4, lieu, trescamecmax)
+                        if(ns .ne. 0) call rc32s0b(zr(jspseis), stm4, trescamecmax)
                         trescamax=tresca
                         instp(1) = i
                         instp(2) = l
                         instsp(1) = zr(jtranp+50*(i-1)+1)
                         instsp(2) = zr(jtranq+50*(l-1)+1)
+                      endif
                     endif
+                    if(.not. unitaire) exit
 469               continue
 468             continue
 467         continue    
@@ -812,52 +832,57 @@ subroutine rc32spb(ze200, lieu, iocc1, iocc2, ns,&
                           endif
 583                     continue
                         st1(j) = sb(j)+sc(j)+e0(i0)*sa1(j)
-                        st2(j) = sb(j)+sc(j)+e0(i0)*sa2(j)
-                        st3(j) = sb(j)+sc(j)+e0(i0)*sa3(j)
-                        st4(j) = sb(j)+sc(j)+e0(i0)*sa4(j)
                         stm1(j) = sbm(j)+sc(j)+e0(i0)*sa1(j)
-                        stm2(j) = sbm(j)+sc(j)+e0(i0)*sa2(j)
-                        stm3(j) = sbm(j)+sc(j)+e0(i0)*sa3(j)
-                        stm4(j) = sbm(j)+sc(j)+e0(i0)*sa4(j)
+                        if(unitaire) then
+                          st2(j) = sb(j)+sc(j)+e0(i0)*sa2(j)
+                          st3(j) = sb(j)+sc(j)+e0(i0)*sa3(j)
+                          st4(j) = sb(j)+sc(j)+e0(i0)*sa4(j)
+                          stm2(j) = sbm(j)+sc(j)+e0(i0)*sa2(j)
+                          stm3(j) = sbm(j)+sc(j)+e0(i0)*sa3(j)
+                          stm4(j) = sbm(j)+sc(j)+e0(i0)*sa4(j)
+                        endif
 570                 continue
 !                    
                     if (ns .eq. 0) call rctres(st1,tresca)
-                    if (ns .ne. 0) call rc32s0('SPSP', st1, lieu, tresca)
+                    if (ns .ne. 0) call rc32s0b(zr(jspseis), st1, tresca)
                     if(tresca .gt. trescamax) then
                         if(ns .eq. 0) call rctres(stm1, trescamecmax)
-                        if(ns .ne. 0) call rc32s0('SPSP', stm1, lieu, trescamecmax)
-                        trescamax=tresca
-                        instp(1) = i
-                        instsp(1) = zr(jtranp+50*(i-1)+1)
-                    endif
-                    if (ns .eq. 0) call rctres(st2,tresca)
-                    if (ns .ne. 0) call rc32s0('SPSP', st2, lieu, tresca)
-                    if(tresca .gt. trescamax) then
-                        if(ns .eq. 0) call rctres(stm2, trescamecmax)
-                        if(ns .ne. 0) call rc32s0('SPSP', stm2, lieu, trescamecmax)
-                        trescamax=tresca
-                        instp(1) = i
-                        instsp(1) = zr(jtranp+50*(i-1)+1)
-                    endif
-                    if (ns .eq. 0) call rctres(st3,tresca)
-                    if (ns .ne. 0) call rc32s0('SPSP', st3, lieu, tresca)
-                    if(tresca .gt. trescamax) then
-                        if(ns .eq. 0) call rctres(stm3, trescamecmax)
-                        if(ns .ne. 0) call rc32s0('SPSP', stm3, lieu, trescamecmax)
-                        trescamax=tresca
-                        instp(1) = i
-                        instsp(1) = zr(jtranp+50*(i-1)+1)
-                    endif
-                    if (ns .eq. 0) call rctres(st4,tresca)
-                    if (ns .ne. 0) call rc32s0('SPSP', st4, lieu, tresca)
-                    if(tresca .gt. trescamax) then
-                        if(ns .eq. 0) call rctres(stm4, trescamecmax)
-                        if(ns .ne. 0) call rc32s0('SPSP', stm4, lieu, trescamecmax)
+                        if(ns .ne. 0) call rc32s0b(zr(jspseis), stm1, trescamecmax)
                         trescamax=tresca
                         instp(1) = i
                         instsp(1) = zr(jtranp+50*(i-1)+1)
                     endif
 !
+                    if(unitaire) then
+                      if (ns .eq. 0) call rctres(st2,tresca)
+                      if (ns .ne. 0) call rc32s0b(zr(jspseis), st2, tresca)
+                      if(tresca .gt. trescamax) then
+                        if(ns .eq. 0) call rctres(stm2, trescamecmax)
+                        if(ns .ne. 0) call rc32s0b(zr(jspseis), stm2, trescamecmax)
+                        trescamax=tresca
+                        instp(1) = i
+                        instsp(1) = zr(jtranp+50*(i-1)+1)
+                      endif
+                      if (ns .eq. 0) call rctres(st3,tresca)
+                      if (ns .ne. 0) call rc32s0b(zr(jspseis), st3, tresca)
+                      if(tresca .gt. trescamax) then
+                        if(ns .eq. 0) call rctres(stm3, trescamecmax)
+                        if(ns .ne. 0) call rc32s0b(zr(jspseis), stm3, trescamecmax)
+                        trescamax=tresca
+                        instp(1) = i
+                        instsp(1) = zr(jtranp+50*(i-1)+1)
+                      endif
+                      if (ns .eq. 0) call rctres(st4,tresca)
+                      if (ns .ne. 0) call rc32s0b(zr(jspseis), st4, tresca)
+                      if(tresca .gt. trescamax) then
+                        if(ns .eq. 0) call rctres(stm4, trescamecmax)
+                        if(ns .ne. 0) call rc32s0b(zr(jspseis), stm4, trescamecmax)
+                        trescamax=tresca
+                        instp(1) = i
+                        instsp(1) = zr(jtranp+50*(i-1)+1)
+                      endif
+                    endif
+                    if(.not. unitaire) exit
 569               continue
 567         continue    
           endif
@@ -879,52 +904,57 @@ subroutine rc32spb(ze200, lieu, iocc1, iocc2, ns,&
                           endif
 683                     continue
                         st1(j) = sb(j)+sc(j)+e0(i0)*sa1(j)
-                        st2(j) = sb(j)+sc(j)+e0(i0)*sa2(j)
-                        st3(j) = sb(j)+sc(j)+e0(i0)*sa3(j)
-                        st4(j) = sb(j)+sc(j)+e0(i0)*sa4(j)
                         stm1(j) = sbm(j)+sc(j)+e0(i0)*sa1(j)
-                        stm2(j) = sbm(j)+sc(j)+e0(i0)*sa2(j)
-                        stm3(j) = sbm(j)+sc(j)+e0(i0)*sa3(j)
-                        stm4(j) = sbm(j)+sc(j)+e0(i0)*sa4(j)
+                        if(unitaire)then
+                          st2(j) = sb(j)+sc(j)+e0(i0)*sa2(j)
+                          st3(j) = sb(j)+sc(j)+e0(i0)*sa3(j)
+                          st4(j) = sb(j)+sc(j)+e0(i0)*sa4(j)
+                          stm2(j) = sbm(j)+sc(j)+e0(i0)*sa2(j)
+                          stm3(j) = sbm(j)+sc(j)+e0(i0)*sa3(j)
+                          stm4(j) = sbm(j)+sc(j)+e0(i0)*sa4(j)
+                        endif
 670                 continue
 !                    
                     if (ns .eq. 0) call rctres(st1,tresca)
-                    if (ns .ne. 0) call rc32s0('SPSP', st1, lieu, tresca)
+                    if (ns .ne. 0) call rc32s0b(zr(jspseis), st1, tresca)
                     if(tresca .gt. trescamax) then
                         if(ns .eq. 0) call rctres(stm1, trescamecmax)
-                        if(ns .ne. 0) call rc32s0('SPSP', stm1, lieu, trescamecmax)
+                        if(ns .ne. 0) call rc32s0b(zr(jspseis), stm1, trescamecmax)
                         trescamax=tresca
                         instp(2) = l
                         instsp(2) = zr(jtranq+50*(l-1)+1)
                     endif
-                    if (ns .eq. 0) call rctres(st2,tresca)
-                    if (ns .ne. 0) call rc32s0('SPSP', st2, lieu, tresca)
-                    if(tresca .gt. trescamax) then
+!             
+                    if(unitaire) then
+                      if (ns .eq. 0) call rctres(st2,tresca)
+                      if (ns .ne. 0) call rc32s0b(zr(jspseis), st2, tresca)
+                      if(tresca .gt. trescamax) then
                         if(ns .eq. 0) call rctres(stm2, trescamecmax)
-                        if(ns .ne. 0) call rc32s0('SPSP', stm2, lieu, trescamecmax)
+                        if(ns .ne. 0) call rc32s0b(zr(jspseis), stm2, trescamecmax)
                         trescamax=tresca
                         instp(2) = l
                         instsp(2) = zr(jtranq+50*(l-1)+1)
-                    endif
-                    if (ns .eq. 0) call rctres(st3,tresca)
-                    if (ns .ne. 0) call rc32s0('SPSP', st3, lieu, tresca)
-                    if(tresca .gt. trescamax) then
+                      endif
+                      if (ns .eq. 0) call rctres(st3,tresca)
+                      if (ns .ne. 0) call rc32s0b(zr(jspseis), st3, tresca)
+                      if(tresca .gt. trescamax) then
                         if(ns .eq. 0) call rctres(stm3, trescamecmax)
-                        if(ns .ne. 0) call rc32s0('SPSP', stm3, lieu, trescamecmax)
+                        if(ns .ne. 0) call rc32s0b(zr(jspseis), stm3, trescamecmax)
                         trescamax=tresca
                         instp(2) = l
                         instsp(2) = zr(jtranq+50*(l-1)+1)
-                    endif
-                    if (ns .eq. 0) call rctres(st4,tresca)
-                    if (ns .ne. 0) call rc32s0('SPSP', st4, lieu, tresca)
-                    if(tresca .gt. trescamax) then
+                      endif
+                      if (ns .eq. 0) call rctres(st4,tresca)
+                      if (ns .ne. 0) call rc32s0b(zr(jspseis), st4, tresca)
+                      if(tresca .gt. trescamax) then
                         if(ns .eq. 0) call rctres(stm4, trescamecmax)
-                        if(ns .ne. 0) call rc32s0('SPSP', stm4, lieu, trescamecmax)
+                        if(ns .ne. 0) call rc32s0b(zr(jspseis), stm4, trescamecmax)
                         trescamax=tresca
                         instp(2) = l
                         instsp(2) = zr(jtranq+50*(l-1)+1)
+                      endif
                     endif
-!
+                    if(.not. unitaire) exit
 669               continue
 668           continue  
           else
@@ -945,29 +975,30 @@ subroutine rc32spb(ze200, lieu, iocc1, iocc2, ns,&
 770               continue
 !                    
                   if (ns .eq. 0) call rctres(st1,tresca)
-                  if (ns .ne. 0) call rc32s0('SPSP', st1, lieu, tresca)
+                  if (ns .ne. 0) call rc32s0b(zr(jspseis), st1, tresca)
                   if(tresca .gt. trescamax) then
                       trescamax=tresca
                       trescamecmax=tresca
                   endif
                   if (ns .eq. 0) call rctres(st2,tresca)
-                  if (ns .ne. 0) call rc32s0('SPSP', st2, lieu, tresca)
+                  if (ns .ne. 0) call rc32s0b(zr(jspseis), st2, tresca)
                   if(tresca .gt. trescamax) then
                       trescamax=tresca
                       trescamecmax=tresca
                   endif
                   if (ns .eq. 0) call rctres(st3,tresca)
-                  if (ns .ne. 0) call rc32s0('SPSP', st3, lieu, tresca)
+                  if (ns .ne. 0) call rc32s0b(zr(jspseis), st3, tresca)
                   if(tresca .gt. trescamax) then
                       trescamax=tresca
                       trescamecmax=tresca
                   endif
                   if (ns .eq. 0) call rctres(st4,tresca)
-                  if (ns .ne. 0) call rc32s0('SPSP', st4, lieu, tresca)
+                  if (ns .ne. 0) call rc32s0b(zr(jspseis), st4, tresca)
                   if(tresca .gt. trescamax) then
                       trescamax=tresca
                       trescamecmax=tresca
                   endif
+                  if(.not. unitaire) exit
 !
 769           continue  
           endif 
@@ -1075,43 +1106,49 @@ subroutine rc32spb(ze200, lieu, iocc1, iocc2, ns,&
         do 927 i0 = 1, 2 
           do 928 j = 1,6
             st1(j) = sb(j)+ sc(j)+ e0(i0)*sa1(j)
-            st2(j) = sb(j)+ sc(j)+ e0(i0)*sa2(j)
-            st3(j) = sb(j)+ sc(j)+ e0(i0)*sa3(j)
-            st4(j) = sb(j)+ sc(j)+ e0(i0)*sa4(j)
             stm1(j) = sbm(j)+ sc(j)+ e0(i0)*sa1(j)
-            stm2(j) = sbm(j)+ sc(j)+ e0(i0)*sa2(j)
-            stm3(j) = sbm(j)+ sc(j)+ e0(i0)*sa3(j)
-            stm4(j) = sbm(j)+ sc(j)+ e0(i0)*sa4(j)
+            if(unitaire) then
+              st2(j) = sb(j)+ sc(j)+ e0(i0)*sa2(j)
+              st3(j) = sb(j)+ sc(j)+ e0(i0)*sa3(j)
+              st4(j) = sb(j)+ sc(j)+ e0(i0)*sa4(j)
+              stm2(j) = sbm(j)+ sc(j)+ e0(i0)*sa2(j)
+              stm3(j) = sbm(j)+ sc(j)+ e0(i0)*sa3(j)
+              stm4(j) = sbm(j)+ sc(j)+ e0(i0)*sa4(j)
+            endif
 928       continue
 !                 
           if (ns .eq. 0) call rctres(st1,tresca)
-          if (ns .ne. 0) call rc32s0('SPSP', st1, lieu, tresca)
+          if (ns .ne. 0) call rc32s0b(zr(jspseis), st1, tresca)
           if(tresca .gt. trescamax) then
             trescamax=tresca
             if(ns .eq. 0) call rctres(stm1, trescamecmax)
-            if(ns .ne. 0) call rc32s0('SPSP', stm1, lieu, trescamecmax)
+            if(ns .ne. 0) call rc32s0b(zr(jspseis), stm1, trescamecmax)
           endif
-          if (ns .eq. 0) call rctres(st2,tresca)
-          if (ns .ne. 0) call rc32s0('SPSP', st2, lieu, tresca)
-          if(tresca .gt. trescamax) then
-            trescamax=tresca
-            if(ns .eq. 0) call rctres(stm2, trescamecmax)
-            if(ns .ne. 0) call rc32s0('SPSP', stm2, lieu, trescamecmax)
+!
+          if(unitaire) then
+            if (ns .eq. 0) call rctres(st2,tresca)
+            if (ns .ne. 0) call rc32s0b(zr(jspseis), st2, tresca)
+            if(tresca .gt. trescamax) then
+              trescamax=tresca
+              if(ns .eq. 0) call rctres(stm2, trescamecmax)
+              if(ns .ne. 0) call rc32s0b(zr(jspseis), stm2, trescamecmax)
+            endif
+            if (ns .eq. 0) call rctres(st3,tresca)
+            if (ns .ne. 0) call rc32s0b(zr(jspseis), st3, tresca)
+            if(tresca .gt. trescamax) then
+              if(ns .eq. 0) call rctres(stm3, trescamecmax)
+              if(ns .ne. 0) call rc32s0b(zr(jspseis), stm3, trescamecmax)
+              trescamax=tresca
+            endif
+            if (ns .eq. 0) call rctres(st4,tresca)
+            if (ns .ne. 0) call rc32s0b(zr(jspseis), st4, tresca)
+            if(tresca .gt. trescamax) then
+              if(ns .eq. 0) call rctres(stm4, trescamecmax)
+              if(ns .ne. 0) call rc32s0b(zr(jspseis), stm4, trescamecmax)
+              trescamax=tresca
+            endif
           endif
-          if (ns .eq. 0) call rctres(st3,tresca)
-          if (ns .ne. 0) call rc32s0('SPSP', st3, lieu, tresca)
-          if(tresca .gt. trescamax) then
-            if(ns .eq. 0) call rctres(stm3, trescamecmax)
-            if(ns .ne. 0) call rc32s0('SPSP', stm3, lieu, trescamecmax)
-            trescamax=tresca
-          endif
-          if (ns .eq. 0) call rctres(st4,tresca)
-          if (ns .ne. 0) call rc32s0('SPSP', st4, lieu, tresca)
-          if(tresca .gt. trescamax) then
-            if(ns .eq. 0) call rctres(stm4, trescamecmax)
-            if(ns .ne. 0) call rc32s0('SPSP', stm4, lieu, trescamecmax)
-            trescamax=tresca
-          endif
+          if(.not. unitaire) exit
 !
 927     continue
 !

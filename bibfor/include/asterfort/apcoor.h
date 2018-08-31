@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -28,7 +28,7 @@ interface
         integer, intent(out) :: elem_nbnode
         character(len=8), intent(out) :: elem_code
         integer, intent(out) :: elem_dime
-        integer, pointer, intent(in) :: v_mesh_connex(:)
-        integer, pointer, intent(in) :: v_connex_lcum(:)  
+        integer, pointer :: v_mesh_connex(:)
+        integer, pointer :: v_connex_lcum(:)  
     end subroutine apcoor
 end interface

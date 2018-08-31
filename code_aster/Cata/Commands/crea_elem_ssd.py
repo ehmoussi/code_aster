@@ -45,7 +45,7 @@ CREA_ELEM_SSD=MACRO(nom="CREA_ELEM_SSD",
          MODELE          =SIMP(statut='o',typ=modele_sdaster),
          CHAM_MATER      =SIMP(statut='o',typ=cham_mater),
          CARA_ELEM       =SIMP(statut='f',typ=cara_elem),
-         NUME_DDL        =SIMP(statut='f',typ=CO,defaut=None),
+         NUME_DDL        =SIMP(statut='f',typ=CO),
          CHARGE          =SIMP(statut='f',typ=(char_meca,char_ther,char_acou),validators=NoRepeat(),max='**'),
 
 # pour DEFI_INTERF_DYNA

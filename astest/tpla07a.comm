@@ -26,9 +26,10 @@ NIV_PUB_WEB='INTERNET',),DEBUG=_F(SDVERI='OUI'))
 #
 # LECTURE DU MAILLAGE --------------------------------------------------
 
-PRE_GMSH();
 
-MAIL2=LIRE_MAILLAGE(FORMAT="ASTER",);
+MAIL2 = LIRE_MAILLAGE(FORMAT='GMSH',
+                      UNITE=19,
+                      )
 
 MAIL2=DEFI_GROUP(reuse =MAIL2,
                  MAILLAGE=MAIL2,

@@ -54,6 +54,7 @@ def impr_fonction_ops(self, FORMAT, COURBE, INFO, **args):
     # 0. Traitement des arguments, initialisations
     # 0.1. Fichier
     nomfich = None
+    UNITE = args.get('UNITE', 6)
     if args['UNITE'] and args['UNITE'] != 6:
         nomfich = LogicalUnitFile.filename_from_unit(args['UNITE'])
         if INFO == 2:

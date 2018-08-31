@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -214,11 +214,11 @@ Contact.
 """),
 
 
-    97 : _(u"""
-    DEFI_CONTACT/ALGO_CONT=PENALISATION/ADAPTATION=PENE_MAXI.
-    Vous êtes dans un cas où vous avez demandé un traitement adaptatif pour la pénalisation dans au moins une zone. Or la zone avec traitement adaptatif n'est pas encore rentrée en contact.
-    La vérification du critère de pénétration n'a donc pas de sens. On continue le calcul.
-"""),
+    #97 : _(u"""
+    #DEFI_CONTACT/ALGO_CONT=PENALISATION/ADAPTATION=PENE_MAXI.
+    #Vous êtes dans un cas où vous avez demandé un traitement adaptatif pour la pénalisation dans au moins une zone. Or la zone avec traitement adaptatif n'est pas encore rentrée en contact.
+    #La vérification du critère de pénétration n'a donc pas de sens. On continue le calcul.
+#"""),
     98 : _(u"""
 Contact et détection de collision.
     Le contact semble "rasant", c'est-à-dire que le jeu est nul mais que la pression de contact est quasiment

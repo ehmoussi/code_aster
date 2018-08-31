@@ -85,8 +85,9 @@ subroutine te0514(option, nomte)
     real(kind=8) :: xg(3), cridist, xref(81), ff(27), ptref(3), norme
     integer :: fisco(2*nfimax), fisc(2*nfimax), coupe(nfimax), zxain, ai, nnos
     parameter(ninmax=44,nmmax=264)
-    integer, pointer :: ndoubl(:) => null(), ndoub2(:) => null()
-    integer, pointer :: ndoub3(:) => null()
+
+    integer, dimension(:), allocatable :: ndoubl, ndoub2, ndoub3
+
     parameter(cridist=1.d-9)
     aster_logical :: deja, ajn, cut, lconnec_ok, pre1, jonc
 !
@@ -97,10 +98,11 @@ subroutine te0514(option, nomte)
 !   WKVECT DANS LES TE SONT COUTEUX).
 !
 !   On the other hand ndoubl, ndoub2, ndoub3 are too big to be allocated on the stack.
-!   Hence the use of AS_ALLOCATE.
-    AS_ALLOCATE(vi= ndoubl, size=ninmax*(2**nfimax))
-    AS_ALLOCATE(vi= ndoub2, size=ninmax*(2**nfimax))
-    AS_ALLOCATE(vi= ndoub3, size= nmmax*(2**nfimax))
+!   Hence the use of allocate. AS_ALLOCATE **is volontarily not used** given the performance
+!   overhead and the fact it is unnecessary here (temporary arrays used only here)
+    allocate(ndoubl(ninmax*(2**nfimax)))
+    allocate(ndoub2(ninmax*(2**nfimax)))
+    allocate(ndoub3( nmmax*(2**nfimax)))
 !
     ASSERT(option.eq.'TOPOSE')
     call vecini(51, 0.d0, pmilie)
@@ -619,8 +621,8 @@ subroutine te0514(option, nomte)
     endif
 !
 !   Deallocation of temporary arrays on heap
-    AS_DEALLOCATE(vi=ndoubl)
-    AS_DEALLOCATE(vi=ndoub2)
-    AS_DEALLOCATE(vi=ndoub3)
+    deallocate(ndoubl)
+    deallocate(ndoub2)
+    deallocate(ndoub3)
 !
 end subroutine

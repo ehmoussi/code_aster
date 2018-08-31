@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -29,7 +29,7 @@ IMPR_FONCTION=MACRO(nom="IMPR_FONCTION",
                     sd_prod=None,
                     fr=tr("Imprime le contenu d'objets de type fonction ou liste de "
                          "réels dans un fichier destiné à un traceur de courbe"),
-         FORMAT          =SIMP(statut='o',typ='TXM',defaut='TABLEAU',
+         FORMAT          =SIMP(statut='f',typ='TXM',defaut='TABLEAU',
                                into=("TABLEAU","AGRAF","XMGRACE","LISS_ENVELOP"),),
          b_pilote = BLOC(condition = """equal_to("FORMAT", 'XMGRACE')""",
                         fr=tr("Mots-clés propres à XMGRACE"),
@@ -41,14 +41,14 @@ IMPR_FONCTION=MACRO(nom="IMPR_FONCTION",
          ),
          b_agraf = BLOC(condition = """equal_to("FORMAT", 'AGRAF')""",
                         fr=tr("Mots-clés propres à AGRAF"),
-           UNITE           =SIMP(statut='o',typ=UnitType(),defaut=25, inout='out',
+           UNITE           =SIMP(statut='f',typ=UnitType(),defaut=25, inout='out',
                                  fr=tr("Unité logique définissant le fichier (fort.N) dans lequel on écrit")),
-           UNITE_DIGR      =SIMP(statut='o',typ=UnitType(),defaut=26, inout='out',
+           UNITE_DIGR      =SIMP(statut='f',typ=UnitType(),defaut=26, inout='out',
                                  fr=tr("Unité logique définissant le fichier dans lequel on écrit les directives Agraf")),
          ),
          # unite pour TABLEAU dans le bloc de mise en forme spécifique
-         
-         b_format1       = BLOC(condition = """not equal_to("FORMAT", 'LISS_ENVELOP')""",           
+
+         b_format1       = BLOC(condition = """not equal_to("FORMAT", 'LISS_ENVELOP')""",
              COURBE          =FACT(statut='o',max='**',fr=tr("Définition de la fonction à tracer"),
                 regles=(UN_PARMI('FONCTION','LIST_RESU','FONC_X','ABSCISSE'),),
                 FONCTION        =SIMP(statut='f',typ=(fonction_sdaster, formule, fonction_c, nappe_sdaster),
@@ -91,29 +91,29 @@ IMPR_FONCTION=MACRO(nom="IMPR_FONCTION",
                 MARQUEUR        =SIMP(statut='f',typ='I',val_min=0,
                                         fr=tr("Type du marqueur associé à la fonction"),),
                 FREQ_MARQUEUR   =SIMP(statut='f',typ='I',defaut=0,
-                                        fr=tr("Fréquence d impression du marqueur associé à la fonction"), ),    
+                                        fr=tr("Fréquence d impression du marqueur associé à la fonction"), ),
                 # fin bloc mise en forme
                 TRI             =SIMP(statut='f',typ='TXM',defaut="N",
                                  fr=tr("Choix du tri effectué sur les abscisses ou sur les ordonnées"),
-                                 into=("N","X","Y","XY","YX") ),                        
+                                 into=("N","X","Y","XY","YX") ),
            ),
          ),
-         
-         b_format2       = BLOC(condition = """equal_to("FORMAT", 'LISS_ENVELOP')""",  
+
+         b_format2       = BLOC(condition = """equal_to("FORMAT", 'LISS_ENVELOP')""",
              COURBE          =FACT(statut='o',max='**',fr=tr("Définition de la fonction à tracer"),
                 regles=(UN_PARMI('NAPPE','NAPPE_LISSEE'),),
                 NAPPE           =SIMP(statut='f',typ=(nappe_sdaster),
-                                 fr=tr("Nappe aster"), ),                        
+                                 fr=tr("Nappe aster"), ),
                 NAPPE_LISSEE     =SIMP(statut='f',typ=(nappe_sdaster),
                                  fr=tr("Nappe aster issue de CALC_FONCTION/LISS_ENVELOP"), ),
                 ),
-          ), 
-           
+          ),
+
 
          # Mise en page du tableau ou du graphique
          b_tableau = BLOC(condition = """equal_to("FORMAT", 'TABLEAU')""",
                           fr=tr("Mots-clés propres au format Tableau"),
-           UNITE           =SIMP(statut='o',typ=UnitType(),defaut=8, inout='out',
+           UNITE           =SIMP(statut='f',typ=UnitType(),defaut=8, inout='out',
                                  fr=tr("Unité logique définissant le fichier (fort.N) dans lequel on écrit")),
            TITRE           =SIMP(statut='f',typ='TXM',
                                  fr=tr("Titre associé au graphique") ),
@@ -157,8 +157,8 @@ IMPR_FONCTION=MACRO(nom="IMPR_FONCTION",
          ),
          b_liss_enveloppe = BLOC(condition = """equal_to("FORMAT", 'LISS_ENVELOP')""",
                           fr=tr("Mots-clés propres au format Liss_Envelop"),
-           UNITE           =SIMP(statut='o',typ='I',defaut=25, inout='out',
+           UNITE           =SIMP(statut='f', typ=UnitType(), defaut=25, inout='out',
                                  fr=tr("Unité logique définissant le fichier (fort.N) dans lequel on écrit")),
-         ),         
+         ),
          INFO            =SIMP(statut='f',typ='I',defaut=1,into=(1,2) ),
 )  ;

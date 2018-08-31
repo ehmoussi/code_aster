@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -24,7 +24,7 @@ subroutine rc32spa(ze200, lieu, iocc1, iocc2, ns, sp, spmeca, instsp)
 #include "asterfort/jedema.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/rcZ2s0.h"
-#include "asterfort/rc32s0.h"
+#include "asterfort/rc32s0b.h"
 #include "asterfort/codent.h"
 #include "asterfort/jeexin.h"
 #include "asterfort/jexnom.h"
@@ -54,7 +54,7 @@ subroutine rc32spa(ze200, lieu, iocc1, iocc2, ns, sp, spmeca, instsp)
 !
     integer :: jinfoi, nmecap, npresp, ntherp, jinfor, numcha, iret
     integer :: jchara, jcharb, k, j, jtranp, jsigu, i0, i1, e0(2)
-    integer :: jtemp, nmecaq, npresq, ntherq, jtranq, n1
+    integer :: jtemp, nmecaq, npresq, ntherq, jtranq, n1, jspseis
     real(kind=8) :: presap, presbp, map(12), mbp(12), s2pp, sb(6)
     real(kind=8) :: instpmin, instpmax, maq(12), mbq(12), presaq
     real(kind=8) :: tresca, sa(6), st(6), sc(6), presbq, sa1(6), sa2(6)
@@ -68,10 +68,12 @@ subroutine rc32spa(ze200, lieu, iocc1, iocc2, ns, sp, spmeca, instsp)
     real(kind=8) :: stm11(6), stm12(6), stm13(6), stm14(6), stm21(6)
     real(kind=8) :: stm22(6), stm23(6), stm24(6)
     character(len=8) ::  knumec, sscyc
-    aster_logical :: tranp, tranq
+    aster_logical :: tranp, tranq, unitaire
 !
 ! DEB ------------------------------------------------------------------
     call jemarq()
+!
+    if(.not. ze200 .and. ns .ne. 0) call jeveuo('&&RC3200.SPSEISME.'//lieu, 'L', jspseis)
 !
     sp(1)  = 0.d0
     sp(2)  = 0.d0
@@ -108,6 +110,11 @@ subroutine rc32spa(ze200, lieu, iocc1, iocc2, ns, sp, spmeca, instsp)
     nmecap = zi(jinfoi+27*(iocc1-1)+23)
     npresp = zi(jinfoi+27*(iocc1-1)+23)
     ntherp = zi(jinfoi+27*(iocc1-1)+26)
+!
+    unitaire = .false.
+!
+!---- Mot clé pour accélerer les calculs si aucun chargement en unitaire
+    if(npresp .eq. 1 .or. nmecap .eq. 1) unitaire = .true.
 !
     presap = zr(jinfor+4*(iocc1-1))
     presbp = zr(jinfor+4*(iocc1-1)+1)
@@ -259,11 +266,12 @@ subroutine rc32spa(ze200, lieu, iocc1, iocc2, ns, sp, spmeca, instsp)
               call rctres(stm, tresca)
               spmeca(1) = max(spmeca(1), tresca)
           else
-              call rc32s0('SPSP', st, lieu, tresca)
+              call rc32s0b(zr(jspseis), st, tresca)
               sp(1) = max(sp(1), tresca)
-              call rc32s0('SPSP', stm, lieu, tresca)
+              call rc32s0b(zr(jspseis), stm, tresca)
               spmeca(1) = max(spmeca(1), tresca)
           endif
+          if(.not. unitaire) exit
 71      continue
       endif
 !
@@ -466,6 +474,12 @@ subroutine rc32spa(ze200, lieu, iocc1, iocc2, ns, sp, spmeca, instsp)
 ! --------------------------------------------------------------
 !                          CALCUL DE SP(P,Q)
 ! --------------------------------------------------------------
+      unitaire = .false.
+!
+!---- Mot clé pour accélerer les calculs si aucun chargement en unitaire
+      if(npresp .eq. 1 .or. nmecap .eq. 1) unitaire = .true.
+      if(npresq .eq. 1 .or. nmecaq .eq. 1) unitaire = .true.
+!
       if (ze200) then
         trescapq(1)= -1.d0
         trescapq(2)= -1.d0
@@ -521,6 +535,7 @@ subroutine rc32spa(ze200, lieu, iocc1, iocc2, ns, sp, spmeca, instsp)
         spmeca(1) = s2(1)+tresmepq(1)
         spmeca(2) = s2(2)+tresmepq(2)
       else
+!------ si on est en B3200
         trescapq(1)= -1.d0
         trescapq(2)= -1.d0
         tresmepq(1)= -1.d0
@@ -528,90 +543,137 @@ subroutine rc32spa(ze200, lieu, iocc1, iocc2, ns, sp, spmeca, instsp)
         do 173 i0 = 1,2
           do 174 j = 1,6
             st11(j) = sb1(j)+sc1(j)+e0(i0)*sa1(j)
-            st12(j) = sb1(j)+sc1(j)+e0(i0)*sa2(j)
-            st13(j) = sb1(j)+sc1(j)+e0(i0)*sa3(j)
-            st14(j) = sb1(j)+sc1(j)+e0(i0)*sa4(j)
             st21(j) = sb2(j)+sc2(j)+e0(i0)*sa1(j)
-            st22(j) = sb2(j)+sc2(j)+e0(i0)*sa2(j)
-            st23(j) = sb2(j)+sc2(j)+e0(i0)*sa3(j)
-            st24(j) = sb2(j)+sc2(j)+e0(i0)*sa4(j)
             stm11(j) = sbm1(j)+sc1(j)+e0(i0)*sa1(j)
-            stm12(j) = sbm1(j)+sc1(j)+e0(i0)*sa2(j)
-            stm13(j) = sbm1(j)+sc1(j)+e0(i0)*sa3(j)
-            stm14(j) = sbm1(j)+sc1(j)+e0(i0)*sa4(j)
             stm21(j) = sbm2(j)+sc2(j)+e0(i0)*sa1(j)
-            stm22(j) = sbm2(j)+sc2(j)+e0(i0)*sa2(j)
-            stm23(j) = sbm2(j)+sc2(j)+e0(i0)*sa3(j)
-            stm24(j) = sbm2(j)+sc2(j)+e0(i0)*sa4(j)
+!
+            if(unitaire) then
+              st12(j) = sb1(j)+sc1(j)+e0(i0)*sa2(j)
+              st13(j) = sb1(j)+sc1(j)+e0(i0)*sa3(j)
+              st14(j) = sb1(j)+sc1(j)+e0(i0)*sa4(j)
+              st22(j) = sb2(j)+sc2(j)+e0(i0)*sa2(j)
+              st23(j) = sb2(j)+sc2(j)+e0(i0)*sa3(j)
+              st24(j) = sb2(j)+sc2(j)+e0(i0)*sa4(j)
+              stm12(j) = sbm1(j)+sc1(j)+e0(i0)*sa2(j)
+              stm13(j) = sbm1(j)+sc1(j)+e0(i0)*sa3(j)
+              stm14(j) = sbm1(j)+sc1(j)+e0(i0)*sa4(j)
+              stm22(j) = sbm2(j)+sc2(j)+e0(i0)*sa2(j)
+              stm23(j) = sbm2(j)+sc2(j)+e0(i0)*sa3(j)
+              stm24(j) = sbm2(j)+sc2(j)+e0(i0)*sa4(j)
+           endif
 174       continue
 !
-!-------- Calcul du SP avec ou sans séisme
-          if(ns .eq. 0) call rctres(st11, tresca)
-          if(ns .ne. 0) call rc32s0('SPSP', st11, lieu, tresca)
-          if(tresca .gt. trescapq(1) ) then
+!-------- Calcul du SP sans séisme
+          if(ns .eq. 0) then
+            call rctres(st11, tresca)
+            if(tresca .gt. trescapq(1) ) then
               trescapq(1) = tresca
-              if(ns .eq. 0) call rctres(stm11, tresme1)
-              if(ns .ne. 0) call rc32s0('SPSP', stm11, lieu, tresme1)
+              call rctres(stm11, tresme1)
               tresmepq(1) = tresme1
-          endif          
-          if(ns .eq. 0) call rctres(st12, tresca)
-          if(ns .ne. 0) call rc32s0('SPSP', st12, lieu, tresca)  
-          if(tresca .gt. trescapq(1) ) then
-              trescapq(1) = tresca
-              if(ns .eq. 0) call rctres(stm12, tresme1)
-              if(ns .ne. 0) call rc32s0('SPSP', stm12, lieu, tresme1)
-              tresmepq(1) = tresme1
-          endif   
-          if(ns .eq. 0) call rctres(st13, tresca)
-          if(ns .ne. 0) call rc32s0('SPSP', st13, lieu, tresca)  
-          if(tresca .gt. trescapq(1) ) then
-              trescapq(1) = tresca
-              if(ns .eq. 0) call rctres(stm13, tresme1)
-              if(ns .ne. 0) call rc32s0('SPSP', stm13, lieu, tresme1)
-              tresmepq(1) = tresme1
-          endif   
-          if(ns .eq. 0) call rctres(st14, tresca)
-          if(ns .ne. 0) call rc32s0('SPSP', st14, lieu, tresca)  
-          if(tresca .gt. trescapq(1) ) then
-              trescapq(1) = tresca
-              if(ns .eq. 0) call rctres(stm14, tresme1)
-              if(ns .ne. 0) call rc32s0('SPSP', stm14, lieu, tresme1)
-              tresmepq(1) = tresme1
-          endif   
+            endif   
+            call rctres(st21, tresca)          
+            if(tresca .gt. trescapq(2) ) then
+              trescapq(2) = tresca
+              call rctres(stm21, tresme2)
+              tresmepq(2) = tresme2
+            endif  
+!       
+            if(unitaire) then
+              call rctres(st12, tresca) 
+              if(tresca .gt. trescapq(1) ) then
+                trescapq(1) = tresca
+                call rctres(stm12, tresme1)
+                tresmepq(1) = tresme1
+              endif   
+              call rctres(st13, tresca)
+              if(tresca .gt. trescapq(1) ) then
+                trescapq(1) = tresca
+                call rctres(stm13, tresme1)
+                tresmepq(1) = tresme1
+              endif   
+              call rctres(st14, tresca)  
+              if(tresca .gt. trescapq(1) ) then
+                trescapq(1) = tresca
+                call rctres(stm14, tresme1)
+                tresmepq(1) = tresme1
+              endif   
+              call rctres(st22, tresca)     
+              if(tresca .gt. trescapq(2) ) then
+                trescapq(2) = tresca
+                call rctres(stm22, tresme2)
+                tresmepq(2) = tresme2
+              endif 
+              call rctres(st23, tresca)           
+              if(tresca .gt. trescapq(2) ) then
+                trescapq(2) = tresca
+                call rctres(stm23, tresme2)
+                tresmepq(2) = tresme2
+              endif 
+              call rctres(st24, tresca)        
+              if(tresca .gt. trescapq(2) ) then
+                trescapq(2) = tresca
+                call rctres(stm24, tresme2)
+                tresmepq(2) = tresme2
+              endif
+            endif 
+          endif
 !
-          if(ns .eq. 0) call rctres(st21, tresca)
-          if(ns .ne. 0) call rc32s0('SPSP', st21, lieu, tresca)            
-          if(tresca .gt. trescapq(2) ) then
+!-------- Calcul du SP avec séisme
+          if(ns .ne. 0) then
+            call rc32s0b(zr(jspseis), st11, tresca)
+            if(tresca .gt. trescapq(1) ) then
+              trescapq(1) = tresca
+              call rc32s0b(zr(jspseis), stm11, tresme1)
+              tresmepq(1) = tresme1
+            endif 
+            call rc32s0b(zr(jspseis), st21, tresca)           
+            if(tresca .gt. trescapq(2) ) then
               trescapq(2) = tresca
-              if(ns .eq. 0) call rctres(stm21, tresme2)
-              if(ns .ne. 0) call rc32s0('SPSP', stm21, lieu, tresme2)
+              call rc32s0b(zr(jspseis), stm21, tresme2)
               tresmepq(2) = tresme2
-          endif   
-          if(ns .eq. 0) call rctres(st22, tresca)
-          if(ns .ne. 0) call rc32s0('SPSP', st22, lieu, tresca)            
-          if(tresca .gt. trescapq(2) ) then
-              trescapq(2) = tresca
-              if(ns .eq. 0) call rctres(stm22, tresme2)
-              if(ns .ne. 0) call rc32s0('SPSP', stm22, lieu, tresme2)
-              tresmepq(2) = tresme2
-          endif 
-          if(ns .eq. 0) call rctres(st23, tresca)
-          if(ns .ne. 0) call rc32s0('SPSP', st23, lieu, tresca)            
-          if(tresca .gt. trescapq(2) ) then
-              trescapq(2) = tresca
-              if(ns .eq. 0) call rctres(stm23, tresme2)
-              if(ns .ne. 0) call rc32s0('SPSP', stm23, lieu, tresme2)
-              tresmepq(2) = tresme2
-          endif 
-          if(ns .eq. 0) call rctres(st24, tresca)
-          if(ns .ne. 0) call rc32s0('SPSP', st24, lieu, tresca)            
-          if(tresca .gt. trescapq(2) ) then
-              trescapq(2) = tresca
-              if(ns .eq. 0) call rctres(stm24, tresme2)
-              if(ns .ne. 0) call rc32s0('SPSP', stm24, lieu, tresme2)
-              tresmepq(2) = tresme2
+            endif        
+!   
+            if(unitaire) then
+              call rc32s0b(zr(jspseis), st12, tresca) 
+              if(tresca .gt. trescapq(1) ) then
+                trescapq(1) = tresca
+                call rc32s0b(zr(jspseis), stm12, tresme1)
+                tresmepq(1) = tresme1
+              endif   
+              call rc32s0b(zr(jspseis), st13, tresca)
+              if(tresca .gt. trescapq(1) ) then
+                trescapq(1) = tresca
+                call rc32s0b(zr(jspseis), stm13, tresme1)
+                tresmepq(1) = tresme1
+              endif    
+              call rc32s0b(zr(jspseis), st14, tresca) 
+              if(tresca .gt. trescapq(1) ) then
+                trescapq(1) = tresca
+                call rc32s0b(zr(jspseis), stm14, tresme1)
+                tresmepq(1) = tresme1
+              endif   
+              call rc32s0b(zr(jspseis), st22, tresca)    
+              if(tresca .gt. trescapq(2) ) then
+                trescapq(2) = tresca
+                call rc32s0b(zr(jspseis), stm22, tresme2)
+                tresmepq(2) = tresme2
+              endif  
+              call rc32s0b(zr(jspseis), st23, tresca)           
+              if(tresca .gt. trescapq(2) ) then
+                trescapq(2) = tresca
+                call rc32s0b(zr(jspseis), stm23, tresme2)
+                tresmepq(2) = tresme2
+              endif 
+              call rc32s0b(zr(jspseis), st24, tresca)          
+              if(tresca .gt. trescapq(2) ) then
+                trescapq(2) = tresca
+                call rc32s0b(zr(jspseis), stm24, tresme2)
+                tresmepq(2) = tresme2
+              endif
+            endif
           endif 
 !
+          if(.not. unitaire) exit
 173     continue
         if(trescapq(1) .gt. sp(1)) then
             sp(1) = trescapq(1)

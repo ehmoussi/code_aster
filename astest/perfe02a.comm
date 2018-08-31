@@ -224,7 +224,7 @@ TEST_TABLE(
            )
 
 TEST_TABLE(
-           VALE_CALC=2.9973457362,
+           VALE_CALC=3.00653919529,
            NOM_PARA='DY',
            TABLE=FODEP,
            FILTRE=_F(NOM_PARA='INST',

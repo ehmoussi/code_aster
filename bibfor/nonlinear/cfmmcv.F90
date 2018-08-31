@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -126,6 +126,7 @@ implicit none
 ! - Cycling informations printing in convergence table
 !
     if (l_cont_cont) then
+        ds_print%resi_pressure = ds_contact%resi_pressure
         call mm_cycl_print(ds_print, ds_measure)
     endif
 !

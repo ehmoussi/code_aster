@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -61,6 +61,14 @@ DEFI_SOL_EQUI = MACRO(nom="DEFI_SOL_EQUI",
       GROUP_MA_DROITE = SIMP(statut='f',typ=grma,),
       GROUP_MA_GAUCHE = SIMP(statut='f',typ=grma,),
       GROUP_MA_LIGNE  = SIMP(statut='f',typ=grma,),
+      b_BYRNE = BLOC ( condition = """not exists("GROUP_MA_LIGNE")""",
+          CORRECTION = SIMP(statut='f',typ='TXM',into=("BYRNE","SANS"),defaut="SANS",
+                fr=tr("utilisation formulation Byrne"),),
+          b_CORRECTION =BLOC ( condition = """equal_to("CORRECTION", 'BYRNE')""",
+                COEF_KSI = SIMP(statut='f',typ='R',defaut=0.666666667,
+                         fr=tr("facteur Ksi_max par couche pour modele Byrne"),),
+            ),
+       ),
    ),
    b_MONO =BLOC ( condition = """equal_to("CHARGEMENT", 'MONO_APPUI')""",
       regles=(UN_PARMI('FONC_SIGNAL','DSP','FONC_SIGNAL_X'),
@@ -90,7 +98,16 @@ DEFI_SOL_EQUI = MACRO(nom="DEFI_SOL_EQUI",
       GROUP_MA_DROITE =SIMP(statut='f',typ=grma,),
       GROUP_MA_GAUCHE =SIMP(statut='f',typ=grma,),
       GROUP_MA_LIGNE  = SIMP(statut='f',typ=grma,),
-   ),
+      b_BYRNE = BLOC ( condition = """not exists("GROUP_MA_LIGNE")""",
+          CORRECTION = SIMP(statut='f',typ='TXM',into=("BYRNE","SANS"),defaut="SANS",
+                fr=tr("utilisation formulation Byrne"),),
+          b_CORRECTION =BLOC ( condition = """equal_to("CORRECTION", 'BYRNE')""",
+                COEF_KSI = SIMP(statut='f',typ='R',defaut=0.666666667,
+                         fr=tr("facteur Ksi_max par couche pour modele Byrne"),),
+            ),
+       ),
+    ),
+
    CORR_AMOR  =SIMP(statut='f',typ='TXM',into=("OUI","NON",),
                        defaut="NON",fr=tr("formulation d'amortissement")
                        ),
@@ -150,6 +167,7 @@ DEFI_SOL_EQUI = MACRO(nom="DEFI_SOL_EQUI",
       RHO       = SIMP(statut='o', typ='R', fr=tr("Masse volumique")),
       AMOR_HYST = SIMP(statut='o', typ='R', fr=tr("Coefficient d'amortissement")),
       NUME_MATE = SIMP(statut='o', typ='I', fr=tr("Numéro du matériau")),
+      N1        = SIMP(statut='f', typ='R', fr=tr("Valeur essai SPT")),
     ),
    ),
    TITRE = SIMP(statut='f', typ='TXM',
