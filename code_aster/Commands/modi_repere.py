@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -29,7 +29,7 @@ class ModiRepere(ExecuteCommand):
 
     def create_result(self, keywords):
         """Initialize the result.
-        
+
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
@@ -40,5 +40,19 @@ class ModiRepere(ExecuteCommand):
                 self._result = type(keywords["RESULTAT"])()
         else:
             self._result = type(keywords["CHAM_GD"])()
+
+    def post_exec(self, keywords):
+        """Execute the command.
+
+        Arguments:
+            keywords (dict): User's keywords.
+        """
+        modele = None
+        try:
+            modele = keywords["RESULTAT"].getModel()
+            self._result.appendModelOnAllRanks(modele)
+            self._result.update()
+        except:
+            pass
 
 MODI_REPERE = ModiRepere.run

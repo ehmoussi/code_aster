@@ -79,5 +79,22 @@ class MatrixCombination(ExecuteCommand):
         if self._result is None:
             raise NotImplementedError()
 
+    def post_exec(self, keywords):
+        """Execute the command.
+
+        Arguments:
+            keywords (dict): User's keywords.
+        """
+        comb = keywords.get("COMB_R")
+        if comb is None:
+            comb = keywords.get("COMB_C")
+        if comb is not None:
+            if isinstance(self._result, GeneralizedAssemblyMatrixDouble) or \
+                isinstance(self._result, GeneralizedAssemblyMatrixComplex):
+                dofNum = comb[0]["MATR_ASSE"].getGeneralizedDOFNumbering()
+                self._result.setGeneralizedDOFNumbering(dofNum)
+            else:
+                dofNum = comb[0]["MATR_ASSE"].getDOFNumbering()
+                self._result.setDOFNumbering(dofNum)
 
 COMB_MATR_ASSE = MatrixCombination.run

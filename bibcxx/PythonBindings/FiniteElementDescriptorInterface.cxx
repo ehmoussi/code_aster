@@ -1,6 +1,6 @@
 /**
- * @file VectorUtilities.cxx
- * @brief Utilitaires pour convertir un vector en list et inversement
+ * @file FiniteElementDescriptorInterface.cxx
+ * @brief Interface python de FiniteElementDescriptor
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
@@ -21,19 +21,19 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "PythonBindings/VectorUtilities.h"
-#include "Loads/PhysicalQuantity.h"
-#include "Materials/Material.h"
-#include "Modeling/FiniteElementDescriptor.h"
+/* person_in_charge: nicolas.sellenet at edf.fr */
 
-void exportVectorUtilitiesToPython()
+#include <boost/python.hpp>
+#include <PythonBindings/factory.h>
+#include "PythonBindings/FiniteElementDescriptorInterface.h"
+
+
+void exportFiniteElementDescriptorToPython()
 {
     using namespace boost::python;
 
-    exportVectorUtilities< long >();
-    exportVectorUtilities< double >();
-    exportVectorUtilities< std::string >();
-    exportVectorUtilities< PhysicalQuantityComponent >();
-    exportVectorUtilities< MaterialPtr >();
-    exportVectorUtilities< FiniteElementDescriptorPtr >();
+    class_< FiniteElementDescriptorInstance,
+            FiniteElementDescriptorInstance::FiniteElementDescriptorPtr,
+            bases< DataStructure > > ( "FiniteElementDescriptor", no_init )
+    ;
 };

@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -30,7 +30,7 @@ class ExtrMode(ExecuteCommand):
 
     def create_result(self, keywords):
         """Initialize the result.
-        
+
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
@@ -38,5 +38,16 @@ class ExtrMode(ExecuteCommand):
             self._result = MechanicalModeContainer()
         else:
             self._result = type(keywords['FILTRE_MODE'][0]['MODE'])()
+
+    def post_exec(self, keywords):
+        """Execute the command.
+
+        Arguments:
+            keywords (dict): User's keywords.
+        """
+        try:
+            self._result.setDOFNumbering(keywords['FILTRE_MODE'][0]['MODE'].getDOFNumbering())
+        except:
+            pass
 
 EXTR_MODE = ExtrMode.run

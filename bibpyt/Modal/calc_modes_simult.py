@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -65,6 +65,16 @@ class ModalCalculationSimult(ExecuteCommand):
         Arguments:
             keywords (dict): User's keywords.
         """
+        matrRigi = keywords.get("MATR_RIGI")
+        if matrRigi is not None:
+            if isinstance(self._result, GeneralizedModeContainer):
+                self._result.setGeneralizedDOFNumbering(matrRigi.getGeneralizedDOFNumbering())
+            else:
+                self._result.setDOFNumbering(matrRigi.getDOFNumbering())
+            self._result.setRigidityMatrix(matrRigi)
+        matrAmor = keywords.get("MATR_AMOR")
+        if matrAmor is not None:
+            self._result.setDampingMatrix(matrAmor)
         self._result.update()
 
 

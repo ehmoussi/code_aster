@@ -47,4 +47,14 @@ class ProjMesuModal(ExecuteCommand):
         else:
             raise TypeError("Type not allowed")
 
+    def post_exec(self, keywords):
+        """Execute the command.
+
+        Arguments:
+            keywords (dict): User's keywords.
+        """
+        base = keywords["MODELE_CALCUL"]["BASE"]
+        if isinstance(self._result, TransientGeneralizedResultsContainer):
+            self._result.setDOFNumbering(base.getDOFNumbering())
+
 PROJ_MESU_MODAL = ProjMesuModal.run

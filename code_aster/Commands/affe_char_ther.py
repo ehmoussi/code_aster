@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -34,15 +34,7 @@ class ThermalLoadDefinition(ExecuteCommand):
             keywords (dict): Keywords arguments of user's keywords.
         """
 
-        self._result = ThermalLoad()
-
-    def post_exec(self, keywords):
-        """Execute the command.
-
-        Arguments:
-            keywords (dict): User's keywords.
-        """
-        self._result.setModel(keywords["MODELE"])
+        self._result = ThermalLoad(keywords["MODELE"])
 
 
 AFFE_CHAR_THER = ThermalLoadDefinition.run

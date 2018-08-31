@@ -111,8 +111,7 @@ class MechanicalSolver(ExecuteCommand):
             CALC_CHAMP(reuse=self._result,
                        RESULTAT=self._result,
                        CONTRAINTE=contrainte,)
-
-        self._result.update()
-        self._result.appendModelOnAllRanks(keywords["MODELE"])
+        else:
+            self._result.update()
 
 MECA_STATIQUE = MechanicalSolver.run

@@ -75,6 +75,7 @@
 #include "PythonBindings/CrackShapeInterface.h"
 #include "PythonBindings/CrackTipInterface.h"
 #include "PythonBindings/GeneralizedModelInterface.h"
+#include "PythonBindings/FiniteElementDescriptorInterface.h"
 #include "PythonBindings/ModelInterface.h"
 #include "PythonBindings/PhysicsAndModelingsInterface.h"
 #include "PythonBindings/PrestressingCableDefinitionInterface.h"
@@ -179,6 +180,7 @@ BOOST_PYTHON_MODULE(libaster)
     exportDiscreteProblemToPython();
     exportDOFNumberingToPython();
     exportElementaryCharacteristicsToPython();
+    exportFiniteElementDescriptorToPython();
     exportFiberGeometryToPython();
     exportGenericDataFieldToPython();
     exportFieldOnElementsToPython();

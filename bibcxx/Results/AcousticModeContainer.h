@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe AcousticModeContainer
  * @author Natacha Béreux 
  * @section LICENCE
- *   Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -27,6 +27,7 @@
 #include "astercxx.h"
 
 #include "Results/FullResultsContainer.h"
+#include "LinearAlgebra/AssemblyMatrix.h"
 
 /**
  * @class AcousticModeContainerInstance
@@ -36,13 +37,32 @@
 class AcousticModeContainerInstance: public FullResultsContainerInstance
 {
 private:
-    
+    /** @brief Rigidity displacement matrix */
+    AssemblyMatrixPressureDoublePtr _rigidityMatrix;
+
 public:
     /**
      * @brief Constructeur
      */
-    AcousticModeContainerInstance(): FullResultsContainerInstance( "MODE_ACOU" )
-    {};   
+    AcousticModeContainerInstance():
+        FullResultsContainerInstance( "MODE_ACOU" ),
+        _rigidityMatrix( nullptr )
+    {};
+
+    /**
+     * @brief Set the rigidity matrix
+     * @param matr AssemblyMatrixPressureDoublePtr
+     */
+    bool setRigidityMatrix( const AssemblyMatrixPressureDoublePtr& matr )
+    {
+        _rigidityMatrix = matr;
+        return true;
+    };
+
+    bool update() throw ( std::runtime_error )
+    {
+        return ResultsContainerInstance::update();
+    };
 };
 
 /**
