@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -93,6 +93,7 @@ subroutine xcface(lsn, lst, jgrlsn, igeom, enr,&
 !
 !
     eps=-1.0d-10
+    minlst = 1*r8maem()
     zxain = xxmmvd('ZXAIN')
     call elrefe_info(fami='RIGI', ndim=ndim, nno=nno, nnos=nnos)
 !
@@ -149,7 +150,6 @@ subroutine xcface(lsn, lst, jgrlsn, igeom, enr,&
 !   A IA=IN=0 POUR LES MAILLES DU FRONT
     prec = 1000*r8prem()
     minlsn = 1*r8maem()
-    minlst = 1*r8maem()
 !
 !
     if (ndim .eq. 3) then

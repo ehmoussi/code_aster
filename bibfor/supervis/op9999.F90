@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -51,12 +51,12 @@ subroutine op9999()
 #include "asterfort/asmpi_info.h"
     mpi_int :: mrank, msize
     integer :: info, nbenre, nboct, iret, nbrank
-    integer :: ifm, iunerr, iunres, iunmes
+    integer :: ifm, iunres, iunmes
     integer :: i, jco, nbco
     integer :: nbext, nfhdf, nproc
     aster_logical :: bool
     character(len=8) :: k8b, ouinon, infr, proc
-    character(len=16) :: fchier, fhdf, typres
+    character(len=16) :: fhdf, typres
     character(len=80) :: fich
 !-----------------------------------------------------------------------
 !
@@ -86,12 +86,7 @@ subroutine op9999()
 !
     infr = 'NON'
     if (infr.eq.'OUI') then
-        ifm = 0
-        fchier = ' '
-        ifm = 6
-        if (.not. ulexis( ifm )) then
-            call ulopen(ifm, ' ', fchier, 'NEW', 'O')
-        endif
+        ifm = iunifi('MESSAGE')
 !
         typres = 'RESULTAT_SDASTER'
         nbco = 0
@@ -106,7 +101,6 @@ subroutine op9999()
         endif
     endif
 !
-    iunerr = iunifi('ERREUR')
     iunmes = iunifi('MESSAGE')
     iunres = iunifi('RESULTAT')
 !
@@ -154,8 +148,6 @@ subroutine op9999()
 ! --- CLOTURE DES FICHIERS
 !
       call jelibf('SAUVE', 'G', info)
-      if (iunerr .gt. 0) write(iunerr,* ) '<I> <FIN> FERMETURE DE LA BASE "GLOBALE" EFFECTUEE.'
-      if (iunres .gt. 0) write(iunres,* ) '<I> <FIN> FERMETURE DE LA BASE "GLOBALE" EFFECTUEE.'
 !
       call jelibf('DETRUIT', 'V', info)
 !
@@ -163,9 +155,6 @@ subroutine op9999()
 !
       if (ouinon .eq. 'OUI') then
         call jxcopy('G', 'GLOBALE', 'V', 'VOLATILE', nbext)
-        if (iunerr .gt. 0) write(iunerr, '(A,I2,A)'&
-                           ) ' <I> <FIN> RETASSAGE DE LA BASE "GLOBALE" EFFECTUEE, ',&
-                           nbext, ' FICHIER(S) UTILISE(S).'
         if (iunres .gt. 0) write(iunres, '(A,I2,A)'&
                            ) ' <I> <FIN> RETASSAGE DE LA BASE "GLOBALE" EFFECTUEE, ',&
                            nbext, ' FICHIER(S) UTILISE(S).'
@@ -174,7 +163,6 @@ subroutine op9999()
 ! --- IMPRESSION DES STATISTIQUES ( AVANT CLOTURE DE JEVEUX )
 !
       !call utmess('I', 'SUPERVIS2_97')
-      if (iunerr .gt. 0) write(iunerr, *) '<I> <FIN> ARRET NORMAL DANS "FIN" PAR APPEL A "JEFINI".'
       if (iunres .gt. 0) write(iunres, *) '<I> <FIN> ARRET NORMAL DANS "FIN" PAR APPEL A "JEFINI".'
     endif
     call jedema()

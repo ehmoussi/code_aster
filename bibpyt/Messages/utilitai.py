@@ -409,6 +409,11 @@ Contactez le support technique.
  "INTERP_NUME" et ("FREQ" ou "LIST_FREQ") non compatibles
 """),
 
+    97 : _(u"""
+ Modèle absent.
+ Il faut renseigner le mot-clé MODELE.
+"""),
+
     99 : _(u"""
  objet %(k1)s inexistant
 """),

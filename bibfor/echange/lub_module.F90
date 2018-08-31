@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -130,9 +130,10 @@ module lub_module
         subroutine get_previous_element(element, backele)
             ! return the element before
             type(bearing), pointer, intent(in)  :: element
-            type(bearing), pointer, intent(out) :: backele => null()
+            type(bearing), pointer, intent(out) :: backele 
             type(bearing), pointer              :: current => null()
-
+            
+            backele => null()
             current => first_bearing
 
             do while ( associated( current ) )
@@ -250,8 +251,9 @@ module lub_module
         subroutine is_bearing_exist(num, exist, current)
             integer , intent(in) :: num
             logical , intent(out) :: exist
-            type(bearing), pointer, intent (out), optional :: current => null()
-
+            type(bearing), pointer, intent (out), optional :: current 
+           
+            current => null()
             exist = .false.
 
             if(associated(first_bearing)) then
@@ -280,8 +282,9 @@ module lub_module
 
         subroutine get_bearing_by_num(num, fbearing)
            integer, intent(in) :: num
-           type(bearing), pointer, intent(out) :: fbearing => null()
+           type(bearing), pointer, intent(out) :: fbearing 
            logical :: exist
+           fbearing => null()
            call is_bearing_exist(num, exist, fbearing)
            ASSERT(exist)
         end subroutine

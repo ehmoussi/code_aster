@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -22,14 +22,11 @@ subroutine cfcpem(resoco, nbliai)
     implicit     none
 #include "jeveux.h"
 !
-#include "asterc/r8prem.h"
+#include "asterfort/compute_ineq_conditions_matrix.h"
 #include "asterfort/cfmmvd.h"
 #include "asterfort/jedema.h"
-#include "asterfort/jelibe.h"
 #include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
-#include "asterfort/jexnum.h"
-#include "asterfort/r8inir.h"
 #include "blas/daxpy.h"
     character(len=24) :: resoco
     integer :: nbliai
@@ -49,11 +46,6 @@ subroutine cfcpem(resoco, nbliai)
 !
 !
 !
-    integer :: ndlmax
-    parameter   (ndlmax = 30)
-    real(kind=8) :: jeuini
-    real(kind=8) :: coefpn, xmu
-    integer :: iliai
     character(len=24) :: apcoef, appoin
     integer :: japcoe, japptr
     character(len=24) :: tacfin
@@ -61,9 +53,7 @@ subroutine cfcpem(resoco, nbliai)
     character(len=24) :: jeux
     integer :: jjeux
     character(len=24) :: enat
-    integer :: jenat
     integer :: ztacf
-    integer :: nbddl, jdecal
 !
 ! ----------------------------------------------------------------------
 !
@@ -84,20 +74,9 @@ subroutine cfcpem(resoco, nbliai)
 !
 ! --- CALCUL DE LA MATRICE DE CONTACT PENALISEE
 !
-    do 210 iliai = 1, nbliai
-        jdecal = zi(japptr+iliai-1)
-        nbddl = zi(japptr+iliai) - zi(japptr+iliai-1)
-        jeuini = zr(jjeux+3*(iliai-1)+1-1)
-        coefpn = zr(jtacf+ztacf*(iliai-1)+1)
-        call jeveuo(jexnum(enat, iliai), 'E', jenat)
-        call r8inir(ndlmax, 0.d0, zr(jenat), 1)
-        if (jeuini .lt. r8prem()) then
-            xmu = sqrt(coefpn)
-            call daxpy(nbddl, xmu, zr(japcoe+jdecal), 1, zr(jenat),&
-                       1)
-        endif
-        call jelibe(jexnum(enat, iliai))
-210  end do
+    call compute_ineq_conditions_matrix(enat  , nbliai, japptr,&
+                                             japcoe, jjeux , jtacf ,&
+                                             3     , ztacf )
 !
     call jedema()
 !

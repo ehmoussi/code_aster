@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -131,6 +131,8 @@ implicit none
     else if (question.eq.'CONT_PENA') then
         algo_cont = cfdisi(sdcont_defi,'ALGO_CONT')
         cfdisl = algo_cont.eq.4
+    else if (question.eq.'UNIL_PENA') then
+        cfdisl = cfdisi(sdcont_defi,'ALGO_UNIL').eq.4
     else if (question.eq.'CONT_ACTI') then
         algo_cont = cfdisi(sdcont_defi,'ALGO_CONT')
         cfdisl = algo_cont.eq.1

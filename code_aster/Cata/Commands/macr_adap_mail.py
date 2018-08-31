@@ -143,7 +143,7 @@ MACR_ADAP_MAIL=MACRO(nom="MACR_ADAP_MAIL",
 #
 # 4.1.4. La ou les composantes retenues
 #
-    NOM_CMP = SIMP(statut='f',typ=grma,validators=NoRepeat(),max='**',
+    NOM_CMP = SIMP(statut='f',typ='TXM',validators=NoRepeat(),max='**',
                           fr=tr("Liste des composante(s) retenue(s) pour le champ."),
                           ),
 #
@@ -576,7 +576,7 @@ MACR_ADAP_MAIL=MACRO(nom="MACR_ADAP_MAIL",
 #
 # 10.4. Les composantes
 #
-    NOM_CMP = SIMP(statut='f',typ=grma,validators=NoRepeat(),max='**',
+    NOM_CMP = SIMP(statut='f',typ='TXM',validators=NoRepeat(),max='**',
                    fr=tr("Liste des composante(s) retenue(s) pour le champ."),
                    ),
 #

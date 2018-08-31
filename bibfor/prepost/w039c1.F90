@@ -29,6 +29,7 @@ subroutine w039c1(carte, ifi, form, ligrel, titre)
 #include "asterfort/exisd.h"
 #include "asterfort/imprsd.h"
 #include "asterfort/irceme.h"
+#include "asterfort/iunifi.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jelira.h"
 #include "asterfort/jemarq.h"
@@ -72,8 +73,8 @@ subroutine w039c1(carte, ifi, form, ligrel, titre)
     if (iexi .eq. 0) goto 999
 
 !
-    ifm=6
-    ifr=8
+    ifm=iunifi('MESSAGE')
+    ifr=iunifi('RESULTAT')
     cart1=carte
 
 !     -- POUR QUE LE CHAM_ELEM QUE L'ON VA IMPRIMER AIT UN NOM "PROCHE"
