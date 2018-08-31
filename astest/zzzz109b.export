@@ -1,0 +1,8 @@
+P memory_limit 512
+P mpi_nbcpu 1
+P mpi_nbnoeud 1
+P testlist verification sequential
+P time_limit 30
+F comm zzzz109b.comm D  1
+F comm zzzz109b.com1 D  1
+F libr zzzz109b.mmed D  20
