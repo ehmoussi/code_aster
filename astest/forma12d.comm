@@ -17,10 +17,6 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: emmanuel.boyere at edf.fr
-#-----------------------------------------------------------------------
-#
-
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
 
 tfin = 0.5;
@@ -89,9 +85,11 @@ MODEE=EXTR_MODE(FILTRE_MODE=_F(MODE=MODES,
                                FREQ_MAX=100.0,),
                 IMPRESSION=_F(CUMUL='OUI',),);
 
+fc_x4 = 4.*fc
+
 MODEF=EXTR_MODE(FILTRE_MODE=_F(MODE=MODES,
                                FREQ_MIN=0.0,
-                               FREQ_MAX=(4.0 * fc),),
+                               FREQ_MAX=fc_x4,),
                 IMPRESSION=_F(CUMUL='OUI',),);
 
 GRAV=AFFE_CHAR_MECA(MODELE=MODELE,

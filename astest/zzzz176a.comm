@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -27,9 +27,10 @@
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
 
-PRE_IDEAS(CREA_GROUP_COUL='NON',);
 
-MAYA=LIRE_MAILLAGE(FORMAT="ASTER", );
+MAYA = LIRE_MAILLAGE(FORMAT='IDEAS',
+                     UNITE=19,
+                     )
 
 MODELE=AFFE_MODELE(MAILLAGE=MAYA,
                    AFFE=_F(TOUT='OUI',
@@ -103,9 +104,10 @@ IMPR_RESU(FORMAT='GMSH', UNITE=60, RESU=_F(MAILLAGE=MAYA,), PROC0='NON',);
 
 DEFI_FICHIER (ACTION='LIBERER',UNITE=60)
 
-PRE_GMSH(UNITE_GMSH=60,UNITE_MAILLAGE=22)
 
-MA22=LIRE_MAILLAGE(FORMAT="ASTER",UNITE=22)
+MA22 = LIRE_MAILLAGE(FORMAT='GMSH',
+                     UNITE=60,
+                     )
 
 
 # FORMAT IDEAS
@@ -115,9 +117,10 @@ IMPR_RESU(FORMAT='IDEAS', UNITE=62, RESU=_F(MAILLAGE=MAYA,), PROC0='NON',);
 
 DEFI_FICHIER (ACTION='LIBERER',UNITE=62)
 
-PRE_IDEAS(UNITE_IDEAS=62,UNITE_MAILLAGE=23,)
 
-MA23=LIRE_MAILLAGE(FORMAT="ASTER",UNITE=23)
+MA23 = LIRE_MAILLAGE(FORMAT='IDEAS',
+                     UNITE=62,
+                     )
 
 # FORMAT IDEAS POUR TESTER LE RETOUR DE DEFI_FICHIER
 # --------------------------------------------------

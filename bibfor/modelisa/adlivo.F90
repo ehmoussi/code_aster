@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 
 subroutine adlivo(mv, is, nvtot, nvoima, nscoma,&
-                  touvoi)
+                  touvoi, nomail)
     implicit none
 #include "asterf_types.h"
 #include "asterfort/utmess.h"
@@ -26,6 +26,7 @@ subroutine adlivo(mv, is, nvtot, nvoima, nscoma,&
     integer :: touvoi(1:nvoima, 1:nscoma+2)
     integer :: iv, nsco, isco
     aster_logical :: trma, trso
+    character(len=8) :: nomail
 !
 !  AJOUTE A LA LISTE DE TOUS LES VOISINS DE LA MAILLE COURANTE MO
 !  LA MAILLE MV ET LE SOMMET IS SI CETTE MAILE N EXISTE PAS DEJA
@@ -70,7 +71,7 @@ subroutine adlivo(mv, is, nvtot, nvoima, nscoma,&
     if (.not.trma) then
         nvtot=nvtot+1
         if (nvtot .gt. nvoima) then
-            call utmess('F', 'VOLUFINI_3', si=nvtot)
+            call utmess('F', 'VOLUFINI_3', sk=nomail)
         endif
         touvoi(nvtot,1)=mv
         touvoi(nvtot,2)=1

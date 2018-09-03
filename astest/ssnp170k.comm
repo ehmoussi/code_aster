@@ -80,7 +80,7 @@ CHAR2= AFFE_CHAR_MECA(MODELE=MODI,
 
 
 
-RES=STAT_NON_LINE(INFO=2,
+RES=STAT_NON_LINE(INFO=1,
                   AFFICHAGE=_F(INFO_RESIDU='OUI',),
                   MODELE=MODI,
                   CHAM_MATER=AFFE,
@@ -105,14 +105,14 @@ RES=STAT_NON_LINE(INFO=2,
                                _F(OBSE_ETAT_INIT = 'NON',
                                   NOM_CMP    = ('PRES', 'JEU', 'CONT', 'COEFSURF', 'PRESCOOR'),
                                   NOM_CHAM   ='CONT_ELEM',
-                                  MAILLE='M1527',
+                                  MAILLE='C1527',
                                   INST=(1.),
                                   EVAL_CHAM  ='VALE',),
                                   ),
                   CONVERGENCE=_F(RESI_GLOB_RELA=1.E-6,
                                  ITER_GLOB_MAXI=50,));
 
-IMPR_RESU(FORMAT="RESULTAT",RESU=_F(RESULTAT=RES, NOM_CHAM=('SIEF_ELGA','CONT_ELEM'), INST=1.0, MAILLE=('M1527'),))
+IMPR_RESU(FORMAT="RESULTAT",RESU=_F(RESULTAT=RES, NOM_CHAM=('SIEF_ELGA','CONT_ELEM'), INST=1.0, MAILLE=('C1527'),))
 
 TAB= RECU_TABLE(CO=RES, NOM_TABLE='OBSERVATION')
 
@@ -195,7 +195,7 @@ TEST_RESU(RESU=(_F(INST=1.0,
                    REFERENCE = 'ANALYTIQUE',
                    NOM_CHAM='CONT_ELEM',
                    LEGENDE='CONT_ELEM',
-                   MAILLE='M1527',
+                   MAILLE='C1527',
                    NOM_CMP='PRES',
                    VALE_REFE=-25.0,
                    VALE_CALC=-25.00,

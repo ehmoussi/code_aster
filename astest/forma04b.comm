@@ -25,6 +25,7 @@ DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),IGNORE_ALARM='CONTACT3_16',DEBUG=_F(SDVERI
 E  =  20000.
 nu =  0.3
 h  =  2.
+h_m = -1.*h
 R  =  50.
 
 # -- Lecture du maillage et affectation du modele, des chargements
@@ -51,7 +52,7 @@ CL=AFFE_CHAR_MECA(MODELE=MO,
   DDL_IMPO=(_F(GROUP_MA='A1A2',
    DX=0,),
 _F(GROUP_MA='A2B2',
-   DY=-h,),
+   DY=h_m,),
 _F(GROUP_MA='A1B1',
    DY=h,),),);
 

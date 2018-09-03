@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -31,6 +31,7 @@ implicit none
 #include "asterfort/dbr_calcpod_sele.h"
 #include "asterfort/dbr_calcpod_save.h"
 #include "asterfort/dbr_calcpod_redu.h"
+#include "asterfort/dbr_calcpod_size.h"
 #include "asterfort/romTableSave.h"
 !
 character(len=24), intent(in) :: field_iden
@@ -51,27 +52,32 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: nb_sing, nb_mode, nb_snap_redu, nb_line_svd, i_snap, nb_mode_maxi
+    integer :: nb_sing, nb_mode, nb_snap_redu, nb_line_svd, i_snap, nb_mode_maxi, m, n
     real(kind=8), pointer :: q(:) => null()
     real(kind=8), pointer :: v(:) => null()
     real(kind=8), pointer :: s(:) => null() 
     real(kind=8), pointer :: v_gamma(:) => null()
-    character(len=19) :: tabl_name
+    character(len=19) :: tabl_coor
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    tabl_name    = ds_para_pod%tabl_name
+    tabl_coor    = ds_empi%tabl_coor
     nb_snap_redu = ds_para_pod%ds_snap%nb_snap
     nb_mode_maxi = ds_para_pod%nb_mode_maxi
     nb_line_svd  = 0
 !
+! - Get size of snapshots matrix
+!
+    call dbr_calcpod_size(ds_empi, ds_para_pod%ds_snap,&
+                          m      , n )
+!
 ! - Create snapshots matrix Q
 !    
-    call dbr_calcpod_q(ds_empi, ds_para_pod%ds_snap, q)
+    call dbr_calcpod_q(ds_empi, ds_para_pod%ds_snap, m, n, q)
 !
 ! - Compute empiric modes by SVD
 !
-    call dbr_calcpod_svd(ds_empi, ds_para_pod%ds_snap, q, s, v, nb_sing, nb_line_svd)
+    call dbr_calcpod_svd(m, n, q, s, v, nb_sing, nb_line_svd)
 !
 ! - Select empiric modes
 !
@@ -88,7 +94,7 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
 ! - Save the reduced coordinates in a table
 !
     do i_snap = 1, nb_snap_redu
-        call romTableSave(tabl_name  , nb_mode, v_gamma   ,&
+        call romTableSave(tabl_coor  , nb_mode, v_gamma   ,&
                           nume_snap_ = i_snap)
     end do
 !

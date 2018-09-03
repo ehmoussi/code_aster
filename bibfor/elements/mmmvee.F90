@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -20,7 +20,7 @@ subroutine mmmvee(phasez, ndim, nne, norm, tau1,&
                   tau2, mprojt, wpg, ffe, jacobi,&
                   jeu, coefac, coefaf, lambda, coefff,&
                   dlagrc, dlagrf, dvite, rese, nrese,&
-                  vectee)
+                  vectee,mprt11,mprt21,mprt22,kappa,granglis)
 !
 ! person_in_charge: mickael.abbas at edf.fr
 !
@@ -29,6 +29,7 @@ subroutine mmmvee(phasez, ndim, nne, norm, tau1,&
 #include "asterfort/assert.h"
     character(len=*) :: phasez
     integer :: ndim, nne
+    integer :: granglis
     real(kind=8) :: wpg, ffe(9), jacobi
     real(kind=8) :: dlagrc, dlagrf(2), dvite(3)
     real(kind=8) :: rese(3), nrese
@@ -36,8 +37,8 @@ subroutine mmmvee(phasez, ndim, nne, norm, tau1,&
     real(kind=8) :: tau1(3), tau2(3), mprojt(3, 3)
     real(kind=8) :: coefac, coefaf, jeu
     real(kind=8) :: lambda, coefff
-    real(kind=8) :: vectee(27)
-!
+    real(kind=8) :: vectee(27),kappa(2,2)
+    real(kind=8) :: mprt11(3, 3), mprt21(3, 3), mprt22(3, 3)
 ! ----------------------------------------------------------------------
 !
 ! ROUTINE CONTACT (METHODE CONTINUE - UTILITAIRE)
@@ -81,59 +82,75 @@ subroutine mmmvee(phasez, ndim, nne, norm, tau1,&
 !
     integer :: inoe, idim, ii, i, j, k
     real(kind=8) :: dlagft(3), plagft(3), prese(3)
-    real(kind=8) :: dvitet(3), pdvitt(3)
+    real(kind=8) :: dvitet(3), pdvitt(3), g(3, 3), mprt12(3, 3)
     character(len=9) :: phasep
 !
 ! ----------------------------------------------------------------------
 !
     phasep = phasez
-    do 14 i = 1, 3
+    do  i = 1, 3
         plagft(i) = 0.d0
         dlagft(i) = 0.d0
         prese (i) = 0.d0
         dvitet(i) = 0.d0
         pdvitt(i) = 0.d0
-14  end do
+  end do
 !
+ mprt12(1,1) = mprt21(1,1)
+  mprt12(2,2) = mprt21(2,2)  
+  mprt12(3,3) = mprt21(3,3)
+  mprt12(1,2) = mprt21(2,1)
+  mprt12(1,3) = mprt21(3,1)  
+  mprt12(2,1) = mprt21(1,2)
+  mprt12(2,3) = mprt21(3,2)  
+  mprt12(3,1) = mprt21(1,3)
+  mprt12(3,2) = mprt21(2,3) 
+!  granglis = 0
 ! --- PROJECTION DU LAGRANGE DE FROTTEMENT SUR LE PLAN TANGENT
 !
-    do 123 i = 1, ndim
+    do  i = 1, ndim
         dlagft(i) = dlagrf(1)*tau1(i)+dlagrf(2)*tau2(i)
-123  end do
+  end do
 !
 ! --- PRODUIT LAGR. FROTTEMENT. PAR MATRICE P
 !
-    do 221 i = 1, ndim
-        do 222 j = 1, ndim
+    do  i = 1, ndim
+        do  j = 1, ndim
             plagft(i) = mprojt(i,j)*dlagft(j)+plagft(i)
-222      continue
-221  end do
+        enddo
+  end do
 !
 ! --- PRODUIT SEMI MULT. LAGR. FROTTEMENT. PAR MATRICE P
 !
     if (phasep(1:4) .eq. 'GLIS') then
-        do 228 i = 1, ndim
-            do 229 j = 1, ndim
-                prese(i) = mprojt(i,j)*rese(j)/nrese+prese(i)
-229          continue
-228      continue
+        do  i = 1, ndim
+            do  j = 1, ndim
+                if (granglis .eq. 1) then 
+                   g(i,j)=kappa(1,1)*mprt11(i,j)+kappa(1,2)*mprt12(i,j)&
+                    +kappa(2,1)*mprt21(i,j)+kappa(2,2)*mprt22(i,j)
+                    prese(i) = g(i,j)*rese(j)/nrese+prese(i)
+                else
+                    prese(i) = mprojt(i,j)*rese(j)/nrese+prese(i)
+                endif
+            enddo
+        enddo
     endif
 !
 ! --- PROJECTION DU SAUT SUR LE PLAN TANGENT
 !
-    do 21 i = 1, ndim
-        do 22 k = 1, ndim
+    do  i = 1, ndim
+        do  k = 1, ndim
             dvitet(i) = mprojt(i,k)*dvite(k)+dvitet(i)
-22      continue
-21  end do
+        enddo
+    end do
 !
 ! --- PRODUIT SAUT PAR MATRICE P
 !
-    do 721 i = 1, ndim
-        do 722 j = 1, ndim
+    do  i = 1, ndim
+        do  j = 1, ndim
             pdvitt(i) = mprojt(i,j)*dvitet(j)+pdvitt(i)
-722      continue
-721  end do
+        enddo
+  enddo
 !
 ! --- CALCUL DES TERMES
 !
@@ -141,47 +158,48 @@ subroutine mmmvee(phasez, ndim, nne, norm, tau1,&
 ! --- PAS DE CONTRIBUTION
     else if (phasep(1:4).eq.'CONT') then
         if (phasep(6:9) .eq. 'PENA') then
-            do 75 inoe = 1, nne
-                do 65 idim = 1, ndim
+            do  inoe = 1, nne
+                do  idim = 1, ndim
                     ii = ndim*(inoe-1)+idim
                     vectee(ii) = vectee(ii)+ wpg*ffe(inoe)*jacobi* norm(idim)* (jeu*coefac)
-65              continue
-75          continue
+                 enddo
+            enddo
         else
-            do 70 inoe = 1, nne
-                do 60 idim = 1, ndim
+            do  inoe = 1, nne
+                do  idim = 1, ndim
                     ii = ndim*(inoe-1)+idim
                     vectee(ii) = vectee(ii)- wpg*ffe(inoe)*jacobi* norm(idim)* (dlagrc-jeu*coefac&
                                  &)
-60              continue
-70          continue
+                enddo
+            enddo
         endif
 !
     else if (phasep(1:4).eq.'GLIS') then
-        do 74 inoe = 1, nne
-            do 64 idim = 1, ndim
+        do  inoe = 1, nne
+            do  idim = 1, ndim
                 ii = ndim*(inoe-1)+idim
-                vectee(ii) = vectee(ii)- wpg*ffe(inoe)*jacobi*prese( idim)* lambda*coefff
-64          continue
-74      continue
+                vectee(ii) = vectee(ii)- wpg*ffe(inoe)*jacobi*prese( idim)*  (lambda-0.*jeu)*coefff
+            enddo
+        enddo
 !
     else if (phasep(1:4).eq.'ADHE') then
         if (phasep(6:9) .eq. 'PENA') then
-            do 77 inoe = 1, nne
-                do 67 idim = 1, ndim
+            do  inoe = 1, nne
+                do  idim = 1, ndim
                     ii = ndim*(inoe-1)+idim
                     vectee(ii) = vectee(ii)- wpg*ffe(inoe)*jacobi* lambda*coefff* pdvitt(idim)*co&
                                  &efaf
-67              continue
-77          continue
+                enddo
+            enddo
         else
-            do 73 inoe = 1, nne
-                do 63 idim = 1, ndim
+            do   inoe = 1, nne
+                do   idim = 1, ndim
                     ii = ndim*(inoe-1)+idim
-                    vectee(ii) = vectee(ii)- wpg*ffe(inoe)*jacobi* lambda*coefff* (plagft(idim)+p&
+                    vectee(ii) = vectee(ii)- wpg*ffe(inoe)*jacobi*&
+                    (lambda-0.*jeu)*coefff* (plagft(idim)+p&
                                  &dvitt(idim)*coefaf)
-63              continue
-73          continue
+                 enddo
+            enddo
         endif
 !
     else

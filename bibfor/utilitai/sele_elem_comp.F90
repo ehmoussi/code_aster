@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -39,7 +39,7 @@ implicit none
     character(len=*), intent(in) :: modelz
     character(len=24), intent(in) :: compor
     character(len=16), intent(in) :: defo_comp
-    integer, pointer, intent(out) :: list_elem_comp(:)
+    integer, pointer :: list_elem_comp(:)
 !
 ! --------------------------------------------------------------------------------------------------
 !

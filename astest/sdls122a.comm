@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -21,17 +21,6 @@
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),
       DEBUG=_F(SDVERI='NON'));
 
-PRE_IDEAS(UNITE_MAILLAGE=20,
-          UNITE_IDEAS=19,
-          );
-
-PRE_IDEAS(UNITE_MAILLAGE=30,
-          UNITE_IDEAS=29,
-          );
-
-PRE_IDEAS(UNITE_MAILLAGE=40,
-          UNITE_IDEAS=39,
-          );
 
 #-- ON CHERCHE ICI A CALCULER DE 2 FACONS DIFFERENTES LES MODES D'UNE PLAQUE
 #-- D'ACIER RECTANGULAIRE DE 2m x 1m x 1cm APPUYEE SUR SES 4 COINS. ON COMPARE
@@ -49,11 +38,12 @@ PRE_IDEAS(UNITE_MAILLAGE=40,
 #------------------------------------------------------#
 
 #-- MAILLAGES DES DEUX PARTIES CARREES
-MAILLA1=LIRE_MAILLAGE(UNITE=20,FORMAT='ASTER',)
-MAILLA2=LIRE_MAILLAGE(UNITE=30,FORMAT='ASTER',)
+MAILLA1 = LIRE_MAILLAGE(FORMAT='IDEAS', UNITE=19)
+
+MAILLA2 = LIRE_MAILLAGE(FORMAT='IDEAS', UNITE=29)
 
 #-- MAILLAGE DU RECTANGLE COMPLET
-MAILLA3=LIRE_MAILLAGE(UNITE=40,FORMAT='ASTER',)
+MAILLA3 = LIRE_MAILLAGE(FORMAT='IDEAS', UNITE=39)
 
 
 #-- CONSTRUCTION DES MODELES

@@ -23,9 +23,10 @@ DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='NON'))
 #                MAILLAGE : ssnp144k.mgib
 #----------------------------------------------
 
-PRE_GIBI();
 
-MAILLAG1=LIRE_MAILLAGE(FORMAT="ASTER",);
+MAILLAG1 = LIRE_MAILLAGE(FORMAT='GIBI',
+                         UNITE=19,
+                         )
 
 MAILLAG2= COPIER(CONCEPT= MAILLAG1)
 

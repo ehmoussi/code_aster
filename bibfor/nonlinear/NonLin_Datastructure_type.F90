@@ -105,6 +105,7 @@ implicit none
         aster_logical :: l_tcvg_csv
         integer :: tcvg_unit
         integer :: reac_print
+        real(kind=8)      :: resi_pressure
         character(len=512) :: sep_line
     end type NL_DS_Print
 !
@@ -308,6 +309,8 @@ implicit none
         real(kind=8)      :: geom_maxi
         real(kind=8)      :: arete_min
         real(kind=8)      :: arete_max=0.0
+        real(kind=8)      :: cont_pressure=0.0
+        real(kind=8)      :: resi_pressure=1.0d3
 ! ----- Get-off indicator
         aster_logical     :: l_getoff
 ! ----- First geometric loop
@@ -318,6 +321,9 @@ implicit none
         integer           :: nt_patch
 ! ----- Total number of contact pairs
         integer           :: nb_cont_pair
+! ----- Number of stored values from precedent Newton iteration
+        integer           :: n_cychis = 73
+        integer           :: cycl_long_acti = 3
 ! ----- Automatic update of penalised coefficient
         real(kind=8)      :: estimated_coefficient = 100.0
         real(kind=8)      :: max_coefficient = 100.0
@@ -326,6 +332,10 @@ implicit none
         real(kind=8)      :: critere_penetration  = 0.0
         real(kind=8)      :: continue_pene  = 0.0
         real(kind=8)      :: time_curr  = -1.0
+! ----- Automatic update of resi_geom
+        real(kind=8)      :: critere_geom  = 0.0
+        character(len=16)      :: crit_geom_noeu  = ' '
+        integer           :: flag_mast_nume  = 1
 ! ----- Force for DISCRETE contact (friction)
         aster_logical     :: l_cnctdf
         character(len=19) :: cnctdf

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -80,21 +80,21 @@ aster_logical, intent(in), optional :: l_line_search_
 !
 ! - Check mesh
 !
-    mesh_base = ds_empi%mesh
+    mesh_base = ds_empi%ds_mode%mesh
     if (mesh_base .ne. mesh_algo) then
         call utmess('F', 'ROM5_31')
     endif
 !
 ! - Check model
 !
-    model_base = ds_empi%model
+    model_base = ds_empi%ds_mode%model
     if (model_base .ne. model_algo) then
         call utmess('F', 'ROM5_49')
     endif
 !
 ! - Check field in base
 !
-    field_name = ds_empi%field_name
+    field_name = ds_empi%ds_mode%field_name
     if (phenom .eq. 'THER') then
         if (field_name .ne. 'TEMP') then
             call utmess('F', 'ROM5_32')

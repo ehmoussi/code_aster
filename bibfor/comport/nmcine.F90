@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -121,6 +121,11 @@ subroutine nmcine(fami, kpg, ksp, ndim, imate,&
     call rcvalb(fami, kpg, ksp, '-', imate, ' ', 'ECRO_LINE', 0, ' ', [0.d0],&
                 2, nomres, valres, icodre, 2)
     dsdem=valres(1)
+    if (dsdem .le. 0.) then
+        valrm(1)=dsdem
+        valrm(2)=em
+        call utmess('F', 'COMPOR1_53', nr=2, valr=valrm)
+    endif
     if ((em-dsdem) .lt. r8miem()) then
         valrm(1)=dsdem
         valrm(2)=em

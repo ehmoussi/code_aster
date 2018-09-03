@@ -64,7 +64,7 @@ class MissCmdeGenerator(object):
         else:
             if self.param['RFIC'] != 0.:
                 self.dinf["rfic"] = str(self.param['RFIC'])
-        
+
         if self.param["TYPE"] == "BINAIRE":
             self.dinf["binaire"] = "BINA"
         if self.param["SURF"] == "OUI":
@@ -179,15 +179,80 @@ class MissCmdeGenerator(object):
                               'UI TOUS',
                               'FINP'])
         else:
+            if self.param['ISSF'] == 'OUI':
+                nbmode = self.param['NBM_TOT']
+            else:
+                nbmode = self.param['NBM_STA']
+            lcham = self.param['TOUT_CHAM'] == 'OUI'
+            if self.param['_calc_impe']:
+                lines.extend(['*',
+                              '* Post-traitement des impédances',
+                              '* ------------------------------',
+                              'POST',
+                              'FICH %s  %s'
+                              % (self.dinf['fich_impe'], self.dinf['binaire']),
+                              'IMPDC',
+                              'FREQ TOUTES',
+                              'CHPU  DE    1 A    %d  PAS 1' % nbmode,
+                              'CHPT DE    1 A    %d  PAS 1' % nbmode,
+                              'FINP'])
+            if self.param['_calc_forc']:
+                lines.extend(['*',
+                              '* Post-traitement des forces sismiques',
+                              '* ------------------------------------',
+                              'POST',
+                              'FICH %s' % self.dinf['fich_forc'],
+                              'FORCE',
+                              'FREQ TOUTES',
+                              'DDL  DE    1 A    %d  PAS 1' % nbmode,
+                              'UI TOUS',
+                              'FINP'])
             lines.extend(['*',
                           '* Definition du signal',
                           '* --------------------',
                           'SIGNAL LIRE %s' % self.fname("01.sign")])
             lines.extend(self._chargement_domaine('sol'))
-            lines.extend(['*',
-                          '* Post-traitement aux points de controle',
-                          '* --------------------------------------',
-                          'POST',
+            if lcham :
+              lines.extend(['*',
+                            '* Post-traitement aux points de controle',
+                            '* --------------------------------------',
+                            'POST',
+                        ('SPEC NF=%%%(I)s FMAX=%%%(R)s' % dict_format)
+                % (self.param['_nbfreq'], self.param['FREQ_MAX']),
+                'FICH %s' % self.fname("01.csol.a"),
+                'CSOL LEGENDE ACCELERATIONS',
+                'FREQ TOUTES',
+                'CHAMP DE    1 A    3  PAS 1',
+                'POINTS DE    1 A    %d  PAS 1' % self.param['_nbPC'],
+                'DDL TOUS',
+                'FINS',
+                '*',
+                        ('SPEC NF=%%%(I)s FMAX=%%%(R)s' % dict_format)
+                % (self.param['_nbfreq'], self.param['FREQ_MAX']),
+                'FICH %s' % self.fname("01.csol.v"),
+                'CSOL LEGENDE VITESSES',
+                'FREQ TOUTES',
+                'CHAMP DE    1 A    3  PAS 1',
+                'POINTS DE    1 A    %d  PAS 1' % self.param['_nbPC'],
+                'DDL TOUS',
+                'FINS',
+                '*',
+                        ('SPEC NF=%%%(I)s FMAX=%%%(R)s' % dict_format)
+                % (self.param['_nbfreq'], self.param['FREQ_MAX']),
+                'FICH %s' % self.fname("01.csol.d"),
+                'CSOL LEGENDE DEPLACEMENTS',
+                'FREQ TOUTES',
+                'CHAMP DE    1 A    3  PAS 1',
+                'POINTS DE    1 A    %d  PAS 1' % self.param['_nbPC'],
+                'DDL TOUS',
+                'FINS',
+                '*',
+                'FINP'])
+            else:
+              lines.extend(['*',
+                            '* Post-traitement aux points de controle',
+                            '* --------------------------------------',
+                            'POST',
                         ('SPEC NF=%%%(I)s FMAX=%%%(R)s' % dict_format)
                 % (self.param['_nbfreq'], self.param['FREQ_MAX']),
                 'FICH %s' % self.fname("01.csol.a"),
@@ -410,7 +475,7 @@ class MissCmdeGenerator(object):
             lines.extend(['*',
                           '* Definition de source dans le sol',
                           '* --------------------------------',
-                          'EXEC SPFR', 
+                          'EXEC SPFR',
                           'INCI 1',
                         ('SOURCE %%%(R)s %%%(R)s %%%(R)s' %
                          dict_format) % src['POINT'],
@@ -616,7 +681,7 @@ class TestMissCmde(unittest.TestCase):
             '_nbPC': 0,
             '_auto_first_LT': None,
         })
-        self._write = False
+        self._debug = False
 
     def fname(self, ext):
         """use PROJET"""
@@ -651,7 +716,7 @@ stwDncR5RevYR6cq/CqGI19Y6lvgN0yQXTY=
         })
         gen = MissCmdeGen(self.par, self.struct, self.fname)
         txt = gen.build()
-        if self._write:
+        if self._debug:
             open('/tmp/test01_sdlx103a.in', 'wb').write(txt)
         diff = self._diffcompress(refe, txt)
         assert diff.strip() == "", diff
@@ -687,7 +752,7 @@ DJ2q7FXuRr6t9JfAH4AuXdY=
         })
         gen = MissCmdeGen(self.par, self.struct, self.fname)
         txt = gen.build()
-        if self._write:
+        if self._debug:
             open('/tmp/test02_zzzz200b.in', 'wb').write(txt)
         diff = self._diffcompress(refe, txt)
         assert diff.strip() == "", diff
@@ -728,7 +793,7 @@ bEoiaetIF5ltey0cVW72YG2767XsvvDfhYldqSF/Ac9u8B8=
         })
         gen = MissCmdeGen(self.par, self.struct, self.fname)
         txt = gen.build()
-        if self._write:
+        if self._debug:
             open('/tmp/test03_fdlv112b.in', 'wb').write(txt)
         diff = self._diffcompress(refe, txt)
         assert diff.strip() == "", diff
@@ -766,7 +831,7 @@ HmecpsR1A32bksx/vuIcSoZD61ZCZ5JNfN6YDfgPEoFDsQ==
         })
         gen = MissCmdeGen(self.par, self.struct, self.fname, lapl_temps=True)
         txt = gen.build()
-        if self._write:
+        if self._debug:
             open('/tmp/test04_miss03c_inci.in', 'wb').write(txt)
         diff = self._diffcompress(refe, txt)
         assert diff.strip() == "", diff
@@ -808,34 +873,27 @@ mvv8JCqRitMzdqbpHCjF9gW142wdq/JFHgdevNSrwW/+xHAQ
         })
         gen = MissCmdeGen(self.par, self.struct, self.fname)
         txt = gen.build()
-        if self._write:
+        if self._debug:
             open('/tmp/test05_miss03c_loop.in', 'wb').write(txt)
         diff = self._diffcompress(refe, txt)
         assert diff.strip() == "", diff
 
-    def test06_zzzz108b(self):
+    def test06_zzzz108c(self):
         """ISS using TABLE_CONTROL"""
         refe = """
-eJzdV0uPozgQvvtX1LlHyZKMZjWXOdBgaLS81jat0VxGNHESJAIZHquefz9lJ5mQJ6i3D6tFITxs
-f19VfWW7eABbvnQtLCQUINsOr0HeNOQBJtcO8oAtYbWBlSxlnf/oJI5sYJln61zWDQQe57fG9mFc
-GlIG3/CYGZ8fNerejg42suzANoV5FYjsWrBN5G0te4aTh8vOwhOMkphFduIJiE0Glulb33dmIoYv
-s7ZTKEib5kWRrq7BKKTgOfJh+sfB5Onmn6rY273My7zNq1KHYlVX3VbeDCC6zqIkJgAwB4RMAkoc
-L1TPH/vPeLrX4DfV4iY4sZ7MICa+x2jf0my91UhxWqcbiTFrYAF52cpVnSrcO3oRLxTUZabwohAY
-tQT8CZ9BMM8MXZ/CbI6/SyuhSGGrQqnul7XELCmzOyE543QY/TuhoUXBpqDiNP1kqINOjBmY6s2n
-qbF78wHfxCY/73UtcE3VNZNFhSqXg6ZcjO9OhkPT1p3Om7EucTsKTC/U7sxAZ8D+HmUnf1mB0psP
-0qqMGyA8oZofqSaKak64YGabL3N5JHTycmjWqc52f5LqOfcqs+5O/uj+1jqtVxKx9cx+Q/xIP3KE
-fhWUeTRhF0kuX1tlJb3HOiJ8J3w3UhutT1UMs/So0gjkIwGfB/DNUAzGMZHxmSfMuXCsub7MZOt0
-s21wGmf5Av0cMblwLlseZpsd+yb6x59hNr1iBjGm+Ixtvzs+jewYD/XT0qRF1hVvcAG1pxYoH4Zw
-IO1eYVvl6hYVy6qyrati7Fy9xmpFoWARLnjJjvyx6rICE6qroVC736glDoV3mPwBIkoE5cDNZwrB
-s2PjC4HAIPD0gtgGJ2LW/zePe8ItqzJT1Fomt5by3lbUk4PHDrvEqjH+WAhAvtnKRTpuw9nhJa5w
-IbEN0PunEoFqAK2E1ExMov3dIU7bunopUJf9Plqn2cA+esnp+tGj6b+/yvxn2a5lI/sz45Cn2tZl
-On4rPhhre46jnJSQqGQV+PdfSql7Pr/DOnBcA9TwYwggjFwaHfdQHYGXtywNfa7QdnDMCerAVnta
-PW+rpp2gDHmrU+pecXel3MhXZXpLMMI9NzR9OJfBmE3VuPfP5fjUlX+7rpM44oLwGMUMnS+KBatH
-JzC/fjkrKbGQsJ7OPMzQh2lKLI5fAT7FzxesTU3Loj7dVcdcl637xX1XiO/L133N+hF0pTpDK7Co
-5jcabdtXGPxQnuEl7ldpY9U9y5+B7zr9xfELc+l7sg==
+eJzNU9tu1DAQffdXzDtqSFIV9aUPxh5nLeILvqxWfUGrbYCVSku3q4rPZ5xs6e4WBKJCIkosz8zJ
+mePL6dBigEt6mvpcMMkTZ0mngMwHJ7NO4HkAwXvxwegYmZm7HqrXjz9UXx5ur1kXXPYMAFqgcjbI
+lLYlPt2P6euYmHHjWa8D7rOsPn9l2ibsAk/aWQgoEryBc0hBc9v1CE1LL1MB32e0AkEilH7VWV0e
+PKkb4CVzVtVT5hVlPI/HKBalM1zb8fcGRuW7Ocll74QpOuMBrH2CnRRYy2IKfLv+uB4mMA2S7fMy
+XCQMGnN4ttTh27bgcR/fUhBbA5d1ieqnJVAcc1DPSO5p07UVmhRL33NiiXNoqp8QsLqimGo/gLM/
+BPrf4XCBAoqKaSacTcHRUWVNy1FhuIPkcsIIkc8RzFxJSiQqQ6JPGy9BuSBevhNj++hVmGa5Sx1k
+WcN410ojvFrerIax2zBhut695f1h57EgtVKb5Wo7QC5iEw1/LansyOb2eo8KrOvQMbRSbYY7FnVn
+eQ/HBHVT3a8/3Ryq8y4mFj3RWnVRMnS/leGLi6NLT5dLzI7YViSpWjIRybs9dtQegQuBPU5+i6Ox
+dsc1WXRnsJ2rTmH0UkMqyKbxF0Up+8IRdw56gdaHQ61zTboi/ncyrw5lSiTnCDRIvf+FVBp8Gb4D
+RYFWCQ==
 """
         self.par.update({
-            'PROJET': "ZZZZ108B",
+            'PROJET': "ZZZZ108C",
             'FREQ_MIN': 0.25,
             'FREQ_MAX': 50.0,
             'FREQ_PAS': 0.25,
@@ -844,13 +902,19 @@ JzC/fjkrKbGQsJ7OPMzQh2lKLI5fAT7FzxesTU3Loj7dVcdcl637xX1XiO/L133N+hF0pTpDK7Co
             'SURF': 'OUI',
             'ALGO': 'DEPL',
             'Z0': 0.0,
+            'NBM_TOT': 291,
+            'NBM_DYN': 291,
+            'NBM_STA': 291,
+            'TOUT_CHAM': 'OUI',
+            '_calc_impe': False,
+            '_calc_forc': False,
             '_hasPC': True,
             '_nbPC': 3,
         })
         gen = MissCmdeGen(self.par, self.struct, self.fname)
         txt = gen.build()
-        if self._write:
-            open('/tmp/test06_zzzz108b.in', 'wb').write(txt)
+        if self._debug:
+            open('/tmp/test06_zzzz108c.in', 'wb').write(txt)
         diff = self._diffcompress(refe, txt)
         assert diff.strip() == "", diff
 
@@ -889,13 +953,19 @@ aoGdEL8yaVmewuCHkhR/om5lOpTds/i504zrNvFvcCbg8g==
             'ISSF': 'OUI',
             'MATER_FLUIDE': {'RHO': 1000., 'CELE': 1500, 'AMOR_BETA': 0.,
                              'DEMI_ESPACE': 'OUI'},
+            'NBM_DYN': 38,
+            'NBM_STA': 6,
+            'NBM_TOT': 44,
+            'TOUT_CHAM': 'NON',
+            '_calc_impe': False,
+            '_calc_forc': False,
             '_hasPC': True,
             '_nbPC': 3,
             '_hasSL': True,
         })
         gen = MissCmdeGen(self.par, self.struct, self.fname)
         txt = gen.build()
-        if self._write:
+        if self._debug:
             open('/tmp/test07_fdlv112e.in', 'wb').write(txt)
         diff = self._diffcompress(refe, txt)
         assert diff.strip() == "", diff
@@ -935,7 +1005,7 @@ rXffxK/nhVQeQ/4A5Lekkg==
         })
         gen = MissCmdeGen(self.par, self.struct, self.fname)
         txt = gen.build()
-        if self._write:
+        if self._debug:
             open('/tmp/test08_fdlv113a.in', 'wb').write(txt)
         diff = self._diffcompress(refe, txt)
         assert diff.strip() == "", diff
@@ -944,7 +1014,13 @@ rXffxK/nhVQeQ/4A5Lekkg==
         """Compare files without comment"""
         sref = remove_comments(test_utils.uncompress64(refe))
         snew = remove_comments(new)
-        return test_utils.difftxt(sref, snew)
+        diff = test_utils.difftxt(sref, snew)
+        if diff and self._debug:
+            with open("/tmp/miss_diff.refe", "w") as fref:
+                fref.write(sref)
+            with open("/tmp/miss_diff.new", "w") as fnew:
+                fnew.write(snew)
+        return diff
 
 if __name__ == '__main__':
     # ( cd $HOME/dev/codeaster/src/bibpyt ; PYTHONPATH=.:$PYTHONPATH python Miss/miss_fichier_cmde.py )

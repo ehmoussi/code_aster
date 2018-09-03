@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,22 +17,19 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nxini0(ds_algopara, ds_inout, ds_algorom)
+subroutine nxini0(ds_algopara, ds_inout)
 !
 use NonLin_Datastructure_type
-use Rom_Datastructure_type
 !
 implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/infniv.h"
-#include "asterfort/nonlinDSAlgoParaCreate.h"
 #include "asterfort/nonlinDSInOutCreate.h"
-#include "asterfort/romAlgoNLDSCreate.h"
+#include "asterfort/nonlinDSAlgoParaCreate.h"
 !
 type(NL_DS_AlgoPara), intent(out) :: ds_algopara
 type(NL_DS_InOut), intent(out) :: ds_inout
-type(ROM_DS_AlgoPara), intent(out) :: ds_algorom
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -44,7 +41,6 @@ type(ROM_DS_AlgoPara), intent(out) :: ds_algorom
 !
 ! Out ds_algopara      : datastructure for algorithm parameters
 ! Out ds_inout         : datastructure for input/output management
-! Out ds_algorom       : datastructure for ROM parameters
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -64,9 +60,5 @@ type(ROM_DS_AlgoPara), intent(out) :: ds_algorom
 ! - Create algorithm parameters datastructure
 !
     call nonlinDSAlgoParaCreate(ds_algopara)
-!
-! - Create ROM parameters datastructure
-!
-    call romAlgoNLDSCreate(ds_algorom)
 !
 end subroutine

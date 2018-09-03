@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -23,9 +23,9 @@ interface
                                tabl_equa)
         character(len=*), intent(in) :: prof_genez
         integer, intent(in) :: nb_cmp
-        character(len=8), optional, pointer, intent(in) :: cata_cmp(:)
-        character(len=8), optional, pointer, intent(in) :: list_cmp(:)
-        integer, pointer, optional, intent(inout) :: list_equa(:)
-        integer, pointer, optional, intent(inout) :: tabl_equa(:,:)
+        character(len=8), pointer, optional :: cata_cmp(:)
+        character(len=8), pointer, optional :: list_cmp(:)
+        integer, pointer, optional :: list_equa(:)
+        integer, pointer, optional :: tabl_equa(:,:)
     end subroutine select_dof_gene
 end interface

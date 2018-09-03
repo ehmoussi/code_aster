@@ -87,7 +87,7 @@ CHA1=DEFI_CONTACT(MODELE=MO,
                          # ADAPTATION Fonctionne mais sensibilite 1.E-4% machine
                          #ADAPTATION='TOUT',
                          #PENE_MAXI=1.E-9,
-                         ADAPTATION='NON',
+                         ADAPTATION='CYCLAGE',
                          COEF_PENA_CONT=1.E+14,
                          #COEF_PENA_FROT=1.E+8,
                  ),);

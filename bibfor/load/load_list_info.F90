@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -32,8 +32,8 @@ implicit none
 !
     integer, intent(out) :: nb_load
     aster_logical, intent(out) :: load_empty
-    character(len=24), pointer, intent(out) :: v_load_name(:)
-    integer, pointer, intent(out) :: v_load_info(:)
+    character(len=24), pointer :: v_load_name(:)
+    integer, pointer :: v_load_info(:)
     character(len=19), optional, intent(in) :: list_load_
     character(len=*), optional, intent(in) :: lload_name_
     character(len=*), optional, intent(in) :: lload_info_

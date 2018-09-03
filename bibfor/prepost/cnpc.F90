@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -41,7 +41,7 @@ subroutine cnpc(main, macou, macsu, conneo)
 !
 ! ----------------------------------------------------------------------
 !        CONNECTIVITE DE L'ORDRE DES NOEUDS ENTRE MAILLE DE PEAU
-!        ET MAILLE VOLUMIQUE CORRESPONDANTE 
+!        ET MAILLE VOLUMIQUE CORRESPONDANTE
 ! ----------------------------------------------------------------------
 ! IN        MAIN    MAILLAGE
 ! IN        MACOU   NUMERO DE LA MAILLE COURANTE
@@ -54,7 +54,7 @@ subroutine cnpc(main, macou, macsu, conneo)
 
 ! ----------------------------------------------------------------------
 !
-    call jemarq()    
+    call jemarq()
 !
     call jeveuo(jexnum(main//'.CONNEX',macsu),'L',jmacsu)
     call jeveuo(jexnum(main//'.CONNEX',macou),'L',jmacou)
@@ -71,9 +71,8 @@ subroutine cnpc(main, macou, macsu, conneo)
             end if
         end do
     end do
-!
     call jedema()
 !
 ! rajouter un test d'erreur
 !
-end subroutine    
+end subroutine

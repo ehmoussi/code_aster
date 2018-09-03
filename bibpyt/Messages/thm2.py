@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -21,30 +21,15 @@
 
 cata_msg = {
 
-    1 : _(u"""
-La définition de la température initiale est obligatoire pour une loi de couplage de type %(k1)s.
-"""),
 
-    2 : _(u"""
-La définition de la deuxième pression initiale est obligatoire pour une loi de couplage de type %(k1)s.
-"""),
 
-    3 : _(u"""
-La température de référence (exprimée en Kelvin) doit toujours être strictement supérieure à zéro.
-"""),
-
-    4 : _(u"""
-La pression de gaz de référence doit toujours être différente de zéro.
-"""),
-
-    5 : _(u"""
-La définition de la température initiale est obligatoire.
-"""),
 
     6 : _(u"""
-La température devient négative à la maille %(k1)s.
+La température devient négative ou nulle à la maille %(k1)s.
 """),
-
+    7 : _(u"""
+La pression de gaz est nulle à la maille %(k1)s. Attention à initialiser une valeur non nulle
+"""),
 
     60 : _(u"""
 La porosité donnée dans les paramètres matériaux de %(k1)s doit être la même que dans THM_INIT.

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -38,7 +38,7 @@ implicit none
 #include "blas/dgesv.h"
 !
 type(ROM_DS_Empi), intent(in) :: ds_empi
-integer, pointer, intent(in)  :: v_equa(:)
+integer, pointer  :: v_equa(:)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -77,15 +77,15 @@ integer, pointer, intent(in)  :: v_equa(:)
 !
     call infniv(ifm, niv)
     if (niv .ge. 2) then
-        call utmess('I', 'ROM4_20', sk = ds_empi%base)
+        call utmess('I', 'ROM4_20')
     endif
 !
 ! - Get parameters
 !        
-    nb_equa     = ds_empi%nb_equa
+    nb_equa     = ds_empi%ds_mode%nb_equa
     nb_mode     = ds_empi%nb_mode
     base        = ds_empi%base
-    field_name  = ds_empi%field_name
+    field_name  = ds_empi%ds_mode%field_name
 !
 ! - Prepare working objects
 !
@@ -93,15 +93,16 @@ integer, pointer, intent(in)  :: v_equa(:)
     AS_ALLOCATE(vi = v_npl , size = nb_mode)
     AS_ALLOCATE(vi = v_tuan, size = nb_mode)
 !
-! - Get informations from the reduced base
+! - Get index of slice in reduced basis
 !
     do i_mode = 1, nb_mode
         call rsadpa(base, 'L', 1, 'NUME_PLAN', i_mode, 0, sjv=jv_para)
         v_npl(i_mode) = zi(jv_para)
     enddo
+!
     ntp = 1
     do i_mode = 2, nb_mode
-        if(v_npl(i_mode).ne.v_npl(i_mode-1)) then
+        if (v_npl(i_mode) .ne. v_npl(i_mode-1)) then
             ntm = ntp
             ntp = 1
             v_tuan(i_mode - ntm) = ntm
@@ -116,7 +117,7 @@ integer, pointer, intent(in)  :: v_equa(:)
 !
     do i_mode = 1, nb_mode
 ! - Check the mode (linear or 3D, how many slices?)
-        if (v_tuan(i_mode).ne. 0) then
+        if (v_tuan(i_mode) .ne. 0) then
             nb_motr = v_tuan(i_mode)
             AS_ALLOCATE(vr=v_base, size=nb_equa*nb_motr)
             AS_ALLOCATE(vi=v_list_loca, size=nb_motr)

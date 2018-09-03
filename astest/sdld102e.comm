@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -48,12 +48,12 @@ LIST_R=DEFI_LIST_REEL(DEBUT=0.,
 
 #
 
-PRE_IDEAS(UNITE_IDEAS=19,
-          UNITE_MAILLAGE=21,);
 
 #
 
-MAILLA0=LIRE_MAILLAGE(FORMAT="ASTER",UNITE=21,);
+MAILLA0 = LIRE_MAILLAGE(FORMAT='IDEAS',
+                        UNITE=19,
+                        )
 
 #
 MAILLA=CREA_MAILLAGE(MAILLAGE=MAILLA0,

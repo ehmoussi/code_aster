@@ -1,0 +1,36 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+# Reecriture des liaisons cinématiques pour les DDLs rélachés (via Rtool)
+
+BLOQ = AFFE_CHAR_MECA(
+    MODELE= MODEL,
+    LIAISON_DDL=(
+        # 1D1D : Liaison entre POU1_NN et POU2_NN
+        _F(GROUP_NO=('GCharNold_2657', 'GCharNnew_9095'), DDL=('DX', 'DX'), COEF_IMPO=0.0, COEF_MULT=(1.0,-1.0),),
+        _F(GROUP_NO=('GCharNold_2657', 'GCharNnew_9095'), DDL=('DY', 'DY'), COEF_IMPO=0.0, COEF_MULT=(1.0,-1.0),),
+        _F(GROUP_NO=('GCharNold_2657', 'GCharNnew_9095'), DDL=('DZ', 'DZ'), COEF_IMPO=0.0, COEF_MULT=(1.0,-1.0),),
+        _F(GROUP_NO=(u'GCharNold_2657', u'GCharNnew_9095'), COEF_IMPO=0.0,
+           DDL=(u'DRX', u'DRX'),
+           COEF_MULT=(-1.0, 1.0),),
+        _F(GROUP_NO=(u'GCharNold_2657', u'GCharNnew_9095'), COEF_IMPO=0.0,
+           DDL=(u'DRY', u'DRY'),
+           COEF_MULT=(-1.0, 1.0),),
+    ),
+)

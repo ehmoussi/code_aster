@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -84,8 +84,8 @@ MODE_STATIQUE=OPER(nom="MODE_STATIQUE",op= 93,sd_prod=mode_meca,
            TOUT_CMP        =SIMP(statut='f',typ='TXM',into=("OUI",) ),
            AVEC_CMP        =SIMP(statut='f',typ='TXM',max='**'),
            SANS_CMP        =SIMP(statut='f',typ='TXM',max='**'),
-           NB_MODE         =SIMP(statut='o',typ='I',defaut= 1),
-           SHIFT           =SIMP(statut='o',typ='R',defaut= 1.0),
+           NB_MODE         =SIMP(statut='f',typ='I',defaut= 1),
+           SHIFT           =SIMP(statut='f',typ='R',defaut= 1.0),
 
          ),
 

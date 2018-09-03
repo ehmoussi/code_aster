@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -166,10 +166,14 @@ subroutine tabchs(tabin, typchs, base, nomgd, ma,&
 !        ON VERIFIE QUE LES NOEUDS FOURNIS DANS LA TABLE
 !        APPARTIENNENT AU MAILLAGE
         objtmp='&&TABCHS.NOEUD'
-        call tbexve(tabin, 'NOEUD', objtmp, 'V', nbval,&
-                    tsca)
-        call jeveuo(objtmp, 'L', jcolno)
-        call verima(ma, zk8(jcolno), nbval, 'NOEUD')
+        call tbexve(tabin, 'NOEUD', objtmp, 'V', nbval, tsca)
+        if ( tsca .eq. 'K8' ) then 
+            call jeveuo(objtmp, 'L', jcolno)
+            call verima(ma, zk8(jcolno), nbval, 'NOEUD')
+        else
+            valk(2)=tsca 
+            call utmess('F', 'MODELISA9_7', nk=2, valk=valk)
+        endif
     endif
 !
 !     -- 2.2 COLONNE 'MAILLE' :
@@ -177,25 +181,27 @@ subroutine tabchs(tabin, typchs, base, nomgd, ma,&
 !        ON VERIFIE QUE LES MAILLES FOURNIES DANS LA TABLE
 !        APPARTIENNENT AU MAILLAGE
         objtmp='&&TABCHS.MAILLE'
-        call tbexve(tabin, 'MAILLE', objtmp, 'V', nbval,&
-                    tsca)
-        call jeveuo(objtmp, 'L', jcolma)
-        call verima(ma, zk8(jcolma), nbval, 'MAILLE')
+        call tbexve(tabin, 'MAILLE', objtmp, 'V', nbval, tsca)
+        if ( tsca .eq. 'K8' ) then 
+            call jeveuo(objtmp, 'L', jcolma)
+            call verima(ma, zk8(jcolma), nbval, 'MAILLE')
+        else
+            valk(2)=tsca 
+            call utmess('F', 'MODELISA9_7', nk=2, valk=valk)
+        endif
     endif
 !
 !     -- 2.3 COLONNE 'POINT' :
     if (lpoin) then
         objtmp='&&TABCHS.POINT'
-        call tbexve(tabin, 'POINT', objtmp, 'V', nbval,&
-                    tsca)
+        call tbexve(tabin, 'POINT', objtmp, 'V', nbval, tsca)
         call jeveuo(objtmp, 'L', jcolpt)
     endif
 !
 !     -- 2.4 COLONNE 'SOUS_POINT' :
     if (lspoin) then
         objtmp='&&TABCHS.SPOINT'
-        call tbexve(tabin, 'SOUS_POINT', objtmp, 'V', nbval,&
-                    tsca)
+        call tbexve(tabin, 'SOUS_POINT', objtmp, 'V', nbval, tsca)
         call jeveuo(objtmp, 'L', jcolsp)
     endif
 !

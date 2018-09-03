@@ -152,10 +152,10 @@ implicit none
 !
 ! - Creation of datastructures
 !
-    call nmini0(fonact    , eta      , numins     , matass         , zmeelm    ,&
-                zmeass    , zveelm   , zveass     , zsolal         , zvalin     ,&
-                ds_print  , ds_conv  , ds_algopara, ds_inout       , ds_contact ,&
-                ds_measure, ds_energy, ds_algorom , ds_constitutive, ds_material)
+    call nmini0(fonact    , eta      , numins         , matass     , zmeelm    ,&
+                zmeass    , zveelm   , zveass         , zsolal     , zvalin    ,&
+                ds_print  , ds_conv  , ds_algopara    , ds_inout   , ds_contact,&
+                ds_measure, ds_energy, ds_constitutive, ds_material)
 !
 ! - Read parameters
 !

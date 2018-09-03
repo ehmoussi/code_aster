@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,15 +15,15 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
+#include "asterf_types.h"
 !
 interface 
-    subroutine romAlgoNLSystemSolve(matr_asse, vect_2mbr, ds_algorom, vect_solu)
+    subroutine romAlgoNLSystemSolve(matr_asse, vect_2mbr, ds_algorom, vect_solu, l_update_redu_)
         use Rom_Datastructure_type
         character(len=24), intent(in) :: matr_asse
         character(len=24), intent(in) :: vect_2mbr
         type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
         character(len=19), intent(in) :: vect_solu
+        aster_logical, optional, intent(in) :: l_update_redu_
     end subroutine romAlgoNLSystemSolve
 end interface 

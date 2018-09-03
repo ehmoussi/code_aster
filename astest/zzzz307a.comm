@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -32,8 +32,9 @@ DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),
 # Ce test valide la programmation MPI mais ne prouve rien sur les performances.
 #===========================================================================================
 
-PRE_GIBI()
-MA=LIRE_MAILLAGE(FORMAT="ASTER",)
+MA = LIRE_MAILLAGE(FORMAT='GIBI',
+                   UNITE=19,
+                   )
 MAT=DEFI_MATERIAU( ELAS=_F(  E = 1.0,  NU = 0.3) )
 CHMAT=AFFE_MATERIAU(  MAILLAGE=MA,  AFFE=_F(  TOUT = 'OUI',  MATER = MAT) )
 

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -32,6 +32,8 @@ subroutine te0364(option, nomte)
 #include "asterfort/mmmlcf.h"
 #include "asterfort/mmmpha.h"
 #include "asterfort/mmmsta.h"
+#include "asterfort/mmnsta.h"
+#include "asterfort/mngliss.h"
 #include "asterfort/mmmtas.h"
 #include "asterfort/mmmtdb.h"
 #include "asterfort/mmmtex.h"
@@ -65,9 +67,10 @@ subroutine te0364(option, nomte)
     integer :: jmatt, jpcf
 !
 ! DECLARATION TYPES RESOLUTION    
-    integer :: iresof, iresog
+    integer :: iresof, iresog,count_consistency
     integer :: iresof_prev, iresog_prev
     integer :: ndexfr
+    integer :: granglis=0
     integer :: ndexfr_prev
     aster_logical :: laxis, leltf
     aster_logical :: lpenac, lpenaf
@@ -100,11 +103,13 @@ subroutine te0364(option, nomte)
     real(kind=8) :: jeu=0.0, djeut(3)=0.0
     real(kind=8) :: jeu_prev=0.0, djeut_prev(3) = 0.0
     real(kind=8) :: alpha_cont=0.0 , alpha_frot=0.0
+    real(kind=8) :: dnepmait1 ,dnepmait2 ,taujeu1,taujeu2
+    real(kind=8) :: dnepmait1_prev ,dnepmait2_prev ,taujeu1_prev,taujeu2_prev
 !
     character(len=8) :: typmae, typmam
     character(len=9) :: phasep
     character(len=9) :: phasep_prev
-    real(kind=8) :: ffe(9), ffm(9), ffl(9), dffm(2, 9)
+    real(kind=8) :: ffe(9), ffm(9), ffl(9), dffm(2, 9), ddffm(3, 9)
 !
     real(kind=8) :: mprt1n(3, 3)=0.0, mprt2n(3, 3)=0.0
     real(kind=8) :: mprt1n_prev(3, 3)=0.0, mprt2n_prev(3, 3)=0.0
@@ -120,6 +125,8 @@ subroutine te0364(option, nomte)
     real(kind=8) :: vech1_prev(3)=0.0, vech2_prev(3)=0.0
 !
 ! DECLARATION MATRICES CONTACT-FROTTEMENT
+    real(kind=8) :: mmat_tmp(81, 81)
+    
     real(kind=8) :: mmat(81, 81)
     real(kind=8) :: mmat_prev(81, 81)
 !
@@ -161,6 +168,7 @@ subroutine te0364(option, nomte)
 !
     call matini(81, 81, 0.d0, mmat)
     call matini(81, 81, 0.d0, mmat_prev)
+    call matini(81, 81, 0.d0, mmat_tmp)
 !
     call matini(9, 9, 0.d0, matrcc)
     call matini(9, 9, 0.d0, matrcc_prev)
@@ -222,9 +230,11 @@ subroutine te0364(option, nomte)
     loptf           = option.eq.'RIGI_FROT'
     call jevech('PCONFR', 'L', jpcf)
     l_previous_cont = (nint(zr(jpcf-1+30)) .eq. 1 )
-    l_previous_frot = (nint(zr(jpcf-1+44)) .eq. 1 ) .and. .false.
+    l_previous_frot = (nint(zr(jpcf-1+44)) .eq. 1 )  
     if (option .eq. 'RIGI_CONT') l_previous = l_previous_cont
     if (option .eq. 'RIGI_FROT') l_previous = l_previous_frot
+    granglis = nint(zr(jpcf-1+48))
+    
 !---------------------------------------------------------------
 !------------- PREPARATION DES CALCULS -------------------------
 !---------------------------------------------------------------
@@ -280,24 +290,26 @@ subroutine te0364(option, nomte)
 !
         call mmtppe(typmae, typmam, ndim, nne, nnm,&
                     nnl, nbdm, iresog, laxis, ldyna,&
-                    jeusup, ffe, ffm, dffm, ffl,&
+                    jeusup, ffe, ffm, dffm,ddffm, ffl,&
                     jacobi, wpg, jeu, djeut, dlagrc,&
                     dlagrf, norm, tau1, tau2, mprojn,&
                     mprojt, mprt1n, mprt2n, gene11, gene21,&
                     gene22, kappa, h, vech1, vech2,&
                     a, ha, hah, mprt11, mprt21,&
-                    mprt22, .false._1)
+                    mprt22,taujeu1, taujeu2, &
+                  dnepmait1,dnepmait2, .false._1,granglis)
                     
         if (l_previous) then
             call mmtppe(typmae, typmam, ndim, nne, nnm,&
                         nnl, nbdm, iresog_prev, laxis, ldyna,&
-                        jeusup_prev, ffe, ffm, dffm, ffl,&
+                        jeusup_prev, ffe, ffm, dffm,ddffm, ffl,&
                         jacobi, wpg, jeu_prev, djeut_prev, dlagrc_prev,&
                         dlagrf_prev, norm_prev, tau1_prev, tau2_prev, mprojn_prev,&
                         mprojt_prev, mprt1n_prev, mprt2n_prev, gene11_prev, gene21_prev,&
                         gene22_prev, kappa_prev, h_prev, vech1_prev, vech2_prev,&
                         a_prev, ha_prev, hah_prev, mprt11_prev, mprt21_prev,&
-                        mprt22_prev, .true._1)  
+                        mprt22_prev,taujeu1_prev, taujeu2_prev, &
+                  dnepmait1_prev,dnepmait2_prev, .true._1,granglis)  
                               
 !            debug = .false.
 !            if (debug) then 
@@ -418,6 +430,15 @@ subroutine te0364(option, nomte)
 !            debug = .false.
         endif
 !
+
+     if (lcont .and.  (phasep(1:4) .eq. 'GLIS') .and. (granglis .eq. 1) &
+         .and. (abs(jeu) .lt. 1.d-6 )) then
+            call mngliss(tau1  ,tau2  ,djeut,kappa ,taujeu1, taujeu2, &
+                        dnepmait1,dnepmait2,ndim )
+            call mmnsta(ndim, leltf, lpenaf, loptf, djeut,&
+                        dlagrf, coefaf, tau1, tau2, lcont,&
+                        ladhe, lambda, rese, nrese)
+        endif
     else
         ASSERT(.false.)
     endif
@@ -464,17 +485,21 @@ subroutine te0364(option, nomte)
         if (iresog .eq. 1) then
             call mmtgeo(phasep, ndim, nne, nnm, mprt1n,&
                         mprt2n, mprojn, mprt11, mprt21, mprt22,&
-                        wpg, ffe, ffm, dffm, jacobi,&
-                        coefac, jeu, dlagrc, kappa, vech1,&
-                        vech2, h, hah, matree, matrmm,&
+                        wpg, ffe, ffm, dffm,ddffm, jacobi,&
+                        coefac, jeu, dlagrc, kappa, vech1,vech2, h, &
+                        coefff,granglis,&
+                            matree, matrmm,&
                         matrem, matrme)
                      
             if (l_previous) then
                 call mmtgeo(phasep_prev, ndim, nne, nnm, mprt1n_prev,&
                             mprt2n_prev, mprojn_prev, mprt11_prev, mprt21_prev, mprt22_prev,&
-                            wpg, ffe, ffm, dffm, jacobi,&
-                            coefac_prev, jeu_prev, dlagrc_prev, kappa_prev, vech1_prev,&
-                            vech2_prev, h_prev, hah_prev, matree_prev, matrmm_prev,&
+                            wpg, ffe, ffm, dffm,ddffm, jacobi,&
+                            coefac_prev, jeu_prev, dlagrc_prev, kappa_prev,&
+                            vech1_prev,&
+                            vech2_prev, h_prev, &
+                        coefff,granglis,&
+                            matree_prev, matrmm_prev,&
                             matrem_prev, matrme_prev)
             
             endif
@@ -496,7 +521,8 @@ subroutine te0364(option, nomte)
                     nnm, nbcps, wpg, jacobi, ffl,&
                     ffe, ffm, norm, tau1, tau2,&
                     mprojt, rese, nrese, lambda, coefff,&
-                    coefaf, coefac, matrcc, matrff, matrce,&
+                    coefaf, coefac,&
+                    matrcc, matrff, matrce,&
                     matrcm, matrfe, matrfm)
                     
         if (l_previous) then 
@@ -504,7 +530,8 @@ subroutine te0364(option, nomte)
                         nnm, nbcps, wpg, jacobi, ffl,&
                         ffe, ffm, norm, tau1_prev, tau2_prev,&
                         mprojt_prev, rese_prev, nrese_prev, lambda_prev, coefff,&
-                        coefaf_prev, coefac_prev, matrcc_prev, matrff_prev, matrce_prev,&
+                        coefaf_prev, coefac_prev,&
+                    matrcc_prev, matrff_prev, matrce_prev,&
                         matrcm_prev, matrfe_prev, matrfm_prev)        
         endif
     else
@@ -555,6 +582,25 @@ subroutine te0364(option, nomte)
 
     alpha_cont = zr(jpcf-1+28)
     alpha_frot = zr(jpcf-1+42)
+    if (l_previous) then    
+!     write (6,*) "alpha_cont",alpha_cont
+            mmat_tmp = alpha_cont*mmat+(1-alpha_cont)*mmat_prev
+            count_consistency = 0 
+            51 continue
+            count_consistency = count_consistency+1
+            alpha_cont = 0.5*(alpha_cont+1.0)
+            mmat_tmp = alpha_cont*mmat+(1.0-alpha_cont)*mmat_prev
+
+            if ( norm2(mmat_tmp-mmat) &
+                .gt. 1.d-6*norm2(mmat) .and. count_consistency .le. 15) then 
+                       goto 51
+            elseif ( norm2(mmat_tmp-mmat) .lt. 1.d-6*norm2(mmat)) then 
+                       mmat = mmat_tmp
+            else 
+                       mmat = 0.9999d0*mmat + 0.0001d0*mmat_tmp
+            endif
+            ! Ce critere peut influencer les perfs : ssnv505l 26s a 35s. 
+    endif
 !    do compte_l = 1, 81
 !       if mmat(compte_l,compte_l) .le. 1.d-50&
 !       write (6,*) "diagonal nul" , mmat(compte_l,compte_l)
@@ -575,27 +621,11 @@ subroutine te0364(option, nomte)
             do     i = 1, nddl
                 ij = j+nddl*(i-1)
                 if (lpenac.and.(option.eq.'RIGI_CONT')) then
-                    if (l_previous) then 
-                        zr(jmatt+ij-1) = alpha_cont * mmat(i,j) &
-                                         + (1-alpha_cont) * mmat_prev(i,j)
-                    else 
-                        zr(jmatt+ij-1) = 1.0 * mmat(i,j)
-                    endif
+                        zr(jmatt+ij-1) = mmat(i,j)
                 else if ((option.eq.'RIGI_FROT').and.(iresof.ne.0)) then 
-                    if (l_previous) then 
-                        zr(jmatt+ij-1) = alpha_frot * mmat(i,j) &
-                                         + (1-alpha_frot) * mmat_prev(i,j)
-                    else 
-                        zr(jmatt+ij-1) = 1.0 * mmat(i,j)                    
-                    endif
-                    
+                        zr(jmatt+ij-1) = mmat(i,j) 
                 else if (lpenaf.and.(option.eq.'RIGI_FROT')) then 
-                    if (l_previous) then 
-                        zr(jmatt+ij-1) = alpha_frot * mmat(i,j) &
-                                         + (1-alpha_frot) * mmat_prev(i,j)
-                    else     
                         zr(jmatt+ij-1) = 1.0 * mmat(i,j)        
-                    endif
                 endif
                 if (debug) then
                     call mmmtdb(mmat(i, j), 'IJ', i, j)
@@ -613,16 +643,8 @@ subroutine te0364(option, nomte)
         do 761 j = 1, nddl
             do 751 i = 1, j
                 ij = (j-1)*j/2 + i
-                if (l_previous) then 
-                    if ((option.ne.'RIGI_FROT')) then
-                        zr(jmatt+ij-1) = alpha_cont *  mmat(i,j) &
-                                         + (1-alpha_cont) * mmat_prev(i,j)
-                    else
-                        zr(jmatt+ij-1) = 1.0 *  mmat(i,j)
-                    endif
-                else 
-                    zr(jmatt+ij-1) = 1.0 *  mmat(i,j)
-                endif
+                    zr(jmatt+ij-1) = mmat(i,j)
+                    
                 if (debug) then
                     call mmmtdb(mmat(i, j), 'IJ', i, j)
                 endif
@@ -632,3 +654,4 @@ subroutine te0364(option, nomte)
     endif
 !
 end subroutine
+

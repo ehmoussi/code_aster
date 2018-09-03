@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -25,7 +25,8 @@ interface
                       nnm, nbcps, wpg, jacobi, ffl,&
                       ffe, ffm, norm, tau1, tau2,&
                       mprojt, rese, nrese, lambda, coefff,&
-                      coefaf, coefac, matrcc, matrff, matrce,&
+                      coefaf, coefac,&
+                            matrcc, matrff, matrce,&
                       matrcm, matrfe, matrfm)
         character(len=9) :: phasep
         aster_logical :: leltf

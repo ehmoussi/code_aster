@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -35,10 +35,10 @@ implicit none
 !
     character(len=*), intent(in) :: modelz
     integer, intent(in) :: nb_elem_type
-    character(len=16), pointer, intent(in) :: list_elem_type(:)
-    integer, pointer, intent(out) :: list_node(:)
+    character(len=16), pointer :: list_elem_type(:)
+    integer, pointer :: list_node(:)
     integer, intent(out) :: nb_node_found
-    integer, pointer, optional, intent(in) :: pre_select_elem(:)
+    integer, pointer, optional :: pre_select_elem(:)
 !
 ! --------------------------------------------------------------------------------------------------
 !

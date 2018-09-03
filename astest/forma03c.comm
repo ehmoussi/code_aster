@@ -76,7 +76,8 @@ RAMPE=DEFI_FONCTION(NOM_PARA='INST',VALE=(0.0,0.0,
                            1000.0,1000.0,
                            ),);
 
-
+# DISCRETISATION EN TEMPS
+TFIN  = 243.0;
 
 ########################################################################
 #
@@ -84,8 +85,6 @@ RAMPE=DEFI_FONCTION(NOM_PARA='INST',VALE=(0.0,0.0,
 #
 ########################################################################
 
-# DISCRETISATION EN TEMPS
-TFIN  = 243.0;
 L_INST=DEFI_LIST_REEL(DEBUT=0.0,
                       INTERVALLE=(_F(JUSQU_A=TFIN,
                                      NOMBRE=10,),
@@ -116,9 +115,6 @@ RESUNL=STAT_NON_LINE(MODELE=MODE,
 # EXEMPLE DE GESTION DE LA LISTE AUTOMATIQUE
 #
 ########################################################################
-
-# DISCRETISATION EN TEMPS
-TFIN  = 243.0;
 
 # EN GESTION AUTOMATIQUE, ON IMPOSE SEULEMENT LE 1ER PAS DE TEMPS
 DEFAUTO=DEFI_LIST_INST(METHODE='AUTO',
