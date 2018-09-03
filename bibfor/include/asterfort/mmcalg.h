@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,22 +19,25 @@
 !
 !
 interface
-    subroutine mmcalg(ndim  ,nnm   ,    &
+    subroutine mmcalg(ndim  ,nnm   ,  dffm,  &
           ddffm ,geomam, &
-          tau1  ,tau2  ,jeu   ,norm  , &
+          tau1  ,tau2  ,jeu  ,djeu, ddepmam ,norm  , &
           gene11,gene21,gene22,kappa ,h        , &
           vech1 ,vech2 ,a     ,ha    ,hah   , &
-          mprt11,mprt21,mprt22,mprt1n,mprt2n,iresog)
+          mprt11,mprt21,mprt22,mprt1n,mprt2n, granglis,taujeu1, taujeu2, &
+                  dnepmait1,dnepmait2)
 
         integer :: ndim
         integer :: nnm
-        integer :: iresog
+        integer :: iresog,granglis
     
-        real(kind=8) :: geomam(9, 3)
+        real(kind=8) :: geomam(9, 3),ddepmam(9, 3)
+    real(kind=8) :: ddgeo1(3),ddgeo2(3),ddgeo3(3),detkap,ddepmait1(3),ddepmait2(3)
+    real(kind=8) :: dnepmait1 ,dnepmait2 ,taujeu1,taujeu2
 
-        real(kind=8) :: ddffm(3, 9)
+        real(kind=8) :: ddffm(3, 9),dffm(2, 9)
 
-        real(kind=8) :: jeu
+        real(kind=8) :: jeu , djeu(3)
         real(kind=8) :: djeut(3)
 
         real(kind=8) :: norm(3)

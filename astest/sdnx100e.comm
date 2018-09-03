@@ -19,11 +19,13 @@
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),);
 
-PRE_GIBI(UNITE_MAILLAGE=22);
 
-mailcol=LIRE_MAILLAGE(FORMAT="ASTER",UNITE=22);
+mailcol = LIRE_MAILLAGE(FORMAT='GIBI',
+                        UNITE=19,
+                        )
 #
-MAILLAGE=LIRE_MAILLAGE(FORMAT="ASTER",);
+MAILLAGE = LIRE_MAILLAGE(FORMAT='ASTER',
+                         )
 
 MAILLAGE=DEFI_GROUP(reuse =MAILLAGE,
                     MAILLAGE=MAILLAGE,

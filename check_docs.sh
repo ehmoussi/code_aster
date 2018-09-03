@@ -12,6 +12,10 @@ _usage()
     echo
     echo "  --help (-h)            Print this help information and exit."
     echo
+    echo "  --waf script           Define the script to be used (default: ./waf)."
+    echo
+    echo "  --builddir DIR         Define the build directory (default: build/std)."
+    echo
     echo "  --use-debug            Use the debug build (Use 'release' by default)."
     echo
     echo "  --verbose (-v)         Show commands output."
@@ -21,28 +25,28 @@ _usage()
 
 check_docs_main()
 {
+    local waf=./waf
+    local builddir=build/std
     local variant="release"
     local verbose=0
-    local option
-    while getopts ":-:hv" option $@
-    do
-        if [ "${option}" = "-" ]
-        then
-            case ${OPTARG} in
-                help ) _usage ;;
-                use-debug ) variant="debug" ;;
-                verbose ) verbose=1 ;;
-                * ) echo "Wrong option: --${OPTARG}" ; _usage 2 ;;
-            esac
-        else
-            case ${option} in
-                h ) _usage ;;
-                v ) verbose=1 ;;
-                ? ) echo "Wrong option" ; _usage 2 ;;
+
+    OPTS=$(getopt -o hv --long help,verbose,use-debug,waf:,builddir: -n $(basename $0) -- "$@")
+    if [ $? != 0 ] ; then
+        _usage >&2
+    fi
+    eval set -- "$OPTS"
+    while true; do
+        case "$1" in
+            -h | --help ) _usage ;;
+            -v | --verbose ) verbose=1 ;;
+            --use-debug ) variant="debug" ;;
+            --waf ) waf="$2" ; shift ;;
+            --builddir ) builddir="$2" ; shift ;;
+            -- ) shift; break ;;
+            * ) break ;;
         esac
-        fi
+        shift
     done
-    shift $((OPTIND - 1))
 
     local suffix=""
     if [ ${variant} = "debug" ]; then
@@ -54,16 +58,16 @@ check_docs_main()
 
     (
         printf "Check installation... "
-        if [ ! -f build/${variant}/bibc/libaster.so ] \
-        || [ ! -f build/${variant}/data/profile.sh ]
+        if [ ! -f ${builddir}/${variant}/bibc/libaster.so ] \
+        || [ ! -f ${builddir}/${variant}/data/profile.sh ]
         then
-            echo "Installation not found in 'build/${variant}'"
+            echo "Installation not found in '${builddir}/${variant}'"
             return 1
         fi
         echo "ok"
 
         printf "\nSource environment...\n"
-        . build/${variant}/data/profile.sh
+        . ${builddir}/${variant}/data/profile.sh
 
         printf "\nGenerate objects documentation...\n"
         python doc/generate_rst.py --objects
@@ -77,7 +81,7 @@ check_docs_main()
         fi
 
         printf "\nGenerate html documentation...\n"
-        ./waf doc${suffix}
+        ${waf} doc${suffix}
         return $?
 
     ) >> ${log} 2>&1

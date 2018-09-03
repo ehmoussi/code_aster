@@ -21,7 +21,6 @@
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
 
-PRE_IDEAS();
 
 
 INST1=DEFI_LIST_REEL(DEBUT=0.0,
@@ -29,7 +28,9 @@ INST1=DEFI_LIST_REEL(DEBUT=0.0,
                       JUSQU_A=10.,NOMBRE=1,),);
 
 
-MAIL=LIRE_MAILLAGE(FORMAT="ASTER",);
+MAIL = LIRE_MAILLAGE(FORMAT='IDEAS',
+                     UNITE=19,
+                     )
 
 MAIL=DEFI_GROUP(reuse =MAIL,
                 MAILLAGE=MAIL,

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -93,8 +93,11 @@ Erreur utilisateur :
    Sous-point : %(i2)d
 """),
 
-
-
+    7 : _(u"""
+Erreur utilisateur dans la commande CREA_CHAMP / EXTR / TABLE :
+   Dans la table %(k1)s, la colonne NOEUD ou la colonne MAILLE
+   doit être obligatoirement de type K8, or elle est de type %(k2)s
+"""),
 
     8 : _(u"""
 Erreur :

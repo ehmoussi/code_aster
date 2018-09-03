@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -23,6 +23,6 @@ interface
         use NonLin_Datastructure_type
         type(NL_DS_Contact), intent(inout) :: ds_contact
         integer, intent(in):: nb_pair
-        integer, pointer, intent(inout) :: list_pair(:)
+        integer, pointer :: list_pair(:)
     end subroutine apstoc
 end interface

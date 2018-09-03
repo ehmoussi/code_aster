@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,20 +15,19 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine romLineicIndexSurf(nb1 , tab11, tab12,&
-                                  nb2 , tab21, tab22,&
-                                  tab3, epsi)
-        integer, intent(in) :: nb1
-        real(kind=8), intent(in) :: tab11(nb1)
-        real(kind=8), intent(in) :: tab12(nb1)
-        integer, intent(in) :: nb2
-        real(kind=8), intent(in) :: tab21(nb2)
-        real(kind=8), intent(in) :: tab22(nb2)
-        integer, intent(out) :: tab3(nb1)
-        real(kind=8), intent(in) :: epsi
+    subroutine romLineicIndexSurf(tole         ,&
+                                  nb_node      , coor_node1  , coor_node2  ,&
+                                  nb_node_slice, coor_node_s1, coor_node_s2,&
+                                  node_in_slice)
+        real(kind=8), intent(in) :: tole
+        integer, intent(in) :: nb_node
+        real(kind=8), intent(in) :: coor_node1(nb_node)
+        real(kind=8), intent(in) :: coor_node2(nb_node)
+        integer, intent(in) :: nb_node_slice
+        real(kind=8), intent(in) :: coor_node_s1(nb_node_slice)
+        real(kind=8), intent(in) :: coor_node_s2(nb_node_slice)
+        integer, intent(out) :: node_in_slice(nb_node)
     end subroutine romLineicIndexSurf
 end interface

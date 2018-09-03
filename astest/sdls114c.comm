@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -26,9 +26,10 @@ tau = 0.001
 t_fin = 0.002
 pas = 5E-7
 nbpas = 100
-PRE_GIBI();
 
-M = LIRE_MAILLAGE(FORMAT="ASTER",);
+M = LIRE_MAILLAGE(FORMAT='GIBI',
+                  UNITE=19,
+                  )
 
 M=DEFI_GROUP(reuse=M,
              MAILLAGE=M,

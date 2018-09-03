@@ -26,11 +26,11 @@ from code_aster.Cata.Commons import *
 def defi_fonction_prod(VALE,VALE_PARA,VALE_C,NOEUD_PARA,ABSCISSE,**args):
   if args.get('__all__'):
       return (fonction_sdaster, fonction_c)
-  if VALE       != None  : return fonction_sdaster
-  if VALE_C     != None  : return fonction_c
-  if VALE_PARA  != None  : return fonction_sdaster
-  if ABSCISSE   != None  : return fonction_sdaster
-  if NOEUD_PARA != None  : return fonction_sdaster
+  if VALE       is not None  : return fonction_sdaster
+  if VALE_C     is not None  : return fonction_c
+  if VALE_PARA  is not None  : return fonction_sdaster
+  if ABSCISSE   is not None  : return fonction_sdaster
+  if NOEUD_PARA is not None  : return fonction_sdaster
   raise AsException("type de concept resultat non prevu")
 
 DEFI_FONCTION=OPER(nom="DEFI_FONCTION",op=3,sd_prod=defi_fonction_prod,

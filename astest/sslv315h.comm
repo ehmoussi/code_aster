@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -45,8 +45,7 @@ nbcalc = 2
 #-----------------------------------------
 #
 L_INS1=[0., 1., 2.]
-PRE_GMSH();
-MAILLAG1=LIRE_MAILLAGE(FORMAT="ASTER",INFO=1,);
+MAILLAG1 = LIRE_MAILLAGE(FORMAT='GMSH', UNITE=19)
 #
 MAILLAG1=DEFI_GROUP(reuse =MAILLAG1,
                     MAILLAGE=MAILLAG1,

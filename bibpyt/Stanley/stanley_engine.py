@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -550,7 +550,7 @@ class PARAMETRES:
 
 # Champs Bulle particulierement longs
         dparam['mode']['bulle'] = _(
-            """Mode d'utilisation suivant le profil du poste de travail.
+            u"""Mode d'utilisation suivant le profil du poste de travail.
 
 LOCAL: pour les utilisateurs qui travaillent sur une version locale d'Aster.
 
@@ -562,7 +562,7 @@ répertoire partagé.
 """)
 
         dparam['mode']['TAILLE_MIN'] = _(
-            """Parametre pour Gmsh : TAILLE_MIN
+            u"""Parametre pour Gmsh : TAILLE_MIN
 
 Ceci permet de fixer la taille minimale d'un cote d'un element. Si cette taille n'est pas atteinte, on
 procede à une transformation geometrique (affinite le long du cote trop petit). L'interet est de

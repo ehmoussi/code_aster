@@ -17,13 +17,12 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nmini0(list_func_acti, eta      , nume_inst  , matass         , zmeelm    ,&
-                  zmeass        , zveelm   , zveass     , zsolal         , zvalin    ,&
-                  ds_print      , ds_conv  , ds_algopara, ds_inout       , ds_contact,&
-                  ds_measure    , ds_energy, ds_algorom , ds_constitutive, ds_material)
+subroutine nmini0(list_func_acti, eta      , nume_inst      , matass     , zmeelm    ,&
+                  zmeass        , zveelm   , zveass         , zsolal     , zvalin    ,&
+                  ds_print      , ds_conv  , ds_algopara    , ds_inout   , ds_contact,&
+                  ds_measure    , ds_energy, ds_constitutive, ds_material)
 !
 use NonLin_Datastructure_type
-use Rom_Datastructure_type
 !
 implicit none
 !
@@ -38,7 +37,6 @@ implicit none
 #include "asterfort/nonlinDSContactCreate.h"
 #include "asterfort/nonlinDSMeasureCreate.h"
 #include "asterfort/nonlinDSEnergyCreate.h"
-#include "asterfort/romAlgoNLDSCreate.h"
 #include "asterfort/nonlinDSConstitutiveCreate.h"
 #include "asterfort/nonlinDSMaterialCreate.h"
 !
@@ -55,7 +53,6 @@ type(NL_DS_InOut), intent(out) :: ds_inout
 type(NL_DS_Contact), intent(out) :: ds_contact
 type(NL_DS_Measure), intent(out) :: ds_measure
 type(NL_DS_Energy), intent(out) :: ds_energy
-type(ROM_DS_AlgoPara), intent(out) :: ds_algorom
 type(NL_DS_Constitutive), intent(out) :: ds_constitutive
 type(NL_DS_Material), intent(out) :: ds_material
 !
@@ -76,7 +73,6 @@ type(NL_DS_Material), intent(out) :: ds_material
 ! Out ds_contact       : datastructure for contact management
 ! Out ds_measure       : datastructure for measure and statistics management
 ! Out ds_energy        : datastructure for energy management
-! Out ds_algorom       : datastructure for ROM parameters
 ! Out ds_constitutive  : datastructure for constitutive laws management
 ! Out ds_material      : datastructure for material parameters
 !
@@ -120,10 +116,6 @@ type(NL_DS_Material), intent(out) :: ds_material
 ! - Create energy management datastructure
 !
     call nonlinDSEnergyCreate(ds_energy)
-!
-! - Create ROM parameters datastructure
-!
-    call romAlgoNLDSCreate(ds_algorom)
 !
 ! - Create constitutive laws management datastructure
 !

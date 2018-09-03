@@ -35,6 +35,6 @@ interface
         integer,          optional, intent(in) :: ivect(lonvec)
         real(kind=8),     optional, intent(in) :: rvect(lonvec)
         complex(kind=8),  optional, intent(in) :: cvect(lonvec)
-        integer, pointer, optional, intent(in) :: buffer(:)
+        integer, pointer, optional :: buffer(:)
     end subroutine nlsav
 end interface

@@ -42,9 +42,10 @@ DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'), DEBUG=_F(SDVERI='OUI'))
 
 #=====  1 - LECTURE DU MAILLAGE  =======================================
 
-PRE_GIBI ()
 
-MAIL = LIRE_MAILLAGE (FORMAT="ASTER")
+MAIL = LIRE_MAILLAGE(FORMAT='GIBI',
+                     UNITE=19,
+                     )
 
 # AJOUT DES GROUPES DE NOEUDS SUR LES BORDS INFERIEUR ET SUPERIEUR
 

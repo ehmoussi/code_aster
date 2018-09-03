@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -21,19 +21,19 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine mm_cycl_detect(ds_contact    , l_loop_cont   ,&
+    subroutine mm_cycl_detect(ds_contact    , &
                               l_frot_zone   , i_cont_poin   ,&
                               coef_cont, coef_frot ,& 
                               pres_cont_prev, dist_cont_prev,&
                               pres_frot_curr,pres_frot_prev ,&
                               indi_frot_prev, dist_frot_prev,&
                               indi_cont_eval, indi_frot_eval,&
+                              indi_cont_prev, &
                               dist_cont_curr, pres_cont_curr, dist_frot_curr,&
                               alpha_cont_matr, alpha_cont_vect,&
                               alpha_frot_matr, alpha_frot_vect)
         use NonLin_Datastructure_type
-        type(NL_DS_Contact), intent(in) :: ds_contact
-        aster_logical, intent(in) :: l_loop_cont
+        type(NL_DS_Contact), intent(inout) :: ds_contact
         aster_logical, intent(in) :: l_frot_zone
         integer, intent(in) :: i_cont_poin
         real(kind=8), intent(in) :: coef_cont
@@ -45,6 +45,7 @@ interface
         integer, intent(in) :: indi_frot_prev
         real(kind=8), intent(in) :: dist_frot_prev(3)
         integer, intent(in) :: indi_cont_eval
+        integer, intent(in) :: indi_cont_prev
         integer, intent(in) :: indi_frot_eval
         real(kind=8), intent(in) :: dist_cont_curr
         real(kind=8), intent(in) :: pres_cont_curr

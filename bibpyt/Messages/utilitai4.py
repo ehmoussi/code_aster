@@ -17,12 +17,8 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: josselin.delmas at edf.fr
 
 cata_msg = {
-
-
-
 
 
     8: _(u"""
@@ -42,12 +38,12 @@ cata_msg = {
 """),
 
     12: _(u"""
- La vitesse critique calculée pour le nombre de CONNORS %(r1)f est nulle. La valeur du rapport  
+ La vitesse critique calculée pour le nombre de CONNORS %(r1)f est nulle. La valeur du rapport
  d'instabilité dans la fonction produite est fixée à zéro pour cette abscisse.
 """),
 
     14: _(u"""
- composante généralisée NUME_CMP_GENE non trouvée   
+ composante généralisée NUME_CMP_GENE non trouvée
  Conseil : vérifiez que la composante généralisée demandée est bien présente dans la base modale.
 """),
 
@@ -103,10 +99,6 @@ Contactez le support technique.
 
     31: _(u"""
  type_RESULTAT inconnu : %(k1)s
-"""),
-
-    33: _(u"""
- type scalaire inconnu :  %(k1)s
 """),
 
     34: _(u"""

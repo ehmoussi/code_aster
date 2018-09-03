@@ -32,10 +32,11 @@ pipeline {
         stage('Build') {
             steps {
                 sh "( cd $HOME/dev/jenkins/data && hg pull && hg update )"
-                sh "./waf configure --with-data=$HOME/dev/jenkins/data --prefix=build/install/std"
-                sh "./waf install"
+                sh "[ -e waf_std ] || ln -s waf_variant waf_std"
+                sh "./waf_std configure --with-data=$HOME/dev/jenkins/data --prefix=build/install/std"
+                sh "./waf_std install"
                 sh '''#!/bin/bash -l
-                ./check_docs.sh
+                ./check_docs.sh --waf=./waf_std --builddir=build/std
                 '''
                 sh "[ -e waf_mpi ] || ln -s waf_variant waf_mpi"
                 sh "./waf_mpi configure --with-data=$HOME/dev/jenkins/data --prefix=build/install/mpi"

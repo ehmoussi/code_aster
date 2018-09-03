@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -23,11 +23,12 @@ interface
                       tau2, mprojt, wpg, ffm, jacobi,&
                       jeu, coefac, coefaf, lambda, coefff,&
                       dlagrc, dlagrf, dvite, rese, nrese,&
-                      vectmm)
+                      vectmm,mprt11,mprt21,mprt22,mprt1n,mprt2n,kappa,granglis)
         character(len=*) :: phasez
         integer :: ndim
         integer :: nnm
-        real(kind=8) :: norm(3)
+        integer :: granglis
+        real(kind=8) :: norm(3),kappa(2,2)
         real(kind=8) :: tau1(3)
         real(kind=8) :: tau2(3)
         real(kind=8) :: mprojt(3, 3)
@@ -45,5 +46,7 @@ interface
         real(kind=8) :: rese(3)
         real(kind=8) :: nrese
         real(kind=8) :: vectmm(27)
+           real(kind=8) :: mprt1n(3,3),mprt2n(3,3)  
+    real(kind=8) :: mprt11(3, 3), mprt21(3, 3), mprt22(3, 3)
     end subroutine mmmvmm
 end interface

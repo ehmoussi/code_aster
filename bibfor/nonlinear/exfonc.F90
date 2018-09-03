@@ -340,16 +340,16 @@ type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 !
     if (l_rom) then
         if (l_pilo) then
-            call utmess('F', 'ROM2_6')
+            call utmess('F', 'ROM5_69')
         endif
         if (l_line_search) then
-            call utmess('F', 'ROM2_4')
+            call utmess('F', 'ROM5_34')
         endif
         if (l_dyna) then
-            call utmess('F', 'ROM2_7')
+            call utmess('F', 'ROM5_70')
         endif
         if (l_cont) then
-            call utmess('F', 'ROM2_8')
+            call utmess('F', 'ROM5_71')
         endif
     endif
 !

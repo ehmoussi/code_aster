@@ -20,7 +20,7 @@
 !
 interface
     subroutine nmctcc(mesh      , model_    , ds_material, nume_inst, &
-                      sderro    , ds_measure, sddisc, hval_incr, hval_algo,&
+                      sderro    ,  sddisc, hval_incr, hval_algo,&
                       ds_contact, ds_constitutive   , list_func_acti)
         use NonLin_Datastructure_type
         character(len=8), intent(in) :: mesh
@@ -28,7 +28,6 @@ interface
         type(NL_DS_Material), intent(in) :: ds_material
         integer, intent(in) :: nume_inst
         character(len=24), intent(in) :: sderro
-        type(NL_DS_Measure), intent(inout) :: ds_measure
         character(len=19), intent(in) :: sddisc
         character(len=19), intent(in) :: hval_incr(*)
         character(len=19), intent(in) :: hval_algo(*)

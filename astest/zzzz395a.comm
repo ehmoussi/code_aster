@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -20,41 +20,6 @@
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),DEBUG=_F(SDVERI='OUI'));
 
 mesh=LIRE_MAILLAGE(FORMAT='MED',);
-
-# Material properties for thermics: functions
-Lambda=DEFI_FONCTION(
-                     NOM_PARA='TEMP',
-                     VALE=(20.0 ,0.014 ,
-                           100.0 ,0.0152 ,
-                           200.0 ,0.0166 ,
-                           300.0 ,0.0179 ,
-                           400.0 ,0.019 ,
-                           500.0 ,0.0206 ,
-                           600.0 ,0.0218 ,
-                           700.0 ,0.0231 ,
-                           800.0 ,0.0243 ,
-                           900.0 ,0.026 ,
-                           1000.0 ,0.0273 ,
-                           1200.0 ,0.0299 ,),
-                     PROL_DROITE='LINEAIRE',
-                     PROL_GAUCHE='LINEAIRE',);
-
-rho_cp=DEFI_FONCTION(
-                     NOM_PARA='TEMP',
-                     VALE=(20.0 ,0.0036 ,
-                           100.0 ,0.0039053 ,
-                           200.0 ,0.0041685 ,
-                           300.0 ,0.0043 ,
-                           400.0 ,0.004396 ,
-                           500.0 ,0.004446 ,
-                           600.0 ,0.004495 ,
-                           700.0 ,0.0045815 ,
-                           800.0 ,0.0047875 ,
-                           900.0 ,0.0049465 ,
-                           1000.0 ,0.0049962 ,
-                           1200.0 ,0.00504365 ,),
-                     PROL_DROITE='LINEAIRE',
-                     PROL_GAUCHE='LINEAIRE',);
 
 # Heat transfer coefficient with air (W.mm-2.K-1)
 C_echang=DEFI_CONSTANTE(VALE=1.5e-05,);
@@ -80,19 +45,13 @@ T_im=DEFI_FONCTION(
                          9.0 ,1000.0 ,),
                    PROL_DROITE='CONSTANT',
                    PROL_GAUCHE='LINEAIRE',);
+
 # Emissivity
 C_epsi=DEFI_CONSTANTE(VALE=0.75,);
 
 # Stefan–Boltzmann constant (J.mm-2.s-1.K-4)
 C_sigma=DEFI_CONSTANTE(VALE=5.67e-14,);
 
-# Define the material
-steel=DEFI_MATERIAU(THER_NL=_F(LAMBDA=Lambda,
-                             RHO_CP=rho_cp,),);
-
-chmat=AFFE_MATERIAU(MAILLAGE=mesh,
-                    AFFE=_F(TOUT='OUI',
-                            MATER=steel,),);
 # Thermic model
 model=AFFE_MODELE(MAILLAGE=mesh,
                AFFE=_F(TOUT='OUI',
@@ -112,30 +71,38 @@ chg_th=AFFE_CHAR_THER_F(MODELE=model,
                                     COEF_H=C_echanf,
                                     TEMP_EXT=T_im,),),);
 
+# Read complete computation to create base
+thnl1 = LIRE_RESU(FORMAT='MED',
+                  MODELE=model,
+                  UNITE=30,
+                  TYPE_RESU='EVOL_THER',
+                  FORMAT_MED=(
+                     _F(NOM_CHAM='TEMP',
+                        NOM_RESU='thnl',),
+                     _F(NOM_CHAM='FLUX_NOEU',
+                        NOM_RESU='thnl',),),
+                  TOUT_ORDRE='OUI',);
+thnl2 = LIRE_RESU(FORMAT='MED',
+                  MODELE=model,
+                  UNITE=31,
+                  TYPE_RESU='EVOL_THER',
+                  FORMAT_MED=(
+                     _F(NOM_CHAM='TEMP',
+                        NOM_RESU='thnl',),
+                     _F(NOM_CHAM='FLUX_NOEU',
+                        NOM_RESU='thnl',),),
+                  TOUT_ORDRE='OUI',);
 
-# Time discretization
-list_t=DEFI_LIST_REEL(DEBUT=0.0,
-                      INTERVALLE=_F(JUSQU_A=10.0,
-                                    PAS=1.0,),);
-
-list_i=DEFI_LIST_INST(METHODE='MANUEL', DEFI_LIST=_F(LIST_INST=list_t,),);
-
-# Complete computation to create base
-thnl=THER_NON_LINE(MODELE=model,
-                   CHAM_MATER=chmat,
-                   EXCIT=_F(CHARGE=chg_th,),
-                   INCREMENT=_F(LIST_INST=list_i,),
-                   ETAT_INIT=_F(VALE=20.0,),
-                   NEWTON=_F(REAC_ITER=1,
-                             ITER_LINE_MAXI=3,),
-                   CONVERGENCE=_F(RESI_GLOB_MAXI=1e-5,),);
-
-thnl=CALC_CHAMP(reuse=thnl,
-                RESULTAT=thnl,
-                THERMIQUE='FLUX_NOEU',);
+thnl = CREA_RESU(OPERATION='ASSE',
+                 TYPE_RESU='EVOL_THER',
+                 ASSE=(_F(RESULTAT=thnl1),
+                       _F(RESULTAT=thnl2),
+                      ),
+                )
 
 # Create base (TEMP)
 base_p=DEFI_BASE_REDUITE(RESULTAT = thnl,
+                         MODELE   = model,
                          INFO     = 2,
                          NOM_CHAM = 'TEMP',
                          TOLE_SVD = 1.E-3,);
@@ -145,6 +112,7 @@ coorredp=RECU_TABLE(CO=base_p,NOM_TABLE='COOR_REDUIT',);
 
 # Create base (FLUX_NOEU)
 base_d=DEFI_BASE_REDUITE(RESULTAT = thnl,
+                         MODELE   = model,
                          INFO     = 2,
                          NOM_CHAM = 'FLUX_NOEU',
                          TOLE_SVD = 1.E-3,);
@@ -158,10 +126,10 @@ IMPR_RESU(FORMAT='MED',UNITE=80,RESU=_F(RESULTAT=base_p))
 IMPR_RESU(FORMAT='MED',UNITE=81,RESU=_F(RESULTAT=base_d))
 
 # Print reduced coordinates (TEMP)
-IMPR_TABLE(TABLE=coorredp)
+IMPR_TABLE(TABLE=coorredp,UNITE=6)
 
 # Print reduced coordinates (FLUX_NOEU)
-IMPR_TABLE(TABLE=coorredd)
+IMPR_TABLE(TABLE=coorredd,UNITE=6)
 
 # Tests base
 TEST_RESU(RESU=(

@@ -104,8 +104,12 @@ MACR_RECAL = MACRO(nom="MACR_RECAL",
 
          # Calculs des gradients
          # ---------------------
-         b_gradient =BLOC(condition = """equal_to("METHODE", 'FMINBFGS') or equal_to("METHODE", 'FMINNCG')""" ,
+         b_gradient =BLOC(condition = """equal_to("METHODE", 'FMINBFGS')""" ,
              GRADIENT        =SIMP(statut='f',typ='TXM',defaut='NON_CALCULE', into=("NON_CALCULE", "NORMAL", "ADIMENSIONNE" )),
+         ),
+
+         b_gradient_fmincg =BLOC(condition = """equal_to("METHODE", 'FMINNCG')""" ,
+             GRADIENT        =SIMP(statut='o',typ='TXM',into=("NORMAL", "ADIMENSIONNE" )),
          ),
 
          b_gradient_levenberg =BLOC(condition = """equal_to("METHODE", 'LEVENBERG')""" ,
