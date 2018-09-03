@@ -36,7 +36,7 @@ pipeline {
                 sh "./waf_std configure --with-data=$HOME/dev/jenkins/data --prefix=build/install/std"
                 sh "./waf_std install"
                 sh '''#!/bin/bash -l
-                ./check_docs.sh --waf=waf_std --builddir=build/std
+                ./check_docs.sh --waf=./waf_std --builddir=build/std
                 '''
                 sh "[ -e waf_mpi ] || ln -s waf_variant waf_mpi"
                 sh "./waf_mpi configure --with-data=$HOME/dev/jenkins/data --prefix=build/install/mpi"
