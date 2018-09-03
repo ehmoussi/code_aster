@@ -17,8 +17,6 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: emmanuel.boyere at edf.fr
-
 DEBUT(CODE=_F( NIV_PUB_WEB='INTERNET',),DEBUG=_F(SDVERI='NON'))
 # SDVERI='NON' car la verification est trop couteuse en CPU
 
@@ -73,6 +71,7 @@ sinom = FORMULE(VALE='sin(om*INST)',
                 om=om,
                 NOM_PARA='INST',)
 
+bande = 1./(5.*pa)
 
 TRANSD = DYNA_LINE(TYPE_CALCUL="TRAN",
                  BASE_CALCUL="PHYS",
@@ -80,11 +79,11 @@ TRANSD = DYNA_LINE(TYPE_CALCUL="TRAN",
                  CHAM_MATER=CHMAT,
                  CHARGE=BLOCAGE,
                  EXCIT=_F(CHARGE=GRAV, FONC_MULT=sinom,),
-                 BANDE_ANALYSE=1./(5.*pa),
+                 BANDE_ANALYSE=bande,
                  SCHEMA_TEMPS=_F(SCHEMA ='NEWMARK'),
                  INCREMENT=_F(INST_FIN=tfin,
-                               PAS=(1.0 * pa),),)
-                  
+                               PAS=pa,),)
+
 
 DEPLPDZ=RECU_FONCTION(RESULTAT=TRANSD,
                        NOM_CHAM='DEPL',
@@ -117,5 +116,5 @@ TEST_FONCTION(VALEUR=(_F(VALE_CALC=0.00017243164,
                          FONCTION=DEPLPDX,
                          ),
               ))
-              
+
 FIN();

@@ -32,7 +32,8 @@ implicit none
 #include "asterfort/getvis.h"
 #include "asterfort/infniv.h"
 #include "asterfort/utmess.h"
-#include "asterfort/romBaseRead.h"
+#include "asterfort/romBaseGetInfo.h"
+#include "asterfort/romBasePrintInfo.h"
 #include "asterfort/getelem.h"
 #include "asterfort/getnode.h"
 #include "asterfort/jeveuo.h"
@@ -116,12 +117,14 @@ type(ROM_DS_ParaDDR), intent(inout) :: ds_para
 ! - Get informations about bases - Primal
 !
     call getvid(' ', 'BASE_PRIMAL', scal = base_prim)
-    call romBaseRead(base_prim, empi_prim)
+    call romBaseGetInfo(base_prim, empi_prim)
+    call romBasePrintInfo(empi_prim)
 !
 ! - Get informations about bases - Dual
 !
     call getvid(' ', 'BASE_DUAL', scal = base_dual)
-    call romBaseRead(base_dual, empi_dual)
+    call romBaseGetInfo(base_dual, empi_dual)
+    call romBasePrintInfo(empi_dual)
 !
 ! - Save parameters in datastructure
 !

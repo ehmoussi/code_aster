@@ -1,0 +1,32 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+# Reecriture des liaisons cinématiques pour les DDLs rélachés (via Rtool)
+
+BLOQ = AFFE_CHAR_MECA(
+    MODELE= MODEL,
+    LIAISON_ELEM=(
+        # 1D2D : Liaison entre P1_2 et des elements de la surface D3
+        _F(GROUP_MA_1='GCharEnew_3231', GROUP_NO_2='GCharNold_33', OPTION='PLAQ_POUT_ORTH', VERIF_EXCENT='NON',),
+        # 1D2D : Liaison entre P1_1 et des elements de la surface D2
+        _F(GROUP_MA_1='GCharEnew_3232', GROUP_NO_2='GCharNold_23', OPTION='PLAQ_POUT_ORTH', VERIF_EXCENT='NON',),
+        # 1D2D : Liaison entre P1_0 et des elements de la surface D1
+        _F(GROUP_MA_1='GCharEnew_3233', GROUP_NO_2='GCharNold_14', OPTION='PLAQ_POUT_ORTH', VERIF_EXCENT='NON',),
+    ),
+)

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -355,6 +355,67 @@ TEST_RESU(RESU=(
                    REFERENCE='AUTRE_ASTER',
                    VALE_CALC=931.339805173,
                    PRECISION = 0.00015
+                   ),
+                ),
+          );
+
+
+redu2=THER_NON_LINE(MODELE=model_r,
+                    CHAM_MATER=chmat,
+                    EXCIT=_F(CHARGE=chg_th_r,),
+                    INCREMENT=_F(LIST_INST=list_i,),
+                    ETAT_INIT=_F(VALE=20.0,),
+                    METHODE='MODELE_REDUIT',
+                    MODELE_REDUIT=_F(
+                              REAC_ITER         = 1,
+                              BASE_PRIMAL       = base_t,
+                              DOMAINE_REDUIT    = 'OUI',
+                              GROUP_NO_INTERF   = 'INF',
+                    ),
+                   CONVERGENCE=_F(RESI_GLOB_MAXI=1e-5,),);
+
+# Valeurs de référence (calcul complet) - Dans RID
+
+TEST_RESU(RESU=(
+                _F(RESULTAT=redu2,
+                   INST= 1.0,
+                   NOM_CHAM='TEMP',
+                   NOEUD='N206',
+                   NOM_CMP='TEMP',
+                   VALE_REFE=29.9070478306,
+                   REFERENCE='AUTRE_ASTER',
+                   VALE_CALC=29.9091395725,
+                   PRECISION = 0.00007
+                   ),
+                _F(RESULTAT=redu2,
+                   INST= 4.0,
+                   NOM_CHAM='TEMP',
+                   NOEUD='N206',
+                   NOM_CMP='TEMP',
+                   VALE_REFE=139.467784038,
+                   REFERENCE='AUTRE_ASTER',
+                   VALE_CALC=139.471174904,
+                   PRECISION = 0.000025
+                   ),
+                _F(RESULTAT=redu2,
+                   INST= 7.0,
+                   NOM_CHAM='TEMP',
+                   NOEUD='N206',
+                   NOM_CMP='TEMP',
+                   VALE_REFE=567.145887211,
+                   REFERENCE='AUTRE_ASTER',
+                   VALE_CALC=567.150857718,
+                   PRECISION = 0.0000090
+                   ),
+                _F(RESULTAT=redu2,
+                   INST= 10.0,
+                   NOM_CHAM='TEMP',
+                   NOEUD='N206',
+                   NOM_CMP='TEMP',
+                   VALE_REFE=999.500384048,
+                   REFERENCE='AUTRE_ASTER',
+                   VALE_CALC=999.507393698,
+                   PRECISION = 0.0000075
                    ),
                 ),
           );

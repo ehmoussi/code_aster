@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine rc32s0(option, sig, lieu, trescamax)
+subroutine rc32s0(option, lieu, seis)
     implicit   none
 #include "asterf_types.h"
 #include "jeveux.h"
@@ -36,7 +36,7 @@ subroutine rc32s0(option, sig, lieu, trescamax)
 #include "asterfort/jedetr.h"
 #include "asterfort/tbliva.h"
 #include "asterfort/rc32my.h"
-    real(kind=8) :: sig(6), trescamax
+    real(kind=8) :: seis(72)
     character(len=4) :: option, lieu
 
 !
@@ -46,14 +46,12 @@ subroutine rc32s0(option, sig, lieu, trescamax)
 !
 !     ------------------------------------------------------------------
 !
-    integer :: i0, i1, i2, i3, i4, i5, i6, i7, i8, i9, i10, i11, i12
-    integer :: e0(2), jinfois, numcha, jchars, k, jsigu, j, typseis
+    integer :: jinfois, numcha, jchars, k, jsigu, j, typseis
     integer :: iret, n0, i, nbabsc, jabsc, ibid
-    real(kind=8) :: st(6), ms(12), seisfx(6), seisfy(6), seisfz(6)
+    real(kind=8) :: ms(12), seisfx(6), seisfy(6), seisfz(6)
     real(kind=8) :: seismx(6), seismy(6), seismz(6), seisfx2(6)
     real(kind=8) :: seisfy2(6), seisfz2(6), seismx2(6), seismy2(6)
-    real(kind=8) :: seismz2(6), tresca, prec(1), vale(1), momen0
-    real(kind=8) :: momen1
+    real(kind=8) :: seismz2(6), prec(1), vale(1), momen0, momen1
     character(len=8) ::  knumec, crit(1), nocmp(6), tabfm(6), k8b
     character(len=16) :: valek(1)
     character(len=24) :: valk(3)
@@ -63,10 +61,8 @@ subroutine rc32s0(option, sig, lieu, trescamax)
 
 ! DEB ------------------------------------------------------------------
 !
-    trescamax = 0.d0
-    do 10 i0 = 1, 2
-        i1 = 2*(i0-2)+1
-        e0(i0) = i1
+    do 10 j = 1, 72
+            seis(j)= 0.d0
 10  continue
 !
     call jeveuo('&&RC3200.SEIS_INFOI', 'L', jinfois)
@@ -269,41 +265,19 @@ subroutine rc32s0(option, sig, lieu, trescamax)
         AS_DEALLOCATE(vr=contraintes)
     endif
 !
-    do 101 i1 = 1, 2
-      do 102 i2 = 1, 2
-        do 103 i3 = 1, 2
-          do 104 i4 = 1, 2
-            do 105 i5 = 1, 2
-              do 106 i6 = 1, 2
-                do 107 i7 = 1, 2
-                  do 108 i8 = 1, 2
-                    do 109 i9 = 1, 2
-                      do 110 i10 = 1, 2
-                        do 111 i11 = 1, 2
-                          do 112 i12 = 1, 2
-                            do 113 j = 1, 6
-!
-                                st(j) =  sig(j)+e0(i1)*seisfx(j)  +e0(i2)*seisfy(j)  +&
-                                               e0(i3)*seisfz(j)  +e0(i4)*seismx(j)   +&
-                                               e0(i5)*seismy(j)  +e0(i6)*seismz(j)   +&
-                                               e0(i7)*seisfx2(j) +e0(i8)*seisfy2(j)  +&
-                                               e0(i9)*seisfz2(j) +e0(i10)*seismx2(j) +&
-                                               e0(i11)*seismy2(j)+e0(i12)*seismz2(j)
-!
-113                         continue
-                            call rctres(st, tresca)
-                            trescamax=max(tresca, trescamax)
-112                       continue
-111                     continue
-110                   continue
-109                 continue
-108               continue
-107             continue
-106           continue
-105         continue
-104       continue
-103     continue
-102   continue
-101 continue
+    do 80 j = 1, 6
+            seis(j) = seisfx(j)
+            seis(6+j)= seisfy(j)
+            seis(2*6+j)=seisfz(j)
+            seis(3*6+j)=seismx(j)
+            seis(4*6+j)=seismy(j)
+            seis(5*6+j)=seismz(j)
+            seis(6*6+j)= seisfx2(j)
+            seis(7*6+j)=seisfy2(j)
+            seis(8*6+j)=seisfz2(j)
+            seis(9*6+j)=seismx2(j)
+            seis(10*6+j)=seismy2(j)
+            seis(11*6+j)=seismz2(j)
+80  continue
 !
 end subroutine

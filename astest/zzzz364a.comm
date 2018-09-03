@@ -196,7 +196,6 @@ DRZIMP = FORMULE(VALE='u_imp(6,X,Y,Z,INST)',
                  NOM_PARA=['X', 'Y', 'Z', 'INST'],)
 
 #--------------------------------------------------------------------------------------
-PRE_GIBI()
 
 
 lmodeli= ['3D',]
@@ -257,7 +256,7 @@ for modeli in lmodeli :
     # Pour COQUE_3D, il faut un maillage de QUAD9 :
     #-----------------------------------------------------
     if modeli=='COQUE_3D' :
-        MA0=LIRE_MAILLAGE(FORMAT="ASTER",)
+        MA0=LIRE_MAILLAGE(FORMAT="GIBI", UNITE=19)
         MA1=CREA_MAILLAGE(MAILLAGE=MA0,LINE_QUAD=_F(GROUP_MA=(solide,bord)))
         # le group_no solide ne contient que les noeuds des QUAD8
         DEFI_GROUP(reuse=MA1, MAILLAGE=MA1, CREA_GROUP_NO=_F(NOM=solide, GROUP_MA=solide))
@@ -265,7 +264,7 @@ for modeli in lmodeli :
                        MODI_MAILLE= _F(OPTION='QUAD8_9',GROUP_MA=(solide,),PREF_NOEUD='NQ'))
         DETRUIRE(CONCEPT=_F(NOM=(MA0,MA1,)),INFO=1,)
     else :
-        MA=LIRE_MAILLAGE(FORMAT="ASTER",)
+        MA=LIRE_MAILLAGE(FORMAT="GIBI", UNITE=19)
         DEFI_GROUP(reuse=MA, MAILLAGE=MA, CREA_GROUP_NO=_F(NOM=solide, GROUP_MA=solide))
 
 
@@ -281,8 +280,7 @@ for modeli in lmodeli :
     if not modeli in ('POU_D_EM', 'POU_D_TGM') :
         CM=AFFE_MATERIAU(   MAILLAGE=MA,  AFFE=_F( GROUP_MA = solide, MATER = MAT) )
     else :
-        PRE_GIBI(UNITE_GIBI=17, UNITE_MAILLAGE=18)
-        MASEC=LIRE_MAILLAGE(FORMAT="ASTER",UNITE=18,);
+        MASEC=LIRE_MAILLAGE(FORMAT="GIBI", UNITE=17);
         GF=DEFI_GEOM_FIBRE(
            SECTION = _F ( GROUP_FIBRE='SEC1',
                             MAILLAGE_SECT = MASEC , GROUP_MA_SECT = 'SURF1',

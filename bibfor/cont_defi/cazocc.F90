@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -59,12 +59,13 @@ implicit none
     integer :: nb_cont_excl_1, nb_cont_excl_2, nb_cont_excl_3, nb_cont_excl_4
     integer :: nb_dire_excl, noc
     character(len=16) :: s_cont_excl, s_frot_excl
+    character(len=16) :: s_grglis
     character(len=16) :: s_gliss, s_type_inte, s_cont_init, s_algo_cont, s_algo_frot
     character(len=16) :: adaptation
     real(kind=8) :: dire_excl_frot_i, dire_excl_frot(3)
     real(kind=8) :: coef_cont, coef_frot, seuil_init, coef_coul_frot
     real(kind=8) :: coef_augm_frot, coef_augm_cont
-    real(kind=8) :: coef_pena_frot, coef_pena_cont,pene_maxi
+    real(kind=8) :: coef_pena_frot, coef_pena_cont,pene_maxi,glis_maxi
     real(kind=8) :: algo_cont, algo_frot
     real(kind=8) :: type_inte, cont_init, seuil_auto
     integer :: inte_order
@@ -79,6 +80,7 @@ implicit none
     character(len=24) :: sdcont_paraci
     integer, pointer :: v_sdcont_paraci(:) => null()
     aster_logical ::  l_newt_fr = .false._1, l_cont_cont = .false._1,l_pena_cont = .false._1
+    aster_logical ::  l_granglis = .false._1
     character(len=24) :: sdcont_paracr
     real(kind=8), pointer :: v_sdcont_paracr(:) => null()
     real(kind=8) :: pene_critere
@@ -110,11 +112,13 @@ implicit none
     l_node_excl       = .false.
     l_frot_excl       = .false.
     l_gliss           = .false.
+    l_granglis        = .false.
     l_dire_excl_frot  = .false.
     l_newt_fr  = .false.
     l_cont_cont= .false.
     s_algo_frot       = ' '
     pene_maxi         =1.d3
+    glis_maxi         =1.d3
 !
 ! - Datastructure for contact
 !
@@ -161,7 +165,7 @@ implicit none
 !
 ! - Contact method
 ! - Traitement de PENE_MAXI :
-!      - Dans le cas  ADAPTATION=NON+PENALISATION,
+!      - Dans le cas  ADAPTATION=NON ou CYCLAGE+PENALISATION,
 !        le critere PENE_MAXI n'a pas de sens. Au moment de la résolution,
 !        dans STAT_NON_LINE, on ne cherche pas à le vérifier. La parade c'est
 !        de prendre le critère volontairement tres grand pour ne pas avoir à le vérifier. 
@@ -227,7 +231,9 @@ implicit none
             algo_frot = 1.d0
             coef_frot = coef_augm_frot
         else if (s_algo_frot .eq. 'PENALISATION') then
+            call getvtx(keywf, 'ADAPTATION', iocc=i_zone, scal=adaptation)
             call getvr8(keywf, 'COEF_PENA_FROT', iocc=i_zone, scal=coef_pena_frot)
+            call getvr8(keywf, 'GLIS_MAXI', iocc=i_zone, scal=glis_maxi,nbret=nbret)
             algo_frot = 3.d0
             coef_frot = coef_pena_frot
         else
@@ -244,6 +250,7 @@ implicit none
         coef_frot = 0.d0
         algo_frot = 0.d0
     endif
+    v_sdcont_caracf(zcmcf*(i_zone-1)+16) = glis_maxi
 !
 ! - Get friction parameters
 !
@@ -359,6 +366,34 @@ implicit none
         endif
     endif
 !
+
+!
+! --- GRAND_GLISSEMENT 
+!
+    if (l_frot .and. l_cont_cont) then 
+        call getvtx(keywf, 'GRAND_GLIS', iocc=i_zone, scal=s_grglis, nbret=noc)
+        if (noc .ge. 1) then  
+            if (s_grglis(1:3) .eq. 'OUI') then
+                l_granglis = .true.
+            elseif (s_grglis(1:3) .eq. 'NON') then
+                l_granglis = .false.
+            else
+                print s_grglis(1:3)
+                ASSERT(.false.)
+            endif
+        else 
+            l_granglis = .false.
+        endif
+    !
+        if (l_granglis) then
+            v_sdcont_caracf(zcmcf*(i_zone-1)+15) = 1.d0
+        else
+            v_sdcont_caracf(zcmcf*(i_zone-1)+15) = 0.d0
+        endif
+    endif
+    write (6,*) "granglis cazocc", v_sdcont_caracf(zcmcf*(i_zone-1)+15)
+
+
     v_sdcont_caracf(zcmcf*(i_zone-1)+8) = cont_init
     if (l_gliss) then
        v_sdcont_caracf(zcmcf*(i_zone-1)+9) = 1.d0

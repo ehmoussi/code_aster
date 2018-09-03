@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -43,7 +43,8 @@ LIST_R=DEFI_LIST_REEL(       DEBUT=0.,
 #                           CALCUL DIRECT                              #
 ########################################################################
 #
-MAYA=LIRE_MAILLAGE(FORMAT="ASTER", UNITE=20)
+MAYA = LIRE_MAILLAGE(FORMAT='ASTER',
+                     UNITE=20,)
 
 MAYA=DEFI_GROUP( reuse=MAYA,   MAILLAGE=MAYA,
   CREA_GROUP_MA=_F(  NOM = 'TOUT', TOUT = 'OUI'))
@@ -242,11 +243,11 @@ TEST_RESU(RESU=_F(INST=0.0195,
 #          CALCUL PAR SOUS-STRUCTURATION DYNAMIQUE TRANSITOIRE         #
 ########################################################################
 #
-PRE_IDEAS(UNITE_IDEAS=19,
-           UNITE_MAILLAGE=21)
 
 #
-MAYA1=LIRE_MAILLAGE(FORMAT="ASTER", UNITE=21)
+MAYA1 = LIRE_MAILLAGE(FORMAT='IDEAS',
+                      UNITE=19,
+                      )
 
 MAYA1=DEFI_GROUP( reuse=MAYA1,   MAILLAGE=MAYA1,
   CREA_GROUP_MA=_F(  NOM = 'TOUT1', TOUT = 'OUI'))

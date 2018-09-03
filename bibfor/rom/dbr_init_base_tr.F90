@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -26,9 +26,9 @@ implicit none
 #include "asterf_types.h"
 #include "asterfort/infniv.h"
 #include "asterfort/utmess.h"
-#include "asterfort/romBaseRead.h"
+#include "asterfort/romBaseGetInfo.h"
 #include "asterfort/rscrsd.h"
-#include "asterfort/romBaseCopy.h"
+#include "asterfort/romBaseDSCopy.h"
 #include "asterfort/dbr_init_prof_tr.h"
 !
 character(len=8), intent(in) :: base
@@ -60,20 +60,35 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
         call utmess('I', 'ROM2_39')
     endif
 !
-! - Read empiric base to modify
+! - Get informations about empiric base to truncate
 !
     if (l_reuse) then
-        call romBaseRead(base, ds_empi)
+        if (niv .ge. 2) then
+            call utmess('I', 'ROM2_56')
+        endif
+        call romBaseGetInfo(base, ds_empi)
     else
-        call romBaseRead(ds_para_tr%base_init, ds_para_tr%ds_empi_init)
+        if (niv .ge. 2) then
+            call utmess('I', 'ROM2_57')
+        endif
+        call romBaseGetInfo(ds_para_tr%base_init, ds_para_tr%ds_empi_init)
     endif
 !
-! - Create empiric base
+! - Create PROF_CHNO for truncation
+!
+    if (niv .ge. 2) then
+        call utmess('I', 'ROM2_55')
+    endif
+    call dbr_init_prof_tr(base, ds_para_tr)
+!
+! - Create empiric base (if necessary)
 !
     if (.not. l_reuse) then
-        call dbr_init_prof_tr(base, ds_para_tr)
+        if (niv .ge. 2) then
+            call utmess('I', 'ROM2_58')
+        endif
         call rscrsd('G', base, 'MODE_EMPI', ds_para_tr%ds_empi_init%nb_mode)
-        call romBaseCopy(ds_para_tr%ds_empi_init, base, ds_empi)
+        call romBaseDSCopy(ds_para_tr%ds_empi_init, base, ds_empi)
     endif
 !
 end subroutine

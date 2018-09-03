@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -35,8 +35,8 @@ implicit none
     integer, intent(in) :: nb_cont_surf
     integer, intent(in) :: nb_cont_node0
     integer, intent(inout) :: nb_cont_node
-    integer, pointer, intent(out) :: v_poin_node(:)
-    integer, pointer, intent(out) :: v_list_node(:)
+    integer, pointer :: v_poin_node(:)
+    integer, pointer :: v_list_node(:)
 !
 ! --------------------------------------------------------------------------------------------------
 !

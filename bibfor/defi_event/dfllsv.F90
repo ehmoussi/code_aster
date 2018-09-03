@@ -34,10 +34,10 @@ implicit none
 #include "asterfort/jemarq.h"
 #include "asterfort/utmess.h"
 !
-real(kind=8), intent(in), pointer :: v_sdlist_linfor(:)
-real(kind=8), intent(in), pointer :: v_sdlist_eevenr(:)
-character(len=16), intent(in), pointer :: v_sdlist_eevenk(:)
-real(kind=8), intent(in), pointer :: v_sdlist_esubdr(:)
+real(kind=8), pointer :: v_sdlist_linfor(:)
+real(kind=8), pointer :: v_sdlist_eevenr(:)
+character(len=16), pointer :: v_sdlist_eevenk(:)
+real(kind=8), pointer :: v_sdlist_esubdr(:)
 integer, intent(in) :: i_fail_save
 character(len=16), intent(in) :: event_typek
 real(kind=8), intent(in) :: vale_ref

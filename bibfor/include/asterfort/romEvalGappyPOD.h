@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -23,8 +23,8 @@ interface
         type(ROM_DS_ParaRRC), intent(in) :: ds_para
         character(len=8), intent(in) :: result
         integer, intent(in) :: nb_store
-        real(kind=8), pointer, intent(in) :: v_matr_phi(:)
-        real(kind=8), pointer, intent(out) :: v_coor_redu(:)
+        real(kind=8), pointer :: v_matr_phi(:)
+        real(kind=8), pointer :: v_coor_redu(:)
         integer, intent(in) :: ind_dual
     end subroutine romEvalGappyPOD
 end interface

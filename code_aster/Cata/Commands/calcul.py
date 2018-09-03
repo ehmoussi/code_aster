@@ -38,7 +38,7 @@ CALCUL=OPER(nom="CALCUL",op=26,sd_prod=table_container,
           NUME_ORDRE      =SIMP(statut='o',typ='I'),),
 
      b_mecanique     =BLOC( condition = """equal_to("PHENOMENE", 'MECANIQUE')""",
-         OPTION          =SIMP(statut='o',typ='TXM',validators=NoRepeat(),max='**',defaut="COMPORTEMENT",
+         OPTION          =SIMP(statut='f',typ='TXM',validators=NoRepeat(),max='**',defaut="COMPORTEMENT",
                                into=( "COMPORTEMENT","MATR_TANG_ELEM","FORC_INTE_ELEM","FORC_NODA_ELEM","FORC_VARC_ELEM_M","FORC_VARC_ELEM_P"),),
          EXCIT           =FACT(statut='f',max='**',
            CHARGE          =SIMP(statut='o',typ=(char_meca,char_cine_meca)),

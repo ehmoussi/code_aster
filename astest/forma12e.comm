@@ -37,7 +37,7 @@ nu = 0.3;
 
 LISTR=DEFI_LIST_REEL(DEBUT=0.,
                      INTERVALLE=_F(JUSQU_A=tfin,
-                                   PAS=(1.0 * pa),),);
+                                   PAS=pa,),);
 
 MAIL=LIRE_MAILLAGE(UNITE=20,
                    FORMAT='MED',);
@@ -47,10 +47,11 @@ MODELE=AFFE_MODELE(MAILLAGE=MAIL,
                            PHENOMENE='MECANIQUE',
                            MODELISATION='3D',),);
 
+dse = E / 100
 MAT=DEFI_MATERIAU(ELAS=_F(E=E,
                           NU=nu,
                           RHO=rho,),
-                  ECRO_LINE=_F(D_SIGM_EPSI=(E / 100.0),
+                  ECRO_LINE=_F(D_SIGM_EPSI=dse,
                                SY=200.E6,),);
 
 CHMAT=AFFE_MATERIAU(MAILLAGE=MAIL,
@@ -92,9 +93,11 @@ MODEE=EXTR_MODE(FILTRE_MODE=_F(MODE=MODES,
                                FREQ_MAX=100.0,),
                 IMPRESSION=_F(CUMUL='OUI',),);
 
+fc_x4 = 4.*fc
+
 MODEF=EXTR_MODE(FILTRE_MODE=_F(MODE=MODES,
                                FREQ_MIN=0.0,
-                               FREQ_MAX=(4.0 * fc),),
+                               FREQ_MAX=fc_x4,),
                 IMPRESSION=_F(CUMUL='OUI',),);
 
 GRAV=AFFE_CHAR_MECA(MODELE=MODELE,
@@ -277,7 +280,7 @@ DYNADNL=DYNA_NON_LINE(MODELE=MODELE,
                                       FORMULATION='DEPLACEMENT',),
                       NEWTON=_F(),
                       CONVERGENCE=_F(ITER_GLOB_MAXI=30,
-                                     
+
                                      ARRET='OUI',),);
 
 DEPLPDZn=RECU_FONCTION(RESULTAT=DYNADNL,

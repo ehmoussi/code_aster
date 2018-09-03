@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -35,7 +35,7 @@ implicit none
 #include "asterfort/getMFrontPlaneStress.h"
 !
 character(len=8), intent(in) :: mesh
-integer, intent(in), pointer :: v_model_elem(:)
+integer, pointer :: v_model_elem(:)
 integer, intent(in) :: elem_type 
 character(len=16), intent(in) :: keywf
 integer, intent(in) :: i_comp

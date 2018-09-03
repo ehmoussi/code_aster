@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -20,7 +20,7 @@ subroutine mmmvuu(phasez, ndim, nne, nnm, norm,&
                   tau1, tau2, mprojt, wpg, ffe,&
                   ffm, jacobi, jeu, coefac, coefaf,&
                   lambda, coefff, dlagrc, dlagrf, dvite,&
-                  rese, nrese, vectee, vectmm)
+                  rese, nrese, vectee, vectmm,mprt11,mprt21,mprt22,mprt1n,mprt2n,kappa,granglis)
 !
 ! person_in_charge: mickael.abbas at edf.fr
 !
@@ -29,15 +29,17 @@ subroutine mmmvuu(phasez, ndim, nne, nnm, norm,&
 #include "asterfort/mmmvee.h"
 #include "asterfort/mmmvmm.h"
     character(len=*) :: phasez
-    integer :: ndim, nne, nnm
+    integer :: ndim, nne, nnm,granglis
     real(kind=8) :: wpg, ffe(9), ffm(9), jacobi
     real(kind=8) :: dlagrc, dlagrf(2), dvite(3)
     real(kind=8) :: rese(3), nrese
     real(kind=8) :: norm(3)
-    real(kind=8) :: tau1(3), tau2(3), mprojt(3, 3)
+    real(kind=8) :: tau1(3), tau2(3), mprojt(3, 3),kappa(2,2)
     real(kind=8) :: coefac, coefaf, jeu
     real(kind=8) :: lambda, coefff
     real(kind=8) :: vectee(27), vectmm(27)
+    real(kind=8) :: mprt11(3, 3), mprt21(3, 3), mprt22(3, 3)
+    real(kind=8) :: mprt1n(3,3),mprt2n(3,3)  
 !
 ! ----------------------------------------------------------------------
 !
@@ -90,11 +92,13 @@ subroutine mmmvuu(phasez, ndim, nne, nnm, norm,&
 !
 ! --- DEPL_ESCL
 !
+!     write (6,*) "jeu",jeu
+!     write (6,*) "kappa",kappa
     call mmmvee(phasep, ndim, nne, norm, tau1,&
                 tau2, mprojt, wpg, ffe, jacobi,&
                 jeu, coefac, coefaf, lambda, coefff,&
                 dlagrc, dlagrf, dvite, rese, nrese,&
-                vectee)
+                vectee,mprt11,mprt21,mprt22,kappa,granglis)
 !
 ! --- DEPL_MAIT
 !
@@ -102,6 +106,6 @@ subroutine mmmvuu(phasez, ndim, nne, nnm, norm,&
                 tau2, mprojt, wpg, ffm, jacobi,&
                 jeu, coefac, coefaf, lambda, coefff,&
                 dlagrc, dlagrf, dvite, rese, nrese,&
-                vectmm)
+                vectmm,mprt11,mprt21,mprt22,mprt1n,mprt2n,kappa,granglis)
 !
 end subroutine

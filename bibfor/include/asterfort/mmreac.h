@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -20,7 +20,7 @@
 !
 interface
     subroutine mmreac(nbdm, ndim, nne, nnm, jgeom,&
-                      jdepm,jdepde,ppe, geomae, geomam)
+                      jdepm,jdepde,ppe, geomae, geomam,ddepmam)
         integer :: nbdm
         integer :: ndim
         integer :: nne
@@ -29,7 +29,7 @@ interface
         integer :: jdepm
     integer :: jdepde
         real(kind=8) :: ppe
-        real(kind=8) :: geomae(9, 3)
+        real(kind=8) :: geomae(9, 3),ddepmam(9, 3)
         real(kind=8) :: geomam(9, 3)
     end subroutine mmreac
 end interface

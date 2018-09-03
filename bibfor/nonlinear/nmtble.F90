@@ -18,7 +18,7 @@
 ! person_in_charge: mickael.abbas at edf.fr
 !
 subroutine nmtble(loop_exte     , model   , mesh  , ds_material, ds_contact,&
-                  list_func_acti, ds_print, ds_measure, &
+                  list_func_acti, ds_print,  &
                   sderro        , ds_conv , sddisc, nume_inst, hval_incr ,&
                   hval_algo, ds_constitutive, ds_algorom)
 !
@@ -50,7 +50,6 @@ type(NL_DS_Material), intent(in) :: ds_material
 type(NL_DS_Contact), intent(inout) :: ds_contact
 integer, intent(in) :: list_func_acti(*)
 type(NL_DS_Print), intent(inout) :: ds_print
-type(NL_DS_Measure), intent(inout) :: ds_measure
 character(len=24), intent(in) :: sderro
 type(NL_DS_Conv), intent(in) :: ds_conv
 character(len=19), intent(in) :: sddisc
@@ -80,7 +79,6 @@ type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
 ! IO  ds_contact       : datastructure for contact management
 ! In  list_func_acti   : list of active functionnalities
 ! IO  ds_print         : datastructure for printing parameters
-! IO  ds_measure       : datastructure for measure and statistics management
 ! In  sderro           : datastructure for errors during algorithm
 ! In  ds_conv          : datastructure for convergence management
 ! In  sddisc           : datastructure for time discretization
@@ -132,7 +130,7 @@ type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
             if (l_loop_cont) then
                 loop_exte = 1
                 call nmctcc(mesh      , model     , ds_material, nume_inst,&
-                            sderro    , ds_measure, sddisc, hval_incr, hval_algo,&
+                            sderro    ,  sddisc, hval_incr, hval_algo,&
                             ds_contact, ds_constitutive   , list_func_acti)
                 call mmbouc(ds_contact, 'Cont', 'Is_Convergence', loop_state_ = loop_cont_conv)
                 call mmbouc(ds_contact, 'Cont', 'Get_Vale'      , loop_vale_  = loop_cont_vale)

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine ddr_chck(ds_para)
 !
 use Rom_Datastructure_type
@@ -29,9 +30,7 @@ implicit none
 #include "asterfort/jenonu.h"
 #include "asterfort/jexnom.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    type(ROM_DS_ParaDDR), intent(in) :: ds_para
+type(ROM_DS_ParaDDR), intent(in) :: ds_para
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -68,19 +67,19 @@ implicit none
 !
 ! - Check mesh
 !
-    mesh_prim = empi_prim%mesh
-    mesh_dual = empi_dual%mesh
+    mesh_prim = empi_prim%ds_mode%mesh
+    mesh_dual = empi_dual%ds_mode%mesh
     if (mesh_prim .ne. mesh_dual) then
         call utmess('F','ROM4_9')
     endif
     if (mesh .ne. mesh_prim) then
-        call utmess('F','ROM4_10', sk = mesh)
+        call utmess('F','ROM4_10')
     endif
 !
 ! - Check model
 !
-    model_prim = empi_prim%model
-    model_dual = empi_dual%model
+    model_prim = empi_prim%ds_mode%model
+    model_dual = empi_dual%ds_mode%model
     if (model_prim .eq. '#PLUSIEURS' .or. model_dual .eq. '#PLUSIEURS') then
         call utmess('F','ROM4_11')
     endif
@@ -104,12 +103,12 @@ implicit none
 !
 ! - Check fields for empiric modes
 !
-    if (empi_prim%field_name .eq. 'TEMP') then
-        if (empi_dual%field_name .ne. 'FLUX_NOEU') then
+    if (empi_prim%ds_mode%field_name .eq. 'TEMP') then
+        if (empi_dual%ds_mode%field_name .ne. 'FLUX_NOEU') then
             call utmess('F', 'ROM4_17', sk = 'FLUX_NOEU')
         endif
-    elseif (empi_prim%field_name .eq. 'DEPL') then
-        if (empi_dual%field_name .ne. 'SIEF_NOEU') then
+    elseif (empi_prim%ds_mode%field_name .eq. 'DEPL') then
+        if (empi_dual%ds_mode%field_name .ne. 'SIEF_NOEU') then
             call utmess('F', 'ROM4_17', sk = 'SIEF_NOEU')
         endif
     else

@@ -137,7 +137,7 @@ implicit none
 !
 ! - Creation of datastructures
 !
-    call nxini0(ds_algopara, ds_inout, ds_algorom)
+    call nxini0(ds_algopara, ds_inout)
 !
 ! - Read parameters (linear)
 !

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine aprtpe(elin_dime, poin_inte, nb_poin_inte,& 
+subroutine aprtpe(elin_dime, poin_inte, nb_poin_inte,&
                   elem_code, elin_nume)
 !
 implicit none
@@ -53,7 +53,7 @@ implicit none
     real(kind=8) :: node_real(3), ksi(2)
     real(kind=8) :: tau1(3), tau2(3)
     real(kind=8) :: norm(3), noor
-    real(kind=8) :: node_para(3,3), node_para_2(2,2)
+    real(kind=8) :: node_para(3,3)
     character(len=8) :: elin_code
 !
 ! --------------------------------------------------------------------------------------------------
@@ -67,7 +67,7 @@ implicit none
     norm(1:3) = 0.d0
     noor      = 0.d0
 !
-! - Loop on integration points
+! - Loop on intersection point points
 !
     do i_poin_inte=1, nb_poin_inte
         tau1(1:3) = 0.d0
@@ -79,7 +79,8 @@ implicit none
             ksi(2) = poin_inte (2,i_poin_inte)
         end if
 !
-        if ((elem_code.eq.'QU4' ) .and. present(elin_nume)) then
+        if ((elem_code.eq.'QU4' .or. elem_code.eq.'QU8' .or. elem_code.eq.'QU9') .and.&
+            present(elin_nume)) then
             if (elin_nume .eq. 1) then
                 node_para(1,1) = -1.d0
                 node_para(2,1) = -1.d0
@@ -111,152 +112,6 @@ implicit none
             else
                 ASSERT(.false.)
             endif
-        elseif (elem_code.eq.'TR6' .and. present(elin_nume)) then
-            if (elin_nume .eq. 1) then
-                node_para(1,1) = 0.d0
-                node_para(2,1) = 0.d0
-                node_para(3,1) = 0.d0
-                node_para(1,2) = 5.d-1
-                node_para(2,2) = 0.d0
-                node_para(3,2) = 0.d0
-                node_para(1,3) = 0.d0
-                node_para(2,3) = 5.d-1
-                node_para(3,3) = 0.d0
-                elin_code='TR3'
-                call reerel(elin_code,3, 3, node_para, ksi, node_real)
-                poin_inte_real(1,i_poin_inte) = node_real(1)
-                poin_inte_real(2,i_poin_inte) = node_real(2)            
-            elseif (elin_nume .eq. 2) then
-                node_para(1,1) = 5.d-1
-                node_para(2,1) = 0.d0
-                node_para(3,1) = 0.d0
-                node_para(1,2) = 1.d0
-                node_para(2,2) = 0.d0
-                node_para(3,2) = 0.d0
-                node_para(1,3) = 5.d-1
-                node_para(2,3) = 5.d-1
-                node_para(3,3) = 0.d0
-                elin_code='TR3'
-                call reerel(elin_code,3, 3, node_para, ksi, node_real)
-                poin_inte_real(1,i_poin_inte) = node_real(1)
-                poin_inte_real(2,i_poin_inte) = node_real(2)
-            elseif (elin_nume .eq. 3) then
-                node_para(1,1) = 5.d-1
-                node_para(2,1) = 0.d0
-                node_para(3,1) = 0.d0
-                node_para(1,2) = 5.d-1
-                node_para(2,2) = 5.d-1
-                node_para(3,2) = 0.d0
-                node_para(1,3) = 0.d0
-                node_para(2,3) = 5.d-1
-                node_para(3,3) = 0.d0
-                elin_code='TR3'
-                call reerel(elin_code,3, 3, node_para, ksi, node_real)
-                poin_inte_real(1,i_poin_inte) = node_real(1)
-                poin_inte_real(2,i_poin_inte) = node_real(2)
-            elseif (elin_nume .eq. 4) then
-                node_para(1,1) = 5.d-1
-                node_para(2,1) = 5.d-1
-                node_para(3,1) = 0.d0
-                node_para(1,2) = 0.d0
-                node_para(2,2) = 1.d0
-                node_para(3,2) = 0.d0
-                node_para(1,3) = 0.d0
-                node_para(2,3) = 5.d-1
-                node_para(3,3) = 0.d0
-                elin_code='TR3'
-                call reerel(elin_code,3, 3, node_para, ksi, node_real)
-                poin_inte_real(1,i_poin_inte) = node_real(1)
-                poin_inte_real(2,i_poin_inte) = node_real(2)
-            end if
-        elseif (elem_code.eq.'QU8' .and. present(elin_nume)) then
-            if (elin_nume .eq. 1) then
-                node_para(1,1) = -1.d0
-                node_para(2,1) = -1.d0
-                node_para(3,1) =  0.d0
-                node_para(1,2) =  0.d0
-                node_para(2,2) = -1.d0
-                node_para(3,2) =  0.d0
-                node_para(1,3) = -1.d0
-                node_para(2,3) =  0.d0
-                node_para(3,3) =  0.d0
-                elin_code='TR3'
-                call reerel(elin_code,3, 3, node_para, ksi, node_real)
-                poin_inte_real(1,i_poin_inte) = node_real(1)
-                poin_inte_real(2,i_poin_inte) = node_real(2)
-            elseif (elin_nume .eq. 2) then
-                node_para(1,1) =  0.d0
-                node_para(2,1) = -1.d0
-                node_para(3,1) =  0.d0
-                node_para(1,2) =  1.d0
-                node_para(2,2) = -1.d0
-                node_para(3,2) =  0.d0
-                node_para(1,3) =  1.d0
-                node_para(2,3) =  0.d0
-                node_para(3,3) =  0.d0
-                elin_code='TR3'
-                call reerel(elin_code,3, 3, node_para, ksi, node_real)
-                poin_inte_real(1,i_poin_inte) = node_real(1)
-                poin_inte_real(2,i_poin_inte) = node_real(2)                      
-            elseif (elin_nume .eq. 3) then
-                node_para(1,1) =  1.d0
-                node_para(2,1) =  0.d0
-                node_para(3,1) =  0.d0
-                node_para(1,2) =  1.d0
-                node_para(2,2) =  1.d0
-                node_para(3,2) =  0.d0
-                node_para(1,3) =  0.d0
-                node_para(2,3) =  1.d0
-                node_para(3,3) =  0.d0
-                elin_code='TR3'
-                call reerel(elin_code,3, 3, node_para, ksi, node_real)
-                poin_inte_real(1,i_poin_inte) = node_real(1)
-                poin_inte_real(2,i_poin_inte) = node_real(2)
-            elseif (elin_nume .eq. 4) then
-                node_para(1,1) =  0.d0
-                node_para(2,1) =  1.d0
-                node_para(3,1) =  0.d0
-                node_para(1,2) = -1.d0
-                node_para(2,2) =  1.d0
-                node_para(3,2) =  0.d0
-                node_para(1,3) = -1.d0
-                node_para(2,3) =  0.d0
-                node_para(3,3) =  0.d0
-                elin_code='TR3'
-                call reerel(elin_code,3, 3, node_para, ksi, node_real)
-                poin_inte_real(1,i_poin_inte) = node_real(1)
-                poin_inte_real(2,i_poin_inte) = node_real(2)
-            elseif (elin_nume .eq. 5) then
-                node_para(1,1) =  0.d0
-                node_para(2,1) = -1.d0
-                node_para(3,1) =  0.d0
-                node_para(1,2) =  1.d0
-                node_para(2,2) =  0.d0
-                node_para(3,2) =  0.d0
-                node_para(1,3) =  0.d0
-                node_para(2,3) =  1.d0
-                node_para(3,3) =  0.d0
-                elin_code='TR3'
-                call reerel(elin_code,3, 3, node_para, ksi, node_real)
-                poin_inte_real(1,i_poin_inte) = node_real(1)
-                poin_inte_real(2,i_poin_inte) = node_real(2)
-            elseif (elin_nume .eq. 6) then
-                node_para(1,1) =  0.d0
-                node_para(2,1) =  1.d0
-                node_para(3,1) =  0.d0
-                node_para(1,2) = -1.d0
-                node_para(2,2) =  0.d0
-                node_para(3,2) =  0.d0
-                node_para(1,3) =  0.d0
-                node_para(2,3) = -1.d0
-                node_para(3,3) =  0.d0
-                elin_code='TR3'
-                call reerel(elin_code,3, 3, node_para, ksi, node_real)
-                poin_inte_real(1,i_poin_inte) = node_real(1)
-                poin_inte_real(2,i_poin_inte) = node_real(2)                     
-            else
-                ASSERT(.false.)
-            end if
         else
             poin_inte_real(1,i_poin_inte) = ksi(1)
             if ((elin_dime-1) .eq. 2) then

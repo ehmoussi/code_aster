@@ -148,16 +148,31 @@ thnl2=CALC_CHAMP(reuse=thnl2,
                 RESULTAT=thnl2,
                 THERMIQUE='FLUX_NOEU',);
 
-# Create base
-base_p1=DEFI_BASE_REDUITE(OPERATION = 'POD_INCR',
-                          TOLE      = 1.E-10,
-                          RESULTAT  = thnl1,
-                          INFO      = 2,
-                          NOM_CHAM  = 'TEMP',
-                          TOLE_SVD  = 1.E-3,);
+# Get initial base
+base_p1 = LIRE_RESU(FORMAT='MED',
+                    FORMAT_MED=_F(NOM_CHAM='TEMP',
+                                  NOM_CHAM_MED='base_p1_TEMP'),
+                    MODELE=model,
+                    TOUT_ORDRE='OUI',
+                    TYPE_RESU='MODE_EMPI',
+                    UNITE=80)
 
+'''
+base_pp=DEFI_BASE_REDUITE(OPERATION = 'POD_INCR',
+                          TOLE      = 1.E-10,
+                         RESULTAT  = thnl1,
+                         INFO      = 2,
+                         NOM_CHAM  = 'TEMP',
+                         TOLE_SVD  = 1.E-3,);
+coorY=RECU_TABLE(CO=base_pp,NOM_TABLE='COOR_REDUIT',);
+'''
+coorY= LIRE_TABLE(FORMAT='ASTER', UNITE=54)
+
+
+# Enrichment of base
 base_p1=DEFI_BASE_REDUITE(reuse     = base_p1,
                           BASE      = base_p1,
+                          TABL_COOR_REDUIT = coorY,
                           OPERATION = 'POD_INCR',
                           TOLE      = 1.E-10,
                           RESULTAT  = thnl2,

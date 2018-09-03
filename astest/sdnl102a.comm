@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -26,11 +26,10 @@
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
 
 # Maillage supportant les champs de vent
-PRE_IDEAS(
-    UNITE_IDEAS    = 30,
-    UNITE_MAILLAGE = 32,
-)
-MAVENT=LIRE_MAILLAGE(FORMAT="ASTER",UNITE= 32)
+
+MAVENT = LIRE_MAILLAGE(FORMAT='IDEAS',
+                       UNITE=30,
+                       )
 
 # Lecture du fichier de vitesse de vent
 VVENT=LIRE_RESU(
@@ -51,7 +50,8 @@ VVENT=LIRE_RESU(
 )
 
 # Maillage supportant la structure
-MA=LIRE_MAILLAGE(FORMAT="ASTER",UNITE= 20)
+MA = LIRE_MAILLAGE(FORMAT='ASTER',
+                   UNITE=20,)
 
 # Modele contenant la structure
 MO=AFFE_MODELE(

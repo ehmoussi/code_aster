@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -26,11 +26,11 @@ implicit none
 #include "asterf_types.h"
 #include "asterfort/infniv.h"
 #include "asterfort/utmess.h"
-#include "asterfort/dismoi.h"
-#include "asterfort/rs_getfirst.h"
-#include "asterfort/modelNodeEF.h"
-#include "asterfort/rsexch.h"
 #include "asterfort/rscrsd.h"
+#include "asterfort/dbr_rnum.h"
+#include "asterfort/romBaseGetInfo.h"
+#include "asterfort/romTableCreate.h"
+#include "asterfort/romBaseGetInfoFromResult.h"
 !
 character(len=8), intent(in) :: base
 type(ROM_DS_ParaDBR_POD), intent(in) :: ds_para_pod
@@ -53,12 +53,7 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    integer :: iret, nume_first
-    integer :: nb_equa = 0, nb_node = 0, nb_mode_crea = 0, nb_mode_maxi = 0, nb_cmp = 0
-    character(len=8)  :: model = ' ', mesh = ' '
-    character(len=16) :: field_name = ' '
-    character(len=8)  :: axe_line = ' ', surf_num = ' ', base_type = ' ', result_in = ' '
-    character(len=24) :: field_refe = '&&ROM_COMP.FIELD'
+    integer :: nb_mode_crea = 0, nb_mode_maxi = 0
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -69,38 +64,11 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
 !
 ! - Get informations from parameters
 !
-    result_in    = ds_para_pod%result_in
-    field_name   = ds_para_pod%field_name(1:16)
-    base_type    = ds_para_pod%base_type
-    axe_line     = ds_para_pod%axe_line
-    surf_num     = ds_para_pod%surf_num(1:8)
     nb_mode_maxi = ds_para_pod%nb_mode_maxi
-!
-! - Get information about model
-!
-    call dismoi('NOM_MODELE', result_in, 'RESULTAT', repk = model)
-!
-! - Get informations about fields
-!
-    call rs_getfirst(result_in, nume_first)
-    call rsexch(' ', result_in, field_name, nume_first, field_refe, iret)
-    if (iret .ne. 0) then
-        call utmess('F', 'ROM5_11', sk = field_name)
-    endif
-    call dismoi('NB_EQUA'     , field_refe, 'CHAM_NO' , repi = nb_equa) 
-    call dismoi('NOM_MAILLA'  , field_refe, 'CHAM_NO' , repk = mesh)
-!
-! - Get number of nodes affected by model
-!
-    call modelNodeEF(model, nb_node)
-    if (mod(nb_equa, nb_node) .ne. 0) then
-        call utmess('I', 'ROM5_53')
-    endif
-    nb_cmp = nb_equa/nb_node
 !
 ! - Create empiric base
 !
-    if (.not. l_reuse) then
+    if (.not.l_reuse) then
         if (nb_mode_maxi .eq. 0) then
             nb_mode_crea = 10
         else
@@ -112,19 +80,30 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
         call rscrsd('G', base, 'MODE_EMPI', nb_mode_crea)
     endif
 !
-! - Save in empiric base
+! - Create table for the reduced coordinates in results datastructure
 !
-    ds_empi%base         = base
-    ds_empi%field_name   = field_name
-    ds_empi%field_refe   = field_refe
-    ds_empi%mesh         = mesh
-    ds_empi%model        = model
-    ds_empi%base_type    = base_type
-    ds_empi%axe_line     = axe_line
-    ds_empi%surf_num     = surf_num
-    ds_empi%nb_equa      = nb_equa
-    ds_empi%nb_node      = nb_node
-    ds_empi%nb_cmp       = nb_cmp
-    ds_empi%nb_mode      = 0
+    call romTableCreate(base, ds_empi%tabl_coor)
+!
+! - Get informations about empiric modes base
+!
+    if (l_reuse) then
+        call romBaseGetInfo(base, ds_empi)
+    else
+        call romBaseGetInfoFromResult(ds_para_pod%ds_result_in, base, ds_empi)
+        ds_empi%base_type = ds_para_pod%base_type
+        ds_empi%axe_line  = ds_para_pod%axe_line
+        ds_empi%surf_num  = ds_para_pod%surf_num
+        ds_empi%nb_mode   = 0
+        ds_empi%nb_snap   = 0
+    endif
+!
+! - Create numbering of nodes for the lineic model
+!
+    if (ds_empi%base_type .eq. 'LINEIQUE') then
+        if (niv .ge. 2) then
+            call utmess('I', 'ROM2_40')
+        endif
+        call dbr_rnum(ds_empi)
+    endif
 !
 end subroutine

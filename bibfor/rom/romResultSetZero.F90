@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine romResultSetZero(result, nume_store, ds_empi)
+subroutine romResultSetZero(result, nume_store, ds_mode)
 !
 use Rom_Datastructure_type
 !
@@ -34,7 +34,7 @@ implicit none
 !
 character(len=8), intent(in) :: result
 integer, intent(in) :: nume_store
-type(ROM_DS_Empi), intent(in) :: ds_empi
+type(ROM_DS_Field), intent(in) :: ds_mode
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -46,7 +46,7 @@ type(ROM_DS_Empi), intent(in) :: ds_empi
 !
 ! In  result           : name of results datastructure
 ! In  nume_store       : index to set zero in results
-! In  ds_empi          : datastructure for empiric modes
+! In  ds_mode          : datastructure for empiric mode
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -59,16 +59,16 @@ type(ROM_DS_Empi), intent(in) :: ds_empi
 !
     call infniv(ifm, niv)
     if (niv .ge. 2) then
-        call utmess('I', 'ROM6_33', si = nume_store, sk = ds_empi%base)
+        call utmess('I', 'ROM6_33', si = nume_store)
     endif
 !
 ! - Set zero
 !
-    call rsexch(' ', result, ds_empi%field_name, nume_store, field_save, iret)
+    call rsexch(' ', result, ds_mode%field_name, nume_store, field_save, iret)
     ASSERT(iret .eq. 100)
-    call copisd('CHAMP_GD', 'G', ds_empi%field_refe, field_save)
+    call copisd('CHAMP_GD', 'G', ds_mode%field_refe, field_save)
     call jeveuo(field_save(1:19)//'.VALE', 'E', vr = v_field_save)
     v_field_save(:) = 0.d0
-    call rsnoch(result, ds_empi%field_name, nume_store)
+    call rsnoch(result, ds_mode%field_name, nume_store)
 !
 end subroutine

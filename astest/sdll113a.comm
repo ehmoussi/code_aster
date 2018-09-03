@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -30,8 +30,6 @@
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),
       DEBUG=_F(SDVERI='OUI'))
 
-PRE_IDEAS(UNITE_IDEAS=19,
-           UNITE_MAILLAGE=21)
 
 #
 MATERIO=DEFI_MATERIAU(  ELAS=_F( RHO = 1.E04,  NU = 0.3,  E = 1.E10))
@@ -163,7 +161,8 @@ RESULT1=REST_GENE_PHYS(   RESU_GENE=TRAN_GEN,
 ########################################################################
 #
 #
-MAYA1=LIRE_MAILLAGE(FORMAT="ASTER", UNITE=21)
+MAYA1 = LIRE_MAILLAGE(FORMAT='IDEAS',
+                      UNITE=19)
 
 MAYA1=DEFI_GROUP( reuse=MAYA1,   MAILLAGE=MAYA1,
   CREA_GROUP_MA=_F(  NOM = 'TOUT1', TOUT = 'OUI'))

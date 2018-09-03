@@ -40,7 +40,6 @@ implicit none
 #include "asterfort/mmmtdb.h"
 #include "asterfort/lcsena.h"
 #include "asterfort/apdcma.h"
-#include "asterfort/apdmae.h"
 #include "asterfort/aprtpe.h"
 #include "asterf_types.h"
 !
@@ -65,22 +64,22 @@ implicit none
     integer :: i_tria, i_dime, i_elin_mast, i_elin_slav, i_node, i_gauss
     real(kind=8) :: proj_tole, lagrc, lagrc_prev
     integer :: algo_reso_geom, indi_cont, indi_cont_prev, norm_smooth
-    aster_logical :: l_axis, l_elem_frot, loptf, debug, l_upda_jaco       
+    aster_logical :: l_axis, l_elem_frot, loptf, debug, l_upda_jaco
     real(kind=8) :: norm(3)
     character(len=8) :: elem_slav_code, elem_mast_code
     real(kind=8) :: elem_mast_coor(27),elem_slav_coor(27)
     real(kind=8) :: elem_mast_coor_prev(27),elem_slav_coor_prev(27)
     real(kind=8) :: elin_mast_coor(27)
-    integer :: elin_mast_nbsub, elin_mast_sub(8,4), elin_mast_nbnode(8)
-    character(len=8) :: elin_mast_code 
+    integer :: elin_mast_nbsub, elin_mast_sub(2,3), elin_mast_nbnode(2)
+    character(len=8) :: elin_mast_code
     real(kind=8) :: elin_slav_coor(27)
-    integer :: elin_slav_nbsub, elin_slav_sub(8,9), elin_slav_nbnode(8)
+    integer :: elin_slav_nbsub, elin_slav_sub(2,3), elin_slav_nbnode(2)
     character(len=8) :: elin_slav_code
     real(kind=8) :: poin_inte(32), tria_coot(2,3), tria_coor(32), tria_coor_aux(32)
     integer :: tria_node(6,3)
     real(kind=8) :: inte_weight
     real(kind=8) :: gauss_weight(12), gauss_coor(2,12), gauss_coot(2)
-    character(len=8) :: elga_fami_slav, elga_fami_mast 
+    character(len=8) :: elga_fami_slav, elga_fami_mast
     real(kind=8) :: poidpg, jacobian
     real(kind=8) :: shape_func(9), shape_dfunc(2, 9)
     real(kind=8) :: vtmp(55),vtmp_prev(55),vtmp_(55)
@@ -117,30 +116,30 @@ implicit none
                 elem_slav_code, elga_fami_slav, nb_node_slav,&
                 elem_mast_code, elga_fami_mast, nb_node_mast)
     ASSERT(nb_dof .le. 55)
-    
-! - Get information about cycling 
+
+! - Get information about cycling
 
     call jevech('PCONFR', 'L', jpcf)
 !    l_previous = nint(zr(jpcf-1+10 )).eq.1 .and. .false._1
-    l_previous = nint(zr(jpcf-1+10 )).eq.1 
+    l_previous = nint(zr(jpcf-1+10 )).eq.1
 
 !
 ! - Get indicators
 !
     call lcstco(algo_reso_geom, indi_cont, l_upda_jaco, &
-                 lagrc, gap_curr, mesure, rho_n, eval,.false._1)    
+                 lagrc, gap_curr, mesure, rho_n, eval,.false._1)
 
-! --- S'il y a du cyclage, on récupère les informations à n-1 : 
- 
-        if(l_previous) then 
+! --- S'il y a du cyclage, on récupère les informations à n-1 :
+
+        if(l_previous) then
            call lcstco(algo_reso_geom, indi_cont_prev, l_upda_jaco, lagrc_prev,&
-                     gap_prev, mesure_prev, rho_n_prev, eval_prev, l_previous)          
-!           if(indi_cont .eq. 1) then 
+                     gap_prev, mesure_prev, rho_n_prev, eval_prev, l_previous)
+!           if(indi_cont .eq. 1) then
 !                alpha = abs(gap_prev)/(abs(gap_curr)+abs(gap_prev))
-!           else 
+!           else
 !                alpha = abs(gap_curr)/(abs(gap_curr)+abs(gap_prev))
-!           end if 
-        end if  
+!           end if
+        end if
 
 
 !
@@ -150,13 +149,13 @@ implicit none
                 nb_node_slav  , nb_node_mast  , &
                 algo_reso_geom, elem_mast_coor, elem_slav_coor,&
                 norm_smooth, .false._1)
-                
-    if(l_previous) then 
+
+    if(l_previous) then
          call lcgeog(elem_dime     , nb_lagr       , indi_lagc ,&
             nb_node_slav  , nb_node_mast  , &
             algo_reso_geom, elem_mast_coor_prev, elem_slav_coor_prev,&
             norm_smooth, l_previous)
-    end if 
+    end if
 !
 ! - Compute vector
 !
@@ -165,7 +164,7 @@ implicit none
 ! ----- Cut elements in linearized sub-elements
 !
         call apdcma(elem_mast_code, elin_mast_sub, elin_mast_nbnode, elin_mast_nbsub)
-        call apdmae(elem_slav_code, elin_slav_sub, elin_slav_nbnode, elin_slav_nbsub)
+        call apdcma(elem_slav_code, elin_slav_sub, elin_slav_nbnode, elin_slav_nbsub)
 !
 ! ----- Loop on linearized slave sub-elements
 !
@@ -200,13 +199,13 @@ implicit none
             end do
 !
 ! --------- Loop on linearized master sub-elements
-!         
+!
             do i_elin_mast = 1, elin_mast_nbsub
 !
 ! ------------- Code for current linearized master sub-element
 !
                 if (elin_mast_nbnode(i_elin_mast) .eq. 2 .and. elem_dime .eq. 2) then
-                    elin_mast_code = 'SE2'                             
+                    elin_mast_code = 'SE2'
                 elseif (elin_mast_nbnode(i_elin_mast) .eq. 3 .and. elem_dime .eq. 3) then
                     elin_mast_code = 'TR3'
                 elseif (elin_mast_nbnode(i_elin_mast) .eq. 4 .and. elem_dime .eq. 3) then
@@ -216,13 +215,13 @@ implicit none
                 end if
 !
 ! ------------- Get coordinates for current linearized master sub-element
-!              
+!
                 elin_mast_coor(:) = 0.d0
                 do i_node = 1, elin_mast_nbnode(i_elin_mast)
                     do i_dime = 1, elem_dime
                         elin_mast_coor((i_node-1)*elem_dime+i_dime) = &
                             elem_mast_coor((elin_mast_sub(i_elin_mast,i_node)-1)*elem_dime+i_dime)
-                    end do     
+                    end do
                 end do
 !
 ! ------------- Projection/intersection
@@ -312,8 +311,8 @@ implicit none
 !                                        gauss_coot  , shape_func    , shape_dfunc   ,&
 !                                        jacobian   , l_upda_jaco     ,  norm, jv_geom)
 !
-!                        end do                                     
-                                                                    
+!                        end do
+
 ! ------- CONTRIBUTIONS ESCLAVES et "GEOMETRIQUES":
 !
 ! --------------------- Projection from para. space of triangle into sub-element para. space
@@ -378,7 +377,7 @@ implicit none
                                         poidpg      , gauss_coot    , jacobian, norm ,&
                                         vtmp)
 
-                        end do             
+                        end do
 !
 ! --------------------- Projection of triangle in master parametric space
 !
@@ -424,13 +423,13 @@ implicit none
                 end if
             end do
         end do
-        if (l_previous) then 
+        if (l_previous) then
             call lcsena(elem_dime, nb_lagr, nb_node_slav, indi_lagc, &
                         lagrc_prev    , vtmp_prev)
             if ((abs(lagrc_prev+100.d0*gap_prev)+abs(lagrc+100.d0*gap_curr)) .gt. 1.d-6 ) then
                 alpha = 1.0-abs(lagrc+100.d0*gap_curr)/&
                         (abs(lagrc_prev+100.d0*gap_prev)+abs(lagrc+100.d0*gap_curr))
-            else 
+            else
                 alpha = 1.0-abs(lagrc+100.d0*gap_curr)
             endif
             alpha = max(alpha,max_value)
@@ -438,20 +437,20 @@ implicit none
             alpha = 0.5*(alpha+1.0)
             vtmp_ = alpha*vtmp+(1-alpha)*vtmp_prev
 !            if (abs(max(vtmp_ -vtmp)) .gt. 1.d-6 ) write (6,*) "perte de consistance",&
-!                     abs(max(vtmp_ - vtmp)) .gt. 1.d-6 
+!                     abs(max(vtmp_ - vtmp)) .gt. 1.d-6
             if ( norm2(vtmp -vtmp) .gt. 1.d-12*norm2(vtmp) ) goto 52
 !            vtmp = vtmp_
-                        
+
         endif
     elseif (indi_cont .eq. 0) then
         call lcsena(elem_dime, nb_lagr, nb_node_slav, indi_lagc, &
                     lagrc    , vtmp)
-        if (l_previous) then 
+        if (l_previous) then
         !
         ! ----- Cut elements in linearized sub-elements
         !
                 call apdcma(elem_mast_code, elin_mast_sub, elin_mast_nbnode, elin_mast_nbsub)
-                call apdmae(elem_slav_code, elin_slav_sub, elin_slav_nbnode, elin_slav_nbsub)
+                call apdcma(elem_slav_code, elin_slav_sub, elin_slav_nbnode, elin_slav_nbsub)
         !
         ! ----- Loop on linearized slave sub-elements
         !
@@ -486,13 +485,13 @@ implicit none
                     end do
         !
         ! --------- Loop on linearized master sub-elements
-        !         
+        !
                     do i_elin_mast = 1, elin_mast_nbsub
         !
         ! ------------- Code for current linearized master sub-element
         !
                         if (elin_mast_nbnode(i_elin_mast) .eq. 2 .and. elem_dime .eq. 2) then
-                            elin_mast_code = 'SE2'                             
+                            elin_mast_code = 'SE2'
                         elseif (elin_mast_nbnode(i_elin_mast) .eq. 3 .and. elem_dime .eq. 3) then
                             elin_mast_code = 'TR3'
                         elseif (elin_mast_nbnode(i_elin_mast) .eq. 4 .and. elem_dime .eq. 3) then
@@ -502,14 +501,14 @@ implicit none
                         end if
         !
         ! ------------- Get coordinates for current linearized master sub-element
-        !              
+        !
                         elin_mast_coor(:) = 0.d0
                         do i_node = 1, elin_mast_nbnode(i_elin_mast)
                             do i_dime = 1, elem_dime
                                 elin_mast_coor((i_node-1)*elem_dime+i_dime) = &
                             elem_mast_coor_prev((elin_mast_sub(i_elin_mast,i_node)-1)*&
                                    elem_dime+i_dime)
-                            end do     
+                            end do
                         end do
         !
         ! ------------- Projection/intersection
@@ -599,8 +598,8 @@ implicit none
         !                                        gauss_coot  , shape_func    , shape_dfunc   ,&
         !                                        jacobian   , l_upda_jaco     ,  norm, jv_geom)
         !
-        !                        end do                                     
-                                                                            
+        !                        end do
+
         ! ------- CONTRIBUTIONS ESCLAVES et "GEOMETRIQUES":
         !
         ! --------------------- Projection from para. space of triangle into sub-element para. space
@@ -664,8 +663,8 @@ implicit none
                                                 elem_slav_code,&
                                                 poidpg      , gauss_coot    , jacobian, norm ,&
                                                 vtmp_prev)
-        
-                                end do             
+
+                                end do
         !
         ! --------------------- Projection of triangle in master parametric space
         !
@@ -716,7 +715,7 @@ implicit none
             if ((abs(lagrc_prev+100.d0*gap_prev)+abs(lagrc+100.d0*gap_curr)) .gt. 1.d-6 ) then
                 alpha = 1.0-abs(lagrc+100.d0*gap_curr)/&
                         (abs(lagrc_prev+100.d0*gap_prev)+abs(lagrc+100.d0*gap_curr))
-            else 
+            else
                 alpha = 1.0-abs(lagrc+100.d0*gap_curr)
             endif
             alpha = max(alpha,max_value)
@@ -727,8 +726,8 @@ implicit none
 !                     abs(norm2(vtmp -vtmp)) , alpha
             if ( norm2(vtmp -vtmp) .gt. 1.d-12*norm2(vtmp) ) goto 51
 !            vtmp = vtmp_
-            
-        
+
+
         endif
     else
 !

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -26,10 +26,10 @@ DEBUT( CODE=_F(
 # CREATION DU MODELE EXPERIMENTAL
 #**********************************
 
-PRE_IDEAS(UNITE_IDEAS=21,
-          UNITE_MAILLAGE=22,);
 
-MAILEXP=LIRE_MAILLAGE(FORMAT="ASTER",UNITE=22,);
+MAILEXP = LIRE_MAILLAGE(FORMAT='IDEAS',
+                        UNITE=21,
+                        )
 
 MODLEXP=AFFE_MODELE(MAILLAGE=MAILEXP,
                     AFFE=_F(TOUT='OUI',
@@ -99,7 +99,8 @@ MODMESU=EXTR_MODE(FILTRE_MODE=_F(MODE=MODMtmp,
 # modif, il conviendra de realiser un LIAISON_MAIL, ou un LIAISON_DDL
 # entre les DDL de la structure et de la modif.
 
-MAILSUP=LIRE_MAILLAGE(FORMAT="ASTER",UNITE=20,);
+MAILSUP = LIRE_MAILLAGE(FORMAT='ASTER',
+                        UNITE=20,)
 
 MAILSUP=DEFI_GROUP(reuse=MAILSUP,MAILLAGE=MAILSUP,
                    CREA_GROUP_NO=_F(NOM='CAPT2',
@@ -278,7 +279,8 @@ MACELSTR=MACR_ELEM_DYNA( BASE_MODALE=BAMOSTRU,
 #*********************************************
 # MODELE MODIFICATION ET MACRO-ELEMENT ASSOCIE
 #*********************************************
-MAILMODI=LIRE_MAILLAGE(FORMAT="ASTER",UNITE=24)
+MAILMODI = LIRE_MAILLAGE(FORMAT='ASTER',
+                         UNITE=24,)
 
 MODMODI=AFFE_MODELE(MAILLAGE=MAILMODI,
                     AFFE=_F(GROUP_MA=('POUTRE',),

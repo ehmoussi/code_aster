@@ -32,7 +32,8 @@ DEBUT( CODE = _F(
 #----------------------
 # 1) Creation du modele
 #----------------------
-MAYANUM = LIRE_MAILLAGE(FORMAT="ASTER", UNITE = 20);
+MAYANUM = LIRE_MAILLAGE(FORMAT='ASTER',
+                        UNITE=20,)
 
 
 
@@ -154,9 +155,10 @@ DYN = DYNA_ALEA_MODAL( BASE_MODALE = _F( MODE_MECA = MODE_NUM,
 # - le fait que certaines composantes n'ont pas ete mesurees (capteurs
 #   mono-axes)
 
-PRE_IDEAS( UNITE_IDEAS = 31, UNITE_MAILLAGE = 21 )
 
-MAYAEXP = LIRE_MAILLAGE(FORMAT="ASTER", UNITE = 21 );
+MAYAEXP = LIRE_MAILLAGE(FORMAT='IDEAS',
+                        UNITE=31,
+                        )
 
 gpsupred = ('N24','N28','N30');
 gpcylred = ('N5','N8','N15','N17','N20','N27')
@@ -321,9 +323,10 @@ SPECTPHY = REST_SPEC_PHYS( MODE_MECA = MODEIDE1,
 #
 #****************************************************************************
 
-PRE_IDEAS(UNITE_IDEAS = 32, UNITE_MAILLAGE = 22)
 
-MAYAACT = LIRE_MAILLAGE(FORMAT="ASTER", UNITE = 22 );
+MAYAACT = LIRE_MAILLAGE(FORMAT='IDEAS',
+                        UNITE=32,
+                        )
 
 
 MAYAACT = DEFI_GROUP( reuse        = MAYAACT,

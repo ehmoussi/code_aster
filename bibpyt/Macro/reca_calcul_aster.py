@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -387,7 +387,7 @@ class CALCUL_ASTER:
 
         # Si le calcul Aster (et ses derivees) est deja effectue pour val on ne
         # le refait pas
-        if not ((self.val == val) and self.A):
+        if not ((self.val == val) and (self.A is not None)):
             self.erreur, self.residu, self.A_nodim, self.A = self.calcul_FG(
                 val)
         return NP.dot(NP.transpose(self.A), self.erreur)

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -73,23 +73,23 @@ force=AFFE_CHAR_MECA(MODELE=modele,
 contact=DEFI_CONTACT(MODELE=modele,
                      FORMULATION='CONTINUE',
                      FROTTEMENT='COULOMB',
-                     ALGO_RESO_GEOM='NEWTON',
-                     ALGO_RESO_CONT='NEWTON',
+                     ALGO_RESO_GEOM='POINT_FIXE',REAC_GEOM='CONTROLE',NB_ITER_GEOM=2,
+                     ALGO_RESO_CONT='POINT_FIXE',
                      ALGO_RESO_FROT='NEWTON',
-                     RESI_FROT = 1.E-4,
-                     RESI_GEOM = 1.E-4,
+                     RESI_FROT = 1.E1,
+                     #RESI_GEOM = 1.E-4,
                      #ADAPT_COEF='OUI',
                      ZONE=_F(GROUP_MA_MAIT='Haut_Contact',
                              GROUP_MA_ESCL='Bas_Contact',
                              CONTACT_INIT='OUI',
-                             ALGO_CONT = 'PENALISATION',
+                             ALGO_CONT = 'STANDARD',
                              ALGO_FROT = 'STANDARD',
                              #COEF_PENA_FROT=1.E6,
                              #COEF_PENA_CONT=1.E9,
                              #PENE_MAXI=1.E-2,
-                             ADAPTATION='TOUT',
+                             ADAPTATION='NON',
                              SANS_GROUP_NO = ('Clim_Bas', ),
-                             DIST_APPA = 0.2,
+                             #DIST_APPA = 0.,
                              COULOMB=0.2),);
                              
 contac2=DEFI_CONTACT(MODELE=modele,
@@ -99,7 +99,7 @@ contac2=DEFI_CONTACT(MODELE=modele,
                      ALGO_RESO_CONT='NEWTON',
                      ALGO_RESO_FROT='POINT_FIXE',
                      RESI_FROT = 1.E-1,
-                     RESI_GEOM = 1.E-2,
+                     RESI_GEOM = 1.E-3,
                      ##ADAPT_COEF='OUI',
                      ZONE=_F(GROUP_MA_MAIT='Haut_Contact',
                              GROUP_MA_ESCL='Bas_Contact',
@@ -216,10 +216,12 @@ TEST_RESU(RESU=_F(INST=0.0006,
                   NOM_CHAM='DEPL',
                   NOM_CMP = 'DY',
                   GROUP_NO='relev_haut',
-                  VALE_CALC=-0.0193792086576,
+                  VALE_CALC=-0.0191929118946,
                   CRITERE='ABSOLU',),
           )
-
+IMPR_RESU(FORMAT='MED',RESU=_F(RESULTAT=evol1))
 
 FIN();
 #CHECKSUM:2af6539f8f0ef1542b8f866eb84ee269  -:FIN CHECKSUM
+
+

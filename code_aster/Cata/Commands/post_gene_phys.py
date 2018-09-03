@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -27,28 +27,28 @@ from code_aster.Cata.Commons import *
 POST_GENE_PHYS  = OPER( nom="POST_GENE_PHYS",op=  58,sd_prod=table_sdaster,
                         fr="Post-traiter dans la base physique des résultats dyanmiques en coordonnées généralisées",
                         reentrant='n',
-   
-                  RESU_GENE   = SIMP(statut = 'o', typ = (tran_gene,harm_gene) ), 
+
+                  RESU_GENE   = SIMP(statut = 'o', typ = (tran_gene,harm_gene) ),
                   MODE_MECA   = SIMP(statut = 'f', typ = mode_meca ),
-   
+
                   OBSERVATION = FACT(statut = 'o', min = 1, max = '**',
                                      regles=(EXCLUS('INST','LIST_INST','TOUT_INST','NUME_ORDRE','TOUT_ORDRE','FREQ','LIST_FREQ'),
                                              EXCLUS('NOEUD','GROUP_NO','MAILLE','GROUP_MA'),
                                              AU_MOINS_UN('NOEUD','GROUP_NO','MAILLE','GROUP_MA'),),
 
-                      NOM_CHAM   = SIMP(statut = 'o', typ = 'TXM', validators = NoRepeat(), max = 1, defaut = 'DEPL',
-                                        into   = ('DEPL'      ,'VITE'      ,'ACCE'        , 
-                                                 'DEPL_ABSOLU','VITE_ABSOLU','ACCE_ABSOLU', 
+                      NOM_CHAM   = SIMP(statut = 'f', typ = 'TXM', validators = NoRepeat(), max = 1, defaut = 'DEPL',
+                                        into   = ('DEPL'      ,'VITE'      ,'ACCE'        ,
+                                                 'DEPL_ABSOLU','VITE_ABSOLU','ACCE_ABSOLU',
                                                  'FORC_NODA'  ,'EFGE_ELNO'  ,'SIPO_ELNO'  ,
                                                  'SIGM_ELNO'  ,'EFGE_ELGA'  ,'SIGM_ELGA'  ,),),
                       NOM_CMP    = SIMP(statut = 'f', typ = 'TXM', max = 20,),
- 
-                      INST       = SIMP(statut = 'f' , typ='R'           , validators = NoRepeat(), max = '**' ), 
+
+                      INST       = SIMP(statut = 'f' , typ='R'           , validators = NoRepeat(), max = '**' ),
                       TOUT_INST  = SIMP(statut = 'f' , typ='TXM'         , into = ("OUI",) ),
                       LIST_INST  = SIMP(statut = 'f' , typ=listr8_sdaster,),
-                      NUME_ORDRE = SIMP(statut = 'f' , typ='I'           , validators = NoRepeat(), max = '**' ),  
+                      NUME_ORDRE = SIMP(statut = 'f' , typ='I'           , validators = NoRepeat(), max = '**' ),
                       TOUT_ORDRE = SIMP(statut = 'f' , typ='TXM'         , into = ("OUI",) ),
-                      FREQ       = SIMP(statut = 'f' , typ='R'           , validators = NoRepeat(), max = '**' ),  
+                      FREQ       = SIMP(statut = 'f' , typ='R'           , validators = NoRepeat(), max = '**' ),
                       LIST_FREQ  = SIMP(statut = 'f' , typ=listr8_sdaster,),
                       b_prec     = BLOC(condition = """(exists("INST")) or (exists("LIST_INST")) or (exists("FREQ")) or (exists("LIST_FREQ"))""",
                           CRITERE = SIMP(statut = 'f', typ = 'TXM', defaut = 'RELATIF', into = ('ABSOLU','RELATIF') ),
@@ -67,5 +67,5 @@ POST_GENE_PHYS  = OPER( nom="POST_GENE_PHYS",op=  58,sd_prod=table_sdaster,
                       ACCE_MONO_APPUI = SIMP(statut = 'f', typ=(fonction_sdaster,nappe_sdaster,formule)),
                       DIRECTION       = SIMP(statut = 'f', typ='R', min=3, max = 3 ),),),
 
-                  TITRE       = SIMP(statut = 'f', typ='TXM',),  
+                  TITRE       = SIMP(statut = 'f', typ='TXM',),
 )  ;

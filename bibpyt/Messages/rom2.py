@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -21,21 +21,11 @@
 
 cata_msg = {
 
-    1 : _(u"""La base empirique %(k1)s est copiée dans la base empirique %(k2)s."""),
-
-    2 : _(u"""Lecture de la base empirique de nom %(k1)s."""),
-
-    3 : _(u"""Initialisation de la base empirique."""),
-
     4 : _(u"""Lecture des données pour sélectionner les clichés."""),
 
-    5 : _(u"""Initialisation de la structure de données pour sélectionner les clichés."""),
+    6 : _(u"""Tolérance pour détecter les noeuds: %(r1)19.12e."""),
 
-    6 : _(u"""Initialisation de la structure de données pour les modes linéiques."""),
-
-    7 : _(u"""Troncature des modes de la base empirique."""),
-
-    8 : _(u"""Création de la liste des équations sur la base empirique %(k1)s."""),
+    8 : _(u"""Création de la liste des équations sur le mode empirique."""),
 
     9 : _(u"""Base empirique créée à partir de %(i1)d clichés."""),
 
@@ -129,5 +119,13 @@ cata_msg = {
    54 : _(u"""Norme du résidu initial: %(r1)19.12e."""),
 
    55 : _(u"""Création du nouveau profil de numérotation du champ tronqué."""),
+
+   56 : _(u"""Lecture de la base à tronquer. La base tronquée aura le même nom que la base à tronquer."""),
+
+   57 : _(u"""Lecture de la base à tronquer. La base tronquée sera nouvelle."""),
+
+   58 : _(u"""Création de la nouvelle base tronquée."""),
+
+   59 : _(u"""Création de la nouvelle numérotation sur le domaine complet."""),
 
 }

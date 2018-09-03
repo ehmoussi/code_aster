@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -31,7 +31,8 @@ interface
                            elem_mast_nume,&
                            lagr_cont_node,&
                            norm   , &
-                           gap    , gap_user,  lagr_cont_poin)
+                           gap    , gap_user,  lagr_cont_poin,&
+                        poin_slav_coor, poin_proj_coor)
         use NonLin_Datastructure_type
         character(len=8), intent(in) :: mesh
         real(kind=8), intent(in) :: time_curr
@@ -54,5 +55,6 @@ interface
         real(kind=8), intent(out) :: gap
         real(kind=8), intent(out) :: gap_user
         real(kind=8), intent(out) :: lagr_cont_poin
+        real(kind=8),intent(out),optional :: poin_slav_coor(3), poin_proj_coor(3)
     end subroutine mmeval_prep
 end interface
