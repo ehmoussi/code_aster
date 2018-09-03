@@ -76,8 +76,8 @@ keywords = dict(
 )
 
 
-LIRE_MAILLAGE = MACRO(nom="LIRE_MAILLAGE",
-                      op=OPS('Macro.lire_maillage_ops.lire_maillage_ops'),
+LIRE_MAILLAGE = OPER(nom="LIRE_MAILLAGE",
+                      op=1,
                       sd_prod=maillage_sdaster,
                       fr=tr("Crée un maillage par lecture d'un fichier"),
                       reentrant='n',

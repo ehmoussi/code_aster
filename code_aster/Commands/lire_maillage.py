@@ -24,9 +24,66 @@ from .ExecuteCommand import ExecuteCommand
 from code_aster.RunManager import LogicalUnitFile
 
 
+def catalog_op():
+    """Define the catalog of the fortran operator."""
+    from code_aster.Cata.Commands.lire_maillage import keywords as main_keywords
+    from code_aster.Cata.DataStructure import maillage_sdaster
+    from code_aster.Cata.Syntax import OPER, SIMP, tr
+
+    keywords = dict()
+    keywords.update(main_keywords)
+    del keywords['b_format_ideas']
+    keywords['FORMAT'] = SIMP(statut='f', typ='TXM',
+                            defaut='MED',
+                            into=('ASTER', 'MED'))
+
+    cata = OPER(nom="LIRE_MAILLAGE_OP",
+                 op=1,
+                 sd_prod=maillage_sdaster,
+                 fr=tr("Crée un maillage par lecture d'un fichier"),
+                 reentrant='n',
+                 **keywords
+    )
+    return cata
+
+
 class MeshReader(ExecuteCommand):
     """Command that creates a :class:`~code_aster.Objects.Mesh` from a file."""
     command_name = "LIRE_MAILLAGE"
+
+    def exec_(self, keywords):
+        """Execute the command.
+
+        Arguments:
+            keywords (dict): User's keywords.
+        """
+        from code_aster.Commands import PRE_GIBI, PRE_GMSH, PRE_IDEAS
+
+        need_conversion = ('GIBI', 'GMSH', 'IDEAS')
+        unit = keywords.get('UNITE')
+        fmt = keywords['FORMAT']
+        if fmt in need_conversion:
+            tmpfile = LogicalUnitFile.new_free(None)
+            unit_op = tmpfile.unit
+            keywords['FORMAT'] = 'ASTER'
+        else:
+            unit_op = unit
+
+        if fmt == 'GIBI':
+            PRE_GIBI(UNITE_GIBI=unit, UNITE_MAILLAGE=unit_op)
+        elif fmt == 'GMSH':
+            PRE_GMSH(UNITE_GMSH=unit, UNITE_MAILLAGE=unit_op)
+        elif fmt == 'IDEAS':
+            coul = keywords.pop('CREA_GROUP_COUL', 'NON')
+            PRE_IDEAS(UNITE_IDEAS=unit, UNITE_MAILLAGE=unit_op,
+                      CREA_GROUP_COUL=coul)
+
+        if fmt in need_conversion:
+            tmpfile.release_from_number(unit_op)
+
+        keywords['UNITE'] = unit_op
+
+        super(MeshReader, self).exec_(keywords)
 
 
     def create_result(self, keywords):
