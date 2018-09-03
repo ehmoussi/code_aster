@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -30,7 +30,7 @@ implicit none
 #include "asterfort/getvtx.h"
 #include "asterfort/infniv.h"
 #include "asterfort/utmess.h"
-#include "asterfort/romBaseRead.h"
+#include "asterfort/romBaseGetInfo.h"
 !
 type(ROM_DS_ParaRRC), intent(inout) :: ds_para
 !
@@ -73,13 +73,13 @@ type(ROM_DS_ParaRRC), intent(inout) :: ds_para
 ! - Get informations about bases - Primal
 !
     call getvid(' ', 'BASE_PRIMAL', scal = base_prim)
-    call romBaseRead(base_prim, empi_prim)
+    call romBaseGetInfo(base_prim, empi_prim)
 !
 ! - Get informations about bases - Dual
 !
     if (l_prev_dual) then
         call getvid(' ', 'BASE_DUAL', scal = base_dual)
-        call romBaseRead(base_dual, empi_dual)
+        call romBaseGetInfo(base_dual, empi_dual)
         call getvtx(' ', 'GROUP_NO_INTERF', scal = grnode_int)
     endif
 !

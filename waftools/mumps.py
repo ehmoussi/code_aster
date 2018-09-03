@@ -37,8 +37,10 @@ def options(self):
 
 def configure(self):
     try:
+        self.env.stash()
         self.check_mumps()
     except Errors.ConfigurationError:
+        self.env.revert()
         self.define('_DISABLE_MUMPS', 1)
         self.undefine('HAVE_MUMPS')
         if self.options.enable_mumps == True:

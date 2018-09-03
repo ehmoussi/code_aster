@@ -21,11 +21,12 @@
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'))
 
-PRE_GIBI();
 
 import math;
 
-MAILLAGE=LIRE_MAILLAGE(FORMAT="ASTER",);
+MAILLAGE = LIRE_MAILLAGE(FORMAT='GIBI',
+                         UNITE=19,
+                         )
 
 #data:
 #position du point de bifurcation (0,cte)

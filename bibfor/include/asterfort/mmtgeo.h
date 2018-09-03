@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -21,9 +21,10 @@
 interface
     subroutine mmtgeo(phasep,ndim  ,nne   ,nnm   ,mprt1n, &
               mprt2n,mprojn,mprt11,mprt21,mprt22, &
-          wpg   ,ffe   ,ffm   ,dffm  ,jacobi, &
+          wpg   ,ffe   ,ffm   ,dffm  ,ddffm,jacobi, &
           coefac,jeu   ,dlagrc,kappa ,vech1 , &
-          vech2 ,h        ,hah  , &
+          vech2 ,h        ,  &
+                        coefff,granglis,&
           matree,matrmm,matrem, matrme)
           
         character(len=9) :: phasep
@@ -38,10 +39,13 @@ interface
         real(kind=8) :: ffe(9)
         real(kind=8) :: ffm(9)
         real(kind=8) :: dffm(2, 9)
+        real(kind=8) :: ddffm(3, 9)
         real(kind=8) :: jacobi
-        real(kind=8) :: coefac        
+        real(kind=8) :: coefac   
+        integer :: granglis     
         real(kind=8) :: jeu
         real(kind=8) :: dlagrc
+        real(kind=8) :: coefff
     
         real(kind=8) :: mprt1n(3, 3)
         real(kind=8) :: mprt2n(3, 3)

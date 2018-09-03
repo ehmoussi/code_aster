@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -28,6 +28,7 @@ implicit none
 #include "asterfort/apetsc.h"
 #include "asterfort/assde1.h"
 #include "asterfort/assert.h"
+#include "asterfort/detlsp.h"
 #include "asterfort/detrs2.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/jedema.h"
@@ -77,13 +78,13 @@ implicit none
     mpi_int :: mrank, msize
     integer :: iret, iad, long, i, nbch, ibid, nbproc, num
     integer :: ityobj, inomsd, nblg, nbpa, nblp, n1, nbjoin
-    integer :: iexi
+    integer :: iexi, iexi2
     character(len=8) :: metres, k8
     character(len=4) :: chnbjo
     character(len=12) :: vge
     character(len=14) :: nu, com
     character(len=16) :: typ2sd, corres
-    character(len=19) :: champ, matas, table, solveu, fnc, resu
+    character(len=19) :: champ, matas, table, solveu, fnc, resu, matas2, solveu2
     character(len=19) :: ligrel, nuage, ligret, mltf, stock, k19, matel, liste
     character(len=24) :: typobj, knomsd, nojoin
     aster_logical :: lbid
@@ -378,12 +379,21 @@ implicit none
         if (iexi .gt. 0) then
             call jeveuo(matas//'.REFA', 'L', vk24=refa)
             if (refa(19) .ne. ' ') then
-                call detrs2('MATR_ASSE', refa(19)(1:19))
-            endif
+                matas2=refa(19)
+                call jeexin(matas2, iexi2)
+                if (iexi2 .gt. 0) then
+                    call dismoi('SOLVEUR', matas2, 'MATR_ASSE', repk=solveu2, arret='C',&
+                        ier=iret)
+                    if (iret .eq. 0 ) then
+                        call detlsp(matas2, solveu2)
+                    endif
+                    call detrs2('MATR_ASSE', matas2)
+                 endif
 !       -- DESTRUCTION DE L'EVENTUELLE MATRICE PRE CONDITIONNEUR XFEM :
 !            if (refa(18) .ne. ' ' .or. refa(16) .ne. ' ') then
 !                call xfem_pc_detr(matas)
 !            endif
+            endif
         endif
 !
 !       -- DESTRUCTION DE L'EVENTUELLE INSTANCE MUMPS OU PETSC :

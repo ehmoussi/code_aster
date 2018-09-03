@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,20 +15,24 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine rsindi(tysca, iaobj, paobj, jordr, ival,&
                   rval, kval, cval, epsi, crit,&
                   nbordr, nbtrou, nutrou, ndim)
-    implicit none
+!
+implicit none
+!
 #include "asterf_types.h"
 #include "jeveux.h"
+#include "asterfort/assert.h"
 #include "asterfort/utmess.h"
-    integer :: nbordr, nbtrou, nutrou(*), ndim, ival, paobj
-    real(kind=8) :: rval, epsi
-    character(len=4) :: tysca
-    character(len=*) :: kval, crit
-    complex(kind=8) :: cval
-! person_in_charge: jacques.pellet at edf.fr
+!
+integer :: nbordr, nbtrou, nutrou(*), ndim, ival, paobj
+real(kind=8) :: rval, epsi
+character(len=4) :: tysca
+character(len=*) :: kval, crit
+complex(kind=8) :: cval
+!
 !      TROUVER DANS LA TABLE ZX(IAOBJ-1+I),I=1,NBORDR LE SCALAIRE
 !      IVAL,RVAL,CVAL...
 !               AVEC LA PRECISION  / RELATIVE EPSI
@@ -65,7 +69,7 @@ subroutine rsindi(tysca, iaobj, paobj, jordr, ival,&
     nbtrou = 0
     depass = .false.
     if (tysca(1:1) .eq. 'R') then
-        do 10 i = 1, nbordr
+        do i = 1, nbordr
             if (crit2(1:4) .eq. 'RELA') then
                 if (abs(zr(iaobj+(i-1)*paobj)-rval) .le. abs(epsi*rval)) then
                     trouve = .true.
@@ -79,7 +83,7 @@ subroutine rsindi(tysca, iaobj, paobj, jordr, ival,&
                     trouve = .false.
                 endif
             else
-                call utmess('F', 'ALGORITH3_42', sk=crit2)
+                ASSERT(ASTER_FALSE)
             endif
             if (trouve) then
                 nbtrou = nbtrou + 1
@@ -89,9 +93,9 @@ subroutine rsindi(tysca, iaobj, paobj, jordr, ival,&
                     depass = .true.
                 endif
             endif
- 10     continue
+        end do
     else if (tysca(1:1).eq.'I') then
-        do 20 i = 1, nbordr
+        do i = 1, nbordr
             if (zi(iaobj+(i-1)*paobj) .eq. ival) then
                 nbtrou = nbtrou + 1
                 if (nbtrou .le. ndim) then
@@ -100,9 +104,9 @@ subroutine rsindi(tysca, iaobj, paobj, jordr, ival,&
                     depass = .true.
                 endif
             endif
- 20     continue
+        end do
     else if (tysca.eq.'K8  ') then
-        do 30 i = 1, nbordr
+        do i = 1, nbordr
             if (zk8(iaobj+(i-1)*paobj) .eq. kval) then
                 nbtrou = nbtrou + 1
                 if (nbtrou .le. ndim) then
@@ -111,9 +115,9 @@ subroutine rsindi(tysca, iaobj, paobj, jordr, ival,&
                     depass = .true.
                 endif
             endif
- 30     continue
+        end do
     else if (tysca.eq.'K16 ') then
-        do 40 i = 1, nbordr
+        do i = 1, nbordr
             if (zk16(iaobj+(i-1)*paobj) .eq. kval) then
                 nbtrou = nbtrou + 1
                 if (nbtrou .le. ndim) then
@@ -122,9 +126,9 @@ subroutine rsindi(tysca, iaobj, paobj, jordr, ival,&
                     depass = .true.
                 endif
             endif
- 40     continue
+        end do
     else if (tysca.eq.'K24 ') then
-        do 50 i = 1, nbordr
+        do i = 1, nbordr
             if (zk24(iaobj+(i-1)*paobj) .eq. kval) then
                 nbtrou = nbtrou + 1
                 if (nbtrou .le. ndim) then
@@ -133,9 +137,9 @@ subroutine rsindi(tysca, iaobj, paobj, jordr, ival,&
                     depass = .true.
                 endif
             endif
- 50     continue
+        end do
     else if (tysca.eq.'K32 ') then
-        do 60 i = 1, nbordr
+        do i = 1, nbordr
             if (zk32(iaobj+(i-1)*paobj) .eq. kval) then
                 nbtrou = nbtrou + 1
                 if (nbtrou .le. ndim) then
@@ -144,9 +148,9 @@ subroutine rsindi(tysca, iaobj, paobj, jordr, ival,&
                     depass = .true.
                 endif
             endif
- 60     continue
+        end do
     else if (tysca.eq.'K80 ') then
-        do 70 i = 1, nbordr
+        do i = 1, nbordr
             if (zk80(iaobj+(i-1)*paobj) .eq. kval) then
                 nbtrou = nbtrou + 1
                 if (nbtrou .le. ndim) then
@@ -155,9 +159,9 @@ subroutine rsindi(tysca, iaobj, paobj, jordr, ival,&
                     depass = .true.
                 endif
             endif
- 70     continue
+        end do
     else if (tysca(1:1).eq.'C') then
-        do 80 i = 1, nbordr
+        do i = 1, nbordr
             if (crit2(1:4) .eq. 'RELA') then
                 if (abs(zc(iaobj+(i-1)*paobj)-cval) .le. abs(epsi*cval)) then
                     trouve = .true.
@@ -171,7 +175,7 @@ subroutine rsindi(tysca, iaobj, paobj, jordr, ival,&
                     trouve = .false.
                 endif
             else
-                call utmess('F', 'ALGORITH3_42', sk=crit2)
+                ASSERT(ASTER_FALSE)
             endif
             if (trouve) then
                 nbtrou = nbtrou + 1
@@ -181,9 +185,9 @@ subroutine rsindi(tysca, iaobj, paobj, jordr, ival,&
                     depass = .true.
                 endif
             endif
- 80     continue
+        end do
     else
-        call utmess('F', 'UTILITAI4_33', sk=tysca)
+        ASSERT(ASTER_FALSE)
     endif
 !
 !

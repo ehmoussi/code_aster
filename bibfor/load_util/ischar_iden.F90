@@ -28,7 +28,7 @@ implicit none
 ! person_in_charge: mickael.abbas at edf.fr
 !
     aster_logical :: ischar_iden
-    integer, intent(in), pointer :: v_load_info(:)
+    integer, intent(in) :: v_load_info(:)
     integer, intent(in) :: i_load
     integer, intent(in) :: nb_load
     character(len=4), intent(in) :: load_type_1

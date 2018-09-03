@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,13 +18,14 @@
 
 subroutine mmtppe(typmae, typmam, ndim, nne, nnm,&
                   nnl, nbdm, iresog, laxis, ldyna,&
-                  jeusup, ffe, ffm, dffm, ffl,&
+                  jeusup, ffe, ffm, dffm,ddffm, ffl,&
                   jacobi, wpg, jeu, djeut, dlagrc,&
                   dlagrf, norm, tau1, tau2, mprojn,&
                   mprojt, mprt1n, mprt2n, gene11, gene21,&
                   gene22, kappa, h, vech1, vech2,&
                   a, ha, hah, mprt11, mprt21,&
-                  mprt22,l_previous)
+                  mprt22,taujeu1, taujeu2, &
+                  dnepmait1,dnepmait2,l_previous,granglis)
 !
 ! person_in_charge: ayaovi-dzifa.kudawoo at edf.fr
 !
@@ -47,7 +48,7 @@ subroutine mmtppe(typmae, typmam, ndim, nne, nnm,&
 !
     integer :: ndim, nne, nnm, nnl, nbdm
 !
-    integer :: iresog
+    integer :: iresog,granglis
     aster_logical :: laxis, ldyna,l_previous
 !
     real(kind=8) :: jeusup
@@ -149,7 +150,7 @@ subroutine mmtppe(typmae, typmam, ndim, nne, nnm,&
     integer :: jaccm, jvitm, jvitp
     real(kind=8) :: ppe
 !
-    real(kind=8) :: geomae(9, 3), geomam(9, 3)
+    real(kind=8) :: geomae(9, 3), geomam(9, 3),ddepmam(9, 3)
     real(kind=8) :: geomm(3), geome(3)
     real(kind=8) :: ddeple(3), ddeplm(3)
     real(kind=8) :: deplme(3), deplmm(3)
@@ -158,6 +159,7 @@ subroutine mmtppe(typmae, typmam, ndim, nne, nnm,&
     real(kind=8) :: ddffm(3, 9)
     real(kind=8) :: dffl(2, 9), ddffl(3, 9)
     real(kind=8) :: xpc, ypc, xpr, ypr
+    real(kind=8) :: dnepmait1 ,dnepmait2 ,taujeu1,taujeu2
 !
 ! ----------------------------------------------------------------------
 !
@@ -177,6 +179,8 @@ subroutine mmtppe(typmae, typmam, ndim, nne, nnm,&
     tau2(3) = zr(jpcf-1+10)
     wpg = zr(jpcf-1+11)
     ppe = 0.d0
+    geomae = 0.
+    geomam = 0.
 !
 ! TRAITEMENT CYCLAGE : ON REMPLACE LES VALEURS DE JEUX et DE NORMALES
 !                      POUR AVOIR UNE MATRICE CONSISTANTE
@@ -232,7 +236,7 @@ subroutine mmtppe(typmae, typmam, ndim, nne, nnm,&
 !     NEWTON_GENE INEXACT --> 0.0d0<PPE<1.0d0
 !
     call mmreac(nbdm, ndim, nne, nnm, jgeom,&
-                jdepm, jdepde, ppe, geomae, geomam)
+                jdepm, jdepde, ppe, geomae, geomam,ddepmam)
 !
 ! --- CALCUL DES COORDONNEES ACTUALISEES
 !
@@ -280,17 +284,22 @@ subroutine mmtppe(typmae, typmam, ndim, nne, nnm,&
 !
 !
 !
-    if (iresog .eq. 1) then
+!    if (iresog .eq. 1) then
 !
 !
 !
-        call mmcalg(ndim, nnm, ddffm, geomam, tau1,&
-                    tau2, jeu, norm, gene11, gene21,&
+        call mmcalg(ndim, nnm, dffm, ddffm, geomam, tau1,&
+                    tau2, jeu,djeu , ddepmam , norm, gene11, gene21,&
                     gene22, kappa, h, vech1, vech2,&
                     a, ha, hah, mprt11, mprt21,&
-                    mprt22, mprt1n, mprt2n, iresog)
+                    mprt22, mprt1n, mprt2n, granglis,taujeu1, taujeu2, &
+                  dnepmait1,dnepmait2)
+
+
+
+
 !
-    endif
+!    endif
 !
 !
 !

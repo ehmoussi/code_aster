@@ -71,7 +71,7 @@ def C_COMPORTEMENT_DYNA(COMMAND=None) : #COMMUN#
                                        EXCLUS('NOEUD_G','GROUP_NO_G'),
                                        PRESENT_PRESENT('NOEUD_D','NOEUD_G'),
                                        PRESENT_PRESENT('GROUP_NO_D','GROUP_NO_G',),),
-            ANGL_INIT   =     SIMP(statut='o',typ='R',defaut=0.E0),
+            ANGL_INIT   =     SIMP(statut='f',typ='R',defaut=0.E0),
             ANGL_ROTA   =     SIMP(statut='f',typ=(fonction_sdaster,formule),),
             NOEUD_G     =     SIMP(statut='c',typ=no),
             NOEUD_D     =     SIMP(statut='c',typ=no),
@@ -163,10 +163,10 @@ def C_COMPORTEMENT_DYNA(COMMAND=None) : #COMMUN#
             UNSUR_K2    =     SIMP(statut='f',typ='R',val_min = 1.0E-08, fr=tr("Souplesse en parallèle de la branche visqueuse."),),
             UNSUR_K3    =     SIMP(statut='f',typ='R',val_min = 0.0,     fr=tr("Souplesse dans la branche visqueuse."),),
             C           =     SIMP(statut='o',typ='R',val_min = 1.0E-08, fr=tr("'Raideur' de la partie visqueuse."),),
-            PUIS_ALPHA  =     SIMP(statut='o',typ='R',val_min = 1.0E-08, fr=tr("Puissance de la loi visqueuse ]0.0, 1.0]."),
+            PUIS_ALPHA  =     SIMP(statut='f',typ='R',val_min = 1.0E-08, fr=tr("Puissance de la loi visqueuse ]0.0, 1.0]."),
                                    val_max=1.0, defaut=0.5,),
-            ITER_INTE_MAXI=   SIMP(statut='o',typ='I',defaut= 20),
-            RESI_INTE_RELA=   SIMP(statut='o',typ='R',defaut= 1.0E-6),
+            ITER_INTE_MAXI=   SIMP(statut='f',typ='I',defaut= 20),
+            RESI_INTE_RELA=   SIMP(statut='f',typ='R',defaut= 1.0E-6),
         ), # end b_disvisc
 #       C.2.6.2 Discrete nonlinear behavior in axial OR tangent direction
         b_disecro       = BLOC(condition="""equal_to("RELATION", 'DIS_ECRO_TRAC')""",
@@ -186,8 +186,8 @@ def C_COMPORTEMENT_DYNA(COMMAND=None) : #COMMUN#
                 fr=tr("Type de l'écrouissage : isotrope ou cinématique"),
                 ECROUISSAGE =SIMP(statut='o',typ='TXM', into=('ISOTROPE','CINEMATIQUE'),),
             ),
-            ITER_INTE_MAXI = SIMP(statut='o',typ='I',defaut= 20),
-            RESI_INTE_RELA = SIMP(statut='o',typ='R',defaut= 1.0E-6),
+            ITER_INTE_MAXI = SIMP(statut='f',typ='I',defaut= 20),
+            RESI_INTE_RELA = SIMP(statut='f',typ='R',defaut= 1.0E-6),
         ), # end b_disecro
 #       C.2.7 Force displacement relationship non linearity
         b_refx          = BLOC(condition="""equal_to("RELATION", 'RELA_EFFO_DEPL')""",

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -42,7 +42,7 @@ character(len=8), intent(out) :: model
 character(len=8), intent(out) :: cara_elem
 character(len=24), intent(out) :: mate
 character(len=24), intent(out) :: compor_mult
-character(len=8), intent(out), pointer :: v_list_load8(:)
+character(len=8), pointer :: v_list_load8(:)
 integer, intent(out) :: nb_load
 character(len=19), intent(out) :: rigi_meca
 character(len=19), intent(out) :: mass_meca

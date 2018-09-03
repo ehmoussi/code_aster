@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -51,9 +51,9 @@ subroutine hujpxs(mater, sig, vin, prox)
     pc = pco*exp(-beta*epsvpm)
 !
     i1 = zero
-    do 10 i = 1, ndi
+    do i = 1, ndi
         i1 = i1 + d13*sig(i)
- 10 continue
+    enddo
 !
     r4 = abs(i1)/abs(d*pc)
 !

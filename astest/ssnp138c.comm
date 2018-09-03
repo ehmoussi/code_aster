@@ -70,9 +70,10 @@ RS=[0.3*A, 3*eps]
 #                MAILLAGE, MODELE INITIAL
 #----------------------------------------------
 
-PRE_GIBI()
 
-MAILLAGE=LIRE_MAILLAGE(FORMAT="ASTER",)
+MAILLAGE = LIRE_MAILLAGE(FORMAT='GIBI',
+                         UNITE=19,
+                         )
 
 MAILLAGE=DEFI_GROUP(reuse =MAILLAGE,
                     MAILLAGE=MAILLAGE,

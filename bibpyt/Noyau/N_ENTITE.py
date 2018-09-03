@@ -281,10 +281,13 @@ class ENTITE:
 
     def check_into(self):
         """Vérifie l'attribut into."""
-        if self.into != None:
+        if self.into is not None:
             if type(self.into) not in (list, tuple):
                 self.cr.fatal(
                     _(u"L'attribut 'into' doit être un tuple : %r"), self.into)
+            if len(self.into) == 0:
+                self.cr.fatal(
+                    _(u"L'attribut 'into' doit contenir au moins une valeur"))
 
     def check_position(self):
         """Vérifie l'attribut position."""
@@ -306,6 +309,9 @@ class ENTITE:
                     self.cr.fatal(
                         _(u"La valeur de l'attribut 'defaut' n'est pas "
                           u"cohérente avec le type %r : %r"), self.type, val)
+            if self.statut == 'o':
+                self.cr.fatal(_(u"Un mot-clé avec valeur par défaut doit être "
+                                u"facultatif."))
 
     def check_inout(self):
         """Vérifie l'attribut inout."""
@@ -331,7 +337,6 @@ class ENTITE:
                 self.cr.fatal(
                     _(u"L'attribut 'inout' est obligatoire pour le type "
                       u"UnitType()."))
-            if self.defaut == 6 :                 
+            if self.defaut == 6 :
                 self.cr.fatal(
-                    _(u"La vaveur par défaut doit être différente de 6" ))
-
+                    _(u"La valeur par défaut doit être différente de 6" ))

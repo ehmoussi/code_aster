@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -54,7 +54,7 @@ type(ROM_DS_ParaRRC), intent(in) :: ds_para
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    integer :: nb_mode, nb_equa, nb_equa_ridi, nb_cmp, nb_store
+    integer :: nb_mode, nb_equa, nb_equa_ridi, nb_store
     integer :: iret, i_mode, i_equa, i_store, nume_store, i_ord, nume_equa
     character(len=8) :: result_rom, result_dom
     real(kind=8), pointer :: v_dual(:) => null()
@@ -65,6 +65,7 @@ type(ROM_DS_ParaRRC), intent(in) :: ds_para
     real(kind=8), pointer :: v_cohr(:) => null()
     character(len=24) :: field_save, sigm_rid
     real(kind=8), pointer :: v_field_save(:) => null()
+    type(ROM_DS_Field) :: ds_mode
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -76,9 +77,9 @@ type(ROM_DS_ParaRRC), intent(in) :: ds_para
 ! - Get parameters
 !
     nb_store     = ds_para%nb_store
+    ds_mode      = ds_para%ds_empi_dual%ds_mode
     nb_mode      = ds_para%ds_empi_dual%nb_mode
-    nb_equa      = ds_para%ds_empi_dual%nb_equa
-    nb_cmp       = ds_para%ds_empi_dual%nb_cmp
+    nb_equa      = ds_mode%nb_equa
     result_rom   = ds_para%result_rom
     result_dom   = ds_para%result_dom
     nb_equa_ridi = ds_para%nb_equa_ridi
@@ -107,23 +108,26 @@ type(ROM_DS_ParaRRC), intent(in) :: ds_para
 ! - Initial state
 !
     nume_store = 0
-    call romResultSetZero(result_dom, nume_store, ds_para%ds_empi_dual)
+    call romResultSetZero(result_dom, nume_store, ds_mode)
 !
-! - Compute new field
+! - Compute new fields
 !
     AS_ALLOCATE(vr = v_sigm_dom, size = nb_equa*(nb_store-1))
     call dgemm('N', 'N', nb_equa, nb_store-1, nb_mode, 1.d0, &
                v_dual, nb_equa, v_cohr, nb_mode, 0.d0, v_sigm_dom, nb_equa)
+!
+! - Compute new field
+!
     do i_store = 1, nb_store-1
         nume_store = i_store
 ! ----- Get field to save
-        call rsexch(' ', result_dom, ds_para%ds_empi_dual%field_name,&
+        call rsexch(' ', result_dom, ds_mode%field_name,&
                     nume_store, field_save, iret)
         ASSERT(iret .eq. 100)
-        call copisd('CHAMP_GD', 'G', ds_para%ds_empi_dual%field_refe, field_save)
+        call copisd('CHAMP_GD', 'G', ds_mode%field_refe, field_save)
         call jeveuo(field_save(1:19)//'.VALE', 'E', vr = v_field_save)
 ! ----- Get field on RID
-        call rsexch(' ', result_rom, ds_para%ds_empi_dual%field_name,&
+        call rsexch(' ', result_rom, ds_mode%field_name,&
                     nume_store, sigm_rid, iret)
         ASSERT(iret .eq. 0)
         call jeveuo(sigm_rid(1:19)//'.VALE', 'L', vr = v_sigm_rid)
@@ -143,8 +147,7 @@ type(ROM_DS_ParaRRC), intent(in) :: ds_para
                 v_field_save(i_equa) = v_sigm_rom(nume_equa)
             endif
         enddo
-        call rsnoch(result_dom, ds_para%ds_empi_dual%field_name,&
-                    nume_store)
+        call rsnoch(result_dom, ds_mode%field_name, nume_store)
         AS_DEALLOCATE(vr = v_sigm_rom)
     enddo
 !

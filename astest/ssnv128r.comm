@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -75,15 +75,15 @@ CHA1=DEFI_CONTACT(MODELE=MO,
                   FROTTEMENT='COULOMB',
                     ALGO_RESO_CONT = 'POINT_FIXE',
                     ALGO_RESO_GEOM = 'POINT_FIXE',
-                    ALGO_RESO_FROT = 'POINT_FIXE',
+                    #ALGO_RESO_FROT = 'POINT_FIXE',
                     ##ADAPT_COEF     = 'OUI',
-                  RESI_FROT=10.,RESI_GEOM=1.0,
+                  RESI_FROT=10.E-1,RESI_GEOM=1.0,
                   ZONE=_F(GROUP_MA_MAIT='SBATI',
                           GROUP_MA_ESCL='SCONTA',
                           CONTACT_INIT='INTERPENETRE',
                           COULOMB=1.0,
                           #ADAPTATION = 'CYCLAGE',
-                          ADAPTATION = 'TOUT',
+                          ADAPTATION = 'NON',
                           #ALGO_CONT = 'PENALISATION',
                           #ALGO_FROT = 'STANDARD',
                           #COEF_FROT     = 1.E6,
@@ -142,7 +142,7 @@ TEST_RESU(RESU=(
                    RESULTAT=U2M,
                    NOM_CHAM='DEPL',
                    NOM_CMP='DX',
-                   VALE_CALC= 2.81579227713E-05,
+                   VALE_CALC=2.96388335948E-05,
                    VALE_REFE=2.8600000000000001E-05,
                    PRECISION=0.050000000000000003,                
                    ),
@@ -152,7 +152,7 @@ TEST_RESU(RESU=(
                    RESULTAT=U2M,
                    NOM_CHAM='DEPL',
                    NOM_CMP='DX',
-                   VALE_CALC= 2.66763122224E-05,
+                   VALE_CALC=2.81670867313E-05,
                    VALE_REFE=2.72E-05,
                    PRECISION=0.050000000000000003,
                    ),
@@ -162,7 +162,7 @@ TEST_RESU(RESU=(
                    RESULTAT=U2M,
                    NOM_CHAM='DEPL',
                    NOM_CMP='DX',
-                   VALE_CALC= 2.20157840571E-05,
+                   VALE_CALC=2.35951821368E-05,
                    VALE_REFE=2.2799999999999999E-05,
                    PRECISION=0.050000000000000003,
                    ),
@@ -172,7 +172,7 @@ TEST_RESU(RESU=(
                    RESULTAT=U2M,
                    NOM_CHAM='DEPL',
                    NOM_CMP='DX',
-                   VALE_CALC= 1.95483571267E-05,
+                   VALE_CALC=2.05419985624E-05,
                    VALE_REFE=1.98E-05,
                    PRECISION=0.050000000000000003,
                    ),
@@ -182,7 +182,7 @@ TEST_RESU(RESU=(
                    RESULTAT=U2M,
                    NOM_CHAM='DEPL',
                    NOM_CMP='DX',
-                   VALE_CALC= 1.65403143532E-05,
+                   VALE_CALC=1.61874703852E-05,
                    VALE_REFE=1.5E-05,
                    PRECISION=0.150000000000000003,
                    ),
@@ -270,3 +270,4 @@ TEST_RESU(RESU=(
 FIN();
 
 #
+

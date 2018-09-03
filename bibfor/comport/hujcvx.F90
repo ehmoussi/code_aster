@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -56,15 +56,15 @@ subroutine hujcvx(mod, nmat, materf, vinf, deps,&
 !
 ! --- CONTROLE DE LA NORME DE DEFORMATION
     somme = zero
-    do 10 i = 1, 6
+    do i = 1, 6
         somme = somme + abs(deps(i))
- 10 end do
+    end do
     if (somme .lt. r8prem()) goto 999
 !
-    do 20 i = 1, 22
+    do i = 1, 22
         matert(i,1) = materf(i,1)
         matert(i,2) = materf(i,2)
- 20 end do
+    end do
 !
 ! --- DEFINITION DU DOMAINE POTENTIEL DES MECANISMES ACTIFS
     call hujpot(mod, matert, vinf, deps, sigd,&

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,7 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine nmdovm(model       , l_affe_all  , list_elem_affe, nb_elem_affe  , full_elem_s,&
                   rela_comp_py, type_cpla   , l_auto_elas   , l_auto_deborst, l_comp_erre,&
                   l_one_elem  , l_elem_bound)
@@ -34,19 +34,18 @@ implicit none
 #include "asterfort/jexnum.h"
 #include "asterfort/teattr.h"
 !
-!
-    character(len=8), intent(in) :: model
-    character(len=24), intent(in) :: list_elem_affe
-    aster_logical, intent(in) :: l_affe_all
-    integer, intent(in) :: nb_elem_affe
-    character(len=19), intent(in) :: full_elem_s
-    character(len=16), intent(in) :: rela_comp_py
-    character(len=16), intent(inout) :: type_cpla
-    aster_logical, intent(out) :: l_auto_elas
-    aster_logical, intent(out) :: l_auto_deborst
-    aster_logical, intent(out) :: l_comp_erre
-    aster_logical, intent(out) :: l_one_elem
-    aster_logical, intent(out) :: l_elem_bound
+character(len=8), intent(in) :: model
+character(len=24), intent(in) :: list_elem_affe
+aster_logical, intent(in) :: l_affe_all
+integer, intent(in) :: nb_elem_affe
+character(len=19), intent(in) :: full_elem_s
+character(len=16), intent(in) :: rela_comp_py
+character(len=16), intent(inout) :: type_cpla
+aster_logical, intent(out) :: l_auto_elas
+aster_logical, intent(out) :: l_auto_deborst
+aster_logical, intent(out) :: l_comp_erre
+aster_logical, intent(out) :: l_one_elem
+aster_logical, intent(out) :: l_elem_bound
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -179,7 +178,7 @@ implicit none
                         l_comp_erre = .true.
                     else
                         call lctest(rela_comp_py, 'MODELISATION', type_elem2, irett)
-                        if (irett .eq. 0) then
+                        if (irett .eq. 0 .and. type_elem2 .ne. 'NON_DEFINI') then
                             l_comp_erre = .true.
                         endif
                     endif

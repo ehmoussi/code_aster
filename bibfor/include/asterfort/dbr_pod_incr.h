@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -28,9 +28,9 @@ interface
         integer, intent(in) :: nb_mode_maxi
         type(ROM_DS_Empi), intent(inout) :: ds_empi
         type(ROM_DS_ParaDBR_POD) , intent(in) :: ds_para_pod
-        real(kind=8), pointer, intent(inout) :: q(:)
-        real(kind=8), pointer, intent(out)   :: s(:)
-        real(kind=8), pointer, intent(out)   :: v(:)
+        real(kind=8), pointer :: q(:)
+        real(kind=8), pointer   :: s(:)
+        real(kind=8), pointer   :: v(:)
         integer, intent(out) :: nb_mode
         integer, intent(out) :: nb_snap_redu
     end subroutine dbr_pod_incr

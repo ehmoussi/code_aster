@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine romSolveDSInit(type_syst, ds_solve)
 !
 use Rom_Datastructure_type
@@ -25,10 +26,8 @@ implicit none
 #include "asterfort/infniv.h"
 #include "asterfort/utmess.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=3), intent(in) :: type_syst
-    type(ROM_DS_Solve), intent(out) :: ds_solve
+character(len=3), intent(in) :: type_syst
+type(ROM_DS_Solve), intent(out) :: ds_solve
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -42,15 +41,6 @@ implicit none
 ! Out ds_solve         : datastructure to solve systems
 !
 ! --------------------------------------------------------------------------------------------------
-!
-    integer :: ifm, niv
-!
-! --------------------------------------------------------------------------------------------------
-!
-    call infniv(ifm, niv)
-    if (niv .ge. 2) then
-        call utmess('I', 'ROM5_50', sk = type_syst)
-    endif
 !
     ds_solve%syst_matr       = '&&'//type_syst//'.MATR'
     ds_solve%syst_2mbr       = '&&'//type_syst//'.SECMBR'

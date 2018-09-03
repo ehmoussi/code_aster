@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -41,7 +41,6 @@ type(ROM_DS_ParaRRC), intent(in) :: ds_para
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    character(len=24) :: valk(2)
     character(len=16) :: type_resu
     character(len=8) :: result_rom, result_dom, model_dom, model_rom
     integer :: nb_store
@@ -60,13 +59,7 @@ type(ROM_DS_ParaRRC), intent(in) :: ds_para
 !
 ! - Print
 !
-    valk(1) = result_dom
-    valk(2) = model_dom
-    call utmess('I', 'ROM6_5', nk = 2, valk = valk)
     call utmess('I', 'ROM6_7', sk = type_resu)
-    valk(1) = result_rom
-    valk(2) = model_rom
-    call utmess('I', 'ROM6_10', nk = 2, valk = valk)
     call utmess('I', 'ROM6_11', si = nb_store)
     if (l_prev_dual) then
         call utmess('I', 'ROM6_14')

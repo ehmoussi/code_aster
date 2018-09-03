@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine romAlgoNLRead(phenom, ds_algorom)
+subroutine romAlgoNLRead(ds_algorom)
 !
 use Rom_Datastructure_type
 !
@@ -27,12 +27,11 @@ implicit none
 #include "asterfort/getvtx.h"
 #include "asterfort/getvid.h"
 #include "asterfort/getvr8.h"
-#include "asterfort/romBaseRead.h"
+#include "asterfort/romBaseGetInfo.h"
 #include "asterfort/infniv.h"
 #include "asterfort/utmess.h"
 !
-    character(len=4), intent(in) :: phenom
-    type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
+type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -42,7 +41,6 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  phenom           : phenomenon (MECA/THER)
 ! IO  ds_algorom       : datastructure for ROM parameters
 !
 ! --------------------------------------------------------------------------------------------------
@@ -65,13 +63,13 @@ implicit none
 ! - Initializations
 !
     keywf         = 'MODELE_REDUIT'
-    l_hrom        = .false._1
-    l_hrom_corref = .false._1
+    l_hrom        = ASTER_FALSE
+    l_hrom_corref = ASTER_FALSE
     grnode_int    = ' '
     grnode_sub    = ' '
     coef_pena     = 0.d0
 !
-! - Read
+! - Read parameters
 !
     call getvid(keywf, 'BASE_PRIMAL'   , iocc=1, scal = ds_empi_name)
     call getvtx(keywf, 'DOMAINE_REDUIT', iocc=1, scal = answer)
@@ -85,8 +83,14 @@ implicit none
             call getvr8(keywf,'COEF_PENA'        , iocc=1, scal = coef_pena)
         endif
     endif
-    call romBaseRead(ds_empi_name, ds_empi)
-    ds_algorom%l_rom         = .true.
+!
+! - Get informations about base
+!
+    call romBaseGetInfo(ds_empi_name, ds_empi)
+!
+! - Save parameters in datastructure
+!
+    ds_algorom%l_rom         = ASTER_TRUE
     ds_algorom%ds_empi       = ds_empi
     ds_algorom%l_hrom        = l_hrom
     ds_algorom%grnode_int    = grnode_int

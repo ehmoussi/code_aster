@@ -17,8 +17,6 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-#
-
 # Test for DEFI_DOMAINE_REDUIT
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),DEBUG=_F(SDVERI='OUI'));
@@ -26,11 +24,17 @@ DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),DEBUG=_F(SDVERI='OUI'));
 # Read the mesh
 mesh=LIRE_MAILLAGE(FORMAT='MED',);
 
-# Thermic model
+# Mechanic model
 model=AFFE_MODELE(MAILLAGE=mesh,
                  AFFE=_F(TOUT='OUI',
                          PHENOMENE='MECANIQUE',
                          MODELISATION='3D',),);
+
+####################################################################################################
+#
+# Construction du RID avec NB_COUCHE_SUPPL = 4 => RID == DOMAINE_ENTIER
+#
+####################################################################################################
 
 base_p=LIRE_RESU(TYPE_RESU  = 'MODE_EMPI',
                  FORMAT     = 'MED',
@@ -49,14 +53,6 @@ base_d=LIRE_RESU(TYPE_RESU  = 'MODE_EMPI',
                                  NOM_CHAM     = 'SIEF_NOEU',),
                  TOUT_ORDRE = 'OUI',);
 
-TEST_RESU(MAILLAGE = _F(MAILLAGE    = mesh,
-                        CARA        = 'NB_GROUP_MA',
-                        REFERENCE   = 'ANALYTIQUE',
-                        CRITERE     = 'ABSOLU',
-                        VALE_REFE_I = 6,
-                        VALE_CALC_I = 6,)
-          )
-
 # Avec NB_COUCHE_SUPPL = 4 => RID == DOMAINE_ENTIER
 mesh=DEFI_DOMAINE_REDUIT(reuse=mesh,INFO=2,
             MAILLAGE=mesh,
@@ -66,46 +62,16 @@ mesh=DEFI_DOMAINE_REDUIT(reuse=mesh,INFO=2,
             NB_COUCHE_SUPPL = 4,
             GROUP_NO_INTERF='INF',);
 
-IMPR_RESU(FORMAT='MED', UNITE = 80, RESU=_F(MAILLAGE = mesh))
-
-TEST_RESU(MAILLAGE = _F(MAILLAGE    = mesh,
-                        CARA        = 'NB_GROUP_MA',
-                        REFERENCE   = 'ANALYTIQUE',
-                        CRITERE     = 'ABSOLU',
-                        VALE_REFE_I = 7,
-                        VALE_CALC_I = 7)
-          )
-
-TEST_RESU(MAILLAGE = _F(MAILLAGE    = mesh,
-                        CARA        = 'NB_GROUP_NO',
-                        REFERENCE   = 'ANALYTIQUE',
-                        CRITERE     = 'ABSOLU',
-                        VALE_REFE_I = 2,
-                        VALE_CALC_I = 2,)
-          )
-
-TEST_RESU(MAILLAGE = _F(MAILLAGE    = mesh,
-                        CARA        = 'NB_MA_GROUP_MA',
-                        NOM_GROUP_MA= 'RID',
-                        REFERENCE   = 'ANALYTIQUE',
-                        CRITERE     = 'ABSOLU',
-                        VALE_REFE_I = 117,
-                        VALE_CALC_I = 117,)
-          )
-
-TEST_RESU(MAILLAGE = _F(MAILLAGE    = mesh,
-                        CARA        = 'NB_NO_GROUP_NO',
-                        NOM_GROUP_NO= 'INF',
-                        REFERENCE   = 'ANALYTIQUE',
-                        CRITERE     = 'ABSOLU',
-                        VALE_REFE_I = 1,
-                        VALE_CALC_I = 1,)
-          )
+####################################################################################################
+#
+# Construction du RID avec interface EF
+#
+####################################################################################################
 
 # Read the mesh
 mesh2=LIRE_MAILLAGE(FORMAT='MED',);
 
-# Thermic model
+# Mechanic model
 model2=AFFE_MODELE(MAILLAGE=mesh2,
                  AFFE=_F(TOUT='OUI',
                          PHENOMENE='MECANIQUE',
@@ -128,14 +94,6 @@ base_d2=LIRE_RESU(TYPE_RESU  = 'MODE_EMPI',
                                  NOM_CHAM     = 'SIEF_NOEU',),
                  NUME_ORDRE = 1,);
 
-TEST_RESU(MAILLAGE = _F(MAILLAGE    = mesh2,
-                        CARA        = 'NB_GROUP_MA',
-                        REFERENCE   = 'ANALYTIQUE',
-                        CRITERE     = 'ABSOLU',
-                        VALE_REFE_I = 6,
-                        VALE_CALC_I = 6,)
-          )
-
 # Avec CORR_COMPLET
 mesh2=DEFI_DOMAINE_REDUIT(reuse=mesh2,INFO=2,
             MAILLAGE=mesh2,
@@ -148,56 +106,17 @@ mesh2=DEFI_DOMAINE_REDUIT(reuse=mesh2,INFO=2,
             NB_COUCHE_SUPPL    = 1,
             GROUP_NO_INTERF='INF',);
 
-TEST_RESU(MAILLAGE = _F(MAILLAGE    = mesh2,
-                        CARA        = 'NB_GROUP_MA',
-                        REFERENCE   = 'ANALYTIQUE',
-                        CRITERE     = 'ABSOLU',
-                        VALE_REFE_I = 7,
-                        VALE_CALC_I = 7)
-          )
-
-TEST_RESU(MAILLAGE = _F(MAILLAGE    = mesh2,
-                        CARA        = 'NB_GROUP_NO',
-                        REFERENCE   = 'ANALYTIQUE',
-                        CRITERE     = 'ABSOLU',
-                        VALE_REFE_I = 3,
-                        VALE_CALC_I = 3,)
-          )
-
-TEST_RESU(MAILLAGE = _F(MAILLAGE    = mesh2,
-                        CARA        = 'NB_MA_GROUP_MA',
-                        NOM_GROUP_MA= 'RID',
-                        REFERENCE   = 'ANALYTIQUE',
-                        CRITERE     = 'ABSOLU',
-                        VALE_REFE_I = 49,
-                        VALE_CALC_I = 49,)
-          )
-
-TEST_RESU(MAILLAGE = _F(MAILLAGE    = mesh2,
-                        CARA        = 'NB_NO_GROUP_NO',
-                        NOM_GROUP_NO= 'INF',
-                        REFERENCE   = 'ANALYTIQUE',
-                        CRITERE     = 'ABSOLU',
-                        VALE_REFE_I = 26,
-                        VALE_CALC_I = 26,)
-          )
-
-TEST_RESU(MAILLAGE = _F(MAILLAGE    = mesh2,
-                        CARA        = 'NB_NO_GROUP_NO',
-                        NOM_GROUP_NO= 'SUB',
-                        REFERENCE   = 'ANALYTIQUE',
-                        CRITERE     = 'ABSOLU',
-                        VALE_REFE_I = 42,
-                        VALE_CALC_I = 42,)
-          )
-
-IMPR_RESU(FORMAT='MED', UNITE = 80, RESU=_F(MAILLAGE = mesh2))
+####################################################################################################
+#
+# Construction du RID avec DOMAINE_MINI
+#
+####################################################################################################
 
 
 # Read the mesh
 mesh3=LIRE_MAILLAGE(FORMAT='MED',);
 
-# Thermic model
+# Mechanic model
 model3=AFFE_MODELE(MAILLAGE=mesh3,
                  AFFE=_F(TOUT='OUI',
                          PHENOMENE='MECANIQUE',
@@ -230,41 +149,5 @@ mesh3=DEFI_DOMAINE_REDUIT(reuse=mesh3,INFO=2,
             DOMAINE_MINI=_F(GROUP_MA='S_inf'),
             );
 
-TEST_RESU(MAILLAGE = _F(MAILLAGE    = mesh3,
-                        CARA        = 'NB_GROUP_MA',
-                        REFERENCE   = 'ANALYTIQUE',
-                        CRITERE     = 'ABSOLU',
-                        VALE_REFE_I = 7,
-                        VALE_CALC_I = 7)
-          )
-
-TEST_RESU(MAILLAGE = _F(MAILLAGE    = mesh3,
-                        CARA        = 'NB_GROUP_NO',
-                        REFERENCE   = 'ANALYTIQUE',
-                        CRITERE     = 'ABSOLU',
-                        VALE_REFE_I = 2,
-                        VALE_CALC_I = 2,)
-          )
-
-TEST_RESU(MAILLAGE = _F(MAILLAGE    = mesh3,
-                        CARA        = 'NB_MA_GROUP_MA',
-                        NOM_GROUP_MA= 'RID',
-                        REFERENCE   = 'ANALYTIQUE',
-                        CRITERE     = 'ABSOLU',
-                        VALE_REFE_I = 46,
-                        VALE_CALC_I = 46,)
-          )
-
-TEST_RESU(MAILLAGE = _F(MAILLAGE    = mesh3,
-                        CARA        = 'NB_NO_GROUP_NO',
-                        NOM_GROUP_NO= 'INF',
-                        REFERENCE   = 'ANALYTIQUE',
-                        CRITERE     = 'ABSOLU',
-                        VALE_REFE_I = 16,
-                        VALE_CALC_I = 16,)
-          )
-
-
-IMPR_RESU(FORMAT='MED', UNITE = 80, RESU=_F(MAILLAGE = mesh3))
 
 FIN();

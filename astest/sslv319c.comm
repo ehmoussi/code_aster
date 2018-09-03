@@ -50,7 +50,6 @@ type_cas = 'cas_test'
 
 # parametres de la fissure initiale
 # ---------------------------------
-PRE_GMSH();
 # demi-grand axe
 a=0.119E-3
 
@@ -101,7 +100,7 @@ RESU = [None]*(nb_pas+1)
 # pas de tables pour LSN ni LST
 c_mult_pilo=1.
 #
-MAIT=LIRE_MAILLAGE(FORMAT="ASTER",INFO=1,)
+MAIT = LIRE_MAILLAGE(FORMAT='GMSH', UNITE=19)
 
 MAIT=DEFI_GROUP(reuse =MAIT,
                 MAILLAGE=MAIT,

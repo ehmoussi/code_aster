@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -31,7 +31,7 @@ interface
         character(len=8), intent(in) :: name_subs
         integer, intent(in) :: nume_link
         integer, intent(in) :: nb_node_lagr
-        integer, pointer, intent(in) :: list_node_lagr(:)
+        integer, pointer :: list_node_lagr(:)
         character(len=8), intent(in) :: ligrel
     end subroutine equa_print
 end interface

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -92,9 +92,9 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
 !
     l_hrom     = ds_algorom%l_hrom
     base       = ds_algorom%ds_empi%base
-    nb_equa    = ds_algorom%ds_empi%nb_equa
+    nb_equa    = ds_algorom%ds_empi%ds_mode%nb_equa
     nb_mode    = ds_algorom%ds_empi%nb_mode
-    field_name = ds_algorom%ds_empi%field_name
+    field_name = ds_algorom%ds_empi%ds_mode%field_name
 !
 ! - Access to vectors
 !

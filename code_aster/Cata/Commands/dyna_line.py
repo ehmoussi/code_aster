@@ -57,7 +57,7 @@ DYNA_LINE = MACRO(nom      = "DYNA_LINE",
         MODELE          =     SIMP(statut='o',typ=modele_sdaster),
         CHAM_MATER      =     SIMP(statut='f',typ=cham_mater),
         CARA_ELEM       =     SIMP(statut='f',typ=cara_elem),
-        CHARGE          =     SIMP(statut='o',typ=(char_meca,char_cine_meca), max='**'),
+        CHARGE          =     SIMP(statut='f',typ=(char_meca,char_cine_meca), max='**'),
 
         # if no value, F_max computed automaticaly, F_min set to 0
         # if only one value => F_max, F_min set to 0
@@ -90,7 +90,7 @@ DYNA_LINE = MACRO(nom      = "DYNA_LINE",
         b_param_tran    = BLOC(condition = """equal_to("TYPE_CALCUL", 'TRAN')""",
             # 1. Integration schemes
             SCHEMA_TEMPS    =     FACT(statut='d',
-                SCHEMA      =         SIMP(statut='o', typ='TXM', defaut="DEVOGE",
+                SCHEMA      =         SIMP(statut='f', typ='TXM', defaut="DEVOGE",
                                             into=("NEWMARK", "WILSON", "DIFF_CENTRE",
                                                     "DEVOGE", "ADAPT_ORDRE1", "ADAPT_ORDRE2",
                                                     "RUNGE_KUTTA_32", "RUNGE_KUTTA_54", "ITMI"),),
