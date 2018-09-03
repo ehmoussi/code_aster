@@ -114,7 +114,7 @@ class ExecuteCommand(object):
 
     @classmethod
     def run(cls, **keywords):
-        """Run the macro-command.
+        """Run the command.
 
         Arguments:
             keywords (dict): User keywords
