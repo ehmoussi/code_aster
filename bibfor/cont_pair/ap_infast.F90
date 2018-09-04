@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! aslint: disable=W1306
+!
 subroutine ap_infast(mesh          , newgeo        , pair_tole      ,nb_elem_mast  ,&
                      list_elem_mast, nb_elem_slav  , list_elem_slav ,elem_slav_flag,&
                      nb_mast_start , elem_mast_start,nb_slav_start  ,elem_slav_start,&
@@ -41,22 +42,20 @@ implicit none
 #include "asterfort/as_deallocate.h"
 #include "asterfort/as_allocate.h"
 !
-! aslint: disable=W1306
-!
-    character(len=8), intent(in) :: mesh
-    character(len=19), intent(in) :: newgeo
-    real(kind=8), intent(in) :: pair_tole
-    integer, intent(in) :: nb_elem_mast
-    integer, intent(in) :: list_elem_mast(nb_elem_mast)
-    integer, intent(in) :: nb_elem_slav
-    integer, intent(in) :: list_elem_slav(nb_elem_slav)
-    integer, pointer :: elem_slav_flag(:)
-    integer, intent(out) :: nb_mast_start
-    integer, intent(out) :: elem_mast_start(nb_elem_slav)
-    integer, intent(out) :: nb_slav_start
-    integer, intent(out) :: elem_slav_start(nb_elem_slav)
-    character(len=19), intent(in) :: sdappa
-    integer, intent(in) :: i_zone
+character(len=8), intent(in) :: mesh
+character(len=19), intent(in) :: newgeo
+real(kind=8), intent(in) :: pair_tole
+integer, intent(in) :: nb_elem_mast
+integer, intent(in) :: list_elem_mast(nb_elem_mast)
+integer, intent(in) :: nb_elem_slav
+integer, intent(in) :: list_elem_slav(nb_elem_slav)
+integer, pointer :: elem_slav_flag(:)
+integer, intent(out) :: nb_mast_start
+integer, intent(out) :: elem_mast_start(nb_elem_slav)
+integer, intent(out) :: nb_slav_start
+integer, intent(out) :: elem_slav_start(nb_elem_slav)
+character(len=19), intent(in) :: sdappa
+integer, intent(in) :: i_zone
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -111,10 +110,7 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-!
-! - Initialisation
-!
-    debug          = .false.
+    debug          = ASTER_FALSE
     mast_indx_mini = minval(list_elem_mast)
     slav_indx_mini = minval(list_elem_slav)
     nb_mast_start  = 0
@@ -128,7 +124,7 @@ implicit none
     call jeveuo(jexatr(conx_inve, 'LONCUM'), 'L', vi = v_cninv_lcum)
     call jeveuo(sdappa(1:19)//'.LM'//knuzo(1:2),'L', vi = list_node_mast)
     call jelira(sdappa(1:19)//'.LM'//knuzo(1:2),'LONMAX',nb_node_mast)
-    if(nb_node_mast .eq. 0) then
+    if (nb_node_mast .eq. 0) then
         go to 100
     end if
 !
@@ -176,7 +172,8 @@ implicit none
 !
 ! --------- Cut slave element in linearized sub-elements (SEG2 or TRIA3)
 !
-            call apdcma(elem_slav_code, elin_slav_sub, elin_slav_nbnode, elin_slav_nbsub)
+            call apdcma(elem_slav_code,&
+                        elin_slav_sub, elin_slav_nbnode, elin_slav_nbsub, elin_slav_code)
             if (debug) then
                 write(*,*) "Cut slave: ", elin_slav_nbsub
             endif
@@ -191,7 +188,6 @@ implicit none
 !
             call gtlmex(v_cninv,v_cninv_lcum, nume_node_cl,nb_elem_mast,list_elem_mast,&
                         list_el_ma_ax, nb_el_ma_ax)
-
             do i_elem_mast = 1, nb_el_ma_ax
 !
 ! ------------- Current master element
@@ -221,7 +217,8 @@ implicit none
 !
 ! ----------------- Cut master element in linearized sub-elements (SEG2 or TRIA3)
 !
-                    call apdcma(elem_mast_code, elin_mast_sub, elin_mast_nbnode, elin_mast_nbsub)
+                    call apdcma(elem_mast_code,&
+                                elin_mast_sub, elin_mast_nbnode, elin_mast_nbsub, elin_mast_code)
                     if (debug) then
                         write(*,*) "Cut master: ", elin_mast_nbsub
                     endif
@@ -229,16 +226,6 @@ implicit none
 ! ----------------- Loop on linearized master sub-elements
 !
                     do i_elin_mast = 1, elin_mast_nbsub
-!
-! --------------------- Code for current linearized master sub-element
-!
-                        if (elin_mast_nbnode(i_elin_mast) .eq. 2) then
-                            elin_mast_code = 'SE2'
-                        elseif (elin_mast_nbnode(i_elin_mast) .eq. 3) then
-                            elin_mast_code = 'TR3'
-                        else
-                            ASSERT(.false.)
-                        end if
 !
 ! --------------------- Get coordinates for current linearized master sub-element
 !
@@ -254,16 +241,6 @@ implicit none
 !
                         do i_elin_slav = 1, elin_slav_nbsub
 !
-! ------------------------- Code for current linearized slave sub-element
-!
-                            if (elin_slav_nbnode(i_elin_slav) .eq. 2) then
-                                elin_slav_code = 'SE2'
-                            elseif (elin_slav_nbnode(i_elin_slav) .eq. 3) then
-                                elin_slav_code = 'TR3'
-                            else
-                                ASSERT(.false.)
-                            endif
-!
 ! ------------------------- Get coordinates for current linearized slave sub-element
 !
                             elin_slav_coor(:) = 0.d0
@@ -276,10 +253,10 @@ implicit none
 !
 ! ------------------------- Projection/intersection of elements in slave parametric space
 !
-                call prjint(pair_tole     , elem_mast_dime,&
-                            elin_slav_coor, elin_slav_nbnode(i_elin_slav), elin_slav_code,&
-                            elin_mast_coor, elin_mast_nbnode(i_elin_mast), elin_mast_code,&
-                            poin_inte     , inte_weight                  , nb_poin_inte  )
+                        call prjint(pair_tole     , elem_mast_dime,&
+                                    elin_slav_coor, elin_slav_nbnode(i_elin_slav), elin_slav_code,&
+                                    elin_mast_coor, elin_mast_nbnode(i_elin_mast), elin_mast_code,&
+                                    poin_inte     , inte_weight                  , nb_poin_inte  )
 !
 ! ------------------------- Set start elements
 !

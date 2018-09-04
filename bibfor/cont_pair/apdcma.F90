@@ -16,17 +16,17 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine apdcma(elem_code, elin_sub, elin_nbnode, elin_nbsub)
+subroutine apdcma(elem_code, elin_sub, elin_nbnode, elin_nbsub, elin_code)
 !
 implicit none
 !
 #include "asterfort/assert.h"
 !
-!
-    character(len=8), intent(in) :: elem_code
-    integer, intent(out) :: elin_sub(2,3)
-    integer, intent(out) :: elin_nbnode(2)
-    integer, intent(out) :: elin_nbsub
+character(len=8), intent(in) :: elem_code
+integer, intent(out) :: elin_sub(2,3)
+integer, intent(out) :: elin_nbnode(2)
+integer, intent(out) :: elin_nbsub
+character(len=8), intent(out) :: elin_code
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -37,11 +37,11 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
 ! SEG2  => 1xSEG2
-! SEG3  => 1xSEG2
+! SEG3  => 2xSEG2
 ! TRIA3 => 1xTRIA3
-! TRIA6 => 1xTRIA3
+! TRIA6 => 4xTRIA3
 ! QUAD4 => 2xTRIA3
-! QUAD8 => 2xTRIA3
+! QUAD8 => 6xTRIA3
 ! QUAD9 => 2xTRIA3
 !
 ! --------------------------------------------------------------------------------------------------
@@ -50,6 +50,7 @@ implicit none
 ! Out elin_nbsub       : number of linearized sub-elements
 ! Out elin_nbnode      : number of nodes for each linearized sub-element
 ! Out elin_sub         : list of nodes for each linearized sub-element
+! Out elin_code        : code of linearized sub-element (SE2 or TR3)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -61,12 +62,14 @@ implicit none
         elin_nbnode(1) = 2
         elin_sub(1,1)  = 1
         elin_sub(1,2)  = 2
+        elin_code      = 'SE2'
     elseif (elem_code .eq. 'TR3' .or. elem_code .eq. 'TR6') then
         elin_nbsub     = 1
         elin_nbnode(1) = 3
         elin_sub(1,1)  = 1
         elin_sub(1,2)  = 2
         elin_sub(1,3)  = 3
+        elin_code      = 'TR3'
     else if (elem_code .eq. 'QU4' .or. elem_code .eq. 'QU8' .or.&
              elem_code .eq. 'QU9') then
         elin_nbsub     = 2
@@ -78,9 +81,9 @@ implicit none
         elin_sub(2,1)  = 3
         elin_sub(2,2)  = 4
         elin_sub(2,3)  = 1
-
+        elin_code      = 'TR3'
     else
-        ASSERT(.false.)
+        ASSERT(ASTER_FALSE)
     end if
 !
 end subroutine
