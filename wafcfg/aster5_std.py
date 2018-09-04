@@ -39,7 +39,7 @@ def configure(self):
 
     intel.configure(self)
     official_programs.configure(self)
-    official_programs.check_prerequisites_package(self, YAMMROOT, '20180831')
+    official_programs.check_prerequisites_package(self, YAMMROOT, '20180830')
     opts.with_prog_salome = True
 
     # enable TEST_STRICT on the reference server
