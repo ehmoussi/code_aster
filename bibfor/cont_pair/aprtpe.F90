@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 
 subroutine aprtpe(elin_dime, poin_inte, nb_poin_inte,&
-                  elem_code, elin_nume)
+                  elem_code, elin_nume_)
 !
 implicit none
 !
@@ -25,11 +25,11 @@ implicit none
 #include "asterfort/assert.h"
 !
 !
-    integer, intent(in) :: elin_dime
-    real(kind=8), intent(inout) :: poin_inte(elin_dime-1,16)
-    integer, intent(in) :: nb_poin_inte
-    character(len=8), intent(in) :: elem_code
-    integer, intent(in), optional :: elin_nume
+integer, intent(in) :: elin_dime
+real(kind=8), intent(inout) :: poin_inte(elin_dime-1,16)
+integer, intent(in) :: nb_poin_inte
+character(len=8), intent(in) :: elem_code
+integer, intent(in), optional :: elin_nume_
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -67,21 +67,20 @@ implicit none
     norm(1:3) = 0.d0
     noor      = 0.d0
 !
-! - Loop on intersection point points
+! - Loop on intersection points
 !
-    do i_poin_inte=1, nb_poin_inte
+    do i_poin_inte = 1, nb_poin_inte
         tau1(1:3) = 0.d0
         tau2(1:3) = 0.d0
         norm(1:3) = 0.d0
         noor      = 0.d0
-        ksi(1) = poin_inte (1,i_poin_inte)
+        ksi(1) = poin_inte (1, i_poin_inte)
         if (elin_dime .eq. 3) then
-            ksi(2) = poin_inte (2,i_poin_inte)
+            ksi(2) = poin_inte (2, i_poin_inte)
         end if
-!
         if ((elem_code.eq.'QU4' .or. elem_code.eq.'QU8' .or. elem_code.eq.'QU9') .and.&
-            present(elin_nume)) then
-            if (elin_nume .eq. 1) then
+            present(elin_nume_)) then
+            if (elin_nume_ .eq. 1) then
                 node_para(1,1) = -1.d0
                 node_para(2,1) = -1.d0
                 node_para(3,1) =  0.d0
@@ -91,11 +90,10 @@ implicit none
                 node_para(1,3) =  1.d0
                 node_para(2,3) =  1.d0
                 node_para(3,3) =  0.d0
-                elin_code   = 'TR3'
                 call reerel(elin_code, 3, 3, node_para, ksi, node_real)
                 poin_inte_real(1,i_poin_inte) = node_real(1)
                 poin_inte_real(2,i_poin_inte) = node_real(2)
-            elseif (elin_nume .eq. 2) then
+            elseif (elin_nume_ .eq. 2) then
                 node_para(1,1) =  1.d0
                 node_para(2,1) =  1.d0
                 node_para(3,1) =  0.d0
@@ -105,16 +103,15 @@ implicit none
                 node_para(1,3) = -1.d0
                 node_para(2,3) = -1.d0
                 node_para(3,3) =  0.d0
-                elin_code      = 'TR3'
                 call reerel(elin_code,3, 3, node_para, ksi, node_real)
                 poin_inte_real(1,i_poin_inte) = node_real(1)
                 poin_inte_real(2,i_poin_inte) = node_real(2)
             else
-                ASSERT(.false.)
+                ASSERT(ASTER_FALSE)
             endif
         else
             poin_inte_real(1,i_poin_inte) = ksi(1)
-            if ((elin_dime-1) .eq. 2) then
+            if (elin_dime .eq. 3) then
                 poin_inte_real(2,i_poin_inte) = ksi(2)
             end if
         end if

@@ -15,14 +15,14 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine apdcma(elem_code, elin_sub, elin_nbnode, elin_nbsub)
+    subroutine apdcma(elem_code,&
+                      elin_sub , elin_nbnode, elin_nbsub, elin_code)
         character(len=8), intent(in) :: elem_code
         integer, intent(out) :: elin_sub(2,3)
         integer, intent(out) :: elin_nbnode(2)
         integer, intent(out) :: elin_nbsub
+        character(len=8), intent(out) :: elin_code
     end subroutine apdcma
 end interface

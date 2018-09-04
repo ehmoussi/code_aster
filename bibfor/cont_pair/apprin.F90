@@ -15,7 +15,7 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine apprin(mesh          , newgeo        , pair_tole      ,nb_elem_mast  ,&
                   list_elem_mast, nb_elem_slav  , list_elem_slav ,elem_slav_flag,&
                   nb_mast_start , elem_mast_start,nb_slav_start ,elem_slav_start)
@@ -33,19 +33,18 @@ implicit none
 #include "asterfort/apdcma.h"
 #include "asterfort/prjint.h"
 !
-!
-    character(len=8), intent(in) :: mesh
-    character(len=19), intent(in) :: newgeo
-    real(kind=8), intent(in) :: pair_tole
-    integer, intent(in) :: nb_elem_mast
-    integer, intent(in) :: list_elem_mast(nb_elem_mast)
-    integer, intent(in) :: nb_elem_slav
-    integer, intent(in) :: list_elem_slav(nb_elem_slav)
-    integer, pointer :: elem_slav_flag(:)
-    integer, intent(out) :: nb_mast_start
-    integer, intent(out) :: elem_mast_start(nb_elem_slav)
-    integer, intent(out) :: nb_slav_start
-    integer, intent(out) :: elem_slav_start(nb_elem_slav)
+character(len=8), intent(in) :: mesh
+character(len=19), intent(in) :: newgeo
+real(kind=8), intent(in) :: pair_tole
+integer, intent(in) :: nb_elem_mast
+integer, intent(in) :: list_elem_mast(nb_elem_mast)
+integer, intent(in) :: nb_elem_slav
+integer, intent(in) :: list_elem_slav(nb_elem_slav)
+integer, pointer :: elem_slav_flag(:)
+integer, intent(out) :: nb_mast_start
+integer, intent(out) :: elem_mast_start(nb_elem_slav)
+integer, intent(out) :: nb_slav_start
+integer, intent(out) :: elem_slav_start(nb_elem_slav)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -58,7 +57,7 @@ implicit none
 ! In  mesh             : name of mesh
 ! In  newgeo           : name of field for geometry update from initial coordinates of nodes
 ! In  pair_tole        : tolerance for pairing
-! In  l_not_memory     : .true. is algorithm is the "non-memory" version for standard PANG
+! In  l_not_memory     : ASTER_TRUE is algorithm is the "non-memory" version for standard PANG
 ! In  nb_elem_mast     : number of master elements on current zone
 ! In  list_elem_mast   : name of datastructure for list of master elements on current zone
 ! In  nb_elem_slav     : number of slave elements on current zone
@@ -95,13 +94,13 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    debug          = .false.
-    mast_indx_mini = minval(list_elem_mast)
-    slav_indx_mini = minval(list_elem_slav)
-    nb_mast_start  = 0
-    nb_slav_start  = 0
-    elem_slav_start(1:nb_elem_slav) = 0
-    elem_mast_start(1:nb_elem_slav) = 0
+    debug              = ASTER_FALSE
+    mast_indx_mini     = minval(list_elem_mast)
+    slav_indx_mini     = minval(list_elem_slav)
+    nb_mast_start      = 0
+    nb_slav_start      = 0
+    elem_slav_start(:) = 0
+    elem_mast_start(:) = 0
 !
 ! - Access to mesh
 !
@@ -147,7 +146,8 @@ implicit none
 !
 ! --------- Cut slave element in linearized sub-elements (SEG2 or TRIA3)
 !
-            call apdcma(elem_slav_code, elin_slav_sub, elin_slav_nbnode, elin_slav_nbsub)
+            call apdcma(elem_slav_code,&
+                        elin_slav_sub, elin_slav_nbnode, elin_slav_nbsub, elin_slav_code)
             if (debug) then
                 write(*,*) "Cut slave: ", elin_slav_nbsub
             endif
@@ -168,7 +168,7 @@ implicit none
 !
 ! ------------- Already tracked ?
 !
-                if (.true.) then
+                if (ASTER_TRUE) then
                     if (debug) then
                         write(*,*) "Master element not yet tracked"
                     endif
@@ -183,7 +183,8 @@ implicit none
 !
 ! ----------------- Cut master element in linearized sub-elements (SEG2 or TRIA3)
 !
-                    call apdcma(elem_mast_code, elin_mast_sub, elin_mast_nbnode, elin_mast_nbsub)
+                    call apdcma(elem_mast_code,&
+                                elin_mast_sub, elin_mast_nbnode, elin_mast_nbsub, elin_mast_code)
                     if (debug) then
                         write(*,*) "Cut master: ", elin_mast_nbsub
                     endif
@@ -191,16 +192,6 @@ implicit none
 ! ----------------- Loop on linearized master sub-elements
 !
                     do i_elin_mast = 1, elin_mast_nbsub
-!
-! --------------------- Code for current linearized master sub-element
-!
-                        if (elin_mast_nbnode(i_elin_mast) .eq. 2) then
-                            elin_mast_code = 'SE2'
-                        elseif (elin_mast_nbnode(i_elin_mast) .eq. 3) then
-                            elin_mast_code = 'TR3'
-                        else
-                            ASSERT(.false.)
-                        end if
 !
 ! --------------------- Get coordinates for current linearized master sub-element
 !
@@ -215,16 +206,6 @@ implicit none
 ! --------------------- Loop on linearized slave sub-elements
 !
                         do i_elin_slav = 1, elin_slav_nbsub
-!
-! ------------------------- Code for current linearized slave sub-element
-!
-                            if (elin_slav_nbnode(i_elin_slav) .eq. 2) then
-                                elin_slav_code = 'SE2'
-                            elseif (elin_slav_nbnode(i_elin_slav) .eq. 3) then
-                                elin_slav_code = 'TR3'
-                            else
-                                ASSERT(.false.)
-                            endif
 !
 ! ------------------------- Get coordinates for current linearized slave sub-element
 !

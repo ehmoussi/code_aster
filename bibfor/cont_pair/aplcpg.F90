@@ -16,6 +16,8 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
+! aslint: disable=W1306
+!
 subroutine aplcpg(mesh        , newgeo        , sdappa      , i_zone        , pair_tole,&
                   nb_elem_mast, list_elem_mast, nb_elem_slav, list_elem_slav, &
                   nb_pair_zone, list_pair_zone, i_proc      , nb_proc, pair_method)
@@ -55,22 +57,20 @@ implicit none
 #include "asterfort/apsave_pair.h"
 #include "asterfort/apsave_patch.h"
 !
-! aslint: disable=W1306
-!
-    character(len=8), intent(in) :: mesh
-    character(len=19), intent(in) :: newgeo
-    character(len=19), intent(in) :: sdappa
-    integer, intent(in) :: i_zone
-    real(kind=8), intent(in) :: pair_tole
-    integer, intent(in) :: nb_elem_slav
-    integer, intent(in) :: nb_elem_mast
-    integer, intent(in) :: list_elem_mast(nb_elem_mast)
-    integer, intent(in) :: list_elem_slav(nb_elem_slav)
-    integer, intent(inout) :: nb_pair_zone
-    integer, pointer :: list_pair_zone(:)
-    integer, intent(in) :: i_proc
-    integer, intent(in) :: nb_proc
-    character(len=24), intent(in) :: pair_method
+character(len=8), intent(in) :: mesh
+character(len=19), intent(in) :: newgeo
+character(len=19), intent(in) :: sdappa
+integer, intent(in) :: i_zone
+real(kind=8), intent(in) :: pair_tole
+integer, intent(in) :: nb_elem_slav
+integer, intent(in) :: nb_elem_mast
+integer, intent(in) :: list_elem_mast(nb_elem_mast)
+integer, intent(in) :: list_elem_slav(nb_elem_slav)
+integer, intent(inout) :: nb_pair_zone
+integer, pointer :: list_pair_zone(:)
+integer, intent(in) :: i_proc
+integer, intent(in) :: nb_proc
+character(len=24), intent(in) :: pair_method
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -287,7 +287,8 @@ implicit none
 !
 ! ----- Cut element in linearized sub-elements
 !
-        call apdcma(elem_slav_code, elin_slav_sub, elin_slav_nbnode, elin_slav_nbsub)
+        call apdcma(elem_slav_code,&
+                    elin_slav_sub, elin_slav_nbnode, elin_slav_nbsub, elin_slav_code)
 !
 ! ----- Compute weight of element
 !
@@ -407,7 +408,8 @@ implicit none
 !
 ! --------- Cut master element in linearized sub-elements
 !
-            call apdcma(elem_mast_code, elin_mast_sub, elin_mast_nbnode, elin_mast_nbsub)
+            call apdcma(elem_mast_code,&
+                        elin_mast_sub, elin_mast_nbnode, elin_mast_nbsub, elin_mast_code)
             if (debug) then
                 write(*,*) "Current slave element is cut: ", elin_mast_nbsub
             endif
@@ -418,30 +420,6 @@ implicit none
             do i_elin_slav = 1, elin_slav_nbsub
 !
                 inte_neigh_aux(1:4) = 0
-!
-! ------------- Code for current linearized slave sub-element
-!
-                if  (elin_slav_nbnode(i_elin_slav) .eq. 2 .and.&
-                     elem_slav_dime .eq. 2) then
-                    elin_slav_code = 'SE2'
-                elseif (elin_slav_nbnode(i_elin_slav) .eq. 3 .and.&
-                        elem_slav_dime .eq. 2) then
-                    elin_slav_code = 'SE3'
-                elseif (elin_slav_nbnode(i_elin_slav) .eq. 3 .and.&
-                        elem_slav_dime .eq. 3) then
-                    elin_slav_code = 'TR3'
-                elseif (elin_slav_nbnode(i_elin_slav) .eq. 4 .and.&
-                        elem_slav_dime .eq. 3) then
-                    elin_slav_code = 'QU4'
-                elseif (elin_slav_nbnode(i_elin_slav) .eq. 6 .and.&
-                        elem_slav_dime .eq. 3) then
-                    elin_slav_code = 'TR6'
-                elseif (elin_slav_nbnode(i_elin_slav) .eq. 9 .and.&
-                        elem_slav_dime .eq. 3) then
-                    elin_slav_code = 'QU9'
-                else
-                    ASSERT(.false.)
-                end if
 !
 ! ------------- Coordinates for current linearized slave sub-element
 !
@@ -456,18 +434,6 @@ implicit none
 ! ------------- Loop on linearized master sub-elements
 !
                 do i_elin_mast = 1, elin_mast_nbsub
-!
-! ----------------- Code for current linearized master sub-element
-!
-                    if (elin_mast_nbnode(i_elin_mast) .eq. 2 .and. elem_slav_dime .eq. 2) then
-                        elin_mast_code = 'SE2'
-                    elseif (elin_mast_nbnode(i_elin_mast) .eq. 3 .and. elem_slav_dime .eq. 3) then
-                        elin_mast_code = 'TR3'
-                    elseif (elin_mast_nbnode(i_elin_mast) .eq. 4 .and. elem_slav_dime .eq. 3) then
-                        elin_mast_code = 'QU4'
-                    else
-                        ASSERT(.false.)
-                    endif
 !
 ! ----------------- Get coordinates for current linearized master sub-element
 !
