@@ -66,8 +66,8 @@ real(kind=8), intent(out) :: predef(*), dpred(*)
 !
     data lvarc/'SECH','HYDR','IRRA','NEUT1','NEUT2','CORR','ALPHPUR','ALPHBETA'/
 ! 
-    call r8inir(npred, r8nnem(), predef, 1)
-    call r8inir(npred, r8nnem(), dpred, 1)
+    call r8inir(npred, 0.d0, predef, 1)
+    call r8inir(npred, 0.d0, dpred, 1)
 !
     if (irets .eq. 0) then
         predef(1)=sechm

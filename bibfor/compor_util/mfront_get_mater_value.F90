@@ -75,8 +75,8 @@ real(kind=8), intent(out) :: props(*)
     tabcod(:) = 0
     variextecode(1) = jvariexte
     call isdeco(variextecode(1), tabcod, 30)
-
-
+    nbcoef = 0
+!
     if (rela_comp .eq. 'MFRONT') then
         call mat_proto(fami, kpg, ksp, '+', imate, rela_comp, nprops, props)
     else
