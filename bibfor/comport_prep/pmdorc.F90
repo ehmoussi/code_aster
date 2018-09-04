@@ -230,6 +230,7 @@ character(len=16), intent(out) :: mult_comp
 !  
 ! - Save in list
 !
+    carcri(:) = 0.d0
     carcri(1)  = iter_inte_maxi
     carcri(2)  = ds_compor_para%v_para(i_comp)%type_matr_t
     carcri(3)  = resi_inte_rela

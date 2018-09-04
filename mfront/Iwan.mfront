@@ -112,7 +112,7 @@ nu.setGlossaryName("PoissonRatio");
     C[0] = 2*G;
 // C values recursively obtained 
     real aux=0.;
-    for (unsigned short i=1;i<Ns;i++){
+    for (unsigned short i=1;i<Ns+1;i++){
         aux = 1./(C[i-1])+aux;
         C[i]=1./(0.5*(leps[i]-leps[i-1])/(ltau[i]-ltau[i-1])-aux);
     }
