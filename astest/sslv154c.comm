@@ -84,7 +84,7 @@ LINST = DEFI_LIST_REEL   ( DEBUT      =  0.,
                            INTERVALLE =_F (JUSQU_A= 1.0, NOMBRE = 1   )
                                          );
 
-FISS=DEFI_FOND_FISS(MAILLAGE=MA,
+FISS=DEFI_FOND_FISS(MAILLAGE=MA, SYME='NON',
                     FOND_FISS=_F(GROUP_NO='NFF3'),
                     LEVRE_SUP=_F(GROUP_MA='LEVSUP'),
                     LEVRE_INF=_F(GROUP_MA='LEVINF'),

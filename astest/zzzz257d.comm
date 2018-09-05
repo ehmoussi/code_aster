@@ -177,7 +177,7 @@ MAIB=DEFI_GROUP(reuse =MAIB,
                                _F(NOM='LINF',
                                   INTERSEC=('LEVINF','CURVMAX',),),),);
 
-FISS=DEFI_FOND_FISS(MAILLAGE=MAIB,
+FISS=DEFI_FOND_FISS(MAILLAGE=MAIB, SYME='NON',
                     FOND_FISS=_F(GROUP_MA='FONDFISS',),
                     LEVRE_SUP=_F(GROUP_MA='LSUP',),
                     LEVRE_INF=_F(GROUP_MA='LINF',),);
