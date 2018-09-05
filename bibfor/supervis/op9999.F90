@@ -51,12 +51,12 @@ subroutine op9999()
 #include "asterfort/asmpi_info.h"
     mpi_int :: mrank, msize
     integer :: info, nbenre, nboct, iret, nbrank
-    integer :: ifm, iunres, iunmes
+    integer :: ifm, iunerr, iunres, iunmes
     integer :: i, jco, nbco
     integer :: nbext, nfhdf, nproc
     aster_logical :: bool
     character(len=8) :: k8b, ouinon, infr, proc
-    character(len=16) :: fhdf, typres
+    character(len=16) :: fchier, fhdf, typres
     character(len=80) :: fich
 !-----------------------------------------------------------------------
 !
@@ -86,7 +86,12 @@ subroutine op9999()
 !
     infr = 'NON'
     if (infr.eq.'OUI') then
-        ifm = iunifi('MESSAGE')
+        ifm = 0
+        fchier = ' '
+        ifm = 6
+        if (.not. ulexis( ifm )) then
+            call ulopen(ifm, ' ', fchier, 'NEW', 'O')
+        endif
 !
         typres = 'RESULTAT_SDASTER'
         nbco = 0

@@ -22,12 +22,12 @@
 """Commande LIRE_MAILLAGE"""
 
 
+from code_aster import Mesh
 
 def catalog_op():
     """Define the catalog of the fortran operator."""
     from code_aster.Cata.Commands.lire_maillage import keywords as main_keywords
-    from code_aster.Cata.DataStructure import maillage_sdaster
-    from code_aster.Cata.Syntax import MACRO, SIMP, tr
+    from code_aster.Cata.Syntax import OPER, SIMP, tr
 
     keywords = dict()
     keywords.update(main_keywords)
@@ -36,12 +36,12 @@ def catalog_op():
                             defaut='MED',
                             into=('ASTER', 'MED'))
 
-    cata = MACRO(nom="LIRE_MAILLAGE_OP",
-                 op=1,
-                 sd_prod=maillage_sdaster,
-                 fr=tr("Crée un maillage par lecture d'un fichier"),
-                 reentrant='n',
-                 **keywords
+    cata = OPER(nom="LIRE_MAILLAGE_OP",
+                op=1,
+                sd_prod=Mesh,
+                fr=tr("Crée un maillage par lecture d'un fichier"),
+                reentrant='n',
+                **keywords
     )
     return cata
 
@@ -76,9 +76,24 @@ def lire_maillage_ops(self, **args):
 
     args['UNITE'] = unit_op
 
+    from code_aster.Commands.ExecuteCommand import ExecuteCommand
     LIRE_MAILLAGE_OP = catalog_op()
-    mesh = LIRE_MAILLAGE_OP(**args)
+    class InheritedCommand(ExecuteCommand):
+        """Execute legacy operator."""
+        command_name = "LIRE_MAILLAGE_OP"
+        command_cata = LIRE_MAILLAGE_OP
+
+        def create_result(self, keywords):
+            """Initialize the :class:`~code_aster.Objects.Mesh`.
+
+            Arguments:
+                keywords (dict): Keywords arguments of user's keywords.
+            """
+            self._result = Mesh()
+
+    RunReadMesh = InheritedCommand()
+    mesh = RunReadMesh.run(**args)
 
     if fmt in need_conversion:
         UL.EtatInit(unit_op)
-    return 0
+    return mesh
