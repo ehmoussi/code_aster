@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -406,20 +406,6 @@ def check_optimization_fcflags(self):
     Debian bug report: http://gcc.gnu.org/bugzilla/show_bug.cgi?id=51267
     Check if it must be fixed using the 'VOLATILE' statement.
     """
-    with_volatile = self.uncompress64('''
-eJx9kkFPhDAQhe/+infbFgtaNtnshYOJa7LRxIsHrxUKNtR2A8X48x3YlCVZlFP7Zr43ry3A9J06
-33TqC0H3wfry5qzi21sVjNUwQx8144JudJfsR5FJvqILoyrhBBkJ/WNC6Ssdu6xvTKksfHvNBfXB
-drOfQ4F8blIVbRnhJaM2jnRaUgIOjjvsY2PlISVMIYWLEqag5HDLTLJN85EokMo/6vL/OrCo0yig
-9C4YN8xH9C2Vs9ANOlukyvMp1TZZ5qoxnoYZjszpDOPsM10r2084YdcTRs63HOFTL9ziVRN/f1FP
-HV0wEoHN6/MmyprcV0G5Bj49HF8OjxfYVaaOG3pLi8P78Y1FF77ou/qvfgGhoZdy
-''')
-    without_volatile = self.uncompress64('''
-eJx9kkFPhDAQhe/7K95tWwS0bGL2wsHommw08eLBa4WCDbXdQDH+fAfWsiSgnNo38715bQHG79S6
-upWf8KrzxhWb+7OML2ek10ZB993mV9PWq1q10X4QmeAreqxlGduYnGL1rX3hShW6jKt1IQ1cs+S8
-fGe3k59FjmxqkiVtGeEFozaOZFxSAg6Oa+xDY+kgBHQuYhskjEHJ4YrpaJdkA5EjEX/Uxf91YFan
-UUDhrNe2n47oGiqnvu1VOkuVZWOqXTTPVWE4DdMcqVUphtlnupKmG3HClhMGzjUc/kPN3MJVE39z
-UU8tXTCiGNuXp22QFbmvgmINfLw7Ph8eLrAtdRU29JYGh7fjKwsufNa3+LF+AEX8l7U=
-''')
     self.setenv('debug')
     flags = ['-g'] + Utils.to_list(self.env['FCFLAGS_ASTER_DEBUG'])
     self.start_msg('Setting fortran debug flags')
@@ -439,9 +425,9 @@ UU8tXTCiGNuXp22QFbmvgmINfLw7Ph8eLrAtdRU29JYGh7fjKwsufNa3+LF+AEX8l7U=
     # different cases to check
     # '-fno-tree-dse' is a workaround that works with gfortran 4.6
     last_ressort = ['-O0']
-    cases = [(without_volatile,
+    cases = [(fragment_without_volatile,
               (flags, flags + ['-fno-tree-dse']),),
-             (with_volatile,
+             (fragment_with_volatile,
               (flags, flags + ['-fno-tree-dse'], last_ressort),),]
     optflag = ''
     legend = 'failed'
@@ -450,7 +436,7 @@ UU8tXTCiGNuXp22QFbmvgmINfLw7Ph8eLrAtdRU29JYGh7fjKwsufNa3+LF+AEX8l7U=
             if testit(fcflags=opts, fragment=code,
                       mandatory=opts is last_ressort):
                 optflag = opts
-                if code is with_volatile:
+                if code is fragment_with_volatile:
                     # should be used in jeveux*.h in future
                     DEF = 'USE_VOLATILE_COMMON'
                     legend = 'VOLATILE is required'
@@ -476,3 +462,35 @@ def check_optional_features(self):
     code_checker(self, 'HAVE_TRACEBACKQQ', self.check_fc, fragment,
                  'Check for tracebackqq feature',
                  'failure', mandatory=False, setbool=True)
+
+# code fragments
+fragment_with_volatile = """
+       program testloc
+       volatile ius
+       integer*8 ius(1)
+       integer*8 i,iad,n,loc,exitcode
+       logical ok
+       integer*8 tab(6)
+       n = 2
+       iad = ( loc(tab) - loc(ius) ) / 8
+       do 11 i=1,n
+         ius(iad+(i*3-2) ) = -1
+         ius(iad+(i*3-1) ) = -1
+         ius(iad+(i*3  ) ) = -1
+  11   continue
+       ok = .true.
+       do 22 i=1,3*n
+         if (tab(i) .ne. -1) ok = .false.
+  22   continue
+       if (ok) then
+         exitcode = 0
+         print *, 'OK'
+       else
+         exitcode = 1
+         print *, 'FAILED'
+       endif
+       call EXIT(exitcode)
+       end program testloc
+"""
+
+fragment_without_volatile = fragment_with_volatile.replace("volatile ius", "")

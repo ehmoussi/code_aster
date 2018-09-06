@@ -47,7 +47,7 @@ ASTERINTEGER DEFP (MEMPID, mempid, ASTERINTEGER *val)
     ASTERINTEGER iret;
     pid_t numpro;
 
-#if defined _POSIX && DISABLE_VMPEAK != 1
+#if defined _POSIX && defined ENABLE_PROC_STATUS
 
     pid_t getpid(void);
     numpro = getpid();
