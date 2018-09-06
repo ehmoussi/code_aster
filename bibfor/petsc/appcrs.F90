@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -32,6 +32,7 @@ use petsc_data_module
 #include "asterfort/asmpi_info.h"
 #include "asterfort/assert.h"
 #include "asterfort/crsmsp.h"
+#include "asterfort/dismoi.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jelira.h"
 #include "asterfort/jemarq.h"
@@ -60,8 +61,11 @@ use petsc_data_module
     character(len=24) :: precon
     character(len=19) :: nomat, nosolv
     character(len=14) :: nonu
+    character(len=3)  :: kmatd
 !
     real(kind=8) :: fillin
+!
+    aster_logical :: lmhpc
 !
 !----------------------------------------------------------------
 !     Variables PETSc
@@ -99,6 +103,10 @@ use petsc_data_module
     call asmpi_info(rank=mrank, size=msize)
     rang = to_aster_int(mrank)
     nbproc = to_aster_int(msize)
+
+!  Est-ce que la matrice est distribuee dans asterxx?
+    call dismoi('MATR_HPC', nomat, 'MATR_ASSE', repk=kmatd)
+    lmhpc = (kmatd == 'OUI')
 !
 !     -- CAS PARTICULIER (LDLT_INC/SOR)
 !     -- CES PC NE SONT PAS PARALLELISES
@@ -140,52 +148,59 @@ use petsc_data_module
         spsomu = zk24(jslvk-1+3)(1:19)
         call crsmsp(spsomu, nomat, 0, 'IN_CORE')
 !        CREATION DES VECTEURS TEMPORAIRES UTILISES DANS LDLT_SP
-        if (lmd) then
-            call jeveuo(nonu//'.NUME.NEQU', 'L', jnequ)
-            call jeveuo(nonu//'.NUML.NEQU', 'L', jnequl)
-            call jeveuo(nonu//'.NUML.PDDL', 'L', jprddl)
-            nloc=zi(jnequl)
-            neq=zi(jnequ)
+        if (lmd.or.lmhpc) then
+            if (lmd) then
+               call jeveuo(nonu//'.NUME.NEQU', 'L', jnequ)
+               call jeveuo(nonu//'.NUML.NEQU', 'L', jnequl)
+               call jeveuo(nonu//'.NUML.PDDL', 'L', jprddl)
+               nloc = zi(jnequl)
+               neq = zi(jnequ)
+            else
+               call jeveuo(nonu//'.NUME.NEQU', 'L', jnequ)
+               call jeveuo(nonu//'.NUME.PDDL', 'L', jprddl)
+               nloc = zi(jnequ)
+               neq = zi(jnequ+1)
+            end if
             ndprop = 0
             do jcoll = 0, nloc-1
                 if (zi(jprddl+jcoll) .eq. rang) ndprop = ndprop+1
             end do
 !
-#if PETSC_VERSION_LT(3,8,0) 
+#if PETSC_VERSION_LT(3,8,0)
             ASSERT( xlocal == PETSC_NULL_OBJECT )
 #else
             ASSERT( xlocal == PETSC_NULL_VEC )
-#endif 
+#endif
             call VecCreateMPI(mpicou, to_petsc_int(ndprop), to_petsc_int(neq), xlocal, ierr)
         else
             call jelira(nonu//'.SMOS.SMDI', 'LONMAX', nsmdi)
             neq=nsmdi
 !
 !
-#if PETSC_VERSION_LT(3,8,0) 
+#if PETSC_VERSION_LT(3,8,0)
             ASSERT( xlocal == PETSC_NULL_OBJECT )
 #else
             ASSERT( xlocal == PETSC_NULL_VEC )
-#endif 
+#endif
             call VecCreateMPI(mpicou, PETSC_DECIDE, to_petsc_int(neq), xlocal, ierr)
         endif
         ASSERT(ierr.eq.0)
 !
-#if PETSC_VERSION_LT(3,8,0) 
+#if PETSC_VERSION_LT(3,8,0)
             ASSERT( xscatt == PETSC_NULL_OBJECT )
 #else
             ASSERT( xscatt == PETSC_NULL_VECSCATTER )
-#endif 
-#if PETSC_VERSION_LT(3,8,0) 
+#endif
+#if PETSC_VERSION_LT(3,8,0)
             ASSERT( xglobal == PETSC_NULL_OBJECT )
 #else
             ASSERT( xglobal == PETSC_NULL_VEC )
 #endif
-#if PETSC_VERSION_LT(3,8,0) 
+#if PETSC_VERSION_LT(3,8,0)
 #else
 ! Ne pas supprimer VecCreate: si xglobal vaut PETSC_NULL_VEC en entrée de VecScatterCreateToAll,
-! il n'est pas alloué en sortie 
-        call VecCreate( mpicou, xglobal, ierr )
+! il n'est pas alloué en sortie
+        call VecCreateSeq( PETSC_COMM_SELF, to_petsc_int(neq), xglobal, ierr )
         ASSERT( ierr == 0 )
 #endif
         call VecScatterCreateToAll(xlocal, xscatt, xglobal, ierr)
