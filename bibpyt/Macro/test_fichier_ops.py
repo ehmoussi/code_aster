@@ -77,9 +77,7 @@ dict_func_test = {
 #-------------------------------------------------------------------------
 
 
-def test_fichier_ops(self, FICHIER, NB_VALE, NB_VALE_I,
-                     VALE_CALC, VALE_CALC_I, VALE_CALC_K,
-                     TOLE_MACHINE, CRITERE, INFO, **kwargs):
+def test_fichier_ops(self, **kwargs):
     """
       Macro permettant de tester la non-regression d'un fichier.
       On teste le nombre de réels présents, et, facultativement, la
@@ -88,6 +86,17 @@ def test_fichier_ops(self, FICHIER, NB_VALE, NB_VALE_I,
     import aster
     from code_aster.Cata.Syntax import _F
     from Utilitai.Utmess import UTMESS
+
+    FICHIER = kwargs.get("FICHIER")
+    NB_VALE = kwargs.get("NB_VALE")
+    NB_VALE_I = kwargs.get("NB_VALE_I")
+    VALE_CALC = kwargs.get("VALE_CALC")
+    VALE_CALC_I = kwargs.get("VALE_CALC_I")
+    VALE_CALC_K = kwargs.get("VALE_CALC_K")
+    TOLE_MACHINE = kwargs.get("TOLE_MACHINE")
+    CRITERE = kwargs.get("CRITERE")
+    INFO = kwargs.get("INFO")
+
     # La macro compte pour 1 dans la numerotation des commandes
     self.set_icmd(1)
     # On importe les definitions des commandes a utiliser dans la macro
