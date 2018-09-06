@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -44,9 +44,8 @@ subroutine fonmai(resu, nomail, typfon, iocc, nbnoff)
     character(len=8) :: resu, nomail, typfon
 ! FONCTION REALISEE:
 !
-!     VERIFICATION DES ENTITES LORSQUE LE FOND EST DECRIT PAR
-!     DES MAILLES OU DE GROUPES DE MAILLES
-!     RENSEIGNEES DANS DEFI_FOND_FISS
+!     VERIFICATION DES ENTITES LORSQUE LE FRONT EST DECRIT PAR
+!     DES GROUPES DE MAILLES RENSEIGNEES DANS DEFI_FOND_FISS
 !     CONSTRUCTION DU FOND DE FISSURE A PARTIR CES DONNEES
 !
 !     ENTREES:
@@ -92,11 +91,9 @@ subroutine fonmai(resu, nomail, typfon, iocc, nbnoff)
 !     --- RECHERCHE DES NOEUDS SOMMET DES MAILLES RENSEIGNEES
 !     ------------------------------------------------------------------
     motcle(1) = 'GROUP_MA'
-    motcle(2) = 'MAILLE'
     typmcl(1) = 'GROUP_MA'
-    typmcl(2) = 'MAILLE'
     mafour='&&FONMAI.MALIGNE'
-    call cgnoor(mafour, nomail, motfac, iocc, 2,&
+    call cgnoor(mafour, nomail, motfac, iocc, 1,&
                 motcle, typmcl, typfon, nbma, ndorig,&
                 ndextr, typm, vecori)
     call jeveuo(mafour, 'L', jcour2)

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -24,6 +24,7 @@
 DEBUT( CODE=_F(NIV_PUB_WEB='INTERNET'))
 
 MA=LIRE_MAILLAGE(VERI_MAIL=_F(VERIF='OUI'),FORMAT='MED',  )
+
 
 MO=AFFE_MODELE(  MAILLAGE=MA, 
      AFFE=_F(  TOUT = 'OUI',PHENOMENE = 'MECANIQUE',MODELISATION = '3D') )
@@ -76,9 +77,7 @@ CHAMDEPL=MECA_STATIQUE(   MODELE=MO,   CHAM_MATER=CHMAT,
 
 FISS1=DEFI_FOND_FISS(MAILLAGE=MA,
                      SYME='OUI',
-                     FOND_FISS=_F(NOEUD = ( 'N186', 'N183', 'N182', 'N175', 'N174', 'N166',
-                                                 'N165', 'N155', 'N154', 'N142', 'N141', 'N121',
-                                                 'N120', 'N110', 'N109', 'N99',  'N98',  ),
+                     FOND_FISS=_F(GROUP_NO = ( 'FOND',),
                                   DTAN_ORIG=( 1.,  0.,  0.,),),
                      LEVRE_SUP=_F(  GROUP_MA = 'LEVREINS'),
                     );

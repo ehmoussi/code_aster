@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -42,7 +42,7 @@ subroutine fonnoe(resu, noma, cnxinv, nomobj, typfon,&
     character(len=19) :: cnxinv
 ! FONCTION REALISEE:
 !
-!     CONSTRUCTION DU FOND DE FISSURE A PARTIR DE NOEUDS OU DE GROUPES
+!     CONSTRUCTION DU FRONT DE FISSURE A PARTIR DE GROUPES
 !     DE NOEUDS RENSEIGNES DANS DEFI_FOND_FISS
 !
 !     ENTREES:
@@ -98,12 +98,10 @@ subroutine fonnoe(resu, noma, cnxinv, nomobj, typfon,&
 !
 ! --- CALCUL DU NOMBRE DE NOEUDS
     motcle(1) = 'GROUP_NO'
-    motcle(2) = 'NOEUD'
     typmcl(1) = 'GROUP_NO'
-    typmcl(2) = 'NOEUD'
     trav = '&&'//nompro//'.NOEUD'
     call reliem(' ', noma, 'NO_NOEUD', 'FOND_FISS', 1,&
-                2, motcle, typmcl, trav, nbnoff)
+                1, motcle, typmcl, trav, nbnoff)
     obtrav = '&&'//nomobj//'.NOEUD'
     call jeexin(obtrav, iret)
     if (iret .ne. 0) then
