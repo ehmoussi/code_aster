@@ -26,16 +26,18 @@ subroutine utgtme(nbarg, nomarg, valarg, iret)
     real(kind=8) :: valarg(*)
 ! person_in_charge: j-pierre.lefebvre at edf.fr
 ! ----------------------------------------------------------------------
-!     RENVOIE LA OU LES VALEURS ASSOCIEES AU(X) NOM(S) NOMARG DES
-!     PARAMETRES MEMOIRE EN MEGA OCTETS
-! IN  NBARG   : NOMBRE D'ARGUMENTS (>1)
-! IN  NOMARG  : NOMS DES PARAMETRES
-! OUT VALARG  : VALEURS DES PARAMETRES
-! OUT IRET    : CODE RETOUR
-!                =0 TOUTES LES VALEURS ONT ETE TROUVEES
-!               !=0 AU MOINS UNE VALEUR EST INVALIDE
 !
-! DEB ------------------------------------------------------------------
+!   Return the values related to the parameters names given with `nomarg`.
+!
+!   NB: VmPeak/VmSize may be unsupported on some platforms.
+!       The caller must check that the returned values are not null.
+!
+!   In  nbarg           Number of requested parameters
+!   In  nomarg(nbarg)   Parameters names
+!   Out valarg(nbarg)   Returned values for parameters in MB
+!   Out iret            Exit code: 0 if all parameters are found, <0 otherwise.
+!
+! ----------------------------------------------------------------------
     real(kind=8) :: svuse, smxuse
     common /statje/ svuse,smxuse
     real(kind=8) :: mxdyn, mcdyn, mldyn, vmxdyn, vmet, lgio
@@ -52,7 +54,7 @@ subroutine utgtme(nbarg, nomarg, valarg, iret)
     iv(1) = 0
     iv(2) = 0
     ival = mempid(iv)
-!     IV(1)=VmData IV(2)=VmSize IV(3)=VmPeak IV(4)=VmRSS
+    ASSERT(ival .eq. 0)
 !
     do k = 1, nbarg
 !
@@ -61,23 +63,13 @@ subroutine utgtme(nbarg, nomarg, valarg, iret)
 !
 ! ----- PIC MEMOIRE TOTALE
 !
-            if (ival .ne. -1) then
-                valarg(k) = dble(iv(2))/1024
-            else
-                iret = iret - 1
-                valarg(k) = 0.d0
-            endif
+            valarg(k) = dble(iv(2))/1024
 !
         else if (nom .eq. 'VMSIZE') then
 !
 ! ----- MEMOIRE INSTANTANNEE
 !
-            if (ival .ne. -1) then
-                valarg(k) = dble(iv(1))/1024
-            else
-                iret = iret - 1
-                valarg(k) = 0.d0
-            endif
+            valarg(k) = dble(iv(1))/1024
 !
         else if (nom .eq. 'LIMIT_JV') then
 !
