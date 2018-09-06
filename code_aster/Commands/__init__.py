@@ -54,6 +54,7 @@ from .calc_char_seisme import CALC_CHAR_SEISME
 from .calc_cham_elem import CALC_CHAM_ELEM
 from .calc_cham_flui import CALC_CHAM_FLUI
 from .calc_char_cine import CALC_CHAR_CINE
+from .calc_corr_ssd import CALC_CORR_SSD
 from .calc_erc_dyn import CALC_ERC_DYN
 from .calc_erreur import CALC_ERREUR
 from .calc_fatigue import CALC_FATIGUE
