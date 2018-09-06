@@ -23,6 +23,7 @@
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'), DEBUG=_F(SDVERI='OUI'))
 
 MA=LIRE_MAILLAGE(FORMAT='MED',  )
+DEFI_GROUP(reuse = MA, MAILLAGE=MA, CREA_GROUP_NO=_F(NOM='GN3', NOEUD='N3'))
 
 MO=AFFE_MODELE(     MAILLAGE=MA,
                          AFFE=_F(  TOUT = 'OUI',
@@ -109,7 +110,7 @@ NOM_CHAM='DEPL', RESULTAT=RESU,
 #--------------------------------------------------------------------
 
 FOND=DEFI_FOND_FISS( MAILLAGE=MA,
-                     FOND_FISS=_F( NOEUD = 'N3'),
+                     FOND_FISS=_F( GROUP_NO = 'GN3'),
                      SYME='OUI',
                      LEVRE_SUP=_F(MAILLE='M388'))
 

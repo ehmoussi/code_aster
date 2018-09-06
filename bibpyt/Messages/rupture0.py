@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -577,8 +577,8 @@ modèle %(k2)s.
 
     98: _(u"""
 Erreur dans l'utilisation du mot clé facteur FOND_FISS.
-Dans le cas d'un fond fermé, il n'est pas possible d'utiliser le mot clé simple NOEUD ou GROUP_NO.
-Vous devez obligatoirement utiliser le mot clé simple MAILLE ou GROUP_MA.
+Dans le cas d'un fond fermé, il n'est pas possible d'utiliser le mot clé simple GROUP_NO.
+Vous devez obligatoirement utiliser le mot clé simple GROUP_MA.
 """),
 
     99: _(u"""

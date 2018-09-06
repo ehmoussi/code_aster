@@ -36,15 +36,12 @@ DEFI_FOND_FISS=OPER(nom="DEFI_FOND_FISS",
     FOND_FISS = FACT(statut='o',max=2,
 
                      TYPE_FOND = SIMP(statut='f',typ='TXM',into=("OUVERT","FERME","INF","SUP"),defaut="OUVERT"),
-
-                     NOEUD    = SIMP(statut='c',typ=no  ,validators=NoRepeat(),max='**'),
                      GROUP_NO = SIMP(statut='f',typ=grno,max=1   ),
                      GROUP_MA = SIMP(statut='f',typ=grma,max=1   ),
-                     MAILLE   = SIMP(statut='c',typ=ma  ,validators=NoRepeat(),max='**'),
-                     regles=(UN_PARMI('GROUP_NO','NOEUD','GROUP_MA','MAILLE'),),
+                     regles=(UN_PARMI('GROUP_NO','GROUP_MA'),),
 
                      # possibilite d'ordonnencement automatique du fond si groupe de mailles
-                     b_grma = BLOC(condition = """(exists("GROUP_MA") or exists("MAILLE")) and not equal_to("TYPE_FOND", 'FERME')""",
+                     b_grma = BLOC(condition = """exists("GROUP_MA") and not equal_to("TYPE_FOND", 'FERME')""",
                                    NOEUD_ORIG    =SIMP(statut='c',typ=no,  max=1),
                                    GROUP_NO_ORIG =SIMP(statut='f',typ=grno,max=1),
                                    regles=(EXCLUS('NOEUD_ORIG','GROUP_NO_ORIG'),),
@@ -57,7 +54,7 @@ DEFI_FOND_FISS=OPER(nom="DEFI_FOND_FISS",
                                                 ),
                                   ),
                      # possibilite d'ordonnencement automatique du fond si groupe de mailles
-                     b_grma_ferme= BLOC(condition = """(exists("GROUP_MA") or exists("MAILLE")) and equal_to("TYPE_FOND", 'FERME')""",
+                     b_grma_ferme= BLOC(condition = """exists("GROUP_MA") and equal_to("TYPE_FOND", 'FERME')""",
                                         NOEUD_ORIG    =SIMP(statut='c',typ=no,  max=1),
                                         GROUP_NO_ORIG =SIMP(statut='f',typ=grno,max=1),
                                         regles=(EXCLUS('NOEUD_ORIG','GROUP_NO_ORIG'),),
