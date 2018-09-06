@@ -34,8 +34,6 @@ out = 'build'
 
 import os
 import os.path as osp
-import zlib
-import base64
 from functools import partial
 from itertools import chain
 from waflib import Configure, Logs, Utils, Build
@@ -338,10 +336,6 @@ def set_installdirs(self):
     if not self.env.LOCALEDIR:
         self.env.LOCALEDIR = osp.join(self.env.PREFIX, 'share', 'locale')
     self.env['ASTERLOCALEDIR'] = norm(self.env.LOCALEDIR)
-
-@Configure.conf
-def uncompress64(self, compressed):
-    return zlib.decompress(base64.decodestring(compressed))
 
 @Configure.conf
 def check_platform(self):
