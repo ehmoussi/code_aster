@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -99,7 +99,7 @@ vite = 1.
 
 MELES=CALC_FLUI_STRU(VITE_FLUI  = _F(VITE_MIN  = 1.,
                                      VITE_MAX  = 1.,
-                                     NB_POIN   = 1.),
+                                     NB_POIN   = 1),
                      BASE_MODALE= _F(MODE_MECA = MODES,
 
                                      AMOR_REDUIT = (0.15E-2,0.15E-2),

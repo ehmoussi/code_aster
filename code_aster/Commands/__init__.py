@@ -154,6 +154,7 @@ from .modi_modele_xfem import MODI_MODELE_XFEM
 from .modi_repere import MODI_REPERE
 from .nume_ddl import NUME_DDL
 from .nume_ddl_gene import NUME_DDL_GENE
+from .norm_mode import NORM_MODE
 from .post_champ import POST_CHAMP
 from .post_cham_xfem import POST_CHAM_XFEM
 from .post_dyna_moda_t import POST_DYNA_MODA_T
