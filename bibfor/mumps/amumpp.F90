@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -264,24 +264,43 @@ subroutine amumpp(option, nbsol, kxmps, ldist, type,&
             else
                 call wkvect('&&AMUMPP.RHS', 'V V C', nnbsol, jrhs)
             endif
-            do j = 1, nbeql
-                if ( pddl(j).eq.rang ) then
-                    nuglo = nulg(j)
-                    if(ltypr) then
-                        zr(jrhs+nuglo) = rsolu(j)
-                    else
-                        zc(jrhs+nuglo) = csolu(j)
+            if (.not.lpreco) then
+                do j = 1, nbeql
+                    if ( pddl(j).eq.rang ) then
+                        nuglo = nulg(j)
+                        if(ltypr) then
+                            zr(jrhs+nuglo) = rsolu(j)
+                        else
+                            zc(jrhs+nuglo) = csolu(j)
+                        endif
                     endif
+                enddo
+                if (ltypr) then
+                    call asmpi_comm_vect('REDUCE', 'R', nbval=nnbsol, vr=zr(jrhs))
+                    call jgetptc(jrhs, pteur_c, vr=zr(1))
+                    call c_f_pointer(pteur_c, rsolu2, [nnbsol])
+                else
+                    call asmpi_comm_vect('REDUCE', 'C', nbval=nnbsol, vc=zc(jrhs))
+                    call jgetptc(jrhs, pteur_c, vc=zc(1))
+                    call c_f_pointer(pteur_c, csolu2, [nnbsol])
                 endif
-            enddo
-            if (ltypr) then
-                call asmpi_comm_vect('REDUCE', 'R', nbval=nnbsol, vr=zr(jrhs))
-                call jgetptc(jrhs, pteur_c, vr=zr(1))
-                call c_f_pointer(pteur_c, rsolu2, [nnbsol])
             else
-                call asmpi_comm_vect('REDUCE', 'C', nbval=nnbsol, vc=zc(jrhs))
-                call jgetptc(jrhs, pteur_c, vc=zc(1))
-                call c_f_pointer(pteur_c, csolu2, [nnbsol])
+!               if mumps is used as a preconditionner in HPC mode (asterxx),
+!               each process knows the RHS and the numberings are the same
+                do j = 1, nnbsol
+                    if(ltypr) then
+                        zr(jrhs+j-1) = rsolu(j)
+                    else
+                        zc(jrhs+j-1) = csolu(j)
+                    endif
+                enddo
+                if (ltypr) then
+                    call jgetptc(jrhs, pteur_c, vr=zr(1))
+                    call c_f_pointer(pteur_c, rsolu2, [nnbsol])
+                else
+                    call jgetptc(jrhs, pteur_c, vc=zc(1))
+                    call c_f_pointer(pteur_c, csolu2, [nnbsol])
+                endif
             endif
         else
             if (ltypr) then
@@ -431,14 +450,28 @@ subroutine amumpp(option, nbsol, kxmps, ldist, type,&
             if (lmhpc) then
                 if (ltypr) then
                     call asmpi_comm_vect('BCAST', 'R', nbval=nnbsol, bcrank=0, vr=rsolu2)
-                    do j = 1, nbeql
-                        rsolu(j) = rsolu2(nulg(j)+1)
-                    enddo
+                    if (.not.lpreco) then
+                        do j = 1, nbeql
+                            rsolu(j) = rsolu2(nulg(j)+1)
+                        enddo
+                    else
+!               if mumps is used as a preconditionner in HPC mode (asterxx),
+!               each process knows the SOL and the numberings are the same
+                        do j = 1, nnbsol
+                            rsolu(j) = rsolu2(j)
+                        enddo
+                    endif
                 else
                     call asmpi_comm_vect('BCAST', 'C', nbval=nnbsol, bcrank=0, vc=csolu2)
-                    do j = 1, nbeql
-                        csolu(j) = csolu2(nulg(j)+1)
-                    enddo
+                    if (.not.lpreco) then
+                        do j = 1, nbeql
+                            csolu(j) = csolu2(nulg(j)+1)
+                        enddo
+                    else
+                        do j = 1, nnbsol
+                            csolu(j) = csolu2(j)
+                        enddo
+                    endif
                 endif
             endif
 !
