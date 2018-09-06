@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -139,8 +139,8 @@ subroutine jedebu(nbfi, mxzon, idb)
     common /idagod/ indiq_jjagod
 ! --------------------------------- ------------------------------------
     integer :: mxlici, iret
-    real(kind=8) :: rval(6)
-    character(len=8) :: k8tab(6)
+    real(kind=8) :: rval(3)
+    character(len=8) :: k8tab(3)
     parameter      ( mxlici = 67 )
     character(len=mxlici) :: clicit
     data clicit/' ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.$&_abcdefghijklmnopqrstuvwxyz'/
@@ -157,7 +157,7 @@ subroutine jedebu(nbfi, mxzon, idb)
     indiq_jjagod = 0
     do k=1,n
        lfic(k) = lofiem()
-    end do   
+    end do
     call gtoptr('maxbase', val, iret)
     if (val .le. 0 .or. iret .ne. 0) then
         mfic = mofiem()
@@ -222,17 +222,13 @@ subroutine jedebu(nbfi, mxzon, idb)
     vmet = vmxdyn
 !
     call utptme('MEM_MUMP', 0.d0, iret)
-    call utgtme(1, 'VMPEAK  ', rval, iret)
-    if (rval(1) .le. 0) then
+    k8tab(1) = 'LIMIT_JV'
+    k8tab(2) = 'VMPEAK'
+    k8tab(3) = 'VMSIZE'
+    call utgtme(3, k8tab, rval, iret)
+    if (rval(2) .le. 0 .or. rval(3) .le. 0) then
         call utmess('I', 'JEVEUX1_75')
     endif
-    k8tab(1) = 'LIMIT_JV'
-    k8tab(2) = 'MEM_TOTA'
-    k8tab(3) = 'VMSIZE'
-    k8tab(4) = 'CMAX_JV'
-    k8tab(5) = 'COUR_JV'
-    k8tab(6) = 'MEM_MUMP'
-    call utgtme(6, k8tab, rval, iret)
 !
     if (rval(3) .gt. 0) then
 !
