@@ -255,8 +255,6 @@ def set_define_from_env(self, define, start_msg, error_msg,
             raise Errors.ConfigurationError(error_msg % locals())
     except AttributeError:
         self.end_msg('no', 'YELLOW')
-        if setbool:
-            self.undefine(define)
     else:
         self.define(define, size, quote=False)
         # for easy access to the value in other wscripts
