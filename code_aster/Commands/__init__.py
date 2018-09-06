@@ -116,6 +116,7 @@ from .depl_interne import DEPL_INTERNE
 from .detruire import DETRUIRE
 from .dyna_alea_modal import DYNA_ALEA_MODAL
 from .dyna_non_line import DYNA_NON_LINE
+from .dyna_spec_modal import DYNA_SPEC_MODAL
 from .dyna_vibra import DYNA_VIBRA
 from .elim_lagr import ELIM_LAGR
 from .engendre_test import ENGENDRE_TEST
