@@ -21,13 +21,13 @@
 
 #ifdef _POSIX
 # ifdef __FreeBSD__
-#  include <kvm.h>
-#  include <sys/param.h>
-#  include <sys/sysctl.h>
-#  include <sys/user.h>
-#  include <err.h>
+#   include <kvm.h>
+#   include <sys/param.h>
+#   include <sys/sysctl.h>
+#   include <sys/user.h>
+#   include <err.h>
 # endif
-# include <fcntl.h>
+#   include <fcntl.h>
 #endif
 
 /*
@@ -38,17 +38,18 @@
 **
 ** Le numero du processus est recupere par getpid
 */
-ASTERINTEGER DEFP (MEMPID, mempid, ASTERINTEGER *val) 
+ASTERINTEGER DEFP (MEMPID, mempid, ASTERINTEGER *val)
 {
     static char filename[80];
     static char sbuf[1024];
     char* S;
     int fd, num_read;
-    long lmem;
+    ASTERINTEGER iret;
     pid_t numpro;
-#ifdef _POSIX
-    pid_t getpid(void);
 
+#if defined _POSIX && defined ENABLE_PROC_STATUS
+
+    pid_t getpid(void);
     numpro = getpid();
 
 # if defined FREEBSD
@@ -56,9 +57,7 @@ ASTERINTEGER DEFP (MEMPID, mempid, ASTERINTEGER *val)
 ** FreeBSD and some others without /proc ?
 */
 
-
 #define B2K(x) ((x) >> 10) /* bytes to kbytes */
-#define P2K(x) ((x) << (PAGE_SHIFT - 10)) /* pages to kbytes */
 
     char errbuf[_POSIX2_LINE_MAX];
     struct kinfo_proc *kp;
@@ -77,16 +76,11 @@ ASTERINTEGER DEFP (MEMPID, mempid, ASTERINTEGER *val)
 
     kvm_close(kd);
 
-    /* VmData */
-    val[0] = P2K((uintmax_t)kp->ki_dsize);
     /* VmSize */
-    val[1] = B2K((uintmax_t)kp->ki_size);
+    val[0] = B2K((uintmax_t)kp->ki_size);
     /* VmPeak - not defined in /compat/linux/proc/pid/status */
-    val[2] = -1;
-    /* VmRSS */
-    val[3] = P2K((uintmax_t)kp->ki_rssize);
-    /* VmStk */
-    lmem = P2K((uintmax_t)kp->ki_ssize);
+    val[1] = -1;
+    iret = 0;
 
 # elif defined DARWIN
 
@@ -94,11 +88,9 @@ ASTERINTEGER DEFP (MEMPID, mempid, ASTERINTEGER *val)
 OS X does not support retrieving memory consumptions through /proc or kvm library
 */
 
-    val[0] = 0 ;
-    val[1] = 0 ;
-    val[2] = 0 ;
-    val[3] = 0 ;
-    lmem = 0 ;
+    val[0] = 0;
+    val[1] = 0;
+    iret = 0;
 
 # else /* Linux */
 
@@ -106,39 +98,31 @@ OS X does not support retrieving memory consumptions through /proc or kvm librar
     fd = open(filename, O_RDONLY, 0);
     if (fd==-1) return -1;
     num_read=read(fd,sbuf,(sizeof sbuf)-1);
-/*  printf (" contenu du buffer = %s\n",sbuf); */   
+/*  printf (" contenu du buffer = %s\n",sbuf); */
     close(fd);
 
-    S=strstr(sbuf,"VmData:")+8;
-    val[0] = (ASTERINTEGER)atoi(S); 
-
     S=strstr(sbuf,"VmSize:")+8;
-    val[1] = (ASTERINTEGER)atoi(S); 
+    val[0] = (ASTERINTEGER)atoi(S);
 
     if ( strstr(sbuf,"VmPeak:") != NULL ) {
         S=strstr(sbuf,"VmPeak:")+8;
-        val[2] = atoi(S);
+        val[1] = atoi(S);
     } else {
-        val[2] = -1 ;  
+        val[1] = -1;
     }
 
-    S=strstr(sbuf,"VmRSS:")+7;
-    val[3] = (ASTERINTEGER)atoi(S); 
-      
-    S=strstr(sbuf,"VmStk:")+7;
-    lmem = atoi(S);
+    iret = 0;
 # endif
 
-    return lmem ;
+    return iret;
 
 #else
-/* 
+/*
 ** Pour retourner des valeurs sous Windows
 */
-    val[0] = 0 ;
-    val[1] = 0 ;
-    val[2] = 0 ;
-    val[3] = 0 ;
-    return -1 ;
+    val[0] = 0;
+    val[1] = 0;
+    return 0;
+
 #endif
 }
