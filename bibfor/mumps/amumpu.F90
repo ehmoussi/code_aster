@@ -288,8 +288,8 @@ subroutine amumpu(option, type, kxmps, usersm, nprec,&
         rval1=rval(1)
         rval2=rval(2)
         rval3=rval(3)
-        if ((rval1.lt.0.d0) .or. (rval2.lt.0.d0) .or. (rval3.lt.0.d0) .or. (rval2.le.rval3)&
-            .or. (iret.ne.0)) then
+        if (rval1.le.0.d0 .or. rval2.le.0.d0 .or. rval3.le.0.d0 &
+            .or. rval2.le.rval3 .or. iret.ne.0) then
             lpbmem=.true.
             call utmess('A', 'FACTOR_82')
             if (usersm(1:4) .eq. 'AUTO') then
@@ -625,7 +625,7 @@ subroutine amumpu(option, type, kxmps, usersm, nprec,&
 !!$OMP PARALLEL PRIVATE(NTHREADS, TID)
 !        TID = OMP_GET_THREAD_NUM()
 !        write(ifm,*) 'Hello World from thread = ', TID
-!       if (TID .EQ. 0) then  
+!       if (TID .EQ. 0) then
 !            NTHREADS = OMP_GET_NUM_THREADS()
 !            write(ifm,*) 'Number of threads = ', NTHREADS
 !        endif

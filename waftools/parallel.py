@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -48,6 +48,7 @@ def configure(self):
     self.check_fortran_verbose_flag()
     self.check_openmp()
     self.check_fortran_clib()
+    self.check_vmsize()
 
 ###############################################################################
 
@@ -119,3 +120,81 @@ def check_sizeof_mpi_int(self):
                           'Checking size of MPI_Fint integers',
                           'unexpected value for sizeof(MPI_Fint): %(size)s',
                           into=(4, 8), use='MPI')
+
+@Configure.conf
+def check_vmsize(self):
+    """Check for VmSize 'bug' with MPI."""
+    is_ok = not self.get_define('HAVE_MPI')
+    if not is_ok:
+        self.start_msg("Checking measure of VmSize during MPI_Init")
+        try:
+            size = self.check_cc(fragment=fragment_failure_vmsize,
+                                 mandatory=True, execute=True, define_ret=True,
+                                 use="MPI")
+        except Errors.ConfigurationError:
+            self.end_msg("failed (memory consumption can not be estimated "
+                         "during the calculation)", 'YELLOW')
+        else:
+            self.end_msg("ok (%s)" % size)
+            is_ok = True
+    if is_ok:
+        self.define('ENABLE_PROC_STATUS', 1)
+
+
+fragment_failure_vmsize = r"""
+/*
+   Check for unexpected value of VmPeak passing MPI_Init.
+*/
+
+#include <stdio.h>
+#include <fcntl.h>
+#include <string.h>
+
+#include "mpi.h"
+
+
+long read_vmsize()
+{
+    static char filename[80];
+    static char sbuf[1024];
+    char* str;
+    int fd, size;
+
+    sprintf(filename, "/proc/%ld/status", (long)getpid());
+    fd = open(filename, O_RDONLY, 0);
+    if (fd == -1)
+        return -1;
+    size = read(fd, sbuf, (sizeof sbuf) - 1);
+    close(fd);
+
+    str = strstr(sbuf, "VmSize:") + 8;
+    return atol(str);
+}
+
+int main(int argc, char *argv[])
+{
+    int iret;
+    long size;
+
+    size = read_vmsize();
+
+    MPI_Init(&argc, &argv);
+
+    sleep(1);
+    size = read_vmsize() - size;
+
+    printf("%ld kB", size);
+    if ( size > 10 * 1024 * 1024 ) {
+        // it should be around 100 MB (dynlibs loaded)
+        fprintf(stderr, "MPI initialization used more than 10 GB (%ld kB)\n", size);
+        iret = 1;
+    }
+    else {
+        iret = 0;
+    }
+
+    MPI_Finalize();
+
+    return iret;
+}
+"""

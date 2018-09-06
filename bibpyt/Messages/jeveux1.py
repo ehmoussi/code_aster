@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -94,7 +94,7 @@ Contactez le support technique.
 """),
 
     13 : _(u"""
-Le répertoire de noms %(k1)s contient %(i1)d points d'entrée, la requête 
+Le répertoire de noms %(k1)s contient %(i1)d points d'entrée, la requête
 sur le numéro %(i2)d est invalide.
 Ce message est un message d'erreur développeur.
 Contactez le support technique.
@@ -458,7 +458,7 @@ Contactez le support technique.
 """),
 
     75 : _(u"""
- La plate-forme utilisée ne permet pas d'avoir accès à la valeur de VmPeak.
+ La plate-forme utilisée ne permet pas d'avoir accès aux valeurs VmPeak/VmSize.
 """),
 
 

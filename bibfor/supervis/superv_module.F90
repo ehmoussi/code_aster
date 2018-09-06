@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -60,8 +60,8 @@ contains
     subroutine superv_before()
         mpi_int :: world, current
         integer :: maxThreads, iret
-        real(kind=8) :: rval(7), v0
-        character(len=8) :: k8tab(7)
+        real(kind=8) :: rval(6), v0
+        character(len=8) :: k8tab(6)
 
 !   Check MPI communicators: must be equal between operators
         call asmpi_comm('GET_WORLD', world)
@@ -82,9 +82,8 @@ contains
         k8tab(4) = 'CMAX_JV'
         k8tab(5) = 'RLQ_MEM'
         k8tab(6) = 'COUR_JV'
-        k8tab(7) = 'VMPEAK'
-        call utgtme(7, k8tab, rval, iret)
-        if ( rval(3) - rval(6) .lt. rval(5) ) then
+        call utgtme(6, k8tab, rval, iret)
+        if ( rval(3) .gt. 0 .and. rval(3) - rval(6) .lt. rval(5) ) then
 !           the remaining memory decreased: adjust it
             call utptme('RLQ_MEM ', rval(3) - rval(6), iret)
         endif

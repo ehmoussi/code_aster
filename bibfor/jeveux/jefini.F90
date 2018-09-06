@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -95,10 +95,12 @@ subroutine jefini(cond,arg_rank)
     k8tab(2)='MEM_TOTA'
     call utgtme(2, k8tab, rval, iret)
 !
-!    if (rval(2) .lt. rval(1)) then
-!        call utmess('I', 'JEVEUX1_77', nr=2, valr=rval)
-!    else if ((rval(2)-rval(1))/rval(1) .gt. 0.5d0) then
-!        call utmess('I', 'JEVEUX1_78', nr=2, valr=rval)
+!    if (rval(1) .gt. 0) then
+!        if (rval(2) .lt. rval(1)) then
+!            call utmess('I', 'JEVEUX1_77', nr=2, valr=rval)
+!        else if (rval(2) - rval(1) .gt. 0.5d0 * rval(1)) then
+!            call utmess('I', 'JEVEUX1_78', nr=2, valr=rval)
+!        endif
 !    endif
 !
 !     -------------  EDITION DES REPERTOIRES ---------------------------
