@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -43,7 +43,7 @@ subroutine utgtme(nbarg, nomarg, valarg, iret)
     real(kind=8) :: vmumps, vpetsc, rlqmem, vminit, vmjdc
     common /msolve/ vmumps,vpetsc,rlqmem,vminit,vmjdc
 ! ----------------------------------------------------------------------
-    integer :: k, iv(4), ival, lois
+    integer :: k, iv(2), ival, lois
     character(len=8) :: nom
 ! ----------------------------------------------------------------------
     iret = 0
@@ -51,12 +51,10 @@ subroutine utgtme(nbarg, nomarg, valarg, iret)
     lois = loisem()
     iv(1) = 0
     iv(2) = 0
-    iv(3) = 0
-    iv(4) = 0
     ival = mempid(iv)
 !     IV(1)=VmData IV(2)=VmSize IV(3)=VmPeak IV(4)=VmRSS
 !
-    do 100 k = 1, nbarg
+    do k = 1, nbarg
 !
         nom = nomarg(k)
         if (nom .eq. 'VMPEAK') then
@@ -64,28 +62,18 @@ subroutine utgtme(nbarg, nomarg, valarg, iret)
 ! ----- PIC MEMOIRE TOTALE
 !
             if (ival .ne. -1) then
-                valarg(k) = dble(iv(3))/1024
+                valarg(k) = dble(iv(2))/1024
             else
                 iret = iret - 1
                 valarg(k) = 0.d0
             endif
 !
-        else if (nom .eq. 'VMRSS') then
-!
-! ----- MEMOIRE RESIDENTE
-!
-            if (ival .ne. -1) then
-                valarg(k) = dble(iv(4))/1024
-            else
-                iret = iret - 1
-                valarg(k) = 0.d0
-            endif
         else if (nom .eq. 'VMSIZE') then
 !
 ! ----- MEMOIRE INSTANTANNEE
 !
             if (ival .ne. -1) then
-                valarg(k) = dble(iv(2))/1024
+                valarg(k) = dble(iv(1))/1024
             else
                 iret = iret - 1
                 valarg(k) = 0.d0
@@ -163,7 +151,7 @@ subroutine utgtme(nbarg, nomarg, valarg, iret)
             iret = iret - 1
         endif
 !
-100  end do
+    end do
 !
 ! FIN ------------------------------------------------------------------
 end subroutine
