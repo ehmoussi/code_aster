@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -74,7 +74,7 @@ subroutine jefini(cond,arg_rank)
     if (present(arg_rank)) then
        rank=arg_rank
     else
-!     
+!
 !   SI L'ARGUMENT N'EST PAS PRESENT, ON N'EFFECTUE PAS D'ECRITURE rank=1
 !
        rank=1
@@ -97,7 +97,7 @@ subroutine jefini(cond,arg_rank)
 !
     if (rval(2) .lt. rval(1)) then
         call utmess('I', 'JEVEUX1_77', nr=2, valr=rval)
-    else if ((rval(2)-rval(1))/rval(1) .gt. 0.5d0) then
+    else if (rval(2) - rval(1) .gt. 0.5d0 * rval(1)) then
         call utmess('I', 'JEVEUX1_78', nr=2, valr=rval)
     endif
 !
