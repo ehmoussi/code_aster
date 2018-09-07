@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -25,7 +25,7 @@ loi = LoiComportement(
     nom            = 'LIQU_VAPE',
     lc_type        = ('COUPLAGE_THM',),
     doc            =   """Loi de comportement pour un milieux poreux saturé par un composant présent sous forme liquide ou vapeur
-   avec changement de phase (Cf. [R7.01.11] pour plus de détails)."""            ,
+   avec changement de phase (Cf. [R7.01.11] pour plus de détails)."""              ,
     num_lc         = 3,
     nb_vari        = 3,
     nom_vari       = ('POROSITE','PVP','SATLIQ',),
@@ -38,4 +38,5 @@ loi = LoiComportement(
     proprietes     = None,
     syme_matr_tang = ('Yes',),
     exte_vari      = None,
+    deform_ldc     = ('OLD',),
 )

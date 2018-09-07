@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -155,10 +155,10 @@ subroutine lcpivm(fami, kpg, ksp, mate, compor,&
 !
         else
             line = 1
-            if (compor .eq. 'VMIS_ISOT_LINE') then
+            if (compor .eq. 'VMIS2ISOT_LINE') then
                 dp = seuil/(pente+mu*trbetr)
 !
-            else if (compor .eq. 'VMIS_ISOT_PUIS') then
+            else if (compor .eq. 'VMIS2ISOT_PUIS') then
                 tauteq=mu*eqbetr
                 mutrbe=mu*trbetr
                 call ecpuis(young, sigy, apui, 1.d0/npui, pm,&
@@ -173,7 +173,7 @@ subroutine lcpivm(fami, kpg, ksp, mate, compor,&
                 call ecpuis(young, sigy, apui, 1.d0/npui, pm,&
                             dp, rp, rprim)
                 pente=rprim
-            else if (compor.eq.'VMIS_ISOT_TRAC') then
+            else if (compor.eq.'VMIS2ISOT_TRAC') then
                 call rcfonc('E', 1, jprol, jvale, nbval,&
                             e = young* trbetr/3, nu = nu, p = pm, rp = rp, rprim = pente,&
                             airerp = airerp, sieleq = mu*eqbetr, dp = dp)

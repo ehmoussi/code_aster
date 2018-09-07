@@ -25,7 +25,7 @@ loi = LoiComportement(
     nom            = 'DRUCK_PRAGER',
     lc_type        = ('MECANIQUE',),
     doc            =   """Loi de Drucker_Prager, associée, pour la mécanique des sols (cf. [R7.01.16] pour plus de détails).
-   On suppose toutefois que le coefficient de dilatation thermique est constant. L'écrouissage peut être linéaire ou parabolique."""            ,
+   On suppose toutefois que le coefficient de dilatation thermique est constant. L'écrouissage peut être linéaire ou parabolique."""              ,
     num_lc         = 16,
     nb_vari        = 3,
     nom_vari       = ('EPSPEQ','EPSPVOL','INDIPLAS',),
@@ -37,4 +37,5 @@ loi = LoiComportement(
     proprietes     = None,
     syme_matr_tang = ('Yes',),
     exte_vari      = None,
+    deform_ldc     = ('OLD',),
 )

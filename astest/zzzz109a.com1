@@ -1,0 +1,46 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+POURSUITE(CODE='OUI', PAR_LOT='NON')
+
+import numpy as np
+
+# extract as dense matrix
+matr_dense = GOM.EXTR_MATR()
+
+# extract as sparse matrix
+data, row, col, dim = GOM.EXTR_MATR(sparse='True')
+
+matr_sparse = np.zeros((dim, dim))
+for i, j, value in zip(row, col, data):
+    matr_sparse[i, j] = value
+
+# check equality
+equal = np.allclose(matr_dense, matr_sparse)
+
+tab = CREA_TABLE(LISTE=_F(PARA='EQUAL',
+                          LISTE_I=int(equal)))
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+            VALE_CALC_I=1,
+            VALE_REFE_I=1,
+            NOM_PARA='EQUAL',
+            TABLE=tab,)
+
+FIN();

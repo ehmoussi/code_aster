@@ -600,6 +600,7 @@ COMPOR   = PhysicalQuantity(type='K16',
        'KIT2NVAR',
        'KIT3NVAR',
        'KIT4NVAR',
+       'DEFO_LDC',
     ),
     comment="""  COMPOR Type:K16 Comportement materiel
        RELCOM : relation de comportement : 'ELAS' , 'VMIS_ISOT_LINE' , ...
@@ -622,6 +623,7 @@ COMPOR   = PhysicalQuantity(type='K16',
        KIT2NVAR : number of internal variables for kit (2)
        KIT3NVAR : number of internal variables for (3)
        KIT4NVAR : number of internal variables for (4)
+       DEFO_LDC : deformation en entrée de la ldc : 'TOTALE' ou 'MECANIQUE'
 """)
 
 

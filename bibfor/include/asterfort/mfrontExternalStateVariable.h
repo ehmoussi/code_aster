@@ -17,20 +17,16 @@
 ! --------------------------------------------------------------------
 
 interface
-    subroutine  mfrontExternalStateVariable(carcri,&
-                                            fami   , kpg      , ksp, imate, &
-                                            temp   , dtemp    , &
-                                            predef , dpred    , &
-                                            neps   , epsth    , depsth, rela_comp)
+    subroutine  mfrontExternalStateVariable(carcri, rela_comp, fami, kpg, ksp, &
+                                            irets, ireth, &
+                                            sechm, sechp, hydrm, hydrp, &
+                                            predef, dpred)
         real(kind=8), intent(in) :: carcri(*)
+        character(len=16), intent(in) :: rela_comp
         character(len=*), intent(in) :: fami
-        integer, intent(in) :: kpg
-        integer, intent(in) :: ksp
-        integer, intent(in) :: imate
-        real(kind=8), intent(out) :: temp, dtemp
+        integer, intent(in) :: kpg, ksp
+        integer, intent(in)      :: irets, ireth
+        real(kind=8), intent(in) :: sechm, sechp, hydrm, hydrp
         real(kind=8), intent(out) :: predef(*), dpred(*)
-        integer, intent(in) :: neps
-        real(kind=8), intent(out) :: epsth(neps), depsth(neps)
-        character(len=16),optional,intent(in) :: rela_comp
     end subroutine mfrontExternalStateVariable
 end interface

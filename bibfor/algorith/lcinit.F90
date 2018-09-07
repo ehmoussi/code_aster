@@ -87,7 +87,7 @@ subroutine lcinit(fami, kpg, ksp, loi, typess,&
                     timed, timef, yd, epsd, deps,&
                     dy)
 !
-    else if (loi(1:8) .eq. 'MONOCRIS') then
+    else if ((loi(1:8) .eq. 'MONOCRIS') .or. (loi(1:8) .eq. 'MONO2RIS')) then
         call lcmmin(typess, essai, mod, nmat, materf,&
                     nr, nvi, yd, deps, dy,&
                     comp, nbcomm, cpmono, pgl, nfs,&

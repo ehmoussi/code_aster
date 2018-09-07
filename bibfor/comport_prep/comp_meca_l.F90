@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -55,7 +55,8 @@ implicit none
     what = whatz
     l_detec = .false.
     if (what .eq. 'CRISTAL') then
-        l_detec = (rela_comp .eq. 'MONOCRISTAL') .or. (rela_comp .eq.'POLYCRISTAL')
+        l_detec = (rela_comp .eq. 'MONOCRISTAL') .or. (rela_comp .eq. 'MONO2RISTAL') &
+        .or. (rela_comp .eq.'POLYCRISTAL')
     else if (what .eq. 'KIT_META') then
         l_detec = (rela_comp(1:4).eq.'META').and.(rela_comp.ne.'META_LEMA_ANI')
     else if (what .eq. 'KIT_THM') then
