@@ -84,7 +84,7 @@ implicit none
 !     MISE A JOUR DE SIGF , VINF
     call lceqvn(ndt, yf(1), sigf)
 !
-    if (rela_comp(1:8) .eq. 'MONOCRIS') then
+    if ((rela_comp(1:8) .eq. 'MONOCRIS') .or. (rela_comp(1:8) .eq. 'MONO2RIS')) then
 ! ---    DEFORMATION PLASTIQUE EQUIVALENTE CUMULEE MACROSCOPIQUE
         call lcdpec(vind, nbcomm, nmat, ndt, cpmono,&
                     materf, iter, nvi, itmax, toler,&

@@ -158,6 +158,10 @@ implicit none
 #include "asterfort/vrcpto.h"
 #include "asterfort/isdeco.h"
 #include "asterfort/calcExternalStateVariable5.h"
+#include "asterfort/lcExternalStateVariable.h"
+#include "asterfort/lcPrepareStrain.h"
+#include "asterfort/lcRestoreStrain.h"
+#include "asterfort/assert.h"
 !
 integer :: imate, ndim, nvi, kpg, ksp
 integer :: neps, nsig, nwkin, nwkout, ndsde
@@ -172,7 +176,7 @@ character(len=16) :: compor(*), option
 character(len=16), intent(in) :: mult_comp
 character(len=8) :: typmod(*)
 character(len=*) :: fami
-aster_logical :: cp
+aster_logical :: cp, l_large_strains
 integer :: icomp
 integer :: numlc
 integer :: codret
@@ -267,9 +271,13 @@ integer :: codret
 !     ----------------------------------------------------------------
 !
     integer :: tabcod(30), variextecode(1)
+    integer, parameter :: npred = 8
+    character(len=16) :: defo_ldc, defo_comp
+    real(kind=8) :: epsth(neps), depsth(neps)
+    real(kind=8) :: temp, dtemp
+    real(kind=8) :: predef(npred), dpred(npred)
 !     ----------------------------------------------------------------
 !     ------------------------------------------------------------------
-!
 !
 ! - Compute mechanical strain with PTOT external state variable
 !
@@ -287,6 +295,33 @@ integer :: codret
     call isdeco(variextecode(1), tabcod, 30)
     if (tabcod(HYGR) .eq. 1) then
         call calcExternalStateVariable5(fami, kpg, ksp, imate)
+    endif
+!
+! - Prepare input strain for the behaviour law
+!    -> If defo_ldc = 'MECANIQUE', prepare mechanical strain
+!    -> If defo_ldc = 'TOTALE' or 'OLD', keep total strain
+!
+    read (compor(21),'(A16)') defo_ldc
+    defo_comp = compor(3)
+    l_large_strains = (defo_comp .eq. 'SIMO_MIEHE') .or. (defo_comp .eq. 'GROT_GDEP')
+!
+    if (defo_ldc .eq. 'MECANIQUE') then 
+        if (.not. l_large_strains) then
+!
+!       * Compute "thermic" strains for some external state variables
+            call lcExternalStateVariable(carcri, compor, &
+                                         fami  , kpg      , ksp, imate, &
+                                         neps  , epsth    , depsth, &
+                                         temp  , dtemp, &
+                                         predef, dpred )
+!
+!       * Subtract to get mechanical strain
+!       (epsm and deps become mechanical strains)
+            call lcPrepareStrain(option, typmod,&
+                                 neps , epsth , depsth,&
+                                 epsm , deps)
+        endif
+
     endif
 !
 ! - Prepare index of behaviour law
@@ -518,9 +553,10 @@ integer :: codret
         call lc0050(fami, kpg, ksp, ndim, typmod,&
                     imate, compor, carcri, instam, instap,&
                     neps, epsm, deps, nsig, sigm,&
-                    nvi, vim, option, angmas, &
-                    icomp, sigp, vip, ndsde,&
-                    dsidep, codret)
+                    nvi, vim, option, angmas, icomp,&
+                    temp , dtemp , predef, dpred ,&
+                    sigp, vip, ndsde, dsidep, codret)
+                    
     case (54)
         call lc0054(fami, kpg, ksp, ndim, imate,&
                     compor, carcri, instam, instap, epsm,&
@@ -535,12 +571,12 @@ integer :: codret
                     nvi, dsidep, codret)
     case (58)
 !     MFRONT
-        call lc0058(fami, kpg, ksp, ndim, typmod,&
-                    imate, compor, carcri, instam, instap,&
-                    neps, epsm, deps, nsig, sigm,&
-                    nvi, vim, option, angmas, &
-                    icomp, sigp, vip, dsidep,&
-                    codret)
+        call lc0058(fami , kpg   , ksp   , ndim  , typmod,&
+                      imate, compor, carcri, instam, instap,&
+                      neps , epsm  , deps  , nsig  , sigm  ,&
+                      nvi  , vim   , option, angmas, icomp ,&
+                      temp , dtemp , predef, dpred ,&
+                      sigp , vip   , dsidep, codret)
     case (59)
         call lc0059(fami, kpg, ksp, imate,&
                     compor, carcri, instam, instap, neps, epsm,&
@@ -873,12 +909,12 @@ integer :: codret
 
     case (1058)
 !     MFRONT
-        call lc1058(fami, kpg, ksp, ndim, typmod,&
+        call lc1058(fami , kpg   , ksp   , ndim  , typmod,&
                     imate, compor, carcri, instam, instap,&
-                    neps, epsm, deps, nsig, sigm,&
-                    nvi, vim, option, angmas,&
-                    icomp, sigp, vip, dsidep,&
-                    codret)
+                    neps , epsm  , deps  , nsig  , sigm  ,&
+                    nvi  , vim   , option, angmas, icomp ,&
+                    temp , dtemp , predef, dpred ,&
+                    sigp , vip   , dsidep, codret)
 
     case (1137)
 !     MONOCRISTAL, POLYCRISTAL
@@ -1064,12 +1100,12 @@ integer :: codret
                     nvi, dsidep, codret)
     case (7058)
 !     MFRONT
-        call lc7058(fami, kpg, ksp, ndim, typmod,&
+        call lc7058(fami , kpg   , ksp   , ndim  , typmod,&
                     imate, compor, carcri, instam, instap,&
-                    neps, epsm, deps, nsig, sigm,&
-                    nvi, vim, option, angmas, &
-                    icomp, sigp, vip, dsidep,&
-                    codret)
+                    neps , epsm  , deps  , nsig  , sigm  ,&
+                    nvi  , vim   , option, angmas, icomp ,&
+                    temp , dtemp , predef, dpred ,&
+                    sigp , vip   , dsidep, codret)
 !
 ! --------------------------------------------------------------------------------------------------
 ! - For KIT_DDI
@@ -1164,5 +1200,17 @@ integer :: codret
     case default
         call utmess('F', 'COMPOR1_43', si=numlc)
     end select
+!
+! --------------------------------------------------------------------------------------------------
+!
+! - Restore total strain
+!
+    if (defo_ldc .eq. 'MECANIQUE') then 
+        if (.not. l_large_strains) then
+            call lcRestoreStrain(option, typmod,&
+                                 neps , epsth , depsth,&
+                                 epsm , deps)
+        endif
+    endif
 !
 end subroutine

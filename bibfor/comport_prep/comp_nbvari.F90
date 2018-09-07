@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -93,6 +93,7 @@ integer, optional, intent(out) :: nume_comp_(4)
     nb_vari_exte  = 0
     nb_vari       = 0
     l_implex      = .false.
+    l_meca_mfront = .false.
     if (present(kit_comp_)) then
         kit_comp(1:4) = kit_comp_(1:4)
     endif

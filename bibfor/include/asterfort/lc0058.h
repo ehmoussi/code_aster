@@ -22,6 +22,7 @@ interface
                       imate, compor, carcri, instam, instap,&
                       neps , epsm  , deps  , nsig  , sigm  ,&
                       nvi  , vim   , option, angmas, icomp ,&
+                      temp , dtemp , predef, dpred ,&
                       sigp , vip   , dsidep, codret)
         character(len=*), intent(in) :: fami
         integer, intent(in) :: kpg, ksp, ndim
@@ -38,7 +39,9 @@ interface
         real(kind=8), intent(in) :: vim(*)
         character(len=16), intent(in) :: option
         real(kind=8), intent(in) :: angmas(*)
-        integer, intent(in) :: icomp     
+        integer, intent(in) :: icomp  
+        real(kind=8), intent(in) :: temp, dtemp
+        real(kind=8), intent(in) :: predef(*), dpred(*)   
         real(kind=8), intent(out) :: sigp(6)
         real(kind=8), intent(out) :: vip(nvi)
         real(kind=8), intent(out) :: dsidep(6, 6)
