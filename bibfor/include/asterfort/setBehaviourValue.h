@@ -20,7 +20,7 @@
 !
 interface
     subroutine setBehaviourValue(rela_comp, defo_comp   , type_comp, type_cpla,&
-                                 mult_comp, post_iter   , kit_comp ,&
+                                 mult_comp, post_iter   , defo_ldc,  kit_comp ,&
                                  nb_vari  , nb_vari_comp, nume_comp,&
                                  l_compor_, v_compor_)
         character(len=16), intent(in) :: rela_comp
@@ -29,6 +29,7 @@ interface
         character(len=16), intent(in) :: type_cpla
         character(len=16), intent(in) :: mult_comp
         character(len=16), intent(in) :: post_iter
+        character(len=16), intent(in) :: defo_ldc
         character(len=16), intent(in) :: kit_comp(4)
         integer, intent(in)  :: nb_vari
         integer, intent(in)  :: nb_vari_comp(4)

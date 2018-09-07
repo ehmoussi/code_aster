@@ -24,7 +24,7 @@ from cata_comportement import LoiComportement
 loi = LoiComportement(
     nom            = 'FLUA_PORO_BETON',
     lc_type        = ('MECANIQUE',),
-    doc            =   """Loi Fluage pour le beton"""            ,
+    doc            =   """Loi Fluage pour le beton"""              ,
     num_lc         = 165,
     nb_vari        = 108,
     nom_vari=(
@@ -183,4 +183,5 @@ loi = LoiComportement(
     proprietes     = None,
     syme_matr_tang = ('Yes',),
     exte_vari      = None,
+    deform_ldc     = ('OLD',),
 )

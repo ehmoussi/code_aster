@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -25,17 +25,18 @@ loi = LoiComportement(
     nom            = 'META_V_IL_PT_RE',
     lc_type        = ('KIT_META',),
     doc            =   """Loi de comportement elasto-visco-plastique à écrouissage isotrope linéaire,
-   prenant en compte la métallurgie, la plasticité de transformation,et la restauration"""            ,
+   prenant en compte la métallurgie, la plasticité de transformation,et la restauration"""              ,
     num_lc         = 15,
     nb_vari        = 1,
     nom_vari       = ('EPSPEQ',),
     mc_mater       = ('ELAS_META','META_VISC','META_ECRO_LINE','META_PT','META_RE',
         ),
     modelisation   = ('3D','AXIS','D_PLAN',),
-    deformation    = ('PETIT','PETIT_REAC','GROT_GDEP','SIMO_MIEHE',),
+    deformation    = ('PETIT','PETIT_REAC','GROT_GDEP'),
     algo_inte      = ('SPECIFIQUE',),
     type_matr_tang = ('PERTURBATION','VERIFICATION',),
     proprietes     = None,
     syme_matr_tang = ('Yes',),
     exte_vari      = None,
+    deform_ldc     = ('OLD',),
 )
