@@ -17,21 +17,15 @@
 ! --------------------------------------------------------------------
 
 interface
-    subroutine  mfront_varc(fami   , kpg      , ksp      , imate, &
-                            nb_varc, list_varc, jvariexte,&
-                            temp   , dtemp    , &
-                            predef , dpred    , &
-                            neps   , epsth    , depsth, rela_comp)
+    subroutine  umatExternalStateVariable(fami, kpg, ksp, &
+                                            irets, ireth, &
+                                            sechm, sechp, hydrm, hydrp, &
+                                            predef, dpred)
         character(len=*), intent(in) :: fami
         integer, intent(in) :: kpg, ksp
-        integer, intent(in) :: imate
-        integer, intent(in) :: nb_varc
-        integer, intent(in) :: jvariexte
-        character(len=8), intent(in) :: list_varc(*)
-        real(kind=8), intent(out) :: temp, dtemp
+        integer, intent(in)      :: irets, ireth
+        real(kind=8), intent(in) :: sechm, sechp, hydrm, hydrp
         real(kind=8), intent(out) :: predef(*), dpred(*)
-        integer, intent(in) :: neps
-        real(kind=8), intent(out) :: epsth(neps), depsth(neps)
-        character(len=16),optional,intent(in) :: rela_comp
-    end subroutine mfront_varc
+    end subroutine umatExternalStateVariable
 end interface
+

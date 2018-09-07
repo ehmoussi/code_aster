@@ -171,6 +171,7 @@ int mfront_get_number_of_internal_state_variables(char* nomlib, STRING_SIZE lnom
     FreeStr(libname);
     FreeStr(symbol);
     FreeStr(symbname);
+    FreeStr(model);
     return *nbvari2;
 #else
     printf("Not available under Windows.\n");
@@ -202,6 +203,7 @@ int mfront_get_strain_model(char* nomlib, STRING_SIZE lnomlib,
         FreeStr(libname);
         FreeStr(symbol);
         FreeStr(symbname);
+        FreeStr(model);
         return 0;
     }
     else
@@ -210,6 +212,7 @@ int mfront_get_strain_model(char* nomlib, STRING_SIZE lnomlib,
         FreeStr(libname);
         FreeStr(symbol);
         FreeStr(symbname);
+        FreeStr(model);
         return *type;
     }
 #else
@@ -322,12 +325,10 @@ void DEFSSSS(MFRONT_GET_INTERNAL_STATE_VARIABLES_TYPES,
         }
     }
 
-
-
-
     FreeStr(libname);
     FreeStr(symbol);
     FreeStr(symbname);
+    FreeStr(model);
 #else
     printf("Not available under Windows.\n");
     abort();
@@ -383,6 +384,7 @@ void DEFSSSSP(MFRONT_GET_INTERNAL_STATE_VARIABLES,
     FreeStr(libname);
     FreeStr(symbol);
     FreeStr(symbname);
+    FreeStr(model);
 #else
     printf("Not available under Windows.\n");
     abort();

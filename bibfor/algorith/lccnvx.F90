@@ -94,7 +94,7 @@ subroutine lccnvx(fami, kpg, ksp, loi, mod,&
         call hbrcvx(sigf, vind, nmat, materf, seuil,&
                     vp, vecp)
 ! ======================================================================
-    else if (loi(1:8) .eq. 'MONOCRIS') then
+    else if ((loi(1:8) .eq. 'MONOCRIS') .or. (loi(1:8) .eq. 'MONO2RIS')) then
         call lcmmvx(sigf, vind, nmat, materf, nbcomm,&
                     cpmono, pgl, nvi, hsr, nfs,&
                     nsg, toutms, timed, timef, deps,&

@@ -100,7 +100,7 @@ subroutine lcjacb(fami, kpg, ksp, rela_comp, mod,&
                     yf, dy, nr, epsd, deps,&
                     drdy)
 !
-    else if (rela_comp(1:8) .eq. 'MONOCRIS') then
+    else if ((rela_comp(1:8) .eq. 'MONOCRIS') .or. (rela_comp(1:8) .eq. 'MONO2RIS')) then
         call lcmmja(mod, nmat, materf, timed,&
                     timef, itmax, toler, nbcomm, cpmono,&
                     pgl, nfs, nsg, toutms, hsr,&

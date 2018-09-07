@@ -22,7 +22,7 @@
 !
 ! - Access in <COMPOR> - Behaviour field - General
 !
-#define NB_COMP_MAXI 20
+#define NB_COMP_MAXI 21
 #define RELA_NAME    1
 #define NVAR         2
 #define DEFO         3
@@ -31,6 +31,7 @@
 #define NUME         6
 #define MULTCOMP     7
 #define POSTITER     8
+#define DEFO_LDC     21
 !
 ! - Access in <COMPOR> - Behaviour field - KITs
 !
