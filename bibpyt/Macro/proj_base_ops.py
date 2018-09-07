@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,15 +17,18 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-def proj_base_ops(self, BASE, NB_VECT,
-                  MATR_ASSE_GENE,
-                  VECT_ASSE_GENE,
-                  RESU_GENE,
-                  NUME_DDL_GENE,
-                  STOCKAGE, **args):
+def proj_base_ops(self, **args):
     """
      Ecriture de la macro PROJ_BASE
     """
+    BASE = args.get("BASE")
+    NB_VECT = args.get("NB_VECT")
+    MATR_ASSE_GENE = args.get("MATR_ASSE_GENE")
+    VECT_ASSE_GENE = args.get("VECT_ASSE_GENE")
+    RESU_GENE = args.get("RESU_GENE")
+    NUME_DDL_GENE = args.get("NUME_DDL_GENE")
+    STOCKAGE = args.get("STOCKAGE")
+
     ier = 0
     from Utilitai.Utmess import UTMESS
     # La macro compte pour 1 dans la numerotation des commandes
