@@ -29,6 +29,7 @@
 #include "astercxx.h"
 
 #include "Results/TimeDependantResultsContainer.h"
+#include "Supervis/ResultNaming.h"
 
 /**
  * @class ElasticEvolutionContainerInstance
@@ -42,8 +43,15 @@ public:
     /**
      * @brief Constructeur
      */
-    ElasticEvolutionContainerInstance(): 
-        TimeDependantResultsContainerInstance( "EVOL_ELAS" )
+    ElasticEvolutionContainerInstance():
+        ElasticEvolutionContainerInstance( ResultNaming::getNewResultName() )
+    {};
+
+    /**
+     * @brief Constructeur
+     */
+    ElasticEvolutionContainerInstance( const std::string name ):
+        TimeDependantResultsContainerInstance( name, "EVOL_ELAS" )
     {};
 };
 

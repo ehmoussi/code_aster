@@ -123,6 +123,8 @@ class Serializer(object):
             logger.info("Saving objects...")
             objList = []
             for name, obj in ctxt.items():
+                if name == "CO":
+                    continue
                 try:
                     logger.info("{0:<24s} {1}".format(name, type(obj)))
                     pickler.save_one(obj)
