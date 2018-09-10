@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -110,10 +110,6 @@ cata_msg = {
     70 : _(u"""
  Vous avez demandé une impression au format ASTER sans préciser de MAILLAGE.
  Aucune impression ne sera réalisée car IMPR_RESU au format ASTER n'imprime qu'un MAILLAGE.
-"""),
-
-    73 : _(u"""
- l'impression avec sélection sur des entités topologiques n'a pas de sens au format CASTEM  : toutes les valeurs sur tout le maillage seront donc imprimées.
 """),
 
     74 : _(u"""

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -521,25 +521,6 @@ class ETAPE(B_OBJECT.OBJECT, B_CODE.CODE):
         val: valeurs des paramètres (même cardinal que nom_param)
         Elle retourne 2 valeurs : code_retour, valeur
         """
-        def _print_msg(case, **kwargs):
-            """Print the error message"""
-            from Utilitai.Utmess import UTMESS
-            if coderr.strip() == '':
-                # silencieux
-                return
-            suite = coderr + '+'
-            UTMESS(suite, 'FONCT0_9', valk=nom_fonction)
-            # prend les messages dans le catalogues
-            if case == 1:
-                UTMESS(suite, 'FONCT0_67', **kwargs)
-            elif case == 2:
-                UTMESS(suite, 'FONCT0_68', **kwargs)
-            elif case == 3:
-                UTMESS(suite, 'FONCT0_69', **kwargs)
-            elif case == 4:
-                UTMESS(suite, 'FONCT0_70', **kwargs)
-            UTMESS(coderr, 'FONCT0_52')
-
         nom_param = tuple([p.strip() for p in nom_param])
         self._cache_func = getattr(self, '_cache_func', {})
         self._cache_ctxt = getattr(self, '_cache_ctxt', (None, {}))
@@ -549,19 +530,17 @@ class ETAPE(B_OBJECT.OBJECT, B_CODE.CODE):
         else:
             # XXX ne fonctionne pas en poursuite (cf. zzzz100a)
             # objet_sd = self.get_concept(nom_fonction.strip())
-            objet_sd = self.parent.get_sd_avant_etape(
-                nom_fonction.strip(), self)
+            objet_sd = self.parent.get_sd_avant_etape(nom_fonction.strip(),
+                                                      self)
             self._cache_func[nom_fonction] = {'fonction': objet_sd}
-        assert objet_sd is not None, "concept inconnu : %s" % nom_fonction.strip(
-        )
+        assert objet_sd is not None, ("concept inconnu : {0}"
+                                      .format(nom_fonction.strip()))
 
         if len(nom_param) != len(val):
-            _print_msg(1)
+            _print_msg(coderr, nom_fonction, 1)
             return 4, None
 
-        if self._cache_func.get(nom_fonction).get(nom_param):
-            inter = self._cache_func[nom_fonction][nom_param]
-        else:
+        if not self._cache_func.get(nom_fonction).get(nom_param):
             # paramètres manquants, paramètres en double
             miss, inter, dble = B_utils.miss_dble(objet_sd.nompar, nom_param)
             self._cache_func[nom_fonction][nom_param] = inter
@@ -569,36 +548,23 @@ class ETAPE(B_OBJECT.OBJECT, B_CODE.CODE):
                 args = list(miss)
                 args.sort()
                 args = ', '.join([repr(nom) for nom in args])
-                _print_msg(2, valk=args)
+                _print_msg(coderr, nom_fonction, 2, valk=args)
                 return 4, None
 
             if len(dble) > 0:
                 args = list(dble)
                 args.sort()
                 args = ', '.join(args)
-                _print_msg(3, valk=args)
+                _print_msg(coderr, nom_fonction, 3, valk=args)
                 return 4, None
 
-        # appel de fonction definie dans le corps du jeu de commandes
+        # parameters as dict
+        dval = dict(zip(nom_param, val))
+        # evaluation de la formule
         try:
-            context = {}
-            # mettre le contexte du parent de l'étape courante (INCLUDE par
-            # exemple)
-            last_etape, last_ctxt = self._cache_ctxt
-            if last_etape != id(self):
-                last_ctxt = {}
-                last_ctxt.update(self.parent.get_contexte_avant(self))
-                self._cache_ctxt = id(self), last_ctxt
-            context = last_ctxt
-            # récupération des constantes locales en cas de MACRO
-            context.update(getattr(self.parent, 'macro_const_context', {}))
-            # on reduit le dict au seul parametre de la formule
-            dp = dict(zip(nom_param, val))
-            for param in inter:
-                context[param] = dp[param]
-            res = eval(objet_sd.code, self.jdc.const_context, context)
+            res = objet_sd(**dval)
         except:
-            _print_msg(4, valk=traceback.format_exc())
+            _print_msg(coderr, nom_fonction, 4, valk=traceback.format_exc())
             return 4, None
         return 0, res
 
@@ -880,3 +846,23 @@ class ETAPE(B_OBJECT.OBJECT, B_CODE.CODE):
             return 0
         self.sd.valeur = rval
         return 1
+
+
+def _print_msg(coderr, nom_fonction, case, **kwargs):
+    """Print the error message"""
+    from Utilitai.Utmess import UTMESS
+    if coderr.strip() == '':
+        # silencieux
+        return
+    suite = coderr + '+'
+    UTMESS(suite, 'FONCT0_9', valk=nom_fonction)
+    # prend les messages dans le catalogues
+    if case == 1:
+        UTMESS(suite, 'FONCT0_67', **kwargs)
+    elif case == 2:
+        UTMESS(suite, 'FONCT0_68', **kwargs)
+    elif case == 3:
+        UTMESS(suite, 'FONCT0_69', **kwargs)
+    elif case == 4:
+        UTMESS(suite, 'FONCT0_70', **kwargs)
+    UTMESS(coderr, 'FONCT0_52')

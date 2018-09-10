@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,17 +15,15 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine smcaba(ftrc, trc, nbhist, x, dz,&
-                      ind)
-        integer :: nbhist
-        real(kind=8) :: ftrc((3*nbhist), 3)
-        real(kind=8) :: trc((3*nbhist), 5)
-        real(kind=8) :: x(5)
-        real(kind=8) :: dz(4)
-        integer :: ind(6)
+    subroutine smcaba(x , nb_hist, trc, ftrc, ind,&
+                      dz)
+        real(kind=8), intent(in) :: x(5)
+        integer, intent(in) :: nb_hist
+        real(kind=8), intent(in) :: trc((3*nb_hist), 5)
+        real(kind=8), intent(in) :: ftrc((3*nb_hist), 3)
+        integer, intent(in) :: ind(6)
+        real(kind=8), intent(inout) :: dz(4)
     end subroutine smcaba
 end interface

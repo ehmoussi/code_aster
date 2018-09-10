@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,10 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmfocc(phase      , model     , mate     , nume_dof , list_func_acti,&
-                  ds_contact , ds_measure, hval_algo, hval_incr, hval_veelem   ,&
-                  hval_veasse, ds_constitutive)
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine nmfocc(phase      , model     , ds_material, nume_dof , list_func_acti ,&
+                  ds_contact , ds_measure, hval_algo  , hval_incr, ds_constitutive)
 !
 use NonLin_Datastructure_type
 !
@@ -38,20 +38,16 @@ implicit none
 #include "asterfort/nmvcex.h"
 #include "asterfort/vtaxpy.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=10), intent(in) :: phase
-    character(len=24), intent(in) :: model
-    character(len=24), intent(in) :: mate
-    character(len=24), intent(in) :: nume_dof
-    integer, intent(in) :: list_func_acti(*)
-    type(NL_DS_Contact), intent(in) :: ds_contact
-    type(NL_DS_Measure), intent(inout) :: ds_measure
-    character(len=19), intent(in) :: hval_algo(*)
-    character(len=19), intent(in) :: hval_incr(*)
-    character(len=19), intent(in) :: hval_veelem(*)
-    character(len=19), intent(in) :: hval_veasse(*)
-    type(NL_DS_Constitutive), intent(in) :: ds_constitutive
+character(len=10), intent(in) :: phase
+character(len=24), intent(in) :: model
+type(NL_DS_Material), intent(in) :: ds_material
+character(len=24), intent(in) :: nume_dof
+integer, intent(in) :: list_func_acti(*)
+type(NL_DS_Contact), intent(in) :: ds_contact
+type(NL_DS_Measure), intent(inout) :: ds_measure
+character(len=19), intent(in) :: hval_algo(*)
+character(len=19), intent(in) :: hval_incr(*)
+type(NL_DS_Constitutive), intent(in) :: ds_constitutive
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -66,15 +62,13 @@ implicit none
 !               'CONVERGENC' - PHASE DE CONVERGENCE
 !               'CORRECTION' - PHASE DE CORRECTION
 ! In  model            : name of model
-! In  mate             : name of material characteristics (field)
+! In  ds_material      : datastructure for material parameters
 ! In  nume_dof         : name of numbering (NUME_DDL)
 ! In  list_func_acti   : list of active functionnalities
 ! In  ds_contact       : datastructure for contact management
 ! IO  ds_measure       : datastructure for measure and statistics management
 ! In  hval_incr        : hat-variable for incremental values fields
 ! In  hval_algo        : hat-variable for algorithms fields
-! In  hval_veelem      : hat-variable for elementary vectors
-! In  hval_veasse      : hat-variable for vectors (node fields)
 ! In  ds_constitutive  : datastructure for constitutive laws management
 !
 ! --------------------------------------------------------------------------------------------------
@@ -84,7 +78,7 @@ implicit none
     aster_logical :: l_xthm
     character(len=8) :: mesh
     character(len=19) :: vect_elem_cont, vect_elem_frot
-    character(len=19) :: vect_asse_frot, vect_asse_cont, vect_asse_fint
+    character(len=19) :: vect_asse_frot, vect_asse_cont
     character(len=19) :: disp_prev, disp_cumu_inst, disp_newt_curr, vite_prev, acce_prev, vite_curr
     character(len=19) :: varc_prev, varc_curr, time_prev, time_curr
 !
@@ -108,17 +102,16 @@ implicit none
 !
 ! - Get fields
 !
-    call nmchex(hval_veasse, 'VEASSE', 'CNFINT', vect_asse_fint)
     call nmchex(hval_incr, 'VALINC', 'DEPMOI', disp_prev)
     call nmchex(hval_incr, 'VALINC', 'VITMOI', vite_prev)
     call nmchex(hval_incr, 'VALINC', 'ACCMOI', acce_prev)
     call nmchex(hval_incr, 'VALINC', 'VITPLU', vite_curr)
     call nmchex(hval_algo, 'SOLALG', 'DEPDEL', disp_cumu_inst)
     call nmchex(hval_algo, 'SOLALG', 'DDEPLA', disp_newt_curr)
-    call nmchex(hval_veelem, 'VEELEM', 'CNELTC', vect_elem_cont)
-    call nmchex(hval_veelem, 'VEELEM', 'CNELTF', vect_elem_frot)
-    call nmchex(hval_veasse, 'VEASSE', 'CNELTC', vect_asse_cont)
-    call nmchex(hval_veasse, 'VEASSE', 'CNELTF', vect_asse_frot)
+    vect_elem_cont = ds_contact%veeltc
+    vect_elem_frot = ds_contact%veeltf
+    vect_asse_cont = ds_contact%cneltc
+    vect_asse_frot = ds_contact%cneltf
     call nmchex(hval_incr, 'VALINC', 'COMMOI', varc_prev)
     call nmchex(hval_incr, 'VALINC', 'COMPLU', varc_curr)
     call nmvcex('INST', varc_prev, time_prev)
@@ -130,24 +123,13 @@ implicit none
         goto 999
     endif
 !
-! - Prepare internal forces: no previous contact forces
-!
-    if (phase .eq. 'CORRECTION') then
-        if (l_elem_cont .and. (.not.l_all_verif)) then
-            call vtaxpy(-1.d0, vect_asse_cont, vect_asse_fint)
-        endif
-        if (l_elem_frot .and. (.not.l_all_verif) .and. (.not.l_xthm)) then
-            call vtaxpy(-1.d0, vect_asse_frot, vect_asse_fint)
-        endif
-    endif
-!
 ! - Compute contact forces
 !
     if (l_elem_cont .and. (.not.l_all_verif) .and. &
         ((.not.l_cont_lac) .or. ds_contact%nb_cont_pair.ne.0)) then
         call nmtime(ds_measure, 'Init'  , 'Cont_Elem')
         call nmtime(ds_measure, 'Launch', 'Cont_Elem')
-        call nmelcv('CONT'        , mesh     , model    , mate     , ds_contact    ,&
+        call nmelcv('CONT'        , mesh     , model    , ds_material, ds_contact    ,&
                     disp_prev     , vite_prev, acce_prev, vite_curr, disp_cumu_inst,&
                     disp_newt_curr, vect_elem_cont, time_prev, time_curr, ds_constitutive)
         call assvec('V', vect_asse_cont, 1, vect_elem_cont, [1.d0],&
@@ -164,7 +146,7 @@ implicit none
     if (l_elem_frot .and. (.not.l_all_verif) .and. (.not.l_xthm)) then
         call nmtime(ds_measure, 'Init'  , 'Cont_Elem')
         call nmtime(ds_measure, 'Launch', 'Cont_Elem')
-        call nmelcv('FROT'        , mesh     , model    , mate     , ds_contact    ,&
+        call nmelcv('FROT'        , mesh     , model    , ds_material, ds_contact    ,&
                     disp_prev     , vite_prev, acce_prev, vite_curr, disp_cumu_inst,&
                     disp_newt_curr, vect_elem_frot, time_prev, time_curr, ds_constitutive)
         call assvec('V', vect_asse_frot, 1, vect_elem_frot, [1.d0],&
@@ -173,17 +155,6 @@ implicit none
         call nmrinc(ds_measure, 'Cont_Elem')
         if (niv .eq. 2) then
             call nmdebg('VECT', vect_asse_frot, ifm)
-        endif
-    endif
-!
-! - Prepare internal forces: add new contact forces
-!
-    if (phase .eq. 'CORRECTION') then
-        if (l_elem_cont .and. (.not.l_all_verif)) then
-            call vtaxpy(+1.d0, vect_asse_cont, vect_asse_fint)
-        endif
-        if (l_elem_frot .and. (.not.l_all_verif) .and. (.not.l_xthm)) then
-            call vtaxpy(+1.d0, vect_asse_frot, vect_asse_fint)
         endif
     endif
 !

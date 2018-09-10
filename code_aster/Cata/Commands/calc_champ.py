@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -24,11 +24,15 @@ from code_aster.Cata.Commons import *
 
 
 def calc_champ_prod(RESULTAT,**args):
+   if args.get('__all__'):
+       return (resultat_sdaster, )
+
    if AsType(RESULTAT) != None : return AsType(RESULTAT)
    raise AsException("type de concept resultat non prevu : RESULTAT=%s (type %s)" \
         % (RESULTAT, type(RESULTAT)))
 
-CALC_CHAMP=OPER(nom="CALC_CHAMP",op=52,sd_prod=calc_champ_prod,reentrant='f',
+CALC_CHAMP=OPER(nom="CALC_CHAMP",op=52,sd_prod=calc_champ_prod,
+                reentrant='f:RESULTAT',
                 fr=tr("Completer ou creer un resultat en calculant des champs par elements ou aux noeuds"),
      reuse=SIMP(statut='c', typ=CO),
      MODELE           = SIMP(statut='f',typ=modele_sdaster),
@@ -93,7 +97,7 @@ CALC_CHAMP=OPER(nom="CALC_CHAMP",op=52,sd_prod=calc_champ_prod,reentrant='f',
          FORCE        = SIMP(statut='f',typ='TXM',validators=NoRepeat(),max='**',
                              fr=tr("Options pour des forces nodales et des reactions nodales"),
                              into=C_NOM_CHAM_INTO(phenomene='FORCE',),),
-         
+
          EXCIT       = FACT(statut='f',max='**',
                         fr=tr("Charges contenant les temperatures, les efforts repartis pour les poutres..."),
                         regles=(EXCLUS('FONC_MULT','COEF_MULT',),),
@@ -102,7 +106,7 @@ CALC_CHAMP=OPER(nom="CALC_CHAMP",op=52,sd_prod=calc_champ_prod,reentrant='f',
            COEF_MULT    = SIMP(statut='f',typ='R'),
            TYPE_CHARGE  = SIMP(statut='f',typ='TXM',defaut="FIXE_CSTE",into=("FIXE_CSTE",),),
            ),
-           
+
          CHAM_UTIL = FACT(statut='f', max='**',
              regles = (UN_PARMI('FORMULE', 'CRITERE', 'NORME'), ),
              NOM_CHAM = SIMP(statut='o', typ='TXM',
@@ -125,33 +129,33 @@ CALC_CHAMP=OPER(nom="CALC_CHAMP",op=52,sd_prod=calc_champ_prod,reentrant='f',
          regles=(AU_MOINS_UN ('CONTRAINTE', 'DEFORMATION', 'ENERGIE', 'CRITERES', 'VARI_INTERNE', 'PROPRIETES', 'ACOUSTIQUE', 'FORCE','CHAM_UTIL'),),
          CONTRAINTE   = SIMP(statut='f',typ='TXM',validators=NoRepeat(),max='**',
                              fr=tr("Options pour le calcul de contraintes et efforts generalises"),
-                             into=C_NOM_CHAM_INTO(phenomene='CONTRAINTE',categorie='dyna'),),
+                             into=C_NOM_CHAM_INTO(phenomene='CONTRAINTE',categorie='lin'),),
 
          DEFORMATION  = SIMP(statut='f',typ='TXM',validators=NoRepeat(),max='**',
                              fr=tr("Options pour le calcul de deformations"),
-                             into=C_NOM_CHAM_INTO(phenomene='DEFORMATION',categorie='dyna'),),
+                             into=C_NOM_CHAM_INTO(phenomene='DEFORMATION',categorie='lin'),),
 
          ENERGIE      = SIMP(statut='f',typ='TXM',validators=NoRepeat(),max='**',
                              fr=tr("Options pour le calcul d'energies"),
-                             into=C_NOM_CHAM_INTO(phenomene='ENERGIE',categorie='dyna'),),
+                             into=C_NOM_CHAM_INTO(phenomene='ENERGIE',categorie='lin'),),
 
          CRITERES     = SIMP(statut='f',typ='TXM',validators=NoRepeat(),max='**',
                              fr=tr("Options pour le calcul de criteres"),
-                             into=C_NOM_CHAM_INTO(phenomene='CRITERES',categorie='dyna'),),
+                             into=C_NOM_CHAM_INTO(phenomene='CRITERES',categorie='lin'),),
 
          VARI_INTERNE = SIMP(statut='f',typ='TXM',validators=NoRepeat(),max='**',
                              fr=tr("Options pour le calcul de variables internes"),
-                             into=C_NOM_CHAM_INTO(phenomene='VARI_INTERNE',categorie='dyna'),),
+                             into=C_NOM_CHAM_INTO(phenomene='VARI_INTERNE',categorie='lin'),),
          PROPRIETES   = SIMP(statut='f',typ='TXM',validators=NoRepeat(),max='**',
                              fr=tr("Options pour le calcul de propriétés"),
-                             into=C_NOM_CHAM_INTO(phenomene='PROPRIETES',categorie='dyna'),),
+                             into=C_NOM_CHAM_INTO(phenomene='PROPRIETES',categorie='lin'),),
          ACOUSTIQUE   = SIMP(statut='f',typ='TXM',validators=NoRepeat(), max='**',
                              fr=tr("Options pour le calcul de champs en acoustique"),
-                             into=C_NOM_CHAM_INTO(phenomene='ACOUSTIQUE',categorie='dyna'),),
+                             into=C_NOM_CHAM_INTO(phenomene='ACOUSTIQUE',),),
          FORCE        = SIMP(statut='f',typ='TXM',validators=NoRepeat(),max='**',
                              fr=tr("Options pour des forces nodales et des reactions nodales"),
                              into=C_NOM_CHAM_INTO(phenomene='FORCE',),),
-         
+
          EXCIT       = FACT(statut='f',max='**',
                         fr=tr("Charges contenant les temperatures, les efforts repartis pour les poutres..."),
                         regles=(EXCLUS('FONC_MULT','COEF_MULT',),),
@@ -166,7 +170,7 @@ CALC_CHAMP=OPER(nom="CALC_CHAMP",op=52,sd_prod=calc_champ_prod,reentrant='f',
            COEF_MULT    = SIMP(statut='f',typ='R'),
            TYPE_CHARGE  = SIMP(statut='f',typ='TXM',defaut="FIXE_CSTE",into=("FIXE_CSTE",),),
            ),
-         
+
          CHAM_UTIL = FACT(statut='f', max='**',
              regles = (UN_PARMI('FORMULE', 'CRITERE', 'NORME'), ),
              NOM_CHAM = SIMP(statut='o', typ='TXM',
@@ -229,7 +233,7 @@ CALC_CHAMP=OPER(nom="CALC_CHAMP",op=52,sd_prod=calc_champ_prod,reentrant='f',
          FORCE        = SIMP(statut='f',typ='TXM',validators=NoRepeat(),max='**',
                              fr=tr("Options pour des forces nodales et des reactions nodales"),
                              into=C_NOM_CHAM_INTO(phenomene='FORCE',),),
-         
+
          EXCIT       = FACT(statut='f',max='**',
                         fr=tr("Charges contenant les temperatures, les efforts repartis pour les poutres..."),
                         regles=(EXCLUS('FONC_MULT','COEF_MULT',),),
@@ -238,7 +242,7 @@ CALC_CHAMP=OPER(nom="CALC_CHAMP",op=52,sd_prod=calc_champ_prod,reentrant='f',
            COEF_MULT    = SIMP(statut='f',typ='R'),
            TYPE_CHARGE  = SIMP(statut='f',typ='TXM',defaut="FIXE_CSTE",into=("FIXE_CSTE","FIXE_PILO","SUIV","DIDI"),),
            ),
-         
+
          CHAM_UTIL = FACT(statut='f', max='**',
              regles = (UN_PARMI('FORMULE', 'CRITERE', 'NORME'), ),
              NOM_CHAM = SIMP(statut='o', typ='TXM',
@@ -255,7 +259,7 @@ CALC_CHAMP=OPER(nom="CALC_CHAMP",op=52,sd_prod=calc_champ_prod,reentrant='f',
                           fr=tr("Numéro du champ produit. Exemple: 6 produit le champ UT06"),),
              ),
          ),
-    
+
 
      # Bloc Thermique
      b_ther = BLOC(condition = """is_type("RESULTAT") in (evol_ther,fourier_ther,)""" ,
@@ -271,7 +275,7 @@ CALC_CHAMP=OPER(nom="CALC_CHAMP",op=52,sd_prod=calc_champ_prod,reentrant='f',
            COEF_MULT    = SIMP(statut='f',typ='R'),
            TYPE_CHARGE  = SIMP(statut='f',typ='TXM',defaut="FIXE_CSTE",into=("FIXE_CSTE",),),
            ),
-         
+
          CHAM_UTIL = FACT(statut='f', max='**',
              regles = (UN_PARMI('FORMULE', 'CRITERE', 'NORME'), ),
              NOM_CHAM = SIMP(statut='o', typ='TXM',

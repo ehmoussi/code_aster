@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -207,11 +207,14 @@ class CommandTextVisitor(JDCVisitor):
 
     def visitMCSIMP(self, mcsimp):
         """Visit the MCSIMP object."""
-        if mcsimp.definition.statut == 'c':
+        from code_aster.Cata.DataStructure import ma, no
+
+        catadef = mcsimp.definition
+        if catadef.statut == 'c' and catadef.type[0] not in (ma, no):
             return
         svalues = self._repr_MCSIMP(mcsimp)
         as_list = len(svalues) > 1 \
-            or (mcsimp.definition.max == '**' or mcsimp.definition.max > 1)
+            or (catadef.max == '**' or catadef.max > 1)
         if as_list and len(svalues) == 1:
             svalues.append("")
         svalues = ", ".join(svalues)

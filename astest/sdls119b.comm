@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -536,10 +536,12 @@ tcompx=CALC_TABLE(TABLE = tevolx,
 tcompy=CALC_TABLE(TABLE = tevoly,
                   ACTION=_F(OPERATION = 'COMB', TABLE = taby2, NOM_PARA = ('INST',)),);
 #
-DIFFDX = FORMULE(NOM_PARA=('DX','DEPX'),VALE='(DX - DEPX)');
+DIFFDX = FORMULE(VALE='(DX - DEPX)',
+                 NOM_PARA=['DX', 'DEPX'],)
 tresx = CALC_TABLE(TABLE = tcompx,
                    ACTION = _F(OPERATION = 'OPER',FORMULE=DIFFDX,NOM_PARA='DELTA_DX'),);
-DIFFDY = FORMULE(NOM_PARA=('DY','DEPY'),VALE='(DY - DEPY)');
+DIFFDY = FORMULE(VALE='(DY - DEPY)',
+                 NOM_PARA=['DY', 'DEPY'],)
 tresy = CALC_TABLE(TABLE = tcompy,
                    ACTION = _F(OPERATION = 'OPER',FORMULE=DIFFDY,NOM_PARA='DELTA_DY'),);
 #

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -22,7 +22,7 @@ interface
     subroutine irvari(ifi        , field_med    , vari_elga, field_loca, model    ,&
                       nb_cmp_sele, cmp_name_sele, partie   , numpt     , instan   ,&
                       nume_store , nbmaec       , limaec   , result    , cara_elem,&
-                      codret)
+                      carael     , codret)
         integer, intent(in) :: ifi
         character(len=64), intent(in) :: field_med
         character(len=19), intent(in) :: vari_elga
@@ -37,7 +37,7 @@ interface
         integer, intent(in) :: nbmaec
         integer, intent(in) :: limaec(*)
         character(len=8), intent(in) :: result
-        character(len=8), intent(in) :: cara_elem
+        character(len=8), intent(in) :: cara_elem, carael
         integer, intent(out) :: codret
     end subroutine irvari
 end interface

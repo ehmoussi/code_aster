@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -24,6 +24,11 @@ from code_aster.Cata.Commons import *
 
 
 def crea_resu_prod(TYPE_RESU,**args):
+    if args.get('__all__'):
+        return (evol_elas, evol_noli, evol_ther, mult_elas, mode_meca,
+                mode_meca_c, dyna_trans, dyna_harmo, fourier_elas,
+                fourier_ther, evol_varc, evol_char)
+
     if TYPE_RESU == "EVOL_ELAS"    : return evol_elas
     if TYPE_RESU == "EVOL_NOLI"    : return evol_noli
     if TYPE_RESU == "EVOL_THER"    : return evol_ther
@@ -38,12 +43,13 @@ def crea_resu_prod(TYPE_RESU,**args):
     if TYPE_RESU == "EVOL_CHAR"    : return evol_char
     raise AsException("type de concept resultat non prevu")
 
-CREA_RESU=OPER(nom="CREA_RESU",op=124,sd_prod=crea_resu_prod,reentrant='f',
+CREA_RESU=OPER(nom="CREA_RESU",op=124,sd_prod=crea_resu_prod,
+               reentrant='f:RESULTAT|RESU_FINAL',
                fr=tr("Creer ou enrichir une structure de donnees resultat a partir de champs aux noeuds"),
 
          reuse=SIMP(statut='c', typ=CO),
-         
-         OPERATION =SIMP(statut='o',typ='TXM',into=("AFFE","ASSE","ECLA_PG","PERM_CHAM","PROL_RTZ","PREP_VRC1","PREP_VRC2",),
+
+         OPERATION =SIMP(statut='o',typ='TXM',into=("AFFE","ASSE","ECLA_PG","PERM_CHAM","PROL_RTZ","PREP_VRC1","PREP_VRC2","KUCV","CONV_CHAR","CONV_RESU"),
                          fr=tr("choix de la fonction a activer"),),
 
          TYPE_RESU    =SIMP(statut='o',typ='TXM',
@@ -80,7 +86,7 @@ CREA_RESU=OPER(nom="CREA_RESU",op=124,sd_prod=crea_resu_prod,reentrant='f',
              CHARGE        =SIMP(statut='f',typ=(char_meca),max='**'),
            ),
          ), # fin bloc b_affe_mult_elas
-         
+
          b_affe_evol_dyn= BLOC(condition = """equal_to("OPERATION", 'AFFE') and is_in('TYPE_RESU', ('EVOL_ELAS', 'EVOL_NOLI', 'EVOL_THER', 'EVOL_VARC', 'EVOL_CHAR', 'DYNA_TRANS'))""",
            RESULTAT=SIMP(statut='f',typ=(evol_elas, evol_noli, evol_ther, evol_varc, evol_char, dyna_trans)),
            AFFE         =FACT(statut='o',max='**',
@@ -131,24 +137,24 @@ CREA_RESU=OPER(nom="CREA_RESU",op=124,sd_prod=crea_resu_prod,reentrant='f',
                                     "FLUN")),
              COMPORTEMENT     =C_COMPORTEMENT(),
          ), # fin bloc b_evol_char
-         
+
          b_cham_no    =BLOC(condition = """equal_to("OPERATION", 'AFFE') and not equal_to("TYPE_RESU", 'EVOL_CHAR')""",
              NOM_CHAM     =SIMP(statut='o',typ='TXM',validators=NoRepeat(),into=C_NOM_CHAM_INTO()),
              COMPORTEMENT     =C_COMPORTEMENT(),
          ),  # fin bloc b_cham_no
-                   
-         b_mode_meca =BLOC(condition = """equal_to("OPERATION", 'AFFE') and is_in('TYPE_RESU', ('MODE_MECA', 'MODE_MECA_C', 'DYNA_HARMO', 'DYNA_TRANS'))""", 
+
+         b_mode_meca =BLOC(condition = """equal_to("OPERATION", 'AFFE') and is_in('TYPE_RESU', ('MODE_MECA', 'MODE_MECA_C', 'DYNA_HARMO', 'DYNA_TRANS'))""",
              MATR_RIGI    =SIMP(statut='f',typ=matr_asse_depl_r,),
              MATR_MASS    =SIMP(statut='f',typ=matr_asse_depl_r,),
          ), # fin bloc b_mode_meca
-        
+
          b_evol_elas =BLOC(condition = """equal_to("OPERATION", 'AFFE') and equal_to("TYPE_RESU", 'EVOL_ELAS')""",
              EXCIT        =FACT(statut='f',max='**',
                 CHARGE          =SIMP(statut='o',typ=(char_meca,char_cine_meca)),
                 FONC_MULT       =SIMP(statut='f',typ=(fonction_sdaster,nappe_sdaster,formule)),
                 TYPE_CHARGE     =SIMP(statut='f',typ='TXM',defaut="FIXE_CSTE",into=("FIXE_CSTE",) ),),
          ), # fin bloc b_evol_elas
-        
+
          b_evol_ther =BLOC(condition = """equal_to("OPERATION", 'AFFE') and equal_to("TYPE_RESU", 'EVOL_THER')""",
              EXCIT        =FACT(statut='f',max='**',
                 CHARGE          =SIMP(statut='o',typ=(char_ther,char_cine_ther)),
@@ -169,7 +175,7 @@ CREA_RESU=OPER(nom="CREA_RESU",op=124,sd_prod=crea_resu_prod,reentrant='f',
                 NOEUD           =SIMP(statut='c',typ=no  ,validators=NoRepeat(),max='**'),
                 GROUP_NO        =SIMP(statut='f',typ=grno,validators=NoRepeat(),max='**'),),
          ), # fin bloc b_evol_noli
-   
+
          b_affe_mode_meca= BLOC(condition = """equal_to("OPERATION", 'AFFE') and equal_to("TYPE_RESU", 'MODE_MECA')""",
            RESULTAT=SIMP(statut='f',typ=mode_meca),
            AFFE         =FACT(statut='o',max='**',
@@ -180,9 +186,9 @@ CREA_RESU=OPER(nom="CREA_RESU",op=124,sd_prod=crea_resu_prod,reentrant='f',
              NUME_MODE     =SIMP(statut='o',typ='I'),
              FREQ          =SIMP(statut='f',typ='R'),
              AXE           =SIMP(statut='f',typ='TXM',into=("X","Y","Z") ),
-           ),  
+           ),
          ), # fin bloc b_affe_mode_meca
-           
+
          b_affe_mode_meca_c= BLOC(condition = """equal_to("OPERATION", 'AFFE') and equal_to("TYPE_RESU", 'MODE_MECA_C')""",
            RESULTAT=SIMP(statut='f',typ=mode_meca_c),
            AFFE         =FACT(statut='o',max='**',
@@ -194,9 +200,9 @@ CREA_RESU=OPER(nom="CREA_RESU",op=124,sd_prod=crea_resu_prod,reentrant='f',
              FREQ          =SIMP(statut='f',typ='R'),
              AXE           =SIMP(statut='f',typ='TXM',into=("X","Y","Z") ),
              AMOR_REDUIT    =SIMP(statut='f',typ='R'),
-           ),  
+           ),
          ), # fin bloc b_affe_mode_meca_c
-           
+
          b_affe_dyna_harmo= BLOC(condition = """equal_to("OPERATION", 'AFFE') and equal_to("TYPE_RESU", 'DYNA_HARMO')""",
            RESULTAT=SIMP(statut='f',typ=dyna_harmo),
            AFFE         =FACT(statut='o',max='**',
@@ -320,4 +326,43 @@ CREA_RESU=OPER(nom="CREA_RESU",op=124,sd_prod=crea_resu_prod,reentrant='f',
 
            ),
          ),
+         b_prod_evol_char= BLOC(condition = """equal_to("OPERATION", 'KUCV') and is_in('TYPE_RESU', ('EVOL_CHAR', 'DYNA_TRANS'))""",
+           KUCV         =FACT(statut='o',max=1,
+             RESU_INIT    =SIMP(statut='o',typ=(dyna_trans)),
+             regles=(UN_PARMI('INST','LIST_INST'),),
+             MATR_RIGI    =SIMP(statut='f',typ=matr_asse_depl_r,),
+             MATR_AMOR    =SIMP(statut='o',typ=matr_asse_depl_r,),
+             INST          =SIMP(statut='f',typ='R',validators=NoRepeat(),max='**'),
+             LIST_INST     =SIMP(statut='f',typ=listr8_sdaster),
+             PRECISION     =SIMP(statut='f',typ='R',defaut= 1.E-6 ),
+             CRITERE       =SIMP(statut='f',typ='TXM',defaut="RELATIF",into=("RELATIF","ABSOLU") ),
+           ),
+         ), # fin bloc b_prod_evol_char
+
+         b_comb_evol_char= BLOC(condition = """equal_to("OPERATION", 'CONV_RESU') and is_in('TYPE_RESU', ('EVOL_CHAR', 'DYNA_TRANS'))""",
+           CONV_RESU      =FACT(statut='o',max=1,
+             RESU_INIT    =SIMP(statut='o',typ=(dyna_trans,evol_char)),
+             NOM_CHAM_INIT=SIMP(statut='f',typ='TXM',into=("DEPL","FORC_NODA") ),
+             regles=(UN_PARMI('MATR_RIGI', 'NUME_DDL'),UN_PARMI('INST','LIST_INST'),),
+             MATR_RIGI    =SIMP(statut='f',typ=matr_asse_depl_r,),
+             NUME_DDL      =SIMP(statut='f',typ=nume_ddl_sdaster ),
+             INST          =SIMP(statut='f',typ='R',validators=NoRepeat(),max='**'),
+             LIST_INST     =SIMP(statut='f',typ=listr8_sdaster),
+             PRECISION     =SIMP(statut='f',typ='R',defaut= 1.E-6 ),
+             COEF          =SIMP(statut='f',typ='R',defaut= 1.0 ),
+             CRITERE       =SIMP(statut='f',typ='TXM',defaut="RELATIF",into=("RELATIF","ABSOLU") ),
+           ),
+         ), # fin bloc b_comb_evol_char
+
+         b_char_evol_char= BLOC(condition = """equal_to("OPERATION", 'CONV_CHAR') and is_in('TYPE_RESU', 'DYNA_TRANS')""",
+           CONV_CHAR      =FACT(statut='o',max=1,
+             CHARGE       =SIMP(statut='o',typ=(char_meca,),max='**'),
+             MATR_RIGI    =SIMP(statut='o',typ=matr_asse_depl_r,),
+             regles=(UN_PARMI('INST','LIST_INST'),),
+             INST          =SIMP(statut='f',typ='R',validators=NoRepeat(),max='**'),
+             LIST_INST     =SIMP(statut='f',typ=listr8_sdaster),
+             PRECISION     =SIMP(statut='f',typ='R',defaut= 1.E-6 ),
+             CRITERE       =SIMP(statut='f',typ='TXM',defaut="RELATIF",into=("RELATIF","ABSOLU") ),
+           ),
+         ), # fin bloc b_char_evol_char
 )  ;

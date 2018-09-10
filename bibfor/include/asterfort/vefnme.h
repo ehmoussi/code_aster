@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,27 +15,22 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine vefnme(option, base  , model , mate      , carele  ,&
-                      compor, partps, nh    , ligrelz   , varicomz,&
-                      sigmaz, strxz , deplz , depl_incrz, vecelz)
-        character(len=16), intent(in) :: option
+    subroutine vefnme(option_, model     , mate , cara_elem_,&
+                      compor , partps    , nh   , ligrel_   ,&
+                      varc_  , sigm_     , strx_,&
+                      disp_  , disp_incr_,&
+                      base   , vect_elem_)
+        character(len=16), intent(in) :: option_
         character(len=1), intent(in) :: base
         character(len=8), intent(in) :: model
         real(kind=8), intent(in) :: partps(*)
-        character(len=24), intent(in) :: carele
-        character(len=24), intent(in) :: mate
-        character(len=*), intent(in) :: ligrelz
+        character(len=24), intent(in) :: cara_elem_,  mate
+        character(len=*), intent(in) :: ligrel_
         integer, intent(in) :: nh
         character(len=19), intent(in) :: compor
-        character(len=*), intent(in) :: sigmaz
-        character(len=*), intent(in) :: varicomz
-        character(len=*), intent(in) :: strxz
-        character(len=*), intent(in) :: deplz
-        character(len=*), intent(in) :: depl_incrz
-        character(len=*), intent(inout) :: vecelz(*)
+        character(len=*), intent(in) :: sigm_, varc_, strx_, disp_, disp_incr_
+        character(len=*), intent(inout) :: vect_elem_
     end subroutine vefnme
 end interface

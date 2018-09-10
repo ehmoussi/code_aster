@@ -3,7 +3,7 @@
  * @brief Implementation de ResultsContainer
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -92,6 +92,8 @@ void ResultsContainerInstance::addModel( const ModelPtr& model,
     long rang = rank;
     std::string type("MODELE");
     CALLO_RSADPA_ZK8_WRAP( getName(), &rang, model->getName(), type );
+    const auto fed = model->getFiniteElementDescriptor();
+    _fieldBuidler.addFiniteElementDescriptor( fed );
 };
 
 void ResultsContainerInstance::appendMaterialOnMeshOnAllRanks( const MaterialOnMeshPtr& mater )
@@ -101,7 +103,7 @@ void ResultsContainerInstance::appendMaterialOnMeshOnAllRanks( const MaterialOnM
     for( int rank = 0; rank < nbRanks; ++rank )
     {
         const long iordr = (*_serialNumber)[rank];
-        if( _mapMaterial.find( rank ) == _mapMaterial.end() )
+        if( _mapMaterial.find( iordr ) == _mapMaterial.end() )
             addMaterialOnMesh( mater, iordr );
     }
 };
@@ -113,7 +115,7 @@ void ResultsContainerInstance::appendModelOnAllRanks( const ModelPtr& model )
     for( int rank = 0; rank < nbRanks; ++rank )
     {
         const long iordr = (*_serialNumber)[rank];
-        if( _mapModel.find( rank ) == _mapModel.end() )
+        if( _mapModel.find( iordr ) == _mapModel.end() )
             addModel( model, iordr );
     }
 };
@@ -174,7 +176,8 @@ void ResultsContainerInstance::addTimeValue( double value,
 };
 
 void ResultsContainerInstance::listFields() const
-{   std::cout<<"Content of DataStructure : ";
+{
+    std::cout << "Content of DataStructure : ";
     for ( auto curIter : _dictOfVectorOfFieldsNodes )
     {
         std::cout << curIter.first << " - " ;
@@ -189,9 +192,15 @@ void ResultsContainerInstance::listFields() const
 bool ResultsContainerInstance::update() throw ( std::runtime_error )
 {
     _serialNumber->updateValuePointer();
-    _namesOfFields->buildFromJeveux();
+    auto boolRet = _namesOfFields->buildFromJeveux( true );
     const auto numberOfSerialNum = _serialNumber->usedSize();
     _nbRanks = numberOfSerialNum;
+    BaseMeshPtr curMesh( nullptr );
+    const long iordr = (*_serialNumber)[_nbRanks-1];
+    if( _mapModel.find( iordr ) != _mapModel.end() )
+        curMesh = _mapModel[ iordr ]->getSupportMesh();
+    else if( _mesh != nullptr )
+        curMesh = _mesh;
 
     int cmpt = 1;
     for( const auto curIter : _namesOfFields->getVectorOfObjects() )
@@ -228,15 +237,15 @@ bool ResultsContainerInstance::update() throw ( std::runtime_error )
                             FieldOnNodesDoublePtr( nullptr ) );
                     else if( curIter2->second.size() != numberOfSerialNum )
                     {
-                        curIter2->second.clear();
-                        _dictOfVectorOfFieldsNodes[ nomSymb ] = VectorOfFieldsNodes( numberOfSerialNum,
-                            FieldOnNodesDoublePtr( nullptr ) );
+                        curIter2->second.resize( numberOfSerialNum,
+                                                 FieldOnNodesDoublePtr( nullptr ) );
                     }
 
                     long test2 = _dictOfVectorOfFieldsNodes[ nomSymb ][ rank ].use_count();
                     if( test2 == 0 )
                     {
-                        FieldOnNodesDoublePtr result( new FieldOnNodesDoubleInstance( name ) );
+                        FieldOnNodesDoublePtr result = _fieldBuidler.buildFieldOnNodes< double >
+                            ( name );
                         _dictOfVectorOfFieldsNodes[ nomSymb ][ rank ] = result;
                     }
                 }
@@ -248,15 +257,18 @@ bool ResultsContainerInstance::update() throw ( std::runtime_error )
                             FieldOnElementsDoublePtr( nullptr ) );
                     else if( curIter2->second.size() != numberOfSerialNum )
                     {
-                        curIter2->second.clear();
-                       _dictOfVectorOfFieldsElements [ nomSymb ] = VectorOfFieldsElements( numberOfSerialNum,
-                            FieldOnElementsDoublePtr( nullptr ) );
+                        curIter2->second.resize( numberOfSerialNum,
+                                                 FieldOnElementsDoublePtr( nullptr ) );
                     }
 
                     long test2 = _dictOfVectorOfFieldsElements[ nomSymb ][ rank ].use_count();
                     if( test2 == 0 )
                     {
-                        FieldOnElementsDoublePtr result( new FieldOnElementsDoubleInstance( name ) );
+                        if( curMesh == nullptr )
+                            throw std::runtime_error( "No mesh, impossible to build FieldOnElements" );
+                        FieldOnElementsDoublePtr result =_fieldBuidler.buildFieldOnElements<double>
+                            ( name, curMesh );
+                        ( new FieldOnElementsDoubleInstance( name ) );
                         _dictOfVectorOfFieldsElements[ nomSymb ][ rank ] = result;
                     }
                 }

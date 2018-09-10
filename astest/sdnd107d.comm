@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -85,7 +85,9 @@ Linst  = DEFI_LIST_REEL(
     )
 )
 #
-DEPLA  = FORMULE(NOM_PARA='INST',VALE='-Amplitude*sin(Pulsation*INST)/(Pulsation**2)')
+DEPLA  = FORMULE(NOM_PARA='INST',
+                 VALE='-Amplitude*sin(Pulsation*INST)/(Pulsation**2)',
+                 Amplitude=Amplitude, Pulsation=Pulsation)
 #
 DEPLAI = CALC_FONC_INTERP(NOM_RESU='DEPLA',
     FONCTION=DEPLA, LIST_PARA=LinstF, NOM_PARA = 'INST',
@@ -329,7 +331,7 @@ TEST_TABLE(TABLE=TDForc,
     NOM_PARA='Forc',
     REFERENCE='SOURCE_EXTERNE', CRITERE='ABSOLU',PRECISION=0.03,
     VALE_REFE=1.261E-03, VALE_CALC=0.00603736773377,
- 
+
 )
 #
 IMPR_FONCTION(UNITE=26,

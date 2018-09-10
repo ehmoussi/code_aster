@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -579,7 +579,9 @@ LINSDY2=DEFI_LIST_REEL(DEBUT=0.0,
 
 OMEGA = 314.;
 
-EVOL_FY = FORMULE(NOM_PARA='INST',VALE='sin(OMEGA*INST) ')
+EVOL_FY = FORMULE(VALE='sin(OMEGA*INST) ',
+                  OMEGA=OMEGA,
+                  NOM_PARA='INST',)
 
 EVINT=CALC_FONC_INTERP(FONCTION=EVOL_FY, NOM_PARA = 'INST',
                           NOM_RESU='EVOL_FY',

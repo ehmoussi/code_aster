@@ -1,0 +1,96 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+from Contrib.testcomp_utils import rename_components
+
+from comp003a import TEST_ECART
+
+POURSUITE(PAR_LOT='NON', CODE='OUI')
+
+tempsar=DEFI_LIST_REEL( VALE =[t_0*i for i in range(9)],)
+
+
+
+###################################################################################
+#  TEST 3D MFRONT
+##################################################################################
+
+# les quantites extraites du calcul
+ch_param=['V7','VMIS','TRACE','SIXX','SIYY','SIZZ','SIXY','SIXZ','SIYZ']
+ch_param2=['V7','VMIS','TRACE']
+# resultats
+RESM=[None]*Ncal
+R_SI=[None]*len(ch_param)
+
+#Boucle sur l'ensemble des calculs
+for i in range(Ncal):
+        N = N_pas[i]
+        imat = P_imat[i]
+        temps=DEFI_LIST_REEL(DEBUT=0.0,
+                     INTERVALLE=(_F(JUSQU_A=t_0,NOMBRE=N,),
+                                 _F(JUSQU_A=2.0*t_0,NOMBRE=N,),
+                                 _F(JUSQU_A=3.0*t_0,NOMBRE=N,),
+                                 _F(JUSQU_A=4.0*t_0,NOMBRE=N,),
+                                 _F(JUSQU_A=5.0*t_0,NOMBRE=N,),
+                                 _F(JUSQU_A=6.0*t_0,NOMBRE=N,),
+                                 _F(JUSQU_A=7.0*t_0,NOMBRE=N,),
+                                 _F(JUSQU_A=8.0*t_0,NOMBRE=N,),),);
+
+#       Resout le pb a deformation imposee
+        RESM[i]=SIMU_POINT_MAT(
+
+                COMPORTEMENT=_F(RELATION='MFRONT',
+                                NOM_ROUTINE='asteranisolemaitre',
+                                UNITE_LIBRAIRIE=39,
+                                RESI_INTE_MAXI=1e-10,
+                        ),
+
+                   ANGLE=angles[i],
+                   #SUPPORT='ELEMENT',
+                   AFFE_VARC=(
+                          _F(V1=phase1,V2=phase0,V3=phase0,V4=phase0,V5=phase0,NOM_VARC='M_ZIRC',),
+                          _F(VALE_FONC=TEMP,
+                              VALE_REF=700.,
+                              NOM_VARC='TEMP',),),
+                   NEWTON=_F(MATRICE='TANGENTE',
+                             REAC_ITER=1,),
+                   CONVERGENCE=_F(ITER_GLOB_MAXI=50,),
+                   MATER      = MATF[imat],
+                   INCREMENT=_F(LIST_INST=temps),
+                   ARCHIVAGE = _F(LIST_INST = tempsar),
+                   EPSI_IMPOSE=_F(EPXX=eps_def[0], EPYY=eps_def[1], EPZZ=eps_def[2],
+                                  EPXY=eps_def[3], EPXZ=eps_def[4], EPYZ=eps_def[5]),
+                        );
+        DETRUIRE(CONCEPT=_F(NOM=temps))
+        #IMPR_TABLE(TABLE=RESF[i])
+#       DETRUIRE(CONCEPT=_F(NOM=DEFLIST))
+# On renomme les composantes en fonction de  l'ordre de discretisation
+        R_SI=rename_components(i,N_pas,label_cal,ch_param,RESM,R_SI)
+
+# TEST_RESU sur les erreurs relatives
+TEST_ECART(ch_param2,label_cal,N_pas,Ncal,nbequi,R_SI,prec_ecart,vale_calc,prec_zero,coef_para)
+
+###############################################################################
+# impressions
+for i in range(len(ch_param)):
+       IMPR_TABLE(TABLE=R_SI[i])
+       DETRUIRE(CONCEPT=_F(NOM=R_SI[i]))
+
+FIN();
+#

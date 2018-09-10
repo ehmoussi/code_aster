@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -71,14 +71,14 @@ def dyna_visco_harm(self, EXCIT, list_FREQ, modes,
             no_force = charge[i].sdj.CHME.LIGRE.NEMA.get()
 
             for j in no_force.keys():
-                if not ( len(no_force[j])==2 and no_force[j][1]==1 ): # in the dictionary no_force, an imposed nodal force presents as 
+                if not ( len(no_force[j])==2 and no_force[j][1]==1 ): # in the dictionary no_force, an imposed nodal force presents as
                                                                       # an entry (a key) having this shape: (node_number, 1)
                                                                       # so one deletes all entries having a different shape
                     no_force.pop(j)
-    
+
             iret,ibid,nom_mail = aster.dismoi('NOM_MAILLA',__num.nom,'NUME_DDL','F')
             maillage = self.get_concept(nom_mail)
-    
+
             direction = array( [tuple(array(ddl[i*12:(i+1)*12]).nonzero()[0]) for i in range(0, len(ddl)/12)] )
             # array which contains, for each node having an imposed force, the list of the imposed directions
             # (rq : "/12" because each node has 12 DoF)
@@ -107,12 +107,12 @@ def dyna_visco_harm(self, EXCIT, list_FREQ, modes,
             for i in range(1, len(no_force)+1):
                 mc_composante={}
                 mc_composante['AVEC_CMP'] = tuple( ddl_phys[i-1] )
-                
+
                 mc_force_nodale.append( _F(NOEUD=(no_mail[(no_force[i][0]-1)].strip()),
                                            **mc_composante)
                                        )
 
-    
+
     if l_force_nodale==False:
         UTMESS('F', 'DYNAVISCO_8')
 
@@ -220,8 +220,9 @@ def dyna_visco_harm(self, EXCIT, list_FREQ, modes,
                                 TYPE_CHAM='NOEU_DEPL_C',
                                 RESULTAT=__dynphys,
                                 NUME_ORDRE=1,);
-            
+
             dyna_harm=CREA_RESU(reuse=dyna_harm,
+                                RESULTAT=dyna_harm,
                                 OPERATION='AFFE',
                                 TYPE_RESU='DYNA_HARMO',
                                 NOM_CHAM=champ,

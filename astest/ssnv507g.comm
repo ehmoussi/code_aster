@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -49,7 +49,9 @@ MODELEIN=AFFE_MODELE(MAILLAGE=MAILLAG2,
                               PHENOMENE='MECANIQUE',
                               MODELISATION='D_PLAN')));
 
-LN=FORMULE(NOM_PARA=('X','Y'),VALE='-X*X-Y*Y+R*R');
+LN = FORMULE(VALE='-X*X-Y*Y+R*R',
+             R=R,
+             NOM_PARA=['X', 'Y'],)
 
 FISS=DEFI_FISS_XFEM(MAILLAGE=MAILLAG2,
                     TYPE_DISCONTINUITE='INTERFACE',
@@ -98,21 +100,27 @@ VAR1=DEFI_FONCTION(NOM_PARA='INST',VALE=(0.,1.,1.,1.));
 p=1.E6
 a=-(p/E)*( (R2*R2)/(R1*R1+R2*R2) )
 b=-a*R1*R1
-ux= FORMULE(NOM_PARA=('X','Y'),
-    VALE='(a*sqrt(X*X+Y*Y)+b/sqrt(X*X+Y*Y))*cos(atan2(Y,X))');
+ux = FORMULE(VALE='(a*sqrt(X*X+Y*Y)+b/sqrt(X*X+Y*Y))*cos(atan2(Y,X))',
+             a=a,
+             b=b,
+             NOM_PARA=['X', 'Y'],)
 
-uy=FORMULE(NOM_PARA=('X','Y'),
-   VALE='(a*sqrt(X*X+Y*Y)+b/sqrt(X*X+Y*Y))*sin(atan2(Y,X))');
+uy = FORMULE(VALE='(a*sqrt(X*X+Y*Y)+b/sqrt(X*X+Y*Y))*sin(atan2(Y,X))',
+             a=a,
+             b=b,
+             NOM_PARA=['X', 'Y'],)
 
 CH1=AFFE_CHAR_MECA_F(MODELE=MODELEK,
                     DDL_IMPO=(_F(GROUP_MA=('LB','LG','LH','LD'),
                                  DX=ux,DY=uy)));
 
-tournex = FORMULE(NOM_PARA=('X','Y','INST'),
-          VALE='sqrt(X*X+Y*Y)*cos(atan2(Y,X)+DTH*INST)-X');
+tournex = FORMULE(VALE='sqrt(X*X+Y*Y)*cos(atan2(Y,X)+DTH*INST)-X',
+                  DTH=DTH,
+                  NOM_PARA=['X', 'Y', 'INST'],)
 
-tourney = FORMULE(NOM_PARA=('X','Y','INST'),
-          VALE='sqrt(X*X+Y*Y)*sin(atan2(Y,X)+DTH*INST)-Y');
+tourney = FORMULE(VALE='sqrt(X*X+Y*Y)*sin(atan2(Y,X)+DTH*INST)-Y',
+                  DTH=DTH,
+                  NOM_PARA=['X', 'Y', 'INST'],)
 
 ROT=AFFE_CHAR_MECA_F(MODELE=MODELEK,
                     DDL_IMPO=(_F(GROUP_NO='INTER',
@@ -162,19 +170,19 @@ RES_XFEM=POST_CHAM_XFEM( MODELE_VISU  = MOD_VISU,
 LAG=[None]*11
 inst=[0.0,0.25,0.50,0.75,1.0]
 
-a=-9.7799511e-3
-b=0.0880195599
-LAGS_A = E*a-(E*b)/(8*8)
+a2=-9.7799511e-3
+b2=0.0880195599
+LAGS_A = E*a2-(E*b2)/(8*8)
 
 VALE_CALC=[
- -881695.571978,
- -1237533.70885,
- -9.2115268715311E+05,
- -1.2704004587724E+06,
- -8.817394495597E+05,
- -1.2375079728171E+06,
- -1.0121339487718E+06,
- -1.1061971613657E+06,
+    -920563.248073,
+    -1278725.32478,
+    -963259.585787,
+    -1312546.79009,
+    -920607.787216,
+    -1278692.48549,
+    -1047055.76523,
+    -1145412.41678,
 ]
 
 for i in [1,2,3,4]: #Boucle sur les increments
@@ -223,16 +231,15 @@ TEST_RESU(RESU=_F(INST=1.0,
                   NOM_CHAM='DEPL',
                   NOEUD='NM3D',
                   NOM_CMP='DX',
-                  VALE_CALC=9.9863363659732E-4,
+                  VALE_CALC=0.00104046946311,
                   ),
           )
-
 TEST_RESU(RESU=_F(INST=1.0,
                   RESULTAT=RES_XFEM,
                   NOM_CHAM='DEPL',
                   NOEUD='NM3D',
                   NOM_CMP='DY',
-                  VALE_CALC=0.068527720481006,
+                  VALE_CALC=0.071182292326,
                   ),
           )
 
@@ -241,7 +248,7 @@ TEST_RESU(RESU=_F(INST=1.0,
                   NOM_CHAM='DEPL',
                   NOEUD='NM12H',
                   NOM_CMP='DX',
-                  VALE_CALC=0.068503841454940,
+                  VALE_CALC=0.0711574307204,
                   ),
           )
 
@@ -250,7 +257,7 @@ TEST_RESU(RESU=_F(INST=1.0,
                   NOM_CHAM='DEPL',
                   NOEUD='NM12H',
                   NOM_CMP='DY',
-                  VALE_CALC=-2.2902554698403E-3,
+                  VALE_CALC=-0.0023732513034,
                   ),
           )
 
@@ -259,7 +266,7 @@ TEST_RESU(RESU=_F(INST=1.0,
                   NOM_CHAM='DEPL',
                   NOEUD='NM12W',
                   NOM_CMP='DX',
-                  VALE_CALC=-0.068503841454939,
+                  VALE_CALC=-0.0711574307204,
                   ),
           )
 
@@ -268,7 +275,7 @@ TEST_RESU(RESU=_F(INST=1.0,
                   NOM_CHAM='DEPL',
                   NOEUD='NM12W',
                   NOM_CMP='DY',
-                  VALE_CALC=2.2902554698402E-3,
+                  VALE_CALC=0.0023732513034,
                   ),
           )
 
@@ -277,7 +284,7 @@ TEST_RESU(RESU=_F(INST=1.0,
                   NOM_CHAM='DEPL',
                   NOEUD='NM21Z',
                   NOM_CMP='DX',
-                  VALE_CALC=-9.9863363659688E-4,
+                  VALE_CALC=-0.00104046946311,
                   ),
           )
 
@@ -286,7 +293,7 @@ TEST_RESU(RESU=_F(INST=1.0,
                   NOM_CHAM='DEPL',
                   NOEUD='NM21Z',
                   NOM_CMP='DY',
-                  VALE_CALC=-0.068527720481006,
+                  VALE_CALC=-0.071182292326,
                   ),
           )
 

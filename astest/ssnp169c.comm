@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -434,48 +434,114 @@ def EPSI_XY_2_v(x,y):
 
 # deplacement couronne externe
 
-ux1s = FORMULE(NOM_PARA=('X','Y',), VALE='ux1_c(X,Y)+ux1_v(X,Y)');
+ux1s = FORMULE(VALE='ux1_c(X,Y)+ux1_v(X,Y)',
+               ux1_c=ux1_c,
+               ux1_v=ux1_v,
+               NOM_PARA=['X', 'Y'],)
 
-uy1s = FORMULE(NOM_PARA=('X','Y',), VALE='uy1_c(X,Y)+uy1_v(X,Y)');
+uy1s = FORMULE(VALE='uy1_c(X,Y)+uy1_v(X,Y)',
+               uy1_c=uy1_c,
+               uy1_v=uy1_v,
+               NOM_PARA=['X', 'Y'],)
 
 # deplacement couronne externe
 
-ux2s = FORMULE(NOM_PARA=('X','Y',), VALE='ux2_c(X,Y)+ux2_v(X,Y)');
+ux2s = FORMULE(VALE='ux2_c(X,Y)+ux2_v(X,Y)',
+               ux2_c=ux2_c,
+               ux2_v=ux2_v,
+               NOM_PARA=['X', 'Y'],)
 
-uy2s = FORMULE(NOM_PARA=('X','Y',), VALE='uy2_c(X,Y)+uy2_v(X,Y)');
+uy2s = FORMULE(VALE='uy2_c(X,Y)+uy2_v(X,Y)',
+               uy2_c=uy2_c,
+               uy2_v=uy2_v,
+               NOM_PARA=['X', 'Y'],)
 
 # contraintes couronne externe
 
-SIG_XX_1=FORMULE(NOM_PARA=('X','Y',), VALE='SIGMA_XX_1_c(X,Y)+SIGMA_XX_1_v(X,Y)')
-SIG_YY_1=FORMULE(NOM_PARA=('X','Y',), VALE='SIGMA_YY_1_c(X,Y)+SIGMA_YY_1_v(X,Y)')
-SIG_ZZ_1=FORMULE(NOM_PARA=('X','Y',), VALE='SIGMA_ZZ_1_c(X,Y)+SIGMA_ZZ_1_v(X,Y)')
-SIG_XY_1=FORMULE(NOM_PARA=('X','Y',), VALE='SIGMA_XY_1_c(X,Y)+SIGMA_XY_1_v(X,Y)')
+SIG_XX_1 = FORMULE(VALE='SIGMA_XX_1_c(X,Y)+SIGMA_XX_1_v(X,Y)',
+                   SIGMA_XX_1_c=SIGMA_XX_1_c,
+                   SIGMA_XX_1_v=SIGMA_XX_1_v,
+                   NOM_PARA=['X', 'Y'],)
+SIG_YY_1 = FORMULE(VALE='SIGMA_YY_1_c(X,Y)+SIGMA_YY_1_v(X,Y)',
+                   SIGMA_YY_1_c=SIGMA_YY_1_c,
+                   SIGMA_YY_1_v=SIGMA_YY_1_v,
+                   NOM_PARA=['X', 'Y'],)
+SIG_ZZ_1 = FORMULE(VALE='SIGMA_ZZ_1_c(X,Y)+SIGMA_ZZ_1_v(X,Y)',
+                   SIGMA_ZZ_1_c=SIGMA_ZZ_1_c,
+                   SIGMA_ZZ_1_v=SIGMA_ZZ_1_v,
+                   NOM_PARA=['X', 'Y'],)
+SIG_XY_1 = FORMULE(VALE='SIGMA_XY_1_c(X,Y)+SIGMA_XY_1_v(X,Y)',
+                   SIGMA_XY_1_c=SIGMA_XY_1_c,
+                   SIGMA_XY_1_v=SIGMA_XY_1_v,
+                   NOM_PARA=['X', 'Y'],)
 
 # contraintes couronne interne
 
-SIG_XX_2=FORMULE(NOM_PARA=('X','Y',), VALE='SIGMA_XX_2_c(X,Y)+SIGMA_XX_2_v(X,Y)')
-SIG_YY_2=FORMULE(NOM_PARA=('X','Y',), VALE='SIGMA_YY_2_c(X,Y)+SIGMA_YY_2_v(X,Y)')
-SIG_ZZ_2=FORMULE(NOM_PARA=('X','Y',), VALE='SIGMA_ZZ_2_c(X,Y)+SIGMA_ZZ_2_v(X,Y)')
-SIG_XY_2=FORMULE(NOM_PARA=('X','Y',), VALE='SIGMA_XY_2_c(X,Y)+SIGMA_XY_2_v(X,Y)')
+SIG_XX_2 = FORMULE(VALE='SIGMA_XX_2_c(X,Y)+SIGMA_XX_2_v(X,Y)',
+                   SIGMA_XX_2_c=SIGMA_XX_2_c,
+                   SIGMA_XX_2_v=SIGMA_XX_2_v,
+                   NOM_PARA=['X', 'Y'],)
+SIG_YY_2 = FORMULE(VALE='SIGMA_YY_2_c(X,Y)+SIGMA_YY_2_v(X,Y)',
+                   SIGMA_YY_2_c=SIGMA_YY_2_c,
+                   SIGMA_YY_2_v=SIGMA_YY_2_v,
+                   NOM_PARA=['X', 'Y'],)
+SIG_ZZ_2 = FORMULE(VALE='SIGMA_ZZ_2_c(X,Y)+SIGMA_ZZ_2_v(X,Y)',
+                   SIGMA_ZZ_2_c=SIGMA_ZZ_2_c,
+                   SIGMA_ZZ_2_v=SIGMA_ZZ_2_v,
+                   NOM_PARA=['X', 'Y'],)
+SIG_XY_2 = FORMULE(VALE='SIGMA_XY_2_c(X,Y)+SIGMA_XY_2_v(X,Y)',
+                   SIGMA_XY_2_c=SIGMA_XY_2_c,
+                   SIGMA_XY_2_v=SIGMA_XY_2_v,
+                   NOM_PARA=['X', 'Y'],)
 
 # deformations couronne externe
 
-EPS_XX_1=FORMULE(NOM_PARA=('X','Y',), VALE='EPSI_XX_1_c(X,Y)+EPSI_XX_1_v(X,Y)')
-EPS_YY_1=FORMULE(NOM_PARA=('X','Y',), VALE='EPSI_YY_1_c(X,Y)+EPSI_YY_1_v(X,Y)')
-EPS_ZZ_1=FORMULE(NOM_PARA=('X','Y',), VALE='EPSI_ZZ_1_c(X,Y)+EPSI_ZZ_1_v(X,Y)')
-EPS_XY_1=FORMULE(NOM_PARA=('X','Y',), VALE='EPSI_XY_1_c(X,Y)+EPSI_XY_1_v(X,Y)')
+EPS_XX_1 = FORMULE(VALE='EPSI_XX_1_c(X,Y)+EPSI_XX_1_v(X,Y)',
+                   EPSI_XX_1_c=EPSI_XX_1_c,
+                   EPSI_XX_1_v=EPSI_XX_1_v,
+                   NOM_PARA=['X', 'Y'],)
+EPS_YY_1 = FORMULE(VALE='EPSI_YY_1_c(X,Y)+EPSI_YY_1_v(X,Y)',
+                   EPSI_YY_1_c=EPSI_YY_1_c,
+                   EPSI_YY_1_v=EPSI_YY_1_v,
+                   NOM_PARA=['X', 'Y'],)
+EPS_ZZ_1 = FORMULE(VALE='EPSI_ZZ_1_c(X,Y)+EPSI_ZZ_1_v(X,Y)',
+                   EPSI_ZZ_1_c=EPSI_ZZ_1_c,
+                   EPSI_ZZ_1_v=EPSI_ZZ_1_v,
+                   NOM_PARA=['X', 'Y'],)
+EPS_XY_1 = FORMULE(VALE='EPSI_XY_1_c(X,Y)+EPSI_XY_1_v(X,Y)',
+                   EPSI_XY_1_c=EPSI_XY_1_c,
+                   EPSI_XY_1_v=EPSI_XY_1_v,
+                   NOM_PARA=['X', 'Y'],)
 
 # deformations couronne interne
 
-EPS_XX_2=FORMULE(NOM_PARA=('X','Y',), VALE='EPSI_XX_2_c(X,Y)+EPSI_XX_2_v(X,Y)')
-EPS_YY_2=FORMULE(NOM_PARA=('X','Y',), VALE='EPSI_YY_2_c(X,Y)+EPSI_YY_2_v(X,Y)')
-EPS_ZZ_2=FORMULE(NOM_PARA=('X','Y',), VALE='EPSI_ZZ_2_c(X,Y)+EPSI_ZZ_2_v(X,Y)')
-EPS_XY_2=FORMULE(NOM_PARA=('X','Y',), VALE='EPSI_XY_2_c(X,Y)+EPSI_XY_2_v(X,Y)')
+EPS_XX_2 = FORMULE(VALE='EPSI_XX_2_c(X,Y)+EPSI_XX_2_v(X,Y)',
+                   EPSI_XX_2_c=EPSI_XX_2_c,
+                   EPSI_XX_2_v=EPSI_XX_2_v,
+                   NOM_PARA=['X', 'Y'],)
+EPS_YY_2 = FORMULE(VALE='EPSI_YY_2_c(X,Y)+EPSI_YY_2_v(X,Y)',
+                   EPSI_YY_2_c=EPSI_YY_2_c,
+                   EPSI_YY_2_v=EPSI_YY_2_v,
+                   NOM_PARA=['X', 'Y'],)
+EPS_ZZ_2 = FORMULE(VALE='EPSI_ZZ_2_c(X,Y)+EPSI_ZZ_2_v(X,Y)',
+                   EPSI_ZZ_2_c=EPSI_ZZ_2_c,
+                   EPSI_ZZ_2_v=EPSI_ZZ_2_v,
+                   NOM_PARA=['X', 'Y'],)
+EPS_XY_2 = FORMULE(VALE='EPSI_XY_2_c(X,Y)+EPSI_XY_2_v(X,Y)',
+                   EPSI_XY_2_c=EPSI_XY_2_c,
+                   EPSI_XY_2_v=EPSI_XY_2_v,
+                   NOM_PARA=['X', 'Y'],)
 
 # pression
-pression  = FORMULE(NOM_PARA=('X','Y',), VALE=' -press_c(X,Y)-press_v(X,Y)');
+pression = FORMULE(VALE=' -press_c(X,Y)-press_v(X,Y)',
+                   press_c=press_c,
+                   press_v=press_v,
+                   NOM_PARA=['X', 'Y'],)
 
-p_app     = FORMULE(NOM_PARA=('X','Y',), VALE=' +press_c(X,Y)+press_v(X,Y)');
+p_app = FORMULE(VALE=' +press_c(X,Y)+press_v(X,Y)',
+                press_c=press_c,
+                press_v=press_v,
+                NOM_PARA=['X', 'Y'],)
 
 #=============================================================
 # Fusion des declarations de champs de deplacement
@@ -495,9 +561,13 @@ def uy_f(x,y):
     else: 
         return uy2_c(x,y)+uy2_v(x,y)
 
-ux = FORMULE(NOM_PARA=('X','Y',), VALE='ux_f(X,Y)');
+ux = FORMULE(VALE='ux_f(X,Y)',
+             ux_f=ux_f,
+             NOM_PARA=['X', 'Y'],)
 
-uy = FORMULE(NOM_PARA=('X','Y',), VALE='uy_f(X,Y)');
+uy = FORMULE(VALE='uy_f(X,Y)',
+             uy_f=uy_f,
+             NOM_PARA=['X', 'Y'],)
 
 #=============================================================
 # Fusion des declarations de champs de contraintes
@@ -531,10 +601,18 @@ def SIG_XY_f(x,y):
     else: 
         return SIGMA_XY_2_c(x,y)+SIGMA_XY_2_v(x,y)
 
-SIG_XX=FORMULE(NOM_PARA=('X','Y',), VALE='SIG_XX_f(X,Y)')
-SIG_YY=FORMULE(NOM_PARA=('X','Y',), VALE='SIG_YY_f(X,Y)')
-SIG_ZZ=FORMULE(NOM_PARA=('X','Y',), VALE='SIG_ZZ_f(X,Y)')
-SIG_XY=FORMULE(NOM_PARA=('X','Y',), VALE='SIG_XY_f(X,Y)')
+SIG_XX = FORMULE(VALE='SIG_XX_f(X,Y)',
+                 SIG_XX_f=SIG_XX_f,
+                 NOM_PARA=['X', 'Y'],)
+SIG_YY = FORMULE(VALE='SIG_YY_f(X,Y)',
+                 SIG_YY_f=SIG_YY_f,
+                 NOM_PARA=['X', 'Y'],)
+SIG_ZZ = FORMULE(VALE='SIG_ZZ_f(X,Y)',
+                 SIG_ZZ_f=SIG_ZZ_f,
+                 NOM_PARA=['X', 'Y'],)
+SIG_XY = FORMULE(VALE='SIG_XY_f(X,Y)',
+                 SIG_XY_f=SIG_XY_f,
+                 NOM_PARA=['X', 'Y'],)
 
 #=============================================================
 # Fusion des declarations de champs de deformation
@@ -568,10 +646,18 @@ def EPS_XY_f(x,y):
     else: 
         return EPSI_XY_2_c(x,y)+EPSI_XY_2_v(x,y)
 
-EPS_XX=FORMULE(NOM_PARA=('X','Y',), VALE='EPS_XX_f(X,Y)')
-EPS_YY=FORMULE(NOM_PARA=('X','Y',), VALE='EPS_YY_f(X,Y)')
-EPS_ZZ=FORMULE(NOM_PARA=('X','Y',), VALE='EPS_ZZ_f(X,Y)')
-EPS_XY=FORMULE(NOM_PARA=('X','Y',), VALE='EPS_XY_f(X,Y)')
+EPS_XX = FORMULE(VALE='EPS_XX_f(X,Y)',
+                 EPS_XX_f=EPS_XX_f,
+                 NOM_PARA=['X', 'Y'],)
+EPS_YY = FORMULE(VALE='EPS_YY_f(X,Y)',
+                 EPS_YY_f=EPS_YY_f,
+                 NOM_PARA=['X', 'Y'],)
+EPS_ZZ = FORMULE(VALE='EPS_ZZ_f(X,Y)',
+                 EPS_ZZ_f=EPS_ZZ_f,
+                 NOM_PARA=['X', 'Y'],)
+EPS_XY = FORMULE(VALE='EPS_XY_f(X,Y)',
+                 EPS_XY_f=EPS_XY_f,
+                 NOM_PARA=['X', 'Y'],)
 
 
 #----------------------------------------------
@@ -595,7 +681,11 @@ MODELEIN=AFFE_MODELE(MAILLAGE=MAILLAG1,
 X0=0.
 Y0=0.
 
-LN=FORMULE(NOM_PARA=('X','Y'),VALE='(X-X0)**2+(Y-Y0)**2-R2*R2');
+LN = FORMULE(VALE='(X-X0)**2+(Y-Y0)**2-R2*R2',
+             X0=X0,
+             Y0=Y0,
+             R2=R2,
+             NOM_PARA=['X', 'Y'],)
 
 FISS=DEFI_FISS_XFEM(MAILLAGE=MAILLAG1,
                     TYPE_DISCONTINUITE='INTERFACE',

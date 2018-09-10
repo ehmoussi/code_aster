@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,10 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmcalm(typmat         , modelz, lischa, mate      , carele,&
-                  ds_constitutive, instam, instap, valinc    , solalg,&
-                  optmaz         , base  , meelem, ds_contact, matele,&
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine nmcalm(typmat         , modelz, lischa, ds_material, carele,&
+                  ds_constitutive, instam, instap, valinc     , solalg,&
+                  optmaz         , base  , meelem, ds_contact , matele,&
                   l_xthm)
 !
 use NonLin_Datastructure_type
@@ -45,20 +46,19 @@ implicit none
 #include "asterfort/nmelcm.h"
 #include "asterfort/wkvect.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=*) :: modelz
-    character(len=*) :: mate, carele
-    type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-    real(kind=8) :: instam, instap
-    type(NL_DS_Contact), intent(in) :: ds_contact
-    character(len=19) :: lischa
-    character(len=6) :: typmat
-    character(len=*) :: optmaz
-    character(len=1) :: base
-    character(len=19) :: meelem(*), solalg(*), valinc(*)
-    character(len=19) :: matele
-    aster_logical, intent(in) :: l_xthm
+character(len=*) :: modelz
+character(len=*) :: carele
+type(NL_DS_Material), intent(in) :: ds_material
+type(NL_DS_Constitutive), intent(in) :: ds_constitutive
+real(kind=8) :: instam, instap
+type(NL_DS_Contact), intent(in) :: ds_contact
+character(len=19) :: lischa
+character(len=6) :: typmat
+character(len=*) :: optmaz
+character(len=1) :: base
+character(len=19) :: meelem(*), solalg(*), valinc(*)
+character(len=19) :: matele
+aster_logical, intent(in) :: l_xthm
 !
 ! ----------------------------------------------------------------------
 !
@@ -70,7 +70,7 @@ implicit none
 !
 ! IN  MODELE : NOM DU MODELE
 ! IN  LISCHA : LISTE DES CHARGEMENTS
-! IN  MATE   : CHAMP MATERIAU
+! In  ds_material      : datastructure for material parameters
 ! In  ds_contact       : datastructure for contact management
 ! In  ds_constitutive  : datastructure for constitutive laws management
 ! In  list_func_acti   : list of active functionnalities
@@ -93,7 +93,7 @@ implicit none
 !
 !
 !
-!
+    integer :: ifm, niv
     character(len=19) :: memass, merigi
     character(len=24) :: model
     integer :: jinfc, jchar, jchar2
@@ -105,7 +105,6 @@ implicit none
     character(len=19) :: varc_prev, varc_curr, time_prev
     character(len=24) :: charge, infoch
     character(len=8) :: mesh
-    integer :: ifm, niv
 !
 ! ----------------------------------------------------------------------
 !
@@ -174,45 +173,45 @@ implicit none
 !
     else if (typmat.eq.'MEGEOM') then
         call merige(model(1:8), carele(1:8), sigplu, strplu, matele,&
-                    'V', 0, mater=mate)
+                    'V', 0, mater=ds_material%field_mate)
 !
 ! --- MATR_ELEM MASSES
 !
     else if (typmat.eq.'MEMASS') then
-        call memame(optmat, model, mate,&
+        call memame(optmat, model, ds_material%field_mate,&
                     carele, instam, ds_constitutive%compor, matele,&
                     base)
 !
 ! --- MATR_ELEM AMORTISSEMENT
 !
     else if (typmat.eq.'MEAMOR') then
-        call meamme(optmat, model, nbchar, zk8(jchar2), mate,&
+        call meamme(optmat, model, nbchar, zk8(jchar2), ds_material%field_mate,&
                     carele, instam, 'V', merigi,&
                     memass, matele, varplu)
 !
 ! --- MATR_ELEM POUR CHARGES SUIVEUSES
 !
     else if (typmat.eq.'MESUIV') then
-        call mecgme(model, carele, mate  , lischa, instap,&
+        call mecgme(model, carele, ds_material%field_mate  , lischa, instap,&
                     disp_prev, disp_cumu_inst, instam, ds_constitutive%compor, matele)
 !
 ! --- MATR_ELEM DES SOUS-STRUCTURES
 !
     else if (typmat.eq.'MESSTR') then
-        call messtr(base  , optmat, model, carele, mate,&
+        call messtr(base  , optmat, model, carele, ds_material%field_mate,&
                     matele)
 !
 ! --- MATR_ELEM DES ELTS DE CONTACT (XFEM+CONTINUE)
 !
     else if (typmat.eq.'MEELTC') then
-        call nmelcm('CONT'   , mesh     , model    , mate     , ds_contact    ,&
+        call nmelcm('CONT'   , mesh     , model    , ds_material     , ds_contact    ,&
                     disp_prev, vite_prev, acce_prev, vite_curr, disp_cumu_inst,&
                     disp_newt_curr,matele   , time_prev, time_curr, ds_constitutive, l_xthm)
 !
 ! --- MATR_ELEM DES ELTS DE FROTTEMENT (XFEM+CONTINUE)
 !
     else if (typmat.eq.'MEELTF') then
-        call nmelcm('FROT'   , mesh     , model    , mate     , ds_contact    ,&
+        call nmelcm('FROT'   , mesh     , model    , ds_material, ds_contact    ,&
                     disp_prev, vite_prev, acce_prev, vite_curr, disp_cumu_inst,&
                     disp_newt_curr,matele   , time_prev, time_curr, ds_constitutive, l_xthm)
     else

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -96,7 +96,8 @@ LI1=DEFI_LIST_REEL(DEBUT=0.10000000000000001,
                                  PAS=1.E-2,),);
 
 LAMBT=DEFI_CONSTANTE(VALE=8.3300000000000001,);
-LS = FORMULE(NOM_PARA='SAT',VALE='(0.3*SAT)');
+LS = FORMULE(VALE='(0.3*SAT)',
+             NOM_PARA='SAT',)
 
 LAMBS=CALC_FONC_INTERP(FONCTION=LS,
                         LIST_PARA=LI1,
@@ -111,7 +112,8 @@ LAMBCT=DEFI_CONSTANTE(VALE=0.5,);
 #CONSTBO = DEFI_CONSTANTE ( VALE : 0.99);
 #
 
-SLO = FORMULE(NOM_PARA='PCAP',VALE='(0.5-1.E-12*(PCAP-3700.+1.E5))');
+SLO = FORMULE(VALE='(0.5-1.E-12*(PCAP-3700.+1.E5))',
+              NOM_PARA='PCAP',)
 
 SATUBO=CALC_FONC_INTERP(FONCTION=SLO,
                         LIST_PARA=LI2,
@@ -122,7 +124,8 @@ NOM_PARA='PCAP',
 
 DSATBO=DEFI_CONSTANTE(VALE=-1.E-12,);
 
-PERMO = FORMULE(NOM_PARA='SAT',VALE='(1.+(0.5*(-1.+SAT**(-16.667))**0.940)**2)**(-0.5)');
+PERMO = FORMULE(VALE='(1.+(0.5*(-1.+SAT**(-16.667))**0.940)**2)**(-0.5)',
+                NOM_PARA='SAT',)
 
 PERM11BO=CALC_FONC_INTERP(FONCTION=PERMO,
 NOM_PARA='SAT',
@@ -131,11 +134,12 @@ NOM_PARA='SAT',
                           PROL_DROITE='CONSTANT',
                           INFO=2,);
 
-DPERMO = FORMULE(NOM_PARA='SAT',VALE='''
+DPERMO = FORMULE(VALE="""
   -0.5*(1.+ (0.5*(-1.+(SAT)**(-16.667))**0.940)**2)**(-1.5)
   * (2*(0.5*(-1.+(SAT)**(-16.667))**0.940))
  *0.47*(-1.+(SAT)**(-16.667))**(-0.06)
-  * (-16.667) * (SAT)**(-17.667)''');
+  * (-16.667) * (SAT)**(-17.667)""",
+                 NOM_PARA='SAT',)
 
 DPR11BO=CALC_FONC_INTERP(FONCTION=DPERMO,
 LIST_PARA=LI1,

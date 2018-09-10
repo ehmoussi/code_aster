@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -161,7 +161,7 @@ integer, intent(out) :: retcom
 
     else
 ! ----- Standard behaviours
-        compor_meca(NAME) = meca
+        compor_meca(RELA_NAME) = meca
         write (compor_meca(NVAR),'(I16)') nb_vari_meca
         compor_meca(DEFO) = defo
         write (compor_meca(NUME),'(I16)') nume_meca

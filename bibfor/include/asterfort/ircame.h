@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -23,7 +23,7 @@ interface
                       nbcmp, nomcmp, etiqcp, partie, numpt,&
                       instan, numord, adsk, adsd, adsc,&
                       adsv, adsl, nbenec, lienec, sdcarm,&
-                      codret)
+                      carael, codret)
         integer :: ifi
         character(len=64) :: nochmd
         character(len=19) :: chanom
@@ -43,7 +43,7 @@ interface
         integer :: adsl
         integer :: nbenec
         integer :: lienec(*)
-        character(len=8) :: sdcarm
+        character(len=8) :: sdcarm, carael
         integer :: codret
     end subroutine ircame
 end interface

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,52 +15,52 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine romLineicIndexSurf(nb1 , tab11, tab12,&
-                              nb2 , tab21, tab22,&
-                              tab3, epsi)
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine romLineicIndexSurf(tole         ,&
+                              nb_node      , coor_node1  , coor_node2  ,&
+                              nb_node_slice, coor_node_s1, coor_node_s2,&
+                              node_in_slice)
 !
 implicit none
 !
-!
-    integer, intent(in) :: nb1
-    real(kind=8), intent(in) :: tab11(nb1)
-    real(kind=8), intent(in) :: tab12(nb1)
-    integer, intent(in) :: nb2
-    real(kind=8), intent(in) :: tab21(nb2)
-    real(kind=8), intent(in) :: tab22(nb2)
-    integer, intent(out) :: tab3(nb1)
-    real(kind=8), intent(in) :: epsi
+real(kind=8), intent(in) :: tole
+integer, intent(in) :: nb_node
+real(kind=8), intent(in) :: coor_node1(nb_node)
+real(kind=8), intent(in) :: coor_node2(nb_node)
+integer, intent(in) :: nb_node_slice
+real(kind=8), intent(in) :: coor_node_s1(nb_node_slice)
+real(kind=8), intent(in) :: coor_node_s2(nb_node_slice)
+integer, intent(out) :: node_in_slice(nb_node)
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! Model reduction - Utilities
 !
-! For lineic base
+! For lineic base - Get index in slice for each node in plane orthogonal to given direction
 !
 ! --------------------------------------------------------------------------------------------------
 ! 
-! A PARTIR DE DEUX LISTES DE COORDONNEES 3D ET DEUX LISTES DE COORDONNEES 2D
-! TROUVER LA POSITION DE DEUX LISTES 3D DANS 2D
-! LE RESULTAT EST UNE LISTE D'ENTIER.
-!
-! TAB11, TAB12      /R/: TABLEAUX 3D
-! NB1               /I/: TAILLAE DU TABLEAU 3D
-! TAB21, TAB22      /R/: TABLEAUX 2D
-! NB2               /I/: TAILLE DU TABLEAU 2D
-! TAB3              /I/: TABLEAU RESULTAT
-! EPS               /R/: VALEUR DE TOLERENCE
+! In  tole             : tolerance
+! In  nb_node          : number of nodes
+! In  coor_node1       : first coordinate of nodes in plane orthogonal to given direction
+! In  coor_node2       : second coordinate of nodes in plane orthogonal to given direction
+! In  nb_node_slice    : number of nodes in slice
+! In  coor_node_s1     : first coordinate of nodes for slice in plane orthogonal to given direction
+! In  coor_node_s2     : second coordinate of nodes for slice in plane orthogonal to given direction
+! Out node_in_slice    : for each node, the index of node in slice
 !
 ! --------------------------------------------------------------------------------------------------
 ! 
-    integer :: i, j
+    integer :: i_node, i_node_slice
 !
 ! --------------------------------------------------------------------------------------------------
 ! 
-    do i = 1, nb1
-        do j = 1, nb2
-            if (abs(tab21(j)-tab11(i)).lt.epsi .and. abs(tab22(j)-tab12(i)).lt.epsi) then
-                tab3(i) = j
+    do i_node = 1, nb_node
+        do i_node_slice = 1, nb_node_slice
+            if (abs(coor_node_s1(i_node_slice)-coor_node1(i_node)).lt.tole .and.&
+                abs(coor_node_s2(i_node_slice)-coor_node2(i_node)).lt.tole) then
+                node_in_slice(i_node) = i_node_slice
                 exit
             endif
         enddo

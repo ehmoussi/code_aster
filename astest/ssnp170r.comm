@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -29,15 +29,15 @@ lisi=DEFI_LIST_REEL(DEBUT=0,
                                   PAS=1,),);
 LINST=DEFI_LIST_INST(DEFI_LIST=_F(LIST_INST=lisi,),
                          ECHEC=_F(EVENEMENT='ERREUR',
-                         ACTION='DECOUPE',),);                  
-RAMPE=DEFI_FONCTION(NOM_PARA='INST',VALE=(0,0,1,1),); 
+                         ACTION='DECOUPE',),);
+RAMPE=DEFI_FONCTION(NOM_PARA='INST',VALE=(0,0,1,1),);
 
 Mail=LIRE_MAILLAGE(UNITE=20,
                    FORMAT='MED',);
-                   
+
 Mail=MODI_MAILLAGE(reuse=Mail,
                    MAILLAGE=Mail,
-                   ORIE_PEAU_3D=_F(GROUP_MA=('Group_2','Group_1','Group_3','Group_4',),),);                       
+                   ORIE_PEAU_3D=_F(GROUP_MA=('Group_2','Group_1','Group_3','Group_4',),),);
 
 mat1=DEFI_MATERIAU(ELAS=_F(E=2000,
                            NU=0.3,),);
@@ -59,17 +59,17 @@ for i in range(2):
     Mail2[i]=CREA_MAILLAGE(MAILLAGE=Mail,
                         DECOUPE_LAC=_F(GROUP_MA_ESCL=group_ma_escl,),
                         )
-    
+
     MODI[i]=AFFE_MODELE(MAILLAGE=Mail2[i],
                         AFFE=_F(TOUT='OUI',
                             PHENOMENE='MECANIQUE',
                             MODELISATION='3D',),);
-                        
+
     AFFE[i]=AFFE_MATERIAU(MAILLAGE=Mail2[i],
                     MODELE=MODI[i],
                     AFFE=_F(TOUT='OUI',
                             MATER=mat1,),);
-    
+
     DEFICO[i]=DEFI_CONTACT(MODELE=MODI[i],
                         INFO=1,
                         FORMULATION='CONTINUE',
@@ -81,8 +81,8 @@ for i in range(2):
                                 ALGO_CONT='LAC',
                                 TYPE_APPA="ROBUSTE",
                                 ),);
-    
-    
+
+
     CHAR1[i]=AFFE_CHAR_CINE(MODELE=MODI[i],
                         MECA_IMPO=(_F(GROUP_MA='Symx',
                                     DX=0,),
@@ -93,8 +93,8 @@ for i in range(2):
     CHAR2[i]= AFFE_CHAR_MECA(MODELE=MODI[i],
                                 PRES_REP=_F(GROUP_MA='Group_4',
                                 PRES=25,), );
-    
-    RES[i]=STAT_NON_LINE(INFO=2,
+
+    RES[i]=STAT_NON_LINE(INFO=1,
                     AFFICHAGE=_F(INFO_RESIDU='OUI',),
                     MODELE=MODI[i],
                     CHAM_MATER=AFFE[i],
@@ -103,10 +103,10 @@ for i in range(2):
                             _F(CHARGE=CHAR2[i],
                                 FONC_MULT=RAMPE,
                                 #TYPE_CHARGE='SUIV',
-                                ), ),  
+                                ), ),
                     CONTACT=DEFICO[i],
                     NEWTON=_F(MATRICE='TANGENTE',
-                                REAC_ITER=1,),    
+                                REAC_ITER=1,),
                     COMPORTEMENT=_F(RELATION='ELAS',
                                         DEFORMATION='PETIT',
                                     TOUT='OUI',),
@@ -117,11 +117,11 @@ for i in range(2):
                                 PCENT_PIVOT= 30,),
                     CONVERGENCE=_F(RESI_GLOB_RELA=1.E-6,
                                     ITER_GLOB_MAXI=50,));
-    
+
     CALC_CHAMP(reuse=RES[i],
             RESULTAT=RES[i],
             CONTRAINTE=('SIEF_NOEU'),);
-    
+
     TEST_RESU(RESU=(_F(INST=1.0,
                     TYPE_TEST='MIN',
                     RESULTAT=RES[i],
@@ -164,7 +164,7 @@ for i in range(2):
                     ),
                     ),
             );
-    
+
     TEST_RESU(RESU=(_F(INST=1.0,
                        TYPE_TEST='MIN',
                        RESULTAT=RES[i],
@@ -235,7 +235,7 @@ for i in range(2):
                        NOM_CHAM='CONT_ELEM',
                        LEGENDE='CONT_ELEM',
                        NOM_CMP='COEFSURF',
-                       VALE_CALC=0.25,
+                       VALE_CALC=1.0,
                        ),
                     _F(INST=1.0,
                        TYPE_TEST='MAX',
@@ -243,7 +243,7 @@ for i in range(2):
                        NOM_CHAM='CONT_ELEM',
                        LEGENDE='CONT_ELEM',
                        NOM_CMP='COEFSURF',
-                       VALE_CALC=0.25,
+                       VALE_CALC=1.0,
                        ),
                     _F(INST=1.0,
                        TYPE_TEST='MIN',
@@ -251,7 +251,7 @@ for i in range(2):
                        NOM_CHAM='CONT_ELEM',
                        LEGENDE='CONT_ELEM',
                        NOM_CMP='PRESCOOR',
-                       VALE_CALC=-6.25,
+                       VALE_CALC=-25.0,
                        ),
                     _F(INST=1.0,
                        TYPE_TEST='MAX',
@@ -259,7 +259,7 @@ for i in range(2):
                        NOM_CHAM='CONT_ELEM',
                        LEGENDE='CONT_ELEM',
                        NOM_CMP='PRESCOOR',
-                       VALE_CALC=-6.25,
+                       VALE_CALC=-25.0,
                        ),
                     ),
               )

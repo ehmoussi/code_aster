@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -24,11 +24,8 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 
-def copier_prod(CONCEPT,**args):
-   return AsType(CONCEPT)
-
 # liste des types de concept acceptes par la commande :
-copier_ltyp=(
+copier_ltyp = (
   cabl_precont,
   listr8_sdaster,
   listis_sdaster,
@@ -42,7 +39,15 @@ copier_ltyp=(
   evol_ther,
 )
 
-COPIER=OPER(nom="COPIER",op= 185,sd_prod=copier_prod,reentrant='f',
+def copier_prod(CONCEPT,**args):
+    if args.get('__all__'):
+        return copier_ltyp
+
+    return AsType(CONCEPT)
+
+
+COPIER=OPER(nom="COPIER",op= 185,sd_prod=copier_prod,
+            reentrant='f:CONCEPT',
             fr=tr("Copier un concept utilisateur sous un autre nom"),
 
             reuse=SIMP(statut='c', typ=CO),

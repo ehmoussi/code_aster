@@ -6,5 +6,5 @@ P mpi_nbnoeud 1
 P testlist verification sequential
 
 F comm ssnv147i.comm D 1
-F datg ssnv147a.datg D 16
-F mmed ssnv147a.mmed D 20
+F datg ssnv147c.datg D 16
+F mmed ssnv147c.mmed D 20

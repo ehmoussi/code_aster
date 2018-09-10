@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -25,7 +25,6 @@ subroutine focoli(ipt, coli, interp, x, y,&
     real(kind=8) :: x(*), y(*), rvar, resu
     character(len=1) :: coli
     character(len=24) :: interp
-    real(kind=8) :: epsi, tole
     real(kind=8) :: valr(3)
 ! ----------------------------------------------------------------------
 #define linlin(x0,x1,y1,x2,y2) y1+(x0-x1)*(y2-y1)/(x2-x1)
@@ -81,21 +80,6 @@ subroutine focoli(ipt, coli, interp, x, y,&
                 call utmess('A', 'UTILITAI6_15', nr=3, valr=valr)
             else
                 resu = loglin(rvar,x(ipt),y(ipt),x(ipt+1),y(ipt+1))
-            endif
-!
-        else if (interp(1:3).eq.'NON') then
-            epsi = sqrt ( r8prem() )
-            tole = epsi * abs( x(ipt) - x(ipt+1) )
-            if (abs(x(ipt)-rvar) .le. tole) then
-                resu = y(ipt)
-            else if (abs(x(ipt+1)-rvar) .le. tole) then
-                resu = y(ipt+1)
-            else
-                ier = 200
-                valr (1) = rvar
-                valr (2) = x(ipt)
-                valr (3) = x(ipt+1)
-                call utmess('A', 'UTILITAI6_14', nr=3, valr=valr)
             endif
 !
         else

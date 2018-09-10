@@ -34,16 +34,19 @@ class StaticNonLinearAnalysisBuild(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        self._result = NonLinearEvolutionContainer()
-    
+        if keywords.get("reuse") != None:
+            self._result = keywords["reuse"]
+        else:
+            self._result = NonLinearEvolutionContainer()
+
     def post_exec(self, keywords):
         """Execute the command.
 
         Arguments:
             keywords (dict): User's keywords.
         """
-        self._result.update()
         self._result.appendModelOnAllRanks(keywords["MODELE"])
         self._result.appendMaterialOnMeshOnAllRanks(keywords["CHAM_MATER"])
+        self._result.update()
 
 STAT_NON_LINE = StaticNonLinearAnalysisBuild.run

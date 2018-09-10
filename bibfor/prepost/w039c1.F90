@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -29,8 +29,8 @@ subroutine w039c1(carte, ifi, form, ligrel, titre)
 #include "asterfort/exisd.h"
 #include "asterfort/imprsd.h"
 #include "asterfort/irceme.h"
+#include "asterfort/iunifi.h"
 #include "asterfort/jedema.h"
-#include "asterfort/jedetr.h"
 #include "asterfort/jelira.h"
 #include "asterfort/jemarq.h"
 #include "asterfort/jenuno.h"
@@ -39,7 +39,6 @@ subroutine w039c1(carte, ifi, form, ligrel, titre)
 #include "asterfort/jexnum.h"
 #include "asterfort/w039c2.h"
 #include "asterfort/w039c4.h"
-#include "asterfort/wkvect.h"
 #include "asterfort/as_deallocate.h"
 #include "asterfort/as_allocate.h"
 !
@@ -74,8 +73,8 @@ subroutine w039c1(carte, ifi, form, ligrel, titre)
     if (iexi .eq. 0) goto 999
 
 !
-    ifm=6
-    ifr=8
+    ifm=iunifi('MESSAGE')
+    ifr=iunifi('RESULTAT')
     cart1=carte
 
 !     -- POUR QUE LE CHAM_ELEM QUE L'ON VA IMPRIMER AIT UN NOM "PROCHE"
@@ -207,7 +206,7 @@ subroutine w039c1(carte, ifi, form, ligrel, titre)
         sdcarm=' '
         call irceme(ifi, nommed, cel2, typech, modele,&
                     0, ' ', ' ', ' ', 0,&
-                    0.d0, 0, 0, [0], sdcarm,&
+                    0.d0, 0, 0, [0], sdcarm, sdcarm,&
                     iret)
         ASSERT(iret.eq.0)
 

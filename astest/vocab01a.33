@@ -5,22 +5,45 @@
 import os
 import tempfile
 
+from Noyau.N_ETAPE import check_sdprod
+
 
 def getListOfCommands():
     """Build the list of operators"""
     from code_aster.Cata.Commands import commandStore
-    return commandStore.values()
+    commands = [cmd for cmd in commandStore.values() if cmd.nom != 'VARIABLE']
+    return commands
 
 def checkDefinition( commands ):
     """Check the definition of the catalog of the commands (see N_ENTITE.py)"""
     print ">>> Vérification des catalogues de commandes..."
+    err = []
     for cmd in commands:
         cr = cmd.report()
         if not cr.estvide():
-            print str(cr)
-            raise TypeError("La vérification du catalogue a échoué pour '{0}'"\
-                            .format(cmd.nom))
+            err.append([cmd.nom, str(cr)])
+            # print str(cr)
+            # raise TypeError("La vérification du catalogue a échoué pour '{0}'"\
+            #                 .format(cmd.nom))
+        cr = check_sd_prod(cmd)
+        if cr:
+            err.append([cmd.nom, str(cr)])
+
+    for name, msg in err:
+        print("La vérification du catalogue a échoué pour '{0}':\n{1}"
+              .format(name, msg))
+    if err:
+        raise TypeError("{0} erreurs sur {1} commandes."
+                        .format(len(err), len(commands)))
     print "    ok\n"
+
+def check_sd_prod(cmd):
+    """Check sd_prod function."""
+    try:
+        check_sdprod(cmd.nom, getattr(cmd, 'sd_prod', None),
+                     None, verbose=False)
+    except TypeError as exc:
+        return str(exc)
 
 def get_entite( obj ):
     """Return the sub-objects of a composite object"""

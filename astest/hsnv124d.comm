@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -49,11 +49,14 @@ ZERO=DEFI_CONSTANTE( VALE=0.0)
 
 YOUNG=2.E5
 
-S_F = FORMULE(NOM_PARA='TEMP',VALE='200.- 1.7*TEMP')
+S_F = FORMULE(VALE='200.- 1.7*TEMP',
+              NOM_PARA='TEMP',)
 
-C_F = FORMULE(NOM_PARA='TEMP',VALE='(100.+1.7*TEMP)*(50.+2.*TEMP)')
+C_F = FORMULE(VALE='(100.+1.7*TEMP)*(50.+2.*TEMP)',
+              NOM_PARA='TEMP',)
 
-D_F = FORMULE(NOM_PARA='TEMP',VALE='50.+2.*TEMP')
+D_F = FORMULE(VALE='50.+2.*TEMP',
+              NOM_PARA='TEMP',)
 
 TEMPE1=DEFI_LIST_REEL(  DEBUT=-10.,
               INTERVALLE=_F(  JUSQU_A = 120.,    NOMBRE = 130,  )
@@ -84,7 +87,9 @@ ACIER=DEFI_MATERIAU(  THER=_F( LAMBDA = 1.,   ),
                                     )
                           )
 
-C2_F = FORMULE(NOM_PARA='TEMP',VALE='C_F(TEMP)*0.5')
+C2_F = FORMULE(VALE='C_F(TEMP)*0.5',
+               C_F=C_F,
+               NOM_PARA='TEMP',)
 
 C2_T=CALC_FONC_INTERP(    FONCTION=C2_F,
                              LIST_PARA=TEMPE1,

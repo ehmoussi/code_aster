@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -20,7 +20,7 @@
 !
 interface
     subroutine caraun(char, motfac, nzocu, nbgdcu, coefcu,&
-                      compcu, multcu, ntcmp)
+                      compcu, multcu, penacu, ntcmp)
         character(len=8) :: char
         character(len=16) :: motfac
         integer :: nzocu
@@ -28,6 +28,7 @@ interface
         character(len=24) :: coefcu
         character(len=24) :: compcu
         character(len=24) :: multcu
+        character(len=24) :: penacu
         integer :: ntcmp
     end subroutine caraun
 end interface

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -103,14 +103,16 @@ LI2=DEFI_LIST_REEL(DEBUT=0.0,
 #
 # PRESSION CAPILLAIRE S(PC)
 #
-SL = FORMULE(NOM_PARA='PCAP',VALE='0.81667/(1+(2.9227*PCAP)**2.0304)**0.5075+0.18333');
+SL = FORMULE(VALE='0.81667/(1+(2.9227*PCAP)**2.0304)**0.5075+0.18333',
+             NOM_PARA='PCAP',)
 SATU=CALC_FONC_INTERP(FONCTION=SL,
                       LIST_PARA=LI2,
                       NOM_PARA='PCAP',
                       PROL_DROITE='CONSTANT',
                       PROL_GAUCHE='CONSTANT',
                       INFO=2,);
-DSL = FORMULE(NOM_PARA='PCAP',VALE='-2.4595*(2.9227*PCAP)**1.0304/((1+(2.9227*PCAP)**2.0304)**1.5075)');
+DSL = FORMULE(VALE='-2.4595*(2.9227*PCAP)**1.0304/((1+(2.9227*PCAP)**2.0304)**1.5075)',
+              NOM_PARA='PCAP',)
 
 DSATU=CALC_FONC_INTERP(FONCTION=DSL,
                        LIST_PARA=LI2,
@@ -131,7 +133,12 @@ D=2.4977;
 E=2.304;
 ADB=2*A*A*D*B;
 
-PL = FORMULE(NOM_PARA='SAT',VALE='exp(-D*((A/(SAT-C))**2-1)**B)');
+PL = FORMULE(VALE='exp(-D*((A/(SAT-C))**2-1)**B)',
+             D=D,
+             A=A,
+             C=C,
+             B=B,
+             NOM_PARA='SAT',)
 
 PERML=CALC_FONC_INTERP(FONCTION=PL,
                        LIST_PARA=LI1,
@@ -140,7 +147,13 @@ PERML=CALC_FONC_INTERP(FONCTION=PL,
                        PROL_GAUCHE='CONSTANT',
                        INFO=2,);
 
-DPL= FORMULE(NOM_PARA='SAT',VALE='(ADB/(SAT-C)**3)*(A*A/(SAT-C)**2-1)**(B-1)*exp(-D*((A/(SAT-C))**2-1)**B) ');
+DPL = FORMULE(VALE='(ADB/(SAT-C)**3)*(A*A/(SAT-C)**2-1)**(B-1)*exp(-D*((A/(SAT-C))**2-1)**B) ',
+              ADB=ADB,
+              C=C,
+              A=A,
+              B=B,
+              D=D,
+              NOM_PARA='SAT',)
 DPERML=CALC_FONC_INTERP(FONCTION=DPL,
                        LIST_PARA=LI1,
                        NOM_PARA='SAT',

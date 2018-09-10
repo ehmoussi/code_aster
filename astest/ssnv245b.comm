@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -58,7 +58,8 @@ MO=AFFE_MODELE(MAILLAGE=MAILLAG2,
                        MODELISATION='D_PLAN',),
               );
 
-LS_N=FORMULE(NOM_PARA=('X','Y'),VALE='Y-2.6');
+LS_N = FORMULE(VALE='Y-2.6',
+               NOM_PARA=['X', 'Y'],)
 
 FISS=DEFI_FISS_XFEM(MAILLAGE=MAILLAG2,
                     TYPE_DISCONTINUITE='INTERFACE',
@@ -125,11 +126,14 @@ def depy(x,y) :
 
 
 DEPL_X = FORMULE(VALE='depx(X,Y)',
-                  NOM_PARA=('X','Y',),);
+                 depx=depx,
+                 NOM_PARA=['X', 'Y'],)
 DEPL_N = FORMULE(VALE='depn(X,Y)',
-                  NOM_PARA=('X','Y',),);
+                 depn=depn,
+                 NOM_PARA=['X', 'Y'],)
 DEPL_Y = FORMULE(VALE='depy(X,Y)',
-                  NOM_PARA=('X','Y',),);
+                 depy=depy,
+                 NOM_PARA=['X', 'Y'],)
 
 CH=AFFE_CHAR_MECA_F(MODELE=MODELEK,
                   DDL_IMPO=(

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,25 +15,25 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine comp_meta_save(mesh, compor, nb_cmp, list_vale)
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine comp_meta_save(mesh, compor, nb_cmp, ds_comporMeta)
+!
+use Metallurgy_type
 !
 implicit none
 !
 #include "asterf_types.h"
-#include "asterc/getfac.h"
 #include "asterfort/comp_read_mesh.h"
 #include "asterfort/assert.h"
 #include "asterfort/jedetr.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/nocart.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=8), intent(in) :: mesh
-    character(len=19), intent(in) :: compor
-    integer, intent(in) :: nb_cmp
-    character(len=19), intent(in) :: list_vale
+character(len=8), intent(in) :: mesh
+character(len=19), intent(in) :: compor
+integer, intent(in) :: nb_cmp
+type(META_PrepPara), intent(in) :: ds_comporMeta
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -43,57 +43,53 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  mesh        : name of mesh
-! In  compor      : name of <CARTE> COMPOR
-! In  nb_cmp      : number of components in <CARTE> COMPOR
-! In  list_vale   : list of informations to save
+! In  mesh             : name of mesh
+! In  compor           : name of <CARTE> COMPOR
+! In  nb_cmp           : number of components in <CARTE> COMPOR
+! In  ds_comporMeta    : datastructure to prepare comportement
 !
 ! --------------------------------------------------------------------------------------------------
 !
     character(len=24) :: list_elem_affe
     aster_logical :: l_affe_all
     integer :: nb_elem_affe
-    integer :: iocc, nocc
-    character(len=16) :: rela_comp
-    integer :: nb_vari
-    character(len=16) :: keywordfact
-    character(len=16), pointer :: valv(:) => null()
-    character(len=24), pointer :: valk(:) => null()
-    integer, pointer :: vali(:) => null()
+    integer :: i_comp, nb_comp
+    integer :: nb_vari, nume_comp
+    character(len=16) :: phase_type, loi_meta, keywordfact
+    character(len=16), pointer :: v_compor_valv(:) => null()
     integer, pointer :: v_elem_affe(:) => null()
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    list_elem_affe = '&&COMPMETASAVE.LIST'
     keywordfact    = 'COMPORTEMENT'
-    call getfac(keywordfact, nocc)
+    list_elem_affe = '&&COMPMETASAVE.LIST'
+    nb_comp        = ds_comporMeta%nb_comp
 !
 ! - Access to COMPOR <CARTE>
 !
-    call jeveuo(compor//'.VALV', 'E', vk16=valv)
-!
-! - Access to list
-!
-    call jeveuo(list_vale(1:19)//'.VALI', 'L', vi=vali)
-    call jeveuo(list_vale(1:19)//'.VALK', 'L', vk24=valk)
+    call jeveuo(compor//'.VALV', 'E', vk16=v_compor_valv)
 !
 ! - Read list
 !
-    do iocc = 1, nocc
+    do i_comp = 1, nb_comp
 !
 ! ----- Get options
 !
-        nb_vari   = vali(1)
-        rela_comp = valk(1)(1:16)
+        phase_type = ds_comporMeta%v_comp(i_comp)%phase_type
+        loi_meta   = ds_comporMeta%v_comp(i_comp)%loi_meta
+        nb_vari    = ds_comporMeta%v_comp(i_comp)%nb_vari
+        nume_comp  = ds_comporMeta%v_comp(i_comp)%nume_comp
 !
 ! ----- Set options in COMPOR <CARTE>
 !
-        valv(1) = rela_comp
-        write (valv(2),'(I16)') nb_vari
+        v_compor_valv(1) = phase_type
+        write (v_compor_valv(2),'(I16)') nb_vari
+        v_compor_valv(3) = loi_meta
+        write (v_compor_valv(4),'(I16)') nume_comp
 !
 ! ----- Get list of elements where comportment is defined
 !
-        call comp_read_mesh(mesh          , keywordfact, iocc        ,&
+        call comp_read_mesh(mesh          , keywordfact, i_comp        ,&
                             list_elem_affe, l_affe_all , nb_elem_affe)
 !
 ! ----- Affect in COMPOR <CARTE>

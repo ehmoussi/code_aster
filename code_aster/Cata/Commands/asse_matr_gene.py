@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -24,6 +24,9 @@ from code_aster.Cata.Commons import *
 
 
 def asse_matr_gene_prod(METHODE,**args):
+    if args.get('__all__'):
+        return (matr_asse_gene_r, matr_asse_gene_c)
+
     if   (METHODE=="INITIAL") : return matr_asse_gene_r
     elif (args['OPTION']=="RIGI_GENE_C") : return matr_asse_gene_c
     else : return matr_asse_gene_r

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -21,12 +21,12 @@ subroutine lc0058(fami , kpg   , ksp   , ndim  , typmod,&
                   imate, compor, carcri, instam, instap,&
                   neps , epsm  , deps  , nsig  , sigm  ,&
                   nvi  , vim   , option, angmas, icomp ,&
+                  temp , dtemp , predef, dpred ,&
                   sigp , vip   , dsidep, codret)
 !
 implicit none
 !
 #include "asterc/mfront_behaviour.h"
-#include "asterfort/mfrontExternalStateVariable.h"
 #include "asterfort/mfront_get_mater_value.h"
 #include "asterfort/mfrontPrepareStrain.h"
 #include "asterfort/assert.h"
@@ -47,7 +47,7 @@ character(len=16), intent(in) :: compor(*)
 real(kind=8), intent(in) :: carcri(*)
 real(kind=8), intent(in) :: instam, instap
 integer, intent(in) :: neps
-real(kind=8), intent(in) :: epsm(6), deps(6)
+real(kind=8), intent(in) :: epsm(*), deps(*)
 integer, intent(in) :: nsig
 real(kind=8), intent(in) :: sigm(6)
 integer, intent(in) :: nvi
@@ -55,6 +55,8 @@ real(kind=8), intent(in) :: vim(*)
 character(len=16), intent(in) :: option
 real(kind=8), intent(in) :: angmas(*)
 integer, intent(in) :: icomp
+real(kind=8), intent(in) :: temp, dtemp
+real(kind=8), intent(in) :: predef(*), dpred(*)
 real(kind=8), intent(out) :: sigp(6)
 real(kind=8), intent(out) :: vip(nvi)
 real(kind=8), intent(out) :: dsidep(6, 6)
@@ -88,6 +90,10 @@ integer, intent(out) :: codret
 ! In  option           : name of option to compute
 ! In  angmas           : nautical angles
 ! In  icomp            : indicator of local sub-step
+! In temp              : temperature at beginning of current step time
+! In dtemp             : increment of temperature during current step time
+! In predef            : external state variables at beginning of current step time
+! In dpred             : increment of external state variables during current step time
 ! Out sigm             : stresses at end of current step time
 ! Out vip              : internal state variables at end of current step time
 ! Out dsidep           : tangent matrix
@@ -96,19 +102,17 @@ integer, intent(out) :: codret
 ! --------------------------------------------------------------------------------------------------
 !
     integer, parameter :: npropmax = 197
-    integer, parameter :: npred = 8
-    integer :: nprops, nstatv, j, i, pfcmfr, nummod, jvariexte
+    integer :: nprops, nstatv, j, i, pfcmfr, nummod, jvariexte, jstrainexte
     real(kind=8), parameter :: rac2 = sqrt(2.d0)
     real(kind=8), parameter :: usrac2 = sqrt(2.d0)*0.5d0
     real(kind=8) :: drot(3, 3), dstran(9), props(npropmax)
     real(kind=8) :: time(2)
-    real(kind=8) :: predef(npred), dpred(npred)
     real(kind=8) :: ddsdde(54)
     real(kind=8) :: stran(9)
-    real(kind=8) :: dtime, temp, dtemp, pnewdt
-    real(kind=8) :: depsth(6), epsth(6), drott(3, 3)
+    real(kind=8) :: dtime, pnewdt
+    real(kind=8) :: drott(3, 3)
     character(len=16) :: rela_comp, defo_comp
-    aster_logical :: l_pred, l_large_strain, l_czm
+    aster_logical :: l_simomiehe, l_grotgdep, l_czm
     integer :: ntens, ndi
     common/tdim/  ntens  , ndi
 !
@@ -118,17 +122,19 @@ integer, intent(out) :: codret
     ndi            = 3
     codret         = 0
     nprops         = npropmax
-    rela_comp      = compor(NAME)
+    rela_comp      = compor(RELA_NAME)
     defo_comp      = compor(DEFO)
     pfcmfr         = nint(carcri(16))
     jvariexte      = nint(carcri(IVARIEXTE))
-    l_pred         = option(1:9).eq. 'RIGI_MECA'
-    l_large_strain = .false.
+    jstrainexte    = nint(carcri(ISTRAINEXTE))
+    l_simomiehe    = defo_comp .eq. 'SIMO_MIEHE'
+    l_grotgdep     = ASTER_FALSE
+    if (jstrainexte .eq. MFRONT_STRAIN_GROTGDEP_L) then
+        l_grotgdep     = ASTER_TRUE
+    endif
     l_czm          = typmod(2).eq.'ELEMJOIN'
     ASSERT(.not. l_czm)
-    if (l_czm) then
-        ntens = 6
-    endif
+    ASSERT(.not. l_simomiehe)
 !
 ! - Get material properties
 !
@@ -150,20 +156,11 @@ integer, intent(out) :: codret
         ASSERT(.false.)
     endif
 !
-! - Prepare external state variables
-!
-    call mfrontExternalStateVariable(carcri,&
-                                     fami   , kpg      , ksp, imate, &
-                                     temp   , dtemp    , &
-                                     predef , dpred    , &
-                                     neps   , epsth    , depsth)
-!
 ! - Prepare strains
 !
-    call mfrontPrepareStrain(l_large_strain, l_pred, l_czm,&
-                             neps          , epsm  , deps ,&
-                             epsth         , depsth,&
-                             stran         , dstran)
+    call mfrontPrepareStrain(l_simomiehe, l_grotgdep, option, &
+                             neps , epsm , deps ,&
+                             stran , dstran)
 !
 ! - Modify number of internal state variables
 !

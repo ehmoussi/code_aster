@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,9 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmprde(modele, numedd         , numfix    , mate       , carele    ,&
-                  comref, ds_constitutive, lischa    , ds_algopara, solveu    ,&
+! person_in_charge: mickael.abbas at edf.fr
+! aslint: disable=W1504
+!
+subroutine nmprde(modele, numedd         , numfix    , ds_material, carele    ,&
+                  ds_constitutive, lischa    , ds_algopara, solveu    ,&
                   fonact, ds_print       , ds_measure, ds_algorom, sddisc     , numins    ,&
                   valinc, solalg         , matass    , maprec     , ds_contact,&
                   sddyna, meelem         , measse    , veelem     , veasse    ,&
@@ -38,24 +40,22 @@ implicit none
 #include "asterfort/vtcopy.h"
 #include "asterfort/vtzero.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-! aslint: disable=W1504
-!
-    integer :: fonact(*)
-    integer :: numins, ldccvg, faccvg, rescvg
-    type(NL_DS_AlgoPara), intent(in) :: ds_algopara
-    character(len=19) :: maprec, matass
-    type(NL_DS_Measure), intent(inout) :: ds_measure
-    type(NL_DS_Print), intent(inout) :: ds_print
-    type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
-    character(len=19) :: lischa, solveu, sddisc, sddyna
-    character(len=24) :: numedd, numfix
-    character(len=24) :: modele, mate, carele, comref
-    type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-    type(NL_DS_Contact), intent(inout) :: ds_contact
-    character(len=19) :: veelem(*), veasse(*)
-    character(len=19) :: meelem(*), measse(*)
-    character(len=19) :: solalg(*), valinc(*)
+integer :: fonact(*)
+integer :: numins, ldccvg, faccvg, rescvg
+type(NL_DS_AlgoPara), intent(in) :: ds_algopara
+character(len=19) :: maprec, matass
+type(NL_DS_Measure), intent(inout) :: ds_measure
+type(NL_DS_Print), intent(inout) :: ds_print
+type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
+character(len=19) :: lischa, solveu, sddisc, sddyna
+character(len=24) :: numedd, numfix
+character(len=24) :: modele, carele
+type(NL_DS_Material), intent(in) :: ds_material
+type(NL_DS_Constitutive), intent(in) :: ds_constitutive
+type(NL_DS_Contact), intent(inout) :: ds_contact
+character(len=19) :: veelem(*), veasse(*)
+character(len=19) :: meelem(*), measse(*)
+character(len=19) :: solalg(*), valinc(*)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -68,9 +68,8 @@ implicit none
 ! IN  MODELE : MODELE
 ! IN  NUMEDD : NUME_DDL (VARIABLE AU COURS DU CALCUL)
 ! IN  NUMFIX : NUME_DDL (FIXE AU COURS DU CALCUL)
-! IN  MATE   : CHAMP MATERIAU
+! In  ds_material      : datastructure for material parameters
 ! IN  CARELE : CARACTERISTIQUES DES ELEMENTS DE STRUCTURE
-! IN  COMREF : VARI_COM DE REFERENCE
 ! In  ds_constitutive  : datastructure for constitutive laws management
 ! IN  LISCHA : LISTE DES CHARGES
 ! IN  MAPREC : MATRICE DE PRECONDITIONNEMENT (GCPC)
@@ -159,8 +158,8 @@ implicit none
 ! --- CINEMATIQUEMENT ADMISSIBLE
 !
     if (lproj) then
-        call nmprca(modele, numedd         , numfix     , mate       , carele    ,&
-                    comref, ds_constitutive, lischa     , ds_algopara, solveu    ,&
+        call nmprca(modele, numedd         , numfix     , ds_material, carele    ,&
+                    ds_constitutive, lischa     , ds_algopara, solveu    ,&
                     fonact, ds_print       , ds_measure , ds_algorom, sddisc     , numins    ,&
                     valinc, solalg         , matass     , maprec     , ds_contact,&
                     sddyna, meelem         , measse     , veelem     , veasse    ,&

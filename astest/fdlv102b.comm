@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -31,10 +31,11 @@ DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'),
 #
 # AFFECTATION DU MODELE FLUIDE SUR UN PREMIER MAILLAGE
 #
-PRE_GIBI(UNITE_MAILLAGE=21)
 
 #
-MAFLUI=LIRE_MAILLAGE(FORMAT="ASTER",UNITE=21)
+MAFLUI = LIRE_MAILLAGE(FORMAT='GIBI',
+                       UNITE=19,
+                       )
 
 #
 FLUIDE=AFFE_MODELE(  MAILLAGE=MAFLUI,AFFE=(
@@ -66,7 +67,8 @@ CHAMMAT2=AFFE_MATERIAU(  MAILLAGE=MAFLUI,AFFE=(
 #
 
 
-MASTRUC=LIRE_MAILLAGE(FORMAT='MED',UNITE=20)
+MASTRUC = LIRE_MAILLAGE(FORMAT='MED',
+                        UNITE=20,)
 
 ACIER=DEFI_MATERIAU(  ELAS=_F( E = 2.1E11,  NU = 0.30,  RHO = 7800.0))
 

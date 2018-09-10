@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -25,17 +25,18 @@ loi = LoiComportement(
     nom            = 'ENDO_ORTH_BETON',
     lc_type        = ('MECANIQUE',),
     doc            =   """Relation de comportement anisotrope du béton avec endommagement [R7.01.09].
-   Il s'agit d'une modélisation locale d'endommagement prenant en compte la refermeture des fissures."""            ,
+   Il s'agit d'une modélisation locale d'endommagement prenant en compte la refermeture des fissures."""              ,
     num_lc         = 7,
     nb_vari        = 7,
     nom_vari       = ('ENDOXX','ENDOYY','ENDOZZ','ENDOXY','ENDOXZ',
         'ENDOYZ','ENDOCOMP',),
-    mc_mater       = ('ELAS','ENDO_ORTH_BETON','NON_LOCAL',),
-    modelisation   = ('3D','AXIS','D_PLAN','GRADEPSI',),
+    mc_mater       = ('ELAS','ENDO_ORTH_BETON',),
+    modelisation   = ('3D','AXIS','D_PLAN',),
     deformation    = ('PETIT','PETIT_REAC','GROT_GDEP',),
     algo_inte      = ('NEWTON',),
     type_matr_tang = ('PERTURBATION','VERIFICATION',),
     proprietes     = None,
     syme_matr_tang = ('No',),
     exte_vari      = None,
+    deform_ldc     = ('OLD',),
 )

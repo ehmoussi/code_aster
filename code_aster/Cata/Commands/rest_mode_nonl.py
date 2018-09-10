@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -23,6 +23,8 @@ from code_aster.Cata.Commons import *
 
 
 def rest_mode_nonl_prod(TYPE_RESU,**args):
+    if args.get('__all__'):
+        return (dyna_trans, mode_meca)
     if TYPE_RESU == 'DYNA_TRANS' : return dyna_trans
     elif TYPE_RESU == 'MODE_MECA' : return mode_meca
     raise AsException("type de concept resultat non prevu")
@@ -32,7 +34,7 @@ REST_MODE_NONL=OPER(nom="REST_MODE_NONL", op=63,
          fr=tr("Post traitement de mode_non_line : récuperation résultats"),
 
          MODE_NON_LINE    =SIMP(statut='o',typ=table_container,max=1),
-         TYPE_RESU    =SIMP(statut='o',typ='TXM',into=('MODE_MECA','DYNA_TRANS'),defaut='DYNA_TRANS',max=1),
+         TYPE_RESU    =SIMP(statut='f',typ='TXM',into=('MODE_MECA','DYNA_TRANS'),defaut='DYNA_TRANS',max=1),
          NUME_ORDRE      =SIMP(statut='o',typ='I',max=1),
          b_dyna_trans  =BLOC(condition="""equal_to("TYPE_RESU", 'DYNA_TRANS')""",
                 NB_INST =SIMP(statut='f',typ='I',max=1,defaut=512),),

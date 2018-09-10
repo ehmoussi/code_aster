@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -70,16 +70,6 @@ format MED.
   PROJ_CHAMP utilisant la méthode 'SOUS_POINT'.
 
   Cette impression n'est pas possible au format MED.
-"""),
-
-    10 : _(u"""
-  Vous demandez l'impression d'un champ aux sous-points pour des éléments "tuyaux".
-
-  Cette impression n'est actuellement pas possible au format MED.
-
-  Conseils :
-    - si vous avez besoin de visualiser les champs aux sous-points sur d'autres éléments, utilisez le mot-clé GROUP_MA ;
-    - pour imprimer le champ sans les sous-points, retirez le mot-clé CARA_ELEM.
 """),
 
     11 : _(u"""

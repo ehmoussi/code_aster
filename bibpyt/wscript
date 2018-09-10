@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -20,11 +20,18 @@
 import os
 import os.path as osp
 import re
-from time import localtime, strftime
+from time import strftime
 from pprint import pformat
 from subprocess import Popen, PIPE
 
-from waflib import TaskGen, Utils, Errors, Logs
+from waflib import Errors, Logs
+
+
+def options(self):
+    group = self.get_option_group("code_aster options")
+    group.add_option('--without-hg', dest='without_hg',
+                     default=False, action='store_true',
+                     help='build without the source repository')
 
 
 def configure(self):
@@ -99,7 +106,7 @@ def check_aster_version(self):
         execfile(pkginfo[0].abspath(), d)
         return d['pkginfo']
     # get revision informations
-    return get_revision_info()
+    return get_revision_info(self.options)
 
 
 MAXLEVEL = 25
@@ -119,7 +126,11 @@ def get_revision_info_cmd(from_rev=None, rev="."):
                      "--template", "{rev}:{node}:{tags}:{branch}:"
                                    "{date|shortdate}:{files}\n"]).splitlines()
     if not logs:
-        raise ValueError("empty revs range: {0}".format(ancestors))
+        raise ValueError("empty revs range: {0}\n"
+                         "Use --without-hg option if you didn't download the "
+                         "hg repository or create manually a file named "
+                         "`bibpyt/pkginfo.py` with the necessary informations "
+                         "about the version.".format(ancestors))
     last = logs[-1].split(":")
     # print "\n".join(logs)
     _revn, revid, _tag, branch, date, _files = last
@@ -147,9 +158,12 @@ def get_revision_info_cmd(from_rev=None, rev="."):
         chg += 1
     return [vers, revid, branch, date, frbr, chg, loc]
 
-def get_revision_info(from_rev=None, rev="."):
+def get_revision_info(options, from_rev=None, rev="."):
     """Return details about changes on `rev` or the current revision
     between last official tagged revision"""
+    date = strftime("%d/%m/%Y")
+    if options.without_hg:
+        return [(0, 0, 1), "?", "?", date, "?", 1, ["no source repository"]]
     # quick search on last revisions
     infos = get_revision_info_cmd(from_rev, rev)
     if infos[0] == "?":

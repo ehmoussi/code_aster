@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,11 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine calc_meta_init(sd_temp, temp_nume, ligrmo, compor, phasin,&
                           chmate)
 !
-    implicit none
+implicit none
 !
 #include "jeveux.h"
 #include "asterfort/assert.h"
@@ -33,13 +33,12 @@ subroutine calc_meta_init(sd_temp, temp_nume, ligrmo, compor, phasin,&
 #include "asterfort/rsnoch.h"
 #include "asterfort/utmess.h"
 !
-!
-    character(len=8), intent(in) :: sd_temp
-    integer, intent(in) :: temp_nume
-    character(len=24), intent(in) :: ligrmo
-    character(len=19), intent(in) :: compor
-    character(len=24), intent(in) :: phasin
-    character(len=24), intent(in) :: chmate
+character(len=8), intent(in) :: sd_temp
+integer, intent(in) :: temp_nume
+character(len=24), intent(in) :: ligrmo
+character(len=19), intent(in) :: compor
+character(len=24), intent(in) :: phasin
+character(len=24), intent(in) :: chmate
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -89,16 +88,21 @@ subroutine calc_meta_init(sd_temp, temp_nume, ligrmo, compor, phasin,&
     call calc_meta_field(ligrmo, chmate, tempe, compor, phasin,&
                          meta_out)
 !
-! - Save in result datastructure
+! - Save META_ELNO in result datastructure
 !
     call rsexch(' ', sd_temp, 'META_ELNO', temp_nume, sd_field,&
                 iret)
     call copisd('CHAMP_GD', 'G', meta_out, sd_field)
     call rsnoch(sd_temp, 'META_ELNO', temp_nume)
-!
-! - Print
-!
     call utmess('I', 'ARCHIVAGE_6', sk='META_ELNO', si=temp_nume, sr=time)
+!
+! - Save COMPORMETA in result datastructure
+!
+    call rsexch(' ', sd_temp, 'COMPORMETA', temp_nume, sd_field,&
+                iret)
+    call copisd('CHAMP_GD', 'G', compor, sd_field)
+    call rsnoch(sd_temp, 'COMPORMETA', temp_nume)
+    call utmess('I', 'ARCHIVAGE_6', sk='COMPORMETA', si=temp_nume, sr=time)
 !
     call jedema()
 end subroutine

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -31,9 +31,12 @@ MODEL=AFFE_MODELE(MAILLAGE=MAIL,
                           MODELISATION='AXIS'));
 
 # DEFINITION DU MATERIAU
-YOUNG1 = FORMULE(NOM_PARA='TEMP', VALE='210000.0 - 30.0*TEMP', );
-NU1    = FORMULE(NOM_PARA='TEMP', VALE='0.30 + 5.0E-05*TEMP', );
-ALPHA1 = FORMULE(NOM_PARA='TEMP', VALE='1.0E-06*(15.0+2.0E-03*TEMP)',);
+YOUNG1 = FORMULE(VALE='210000.0 - 30.0*TEMP',
+                 NOM_PARA='TEMP',)
+NU1 = FORMULE(VALE='0.30 + 5.0E-05*TEMP',
+              NOM_PARA='TEMP',)
+ALPHA1 = FORMULE(VALE='1.0E-06*(15.0+2.0E-03*TEMP)',
+                 NOM_PARA='TEMP',)
 
 
 TEM=DEFI_LIST_REEL(

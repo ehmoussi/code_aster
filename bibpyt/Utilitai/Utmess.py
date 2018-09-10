@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -68,9 +68,9 @@ def list_unit(code):
     # 'D' pour afficher un diagnostic 'F' sans les effets
     # 'Z' levée d'exception
     d = {
-        'E': ('ERREUR', 'MESSAGE', 'RESULTAT'),
+        'E': ('MESSAGE',),
         'I': ('MESSAGE',),
-        'A': ('MESSAGE', 'RESULTAT'),
+        'A': ('MESSAGE',),
     }
     d['F'] = d['S'] = d['Z'] = d['D'] = d['E']
     d['X'] = d['A']

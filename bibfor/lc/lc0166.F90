@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,22 +17,21 @@
 ! --------------------------------------------------------------------
 
 subroutine lc0166(fami, kpg, ksp, ndim, imate,&
-                  compor, carcri, instam, instap, epsm,&
-                  deps, sigm, vim, option, angmas,&
-                  sigp, vip, wkin, typmod, icomp,&
-                  nvi, dsidep, codret)
+                  compor,  instam, instap, epsm,&
+                  deps, sigm, vim, option, &
+                  sigp, vip,  typmod, &
+                   dsidep, codret)
 implicit none
-#include "asterfort/lcsend.h"
+#include "asterfort/cfluendo3d.h"
+
 !
 ! person_in_charge: etienne.grimal at edf.fr
-! aslint: disable=W1504,W0104
 !.......................................................................
-!     BUT: LOI D'ENDOMMAGEMENT DE KIT_RGI
+!     BUT: LOI D'ENDOMMAGEMENT ENDO_PORO_BETON
 !
 !          RELATION : 'ENDO_PORO_BETON'
-    integer :: imate, ndim, kpg, ksp, codret, icomp, nvi
-    real(kind=8) :: carcri(*), angmas(*)
-    real(kind=8) :: instam, instap, wkin(*)
+    integer :: imate, ndim, kpg, ksp, codret
+    real(kind=8) :: instam, instap
     real(kind=8) :: epsm(6), deps(6)
     real(kind=8) :: sigm(6), sigp(6)
     real(kind=8) :: vim(*), vip(*)
@@ -41,10 +40,10 @@ implicit none
     character(len=8) :: typmod(*)
     character(len=*) :: fami
 !
-    call lcsend(fami, kpg, ksp, ndim, imate,&
-                compor, carcri, instam, instap, epsm,&
-                deps, sigm, vim, option, angmas,&
-                sigp, vip, wkin, typmod,&
+    call cfluendo3d(fami, kpg, ksp, ndim, imate,&
+                compor, instam, instap, epsm,&
+                deps, sigm, vim, option,&
+                sigp, vip, typmod,&
                 dsidep, codret)
 !
 end subroutine

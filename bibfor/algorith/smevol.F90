@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -253,6 +253,14 @@ subroutine smevol(temper, modelz, mate, compor, option,&
         call rsnoch(temper, 'META_ELNO', num3)
 !        write(ifm,1010) 'META_ELNO', num3, inst2
         call utmess('I', 'ARCHIVAGE_6', sk='META_ELNO', si=num3, sr=inst2)
+
+        call rsexch(' ', temper, 'COMPORMETA', num3, nomch,&
+                    iret)
+        call copisd('CHAMP_GD', 'G', compor, nomch(1:19))
+        call rsnoch(temper, 'COMPORMETA', num3)
+!        write(ifm,1010) 'META_ELNO', num3, inst2
+        call utmess('I', 'ARCHIVAGE_6', sk='COMPORMETA', si=num3, sr=inst2)
+
 !
 19      continue
     end do

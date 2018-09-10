@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -20,7 +20,7 @@
 !
           interface 
             subroutine pj4dco(mocle,moa1,moa2,nbma1,lima1,nbno2,lino2,  &
-     &geom1,geom2,corres,l_dmax,dmax,dala)
+     &geom1,geom2,corres,l_dmax,dmax,dala, listIntercz, nbIntercz)
               character(len=*) :: mocle
               character(len=8) :: moa1
               character(len=8) :: moa2
@@ -34,5 +34,7 @@
               aster_logical :: l_dmax
               real(kind=8) :: dmax
               real(kind=8) :: dala
+              character(len=16), optional :: listIntercz
+              integer, optional :: nbIntercz
             end subroutine pj4dco
           end interface 

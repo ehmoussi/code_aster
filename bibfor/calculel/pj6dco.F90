@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,7 +18,7 @@
 
 subroutine pj6dco(mocle, moa1, moa2, nbma1, lima1,&
                   nbno2, lino2, geom1, geom2, corres,&
-                  l_dmax, dmax, dala)
+                  l_dmax, dmax, dala, listIntercz, nbIntercz)
     implicit none
 #include "asterf_types.h"
 #include "jeveux.h"
@@ -52,6 +52,8 @@ subroutine pj6dco(mocle, moa1, moa2, nbma1, lima1,&
     character(len=8) :: moa1, moa2
     character(len=*) :: mocle
     integer :: nbma1, lima1(*), nbno2, lino2(*)
+    character(len=16), optional :: listIntercz
+    integer, optional :: nbIntercz
 ! person_in_charge: jacques.pellet at edf.fr
 ! ======================================================================
 ! but :
@@ -85,7 +87,7 @@ subroutine pj6dco(mocle, moa1, moa2, nbma1, lima1,&
     character(len=8) :: elrf(nbtmx)
 
     integer :: ifm, niv, nno1, nno2, nma1, nma2, k
-    integer :: ima, ino2, ico
+    integer :: ima, ino2, ico, ino
     integer :: iatr3, iacoo1, iacoo2
     integer :: iabtco, jxxk1, iaconu, iacocf, iacotr
     integer :: ialim1, ialin1, ilcnx1, ialin2
@@ -106,6 +108,7 @@ subroutine pj6dco(mocle, moa1, moa2, nbma1, lima1,&
     integer, pointer :: bt3ddi(:) => null()
     integer, pointer :: typmail(:) => null()
     integer, pointer :: bt3dlc(:) => null()
+    integer, pointer :: vinterc(:) => null()
 
 ! DEB ------------------------------------------------------------------
     call jemarq()
@@ -264,6 +267,29 @@ subroutine pj6dco(mocle, moa1, moa2, nbma1, lima1,&
                     cobary, itr3, nbtrou, bt3ddi, bt3dvr,&
                     bt3dnb, bt3dlc, zi( iabtco),&
                     l_dmax, dmax, dala, loin, dmin)
+        if (loin) then
+!           on regarde si le noeud est deja projete par une autre
+!           occurrence de VIS_A_VIS
+            if (present(nbIntercz))then
+                if (nbIntercz .ne. 0)then
+                    ASSERT(present(listIntercz))
+                    call jeveuo(listIntercz, 'L', vi=vinterc)
+                    do ino = 1,nbIntercz
+                        if (ino2 .eq. vinterc(ino))then
+                            loin = .false.
+!                       
+                            l_dmax = .true.
+                            nbtrou = 0
+!
+                            call jenuno(jexnum(m2//'.NOMNOE', ino2), nono2)
+                            call utmess('A','CALCULEL5_47', si=vinterc(nbIntercz+1),&
+                                        sk=nono2)
+                            exit
+                        endif
+                    enddo
+                endif
+            endif
+        endif
         if (loin) then
             loin2=.true.
             nbnodm = nbnodm + 1

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -28,9 +28,10 @@ DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),
 # CREATION DU MODELE EXPERIMENTAL
 #**********************************
 
-PRE_IDEAS( UNITE_IDEAS = 21, UNITE_MAILLAGE = 22 );
 
-MAILEXP=LIRE_MAILLAGE(FORMAT="ASTER",UNITE=22);
+MAILEXP = LIRE_MAILLAGE(FORMAT='IDEAS',
+                        UNITE=21,
+                        )
 
 MODLEXP=AFFE_MODELE(MAILLAGE=MAILEXP,
                    AFFE=_F(TOUT='OUI',
@@ -114,7 +115,8 @@ MODEIDE=EXTR_MODE(FILTRE_MODE=_F(MODE=MODMESU,
 # CREATION MODELE SUPPORT
 #********************************
 
-MAILSUP=LIRE_MAILLAGE(FORMAT="ASTER",UNITE=20);
+MAILSUP = LIRE_MAILLAGE(FORMAT='ASTER',
+                        UNITE=20,)
 
 MODLSUP=AFFE_MODELE(MAILLAGE=MAILSUP,
                     AFFE=(_F(GROUP_MA=('POUTRE','VISUAL',),
@@ -197,7 +199,8 @@ MODESUP=CALC_MODES(MATR_RIGI=KASSUP,
                    )
 
 # Maillage modification
-MAILX=LIRE_MAILLAGE(FORMAT="ASTER",UNITE=24);
+MAILX = LIRE_MAILLAGE(FORMAT='ASTER',
+                      UNITE=24,)
 
 #********************************
 # CREATION MODELE NUMERIQUE COMPLET : SUPPORT + MODIF
@@ -772,8 +775,8 @@ T_RETRO=POST_RELEVE_T(ACTION=_F(INTITULE='RETRO',
                       OPERATION='EXTRACTION',
                       ),);
 
-F1=FORMULE(NOM_PARA=('DY_DIR', 'DY_RETRO',),
-                VALE='abs (DY_DIR - DY_RETRO)')
+F1 = FORMULE(VALE='abs (DY_DIR - DY_RETRO)',
+             NOM_PARA=['DY_DIR', 'DY_RETRO'],)
 
 T1=CALC_TABLE(TABLE=T_DIR,
               ACTION=(_F(OPERATION='RENOMME',

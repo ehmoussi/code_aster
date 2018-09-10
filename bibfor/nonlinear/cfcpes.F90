@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -21,10 +21,9 @@ subroutine cfcpes(resoco, jsecmb)
 !
     implicit     none
 #include "jeveux.h"
-#include "asterc/r8prem.h"
-#include "asterfort/calatm.h"
 #include "asterfort/cfdisd.h"
 #include "asterfort/cfmmvd.h"
+#include "asterfort/compute_ineq_conditions_vector.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
@@ -46,8 +45,7 @@ subroutine cfcpes(resoco, jsecmb)
 !
 !
 !
-    real(kind=8) :: jeuini, coefpn, lambdc
-    integer :: iliai, iliac
+    integer :: iliac
     character(len=19) :: mu
     integer :: jmu
     character(len=24) :: apcoef, apddl, appoin
@@ -58,7 +56,6 @@ subroutine cfcpes(resoco, jsecmb)
     integer :: jjeux
     integer :: ztacf
     integer :: nbliai, neq
-    integer :: nbddl, jdecal
 !
 ! ----------------------------------------------------------------------
 !
@@ -84,30 +81,11 @@ subroutine cfcpes(resoco, jsecmb)
     call jeveuo(tacfin, 'L', jtacf)
     call jeveuo(mu, 'E', jmu)
     ztacf = cfmmvd('ZTACF')
-!
-! --- INITIALISATION DES MU
-!
-    do 10 iliai = 1, nbliai
-        zr(jmu +iliai-1) = 0.d0
-        zr(jmu+3*nbliai+iliai-1) = 0.d0
-10  end do
-!
-! --- CALCUL DES FORCES DE CONTACT
-!
-    iliac = 1
-    do 50 iliai = 1, nbliai
-        jeuini = zr(jjeux+3*(iliai-1)+1-1)
-        coefpn = zr(jtacf+ztacf*(iliai-1)+1)
-        if (jeuini .lt. r8prem()) then
-            jdecal = zi(japptr+iliai-1)
-            nbddl = zi(japptr+iliai) - zi(japptr+iliai-1)
-            lambdc = -jeuini*coefpn
-            zr(jmu+iliac-1) = lambdc
-            call calatm(neq, nbddl, lambdc, zr(japcoe+jdecal), zi(japddl+ jdecal),&
-                        zr(jsecmb))
-            iliac = iliac + 1
-        endif
-50  end do
+    
+    call compute_ineq_conditions_vector(jsecmb, nbliai, neq,   &
+                                        japptr, japddl, japcoe,&
+                                        jjeux , jtacf , jmu,   &
+                                        3     , ztacf , iliac  )
 !
     call jedema()
 !

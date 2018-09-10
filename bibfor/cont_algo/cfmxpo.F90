@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,9 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine cfmxpo(mesh      , model_   , ds_contact, nume_inst  , sddisc,&
-                  ds_measure, hval_algo, hval_incr , hval_veasse)
+                  ds_measure, hval_algo, hval_incr )
 !
 use NonLin_Datastructure_type
 !
@@ -33,17 +34,14 @@ implicit none
 #include "asterfort/mldeco.h"
 #include "asterfort/xmdeco.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=8), intent(in) :: mesh
-    character(len=*), intent(in) :: model_
-    type(NL_DS_Measure), intent(inout) :: ds_measure
-    type(NL_DS_Contact), intent(inout) :: ds_contact
-    integer, intent(in) :: nume_inst
-    character(len=19), intent(in) :: sddisc
-    character(len=19), intent(in) :: hval_algo(*)
-    character(len=19), intent(in) :: hval_incr(*)
-    character(len=19), intent(in) :: hval_veasse(*)
+character(len=8), intent(in) :: mesh
+character(len=*), intent(in) :: model_
+type(NL_DS_Measure), intent(inout) :: ds_measure
+type(NL_DS_Contact), intent(inout) :: ds_contact
+integer, intent(in) :: nume_inst
+character(len=19), intent(in) :: sddisc
+character(len=19), intent(in) :: hval_algo(*)
+character(len=19), intent(in) :: hval_incr(*)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -61,7 +59,6 @@ implicit none
 ! In  sddisc           : datastructure for discretization
 ! In  hval_algo        : hat-variable for algorithms fields
 ! In  hval_incr        : hat-variable for incremental values fields
-! In  hval_veasse      : hat-variable for vectors (node fields)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -98,6 +95,6 @@ implicit none
 ! - Save post-treatment fields for contact
 !
     call cfmxre(mesh  , model_   , ds_measure, ds_contact , nume_inst,&
-                sddisc, hval_algo, hval_incr , hval_veasse)
+                sddisc, hval_algo, hval_incr )
 !
 end subroutine

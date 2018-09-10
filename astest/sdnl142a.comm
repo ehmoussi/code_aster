@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -77,15 +77,57 @@ INCLUDE(UNITE=77,);
 
 
 
-FXP=FORMULE(NOM_PARA=('X','Y','Z','INST','VITE_X','VITE_Y','VITE_Z','DX','DY','DZ'),
-            VALE='FP(rhoeau,Cd1,D1,X,Y,Z,INST,H,T,L,thetai,0.,0.,proinf,depth,lstrech,VITE_X,VITE_Y,VITE_Z,DX,DY,DZ,1,cinelin,projvect,dragquad)',);
+FXP = FORMULE(VALE='FP(rhoeau,Cd1,D1,X,Y,Z,INST,H,T,L,thetai,0.,0.,proinf,depth,lstrech,VITE_X,VITE_Y,VITE_Z,DX,DY,DZ,1,cinelin,projvect,dragquad)',
+              FP=FP,
+              rhoeau=rhoeau,
+              Cd1=Cd1,
+              D1=D1,
+              H=H,
+              T=T,
+              L=L,
+              thetai=thetai,
+              proinf=proinf,
+              depth=depth,
+              lstrech=lstrech,
+              cinelin=cinelin,
+              projvect=projvect,
+              dragquad=dragquad,
+              NOM_PARA=['X', 'Y', 'Z', 'INST', 'VITE_X', 'VITE_Y', 'VITE_Z', 'DX', 'DY', 'DZ'],)
 
-FYP=FORMULE(NOM_PARA=('X','Y','Z','INST','VITE_X','VITE_Y','VITE_Z','DX','DY','DZ'),
-            VALE='FP(rhoeau,Cd1,D1,X,Y,Z,INST,H,T,L,thetai,0.,0.,proinf,depth,lstrech,VITE_X,VITE_Y,VITE_Z,DX,DY,DZ,2,cinelin,projvect,dragquad)',);
+FYP = FORMULE(VALE='FP(rhoeau,Cd1,D1,X,Y,Z,INST,H,T,L,thetai,0.,0.,proinf,depth,lstrech,VITE_X,VITE_Y,VITE_Z,DX,DY,DZ,2,cinelin,projvect,dragquad)',
+              FP=FP,
+              rhoeau=rhoeau,
+              Cd1=Cd1,
+              D1=D1,
+              H=H,
+              T=T,
+              L=L,
+              thetai=thetai,
+              proinf=proinf,
+              depth=depth,
+              lstrech=lstrech,
+              cinelin=cinelin,
+              projvect=projvect,
+              dragquad=dragquad,
+              NOM_PARA=['X', 'Y', 'Z', 'INST', 'VITE_X', 'VITE_Y', 'VITE_Z', 'DX', 'DY', 'DZ'],)
 
 
-FZP=FORMULE(NOM_PARA=('X','Y','Z','INST','VITE_X','VITE_Y','VITE_Z','DX','DY','DZ'),
-            VALE='FP(rhoeau,Cd1,D1,X,Y,Z,INST,H,T,L,thetai,0.,0.,proinf,depth,lstrech,VITE_X,VITE_Y,VITE_Z,DX,DY,DZ,3,cinelin,projvect,dragquad)',);
+FZP = FORMULE(VALE='FP(rhoeau,Cd1,D1,X,Y,Z,INST,H,T,L,thetai,0.,0.,proinf,depth,lstrech,VITE_X,VITE_Y,VITE_Z,DX,DY,DZ,3,cinelin,projvect,dragquad)',
+              FP=FP,
+              rhoeau=rhoeau,
+              Cd1=Cd1,
+              D1=D1,
+              H=H,
+              T=T,
+              L=L,
+              thetai=thetai,
+              proinf=proinf,
+              depth=depth,
+              lstrech=lstrech,
+              cinelin=cinelin,
+              projvect=projvect,
+              dragquad=dragquad,
+              NOM_PARA=['X', 'Y', 'Z', 'INST', 'VITE_X', 'VITE_Y', 'VITE_Z', 'DX', 'DY', 'DZ'],)
 
 visqueux=AFFE_CHAR_MECA_F(MODELE=mo,
                      FORCE_POUTRE=_F(GROUP_MA='CABLE',

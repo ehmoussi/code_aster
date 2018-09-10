@@ -1,7 +1,7 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -81,9 +81,11 @@ CHAM_MAT=AFFE_MATERIAU(MAILLAGE=MA,
                                MATER=MULTI,),);
 
 PO=1.0
-P=FORMULE(NOM_PARA=('X','Y','Z'),VALE='''
+P = FORMULE(VALE="""
 PO*sin(pi*(cos(3*pi/18.)*cos(pi/9.)*X+sin(pi/9.)*cos(3*pi/18.)*Y-
-sin(3*pi/18.)*Z))*sin(pi*( -sin(pi/9.)*X + cos(pi/9.)*Y))''');
+sin(3*pi/18.)*Z))*sin(pi*( -sin(pi/9.)*X + cos(pi/9.)*Y))""",
+            PO=PO,
+            NOM_PARA=['X', 'Y', 'Z'],)
 
 CHA=AFFE_CHAR_MECA(MODELE=MO,
                    LIAISON_OBLIQUE=(_F(GROUP_NO='O',

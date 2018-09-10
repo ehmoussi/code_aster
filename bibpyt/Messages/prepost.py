@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -24,7 +24,7 @@ cata_msg = {
     1 : _(u"""
 
 Attention :
-  Vous avez demandé de limiter l'impression au processeur 0 (PROC0='OUI' valeur par défaut), 
+  Vous avez demandé de limiter l'impression au processeur 0 (PROC0='OUI' valeur par défaut),
   mais il n'est pas possible d'effectuer l'impression d'un CONCEPT uniquement sur le processeur 0.
   Cette impression sera effectuée sur tous les processeurs.
 
@@ -126,7 +126,7 @@ Attention :
  du dernier type (projections simples).
 
  Conseil :
- Utilisez l'un des deux opérateurs REST_GENE_PHYS ou REST_SOUS_STRUCT pour restituer sur
+ Utilisez l'un des deux opérateurs REST_GENE_PHYS ou REST_SOUS_STRUC pour restituer sur
  base physique vos résultats en coordonnées généralisées.
 """),
 

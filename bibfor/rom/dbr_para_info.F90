@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -30,7 +30,6 @@ implicit none
 #include "asterfort/dbr_para_info_pod.h"
 #include "asterfort/dbr_para_info_rb.h"
 #include "asterfort/dbr_para_info_tr.h"
-#include "asterfort/romBaseInfo.h"
 !
 type(ROM_DS_ParaDBR), intent(in) :: ds_para
 !
@@ -67,22 +66,16 @@ type(ROM_DS_ParaDBR), intent(in) :: ds_para
         call utmess('I', 'ROM5_24')
         call utmess('I', 'ROM5_16', sk = operation)
         if (l_reuse) then
-            call utmess('I', 'ROM7_15', sk = result_out)
+            call utmess('I', 'ROM7_15')
         else
             call utmess('I', 'ROM7_16')
         endif
     endif
 !
-! - Print about empiric base
-!
-    if (niv .ge. 2) then
-        call romBaseInfo(ds_para%ds_empi)
-    endif
-!
 ! - Print / method
 !
     if (operation(1:3) .eq. 'POD') then
-        call dbr_para_info_pod(ds_para%para_pod)
+        call dbr_para_info_pod(operation, ds_para%para_pod)
         
     elseif (operation .eq. 'GLOUTON') then
         call dbr_para_info_rb(ds_para%para_rb)

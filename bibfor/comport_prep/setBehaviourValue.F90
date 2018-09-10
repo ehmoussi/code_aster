@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 
 subroutine setBehaviourValue(rela_comp, defo_comp   , type_comp, type_cpla,&
-                             mult_comp, post_iter   , kit_comp ,&
+                             mult_comp, post_iter   , defo_ldc, kit_comp ,&
                              nb_vari  , nb_vari_comp, nume_comp,&
                              l_compor_, v_compor_)
 !
@@ -37,12 +37,13 @@ implicit none
     character(len=16), intent(in) :: type_cpla
     character(len=16), intent(in) :: mult_comp
     character(len=16), intent(in) :: post_iter
+    character(len=16), intent(in) :: defo_ldc
     character(len=16), intent(in) :: kit_comp(4)
     integer, intent(in)  :: nb_vari
     integer, intent(in)  :: nb_vari_comp(4)
     integer, intent(in)  :: nume_comp(4)
     character(len=16), intent(out), optional :: l_compor_(:)
-    character(len=16), intent(out), optional, pointer :: v_compor_(:)
+    character(len=16), pointer, optional :: v_compor_(:)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -58,6 +59,7 @@ implicit none
 ! In  type_cpla        : plane stress method
 ! In  mult_comp        : multi-comportment (DEFI_COMPOR for PMF)
 ! In  post_iter        : type of post_treatment POST_ITER
+! In  defo_ldc         : type of strains (TOTAL, MECANIQUE or OLD)
 ! In  kit_comp         : KIT comportment
 ! In  nb_vari          : number of internal variables
 ! In  nb_vari_comp     : number of internal variables for KIT
@@ -79,7 +81,7 @@ implicit none
 !
     if (present(v_compor_)) then
         v_compor_(1:NB_COMP_MAXI) = 'VIDE'
-        v_compor_(NAME) = rela_comp
+        v_compor_(RELA_NAME) = rela_comp
         write (v_compor_(NVAR),'(I16)') nb_vari
         v_compor_(DEFO) = defo_comp
         v_compor_(INCRELAS) = type_comp
@@ -89,6 +91,7 @@ implicit none
         endif
         v_compor_(MULTCOMP) = mult_comp
         v_compor_(POSTITER) = post_iter
+        v_compor_(DEFO_LDC) = defo_ldc
         if (l_kit_thm) then
             v_compor_(THMC_NAME) = kit_comp(1)
             v_compor_(THER_NAME) = kit_comp(2)
@@ -123,7 +126,7 @@ implicit none
         endif
     elseif (present(l_compor_)) then
         l_compor_(1:NB_COMP_MAXI) = 'VIDE'
-        l_compor_(NAME) = rela_comp
+        l_compor_(RELA_NAME) = rela_comp
         write (l_compor_(NVAR),'(I16)') nb_vari
         l_compor_(DEFO) = defo_comp
         l_compor_(INCRELAS) = type_comp
@@ -133,6 +136,7 @@ implicit none
         endif
         l_compor_(MULTCOMP) = mult_comp
         l_compor_(POSTITER) = post_iter
+        l_compor_(DEFO_LDC) = defo_ldc
         if (l_kit_ddi) then
             l_compor_(CREEP_NAME) = kit_comp(1)
             l_compor_(PLAS_NAME)  = kit_comp(2)

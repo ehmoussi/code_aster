@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -432,7 +432,7 @@ for n in range(1,nbcouche-1):
                               CHAM_GD=DEP[n-1]));
 
     FX = FORMULE(NOM_PARA=('X'),VALE='X')
-    FY = FORMULE(NOM_PARA=('Y'),VALE='PROJ(Y,%f)'%Height[n])
+    FY = FORMULE(NOM_PARA=('Y'),VALE='PROJ(Y,%f)'%Height[n], PROJ=PROJ)
 
     DEPL_PJ = PROJ_CHAMP(INFO = 1,
                          PROJECTION = 'OUI',
@@ -633,7 +633,7 @@ U[n]=CALC_CHAMP(reuse=U[n],
 
 TEST_RESU(RESU=(_F(NUME_ORDRE=1,
                    POINT=1,
-                   RESULTAT=U_9,
+                   RESULTAT=U[9],
                    NOM_CHAM='INDL_ELGA',
                    NOM_CMP='INDICE',
                    VALE_CALC=0.,
@@ -642,7 +642,7 @@ TEST_RESU(RESU=(_F(NUME_ORDRE=1,
                 _F(NUME_ORDRE=1,
                    VALE_ABS='OUI',
                    POINT=1,
-                   RESULTAT=U_9,
+                   RESULTAT=U[9],
                    NOM_CHAM='INDL_ELGA',
                    NOM_CMP='DIR1',
                    VALE_CALC=0.,
@@ -651,7 +651,7 @@ TEST_RESU(RESU=(_F(NUME_ORDRE=1,
                 _F(NUME_ORDRE=1,
                    VALE_ABS='OUI',
                    POINT=1,
-                   RESULTAT=U_9,
+                   RESULTAT=U[9],
                    NOM_CHAM='INDL_ELGA',
                    NOM_CMP='DIR2',
                    VALE_CALC=0.,
@@ -660,7 +660,7 @@ TEST_RESU(RESU=(_F(NUME_ORDRE=1,
                 _F(NUME_ORDRE=1,
                    VALE_ABS='OUI',
                    POINT=1,
-                   RESULTAT=U_9,
+                   RESULTAT=U[9],
                    NOM_CHAM='INDL_ELGA',
                    NOM_CMP='DIR3',
                    VALE_CALC=0.,
@@ -669,7 +669,7 @@ TEST_RESU(RESU=(_F(NUME_ORDRE=1,
                 _F(NUME_ORDRE=1,
                    VALE_ABS='OUI',
                    POINT=1,
-                   RESULTAT=U_9,
+                   RESULTAT=U[9],
                    NOM_CHAM='INDL_ELGA',
                    NOM_CMP='DIR4',
                    VALE_CALC=0.,
@@ -679,7 +679,7 @@ TEST_RESU(RESU=(_F(NUME_ORDRE=1,
 
 TEST_RESU(RESU=_F(NUME_ORDRE=1,
                   POINT=1,
-                  RESULTAT=U_9,
+                  RESULTAT=U[9],
                   NOM_CHAM='PDIL_ELGA',
                   NOM_CMP='A1_LC2',
                   VALE_CALC=0.,

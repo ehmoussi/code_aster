@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -49,12 +49,6 @@ CCADISM  = LocatedComponents(phys=PHY.CADISM, type='ELEM',
 CCAORIE  = LocatedComponents(phys=PHY.CAORIE, type='ELEM',
     components=('ALPHA','BETA','GAMMA',))
 
-
-CCARCRI  = LocatedComponents(phys=PHY.CARCRI, type='ELEM',
-    components=('ITECREL','MACOMP','RESCREL','THETA','ITEDEC',
-          'INTLOC','PERTURB','TOLDEBO','ITEDEBO','TSSEUIL',
-          'TSAMPL','TSRETOUR','POSTITER','LC_EXT[3]','MODECALC',
-          'ALPHA','LC_EXT2[2]',))
 
 
 NDEPLAC  = LocatedComponents(phys=PHY.DEPL_C, type='ELNO',
@@ -231,7 +225,7 @@ class MECA_DIS_T_N(Element):
 
         OP.FULL_MECA(te=47,
             para_in=((SP.PCADISK, CCADISK), (OP.FULL_MECA.PCAORIE, CCAORIE),
-                     (SP.PCARCRI, CCARCRI), (SP.PCINFDI, LC.CCINFDI),
+                     (SP.PCARCRI, LC.CCARCRI), (SP.PCINFDI, LC.CCINFDI),
                      (OP.FULL_MECA.PCOMPOR, LC.CCOMPOR), (OP.FULL_MECA.PCONTMR, EEFGEGA),
                      (SP.PDEPENT, DDL_MECA), (SP.PDEPLMR, DDL_MECA),
                      (SP.PDEPLPR, DDL_MECA), (SP.PGEOMER, NGEOMER),
@@ -248,7 +242,7 @@ class MECA_DIS_T_N(Element):
 
         OP.FULL_MECA_ELAS(te=47,
             para_in=((SP.PCADISK, CCADISK), (OP.FULL_MECA_ELAS.PCAORIE, CCAORIE),
-                     (SP.PCARCRI, CCARCRI), (SP.PCINFDI, LC.CCINFDI),
+                     (SP.PCARCRI, LC.CCARCRI), (SP.PCINFDI, LC.CCINFDI),
                      (OP.FULL_MECA_ELAS.PCOMPOR, LC.CCOMPOR), (OP.FULL_MECA_ELAS.PCONTMR, EEFGEGA),
                      (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
                      (SP.PGEOMER, NGEOMER), (SP.PINSTMR, LC.CINSTPR),
@@ -321,7 +315,7 @@ class MECA_DIS_T_N(Element):
 
         OP.RAPH_MECA(te=47,
             para_in=((SP.PCADISK, CCADISK), (OP.RAPH_MECA.PCAORIE, CCAORIE),
-                     (SP.PCARCRI, CCARCRI), (SP.PCINFDI, LC.CCINFDI),
+                     (SP.PCARCRI, LC.CCARCRI), (SP.PCINFDI, LC.CCINFDI),
                      (OP.RAPH_MECA.PCOMPOR, LC.CCOMPOR), (OP.RAPH_MECA.PCONTMR, EEFGEGA),
                      (SP.PDEPENT, DDL_MECA), (SP.PDEPLMR, DDL_MECA),
                      (SP.PDEPLPR, DDL_MECA), (SP.PGEOMER, NGEOMER),
@@ -364,7 +358,7 @@ class MECA_DIS_T_N(Element):
 
         OP.RIGI_MECA_ELAS(te=47,
             para_in=((SP.PCADISK, CCADISK), (OP.RIGI_MECA_ELAS.PCAORIE, CCAORIE),
-                     (SP.PCARCRI, CCARCRI), (SP.PCINFDI, LC.CCINFDI),
+                     (SP.PCARCRI, LC.CCARCRI), (SP.PCINFDI, LC.CCINFDI),
                      (OP.RIGI_MECA_ELAS.PCOMPOR, LC.CCOMPOR), (OP.RIGI_MECA_ELAS.PCONTMR, EEFGEGA),
                      (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
                      (SP.PGEOMER, NGEOMER), (SP.PINSTMR, LC.CINSTPR),
@@ -384,7 +378,7 @@ class MECA_DIS_T_N(Element):
 
         OP.RIGI_MECA_TANG(te=47,
             para_in=((SP.PCADISK, CCADISK), (OP.RIGI_MECA_TANG.PCAORIE, CCAORIE),
-                     (SP.PCARCRI, CCARCRI), (SP.PCINFDI, LC.CCINFDI),
+                     (SP.PCARCRI, LC.CCARCRI), (SP.PCINFDI, LC.CCINFDI),
                      (OP.RIGI_MECA_TANG.PCOMPOR, LC.CCOMPOR), (OP.RIGI_MECA_TANG.PCONTMR, EEFGEGA),
                      (SP.PDEPENT, DDL_MECA), (SP.PDEPLMR, DDL_MECA),
                      (SP.PDEPLPR, DDL_MECA), (SP.PGEOMER, NGEOMER),

@@ -36,6 +36,7 @@
 #include "DataFields/GenericDataField.h"
 #include "DataFields/SimpleFieldOnElements.h"
 #include "Modeling/Model.h"
+#include "Modeling/FiniteElementDescriptor.h"
 
 /**
  * @class FieldOnElementsInstance
@@ -50,13 +51,17 @@ private:
     typedef boost::shared_ptr< SimpleFieldOnElementsDoubleInstance > SimpleFieldOnElementsValueTypePtr;
 
     /** @brief Vecteur Jeveux '.CELD' */
-    JeveuxVectorLong        _descriptor;
+    JeveuxVectorLong           _descriptor;
     /** @brief Vecteur Jeveux '.CELK' */
-    JeveuxVectorChar24      _reference;
+    JeveuxVectorChar24         _reference;
     /** @brief Vecteur Jeveux '.CELV' */
-    JeveuxVector<ValueType> _valuesList;
+    JeveuxVector<ValueType>    _valuesList;
     /** @brief Modele support */
-    ModelPtr                _supportModel;
+    ModelPtr                   _supportModel;
+    /** @brief Finite element description */
+    FiniteElementDescriptorPtr _dofDescription;
+    /** @brief jeveux vector '.TITR' */
+    JeveuxVectorChar80         _title;
 
 public:
     /**
@@ -74,7 +79,8 @@ public:
                     _descriptor( JeveuxVectorLong( getName() + ".CELD" ) ),
                     _reference( JeveuxVectorChar24( getName() + ".CELK" ) ),
                     _valuesList( JeveuxVector< ValueType >( getName() + ".CELV" ) ),
-                    _supportModel( ModelPtr() )
+                    _supportModel( nullptr ),
+                    _title( JeveuxVectorChar80( getName() + ".TITR" ) )
     {};
 
     /**
@@ -86,7 +92,8 @@ public:
                     _descriptor( JeveuxVectorLong( getName() + ".CELD" ) ),
                     _reference( JeveuxVectorChar24( getName() + ".CELK" ) ),
                     _valuesList( JeveuxVector< ValueType >( getName() + ".CELV" ) ),
-                    _supportModel( ModelPtr() )
+                    _supportModel( nullptr ),
+                    _title( JeveuxVectorChar80( getName() + ".TITR" ) )
     {};
 
     ~FieldOnElementsInstance()
@@ -123,15 +130,24 @@ public:
     };
 
     /**
-     * @brief Mise a jour des pointeurs Jeveux
-     * @return renvoie true si la mise a jour s'est bien deroulee, false sinon
+     * @brief Get the support model
      */
-    bool updateValuePointers()
+    ModelPtr getModel() const
     {
-        bool retour = _descriptor->updateValuePointer();
-        retour = ( retour && _reference->updateValuePointer() );
-        retour = ( retour && _valuesList->updateValuePointer() );
-        return retour;
+        if ( _supportModel->isEmpty() )
+            throw std::runtime_error( "Model is empty" );
+        return _supportModel;
+    };
+
+    /**
+     * @brief Set the description of finite elements
+     * @param curDesc object FiniteElementDescriptorPtr
+     */
+    void setDescription( FiniteElementDescriptorPtr& curDesc )
+    {
+        if( _dofDescription )
+            throw std::runtime_error( "FiniteElementDescriptor already set" );
+        _dofDescription = curDesc;
     };
 
     /**
@@ -145,6 +161,34 @@ public:
         _supportModel = currentModel;
         return true;
     };
+
+    /**
+     * @brief Update field and build FiniteElementDescriptor if necessary
+     */
+    bool update() throw ( std::runtime_error )
+    {
+        if( _dofDescription == nullptr && updateValuePointers() )
+        {
+            if( _supportModel == nullptr )
+                throw std::runtime_error( "Model is empty" );
+            _dofDescription = _supportModel->getFiniteElementDescriptor();
+        }
+        return true;
+    };
+
+    /**
+     * @brief Mise a jour des pointeurs Jeveux
+     * @return renvoie true si la mise a jour s'est bien deroulee, false sinon
+     */
+    bool updateValuePointers()
+    {
+        bool retour = _descriptor->updateValuePointer();
+        retour = ( retour && _reference->updateValuePointer() );
+        retour = ( retour && _valuesList->updateValuePointer() );
+        return retour;
+    };
+
+    friend class FieldBuilder;
 };
 
 

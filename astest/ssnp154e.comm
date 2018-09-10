@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -188,7 +188,10 @@ PM_FONCF=RECU_FONCTION(TABLE=CALC_PMF,
 # Construction de la solution analytique
 a=6.21
 p0=3585.37
-p=FORMULE(NOM_PARA='X',VALE='-1.*p0*sqrt(1-(X/a)*(X/a))',)
+p = FORMULE(VALE='-1.*p0*sqrt(1-(X/a)*(X/a))',
+            p0=p0,
+            a=a,
+            NOM_PARA='X',)
 absc=DEFI_LIST_REEL(DEBUT=0,
                     INTERVALLE=(_F(JUSQU_A=5,
                                   NOMBRE=100,),

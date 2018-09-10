@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -175,7 +175,8 @@ TAB_N6=CREA_TABLE(RESU=_F(RESULTAT=MODGL1,
                         NOEUD='NO000412',
                         ),)                           
                            
-module=FORMULE(NOM_PARA=('DX','DY','DZ'),VALE='(DX**2+DY**2+DZ**2)**(0.5)',)
+module = FORMULE(VALE='(DX**2+DY**2+DZ**2)**(0.5)',
+                 NOM_PARA=['DX', 'DY', 'DZ'],)
 TAB_N1=CALC_TABLE(reuse=TAB_N1,
                   TABLE=TAB_N1,
                   ACTION=(_F(OPERATION='OPER',
@@ -237,18 +238,18 @@ TAB_TOT=CALC_TABLE(TABLE=TAB_N1,
 
 #IMPR_TABLE(TABLE=TAB_TOT)
 
-moyn1=FORMULE(NOM_PARA=('MODN1','MODN2','MODN3','MODN4','MODN5','MODN6'),
-                VALE='abs(1-6*MODN1/(MODN1+MODN2+MODN3+MODN4+MODN5+MODN6))',)
-moyn2=FORMULE(NOM_PARA=('MODN1','MODN2','MODN3','MODN4','MODN5','MODN6'),
-                VALE='abs(1-6*MODN2/(MODN1+MODN2+MODN3+MODN4+MODN5+MODN6))',)
-moyn3=FORMULE(NOM_PARA=('MODN1','MODN2','MODN3','MODN4','MODN5','MODN6'),
-                VALE='abs(1-6*MODN3/(MODN1+MODN2+MODN3+MODN4+MODN5+MODN6))',)
-moyn4=FORMULE(NOM_PARA=('MODN1','MODN2','MODN3','MODN4','MODN5','MODN6'),
-                VALE='abs(1-6*MODN4/(MODN1+MODN2+MODN3+MODN4+MODN5+MODN6))',)
-moyn5=FORMULE(NOM_PARA=('MODN1','MODN2','MODN3','MODN4','MODN5','MODN6'),
-                VALE='abs(1-6*MODN5/(MODN1+MODN2+MODN3+MODN4+MODN5+MODN6))',)
-moyn6=FORMULE(NOM_PARA=('MODN1','MODN2','MODN3','MODN4','MODN5','MODN6'),
-                VALE='abs(1-6*MODN6/(MODN1+MODN2+MODN3+MODN4+MODN5+MODN6))',)
+moyn1 = FORMULE(VALE='abs(1-6*MODN1/(MODN1+MODN2+MODN3+MODN4+MODN5+MODN6))',
+                NOM_PARA=['MODN1', 'MODN2', 'MODN3', 'MODN4', 'MODN5', 'MODN6'],)
+moyn2 = FORMULE(VALE='abs(1-6*MODN2/(MODN1+MODN2+MODN3+MODN4+MODN5+MODN6))',
+                NOM_PARA=['MODN1', 'MODN2', 'MODN3', 'MODN4', 'MODN5', 'MODN6'],)
+moyn3 = FORMULE(VALE='abs(1-6*MODN3/(MODN1+MODN2+MODN3+MODN4+MODN5+MODN6))',
+                NOM_PARA=['MODN1', 'MODN2', 'MODN3', 'MODN4', 'MODN5', 'MODN6'],)
+moyn4 = FORMULE(VALE='abs(1-6*MODN4/(MODN1+MODN2+MODN3+MODN4+MODN5+MODN6))',
+                NOM_PARA=['MODN1', 'MODN2', 'MODN3', 'MODN4', 'MODN5', 'MODN6'],)
+moyn5 = FORMULE(VALE='abs(1-6*MODN5/(MODN1+MODN2+MODN3+MODN4+MODN5+MODN6))',
+                NOM_PARA=['MODN1', 'MODN2', 'MODN3', 'MODN4', 'MODN5', 'MODN6'],)
+moyn6 = FORMULE(VALE='abs(1-6*MODN6/(MODN1+MODN2+MODN3+MODN4+MODN5+MODN6))',
+                NOM_PARA=['MODN1', 'MODN2', 'MODN3', 'MODN4', 'MODN5', 'MODN6'],)
 
 TAB_REL=CALC_TABLE(TABLE=TAB_TOT,
                   ACTION=(_F(OPERATION='OPER',

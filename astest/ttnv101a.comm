@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -105,7 +105,8 @@ IMPR_TABLE(TABLE=CMoy,);
 
 ## calcul de la perte de masse en % a chaque instant
 Dmasse = FORMULE(VALE='100*(C0-MOYE_TEMP)/2410',
-             NOM_PARA='MOYE_TEMP',);
+                 C0=C0,
+                 NOM_PARA='MOYE_TEMP',)
 TPERTE0=CALC_TABLE(TABLE=CMoy,
                   ACTION=(_F(OPERATION='OPER',
                                            FORMULE=Dmasse,

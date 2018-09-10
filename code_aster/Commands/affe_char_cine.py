@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -19,7 +19,7 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import KinematicsLoad
+from ..Objects import KinematicsMechanicalLoad, KinematicsThermalLoad, KinematicsAcousticLoad
 from .ExecuteCommand import ExecuteCommand
 
 
@@ -33,14 +33,15 @@ class KinematicsLoadDefinition(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        self._result = KinematicsLoad()
-        self._result.setSupportModel(keywords["MODELE"])
         if keywords.get( "MECA_IMPO" ) is not None:
-            self._result.setType('CHAR_CINE_MECA')
+            self._result = KinematicsMechanicalLoad()
         elif keywords.get( "THER_IMPO" ) is not None:
-            self._result.setType('CHAR_CINE_THER')
+            self._result = KinematicsThermalLoad()
+        elif keywords.get( "ACOU_IMPO" ) is not None:
+            self._result = KinematicsAcousticLoad()
         else:
             raise NotImplementedError("Must be implemented")
+        self._result.setSupportModel(keywords["MODELE"])
 
 
 AFFE_CHAR_CINE = KinematicsLoadDefinition.run

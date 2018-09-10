@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -35,5 +35,15 @@ class CalcMatrAjou(ExecuteCommand):
             keywords (dict): Keywords arguments of user's keywords.
         """
         self._result = GeneralizedAssemblyMatrixDouble()
+
+    def post_exec(self, keywords):
+        """Execute the command.
+
+        Arguments:
+            keywords (dict): User's keywords.
+        """
+        numeDdlGene = keywords.get("NUME_DDL_GENE")
+        if numeDdlGene is not None:
+            self._result.setGeneralizedDOFNumbering(numeDdlGene)
 
 CALC_MATR_AJOU = CalcMatrAjou.run

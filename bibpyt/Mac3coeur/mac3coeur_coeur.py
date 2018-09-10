@@ -109,16 +109,16 @@ class Coeur(object):
     def position_fromthyc(self, posX, posY):
         """Retourne la position Aster correspondant à la position Thyc."""
         raise NotImplementedError
-        
+
     def get_length(self) :
         return len(self.ALPHA_MAC)
-        
+
     def get_letter(self,index) :
         return self.ALPHA_MAC[index]
-        
+
     def get_index(self,letter) :
         return self.ALPHA_MAC.index(letter)
-        
+
     def get_XY(self,position) :
         raise NotImplementedError
 
@@ -466,7 +466,7 @@ class Coeur(object):
         from code_aster.Cata.Syntax import _F
         DEFI_FONCTION = self.macro.get_cmd('DEFI_FONCTION')
         AFFE_CHAR_MECA_F = self.macro.get_cmd('AFFE_CHAR_MECA_F')
-        
+
         if compression_init :
             _FXpsc = DEFI_FONCTION(NOM_PARA='INST',
                                VALE=(-2.0,   0.,
@@ -724,7 +724,7 @@ class Coeur(object):
 
         _LI = DEFI_LIST_REEL(DEBUT=-1, INTERVALLE=_list,)
 
-        
+
         if nbSubdEchec == 1 :
             return _LI
         else :
@@ -848,7 +848,7 @@ class Coeur(object):
             mcfm.append(mtmpm)
             mcf0.append(mtmp0)
             mcf1.append(mtmp1)
-            
+
         _INST_M = CREA_CHAMP(
             OPERATION='AFFE', TYPE_CHAM='NOEU_INST_R', MAILLAGE=MAILLAGE,
             #AFFE=(_F(GROUP_MA=('T_GUIDE', 'CRAYON', 'ELA', 'MAINTIEN',), NOM_CMP='INST', VALE=0.0),),)
@@ -1048,9 +1048,9 @@ class Coeur(object):
         else:
             _M_RES = DEFI_MATERIAU(DIS_CONTACT=_F(RIGI_NOR=1.E1))
 
- 
+
         _M_BCR = DEFI_MATERIAU( DIS_CONTACT = _F( RIGI_NOR = 1.E9, JEU=.0),);
- 
+
         mcf_affe_mater = self.mcf_coeur_mater(_M_RES,_M_BCR)
         # Affectation des materiau dans le coeur
         _A_MAT = AFFE_MATERIAU(MAILLAGE=MAILLAGE,
@@ -1405,9 +1405,9 @@ class Coeur(object):
         #---------------------------------------------------------------
         if (is_char_ini) :
             _dilatation = AFFE_CHAR_MECA_F( MODELE   = MODEL,
-                                           DDL_IMPO = (_F(GROUP_NO = 'FIX', 
+                                           DDL_IMPO = (_F(GROUP_NO = 'FIX',
                                                           DX=_DthXpic,),
-                                                       _F(GROUP_NO = 'P_CUV',  
+                                                       _F(GROUP_NO = 'P_CUV',
                                                           DX=_DthX,   ),),)
         else :
             _dilatation = AFFE_CHAR_MECA_F(MODELE=MODEL,

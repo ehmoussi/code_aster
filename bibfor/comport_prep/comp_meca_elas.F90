@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -62,7 +62,7 @@ implicit none
 !
 ! - Set for ELASTIQUE
 !
-    p_compelas_valv(NAME) = 'ELAS'
+    p_compelas_valv(RELA_NAME) = 'ELAS'
     p_compelas_valv(NVAR) = '1'
     p_compelas_valv(DEFO) = 'PETIT'
     if (l_etat_init) then

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -36,22 +36,16 @@ subroutine w155m3(numa, jce2d, jce2l, jce2v, isp,&
 !       A PARTIR DU NUMERO DE SOUS-POINT ISP
 ! ----------------------------------------------------------------------
 !
+!   ON DETERMINE SI LA MAILLE EST DE TYPE COQUE, PMF, GRILLE OU TUYAU :
 !
-!     -- ON DETERMINE SI LA MAILLE EST DE TYPE COQUE, PMF, GRILLE
-!        OU TUYAU :
-!       -- CMP1 = COQ_NCOU
-    call cesexi('C', jce2d, jce2l, numa, 1,&
-                1, 1, iad1)
-!       -- CMP2 = TUY_NCOU
-    call cesexi('C', jce2d, jce2l, numa, 1,&
-                1, 2, iad2)
-!       -- CMP3 = TUY_NSEC
-    call cesexi('C', jce2d, jce2l, numa, 1,&
-                1, 3, iad3)
-!       -- CMP4 = NBFIBR
-    call cesexi('C', jce2d, jce2l, numa, 1,&
-                1, 4, iad4)
-!
+!   CMP1 = COQ_NCOU
+    call cesexi('C', jce2d, jce2l, numa, 1, 1, 1, iad1)
+!   CMP2 = TUY_NCOU
+    call cesexi('C', jce2d, jce2l, numa, 1, 1, 2, iad2)
+!   CMP3 = TUY_NSEC
+    call cesexi('C', jce2d, jce2l, numa, 1, 1, 3, iad3)
+!   CMP4 = NBFIBR
+    call cesexi('C', jce2d, jce2l, numa, 1, 1, 4, iad4)
 !
     if (iad4 .gt. 0) then
         typma='PMF'
@@ -74,13 +68,7 @@ subroutine w155m3(numa, jce2d, jce2l, jce2v, isp,&
     posic=-999
     posis=-999
 !
-!
-    if (typma .eq. 'GRI') then
-!       -------------------------
-        ASSERT(isp.le.nbcou)
-        nucou=isp
-!
-    else if (typma.eq.'PMF') then
+    if (typma.eq.'PMF') then
 !       -------------------------
         ASSERT(isp.le.nbfib)
         nufib=isp
@@ -89,7 +77,7 @@ subroutine w155m3(numa, jce2d, jce2l, jce2v, isp,&
 !       -------------------------
         ASSERT(isp.le.nbcou*3)
         nucou=(isp+2)/3
-        posic=mod(isp+1,3)-1
+        posic=mod(isp+2,3)-1
 !
     else if (typma.eq.'TUY') then
 !       -------------------------

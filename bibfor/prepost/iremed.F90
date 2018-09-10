@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -32,18 +32,15 @@ subroutine iremed(nomcon, ifichi, nocham, novcmp, partie,&
 #include "asterfort/irchme.h"
 #include "asterfort/irmpar.h"
 #include "asterfort/jedema.h"
-#include "asterfort/jedetr.h"
 #include "asterfort/jeexin.h"
 #include "asterfort/jelira.h"
 #include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
-#include "asterfort/lxlgut.h"
 #include "asterfort/mdnoch.h"
 #include "asterfort/rsexch.h"
 #include "asterfort/rsutrg.h"
 #include "asterfort/utcmp3.h"
 #include "asterfort/utmess.h"
-#include "asterfort/wkvect.h"
 #include "asterfort/as_deallocate.h"
 #include "asterfort/as_allocate.h"
 #include "asterfort/bool_to_int.h"
@@ -174,7 +171,7 @@ subroutine iremed(nomcon, ifichi, nocham, novcmp, partie,&
 !     --- BOUCLE SUR LE NOMBRE DE CHAMPS A IMPRIMER
 !
     do isy = 1, nbcham
-        l_mult_model = ASTER_FALSE 
+        l_mult_model = ASTER_FALSE
         l_vari_name  = ASTER_FALSE
 !
 !       --- BOUCLE SUR LA LISTE DES NUMEROS D'ORDRE
@@ -283,7 +280,7 @@ subroutine iremed(nomcon, ifichi, nocham, novcmp, partie,&
             call irchme(ifichi, cham19, partie, field_name, result_name,&
                         field_type, typech, numord, nbrcmp, zk8(jnocmp),&
                         nbnoec, linoec, nbmaec, limaec, lvarie,&
-                        sdcarm, linopa, codret)
+                        sdcarm, carael, linopa, codret)
 !
 999         continue
 !

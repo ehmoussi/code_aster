@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -54,14 +54,13 @@ type(ROM_DS_ParaDBR), intent(inout) :: ds_para
     endif
 !
     if (ds_para%operation(1:3) .eq. 'POD') then
-        call dbr_init_algo_pod(ds_para%result_out, ds_para%ds_empi,&
-                               ds_para%para_pod%tabl_name)
+        call dbr_init_algo_pod()
     elseif (ds_para%operation .eq. 'GLOUTON') then
         call dbr_init_algo_rb(ds_para%para_rb)
     elseif (ds_para%operation .eq. 'TRONCATURE') then
         call dbr_init_algo_tr(ds_para%para_tr)
     else
-        ASSERT(.false.)
+        ASSERT(ASTER_FALSE)
     endif
 !
 end subroutine

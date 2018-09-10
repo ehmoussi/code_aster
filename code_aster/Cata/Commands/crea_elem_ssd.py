@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -25,6 +25,10 @@ from code_aster.Cata.Commons import *
 
 
 def crea_elem_ssd_prod(self,NUME_DDL,**args):
+    if args.get('__all__'):
+        return ([macr_elem_dyna],
+                [None, nume_ddl_sdaster])
+
     if NUME_DDL:
         self.type_sdprod(NUME_DDL,nume_ddl_sdaster)
     return macr_elem_dyna
@@ -41,7 +45,7 @@ CREA_ELEM_SSD=MACRO(nom="CREA_ELEM_SSD",
          MODELE          =SIMP(statut='o',typ=modele_sdaster),
          CHAM_MATER      =SIMP(statut='o',typ=cham_mater),
          CARA_ELEM       =SIMP(statut='f',typ=cara_elem),
-         NUME_DDL        =SIMP(statut='f',typ=CO,defaut=None),
+         NUME_DDL        =SIMP(statut='f',typ=CO),
          CHARGE          =SIMP(statut='f',typ=(char_meca,char_ther,char_acou),validators=NoRepeat(),max='**'),
 
 # pour DEFI_INTERF_DYNA

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -38,12 +38,12 @@ subroutine hujprj(k, tin, toud, p, q)
     data   d12, deux /0.5d0, 2.d0/
 !
     j = 1
-    do 10 i = 1, ndi
+    do i = 1, ndi
         if (i .ne. k) then
             tou(j) = tin(i)
             j = j+1
         endif
-10  continue
+    enddo
 !
     tou(3) = tin(ndt+1-k)
 !

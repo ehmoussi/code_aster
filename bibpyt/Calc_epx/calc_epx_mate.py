@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -25,6 +25,7 @@ Traitement des données matériaux et comportements pour CALC_EUROPLEXUS
 
 from Calc_epx.calc_epx_cata import cata_compor, cata_lois, cata_ordre_para
 from Calc_epx.calc_epx_utils import recupere_structure, tolist, get_group_ma
+from Calc_epx.calc_epx_utils import extract_from_tuple
 from Utilitai.Utmess import UTMESS
 from Calc_epx.calc_epx_struc import BLOC_DONNEES, BLOC_MATE, FONCTION
 
@@ -87,7 +88,7 @@ def export_mate(epx, CHAM_MATER, COMPORTEMENT, INTERFACES, dicOrthotropie):
 
     for affe in affe_mater:
         # Recuperer le concept du materiau defini par DEFI_MATERIAU
-        concept_mater = affe['MATER']
+        concept_mater = extract_from_tuple(affe['MATER'])
         nom_mater = concept_mater.get_name()
         # Recuperer les group_ma concernes
         group_ma = get_group_ma(affe, mcfact='AFFE_MATERIAU/AFFE')

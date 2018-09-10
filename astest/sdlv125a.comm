@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -32,7 +32,8 @@ DEBUT( CODE = _F(
 #----------------------
 # 1) Creation du modele
 #----------------------
-MAYANUM = LIRE_MAILLAGE(FORMAT="ASTER", UNITE = 20);
+MAYANUM = LIRE_MAILLAGE(FORMAT='ASTER',
+                        UNITE=20,)
 
 
 
@@ -154,9 +155,10 @@ DYN = DYNA_ALEA_MODAL( BASE_MODALE = _F( MODE_MECA = MODE_NUM,
 # - le fait que certaines composantes n'ont pas ete mesurees (capteurs
 #   mono-axes)
 
-PRE_IDEAS( UNITE_IDEAS = 31, UNITE_MAILLAGE = 21 )
 
-MAYAEXP = LIRE_MAILLAGE(FORMAT="ASTER", UNITE = 21 );
+MAYAEXP = LIRE_MAILLAGE(FORMAT='IDEAS',
+                        UNITE=31,
+                        )
 
 gpsupred = ('N24','N28','N30');
 gpcylred = ('N5','N8','N15','N17','N20','N27')
@@ -321,9 +323,10 @@ SPECTPHY = REST_SPEC_PHYS( MODE_MECA = MODEIDE1,
 #
 #****************************************************************************
 
-PRE_IDEAS(UNITE_IDEAS = 32, UNITE_MAILLAGE = 22)
 
-MAYAACT = LIRE_MAILLAGE(FORMAT="ASTER", UNITE = 22 );
+MAYAACT = LIRE_MAILLAGE(FORMAT='IDEAS',
+                        UNITE=32,
+                        )
 
 
 MAYAACT = DEFI_GROUP( reuse        = MAYAACT,
@@ -436,7 +439,8 @@ l_vale_calc = [0.10599446601277,0.013197789660486,0.044461076195249,0.0361609230
 0.019368273869697,0.066471443012318,0.16758897333428,0.070572731608666,0.050192251175030,0.079785689428245,
 0.034838238460752,1.2595167423121E-04,1.4583949109771E-04,2.414248810516E-05,]
 
-RAPPORT = FORMULE( NOM_PARA = ('REFE','DELTA'), VALE = 'DELTA/REFE')
+RAPPORT = FORMULE(VALE='DELTA/REFE',
+                  NOM_PARA=['REFE', 'DELTA'],)
 
 for ind in range(len(test_no)):
 

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -40,7 +40,8 @@ MOTHER=AFFE_MODELE(MAILLAGE=MATH,
 # DEFINITION DE LA FONCTION TEMPERATURE
 # -------------------------------------
 
-FTEMP = FORMULE(NOM_PARA=('Z','INST'),VALE='(-200*Z*+20)*INST')
+FTEMP = FORMULE(VALE='(-200*Z*+20)*INST',
+                NOM_PARA=['Z', 'INST'],)
 
 # CONSTRUCTION DES CHAMPS DE GEOMETRIE
 # ------------------------------------
@@ -311,8 +312,10 @@ TEST_RESU(RESU=(_F(INST=2.,
 # DEFINITION DE LA FONCTION TEMPERATURE
 # -------------------------------------
 
-FTEMP_H = FORMULE(NOM_PARA=('INST'),VALE='20*INST')
-FTEMP_B = FORMULE(NOM_PARA=('INST'),VALE='40*INST')
+FTEMP_H = FORMULE(VALE='20*INST',
+                  NOM_PARA='INST',)
+FTEMP_B = FORMULE(VALE='40*INST',
+                  NOM_PARA='INST',)
 
 
 # AFFECTATION DES FONCTIONS

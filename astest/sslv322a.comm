@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -235,9 +235,12 @@ CGKlag=CALC_G(RESULTAT=RESU,
 #               passage des FICs en MPa rac(m)
 #----------------------------------------------------------------------
 
-FK1MPA = FORMULE(NOM_PARA='K1', VALE="1.e-6*K1" )
-FK2MPA = FORMULE(NOM_PARA='K2', VALE="1.e-6*K2" )
-FK3MPA = FORMULE(NOM_PARA='K3', VALE="1.e-6*K3" )
+FK1MPA = FORMULE(VALE='1.e-6*K1',
+                 NOM_PARA='K1',)
+FK2MPA = FORMULE(VALE='1.e-6*K2',
+                 NOM_PARA='K2',)
+FK3MPA = FORMULE(VALE='1.e-6*K3',
+                 NOM_PARA='K3',)
 
 CGKleg=CALC_TABLE(reuse=CGKleg,
                   TABLE=CGKleg,

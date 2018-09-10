@@ -31,26 +31,51 @@ bool GeneralMaterialBehaviourInstance::buildJeveuxVectors( JeveuxVectorComplex& 
                                                            JeveuxVectorDouble& doubleValues,
                                                            JeveuxVectorChar16& char16Values,
                                                            JeveuxVectorChar16& ordr,
+                                                           JeveuxVectorLong& kOrd,
                                                            JeveuxVectorDouble& userDoubles,
                                                            JeveuxVectorChar8& userFunctions ) const
     throw( std::runtime_error )
 {
-    if( _vectOrdr.size() != 0 )
-    {
-        ordr->allocate( Permanent, _vectOrdr.size() );
-        for( int i = 0; i < _vectOrdr.size(); ++i )
-            (*ordr)[i] = _vectOrdr[i];
-    }
     const int nbOfMaterialProperties = getNumberOfPropertiesWithValue();
     complexValues->allocate( Permanent, nbOfMaterialProperties );
     doubleValues->allocate( Permanent, nbOfMaterialProperties );
     char16Values->allocate( Permanent, 2*nbOfMaterialProperties );
 
+    typedef std::map< std::string, int > MapStrInt;
+    MapStrInt mapTmp;
+    bool bOrdr = false;
+    if( _vectOrdr.size() != 0 )
+    {
+        ordr->allocate( Permanent, _vectOrdr.size() );
+        for( int i = 0; i < _vectOrdr.size(); ++i )
+        {
+            (*ordr)[i] = _vectOrdr[i];
+            mapTmp[ _vectOrdr[i] ] = i + 1;
+        }
+        kOrd->allocate( Permanent, 2 + 4*nbOfMaterialProperties );
+        (*kOrd)[0] = _vectOrdr.size();
+        (*kOrd)[1] = nbOfMaterialProperties;
+        bOrdr = true;
+    }
+
     int position = 0, position2 = nbOfMaterialProperties, pos3 = 0;
-    for( auto curIter : _mapOfDoubleMaterialProperties ){
-        std::string nameOfProperty = curIter.second.getName();
+    for( int i = 0; i < _vectKW.size()/2; ++i )
+    {
+        auto nameOfProperty2 = _vectKW[ 2*i ];
+        auto nameOfProperty = _vectKW[ 2*i+1 ];
+        auto curIter1 = _mapOfDoubleMaterialProperties.find( nameOfProperty2 );
+        if ( curIter1 ==  _mapOfDoubleMaterialProperties.end() ) continue;
+
+        auto curIter = *curIter1;
         if( curIter.second.hasValue() )
         {
+            if( bOrdr )
+            {
+                const int curPos = 2 + nbOfMaterialProperties + i;
+                (*kOrd)[ curPos ] = position + 1;
+                const int curPos2 = 2 + i;
+                (*kOrd)[ curPos2 ] = mapTmp[ nameOfProperty ];
+            }
             nameOfProperty.resize( 16, ' ' );
             (*char16Values)[position] = nameOfProperty.c_str();
             (*doubleValues)[position] = curIter.second.getValue();
@@ -58,9 +83,9 @@ bool GeneralMaterialBehaviourInstance::buildJeveuxVectors( JeveuxVectorComplex& 
         }
 
         if( curIter.second.isMandatory() && ! curIter.second.hasValue() )
-            throw std::runtime_error( "Mandatory material property " + nameOfProperty + " is missing" );
-
+            throw std::runtime_error( "Mandatory material property " + nameOfProperty2 + " is missing" );
     }
+
     for( auto curIter : _mapOfConvertibleMaterialProperties ){
         std::string nameOfProperty = curIter.second.getName();
         if( curIter.second.hasValue() )
@@ -73,7 +98,6 @@ bool GeneralMaterialBehaviourInstance::buildJeveuxVectors( JeveuxVectorComplex& 
 
         if( curIter.second.isMandatory() && ! curIter.second.hasValue() )
             throw std::runtime_error( "Mandatory material property " + nameOfProperty + " is missing" );
-
     }
     doubleValues->setUsedSize(position);
 
@@ -86,31 +110,17 @@ bool GeneralMaterialBehaviourInstance::buildJeveuxVectors( JeveuxVectorComplex& 
             (*complexValues)[position] = curIter.second.getValue();
             ++position;
             ++pos3;
+            if( bOrdr )
+                throw std::runtime_error( "ORDRE_PARAM with complex values not allowed" );
         }
 
         if( curIter.second.isMandatory() && ! curIter.second.hasValue() )
             throw std::runtime_error( "Mandatory material property " + nameOfProperty + " is missing" );
-
     }
     if( pos3 != 0 )
         complexValues->setUsedSize(position);
     else
         complexValues->setUsedSize(pos3);
-
-    for( auto curIter : _mapOfStringMaterialProperties ){
-        std::string nameOfProperty = curIter.second.getName();
-        if( curIter.second.hasValue() )
-        {
-            nameOfProperty.resize( 16, ' ' );
-            (*char16Values)[position] = nameOfProperty.c_str();
-            (*char16Values)[position2] = curIter.second.getValue();
-            ++position;
-            ++position2;
-        }
-
-        if( curIter.second.isMandatory() && ! curIter.second.hasValue() )
-            throw std::runtime_error( "Mandatory material property " + nameOfProperty + " is missing" );
-    }
 
     for( auto curIter : _mapOfTableMaterialProperties ){
         std::string nameOfProperty = curIter.second.getName();
@@ -127,10 +137,23 @@ bool GeneralMaterialBehaviourInstance::buildJeveuxVectors( JeveuxVectorComplex& 
             throw std::runtime_error( "Mandatory material property " + nameOfProperty + " is missing" );
     }
 
-    for( auto curIter : _mapOfFunctionMaterialProperties ){
-        std::string nameOfProperty = curIter.second.getName();
+    for( int i = 0; i < _vectKW.size()/2; ++i )
+    {
+        auto nameOfProperty2 = _vectKW[ 2*i ];
+        auto nameOfProperty = _vectKW[ 2*i+1 ];
+        auto curIter1 = _mapOfFunctionMaterialProperties.find( nameOfProperty2 );
+        if ( curIter1 ==  _mapOfFunctionMaterialProperties.end() ) continue;
+
+        auto curIter = *curIter1;
         if( curIter.second.hasValue() )
         {
+            if( bOrdr )
+            {
+                const int curPos = 2 + 3*nbOfMaterialProperties + i;
+                (*kOrd)[ curPos ] = position + 1;
+                const int curPos2 = 2 + i;
+                (*kOrd)[ curPos2 ] = mapTmp[ nameOfProperty ];
+            }
             nameOfProperty.resize( 16, ' ' );
             (*char16Values)[position] = nameOfProperty.c_str();
             (*char16Values)[position2] = curIter.second.getValue()->getName();

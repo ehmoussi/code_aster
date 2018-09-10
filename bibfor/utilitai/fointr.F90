@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -171,21 +171,6 @@ subroutine fointr(nomfon, chprol, nbvar, var, fon,&
                     call jeveuo(nomf//'.NOVA', 'L', lnova)
                     call fointe('F ', nomf, 1, zk8(lnova), varres(ires),&
                                 fonres(ires), ier)
-                else if (chprol(2)(1:3).eq.'NON') then
-                    if (varres(ires) .eq. var(ivar)) then
-                        fonres(ires) = fon(ivar)
-                    else
-                        if (varres(ires) .eq. var(ivar+1)) then
-                            fonres(ires) = fon(ivar+1)
-                        else
-                            ier = ier + 1
-                            valr (1) = varres(ires)
-                            valr (2) = var(ivar)
-                            valr (3) = var(ivar+1)
-                            call utmess('F+', 'FONCT0_11', sk=nomf)
-                            call utmess('F', 'FONCT0_26', nr=3, valr=valr)
-                        endif
-                    endif
                 else
                     ier = ier + 1
                     call utmess('F', 'FONCT0_21', sk=chprol(2))

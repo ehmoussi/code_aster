@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -22,6 +22,7 @@ subroutine cpnno(main,numa,coor,inc,nbno,nomnoe)
     implicit none
 !
 #include "jeveux.h"
+#include "asterfort/assert.h"
 #include "asterfort/codent.h"
 #include "asterfort/jecroc.h"
 #include "asterfort/jeexin.h"
@@ -33,13 +34,12 @@ subroutine cpnno(main,numa,coor,inc,nbno,nomnoe)
 #include "asterfort/lxlgut.h"
 #include "asterfort/utmess.h"
 #include "asterfort/reerel.h"
-#include "asterfort/assert.h"
 !
     integer :: nbno, inc, numa
     real(kind=8) :: coor(3, *)
     character(len=8) :: main
     character(len=24) :: nomnoe
-    
+
 
 !
 !
@@ -59,7 +59,7 @@ subroutine cpnno(main,numa,coor,inc,nbno,nomnoe)
 !
     character(len=8) :: nomnd,eletyp, mailut
     character(len=24) :: valk
-    character(len=6) :: knume
+    character(len=16) :: knume
 ! ----------------------------------------------------------------------
 !
 !
@@ -69,17 +69,20 @@ subroutine cpnno(main,numa,coor,inc,nbno,nomnoe)
     nbso=3
     eletyp='TR3'
     mailut=main
-    call jeveuo(jexnum(mailut//'.CONNEX',numa),'L',jtab)        
+    call jeveuo(jexnum(mailut//'.CONNEX',numa),'L',jtab)
 
 ! - INSERTION DU NOUVEAU NOEUD
 !
 !      NOM DU NOEUD CREE
      call codent(nbno+inc, 'G', knume)
+     if (knume(1:1)=='*') then
+         ASSERT(.false.)
+     endif
      lgnd = lxlgut(knume)
-     if (lgnd+2 .gt. 8) then
+     if (lgnd+1 .gt. 8) then
          call utmess('F', 'ALGELINE_16')
      endif
-     nomnd = 'C' // knume
+     nomnd = 'C' // knume(1:lgnd)
 !
 !      DECLARATION DU NOEUD CREE
      call jeexin(jexnom(nomnoe, nomnd), iret)
@@ -92,7 +95,7 @@ subroutine cpnno(main,numa,coor,inc,nbno,nomnoe)
 
 ! --- Preparation de la geometrie
     do  inc1=1, nbso
-        lino(inc1)= zi(jtab+inc1-1) 
+        lino(inc1)= zi(jtab+inc1-1)
     end do
     aux=1
     do inc1=1,nbso
@@ -100,7 +103,7 @@ subroutine cpnno(main,numa,coor,inc,nbno,nomnoe)
             tabar(aux+inc2-1) =  coor(inc2,lino(inc1))
         end do
         aux=aux+3
-    end do 
+    end do
 !
 ! - CALCUL DES COORDONNEES DU NOUVEAU NOEUD
 ! --- CENTRE DE GRAVITE
@@ -112,7 +115,7 @@ subroutine cpnno(main,numa,coor,inc,nbno,nomnoe)
     xe(3)=0.d0
     call reerel(eletyp, nbso, 3, tabar, xe, xp)
     coor(1,nbno+inc) = xp(1)
-    coor(2,nbno+inc) = xp(2)  
+    coor(2,nbno+inc) = xp(2)
     coor(3,nbno+inc) = xp(3)
 
 !

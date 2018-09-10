@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -207,8 +207,10 @@ RELEFr=POST_RELEVE_T(ACTION=(_F(OPERATION='EXTRACTION',
                               NOM_CMP=('LAGS_C','LAGS_F1',)),
                            ),);
 
-MOINS_UN=FORMULE(NOM_PARA='LAGS_C',VALE='-1.0*LAGS_C',);
-PRESTANG=FORMULE(NOM_PARA=('LAGS_C','LAGS_F1'),VALE='-0.1*LAGS_C*abs(LAGS_F1)',);
+MOINS_UN = FORMULE(VALE='-1.0*LAGS_C',
+                   NOM_PARA='LAGS_C',)
+PRESTANG = FORMULE(VALE='-0.1*LAGS_C*abs(LAGS_F1)',
+                   NOM_PARA=['LAGS_C', 'LAGS_F1'],)
 
 RELE=CALC_TABLE(reuse=RELE,
                 TABLE=RELE,

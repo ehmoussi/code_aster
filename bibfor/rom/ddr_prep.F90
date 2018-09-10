@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -31,11 +31,12 @@ implicit none
 #include "asterfort/as_deallocate.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/utlisi.h"
+#include "asterfort/romConvertEquaToNode.h"
 !
 type(ROM_DS_ParaDDR), intent(in) :: ds_para
-integer, intent(in), pointer :: v_equa_prim(:)
-integer, intent(in), pointer :: v_equa_dual(:)
-integer, intent(out), pointer :: v_node_rid(:)
+integer, pointer :: v_equa_prim(:)
+integer, pointer :: v_equa_dual(:)
+integer, pointer :: v_node_rid(:)
 integer, intent(out) :: nb_node_rid
 !
 ! --------------------------------------------------------------------------------------------------
@@ -56,10 +57,13 @@ integer, intent(out) :: nb_node_rid
 !
     integer :: ifm, niv
     integer :: nb_mode_prim, nb_mode_dual, nb_mode_total
-    integer :: nb_cmp_prim, nb_cmp_dual, nb_rid_mini
+    integer :: nb_rid_mini
     integer :: i_node_rid
     integer, pointer :: v_list_unio1(:) => null()
     integer, pointer :: v_list_unio2(:) => null()
+    character(len=24) :: mode_prim, mode_dual
+    integer, pointer :: v_node_prim(:) => null()
+    integer, pointer :: v_node_dual(:) => null()
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -72,10 +76,10 @@ integer, intent(out) :: nb_node_rid
 ! - Get parameters
 !
     nb_mode_prim  = ds_para%ds_empi_prim%nb_mode
+    mode_prim     = ds_para%ds_empi_prim%ds_mode%field_refe
     nb_mode_dual  = ds_para%ds_empi_dual%nb_mode
+    mode_dual     = ds_para%ds_empi_dual%ds_mode%field_refe
     nb_mode_total = nb_mode_prim + nb_mode_dual
-    nb_cmp_prim   = ds_para%ds_empi_prim%nb_cmp
-    nb_cmp_dual   = ds_para%ds_empi_dual%nb_cmp
     nb_rid_mini   = ds_para%nb_rid_mini
 !
 ! - Prepare working objects
@@ -84,24 +88,24 @@ integer, intent(out) :: nb_node_rid
     AS_ALLOCATE(vi = v_list_unio2, size = nb_mode_total+nb_rid_mini)
 !
 ! - "convert" equations to nodes
-!    
-    if (nb_cmp_prim .ne. 1) then
-        v_equa_prim = v_equa_prim/nb_cmp_prim + 1
-    endif
-    v_equa_dual = (v_equa_dual-1)/nb_cmp_dual + 1
+!
+    AS_ALLOCATE(vi = v_node_prim, size = nb_mode_prim)
+    AS_ALLOCATE(vi = v_node_dual, size = nb_mode_dual)
+    call romConvertEquaToNode(mode_prim, nb_mode_prim, v_equa_prim, v_node_prim)
+    call romConvertEquaToNode(mode_dual, nb_mode_dual, v_equa_dual, v_node_dual)
 !
 ! - Assembling the two lists to find a list of interpolated points
 !
     call utlisi('UNION'     ,&
-                v_equa_prim , nb_mode_prim ,&
-                v_equa_dual , nb_mode_dual ,&
+                v_node_prim , nb_mode_prim ,&
+                v_node_dual , nb_mode_dual ,&
                 v_list_unio1, nb_mode_total, nb_node_rid)
 !
-! - Assembling the two lists to find a list of interpolated points
+! - Add minimum domain (if required)
 !
     if (nb_rid_mini .gt. 0) then
         call utlisi('UNION'     ,&
-                    v_list_unio1      , nb_node_rid ,&
+                    v_list_unio1      , nb_node_rid,&
                     ds_para%v_rid_mini, nb_rid_mini,&
                     v_list_unio2      , nb_mode_total+nb_rid_mini, nb_node_rid)
     endif
@@ -124,5 +128,7 @@ integer, intent(out) :: nb_node_rid
 !
     AS_DEALLOCATE(vi=v_list_unio1)
     AS_DEALLOCATE(vi=v_list_unio2)
+    AS_DEALLOCATE(vi=v_node_prim)
+    AS_DEALLOCATE(vi=v_node_dual)
 !
 end subroutine

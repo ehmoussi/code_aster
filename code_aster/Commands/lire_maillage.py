@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -21,20 +21,35 @@
 
 from ..Objects import Mesh
 from .ExecuteCommand import ExecuteCommand
+from code_aster.RunManager import LogicalUnitFile
+
+
+def catalog_op():
+    """Define the catalog of the fortran operator."""
+    from code_aster.Cata.Commands.lire_maillage import keywords as main_keywords
+    from code_aster.Cata.DataStructure import maillage_sdaster
+    from code_aster.Cata.Syntax import OPER, SIMP, tr
+
+    keywords = dict()
+    keywords.update(main_keywords)
+    del keywords['b_format_ideas']
+    keywords['FORMAT'] = SIMP(statut='f', typ='TXM',
+                            defaut='MED',
+                            into=('ASTER', 'MED'))
+
+    cata = OPER(nom="LIRE_MAILLAGE_OP",
+                 op=1,
+                 sd_prod=maillage_sdaster,
+                 fr=tr("Crée un maillage par lecture d'un fichier"),
+                 reentrant='n',
+                 **keywords
+    )
+    return cata
 
 
 class MeshReader(ExecuteCommand):
     """Command that creates a :class:`~code_aster.Objects.Mesh` from a file."""
     command_name = "LIRE_MAILLAGE"
-
-
-    def create_result(self, _):
-        """Create the :class:`~code_aster.Objects.Mesh`.
-
-        Arguments:
-            keywords (dict): Keywords arguments of user's keywords.
-        """
-        self._result = Mesh()
 
     def exec_(self, keywords):
         """Execute the command.
@@ -42,18 +57,42 @@ class MeshReader(ExecuteCommand):
         Arguments:
             keywords (dict): User's keywords.
         """
-        mesh = self._result
-        fileName = "fort.{UNITE}".format(**keywords)
-        format = keywords["FORMAT"]
-        if format == "MED":
-            mesh.readMedFile( fileName )
-        elif format == "GMSH":
-            mesh.readGmshFile( fileName )
-        elif format == "GIBI":
-            mesh.readGibiFile( fileName )
-        elif format == "ASTER":
-            mesh.readAsterMeshFile( fileName )
-        return mesh
+        from code_aster.Commands import PRE_GIBI, PRE_GMSH, PRE_IDEAS
+
+        need_conversion = ('GIBI', 'GMSH', 'IDEAS')
+        unit = keywords.get('UNITE')
+        fmt = keywords['FORMAT']
+        if fmt in need_conversion:
+            tmpfile = LogicalUnitFile.new_free(None)
+            unit_op = tmpfile.unit
+            keywords['FORMAT'] = 'ASTER'
+        else:
+            unit_op = unit
+
+        if fmt == 'GIBI':
+            PRE_GIBI(UNITE_GIBI=unit, UNITE_MAILLAGE=unit_op)
+        elif fmt == 'GMSH':
+            PRE_GMSH(UNITE_GMSH=unit, UNITE_MAILLAGE=unit_op)
+        elif fmt == 'IDEAS':
+            coul = keywords.pop('CREA_GROUP_COUL', 'NON')
+            PRE_IDEAS(UNITE_IDEAS=unit, UNITE_MAILLAGE=unit_op,
+                      CREA_GROUP_COUL=coul)
+
+        if fmt in need_conversion:
+            tmpfile.release_from_number(unit_op)
+
+        keywords['UNITE'] = unit_op
+
+        super(MeshReader, self).exec_(keywords)
+
+
+    def create_result(self, keywords):
+        """Create the :class:`~code_aster.Objects.Mesh`.
+
+        Arguments:
+            keywords (dict): Keywords arguments of user's keywords.
+        """
+        self._result = Mesh()
 
 
 LIRE_MAILLAGE = MeshReader.run

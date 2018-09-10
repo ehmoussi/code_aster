@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -37,12 +37,6 @@ CCAMASS  = LocatedComponents(phys=PHY.CAMASS, type='ELEM',
     components=('C','ALPHA','BETA','KAPPA','X',
           'Y','Z',))
 
-
-CCARCRI  = LocatedComponents(phys=PHY.CARCRI, type='ELEM',
-    components=('ITECREL','MACOMP','RESCREL','THETA','ITEDEC',
-          'INTLOC','PERTURB','TOLDEBO','ITEDEBO','TSSEUIL',
-          'TSAMPL','TSRETOUR','POSTITER','LC_EXT[3]','MODECALC',
-          'ALPHA','LC_EXT2[2]',))
 
 
 DDL_MECA = LocatedComponents(phys=PHY.DEPL_R, type='ELNO', diff=True,
@@ -372,7 +366,7 @@ class MECA_XH1_HEXA8(Element):
 
         OP.FULL_MECA(te=539,
             para_in=((OP.FULL_MECA.PBASLOR, LC.N9NEUT_R), (SP.PCAMASS, CCAMASS),
-                     (SP.PCARCRI, CCARCRI), (OP.FULL_MECA.PCNSETO, LC.E512NEUI),
+                     (SP.PCARCRI, LC.CCARCRI), (OP.FULL_MECA.PCNSETO, LC.E512NEUI),
                      (OP.FULL_MECA.PCOMPOR, LC.CCOMPOR), (OP.FULL_MECA.PCONTMR, ECONTPG),
                      (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
                      (OP.FULL_MECA.PFISNO, LC.FISNO_I), (SP.PGEOMER, NGEOMER),
@@ -419,7 +413,7 @@ class MECA_XH1_HEXA8(Element):
 
         OP.RAPH_MECA(te=539,
             para_in=((OP.RAPH_MECA.PBASLOR, LC.N9NEUT_R), (SP.PCAMASS, CCAMASS),
-                     (SP.PCARCRI, CCARCRI), (OP.RAPH_MECA.PCNSETO, LC.E512NEUI),
+                     (SP.PCARCRI, LC.CCARCRI), (OP.RAPH_MECA.PCNSETO, LC.E512NEUI),
                      (OP.RAPH_MECA.PCOMPOR, LC.CCOMPOR), (OP.RAPH_MECA.PCONTMR, ECONTPG),
                      (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
                      (SP.PGEOMER, NGEOMER), (OP.RAPH_MECA.PHEAVTO, LC.E128NEUI),
@@ -449,7 +443,7 @@ class MECA_XH1_HEXA8(Element):
 
         OP.RIGI_MECA_TANG(te=539,
             para_in=((OP.RIGI_MECA_TANG.PBASLOR, LC.N9NEUT_R), (SP.PCAMASS, CCAMASS),
-                     (SP.PCARCRI, CCARCRI), (OP.RIGI_MECA_TANG.PCNSETO, LC.E512NEUI),
+                     (SP.PCARCRI, LC.CCARCRI), (OP.RIGI_MECA_TANG.PCNSETO, LC.E512NEUI),
                      (OP.RIGI_MECA_TANG.PCOMPOR, LC.CCOMPOR), (OP.RIGI_MECA_TANG.PCONTMR, ECONTPG),
                      (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
                      (OP.RIGI_MECA_TANG.PFISNO, LC.FISNO_I), (SP.PGEOMER, NGEOMER),

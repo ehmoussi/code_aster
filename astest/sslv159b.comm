@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -64,7 +64,8 @@ FORCE=AFFE_CHAR_MECA(MODELE=MOD,
                      FORCE_NODALE=_F(GROUP_NO='ForNod',
                                      FZ=-500.0,),);
 
-FONC = FORMULE(NOM_PARA='INST',VALE='sin(0.025*pi*INST)');
+FONC = FORMULE(VALE='sin(0.025*pi*INST)',
+               NOM_PARA='INST',)
 
 LINST=DEFI_LIST_REEL(DEBUT=0.0,
                      INTERVALLE=_F(JUSQU_A=80.0,

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2016  EDF R2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2016  EDF R2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -31,8 +31,10 @@ POURSUITE(CODE='OUI',)
 # ET PRENDRE ABS(MT)
 
 # test de CALC_TABLE/OPER pour corriger les abscisses et ordonnées
-decX = FORMULE(NOM_PARA='ABSC_CURV', VALE='57766.1-ABSC_CURV')
-norm = FORMULE(NOM_PARA='MT',        VALE='abs(MT*1.e-6)')
+decX = FORMULE(VALE='57766.1-ABSC_CURV',
+               NOM_PARA='ABSC_CURV',)
+norm = FORMULE(VALE='abs(MT*1.e-6)',
+               NOM_PARA='MT',)
 EFF_GENc=CALC_TABLE(
    TABLE=EFF_GEN,
    ACTION=(
@@ -85,7 +87,8 @@ TEST_FICHIER(
 # on filtre sur ABS_corr
 # on extrait qques colonnes
 # on trie par ABS_corr croissant
-dnor=FORMULE(NOM_PARA=('DX', 'DY', 'DZ'), VALE='sqrt(DX**2+DY**2+DZ**2)')
+dnor = FORMULE(VALE='sqrt(DX**2+DY**2+DZ**2)',
+               NOM_PARA=['DX', 'DY', 'DZ'],)
 
 tab=CALC_TABLE(
    TABLE=DEPLNO,

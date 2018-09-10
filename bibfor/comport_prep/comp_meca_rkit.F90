@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -76,7 +76,7 @@ implicit none
             if (rela_meta.ne.'ZIRC') then
                 call utmess('F','COMPOR3_91')
             endif
-            kit_comp(1) = 'ZIRC'
+            kit_comp(1) = 'VIDE'
         endif
     else if (rela_comp.eq.'KIT_DDI') then
         call ddi_kit_read(keywordfact, iocc     , l_etat_init,&

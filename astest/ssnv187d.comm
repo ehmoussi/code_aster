@@ -1,80 +1,48 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
-#
+# 
 # code_aster is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
+# 
 # code_aster is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
+# 
 # You should have received a copy of the GNU General Public License
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'), DEBUG=_F(SDVERI='OUI'))
 
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
+MAIL0 = LIRE_MAILLAGE(FORMAT='MED', UNITE=20)
 
-PRE_GMSH();
-
-MAIL=LIRE_MAILLAGE(FORMAT="ASTER",);
-
-MAIL=DEFI_GROUP(reuse =MAIL,
-                    MAILLAGE=MAIL,
-                    CREA_GROUP_MA=_F(GROUP_MA='GM20',
-                                     NOM='SURF_GAU'),
-                    );
-
-MAIL=DEFI_GROUP(reuse =MAIL,
-                    MAILLAGE=MAIL,
-                    CREA_GROUP_MA=_F(GROUP_MA='GM21',
-                                     NOM='SURF_BAS'),
-                    );
-
-MAIL=DEFI_GROUP(reuse =MAIL,
-                    MAILLAGE=MAIL,
-                    CREA_GROUP_MA=_F(GROUP_MA='GM22',
-                                     NOM='SURF_HAU'),
-                    );
-
-MAIL=DEFI_GROUP(reuse =MAIL,
-                    MAILLAGE=MAIL,
-                    CREA_GROUP_MA=_F(GROUP_MA='GM23',
-                                     NOM='SURF_DEV'),
-                    );
-
-MAIL=DEFI_GROUP(reuse =MAIL,
-                    MAILLAGE=MAIL,
-                    CREA_GROUP_MA=_F(GROUP_MA='GM24',
-                                     NOM='SURF_DER'),
-                    );
+MAIL=CREA_MAILLAGE(MAILLAGE=MAIL0,
+                   LINE_QUAD=_F(TOUT='OUI',),);
 
 MODELE=AFFE_MODELE(MAILLAGE=MAIL,
                    AFFE=_F(TOUT='OUI',
                            PHENOMENE='MECANIQUE',
                            MODELISATION='3D_SI',),);
 
-
-
 MAIL=MODI_MAILLAGE(reuse=MAIL,MAILLAGE=MAIL,
-                   ORIE_PEAU_3D=_F(GROUP_MA='SURF_HAU',),)
+                   ORIE_PEAU_3D=_F(GROUP_MA='SURF_DER',),)
 
 FORCE=AFFE_CHAR_MECA(MODELE=MODELE,
-                     PRES_REP=_F(GROUP_MA='SURF_HAU',
+                     PRES_REP=_F(GROUP_MA='SURF_DER',
                                  PRES=0.876,),);
 
 DEPL=AFFE_CHAR_MECA(MODELE=MODELE,
-                     DDL_IMPO=(_F(GROUP_MA='SURF_BAS',
+                     DDL_IMPO=(_F(GROUP_MA='SURF_DEV',
                                   DY=0.0,),
                                _F(GROUP_MA='SURF_GAU',
                                   DX=0.0,),
-                               _F(GROUP_MA='SURF_DEV',
+                               _F(GROUP_MA='SURF_BAS',
                                   DZ=0.0,),
-                               _F(GROUP_MA='SURF_DER',
+                               _F(GROUP_MA='SURF_HAU',
                                   DZ=0.0,),
                                ),);
 
@@ -121,17 +89,9 @@ RESU1=STAT_NON_LINE(MODELE=MODELE,
                                    ITER_GLOB_MAXI=20)),
                    INCREMENT=_F(LIST_INST=LISTE,),);
 
-TEST_RESU(RESU=_F(NUME_ORDRE=20,
-                  GROUP_NO='GM100',
-                  REFERENCE='ANALYTIQUE',
-                  RESULTAT=RESU1,
-                  NOM_CHAM='DEPL',
-                  NOM_CMP='DY',
-                  VALE_CALC=-0.034072487756090002,
-                  VALE_REFE=-0.034009,
-                  CRITERE='RELATIF',
-                  PRECISION=2.E-3,),
-          )
+RESU1=CALC_CHAMP(reuse=RESU1,
+                 RESULTAT=RESU1,
+                 CONTRAINTE=('SIGM_NOEU'),);
 
 # MATERIAU HYPERELASTIQUE: NEO-HOOKEEN
 C01 = 0.0;
@@ -170,18 +130,11 @@ RESU2=STAT_NON_LINE(MODELE=MODELE,
                                    ITER_GLOB_MAXI=20)),
                    INCREMENT=_F(LIST_INST=LISTE,),);
 
+RESU2=CALC_CHAMP(reuse=RESU2,
+                 RESULTAT=RESU2,
+                 CONTRAINTE=('SIGM_NOEU'),);
 
 
-TEST_RESU(RESU=_F(NUME_ORDRE=20,
-                  GROUP_NO='GM100',
-                  REFERENCE='ANALYTIQUE',
-                  RESULTAT=RESU2,
-                  NOM_CHAM='DEPL',
-                  NOM_CMP='DY',
-                  VALE_CALC=-0.078330830948144997,
-                  VALE_REFE=-0.078180,
-                  PRECISION=2.E-3,),
-          )
 
 # MATERIAU HYPERELASTIQUE: SIGNORINI
 C01 = 1.2345;
@@ -219,18 +172,108 @@ RESU3=STAT_NON_LINE(MODELE=MODELE,
                                    ITER_GLOB_MAXI=20)),
                    INCREMENT=_F(LIST_INST=LISTE,),);
 
-
+RESU3=CALC_CHAMP(reuse=RESU3,
+                 RESULTAT=RESU3,
+                 CONTRAINTE=('SIGM_NOEU'),);
 
 TEST_RESU(RESU=_F(NUME_ORDRE=20,
-                  GROUP_NO='GM100',
+                  GROUP_NO=('TestDisp', ),
+                  REFERENCE='ANALYTIQUE',
+                  RESULTAT=RESU1,
+                  NOM_CHAM='DEPL',
+                  NOM_CMP='DY',
+                  VALE_CALC=-0.0340724877561,
+                  VALE_REFE=-0.034009,
+                  CRITERE='RELATIF',
+                  PRECISION=2.E-3,),
+          )
+
+TEST_RESU(
+    RESU=(_F(
+        CRITERE=('RELATIF', ),
+        GROUP_NO=('TestSigm', ),
+        NOM_CHAM='SIGM_NOEU',
+        NOM_CMP='SIYY',
+        NUME_ORDRE=20,
+        RESULTAT=RESU1,
+        VALE_CALC=(-0.846268961318, ),
+        ),
+    _F(
+        CRITERE=('RELATIF', ),
+        GROUP_NO=('TestSigm', ),
+        NOM_CHAM='SIGM_NOEU',
+        NOM_CMP='SIZZ',
+        NUME_ORDRE=20,
+        RESULTAT=RESU1,
+        VALE_CALC=(-0.41445290741, ),
+        ),)
+)
+
+TEST_RESU(RESU=_F(NUME_ORDRE=20,
+                  GROUP_NO=('TestDisp', ),
+                  REFERENCE='ANALYTIQUE',
+                  RESULTAT=RESU2,
+                  NOM_CHAM='DEPL',
+                  NOM_CMP='DY',
+                  VALE_CALC=-0.0783308309481,
+                  VALE_REFE=-0.078180,
+                  CRITERE='RELATIF',
+                  PRECISION=0.003,),
+          )
+
+TEST_RESU(
+    RESU=(_F(
+        CRITERE=('RELATIF', ),
+        GROUP_NO=('TestSigm', ),
+        NOM_CHAM='SIGM_NOEU',
+        NOM_CMP='SIYY',
+        NUME_ORDRE=20,
+        RESULTAT=RESU2,
+        VALE_CALC=(-0.807653361702, ),
+        ),
+    _F(
+        CRITERE=('RELATIF', ),
+        GROUP_NO=('TestSigm', ),
+        NOM_CHAM='SIGM_NOEU',
+        NOM_CMP='SIZZ',
+        NUME_ORDRE=20,
+        RESULTAT=RESU2,
+        VALE_CALC=(-0.435796747409, ),
+        ),)
+)
+
+TEST_RESU(RESU=_F(NUME_ORDRE=20,
+                  GROUP_NO=('TestDisp', ),
                   REFERENCE='ANALYTIQUE',
                   RESULTAT=RESU3,
                   NOM_CHAM='DEPL',
                   NOM_CMP='DY',
-                  VALE_CALC=-0.071058425921551996,
+                  VALE_CALC=-0.0710584259216,
                   VALE_REFE=-0.070936,
                   CRITERE='RELATIF',
                   PRECISION=2.E-3,),
           )
+
+TEST_RESU(
+    RESU=(_F(
+        CRITERE=('RELATIF', ),
+        GROUP_NO=('TestSigm', ),
+        NOM_CHAM='SIGM_NOEU',
+        NOM_CMP='SIYY',
+        NUME_ORDRE=20,
+        RESULTAT=RESU3,
+        VALE_CALC=(-0.813992493333, ),
+        ),
+    _F(
+        CRITERE=('RELATIF', ),
+        GROUP_NO=('TestSigm', ),
+        NOM_CHAM='SIGM_NOEU',
+        NOM_CMP='SIZZ',
+        NUME_ORDRE=20,
+        RESULTAT=RESU3,
+        VALE_CALC=(-0.382511525743, ),
+        ),)
+)
+
 
 FIN();

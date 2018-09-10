@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -37,5 +37,21 @@ class PostChamp(ExecuteCommand):
             self._result = type(keywords["RESULTAT"])()
         else:
             self._result = type(keywords["RESULTAT"])()
+
+    def post_exec(self, keywords):
+        """Execute the command.
+
+        Arguments:
+            keywords (dict): User's keywords.
+        """
+        modele = keywords.get("MODELE")
+        if modele is None:
+            try:
+                modele = keywords["RESULTAT"].getModel()
+            except:
+                pass
+        if modele is not None:
+            self._result.appendModelOnAllRanks(modele)
+        self._result.update()
 
 POST_CHAMP = PostChamp.run

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -259,7 +259,9 @@ def masque(X1):
       val=0.
     return val
 
-MASQ = FORMULE(NOM_PARA=('X1'),VALE='masque(X1)')
+MASQ = FORMULE(VALE='masque(X1)',
+               masque=masque,
+               NOM_PARA='X1',)
 
 CHFON=CREA_CHAMP(OPERATION='AFFE',
                  TYPE_CHAM='NOEU_NEUT_F',
@@ -307,7 +309,9 @@ def masque2(X1):
       val=0.
     return val
 
-MASQ2 = FORMULE(NOM_PARA=('X1'),VALE='masque2(X1)')
+MASQ2 = FORMULE(VALE='masque2(X1)',
+                masque2=masque2,
+                NOM_PARA='X1',)
 
 CHFON2=CREA_CHAMP(OPERATION='AFFE',
                  TYPE_CHAM='ELGA_NEUT_F',

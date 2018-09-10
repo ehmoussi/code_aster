@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -34,7 +34,8 @@ MODELEIN=AFFE_MODELE(MAILLAGE=MAILLAG2,
                               PHENOMENE='MECANIQUE',
                               MODELISATION='3D')));
 
-LN=FORMULE(NOM_PARA=('X','Y','Z'),VALE='Z-17.5');
+LN = FORMULE(VALE='Z-17.5',
+             NOM_PARA=['X', 'Y', 'Z'],)
 
 FISS=DEFI_FISS_XFEM(MAILLAGE=MAILLAG2,
                     TYPE_DISCONTINUITE='INTERFACE',
@@ -77,7 +78,10 @@ CHAMPMAT=AFFE_MATERIAU(MAILLAGE=MAILLAG2,
                                 ));
 
 PRES=100.
-FCTPRES=FORMULE(NOM_PARA=('X','Y','Z'),VALE='(PRES-(Y-10.)*(Y-10.)/2.)*E/1e6');
+FCTPRES = FORMULE(VALE='(PRES-(Y-10.)*(Y-10.)/2.)*E/1e6',
+                  PRES=PRES,
+                  E=E,
+                  NOM_PARA=['X', 'Y', 'Z'],)
 
 CH1=AFFE_CHAR_MECA(MODELE=MODELEK,
                    DDL_IMPO=(_F(GROUP_MA='SURFINF',DX=0.0,DY=0.0,DZ=0.0),

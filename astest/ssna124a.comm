@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -35,19 +35,23 @@ MODEL=AFFE_MODELE(
 );
 
 # DEFINITION DU MATERIAU
-YOUNG1 = FORMULE(NOM_PARA='TEMP', VALE='210000.0 - 30.0*TEMP', );
-NU1    = FORMULE(NOM_PARA='TEMP', VALE='0.30 + 5.0E-05*TEMP', );
-ALPHA1 = FORMULE(NOM_PARA='TEMP', VALE='1.0E-06*(15.0+2.0E-03*TEMP)',);
-R021   = FORMULE(NOM_PARA=('TEMP','IRRA',),
-    VALE='(270.0-0.65*TEMP+0.001*TEMP**2)*3.0*(2.0-exp(-IRRA/3.0))', );
+YOUNG1 = FORMULE(VALE='210000.0 - 30.0*TEMP',
+                 NOM_PARA='TEMP',)
+NU1 = FORMULE(VALE='0.30 + 5.0E-05*TEMP',
+              NOM_PARA='TEMP',)
+ALPHA1 = FORMULE(VALE='1.0E-06*(15.0+2.0E-03*TEMP)',
+                 NOM_PARA='TEMP',)
+R021 = FORMULE(VALE='(270.0-0.65*TEMP+0.001*TEMP**2)*3.0*(2.0-exp(-IRRA/3.0))',
+               NOM_PARA=['TEMP', 'IRRA'],)
 
-RM1 = FORMULE(NOM_PARA=('TEMP','IRRA',),
-    VALE='''R021(TEMP,IRRA)+((600.0-1.5*TEMP+0.010*TEMP**2)
+RM1 = FORMULE(VALE="""R021(TEMP,IRRA)+((600.0-1.5*TEMP+0.010*TEMP**2)
             -(270.00-0.65*TEMP+0.001*TEMP**2))*0.50*
-            (0.25-0.10*(1.0-exp(-IRRA/10.0))+exp(-IRRA/2.0))''', );
+            (0.25-0.10*(1.0-exp(-IRRA/10.0))+exp(-IRRA/2.0))""",
+              R021=R021,
+              NOM_PARA=['TEMP', 'IRRA'],)
 
-EU1 = FORMULE(NOM_PARA=('TEMP','IRRA',),
-    VALE='''log(1.0+((50.0-0.15*TEMP+0.0007*TEMP**2)*0.25*exp(-IRRA/2.0))*1.0E-02)''', );
+EU1 = FORMULE(VALE='log(1.0+((50.0-0.15*TEMP+0.0007*TEMP**2)*0.25*exp(-IRRA/2.0))*1.0E-02)',
+              NOM_PARA=['TEMP', 'IRRA'],)
 
 
 TEM=DEFI_LIST_REEL(

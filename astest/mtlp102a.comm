@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -130,8 +130,8 @@ TEMPE=CREA_RESU(    OPERATION='AFFE', TYPE_RESU='EVOL_THER',
                     )
 
 
-PHASINIT=CREA_CHAMP(AFFE=_F(VALE=(0.7,0.0,0.3,0.0,0.0),
-                            NOM_CMP=('V1','V2','V3','V4','V5'),
+PHASINIT=CREA_CHAMP(AFFE=_F(VALE=(0.7,0.0,0.3,0.0,0.0, 0.0),
+                            NOM_CMP=('V1','V2','V3','V4','V5','V6'),
                             TOUT='OUI',),
                     TYPE_CHAM='CART_VAR2_R',
                     MAILLAGE=MAIL,
@@ -175,7 +175,7 @@ PHAS_3=CREA_CHAMP( OPERATION='EXTR', TYPE_CHAM='ELNO_VARI_R',
 TEST_RESU(CHAM_ELEM=(_F(NOEUD='N66',
                         CRITERE='RELATIF',
                         REFERENCE='NON_DEFINI',
-                        NOM_CMP='V5',
+                        NOM_CMP='V6',
                         PRECISION=1.E-2,
                         MAILLE='M19',
                         CHAM_GD=PHAS_0,
@@ -184,7 +184,7 @@ TEST_RESU(CHAM_ELEM=(_F(NOEUD='N66',
                      _F(NOEUD='N70',
                         CRITERE='RELATIF',
                         REFERENCE='NON_DEFINI',
-                        NOM_CMP='V5',
+                        NOM_CMP='V6',
                         PRECISION=1.E-2,
                         MAILLE='M19',
                         CHAM_GD=PHAS_1,
@@ -193,7 +193,7 @@ TEST_RESU(CHAM_ELEM=(_F(NOEUD='N66',
                      _F(NOEUD='N39',
                         CRITERE='RELATIF',
                         REFERENCE='NON_DEFINI',
-                        NOM_CMP='V5',
+                        NOM_CMP='V6',
                         PRECISION=1.E-2,
                         MAILLE='M13',
                         CHAM_GD=PHAS_2,

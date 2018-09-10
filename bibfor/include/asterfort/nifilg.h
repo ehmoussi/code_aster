@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,14 +15,13 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
+! aslint: disable=W1504
 !
 #include "asterf_types.h"
 !
 interface
-    subroutine nifilg(ndim, nno1, nno2, nno3, npg,&
-                      iw, vff1, vff2, vff3, idff1,&
+    subroutine nifilg(ndim, nnod, nnog, nnop, npg,&
+                      iw, vffd, vffg, vffp, idff1,&
                       vu, vg, vp, geomi, typmod,&
                       option, mate, compor, lgpg, crit,&
                       instm, instp, ddlm, ddld, angmas,&
@@ -30,19 +29,19 @@ interface
                       rigi, vect, matr, matsym, codret)
         integer :: lgpg
         integer :: npg
-        integer :: nno3
-        integer :: nno2
-        integer :: nno1
+        integer :: nnop
+        integer :: nnog
+        integer :: nnod
         integer :: ndim
         integer :: iw
-        real(kind=8) :: vff1(nno1, npg)
-        real(kind=8) :: vff2(nno2, npg)
-        real(kind=8) :: vff3(nno3, npg)
+        real(kind=8) :: vffd(nnod, npg)
+        real(kind=8) :: vffg(nnog, npg)
+        real(kind=8) :: vffp(nnop, npg)
         integer :: idff1
         integer :: vu(3, 27)
         integer :: vg(27)
         integer :: vp(27)
-        real(kind=8) :: geomi(ndim, nno1)
+        real(kind=8) :: geomi(ndim, nnod)
         character(len=8) :: typmod(*)
         character(len=16) :: option
         integer :: mate

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -59,7 +59,8 @@ carelem4=AFFE_CARA_ELEM(
     ),
 )
 
-fct1 = FORMULE(NOM_PARA=('X','Y','Z'),VALE="2*X+3*Y" )
+fct1 = FORMULE(VALE='2*X+3*Y',
+               NOM_PARA=['X', 'Y', 'Z'],)
 
 carelem5=AFFE_CARA_ELEM(
     MODELE=model,

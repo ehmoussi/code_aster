@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,26 +15,23 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine nmfint(modele, mate  , carele, comref    , ds_constitutive,&
-                      fonact, iterat, sddyna, ds_measure, valinc         ,&
-                      solalg, ldccvg, vefint)
+    subroutine nmfint(model          , cara_elem      ,&
+                      ds_material    , ds_constitutive,&
+                      list_func_acti , iter_newt      , sddyna, ds_measure,&
+                      hval_incr      , hval_algo      ,&
+                      vefint         , ldccvg   )
         use NonLin_Datastructure_type        
-        character(len=24) :: modele
-        character(len=24) :: mate
-        character(len=24) :: carele
-        character(len=24) :: comref
+        character(len=24), intent(in) :: model, cara_elem
+        type(NL_DS_Material), intent(in) :: ds_material
         type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-        integer :: fonact(*)
-        integer :: iterat
-        character(len=19) :: sddyna
+        integer, intent(in) :: list_func_acti(*)
+        integer, intent(in) :: iter_newt
+        character(len=19), intent(in) :: sddyna
         type(NL_DS_Measure), intent(inout) :: ds_measure
-        character(len=19) :: valinc(*)
-        character(len=19) :: solalg(*)
-        integer :: ldccvg
-        character(len=19) :: vefint
+        character(len=19), intent(in) :: hval_incr(*), hval_algo(*)
+        character(len=19), intent(in) :: vefint
+        integer, intent(out) :: ldccvg
     end subroutine nmfint
 end interface

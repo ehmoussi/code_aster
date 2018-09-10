@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -105,11 +105,13 @@ CAEL_G=AFFE_CARA_ELEM(MODELE=MO_G,
                                ANGL_REP=(0.0,0.0,),
                                INER_ROTA='OUI',),);
 
-UX_IMPOS=FORMULE(VALE='D0*Y',
-                 NOM_PARA='Y',);
+UX_IMPOS = FORMULE(VALE='D0*Y',
+                   D0=D0,
+                   NOM_PARA='Y',)
 
-UY_IMPOS=FORMULE(VALE='D0*X',
-                 NOM_PARA='X',);
+UY_IMPOS = FORMULE(VALE='D0*X',
+                   D0=D0,
+                   NOM_PARA='X',)
 
 COND_0=AFFE_CHAR_CINE(MODELE=MO_G,
                       MECA_IMPO=_F(GROUP_NO='A1',
@@ -195,17 +197,17 @@ RESU_D=CALC_CHAMP(reuse=RESU_D,
 
 ############### POST TRAITEMENT #################################
 
-FORM_A=FORMULE(VALE='abs(DX+DY)',
-               NOM_PARA=('DX','DY',),);
+FORM_A = FORMULE(VALE='abs(DX+DY)',
+                 NOM_PARA=['DX', 'DY'],)
 
-FORM_V=FORMULE(VALE='(DX*DX+DY*DY)**0.5*(DX+DY)/abs(DX+DY)',
-               NOM_PARA=('DX','DY',),);
+FORM_V = FORMULE(VALE='(DX*DX+DY*DY)**0.5*(DX+DY)/abs(DX+DY)',
+                 NOM_PARA=['DX', 'DY'],)
 
 DIF_REL = FORMULE(VALE='(VG-V)/V',
-                  NOM_PARA=('V','VG',),);
+                  NOM_PARA=['V', 'VG'],)
 
 DIF_RELD = FORMULE(VALE='(VG-VD)/VD',
-                  NOM_PARA=('VD','VG',),);
+                   NOM_PARA=['VD', 'VG'],)
 
 ######################################################################
 

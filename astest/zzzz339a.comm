@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -37,8 +37,8 @@ CH_MAT=AFFE_MATERIAU(MAILLAGE=MA,
                      AFFE=_F(TOUT='OUI',
                              MATER=MAT_TEST,),);
 
-f_sig=FORMULE(NOM_PARA=('X','Y','Z'),
-              VALE='X-Y',)
+f_sig = FORMULE(VALE='X-Y',
+                NOM_PARA=['X', 'Y', 'Z'],)
 
 CHXN=CREA_CHAMP(TYPE_CHAM='NOEU_GEOM_R',
                 OPERATION='EXTR',

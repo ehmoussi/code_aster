@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -22,6 +22,7 @@ subroutine cpnpq8(main,numa,coor,ind,nomnoe)
     implicit none
 !
 #include "jeveux.h"
+#include "asterfort/assert.h"
 #include "asterfort/codent.h"
 #include "asterfort/jecroc.h"
 #include "asterfort/jeexin.h"
@@ -35,7 +36,6 @@ subroutine cpnpq8(main,numa,coor,ind,nomnoe)
 #include "asterfort/jemarq.h"
 #include "asterfort/jedema.h"
 #include "asterfort/reerel.h"
-#include "asterfort/assert.h"
 !
     integer, intent(in) :: ind
     integer, intent(in) :: numa
@@ -45,7 +45,7 @@ subroutine cpnpq8(main,numa,coor,ind,nomnoe)
 !
 !
 ! ----------------------------------------------------------------------
-!         CREATION DES DDL SUPPLEMENTAIRES 
+!         CREATION DES DDL SUPPLEMENTAIRES
 !         SUR LA FACE DE LA ZONE DE CONTACT ESCLAVE
 !         CAS HEXA 8
 ! ----------------------------------------------------------------------
@@ -63,7 +63,7 @@ subroutine cpnpq8(main,numa,coor,ind,nomnoe)
 !
     character(len=8) :: nomnd,eletyp,mailut
     character(len=24) :: valk
-    character(len=6) :: knume
+    character(len=16) :: knume
 ! ----------------------------------------------------------------------
 !
     call jemarq()
@@ -72,17 +72,20 @@ subroutine cpnpq8(main,numa,coor,ind,nomnoe)
     nbso=4
     eletyp='QU4'
     mailut=main
-    call jeveuo(jexnum(mailut//'.CONNEX',numa),'L',jtab)   
+    call jeveuo(jexnum(mailut//'.CONNEX',numa),'L',jtab)
 !
 ! - INSERTION DES NOUVEAUX NOEUDS
     do inc1=1,4
 ! ------ NOM DU NOEUD CREE
         call codent(ind+inc1-1, 'G', knume)
+        if (knume(1:1)=='*') then
+            ASSERT(.false.)
+        endif
         lgnd = lxlgut(knume)
-        if (lgnd+2 .gt. 8) then
+        if (lgnd+1 .gt. 8) then
             call utmess('F', 'ALGELINE_16')
         endif
-        nomnd = 'C' // knume
+        nomnd = 'C' // knume(1:lgnd)
 ! ------ DECLARATION DU NOEUD CREE
         call jeexin(jexnom(nomnoe, nomnd), iret)
         if (iret .eq. 0) then
@@ -95,17 +98,17 @@ subroutine cpnpq8(main,numa,coor,ind,nomnoe)
 ! --- CALCUL DES COORDONNEES DES NOUVEAUX NOEUDS
 
     do  inc1=1, nbso
-        lino(inc1)= zi(jtab+inc1-1) 
+        lino(inc1)= zi(jtab+inc1-1)
     end do
     aux=1
     do inc1=1,nbso
         do inc2=1,3
-                tabar(aux+inc2-1) =  coor(inc2,lino(inc1))    
+                tabar(aux+inc2-1) =  coor(inc2,lino(inc1))
         end do
         aux=aux+3
-    end do 
+    end do
 
-! --- NOEUD 1 
+! --- NOEUD 1
     xp(1)=0.d0
     xp(2)=0.d0
     xp(3)=0.d0
@@ -116,7 +119,7 @@ subroutine cpnpq8(main,numa,coor,ind,nomnoe)
     coor(1,ind) = xp(1)
     coor(2,ind) = xp(2)
     coor(3,ind) = xp(3)
-! --- NOEUD 2 
+! --- NOEUD 2
     xp(1)=0.d0
     xp(2)=0.d0
     xp(3)=0.d0
@@ -127,7 +130,7 @@ subroutine cpnpq8(main,numa,coor,ind,nomnoe)
     coor(1,ind+1) = xp(1)
     coor(2,ind+1) = xp(2)
     coor(3,ind+1) = xp(3)
-! --- NOEUD 3 
+! --- NOEUD 3
     xp(1)=0.d0
     xp(2)=0.d0
     xp(3)=0.d0
@@ -147,7 +150,7 @@ subroutine cpnpq8(main,numa,coor,ind,nomnoe)
     xe(3)=0.d0
     call reerel(eletyp, nbso, 3, tabar, xe, xp)
     coor(1,ind+3) = xp(1)
-    coor(2,ind+3) = xp(2)  
+    coor(2,ind+3) = xp(2)
     coor(3,ind+3) = xp(3)
 !
 

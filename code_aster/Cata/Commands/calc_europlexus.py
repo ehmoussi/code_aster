@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -25,6 +25,9 @@ from code_aster.Cata.Commons import *
 
 
 def calc_europlexus_prod(self,COURBE=None,**args):
+  if args.get('__all__'):
+      return ([evol_noli], [None, table_sdaster])
+
   if COURBE is not None:
       self.type_sdprod(args['TABLE_COURBE'],table_sdaster)
   return evol_noli
@@ -39,7 +42,7 @@ CALC_EUROPLEXUS = MACRO(nom="CALC_EUROPLEXUS",
                                 EXCLUS('ETAT_INIT','FONC_PARASOL'),
                                 AU_MOINS_UN('COMPORTEMENT'),),
         LOGICIEL = SIMP(statut='f', typ='TXM'),
-        LANCEMENT = SIMP(statut='o', typ='TXM', defaut='OUI',into=('OUI','NON')),
+        LANCEMENT = SIMP(statut='f', typ='TXM', defaut='OUI',into=('OUI','NON')),
         VERSION_EUROPLEXUS =  SIMP(statut='f',typ='TXM',defaut="EPX2017",
                         into=("2014", "2015", "2015_DEV", "DEV" , "2016" , "EPX2016p1" , "EPX2017" , "EPXASTER_DEV"),
                         fr=tr("Version d'EUROPLEXUS"),
@@ -79,13 +82,13 @@ CALC_EUROPLEXUS = MACRO(nom="CALC_EUROPLEXUS",
           ),
 
         CALCUL = FACT(statut='o',max=1,
-           TYPE_DISCRETISATION  = SIMP(statut='o',typ='TXM',defaut='AUTO',into=('AUTO','UTIL')),
+           TYPE_DISCRETISATION  = SIMP(statut='f',typ='TXM',defaut='AUTO',into=('AUTO','UTIL')),
            INST_FIN             = SIMP(statut='o',typ='R'),
            INST_INIT            = SIMP(statut='o',typ='R'),
            NMAX                 = SIMP(statut='f',typ='R'),
 
            b_auto =BLOC( condition = """equal_to("TYPE_DISCRETISATION", 'AUTO')""",
-              CSTAB  = SIMP(statut='o',typ='R',defaut=0.3),
+              CSTAB  = SIMP(statut='f',typ='R',defaut=0.3),
 #              DTMAX  = SIMP(statut='f',typ='R'),
                        ),
 

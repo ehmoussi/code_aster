@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -26,6 +26,9 @@ from code_aster.Cata.Commons import *
 
 
 def lire_fonction_prod(self,TYPE,**args):
+  if args.get('__all__'):
+      return (fonction_sdaster, fonction_c, nappe_sdaster)
+
   if   (TYPE == 'FONCTION')  : return fonction_sdaster
   elif (TYPE == 'FONCTION_C'): return fonction_c
   elif (TYPE == 'NAPPE'   )  : return nappe_sdaster
@@ -47,15 +50,15 @@ LIRE_FONCTION=MACRO(nom="LIRE_FONCTION",
          b_fonction_c    =BLOC(condition = """equal_to("TYPE", 'FONCTION_C') """,
            FORMAT_C        =SIMP(statut='f',typ='TXM',defaut="REEL_IMAG",into=("REEL_IMAG","MODULE_PHASE") ),
            b_reel_imag     =BLOC(condition = """equal_to("FORMAT_C", 'REEL_IMAG') """,
-             INDIC_REEL      =SIMP(statut='o',typ='I',min=2,max=2,defaut=[1,2]),
-             INDIC_IMAG      =SIMP(statut='o',typ='I',min=2,max=2,defaut=[1,3]), ) ,
+             INDIC_REEL      =SIMP(statut='f',typ='I',min=2,max=2,defaut=[1,2]),
+             INDIC_IMAG      =SIMP(statut='f',typ='I',min=2,max=2,defaut=[1,3]), ) ,
            b_modu_phas     =BLOC(condition = """equal_to("FORMAT_C", 'MODULE_PHASE') """,
-             INDIC_MODU      =SIMP(statut='o',typ='I',min=2,max=2,defaut=[1,2]),
-             INDIC_PHAS      =SIMP(statut='o',typ='I',min=2,max=2,defaut=[1,3]), ), ),
+             INDIC_MODU      =SIMP(statut='f',typ='I',min=2,max=2,defaut=[1,2]),
+             INDIC_PHAS      =SIMP(statut='f',typ='I',min=2,max=2,defaut=[1,3]), ), ),
          b_nappe         =BLOC(condition = """equal_to("TYPE", 'NAPPE') """,
            NOM_PARA_FONC   =SIMP(statut='o',typ='TXM',into=C_PARA_FONCTION() ),
            INDIC_ABSCISSE  =SIMP(statut='o',typ='I',min=2,max=2,),
-           INTERPOL_FONC   =SIMP(statut='f',typ='TXM',max=2,defaut="LIN",into=("NON","LIN","LOG"),
+           INTERPOL_FONC   =SIMP(statut='f',typ='TXM',max=2,defaut="LIN",into=("LIN","LOG"),
                                  fr=tr("Type d'interpolation pour les abscisses et les ordonnées de la fonction")),
            PROL_DROITE_FONC=SIMP(statut='f',typ='TXM',defaut="EXCLU",into=("CONSTANT","LINEAIRE","EXCLU") ),
            PROL_GAUCHE_FONC=SIMP(statut='f',typ='TXM',defaut="EXCLU",into=("CONSTANT","LINEAIRE","EXCLU") ),
@@ -64,7 +67,7 @@ LIRE_FONCTION=MACRO(nom="LIRE_FONCTION",
          UNITE           =SIMP(statut='o',typ=UnitType(), inout='in',),
          NOM_PARA        =SIMP(statut='o',typ='TXM',into=C_PARA_FONCTION() ),
          NOM_RESU        =SIMP(statut='f',typ='TXM',defaut="TOUTRESU"),
-         INTERPOL        =SIMP(statut='f',typ='TXM',max=2,defaut="LIN",into=("NON","LIN","LOG"),
+         INTERPOL        =SIMP(statut='f',typ='TXM',max=2,defaut="LIN",into=("LIN","LOG"),
                                fr=tr("Type d'interpolation pour les abscisses et les ordonnées de la "
                                     "fonction ou bien pour le paramètre de la nappe.")),
          PROL_DROITE     =SIMP(statut='f',typ='TXM',defaut="EXCLU",into=("CONSTANT","LINEAIRE","EXCLU") ),

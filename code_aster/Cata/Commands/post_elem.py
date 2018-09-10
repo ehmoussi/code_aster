@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -43,7 +43,7 @@ POST_ELEM=OPER(nom="POST_ELEM",op=107,sd_prod=table_sdaster,reentrant='n',
          b_mass_iner = BLOC(condition = """( exists("MASS_INER") )""",
                        fr=tr("calcul de la masse, les inerties et le centre de gravité"),
                        regles=(EXCLUS('CHAM_GD','RESULTAT'),
-                               EXCLUS('TOUT_ORDRE','NUME_ORDRE','INST','FREQ','NUME_MODE',
+                               EXCLUS('CHAM_GD','TOUT_ORDRE','NUME_ORDRE','INST','FREQ','NUME_MODE',
                                       'NOEUD_CMP','LIST_ORDRE','LIST_INST','LIST_FREQ','NOM_CAS'),),
                        MODELE         = SIMP(statut='f',typ=modele_sdaster),
                        CHAM_MATER     = SIMP(statut='f',typ=cham_mater),

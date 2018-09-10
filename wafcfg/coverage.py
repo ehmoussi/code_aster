@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -23,12 +23,12 @@ Configuration for code coverage with Intel compilers
 This configuration just adds Intel option for code coverage.
 It must be used with another configuration.
 
-Example for calibre7 + coverage:
+Example for linux + coverage:
 
 cd $HOME/dev/codeaster/src
 cp waf_variant waf_cov
 
-./waf_cov configure --use-config=calibre7,coverage --prefix=../install/cov
+./waf_cov configure --use-config=linux,coverage --prefix=../install/cov
 ./waf_cov install -p
 """
 

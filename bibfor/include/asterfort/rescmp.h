@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,19 +15,14 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine rescmp(cndiri, cnvcfo, cnfext, cnfint, cnfnod,&
-                      maxres, noddlm, numno)
-        character(len=19) :: cndiri
-        character(len=19) :: cnvcfo
-        character(len=19) :: cnfext
-        character(len=19) :: cnfint
-        character(len=19) :: cnfnod
-        real(kind=8) :: maxres
-        character(len=8) :: noddlm
-        integer :: numno
+    subroutine rescmp(cnfnod     , cnequi,&
+                      r_comp_vale, r_comp_name, r_comp_indx)
+        use NonLin_Datastructure_type
+        character(len=19), intent(in) :: cnfnod, cnequi
+        real(kind=8), intent(out) :: r_comp_vale
+        character(len=8), intent(out) :: r_comp_name
+        integer, intent(out) :: r_comp_indx
     end subroutine rescmp
 end interface

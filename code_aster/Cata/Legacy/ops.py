@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -116,6 +116,8 @@ def DEBUT(self, PAR_LOT, IMPR_MACRO, CODE, DEBUG, IGNORE_ALARM, LANG, INFO, **ar
     """
        Fonction sdprod de la macro DEBUT
     """
+    if args.get('__all__'):
+        return None
     # La commande DEBUT ne peut exister qu'au niveau jdc
     if self.jdc is not self.parent:
         raise Accas.AsException(
@@ -159,6 +161,8 @@ def POURSUITE(self, PAR_LOT, IMPR_MACRO, CODE, DEBUG, IGNORE_ALARM, LANG, INFO, 
     """
         Fonction sdprod de la macro POURSUITE
     """
+    if args.get('__all__'):
+        return None
     # La commande POURSUITE ne peut exister qu'au niveau jdc
     if self.jdc is not self.parent:
         raise Accas.AsException(
@@ -344,9 +348,13 @@ def build_poursuite(self, **args):
 
 def INCLUDE(self, UNITE, DONNEE, **args):
     """Fonction sd_prod pour la macro INCLUDE"""
+    if args.get('__all__'):
+        return None
     self.show_children = args.get('INFO', 1) != 0
     if not (UNITE or DONNEE) or hasattr(self, '_mark'):
         return
+    if args.get("ALARME", "OUI"):
+        UTMESS('A', 'SUPERVIS_25', valk=("AsterStudy", "import"))
     self._mark = 1
     if self.jdc and self.jdc.par_lot == 'NON':
         # On est en mode commande par commande, on appelle la methode speciale
@@ -498,3 +506,12 @@ def build_formule(self, d):
     elif VALE_C != None:
         texte = ''.join(VALE_C.splitlines())
     self.sd.setFormule(NOM_PARA, texte.strip())
+
+    _ctxt = {}
+    keys = self.valeur.keys()
+    for key in keys:
+        if key not in ('VALE', 'VALE_C', 'NOM_PARA'):
+            _ctxt[key] = self.valeur[key]
+    # functions defined in JDC can not be pickled, so keep only a reference
+    # self.sd.set_context(pickle.dumps(_ctxt))
+    self.sd.set_context(_ctxt)

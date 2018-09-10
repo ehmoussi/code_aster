@@ -75,6 +75,7 @@
 #include "PythonBindings/CrackShapeInterface.h"
 #include "PythonBindings/CrackTipInterface.h"
 #include "PythonBindings/GeneralizedModelInterface.h"
+#include "PythonBindings/FiniteElementDescriptorInterface.h"
 #include "PythonBindings/ModelInterface.h"
 #include "PythonBindings/PhysicsAndModelingsInterface.h"
 #include "PythonBindings/PrestressingCableDefinitionInterface.h"
@@ -121,6 +122,7 @@
 #include "PythonBindings/GeneralizedModeContainerInterface.h"
 #include "PythonBindings/FluidStructureModalBasisInterface.h"
 #include "PythonBindings/ListOfFloatsInterface.h"
+#include "PythonBindings/ListOfIntegersInterface.h"
 #include "PythonBindings/InputVariableDefinitionInterface.h"
 #include "PythonBindings/ModeEmpiContainerInterface.h"
 #include "PythonBindings/ElasticEvolutionContainerInterface.h"
@@ -178,6 +180,7 @@ BOOST_PYTHON_MODULE(libaster)
     exportDiscreteProblemToPython();
     exportDOFNumberingToPython();
     exportElementaryCharacteristicsToPython();
+    exportFiniteElementDescriptorToPython();
     exportFiberGeometryToPython();
     exportGenericDataFieldToPython();
     exportFieldOnElementsToPython();
@@ -274,6 +277,7 @@ BOOST_PYTHON_MODULE(libaster)
     exportPartialMeshToPython();
     exportResultNamingToPython();
     exportListOfFloatsToPython();
+    exportListOfIntegersToPython();
     exportInputVariableDefinitionToPython();
     exportModeEmpiContainerToPython();
     exportElasticEvolutionContainerToPython();

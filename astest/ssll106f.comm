@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -109,8 +109,12 @@ CHAR6=AFFE_CHAR_MECA(   MODELE=MO,
 # La longueur du tuyau est lg
 lg=5.
 #
-presf1 = FORMULE(NOM_PARA=('ABSC',), VALE='1.E7*ABSC/lg')
-presf2 = FORMULE(NOM_PARA=('ABSC',), VALE='1.E7*(lg-ABSC)/lg')
+presf1 = FORMULE(VALE='1.E7*ABSC/lg',
+                 lg=lg,
+                 NOM_PARA='ABSC',)
+presf2 = FORMULE(VALE='1.E7*(lg-ABSC)/lg',
+                 lg=lg,
+                 NOM_PARA='ABSC',)
 CHAR71=AFFE_CHAR_MECA_F(   MODELE=MO,
                 FORCE_TUYAU=_F(  GROUP_MA = 'MA',  PRES = presf1))
 CHAR72=AFFE_CHAR_MECA_F(   MODELE=MO,

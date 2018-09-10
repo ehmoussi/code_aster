@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,109 +15,93 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine te0064(option, nomte)
-    implicit   none
-#include "jeveux.h"
 !
+subroutine te0064(option, nomte)
+!
+use Metallurgy_type
+!
+implicit none
+!
+#include "jeveux.h"
 #include "asterfort/elrefe_info.h"
+#include "asterfort/assert.h"
 #include "asterfort/jevech.h"
 #include "asterfort/rcadma.h"
 #include "asterfort/zacier.h"
 #include "asterfort/zedgar.h"
-    character(len=16) :: option, nomte
-! ......................................................................
+#include "asterfort/Metallurgy_type.h"
+#include "asterfort/nzcomp_prep.h"
+#include "asterfort/nzcomp.h"
 !
-!    - FONCTION REALISEE:  CALCUL DE Z EN 3D
-!                          CHGT DE PHASE METALLURGIQUE
-!                          OPTION : 'META_ELGA_TEMP'ET'META_ELNO'
+character(len=16), intent(in) :: option, nomte
 !
-!    - ARGUMENTS:
-!        DONNEES:      OPTION       -->  OPTION DE CALCUL
-!                      NOMTE        -->  NOM DU TYPE ELEMENT
-! ......................................................................
+! --------------------------------------------------------------------------------------------------
 !
+! Elementary computation
 !
+! Elements: THERMIQUE - 3D
+! Option: META_ELNO
 !
-    character(len=16) :: compor
-    integer :: icodre
-    real(kind=8) :: dt10, dt21, instp
+! --------------------------------------------------------------------------------------------------
+!
+! In  option           : name of option to compute
+! In  nomte            : type of finite element
+!
+! --------------------------------------------------------------------------------------------------
+!
+    character(len=16) :: phase_type
+    real(kind=8) :: dt10, dt21, inst2
     real(kind=8) :: tno1, tno0, tno2
-    real(kind=8) :: metaac(189), metazi(108)
-    integer :: jgano, nno, kn, i, itempe, itempa, itemps, iadtrc
-    integer :: ipoids, ivf, imate, ndim, npg
-    integer :: nbhist, itempi, nbtrc, iadckm, nnos
-    integer :: ipftrc, jftrc, jtrc, iphasi, iphasn, icompo
-    integer :: matos, nbcb1, nbcb2, nblexp, iadexp, idfde
+    integer :: nno, i_node, itempe, itempa, jv_time
+    integer :: imate, nb_vari, nume_comp
+    integer :: itempi
+    integer :: jv_phase_in, jv_phase_out, icompo
+    integer :: jv_mater
+    type(META_MaterialParameters) :: metaPara
 !
+! --------------------------------------------------------------------------------------------------
 !
-    call elrefe_info(fami='RIGI',ndim=ndim,nno=nno,nnos=nnos,&
-  npg=npg,jpoids=ipoids,jvf=ivf,jdfde=idfde,jgano=jgano)
+    call elrefe_info(fami='RIGI', nno=nno)
+!
+! - Input/Output fields
 !
     call jevech('PMATERC', 'L', imate)
     call jevech('PTEMPAR', 'L', itempa)
     call jevech('PTEMPER', 'L', itempe)
     call jevech('PTEMPIR', 'L', itempi)
-    call jevech('PTEMPSR', 'L', itemps)
-    call jevech('PPHASIN', 'L', iphasi)
+    call jevech('PTEMPSR', 'L', jv_time)
+    call jevech('PPHASIN', 'L', jv_phase_in)
     call jevech('PCOMPOR', 'L', icompo)
+    call jevech('PPHASNOU', 'E', jv_phase_out)
 !
-    call jevech('PPHASNOU', 'E', iphasn)
+    phase_type = zk16(icompo)
+    jv_mater   = zi(imate)
+    read (zk16(icompo+3),'(I16)') nume_comp
 !
-    compor = zk16(icompo)
-    matos = zi(imate)
+! - Preparation
 !
-    if (compor .eq. 'ACIER') then
+    call nzcomp_prep(jv_mater, phase_type,&
+                     nb_vari , metaPara)
 !
-        call jevech('PFTRC', 'L', ipftrc)
-        jftrc = zi(ipftrc)
-        jtrc = zi(ipftrc+1)
+! - Time parameters: 0 - 1 - 2
 !
-        call rcadma(matos, 'META_ACIER', 'TRC', iadtrc, icodre,&
-                    1)
+    dt10  = zr(jv_time+1)
+    dt21  = zr(jv_time+2)
+    inst2 = zr(jv_time)+dt21
 !
-        nbcb1 = nint(zr(iadtrc+1))
-        nbhist = nint(zr(iadtrc+2))
-        nbcb2 = nint(zr(iadtrc+1+2+nbcb1*nbhist))
-        nblexp = nint(zr(iadtrc+1+2+nbcb1*nbhist+1))
-        nbtrc = nint(zr(iadtrc+1+2+nbcb1*nbhist+2+nbcb2*nblexp+1))
-        iadexp = 5 + nbcb1*nbhist
-        iadckm = 7 + nbcb1*nbhist + nbcb2*nblexp
+! - Loop on nodes
 !
-        do 10 kn = 1, nno
-!         -- ATTENTION: ZACIER MODIFIE PARFOIS DT10 ET DT21 :
-            dt10 = zr(itemps+1)
-            dt21 = zr(itemps+2)
-!
-            tno1 = zr(itempe+kn-1)
-            tno0 = zr(itempa+kn-1)
-            tno2 = zr(itempi+kn-1)
-            call zacier(matos, nbhist, zr(jftrc), zr(jtrc), zr(iadtrc+3),&
-                        zr(iadtrc+iadexp), zr(iadtrc+iadckm), nbtrc, tno0, tno1,&
-                        tno2, dt10, dt21, zr(iphasi+7*(kn-1)), metaac(1+7*(kn-1)))
-!
-            do 20 i = 1, 7
-                zr(iphasn+7*(kn-1)+i-1) = metaac(1+7*(kn-1)+i-1)
-20          continue
-10      continue
-!
-    else if (compor(1:4).eq.'ZIRC') then
-!
-        dt10 = zr(itemps+1)
-        dt21 = zr(itemps+2)
-        instp= zr(itemps)+dt21
-!
-        do 30 kn = 1, nno
-            tno1 = zr(itempe+kn-1)
-            tno2 = zr(itempi+kn-1)
-            call zedgar(matos, tno1, tno2, instp, dt21,&
-                        zr(iphasi+4*(kn-1) ), metazi(1+4*(kn-1)))
-!
-            do 40 i = 1, 4
-                zr(iphasn+4*(kn-1)+i-1) = metazi(1+4*(kn-1)+i-1)
-40          continue
-30      continue
-!
-    endif
+    do i_node = 1, nno
+! ----- Temperatures: 0 - 1 - 2
+        tno1 = zr(itempe+i_node-1)
+        tno0 = zr(itempa+i_node-1)
+        tno2 = zr(itempi+i_node-1)
+! ----- General switch
+        call nzcomp(jv_mater , metaPara , nume_comp,&
+                    dt10     , dt21     , inst2    ,&
+                    tno0     , tno1     , tno2     ,&
+                    zr(jv_phase_in+nb_vari*(i_node-1)),&
+                    zr(jv_phase_out+nb_vari*(i_node-1)))
+    end do
 !
 end subroutine

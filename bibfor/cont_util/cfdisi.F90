@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -110,6 +110,9 @@ implicit none
     else if (question.eq.'ALGO_CONT') then
         call jeveuo(sdcont_paraci, 'L', vi = v_sdcont_paraci)
         cfdisi = v_sdcont_paraci(17)
+    else if (question.eq.'ALGO_UNIL') then
+        call jeveuo(sdcont_paraci, 'L', vi = v_sdcont_paraci)
+        cfdisi = v_sdcont_paraci(30)
     else if (question.eq.'ALGO_FROT') then
         call jeveuo(sdcont_paraci, 'L', vi = v_sdcont_paraci)
         cfdisi = v_sdcont_paraci(18)

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -23,10 +23,11 @@ POURSUITE(CODE='OUI',
 
 assert a == 2.
 
-mult6 = FORMULE(NOM_PARA='INST', VALE='INST * a * 3')
+mult6 = FORMULE(NOM_PARA='INST', VALE='INST * a * 3', a=a)
 assert mult6(2.) == 12.
 
-mult12sq = FORMULE(NOM_PARA='INST', VALE='INST * a * mult6(a)')
+mult12sq = FORMULE(NOM_PARA='INST', VALE='INST * a * mult6(a)',
+                   a=a, mult6=mult6)
 assert mult12sq(2.) == 48.
 
 assert mult2(2.) == 4.

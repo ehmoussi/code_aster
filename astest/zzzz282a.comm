@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -88,10 +88,10 @@ FISS[1]=DEFI_FISS_XFEM(DEFI_FISS=_F(GROUP_MA_FISS='FISS_0',
 # FISS[2]: DEFINITION PAR FONCTIONS
 #--------
 
-fLSN=FORMULE(NOM_PARA='Z',
-             VALE='Z')
-fLST=FORMULE(NOM_PARA='Y',
-             VALE='Y-1.0')
+fLSN = FORMULE(VALE='Z',
+               NOM_PARA='Z',)
+fLST = FORMULE(VALE='Y-1.0',
+               NOM_PARA='Y',)
 
 FISS[2]=DEFI_FISS_XFEM(DEFI_FISS=_F(FONC_LN=fLSN,
                                     FONC_LT=fLST),
@@ -176,8 +176,8 @@ FISS[8]=DEFI_FISS_XFEM(TYPE_DISCONTINUITE='INTERFACE',
 #----------------------------------------------
 
 # FORMULE POUR LE CALCUL DE LA DIFFERENCE ENTRE LES LEVEL SETS
-DIFFER=FORMULE(NOM_PARA=('X1','XGR'),
-               VALE='X1-XGR',);
+DIFFER = FORMULE(VALE='X1-XGR',
+                 NOM_PARA=['X1', 'XGR'],)
 
 # TOLERANCE SUR LA DIFFERENCE ENTRE LES LEVEL SETS: 1% LONGUEUR ARETE MAILLAGE
 tol=0.01

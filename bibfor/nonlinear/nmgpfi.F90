@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! aslint: disable=W1504
+!
 subroutine nmgpfi(fami, option, typmod, ndim, nno,&
                   npg, iw, vff, idff, geomi,&
                   dff, compor, mate, mult_comp, lgpg, crit,&
@@ -23,9 +24,8 @@ subroutine nmgpfi(fami, option, typmod, ndim, nno,&
                   sigm, vim, sigp, vip, fint,&
                   matr, codret)
 !
+implicit none
 !
-! aslint: disable=W1504
-    implicit none
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterc/r8vide.h"
@@ -42,17 +42,18 @@ subroutine nmgpfi(fami, option, typmod, ndim, nno,&
 #include "blas/daxpy.h"
 #include "blas/dcopy.h"
 #include "blas/dscal.h"
-    integer :: ndim, nno, npg, mate, lgpg, codret, iw, idff
-    character(len=8) :: typmod(*)
-    character(len=*) :: fami
-    character(len=16) :: option, compor(*)
-    character(len=16), intent(in) :: mult_comp
-    real(kind=8) :: geomi(*), dff(nno, *), crit(*), instm, instp
-    real(kind=8) :: vff(nno, npg)
-    real(kind=8) :: angmas(3)
-    real(kind=8) :: deplm(*), depld(*), sigm(2*ndim, npg)
-    real(kind=8) :: vim(lgpg, npg), sigp(2*ndim, npg), vip(lgpg, npg)
-    real(kind=8) :: matr(*), fint(*)
+!
+integer :: ndim, nno, npg, mate, lgpg, codret, iw, idff
+character(len=8) :: typmod(*)
+character(len=*) :: fami
+character(len=16) :: option, compor(*)
+character(len=16), intent(in) :: mult_comp
+real(kind=8) :: geomi(*), dff(nno, *), crit(*), instm, instp
+real(kind=8) :: vff(nno, npg)
+real(kind=8) :: angmas(3)
+real(kind=8) :: deplm(*), depld(*), sigm(2*ndim, npg)
+real(kind=8) :: vim(lgpg, npg), sigp(2*ndim, npg), vip(lgpg, npg)
+real(kind=8) :: matr(*), fint(*)
 !
 ! ----------------------------------------------------------------------
 !
@@ -89,7 +90,7 @@ subroutine nmgpfi(fami, option, typmod, ndim, nno,&
 !
 !
     aster_logical :: grand, axi, resi, rigi
-    integer :: lij(3, 3), vij(3, 3), ia, ja, na, ib, jb, nb, g, kk, os, ija, i
+    integer :: lij(3, 3), vij(3, 3), ia, ja, na, ib, jb, nb, g, kk, os, ija
     integer :: nddl, ndu, vu(3, 27)
     integer :: cod(27)
     real(kind=8) :: tampon(10), wkout(1)
@@ -137,25 +138,23 @@ subroutine nmgpfi(fami, option, typmod, ndim, nno,&
     call r8inir(6, 0.d0, taup, 1)
     call r8inir(54, 0.d0, dsidep, 1)
     call r8inir(10, 0.d0, tampon, 1)
-    do 9 i = 1, 27
-        cod(i)=0
-  9 continue
+    cod(:)=0
 !
 !
 ! - CALCUL POUR CHAQUE POINT DE GAUSS
-    do 10 g = 1, npg
+    do g = 1, npg
 !
 !      CALCUL DES DEFORMATIONS
         call dfdmip(ndim, nno, axi, geomi, g,&
                     iw, vff(1, g), idff, r, w,&
                     dff)
         call nmepsi(ndim, nno, axi, grand, vff(1, g),&
-                    r, dff, deplm, fm, tbid)
+                    r, dff, deplm, fm)
         call dfdmip(ndim, nno, axi, geomm, g,&
                     iw, vff(1, g), idff, r, rbid,&
                     dff)
         call nmepsi(ndim, nno, axi, grand, vff(1, g),&
-                    r, dff, depld, fd, tbid)
+                    r, dff, depld, fd)
         call dfdmip(ndim, nno, axi, geomp, g,&
                     iw, vff(1, g), idff, r, rbid,&
                     dff)
@@ -172,7 +171,7 @@ subroutine nmgpfi(fami, option, typmod, ndim, nno,&
 !      PERTINENCE DES GRANDEURS
         if (jd .le. 1.d-2 .or. jd .gt. 1.d2) then
             codret = 1
-            goto 9999
+            goto 999
         endif
 !
 ! -   APPEL A LA LOI DE COMPORTEMENT
@@ -195,7 +194,7 @@ subroutine nmgpfi(fami, option, typmod, ndim, nno,&
             if (.not. resi) then
                 call utmess('F', 'ALGORITH11_88')
             endif
-            goto 9999
+            goto 999
         endif
 !
 !      SUPPRESSION DES RACINES DE 2
@@ -220,17 +219,17 @@ subroutine nmgpfi(fami, option, typmod, ndim, nno,&
             call dscal(2*ndim, coef, sigp(1, g), 1)
 !
 !        VECTEUR FINT
-            do 300 na = 1, nno
-                do 310 ia = 1, ndu
+            do na = 1, nno
+                do ia = 1, ndu
                     kk = vu(ia,na)
                     t1 = 0
-                    do 320 ja = 1, ndu
+                    do ja = 1, ndu
                         t2 = taup(vij(ia,ja))
                         t1 = t1 + t2*dff(na,lij(ia,ja))
-320                 continue
+                    end do
                     fint(kk) = fint(kk) + w*t1
-310             continue
-300         continue
+                end do
+            end do
         endif
 !
 !
@@ -247,71 +246,62 @@ subroutine nmgpfi(fami, option, typmod, ndim, nno,&
             endif
 !
             if (ndu .eq. 3) then
-                do 500 na = 1, nno
-                    do 510 ia = 1, 3
+                do  na = 1, nno
+                    do ia = 1, 3
                         os = (vu(ia,na) - 1)*nddl
-!
-                        do 520 nb = 1, nno
-                            do 530 ib = 1, 3
+                        do nb = 1, nno
+                            do ib = 1, 3
                                 kk = os + vu(ib,nb)
                                 t1 = 0.d0
-                                do 550 ja = 1, 3
-                                    do 560 jb = 1, 3
+                                do ja = 1, 3
+                                    do jb = 1, 3
                                         ija = vij(ia,ja)
                                         t2 = dsidep(ija,ib,jb)
                                         t1 = t1 + dff( na, lij(ia, ja))* t2*dff(nb, lij(ib, jb) )
-560                                 continue
-550                             continue
+                                    end do
+                                end do
 !
 !               RIGIDITE GEOMETRIQUE
-                                do 570 jb = 1, 3
+                                do jb = 1, 3
                                     t1 = t1 - dff(&
                                          na, lij(ia, ib))*dff( nb, lij(ib, jb)) *taup(vij(ia, jb)&
                                          )
-570                             continue
+                                end do
                                 matr(kk) = matr(kk) + w*t1
-530                         continue
-520                     continue
-!
-510                 continue
-500             continue
+                            end do
+                        end do
+                    end do
+                end do
 !
             else if (ndu.eq.2) then
-!
-                do 600 na = 1, nno
-                    do 610 ia = 1, 2
+                do na = 1, nno
+                    do ia = 1, 2
                         os = (vu(ia,na) - 1)*nddl
-!
-                        do 620 nb = 1, nno
-                            do 630 ib = 1, 2
+                        do nb = 1, nno
+                            do ib = 1, 2
                                 kk = os + vu(ib,nb)
                                 t1 = 0.d0
-                                do 650 ja = 1, 2
-                                    do 660 jb = 1, 2
+                                do ja = 1, 2
+                                    do jb = 1, 2
                                         ija = vij(ia,ja)
                                         t2 = dsidep(ija,ib,jb)
                                         t1 = t1 + dff( na, lij(ia, ja))* t2*dff(nb, lij(ib, jb) )
-660                                 continue
-650                             continue
-!
+                                    end do
+                                end do
 !               RIGIDITE GEOMETRIQUE
-                                do 670 jb = 1, 2
+                                do jb = 1, 2
                                     t1 = t1 - dff(&
                                          na, lij(ia, ib))*dff( nb, lij(ib, jb)) *taup(vij(ia, jb)&
                                          )
-670                             continue
+                                end do
                                 matr(kk) = matr(kk) + w*t1
-630                         continue
-620                     continue
-!
-610                 continue
-600             continue
-!
+                            end do
+                        end do
+                    end do
+                end do
             endif
-!
         endif
-!
- 10 continue
+    end do
 !
 !
 !     POST_ITER='CRIT_RUPT'
@@ -325,5 +315,5 @@ subroutine nmgpfi(fami, option, typmod, ndim, nno,&
 ! - SYNTHESE DES CODES RETOURS
     call codere(cod, npg, codret)
 !
-9999 continue
+999 continue
 end subroutine

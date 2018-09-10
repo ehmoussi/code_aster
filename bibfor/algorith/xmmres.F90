@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,12 +15,14 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine xmmres(depdel, modele, veasse, cnsinr)
-!
 ! person_in_charge: samuel.geniaut at edf.fr
 !
-    implicit none
+subroutine xmmres(depdel, modele, cnsinr, ds_contact)
+!
+use NonLin_Datastructure_type
+!
+implicit none
+!
 #include "jeveux.h"
 #include "asterfort/assert.h"
 #include "asterfort/celces.h"
@@ -37,7 +39,6 @@ subroutine xmmres(depdel, modele, veasse, cnsinr)
 #include "asterfort/jeveuo.h"
 #include "asterfort/jexatr.h"
 #include "asterfort/jexnum.h"
-#include "asterfort/nmchex.h"
 #include "asterfort/normev.h"
 #include "asterfort/vecini.h"
 #include "asterfort/wkvect.h"
@@ -47,10 +48,10 @@ subroutine xmmres(depdel, modele, veasse, cnsinr)
 #include "blas/ddot.h"
 #include "asterfort/xcalc_saut.h"
 !
-    character(len=19) :: cnsinr
-    character(len=19) :: veasse(*)
-    character(len=19) :: depdel
-    character(len=8) :: modele
+character(len=19) :: cnsinr
+character(len=19) :: depdel
+character(len=8) :: modele
+type(NL_DS_Contact), intent(in) :: ds_contact
 !
 ! ----------------------------------------------------------------------
 !
@@ -63,7 +64,6 @@ subroutine xmmres(depdel, modele, veasse, cnsinr)
 !
 ! IN  DEPDEL : DEPLACEMENT AU PAS DE TEMPS COURANT
 ! IN  MODELE : NOM DU MODELE
-! IN  VEASSE : VARIABLE CHAPEAU POUR NOM DES VECT_ASSE
 ! OUT CNSINR : CHAM_NO_S POUR L'ARCHIVAGE DU CONTACT
 !
 !
@@ -131,8 +131,8 @@ subroutine xmmres(depdel, modele, veasse, cnsinr)
 !
     zresu = cfmmvd('ZRESU')
     zxain = xxmmvd('ZXAIN')
-    call nmchex(veasse, 'VEASSE', 'CNELTC', fcont)
-    call nmchex(veasse, 'VEASSE', 'CNELTF', ffrot)
+    fcont = ds_contact%cneltc
+    ffrot = ds_contact%cneltf
 !
 ! --- ACCES SD XFEM
 !

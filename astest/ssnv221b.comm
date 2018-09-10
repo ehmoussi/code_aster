@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -140,8 +140,8 @@ U1 = SIMU_POINT_MAT( SUPPORT    = 'POINT',
                                       EPYZ = 0.,),
                      INFO = 2,)
 
-TREPS = FORMULE(NOM_PARA = ('EPXX','EPYY','EPZZ'),
-                VALE     = 'EPXX + EPYY + EPZZ',)
+TREPS = FORMULE(VALE='EPXX + EPYY + EPZZ',
+                NOM_PARA=['EPXX', 'EPYY', 'EPZZ'],)
 
 U1 = CALC_TABLE(reuse = U1,
                 TABLE = U1,

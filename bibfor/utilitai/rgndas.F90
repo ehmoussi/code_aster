@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -140,9 +140,13 @@ character(len=*), optional, intent(out) :: ligrelz
         modl_gene = p_refe(1)(1:8)
         call jeexin(modl_gene//'      .MODG.SSNO', iexi)
         if (iexi .gt. 0) then
-            call jenuno(jexnum(modl_gene//'      .MODG.SSNO', nume_subs), name_subs)
+            if (nume_subs .eq. 0) then
+                name_subs = 'N/A'
+            else
+                call jenuno(jexnum(modl_gene//'      .MODG.SSNO', nume_subs), name_subs)
+            endif
         else
-            name_subs = 'UNFOUND'
+            name_subs = 'N/A'
         endif
         name_node = name_subs
     endif

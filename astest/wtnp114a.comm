@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -94,9 +94,11 @@ CALBAS=AFFE_CHAR_MECA(MODELE=MODELE,
                       DDL_IMPO=(_F(GROUP_NO='BAS',
                                    DY=0.0,),),);
 
-FSX = FORMULE(NOM_PARA='X',VALE='15.4E6');
+FSX = FORMULE(VALE='15.4E6',
+              NOM_PARA='X',)
 
-FSY = FORMULE(NOM_PARA='Y',VALE='11.0E6');
+FSY = FORMULE(VALE='11.0E6',
+              NOM_PARA='Y',)
 
 CALGAU = AFFE_CHAR_MECA(
                            MODELE   =  MODELE,

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,149 +15,86 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmacfi(fonact, veasse, cnffdo, cndfdo)
-!
 ! person_in_charge: mickael.abbas at edf.fr
 !
-    implicit none
+subroutine nmacfi(list_func_acti, hval_veasse, cnffdo, cndfdo)
+!
+use NonLin_Datastructure_type
+!
+implicit none
+!
 #include "asterf_types.h"
-#include "jeveux.h"
-#include "asterfort/infdbg.h"
+#include "asterfort/nonlinDSVectCombCompute.h"
+#include "asterfort/nonlinDSVectCombAddHat.h"
+#include "asterfort/nonlinDSVectCombAddDyna.h"
+#include "asterfort/nonlinDSVectCombInit.h"
 #include "asterfort/isfonc.h"
-#include "asterfort/jedema.h"
-#include "asterfort/jemarq.h"
-#include "asterfort/nmchex.h"
-#include "asterfort/nmdebg.h"
-#include "asterfort/vtaxpy.h"
-#include "asterfort/vtzero.h"
-    character(len=19) :: cnffdo, cndfdo
-    character(len=19) :: veasse(*)
-    integer :: fonact(*)
 !
-! ----------------------------------------------------------------------
+integer, intent(in) :: list_func_acti(*)
+character(len=19), intent(in) :: hval_veasse(*), cnffdo, cndfdo
 !
-! ROUTINE MECA_NON_LINE (ALGORITHME)
+! --------------------------------------------------------------------------------------------------
 !
-! CALCUL DU VECTEUR DES CHARGEMENTS CONSTANTS POUR L'ACCELERATION
-! INITIALE
+! MECA_NON_LINE - Algorithm
 !
-! ----------------------------------------------------------------------
+! Get Neumann and Dirichlet loads for initial acceleration 
 !
+! --------------------------------------------------------------------------------------------------
 !
-! IN  FONACT : FONCTIONNALITES ACTIVEES (VOIR NMFONC)
-! IN  VEASSE : VARIABLE CHAPEAU POUR NOM DES VECT_ASSE
-! OUT CNFFDO : VECT_ASSE DE TOUTES LES FORCES FIXES DONNES
-! OUT CNDFDO : VECT_ASSE DE TOUS LES DEPLACEMENTS FIXES DONNES
+! In  list_func_acti   : list of active functionnalities
+! In  hval_veasse      : hat-variable for vectors (node fields)
+! In  cnffdo           : name of resultant nodal field for Neumann loads
+! In  cndfdo           : name of resultant nodal field for Dirichlet loads
 !
+! --------------------------------------------------------------------------------------------------
 !
+    aster_logical :: l_didi, l_macr, l_sstf
+    type(NL_DS_VectComb) :: ds_vectcomb
 !
+! --------------------------------------------------------------------------------------------------
 !
+    l_didi = isfonc(list_func_acti,'DIDI')
+    l_macr = isfonc(list_func_acti,'MACR_ELEM_STAT')
+    l_sstf = isfonc(list_func_acti,'SOUS_STRUC')
 !
-    integer :: ifm, niv
-    integer :: ifdo
-    integer :: n
-    character(len=19) :: cnfixe(20)
-    real(kind=8) :: cofixe(20)
-    character(len=19) :: cnfedo, cndido
-    character(len=19) :: cncine, cndidi, cnsstr, cnsstf
-    aster_logical :: ldidi
-    aster_logical :: lmacr, lsstf
+! - Initializations
 !
-! ----------------------------------------------------------------------
+    call nonlinDSVectCombInit(ds_vectcomb)
 !
-    call jemarq()
-    call infdbg('MECA_NON_LINE', ifm, niv)
+! - Dirichlet (given displacements) - AFFE_CHAR_MECA
 !
-! --- AFFICHAGE
-!
-    if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE> ...... CALCUL CHARGEMENT FIXE'
+    call nonlinDSVectCombAddHat(hval_veasse, 'CNDIDO', 1.d0, ds_vectcomb)
+    if (l_didi) then
+        call nonlinDSVectCombAddHat(hval_veasse, 'CNDIDI', 1.d0, ds_vectcomb)
     endif
 !
-! --- FONCTIONNALITES ACTIVEES
+! - Dirichlet (given displacements) - AFFE_CHAR_CINE
 !
-    ldidi = isfonc(fonact,'DIDI')
-    lmacr = isfonc(fonact,'MACR_ELEM_STAT')
-    lsstf = isfonc(fonact,'SOUS_STRUC')
+    call nonlinDSVectCombAddHat(hval_veasse, 'CNCINE', 1.d0, ds_vectcomb)
 !
-! --- INITIALISATIONS
+! - Combination
 !
-    ifdo = 0
-    call vtzero(cnffdo)
-    call vtzero(cndfdo)
+    call nonlinDSVectCombCompute(ds_vectcomb, cndfdo)
+    call nonlinDSVectCombInit(ds_vectcomb)
 !
-! --- DEPLACEMENTS DONNES (Y COMPRIS DIDI SI NECESSAIRE)
+! - Dead Neumann forces
 !
-    call nmchex(veasse, 'VEASSE', 'CNDIDO', cndido)
-    ifdo = ifdo+1
-    cnfixe(ifdo) = cndido
-    cofixe(ifdo) = 1.d0
+    call nonlinDSVectCombAddHat(hval_veasse, 'CNFEDO', 1.d0, ds_vectcomb)
 !
-    if (ldidi) then
-        call nmchex(veasse, 'VEASSE', 'CNDIDI', cndidi)
-        ifdo = ifdo+1
-        cnfixe(ifdo) = cndidi
-        cofixe(ifdo) = 1.d0
+! - Force from sub-structuring
+!
+    if (l_macr) then
+        call nonlinDSVectCombAddHat(hval_veasse, 'CNSSTR', -1.d0, ds_vectcomb)
     endif
 !
-! --- CONDITIONS CINEMATIQUES IMPOSEES
+! - Sub-structuring force
 !
-    call nmchex(veasse, 'VEASSE', 'CNCINE', cncine)
-    ifdo = ifdo+1
-    cnfixe(ifdo) = cncine
-    cofixe(ifdo) = 1.d0
-!
-! --- VECTEUR RESULTANT DEPLACEMENT FIXE
-!
-    do 17 n = 1, ifdo
-        call vtaxpy(cofixe(n), cnfixe(n), cndfdo)
-        if (niv .ge. 2) then
-            write (ifm,*) '<MECANONLINE> ......... DEPL. FIXE'
-            write (ifm,*) '<MECANONLINE> .........  ',n,' - COEF: ',&
-     &                   cofixe(n)
-            call nmdebg('VECT', cnfixe(n), ifm)
-        endif
- 17 end do
-!
-    ifdo = 0
-!
-! --- FORCES DONNEES
-!
-    call nmchex(veasse, 'VEASSE', 'CNFEDO', cnfedo)
-    ifdo = ifdo+1
-    cnfixe(ifdo) = cnfedo
-    cofixe(ifdo) = 1.d0
-!
-! --- FORCES ISSUES DES MACRO-ELEMENTS STATIQUES
-!
-    if (lmacr) then
-        call nmchex(veasse, 'VEASSE', 'CNSSTR', cnsstr)
-        ifdo = ifdo+1
-        cnfixe(ifdo) = cnsstr
-        cofixe(ifdo) = -1.d0
+    if (l_sstf) then
+        call nonlinDSVectCombAddHat(hval_veasse, 'CNSSTF', 1.d0, ds_vectcomb)
     endif
 !
-! --- FORCES ISSUES DU CALCUL PAR SOUS-STRUCTURATION
+! - Combination
 !
-    if (lsstf) then
-        call nmchex(veasse, 'VEASSE', 'CNSSTF', cnsstf)
-        ifdo = ifdo+1
-        cnfixe(ifdo) = cnsstf
-        cofixe(ifdo) = 1.d0
-    endif
+    call nonlinDSVectCombCompute(ds_vectcomb, cnffdo)
 !
-! --- VECTEUR RESULTANT FORCE FIXE
-!
-    do 10 n = 1, ifdo
-        call vtaxpy(cofixe(n), cnfixe(n), cnffdo)
-        if (niv .ge. 2) then
-            write (ifm,*) '<MECANONLINE> ......... FORC. FIXE'
-            write (ifm,*) '<MECANONLINE> .........  ',n,' - COEF: ',&
-     &                 cofixe(n)
-            call nmdebg('VECT', cnfixe(n), ifm)
-        endif
- 10 end do
-!
-    call jedema()
 end subroutine

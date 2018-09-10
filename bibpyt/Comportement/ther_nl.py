@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -24,7 +24,7 @@ from cata_comportement import LoiComportement
 loi = LoiComportement(
     nom            = 'THER_NL',
     lc_type        = ('THERMIQUE',),
-    doc            =   """Relation de comportement de thermique non lineaire"""            ,
+    doc            =   """Relation de comportement de thermique non lineaire"""              ,
     num_lc         = 0,
     nb_vari        = 0,
     nom_vari       = None,
@@ -37,4 +37,5 @@ loi = LoiComportement(
     proprietes     = None,
     syme_matr_tang = ('Yes',),
     exte_vari      = None,
+    deform_ldc     = ('OLD',),
 )

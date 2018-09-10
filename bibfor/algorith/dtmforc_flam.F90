@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -56,12 +56,12 @@ subroutine dtmforc_flam(nl_ind, sd_dtm_, sd_nl_, buffdtm, buffnl,&
     integer               , intent(in)  :: nl_ind
     character(len=*)      , intent(in)  :: sd_dtm_
     character(len=*)      , intent(in)  :: sd_nl_
-    integer     , pointer , intent(in)  :: buffdtm  (:)
-    integer     , pointer , intent(in)  :: buffnl   (:)
+    integer     , pointer  :: buffdtm  (:)
+    integer     , pointer  :: buffnl   (:)
     real(kind=8)          , intent(in)  :: time
-    real(kind=8), pointer , intent(in)  :: depl     (:)
-    real(kind=8), pointer , intent(in)  :: vite     (:)
-    real(kind=8), pointer , intent(out) :: fext     (:)
+    real(kind=8), pointer  :: depl     (:)
+    real(kind=8), pointer  :: vite     (:)
+    real(kind=8), pointer :: fext     (:)
 !
 !   -0.2- Local variables
     aster_logical     :: multi_support
@@ -71,8 +71,9 @@ subroutine dtmforc_flam(nl_ind, sd_dtm_, sd_nl_, buffdtm, buffnl,&
     real(kind=8)      :: cosg, depglo(3), vitglo(3), deploc(6), vitloc(6)
     real(kind=8)      :: dvitlo(3), xjeu, knorm, flim, fseuil
     real(kind=8)      :: rigifl, dnorm, dist1, dist2, cost
-    real(kind=8)      :: sint, fn, flocal(3), defpla, vnorm
-    real(kind=8)      :: fgloba(3)
+    real(kind=8)      :: sint, fn, flocal(3), defpla, vnorm, defmax
+    real(kind=8)      :: fgloba(3), enfo_fl, cnorm
+    real(kind=8)      :: deft0
     character(len=8)  :: sd_dtm, sd_nl, monmot, obst_typ
     character(len=19) :: nomres
 !
@@ -92,6 +93,10 @@ subroutine dtmforc_flam(nl_ind, sd_dtm_, sd_nl_, buffdtm, buffnl,&
     real(kind=8)    , pointer :: dplmod (:)   => null()
     real(kind=8)    , pointer :: dplmod1(:)   => null()
     real(kind=8)    , pointer :: dplmod2(:)   => null()
+
+    real(kind=8)    , pointer :: def(:)   => null()
+    real(kind=8)    , pointer :: deft(:)   => null()
+
     character(len=8), pointer :: nofdep(:)  => null()
     character(len=8), pointer :: nofvit(:)  => null()
 !
@@ -195,20 +200,29 @@ subroutine dtmforc_flam(nl_ind, sd_dtm_, sd_nl_, buffdtm, buffnl,&
             dvitlo(i) = vitloc(i)
         end do
     end if
+
+
 !
     call nlget(sd_nl, _GAP                       , iocc=nl_ind, rscal=xjeu  , buffer=buffnl)
     call nlget(sd_nl, _STIF_NORMAL               , iocc=nl_ind, rscal=knorm , buffer=buffnl)
+    call nlget(sd_nl, _DAMP_NORMAL               , iocc=nl_ind, rscal=cnorm , buffer=buffnl)
     call nlget(sd_nl, _DIST_NO1                  , iocc=nl_ind, rscal=dist1 , buffer=buffnl)
     call nlget(sd_nl, _DIST_NO2                  , iocc=nl_ind, rscal=dist2 , buffer=buffnl)
     call nlget(sd_nl, _BUCKLING_LIMIT_FORCE      , iocc=nl_ind, rscal=flim  , buffer=buffnl)
     call nlget(sd_nl, _BUCKLING_POST_PALIER_FORCE, iocc=nl_ind, rscal=fseuil, buffer=buffnl)
-    call nlget(sd_nl, _BUCKLING_POST_STIFFNESS   , iocc=nl_ind, rscal=rigifl, buffer=buffnl)
+    call nlget(sd_nl, _BUCKLING_DEF             , iocc=nl_ind, rscal=enfo_fl, buffer=buffnl)
+    call nlget(sd_nl, _BUCKLING_DEF_PLA         , iocc=nl_ind, vr=def, buffer=buffnl)
+    call nlget(sd_nl, _BUCKLING_DEF_TOT         , iocc=nl_ind, vr=deft, buffer=buffnl)
+    call nlget(sd_nl, _BUCKLING_DEF_TOT_0       , iocc=nl_ind, rscal=deft0, buffer=buffnl)
+
 !
     dnorm = 0.d0
     call distno(deploc, sign_dyz, obst_typ, xjeu, dist1,&
                 dist2, dnorm, cost, sint)
 !
     defpla = vint(start+8)
+    rigifl = vint(start+9)
+    defmax = vint(start+10)
     fn = 0.d0
 
     if (dnorm .le. 0.d0) then
@@ -216,9 +230,11 @@ subroutine dtmforc_flam(nl_ind, sd_dtm_, sd_nl_, buffdtm, buffnl,&
         call vecini(3, 0.d0, flocal)
 
 !       --- Calculation of the buckling (normal) force in the local reference
-        call mdflam(dnorm, dvitlo, knorm, cost, sint,&
+        call mdflam(dnorm, dvitlo, knorm, cnorm, cost, sint,&
                     flim, fseuil, rigifl, defpla, fn,&
-                    flocal, vnorm)
+                    flocal, vnorm, defmax ,enfo_fl, def,&
+                    deft0, deft)
+
 
 !       --- Conversion to the global (physical) reference
         call locglo(flocal, sina, cosa, sinb, cosb,&
@@ -256,6 +272,8 @@ subroutine dtmforc_flam(nl_ind, sd_dtm_, sd_nl_, buffdtm, buffnl,&
 
 !   --- Cumulative plastic deformation
     vint(start+8 ) = defpla
+    vint(start+9 ) = rigifl
+    vint(start+10) = defmax
 
     if (multi_support) then
         AS_DEALLOCATE(vr=coedep)

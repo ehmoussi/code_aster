@@ -30,15 +30,15 @@
 #include"TFEL/Math/General/CubicRoots.hxx"
 }
 
+
+
+@MaterialProperty stress s_y;
+@MaterialProperty stress ET;
+
 @MaterialProperty stress young; /* mandatory for castem */
 young.setGlossaryName("YoungModulus");
 @MaterialProperty real nu;    /* mandatory for castem */
 nu.setGlossaryName("PoissonRatio");
-@MaterialProperty thermalexpansion alpha;    /* mandatory for castem */
-alpha.setGlossaryName("ThermalExpansion");
-
-@MaterialProperty stress s_y;
-@MaterialProperty stress ET;
 
 @StateVariable strain p;
 p.setGlossaryName("EquivalentPlasticStrain");
@@ -103,7 +103,7 @@ Tref.setDefaultValue(293.15);
     dev_tK = StressStensor(stress(0));
   }
   // Kirchhoff stress
-  const StressStensor tK = dev_tK+(K/2)*((J*J-1)-3*alpha*(T+dT-Tref)*(J+1/J))*StrainStensor::Id();
+  const StressStensor tK = dev_tK+(K/2)*((J*J-1))*StrainStensor::Id();
   // correction of the trace to satisfy plastic incompressibility
   real x0,x1,x2;
   const real Je_2 = tKeq*tKeq/(2*mu*mu);

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -251,7 +251,7 @@ implicit none
             call jevech('PCARCRI', 'L', icarcr)
             call jevech('PVARIMR', 'L', ivarim)
             call jevech('PCOMPOR', 'L', icompo)
-            compor = zk16(icompo-1+NAME)
+            compor = zk16(icompo-1+RELA_NAME)
             comp3 = zk16(icompo-1+INCRELAS)
             leul = zk16(icompo-1+DEFO).eq.'GROT_GDEP'
             read (zk16(icompo-1+NVAR),'(I16)') nbvari

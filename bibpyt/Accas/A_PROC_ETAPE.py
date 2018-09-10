@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -34,3 +34,4 @@ class PROC_ETAPE(E_PROC_ETAPE.PROC_ETAPE,
         # Pas de constructeur pour B_PROC_ETAPE.PROC_ETAPE
         N_PROC_ETAPE.PROC_ETAPE.__init__(self, oper=oper, args=args)
         V_PROC_ETAPE.PROC_ETAPE.__init__(self)
+        E_PROC_ETAPE.PROC_ETAPE.__init__(self)

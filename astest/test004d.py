@@ -31,14 +31,14 @@ affectMat.addMaterialOnAllMesh( acier )
 affectMat.buildWithoutInputVariables()
 
 
-kine1 = code_aster.KinematicsLoad()
+kine1 = code_aster.KinematicsMechanicalLoad()
 kine1.setSupportModel(monModel)
 kine1.addImposedMechanicalDOFOnElements(code_aster.PhysicalQuantityComponent.Dx, 0., "Bas")
 kine1.addImposedMechanicalDOFOnElements(code_aster.PhysicalQuantityComponent.Dy, 0., "Bas")
 kine1.addImposedMechanicalDOFOnElements(code_aster.PhysicalQuantityComponent.Dz, 0., "Bas")
 kine1.build()
 
-kine2=code_aster.KinematicsLoad()
+kine2=code_aster.KinematicsMechanicalLoad()
 kine2.setSupportModel(monModel)
 kine2.addImposedMechanicalDOFOnElements(code_aster.PhysicalQuantityComponent.Dz, 0.1, "Haut")
 kine2.build()

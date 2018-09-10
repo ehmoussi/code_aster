@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -121,8 +121,8 @@ time = 0.
 tmax=1.
 epsi=1.e-10
 
-VERIF=FORMULE(NOM_PARA=('VAL_REF', 'VAL_CAL'),
-              VALE='abs ((VAL_CAL - VAL_REF)/VAL_REF)')
+VERIF = FORMULE(VALE='abs ((VAL_CAL - VAL_REF)/VAL_REF)',
+                NOM_PARA=['VAL_REF', 'VAL_CAL'],)
 
 for i in range(NCAL-1):
 

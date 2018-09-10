@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -254,6 +254,12 @@ Ne renseignez pas le mot-clé COMPORTEMENT/%(k2)s, afin de sélectionner l'algor
   Assurez-vous que les rotations ne soient pas très grandes au risque de résultats faux.
 """),
 
+    53: _(u"""
+ ECRO_LINE : la plasticité parfaite n'est pas autorisée !
+             Par conséquent la pente d'écrouissage H doit être strictement positive.
+             (H doit également être inférieure à E).
+             Ici, H vaut <%(r1)E>. (E vaut <%(r2)E>)
+"""),
 
     54: _(u"""
  ECRO_LINE : la pente d'écrouissage H et/ou le module de YOUNG E ne sont pas compatibles :
@@ -319,15 +325,6 @@ Vous utilisez un comportement élastique non-linéaire avec un état initial.
 Cet état initial ne sera pas pris en compte.
 """),
 
-    63 : _(u"""
-   ATTENTION SR > 1    SR = %(r1)f
-   Séchage moins %(r2)f  Séchage plus %(r3)f    W0 %(r4)f
-"""),
-
-    64 : _(u"""
-   ATTENTION SR < 0    SR = %(r1)f
-   Séchage moins %(r2)f  Séchage plus %(r3)f   W0 %(r4)f
-"""),
 
     67 : _(u"""
 Dans la définition du matériau RUPT_DUCT les coefficients de forme de la loi CZM_TRA_MIX doivent vérifier : COEF_EXTR <= COEF_PLAS
@@ -425,18 +422,6 @@ L'identification numérique des paramètres SIG0 et TAU à partir de FT et FC a 
 Comportement  %(k1)s : avec ELAS_ORTH, il faut renseigner le mot clé MU_MOY.
 """),
 
-    89 : _(u"""
-Loi d'endommagement de Sellier utilise une régularisation en énergie de fissuration qui n'est valide ici que sur des éléments cubiques à 8 points de gauss.
-Les résultats obtenus ne sont pas exactes avec un autre type d'élément.
-"""),
-
-    90 : _(u"""
-La loi d'endommagement de KIT_RGI est mal utilisée ou bien il y a un problème
-d'intégration local d'un phénomène.
-
-Vérifiez les propriétés matériaux et que la modélisation est 3D.
-"""),
-
     91: _(u"""
  REST_ECRO : la fonction de restauration d'écrouissage vaut %(r1)E or elle doit être comprise entre 0 et 1.
 
@@ -460,6 +445,12 @@ m=%(r1)f et p=%(r2)f ne respectent pas la contrainte m>p+2.
 ITER_INTE_PAS ne peut admettre qu'une valeur positive pour un comportement MFRONT.
  """),
 
-
+    96 : _(u"""
+Loi de comportement BETON_RAG :
+Au temps %(r1)f, une grandeur liée au séchage est inférieure au seuil %(r2)f, ce qui n'a pas de sens physique.
+    Séchage au temps précédent : %(r3)f
+    Séchage au temps actuel    : %(r4)f
+    Séchage de référence       : %(r5)f
+ """),
 
 }

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -65,7 +65,9 @@ def reparti(x) :
     x2=x*2*pi/10.
     return -1.E6*sin(x2)
 
-F1=FORMULE(NOM_PARA=('X'),VALE='reparti(X)')
+F1 = FORMULE(VALE='reparti(X)',
+             reparti=reparti,
+             NOM_PARA='X',)
 CHARG1=AFFE_CHAR_MECA_F(MODELE=MO1,  FORCE_INTERNE=_F( GROUP_MA = 'BARR1', FX=F1))
 CHARG2=AFFE_CHAR_MECA_F(MODELE=MO2,  FORCE_INTERNE=_F( GROUP_MA = 'BARR2', FX=F1))
 

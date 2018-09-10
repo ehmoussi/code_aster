@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -22,6 +22,7 @@ interface
                       imate, compor, carcri, instam, instap,&
                       neps , epsm  , deps  , nsig  , sigm  ,&
                       nvi  , vim   , option, angmas, icomp ,&
+                      temp , dtemp , predef, dpred ,&
                       sigp , vip   , dsidep, codret)
         character(len=*), intent(in) :: fami
         integer, intent(in) :: kpg, ksp, ndim
@@ -31,7 +32,7 @@ interface
         real(kind=8), intent(in) :: carcri(*)
         real(kind=8), intent(in) :: instam, instap
         integer, intent(in) :: neps
-        real(kind=8), intent(in) :: epsm(6), deps(6)
+        real(kind=8), intent(in) :: epsm(*), deps(*)
         integer, intent(in) :: nsig
         real(kind=8), intent(in) :: sigm(6)
         integer, intent(in) :: nvi
@@ -39,6 +40,8 @@ interface
         character(len=16), intent(in) :: option
         real(kind=8), intent(in) :: angmas(*)
         integer, intent(in) :: icomp     
+        real(kind=8), intent(in) :: temp, dtemp
+        real(kind=8), intent(in) :: predef(*), dpred(*) 
         real(kind=8), intent(out) :: sigp(6)
         real(kind=8), intent(out) :: vip(nvi)
         real(kind=8), intent(out) :: dsidep(6, 6)

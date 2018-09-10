@@ -1,0 +1,366 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+#
+#
+# --------------------------------------------------------------------------------------------------
+#
+#                   DISCRET COMPORTEMENT ECROUISSAGE TRACTION
+#
+#   Validation du comportement avec DYNA_VIBRA Schéma RK54
+#
+#
+# --------------------------------------------------------------------------------------------------
+import numpy as NU
+
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',))
+
+MAIL=LIRE_MAILLAGE(FORMAT="ASTER",)
+#
+# Modèle
+Modele=AFFE_MODELE(
+    MAILLAGE=MAIL,
+    AFFE=(
+        _F(GROUP_MA=('MASSE','GM0203'), PHENOMENE='MECANIQUE', MODELISATION='DIS_T',),
+        _F(MAILLE=('PT01'), PHENOMENE='MECANIQUE', MODELISATION='DIS_T',),
+    ),
+)
+
+#
+ZERO=DEFI_CONSTANTE(VALE=0.0)
+
+def Rampe(t):
+    if (t<= 0.0): return 0.0
+    if (t<= 5.0): return t/5.0
+    if (t<=15.0): return 1.0
+    if (t<=20.0): return (20.0-t)/5.0
+    return 0.0
+
+def DRampe(t):
+    if (t<= 0.0): return  0.0
+    if (t<= 5.0): return  1.0/5.0
+    if (t<=15.0): return  0.0
+    if (t<=20.0): return -1.0/5.0
+    return 0.0
+
+def FDeplax(t):
+    uu = 0.20; ff = 1.0;  ww = 2.0*NU.pi
+    zz = uu*sin(ww*t*ff)*Rampe(t)
+    return zz
+
+def FDeplay(t):
+    uu = [ 0.20 , 0.15 , 0.10 ]
+    ff = [ 0.80 , 1.50 , 3.00 ]
+    ww = 2.0*NU.pi
+    zz = 0.0
+    for u,f in zip(uu,ff):
+        zz += u*sin(ww*t*f)*Rampe(t)
+    return zz
+
+def FDeplaz(t):
+    uu = [ -0.20 , 0.15 , -0.10 ]
+    ff = [  0.90 , 2.00 ,  2.80 ]
+    ww = 2.0*NU.pi
+    zz = 0.0
+    for u,f in zip(uu,ff):
+        zz += u*sin(ww*t*f)*Rampe(t)
+    return zz
+
+def FVitex(t):
+    uu = 0.20; ff = 1.0;  ww = 2.0*NU.pi
+    zz = uu*ww*ff*cos(ww*t*ff)*Rampe(t) + uu*sin(ww*t*ff)*DRampe(t)
+    return zz
+
+def FVitey(t):
+    uu = [ 0.20 , 0.15 , 0.10 ]
+    ff = [ 0.80 , 1.50 , 3.00 ]
+    ww = 2.0*NU.pi
+    zz = 0.0
+    for u,f in zip(uu,ff):
+        zz += u*ww*f*cos(ww*t*f)*Rampe(t) + u*sin(ww*t*f)*DRampe(t)
+    return zz
+
+def FVitez(t):
+    uu = [ -0.20 , 0.15 , -0.10 ]
+    ff = [  0.90 , 2.00 ,  2.80 ]
+    ww = 2.0*NU.pi
+    zz = 0.0
+    for u,f in zip(uu,ff):
+        zz += u*ww*f*cos(ww*t*f)*Rampe(t) + u*sin(ww*t*f)*DRampe(t)
+    return zz
+
+def FAccex(t):
+    uu = 0.20; ff = 1.0;  ww = 2.0*NU.pi
+    zz = -uu*ww*ww*ff*ff*sin(ww*t*ff)*Rampe(t) + uu*ww*ff*cos(ww*t*ff)*DRampe(t) + uu*ww*ff*cos(ww*t*ff)*DRampe(t)
+    return zz
+
+def FAccey(t):
+    uu = [ 0.20 , 0.15 , 0.10 ]
+    ff = [ 0.80 , 1.50 , 3.00 ]
+    ww = 2.0*NU.pi
+    zz = 0.0
+    for u,f in zip(uu,ff):
+        zz += -u*ww*ww*f*f*sin(ww*t*f)*Rampe(t) + u*ww*f*cos(ww*t*f)*DRampe(t) + u*ww*f*cos(ww*t*f)*DRampe(t)
+    return zz
+
+def FAccez(t):
+    uu = [ -0.20 , 0.15 , -0.10 ]
+    ff = [  0.90 , 2.00 ,  2.80 ]
+    ww = 2.0*NU.pi
+    zz = 0.0
+    for u,f in zip(uu,ff):
+        zz += -u*ww*ww*f*f*sin(ww*t*f)*Rampe(t) + u*ww*f*cos(ww*t*f)*DRampe(t) + u*ww*f*cos(ww*t*f)*DRampe(t)
+    return zz
+
+
+# Fonction d'écrouissage
+ldepla   = NU.array( [0.00 , 0.100 , 0.200 , 20.2 ] )
+lforce   = NU.array( [0.00 , 100.0 , 120.0 , 370.0 ] )
+Kp = 1000.0
+LaMasse = 200.0
+
+fctsy=DEFI_FONCTION(NOM_PARA='DTAN',
+    ABSCISSE=ldepla,
+    ORDONNEE=lforce,
+)
+
+# Caractéristiques : Ressorts / Masse
+caraElem=AFFE_CARA_ELEM(
+    MODELE=Modele,
+    DISCRET=(
+        _F( REPERE='LOCAL',CARA='M_T_D_N', MAILLE='PT01', VALE=( 0.0, ), ),
+        _F( REPERE='LOCAL',CARA='K_T_D_N', MAILLE='PT01', VALE=( Kp, Kp, Kp,), ),
+
+        _F( REPERE='LOCAL',CARA='M_T_D_N', GROUP_MA='MASSE', VALE=( LaMasse ), ),
+        _F( REPERE='LOCAL',CARA='K_T_D_N', GROUP_MA='MASSE', VALE=( 0.0,0.0,0.0,), ),
+
+        _F( REPERE='LOCAL',CARA='M_T_D_L', GROUP_MA='GM0203', VALE=( 0.0,), ),
+        _F( REPERE='LOCAL',CARA='K_T_D_L', GROUP_MA='GM0203', VALE=( Kp, Kp, Kp,), ),
+    ),
+)
+#
+# condition aux limites en déplacement
+Blocage=AFFE_CHAR_MECA(
+   MODELE=Modele,
+   DDL_IMPO= (
+        _F(NOEUD='N01', DX=0.0, DY=0.0, DZ=0.0,),
+        _F(NOEUD='N03', DX=0.0, DY=0.0, DZ=0.0,),
+    ),
+)
+#
+# Liste d'instant
+TempsMaxi = 20.0
+DeltaPas  = 0.02
+# pour l'interpolation des fonctions
+LinstF = DEFI_LIST_REEL(
+    DEBUT=0.0,
+    INTERVALLE=_F(JUSQU_A = TempsMaxi, PAS = DeltaPas/30.0),)
+#
+DEPLX  = FORMULE(VALE='FDeplax(INST)',FDeplax=FDeplax,NOM_PARA='INST',)
+DEPLY  = FORMULE(VALE='FDeplay(INST)',FDeplay=FDeplay,NOM_PARA='INST',)
+DEPLZ  = FORMULE(VALE='FDeplaz(INST)',FDeplaz=FDeplaz,NOM_PARA='INST',)
+VITEX  = FORMULE(VALE='FVitex(INST)' ,FVitex =FVitex ,NOM_PARA='INST',)
+VITEY  = FORMULE(VALE='FVitey(INST)' ,FVitey =FVitey ,NOM_PARA='INST',)
+VITEZ  = FORMULE(VALE='FVitez(INST)' ,FVitez =FVitez ,NOM_PARA='INST',)
+ACCEX  = FORMULE(VALE='FAccex(INST)' ,FAccex =FAccex ,NOM_PARA='INST',)
+ACCEY  = FORMULE(VALE='FAccey(INST)' ,FAccey =FAccey ,NOM_PARA='INST',)
+ACCEZ  = FORMULE(VALE='FAccez(INST)' ,FAccez =FAccez ,NOM_PARA='INST',)
+#
+DEPLIX = CALC_FONC_INTERP(NOM_RESU='DEPLIX',
+    FONCTION=DEPLX, LIST_PARA=LinstF, NOM_PARA = 'INST',
+    PROL_DROITE='CONSTANT', PROL_GAUCHE='CONSTANT',
+)
+DEPLIY = CALC_FONC_INTERP(NOM_RESU='DEPLIY',
+    FONCTION=DEPLY, LIST_PARA=LinstF, NOM_PARA = 'INST',
+    PROL_DROITE='CONSTANT', PROL_GAUCHE='CONSTANT',
+)
+DEPLIZ = CALC_FONC_INTERP(NOM_RESU='DEPLIZ',
+    FONCTION=DEPLZ, LIST_PARA=LinstF, NOM_PARA = 'INST',
+    PROL_DROITE='CONSTANT', PROL_GAUCHE='CONSTANT',
+)
+VITEIX = CALC_FONC_INTERP(NOM_RESU='VITEIX',
+    FONCTION=VITEX, LIST_PARA=LinstF, NOM_PARA = 'INST',
+    PROL_DROITE='CONSTANT', PROL_GAUCHE='CONSTANT',
+)
+VITEIY = CALC_FONC_INTERP(NOM_RESU='VITEIY',
+    FONCTION=VITEY, LIST_PARA=LinstF, NOM_PARA = 'INST',
+    PROL_DROITE='CONSTANT', PROL_GAUCHE='CONSTANT',
+)
+VITEIZ = CALC_FONC_INTERP(NOM_RESU='VITEIZ',
+    FONCTION=VITEZ, LIST_PARA=LinstF, NOM_PARA = 'INST',
+    PROL_DROITE='CONSTANT', PROL_GAUCHE='CONSTANT',
+)
+ACCEIX = CALC_FONC_INTERP(NOM_RESU='ACCEIX',
+    FONCTION=ACCEX, LIST_PARA=LinstF, NOM_PARA = 'INST',
+    PROL_DROITE='CONSTANT', PROL_GAUCHE='CONSTANT',
+)
+ACCEIY = CALC_FONC_INTERP(NOM_RESU='ACCEIY',
+    FONCTION=ACCEY, LIST_PARA=LinstF, NOM_PARA = 'INST',
+    PROL_DROITE='CONSTANT', PROL_GAUCHE='CONSTANT',
+)
+ACCEIZ = CALC_FONC_INTERP(NOM_RESU='ACCEIZ',
+    FONCTION=ACCEZ, LIST_PARA=LinstF, NOM_PARA = 'INST',
+    PROL_DROITE='CONSTANT', PROL_GAUCHE='CONSTANT',
+)
+#
+ASSEMBLAGE(
+    MODELE=Modele, CARA_ELEM=caraElem, CHARGE=Blocage,
+    NUME_DDL=CO('NumeDDL'),
+    MATR_ASSE=(
+        _F(MATRICE=CO('Rigidite'), OPTION='RIGI_MECA',),
+        _F(MATRICE=CO('Masse'),    OPTION='MASS_MECA',),
+    ),
+)
+#
+# Mode de la structure
+ModeStr=CALC_MODES(
+    MATR_RIGI=Rigidite, OPTION='BANDE',
+    CALC_FREQ=_F( FREQ=(0.0,3.0,), ),
+    MATR_MASS=Masse,
+)
+ModeStr=NORM_MODE(reuse=ModeStr, MODE=ModeStr, NORME='MASS_GENE')
+#
+# calcul des modes statiques aux points d'ancrage et des chargements sismiques
+ModeSta=MODE_STATIQUE(
+    MATR_RIGI=Rigidite,
+    MATR_MASS=Masse,
+    MODE_STAT=(
+        _F(GROUP_NO='GPT01',AVEC_CMP=('DX','DY','DZ'),),
+        _F(GROUP_NO='GPT03',AVEC_CMP=('DX','DY','DZ'),),
+    ),
+)
+#
+DSis1X=CALC_CHAR_SEISME(MATR_MASS=Masse,MODE_STAT=ModeSta, NOEUD='N01', DIRECTION=(1.0, 0.0, 0.0),)
+DSis1Y=CALC_CHAR_SEISME(MATR_MASS=Masse,MODE_STAT=ModeSta, NOEUD='N01', DIRECTION=(0.0, 1.0, 0.0),)
+DSis1Z=CALC_CHAR_SEISME(MATR_MASS=Masse,MODE_STAT=ModeSta, NOEUD='N01', DIRECTION=(0.0, 0.0, 1.0),)
+DSis3X=CALC_CHAR_SEISME(MATR_MASS=Masse,MODE_STAT=ModeSta, NOEUD='N03', DIRECTION=(1.0, 0.0, 0.0),)
+DSis3Y=CALC_CHAR_SEISME(MATR_MASS=Masse,MODE_STAT=ModeSta, NOEUD='N03', DIRECTION=(0.0, 1.0, 0.0),)
+DSis3Z=CALC_CHAR_SEISME(MATR_MASS=Masse,MODE_STAT=ModeSta, NOEUD='N03', DIRECTION=(0.0, 0.0, 1.0),)
+#
+# projection des matrices et vecteurs sur la base modale
+PROJ_BASE(
+    BASE=ModeStr,
+    STOCKAGE='DIAG',
+    MATR_ASSE_GENE=(
+        _F(MATRICE = CO("MasseGen"), MATR_ASSE = Masse),
+        _F(MATRICE = CO("RigidGen"), MATR_ASSE = Rigidite),
+    ),
+    VECT_ASSE_GENE=(
+        _F(VECTEUR = CO("D1GenX"), VECT_ASSE = DSis1X),
+        _F(VECTEUR = CO("D1GenY"), VECT_ASSE = DSis1Y),
+        _F(VECTEUR = CO("D1GenZ"), VECT_ASSE = DSis1Z),
+        _F(VECTEUR = CO("D3GenX"), VECT_ASSE = DSis3X),
+        _F(VECTEUR = CO("D3GenY"), VECT_ASSE = DSis3Y),
+        _F(VECTEUR = CO("D3GenZ"), VECT_ASSE = DSis3Z),
+    ),
+)
+
+#
+# --------------------------------------------------------------------------------------------------
+#
+dt = 1.0/4000.0
+
+archivedInstants =(  0.178500,  0.639500,  1.452250,  2.067000,  2.775250,  3.746250,  4.789000,  5.427250,
+                     6.381250,  7.481500,  8.129000,  8.548750,  9.340000,  9.859000, 10.389000, 10.953750,
+                    11.690250, 12.062500, 12.767250, 13.737250, 14.561500, 15.214500, 15.882000, 16.869750,
+                    17.697750, 18.543750, 19.963250, )
+unite = 39
+Resultat=DYNA_VIBRA(
+    TYPE_CALCUL='TRAN', BASE_CALCUL='GENE',
+    MATR_MASS=MasseGen, MATR_RIGI=RigidGen,
+    SCHEMA_TEMPS=_F(SCHEMA='RUNGE_KUTTA_54', PAS_MINI=dt, PAS_MAXI=dt),
+    INCREMENT=_F(PAS=dt, INST_INIT=0.0, INST_FIN=TempsMaxi),
+    MODE_STAT=ModeSta,
+    EXCIT=(
+        _F(VECT_ASSE_GENE=D1GenX, ACCE=ACCEIX, VITE=VITEIX, DEPL=DEPLIX,),
+        _F(VECT_ASSE_GENE=D1GenY, ACCE=ACCEIY, VITE=VITEIY, DEPL=DEPLIY,),
+        _F(VECT_ASSE_GENE=D1GenZ, ACCE=ACCEIZ, VITE=VITEIZ, DEPL=DEPLIZ,),
+        _F(VECT_ASSE_GENE=D3GenX, ACCE=ACCEIX, VITE=VITEIX, DEPL=DEPLIX,),
+        _F(VECT_ASSE_GENE=D3GenY, ACCE=ACCEIY, VITE=VITEIY, DEPL=DEPLIY,),
+        _F(VECT_ASSE_GENE=D3GenZ, ACCE=ACCEIZ, VITE=VITEIZ, DEPL=DEPLIZ,),
+    ),
+    COMPORTEMENT=_F(RELATION='DIS_ECRO_TRAC',
+                    NOEUD_1='N01', NOEUD_2='N02', FTAN= fctsy, ECROUISSAGE='ISOTROPE'),
+    ARCHIVAGE=_F(PAS_ARCH=1.E8, INST=archivedInstants),
+    IMPRESSION=_F(UNITE_DIS_ECRO_TRAC =unite),
+)
+#
+ForY=LIRE_FONCTION(UNITE=unite,NOM_PARA='INST',NOM_RESU='ForY',INDIC_PARA=[1,1],INDIC_RESU=[1,4])
+DepY=LIRE_FONCTION(UNITE=unite,NOM_PARA='INST',NOM_RESU='DepY',INDIC_PARA=[1,1],INDIC_RESU=[1,5])
+ForZ=LIRE_FONCTION(UNITE=unite,NOM_PARA='INST',NOM_RESU='ForZ',INDIC_PARA=[1,1],INDIC_RESU=[1,6])
+DepZ=LIRE_FONCTION(UNITE=unite,NOM_PARA='INST',NOM_RESU='DepZ',INDIC_PARA=[1,1],INDIC_RESU=[1,7])
+Puis=LIRE_FONCTION(UNITE=unite,NOM_PARA='INST',NOM_RESU='Puis',INDIC_PARA=[1,1],INDIC_RESU=[1,8])
+#
+# INST               FY                  UY                  FZ                  UZ                  PUISS
+ResuIntgr = {
+ 1: (1.785000E-001, -9.5228505800E+000, -9.5228505800E-003,  1.7377262357E+000,  1.7377262357E-003,  0.0000000000E+000,),
+ 2: (6.395000E-001,  2.3480014503E+001,  2.3480014503E-002, -5.4263786933E+001, -5.4263786933E-002,  0.0000000000E+000,),
+ 3: (1.452250E+000, -1.0317720713E+002, -1.6211270794E-001,  6.1307823697E+001,  1.1624458753E-001,  8.9645127624E+000,),
+ 4: (2.067000E+000, -9.2338602932E+000,  1.5567270902E-002, -1.2155680016E+002, -1.5251033592E-001,  2.7022082770E+001,),
+ 5: (2.775250E+000, -1.2136300295E+002, -2.7135220620E-001, -3.2693678996E+001, -3.6536329912E-002,  6.4015254033E+001,),
+ 6: (3.746250E+000, -1.3164554702E+002,  2.7329946789E-002,  3.3007638317E+001,  7.5783306117E-002,  1.6759158289E+002,),
+ 7: (4.789000E+000, -1.2266405634E+002,  1.0103610552E-002,  9.7772845097E+001,  3.8916811265E-001,  4.1193704444E+002,),
+ 8: (5.427250E+000, -1.1993848298E+002, -4.8324874201E-001,  1.1679076287E+002,  1.1545148935E-001,  5.4700024454E+002,),
+ 9: (6.381250E+000, -1.6819295727E+002, -1.6789198269E-001, -8.1170480331E+001, -1.6809137097E-001,  8.1766187511E+002,),
+10: (7.481500E+000, -1.8171282540E+002, -1.3923062726E-001, -1.0145371463E+002, -1.5592655634E-001,  1.1508396509E+003,),
+11: (8.129000E+000, -6.6618757448E+001, -2.2230436046E-001, -2.0450721482E+002, -2.2198619782E-002,  1.2749939437E+003,),
+12: (8.548750E+000,  1.0760771709E+002,  4.1018402649E-001, -1.9622810283E+002, -3.9474633199E-001,  1.4183530244E+003,),
+13: (9.340000E+000,  3.6323155099E+001, -4.4222294542E-002,  2.3143868135E+002,  3.0757460143E-001,  1.6078879150E+003,),
+14: (9.859000E+000,  2.0314693467E+002,  3.4666127921E-001,  1.2841464463E+002, -1.5756928402E-001,  1.7214799671E+003,),
+15: (1.038900E+001, -4.4713378731E+001, -3.1290501658E-001,  2.4357948661E+002,  3.1633805646E-001,  1.8625448420E+003,),
+16: (1.095375E+001,  2.4122975467E+002,  2.6770651363E-001, -2.1343368955E+001, -2.3762961862E-001,  1.9697639567E+003,),
+17: (1.169025E+001,  2.0915125079E+001, -2.1835676591E-001, -2.6443978625E+002, -2.4038385625E-001,  2.2194509213E+003,),
+18: (1.206250E+001, -3.5474400083E+001,  5.8689764417E-003, -2.6746711458E+002, -3.3284362241E-001,  2.3154851727E+003,),
+19: (1.276725E+001, -2.6325240887E+002, -5.2783097402E-001, -8.6606216867E+001, -5.1473276512E-002,  2.4736975795E+003,),
+20: (1.373725E+001, -2.0046958284E+002,  9.8634411602E-002,  1.4916745772E+002,  2.1519005631E-002,  2.7704595726E+003,),
+21: (1.456150E+001,  3.0313212083E+002,  5.5438616922E-001, -1.7453648591E+001, -5.6182165888E-002,  3.0816512056E+003,),
+22: (1.521450E+001, -1.0314781593E+002, -1.3376357352E-001, -2.9198113004E+002, -2.8455913044E-001,  3.2277514737E+003,),
+23: (1.588200E+001,  3.0071753596E+002,  4.6802558482E-001,  1.0295862227E+002,  4.0197642195E-001,  3.4309424119E+003,),
+24: (1.686975E+001, -7.9061269936E+001,  3.5121421916E-002,  3.0992162998E+002,  5.0342876705E-001,  3.4809325604E+003,),
+25: (1.769775E+001, -2.0859849411E+002, -1.2305010014E-001, -2.4334650215E+002, -9.4227089753E-002,  3.4978686578E+003,),
+26: (1.854375E+001,  1.4382892373E+002,  2.2937731770E-001, -1.7704305982E+002, -2.7923647429E-002,  3.4978686578E+003,),
+27: (1.996325E+001, -6.9590186410E+001,  1.5958207556E-002, -1.5363419236E+002, -4.5147799692E-003,  3.4978686578E+003,),
+}
+
+for nume_ordre in ResuIntgr.keys():
+    TEST_FONCTION(
+        VALEUR= (
+            _F(FONCTION=ForY, NOM_PARA='INST', VALE_PARA=ResuIntgr[nume_ordre][0],
+               VALE_CALC=ResuIntgr[nume_ordre][1],
+               REFERENCE='AUTRE_ASTER', VALE_REFE=ResuIntgr[nume_ordre][1], PRECISION=1.0E-02,),
+
+            _F(FONCTION=DepY, NOM_PARA='INST', VALE_PARA=ResuIntgr[nume_ordre][0],
+               VALE_CALC=ResuIntgr[nume_ordre][2],
+               REFERENCE='AUTRE_ASTER', VALE_REFE=ResuIntgr[nume_ordre][2], PRECISION=1.0E-02,),
+
+            _F(FONCTION=ForZ, NOM_PARA='INST', VALE_PARA=ResuIntgr[nume_ordre][0],
+               VALE_CALC=ResuIntgr[nume_ordre][3],
+               REFERENCE='AUTRE_ASTER', VALE_REFE=ResuIntgr[nume_ordre][3], PRECISION=1.0E-02,),
+
+            _F(FONCTION=DepZ, NOM_PARA='INST', VALE_PARA=ResuIntgr[nume_ordre][0],
+               VALE_CALC=ResuIntgr[nume_ordre][4],
+               REFERENCE='AUTRE_ASTER', VALE_REFE=ResuIntgr[nume_ordre][4], PRECISION=1.0E-02,),
+
+            _F(FONCTION=Puis, NOM_PARA='INST', VALE_PARA=ResuIntgr[nume_ordre][0],
+               VALE_CALC=ResuIntgr[nume_ordre][5],
+               REFERENCE='AUTRE_ASTER', VALE_REFE=ResuIntgr[nume_ordre][5], PRECISION=1.0E-02,),
+        ),
+    )
+
+FIN()

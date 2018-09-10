@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -39,16 +39,16 @@ MO=AFFE_MODELE(MAILLAGE=MA,
 
 
 Y_F = FORMULE(VALE='2.E5 - (1.E5*((TEMP - 100.)/960.)**2)',
-              NOM_PARA='TEMP',);
+              NOM_PARA='TEMP',)
 
 AL_F = FORMULE(VALE='1.E-5 + (1.E-5  * ((TEMP - 100.)/960.) ** 4)',
-               NOM_PARA='TEMP',);
+               NOM_PARA='TEMP',)
 
 C_F = FORMULE(VALE='(2.E6 - (192500. * (TEMP - 100.) / 96.))',
-              NOM_PARA='TEMP',);
+              NOM_PARA='TEMP',)
 
 D_F = FORMULE(VALE='(5000. - ( 450. * (TEMP - 100.)/96.) )',
-              NOM_PARA='TEMP',);
+              NOM_PARA='TEMP',)
 
 TEMPE1=DEFI_LIST_REEL(DEBUT=20.,
                       INTERVALLE=_F(JUSQU_A=1060.,
@@ -100,7 +100,8 @@ CHMAT=AFFE_MATERIAU(MAILLAGE=MA,
                             MATER=MAT,),);
 
 C2_F = FORMULE(VALE='C_F(TEMP)/2.',
-               NOM_PARA='TEMP',);
+               C_F=C_F,
+               NOM_PARA='TEMP',)
 
 C2_T=CALC_FONC_INTERP(FONCTION=C2_F,
                       LIST_PARA=TEMPE1,

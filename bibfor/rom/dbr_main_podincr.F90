@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -30,6 +30,7 @@ implicit none
 #include "asterfort/dbr_calcpod_q.h"
 #include "asterfort/dbr_pod_incr.h"
 #include "asterfort/dbr_calcpod_save.h"
+#include "asterfort/dbr_calcpod_size.h"
 #include "asterfort/as_deallocate.h"
 !
 aster_logical, intent(in) :: l_reuse
@@ -55,15 +56,20 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
     real(kind=8), pointer :: q(:) => null()
     real(kind=8), pointer :: v(:) => null()
     real(kind=8), pointer :: s(:) => null()
-    integer :: nb_mode, nb_snap_redu, nb_mode_maxi
+    integer :: nb_mode, nb_snap_redu, nb_mode_maxi, m, n
 !
 ! --------------------------------------------------------------------------------------------------
 !
     nb_mode_maxi = ds_para_pod%nb_mode_maxi
 !
+! - Get size of snapshots matrix
+!
+    call dbr_calcpod_size(ds_empi, ds_para_pod%ds_snap,&
+                          m      , n )
+!
 ! - Create snapshots matrix Q
 !    
-    call dbr_calcpod_q(ds_empi, ds_para_pod%ds_snap, q)
+    call dbr_calcpod_q(ds_empi, ds_para_pod%ds_snap, m, n, q)
 !
 ! - Incremental POD method
 !

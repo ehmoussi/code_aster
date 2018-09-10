@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -33,3 +33,4 @@ class ETAPE(E_ETAPE.ETAPE, B_ETAPE.ETAPE, V_ETAPE.ETAPE,
         # Pas de constructeur pour B_ETAPE.ETAPE
         N_ETAPE.ETAPE.__init__(self, oper, reuse, args)
         V_ETAPE.ETAPE.__init__(self)
+        E_ETAPE.ETAPE.__init__(self)

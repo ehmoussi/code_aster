@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -113,7 +113,7 @@ subroutine eclpgc(ch1, ch2, ligrel, ma2, prchno,&
     integer :: iamol1, jcnsv2, mxcmp
     integer :: ima, nbelgr, jval2, nbno, nddl, iddl, adiel
     integer :: iipg, jceld1,  moloc1, nb_cmp_mx, jcmpgd
-    parameter(mxcmp=100)
+    parameter(mxcmp=200)
     integer :: nuddl(mxcmp), mxvari, iel, nb_cmp
     character(len=8) :: ma2, nomg1, nomg2, elrefa, fapg
     character(len=16) :: nomte
@@ -207,7 +207,7 @@ subroutine eclpgc(ch1, ch2, ligrel, ma2, prchno,&
             cmp_name(k) = zk8(jcmpgd-1+k)
         end do
     endif
-    ASSERT(nb_cmp.le.mxcmp)
+    if (nb_cmp.gt.mxcmp) call utmess('F','CALCULEL2_51', ni=2, vali=[mxcmp,nb_cmp])
 !
 !
 !

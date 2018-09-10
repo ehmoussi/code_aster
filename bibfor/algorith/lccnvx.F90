@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -54,7 +54,6 @@ subroutine lccnvx(fami, kpg, ksp, loi, mod,&
 ! --- : IRET   :  CODE RETOUR = 1 -> ECHEC D'INTEGRATION
 ! ----------------------------------------------------------------------
 ! ======================================================================
-#include "asterfort/burcvx.h"
 #include "asterfort/cvmcvx.h"
 #include "asterfort/hbrcvx.h"
 #include "asterfort/hujcvx.h"
@@ -95,7 +94,7 @@ subroutine lccnvx(fami, kpg, ksp, loi, mod,&
         call hbrcvx(sigf, vind, nmat, materf, seuil,&
                     vp, vecp)
 ! ======================================================================
-    else if (loi(1:8) .eq. 'MONOCRIS') then
+    else if ((loi(1:8) .eq. 'MONOCRIS') .or. (loi(1:8) .eq. 'MONO2RIS')) then
         call lcmmvx(sigf, vind, nmat, materf, nbcomm,&
                     cpmono, pgl, nvi, hsr, nfs,&
                     nsg, toutms, timed, timef, deps,&
@@ -104,13 +103,6 @@ subroutine lccnvx(fami, kpg, ksp, loi, mod,&
     else if (loi(1:7) .eq. 'IRRAD3M') then
         call irrcvx(fami, kpg, ksp, nmat, materf,&
                     sigf, vind, seuil)
-! ======================================================================
-! ======================================================================
-    else if (loi(1:12) .eq. 'BETON_BURGER') then
-! --- LE FLUAGE EST CONSIDERE POUR TOUT TYPE DE SOLLICITATION MECANIQUE
-        call burcvx(mod, nmat, materd, materf, timed,&
-                    timef, nvi, vind, nr, sigd,&
-                    deps, yd, yf, toler, seuil)
 ! ======================================================================
     else if (loi(1:4) .eq. 'LETK') then
         call lkcnvx(sigd, sigf, nvi, vind, nmat,&

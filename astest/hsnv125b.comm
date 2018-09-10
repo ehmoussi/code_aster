@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -35,18 +35,20 @@ MO=AFFE_MODELE(MAILLAGE=MA,
                        MODELISATION='3D',),);
 
 Y_F = FORMULE(VALE='2.E5 - (1.E5*((TEMP - 100.)/960.)**2)',
-              NOM_PARA='TEMP',);
+              NOM_PARA='TEMP',)
 
 AL_F = FORMULE(VALE='1.E-5 + (1.E-5  * ((TEMP - 100.)/960.) ** 4)',
-               NOM_PARA='TEMP',);
+               NOM_PARA='TEMP',)
 
 # C(100)=15000
 
 C_F = FORMULE(VALE='(40000. - (25000. * (TEMP - 100.) / 960.))',
-              NOM_PARA='TEMP',);
+              NOM_PARA='TEMP',)
 
 DSDE_F = FORMULE(VALE='Y_F(TEMP)*C_F(TEMP)/(Y_F(TEMP)+C_F(TEMP))',
-                 NOM_PARA='TEMP',);
+                 Y_F=Y_F,
+                 C_F=C_F,
+                 NOM_PARA='TEMP',)
 
 TEMPE1=DEFI_LIST_REEL(DEBUT=20.,
                       INTERVALLE=_F(JUSQU_A=1060.,

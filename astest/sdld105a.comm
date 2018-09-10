@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -135,7 +135,8 @@ MULT_X=CALC_CHAR_SEISME(MATR_MASS=MASSE,
                         NOEUD='N01',);
 
 ACCELERO = FORMULE(VALE='sin(2*pi*fex*INST)',
-                   NOM_PARA='INST',);
+                   fex=fex,
+                   NOM_PARA='INST',)
 
 
 L_INST=DEFI_LIST_REEL(DEBUT=0.,
@@ -205,10 +206,12 @@ MODCOR=MACRO_ELAS_MULT(MODELE=MODELE,
 
 
 DERI_PRE = FORMULE(VALE='2*pi*fex*cos(2*pi*fex*INST)',
-                   NOM_PARA='INST',);
+                   fex=fex,
+                   NOM_PARA='INST',)
 
 DERI_SEC = FORMULE(VALE='-(2*pi**fex)**2*sin(2*pi*fex*INST)',
-                   NOM_PARA='INST',);
+                   fex=fex,
+                   NOM_PARA='INST',)
 
 TRA_GCS=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='GENE',
                         SCHEMA_TEMPS=_F(SCHEMA='NEWMARK',),

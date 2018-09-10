@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -20,7 +20,7 @@
 !
 interface
     subroutine setBehaviourValue(rela_comp, defo_comp   , type_comp, type_cpla,&
-                                 mult_comp, post_iter   , kit_comp ,&
+                                 mult_comp, post_iter   , defo_ldc,  kit_comp ,&
                                  nb_vari  , nb_vari_comp, nume_comp,&
                                  l_compor_, v_compor_)
         character(len=16), intent(in) :: rela_comp
@@ -29,11 +29,12 @@ interface
         character(len=16), intent(in) :: type_cpla
         character(len=16), intent(in) :: mult_comp
         character(len=16), intent(in) :: post_iter
+        character(len=16), intent(in) :: defo_ldc
         character(len=16), intent(in) :: kit_comp(4)
         integer, intent(in)  :: nb_vari
         integer, intent(in)  :: nb_vari_comp(4)
         integer, intent(in)  :: nume_comp(4)
         character(len=16), intent(out), optional :: l_compor_(:)
-        character(len=16), intent(out), optional, pointer :: v_compor_(:)
+        character(len=16), pointer, optional :: v_compor_(:)
     end subroutine setBehaviourValue
 end interface

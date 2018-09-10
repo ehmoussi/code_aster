@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -446,32 +446,71 @@ def SIGMA_XY_2_v(x,y):
 
 # deplacement couronne externe
 
-ux1s = FORMULE(NOM_PARA=('X','Y',), VALE='ux1_c(X,Y)+ux1_v(X,Y)');
+ux1s = FORMULE(VALE='ux1_c(X,Y)+ux1_v(X,Y)',
+               ux1_c=ux1_c,
+               ux1_v=ux1_v,
+               NOM_PARA=['X', 'Y'],)
 
-uy1s = FORMULE(NOM_PARA=('X','Y',), VALE='uy1_c(X,Y)+uy1_v(X,Y)');
+uy1s = FORMULE(VALE='uy1_c(X,Y)+uy1_v(X,Y)',
+               uy1_c=uy1_c,
+               uy1_v=uy1_v,
+               NOM_PARA=['X', 'Y'],)
 
 # deplacement couronne externe
 
-ux2s = FORMULE(NOM_PARA=('X','Y',), VALE='ux2_c(X,Y)+ux2_v(X,Y)');
+ux2s = FORMULE(VALE='ux2_c(X,Y)+ux2_v(X,Y)',
+               ux2_c=ux2_c,
+               ux2_v=ux2_v,
+               NOM_PARA=['X', 'Y'],)
 
-uy2s = FORMULE(NOM_PARA=('X','Y',), VALE='uy2_c(X,Y)+uy2_v(X,Y)');
+uy2s = FORMULE(VALE='uy2_c(X,Y)+uy2_v(X,Y)',
+               uy2_c=uy2_c,
+               uy2_v=uy2_v,
+               NOM_PARA=['X', 'Y'],)
 
 # contraintes couronne externe
 
-SIG_XX_1=FORMULE(NOM_PARA=('X','Y',), VALE='SIGMA_XX_1_c(X,Y)+SIGMA_XX_1_v(X,Y)')
-SIG_YY_1=FORMULE(NOM_PARA=('X','Y',), VALE='SIGMA_YY_1_c(X,Y)+SIGMA_YY_1_v(X,Y)')
-SIG_ZZ_1=FORMULE(NOM_PARA=('X','Y',), VALE='SIGMA_ZZ_1_c(X,Y)+SIGMA_ZZ_1_v(X,Y)')
-SIG_XY_1=FORMULE(NOM_PARA=('X','Y',), VALE='SIGMA_XY_1_c(X,Y)+SIGMA_XY_1_v(X,Y)')
+SIG_XX_1 = FORMULE(VALE='SIGMA_XX_1_c(X,Y)+SIGMA_XX_1_v(X,Y)',
+                   SIGMA_XX_1_c=SIGMA_XX_1_c,
+                   SIGMA_XX_1_v=SIGMA_XX_1_v,
+                   NOM_PARA=['X', 'Y'],)
+SIG_YY_1 = FORMULE(VALE='SIGMA_YY_1_c(X,Y)+SIGMA_YY_1_v(X,Y)',
+                   SIGMA_YY_1_c=SIGMA_YY_1_c,
+                   SIGMA_YY_1_v=SIGMA_YY_1_v,
+                   NOM_PARA=['X', 'Y'],)
+SIG_ZZ_1 = FORMULE(VALE='SIGMA_ZZ_1_c(X,Y)+SIGMA_ZZ_1_v(X,Y)',
+                   SIGMA_ZZ_1_c=SIGMA_ZZ_1_c,
+                   SIGMA_ZZ_1_v=SIGMA_ZZ_1_v,
+                   NOM_PARA=['X', 'Y'],)
+SIG_XY_1 = FORMULE(VALE='SIGMA_XY_1_c(X,Y)+SIGMA_XY_1_v(X,Y)',
+                   SIGMA_XY_1_c=SIGMA_XY_1_c,
+                   SIGMA_XY_1_v=SIGMA_XY_1_v,
+                   NOM_PARA=['X', 'Y'],)
 
 # contraintes couronne interne
 
-SIG_XX_2=FORMULE(NOM_PARA=('X','Y',), VALE='SIGMA_XX_2_c(X,Y)+SIGMA_XX_2_v(X,Y)')
-SIG_YY_2=FORMULE(NOM_PARA=('X','Y',), VALE='SIGMA_YY_2_c(X,Y)+SIGMA_YY_2_v(X,Y)')
-SIG_ZZ_2=FORMULE(NOM_PARA=('X','Y',), VALE='SIGMA_ZZ_2_c(X,Y)+SIGMA_ZZ_2_v(X,Y)')
-SIG_XY_2=FORMULE(NOM_PARA=('X','Y',), VALE='SIGMA_XY_2_c(X,Y)+SIGMA_XY_2_v(X,Y)')
+SIG_XX_2 = FORMULE(VALE='SIGMA_XX_2_c(X,Y)+SIGMA_XX_2_v(X,Y)',
+                   SIGMA_XX_2_c=SIGMA_XX_2_c,
+                   SIGMA_XX_2_v=SIGMA_XX_2_v,
+                   NOM_PARA=['X', 'Y'],)
+SIG_YY_2 = FORMULE(VALE='SIGMA_YY_2_c(X,Y)+SIGMA_YY_2_v(X,Y)',
+                   SIGMA_YY_2_c=SIGMA_YY_2_c,
+                   SIGMA_YY_2_v=SIGMA_YY_2_v,
+                   NOM_PARA=['X', 'Y'],)
+SIG_ZZ_2 = FORMULE(VALE='SIGMA_ZZ_2_c(X,Y)+SIGMA_ZZ_2_v(X,Y)',
+                   SIGMA_ZZ_2_c=SIGMA_ZZ_2_c,
+                   SIGMA_ZZ_2_v=SIGMA_ZZ_2_v,
+                   NOM_PARA=['X', 'Y'],)
+SIG_XY_2 = FORMULE(VALE='SIGMA_XY_2_c(X,Y)+SIGMA_XY_2_v(X,Y)',
+                   SIGMA_XY_2_c=SIGMA_XY_2_c,
+                   SIGMA_XY_2_v=SIGMA_XY_2_v,
+                   NOM_PARA=['X', 'Y'],)
 
 # pression
-pression = FORMULE(NOM_PARA=('X','Y',), VALE=' -press_c(X,Y)-press_v(X,Y)');
+pression = FORMULE(VALE=' -press_c(X,Y)-press_v(X,Y)',
+                   press_c=press_c,
+                   press_v=press_v,
+                   NOM_PARA=['X', 'Y'],)
 
 #=======================================================
 # fusion des deux declarations de chargement en un seul

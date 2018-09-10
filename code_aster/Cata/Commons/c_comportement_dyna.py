@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -22,9 +22,9 @@ from code_aster.Cata.DataStructure import *
 
 
 def C_COMPORTEMENT_DYNA(COMMAND=None) : #COMMUN#
-    
+
     assert COMMAND in ('DYNA_VIBRA', 'DYNA_LINE', None)
-    
+
     mcfact = FACT(statut='f',max='**',
             RELATION    =     SIMP(statut='o', typ='TXM', into=('DIS_CHOC', 'ROTOR_FISS', 'PALIER_EDYOS', 'FLAMBAGE', 'ANTI_SISM',
                                                                 'DIS_VISC', 'DIS_ECRO_TRAC', 'RELA_EFFO_DEPL', 'RELA_EFFO_VITE',
@@ -71,7 +71,7 @@ def C_COMPORTEMENT_DYNA(COMMAND=None) : #COMMUN#
                                        EXCLUS('NOEUD_G','GROUP_NO_G'),
                                        PRESENT_PRESENT('NOEUD_D','NOEUD_G'),
                                        PRESENT_PRESENT('GROUP_NO_D','GROUP_NO_G',),),
-            ANGL_INIT   =     SIMP(statut='o',typ='R',defaut=0.E0),
+            ANGL_INIT   =     SIMP(statut='f',typ='R',defaut=0.E0),
             ANGL_ROTA   =     SIMP(statut='f',typ=(fonction_sdaster,formule),),
             NOEUD_G     =     SIMP(statut='c',typ=no),
             NOEUD_D     =     SIMP(statut='c',typ=no),
@@ -123,9 +123,13 @@ def C_COMPORTEMENT_DYNA(COMMAND=None) : #COMMUN#
             DIST_2      =     SIMP(statut='f',typ='R'),
             REPERE      =     SIMP(statut='f',typ='TXM',defaut="GLOBAL"),
             RIGI_NOR    =     SIMP(statut='o',typ='R'),
-            FNOR_CRIT   =     SIMP(statut='f',typ='R'),
-            FNOR_POST_FL=     SIMP(statut='f',typ='R'),
-            RIGI_NOR_POST_FL= SIMP(statut='f',typ='R'),
+            AMOR_NOR    =     SIMP(statut='f',typ='R',defaut= 0.E+0),
+            FNOR_CRIT   =     SIMP(statut='o',typ='R'),
+            FNOR_POST_FL=     SIMP(statut='o',typ='R'),
+            ENFO_FL     =     SIMP(statut='f',typ='R',defaut= 1.E-20),
+            LARG_PLAT   =     SIMP(statut='f',typ='R',defaut= 0.E+0),
+            DEPL_POST_FL=     SIMP(statut='f',typ='R',max='**'),
+            RIGI_POST_FL=     SIMP(statut='f',typ='R',max='**'),
         ), # end b_buckling
 
 #       C.2.5 Anti-sismic disposition non linearity
@@ -159,22 +163,31 @@ def C_COMPORTEMENT_DYNA(COMMAND=None) : #COMMUN#
             UNSUR_K2    =     SIMP(statut='f',typ='R',val_min = 1.0E-08, fr=tr("Souplesse en parallèle de la branche visqueuse."),),
             UNSUR_K3    =     SIMP(statut='f',typ='R',val_min = 0.0,     fr=tr("Souplesse dans la branche visqueuse."),),
             C           =     SIMP(statut='o',typ='R',val_min = 1.0E-08, fr=tr("'Raideur' de la partie visqueuse."),),
-            PUIS_ALPHA  =     SIMP(statut='o',typ='R',val_min = 1.0E-08, fr=tr("Puissance de la loi visqueuse ]0.0, 1.0]."),
+            PUIS_ALPHA  =     SIMP(statut='f',typ='R',val_min = 1.0E-08, fr=tr("Puissance de la loi visqueuse ]0.0, 1.0]."),
                                    val_max=1.0, defaut=0.5,),
-            ITER_INTE_MAXI=   SIMP(statut='o',typ='I',defaut= 20),
-            RESI_INTE_RELA=   SIMP(statut='o',typ='R',defaut= 1.0E-6),
+            ITER_INTE_MAXI=   SIMP(statut='f',typ='I',defaut= 20),
+            RESI_INTE_RELA=   SIMP(statut='f',typ='R',defaut= 1.0E-6),
         ), # end b_disvisc
-#       C.2.6.2 Discrete nonlinear behavior
+#       C.2.6.2 Discrete nonlinear behavior in axial OR tangent direction
         b_disecro       = BLOC(condition="""equal_to("RELATION", 'DIS_ECRO_TRAC')""",
-                               regles=(UN_PARMI('NOEUD_1','GROUP_NO_1'),
-                                       UN_PARMI('NOEUD_2','GROUP_NO_2'),),
+            fr=tr("Loi pour un discret avec écrouissage isotrope ."),
+            regles=(UN_PARMI('NOEUD_1','GROUP_NO_1'),
+                    UN_PARMI('NOEUD_2','GROUP_NO_2'),
+                    UN_PARMI('FX','FTAN'),),
             NOEUD_1     =   SIMP(statut='c',typ=no),
             NOEUD_2     =   SIMP(statut='c',typ=no),
             GROUP_NO_1  =   SIMP(statut='f',typ=grno),
             GROUP_NO_2  =   SIMP(statut='f',typ=grno),
-            FX          =   SIMP(statut='o',typ=(fonction_sdaster), fr=tr("Comportement en fonction du déplacement relatif."),),
-            ITER_INTE_MAXI = SIMP(statut='o',typ='I',defaut= 20),
-            RESI_INTE_RELA = SIMP(statut='o',typ='R',defaut= 1.0E-6),
+            FX =SIMP(statut='f',typ=(fonction_sdaster),
+                fr=tr("Comportement axial en fonction du déplacement relatif."),),
+            FTAN=SIMP(statut='f',typ=(fonction_sdaster),
+                fr=tr("Comportement tangent en fonction du déplacement relatif."),),
+            b_ftan=BLOC(condition = """ exists("FTAN") """,
+                fr=tr("Type de l'écrouissage : isotrope ou cinématique"),
+                ECROUISSAGE =SIMP(statut='o',typ='TXM', into=('ISOTROPE','CINEMATIQUE'),),
+            ),
+            ITER_INTE_MAXI = SIMP(statut='f',typ='I',defaut= 20),
+            RESI_INTE_RELA = SIMP(statut='f',typ='R',defaut= 1.0E-6),
         ), # end b_disecro
 #       C.2.7 Force displacement relationship non linearity
         b_refx          = BLOC(condition="""equal_to("RELATION", 'RELA_EFFO_DEPL')""",
@@ -195,5 +208,5 @@ def C_COMPORTEMENT_DYNA(COMMAND=None) : #COMMUN#
             FONCTION    =     SIMP(statut='o',typ=(fonction_sdaster,nappe_sdaster,formule),),
         ), # end b_refv
     ) # end fkw_comportement
-    
+
     return mcfact

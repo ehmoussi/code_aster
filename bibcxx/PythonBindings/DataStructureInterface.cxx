@@ -41,5 +41,6 @@ void exportDataStructureToPython()
         .def( "getType", &DataStructure::getType, return_value_policy<return_by_value>() )
         .def( "debugPrint", c1 )
         .def( "debugPrint", c2 )
+        .def( "update", &DataStructure::update )
     ;
 };

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,79 +15,46 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmacva(veasse, cnvado)
-!
 ! person_in_charge: mickael.abbas at edf.fr
 !
-    implicit none
-#include "jeveux.h"
-#include "asterfort/infdbg.h"
-#include "asterfort/jedema.h"
-#include "asterfort/jemarq.h"
+subroutine nmacva(hval_veasse, cnvado)
+!
+use NonLin_Datastructure_type
+!
+implicit none
+!
 #include "asterfort/nmchex.h"
-#include "asterfort/nmdebg.h"
-#include "asterfort/vtaxpy.h"
-#include "asterfort/vtzero.h"
-    character(len=19) :: cnvado
-    character(len=19) :: veasse(*)
+#include "asterfort/nonlinDSVectCombCompute.h"
+#include "asterfort/nonlinDSVectCombAddHat.h"
+#include "asterfort/nonlinDSVectCombInit.h"
 !
-! ----------------------------------------------------------------------
+character(len=19), intent(in) :: hval_veasse(*), cnvado
 !
-! ROUTINE MECA_NON_LINE (ALGORITHME)
+! --------------------------------------------------------------------------------------------------
 !
-! CALCUL DU VECTEUR DES CHARGEMENTS VARIABLES POUR L'ACCELERATION
-! INITIALE
+! MECA_NON_LINE - Algorithm
 !
-! ----------------------------------------------------------------------
+! Get undead Neumann loads
 !
+! --------------------------------------------------------------------------------------------------
 !
-! IN  VEASSE : VARIABLE CHAPEAU POUR NOM DES VECT_ASSE
-! OUT CNVADO : VECT_ASSE DE TOUS LES CHARGEMENTS VARIABLES DONNES
+! In  hval_veasse      : hat-variable for vectors (node fields)
+! In  cnvado           : name of resultant nodal field
 !
+! --------------------------------------------------------------------------------------------------
 !
+    type(NL_DS_VectComb) :: ds_vectcomb
 !
+! --------------------------------------------------------------------------------------------------
 !
-    integer :: ifm, niv
-    integer :: ifdo, n
-    character(len=19) :: cnvari(20)
-    real(kind=8) :: covari(20)
-    character(len=19) :: cnfsdo
+    call nonlinDSVectCombInit(ds_vectcomb)
 !
-! ----------------------------------------------------------------------
+! - Dead Neumann forces
 !
-    call jemarq()
-    call infdbg('MECA_NON_LINE', ifm, niv)
+    call nonlinDSVectCombAddHat(hval_veasse, 'CNFSDO', 1.d0, ds_vectcomb)
 !
-! --- AFFICHAGE
+! - Combination
 !
-    if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE> ...... CALCUL CHARGEMENT VARIABLE'
-    endif
+    call nonlinDSVectCombCompute(ds_vectcomb, cnvado)
 !
-! --- INITIALISATIONS
-!
-    ifdo = 0
-    call vtzero(cnvado)
-!
-! --- CALCUL DES FORCES EXTERIEURES VARIABLES
-!
-    call nmchex(veasse, 'VEASSE', 'CNFSDO', cnfsdo)
-    ifdo = ifdo+1
-    cnvari(ifdo) = cnfsdo
-    covari(ifdo) = 1.d0
-!
-! --- VECTEUR RESULTANT CHARGEMENT DONNE
-!
-    do 10 n = 1, ifdo
-        call vtaxpy(covari(n), cnvari(n), cnvado)
-        if (niv .ge. 2) then
-            write (ifm,*) '<MECANONLINE> ......... FORC. VARIABLE'
-            write (ifm,*) '<MECANONLINE> .........  ',n,' - COEF: ',&
-     &                   covari(n)
-            call nmdebg('VECT', cnvari(n), ifm)
-        endif
-10  end do
-!
-    call jedema()
 end subroutine

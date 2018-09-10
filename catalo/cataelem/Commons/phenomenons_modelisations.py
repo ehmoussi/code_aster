@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -471,25 +471,6 @@ phen.add('3D_FLUI_ABSO', Modelisation(dim=(2,3), code='3FA',
         (MT.TRIA6     , EL.MEFA_FACE6),
         (MT.QUAD8     , EL.MEFA_FACE8),
         (MT.QUAD9     , EL.MEFA_FACE9),
-    )))
-
-phen.add('3D_GRAD_EPSI', Modelisation(dim=(3,3), code='3DG',
-    attrs=(
-        (AT.NBSIGM,'6'),
-        (AT.TYPMOD,'COMP3D'),
-        (AT.TYPMOD2,'GRADEPSI'),
-    ),
-    elements=(
-        (MT.HEXA20    , EL.MGCA_HEXA20),
-        (MT.TETRA4    , EL.MGCA_TETRA4),
-        (MT.TETRA10   , EL.MGCA_TETRA10),
-        (MT.PENTA15   , EL.MGCA_PENTA15),
-        (MT.PYRAM13   , EL.MGCA_PYRAM13),
-        (MT.QUAD8     , EL.MECA_FACE8),
-        (MT.TRIA6     , EL.MECA_FACE6),
-        (MT.TRIA3     , EL.MECA_FACE3),
-        (MT.SEG3      , EL.MECA_ARETE3),
-        (MT.SEG2      , EL.MECA_ARETE2),
     )))
 
 phen.add('3D_GRAD_VARI', Modelisation(dim=(3,3), code='3DV',
@@ -2701,21 +2682,6 @@ phen.add('C_PLAN2XTC', Modelisation(dim=(2,2), code='CX8',
         (MT.QUAD8     , EL.MECPQU8_XTC),
     )))
 
-phen.add('C_PLAN_GRAD_EPSI', Modelisation(dim=(2,2), code='CPG',
-    attrs=(
-        (AT.NBSIGM,'4'),
-        (AT.C_PLAN,'OUI'),
-        (AT.TYPMOD,'C_PLAN'),
-        (AT.TYPMOD2,'GRADEPSI'),
-    ),
-    elements=(
-        (MT.SEG2      , EL.MEPLSE2),
-        (MT.SEG3      , EL.MEPLSE3),
-        (MT.TRIA3     , EL.MGCPTR3),
-        (MT.TRIA6     , EL.MGCPTR6),
-        (MT.QUAD8     , EL.MGCPQU8),
-    )))
-
 phen.add('C_PLAN_SI', Modelisation(dim=(2,2), code='CPS',
     attrs=(
         (AT.NBSIGM,'4'),
@@ -3086,21 +3052,6 @@ phen.add('D_PLAN_DIL', Modelisation(dim=(2,2), code='D2D',
         (MT.TRIA6     , EL.TR6_DP_2D),
         (MT.QUAD9     , EL.QU9_DP_2D),
         (MT.QUAD8     , EL.QU8_DP_2D),
-    )))
-
-phen.add('D_PLAN_GRAD_EPSI', Modelisation(dim=(2,2), code='DPG',
-    attrs=(
-        (AT.NBSIGM,'4'),
-        (AT.D_PLAN,'OUI'),
-        (AT.TYPMOD,'D_PLAN'),
-        (AT.TYPMOD2,'GRADEPSI'),
-    ),
-    elements=(
-        (MT.TRIA3     , EL.MGDPTR3),
-        (MT.TRIA6     , EL.MGDPTR6),
-        (MT.QUAD8     , EL.MGDPQU8),
-        (MT.SEG2      , EL.MEPLSE2),
-        (MT.SEG3      , EL.MEPLSE3),
     )))
 
 phen.add('D_PLAN_GRAD_SIGM', Modelisation(dim=(2,2), code='DSG',

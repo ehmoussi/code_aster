@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -35,6 +35,6 @@ interface
         integer,          optional, intent(in) :: ivect(lonvec)
         real(kind=8),     optional, intent(in) :: rvect(lonvec)
         complex(kind=8),  optional, intent(in) :: cvect(lonvec)
-        integer, pointer, optional, intent(in) :: buffer(:)
+        integer, pointer, optional :: buffer(:)
     end subroutine nlsav
 end interface

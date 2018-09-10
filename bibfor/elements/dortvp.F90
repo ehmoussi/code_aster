@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -35,6 +35,7 @@ subroutine dortvp(ndim, nomrc, d, modeli)
 ! -----  ARGUMENTS
 #include "asterfort/infniv.h"
 #include "asterfort/jacobi.h"
+#include "asterfort/utmess.h"
     integer :: ndim
     real(kind=8) :: d(6, 6)
     character(len=2) :: modeli
@@ -189,6 +190,8 @@ subroutine dortvp(ndim, nomrc, d, modeli)
 !
         write(ifm,1010)
         write(ifm,1020) nomrc
+        call utmess('A', 'MATERIAL2_20')
+!
     else if (ineg.eq.1) then
 !
         if (modeli .eq. 'CP') then
@@ -201,6 +204,7 @@ subroutine dortvp(ndim, nomrc, d, modeli)
 !
         write(ifm,1030)
         write(ifm,1020) nomrc
+        call utmess('A', 'MATERIAL2_20')
     endif
 !
     if (ineg .gt. 0) then

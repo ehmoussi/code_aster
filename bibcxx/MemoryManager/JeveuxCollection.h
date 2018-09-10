@@ -631,7 +631,7 @@ public:
      *   existante en memoire Jeveux
      * @return Renvoit true si la construction s'est bien deroulee
      */
-    bool buildFromJeveux();
+    bool buildFromJeveux( bool force = false );
 
     /**
      * @brief Methode verifiant l'existance d'un objet de collection dans la collection
@@ -722,18 +722,21 @@ public:
 };
 
 template< class ValueType, class PointerType >
-bool JeveuxCollectionInstance< ValueType, PointerType >::buildFromJeveux()
+bool JeveuxCollectionInstance< ValueType, PointerType >::buildFromJeveux( bool force )
 {
-    if( ! _isEmpty ) return false;
-    _listObjects.clear();
     long nbColObj, valTmp;
     JeveuxChar8 param( "NUTIOC" );
     std::string charval(32, ' ');
     long iret=0;
     CALLO_JEEXIN( _name, &iret);
-    if ( iret == 0) return false;
+    if( iret == 0 ) return false;
     CALLO_JELIRA( _name, param, &nbColObj, charval );
+
+    if( ! force && ! _isEmpty && _size == nbColObj )
+        return false;
+
     _size = nbColObj;
+    _listObjects.clear();
 
     param = "ACCES ";
     charval = std::string (32, ' ');

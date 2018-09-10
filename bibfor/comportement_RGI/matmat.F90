@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,7 +18,7 @@
 
 subroutine matmat(a, b, nl, nc1, nc2,&
                   c)
-! person_in_charge: etienne.grimal at edf.fr
+! person_in_charge: etienne.grimal@edf.fr
 !=====================================================================
 !=====================================================================
 !  C(NL,NC2)=A(NL,NC1)*B(NC1,NC2)

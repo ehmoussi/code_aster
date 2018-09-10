@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -56,7 +56,6 @@ subroutine lcinit(fami, kpg, ksp, loi, typess,&
 !           INDI   :  INDICATEURS DES MECANISMES POT. ACTIFS (HUJEUX)
 !       ----------------------------------------------------------------
 #include "asterf_types.h"
-#include "asterfort/burini.h"
 #include "asterfort/cvmini.h"
 #include "asterfort/hujini.h"
 #include "asterfort/irrini.h"
@@ -88,29 +87,30 @@ subroutine lcinit(fami, kpg, ksp, loi, typess,&
                     timed, timef, yd, epsd, deps,&
                     dy)
 !
-    else if (loi(1:8) .eq. 'MONOCRIS') then
+    else if ((loi(1:8) .eq. 'MONOCRIS') .or. (loi(1:8) .eq. 'MONO2RIS')) then
         call lcmmin(typess, essai, mod, nmat, materf,&
                     nr, nvi, yd, deps, dy,&
                     comp, nbcomm, cpmono, pgl, nfs,&
                     nsg, toutms, timed, timef, vind,&
                     sigd, epstr)
+!
     else if (loi(1:7) .eq. 'IRRAD3M') then
         call irrini(fami, kpg, ksp, typess, essai,&
                     mod, nmat, materf, yd, deps,&
                     dy)
-    else if (loi(1:12) .eq. 'BETON_BURGER') then
-        call burini(nmat, materd, materf, timed, timef,&
-                    nvi, vind, nr, yd, deps,&
-                    dy)
+!
     else if (loi(1:4) .eq. 'LETK') then
         call lklini(sigf, nr, yd, dy)
+!
     else if (loi(1:3) .eq. 'LKR') then
         call srlini(sigf,nr,yd,dy)
+!
     else if (loi(1:6).eq.'HUJEUX') then
         call hujini(mod, nmat, materf, intg, deps,&
                     nr, yd, nvi, vind, sigd,&
                     sigf, bnews, mtrac, dy, indi,&
                     iret)
+!
     else
 !        SOLUTION INITIALE = ZERO
         call vecini(nr, 0.d0, dy)

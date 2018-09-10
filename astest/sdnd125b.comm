@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -18,6 +18,8 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: hassan.berro at edf.fr
+
+from math import *
 
 #################################################
 ##############Model Illustration#################
@@ -155,8 +157,10 @@ FLOOR    = DEFI_OBSTACLE (TYPE          = 'BI_PLAN_Y')
 
 
 
-SINE_FOR = FORMULE       (NOM_PARA = 'INST',
-                          VALE     = 'ampl * sin ( om*INST )')
+SINE_FOR = FORMULE(VALE='ampl * sin ( om*INST )',
+                   ampl=ampl,
+                   om=om,
+                   NOM_PARA='INST',)
 
 
 INSTANTS = DEFI_LIST_REEL(DEBUT      = t0-dt,
@@ -186,8 +190,7 @@ INTEGR   = DYNA_VIBRA   (TYPE_CALCUL  =  'TRAN',
                                               JEU          = 0.0,
                                               RIGI_NOR     = Kn_left,
                                               FNOR_CRIT    = Fn_crit,
-                                              FNOR_POST_FL = Fn_buck,
-                                              RIGI_NOR_POST_FL = Kn_buck),
+                                              FNOR_POST_FL = Fn_buck,),
                                            _F(RELATION     = 'FLAMBAGE',
                                               GROUP_NO_1   = 'CENTER',
                                               GROUP_NO_2   = 'RIGHT',
@@ -196,8 +199,7 @@ INTEGR   = DYNA_VIBRA   (TYPE_CALCUL  =  'TRAN',
                                               JEU          = 0.0,
                                               RIGI_NOR     = Kn_right,
                                               FNOR_CRIT    = Fn_crit,
-                                              FNOR_POST_FL = Fn_buck,
-                                              RIGI_NOR_POST_FL = Kn_buck)),
+                                              FNOR_POST_FL = Fn_buck,)),
                           ARCHIVAGE     =  _F(PAS_ARCH = 10),
                           TRAITEMENT_NONL = 'EXPLICITE', INFO=2)
 

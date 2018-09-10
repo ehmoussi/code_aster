@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -121,14 +121,17 @@ def escalier(x):
     else:
         return 0.
 
-EXX_X=FORMULE(NOM_PARA = ('X','INST'),
-            VALE     = '1.E-3*escalier(X)*INST',)
+EXX_X = FORMULE(VALE='1.E-3*escalier(X)*INST',
+                escalier=escalier,
+                NOM_PARA=['X', 'INST'],)
 
-EXX_Y=FORMULE(NOM_PARA = ('Y','INST'),
-            VALE     = '1.E-3*escalier(Y)*INST',)
+EXX_Y = FORMULE(VALE='1.E-3*escalier(Y)*INST',
+                escalier=escalier,
+                NOM_PARA=['Y', 'INST'],)
             
-EXX_Z=FORMULE(NOM_PARA = ('Z','INST'),
-            VALE     = '1.E-3*escalier(Z)*INST',)
+EXX_Z = FORMULE(VALE='1.E-3*escalier(Z)*INST',
+                escalier=escalier,
+                NOM_PARA=['Z', 'INST'],)
  
 
 #-----------------------------------------------------------------------

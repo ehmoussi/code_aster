@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -97,7 +97,8 @@ MODELEIN=AFFE_MODELE(MAILLAGE=MAILLAG2,
 
 # FORME ANALYTIQUE POUR LA FISSURE
 
-LN=FORMULE(NOM_PARA=('X','Y'),VALE='Y');
+LN = FORMULE(VALE='Y',
+             NOM_PARA=['X', 'Y'],)
 
 FISS=DEFI_FISS_XFEM(MAILLAGE=MAILLAG2,
                     TYPE_DISCONTINUITE='INTERFACE',
@@ -204,7 +205,8 @@ def pr(y) :
    if y == 1e-15:  return 0.
 
 FCTPRES = FORMULE(VALE='pr(Y)',
-                  NOM_PARA=('X','Y'));
+                  pr=pr,
+                  NOM_PARA=['X', 'Y'],)
 
 CHAF=AFFE_CHAR_MECA_F(MODELE=MODELEK,
                       PRES_REP=_F(GROUP_MA = ('LIG2','LIG4'),

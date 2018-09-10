@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,9 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine ndxprm(modelz, mate  , carele    , ds_constitutive, ds_algopara,&
-                  lischa, numedd, numfix    , solveu         , comref     ,&
+! person_in_charge: mickael.abbas at edf.fr
+! aslint: disable=W1504
+!
+subroutine ndxprm(modelz, ds_material, carele    , ds_constitutive, ds_algopara,&
+                  lischa, numedd, numfix    , solveu         , &
                   sddisc, sddyna, ds_measure, numins         , fonact     ,&
                   valinc, solalg, veelem    , meelem         , measse     ,&
                   maprec, matass, faccvg    , ldccvg)
@@ -39,23 +41,20 @@ implicit none
 #include "asterfort/preres.h"
 #include "asterfort/utmess.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-! aslint: disable=W1504
-!
-    type(NL_DS_AlgoPara), intent(in) :: ds_algopara
-    integer :: fonact(*)
-    character(len=*) :: modelz
-    character(len=24) :: mate, carele
-    type(NL_DS_Measure), intent(inout) :: ds_measure
-    character(len=24) :: numedd, numfix
-    type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-    character(len=19) :: sddisc, sddyna, lischa, solveu
-    character(len=24) :: comref
-    character(len=19) :: solalg(*), valinc(*)
-    character(len=19) :: veelem(*), meelem(*), measse(*)
-    integer :: numins
-    character(len=19) :: maprec, matass
-    integer :: faccvg, ldccvg
+type(NL_DS_AlgoPara), intent(in) :: ds_algopara
+integer :: fonact(*)
+character(len=*) :: modelz
+type(NL_DS_Material), intent(in) :: ds_material
+character(len=24) :: carele
+type(NL_DS_Measure), intent(inout) :: ds_measure
+character(len=24) :: numedd, numfix
+type(NL_DS_Constitutive), intent(in) :: ds_constitutive
+character(len=19) :: sddisc, sddyna, lischa, solveu
+character(len=19) :: solalg(*), valinc(*)
+character(len=19) :: veelem(*), meelem(*), measse(*)
+integer :: numins
+character(len=19) :: maprec, matass
+integer :: faccvg, ldccvg
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -68,9 +67,8 @@ implicit none
 ! IN  MODELE : MODELE
 ! IN  NUMEDD : NUME_DDL (VARIABLE AU COURS DU CALCUL)
 ! IN  NUMFIX : NUME_DDL (FIXE AU COURS DU CALCUL)
-! IN  MATE   : CHAMP MATERIAU
+! In  ds_material      : datastructure for material parameters
 ! IN  CARELE : CARACTERISTIQUES DES ELEMENTS DE STRUCTURE
-! IN  COMREF : VARI_COM DE REFERENCE
 ! In  ds_constitutive  : datastructure for constitutive laws management
 ! IN  LISCHA : LISTE DES CHARGES
 ! IN  SDDYNA : SD POUR LA DYNAMIQUE
@@ -213,9 +211,9 @@ implicit none
 ! --- CALCUL ET ASSEMBLAGE DES MATR_ELEM DE LA LISTE
 !
     if (nb_matr .gt. 0) then
-        call nmxmat(modelz        , mate       , carele     , ds_constitutive, sddisc        ,&
+        call nmxmat(modelz        , ds_material, carele     , ds_constitutive, sddisc        ,&
                     sddyna        , fonact     , numins     , iterat         , valinc        ,&
-                    solalg        , lischa     , comref     , numedd         , numfix        ,&
+                    solalg        , lischa     , numedd     , numfix        ,&
                     ds_measure    , ds_algopara, nb_matr    , list_matr_type , list_calc_opti,&
                     list_asse_opti, list_l_calc, list_l_asse, lcfint         , meelem        ,&
                     measse        , veelem     , ldccvg)

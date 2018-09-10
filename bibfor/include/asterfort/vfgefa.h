@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -21,8 +21,8 @@ interface
                       surf, norm, xgf, d ,&
                       iret)
         integer, intent(in) :: nnos
-        real(kind=8), intent(in) :: xs(3, nnos), t(3, nnos)
-        real(kind=8), intent(out) :: xg(3), surf, norm(3), xgf(3), d
+        real(kind=8), intent(in) :: xg(3), xs(3, nnos), t(3, nnos)
+        real(kind=8), intent(out) :: surf, norm(3), xgf(3), d
         integer, intent(out) :: iret
     end subroutine vfgefa
 end interface

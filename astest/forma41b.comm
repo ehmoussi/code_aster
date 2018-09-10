@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -65,13 +65,13 @@ LAMBDA = 1.0;
 #CHALEUR D HYDRATATION  J/m3
 Q0 = 114000000.0;
 
-#TEMPERATURE DE REFERENCE 
+#TEMPERATURE DE REFERENCE
 TZ0 = 273.15;
 
-# CONSTANTE ARRHENIUS 
+# CONSTANTE ARRHENIUS
 Ar = 4000;
 
-# COEFFICIENT DE LA FONCTION A 
+# COEFFICIENT DE LA FONCTION A
 a6 = 50.12;
 
 a5 = -190.76;
@@ -89,10 +89,20 @@ a0 = 2.43;
 #CALCUL DE LA FONCTION A ET TABULATTION EN FONCTION DE HYDR
 #---------------------------------------------------------
 AA0 = FORMULE(VALE='a6*HYDR**6+a5*HYDR**5+a4*HYDR**4+a3*HYDR**3+a2*HYDR**2+a1*HYDR+a0',
-              NOM_PARA='HYDR',);
+              a6=a6,
+              a5=a5,
+              a4=a4,
+              a3=a3,
+              a2=a2,
+              a1=a1,
+              a0=a0,
+              NOM_PARA='HYDR',)
 
 AA = FORMULE(VALE='exp(-Ar/(TZ0+TEMP))*(AA0(HYDR))',
-             NOM_PARA=('TEMP','HYDR',),);
+             Ar=Ar,
+             TZ0=TZ0,
+             AA0=AA0,
+             NOM_PARA=['TEMP', 'HYDR'],)
 
 LL=DEFI_LIST_REEL(DEBUT=0,
                   INTERVALLE=_F(JUSQU_A=1,
@@ -117,7 +127,9 @@ AFF=CALC_FONC_INTERP(FONCTION=AA,
 CONDBET=DEFI_CONSTANTE(VALE=LAMBDA,);
 
 beta = FORMULE(VALE='RCP*(TEMP+TZ0)',
-               NOM_PARA='TEMP',);
+               RCP=RCP,
+               TZ0=TZ0,
+               NOM_PARA='TEMP',)
 
 ENTH=CALC_FONC_INTERP(FONCTION=beta,
                       LIST_PARA=LT,
@@ -210,7 +222,7 @@ MO2=AFFE_MODELE(MAILLAGE=MA,
                         PHENOMENE='THERMIQUE',
                         MODELISATION='3D',),),);
 #--------------------------------------------------------------
-# 2- DEFINITION DES PARAMETRES MATERIAUX 
+# 2- DEFINITION DES PARAMETRES MATERIAUX
 #  ET CARACTERISTIQUES GEOMETRIQUES DES ELEMENTS DE STRUCTURE
 #--------------------------------------------------------------
 
@@ -273,7 +285,7 @@ CHMAT=AFFE_MATERIAU(MAILLAGE=MA,
                                   VALE_REF=120,),),);
 
 #--------------------------------------------------------------
-# 3- DEFINITION DES CHARGEMENTS 
+# 3- DEFINITION DES CHARGEMENTS
 #--------------------------------------------------------------
 
 CLIM=AFFE_CHAR_MECA(MODELE=MO,
@@ -302,6 +314,7 @@ RESUSTA=MECA_STATIQUE(MODELE=MO,
                       INST_FIN=4320000,);
 
 RESUSTA=MECA_STATIQUE(reuse =RESUSTA,
+                      RESULTAT=RESUSTA,
                       MODELE=MO,
                       CHAM_MATER=CHMAT,
                       CARA_ELEM=CARAMECA,

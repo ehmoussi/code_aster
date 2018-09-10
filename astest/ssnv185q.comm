@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -99,8 +99,12 @@ CHAMPMA1=AFFE_MATERIAU(MAILLAGE=MAILLAG1,
 # PARAMETRES DE LA FISSURE
 a=4.9
 b=10.
-LN=FORMULE(NOM_PARA=('X','Y','Z'),VALE='Z-15.');
-LT=FORMULE(NOM_PARA=('X','Y','Z'),VALE='b-a-Y');
+LN = FORMULE(VALE='Z-15.',
+             NOM_PARA=['X', 'Y', 'Z'],)
+LT = FORMULE(VALE='b-a-Y',
+             b=b,
+             a=a,
+             NOM_PARA=['X', 'Y', 'Z'],)
 
 FISS = [None]*5
 

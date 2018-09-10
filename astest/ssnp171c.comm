@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -95,7 +95,9 @@ fonction = 1;
 # fonction=1 : la pression PRES est une fonction de l espace
 #
 PRES = -1.;
-FCTPRES = FORMULE(NOM_PARA=('X','Y'),VALE='PRES*X'); 
+FCTPRES = FORMULE(VALE='PRES*X',
+                  PRES=PRES,
+                  NOM_PARA=['X', 'Y'],)
 #************************************************************
 
 
@@ -179,9 +181,12 @@ MODELEIN=AFFE_MODELE(MAILLAGE=MAILLAG1,
 #----------------------------------------------
 
 LN = FORMULE(VALE='Y*cos(ALPHA)-X*sin(ALPHA)',
-             NOM_PARA=('X','Y',),);
+             ALPHA=ALPHA,
+             NOM_PARA=['X', 'Y'],)
 LT = FORMULE(VALE='abs(Y*sin(ALPHA)+X*cos(ALPHA))-A',
-             NOM_PARA=('X','Y',),);
+             ALPHA=ALPHA,
+             A=A,
+             NOM_PARA=['X', 'Y'],)
              
 FISS=DEFI_FISS_XFEM(MAILLAGE=MAILLAG1,
                     DEFI_FISS=_F(FONC_LT=LT,

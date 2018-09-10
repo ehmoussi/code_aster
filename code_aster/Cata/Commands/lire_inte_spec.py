@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -38,7 +38,7 @@ LIRE_INTE_SPEC=MACRO(nom="LIRE_INTE_SPEC",
                                into=("DX","DY","DZ","DRX","DRY","DRZ","TEMP",
                                      "INST","X","Y","Z","EPSI","FREQ","PULS","AMOR","ABSC",) ),
          NOM_RESU        =SIMP(statut='f',typ='TXM',defaut="DSP" ),
-         INTERPOL        =SIMP(statut='f',typ='TXM',max=2,into=("NON","LIN","LOG") ),
+         INTERPOL        =SIMP(statut='f',typ='TXM',max=2,into=("LIN","LOG") ),
          PROL_DROITE     =SIMP(statut='f',typ='TXM',into=("CONSTANT","LINEAIRE","EXCLU") ),
          PROL_GAUCHE     =SIMP(statut='f',typ='TXM',into=("CONSTANT","LINEAIRE","EXCLU") ),
          TITRE           =SIMP(statut='f',typ='TXM'),

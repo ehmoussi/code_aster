@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -119,6 +119,7 @@ temp=DEFI_FONCTION(NOM_PARA='INST',VALE=(
 
 
 phase0=DEFI_CONSTANTE(VALE=0)
+temp0=DEFI_CONSTANTE(VALE=0)
 
 phase3=DEFI_FONCTION(NOM_PARA='INST',VALE=(
  0.00000E+00 , 0.00000E+00, 
@@ -151,8 +152,40 @@ phase3=DEFI_FONCTION(NOM_PARA='INST',VALE=(
  1.12000E+02 , 1.00000E+00, 
  1.76000E+02 , 1.00000E+00, 
  ))
+
+phaseA=DEFI_FONCTION(NOM_PARA='INST',VALE=(
+ 0.00000E+00    ,       1.00000E+00     ,
+ 6.00000E+01    ,       1.00000E+00     ,
+ 6.20000E+01    ,       9.60800E-01     ,
+ 6.40000E+01    ,       9.21599E-01     ,
+ 6.60000E+01    ,       8.82399E-01     ,
+ 6.80000E+01    ,       8.43199E-01     ,
+ 7.00000E+01    ,       8.03998E-01     ,
+ 7.20000E+01    ,       7.64798E-01     ,
+ 7.40000E+01    ,       7.25598E-01     ,
+ 7.60000E+01    ,       6.86397E-01     ,
+ 7.80000E+01    ,       6.47197E-01     ,
+ 8.00000E+01    ,       6.07997E-01     ,
+ 8.20000E+01    ,       5.68797E-01     ,
+ 8.40000E+01    ,       5.29596E-01     ,
+ 8.60000E+01    ,       4.90396E-01     ,
+ 8.80000E+01    ,       4.51196E-01     ,
+ 9.00000E+01    ,       4.11995E-01     ,
+ 9.20000E+01    ,       3.72795E-01     ,
+ 9.40000E+01    ,       3.33595E-01     ,
+ 9.60000E+01    ,       2.94394E-01     ,
+ 9.80000E+01    ,       2.55194E-01     ,
+ 1.00000E+02    ,       2.15994E-01     ,
+ 1.02000E+02    ,       1.76793E-01     ,
+ 1.04000E+02    ,       1.37593E-01     ,
+ 1.06000E+02    ,       9.83930E-02     ,
+ 1.08000E+02    ,       5.91920E-02     ,
+ 1.10000E+02    ,       1.99920E-02     ,
+ 1.12000E+02    ,       0.00000E+00     ,
+ 1.76000E+02    ,       0.00000E+00     ,
+ ))
  
-v7=DEFI_FONCTION(NOM_PARA='INST',VALE=(
+transf=DEFI_FONCTION(NOM_PARA='INST',VALE=(
  0.00000E+00, 2.00000E+02, 
  8.20000E+01, 2.00000E+02, 
  8.40000E+01, 1.99972E+02, 
@@ -332,7 +365,7 @@ DEFLIST=DEFI_LIST_INST(DEFI_LIST=_F(LIST_INST=       L_INST))
 RESPM=SIMU_POINT_MAT(  
                 COMPORTEMENT=_F(RELATION = 'META_P_IL',RELATION_KIT = ('ACIER',)   ),
                 AFFE_VARC=(
-                          _F(V1=phase0,V2=phase0,V3=phase3,V4=phase0,V5=phase0,V6=temp,V7=v7,NOM_VARC='M_ACIER',),
+                          _F(V1=phase0,V2=phase0,V3=phase3,V4=phase0,V5=phaseA,V6=temp0,V7=temp,V8=transf,NOM_VARC='M_ACIER',),
                           _F(VALE_FONC=temp,
                               VALE_REF=900.,
                               NOM_VARC='TEMP',),),

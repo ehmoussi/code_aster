@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -168,7 +168,7 @@ TEST_FONCTION(VALEUR=_F(VALE_REFE=1.61607288E-06,
 LBEWS=LIRE_FONCTION(     UNITE=18,
               NOM_PARA='INST',    NOM_RESU='ACCE_SOL',
              TITRE='ACCELEROGRAMME DOSEISME CENTRE',
-             INTERPOL='NON',
+             INTERPOL='LIN',
                PROL_DROITE='EXCLU',    PROL_GAUCHE='EXCLU'  )
 
 TEST_FONCTION(VALEUR=_F(VALE_REFE=1.0,
@@ -190,7 +190,7 @@ TEST_FONCTION(VALEUR=_F(VALE_REFE=1.0,
                         _F(ATTR_REFE='EXCLU',
                            FONCTION=LBEWS,
                            ATTR='PROL_GAUCHE',),
-                        _F(ATTR_REFE='NON NON ',
+                        _F(ATTR_REFE='LIN LIN ',
                            FONCTION=LBEWS,
                            ATTR='INTERPOL',),
                         ),

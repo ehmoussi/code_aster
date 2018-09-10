@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -20,7 +20,7 @@
 # PLASTIQUE
 # ----------------------------------------------------------------------
 #
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI')) 
 
 MAILLAG0=LIRE_MAILLAGE(FORMAT="ASTER", )
 
@@ -30,6 +30,7 @@ MAILLAGE=CREA_MAILLAGE(MAILLAGE=MAILLAG0,
         _F(NOM_GROUP_MA='N02',   NOEUD=('N02',),),
     ),
 )
+
 
 
 
@@ -149,7 +150,7 @@ TRAN_GEN=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='GENE',
                                        RIGI_NOR = 1.,
                                        FNOR_CRIT = 1.,
                                        FNOR_POST_FL = 0.5,
-                                       RIGI_NOR_POST_FL = 0.5),
+                                       ),
                       INCREMENT=_F(
                                   INST_INIT = 0.,   INST_FIN = 0.5,
                                   PAS = 0.0002)
@@ -172,7 +173,7 @@ TRAN_GEN=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='GENE',
                                        RIGI_NOR = 1.,
                                        FNOR_CRIT = 1.,
                                        FNOR_POST_FL = 0.5,
-                                       RIGI_NOR_POST_FL = 0.5),
+                                       ),
                       INCREMENT=_F(INST_FIN = 1.,  PAS = 0.0002,)
                             )
 
@@ -190,7 +191,7 @@ TRAN_GEN=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='GENE',
                                        RIGI_NOR = 1.,
                                        FNOR_CRIT = 1.,
                                        FNOR_POST_FL = 0.5,
-                                       RIGI_NOR_POST_FL = 0.5),
+                                       ),
                       INCREMENT=_F(
                                  INST_FIN = 12.,  PAS = 0.001)
                             )

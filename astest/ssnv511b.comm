@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -29,14 +29,16 @@ MODELEIN=AFFE_MODELE(MAILLAGE=MAILLAG,
                               PHENOMENE='MECANIQUE',
                               MODELISATION='C_PLAN',),),);
 
-LN1=FORMULE(NOM_PARA=('X','Y'),VALE='Y');
+LN1 = FORMULE(VALE='Y',
+              NOM_PARA=['X', 'Y'],)
 
 FISS1=DEFI_FISS_XFEM(MAILLAGE=MAILLAG,
                     TYPE_DISCONTINUITE='INTERFACE',
                     DEFI_FISS=_F(FONC_LN=LN1,),
                     INFO=1,);
 
-LN2=FORMULE(NOM_PARA=('X','Y'),VALE='X');
+LN2 = FORMULE(VALE='X',
+              NOM_PARA=['X', 'Y'],)
 
 FISS2=DEFI_FISS_XFEM(MAILLAGE=MAILLAG,
                     TYPE_DISCONTINUITE='INTERFACE',
@@ -78,9 +80,11 @@ def depy(x) :
    return 0.
 
 DEPL_X = FORMULE(VALE='depx(X,Y)',
-                  NOM_PARA=('X','Y',),);
+                 depx=depx,
+                 NOM_PARA=['X', 'Y'],)
 DEPL_Y = FORMULE(VALE='depy(X)',
-                  NOM_PARA=('X',),);
+                 depy=depy,
+                 NOM_PARA='X',)
 
 CH1=AFFE_CHAR_MECA_F(MODELE=MODELEK,
                    DDL_IMPO=(_F(GROUP_MA=('LD','LG'),DX= DEPL_X,DY= DEPL_Y),),

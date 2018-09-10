@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -140,38 +140,12 @@ Contactez le support technique.
       nom du champ : %(k2)s
 """),
 
-    25 : _(u"""
- Le nombre d'astérisques pour les noms de fichiers ENSIGHT de pression est trop grand.
- Il est limite à 7
- Il y a %(i1)d astérisques.
-"""),
-
-    26 : _(u"""
- Appel erroné  résultat :  %(k1)s   archivage numéro :  %(i1)d
-   code retour :  %(i2)d
-   problème champ :  %(k2)s
-Ce message est un message d'erreur développeur.
-Contactez le support technique.
-"""),
-
     27 : _(u"""
  Appel erroné  résultat :  %(k1)s   archivage numéro :  %(i1)d
    code retour  :  %(i2)d
    problème champ :  %(k2)s
 Ce message est un message d'erreur développeur.
 Contactez le support technique.
-"""),
-
-    28 : _(u"""
- Fin de fichier dans la lecture des fichiers ENSIGHT
-"""),
-
-    29 : _(u"""
- Erreur dans la lecture du fichier ENSIGHT
-"""),
-
-    30 : _(u"""
-  problème pour le fichier:  %(k1)s
 """),
 
     31 : _(u"""

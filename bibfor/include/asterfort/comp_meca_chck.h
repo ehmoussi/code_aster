@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,19 +15,17 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
     subroutine comp_meca_chck(model         , mesh          , full_elem_s, l_etat_init,&
                               ds_compor_prep,&
                               l_auto_elas   , l_auto_deborst, l_comp_erre)
-        use NonLin_Datastructure_type
+        use Behaviour_type
         character(len=8), intent(in) :: model
         character(len=8), intent(in) :: mesh
         character(len=19), intent(in) :: full_elem_s
         aster_logical, intent(in) :: l_etat_init
-        type(NL_DS_ComporPrep), intent(inout) :: ds_compor_prep
+        type(Behaviour_PrepPara), intent(inout) :: ds_compor_prep
         aster_logical, intent(out) :: l_auto_elas
         aster_logical, intent(out) :: l_auto_deborst
         aster_logical, intent(out) :: l_comp_erre

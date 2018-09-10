@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -69,12 +69,12 @@ dernière au format HDF (mot clé FORMAT_HDF="OUI" dans la commande FIN).
 
                 -- CODE_ASTER -- VERSION : %(k1)s --
 """),
-           'flags': 'CENTER | ALL_UNIT',
+           'flags': 'CENTER',
            },
 
     23 : {  'message' : _(u"""Version %(k1)s modifiée le %(k2)s
                révision %(k3)s - branche '%(k4)s'"""),
-            'flags': 'CENTER | ALL_UNIT',
+            'flags': 'CENTER',
             },
 
     10 : {  'message' : _(u"""Copyright EDF R&D %(k1)s - %(k2)s
@@ -85,12 +85,12 @@ dernière au format HDF (mot clé FORMAT_HDF="OUI" dans la commande FIN).
                 Type de processeur : %(k6)s
                 Système d'exploitation : %(k7)s
                 Langue des messages : %(k8)s
-"""), 'flags' : 'CENTER | ALL_UNIT',
+"""), 'flags' : 'CENTER',
             },
 
     9 : {  'message' : _(u"""Version de Python : %(k1)s
                           Version de NumPy : %(k2)s"""),
-           'flags': 'CENTER | ALL_UNIT',
+           'flags': 'CENTER',
            },
 
     # fin Lignes d'entete
@@ -98,82 +98,90 @@ dernière au format HDF (mot clé FORMAT_HDF="OUI" dans la commande FIN).
     11 : {  'message' : _(u"""Parallélisme MPI : actif
                 Rang du processeur courant : %(i1)d
                 Nombre de processeurs utilisés : %(i2)d"""),
-            'flags': 'CENTER | ALL_UNIT',
+            'flags': 'CENTER',
             },
 
     12 : {  'message' : _(u"""Parallélisme MPI : inactif"""),
-            'flags': 'CENTER | ALL_UNIT',
+            'flags': 'CENTER',
             },
 
     13 : {  'message' : _(u"""Parallélisme OpenMP : actif
                 Nombre de processus utilisés : %(i1)d"""),
-            'flags': 'CENTER | ALL_UNIT',
+            'flags': 'CENTER',
             },
 
     14: {
         'message' : _(u"""Version de la librairie HDF5 : %(i1)d.%(i2)d.%(i3)d"""),
-        'flags': 'CENTER | ALL_UNIT',
+        'flags': 'CENTER',
     },
 
     15 : {  'message' : _(u"""Librairie HDF5 : non disponible"""),
-            'flags': 'CENTER | ALL_UNIT',
+            'flags': 'CENTER',
             },
 
     16: {
         'message' : _(u"""Version de la librairie MED : %(i1)d.%(i2)d.%(i3)d"""),
-        'flags': 'CENTER | ALL_UNIT',
+        'flags': 'CENTER',
     },
 
     17 : {  'message' : _(u"""Librairie MED : non disponible"""),
-            'flags': 'CENTER | ALL_UNIT',
+            'flags': 'CENTER',
             },
 
     18 : {  'message' : _(u"""Version de la librairie MUMPS : %(k1)s"""),
-            'flags': 'CENTER | ALL_UNIT',
+            'flags': 'CENTER',
             },
 
     19 : {  'message' : _(u"""Librairie MUMPS : non disponible"""),
-            'flags': 'CENTER | ALL_UNIT',
+            'flags': 'CENTER',
             },
 
     20: {
         'message' : _(u"""Version de la librairie SCOTCH : %(i1)d.%(i2)d.%(i3)d"""),
-        'flags': 'CENTER | ALL_UNIT',
+        'flags': 'CENTER',
     },
 
     21 : {  'message' : _(u"""Librairie SCOTCH : non disponible"""),
-            'flags': 'CENTER | ALL_UNIT',
+            'flags': 'CENTER',
             },
 
     22 : {  'message' : _(u"""Mémoire limite pour l'exécution : %(r2).2f Mo
                           consommée par l'initialisation : %(r3).2f Mo
                          par les objets du jeu de commandes : %(r4).2f Mo
                          reste pour l'allocation dynamique : %(r1).2f Mo"""),
-            'flags': 'CENTER | ALL_UNIT',
+            'flags': 'CENTER',
             },
 
     # 23 plus haut avec 10
 
     24 : {  'message' : _(u"""Taille limite des fichiers d'échange : %(r1).2f Go
-"""), 'flags' : 'CENTER | ALL_UNIT',
+"""), 'flags' : 'CENTER',
             },
 
     25 : {  'message' : _(u"""Version de la librairie PETSc : %(k1)s"""),
-            'flags': 'CENTER | ALL_UNIT',
+            'flags': 'CENTER',
             },
 
     26 : {  'message' : _(u"""Librairie PETSc : non disponible"""),
-            'flags': 'CENTER | ALL_UNIT',
+            'flags': 'CENTER',
             },
 
     27: {
         'message' : _(u"""Version de la librairie MFront : %(k1)s"""),
-        'flags': 'CENTER | ALL_UNIT',
+        'flags': 'CENTER',
     },
 
     28 : {  'message' : _(u"""Librairie MFront : non disponible"""),
-            'flags': 'CENTER | ALL_UNIT',
+            'flags': 'CENTER',
             },
+
+    29 : {  'message' : _(u"""Mémoire limite pour l'exécution : %(r2).2f Mo
+                         reste pour l'allocation dynamique : %(r1).2f Mo"""),
+            'flags': 'CENTER',
+            },
+
+    # marks for the extraction of messages
+    69 : u""".. _%(k1)s""",
 
     # Affichage des commandes
     70 : u"""  # ------------------------------------------------------------------------------------------""",
@@ -186,7 +194,7 @@ dernière au format HDF (mot clé FORMAT_HDF="OUI" dans la commande FIN).
     73 : _(u"""  # Mémoire (Mo) : %(r1)8.2f / %(r2)8.2f / %(r3)8.2f / %(r4)8.2f (VmPeak / VmSize / Optimum / Minimum)"""),
 
     # attention au décalage
-    74 : _(u"""  # Mémoire (Mo) : %(r2)8.2f / %(r3)8.2f / %(r4)8.2f (VmSize / Optimum / Minimum)"""),
+    74 : _(u"""  # Mémoire (Mo) : %(r3)8.2f / %(r4)8.2f (Optimum / Minimum)"""),
 
     75 : _(u"""  # Fin commande No : %(i1)04d   user+syst:%(r1)12.2fs (syst:%(r2)12.2fs, elaps:%(r3)12.2fs)"""),
 
@@ -199,13 +207,14 @@ dernière au format HDF (mot clé FORMAT_HDF="OUI" dans la commande FIN).
 
     # attention au décalage
     78 : _(u"""
-  Mémoire (Mo) : %(r2)8.2f / %(r3)8.2f / %(r4)8.2f (VmSize / Optimum / Minimum)
+  Mémoire (Mo) : %(r3)8.2f / %(r4)8.2f (Optimum / Minimum)
 """),
 
-
-    97 : {  'message' : _(u"""
+    97 : _(u"""
  <FIN> Arrêt normal dans "FIN".
-"""), 'flags' : 'ALL_UNIT',
-            },
+"""),
 
+    98 : _(u"""
+ <INFO> Démarrage de l'exécution.
+"""),
 }

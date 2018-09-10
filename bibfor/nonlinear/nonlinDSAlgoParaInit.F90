@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nonlinDSAlgoParaInit(list_func_acti, ds_algopara)
+subroutine nonlinDSAlgoParaInit(list_func_acti, ds_algopara, ds_contact)
 !
 use NonLin_Datastructure_type
 !
@@ -26,12 +26,14 @@ implicit none
 #include "asterf_types.h"
 #include "asterc/r8prem.h"
 #include "asterfort/assert.h"
+#include "asterfort/cfdisl.h"
 #include "asterfort/infdbg.h"
 #include "asterfort/isfonc.h"
 #include "asterfort/utmess.h"
 !
 integer, intent(in) :: list_func_acti(*)
 type(NL_DS_AlgoPara), intent(inout) :: ds_algopara
+type(NL_DS_Contact), intent(inout) :: ds_contact
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -48,7 +50,7 @@ type(NL_DS_AlgoPara), intent(inout) :: ds_algopara
 !
     integer :: ifm, niv
     real(kind=8) :: reli_rho_mini, reli_rho_maxi, reli_rho_excl, swap
-    aster_logical :: l_cont_disc, l_unil
+    aster_logical :: l_cont_disc, l_unil, l_unil_pena
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -64,8 +66,14 @@ type(NL_DS_AlgoPara), intent(inout) :: ds_algopara
 !
 ! - Symmetric matrix for DISCRETE contact
 ! 
-    if (l_cont_disc.or.l_unil) then
+    if (l_cont_disc) then
         ds_algopara%l_matr_rigi_syme = .true._1
+    endif
+    if(l_unil) then
+        l_unil_pena     = cfdisl(ds_contact%sdcont_defi, 'UNIL_PENA')
+        if (.not.l_unil_pena) then
+            ds_algopara%l_matr_rigi_syme = .true._1
+        endif
     endif
 !
 ! - Update bounds for line search

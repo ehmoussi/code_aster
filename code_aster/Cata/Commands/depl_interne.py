@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -24,6 +24,10 @@ from code_aster.Cata.Commons import *
 
 
 def depl_interne_prod(DEPL_GLOBAL,**args ):
+    if args.get('__all__'):
+        return (cham_no_sdaster, evol_elas, dyna_trans, dyna_harmo,
+                mode_meca, mode_meca_c)
+
     if AsType(DEPL_GLOBAL)     == cham_no_sdaster: return cham_no_sdaster
     if AsType(DEPL_GLOBAL)     == evol_elas      : return evol_elas
     if AsType(DEPL_GLOBAL)     == dyna_trans     : return dyna_trans

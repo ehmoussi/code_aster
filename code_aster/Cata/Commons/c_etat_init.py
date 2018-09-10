@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -23,7 +23,12 @@ from code_aster.Cata.Syntax import *
 from code_aster.Cata.DataStructure import *
 
 
-def C_ETAT_INIT( COMMAND, statut ) :  #COMMUN#
+def C_ETAT_INIT( COMMAND, statut ):
+    """Definition of the keywords common to several commands to describe
+    the initial state.
+    """
+    assert COMMAND in ('DYNA_NON_LINE', 'STAT_NON_LINE'), (
+        "unsupported command: {0}".format(COMMAND))
 
     kwargs = {}
 

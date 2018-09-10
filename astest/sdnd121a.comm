@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -85,7 +85,9 @@ modes=CALC_MODES(MATR_RIGI=K_ASSE,
 f = 5 ;   # freq de l'excitation (Hz)
 Fa = 3.E3; # amplitude de l'excitation
 EXCIT = FORMULE(VALE='Fa*sin(2*pi*f*(INST))',
-                NOM_PARA='INST',);
+                Fa=Fa,
+                f=f,
+                NOM_PARA='INST',)
 
 # Calcul des matrices generalisees :
 PROJ_BASE(BASE=modes,

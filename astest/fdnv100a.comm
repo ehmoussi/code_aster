@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -189,7 +189,9 @@ LFONC=DEFI_LIST_REEL(DEBUT=0.0,
                      INTERVALLE=_F(JUSQU_A=10.0,
                                    PAS=0.01,),);
 #
-FONC = FORMULE(NOM_PARA='INST',VALE='(0.001)*sin(2*pi*FREQ*INST)');
+FONC = FORMULE(VALE='(0.001)*sin(2*pi*FREQ*INST)',
+               FREQ=FREQ,
+               NOM_PARA='INST',)
 #
 DEPLX=CALC_FONC_INTERP(FONCTION=FONC,
                        NOM_PARA='INST',

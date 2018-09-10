@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -51,7 +51,11 @@ def Sinus(t,freq):
 
 Freq01 = 5.0 ; U01 = 0.10
 # Le déplacement imposé
-Depla01  = FORMULE(VALE='U01*Sinus(INST,Freq01)',   NOM_PARA='INST')
+Depla01 = FORMULE(VALE='U01*Sinus(INST,Freq01)',
+                  U01=U01,
+                  Sinus=Sinus,
+                  Freq01=Freq01,
+                  NOM_PARA='INST',)
 
 # Liste d'instant
 TempsMaxi = 1.00
@@ -513,7 +517,8 @@ PrecisDisC = 3.0E-03
 # valeur de Non-Régression
 ValeNonRegr = 0.5295830097
 
-BMOINSA=FORMULE(NOM_PARA=('VA','VB'), VALE='VB-VA')
+BMOINSA = FORMULE(VALE='VB-VA',
+                  NOM_PARA=['VA', 'VB'],)
 
 # Test de la dissipation sur le dernier cycle pour ZENER01
 DISSI1A = CALC_TABLE(TABLE=TABVARI1,

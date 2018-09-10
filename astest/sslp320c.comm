@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -102,8 +102,12 @@ CHAMPMA1=AFFE_MATERIAU(MAILLAGE=MAILLAG1,
 X0 = xinit
 Y0 = yinit
 
-LN=FORMULE(NOM_PARA=('X','Y'),VALE='Y-Y0');
-LT=FORMULE(NOM_PARA=('X','Y'),VALE='X-X0');
+LN = FORMULE(VALE='Y-Y0',
+             Y0=Y0,
+             NOM_PARA=['X', 'Y'],)
+LT = FORMULE(VALE='X-X0',
+             X0=X0,
+             NOM_PARA=['X', 'Y'],)
 
 FISS = [None]*(NPAS+1)
 
@@ -127,8 +131,8 @@ LST = [None]*(NPAS+1)
 TAB = [None]*(NPAS+1)
 afiss[0]=xinit
 
-FOND1=FORMULE(NOM_PARA='NUME_ORDRE',
-                VALE='0*NUME_ORDRE+1',);
+FOND1 = FORMULE(VALE='0*NUME_ORDRE+1',
+                NOM_PARA='NUME_ORDRE',)
 
 VALE_CALC=[
  4240263.2141,

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,12 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmassp(modele         , numedd, mate  , carele    , comref    ,&
-                  ds_constitutive, lischa, fonact, ds_measure, ds_contact,&
-                  sddyna         , valinc, solalg, veelem    , veasse    ,&
-                  ldccvg         , cnpilo, cndonn, sdnume    , matass    ,&
-                  ds_algorom)
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine nmassp(ds_material   , list_func_acti,&
+                  ds_algorom    , sddyna        ,&
+                  ds_contact    , hval_veasse   ,&
+                  cnpilo        , cndonn)
 !
 use NonLin_Datastructure_type
 use Rom_Datastructure_type
@@ -29,96 +29,60 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/assert.h"
-#include "asterfort/infdbg.h"
 #include "asterfort/ndassp.h"
 #include "asterfort/ndynlo.h"
 #include "asterfort/nsassp.h"
 #include "asterfort/vtzero.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-! aslint: disable=W1504
-!
-    integer :: ldccvg
-    integer :: fonact(*)
-    character(len=19) :: lischa, sddyna, sdnume, matass
-    type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-    type(NL_DS_Measure), intent(inout) :: ds_measure
-    character(len=24) :: modele, numedd, mate
-    character(len=24) :: carele, comref
-    type(NL_DS_Contact), intent(in) :: ds_contact
-    character(len=19) :: solalg(*), valinc(*)
-    character(len=19) :: veasse(*), veelem(*)
-    character(len=19) :: cnpilo, cndonn
-    type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
+type(NL_DS_Material), intent(in) :: ds_material
+integer, intent(in) :: list_func_acti(*)
+type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
+character(len=19), intent(in) :: sddyna
+type(NL_DS_Contact), intent(in) :: ds_contact
+character(len=19), intent(in) :: hval_veasse(*)
+character(len=19), intent(in) :: cnpilo, cndonn
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! ROUTINE MECA_NON_LINE (ALGORITHME - PREDICTION)
+! MECA_NON_LINE - Algorithm
 !
-! CALCUL DU SECOND MEMBRE POUR LA PREDICTION
+! Evaluate second member for prediction
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! IN  MODELE : NOM DU MODELE
-! IN  NUMEDD : NOM DE LA NUMEROTATION
-! IN  MATE   : NOM DU CHAMP DE MATERIAU
-! IN  CARELE : CARACTERISTIQUES DES ELEMENTS DE STRUCTURE
-! IN  COMREF : VALEURS DE REF DES VARIABLES DE COMMANDE
-! IN  LISCHA : SD L_CHARGES
-! In  ds_constitutive  : datastructure for constitutive laws management
+! In  ds_material      : datastructure for material parameters
+! In  list_func_acti   : list of active functionnalities
+! In  ds_algorom       : datastructure for ROM parameters
 ! In  ds_contact       : datastructure for contact management
-! IN  FONACT : FONCTIONNALITES ACTIVEES
-! IO  ds_measure       : datastructure for measure and statistics management
-! IN  VALINC : VARIABLE CHAPEAU POUR INCREMENTS VARIABLES
-! IN  SOLALG : VARIABLE CHAPEAU POUR INCREMENTS SOLUTIONS
-! IN  VEELEM : VARIABLE CHAPEAU POUR NOM DES VECT_ELEM
-! IN  VEASSE : VARIABLE CHAPEAU POUR NOM DES VECT_ASSE
-! IN  SDNUME : SD NUMEROTATION
-! OUT CNPILO : VECTEUR ASSEMBLE DES FORCES PILOTEES
-! OUT CNDONN : VECTEUR ASSEMBLE DES FORCES DONNEES
-! OUT LDCCVG : CODE RETOUR DE L'INTEGRATION DU COMPORTEMENT
-!                -1 : PAS D'INTEGRATION DU COMPORTEMENT
-!                 0 : CAS DU FONCTIONNEMENT NORMAL
-!                 1 : ECHEC DE L'INTEGRATION DE LA LDC
-!                 2 : ERREUR SUR LA NON VERIF. DE CRITERES PHYSIQUES
-!                 3 : SIZZ PAS NUL POUR C_PLAN DEBORST
+! In  sddyna           : datastructure for dynamic
+! In  hval_veasse      : hat-variable for vectors (node fields)
+! In  cndonn           : name of nodal field for "given" forces
+! In  cnpilo           : name of nodal field for "pilotage" forces
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: ifm, niv
-    aster_logical :: lstat, ldyna
+    aster_logical :: l_stat, l_dyna
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call infdbg('MECA_NON_LINE', ifm, niv)
-    if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE> ... CALCUL SECOND MEMBRE'
-    endif
-!
-! --- INITIALISATIONS
-!
-    ldccvg = -1
     call vtzero(cnpilo)
     call vtzero(cndonn)
 !
-! --- FONCTIONNALITES ACTIVEES
+! - Active functionnalities
 !
-    lstat = ndynlo(sddyna,'STATIQUE')
-    ldyna = ndynlo(sddyna,'DYNAMIQUE')
+    l_stat = ndynlo(sddyna,'STATIQUE')
+    l_dyna = ndynlo(sddyna,'DYNAMIQUE')
 !
-! --- EVALUATION DU SECOND MEMBRE
+! - Evaluate second member for prediction
 !
-    if (ldyna) then
-        call ndassp(modele         , numedd, mate      , carele, comref    ,&
-                    ds_constitutive, lischa, ds_measure, fonact, ds_contact,&
-                    sddyna         , valinc, solalg    , veelem, veasse    ,&
-                    ldccvg         , cndonn, sdnume    , matass)
-    else if (lstat) then
-        call nsassp(modele, numedd, lischa, fonact, sddyna,&
-                    ds_measure, valinc, veelem, veasse, cnpilo,&
-                    cndonn, mate, carele, ds_contact, matass, ds_algorom)
+    if (l_dyna) then
+        call ndassp(ds_material, list_func_acti, ds_contact,&
+                    sddyna     , hval_veasse   , cndonn)
+    else if (l_stat) then
+        call nsassp(list_func_acti, ds_material, ds_contact, ds_algorom,&
+                    hval_veasse   , cnpilo     , cndonn)
     else
-        ASSERT(.false.)
+        ASSERT(ASTER_FALSE)
     endif
 !
 end subroutine

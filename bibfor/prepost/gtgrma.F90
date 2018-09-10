@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,42 +16,48 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine gtgrma(main, nmgrma, lima, nbma)
+subroutine gtgrma(main, maax, nmgrma, lima, nbma)
 !
 
     implicit none
 #include "jeveux.h"
-#include "asterfort/jecrec.h"
-#include "asterfort/jecroc.h"
 #include "asterfort/jedema.h"
-#include "asterfort/jedetr.h"
-#include "asterfort/jeecra.h"
 #include "asterfort/jemarq.h"
+#include "asterfort/jenonu.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/jexnom.h"
-#include "asterfort/jexnum.h"
-#include "asterfort/wkvect.h"
 #include "asterfort/jelira.h"
 #include "asterfort/as_allocate.h"
+#include "asterfort/utmess.h"
 
-    character(len=8), intent(in) :: main
+    character(len=8), intent(in) :: main, maax
     character(len=24), intent(in) :: nmgrma
     integer, pointer :: lima(:)
     integer, intent(out) :: nbma
 ! -------------------------------------------------------------------------------------------------
 !   RECUPERATION DE LA LISTE DES NUMERO DE MAILLE DU GROUP NMGRMA
 ! -------------------------------------------------------------------------------------------------
-    integer :: jgrma, inc
+!   MAIN est présent uniquement pour afficher le maillage donné par l'utilisateur dans le message
+!   d'erreur
+! -------------------------------------------------------------------------------------------------
+    integer :: jgrma, inc, iret
+    character(len=24) :: valk(2)
 ! -------------------------------------------------------------------------------------------------
     call jemarq()
 !
-
-        call jelira(jexnom(main//'.GROUPEMA', nmgrma),'LONUTI',nbma)
-        call jeveuo(jexnom(main//'.GROUPEMA', nmgrma),'L',jgrma)
-        AS_ALLOCATE(vi=lima, size=nbma)
-        do inc=1, nbma
-            lima(inc)=zi(jgrma+inc-1)
-        end do
+    call jenonu(jexnom(main//'.GROUPEMA', nmgrma), iret)
+    if (iret .eq. 0) then
+        valk(1) = nmgrma
+        valk(2) = main
+        call utmess('F', 'MODELISA7_77', nk=2, valk=valk)
+    endif
+    
+    call jelira(jexnom(maax//'.GROUPEMA', nmgrma),'LONUTI',nbma)
+    call jeveuo(jexnom(maax//'.GROUPEMA', nmgrma),'L',jgrma)
+    AS_ALLOCATE(vi=lima, size=nbma)
+    do inc=1, nbma
+        lima(inc)=zi(jgrma+inc-1)
+    end do
 
 !
     call jedema()

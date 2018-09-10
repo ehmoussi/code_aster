@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -44,7 +44,8 @@ CHMAT=AFFE_MATERIAU(MAILLAGE=MAIL,
 #-----------------------------------------------------------------
 # CHAMP DE TEMPERATURE LINEAIRE => FLUX CONSTANT
 # ===============================================
-FTEMPL = FORMULE(NOM_PARA=('X','Y','Z'),VALE='2.*X +3.*Y + 4.*Z')
+FTEMPL = FORMULE(VALE='2.*X +3.*Y + 4.*Z',
+                 NOM_PARA=['X', 'Y', 'Z'],)
 #
 CHTEMPL = CREA_CHAMP(OPERATION='AFFE',
                     TYPE_CHAM='NOEU_TEMP_F',
@@ -706,7 +707,8 @@ TEST_RESU(RESU=(_F(GROUP_NO='D1',
 #-----------------------------------------------------------------
 # CHAMP DE TEMPERATURE QUADRATIQUE => FLUX LINEAIRE
 # ==================================================
-FTEMPQ = FORMULE(NOM_PARA=('X','Y','Z'),VALE='2.*X*X +3.*Y*Y + 4.*Z*Z')
+FTEMPQ = FORMULE(VALE='2.*X*X +3.*Y*Y + 4.*Z*Z',
+                 NOM_PARA=['X', 'Y', 'Z'],)
 #
 CHTEMPQ = CREA_CHAMP(OPERATION='AFFE',
                     TYPE_CHAM='NOEU_TEMP_F',

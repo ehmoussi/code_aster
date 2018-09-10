@@ -30,8 +30,8 @@
 #include "Supervis/CommandSyntax.h"
 #include "Supervis/ResultNaming.h"
 
-KinematicsLoadInstance::KinematicsLoadInstance():
-    DataStructure( ResultNaming::getNewResultName(), 19, "CHAR_CINE" ),
+KinematicsLoadInstance::KinematicsLoadInstance( const std::string& type ):
+    DataStructure( ResultNaming::getNewResultName(), 19, "CHAR_CINE" + type ),
     _supportModel( ModelPtr() ),
     _intParam( JeveuxVectorLong( getName() + ".AFCI" ) ),
     _charParam( JeveuxVectorChar8( getName() + ".AFCK" ) ),
@@ -41,20 +41,11 @@ KinematicsLoadInstance::KinematicsLoadInstance():
 
 bool KinematicsLoadInstance::build() throw ( std::runtime_error )
 {
-    std::string typSd = getType();
-    if ( _listOfDoubleImposedDisplacement.size() != 0 )
-        typSd.insert( 9, "_MECA" );
-    else if ( _listOfDoubleImposedTemperature.size() != 0 or 
-              _listOfFunctionImposedTemperature.size() != 0)
-        typSd.insert( 9, "_THER");
-    else
-        throw std::runtime_error( "KinematicsLoad empty" );
-    setType( typSd );
     std::string cmd = "AFFE_CHAR_CINE";
     if (_listOfFunctionImposedTemperature.size() != 0)
         cmd += "_F";
     CommandSyntax cmdSt( cmd );
-    cmdSt.setResult( ResultNaming::getCurrentName(), typSd );
+    cmdSt.setResult( ResultNaming::getCurrentName(), getType() );
 
     SyntaxMapContainer dict;
     if ( ! _supportModel )

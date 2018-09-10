@@ -87,6 +87,9 @@ def mon_include_ops(self, UNITE, INTERNE, TABLE, **kwargs):
 
 def mon_include_prod(self, TABLE, **kwargs):
     """Déclaration des concepts de sortie"""
+    if kwargs.get('__all__'):
+        return ([None], [table_sdaster])
+
     self.type_sdprod(TABLE, table_sdaster)
 
 MON_INCLUDE = MACRO(nom="MON_INCLUDE",

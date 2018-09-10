@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,11 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmrelp(modele         , numedd, mate       , carele    , comref    ,&
-                  ds_constitutive, lischa, fonact     , iterat    , ds_measure,&
-                  sdnume         , sddyna, ds_algopara, ds_contact, valinc    ,&
-                  solalg         , veelem, veasse     , ds_conv   , ldccvg)
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine nmrelp(model          , nume_dof , ds_material, cara_elem ,&
+                  ds_constitutive, list_load, list_func_acti     , iter_newt    , ds_measure,&
+                  sdnume         , sddyna   , ds_algopara, ds_contact, valinc    ,&
+                  solalg         , veelem   , veasse     , ds_conv   , ldccvg)
 !
 use NonLin_Datastructure_type
 !
@@ -34,14 +35,13 @@ implicit none
 #include "asterfort/infdbg.h"
 #include "asterfort/isfonc.h"
 #include "asterfort/jeveuo.h"
-#include "asterfort/nmadir.h"
 #include "asterfort/nmaint.h"
 #include "asterfort/nmcha0.h"
 #include "asterfort/nmchai.h"
 #include "asterfort/nmchex.h"
 #include "asterfort/nmchso.h"
 #include "asterfort/nmdebg.h"
-#include "asterfort/nmdiri.h"
+#include "asterfort/nonlinRForceCompute.h"
 #include "asterfort/nmfint.h"
 #include "asterfort/nmmaji.h"
 #include "asterfort/nmrebo.h"
@@ -52,22 +52,21 @@ implicit none
 #include "asterfort/vtcreb.h"
 #include "asterfort/vtzero.h"
 #include "asterfort/zbinit.h"
+#include "asterfort/nonlinSubStruCompute.h"
 #include "blas/daxpy.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-! aslint: disable=W1504
-!
-    integer :: fonact(*)
-    integer :: iterat, ldccvg
-    type(NL_DS_AlgoPara), intent(in) :: ds_algopara
-    type(NL_DS_Contact), intent(in) :: ds_contact
-    type(NL_DS_Measure), intent(inout) :: ds_measure
-    character(len=19) :: lischa, sddyna, sdnume
-    character(len=24) :: modele, numedd, mate, carele, comref
-    type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-    character(len=19) :: veelem(*), veasse(*)
-    character(len=19) :: solalg(*), valinc(*)
-    type(NL_DS_Conv), intent(inout) :: ds_conv
+integer :: list_func_acti(*)
+integer :: iter_newt, ldccvg
+type(NL_DS_AlgoPara), intent(in) :: ds_algopara
+type(NL_DS_Contact), intent(in) :: ds_contact
+type(NL_DS_Measure), intent(inout) :: ds_measure
+character(len=19) :: list_load, sddyna, sdnume
+type(NL_DS_Material), intent(in) :: ds_material
+character(len=24) :: model, nume_dof, cara_elem
+type(NL_DS_Constitutive), intent(in) :: ds_constitutive
+character(len=19) :: veelem(*), veasse(*)
+character(len=19) :: solalg(*), valinc(*)
+type(NL_DS_Conv), intent(inout) :: ds_conv
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -77,13 +76,12 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! IN  MODELE : MODELE
-! IN  NUMEDD : NUME_DDL
-! IN  MATE   : CHAMP MATERIAU
-! IN  CARELE : CARACTERISTIQUES DES ELEMENTS DE STRUCTURE
-! IN  COMREF : VARI_COM DE REFERENCE
+! In  model            : name of model
+! In  cara_elem        : name of elementary characteristics (field)
+! In  ds_material      : datastructure for material parameters
+! In  list_load        : name of datastructure for list of loads
+! In  nume_dof         : name of numbering object (NUME_DDL)
 ! In  ds_constitutive  : datastructure for constitutive laws management
-! IN  LISCHA : LISTE DES CHARGES
 ! IO  ds_measure       : datastructure for measure and statistics management
 ! IN  FONACT : FONCTIONNALITES ACTIVEES
 ! IN  ITERAT : NUMERO D'ITERATION DE NEWTON
@@ -119,9 +117,10 @@ implicit none
     character(len=19) :: depplu, sigplu, varplu, complu
     character(len=19) :: sigplt, varplt, depplt
     character(len=19) :: vefint, vediri
-    character(len=19) :: cnfint, cndiri, cnfext
+    character(len=19) :: cnfint, cndiri, cnfext, cnsstr
     character(len=19) :: depdet, ddepla, depdel
     character(len=19) :: solalt(zsolal), valint(zvalin, 2)
+    character(len=24) :: mate, varc_refe
     aster_logical :: echec
     integer :: ifm, niv
     real(kind=8), pointer :: vale(:) => null()
@@ -135,12 +134,14 @@ implicit none
 !
 ! --- FONCTIONNALITES ACTIVEES
 !
-    lgrot = isfonc(fonact,'GD_ROTA')
-    lendo = isfonc(fonact,'ENDO_NO')
-    lnkry = isfonc(fonact,'NEWTON_KRYLOV')
+    lgrot = isfonc(list_func_acti,'GD_ROTA')
+    lendo = isfonc(list_func_acti,'ENDO_NO')
+    lnkry = isfonc(list_func_acti,'NEWTON_KRYLOV')
 !
 ! --- INITIALISATIONS
 !
+    mate      = ds_material%field_mate
+    varc_refe = ds_material%varc_refe
     opt = 1
     parmul = 3.d0
     fopt = r8maem()
@@ -171,6 +172,7 @@ implicit none
     call nmchex(veasse, 'VEASSE', 'CNFINT', cnfint)
     call nmchex(veasse, 'VEASSE', 'CNDIRI', cndiri)
     call nmchex(veasse, 'VEASSE', 'CNFEXT', cnfext)
+    call nmchex(veasse, 'VEASSE', 'CNSSTR', cnsstr)
     call nmchex(veelem, 'VEELEM', 'CNFINT', vefint)
     call nmchex(veelem, 'VEELEM', 'CNDIRI', vediri)
     call nmchex(solalg, 'SOLALG', 'DDEPLA', ddepla)
@@ -194,8 +196,8 @@ implicit none
     call vtzero(depplt)
     call copisd('CHAMP_GD', 'V', varplu, varplt)
     call copisd('CHAMP_GD', 'V', sigplu, sigplt)
-    call vtcreb('&&NMRECH.RESI', 'V', 'R', nume_ddlz = numedd, nb_equa_outz = neq)
-    call vtcreb('&&NMRECH.DIRI', 'V', 'R', nume_ddlz = numedd, nb_equa_outz = neq)
+    call vtcreb('&&NMRECH.RESI', 'V', 'R', nume_ddlz = nume_dof, nb_equa_outz = neq)
+    call vtcreb('&&NMRECH.DIRI', 'V', 'R', nume_ddlz = nume_dof, nb_equa_outz = neq)
 !
 ! --- CONSTRUCTION DES VARIABLES CHAPEAUX
 !
@@ -211,7 +213,8 @@ implicit none
 !
 ! --- CALCUL DE F(RHO=0)
 !
-    call nmrecz(numedd, cndiri, cnfint, cnfext, ddepla,&
+    call nmrecz(nume_dof, ds_contact, list_func_acti, &
+                cndiri, cnfint, cnfext, cnsstr, ddepla,&
                 f0)
 !
     if (niv .ge. 2) then
@@ -250,17 +253,15 @@ implicit none
 !
 ! ----- CALCUL DE L'INCREMENT DE DEPLACEMENT TEMPORAIRE
 !
-        call nmmaji(numedd, lgrot, lendo, sdnume, rho,&
+        call nmmaji(nume_dof, lgrot, lendo, sdnume, rho,&
                     depdel, ddepla, depdet, 0)
-        call nmmaji(numedd, lgrot, lendo, sdnume, rho,&
+        call nmmaji(nume_dof, lgrot, lendo, sdnume, rho,&
                     depplu, ddepla, depplt, 1)
         if (lnkry) then
             call vlaxpy(1.d0-rho, ddepla, depdet)
             call vlaxpy(1.d0-rho, ddepla, depplt)
         endif
-!
-! ----- AFFICHAGE
-!
+! ----- Print
         if (niv .ge. 2) then
             write (ifm,*) '<MECANONLINE> ...... ITERATION <',iterho,'>'
             write (ifm,*) '<MECANONLINE> ...... RHO COURANT = ',rho
@@ -269,27 +270,18 @@ implicit none
             write (ifm,*) '<MECANONLINE> ...... INCREMENT DEPL. TOTAL'
             call nmdebg('VECT', depdet, 6)
         endif
-!
-! ----- REACTUALISATION DES FORCES INTERIEURES
-!
-        call nmfint(modele, mate  , carele, comref    , ds_constitutive,&
-                    fonact, iterat, sddyna, ds_measure, valint(1, act) ,&
-                    solalt, ldccvg, vefint)
-!
-! ----- ASSEMBLAGE DES FORCES INTERIEURES
-!
-        call nmaint(numedd, fonact, ds_contact, veasse, vefint,&
-                    cnfins(act), sdnume)
-!
-! ----- REACTUALISATION DES REACTIONS D'APPUI BT.LAMBDA
-!
-        call nmtime(ds_measure, 'Init'  , '2nd_Member')
-        call nmtime(ds_measure, 'Launch', '2nd_Member')
-        call nmdiri(modele, mate, carele, lischa, sddyna,&
-                    depplt, k19bla, k19bla, vediri)
-        call nmadir(numedd, fonact, ds_contact, veasse, vediri,&
-                    cndirs(act))
-        call nmtime(ds_measure, 'Stop', '2nd_Member')
+! ----- Update internal forces
+        call nmfint(model          , cara_elem      ,&
+                    ds_material    , ds_constitutive,&
+                    list_func_acti , iter_newt      , sddyna, ds_measure,&
+                    valint(1, act) , solalt         ,&
+                    vefint         , ldccvg   )
+        call nmaint(nume_dof, list_func_acti, sdnume,&
+                    vefint, cnfins(act))
+! ----- Update force for Dirichlet boundary conditions (dualized) - BT.LAMBDA
+        call nonlinRForceCompute(model   , ds_material, cara_elem, list_load,&
+                                 nume_dof, ds_measure , depplt,&
+                                 veelem  , cndiri_ = cndirs(act))
         if (niv .ge. 2) then
             write (ifm,*) '<MECANONLINE> ...... FORCES INTERNES'
             call nmdebg('VECT', cnfins(act), 6)
@@ -316,8 +308,8 @@ implicit none
 !
 ! ----- CALCUL DE F(RHO)
 !
-        call nmrecz(numedd, cndirs(act), cnfins(act), cnfext, ddepla,&
-                    f)
+        call nmrecz(nume_dof, ds_contact, list_func_acti, &
+                    cndirs(act), cnfins(act), cnfext, cnsstr, ddepla, f)
 !
         if (niv .ge. 2) then
             write (ifm,*) '<MECANONLINE> ... FONCTIONNELLE COURANTE: ',f
@@ -354,8 +346,7 @@ implicit none
 !
 ! --- AJUSTEMENT DE LA DIRECTION DE DESCENTE
 !
-    call daxpy(neq, rhoopt-1.d0, vale, 1, vale,&
-               1)
+    call daxpy(neq, rhoopt-1.d0, vale, 1, vale, 1)
 !
 ! --- RECUPERATION DES VARIABLES EN T+ SI NECESSAIRE
 !

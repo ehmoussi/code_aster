@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -231,9 +231,12 @@ TAB_N6=CREA_TABLE(RESU=_F(RESULTAT=MOGECOMP,
                         NOEUD='NO131',
                         ),)                           
                            
-extrX=FORMULE(NOM_PARA=('DX'),VALE='DX',)
-extrY=FORMULE(NOM_PARA=('DY'),VALE='DY',)
-extrZ=FORMULE(NOM_PARA=('DZ'),VALE='DZ',)
+extrX = FORMULE(VALE='DX',
+                NOM_PARA='DX',)
+extrY = FORMULE(VALE='DY',
+                NOM_PARA='DY',)
+extrZ = FORMULE(VALE='DZ',
+                NOM_PARA='DZ',)
 
 TAB_N1=CALC_TABLE(reuse=TAB_N1,
                   TABLE=TAB_N1,
@@ -366,12 +369,12 @@ TAB_TOT=CALC_TABLE(TABLE=TAB_N1,
                              NOM_PARA='NUME_ORDRE',
                              TABLE=TAB_N6,),),)
                                                           
-reln1=FORMULE(NOM_PARA=('N1X','N1Y','N1Z','N4X','N4Y','N4Z'),
-                VALE='( ( (N1X-N4X)**2 + (N1Y-N4Y)**2 + (N1Z-N4Z)**2 )**(0.5) /(N1X**2+N1Y**2+N1Z**2)**0.5    )',)
-reln2=FORMULE(NOM_PARA=('N2X','N2Y','N2Z','N5X','N5Y','N5Z'),
-                VALE='( ( (N2X-N5X)**2 + (N2Y-N5Y)**2 + (N2Z-N5Z)**2 )**(0.5) /(N2X**2+N2Y**2+N2Z**2)**0.5    )',)
-reln3=FORMULE(NOM_PARA=('N3X','N3Y','N3Z','N6X','N6Y','N6Z'),
-                VALE='( ( (N3X-N6X)**2 + (N3Y-N6Y)**2 + (N3Z-N6Z)**2 )**(0.5) /(N3X**2+N3Y**2+N3Z**2)**0.5    )',)
+reln1 = FORMULE(VALE='( ( (N1X-N4X)**2 + (N1Y-N4Y)**2 + (N1Z-N4Z)**2 )**(0.5) /(N1X**2+N1Y**2+N1Z**2)**0.5    )',
+                NOM_PARA=['N1X', 'N1Y', 'N1Z', 'N4X', 'N4Y', 'N4Z'],)
+reln2 = FORMULE(VALE='( ( (N2X-N5X)**2 + (N2Y-N5Y)**2 + (N2Z-N5Z)**2 )**(0.5) /(N2X**2+N2Y**2+N2Z**2)**0.5    )',
+                NOM_PARA=['N2X', 'N2Y', 'N2Z', 'N5X', 'N5Y', 'N5Z'],)
+reln3 = FORMULE(VALE='( ( (N3X-N6X)**2 + (N3Y-N6Y)**2 + (N3Z-N6Z)**2 )**(0.5) /(N3X**2+N3Y**2+N3Z**2)**0.5    )',
+                NOM_PARA=['N3X', 'N3Y', 'N3Z', 'N6X', 'N6Y', 'N6Z'],)
 
 TAB_REL=CALC_TABLE(TABLE=TAB_TOT,
                   ACTION=(_F(OPERATION='OPER',

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -25,16 +25,17 @@ loi = LoiComportement(
     nom            = 'DRUCK_PRAGER',
     lc_type        = ('MECANIQUE',),
     doc            =   """Loi de Drucker_Prager, associée, pour la mécanique des sols (cf. [R7.01.16] pour plus de détails).
-   On suppose toutefois que le coefficient de dilatation thermique est constant. L'écrouissage peut être linéaire ou parabolique."""            ,
+   On suppose toutefois que le coefficient de dilatation thermique est constant. L'écrouissage peut être linéaire ou parabolique."""              ,
     num_lc         = 16,
     nb_vari        = 3,
     nom_vari       = ('EPSPEQ','EPSPVOL','INDIPLAS',),
     mc_mater       = ('ELAS','DRUCKER_PRAGER',),
-    modelisation   = ('3D','AXIS','D_PLAN','GRADEPSI',),
+    modelisation   = ('3D','AXIS','D_PLAN',),
     deformation    = ('PETIT','PETIT_REAC','GROT_GDEP',),
     algo_inte      = ('ANALYTIQUE',),
     type_matr_tang = ('PERTURBATION','VERIFICATION',),
     proprietes     = None,
     syme_matr_tang = ('Yes',),
     exte_vari      = None,
+    deform_ldc     = ('OLD',),
 )

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,16 +15,15 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine deprecated_material(mater)
 !
 implicit none
+!
 #include "asterfort/assert.h"
 #include "asterfort/utmess.h"
 !
-! person_in_charge: josselin.delmas at edf.fr
-!
-    character(len=*), intent(in) :: mater
+character(len=*), intent(in) :: mater
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -43,18 +42,15 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-!    Replace XXX by deprecated material name
     if (mater .eq. 'XXX') then
-        vali = 13
-        valk    = "Le materiau 'XXX'"
-
+        vali = 14
+        valk = "Le materiau 'XXX'"
     else
          goto 999
-
     endif
-
+!
     call utmess('A', 'SUPERVIS_9', sk = valk, si = vali)
-
+!
 999 continue
 !
 end subroutine

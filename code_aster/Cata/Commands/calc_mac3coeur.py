@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -25,6 +25,9 @@ from code_aster.Cata.Commons import *
 
 
 def calc_mac3coeur_prod(self,RESU_DEF,**args):
+    if args.get('__all__'):
+        return ([evol_noli], [None, evol_noli])
+
     if RESU_DEF:
         self.type_sdprod(RESU_DEF,evol_noli)
     return evol_noli
@@ -37,8 +40,8 @@ CALC_MAC3COEUR = MACRO(nom="CALC_MAC3COEUR",
          # TYPE DE COEUR A CONSIDERER
          TABLE_N      = SIMP(statut='o',typ=table_sdaster),         # TABLE INITIALE DES DAMAC A L INSTANT N
          MAILLAGE_N   = SIMP(statut='f',typ=maillage_sdaster),      # MAILLAGE EN ATTENDANT MIEUX ???
-         RESU_DEF     = SIMP(statut='f',typ=CO,defaut=None),
-         FLUENCE_CYCLE = SIMP(statut='o',typ='R',max=1,defaut=0.),
+         RESU_DEF     = SIMP(statut='f',typ=CO),
+         FLUENCE_CYCLE = SIMP(statut='f',typ='R',max=1,defaut=0.),
 
          ETAT_INITIAL = FACT(statut='f',max=1,
                           fr=tr("Estimation d'un etat initial a partir d un DAMAC"),

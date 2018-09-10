@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -28,6 +28,8 @@ def recu_fonction_prod(RESULTAT=None,TABLE=None,RESU_GENE=None,
                        INTE_SPEC=None,NOEUD_J=None,NUME_ORDRE_J=None,
                        NOM_CMP_J=None,NOM_CMP_I=None,NUME_ORDRE_I=None,NOEUD_I=None,
                        NOM_PARA_TABL=None,PARA_Y=None,**args):
+    if args.get('__all__'):
+        return (fonction_c, fonction_sdaster)
 
     if AsType(RESULTAT) == dyna_harmo:
         return fonction_c
@@ -84,7 +86,7 @@ RECU_FONCTION=OPER(nom="RECU_FONCTION",op=90,sd_prod=recu_fonction_prod,
            NUME_MODE       =SIMP(statut='o',typ='I' ),
            PARA_X          =SIMP(statut='o',typ='TXM',into=("VITE_FLU","NB_CONNORS") ),
            b_connors = BLOC ( condition = """equal_to("PARA_X", 'NB_CONNORS')""",
-               PARA_Y      =SIMP(statut='o',typ='TXM',into=("VITE_CRIT",) ),),
+               PARA_Y      =SIMP(statut='o',typ='TXM',into=("VITE_CRIT","INSTAB_EDF","INSTAB_TOUT_CMP") ),),
            b_cdck    = BLOC ( condition = """equal_to("PARA_X", 'VITE_FLU')""",
                               regles=(UN_PARMI('TOUT_ORDRE','NUME_ORDRE'),),
                TOUT_ORDRE  =SIMP(statut='f',typ='TXM',into=("OUI",) ),
@@ -267,7 +269,7 @@ RECU_FONCTION=OPER(nom="RECU_FONCTION",op=90,sd_prod=recu_fonction_prod,
 # ======= SURCHARGE DES ATTRIBUTS =================================================
          NOM_PARA        =SIMP(statut='f',typ='TXM', into=C_PARA_FONCTION() ),
          NOM_RESU        =SIMP(statut='f',typ='TXM' ),
-         INTERPOL        =SIMP(statut='f',typ='TXM',max=2,into=("NON","LIN","LOG") ),
+         INTERPOL        =SIMP(statut='f',typ='TXM',max=2,into=("LIN","LOG") ),
          PROL_DROITE     =SIMP(statut='f',typ='TXM',into=("CONSTANT","LINEAIRE","EXCLU") ),
          PROL_GAUCHE     =SIMP(statut='f',typ='TXM',into=("CONSTANT","LINEAIRE","EXCLU") ),
 

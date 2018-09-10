@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -79,13 +79,13 @@ subroutine dtmprep_noli_flam(sd_dtm_, sd_nl_, icomp)
     integer           :: ino1, ino2, ind1, ind2, nbmode
     integer           :: info, vali, j, neq, mxlevel
     integer           :: nbchoc, nexcit, nl_type, tomove, k
-    integer           :: cntr
+    integer           :: cntr, n2
 !
     real(kind=8)      :: r8bid, gap, xjeu, sina, cosa
     real(kind=8)      :: sinb, cosb, sing, cosg, valr(10)
     real(kind=8)      :: kn, dist_no1, dist_no2, ddpilo(3), dpiglo(6)
-    real(kind=8)      :: dpiloc(6), one, fn_crit, fn_postbuck, kn_postbuck
-    real(kind=8)      :: rap
+    real(kind=8)      :: dpiloc(6), one, fn_crit, fn_postbuck, damp_normal
+    real(kind=8)      :: delta_u, def1, deft0, deft1, rigi1
 !
     complex(kind=8)   :: cbid
 !
@@ -112,8 +112,16 @@ subroutine dtmprep_noli_flam(sd_dtm_, sd_nl_, icomp)
     real(kind=8)     , pointer  :: origob(:)         => null()
     real(kind=8)     , pointer  :: bmodal_v(:)       => null()
     real(kind=8)     , pointer  :: ps1del_v(:)       => null()
+    real(kind=8)     , pointer  :: def(:)           => null()
+    real(kind=8)     , pointer  :: rigi(:)           => null()
+    real(kind=8)     , pointer  :: deft(:)           => null()
+
     character(len=8) , pointer  :: noeud(:)          => null()
 !
+
+
+
+
 #define ps1del(m,n) ps1del_v((n-1)*neq+m)
 #define bmodal(m,n) bmodal_v((n-1)*neq+m)
 !
@@ -303,26 +311,76 @@ subroutine dtmprep_noli_flam(sd_dtm_, sd_nl_, icomp)
     call getvr8(motfac, 'RIGI_NOR', iocc=icomp, scal=kn, nbret=n1)
     if (n1.gt.0) call nlsav(sd_nl, _STIF_NORMAL, 1, iocc=i, rscal=kn)
 
+    if (kn.le.0.d0) then
+        call utmess('F', 'ALGORITH5_40')
+    endif
+
     call nlsav(sd_nl, _BUCKLING_LIMIT_FORCE, 1, iocc=i, rscal=0.d0)
     call getvr8(motfac, 'FNOR_CRIT', iocc=icomp, scal=fn_crit, nbret=n1)
     if (n1.gt.0) call nlsav(sd_nl, _BUCKLING_LIMIT_FORCE, 1, iocc=i, rscal=fn_crit)
-    
+
+    call nlsav(sd_nl, _DAMP_NORMAL, 1, iocc=i, rscal=0.d0)
+    call getvr8(motfac, 'AMOR_NOR', iocc=icomp, scal=damp_normal, nbret=n1)
+    if (n1.gt.0) call nlsav(sd_nl, _DAMP_NORMAL, 1, iocc=i, rscal=damp_normal)
+
     call nlsav(sd_nl, _BUCKLING_POST_PALIER_FORCE, 1, iocc=i, rscal=0.d0)
     call getvr8(motfac, 'FNOR_POST_FL', iocc=icomp, scal=fn_postbuck, nbret=n1)
     if (n1.gt.0) call nlsav(sd_nl, _BUCKLING_POST_PALIER_FORCE, 1, iocc=i, rscal=fn_postbuck)
     
-    call nlsav(sd_nl, _BUCKLING_POST_STIFFNESS, 1, iocc=i, rscal=0.d0)
-    call getvr8(motfac, 'RIGI_NOR_POST_FL', iocc=icomp, scal=kn_postbuck, nbret=n1)
-    if (n1.gt.0) call nlsav(sd_nl, _BUCKLING_POST_STIFFNESS, 1, iocc=i, rscal=kn_postbuck)
+    call nlsav(sd_nl, _BUCKLING_DEF, 1, iocc=i, rscal=0.d0)
+    call getvr8(motfac, 'ENFO_FL', iocc=icomp, scal=delta_u, nbret=n1)
+    if (n1.gt.0) call nlsav(sd_nl, _BUCKLING_DEF, 1, iocc=i, rscal=delta_u)
 
-    if ((kn.le.0.d0).or.(kn_postbuck.le.0.d0)) then
-        call utmess('F', 'ALGORITH5_40')
-    else
-        rap = (fn_crit/kn)-(fn_postbuck/kn_postbuck)
-        if (rap .lt. 0.d0) then
-            call utmess('F', 'ALGORITH5_41')
-        endif
+    call getvr8(motfac, 'LARG_PLAT', iocc=icomp, scal=def1, nbret=n1)
+
+    deft0 = fn_crit/kn+def1
+    call nlsav(sd_nl, _BUCKLING_DEF_TOT_0, 1, iocc=i, rscal=deft0)
+
+    deft1 = deft0 + delta_u
+    rigi1=fn_postbuck/(deft1-def1)
+
+    call getvr8(motfac, 'DEPL_POST_FL', iocc=icomp, nbval=0, nbret=n1)
+    call nlinivec(sd_nl, _BUCKLING_DEF_PLA, (-n1+1), iocc=i, vr=def)
+    def(1)=def1
+
+  
+    if (n1.lt.0) then
+       call getvr8(motfac, 'DEPL_POST_FL', iocc=icomp, nbval=-n1, vect=def(2:(-n1+1))) 
+       do j= 1,size(def)-1
+          if (def(j).gt.def(j+1)) then
+             call utmess('F', 'ALGORITH5_84') 
+          endif
+       enddo
     endif
+
+    call getvr8(motfac, 'RIGI_POST_FL', iocc=icomp, nbval=0, nbret=n2)
+    call nlinivec(sd_nl, _BUCKLING_RIGI_NOR, (-n1+1), iocc=i, vr=rigi)
+    rigi(1)=rigi1
+    if (n2.lt.0) then
+       call getvr8(motfac, 'RIGI_POST_FL', iocc=icomp, nbval=-n2, vect=rigi(2:(-n2+1)))
+
+       do j= 1,size(rigi)
+          if (def(j).lt.0.d0) then
+             call utmess('F', 'ALGORITH5_40') 
+          endif
+       enddo
+    endif
+
+    if (n2.ne.n1) then
+        call utmess('F', 'ALGORITH5_41') 
+    endif
+
+    call nlinivec(sd_nl, _BUCKLING_DEF_TOT, (-n1+1), iocc=i, vr=deft)
+    do j= 1,size(def)
+        deft(j)=def(j)+fn_postbuck/rigi(j)
+    enddo
+
+    do j= 1,size(deft)-1
+       if (deft(j).gt.deft(j+1)) then
+          call utmess('F', 'ALGORITH5_85') 
+       endif
+    enddo
+
 
     call getvid(motfac, 'OBSTACLE', iocc=icomp, scal=obst_typ, nbret=n1)
 
@@ -500,6 +558,7 @@ subroutine dtmprep_noli_flam(sd_dtm_, sd_nl_, icomp)
     call nlsav(sd_nl, _NB_FLAMB, 1, iscal = nbbuck)
 !
     AS_DEALLOCATE(vi=ddlcho)
+
 !
     call jedema()
 end subroutine

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -44,9 +44,13 @@ eps    = 1.E-5
 # CLAVAGE EN FONCTION DU TEMPS
 cla_ins=DEFI_FONCTION(NOM_PARA='INST',VALE=( 0.,-1. , i_clav-eps,-1 , i_clav,1. , i_clav+eps,-1 ,  tfin,-1.));
 # CLAVAGE EN FONCTION DE L'ESPACE
-cla_y = FORMULE(NOM_PARA=('Y',),VALE='5.0E4');
+cla_y = FORMULE(VALE='5.0E4',
+                NOM_PARA='Y',)
 # CLAVAGE FONCTION DU TEMPS ET DE L'ESPACE
-fonc_cla = FORMULE(NOM_PARA=('Y','INST'),VALE='cla_y(Y)*cla_ins(INST)');
+fonc_cla = FORMULE(VALE='cla_y(Y)*cla_ins(INST)',
+                   cla_y=cla_y,
+                   cla_ins=cla_ins,
+                   NOM_PARA=['Y', 'INST'],)
 
 
 ##################################

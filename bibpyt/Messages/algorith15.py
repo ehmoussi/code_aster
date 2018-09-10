@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,8 +17,6 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: josselin.delmas at edf.fr
-
 cata_msg = {
 
     1 : _(u"""
@@ -28,9 +26,10 @@ cata_msg = {
 """),
 
     2 : _(u"""
- arrêt sur dimension matrice TETA incorrecte
- dimension effective :  %(i1)d
- dimension en argument:  %(i2)d
+La dimension de la matrice de changement de base est incorrecte ;
+
+- dimension effective   :  %(i1)d
+- dimension en argument :  %(i2)d
 """),
 
     3 : _(u"""
@@ -65,7 +64,7 @@ cata_msg = {
 
     9 : _(u"""
   arrêt pour cause de ddls interdits :
-  seules les composantes DX, DY, DZ, DRX, DRY, DRZ sont autorisées 
+  seules les composantes DX, DY, DZ, DRX, DRY, DRZ sont autorisées
 """),
 
     10 : _(u"""
@@ -161,7 +160,7 @@ On a %(i1)d. Il faudrait un nombre supérieur à :  %(r1)f
 
 
     45 : _(u"""
-  on ne trouve pas 
+  on ne trouve pas
 Ce message est un message d'erreur développeur.
 Contactez le support technique.
 """),
@@ -369,26 +368,7 @@ Contactez le support technique.
 
 
 
-    95 : _(u"""
- l'entrée d'amortissements réduits est incompatible
- avec des matrices de type  %(k1)s
- Il faut des matrices de type MATR_ASSE_GENE_*
-"""),
 
-    96 : _(u"""
- le nombre d'amortissements réduits est trop grand
- le nombre de modes propres vaut  %(i1)d
- et le nombre de coefficients :  %(i2)d
- on ne garde donc que les  %(i3)d premiers coefficients
-
-"""),
-
-    97 : _(u"""
- le nombre d'amortissements réduits est insuffisant
- il en manque :  %(i1)d
- car le nombre de modes vaut :  %(i2)d
- on rajoute  %(i3)d amortissement réduits avec la valeur du dernier mode propre.
-"""),
 
     98 : _(u"""
  incohérence dans le DATASET 58

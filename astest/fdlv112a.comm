@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -20,12 +20,7 @@
 # FLUIDES INCOMPRESSIBLES - MASSES AJOUTEES.
 
 
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'), DEBUG=_F(SDVERI='OUI'),
-      IGNORE_ALARM=('MODELE1_63','MODELE1_64'))
-
-# <MODELE1_63> : DANS UN MODELE, IL EXISTE DES ELEMENTS DE TYPE "BORD" QUI N'ONT PAS DE VOISIN AVEC RIGIDITE
-# <MODELE1_64> : DANS UN MODELE, IL N'Y A AUCUN ELEMENT AVEC AVEC RIGIDITE
-#  LE MODELE PROVOQUANT CES ALARMES EST UN MODELE D'INTERFACE
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'), DEBUG=_F(SDVERI='OUI'),)
 
 LIST_IN = DEFI_LIST_REEL( DEBUT=0.,
                            INTERVALLE=_F(  JUSQU_A = 11.14,  PAS = 0.01))

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine dbr_chck_tr(ds_para_tr)
+subroutine dbr_chck_tr(ds_para_tr, l_reuse)
 !
 use Rom_Datastructure_type
 !
@@ -26,8 +26,10 @@ implicit none
 #include "asterf_types.h"
 #include "asterfort/utmess.h"
 #include "asterfort/dismoi.h"
+#include "asterfort/romModeChck.h"
 !
 type(ROM_DS_ParaDBR_TR), intent(in) :: ds_para_tr
+aster_logical, intent(in) :: l_reuse
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -38,23 +40,39 @@ type(ROM_DS_ParaDBR_TR), intent(in) :: ds_para_tr
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  ds_para_tr       : datastructure for truncation parameters
+! In  l_reuse          : .true. if reuse
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    character(len=8) :: model_rom, model_init
-    character(len=8) :: mesh_rom, mesh_init
+    character(len=8) :: model_rom, model_mode
+    character(len=8) :: mesh_rom, mesh_mode, base_init
+    type(ROM_DS_Field) :: ds_mode
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    model_init = ds_para_tr%ds_empi_init%model
+    ds_mode    = ds_para_tr%ds_empi_init%ds_mode
+    model_mode = ds_mode%model
+    mesh_mode  = ds_mode%mesh
     model_rom  = ds_para_tr%model_rom
-    mesh_init  = ds_para_tr%ds_empi_init%mesh
     call dismoi('NOM_MAILLA', model_rom, 'MODELE'  , repk = mesh_rom)
-    if (mesh_init .ne. mesh_rom) then
-        call utmess('F', 'ROM6_12', nk = 2, valk = [mesh_init, mesh_rom])
+    if (mesh_mode .ne. mesh_rom) then
+        call utmess('F', 'ROM6_12')
     endif
-    if (model_init .eq. model_rom) then
+    if (model_mode .eq. model_rom) then
         call utmess('F', 'ROM6_13')
+    endif
+!
+! - Check empiric mode
+!
+    call romModeChck(ds_mode)
+!
+! - No reuse:
+!
+    base_init  = ds_para_tr%base_init
+    if (l_reuse) then
+        if (base_init .ne. ' ') then
+            call utmess('F', 'ROM6_40')
+        endif
     endif
 !
 end subroutine

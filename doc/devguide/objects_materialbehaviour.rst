@@ -47,15 +47,6 @@
 
 
 ================================================================================
-:py:class:`~code_aster.Objects.BetonBurgerFpMaterialBehaviour` object
-================================================================================
-
-.. autoclass:: code_aster.Objects.BetonBurgerFpMaterialBehaviour
-   :show-inheritance:
-   :members:
-
-
-================================================================================
 :py:class:`~code_aster.Objects.BetonDoubleDpMaterialBehaviour` object
 ================================================================================
 
@@ -267,6 +258,15 @@
 ================================================================================
 
 .. autoclass:: code_aster.Objects.DisEcroCineMaterialBehaviour
+   :show-inheritance:
+   :members:
+
+
+================================================================================
+:py:class:`~code_aster.Objects.DisEcroTracMaterialBehaviour` object
+================================================================================
+
+.. autoclass:: code_aster.Objects.DisEcroTracMaterialBehaviour
    :show-inheritance:
    :members:
 
@@ -848,6 +848,15 @@
 
 
 ================================================================================
+:py:class:`~code_aster.Objects.MaterialBehaviour` object
+================================================================================
+
+.. autoclass:: code_aster.Objects.MaterialBehaviour
+   :show-inheritance:
+   :members:
+
+
+================================================================================
 :py:class:`~code_aster.Objects.MazarsFoMaterialBehaviour` object
 ================================================================================
 
@@ -1302,6 +1311,15 @@
 ================================================================================
 
 .. autoclass:: code_aster.Objects.TherOrthMaterialBehaviour
+   :show-inheritance:
+   :members:
+
+
+================================================================================
+:py:class:`~code_aster.Objects.ThmAirDissMaterialBehaviour` object
+================================================================================
+
+.. autoclass:: code_aster.Objects.ThmAirDissMaterialBehaviour
    :show-inheritance:
    :members:
 

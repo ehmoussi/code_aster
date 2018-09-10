@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -57,7 +57,12 @@ ACIER[1]=DEFI_MATERIAU(ELAS=_F(E=YOUNG,
 # courbe de traction equivalente
 
 # courbe R(p)
-Rdep = FORMULE(VALE='SY+SY*(YOUNG*p/APUI/SY)**(1./NPUI)',NOM_PARA='p',);
+Rdep = FORMULE(VALE='SY+SY*(YOUNG*p/APUI/SY)**(1./NPUI)',
+               SY=SY,
+               YOUNG=YOUNG,
+               APUI=APUI,
+               NPUI=NPUI,
+               NOM_PARA='p',)
 
 LISTE=DEFI_LIST_REEL(DEBUT=0.,INFO=1,
                         INTERVALLE=_F(JUSQU_A=1.,
@@ -71,7 +76,9 @@ Rdep2=CALC_FONC_INTERP(FONCTION=Rdep,
 
 TRdep=CREA_TABLE(FONCTION=_F(FONCTION=Rdep2,PARA=('p','SIGM')))
 
-EPSI = FORMULE(VALE='p+SIGM/YOUNG',NOM_PARA=('p','SIGM'),)
+EPSI = FORMULE(VALE='p+SIGM/YOUNG',
+               YOUNG=YOUNG,
+               NOM_PARA=['p', 'SIGM'],)
 
 TTRAC = CALC_TABLE(TABLE = TRdep,
 ACTION = _F (OPERATION = 'OPER',FORMULE = EPSI,NOM_PARA = ('EPSI')))

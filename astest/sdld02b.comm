@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -1224,9 +1224,11 @@ TEST_RESU(RESU=(_F(NUME_ORDRE=1,
 
 
 
-TY = FORMULE(NOM_PARA='Y',VALE='3. + ( 4. * Y  )')
+TY = FORMULE(VALE='3. + ( 4. * Y  )',
+             NOM_PARA='Y',)
 
-TX = FORMULE(NOM_PARA='X',VALE='1. + ( 2. * X  )')
+TX = FORMULE(VALE='1. + ( 2. * X  )',
+             NOM_PARA='X',)
 
 CHT=CREA_CHAMP( OPERATION='AFFE', TYPE_CHAM='NOEU_DEPL_F', MAILLAGE=MA,AFFE=(
                       _F(  NOEUD = ('P1',  'P3', 'P4','P6',),

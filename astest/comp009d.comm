@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -201,7 +201,9 @@ def verif(VAL_CAL,VAL_REF):
       diff=abs (VAL_CAL - VAL_REF)
    return diff
 
-VERIF=FORMULE(NOM_PARA=('VAL_REF', 'VAL_CAL'),VALE='verif(VAL_CAL,VAL_REF)')
+VERIF = FORMULE(VALE='verif(VAL_CAL,VAL_REF)',
+                verif=verif,
+                NOM_PARA=['VAL_REF', 'VAL_CAL'],)
             #  VALE='abs (VAL_CAL - VAL_REF)/max(VAL_REF')
 
 
@@ -268,7 +270,8 @@ for i in range(1,NCAL+1):
              # Faux en PAR_LOT='OUI' car la formule est evaluee avec le dernier i
              # NOR = FORMULE(NOM_PARA='N',VALE='YOUN(Ti)/YOUN(Tm)*N')
              # donc il faut faire au choix :
-              NOR = FORMULE(NOM_PARA='N',VALE='YOUN(%f)/YOUN(%f)*N' % (Ti, Tm))
+              NOR = FORMULE(NOM_PARA='N',VALE='YOUN(%f)/YOUN(%f)*N' % (Ti, Tm),
+                            YOUN=YOUN)
              # ou bien :
              # NOR = FORMULE(NOM_PARA='N',VALE='YOUN(%(Ti)f)/YOUN(%(Tm)f)*N' \
              #    % { 'Ti' : Ti, 'Tm' : Tm })
@@ -287,7 +290,8 @@ for i in range(1,NCAL+1):
                                 NOM_CMP_RESU = ('N')))
 
               # idem NOR CORCIN = FORMULE(NOM_PARA='V1',VALE='DSDE(Ti)/DSDE(Tm)*V1')
-              CORCIN = FORMULE(NOM_PARA='V1',VALE='DSDE(%f)/DSDE(%f)*V1' % (Ti, Tm))
+              CORCIN = FORMULE(NOM_PARA='V1',VALE='DSDE(%f)/DSDE(%f)*V1' % (Ti, Tm),
+                               DSDE=DSDE)
 
               VINT1=CREA_CHAMP(OPERATION='AFFE', TYPE_CHAM='ELGA_NEUT_F',
                               MODELE=MOMECA,  PROL_ZERO='OUI',   INFO=1,

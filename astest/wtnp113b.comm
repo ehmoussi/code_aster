@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -134,14 +134,16 @@ LI1=DEFI_LIST_REEL(DEBUT=1.E-5,
 #
 # PRESSION CAPILLAIRE S(PC)
 #
-SL = FORMULE(NOM_PARA='PCAP',VALE='0.999*(0.85/(1+(6.5E-8*PCAP)**1.49)**0.33+0.15)');
+SL = FORMULE(VALE='0.999*(0.85/(1+(6.5E-8*PCAP)**1.49)**0.33+0.15)',
+             NOM_PARA='PCAP',)
 SATU=CALC_FONC_INTERP(FONCTION=SL,
                       LIST_PARA=LI2,
                       NOM_PARA='PCAP',
                       PROL_DROITE='CONSTANT',
                       PROL_GAUCHE='CONSTANT',
                       INFO=2,);
-DSL = FORMULE(NOM_PARA='PCAP',VALE='- 0.999*(2.71E-8*(6.5E-8*PCAP)**0.49/((1+(6.5E-8*PCAP)**1.49)**1.33))');
+DSL = FORMULE(VALE='- 0.999*(2.71E-8*(6.5E-8*PCAP)**0.49/((1+(6.5E-8*PCAP)**1.49)**1.33))',
+              NOM_PARA='PCAP',)
 
 DSATU=CALC_FONC_INTERP(FONCTION=DSL,
                        LIST_PARA=LI2,
@@ -156,7 +158,8 @@ DSATU=CALC_FONC_INTERP(FONCTION=DSL,
 KINT=DEFI_CONSTANTE(    VALE=1.E-18)
 KH_INF=DEFI_CONSTANTE(    VALE=1.E20)
 
-PL = FORMULE(NOM_PARA='SAT',VALE='0.999*SAT**3');
+PL = FORMULE(VALE='0.999*SAT**3',
+             NOM_PARA='SAT',)
 
 PERML=CALC_FONC_INTERP(FONCTION=PL,
                        LIST_PARA=LI1,
@@ -165,7 +168,8 @@ PERML=CALC_FONC_INTERP(FONCTION=PL,
                        PROL_GAUCHE='CONSTANT',
                        INFO=2,);
 
-DPL= FORMULE(NOM_PARA='SAT',VALE='0.999*3*SAT**2');
+DPL = FORMULE(VALE='0.999*3*SAT**2',
+              NOM_PARA='SAT',)
 
 DPERML=CALC_FONC_INTERP(FONCTION=DPL,
                        LIST_PARA=LI1,

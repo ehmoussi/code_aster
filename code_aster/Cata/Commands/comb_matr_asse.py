@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -24,6 +24,11 @@ from code_aster.Cata.Commons import *
 
 
 def comb_matr_asse_prod(COMB_R,COMB_C,CALC_AMOR_GENE,**args):
+  if args.get('__all__'):
+      return (matr_asse_depl_c, matr_asse_gene_c, matr_asse_temp_c,
+              matr_asse_pres_c, matr_asse_depl_r, matr_asse_gene_r,
+              matr_asse_temp_r, matr_asse_pres_r)
+
   if COMB_C:
     type_mat = AsType(COMB_C[0]['MATR_ASSE'])
     if type_mat in  (matr_asse_depl_c,matr_asse_depl_r) : return matr_asse_depl_c
@@ -42,9 +47,15 @@ def comb_matr_asse_prod(COMB_R,COMB_C,CALC_AMOR_GENE,**args):
 
 COMB_MATR_ASSE=OPER(nom="COMB_MATR_ASSE",op=  31,sd_prod=comb_matr_asse_prod,
                     fr=tr("Effectuer la combinaison linéaire de matrices assemblées"),
-                    reentrant='f',
+                    reentrant='f:MATR_ASSE',
          regles=(UN_PARMI('COMB_R','COMB_C','CALC_AMOR_GENE' ),),
          reuse=SIMP(statut='c', typ=CO),
+         MATR_ASSE=SIMP(statut='f',
+                        typ=(matr_asse_depl_r, matr_asse_depl_c, matr_asse_temp_r,
+                             matr_asse_temp_c, matr_asse_pres_r, matr_asse_pres_c,
+                             matr_asse_gene_r, matr_asse_gene_c),
+                        fr=tr("Objet qui sera réutilisé pour l'opération")),
+
          COMB_R          =FACT(statut='f',max='**',
            PARTIE          =SIMP(statut='f',typ='TXM',into=("REEL","IMAG") ),
            MATR_ASSE       =SIMP(statut='o',typ=(matr_asse_depl_r,matr_asse_depl_c,matr_asse_temp_r,matr_asse_temp_c

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -180,7 +180,7 @@ REPONSE=DYNA_NON_LINE( reuse=REPONSE,
                 CRIT_STAB = _F(TYPE='FLAMBEMENT',
                                COEF_DIM_ESPACE=5,LIST_INST=L_INSTC,OPTION='BANDE',
                                CHAR_CRIT=(-100.0,100.),),
-                MODE_VIBR = _F(BANDE=(0.1,0.5),MATR_RIGI='ELASTIQUE',LIST_INST=L_INSTM),
+                MODE_VIBR = _F(OPTION='BANDE',FREQ=(0.1,0.5),MATR_RIGI='ELASTIQUE',LIST_INST=L_INSTM),
                 RECH_LINEAIRE=_F(METHODE='MIXTE',),
              );
 
@@ -242,7 +242,7 @@ REPONSEL=DYNA_NON_LINE( reuse=REPONSEL,
                 CRIT_STAB = _F(TYPE='FLAMBEMENT',
                                COEF_DIM_ESPACE=5,LIST_INST = L_INSTC,OPTION='BANDE',
                                CHAR_CRIT=(-100.0,100.),),
-                MODE_VIBR = _F(BANDE=(0.1,0.5),MATR_RIGI='ELASTIQUE',LIST_INST=L_INSTM),
+                MODE_VIBR = _F(OPTION='BANDE',FREQ=(0.1,0.5),MATR_RIGI='ELASTIQUE',LIST_INST=L_INSTM),
                 RECH_LINEAIRE=_F(METHODE='MIXTE',),
              );
 
@@ -301,7 +301,7 @@ REPONSEM=DYNA_NON_LINE( reuse=REPONSEM,
                 CRIT_STAB = _F(TYPE='FLAMBEMENT',
                                COEF_DIM_ESPACE=5,OPTION='BANDE',
                                CHAR_CRIT=(-100.0,100.),LIST_INST=L_INSTC),
-                MODE_VIBR = _F(BANDE=(0.1,0.5),MATR_RIGI='ELASTIQUE',LIST_INST=L_INSTM),
+                MODE_VIBR = _F(OPTION='BANDE',FREQ=(0.1,0.5),MATR_RIGI='ELASTIQUE',LIST_INST=L_INSTM),
                 RECH_LINEAIRE=_F(METHODE='MIXTE',),
              );
 #

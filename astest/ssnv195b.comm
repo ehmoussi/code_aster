@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -93,10 +93,12 @@ MODELEIN=AFFE_MODELE(MAILLAGE=MAILLAGE,
 
 
 
-LN1=FORMULE(NOM_PARA=('X','Y','Z'),VALE='Z-12.5');
+LN1 = FORMULE(VALE='Z-12.5',
+              NOM_PARA=['X', 'Y', 'Z'],)
 
 
-LN2=FORMULE(NOM_PARA=('X','Y','Z'),VALE='Z-37.5');
+LN2 = FORMULE(VALE='Z-37.5',
+              NOM_PARA=['X', 'Y', 'Z'],)
 
 
 FISS1=DEFI_FISS_XFEM(MAILLAGE=MAILLAGE,

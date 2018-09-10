@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,66 +15,48 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmlssv(mode, lischa, nbsst)
 ! person_in_charge: mickael.abbas at edf.fr
 !
-    implicit none
-#include "jeveux.h"
+subroutine nmlssv(list_load)
+!
+implicit none
+!
 #include "asterc/getfac.h"
 #include "asterfort/assert.h"
 #include "asterfort/getvid.h"
-#include "asterfort/jedema.h"
-#include "asterfort/jemarq.h"
 #include "asterfort/wkvect.h"
-    character(len=4) :: mode
-    integer :: nbsst
-    character(len=19) :: lischa
 !
-! ----------------------------------------------------------------------
+character(len=19), intent(in) :: list_load
+!
+! --------------------------------------------------------------------------------------------------
 !
 ! ROUTINE MECA_NON_LINE (CALCUL - SOUS-STRUCTURATION)
 !
 ! LECTURE ET PREPARATION POUR SOUS_STRUCT
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
+! In  list_load        : name of datastructure for list of loads
 !
-! IN  MODE   : TYPE d'OPERATION
-!              'LECT' LIT LE MOT-CLEF 'SOUS_STRUC'
-!              'INIT' CREE LE VECTEUR DES CHARGES POUR SOUS_STRUC
-! IN  LISCHA : SD L_CHARGES
-! OUT NBSST  : NOMBRE de SOUS-STRUCTURES
+! --------------------------------------------------------------------------------------------------
 !
+    character(len=24) :: lload_fcss
+    integer :: i, iret, nbsst
+    character(len=24), pointer :: v_lload_fcss(:) => null()
 !
+! --------------------------------------------------------------------------------------------------
 !
-!
-    character(len=24) :: fomul2
-    integer :: jfomu2
-    integer :: i, ibid
-!
-! ----------------------------------------------------------------------
-!
-    call jemarq()
-!
-    nbsst = 0
-    if (mode .eq. 'LECT') then
-        call getfac('SOUS_STRUC', nbsst)
-    else if (mode.eq.'INIT') then
-        call getfac('SOUS_STRUC', nbsst)
-        if (nbsst .gt. 0) then
-            fomul2 = lischa(1:19)//'.FCSS'
-            call wkvect(fomul2, 'V V K24', nbsst, jfomu2)
-            do 1 i = 1, nbsst
-                call getvid('SOUS_STRUC', 'FONC_MULT', iocc=i, scal=zk24(jfomu2+i-1), nbret=ibid)
-                if (ibid .eq. 0) then
-                    zk24(jfomu2+i-1) = '&&CONSTA'
-                endif
- 1          continue
-        endif
-    else
-        ASSERT(.false.)
+    nbsst      = 0
+    lload_fcss = list_load(1:19)//'.FCSS'
+    call getfac('SOUS_STRUC', nbsst)
+    if (nbsst .gt. 0) then
+        call wkvect(lload_fcss, 'V V K24', nbsst, vk24 = v_lload_fcss)
+        do i = 1, nbsst
+            call getvid('SOUS_STRUC', 'FONC_MULT', iocc=i, scal=v_lload_fcss(i), nbret=iret)
+            if (iret .eq. 0) then
+                v_lload_fcss(i) = '&&CONSTA'
+            endif
+        end do
     endif
-    call jedema()
 !
 end subroutine

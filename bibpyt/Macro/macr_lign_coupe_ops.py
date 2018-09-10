@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -918,19 +918,12 @@ def macr_lign_coupe_ops(self, LIGN_COUPE, RESULTAT=None, CHAM_GD=None,
 
     __macou = DEFI_GROUP(reuse=__macou, MAILLAGE=__macou, **motscles)
 
-    if RESULTAT.getType().lower() in ('evol_elas', 'evol_noli', 'mode_meca',
-                                     'comb_fourier', 'mult_elas', 'fourier_elas'):
-        __mocou = AFFE_MODELE(MAILLAGE=__macou,
-                              AFFE=_F(TOUT='OUI',
-                                      PHENOMENE='MECANIQUE',
-                                      MODELISATION='BARRE',),
-                              DISTRIBUTION=_F(METHODE='CENTRALISE'),
-                              )
-    elif RESULTAT.getType().lower() in ('evol_ther', 'evol_varc',):
-        __mocou = AFFE_MODELE(MAILLAGE=__macou,
-                              AFFE=_F(TOUT='OUI',
-                                      PHENOMENE='THERMIQUE',
-                                      MODELISATION='PLAN',),)
+
+    # issue27543 : l'utilisation d'un modèle n'est pas utile et elle
+    # engendrait dans le cas thermique l'émission des alarmes MODELE1_3 et MODELE1_53
+    # Dans le cas où il y aurait besoin de réintroduire les modèles, j'ai remplacé
+    # la modélisation PLAN par COQUE (laissée en commentaire) ce qui permet également
+    # de supprimer les alarmes.
 
     motscles = {}
     motscles.update(mcORDR)
@@ -949,16 +942,17 @@ def macr_lign_coupe_ops(self, LIGN_COUPE, RESULTAT=None, CHAM_GD=None,
 
     if (l_mode_meca_sans_modele == False):
         # on utilise le modèle pour projeter le champ
-        if RESULTAT != None:
-            MODELE_1 = RESULTAT.getModel()
-        elif CHAM_GD != None:
+        if CHAM_GD != None:
             MODELE_1 = MODELE
+        elif RESULTAT != None:
+            MODELE_1 = RESULTAT.getModel()
 
         __recou = PROJ_CHAMP(METHODE='COLLOCATION',
                              RESULTAT=RESULTAT,
                              MODELE_1=MODELE_1,
                              DISTANCE_MAX=m['DISTANCE_MAX'],
-                             MODELE_2=__mocou,
+                             # issue27543 #MODELE_2=__mocou,
+                             MAILLAGE_2=__macou,
                              TYPE_CHAM='NOEU',
                              NOM_CHAM=NOM_CHAM, **motscles)
 
@@ -974,7 +968,8 @@ def macr_lign_coupe_ops(self, LIGN_COUPE, RESULTAT=None, CHAM_GD=None,
                              RESULTAT=RESULTAT,
                              MAILLAGE_1=MAILLAGE_1,
                              DISTANCE_MAX=m['DISTANCE_MAX'],
-                             MODELE_2=__mocou,
+                             # issue27543 #MODELE_2=__mocou,
+                             MAILLAGE_2=__macou,
                              TYPE_CHAM='NOEU',
                              NOM_CHAM=NOM_CHAM, **motscles)
 

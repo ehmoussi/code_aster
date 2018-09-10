@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 
 subroutine indice1(i, k, l)
-! person_in_charge: etienne.grimal at edf.fr
+! person_in_charge: etienne.grimal@edf.fr
 !=====================================================================
 !     indices complementaires dans une matrice carre
 !=====================================================================

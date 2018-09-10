@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,7 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine cucrsd(mesh, nume_dof, ds_contact)
 !
 use NonLin_Datastructure_type
@@ -25,6 +25,7 @@ implicit none
 #include "jeveux.h"
 #include "asterfort/assert.h"
 #include "asterfort/cfcrma.h"
+#include "asterfort/cfdisl.h"
 #include "asterfort/cudisi.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/infdbg.h"
@@ -39,12 +40,13 @@ implicit none
 #include "asterfort/jexnum.h"
 #include "asterfort/posddl.h"
 #include "asterfort/utmess.h"
+#include "asterfort/vtcreb.h"
 #include "asterfort/wkvect.h"
 !
 !
-    character(len=8), intent(in) :: mesh
-    character(len=24), intent(in) :: nume_dof
-    type(NL_DS_Contact), intent(in) :: ds_contact
+character(len=8), intent(in) :: mesh
+character(len=24), intent(in) :: nume_dof
+type(NL_DS_Contact), intent(inout) :: ds_contact
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -56,7 +58,7 @@ implicit none
 !
 ! In  mesh             : name of mesh
 ! In  nume_dof         : name of numbering object (NUME_DDL)
-! In  ds_contact       : datastructure for contact management
+! IO  ds_contact       : datastructure for contact management
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -77,6 +79,9 @@ implicit none
     character(len=24) :: cm1a, coco, liac, mu, delt0, delta, liot
     integer :: jcoco, jliac, jmu, jdelt0, jdelta, jliot
 !
+    integer :: inoe
+    character(len=19) :: enat
+    aster_logical :: l_unil_pena
 ! --------------------------------------------------------------------------------------------------
 !
     call jemarq()
@@ -91,6 +96,7 @@ implicit none
     sdunil_solv = ds_contact%sdunil_solv
     mesh_nomnoe = mesh // '.NOMNOE'
     call dismoi('NB_EQUA', nume_dof, 'NUME_DDL', repi=neq)
+    l_unil_pena = cfdisl(ds_contact%sdcont_defi, 'UNIL_PENA')
 !
 ! --- VECTEUR AT.MU (FORCES NODALES)
 !
@@ -242,5 +248,26 @@ implicit none
 !
     call cfcrma(ncmpg, mesh, sdunil_solv)
 !
+! - Forces to solve
+!
+    call vtcreb(ds_contact%cnunil, 'V', 'R', nume_ddlz = nume_dof)
+    ds_contact%l_cnunil = ASTER_TRUE
+!
+! --- CAS DE LA PENALISATION - MATRICE ENAT
+!
+! ---   MATRICE STOCKEE CREUSE E_N*AT (POUR CONTACT PENALISE)
+! ---   TAILLE : NBENAT*30
+
+    if (l_unil_pena) then
+       enat = sdunil_solv(1:14)//'.ENAT'
+       call jecrec(enat, 'V V R', 'NU', 'DISPERSE', 'CONSTANT',&
+                nnocu)
+       call jeecra(enat, 'LONMAX', ival=30)
+       do inoe = 1, nnocu
+          call jecroc(jexnum(enat, inoe))
+       end do
+    endif
+!
+! ----------------------------------------------------------------------
     call jedema()
 end subroutine

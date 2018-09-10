@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -27,6 +27,9 @@ from code_aster.Cata.Commons import *
 def crea_table_prod(TYPE_TABLE, **args):
    """Typage du concept résultat
    """
+   if args.get('__all__'):
+       return (table_fonction, table_container, table_sdaster)
+
    if TYPE_TABLE == 'TABLE_FONCTION':
       return table_fonction
    elif TYPE_TABLE == 'TABLE_CONTENEUR':

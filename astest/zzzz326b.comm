@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -31,13 +31,13 @@ EP=AFFE_CARA_ELEM(MODELE=MO,
                              SECTION='CERCLE',
                              CARA=('R','EP'),
                              VALE=(10.,1.),
-                             TUYAU_NSEC = 4,
+                             TUYAU_NSEC = 8,
                              TUYAU_NCOU = 1,),
                           _F(GROUP_MA='GR2',
                              SECTION='CERCLE',
                              CARA=('R','EP'),
                              VALE=(10.,1.),
-                             TUYAU_NSEC = 6,
+                             TUYAU_NSEC = 8,
                              TUYAU_NCOU = 2,),),
                   ORIENTATION=(_F(GROUP_MA='GR2',
                                   CARA='ANGL_VRIL',

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -29,7 +29,12 @@ subroutine trcart(ific, nocc)
 #include "asterfort/getvr8.h"
 #include "asterfort/getvtx.h"
 #include "asterfort/jedema.h"
+#include "asterfort/jelira.h"
 #include "asterfort/jemarq.h"
+#include "asterfort/jeveuo.h"
+#include "asterfort/jexnom.h"
+#include "asterfort/jexnum.h"
+#include "asterfort/jenuno.h"
 #include "asterfort/lxlgut.h"
 #include "asterfort/utcmp1.h"
 #include "asterfort/utmess.h"
@@ -39,7 +44,6 @@ subroutine trcart(ific, nocc)
 #include "asterfort/tresu_tole.h"
     integer, intent(in) :: ific
     integer, intent(in) :: nocc
-! person_in_charge: jacques.pellet at edf.fr
 !     COMMANDE:  TEST_RESU
 !                MOT CLE FACTEUR "CARTE"
 ! ----------------------------------------------------------------------
@@ -48,6 +52,7 @@ subroutine trcart(ific, nocc)
     integer :: iocc, iret
     integer :: n1, n2, n3, n1r, n2r, n3r, ivari, n1a, n1b
     integer :: nl1, nl2, vali, valir
+    integer :: jnuma
     real(kind=8) :: epsi, epsir, valr, valrr
     complex(kind=8) :: valc, valcr
     character(len=1) :: typres
@@ -56,6 +61,7 @@ subroutine trcart(ific, nocc)
     character(len=11) :: motcle
     character(len=19) :: cham19
     character(len=16) :: tbtxt(2), tbref(2)
+    character(len=24) :: nogrma
     character(len=200) :: lign1, lign2
     integer :: iarg
     aster_logical :: lref
@@ -126,16 +132,30 @@ subroutine trcart(ific, nocc)
         call getvem(nomma, 'MAILLE', 'CARTE', 'MAILLE', iocc,&
                     iarg, 1, nomail, n1a)
         if (n1a.eq.0) then
-            call getvem(nomma, 'MAILLE', 'CARTE', 'GROUP_MA', iocc,&
-                    iarg, 1, nomail, n1b)
+            call getvem(nomma, 'GROUP_MA', 'CARTE', 'GROUP_MA', iocc,&
+                    iarg, 1, nogrma, n1b)
             ASSERT(n1b.eq.1)
+            call jelira(jexnom(nomma//'.GROUPEMA', nogrma),'LONUTI',ival=n1b)
+            if (n1b .ne. 1) call utmess('F', 'TEST0_20',sk=nogrma,si=n1b)
+            call jeveuo(jexnom(nomma//'.GROUPEMA', nogrma), 'L', jnuma)
+            call jenuno(jexnum(nomma//'.NOMMAI', zi(jnuma)), nomail)
         endif
-        nl1 = lxlgut(lign1)
-        nl2 = lxlgut(lign2)
-        lign1(1:nl1+16)=lign1(1:nl1-1)//' MAILLE'
-        lign2(1:nl2+16)=lign2(1:nl2-1)//' '//nomail
-        lign1(nl1+17:nl1+17)='.'
-        lign2(nl2+17:nl2+17)='.'
+!
+        if (n1a.ne.0) then
+            nl1 = lxlgut(lign1)
+            nl2 = lxlgut(lign2)
+            lign1(1:nl1+16)=lign1(1:nl1-1)//' MAILLE'
+            lign2(1:nl2+16)=lign2(1:nl2-1)//' '//nomail
+            lign1(nl1+17:nl1+17)='.'
+            lign2(nl2+17:nl2+17)='.'
+        else
+            nl1 = lxlgut(lign1)
+            nl2 = lxlgut(lign2)
+            lign1(1:nl1+16)=lign1(1:nl1-1)//' GROUP_MA'
+            lign2(1:nl2+16)=lign2(1:nl2-1)//' '//nogrma
+            lign1(nl1+17:nl1+17)='.'
+            lign2(nl2+17:nl2+17)='.'
+        endif
 !
 !
         call dismoi('NOM_GD', cham19, 'CHAMP', repk=nomgd)

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -40,8 +40,9 @@ DEFLIST =DEFI_LIST_INST(DEFI_LIST=_F(LIST_INST = INSTEL),
                                  SUBD_PAS=4,
                                  SUBD_PAS_MINI=0.000001,),)
 
-PRE_GMSH();
-MAILIN=LIRE_MAILLAGE(FORMAT="ASTER",);
+MAILIN = LIRE_MAILLAGE(FORMAT='GMSH',
+                       UNITE=19,
+                       )
 MAIL=CREA_MAILLAGE(MAILLAGE=MAILIN,
                    LINE_QUAD=_F(TOUT='OUI'),
                    );
@@ -170,9 +171,15 @@ def hv3(x,y) :
         if (x>=g) and (x<=d) and (y<=ah) : return 0.0
         else : return 0.
 
-VARI1 = FORMULE(NOM_PARA=('X','Y'),VALE='hv1(X,Y)')
-VARI2 = FORMULE(NOM_PARA=('X','Y'),VALE='hv2(X,Y)')
-VARI3 = FORMULE(NOM_PARA=('X','Y'),VALE='hv3(X,Y)')
+VARI1 = FORMULE(VALE='hv1(X,Y)',
+                hv1=hv1,
+                NOM_PARA=['X', 'Y'],)
+VARI2 = FORMULE(VALE='hv2(X,Y)',
+                hv2=hv2,
+                NOM_PARA=['X', 'Y'],)
+VARI3 = FORMULE(VALE='hv3(X,Y)',
+                hv3=hv3,
+                NOM_PARA=['X', 'Y'],)
 
 #CREATION DU CHAMPS DE VARIABLE INTERNES AUX PTS DE GAUSS (6 COMPOSANTES)
 
@@ -285,7 +292,10 @@ ckl=ck*(sqrt(pilc))
 
 
 
-F_FIC = FORMULE(NOM_PARA=('SIXX_G','SIXX_D'),VALE='KIA/(ckl*(SIXX_G+SIXX_D)/2.)')
+F_FIC = FORMULE(VALE='KIA/(ckl*(SIXX_G+SIXX_D)/2.)',
+                KIA=KIA,
+                ckl=ckl,
+                NOM_PARA=['SIXX_G', 'SIXX_D'],)
 SIGOFC=CALC_TABLE(TABLE=SIGC,
                   TITRE = ' ',
                   ACTION=(

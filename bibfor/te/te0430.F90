@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -201,7 +201,7 @@ subroutine te0430(option, nomte)
                             iret_ = iret, epsth_=epsthe)
                 if (iret .ne. 0) then
                     call tecael(iadzi, iazk24)
-                    call utmess('F', 'CALCULEL2_81', sk=zk24(iazk24-1+3))
+                    call utmess('S', 'CALCULEL2_81', sk=zk24(iazk24-1+3))
                 endif
                 nomres(1) = 'E'
                 call rcvalb(fami, kpg, 1, '+', zi(imate),&

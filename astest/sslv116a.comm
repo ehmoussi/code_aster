@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -554,7 +554,9 @@ KINI=POST_K1_K2_K3(FOND_FISS=FISS,
 #                                 CONFRONTATION DES RESULTATS SOUS FORME DE COURBE
 #-----------------------------------------------------------------------------------------------------------------------------
 # formule pour le calcul de l'angle en degre
-ANGLE=FORMULE(NOM_PARA=('ABSC_CURV'),VALE='ABSC_CURV/a * 180./pi')
+ANGLE = FORMULE(VALE='ABSC_CURV/a * 180./pi',
+                a=a,
+                NOM_PARA='ABSC_CURV',)
 #
 # ajout des colonnes 'angle'
 GREF=CALC_TABLE(TABLE=GREF,

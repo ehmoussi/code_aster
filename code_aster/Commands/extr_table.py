@@ -39,7 +39,7 @@ from ..Objects import Function
 from ..Objects import ElementaryVector
 from ..Objects import Table
 from ..Objects import GeneralizedAssemblyMatrixDouble
-from ..Objects import AssemblyMatrixDouble
+from ..Objects import ElementaryMatrix
 from ..Objects import Surface
 from ..Objects import MechanicalModeContainer
 from ..Objects import PCFieldOnMeshDouble, FieldOnElementsDouble
@@ -67,7 +67,7 @@ class ExtrTable(ExecuteCommand):
         elif keywords['TYPE_RESU'] =='MATR_ASSE_GENE_R':
             self.result = GeneralizedAssemblyMatrixDouble()
         elif keywords['TYPE_RESU'] =='MATR_ELEM_DEPL_R':
-            self.result = AssemblyMatrixDouble()
+            self.result = ElementaryMatrix()
         elif keywords['TYPE_RESU'] =='NAPPE_SDASTER':
             self.result = Surface()
         elif keywords['TYPE_RESU'] =='MODE_MECA':

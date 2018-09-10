@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -24,7 +24,8 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 
-RESOUDRE=OPER(nom="RESOUDRE",op=15,sd_prod=cham_no_sdaster,reentrant='f',
+RESOUDRE=OPER(nom="RESOUDRE",op=15,sd_prod=cham_no_sdaster,
+              reentrant='f:CHAM_NO',
                fr=tr("Résolution par méthode directe un système d'équations linéaires préalablement factorisé par FACT_LDLT"
                   "ou Résolution d'un système linéaire par la méthode du gradient conjugué préconditionné"),
          reuse=SIMP(statut='c', typ=CO),

@@ -34,8 +34,6 @@ out = 'build'
 
 import os
 import os.path as osp
-import zlib
-import base64
 from functools import partial
 from itertools import chain
 from waflib import Configure, Logs, Utils, Build, TaskGen, Task
@@ -131,6 +129,7 @@ def options(self):
     self.recurse('code_aster')
     self.recurse('bibcxx')
     self.recurse('bibc')
+    self.recurse('bibpyt')
     self.recurse('mfront')
     self.recurse('i18n')
     self.recurse('data')
@@ -145,16 +144,15 @@ def configure(self):
 
     # compute default prefix
     if not self.env.PREFIX:
-        suffix = osp.basename(self.options.out)
-        if not suffix:
-            suffix = 'std'
+        suffix = os.environ.get('WAF_SUFFIX', 'std')
         default_prefix = '../install/%s' % suffix
         self.env.PREFIX = osp.abspath(default_prefix)
     self.msg('Setting prefix to', self.env.PREFIX)
 
     self.load('ext_aster', tooldir='waftools')
-    if not self.options.use_config and os.environ.get('DEVTOOLS_COMPUTER_ID'):
-        suffix= osp.basename(self.options.out)
+    computer_id = os.environ.get('DEVTOOLS_COMPUTER_ID', 'None')
+    if not self.options.use_config and computer_id != 'None':
+        suffix = os.environ.get('WAF_SUFFIX', '')
         if suffix:
             suffix = '_' + suffix
         self.options.use_config = os.environ['DEVTOOLS_COMPUTER_ID'] + suffix
@@ -266,6 +264,14 @@ def build(self):
             osp.join(self.env.data_path or '', 'datg')]
     if self.env.install_tests:
         lsub.extend(['astest', osp.join(self.env.validation_path, 'astest')])
+    else:
+        dest = osp.join(self.env.ASTERDATADIR, 'tests')
+        if osp.exists(dest) and not osp.islink(dest):
+            Logs.warn("Symlink not created, {0!r} already exists "
+                      "(use '--install-tests' to update this directory)."
+                      .format(dest))
+        elif not osp.exists(dest):
+            self.symlink_as(dest, osp.abspath("astest"))
     for optional in lsub:
         if osp.exists(osp.join(optional, 'wscript')):
             self.recurse(optional)
@@ -343,10 +349,6 @@ def set_installdirs(self):
     if not self.env.LOCALEDIR:
         self.env.LOCALEDIR = osp.join(self.env.PREFIX, 'share', 'locale')
     self.env['ASTERLOCALEDIR'] = norm(self.env.LOCALEDIR)
-
-@Configure.conf
-def uncompress64(self, compressed):
-    return zlib.decompress(base64.decodestring(compressed))
 
 @Configure.conf
 def check_platform(self):

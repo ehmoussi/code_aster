@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -113,7 +113,7 @@ real(kind=8) :: instam, instap, sigm(2*ndim, npg), sign(6)
     real(kind=8) :: dfdi(nnop, ndim), pff(1+nfh+nfe*ndim**2, nnop, ndim)
     real(kind=8) :: def(6, nnop, ndim*(1+nfh+nfe*ndim))
     real(kind=8) :: elgeom(10, 27)
-    real(kind=8) :: fmm(3, 3), deplb1(3, 27), deplb2(3, 27)
+    real(kind=8) :: fmm(3, 3)
     real(kind=8) :: fk(27,3,3), dkdgl(27,3,3,3), ka, mu
     aster_logical :: grdepl, axi, cplan, resi, rigi
 !
@@ -158,11 +158,12 @@ real(kind=8) :: instam, instap, sigm(2*ndim, npg), sign(6)
 !
     jvariexte = nint(carcri(IVARIEXTE))
 !
-! - CALCUL DES ELEMENTS GEOMETRIQUES SPECIFIQUES LOIS DE COMPORTEMENT
-! - LES ARGUMENTS DFDIB, DEPLB1, DEPLB2 NE SERVENT PAS DANS CE CAS
-    call lcegeo(nno, npg, ipoids, ivf, idfde,&
-                zr(igeom), typmod, jvariexte, ndim,&
-                deplb1, deplb2)
+! - Compute intrinsic external state variables
+!
+    call lcegeo(nno, npg, ndim,&
+                ipoids, ivf, idfde,&
+                typmod, jvariexte, &
+                zr(igeom))
 !
     do n = 1, nnop
         call indent(n, ddls, ddlm, nnops, dec(n))

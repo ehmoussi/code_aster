@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,50 +17,24 @@
 ! --------------------------------------------------------------------
 
 subroutine lc0005(fami, kpg, ksp, ndim, imate,&
-                  compor, carcri, instam, instap, epsm,&
+                  compor, crit, instam, instap, epsm,&
                   deps, sigm, vim, option, angmas,&
                   sigp, vip, typmod, icomp,&
                   nvi, dsidep, codret)
 !
-implicit none
-!
-#include "asterfort/lcfrlo.h"
 !
 ! aslint: disable=W1504,W0104
-!
-    character(len=*), intent(in) :: fami
-    integer, intent(in) :: kpg
-    integer, intent(in) :: ksp
-    integer, intent(in) :: ndim
-    integer, intent(in) :: imate
-    character(len=16), intent(in) :: compor(*)
-    real(kind=8), intent(in) :: carcri(*)
-    real(kind=8), intent(in) :: instam
-    real(kind=8), intent(in) :: instap
-    real(kind=8), intent(in) :: epsm(*)
-    real(kind=8), intent(in) :: deps(*)
-    real(kind=8), intent(in) :: sigm(*)
-    real(kind=8), intent(in) :: vim(*)
-    character(len=16), intent(in) :: option
-    real(kind=8), intent(in) :: angmas(*)
-    real(kind=8), intent(out) :: sigp(*)
-    real(kind=8), intent(out) :: vip(*)
-    character(len=8), intent(in) :: typmod(*)
-    integer, intent(in) :: icomp
-    integer, intent(in) :: nvi
-    real(kind=8), intent(out) :: dsidep(*)
-    integer, intent(out) :: codret
-!
-! --------------------------------------------------------------------------------------------------
-!
-! Behaviour
-!
-! ENDO_FRAGILE
-!
-! --------------------------------------------------------------------------------------------------
-!
-    codret = 0
-    call lcfrlo(ndim, typmod, imate, epsm, deps,&
-                vim, option, sigp, vip, dsidep)
-!
+    implicit none
+#include "asterfort/utmess.h"
+    integer :: imate, ndim, kpg, ksp, codret, icomp, nvi
+    real(kind=8) :: crit(*), angmas(3)
+    real(kind=8) :: instam, instap
+    real(kind=8) :: epsm(6), deps(6)
+    real(kind=8) :: sigm(6), sigp(6)
+    real(kind=8) :: vim(*), vip(*)
+    real(kind=8) :: dsidep(6, 6)
+    character(len=16) :: compor(*), option
+    character(len=8) :: typmod(*)
+    character(len=*) :: fami
+    call utmess('F', 'FERMETUR_11')
 end subroutine

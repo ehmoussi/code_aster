@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -191,8 +191,9 @@ CAEL_G=AFFE_CARA_ELEM(MODELE=MO_G,
                                COEF_RIGI_DRZ=1.E-10,
                                INER_ROTA='OUI',),);
 
-FL_IMPOS=FORMULE(VALE='D0*X*Y',
-                 NOM_PARA=('X','Y',),);
+FL_IMPOS = FORMULE(VALE='D0*X*Y',
+                   D0=D0,
+                   NOM_PARA=['X', 'Y'],)
 
 COND_0=AFFE_CHAR_MECA(MODELE=MO_G,
                       DDL_IMPO=(_F(GROUP_NO='A1',

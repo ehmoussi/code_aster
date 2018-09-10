@@ -72,6 +72,8 @@ protected:
     JeveuxBidirectionalMapChar24   _nameOfGrpElements;
     /** @brief Objet Jeveux '.GROUPEMA' */
     JeveuxCollectionLongNamePtr    _groupsOfElements;
+    /** @brief jeveux vector '.TITR' */
+    JeveuxVectorChar80         _title;
     /** @brief Object to allow loop over connectivity */
     const ConnectivityMeshExplorer _explorer;
 
@@ -102,6 +104,7 @@ protected:
         _nameOfGrpElements( JeveuxBidirectionalMapChar24( getName() + ".PTRNOMMAI " ) ),
         _groupsOfElements( JeveuxCollectionLongNamePtr( getName() + ".GROUPEMA  ",
                                                         _nameOfGrpElements ) ),
+        _title( JeveuxVectorChar80( getName() + "           .TITR" ) ),
         _explorer( ConnectivityMeshExplorer( _connectivity, _elementsType ) )
     {};
 

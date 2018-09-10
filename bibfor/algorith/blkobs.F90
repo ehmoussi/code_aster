@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -61,6 +61,7 @@ subroutine blkobs(matobs, obsdim,alpha,matprod)
 #include "asterfort/wkvect.h"
 #include "asterfort/indiis.h"
 #include "asterfort/utmess.h"
+#include "asterfort/assert.h"
 #include "blas/dscal.h"
 !
     integer,intent(in) :: obsdim(3)
@@ -115,7 +116,9 @@ subroutine blkobs(matobs, obsdim,alpha,matprod)
         end do
     endif
 !     DECOMPOSITION DE CHOLESKY PROPREMENT DITE
+    info = 0
     call dpotrf('U', nvect, MATCHOL, nvect, info)
+    ASSERT(info .eq. 0)
 !
 ! --- RECUPERATION DE LA MATRICE D'OBSERVATION
     call jeveuo(matobs(1), 'L', iobfil)

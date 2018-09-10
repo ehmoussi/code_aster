@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -139,7 +139,8 @@ IMPR_CO(CONCEPT=_F(NOM=L_INST3))
 #
 # DESCRIPTION DES ACCELEROGRAMMES:
 #---------------------------------
-ACCE1 = FORMULE(NOM_PARA='INST',VALE='2.E+05*INST**2')
+ACCE1 = FORMULE(VALE='2.E+05*INST**2',
+                NOM_PARA='INST',)
 ACCELER1=CALC_FONC_INTERP( FONCTION=ACCE1, LIST_PARA=L_INST,
                        NOM_PARA = 'INST',
                        PROL_DROITE='LINEAIRE',
@@ -147,7 +148,8 @@ ACCELER1=CALC_FONC_INTERP( FONCTION=ACCE1, LIST_PARA=L_INST,
                       NOM_RESU='ACCE'
                      )
 
-ACCE2 = FORMULE(NOM_PARA='INST',VALE='0.*INST ')
+ACCE2 = FORMULE(VALE='0.*INST ',
+                NOM_PARA='INST',)
 ACCELER2=CALC_FONC_INTERP( FONCTION=ACCE2, LIST_PARA=L_INST,
                       NOM_PARA = 'INST',
                        PROL_DROITE='LINEAIRE',
@@ -158,7 +160,8 @@ ACCELER2=CALC_FONC_INTERP( FONCTION=ACCE2, LIST_PARA=L_INST,
 #
 # INTEGRATION DES ACCELEROGRAMMES:
 #---------------------------------
-VITE1 = FORMULE(NOM_PARA='INST',VALE='(2.E+05*INST**3)/3.')
+VITE1 = FORMULE(VALE='(2.E+05*INST**3)/3.',
+                NOM_PARA='INST',)
 VITESSE1=CALC_FONC_INTERP( FONCTION=VITE1, LIST_PARA=L_INST,
                        NOM_PARA = 'INST',
                        PROL_DROITE='LINEAIRE',
@@ -166,7 +169,8 @@ VITESSE1=CALC_FONC_INTERP( FONCTION=VITE1, LIST_PARA=L_INST,
                       NOM_RESU='VITE'
                      )
 
-DEPL1 = FORMULE(NOM_PARA='INST',VALE='(2.E+05*INST**4)/12.')
+DEPL1 = FORMULE(VALE='(2.E+05*INST**4)/12.',
+                NOM_PARA='INST',)
 DEPLACE1=CALC_FONC_INTERP( FONCTION=DEPL1, LIST_PARA=L_INST,
                        NOM_PARA = 'INST',
                        PROL_DROITE='LINEAIRE',
@@ -174,7 +178,8 @@ DEPLACE1=CALC_FONC_INTERP( FONCTION=DEPL1, LIST_PARA=L_INST,
                       NOM_RESU='DEPL'
                      )
 
-VITE2 = FORMULE(NOM_PARA='INST',VALE='0.*INST')
+VITE2 = FORMULE(VALE='0.*INST',
+                NOM_PARA='INST',)
 VITESSE2=CALC_FONC_INTERP( FONCTION=VITE2, LIST_PARA=L_INST,
                      NOM_PARA = 'INST',
                        PROL_DROITE='LINEAIRE',
@@ -182,7 +187,8 @@ VITESSE2=CALC_FONC_INTERP( FONCTION=VITE2, LIST_PARA=L_INST,
                       NOM_RESU='VITE'
                      )
 
-DEPL2 = FORMULE(NOM_PARA='INST',VALE='0.*INST')
+DEPL2 = FORMULE(VALE='0.*INST',
+                NOM_PARA='INST',)
 DEPLACE2=CALC_FONC_INTERP( FONCTION=DEPL2, LIST_PARA=L_INST,
                      NOM_PARA = 'INST',
                        PROL_DROITE='LINEAIRE',
@@ -518,17 +524,27 @@ OMEGA2=sqrt(2000.)
 
 OMEGA3=sqrt(2000./(2.-sqrt(2.)))
 
-F1 = FORMULE(NOM_PARA='INST',VALE='cos(OMEGA1*INST)-1. ')
-F2 = FORMULE(NOM_PARA='INST',VALE='cos(OMEGA2*INST)-1. ')
-F3 = FORMULE(NOM_PARA='INST',VALE='cos(OMEGA3*INST)-1. ')
+F1 = FORMULE(VALE='cos(OMEGA1*INST)-1. ',
+             OMEGA1=OMEGA1,
+             NOM_PARA='INST',)
+F2 = FORMULE(VALE='cos(OMEGA2*INST)-1. ',
+             OMEGA2=OMEGA2,
+             NOM_PARA='INST',)
+F3 = FORMULE(VALE='cos(OMEGA3*INST)-1. ',
+             OMEGA3=OMEGA3,
+             NOM_PARA='INST',)
 
 # CALCUL DU DEPLACEMENT RELATIF AU NOEUD 2 : XRNO2
 # ------------------------------------------------
 # BASE COMPLETE
-XRNO2a = FORMULE(NOM_PARA='INST',VALE='''
+XRNO2a = FORMULE(VALE="""
 -25.*(7*INST**2+((10.+7.*sqrt(2.))*F1(INST) +F2(INST)
                         +(10.-7.*sqrt(2.))*F3(INST))*0.001)
-        ''')
+        """,
+                 F1=F1,
+                 F2=F2,
+                 F3=F3,
+                 NOM_PARA='INST',)
 
 XR2='XRNO2'
 
@@ -539,10 +555,13 @@ XRNO2=CALC_FONC_INTERP(     FONCTION=XRNO2a,
 # CALCUL DU DEPLACEMENT RELATIF AU NOEUD 3 : XRNO3
 # ------------------------------------------------
 
-XRNO3a = FORMULE(NOM_PARA='INST',VALE='''
+XRNO3a = FORMULE(VALE="""
 -25.*(8*INST**2+((10.*sqrt(2.)+14.)*F1(INST)
                         +(-10.*sqrt(2.)+14.)*F3(INST))*0.001)
-         ''')
+         """,
+                 F1=F1,
+                 F3=F3,
+                 NOM_PARA='INST',)
 
 XR3='XRNO3'
 
@@ -553,10 +572,14 @@ XRNO3=CALC_FONC_INTERP(     FONCTION=XRNO3a,
 # CALCUL DU DEPLACEMENT RELATIF AU NOEUD 4 : XRNO4
 # ------------------------------------------------
 
-XRNO4a = FORMULE(NOM_PARA='INST',VALE='''
+XRNO4a = FORMULE(VALE="""
 -25.*(5*INST**2+((10.+7.*sqrt(2.))*F1(INST) -F2(INST)
                         +(10.-7.*sqrt(2.))*F3(INST))*0.001)
-        ''')
+        """,
+                 F1=F1,
+                 F2=F2,
+                 F3=F3,
+                 NOM_PARA='INST',)
 
 XR4='XRNO4'
 
@@ -567,7 +590,8 @@ XRNO4=CALC_FONC_INTERP(     FONCTION=XRNO4a,
 # CALCUL ANALYTIQUE DU DEPLACEMENT D ENTRAINEMENT AU NOEUD 2 : XRNOE2
 # -------------------------------------------------------------------
 
-XRNOE2a = FORMULE(NOM_PARA='INST',VALE='(300000.*INST**4)/24.')
+XRNOE2a = FORMULE(VALE='(300000.*INST**4)/24.',
+                  NOM_PARA='INST',)
 XRE2='XRNOE2'
 
 XRNOE2=CALC_FONC_INTERP(     FONCTION=XRNOE2a,
@@ -577,7 +601,8 @@ XRNOE2=CALC_FONC_INTERP(     FONCTION=XRNOE2a,
 # CALCUL ANALYTIQUE DU DEPLACEMENT D ENTRAINEMENT AU NOEUD 3 : XRNOE3
 # -------------------------------------------------------------------
 
-XRNOE3a = FORMULE(NOM_PARA='INST',VALE='(100000.*INST**4)/12.')
+XRNOE3a = FORMULE(VALE='(100000.*INST**4)/12.',
+                  NOM_PARA='INST',)
 XRE3='XRNOE3'
 
 XRNOE3=CALC_FONC_INTERP(     FONCTION=XRNOE3a,
@@ -587,7 +612,8 @@ XRNOE3=CALC_FONC_INTERP(     FONCTION=XRNOE3a,
 # CALCUL ANALYTIQUE DU DEPLACEMENT D ENTRAINEMENT AU NOEUD 4 : XRNOE4
 # -------------------------------------------------------------------
 
-XRNOE4a = FORMULE(NOM_PARA='INST',VALE='(100000.*INST**4)/24.')
+XRNOE4a = FORMULE(VALE='(100000.*INST**4)/24.',
+                  NOM_PARA='INST',)
 XRE4='XRNOE4'
 
 XRNOE4=CALC_FONC_INTERP(     FONCTION=XRNOE4a,

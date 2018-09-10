@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine rs_get_liststore(result_, nb_store, v_list_store_)
 !
 implicit none
@@ -24,11 +25,9 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/as_allocate.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=*), intent(in) :: result_
-    integer, intent(out) :: nb_store
-    integer, pointer, optional, intent(out) :: v_list_store_(:)
+character(len=*), intent(in) :: result_
+integer, intent(out) :: nb_store
+integer, pointer, optional :: v_list_store_(:)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -63,7 +62,9 @@ implicit none
                 i_dummy)
     nb_store = tord(1)
     if (nb_store .eq. 0) then
-        call utmess('F', 'RESULT1_3', sk = result)
+        if (present(v_list_store_)) then
+            call utmess('F', 'RESULT1_3', sk = result)
+        endif
     endif
     if (present(v_list_store_)) then
         call rsorac(result   , 'TOUT_ORDRE', 0       , r8_dummy     , k8_dummy,&

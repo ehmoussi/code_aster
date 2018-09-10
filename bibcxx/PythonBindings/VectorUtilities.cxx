@@ -3,7 +3,7 @@
  * @brief Utilitaires pour convertir un vector en list et inversement
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -23,6 +23,8 @@
 
 #include "PythonBindings/VectorUtilities.h"
 #include "Loads/PhysicalQuantity.h"
+#include "Materials/Material.h"
+#include "Modeling/FiniteElementDescriptor.h"
 
 void exportVectorUtilitiesToPython()
 {
@@ -32,4 +34,6 @@ void exportVectorUtilitiesToPython()
     exportVectorUtilities< double >();
     exportVectorUtilities< std::string >();
     exportVectorUtilities< PhysicalQuantityComponent >();
+    exportVectorUtilities< MaterialPtr >();
+    exportVectorUtilities< FiniteElementDescriptorPtr >();
 };

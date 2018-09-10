@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -21,10 +21,10 @@
 interface
     subroutine gtvois(v_connex  , v_connex_lcum, list_elem, nb_elem   , elem_nume, elem_code,&
                       v_conx_inv, v_inv_lcum   , nb_neigh , list_neigh)
-        integer, pointer, intent(in) :: v_connex(:)
-        integer, pointer, intent(in) :: v_connex_lcum(:)
-        integer, pointer, intent(in) :: v_conx_inv(:)
-        integer, pointer, intent(in) :: v_inv_lcum(:)
+        integer, pointer :: v_connex(:)
+        integer, pointer :: v_connex_lcum(:)
+        integer, pointer :: v_conx_inv(:)
+        integer, pointer :: v_inv_lcum(:)
         integer, intent(in) :: nb_elem
         integer, intent(in) :: list_elem(nb_elem)
         integer, intent(in) :: elem_nume

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -22,6 +22,7 @@ subroutine cpnph20(main,numa,coor,ind,nomnoe)
     implicit none
 !
 #include "jeveux.h"
+#include "asterfort/assert.h"
 #include "asterfort/codent.h"
 #include "asterfort/jecroc.h"
 #include "asterfort/jeexin.h"
@@ -42,7 +43,7 @@ subroutine cpnph20(main,numa,coor,ind,nomnoe)
 !
 !
 ! ----------------------------------------------------------------------
-!         CREATION DES DDL SUPPLEMENTAIRES 
+!         CREATION DES DDL SUPPLEMENTAIRES
 !         SUR LA FACE DE LA ZONE DE CONTACT ESCLAVE
 !         CAS QUAD 8
 ! ----------------------------------------------------------------------
@@ -60,7 +61,7 @@ subroutine cpnph20(main,numa,coor,ind,nomnoe)
 !
     character(len=8) :: nomnd,eletyp
     character(len=24) :: valk
-    character(len=6) :: knume
+    character(len=16) :: knume
 ! ----------------------------------------------------------------------
 !
     call jemarq()
@@ -69,11 +70,14 @@ subroutine cpnph20(main,numa,coor,ind,nomnoe)
     do inc1=1,12
 ! ------ NOM DU NOEUD CREE
         call codent(ind+inc1-1, 'G', knume)
+        if (knume(1:1)=='*') then
+            ASSERT(.false.)
+        endif
         lgnd = lxlgut(knume)
-        if (lgnd+2 .gt. 8) then
+        if (lgnd+1 .gt. 8) then
             call utmess('F', 'ALGELINE_16')
         endif
-        nomnd = 'C' // knume
+        nomnd = 'C' // knume(1:lgnd)
 ! ------ DECLARATION DU NOEUD CREE
         call jeexin(jexnom(nomnoe, nomnd), iret)
         if (iret .eq. 0) then
@@ -85,17 +89,17 @@ subroutine cpnph20(main,numa,coor,ind,nomnoe)
     end do
 ! --- CALCUL DES COORDONNEES DES NOUVEAUX NOEUDS
 
-    call jeveuo(jexnum(main//'.CONNEX',numa),'L',jtab)  
+    call jeveuo(jexnum(main//'.CONNEX',numa),'L',jtab)
     do  inc1=1, 8
-        lino(inc1)= zi(jtab+inc1-1) 
+        lino(inc1)= zi(jtab+inc1-1)
     end do
     do inc1=1,8
         do inc2=1,3
-            tabar((inc1-1)*3+inc2) =  coor(inc2,lino(inc1))      
+            tabar((inc1-1)*3+inc2) =  coor(inc2,lino(inc1))
         end do
-    end do 
+    end do
     eletyp='QU8'
-! --- NOEUD 1 
+! --- NOEUD 1
     xp(1)=0.d0
     xp(2)=0.d0
     xp(3)=0.d0
@@ -106,7 +110,7 @@ subroutine cpnph20(main,numa,coor,ind,nomnoe)
     coor(1,ind) = xp(1)
     coor(2,ind) = xp(2)
     coor(3,ind) = xp(3)
-! --- NOEUD 2 
+! --- NOEUD 2
     xp(1)=0.d0
     xp(2)=0.d0
     xp(3)=0.d0
@@ -117,7 +121,7 @@ subroutine cpnph20(main,numa,coor,ind,nomnoe)
     coor(1,ind+1) = xp(1)
     coor(2,ind+1) = xp(2)
     coor(3,ind+1) = xp(3)
-! --- NOEUD 3 
+! --- NOEUD 3
     xp(1)=0.d0
     xp(2)=0.d0
     xp(3)=0.d0
@@ -137,10 +141,10 @@ subroutine cpnph20(main,numa,coor,ind,nomnoe)
     xe(3)=0.d0
     call reerel(eletyp, 8, 3, tabar, xe, xp)
     coor(1,ind+3) = xp(1)
-    coor(2,ind+3) = xp(2)  
+    coor(2,ind+3) = xp(2)
     coor(3,ind+3) = xp(3)
 !
-! --- NOEUD 5 
+! --- NOEUD 5
     xp(1)=0.d0
     xp(2)=0.d0
     xp(3)=0.d0
@@ -151,7 +155,7 @@ subroutine cpnph20(main,numa,coor,ind,nomnoe)
     coor(1,ind+4) = xp(1)
     coor(2,ind+4) = xp(2)
     coor(3,ind+4) = xp(3)
-! --- NOEUD 6 
+! --- NOEUD 6
     xp(1)=0.d0
     xp(2)=0.d0
     xp(3)=0.d0
@@ -162,7 +166,7 @@ subroutine cpnph20(main,numa,coor,ind,nomnoe)
     coor(1,ind+5) = xp(1)
     coor(2,ind+5) = xp(2)
     coor(3,ind+5) = xp(3)
-! --- NOEUD 7 
+! --- NOEUD 7
     xp(1)=0.d0
     xp(2)=0.d0
     xp(3)=0.d0
@@ -182,10 +186,10 @@ subroutine cpnph20(main,numa,coor,ind,nomnoe)
     xe(3)=0.d0
     call reerel(eletyp, 8, 3, tabar, xe, xp)
     coor(1,ind+7) = xp(1)
-    coor(2,ind+7) = xp(2)  
+    coor(2,ind+7) = xp(2)
     coor(3,ind+7) = xp(3)
 !
-! --- NOEUD 1b 
+! --- NOEUD 1b
     xp(1)=0.d0
     xp(2)=0.d0
     xp(3)=0.d0
@@ -196,7 +200,7 @@ subroutine cpnph20(main,numa,coor,ind,nomnoe)
     coor(1,ind+8) = xp(1)
     coor(2,ind+8) = xp(2)
     coor(3,ind+8) = xp(3)
-! --- NOEUD 2b 
+! --- NOEUD 2b
     xp(1)=0.d0
     xp(2)=0.d0
     xp(3)=0.d0
@@ -207,7 +211,7 @@ subroutine cpnph20(main,numa,coor,ind,nomnoe)
     coor(1,ind+9) = xp(1)
     coor(2,ind+9) = xp(2)
     coor(3,ind+9) = xp(3)
-! --- NOEUD 3b 
+! --- NOEUD 3b
     xp(1)=0.d0
     xp(2)=0.d0
     xp(3)=0.d0
@@ -227,7 +231,7 @@ subroutine cpnph20(main,numa,coor,ind,nomnoe)
     xe(3)=0.d0
     call reerel(eletyp, 8, 3, tabar, xe, xp)
     coor(1,ind+11) = xp(1)
-    coor(2,ind+11) = xp(2)  
+    coor(2,ind+11) = xp(2)
     coor(3,ind+11) = xp(3)
 !
     call jedema()

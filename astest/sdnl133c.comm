@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -243,11 +243,11 @@ PROJ_BASE(  BASE=BMOD,
              ))
 
 
-OM=FORMULE(VALE='-10.*pi',
-            NOM_PARA='INST',);
+OM = FORMULE(VALE='-10.*pi',
+             NOM_PARA='INST',)
 
-PHI=FORMULE(VALE='-10.*pi*INST+0.',
-             NOM_PARA='INST',);
+PHI = FORMULE(VALE='-10.*pi*INST+0.',
+              NOM_PARA='INST',)
 
 TRANGEN = DYNA_VIBRA   (     MATR_MASS=MASGEN,
                              MATR_RIGI=RIGGEN,

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -74,7 +74,7 @@ integer :: nbordr
 !     ------------------------------------------------------------------
 !                      C H A M P _ T H E R M I Q U E
 !     ------------------------------------------------------------------
-    parameter (ncthe1=17)
+    parameter (ncthe1=18)
     parameter (ncther=ncthe1+ncmuti)
     character(len=16) :: chthe1(ncthe1)
     character(len=16) :: chther(ncther)
@@ -187,7 +187,7 @@ integer :: nbordr
      & 'META_ELNO',       'META_NOEU',&
      & 'DURT_ELNO',       'DURT_NOEU',       'ETHE_ELEM',&
      & 'HYDR_ELNO',       'HYDR_NOEU',&
-     & 'SOUR_ELGA',       'COMPORTHER',&
+     & 'SOUR_ELGA',       'COMPORTHER',      'COMPORMETA',&
      & 'ERTH_ELEM',       'ERTH_ELNO',       'ERTH_NOEU',&
      & 'TEMP_ELGA'/
 !     ------------------------------------------------------------------

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -26,7 +26,7 @@ loi = LoiComportement(
     lc_type        = ('MECANIQUE',),
     doc            =   """Relation de comportement cohésive (Cohesive Zone Model FATigue MIXte) pour la fatigue (Cf. [R7.02.11]) modélisant l'ouverture et la
    propagation d'une fissure sous chargement cyclique. Cette loi est utilisable avec l'élément fini d'interface basé sur une formulation mixte
-   lagrangien augmenté (Cf. [R3.06.13]) """            ,
+   lagrangien augmenté (Cf. [R3.06.13]) """              ,
     num_lc         = 43,
     nb_vari        = 9,
     nom_vari       = ('SEUILDEP','INDIDISS','INDIENDO','PCENERDI','DISSIP',
@@ -39,4 +39,5 @@ loi = LoiComportement(
     proprietes     = None,
     syme_matr_tang = ('Yes',),
     exte_vari      = None,
+    deform_ldc     = ('OLD',),
 )

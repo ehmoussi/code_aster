@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -68,14 +68,15 @@ TEMPE=THER_LINEAIRE(        MODELE=MOTH,
 
 LIS=DEFI_LIST_REEL(  VALE=( 0.1,  0.2,  0.7,  2., )  )
 
-TEMPE=THER_LINEAIRE(reuse=TEMPE,        MODELE=MOTH,
-                              ETAT_INIT=_F(  EVOL_THER = TEMPE,
-                                          INST = 2.E-2),
-                              INCREMENT=_F(  LIST_INST = LR8),
-                              CHAM_MATER=CHMAT,
-                                  EXCIT=_F(  CHARGE = CHTH),
-                              ARCHIVAGE=_F(  LIST_INST = LIS)
-             )
+TEMPE=THER_LINEAIRE(reuse=TEMPE,
+                    RESULTAT=TEMPE,
+                    MODELE=MOTH,
+                    ETAT_INIT=_F(EVOL_THER=TEMPE,
+                                 INST=2.E-2),
+                    INCREMENT=_F(LIST_INST=LR8),
+                    CHAM_MATER=CHMAT,
+                    EXCIT=_F(CHARGE=CHTH),
+                    ARCHIVAGE=_F(LIST_INST=LIS))
 
 TEMP_1=CREA_CHAMP(  OPERATION='EXTR', TYPE_CHAM='NOEU_TEMP_R',
 NOM_CHAM='TEMP', RESULTAT=TEMPE,

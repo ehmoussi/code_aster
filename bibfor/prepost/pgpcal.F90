@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -48,7 +48,7 @@ subroutine pgpcal(sd_pgp)
     integer           :: i, j, iord, dec1, nord
     integer           :: jevol, jvecr, jvecc, jtblp, lc
     character(len=4)  :: chreco, typcha, typsc, typres
-    character(len=8)  :: resin, base, result
+    character(len=8)  :: resin, result
     character(len=12) :: bl11pt
     character(len=16) :: champ
     character(len=24) :: nomjv
@@ -56,6 +56,7 @@ subroutine pgpcal(sd_pgp)
     integer         , pointer :: lordr(:) => null()
     real(kind=8)    , pointer :: vectr(:) => null()
     complex(kind=8) , pointer :: vectc(:) => null()
+    integer         , pointer :: desc(:) => null()
 
 !   ------------------------------------------------------------------------------------
 !   Definition of statement functions giving the appropriate (i,j) term in the basis
@@ -83,8 +84,8 @@ subroutine pgpcal(sd_pgp)
 
     call pgpget(sd_pgp,'RESU_IN ',kscal=resin)
     call pgpget(sd_pgp,'TYP_RESU ',kscal=typres)
-    call pgpget(sd_pgp, 'BASE',kscal=base)
-    call dismoi('NB_MODES_TOT', base, 'RESULTAT', repi=nbmodes)
+    call jeveuo(resin//'           .DESC', 'L', vi=desc)
+    nbmodes = desc(2)
 
 !   Line counter, across the whole table (for different observations)
     lc = 0

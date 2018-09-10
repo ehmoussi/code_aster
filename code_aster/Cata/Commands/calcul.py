@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -23,7 +23,8 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 
-CALCUL=OPER(nom="CALCUL",op=26,sd_prod=table_container,reentrant='f',
+CALCUL=OPER(nom="CALCUL",op=26,sd_prod=table_container,
+            reentrant='f:TABLE',
             fr=tr("Calculer des objets élémentaires comme une matrice tangente, intégrer une loi de comportement, etc..."),
      reuse=SIMP(statut='c', typ=CO),
 
@@ -37,7 +38,7 @@ CALCUL=OPER(nom="CALCUL",op=26,sd_prod=table_container,reentrant='f',
           NUME_ORDRE      =SIMP(statut='o',typ='I'),),
 
      b_mecanique     =BLOC( condition = """equal_to("PHENOMENE", 'MECANIQUE')""",
-         OPTION          =SIMP(statut='o',typ='TXM',validators=NoRepeat(),max='**',defaut="COMPORTEMENT",
+         OPTION          =SIMP(statut='f',typ='TXM',validators=NoRepeat(),max='**',defaut="COMPORTEMENT",
                                into=( "COMPORTEMENT","MATR_TANG_ELEM","FORC_INTE_ELEM","FORC_NODA_ELEM","FORC_VARC_ELEM_M","FORC_VARC_ELEM_P"),),
          EXCIT           =FACT(statut='f',max='**',
            CHARGE          =SIMP(statut='o',typ=(char_meca,char_cine_meca)),

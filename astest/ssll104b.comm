@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -32,14 +32,16 @@
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
 
-MA=LIRE_MAILLAGE(FORMAT="ASTER", )
+MA = LIRE_MAILLAGE(FORMAT='ASTER',
+                   )
 
 MA=DEFI_GROUP( reuse=MA,   MAILLAGE=MA,
   CREA_GROUP_MA=_F(  NOM = 'TOUT', TOUT = 'OUI'))
 
-PRE_GMSH(UNITE_MAILLAGE=21,);
 
-MASEC=LIRE_MAILLAGE(FORMAT="ASTER",UNITE=21,);
+MASEC = LIRE_MAILLAGE(FORMAT='GMSH',
+                      UNITE=19,
+                      )
 
 MO1=AFFE_MODELE(  MAILLAGE=MA,
                   AFFE=_F(  TOUT = 'OUI',    PHENOMENE = 'MECANIQUE',
@@ -203,15 +205,15 @@ def escalier(x):
         return 0.
 
 
-EPX=FORMULE(NOM_PARA = ('X','INST'),
-               VALE     = '1.E-3*escalier(X)*INST',
-                       )
-KY=FORMULE(NOM_PARA = ('Y','INST'),
-               VALE     = '2.E-3*escalier(Y)*INST',
-                       )
-KZ=FORMULE(NOM_PARA = ('Z','INST'),
-               VALE     = '3.E-3*escalier(Z)*INST',
-                       )
+EPX = FORMULE(VALE='1.E-3*escalier(X)*INST',
+              escalier=escalier,
+              NOM_PARA=['X', 'INST'],)
+KY = FORMULE(VALE='2.E-3*escalier(Y)*INST',
+             escalier=escalier,
+             NOM_PARA=['Y', 'INST'],)
+KZ = FORMULE(VALE='3.E-3*escalier(Z)*INST',
+             escalier=escalier,
+             NOM_PARA=['Z', 'INST'],)
 
 CHF1=AFFE_CHAR_MECA_F(  MODELE=MO1,
                         PRE_EPSI=_F( MAILLE=('E1','E2','E4','E5','E7','E8'),

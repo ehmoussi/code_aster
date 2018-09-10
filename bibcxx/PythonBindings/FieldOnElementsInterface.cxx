@@ -42,7 +42,12 @@ void exportFieldOnElementsToPython()
                              std::string >) )
         .def( "exportToSimpleFieldOnElements",
               &FieldOnElementsDoubleInstance::exportToSimpleFieldOnElements )
+        .def( "getModel",
+              &FieldOnElementsDoubleInstance::getModel )
+        .def( "setDescription",
+              &FieldOnElementsDoubleInstance::setDescription )
         .def( "setModel",
               &FieldOnElementsDoubleInstance::setModel )
+        .def( "update", &FieldOnElementsDoubleInstance::update )
         ;
 };

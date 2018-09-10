@@ -73,6 +73,28 @@ class AssemblyMatrixInstance: public DataStructure
         JeveuxCollection< ValueType > _matrixValues;
         /** @brief Objet '.CONL' */
         JeveuxVectorDouble            _scaleFactorLagrangian;
+        /** @brief Objet Jeveux '.LIME' */
+        JeveuxVectorChar24            _listOfElementaryMatrix;
+        /** @brief Objet Jeveux '.VALF' */
+        JeveuxVector< ValueType >     _valf;
+        /** @brief Objet Jeveux '.WALF' */
+        JeveuxVector< ValueType >     _walf;
+        /** @brief Objet Jeveux '.UALF' */
+        JeveuxVector< ValueType >     _ualf;
+        /** @brief Objet Jeveux '.PERM' */
+        JeveuxVectorLong              _perm;
+        /** @brief Objet Jeveux '.DIGS' */
+        JeveuxVector< ValueType >     _digs;
+
+        /** @brief Objet Jeveux '.CCID' */
+        JeveuxVectorLong              _ccid;
+        /** @brief Objet Jeveux '.CCLL' */
+        JeveuxVectorLong              _ccll;
+        /** @brief Objet Jeveux '.CCVA' */
+        JeveuxVector< ValueType >     _ccva;
+        /** @brief Objet Jeveux '.CCII' */
+        JeveuxVectorLong              _ccii;
+
         /** @brief ElementaryMatrix sur lesquelles sera construit la matrice */
         std::vector< ElementaryMatrixPtr > _elemMatrix;
         /** @brief Objet nume_ddl */
@@ -97,6 +119,7 @@ class AssemblyMatrixInstance: public DataStructure
          * @brief Constructeur
          */
         AssemblyMatrixInstance( const JeveuxMemory memType = Permanent );
+
         /**
          * @brief Constructeur
          */
@@ -123,9 +146,26 @@ class AssemblyMatrixInstance: public DataStructure
         };
 
         /**
+         * @brief Methode permettant de definir les matrices elementaires
+         * @param currentElemMatrix objet ElementaryMatrix
+         */
+        void appendElementaryMatrix( const ElementaryMatrixPtr& currentElemMatrix )
+        {
+            _elemMatrix.push_back( currentElemMatrix );
+        };
+
+        /**
          * @brief Assemblage de la matrice
          */
         bool build() throw ( std::runtime_error );
+
+        /**
+         * @brief Clear all ElementaryMatrixPtr
+         */
+        void clearElementaryMatrix()
+        {
+            _elemMatrix.clear();
+        };
 
         /**
          * @brief Get the internal DOFNumbering
@@ -176,23 +216,6 @@ class AssemblyMatrixInstance: public DataStructure
 #endif /* _USE_MPI */
 
         /**
-         * @brief Methode permettant de definir les matrices elementaires
-         * @param currentElemMatrix objet ElementaryMatrix
-         */
-        void appendElementaryMatrix( const ElementaryMatrixPtr& currentElemMatrix )
-        {
-            _elemMatrix.push_back( currentElemMatrix );
-        };
-
-        /**
-         * @brief Clear all ElementaryMatrixPtr
-         */
-        void clearElementaryMatrix()
-        {
-            _elemMatrix.clear();
-        };
-
-        /**
          * @brief Methode permettant de definir la liste de chargement
          * @param lLoads objet de type ListOfLoadsPtr
          */
@@ -204,17 +227,32 @@ class AssemblyMatrixInstance: public DataStructure
 
 /** @typedef Definition d'une matrice assemblee de double */
 template class AssemblyMatrixInstance< double, Displacement >;
-typedef AssemblyMatrixInstance< double, Displacement > AssemblyMatrixDoubleInstance;
+typedef AssemblyMatrixInstance< double, Displacement > AssemblyMatrixDisplacementDoubleInstance;
 /** @typedef Definition d'une matrice assemblee de complexe */
-typedef AssemblyMatrixInstance< DoubleComplex, Displacement > AssemblyMatrixComplexInstance;
+typedef AssemblyMatrixInstance< DoubleComplex, Displacement > AssemblyMatrixDisplacementComplexInstance;
 
 /** @typedef Definition d'une matrice assemblee de double temperature */
 template class AssemblyMatrixInstance< double, Temperature >;
 typedef AssemblyMatrixInstance< double, Temperature > AssemblyMatrixTemperatureDoubleInstance;
 
-typedef boost::shared_ptr< AssemblyMatrixDoubleInstance > AssemblyMatrixDoublePtr;
-typedef boost::shared_ptr< AssemblyMatrixComplexInstance > AssemblyMatrixComplexPtr;
+/** @typedef Definition d'une matrice assemblee de double pression */
+template class AssemblyMatrixInstance< double, Pressure >;
+typedef AssemblyMatrixInstance< double, Pressure > AssemblyMatrixPressureDoubleInstance;
+
+/** @typedef Definition d'une matrice assemblee de DoubleComplex temperature */
+template class AssemblyMatrixInstance< DoubleComplex, Temperature >;
+typedef AssemblyMatrixInstance< DoubleComplex, Temperature > AssemblyMatrixTemperatureComplexInstance;
+
+/** @typedef Definition d'une matrice assemblee de DoubleComplex pression */
+template class AssemblyMatrixInstance< DoubleComplex, Pressure >;
+typedef AssemblyMatrixInstance< DoubleComplex, Pressure > AssemblyMatrixPressureComplexInstance;
+
+typedef boost::shared_ptr< AssemblyMatrixDisplacementDoubleInstance > AssemblyMatrixDisplacementDoublePtr;
+typedef boost::shared_ptr< AssemblyMatrixDisplacementComplexInstance > AssemblyMatrixDisplacementComplexPtr;
 typedef boost::shared_ptr< AssemblyMatrixTemperatureDoubleInstance > AssemblyMatrixTemperatureDoublePtr;
+typedef boost::shared_ptr< AssemblyMatrixTemperatureComplexInstance > AssemblyMatrixTemperatureComplexPtr;
+typedef boost::shared_ptr< AssemblyMatrixPressureDoubleInstance > AssemblyMatrixPressureDoublePtr;
+typedef boost::shared_ptr< AssemblyMatrixPressureComplexInstance > AssemblyMatrixPressureComplexPtr;
 
 template< class ValueType, PhysicalQuantityEnum PhysicalQuantity >
 AssemblyMatrixInstance< ValueType, PhysicalQuantity >::AssemblyMatrixInstance( const JeveuxMemory memType ):
@@ -222,6 +260,16 @@ AssemblyMatrixInstance< ValueType, PhysicalQuantity >::AssemblyMatrixInstance( c
     _description( JeveuxVectorChar24( getName() + ".REFA" ) ),
     _matrixValues( JeveuxCollection< ValueType >( getName() + ".VALM" ) ),
     _scaleFactorLagrangian( JeveuxVectorDouble( getName() + ".CONL" ) ),
+    _listOfElementaryMatrix( JeveuxVectorChar24( getName() + ".LIME" ) ),
+    _valf( JeveuxVector< ValueType >( getName() + ".VALF" ) ),
+    _walf( JeveuxVector< ValueType >( getName() + ".WALF" ) ),
+    _ualf( JeveuxVector< ValueType >( getName() + ".UALF" ) ),
+    _perm( JeveuxVectorLong( getName() + ".PERM" ) ),
+    _digs( JeveuxVector< ValueType >( getName() + ".DIGS" ) ),
+    _ccid( JeveuxVectorLong( getName() + ".CCID" ) ),
+    _ccll( JeveuxVectorLong( getName() + ".CCLL" ) ),
+    _ccva( JeveuxVector< ValueType >( getName() + ".CCVA" ) ),
+    _ccii( JeveuxVectorLong( getName() + ".CCII" ) ),
     _isEmpty( true ),
     _isFactorized( false ),
     _listOfLoads( ListOfLoadsPtr( new ListOfLoadsInstance( memType ) ) )
@@ -233,6 +281,16 @@ AssemblyMatrixInstance< ValueType, PhysicalQuantity >::AssemblyMatrixInstance( c
     _description( JeveuxVectorChar24( getName() + ".REFA" ) ),
     _matrixValues( JeveuxCollection< ValueType >( getName() + ".VALM" ) ),
     _scaleFactorLagrangian( JeveuxVectorDouble( getName() + ".CONL" ) ),
+    _listOfElementaryMatrix( JeveuxVectorChar24( getName() + ".LIME" ) ),
+    _valf( JeveuxVector< ValueType >( getName() + ".VALF" ) ),
+    _walf( JeveuxVector< ValueType >( getName() + ".WALF" ) ),
+    _ualf( JeveuxVector< ValueType >( getName() + ".UALF" ) ),
+    _perm( JeveuxVectorLong( getName() + ".PERM" ) ),
+    _digs( JeveuxVector< ValueType >( getName() + ".DIGS" ) ),
+    _ccid( JeveuxVectorLong( getName() + ".CCID" ) ),
+    _ccll( JeveuxVectorLong( getName() + ".CCLL" ) ),
+    _ccva( JeveuxVector< ValueType >( getName() + ".CCVA" ) ),
+    _ccii( JeveuxVectorLong( getName() + ".CCII" ) ),
     _isEmpty( true ),
     _isFactorized( false ),
     _listOfLoads( ListOfLoadsPtr( new ListOfLoadsInstance() ) )

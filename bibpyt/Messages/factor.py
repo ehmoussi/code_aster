@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -554,6 +554,18 @@ Solveur MUMPS :
   Conseil:
     - Assurer vous de prendre une version parallèle de Code_Aster intégrant ces produits externes,
     - Changer de renuméroteur ou laisser le paramètre RENUM à la valeur 'AUTO'.
+
+"""),
+92: _(u"""
+Solveur MUMPS :
+  Vous utilisez le solveur linéaire MUMPS avec un renuméroteur 32 bits alors que votre modèle éléments finis requiert un renuméroteur 64 bits.
+  En effet, ce modèle génère des systèmes linéaires trop grands pour les capacités de stockage informatique des 32 bits.
+
+  Conseil:
+    - Assurer vous d'utiliser une version de code_aster s'appuyant sur des renuméroteurs 64 bits et relancer le calcul en activant explicitement l'un d'eux
+     (SOLVEUR/RENUM='METIS'/'PARMETIS'/'SCOTCH'/'PTSCOTCH'/'PORD') ou en laissant le choix par défaut (SOLVEUR/RENUM='AUTO').
+    - Sinon, utiliser un solveur linéaire n'ayant pas besoin de MUMPS (SOLVEUR/METHODE='PETSC' + PRE_COND différent de 'LDLT_SP').
+    - ou, si possible, réduisez la taille du modèle (< 5 à 10 millions de ddls).
 
 """),
 }

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine calcExternalStateVariable1(nno     , npg    ,&
+subroutine calcExternalStateVariable1(nno     , npg    , ndim    ,&
                                       jv_poids, jv_func, jv_dfunc,&
                                       geom    , typmod)
 !
@@ -26,15 +26,16 @@ implicit none
 !
 #include "asterf_types.h"
 #include "jeveux.h"
+#include "asterc/r8vide.h"
 #include "asterfort/assert.h"
 #include "asterfort/dfdm2d.h"
 #include "asterfort/dfdm3d.h"
 #include "asterfort/utmess.h"
 !
-integer, intent(in) :: nno, npg
+integer, intent(in) :: nno, npg, ndim
 integer, intent(in) :: jv_poids, jv_func, jv_dfunc
 character(len=8), intent(in) :: typmod(2)
-real(kind=8), intent(in) :: geom(3, nno)
+real(kind=8), intent(in) :: geom(ndim, nno)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -46,6 +47,7 @@ real(kind=8), intent(in) :: geom(3, nno)
 !
 ! In  nno              : number of nodes 
 ! In  npg              : number of Gauss points 
+! In  ndim             : dimension of problem (2 or 3)
 ! In  jv_poids         : JEVEUX adress for weight of Gauss points
 ! In  jv_func          : JEVEUX adress for shape functions
 ! In  jv_dfunc         : JEVEUX adress for derivative of shape functions
@@ -99,8 +101,7 @@ real(kind=8), intent(in) :: geom(3, nno)
         endif
 !
     elseif (typmod(1)(1:6).eq.'C_PLAN') then
-        call utmess('F', 'COMPOR5_51')
-!
+        lc = r8vide()
     else
         ASSERT(.false.)
     endif

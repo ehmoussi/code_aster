@@ -31,10 +31,49 @@
 #include "DataStructures/DataStructure.h"
 #include "MemoryManager/JeveuxVector.h"
 #include "Modeling/Model.h"
+#include "Modeling/FiniteElementDescriptor.h"
 #include "LinearAlgebra/ElementaryMatrix.h"
 #include "Loads/MechanicalLoad.h"
 #include "Loads/KinematicsLoad.h"
 #include "Loads/ListOfLoads.h"
+#include "LinearAlgebra/MatrixStorage.h"
+
+/**
+ * @class FieldOnNodesDescriptionInstance
+ * @brief This class describes the structure of dof stored in a field on nodes
+ * @author Nicolas Sellenet
+ */
+class FieldOnNodesDescriptionInstance: public DataStructure
+{
+    /** @brief Objet Jeveux '.PRNO' */
+    JeveuxCollectionLong         _componentsOnNodes;
+    /** @brief Objet Jeveux '.LILI' */
+    JeveuxBidirectionalMapChar24 _namesOfGroupOfElements;
+    /** @brief Objet Jeveux '.NUEQ' */
+    JeveuxVectorLong             _indexationVector;
+    /** @brief Objet Jeveux '.DEEQ' */
+    JeveuxVectorLong             _nodeAndComponentsNumberFromDOF;
+
+public:
+    /**
+     * @brief Constructeur
+     */
+    FieldOnNodesDescriptionInstance( const JeveuxMemory memType = Permanent );
+
+    /**
+     * @brief Destructor
+     */
+    ~FieldOnNodesDescriptionInstance()
+    {};
+
+    /**
+     * @brief Constructeur
+     * @param name nom souhaité de la sd (utile pour le FieldOnNodesDescriptionInstance d'une sd_resu)
+     */
+    FieldOnNodesDescriptionInstance( const std::string name,
+                                     const JeveuxMemory memType = Permanent );
+};
+typedef boost::shared_ptr< FieldOnNodesDescriptionInstance > FieldOnNodesDescriptionPtr;
 
 /**
  * @class BaseDOFNumberingInstance
@@ -45,6 +84,87 @@
 class BaseDOFNumberingInstance: public DataStructure
 {
 private:
+    class MultFrontGarbageInstance
+    {
+        /** @brief Objet Jeveux '.ADNT' */
+        JeveuxVectorShort             _adnt;
+        /** @brief Objet Jeveux '.GLOB' */
+        JeveuxVectorShort             _glob;
+        /** @brief Objet Jeveux '.LOCL' */
+        JeveuxVectorShort             _locl;
+        /** @brief Objet Jeveux '.PNTI' */
+        JeveuxVectorShort             _pnti;
+        /** @brief Objet Jeveux '.RENU' */
+        JeveuxVectorChar8             _renu;
+        /** @brief Objet Jeveux '.ADPI' */
+        JeveuxVectorLong              _adpi;
+        /** @brief Objet Jeveux '.ADRE' */
+        JeveuxVectorLong              _adre;
+        /** @brief Objet Jeveux '.ANCI' */
+        JeveuxVectorLong              _anci;
+        /** @brief Objet Jeveux '.LFRN' */
+        JeveuxVectorLong              _debf;
+        /** @brief Objet Jeveux '.DECA' */
+        JeveuxVectorLong              _deca;
+        /** @brief Objet Jeveux '.DEFS' */
+        JeveuxVectorLong              _defs;
+        /** @brief Objet Jeveux '.DESC' */
+        JeveuxVectorLong              _desc;
+        /** @brief Objet Jeveux '.DIAG' */
+        JeveuxVectorLong              _diag;
+        /** @brief Objet Jeveux '.FILS' */
+        JeveuxVectorLong              _fils;
+        /** @brief Objet Jeveux '.FRER' */
+        JeveuxVectorLong              _frer;
+        /** @brief Objet Jeveux '.LGBL' */
+        JeveuxVectorLong              _lgbl;
+        /** @brief Objet Jeveux '.LGSN' */
+        JeveuxVectorLong              _lgsn;
+        /** @brief Objet Jeveux '.NBAS' */
+        JeveuxVectorLong              _nbas;
+        /** @brief Objet Jeveux '.NBLI' */
+        JeveuxVectorLong              _nbli;
+        /** @brief Objet Jeveux '.NCBL' */
+        JeveuxVectorLong              _nbcl;
+        /** @brief Objet Jeveux '.NOUV' */
+        JeveuxVectorLong              _nouv;
+        /** @brief Objet Jeveux '.PARE' */
+        JeveuxVectorLong              _pare;
+        /** @brief Objet Jeveux '.SEQU' */
+        JeveuxVectorLong              _sequ;
+        /** @brief Objet Jeveux '.SUPN' */
+        JeveuxVectorLong              _supn;
+
+        MultFrontGarbageInstance( const std::string& DOFNumName ):
+            _adnt( DOFNumName + ".ADNT" ),
+            _glob( DOFNumName + ".GLOB" ),
+            _locl( DOFNumName + ".LOCL" ),
+            _pnti( DOFNumName + ".PNTI" ),
+            _renu( DOFNumName + ".RENU" ),
+            _adpi( DOFNumName + ".ADPI" ),
+            _adre( DOFNumName + ".ADRE" ),
+            _anci( DOFNumName + ".ANCI" ),
+            _debf( DOFNumName + ".LFRN" ),
+            _deca( DOFNumName + ".DECA" ),
+            _defs( DOFNumName + ".DEFS" ),
+            _desc( DOFNumName + ".DESC" ),
+            _diag( DOFNumName + ".DIAG" ),
+            _fils( DOFNumName + ".FILS" ),
+            _frer( DOFNumName + ".FRER" ),
+            _lgbl( DOFNumName + ".LGBL" ),
+            _lgsn( DOFNumName + ".LGSN" ),
+            _nbas( DOFNumName + ".NBAS" ),
+            _nbli( DOFNumName + ".NBLI" ),
+            _nbcl( DOFNumName + ".NCBL" ),
+            _nouv( DOFNumName + ".NOUV" ),
+            _pare( DOFNumName + ".PARE" ),
+            _sequ( DOFNumName + ".SEQU" ),
+            _supn( DOFNumName + ".SUPN" )
+        {};
+        friend class BaseDOFNumberingInstance;
+    };
+    typedef boost::shared_ptr< MultFrontGarbageInstance > MultFrontGarbagePtr;
+
     class GlobalEquationNumberingInstance
     {
         /** @brief Objet Jeveux '.NEQU' */
@@ -53,27 +173,12 @@ private:
         JeveuxVectorLong             _informations;
         /** @brief Objet Jeveux '.DELG' */
         JeveuxVectorLong             _lagrangianInformations;
-        /** @brief Objet Jeveux '.PRNO' */
-        JeveuxCollectionLong         _componentsOnNodes;
-        /** @brief Objet Jeveux '.LILI' */
-        JeveuxBidirectionalMapChar24 _namesOfGroupOfElements;
-        /** @brief Objet Jeveux '.NUEQ' */
-        JeveuxVectorLong             _indexationVector;
-        /** @brief Objet Jeveux '.DEEQ' */
-        JeveuxVectorLong             _nodeAndComponentsNumberFromDOF;
 
         GlobalEquationNumberingInstance( const std::string& DOFNumName ):
             _numberOfEquations( DOFNumName + ".NEQU" ),
             _informations( DOFNumName + ".REFN" ),
-            _lagrangianInformations( DOFNumName + ".DELG" ),
-            _componentsOnNodes( DOFNumName + ".PRNO" ),
-            _namesOfGroupOfElements( DOFNumName + ".LILI" ),
-            _indexationVector( DOFNumName + ".NUEQ" ),
-            _nodeAndComponentsNumberFromDOF( DOFNumName + ".DEEQ" )
-        {
-            if ( DOFNumName.size() != 19 )
-                throw std::runtime_error( "Catastrophic error" );
-        };
+            _lagrangianInformations( DOFNumName + ".DELG" )
+        {};
         friend class BaseDOFNumberingInstance;
     };
     typedef boost::shared_ptr< GlobalEquationNumberingInstance > GlobalEquationNumberingPtr;
@@ -100,10 +205,7 @@ private:
             _indexationVector( DOFNumName + ".NUEQ" ),
             _globalToLocal( DOFNumName + ".NULG" ),
             _LocalToGlobal( DOFNumName + ".NUGL" )
-        {
-            if ( DOFNumName.size() != 19 )
-                throw std::runtime_error( "Catastrophic error" );
-        };
+        {};
         friend class BaseDOFNumberingInstance;
     };
     typedef boost::shared_ptr< LocalEquationNumberingInstance > LocalEquationNumberingPtr;
@@ -113,6 +215,8 @@ private:
     JeveuxVectorChar24         _nameOfSolverDataStructure;
     /** @brief Objet '.NUME' */
     GlobalEquationNumberingPtr _globalNumbering;
+    /** @brief Objet prof_chno */
+    FieldOnNodesDescriptionPtr _dofDescription;
     /** @brief Objet '.NUML' */
     LocalEquationNumberingPtr  _localNumbering;
     /** @brief Modele support */
@@ -121,8 +225,18 @@ private:
     ElementaryMatrixPtr        _supportMatrix;
     /** @brief Chargements */
     ListOfLoadsPtr             _listOfLoads;
+    /** @brief Objet Jeveux '.SMOS' */
+    MorseStoragePtr            _smos;
+    /** @brief Objet Jeveux '.SLCS' */
+    LigneDeCielPtr             _slcs;
+    /** @brief Objet Jeveux '.MLTF' */
+    MultFrontGarbagePtr        _mltf;
     /** @brief Booleen permettant de preciser sur la sd est vide */
     bool                       _isEmpty;
+
+    /** @brief Vectors of FiniteElementDescriptor */
+    std::vector< FiniteElementDescriptorPtr > _FEDVector;
+    std::set< std::string >                   _FEDNames;
 
 protected:
     /**
@@ -157,6 +271,22 @@ public:
     typedef boost::shared_ptr< BaseDOFNumberingInstance > BaseDOFNumberingPtr;
 
     /**
+     * @brief Add a FiniteElementDescriptor to elementary matrix
+     * @param FiniteElementDescriptorPtr support FiniteElementDescriptor
+     */
+    bool addFiniteElementDescriptor( const FiniteElementDescriptorPtr& curFED )
+    {
+        const auto name = trim( curFED->getName() );
+        if( _FEDNames.find( name ) == _FEDNames.end() )
+        {
+            _FEDVector.push_back( _supportModel->getFiniteElementDescriptor() );
+            _FEDNames.insert( name );
+            return true;
+        }
+        return false;
+    };
+
+    /**
      * @brief Function d'ajout d'un chargement
      * @param Args... Liste d'arguments template
      */
@@ -170,6 +300,39 @@ public:
      * @brief Determination de la numerotation
      */
     bool computeNumerotation() throw ( std::runtime_error );
+
+    /**
+     * @brief Get elementary matrix
+     */
+    ElementaryMatrixPtr getElementaryMatrix()
+    {
+        return _supportMatrix;
+    };
+
+    /**
+     * @brief Get support FieldOnNodesDescription
+     */
+    FieldOnNodesDescriptionPtr getFieldOnNodesDescription()
+    {
+        return _dofDescription;
+    };
+
+    /**
+     * @brief Get all support FiniteElementDescriptors
+     * @return vector of all FiniteElementDescriptors
+     */
+    std::vector< FiniteElementDescriptorPtr > getFiniteElementDescriptors()
+    {
+        return _FEDVector;
+    };
+
+    /**
+     * @brief Get model
+     */
+    ModelPtr getSupportModel()
+    {
+        return _supportModel;
+    };
 
     /**
      * @brief Methode permettant de savoir si la numerotation est vide
@@ -220,12 +383,13 @@ public:
         if ( ! _supportMatrix.use_count() == 0 )
             throw std::runtime_error( "It is not allowed to defined Model and ElementaryMatrix together" );
         _supportModel = currentModel;
-    };
-    /**
-     * @brief Get model
-     */
-    ModelPtr getSupportModel() throw ( std::runtime_error ){
-        return _supportModel;
+        auto curFED = _supportModel->getFiniteElementDescriptor();
+        const auto name = trim( curFED->getName() );
+        if( _FEDNames.find( name ) == _FEDNames.end() )
+        {
+            _FEDVector.push_back( _supportModel->getFiniteElementDescriptor() );
+            _FEDNames.insert( name );
+        }
     };
 };
 

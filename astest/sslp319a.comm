@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -65,15 +65,17 @@ a0 = 300
 
 # FISSURE A DROITE
 LNR = FORMULE(VALE='Y',
-              NOM_PARA=('Y'));
+              NOM_PARA='Y',)
 LTR = FORMULE(VALE='(500-a0)-X',
-              NOM_PARA=('X'));
+              a0=a0,
+              NOM_PARA='X',)
 
 # FISSURE A GAUCHE
 LNL = FORMULE(VALE='Y',
-              NOM_PARA=('Y'));
+              NOM_PARA='Y',)
 LTL = FORMULE(VALE='X+(500-a0)',
-              NOM_PARA=('X'));
+              a0=a0,
+              NOM_PARA='X',)
 
 # NOMBRE DE PROPAGATIONS
 NPS = 3

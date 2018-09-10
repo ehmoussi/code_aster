@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -23,8 +23,8 @@ interface
                                         cptr_fct_ldc ,&
                                         cptr_nbvarext, cptr_namevarext,&
                                         cptr_nbprop  , cptr_nameprop)
-        use NonLin_Datastructure_type
-        type(NL_DS_ComporExte), intent(in) :: comp_exte
+        use Behaviour_type
+        type(Behaviour_External), intent(in) :: comp_exte
         integer, intent(out) :: cptr_fct_ldc
         integer, intent(out) :: cptr_nbvarext
         integer, intent(out) :: cptr_namevarext

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -45,7 +45,6 @@ implicit none
 #include "asterfort/jeveuo.h"
 #include "asterfort/matdis.h"
 #include "asterfort/ndynlo.h"
-#include "asterfort/nmlssv.h"
 !
 type(NL_DS_Conv), intent(in) :: ds_conv
 type(NL_DS_AlgoPara), intent(in) :: ds_algopara
@@ -94,10 +93,10 @@ integer, intent(inout) :: list_func_acti(*)
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    integer :: nocc, iret, nb_subs_stat, nb_load_subs
+    integer :: nocc, iret, nb_subs_stat, nb_sst
     integer :: i_cont_form
     aster_logical :: l_deborst, l_frot, l_dis_choc, l_all_verif, l_refe, l_comp, l_post_incr
-    aster_logical :: l_loop_geom, l_loop_frot, l_loop_cont,l_pena
+    aster_logical :: l_loop_geom, l_loop_frot, l_loop_cont, l_pena
     integer :: ixfem
     aster_logical :: l_load_undead, l_load_laplace, l_load_elim, l_load_didi
     character(len=8) :: k8bid, repk
@@ -334,8 +333,10 @@ integer, intent(inout) :: list_func_acti(*)
 !
 ! - Substructuring loads
 !
-    call nmlssv('LECT', list_load, nb_load_subs)
-    if (nb_load_subs .gt. 0) list_func_acti(24) = 1
+    call getfac('SOUS_STRUC', nb_sst)
+    if (nb_sst .gt. 0) then
+        list_func_acti(24) = 1
+    endif
 !
 ! - Buckling
 !

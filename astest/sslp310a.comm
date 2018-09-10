@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -43,17 +43,25 @@ MA=DEFI_GROUP( reuse=MA,   MAILLAGE=MA,
                                 'LEV_INF' ))
                  )
 
-EXP1 = FORMULE(NOM_PARA='X',VALE='( exp(X) ) ')
-EXP5 = FORMULE(NOM_PARA='X',VALE='( exp(5. * X) ) ')
+EXP1 = FORMULE(VALE='( exp(X) ) ',
+               NOM_PARA='X',)
+EXP5 = FORMULE(VALE='( exp(5. * X) ) ',
+               NOM_PARA='X',)
 
-SINH1 = FORMULE(NOM_PARA='X',VALE='( sinh(X) ) ')
-SINH5 = FORMULE(NOM_PARA='X',VALE='( sinh(5. * X) ) ')
+SINH1 = FORMULE(VALE='( sinh(X) ) ',
+                NOM_PARA='X',)
+SINH5 = FORMULE(VALE='( sinh(5. * X) ) ',
+                NOM_PARA='X',)
 
-COSH1 = FORMULE(NOM_PARA='X',VALE='( cosh(X) ) ')
-COSH5 = FORMULE(NOM_PARA='X',VALE='( cosh(5. * X) ) ')
+COSH1 = FORMULE(VALE='( cosh(X) ) ',
+                NOM_PARA='X',)
+COSH5 = FORMULE(VALE='( cosh(5. * X) ) ',
+                NOM_PARA='X',)
 
-COS1 = FORMULE(NOM_PARA='X',VALE='( cos(X) ) ')
-COS5 = FORMULE(NOM_PARA='X',VALE='( cos(2.4048255577 * X))')
+COS1 = FORMULE(VALE='( cos(X) ) ',
+               NOM_PARA='X',)
+COS5 = FORMULE(VALE='( cos(2.4048255577 * X))',
+               NOM_PARA='X',)
 
 CL=AFFE_CHAR_MECA(   MODELE=MO,
 

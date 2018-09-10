@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -32,6 +32,9 @@ def asse_elem_ssd_prod(self, RESU_ASSE_SSD, **args):
         'RIGI_GENE' : matr_asse_gene_r,
         'MASS_GENE' : matr_asse_gene_r,
     }
+    if args.get('__all__'):
+        return ([None], MTYPES.values())
+
     for mc, typ in MTYPES.items():
         if RESU_ASSE_SSD.get(mc):
             self.type_sdprod(RESU_ASSE_SSD[mc], typ)
@@ -48,10 +51,10 @@ ASSE_ELEM_SSD=MACRO(nom="ASSE_ELEM_SSD",
         RESU_ASSE_SSD = FACT( statut='o',
                           regles=(PRESENT_PRESENT('RIGI_GENE','NUME_DDL_GENE'),
                                   PRESENT_PRESENT('MASS_GENE','NUME_DDL_GENE'),),
-                              MODELE=SIMP(statut='o',typ=CO,defaut=None),
-                              NUME_DDL_GENE=SIMP(statut='o',typ=CO,defaut=None),
-                              RIGI_GENE=SIMP(statut='o',typ=CO,defaut=None),
-                              MASS_GENE=SIMP(statut='o',typ=CO,defaut=None),
+                              MODELE=SIMP(statut='o',typ=CO),
+                              NUME_DDL_GENE=SIMP(statut='o',typ=CO),
+                              RIGI_GENE=SIMP(statut='o',typ=CO),
+                              MASS_GENE=SIMP(statut='o',typ=CO),
                            ),
 
         INFO            =SIMP(statut='f',typ='I',defaut= 1,into=( 1 , 2) ),

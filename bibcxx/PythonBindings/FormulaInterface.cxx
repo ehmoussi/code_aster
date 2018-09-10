@@ -39,14 +39,71 @@ void exportFormulaToPython()
         .def( "__init__", make_constructor(
             &initFactoryPtr< FormulaInstance,
                              std::string >) )
-        .def( "setVariables", &FormulaInstance::setVariables )
-        .def( "setExpression", &FormulaInstance::setExpression )
-        .def( "setComplex", &FormulaInstance::setComplex )
-        .def( "setContext", &FormulaInstance::setContext )
-        .def( "evaluate", &FormulaInstance::evaluate )
-        .def( "getVariables", &FormulaInstance::getVariables )
-        .def( "getExpression", &FormulaInstance::getExpression )
-        .def( "getContext", &FormulaInstance::getContext )
-        .def( "getProperties", &FormulaInstance::getProperties )
+
+        .def( "setVariables", &FormulaInstance::setVariables, R"(
+Define the variables names.
+
+Arguments:
+    varnames (list[str]): List of variables names.
+        )", ( arg("self"), arg("varnames") ) )
+
+        .def( "setExpression", &FormulaInstance::setExpression, R"(
+Define the expression of the formula.
+
+If the expression uses non builtin objects, the evaluation context must be
+defined using `:func:setContext`.
+
+Arguments:
+    expression (str): Expression of the formula.
+        )", (arg("self"), arg("expression")) )
+
+        .def( "setComplex", &FormulaInstance::setComplex, R"(
+Set the type of the formula as complex.
+        )", (arg("self"))  )
+
+        .def( "setContext", &FormulaInstance::setContext, R"(
+Define the context holding objects required to evaluate the expression.
+
+Arguments:
+    context (dict): Context for the evaluation.
+        )", (arg("self"), arg("context")) )
+
+        .def( "evaluate", &FormulaInstance::evaluate, R"(
+Evaluate the formula with the given variables values.
+
+Arguments:
+    val (list[float]): List of the values of the variables.
+
+Returns:
+    float/complex: Value of the formula for these values.
+        )", (arg("self"), arg("*val")) )
+
+        .def( "getVariables", &FormulaInstance::getVariables, R"(
+Return the variables names.
+
+Returns:
+    list[str]: List of the names of the variables.
+        )", (arg("self")) )
+
+        .def( "getExpression", &FormulaInstance::getExpression, R"(
+Return expression of the formula.
+
+Returns:
+    str: Expression of the formula.
+        )", (arg("self")) )
+
+        .def( "getContext", &FormulaInstance::getContext, R"(
+Return the context used to evaluate the formula.
+
+Returns:
+    dict: Context used for evaluation.
+        )", arg("self") )
+
+        .def( "getProperties", &FormulaInstance::getProperties, R"(
+Return the properties of the formula (for compatibility with function objects).
+
+Returns:
+    list[str]: List of 6 strings as function objects contain.
+        )", arg("self") )
     ;
 };
