@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -303,8 +303,8 @@ TAB_EPS=POST_RELEVE_T(ACTION=_F(INTITULE='EPSG_NOEU',
 
 from numpy import sqrt, log, interp, array
 
-EPXL = FORMULE(NOM_PARA=('EPXX'),
-                VALE='log(1+2*EPXX)/2.')
+EPXL = FORMULE(VALE='log(1+2*EPXX)/2.',
+               NOM_PARA='EPXX',)
 
 
 TAB_EPS=CALC_TABLE(TABLE=TAB_EPS,
@@ -312,16 +312,16 @@ TAB_EPS=CALC_TABLE(TABLE=TAB_EPS,
                     ACTION=_F(OPERATION='OPER',
                             FORMULE=EPXL,NOM_PARA='EPXXL'),)
 
-EPYL = FORMULE(NOM_PARA=('EPYY'),
-                VALE='log(1+2*EPYY)/2.')
+EPYL = FORMULE(VALE='log(1+2*EPYY)/2.',
+               NOM_PARA='EPYY',)
 
 TAB_EPS=CALC_TABLE(TABLE=TAB_EPS,
                     reuse=TAB_EPS,
                     ACTION=_F(OPERATION='OPER',
                             FORMULE=EPYL,NOM_PARA='EPYYL'),)
 
-EPZL = FORMULE(NOM_PARA=('EPZZ'),
-                VALE='log(1+2*EPZZ)/2.')
+EPZL = FORMULE(VALE='log(1+2*EPZZ)/2.',
+               NOM_PARA='EPZZ',)
 
 
 TAB_EPS=CALC_TABLE(TABLE=TAB_EPS,
@@ -329,8 +329,8 @@ TAB_EPS=CALC_TABLE(TABLE=TAB_EPS,
                     ACTION=_F(OPERATION='OPER',
                             FORMULE=EPZL,NOM_PARA='EPZZL'),)
 
-EPVL=FORMULE(NOM_PARA=('EPXX','EPYY','EPZZ'),
-            VALE='(sqrt(1+2*EPXX))*(sqrt(1+2*EPYY))*(sqrt(1+2*EPZZ))-1')
+EPVL = FORMULE(VALE='(sqrt(1+2*EPXX))*(sqrt(1+2*EPYY))*(sqrt(1+2*EPZZ))-1',
+               NOM_PARA=['EPXX', 'EPYY', 'EPZZ'],)
 
 TAB_EPS=CALC_TABLE(TABLE=TAB_EPS,
                     reuse=TAB_EPS,

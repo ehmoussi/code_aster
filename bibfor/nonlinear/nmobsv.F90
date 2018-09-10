@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,10 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmobsv(meshz     , modelz, sddisc         , sd_obsv  , nume_time,&
-                  cara_elemz, matez , ds_constitutive, varc_refe, valinc   ,&
-                  ds_inout  )
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine nmobsv(meshz     , modelz     , sddisc         , sd_obsv  , nume_time,&
+                  cara_elemz, ds_material, ds_constitutive, valinc   , ds_inout  )
 !
 use NonLin_Datastructure_type
 !
@@ -31,19 +31,16 @@ implicit none
 #include "asterfort/nmextd.h"
 #include "asterfort/jeveuo.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=*), intent(in) :: meshz
-    character(len=19), intent(in) :: sd_obsv
-    integer, intent(in) :: nume_time
-    character(len=19), intent(in) :: sddisc
-    character(len=*), intent(in) :: cara_elemz
-    character(len=*), intent(in) :: matez
-    character(len=*), intent(in) :: modelz
-    type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-    character(len=*), intent(in) :: varc_refe
-    character(len=19), intent(in) :: valinc(*)
-    type(NL_DS_InOut), optional, intent(in) :: ds_inout
+character(len=*), intent(in) :: meshz
+character(len=19), intent(in) :: sd_obsv
+integer, intent(in) :: nume_time
+character(len=19), intent(in) :: sddisc
+character(len=*), intent(in) :: cara_elemz
+type(NL_DS_Material), intent(in) :: ds_material
+character(len=*), intent(in) :: modelz
+type(NL_DS_Constitutive), intent(in) :: ds_constitutive
+character(len=19), intent(in) :: valinc(*)
+type(NL_DS_InOut), optional, intent(in) :: ds_inout
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -59,15 +56,15 @@ implicit none
 ! In  nume_time        : index of time
 ! In  model            : name of model
 ! In  cara_elem        : name of datastructure for elementary parameters (CARTE)
-! In  mate             : name of material characteristics (field)
+! In  ds_material      : datastructure for material parameters
 ! In  ds_constitutive  : datastructure for constitutive laws management
-! In  varc_refe        : command variable for reference
 ! In  valinc           : hat variable for algorithm fields
 ! In  ds_inout         : datastructure for input/output management
 !
 ! --------------------------------------------------------------------------------------------------
 !
     real(kind=8) :: time
+    character(len=24) :: mate, varc_refe
     character(len=19) :: disp_curr, strx_curr, varc_curr
     character(len=24) :: field_type
     character(len=19) :: field
@@ -79,7 +76,9 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    time   = diinst(sddisc, nume_time)
+    mate      = ds_material%field_mate
+    varc_refe = ds_material%varc_refe
+    time      = diinst(sddisc, nume_time)
 !
 ! - Get fields
 !
@@ -90,8 +89,8 @@ implicit none
 ! - Make observation 
 !
     call nmobse(meshz     , sd_obsv  , time,&
-                cara_elemz, modelz   , matez    , ds_constitutive, disp_curr,&
-                strx_curr , varc_curr, varc_refe)
+                cara_elemz, modelz   , ds_material, ds_constitutive, disp_curr,&
+                strx_curr , varc_curr)
 !
 ! - Change fields after initial observation
 !

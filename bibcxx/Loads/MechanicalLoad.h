@@ -262,7 +262,7 @@ template <> struct LoadTraits< THMFlux >
  */
 class GenericMechanicalLoadInstance: public DataStructure
 {
-public:
+    public:
         struct MecaLoad
         {
             /** @brief Modèle support */
@@ -418,6 +418,14 @@ public:
         {};
 
         /**
+         * @brief Get the support finite element descriptor
+         */
+        FiniteElementDescriptorPtr getFiniteElementDescriptor() const
+        {
+            return _mecaLoad._FEDesc;
+        };
+
+        /**
          * @brief Get the support model
          */
         const MecaLoad& getMechanicalLoadDescription() const
@@ -432,7 +440,7 @@ public:
             throw ( std::runtime_error )
         {
             if ( ( ! _mecaLoad._supportModel ) || _mecaLoad._supportModel->isEmpty() )
-                throw std::runtime_error( "Support mesh of current model is empty" );
+                throw std::runtime_error( "Support model of current load is empty" );
             return _mecaLoad._supportModel;
         };
 

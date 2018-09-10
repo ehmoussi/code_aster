@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -95,20 +95,22 @@ def raff_gp_ops(self, **args):
     nbcop = TRANCHE_2D['NB_ZONE']
     theta = TRANCHE_2D['ANGLE']
     taille = TRANCHE_2D['TAILLE']
-    self.update_const_context({'origine': TRANCHE_2D['CENTRE']})
-    self.update_const_context({'rayon': TRANCHE_2D['RAYON']})
-    self.update_const_context({'taille': TRANCHE_2D['TAILLE']})
-    self.update_const_context({'theta': TRANCHE_2D['ANGLE']})
-    self.update_const_context({'nbcop': TRANCHE_2D['NB_ZONE']})
 
 #
 # INITIALISATIONS
 #
     __MA = [None] * (nb_calc + 1)
     __MA[0] = __MA0
-    self.update_const_context({'SEUIL': SEUIL})
-    self.update_const_context({'ccos': cos(theta * pi / 180.)})
-    self.update_const_context({'ssin': sin(theta * pi / 180.)})
+    const_context = {
+        'origine': TRANCHE_2D['CENTRE'],
+        'rayon': TRANCHE_2D['RAYON'],
+        'taille': TRANCHE_2D['TAILLE'],
+        'theta': TRANCHE_2D['ANGLE'],
+        'nbcop': TRANCHE_2D['NB_ZONE'],
+        'SEUIL': SEUIL,
+        'ccos': cos(theta * pi / 180.),
+        'ssin': sin(theta * pi / 180.)
+    }
 
 #
 # C EST PARTI
@@ -117,15 +119,18 @@ def raff_gp_ops(self, **args):
         if num_calc % 3 == 0:
             __seuil = FORMULE(
                 VALE='''SEUIL(X,Y,origine[0]-3.*rayon*ccos,origine[1]-3*rayon*ssin,3*rayon,taille,nbcop+4,ccos,ssin)''',
-                NOM_PARA=('X', 'Y'),)
+                NOM_PARA=('X', 'Y'),
+                **const_context)
         elif num_calc % 3 == 1:
             __seuil = FORMULE(
                 VALE='''SEUIL(X,Y,origine[0]-2.*rayon*ccos,origine[1]-2.*rayon*ssin,2.*rayon,taille,nbcop+2,ccos,ssin)''',
-                NOM_PARA=('X', 'Y'),)
+                NOM_PARA=('X', 'Y'),
+                **const_context)
         elif num_calc % 3 == 2:
             __seuil = FORMULE(
                 VALE='''SEUIL(X,Y,origine[0]-1.2*rayon*ccos,origine[1]-1.2*rayon*ssin,1.2*rayon,taille,nbcop,ccos,ssin)''',
-                NOM_PARA=('X', 'Y'),)
+                NOM_PARA=('X', 'Y'),
+                **const_context)
         __MO = AFFE_MODELE(MAILLAGE=__MA[num_calc],
                            AFFE=_F(TOUT='OUI',
                                    PHENOMENE='MECANIQUE',

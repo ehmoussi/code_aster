@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -26,6 +26,9 @@ from code_aster.Cata.Commons import *
 
 
 def dyna_vibra_sdprod(BASE_CALCUL, TYPE_CALCUL, MATR_RIGI,**args):
+    if args.get('__all__'):
+        return (dyna_trans, dyna_harmo, acou_harmo, tran_gene, harm_gene)
+
     if BASE_CALCUL == 'PHYS':
         if TYPE_CALCUL == 'TRAN'                   : return dyna_trans
         if (AsType(MATR_RIGI) == matr_asse_pres_c) : return acou_harmo
@@ -37,7 +40,7 @@ def dyna_vibra_sdprod(BASE_CALCUL, TYPE_CALCUL, MATR_RIGI,**args):
 DYNA_VIBRA = OPER (nom      = "DYNA_VIBRA",
                    op       = 29,
                    sd_prod  = dyna_vibra_sdprod,
-                   reentrant='f',
+                   reentrant='f:RESULTAT',
                    fr       = tr("Calcul dynamique transitoire ou harminque, sur base physique ou généralisée"),
 
         reuse=SIMP(statut='c', typ=CO),
@@ -73,7 +76,7 @@ DYNA_VIBRA = OPER (nom      = "DYNA_VIBRA",
         ACCE_ROTA       =     SIMP(statut='f',typ=(fonction_sdaster,formule),),),
 
         b_constante     = BLOC(condition="""equal_to("VITESSE_VARIABLE", 'NON')""",
-        VITE_ROTA       =     SIMP(statut='o',typ='R',defaut=0.E0),),
+        VITE_ROTA       =     SIMP(statut='f',typ='R',defaut=0.E0),),
         COUPLAGE_EDYOS  =     FACT(statut='f',max=1,
             PAS_TPS_EDYOS=        SIMP(statut='o',typ='R' ),),),
 
@@ -124,7 +127,7 @@ DYNA_VIBRA = OPER (nom      = "DYNA_VIBRA",
 
            # 1. Integration schemes
            SCHEMA_TEMPS    =     FACT(statut='d',
-               SCHEMA      =         SIMP(statut='o', typ='TXM', defaut="DIFF_CENTRE",
+               SCHEMA      =         SIMP(statut='f', typ='TXM', defaut="DIFF_CENTRE",
                                           into=("NEWMARK", "WILSON", "DIFF_CENTRE",
                                                 "DEVOGE", "ADAPT_ORDRE1", "ADAPT_ORDRE2",
                                                 "RUNGE_KUTTA_32", "RUNGE_KUTTA_54", "ITMI"),),
@@ -334,9 +337,9 @@ DYNA_VIBRA = OPER (nom      = "DYNA_VIBRA",
             SEUIL       =         SIMP(statut='f',typ='R',defaut= 0.5),),
 #            Implicit or explicit treatment of choc non-linearities in integration
         b_nl_wet        =     BLOC(condition="""exists("BASE_ELAS_FLUI")""",
-          TRAITEMENT_NONL =         SIMP(statut='o',typ='TXM', defaut='IMPLICITE', into=('IMPLICITE',),),),
+          TRAITEMENT_NONL =         SIMP(statut='f',typ='TXM', defaut='IMPLICITE', into=('IMPLICITE',),),),
         b_nl_dry        =     BLOC(condition="""not exists("BASE_ELAS_FLUI")""",
-          TRAITEMENT_NONL =         SIMP(statut='o',typ='TXM', defaut='EXPLICITE', into=('IMPLICITE','EXPLICITE'),),),
+          TRAITEMENT_NONL =         SIMP(statut='f',typ='TXM', defaut='EXPLICITE', into=('IMPLICITE','EXPLICITE'),),),
 
         ), # end b_excit_tran_mod
 ##########################################################################################

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -61,8 +61,8 @@ subroutine te0165(option, nomte)
 !
 !
     call jevech('PCOMPOR', 'L', icompo)
-    if (zk16(icompo-1+NAME)(1:4) .ne. 'ELAS') then
-        call utmess('F', 'CALCULEL4_92', sk=zk16(icompo-1+NAME))
+    if (zk16(icompo-1+RELA_NAME)(1:4) .ne. 'ELAS') then
+        call utmess('F', 'CALCULEL4_92', sk=zk16(icompo-1+RELA_NAME))
     endif
     if (zk16(icompo-1+DEFO) .ne. 'GROT_GDEP') then
         call utmess('F', 'CALCULEL4_93', sk=zk16(icompo-1+DEFO))

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -78,7 +78,7 @@ dict_func_test = {
 
 
 def test_fichier_ops(self, FICHIER, NB_VALE, NB_VALE_I,
-                     VALE_CALC, VALE_CALC_I, VALE_CALC_K, TYPE_TEST,
+                     VALE_CALC, VALE_CALC_I, VALE_CALC_K,
                      TOLE_MACHINE, CRITERE, INFO, **kwargs):
     """
       Macro permettant de tester la non-regression d'un fichier.
@@ -88,7 +88,6 @@ def test_fichier_ops(self, FICHIER, NB_VALE, NB_VALE_I,
     import aster
     from code_aster.Cata.Syntax import _F
     from Utilitai.Utmess import UTMESS
-    ier = 0
     # La macro compte pour 1 dans la numerotation des commandes
     self.set_icmd(1)
     # On importe les definitions des commandes a utiliser dans la macro
@@ -99,6 +98,7 @@ def test_fichier_ops(self, FICHIER, NB_VALE, NB_VALE_I,
     TEST_TABLE = self.get_cmd('TEST_TABLE')
     #
     is_ok = 0
+    TYPE_TEST = kwargs.get("TYPE_TEST")
     TYPE_TEST = TYPE_TEST or 'SOMM'
     # # vérification non faisable dans le catalogue
     if VALE_CALC_I is not None and NB_VALE_I is None:
@@ -113,7 +113,7 @@ def test_fichier_ops(self, FICHIER, NB_VALE, NB_VALE_I,
     fileobj = open(FICHIER, 'r')
     # filtre par expression régulière
     try:
-        fileobj = regexp_filter(fileobj, kwargs['EXPR_IGNORE'])
+        fileobj = regexp_filter(fileobj, kwargs.get('EXPR_IGNORE'))
     except TestFichierError, valk:
         UTMESS('S', 'TEST0_1', valk=valk)
     # calcule le nombre de valeurs et la somme ou min/max
@@ -176,7 +176,7 @@ def test_fichier_ops(self, FICHIER, NB_VALE, NB_VALE_I,
                    VALE_CALC_I=int(True),
                    TOLE_MACHINE=0,
                    CRITERE='ABSOLU',)
-    return ier
+    return
 
 
 def regexp_filter(file_in, regexp_ignore, debug=False):

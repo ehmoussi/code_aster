@@ -34,7 +34,7 @@ MODT=AFFE_MODELE(MAILLAGE=MAIL,
 #MODT.build()
 #MODT.debugPrint()
 
-charCine = code_aster.KinematicsLoad()
+charCine = code_aster.KinematicsMechanicalLoad()
 charCine.setSupportModel(MODT)
 charCine.addImposedMechanicalDOFOnNodes(code_aster.PhysicalQuantityComponent.Dx, 0., "EncastN")
 charCine.addImposedMechanicalDOFOnNodes(code_aster.PhysicalQuantityComponent.Dy, 0., "EncastN")
@@ -61,7 +61,7 @@ numeDDL.setElementaryMatrix(matr_elem)
 numeDDL.computeNumerotation()
 #numeDDL.debugPrint()
 
-matrAsse = code_aster.AssemblyMatrixDouble()
+matrAsse = code_aster.AssemblyMatrixDisplacementDouble()
 matrAsse.appendElementaryMatrix(matr_elem)
 matrAsse.setDOFNumbering(numeDDL)
 matrAsse.addKinematicsLoad(charCine)

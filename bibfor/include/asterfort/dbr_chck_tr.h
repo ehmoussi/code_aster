@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,8 +19,9 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine dbr_chck_tr(ds_para_tr)
+    subroutine dbr_chck_tr(ds_para_tr, l_reuse)
         use Rom_Datastructure_type
             type(ROM_DS_ParaDBR_TR), intent(in) :: ds_para_tr
+            aster_logical, intent(in) :: l_reuse
     end subroutine dbr_chck_tr
 end interface

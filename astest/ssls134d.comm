@@ -1,0 +1,181 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'), DEBUG=_F(SDVERI='OUI'))
+
+MA=LIRE_MAILLAGE(FORMAT="ASTER",)
+
+MODEL=AFFE_MODELE(MAILLAGE=MA,
+                  AFFE=_F(GROUP_MA='PLAQUE', PHENOMENE='MECANIQUE', MODELISATION='DKT',))
+
+
+CARA=AFFE_CARA_ELEM(MODELE=MODEL,
+                    COQUE= _F(GROUP_MA='PLAQUE', EPAIS=0.2))
+
+
+# on cree une sd evol_elas avec des champs d'efforts imposes :
+#-------------------------------------------------------------
+CHEFF1=CREA_CHAMP(MAILLAGE=MA, OPERATION='AFFE', TYPE_CHAM='CART_SIEF_R',
+                   AFFE= _F(GROUP_MA='PLAQUE',
+                            NOM_CMP= ('NXX', 'NYY','NXY','MXX','MYY','MXY','QX','QY'),
+                            VALE=    (1.0E6, 0.0,   0.0,  0.0,  0.0,  0.0,-6.E5, 0.0)))
+#fibre supérieure tendue en X
+CHEFF2=CREA_CHAMP(MAILLAGE=MA, OPERATION='AFFE', TYPE_CHAM='CART_SIEF_R',
+                   AFFE= _F(GROUP_MA='PLAQUE',
+                            NOM_CMP= ('NXX', 'NYY','NXY','MXX','MYY','MXY','QX','QY'),
+                            VALE=    (0.0,   0.0,  0.0,  +100.0E3,  0.0,  0.0, 0.0, 0.0)))
+#section partiellement tendue
+CHEFF3=CREA_CHAMP(MAILLAGE=MA, OPERATION='AFFE', TYPE_CHAM='CART_SIEF_R',
+                   AFFE= _F(GROUP_MA='PLAQUE',
+                            NOM_CMP= ('NXX','NYY'    ,'NXY','MXX','MYY','MXY','QX','QY'),
+                            VALE=    ( 100.0E3,  0.0,  0.0,  100E3,  0.0,  0.0, 0.0, 0.0)))
+#section totalement tendue
+CHEFF4=CREA_CHAMP(MAILLAGE=MA, OPERATION='AFFE', TYPE_CHAM='CART_SIEF_R',
+                   AFFE= _F(GROUP_MA='PLAQUE',
+                            NOM_CMP= ('NXX','NYY','NXY','MXX' ,'MYY'   ,'MXY','QX','QY'),
+                            VALE=    (2E6,  0.0,  0.0,  100E3,  0.0,  0.0, 0.0, 0.0)))
+CHEFF5=CREA_CHAMP(MAILLAGE=MA, OPERATION='AFFE', TYPE_CHAM='CART_SIEF_R',
+                   AFFE= _F(GROUP_MA='PLAQUE',
+                            NOM_CMP= ('NXX','NYY','NXY','MXX','MYY','MXY','QX','QY'),
+                            VALE=    ( 0.0,  0.0,  0.0, 100E3, -75E3,  0.0, 0.0, 0.0)))
+RESUELU=CREA_RESU(OPERATION='AFFE',TYPE_RESU='EVOL_ELAS',
+           NOM_CHAM='EFGE_ELNO',
+           AFFE=(
+             _F( CHAM_GD=CHEFF1,INST=1., MODELE=MODEL, CARA_ELEM=CARA,),
+             _F( CHAM_GD=CHEFF2,INST=2., MODELE=MODEL, CARA_ELEM=CARA,),
+             _F( CHAM_GD=CHEFF3,INST=3., MODELE=MODEL, CARA_ELEM=CARA,),
+             _F( CHAM_GD=CHEFF4,INST=4., MODELE=MODEL, CARA_ELEM=CARA,),
+             _F( CHAM_GD=CHEFF5,INST=5., MODELE=MODEL, CARA_ELEM=CARA,),
+           ))
+RESUELS=CREA_RESU(OPERATION='AFFE',TYPE_RESU='EVOL_ELAS',
+           NOM_CHAM='EFGE_ELNO',
+           AFFE=(
+             _F( CHAM_GD=CHEFF1,INST=1., MODELE=MODEL, CARA_ELEM=CARA,),
+             _F( CHAM_GD=CHEFF2,INST=2., MODELE=MODEL, CARA_ELEM=CARA,),
+             _F( CHAM_GD=CHEFF3,INST=3., MODELE=MODEL, CARA_ELEM=CARA,),
+             _F( CHAM_GD=CHEFF4,INST=4., MODELE=MODEL, CARA_ELEM=CARA,),
+             _F( CHAM_GD=CHEFF5,INST=5., MODELE=MODEL, CARA_ELEM=CARA,),
+           ))
+
+# calcul du ferraillage :
+#------------------------
+RESUELU= CALC_FERRAILLAGE( RESULTAT =RESUELU,reuse=RESUELU,
+                           CODIFICATION = 'EC2',
+                           TYPE_COMB    = 'ELU',  INST=(1., 2., 3., 4.,5.),
+                           AFFE  = (_F( TOUT='OUI', C_INF=0.04, C_SUP=0.02, FYK=500.0E6, FCK = 55.E6, GAMMA_S=1.15, GAMMA_C=1.5,UNITE_CONTRAINTE='Pa', E_S = 2.1e11),))
+N_CMPU = ['DNSXI','DNSXS','DNSYI','DNSYS','DNST'];
+RESUELS= CALC_FERRAILLAGE( RESULTAT =RESUELS, reuse=RESUELS,
+         CODIFICATION = 'EC2',
+         TYPE_COMB    = 'ELS',  
+         INST=(1., 2., 3., 4.,5.),
+         AFFE  = (_F( TOUT='OUI', C_INF=0.04, C_SUP=0.02, SIGS_ELS=400.0E6, SIGC_ELS=21E6, ALPHA_E=21.,UNITE_CONTRAINTE='Pa'),))
+N_CMPU = ['DNSXI','DNSXS','DNSYI','DNSYS','DNST'];
+N_CMPS = ['DNSXI','DNSXS','DNSYI','DNSYS'];
+
+#-----------------------------------------------------
+# Tests pour l'ELU
+#-----------------------------------------------------
+D_ref = [[0.00115, 0.00115, 0, 0, 0.0038333333333333327],
+[0, 0.0015260027515050546, 0, 0, 0],
+[0, 0.0016588415206410722, 0, 0, 0.0],
+[0.00038333333333333334, 0.004216666666666666, 0, 0, 0.0],
+[0, 0.0015260027515050546, 0.0009915472790294484, 0, 0],];
+# valeurs de non-regression DNSXI,DNSXS,DNSYI,DNSYS
+D_calc = [[0.00115, 0.00115, 0, 0, 0.0038333333333333327],
+[0, 0.00152600275151, 0, 0, 0],
+[0, 0.00165884152064, 0, 0, 0.0],
+[0.000383333333333, 0.00421666666667, 0, 0, 0.0],
+[0, 0.00152600275151, 0.000991547279029, 0, 0],];
+for j in range(len(D_ref)) :
+    for i,ncmp in enumerate(N_CMPU) :
+      if (D_ref[j][i] == 0):
+        TEST_RESU(RESU=_F(RESULTAT=RESUELU,
+                  INST=j+1.0,
+                  NOM_CHAM='FERRAILLAGE',
+                  NOM_CMP=ncmp,
+                  MAILLE='M1',
+                  LEGENDE = 'ELU',
+                  VALE_REFE=D_ref[j][i],
+                  VALE_CALC=D_calc[j][i],
+                  REFERENCE='ANALYTIQUE',
+                  ORDRE_GRANDEUR=1.e-3,
+                  CRITERE='ABSOLU',),);
+      else: 
+        TEST_RESU(RESU=_F(RESULTAT=RESUELU,
+                  INST=j+1.0,
+                  NOM_CHAM='FERRAILLAGE',
+                  NOM_CMP=ncmp,
+                  MAILLE='M1',
+                  LEGENDE = 'ELU',
+                  VALE_REFE=D_ref[j][i],
+                  REFERENCE='ANALYTIQUE',
+                  VALE_CALC=D_calc[j][i],),);
+
+Tad=CREA_TABLE(RESU=_F(RESULTAT = RESUELU,
+                       NOM_CHAM = 'FERRAILLAGE',
+                       TOUT_CMP='OUI',
+                       MAILLE = 'M1',),)
+IMPR_TABLE(UNITE=8,TABLE=Tad,
+           FORMAT='TABLEAU',SEPARATEUR = ';',TITRE ='');
+#-----------------------------------------------------
+# Tests pour l'ELS
+#-----------------------------------------------------
+D_ref = [[0.00125, 0.00125, 0, 0],
+[0, 0.0018728954321147761, 0, 0],
+[0, 0.002002833458226873, 0, 0],
+[0.0004166666666666667, 0.004583333333333333, 0, 0],
+[0, 0.0018728954321147761, 0.0012056660625551991, 0],];
+# valeurs de non-regression DNSXI,DNSXS,DNSYI,DNSYS
+D_calc = [[0.00125, 0.00125, 0, 0],
+[0, 0.00187289543211, 0, 0],
+[0, 0.00200283345823, 0, 0],
+[0.000416666666667, 0.00458333333333, 0, 0],
+[0, 0.00187289543211, 0.00120566606256, 0],];
+for j in range(len(D_ref)) :
+    for i,ncmp in enumerate(N_CMPS) :
+      if (D_ref[j][i] == 0):
+        TEST_RESU(RESU=_F(RESULTAT=RESUELS,
+                  INST=j+1.0,
+                  NOM_CHAM='FERRAILLAGE',
+                  NOM_CMP=ncmp,
+                  LEGENDE = 'ELS',
+                  MAILLE='M1',
+                  VALE_CALC=D_calc[j][i],
+                  VALE_REFE=D_ref[j][i],
+                  REFERENCE='ANALYTIQUE',
+                  ORDRE_GRANDEUR=1.e-3,
+                  CRITERE='ABSOLU',),);
+      else:
+        TEST_RESU(RESU=_F(RESULTAT=RESUELS,
+                  INST=j+1.0,
+                  NOM_CHAM='FERRAILLAGE',
+                  NOM_CMP=ncmp,
+                  LEGENDE = 'ELS',
+                  MAILLE='M1',
+                  VALE_REFE=D_ref[j][i],
+                  REFERENCE='ANALYTIQUE',
+                  VALE_CALC=D_calc[j][i],),);
+
+Tae=CREA_TABLE(RESU=_F(RESULTAT = RESUELS,
+                       NOM_CHAM = 'FERRAILLAGE',
+                       TOUT_CMP='OUI',
+                       MAILLE = 'M1',),)
+IMPR_TABLE(UNITE=8,TABLE=Tae,
+           FORMAT='TABLEAU',SEPARATEUR = ';',TITRE ='');
+FIN()

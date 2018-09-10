@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -42,7 +42,8 @@ MO2=AFFE_MODELE(MAILLAGE=MA2, AFFE=_F( TOUT='OUI',PHENOMENE='MECANIQUE',MODELISA
 # 3.1. Creation du champ de contraintes
 #---------------------------------
 
-FONC = FORMULE(NOM_PARA=('X','Y'),VALE='1+X+Y')
+FONC = FORMULE(VALE='1+X+Y',
+               NOM_PARA=['X', 'Y'],)
 
 CHFONC=CREA_CHAMP( OPERATION='AFFE', TYPE_CHAM='ELGA_NEUT_F', MODELE=MO1,PROL_ZERO='OUI',
               AFFE=_F(  TOUT = 'OUI', NOM_CMP = ('X1', ), VALE_F = FONC))
@@ -189,7 +190,8 @@ MO4=AFFE_MODELE(MAILLAGE=MA4, AFFE=_F( TOUT='OUI',PHENOMENE='MECANIQUE',MODELISA
 # 3.1. Creation du champ de contraintes
 #---------------------------------
 
-FONC = FORMULE(NOM_PARA=('X','Y','Z'),VALE='1+X')
+FONC = FORMULE(VALE='1+X',
+               NOM_PARA=['X', 'Y', 'Z'],)
 
 CHFONC=CREA_CHAMP( OPERATION='AFFE', TYPE_CHAM='ELGA_NEUT_F', MODELE=MO3,PROL_ZERO='OUI',
               AFFE=_F(  TOUT = 'OUI', NOM_CMP = ('X1', ), VALE_F = FONC))
@@ -335,17 +337,38 @@ CHXG1=CREA_CHAMP(OPERATION='DISC', TYPE_CHAM='ELGA_GEOM_R',PROL_ZERO='OUI',
 CHREEL=CREA_CHAMP( OPERATION='EVAL', TYPE_CHAM='ELGA_NEUT_R',
               CHAM_F=CHFON2,CHAM_PARA=CHXG1)
 
-CHVARIR=CREA_CHAMP(OPERATION='ASSE', TYPE_CHAM='ELGA_VARI_R',
+CHVARIT=CREA_CHAMP(OPERATION='ASSE', TYPE_CHAM='ELGA_VARI_R',
           MODELE=MO3 , PROL_ZERO='OUI',
            ASSE=_F(TOUT='OUI', CHAM_GD=CHREEL,
              NOM_CMP= 'X1',
            NOM_CMP_RESU= 'V1'))
 
+# on ajoute 199 composantes pour valider qu'ECLA_PG peut traiter des champs 
+# jusqu'a 200 composantes
+
+nom_cmp = ['V%s'%i for i in range(1,201)]
+vale = [i for i in range(1,201)]
+
+V199=  CREA_CHAMP(OPERATION='AFFE', TYPE_CHAM='ELGA_VARI_R', MODELE=MO3, 
+                 AFFE=_F( TOUT = 'OUI', NOM_CMP = nom_cmp, VALE  = vale))
+
+
+CHVARIR=CREA_CHAMP(OPERATION='ASSE', TYPE_CHAM='ELGA_VARI_R',
+          MODELE=MO3 , PROL_ZERO='OUI',
+           ASSE=(_F(TOUT='OUI', CHAM_GD=CHVARIT,
+                    NOM_CMP= 'V1',),
+                 _F(TOUT='OUI', CHAM_GD=V199,
+                    NOM_CMP= nom_cmp[1:],),
+             ))
+
+
 DETRUIRE(CONCEPT=(_F(NOM=CHFONC),
                   _F(NOM=CHFON2),
                   _F(NOM=CHXN),
                   _F(NOM=CHXG1),
-                  _F(NOM=CHREEL),))
+                  _F(NOM=CHREEL),
+                  _F(NOM=CHVARIT),
+                  _F(NOM=V199),))
 
 
 
@@ -368,5 +391,14 @@ TEST_RESU(CHAM_ELEM=_F(REFERENCE='ANALYTIQUE',
                        VALE_CALC=1.200057452,
                        VALE_REFE=1.1971689999999999,),
           )
+
+#TEST_RESU(CHAM_ELEM=_F(REFERENCE='ANALYTIQUE',
+                       #POINT=8,
+                       #NOM_CMP='V200',
+                       #MAILLE='M272',
+                       #CHAM_GD=PJVARI,
+                       #VALE_CALC=200,
+                       #VALE_REFE=200,),
+          #)
 
 FIN();

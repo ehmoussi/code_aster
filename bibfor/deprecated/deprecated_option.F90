@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,16 +15,14 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine deprecated_option(option)
 !
 implicit none
 #include "asterfort/assert.h"
 #include "asterfort/utmess.h"
 !
-! person_in_charge: josselin.delmas at edf.fr
-!
-    character(len=*), intent(in) :: option
+character(len=*), intent(in) :: option
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -45,13 +43,12 @@ implicit none
 !
     if (option .eq. 'VAEX_ELNO') then
         vali = 14
-        valk    = "OPTION='VAEX_ELNO'"
+        valk = "OPTION='VAEX_ELNO'"
     else if (option .eq. 'VAEX_ELGA') then
         vali = 14
-        valk    = "OPTION='VAEX_ELGA'"
+        valk = "OPTION='VAEX_ELGA'"
     else
         goto 999
-!
     endif
 !
     call utmess('A', 'SUPERVIS_9', sk = valk, si = vali)

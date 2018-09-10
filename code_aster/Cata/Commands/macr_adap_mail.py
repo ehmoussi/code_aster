@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -25,6 +25,13 @@ from code_aster.Cata.Commons import *
 
 
 def macr_adap_mail_prod(self, MAJ_CHAM, ADD_CHAM, ADAPTATION, **args):
+  if args.get('__all__'):
+      return ([None],
+              [None, maillage_sdaster],
+              [None, maillage_sdaster],
+              [None, cham_no_sdaster],
+              [None, cham_elem],
+              [None, carte_sdaster])
 #
 # 0. Typage des structures produites
 #
@@ -136,7 +143,7 @@ MACR_ADAP_MAIL=MACRO(nom="MACR_ADAP_MAIL",
 #
 # 4.1.4. La ou les composantes retenues
 #
-    NOM_CMP = SIMP(statut='f',typ=grma,validators=NoRepeat(),max='**',
+    NOM_CMP = SIMP(statut='f',typ='TXM',validators=NoRepeat(),max='**',
                           fr=tr("Liste des composante(s) retenue(s) pour le champ."),
                           ),
 #
@@ -569,7 +576,7 @@ MACR_ADAP_MAIL=MACRO(nom="MACR_ADAP_MAIL",
 #
 # 10.4. Les composantes
 #
-    NOM_CMP = SIMP(statut='f',typ=grma,validators=NoRepeat(),max='**',
+    NOM_CMP = SIMP(statut='f',typ='TXM',validators=NoRepeat(),max='**',
                    fr=tr("Liste des composante(s) retenue(s) pour le champ."),
                    ),
 #
@@ -760,8 +767,8 @@ MACR_ADAP_MAIL=MACRO(nom="MACR_ADAP_MAIL",
 #
 # 16.3. Version de HOMARD
 #
-  VERSION_HOMARD = SIMP(statut='f',typ='TXM',defaut="V11_7",
-                        into=("V11_7", "V11_N", "V11_N_PERSO"),
+  VERSION_HOMARD = SIMP(statut='f',typ='TXM',defaut="V11_10",
+                        into=("V11_10", "V11_N", "V11_N_PERSO"),
                         fr=tr("Version de HOMARD"),
                         ),
 #

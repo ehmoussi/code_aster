@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -22,7 +22,7 @@
 !
 interface
     subroutine rk5adp(nbeq, param_real, param_int, param_car, t0, dt0, &
-                      nbmax, errmax, y0, dy0, rk5fct, resu, iret)
+                      nbmax, errmax, y0, dy0, rk5fct, resu, iret, ynorme)
         integer          :: nbeq
         real(kind=8)     :: param_real(*)
         integer          :: param_int(*)
@@ -35,6 +35,7 @@ interface
         real(kind=8)     :: dy0(nbeq)
         real(kind=8)     :: resu(2*nbeq)
         integer          :: iret
+        real(kind=8),intent(in),optional :: ynorme(nbeq)
 !
         interface
             subroutine rk5fct(ppr, ppi, ppc, yy0, dy0, dyy, decoup)

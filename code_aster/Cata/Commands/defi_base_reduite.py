@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -28,42 +28,47 @@ from code_aster.Cata.Commons import *
 DEFI_BASE_REDUITE=OPER(
     nom="DEFI_BASE_REDUITE",op=53,
     sd_prod=mode_empi,
-    reentrant='f',
+    reentrant='f:BASE',
     reuse=SIMP(statut='c', typ=CO),
+    BASE = SIMP(statut='f',typ=mode_empi,
+                fr=tr("Objet qui sera enrichi des nouveaux instants calculés")),
 
     OPERATION = SIMP(statut='f',typ='TXM',defaut="POD",into=("POD","POD_INCR",'GLOUTON','TRONCATURE',)),
 
     b_pod  = BLOC(condition ="""(equal_to("OPERATION", 'POD'))""",
-        RESULTAT        =SIMP(statut='o',typ=resultat_sdaster),
-        b_thermique     =BLOC(condition = """is_type("RESULTAT") == evol_ther""",
+        RESULTAT         =SIMP(statut='o',typ=resultat_sdaster),
+        b_thermique      =BLOC(condition = """is_type("RESULTAT") == evol_ther""",
                                NOM_CHAM  = SIMP(statut='o',typ='TXM',max=1,into=('TEMP','FLUX_NOEU')),
                           ),
-        b_mecanique     =BLOC(condition = """is_type("RESULTAT") == evol_noli""",
+        b_mecanique      =BLOC(condition = """is_type("RESULTAT") == evol_noli""",
                                NOM_CHAM  = SIMP(statut='o',typ='TXM',max=1,into=('DEPL','SIEF_NOEU')),
                           ),
-        TYPE_BASE       =SIMP(statut='f',typ='TXM',defaut="3D",into=("3D","LINEIQUE")),
-        b_lineique      =BLOC(condition ="""(equal_to("TYPE_BASE", 'LINEIQUE'))""",
+        TYPE_BASE        =SIMP(statut='f',typ='TXM',defaut="3D",into=("3D","LINEIQUE")),
+        b_lineique       =BLOC(condition ="""(equal_to("TYPE_BASE", 'LINEIQUE'))""",
                                AXE       = SIMP(statut='o',typ='TXM',max=1,into=('OX','OY','OZ')),
                                SECTION   = SIMP(statut='o',typ=grno ,max=1)),
-        TOLE_SVD        =SIMP(statut='f',typ='R',defaut=1.E-6),
-        NB_MODE         =SIMP(statut='f',typ='I'),
+        TOLE_SVD         =SIMP(statut='f',typ='R',defaut=1.E-6),
+        NB_MODE          =SIMP(statut='f',typ='I'),
+        MODELE           =SIMP(statut='f',typ=modele_sdaster),
     ),
 
     b_incr = BLOC(condition ="""(equal_to("OPERATION", 'POD_INCR'))""",
-        RESULTAT        =SIMP(statut='o',typ=resultat_sdaster),
-        b_thermique     =BLOC(condition = """is_type("RESULTAT") == evol_ther""",
+        RESULTAT         =SIMP(statut='o',typ=resultat_sdaster),
+        b_thermique      =BLOC(condition = """is_type("RESULTAT") == evol_ther""",
                                NOM_CHAM  = SIMP(statut='o',typ='TXM',max=1,into=('TEMP','FLUX_NOEU')),
                           ),
-        b_mecanique     =BLOC(condition = """is_type("RESULTAT") == evol_noli""",
+        b_mecanique      =BLOC(condition = """is_type("RESULTAT") == evol_noli""",
                                NOM_CHAM  = SIMP(statut='o',typ='TXM',max=1,into=('DEPL','SIEF_NOEU')),
                           ),
-        TYPE_BASE       =SIMP(statut='f',typ='TXM',defaut="3D",into=("3D","LINEIQUE")),
-        b_lineique      =BLOC(condition ="""(equal_to("TYPE_BASE", 'LINEIQUE'))""",
+        TYPE_BASE        =SIMP(statut='f',typ='TXM',defaut="3D",into=("3D","LINEIQUE")),
+        b_lineique       =BLOC(condition ="""(equal_to("TYPE_BASE", 'LINEIQUE'))""",
                                AXE       = SIMP(statut='o',typ='TXM',max=1,into=('OX','OY','OZ')),
                                SECTION   = SIMP(statut='o',typ=grno ,max=1)),
-        TOLE            =SIMP(statut='f',typ='R',defaut=1.E-10),
-        TOLE_SVD        =SIMP(statut='f',typ='R',defaut=1.E-6),
-        NB_MODE         =SIMP(statut='f',typ='I'),
+        TOLE             =SIMP(statut='f',typ='R',defaut=1.E-10),
+        TOLE_SVD         =SIMP(statut='f',typ='R',defaut=1.E-6),
+        NB_MODE          =SIMP(statut='f',typ='I'),
+        MODELE           =SIMP(statut='f',typ=modele_sdaster),
+        TABL_COOR_REDUIT =SIMP(statut='f',typ=table_sdaster),
     ),
 
     b_type_rb       =BLOC(condition ="""(equal_to("OPERATION", 'GLOUTON'))""",
@@ -93,12 +98,11 @@ DEFI_BASE_REDUITE=OPER(
         SOLVEUR         =C_SOLVEUR('DYNA_LINE_HARM'),
         NB_MODE         =SIMP(statut='f',typ='I'),
     ),
- 
+
     b_tronca       =BLOC(condition ="""(equal_to("OPERATION", 'TRONCATURE'))""",
-        BASE          = SIMP(statut='f',typ=mode_empi),
         MODELE_REDUIT = SIMP(statut='o',typ=modele_sdaster),
     ),
-   
+
     INFO            =SIMP(statut='f',typ='I',defaut= 1,into=( 1 , 2) ),
     TITRE           =SIMP(statut='f',typ='TXM'),
 ) ;

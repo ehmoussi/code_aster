@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -230,8 +230,9 @@ for i in range(NCAL):
              # don cil faut faire au choix :
              # NOR = FORMULE(NOM_PARA='N',VALE='YOUN(%f)/YOUN(%f)*N' % (Ti, Tm))
              # ou bien :
-              NOR = FORMULE(NOM_PARA='N',VALE='YOUN(%(Ti)f)/YOUN(%(Tm)f)*N' \
-                 % { 'Ti' : Ti, 'Tm' : Tm })
+              NOR = FORMULE(VALE='YOUN(Ti)/YOUN(Tm)*N',
+                            YOUN=YOUN, Ti=Ti, Tm=Tm,
+                            NOM_PARA='N',)
 
               SIG1=CREA_CHAMP(OPERATION='AFFE', TYPE_CHAM='ELGA_NEUT_F',
                               MODELE=MOMECA,  PROL_ZERO='OUI',   INFO=1,

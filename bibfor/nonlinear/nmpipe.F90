@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,8 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmpipe(modele         , ligrpi    , cartyp, careta, mate  ,&
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine nmpipe(modele         , ligrpi    , cartyp, careta, ds_material,&
                   ds_constitutive, ds_contact, valinc, depdel, ddepl0,&
                   ddepl1         , tau       , nbeffe, eta   , pilcvg,&
                   typpil         , carele)
@@ -47,17 +48,16 @@ implicit none
 #include "asterfort/sdmpic.h"
 #include "asterfort/wkvect.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    integer :: pilcvg, nbeffe
-    real(kind=8) :: tau, eta(2)
-    character(len=24) :: typpil
-    character(len=19) :: ddepl0, ddepl1
-    character(len=19) :: ligrpi, cartyp, careta
-    character(len=24) :: modele, mate, carele
-    type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-    character(len=19) :: depdel, valinc(*)
-    type(NL_DS_Contact), intent(in) :: ds_contact
+integer :: pilcvg, nbeffe
+real(kind=8) :: tau, eta(2)
+character(len=24) :: typpil
+character(len=19) :: ddepl0, ddepl1
+character(len=19) :: ligrpi, cartyp, careta
+character(len=24) :: modele, carele
+type(NL_DS_Material), intent(in) :: ds_material
+type(NL_DS_Constitutive), intent(in) :: ds_constitutive
+character(len=19) :: depdel, valinc(*)
+type(NL_DS_Contact), intent(in) :: ds_contact
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -71,7 +71,7 @@ implicit none
 ! IN  MODELE : MODELE
 ! IN  LIGRPI : LIGREL DES MAILLES CONTROLEES PAR LE PILOTAGE
 ! IN  CARTYP : CARTE CONTENANT LE TYPE DE PILOTAGE
-! IN  MATE   : MATERIAU
+! In  ds_material      : datastructure for material parameters
 ! IN  CARELE : CARACTERISTIQUES DES ELEMENTS DE STRUCTURE
 ! In  ds_constitutive  : datastructure for constitutive laws management
 ! In  ds_contact       : datastructure for contact management
@@ -198,7 +198,7 @@ implicit none
     lpain(1) = 'PGEOMER'
     lchin(1) = chgeom
     lpain(2) = 'PMATERC'
-    lchin(2) = mate(1:19)
+    lchin(2) = ds_material%field_mate(1:19)
     lpain(3) = 'PCOMPOR'
     lchin(3) = ds_constitutive%compor(1:19)
     lpain(4) = 'PDEPLMR'

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,18 +15,16 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine zedgar(matos, tm, tp, instp, dinst,&
-                      vim, vip)
-        integer :: matos
-        real(kind=8) :: tm
-        real(kind=8) :: tp
-        real(kind=8) :: instp
-        real(kind=8) :: dinst
-        real(kind=8) :: vim(4)
-        real(kind=8) :: vip(4)
+    subroutine zedgar(jv_mater ,&
+                      tm       , tp,&
+                      time_curr, time_incr,&
+                      meta_prev, meta_curr)
+        integer, intent(in) :: jv_mater
+        real(kind=8), intent(in) :: tm, tp
+        real(kind=8), intent(in) :: time_curr, time_incr
+        real(kind=8), intent(in) :: meta_prev(5)
+        real(kind=8), intent(out) :: meta_curr(5)
     end subroutine zedgar
 end interface

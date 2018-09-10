@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,157 +17,153 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-#
-
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'), DEBUG=_F(SDVERI='OUI'))
 
-M=LIRE_MAILLAGE(FORMAT='MED',);
+youn1 = 31000.0
+nu1   = 0.2
 
-MO=AFFE_MODELE(MAILLAGE=M,
-               AFFE=_F(TOUT='OUI',
-                       PHENOMENE='MECANIQUE',
-                       MODELISATION='3D',),);
+M = LIRE_MAILLAGE( FORMAT = 'MED',);
 
-FONC1=DEFI_FONCTION(NOM_PARA='SECH',
-                    VALE=(0.0,0.0,100.0,1.0,),
-                    PROL_DROITE='LINEAIRE',
-                    PROL_GAUCHE='LINEAIRE',);
+MO = AFFE_MODELE( MAILLAGE = M,
+                  AFFE = _F( TOUT = 'OUI',
+                             PHENOMENE = 'MECANIQUE',
+                             MODELISATION = '3D',),);
 
-E=DEFI_FONCTION(NOM_PARA='TEMP',
-                VALE=(0.0,31000.0,1.0,31000.0,),
-                PROL_DROITE='LINEAIRE',
-                PROL_GAUCHE='LINEAIRE',);
+FONC1 = DEFI_FONCTION( NOM_PARA = 'SECH',
+                       VALE = (0.0,   0.0,
+                               100.0, 1.0,),
+                       PROL_DROITE = 'LINEAIRE',
+                       PROL_GAUCHE = 'LINEAIRE',);
 
-NU=DEFI_FONCTION(NOM_PARA='TEMP',
-                 VALE=(0.0,0.2,1.0,0.2,),
-                 PROL_DROITE='LINEAIRE',
-                 PROL_GAUCHE='LINEAIRE',);
+E = DEFI_CONSTANTE( VALE = youn1,);
 
-ALPHA= DEFI_CONSTANTE(VALE=0.);
+Nu = DEFI_CONSTANTE( VALE = nu1,);
 
-BETON=DEFI_MATERIAU(ELAS_FO=_F(E=E,
-                               NU=NU,
-                           FONC_DESORP=FONC1,ALPHA=ALPHA,
-                           TEMP_DEF_ALPHA=0.),
-                    BETON_BURGER=_F(K_RS=1.2e5,
-                                     ETA_RS=2.21e10,
-                                     KAPPA=1e1,
-                                     ETA_IS=4.16e10,
-                                     K_RD=3.86e4,
-                                     ETA_RD=6.19e10,
-                                     ETA_ID=1.64e12,
-                                     QSR_K  = 0.,
-                                     TEMP_0_C  = 20.,  
-                                     ),);
-SECH0=CREA_CHAMP(TYPE_CHAM='NOEU_TEMP_R',
-                 OPERATION='AFFE',
-                 MAILLAGE=M,
-                 AFFE=_F(TOUT='OUI',
-                         NOM_CMP='TEMP',
-                         VALE=100.0,),);
+ALPHA = DEFI_CONSTANTE( VALE = 0.);
 
+BETON = DEFI_MATERIAU( ELAS_FO = _F( E = E,
+                                     NU = Nu,
+                                     FONC_DESORP = FONC1,
+                                     ALPHA = ALPHA,
+                                     TEMP_DEF_ALPHA = 0.),
+                       BETON_BURGER = _F( YoungModulus = youn1,
+                                          PoissonRatio = nu1,
+                                          K_RS     = 1.2e5,
+                                          ETA_RS   = 2.21e10,
+                                          KAPPA    = 1e1,
+                                          ETA_IS   = 4.16e10,
+                                          K_RD     = 3.86e4,
+                                          ETA_RD   = 6.19e10,
+                                          ETA_ID   = 1.64e12,
+                                          ETA_FD   = 0.,
+                                          QSR_K    = 0.,
+                                          TEMP_0_C = 20.,),);
 
-SECHI=CREA_CHAMP(TYPE_CHAM='NOEU_TEMP_R',
-                 OPERATION='AFFE',
-                 MAILLAGE=M,
-                 AFFE=_F(TOUT='OUI',
-                         NOM_CMP='TEMP',
-                         VALE=100.0,),);
+SECH0 = CREA_CHAMP( TYPE_CHAM = 'NOEU_TEMP_R',
+                    OPERATION = 'AFFE',
+                    MAILLAGE = M,
+                    AFFE = _F( TOUT = 'OUI',
+                               NOM_CMP = 'TEMP',
+                               VALE = 100.0,),);
 
-SECHF=CREA_CHAMP(TYPE_CHAM='NOEU_TEMP_R',
-                 OPERATION='AFFE',
-                 MAILLAGE=M,
-                 AFFE=_F(TOUT='OUI',
-                         NOM_CMP='TEMP',
-                         VALE=100.0,),);
+SECHI = CREA_CHAMP( TYPE_CHAM = 'NOEU_TEMP_R',
+                    OPERATION = 'AFFE',
+                    MAILLAGE = M,
+                    AFFE = _F( TOUT = 'OUI',
+                               NOM_CMP = 'TEMP',
+                               VALE = 100.0,),);
 
-SECH1=CREA_RESU(OPERATION='AFFE',
-                TYPE_RESU='EVOL_THER',
-                NOM_CHAM='TEMP',
-                AFFE=(
-                _F(CHAM_GD=SECH0,
-                   INST=-1.0,),
-                _F(CHAM_GD=SECHI,
-                   INST=0.0,),
-                _F(CHAM_GD=SECHF,
-                   INST=64800000.0,),),);
+SECHF = CREA_CHAMP( TYPE_CHAM = 'NOEU_TEMP_R',
+                    OPERATION = 'AFFE',
+                    MAILLAGE = M,
+                    AFFE = _F( TOUT = 'OUI',
+                               NOM_CMP = 'TEMP',
+                               VALE = 100.0,),);
 
-TEMP=CREA_CHAMP(TYPE_CHAM='NOEU_TEMP_R',
-                OPERATION='AFFE',
-                MAILLAGE=M,
-                AFFE=_F(TOUT='OUI',
-                        NOM_CMP='TEMP',
-                        VALE=20.0,),);
+SECH1 = CREA_RESU( OPERATION = 'AFFE',
+                   TYPE_RESU = 'EVOL_THER',
+                   NOM_CHAM = 'TEMP',
+                  AFFE = ( _F( CHAM_GD = SECH0,
+                               INST = -1.0,),
+                           _F( CHAM_GD = SECHI,
+                               INST = 0.0,),
+                           _F( CHAM_GD = SECHF,
+                               INST = 64800000.0,),),);
 
-CM=AFFE_MATERIAU(MAILLAGE=M,
-                 AFFE=_F(TOUT='OUI',
-                         MATER=BETON,),
-                 AFFE_VARC=(_F(TOUT='OUI',EVOL=SECH1,NOM_VARC="SECH",NOM_CHAM='TEMP',VALE_REF=100),
-                            _F(TOUT='OUI',CHAM_GD=TEMP,NOM_VARC="TEMP",VALE_REF=20.),),
-                 );
+TEMP = CREA_CHAMP( TYPE_CHAM = 'NOEU_TEMP_R',
+                   OPERATION = 'AFFE',
+                   MAILLAGE = M,
+                   AFFE = _F( TOUT = 'OUI',
+                              NOM_CMP = 'TEMP',
+                              VALE = 20.0,),);
 
-#CH3=AFFE_CHAR_MECA(MODELE=MO, TEMP_CALCULEE=TEMP);
+CM = AFFE_MATERIAU( MAILLAGE = M,
+                    AFFE = _F( TOUT = 'OUI',
+                               MATER = BETON,),
+                    AFFE_VARC = ( _F( TOUT = 'OUI',
+                                      EVOL = SECH1,
+                                      NOM_VARC = "SECH",
+                                      NOM_CHAM = 'TEMP',
+                                      VALE_REF = 100),
+                                  _F( TOUT = 'OUI',
+                                      CHAM_GD = TEMP,
+                                      NOM_VARC = "TEMP",
+                                      VALE_REF = 20.),),);
 
-FORCE=DEFI_FONCTION(NOM_PARA='INST',
-                    VALE=(0.0,0.0,1.0,10.0,64800000.0,10.0,),
-                    PROL_DROITE='LINEAIRE',
-                    PROL_GAUCHE='LINEAIRE',);
+FORCE = DEFI_FONCTION( NOM_PARA = 'INST',
+                       VALE = (0.0,        0.0,
+                               1.0,        10.0,
+                               64800000.0, 10.0,),
+                       PROL_DROITE = 'LINEAIRE',
+                       PROL_GAUCHE = 'LINEAIRE',);
 
-CH10=AFFE_CHAR_MECA(MODELE=MO,
-                    DDL_IMPO=_F(GROUP_NO=('P1','P2','P3','P4'),
-                                DX=0.0,
-                                DY=0.0,
-                                DZ=0.0,),);
+CH10 = AFFE_CHAR_MECA( MODELE = MO,
+                       DDL_IMPO = _F( GROUP_NO = ('P1','P2','P3','P4'),
+                                      DX = 0.0, DY = 0.0, DZ = 0.0,),);
 
+CH12 = AFFE_CHAR_MECA( MODELE = MO,
+                       DDL_IMPO = _F( GROUP_NO = ('P5','P6','P7','P8'),
+                                      DY = 0.0, DZ = 0.0,),
+                       LIAISON_UNIF = _F( GROUP_NO = ('P5','P6','P7','P8'),
+                                          DDL = 'DX',),);
 
-CH12=AFFE_CHAR_MECA(MODELE=MO,
-                    DDL_IMPO=_F(GROUP_NO=('P5','P6','P7','P8'),
-                                DY=0.0,
-                                DZ=0.0,),
-                    LIAISON_UNIF=_F(GROUP_NO=('P5','P6','P7','P8'),
-                                    DDL='DX',),);
+CH13 = AFFE_CHAR_MECA_F( MODELE = MO,
+                         FORCE_NODALE = _F( GROUP_NO = 'P8', FX = FORCE),);
 
-CH13=AFFE_CHAR_MECA_F(MODELE=MO,
-                      FORCE_NODALE=_F(GROUP_NO = 'P8',
-                                      FX = FORCE),);
+L_INST = DEFI_LIST_REEL( DEBUT = -1.0,
+                         INTERVALLE = (_F( JUSQU_A = 1.0,        NOMBRE = 2,),
+                                       _F( JUSQU_A = 64800.0,    NOMBRE = 2,),
+                                       _F( JUSQU_A = 648000.0,   NOMBRE = 2,),
+                                       _F( JUSQU_A = 6480000.0,  NOMBRE = 2,),
+                                       _F( JUSQU_A = 64800000.0, NOMBRE = 2,),),);
 
+U = STAT_NON_LINE( MODELE = MO,
+                   CHAM_MATER = CM,
+                   EXCIT = (_F( CHARGE = CH10,),
+                            _F( CHARGE = CH12,),
+                            _F( CHARGE = CH13,),),
+                   COMPORTEMENT = _F( RELATION = 'BETON_BURGER',
+                                      RESI_INTE_RELA = 1e-12,),
+                   INCREMENT = _F( LIST_INST = L_INST,),
+                   NEWTON = _F( PREDICTION = 'ELASTIQUE',
+                                MATRICE = 'TANGENTE',
+                                REAC_ITER = 1,),
+                   CONVERGENCE = _F( RESI_GLOB_MAXI = 1e-08,
+                                     ITER_GLOB_MAXI = 25),);
 
-L_INST=DEFI_LIST_REEL(DEBUT=-1.0,
-                      INTERVALLE=(_F(JUSQU_A=1.0,
-                                     NOMBRE=2,),
-                                  _F(JUSQU_A=64800.0,
-                                     NOMBRE=2,),
-                                  _F(JUSQU_A=648000.0,
-                                     NOMBRE=2,),
-                                  _F(JUSQU_A=6480000.0,
-                                     NOMBRE=2,),
-                                  _F(JUSQU_A=64800000.0,
-                                     NOMBRE=2,),),);
-
-U=STAT_NON_LINE(MODELE=MO,
-                CHAM_MATER=CM,
-                EXCIT=(_F(CHARGE=CH10,),
-                       _F(CHARGE=CH12,),
-                       _F(CHARGE=CH13,),),
-                COMPORTEMENT=_F(RELATION='BETON_BURGER',
-                             ITER_INTE_MAXI=1000,),
-                INCREMENT=_F(LIST_INST=L_INST,),
-                NEWTON=_F(PREDICTION='ELASTIQUE',
-                          MATRICE='TANGENTE',
-                          REAC_ITER=1,),
-                CONVERGENCE=_F(RESI_GLOB_MAXI=1e-08,
-                               ITER_GLOB_MAXI=25),);
-
-U=CALC_CHAMP(reuse=U,RESULTAT=U,CONTRAINTE=('SIGM_ELNO'),DEFORMATION=('EPSI_ELNO'))
+U = CALC_CHAMP( reuse = U,RESULTAT = U,
+                CONTRAINTE = ('SIGM_ELNO'),
+                DEFORMATION = ('EPSI_ELNO'),);
 
 
+# VALEURS DE NON-REGRESSION
 TEST_RESU(RESU=(_F(INST=6.4800E4,
                    REFERENCE='ANALYTIQUE',
                    RESULTAT=U,
                    NOM_CHAM='EPSI_ELNO',
                    NOEUD='N6',
                    NOM_CMP='EPXZ',
-                   VALE_CALC= 3.97751626E-04,
+                   VALE_CALC= 0.000397651469749,
                    VALE_REFE=3.9750000000000001E-4,
                    PRECISION=5.0000000000000001E-3,
                    MAILLE='M1',),
@@ -177,9 +173,9 @@ TEST_RESU(RESU=(_F(INST=6.4800E4,
                    NOM_CHAM='EPSI_ELNO',
                    NOEUD='N6',
                    NOM_CMP='EPXZ',
-                   VALE_CALC= 4.77165025E-04,
+                   VALE_CALC= 0.000471909184773,
                    VALE_REFE=4.7699999999999999E-4,
-                   PRECISION=5.0000000000000001E-3,
+                   PRECISION=2.0000000000000001E-2,
                    MAILLE='M1',),
                 _F(INST=6.480000E6,
                    REFERENCE='ANALYTIQUE',
@@ -187,9 +183,9 @@ TEST_RESU(RESU=(_F(INST=6.4800E4,
                    NOM_CHAM='EPSI_ELNO',
                    NOEUD='N6',
                    NOM_CMP='EPXZ',
-                   VALE_CALC= 6.81121110E-04,
+                   VALE_CALC= 0.000663241265966,
                    VALE_REFE=6.8110000000000002E-4,
-                   PRECISION=5.0000000000000001E-3,
+                   PRECISION=3.0000000000000001E-2,
                    MAILLE='M1',),
                 _F(INST=6.4800000E7,
                    REFERENCE='ANALYTIQUE',
@@ -197,7 +193,7 @@ TEST_RESU(RESU=(_F(INST=6.4800E4,
                    NOM_CHAM='EPSI_ELNO',
                    NOEUD='N6',
                    NOM_CMP='EPXZ',
-                   VALE_CALC= 1.04127505E-03,
+                   VALE_CALC= 0.00104120956399,
                    VALE_REFE=1.0413E-3,
                    PRECISION=5.0000000000000001E-3,
                    MAILLE='M1',),

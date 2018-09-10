@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -22,8 +22,8 @@
 !
 ! - Access in <COMPOR> - Behaviour field - General
 !
-#define NB_COMP_MAXI 20
-#define NAME         1
+#define NB_COMP_MAXI 21
+#define RELA_NAME    1
 #define NVAR         2
 #define DEFO         3
 #define INCRELAS     4
@@ -31,6 +31,7 @@
 #define NUME         6
 #define MULTCOMP     7
 #define POSTITER     8
+#define DEFO_LDC     21
 !
 ! - Access in <COMPOR> - Behaviour field - KITs
 !
@@ -80,13 +81,20 @@
 #define CABLE_NAME   9
 #define SHEATH_NAME  10
 !
-! - Access in <CARCRI>
+! - Access in <CARCRI> for external state variables
 !
 #define IVARIEXTE      11
+!
+! - Access in <CARCRI> for THM parameters
+!
 #define PARM_ALPHA_THM 18
 #define PARM_THETA_THM 12
 !
-! - Access in <CARCRI_VARI_EXT>
+! - Access in <CARCRI> for strains model
+!
+#define ISTRAINEXTE    22
+!
+! - Access in <CARCRI_VARI_EXT>: type of external state variables
 !
 #define ELTSIZE1  1
 #define ELTSIZE2  2
@@ -112,9 +120,18 @@
 #define EPSAXY    22
 #define EPSAXZ    23
 #define EPSAYZ    24
-#define PFERRITE  25
-#define PPERLITE  26
-#define PBAINITE  27
-#define PMARTENS  28
-#define ALPHPUR   29
-#define ALPHBET   30
+#define ZFERRITE  25
+#define ZPERLITE  26
+#define ZBAINITE  27
+#define ZMARTENS  28
+#define ZALPHPUR  29
+#define ZALPHBET  30
+!
+! - Type of strains model from MFRONT
+!
+#define MFRONT_STRAIN_SMALL          0
+#define MFRONT_STRAIN_SIMOMIEHE      1
+#define MFRONT_STRAIN_GROTGDEP       2
+#define MFRONT_STRAIN_UNDETERMINATED 3
+#define MFRONT_STRAIN_GROTGDEP_S     4
+#define MFRONT_STRAIN_GROTGDEP_L     5

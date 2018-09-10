@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -28,6 +28,13 @@ from code_aster.Cata.Commons import *
 def proj_base_prod(self,MATR_ASSE_GENE,VECT_ASSE_GENE,
                    RESU_GENE, NUME_DDL_GENE,
                    STOCKAGE,**args ):
+  if args.get('__all__'):
+      return ([None],
+              [None, nume_ddl_gene],
+              [None, matr_asse_gene_r],
+              [None, vect_asse_gene],
+              [None, tran_gene])
+
   if NUME_DDL_GENE is not None and NUME_DDL_GENE.is_typco():
       self.type_sdprod(NUME_DDL_GENE, nume_ddl_gene)
   if MATR_ASSE_GENE != None:
@@ -49,7 +56,7 @@ PROJ_BASE=MACRO(nom="PROJ_BASE",
          BASE            =SIMP(statut='o',typ=(mode_meca,mode_gene) ),
          NB_VECT         =SIMP(statut='f',typ='I'),
          STOCKAGE        =SIMP(statut='f',typ='TXM',defaut="PLEIN",into=("PLEIN","DIAG") ),
-         NUME_DDL_GENE   =SIMP(statut='f',typ=(nume_ddl_gene,CO),defaut=None),
+         NUME_DDL_GENE   =SIMP(statut='f',typ=(nume_ddl_gene, CO)),
          MATR_ASSE_GENE  =FACT(statut='f',max='**',
            MATRICE         =SIMP(statut='o',typ=CO,),
            regles=(UN_PARMI('MATR_ASSE','MATR_ASSE_GENE',),),

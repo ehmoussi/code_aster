@@ -32,9 +32,8 @@
 extern "C" {
 #endif
 
-extern void openLogicalUnitFile(const char* name, const int type, const int access);
-extern void releaseLogicalUnitFile(const char* name);
-extern int getNumberOfLogicalUnitFile(const char* name);
+extern int openLogicalUnitFile(const char* name, const int type, const int access);
+extern void releaseLogicalUnitFile(const int logicalUnit);
 
 /* FIN LOGICAL_UNIT_H */
 #ifdef __cplusplus

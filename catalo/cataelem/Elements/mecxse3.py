@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -32,13 +32,6 @@ from cataelem.Options.options import OP
 
 CCACOQU = LocatedComponents(phys=PHY.CACOQU, type='ELEM',
                             components=('EP', 'KAPPA', 'C_METR',))
-
-
-CCARCRI = LocatedComponents(phys=PHY.CARCRI, type='ELEM',
-                            components=(
-                                'ITECREL', 'MACOMP', 'RESCREL', 'THETA', 'ITEDEC',
-                            'INTLOC', 'PERTURB', 'TOLDEBO', 'ITEDEBO', 'TSSEUIL',
-                            'TSAMPL', 'TSRETOUR', 'POSTITER', 'LC_EXT[3]', 'MODECALC',))
 
 
 NDEPLAC = LocatedComponents(phys=PHY.DEPL_C, type='ELNO',
@@ -353,7 +346,7 @@ class MECXSE3(Element):
                      ),
 
         OP.FULL_MECA(te=239,
-                     para_in=((SP.PCACOQU, CCACOQU), (SP.PCARCRI, CCARCRI),
+                     para_in=((SP.PCACOQU, CCACOQU), (SP.PCARCRI, LC.CCARCRI),
                               (OP.FULL_MECA.PCOMPOR, LC.CCOMPOR), (
                               OP.FULL_MECA.PCONTMR, ECONTPG),
                               (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
@@ -428,7 +421,7 @@ class MECXSE3(Element):
                     ),
 
         OP.RAPH_MECA(te=239,
-                     para_in=((SP.PCACOQU, CCACOQU), (SP.PCARCRI, CCARCRI),
+                     para_in=((SP.PCACOQU, CCACOQU), (SP.PCARCRI, LC.CCARCRI),
                               (OP.RAPH_MECA.PCOMPOR, LC.CCOMPOR), (
                               OP.RAPH_MECA.PCONTMR, ECONTPG),
                               (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
@@ -466,7 +459,7 @@ class MECXSE3(Element):
 
         OP.RIGI_MECA_TANG(te=239,
                           para_in=(
-                              (SP.PCACOQU, CCACOQU), (SP.PCARCRI, CCARCRI),
+                              (SP.PCACOQU, CCACOQU), (SP.PCARCRI, LC.CCARCRI),
                           (OP.RIGI_MECA_TANG.PCOMPOR, LC.CCOMPOR), (
                           OP.RIGI_MECA_TANG.PCONTMR, ECONTPG),
                               (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),

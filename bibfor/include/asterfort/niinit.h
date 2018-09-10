@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,23 +15,13 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine niinit(nomte, typmod, ndim, nno1, nno2,&
-                      nno3, nno4, vu, vg, vp,&
-                      vpi)
-        character(len=16) :: nomte
-        character(len=8) :: typmod(*)
-        integer :: ndim
-        integer :: nno1
-        integer :: nno2
-        integer :: nno3
-        integer :: nno4
-        integer :: vu(3, 27)
-        integer :: vg(27)
-        integer :: vp(27)
-        integer :: vpi(3, 27)
+    subroutine niinit(typmod,&
+                      ndim  , nno1, nno2, nno3, nno4,&
+                      vu    , vg  , vp  , vpi)
+        character(len=8), intent(in) :: typmod(*)
+        integer, intent(in) :: ndim, nno1, nno2, nno3, nno4
+        integer, intent(out) :: vu(3, 27), vg(27), vp(27), vpi(3, 27)
     end subroutine niinit
 end interface

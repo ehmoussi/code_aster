@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -29,12 +29,12 @@ CALC_CHAM_FLUI = OPER(nom="CALC_CHAM_FLUI",op= 116,sd_prod=evol_ther,
          # Mot-clés obligatoires
          RIGI_THER   = SIMP(statut='o',typ=matr_asse_temp_r ),
          EXCIT       = FACT(statut='o',max='**',
-                       CHARGE    = SIMP(statut='o',typ=(char_ther,char_cine_ther)),
+                       CHARGE    = SIMP(statut='o',typ=(char_ther,)),
                        FONC_MULT = SIMP(statut='f',typ=(fonction_sdaster,nappe_sdaster,formule))),
-         POTENTIEL   = SIMP(statut='o',typ='TXM',defaut="DEPL",into=("DEPL","VITE","PRES")),
-         DIST_REFE   = SIMP(statut='o',typ='R',defaut= 1.E-2 ),
+         POTENTIEL   = SIMP(statut='f',typ='TXM',defaut="DEPL",into=("DEPL","VITE","PRES")),
+         DIST_REFE   = SIMP(statut='f',typ='R',defaut= 1.E-2 ),
          MODE_MECA   = SIMP(statut='o',typ=mode_meca),
          b_coefmult       = BLOC(condition  = """exists("MODE_MECA")""",
-                                COEF_MULT    =SIMP(statut='o',typ='R',defaut=(1.0),max='**'),
-                               ),   
+                                COEF_MULT    =SIMP(statut='f',typ='R',defaut=(1.0),max='**'),
+                               ),
                       )

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -47,32 +47,46 @@ h = 0.5;
 
 
 LN = FORMULE(VALE='Y-h',
-             NOM_PARA=('X','Y',),);
+             h=h,
+             NOM_PARA=['X', 'Y'],)
 
 LT = FORMULE(VALE='-X+a',
-             NOM_PARA=('X','Y',),);
+             a=a,
+             NOM_PARA=['X', 'Y'],)
 
 R = FORMULE(VALE='sqrt((X-0.5)**2+(Y-0.5)**2)',
-            NOM_PARA=('X','Y',),);
+            NOM_PARA=['X', 'Y'],)
 
 T = FORMULE(VALE='atan2(Y-0.5,-X+0.5)',
-            NOM_PARA=('X','Y',),);
+            NOM_PARA=['X', 'Y'],)
 coef = ((1 + nu) / (e * sqrt(6.28318530718)));
 
 
 # CHAMPS DE DEPLACEMENT
 
 OUAUX1 = FORMULE(VALE='-1.*coef*sqrt(R(X,Y))*cos(T(X,Y)/2.)*(3.-4.*nu-cos(T(X,Y)))',
-                 NOM_PARA=('X','Y',),);
+                 coef=coef,
+                 R=R,
+                 T=T,
+                 nu=nu,
+                 NOM_PARA=['X', 'Y'],)
 
 UAUX2 = FORMULE(VALE=' coef*sqrt(R(X,Y))*sin(T(X,Y)/2.)*(3.-4.*nu-cos(T(X,Y)))',
-                NOM_PARA=('X','Y',),);
+                coef=coef,
+                R=R,
+                T=T,
+                nu=nu,
+                NOM_PARA=['X', 'Y'],)
 
 UAUX1 = FORMULE(VALE='-1.* OUAUX1(X,Y)',
-                NOM_PARA=('X','Y',),);
+                OUAUX1=OUAUX1,
+                NOM_PARA=['X', 'Y'],)
 
 H1YSUP = FORMULE(VALE='coef*sqrt(R(X,0.5))*(4.-4.*nu)',
-                 NOM_PARA=('X','Y',),);
+                 coef=coef,
+                 R=R,
+                 nu=nu,
+                 NOM_PARA=['X', 'Y'],)
 
 # INSTANTS
 

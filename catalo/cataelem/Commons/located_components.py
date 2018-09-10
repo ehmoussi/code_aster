@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -49,6 +49,13 @@ CCAGRPO = LocatedComponents(phys=PHY.CAGEPO, type='ELEM',
                                         'HZ2', 'EPY2', 'EPZ2', 'R1', 'EP1',
                                         'R2', 'EP2', 'TSEC',))
 
+CCARCRI  = LocatedComponents(phys=PHY.CARCRI, type='ELEM',
+                             components=('ITECREL', 'MACOMP', 'RESCREL', 'THETA',
+                                         'ITEDEC', 'INTLOC', 'PERTURB', 'TOLDEBO',
+                                         'ITEDEBO', 'RESIRADI', 'VARIEXTE', 'THETATHM',
+                                         'POSTITER', 'LC_EXT[3]', 'MATRNSYM', 'ALPHATHM',
+                                         'LC_EXT2[2]', 'POSTINCR', 'STRAIN'))
+
 CCDTAU = LocatedComponents(phys=PHY.PILO_R, type='ELEM',
                            components=('A0',))
 
@@ -69,6 +76,7 @@ CCOMPOR  = LocatedComponents(phys=PHY.COMPOR, type='ELEM',
                                          'KIT1NAME', 'KIT2NAME', 'KIT3NAME', 'KIT4NAME',
                                          'KIT1NUME', 'KIT2NUME', 'KIT3NUME', 'KIT4NUME',
                                          'KIT1NVAR', 'KIT2NVAR', 'KIT3NVAR', 'KIT4NVAR',
+                                         'DEFO_LDC',
                                          ))
 
 CCOMPO2 = LocatedComponents(phys=PHY.COMPOR, type='ELEM',
@@ -90,9 +98,9 @@ CDECENT = LocatedComponents(phys=PHY.NEUT_K24, type='ELEM',
                             components=('Z1',))
 
 CFER1_R = LocatedComponents(phys=PHY.FER1_R, type='ELEM',
-                            components=(
-                                'TYPCOMB', 'ENROBG', 'CEQUI', 'SIGACI', 'SIGBET',
-                            'PIVA', 'PIVB', 'ES',))
+                            components=('TYPCOMB', 'CODIF', 'ES', 'CEQUI', 'ENROBS', 'ENROBI',
+                                        'SIGMACI', 'SIGMBET', 'COEFF1', 'COEFF2', 'GAMMAS', 
+                                        'GAMMAC', 'FACIER', 'FBETON', 'CLACIER', 'UC',))
 
 CFER2_R = LocatedComponents(phys=PHY.FER2_R, type='ELEM',
                             components=(
@@ -162,7 +170,7 @@ CPESANR = LocatedComponents(phys=PHY.PESA_R, type='ELEM',
                             components=('G', 'AG', 'BG', 'CG',))
 
 CPHASIN_ = LocatedComponents(phys=PHY.VAR2_R, type='ELEM',
-                             components=('V[5]',))
+                             components=('V[6]',))
 
 CRAYONF = LocatedComponents(phys=PHY.RAYO_F, type='ELEM',
                             components=('SIGMA', 'EPSIL', 'TPINF',))

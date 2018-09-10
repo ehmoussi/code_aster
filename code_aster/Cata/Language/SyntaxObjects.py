@@ -44,9 +44,9 @@ import types
 from collections import OrderedDict
 
 from .DataStructure import DataStructure, UnitBaseType
-from .SyntaxUtils import (block_utils, debug_message2, disable_0key,
-                          enable_0key, mixedcopy, sorted_dict,
-                          value_is_sequence)
+from .SyntaxUtils import (add_none_sdprod, block_utils, debug_message2,
+                          disable_0key, enable_0key, force_list, mixedcopy,
+                          sorted_dict, value_is_sequence)
 
 
 class SyntaxId(object):
@@ -489,7 +489,8 @@ class PartOfSyntax(UIDMixing):
     def undefined(cls, value):
         """Return *True* if the value is a null value (undefined keyword),
         *False* otherwise."""
-        return value is None
+        return value is None or (isinstance(value, (list, tuple)) and
+                                 len(value) == 1 and value[0] is None)
 
     def is_list(self):
         """Tell if the value should be stored as list."""
@@ -572,7 +573,7 @@ class FactorKeyword(PartOfSyntax):
         if self._def_status() not in ("c", "d"):
             return None
         if self.is_list():
-            return []
+            return [_F()]
         return _F()
 
 
@@ -650,7 +651,8 @@ class Command(PartOfSyntax):
 
     def can_reuse(self):
         """Tell if the result can be a reused one."""
-        return self.definition.get('reentrant') in ('o', 'f')
+        reentr = self.definition.get("reentrant", "").split(':')
+        return reentr and reentr[0] in ('o', 'f')
 
     def accept(self, visitor, syntax=None):
         """Called by a Visitor"""
@@ -697,7 +699,7 @@ class Command(PartOfSyntax):
                     # print "COMMAND:", self.name
                     # print "CTX1:", ctxt.keys()
                     # print "CTX1:", ctxt
-                self._add_none_sdprod(resultType, ctxt)
+                add_none_sdprod(resultType, ctxt)
                 resultType = self.build_sd_prod(resultType, ctxt)
             return resultType
 
@@ -708,33 +710,22 @@ class Command(PartOfSyntax):
         disable_0key(ctxt)
         return resultType
 
-    def _add_none_sdprod(self, sd_prod, dictargs):
-        """Check if some arguments are missing to call *sd_prod* function and
-        add them with the *None* value.
+    def get_all_types(self):
+        """Return the list of all possible types that the command can return.
 
-        It could be considered as a catalog error. *sd_prod* function should
-        not take optional keywords as arguments.
-
-        Arguments:
-            sd_prod (callable): *sd_prod* function to inspect.
-            dictargs (dict): Dict of keywords.
+        Returns:
+            list[DataStructure] or list[list[DataStructure]]: List of possible
+            types or a list of list if there are additional results for
+            macro-commands.
         """
-        argspec = inspect.getargspec(sd_prod)
-        required = argspec.args
-        if argspec.defaults:
-            required = required[:-len(argspec.defaults)]
-        args = dictargs.keys()
-        # add 'self' for macro
-        args.append('self')
-        miss = set(required).difference(args)
-        if len(miss) > 0:
-            # miss = sorted(list(miss))
-            # raise ValueError("Arguments required by the function:\n    {0}\n"
-            #                  "Provided in dict:    {1}\n"
-            #                  "Missing:    {2}\n"\
-            #                  .format(sorted(required), sorted(args), miss))
-            for i in miss:
-                dictargs[i] = None
+        sd_prod = self.definition.get('sd_prod')
+        if type(sd_prod) is types.FunctionType:
+            args = {}
+            add_none_sdprod(sd_prod, args)
+            args['__all__'] = True
+            return force_list(sd_prod(**args))
+        else:
+            return (sd_prod, )
 
 
 class Operator(Command):
@@ -749,12 +740,16 @@ class Macro(Command):
     def build_sd_prod(self, sdprodFunc, ctxt):
         """Call the `sd_prod` function"""
         enable_0key(ctxt)
+        if 'self' in ctxt:
+            del ctxt['self']
         resultType = sdprodFunc(self, **ctxt)
         disable_0key(ctxt)
         return resultType
 
     def type_sdprod(self, result, astype):
         """Define the type of the result."""
+        if result is None:
+            return
         result.settype(astype)
 
 

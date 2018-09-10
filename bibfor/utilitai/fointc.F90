@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -49,7 +49,7 @@ subroutine fointc(codmes, nomf, nbpu, nompu, valpu,&
 !     ------------------------------------------------------------------
 !     ------------------------------------------------------------------
     integer :: lprol, i, i1, i2, lvale, lfonc, nbvale
-    real(kind=8) :: epsi, tole, valr, resu(2)
+    real(kind=8) :: epsi, valr, resu(2)
     character(len=1) :: coli
     character(len=24) :: interp, prolgd
     character(len=19) :: nomfon
@@ -145,22 +145,7 @@ subroutine fointc(codmes, nomf, nbpu, nompu, valpu,&
         resuim = zr(lfonc+i1+1)
 !
     else if (coli.eq.'I') then
-        if (interp(1:3) .eq. 'NON') then
-            i1 = 1 + 2 * ( i - 1 )
-            i2 = 1 + 2 * i
-            tole = epsi * abs( zr(lvale+i-1) - zr(lvale+i) )
-            if (abs(zr(lvale+i-1)-valr) .le. tole) then
-                resure = zr(lfonc+i1)
-                resuim = zr(lfonc+i1+1)
-            else if (abs(zr(lvale+i)-valr) .le. tole) then
-                resure = zr(lfonc+i2)
-                resuim = zr(lfonc+i2+1)
-            else
-                ier = 200
-                call utmess('A', 'UTILITAI2_16')
-                goto 999
-            endif
-        else if (interp.eq.'LIN LIN ') then
+        if (interp.eq.'LIN LIN ') then
             i1 = 1 + 2 * ( i - 1 )
             i2 = 1 + 2 * i
             resure = linlin( valr, zr(lvale+i-1), zr(lfonc+i1), zr(lvale+ i), zr(lfonc+i2) )

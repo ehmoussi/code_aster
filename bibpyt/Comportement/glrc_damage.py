@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -29,7 +29,7 @@ loi = LoiComportement(
    Les phénomènes pris en compte sont l'élasto-plasticité couplée entre les effets de membrane et de flexion
    (contre une élasto-plasticité en flexion seulement dans GLRC) et l'endommagement en flexion.
    L'endommagement couplé membrane/flexion est traité par GLRC_DM, lequel, par contre, néglige complètement l'élasto-plasticité.
-   Pour les précisions sur la formulation du modèle voir [R7.01.31]."""            ,
+   Pour les précisions sur la formulation du modèle voir [R7.01.31]."""              ,
     num_lc         = 0,
     nb_vari        = 19,
     nom_vari       = ('EPSP1','EPSP2','EPSP3','KHIP1','KHIP2',
@@ -44,4 +44,5 @@ loi = LoiComportement(
     proprietes     = None,
     syme_matr_tang = ('Yes',),
     exte_vari      = None,
+    deform_ldc     = ('OLD',),
 )

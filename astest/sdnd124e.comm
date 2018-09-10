@@ -1,0 +1,251 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+#
+#
+# --------------------------------------------------------------------------------------------------
+#
+#                   DISCRET COMPORTEMENT ECROUISSAGE TRACTION
+#
+#   Validation du comportement avec DYNA_NON_LINE
+#
+#
+# --------------------------------------------------------------------------------------------------
+import numpy as NU
+
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),)
+
+MAIL=LIRE_MAILLAGE(FORMAT="ASTER",)
+#
+# Modèle
+Modele=AFFE_MODELE(
+    MAILLAGE=MAIL,
+    AFFE=(
+        _F(GROUP_MA=('MASSE','GM0203','GM0102'), PHENOMENE='MECANIQUE', MODELISATION='DIS_T',),
+    ),
+)
+
+
+#
+ZERO=DEFI_CONSTANTE(VALE=0.0)
+
+def Rampe(t):
+    if (t<= 0.0): return 0.0
+    if (t<= 5.0): return t/5.0
+    if (t<=15.0): return 1.0
+    if (t<=20.0): return (20.0-t)/5.0
+    return 0.0
+
+def FDeplax(t):
+    uu = 0.20; ff = 1.0;  ww = 2.0*NU.pi
+    zz = uu*sin(ww*t*ff)*Rampe(t)
+    return zz
+
+def FDeplay(t):
+    uu = [ 0.20 , 0.15 , 0.10 ]
+    ff = [ 0.80 , 1.50 , 3.00 ]
+    ww = 2.0*NU.pi
+    zz = 0.0
+    for u,f in zip(uu,ff):
+        zz += u*sin(ww*t*f)*Rampe(t)
+    return zz
+
+def FDeplaz(t):
+    uu = [ -0.20 , 0.15 , -0.10 ]
+    ff = [  0.90 , 2.00 ,  2.80 ]
+    ww = 2.0*NU.pi
+    zz = 0.0
+    for u,f in zip(uu,ff):
+        zz += u*sin(ww*t*f)*Rampe(t)
+    return zz
+
+# Fonction d'écrouissage
+ldepla   = NU.array( [0.00 , 0.100 , 20.1 ] )
+lforce   = NU.array( [0.00 , 100.0 , 350.0 ] )
+Kp = 1000.0
+Masse = 200.0
+
+fctsy=DEFI_FONCTION(NOM_PARA='DTAN',
+    ABSCISSE=ldepla,
+    ORDONNEE=lforce,
+)
+
+# Définition des matériaux
+Fusib01  = DEFI_MATERIAU( DIS_ECRO_TRAC=_F(FTAN= fctsy, ECROUISSAGE='CINEMATIQUE' ), )
+
+CHMAT=AFFE_MATERIAU(
+    MAILLAGE=MAIL,
+    AFFE=(
+      _F(GROUP_MA='GM0102',  MATER=Fusib01,),
+   ),
+)
+
+# Caractéristiques : Ressorts / Masse
+caraElem=AFFE_CARA_ELEM(
+    MODELE=Modele,
+    DISCRET=(
+        _F( REPERE='LOCAL',CARA='M_T_D_L', GROUP_MA='GM0102', VALE=(0.0,), ),
+        _F( REPERE='LOCAL',CARA='K_T_D_L', GROUP_MA='GM0102', VALE=(Kp, 0.0, 0.0,), ),
+        _F( REPERE='LOCAL',CARA='M_T_D_N', GROUP_MA='MASSE',  VALE=(Masse ), ),
+        _F( REPERE='LOCAL',CARA='K_T_D_N', GROUP_MA='MASSE',  VALE=(0.0,0.0,0.0,), ),
+        _F( REPERE='LOCAL',CARA='M_T_D_L', GROUP_MA='GM0203', VALE=(0.0,), ),
+        _F( REPERE='LOCAL',CARA='K_T_D_L', GROUP_MA='GM0203', VALE=(Kp, 400.0, 400.0,), ),
+    ),
+)
+#
+# Liste d'instant
+TempsMaxi = 20.0
+DeltaPas  = 0.02
+# pour l'interpolation des fonctions
+LinstF = DEFI_LIST_REEL(
+    DEBUT=0.,
+    INTERVALLE=_F(JUSQU_A = TempsMaxi, PAS = DeltaPas/10.0),)
+# pour le calcul
+Linst  = DEFI_LIST_REEL(
+    DEBUT=0.,
+    INTERVALLE=_F(JUSQU_A = TempsMaxi, PAS = DeltaPas),)
+#
+DEPLX  = FORMULE(VALE='FDeplax(INST)',FDeplax=FDeplax,NOM_PARA='INST')
+DEPLY  = FORMULE(VALE='FDeplay(INST)',FDeplay=FDeplay,NOM_PARA='INST')
+DEPLZ  = FORMULE(VALE='FDeplaz(INST)',FDeplaz=FDeplaz,NOM_PARA='INST')
+#
+DEPLIX = CALC_FONC_INTERP(NOM_RESU='DEPLIX',
+    FONCTION=DEPLX, LIST_PARA=LinstF, NOM_PARA = 'INST',
+    PROL_DROITE='CONSTANT', PROL_GAUCHE='CONSTANT',
+)
+DEPLIY = CALC_FONC_INTERP(NOM_RESU='DEPLIY',
+    FONCTION=DEPLY, LIST_PARA=LinstF, NOM_PARA = 'INST',
+    PROL_DROITE='CONSTANT', PROL_GAUCHE='CONSTANT',
+)
+DEPLIZ = CALC_FONC_INTERP(NOM_RESU='DEPLIZ',
+    FONCTION=DEPLZ, LIST_PARA=LinstF, NOM_PARA = 'INST',
+    PROL_DROITE='CONSTANT', PROL_GAUCHE='CONSTANT',
+)
+#
+CONDLIM =AFFE_CHAR_MECA_F(MODELE=Modele,
+    DDL_IMPO = (
+        _F(NOEUD='N01', DX=DEPLIX, DY=DEPLIY, DZ=DEPLIZ,),
+        _F(NOEUD='N03', DX=DEPLIX, DY=DEPLIY, DZ=DEPLIZ,),
+    ),
+)
+#
+DEPL0=CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R',OPERATION='AFFE',MODELE=Modele,
+    AFFE=_F(NOM_CMP=('DX','DY','DZ'), TOUT='OUI',
+            VALE=(0.0, 0.0, 0.0,),),
+)
+VITE0=CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R',OPERATION='AFFE',MODELE=Modele,
+    AFFE=_F(NOM_CMP=('DX','DY','DZ'), TOUT='OUI',
+            VALE=(0.0, 0.0, 0.0,),),
+)
+ACCE0=CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R',OPERATION='AFFE',MODELE=Modele,
+    AFFE=_F(NOM_CMP=('DX','DY','DZ'), TOUT='OUI',
+            VALE=(0.0, 0.0, 0.0,),),
+)
+#
+LLinst =DEFI_LIST_INST(
+    DEFI_LIST=_F(LIST_INST=Linst ),
+)
+# --------------------------------------------------------------------------------------------------
+#
+RESU=DYNA_NON_LINE(
+    MODELE     = Modele,
+    CHAM_MATER = CHMAT,
+    CARA_ELEM  = caraElem,
+    EXCIT=(
+        _F(CHARGE=CONDLIM),
+    ),
+    ETAT_INIT=_F(DEPL=DEPL0,VITE=VITE0,ACCE=ACCE0),
+    COMPORTEMENT=(
+        _F(RELATION='ELAS',     TOUT='OUI',),
+        _F(RELATION='DIS_ECRO_TRAC', GROUP_MA='GM0102',),
+    ),
+    SCHEMA_TEMPS=_F(SCHEMA='NEWMARK', FORMULATION='DEPLACEMENT',),
+    INCREMENT=_F(LIST_INST=LLinst,),
+    CONVERGENCE=_F(ITER_GLOB_MAXI=30, RESI_REFE_RELA=1.0E-06, EFFORT_REFE=1.0,),
+    NEWTON=_F(REAC_INCR=1,REAC_ITER=1, MATRICE='TANGENTE'),
+)
+# --------------------------------------------------------------------------------------------------
+#   Résultat sur Fusib01
+TABVARI1 = CREA_TABLE(
+    RESU=_F(RESULTAT=RESU,
+        GROUP_MA='GM0102',NOM_CHAM='VARI_ELGA',TOUT_CMP='OUI',
+    ),
+)
+TABVARI1 = CALC_TABLE(reuse=TABVARI1,
+    TABLE=TABVARI1,
+    ACTION=(
+        _F(OPERATION='FILTRE',NOM_PARA='POINT',CRIT_COMP='EQ',VALE=2),
+        _F(OPERATION='EXTR',NOM_PARA=('NUME_ORDRE','INST','V2','V3','V5','V6','V7','V8',),)
+    ),
+)
+#
+"""
+IMPR_RESU(FORMAT='RESULTAT', RESU=_F(RESULTAT=RESU,),)
+
+IMPR_TABLE(UNITE=38, TABLE=TABVARI1, FORMAT_R='E17.10')
+Lordre = [9, 40, 73, 98, 139, 192, 239, 274, 306, 342, 377, 402, 419, 446, 483, 499, 534, 567, 599,
+          632, 658, 695, 731, 767, 794, 828, 877, 903, 923, 946, 983, ]
+IMPR_TABLE(UNITE=39, TABLE=TABVARI1, FORMAT_R='E17.10',
+           FILTRE=_F(NOM_PARA='NUME_ORDRE',CRIT_COMP='EQ',VALE_I=Lordre,CRITERE='ABSOLU'))
+"""
+#NUME_ORDRE
+#       INST      V2                 V3                 V5                 V6                 V7                 V8
+ResuIntgr = {
+  9: (1.800E-01, -9.7633895513E+00,  1.8038422368E+00, -9.7633895513E-03,  1.8038422368E-03,  0.0000000000E+00,  0.0000000000E+00,),
+ 40: (8.000E-01,  2.5306038843E-01, -7.3561108838E+00,  2.5306038843E-04, -7.3561108838E-03,  0.0000000000E+00,  0.0000000000E+00,),
+ 73: (1.460E+00, -8.5865192139E+01,  5.3235024414E+01, -1.4690774753E-01,  1.0903237718E-01,  8.3227201162E+00,  8.3227196282E-02,),
+ 98: (1.960E+00,  7.8773673460E+01, -6.1084709402E+01,  6.5004341085E-02, -3.7940641933E-02,  1.7006873559E+01,  1.7006867291E-01,),
+139: (2.780E+00, -9.9940145859E+01, -2.0765210417E+01, -2.6901818785E-01, -1.3204157893E-02,  5.4641871465E+01,  5.4641861373E-01,),
+192: (3.840E+00, -1.2475449255E+01, -6.2610709260E+01,  9.5815899571E-02,  1.5298112370E-02,  1.3680120015E+02,  1.3680113166E+00,),
+239: (4.780E+00, -7.3002237550E+01,  7.0488355909E+01,  3.8394970673E-02,  3.6153069156E-01,  3.1805599363E+02,  3.1805580123E+00,),
+274: (5.480E+00, -7.1844599907E+00,  3.8984725149E+01, -3.2736341808E-01,  1.4136396295E-01,  4.0809181014E+02,  4.0809160412E+00,),
+306: (6.120E+00, -9.5000502820E+01, -3.3001694235E+01, -1.5363509562E-01, -1.7372773716E-03,  5.7365414407E+02,  5.7365381237E+00,),
+342: (6.780E+00, -1.1242871377E+00,  1.0146264195E+02, -3.6084317149E-01,  2.2165698619E-01,  6.3037056083E+02,  6.3037022541E+00,),
+377: (7.480E+00, -7.4050699555E+01, -7.0357170645E+01, -1.5970188136E-01, -2.2651544466E-01,  7.9746712984E+02,  7.9746678309E+00,),
+402: (7.980E+00, -6.1452955898E+01,  4.0370353771E+01, -2.1686065092E-02,  3.0076883936E-01,  8.4510058962E+02,  8.4510024105E+00,),
+419: (8.320E+00,  7.4745800359E+01,  7.0941631754E+01,  2.6989237702E-01,  2.1560516129E-01,  9.2040480709E+02,  9.2040440210E+00,),
+446: (8.860E+00, -6.2757383511E+00,  9.9119338366E+01, -1.6850983620E-01,  3.6587847034E-02,  1.0306485441E+03,  1.0306480972E+01,),
+483: (9.600E+00,  7.5558106903E+01, -7.1168316110E+01,  1.9451456129E-01, -3.8441866869E-01,  1.1739912914E+03,  1.1739907915E+01,),
+499: (9.920E+00,  2.8029280771E+01,  5.1927178497E+01,  2.3757267844E-01, -7.7734300484E-02,  1.1954511241E+03,  1.1954506198E+01,),
+534: (1.062E+01, -1.0255476090E+01, -1.0332996587E+02,  5.1953143648E-02, -4.1471014752E-01,  1.3389762657E+03,  1.3389756969E+01,),
+567: (1.128E+01, -6.7509860478E+01,  7.2390958577E+01,  7.0000819612E-02,  9.2112934564E-02,  1.4289869349E+03,  1.4289863354E+01,),
+599: (1.192E+01,  9.7241087436E+01, -3.1790208538E+01,  2.8479548432E-01, -4.4695597827E-02,  1.5682779458E+03,  1.5682773161E+01,),
+632: (1.258E+01, -2.7257254219E+01,  2.0543731996E+01,  1.9648088915E-01,  2.2302599963E-01,  1.6586176174E+03,  1.6586169745E+01,),
+658: (1.310E+01,  6.1123378470E+01, -8.3462620987E+01,  1.0775094633E-01, -3.8881723071E-01,  1.7676966196E+03,  1.7676959493E+01,),
+695: (1.384E+01, -3.3401749008E+01, -7.4270089651E+01,  1.1325957762E-01,  1.0675208974E-01,  1.8761208826E+03,  1.8761201866E+01,),
+731: (1.456E+01,  8.4598398301E+01, -5.8678441460E+01,  3.8056470255E-01, -4.5361854344E-02,  2.0555734017E+03,  2.0555725775E+01,),
+767: (1.528E+01, -3.3657824144E+01, -1.7243068139E+01, -1.2919996043E-01, -2.1296025073E-01,  2.1478834703E+03,  2.1478826082E+01,),
+794: (1.582E+01,  7.6333363829E+01,  7.0639326411E+01,  2.0365530376E-01,  4.0096077416E-01,  2.2596789282E+03,  2.2596780494E+01,),
+828: (1.650E+01, -2.9005495139E+00,  8.0758028799E+00, -4.0329777734E-02, -1.1379761308E-02,  2.3207206904E+03,  2.3207198010E+01,),
+877: (1.748E+01, -8.4781719422E+01, -5.0999103540E+01,  5.3256032200E-03, -3.8267739103E-02,  2.4182749393E+03,  2.4182740166E+01,),
+903: (1.800E+01, -4.1365186407E+01,  4.4149701243E+01,  4.2679976384E-02,  1.7003344910E-01,  2.4301603921E+03,  2.4301594614E+01,),
+923: (1.840E+01,  8.0376896152E+01, -5.9417284041E+01,  1.5707462973E-01,  4.8547734094E-02,  2.4331573797E+03,  2.4331564472E+01,),
+946: (1.886E+01, -9.2069244247E+01,  3.4042128439E+01, -2.5636293603E-02,  3.2531541328E-02,  2.4522799776E+03,  2.4522790403E+01,),
+983: (1.960E+01, -6.2204953255E+00, -5.8333737502E+01,  4.3155639731E-02, -4.7102173316E-02,  2.4544126784E+03,  2.4544117400E+01,),
+}
+
+Lpara = [('V2',1),('V3',2),('V5',3),('V6',4),('V7',5),('V8',6),]
+for nume_ordre in ResuIntgr.keys():
+    for para,indx in Lpara:
+        TEST_TABLE(TABLE=TABVARI1,
+            FILTRE=_F(NOM_PARA='NUME_ORDRE', CRIT_COMP='EQ', VALE_I= nume_ordre),
+            NOM_PARA=para, VALE_CALC=ResuIntgr[nume_ordre][indx],
+            VALE_REFE=ResuIntgr[nume_ordre][indx], REFERENCE='SOURCE_EXTERNE', PRECISION=1.0E-06,
+        )
+FIN()

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -26,7 +26,7 @@ DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
 MAYA=LIRE_MAILLAGE(FORMAT="ASTER", )
 
 MODEL=AFFE_MODELE(    MAILLAGE=MAYA,
-                                
+
                                  AFFE=_F(  TOUT = 'OUI',
                                         PHENOMENE = 'MECANIQUE',
                                         MODELISATION = 'C_PLAN')
@@ -72,7 +72,8 @@ TCALC=CREA_RESU( OPERATION='AFFE',
                  NOM_CHAM='TEMP',
                  AFFE=_F(CHAM_GD=T0,
                          INST=.0,),);
-CREA_RESU(reuse =TCALC,
+TCALC=CREA_RESU( reuse =TCALC,
+                 RESULTAT=TCALC,
                  OPERATION='AFFE',
                  TYPE_RESU='EVOL_THER',
                  NOM_CHAM='TEMP',

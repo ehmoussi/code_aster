@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -33,6 +33,7 @@ import types
 import sys
 import traceback
 import re
+import warnings
 
 # Modules EFICAS
 import V_MCCOMPO
@@ -141,7 +142,7 @@ class ETAPE(V_MCCOMPO.MCCOMPO):
                 # l'indicateur de validité valid
                 return valid
 
-            if self.definition.reentrant == 'n' and self.reuse:
+            if self.definition.reentrant[0] == 'n' and self.reuse:
                 # Il ne peut y avoir de concept reutilise avec un OPER non
                 # reentrant
                 if cr == 'oui':
@@ -212,6 +213,46 @@ class ETAPE(V_MCCOMPO.MCCOMPO):
                                       self.reuse.nom, self.sdnom)
                     valid = 0
             if valid:
+                d = self.cree_dict_valeurs(self.mc_liste)
+                d = _backward_compatibility_27390(self, d)
+                orig = self.definition.reentrant.split(":")[1:]
+                for k in orig[0].split("|"):
+                    keyword = d.get(k)
+                    if keyword is not None:
+                        break
+                if keyword is None:
+                    if cr == 'oui':
+                        self.cr.fatal(_(u'Concept réutilisé : non trouvé sous %s'),
+                                      "/".join(orig))
+                    valid = 0
+                if valid and len(orig) == 2:
+                    try:
+                        keyword = keyword[0]
+                    except IndexError:
+                        pass
+                    try:
+                        keyword = keyword.get(orig[1])
+                    except Exception as exc:
+                        self.cr.fatal(str(exc))
+                        keyword = None
+                    if keyword is None:
+                        if cr == 'oui':
+                            self.cr.fatal(_(u'Concept réutilisé : non trouvé sous %s'),
+                                          "/".join(orig))
+                        valid = 0
+                if valid and AsType(keyword) != sd_prod:
+                    if cr == 'oui':
+                        self.cr.fatal(_(u'Concept réutilisé : type incorrect '
+                                        u' %s au lieu de %s'),
+                                        AsType(keyword), sd_prod)
+                    valid = 0
+                if valid and keyword is not self.reuse:
+                    if cr == 'oui':
+                        self.cr.fatal(_(u'Concept réutilisé : concept '
+                                        u'inattendu %s au lieu de %s'),
+                                        keyword, self.reuse)
+                    valid = 0
+            if valid:
                 self.sd = self.reuse
         else:
             if sd_prod == None:  # Pas de concept retourné
@@ -229,7 +270,7 @@ class ETAPE(V_MCCOMPO.MCCOMPO):
                     if cr == 'oui':
                         self.cr.fatal(_(u"Concept retourné non défini"))
                     valid = 0
-            if self.definition.reentrant == 'o':
+            if self.definition.reentrant[0] == 'o':
                 if cr == 'oui':
                     self.cr.fatal(
                         _(u'Commande obligatoirement réentrante : spécifier reuse=concept'))
@@ -260,3 +301,36 @@ class ETAPE(V_MCCOMPO.MCCOMPO):
                 break
             self.cr.add(child.report())
         return self.cr
+
+
+def _backward_compatibility_27390(etape, keywords):
+    """Backward compatibility function for transition (cf. issue27390).
+
+    Arguments:
+        etape (ETAPE): Currently executed command
+        keywords (dict): Dict of keywords.
+
+    Returns:
+        dict; *keywords* changed in place.
+    """
+    msg = ("\n <A> {name} with reuse but {key} is missing.\n"
+           "{key}={reuse} has been added for you but it "
+           "will be an error in the next major version.\n")
+
+    key = None
+    if etape.nom in ("DYNA_NON_LINE", "DYNA_VIBRA", "MECA_STATIQUE",
+                     "STAT_NON_LINE", "THER_LINEAIRE", "THER_NON_LINE"):
+        key = "RESULTAT"
+    if etape.nom in ("COMB_MATR_ASSE", ):
+        key = "MATR_ASSE"
+    if etape.nom in ("CREA_CHAMP", ):
+        key = "CHAM_GD"
+
+    if key:
+        if keywords.get(key) is None:
+            keywords[key] = etape.reuse
+            warnings.warn(msg.format(name=etape.nom, key=key,
+                                     reuse=etape.reuse.nom),
+                          DeprecationWarning)
+
+    return keywords

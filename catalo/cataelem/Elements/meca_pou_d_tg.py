@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -49,13 +49,6 @@ CCAGNPO = LocatedComponents(phys=PHY.CAGNPO, type='ELEM',
 CCAORIE = LocatedComponents(phys=PHY.CAORIE, type='ELEM',
                             components=('ALPHA', 'BETA', 'GAMMA',))
 
-
-CCARCRI = LocatedComponents(phys=PHY.CARCRI, type='ELEM',
-                            components=(
-                                'ITECREL', 'MACOMP', 'RESCREL', 'THETA', 'ITEDEC',
-                            'INTLOC', 'PERTURB', 'TOLDEBO', 'ITEDEBO', 'TSSEUIL',
-                            'TSAMPL', 'TSRETOUR', 'POSTITER', 'LC_EXT[3]', 'MODECALC',
-                            'ALPHA', 'LC_EXT2[2]',))
 
 NDEPLAC = LocatedComponents(phys=PHY.DEPL_C, type='ELNO',
                             components=('DX', 'DY', 'DZ', 'DRX', 'DRY',
@@ -399,7 +392,7 @@ class MECA_POU_D_TG(Element):
                      para_in=(
                          (SP.PCAGNPO, LC.CCAGNP1), (
                              OP.FULL_MECA.PCAORIE, CCAORIE),
-                     (SP.PCARCRI, CCARCRI), (OP.FULL_MECA.PCOMPOR, LC.CCOMPOR),
+                     (SP.PCARCRI, LC.CCARCRI), (OP.FULL_MECA.PCOMPOR, LC.CCOMPOR),
                      (OP.FULL_MECA.PCONTMR, EEFGEGA), (SP.PDEPLMR, DDL_MECA),
                      (SP.PDEPLPR, DDL_MECA), (SP.PGEOMER, NGEOMER),
                      (SP.PINSTMR, CTEMPSR), (SP.PINSTPR, CTEMPSR),
@@ -505,7 +498,7 @@ class MECA_POU_D_TG(Element):
                      para_in=(
                          (SP.PCAGNPO, LC.CCAGNP1), (
                              OP.RAPH_MECA.PCAORIE, CCAORIE),
-                     (SP.PCARCRI, CCARCRI), (OP.RAPH_MECA.PCOMPOR, LC.CCOMPOR),
+                     (SP.PCARCRI, LC.CCARCRI), (OP.RAPH_MECA.PCOMPOR, LC.CCOMPOR),
                      (OP.RAPH_MECA.PCONTMR, EEFGEGA), (SP.PDEPLMR, DDL_MECA),
                      (SP.PDEPLPR, DDL_MECA), (SP.PGEOMER, NGEOMER),
                      (SP.PINSTMR, CTEMPSR), (SP.PINSTPR, CTEMPSR),
@@ -583,7 +576,7 @@ class MECA_POU_D_TG(Element):
                           para_in=(
                           (SP.PCAGNPO, LC.CCAGNP1), (
                               OP.RIGI_MECA_TANG.PCAORIE, CCAORIE),
-                          (SP.PCARCRI, CCARCRI), (
+                          (SP.PCARCRI, LC.CCARCRI), (
                           OP.RIGI_MECA_TANG.PCOMPOR, LC.CCOMPOR),
                           (OP.RIGI_MECA_TANG.PCONTMR, EEFGEGA), (
                           SP.PDEPLMR, DDL_MECA),

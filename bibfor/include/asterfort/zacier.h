@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,27 +15,17 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine zacier(matos, nbhist, ftrc, trc, coef,&
-                      fmod, ckm, nbtrc, tpg0, tpg1,&
-                      tpg2, dt10, dt21, tamp, metapg)
-        integer :: nbtrc
-        integer :: nbhist
-        integer :: matos
-        real(kind=8) :: ftrc((3*nbhist), 3)
-        real(kind=8) :: trc((3*nbhist), 5)
-        real(kind=8) :: coef(*)
-        real(kind=8) :: fmod(*)
-        real(kind=8) :: ckm(6*nbtrc)
-        real(kind=8) :: tpg0
-        real(kind=8) :: tpg1
-        real(kind=8) :: tpg2
-        real(kind=8) :: dt10
-        real(kind=8) :: dt21
-        real(kind=8) :: tamp(7)
-        real(kind=8) :: metapg(7)
+    subroutine zacier(metaSteelPara,&
+                      tpg0         , tpg1     , tpg2,&
+                      dt10         , dt21     ,&
+                      meta_prev    , meta_curr)
+        use Metallurgy_type
+        type(META_SteelParameters), intent(in) :: metaSteelPara
+        real(kind=8), intent(in) :: tpg0, tpg1, tpg2
+        real(kind=8), intent(in) :: dt10, dt21
+        real(kind=8), intent(in) :: meta_prev(8)
+        real(kind=8), intent(out) :: meta_curr(8)
     end subroutine zacier
 end interface

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -122,7 +122,7 @@ implicit none
 ! - Comportment
 !
     call jevech('PCOMPOR', 'L', icompo)
-    rela_comp  = zk16(icompo-1+NAME)
+    rela_comp  = zk16(icompo-1+RELA_NAME)
     kit_comp_1 = zk16(icompo-1+CREEP_NAME)
     kit_comp_2 = zk16(icompo-1+PLAS_NAME)
 !

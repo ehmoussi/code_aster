@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -83,10 +83,6 @@ MODES0=CALC_MODES(MATR_RIGI=RIGID,
                   CALC_FREQ=_F(NMAX_FREQ=20,
                                FREQ=(500.,),
                                ),
-                  SOLVEUR=_F(RENUM='METIS',
-                             METHODE='MULT_FRONT',
-                             NPREC=12,
-                             ),
                   MATR_MASS=MASSE,
                   SOLVEUR_MODAL=_F(METHODE='SORENSEN',
                                    ),
@@ -235,10 +231,6 @@ for i in range(nbV):
                             CALC_FREQ=_F(NMAX_FREQ=15,
                                          FREQ=(500.,),
                                          ),
-                            SOLVEUR=_F(RENUM='METIS',
-                                       METHODE='MULT_FRONT',
-                                       NPREC=12,
-                                       ),
                             MATR_AMOR=GYASSi,
                             MATR_MASS=MASSE,
                             SOLVEUR_MODAL=_F(METHODE='SORENSEN',
@@ -253,10 +245,6 @@ for i in range(nbV):
                             CALC_FREQ=_F(NMAX_FREQ=15,
                                          FREQ=(500.,),
                                          ),
-                            SOLVEUR=_F(RENUM='METIS',
-                                       METHODE='MULT_FRONT',
-                                       NPREC=12,
-                                       ),
                             MATR_AMOR=GYASSi,
                             MATR_MASS=MASSE,
                             SOLVEUR_MODAL=_F(METHODE='SORENSEN',

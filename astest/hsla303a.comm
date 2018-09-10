@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -30,7 +30,7 @@ MAIL=DEFI_GROUP( reuse=MAIL,   MAILLAGE=MAIL,
                        _F(  NOM = 'RESULT',
                                        NOEUD = ('N1', 'N2', 'N3', 'N4', )),
                        _F(  GROUP_MA = 'LCD')),
-                  CREA_GROUP_MA= _F(NOM='M1', MAILLE='M1',),
+                  CREA_GROUP_MA= _F(NOM='MA1', MAILLE='M1',),
                 )
 
 #
@@ -195,7 +195,7 @@ TEST_RESU(RESU=_F(NUME_ORDRE=1,
                   VALE_REFE=1.2E-3,
                   REFERENCE = 'ANALYTIQUE',
                   PRECISION=1.E-4,
-                  GROUP_MA='M1',),
+                  GROUP_MA='MA1',),
           )
 
 TEST_RESU(RESU=_F(NUME_ORDRE=1,

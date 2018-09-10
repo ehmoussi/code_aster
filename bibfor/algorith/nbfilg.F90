@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: sebastien.fayolle at edf.fr
+! aslint: disable=W1306,W1504
+!
 subroutine nbfilg(ndim, nno1, nno2, nno3, npg,&
                   iw, vff1, vff2, vff3, idff1,&
                   vu, vg, vp, geomi, typmod,&
@@ -23,9 +25,8 @@ subroutine nbfilg(ndim, nno1, nno2, nno3, npg,&
                   instm, instp, ddlm, ddld, angmas,&
                   sigm, vim, sigp, vip, resi,&
                   rigi, vect, matr, matsym, codret)
-! person_in_charge: sebastien.fayolle at edf.fr
-! aslint: disable=W1306,W1504
-    implicit none
+!
+implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/codere.h"
@@ -43,25 +44,24 @@ subroutine nbfilg(ndim, nno1, nno2, nno3, npg,&
 #include "blas/dcopy.h"
 #include "blas/ddot.h"
 #include "blas/dscal.h"
-    aster_logical :: resi, rigi, matsym
-    integer :: ndim, nno1, nno2, nno3, npg, iw, idff1, lgpg
-    integer :: mate
-    integer :: vu(3, 27), vg(27), vp(27)
-    integer :: codret
-    real(kind=8) :: vff1(nno1, npg), vff2(nno2, npg), vff3(nno3, npg)
-    real(kind=8) :: instm, instp
-    real(kind=8) :: geomi(ndim, nno1), ddlm(*), ddld(*), angmas(*)
-    real(kind=8) :: sigm(2*ndim, npg), sigp(2*ndim, npg)
-    real(kind=8) :: vim(lgpg, npg), vip(lgpg, npg)
-    real(kind=8) :: vect(*), matr(*)
-    real(kind=8) :: crit(*)
-    character(len=8) :: typmod(*)
-    character(len=16) :: compor(*), option
+aster_logical :: resi, rigi, matsym
+integer :: ndim, nno1, nno2, nno3, npg, iw, idff1, lgpg
+integer :: mate
+integer :: vu(3, 27), vg(27), vp(27)
+integer :: codret
+real(kind=8) :: vff1(nno1, npg), vff2(nno2, npg), vff3(nno3, npg)
+real(kind=8) :: instm, instp
+real(kind=8) :: geomi(ndim, nno1), ddlm(*), ddld(*), angmas(*)
+real(kind=8) :: sigm(2*ndim, npg), sigp(2*ndim, npg)
+real(kind=8) :: vim(lgpg, npg), vip(lgpg, npg)
+real(kind=8) :: vect(*), matr(*)
+real(kind=8) :: crit(*)
+character(len=8) :: typmod(*)
+character(len=16) :: compor(*), option
 !-----------------------------------------------------------------------
 !          CALCUL DES FORCES INTERNES POUR LES ELEMENTS
 !          INCOMPRESSIBLES POUR LES GRANDES DEFORMATIONS
 !          3D/D_PLAN/AXIS
-!          ROUTINE APPELEE PAR TE0590
 !-----------------------------------------------------------------------
 ! IN  RESI    : CALCUL DES FORCES INTERNES
 ! IN  RIGI    : CALCUL DE LA MATRICE DE RIGIDITE
@@ -112,8 +112,8 @@ subroutine nbfilg(ndim, nno1, nno2, nno3, npg,&
     real(kind=8) :: presm(27), presd(27)
     real(kind=8) :: gonfm(27), gonfd(27)
     real(kind=8) :: gm, gd, gp, pm, pd, pp
-    real(kind=8) :: fm(3, 3), jm, ftm(3, 3), corm, epsm(6), epsml(6)
-    real(kind=8) :: fp(3, 3), jp, ftp(3, 3), corp, epsp(6), deps(6)
+    real(kind=8) :: fm(3, 3), jm, ftm(3, 3), corm, epsml(6)
+    real(kind=8) :: fp(3, 3), jp, ftp(3, 3), corp, deps(6)
     real(kind=8) :: gn(3, 3), lamb(3), logl(3)
     real(kind=8) :: tn(6), tp(6), dtde(6, 6)
     real(kind=8) :: pk2(6), pk2m(6)
@@ -187,9 +187,9 @@ subroutine nbfilg(ndim, nno1, nno2, nno3, npg,&
                     iw, vff1(1, g), idff1, r, w,&
                     dff1)
         call nmepsi(ndim, nno1, axi, grand, vff1(1, g),&
-                    r, dff1, deplm, fm, epsm)
+                    r, dff1, deplm, fm)
         call nmepsi(ndim, nno1, axi, grand, vff1(1, g),&
-                    r, dff1, deplp, fp, epsp)
+                    r, dff1, deplp, fp)
         call dfdmip(ndim, nno1, axi, geomp, g,&
                     iw, vff1(1, g), idff1, r, wp,&
                     dff1)

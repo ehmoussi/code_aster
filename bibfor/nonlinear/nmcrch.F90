@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine nmcrch(numedd, fonact, sddyna, ds_contact, valinc,&
                   solalg, veasse)
 !
@@ -35,15 +36,13 @@ implicit none
 #include "asterfort/nmchex.h"
 #include "asterfort/vtcreb.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=24), intent(in) :: numedd
-    integer, intent(in) :: fonact(*)
-    character(len=19), intent(in) :: sddyna
-    type(NL_DS_Contact), intent(in) :: ds_contact
-    character(len=19), intent(in) :: valinc(*)
-    character(len=19), intent(in) :: solalg(*)
-    character(len=19), intent(in) :: veasse(*)
+character(len=24), intent(in) :: numedd
+integer, intent(in) :: fonact(*)
+character(len=19), intent(in) :: sddyna
+type(NL_DS_Contact), intent(in) :: ds_contact
+character(len=19), intent(in) :: valinc(*)
+character(len=19), intent(in) :: solalg(*)
+character(len=19), intent(in) :: veasse(*)
 !
 ! ----------------------------------------------------------------------
 !
@@ -65,8 +64,6 @@ implicit none
     integer :: ifm, niv
     character(len=24) :: sdcont_defi
     aster_logical :: ldyna, lammo, lmpas, lrefe, lmacr, lmuap, lviss
-    aster_logical :: leltc, leltf
-    aster_logical :: lunil, lctcd, lctfd, lpenac, lallv
     aster_logical :: lsstf, limpe
     aster_logical :: ldidi, lpilo, lener
     character(len=19) :: depplu, vitplu, accplu
@@ -80,16 +77,14 @@ implicit none
     character(len=19) :: depkm1, vitkm1, acckm1, romkm1, romk
     character(len=19) :: depent, vitent, accent
     character(len=19) :: depabs, vitabs, accabs
-    character(len=19) :: cndyna, cnmodp, cnmodc
-    character(len=19) :: cnfext, cnvcf1
+    character(len=19) :: cndyna, cnamod
+    character(len=19) :: cnfext
     character(len=19) :: cnfedo, cnfsdo, cndidi, cnfint
     character(len=19) :: cndido, cncine, cndiri
     character(len=19) :: cnondp, cnlapl, cnviss
     character(len=19) :: cnsstf, cnsstr
-    character(len=19) :: cnctdc, cnctdf, cnunil
-    character(len=19) :: cneltc, cneltf
-    character(len=19) :: cnimpp, cnimpc
-    character(len=19) :: cnfepi, cndipi, cnrefe
+    character(len=19) :: cnimpe
+    character(len=19) :: cnfepi, cndipi, cnrefe, cneltc, cneltf
 !
 ! ----------------------------------------------------------------------
 !
@@ -109,10 +104,6 @@ implicit none
     ldyna = ndynlo(sddyna,'DYNAMIQUE')
     lammo = ndynlo(sddyna,'AMOR_MODAL')
     lmpas = ndynlo(sddyna,'MULTI_PAS')
-    lctcd = isfonc(fonact,'CONT_DISCRET')
-    lctfd = isfonc(fonact,'FROT_DISCRET')
-    lallv = isfonc(fonact,'CONT_ALL_VERIF')
-    lunil = isfonc(fonact,'LIAISON_UNILATER')
     ldidi = isfonc(fonact,'DIDI')
     lpilo = isfonc(fonact,'PILOTAGE')
     lsstf = isfonc(fonact,'SOUS_STRUC')
@@ -121,13 +112,6 @@ implicit none
     lviss = ndynlo(sddyna,'VECT_ISS' )
     lener = isfonc(fonact,'ENERGIE')
     lmuap = ndynlo(sddyna,'MULTI_APPUI')
-    if (lctcd) then
-        lpenac = cfdisl(sdcont_defi,'CONT_PENA' )
-    else
-        lpenac = .false.
-    endif
-    leltc = isfonc(fonact,'ELT_CONTACT')
-    leltf = isfonc(fonact,'ELT_FROTTEMENT')
 !
 ! --- ENERGIE
 !
@@ -261,13 +245,11 @@ implicit none
         call vtcreb(cnviss, 'V', 'R', nume_ddlz = numedd)
     endif
 !
-! --- FORCES D'IMPEDANCES (PREDICTION ET CORRECTION)
+! --- FORCES D'IMPEDANCES
 !
     if (limpe) then
-        call nmchex(veasse, 'VEASSE', 'CNIMPP', cnimpp)
-        call vtcreb(cnimpp, 'V', 'R', nume_ddlz = numedd)
-        call nmchex(veasse, 'VEASSE', 'CNIMPC', cnimpc)
-        call vtcreb(cnimpc, 'V', 'R', nume_ddlz = numedd)
+        call nmchex(veasse, 'VEASSE', 'CNIMPE', cnimpe)
+        call vtcreb(cnimpe, 'V', 'R', nume_ddlz = numedd)
     endif
 !
 ! --- SECOND MEMBRE
@@ -292,10 +274,8 @@ implicit none
 !
     call nmchex(veasse, 'VEASSE', 'CNFEXT', cnfext)
     call nmchex(veasse, 'VEASSE', 'CNFINT', cnfint)
-    call nmchex(veasse, 'VEASSE', 'CNVCF1', cnvcf1)
     call vtcreb(cnfext, 'V', 'R', nume_ddlz = numedd)
     call vtcreb(cnfint, 'V', 'R', nume_ddlz = numedd)
-    call vtcreb(cnvcf1, 'V', 'R', nume_ddlz = numedd)
 !
     if (ldyna) then
         call nmchex(veasse, 'VEASSE', 'CNDYNA', cndyna)
@@ -321,6 +301,12 @@ implicit none
             call vtcreb(cncine, 'V', 'R', nume_ddlz = numedd)
             call ndynkk(sddyna, 'OLDP_CNVISS', cnviss)
             call vtcreb(cnviss, 'V', 'R', nume_ddlz = numedd)
+            call ndynkk(sddyna, 'OLDP_CNSSTR', cnsstr)
+            call vtcreb(cnsstr, 'V', 'R', nume_ddlz = numedd)
+            call ndynkk(sddyna, 'OLDP_CNELTC', cneltc)
+            call vtcreb(cneltc, 'V', 'R', nume_ddlz = numedd)
+            call ndynkk(sddyna, 'OLDP_CNELTF', cneltf)
+            call vtcreb(cneltf, 'V', 'R', nume_ddlz = numedd)
         endif
     endif
 !
@@ -341,42 +327,8 @@ implicit none
 ! --- AMORTISSEMENT MODAL
 !
     if (lammo) then
-        call nmchex(veasse, 'VEASSE', 'CNMODP', cnmodp)
-        call nmchex(veasse, 'VEASSE', 'CNMODC', cnmodc)
-        call vtcreb(cnmodp, 'V', 'R', nume_ddlz = numedd)
-        call vtcreb(cnmodc, 'V', 'R', nume_ddlz = numedd)
-    endif
-!
-! --- CONTACT/FROTTEMENT DISCRET
-!
-    if (lctcd .and. (.not.lallv)) then
-        call nmchex(veasse, 'VEASSE', 'CNCTDC', cnctdc)
-        call vtcreb(cnctdc, 'V', 'R', nume_ddlz = numedd)
-    endif
-    if ((lctfd.or.lpenac) .and. (.not.lallv)) then
-        call nmchex(veasse, 'VEASSE', 'CNCTDF', cnctdf)
-        call vtcreb(cnctdf, 'V', 'R', nume_ddlz = numedd)
-    endif
-!
-! --- LIAISON UNILATERALE
-!
-    if (lunil) then
-        call nmchex(veasse, 'VEASSE', 'CNUNIL', cnunil)
-        call vtcreb(cnunil, 'V', 'R', nume_ddlz = numedd)
-    endif
-!
-! --- CONTACT AVEC DES ELEMENTS FINIS (CONTINUE/XFEM)
-!
-    if (leltc .and. (.not.lallv)) then
-        call nmchex(veasse, 'VEASSE', 'CNELTC', cneltc)
-        call vtcreb(cneltc, 'V', 'R', nume_ddlz = numedd)
-    endif
-!
-! --- FROTTEMENT AVEC DES ELEMENTS FINIS (CONTINUE/XFEM)
-!
-    if (leltf .and. (.not.lallv)) then
-        call nmchex(veasse, 'VEASSE', 'CNELTF', cneltf)
-        call vtcreb(cneltf, 'V', 'R', nume_ddlz = numedd)
+        call nmchex(veasse, 'VEASSE', 'CNAMOD', cnamod)
+        call vtcreb(cnamod, 'V', 'R', nume_ddlz = numedd)
     endif
 !
 ! --- RESIDU DE REFERENCE

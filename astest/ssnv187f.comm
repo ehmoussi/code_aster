@@ -1,0 +1,250 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+# 
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'), DEBUG=_F(SDVERI='OUI'))
+
+CREA_LIB_MFRONT(UNITE_MFRONT=38,UNITE_LIBRAIRIE=39)
+
+MAIL0 = LIRE_MAILLAGE(FORMAT='MED', UNITE=20)
+
+MAIL=CREA_MAILLAGE(MAILLAGE=MAIL0,
+                   LINE_QUAD=_F(TOUT='OUI',),);
+
+MODELE = AFFE_MODELE(
+    AFFE=_F(MODELISATION='D_PLAN', PHENOMENE='MECANIQUE', TOUT='OUI'),
+    MAILLAGE=MAIL
+)
+
+
+# MATERIAU HYPERELASTIQUE: MOONEY-RIVLIN
+C01 = 2.3456;
+C10 = 0.709;
+C20 = 0.0;
+NU  = 0.499
+K   = (6*(C10+C01))/(3*(1-2*NU))
+
+# MATERIAU HYPERELASTIQUE: MOONEY-RIVLIN
+RUBBER1=DEFI_MATERIAU(ELAS_HYPER=_F(C10=C10,
+                                   C01=C01,
+                                   C20=C20,
+                                   K=K,
+                                   RHO=1000.0),
+                       MFRONT=_F( LISTE_COEF=(C01,C10,C20,K),),
+)
+
+CHMAT1 = AFFE_MATERIAU(AFFE=_F(MATER=RUBBER1, TOUT='OUI'), MAILLAGE=MAIL)
+
+
+# MATERIAU HYPERELASTIQUE: NEO-HOOKEEN
+C01 = 0.0
+
+C10 = 1.2345
+
+C20 = 0.0
+
+NU = 0.499
+
+K = (6. * (C10 + C01)) / (3. * (1. - 2. * NU))
+
+RUBBER2=DEFI_MATERIAU(ELAS_HYPER=_F(C10=C10,
+                                   C01=C01,
+                                   C20=C20,
+                                   K=K,
+                                   RHO=1000.0),
+                       MFRONT=_F( LISTE_COEF=(C01,C10,C20,K),),
+)
+
+CHMAT2 = AFFE_MATERIAU(AFFE=_F(MATER=RUBBER2, TOUT='OUI'), MAILLAGE=MAIL)
+
+
+# MATERIAU HYPERELASTIQUE: SIGNORINI
+C01 = 1.2345
+
+C10 = 0.1234
+
+C20 = 0.456
+
+NU = 0.499
+
+K = (6. * (C10 + C01)) / (3. * (1. - 2. * NU))
+
+RUBBER3=DEFI_MATERIAU(ELAS_HYPER=_F(C10=C10,
+                                   C01=C01,
+                                   C20=C20,
+                                   K=K,
+                                   RHO=1000.0),
+                       MFRONT=_F( LISTE_COEF=(C01,C10,C20,K),),
+)
+
+CHMAT3 = AFFE_MATERIAU(AFFE=_F(MATER=RUBBER3, TOUT='OUI'), MAILLAGE=MAIL)
+
+LISTE = DEFI_LIST_REEL(DEBUT=0.0, INTERVALLE=_F(JUSQU_A=1.0, NOMBRE=20))
+
+RAMPE = DEFI_FONCTION(NOM_PARA='INST', VALE=(0.0, 0.0, 1.0, 1.0))
+
+FORCE = AFFE_CHAR_MECA(MODELE=MODELE, PRES_REP=_F(GROUP_MA='Sup', PRES=0.876))
+
+DEPL = AFFE_CHAR_MECA(
+    DDL_IMPO=(_F(DY=0.0, GROUP_MA='Inf'), _F(DX=0.0, GROUP_MA='Sym')),
+    MODELE=MODELE
+)
+
+RESU1 = STAT_NON_LINE(
+    CHAM_MATER=CHMAT1,
+                   COMPORTEMENT=_F(
+                                   RELATION        = 'MFRONT',
+                                   DEFORMATION     = 'SIMO_MIEHE',
+                                   NOM_ROUTINE     = 'astersignorini',
+                                   UNITE_LIBRAIRIE = 39,
+                                   RESI_INTE_MAXI  = 1e-11,
+                                  ),
+    CONVERGENCE=_F(ARRET='OUI', ITER_GLOB_MAXI=20),
+    EXCIT=(_F(CHARGE=FORCE, FONC_MULT=RAMPE), _F(CHARGE=DEPL)),
+    INCREMENT=_F(LIST_INST=LISTE),
+    MODELE=MODELE,
+    NEWTON=_F(MATRICE='TANGENTE', REAC_INCR=1, REAC_ITER=1)
+)
+
+RESU1=CALC_CHAMP(reuse=RESU1,
+                 RESULTAT=RESU1,
+                 CONTRAINTE=('SIGM_NOEU'),);
+
+
+RESU2 = STAT_NON_LINE(
+    CHAM_MATER=CHMAT2,
+                   COMPORTEMENT=_F(
+                                   RELATION        = 'MFRONT',
+                                   DEFORMATION     = 'SIMO_MIEHE',
+                                   NOM_ROUTINE     = 'astersignorini',
+                                   UNITE_LIBRAIRIE = 39,
+                                   RESI_INTE_MAXI  = 1e-11,
+                                  ),
+    CONVERGENCE=_F(ARRET='OUI', ITER_GLOB_MAXI=20),
+    EXCIT=(_F(CHARGE=FORCE, FONC_MULT=RAMPE), _F(CHARGE=DEPL)),
+    INCREMENT=_F(LIST_INST=LISTE),
+    MODELE=MODELE,
+    NEWTON=_F(MATRICE='TANGENTE', REAC_INCR=1, REAC_ITER=1)
+)
+
+RESU2=CALC_CHAMP(reuse=RESU2,
+                 RESULTAT=RESU2,
+                 CONTRAINTE=('SIGM_NOEU'),);
+
+RESU3 = STAT_NON_LINE(
+    CHAM_MATER=CHMAT3,
+                   COMPORTEMENT=_F(
+                                   RELATION        = 'MFRONT',
+                                   DEFORMATION     = 'SIMO_MIEHE',
+                                   NOM_ROUTINE     = 'astersignorini',
+                                   UNITE_LIBRAIRIE = 39,
+                                   RESI_INTE_MAXI  = 1e-11,
+                                  ),
+    CONVERGENCE=_F(ARRET='OUI', ITER_GLOB_MAXI=20),
+    EXCIT=(_F(CHARGE=FORCE, FONC_MULT=RAMPE), _F(CHARGE=DEPL)),
+    INCREMENT=_F(LIST_INST=LISTE),
+    MODELE=MODELE,
+    NEWTON=_F(MATRICE='TANGENTE', REAC_INCR=1, REAC_ITER=1)
+)
+
+RESU3=CALC_CHAMP(reuse=RESU3,
+                 RESULTAT=RESU3,
+                 CONTRAINTE=('SIGM_NOEU'),);
+
+TEST_RESU(
+    RESU=_F(
+        CRITERE=('RELATIF', ),
+        GROUP_NO=('TestDisp', ),
+        NOM_CHAM='DEPL',
+        NOM_CMP='DY',
+        NUME_ORDRE=20,
+        PRECISION=0.002,
+        REFERENCE='ANALYTIQUE',
+        RESULTAT=RESU1,
+        VALE_CALC=(-0.0340724877561, ),
+        VALE_REFE=(-0.034009, )
+    )
+)
+
+TEST_RESU(
+    RESU=_F(
+        CRITERE=('RELATIF', ),
+        GROUP_NO=('MiddleNode', ),
+        NOM_CHAM='SIGM_NOEU',
+        NOM_CMP='SIYY',
+        NUME_ORDRE=20,
+        RESULTAT=RESU1,
+        VALE_CALC=(-0.846268961317, ),
+        ),
+)
+
+
+TEST_RESU(
+    RESU=_F(
+        CRITERE=('RELATIF', ),
+        GROUP_NO=('TestDisp', ),
+        NOM_CHAM='DEPL',
+        NOM_CMP='DY',
+        NUME_ORDRE=20,
+        PRECISION=0.002,
+        REFERENCE='ANALYTIQUE',
+        RESULTAT=RESU2,
+        VALE_CALC=(-0.0783308313502, ),
+        VALE_REFE=(-0.07818, )
+    )
+)
+
+TEST_RESU(
+    RESU=_F(
+        CRITERE=('RELATIF', ),
+        GROUP_NO=('MiddleNode', ),
+        NOM_CHAM='SIGM_NOEU',
+        NOM_CMP='SIYY',
+        NUME_ORDRE=20,
+        RESULTAT=RESU2,
+        VALE_CALC=(-0.807653804187, ),
+        ),
+)
+
+TEST_RESU(
+    RESU=_F(
+        CRITERE=('RELATIF', ),
+        GROUP_NO=('TestDisp', ),
+        NOM_CHAM='DEPL',
+        NOM_CMP='DY',
+        NUME_ORDRE=20,
+        PRECISION=0.002,
+        REFERENCE='ANALYTIQUE',
+        RESULTAT=RESU3,
+        VALE_CALC=(-0.0710584259216, ),
+        VALE_REFE=(-0.070936, )
+    )
+)
+
+TEST_RESU(
+    RESU=_F(
+        CRITERE=('RELATIF', ),
+        GROUP_NO=('MiddleNode', ),
+        NOM_CHAM='SIGM_NOEU',
+        NOM_CMP='SIYY',
+        NUME_ORDRE=20,
+        RESULTAT=RESU3,
+        VALE_CALC=(-0.813992493333, ),
+        ),
+)
+
+FIN()

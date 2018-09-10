@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -351,7 +351,9 @@ axcc = RECU_FONCTION( RESU_GENE= dyna, NOEUD= 'NO550', NOM_CHAM= 'ACCE',
                       PROL_DROITE='CONSTANT',PROL_GAUCHE='CONSTANT',
                          NOM_CMP='DX');
                          
-axccF=FORMULE(NOM_PARA='FREQ',VALE_C='1+0j+axcc(FREQ)')
+axccF = FORMULE(VALE_C='1+0j+axcc(FREQ)',
+                axcc=axcc,
+                NOM_PARA='FREQ',)
 
 axccC=CALC_FONC_INTERP(FONCTION=axccF, NOM_PARA = 'FREQ',
                         PROL_DROITE='CONSTANT',
@@ -363,8 +365,11 @@ accexH= CALC_FONCTION(FFT=_F(FONCTION=accex,METHODE='COMPLET'),
                       INTERPOL='LIN',
                       PROL_DROITE='CONSTANT',PROL_GAUCHE='CONSTANT',);
                       
-accexNHF=FORMULE(NOM_PARA='FREQ',
-               VALE_C='accexH(FREQ)*FILTRE(FREQ)/axccC(FREQ)')
+accexNHF = FORMULE(VALE_C='accexH(FREQ)*FILTRE(FREQ)/axccC(FREQ)',
+                   accexH=accexH,
+                   FILTRE=FILTRE,
+                   axccC=axccC,
+                   NOM_PARA='FREQ',)
 
 accexNH=CALC_FONC_INTERP(FONCTION=accexNHF, NOM_PARA = 'FREQ',
                         PROL_DROITE='CONSTANT',

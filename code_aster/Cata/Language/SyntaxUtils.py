@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -24,11 +24,12 @@ Code_Aster Syntax Utilities
 List of utilities for syntax objects.
 """
 
+import inspect
+import math
+import os
 from array import array
 from collections import OrderedDict
 from functools import partial
-import math
-import os
 
 import numpy
 
@@ -62,6 +63,35 @@ def remove_none(obj):
                 del obj[key]
             else:
                 remove_none(obj[key])
+
+def add_none_sdprod(sd_prod, dictargs):
+    """Check if some arguments are missing to call *sd_prod* function and
+    add them with the *None* value.
+
+    It could be considered as a catalog error. *sd_prod* function should
+    not take optional keywords as arguments.
+
+    Arguments:
+        sd_prod (callable): *sd_prod* function to inspect.
+        dictargs (dict): Dict of keywords, changed in place.
+    """
+    argspec = inspect.getargspec(sd_prod)
+    required = argspec.args
+    if argspec.defaults:
+        required = required[:-len(argspec.defaults)]
+    args = dictargs.keys()
+    # add 'self' for macro
+    required.append('self')
+    miss = set(required).difference(args)
+    if len(miss) > 0:
+        # miss = sorted(list(miss))
+        # raise ValueError("Arguments required by the function:\n    {0}\n"
+        #                  "Provided in dict:    {1}\n"
+        #                  "Missing:    {2}\n"\
+        #                  .format(sorted(required), sorted(args), miss))
+        for i in miss:
+            dictargs[i] = None
+
 
 def search_for(obj, predicate):
     """Return all values that verify the predicate function."""
@@ -196,7 +226,7 @@ def debug_message(*args, **kwargs):
     message, you may pass any printable object(s) as parameter.
 
     Example:
-        >>> from common.utilities import debug_message, debug_mode
+        >>> from asterstudy.common.utilities import debug_message, debug_mode
         >>> previous = debug_mode()
         >>> debug_mode.DEBUG = 1
         >>> debug_message("Start operation:", "Compute", "[args]", 100)

@@ -363,8 +363,9 @@ ltps=DEFI_LIST_REEL(DEBUT=0.0,
                     INTERVALLE=_F(JUSQU_A=tfin,
                                   PAS=pas1,),)
 
-fonsin = FORMULE(NOM_PARA='INST',
-                 VALE='sin(omega*INST) ')
+fonsin = FORMULE(VALE='sin(omega*INST) ',
+                 omega=omega,
+                 NOM_PARA='INST',)
 
 accsin=CALC_FONC_INTERP(FONCTION=fonsin,
                         NOM_PARA='INST',

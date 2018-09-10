@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -21,7 +21,8 @@
 interface
     subroutine ircnme(ifi, nochmd, chanom, typech, modele,&
                       nbcmp, nomcmp, partie, numpt, instan,&
-                      numord, nbnoec, linoec, sdcarm, codret)
+                      numord, nbnoec, linoec, sdcarm, carael,&
+                      codret)
         integer :: ifi
         character(len=64) :: nochmd
         character(len=19) :: chanom
@@ -35,7 +36,7 @@ interface
         integer :: numord
         integer :: nbnoec
         integer :: linoec(*)
-        character(len=8) :: sdcarm
+        character(len=8) :: sdcarm, carael
         integer :: codret
     end subroutine ircnme
 end interface

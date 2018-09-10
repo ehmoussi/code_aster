@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -408,8 +408,8 @@ V_X_03=POST_RELEVE_T(ACTION=_F(OPERATION='EXTRACTION',
                                GROUP_NO='GAUCHE_F',
                                NOM_CMP=('FH11X',),),);
 
-DEBJOUR=FORMULE(NOM_PARA=('FH11X',),
-                 VALE='-FH11X*86400',);
+DEBJOUR = FORMULE(VALE='-FH11X*86400',
+                  NOM_PARA='FH11X',)
 
 V_X_03=CALC_TABLE(TABLE=V_X_03,
                   reuse=V_X_03,

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -26,7 +26,7 @@ loi = LoiComportement(
     doc            =   """Loi élastoplastique de J.L.Chaboche à 2 variables cinématiques qui rend compte du comportement cyclique en élasto-plasticité
    avec 2 tenseurs d'écrouissage cinématique non linéaire, un écrouissage isotrope non linéaire, un effet d'écrouissage sur les variables
    tensorielles de rappel, et prise en compte de la non proportionnalité du chargement.
-   Toutes les constantes du matériau peuvent éventuellement dépendre de la température."""            ,
+   Toutes les constantes du matériau peuvent éventuellement dépendre de la température."""              ,
     num_lc         = 4,
     nb_vari        = 14,
     nom_vari       = ('EPSPEQ','INDIPLAS','ALPHAXX','ALPHAYY','ALPHAZZ',
@@ -40,4 +40,5 @@ loi = LoiComportement(
     proprietes     = None,
     syme_matr_tang = ('Yes',),
     exte_vari      = None,
+    deform_ldc     = ('OLD',),
 )

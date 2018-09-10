@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -68,25 +68,25 @@ F1 = FORMULE(VALE="""
 1.-(1.5*cos(2.*atan2(Y,4.))+cos(4.*atan2(Y,4.))) /(16.+Y*Y)
                             +(3.*cos(4.*atan2(Y,4.)))/(2.*(16.+Y*Y)**2)
               """,
-             NOM_PARA='Y',);
+             NOM_PARA='Y',)
 
 F2 = FORMULE(VALE="""
 -(0.5*sin(2.*atan2(Y,4.))+sin(4.*atan2(Y,4.))) /(16.+Y*Y)
                              +(3.*sin(4.*atan2(Y,4.)))/(2.*(16.+Y*Y)**2)
               """,
-             NOM_PARA='Y',);
+             NOM_PARA='Y',)
 
 F3 = FORMULE(VALE="""
 -(0.5*sin(2.*atan2(4.,X))+sin(4.*atan2(4.,X))) /(16.+X*X)
                              +(3.*sin(4.*atan2(4.,X)))/(2.*(16.+X*X)**2)
               """,
-             NOM_PARA='X',);
+             NOM_PARA='X',)
 
 F4 = FORMULE(VALE="""
 -(0.5*cos(2.*atan2(4.,X))-cos(4.*atan2(4.,X))) /(16.+X*X)
                              -(3.*cos(4.*atan2(4.,X)))/(2.*(16.+X*X)**2)
               """,
-             NOM_PARA='X',);
+             NOM_PARA='X',)
 #
 # 0.2. ==> Resultats analytiques au point de coordonnees polaires(R,TH)
 
@@ -94,19 +94,19 @@ SIXX = FORMULE(VALE="""
 1.-(1.5*cos(2.*TH)+cos(4.*TH)) /(R*R)
           +(1.5*cos(4.*TH))/(R**4)
        """,
-               NOM_PARA=('R','TH',),);
+               NOM_PARA=['R', 'TH'],)
 
 SIYY = FORMULE(VALE="""
 -(0.5*cos(2.*TH)-cos(4.*TH)) /(R*R)
           -(1.5*cos(4.*TH))/(R**4)
               """,
-               NOM_PARA=('R','TH',),);
+               NOM_PARA=['R', 'TH'],)
 
 SIXY = FORMULE(VALE="""
 -(0.5*sin(2.*TH)+sin(4.*TH)) /(R*R)
           +(1.5*sin(4.*TH))/(R**4)
               """,
-               NOM_PARA=('R','TH',),);
+               NOM_PARA=['R', 'TH'],)
 #
 # 1. Definition du materiau
 

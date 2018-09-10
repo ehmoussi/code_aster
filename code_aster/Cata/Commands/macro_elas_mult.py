@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -26,6 +26,10 @@ from code_aster.Cata.Commons import *
 
 
 def macro_elas_mult_prod(self,NUME_DDL,CAS_CHARGE,**args ):
+  if args.get('__all__'):
+      return ([mult_elas, fourier_elas],
+              [None, nume_ddl_sdaster])
+
   if NUME_DDL is not None and NUME_DDL.is_typco():
     self.type_sdprod(NUME_DDL,nume_ddl_sdaster)
   if CAS_CHARGE[0]['NOM_CAS']      != None : return mult_elas
@@ -35,7 +39,7 @@ def macro_elas_mult_prod(self,NUME_DDL,CAS_CHARGE,**args ):
 MACRO_ELAS_MULT=MACRO(nom="MACRO_ELAS_MULT",
                       op=OPS('Macro.macro_elas_mult_ops.macro_elas_mult_ops'),
                       sd_prod=macro_elas_mult_prod,
-                      reentrant='f',
+                      reentrant='f:RESULTAT',
                       fr=tr("Calculer les réponses statiques linéaires pour différents cas "
                            "de charges ou modes de Fourier"),
          regles=(UN_PARMI('CHAR_MECA_GLOBAL','LIAISON_DISCRET', ),),

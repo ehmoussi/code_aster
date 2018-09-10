@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -224,8 +224,10 @@ TAB_SIG=POST_RELEVE_T(ACTION=_F(INTITULE = 'SIGM_NOEU',
                                 TOUT_CMP = 'OUI',
                                 OPERATION= 'EXTRACTION'));
 
-SIGMA_N = FORMULE(NOM_PARA=('SIXX','SIZZ'), VALE='0.5*(SIXX+SIZZ)');
-SIGMA_D = FORMULE(NOM_PARA=('SIXX','SIZZ'), VALE='0.5*(SIXX-SIZZ)');
+SIGMA_N = FORMULE(VALE='0.5*(SIXX+SIZZ)',
+                  NOM_PARA=['SIXX', 'SIZZ'],)
+SIGMA_D = FORMULE(VALE='0.5*(SIXX-SIZZ)',
+                  NOM_PARA=['SIXX', 'SIZZ'],)
 
 TAB_EPS=POST_RELEVE_T(ACTION=_F(INTITULE = 'EPSI_NOEU',
                                 GROUP_NO = 'C',

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -23,6 +23,7 @@ use Rom_Datastructure_type
 !
 implicit none
 !
+#include "asterf_types.h"
 #include "asterfort/assert.h"
 #include "asterfort/infniv.h"
 #include "asterfort/utmess.h"
@@ -58,7 +59,7 @@ type(ROM_DS_ParaDBR_TR), intent(inout) :: ds_para_tr
     ASSERT(nocc .eq. 1)
     call getvid(' ', 'BASE', scal = base_init, nbret = nocc)
     if (nocc .eq. 0) then
-        base_init = ' '
+        base_init   = ' '
     endif
 !
 ! - Save parameters in datastructure

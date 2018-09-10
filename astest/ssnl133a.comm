@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -108,7 +108,8 @@ DEPZ=RECU_FONCTION(
    GROUP_NO='PC',)
 
 T_INST=RECU_TABLE(CO=RESO,NOM_PARA='INST',)
-COPIE=FORMULE(NOM_PARA=('INST',),VALE='INST',)
+COPIE = FORMULE(VALE='INST',
+                NOM_PARA='INST',)
 T_INST=CALC_TABLE(reuse=T_INST,
    TABLE=T_INST,
    ACTION=(_F(OPERATION='OPER', FORMULE=COPIE, NOM_PARA='ETA_PILOTAGE'),),)

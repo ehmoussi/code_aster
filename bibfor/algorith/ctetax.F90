@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -125,7 +125,7 @@ subroutine ctetax(basmod, numa, nbsec, teta, nbtet)
     if (nbdax .ne. nbtet) then
         vali (1) = nbdax
         vali (2) = nbtet
-        call utmess('F', 'ALGORITH14_93', ni=2, vali=vali)
+        call utmess('F', 'ALGORITH15_2', ni=2, vali=vali)
     endif
 !
 !

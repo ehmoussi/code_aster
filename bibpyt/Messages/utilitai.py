@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -143,7 +143,7 @@ Erreur utilisateur dans la commande CREA_RESU / TYPE_MAXI= ...
   La commande exige que tous les champs pour lesquels on veut extraire
   le maximum aient la même numérotation pour leurs composantes.
   Ce n'est pas le cas pour cette structure de donnée SD_RESULTAT.
-  
+
   Cela est certainement du à la présence de mailles tardives à certains instants
   de calcul et pas à d'autres.
 """),
@@ -263,8 +263,6 @@ Contactez le support technique.
     56 : _(u"""
  Le partitionneur SCOTCH a fait remonter l'erreur %(i1)d. Veuillez contacter l'équipe de
  développement.
- Pour contourner ce problème, vous pouvez néanmoins:
-   - changer de partitionneur (METHODE=KMETIS ou PMETIS),
 """),
 
 
@@ -352,11 +350,6 @@ Contactez le support technique.
 
 
 
-    81 : _(u"""
-  erreur à l'appel de METIS
-  plus aucune unité logique libre
-"""),
-
     82 : _(u"""
  méthode d'intégration inexistante.
 """),
@@ -414,6 +407,11 @@ Contactez le support technique.
 
     96 : _(u"""
  "INTERP_NUME" et ("FREQ" ou "LIST_FREQ") non compatibles
+"""),
+
+    97 : _(u"""
+ Modèle absent.
+ Il faut renseigner le mot-clé MODELE.
 """),
 
     99 : _(u"""

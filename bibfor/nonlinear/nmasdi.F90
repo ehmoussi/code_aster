@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,124 +15,61 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmasdi(fonact, veasse, cndfdo, cndfpi)
-!
 ! person_in_charge: mickael.abbas at edf.fr
 !
-    implicit none
+subroutine nmasdi(list_func_acti, hval_veasse, cndfdo)
+!
+use NonLin_Datastructure_type
+!
+implicit none
+!
 #include "asterf_types.h"
-#include "jeveux.h"
-#include "asterfort/infdbg.h"
+#include "asterfort/nonlinDSVectCombCompute.h"
+#include "asterfort/nonlinDSVectCombAddHat.h"
+#include "asterfort/nonlinDSVectCombInit.h"
 #include "asterfort/isfonc.h"
-#include "asterfort/jedema.h"
-#include "asterfort/jemarq.h"
-#include "asterfort/nmchex.h"
-#include "asterfort/nmdebg.h"
-#include "asterfort/vtaxpy.h"
-#include "asterfort/vtzero.h"
-    character(len=19) :: cndfdo, cndfpi
-    character(len=19) :: veasse(*)
-    integer :: fonact(*)
 !
-! ----------------------------------------------------------------------
+integer, intent(in) :: list_func_acti(*)
+character(len=19), intent(in) :: hval_veasse(*), cndfdo
 !
-! ROUTINE MECA_NON_LINE (ALGORITHME)
+! --------------------------------------------------------------------------------------------------
 !
-! CALCUL DES COMPOSANTES DU VECTEUR SECOND MEMBRE
-!  - CHARGEMENT DE TYPE DIRICHLET
-!  - CHARGEMENT FIXE AU COURS DU PAS DE TEMPS
-!  - CHARGEMENT DONNE ET PILOTE
+! MECA_NON_LINE - Algorithm
 !
-! ----------------------------------------------------------------------
+! Get Dirichlet loads
 !
+! --------------------------------------------------------------------------------------------------
 !
-! IN  FONACT : FONCTIONNALITES ACTIVEES (VOIR NMFONC)
-! IN  VEASSE : VARIABLE CHAPEAU POUR NOM DES VECT_ASSE
-! OUT CNDFDO : VECT_ASSE DE TOUS LES DEPLACEMENTS FIXES DONNES
-! OUT CNDFPI : VECT_ASSE DE TOUS LES DEPLACEMENTS FIXES PILOTES
+! In  list_func_acti   : list of active functionnalities
+! In  hval_veasse      : hat-variable for vectors (node fields)
+! In  cndfdo           : name of resultant nodal field
 !
+! --------------------------------------------------------------------------------------------------
 !
+    aster_logical :: l_didi
+    type(NL_DS_VectComb) :: ds_vectcomb
 !
+! --------------------------------------------------------------------------------------------------
 !
+    l_didi = isfonc(list_func_acti,'DIDI')
 !
-    integer :: ifm, niv
-    integer :: ifdo
-    integer :: n
-    character(len=19) :: cndonn(20)
-    real(kind=8) :: codonn(20)
-    character(len=19) :: cndido, cndipi
-    character(len=19) :: cncine, cndidi
-    aster_logical :: ldidi, lpilo
+! - Initializations
 !
-! ----------------------------------------------------------------------
+    call nonlinDSVectCombInit(ds_vectcomb)
 !
-    call jemarq()
-    call infdbg('MECA_NON_LINE', ifm, niv)
+! - Dirichlet (given displacements) - AFFE_CHAR_MECA
 !
-! --- AFFICHAGE
-!
-    if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE> ...... CALCUL DIRICHLET CONSTANT'
+    call nonlinDSVectCombAddHat(hval_veasse, 'CNDIDO', 1.d0, ds_vectcomb)
+    if (l_didi) then
+        call nonlinDSVectCombAddHat(hval_veasse, 'CNDIDI', 1.d0, ds_vectcomb)
     endif
 !
-! --- FONCTIONNALITES ACTIVEES
+! - Dirichlet (given displacements) - AFFE_CHAR_CINE
 !
-    lpilo = isfonc(fonact,'PILOTAGE')
-    ldidi = isfonc(fonact,'DIDI')
+    call nonlinDSVectCombAddHat(hval_veasse, 'CNCINE', 1.d0, ds_vectcomb)
 !
-! --- INITIALISATIONS
+! - Combination
 !
-    ifdo = 0
-    call vtzero(cndfdo)
-    call vtzero(cndfpi)
+    call nonlinDSVectCombCompute(ds_vectcomb, cndfdo)
 !
-! --- DEPLACEMENTS DONNES (Y COMPRIS DIDI SI NECESSAIRE)
-!
-    call nmchex(veasse, 'VEASSE', 'CNDIDO', cndido)
-    ifdo = ifdo+1
-    cndonn(ifdo) = cndido
-    codonn(ifdo) = 1.d0
-!
-    if (ldidi) then
-        call nmchex(veasse, 'VEASSE', 'CNDIDI', cndidi)
-        ifdo = ifdo+1
-        cndonn(ifdo) = cndidi
-        codonn(ifdo) = 1.d0
-    endif
-!
-! --- CONDITIONS CINEMATIQUES IMPOSEES
-!
-    call nmchex(veasse, 'VEASSE', 'CNCINE', cncine)
-    ifdo = ifdo+1
-    cndonn(ifdo) = cncine
-    codonn(ifdo) = 1.d0
-!
-! --- VECTEUR RESULTANT DEPLACEMENTS DONN2S
-!
-    do 17 n = 1, ifdo
-        call vtaxpy(codonn(n), cndonn(n), cndfdo)
-        if (niv .ge. 2) then
-            write (ifm,*) '<MECANONLINE> ......... DEPL. DONNES'
-            write (ifm,*) '<MECANONLINE> .........  ',n,' - COEF: ',&
-     &                   codonn(n)
-            call nmdebg('VECT', cndonn(n), ifm)
-        endif
- 17 end do
-!
-! --- VECTEUR RESULTANT DEPLACEMENTS PILOTES
-!
-    if (lpilo) then
-        call nmchex(veasse, 'VEASSE', 'CNDIPI', cndipi)
-        cndfpi = cndipi
-        if (niv .ge. 2) then
-            write (ifm,*) '<MECANONLINE> ......... DEPL. PILOTES'
-            write (ifm,*) '<MECANONLINE> .........  ',1,' - COEF: ',&
-     &                   1.d0
-            call nmdebg('VECT', cndfpi, ifm)
-        endif
-!
-    endif
-!
-    call jedema()
 end subroutine

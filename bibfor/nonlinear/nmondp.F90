@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,63 +15,66 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmondp(lischa, londe, chondp, nondp)
 !
+subroutine nmondp(list_load, londe, chondp, nondp)
 !
-    implicit none
+implicit none
+!
 #include "asterf_types.h"
 #include "jeveux.h"
-!
-#include "asterc/getfac.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/wkvect.h"
-    integer :: nondp
-    character(len=24) :: chondp
-    character(len=19) :: lischa
-    aster_logical :: londe
+#include "asterfort/ischar_iden.h"
 !
-!
-!
-!
-    integer :: jinf, ialich, nchar, ich, iondp, nond
-    character(len=24) :: infoch, charge
+integer :: nondp
+character(len=24) :: chondp
+character(len=19) :: list_load
+aster_logical :: londe
 !
 ! ----------------------------------------------------------------------
 !
+    character(len=24) :: lload_name, lload_info
+    integer, pointer :: v_load_info(:) => null()
+    character(len=24), pointer :: v_load_name(:) => null()
+    integer :: iondp, nond, i_load, nb_load
+!
     call jemarq()
 !
-! --- INITIALISATIONS
+! - Initializations
 !
-    londe = .false.
-    infoch = lischa(1:19)//'.INFC'
-    charge = lischa(1:19)//'.LCHA'
-    nondp = 0
-    call jeveuo(infoch, 'L', jinf)
-    call jeveuo(charge, 'L', ialich)
-    call getfac('EXCIT', nchar)
-    do 30 ich = 1, nchar
-        if (zi(jinf+nchar+ich) .eq. 6) then
+    londe  = .false.
+    nondp  = 0
+    chondp = '&&NMONDP.ONDP'
+!
+! - Datastructure access
+!
+    lload_name = list_load(1:19)//'.LCHA'
+    lload_info = list_load(1:19)//'.INFC'
+    call jeveuo(lload_name, 'L', vk24 = v_load_name)
+    call jeveuo(lload_info, 'L', vi   = v_load_info)
+    nb_load = v_load_info(1)
+    do i_load = 1, nb_load
+        if (ischar_iden(v_load_info, i_load, nb_load, 'NEUM', 'ONDE')) then
             nondp = nondp + 1
         endif
- 30 end do
+    end do
 !
 ! --- RECUPERATION DES DONNEES DE CHARGEMENT PAR ONDE PLANE
-    chondp = '&&NMONDP.ONDP'
+!
     if (nondp .eq. 0) then
         call wkvect(chondp, 'V V K8', 1, iondp)
     else
         londe = .true.
         call wkvect(chondp, 'V V K8', nondp, iondp)
         nond = 0
-        do 40 ich = 1, nchar
-            if (zi(jinf+nchar+ich) .eq. 6) then
+        do i_load = 1, nb_load
+            if (ischar_iden(v_load_info, i_load, nb_load, 'NEUM', 'ONDE')) then
                 nond = nond + 1
-                zk8(iondp+nond-1) = zk24(ialich+ich-1)
+                zk8(iondp+nond-1) = v_load_name(i_load)(1:8)
             endif
- 40     continue
+        end do
     endif
     call jedema()
 end subroutine

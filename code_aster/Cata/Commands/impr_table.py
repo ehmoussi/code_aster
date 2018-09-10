@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -30,7 +30,7 @@ IMPR_TABLE=MACRO(nom="IMPR_TABLE",
                  fr=tr("Impression du contenu d'une table dans un fichier"),
    TABLE          =SIMP(statut='o',typ=table_sdaster),
    FORMAT         =SIMP(statut='f',typ='TXM',defaut="TABLEAU",
-                         into=("TABLEAU","ASTER","TABLEAU_CROISE","AGRAF","XMGRACE",),),
+                         into=("TABLEAU","ASTER","TABLEAU_CROISE","AGRAF","XMGRACE","NUMPY"),),
    b_pilote       =BLOC(condition = """equal_to("FORMAT", 'XMGRACE')""",
                         fr=tr("Mots-clés propres à XMGRACE"),
       PILOTE         =SIMP(statut='f',typ='TXM',defaut='',

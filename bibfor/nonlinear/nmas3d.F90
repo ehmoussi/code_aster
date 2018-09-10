@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! aslint: disable=W1504
+!
 subroutine nmas3d(fami, nno, nbpg1, ipoids, ivf,&
                   idfde, geom, typmod, option, imate,&
                   compor, mult_comp, lgpg, carcri, instam, instap,&
@@ -44,24 +45,22 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/Behaviour_type.h"
 !
-! aslint: disable=W1504
-!
-    integer :: nno, imate, lgpg, codret, nbpg1
-    integer :: ipoids, ivf, idfde
-    integer :: ipoid2, ivf2, idfde2
-    character(len=*) :: fami
-    character(len=8) :: typmod(*)
-    character(len=16) :: option
-    character(len=16), intent(in) :: compor(*)
-    character(len=16), intent(in) :: mult_comp
-    real(kind=8), intent(in) :: carcri(*)
-    real(kind=8) :: instam, instap
-    real(kind=8) :: geom(3, nno)
-    real(kind=8) :: deplm(3, nno), deplp(3, nno), dfdi(nno, 3)
-    real(kind=8) :: def(6, 3, nno)
-    real(kind=8) :: sigm(78, nbpg1), sigp(78, nbpg1)
-    real(kind=8) :: vim(lgpg, nbpg1), vip(lgpg, nbpg1)
-    real(kind=8) :: matuu(*), vectu(3, nno), angmas(3)
+integer :: nno, imate, lgpg, codret, nbpg1
+integer :: ipoids, ivf, idfde
+integer :: ipoid2, ivf2, idfde2
+character(len=*) :: fami
+character(len=8) :: typmod(*)
+character(len=16) :: option
+character(len=16), intent(in) :: compor(*)
+character(len=16), intent(in) :: mult_comp
+real(kind=8), intent(in) :: carcri(*)
+real(kind=8) :: instam, instap
+real(kind=8) :: geom(3, nno)
+real(kind=8) :: deplm(3, nno), deplp(3, nno), dfdi(nno, 3)
+real(kind=8) :: def(6, 3, nno)
+real(kind=8) :: sigm(78, nbpg1), sigp(78, nbpg1)
+real(kind=8) :: vim(lgpg, nbpg1), vip(lgpg, nbpg1)
+real(kind=8) :: matuu(*), vectu(3, nno), angmas(3)
 !.......................................................................
 !
 !     BUT:  CALCUL  DES OPTIONS RIGI_MECA_TANG, RAPH_MECA ET FULL_MECA
@@ -140,10 +139,13 @@ implicit none
 !
     jvariexte = nint(carcri(IVARIEXTE))
 !
-! - CALCUL DES ELEMENTS GEOMETRIQUES SPECIFIQUES AU COMPORTEMENT
-    call lcegeo(nno, nbpg1, ipoids, ivf, idfde,&
-                geom, typmod, jvariexte, 3,&
-                deplm, deplp)
+! - Compute intrinsic external state variables
+!
+    call lcegeo(nno   , nbpg1    , 3    ,&
+                ipoids, ivf      , idfde,&
+                typmod, jvariexte,&
+                geom  ,&
+                deplm , deplp)
 !
 ! - INITIALISATION CODES RETOURS
     do kpg = 1, nbpg1

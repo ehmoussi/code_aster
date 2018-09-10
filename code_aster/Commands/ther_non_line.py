@@ -48,8 +48,8 @@ class NonLinearThermalAnalysis(ExecuteCommand):
         if(keywords.has_key("reuse")):
             self._result.update()
         else:
-            self._result.update()
             self._result.appendModelOnAllRanks(keywords["MODELE"])
+            self._result.update()
 
 
 THER_NON_LINE = NonLinearThermalAnalysis.run

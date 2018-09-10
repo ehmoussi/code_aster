@@ -11,7 +11,7 @@ test = code_aster.TestCase()
 mail1 = LIRE_MAILLAGE( FORMAT = "MED" )
 
 with test.assertRaisesRegexp(ValueError, "must be in"):
-    LIRE_MAILLAGE( FORMAT = "GIBI", UNITE = 21 )
+    LIRE_MAILLAGE( FORMAT = "xxx", UNITE = 21 )
 
 MA0=LIRE_MAILLAGE(FORMAT='MED',UNITE=22)
 

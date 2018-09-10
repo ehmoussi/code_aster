@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -50,10 +50,14 @@ MODELEIN=AFFE_MODELE(MAILLAGE=MAILLAG,
                               PHENOMENE='MECANIQUE',
                               MODELISATION='3D')));
 
-LN1=FORMULE(NOM_PARA=('X','Y','Z'),VALE='Y-0.5');
-LN2=FORMULE(NOM_PARA=('X','Y','Z'),VALE='Y-1.5');
-LN3=FORMULE(NOM_PARA=('X','Y','Z'),VALE='Y-2.5');
-LN4=FORMULE(NOM_PARA=('X','Y','Z'),VALE='Y-3.5');
+LN1 = FORMULE(VALE='Y-0.5',
+              NOM_PARA=['X', 'Y', 'Z'],)
+LN2 = FORMULE(VALE='Y-1.5',
+              NOM_PARA=['X', 'Y', 'Z'],)
+LN3 = FORMULE(VALE='Y-2.5',
+              NOM_PARA=['X', 'Y', 'Z'],)
+LN4 = FORMULE(VALE='Y-3.5',
+              NOM_PARA=['X', 'Y', 'Z'],)
 
 FISS1=DEFI_FISS_XFEM(MAILLAGE=MAILLAG,
                      TYPE_DISCONTINUITE='INTERFACE',
@@ -125,7 +129,9 @@ def pression(y) :
    if y < 1.5 and y >= 0.5 : return 10e6
    if y < 0.5 : return 0
 
-PRESSION = FORMULE(VALE='pression(Y)',NOM_PARA='Y');
+PRESSION = FORMULE(VALE='pression(Y)',
+                   pression=pression,
+                   NOM_PARA='Y',)
 
 def depx(y) :
    return y/5
@@ -185,8 +191,8 @@ TABDEP=POST_RELEVE_T(ACTION=_F(INTITULE='DEPLACEMENT SUR LES LEVRES',
                                TOUT_CMP='OUI',
                                OPERATION='EXTRACTION'));
 
-depl_y = FORMULE(NOM_PARA=('DY','COOR_Y'),
-                 VALE='DY+COOR_Y/10');
+depl_y = FORMULE(VALE='DY+COOR_Y/10',
+                 NOM_PARA=['DY', 'COOR_Y'],)
 
 TABDEP = CALC_TABLE(reuse = TABDEP,
                      TABLE = TABDEP,
@@ -199,8 +205,9 @@ TABDEP = CALC_TABLE(reuse = TABDEP,
 
 # FILTRE SUR LES NOMS DES NOEUDS POUR NE GARDER QUE LES NP (COTE MAITRE)
 
-depl_p = FORMULE(NOM_PARA=('DX','COOR_X','COOR_Y'),
-                   VALE='DX+depx(COOR_Y+0.5)*(COOR_X-2)/2');
+depl_p = FORMULE(VALE='DX+depx(COOR_Y+0.5)*(COOR_X-2)/2',
+                 depx=depx,
+                 NOM_PARA=['DX', 'COOR_X', 'COOR_Y'],)
 
 TABDEPP = CALC_TABLE(TABLE = TABDEP,
                      ACTION =(_F(OPERATION = 'FILTRE',
@@ -219,8 +226,9 @@ IMPR_TABLE(TABLE=TABDEPP,
 
 # FILTRE SUR LES NOMS DES NOEUDS POUR NE GARDER QUE LES NM (COTE ESCLAVE)
 
-depl_m = FORMULE(NOM_PARA=('DX','COOR_X','COOR_Y'),
-                   VALE='DX+depx(COOR_Y-0.5)*(COOR_X-2)/2');
+depl_m = FORMULE(VALE='DX+depx(COOR_Y-0.5)*(COOR_X-2)/2',
+                 depx=depx,
+                 NOM_PARA=['DX', 'COOR_X', 'COOR_Y'],)
 
 TABDEPM = CALC_TABLE(TABLE = TABDEP,
                      ACTION =(_F(OPERATION = 'FILTRE',
@@ -245,8 +253,12 @@ def ux(X,Y):
 def uy(X,Y): 
     return -Y*1.e7/E
 
-UX=FORMULE(NOM_PARA=('X','Y',),VALE='ux(X,Y)')
-UY=FORMULE(NOM_PARA=('X','Y',),VALE='uy(X,Y)')
+UX = FORMULE(VALE='ux(X,Y)',
+             ux=ux,
+             NOM_PARA=['X', 'Y'],)
+UY = FORMULE(VALE='uy(X,Y)',
+             uy=uy,
+             NOM_PARA=['X', 'Y'],)
 
 #    - contraintes
 def Sxx(X,Y):
@@ -255,8 +267,12 @@ def Sxx(X,Y):
 def Syy(X,Y):
     return -1.e7
 
-SXX=FORMULE(NOM_PARA=('X','Y',),VALE='Sxx(X,Y)');
-SYY=FORMULE(NOM_PARA=('X','Y',),VALE='Syy(X,Y)');
+SXX = FORMULE(VALE='Sxx(X,Y)',
+              Sxx=Sxx,
+              NOM_PARA=['X', 'Y'],)
+SYY = FORMULE(VALE='Syy(X,Y)',
+              Syy=Syy,
+              NOM_PARA=['X', 'Y'],)
 
 # calcul de l'erreur en terme de norme en energie
 Scal=CREA_CHAMP(OPERATION='EXTR',

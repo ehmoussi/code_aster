@@ -32,6 +32,8 @@
 #include "Modeling/Model.h"
 #include "Materials/MaterialOnMesh.h"
 #include "Loads/MechanicalLoad.h"
+#include "DataFields/ElementaryResult.h"
+#include "Modeling/FiniteElementDescriptor.h"
 
 /**
  * @class ElementaryMatrixInstance
@@ -47,13 +49,19 @@ private:
     typedef ListMecaLoad::iterator ListMecaLoadIter;
 
     /** @brief Objet Jeveux '.RERR' */
-    JeveuxVectorChar24 _description;
+    JeveuxVectorChar24                        _description;
     /** @brief Objet Jeveux '.RELR' */
-    JeveuxVectorChar24 _listOfElementaryResults;
+    JeveuxVectorChar24                        _listOfElementaryResults;
+    /** @brief Vectors of RESUELEM */
+    std::vector< ElementaryResultDoublePtr >  _realVector;
+    std::vector< ElementaryResultComplexPtr > _complexVector;
     /** @brief Booleen indiquant si la sd est vide */
-    bool               _isEmpty;
+    bool                                      _isEmpty;
     /** @brief Modele support */
-    ModelPtr           _supportModel;
+    ModelPtr                                  _supportModel;
+    /** @brief Vectors of FiniteElementDescriptor */
+    std::vector< FiniteElementDescriptorPtr > _FEDVector;
+    std::set< std::string >                   _FEDNames;
 
 public:
     /**
@@ -71,7 +79,8 @@ public:
         DataStructure( name, 19, type, memType ),
         _description( JeveuxVectorChar24( getName() + ".RERR" ) ),
         _listOfElementaryResults( JeveuxVectorChar24( getName() + ".RELR" ) ),
-        _isEmpty( true )
+        _isEmpty( true ),
+        _supportModel( nullptr )
     {};
 
     /**
@@ -107,6 +116,31 @@ public:
     };
 
     /**
+     * @brief Add a FiniteElementDescriptor to elementary matrix
+     * @param FiniteElementDescriptorPtr support FiniteElementDescriptor
+     */
+    bool addFiniteElementDescriptor( const FiniteElementDescriptorPtr& curFED )
+    {
+        const auto name = trim( curFED->getName() );
+        if( _FEDNames.find( name ) == _FEDNames.end() )
+        {
+            _FEDVector.push_back( _supportModel->getFiniteElementDescriptor() );
+            _FEDNames.insert( name );
+            return true;
+        }
+        return false;
+    };
+
+    /**
+     * @brief Get all support FiniteElementDescriptors
+     * @return vector of all FiniteElementDescriptors
+     */
+    std::vector< FiniteElementDescriptorPtr > getFiniteElementDescriptors()
+    {
+        return _FEDVector;
+    };
+
+    /**
      * @brief Obtenir le modèle de l'étude
      */
     ModelPtr getSupportModel() const
@@ -139,6 +173,32 @@ public:
     void setSupportModel( const ModelPtr& currentModel )
     {
         _supportModel = currentModel;
+        auto curFED = _supportModel->getFiniteElementDescriptor();
+        const auto name = trim( curFED->getName() );
+        if( _FEDNames.find( name ) == _FEDNames.end() )
+        {
+            _FEDVector.push_back( _supportModel->getFiniteElementDescriptor() );
+            _FEDNames.insert( name );
+        }
+    };
+
+    /**
+     * @brief function to update ElementaryResultInstance
+     */
+    bool update() throw ( std::runtime_error )
+    {
+        _listOfElementaryResults->updateValuePointer();
+        _realVector.clear();
+        for( int pos = 0; pos < _listOfElementaryResults->size(); ++pos )
+        {
+            const std::string name = (*_listOfElementaryResults)[pos].toString();
+            if( trim( name ) != "" )
+            {
+                ElementaryResultDoublePtr toPush( new ElementaryResultInstance< double >( name ) );
+                _realVector.push_back( toPush );
+            }
+        }
+        return true;
     };
 
     friend class DiscreteProblemInstance;

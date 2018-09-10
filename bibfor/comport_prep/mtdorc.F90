@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,28 +15,28 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine mtdorc(model, compor)
+!
+use Metallurgy_type
 !
 implicit none
 !
-#include "jeveux.h"
+#include "asterfort/assert.h"
 #include "asterfort/comp_init.h"
+#include "asterfort/comp_meta_info.h"
 #include "asterfort/comp_meta_read.h"
 #include "asterfort/comp_meta_save.h"
+#include "asterfort/comp_meta_pvar.h"
+#include "asterfort/comp_meta_prnt.h"
 #include "asterfort/dismoi.h"
-#include "asterfort/jedema.h"
-#include "asterfort/jedetr.h"
-#include "asterfort/jemarq.h"
-#include "asterfort/jeveuo.h"
 !
-!
-    character(len=8), intent(in) :: model
-    character(len=19), intent(in) :: compor
+character(len=8), intent(in) :: model
+character(len=19), intent(in) :: compor
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! Preparation of comportment (matallurgy)
+! Preparation of comportment (metallurgy)
 !
 ! Prepare objects COMPOR <CARTE>
 !
@@ -49,16 +49,17 @@ implicit none
 !
     integer :: nb_cmp
     character(len=8) :: mesh
-    character(len=19) :: list_vale
+    character(len=19) :: compor_info
+    type(META_PrepPara) :: ds_comporMeta
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call jemarq()
-!
-! - Initializations
-!
+    compor_info = '&&MTDORC.INFO'
     call dismoi('NOM_MAILLA', model, 'MODELE', repk=mesh)
-    list_vale = '&&LIST_VALE'
+!
+! - Create datastructure to prepare comportement
+!
+    call comp_meta_info(ds_comporMeta)
 !
 ! - Create COMPOR <CARTE>
 !
@@ -66,16 +67,23 @@ implicit none
 !
 ! - Read informations from command file
 !
-    call comp_meta_read(list_vale)
+    call comp_meta_read(ds_comporMeta)
 !
 ! - Save informations in COMPOR <CARTE>
 !
-    call comp_meta_save(mesh, compor, nb_cmp, list_vale)
+    call comp_meta_save(mesh         , compor, nb_cmp, &
+                        ds_comporMeta)
 !
-! - Clean it
+! - Prepare informations about internal variables
 !
-    call jedetr(list_vale)
+    call comp_meta_pvar(model, compor, compor_info)
 !
-    call jedema()
+! - Print informations about internal variables
+!
+    call comp_meta_prnt(compor_info)
+!
+! - Cleaning
+!
+    deallocate(ds_comporMeta%v_comp)
 !
 end subroutine

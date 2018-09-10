@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -253,7 +253,7 @@ TEST_RESU(RESU=(_F(INST=0.0,
                    RESULTAT=DEP,
                    NOM_CHAM='FERRAILLAGE',
                    NOM_CMP='DNSXS',
-                   VALE_CALC=2.3058708523766001E-06,
+                   VALE_CALC=2.26512773371E-08,
                    CRITERE='RELATIF',
                    MAILLE='C1',),
                 _F(INST=0.0,
@@ -261,7 +261,7 @@ TEST_RESU(RESU=(_F(INST=0.0,
                    RESULTAT=DEP,
                    NOM_CHAM='FERRAILLAGE',
                    NOM_CMP='DNSYI',
-                   VALE_CALC=2.2907787687229001E-06,
+                   VALE_CALC=1.13226882673E-10,
                    CRITERE='RELATIF',
                    MAILLE='C1',),
                 _F(INST=0.0,
@@ -269,7 +269,7 @@ TEST_RESU(RESU=(_F(INST=0.0,
                    RESULTAT=DEP,
                    NOM_CHAM='FERRAILLAGE',
                    NOM_CMP='SIGMBE',
-                   VALE_CALC=1.307140814631E5,
+                   VALE_CALC=12905.9694009,
                    CRITERE='RELATIF',
                    MAILLE='C1',),
                 ),

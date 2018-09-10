@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -26,7 +26,7 @@ from code_aster.Cata.Commons import *
 MODI_MAILLAGE=OPER(nom="MODI_MAILLAGE",op= 154,sd_prod=maillage_sdaster,
                    fr=tr("Effectuer des modifications sur un maillage existant: réorienter des mailles servant,"
                       " à l'application d'une pression, à la modélisation du contact,..."),
-                   reentrant='o',
+                   reentrant='o:MAILLAGE',
       regles=(AU_MOINS_UN('ORIE_FISSURE','DEFORME','ORIE_PEAU_2D',
                        'ORIE_PEAU_3D','ORIE_NORM_COQUE','MODI_MAILLE',
                        'TRANSLATION','ROTATION','MODI_BASE','ECHELLE',
@@ -113,7 +113,7 @@ MODI_MAILLAGE=OPER(nom="MODI_MAILLAGE",op= 154,sd_prod=maillage_sdaster,
          TRANSLATION     =SIMP(statut='f',typ='R',min=2,max=3),
          ROTATION        =FACT(statut='f',max='**',
            POIN_1           =SIMP(statut='o',typ='R',min=2,max=3),
-           ANGLE            =SIMP(statut='o',typ='R',defaut= 0.E+0 ),
+           ANGLE            =SIMP(statut='f',typ='R',defaut= 0.E+0 ),
            regles=(EXCLUS('DIR','POIN_2'),),
            POIN_2           =SIMP(statut='f',typ='R',min=2,max=3),
            DIR              =SIMP(statut='f',typ='R',min=2,max=3),

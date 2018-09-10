@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,12 +19,14 @@
 !
 !
 interface
-    subroutine mdflam(dnorm, vitloc, knorm, cost, sint,&
-                      flim, fseuil, rigifl, defpla, fnorma,&
-                      flocal, vnorm)
+    subroutine mdflam(dnorm, vitloc, knorm, cnorm, cost, sint,&
+                  flim, fseuil, rigifl, defpla, fnorma,&
+                  flocal, vnorm, defmax, enfo_fl, def,&
+                  deft0, deft)
         real(kind=8) :: dnorm
         real(kind=8) :: vitloc(3)
         real(kind=8) :: knorm
+        real(kind=8) :: cnorm
         real(kind=8) :: cost
         real(kind=8) :: sint
         real(kind=8) :: flim
@@ -34,5 +36,10 @@ interface
         real(kind=8) :: fnorma
         real(kind=8) :: flocal(3)
         real(kind=8) :: vnorm
+        real(kind=8) :: defmax
+        real(kind=8) :: enfo_fl
+        real(kind=8) :: deft0  
+        real(kind=8)     , pointer  :: def(:)                 
+        real(kind=8)     , pointer  :: deft(:)           
     end subroutine mdflam
 end interface

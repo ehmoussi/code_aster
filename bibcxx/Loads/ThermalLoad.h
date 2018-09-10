@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe ThermalLoad
  * @author Jean-Pierre Lefebvre
  * @section LICENCE
- *   Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -31,6 +31,8 @@
 #include "Modeling/Model.h"
 #include "Loads/UnitaryThermalLoad.h"
 #include "Utilities/CapyConvertibleValue.h"
+#include "Modeling/FiniteElementDescriptor.h"
+#include "DataFields/PCFieldOnMesh.h"
 
 /**
  * @class ThermalLoadInstance
@@ -40,6 +42,56 @@
 class ThermalLoadInstance: public DataStructure
 {
 private:
+    struct TherLoad
+    {
+        /** @brief Modèle support */
+        ModelPtr                    _supportModel;
+        /** @brief support mesh */
+        BaseMeshPtr                 _mesh;
+        /** @brief Vecteur Jeveux '.MODEL.NOMO' */
+        JeveuxVectorChar8           _modelName;
+        /** @brief Vecteur Jeveux '.CONVE.VALE' */
+        JeveuxVectorChar8           _convection;
+        /** @brief Vecteur Jeveux '.LIGRE' */
+        FiniteElementDescriptorPtr  _FEDesc;
+        /** @brief Carte '.CIMPO' */
+        PCFieldOnMeshDoublePtr      _cimpo;
+        /** @brief Carte '.CMULT' */
+        PCFieldOnMeshDoublePtr      _cmult;
+        /** @brief Carte '.COEFH' */
+        PCFieldOnMeshDoublePtr      _coefh;
+        /** @brief Carte '.FLUNL' */
+        PCFieldOnMeshDoublePtr      _flunl;
+        /** @brief Carte '.FLURE' */
+        PCFieldOnMeshDoublePtr      _flure;
+        /** @brief Carte '.GRAIN' */
+        PCFieldOnMeshDoublePtr      _grain;
+        /** @brief Carte '.HECHP' */
+        PCFieldOnMeshDoublePtr      _hechp;
+        /** @brief Carte '.SOURE' */
+        PCFieldOnMeshDoublePtr      _soure;
+        /** @brief Carte '.T_EXT' */
+        PCFieldOnMeshDoublePtr      _tExt;
+
+        /** @brief Constructeur */
+        TherLoad( const std::string& name, const ModelPtr& currentModel ):
+            _supportModel( currentModel ),
+            _mesh( _supportModel->getSupportMesh() ),
+            _modelName( name + ".MODEL.NOMO" ),
+            _convection( name + ".CONVE.VALE" ),
+            _FEDesc( new FiniteElementDescriptorInstance( name + ".LIGRE", _mesh ) ),
+            _cimpo( new PCFieldOnMeshDoubleInstance( name + ".CIMPO", _FEDesc ) ),
+            _cmult( new PCFieldOnMeshDoubleInstance( name + ".CMULT", _FEDesc ) ),
+            _coefh( new PCFieldOnMeshDoubleInstance( name + ".COEFH", _FEDesc ) ),
+            _flunl( new PCFieldOnMeshDoubleInstance( name + ".FLUNL", _FEDesc ) ),
+            _flure( new PCFieldOnMeshDoubleInstance( name + ".FLURE", _FEDesc ) ),
+            _grain( new PCFieldOnMeshDoubleInstance( name + ".GRAIN", _FEDesc ) ),
+            _hechp( new PCFieldOnMeshDoubleInstance( name + ".HECHP", _FEDesc ) ),
+            _soure( new PCFieldOnMeshDoubleInstance( name + ".SOURE", _FEDesc ) ),
+            _tExt( new PCFieldOnMeshDoubleInstance( name + ".T_EXT", _FEDesc ) )
+        {};
+    };
+
     /** @typedef Pointeur intelligent sur un VirtualMeshEntity */
     typedef boost::shared_ptr< VirtualMeshEntity > MeshEntityPtr;
     /** @brief std::list de std::pair de UnitaryThermalLoadPtr et MeshEntityPtr */
@@ -49,6 +101,9 @@ private:
     /** @brief Iterateur sur un listOfLoads */
     typedef listOfLoads::iterator listOfLoadsIter;
 
+    /** @brief Vecteur Jeveux '.TYPE' */
+    JeveuxVectorChar8  _type;
+    TherLoad           _therLoad;
     /** @brief Modele support */
     ModelPtr           _supportModel;
     /** @brief La SD est-elle vide ? */
@@ -68,16 +123,19 @@ public:
     /**
      * @brief Constructeur
      */
-    ThermalLoadInstance():
-        ThermalLoadInstance( ResultNaming::getNewResultName() )
+    ThermalLoadInstance( const ModelPtr& currentModel ):
+        ThermalLoadInstance( ResultNaming::getNewResultName(), currentModel )
     {};
 
     /**
      * @brief Constructeur
      */
-    ThermalLoadInstance( const std::string name ):
+    ThermalLoadInstance( const std::string name,
+                         const ModelPtr& currentModel ):
         DataStructure( name, 8, "CHAR_THER" ),
-        _supportModel( ModelPtr() ),
+        _therLoad( getName() + ".CHTH", currentModel ),
+        _type( getName() + ".TYPE" ),
+        _supportModel( currentModel ),
         _isEmpty( true )
     {};
 
@@ -104,15 +162,11 @@ public:
     bool build() throw ( std::runtime_error );
 
     /**
-     * @brief Definition du modele support
-     * @param currentMesh objet Model sur lequel la charge reposera
+     * @brief Get the support finite element descriptor
      */
-    bool setModel( ModelPtr& currentModel )
+    FiniteElementDescriptorPtr getFiniteElementDescriptor() const
     {
-        if ( currentModel->isEmpty() )
-            throw std::runtime_error( "Model is empty" );
-        _supportModel = currentModel;
-        return true;
+        return _therLoad._FEDesc;
     };
 };
 

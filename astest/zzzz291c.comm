@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -130,14 +130,14 @@ DEPLELGA=CREA_CHAMP(OPERATION='DISC',
 
 # Formule
 
-FNORM3=FORMULE(VALE='DX*DX + DY*DY + DZ*DZ',
-               NOM_PARA=('DX','DY','DZ'));
+FNORM3 = FORMULE(VALE='DX*DX + DY*DY + DZ*DZ',
+                 NOM_PARA=['DX', 'DY', 'DZ'],)
 
-FNORM6=FORMULE(VALE='SIXX*SIXX + SIYY*SIYY + SIZZ*SIZZ + 2*SIXY*SIXY + 2*SIYZ*SIYZ + 2*SIXZ*SIXZ',
-               NOM_PARA=('SIXX','SIYY','SIZZ','SIXY','SIXZ','SIYZ'));
+FNORM6 = FORMULE(VALE='SIXX*SIXX + SIYY*SIYY + SIZZ*SIZZ + 2*SIXY*SIXY + 2*SIYZ*SIYZ + 2*SIXZ*SIXZ',
+                 NOM_PARA=['SIXX', 'SIYY', 'SIZZ', 'SIXY', 'SIXZ', 'SIYZ'],)
 
-FFROB6=FORMULE(VALE='SIXX*SIXX + SIYY*SIYY + SIZZ*SIZZ + SIXY*SIXY + SIYZ*SIYZ + SIXZ*SIXZ',
-               NOM_PARA=('SIXX','SIYY','SIZZ','SIXY','SIXZ','SIYZ'));
+FFROB6 = FORMULE(VALE='SIXX*SIXX + SIYY*SIYY + SIZZ*SIZZ + SIXY*SIXY + SIYZ*SIYZ + SIXZ*SIXZ',
+                 NOM_PARA=['SIXX', 'SIYY', 'SIZZ', 'SIXY', 'SIXZ', 'SIYZ'],)
 
 # Creation des champs de fonctions
 

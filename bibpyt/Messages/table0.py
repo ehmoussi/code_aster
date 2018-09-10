@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -36,6 +36,13 @@ Opération RENOMME. Erreur : %(k1)s
     4 : (u"""
 NOM_PARA ne doit contenir qu'un seul nom de paramètres pour ajouter
 une colonne non constante.
+"""),
+
+    5 : (u"""
+Seuls les paramètres de types réels ou entiers sont imprimés au format NUMPY.
+
+Paramètres non supportés :
+    %(k1)s
 """),
 
     6 : _(u"""

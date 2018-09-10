@@ -927,6 +927,7 @@ class Mac3CoeurLame(Mac3CoeurCalcul):
                    }
         if reuse :
             keywords['reuse'] = reuse
+            keywords['RESULTAT'] = reuse
         return keywords
 
 

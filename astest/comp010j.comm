@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -42,6 +42,7 @@ V1_META= [None]*NCAL
 V2_META= [None]*NCAL
 V3_META= [None]*NCAL
 V4_META= [None]*NCAL
+V5_META= [None]*NCAL
 
 TREF = 700.
 T0   = TREF
@@ -100,8 +101,8 @@ PHASINIT=CREA_CHAMP(OPERATION='AFFE',
                     TYPE_CHAM='CART_VAR2_R',
                     MAILLAGE=MA,
                     AFFE=_F(TOUT = 'OUI',
-                            NOM_CMP = ('V1', 'V2', 'V3','V4'),
-                            VALE = ( 1.0, 0.0, 20.,0.)))
+                            NOM_CMP = ('V1', 'V2', 'V3', 'V4', 'V5'),
+                            VALE = ( 1.0, 0.0, 0.0, 20., 0.)))
 
 TEMPE=CREA_RESU(OPERATION='AFFE',
                 TYPE_RESU='EVOL_THER',
@@ -131,6 +132,7 @@ for i in range(NCAL):
   V2_META[i]=EVMETA.EXTR_COMP("V2",[],1).valeurs[1]
   V3_META[i]=EVMETA.EXTR_COMP("V3",[],1).valeurs[1]
   V4_META[i]=EVMETA.EXTR_COMP("V4",[],1).valeurs[1]
+  V5_META[i]=EVMETA.EXTR_COMP("V5",[],1).valeurs[1]
   DETRUIRE ( CONCEPT =  _F (NOM =EVMETA),);
 
 # Parametres elastiques
@@ -303,8 +305,8 @@ for i in range(NCAL):
                     TYPE_CHAM='CART_VAR2_R',
                     MAILLAGE=MA,
                     AFFE=_F(TOUT = 'OUI',
-                            NOM_CMP = ('V1', 'V2', 'V3','V4'),
-                     VALE=(V1_META[i],V2_META[i],V3_META[i],V4_META[i])))
+                            NOM_CMP = ('V1', 'V2', 'V3','V4','V5'),
+                     VALE=(V1_META[i],V2_META[i],V3_META[i],V4_META[i],V5_META[i])))
 
           TEMP2=CREA_RESU(OPERATION='AFFE',
                 TYPE_RESU='EVOL_THER',

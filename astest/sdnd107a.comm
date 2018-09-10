@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -222,8 +222,12 @@ def Force(t):
     return tmp
 
 # Différences entre les valeurs théorique et calculées
-DDEPLA=FORMULE(NOM_PARA=('INST','DX'), VALE='abs(Deplacement(INST)-DX)')
-DFORCE=FORMULE(NOM_PARA=('INST','N'),  VALE='abs(Force(INST)-N)/4.42')
+DDEPLA = FORMULE(VALE='abs(Deplacement(INST)-DX)',
+                 Deplacement=Deplacement,
+                 NOM_PARA=['INST', 'DX'],)
+DFORCE = FORMULE(VALE='abs(Force(INST)-N)/4.42',
+                 Force=Force,
+                 NOM_PARA=['INST', 'N'],)
 
 TempsF = ( 0.7120, 1.7440, 2.7760, 3.8080, 4.8400,)
 TempsD = ( 0.8760, 1.9040, 2.9360, 3.9680, )

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -62,7 +62,9 @@ MENSI1=DEFI_NAPPE(NOM_PARA='TSEC',
 
 # Pour tester la possibilite d'utiliser une variable de commande pour SECH_NAPPE / FONCTION :
 # Remarque : NEUT1 n'a en realite aucune influence sur la fonction.
-MENSI = FORMULE(NOM_PARA=('TEMP','TSEC','NEUT1'),VALE='(1.+0.0*NEUT1)*MENSI1(TSEC,TEMP)')
+MENSI = FORMULE(VALE='(1.+0.0*NEUT1)*MENSI1(TSEC,TEMP)',
+                MENSI1=MENSI1,
+                NOM_PARA=['TEMP', 'TSEC', 'NEUT1'],)
 
 BETON=DEFI_MATERIAU(SECH_NAPPE=_F(FONCTION=MENSI,),)
 

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -254,8 +254,9 @@ liste = DEFI_LIST_REEL( DEBUT = 0.0,
 
 
 # excitation spectre large
-tmp11 = FORMULE( NOM_PARA = 'FREQ',
-                 VALE     = 'gauss(300,100,FREQ)')
+tmp11 = FORMULE(VALE='gauss(300,100,FREQ)',
+                gauss=gauss,
+                NOM_PARA='FREQ',)
 
 tmp12 = CALC_FONC_INTERP( FONCTION  = tmp11,
                           LIST_PARA = liste,
@@ -264,8 +265,9 @@ tmp12 = CALC_FONC_INTERP( FONCTION  = tmp11,
 FONC_11 = CALC_FONCTION( COMB_C = _F( FONCTION = tmp12 , COEF_C= 2.0E12*complex(1,0)) )
 
 # excitation de type raie
-tmp21 = FORMULE( NOM_PARA = 'FREQ',
-                 VALE     = 'gauss(250,1,FREQ)')
+tmp21 = FORMULE(VALE='gauss(250,1,FREQ)',
+                gauss=gauss,
+                NOM_PARA='FREQ',)
 
 tmp22 = CALC_FONC_INTERP( FONCTION  = tmp21,
                           LIST_PARA = liste,

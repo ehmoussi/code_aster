@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -74,8 +74,12 @@ ACIER=DEFI_MATERIAU(ELAS=_F(E=E,NU=nu,),);
 X0 = xinit
 Y0 = yinit
 
-LN=FORMULE(NOM_PARA=('X','Y'),VALE='X-X0');
-LT=FORMULE(NOM_PARA=('X','Y'),VALE='Y-Y0');
+LN = FORMULE(VALE='X-X0',
+             X0=X0,
+             NOM_PARA=['X', 'Y'],)
+LT = FORMULE(VALE='Y-Y0',
+             Y0=Y0,
+             NOM_PARA=['X', 'Y'],)
 
 FISS = [None]*(NPAS+2)
 

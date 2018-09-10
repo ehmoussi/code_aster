@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -24,7 +24,8 @@ interface
                   ffe   ,ffm    ,norm  ,tau1  , &
                   tau2  ,mprojn,mprojt,rese  ,nrese , &
                   lambda,coefff,coefaf,coefac, &
-                  dlagrf,djeut ,matree,matrmm, &
+                  dlagrf,djeut ,&
+                  matree,matrmm, &
                   matrem,matrme,matrec,matrmc,matref, &
                   matrmf)
         character(len=9) :: phasep

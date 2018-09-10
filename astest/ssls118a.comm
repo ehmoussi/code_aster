@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -44,7 +44,9 @@ CHAM_MAT=AFFE_MATERIAU(AFFE=_F(MATER=MAT,
                                TOUT='OUI',),
                        MAILLAGE=MA,);
 PO=1.0
-P = FORMULE(NOM_PARA=('X','Y'),VALE='PO*sin(pi*X)*sin(pi*Y)''');
+P = FORMULE(VALE='PO*sin(pi*X)*sin(pi*Y)',
+            PO=PO,
+            NOM_PARA=['X', 'Y'],)
 CHA_1=AFFE_CHAR_MECA(DDL_IMPO=(_F(DZ=0.0,
                                   GROUP_NO='AB',
                                   DRY=0.0,),

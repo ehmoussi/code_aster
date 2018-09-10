@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -152,7 +152,11 @@ P2=- P0/OMEGA
 
 #
 # --- T<T0=0.025 ---
-XRN1a = FORMULE(NOM_PARA='INST',VALE='P2/(OMEGA*T0)*(INST-sin(OMEGA*INST)/OMEGA)')
+XRN1a = FORMULE(VALE='P2/(OMEGA*T0)*(INST-sin(OMEGA*INST)/OMEGA)',
+                P2=P2,
+                OMEGA=OMEGA,
+                T0=T0,
+                NOM_PARA='INST',)
 
 L_RECU1=DEFI_LIST_REEL(  DEBUT=0.,
                       INTERVALLE=_F(  JUSQU_A = 0.025, PAS = 0.001) )
@@ -164,10 +168,14 @@ XRN1=CALC_FONC_INTERP(      FONCTION=XRN1a,
                             NOM_PARA = 'INST', )
 
 # --- T0<T<2.T0 ---
-XRN2a = FORMULE(NOM_PARA='INST',VALE='''
+XRN2a = FORMULE(VALE="""
 P2/(OMEGA*T0)*(2*T0-INST+(2*sin(OMEGA*(INST-T0))-sin(OMEGA*INST))
                     /OMEGA)
-        ''')
+        """,
+                P2=P2,
+                OMEGA=OMEGA,
+                T0=T0,
+                NOM_PARA='INST',)
 
 L_RECU2=DEFI_LIST_REEL(  DEBUT=0.025,
                       INTERVALLE=_F(  JUSQU_A = 0.05, PAS = 0.001) )
@@ -179,11 +187,15 @@ XRN2=CALC_FONC_INTERP(      FONCTION=XRN2a,
                             NOM_PARA = 'INST', )
 
 # --- T>2.T0 ---
-XRN3a = FORMULE(NOM_PARA='INST',VALE='''
+XRN3a = FORMULE(VALE="""
 P2/(OMEGA*OMEGA*T0)
            *(2*sin(OMEGA*(INST-T0))-sin(OMEGA*(INST-2*T0))
                  -sin(OMEGA*INST))
-        ''')
+        """,
+                P2=P2,
+                OMEGA=OMEGA,
+                T0=T0,
+                NOM_PARA='INST',)
 
 L_RECU3=DEFI_LIST_REEL(  DEBUT=0.05,
                       INTERVALLE=_F(  JUSQU_A = 0.1, PAS = 0.001) )

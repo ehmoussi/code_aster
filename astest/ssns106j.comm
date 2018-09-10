@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -432,8 +432,8 @@ TFXA6_R1=CALC_TABLE(reuse=TFXA6_R1,
                                NOM_PARA=('DX','FXA6',),),),);
 
 
-SUM_FX=FORMULE(VALE='FXA2+FXA4+FXA6',
-               NOM_PARA=('FXA2','FXA4','FXA6',),);
+SUM_FX = FORMULE(VALE='FXA2+FXA4+FXA6',
+                 NOM_PARA=['FXA2', 'FXA4', 'FXA6'],)
 
 TFX_R1=CALC_TABLE(TABLE=TFXA2_R1,
                   ACTION=(_F(OPERATION='COMB',
@@ -517,7 +517,7 @@ TMYA6_R1=CALC_TABLE(reuse=TMYA6_R1,
                                NOM_PARA=('DRY','MYA6',),),),);
 
 SUM_MY = FORMULE(VALE='MYA2+MYA4+MYA6',
-                 NOM_PARA=('MYA2','MYA4','MYA6',),);
+                 NOM_PARA=['MYA2', 'MYA4', 'MYA6'],)
 
 TMY_R1=CALC_TABLE(TABLE=TMYA2_R1,
                   ACTION=(_F(OPERATION='COMB',
@@ -998,11 +998,11 @@ IMPR_TABLE(TABLE=TDI_D1,);
 ##################################################################
 # DIFFERENCE ENTRE GLRC_DM ET EIB
 
-DREL_FX=FORMULE(VALE='(FXG-FX)/FX',
-                NOM_PARA=('FX','FXG',),);
+DREL_FX = FORMULE(VALE='(FXG-FX)/FX',
+                  NOM_PARA=['FX', 'FXG'],)
 
-D_REL_DY=FORMULE(VALE='(DYG-DY)/DY',
-                 NOM_PARA=('DY','DYG',),);
+D_REL_DY = FORMULE(VALE='(DYG-DY)/DY',
+                   NOM_PARA=['DY', 'DYG'],)
 
 D_FX_1=CALC_TABLE(TABLE=TFX_R1,
                   ACTION=(_F(OPERATION='COMB',
@@ -1032,11 +1032,11 @@ D_DY_1=CALC_TABLE(reuse=D_DY_1,
                             FORMULE=D_REL_DY,
                             NOM_PARA='DYG_DY',),);
 
-DREL_MY=FORMULE(VALE='(MYG-MY)/MY',
-                NOM_PARA=('MY','MYG',),);
+DREL_MY = FORMULE(VALE='(MYG-MY)/MY',
+                  NOM_PARA=['MY', 'MYG'],)
 
-DREL_RX=FORMULE(VALE='(RXG-RX)/RX',
-                NOM_PARA=('RX','RXG',),);
+DREL_RX = FORMULE(VALE='(RXG-RX)/RX',
+                  NOM_PARA=['RX', 'RXG'],)
 
 D_MY_1=CALC_TABLE(TABLE=TMY_R1,
                   ACTION=(_F(OPERATION='COMB',
@@ -1071,10 +1071,10 @@ IMPR_TABLE(TABLE=D_RX_1,);
 # DIFFERENCE ENTRE GLRC_DM ET DHRC
 
 DREL_FXG = FORMULE(VALE='(FXG-FXD)/FXD',
-                   NOM_PARA=('FXD','FXG',),);
+                   NOM_PARA=['FXD', 'FXG'],)
 
 DREL_DYG = FORMULE(VALE='(DYG-DYD)/DYD',
-                   NOM_PARA=('DYD','DYG',),);
+                   NOM_PARA=['DYD', 'DYG'],)
 
 D_FX_1G=CALC_TABLE(TABLE=TFX_D1,
                    ACTION=(_F(OPERATION='COMB',
@@ -1108,11 +1108,11 @@ D_DY_1G=CALC_TABLE(reuse =D_DY_1G,
                              FORMULE=DREL_DYG,
                              NOM_PARA='DYG_DYD',),);
 
-DREL_MYG=FORMULE(VALE='(MYG-MYD)/MYD',
-                 NOM_PARA=('MYD','MYG',),);
+DREL_MYG = FORMULE(VALE='(MYG-MYD)/MYD',
+                   NOM_PARA=['MYD', 'MYG'],)
 
-DREL_RXG=FORMULE(VALE='(RXG-RXD)/RXD',
-                 NOM_PARA=('RXD','RXG',),);
+DREL_RXG = FORMULE(VALE='(RXG-RXD)/RXD',
+                   NOM_PARA=['RXD', 'RXG'],)
 
 D_MY_1G=CALC_TABLE(TABLE=TMY_D1,
                    ACTION=(_F(OPERATION='COMB',

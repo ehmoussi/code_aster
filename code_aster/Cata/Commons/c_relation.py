@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -102,12 +102,12 @@ def C_RELATION( COMMAND ):
                                         "ENDO_PORO_BETON",
                                         "ENDO_CARRE",
                                         "ENDO_FISS_EXP",
-                                        "ENDO_FRAGILE",
                                         "ENDO_HETEROGENE",
                                         "ENDO_ISOT_BETON",
                                         "ENDO_ORTH_BETON",
                                         "ENDO_SCALAIRE",
                                         "FLUA_PORO_BETON",
+                                        "FLUA_ENDO_PORO",
                                         "GLRC_DAMAGE",
                                         "GLRC_DM",
                                         "GTN",
@@ -177,6 +177,7 @@ def C_RELATION( COMMAND ):
                                         "META_V_INL_RE",
                                         "MOHR_COULOMB",
                                         "RANKINE",
+                                        "RGI_BETON",
                                         "MONOCRISTAL",
                                         "MULTIFIBRE",
                                         "NORTON",
@@ -184,7 +185,6 @@ def C_RELATION( COMMAND ):
                                         "PINTO_MENEGOTTO",
                                         "POLYCRISTAL",
                                         "RELAX_ACIER",
-                                        "RGI_BETON",
                                         "ROUSSELIER",
                                         "ROUSS_PR",
                                         "ROUSS_VISC",

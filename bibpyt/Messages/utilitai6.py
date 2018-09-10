@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -69,13 +69,6 @@ cata_msg = {
  problème rencontré lors de la recherche de la variable :  %(k1)s
          DEBUT :  %(k2)s
            fin :  %(k3)s
-"""),
-
-    14 : _(u"""
- interpolation non permise
- valeur à interpoler : %(r1)f
- borne inférieure    : %(r2)f
- borne supérieure    : %(r3)f
 """),
 
     15 : _(u"""

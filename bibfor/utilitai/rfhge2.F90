@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -79,8 +79,8 @@ subroutine rfhge2(harmge)
     call getres(nomfon, typcon, nomcmd)
 !
     resu = harmge
-    interp(1) = 'NON '
-    interp(2) = 'NON '
+    interp(1) = 'LIN '
+    interp(2) = 'LIN '
     intres = 'NON '
 !
     call getvtx(' ', 'CRITERE', scal=crit, nbret=n1)

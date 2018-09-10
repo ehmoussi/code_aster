@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
-# person_in_charge: 
+# person_in_charge: nicolas.sellenet@edf.fr
 
 from ..Objects import PCFieldOnMeshDouble, FieldOnNodesDouble, FieldOnElementsDouble
 from .ExecuteCommand import ExecuteCommand
@@ -38,7 +38,7 @@ class FieldReader(ExecuteCommand):
         """
         location = keywords["TYPE_CHAM"][:5]
         typ = keywords["TYPE_CHAM"][10:]
-        if (typ != "R" and typ != "F") or location not in ("CART_", "NOEU_", "ELGA_"):
+        if (typ != "R" and typ != "F") or location not in ("CART_", "NOEU_", "ELGA_", "ELNO_"):
             raise NotImplementedError("Type of field {0!r} not yet supported"
                                       .format(keywords["TYPE_CHAM"]))
         if location == "CART_":

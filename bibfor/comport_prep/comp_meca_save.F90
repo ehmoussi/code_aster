@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,11 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine comp_meca_save(model         , mesh, chmate, compor, nb_cmp,&
                           ds_compor_prep)
 !
-use NonLin_Datastructure_type
+use Behaviour_type
 !
 implicit none
 !
@@ -42,14 +43,12 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/setBehaviourValue.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=8), intent(in) :: model
-    character(len=8), intent(in) :: mesh
-    character(len=8), intent(in) :: chmate
-    character(len=19), intent(in) :: compor
-    integer, intent(in) :: nb_cmp
-    type(NL_DS_ComporPrep), intent(in) :: ds_compor_prep
+character(len=8), intent(in) :: model
+character(len=8), intent(in) :: mesh
+character(len=8), intent(in) :: chmate
+character(len=19), intent(in) :: compor
+integer, intent(in) :: nb_cmp
+type(Behaviour_PrepPara), intent(in) :: ds_compor_prep
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -79,7 +78,7 @@ implicit none
     integer :: i_comp, nb_comp
     character(len=16), pointer :: v_compor_valv(:) => null()
     character(len=16) :: defo_comp, rela_comp, type_comp, type_cpla, mult_comp
-    character(len=16) :: kit_comp(4), post_iter
+    character(len=16) :: kit_comp(4), post_iter, defo_ldc
     aster_logical :: l_cristal, l_pmf, l_is_pmf
     integer :: nb_vari, nb_vari_comp(4), elem_nume, nume_comp(4)
 !
@@ -115,6 +114,7 @@ implicit none
         kit_comp(:)     = ds_compor_prep%v_comp(i_comp)%kit_comp(:)
         mult_comp       = ds_compor_prep%v_comp(i_comp)%mult_comp
         post_iter       = ds_compor_prep%v_comp(i_comp)%post_iter
+        defo_ldc        = ds_compor_prep%v_comp(i_comp)%defo_ldc
 !
 ! ----- Detection of specific cases
 !
@@ -153,7 +153,7 @@ implicit none
 ! ----- Set in <CARTE>
 !
         call setBehaviourValue(rela_comp, defo_comp   , type_comp, type_cpla,&
-                               mult_comp, post_iter   , kit_comp ,&
+                               mult_comp, post_iter   , defo_ldc , kit_comp ,&
                                nb_vari  , nb_vari_comp, nume_comp,&
                                v_compor_ = v_compor_valv) 
 !

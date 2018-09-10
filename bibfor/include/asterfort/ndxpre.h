@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,46 +15,32 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
+! aslint: disable=W1504
 !
 #include "asterf_types.h"
 !
-! aslint: disable=W1504
-!
 interface
-    subroutine ndxpre(modele  , numedd         , numfix    , mate       , carele,&
-                      comref  , ds_constitutive, lischa    , ds_algopara, solveu,&
-                      fonact  , sddisc         , ds_measure, numins     , valinc,&
-                      solalg  , matass         , maprec    , sddyna     , sderro,&
-                      ds_inout, meelem         , measse    , veelem     , veasse,&
+    subroutine ndxpre(model          , nume_dof   , numfix     , ds_material, cara_elem,&
+                      ds_constitutive, list_load  , ds_algopara, solveu     ,&
+                      list_func_acti , sddisc     , ds_measure , nume_inst  , hval_incr,&
+                      hval_algo      , matass     , maprec     , sddyna     , sderro,&
+                      hval_meelem    , hval_measse, hval_veelem, hval_veasse,&
                       lerrit)
         use NonLin_Datastructure_type
-        character(len=24) :: modele
-        character(len=24) :: numedd
-        character(len=24) :: numfix
-        character(len=24) :: mate
-        character(len=24) :: carele
-        character(len=24) :: comref
-        type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-        character(len=19) :: lischa
-        type(NL_DS_InOut), intent(in) :: ds_inout
+        integer :: list_func_acti(*)
+        integer :: nume_inst
         type(NL_DS_AlgoPara), intent(in) :: ds_algopara
-        character(len=19) :: solveu
-        integer :: fonact(*)
-        character(len=19) :: sddisc
+        character(len=19) :: matass, maprec
+        type(NL_DS_Material), intent(in) :: ds_material
         type(NL_DS_Measure), intent(inout) :: ds_measure
-        integer :: numins
-        character(len=19) :: valinc(*)
-        character(len=19) :: solalg(*)
-        character(len=19) :: matass
-        character(len=19) :: maprec
-        character(len=19) :: sddyna
+        character(len=19) :: list_load, solveu, sddisc, sddyna
+        character(len=24) :: model, cara_elem
+        type(NL_DS_Constitutive), intent(in) :: ds_constitutive
+        character(len=24) :: nume_dof, numfix
         character(len=24) :: sderro
-        character(len=19) :: meelem(*)
-        character(len=19) :: measse(*)
-        character(len=19) :: veelem(*)
-        character(len=19) :: veasse(*)
+        character(len=19) :: hval_meelem(*), hval_veelem(*)
+        character(len=19) :: hval_measse(*), hval_veasse(*)
+        character(len=19) :: hval_algo(*), hval_incr(*)
         aster_logical :: lerrit
     end subroutine ndxpre
 end interface

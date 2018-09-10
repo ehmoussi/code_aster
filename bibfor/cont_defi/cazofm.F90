@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,15 +15,15 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: ayaovi-dzifa.kudawoo at edf.fr
+! aslint: disable=W0413
+!
 subroutine cazofm(sdcont, keywf, cont_form, cont_nbzone)
 !
 implicit none
 !
 #include "asterf_types.h"
-#include "jeveux.h"
 #include "asterc/r8prem.h"
-#include "asterfort/deprecated_algom.h"
 #include "asterfort/assert.h"
 #include "asterfort/cazouu.h"
 #include "asterfort/getvr8.h"
@@ -33,13 +33,10 @@ implicit none
 #include "asterfort/jeveuo.h"
 #include "asterfort/utmess.h"
 !
-! person_in_charge: ayaovi-dzifa.kudawoo at edf.fr
-! aslint: disable=W0413
-!
-    character(len=8), intent(in) :: sdcont
-    integer, intent(in) :: cont_form
-    integer, intent(in) :: cont_nbzone
-    character(len=16), intent(in) :: keywf
+character(len=8), intent(in) :: sdcont
+integer, intent(in) :: cont_form
+integer, intent(in) :: cont_nbzone
+character(len=16), intent(in) :: keywf
 !
 ! --------------------------------------------------------------------------------------------------
 !

@@ -100,6 +100,7 @@ from .defi_grille import DEFI_GRILLE
 from .defi_group import DEFI_GROUP
 from .defi_inte_spec import DEFI_INTE_SPEC
 from .defi_interf_dyna import DEFI_INTERF_DYNA
+from .defi_list_enti import DEFI_LIST_ENTI
 from .defi_list_inst import DEFI_LIST_INST
 from .defi_list_reel import DEFI_LIST_REEL
 from .defi_maillage import DEFI_MAILLAGE
@@ -192,6 +193,7 @@ from .test_table import TEST_TABLE
 from .ther_non_line import THER_NON_LINE
 from .ther_lineaire import THER_LINEAIRE
 from .ther_non_line_mo import THER_NON_LINE_MO
+from .variable import VARIABLE
 
 from .ExecuteCommand import CO
 

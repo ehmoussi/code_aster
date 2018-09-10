@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -226,7 +226,8 @@ LI2  = DEFI_LIST_REEL ( DEBUT      = 0.4,
                                     ),);
 FICKWAR=DEFI_CONSTANTE ( VALE = 0.45E-9);    #
 
-FFAS  = FORMULE(NOM_PARA='SAT', VALE='SAT');  # SATURATION DU LIQUIDE
+FFAS = FORMULE(VALE='SAT',
+               NOM_PARA='SAT',)
 
 FAS   = CALC_FONC_INTERP ( FONCTION     =  FFAS      ,
                            LIST_PARA    =  LI2       ,

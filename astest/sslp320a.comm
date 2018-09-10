@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -113,8 +113,8 @@ TAB   = [None]*(NPAS+2)
 
 L_INS1=DEFI_LIST_REEL(DEBUT=0.0,INTERVALLE=_F(JUSQU_A=3.0,NOMBRE=3,),);
 
-FOND1=FORMULE(NOM_PARA='NUME_ORDRE',
-                VALE='0*NUME_ORDRE+1',);
+FOND1 = FORMULE(VALE='0*NUME_ORDRE+1',
+                NOM_PARA='NUME_ORDRE',)
 
 VAL_CALC = [
     4193126.49524,

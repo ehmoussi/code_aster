@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -54,7 +54,8 @@ CH=AFFE_CHAR_MECA(  MODELE=MO,DDL_IMPO=(
               _F(  GROUP_NO = 'GRNINF', DY = 0.)),
      FORCE_FACE=_F(  GROUP_MA = 'FACTRAC', FZ = 1.))
 
-FZFONC = FORMULE(NOM_PARA=('X','Y','Z'),VALE='1.')
+FZFONC = FORMULE(VALE='1.',
+                 NOM_PARA=['X', 'Y', 'Z'],)
 
 CHFONC=AFFE_CHAR_MECA_F(  MODELE=MO,
                             FORCE_FACE=_F(  GROUP_MA = 'FACTRAC',

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -37,14 +37,16 @@ MODELEIN=AFFE_MODELE(MAILLAGE=MAILLAG2,
                               PHENOMENE='MECANIQUE',
                               MODELISATION='D_PLAN_HM',),),);
 
-LN1=FORMULE(NOM_PARA=('X','Y'),VALE='Y-0.2-0.5*X');
+LN1 = FORMULE(VALE='Y-0.2-0.5*X',
+              NOM_PARA=['X', 'Y'],)
 
 FISS1=DEFI_FISS_XFEM(MAILLAGE=MAILLAG2,
                     TYPE_DISCONTINUITE='INTERFACE',
                     DEFI_FISS=_F(FONC_LN=LN1,),
                     INFO=1,);
 
-LN2=FORMULE(NOM_PARA=('X','Y'),VALE='Y+0.5*X+0.2');
+LN2 = FORMULE(VALE='Y+0.5*X+0.2',
+              NOM_PARA=['X', 'Y'],)
 
 FISS2=DEFI_FISS_XFEM(MAILLAGE=MAILLAG2,
                     TYPE_DISCONTINUITE='INTERFACE',
@@ -128,7 +130,8 @@ def depl(x,y) :
    return 0.0001
 
 DEPL = FORMULE(VALE='depl(X,Y)',
-                  NOM_PARA=('X','Y',),);
+               depl=depl,
+               NOM_PARA=['X', 'Y'],)
 
 CH2=AFFE_CHAR_MECA_F(MODELE=MODELEK,
                    DDL_IMPO=(

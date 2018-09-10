@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -58,7 +58,7 @@ MATER=DEFI_MATERIAU(
                 E = 2.E11,
                 NU = 0.30,RHO=1.,
                 ALPHA = 1.E-5),
-                MFRONT=_F(LISTE_COEF=(2.E11,0.30,1.E-5,2.E8,2.E9,
+                MFRONT=_F(LISTE_COEF=(2.E8,2.E9,2.E11,0.30,
                                     )),
                         )
 

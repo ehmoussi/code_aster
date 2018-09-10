@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -131,10 +131,12 @@ AMOGYRO=COMB_MATR_ASSE(COMB_R=(_F(MATR_ASSE=GYRO,
                                   COEF_R=1.0,),),);
 
 fory = FORMULE(VALE='cos(OM*INST)',
-               NOM_PARA='INST',);
+               OM=OM,
+               NOM_PARA='INST',)
 
 forz = FORMULE(VALE='sin(OM*INST)',
-               NOM_PARA='INST',);
+               OM=OM,
+               NOM_PARA='INST',)
 
 LINST=DEFI_LIST_REEL(DEBUT=0.0,
                      INTERVALLE=_F(JUSQU_A=tfin,

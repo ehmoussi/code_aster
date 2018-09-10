@@ -139,6 +139,14 @@ class DataStructure
             return (*_tco)[0].rstrip();
         };
 
+        /**
+         * @brief Virtual function to update DataStructure
+         */
+        virtual bool update() throw ( std::runtime_error )
+        {
+            return true;
+        };
+
     protected:
         /**
          * @brief Methode servant a fixer a posteriori le type d'une sd

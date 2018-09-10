@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -20,7 +20,8 @@
 !
 interface
     subroutine irmaes(idfimd, nomaas, nomamd, nbimpr, caimpi,&
-                      modnum, nuanom, nomtyp, nnotyp, sdcarm)
+                      modnum, nuanom, nomtyp, nnotyp, sdcarm,&
+                      carael)
         integer, parameter :: ntymax=69
         integer :: nbimpr
         integer :: idfimd
@@ -31,6 +32,6 @@ interface
         integer :: nuanom(ntymax, *)
         character(len=8) :: nomtyp(*)
         integer :: nnotyp(*)
-        character(len=8) :: sdcarm
+        character(len=8) :: sdcarm, carael
     end subroutine irmaes
 end interface

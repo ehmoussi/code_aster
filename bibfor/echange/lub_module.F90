@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -104,7 +104,7 @@ module lub_module
 
         subroutine delete_bearing(mbearing)
 
-            type(bearing), pointer, intent(inout) :: mbearing
+            type(bearing), pointer :: mbearing
             type(bearing), pointer :: precedent => null()
 
 
@@ -129,10 +129,11 @@ module lub_module
 
         subroutine get_previous_element(element, backele)
             ! return the element before
-            type(bearing), pointer, intent(in)  :: element
-            type(bearing), pointer, intent(out) :: backele => null()
+            type(bearing), pointer  :: element
+            type(bearing), pointer :: backele 
             type(bearing), pointer              :: current => null()
-
+            
+            backele => null()
             current => first_bearing
 
             do while ( associated( current ) )
@@ -156,8 +157,8 @@ module lub_module
             real(kind=8), intent(in) :: om 
             ! storage time that will be used by edyos
             real(kind=8), intent(in) :: dtstoc 
-            real(kind=8), pointer, intent(in) :: mdefmod(:)
-            integer,      pointer, intent(in) :: list_ddl(:)
+            real(kind=8), pointer :: mdefmod(:)
+            integer,      pointer :: list_ddl(:)
 
 
 
@@ -250,8 +251,9 @@ module lub_module
         subroutine is_bearing_exist(num, exist, current)
             integer , intent(in) :: num
             logical , intent(out) :: exist
-            type(bearing), pointer, intent (out), optional :: current => null()
-
+            type(bearing), pointer, optional :: current 
+           
+            current => null()
             exist = .false.
 
             if(associated(first_bearing)) then
@@ -280,8 +282,9 @@ module lub_module
 
         subroutine get_bearing_by_num(num, fbearing)
            integer, intent(in) :: num
-           type(bearing), pointer, intent(out) :: fbearing => null()
+           type(bearing), pointer :: fbearing 
            logical :: exist
+           fbearing => null()
            call is_bearing_exist(num, exist, fbearing)
            ASSERT(exist)
         end subroutine
@@ -463,7 +466,7 @@ module lub_module
 !----
 
         subroutine clean_bearing(mbearing)
-            type(bearing), pointer , intent(inout) :: mbearing
+            type(bearing), pointer :: mbearing
 
             if(.not.associated( mbearing )) return 
 
@@ -498,7 +501,7 @@ module lub_module
 
         logical function are_bearings_equals( b1, b2)
 
-            type(bearing), pointer, intent(in) :: b1, b2
+            type(bearing), pointer :: b1, b2
 
             are_bearings_equals = .false.
 

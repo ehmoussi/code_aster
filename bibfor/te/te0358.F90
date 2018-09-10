@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,30 +15,31 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine te0358(option, nomte)
 !
 implicit none
 !
 #include "jeveux.h"
+#include "asterf_types.h"
 #include "asterfort/assert.h"
 #include "asterfort/dfdm3d.h"
 #include "asterfort/elrefe_info.h"
 #include "asterfort/jevech.h"
 #include "asterfort/meta_vpta_coef.h"
-#include "asterfort/get_meta_phasis.h"
-#include "asterfort/get_meta_id.h"
+#include "asterfort/metaGetPhase.h"
+#include "asterfort/metaGetType.h"
 #include "asterfort/get_elas_id.h"
 #include "asterfort/get_elas_para.h"
 #include "asterfort/rcvarc.h"
 #include "asterfort/tecach.h"
 #include "asterfort/utmess.h"
 #include "asterfort/Behaviour_type.h"
+#include "asterfort/Metallurgy_type.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=16), intent(in) :: option
-    character(len=16), intent(in) :: nomte
+character(len=16), intent(in) :: option
+character(len=16), intent(in) :: nomte
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -55,7 +56,7 @@ implicit none
     integer :: j_compor
     character(len=16) :: type_phas, rela_comp, valk(2)
     integer :: j_mate, j_mater
-    integer :: meta_id, nb_phasis
+    integer :: meta_type, nb_phasis
     real(kind=8) :: young, nu, deuxmu
     integer :: j_sigm
     integer :: nb_sigm, elas_id
@@ -64,14 +65,13 @@ implicit none
     integer :: j_vectu
     integer :: j_vari
     real(kind=8) :: sig(6), sigdv(6)
-    real(kind=8) :: dfdx(27), dfdy(27), dfdz(27), poids, kron(6)
+    real(kind=8) :: dfdx(27), dfdy(27), dfdz(27), poids
     real(kind=8) :: coef, trans
     real(kind=8) :: zcold_curr
     real(kind=8) :: phas_prev(5), phas_curr(5), temp
-    logical :: l_temp
+    aster_logical :: l_temp
     character(len=16) :: elas_keyword
-!
-    data kron  /1.d0,1.d0,1.d0,0.d0,0.d0,0.d0/
+    real(kind=8), parameter :: kron(6) = (/1.d0,1.d0,1.d0,0.d0,0.d0,0.d0/)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -93,7 +93,7 @@ implicit none
 ! - Comportement
 !
     call jevech('PCOMPOR', 'L', j_compor)
-    rela_comp = zk16(j_compor-1+NAME)
+    rela_comp = zk16(j_compor-1+RELA_NAME)
 !
 ! - Cannot evaluate command variables effect for Mfront behaviors
 !
@@ -104,23 +104,23 @@ implicit none
 !
 ! - Get type of phasis
 !
-    call get_meta_id(meta_id, nb_phasis)
+    type_phas = zk16(j_compor-1+META_NAME)
+    call metaGetType(meta_type, nb_phasis)
     ASSERT(nb_phasis.le.5)
-    if ((meta_id.eq.0).or.(rela_comp.eq.'META_LEMA_ANI')) then
+    if ((meta_type .eq. META_NONE).or.(rela_comp.eq.'META_LEMA_ANI')) then
         goto 99
     endif
 !
 ! - Check type of phasis
 !
-    type_phas = zk16(j_compor-1+META_NAME)
     valk(1) = type_phas
     if (type_phas.eq.'ACIER') then
-        if (meta_id.ne.1) then
+        if (meta_type .ne. META_STEEL) then
             valk(2) = 'ZIRC'
             call utmess('F', 'COMPOR3_8', nk = 2, valk = valk)
         endif
     elseif (type_phas.eq.'ZIRC') then
-        if (meta_id.ne.2) then
+        if (meta_type .ne. META_ZIRC) then
             valk(2) = 'ACIER'
             call utmess('F', 'COMPOR3_8', nk = 2, valk = valk)
         endif
@@ -169,9 +169,9 @@ implicit none
 !
         phas_prev(:) = 0.d0
         phas_curr(:) = 0.d0
-        call get_meta_phasis(fami     , '-'      , ipg        , ispg, meta_id,&
+        call metaGetPhase(fami     , '-'      , ipg        , ispg, meta_type,&
                              nb_phasis, phas_prev)
-        call get_meta_phasis(fami     , '+'      , ipg        , ispg, meta_id,&
+        call metaGetPhase(fami     , '+'      , ipg        , ispg, meta_type,&
                              nb_phasis, phas_curr, zcold_ = zcold_curr)
 !
 ! ----- Get elastic parameters
@@ -182,12 +182,11 @@ implicit none
                            e  = young , nu = nu)
         ASSERT(elas_id.eq.1)
         deuxmu = young/(1.d0+nu)
-
 !
 ! ----- Compute coefficients for second member
 !
         call meta_vpta_coef(rela_comp, lgpg      , fami     , ipg      , j_mater  ,&
-                            l_temp   , temp      , meta_id,   nb_phasis, phas_prev,&
+                            l_temp   , temp      , meta_type, nb_phasis, phas_prev,&
                             phas_curr, zcold_curr, young    , deuxmu   , coef     ,&
                             trans)
 !

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -21,8 +21,8 @@
 interface
     subroutine setMfrontPara(comp_exte,&
                              iter_inte_maxi, resi_inte_rela, iveriborne)
-        use NonLin_Datastructure_type
-        type(NL_DS_ComporExte), intent(in) :: comp_exte
+        use Behaviour_type
+        type(Behaviour_External), intent(in) :: comp_exte
         real(kind=8), intent(in) :: iter_inte_maxi
         real(kind=8), intent(in) :: resi_inte_rela
         integer, intent(in) :: iveriborne

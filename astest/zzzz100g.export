@@ -1,5 +1,5 @@
 P time_limit 60
-P memory_limit 256
+P memory_limit 600
 P ncpus 1
 P mpi_nbcpu 1
 P mpi_nbnoeud 1
@@ -7,3 +7,4 @@ P testlist verification sequential
 
 F comm zzzz100g.comm D 1
 F libr zzzz100g.2 D 2
+F mmed zzzz100g.med D 20

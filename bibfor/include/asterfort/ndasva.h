@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,14 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine ndasva(phase, sddyna, veasse, cnvady)
-        character(len=4) :: phase
-        character(len=19) :: sddyna
-        character(len=19) :: veasse(*)
-        character(len=19) :: cnvady
+    subroutine ndasva(sddyna, hval_veasse, cnvady)
+        character(len=19), intent(in) :: sddyna, hval_veasse(*), cnvady
     end subroutine ndasva
 end interface

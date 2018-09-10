@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -19,7 +19,7 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import AssemblyMatrixDouble
+from ..Objects import AssemblyMatrixDisplacementDouble
 from ..Objects import GeneralizedAssemblyMatrixDouble, GeneralizedAssemblyMatrixComplex
 from .ExecuteCommand import ExecuteCommand
 
@@ -38,9 +38,18 @@ class ProjMatrBase(ExecuteCommand):
         if keywords.has_key("MATR_ASSE_GENE"):
             self._result = type(keywords["MATR_ASSE_GENE"])()
         else:
-            if type(keywords["MATR_ASSE"]) == AssemblyMatrixDouble:
+            if type(keywords["MATR_ASSE"]) == AssemblyMatrixDisplacementDouble:
                 self._result = GeneralizedAssemblyMatrixDouble()
             else:
                 self._result = GeneralizedAssemblyMatrixComplex()
+
+    def post_exec(self, keywords):
+        """Execute the command.
+
+        Arguments:
+            keywords (dict): User's keywords.
+        """
+        self._result.setGeneralizedDOFNumbering(keywords['NUME_DDL_GENE'])
+
 
 PROJ_MATR_BASE = ProjMatrBase.run

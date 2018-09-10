@@ -7,4 +7,5 @@ P testlist verification sequential
 
 F comm zzzz395a.comm D 1
 F mmed zzzz395a.mmed D 20
-
+F libr zzzz395a.30 D 30
+F libr zzzz395a.31 D 31

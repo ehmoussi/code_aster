@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -143,7 +143,8 @@ PROJ_BASE(  BASE=MODES,
 # DEFINITION DE L'EXCITATION SINUSOIDALE
 # --------------------------------------
 #
-SINOMEGT = FORMULE(NOM_PARA='INST',VALE='sin(50.*INST) ')
+SINOMEGT = FORMULE(VALE='sin(50.*INST) ',
+                   NOM_PARA='INST',)
 #
 LIEXCIT=DEFI_LIST_REEL(    DEBUT=0.,
                             INTERVALLE=_F(  JUSQU_A = 5., PAS = 0.01) )

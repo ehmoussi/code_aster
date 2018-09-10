@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -111,7 +111,9 @@ def periodique(inst_calc) :
     inst_ev = t3 + (inst_calc - t3) % dt
     return inst_ev
 
-finst = FORMULE(NOM_PARA='INST',VALE='periodique(INST)')
+finst = FORMULE(VALE='periodique(INST)',
+                periodique=periodique,
+                NOM_PARA='INST',)
 
 CHMATM=AFFE_MATERIAU(  MAILLAGE=MAIL,  AFFE=_F(  TOUT = 'OUI', MATER = MATERI),
                        AFFE_VARC=_F(  TOUT = 'OUI', NOM_VARC='TEMP', EVOL=TEMPE,VALE_REF=0.,

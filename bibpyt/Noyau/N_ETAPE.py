@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -41,6 +41,7 @@ import N_utils
 from N_utils import AsType
 from N_ASSD import ASSD
 from N_info import message, SUPERV
+from N_types import force_list
 
 
 class ETAPE(N_MCCOMPO.MCCOMPO):
@@ -67,13 +68,17 @@ class ETAPE(N_MCCOMPO.MCCOMPO):
         """
         self.definition = oper
         self.reuse = reuse
+        self.appel = N_utils.callee_where(niveau)
+        try:
+            self._identifier = "cmd{0}".format(args.pop('identifier'))
+        except KeyError:
+            self._identifier = "txt{0}".format(self.appel[0])
         self.valeur = args
         self.nettoiargs()
         self.parent = CONTEXT.get_current_step()
         self.etape = self
         self.nom = oper.nom
         self.idracine = oper.label
-        self.appel = N_utils.callee_where(niveau)
         self.mc_globaux = {}
         self.sd = None
         self.actif = 1
@@ -179,6 +184,9 @@ class ETAPE(N_MCCOMPO.MCCOMPO):
             try:
                 d['__only_type__'] = True
                 sd_prod = apply(self.definition.sd_prod, (), d)
+                if self.jdc.fico:
+                    self.check_allowed_type(sd_prod)
+
             except EOFError:
                 raise
             except Exception, exc:
@@ -190,7 +198,7 @@ class ETAPE(N_MCCOMPO.MCCOMPO):
         else:
             sd_prod = self.definition.sd_prod
         # on teste maintenant si la SD est réutilisée ou s'il faut la créer
-        if self.definition.reentrant != 'n' and self.reuse:
+        if self.definition.reentrant[0] != 'n' and self.reuse:
             # Le concept produit est specifie reutilise (reuse=xxx). C'est une erreur mais non fatale.
             # Elle sera traitee ulterieurement.
             self.sd = self.reuse
@@ -231,6 +239,13 @@ Causes possibles :
         else:
             sd_prod = self.definition.sd_prod
         return sd_prod
+
+    def check_allowed_type(self, sd_prod):
+        """Check that 'sd_prod' is type declared by the function with '__all__'
+        argument.
+        """
+        check_sdprod(self.nom, self.definition.sd_prod, sd_prod)
+
 
     def get_etape(self):
         """
@@ -457,3 +472,56 @@ Causes possibles :
         # pourrait être appelée par une commande fortran faisant appel à des fonctions python
         # on passe la main au parent
         return self.parent.get_concept(nomsd)
+
+
+def check_sdprod(command, func_prod, sd_prod, verbose=True):
+    """Check that 'sd_prod' is type allowed by the function 'func_prod'
+    with '__all__' argument.
+    """
+    from Noyau.N_CR import CR
+    from code_aster.Cata.Language.SyntaxUtils import add_none_sdprod
+    def _name(class_):
+        return getattr(class_, '__name__', class_)
+
+    if type(func_prod) != types.FunctionType:
+        return
+
+    cr = CR()
+    args = {}
+    add_none_sdprod(func_prod, args)
+    args['__all__'] = True
+    # eval sd_prod with __all__=True + None for other arguments
+    try:
+        allowed = force_list(apply(func_prod, (), args))
+        islist = [isinstance(i, (list, tuple)) for i in allowed]
+        if True in islist:
+            if False in islist:
+                cr.fatal("Error: {0}: for macro-commands, each element must "
+                        "be a list of possible types for each result"
+                        .format(command))
+            else:
+                # can not know which occurrence should be tested
+                allowed = tuple(set().union(*allowed))
+        allowed = tuple(set().union(*[subtypes(i) for i in allowed]))
+        if sd_prod and sd_prod not in allowed:
+            cr.fatal("Error: {0}: type '{1}' is not in the list returned "
+                     "by the 'sd_prod' function with '__all__=True': {2}"
+                     .format(command, _name(sd_prod),
+                             [_name(i) for i in allowed]))
+    except Exception as exc:
+        print("Error: {0}".format(exc))
+        cr.fatal("Error: {0}: the 'sd_prod' function must support "
+                 "the '__all__=True' argument".format(command))
+    if not cr.estvide():
+        if verbose:
+            print(str(cr))
+        raise TypeError(str(cr))
+
+def subtypes(cls):
+    """Return subclasses of 'cls'."""
+    types = [cls]
+    if not cls:
+        return types
+    for subclass in cls.__subclasses__():
+        types.extend(subtypes(subclass))
+    return types

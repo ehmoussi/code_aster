@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -270,6 +270,24 @@ subroutine orth99(nomres, ritz)
         call rsadpa(nomres, 'E', 1, 'TYPE_DEFO', iorne,&
                     0, sjv=jiad, styp=k8b)
         zk16(jiad) = zk16(iad)
+        
+        call rsadpa(base, 'L', 1, 'MODELE', iorol,&
+                    0, sjv=iad, styp=k8b, istop=0)
+        call rsadpa(nomres, 'E', 1, 'MODELE', iorne,&
+                    0, sjv=jiad, styp=k8b)
+        zk8(jiad) = zk8(iad)
+        
+        call rsadpa(base, 'L', 1, 'CHAMPMAT', iorol,&
+                    0, sjv=iad, styp=k8b, istop=0)
+        call rsadpa(nomres, 'E', 1, 'CHAMPMAT', iorne,&
+                    0, sjv=jiad, styp=k8b)
+        zk8(jiad) = zk8(iad)
+        
+        call rsadpa(base, 'L', 1, 'CARAELEM', iorol,&
+                    0, sjv=iad, styp=k8b, istop=0)
+        call rsadpa(nomres, 'E', 1, 'CARAELEM', iorne,&
+                    0, sjv=jiad, styp=k8b)
+        zk8(jiad) = zk8(iad)
     end do
 !
 !

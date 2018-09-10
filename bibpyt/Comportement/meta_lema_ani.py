@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -25,10 +25,10 @@ loi = LoiComportement(
     nom            = 'META_LEMA_ANI',
     lc_type        = ('MECANIQUE',),
     doc            =   """Loi de comportement viscoplastique anisotrope prenant en compte la métallurgie,
-            pour le Zirconium uniquement"""            ,
+            pour le Zirconium uniquement"""              ,
     num_lc         = 115,
-    nb_vari        = 2,
-    nom_vari       = ('EPSPEQ','INDIPLAS',),
+    nb_vari        = 5,
+    nom_vari       = ('EPSPEQ','INDIPLAS','ZIRCALPH','ZIRCALBE','ZIRCBETA'),
     mc_mater       = ('ELAS_META','META_LEMA_ANI',),
     modelisation   = ('3D','AXIS','D_PLAN',),
     deformation    = ('PETIT','PETIT_REAC','GROT_GDEP','GDEF_LOG',),
@@ -37,4 +37,5 @@ loi = LoiComportement(
     proprietes     = None,
     syme_matr_tang = ('Yes',),
     exte_vari      = ('COORGA',),
+    deform_ldc     = ('OLD',),
 )

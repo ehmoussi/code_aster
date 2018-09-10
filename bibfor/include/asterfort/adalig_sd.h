@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -26,7 +26,7 @@
               character(len=24), intent(in) :: ntliel
               integer, intent(in) :: nbtype
               character(len=1), intent(in) :: clas
-              integer ,pointer, intent(in) :: teut(:)
-              integer ,pointer, intent(in) :: nteut(:)
+              integer ,pointer :: teut(:)
+              integer ,pointer :: nteut(:)
             end subroutine adalig_sd
           end interface 

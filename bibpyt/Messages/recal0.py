@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -225,7 +225,7 @@ Domaine couvert par l'expérience : [%(k2)s : %(k3)s]
 
     58 : _(u"""
                  ATTENTION : L'OPTIMUM EST ATTEINT AVEC
-                 DES PARAMETRES EN BUTÉE SUR LE BORD
+                 DES PARAMÈTRES EN BUTÉE SUR LE BORD
                      DU DOMAINE ADMISSIBLE
 """),
 

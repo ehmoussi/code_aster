@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -20,7 +20,7 @@
 subroutine irvari(ifi        , field_med    , vari_elga, field_loca, model    ,&
                   nb_cmp_sele, cmp_name_sele, partie   , numpt     , instan   ,&
                   nume_store , nbmaec       , limaec   , result    , cara_elem,&
-                  codret)
+                  carael     , codret)
 !
 implicit none
 !
@@ -60,7 +60,7 @@ integer, intent(in) :: nume_store
 integer, intent(in) :: nbmaec
 integer, intent(in) :: limaec(*)
 character(len=8), intent(in) :: result
-character(len=8), intent(in) :: cara_elem
+character(len=8), intent(in) :: cara_elem, carael
 integer, intent(out) :: codret
 !
 ! --------------------------------------------------------------------------------------------------
@@ -76,11 +76,11 @@ integer, intent(out) :: codret
 ! In  field_loca       : localization of field
 !                        /'ELNO'/'ELGA'/'ELEM'
 ! In  result           : name of results datastructure
-! In  model            : name of model         
+! In  model            : name of model
 ! Out codret           : error code
 !                        0   - Everything is OK
 !                        200 - External behaviour (MFRONT/UMAT) or multifibers
-!                        300 - No external state variables (everything is elastic)           
+!                        300 - No external state variables (everything is elastic)
 !       IFI    : UNITE LOGIQUE D'IMPRESSION DU CHAMP
 !       PARTIE : IMPRESSION DE LA PARTIE IMAGINAIRE OU REELLE POUR
 !                UN CHAMP COMPLEXE
@@ -110,11 +110,11 @@ integer, intent(out) :: codret
     character(len=19) :: vari_link
     character(len=19), parameter :: vari_redu = '&&IRVARI.VARIREDU'
     integer, pointer :: v_vari_link(:) => null()
-    character(len=16), pointer :: v_vari_redu(:) => null() 
+    character(len=16), pointer :: v_vari_redu(:) => null()
     character(len=19), parameter :: label_med = '&&IRVARI.LABELMED'
     character(len=19), parameter :: label_vxx = '&&IRVARI.LABELVXX'
     character(len=8), pointer :: v_label_vxx(:) => null()
-    character(len=16), pointer :: v_label_med(:) => null() 
+    character(len=16), pointer :: v_label_med(:) => null()
     character(len=64) :: nomres
     real(kind=8), pointer :: v_elgr_cesv(:) => null()
     real(kind=8), pointer :: v_elga_cesv(:) => null()
@@ -155,7 +155,7 @@ integer, intent(out) :: codret
         goto 999
     endif
     call jeveuo(compor_info(1:19)//'.ZONE', 'L', vi = v_zone)
-! 
+!
 ! - Create list of internal variables and link to zone in <CARTE> COMPOR
 !
     call comp_meca_uvar(compor_info, base_name, vari_redu, nb_vari_redu, codret)
@@ -217,12 +217,13 @@ integer, intent(out) :: codret
 !
 ! --------- Access to current zone in CARTE
 !
+            nb_elem = 0
             affe_type = v_compor_desc(1+3+(i_zone-1)*2)
             affe_indx = v_compor_desc(1+4+(i_zone-1)*2)
             if (affe_type .eq. 3) then
                 nb_elem = v_compor_lima_lc(1+affe_indx)-v_compor_lima_lc(affe_indx)
                 posit   = v_compor_lima_lc(affe_indx)
-            elseif (affe_type .eq. 1) then
+            else if (affe_type .eq. 1) then
                 nb_elem = nb_elem_mesh
                 posit   = 0
             else
@@ -235,7 +236,7 @@ integer, intent(out) :: codret
             do i_elem = 1, nb_elem
                 if (affe_type .eq. 3) then
                     nume_elem = v_compor_lima(posit+i_elem-1)
-                elseif (affe_type .eq. 1) then
+                else if (affe_type .eq. 1) then
                     nume_elem = i_elem
                 else
                     ASSERT(.false.)
@@ -259,12 +260,12 @@ integer, intent(out) :: codret
                                     zl(jv_elgr_cesl-1+jv_elgr) = .true.
                                 endif
                             endif
-                        end do
-                    end do
-                end do
-            end do
+                        enddo
+                    enddo
+                enddo
+            enddo
         endif
-    end do
+    enddo
 !
 ! - Transform VARI_ELGR_S in VARI_ELGR
 !
@@ -277,7 +278,7 @@ integer, intent(out) :: codret
     call irceme(ifi, nomres, vari_elgr, field_loca, model,&
                 nb_cmp_sele, cmp_name_sele, label_med, partie, numpt,&
                 instan, nume_store, nbmaec, limaec, cara_elem,&
-                codret)
+                carael, codret)
 !
 999 continue
 !
@@ -298,7 +299,7 @@ integer, intent(out) :: codret
         call codent(i_zone, 'G', saux08)
         vari_link = base_name//saux08
         call jedetr(vari_link)
-    end do
+    enddo
 !
     call jedema()
 !

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -82,7 +82,8 @@ CHAMPMAT=AFFE_MATERIAU(MAILLAGE=MAILLAG,
 fit2vertex = 0.01
 fonc = 'X+Y+Z+'+str(fit2vertex/raff)
 
-LN=FORMULE(NOM_PARA=('X','Y','Z'),VALE=fonc);
+LN = FORMULE(VALE='X+Y+Z+0.01',
+             NOM_PARA=['X', 'Y', 'Z'],)
 
 FISS=DEFI_FISS_XFEM(MAILLAGE=MAILLAG,
                     TYPE_DISCONTINUITE='INTERFACE',
@@ -134,11 +135,14 @@ def um(X,Y,Z,i) :
    return k*var-2.  
 
 depl_x = FORMULE(VALE='depl(X,Y,Z,1)',
-                  NOM_PARA=('X','Y','Z'),);
+                 depl=depl,
+                 NOM_PARA=['X', 'Y', 'Z'],)
 depl_y = FORMULE(VALE='depl(X,Y,Z,2)',
-                  NOM_PARA=('X','Y','Z'),);
+                 depl=depl,
+                 NOM_PARA=['X', 'Y', 'Z'],)
 depl_z = FORMULE(VALE='depl(X,Y,Z,3)',
-                  NOM_PARA=('X','Y','Z'),);
+                 depl=depl,
+                 NOM_PARA=['X', 'Y', 'Z'],)
   
 CH10=AFFE_CHAR_MECA_F(#MODELE=MODELX,
                    MODELE=MODELEIN,
@@ -197,17 +201,23 @@ DEP1P = CALC_TABLE(TABLE = DEP1,
                                VALE_K    = '^N[P]'))); 
 
 deplm_x = FORMULE(VALE='um(X,Y,Z,1)',
-                  NOM_PARA=('X','Y','Z'),);
+                  um=um,
+                  NOM_PARA=['X', 'Y', 'Z'],)
 deplm_y = FORMULE(VALE='um(X,Y,Z,2)',
-                  NOM_PARA=('X','Y','Z'),);
+                  um=um,
+                  NOM_PARA=['X', 'Y', 'Z'],)
 deplm_z = FORMULE(VALE='um(X,Y,Z,3)',
-                  NOM_PARA=('X','Y','Z'),);
+                  um=um,
+                  NOM_PARA=['X', 'Y', 'Z'],)
 deplp_x = FORMULE(VALE='up(X,Y,Z,1)',
-                  NOM_PARA=('X','Y','Z'),);
+                  up=up,
+                  NOM_PARA=['X', 'Y', 'Z'],)
 deplp_y = FORMULE(VALE='up(X,Y,Z,2)',
-                  NOM_PARA=('X','Y','Z'),);
+                  up=up,
+                  NOM_PARA=['X', 'Y', 'Z'],)
 deplp_z = FORMULE(VALE='up(X,Y,Z,3)',
-                  NOM_PARA=('X','Y','Z'),);
+                  up=up,
+                  NOM_PARA=['X', 'Y', 'Z'],)
   
 DEPM_INI=CALC_TABLE(TABLE = DEP1M,
                     ACTION = (_F(OPERATION = 'RENOMME',
@@ -259,9 +269,12 @@ DEPP=CALC_TABLE(TABLE = DEPP_FIN,
                                  NOM_PARA  = ('NUME_ORDRE','INST','ABSC_CURV','X','Y','Z',),),
                                   ));
   
-diff_x = FORMULE(VALE='abs(DX-DX_ANA)', NOM_PARA=('DX','DX_ANA'),);
-diff_y = FORMULE(VALE='abs(DY-DY_ANA)', NOM_PARA=('DY','DY_ANA'),);
-diff_z = FORMULE(VALE='abs(DZ-DZ_ANA)', NOM_PARA=('DZ','DZ_ANA'),);
+diff_x = FORMULE(VALE='abs(DX-DX_ANA)',
+                 NOM_PARA=['DX', 'DX_ANA'],)
+diff_y = FORMULE(VALE='abs(DY-DY_ANA)',
+                 NOM_PARA=['DY', 'DY_ANA'],)
+diff_z = FORMULE(VALE='abs(DZ-DZ_ANA)',
+                 NOM_PARA=['DZ', 'DZ_ANA'],)
 
 DIFFM=CALC_TABLE(TABLE = DEPM,
                     ACTION = (_F(OPERATION = 'OPER',

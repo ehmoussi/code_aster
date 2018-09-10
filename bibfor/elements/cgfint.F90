@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -109,7 +109,7 @@ implicit none
     nddl = nno1*(ndim+1) + nno2
 !
 !
-    ASSERT(compor(NAME).eq.'KIT_CG')
+    ASSERT(compor(RELA_NAME).eq.'KIT_CG')
     cmp2(1:16)=compor(CABLE_NAME)
     cmp1(1:16)=compor(SHEATH_NAME)
     do i = 1, 7

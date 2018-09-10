@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -24,6 +24,9 @@ from code_aster.Cata.Commons import *
 
 
 def calc_fonc_interp_prod(FONCTION, NOM_PARA_FONC, **args):
+   if args.get('__all__'):
+       return (nappe_sdaster, fonction_sdaster, fonction_c, formule)
+
    if   AsType(FONCTION) == nappe_sdaster:
       return nappe_sdaster
    elif AsType(FONCTION) == fonction_sdaster:
@@ -47,7 +50,7 @@ CALC_FONC_INTERP=OPER(nom="CALC_FONC_INTERP",op= 134,sd_prod=calc_fonc_interp_pr
          LIST_PARA       =SIMP(statut='f',typ=listr8_sdaster ),
          NOM_RESU        =SIMP(statut='f',typ='TXM'),
          NOM_PARA        =SIMP(statut='f',typ='TXM'),
-         INTERPOL        =SIMP(statut='f',typ='TXM',max=2,into=("NON","LIN","LOG") ),
+         INTERPOL        =SIMP(statut='f',typ='TXM',max=2,into=("LIN","LOG") ),
          PROL_DROITE     =SIMP(statut='f',typ='TXM',into=("EXCLU","CONSTANT","LINEAIRE") ),
          PROL_GAUCHE     =SIMP(statut='f',typ='TXM',into=("EXCLU","CONSTANT","LINEAIRE") ),
          NOM_PARA_FONC   =SIMP(statut='f',typ='TXM'),
@@ -55,7 +58,7 @@ CALC_FONC_INTERP=OPER(nom="CALC_FONC_INTERP",op= 134,sd_prod=calc_fonc_interp_pr
             regles=(UN_PARMI('VALE_PARA_FONC','LIST_PARA_FONC'),),
             VALE_PARA_FONC  =SIMP(statut='f',typ='R',max='**'),
             LIST_PARA_FONC  =SIMP(statut='f',typ=listr8_sdaster ),
-            INTERPOL_FONC   =SIMP(statut='f',typ='TXM',max=2,into=("NON","LIN","LOG")),
+            INTERPOL_FONC   =SIMP(statut='f',typ='TXM',max=2,into=("LIN","LOG")),
             PROL_DROITE_FONC=SIMP(statut='f',typ='TXM',into=("EXCLU","CONSTANT","LINEAIRE") ),
             PROL_GAUCHE_FONC=SIMP(statut='f',typ='TXM',into=("EXCLU","CONSTANT","LINEAIRE") ),
          ),

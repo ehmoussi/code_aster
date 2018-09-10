@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,8 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine xmtbca(mesh, hval_incr, mate, ds_contact)
+!
+subroutine xmtbca(mesh, hval_incr, ds_material, ds_contact)
 !
 use NonLin_Datastructure_type
 !
@@ -37,11 +37,10 @@ implicit none
 #include "asterfort/mmbouc.h"
 #include "asterfort/nmchex.h"
 !
-!
-    character(len=8), intent(in) :: mesh
-    character(len=19), intent(in) :: hval_incr(*)
-    character(len=24), intent(in) :: mate
-    type(NL_DS_Contact), intent(inout) :: ds_contact
+character(len=8), intent(in) :: mesh
+character(len=19), intent(in) :: hval_incr(*)
+type(NL_DS_Material), intent(in) :: ds_material
+type(NL_DS_Contact), intent(inout) :: ds_contact
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -52,6 +51,7 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  mesh             : name of mesh
+! In  ds_material      : datastructure for material parameters
 ! In  hval_incr        : hat-variable for incremental values fields
 ! IO  ds_contact       : datastructure for contact management
 !
@@ -98,11 +98,7 @@ implicit none
     lnno  = ds_contact%sdcont_solv(1:14)//'.XFLN'
     stano  = ds_contact%sdcont_solv(1:14)//'.XFST'
     option = 'XCVBCA'
-    if (nivdbg .ge. 2) then
-        debug = .true.
-    else
-        debug = .false.
-    endif
+    debug = nivdbg .ge. 2
 !
 ! - <LIGREL> for contact elements
 !
@@ -126,7 +122,7 @@ implicit none
 ! --- SUR LES CONTRAINTES ACTIVES (CONVERGENCE <=> INCOCA =1)
 !
     sinco = 0
-    loop_cont_conv = .true.
+    loop_cont_conv = ASTER_TRUE
 !
 ! --- INITIALISATION DES CHAMPS POUR CALCUL
 !
@@ -156,7 +152,7 @@ implicit none
     lpain(10) = 'PSTANO'
     lchin(10) =  stano
     lpain(11)  = 'PMATERC'
-    lchin(11)  = mate(1:19)
+    lchin(11)  = ds_material%field_mate(1:19)
 
 !
 ! --- CREATION DES LISTES DES CHAMPS OUT
@@ -255,7 +251,7 @@ implicit none
 ! --- SI SINCO EST STRICTEMENT POSITIF, ON A PAS CONVERGÉ
 !
     if (sinco .gt. 0) then
-        loop_cont_conv = .false.
+        loop_cont_conv = ASTER_FALSE
     endif
 !
 ! - Set loop values

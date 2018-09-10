@@ -3,7 +3,7 @@
  * @brief Interface python de GeneralizedModel
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -33,5 +33,8 @@ void exportGeneralizedModelToPython()
             bases< DataStructure > > ( "GeneralizedModel", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< GeneralizedModelInstance > ) )
+        .def( "addDynamicMacroElement", &GeneralizedModelInstance::addDynamicMacroElement )
+        .def( "getDynamicMacroElementFromName",
+              &GeneralizedModelInstance::getDynamicMacroElementFromName )
     ;
 };

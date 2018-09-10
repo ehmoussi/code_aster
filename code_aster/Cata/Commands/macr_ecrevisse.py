@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -26,6 +26,9 @@ from code_aster.Cata.Commons import *
 
 
 def macr_ecrevisse_prod(self,TABLE,TEMPER,DEBIT,**args):
+    if args.get('__all__'):
+        return ([evol_noli], [table_sdaster], [evol_ther], [table_sdaster])
+
     # On definit ici les concepts produits
     self.type_sdprod(TABLE,table_sdaster)
     self.type_sdprod(TEMPER,evol_ther)
@@ -37,7 +40,7 @@ def macr_ecrevisse_prod(self,TABLE,TEMPER,DEBIT,**args):
 MACR_ECREVISSE=MACRO(nom="MACR_ECREVISSE",
                      op=OPS('Macro.macr_ecrevisse_ops.macr_ecrevisse_ops'),
                      sd_prod=macr_ecrevisse_prod,
-                     reentrant='f',
+                     reentrant='f:ETAT_INIT:EVOL_NOLI',
                      fr=tr("Procedure de couplage avec Ecrevisse"),
 
        reuse  = SIMP(statut='c',typ=CO),
@@ -193,7 +196,7 @@ MACR_ECREVISSE=MACRO(nom="MACR_ECREVISSE",
          CONV_CRITERE       =FACT(statut='o',min=1,max=1,
            TEMP_REF            =SIMP(statut='o',typ='R',val_min=1.0E-5,fr=tr("Temperature de reference pour le calcul du critere")),
            PRES_REF            =SIMP(statut='o',typ='R',val_min=1.0E-5,fr=tr("Pression de reference pour le calcul du critere")),
-           CRITERE             =SIMP(statut='o',typ='TXM',defaut="TEMP_PRESS",into=("TEMP_PRESS","EXPLICITE","TEMP","PRESS"),
+           CRITERE             =SIMP(statut='f',typ='TXM',defaut="TEMP_PRESS",into=("TEMP_PRESS","EXPLICITE","TEMP","PRESS"),
                                      fr=tr("La nature du critere pour la convergence")),
            b_critere_autre     =BLOC(condition="""equal_to("CRITERE", 'TEMP_PRESS') or equal_to("CRITERE", 'TEMP') or equal_to("CRITERE", 'PRESS')""",
                                      fr=tr("Critere de convergence temp_press, temp, ou press"),

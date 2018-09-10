@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -39,8 +39,8 @@ MOFLUIDE=AFFE_MODELE(MAILLAGE=MAFLUIDE,
                           PHENOMENE='MECANIQUE',
                           MODELISATION='3D',),);
 
-FORM=FORMULE(NOM_PARA=('X','Y','Z','INST'),
-                VALE='1.E-4*INST*(X+Y+Z)');
+FORM = FORMULE(VALE='1.E-4*INST*(X+Y+Z)',
+               NOM_PARA=['X', 'Y', 'Z', 'INST'],)
 
 VALE=CREA_CHAMP(TYPE_CHAM='NOEU_PRES_F',
                 OPERATION='AFFE',

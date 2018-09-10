@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,18 +15,19 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmchai(tychap, tyvarz, vali, tychap_out)
-!
 ! person_in_charge: mickael.abbas at edf.fr
 !
-    implicit none
+subroutine nmchai(tychap, tyvarz, vali, tychap_out)
+!
+implicit none
+!
 #include "asterc/indik8.h"
 #include "asterfort/assert.h"
-    character(len=6), intent(in) :: tychap
-    character(len=*), intent(in) :: tyvarz
-    integer :: vali
-    character(len=6), optional, intent(out) :: tychap_out
+!
+character(len=6), intent(in) :: tychap
+character(len=*), intent(in) :: tyvarz
+integer :: vali
+character(len=6), optional, intent(out) :: tychap_out
 !
 ! ----------------------------------------------------------------------
 !
@@ -52,10 +53,12 @@ subroutine nmchai(tychap, tyvarz, vali, tychap_out)
 !
 ! ----------------------------------------------------------------------
 !
-    integer :: zmeelm, zmeass, zveelm, zveass
-    parameter    (zmeelm=9 ,zmeass=4 ,zveelm=21,zveass=32)
-    integer :: zsolal, zvalin
-    parameter    (zsolal=17,zvalin=28)
+    integer, parameter :: zmeelm = 9
+    integer, parameter :: zmeass = 4
+    integer, parameter :: zveelm = 15
+    integer, parameter :: zveass = 21
+    integer, parameter :: zsolal = 17
+    integer, parameter :: zvalin = 28
 !
     character(len=8) :: lmeelm(zmeelm), lmeass(zmeass)
     character(len=8) :: lveelm(zveelm), lveass(zveass)
@@ -70,16 +73,15 @@ subroutine nmchai(tychap, tyvarz, vali, tychap_out)
 !
     data lveelm /'CNFINT','CNDIRI','CNBUDI','CNFNOD','CNDIDO',&
      &             'CNDIPI','CNFEDO','CNFEPI','CNLAPL','CNONDP',&
-     &             'CNFSDO','CNIMPP','      ','CNDIDI','CNSSTF',&
-     &             'CNELTC','CNELTF','CNREFE','CNVCF1','CNVCF0',&
-     &             'CNIMPC'/
+     &             'CNFSDO','CNIMPE','CNDIDI','CNSSTF',&
+     &             'CNREFE'/
     data lveass /'CNFINT','CNDIRI','CNBUDI','CNFNOD','CNDIDO',&
      &             'CNDIPI','CNFEDO','CNFEPI','CNLAPL','CNONDP',&
-     &             'CNFSDO','CNIMPP','      ','CNDIDI','CNSSTF',&
-     &             'CNELTC','CNELTF','CNREFE','CNVCF1','CNVCF0',&
-     &             'CNCINE','CNSSTR','CNCTDF','CNVCPR','CNDYNA',&
-     &             'CNMODP','CNMODC','CNCTDC','CNUNIL','CNFEXT',&
-     &             'CNIMPC','CNVISS'/
+     &             'CNFSDO','CNIMPE','CNDIDI','CNSSTF',&
+     &             'CNREFE',&
+     &             'CNCINE','CNSSTR','CNDYNA',&
+     &             'CNAMOD','CNFEXT',&
+     &             'CNVISS'/
 !
     data lsolal /'DDEPLA','DEPDEL','DEPOLD','DEPPR1','DEPPR2',&
      &             'DVITLA','VITDEL','VITOLD','VITPR1','VITPR2',&

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -176,7 +176,7 @@ TRAN_GEN=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='GENE',
                                  RIGI_NOR = 0.5,
                                  FNOR_CRIT = 1.,
                                  FNOR_POST_FL = 0.5,
-                                 RIGI_NOR_POST_FL = 0.25),
+                                 ),
 
                       INCREMENT=_F(
                                   INST_INIT = 0.,   INST_FIN = 3.,
@@ -200,12 +200,13 @@ TRAN_GEN=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='GENE',
                                  RIGI_NOR = 0.5,
                                  FNOR_CRIT = 1.,
                                  FNOR_POST_FL = 0.5,
-                                 RIGI_NOR_POST_FL = 0.25,
-                                 ANGL_VRIL = 0.,),
+                                 ANGL_VRIL = 0.,
+                                       ),
 
                       INCREMENT=_F(INST_FIN = 12.,  PAS = 1.e-5,),
                       ARCHIVAGE=_F(PAS_ARCH=10, INST=[t0])
                             )
+
 
 TABLE=POST_DYNA_MODA_T(   RESU_GENE=TRAN_GEN,
                               CHOC=_F(  OPTION = 'IMPACT')

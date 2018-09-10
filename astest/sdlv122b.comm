@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -41,10 +41,11 @@ DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'), DEBUG=_F(SDVERI='OUI'))
 # DEFINITION DU MODELE NUMERIQUE
 # ==============================
 
-PRE_IDEAS()
 
 #
-MAIL0=LIRE_MAILLAGE(FORMAT="ASTER", )
+MAIL0 = LIRE_MAILLAGE(FORMAT='IDEAS',
+                      UNITE=19,
+                      )
 MAIL=CREA_MAILLAGE(MAILLAGE=MAIL0,
     CREA_POI1=(
         _F(NOM_GROUP_MA='NPOINT1', GROUP_NO=('NPOINT1',),),
@@ -157,10 +158,11 @@ BASE=CALC_CHAMP(reuse=BASE,
 # DEFINITION DU MAILLAGE DE MESURE
 # ================================
 #
-PRE_IDEAS( UNITE_IDEAS = 33, UNITE_MAILLAGE = 21)
 
 #
-MAILMES0=LIRE_MAILLAGE(FORMAT="ASTER",UNITE=21)
+MAILMES0 = LIRE_MAILLAGE(FORMAT='IDEAS',
+                         UNITE=33,
+                         )
 MAILMESU=CREA_MAILLAGE(MAILLAGE=MAILMES0,
          CREA_POI1= _F(NOM_GROUP_MA='N3N4N5',   NOEUD=('N3','N4','N5'), ))
 
@@ -215,15 +217,11 @@ LTEMPS=DEFI_LIST_REEL(   VALE=(9.E-4,  17.E-4,  25.E-4,)              )
 
 #
 REPONS=CALC_CHAMP(RESULTAT=REPONSE,
-                  MODELE=MODELE,
-                  CARA_ELEM=CARAELEM,
-                  CHAM_MATER=MATER,
                   LIST_INST=LTEMPS,
                   CONTRAINTE='SIGM_ELNO',);
 
 #
 REPON2=CALC_CHAMP(RESULTAT=REPONS,
-                  MODELE=MODELE,
                   LIST_INST=LTEMPS,
                   CONTRAINTE='SIGM_NOEU',);
 

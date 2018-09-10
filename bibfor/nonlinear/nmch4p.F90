@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,14 +15,15 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmch4p(veelem)
-!
 ! person_in_charge: mickael.abbas at edf.fr
 !
-    implicit     none
+subroutine nmch4p(veelem)
+!
+implicit none
+!
 #include "asterfort/nmcha0.h"
-    character(len=19) :: veelem(*)
+!
+character(len=19) :: veelem(*)
 !
 ! ----------------------------------------------------------------------
 !
@@ -39,9 +40,8 @@ subroutine nmch4p(veelem)
     character(len=19) :: vefsdo, vefint, vebudi, vedido, vesstf
     character(len=19) :: vedipi, vefedo, vefepi, veondp
     character(len=19) :: vedidi, vediri, vefnod, velapl
-    character(len=19) :: veeltc, veeltf
-    character(len=19) :: verefe, vevcf0, vevcf1
-    character(len=19) :: veimpp, veimpc
+    character(len=19) :: verefe
+    character(len=19) :: veimpe
 !
     data vefedo,vefsdo    /'&&NMCH4P.VEFEDO','&&NMCH4P.VEFSDO'/
     data vedido,vefepi    /'&&NMCH4P.VEDIDO','&&NMCH4P.VEFEPI'/
@@ -49,11 +49,9 @@ subroutine nmch4p(veelem)
     data vebudi,vedidi    /'&&NMCH4P.VEBUDI','&&NMCH4P.VEDIDI'/
     data veondp,velapl    /'&&NMCH4P.VEONDP','&&NMCH4P.VELAPL'/
     data vediri,vefnod    /'&&NMCH4P.VEDIRI','&&NMCH4P.VEFNOD'/
-    data vesstf,veeltc    /'&&NMCH4P.VESSTF','&&NMCH4P.VEELTC'/
-    data veeltf           /'&&NMCH4P.VEELTF'/
+    data vesstf           /'&&NMCH4P.VESSTF'/
     data verefe           /'&&NMCH4P.VEREFE'/
-    data vevcf0,vevcf1    /'&&NMCH4P.VEVCF0','&&NMCH4P.VEVCF1'/
-    data veimpp,veimpc    /'&&NMCH4P.VEIMPP','&&NMCH4P.VEIMPC'/
+    data veimpe           /'&&NMCH4P.VEIMPE'/
 !
 ! ----------------------------------------------------------------------
 !
@@ -69,14 +67,9 @@ subroutine nmch4p(veelem)
     call nmcha0('VEELEM', 'CNLAPL', velapl, veelem)
     call nmcha0('VEELEM', 'CNONDP', veondp, veelem)
     call nmcha0('VEELEM', 'CNFSDO', vefsdo, veelem)
-    call nmcha0('VEELEM', 'CNIMPP', veimpp, veelem)
-    call nmcha0('VEELEM', 'CNIMPC', veimpc, veelem)
+    call nmcha0('VEELEM', 'CNIMPE', veimpe, veelem)
     call nmcha0('VEELEM', 'CNDIDI', vedidi, veelem)
     call nmcha0('VEELEM', 'CNSSTF', vesstf, veelem)
-    call nmcha0('VEELEM', 'CNELTC', veeltc, veelem)
-    call nmcha0('VEELEM', 'CNELTF', veeltf, veelem)
     call nmcha0('VEELEM', 'CNREFE', verefe, veelem)
-    call nmcha0('VEELEM', 'CNVCF1', vevcf1, veelem)
-    call nmcha0('VEELEM', 'CNVCF0', vevcf0, veelem)
 !
 end subroutine

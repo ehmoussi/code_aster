@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,11 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine ndassp(modele         , numedd, mate      , carele, comref    ,&
-                  ds_constitutive, lischa, ds_measure, fonact, ds_contact,&
-                  sddyna         , valinc, solalg    , veelem, veasse    ,&
-                  ldccvg         , cndonn, sdnume    , matass)
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine ndassp(ds_material, list_func_acti, ds_contact,&
+                  sddyna     , hval_veasse   , cndonn    )
 !
 use NonLin_Datastructure_type
 !
@@ -27,216 +26,148 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/assert.h"
+#include "asterfort/cfdisl.h"
+#include "asterfort/isfonc.h"
 #include "asterfort/ndasva.h"
 #include "asterfort/ndynin.h"
 #include "asterfort/ndynre.h"
-#include "asterfort/nmadir.h"
-#include "asterfort/nmaint.h"
 #include "asterfort/nmasdi.h"
 #include "asterfort/nmasfi.h"
 #include "asterfort/nmasva.h"
-#include "asterfort/nmbudi.h"
 #include "asterfort/nmchex.h"
-#include "asterfort/nmdiri.h"
-#include "asterfort/nmfint.h"
-#include "asterfort/nmtime.h"
-#include "asterfort/vtaxpy.h"
-#include "asterfort/vtzero.h"
+#include "asterfort/infdbg.h"
+#include "asterfort/utmess.h"
+#include "asterfort/nmdebg.h"
+#include "asterfort/nonlinDSVectCombInit.h"
+#include "asterfort/nonlinDSVectCombCompute.h"
+#include "asterfort/nonlinDSVectCombAddAny.h"
+#include "asterfort/nonlinDSVectCombAddHat.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-! aslint: disable=W1504
-!
-    integer :: ldccvg
-    integer :: fonact(*)
-    character(len=19) :: lischa, sddyna, sdnume, matass
-    type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-    type(NL_DS_Measure), intent(inout) :: ds_measure
-    character(len=24) :: modele, numedd, mate
-    character(len=24) :: carele, comref
-    type(NL_DS_Contact), intent(in) :: ds_contact
-    character(len=19) :: solalg(*), valinc(*)
-    character(len=19) :: veasse(*), veelem(*)
-    character(len=19) :: cndonn
+type(NL_DS_Material), intent(in) :: ds_material
+integer, intent(in) :: list_func_acti(*)
+type(NL_DS_Contact), intent(in) :: ds_contact
+character(len=19), intent(in) :: sddyna
+character(len=19), intent(in) :: hval_veasse(*)
+character(len=19), intent(in) :: cndonn
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! ROUTINE MECA_NON_LINE (ALGORITHME - PREDICTION)
+! MECA_NON_LINE - Algorithm
 !
-! CALCUL DU SECOND MEMBRE POUR LA PREDICTION - DYNAMIQUE
+! Evaluate second member for prediction (dynamic)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! IN  MODELE : NOM DU MODELE
-! IN  NUMEDD : NOM DE LA NUMEROTATION
-! IN  LISCHA : SD LISTE CHARGES
-! IO  ds_measure       : datastructure for measure and statistics management
-! In  ds_constitutive  : datastructure for constitutive laws management
-! IN  FONACT : FONCTIONNALITES ACTIVEES
-! IN  SDDYNA : SD DYNAMIQUE
-! IN  VALINC : VARIABLE CHAPEAU POUR INCREMENTS VARIABLES
-! IN  VEELEM : VARIABLE CHAPEAU POUR NOM DES VECT_ELEM
-! IN  VEASSE : VARIABLE CHAPEAU POUR NOM DES VECT_ASSE
+! In  ds_material      : datastructure for material parameters
+! In  list_func_acti   : list of active functionnalities
 ! In  ds_contact       : datastructure for contact management
-! IN  SDNUME : SD NUMEROTATION
-! IN  MATASS  : SD MATRICE ASSEMBLEE
-! OUT CNDONN : VECTEUR ASSEMBLE DES FORCES DONNEES
-! OUT LDCCVG : CODE RETOUR DE L'INTEGRATION DU COMPORTEMENT
-!                -1 : PAS D'INTEGRATION DU COMPORTEMENT
-!                 0 : CAS DU FONCTIONNEMENT NORMAL
-!                 1 : ECHEC DE L'INTEGRATION DE LA LDC
-!                 2 : ERREUR SUR LA NON VERIF. DE CRITERES PHYSIQUES
-!                 3 : SIZZ PAS NUL POUR C_PLAN DEBORST
+! In  sddyna           : datastructure for dynamic
+! In  hval_veasse      : hat-variable for vectors (node fields)
+! In  cndonn           : name of nodal field for "given" forces
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: i, nbvec, iterat, nbcoef
+    integer :: ifm, niv
     character(len=19) :: cnffdo, cndfdo, cnfvdo, cnvady
-    character(len=19) :: cndumm
-    character(len=19) :: vebudi
-    parameter    (nbcoef=8)
-    real(kind=8) :: coef(nbcoef)
-    character(len=19) :: vect(nbcoef)
-    character(len=19) :: cnfint, cndiri, k19bla
-    character(len=19) :: vefint, vediri
-    character(len=19) :: cnbudi, cnvcpr
-    character(len=19) :: depmoi, vitmoi, accmoi
-    character(len=19) :: veclag
-    aster_logical :: ldepl, lvite, lacce
+    aster_logical :: l_macr
     real(kind=8) :: coeequ
+    type(NL_DS_VectComb) :: ds_vectcomb
+    aster_logical :: l_unil_pena
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    ldccvg = -1
-    iterat = 0
-    call vtzero(cndonn)
-    cndumm = '&&CNCHAR.DUMM'
+    call infdbg('MECANONLINE', ifm, niv)
+    if (niv .ge. 2) then
+        call utmess('I', 'MECANONLINE11_20')
+    endif
+!
+! - Initializations
+!
+    call nonlinDSVectCombInit(ds_vectcomb)
     cnffdo = '&&CNCHAR.FFDO'
     cndfdo = '&&CNCHAR.DFDO'
     cnfvdo = '&&CNCHAR.FVDO'
     cnvady = '&&CNCHAR.FVDY'
-    k19bla = ' '
+    l_macr = isfonc(list_func_acti,'MACR_ELEM_STAT')
 !
-! --- TYPE DE FORMULATION SCHEMA DYNAMIQUE GENERAL
-!
-    ldepl = ndynin(sddyna,'FORMUL_DYNAMIQUE').eq.1
-    lvite = ndynin(sddyna,'FORMUL_DYNAMIQUE').eq.2
-    lacce = ndynin(sddyna,'FORMUL_DYNAMIQUE').eq.3
-!
-! --- COEFFICIENTS POUR MULTI-PAS
+! - Coefficient for multi-step scheme
 !
     coeequ = ndynre(sddyna,'COEF_MPAS_EQUI_COUR')
 !
-! - Launch timer
+! - Get dead Neumann loads and multi-step dynamic schemes forces
 !
-    call nmtime(ds_measure, 'Init'  , '2nd_Member')
-    call nmtime(ds_measure, 'Launch', '2nd_Member')
+    call nmasfi(list_func_acti, hval_veasse, cnffdo, sddyna)
+    call nonlinDSVectCombAddAny(cnffdo, +1.d0, ds_vectcomb)
 !
-! --- DECOMPACTION DES VARIABLES CHAPEAUX
+! - Get Dirichlet loads
 !
-    call nmchex(valinc, 'VALINC', 'DEPMOI', depmoi)
-    call nmchex(valinc, 'VALINC', 'VITMOI', vitmoi)
-    call nmchex(valinc, 'VALINC', 'ACCMOI', accmoi)
-    call nmchex(veasse, 'VEASSE', 'CNFINT', cnfint)
-    call nmchex(veelem, 'VEELEM', 'CNFINT', vefint)
+    call nmasdi(list_func_acti, hval_veasse, cndfdo)
+    call nonlinDSVectCombAddAny(cndfdo, +1.d0, ds_vectcomb)
 !
-! --- CALCUL DU VECTEUR DES CHARGEMENTS FIXES        (NEUMANN)
+! - Get undead Neumann loads and multi-step dynamic schemes forces
 !
-    call nmasfi(fonact, sddyna, veasse, cnffdo, cndumm)
+    call nmasva(list_func_acti, hval_veasse, cnfvdo, sddyna)
+    call nonlinDSVectCombAddAny(cnfvdo, +1.d0, ds_vectcomb)
 !
-! --- CALCUL DU VECTEUR DES CHARGEMENTS FIXES        (DIRICHLET)
+! - Get undead Neumann loads for dynamic
 !
-    call nmasdi(fonact, veasse, cndfdo, cndumm)
+    call ndasva(sddyna, hval_veasse, cnvady)
+    call nonlinDSVectCombAddAny(cnvady, coeequ, ds_vectcomb)
 !
-! --- CALCUL DU VECTEUR DES CHARGEMENTS VARIABLES    (NEUMANN)
+! - Add DISCRETE contact force
 !
-    call nmasva(sddyna, veasse, cnfvdo)
-!
-! --- CALCUL DU VECTEUR DES CHARGEMENTS VARIABLES DYNAMIQUES (NEUMANN)
-!
-    call ndasva('PRED', sddyna, veasse, cnvady)
-!
-! --- SECOND MEMBRE DES VARIABLES DE COMMANDE
-!
-    call nmchex(veasse, 'VEASSE', 'CNVCPR', cnvcpr)
-!
-! --- QUEL VECTEUR D'INCONNUES PORTE LES LAGRANGES ?
-!
-    if (ldepl) then
-        veclag = depmoi
-    else if (lvite) then
-!        VECLAG = VITMOI
-!       VILAINE GLUTE POUR L'INSTANT
-        veclag = depmoi
-    else if (lacce) then
-        veclag = accmoi
-    else
-        ASSERT(.false.)
+    if (ds_contact%l_cnctdf) then
+        call nonlinDSVectCombAddAny(ds_contact%cnctdf, -1.d0, ds_vectcomb)
     endif
 !
-! --- CONDITIONS DE DIRICHLET B.U
+! - Add LIAISON_UNIL penalized force
 !
-    call nmchex(veasse, 'VEASSE', 'CNBUDI', cnbudi)
-    call nmchex(veelem, 'VEELEM', 'CNBUDI', vebudi)
-    call nmbudi(modele, numedd, lischa, veclag, vebudi,&
-                cnbudi, matass)
-!
-! --- CALCUL DES REACTIONS D'APPUI BT.LAMBDA
-!
-    call nmchex(veelem, 'VEELEM', 'CNDIRI', vediri)
-    call nmchex(veasse, 'VEASSE', 'CNDIRI', cndiri)
-    call nmdiri(modele, mate, carele, lischa, k19bla,&
-                depmoi, k19bla, k19bla, vediri)
-    call nmadir(numedd, fonact, ds_contact, veasse, vediri,&
-                cndiri)
-!
-! - End timer
-!
-    call nmtime(ds_measure, 'Stop', '2nd_Member')
-!
-! --- CALCUL DES FORCES INTERIEURES
-!
-    call nmfint(modele, mate  , carele, comref    , ds_constitutive,&
-                fonact, iterat, sddyna, ds_measure, valinc         ,&
-                solalg, ldccvg, vefint)
-!
-! --- ERREUR SANS POSSIBILITE DE CONTINUER
-!
-    if (ldccvg .eq. 1) goto 999
-!
-! --- ASSEMBLAGE DES FORCES INTERIEURES
-!
-    call nmaint(numedd, fonact, ds_contact, veasse, vefint,&
-                cnfint, sdnume)
-!
-! --- CHARGEMENTS DONNES
-!
-    nbvec = 8
-    coef(1) = 1.d0
-    coef(2) = 1.d0
-    coef(3) = -1.d0
-    coef(4) = -1.d0
-    coef(5) = -1.d0
-    coef(6) = 1.d0
-    coef(7) = 1.d0
-    coef(8) = coeequ
-    vect(1) = cnffdo
-    vect(2) = cnfvdo
-    vect(3) = cnbudi
-    vect(4) = cnfint
-    vect(5) = cndiri
-    vect(6) = cnvcpr
-    vect(7) = cndfdo
-    vect(8) = cnvady
-!
-! --- CHARGEMENT DONNE
-!
-    if (nbvec .gt. nbcoef) then
-        ASSERT(.false.)
+    if (ds_contact%l_cnunil) then
+        l_unil_pena = cfdisl(ds_contact%sdcont_defi, 'UNIL_PENA')
+        if (l_unil_pena) then
+            call nonlinDSVectCombAddAny(ds_contact%cnunil, -1.d0, ds_vectcomb)
+        endif
     endif
-    do i = 1, nbvec
-        call vtaxpy(coef(i), vect(i), cndonn)
-    end do
 !
-999 continue
+! - Add CONTINUE/XFEM contact force
+!
+    if (ds_contact%l_cneltc) then
+        call nonlinDSVectCombAddAny(ds_contact%cneltc, -1.d0, ds_vectcomb)
+    endif
+    if (ds_contact%l_cneltf) then
+        call nonlinDSVectCombAddAny(ds_contact%cneltf, -1.d0, ds_vectcomb)
+    endif
+!
+! - Force from sub-structuring
+!
+    if (l_macr) then
+        call nonlinDSVectCombAddHat(hval_veasse, 'CNSSTR', -1.d0, ds_vectcomb)
+    endif
+!
+! - External state variable
+!
+    call nonlinDSVectCombAddAny(ds_material%fvarc_pred, +1.d0, ds_vectcomb)
+!
+! - Get Dirichlet boundary conditions - B.U
+!
+    call nonlinDSVectCombAddHat(hval_veasse, 'CNBUDI', -1.d0, ds_vectcomb)
+!
+! - Get force for Dirichlet boundary conditions (dualized) - BT.LAMBDA
+!
+    call nonlinDSVectCombAddHat(hval_veasse, 'CNDIRI', -1.d0, ds_vectcomb)
+!
+! - Add internal forces to second member
+!
+    call nonlinDSVectCombAddHat(hval_veasse, 'CNFINT', -1.d0, ds_vectcomb)
+!
+! - Combination
+!
+    call nonlinDSVectCombCompute(ds_vectcomb, cndonn)
+!
+! - Debug
+!
+    if (niv .ge. 2) then
+        call nmdebg('VECT', cndonn, 6)
+    endif
 !
 end subroutine

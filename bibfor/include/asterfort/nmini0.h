@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,16 +15,13 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine nmini0(list_func_acti, eta      , nume_inst  , matass         , zmeelm    ,&
-                      zmeass        , zveelm   , zveass     , zsolal         , zvalin    ,&
-                      ds_print      , ds_conv  , ds_algopara, ds_inout       , ds_contact,&
-                      ds_measure    , ds_energy, ds_algorom , ds_constitutive)
+    subroutine nmini0(list_func_acti, eta      , nume_inst      , matass     , zmeelm    ,&
+                      zmeass        , zveelm   , zveass         , zsolal     , zvalin    ,&
+                      ds_print      , ds_conv  , ds_algopara    , ds_inout   , ds_contact,&
+                      ds_measure    , ds_energy, ds_constitutive, ds_material)
         use NonLin_Datastructure_type
-        use Rom_Datastructure_type
         integer, intent(out) :: list_func_acti(*)
         character(len=19), intent(out) :: matass
         integer, intent(out) :: nume_inst
@@ -42,7 +39,7 @@ interface
         type(NL_DS_Contact), intent(out) :: ds_contact
         type(NL_DS_Measure), intent(out) :: ds_measure
         type(NL_DS_Energy), intent(out) :: ds_energy
-        type(ROM_DS_AlgoPara), intent(out) :: ds_algorom
         type(NL_DS_Constitutive), intent(out) :: ds_constitutive
+        type(NL_DS_Material), intent(out) :: ds_material
     end subroutine nmini0
 end interface

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -149,6 +149,7 @@ TEST_RESU(RESU=(_F(RESULTAT = RESU,
            NOM_CMP  = 'SIYY',
                    TYPE_TEST= 'MAX',
                    VALE_CALC = 551.572385962,
+                   TOLE_MACHINE = 1.e-4,
            REFERENCE= 'SOURCE_EXTERNE',
                    VALE_REFE= 5.519953e+02,
            PRECISION =0.01,
@@ -162,6 +163,7 @@ TEST_RESU(RESU=(_F(RESULTAT = RESU,
            NOM_CMP  = 'SIYY',
                    TYPE_TEST= 'MAX',
                    VALE_CALC = 266.431034727,
+                   TOLE_MACHINE = 1.e-4,
            REFERENCE= 'SOURCE_EXTERNE',
                    VALE_REFE= 2.679747e+02,
            PRECISION =0.01,
@@ -214,6 +216,7 @@ TEST_RESU(RESU=(_F(RESULTAT = RESU,
            NOM_CMP  = 'V2',
                    TYPE_TEST= 'MAX',
                    VALE_CALC = 0.173976280653,
+                   TOLE_MACHINE = 1.e-4,
            REFERENCE= 'SOURCE_EXTERNE',
                    VALE_REFE= 1.735167e-01,
            PRECISION =0.01,

@@ -90,6 +90,14 @@ bool MaterialOnMeshInstance::buildWithoutInputVariables() throw ( std::runtime_e
     return true;
 };
 
+std::vector< MaterialPtr > MaterialOnMeshInstance::getVectorOfMaterial() const
+{
+    std::vector< MaterialPtr > toReturn;
+    for( const auto& curIter : _materialsOnMeshEntity )
+        toReturn.push_back( curIter.first );
+    return toReturn;
+};
+
 bool MaterialOnMeshInstance::existsCalculationInputVariable( const std::string& name )
 {
     if( _cvrcVarc->exists() )

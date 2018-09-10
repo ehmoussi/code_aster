@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -128,8 +128,10 @@ IMPR_RESU(FORMAT='MED',
                   NOM_CHAM='DEPL',
                   NOM_CMP=('DX','DY',),),);
 
-MOINS_UN=FORMULE(NOM_PARA='LAGS_C',VALE='-1.0*LAGS_C',);
-PRESTANG=FORMULE(NOM_PARA=('LAGS_C','LAGS_F1'),VALE='-0.1*LAGS_C*abs(LAGS_F1)',);
+MOINS_UN = FORMULE(VALE='-1.0*LAGS_C',
+                   NOM_PARA='LAGS_C',)
+PRESTANG = FORMULE(VALE='-0.1*LAGS_C*abs(LAGS_F1)',
+                   NOM_PARA=['LAGS_C', 'LAGS_F1'],)
 
 RELE=POST_RELEVE_T(ACTION=_F(OPERATION='EXTRACTION',
                                INTITULE='Pression',
@@ -199,10 +201,10 @@ MESH=MODI_MAILLAGE(reuse=MESH,
 
 # pression de contact
 Pression = FORMULE(VALE='-(SIXX*X*X+SIYY*Y*Y+2*SIXY*X*Y)',
-                   NOM_PARA=('SIXX','SIYY','SIXY','X','Y',),);
+                   NOM_PARA=['SIXX', 'SIYY', 'SIXY', 'X', 'Y'],)
 # pression de contact tangentielle
 PresTang = FORMULE(VALE='-(X*Y*(SIYY-SIXX)+(X*X-Y*Y)*SIXY)',
-                   NOM_PARA=('SIXX','SIYY','SIXY','X','Y',),);
+                   NOM_PARA=['SIXX', 'SIYY', 'SIXY', 'X', 'Y'],)
 
 Pres=CREA_CHAMP(TYPE_CHAM='NOEU_NEUT_F',
                 OPERATION='AFFE',

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -215,10 +215,10 @@ DETRUIRE(CONCEPT=_F(NOM=unite),INFO=1)
 
 TEST_FICHIER(FICHIER="./REPE_OUT/CHMAT.concept",
              NB_VALE_I=107,
-             VALE_CALC_I=2107671,
+             VALE_CALC_I=4204826,
              NB_VALE=0,
              VALE_CALC=0.0000000000,
-             VALE_CALC_K="b803ca7ce4c6359123177ac68a4e7dc1",
+             VALE_CALC_K="2d51cb316bfbd1c4651eddd21f279333",
              EXPR_IGNORE=('IADM','DATE','LTYP','LONO'),
 )
 

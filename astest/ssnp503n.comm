@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -49,12 +49,16 @@ MODELEIN=AFFE_MODELE(MAILLAGE=MAILLAG2,
                               PHENOMENE='MECANIQUE',
                               MODELISATION='D_PLAN')));
 
-LN1=FORMULE(NOM_PARA=('X','Y'),VALE='Y-2.5');
-LT1=FORMULE(NOM_PARA=('X','Y'),VALE='X-2.5');
+LN1 = FORMULE(VALE='Y-2.5',
+              NOM_PARA=['X', 'Y'],)
+LT1 = FORMULE(VALE='X-2.5',
+              NOM_PARA=['X', 'Y'],)
 
 
-LN2=FORMULE(NOM_PARA=('X','Y'),VALE='Y-6.5');
-LT2=FORMULE(NOM_PARA=('X','Y'),VALE='X-3');
+LN2 = FORMULE(VALE='Y-6.5',
+              NOM_PARA=['X', 'Y'],)
+LT2 = FORMULE(VALE='X-3',
+              NOM_PARA=['X', 'Y'],)
 
 FISS1=DEFI_FISS_XFEM(MAILLAGE=MAILLAG2,
                      DEFI_FISS=_F(FONC_LT=LT1,FONC_LN=LN1),

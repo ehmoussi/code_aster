@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -45,6 +45,7 @@ class CheckerError(Exception):
     """
 
     def __init__(self, orig, msg, stack):
+        super(CheckerError, self).__init__(msg)
         self._orig = orig
         self._msg = msg
         self._stack = "/".join(force_list(stack))
@@ -95,9 +96,9 @@ def _gettype(obj):
 
 def isValidType(obj, expected):
     """Check that `obj` has one of the `expected` type"""
-    # None means undefined: type is valid
+    # None means undefined and should have been treated before
     if obj is None:
-        return True
+        return False
 
     if DS.not_checked in expected:
         return True
@@ -260,12 +261,12 @@ class SyntaxCheckerVisitor(object):
                 continue
             if hasattr(i, "evaluation"):
                 i = i.evaluation
+                # if a Variable is not yet evaluated
+                if i is None:
+                    continue
                 # for lists and tuples, take the first element
                 if type(i) in (list, tuple) and i:
                     i = i[0]
-            # if a Variable is not yet evaluated
-            if i is None:
-                continue
 
             # Let expected types check for themselves
             for typeobj in validType:
@@ -292,7 +293,7 @@ class SyntaxCheckerVisitor(object):
                 step._context(i)
                 self.error(TypeError,
                            'Unexpected type: {0}, expecting: {1}'
-                               .format(type(i), validType))
+                           .format(type(i), validType))
             # into
             if step.definition.has_key("into"):
                 if i not in step.definition["into"]:
@@ -363,7 +364,8 @@ class SyntaxCheckerVisitor(object):
             for key, value in userOcc.iteritems():
                 # print key, value
                 if key == "reuse":
-                    if step.definition.get("reentrant") not in ("o", "f"):
+                    reentr = step.definition.get("reentrant", "").split(':')
+                    if reentr and reentr[0] not in ("o", "f"):
                         self._stack.append(key)
                         self.error(KeyError, "reuse is not allowed!")
                     continue

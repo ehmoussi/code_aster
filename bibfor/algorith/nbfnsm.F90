@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,15 +15,15 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+! aslint: disable=W1306
+!
 subroutine nbfnsm(ndim, nno1, nno2, nno3, npg,&
                   iw, vff1, vff2, vff3, idff1,&
                   idff2, vu, vg, vp, typmod,&
                   mate, geomi, sig, ddl, vect)
-! person_in_charge: sebastien.fayolle at edf.fr
 !
-! aslint: disable=W1306
-    implicit none
+implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/dfdmip.h"
@@ -35,18 +35,17 @@ subroutine nbfnsm(ndim, nno1, nno2, nno3, npg,&
 #include "blas/dcopy.h"
 #include "blas/ddot.h"
 #include "blas/dscal.h"
-    integer :: ndim, nno1, nno2, nno3, npg, iw, idff1
-    integer :: idff2, mate
-    integer :: vu(3, 27), vg(27), vp(27)
-    real(kind=8) :: geomi(ndim, nno1)
-    real(kind=8) :: vff1(nno1, npg), vff2(nno2, npg), vff3(nno3, npg)
-    real(kind=8) :: sig(2*ndim, npg), ddl(*), vect(*)
-    character(len=8) :: typmod(*)
+integer :: ndim, nno1, nno2, nno3, npg, iw, idff1
+integer :: idff2, mate
+integer :: vu(3, 27), vg(27), vp(27)
+real(kind=8) :: geomi(ndim, nno1)
+real(kind=8) :: vff1(nno1, npg), vff2(nno2, npg), vff3(nno3, npg)
+real(kind=8) :: sig(2*ndim, npg), ddl(*), vect(*)
+character(len=8) :: typmod(*)
 !-----------------------------------------------------------------------
 !          CALCUL DES FORCES NODALES POUR LES ELEMENTS
 !          INCOMPRESSIBLES POUR LES GRANDES DEFORMATIONS
 !          3D/D_PLAN/AXIS
-!          ROUTINE APPELEE PAR TE0591
 !-----------------------------------------------------------------------
 ! IN  NDIM    : DIMENSION DE L'ESPACE
 ! IN  NNO1    : NOMBRE DE NOEUDS DE L'ELEMENT LIES AUX DEPLACEMENTS
@@ -75,7 +74,7 @@ subroutine nbfnsm(ndim, nno1, nno2, nno3, npg,&
     integer :: k2ret(1), vij(3, 3), lij(3, 3)
     integer :: nddl, ndu, g
     integer :: kl, sa, ra, na, ia, ja, kk
-    real(kind=8) :: geomm(3*27), jm, wm, epsm(6)
+    real(kind=8) :: geomm(3*27), jm, wm
     real(kind=8) :: deplm(3*27), gonfm(27), presm(27), gm, pm, r
     real(kind=8) :: dff1(nno1, 4), dff2(nno2, 3)
     real(kind=8) :: fm(3, 3)
@@ -134,7 +133,7 @@ subroutine nbfnsm(ndim, nno1, nno2, nno3, npg,&
 !
 ! - CALCUL DES ELEMENTS GEOMETRIQUES
         call dfdmip(ndim, nno1, axi, geomi, g, iw, vff1(1, g), idff1, r, w, dff1)
-        call nmepsi(ndim, nno1, axi, grand, vff1(1, g), r, dff1, deplm, fm, epsm)
+        call nmepsi(ndim, nno1, axi, grand, vff1(1, g), r, dff1, deplm, fm)
         call dfdmip(ndim, nno1, axi, geomm, g, iw, vff1(1, g), idff1, r, wm, dff1)
         call nmmalu(nno1, axi, r, vff1(1, g), dff1, lij)
 !

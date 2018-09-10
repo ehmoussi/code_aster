@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -215,7 +215,7 @@ AMORT=COMB_MATR_ASSE(CALC_AMOR_GENE=_F(MASS_GENE = MASSGEN,
 INCLUDE(UNITE=35,);
 ACCE_X=CALC_FONCTION(COMB=_F(FONCTION=ACCE1,
                             COEF=9.8100000000000005,),);
-                            
+
 ACCE_Y=CALC_FONCTION(COMB=_F(FONCTION=ACCE2,
                             COEF=9.8100000000000005,),);
 
@@ -334,19 +334,19 @@ DEPLX=CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R',
                  RESULTAT=DYNA_XP,
                  NOM_CHAM='DEPL',
                  NUME_ORDRE = 2,
-                 INFO=1,);  
+                 INFO=1,);
 DEPLY=CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R',
                  OPERATION='EXTR',
                  RESULTAT=DYNA_YP,
                  NOM_CHAM='DEPL',
                  NUME_ORDRE = 2,
-                 INFO=1,);  
+                 INFO=1,);
 DEPLZ=CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R',
                  OPERATION='EXTR',
                  RESULTAT=DYNA_ZP,
                  NOM_CHAM='DEPL',
                  NUME_ORDRE = 2,
-                 INFO=1,);  
+                 INFO=1,);
 VITEX=CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R',
                  OPERATION='EXTR',
                  RESULTAT=DYNA_XP,
@@ -358,31 +358,31 @@ VITEY=CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R',
                  RESULTAT=DYNA_YP,
                  NOM_CHAM='VITE',
                  NUME_ORDRE = 2,
-                 INFO=1,);  
+                 INFO=1,);
 VITEZ=CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R',
                  OPERATION='EXTR',
                  RESULTAT=DYNA_ZP,
                  NOM_CHAM='VITE',
                  NUME_ORDRE = 2,
-                 INFO=1,);  
+                 INFO=1,);
 ACCEX=CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R',
                  OPERATION='EXTR',
                  RESULTAT=DYNA_XP,
                  NOM_CHAM='ACCE',
                  NUME_ORDRE = 2,
-                 INFO=1,);  
+                 INFO=1,);
 ACCEY=CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R',
                  OPERATION='EXTR',
                  RESULTAT=DYNA_YP,
                  NOM_CHAM='ACCE',
                  NUME_ORDRE = 2,
-                 INFO=1,);  
+                 INFO=1,);
 ACCEZ=CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R',
                  OPERATION='EXTR',
                  RESULTAT=DYNA_ZP,
                  NOM_CHAM='ACCE',
                  NUME_ORDRE = 2,
-                 INFO=1,); 
+                 INFO=1,);
 DEPLA=CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R',
                   OPERATION='ASSE',
                   NUME_DDL= NUME_DD0,
@@ -403,7 +403,7 @@ DEPLA=CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R',
                            COEF_R=1.0,
                            ),
         ),
-                  );   
+                  );
 VITEA=CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R',
                   OPERATION='ASSE',
                   NUME_DDL= NUME_DD0,
@@ -424,8 +424,8 @@ VITEA=CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R',
                            COEF_R=1.0,
                            ),
         ),
-                  ); 
-  
+                  );
+
 ACCEA=CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R',
                   OPERATION='ASSE',
                   NUME_DDL= NUME_DD0,
@@ -453,14 +453,18 @@ DYNA_REF=CREA_RESU(OPERATION='AFFE',
               MATR_MASS=masse0,
               NOM_CHAM='DEPL',
               AFFE=(_F(CHAM_GD=DEPLA,INST=0.0,),),);
-      
-DYNA_REF=CREA_RESU(reuse=DYNA_REF,OPERATION='AFFE',
+
+DYNA_REF=CREA_RESU(reuse=DYNA_REF,
+              RESULTAT=DYNA_REF,
+              OPERATION='AFFE',
               TYPE_RESU='DYNA_TRANS',
               MATR_RIGI=rigid0,
               MATR_MASS=masse0,
               NOM_CHAM='VITE',
-              AFFE=(_F(CHAM_GD=VITEA,INST=0.0,),),);  
-DYNA_REF=CREA_RESU(reuse=DYNA_REF,OPERATION='AFFE',
+              AFFE=(_F(CHAM_GD=VITEA,INST=0.0,),),);
+DYNA_REF=CREA_RESU(reuse=DYNA_REF,
+              RESULTAT=DYNA_REF,
+              OPERATION='AFFE',
               TYPE_RESU='DYNA_TRANS',
               MATR_RIGI=rigid0,
               MATR_MASS=masse0,

@@ -32,10 +32,11 @@ pipeline {
         stage('Build') {
             steps {
                 sh "( cd $HOME/dev/jenkins/data && hg pull && hg update )"
-                sh "./waf configure --with-data=$HOME/dev/jenkins/data --prefix=build/install/std"
-                sh "./waf install"
+                sh "[ -e waf_std ] || ln -s waf_variant waf_std"
+                sh "./waf_std configure --with-data=$HOME/dev/jenkins/data --prefix=build/install/std"
+                sh "./waf_std install"
                 sh '''#!/bin/bash -l
-                ./check_docs.sh
+                ./check_docs.sh --waf=./waf_std --builddir=build/std
                 '''
                 sh "[ -e waf_mpi ] || ln -s waf_variant waf_mpi"
                 sh "./waf_mpi configure --with-data=$HOME/dev/jenkins/data --prefix=build/install/mpi"
@@ -79,7 +80,7 @@ pipeline {
                 cp  .hg/hgrc .hg/hgrc.bck
                 cat << EOF >> .hg/hgrc
 [ui]
-username = 'mergerobot <no-reply@edf.fr>'
+username = mergerobot <no-reply@edf.fr>
 
 [extensions]
 strip =
@@ -115,7 +116,7 @@ EOF
 <p>Congratulations! Your changes have been integrated in the main branch of the official repository.</p>
 <p>Read the <a href="${env.BUILD_URL}/display/redirect">job page</a> or open the attached log file for details.</p>
                  """,
-                to: emailextrecipients([[$class: 'DevelopersRecipientProvider']]),
+                to: emailextrecipients([[$class: 'RequesterRecipientProvider']]),
                 mimeType: 'text/html',
                 attachLog: true
             )
@@ -131,7 +132,7 @@ EOF
 <p>Please fix the errors and try again.</p>
 <p>Read the <a href="${env.BUILD_URL}/display/redirect">job page</a> or open the attached log file to see the reasons of the failure.</p>
                  """,
-                to: emailextrecipients([[$class: 'DevelopersRecipientProvider']]),
+                to: emailextrecipients([[$class: 'RequesterRecipientProvider']]),
                 mimeType: 'text/html',
                 attachLog: true
             )

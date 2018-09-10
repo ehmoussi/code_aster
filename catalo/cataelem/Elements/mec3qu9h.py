@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -41,12 +41,6 @@ CCACOQU  = LocatedComponents(phys=PHY.CACOQU, type='ELEM',
 
 CCAORIE  = LocatedComponents(phys=PHY.CAORIE, type='ELEM',
     components=('ALPHA','BETA','REP',))
-
-
-CCARCRI  = LocatedComponents(phys=PHY.CARCRI, type='ELEM',
-    components=('ITECREL','MACOMP','RESCREL','THETA','ITEDEC',
-          'INTLOC','PERTURB','TOLDEBO','ITEDEBO','TSSEUIL',
-          'TSAMPL','TSRETOUR','POSTITER','LC_EXT[3]','MODECALC',))
 
 NDEPLAC  = LocatedComponents(phys=PHY.DEPL_C, type='ELNO', diff=True,
     components=(
@@ -429,7 +423,7 @@ class TemplateElement(Element):
         ),
 
         OP.FULL_MECA(te=414,
-            para_in=((SP.PCACOQU, CCACOQU), (SP.PCARCRI, CCARCRI),
+            para_in=((SP.PCACOQU, CCACOQU), (SP.PCARCRI, LC.CCARCRI),
                      (OP.FULL_MECA.PCOMPOR, LC.CCOMPOR), (OP.FULL_MECA.PCONTMR, ECONTPG),
                      (SP.PDDEPLA, DDL_MECA), (SP.PDEPLMR, DDL_MECA),
                      (SP.PDEPLPR, DDL_MECA), (SP.PGEOMER, NGEOMER),
@@ -445,7 +439,7 @@ class TemplateElement(Element):
         ),
 
         OP.FULL_MECA_ELAS(te=414,
-            para_in=((SP.PCARCRI, CCARCRI), (OP.FULL_MECA_ELAS.PCOMPOR, LC.CCOMPOR),
+            para_in=((SP.PCARCRI, LC.CCARCRI), (OP.FULL_MECA_ELAS.PCOMPOR, LC.CCOMPOR),
                      (OP.FULL_MECA_ELAS.PCONTMR, ECONTPG), (SP.PDEPLMR, DDL_MECA),
                      (SP.PDEPLPR, DDL_MECA), (SP.PGEOMER, NGEOMER),
                      (SP.PINSTMR, CTEMPSR), (SP.PINSTPR, CTEMPSR),
@@ -510,7 +504,7 @@ class TemplateElement(Element):
 
         OP.RAPH_MECA(te=414,
             para_in=((OP.RAPH_MECA.PCACO3D, CCACO3D), (SP.PCACOQU, CCACOQU),
-                     (SP.PCARCRI, CCARCRI), (OP.RAPH_MECA.PCOMPOR, LC.CCOMPOR),
+                     (SP.PCARCRI, LC.CCARCRI), (OP.RAPH_MECA.PCOMPOR, LC.CCOMPOR),
                      (OP.RAPH_MECA.PCONTMR, ECONTPG), (SP.PDDEPLA, DDL_MECA),
                      (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
                      (SP.PGEOMER, NGEOMER), (SP.PINSTMR, CTEMPSR),
@@ -573,7 +567,7 @@ class TemplateElement(Element):
         ),
 
         OP.RIGI_MECA_ELAS(te=414,
-            para_in=((SP.PCACOQU, CCACOQU), (SP.PCARCRI, CCARCRI),
+            para_in=((SP.PCACOQU, CCACOQU), (SP.PCARCRI, LC.CCARCRI),
                      (OP.RIGI_MECA_ELAS.PCOMPOR, LC.CCOMPOR), (OP.RIGI_MECA_ELAS.PCONTMR, ECONTPG),
                      (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
                      (SP.PGEOMER, NGEOMER), (SP.PINSTMR, CTEMPSR),
@@ -628,7 +622,7 @@ class TemplateElement(Element):
         ),
 
         OP.RIGI_MECA_TANG(te=414,
-            para_in=((SP.PCACOQU, CCACOQU), (SP.PCARCRI, CCARCRI),
+            para_in=((SP.PCACOQU, CCACOQU), (SP.PCARCRI, LC.CCARCRI),
                      (OP.RIGI_MECA_TANG.PCOMPOR, LC.CCOMPOR), (OP.RIGI_MECA_TANG.PCONTMR, ECONTPG),
                      (SP.PDDEPLA, DDL_MECA), (SP.PDEPLMR, DDL_MECA),
                      (SP.PDEPLPR, DDL_MECA), (SP.PGEOMER, NGEOMER),

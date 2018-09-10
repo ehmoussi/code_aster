@@ -1,0 +1,312 @@
+#!/usr/bin/env python
+# -*- coding: utf - 8 -*-
+import os, sys
+from math import sqrt
+import numpy as np
+CODE_PATH = os.path.dirname(os.path.abspath(__file__))
+"""
+calcul des valeurs de références avec comme convention de signe :
+N negatif = traction
+M negatif= tension des aciers superieurs
+"""
+c_inf = 0.04 # c
+c_sup = 0.02 # c'
+h = 0.2
+zd = 0.9*(h-c_sup)
+def check_pivot(mu_bc,mu_ab,mu_1s,mu):
+    if mu>mu_bc:
+        pivot = 'C'
+    else:
+        if mu<mu_ab:
+            pivot = 'A'
+            if mu<0.0:
+                pivot += ' entierement tendu'
+            else:
+                pivot += ' partiellement tendu'
+        else:
+            pivot = 'B'
+    return pivot
+def tranchant(Q,N,sigm_c,sigm_s,z):
+    v1 = 0.6*( 1 -fcj/250.)
+    write="v1 = %.10f\n"% v1
+    sigm_cp = N /h
+    write+="sigm_cp = %.10f\n"% sigm_cp
+    write+="(sigm_cp/sigm_c) = %.10f\n"% ((sigm_cp/sigm_c))
+    if (sigm_cp/sigm_c)>0.5:
+        alpha_cw = 2.5*(1-sigm_cp/sigm_c)
+    elif (sigm_cp/sigm_c)>0.25:
+        alpha_cw = 1.25
+    elif (sigm_cp)>0 :
+        alpha_cw = 1+sigm_cp/sigm_c
+    else:
+        alpha_cw = 1.0
+    write+="alpha_cw = %.10f\n"% alpha_cw
+    X = Q / (alpha_cw*v1*sigm_c*z)
+    write+="X = %.6f\n"% X
+    if X >= 0.3448:
+        cot = (1+sqrt(1-4*X**2))/(2*X)
+    elif X<=0.3448:
+        cot = 2.5
+    Ast = Q/(sigm_s*z*cot)
+    write+="cot = %.8f\n"% cot
+    write+="Ast = %.8f\n"% Ast
+    return write,Ast
+algoelu_fich = os.path.join(CODE_PATH,"algo_elu_enrob_EC2.csv")
+algo_elu = open(algoelu_fich, "w")
+algo_elu.write("EC2"+" ELU\n")
+#parametres
+fcj = 55
+gamma_s = 1.15
+lambd = 0.8-(fcj-50.)/400.
+eta = 1-(fcj-50.)/200.
+gamma_c = 1.5
+fe = 500.e6
+alpha_cc = 1.0
+sigm_c_els = 0.6*fcj*1e6
+sigm_s_els = 400.e6
+n = 210.e3/10.e3
+E_s = 2.1e11
+eps_b = 0.26+3.5*((90.-55.)/100)**4
+eps_a = 0.9*2.5e-2 #classe A
+alpha_ab = 3.5e-3/(3.5e-3+eps_a)
+sigm_s = fe/gamma_s
+eps_bb = sigm_s/(E_s)
+alpha_b = 3.5e-3/(3.5e-3+eps_bb)
+alpha_b = 1
+sigm_c = alpha_cc*fcj*1e6/gamma_c
+algo_elu.write("esp_bb=%.10f\n"% (eps_bb))
+
+algo_elu.write("sigm_s = %.10f\n"% sigm_s)
+algo_elu.write("sigm_c = %.10f\n"% sigm_c)
+algo_elu.write("sigm_s_els = %.10f\n"% sigm_s_els)
+algo_elu.write("sigm_c_els = %.10f\n"% sigm_c_els)
+mu_ab = lambd*alpha_ab*(1-lambd*alpha_ab/2)
+mu_bc = lambd*alpha_b*(1-lambd*alpha_b/2)
+alpha_1s = eps_b/(eps_b+sigm_s/(E_s))
+mu_1s = lambd*alpha_1s*(1-lambd*alpha_1s/2)
+algo_elu.write("alpha_ab = %.10f\n"% alpha_ab)
+algo_elu.write("alpha_b = %.10f\n"% alpha_b)
+algo_elu.write("alpha_1s = %.10f\n"% alpha_1s)
+algo_elu.write("mu_1s = %.10f\n"% mu_1s)
+algo_elu.write("mu_ab = %.10f\n"% mu_ab)
+algo_elu.write("mu_bc = %.10f\n"% mu_bc)
+algo_elu.write("esp_a= piv_a = %.10f\n"% (eps_a))
+Dref_elu = list()
+Dref_els = list()
+
+algo_elu.write("*****************************:\n")
+algo_elu.write(u"conf 1: chargement n 2\n")
+algo_elu.write("*****************************:\n")
+Nxx = -1e6 #pivot A
+algo_elu.write("Chargement Aster Nxx %.10f Mf =0\n" % -Nxx)
+algo_elu.write("M = 0 => d-c ou d_c'? a priori peu importe on mais 1/2N en haut et en bas\n")
+As = abs(Nxx)/sigm_s
+Asxs = Asxi = As / 2
+algo_elu.write("Asxi=Asxs= %.10f \n" % Asxi)
+Qx = 6e5
+Q = abs(Qx)
+text,Ast = tranchant(Q,Nxx,sigm_c,sigm_s,zd)
+algo_elu.write(text)
+Dref_elu.append([Asxi,Asxs,0,0,Ast])
+As = abs(Nxx)/sigm_s_els
+Asxs = Asxi = As / 2
+algo_elu.write("ELS : Asxi=Asxs= %.10f \n" % Asxi)
+Dref_els.append([Asxi,Asxs,0,0])
+
+algo_elu.write("*****************************:\n")
+algo_elu.write(u"conf 2: chargement n 5 \n")
+algo_elu.write("*****************************:\n")
+Mfx = -100000
+algo_elu.write("Chargement Aster N = 0 Mfx = %.10f\n" % -Mfx)
+algo_elu.write("aciers supérieur x tendu M<0 (>0 dans Aster) => d = h-c_inf\n")
+d = h-c_inf
+mu = abs(Mfx)/(d**2*sigm_c*eta)
+pivot = check_pivot(mu_bc,mu_ab,mu_1s,mu)
+algo_elu.write("pivot %s\n"% pivot)
+algo_elu.write("mub = %.10f\n"% mu)
+alpha = 1-sqrt(1-2*mu)
+algo_elu.write("alpha = %.10f\n"% alpha)
+z = d*(1-alpha/2)
+algo_elu.write("z = %.10f\n"% z)
+Asxs =  abs(Mfx)/(z*sigm_s)
+algo_elu.write("Asxs= %.10f \n" % Asxs)
+Dref_elu.append([0,Asxs,0,0,0])
+#ELS########################################
+Mfx = -Mfx
+ylim = d*(n*sigm_c_els)/(n*sigm_c_els+sigm_s_els)
+algo_elu.write("ELS :\n")
+algo_elu.write("ylim= %0.6f\n" % ylim)
+Mlim = 0.5*sigm_c_els*ylim*(d-ylim/3)
+algo_elu.write("Mlim= %.10f\n" % Mlim)
+mu = n*Mfx/(d**2 *sigm_s_els)
+algo_elu.write("mu= %.10f\n" % mu)
+coeff = [1, -3, -6*mu,+6*mu]
+sol = np.roots(coeff)
+alpha = min(abs(sol))
+algo_elu.write("alpha= %.10f\n" % alpha)
+Asxs = Mfx /(sigm_s_els*d*(1-alpha/3))
+#print Asys
+algo_elu.write("Asxs= %.10f \n" % Asxs)
+Dref_els.append([0,Asxs,0,0])
+
+algo_elu.write("*****************************:\n")
+algo_elu.write(u"conf 3: chargement n 7 \n")
+algo_elu.write("*****************************:\n")
+Mfx = -1e5
+Nxx = 1e5
+algo_elu.write("Chargement Aster Nxx = %.10f Mfy = %.10f\n" % (-Nxx,-Mfx))
+algo_elu.write("aciers supérieur tendu Mfx<0 (>0 dans Aster) => d = h-c_inf\n")
+d = h-c_inf
+M = abs(Mfx) - Nxx*(d-h/2)
+algo_elu.write("M = %.10f\n"% M)
+mu = M/(d**2*sigm_c*eta)
+algo_elu.write("mu = %.10f\n"% mu)
+pivot = check_pivot(mu_bc,mu_ab,mu_1s,mu)
+algo_elu.write("pivot %s\n"% pivot)
+alpha = 1-sqrt(1-2*mu)
+algo_elu.write("alpha = %.10f\n"% alpha)
+algo_elu.write("alpha/lambd = %.10f\n"% (alpha/lambd))
+z = d*(1-alpha/2)
+algo_elu.write("z = %.10f\n"% z)
+Asxs = M/(z*sigm_s)+Nxx/sigm_s
+algo_elu.write("Asxs= %.10f \n" % Asxs)
+Dref_elu.append([0,Asxs,0,0,0.0])
+#ELS########################################
+mu = n*M/(d**2*sigm_s_els)
+coeff = [1, -3, -6*mu,+6*mu]
+sol = np.roots(coeff)
+alpha = min(abs(sol))
+ylim = d*(n*sigm_c_els)/(n*sigm_c_els+sigm_s_els)
+algo_elu.write("ELS :\n")
+algo_elu.write("ylim= %0.6f\n" % ylim)
+Mlim = 0.5*sigm_c_els*ylim*(d-ylim/3)
+algo_elu.write("Mlim= %.10f\n" % Mlim)
+Asxs = M/(sigm_s_els*d*(1-alpha/3))+Nxx/sigm_s_els
+algo_elu.write("mu = %0.3f\n"% mu)
+algo_elu.write("alpha = %0.3f\n"% alpha)
+algo_elu.write("Asxs= %.10f \n" % Asxs)
+Dref_els.append([0,Asxs,0,0])
+
+algo_elu.write("*****************************:\n")
+algo_elu.write(u"conf 4: chargement n 8 \n")
+algo_elu.write("*****************************:\n")
+Mfx = -1e5
+Nxx = -2e6
+algo_elu.write("Chargement Aster Nxx = %.10f Mfx = %.10f\n" % (-Nxx,-Mfx))
+algo_elu.write("aciers supérieur tendu Mfx<0 (>0 dans Aster)=> d = h-c_inf\n")
+algo_elu.write("c = c_sup dans toutes les formules?\n")
+algo_elu.write("Asxs = M/((d-c)*sigm_s)-Nxx/sigm_s\n")
+algo_elu.write("Asxi = -M/((d-c)*sigm_s)\n")
+d = h-c_inf
+c = c_inf
+M = abs(Mfx) + Nxx*(d-h/2)
+mu = M/(d**2*sigm_c*eta)
+pivot = check_pivot(mu_bc,mu_ab,mu_1s,mu)
+algo_elu.write("pivot %s\n"% pivot)
+algo_elu.write("mu = %.10f\n"% mu)
+Asxs = M/((d-c)*sigm_s)-Nxx/sigm_s
+Asxi = -M/((d-c)*sigm_s)
+algo_elu.write("Asxs= %.10f \n" % Asxs)
+algo_elu.write("Asxi= %.10f \n" % Asxi)
+algo_elu.write("M = %.10f\n"% M)
+Dref_elu.append([Asxi,Asxs,0,0,0.0])
+#ELS########################################
+ylim = d*(n*sigm_c_els)/(n*sigm_c_els+sigm_s_els)
+algo_elu.write("ELS :\n")
+algo_elu.write("ylim= %0.6f\n" % ylim)
+Mlim = 0.5*sigm_c_els*ylim*(d-ylim/3)
+algo_elu.write("Mlim= %.10f\n" % Mlim)
+Asxs = M/((d-c)*sigm_s_els)-Nxx/sigm_s_els
+Asxi = -M/((d-c)*sigm_s_els)
+algo_elu.write("Asxi= %.10f \n" % Asxi)
+algo_elu.write("Asxs= %.10f \n" % Asxs)
+Dref_els.append([Asxi,Asxs,0,0])
+
+algo_elu.write("*****************************:\n")
+algo_elu.write(u"conf 5: chargement n 9 \n")
+algo_elu.write("*****************************:\n")
+Mfx = -1e5
+Mfy = 7.5e4
+algo_elu.write("Chargement Aster Mfx %.10f Mfy %.10f\n" %(-Mfx,-Mfy))
+algo_elu.write("aciers superieurs en x tendus Mfx<0 (>0 dans Aster)=> d = h-c_inf\n")
+d = h-c_inf
+mu = abs(Mfx)/(d**2*sigm_c*eta)
+pivot = check_pivot(mu_bc,mu_ab,mu_1s,mu)
+algo_elu.write("pivot %s\n"% pivot)
+alpha = 1-sqrt(1-2*mu)
+z = d*(1-alpha/2)
+Asxs = abs(Mfx)/(z*sigm_s)
+algo_elu.write("Asxs= %.10f \n" % Asxs)
+algo_elu.write("M = %.10f\n"% abs(Mfx))
+algo_elu.write("mu = %.10f\n"% mu)
+algo_elu.write("alpha = %.10f\n"% alpha)
+algo_elu.write("alpha/lambd = %.10f\n"% (alpha/lambd))
+algo_elu.write("z = %.10f\n"% z)
+algo_elu.write("aciers inférieurs en y tendus Mfy>0 (<0 dans Aster) => d = h-c_sup\n")
+d = h-c_sup
+mu = abs(Mfy)/(d**2*sigm_c*eta)
+alpha = 1-sqrt(1-2*mu)
+z = d*(1-alpha/2)
+pivot = check_pivot(mu_bc,mu_ab,mu_1s,mu)
+algo_elu.write("pivot %s\n"% pivot)
+algo_elu.write("M = %.10f\n"% Mfy)
+algo_elu.write("mu = %.10f\n"% mu)
+algo_elu.write("alpha = %.10f\n"% alpha)
+algo_elu.write("alpha/lambd = %.10f\n"% (alpha/lambd))
+algo_elu.write("z = %.10f\n"% z)
+Asyi = abs(Mfy)/(z*sigm_s)
+algo_elu.write("Asyi= %.10f \n" % Asyi)
+Dref_elu.append([0,Asxs,Asyi,0,0])
+#ELS########################################
+algo_elu.write("ELS \n")
+ylim = d*(n*sigm_c_els)/(n*sigm_c_els+sigm_s_els)
+algo_elu.write("ELS :\n")
+algo_elu.write("ylim= %0.6f\n" % ylim)
+Mlim = 0.5*sigm_c_els*ylim*(d-ylim/3)
+algo_elu.write("Mlim= %.10f\n" % Mlim)
+alpha_a = n * sigm_c_els /(n * sigm_c_els+sigm_s_els)
+mua = 0.5*alpha_a*(1-alpha_a/3)
+algo_elu.write("mua %.10f \n" % mua)
+algo_elu.write("alpha_a %.10f \n" % alpha_a)
+mu = n*abs(Mfy)/(d**2 *sigm_s_els)
+coeff = [1, -3, -6*mu,+6*mu]
+sol = np.roots(coeff)
+alpha = min(abs(sol))
+Asyi = abs(Mfy)/(sigm_s_els*d*(1-alpha/3))
+d = h-c_inf
+algo_elu.write("mu = %.10f\n"% mu)
+algo_elu.write("alpha = %.10f\n"% alpha)
+algo_elu.write("Asyi = %.10f\n"% Asyi)
+mu = n*abs(Mfx)/(d**2 *sigm_s_els)
+coeff = [1, -3, -6*mu,+6*mu]
+sol = np.roots(coeff)
+alpha = min(abs(sol))
+Asxs = abs(Mfx) /(sigm_s_els*d*(1-alpha/3))
+ylim = d*(n*sigm_c_els)/(n*sigm_c_els+sigm_s_els)
+algo_elu.write("ELS :\n")
+algo_elu.write("ylim= %0.6f\n" % ylim)
+Mlim = 0.5*sigm_c_els*ylim*(d-ylim/3)
+algo_elu.write("Mlim= %.10f\n" % Mlim)
+algo_elu.write("mu = %0.3f\n"% mu)
+algo_elu.write("alpha = %0.3f\n"% alpha)
+algo_elu.write("Asxs = %0.10f\n"% Asxs)
+Dref_els.append([0,Asxs,Asyi,0])
+algo_elu.close()
+
+csv_elu = os.path.join(CODE_PATH,"ref_elu_enrob_"+"EC2"+".csv")
+fich = open(csv_elu, "w")
+fich.write("EC2"+" ELU\n")
+fich.write("[Asxs, Asxi, Asys, Asyi, Ast]\n")
+for j,listi in enumerate(Dref_elu):
+    text = "%s,\n"% str(listi)
+    fich.write(text)
+fich.close()
+
+csv_els = os.path.join(CODE_PATH,"ref_els_enrob_"+"EC2"+".csv")
+fich = open(csv_els, "w")
+fich.write("EC2"+" ELS\n")
+fich.write("[Asxs, Asxi, Asys, Asyi]\n")
+for j,listi in enumerate(Dref_els):
+    text = "%s,\n"% str(listi)
+    fich.write(text)
+fich.close()

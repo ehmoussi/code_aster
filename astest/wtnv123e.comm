@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -46,7 +46,8 @@ LI2=DEFI_LIST_REEL(DEBUT=0.0,
                    INTERVALLE=_F(JUSQU_A=1.6E8,
                                  PAS=1.E6,),);
 
-SL = FORMULE(NOM_PARA='PCAP',VALE=' 0.99*(1.-PCAP*4.495E-6)')
+SL = FORMULE(VALE=' 0.99*(1.-PCAP*4.495E-6)',
+             NOM_PARA='PCAP',)
 SATU=CALC_FONC_INTERP(FONCTION=SL,
                       LIST_PARA=LI2,
                        NOM_PARA='PCAP',
@@ -54,7 +55,8 @@ SATU=CALC_FONC_INTERP(FONCTION=SL,
                       PROL_GAUCHE='CONSTANT',
                       INFO=2,);
 
-DSL = FORMULE(NOM_PARA='PCAP',VALE=' -4.495E-6*0.99')
+DSL = FORMULE(VALE=' -4.495E-6*0.99',
+              NOM_PARA='PCAP',)
 
 DSATU=CALC_FONC_INTERP(FONCTION=DSL,
                        LIST_PARA=LI2,

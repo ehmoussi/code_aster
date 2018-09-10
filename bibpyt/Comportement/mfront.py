@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -25,16 +25,17 @@ loi = LoiComportement(
     nom            = 'MFRONT',
     lc_type        = ('MECANIQUE',),
     doc            =   """Loi de comportement utilisateur dont l'intégration
-            est réalisée par MFront."""            ,
+            est réalisée par MFront."""              ,
     num_lc         = 58,
     nb_vari        = 0,
     nom_vari       = None,
     mc_mater       = ('UMAT',),
     modelisation   = ('3D','AXIS','D_PLAN',),
-    deformation    = ('PETIT','PETIT_REAC','GDEF_LOG','SIMO_MIEHE',),
+    deformation    = ('PETIT','PETIT_REAC','GDEF_LOG','SIMO_MIEHE','GROT_GDEP'),
     algo_inte      = ('SANS_OBJET',),
     type_matr_tang = ('PERTURBATION','VERIFICATION',),
     proprietes     = None,
     syme_matr_tang = ('Yes',),
     exte_vari      = None,
+    deform_ldc     = ('MECANIQUE',),
 )

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -337,7 +337,9 @@ def rho(X) :
         return 1.e3
     else :
         return 3.e3
-rhof = FORMULE(NOM_PARA=('X',), VALE="rho(X)" )
+rhof = FORMULE(VALE='rho(X)',
+               rho=rho,
+               NOM_PARA='X',)
 ACIE3=DEFI_MATERIAU( ELAS_FO=_F(  RHO = rhof, NU = nuf,  E = ef,))
 
 CHGEOM=CREA_CHAMP(TYPE_CHAM='NOEU_GEOM_R', OPERATION='EXTR', MAILLAGE=MAYA, NOM_CHAM='GEOMETRIE',);

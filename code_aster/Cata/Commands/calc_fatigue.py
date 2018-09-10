@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -24,6 +24,9 @@ from code_aster.Cata.Commons import *
 
 
 def calc_fatigue_prod(TYPE_CALCUL,OPTION,**args):
+  if args.get('__all__'):
+      return (cham_elem, cham_no_sdaster)
+
   if TYPE_CALCUL == "CUMUL_DOMMAGE" : return cham_elem
   if TYPE_CALCUL == "FATIGUE_MULTI" and OPTION == "DOMA_ELGA": return cham_elem
   if TYPE_CALCUL == "FATIGUE_MULTI" and OPTION == "DOMA_NOEUD": return cham_no_sdaster
@@ -59,7 +62,7 @@ CALC_FATIGUE=OPER(nom="CALC_FATIGUE",op= 151,sd_prod=calc_fatigue_prod,reentrant
                HISTOIRE        =FACT(statut='o',
                RESULTAT        =SIMP(statut='o',typ=(evol_elas,dyna_trans,
                                                    evol_noli) ),
-               EQUI_GD         =SIMP(statut='o',typ='TXM',defaut="INVA_2_SG",
+               EQUI_GD         =SIMP(statut='f',typ='TXM',defaut="INVA_2_SG",
                                  into=("INVA_2_SG",) ),
                                     ),
                            ),
@@ -81,7 +84,7 @@ CALC_FATIGUE=OPER(nom="CALC_FATIGUE",op= 151,sd_prod=calc_fatigue_prod,reentrant
              RESULTAT  =SIMP(statut='o',typ=(evol_elas, evol_noli) ),
              MODE_MECA        =SIMP(statut='o',typ=(mode_meca) ),
              NUME_MODE        =SIMP(statut='o',typ='I',min=1 ,max='**'),
-             FACT_PARTICI        =SIMP(statut='o',typ='R',min=1, max='**',defaut=1. ),
+             FACT_PARTICI        =SIMP(statut='f',typ='R',min=1, max='**',defaut=1. ),
              EQUI_GD         =SIMP(statut='f',typ='TXM',defaut="VMIS_SG",
                                  into=("VMIS_SG",) ),
            ),

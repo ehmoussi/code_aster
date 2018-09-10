@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -168,7 +168,8 @@ CALC_CHAMP(reuse = U_EPX0, RESULTAT = U_EPX0, CONTRAINTE = 'SIEF_NOEU', GROUP_MA
 nume_ordre1 =3020
 nume_ordre2 =5973
 
-ERR_RELA = FORMULE(NOM_PARA=('TENSION', 'N'), VALE='abs(TENSION-N)/TENSION')
+ERR_RELA = FORMULE(VALE='abs(TENSION-N)/TENSION',
+                   NOM_PARA=['TENSION', 'N'],)
 
 
 TABEPX01 = CREA_TABLE(RESU = (_F(RESULTAT = U_EPX0, NOM_CHAM ='SIEF_NOEU', GROUP_MA='CABLE2', NUME_ORDRE = nume_ordre1, NOM_CMP ='N'),

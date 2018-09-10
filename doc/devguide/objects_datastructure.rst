@@ -38,19 +38,46 @@
 
 
 ================================================================================
-:py:class:`~code_aster.Objects.AssemblyMatrixComplex` object
+:py:class:`~code_aster.Objects.AssemblyMatrixDisplacementComplex` object
 ================================================================================
 
-.. autoclass:: code_aster.Objects.AssemblyMatrixComplex
+.. autoclass:: code_aster.Objects.AssemblyMatrixDisplacementComplex
    :show-inheritance:
    :members:
 
 
 ================================================================================
-:py:class:`~code_aster.Objects.AssemblyMatrixDouble` object
+:py:class:`~code_aster.Objects.AssemblyMatrixDisplacementDouble` object
 ================================================================================
 
-.. autoclass:: code_aster.Objects.AssemblyMatrixDouble
+.. autoclass:: code_aster.Objects.AssemblyMatrixDisplacementDouble
+   :show-inheritance:
+   :members:
+
+
+================================================================================
+:py:class:`~code_aster.Objects.AssemblyMatrixPressureComplex` object
+================================================================================
+
+.. autoclass:: code_aster.Objects.AssemblyMatrixPressureComplex
+   :show-inheritance:
+   :members:
+
+
+================================================================================
+:py:class:`~code_aster.Objects.AssemblyMatrixPressureDouble` object
+================================================================================
+
+.. autoclass:: code_aster.Objects.AssemblyMatrixPressureDouble
+   :show-inheritance:
+   :members:
+
+
+================================================================================
+:py:class:`~code_aster.Objects.AssemblyMatrixTemperatureComplex` object
+================================================================================
+
+.. autoclass:: code_aster.Objects.AssemblyMatrixTemperatureComplex
    :show-inheritance:
    :members:
 
@@ -276,6 +303,15 @@
 ================================================================================
 
 .. autoclass:: code_aster.Objects.FieldOnNodesDouble
+   :show-inheritance:
+   :members:
+
+
+================================================================================
+:py:class:`~code_aster.Objects.FiniteElementDescriptor` object
+================================================================================
+
+.. autoclass:: code_aster.Objects.FiniteElementDescriptor
    :show-inheritance:
    :members:
 
@@ -623,10 +659,37 @@
 
 
 ================================================================================
+:py:class:`~code_aster.Objects.KinematicsAcousticLoad` object
+================================================================================
+
+.. autoclass:: code_aster.Objects.KinematicsAcousticLoad
+   :show-inheritance:
+   :members:
+
+
+================================================================================
 :py:class:`~code_aster.Objects.KinematicsLoad` object
 ================================================================================
 
 .. autoclass:: code_aster.Objects.KinematicsLoad
+   :show-inheritance:
+   :members:
+
+
+================================================================================
+:py:class:`~code_aster.Objects.KinematicsMechanicalLoad` object
+================================================================================
+
+.. autoclass:: code_aster.Objects.KinematicsMechanicalLoad
+   :show-inheritance:
+   :members:
+
+
+================================================================================
+:py:class:`~code_aster.Objects.KinematicsThermalLoad` object
+================================================================================
+
+.. autoclass:: code_aster.Objects.KinematicsThermalLoad
    :show-inheritance:
    :members:
 
@@ -663,6 +726,15 @@
 ================================================================================
 
 .. autoclass:: code_aster.Objects.ListOfFloats
+   :show-inheritance:
+   :members:
+
+
+================================================================================
+:py:class:`~code_aster.Objects.ListOfIntegers` object
+================================================================================
+
+.. autoclass:: code_aster.Objects.ListOfIntegers
    :show-inheritance:
    :members:
 

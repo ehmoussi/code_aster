@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -81,7 +81,7 @@ implicit none
     rela_plas   = compor(PLAS_NAME)
     read (compor(CREEP_NVAR),'(I16)') nvi_flua
     read (compor(CREEP_NUME),'(I16)') nume_flua
-    compor_ext(NAME) = rela_flua
+    compor_ext(RELA_NAME) = rela_flua
     write (compor_ext(NVAR),'(I16)') nvi_flua
     compor_ext(DEFO) = compor(DEFO)
     write (compor_ext(NUME),'(I16)') nume_flua

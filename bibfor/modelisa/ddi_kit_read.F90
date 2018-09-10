@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -54,7 +54,7 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: dmflua, dmplas
-    parameter  ( dmflua = 6, dmplas = 10)
+    parameter  ( dmflua = 5, dmplas = 9)
     character(len=16) :: poflua(dmflua), poplas(dmplas)
     integer :: ikit, ii, nocc
     character(len=16) :: rela_kit(2)
@@ -62,10 +62,10 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
     data poflua / 'BETON_GRANGER'      ,'BETON_GRANGER_V'    ,        &
-                  'BETON_UMLV'   ,'GLRC_DM'         ,'GLRC_DAMAGE'     ,'FLUA_PORO_BETON'/
+                  'BETON_UMLV'   ,'GLRC_DM'         ,'GLRC_DAMAGE'/
     data poplas / 'ELAS'            ,'VMIS_ISOT_TRAC'  ,'VMIS_ISOT_PUIS'  ,        &
                   'VMIS_ISOT_LINE'  ,'VMIS_CINE_LINE'  ,'ROUSS_PR'        ,        &
-                  'BETON_DOUBLE_DP' ,'ENDO_ISOT_BETON' ,'MAZARS'          ,'ENDO_PORO_BETON'/
+                  'BETON_DOUBLE_DP' ,'ENDO_ISOT_BETON' ,'MAZARS'/
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -120,10 +120,6 @@ implicit none
         if (rela_plas .ne. 'VMIS_ISOT_TRAC' .and. rela_plas .ne. 'VMIS_ISOT_LINE' .and.&
             rela_plas .ne. 'VMIS_CINE_LINE') then
             call utmess('F', 'COMPOR3_4', sk=rela_plas)
-        endif
-    else if (rela_flua.eq.'FLUA_PORO_BETON') then
-        if (rela_plas .ne. 'ENDO_PORO_BETON') then
-            call utmess('F', 'COMPOR3_7', sk=rela_plas)
         endif
     else
         call utmess('F', 'COMPOR3_6', sk=rela_flua)

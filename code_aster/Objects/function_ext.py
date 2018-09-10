@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -23,6 +23,7 @@
 ****************************************
 """
 
+import os
 import numpy as np
 
 import aster
@@ -118,15 +119,13 @@ class ExtendedFunction(injector(Function), Function):
 
     def Trace(self, FORMAT='TABLEAU', **kargs):
         """Tracé d'une fonction"""
-        if not self.accessible():
-            raise AsException("Erreur dans fonction.Trace en PAR_LOT='OUI'")
         from Utilitai.Graph import Graph
         gr = Graph()
-        gr.AjoutCourbe(Val=self.Valeurs(),
-                       Lab=[
-            self.Parametres(
-            )['NOM_PARA'], self.Parametres()['NOM_RESU']],
-            Leg=os.linesep.join(self.sdj.TITR.get()))
+        para = self.Parametres()
+        gr.AjoutCourbe(
+            Val=self.Valeurs(),
+            Lab=[para['NOM_PARA'], para['NOM_RESU']],
+            Leg=os.linesep.join(self.sdj.TITR.get() or []))
         gr.Trace(FORMAT=FORMAT, **kargs)
 
 
@@ -190,6 +189,7 @@ class ExtendedFunctionComplex(injector(FunctionComplex), FunctionComplex):
             ordo = numpy.sqrt(
                 numpy.array(self.Ordo())**2 + numpy.array(self.OrdoImg())**2)
         elif arg == 'phase':
+            from math import pi
             ordo = numpy.arctan2(
                 numpy.array(self.OrdoImg()), numpy.array(self.Ordo())) * 180. / pi
         elif arg == 'complex':
@@ -231,13 +231,11 @@ class ExtendedFunctionComplex(injector(FunctionComplex), FunctionComplex):
 
     def Trace(self, FORMAT='TABLEAU', **kargs):
         """Tracé d'une fonction"""
-        if not self.accessible():
-            raise AsException("Erreur dans fonction.Trace en PAR_LOT='OUI'")
         from Utilitai.Graph import Graph
         gr = Graph()
-        gr.AjoutCourbe(Val=self.Valeurs(),
-                       Lab=[
-            self.Parametres(
-            )['NOM_PARA'], self.Parametres()['NOM_RESU']],
-            Leg=os.linesep.join(self.sdj.TITR.get()))
+        para = self.Parametres()
+        gr.AjoutCourbe(
+            Val=self.Valeurs(),
+            Lab=[para['NOM_PARA'], para['NOM_RESU']],
+            Leg=os.linesep.join(self.sdj.TITR.get() or []))
         gr.Trace(FORMAT=FORMAT, **kargs)

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -85,8 +85,12 @@ def Deplacer(t,x):
    if ( t<= 1.0): return 0.0
    return (t-1.0)*0.5E-02
 
-FORCE = FORMULE(NOM_PARA=('INST','X',), VALE='ForceY(INST,X)' );
-DEPLA = FORMULE(NOM_PARA=('INST','X',), VALE='Deplacer(INST,X)' );
+FORCE = FORMULE(VALE='ForceY(INST,X)',
+                ForceY=ForceY,
+                NOM_PARA=['INST', 'X'],)
+DEPLA = FORMULE(VALE='Deplacer(INST,X)',
+                Deplacer=Deplacer,
+                NOM_PARA=['INST', 'X'],)
 
 CHARGE=AFFE_CHAR_MECA_F(
    MODELE=model,

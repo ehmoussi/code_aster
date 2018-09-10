@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -67,7 +67,8 @@ MAILLAGE=CREA_MAILLAGE(MAILLAGE=MAILLAG0,
     _F(NOM_GROUP_MA='N05',  NOEUD = 'N05', ),
     ),)
 
-ACCELERO = FORMULE(NOM_PARA='INST',VALE='sin((INST)*20.*2.*pi)')
+ACCELERO = FORMULE(VALE='sin((INST)*20.*2.*pi)',
+                   NOM_PARA='INST',)
  
 L_INST=DEFI_LIST_REEL(  DEBUT=0.,
                            INTERVALLE=_F(  JUSQU_A = 1.0,  PAS = 0.0001)) 
@@ -234,7 +235,8 @@ tabl_abs = CALC_SPECTRE_IPM(MAILLAGE = MAILLAGE,
 # Validation CORR_INIT : on decale le signal pour qu'il soit non nul pour t=0
 #
 
-ACCELER2 = FORMULE(NOM_PARA='INST',VALE='sin((INST+0.00001)*20.*2.*pi)')
+ACCELER2 = FORMULE(VALE='sin((INST+0.00001)*20.*2.*pi)',
+                   NOM_PARA='INST',)
  
 
 ACCE2 = CALC_FONC_INTERP( FONCTION=ACCELER2, LIST_PARA=L_INST,

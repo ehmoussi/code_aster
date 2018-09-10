@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,11 +19,12 @@
 !
 !
 interface
-    subroutine padtma(coor1, coor2, nbnott, icoupl, dmin)
+    subroutine padtma(coor1, coor2, nbnott, icoupl, dmin, no_err)
         real(kind=8) :: coor1(*)
         real(kind=8) :: coor2(*)
         integer :: nbnott(3)
         integer :: icoupl(*)
         real(kind=8) :: dmin
+        integer ,optional, intent(out) :: no_err
     end subroutine padtma
 end interface

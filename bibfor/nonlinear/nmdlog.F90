@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! aslint: disable=W1306,W1504
+!
 subroutine nmdlog(fami, option, typmod, ndim, nno,&
                   npg, iw, ivf, vff, idff,&
                   geomi, dff, compor, mult_comp, mate, lgpg,&
@@ -41,9 +42,6 @@ implicit none
 #include "blas/dcopy.h"
 #include "asterfort/Behaviour_type.h"
 !
-! aslint: disable=W1306,W1504
-!
-
 ! ----------------------------------------------------------------------
 !     BUT:  CALCUL  DES OPTIONS RIGI_MECA_*, RAPH_MECA ET FULL_MECA_*
 !           EN GRANDES DEFORMATIONS 2D (D_PLAN ET AXI) ET 3D LOG
@@ -98,7 +96,7 @@ implicit none
     real(kind=8) :: matuu(*), fint(ndim*nno)
     real(kind=8) :: geomm(3*27), geomp(3*27), fm(3, 3), fp(3, 3), deplt(3*27)
     real(kind=8) :: r, poids, elgeom(10, 27), tn(6), tp(6), deps(6)
-    real(kind=8) :: gn(3, 3), lamb(3), logl(3), rbid(1), tbid(6)
+    real(kind=8) :: gn(3, 3), lamb(3), logl(3), rbid(1)
     real(kind=8) :: def(2*ndim, nno, ndim), pff(2*ndim, nno, nno)
     real(kind=8) :: dsidep(6, 6), pk2(6), pk2m(6)
 !
@@ -124,11 +122,13 @@ implicit none
 !
     jvariexte = nint(carcri(IVARIEXTE))
 !
-!     CALCUL DES ELEMENTS GEOMETRIQUES SPECIFIQUES AU COMPORTEMENT
-!     ATTENTION DFF NON CALCULE. PB SI MONOCRISTAL
-    call lcegeo(nno, npg, iw, ivf, idff,&
-                geomi, typmod, jvariexte, ndim,&
-                deplm, depld)
+! - Compute intrinsic external state variables
+!
+    call lcegeo(nno   , npg      , ndim ,&
+                iw    , ivf      , idff ,&
+                typmod, jvariexte,&
+                geomi ,&
+                deplm , depld)
 !
 !--------------------------INITIALISATION------------------------
 !
@@ -159,9 +159,9 @@ implicit none
                     dff)
 !
         call nmepsi(ndim, nno, axi, grand, vff(1, g),&
-                    r, dff, deplm, fm, tbid)
+                    r, dff, deplm, fm)
         call nmepsi(ndim, nno, axi, grand, vff(1, g),&
-                    r, dff, deplt, fp, tbid)
+                    r, dff, deplt, fp)
 !
         call prelog(ndim, lgpg, vim(1, g), gn, lamb,&
                     logl, fm, fp, epsml, deps,&

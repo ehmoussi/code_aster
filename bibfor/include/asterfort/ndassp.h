@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,33 +15,16 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine ndassp(modele         , numedd, mate      , carele, comref    ,&
-                      ds_constitutive, lischa, ds_measure, fonact, ds_contact,&
-                      sddyna         , valinc, solalg    , veelem, veasse    ,&
-                      ldccvg         , cndonn, sdnume    , matass)
+    subroutine ndassp(ds_material, list_func_acti, ds_contact,&
+                      sddyna     , hval_veasse   , cndonn    )
         use NonLin_Datastructure_type
-        character(len=24) :: modele
-        character(len=24) :: numedd
-        character(len=24) :: mate
-        character(len=24) :: carele
-        character(len=24) :: comref
-        type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-        character(len=19) :: lischa
-        type(NL_DS_Measure), intent(inout) :: ds_measure
-        integer :: fonact(*)
+        type(NL_DS_Material), intent(in) :: ds_material
+        integer, intent(in) :: list_func_acti(*)
         type(NL_DS_Contact), intent(in) :: ds_contact
-        character(len=19) :: sddyna
-        character(len=19) :: valinc(*)
-        character(len=19) :: solalg(*)
-        character(len=19) :: veelem(*)
-        character(len=19) :: veasse(*)
-        integer :: ldccvg
-        character(len=19) :: cndonn
-        character(len=19) :: sdnume
-        character(len=19) :: matass
+        character(len=19), intent(in) :: sddyna
+        character(len=19), intent(in) :: hval_veasse(*)
+        character(len=19), intent(in) :: cndonn
     end subroutine ndassp
 end interface

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,10 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine te0543(option, nomte)
 !
-    implicit none
+implicit none
+!
 #include "jeveux.h"
 #include "asterfort/assert.h"
 #include "asterfort/elrefe_info.h"
@@ -31,7 +32,7 @@ subroutine te0543(option, nomte)
 #include "asterfort/utmess.h"
 #include "asterfort/Behaviour_type.h"
 !
-    character(len=16) :: option, nomte
+character(len=16) :: option, nomte
 ! ......................................................................
 !    - FONCTION REALISEE:  CALCUL DES COEFFICIENTS A0 ET A1
 !                          POUR LE PILOTAGE PAR CRITERE ELASTIQUE
@@ -103,12 +104,14 @@ subroutine te0543(option, nomte)
                 itab=jtab)
     lgpg = max(jtab(6),1)*jtab(7)
 !
-! - CALCUL DES ELEMENTS GEOMETRIQUES SPECIFIQUES LOIS DE COMPORTEMENT
+! - Compute intrinsic external state variables
 !
     if (compor .eq. 'BETON_DOUBLE_DP') then
         jvariexte = nint(zr(icarcr-1+IVARIEXTE))
-        call lcegeo(nno, npg, ipoids, ivf, idfde,&
-                    zr(igeom), typmod, jvariexte, ndim,&
+        call lcegeo(nno      , npg      , ndim ,&
+                    ipoids   , ivf      , idfde,&
+                    typmod   , jvariexte,&
+                    zr(igeom),&
                     zr(ideplm), zr(iddepl))
     endif
 !

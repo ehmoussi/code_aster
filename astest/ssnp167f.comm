@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -73,7 +73,9 @@ def theta(x,y):
 
 def zero_f(x,y):
     return 0. 
-zero = FORMULE(NOM_PARA=('X','Y',), VALE='zero_f(X,Y)');
+zero = FORMULE(VALE='zero_f(X,Y)',
+               zero_f=zero_f,
+               NOM_PARA=['X', 'Y'],)
     
 #=================================================
 #  Calcul des coefficients de Lame
@@ -451,40 +453,91 @@ def SIGMA_XY_2_v(x,y):
 
 # deplacement couronne externe
 
-ux1s = FORMULE(NOM_PARA=('X','Y','Z'), VALE='ux1_c(X,Y)+ux1_v(X,Y)');
+ux1s = FORMULE(VALE='ux1_c(X,Y)+ux1_v(X,Y)',
+               ux1_c=ux1_c,
+               ux1_v=ux1_v,
+               NOM_PARA=['X', 'Y', 'Z'],)
 
-uy1s = FORMULE(NOM_PARA=('X','Y','Z'), VALE='uy1_c(X,Y)+uy1_v(X,Y)');
+uy1s = FORMULE(VALE='uy1_c(X,Y)+uy1_v(X,Y)',
+               uy1_c=uy1_c,
+               uy1_v=uy1_v,
+               NOM_PARA=['X', 'Y', 'Z'],)
 
-uz1s = FORMULE(NOM_PARA=('X','Y','Z'), VALE='zero_f(X,Y)');
+uz1s = FORMULE(VALE='zero_f(X,Y)',
+               zero_f=zero_f,
+               NOM_PARA=['X', 'Y', 'Z'],)
 
 # deplacement couronne interne
 
-ux2s = FORMULE(NOM_PARA=('X','Y','Z'), VALE='ux2_c(X,Y)+ux2_v(X,Y)');
+ux2s = FORMULE(VALE='ux2_c(X,Y)+ux2_v(X,Y)',
+               ux2_c=ux2_c,
+               ux2_v=ux2_v,
+               NOM_PARA=['X', 'Y', 'Z'],)
 
-uy2s = FORMULE(NOM_PARA=('X','Y','Z'), VALE='uy2_c(X,Y)+uy2_v(X,Y)');
+uy2s = FORMULE(VALE='uy2_c(X,Y)+uy2_v(X,Y)',
+               uy2_c=uy2_c,
+               uy2_v=uy2_v,
+               NOM_PARA=['X', 'Y', 'Z'],)
 
-uz2s = FORMULE(NOM_PARA=('X','Y','Z'), VALE='zero_f(X,Y)');
+uz2s = FORMULE(VALE='zero_f(X,Y)',
+               zero_f=zero_f,
+               NOM_PARA=['X', 'Y', 'Z'],)
 
 # contraintes couronne externe
 
-SIG_XX_1=FORMULE(NOM_PARA=('X','Y','Z'), VALE='SIGMA_XX_1_c(X,Y)+SIGMA_XX_1_v(X,Y)')
-SIG_YY_1=FORMULE(NOM_PARA=('X','Y','Z'), VALE='SIGMA_YY_1_c(X,Y)+SIGMA_YY_1_v(X,Y)')
-SIG_ZZ_1=FORMULE(NOM_PARA=('X','Y','Z'), VALE='SIGMA_ZZ_1_c(X,Y)+SIGMA_ZZ_1_v(X,Y)')
-SIG_XY_1=FORMULE(NOM_PARA=('X','Y','Z'), VALE='SIGMA_XY_1_c(X,Y)+SIGMA_XY_1_v(X,Y)')
-SIG_XZ_1=FORMULE(NOM_PARA=('X','Y','Z'), VALE='zero_f(X,Y)');
-SIG_YZ_1=FORMULE(NOM_PARA=('X','Y','Z'), VALE='zero_f(X,Y)');
+SIG_XX_1 = FORMULE(VALE='SIGMA_XX_1_c(X,Y)+SIGMA_XX_1_v(X,Y)',
+                   SIGMA_XX_1_c=SIGMA_XX_1_c,
+                   SIGMA_XX_1_v=SIGMA_XX_1_v,
+                   NOM_PARA=['X', 'Y', 'Z'],)
+SIG_YY_1 = FORMULE(VALE='SIGMA_YY_1_c(X,Y)+SIGMA_YY_1_v(X,Y)',
+                   SIGMA_YY_1_c=SIGMA_YY_1_c,
+                   SIGMA_YY_1_v=SIGMA_YY_1_v,
+                   NOM_PARA=['X', 'Y', 'Z'],)
+SIG_ZZ_1 = FORMULE(VALE='SIGMA_ZZ_1_c(X,Y)+SIGMA_ZZ_1_v(X,Y)',
+                   SIGMA_ZZ_1_c=SIGMA_ZZ_1_c,
+                   SIGMA_ZZ_1_v=SIGMA_ZZ_1_v,
+                   NOM_PARA=['X', 'Y', 'Z'],)
+SIG_XY_1 = FORMULE(VALE='SIGMA_XY_1_c(X,Y)+SIGMA_XY_1_v(X,Y)',
+                   SIGMA_XY_1_c=SIGMA_XY_1_c,
+                   SIGMA_XY_1_v=SIGMA_XY_1_v,
+                   NOM_PARA=['X', 'Y', 'Z'],)
+SIG_XZ_1 = FORMULE(VALE='zero_f(X,Y)',
+                   zero_f=zero_f,
+                   NOM_PARA=['X', 'Y', 'Z'],)
+SIG_YZ_1 = FORMULE(VALE='zero_f(X,Y)',
+                   zero_f=zero_f,
+                   NOM_PARA=['X', 'Y', 'Z'],)
 
 # contraintes couronne interne
 
-SIG_XX_2=FORMULE(NOM_PARA=('X','Y','Z'), VALE='SIGMA_XX_2_c(X,Y)+SIGMA_XX_2_v(X,Y)')
-SIG_YY_2=FORMULE(NOM_PARA=('X','Y','Z'), VALE='SIGMA_YY_2_c(X,Y)+SIGMA_YY_2_v(X,Y)')
-SIG_ZZ_2=FORMULE(NOM_PARA=('X','Y','Z'), VALE='SIGMA_ZZ_2_c(X,Y)+SIGMA_ZZ_2_v(X,Y)')
-SIG_XY_2=FORMULE(NOM_PARA=('X','Y','Z'), VALE='SIGMA_XY_2_c(X,Y)+SIGMA_XY_2_v(X,Y)')
-SIG_XZ_2=FORMULE(NOM_PARA=('X','Y','Z'), VALE='zero_f(X,Y)');
-SIG_YZ_2=FORMULE(NOM_PARA=('X','Y','Z'), VALE='zero_f(X,Y)');
+SIG_XX_2 = FORMULE(VALE='SIGMA_XX_2_c(X,Y)+SIGMA_XX_2_v(X,Y)',
+                   SIGMA_XX_2_c=SIGMA_XX_2_c,
+                   SIGMA_XX_2_v=SIGMA_XX_2_v,
+                   NOM_PARA=['X', 'Y', 'Z'],)
+SIG_YY_2 = FORMULE(VALE='SIGMA_YY_2_c(X,Y)+SIGMA_YY_2_v(X,Y)',
+                   SIGMA_YY_2_c=SIGMA_YY_2_c,
+                   SIGMA_YY_2_v=SIGMA_YY_2_v,
+                   NOM_PARA=['X', 'Y', 'Z'],)
+SIG_ZZ_2 = FORMULE(VALE='SIGMA_ZZ_2_c(X,Y)+SIGMA_ZZ_2_v(X,Y)',
+                   SIGMA_ZZ_2_c=SIGMA_ZZ_2_c,
+                   SIGMA_ZZ_2_v=SIGMA_ZZ_2_v,
+                   NOM_PARA=['X', 'Y', 'Z'],)
+SIG_XY_2 = FORMULE(VALE='SIGMA_XY_2_c(X,Y)+SIGMA_XY_2_v(X,Y)',
+                   SIGMA_XY_2_c=SIGMA_XY_2_c,
+                   SIGMA_XY_2_v=SIGMA_XY_2_v,
+                   NOM_PARA=['X', 'Y', 'Z'],)
+SIG_XZ_2 = FORMULE(VALE='zero_f(X,Y)',
+                   zero_f=zero_f,
+                   NOM_PARA=['X', 'Y', 'Z'],)
+SIG_YZ_2 = FORMULE(VALE='zero_f(X,Y)',
+                   zero_f=zero_f,
+                   NOM_PARA=['X', 'Y', 'Z'],)
 
 # pression
-pression = FORMULE(NOM_PARA=('X','Y','Z'), VALE=' -press_c(X,Y)-press_v(X,Y)');
+pression = FORMULE(VALE=' -press_c(X,Y)-press_v(X,Y)',
+                   press_c=press_c,
+                   press_v=press_v,
+                   NOM_PARA=['X', 'Y', 'Z'],)
 
 #=======================================================
 # fusion des deux declarations de chargement en un seul

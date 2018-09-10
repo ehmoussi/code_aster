@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine romBaseSave(ds_empi      , nb_mode, nb_snap, mode_type, field_iden,&
                        mode_vectr_  ,&
                        mode_vectc_  ,&
@@ -32,17 +33,15 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/romModeSave.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    type(ROM_DS_Empi), intent(in) :: ds_empi
-    integer, intent(in) :: nb_mode
-    integer, intent(in) :: nb_snap
-    character(len=1), intent(in) :: mode_type
-    character(len=24), intent(in) :: field_iden
-    real(kind=8), optional, intent(in), pointer :: mode_vectr_(:)
-    complex(kind=8), optional, intent(in), pointer :: mode_vectc_(:)
-    real(kind=8), optional, intent(in), pointer :: v_mode_freq_(:)
-    integer, optional, intent(in), pointer      :: v_nume_slice_(:)
+type(ROM_DS_Empi), intent(in) :: ds_empi
+integer, intent(in) :: nb_mode
+integer, intent(in) :: nb_snap
+character(len=1), intent(in) :: mode_type
+character(len=24), intent(in) :: field_iden
+real(kind=8), optional, pointer :: mode_vectr_(:)
+complex(kind=8), optional, pointer :: mode_vectc_(:)
+real(kind=8), optional, pointer :: v_mode_freq_(:)
+integer, optional, pointer      :: v_nume_slice_(:)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -75,7 +74,7 @@ implicit none
 !
     call infniv(ifm, niv)
     if (niv .ge. 2) then
-        call utmess('I', 'ROM5_2', si = nb_mode, sk = ds_empi%base)
+        call utmess('I', 'ROM5_2', si = nb_mode)
     endif
 !
 ! - Initializations
@@ -85,11 +84,11 @@ implicit none
 !
 ! - Get parameters
 !
-    nb_equa      = ds_empi%nb_equa
-    field_name   = ds_empi%field_name
-    field_refe   = ds_empi%field_refe
     base         = ds_empi%base
-    model        = ds_empi%model
+    nb_equa      = ds_empi%ds_mode%nb_equa
+    field_name   = ds_empi%ds_mode%field_name
+    field_refe   = ds_empi%ds_mode%field_refe
+    model        = ds_empi%ds_mode%model
 !
 ! - Save modes
 !

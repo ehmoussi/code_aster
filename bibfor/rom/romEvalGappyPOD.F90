@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -39,8 +39,8 @@ implicit none
 type(ROM_DS_ParaRRC), intent(in) :: ds_para
 character(len=8), intent(in) :: result
 integer, intent(in) :: nb_store
-real(kind=8), pointer, intent(in) :: v_matr_phi(:)
-real(kind=8), pointer, intent(out) :: v_coor_redu(:)
+real(kind=8), pointer :: v_matr_phi(:)
+real(kind=8), pointer :: v_coor_redu(:)
 integer, intent(in) :: ind_dual
 !
 ! --------------------------------------------------------------------------------------------------
@@ -100,7 +100,7 @@ integer, intent(in) :: ind_dual
     if (ind_dual .eq. 0) then
         do i_store = 1, nb_store-1
             nume_store = i_store
-            call rsexch(' ', result, ds_empi%field_name,&
+            call rsexch(' ', result, ds_empi%ds_mode%field_name,&
                         nume_store, field_rom, iret)
             ASSERT(iret .eq. 0)
             call jeveuo(field_rom(1:19)//'.VALE', 'L', vr = v_field_rom)
@@ -121,7 +121,7 @@ integer, intent(in) :: ind_dual
         nb_equa_ridi =  ds_para%nb_equa_ridi
         do i_store = 1, nb_store-1
             nume_store = i_store
-            call rsexch(' ', result, ds_empi%field_name,&
+            call rsexch(' ', result, ds_empi%ds_mode%field_name,&
                         nume_store, field_rom, iret)
             ASSERT(iret .eq. 0)
             call jeveuo(field_rom(1:19)//'.VALE', 'L', vr = v_field_rom)

@@ -34,54 +34,18 @@
 /*
  * Functions based on JDC object.
  */
-void openLogicalUnitFile(const char* name, const int type, const int access)
+int openLogicalUnitFile(const char* name, const int type, const int access)
 {
     /*
      * Open and reserve a logical unit.
-     */
-    PyObject *pylu, *res;
-
-    pylu = GetJdcAttr("logical_unit");
-    res = PyObject_CallMethod(pylu, "open", "sll", name, type, access);
-    if (res == NULL) {
-        MYABORT("Error calling `LogicalUnitFile.open`.");
-    }
-
-    Py_XDECREF(res);
-    Py_XDECREF(pylu);
-    return;
-}
-
-void releaseLogicalUnitFile(const char* name)
-{
-    /*
-     * Release a logical unit.
-     */
-    PyObject *pylu, *res;
-
-    pylu = GetJdcAttr("logical_unit");
-    res = PyObject_CallMethod(pylu, "release_from_name", "s", name);
-    if (res == NULL) {
-        MYABORT("Error calling `LogicalUnitFile.release_from_name`.");
-    }
-
-    Py_XDECREF(res);
-    Py_XDECREF(pylu);
-    return;
-}
-
-int getNumberOfLogicalUnitFile(const char* name)
-{
-    /*
-     * Return the number of the logical unit associated to a filename.
      */
     PyObject *pylu, *res, *unit;
     int number;
 
     pylu = GetJdcAttr("logical_unit");
-    res = PyObject_CallMethod(pylu, "from_name", "s", name);
+    res = PyObject_CallMethod(pylu, "open", "sll", name, type, access);
     if (res == NULL) {
-        MYABORT("Error calling `LogicalUnitFile.getNumberOfLogicalUnitFile`.");
+        MYABORT("Error calling `LogicalUnitFile.open`.");
     }
     unit = PyObject_GetAttrString(res, "unit");
     if (PyInt_Check(unit)) {
@@ -90,8 +54,25 @@ int getNumberOfLogicalUnitFile(const char* name)
         number = -1;
     }
 
-    Py_XDECREF(unit);
     Py_XDECREF(res);
     Py_XDECREF(pylu);
     return number;
+}
+
+void releaseLogicalUnitFile(const int logicalUnit)
+{
+    /*
+     * Release a logical unit.
+     */
+    PyObject *pylu, *res;
+
+    pylu = GetJdcAttr("logical_unit");
+    res = PyObject_CallMethod(pylu, "release_from_number", "l", logicalUnit);
+    if (res == NULL) {
+        MYABORT("Error calling `LogicalUnitFile.release_from_number`.");
+    }
+
+    Py_XDECREF(res);
+    Py_XDECREF(pylu);
+    return;
 }

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -16,10 +16,6 @@
 # You should have received a copy of the GNU General Public License
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
-
-# person_in_charge: emmanuel.boyere at edf.fr
-#-----------------------------------------------------------------------
-#
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
 
@@ -40,7 +36,7 @@ nu = 0.3;
 
 LISTR=DEFI_LIST_REEL(DEBUT=0.,
                      INTERVALLE=_F(JUSQU_A=tfin,
-                                   PAS=(1.0 * pa),),);
+                                   PAS=pa,),);
 
 MAIL=LIRE_MAILLAGE(UNITE=20,
                    FORMAT='MED',);
@@ -74,7 +70,9 @@ GRAV=AFFE_CHAR_MECA(MODELE=MODELE,
                                  DIRECTION=(-1.,0,1,),),);
 
 
-sinom = FORMULE(VALE='sin(om*INST)', NOM_PARA='INST',);
+sinom = FORMULE(VALE='sin(om*INST)',
+                om=om,
+                NOM_PARA='INST',)
 
 
 TRANGENE=DYNA_LINE(TYPE_CALCUL='TRAN', BASE_CALCUL='GENE',
@@ -88,7 +86,7 @@ TRANGENE=DYNA_LINE(TYPE_CALCUL='TRAN', BASE_CALCUL='GENE',
                                  ),
                     EXCIT=_F(CHARGE=GRAV,
                              FONC_MULT=sinom,),
-                   
+
                     BASE_RESU = CO('MODE2'),
                     RESU_GENE = CO('TRANGEN'),
                     ENRI_STAT = 'NON',
@@ -119,17 +117,19 @@ TEST_FONCTION(VALEUR=(_F(
 
 # calcul avec correction statique
 
+pa_s10 = pa/10
+
 TRANPHY=DYNA_LINE(TYPE_CALCUL='TRAN', BASE_CALCUL='PHYS',
                     SCHEMA_TEMPS=_F(SCHEMA='NEWMARK',),
                     MODELE=MODELE,
                     CHAM_MATER=CHMAT,
                     CHARGE=BLOCAGE,
                     INCREMENT=_F(INST_FIN=tfin,
-                                 PAS=pa/10),
+                                 PAS=pa_s10),
                     EXCIT=_F(CHARGE=GRAV,
                              FONC_MULT=sinom,
                              ),
-                    ARCHIVAGE=_F(LIST_INST=LISTR, PAS_ARCH=1.E8),
+                    ARCHIVAGE=_F(LIST_INST=LISTR, PAS_ARCH=10**8),
                     )
 
 UZ3=RECU_FONCTION(RESULTAT=TRANPHY,
@@ -156,9 +156,12 @@ TEST_FONCTION(VALEUR=(_F(
                       )))
 
 # calcul avec pas adaptatif
+
+pa_s100 = pa/100
+
 LIST0 = DEFI_LIST_REEL(
                         DEBUT=0.,
-                        INTERVALLE = (_F( JUSQU_A = tfin, PAS = pa/100., ),)
+                        INTERVALLE = (_F( JUSQU_A = tfin, PAS = pa_s100, ),)
                         )
 
 sinomv =CALC_FONC_INTERP(
@@ -180,11 +183,10 @@ TRANGEN2=DYNA_LINE(TYPE_CALCUL='TRAN', BASE_CALCUL='GENE',
                                  ),
                     EXCIT=_F(CHARGE=GRAV,
                              FONC_MULT=sinomv,),
-                    
-                    ARCHIVAGE=_F(LIST_INST=LISTR, PAS_ARCH=1.E8),
-                     
+
+                    ARCHIVAGE=_F(LIST_INST=LISTR, PAS_ARCH=10**8),
+
                     ORTHO = 'OUI',
-                    
                     )
 
 
@@ -216,7 +218,7 @@ TEST_FONCTION(VALEUR=(_F(
                          VALE_CALC=2.191476390357E-04,
                        )))
 
-                       
+
 DUX34 = CALC_FONCTION(COMB=( _F(  FONCTION = UX3, COEF = 1.),
                               _F(  FONCTION = UX4, COEF = -1.)),
                       )
@@ -253,7 +255,7 @@ TEST_TABLE(CRITERE='ABSOLU',
            TABLE=MAXDUZ34,
            PRECISION = 0.005,
            )
-           
 
-                   
+
+
 FIN()

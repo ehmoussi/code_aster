@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -20,7 +20,7 @@
 !
           interface 
             subroutine pj3dtr(cortr3,corres,nutm3d,elrf3d,geom1,geom2,  &
-     &dala)
+     &dala, listInterc, nbInterc)
               character(len=16), intent(in) :: cortr3
               character(len=16), intent(in) :: corres
               integer, intent(in) :: nutm3d(10)
@@ -28,5 +28,7 @@
               real(kind=8), intent(in) :: geom1(*)
               real(kind=8), intent(in) :: geom2(*)
               real(kind=8), intent(in) :: dala
+              character(len=16), intent(in) :: listInterc
+              integer, intent(in) :: nbInterc
             end subroutine pj3dtr
           end interface 

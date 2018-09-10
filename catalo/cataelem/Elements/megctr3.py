@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -34,12 +34,6 @@ CCACOQU  = LocatedComponents(phys=PHY.CACOQU, type='ELEM',
     components=('SECT_L','ALPHA','BETA','DIST_N','CTOR',))
 
 
-CCARCRI  = LocatedComponents(phys=PHY.CARCRI, type='ELEM',
-    components=('ITECREL','MACOMP','RESCREL','THETA','ITEDEC',
-          'INTLOC','PERTURB','TOLDEBO','ITEDEBO','TSSEUIL',
-          'TSAMPL','TSRETOUR','POSTITER','LC_EXT[3]','MODECALC',
-          'ALPHA','LC_EXT2[2]',))
-
 
 NDEPLAC  = LocatedComponents(phys=PHY.DEPL_C, type='ELNO',
     components=('DX','DY','DZ','DRX','DRY',
@@ -57,7 +51,7 @@ EENERR   = LocatedComponents(phys=PHY.ENER_R, type='ELEM',
 
 CEPSINR  = LocatedComponents(phys=PHY.EPSI_R, type='ELEM',
     components=('EXX',))
-    
+
 
 CEPSINF  = LocatedComponents(phys=PHY.EPSI_F, type='ELEM',
     components=('EXX',))
@@ -102,6 +96,8 @@ EGNEUT_F = LocatedComponents(phys=PHY.NEUT_F, type='ELGA', location='RIGI',
 EGNEUT_R = LocatedComponents(phys=PHY.NEUT_R, type='ELGA', location='RIGI',
     components=('X[30]',))
 
+ENBSP_I = LocatedComponents(phys=PHY.NBSP_I, type='ELEM',
+                            components=('COQ_NCOU',))
 
 EMNEUT_R = LocatedComponents(phys=PHY.NEUT_R, type='ELGA', location='MATER',
     components=('X1',))
@@ -171,15 +167,15 @@ class MEGCTR3(Element):
                      (OP.CHAR_MECA_EPSI_R.PVARCPR, LC.ZVARCPG), ),
             para_out=((SP.PVECTUR, MVECTUR), ),
         ),
-        
+
         OP.CHAR_MECA_EPSI_F(te=430,
             para_in=((SP.PCACOQU, CCACOQU), (SP.PEPSINF, CEPSINF),
                      (SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
-                     (OP.CHAR_MECA_EPSI_F.PVARCPR, LC.ZVARCPG), 
+                     (OP.CHAR_MECA_EPSI_F.PVARCPR, LC.ZVARCPG),
                      (SP.PTEMPSR, CTEMPSR),),
             para_out=((SP.PVECTUR, MVECTUR), ),
         ),
-        
+
         OP.CHAR_MECA_HYDR_R(te=312,
                             para_in=(
                             (SP.PMATERC, LC.CMATERC), (
@@ -194,12 +190,12 @@ class MEGCTR3(Element):
                      (OP.CHAR_MECA_PESA_R.PVARCPR, LC.ZVARCPG), ),
             para_out=((SP.PVECTUR, MVECTUR), ),
         ),
-        
+
         OP.CHAR_MECA_PRES_R(te=580,
             para_in=((SP.PPRESSR, EPRESNO), ),
             para_out=((SP.PVECTUR, MVECTUR), ),
         ),
-        
+
         OP.CHAR_MECA_SECH_R(te=312,
                             para_in=(
                             (SP.PMATERC, LC.CMATERC), (
@@ -300,7 +296,7 @@ class MEGCTR3(Element):
         ),
 
         OP.FULL_MECA(te=431,
-            para_in=((SP.PCACOQU, CCACOQU), (SP.PCARCRI, CCARCRI),
+            para_in=((SP.PCACOQU, CCACOQU), (SP.PCARCRI, LC.CCARCRI),
                      (OP.FULL_MECA.PCOMPOR, LC.CCOMPOR), (OP.FULL_MECA.PCONTMR, ECONTPG),
                      (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
                      (SP.PGEOMER, NGEOMER), (SP.PINSTMR, CTEMPSR),
@@ -314,7 +310,7 @@ class MEGCTR3(Element):
         ),
 
         OP.FULL_MECA_ELAS(te=431,
-            para_in=((SP.PCACOQU, CCACOQU), (SP.PCARCRI, CCARCRI),
+            para_in=((SP.PCACOQU, CCACOQU), (SP.PCARCRI, LC.CCARCRI),
                      (OP.FULL_MECA_ELAS.PCOMPOR, LC.CCOMPOR), (OP.FULL_MECA_ELAS.PCONTMR, ECONTPG),
                      (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
                      (SP.PGEOMER, NGEOMER), (SP.PINSTMR, CTEMPSR),
@@ -388,7 +384,7 @@ class MEGCTR3(Element):
         ),
 
         OP.RAPH_MECA(te=431,
-            para_in=((SP.PCACOQU, CCACOQU), (SP.PCARCRI, CCARCRI),
+            para_in=((SP.PCACOQU, CCACOQU), (SP.PCARCRI, LC.CCARCRI),
                      (OP.RAPH_MECA.PCOMPOR, LC.CCOMPOR), (OP.RAPH_MECA.PCONTMR, ECONTPG),
                      (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
                      (SP.PGEOMER, NGEOMER), (SP.PINSTMR, CTEMPSR),
@@ -423,7 +419,7 @@ class MEGCTR3(Element):
         ),
 
         OP.RIGI_MECA_ELAS(te=431,
-            para_in=((SP.PCACOQU, CCACOQU), (SP.PCARCRI, CCARCRI),
+            para_in=((SP.PCACOQU, CCACOQU), (SP.PCARCRI, LC.CCARCRI),
                      (OP.RIGI_MECA_ELAS.PCOMPOR, LC.CCOMPOR), (OP.RIGI_MECA_ELAS.PCONTMR, ECONTPG),
                      (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
                      (SP.PGEOMER, NGEOMER), (SP.PINSTMR, CTEMPSR),
@@ -442,7 +438,7 @@ class MEGCTR3(Element):
         ),
 
         OP.RIGI_MECA_TANG(te=431,
-            para_in=((SP.PCACOQU, CCACOQU), (SP.PCARCRI, CCARCRI),
+            para_in=((SP.PCACOQU, CCACOQU), (SP.PCARCRI, LC.CCARCRI),
                      (OP.RIGI_MECA_TANG.PCOMPOR, LC.CCOMPOR), (OP.RIGI_MECA_TANG.PCONTMR, ECONTPG),
                      (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
                      (SP.PGEOMER, NGEOMER), (SP.PINSTMR, CTEMPSR),
@@ -481,7 +477,7 @@ class MEGCTR3(Element):
         ),
 
         OP.TOU_INI_ELEM(te=99,
-            para_out=((OP.TOU_INI_ELEM.PGEOM_R, LC.CGEOM3D), ),
+            para_out=((OP.TOU_INI_ELEM.PGEOM_R, LC.CGEOM3D), (OP.TOU_INI_ELEM.PNBSP_I, ENBSP_I),),
         ),
 
         OP.TOU_INI_ELGA(te=99,

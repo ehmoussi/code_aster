@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -20,11 +20,9 @@ subroutine norm_frobenius(nb, tab, norm)
 !
 implicit none
 !
-!
-!
-    integer, intent(in)       :: nb
-    real(kind=8), intent(in)  :: tab(nb)
-    real(kind=8), intent(out) :: norm
+integer, intent(in)       :: nb
+real(kind=8), intent(in)  :: tab(*)
+real(kind=8), intent(out) :: norm
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -36,7 +34,7 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    norm = 0
+    norm = 0.d0
     do i = 1, nb
         norm = norm + tab(i)**2
     enddo

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -71,7 +71,6 @@ implicit none
 ! IER = 40  : ON DEBORDE A DROITE
 !
 ! CODE RETOUR DE FOCOLI :
-! IER = 200 : INTERPOLATION DE LA FONCTION NON PERMISE
 ! IER = 210 : PARAMETRE EN DOUBLE
 ! IER = 220 : PARAMETRE ATTENDUS,PARAMETRES RECUS
 ! IER = 230 : TYPE D'INTERPOLATION DE LA FONCTION INCONNU
@@ -85,7 +84,6 @@ implicit none
 ! IER = 140 : TYPE D'INTERPOLATION SUR LES PARA DE LA NAPPE INCONNU
 ! IER = 150 : TYPE DE FONCTION NON TRAITE
 ! IER = 160 : PAS ASSEZ DE PARAMETRES
-! IER = 170 : INTERPOLATION SUR LES PARAMETRES DE LA NAPPE NON PERMISE
 ! IER = 200 : ERREUR AVEC UNE FORMULE
 !
 ! --------------------------------------------------------------------------------------------------

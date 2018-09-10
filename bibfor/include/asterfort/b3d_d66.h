@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,14 +17,14 @@
 ! --------------------------------------------------------------------
 
 !
+#include "asterf_types.h"
 interface 
-    subroutine b3d_d66(nu, sn3, d66, e0, prog1,&
+    subroutine b3d_d66(nu, sn3, d66, prog1,&
                        comp)
         real(kind=8) :: nu
         real(kind=8) :: sn3(3)
         real(kind=8) :: d66(6, 6)
-        real(kind=8) :: e0
-        logical :: prog1
-        logical :: comp
+        aster_logical :: prog1
+        aster_logical :: comp
     end subroutine b3d_d66
-end interface 
+end interface

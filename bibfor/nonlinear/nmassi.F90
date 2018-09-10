@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,137 +15,99 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmassi(modele, numedd, lischa, fonact, sddyna,&
-                  valinc, veelem, veasse, cndonn, matass)
-!
 ! person_in_charge: mickael.abbas at edf.fr
 !
-    implicit none
+subroutine nmassi(list_func_acti, sddyna, hval_veasse, cndonn)
+!
+use NonLin_Datastructure_type
+!
+implicit none
+!
 #include "asterf_types.h"
-#include "jeveux.h"
 #include "asterfort/assert.h"
 #include "asterfort/infdbg.h"
 #include "asterfort/isfonc.h"
-#include "asterfort/jedema.h"
-#include "asterfort/jemarq.h"
 #include "asterfort/ndynlo.h"
 #include "asterfort/nmacfi.h"
 #include "asterfort/nmacva.h"
-#include "asterfort/nmbudi.h"
-#include "asterfort/nmchex.h"
+#include "asterfort/nmdebg.h"
 #include "asterfort/utmess.h"
-#include "asterfort/vtaxpy.h"
-    integer :: fonact(*)
-    character(len=19) :: sddyna, lischa
-    character(len=24) :: numedd, modele
-    character(len=19) :: valinc(*)
-    character(len=19) :: veasse(*), veelem(*)
-    character(len=19) :: cndonn, matass
+#include "asterfort/nonlinDSVectCombCompute.h"
+#include "asterfort/nonlinDSVectCombAddHat.h"
+#include "asterfort/nonlinDSVectCombInit.h"
+#include "asterfort/nonlinDSVectCombAddAny.h"
 !
-! ----------------------------------------------------------------------
+integer, intent(in) :: list_func_acti(*)
+character(len=19), intent(in) :: sddyna
+character(len=19), intent(in) :: hval_veasse(*)
+character(len=19), intent(in) :: cndonn
 !
-! ROUTINE MECA_NON_LINE (ALGORITHME)
+! --------------------------------------------------------------------------------------------------
 !
-! CALCUL DU SECOND MEMBRE POUR LE CALCUL DE L'ACCELERATION INITIALE
+! MECA_NON_LINE - Algorithm
 !
-! ----------------------------------------------------------------------
+! Evaluate second member for initial acceleration
 !
+! --------------------------------------------------------------------------------------------------
 !
-! IN  MODELE : NOM DU MODELE
-! IN  NUMEDD : NOM DE LA NUMEROTATION
-! IN  LISCHA : LISTE DES CHARGES
-! IN  FONACT : FONCTIONNALITES ACTIVEES
-! IN  SDDYNA : SD DYNAMIQUE
-! IN  VEELEM : VARIABLE CHAPEAU POUR NOM DES VECT_ELEM
-! IN  VEASSE : VARIABLE CHAPEAU POUR NOM DES VECT_ASSE
-! IN  VALINC : VARIABLE CHAPEAU POUR INCREMENTS VARIABLES
-! OUT CNDONN : SECOND MEMBRE CALCULE
-! IN  MATASS : SD MATRICE ASSEMBLEE
+! In  list_func_acti   : list of active functionnalities
+! In  sddyna           : datastructure for dynamic
+! In  hval_veasse      : hat-variable for vectors (node fields)
+! In  cndonn           : name of nodal field for "given" forces
 !
-!
-!
+! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    integer :: i, nbvec, nbcoef
-    character(len=19) :: vebudi
     character(len=19) :: cnffdo, cndfdo, cnfvdo
-    parameter    (nbcoef=8)
-    real(kind=8) :: coef(nbcoef)
-    character(len=19) :: vect(nbcoef)
-    character(len=19) :: cnfnod, cnbudi, depmoi
-    aster_logical :: londe, llapl
+    aster_logical :: l_wave, l_lapl
+    type(NL_DS_VectComb) :: ds_vectcomb
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
-    call jemarq()
-    call infdbg('MECA_NON_LINE', ifm, niv)
-!
-! --- AFFICHAGE
-!
+    call infdbg('MECANONLINE', ifm, niv)
     if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE> ...... CALCUL SECOND MEMBRE'
+        call utmess('I', 'MECANONLINE11_17')
     endif
 !
-! --- FONCTIONNALITES ACTIVEES
+! - Active functionnalities
 !
-    londe = ndynlo(sddyna,'ONDE_PLANE')
-    llapl = isfonc(fonact,'LAPLACE')
-    if (londe .or. llapl) then
+    l_wave = ndynlo(sddyna,'ONDE_PLANE')
+    l_lapl = isfonc(list_func_acti,'LAPLACE')
+    if (l_wave .or. l_lapl) then
         call utmess('A', 'MECANONLINE_23')
     endif
 !
-! --- INITIALISATIONS
+! - Initializations
 !
+    call nonlinDSVectCombInit(ds_vectcomb)
     cnffdo = '&&CNCHAR.FFDO'
     cndfdo = '&&CNCHAR.DFDO'
     cnfvdo = '&&CNCHAR.FVDO'
 !
-! --- DECOMPACTION DES VARIABLES CHAPEAUX
+! - Get Dirichlet boundary conditions - B.U
 !
-    call nmchex(valinc, 'VALINC', 'DEPMOI', depmoi)
+    call nonlinDSVectCombAddHat(hval_veasse, 'CNBUDI', -1.d0, ds_vectcomb)
 !
-! --- CALCUL DU VECTEUR DES FORCES FIXES
+! - Get Neumann and Dirichlet loads
 !
-    call nmacfi(fonact, veasse, cnffdo, cndfdo)
+    call nmacfi(list_func_acti, hval_veasse, cnffdo, cndfdo)
+    call nonlinDSVectCombAddAny(cndfdo, +1.d0, ds_vectcomb)
+    call nonlinDSVectCombAddAny(cnffdo, +1.d0, ds_vectcomb)
 !
-! --- CALCUL DU VECTEUR DES FORCES VARIABLES
+! - Get variables loads
 !
-    call nmacva(veasse, cnfvdo)
+    call nmacva(hval_veasse, cnfvdo)
+    call nonlinDSVectCombAddAny(cnfvdo, +1.d0, ds_vectcomb)
 !
-! --- FORCES NODALES
+! - Add internal forces to second member
 !
-    call nmchex(veasse, 'VEASSE', 'CNFNOD', cnfnod)
+    call nonlinDSVectCombAddHat(hval_veasse, 'CNFNOD', -1.d0, ds_vectcomb)
 !
-! --- CONDITIONS DE DIRICHLET B.U
+! - Second member (standard)
 !
-    call nmchex(veasse, 'VEASSE', 'CNBUDI', cnbudi)
-    call nmchex(veelem, 'VEELEM', 'CNBUDI', vebudi)
-    call nmbudi(modele, numedd, lischa, depmoi, vebudi,&
-                cnbudi, matass)
-!
-! --- VALEURS POUR SOMME DES FORCES
-!
-    nbvec = 5
-    coef(1) = 1.d0
-    coef(2) = 1.d0
-    coef(3) = -1.d0
-    coef(4) = -1.d0
-    coef(5) = 1.d0
-    vect(1) = cnffdo
-    vect(2) = cnfvdo
-    vect(3) = cnfnod
-    vect(4) = cnbudi
-    vect(5) = cndfdo
-!
-! --- FORCES DONNEES
-!
-    if (nbvec .gt. nbcoef) then
-        ASSERT(.false.)
+    call nonlinDSVectCombCompute(ds_vectcomb, cndonn)
+    if (niv .ge. 2) then
+        call nmdebg('VECT', cndonn, 6)
     endif
-    do 10 i = 1, nbvec
-        call vtaxpy(coef(i), vect(i), cndonn)
- 10 end do
 !
-    call jedema()
 end subroutine

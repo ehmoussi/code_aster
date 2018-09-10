@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! aslint: disable=W1306,W1504
+! person_in_charge: samuel.geniaut at edf.fr
+!
 subroutine xxnmpl(elrefp, elrese, ndim, coorse, igeom,&
                   he, nfh, ddlc, ddlm, nfe,&
                   instam, instap, ideplp, sigm, vip,&
@@ -24,8 +26,8 @@ subroutine xxnmpl(elrefp, elrese, ndim, coorse, igeom,&
                   lsn, lst, idecpg, sig, vi,&
                   matuu, ivectu, codret, nfiss, heavn, jstno)
 !
-! aslint: disable=W1306,W1504
-    implicit none
+implicit none
+!
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterfort/assert.h"
@@ -47,20 +49,18 @@ subroutine xxnmpl(elrefp, elrese, ndim, coorse, igeom,&
 #include "asterfort/xnbddl.h"
 #include "asterfort/iselli.h"
 #include "asterfort/Behaviour_type.h"
-    integer :: ndim, igeom, imate, lgpg, codret, nnop, npg
-    integer :: nfh, ddlc, ddlm, nfe, idepl, ivectu, ideplp, jvariexte
-    integer :: nfiss, heavn(nnop, 5), idecpg
-    integer :: jstno
-    character(len=8) :: elrefp, typmod(*)
-    character(len=8) :: elrese
-    character(len=16) :: option, compor(4)
-    real(kind=8) :: basloc(3*ndim*nnop), carcri(*), he(nfiss)
-    real(kind=8) :: lsn(nnop), lst(nnop), coorse(*)
-    real(kind=8) :: vi(lgpg, npg), vip(lgpg, npg), sig(2*ndim, npg), matuu(*)
-    real(kind=8) :: instam, instap, sigm(2*ndim, npg), sign(6)
 !
-! person_in_charge: samuel.geniaut at edf.fr
-!
+integer :: ndim, igeom, imate, lgpg, codret, nnop, npg
+integer :: nfh, ddlc, ddlm, nfe, idepl, ivectu, ideplp, jvariexte
+integer :: nfiss, heavn(nnop, 5), idecpg
+integer :: jstno
+character(len=8) :: elrefp, typmod(*)
+character(len=8) :: elrese
+character(len=16) :: option, compor(4)
+real(kind=8) :: basloc(3*ndim*nnop), carcri(*), he(nfiss)
+real(kind=8) :: lsn(nnop), lst(nnop), coorse(*)
+real(kind=8) :: vi(lgpg, npg), vip(lgpg, npg), sig(2*ndim, npg), matuu(*)
+real(kind=8) :: instam, instap, sigm(2*ndim, npg), sign(6)
 !.......................................................................
 !
 !     BUT:  CALCUL  DES OPTIONS RIGI_MECA_TANG, RAPH_MECA ET FULL_MECA
@@ -106,7 +106,7 @@ subroutine xxnmpl(elrefp, elrese, ndim, coorse, igeom,&
     real(kind=8) :: rbid33(3, 3), rbid1(1)
     real(kind=8) :: dfdi(nnop, ndim), pff(6, nnop, nnop)
     real(kind=8) :: def(6, nnop, ndim*(1+nfh+nfe*ndim)), r
-    real(kind=8) :: elgeom(10, 27), deplb1(3, 27), deplb2(3, 27)
+    real(kind=8) :: elgeom(10, 27)
     real(kind=8) :: fk(27,3,3), dkdgl(27,3,3,3), ka, mu
     aster_logical :: grdepl, axi, cplan
 !
@@ -146,10 +146,12 @@ subroutine xxnmpl(elrefp, elrese, ndim, coorse, igeom,&
 !
     jvariexte = nint(carcri(IVARIEXTE))
 !
-! - CALCUL DES ELEMENTS GEOMETRIQUES SPECIFIQUES LOIS DE COMPORTEMENT
-    call lcegeo(nno, npg, ipoids, ivf, idfde,&
-                zr(igeom), typmod, jvariexte, ndim,&
-                deplb1, deplb2)
+! - Compute intrinsic external state variables
+!
+    call lcegeo(nno      , npg      , ndim ,&
+                ipoids   , ivf      , idfde,&
+                typmod   , jvariexte,&
+                zr(igeom))
 !
     do n = 1, nnop
         call indent(n, ddls, ddlm, nnops, dec(n))

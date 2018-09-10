@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -24,6 +24,7 @@ subroutine rc32ac(lfat, lefat)
 #include "asterfort/wkvect.h"
 #include "asterfort/rc32pmb.h"
 #include "asterfort/rc32sn.h"
+#include "asterfort/rc32s0.h"
 #include "asterfort/rc32sp.h"
 #include "asterfort/rc32sa.h"
 #include "asterfort/rc32fact.h"
@@ -41,7 +42,7 @@ subroutine rc32ac(lfat, lefat)
 !     ------------------------------------------------------------------
     integer :: nb, ndim, jresu, iocc, im, jmax, ns, jresus, n1, i, jcombi
     integer :: iocc1, iocc2, jresucomb, jresucombs, jvalin, nbsscyc, nbid
-    integer :: kk
+    integer :: kk, jsnseis, jspseis, jinfo, numsit1, numsit2
     real(kind=8) :: pm, pb, pmpb, pmmax, pbmax, pmpbmax, pms, pbs, pmpbs
     real(kind=8) :: snmax, sn, sns, instsn(4), instsns(4), snet, snets
     real(kind=8) :: snetmax, sigmoypres, siprmoymax, snthmax, snther, sbid
@@ -79,6 +80,9 @@ subroutine rc32ac(lfat, lefat)
     call getfac('SITUATION', nb)
 !-- le séisme est-il pris en compte
     call getfac('SEISME', ns)
+!
+!-- repérer une situationpar son numéro dans le .mess
+    call jeveuo('&&RC3200.SITU_INFOI', 'L', jinfo)
 !
 !-- les grandeurs sont calculées à l'origine et à l'extrémité du segment
     do 10 im = 1,2
@@ -122,7 +126,24 @@ subroutine rc32ac(lfat, lefat)
 26        continue 
       endif
 !
+!---- Calcul du séisme (contraintes linéarisées et totales) une seule fois
+!
+      if(ns .ne. 0 .and. .not. ze200) then
+          call wkvect('&&RC3200.SNSEISME.'//lieu(im), 'V V R', 72, jsnseis)   
+          call rc32s0('SNSN', lieu(im), zr(jsnseis)) 
+      endif
+      if(option .eq. 'FATIGUE' .or. option .eq. 'EFAT') then
+        if(ns .ne. 0 .and. .not. ze200) then
+          call wkvect('&&RC3200.SPSEISME.'//lieu(im), 'V V R', 72, jspseis)   
+          call rc32s0('SPSP', lieu(im), zr(jspseis)) 
+        endif
+      endif
+!
       do 30 iocc = 1, nb , 1
+!
+        numsit1 = zi(jinfo+27*(iocc-1))
+        if (im .eq. 1) write(*,210) numsit1
+        if (im .eq. 2) write(*,211) numsit1
 !
 !------ Calcul du PM, PB et PMPB
         if(option .eq. 'PM_PB') then
@@ -171,6 +192,7 @@ subroutine rc32ac(lfat, lefat)
             call rc32sn(ze200, lieu(im), iocc, 0, 0, sn, instsn,&
                         snet, sigmoypres, snther, sp3, spmeca3)
             sn = sn*ktsn
+            write(*,*)'SN=',sn
             snet = snet*ktsn
             zr(jresu+121*(iocc-1)+3)=sn
             zr(jresu+121*(iocc-1)+4)=instsn(1)
@@ -189,6 +211,7 @@ subroutine rc32ac(lfat, lefat)
               call rc32sn(ze200, lieu(im), iocc, 0, ns, sns, instsns,&
                           snets, sbid, sbid, sp3s, spmeca3s)
               sns = ktsn*sns
+              write(*,*)'SN=',sns
               snets = ktsn*snets
               zr(jresus+121*(iocc-1)+3)=sns
               zr(jresus+121*(iocc-1)+4)=instsns(1)
@@ -220,6 +243,7 @@ subroutine rc32ac(lfat, lefat)
             call rc32sp(ze200, lieu(im), iocc, 0, 0,&
                         sp, spmeca, instsp, nbsscyc, spss)
             sp(1) = ktsp*(sp(1)+sp3)
+            write(*,*)'SP=',sp(1)
             spmeca(1) = ktsp*(spmeca(1)+spmeca3)
             zr(jresu+121*(iocc-1)+11)=sp(1)
             zr(jresu+121*(iocc-1)+12)=instsp(1)
@@ -265,6 +289,7 @@ subroutine rc32ac(lfat, lefat)
               call rc32sp(ze200, lieu(im), iocc, 0, ns,&
                           sps, spmecas, instsps, nbid, spssbid)
               sps(1) = ktsp*(sps(1)+sp3s)
+              write(*,*)'SPS=',sps(1)
               spmecas(1) = ktsp*(spmecas(1)+spmeca3s)
               zr(jresus+121*(iocc-1)+11)=sps(1)
               zr(jresus+121*(iocc-1)+12)=instsps(1)
@@ -344,9 +369,14 @@ subroutine rc32ac(lfat, lefat)
               if(zi(jcombi+nb*(iocc1-1)+iocc2-1) .ne. 0) then
 !
 !---------------- Calcul de SN(P,Q), SN*(P,Q) et leurs instants sans séisme
+                  numsit1 = zi(jinfo+27*(iocc1-1))
+                  numsit2 = zi(jinfo+27*(iocc2-1))
+                  if (im .eq. 1) write(*,110) numsit1, numsit2
+                  if (im .eq. 2) write(*,111) numsit1, numsit2
                   call rc32sn(ze200, lieu(im), iocc1, iocc2, 0, sn, instsn,&
                               snet, sbid, snther, sp3, spmeca3) 
                   sn = ktsn*sn
+                  write(*,*)'SN=',sn
                   snet = ktsn*snet
                   zr(jresucomb+20*nb*(iocc1-1)+20*(iocc2-1)-1+1)=sn
                   zr(jresucomb+20*nb*(iocc1-1)+20*(iocc2-1)-1+2)=instsn(1)
@@ -400,61 +430,63 @@ subroutine rc32ac(lfat, lefat)
 !
 !---------------- Calcul de SN, SN* et leurs instants avec séisme
                   if(ns .ne. 0) then
-                      call rc32sn(ze200, lieu(im), iocc1, iocc2, ns, sns, instsns,&
+                    call rc32sn(ze200, lieu(im), iocc1, iocc2, ns, sns, instsns,&
                                   snets, sbid, snthers, sp3s, spmeca3s)
-                      sns = ktsn*sns
-                      snets = ktsn*snets    
-                      zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+1)=sns
-                      zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+2)=instsns(1)
-                      zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+3)=instsns(2)
-                      zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+4)=snets
-                      zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+5)=instsns(3)
-                      zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+6)=instsns(4)
-                      zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+7)=max(sigmoypresp, sigmoypresq)
-                      zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+8)=snthers
+                    sns = ktsn*sns
+                    write(*,*)'SNS=',sns
+                    snets = ktsn*snets    
+                    zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+1)=sns
+                    zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+2)=instsns(1)
+                    zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+3)=instsns(2)
+                    zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+4)=snets
+                    zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+5)=instsns(3)
+                    zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+6)=instsns(4)
+                    zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+7)=max(sigmoypresp, sigmoypresq)
+                    zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+8)=snthers
 !
-                      snps = zr(jresus+121*(iocc1-1)+3)
-                      snqs = zr(jresus+121*(iocc2-1)+3)
-                      sntherps = zr(jresus+121*(iocc1-1)+10)
-                      sntherqs = zr(jresus+121*(iocc2-1)+10)
-                      if (snps .ge. sns) then
-                          sns = snps
-                          zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+1)=sns
-                          zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+2)=zr(jresus+121*(iocc1-1)+4)
-                          zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+3)=zr(jresus+121*(iocc1-1)+5)
-                          zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+8)=sntherps
-                      endif
-                      if (snqs .ge. sns) then
-                          sns = snqs
-                          zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+1)=sns
-                          zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+2)=zr(jresus+121*(iocc2-1)+4)
-                          zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+3)=zr(jresus+121*(iocc2-1)+5)
-                          zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+8)=sntherqs
-                      endif
-                      snmax = max (snmax, sns)
-                      snthmax=max(zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+8), snthmax)
+                    snps = zr(jresus+121*(iocc1-1)+3)
+                    snqs = zr(jresus+121*(iocc2-1)+3)
+                    sntherps = zr(jresus+121*(iocc1-1)+10)
+                    sntherqs = zr(jresus+121*(iocc2-1)+10)
+                    if (snps .ge. sns) then
+                        sns = snps
+                        zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+1)=sns
+                        zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+2)=zr(jresus+121*(iocc1-1)+4)
+                        zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+3)=zr(jresus+121*(iocc1-1)+5)
+                        zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+8)=sntherps
+                    endif
+                    if (snqs .ge. sns) then
+                        sns = snqs
+                        zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+1)=sns
+                        zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+2)=zr(jresus+121*(iocc2-1)+4)
+                        zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+3)=zr(jresus+121*(iocc2-1)+5)
+                        zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+8)=sntherqs
+                    endif
+                    snmax = max (snmax, sns)
+                    snthmax=max(zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+8), snthmax)
 !
-                      snetps = zr(jresus+121*(iocc1-1)+6)
-                      snetqs = zr(jresus+121*(iocc2-1)+6)
-                      if (snetps .ge. snets) then
-                          snets = snetps
-                          zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+4)=snets
-                          zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+5)=zr(jresus+121*(iocc1-1)+7)
-                          zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+6)=zr(jresus+121*(iocc1-1)+8)
-                      endif
-                      if (snetqs .ge. snets) then
-                          snets = snetqs
-                          zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+4)=snets
-                          zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+5)=zr(jresus+121*(iocc2-1)+7)
-                          zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+6)=zr(jresus+121*(iocc2-1)+8)
-                      endif
-                      snetmax=max(snets, snetmax)
+                    snetps = zr(jresus+121*(iocc1-1)+6)
+                    snetqs = zr(jresus+121*(iocc2-1)+6)
+                    if (snetps .ge. snets) then
+                        snets = snetps
+                        zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+4)=snets
+                        zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+5)=zr(jresus+121*(iocc1-1)+7)
+                        zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+6)=zr(jresus+121*(iocc1-1)+8)
+                    endif
+                    if (snetqs .ge. snets) then
+                        snets = snetqs
+                        zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+4)=snets
+                        zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+5)=zr(jresus+121*(iocc2-1)+7)
+                        zr(jresucombs+20*nb*(iocc1-1)+20*(iocc2-1)-1+6)=zr(jresus+121*(iocc2-1)+8)
+                    endif
+                    snetmax=max(snets, snetmax)
                   endif
 !
 !---------------- Calcul de SP1(P,Q), SP2(P,Q) et leurs instants sans séisme
                   call rc32sp(ze200, lieu(im), iocc1, iocc2, 0,&
                               sp, spmeca, instsp, nbid, spssbid)
                   sp(1) = ktsp*(sp(1)+sp3)
+                  write(*,*)'SP=',sp(1)
                   spmeca(1) = ktsp*(spmeca(1)+spmeca3)
                   sp(2) = ktsp*(sp(2)+sp3)
                   spmeca(2) = ktsp*(spmeca(2)+spmeca3)
@@ -551,6 +583,7 @@ subroutine rc32ac(lfat, lefat)
                     call rc32sp(ze200, lieu(im), iocc1, iocc2, ns,&
                                 sps, spmecas, instsps, nbid, spssbid)
                     sps(1) = ktsp*(sps(1)+sp3s)
+                    write(*,*)'SPS=',sps(1)
                     spmecas(1) = ktsp*(spmecas(1)+spmeca3s)
                     sps(2) = ktsp*(sps(2)+sp3s)
                     spmecas(2) = ktsp*(spmecas(2)+spmeca3s)
@@ -676,6 +709,11 @@ subroutine rc32ac(lfat, lefat)
       endif
 !
 10  continue
+!
+    110 format (1p,' ORIGINE, COMBINAISON DES SITUATIONS',i4,3x,i4)
+    111 format (1p,' EXTREMITE, COMBINAISON DES SITUATIONS',i4,3x,i4)
+    210 format (1p,' ORIGINE, SITUATION NUMERO',i4)
+    211 format (1p,' EXTREMITE, SITUATION NUMERO',i4)
 !
     call jedema()
 !

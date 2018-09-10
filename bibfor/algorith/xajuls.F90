@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -72,7 +72,7 @@ subroutine xajuls(noma, nbma, cnslt, cnsln, jconx1,&
     real(kind=8), pointer :: ltsv(:) => null()
     aster_logical :: ajust
 !
-    parameter     (fit_to_vertex=(/1.d-6,1d-6/), crlst=1.d-6, penal=0.01)
+    parameter     (fit_to_vertex=(/1.d-6,1d-6/), crlst=1.d-6, penal=0.05)
 !
 !-----------------------------------------------------------------------
 !     DEBUT
@@ -232,10 +232,6 @@ subroutine xajuls(noma, nbma, cnslt, cnsln, jconx1,&
                         lnsv((nunom-1)+1)=0.d0
                         clsm=clsm+1
                         ajust = .true.
-                    else
-                        lnsv((nunom-1)+1)=0.d0
-                        clsm=clsm+1
-                        ajust = .true.
                     endif
                 else if ((lsna*lsnm).lt.0.d0.and.(lsnb*lsnm).lt.0.d0) then
                     d1=lsna/lsnmax
@@ -254,15 +250,6 @@ subroutine xajuls(noma, nbma, cnslt, cnsln, jconx1,&
                         endif
                         clsm=clsm+2
                         ajust = .true.
-                    else
-                        lnsv((nunom-1)+1)=0.d0
-                        if (d1 .gt. d2) then
-                           lnsv((nunob-1)+1)=0.d0
-                        else
-                           lnsv((nunoa-1)+1)=0.d0
-                        endif
-                        clsm=clsm+2
-                        ajust = .true.
                     endif
                 else if (lsna.eq.0.d0.and.(lsnb*lsnm).lt.0.d0) then
                     d3=lsnm/lsnmax
@@ -270,10 +257,6 @@ subroutine xajuls(noma, nbma, cnslt, cnsln, jconx1,&
 !             REAJUSTEMENT A ZERO DE LSNM LORSQUE LA LSN EST NULLE EN A ET
 !             CHANGE DE SIGNE SUR L'ARETE ET QUE LES LSN SONT INFERIEURES
 !             A 1% LSNMAX
-                        lnsv((nunom-1)+1)=0.d0
-                        clsm=clsm+1
-                        ajust = .true.
-                    else
                         lnsv((nunom-1)+1)=0.d0
                         clsm=clsm+1
                         ajust = .true.
@@ -287,10 +270,6 @@ subroutine xajuls(noma, nbma, cnslt, cnsln, jconx1,&
                         lnsv((nunom-1)+1)=0.d0
                         clsm=clsm+1
                         ajust = .true.
-                    else
-                        lnsv((nunom-1)+1)=0.d0
-                        clsm=clsm+1
-                        ajust = .true.
                     endif
                else if ((lsna*lsnb).gt.0.d0.and.lsnm.eq.0.d0) then
                     d1=lsna/lsnmax
@@ -299,14 +278,6 @@ subroutine xajuls(noma, nbma, cnslt, cnsln, jconx1,&
 !             REAJUSTEMENT A ZERO D'UNE LSN D'EXTREMITE LORSQUE LA LSN
 !             EST NULLE EN M ET DE MEME SIGNE AUX EXTREMITES DE L'ARETE ET
 !             QUE LES LSN SONT INFERIEURES A 1% LSNMAX
-                        if (d1 .gt. d2) then
-                           lnsv((nunob-1)+1)=0.d0
-                        else
-                           lnsv((nunoa-1)+1)=0.d0
-                        endif
-                        clsm=clsm+1
-                        ajust = .true.
-                    else
                         if (d1 .gt. d2) then
                            lnsv((nunob-1)+1)=0.d0
                         else
@@ -337,10 +308,6 @@ subroutine xajuls(noma, nbma, cnslt, cnsln, jconx1,&
                         ltsv((nunom-1)+1)=0.d0
                         clsm=clsm+1
                         ajust = .true.
-                    else
-                        ltsv((nunom-1)+1)=0.d0
-                        clsm=clsm+1
-                        ajust = .true.
                     endif
                 else if ((lsta*lstm).lt.0.d0.and.(lstb*lstm).lt.0.d0) then
                     d1=lsta/lstmax
@@ -351,12 +318,6 @@ subroutine xajuls(noma, nbma, cnslt, cnsln, jconx1,&
 !             REAJUSTEMENT A ZERO DE LSNM ET D'UNE LSNM D'EXTREMITE LORSQUE
 !             LA LSN CHANGE DEUX FOIS DE SIGNE SUR L'ARETE ET QUE LES LSN
 !             SONT INFERIEURES A 1% LSNMAX
-                        ltsv((nunom-1)+1)=0.d0
-                        ltsv((nunob-1)+1)=0.d0
-                        ltsv((nunoa-1)+1)=0.d0
-                        clsm=clsm+3
-                        ajust = .true.
-                    else
                         ltsv((nunom-1)+1)=0.d0
                         ltsv((nunob-1)+1)=0.d0
                         ltsv((nunoa-1)+1)=0.d0
@@ -374,11 +335,6 @@ subroutine xajuls(noma, nbma, cnslt, cnsln, jconx1,&
                         ltsv((nunob-1)+1)=0.d0
                         clsm=clsm+2
                         ajust = .true.
-                    else
-                        ltsv((nunom-1)+1)=0.d0
-                        ltsv((nunob-1)+1)=0.d0
-                        clsm=clsm+2
-                        ajust = .true.
                     endif
                 else if ((lsta*lstm).lt.0.d0.and.lstb.eq.0.d0) then
                     d1=lstm/lstmax
@@ -391,11 +347,6 @@ subroutine xajuls(noma, nbma, cnslt, cnsln, jconx1,&
                         ltsv((nunoa-1)+1)=0.d0
                         clsm=clsm+2
                         ajust = .true.
-                    else
-                        ltsv((nunom-1)+1)=0.d0
-                        ltsv((nunoa-1)+1)=0.d0
-                        clsm=clsm+2
-                        ajust = .true.
                     endif
                else if ((lsta*lstb).gt.0.d0.and.lstm.eq.0.d0) then
                     d1=lsta/lstmax
@@ -404,11 +355,6 @@ subroutine xajuls(noma, nbma, cnslt, cnsln, jconx1,&
 !             REAJUSTEMENT A ZERO D'UNE LSN D'EXTREMITE LORSQUE LA LSN
 !             EST NULLE EN M ET DE MEME SIGNE AUX EXTREMITES DE L'ARETE ET
 !             QUE LES LSN SONT INFERIEURES A 1% LSNMAX
-                        ltsv((nunob-1)+1)=0.d0
-                        ltsv((nunoa-1)+1)=0.d0
-                        clsm=clsm+2
-                        ajust = .true.
-                    else
                         ltsv((nunob-1)+1)=0.d0
                         ltsv((nunoa-1)+1)=0.d0
                         clsm=clsm+2

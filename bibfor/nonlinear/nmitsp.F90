@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine nmitsp(ds_print, sddisc, iterat, retsup)
 !
 use NonLin_Datastructure_type
@@ -32,12 +33,10 @@ implicit none
 #include "asterfort/nmlerr.h"
 #include "asterfort/utmess.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    type(NL_DS_Print), intent(in) :: ds_print
-    character(len=19), intent(in) :: sddisc
-    integer, intent(in) :: iterat
-    integer, intent(out) :: retsup
+type(NL_DS_Print), intent(in) :: ds_print
+character(len=19), intent(in) :: sddisc
+integer, intent(in) :: iterat
+integer, intent(out) :: retsup
 !
 ! ----------------------------------------------------------------------
 !
@@ -92,7 +91,6 @@ implicit none
         call utmess('I', 'EXTRAPOLATION_11')
     else
         ciblen = 0.d0
-        call utmess('I', 'EXTRAPOLATION_10')
         retsup = 0
         goto 999
     endif

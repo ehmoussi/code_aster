@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 
 subroutine mmreac(nbdm  ,ndim  ,nne   ,nnm   ,jgeom , &
-                  jdepm ,jdepde,ppe,geomae,geomam)
+                  jdepm ,jdepde,ppe,geomae,geomam,ddepmam)
 !
 ! person_in_charge: mickael.abbas at edf.fr
 !
@@ -27,7 +27,7 @@ subroutine mmreac(nbdm  ,ndim  ,nne   ,nnm   ,jgeom , &
     real(kind=8) :: ppe
     integer :: nbdm, ndim, nne, nnm
     integer :: jgeom, jdepm,jdepde
-    real(kind=8) :: geomae(9, 3), geomam(9, 3)
+    real(kind=8) :: geomae(9, 3), geomam(9, 3), ddepmam(9, 3)
 !
 ! ----------------------------------------------------------------------
 !
@@ -80,6 +80,13 @@ subroutine mmreac(nbdm  ,ndim  ,nne   ,nnm   ,jgeom , &
                                 ) + ppe*zr(jdepde+nne*nbdm+(inom-1)&
                                 &*ndim+idim-1&
                                 )
+
+
+            ddepmam(inom,idim) =   zr(jdepde+nne*nbdm+(inom-1)&
+                                &*ndim+idim-1&
+                                )
+
+
 122      continue
   end do
 !

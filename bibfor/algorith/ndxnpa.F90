@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,10 +15,13 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine ndxnpa(modele, mate  , carele, fonact, ds_print,&
-                  sddisc, sddyna, sdnume, numedd, numins  ,&
-                  valinc, solalg)
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine ndxnpa(model         , cara_elem,&
+                  list_func_acti, ds_print,&
+                  ds_material   , ds_constitutive,&
+                  sddisc, sddyna, sdnume, nume_dof, nume_inst  ,&
+                  hval_incr     , hval_algo)
 !
 use NonLin_Datastructure_type
 !
@@ -37,17 +40,17 @@ implicit none
 #include "asterfort/jeveuo.h"
 #include "asterfort/ndnpas.h"
 #include "asterfort/nmchex.h"
-#include "asterfort/nmvcle.h"
+#include "asterfort/nonlinDSMaterialTimeStep.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    integer :: fonact(*)
-    character(len=19) :: sddyna, sdnume, sddisc
-    character(len=24) :: modele, mate, carele
-    type(NL_DS_Print), intent(inout) :: ds_print
-    integer :: numins
-    character(len=24) :: numedd
-    character(len=19) :: solalg(*), valinc(*)
+character(len=24), intent(in) :: model, cara_elem
+integer, intent(in) :: list_func_acti(*)
+type(NL_DS_Material), intent(in) :: ds_material
+type(NL_DS_Constitutive), intent(in) :: ds_constitutive
+character(len=19), intent(in) :: sddyna, sdnume, sddisc
+type(NL_DS_Print), intent(inout) :: ds_print
+integer, intent(in) :: nume_inst
+character(len=24), intent(in) :: nume_dof
+character(len=19), intent(in) :: hval_algo(*), hval_incr(*)
 !
 ! ----------------------------------------------------------------------
 !
@@ -57,10 +60,6 @@ implicit none
 !
 ! ----------------------------------------------------------------------
 !
-!
-! IN  MODELE : NOM DU MODELE
-! IN  MATE   : CHAMP DE MATERIAU
-! IN  CARELE : CARACTERISTIQUES DES ELEMENTS DE STRUCTURE
 ! IN  FONACT : FONCTIONNALITES ACTIVEES
 ! IN  NUMEDD : NUME_DDL
 ! IN  NUMINS : NUMERO INSTANT COURANT
@@ -77,8 +76,7 @@ implicit none
     integer :: neq
     character(len=19) :: depmoi, varmoi
     character(len=19) :: depplu, varplu, vitplu, accplu
-    character(len=19) :: complu, depdel
-    real(kind=8) :: instap
+    character(len=19) :: depdel
     integer :: jdepde
     integer :: indro
     real(kind=8), pointer :: depp(:) => null()
@@ -89,12 +87,11 @@ implicit none
 !
 ! --- INITIALISATIONS
 !
-    instap = diinst(sddisc,numins)
-    call dismoi('NB_EQUA', numedd, 'NUME_DDL', repi=neq)
+    call dismoi('NB_EQUA', nume_dof, 'NUME_DDL', repi=neq)
 !
 ! --- FONCTIONNALITES ACTIVEES
 !
-    lgrot = isfonc(fonact,'GD_ROTA')
+    lgrot = isfonc(list_func_acti,'GD_ROTA')
 !
 ! --- ELEMENTS DE STRUCTURES EN GRANDES ROTATIONS
 !
@@ -106,18 +103,13 @@ implicit none
 !
 ! --- DECOMPACTION DES VARIABLES CHAPEAUX
 !
-    call nmchex(valinc, 'VALINC', 'DEPMOI', depmoi)
-    call nmchex(valinc, 'VALINC', 'VARMOI', varmoi)
-    call nmchex(valinc, 'VALINC', 'DEPPLU', depplu)
-    call nmchex(valinc, 'VALINC', 'VITPLU', vitplu)
-    call nmchex(valinc, 'VALINC', 'ACCPLU', accplu)
-    call nmchex(valinc, 'VALINC', 'VARPLU', varplu)
-    call nmchex(valinc, 'VALINC', 'COMPLU', complu)
-    call nmchex(solalg, 'SOLALG', 'DEPDEL', depdel)
-!
-! --- TRAITEMENT DES VARIABLES DE COMMANDE
-!
-    call nmvcle(modele, mate, carele, instap, complu)
+    call nmchex(hval_incr, 'VALINC', 'DEPMOI', depmoi)
+    call nmchex(hval_incr, 'VALINC', 'VARMOI', varmoi)
+    call nmchex(hval_incr, 'VALINC', 'DEPPLU', depplu)
+    call nmchex(hval_incr, 'VALINC', 'VITPLU', vitplu)
+    call nmchex(hval_incr, 'VALINC', 'ACCPLU', accplu)
+    call nmchex(hval_incr, 'VALINC', 'VARPLU', varplu)
+    call nmchex(hval_algo, 'SOLALG', 'DEPDEL', depdel)
 !
 ! --- ESTIMATIONS INITIALES DES VARIABLES INTERNES
 !
@@ -135,12 +127,18 @@ implicit none
 !
 ! --- INITIALISATIONS EN DYNAMIQUE
 !
-    call ndnpas(fonact, numedd, numins, sddisc, sddyna,&
-                valinc, solalg)
+    call ndnpas(list_func_acti, nume_dof, nume_inst, sddisc, sddyna,&
+                hval_incr, hval_algo)
 !
 ! - Print or not ?
 !
-    ds_print%l_print = mod(numins+1,ds_print%reac_print) .eq. 0
+    ds_print%l_print = mod(nume_inst+1,ds_print%reac_print) .eq. 0
+!
+! - Update material parameters for new time step
+!
+    call nonlinDSMaterialTimeStep(model          , ds_material, cara_elem,&
+                                  ds_constitutive, hval_incr  ,&
+                                  nume_dof       , sddisc     , nume_inst)
 !
     call jedema()
 !

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,8 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine xmmbca(mesh, model, mate, hval_incr, ds_contact,&
+! person_in_charge: samuel.geniaut at edf.fr
+!
+subroutine xmmbca(mesh, model, ds_material, hval_incr, ds_contact,&
                   ds_constitutive, list_func_acti)
 !
 use NonLin_Datastructure_type
@@ -39,15 +40,13 @@ implicit none
 #include "asterfort/nmchex.h"
 #include "asterfort/xmchex.h"
 !
-! person_in_charge: samuel.geniaut at edf.fr
-!
-    character(len=8), intent(in) :: mesh
-    character(len=8), intent(in) :: model
-    character(len=24), intent(in) :: mate
-    character(len=19), intent(in) :: hval_incr(*)
-    type(NL_DS_Contact), intent(inout) :: ds_contact
-    type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-    integer, intent(in) :: list_func_acti(*)
+character(len=8), intent(in) :: mesh
+character(len=8), intent(in) :: model
+type(NL_DS_Material), intent(in) :: ds_material
+character(len=19), intent(in) :: hval_incr(*)
+type(NL_DS_Contact), intent(inout) :: ds_contact
+type(NL_DS_Constitutive), intent(in) :: ds_constitutive
+integer, intent(in) :: list_func_acti(*)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -59,7 +58,7 @@ implicit none
 !
 ! In  mesh             : name of mesh
 ! In  model            : name of model
-! In  mate             : name of material characteristics (field)
+! In  ds_material      : datastructure for material parameters
 ! In  hval_incr        : hat-variable for incremental values fields
 ! IO  ds_contact       : datastructure for contact management
 ! In  ds_constitutive  : datastructure for constitutive laws management
@@ -107,12 +106,8 @@ implicit none
     xcohes = ds_contact%sdcont_solv(1:14)//'.XCOH'
     xcoheo = ds_contact%sdcont_solv(1:14)//'.XCOP'
 !
-    loop_cont_conv = .false.
-    if (nivdbg .ge. 2) then
-        debug = .true.
-    else
-        debug = .false.
-    endif
+    loop_cont_conv = ASTER_FALSE
+    debug = nivdbg .ge. 2
 !
 ! --- DECOMPACTION DES VARIABLES CHAPEAUX
 !
@@ -206,7 +201,7 @@ implicit none
     lpain(14) = 'PBASECO'
     lchin(14) = baseco
     lpain(15) = 'PMATERC'
-    lchin(15) = mate(1:19)
+    lchin(15) = ds_material%field_mate(1:19)
     lpain(16) = 'PFISNO'
     lchin(16) = fissno
     lpain(17) = 'PHEAVNO'

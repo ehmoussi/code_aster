@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 
 subroutine rk5adp(nbeq, param_real, param_int, param_car, t0, dt0, nbmax,&
-                  errmax, y0, dy0, rk5fct, resu, iret)
+                  errmax, y0, dy0, rk5fct, resu, iret, ynorme)
     implicit none
 #include "asterf_types.h"
 #include "asterfort/rk5app.h"
@@ -33,6 +33,7 @@ subroutine rk5adp(nbeq, param_real, param_int, param_car, t0, dt0, nbmax,&
     real(kind=8)     :: dy0(nbeq)
     real(kind=8)     :: resu(2*nbeq)
     integer          :: iret
+    real(kind=8),intent(in),optional :: ynorme(nbeq)
 !
     interface
         subroutine rk5fct(ppr, ppi, ppc, yy0, dy0, dyy, decoup)
@@ -79,7 +80,7 @@ subroutine rk5adp(nbeq, param_real, param_int, param_car, t0, dt0, nbmax,&
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: nbbou, ii
-    real(kind=8) :: t9, dt9, y9(nbeq), erreur, xbid1, solu(3*nbeq)
+    real(kind=8) :: t9, dt9, y9(nbeq), norme(nbeq), erreur, xbid1, solu(3*nbeq)
     aster_logical :: decoup
 !
     real(kind=8) :: puplus, pumoin, creduc, cforce, coeffm, seuil, precis, grlog
@@ -104,6 +105,16 @@ subroutine rk5adp(nbeq, param_real, param_int, param_car, t0, dt0, nbmax,&
 !   ON COMMENCE
 100 continue
 !
+    if ( present(ynorme) ) then
+        norme(:) = ynorme(:)
+    else
+        norme(:) = y9(:)
+        do ii = 1, nbeq
+            if (abs(norme(ii)) .le. precis) then
+                norme(ii) = 1.0d0
+            endif
+        enddo
+    endif
 !   dépassement du nombre d'itération maximum ==> découpage global
     if (nbbou .gt. nbmax) then
         iret = 1
@@ -121,11 +132,7 @@ subroutine rk5adp(nbeq, param_real, param_int, param_car, t0, dt0, nbmax,&
 !   calcul de l'erreur
     erreur = 0.0d0
     do ii = 1, nbeq
-        if (abs(y9(ii)) .gt. precis) then
-            xbid1 = abs( solu(2*nbeq + ii)/y9(ii) )
-        else
-            xbid1 = abs( solu(2*nbeq + ii) )
-        endif
+        xbid1 = abs( solu(2*nbeq + ii)/norme(ii) )
         if (xbid1 .gt. grlog) then
             if (log10(xbid1) .gt. 100.0d0) then
 !               découpage forcé

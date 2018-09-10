@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -31,7 +31,9 @@ LIM = DEFI_LIST_REEL(
 def Temper(t,x,y,z):
     return t*x*y*z
 
-fct1 = FORMULE(NOM_PARA = ('INST','X','Y','Z'), VALE='Temper(INST,X,Y,Z)')
+fct1 = FORMULE(VALE='Temper(INST,X,Y,Z)',
+               Temper=Temper,
+               NOM_PARA=['INST', 'X', 'Y', 'Z'],)
 
 ch1 = CREA_CHAMP(
    TYPE_CHAM='NOEU_NEUT_F', OPERATION= 'AFFE', MAILLAGE = MAIL ,

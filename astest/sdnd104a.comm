@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -102,25 +102,33 @@ OMEGA=2.*pi
 LINST=DEFI_LIST_REEL(DEBUT=0.0,
                      INTERVALLE=_F(JUSQU_A=12.,
                                        NOMBRE =(12.-0.)/(5.E-5),),);
-ACCE1    = FORMULE(NOM_PARA='INST',VALE='15.*sin (OMEGA *INST)')
+ACCE1 = FORMULE(VALE='15.*sin (OMEGA *INST)',
+                OMEGA=OMEGA,
+                NOM_PARA='INST',)
 ACCELER1 = CALC_FONC_INTERP(FONCTION=ACCE1,
                             LIST_PARA=LINST,
                             NOM_PARA = 'INST',
                             PROL_GAUCHE='CONSTANT',
                             PROL_DROITE='CONSTANT' )
-ACCE2    = FORMULE(NOM_PARA='INST',VALE='1.5*sin (OMEGA *INST)')
+ACCE2 = FORMULE(VALE='1.5*sin (OMEGA *INST)',
+                OMEGA=OMEGA,
+                NOM_PARA='INST',)
 ACCELER2 = CALC_FONC_INTERP(FONCTION=ACCE2,
                             LIST_PARA=LINST,
                             NOM_PARA = 'INST',
                             PROL_GAUCHE='CONSTANT',
                             PROL_DROITE='CONSTANT' )
-ACCE3    = FORMULE(NOM_PARA='INST',VALE='1.01*sin (OMEGA *INST)')
+ACCE3 = FORMULE(VALE='1.01*sin (OMEGA *INST)',
+                OMEGA=OMEGA,
+                NOM_PARA='INST',)
 ACCELER3 = CALC_FONC_INTERP(FONCTION=ACCE3,
                             LIST_PARA=LINST,
                             NOM_PARA = 'INST',
                             PROL_GAUCHE='CONSTANT',
                             PROL_DROITE='CONSTANT' )
-ACCE4    = FORMULE(NOM_PARA='INST',VALE='0.99*sin (OMEGA *INST)')
+ACCE4 = FORMULE(VALE='0.99*sin (OMEGA *INST)',
+                OMEGA=OMEGA,
+                NOM_PARA='INST',)
 ACCELER4 = CALC_FONC_INTERP(FONCTION=ACCE4,
                             LIST_PARA=LINST,
                             NOM_PARA = 'INST',

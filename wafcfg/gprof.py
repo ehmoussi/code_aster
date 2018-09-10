@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -23,12 +23,12 @@ Configuration with profiling enabled
 This configuration just adds option for gprof.
 It must be used with another configuration.
 
-Example for calibre7 + gprof:
+Example for linux + gprof:
 
 cd $HOME/dev/codeaster/src
 cp waf_variant waf_prof
 
-./waf_prof configure --use-config=calibre7,gprof --prefix=../install/prof
+./waf_prof configure --use-config=linux,gprof --prefix=../install/prof
 ./waf_prof install -p
 """
 

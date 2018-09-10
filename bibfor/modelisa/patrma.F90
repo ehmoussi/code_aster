@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -82,7 +82,7 @@ subroutine patrma(llist1, llist2, t, nbtymx, nomma,&
     integer :: i1, iageom, idbij, idcoo1, idcoo2, idcopl, idl1
     integer :: idl2, idlt, idno1, idno2, idtyp, idwcpl, iftyp
     integer :: ima, ima2, ino, iret, ityp, ityp1, j
-    integer :: j2, jdeb, jfin, jtyp, k, lonmx, nbma
+    integer :: j2, jdeb, jfin, jtyp, k, lonmx, nbma, err, tot_error
     integer :: nbma1, nbma2, nbmaty, nbntot, numa1, numa2, numa3
 !
     real(kind=8) :: d, dmin
@@ -161,7 +161,9 @@ subroutine patrma(llist1, llist2, t, nbtymx, nomma,&
         call parotr(nomma, iageom, numa1, nbnott(1), centre,&
                     mrot, t, zr(idcoo1))
         dmin = 999999999999.d0
+        tot_error = 0
         do 2 j = jdeb, jfin
+            err = 0
             jtyp = zi(idl2+2*j)
             if (jtyp .ne. ityp1) then
                 if (fintyp) then
@@ -176,8 +178,9 @@ subroutine patrma(llist1, llist2, t, nbtymx, nomma,&
                 ima2 = zi(idl2+2*j-1)
                 call jenuno(jexnum(nomma//'.NOMMAI', ima2), nomma2)
                 call pacoor(nomma, ima2, nbnott(1), zr(idcoo2))
-                call padtma(zr(idcoo1), zr(idcoo2), nbnott, zi(idwcpl), d)
-                if (d .lt. dmin) then
+                call padtma(zr(idcoo1), zr(idcoo2), nbnott, zi(idwcpl), d, err)
+                tot_error= tot_error + err
+                if (d .lt. dmin .and. err.eq.0) then
                     dmin = d
                     numa2 = ima2
                     j2 = j
@@ -187,6 +190,9 @@ subroutine patrma(llist1, llist2, t, nbtymx, nomma,&
                 endif
             endif
   2     continue
+        if (tot_error.eq.jfin) then
+            call utmess('F', 'MODELISA6_8')
+        end if
         if (idtyp .eq. nbma+1) then
             vali = ityp
             call utmess('F', 'MODELISA8_89', si=vali)

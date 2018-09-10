@@ -32,7 +32,8 @@ from ..Utilities import objects_from_context
 from .datastructure_ext import DataStructure
 
 # extend DataStructures using metaclasses
-from .assemblymatrix_ext import AssemblyMatrixDouble
+from .assemblymatrix_ext import AssemblyMatrixDisplacementDouble
+from .cracktip_ext import CrackTip
 from .elementarycharacteristics_ext import ElementaryCharacteristics
 from .elementarymatrix_ext import ElementaryMatrix
 from .fieldonelements_ext import FieldOnElementsDouble
@@ -40,14 +41,17 @@ from .fieldonnodes_ext import FieldOnNodesDouble
 from .formula_ext import Formula
 from .function_ext import Function
 from .generalizedassemblymatrix_ext import GeneralizedAssemblyMatrixDouble
+from .material_ext import Material
 from .materialonmesh_ext import MaterialOnMesh
 from .mechanicalload_ext import GenericMechanicalLoad
+from .mesh_ext import Mesh
 from .meshcoordinatesfield_ext import MeshCoordinatesField
 from .model_ext import Model
 from .resultscontainer_ext import ResultsContainer
 from .surface_ext import Surface
 from .table_ext import Table
 from .timestepmanager_ext import TimeStepManager
+from .xfemcrack_ext import XfemCrack
 
 # objects without C++ mirror
 from .listoffloats import ListOfFloats

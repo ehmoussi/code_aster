@@ -1,6 +1,7 @@
 
 PRESSION = FORMULE(VALE='p_atm+p_rhol*p_g*(p_long-COOR_X)',
-                   NOM_PARA='COOR_X',);
+                   NOM_PARA='COOR_X',
+                   p_atm=p_atm, p_rhol=p_rhol, p_g=p_g, p_long=p_long)
 
 PRESRE = FORMULE(VALE='(PREF-PRE1)/PREF',
                  NOM_PARA=('PREF','PRE1',),);

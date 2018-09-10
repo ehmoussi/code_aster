@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine nmprdc(ds_algopara, nume_dof , disp_prev, sddisc, nume_inst,&
                   incr_esti  , disp_esti)
 !
@@ -30,20 +31,18 @@ implicit none
 #include "asterfort/jeveuo.h"
 #include "asterfort/rsinch.h"
 #include "asterfort/utmess.h"
-#include "asterfort/vrrefe.h"
+#include "asterfort/chamnoIsSame.h"
 #include "asterfort/vtcopy.h"
 #include "blas/daxpy.h"
 #include "blas/dcopy.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    type(NL_DS_AlgoPara), intent(in) :: ds_algopara
-    character(len=24), intent(in) :: nume_dof
-    character(len=19), intent(in) :: disp_prev
-    character(len=19), intent(in) :: sddisc
-    integer, intent(in)  :: nume_inst
-    character(len=19), intent(in) :: incr_esti
-    character(len=19), intent(in) :: disp_esti
+type(NL_DS_AlgoPara), intent(in) :: ds_algopara
+character(len=24), intent(in) :: nume_dof
+character(len=19), intent(in) :: disp_prev
+character(len=19), intent(in) :: sddisc
+integer, intent(in)  :: nume_inst
+character(len=19), intent(in) :: incr_esti
+character(len=19), intent(in) :: disp_esti
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -102,7 +101,7 @@ implicit none
     if (nume_inst .eq. 1) then
         call vtcopy(disp_extr, disp_esti, 'F', iret)
     else
-        call vrrefe(disp_extr, disp_esti, iret)
+        call chamnoIsSame(disp_extr, disp_esti, iret)
         if (iret.gt.0) then
             call utmess('F', 'MECANONLINE2_28', sk=result_extr, sr=time)
         else

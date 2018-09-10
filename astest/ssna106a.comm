@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -42,7 +42,8 @@ MA = DEFI_GROUP(reuse =MA,
 
 
 
-FONC1= FORMULE(NOM_PARA=('X','INST'),VALE='(X**2)*INST ')
+FONC1 = FORMULE(VALE='(X**2)*INST ',
+                NOM_PARA=['X', 'INST'],)
 
 TP1=CREA_CHAMP(OPERATION='AFFE', TYPE_CHAM='NOEU_TEMP_F',
 MAILLAGE=MA,

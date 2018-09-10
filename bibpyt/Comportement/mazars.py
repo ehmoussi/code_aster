@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -28,17 +28,17 @@ loi = LoiComportement(
    Elle permet de prendre en comtpe l'adoucissement et distingue l'endommagemetn en traction et en compression.
    Une seule variable d'endommagement scalaire est utilisée (cf [R7.01.08]).
    En cas de chargement thermique, les coefficients matériau dépendent de la température maximale atteinte au point de Gauss considéré,
-   et la dilatation thermique, supposée linéaire, ne contribue pas à l'évolution de l'endommagement."""            ,
+   et la dilatation thermique, supposée linéaire, ne contribue pas à l'évolution de l'endommagement."""              ,
     num_lc         = 8,
     nb_vari        = 4,
     nom_vari       = ('ENDO','INDIENDO','TEMP_MAX','EPSEQ',),
-    mc_mater       = ('ELAS','MAZARS','NON_LOCAL',),
-    modelisation   = ('3D','AXIS','C_PLAN','D_PLAN','GRADEPSI',
-        ),
+    mc_mater       = ('ELAS','MAZARS',),
+    modelisation   = ('3D','AXIS','C_PLAN','D_PLAN',),
     deformation    = ('PETIT','PETIT_REAC','GROT_GDEP',),
     algo_inte      = ('ANALYTIQUE',),
     type_matr_tang = ('PERTURBATION','VERIFICATION',),
     proprietes     = None,
     syme_matr_tang = ('No',),
     exte_vari      = None,
+    deform_ldc     = ('OLD',),
 )

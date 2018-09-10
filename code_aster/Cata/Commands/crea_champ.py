@@ -25,6 +25,9 @@ from code_aster.Cata.Commons import *
 
 
 def crea_champ_prod(TYPE_CHAM,**args):
+  if args.get('__all__'):
+      return (carte_sdaster, cham_no_sdaster, cham_elem)
+
   if TYPE_CHAM[0:5] == "CART_" :
      return carte_sdaster
   elif TYPE_CHAM[0:5] == "NOEU_" :
@@ -36,9 +39,14 @@ def crea_champ_prod(TYPE_CHAM,**args):
 
 
 CREA_CHAMP=OPER(nom="CREA_CHAMP",op= 195,sd_prod=crea_champ_prod,
-                fr=tr("Création d'un champ "),reentrant='f',
+                fr=tr("Création d'un champ "),
+                reentrant='f:CHAM_GD',
 
          reuse=SIMP(statut='c', typ=CO),
+         b_reuse=BLOC(condition = """is_in("OPERATION", ("ASSE", "COMB"))""",
+            CHAM_GD=SIMP(statut='f',typ=cham_gd_sdaster,
+         ),
+                      fr=tr("Objet qui sera réutilisé pour l'opération")),
        # TYPE_CHAM doit etre de la forme : CART_xx, NOEU_xx, ELEM_xx, ELGA_xx ou ELNO_xx
        # ou xx est le nom d'une grandeur définie dans le catalogue des grandeurs
          TYPE_CHAM       =SIMP(statut='o',typ='TXM',into=C_TYPE_CHAM_INTO()),
@@ -208,18 +216,18 @@ CREA_CHAMP=OPER(nom="CREA_CHAMP",op= 195,sd_prod=crea_champ_prod,
                  TYPE_MAXI       =SIMP(statut='f',typ='TXM',into=("MAXI","MINI","MAXI_ABS","MINI_ABS","NORM_TRAN",) ),
 
                  # si TYPE_MAXI, on spécifie en général plusieurs numéros d'ordre :
-                 
+
                  b_type_abs =BLOC(condition = """(equal_to("TYPE_MAXI", 'MAXI_ABS') or equal_to("TYPE_MAXI", 'MINI_ABS'))""",
-                        TYPE_RESU       =SIMP(statut='o',typ='TXM',defaut="VALE",into=("VALE","INST","VALE_ABS") ),
+                        TYPE_RESU       =SIMP(statut='f',typ='TXM',defaut="VALE",into=("VALE","INST","VALE_ABS") ),
                       ),
                  b_type_non_abs =BLOC(condition = """(equal_to("TYPE_MAXI", 'MAXI') or equal_to("TYPE_MAXI", 'MINI') or equal_to("TYPE_MAXI", 'NORM_TRAN'))""",
-                        TYPE_RESU       =SIMP(statut='o',typ='TXM',defaut="VALE",into=("VALE","INST") ),
+                        TYPE_RESU       =SIMP(statut='f',typ='TXM',defaut="VALE",into=("VALE","INST") ),
                       ),
-                 
+
                  b_type_maxi =BLOC(condition = """exists("TYPE_MAXI")""",
                       regles=(EXCLUS('TOUT_ORDRE','LIST_INST','LIST_FREQ','NUME_ORDRE','INST',
                                       'FREQ','NUME_MODE','NOEUD_CMP','NOM_CAS','ANGLE'),),
-                      
+
                       TOUT_ORDRE      =SIMP(statut='f',typ='TXM',into=("OUI",) ),
                       LIST_INST       =SIMP(statut='f',typ=(listr8_sdaster) ),
                       LIST_FREQ       =SIMP(statut='f',typ=(listr8_sdaster) ),

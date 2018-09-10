@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,13 +16,14 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine padtma(coor1, coor2, nbnott, icoupl, dmin)
+subroutine padtma(coor1, coor2, nbnott, icoupl, dmin, no_err)
     implicit none
 #include "jeveux.h"
 #include "asterfort/padist.h"
 #include "asterfort/utmess.h"
     real(kind=8) :: coor1(*), coor2(*), d
     integer :: icoupl(*), nbnott(3)
+    integer, intent(out), optional :: no_err
 !     BUT: CALCULER LA DISTANCE ENTRE 2 MAILLES ET DONNER LE TABLEAU
 !          D'INDIRECTION ENTRE LES NUM.DES NOEUDS QUI DESCRIT LE
 !          VIS A VIS ENTRE LES 2 MAILLES REALISANT CETTE DISTANCE MINI.
@@ -49,6 +50,9 @@ subroutine padtma(coor1, coor2, nbnott, icoupl, dmin)
 !                   NOMBRE TOTAL DE NOEUDS<=> VIS A VIS ENTRE LES 2
 !                   MAILLES
 ! OUT  DMIN   R   : DISTANCE ENTRE LES 2 MAILLES
+!
+! OUT NO_ERR    :  present no error is thrown when encoutering perpendicular
+!
     real(kind=8) :: x1(3), xn1(3), xn2(3), x2(3), x3(3), x4(3)
     integer :: iperm(106)
 ! --- DATA DES PERMUTATIONS REPRESENTANT LES VIS A VIS
@@ -66,6 +70,7 @@ subroutine padtma(coor1, coor2, nbnott, icoupl, dmin)
      &            4,3,2,1,7,6,5,8,    1,4,3,2,8,7,6,5       /
 ! --- DEBUT
 ! --- ORIENTATION DES MAILLES
+    no_err = 0
     nbsom = nbnott(1)
     nbno = nbnott(1)+nbnott(2)+nbnott(3)
     if (nbsom .eq. 2) then
@@ -110,7 +115,12 @@ subroutine padtma(coor1, coor2, nbnott, icoupl, dmin)
     else if (s.lt.0) then
         kdeb0 = kdeb2
     else
-        call utmess('F', 'MODELISA6_8')
+        if (present(no_err)) then
+            no_err = 1
+            GO TO 8
+        else
+            call utmess('F', 'MODELISA6_8')
+        end if
     endif
     dmin = 99999999.d0
     nbperm = nbsom
@@ -131,4 +141,5 @@ subroutine padtma(coor1, coor2, nbnott, icoupl, dmin)
     do 6 i = 1, nbno
         icoupl(i) = iperm(ideb+i)
  6  continue
+8   continue
 end subroutine

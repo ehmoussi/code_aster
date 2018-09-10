@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,26 +15,24 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine nmdcae(sddisc, iterat, typdec, nbrpas, ratio,&
                   optdec, retdec)
 !
-! person_in_charge: mickael.abbas at edf.fr
+implicit none
 !
-    implicit none
 #include "asterf_types.h"
-#include "jeveux.h"
 #include "asterc/r8prem.h"
-#include "asterfort/jedema.h"
-#include "asterfort/jemarq.h"
 #include "asterfort/nmacex.h"
 #include "asterfort/nmlerr.h"
 #include "asterfort/utmess.h"
-    character(len=19) :: sddisc
-    integer :: iterat, nbrpas, retdec
-    real(kind=8) :: ratio
-    character(len=16) :: optdec
-    character(len=4) :: typdec
+!
+character(len=19) :: sddisc
+integer :: iterat, nbrpas, retdec
+real(kind=8) :: ratio
+character(len=16) :: optdec
+character(len=4) :: typdec
 !
 ! ----------------------------------------------------------------------
 !
@@ -75,10 +73,6 @@ subroutine nmdcae(sddisc, iterat, typdec, nbrpas, ratio,&
 !
 ! ----------------------------------------------------------------------
 !
-    call jemarq()
-!
-! --- INITIALISATIONS
-!
     un = 1.d0
     retdec = 0
     ratio = 0.d0
@@ -102,8 +96,12 @@ subroutine nmdcae(sddisc, iterat, typdec, nbrpas, ratio,&
 ! --- CALCUL DU RATIO
 !
     if (.not.lextra) then
-        call utmess('I', 'EXTRAPOLATION_10')
-        retdec = 0
+        call utmess('I', 'EXTRAPOLATION_12')
+        nbrpas = 4
+        retdec = 1
+        ratio  = 1.d0
+        optdec = 'UNIFORME'
+        typdec = 'SUBD'
     else
         call utmess('I', 'EXTRAPOLATION_11')
         nbrpas = 4
@@ -138,5 +136,4 @@ subroutine nmdcae(sddisc, iterat, typdec, nbrpas, ratio,&
         typdec = 'SUBD'
     endif
 !
-    call jedema()
 end subroutine

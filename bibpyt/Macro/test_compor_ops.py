@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -24,80 +24,54 @@
 # utilitaires
 #
 
+import numpy as NP
 
-def PROD_ROT(X1, X2):
-    # calcul Produit de 2 vecteurs pour les coef de rotations
-    # dimension de X1 et X2 liste de 3 scalaire resultat liste de 6 scalaires
-    if (len(X1) == len(X2) == 3):
-        Y = [None] * 6
-        V_ind = [[0, 0, 0.5], [1, 1, 0.5], [2, 2, 0.5],
-                [0, 1, 1.0], [0, 2, 1.0], [1, 2, 1.0]]
-        for ind in V_ind:
-            i = V_ind.index(ind)
-            ind1, ind2, coef = ind[0], ind[1], ind[2]
-            Y[i] = coef * (X1[ind1] * X2[ind2] + X1[ind2] * X2[ind1])
-        return Y
-    else:
-        print "CALCUL PROD_ROT IMPOSSIBLE, dimensions innatendues"
-        return None
-#
+from code_aster.Cata.Commands import (CALC_FONCTION, CALC_TABLE, DEBUG,
+                                      DEFI_CONSTANTE, DEFI_FONCTION,
+                                      DEFI_LIST_INST, DEFI_LIST_REEL,
+                                      DEFI_MATERIAU, DETRUIRE, FORMULE,
+                                      IMPR_FONCTION, IMPR_TABLE,
+                                      SIMU_POINT_MAT, TEST_TABLE)
+from code_aster.Cata.Syntax import _F
+from Contrib.testcomp_utils import relative_error, vect_prod_rot
+from Contrib.veri_matr_tang import VERI_MATR_TANG
+from Utilitai.Utmess import MasquerAlarme, RetablirAlarme
 
 
-def RENOMME(self, i, N_pas, label_cal, ch_param, __RES, __RSI):
-    """On renomme les composantes en fonction de  l'ordre de discrétisation.
-    On modifie les tables de la listes __RSI.
-    """
-    from code_aster.Cata.Syntax import _F
-    DETRUIRE = self.get_cmd('DETRUIRE')
-    CALC_TABLE = self.get_cmd('CALC_TABLE')
+def rename_components_tmp(i, N_pas, label_cal, ch_param, RESU, __RS_I):
+    """On renomme les composantes en fonction de  l'ordre de discrétisation"""
     N = N_pas[i]
     chN = label_cal[i] + str(N)
     for ch in ch_param:
         j = ch_param.index(ch)
         chnew = ch + chN
         # Extraction par type de variable
-        if __RSI[j] == None:
-            __RSI[j] = CALC_TABLE(TABLE=__RES[i],
-                                  TITRE=' ',
-                                  ACTION=(_F(OPERATION='EXTR',
-                                             NOM_PARA=('INST', ch,),),
-                                          _F(OPERATION='RENOMME',
-                                             NOM_PARA=(ch, chnew,),),
-                                          ),)
+        if __RS_I[j] == None:
+            __RS_I[j] = CALC_TABLE(TABLE=RESU[i],
+                                 TITRE=' ',
+                                 ACTION=(_F(OPERATION='EXTR',
+                                            NOM_PARA=('INST', ch,),),
+                                         _F(OPERATION='RENOMME',
+                                            NOM_PARA=(ch, chnew,),),
+                                         ),)
         else:
-            __tt = CALC_TABLE(TABLE=__RES[i],
-                              TITRE=' ',
-                              ACTION=(_F(OPERATION='EXTR',
-                                         NOM_PARA=('INST', ch,),),
-                                      _F(OPERATION='RENOMME',
-                                         NOM_PARA=(ch, chnew,),),
-                                      ),)
-            __RSI[j] = CALC_TABLE(reuse=__RSI[j], TABLE=__RSI[j],
-                                  TITRE=' ',
-                                  ACTION=(_F(OPERATION='COMB',
-                                             TABLE=__tt, NOM_PARA='INST',),
-                                          ),)
-            DETRUIRE(CONCEPT=_F(NOM=__tt,), INFO=1)
+            __TMP_S = CALC_TABLE(TABLE=RESU[i],
+                               TITRE=' ',
+                               ACTION=(_F(OPERATION='EXTR',
+                                          NOM_PARA=('INST', ch,),),
+                                       _F(OPERATION='RENOMME',
+                                          NOM_PARA=(ch, chnew,),),
+                                       ),)
+            __RS_I[j] = CALC_TABLE(reuse=__RS_I[j], TABLE=__RS_I[j],
+                                 TITRE=' ',
+                                 ACTION=(_F(OPERATION='COMB',
+                                            TABLE=__TMP_S, NOM_PARA='INST',),
+                                         ),)
+            DETRUIRE(CONCEPT=_F(NOM=__TMP_S,),)
 
-
-#
-
-def ERREUR(X, Xref, prec_zero, coef):
-    "calcul erreur relative entre deux nombres"
-    if (abs(Xref) < prec_zero):
-        err = 0.
-    else:
-        err = abs((X * coef - Xref) / Xref)
-    return err
-#
-
+    return __RS_I
 
 def TEST_ECART(self, ch_param2, label_cal, N_pas, Ncal, ch_param, __RSI, prec_ecart, prec_zero):
-    from code_aster.Cata.Syntax import _F
-    DETRUIRE = self.get_cmd('DETRUIRE')
-    FORMULE = self.get_cmd('FORMULE')
-    CALC_TABLE = self.get_cmd('CALC_TABLE')
-
     # Exploitations
     CH_V1 = ['INST']
     C_Pa = 1.e6
@@ -125,11 +99,13 @@ def TEST_ECART(self, ch_param2, label_cal, N_pas, Ncal, ch_param, __RSI, prec_ec
                 if (i == 0):
                     CH_V1.append(ch_cal)
 #               calcul de l'erreur (ecart relatif)
-            valfor = 'ERREUR(%s,%s,%e,%f)' % (
-                ch_cal, chref[iref], preczero, coef)
+            valfor = 'relative_error(%s,%s,%f,%e)' % (
+                ch_cal, chref[iref], coef, preczero)
             nompar1 = '%s' % (ch_cal)
             nompar2 = '%s' % (chref[iref])
-            __errrel = FORMULE(NOM_PARA=(nompar1, nompar2), VALE=valfor)
+            __errrel = FORMULE(NOM_PARA=(nompar1, nompar2),
+                VALE=valfor,
+                relative_error=relative_error)
             if __ersi == None:
                 __ersi = CALC_TABLE(TABLE=__RSI[i],
                                     TITRE='__RSI' + str(j),
@@ -152,15 +128,6 @@ def TEST_ECART(self, ch_param2, label_cal, N_pas, Ncal, ch_param, __RSI, prec_ec
 
 
 def CHAR3D(self, POISSON, YOUNG, _tempsar, INFO):
-    CALC_FONCTION = self.get_cmd('CALC_FONCTION')
-    DEFI_FONCTION = self.get_cmd('DEFI_FONCTION')
-    DEFI_LIST_REEL = self.get_cmd('DEFI_LIST_REEL')
-    IMPR_FONCTION = self.get_cmd('IMPR_FONCTION')
-    from code_aster.Cata.Syntax import _F
-    import numpy as NP
-
-    #
-
     # definition du trajet de chargement 3D
 
     #
@@ -260,7 +227,7 @@ def CHAR3D(self, POISSON, YOUNG, _tempsar, INFO):
     VI = [[V1, V1], [V2, V2], [V3, V3], [V1, V2], [V1, V3], [V2, V3]]
     for vect_i in VI:
         i = VI.index(vect_i)
-        V_COEF = PROD_ROT(vect_i[0], vect_i[1])
+        V_COEF = vect_prod_rot(vect_i[0], vect_i[1])
         __epsrot = CALC_FONCTION(COMB=(
             _F(FONCTION=__eps_xx, COEF=V_COEF[0],),
             _F(FONCTION=__eps_yy, COEF=V_COEF[1],),
@@ -290,15 +257,7 @@ def CHAR3D(self, POISSON, YOUNG, _tempsar, INFO):
 
 
 def CHAR2D(self, POISSON, YOUNG, _tempsar, INFO):
-    CALC_FONCTION = self.get_cmd('CALC_FONCTION')
-    DEFI_FONCTION = self.get_cmd('DEFI_FONCTION')
-    DEFI_LIST_REEL = self.get_cmd('DEFI_LIST_REEL')
-    IMPR_FONCTION = self.get_cmd('IMPR_FONCTION')
-    #
     # definition du trajet de chargement 2D
-    #
-    from code_aster.Cata.Syntax import _F
-    import numpy as NP
 
     # fonctions chargement
     calibrage = 4.5
@@ -387,14 +346,8 @@ def CHAR2D(self, POISSON, YOUNG, _tempsar, INFO):
 def test_compor_ops(
     self, OPTION, NEWTON, CONVERGENCE, COMPORTEMENT, LIST_MATER, VARI_TEST, INFO,
         **args):
- # seule l'option "THER", c'est à dire le test thermomecanique est programmé à ce jour
- # ajouter l'option MECA (tests comp001,002), l'option HYDR, etc..
-    from code_aster.Cata.Syntax import _F
-    import numpy as NP
-    from Contrib.veri_matr_tang import VERI_MATR_TANG
-    from Utilitai.Utmess import MasquerAlarme, RetablirAlarme
-    self.update_const_context({'ERREUR': ERREUR})
-
+    # seule l'option "THER", c'est à dire le test thermomecanique est programmé à ce jour
+    # ajouter l'option MECA (tests comp001,002), l'option HYDR, etc..
     ier = 0
     # La macro compte pour 1 dans la numerotation des commandes
     self.set_icmd(1)
@@ -403,21 +356,6 @@ def test_compor_ops(
     # le contexte de la macro
     if COMPORTEMENT:
         self.DeclareOut('U', self.sd)
-
-    # On importe les definitions des commandes a utiliser dans la macro
-    CALC_TABLE = self.get_cmd('CALC_TABLE')
-    DEFI_CONSTANTE = self.get_cmd('DEFI_CONSTANTE')
-    DEFI_FONCTION = self.get_cmd('DEFI_FONCTION')
-    DEFI_LIST_INST = self.get_cmd('DEFI_LIST_INST')
-    DEFI_LIST_REEL = self.get_cmd('DEFI_LIST_REEL')
-    DEFI_MATERIAU = self.get_cmd('DEFI_MATERIAU')
-    DETRUIRE = self.get_cmd('DETRUIRE')
-    FORMULE = self.get_cmd('FORMULE')
-    DEBUG = self.get_cmd('DEBUG')
-    IMPR_FONCTION = self.get_cmd('IMPR_FONCTION')
-    SIMU_POINT_MAT = self.get_cmd('SIMU_POINT_MAT')
-    TEST_TABLE = self.get_cmd('TEST_TABLE')
-    IMPR_TABLE = self.get_cmd('IMPR_TABLE')
 
     motscles = {}
     if COMPORTEMENT:
@@ -777,7 +715,7 @@ def test_compor_ops(
                                       )
 
         # On renomme les composantes en fonction de  l'ordre de discretisation
-            RENOMME(self, i, LIST_NPAS, label_cal, ch_param, __RES, __RSI)
+            rename_components_tmp(i, LIST_NPAS, label_cal, ch_param, __RES, __RSI)
 
             DETRUIRE(CONCEPT=_F(NOM=__temps,), INFO=1)
 

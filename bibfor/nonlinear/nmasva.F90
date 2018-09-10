@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,124 +15,90 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmasva(sddyna, veasse, cnvado)
-!
 ! person_in_charge: mickael.abbas at edf.fr
 !
-    implicit none
+subroutine nmasva(list_func_acti, hval_veasse, cnvado, sddyna_)
+!
+use NonLin_Datastructure_type
+!
+implicit none
+!
 #include "asterf_types.h"
-#include "jeveux.h"
-#include "asterfort/infdbg.h"
-#include "asterfort/jedema.h"
-#include "asterfort/jemarq.h"
-#include "asterfort/ndynkk.h"
+#include "asterfort/nonlinDSVectCombCompute.h"
+#include "asterfort/nonlinDSVectCombAddHat.h"
+#include "asterfort/nonlinDSVectCombAddDyna.h"
+#include "asterfort/nonlinDSVectCombInit.h"
 #include "asterfort/ndynlo.h"
 #include "asterfort/ndynre.h"
-#include "asterfort/nmchex.h"
-#include "asterfort/nmdebg.h"
-#include "asterfort/vtaxpy.h"
-#include "asterfort/vtzero.h"
-    character(len=19) :: cnvado
-    character(len=19) :: veasse(*)
-    character(len=19) :: sddyna
+#include "asterfort/isfonc.h"
 !
-! ----------------------------------------------------------------------
+integer, intent(in) :: list_func_acti(*)
+character(len=19), intent(in) :: hval_veasse(*), cnvado
+character(len=19), optional, intent(in) :: sddyna_
 !
-! ROUTINE MECA_NON_LINE (ALGORITHME)
+! --------------------------------------------------------------------------------------------------
 !
-! CALCUL DES COMPOSANTES DU VECTEUR SECOND MEMBRE
-!  - CHARGEMENT DE TYPE NEUMANN
-!  - CHARGEMENT VARIABLE AU COURS DU PAS DE TEMPS
-!  - CHARGEMENT DONNE
+! MECA_NON_LINE - Algorithm
 !
-! ----------------------------------------------------------------------
+! Get undead Neumann loads and multi-step dynamic schemes forces
 !
+! --------------------------------------------------------------------------------------------------
 !
-! IN  SDDYNA : SD DYNAMIQUE
-! IN  VEASSE : VARIABLE CHAPEAU POUR NOM DES VECT_ASSE
-! OUT CNVADO : VECT_ASSE DE TOUS LES CHARGEMENTS VARIABLES DONNES
+! In  list_func_acti   : list of active functionnalities
+! In  hval_veasse      : hat-variable for vectors (node fields)
+! In  cnvado           : name of resultant nodal field
+! In  sddyna           : datastructure for dynamic
 !
+! --------------------------------------------------------------------------------------------------
 !
-!
-!
-    integer :: ifm, niv
-    integer :: ifdo, n
-    character(len=19) :: cnvari(20)
-    real(kind=8) :: covari(20)
     real(kind=8) :: coeext, coeex2, coeint
-    character(len=19) :: cnfsdo, cnfint
-    aster_logical :: ldyna, lmpas
+    aster_logical :: l_dyna, l_mult_step, l_macr
+    type(NL_DS_VectComb) :: ds_vectcomb
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
-    call jemarq()
-    call infdbg('MECA_NON_LINE', ifm, niv)
-!
-! --- AFFICHAGE
-!
-    if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE> ...... CALCUL NEUMANN VARIABLE'
+    l_dyna      = ASTER_FALSE
+    l_mult_step = ASTER_FALSE
+    if (present(sddyna_)) then
+        l_mult_step = ndynlo(sddyna_,'MULTI_PAS')
+        l_dyna      = ndynlo(sddyna_,'DYNAMIQUE')
     endif
+    l_macr = isfonc(list_func_acti,'MACR_ELEM_STAT')
 !
-! --- FONCTIONNALITES ACTIVEES
+! - Initializations
 !
-    ldyna = ndynlo(sddyna,'DYNAMIQUE')
-    lmpas = ndynlo(sddyna,'MULTI_PAS')
+    call nonlinDSVectCombInit(ds_vectcomb)
 !
-! --- INITIALISATIONS
+! - Coefficients
 !
-    ifdo = 0
-    call vtzero(cnvado)
-!
-! --- COEFFICIENTS POUR MULTI-PAS
-!
-    if (ldyna) then
-        coeext = ndynre(sddyna,'COEF_MPAS_FEXT_PREC')
-        coeex2 = ndynre(sddyna,'COEF_MPAS_FEXT_COUR')
-        coeint = ndynre(sddyna,'COEF_MPAS_FINT_PREC')
+    if (l_dyna) then
+        coeext = ndynre(sddyna_, 'COEF_MPAS_FEXT_PREC')
+        coeex2 = ndynre(sddyna_, 'COEF_MPAS_FEXT_COUR')
+        coeint = ndynre(sddyna_, 'COEF_MPAS_FINT_PREC')
     else
         coeext = 1.d0
         coeex2 = 1.d0
         coeint = 1.d0
     endif
 !
-! --- CALCUL DES FORCES EXTERIEURES VARIABLES
+! - Undead Neumann forces
 !
-    call nmchex(veasse, 'VEASSE', 'CNFSDO', cnfsdo)
-    ifdo = ifdo+1
-    cnvari(ifdo) = cnfsdo
-    covari(ifdo) = coeex2
+    call nonlinDSVectCombAddHat(hval_veasse, 'CNFSDO', coeex2, ds_vectcomb)
 !
-! --- AJOUT FORCES EXTERIEURES VARIABLES PAS PRECEDENT
+! - Multi-step dynamic schemes forces from previous time step
 !
-    if (lmpas) then
-        call ndynkk(sddyna, 'OLDP_CNFSDO', cnfsdo)
-        ifdo = ifdo+1
-        cnvari(ifdo) = cnfsdo
-        covari(ifdo) = coeext
-    endif
-!
-! --- AJOUT FORCES INTERNES PAS PRECEDENT
-!
-    if (lmpas) then
-        call ndynkk(sddyna, 'OLDP_CNFINT', cnfint)
-        ifdo = ifdo+1
-        cnvari(ifdo) = cnfint
-        covari(ifdo) = -1.d0*coeint
-    endif
-!
-! --- VECTEUR RESULTANT CHARGEMENT DONNE
-!
-    do 10 n = 1, ifdo
-        call vtaxpy(covari(n), cnvari(n), cnvado)
-        if (niv .ge. 2) then
-            write (ifm,*) '<MECANONLINE> ......... FORC. DONNEES'
-            write (ifm,*) '<MECANONLINE> .........  ',n,' - COEF: ',&
-     &                   covari(n)
-            call nmdebg('VECT', cnvari(n), ifm)
+    if (l_mult_step) then
+        call nonlinDSVectCombAddDyna(sddyna_, 'CNFSDO', coeext, ds_vectcomb)
+        call nonlinDSVectCombAddDyna(sddyna_, 'CNFINT', -1.d0*coeint, ds_vectcomb)
+        call nonlinDSVectCombAddDyna(sddyna_, 'CNELTC', -1.d0*coeint, ds_vectcomb)
+        call nonlinDSVectCombAddDyna(sddyna_, 'CNELTF', -1.d0*coeint, ds_vectcomb)
+        if (l_macr) then
+            call nonlinDSVectCombAddDyna(sddyna_, 'CNSSTR', -1.d0*coeint, ds_vectcomb)
         endif
- 10 end do
+    endif
 !
-    call jedema()
+! - Combination
+!
+    call nonlinDSVectCombCompute(ds_vectcomb, cnvado)
+!
 end subroutine

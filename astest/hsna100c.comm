@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -52,7 +52,7 @@ MOTH=AFFE_MODELE(   MAILLAGE=MAIL,
 T_INT = DEFI_FONCTION(NOM_PARA='INST',
                       VALE=(0,15,
                             1.57670E+08,15,#5ans-1j
-                            1.57680E+08,35,#5ans 
+                            1.57680E+08,35,#5ans
                             1.70294E+09,35,
                             ),);
 T_EXT=DEFI_CONSTANTE(VALE=15,);
@@ -107,19 +107,23 @@ C_EQ_E10=69.1
 
 FL_INT05 = FORMULE(NOM_PARA='TEMP',
                    VALE='''(0.5*BETA / ((C_0 - C_50 )**2)
-  * (TEMP - (2.*C_0 - C_EQ_I05 ))*(TEMP - C_EQ_I05 ))''')
+  * (TEMP - (2.*C_0 - C_EQ_I05 ))*(TEMP - C_EQ_I05 ))''',
+                   BETA=BETA, C_0=C_0, C_50=C_50, C_EQ_I05=C_EQ_I05)
 
 FL_EXT05 = FORMULE(NOM_PARA='TEMP',
                    VALE='''(0.5*BETA / ((C_0 - C_50 )**2)
-  * (TEMP - (2.*C_0 - C_EQ_E05 ))*(TEMP - C_EQ_E05 ))''')
+  * (TEMP - (2.*C_0 - C_EQ_E05 ))*(TEMP - C_EQ_E05 ))''',
+                   BETA=BETA, C_0=C_0, C_50=C_50, C_EQ_E05=C_EQ_E05)
 
 FL_INT10 = FORMULE(NOM_PARA='TEMP',
                    VALE='''(0.5*BETA / ((C_0 - C_50 )**2)
-  * (TEMP - (2.*C_0 - C_EQ_I10 ))*(TEMP - C_EQ_I10 ))''')
+  * (TEMP - (2.*C_0 - C_EQ_I10 ))*(TEMP - C_EQ_I10 ))''',
+                   BETA=BETA, C_0=C_0, C_50=C_50, C_EQ_I10=C_EQ_I10)
 
 FL_EXT10 = FORMULE(NOM_PARA='TEMP',
                    VALE='''(0.5*BETA / ((C_0 - C_50 )**2)
-  * (TEMP - (2.*C_0 - C_EQ_E10 ))*(TEMP - C_EQ_E10 ))''')
+  * (TEMP - (2.*C_0 - C_EQ_E10 ))*(TEMP - C_EQ_E10 ))''',
+                   BETA=BETA, C_0=C_0, C_50=C_50, C_EQ_E10=C_EQ_E10)
 
 LIST0=DEFI_LIST_REEL(  DEBUT=0.,INTERVALLE=(
                          _F(  JUSQU_A = 50.,    PAS = 10.,  ),
@@ -205,8 +209,8 @@ LISTSECH=DEFI_LIST_REEL(
 DEFLISTS =DEFI_LIST_INST(DEFI_LIST=_F(LIST_INST = LISTSECH),)
 
 RESUSECH=THER_NON_LINE(          MODELE=MOTH,
-                                 METHODE='NEWTON_KRYLOV', 
-                                 SOLVEUR=_F(METHODE='PETSC'), 
+                                 METHODE='NEWTON_KRYLOV',
+                                 SOLVEUR=_F(METHODE='PETSC'),
                                      EXCIT=_F( CHARGE = CHARSE05,   ),
                                 CHAM_MATER=CHMAT,
                                  ETAT_INIT=_F( VALE = 105.7,   ),
@@ -219,7 +223,7 @@ RESUSECH=THER_NON_LINE(          MODELE=MOTH,
                              TITRE=( ' CAS TEST &CODE &RL COMMANDE &COMMANDE', )
                          )
 
-RESUSECH=THER_NON_LINE(reuse=RESUSECH,         
+RESUSECH=THER_NON_LINE(reuse=RESUSECH,
                         MODELE=MOTH,
                         METHODE='NEWTON_KRYLOV',
                         SOLVEUR=_F(METHODE='PETSC'),
@@ -257,7 +261,7 @@ COUP=MACR_LIGN_COUPE(RESULTAT=RESUSECH,
 
 IMPR_TABLE(TABLE=COUP,FORMAT='TABLEAU_CROISE', FORMAT_R='F3.12',NOM_PARA=('INST','COOR_X','TEMP'),);
 #-----------------------------------------------------
-# Tests 
+# Tests
 #-----------------------------------------------------
 C_ref = [[67.6838,54.2257,51.6],
          [80.9129,65.2,56.8903],
@@ -270,7 +274,7 @@ C_ref = [[67.6838,54.2257,51.6],
          [90.1783,82.8,73.1186],
          [81,76.3516,70.815],
          [71.2,70.0603,68.8035],];
-# valeurs de non-regression DNSXI,DNSXS,DNSYI,DNSYS    
+# valeurs de non-regression DNSXI,DNSXS,DNSYI,DNSYS
 C_reg=[ [69.395169106175, 51.783610677714, 51.655510194322],
 [81.146071925132, 64.545492771684, 56.460745431477],
 [90.607776328377, 74.955498571336, 61.973805298843],
@@ -284,7 +288,7 @@ C_reg=[ [69.395169106175, 51.783610677714, 51.655510194322],
 [69.361278835568, 69.278022046396, 69.1496019473 ],];
 
 x_test = [22.5,22.5382,22.5954,22.6809,22.8088,23,23.1912,23.3191,23.4046,23.4618,23.5];
-inst_test = [1.57680E+08,4.73040E+08,1.70294E+09,];         
+inst_test = [1.57680E+08,4.73040E+08,1.70294E+09,];
 for j,t in enumerate(inst_test) :
     for i,x in enumerate(x_test) :
         TEST_TABLE(REFERENCE='SOURCE_EXTERNE',

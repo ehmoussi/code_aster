@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -26,6 +26,10 @@ from code_aster.Cata.Commons import *
 
 
 def calc_transfert_prod(self,SIGNAL,**args):
+   if args.get('__all__'):
+       return ([table_sdaster],
+               [None, table_sdaster])
+
 #   self.type_sdprod(tabfrf,table_sdaster)
    if SIGNAL !=None:
       for sign in SIGNAL:
@@ -66,7 +70,7 @@ CALC_TRANSFERT=MACRO(nom="CALC_TRANSFERT",
               MESURE_Y      =SIMP(statut='o',typ=(fonction_sdaster,fonction_c)),
               MESURE_Z      =SIMP(statut='f',typ=(fonction_sdaster,fonction_c)),
               TABLE_RESU    =SIMP(statut='o',typ=CO),
-              TYPE_RESU     =SIMP(statut='o',typ='TXM',defaut="HARMONIQUE",into=("HARMONIQUE","TEMPOREL")),
+              TYPE_RESU     =SIMP(statut='f',typ='TXM',defaut="HARMONIQUE",into=("HARMONIQUE","TEMPOREL")),
               ),
 
 )

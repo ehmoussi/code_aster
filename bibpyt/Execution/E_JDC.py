@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -181,9 +181,6 @@ class JDC:
         cpu_total_user, cpu_total_syst, elapsed_total = self.timer.StopAndGetTotal(
         )
 
-        aster.affiche('RESULTAT', convert(repr(self.timer)))
-        aster.fclose(8)
-
         tpmax = aster_core.get_option("tpmax")
         if tpmax != None:
             cpu_restant = tpmax - elapsed_total
@@ -206,8 +203,8 @@ class JDC:
         sign = self.signature(base)
         UTMESS('I', 'SUPERVIS_68', valk=sign, vali=self.jeveux_sysaddr)
 
-        if self.fico is None:
-            aster.affiche('MESSAGE', convert(repr(self.timer)))
+
+        aster.affiche('MESSAGE', convert(repr(self.timer)))
         if self.ctree:
             txt = self.ctree.get_stats(level=2)
             aster.affiche('MESSAGE', convert(txt))

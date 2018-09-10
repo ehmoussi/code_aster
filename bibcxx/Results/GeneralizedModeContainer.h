@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe GeneralizedModeContainer
  * @author Nicolas Tardieu
  * @section LICENCE
- *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -28,6 +28,8 @@
 
 #include "Results/FullResultsContainer.h"
 #include "Supervis/ResultNaming.h"
+#include "LinearAlgebra/GeneralizedAssemblyMatrix.h"
+#include "Discretization/GeneralizedDOFNumbering.h"
 
 /**
  * @class GeneralizedModeContainerInstance
@@ -37,17 +39,94 @@
 class GeneralizedModeContainerInstance: public FullResultsContainerInstance
 {
 private:
+    /** @brief Damping matrix */
+    GeneralizedAssemblyMatrixDoublePtr   _dampingMatrix;
+    /** @brief Rigidity double matrix */
+    GeneralizedAssemblyMatrixDoublePtr   _rigidityDoubleMatrix;
+    /** @brief Rigidity complex matrix */
+    GeneralizedAssemblyMatrixComplexPtr  _rigidityComplexMatrix;
+    /** @brief generalized support DOFNumbering */
+    GeneralizedDOFNumberingPtr           _genDOFNum;
 
 public:
     /**
      * @brief Constructeur
      * @todo  Ajouter les objets Jeveux de la SD
      */
-    GeneralizedModeContainerInstance( const std::string &name): FullResultsContainerInstance( name, "MODE_GENE" )
-    {};
-    GeneralizedModeContainerInstance(): GeneralizedModeContainerInstance( ResultNaming::getNewResultName())
+    GeneralizedModeContainerInstance( const std::string &name ):
+        FullResultsContainerInstance( name, "MODE_GENE" ),
+        _rigidityDoubleMatrix( nullptr ),
+        _rigidityComplexMatrix( nullptr ),
+        _genDOFNum( nullptr )
     {};
 
+    /**
+     * @brief Constructeur
+     * @todo  Ajouter les objets Jeveux de la SD
+     */
+    GeneralizedModeContainerInstance():
+        GeneralizedModeContainerInstance( ResultNaming::getNewResultName())
+    {};
+
+    /**
+     * @brief Get support GeneralizedDOFNumering
+     */
+    GeneralizedDOFNumberingPtr getGeneralizedDOFNumbering() const throw ( std::runtime_error )
+    {
+        if( _genDOFNum != nullptr )
+            return _genDOFNum;
+        throw std::runtime_error( "GeneralizedDOFNumbering is empty" );
+    };
+
+    /**
+     * @brief Set the damping matrix
+     * @param matr GeneralizedAssemblyMatrixDoublePtr
+     */
+    bool setDampingMatrix( const GeneralizedAssemblyMatrixDoublePtr& matr )
+    {
+        _dampingMatrix = matr;
+        return true;
+    };
+
+    /**
+     * @brief Set support GeneralizedDOFNumering
+     */
+    bool setGeneralizedDOFNumbering( const GeneralizedDOFNumberingPtr& dofNum )
+    {
+        if( dofNum != nullptr )
+        {
+            _genDOFNum = dofNum;
+            return true;
+        }
+        return false;
+    };
+
+    /**
+     * @brief Set the rigidity matrix
+     * @param matr GeneralizedAssemblyMatrixDoublePtr
+     */
+    bool setRigidityMatrix( const GeneralizedAssemblyMatrixDoublePtr& matr )
+    {
+        _rigidityComplexMatrix = nullptr;
+        _rigidityDoubleMatrix = matr;
+        return true;
+    };
+
+    /**
+     * @brief Set the rigidity matrix
+     * @param matr GeneralizedAssemblyMatrixComplexPtr
+     */
+    bool setRigidityMatrix( const GeneralizedAssemblyMatrixComplexPtr& matr )
+    {
+        _rigidityDoubleMatrix = nullptr;
+        _rigidityComplexMatrix = matr;
+        return true;
+    };
+
+    bool update() throw ( std::runtime_error )
+    {
+        return ResultsContainerInstance::update();
+    };
 };
 
 /**

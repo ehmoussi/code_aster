@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -323,7 +323,8 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
 ##############################
 
 #ON ECRIT LA FCT LOG POUR POUVOIR COMPARER LES VALEURS EN ECHELLE LOG DANS TEST_FONCTION
-FLOG = FORMULE(NOM_PARA='DSP',VALE='log(DSP)')
+FLOG = FORMULE(VALE='log(DSP)',
+               NOM_PARA='DSP',)
 LX=DEFI_LIST_REEL( VALE=(tuple(NP.power(10,NP.arange(-10,10,.01)))))
 FFLOG=CALC_FONC_INTERP(     FONCTION=FLOG,    LIST_PARA=LX,
                             NOM_PARA='DSP',

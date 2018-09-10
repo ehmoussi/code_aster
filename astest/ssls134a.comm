@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -35,12 +35,12 @@ CARA=AFFE_CARA_ELEM(MODELE=MODEL,
 CHEFF1=CREA_CHAMP(MAILLAGE=MA, OPERATION='AFFE', TYPE_CHAM='CART_SIEF_R',
                    AFFE= _F(GROUP_MA='PLAQUE',
                             NOM_CMP= ('NXX'   , 'NYY','NXY','MXX','MYY','MXY','QX','QY'),
-                            VALE=    (-1000.0E3,   0.0,  0.0,  0.0,  0.0,  0.0, 0.0, 100000.0)))
+                            VALE=    (0.0, -1000.0E3,  0.0,  0.0,  0.0,  0.0, 0.0, 100000.0)))
 #section totalement tendue en X (pivot A "vertical") + effort transversal
 CHEFF2=CREA_CHAMP(MAILLAGE=MA, OPERATION='AFFE', TYPE_CHAM='CART_SIEF_R',
                    AFFE= _F(GROUP_MA='PLAQUE',
                             NOM_CMP= ('NXX'   ,'NYY','NXY','MXX','MYY','MXY','QX','QY'),
-                            VALE=    (+1000.0E3,  0.0,  0.0,  0.0,  0.0,  0.0, -20000.0, 0.0)))
+                            VALE=    (+1000.0E3,  0.0,  0.0,  0.0,  0.0,  0.0, -600000.0, 0.0)))
 #section totalement tendue en Y (pivot A "vertical") + effort transversal
 CHEFF3=CREA_CHAMP(MAILLAGE=MA, OPERATION='AFFE', TYPE_CHAM='CART_SIEF_R',
                    AFFE= _F(GROUP_MA='PLAQUE',
@@ -74,7 +74,7 @@ CHEFF8=CREA_CHAMP(MAILLAGE=MA, OPERATION='AFFE', TYPE_CHAM='CART_SIEF_R',
 CHEFF9=CREA_CHAMP(MAILLAGE=MA, OPERATION='AFFE', TYPE_CHAM='CART_SIEF_R',
                    AFFE= _F(GROUP_MA='PLAQUE',
                             NOM_CMP= ('NXX','NYY'    ,'NXY','MXX','MYY','MXY','QX','QY'),
-                            VALE=    ( 0.0,  0.0,  0.0,  100E3, 75E3,  0.0, 0.0, 0.0)))
+                            VALE=    ( 0.0,  0.0,  0.0,  100E3, -75E3,  0.0, 0.0, 0.0)))
 
 CHEFF10=CREA_CHAMP(MAILLAGE=MA, OPERATION='AFFE', TYPE_CHAM='CART_SIEF_R',
                    AFFE= _F(GROUP_MA='PLAQUE',
@@ -102,6 +102,15 @@ CHEFF14=CREA_CHAMP(MAILLAGE=MA, OPERATION='AFFE', TYPE_CHAM='CART_SIEF_R',
                             NOM_CMP= ('NXX','NYY','NXY','MXX' ,'MYY'   ,'MXY','QX','QY'),
                             VALE=    (  0.0,  0.0,  0.0,   0.0,-380E3,  0.0, 0.0,0.0)))
 
+CHEFF15=CREA_CHAMP(MAILLAGE=MA, OPERATION='AFFE', TYPE_CHAM='CART_SIEF_R',
+                   AFFE= _F(GROUP_MA='PLAQUE',
+                            NOM_CMP= ('NXX'   , 'NYY','NXY','MXX','MYY','MXY','QX','QY'),
+                            VALE=    (0.0, -1500.0E3,  0.0,  0.0,  0.0,  0.0, 0.0, 800000.0)))
+# Pivot C avec compression totale d'une facette sur la section entière
+CHEFF16=CREA_CHAMP(MAILLAGE=MA, OPERATION='AFFE', TYPE_CHAM='CART_SIEF_R',
+                   AFFE= _F(GROUP_MA='PLAQUE',
+                            NOM_CMP= ('NXX'   , 'NYY','NXY','MXX','MYY','MXY','QX','QY'),
+                            VALE=    (-4500E3, 0.0,  0.0,  380E3,  0.0,  0.0, 0.0, 100000.0)))
 
 RESUELU=CREA_RESU(OPERATION='AFFE',TYPE_RESU='EVOL_ELAS',
            NOM_CHAM='EFGE_ELNO',
@@ -118,6 +127,8 @@ RESUELU=CREA_RESU(OPERATION='AFFE',TYPE_RESU='EVOL_ELAS',
             _F( CHAM_GD=CHEFF10,INST=10., MODELE=MODEL, CARA_ELEM=CARA,),
              _F( CHAM_GD=CHEFF13,INST=11., MODELE=MODEL, CARA_ELEM=CARA,),
              _F( CHAM_GD=CHEFF14,INST=12., MODELE=MODEL, CARA_ELEM=CARA,),
+             _F( CHAM_GD=CHEFF15,INST=13., MODELE=MODEL, CARA_ELEM=CARA,),
+             _F( CHAM_GD=CHEFF16,INST=14., MODELE=MODEL, CARA_ELEM=CARA,),
            ))
 RESUELS=CREA_RESU(OPERATION='AFFE',TYPE_RESU='EVOL_ELAS',
            NOM_CHAM='EFGE_ELNO',
@@ -136,12 +147,14 @@ RESUELS=CREA_RESU(OPERATION='AFFE',TYPE_RESU='EVOL_ELAS',
 # calcul du ferraillage :
 #------------------------
 RESUELU= CALC_FERRAILLAGE( RESULTAT =RESUELU,reuse=RESUELU,
-         TYPE_COMB    = 'ELU',  INST=(1., 2., 3., 4.,5.,6.,7.,8.,9.,10.,11.,12.),
+         CODIFICATION = 'UTILISATEUR',
+         TYPE_COMB    = 'ELU',  INST=(1., 2., 3., 4.,5.,6.,7.,8.,9.,10.,11.,12.,13.,14.),
          AFFE  = (
             _F( TOUT='OUI', ENROBG=0.04, SIGM_ACIER=435.0E6, SIGM_BETON=23.3E6, PIVA=10.0E-3, PIVB= 3.5E-3, ES = 2.1e11
 ),
          ))
 RESUELS= CALC_FERRAILLAGE( RESULTAT =RESUELS, reuse=RESUELS,
+         CODIFICATION = 'UTILISATEUR',
          TYPE_COMB    = 'ELS',  INST=(1., 2., 3., 4.,5.,6.,7.,8.,9.,10.),
          AFFE  = (
             _F( TOUT='OUI', ENROBG=0.04, SIGM_ACIER=400.0E6, SIGM_BETON=21E6, CEQUI=15.1),
@@ -151,37 +164,35 @@ N_CMPS = ['DNSXI','DNSXS','DNSYI','DNSYS'];
 #-----------------------------------------------------
 # Tests pour l'ELU
 #-----------------------------------------------------
-D_ref1 = [
-          [-1e4,-1e4,-1e4,-1e4,15.964],
-          [11.494,11.494,0,0,3.193],
-          [0,0,11.494,11.494,13.164],
-          [0,0,0,15.830,0],
-          [0,15.830,0,0,0],
-          [0,14.596,0,0,0],
-          [0,17.079,0,0,0],
-          [3.831,42.146,0,0,0],
-          [0,15.83,0,11.555,0],
-          [0,0,25.28,0,0],
-          [0,0,58.368,0,0],
-          [-1e4,-1e4,-1e4,-1e4,0.0],
-];
-D_ref = [[1e-4*x for x in T] for T in D_ref1];
-# valeurs de non-regression DNSXI,DNSXS,DNSYI,DNSYS          
-D_calc1 = [
-         [-1e3,-1e3,-1e3,-1e3,1.5964240102171],
-          [1.1494252873563,1.1494252873563,0,0,0.31928480204342],
-          [0,0,1.1494252873563,1.1494252873563,1.3164449634795],
-          [0,0,0,1.5829765402984,0],
-          [0,1.5829765402984,0,0,0],
-          [0,1.4596414634653,0,0,0],
-          [0,1.7079122201924,0,0,0],
-          [0.38314176245211,4.2145593869732,0,0,0],
-          [0,1.5829765402984,0,1.155481113338,0],
-          [0,0,2.5280358704041,0,0],
-          [0,0,5.8368552200731,0,0],
-          [-1e3,-1e3,-1e3,-1e3,0.0],
-];
-D_calc = [[1e-3*x for x in T] for T in D_calc1];
+D_ref = [[0., 0., 0., 0., 0.0015964240102171135],
+[0.0011494252873563218, 0.0011494252873563218, 0, 0, 0.009578544061302681],
+[0.0, 0.0, 0.0011494252873563218, 0.0011494252873563218, 0.0013164449634794572],
+[0, 0, 0, 0.0015829765402983692, 0.0],
+[0, 0.0015829765402983692, 0, 0, 0.0],
+[0, 0.0014596414634652894, 0, 0, 0],
+[0, 0.0017079122201924043, 0, 0, 0],
+[0.0003831417624521073, 0.00421455938697318, 0, 0, 0.0],
+[0, 0.0015829765402983692, 0.0011554811133379565, 0, 0],
+[0, 0, 0.002528035870404115, 0, 0],
+[0, 0, 0.005501356931549193, 0, 0],
+[-1.0, -1.0, -1.0, -1.0, -1.0],
+[0., 0., 0., 0., 0.012771392081736908],
+[-1.0, -1.0, -1.0, -1.0, 0.0015964240102171135],];
+# valeurs de non-regression DNSXI,DNSXS,DNSYI,DNSYS
+D_calc = [[0., 0., 0., 0., 0.0015964240102171135],
+[0.0011494252873563218, 0.0011494252873563218, 0, 0, 0.009578544061302681],
+[0.0, 0.0, 0.0011494252873563218, 0.0011494252873563218, 0.0013164449634794572],
+[0, 0, 0, 0.0015829765402983692, 0.0],
+[0, 0.0015829765402983692, 0, 0, 0.0],
+[0, 0.0014596414634652894, 0, 0, 0],
+[0, 0.0017079122201924043, 0, 0, 0],
+[0.0003831417624521073, 0.00421455938697318, 0, 0, 0.0],
+[0, 0.0015829765402983692, 0.0011554811133379565, 0, 0],
+[0, 0, 0.002528035870404115, 0, 0],
+[0, 0, 0.005501356931549193, 0, 0],
+[-1.0, -1.0, -1.0, -1.0, -1.0],
+[0., 0., 0., 0., 0.012771392081736908],
+[-1.0, -1.0, -1.0, -1.0, 0.0015964240102171135],];
 for j in range(len(D_ref)) :
     for i,ncmp in enumerate(N_CMPU) :
       if (D_ref[j][i] == 0):
@@ -210,29 +221,27 @@ for j in range(len(D_ref)) :
 #-----------------------------------------------------
 # Tests pour l'ELS
 #-----------------------------------------------------
-D_ref1 = [[0,0,0,0],
-          [12.5,12.5,0,0],
-          [0,0,12.5,12.5],
-          [0,0,0,18.31],
-          [0,18.31,0,0],
-          [0,18.044,0,0],
-          [0,19.642,0,0],
-          [4.167,45.833,0,0],
-          [0,18.31,0,13.486],
-          [0,0,18.31,0],];
-D_ref = [[1e-4*x for x in T] for T in D_ref1];
-# valeurs de non-regression DNSXI,DNSXS,DNSYI,DNSYS          
-D_calc1 = [[0,0,0,0],
-          [1.25,1.25,0,0],
-          [0,0,1.25,1.25],
-          [0,0,0,1.8310189118255],
-          [0,1.8310189118255,0,0],
-          [0,1.8044473865326,0,0],
-          [0,1.964228978424,0,0],
-          [0.41666666666667,4.5833333333333,0,0],
-          [0,1.8310189118255,0,1.3485613075893],
-          [0,0,1.8310189118255,0],];
-D_calc = [[1e-3*x for x in T] for T in D_calc1];
+D_ref = [[0, 0, 0, 0],
+[0.00125, 0.00125, 0, 0],
+[0.0, 0.0, 0.00125, 0.00125],
+[0, 0, 0, 0.0018310189118255114],
+[0, 0.0018310189118255114, 0, 0],
+[0, 0.0018044473865325662, 0, 0],
+[0, 0.0019642289784240182, 0, 0],
+[0.0004166666666666667, 0.004583333333333333, 0, 0],
+[0, 0.0018310189118255114, 0.0013485613075893438, 0],
+[0, 0, 0.0018310189118255114, 0],];
+# valeurs de non-regression DNSXI,DNSXS,DNSYI,DNSYS
+D_calc = [[0, 0, 0, 0],
+[0.00125, 0.00125, 0, 0],
+[0.0, 0.0, 0.00125, 0.00125],
+[0, 0, 0, 0.0018310189118255114],
+[0, 0.0018310189118255114, 0, 0],
+[0, 0.0018044473865325662, 0, 0],
+[0, 0.0019642289784240182, 0, 0],
+[0.0004166666666666667, 0.004583333333333333, 0, 0],
+[0, 0.0018310189118255114, 0.0013485613075893438, 0],
+[0, 0, 0.0018310189118255114, 0],];
 for j in range(len(D_ref)) :
     for i,ncmp in enumerate(N_CMPS) :
       if (D_ref[j][i] == 0):

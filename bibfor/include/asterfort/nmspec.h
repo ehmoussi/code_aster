@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,9 +18,9 @@
 ! aslint: disable=W1504
 !
 interface
-    subroutine nmspec(model          , mate         , cara_elem , list_load  , list_func_acti,& 
+    subroutine nmspec(model          , ds_material  , cara_elem , list_load  , list_func_acti,& 
                       nume_dof       , nume_dof_inva,&
-                      ds_constitutive, varc_refe    ,&
+                      ds_constitutive,&
                       sddisc         , nume_inst    ,&
                       sddyna         , sderro       , ds_contact, ds_algopara,&
                       ds_measure     , &
@@ -29,11 +29,11 @@ interface
                       hval_veelem    ,&
                       ds_posttimestep)
         use NonLin_Datastructure_type
-        character(len=24), intent(in) :: model, mate, cara_elem
+        character(len=24), intent(in) :: model, cara_elem
+        type(NL_DS_Material), intent(in) :: ds_material
         character(len=19), intent(in) :: list_load
         integer, intent(in) :: list_func_acti(*)
         character(len=24), intent(in) :: nume_dof, nume_dof_inva
-        character(len=24), intent(in) :: varc_refe
         type(NL_DS_Constitutive), intent(in) :: ds_constitutive
         character(len=19), intent(in) :: sddisc
         integer, intent(in) :: nume_inst

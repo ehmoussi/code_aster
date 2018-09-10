@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -24,6 +24,8 @@ from code_aster.Cata.Commons import *
 
 
 def rest_cond_tran_prod(RESULTAT,TYPE_RESU,**args ):
+  if args.get('__all__'):
+      return (dyna_trans, evol_noli)
 
   if AsType(RESULTAT) == dyna_trans  : return dyna_trans
   if (AsType(RESULTAT) == evol_noli and TYPE_RESU == "DYNA_TRANS") : return dyna_trans
@@ -35,7 +37,7 @@ REST_COND_TRAN=OPER(nom="REST_COND_TRAN",op=  78,sd_prod=rest_cond_tran_prod,
                     fr=tr("Restituer dans la base physique des résultats issus d'un calcul"
                          "non-lineaire avec projection modale ou d'un calcul transitoire linear"
                          "avec condensation dynamique"),
-                    reentrant='f',
+                    reentrant='f:RESU_FINAL|RESULTAT',
         regles=(
                 EXCLUS('TOUT_ORDRE','NUME_ORDRE','INST','LIST_INST','TOUT_INST'),
                 EXCLUS('MACR_ELEM_DYNA','BASE_MODALE'),),

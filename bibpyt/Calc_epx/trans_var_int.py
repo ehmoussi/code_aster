@@ -110,6 +110,7 @@ def var_int_a2e(compor_gr, resu, mod, nume_ordre):
             )
 
     __res = CREA_RESU(reuse=__res,
+                  RESULTAT=__res,
                   OPERATION = 'AFFE',
                   TYPE_RESU = 'EVOL_NOLI',
                   NOM_CHAM  = 'SIEF_ELGA',
@@ -120,6 +121,7 @@ def var_int_a2e(compor_gr, resu, mod, nume_ordre):
             )
 
     __res = CREA_RESU(reuse=__res,
+                  RESULTAT=__res,
                   OPERATION = 'AFFE',
                   TYPE_RESU = 'EVOL_NOLI',
                   NOM_CHAM  = 'VARI_ELGA',

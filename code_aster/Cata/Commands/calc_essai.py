@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -28,11 +28,6 @@ from code_aster.Cata.Commons import *
 def calc_essai_prod(self,RESU_IDENTIFICATION,
                     RESU_MODIFSTRU,
                     **args):
-
-    if RESU_IDENTIFICATION != None:
-        for res in RESU_IDENTIFICATION:
-            self.type_sdprod(res['TABLE'],interspectre)
-
     MTYPES = {
         'MODELE'    : modele_sdaster,
         'MODE_MECA' : mode_meca,
@@ -46,7 +41,16 @@ def calc_essai_prod(self,RESU_IDENTIFICATION,
         'BASE_ES'   : mode_meca,
         'BASE_LMME' : mode_meca,
         'MODE_STA'  : mode_meca,
-              }
+    }
+    if args.get('__all__'):
+        return ([None],
+                [None, interspectre],
+                [None] + MTYPES.values())
+
+    if RESU_IDENTIFICATION != None:
+        for res in RESU_IDENTIFICATION:
+            self.type_sdprod(res['TABLE'],interspectre)
+
     if RESU_MODIFSTRU != None:
         for res in RESU_MODIFSTRU:
             for mc, typ in MTYPES.items():
@@ -65,18 +69,18 @@ CALC_ESSAI = MACRO(nom       = 'CALC_ESSAI',
                                                TABLE = SIMP(statut='f', typ=CO),
                                              ),
                    RESU_MODIFSTRU = FACT( statut='f', max=1,
-                                          MODELE=SIMP(statut='f',typ=CO,defaut=None),
-                                          MODE_MECA=SIMP(statut='f',typ=CO,defaut=None),
-                                          MAILLAGE=SIMP(statut='f',typ=CO,defaut=None),
-                                          NUME_DDL=SIMP(statut='f',typ=CO,defaut=None),
-                                          MASS_MECA=SIMP(statut='f',typ=CO,defaut=None),
-                                          RIGI_MECA=SIMP(statut='f',typ=CO,defaut=None),
-                                          AMOR_MECA=SIMP(statut='f',typ=CO,defaut=None),
-                                          MACR_ELEM=SIMP(statut='f',typ=CO,defaut=None),
-                                          PROJ_MESU=SIMP(statut='f',typ=CO,defaut=None),
-                                          BASE_ES=SIMP(statut='f',typ=CO,defaut=None),
-                                          BASE_LMME=SIMP(statut='f',typ=CO,defaut=None),
-                                          MODE_STA=SIMP(statut='f',typ=CO,defaut=None),
+                                          MODELE=SIMP(statut='f',typ=CO),
+                                          MODE_MECA=SIMP(statut='f',typ=CO),
+                                          MAILLAGE=SIMP(statut='f',typ=CO),
+                                          NUME_DDL=SIMP(statut='f',typ=CO),
+                                          MASS_MECA=SIMP(statut='f',typ=CO),
+                                          RIGI_MECA=SIMP(statut='f',typ=CO),
+                                          AMOR_MECA=SIMP(statut='f',typ=CO),
+                                          MACR_ELEM=SIMP(statut='f',typ=CO),
+                                          PROJ_MESU=SIMP(statut='f',typ=CO),
+                                          BASE_ES=SIMP(statut='f',typ=CO),
+                                          BASE_LMME=SIMP(statut='f',typ=CO),
+                                          MODE_STA=SIMP(statut='f',typ=CO),
                                          ),
 
                    b_inter    = BLOC( condition="""equal_to("INTERACTIF", 'NON')""",

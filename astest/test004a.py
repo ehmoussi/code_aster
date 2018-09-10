@@ -31,7 +31,7 @@ affectMat = code_aster.MaterialOnMesh(monMaillage)
 affectMat.addMaterialOnAllMesh( acier )
 affectMat.buildWithoutInputVariables()
 
-charMeca1 = code_aster.KinematicsLoad()
+charMeca1 = code_aster.KinematicsMechanicalLoad()
 charMeca1.setSupportModel(monModel)
 charMeca1.addImposedMechanicalDOFOnNodes(code_aster.PhysicalQuantityComponent.Dx, 0., "Bas")
 charMeca1.addImposedMechanicalDOFOnNodes(code_aster.PhysicalQuantityComponent.Dy, 0., "Bas")

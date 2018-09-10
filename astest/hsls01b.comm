@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -139,6 +139,7 @@ MESTAT=CREA_RESU(  OPERATION='AFFE', TYPE_RESU='EVOL_ELAS',  NOM_CHAM='DEPL',
                             MODELE=MOD, CHAM_MATER=CHMAT, CARA_ELEM=CARA2, ),
                  )
 MESTAT=CREA_RESU(  reuse=MESTAT,
+                   RESULTAT=MESTAT,
                    OPERATION='AFFE', TYPE_RESU='EVOL_ELAS',  NOM_CHAM='SIEF_ELGA',
                    AFFE=_F( INST = 1.,  CHAM_GD = SIE1,
                             MODELE=MOD, CHAM_MATER=CHMAT, CARA_ELEM=CARA2, ),

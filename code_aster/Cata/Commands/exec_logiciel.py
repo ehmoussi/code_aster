@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -25,8 +25,10 @@ from code_aster.Cata.Commons import *
 
 
 def exec_logiciel_prod(self, SALOME, MAILLAGE, **args):
+    if args.get('__all__'):
+        return (None, maillage_sdaster)
     if SALOME != None:
-        if len(SALOME['NOM_PARA'] or []) != len(SALOME['VALE'] or []):
+        if len(SALOME.get('NOM_PARA') or []) != len(SALOME.get('VALE') or []):
             raise AsException(tr("SALOME: NOM_PARA et VALE doivent avoir le "
                                  "même cardinal"))
     if MAILLAGE != None:
@@ -52,7 +54,7 @@ EXEC_LOGICIEL = MACRO(nom="EXEC_LOGICIEL",
                          "des redirections ou des caractères de completions")),
 
       MAILLAGE = FACT(statut='f',
-         FORMAT     = SIMP(statut='o', typ='TXM', into=("GMSH", "GIBI", "SALOME")),
+         FORMAT     = SIMP(statut='o', typ='TXM', into=("GMSH", "SALOME")),
          UNITE_GEOM = SIMP(statut='f', typ=UnitType(), val_min=10, val_max=90, defaut=16, inout='in',
                            fr=tr("Unité logique définissant le fichier (fort.N) "
                                  "contenant les données géométriques (datg)")),

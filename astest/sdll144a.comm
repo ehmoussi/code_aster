@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -188,21 +188,33 @@ A = (OMdeb*tfin-OMfin*tdeb)/(tfin-tdeb)
 B = (OMdeb-OMfin)/(tdeb-tfin)
 C = PHIdeb - A*tdeb - 0.5*B*(tdeb**2)
 
-PHI=FORMULE(VALE='A*INST + 0.5*B*(INST**2) + C',
-            NOM_PARA='INST',);
+PHI = FORMULE(VALE='A*INST + 0.5*B*(INST**2) + C',
+              A=A,
+              B=B,
+              C=C,
+              NOM_PARA='INST',)
 
-OM=FORMULE(VALE='A+B*INST',
-           NOM_PARA='INST',);
+OM = FORMULE(VALE='A+B*INST',
+             A=A,
+             B=B,
+             NOM_PARA='INST',)
 
-ACC=FORMULE(VALE='B',
-            NOM_PARA='INST',);
+ACC = FORMULE(VALE='B',
+              B=B,
+              NOM_PARA='INST',)
 
 
 forx = FORMULE(VALE='(OM(INST) ** 2) * cos(PHI(INST)) + ACC(INST) * sin(PHI(INST))',
-                NOM_PARA='INST',);
+               OM=OM,
+               PHI=PHI,
+               ACC=ACC,
+               NOM_PARA='INST',)
 
 fory = FORMULE(VALE='(OM(INST) ** 2) * sin(PHI(INST)) - ACC(INST) * cos(PHI(INST))',
-                NOM_PARA='INST',);
+               OM=OM,
+               PHI=PHI,
+               ACC=ACC,
+               NOM_PARA='INST',)
 
 PROJ_BASE(BASE=MODES,
                 STOCKAGE='PLEIN',

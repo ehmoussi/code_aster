@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -19,7 +19,7 @@
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),);
 
-Esol = 18885000000;
+Esol = 18885000000.0;
 
 Nusol = 0.33;
 
@@ -29,7 +29,7 @@ alpha = 1.0;
 
 beta=1.0 ;
 
-rb = 100;
+rb = 100.0;
 
 Gsol = (Esol / (2 * (1 + Nusol)));
 
@@ -43,50 +43,35 @@ Cs = sqrt((Gsol / Msol));
 
 lcara=((1 + alpha) * 2) * rb
 
-mail0=LIRE_MAILLAGE(FORMAT='MED',);
+mail=LIRE_MAILLAGE( );
 
-mail0=DEFI_GROUP(reuse =mail0,
-                MAILLAGE=mail0,
-                CREA_GROUP_NO=_F(GROUP_MA=('SURF','FOND_SS','FOND_RD','FOND_RG',),),);
-
-mail=CREA_MAILLAGE(MAILLAGE=mail0,
-                    CREA_POI1=(_F(NOM_GROUP_MA='SD_RD',
-                                  GROUP_MA='FOND_RD',),
-                               _F(NOM_GROUP_MA='SD_RG',
-                                  GROUP_MA='FOND_RG',),
-                               _F(NOM_GROUP_MA='SD_SS',
-                                  GROUP_MA='FOND_SS',),
-                  ),);
-        
 mail=DEFI_GROUP(reuse =mail,
                 MAILLAGE=mail,
-                CREA_GROUP_NO=_F(NOM='LSURF',NOEUD=('N23','N22','N21','N20',
-        'N19','N18','N17','N16','N15','N14','N13','N12','N11',
-        'N10','N9','N8','N2','N39','N40','N41','N42','N43',
-        'N44','N45','N46','N47','N3'),),);
-        
+                CREA_GROUP_NO=_F(NOM='LSURF',NOEUD=('N785','N786','N540','N781',
+        'N780','N541','N374','N371','N814','N764','N765','N771','N772',
+        'N773','N407','N766','N408','N417','N413','N770','N767','N769',
+        'N768','N435','N438','N437','N775'),),);
+
 mail=DEFI_GROUP(reuse =mail,
                 MAILLAGE=mail,
                 CREA_GROUP_MA=_F(NOM='FOND',UNION=('FOND_SS','FOND_RD','FOND_RG',),),);
-               
-                
+
+
 mail=MODI_MAILLAGE(reuse =mail,
                 MAILLAGE=mail,
                 ORIE_PEAU_2D=_F(GROUP_MA='FOND',GROUP_MA_SURF='FONDAT',),
                 );
-    
+
 
 sol=DEFI_MATERIAU(ELAS=_F(E=Esol,
                           NU=Nusol,
                           RHO=Msol,),);
-              
+
 sol1=DEFI_MATERIAU(ELAS=_F(E=Esol,
                           NU=Nusol,
                           RHO=Msol,
-              #LONG_CARA=lcara,
-              #COEF_AMOR=beta,
               ),);
-              
+
 sol2=DEFI_MATERIAU(ELAS=_F(E=Esol,
                           NU=Nusol,
                           RHO=Msol,
@@ -132,32 +117,35 @@ d_sinus=CALC_FONCTION(DERIVE=_F(FONCTION=sinus,),PROL_GAUCHE= 'CONSTANT',
 LINST=DEFI_LIST_REEL(DEBUT=0.0,
                      INTERVALLE=_F(JUSQU_A=1.0,
                                    PAS=0.005,),);
+LINST2=DEFI_LIST_REEL(DEBUT=0.5,
+                     INTERVALLE=_F(JUSQU_A=1.0,
+                                   PAS=0.005,),);
 
 ONDES=AFFE_CHAR_MECA_F(MODELE=MODELE,
-                       ONDE_PLANE=_F(DIRECTION=(0.0,-1.0,0),
+                       ONDE_PLANE=_F(DIRECTION=(0.0,1.0,0),
                                      TYPE_ONDE='S',
                                      FONC_SIGNAL=d_sinus,
-                                     DIST=-200.,
+                                     DIST=-200., DIST_REFLECHI=0.,
                                      DEPL_IMPO=sinus,
                                      GROUP_MA='FOND',
                                      ),
                       );
-                         
+
 
 ONDEP1=AFFE_CHAR_MECA_F(MODELE=MODELE,
-                       ONDE_PLANE=_F(DIRECTION=(0.0,-1.0,0),
+                       ONDE_PLANE=_F(DIRECTION=(0.0,1.0,0),
                                      TYPE_ONDE='P',
                                      FONC_SIGNAL=d_sinus,
-                                     DIST=-200.,
+                                     DIST=-200., DIST_REFLECHI=0.,
                                      DEPL_IMPO=sinus,
                                      GROUP_MA='FOND_SS',
                                      ),);
 
 ONDEP2=AFFE_CHAR_MECA_F(MODELE=MODELE,
-                       ONDE_PLANE=_F(DIRECTION=(0.0,-1.0,0),
+                       ONDE_PLANE=_F(DIRECTION=(0.0,1.0,0),
                                      TYPE_ONDE='P',
                                      FONC_SIGNAL=d_sinus,
-                                     DIST=-200.,
+                                     DIST=-200., DIST_REFLECHI=0.,
                                      DEPL_IMPO=sinus,
                                      GROUP_MA=('FOND_RG','FOND_RD',),
                                      ),);
@@ -182,7 +170,7 @@ BlancP=DYNA_NON_LINE(
                               REAC_ITER = 0),
                   INCREMENT=_F(LIST_INST=LINST,),
                   EXCIT=(_F(CHARGE=ONDEP1,),
-                         _F(CHARGE=ONDEP2,),), 
+                         _F(CHARGE=ONDEP2,),),
                   );
 
 maxP=CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R',
@@ -191,37 +179,44 @@ maxP=CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R',
                 NOM_CHAM='DEPL',
                 TYPE_MAXI='MAXI',
                 TYPE_RESU='VALE',
-                LIST_INST=LINST,);
+                LIST_INST=LINST2,);
+
+IMPR_RESU(FORMAT="RESULTAT",
+          RESU=_F(CHAM_GD=maxP,
+                  NOM_CMP=('DX','DY',),
+                  GROUP_NO='LSURF',
+                  IMPR_COOR='OUI',),);
 
 TEST_RESU(
           CHAM_NO=(
                    _F(CHAM_GD=maxP,
                       NOM_CMP='DY',
-                      NOEUD='N23',
-                      VALE_CALC=3.06296251486E+00,
+                      NOEUD='N785',
+                      VALE_CALC=2.44917470326,
                       ),
                    _F(CHAM_GD=maxP,
                       NOM_CMP='DX',
-                      NOEUD='N2',
-                      VALE_CALC=2.40829007814E-01,
+                      NOEUD='N408',
+                      VALE_CALC=0.149159237902,
                       ),
                    _F(CHAM_GD=maxP,
                       NOM_CMP='DY',
-                      NOEUD='N2',
-                      VALE_CALC=3.07008598352E+00,
+                      NOEUD='N408',
+                      VALE_CALC=2.19598105256,
                       ),
                    _F(CHAM_GD=maxP,
                       NOM_CMP='DX',
-                      NOEUD='N3',
-                      VALE_CALC=9.21651579636E-01,
+                      NOEUD='N775',
+                      VALE_CALC=0.79120090727,
                       ),
                    _F(CHAM_GD=maxP,
                       NOM_CMP='DY',
-                      NOEUD='N3',
-                      VALE_CALC=1.29986332285E+00,
-                      ),                      
-                  ),                  
-           );
+                      NOEUD='N775',
+                      VALE_CALC=1.3269923361,
+                      ),
+                  ),
+           );      
+
 NT = 202
 
 for k in range(1,NT):
@@ -236,14 +231,16 @@ for k in range(1,NT):
                   NOM_CHAM='DEPL',
                   AFFE=(_F(CHAM_GD=VECA1,INST=0.0,),),);
   else:
-    CHA_ON=CREA_RESU(reuse=CHA_ON,OPERATION='AFFE',
+    CHA_ON=CREA_RESU(reuse=CHA_ON,
+                  RESULTAT=CHA_ON,
+                  OPERATION='AFFE',
                   TYPE_RESU='DYNA_TRANS',
                   MATR_RIGI=RIGI,
                   MATR_MASS=MASSE,
                   NOM_CHAM='DEPL',
                   AFFE=(_F(CHAM_GD=VECA1,INST=(k-1)*0.005,),),);
   DETRUIRE(INFO=1,CONCEPT=_F(NOM=(VECT_EL1,VECA1)));
-  
+
 for k in range(1,NT):
 
   VECT_EL1=CALC_VECT_ELEM(INST=(k-1)*0.005, OPTION='CHAR_MECA', CHAM_MATER=CHMAT, CHARGE=ONDEP2)
@@ -256,7 +253,9 @@ for k in range(1,NT):
                   NOM_CHAM='DEPL',
                   AFFE=(_F(CHAM_GD=VECA1,INST=0.0,),),);
   else:
-    CHA_ONB=CREA_RESU(reuse=CHA_ONB,OPERATION='AFFE',
+    CHA_ONB=CREA_RESU(reuse=CHA_ONB,
+                  RESULTAT=CHA_ONB,
+                  OPERATION='AFFE',
                   TYPE_RESU='DYNA_TRANS',
                   MATR_RIGI=RIGI,
                   MATR_MASS=MASSE,
@@ -264,8 +263,6 @@ for k in range(1,NT):
                   AFFE=(_F(CHAM_GD=VECA1,INST=(k-1)*0.005,),),);
   DETRUIRE(INFO=1,CONCEPT=_F(NOM=(VECT_EL1,VECA1)));
 
-VECT_EL1=CALC_VECT_ELEM(INST=0., OPTION='CHAR_MECA', CHAM_MATER=CHMAT, CHARGE=ONDEP1)
-VECAS=ASSE_VECTEUR(VECT_ELEM=VECT_EL1, NUME_DDL=NUMEDDL)
 
 BlancP2=DYNA_VIBRA(BASE_CALCUL='PHYS',
                   TYPE_CALCUL='TRAN',
@@ -276,9 +273,6 @@ BlancP2=DYNA_VIBRA(BASE_CALCUL='PHYS',
                   MATR_AMOR=AMOR,
                   SCHEMA_TEMPS=_F(SCHEMA='NEWMARK',),
                   INCREMENT=_F(LIST_INST=LINST,),
-                  #EXCIT   = _F( VECT_ASSE = VECAS,
-                  #              COEF_MULT = 0.,
-                  #                     ),
                   EXCIT_RESU=(
                             _F( RESULTAT = CHA_ON,
                                 COEF_MULT= -1.0 ,),
@@ -294,37 +288,37 @@ maxP2=CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R',
                 NOM_CHAM='DEPL',
                 TYPE_MAXI='MAXI',
                 TYPE_RESU='VALE',
-                LIST_INST=LINST,);
+                LIST_INST=LINST2,);
 
 TEST_RESU(
           CHAM_NO=(
                    _F(CHAM_GD=maxP2,
                       NOM_CMP='DY',
-                      NOEUD='N23',
-                      VALE_CALC=3.06233360015E+00,
+                      NOEUD='N785',
+                      VALE_CALC=2.44917059014,
                       ),
                    _F(CHAM_GD=maxP2,
                       NOM_CMP='DX',
-                      NOEUD='N2',
-                      VALE_CALC=2.45347219231E-01,
+                      NOEUD='N408',
+                      VALE_CALC=0.147434668149,
                       ),
                    _F(CHAM_GD=maxP2,
                       NOM_CMP='DY',
-                      NOEUD='N2',
-                      VALE_CALC=3.07686209170E+00,
+                      NOEUD='N408',
+                      VALE_CALC=2.1972863478,
                       ),
                    _F(CHAM_GD=maxP2,
                       NOM_CMP='DX',
-                      NOEUD='N3',
-                      VALE_CALC=9.22242081632E-01,
+                      NOEUD='N775',
+                      VALE_CALC=0.788680483726,
                       ),
                    _F(CHAM_GD=maxP2,
                       NOM_CMP='DY',
-                      NOEUD='N3',
-                      VALE_CALC=1.29681429921E+00,
-                      ),                      
-                  ),                  
-           );                  
+                      NOEUD='N775',
+                      VALE_CALC=1.32707035331,
+                      ),
+                  ),
+           );      
 
 BlancS=DYNA_VIBRA(BASE_CALCUL='PHYS',
                   TYPE_CALCUL='TRAN',
@@ -343,44 +337,44 @@ maxS=CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R',
                 NOM_CHAM='DEPL',
                 TYPE_MAXI='MAXI',
                 TYPE_RESU='VALE',
-                LIST_INST=LINST,);
-                
+                LIST_INST=LINST2,);
+
 TEST_RESU(
           CHAM_NO=(
                    _F(CHAM_GD=maxS,
                       NOM_CMP='DX',
-                      NOEUD='N23',
-                      VALE_CALC=1.65920189907235E+00,
+                      NOEUD='N785',
+                      VALE_CALC=1.41537376606,
                       ),
                    _F(CHAM_GD=maxS,
                       NOM_CMP='DX',
-                      NOEUD='N2',
-                      VALE_CALC=2.93640452908003E+00,
+                      NOEUD='N408',
+                      VALE_CALC=2.86601031776,
                       ),
                    _F(CHAM_GD=maxS,
                       NOM_CMP='DY',
-                      NOEUD='N2',
-                      VALE_CALC=1.55017324733166E+00,
+                      NOEUD='N408',
+                      VALE_CALC=1.4620180121,
                       ),
                    _F(CHAM_GD=maxS,
                       NOM_CMP='DX',
-                      NOEUD='N3',
-                      VALE_CALC=1.56254327439992E+00,
+                      NOEUD='N775',
+                      VALE_CALC=1.51044809341,
                       ),
                    _F(CHAM_GD=maxS,
                       NOM_CMP='DY',
-                      NOEUD='N3',
-                      VALE_CALC=7.35586347558014E-01,
-                      ),                      
-                  ),                  
+                      NOEUD='N775',
+                      VALE_CALC=0.910921575587,
+                      ),
+                  ),
            );
 
-IMPR_RESU(FORMAT="RESULTAT",#UNITE=27,
+IMPR_RESU(FORMAT="RESULTAT",
           RESU=_F(CHAM_GD=maxS,
                   NOM_CMP=('DX','DY',),
                   GROUP_NO='LSURF',
                   IMPR_COOR='OUI',),);
-          
+
 
 FIN();
 #CHECKSUM:f950638f4b15c0cc2a3c5a312d5bb429  -:FIN CHECKSUM

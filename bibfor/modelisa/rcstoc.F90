@@ -18,6 +18,7 @@
 
 subroutine rcstoc(nommat, nomrc, noobrc, nbobj, valr, valc,&
                   valk, nbr, nbc, nbk)
+! aslint: disable=
     implicit none
 #include "jeveux.h"
 #include "asterc/getmjm.h"
@@ -44,6 +45,7 @@ subroutine rcstoc(nommat, nomrc, noobrc, nbobj, valr, valc,&
 #include "asterfort/indk16.h"
 #include "asterfort/as_deallocate.h"
 #include "asterfort/as_allocate.h"
+
     integer :: nbr, nbc, nbk, nbobj
     real(kind=8) :: valr(*)
     complex(kind=8) :: valc(*)
@@ -51,7 +53,8 @@ subroutine rcstoc(nommat, nomrc, noobrc, nbobj, valr, valc,&
     character(len=19) :: noobrc
     character(len=16) :: valk(*)
     character(len=32) :: nomrc
-!
+
+
 ! But: Stocker dans les 3 tableaux VALR, VALC et VALK les reels, les
 !      complexes et les k16 caracterisant la loi de comportement de nom nomrc
 !      Creer si necessaire (ORDRE_PARAM) les objets .ORDR et .KORD et les remplir
@@ -65,15 +68,23 @@ subroutine rcstoc(nommat, nomrc, noobrc, nbobj, valr, valc,&
 !  out nbr    : nombre de reels
 !  out nbc    : nombre de complexes
 !  out nbk    : nombre de concepts (fonction, trc, table, liste)
+!
 ! ----------------------------------------------------------------------
-    real(kind=8) :: valr8
-    character(len=8) :: valtx, valch, nomcle(5), table, typfon, nompf(10), num_lisv
-    character(len=19) :: nomfct, nomint
-    character(len=16) :: nom_lisv, typeco
+!
+    real(kind=8) :: valr8, e1, ei, precma, valrr(4)
+    character(len=16) :: valtx
+    character(len=8) :: valch, nomcle(5)
+    character(len=8) :: table, typfon, nompf(10)
+    character(len=19) :: rdep, nomfct, nomint
+    character(len=8) :: num_lisv
+    character(len=16) :: nom_lisv
     character(len=24) :: prol1, prol2, valkk(2)
+    character(len=16) :: typeco
     complex(kind=8) :: valc8
-    integer :: ibk, nbmax, itrou, n1, posi, kr, kc, kf, i, ii
-    integer :: jvale, n, jlisvr, jlisvf, nmcs, jprol, lpro1, lpro2, nbpf
+    integer ::   ibk, nbmax, vali, itrou, n1, posi, kr, kc, kf
+    integer :: i, k, ii,  jrpv, jvale, nbcoup, n, jlisvr, jlisvf,nmcs
+    integer :: iret, nbfct, nbpts, jprol, nbptm, lpro1, lpro2, nbpf
+    integer :: dis_ecro_trac
     character(len=32), pointer :: nomobj(:) => null()
     character(len=8), pointer :: typobj(:) => null()
     character(len=24), pointer :: prol(:) => null()
@@ -120,6 +131,7 @@ subroutine rcstoc(nommat, nomrc, noobrc, nbobj, valr, valc,&
         nmcs=nmcs-1
     endif
 
+
 !   -- 3. On verifie que les mots cles simples ont moins de 16 carateres
 !   ---------------------------------------------------------------------
     do i = 1, nmcs
@@ -129,6 +141,7 @@ subroutine rcstoc(nommat, nomrc, noobrc, nbobj, valr, valc,&
             call utmess('F','MODELISA9_84', sk=nomobj(i))
         endif
     enddo
+
 
 !   -- 4. On modifie typobj pour remplacer 'R8' par 'LR8',
 !         'C8' par 'LC8' et 'CO' par 'LFO' quand ce sont des listes.
@@ -141,35 +154,37 @@ subroutine rcstoc(nommat, nomrc, noobrc, nbobj, valr, valc,&
             else
                 ASSERT(n.eq.1)
             endif
-        elseif (typobj(i)(1:2) .eq. 'C8') then
+        else if (typobj(i)(1:2) .eq. 'C8') then
             call getvc8(nomrc, nomobj(i), iocc=1, scal=valc8, nbret=n)
             if (n.lt.0) then
                 typobj(i)='LC8'
             else
                 ASSERT(n.eq.1)
             endif
-        elseif (typobj(i)(1:2) .eq. 'CO') then
+        else if (typobj(i)(1:2) .eq. 'CO') then
             call getvid(nomrc, nomobj(i), iocc=1, scal=valch, nbret=n)
             call gettco(valch, typeco)
             if (typeco == ' ') then
                 call utmess('F', 'FONCT0_71', sk=nomobj(i))
             endif
             if (typeco.eq.'TABLE_SDASTER') cycle
-            lverif=(typeco(1:8).eq.'FONCTION' .or. typeco(1:5).eq.'NAPPE' &
-                    .or. typeco(1:7).eq.'FORMULE')
+            lverif=(typeco(1:8).eq.'FONCTION' .or. &
+                    typeco(1:5).eq.'NAPPE'    .or. &
+                    typeco(1:7).eq.'FORMULE')
             ASSERT(lverif)
             if (n.lt.0) then
                 typobj(i)='LFO'
             else
                 ASSERT(n.eq.1)
             endif
-        elseif (typobj(i)(1:2) .eq. 'TX') then
+        else if (typobj(i)(1:2) .eq. 'TX') then
             call getvtx(nomrc, nomobj(i), iocc=1, scal=valch, nbret=n)
             ASSERT(n.eq.1)
         else
             ASSERT(.false.)
         endif
     enddo
+
 
 !   -- 5. Si le mot cle ORDRE_PARAM est fourni, on verifie que TOUS les mots cles fournis
 !         font partie de la liste et on cree l'objet .KORD :
@@ -209,7 +224,7 @@ subroutine rcstoc(nommat, nomrc, noobrc, nbobj, valr, valc,&
             if (typobj(i) .eq. 'R8') then
                 kr=kr+1
                 kord(2+nmcs+i)=kr
-            elseif (typobj(i) .eq. 'C8') then
+            else if (typobj(i) .eq. 'C8') then
                 kc=kc+1
                 kord(2+2*nmcs+i)=kc
             else
@@ -222,9 +237,17 @@ subroutine rcstoc(nommat, nomrc, noobrc, nbobj, valr, valc,&
         ASSERT(kr+kf.eq.nmcs)
     endif
 
-!   -- 6. Glute META_MECA*, BETON_DOUBLE_DP, RUPT_FRAG et CZM_LAB_MIX :
-!         On traite les TX qu'on convertit en R8
-!   --------------------------------------------------------------------
+
+    ! --------------------------------------------------------------------
+    !
+    !   Glute : On traite les TX qu'on convertit en R8
+    !       META_MECA* , BETON_DOUBLE_DP , RUPT_FRAG , CZM_LAB_MIX
+    !       DIS_ECRO_TRAC
+    ! --------------------------------------------------------------------
+    dis_ecro_trac = 0
+    if (nomrc(1:13).eq.'DIS_ECRO_TRAC') then
+        dis_ecro_trac = 1
+    endif
     do i = 1, nmcs
         if (typobj(i)(1:2) .eq. 'TX') then
             if (nomrc(1:9) .eq. 'ELAS_META') then
@@ -234,8 +257,7 @@ subroutine rcstoc(nommat, nomrc, noobrc, nbobj, valr, valc,&
                         nbr = nbr + 1
                         valr(nbr) = 1.d0
                         valk(nbr) = nomobj(i)(1:16)
-                        elseif( nomobj(i).eq.'PHASE_REFE' .and.&
-                    valtx.eq.'FROID') then
+                    else if( nomobj(i).eq.'PHASE_REFE' .and. valtx.eq.'FROID') then
                         nbr = nbr + 1
                         valr(nbr) = 0.d0
                         valk(nbr) = nomobj(i)(1:16)
@@ -244,8 +266,8 @@ subroutine rcstoc(nommat, nomrc, noobrc, nbobj, valr, valc,&
             else if (nomrc .eq. 'BETON_DOUBLE_DP') then
                 call getvtx(nomrc, nomobj(i), iocc=1, scal=valtx, nbret=n)
                 if (n .eq. 1) then
-                    if (nomobj(i) .eq. 'ECRO_COMP_P_PIC' .or. nomobj(i) .eq.&
-                        'ECRO_TRAC_P_PIC') then
+                    if (nomobj(i) .eq. 'ECRO_COMP_P_PIC' .or. &
+                        nomobj(i) .eq. 'ECRO_TRAC_P_PIC') then
                         nbr = nbr + 1
                         valk(nbr) = nomobj(i)(1:16)
                         if (valtx .eq. 'LINEAIRE') then
@@ -255,8 +277,7 @@ subroutine rcstoc(nommat, nomrc, noobrc, nbobj, valr, valc,&
                         endif
                     endif
                 endif
-                elseif ((nomrc(1:9).eq.'RUPT_FRAG') .or.(&
-            nomrc.eq.'CZM_LAB_MIX')) then
+            else if ((nomrc(1:9).eq.'RUPT_FRAG') .or. (nomrc.eq.'CZM_LAB_MIX')) then
                 call getvtx(nomrc, nomobj(i), iocc=1, scal=valtx, nbret=n)
                 if (n .eq. 1) then
                     if (nomobj(i) .eq. 'CINEMATIQUE') then
@@ -275,12 +296,58 @@ subroutine rcstoc(nommat, nomrc, noobrc, nbobj, valr, valc,&
                         ASSERT(.false.)
                     endif
                 endif
+            else if (nomrc(1:10).eq.'BETON_RAG') then
+                call getvtx(nomrc, nomobj(i), iocc=1, scal=valtx, nbret=n)
+                if (n .eq. 1) then
+                    if (nomobj(i) .eq. 'COMP_BETON') then
+                        nbr = nbr + 1
+                        valk(nbr) = 'TYPE_LOI'
+                        if      (valtx.eq.'ENDO') then
+                            valr(nbr) = 1.0D0
+                        else if (valtx.eq.'ENDO_FLUA') then
+                            valr(nbr) = 2.0D0
+                        else if (valtx.eq.'ENDO_FLUA_RAG') then
+                            valr(nbr) = 3.0D0
+                        else
+                            ASSERT(.false.)
+                        endif
+                    endif
+                endif
+            else if (nomrc(1:13).eq.'DIS_ECRO_TRAC') then
+                dis_ecro_trac = 1
+                call getvtx(nomrc, nomobj(i), iocc=1, scal=valtx, nbret=n)
+                if (n .eq. 1) then
+                    if (nomobj(i) .eq. 'ECROUISSAGE') then
+                        dis_ecro_trac = 2
+                        nbr = nbr + 1
+                        valk(nbr) = 'ECRO'
+                        if      (valtx.eq.'ISOTROPE') then
+                            valr(nbr) = 1.0D0
+                        else if (valtx.eq.'CINEMATIQUE') then
+                            valr(nbr) = 2.0D0
+                        else
+                            ASSERT(.false.)
+                        endif
+                    endif
+                endif
             endif
         endif
-    end do
+    enddo
+!
+!   Traitement de DIS_ECRO_TRAC / ECRO
+!       ECRO est seulement présent quand FTAN existe, il peut donc être absent
+!   dis_ecro_trac = 0 : Le comportement n'existe pas. Il n'y a rien à faire.
+!   dis_ecro_trac = 2 : Tout est bon ECRO a été traité. Il n'y a rien de plus à faire.
+!   dis_ecro_trac = 1 : Le comportement existe, et ECRO n'existe pas ==> on crée la variable.
+    if ( dis_ecro_trac == 1 ) then
+        nbr = nbr + 1
+        valk(nbr) = 'ECRO'
+        valr(nbr) = 0.0D0
+    endif
 
 !   -- 7. Stockage des informations dans VALK, VALR et VALC :
 !   ---------------------------------------------------------
+
 !   -- 7.1 on traite les reels
 !   --------------------------
     do i = 1, nmcs
@@ -291,7 +358,8 @@ subroutine rcstoc(nommat, nomrc, noobrc, nbobj, valr, valc,&
             valr(nbr) = valr8
             valk(nbr) = nomobj(i)(1:16)
         endif
-    end do
+    enddo
+
 !   -- 7.2 on traite les complexes
 !   ------------------------------
     do i = 1, nmcs
@@ -302,10 +370,11 @@ subroutine rcstoc(nommat, nomrc, noobrc, nbobj, valr, valc,&
             valc(nbr+nbc) = valc8
             valk(nbr+nbc) = nomobj(i)(1:16)
         endif
-    end do
+    enddo
 
 !   -- 3.3 on traite ensuite les concepts CO puis les listes (LR8/LC8/LFO):
 !   ------------------------------------------------------------------------
+
 !   -- 7.3.1 : on stocke le nom des parametres concernes :
     do i = 1, nmcs
         if (typobj(i)(1:3) .eq. 'CO ') then
@@ -318,14 +387,15 @@ subroutine rcstoc(nommat, nomrc, noobrc, nbobj, valr, valc,&
                 ASSERT(n.eq.0)
             endif
         endif
-    end do
+    enddo
 
     do i = 1, nmcs
-        if ((typobj(i) .eq. 'LR8') .or. (typobj(i) .eq. 'LC8') .or. (typobj(i) .eq. 'LFO')) then
+        if ((typobj(i).eq.'LR8') .or. (typobj(i).eq.'LC8') .or. (typobj(i).eq.'LFO')) then
             nbk = nbk + 1
             valk(nbr+nbc+nbk) = nomobj(i)(1:16)
         endif
-    end do
+    enddo
+
 !   -- 7.3.2 : on stocke le nom des structures de donnees : fonctions, TRC, listes
     ibk = 0
     do i = 1, nmcs
@@ -338,10 +408,10 @@ subroutine rcstoc(nommat, nomrc, noobrc, nbobj, valr, valc,&
                 ASSERT(n.eq.0)
             endif
         endif
-    end do
+    enddo
 
     do i = 1, nmcs
-        if ((typobj(i) .eq. 'LR8') .or. (typobj(i) .eq. 'LC8') .or. (typobj(i) .eq. 'LFO')) then
+        if ((typobj(i).eq.'LR8') .or. (typobj(i).eq.'LC8') .or. (typobj(i).eq.'LFO')) then
             call gcncon('.', num_lisv)
             nom_lisv=nommat//num_lisv
             if (typobj(i) .eq. 'LR8') then
@@ -350,9 +420,9 @@ subroutine rcstoc(nommat, nomrc, noobrc, nbobj, valr, valc,&
                 n=-n
                 call wkvect(nom_lisv//'.LISV_R8','G V R',n,jlisvr)
                 call getvr8(nomrc, nomobj(i), iocc=1, nbval=n, vect=zr(jlisvr))
-            elseif (typobj(i) .eq. 'LC8') then
+            else if (typobj(i) .eq. 'LC8') then
                 ASSERT(.false.)
-            elseif (typobj(i) .eq. 'LFO') then
+            else if (typobj(i) .eq. 'LFO') then
                 call getvid(nomrc, nomobj(i), iocc=1, scal=valtx, nbret=n)
                 ASSERT(n.lt.0)
                 n=-n
@@ -362,7 +432,8 @@ subroutine rcstoc(nommat, nomrc, noobrc, nbobj, valr, valc,&
             ibk = ibk + 1
             valk(nbr+nbc+nbk+ibk) = nom_lisv
         endif
-    end do
+    enddo
+
 
 !   -- 7. creation d'une fonction pour stocker r(p) :
 !   -------------------------------------------------
@@ -403,30 +474,30 @@ subroutine rcstoc(nommat, nomrc, noobrc, nbobj, valr, valc,&
         call wkvect(nommat//'.&&RDEP'//'.VALE', 'G V R', 2*nbmax, jvale)
     endif
 
+
 !   -- 8. Creation si necessaire d'une fonction pour stocker beta
 !         (enthalpie volumique) calculee a partir de RHO_CP
 !   ---------------------------------------------------------------
     if (nomrc(1:8) .eq. 'THER_NL') then
-        do 650 i = 1, nbk
+        do i = 1, nbk
             if (( valk(nbr+nbc+i)(1:4) .eq. 'BETA' )) then
                 nomfct = valk(nbr+nbc+nbk+i)
 !               -- il n'y a rien a faire, on travaille directement avec beta
                 goto 651
             endif
-650      continue
-        do 660 i = 1, nbk
+        enddo
+        do i = 1, nbk
             if (( valk(nbr+nbc+i)(1:6) .eq. 'RHO_CP' )) then
                 nomfct = valk(nbr+nbc+nbk+i)
                 goto 661
             endif
-660      continue
+        enddo
         goto 651
-661      continue
+661     continue
         call gcncon('_', nomint)
         call focain('TRAPEZE', nomfct, 0.d0, nomint, 'G')
 !
-!       -- si prolongement constant pour rho_cp : on affecte prol lineaire a beta
-!
+!       si prolongement constant pour rho_cp : on affecte prol lineaire a beta
         prol1 = nomfct//'.PROL'
         call jeveuo(prol1, 'L', lpro1)
         prol2 = nomint//'.PROL'
@@ -435,19 +506,20 @@ subroutine rcstoc(nommat, nomrc, noobrc, nbobj, valr, valc,&
         if (zk24(lpro1+4)(1:1) .eq. 'C') zk24(lpro2+4)(1:1)='L'
         if (zk24(lpro1+4)(2:2) .eq. 'C') zk24(lpro2+4)(2:2)='L'
 !
-        do 670 i = nbk, 1, -1
+        do i = nbk, 1, -1
             valk(nbr+nbc+nbk+i+1) = valk(nbr+nbc+nbk+i)
-670     continue
+        enddo
         nbk = nbk + 1
         valk(nbr+nbc+ nbk) = 'BETA    '
         valk(nbr+nbc+2*nbk) = nomint(1:16)
 651     continue
     endif
 
+
 !   -- 9. Verification des noms des parametres des tables TRC :
 !   -----------------------------------------------------------
     if (nomrc(1:10) .eq. 'META_ACIER') then
-        do 720 i = 1, nbk
+        do i = 1, nbk
             if (valk(nbr+nbc+i)(1:3) .eq. 'TRC') then
                 call getvid(nomrc, 'TRC', iocc=1, scal=table, nbret=n)
                 call tbexp2(table, 'VITESSE')
@@ -470,8 +542,9 @@ subroutine rcstoc(nommat, nomrc, noobrc, nbobj, valr, valc,&
                 call tbexp2(table, 'DREF')
                 call tbexp2(table, 'A')
             endif
-720      continue
+        enddo
     endif
+
 
 !   -- 10. Verification que RHO ne peut etre une fonction que de la geometrie :
 !   ---------------------------------------------------------------------------
@@ -489,7 +562,9 @@ subroutine rcstoc(nommat, nomrc, noobrc, nbobj, valr, valc,&
             enddo
         endif
     endif
+
     AS_DEALLOCATE(vk8=typobj)
     AS_DEALLOCATE(vk32=nomobj)
+
     call jedema()
 end subroutine

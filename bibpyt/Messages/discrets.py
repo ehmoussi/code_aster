@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -154,6 +154,16 @@ AFFE_CARA_ELEM/RIGI_PARASOL
   Vous devez vérifier l'adéquation des dimensions des éléments sous CARA avec le nombre de valeur sous VALE.
 """),
 
+    22: _(u"""
+Pour l'élément discret %(k5)s .
+Pour ce comportement la modélisation doit être 3D.
+
+Pour information :
+   Modèle   : <%(k1)s>, Option   : <%(k2)s>
+   Comportement : <%(k3)s>, Relation : <%(k4)s>
+   Maille   : <%(k5)s>
+"""),
+
     25 : _(u"""
 Vous utilisez des discrets %(k1)s alors que vous n'avez pas affecté ses caractéristiques.
 Il faut vérifier les affectations sous AFFE_CARA_ELEM/DISCRET OU DISCRET_2D.
@@ -267,13 +277,16 @@ possible d'extrapoler la fonction au delà de %(r1)f
     62 : _(u"""
 Le Comportement <%(k1)s> est non valide.
 La définition de la fonction <%(k2)s> est incorrecte.
-    - elle doit être définie avec DEFI_FONCTION
-    - le premier point doit être (0.0, 0.0)
-    - définie par au moins 3 points
-    - le nom du paramètre est DX
-    - interpolation linéaire entre les points
-    - une fonction monotone croissante
-    - dérivée de la fonction <= raideur initiale
+    - Elle doit être définie avec DEFI_FONCTION
+    - Le premier point doit être (0.0, 0.0)
+    - Le nom du paramètre est 'DX' pour 'FX' ou 'DTAN' pour 'FTAN'
+    - Si FX  la fonction est définie par au moins 3 points
+    - Si FTAN la fonction est définie par :
+        - au moins   3 points, dans le cas isotrope
+        - exactement 3 points, dans le cas cinématique
+    - L'interpolation doit être linéaire entre les points
+    - La fonction doit être monotone croissante
+    - La tangente à la fonction doit être toujours inférieure ou égale à la pente initiale
 Elle ne peut pas être :
     - une constante
     - une nappe

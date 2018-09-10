@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -197,13 +197,24 @@ CHXG=CREA_CHAMP(TYPE_CHAM='ELGA_GEOM_R',
 
 # CHAMP DE CONTRAINTE EFFECTIVE EN Y
 # ----------------------------------
-SIEFY = FORMULE(VALE='rho_deja*G*Y - Sigma0', NOM_PARA='Y');
+SIEFY = FORMULE(VALE='rho_deja*G*Y - Sigma0',
+                rho_deja=rho_deja,
+                G=G,
+                Sigma0=Sigma0,
+                NOM_PARA='Y',)
 
-SIEFX = FORMULE(VALE='K0*(SIEFY(Y)+Sigma0) -Sigma0', NOM_PARA='Y');
+SIEFX = FORMULE(VALE='K0*(SIEFY(Y)+Sigma0) -Sigma0',
+                K0=K0,
+                SIEFY=SIEFY,
+                Sigma0=Sigma0,
+                NOM_PARA='Y',)
 
-SIEFZ = FORMULE(VALE='SIEFX(Y)', NOM_PARA='Y');
+SIEFZ = FORMULE(VALE='SIEFX(Y)',
+                SIEFX=SIEFX,
+                NOM_PARA='Y',)
 
-ZERO = FORMULE(VALE='0.', NOM_PARA='Y',);
+ZERO = FORMULE(VALE='0.',
+               NOM_PARA='Y',)
 
 #  CONTRAINTES dans la fondation
 SIEF1=CREA_CHAMP(TYPE_CHAM='ELGA_NEUT_F',

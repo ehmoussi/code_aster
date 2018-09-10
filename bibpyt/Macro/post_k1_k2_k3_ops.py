@@ -298,11 +298,11 @@ def get_noeud_a_calculer(Lnoff, ndim, FOND_FISS, MAILLAGE, EnumTypes, args):
     import string as S
     from Utilitai.Utmess import UTMESS
 
-    NOEUD = args['NOEUD']
-    SANS_NOEUD = args['SANS_NOEUD']
-    GROUP_NO = args['GROUP_NO']
-    SANS_GROUP_NO = args['SANS_GROUP_NO']
-    TOUT = args['TOUT']
+    NOEUD = args.get('NOEUD')
+    SANS_NOEUD = args.get('SANS_NOEUD')
+    GROUP_NO = args.get('GROUP_NO')
+    SANS_GROUP_NO = args.get('SANS_GROUP_NO')
+    TOUT = args.get('TOUT')
 
     if ndim == 2:
 
@@ -747,7 +747,7 @@ def get_coor_xfem(args, FISSURE, ndim):
 
     Listfo = FISSURE.sdj.FONDFISS.get()
     Basefo = FISSURE.sdj.BASEFOND.get()
-    NB_POINT_FOND = args['NB_POINT_FOND']
+    NB_POINT_FOND = args.get('NB_POINT_FOND')
 
 #     Traitement des fonds fermés
     TypeFond = FISSURE.sdj.INFO.get()[2]
@@ -755,7 +755,7 @@ def get_coor_xfem(args, FISSURE, ndim):
 #     Traitement du cas fond multiple
     Fissmult = FISSURE.sdj.FONDMULT.get()
     Nbfiss = len(Fissmult) / 2
-    Numfiss = args['NUME_FOND']
+    Numfiss = args.get('NUME_FOND')
     if Numfiss <= Nbfiss and (Nbfiss > 1 or TypeFond == 'FERME'):
         Ptinit = Fissmult[2 * (Numfiss - 1)]
         Ptfin = Fissmult[2 * (Numfiss - 1) + 1]
@@ -932,7 +932,7 @@ def get_liste_inst(tabsup, args):
     l_inst_tab = dict([(i, 0)
                       for i in l_inst_tab]).keys()  # elimine les doublons
     l_inst_tab.sort()
-    if args['LIST_ORDRE'] != None or args['NUME_ORDRE'] != None:
+    if args.get('LIST_ORDRE') != None or args.get('NUME_ORDRE') != None:
         l_ord_tab = tabsup['NUME_ORDRE'].values()['NUME_ORDRE']
         l_ord_tab.sort()
         l_ord_tab = dict([(i, 0) for i in l_ord_tab]).keys()
@@ -940,10 +940,10 @@ def get_liste_inst(tabsup, args):
                      for i in range(0, len(l_ord_tab))]
         d_ord_tab = [(i[0], i[1]) for i in d_ord_tab]
         d_ord_tab = dict(d_ord_tab)
-        if args['NUME_ORDRE'] != None:
-            l_ord = args['NUME_ORDRE']
-        elif args['LIST_ORDRE'] != None:
-            l_ord = args['LIST_ORDRE'].sdj.VALE.get()
+        if args.get('NUME_ORDRE') != None:
+            l_ord = args.get('NUME_ORDRE')
+        elif args.get('LIST_ORDRE') != None:
+            l_ord = args.get('LIST_ORDRE').sdj.VALE.get()
         l_inst = []
         for ord in l_ord:
             if ord in l_ord_tab:
@@ -952,13 +952,13 @@ def get_liste_inst(tabsup, args):
                 UTMESS('F', 'RUPTURE0_37', vali=ord)
         PRECISION = 1.E-6
         CRITERE = 'ABSOLU'
-    elif args['INST'] != None or args['LIST_INST'] != None:
-        CRITERE = args['CRITERE']
-        PRECISION = args['PRECISION']
-        if args['INST'] != None:
-            l_inst = args['INST']
-        elif args['LIST_INST'] != None:
-            l_inst = args['LIST_INST'].Valeurs()
+    elif args.get('INST') != None or args.get('LIST_INST') != None:
+        CRITERE = args.get('CRITERE')
+        PRECISION = args.get('PRECISION')
+        if args.get('INST') != None:
+            l_inst = args.get('INST')
+        elif args.get('LIST_INST') != None:
+            l_inst = args.get('LIST_INST').Valeurs()
 
         if type(l_inst) == tuple:
             l_inst = list(l_inst)
@@ -992,17 +992,17 @@ def get_liste_freq(tabsup, args):
     l_freq_tab = dict([(i, 0)
                       for i in l_freq_tab]).keys()  # elimine les doublons
     l_freq_tab.sort()
-    if args['LIST_ORDRE'] != None or args['NUME_ORDRE'] != None:
+    if args.get('LIST_ORDRE') != None or args.get('NUME_ORDRE') != None:
         l_ord_tab = tabsup['NUME_ORDRE'].values()['NUME_ORDRE']
         l_ord_tab.sort()
         l_ord_tab = dict([(i, 0) for i in l_ord_tab]).keys()
         d_ord_tab = [(l_ord_tab[i], l_freq_tab[i])
                      for i in range(0, len(l_ord_tab))]
         d_ord_tab = dict(d_ord_tab)
-        if args['NUME_ORDRE'] != None:
-            l_ord = list(args['NUME_ORDRE'])
-        elif args['LIST_ORDRE'] != None:
-            l_ord = args['LIST_ORDRE'].sdj.VALE.get()
+        if args.get('NUME_ORDRE') != None:
+            l_ord = list(args.get('NUME_ORDRE'))
+        elif args.get('LIST_ORDRE') != None:
+            l_ord = args.get('LIST_ORDRE').sdj.VALE.get()
         l_freq = []
         for ord in l_ord:
             if ord in l_ord_tab:
@@ -1011,17 +1011,17 @@ def get_liste_freq(tabsup, args):
                 UTMESS('F', 'RUPTURE0_37', vali=ord)
         PRECISION = 1.E-6
         CRITERE = 'ABSOLU'
-    elif args['LIST_MODE'] != None or args['NUME_MODE'] != None:
+    elif args.get('LIST_MODE') != None or args.get('NUME_MODE') != None:
         l_mod_tab = tabsup['NUME_MODE'].values()['NUME_MODE']
         l_mod_tab.sort()
         l_mod_tab = dict([(i, 0) for i in l_mod_tab]).keys()
         d_mod_tab = [(l_mod_tab[i], l_freq_tab[i])
                      for i in range(0, len(l_mod_tab))]
         d_mod_tab = dict(d_mod_tab)
-        if args['NUME_MODE'] != None:
-            l_mod = args['NUME_MODE']
-        elif args['LIST_MODE'] != None:
-            l_mod = args['LIST_MODE'].sdj.VALE.get()
+        if args.get('NUME_MODE') != None:
+            l_mod = args.get('NUME_MODE')
+        elif args.get('LIST_MODE') != None:
+            l_mod = args.get('LIST_MODE').sdj.VALE.get()
         l_freq = []
         for mod in l_mod:
             if mod in l_mod_tab:
@@ -1030,13 +1030,13 @@ def get_liste_freq(tabsup, args):
                 UTMESS('F', 'RUPTURE0_74', vali=mod)
         PRECISION = 1.E-6
         CRITERE = 'ABSOLU'
-    elif args['FREQ'] != None or args['LIST_FREQ'] != None:
-        CRITERE = args['CRITERE']
-        PRECISION = args['PRECISION']
-        if args['FREQ'] != None:
-            l_freq = list(args['FREQ'])
-        elif args['LIST_FREQ'] != None:
-            l_freq = args['LIST_FREQ'].Valeurs()
+    elif args.get('FREQ') != None or args.get('LIST_FREQ') != None:
+        CRITERE = args.get('CRITERE')
+        PRECISION = args.get('PRECISION')
+        if args.get('FREQ') != None:
+            l_freq = list(args.get('FREQ'))
+        elif args.get('LIST_FREQ') != None:
+            l_freq = args.get('LIST_FREQ').Valeurs()
 
         if type(l_freq) == tuple:
             l_freq = list(l_freq)
@@ -1256,7 +1256,7 @@ def get_propmat_varc_xfem(self, args, RESULTAT, MAILLAGE, MATER, MODELISATION, F
     # Traitement du cas fond multiple
     Fissmult = FISSURE.sdj.FONDMULT.get()
     Nbfiss = len(Fissmult) / 2
-    Numfiss = args['NUME_FOND']
+    Numfiss = args.get('NUME_FOND')
     if Numfiss <= Nbfiss and (Nbfiss > 1 or TypeFond == 'FERME'):
         Ptinit = Fissmult[2 * (Numfiss - 1)]
         Ptfin = Fissmult[2 * (Numfiss - 1) + 1]
@@ -1266,7 +1266,7 @@ def get_propmat_varc_xfem(self, args, RESULTAT, MAILLAGE, MATER, MODELISATION, F
         UTMESS('F', 'RUPTURE1_38', vali=[Nbfiss, Numfiss])
 
     # Si NB_POINT_FOND est renseigne : interpolation de la varc
-    NB_POINT_FOND = args['NB_POINT_FOND']
+    NB_POINT_FOND = args.get('NB_POINT_FOND')
     if NB_POINT_FOND != None and ndim == 3:
         Nnoff = NB_POINT_FOND
         absmax = Listfo[-1]
@@ -1794,7 +1794,7 @@ def get_tabout(
 
     if FISSURE and MODELISATION == '3D':
         mcfact.append(_F(PARA='FISSURE', LISTE_K=[FISSURE.nom, ] * 3))
-        mcfact.append(_F(PARA='NUME_FOND', LISTE_I=[args['NUME_FOND'], ] * 3))
+        mcfact.append(_F(PARA='NUME_FOND', LISTE_I=[args.get('NUME_FOND'), ] * 3))
         mcfact.append(_F(PARA='NUM_PT', LISTE_I=[ino + 1, ] * 3))
         mcfact.append(_F(PARA='ABSC_CURV', LISTE_R=[absfon[ino], ] * 3))
 
@@ -1918,7 +1918,6 @@ def post_k1_k2_k3_ops(self, RESULTAT, FOND_FISS =None, FISSURE=None, MATER=None,
         if RESULTAT.getNumberOfRanks() > 0:
             cham_maters = []
             for j in RESULTAT.getRanks():
-                print "j", j
                 try:
                     cham_maters += [RESULTAT.getMaterialOnMesh(j)]
                 except RuntimeError:
@@ -1930,9 +1929,13 @@ def post_k1_k2_k3_ops(self, RESULTAT, FOND_FISS =None, FISSURE=None, MATER=None,
                 MATER = None
         else:
             MATER = None
+        test=MATER.getVectorOfMaterial()
+        for curMater in test:
+            if curMater.getName() == mater:
+                MATER = curMater
+                break
     else:
         UTMESS('A', 'RUPTURE0_1', valk=[mater, MATER.nom])
-    
 
 
     # Affectation de ndim selon le type de modelisation
@@ -1951,8 +1954,8 @@ def post_k1_k2_k3_ops(self, RESULTAT, FOND_FISS =None, FISSURE=None, MATER=None,
 #   ------------------------------------------------------------------
 #                               MAILLAGE
 #   ------------------------------------------------------------------
-
-    nom_ma = RESULTAT.getModel().getSupportMesh()
+    MAILLAGE = RESULTAT.getModel().getSupportMesh()
+    nom_ma = MAILLAGE.getName()
 
 
 #   ------------------------------------------------------------------
@@ -1960,7 +1963,6 @@ def post_k1_k2_k3_ops(self, RESULTAT, FOND_FISS =None, FISSURE=None, MATER=None,
 #   ------------------------------------------------------------------
     mater_fonc = False
 
-    print MATER.__getattribute__('NOMRC')
     matph = MATER.sdj.NOMRC.get()
     phenom = None
     ind = 0
@@ -1990,7 +1992,7 @@ def post_k1_k2_k3_ops(self, RESULTAT, FOND_FISS =None, FISSURE=None, MATER=None,
 
         # erreur fatale si le MCS MATER est renseigne car on n'autorise que la
         # surcharge par un materiau constant
-        if args['MATER'] != None:
+        if args.get('MATER') != None:
             UTMESS('F', 'RUPTURE0_6', valk=MATER.nom)
 
 #       valk contient les noms des operandes mis dans defi_materiau dans une premiere partie et
@@ -2078,7 +2080,7 @@ def post_k1_k2_k3_ops(self, RESULTAT, FOND_FISS =None, FISSURE=None, MATER=None,
             coefg3 = unpnu / e
 
     try:
-        TYPE_MAILLAGE = args['TYPE_MAILLAGE']
+        TYPE_MAILLAGE = args.get('TYPE_MAILLAGE')
     except KeyError:
         TYPE_MAILLAGE = []
 
@@ -2092,7 +2094,7 @@ def post_k1_k2_k3_ops(self, RESULTAT, FOND_FISS =None, FISSURE=None, MATER=None,
 #  ------------------------------------------------------------------
     if FOND_FISS:
 
-        NB_NOEUD_COUPE = args['NB_NOEUD_COUPE']
+        NB_NOEUD_COUPE = args.get('NB_NOEUD_COUPE')
 
 #     Verification que les levres sont bien en configuration initiale collees
 #     -----------------------------------------------------------------------
@@ -2250,7 +2252,7 @@ def post_k1_k2_k3_ops(self, RESULTAT, FOND_FISS =None, FISSURE=None, MATER=None,
         (VDIR, VNOR, absfon) = get_direction_xfem(Nnoff, Vpropa, Coorfo, ndim)
 
 #     Extraction des sauts sur la fissure
-        NB_NOEUD_COUPE = args['NB_NOEUD_COUPE']
+        NB_NOEUD_COUPE = args.get('NB_NOEUD_COUPE')
         TTSo = get_sauts_xfem(
             self, Nnoff, Coorfo, VDIR, hmax, NB_NOEUD_COUPE, dmax, __RESX)
 

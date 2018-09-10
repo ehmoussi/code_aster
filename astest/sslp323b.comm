@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -57,9 +57,11 @@ a0 = 2
 R = 5.
 
 LN = FORMULE(VALE='X-R',
-              NOM_PARA=('X'));
+             R=R,
+             NOM_PARA='X',)
 LT = FORMULE(VALE='Y-a0',
-              NOM_PARA=('Y'));
+             a0=a0,
+             NOM_PARA='Y',)
 
 # NOMBRE DE PROPAGATIONS
 NPS = 3

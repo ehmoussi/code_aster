@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -41,7 +41,8 @@ MO=AFFE_MODELE(MAILLAGE=MAILLAG2,
                        MODELISATION='3D',),
               );
 
-LS_N=FORMULE(NOM_PARA=('X','Y','Z'),VALE='sqrt(Z**2+X**2+Y**2)-1.5');
+LS_N = FORMULE(VALE='sqrt(Z**2+X**2+Y**2)-1.5',
+               NOM_PARA=['X', 'Y', 'Z'],)
 
 
 FISS=DEFI_FISS_XFEM(MAILLAGE=MAILLAG2,
@@ -192,11 +193,8 @@ DEP1M = CALC_TABLE(TABLE = DEP1,
                             ),
                   );
 
-deplr = FORMULE(NOM_PARA=('DX','DY','DZ','X','Y','Z'),
-#                VALE='sqrt((X+DX)**2+(Y+DY)**2+(Z+DZ)**2)');
-#                VALE='sqrt(X**2+Y**2+Z**2)');
-#                VALE='sqrt(DX**2+DY**2+DZ**2)');
-                VALE='(DX*X+DY*Y+DZ*Z)/sqrt(X**2+Y**2+Z**2)');
+deplr = FORMULE(VALE='(DX*X+DY*Y+DZ*Z)/sqrt(X**2+Y**2+Z**2)',
+                NOM_PARA=['DX', 'DY', 'DZ', 'X', 'Y', 'Z'],)
 
 
 DEP1P=CALC_TABLE(reuse = DEP1P,

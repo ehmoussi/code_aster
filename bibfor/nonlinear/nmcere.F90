@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,12 +15,14 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmcere(modele         , numedd, mate  , carele    , comref    ,&
-                  ds_constitutive, lischa, fonact, ds_measure, ds_contact,&
-                  iterat         , sdnume, valinc, solalg    , veelem    ,&
-                  veasse         , offset, rho   , eta       , residu    ,&
-                  ldccvg         , matass)
+! person_in_charge: mickael.abbas at edf.fr
+! aslint: disable=W1504
+!
+subroutine nmcere(model          , nume_dof  , ds_material, cara_elem     ,&
+                  ds_constitutive, ds_contact, list_load  , list_func_acti, ds_measure ,&
+                  iter_newt      , sdnume    , valinc     , solalg        , hval_veelem,&
+                  hval_veasse    , offset    , rho        , eta           , residu     ,&
+                  ldccvg         , matr_asse)
 !
 use NonLin_Datastructure_type
 !
@@ -33,15 +35,14 @@ implicit none
 #include "asterfort/isfonc.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/majour.h"
-#include "asterfort/nmadir.h"
 #include "asterfort/nmaint.h"
-#include "asterfort/nmbudi.h"
+#include "asterfort/nonlinLoadDirichletCompute.h"
 #include "asterfort/nmcha0.h"
 #include "asterfort/nmchai.h"
 #include "asterfort/nmchcp.h"
 #include "asterfort/nmchex.h"
 #include "asterfort/nmchso.h"
-#include "asterfort/nmdiri.h"
+#include "asterfort/nonlinRForceCompute.h"
 #include "asterfort/nmfext.h"
 #include "asterfort/nmfint.h"
 #include "asterfort/nmpilr.h"
@@ -49,19 +50,17 @@ implicit none
 #include "asterfort/r8inir.h"
 #include "blas/daxpy.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-! aslint: disable=W1504
-!
-    integer :: fonact(*)
-    integer :: iterat, ldccvg
-    real(kind=8) :: eta, rho, offset, residu
-    character(len=19) :: lischa, sdnume, matass
-    type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-    character(len=24) :: modele, numedd, mate, carele, comref
-    type(NL_DS_Contact), intent(in) :: ds_contact
-    type(NL_DS_Measure), intent(inout) :: ds_measure
-    character(len=19) :: veelem(*), veasse(*)
-    character(len=19) :: solalg(*), valinc(*)
+integer :: list_func_acti(*)
+integer :: iter_newt, ldccvg
+real(kind=8) :: eta, rho, offset, residu
+character(len=19) :: list_load, sdnume, matr_asse
+type(NL_DS_Constitutive), intent(in) :: ds_constitutive
+type(NL_DS_Contact), intent(in) :: ds_contact
+character(len=24) :: model, nume_dof, cara_elem
+type(NL_DS_Material), intent(in) :: ds_material
+type(NL_DS_Measure), intent(inout) :: ds_measure
+character(len=19) :: hval_veelem(*), hval_veasse(*)
+character(len=19) :: solalg(*), valinc(*)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -71,15 +70,15 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! IN  MODELE : MODELE
-! IN  NUMEDD : NUME_DDL
-! IN  MATE   : CHAMP MATERIAU
-! IN  CARELE : CARACTERISTIQUES DES ELEMENTS DE STRUCTURE
-! IN  COMREF : VARI_COM DE REFERENCE
+! In  model            : name of model
+! In  cara_elem        : name of elementary characteristics (field)
+! In  ds_material      : datastructure for material parameters
+! In  list_load        : name of datastructure for list of loads
+! In  nume_dof         : name of numbering object (NUME_DDL)
+! IO  ds_measure       : datastructure for measure and statistics management
 ! In  ds_constitutive  : datastructure for constitutive laws management
-! IN  LISCHA : LISTE DES CHARGES
-! IN  FONACT : FONCTIONNALITES ACTIVEES
 ! In  ds_contact       : datastructure for contact management
+! IN  FONACT : FONCTIONNALITES ACTIVEES
 ! IN  SDNUME : SD NUMEROTATION
 ! IO  ds_measure       : datastructure for measure and statistics management
 ! IN  VALINC : VARIABLE CHAPEAU POUR INCREMENTS VARIABLES
@@ -106,14 +105,13 @@ implicit none
     integer, parameter :: zsolal = 17
     aster_logical :: lgrot, lendo
     integer :: neq, nmax
-    character(len=19) :: vefint, vediri, vebudi
-    character(len=19) :: cnfint, cndiri, cnfext, cnbudi
+    character(len=19) :: vefint
+    character(len=19) :: cnfint, cnfext
     character(len=19) :: valint(zvalin)
     character(len=19) :: solalt(zsolal)
     character(len=19) :: depdet, depdel, deppr1, deppr2
     character(len=19) :: depplt, ddep
     character(len=19) :: depplu
-    character(len=19) :: sigplu, varplu, complu
     character(len=19) :: depl, vite, acce, k19bla
     real(kind=8), pointer :: ddepl(:) => null()
     real(kind=8), pointer :: depdl(:) => null()
@@ -133,13 +131,13 @@ implicit none
 ! --- INITIALISATIONS
 !
     k19bla = ' '
-    lgrot = isfonc(fonact,'GD_ROTA')
-    lendo = isfonc(fonact,'ENDO_NO')
+    lgrot = isfonc(list_func_acti,'GD_ROTA')
+    lendo = isfonc(list_func_acti,'ENDO_NO')
     ddep = '&&CNCETA.CHP0'
     depdet = '&&CNCETA.CHP1'
     depplt = '&&CNCETA.CHP2'
     ldccvg = -1
-    call dismoi('NB_EQUA', numedd, 'NUME_DDL', repi=neq)
+    call dismoi('NB_EQUA', nume_dof, 'NUME_DDL', repi=neq)
     call nmchai('VALINC', 'LONMAX', nmax)
     ASSERT(nmax.eq.zvalin)
     call nmchai('SOLALG', 'LONMAX', nmax)
@@ -148,18 +146,11 @@ implicit none
 ! --- DECOMPACTION VARIABLES CHAPEAUX
 !
     call nmchex(valinc, 'VALINC', 'DEPPLU', depplu)
-    call nmchex(valinc, 'VALINC', 'SIGPLU', sigplu)
-    call nmchex(valinc, 'VALINC', 'VARPLU', varplu)
-    call nmchex(valinc, 'VALINC', 'COMPLU', complu)
     call nmchex(solalg, 'SOLALG', 'DEPDEL', depdel)
     call nmchex(solalg, 'SOLALG', 'DEPPR1', deppr1)
     call nmchex(solalg, 'SOLALG', 'DEPPR2', deppr2)
-    call nmchex(veelem, 'VEELEM', 'CNDIRI', vediri)
-    call nmchex(veasse, 'VEASSE', 'CNDIRI', cndiri)
-    call nmchex(veelem, 'VEELEM', 'CNFINT', vefint)
-    call nmchex(veasse, 'VEASSE', 'CNFINT', cnfint)
-    call nmchex(veelem, 'VEELEM', 'CNBUDI', vebudi)
-    call nmchex(veasse, 'VEASSE', 'CNBUDI', cnbudi)
+    call nmchex(hval_veelem, 'VEELEM', 'CNFINT', vefint)
+    call nmchex(hval_veasse, 'VEASSE', 'CNFINT', cnfint)
 !
 ! --- MISE A JOUR DEPLACEMENT
 ! --- DDEP = RHO*DEPPRE(1) + (ETA-OFFSET)*DEPPRE(2)
@@ -196,38 +187,44 @@ implicit none
     call nmchex(valint, 'VALINC', 'VITPLU', vite)
     call nmchex(valint, 'VALINC', 'ACCPLU', acce)
 !
-! --- REACTUALISATION DES FORCES INTERIEURES
+! - Compute internal forces
 !
-    call nmfint(modele, mate  , carele, comref    , ds_constitutive,&
-                fonact, iterat, k19bla, ds_measure, valint         ,&
-                solalt, ldccvg, vefint)
+!    call nmfint(model, mate  , cara_elem, varc_refe , ds_constitutive,&
+!                list_func_acti, iter_newt, k19bla, ds_measure, valint         ,&
+!                solalt, ldccvg, vefint)
+    call nmfint(model         , cara_elem      ,&
+                ds_material   , ds_constitutive,&
+                list_func_acti, iter_newt      , k19bla, ds_measure,&
+                valint        , solalt         ,&
+                vefint        , ldccvg   )
 !
-! --- ASSEMBLAGE DES FORCES INTERIEURES
+! - Assemble internal forces
 !
-    call nmaint(numedd, fonact, ds_contact, veasse, vefint,&
-                cnfint, sdnume)
+    call nmaint(nume_dof, list_func_acti, sdnume,&
+                vefint  , cnfint)
+!
+! - Update Dirichlet boundary conditions - B.U
+!
+    call nonlinLoadDirichletCompute(list_load  , model      , nume_dof,&
+                                    ds_measure , matr_asse  , depplt  ,&
+                                    hval_veelem, hval_veasse)
+
+!
+! - Update force for Dirichlet boundary conditions (dualized) - BT.LAMBDA
+!
+    call nonlinRForceCompute(model      , ds_material, cara_elem, list_load,&
+                             nume_dof   , ds_measure , depl     ,&
+                             hval_veelem, hval_veasse)
 !
 ! - Launch timer
 !
     call nmtime(ds_measure, 'Init'  , '2nd_Member')
     call nmtime(ds_measure, 'Launch', '2nd_Member')
 !
-! --- REACTUALISATION DES REACTIONS D'APPUI BT.LAMBDA
-!
-    call nmdiri(modele, mate, carele, lischa, k19bla,&
-                depl, vite, acce, vediri)
-    call nmadir(numedd, fonact, ds_contact, veasse, vediri,&
-                cndiri)
-!
-! --- REACTUALISATION DES CONDITIONS DE DIRICHLET B.U
-!
-    call nmbudi(modele, numedd, lischa, depplt, vebudi,&
-                cnbudi, matass)
-!
 ! --- REACTUALISATION DES EFFORTS EXTERIEURS (AVEC ETA)
 !
-    call nmchex(veasse, 'VEASSE', 'CNFEXT', cnfext)
-    call nmfext(eta, fonact, k19bla, veasse, cnfext)
+    call nmchex(hval_veasse, 'VEASSE', 'CNFEXT', cnfext)
+    call nmfext(eta, list_func_acti, k19bla, hval_veasse, cnfext)
 !
 ! - End timer
 !
@@ -240,8 +237,8 @@ implicit none
 ! --- CALCUL DU RESIDU
 !
     if (ldccvg .eq. 0) then
-        call nmpilr(fonact, numedd, matass, veasse, residu,&
-                    eta)
+        call nmpilr(list_func_acti, nume_dof, matr_asse, hval_veasse, ds_contact,&
+                    eta   , residu)
     endif
 !
 end subroutine

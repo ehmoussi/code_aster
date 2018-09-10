@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -35,7 +35,7 @@ class NumberingCreation(ExecuteCommand):
             keywords (dict): Keywords arguments of user's keywords.
         """
         self._result = DOFNumbering()
-        
+
     def post_exec(self, keywords):
         """Store references to ElementaryMatrix objects.
 
@@ -45,8 +45,16 @@ class NumberingCreation(ExecuteCommand):
         """
         if keywords.has_key('MODELE'):
             self._result.setSupportModel(keywords['MODELE'])
+            charge = keywords.get("CHARGE")
+            if charge is not None:
+                for curLoad in charge:
+                    curFED = curLoad.getFiniteElementDescriptor()
+                    self._result.addFiniteElementDescriptor(curFED)
         else:
-            self._result.setSupportModel(keywords['MATR_RIGI'][0].getSupportModel())
+            matrRigi = keywords['MATR_RIGI'][0]
+            self._result.setSupportModel(matrRigi.getSupportModel())
+            for curFED in matrRigi.getFiniteElementDescriptors():
+                self._result.addFiniteElementDescriptor(curFED)
 
 
 NUME_DDL = NumberingCreation.run

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,9 +17,8 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nmsuiv(meshz    , sd_suiv        , ds_print, cara_elemz, modelz,&
-                  matez    , ds_constitutive, valinc  , varc_refe , sddisc,&
-                  nume_inst)
+subroutine nmsuiv(meshz      , sd_suiv        , ds_print, cara_elemz, modelz   ,&
+                  ds_material, ds_constitutive, valinc  , sddisc    , nume_inst)
 !
 use NonLin_Datastructure_type
 !
@@ -41,10 +40,9 @@ character(len=24), intent(in) :: sd_suiv
 type(NL_DS_Print), intent(inout) :: ds_print
 character(len=19), intent(in) :: sddisc
 character(len=*), intent(in) :: cara_elemz
-character(len=*), intent(in) :: matez
+type(NL_DS_Material), intent(in) :: ds_material
 character(len=*), intent(in) :: modelz
 type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-character(len=*), intent(in) :: varc_refe
 integer, intent(in) :: nume_inst
 character(len=19), intent(in) :: valinc(*)
 !
@@ -62,7 +60,7 @@ character(len=19), intent(in) :: valinc(*)
 ! In  sddisc           : datastructure for discretization
 ! In  model            : name of model
 ! In  cara_elem        : name of datastructure for elementary parameters (CARTE)
-! In  mate             : name of material characteristics (field)
+! In  ds_material      : datastructure for material parameters
 ! In  ds_constitutive  : datastructure for constitutive laws management
 ! In  valinc           : hat variable for algorithm fields
 ! In  nume_inst        : index of current time step
@@ -138,9 +136,9 @@ character(len=19), intent(in) :: valinc(*)
             field_disc = v_extr_comp(4*(i_field_comp-1)+2)(1:4) 
             field_type = v_extr_comp(4*(i_field_comp-1)+3)
             ligrel     = v_extr_comp(4*(i_field_comp-1)+4)(1:19)
-            call nmextr_comp(field_comp, field_disc, field_type     , meshz    , modelz   ,&
-                             cara_elemz, matez     , ds_constitutive, disp_curr, strx_curr,&
-                             varc_curr , varc_refe , time           , ligrelz = ligrel)
+            call nmextr_comp(field_comp, field_disc , field_type     , meshz    , modelz   ,&
+                             cara_elemz, ds_material, ds_constitutive, disp_curr, strx_curr,&
+                             varc_curr , time       , ligrelz = ligrel)
         end do
     endif
 !

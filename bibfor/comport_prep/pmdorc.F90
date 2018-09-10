@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -20,7 +20,7 @@
 !
 subroutine pmdorc(compor, carcri, nb_vari, incela, mult_comp)
 !
-use NonLin_Datastructure_type
+use Behaviour_type
 !
 implicit none
 !
@@ -48,8 +48,8 @@ implicit none
 #include "asterfort/setBehaviourValue.h"
 #include "asterfort/setMFrontPara.h"
 !
-character(len=16), intent(out) :: compor(20)
-real(kind=8), intent(out) :: carcri(21)
+character(len=16), intent(out) :: compor(21)
+real(kind=8), intent(out) :: carcri(22)
 integer, intent(out) :: nb_vari
 integer, intent(out) :: incela
 character(len=16), intent(out) :: mult_comp
@@ -74,13 +74,13 @@ character(len=16), intent(out) :: mult_comp
     integer :: nbocc1, nbocc2, nbocc3
     character(len=16) :: keywordfact
     character(len=16) :: rela_comp, algo_inte, defo_comp, type_comp, meca_comp
-    character(len=16) :: kit_comp(4), type_cpla, post_iter
+    character(len=16) :: kit_comp(4), type_cpla, post_iter, defo_ldc
     aster_logical :: l_etat_init, l_implex, plane_stress, l_comp_external
     aster_logical :: l_kit_thm, l_mfront_proto, l_mfront_offi
     real(kind=8) :: algo_inte_r, iter_inte_maxi, resi_inte_rela
     integer :: iveriborne, jvariexte
-    type(NL_DS_ComporPrep) :: ds_compor_prep
-    type(NL_DS_ComporParaPrep) :: ds_compor_para
+    type(Behaviour_PrepPara) :: ds_compor_prep
+    type(Behaviour_PrepCrit) :: ds_compor_para
     integer :: cptr_nbvarext=0, cptr_namevarext=0, cptr_fct_ldc=0
     integer :: cptr_nameprop=0, cptr_nbprop=0
     character(len=16) :: rela_code_py=' ', defo_code_py=' ', meca_code_py=' ', comp_code_py=' '
@@ -91,7 +91,7 @@ character(len=16), intent(out) :: mult_comp
 !
     compor_info  = '&&PMDORC.LIST_VARI'
     keywordfact  = 'COMPORTEMENT'
-    compor(1:20) = 'VIDE'
+    compor(1:21) = 'VIDE'
     l_implex     = .false.
 !
 ! - Initial state
@@ -129,6 +129,7 @@ character(len=16), intent(out) :: mult_comp
     kit_comp(:)     = ds_compor_prep%v_comp(i_comp)%kit_comp(:)
     mult_comp       = ds_compor_prep%v_comp(i_comp)%mult_comp
     post_iter       = ds_compor_prep%v_comp(i_comp)%post_iter
+    defo_ldc        = ds_compor_prep%v_comp(i_comp)%defo_ldc
 !
 ! - Detection of specific cases
 !
@@ -149,7 +150,7 @@ character(len=16), intent(out) :: mult_comp
 ! - Save in list
 !
     call setBehaviourValue(rela_comp, defo_comp   , type_comp, type_cpla,&
-                           mult_comp, post_iter   , kit_comp ,&
+                           mult_comp, post_iter   , defo_ldc, kit_comp ,&
                            nb_vari  , nb_vari_comp, nume_comp,&
                            l_compor_ = compor)
 !
@@ -229,6 +230,7 @@ character(len=16), intent(out) :: mult_comp
 !  
 ! - Save in list
 !
+    carcri(:) = 0.d0
     carcri(1)  = iter_inte_maxi
     carcri(2)  = ds_compor_para%v_para(i_comp)%type_matr_t
     carcri(3)  = resi_inte_rela

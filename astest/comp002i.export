@@ -6,4 +6,6 @@ P mpi_nbnoeud 1
 P testlist verification sequential
 
 F comm comp002i.comm D 1
-F libr comp002i.92 D 92
+F libr comp002i.91 D 91
+F comm comp002i.com1 D 1
+F comm comp002i.com2 D 1

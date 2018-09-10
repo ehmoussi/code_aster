@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -24,6 +24,7 @@ DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
 E  =  20000.
 nu =  0.3
 h  =  2.
+h_m = -1.*h
 R  =  50.
 
 # -- Lecture du maillage et affectation du modele, des chargements
@@ -50,7 +51,7 @@ CL=AFFE_CHAR_MECA(MODELE=MO,
                   DDL_IMPO=(_F(GROUP_MA='A1A2',
                                DX=0,),
                             _F(GROUP_MA='A2B2',
-                               DY=-h,),
+                               DY=h_m,),
                             _F(GROUP_MA='A1B1',
                                DY=h,),),);
 
@@ -128,7 +129,9 @@ p0 = -E/(pi*(1.0-nu*nu))*sqrt(2.0*2.0*h/R)
 a  = sqrt(R*h)
 
 PRES = FORMULE(VALE='p0*sqrt(1.0-(x/a)*(x/a))',
-               NOM_PARA='x',);
+               p0=p0,
+               a=a,
+               NOM_PARA='x',)
 
 PRES_sol=CALC_FONC_INTERP(FONCTION=PRES,
                           LIST_PARA=V_ABSC,

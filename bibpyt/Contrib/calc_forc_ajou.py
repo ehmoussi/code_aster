@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -37,7 +37,7 @@ CALC_FORC_AJOU=OPER(nom="CALC_FORC_AJOU",op=199,sd_prod=vect_asse_gene,
          MODELE_FLUIDE   =SIMP(statut='o',typ=modele_sdaster ),
          MODELE_INTERFACE=SIMP(statut='o',typ=modele_sdaster ),
          CHAM_MATER      =SIMP(statut='o',typ=cham_mater ),
-         CHARGE          =SIMP(statut='o',typ=char_ther ),
+         CHARGE          =SIMP(statut='o',typ=char_ther, max=1 ),
          MODE_MECA       =SIMP(statut='f',typ=mode_meca ),
          MODELE_GENE     =SIMP(statut='f',typ=modele_gene ),
          NUME_DDL_GENE   =SIMP(statut='f',typ=nume_ddl_gene ),

@@ -57,6 +57,8 @@ void exportMechanicalLoadToPython()
             &initFactoryPtr< GenericMechanicalLoadInstance,
                              std::string,
                              ModelPtr >) )
+        .def( "getFiniteElementDescriptor",
+              &GenericMechanicalLoadInstance::getFiniteElementDescriptor )
         .def( "getSupportModel", &GenericMechanicalLoadInstance::getSupportModel,
               return_value_policy<copy_const_reference>() )
     ;

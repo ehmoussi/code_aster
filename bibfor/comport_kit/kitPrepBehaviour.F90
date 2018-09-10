@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -59,14 +59,14 @@ character(len=16), intent(out) :: compor_plas(*)
 !
 ! - Prepare COMPOR <CARTE> for creeping
 !
-    compor_creep(NAME) = compor(CREEP_NAME)
+    compor_creep(RELA_NAME) = compor(CREEP_NAME)
     write (compor_creep(NVAR),'(I16)') nvi_flua
     compor_creep(DEFO) = compor(DEFO)
     write (compor_creep(NUME),'(I16)') nume_flua
 !
 ! - Prepare COMPOR <CARTE> for plasticity
 !
-    compor_plas(NAME) = compor(PLAS_NAME)
+    compor_plas(RELA_NAME) = compor(PLAS_NAME)
     write (compor_plas(NVAR),'(I16)') nvi_plas
     compor_plas(DEFO) = compor(DEFO)
     write (compor_plas(NUME),'(I16)') nume_plas

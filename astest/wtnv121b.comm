@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -85,7 +85,8 @@ LI3=DEFI_LIST_REEL(DEBUT=0.0,
                    INTERVALLE=_F(JUSQU_A=1.,
                                  PAS=0.1,),);
 
-EN = FORMULE(NOM_PARA='ENDO',VALE='(1.e-13*(1.+1.e6*ENDO**3))')
+EN = FORMULE(VALE='(1.e-13*(1.+1.e6*ENDO**3))',
+             NOM_PARA='ENDO',)
 
 KENDO=CALC_FONC_INTERP(FONCTION=EN,
                       LIST_PARA=LI3,
@@ -99,7 +100,8 @@ LI2=DEFI_LIST_REEL(DEBUT=0.0,
                    INTERVALLE=_F(JUSQU_A=5.E8,
                                  PAS=1.E5,),);
 
-SL = FORMULE(NOM_PARA='PCAP',VALE='(1.+(PCAP*2.1433E-8)**1.825)**(-0.57609)')
+SL = FORMULE(VALE='(1.+(PCAP*2.1433E-8)**1.825)**(-0.57609)',
+             NOM_PARA='PCAP',)
 
 SATU=CALC_FONC_INTERP(FONCTION=SL,
                       LIST_PARA=LI2,
@@ -108,8 +110,9 @@ SATU=CALC_FONC_INTERP(FONCTION=SL,
                       PROL_GAUCHE='CONSTANT',
                       INFO=2,);
 
-DSL = FORMULE(NOM_PARA='PCAP',VALE='''-2.2565573E-8*(PCAP*2.1433E-8)**0.825
-          *(1+(PCAP*2.143365E-8)**1.825)**-1.57609''')
+DSL = FORMULE(VALE="""-2.2565573E-8*(PCAP*2.1433E-8)**0.825
+          *(1+(PCAP*2.143365E-8)**1.825)**-1.57609""",
+              NOM_PARA='PCAP',)
 
 DSATU=CALC_FONC_INTERP(FONCTION=DSL,
                        LIST_PARA=LI2,
@@ -124,8 +127,9 @@ LI1=DEFI_LIST_REEL(DEBUT=1.E-3,
                                  PAS=0.001,),);
 
 
-PERM = FORMULE(NOM_PARA='SAT',VALE=''' SAT**0.5*(1-(1-SAT
-                      **(1. / 0.57609))**0.57609)**2''')
+PERM = FORMULE(VALE=""" SAT**0.5*(1-(1-SAT
+                      **(1. / 0.57609))**0.57609)**2""",
+               NOM_PARA='SAT',)
 
 PERML=CALC_FONC_INTERP(FONCTION=PERM,
                        LIST_PARA=LI1,
@@ -134,11 +138,12 @@ PERML=CALC_FONC_INTERP(FONCTION=PERM,
                        PROL_GAUCHE='CONSTANT',
                        INFO=2,);
 
-DPERM = FORMULE(NOM_PARA='SAT',VALE=''' 0.5*SAT**(-0.5)
+DPERM = FORMULE(VALE=""" 0.5*SAT**(-0.5)
                     *(1.-(1.-SAT**(1. / 0.57609))**0.57609)**2
                     +2.*SAT**0.5*(SAT**((1.-0.57609) / 0.57609)
                     *(1.-SAT**(1. / 0.57609))**(0.57609-1.))*(1.-(1.-SAT
-                    **(1. / 0.57609))**0.57609)''')
+                    **(1. / 0.57609))**0.57609)""",
+                NOM_PARA='SAT',)
 
 DPERML=CALC_FONC_INTERP(FONCTION=DPERM,
                         LIST_PARA=LI1,
@@ -149,8 +154,9 @@ DPERML=CALC_FONC_INTERP(FONCTION=DPERM,
 
 #####PERMEABILITE RELATIVE AU GAZ ET SA DERIVEE
 
-PG = FORMULE(NOM_PARA='SAT',VALE='''  (1.-SAT)**0.5
-                     *(1.-SAT**(1. / 0.57609))**(2.*0.57609)''')
+PG = FORMULE(VALE="""  (1.-SAT)**0.5
+                     *(1.-SAT**(1. / 0.57609))**(2.*0.57609)""",
+             NOM_PARA='SAT',)
 
 PERMG=CALC_FONC_INTERP(FONCTION=PG,
                        LIST_PARA=LI1,
@@ -159,10 +165,11 @@ PERMG=CALC_FONC_INTERP(FONCTION=PG,
                        PROL_GAUCHE='CONSTANT',
                        INFO=2,);
 
-DPG = FORMULE(NOM_PARA='SAT',VALE=''' -0.5*(1.-SAT)**(-0.5)
+DPG = FORMULE(VALE=""" -0.5*(1.-SAT)**(-0.5)
                      *(1.-SAT**(1. / 0.57609))**(2.*0.57609)
                      -2.*(1.-SAT)**0.5*SAT**((1. / 0.57609)-1.)
-                     *(1.-SAT**(1. / 0.57609))**(2.*0.57609-1.)''')
+                     *(1.-SAT**(1. / 0.57609))**(2.*0.57609-1.)""",
+              NOM_PARA='SAT',)
 
 DPERMG=CALC_FONC_INTERP(FONCTION=DPG,
                         LIST_PARA=LI1,

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -69,7 +69,7 @@ subroutine op0153()
 !
 !-----------------------------------------------------------------------
     parameter    ( nbpar = 16, nbpar2 = 12, nbpmr = 5 )
-    real(kind=8) :: pmoye, insdeb, epsil, dinst
+    real(kind=8) :: pmoye, insdeb, epsil, dinst, dinst0
     character(len=8) :: k8b
     character(len=8) :: typar(nbpar), typpmr(nbpmr)
     real(kind=8) :: valer(nbpar)
@@ -125,11 +125,11 @@ subroutine op0153()
         if (k8b .ne. resu(1:8)) then
             call utmess('F', 'PREPOST4_7')
         endif
+        call tbexv1(resu, 'INST', '&&OP0153.INST', 'V', nbv,&
+                    k8b)
+        call jeveuo('&&OP0153.INST', 'L', jinst)
         call getvr8(' ', 'INST', scal=dinst, nbret=nis)
         if (nis .eq. 0) then
-            call tbexv1(resu, 'INST', '&&OP0153.INST', 'V', nbv,&
-                        k8b)
-            call jeveuo('&&OP0153.INST', 'L', jinst)
             dinst = zr(jinst+nbv-1)
         endif
         call tbexv1(resu, 'SECTEUR', '&&OP0153.SECT', 'V', nbv,&
@@ -137,7 +137,13 @@ subroutine op0153()
         call jeveuo('&&OP0153.SECT', 'L', jsect)
         nbsect = zi(jsect+nbv-1)
         call jedetr('&&OP0153.SECT')
-        call motubn(resu, dinst, nbsect)
+        call jelira('&&OP0153.INST', 'LONUTI', nbinst)
+        do i = 0, nbinst-1
+            dinst0 = zr(jinst+i)
+            if (dinst0 .ge. dinst) then
+                call motubn(resu, dinst0, nbsect)
+            endif
+        end do
         goto 888
     endif
 !

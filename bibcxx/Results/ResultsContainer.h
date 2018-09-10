@@ -42,6 +42,7 @@
 #include "Supervis/ResultNaming.h"
 #include "Discretization/ElementaryCharacteristics.h"
 #include "Loads/ListOfLoads.h"
+#include "Results/FieldBuilder.h"
 
 /**
  * @class ResultsContainerInstance
@@ -76,8 +77,6 @@ private:
     typedef mapStrVOFE::iterator mapStrVOFEIterator;
     /** @typedef Valeur contenue dans mapStrVOFE */
     typedef mapStrVOFE::value_type mapStrVOFEValue;
-    /** @brief Model sur lequel repose la resultat */
-    BaseMeshPtr                  _mesh;
     /** @brief Pointeur de nom Jeveux '.DESC' */
     JeveuxBidirectionalMapChar16 _symbolicNamesOfFields;
     /** @brief Collection '.TACH' */
@@ -90,6 +89,18 @@ private:
     JeveuxVectorLong             _serialNumber;
     /** @brief Nombre de numéros d'ordre */
     int                          _nbRanks;
+    /** @brief Vecteur Jeveux '.RSPI' */
+    JeveuxVectorLong             _rspi;
+    /** @brief Vecteur Jeveux '.RSPR' */
+    JeveuxVectorDouble           _rspr;
+    /** @brief Vecteur Jeveux '.RSP8' */
+    JeveuxVectorChar8            _rsp8;
+    /** @brief Vecteur Jeveux '.RS16' */
+    JeveuxVectorChar16           _rs16;
+    /** @brief Vecteur Jeveux '.RS24' */
+    JeveuxVectorChar24           _rs24;
+    /** @brief jeveux vector '.TITR' */
+    JeveuxVectorChar80          _title;
 
     /** @brief Liste des champs aux noeuds */
     mapStrVOFN                         _dictOfVectorOfFieldsNodes;
@@ -105,6 +116,12 @@ private:
     mapRankMaterial                    _mapMaterial;
     /** @brief List of ModelPtr */
     mapRankModel                       _mapModel;
+
+protected:
+    /** @brief Maillage sur lequel repose la resultat */
+    BaseMeshPtr                        _mesh;
+    /** @brief Object to correctly manage fields and field descriptions */
+    FieldBuilder                       _fieldBuidler;
 
 public:
     /**
@@ -126,13 +143,20 @@ public:
     ResultsContainerInstance( const std::string &name,
                               const std::string resuTyp ):
         DataStructure( name, 19, resuTyp ),
-        _mesh( nullptr ),
         _symbolicNamesOfFields( JeveuxBidirectionalMapChar16( getName() + ".DESC" ) ),
         _namesOfFields( JeveuxCollectionChar24( getName() + ".TACH" ) ),
         _accessVariables( JeveuxBidirectionalMapChar16( getName() + ".NOVA" ) ),
         _calculationParameter( JeveuxCollectionChar8( getName() + ".TAVA" ) ),
         _serialNumber( JeveuxVectorLong( getName() + ".ORDR" ) ),
-        _nbRanks( 0 )
+        _nbRanks( 0 ),
+        _rspi( JeveuxVectorLong( getName() + ".RSPI" ) ),
+        _rspr( JeveuxVectorDouble( getName() + ".RSPR" ) ),
+        _rsp8( JeveuxVectorChar8( getName() + ".RSP8" ) ),
+        _rs16( JeveuxVectorChar16( getName() + ".RS16" ) ),
+        _rs24( JeveuxVectorChar24( getName() + ".RS24" ) ),
+        _title( JeveuxVectorChar80( getName() + ".TITR" ) ),
+        _mesh( nullptr ),
+        _fieldBuidler( FieldBuilder() )
     {};
 
     /**

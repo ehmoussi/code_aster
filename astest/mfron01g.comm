@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -63,7 +63,7 @@ CTRACB=DEFI_NAPPE(   NOM_PARA='TEMP',  PROL_DROITE='LINEAIRE',
 MATER=DEFI_MATERIAU(THER=_F( RHO_CP = 0.0E-3,LAMBDA = 1.0E-3),
                     ELAS=_F( E = 200.E+3, NU = .3,ALPHA = 10.0E-6),
                     TRACTION=_F( SIGM = CTRACB),
-                    MFRONT=_F(LISTE_COEF=(200.e3,0.3,10.e-6,50000.,
+                    MFRONT=_F(LISTE_COEF=(50000.,200.e3,0.3,
                                 ),)
                         ,)
 

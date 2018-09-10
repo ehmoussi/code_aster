@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,95 +15,108 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmequi(eta, fonact, sddyna, veasse,&
-                  cnfext, cnfint)
-!
 ! person_in_charge: mickael.abbas at edf.fr
 !
-    implicit none
+subroutine nmequi(l_disp     , l_pilo, l_macr, cnequi,&
+                  cnfint     , cnfext, cndiri, cnsstr,&
+                  ds_contact_,&
+                  cnbudi_    , cndfdo_,&
+                  cndipi_    , eta_)
+!
+use NonLin_Datastructure_type
+!
+implicit none
+!
 #include "asterf_types.h"
-#include "jeveux.h"
 #include "asterfort/assert.h"
+#include "asterfort/cfdisl.h"
 #include "asterfort/infdbg.h"
-#include "asterfort/jedema.h"
-#include "asterfort/jemarq.h"
-#include "asterfort/ndynin.h"
-#include "asterfort/ndynlo.h"
-#include "asterfort/nmchex.h"
-#include "asterfort/nmfext.h"
-    real(kind=8) :: eta
-    integer :: fonact(*)
-    character(len=19) :: sddyna
-    character(len=19) :: veasse(*)
-    character(len=19) :: cnfext, cnfint
+#include "asterfort/nmdebg.h"
+#include "asterfort/nonlinDSVectCombCompute.h"
+#include "asterfort/nonlinDSVectCombAddAny.h"
+#include "asterfort/nonlinDSVectCombInit.h"
 !
-! ----------------------------------------------------------------------
+aster_logical, intent(in) :: l_disp, l_pilo, l_macr
+character(len=19), intent(in) :: cnequi
+character(len=19), intent(in) :: cnfint, cnfext, cndiri, cnsstr
+type(NL_DS_Contact), optional, intent(in) :: ds_contact_
+character(len=19), optional, intent(in) :: cnbudi_, cndfdo_, cndipi_
+real(kind=8), optional, intent(in) :: eta_
 !
-! ROUTINE MECA_NON_LINE (ALGORITHME)
+! --------------------------------------------------------------------------------------------------
 !
-! RESULTANTE DES EFFORTS POUR ESTIMATION DE L'EQUILIBRE
+! MECA_NON_LINE - Algorithm
 !
-! ----------------------------------------------------------------------
+! Compute lack of balance forces
 !
+! --------------------------------------------------------------------------------------------------
 !
-! IN  SDDYNA : SD DYNAMIQUE
-! IN  FONACT : FONCTIONNALITES ACTIVEES
-! IN  ETA    : COEFFICIENT DE PILOTAGE
-! IN  VEASSE : VARIABLE CHAPEAU POUR NOM DES VECT_ASSE
+! In  cnfext           : nodal field for external force
+! In  cnfint           : nodal field for internal force
+! In  cndiri           : nodal field for support reaction
+! In  cnsstr           : nodal field for sub-structuring force
+! In  cnequi           : nodal field for out-of-balance force
+! In  ds_contact       : datastructure for contact management
 !
-!
-!
+! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    aster_logical :: ldyna, lstat
-    aster_logical :: lnewma
+    type(NL_DS_VectComb) :: ds_vectcomb
+    aster_logical :: l_unil_pena
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
-    call jemarq()
     call infdbg('MECA_NON_LINE', ifm, niv)
-!
-! --- AFFICHAGE
-!
     if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE> CALCUL DES FORCES POUR '//&
-        'ESTIMATION DE L''EQUILIBRE'
+        write (ifm,*) '<MECANONLINE> Compute lack of balance forces'
     endif
 !
-! --- FONCTIONNALITES ACTIVEES
+! - Initializations
 !
-    ldyna = ndynlo(sddyna,'DYNAMIQUE')
+    call nonlinDSVectCombInit(ds_vectcomb)
 !
-! --- INITIALISATIONS
+! - Add vect_asse
 !
-    lnewma = .false.
+    call nonlinDSVectCombAddAny(cnfint, +1.d0, ds_vectcomb)
+    call nonlinDSVectCombAddAny(cndiri, +1.d0, ds_vectcomb)
+    call nonlinDSVectCombAddAny(cnfext, -1.d0, ds_vectcomb)
+    if (present(ds_contact_)) then
+        if (ds_contact_%l_cnctdf) then
+            call nonlinDSVectCombAddAny(ds_contact_%cnctdf, +1.d0, ds_vectcomb)
+        endif
+        if (ds_contact_%l_cnunil) then
+            l_unil_pena = cfdisl(ds_contact_%sdcont_defi, 'UNIL_PENA')
+            if (l_unil_pena) then
+                call nonlinDSVectCombAddAny(ds_contact_%cnunil, +1.d0, ds_vectcomb)
+            endif
+        endif
+        if (ds_contact_%l_cneltc) then
+            call nonlinDSVectCombAddAny(ds_contact_%cneltc, +1.d0, ds_vectcomb)
+        endif
+        if (ds_contact_%l_cneltf) then
+            call nonlinDSVectCombAddAny(ds_contact_%cneltf, +1.d0, ds_vectcomb)
+        endif
+    endif
+    if (l_disp) then
+        call nonlinDSVectCombAddAny(cnbudi_, +1.d0, ds_vectcomb)
+        call nonlinDSVectCombAddAny(cndfdo_, -1.d0, ds_vectcomb)
+    endif
+    if (l_pilo) then
+        call nonlinDSVectCombAddAny(cndipi_, -eta_, ds_vectcomb)
+    endif
+    if (l_macr) then
+        call nonlinDSVectCombAddAny(cnsstr, +1.d0, ds_vectcomb)
+    endif
+
 !
-! --- FONCTIONNALITES ACTIVEES
+! - Combination
 !
-    ldyna = ndynlo(sddyna,'DYNAMIQUE')
-    lstat = ndynlo(sddyna,'STATIQUE')
-    if (ldyna) then
-        lnewma = ndynlo(sddyna,'FAMILLE_NEWMARK')
+    call nonlinDSVectCombCompute(ds_vectcomb, cnequi)
+!
+! - Debug
+!
+    if (niv .eq. 2) then
+        call nmdebg('VECT', cnequi, ifm)
     endif
 !
-! --- VECTEURS EN SORTIE
-!
-    if (lstat .or. lnewma) then
-        call nmchex(veasse, 'VEASSE', 'CNFEXT', cnfext)
-        call nmchex(veasse, 'VEASSE', 'CNFINT', cnfint)
-    else
-        ASSERT(.false.)
-    endif
-!
-! --- CALCUL DES TERMES
-!
-    if (lstat .or. lnewma) then
-        call nmfext(eta, fonact, sddyna, veasse, cnfext)
-    else
-        ASSERT(.false.)
-    endif
-!
-!
-    call jedema()
 end subroutine

@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
-# person_in_charge: 
+# person_in_charge: nicolas.sellenet@edf.fr
 
 from ..Objects import EvolutiveThermalLoad
 from .ExecuteCommand import ExecuteCommand
@@ -34,7 +34,20 @@ class LinearThermalAnalysisBuild(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        self._result = EvolutiveThermalLoad()
+        if keywords.get("reuse") != None:
+            self._result = keywords["reuse"]
+        else:
+            self._result = EvolutiveThermalLoad()
+    
+    def post_exec(self, keywords):
+        """Execute the command.
+
+        Arguments:
+            keywords (dict): User's keywords.
+        """
+        self._result.appendModelOnAllRanks(keywords["MODELE"])
+        self._result.appendMaterialOnMeshOnAllRanks(keywords["CHAM_MATER"])
+        self._result.update()
 
 
 THER_LINEAIRE = LinearThermalAnalysisBuild.run

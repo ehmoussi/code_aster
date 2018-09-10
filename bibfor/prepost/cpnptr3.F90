@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -22,6 +22,7 @@ subroutine cpnptr3(main,numa,coor,ind,nomnoe)
     implicit none
 !
 #include "jeveux.h"
+#include "asterfort/assert.h"
 #include "asterfort/codent.h"
 #include "asterfort/jecroc.h"
 #include "asterfort/jeexin.h"
@@ -42,7 +43,7 @@ subroutine cpnptr3(main,numa,coor,ind,nomnoe)
 !
 !
 ! ----------------------------------------------------------------------
-!         CREATION DES DDL SUPPLEMENTAIRES 
+!         CREATION DES DDL SUPPLEMENTAIRES
 !         SUR LA FACE DE LA ZONE DE CONTACT ESCLAVE
 !         CAS QUAD 8
 ! ----------------------------------------------------------------------
@@ -60,7 +61,7 @@ subroutine cpnptr3(main,numa,coor,ind,nomnoe)
 !
     character(len=8) :: nomnd,eletyp
     character(len=24) :: valk
-    character(len=6) :: knume
+    character(len=16) :: knume
 ! ----------------------------------------------------------------------
 !
     call jemarq()
@@ -68,11 +69,14 @@ subroutine cpnptr3(main,numa,coor,ind,nomnoe)
 ! - INSERTION DU NOUVEAU NOEUD
 ! ------ NOM DU NOEUD CREE
     call codent(ind, 'G', knume)
+    if (knume(1:1)=='*') then
+        ASSERT(.false.)
+    endif
     lgnd = lxlgut(knume)
-    if (lgnd+2 .gt. 8) then
+    if (lgnd+1 .gt. 8) then
         call utmess('F', 'ALGELINE_16')
     endif
-    nomnd = 'DL' // knume
+    nomnd = 'C' // knume(1:lgnd)
 ! ------ DECLARATION DU NOEUD CREE
     call jeexin(jexnom(nomnoe, nomnd), iret)
     if (iret .eq. 0) then
@@ -83,17 +87,17 @@ subroutine cpnptr3(main,numa,coor,ind,nomnoe)
     endif
 ! --- CALCUL DES COORDONNEES DES NOUVEAUX NOEUDS
 
-    call jeveuo(jexnum(main//'.CONNEX',numa),'L',jtab)  
+    call jeveuo(jexnum(main//'.CONNEX',numa),'L',jtab)
     do  inc1=1, 2
         lino(inc1)= zi(jtab+inc1-1)
     end do
     do inc1=1,2
         do inc2=1,2
-            tabar((inc1-1)*2+inc2) =  coor(inc2,lino(inc1))      
+            tabar((inc1-1)*2+inc2) =  coor(inc2,lino(inc1))
         end do
-    end do 
+    end do
     eletyp='SE2'
-! --- NOEUD 1 
+! --- NOEUD 1
     xp(1)=0.d0
     xp(2)=0.d0
     xe(1)=0.d0

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -437,15 +437,16 @@ CARCRI   = PhysicalQuantity(type='R',
        'PERTURB',
        'TOLDEBO',
        'ITEDEBO',
-       'TSSEUIL',
-       'TSAMPL',
-       'TSRETOUR',
+       'RESIRADI',
+       'VARIEXTE',
+       'THETATHM',
        'POSTITER',
        'LC_EXT[3]',
-       'MODECALC',
-       'ALPHA',
+       'MATRNSYM',
+       'ALPHATHM',
        'LC_EXT2[2]',
        'POSTINCR',
+       'STRAIN',
     ),
     comment="""  CARCRI Type :R Critere de convergence d'un probleme non-lineaire materiel
     (pour 1 point de Gauss)
@@ -458,14 +459,16 @@ CARCRI   = PhysicalQuantity(type='R',
        PERTURB  : perturbation pour matrice tangente par perturbation
        TOLDEBO  : tolerance pour la verification de DEBORST
        ITEDEBO  : nb iterations maxi pour DEBORST (ITER_MAXI_DEBORST == ITEDEBO)
-       TSSEUIL  : seuil d'activation matrice tangente/secante (TANGSEC_SEUIL)
-       TSAMPL   : perturbation de la matrice TANGENTE/SECANTE (TANGSEC_AMPL)
-       TSRETOUR : taux de retour vers la matrice tangente (TANGSEC_RETOUR)
+       RESIRADI : valeur pour RESI_RADI_RELA
+       VARIEXTE : entier code pour les variables d'etat externe (MFront)
+       THETATHM : parametre THETA pour la THM
        POSTITER : type de critere POST_ITER : 0=rien, 1=CRIT_RUPT
-       LC_EXT[3]: pointeurs vers routines externes (UMAT / MFRONT)
-       MODECALC : 1 (CALC_POINT_MAT) ou 0 (ELEMENTS FINIS)
-       ALPHA    : PARM_ALPHA pour les volumes finis
+       LC_EXT[3]: pointeurs vers routines externes (UMAT / MFRONT) 
+       MATRNSYM : 1 si la matrice est non-symetrique
+       ALPHATHM : parametre ALPHA pour la THM (volumes finis)
+       LC_EXT[2]: pointeurs vers routines externes (UMAT / MFRONT) => materiaux
        POSTINCR : type de critere POST_INCR : 0=rien, 1=REST_ECRO
+       STRAIN   : modele de deformation pour MFront
 """)
 
 
@@ -597,6 +600,7 @@ COMPOR   = PhysicalQuantity(type='K16',
        'KIT2NVAR',
        'KIT3NVAR',
        'KIT4NVAR',
+       'DEFO_LDC',
     ),
     comment="""  COMPOR Type:K16 Comportement materiel
        RELCOM : relation de comportement : 'ELAS' , 'VMIS_ISOT_LINE' , ...
@@ -619,6 +623,7 @@ COMPOR   = PhysicalQuantity(type='K16',
        KIT2NVAR : number of internal variables for kit (2)
        KIT3NVAR : number of internal variables for (3)
        KIT4NVAR : number of internal variables for (4)
+       DEFO_LDC : deformation en entrée de la ldc : 'TOTALE' ou 'MECANIQUE'
 """)
 
 
@@ -1399,13 +1404,21 @@ FELECR   = PhysicalQuantity(type='R',
 FER1_R   = PhysicalQuantity(type='R',
     components=(
        'TYPCOMB',
-       'ENROBG',
-       'CEQUI',
-       'SIGACI',
-       'SIGBET',
-       'PIVA',
-       'PIVB',
+       'CODIF',
        'ES',
+       'CEQUI',
+       'ENROBS',
+       'ENROBI',
+       'SIGMACI',
+       'SIGMBET',
+       'COEFF1',
+       'COEFF2',
+       'GAMMAS',
+       'GAMMAC',
+       'FACIER',
+       'FBETON',
+       'CLACIER',
+       'UC',
     ),
     comment=""" FER1_R et FER2_R : 2 grandeurs utilisees par CALC_FERRAILLAGE
 """)

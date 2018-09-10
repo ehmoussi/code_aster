@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -30,7 +30,6 @@ subroutine op0039()
 #include "asterc/getfac.h"
 #include "asterfort/assert.h"
 #include "asterfort/codent.h"
-#include "asterfort/deprecated_algom.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/getvid.h"
 #include "asterfort/getvis.h"
@@ -45,6 +44,7 @@ subroutine op0039()
 #include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/mdexma.h"
+#include "asterfort/ulaffe.h"
 #include "asterfort/ulexis.h"
 #include "asterfort/ulisog.h"
 #include "asterfort/ulopen.h"
@@ -158,7 +158,11 @@ subroutine op0039()
        call getvis(' ', 'UNITE', scal=ifi, nbret=n11)
        ifc = ifi
        if (.not. ulexis( ifi )) then
-           call ulopen(ifi, ' ', fich, 'NEW', 'O')
+           if (form .eq.'MED')then
+               call ulaffe(ifi, ' ', fich, 'NEW', 'O')
+           else
+               call ulopen(ifi, ' ', fich, 'NEW', 'O')
+           endif
        endif
 !
 !     -- VERIFICATIONS POUR GMSH :
