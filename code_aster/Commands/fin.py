@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -19,16 +19,22 @@
 
 # person_in_charge: mathieu.courtois@edf.fr
 
+import aster
+
 from ..Supervis import ExecutionParameter, logger
 from ..RunManager import saveObjects
 
 
 def FIN(**keywords):
-    """Does nothing else printing some informations about the execution.
+    """Save objects that exist in the context of the caller.
+
     The memory manager is closed when :mod:`libaster` is unloaded.
 
     Arguments:
         keywords (dict): Ignored
     """
-    saveObjects(level=2)
+    # Ensure that `saveObjects` has not been already called
+    if aster.jeveux_status():
+        saveObjects(level=2)
+
     logger.info(repr(ExecutionParameter().get_option("timer")))
