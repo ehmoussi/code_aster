@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,6 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: josselin.delmas at edf.fr
 
 cata_msg = {
 
@@ -181,7 +180,7 @@ Erreur d'utilisation pour AFFE_CHAR_CINE :
 """),
 
     28 : _(u"""
- les "MATR_ASSE" %(k1)s "  et  " %(k2)s "  ne sont pas combinables.
+Les matrices assemblées ne sont pas combinables car elle ne reposent pas sur la même numérotation (NUME_DDL).
 """),
 
     29 : _(u"""
