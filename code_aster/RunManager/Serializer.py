@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -123,6 +123,8 @@ class Serializer(object):
             logger.info("Saving objects...")
             objList = []
             for name, obj in ctxt.items():
+                if name == "CO":
+                    continue
                 try:
                     logger.info("{0:<24s} {1}".format(name, type(obj)))
                     pickler.save_one(obj)
@@ -168,23 +170,20 @@ class Serializer(object):
         assert len(objects) == len(objList), (objects, objList)
         logger.info("Restored objects:")
         for name, obj in zip(objList, objects):
+            logger.debug("restoring {0}...".format(name))
             # build instance from BufferObject
-            if hasattr(obj, 'instance'):
-                obj = obj.instance
+            if isinstance(obj, AsterUnpickler.BufferObject):
+                try:
+                    obj = obj.instance
+                except Exception:
+                    logger.error("can not restore object {0} <{1}>\n{2}"
+                                 .format(name, obj, traceback.format_exc()))
+                    continue
             self._ctxt[name] = obj
             logger.info("{0:<24s} {1}".format(name, type(obj)))
+            assert not isinstance(obj, AsterUnpickler.BufferObject)
         # restore the objects counter
         ResultNaming.initCounter(lastId)
-
-    def delete(self, object_names):
-        """Delete given objects from the initial context.
-
-        Arguments:
-            object_names (list[str]): List of object names to be removed from
-                the context.
-        """
-        for name in object_names:
-            self._ctxt[name] = None
 
 
 def saveObjects(level=1, delete=True):
@@ -213,7 +212,9 @@ def saveObjects(level=1, delete=True):
     pickler.sign()
 
     if delete:
-        pickler.delete(saved)
+        # Remove the objects from the context
+        for name in saved:
+            context[name] = None
 
 
 def loadObjects(level=1):
@@ -311,7 +312,7 @@ class AsterUnpickler(pickle.Unpickler):
     class BufferObject(object):
 
         """This class defines a temporary object that is created instead of
-        an instance of DataStructure.abs
+        an instance of DataStructure.
 
         Attributes:
             _name (str): *Jeveux* name of the object.
@@ -371,7 +372,7 @@ class AsterUnpickler(pickle.Unpickler):
 
             If DataStructure objects are in values returned by
             :py:meth:`__getinitargs__` or :py:meth:`__getstate__` they must be
-            in directly present in the returned tuple (not in sub-objects).
+            directly present in the returned tuple (not in sub-objects).
 
             Returns:
                 misc: DataStructure object.
@@ -476,12 +477,14 @@ def _filteringContext(context):
     Returns:
         dict: New cleaned context.
     """
-    from ..Commands import CO, FIN
+    from ..Commands import DETRUIRE, FIN, VARIABLE
+    # functions to be ignored
+    ignored = (DETRUIRE, FIN, VARIABLE)
     ctxt = {}
     for name, obj in context.items():
         if name in ('code_aster', ) or name.startswith('__'):
             continue
-        if not isinstance(obj, numpy.ndarray) and obj in (CO, FIN):
+        if not isinstance(obj, numpy.ndarray) and obj in ignored:
             continue
         if type(obj) in (types.ModuleType, types.ClassType, types.MethodType):
             continue
