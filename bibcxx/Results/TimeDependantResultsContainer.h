@@ -29,11 +29,12 @@
 #include "astercxx.h"
 
 #include "Results/ResultsContainer.h"
+#include "Supervis/ResultNaming.h"
 
 /**
  * @class TimeDependantResultsContainerInstance
  * @brief Cette classe correspond a un evol_sd_aster
- * @author Natacha Béreux 
+ * @author Natacha Béreux
  */
 class TimeDependantResultsContainerInstance: public ResultsContainerInstance
 {
@@ -42,8 +43,17 @@ public:
     /**
      * @brief Constructeur
      */
-    TimeDependantResultsContainerInstance( const std::string resuTyp = "EVOL" ): 
-            ResultsContainerInstance( resuTyp )
+    TimeDependantResultsContainerInstance( const std::string resuTyp = "EVOL" ):
+            TimeDependantResultsContainerInstance( ResultNaming::getNewResultName(),
+                                                   resuTyp )
+    {};
+
+    /**
+     * @brief Constructeur
+     */
+    TimeDependantResultsContainerInstance( const std::string name,
+                                           const std::string resuTyp ):
+            ResultsContainerInstance( name, resuTyp )
     {};
 };
 
