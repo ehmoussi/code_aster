@@ -26,7 +26,7 @@ def create_nume(self, numeddl_status, option, numeddl, matr_rigi, CHARGE, INFO, 
         num = numeddl
     elif numeddl_status == 'To_Create':
         if option in ('RIGI_MECA', 'RIGI_THER', 'RIGI_ACOU', 'RIGI_FLUI_STRU'):
-            num = NUME_DDL(MATR_RIGI=matr_rigi, INFO=info)
+            num = NUME_DDL(MATR_RIGI=matr_rigi, INFO=INFO)
         else:
             if CHARGE != None:
                 num = NUME_DDL(MODELE=MODELE, CHARGE=CHARGE, INFO=INFO)
