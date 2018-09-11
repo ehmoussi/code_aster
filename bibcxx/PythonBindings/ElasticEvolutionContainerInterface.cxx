@@ -34,5 +34,8 @@ void exportElasticEvolutionContainerToPython()
         ( "ElasticEvolutionContainer", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< ElasticEvolutionContainerInstance > ) )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< ElasticEvolutionContainerInstance,
+                             std::string > ) )
     ;
 };
