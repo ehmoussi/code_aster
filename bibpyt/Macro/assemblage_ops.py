@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -20,6 +20,21 @@
 # person_in_charge: albert.alarcon at edf.fr
 from code_aster.Cata.SyntaxUtils import remove_none
 
+def create_nume(self, numeddl_status, option, numeddl, matr_rigi, CHARGE, INFO, MODELE):
+    NUME_DDL = self.get_cmd('NUME_DDL')
+    if numeddl_status == 'To_Read':
+        num = numeddl
+    elif numeddl_status == 'To_Create':
+        if option in ('RIGI_MECA', 'RIGI_THER', 'RIGI_ACOU', 'RIGI_FLUI_STRU'):
+            num = NUME_DDL(MATR_RIGI=matr_rigi, INFO=info)
+        else:
+            if CHARGE != None:
+                num = NUME_DDL(MODELE=MODELE, CHARGE=CHARGE, INFO=INFO)
+            else:
+                num = NUME_DDL(MODELE=MODELE, INFO=INFO)
+    return num
+
+
 
 def assemblage_ops(self, MODELE, NUME_DDL, INFO, **args):
     """
@@ -34,6 +49,7 @@ def assemblage_ops(self, MODELE, NUME_DDL, INFO, **args):
     VECT_ASSE = args.get("VECT_ASSE")
 
     ier = 0
+    num = None
     from Utilitai.Utmess import UTMESS
 
     # On met le mot cle NUME_DDL dans une variable locale pour le proteger
@@ -53,9 +69,9 @@ def assemblage_ops(self, MODELE, NUME_DDL, INFO, **args):
         if (MATR_ASSE == None):
             UTMESS('F', 'MATRICE0_5')
 
-        lnume = 1
+        numeddl_status = 'To_Create'
     else:
-        lnume = 0
+        numeddl_status = 'To_Read'
         # dans le cas ou on assemble des vecteurs, le mot cle charge utilise prealablement pour
         # la construction des conditions de Dirichlet est indispensable...sauf si initialement
         # les matrices etaient construites sans aucune charge (peut etre le cas
@@ -136,25 +152,12 @@ def assemblage_ops(self, MODELE, NUME_DDL, INFO, **args):
                 masel = _a
                 lmasel = 1
 
-            if lnume == 0:
-                num = numeddl
-
-            # ici iocc est obligatoirement 1 vu le traitement précédent
-            # et la non compatibilité des 4 options
-            elif option in ('RIGI_MECA', 'RIGI_THER', 'RIGI_ACOU', 'RIGI_FLUI_STRU'):
-                # self.DeclareOut('num', numeddl)
-                num = NUME_DDL(MATR_RIGI=_a, INFO=info)
-                self.register_result(num, numeddl)
-
-            elif iocc == 1 and option not in (
-                'RIGI_MECA', 'RIGI_THER', 'RIGI_ACOU','RIGI_FLUI_STRU'):
-
-                # self.DeclareOut('num', numeddl)
-                if CHARGE != None:
-                    num = NUME_DDL(MODELE=MODELE, CHARGE=CHARGE, INFO=info)
-                else:
-                    num = NUME_DDL(MODELE=MODELE, INFO=info)
-                self.register_result(num, numeddl)
+# Create NUME_DDL
+            if (numeddl_status != 'OK'):
+                num = create_nume(self, numeddl_status, option, numeddl, _a, CHARGE, info, MODELE)
+                if (numeddl_status == 'To_Create') :
+                     self.register_result(num, numeddl)
+                numeddl_status = 'OK'
 
             self.DeclareOut('mm', m['MATRICE'])
             motscles = {'OPTION': option}
