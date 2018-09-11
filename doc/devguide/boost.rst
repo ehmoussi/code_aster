@@ -95,7 +95,7 @@ See :ref:`devguide-recommendations` for methods with default arguments.
 Pickling support
 ================
 
-See :py:mod:`code_aster.RunManager.Pickling` module for the serialization
+See :py:mod:`code_aster.RunManager.Serializer` module for the serialization
 management.
 
 - Delegated to Python objects.
