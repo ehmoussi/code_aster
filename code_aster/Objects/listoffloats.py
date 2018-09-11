@@ -38,6 +38,9 @@ class ExtendedListOfFloats(injector(ListOfFloats), ListOfFloats):
     def __getattr__(self, attr):
         """Returns the attribute of the underlying :py:class:`numpy.array`
         object if it does not exist."""
+        if attr in ("__getstate__", "__setstate__"):
+            raise AttributeError("'ListOfFloats' object has no attribute '{0}'"
+                                 .format(attr))
         return getattr(np.array(self.getValues()), attr)
 
     def __len__(self):

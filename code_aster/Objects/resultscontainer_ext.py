@@ -32,12 +32,6 @@ from ..Utilities import injector
 class ExtendedResultsContainer(injector(ResultsContainer), ResultsContainer):
     cata_sdj = "SD.sd_resultat.sd_resultat"
 
-    def __getinitargs__(self):
-        """Returns the argument required to reinitialize a ResultsContainer
-        object during unpickling.
-        """
-        return (self.getName(), self.getType())
-
     def LIST_VARI_ACCES (self):
         if not self.accessible():
             raise AsException("Erreur dans resultat.LIST_VARI_ACCES " +
