@@ -296,7 +296,7 @@ Resultat=DYNA_VIBRA(
     ),
     COMPORTEMENT=_F(RELATION='DIS_ECRO_TRAC',
                     NOEUD_1='N01', NOEUD_2='N02', FTAN= fctsy, ECROUISSAGE='CINEMATIQUE'),
-    ARCHIVAGE=_F(PAS_ARCH=1.E8, INST=archivedInstants),
+    ARCHIVAGE=_F(PAS_ARCH=int(1.E8), INST=archivedInstants),
     IMPRESSION=_F(UNITE_DIS_ECRO_TRAC =unite),
 )
 #
