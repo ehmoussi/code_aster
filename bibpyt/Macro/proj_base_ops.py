@@ -42,8 +42,9 @@ def proj_base_ops(self, **args):
         _num = NUME_DDL_GENE(BASE=BASE, NB_VECT=NB_VECT, STOCKAGE=STOCKAGE)
     else:
         if numgen.is_typco():
-            self.DeclareOut('_num', numgen)
+            #self.DeclareOut('_num', numgen)
             _num = NUME_DDL_GENE(BASE=BASE, NB_VECT=NB_VECT, STOCKAGE=STOCKAGE)
+            self.register_result(_num, numgen)
         else:
             _num = numgen
 
@@ -61,8 +62,9 @@ def proj_base_ops(self, **args):
                 motscles['MATR_ASSE_GENE'] = m['MATR_ASSE_GENE']
             else:
                 UTMESS('F', 'MODAL0_1')
-            self.DeclareOut('mm', m['MATRICE'])
+            #self.DeclareOut('mm', m['MATRICE'])
             mm = PROJ_MATR_BASE(BASE=BASE, NUME_DDL_GENE=_num, **motscles)
+            self.register_result(mm, m['MATRICE'])
 
     if VECT_ASSE_GENE:
         for v in VECT_ASSE_GENE:
@@ -76,6 +78,7 @@ def proj_base_ops(self, **args):
             motscles['TYPE_VECT'] = v['TYPE_VECT']
             self.DeclareOut('vv', v['VECTEUR'])
             vv = PROJ_VECT_BASE(BASE=BASE, NUME_DDL_GENE=_num, **motscles)
+            self.register_result(vv, v['VECTEUR'])
 
     if RESU_GENE:
         for v in RESU_GENE:
@@ -89,5 +92,6 @@ def proj_base_ops(self, **args):
             motscles['TYPE_VECT'] = v['TYPE_VECT']
             self.DeclareOut('vv', v['RESULTAT'])
             vv = PROJ_RESU_BASE(BASE=BASE, NUME_DDL_GENE=_num, **motscles)
+            self.register_result(vv, v['RESULTAT'])
 
-    return ier
+    return

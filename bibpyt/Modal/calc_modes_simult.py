@@ -249,10 +249,10 @@ def calc_modes_simult(self, stop_erreur, sturm, TYPE_RESU, OPTION, INFO, **args)
                              )
     materialOnMesh = None
     for matrice in matrices.values():
-        if matrice.getNumberOfElementaryMatrix() != 0:
-            try:
+        try:
+            if matrice.getNumberOfElementaryMatrix() != 0:
                 modes.appendMaterialOnMeshOnAllRanks(matrice.getMaterialOnMesh())
                 break
-            except: pass
+        except: pass
 
     return modes
