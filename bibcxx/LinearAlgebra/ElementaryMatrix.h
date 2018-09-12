@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe ElementaryMatrix
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -59,6 +59,8 @@ private:
     bool                                      _isEmpty;
     /** @brief Modele support */
     ModelPtr                                  _supportModel;
+    /** @brief Support MaterialOnMesh */
+    MaterialOnMeshPtr                         _materOnMesh;
     /** @brief Vectors of FiniteElementDescriptor */
     std::vector< FiniteElementDescriptorPtr > _FEDVector;
     std::set< std::string >                   _FEDNames;
@@ -80,7 +82,8 @@ public:
         _description( JeveuxVectorChar24( getName() + ".RERR" ) ),
         _listOfElementaryResults( JeveuxVectorChar24( getName() + ".RELR" ) ),
         _isEmpty( true ),
-        _supportModel( nullptr )
+        _supportModel( nullptr ),
+        _materOnMesh( nullptr )
     {};
 
     /**
@@ -141,6 +144,16 @@ public:
     };
 
     /**
+     * @brief Get the MaterialOnMesh
+     */
+    MaterialOnMeshPtr getMaterialOnMesh() const throw( std::runtime_error )
+    {
+        if( _materOnMesh == nullptr )
+            throw std::runtime_error( "MaterialOnMesh is not set" );
+        return _materOnMesh;
+    };
+
+    /**
      * @brief Obtenir le modèle de l'étude
      */
     ModelPtr getSupportModel() const
@@ -164,6 +177,15 @@ public:
     void setEmpty( bool bEmpty )
     {
         _isEmpty = bEmpty;
+    };
+
+    /**
+     * @brief Set the MaterialOnMesh
+     * @param currentMater MaterialOnMesh
+     */
+    void setMaterialOnMesh( const MaterialOnMeshPtr& currentMater )
+    {
+        _materOnMesh = currentMater;
     };
 
     /**
