@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -35,14 +35,11 @@ subroutine impmem()
     k8tab(3) = 'CMAX_JV'
     k8tab(4) = 'CMXU_JV'
     call utgtme(4, k8tab, rval, iret)
-    if (iret .eq. 0) then
-        if (rval(1) .gt. 0.d0) then
-            call utmess('I', 'SUPERVIS2_77', nr=4, valr=rval)
-        else
-            call utmess('I', 'SUPERVIS2_78', nr=4, valr=rval)
-        endif
+    ASSERT(iret .eq. 0)
+    if (rval(2) .gt. 0.d0) then
+        call utmess('I', 'SUPERVIS2_77', nr=4, valr=rval)
     else
-        ASSERT(.false.)
+        call utmess('I', 'SUPERVIS2_78', nr=4, valr=rval)
     endif
 !
 end subroutine

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -69,6 +69,10 @@ implicit none
     call jenonu(jexnom('&CATA.GD.NOMGD', name_gd), nume_gd)
     call jeveuo(jexnum('&CATA.GD.NOMCMP', nume_gd), 'L', vk8 = p_cata_nomcmp)
     call jelira(jexnum('&CATA.GD.NOMCMP', nume_gd), 'LONMAX', nb_cmp_max)
+!
+! - Check the number of components is as given in NB_COMP_MAXI (see Behaviour_type.h)
+!
+    ASSERT(nb_cmp_max .eq. 21)
 !
 ! - Allocate <CARTE>
 !

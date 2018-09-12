@@ -41,5 +41,7 @@ void exportElementaryCharacteristicsToPython()
             &initFactoryPtr< ElementaryCharacteristicsInstance,
                              std::string,
                              ModelPtr >) )
+        .def( "getModel", &ElementaryCharacteristicsInstance::getModel,
+              return_value_policy<copy_const_reference>() )
     ;
 };

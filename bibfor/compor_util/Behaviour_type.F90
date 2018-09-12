@@ -71,6 +71,8 @@ implicit none
         character(len=16) :: mult_comp
 ! ----- Keyword POST_ITER
         character(len=16) :: post_iter
+! ----- Type of strain transmitted to the behaviour law : 'OLD', 'MECANIQUE' or 'TOTALE'
+        character(len=16) :: defo_ldc
 ! ----- Total number of internal state variables
         integer           :: nb_vari
 ! ----- Number of internal state variables for kit

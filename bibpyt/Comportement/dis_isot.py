@@ -24,7 +24,7 @@ from cata_comportement import LoiComportement
 loi = LoiComportement(
     nom            = 'DIS_ECRO_TRAC',
     lc_type        = ('MECANIQUE',),
-    doc            =   """Relation de comportement isotrope pour les éléments discrets"""            ,
+    doc            =   """Relation de comportement isotrope pour les éléments discrets"""              ,
     num_lc         = 0,
     nb_vari        = 17,
     nom_vari       = ('FORCEX', 'FORCEY', 'FORCEZ', 'DEPLX',  'DEPLY',  'DEPLZ',  'DISSTHER',
@@ -38,6 +38,7 @@ loi = LoiComportement(
     proprietes     = None,
     syme_matr_tang = ('Yes',),
     exte_vari      = None,
+    deform_ldc     = ('OLD',),
 )
 #
 # Variable existante

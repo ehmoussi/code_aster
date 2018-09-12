@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -91,7 +91,7 @@ subroutine enelpg(fami, iadmat, instan, igau, repere,&
 !
 ! --- CAS EN GRANDES DEFORMATIONS SIMO_MIEHE
     if ((compor(3).eq.'SIMO_MIEHE') .and.&
-        ((compor(1)(1:9).eq.'VMIS_ISOT').or.(compor(1).eq.'ELAS'))) then
+        ((compor(1)(1:9).eq.'VMIS2ISOT').or.(compor(1).eq.'ELAS'))) then
 !
 ! ---    RECUPERATION DES CARACTERISTIQUES DU MATERIAU :
         nomres(1) = 'E'

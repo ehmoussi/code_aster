@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -30,7 +30,7 @@ loi = LoiComportement(
    direction du grandissement par l'opérande ANGL_REP du mot clé MASSIF de l'opérateur AFFE_CARA_ELEM.
    Pour les poutres, le fluage et le grandissement n'ont lieu que dans le sens axial de la poutre :
    dans les autres directions, le comportement est élastique. Le schéma d'intégration est DEKKER ou semi-DEKKER,
-   mais on conseille d'utiliser une intégration semi-DEKKER c'est-à-dire PARM_THETA= 0.5,RESO_INTE=DEKKER."""            ,
+   mais on conseille d'utiliser une intégration semi-DEKKER c'est-à-dire PARM_THETA= 0.5,RESO_INTE=DEKKER."""              ,
     num_lc         = 28,
     nb_vari        = 3,
     nom_vari       = ('EPSPEQ','IRVECU','EPSGRD',),
@@ -42,4 +42,5 @@ loi = LoiComportement(
     proprietes     = None,
     syme_matr_tang = ('Yes',),
     exte_vari      = None,
+    deform_ldc     = ('OLD',),
 )

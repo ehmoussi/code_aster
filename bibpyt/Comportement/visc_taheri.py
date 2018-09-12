@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -29,7 +29,7 @@ loi = LoiComportement(
    Les données nécessaires sont fournies dans l'opérateur DEFI_MATERIAU [U4.43.01],
    sous les mots clés TAHERI(_FO) pour la description de l'écrouissage, LEMAITRE(_FO) pour la viscosité
    et ELAS(_FO) (Cf. [R5.03.05] pour plus de détails).
-   En l'absence de LEMAITRE, la loi est purement élasto-plastique."""            ,
+   En l'absence de LEMAITRE, la loi est purement élasto-plastique."""              ,
     num_lc         = 18,
     nb_vari        = 9,
     nom_vari       = ('EPSPEQ','SIGMAPIC','EPSPXX','EPSPYY','EPSPZZ',
@@ -42,4 +42,5 @@ loi = LoiComportement(
     proprietes     = None,
     syme_matr_tang = ('Yes',),
     exte_vari      = None,
+    deform_ldc     = ('OLD',),
 )

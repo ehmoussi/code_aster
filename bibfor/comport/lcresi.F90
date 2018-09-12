@@ -79,7 +79,7 @@ subroutine lcresi(fami, kpg, ksp, rela_comp, typmod,&
                     timef, yd, yf, epsd, deps,&
                     dy, r)
 !
-    else if (rela_comp(1:8) .eq. 'MONOCRIS') then
+    else if ((rela_comp(1:8) .eq. 'MONOCRIS') .or. (rela_comp(1:8) .eq. 'MONO2RIS')) then
         call lcmmre(typmod, nmat, materd, materf, &
                     nbcomm, cpmono, pgl, nfs, nsg,&
                     toutms, hsr, nr, nvi, vind,&

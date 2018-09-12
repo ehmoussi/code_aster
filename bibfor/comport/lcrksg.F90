@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -49,7 +49,7 @@ subroutine lcrksg(rela_comp, nvi, vinf, fd, df,&
 !
 !     PAS DE CONTRAINTES PLANES NI DE 1D. 3D = D_PLAN = AXIS
     mod='3D'
-    if (rela_comp(1:8) .eq. 'MONOCRIS') then
+    if ((rela_comp(1:8) .eq. 'MONOCRIS') .or. (rela_comp(1:8) .eq. 'MONO2RIS')) then
         if (gdef .eq. 1) then
 !
 !           OPERATEUR D'ELASTICITE DE HOOKE
