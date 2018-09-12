@@ -1881,7 +1881,7 @@ def post_k1_k2_k3_ops(self, RESULTAT, FOND_FISS =None, FISSURE=None, MATER=None,
     from code_aster.Cata.Syntax import _F
     from Utilitai.Table import Table, merge
     from SD.sd_mater import sd_compor1
-    from code_aster.Cata.DataStructure import mode_meca
+    from code_aster.Objects import MechanicalModeContainer
     from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
 
     EnumTypes = (ListType, TupleType)
@@ -1914,6 +1914,7 @@ def post_k1_k2_k3_ops(self, RESULTAT, FOND_FISS =None, FISSURE=None, MATER=None,
     # si le MCS MATER n'est pas renseigne, on considere le materiau
     # present dans la sd_resultat. Si MATER est renseigne, on ecrase
     # le materiau et on emet une alarme.
+    CHAM_MATER = None
     if MATER == None:
         if RESULTAT.getNumberOfRanks() > 0:
             cham_maters = []
@@ -1922,14 +1923,13 @@ def post_k1_k2_k3_ops(self, RESULTAT, FOND_FISS =None, FISSURE=None, MATER=None,
                     cham_maters += [RESULTAT.getMaterialOnMesh(j)]
                 except RuntimeError:
                     pass
-            assert len(cham_maters) <= 1
             if(len(cham_maters)):
-                MATER = cham_maters[0]
+                CHAM_MATER = cham_maters[0]
             else:
-                MATER = None
+                CHAM_MATER = None
         else:
-            MATER = None
-        test=MATER.getVectorOfMaterial()
+            CHAM_MATER = None
+        test=CHAM_MATER.getVectorOfMaterial()
         for curMater in test:
             if curMater.getName() == mater:
                 MATER = curMater
@@ -1954,7 +1954,10 @@ def post_k1_k2_k3_ops(self, RESULTAT, FOND_FISS =None, FISSURE=None, MATER=None,
 #   ------------------------------------------------------------------
 #                               MAILLAGE
 #   ------------------------------------------------------------------
-    MAILLAGE = RESULTAT.getModel().getSupportMesh()
+    try:
+        MAILLAGE = RESULTAT.getModel().getSupportMesh()
+    except:
+        MAILLAGE = CHAM_MATER.getSupportMesh()
     nom_ma = MAILLAGE.getName()
 
 
@@ -2304,7 +2307,7 @@ def post_k1_k2_k3_ops(self, RESULTAT, FOND_FISS =None, FISSURE=None, MATER=None,
 #  V. BOUCLE SUR NOEUDS DU FOND
 #  ------------------------------------------------------------------
 
-    if isinstance(RESULTAT, mode_meca) == True:
+    if isinstance(RESULTAT, MechanicalModeContainer) == True:
         type_para = 'FREQ'
     else:
         type_para = 'INST'

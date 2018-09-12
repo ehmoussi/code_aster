@@ -50,8 +50,12 @@ void exportAssemblyMatrixToPython()
         .def( "addKinematicsLoad", c2 )
         .def( "build", &AssemblyMatrixDisplacementDoubleInstance::build )
         .def( "getDOFNumbering", &AssemblyMatrixDisplacementDoubleInstance::getDOFNumbering )
+        .def( "getMaterialOnMesh", &AssemblyMatrixDisplacementDoubleInstance::getMaterialOnMesh )
+        .def( "getNumberOfElementaryMatrix",
+              &AssemblyMatrixDisplacementDoubleInstance::getNumberOfElementaryMatrix )
         .def( "setDOFNumbering", &AssemblyMatrixDisplacementDoubleInstance::setDOFNumbering )
-        .def( "appendElementaryMatrix", &AssemblyMatrixDisplacementDoubleInstance::appendElementaryMatrix )
+        .def( "appendElementaryMatrix",
+              &AssemblyMatrixDisplacementDoubleInstance::appendElementaryMatrix )
     ;
 
     void (AssemblyMatrixDisplacementComplexInstance::*c3)(const KinematicsLoadPtr& currentLoad) =
@@ -72,8 +76,12 @@ void exportAssemblyMatrixToPython()
         .def( "addKinematicsLoad", c4 )
         .def( "build", &AssemblyMatrixDisplacementComplexInstance::build )
         .def( "getDOFNumbering", &AssemblyMatrixDisplacementComplexInstance::getDOFNumbering )
+        .def( "getMaterialOnMesh", &AssemblyMatrixDisplacementComplexInstance::getMaterialOnMesh )
+        .def( "getNumberOfElementaryMatrix",
+              &AssemblyMatrixDisplacementComplexInstance::getNumberOfElementaryMatrix )
         .def( "setDOFNumbering", &AssemblyMatrixDisplacementComplexInstance::setDOFNumbering )
-        .def( "appendElementaryMatrix", &AssemblyMatrixDisplacementComplexInstance::appendElementaryMatrix )
+        .def( "appendElementaryMatrix",
+              &AssemblyMatrixDisplacementComplexInstance::appendElementaryMatrix )
     ;
 
     void (AssemblyMatrixTemperatureDoubleInstance::*c5)(const KinematicsLoadPtr& currentLoad) =
@@ -94,8 +102,12 @@ void exportAssemblyMatrixToPython()
         .def( "addKinematicsLoad", c6 )
         .def( "build", &AssemblyMatrixTemperatureDoubleInstance::build )
         .def( "getDOFNumbering", &AssemblyMatrixTemperatureDoubleInstance::getDOFNumbering )
+        .def( "getMaterialOnMesh", &AssemblyMatrixTemperatureDoubleInstance::getMaterialOnMesh )
+        .def( "getNumberOfElementaryMatrix",
+              &AssemblyMatrixTemperatureDoubleInstance::getNumberOfElementaryMatrix )
         .def( "setDOFNumbering", &AssemblyMatrixTemperatureDoubleInstance::setDOFNumbering )
-        .def( "appendElementaryMatrix", &AssemblyMatrixTemperatureDoubleInstance::appendElementaryMatrix )
+        .def( "appendElementaryMatrix",
+              &AssemblyMatrixTemperatureDoubleInstance::appendElementaryMatrix )
     ;
 
     void (AssemblyMatrixTemperatureComplexInstance::*c7)(const KinematicsLoadPtr& currentLoad) =
@@ -116,8 +128,12 @@ void exportAssemblyMatrixToPython()
         .def( "addKinematicsLoad", c8 )
         .def( "build", &AssemblyMatrixTemperatureComplexInstance::build )
         .def( "getDOFNumbering", &AssemblyMatrixTemperatureComplexInstance::getDOFNumbering )
+        .def( "getMaterialOnMesh", &AssemblyMatrixTemperatureComplexInstance::getMaterialOnMesh )
+        .def( "getNumberOfElementaryMatrix",
+              &AssemblyMatrixTemperatureComplexInstance::getNumberOfElementaryMatrix )
         .def( "setDOFNumbering", &AssemblyMatrixTemperatureComplexInstance::setDOFNumbering )
-        .def( "appendElementaryMatrix", &AssemblyMatrixTemperatureComplexInstance::appendElementaryMatrix )
+        .def( "appendElementaryMatrix",
+              &AssemblyMatrixTemperatureComplexInstance::appendElementaryMatrix )
     ;
 
     void (AssemblyMatrixPressureDoubleInstance::*c9)(const KinematicsLoadPtr& currentLoad) =
@@ -138,8 +154,12 @@ void exportAssemblyMatrixToPython()
         .def( "addKinematicsLoad", c10 )
         .def( "build", &AssemblyMatrixPressureDoubleInstance::build )
         .def( "getDOFNumbering", &AssemblyMatrixPressureDoubleInstance::getDOFNumbering )
+        .def( "getMaterialOnMesh", &AssemblyMatrixPressureDoubleInstance::getMaterialOnMesh )
+        .def( "getNumberOfElementaryMatrix",
+              &AssemblyMatrixPressureDoubleInstance::getNumberOfElementaryMatrix )
         .def( "setDOFNumbering", &AssemblyMatrixPressureDoubleInstance::setDOFNumbering )
-        .def( "appendElementaryMatrix", &AssemblyMatrixPressureDoubleInstance::appendElementaryMatrix )
+        .def( "appendElementaryMatrix",
+              &AssemblyMatrixPressureDoubleInstance::appendElementaryMatrix )
     ;
 
     void (AssemblyMatrixPressureComplexInstance::*c11)(const KinematicsLoadPtr& currentLoad) =
@@ -160,8 +180,12 @@ void exportAssemblyMatrixToPython()
         .def( "addKinematicsLoad", c12 )
         .def( "build", &AssemblyMatrixPressureComplexInstance::build )
         .def( "getDOFNumbering", &AssemblyMatrixPressureComplexInstance::getDOFNumbering )
+        .def( "getMaterialOnMesh", &AssemblyMatrixPressureComplexInstance::getMaterialOnMesh )
+        .def( "getNumberOfElementaryMatrix",
+              &AssemblyMatrixPressureComplexInstance::getNumberOfElementaryMatrix )
         .def( "setDOFNumbering", &AssemblyMatrixPressureComplexInstance::setDOFNumbering )
-        .def( "appendElementaryMatrix", &AssemblyMatrixPressureComplexInstance::appendElementaryMatrix )
+        .def( "appendElementaryMatrix",
+              &AssemblyMatrixPressureComplexInstance::appendElementaryMatrix )
     ;
 
 };
