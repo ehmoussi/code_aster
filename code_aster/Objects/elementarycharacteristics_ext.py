@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -28,9 +28,15 @@ import aster
 from ..Utilities import injector
 
 
-class ExtendedTable(injector(ElementaryCharacteristics),
+class ElementaryCharacteristics(injector(ElementaryCharacteristics),
                     ElementaryCharacteristics):
     cata_sdj = "SD.sd_cara_elem.sd_cara_elem"
+
+    def __getinitargs__(self):
+        """Returns the argument required to reinitialize a
+        ElementaryCharacteristics object during unpickling.
+        """
+        return (self.getName(), self.getModel())
 
     def toEPX(self):
         """Compute spring and damping values to be passed to Europlexus.

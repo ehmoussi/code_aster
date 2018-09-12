@@ -175,6 +175,11 @@ dernière au format HDF (mot clé FORMAT_HDF="OUI" dans la commande FIN).
             'flags': 'CENTER',
             },
 
+    29 : {  'message' : _(u"""Mémoire limite pour l'exécution : %(r2).2f Mo
+                         reste pour l'allocation dynamique : %(r1).2f Mo"""),
+            'flags': 'CENTER',
+            },
+
     # marks for the extraction of messages
     69 : u""".. _%(k1)s""",
 
@@ -189,7 +194,7 @@ dernière au format HDF (mot clé FORMAT_HDF="OUI" dans la commande FIN).
     73 : _(u"""  # Mémoire (Mo) : %(r1)8.2f / %(r2)8.2f / %(r3)8.2f / %(r4)8.2f (VmPeak / VmSize / Optimum / Minimum)"""),
 
     # attention au décalage
-    74 : _(u"""  # Mémoire (Mo) : %(r2)8.2f / %(r3)8.2f / %(r4)8.2f (VmSize / Optimum / Minimum)"""),
+    74 : _(u"""  # Mémoire (Mo) : %(r3)8.2f / %(r4)8.2f (Optimum / Minimum)"""),
 
     75 : _(u"""  # Fin commande No : %(i1)04d   user+syst:%(r1)12.2fs (syst:%(r2)12.2fs, elaps:%(r3)12.2fs)"""),
 
@@ -202,9 +207,8 @@ dernière au format HDF (mot clé FORMAT_HDF="OUI" dans la commande FIN).
 
     # attention au décalage
     78 : _(u"""
-  Mémoire (Mo) : %(r2)8.2f / %(r3)8.2f / %(r4)8.2f (VmSize / Optimum / Minimum)
+  Mémoire (Mo) : %(r3)8.2f / %(r4)8.2f (Optimum / Minimum)
 """),
-
 
     97 : _(u"""
  <FIN> Arrêt normal dans "FIN".

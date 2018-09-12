@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -24,33 +24,29 @@ interface
     subroutine lc0050(fami, kpg, ksp, ndim, typmod,&
                       imate, compor, crit, instam, instap,&
                       neps, epsm, deps, nsig, sigm,&
-                      nvi, vim, option, angmas, &
-                      icomp, stress, statev, ndsde,&
-                      dsidep, codret)
-        integer :: nvi
-        character(len=*) :: fami
-        integer :: kpg
-        integer :: ksp
-        integer :: ndim
-        character(len=8) :: typmod(*)
-        integer :: imate
-        character(len=16) :: compor(*)
-        real(kind=8) :: crit(*)
-        real(kind=8) :: instam
-        real(kind=8) :: instap
-        integer :: neps
-        real(kind=8) :: epsm(6)
-        real(kind=8) :: deps(6)
-        integer :: nsig
-        real(kind=8) :: sigm(6)
-        real(kind=8) :: vim(*)
-        character(len=16) :: option
-        real(kind=8) :: angmas(*)
-        integer :: icomp
-        real(kind=8) :: stress(6)
-        real(kind=8) :: statev(nvi)
-        integer :: ndsde
-        real(kind=8) :: dsidep(6, 6)
-        integer :: codret
+                      nvi, vim, option, angmas, icomp,&
+                      temp , dtemp , predef, dpred ,&
+                      stress, statev, ndsde, dsidep, codret)
+        character(len=*), intent(in) :: fami
+        integer, intent(in) :: kpg, ksp, ndim
+        character(len=8), intent(in) :: typmod(*)
+        integer, intent(in) :: imate
+        character(len=16), intent(in) :: compor(*)
+        real(kind=8), intent(in) :: crit(*)
+        real(kind=8), intent(in) :: instam, instap
+        integer, intent(in) :: neps, nsig, nvi
+        real(kind=8), intent(in) :: epsm(6), deps(6)
+        real(kind=8), intent(in) :: sigm(6)
+        real(kind=8), intent(in) :: vim(*)
+        character(len=16), intent(in) :: option
+        real(kind=8), intent(in) :: angmas(*)
+        integer, intent(in) :: icomp
+        real(kind=8), intent(in) :: temp, dtemp
+        real(kind=8), intent(in) :: predef(*), dpred(*) 
+        real(kind=8), intent(out) :: stress(6)
+        real(kind=8), intent(out) :: statev(nvi)
+        integer, intent(out) :: ndsde
+        real(kind=8), intent(out) :: dsidep(6, 6)
+        integer, intent(out) :: codret
     end subroutine lc0050
 end interface

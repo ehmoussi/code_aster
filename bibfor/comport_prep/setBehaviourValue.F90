@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 
 subroutine setBehaviourValue(rela_comp, defo_comp   , type_comp, type_cpla,&
-                             mult_comp, post_iter   , kit_comp ,&
+                             mult_comp, post_iter   , defo_ldc, kit_comp ,&
                              nb_vari  , nb_vari_comp, nume_comp,&
                              l_compor_, v_compor_)
 !
@@ -37,6 +37,7 @@ implicit none
     character(len=16), intent(in) :: type_cpla
     character(len=16), intent(in) :: mult_comp
     character(len=16), intent(in) :: post_iter
+    character(len=16), intent(in) :: defo_ldc
     character(len=16), intent(in) :: kit_comp(4)
     integer, intent(in)  :: nb_vari
     integer, intent(in)  :: nb_vari_comp(4)
@@ -58,6 +59,7 @@ implicit none
 ! In  type_cpla        : plane stress method
 ! In  mult_comp        : multi-comportment (DEFI_COMPOR for PMF)
 ! In  post_iter        : type of post_treatment POST_ITER
+! In  defo_ldc         : type of strains (TOTAL, MECANIQUE or OLD)
 ! In  kit_comp         : KIT comportment
 ! In  nb_vari          : number of internal variables
 ! In  nb_vari_comp     : number of internal variables for KIT
@@ -89,6 +91,7 @@ implicit none
         endif
         v_compor_(MULTCOMP) = mult_comp
         v_compor_(POSTITER) = post_iter
+        v_compor_(DEFO_LDC) = defo_ldc
         if (l_kit_thm) then
             v_compor_(THMC_NAME) = kit_comp(1)
             v_compor_(THER_NAME) = kit_comp(2)
@@ -133,6 +136,7 @@ implicit none
         endif
         l_compor_(MULTCOMP) = mult_comp
         l_compor_(POSTITER) = post_iter
+        l_compor_(DEFO_LDC) = defo_ldc
         if (l_kit_ddi) then
             l_compor_(CREEP_NAME) = kit_comp(1)
             l_compor_(PLAS_NAME)  = kit_comp(2)

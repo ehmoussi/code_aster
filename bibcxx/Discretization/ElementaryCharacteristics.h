@@ -103,6 +103,17 @@ public:
     {};
 
     /**
+     * @brief Get the model
+     */
+    const ModelPtr& getModel() const
+        throw ( std::runtime_error )
+    {
+        if ( _model->isEmpty() )
+            throw std::runtime_error( "Support model is empty" );
+        return _model;
+    };
+
+    /**
      * @brief Fonction permettant de savoir si un maillage est vide (non relu par exemple)
      * @return retourne true si le maillage est vide
      */

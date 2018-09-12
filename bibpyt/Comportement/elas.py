@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -23,7 +23,7 @@ from cata_comportement import LoiComportement
 loi = LoiComportement(
     nom            = 'ELAS',
     lc_type        = ('MECANIQUE',),
-    doc            =   """élasticité linéaire isotrope"""            ,
+    doc            =   """élasticité linéaire isotrope"""              ,
     num_lc         = 1,
     nb_vari        = 1,
     nom_vari       = ('VIDE',),
@@ -36,4 +36,5 @@ loi = LoiComportement(
     proprietes     = ('COMP_ELAS',),
     syme_matr_tang = ('Yes',),
     exte_vari      = None,
+    deform_ldc     = ('OLD',),
 )

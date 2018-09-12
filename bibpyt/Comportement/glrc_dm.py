@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -29,7 +29,7 @@ loi = LoiComportement(
    La modélisation jusqu'à la rupture n'est pas recommandée, puisque les phénomènes de plastification ne sont pas
    pris en compte, mais le sont dans GLRC_DAMAGE. En revanche, la modélisation du couplage de l'endommagement entre les effets
    de membrane et de flexion dans GLRC_DM est pris en compte, ce qui n'est pas le cas dans GLRC_DAMAGE.
-   Pour les précisions sur la formulation du modèle voir [R7.01.32]"""            ,
+   Pour les précisions sur la formulation du modèle voir [R7.01.32]"""              ,
     num_lc         = 0,
     nb_vari        = 7,
     nom_vari       = ('ENDOFL+','ENDOFL-','INDIEND1','INDIEND2','ADOUTRAC',
@@ -42,4 +42,5 @@ loi = LoiComportement(
     proprietes     = None,
     syme_matr_tang = ('Yes',),
     exte_vari      = None,
+    deform_ldc     = ('OLD',),
 )

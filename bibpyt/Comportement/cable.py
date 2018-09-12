@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -25,7 +25,7 @@ loi = LoiComportement(
     nom            = 'CABLE',
     lc_type        = ('MECANIQUE',),
     doc            =   """Relation de comportement élastique adaptée aux câbles (DEFORMATION: 'GREEN' obligatoire) :
-   le module d'YOUNG du câble peut être différent en compression et en traction (en particulier il peut être nul en compression)."""            ,
+   le module d'YOUNG du câble peut être différent en compression et en traction (en particulier il peut être nul en compression)."""              ,
     num_lc         = 0,
     nb_vari        = 1,
     nom_vari       = ('VIDE',),
@@ -37,4 +37,5 @@ loi = LoiComportement(
     proprietes     = ('COMP_ELAS',),
     syme_matr_tang = ('Yes',),
     exte_vari      = None,
+    deform_ldc     = ('OLD',),
 )
