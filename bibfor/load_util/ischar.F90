@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -105,16 +105,18 @@ implicit none
 ! - Choice: all loads or not ?
 !
     if (present(i_load_)) then
-        ischar_iload = ischar_iden(v_load_info, i_load_, nb_load, load_type_1, load_type_2, load_name=v_load_name(i_load_))
+        ischar_iload = ischar_iden(v_load_info, i_load_, nb_load, load_type_1, load_type_2,&
+                                   load_name=v_load_name(i_load_))
     else
         do i_load = 1, nb_load
 !
-! --------- Identify type of load
+! --------- Identify type of load 
 !
-            ischar_iload = ischar_iden(v_load_info, i_load, nb_load, load_type_1, load_type_2, load_name=v_load_name(i_load))
+            ischar_iload = ischar_iden(v_load_info, i_load, nb_load, load_type_1, load_type_2,&
+                                       load_name=v_load_name(i_load))
 !
 ! --------- Flag for function
-!
+!    
             if (ischar_iload) then
                 ischar = ischar_iload
                 goto 99

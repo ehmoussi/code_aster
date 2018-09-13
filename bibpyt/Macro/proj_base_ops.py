@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,15 +17,18 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-def proj_base_ops(self, BASE, NB_VECT,
-                  MATR_ASSE_GENE,
-                  VECT_ASSE_GENE,
-                  RESU_GENE,
-                  NUME_DDL_GENE,
-                  STOCKAGE, **args):
+def proj_base_ops(self, **args):
     """
      Ecriture de la macro PROJ_BASE
     """
+    BASE = args.get("BASE")
+    NB_VECT = args.get("NB_VECT")
+    MATR_ASSE_GENE = args.get("MATR_ASSE_GENE")
+    VECT_ASSE_GENE = args.get("VECT_ASSE_GENE")
+    RESU_GENE = args.get("RESU_GENE")
+    NUME_DDL_GENE = args.get("NUME_DDL_GENE")
+    STOCKAGE = args.get("STOCKAGE")
+
     ier = 0
     from Utilitai.Utmess import UTMESS
     # La macro compte pour 1 dans la numerotation des commandes
@@ -39,8 +42,9 @@ def proj_base_ops(self, BASE, NB_VECT,
         _num = NUME_DDL_GENE(BASE=BASE, NB_VECT=NB_VECT, STOCKAGE=STOCKAGE)
     else:
         if numgen.is_typco():
-            self.DeclareOut('_num', numgen)
+            #self.DeclareOut('_num', numgen)
             _num = NUME_DDL_GENE(BASE=BASE, NB_VECT=NB_VECT, STOCKAGE=STOCKAGE)
+            self.register_result(_num, numgen)
         else:
             _num = numgen
 
@@ -58,8 +62,9 @@ def proj_base_ops(self, BASE, NB_VECT,
                 motscles['MATR_ASSE_GENE'] = m['MATR_ASSE_GENE']
             else:
                 UTMESS('F', 'MODAL0_1')
-            self.DeclareOut('mm', m['MATRICE'])
+            #self.DeclareOut('mm', m['MATRICE'])
             mm = PROJ_MATR_BASE(BASE=BASE, NUME_DDL_GENE=_num, **motscles)
+            self.register_result(mm, m['MATRICE'])
 
     if VECT_ASSE_GENE:
         for v in VECT_ASSE_GENE:
@@ -73,6 +78,7 @@ def proj_base_ops(self, BASE, NB_VECT,
             motscles['TYPE_VECT'] = v['TYPE_VECT']
             self.DeclareOut('vv', v['VECTEUR'])
             vv = PROJ_VECT_BASE(BASE=BASE, NUME_DDL_GENE=_num, **motscles)
+            self.register_result(vv, v['VECTEUR'])
 
     if RESU_GENE:
         for v in RESU_GENE:
@@ -86,5 +92,6 @@ def proj_base_ops(self, BASE, NB_VECT,
             motscles['TYPE_VECT'] = v['TYPE_VECT']
             self.DeclareOut('vv', v['RESULTAT'])
             vv = PROJ_RESU_BASE(BASE=BASE, NUME_DDL_GENE=_num, **motscles)
+            self.register_result(vv, v['RESULTAT'])
 
-    return ier
+    return

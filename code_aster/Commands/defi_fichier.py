@@ -27,6 +27,19 @@ class DefineUnitFile(ExecuteCommandOps):
     command_name = "DEFI_FICHIER"
     command_op = 26
 
+    def create_result(self, keywords):
+        """Initialize the result.
+
+        Arguments:
+            keywords (dict): Keywords arguments of user's keywords.
+        """
+        if keywords["ACTION"] in ("ASSOCIER", "RESERVER"):
+            if keywords.get("UNITE") is None:
+                from code_aster.RunManager.LogicalUnit import LogicalUnitFile
+                self._result = LogicalUnitFile._get_free_number()
+            else:
+                self._result = None
+
     def post_exec(self, keywords):
         """Execute the command.
 
@@ -39,10 +52,13 @@ class DefineUnitFile(ExecuteCommandOps):
             typ = FileType.value(keywords["TYPE"])
             access = FileAccess.value(keywords["ACCES"])
             file_name = keywords.get("FICHIER")
-            #if file_name == None:
-                #file_name = ""
-            newFile = LogicalUnitFile(keywords["UNITE"], file_name, action,
-                                      typ, access, False)
+            unit = keywords.get("UNITE")
+            if unit is not None:
+                newFile = LogicalUnitFile(keywords["UNITE"], file_name, action,
+                                          typ, access, False)
+            elif type(self._result) is int:
+                newFile = LogicalUnitFile(self._result, file_name, action,
+                                          typ, access, False)
         if keywords["ACTION"] == "LIBERER":
             LogicalUnitFile.release_from_number(keywords["UNITE"], False)
 

@@ -247,5 +247,12 @@ def calc_modes_simult(self, stop_erreur, sturm, TYPE_RESU, OPTION, INFO, **args)
                              INFO=INFO,
                              **motcles
                              )
+    materialOnMesh = None
+    for matrice in matrices.values():
+        try:
+            if matrice.getNumberOfElementaryMatrix() != 0:
+                modes.appendMaterialOnMeshOnAllRanks(matrice.getMaterialOnMesh())
+                break
+        except: pass
 
     return modes
