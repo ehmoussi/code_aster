@@ -54,6 +54,7 @@ from .calc_char_seisme import CALC_CHAR_SEISME
 from .calc_cham_elem import CALC_CHAM_ELEM
 from .calc_cham_flui import CALC_CHAM_FLUI
 from .calc_char_cine import CALC_CHAR_CINE
+from .calc_corr_ssd import CALC_CORR_SSD
 from .calc_erc_dyn import CALC_ERC_DYN
 from .calc_erreur import CALC_ERREUR
 from .calc_fatigue import CALC_FATIGUE
@@ -115,6 +116,7 @@ from .depl_interne import DEPL_INTERNE
 from .detruire import DETRUIRE
 from .dyna_alea_modal import DYNA_ALEA_MODAL
 from .dyna_non_line import DYNA_NON_LINE
+from .dyna_spec_modal import DYNA_SPEC_MODAL
 from .dyna_vibra import DYNA_VIBRA
 from .elim_lagr import ELIM_LAGR
 from .engendre_test import ENGENDRE_TEST
@@ -154,6 +156,7 @@ from .modi_modele_xfem import MODI_MODELE_XFEM
 from .modi_repere import MODI_REPERE
 from .nume_ddl import NUME_DDL
 from .nume_ddl_gene import NUME_DDL_GENE
+from .norm_mode import NORM_MODE
 from .post_champ import POST_CHAMP
 from .post_cham_xfem import POST_CHAM_XFEM
 from .post_dyna_moda_t import POST_DYNA_MODA_T
@@ -161,6 +164,7 @@ from .post_elem import POST_ELEM
 from .post_fati_alea import POST_FATI_ALEA
 from .post_fatigue import POST_FATIGUE
 from .post_gene_phys import POST_GENE_PHYS
+from .post_k_beta import POST_K_BETA
 from .post_mail_xfem import POST_MAIL_XFEM
 from .post_rccm import POST_RCCM
 from .post_releve_t import POST_RELEVE_T

@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe AssemblyMatrix
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -174,6 +174,26 @@ class AssemblyMatrixInstance: public DataStructure
         BaseDOFNumberingPtr getDOFNumbering() const
         {
             return _dofNum;
+        };
+
+        /**
+         * @brief Get support MaterialOnMesh
+         * @return MaterialOnMesh of the first ElementaryMatrix (all others must be the same)
+         */
+        MaterialOnMeshPtr getMaterialOnMesh() const throw ( std::runtime_error )
+        {
+            if( _elemMatrix.size() == 0 )
+                throw std::runtime_error( "No ElementaryMatrix in AssemblyMatrix" );
+            return _elemMatrix[0]->getMaterialOnMesh();
+        };
+
+        /**
+         * @brief Get the number of defined ElementaryMatrix
+         * @return size of vector containing ElementaryMatrix
+         */
+        int getNumberOfElementaryMatrix() const throw ( std::runtime_error )
+        {
+            return _elemMatrix.size();
         };
 
 #ifdef _HAVE_PETSC4PY

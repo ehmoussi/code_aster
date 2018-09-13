@@ -217,7 +217,7 @@ class ExecuteCommand(object):
 
     def print_result(self):
         """Print an echo of the result of the command."""
-        if self._result:
+        if self._result and type(self._result) is not int:
             logger.info(command_result(self._counter, self.name,
                                        self._result.getName()))
         self._print_timer()
@@ -234,7 +234,7 @@ class ExecuteCommand(object):
         Returns:
             str: Automatically built name.
         """
-        if self._result is None:
+        if self._result is None or type(self._result) is int:
             return ""
         return self._result.getName()
         # return "obj{:05x}".format(self._counter)
@@ -275,7 +275,7 @@ class ExecuteCommand(object):
         syntax = CommandSyntax(self.name, self._cata)
         syntax.define(keywords)
         # set result and type names
-        if self._result is None:
+        if self._result is None or type(self._result) is int:
             type_name = ""
             result_name = ""
         else:
