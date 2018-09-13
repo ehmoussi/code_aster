@@ -39,7 +39,9 @@
 #-------------------------------------------------------------------
 #                       PRE-TRAITEMENTS PYTHON
 #-------------------------------------------------------------------
-# IMPORT PYTHON
+from code_aster.Commands import *
+from code_aster.Supervis.ExecutionParameter import ExecutionParameter
+
 import numpy as NP
 
 # VALEURS DE REFERENCE (APPROCHEES) APRES 4 REMAILLAGES UNIFORMES TRIA6
@@ -98,6 +100,8 @@ RESV    = [None]*nb_calc1
 #                       CALCUL ASTER PROPREMENT DIT
 #-------------------------------------------------------------------
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),PAR_LOT='NON',DEBUG=_F(SDVERI='OUI'))
+
+ExecutionParameter().set_option("use_legacy_mode", 0)
 
 # DEFINITION DU MATERIAU
 ACIER=DEFI_MATERIAU(ELAS=_F(E=210.E3,
@@ -293,19 +297,17 @@ for num_calc in range(0,nb_calc1) :
    if num_calc == nb_calc :
      break
 
-# SUBTILITE MACRO_COMMANDE VIS A VIS DES ENTREES
-   MA[num_calc1]=CO('MA_%d' % (num_calc1))
-
 # RAFFINEMENT UNIFORME VIA HOMARD
 # MAILLAGE DE DEPART: MA[num_calc]
 # MAILLAGE D'ARRIVE: MA[num_calc1]
-   MACR_ADAP_MAIL(
+   results = MACR_ADAP_MAIL(
               ADAPTATION='RAFFINEMENT_UNIFORME',
                        MAILLAGE_N = MA[num_calc],
-                       MAILLAGE_NP1 = MA[num_calc1],
+                       MAILLAGE_NP1 = CO('mesh_np1'),
               QUALITE='OUI',
               TAILLE='OUI',
               CONNEXITE='OUI')
+   MA[num_calc1] = results.mesh_np1
 
 
 #-------------------------------------------------------------------
