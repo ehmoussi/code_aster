@@ -145,8 +145,10 @@ def defi_char_sol_ops(self, TITRE, INFO, **args):
       z0 = args['Z0']
 
       NPC = NCOU+3
+      #if args['NOM_CMP'] == 'DX':
+      #  coef = 0.5
       if args['NOM_CMP'] == 'DX':
-        coef = 0.5
+        coef = 1.0
       else:
         coef = 1.0
       coef2 = -1.0*coef
@@ -374,12 +376,24 @@ def defi_char_sol_ops(self, TITRE, INFO, **args):
                           );
     else:
         if lforcn == 'OUI' :
+          if args['DDL_EXCLUS'] != None:
             __resuon=CREA_RESU(OPERATION='CONV_RESU',
                   TYPE_RESU='EVOL_CHAR', #'DYNA_TRANS',
                   CONV_RESU=_F(NUME_DDL=args['NUME_DDL'],
-                          NOM_CHAM_INIT='FORC_NODA',
+                          NOM_CHAM_INIT=args['NOM_CHAM_INIT'], #'FORC_NODA' par défaut
                           COEF=args['COEF'], #-1.0 par défaut
-                          #MATR_AMOR=args['MATR_AMOR'],
+                          DDL_EXCLUS=args['DDL_EXCLUS'],
+                          PRECISION=args['PRECISION'], #1.E-6 par défaut
+                          CRITERE=args['CRITERE'], #'RELATIF' par défaut
+                          LIST_INST=args['LIST_INST'],
+                          RESU_INIT=args['RESU_INIT'],),
+                );
+          else:
+            __resuon=CREA_RESU(OPERATION='CONV_RESU',
+                  TYPE_RESU='EVOL_CHAR', #'DYNA_TRANS',
+                  CONV_RESU=_F(NUME_DDL=args['NUME_DDL'],
+                          NOM_CHAM_INIT=args['NOM_CHAM_INIT'], #'FORC_NODA' par défaut
+                          COEF=args['COEF'], #-1.0 par défaut
                           PRECISION=args['PRECISION'], #1.E-6 par défaut
                           CRITERE=args['CRITERE'], #'RELATIF' par défaut
                           LIST_INST=args['LIST_INST'],
