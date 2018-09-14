@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -398,7 +398,7 @@ class EUROPLEXUS:
         # être ecrasée par d'autre operation d'ecriture.
         unite = self.get_unite_libre()
         fichier_maillage = self.nom_fichiers['MAILLAGE']
-        DEFI_FICHIER(UNITE=unite, FICHIER=fichier_maillage, ACTION='ASSOCIER')
+        DEFI_FICHIER(UNITE=unite, FICHIER=fichier_maillage, ACTION='ASSOCIER', TYPE='BINARY')
 
         if self.ETAT_INIT is not None:
             RESULTAT = self.ETAT_INIT['RESULTAT']

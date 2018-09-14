@@ -29,7 +29,14 @@ cata_msg = {
  type inconnu" %(k1)s "
 """),
 
-
+    7 : _(u"""
+ Le fichier correspondant à l'unité logique renseignée pour l'écriture de résultats au format MED
+ est de type ASCII. Cela peut engendrer l'affichage de messages intempestifs provenant de la 
+ bibliothèque MED. Il n'y a toutefois aucun risque de résultats faux.
+ 
+ Conseils : pour supprimer l'émission de ce message d'alarme, il faut donner la valeur BINARY au
+ mot-clé TYPE de DEFI_FICHIER."
+"""),
 
     9 : _(u"""
  type de base inconnu:  %(k1)s

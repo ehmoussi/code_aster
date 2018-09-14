@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -61,6 +61,7 @@ subroutine pjeftg(igeom, geomi, nomai, motfac, iocc)
 #include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/lxlgut.h"
+#include "asterfort/ulaffe.h"
 #include "asterfort/ulnume.h"
 #include "asterfort/ulopen.h"
 #include "asterfort/utmess.h"
@@ -160,7 +161,7 @@ subroutine pjeftg(igeom, geomi, nomai, motfac, iocc)
         unite = ulnume()
         if (unite.le.0) call utmess('F', 'UTILITAI5_10')
 !       On ouvre et écriture
-        call ulopen(unite, fichier, ' ', 'N', 'O')
+        call ulaffe(unite, fichier, ' ', 'N', 'O')
         if ( geomi .ne. ' ') then
             call irmail('MED', unite, ibid, maili, ASTER_FALSE , k8bid, 1, formar)
         else
