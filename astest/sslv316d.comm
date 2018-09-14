@@ -364,7 +364,7 @@ DEPL=POST_CHAM_XFEM(
                        RESULTAT=RESU[i],
                        );
 
-DEFI_FICHIER(UNITE=31,);
+DEFI_FICHIER(UNITE=31,TYPE = 'BINARY');
 IMPR_RESU(FORMAT='MED',
              UNITE=31,
              RESU=_F(RESULTAT=DEPL,),);

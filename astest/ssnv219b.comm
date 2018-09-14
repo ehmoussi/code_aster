@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -446,7 +446,8 @@ for Raff in range(0,Nb_Raffinement):
    #          Impressions des pressions
    # ========================================================================================
 
-   DEFI_FICHIER(ACTION='ASSOCIER',UNITE=100+Raff,FICHIER='./REPE_OUT/resu_iter_'+str(Raff)+'.med')
+   DEFI_FICHIER(ACTION='ASSOCIER',UNITE=100+Raff,FICHIER='./REPE_OUT/resu_iter_'+str(Raff)+'.med', 
+                TYPE = 'BINARY')
 
    IMPR_RESU(FORMAT='MED',
              UNITE=100+Raff,
