@@ -170,7 +170,7 @@ subroutine ulaffe(unit, fichie, name, acces, autor)
         namefi(ifile) = namell
         ddname(ifile) = name16
         unitfi(ifile) = unit
-        typefi(ifile) = 'A'
+        typefi(ifile) = 'B'
         accefi(ifile) = k1acce
         etatfi(ifile) = 'O'
         modifi(ifile) = k1aut
