@@ -398,7 +398,7 @@ class EUROPLEXUS:
         # être ecrasée par d'autre operation d'ecriture.
         unite = self.get_unite_libre()
         fichier_maillage = self.nom_fichiers['MAILLAGE']
-        DEFI_FICHIER(UNITE=unite, FICHIER=fichier_maillage, ACTION='ASSOCIER')
+        DEFI_FICHIER(UNITE=unite, FICHIER=fichier_maillage, ACTION='ASSOCIER', TYPE='BINARY')
 
         if self.ETAT_INIT is not None:
             RESULTAT = self.ETAT_INIT['RESULTAT']

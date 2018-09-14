@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -59,7 +59,7 @@ IMPR_RESU(FORMAT="RESULTAT",
 
 
 # IMPRESSION AU FORMAT MED
-DEFI_FICHIER(UNITE=82, FICHIER='./fort.82')
+DEFI_FICHIER(UNITE=82, FICHIER='./fort.82', TYPE = 'BINARY')
 
 IMPR_RESU(FORMAT='MED',UNITE=82,PROC0='NON',
           CONCEPT=_F(CARA_ELEM=CARAELEM,REPERE_LOCAL='ELEM',MODELE=MODELE
