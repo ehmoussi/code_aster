@@ -1087,7 +1087,7 @@ def macr_lign_coupe_ops(self, RESULTAT, CHAM_GD, LIGN_COUPE,
     self.DeclareOut('nomres', self.sd)
     dictab = __tabitm.EXTR_TABLE()
     # Ajout de la colonne theta
-    if len(arcgma) > 0:
+    if len(arcgma) > 0 and 'ABSC_CURV' in dictab.para:
         coltab = []
         val = dictab['ABSC_CURV'].values()['ABSC_CURV']
         nbi = len(val) / nbno
