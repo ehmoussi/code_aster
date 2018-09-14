@@ -280,7 +280,7 @@ implicit none
             if (v_sdcont_cyceta(4*(i_cont_poin-1)+4) .eq. -10) then
                 if (ds_contact%resi_pressure .lt. 1.d-4*ds_contact%cont_pressure) &
                 mmcvca = .true.
-!                 ctcsta = 0
+                ctcsta = 0
             else 
             !ADAPTATION DE MATRICES, VECTEURS ET COEFF POUR LES TE :
                 v_sdcont_cychis(n_cychis*(i_cont_poin-1)+57) = 1.0
