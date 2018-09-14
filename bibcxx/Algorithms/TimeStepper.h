@@ -167,7 +167,7 @@ class TimeStepperInstance: public DataStructure, public GenericStepper
          * @brief Fonction permettant de connaître le nombre de pas de temps
          * @return nombre de pas de temps
          */
-        long size() const
+        ASTERINTEGER size() const
         {
             return _values->size();
         };

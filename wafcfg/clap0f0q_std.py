@@ -51,6 +51,7 @@ def configure(self):
     self.env.TFELVERS = TFELVERS
 
     self.env.append_value('LIBPATH', [
+        '/home/aster/public/lib_boost_1_55_0_gcc49/lib',
         YAMMROOT + '/prerequisites/Python-2710/lib',
         YAMMROOT + '/prerequisites/Hdf5-1814/lib',
         YAMMROOT + '/prerequisites/Medfichier-331/lib',
@@ -60,7 +61,7 @@ def configure(self):
         TFELHOME + '/lib',
         # for openblas
         ASTER_ROOT + '/public/lib',
-    ])
+    ])     
 
     self.env.append_value('INCLUDES', [
         YAMMROOT + '/prerequisites/Python-2710/include/python2.7',
@@ -85,3 +86,7 @@ def configure(self):
     opts.enable_mfront = True
 
     opts.enable_petsc = False
+
+
+    opts.boost_includes='/home/aster/public/lib_boost_1_55_0_gcc49/include'
+    opts.boost_libs='/home/aster/public/lib_boost_1_55_0_gcc49/lib'

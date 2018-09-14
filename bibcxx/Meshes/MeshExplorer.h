@@ -31,40 +31,40 @@
 
 class MeshElement
 {
-    const long        _elemNum;
-    const long* const _listOfNodes;
-    const long        _nbNodes;
-    const long        _type;
+    const ASTERINTEGER        _elemNum;
+    const ASTERINTEGER* const _listOfNodes;
+    const ASTERINTEGER        _nbNodes;
+    const ASTERINTEGER        _type;
 
 public:
-    MeshElement( const long& num, const long* const listOfNodes,
-                 const long& nbNodes, const long& type ):
+    MeshElement( const ASTERINTEGER& num, const ASTERINTEGER* const listOfNodes,
+                 const ASTERINTEGER& nbNodes, const ASTERINTEGER& type ):
         _elemNum( num ),
         _listOfNodes( listOfNodes ),
         _nbNodes( nbNodes ),
         _type( type )
     {};
 
-    const long& getNumberOfNodes() const
+    const ASTERINTEGER& getNumberOfNodes() const
     {
         return _nbNodes;
     };
 
-    const long& getElementNumber() const
+    const ASTERINTEGER& getElementNumber() const
     {
         return _elemNum;
     };
 
-    const long& getType() const
+    const ASTERINTEGER& getType() const
     {
         return _type;
     };
 
     struct const_iterator
     {
-        const long* positionInList;
+        const ASTERINTEGER* positionInList;
 
-        inline const_iterator( const long* curList ):
+        inline const_iterator( const ASTERINTEGER* curList ):
             positionInList( curList )
         {};
 
@@ -96,12 +96,12 @@ public:
             return false;
         };
 
-        inline const long& operator->() const
+        inline const ASTERINTEGER& operator->() const
         {
             return *positionInList;
         };
 
-        inline const long& operator*() const
+        inline const ASTERINTEGER& operator*() const
         {
             return *positionInList;
         };
@@ -152,7 +152,7 @@ public:
             return MeshElement( 0, nullptr, 0, -1 );
         const auto& obj = _connect->getObject( pos + 1 );
         const auto size = obj.size();
-        const long type = (*_type)[ pos ];
+        const ASTERINTEGER type = (*_type)[ pos ];
         return MeshElement( pos+1, &obj.operator[]( 0 ), size, type );
     };
 
@@ -185,7 +185,7 @@ public:
             return MeshElement( 0, nullptr, 0, -1 );
         const auto& obj = _connectAndType->getObject( pos + 1 );
         const auto size = obj.size() - 1;
-        const long type = obj[ size ];
+        const ASTERINTEGER type = obj[ size ];
         return MeshElement( pos+1, &obj.operator[]( 0 ), size, type );
     };
 
@@ -294,7 +294,7 @@ public:
     /**
      * @brief Size of the explorer
      */
-    long size() const
+    ASTERINTEGER size() const
     {
         return _builder.size();
     };

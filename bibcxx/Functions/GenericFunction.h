@@ -65,7 +65,7 @@ public:
     /**
      * @brief Return the number of points of the function
      */
-    virtual long maximumSize() const throw ( std::runtime_error )
+    virtual ASTERINTEGER maximumSize() const throw ( std::runtime_error )
     {
         return 0;
     };
@@ -73,7 +73,7 @@ public:
     /**
      * @brief Return the number of points of the function
      */
-    virtual long size() const throw ( std::runtime_error )
+    virtual ASTERINTEGER size() const throw ( std::runtime_error )
     {
         return 0;
     };

@@ -54,11 +54,11 @@ private:
 public:
     friend class Singleton< PhysicalQuantityManager >;
 
-    const JeveuxCollectionObjectChar8& getComponentNames( const long& quantityNumber ) const;
+    const JeveuxCollectionObjectChar8& getComponentNames( const ASTERINTEGER& quantityNumber ) const;
 
-    long getNumberOfEncodedInteger( const long& quantityNumber ) const;
+    ASTERINTEGER getNumberOfEncodedInteger( const ASTERINTEGER& quantityNumber ) const;
 
-    std::string getPhysicalQuantityName( const long& quantityNumber ) const
+    std::string getPhysicalQuantityName( const ASTERINTEGER& quantityNumber ) const
         throw( std::runtime_error );
 };
 

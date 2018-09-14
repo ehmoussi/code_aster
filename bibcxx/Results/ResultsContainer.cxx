@@ -33,7 +33,7 @@
 bool ResultsContainerInstance::allocate( int nbRanks ) throw ( std::runtime_error )
 {
     std::string base( JeveuxMemoryTypesNames[ getMemoryType() ] );
-    long nbordr = nbRanks;
+    ASTERINTEGER nbordr = nbRanks;
     CALLO_RSCRSD( base, getName(), getType(), &nbordr );
     _nbRanks = nbRanks;
     return true;
@@ -44,7 +44,7 @@ void ResultsContainerInstance::addElementaryCharacteristics( const ElementaryCha
     throw ( std::runtime_error )
 {
     _mapElemCara[rank] = cara;
-    long rang = rank;
+    ASTERINTEGER rang = rank;
     std::string type("CARAELEM");
     CALLO_RSADPA_ZK8_WRAP( getName(), &rang, cara->getName(), type );
 };
@@ -53,7 +53,7 @@ void ResultsContainerInstance::addListOfLoads( const ListOfLoadsPtr& load,
                                                int rank ) throw ( std::runtime_error )
 {
     _mapLoads[rank] = load;
-    long rang = rank;
+    ASTERINTEGER rang = rank;
     std::string type("EXCIT");
     CALLO_RSADPA_ZK24_WRAP( getName(), &rang, load->getName(), type );
 };
@@ -80,7 +80,7 @@ void ResultsContainerInstance::addMaterialOnMesh( const MaterialOnMeshPtr& mater
                                                   int rank ) throw ( std::runtime_error )
 {
     _mapMaterial[rank] = mater;
-    long rang = rank;
+    ASTERINTEGER rang = rank;
     std::string type("CHAMPMAT");
     CALLO_RSADPA_ZK8_WRAP( getName(), &rang, mater->getName(), type );
 };
@@ -89,7 +89,7 @@ void ResultsContainerInstance::addModel( const ModelPtr& model,
                                          int rank ) throw ( std::runtime_error )
 {
     _mapModel[rank] = model;
-    long rang = rank;
+    ASTERINTEGER rang = rank;
     std::string type("MODELE");
     CALLO_RSADPA_ZK8_WRAP( getName(), &rang, model->getName(), type );
     const auto fed = model->getFiniteElementDescriptor();
@@ -99,10 +99,10 @@ void ResultsContainerInstance::addModel( const ModelPtr& model,
 void ResultsContainerInstance::appendMaterialOnMeshOnAllRanks( const MaterialOnMeshPtr& mater )
 {
     _serialNumber->updateValuePointer();
-    long nbRanks = _serialNumber->usedSize();
+    ASTERINTEGER nbRanks = _serialNumber->usedSize();
     for( int rank = 0; rank < nbRanks; ++rank )
     {
-        const long iordr = (*_serialNumber)[rank];
+        const ASTERINTEGER iordr = (*_serialNumber)[rank];
         if( _mapMaterial.find( iordr ) == _mapMaterial.end() )
             addMaterialOnMesh( mater, iordr );
     }
@@ -111,10 +111,10 @@ void ResultsContainerInstance::appendMaterialOnMeshOnAllRanks( const MaterialOnM
 void ResultsContainerInstance::appendModelOnAllRanks( const ModelPtr& model )
 {
     _serialNumber->updateValuePointer();
-    long nbRanks = _serialNumber->usedSize();
+    ASTERINTEGER nbRanks = _serialNumber->usedSize();
     for( int rank = 0; rank < nbRanks; ++rank )
     {
-        const long iordr = (*_serialNumber)[rank];
+        const ASTERINTEGER iordr = (*_serialNumber)[rank];
         if( _mapModel.find( iordr ) == _mapModel.end() )
             addModel( model, iordr );
     }
@@ -170,7 +170,7 @@ ModelPtr ResultsContainerInstance::getModel() throw ( std::runtime_error )
 void ResultsContainerInstance::addTimeValue( double value,
                                              int rank ) throw ( std::runtime_error )
 {
-    long rang = rank;
+    ASTERINTEGER rang = rank;
     std::string type("INST");
     CALLO_RSADPA_ZR_WRAP( getName(), &rang, &value, type );
 };
@@ -196,7 +196,7 @@ bool ResultsContainerInstance::update() throw ( std::runtime_error )
     const auto numberOfSerialNum = _serialNumber->usedSize();
     _nbRanks = numberOfSerialNum;
     BaseMeshPtr curMesh( nullptr );
-    const long iordr = (*_serialNumber)[_nbRanks-1];
+    const ASTERINTEGER iordr = (*_serialNumber)[_nbRanks-1];
     if( _mapModel.find( iordr ) != _mapModel.end() )
         curMesh = _mapModel[ iordr ]->getSupportMesh();
     else if( _mesh != nullptr )
@@ -216,7 +216,7 @@ bool ResultsContainerInstance::update() throw ( std::runtime_error )
             {
                 const std::string questi( "TYPE_CHAMP" );
                 const std::string typeco( "CHAMP" );
-                long repi = 0, ier = 0;
+                ASTERINTEGER repi = 0, ier = 0;
                 JeveuxChar32 repk(" ");
                 const std::string arret( "C" );
                 const std::string questi2( "TYPE_SCA" );
@@ -241,7 +241,7 @@ bool ResultsContainerInstance::update() throw ( std::runtime_error )
                                                  FieldOnNodesDoublePtr( nullptr ) );
                     }
 
-                    long test2 = _dictOfVectorOfFieldsNodes[ nomSymb ][ rank ].use_count();
+                    ASTERINTEGER test2 = _dictOfVectorOfFieldsNodes[ nomSymb ][ rank ].use_count();
                     if( test2 == 0 )
                     {
                         FieldOnNodesDoublePtr result = _fieldBuidler.buildFieldOnNodes< double >
@@ -261,7 +261,7 @@ bool ResultsContainerInstance::update() throw ( std::runtime_error )
                                                  FieldOnElementsDoublePtr( nullptr ) );
                     }
 
-                    long test2 = _dictOfVectorOfFieldsElements[ nomSymb ][ rank ].use_count();
+                    ASTERINTEGER test2 = _dictOfVectorOfFieldsElements[ nomSymb ][ rank ].use_count();
                     if( test2 == 0 )
                     {
                         if( curMesh == nullptr )
@@ -284,7 +284,7 @@ BaseDOFNumberingPtr ResultsContainerInstance::getEmptyDOFNumbering()
 {
     std::string resuName( getName() );
     std::string name( "12345678.00000          " );
-    long a = 10, b = 14;
+    ASTERINTEGER a = 10, b = 14;
     CALLO_GNOMSD( resuName, name, &a, &b );
     DOFNumberingPtr retour( new DOFNumberingInstance( name.substr(0, 14) ) );
     _listOfDOFNum.push_back( retour );
@@ -296,7 +296,7 @@ BaseDOFNumberingPtr ResultsContainerInstance::getEmptyParallelDOFNumbering()
 {
     std::string resuName( getName() );
     std::string name( "12345678.00000          " );
-    long a = 10, b = 14;
+    ASTERINTEGER a = 10, b = 14;
     CALLO_GNOMSD( resuName, name, &a, &b );
     ParallelDOFNumberingPtr retour( new ParallelDOFNumberingInstance( name.substr(0, 14) ) );
     _listOfDOFNum.push_back( retour );

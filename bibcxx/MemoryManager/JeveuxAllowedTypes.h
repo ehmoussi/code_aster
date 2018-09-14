@@ -50,10 +50,10 @@ static const std::string JeveuxTypesNames[10] = { "I", "I4", "R", "C", "K8", "K1
 template< typename T >
 struct AllowedJeveuxType; // undefined for bad types!
 
-template<> struct AllowedJeveuxType< long >
+template<> struct AllowedJeveuxType< ASTERINTEGER >
 {
     static const unsigned short numTypeJeveux = Integer;
-    typedef long type;
+    typedef ASTERINTEGER type;
 };
 
 template<> struct AllowedJeveuxType< short int >

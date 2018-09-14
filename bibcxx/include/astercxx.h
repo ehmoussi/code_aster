@@ -26,6 +26,7 @@
 
 #ifdef __cplusplus
 
+#include <stdexcept>
 #include <list>
 #include <vector>
 #include <string>

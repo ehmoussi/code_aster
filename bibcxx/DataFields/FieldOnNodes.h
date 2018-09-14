@@ -47,7 +47,7 @@
 template< typename T >
 struct AllowedFieldType; // undefined for bad types!
 
-template<> struct AllowedFieldType< long >
+template<> struct AllowedFieldType< ASTERINTEGER >
 {
     static const unsigned short numTypeJeveux = Integer;
 };
@@ -329,7 +329,7 @@ typedef FieldOnNodesInstance< double > FieldOnNodesDoubleInstance;
 typedef boost::shared_ptr< FieldOnNodesDoubleInstance > FieldOnNodesDoublePtr;
 
 /** @typedef FieldOnNodesLongInstance Instance d'une carte de long */
-typedef FieldOnNodesInstance< long > FieldOnNodesLongInstance;
+typedef FieldOnNodesInstance< ASTERINTEGER > FieldOnNodesLongInstance;
 
 /**
  * @typedef FieldOnNodesLongPtr
