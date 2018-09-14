@@ -445,12 +445,6 @@ implicit none
                     v_sdcont_paraci(20) = 3
                 else
                     v_sdcont_paraci(20) = 0 
-           !         write (6,*) "CONDITIONS D ADAPTATION NON VALIDE : IL FAUT QUE"
-           !         write (6,*) "Le mot-clef ADAPTATION pemret de contrôler COEF_CONT dans le cas"
-           !         write (6,*) "où la penalisation est active ou COEF_FROT uniquement dans le cas"
-           !         write (6,*) "ALGO_RESO_FROT='NEWTON' s'il y a frottement"
-           !         write (6,*) "si c'est uniquement le cyclage qui vous intéresse :"
-           !         write (6,*) "branchez ADAPTATION=CYCLAGE"
                 endif
             endif
             
@@ -476,13 +470,7 @@ implicit none
                 else if (s_algo_cont .eq. 'PENALISATION' ) then 
                     v_sdcont_paraci(20) = 3+4
                 else
-                    v_sdcont_paraci(20) = 0+4            
-         !           write (6,*) "CONDITIONS D ADAPTATION NON VALIDE : IL FAUT QUE"
-         !           write (6,*) "Le mot-clef ADAPTATION pemret de contrôler COEF_CONT dans le cas"
-         !           write (6,*) "où la penalisation est active ou COEF_FROT uniquement dans le cas"
-         !           write (6,*) "ALGO_RESO_FROT='NEWTON' s'il y a frottement"
-         !           write (6,*) "si c'est uniquement le cyclage qui vous intéresse :"
-         !           write (6,*) "branchez ADAPTATION=CYCLAGE"
+                    v_sdcont_paraci(20) = 0+4      
                 endif
             endif
                          
