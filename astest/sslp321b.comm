@@ -281,7 +281,7 @@ for i in range(1,NPAS+1) :
                           RESULTAT=RESU[i],
                           );
 
-    DEFI_FICHIER(UNITE=30,);
+    DEFI_FICHIER(UNITE=30,TYPE = 'BINARY');
     IMPR_RESU(   FORMAT='MED',
              UNITE=30,
              RESU=_F(RESULTAT=DEPL[i],),);

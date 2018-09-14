@@ -162,7 +162,7 @@ for num_calc in range(0,nb_calc1) :
                        'ERME_ELNO',),);
 
 # IMPRESSION FORMAT MED I
-   DEFI_FICHIER(FICHIER='IMPR',UNITE=55)
+   DEFI_FICHIER(FICHIER='IMPR',UNITE=55, TYPE='BINARY',)
    IMPR_RESU(FORMAT='MED', UNITE=55,
             RESU=_F(MAILLAGE=MA[num_calc],
                     RESULTAT=DEPLA[num_calc],
