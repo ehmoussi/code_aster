@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -159,6 +159,23 @@ TEST_TABLE(
            FILTRE=_F(NOM_PARA='ANGLE',
                      VALE=45.0,),
            )
+
+TB2M = MACR_LIGN_COUPE(LIGN_COUPE=_F(ANGLE=360.0,
+                                     CENTRE=(0.0, 2.0, 0.0),
+                                     COOR_ORIG=(9.18855088244361e-17, 1.76000036554081, -0.000418878807815594),
+                                     DISTANCE_MAX=0.001,
+                                     DNOR=(1.0, 0.0, 0.0),
+                                     NB_POINTS=16,
+                                     OPERATION='MOYENNE',
+                                     TYPE='ARC'),
+                       NOM_CHAM='SIGM_NOEU',
+                       RESULTAT=CHAMDEPL)
+
+TEST_TABLE(FILTRE=_F(NOM_PARA='QUANTITE',
+                     VALE_K='MOMENT_0'),
+           NOM_PARA='SIZZ',
+           TABLE=TB2M,
+           VALE_CALC=1188664.62838)
 
 FISS=DEFI_FOND_FISS(MAILLAGE=MA,
                     FOND_FISS=_F(GROUP_MA = 'LFF1',
