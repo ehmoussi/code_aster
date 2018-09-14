@@ -204,7 +204,7 @@ for i_raff in range(nb_raff) :
    i_tot += 1
 
 # impression du "dernier" (c-a-d le plus raffine) maillage total
-DEFI_FICHIER(ACTION='ASSOCIER',UNITE=100+i_propa,FICHIER='./REPE_OUT/mail_tot_'+str(i_propa)+'.med')
+DEFI_FICHIER(ACTION='ASSOCIER',UNITE=100+i_propa,FICHIER='./REPE_OUT/mail_tot_'+str(i_propa)+'.med', TYPE = 'BINARY')
 IMPR_RESU(FORMAT='MED',UNITE=100+i_propa,RESU=_F(MAILLAGE=MAIT[i_tot]))
 
 #--------------------------------------------------------------------
@@ -340,7 +340,7 @@ for i_propa in xrange(nb_pas) :
 
    # impression maillage de la fissure propage
    DEFI_FICHIER(ACTION='ASSOCIER',UNITE=200+i_propa+1,
-                FICHIER='./REPE_OUT/mail_fis_'+str(i_propa+1)+'.med')
+                FICHIER='./REPE_OUT/mail_fis_'+str(i_propa+1)+'.med', TYPE = 'BINARY')
    
    IMPR_RESU(FORMAT='MED',UNITE=200+i_propa+1,RESU=_F(MAILLAGE=MAF[i_propa+1]))
 
@@ -490,7 +490,7 @@ for i_propa in xrange(nb_pas) :
   
    # impression du "dernier" (c-a-d le plus raffine) maillage total
    DEFI_FICHIER(ACTION='ASSOCIER',UNITE=100+i_propa+1,
-                FICHIER='./REPE_OUT/mail_tot_'+str(i_propa+1)+'.med')
+                FICHIER='./REPE_OUT/mail_tot_'+str(i_propa+1)+'.med', TYPE = 'BINARY')
    
    IMPR_RESU(FORMAT='MED',UNITE=100+i_propa+1,RESU=_F(MAILLAGE=MAIT[i_tot]))
 
