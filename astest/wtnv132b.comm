@@ -74,8 +74,6 @@ MA=CREA_MAILLAGE(INFO=1,
                  MODI_MAILLE=_F(GROUP_MA = list_group_ma,
                                 OPTION   = 'QUAD8_9'));
 
-#IMPR_RESU(FORMAT="RESULTAT",FORMAT='IDEAS',RESU=_F(MAILLAGE=MA));
-
 # Definition des differents modeles associes a chaque couche
 MOD=[None]*(nbcouche-1);
 U  =[None]*(nbcouche-1);
@@ -99,6 +97,9 @@ for n in range(nbcouche-1):
                        AFFE=(_F(GROUP_MA   =tuple(list_group_ma),
                                PHENOMENE   ='MECANIQUE',
                                MODELISATION='D_PLAN_HM'),
+                             _F(GROUP_MA   ='BAS',
+                               PHENOMENE   ='MECANIQUE',
+                               MODELISATION='D_PLAN_ABSO'),
                             _F(GROUP_MA    =tuple(list_group_ma_),
                                PHENOMENE   ='MECANIQUE',
                                MODELISATION='D_PLAN_DIL')));
@@ -135,6 +136,14 @@ MAT0=DEFI_MATERIAU(ELAS=_F(E     = 100.*YOUNG,
                                UN_SUR_K   = INV_K_EAU,
                                VISC       = VISCOLIQ,
                                D_VISC_TEMP= DVISCOL));
+
+# ---- COUCHE1 : ELASTIQUE TRES RIGIDE
+MATA=DEFI_MATERIAU(ELAS=_F(E     = 100.*YOUNG,
+                           NU    = NU,
+                           RHO   = RHO,
+                           ),
+                   );
+
 
 # ---- COUCHES SUIVANTES : HUJEUX
 MAT1=DEFI_MATERIAU(ELAS=_F(
@@ -181,6 +190,8 @@ AFFMAT1=AFFE_MATERIAU(MAILLAGE=MA,
                               MATER=MAT1),
                             _F(GROUP_MA=list_group_ma[0],
                               MATER=MAT0),
+                            _F(GROUP_MA='BAS',
+                              MATER=MATA),
                             _F(GROUP_MA=list_group_ma_[:nbcouche],
                               MATER=MAT2)));
 
@@ -265,6 +276,7 @@ U[0]=STAT_NON_LINE(MODELE=MOD[0],
                                ALGO_INTE='NEWTON_RELI',
                                RELATION_KIT=('HUJEUX','LIQU_SATU','HYDR_UTIL'),
                                GROUP_MA=list_group_ma[1]),
+                            #_F(RELATION='ELAS', GROUP_MA='BAS'),
                             _F(RELATION='ELAS',
                                GROUP_MA=list_group_ma_[:2])),
                  #RECH_LINEAIRE=_F( ),
@@ -526,6 +538,7 @@ for n in range(1,nbcouche-1):
                                ALGO_INTE='NEWTON_RELI',
                                RELATION_KIT=('HUJEUX','LIQU_SATU','HYDR_UTIL'),
                                GROUP_MA=list_group_ma[1:n+2]),
+                            #_F(RELATION='ELAS', GROUP_MA='BAS'),
                             _F(RELATION='ELAS',
                                GROUP_MA=list_group_ma_[:n+2])),
                  ETAT_INIT=_F(DEPL=DEPL_IN,
@@ -581,9 +594,150 @@ for n in range(1,nbcouche-1):
 #    IMPR_RESU(FORMAT="RESULTAT",RESU=_F(CHAM_GD=VAR[n]));
 #    IMPR_RESU(FORMAT="RESULTAT",RESU=_F(CHAM_GD=SIG[n]));
 
+IMPR_RESU(RESU=_F(RESULTAT=U[9],NOM_CHAM='DEPL',INST=1.10e7),UNITE=6,FORMAT='RESULTAT')
+
+
+# Deplacement horizontal solidaire a la base
+
+BOCONHA=AFFE_CHAR_MECA(MODELE=MOD[9],
+                       LIAISON_GROUP=(_F(GROUP_NO_1='GA10',
+                                    GROUP_NO_2='DR10',
+                                    DDL_1=('DX',),
+                                    DDL_2=('DX',),
+                                    COEF_MULT_1 = 1.,
+                                    COEF_MULT_2 = -1.,
+                                    COEF_IMPO = 0.,),),
+                                 );
+
+BOCONHB=AFFE_CHAR_MECA(MODELE=MOD[9],
+                       LIAISON_GROUP=(
+                                 _F(GROUP_NO_1='LAT_LEFT',
+                                    GROUP_NO_2='LAT_RIGH',
+                                    DDL_1=('DY',),
+                                    DDL_2=('DY',),
+                                    COEF_MULT_1 = 1.,
+                                    COEF_MULT_2 = -1.,
+                                    COEF_IMPO = 0.,),),
+                                );
+
+TI_LI_IN=DEFI_LIST_REEL(DEBUT=-1.e+2,
+                        INTERVALLE=_F(JUSQU_A=0., NOMBRE=1,),);
+
+
+DEFLIST3 =DEFI_LIST_INST(DEFI_LIST=_F(LIST_INST = TI_LI_IN),
+                        ECHEC=_F(ACTION        = 'DECOUPE',
+                                 SUBD_METHODE  = 'MANUEL',
+                                 SUBD_PAS=10,
+                                 SUBD_NIVEAU=10,),)
+
+
+MONOX=AFFE_CHAR_MECA(MODELE=MOD[9],
+                   PESANTEUR=_F(GRAVITE=1.0,
+                                DIRECTION=(-1.0,0.0,0.0),),);
+
+# SEISMIC SIGNAL Friuli_GEFDYN : FONC_MULT=ACCELE
+INCLUDE(UNITE=90, INFO=1,);
+
+T000 = 0.;
+T_END = 0.21 ;
+pas_gro = 0.0100;
+pas_hfin = pas_gro/10. ;
+
+# Instant list devoted to seism
+
+L_INSTh=DEFI_LIST_REEL(DEBUT=T000,
+                       INTERVALLE=(_F(JUSQU_A=T_END, PAS=pas_hfin,),),);
+
+L_ARCH=DEFI_LIST_REEL(DEBUT=T000,
+                      INTERVALLE=_F(JUSQU_A=T_END, PAS=pas_gro,),);
+
+L_COMB=DEFI_LIST_REEL(DEBUT=T000,
+                      INTERVALLE=_F(JUSQU_A=T_END, PAS=pas_gro,),);
+
+DEFLISTh =DEFI_LIST_INST(DEFI_LIST=_F(LIST_INST =L_INSTh ),
+                        ECHEC=_F(ACTION        = 'DECOUPE',
+                                 SUBD_METHODE  = 'MANUEL',
+                                 SUBD_PAS=2,
+                                 SUBD_NIVEAU=10),)
+
+ACCE0 = CREA_CHAMP(INFO=1,
+                       TYPE_CHAM='NOEU_DEPL_R',
+                       OPERATION='ASSE',
+                       MODELE=MOD[9],
+                       ASSE=(_F(CHAM_GD=CHNUL,
+                                TOUT='OUI',
+                                CUMUL='NON',
+                                COEF_R=1.0,),
+                             ),
+                       )
+
+
+U9B=DYNA_NON_LINE(
+                 MODELE=MOD[9],
+                 CHAM_MATER=AFFMAT1,
+                 EXCIT=(
+                        _F(CHARGE=PHAUT),
+                        _F(CHARGE=CHPAR),
+                        _F(CHARGE=BOCONHA),
+                        _F(CHARGE=BOCONHB),
+                        _F(CHARGE=PES, FONC_MULT=FOC),
+                        _F(CHARGE=MONOX, FONC_MULT=ACCELE,),
+                       ),
+                 COMPORTEMENT=(_F(RELATION='KIT_HM',
+                               ITER_INTE_PAS=-10,
+                               RELATION_KIT=('ELAS','LIQU_SATU','HYDR_UTIL'),
+                               GROUP_MA=list_group_ma[0]),
+                            _F(ITER_INTE_MAXI=50,
+                               ITER_INTE_PAS=-5,
+                               RESI_INTE_RELA=1.E-6,
+                               RELATION='KIT_HM',
+                               ALGO_INTE='NEWTON_RELI',
+                               RELATION_KIT=('HUJEUX','LIQU_SATU','HYDR_UTIL'),
+                               GROUP_MA=list_group_ma[1:nbcouche]),
+                            _F(RELATION='ELAS',
+                               GROUP_MA=list_group_ma_[:nbcouche]),
+                             ),
+                 
+                 SOLVEUR=_F(RENUM='METIS',
+                            METHODE='MUMPS',
+                            NPREC=20,
+                          ),
+                 ETAT_INIT=_F(DEPL=DEP[9],
+                              SIGM=SIG[9],
+                              VARI=VAR[9],
+                              ACCE=ACCE0,
+                              ),
+                 INCREMENT=_F(LIST_INST=DEFLISTh, #L_INSTh, #
+                              PRECISION=1.E-6,),
+                 ARCHIVAGE=_F(LIST_INST=L_ARCH,),
+
+                 SCHEMA_TEMPS=_F(SCHEMA='HHT',ALPHA=-0.35,
+                                 FORMULATION='DEPLACEMENT'),
+                 NEWTON=_F(REAC_ITER=1, ), #MATR_RIGI_SYME='OUI',),
+                 CONVERGENCE=_F(RESI_GLOB_RELA=1e-05,
+                                ARRET='NON',
+                                ITER_GLOB_MAXI=10,),
+               );
 
 # <--10: fin boucle for
 
 # INCLUDE(UNITE=38);
+
+ACC_R47X=RECU_FONCTION( RESULTAT=U9B,
+                        TITRE='ACC_R47X',
+                        NOM_CHAM='ACCE',
+                        NOM_CMP='DX',
+                        NOEUD='N47',
+                        PROL_DROITE='CONSTANT',
+                        PROL_GAUCHE='CONSTANT',
+                        INTERPOL='LIN',);
+
+TEST_FONCTION(VALEUR=(_F(FONCTION=ACC_R47X,
+                         VALE_PARA=0.21,
+                         VALE_CALC=-0.16569681,),
+
+                     ),
+              );
+
 
 FIN( );
