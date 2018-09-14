@@ -79,7 +79,7 @@ bool ListOfLoadsInstance::build() throw ( std::runtime_error )
     }
     dict.container[ "EXCIT" ] = listeExcit;
     cmdSt.define( dict );
-    long iexcit = 1;
+    ASTERINTEGER iexcit = 1;
     std::string name( getName().c_str() );
     name.resize( 19, ' ' );
     std::string blank( " " );

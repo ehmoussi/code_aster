@@ -30,20 +30,20 @@ PhysicalQuantityManager::PhysicalQuantityManager():
 {};
 
 const JeveuxCollectionObjectChar8& PhysicalQuantityManager::getComponentNames
-    ( const long& quantityNumber ) const
+    ( const ASTERINTEGER& quantityNumber ) const
 {
     _nameOfCmp->buildFromJeveux();
     return _nameOfCmp->getObject( quantityNumber );
 };
 
-long PhysicalQuantityManager::getNumberOfEncodedInteger( const long& quantityNumber ) const
+ASTERINTEGER PhysicalQuantityManager::getNumberOfEncodedInteger( const ASTERINTEGER& quantityNumber ) const
 {
-    long toReturn = 0;
+    ASTERINTEGER toReturn = 0;
     toReturn = CALL_NBEC( &quantityNumber );
     return toReturn;
 };
 
-std::string PhysicalQuantityManager::getPhysicalQuantityName( const long& quantityNumber ) const
+std::string PhysicalQuantityManager::getPhysicalQuantityName( const ASTERINTEGER& quantityNumber ) const
     throw( std::runtime_error )
 {
     if( quantityNumber <= 0 || quantityNumber > _nameOfPhysicalQuantity->size() )

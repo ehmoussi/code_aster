@@ -305,7 +305,7 @@ bool AssemblyMatrixInstance< ValueType, PhysicalQuantity >::build() throw ( std:
     if ( _elemMatrix.size() == 0 )
         throw std::runtime_error( "Elementary matrix is empty" );
 
-    long typscal = 1;
+    ASTERINTEGER typscal = 1;
     VectorString names;
     std::vector< ElementaryMatrixPtr >::const_iterator elemIt = _elemMatrix.begin();
     for ( ; elemIt != _elemMatrix.end(); ++elemIt ) {
@@ -324,7 +324,7 @@ bool AssemblyMatrixInstance< ValueType, PhysicalQuantity >::build() throw ( std:
     std::string cumul( "ZERO" );
     if( _listOfLoads->isEmpty() && _listOfLoads->size() != 0 )
         _listOfLoads->build();
-    long nbMatrElem = 1;
+    ASTERINTEGER nbMatrElem = 1;
     CALL_ASMATR( &nbMatrElem, tabNames, blanc.c_str(),
                  _dofNum->getName().c_str(), _listOfLoads->getName().c_str(),
                  cumul.c_str(), base.c_str(), &typscal, getName().c_str() );

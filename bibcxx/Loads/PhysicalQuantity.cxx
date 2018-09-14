@@ -3,7 +3,7 @@
  * @brief Initialisation de tableaux de coordonnees autorisees
  * @author Natacha Béreux
  * @section LICENCE
- *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -28,15 +28,6 @@
 #include <algorithm>
 
 const char* PhysicalQuantityNames[nbPhysicalQuantities] = { "", "", "", "", "DEPL", "PRES", "TEMP", "IMPE", "VNOR", "", "" };
-
-const std::map< PhysicalQuantityComponent, std::string > ComponentNames = {
-    { Dx, "DX" }, { Dy, "DY" }, { Dz, "DZ" }, { Drx, "DRX" }, { Dry, "DRY" }, { Drz, "DRZ" },
-    { Temp, "TEMP" }, { MiddleTemp, "TEMP_MIL" }, { Pres, "PRES" }, { Fx, "FX" }, { Fy, "FY" },
-    { Fz, "FZ" }, { Mx, "MX" }, { My, "MY" }, { Mz, "MZ" }, { N, "N" }, { Vy, "VY" },
-    { Vz, "VZ" }, { Mt, "MT" }, { Mfy, "MFY" }, { Mfz, "MFZ" }, { F1, "F1" }, { F2, "F2" },
-    { F3, "F3" }, { Mf1, "MF1" }, { Mf2, "MF2" }, { Impe, "IMPE" }, { Vnor, "VNOR" },
-    { Flun, "FLUN" }, { FlunHydr1, "FLUN_HYDR1" }, { FlunHydr2, "FLUN_HYDR2" },
-};
 
 const std::string& value(const std::pair<PhysicalQuantityComponent,
                                          std::string>& keyValue)

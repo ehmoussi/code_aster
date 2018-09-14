@@ -51,7 +51,7 @@ public:
                           const JeveuxCollectionLong&,
                           const JeveuxVectorLong& > ConnectivityMeshExplorer;
 protected:
-    typedef JeveuxCollection< long, JeveuxBidirectionalMapChar24 > JeveuxCollectionLongNamePtr;
+    typedef JeveuxCollection< ASTERINTEGER, JeveuxBidirectionalMapChar24 > JeveuxCollectionLongNamePtr;
     /** @brief Objet Jeveux '.DIME' */
     JeveuxVectorLong               _dimensionInformations;
     /** @brief Pointeur de nom Jeveux '.NOMNOE' */
@@ -148,7 +148,7 @@ public:
      * @brief Recuperation d'un groupe de noeuds
      * @return Objet de collection contenant la liste des noeuds
      */
-    const JeveuxCollectionObject< long >& getGroupOfNodes( const std::string& name ) const
+    const JeveuxCollectionObject< ASTERINTEGER >& getGroupOfNodes( const std::string& name ) const
         throw( std::runtime_error )
     {
         if( _groupsOfNodes->size() == -1 )

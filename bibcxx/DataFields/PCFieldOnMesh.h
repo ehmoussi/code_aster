@@ -176,8 +176,8 @@ class PCFieldOnMeshInstance: public GenericDataFieldInstance
         JeveuxVector< ValueType >  _valuesListTmp;
 
     private:
-        void fortranAddValues( const long& code, const std::string& grp, const std::string& mode,
-                               const long& nma, const JeveuxVectorLong& limanu,
+        void fortranAddValues( const ASTERINTEGER& code, const std::string& grp, const std::string& mode,
+                               const ASTERINTEGER& nma, const JeveuxVectorLong& limanu,
                                const JeveuxVectorChar8& component,
                                JeveuxVector< ValueType >& values )
             throw ( std::runtime_error )
@@ -188,10 +188,10 @@ class PCFieldOnMeshInstance: public GenericDataFieldInstance
             test = test && _valuesListTmp->updateValuePointer();
             if ( ! test )
                 throw std::runtime_error( "PCFieldOnMeshInstance not allocate" );
-            const long taille = _componentNames->size();
+            const ASTERINTEGER taille = _componentNames->size();
 
-            const long tVerif1 = component->size();
-            const long tVerif2 = values->size();
+            const ASTERINTEGER tVerif1 = component->size();
+            const ASTERINTEGER tVerif2 = values->size();
             if ( tVerif1 > taille || tVerif2 > taille || tVerif1 != tVerif2 )
                 throw std::runtime_error( "Unconsistent size" );
 
@@ -213,8 +213,8 @@ class PCFieldOnMeshInstance: public GenericDataFieldInstance
             }
         };
 
-        void fortranAddValues( const long& code, const std::string& grp, const std::string& mode,
-                               const long& nma, const JeveuxVectorLong& limanu,
+        void fortranAddValues( const ASTERINTEGER& code, const std::string& grp, const std::string& mode,
+                               const ASTERINTEGER& nma, const JeveuxVectorLong& limanu,
                                const VectorString& component,
                                const std::vector< ValueType >& values )
             throw ( std::runtime_error )
@@ -225,10 +225,10 @@ class PCFieldOnMeshInstance: public GenericDataFieldInstance
             test = test && _valuesListTmp->updateValuePointer();
             if ( ! test )
                 throw std::runtime_error( "PCFieldOnMeshInstance not allocate" );
-            const long taille = _componentNames->size();
+            const ASTERINTEGER taille = _componentNames->size();
 
-            const long tVerif1 = component.size();
-            const long tVerif2 = values.size();
+            const ASTERINTEGER tVerif1 = component.size();
+            const ASTERINTEGER tVerif2 = values.size();
             if ( tVerif1 > taille || tVerif2 > taille || tVerif1 != tVerif2 )
                 throw std::runtime_error( "Unconsistent size" );
 
@@ -423,7 +423,7 @@ class PCFieldOnMeshInstance: public GenericDataFieldInstance
         std::string getPhysicalQuantityName() const
         {
             _descriptor->updateValuePointer();
-            long gdeur = (*_descriptor)[0];
+            ASTERINTEGER gdeur = (*_descriptor)[0];
             return PhysicalQuantityManager::Instance().getPhysicalQuantityName( gdeur );
         };
 
@@ -438,26 +438,26 @@ class PCFieldOnMeshInstance: public GenericDataFieldInstance
             if( position >= (*_descriptor)[2] )
                 throw std::runtime_error( "Out of PCFieldOnMesh bound" );
 
-            long nbZoneMax = (*_descriptor)[1];
-            long gdeur = (*_descriptor)[0];
+            ASTERINTEGER nbZoneMax = (*_descriptor)[1];
+            ASTERINTEGER gdeur = (*_descriptor)[0];
             const auto name1 = PhysicalQuantityManager::Instance().getPhysicalQuantityName( gdeur );
-            long nec = PhysicalQuantityManager::Instance().getNumberOfEncodedInteger( gdeur );
+            ASTERINTEGER nec = PhysicalQuantityManager::Instance().getNumberOfEncodedInteger( gdeur );
             const auto& compNames = PhysicalQuantityManager::Instance().getComponentNames( gdeur );
-            const long nbCmpMax = compNames.size();
+            const ASTERINTEGER nbCmpMax = compNames.size();
             VectorString cmpToReturn;
             std::vector< ValueType > valToReturn;
             for( int i = 0; i < nec; ++i )
             {
-                long encodedInt = (*_descriptor)[ 3 + 2*nbZoneMax + position*nec + i ];
+                ASTERINTEGER encodedInt = (*_descriptor)[ 3 + 2*nbZoneMax + position*nec + i ];
                 VectorLong vecOfComp( 30, -1 );
                 CALL_ISDECO( &encodedInt, vecOfComp.data(), &nec );
-                long pos = 0;
+                ASTERINTEGER pos = 0;
                 for( const auto& val : vecOfComp )
                 {
                     if( val == 1 )
                     {
                         cmpToReturn.push_back( compNames[pos+i*30].toString() );
-                        const long posInVale = pos+i*30 + nbCmpMax*position;
+                        const ASTERINTEGER posInVale = pos+i*30 + nbCmpMax*position;
                         valToReturn.push_back( (*_valuesList)[posInVale] );
                     }
                     ++pos;
@@ -476,7 +476,7 @@ class PCFieldOnMeshInstance: public GenericDataFieldInstance
             if( position >= (*_descriptor)[2] )
                 throw std::runtime_error( "Out of PCFieldOnMesh bound" );
 
-            long code = (*_descriptor)[ 3 + 2*position ];
+            ASTERINTEGER code = (*_descriptor)[ 3 + 2*position ];
             if( code == 1 )
                 return PCFieldZone( _supportMesh );
             else if( code == -1 )
@@ -520,10 +520,10 @@ class PCFieldOnMeshInstance: public GenericDataFieldInstance
             if ( _supportMesh.use_count() == 0 || _supportMesh->isEmpty() )
                 throw std::runtime_error( "Mesh is empty" );
 
-            const long code = 1;
+            const ASTERINTEGER code = 1;
             const std::string grp( " " );
             const std::string mode( " " );
-            const long nbMa = 0;
+            const ASTERINTEGER nbMa = 0;
             JeveuxVectorLong limanu( "empty" );
             limanu->allocate( Temporary, 1 );
             fortranAddValues( code, grp, mode, nbMa, limanu, component, values );
@@ -545,13 +545,13 @@ class PCFieldOnMeshInstance: public GenericDataFieldInstance
             if ( _supportMesh.use_count() == 0 || _supportMesh->isEmpty() )
                 throw std::runtime_error( "Mesh is empty" );
 
-            const long code = -3;
+            const ASTERINTEGER code = -3;
             const std::string grp2( " " );
             const std::string mode( "NUM" );
-            const long nbMa = 0;
+            const ASTERINTEGER nbMa = 0;
             JeveuxVectorLong limanu( "&&TEMPORARY" );
             limanu->allocate( Temporary, grp.size() );
-            for( long pos = 0; pos < grp.size(); ++pos )
+            for( ASTERINTEGER pos = 0; pos < grp.size(); ++pos )
                 (*limanu)[pos] = grp[pos];
             fortranAddValues( code, grp2, mode, nbMa, limanu, component, values );
             return true;
@@ -574,9 +574,9 @@ class PCFieldOnMeshInstance: public GenericDataFieldInstance
             if ( ! _supportMesh->hasGroupOfElements( grp.getName() ) )
                 throw std::runtime_error( "Group " + grp.getName() + " not in mesh" );
 
-            const long code = 2;
+            const ASTERINTEGER code = 2;
             const std::string mode( " " );
-            const long nbMa = 0;
+            const ASTERINTEGER nbMa = 0;
             JeveuxVectorLong limanu( "empty" );
             limanu->allocate( Temporary, 1 );
             fortranAddValues( code, grp.getName(), mode, nbMa, limanu, component, values );
@@ -596,10 +596,10 @@ class PCFieldOnMeshInstance: public GenericDataFieldInstance
             if ( _supportMesh.use_count() == 0 || _supportMesh->isEmpty() )
                 throw std::runtime_error( "Mesh is empty" );
 
-            long code = 0;
+            ASTERINTEGER code = 0;
             std::string grp( " " );
             std::string mode( " " );
-            long nbMa = 0;
+            ASTERINTEGER nbMa = 0;
             JeveuxVectorLong limanu( "&&TEMPORARY" );
             if( zone.getLocalizationType() == PCFieldZone::AllMesh )
             {
@@ -624,7 +624,7 @@ class PCFieldOnMeshInstance: public GenericDataFieldInstance
                 const auto& vecTmp = zone.getListOfElements();
                 nbMa = vecTmp.size();
                 limanu->allocate( Temporary, nbMa );
-                for( long pos = 0; pos < nbMa; ++pos )
+                for( ASTERINTEGER pos = 0; pos < nbMa; ++pos )
                     (*limanu)[pos] = vecTmp[pos];
             }
             else if( zone.getLocalizationType() == PCFieldZone::ListOfDelayedElements )
@@ -634,7 +634,7 @@ class PCFieldOnMeshInstance: public GenericDataFieldInstance
                 const auto& vecTmp = zone.getListOfElements();
                 nbMa = vecTmp.size();
                 limanu->allocate( Temporary, nbMa );
-                for( long pos = 0; pos < nbMa; ++pos )
+                for( ASTERINTEGER pos = 0; pos < nbMa; ++pos )
                     (*limanu)[pos] = vecTmp[pos];
             }
             fortranAddValues( code, grp, mode, nbMa, limanu,
@@ -670,7 +670,7 @@ class PCFieldOnMeshInstance: public GenericDataFieldInstance
 /** @typedef PCFieldOnMeshDoubleInstance Instance d'une carte de double */
 typedef PCFieldOnMeshInstance< double > PCFieldOnMeshDoubleInstance;
 /** @typedef PCFieldOnMeshLongInstance Instance d'une carte de long */
-typedef PCFieldOnMeshInstance< long > PCFieldOnMeshLongInstance;
+typedef PCFieldOnMeshInstance< ASTERINTEGER > PCFieldOnMeshLongInstance;
 /** @typedef PCFieldOnMeshComplexInstance Instance d'une carte de complexe */
 typedef PCFieldOnMeshInstance< DoubleComplex > PCFieldOnMeshComplexInstance;
 /** @typedef PCFieldOnMeshChar8Instance Instance d'une carte de char*8 */

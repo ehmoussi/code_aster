@@ -15,7 +15,7 @@
  *   Code_Aster is distributed in the hope that it will be useful,
  *   but WITHOUT ANY WARRANTY; without even the implied warranty of
  *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *   GNU General Public License for more details.
+ *   GNU GeneralF Public License for more details.
  *
  *   You should have received a copy of the GNU General Public License
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
@@ -55,12 +55,12 @@ FieldOnNodesDoublePtr ElementaryVectorInstance::assembleVector( const BaseDOFNum
     if( ! _corichRept->exists() )
     {
         _listOfElementaryResults->updateValuePointer();
-        for( long i = 1; i <= _listOfLoads->getListOfMechanicalLoads().size(); ++i )
+        for( ASTERINTEGER i = 1; i <= _listOfLoads->getListOfMechanicalLoads().size(); ++i )
         {
             std::string detr( "E" );
             std::string vectElem( (*_listOfElementaryResults)[i-1].c_str() );
             vectElem.resize( 24, ' ' );
-            long in;
+            ASTERINTEGER in;
             CALLO_CORICH( detr, vectElem, &i, &in);
         }
     }

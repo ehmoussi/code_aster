@@ -46,7 +46,7 @@ BaseFunctionInstance::BaseFunctionInstance( const std::string type ) :
 {
 }
 
-void BaseFunctionInstance::allocate( JeveuxMemory mem, long size ) throw ( std::runtime_error )
+void BaseFunctionInstance::allocate( JeveuxMemory mem, ASTERINTEGER size ) throw ( std::runtime_error )
 {
     if( _property->exists() )
         _property->deallocate();
@@ -57,7 +57,7 @@ void BaseFunctionInstance::allocate( JeveuxMemory mem, long size ) throw ( std::
     _value->allocate( mem, 2*size );
 }
 
-void FunctionComplexInstance::allocate( JeveuxMemory mem, long size ) throw ( std::runtime_error )
+void FunctionComplexInstance::allocate( JeveuxMemory mem, ASTERINTEGER size ) throw ( std::runtime_error )
 {
     throw std::runtime_error( "Not yet implemented!" );
 }

@@ -202,7 +202,7 @@ typedef FieldOnElementsInstance< double > FieldOnElementsDoubleInstance;
 typedef boost::shared_ptr< FieldOnElementsDoubleInstance > FieldOnElementsDoublePtr;
 
 /** @typedef FieldOnElementsInstanceLong Instance d'une carte de long */
-typedef FieldOnElementsInstance< long > FieldOnElementsLongInstance;
+typedef FieldOnElementsInstance< ASTERINTEGER > FieldOnElementsLongInstance;
 
 /**
  * @typedef FieldOnElementsPtrLong

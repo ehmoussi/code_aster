@@ -42,7 +42,7 @@ class JeveuxBidirectionalMapInstance: public JeveuxObjectInstance,
                                       private AllowedJeveuxType< ValueType >
 {
     private:
-        int _size;
+        ASTERINTEGER _size;
 
     public:
         /**
@@ -91,7 +91,7 @@ class JeveuxBidirectionalMapInstance: public JeveuxObjectInstance,
             {
                 std::string strJeveuxBase( "V" );
                 if ( mem == Permanent ) strJeveuxBase = "G";
-                long taille = size;
+                ASTERINTEGER taille = size;
                 const int intType = AllowedJeveuxType< ValueType >::numTypeJeveux;
                 std::string carac = strJeveuxBase + " N " + JeveuxTypesNames[intType];
                 CALLO_JECREO( _name, carac );
@@ -108,7 +108,7 @@ class JeveuxBidirectionalMapInstance: public JeveuxObjectInstance,
          * @param elementNumber Numero de l'element demande
          * @return Chaine de caractere correspondante
          */
-        std::string findStringOfElement( long elementNumber ) const
+        std::string findStringOfElement( ASTERINTEGER elementNumber ) const
         {
             JeveuxChar32 objName( " " );
             JeveuxChar32 charName( " " );
@@ -123,11 +123,11 @@ class JeveuxBidirectionalMapInstance: public JeveuxObjectInstance,
          * @param elementName Chaine recherchee
          * @return Entier correspondant
          */
-        long findIntegerOfElement( const std::string& elementName ) const
+        ASTERINTEGER findIntegerOfElement( const std::string& elementName ) const
         {
             JeveuxChar32 objName( " " );
             CALLO_JEXNOM(objName, _name, elementName );
-            long resu = -1;
+            ASTERINTEGER resu = -1;
             CALLO_JENONU(objName, &resu);
             return resu;
         };
@@ -136,11 +136,11 @@ class JeveuxBidirectionalMapInstance: public JeveuxObjectInstance,
          * @brief Get the size
          * @return size of object
          */
-        long size() const
+        ASTERINTEGER size() const
         {
             if( ! exists() ) return 0;
 
-            long vectSize;
+            ASTERINTEGER vectSize;
             JeveuxChar8 param( "NOMMAX" );
             JeveuxChar32 dummy( " " );
             CALLO_JELIRA( _name, param, &vectSize, dummy );
@@ -189,7 +189,7 @@ class JeveuxBidirectionalMap
 };
 
 /** @typedef Definition d'un pointeur de nom Jeveux long */
-typedef JeveuxBidirectionalMap< long > JeveuxBidirectionalMapLong;
+typedef JeveuxBidirectionalMap< ASTERINTEGER > JeveuxBidirectionalMapLong;
 /** @typedef Definition d'un pointeur de nom Jeveux short int */
 typedef JeveuxBidirectionalMap< short int > JeveuxBidirectionalMapShort;
 /** @typedef Definition d'un pointeur de nom Jeveux double */
