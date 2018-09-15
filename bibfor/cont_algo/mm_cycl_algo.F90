@@ -21,7 +21,7 @@ subroutine mm_cycl_algo(ds_contact,  l_frot_zone, &
                   indi_cont_eval, indi_frot_eval, dist_cont_curr,  &
                   pres_cont_curr, dist_frot_curr, pres_frot_curr, v_sdcont_cychis,&
                   v_sdcont_cyccoe, v_sdcont_cyceta, indi_cont_curr,indi_frot_curr,&
-                  ctcsta, mmcvca,l_pena_frot,l_pena_cont,vale_pene,glis_maxi,nb_cont_poin)
+                  ctcsta, mmcvca,l_pena_frot,l_pena_cont,vale_pene,glis_maxi)
 !
 use NonLin_Datastructure_type
 !
@@ -53,7 +53,6 @@ implicit none
     integer, intent(inout) :: indi_frot_eval
     real(kind=8), intent(in) :: vale_pene
     real(kind=8), intent(in) :: glis_maxi
-    integer, intent(in) :: nb_cont_poin
     real(kind=8), intent(inout) :: dist_cont_curr
     real(kind=8), intent(inout) :: pres_cont_curr
     real(kind=8), intent(inout) :: dist_frot_curr(3)
@@ -120,8 +119,6 @@ implicit none
     integer :: n_cychis
 !    real(kind=8) :: coef_bussetta=0.0, dist_max, coef_tmp
     real(kind=8) ::  coef_tmp
-   real(kind=8) ::  rt_plus=1.d2,rt_moins=1.d2,coef_frot_calc=1.d2
-   real(kind=8) ::  a,b,c,discriminant
     real(kind=8) :: bound_coef(2)
     bound_coef(1)     = 1.d-8
     bound_coef(2)     = 1.d8
@@ -366,10 +363,10 @@ implicit none
                     dist_max = vale_pene
                 endif
             
-!                 mmcvca = mmcvca .and. (ctcsta .eq. 0)
-!                 call bussetta_algorithm(dist_cont_curr, dist_cont_prev,dist_max, coef_bussetta)
-!                 v_sdcont_cychis(n_cychis*(i_cont_poin-1)+2) = max(coef_bussetta,&
-!                                                         v_sdcont_cychis(n_cychis*(i_cont_poin-1)+2))
+!           mmcvca = mmcvca .and. (ctcsta .eq. 0)
+!           call bussetta_algorithm(dist_cont_curr, dist_cont_prev,dist_max, coef_bussetta)
+!           v_sdcont_cychis(n_cychis*(i_cont_poin-1)+2) = max(coef_bussetta,&
+!                                                   v_sdcont_cychis(n_cychis*(i_cont_poin-1)+2))
             !endif
                                                     
             ! Traitement de fortes interpenetrations         

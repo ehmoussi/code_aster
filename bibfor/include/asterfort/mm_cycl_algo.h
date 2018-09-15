@@ -28,7 +28,7 @@ interface
                    pres_cont_curr, dist_frot_curr, pres_frot_curr, &
                   v_sdcont_cychis, v_sdcont_cyccoe, v_sdcont_cyceta, indi_cont_curr,&
                   indi_frot_curr, ctcsta        , mmcvca               ,l_pena_frot,l_pena_cont,&
-                  vale_pene,glis_maxi,nb_cont_poin)
+                  vale_pene,glis_maxi)
 
         use NonLin_Datastructure_type
         type(NL_DS_Contact), intent(inout) :: ds_contact
@@ -39,7 +39,6 @@ interface
         integer, intent(in) :: zone_index
         real(kind=8), intent(in) :: vale_pene
         real(kind=8), intent(in) :: glis_maxi
-        integer, intent(in) :: nb_cont_poin
         aster_logical, intent(in) :: l_pena_frot
         aster_logical, intent(in) :: l_pena_cont
         integer, intent(inout) :: indi_cont_eval

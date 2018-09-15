@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -89,7 +89,6 @@ subroutine poslog(resi, rigi, tn, tp, fm,&
 !     PERTINENCE DES GRANDEURS
     if (detf .le. 1.d-2 .or. detf .gt. 1.d2) then
         codret = 1
-        write (6,*) "codret = 1,detf",detf
         goto 999
     endif
 !
