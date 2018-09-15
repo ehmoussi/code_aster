@@ -416,7 +416,7 @@ implicit none
                             indi_cont_eval, indi_frot_eval, gap,  lagr_cont_poin,&
                             gap_user_frot, pres_frot, v_sdcont_cychis, v_sdcont_cyccoe, &
                             v_sdcont_cyceta,indi_cont_curr,indi_frot_curr, loop_cont_vali,&
-                            loop_cont_conv,l_pena_frot,l_pena_cont, vale_pene,glis_maxi,nb_cont_poin)
+                            loop_cont_conv,l_pena_frot,l_pena_cont, vale_pene,glis_maxi)
 !
  19             continue
                 if (ds_contact%iteration_newton .ge. 2 .and. indi_cont_curr .eq. 1) then
@@ -478,7 +478,8 @@ implicit none
 !   Critere specifique au contact en mode : RESI_CONT ne -1
     if (resi_cont .gt. r8prem()) then
         if (max(ds_contact%cont_pressure,abs(sum_cont_press)) .gt. 1.d-15) then 
-            resi_press_curr = abs(ds_contact%cont_pressure-abs(sum_cont_press))/abs(max(ds_contact%cont_pressure,abs(sum_cont_press)))
+            resi_press_curr = abs(ds_contact%cont_pressure-abs(sum_cont_press))/&
+                abs(max(ds_contact%cont_pressure,abs(sum_cont_press)))
         else
             resi_press_curr = abs(ds_contact%cont_pressure-abs(sum_cont_press))
         endif
