@@ -54,7 +54,7 @@ implicit none
     character(len=16) :: algo_reso_cont, algo_reso_frot, algo_reso_geom
     integer :: noc
     real(kind=8) :: resi_abso, gcp_coef_resi
-    real(kind=8) :: geom_resi, frot_resi
+    real(kind=8) :: geom_resi, frot_resi,cont_resi=-1
     aster_logical :: l_cont_gcp, l_newt_fr
     aster_logical :: l_cont_disc, l_cont_cont, l_cont_xfem, l_frot, l_cont_lac
     aster_logical :: l_xfem_mortar
@@ -77,6 +77,7 @@ implicit none
     nb_resol       = 10
     geom_resi      = 1.d-2
     frot_resi      = 1.d-2
+    cont_resi      = 1.d-2
     l_newt_fr      = .false.
 !
 ! - Access to datastructure
@@ -242,6 +243,7 @@ implicit none
             else
                 ASSERT(.false.)
             endif
+            if (l_cont_cont) v_sdcont_paracr(7) = -1
         else if (l_cont_disc) then
             call getvis(' ', 'ITER_CONT_MULT', scal=cont_mult)
             v_sdcont_paraci(5)  = cont_mult
@@ -252,7 +254,10 @@ implicit none
             ASSERT(.false.)
         endif
     else if (algo_reso_cont.eq.'NEWTON') then
-! ----- No parameters
+        if (l_cont_cont ) then
+                call getvr8(' ', 'RESI_CONT', scal=cont_resi)
+            v_sdcont_paracr(7) = cont_resi
+        endif
     else
         ASSERT(.false.)
     endif

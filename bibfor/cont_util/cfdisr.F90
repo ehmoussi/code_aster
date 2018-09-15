@@ -65,6 +65,8 @@ implicit none
         cfdisr = v_sdcont_paracr(1)
     else if (question.eq.'RESI_FROT') then
         cfdisr = v_sdcont_paracr(2)
+    else if (question.eq.'RESI_CONT') then
+        cfdisr = v_sdcont_paracr(7)
     else if (question.eq.'RESI_ABSO') then
         cfdisr = v_sdcont_paracr(4)
     else if (question.eq.'COEF_RESI') then

@@ -102,6 +102,7 @@ DEFI_CONTACT=OPER(nom       = "DEFI_CONTACT", op=30, sd_prod   = char_contact, r
            ),
            b_bouc_cont_cont=BLOC(condition = """equal_to("FORMULATION", 'CONTINUE') """,
                                  ALGO_RESO_CONT = SIMP(statut='f',typ='TXM',defaut="NEWTON", into=("POINT_FIXE","NEWTON")),
+                                 RESI_CONT=SIMP(statut='f',typ='R',defaut=-1,),
                                  b_algo_reso_contPF = BLOC(condition = """equal_to("ALGO_RESO_CONT", 'POINT_FIXE')""",
                                    ITER_CONT_TYPE = SIMP(statut='f',typ='TXM',defaut="MAXI", into=("MULT","MAXI")),
                                    b_bouc_cont_mult = BLOC(condition = """equal_to("ITER_CONT_TYPE", 'MULT')""",
