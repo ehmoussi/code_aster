@@ -249,6 +249,9 @@ void DEFPSSSSSSPS(ASMATR,asmatr, ASTERINTEGER *, const char*, STRING_SIZE,
                                   const char*, STRING_SIZE, ASTERINTEGER *,
                                   const char*, STRING_SIZE);
 
+#define CALLO_DELETE_MATRIX(a) CALLO(DELETE_MATRIX, delete_matrix, a)
+void DEFS(DELETE_MATRIX,delete_matrix, const char*, STRING_SIZE);
+
 #ifdef _HAVE_PETSC
 #define CALLO_MATASS2PETSC(a, b, c) \
     CALLOPP(MATASS2PETSC, matass2petsc, a, b, c )
