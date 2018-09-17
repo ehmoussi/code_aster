@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -95,7 +95,7 @@ reaciter=1
 Rota2=[None]*len(compor)*nbincr
 Trac2=[None]*len(compor)*nbincr
 Ftra2=[None]*len(compor)*nbincr
-DZMAX2=200
+DZMAX2=300
 
 #conditions limites et charge
 DZMAX=500.0
@@ -211,22 +211,22 @@ for icomp,comp in enumerate(compor) :
                              PRECISION=2.E-3,
                              NOM_PARA='INST',
                              FONCTION=vmis[icomp],),
-                          _F(VALE_CALC=1412.70676219,
-                             VALE_REFE=1412.7070000000001,
+                          _F(VALE_CALC=1543.01065115,
+                             VALE_REFE=1543.01,
                              VALE_PARA=2.0,
                              REFERENCE='AUTRE_ASTER',
                              PRECISION=1.E-3,
                              NOM_PARA='INST',
                              FONCTION=vmis[icomp],),
-                          _F(VALE_CALC=1666.15807381,
-                             VALE_REFE=1666.1579999999999,
+                          _F(VALE_CALC=1893.83477454,
+                             VALE_REFE=1893.835,
                              VALE_PARA=3.0,
                              REFERENCE='AUTRE_ASTER',
                              PRECISION=1.E-3,
                              NOM_PARA='INST',
                              FONCTION=vmis[icomp],),
-                          _F(VALE_CALC=1893.83477424,
-                             VALE_REFE=1893.835,
+                          _F(VALE_CALC=2197.034325903,
+                             VALE_REFE=2197.034,
                              VALE_PARA=4.0,
                              REFERENCE='AUTRE_ASTER',
                              PRECISION=1.E-3,
