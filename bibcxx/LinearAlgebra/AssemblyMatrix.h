@@ -133,6 +133,10 @@ class AssemblyMatrixInstance: public DataStructure
 #ifdef __DEBUG_GC__
             std::cout << "AssemblyMatrixInstance.destr: " << this->getName() << std::endl;
 #endif
+            if( _description->exists() )
+            {
+                CALLO_DELETE_MATRIX( getName() );
+            }
         };
 
         /**
