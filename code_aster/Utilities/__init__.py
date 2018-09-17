@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -29,7 +29,7 @@ from .Tester import TestCase
 
 from .base_utils import (accept_array, array_to_list, force_list, force_tuple,
                          import_object, is_complex, is_float, is_int, is_str,
-                         objects_from_context, Singleton, value_is_sequence)
+                         Singleton, value_is_sequence)
 from .compatibility import (compat_listr8, deprecated, remove_keyword,
                             required, unsupported)
 from .injector import injector

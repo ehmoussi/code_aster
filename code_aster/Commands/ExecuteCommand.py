@@ -57,15 +57,16 @@ Base classes
 """
 
 import inspect
+import re
 from collections import namedtuple
 
 import aster
 
 from ..Cata import Commands
+from ..Cata.Language.SyntaxObjects import _F
 from ..Cata.SyntaxChecker import CheckerError, checkCommandSyntax
 from ..Cata.SyntaxUtils import mixedcopy, remove_none, search_for
-from ..Cata.Language.SyntaxObjects import _F
-from ..Objects import ResultNaming, DataStructure
+from ..Objects import DataStructure, ResultNaming
 from ..Supervis import CommandSyntax, ExecutionParameter, logger
 from ..Utilities import Singleton, deprecated, import_object
 from ..Utilities.outputs import (command_header, command_result,
@@ -446,7 +447,7 @@ class ExecuteMacro(ExecuteCommand):
         if ExecutionParameter().get_option("use_legacy_mode"):
             self._result = output
             if self._add_results:
-                self._caller["context"].update(self._add_results)
+                publish_in(self._caller["context"], self._add_results)
             return
 
         if not self._sdprods:
@@ -538,3 +539,29 @@ class CO(object):
 
     # used in AsterStudy as settype
     settype = setType
+
+
+def publish_in(context, dict_objects):
+    """Publish some objects in a context.
+
+    It supports list of results as declared in code_aster legacy:
+    If an object is name ``xxx_n`` and that ``xxx`` exists and is a list in
+    *context* and ``xxx[n]`` exists this item of the list is replaced by the
+    new value.
+
+    Arguments:
+        context (dict): Destination context, changed in place.
+        dict_objects (dict): Objects to be added into the context.
+    """
+    re_id = re.compile("^(.*)_([0-9]+)$")
+    for name, value in dict_objects.items():
+        indexed = re_id.search(name)
+        if indexed:
+            bas, idx = indexed.groups()
+            idx = int(idx)
+            seq = context.get(bas)
+            if seq and isinstance(seq, list) and len(seq) > idx:
+                seq[idx] = value
+                continue
+
+        context[name] = value
