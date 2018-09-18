@@ -54,6 +54,8 @@ void exportLinearSolverToPython()
         .value( "QAMD", QAMD )
         .value( "Scotch", Scotch )
         .value( "Auto", Auto )
+        .value( "Parmetis", Parmetis )
+        .value( "Ptscotch", Ptscotch )
         .value( "Sans", Sans )
         ;
 
