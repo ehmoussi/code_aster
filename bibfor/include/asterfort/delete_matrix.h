@@ -19,7 +19,8 @@
 !
 !
 interface
-    subroutine delete_matrix(matas)
+    subroutine delete_matrix(matas, typsol)
         character(len=19) :: matas
+    character(len=5) :: typsol
     end subroutine delete_matrix
 end interface

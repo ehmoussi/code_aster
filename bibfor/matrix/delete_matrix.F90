@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine delete_matrix(matas)
+subroutine delete_matrix(matas, typsol)
 use elim_lagr_data_module
 !
 #include "asterf_types.h"
@@ -25,6 +25,7 @@ use elim_lagr_data_module
 !
     implicit none
     character(len=19) :: matas
+    character(len=5) :: typsol
 !
 #include "jeveux.h"
 #include "asterfort/jeexin.h"
@@ -33,7 +34,6 @@ use elim_lagr_data_module
 #include "asterfort/apetsc.h"
     integer :: iexi, ibid, iret
     complex(kind=8) :: cbid
-    character(len=8) :: metres
     aster_logical :: lbid
     cbid = dcmplx(0.d0, 0.d0)
 !
@@ -45,11 +45,10 @@ use elim_lagr_data_module
 !
     call jeexin(matas//'.REFA', iexi)
     if (iexi .gt. 0) then
-        call dismoi('METH_RESO', matas, 'MATR_ASSE', repk=metres)
-        if (metres .eq. 'MUMPS') then
+        if (typsol .eq. 'MUMPS') then
             call amumph('DETR_MAT', ' ', matas, [0.d0], [cbid],&
                         ' ', 0, ibid, lbid)
-        else if (metres.eq.'PETSC') then
+        else if (typsol.eq.'PETSC') then
             call apetsc('DETR_MAT', ' ', matas, [0.d0], ' ',&
                         0, ibid, iret)
         endif

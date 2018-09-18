@@ -102,6 +102,9 @@ bool BaseLinearSolverInstance::matrixFactorization( AssemblyMatrixDisplacementDo
     CALLO_MATRIX_FACTOR( solverName, base, &cret, matpre, matass, &npvneg, &istop );
     currentMatrix->_isFactorized = true;
 
+    auto solverType = std::string( LinearSolverNames[_linearSolver] );
+    currentMatrix->setSolverName( solverType );
+
     return true;
 };
 
@@ -121,6 +124,9 @@ FieldOnNodesDoublePtr BaseLinearSolverInstance::solveDoubleLinearSystem(
                        blanc, &nsecm, currentRHS->getName(),
                        result->getName(), base, blanc,
                        &prepos, &istop, &iret );
+
+    auto solverType = std::string( LinearSolverNames[_linearSolver] );
+    currentMatrix->setSolverName( solverType );
 
     return result;
 };
@@ -142,6 +148,9 @@ FieldOnNodesDoublePtr BaseLinearSolverInstance::solveDoubleLinearSystemWithKinem
                        kinematicsField->getName(), &nsecm, currentRHS->getName(),
                        result->getName(), base, blanc,
                        &prepos, &istop, &iret );
+
+    auto solverType = std::string( LinearSolverNames[_linearSolver] );
+    currentMatrix->setSolverName( solverType );
 
     return result;
 };

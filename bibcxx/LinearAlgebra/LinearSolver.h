@@ -321,6 +321,13 @@ class BaseLinearSolverInstance: public DataStructure
             _listOfParameters.push_back( &_resolutionType );
             _listOfParameters.push_back( &_acceleration );
         };
+
+        /**
+         * @brief Destructor
+         */
+        ~BaseLinearSolverInstance()
+        {};
+
         /** @brief Returns a ListSyntaxMapContainer object "listsyntax",
             ready to be inserted  in a CommandSyntax object with the key SOLVEUR
         */
