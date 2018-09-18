@@ -193,7 +193,7 @@ for i_raff in range(nb_raff+1) :
       i_tot = i_tot +1
       
 # impression du "denier" (c-a-d le plus raffine) maillage total
-DEFI_FICHIER(ACTION='ASSOCIER',UNITE=100+i_propa,FICHIER='./REPE_OUT/mail_'+str(i_propa)+'.med')
+DEFI_FICHIER(ACTION='ASSOCIER',UNITE=100+i_propa,FICHIER='./REPE_OUT/mail_'+str(i_propa)+'.med', TYPE = 'BINARY')
 IMPR_RESU(FORMAT='MED',UNITE=100+i_propa,RESU=_F(MAILLAGE=MAIT[i_tot]))
 
 # a ce niveau, FISS[i_propa] est la fissure defini sur le maillage raffine MAIT[i_tot]
@@ -442,7 +442,7 @@ for i_propa in xrange(nb_pas) :
   
    # impression du "dernier" (c-a-d le plus raffine) maillage total
    DEFI_FICHIER(ACTION='ASSOCIER',UNITE=100+i_propa+1,
-                FICHIER='./REPE_OUT/mail_'+str(i_propa+1)+'.med')
+                FICHIER='./REPE_OUT/mail_'+str(i_propa+1)+'.med', TYPE = 'BINARY')
    
    IMPR_RESU(FORMAT='MED',UNITE=100+i_propa+1,RESU=_F(MAILLAGE=MAIT[i_tot]))
 
@@ -450,7 +450,7 @@ for i_propa in xrange(nb_pas) :
 
    # impression des level sets de la fissure apres propagation, definies sur le maillage raffine
    DEFI_FICHIER(ACTION='ASSOCIER',UNITE=200+i_propa+1,
-                FICHIER='./REPE_OUT/ls_'+str(i_propa+1)+'.med')
+                FICHIER='./REPE_OUT/ls_'+str(i_propa+1)+'.med', TYPE = 'BINARY')
    
    IMPR_RESU(FORMAT='MED',UNITE=200+i_propa+1,RESU=(_F(CHAM_GD=LSN[nb_raff]),
                                                     _F(CHAM_GD=LST[nb_raff]),

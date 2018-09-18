@@ -114,7 +114,7 @@ LST[0]=CREA_CHAMP(TYPE_CHAM='NOEU_NEUT_R',
                   OPERATION='EXTR',
                   FISSURE=fiss[0],
                   NOM_CHAM='LTNO',);
-DEFI_FICHIER(UNITE=30,);
+DEFI_FICHIER(UNITE=30,TYPE='BINARY');
 IMPR_RESU(FORMAT='MED',
           UNITE=30,
           RESU=_F(CHAM_GD=LSN[0],),);
@@ -270,7 +270,7 @@ MAXF = [None]*NPS
 MOVI = [None]*NPS
 DEPL = [None]*NPS
 
-DEFI_FICHIER(UNITE=31,);
+DEFI_FICHIER(UNITE=31, TYPE='BINARY');
 
 for i in range(0,NPS-1) :
    MAXF[i]=POST_MAIL_XFEM(MODELE=ModX[i]);
