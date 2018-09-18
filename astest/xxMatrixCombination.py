@@ -65,7 +65,7 @@ solver = code_aster.MumpsSolver( code_aster.Renumbering.Metis )
 
 nume_ddl_k = code_aster.DOFNumbering()
 nume_ddl_k.setElementaryMatrix(matr_elem_k)
-nume_ddl_k.computeNumerotation()
+nume_ddl_k.computeNumbering()
 
 
 matr_asse_k = code_aster.AssemblyMatrixDisplacementDouble()

@@ -63,7 +63,7 @@ monSolver = code_aster.MumpsSolver(code_aster.Renumbering.Metis)
 
 numeDDL = code_aster.ParallelDOFNumbering()
 numeDDL.setElementaryMatrix(matr_elem)
-numeDDL.computeNumerotation()
+numeDDL.computeNumbering()
 numeDDL.debugPrint(rank+30)
 
 matrAsse = code_aster.AssemblyMatrixDisplacementDouble()

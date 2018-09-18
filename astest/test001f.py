@@ -91,7 +91,7 @@ monSolver = code_aster.MumpsSolver( code_aster.Renumbering.Metis )
 
 numeDDL = code_aster.DOFNumbering()
 numeDDL.setElementaryMatrix( matr_elem )
-numeDDL.computeNumerotation()
+numeDDL.computeNumbering()
 # numeDDL.debugPrint(6)
 test.assertEqual( numeDDL.getType(), "NUME_DDL_SDASTER" )
 

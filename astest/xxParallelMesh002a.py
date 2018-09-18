@@ -58,7 +58,7 @@ monSolver.setPreconditioning(code_aster.Preconditioning.Without)
 
 numeDDL = code_aster.ParallelDOFNumbering()
 numeDDL.setElementaryMatrix(matr_elem)
-numeDDL.computeNumerotation()
+numeDDL.computeNumbering()
 #numeDDL.debugPrint()
 
 matrAsse = code_aster.AssemblyMatrixDisplacementDouble()

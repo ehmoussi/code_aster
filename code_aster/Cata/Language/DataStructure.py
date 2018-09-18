@@ -440,6 +440,9 @@ class nume_ddl_gene(ASSD):
 class nume_ddl_sdaster(ASSD):
     pass
 
+class nume_ddl_p(nume_ddl_sdaster):
+    pass
+
 class reel(ASSD):
     pass
 
