@@ -1,0 +1,270 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+# person_in_charge: david.haboussa at edf.fr
+
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'));
+
+
+#########################################################
+######### DEFINITION DES PARAMETRES MATERIAUX ###########
+#########################################################
+
+#temperature de travail en degres celsius
+Tdegc=600;
+
+#ATTENTION : f en h-1 et non en %/h
+feps=5.2e7;
+Qeps=3e5;
+aK = -3.3e-2;
+bK = 38.5;
+fA = 9e4;
+QA = 2e5;
+f0 = 3.5e-2;
+Q0 = -4.85e4;
+
+########################################
+######### DEFINITION DU CHARGEMENT #####
+########################################
+
+#niveau de contrainte nominal
+sigmap = 160;
+
+
+#  temps final
+tref=4000;
+
+#######################################################
+
+#quelques calculs intermediaires
+ep0val=feps*exp(-Qeps/(8.314*(Tdegc+273.)));
+Kcoef=aK*(Tdegc+273.)+bK;
+A0 = fA*exp(-QA/(8.314*(Tdegc+273.)));ep0val
+sig0val = f0*exp(-Q0/(8.314*(Tdegc+273.)));
+
+
+F_EPS0   = FORMULE(NOM_PARA = 'TEMP', VALE = 'ep0val*TEMP',ep0val = ep0val )
+F_K      = FORMULE(NOM_PARA = 'TEMP', VALE = 'Kcoef*TEMP' ,Kcoef = Kcoef )
+F_H1     = FORMULE(NOM_PARA = 'TEMP', VALE = '30000.0*TEMP')
+F_H2     = FORMULE(NOM_PARA = 'TEMP', VALE = '-280.*TEMP')
+F_DELTA1 = FORMULE(NOM_PARA = 'TEMP', VALE = '1.0*TEMP')
+F_DELTA2 = FORMULE(NOM_PARA = 'TEMP', VALE = '0.0*TEMP')
+F_H1ST   = FORMULE(NOM_PARA = 'TEMP', VALE = '0.33*TEMP')
+F_H2ST   = FORMULE(NOM_PARA = 'TEMP', VALE = '1.0*TEMP')
+F_KC     = FORMULE(NOM_PARA = 'TEMP', VALE = '0.0*TEMP')
+F_BIGA   = FORMULE(NOM_PARA = 'TEMP', VALE = 'A0*TEMP', A0= A0)
+F_SIG0   = FORMULE(NOM_PARA = 'TEMP', VALE = 'sig0val*TEMP', sig0val=sig0val)
+F_ALPHAD = FORMULE(NOM_PARA = 'TEMP', VALE = '0.5*TEMP')
+
+MAT=DEFI_MATERIAU(ELAS=_F(E=145000.0,
+                          NU=0.3,
+                          ALPHA=0.,),
+                   HAYHURST_FO=_F(EPS0     = F_EPS0,
+                                  K        = F_K,
+                                  H1       = F_H1,
+                                  H2       = F_H2,
+                                  DELTA1   = F_DELTA1,
+                                  DELTA2   = F_DELTA2,
+                                  H1ST     = F_H1ST,
+                                  H2ST     = F_H2ST,
+                                  KC       = F_KC,
+                                  BIGA     = F_BIGA,
+                                  SIG0     = F_SIG0,
+                                  ALPHAD   = F_ALPHAD,
+                                  ),);
+
+TEMP = DEFI_CONSTANTE( VALE = 1.0)
+
+char=DEFI_FONCTION(NOM_PARA='INST',VALE=(0,0,
+                         0.2,sigmap,
+                         100000000,sigmap,
+                         ),);
+
+
+lalist=DEFI_LIST_REEL(DEBUT=0,
+                      INTERVALLE=(_F(JUSQU_A=tref,
+                                     NOMBRE=500,),),);
+
+listtps = DEFI_LIST_INST(DEFI_LIST=_F(LIST_INST=lalist,),
+                         ECHEC=_F(SUBD_NIVEAU=10,
+                                  SUBD_METHODE='MANUEL',
+                                  SUBD_PAS=10,
+                                  EVENEMENT='ERREUR',
+                                  SUBD_PAS_MINI=0.0,
+                                  ACTION='DECOUPE'),
+                                  )
+
+listarch=DEFI_LIST_REEL(DEBUT=0,
+                      INTERVALLE=(_F(JUSQU_A=tref,NOMBRE=100,),),);
+
+soluce=SIMU_POINT_MAT(MATER=MAT,INFO=1,
+                     SIGM_IMPOSE=_F(SIYY=char),
+                     SUPPORT='ELEMENT',
+                     COMPORTEMENT=_F(RELATION='HAYHURST',
+                                  ALGO_INTE='NEWTON_PERT',
+                                  PARM_THETA=0.5,
+                                  DEFORMATION='GDEF_LOG',
+                                  ),
+                     INCREMENT=_F(LIST_INST=listtps,),
+                     NEWTON=_F(REAC_ITER=1,PREDICTION='EXTRAPOLE'),
+                     ARCHIVAGE=_F(LIST_INST=listarch),
+                     AFFE_VARC   = _F(NOM_VARC='TEMP', VALE_REF=1.0, VALE_FONC=TEMP),
+                     );
+
+epsYY=RECU_FONCTION(TABLE=soluce,
+                   PARA_X='INST',
+                   PARA_Y='EPYY',
+                   INTERPOL='LIN');
+
+endo=RECU_FONCTION(TABLE=soluce,
+                   PARA_X='INST',
+                   PARA_Y='V11',
+                   INTERPOL='LIN');
+
+
+#fluage secondaire comparaison ssnv225a
+tsec=2000
+TEST_FONCTION(VALEUR=_F(VALE_CALC=0.02089497365897,
+                        VALE_REFE=0.02089497365045,
+                        REFERENCE='AUTRE_ASTER',
+                        VALE_PARA=2000,
+                        NOM_PARA='INST',
+                        FONCTION=epsYY,
+                        ),
+              )
+
+TEST_FONCTION(VALEUR=_F(VALE_CALC=0.03217489103946,
+                        VALE_REFE=0.03217489098398,
+                        REFERENCE='AUTRE_ASTER',
+                        VALE_PARA=2000,
+                        NOM_PARA='INST',
+                        FONCTION=endo,
+                        ),
+              )
+
+# fluage tertiaire
+tter=4000
+TEST_FONCTION(VALEUR=_F(VALE_CALC=0.05057478419831,
+                        VALE_REFE=0.05057479557016,
+                        REFERENCE='AUTRE_ASTER',
+                        VALE_PARA=4000,
+                        NOM_PARA='INST',
+                        FONCTION=epsYY,
+                        ),
+              )
+
+TEST_FONCTION(VALEUR=_F(VALE_CALC=0.06792737506714,
+                        VALE_REFE=0.06792739444924,
+                        REFERENCE='AUTRE_ASTER',
+                        VALE_PARA=4000,
+                        NOM_PARA='INST',
+                        FONCTION=endo,
+                        ),
+              )
+
+
+depsdt = CALC_FONCTION( DERIVE=_F( FONCTION= epsYY ),)
+
+
+tvit = 1520.
+
+TEST_FONCTION(VALEUR=_F(VALE_CALC=6.640907662355E-06,
+                        VALE_REFE=6.640907659508E-06,
+                        REFERENCE='AUTRE_ASTER',
+                        VALE_PARA=1520.0,
+                        NOM_PARA='INST',
+                        FONCTION=depsdt,
+                        ),
+              )
+
+IMPR_FONCTION(
+            FORMAT='XMGRACE',
+            COURBE=(_F(FONCTION=epsYY,
+                       COULEUR= 0,
+                       LEGENDE= 'EPYY',),),
+            UNITE=38,
+            TITRE='Espilon = f(INST)');
+
+IMPR_FONCTION(
+            FORMAT='XMGRACE',
+            COURBE=(_F(FONCTION=endo,
+                        COULEUR= 0,
+                        LEGENDE= 'endo',),),
+            UNITE=39,
+            TITRE='endo = f(INST)');
+
+IMPR_FONCTION(
+            FORMAT='XMGRACE',
+            COURBE=(_F(FONCTION=depsdt,
+                        COULEUR= 0,
+                        LEGENDE= 'depsdt',),),
+            UNITE=40,
+            TITRE='depsdt = f(INST)');
+
+
+
+## test de l'intégration explicite
+
+solexpl=SIMU_POINT_MAT(MATER=MAT,INFO=1,
+                     SIGM_IMPOSE=_F(SIYY=char),
+                     SUPPORT='ELEMENT',
+                     COMPORTEMENT=_F(RELATION='HAYHURST',
+                                  ALGO_INTE='RUNGE_KUTTA',
+                                  DEFORMATION='GDEF_LOG',
+                                  ),
+                     INCREMENT=_F(LIST_INST=listtps,INST_FIN=2000.),
+                     NEWTON=_F(REAC_ITER=0,PREDICTION='EXTRAPOLE'),
+                     CONVERGENCE=_F(RESI_GLOB_RELA=1.E-5),
+                     ARCHIVAGE=_F(LIST_INST=listarch),
+                     AFFE_VARC   = _F(NOM_VARC='TEMP', VALE_REF=1.0, VALE_FONC=TEMP),
+                     );
+
+epsYYexp=RECU_FONCTION(TABLE=solexpl,
+                   PARA_X='INST',
+                   PARA_Y='EPYY',
+                   INTERPOL='LIN');
+
+endoexp=RECU_FONCTION(TABLE=solexpl,
+                   PARA_X='INST',
+                   PARA_Y='V11',
+                   INTERPOL='LIN');
+
+
+#fluage secondaire comparaison ssnv225a
+
+TEST_FONCTION(VALEUR=_F(VALE_CALC=0.02096051393883,
+                        VALE_REFE=0.02089497365045,
+                        REFERENCE='AUTRE_ASTER',
+                        PRECISION=0.005,
+                        VALE_PARA=2000,
+                        NOM_PARA='INST',
+                        FONCTION=epsYYexp,
+                        ),
+              )
+
+TEST_FONCTION(VALEUR=_F(VALE_CALC=0.03228755226222 ,
+                        VALE_REFE=0.03217489098398,
+                        REFERENCE='AUTRE_ASTER',
+                        PRECISION=0.005,
+                        VALE_PARA=2000,
+                        NOM_PARA='INST',
+                        FONCTION=endoexp,
+                        ),
+              )
+FIN();

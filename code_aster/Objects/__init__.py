@@ -26,8 +26,6 @@ Python functions.
 
 from libaster import *
 
-from ..Utilities import objects_from_context
-
 # ensure DataStructure is extended first
 from .datastructure_ext import DataStructure
 
@@ -41,6 +39,7 @@ from .fieldonnodes_ext import FieldOnNodesDouble
 from .formula_ext import Formula
 from .function_ext import Function
 from .generalizedassemblymatrix_ext import GeneralizedAssemblyMatrixDouble
+from .listoffloats import ListOfFloats
 from .material_ext import Material
 from .materialonmesh_ext import MaterialOnMesh
 from .mechanicalload_ext import GenericMechanicalLoad
@@ -53,15 +52,9 @@ from .table_ext import Table
 from .timestepmanager_ext import TimeStepManager
 from .xfemcrack_ext import XfemCrack
 
-# objects without C++ mirror
-from .listoffloats import ListOfFloats
-
 
 try:
     ParallelMechanicalLoad
 except NameError:
     class ParallelMechanicalLoad(object):
         pass
-
-
-ALL_DS = objects_from_context(globals(), DataStructure)

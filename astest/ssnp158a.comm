@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -172,22 +172,22 @@ for iNumPas in range(0,NbIncr):
       VMI[iNumPas]=CREA_CHAMP(OPERATION='EXTR', TYPE_CHAM='ELNO_SIEF_R', NOM_CHAM='SIEQ_ELNO', RESULTAT=RESUNL, INST=(iNumPas+1)*DT)
 
       baseUL=100
-      DEFI_FICHIER(ACTION='ASSOCIER',UNITE=baseUL+iNumPas,FICHIER='./REPE_OUT/erre_iter_%02i.med' %iNumPas)
+      DEFI_FICHIER(ACTION='ASSOCIER',UNITE=baseUL+iNumPas,FICHIER='./REPE_OUT/erre_iter_%02i.med' %iNumPas, TYPE = 'BINARY')
       IMPR_RESU(FORMAT='MED',UNITE=baseUL+iNumPas,RESU=_F(CHAM_GD=ERR[iNumPas], NOM_CMP='ERREST',))
       DEFI_FICHIER(ACTION='LIBERER',UNITE=baseUL+iNumPas)
 
       baseUL=200
-      DEFI_FICHIER(ACTION='ASSOCIER',UNITE=baseUL+iNumPas,FICHIER='./REPE_OUT/vari_iter_%02i.med' %iNumPas)
+      DEFI_FICHIER(ACTION='ASSOCIER',UNITE=baseUL+iNumPas,FICHIER='./REPE_OUT/vari_iter_%02i.med' %iNumPas, TYPE = 'BINARY')
       IMPR_RESU(FORMAT='MED',UNITE=baseUL+iNumPas,RESU=_F(CHAM_GD=VAR[iNumPas], NOM_CMP='V1',))
       DEFI_FICHIER(ACTION='LIBERER',UNITE=baseUL+iNumPas)
 
       baseUL=300
-      DEFI_FICHIER(ACTION='ASSOCIER',UNITE=baseUL+iNumPas,FICHIER='./REPE_OUT/depl_iter_%02i.med' %iNumPas)
+      DEFI_FICHIER(ACTION='ASSOCIER',UNITE=baseUL+iNumPas,FICHIER='./REPE_OUT/depl_iter_%02i.med' %iNumPas, TYPE = 'BINARY')
       IMPR_RESU(FORMAT='MED',UNITE=baseUL+iNumPas,RESU=_F(CHAM_GD=DEP[iNumPas], NOM_CMP=('DX','DY'),))
       DEFI_FICHIER(ACTION='LIBERER',UNITE=baseUL+iNumPas)
 
       baseUL=400
-      DEFI_FICHIER(ACTION='ASSOCIER',UNITE=baseUL+iNumPas,FICHIER='./REPE_OUT/sieq_iter_%02i.med' %iNumPas)
+      DEFI_FICHIER(ACTION='ASSOCIER',UNITE=baseUL+iNumPas,FICHIER='./REPE_OUT/sieq_iter_%02i.med' %iNumPas, TYPE = 'BINARY')
       IMPR_RESU(FORMAT='MED',UNITE=baseUL+iNumPas,RESU=_F(CHAM_GD=VMI[iNumPas], NOM_CMP=('VMIS'),))
       DEFI_FICHIER(ACTION='LIBERER',UNITE=baseUL+iNumPas)
 

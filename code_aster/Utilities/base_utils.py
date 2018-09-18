@@ -1,6 +1,6 @@
 # coding: utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -129,13 +129,6 @@ def accept_array(func):
         args = [array_to_list(i) for i in args]
         return func(*args, **kwargs)
     return wrapper
-
-
-def objects_from_context(dict_objects, filter_type, ignore_names=[]):
-    """Build the list of all objects of the given type"""
-    objects = dict([(name, obj) for name, obj in dict_objects.items()
-                    if isinstance(obj, filter_type) and not name in ignore_names])
-    return objects
 
 
 class Singleton(type):

@@ -1343,6 +1343,7 @@ def macr_adap_mail_ops(self,
 #
     # print ".. Debut de 3.1."
 #
+    Nom_Co_Mail_NP1 = None
     Nom_Co_Mail_NP1_ANNEXE = None
     l_aux = []
     for dico in liste_maillages:
@@ -1353,10 +1354,6 @@ def macr_adap_mail_ops(self,
             l_aux.append(dico)
             if (dico["Type_Maillage"] == "MAILLAGE_N"):
                 Nom_Co_Mail_N = dico["Nom_ASTER"].getName()
-            elif (dico["Type_Maillage"] == "MAILLAGE_NP1"):
-                Nom_Co_Mail_NP1 = dico["Nom_ASTER"].getName()
-            elif (dico["Type_Maillage"] == "MAILLAGE_NP1_ANNEXE"):
-                Nom_Co_Mail_NP1_ANNEXE = dico["Nom_ASTER"].getName()
         # print ".... dico apres =", dico
     liste_maillages = l_aux
 #
@@ -1666,6 +1663,9 @@ def macr_adap_mail_ops(self,
                 if (dico["Type_Maillage"] == "MAILLAGE_NP1"):
                     maillage_np1 = maillage_a_lire
                     maillage_np1_nom_med = dico["NOM_MED"]
+                    Nom_Co_Mail_NP1 = maillage_a_lire.getName()
+                elif (dico["Type_Maillage"] == "MAILLAGE_NP1_ANNEXE"):
+                    Nom_Co_Mail_NP1_ANNEXE = maillage_a_lire.getName()
 #
 # 8.2. ==> Les champs
 #          Les champs ELNO et ELGA ne sont lus qu'en mode lecture
