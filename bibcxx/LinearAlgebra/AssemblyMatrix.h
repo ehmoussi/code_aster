@@ -105,6 +105,8 @@ class AssemblyMatrixInstance: public DataStructure
         bool                          _isFactorized;
         /** @brief Liste de charges cinematiques */
         ListOfLoadsPtr                _listOfLoads;
+        /** @brief Solver name (MUMPS or PETSc) */
+        std::string                   _solverName;
 
         friend class BaseLinearSolverInstance;
 
@@ -133,9 +135,9 @@ class AssemblyMatrixInstance: public DataStructure
 #ifdef __DEBUG_GC__
             std::cout << "AssemblyMatrixInstance.destr: " << this->getName() << std::endl;
 #endif
-            if( _description->exists() )
+            if( _description->exists() && ( _solverName == "MUMPS" || _solverName == "PETSC" ) )
             {
-                CALLO_DELETE_MATRIX( getName() );
+                CALLO_DELETE_MATRIX( getName(), _solverName );
             }
         };
 
@@ -246,6 +248,16 @@ class AssemblyMatrixInstance: public DataStructure
         void setListOfLoads( const ListOfLoadsPtr& lLoads )
         {
             _listOfLoads = lLoads;
+        };
+
+        /**
+         * @brief Function to set the solver name (MUMS or PETSc)
+         * @param sName name of solver ("MUMPS" or "PETSC")
+         * @todo delete this function and the attribute _solverName
+         */
+        void setSolverName( const std::string& sName )
+        {
+            _solverName = sName;
         };
 };
 
