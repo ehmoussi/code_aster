@@ -106,10 +106,10 @@ public:
     /**
      * @brief Return the number of points of the function
      */
-    long maximumSize() const throw ( std::runtime_error )
+    ASTERINTEGER maximumSize() const throw ( std::runtime_error )
     {
         _value->buildFromJeveux();
-        long toReturn = 0;
+        ASTERINTEGER toReturn = 0;
         for( const auto& curIter : *_value )
         {
             if( curIter.size() > toReturn )
@@ -121,10 +121,10 @@ public:
     /**
      * @brief Return the number of points of the function
      */
-    long size() const throw ( std::runtime_error )
+    ASTERINTEGER size() const throw ( std::runtime_error )
     {
         _value->buildFromJeveux();
-        long toReturn = 0;
+        ASTERINTEGER toReturn = 0;
         for( const auto& curIter : *_value )
         {
             toReturn += curIter.size();

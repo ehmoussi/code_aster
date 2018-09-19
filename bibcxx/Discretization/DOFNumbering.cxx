@@ -86,7 +86,7 @@ bool BaseDOFNumberingInstance::computeNumerotation() throw ( std::runtime_error 
         _listOfLoads->build();
         JeveuxVectorChar24 jvListOfLoads = _listOfLoads->getListVector();
         jvListOfLoads->updateValuePointer();
-        long nbLoad = jvListOfLoads->size();
+        ASTERINTEGER nbLoad = jvListOfLoads->size();
 
         const std::string base( "VG" );
         const std::string null( " " );

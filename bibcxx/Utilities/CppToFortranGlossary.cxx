@@ -3,7 +3,7 @@
  * @brief Création du glossaire permettant de passer du Fortran au C++
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -40,6 +40,7 @@ Glossary::Glossary()
     int i = 0;
     for( const auto& component : ComponentNames )
     {
+        const std::string& toto = component.second;
         _strToInt[ component.second ] = i;
         ++i;
     }
@@ -99,14 +100,15 @@ Glossary::Glossary()
     }
 };
 
-Glossary fortranGlossary;
+// Glossary fortranGlossary;
+Glossary* fortranGlossary2 = new Glossary();
 
 Glossary* getGlossary()
 {
-    return &fortranGlossary;
+    return fortranGlossary2;
 };
 
 const Glossary& getReferenceToGlossary()
 {
-    return fortranGlossary;
+    return *fortranGlossary2;
 };

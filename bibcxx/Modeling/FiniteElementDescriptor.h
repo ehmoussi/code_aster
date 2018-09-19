@@ -114,7 +114,7 @@ public:
         return _explorer2;
     };
 
-    long getNumberOfDelayedNodes() const
+    ASTERINTEGER getNumberOfDelayedNodes() const
     {
         _numberOfDelayedNumberedConstraintNodes->updateValuePointer();
         return (*_numberOfDelayedNumberedConstraintNodes)[0];

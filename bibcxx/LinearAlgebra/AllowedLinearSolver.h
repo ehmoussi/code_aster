@@ -6,7 +6,7 @@
  * @brief Fichier permettant de definir les solveurs et les renumeroteurs
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -40,8 +40,9 @@ extern const char* LinearSolverNames[nbSolvers];
  * @brief Declaration des renumeroteurs
  * @author Nicolas Sellenet
  */
-enum Renumbering { MD, MDA, Metis, RCMK, AMD, AMF, PORD, QAMD, Scotch, Auto, Sans };
-const int nbRenumberings = 11;
+enum Renumbering { MD, MDA, Metis, RCMK, AMD, AMF, PORD, QAMD,
+                   Scotch, Auto, Parmetis, Ptscotch, Sans };
+const int nbRenumberings = 13;
 extern const char* RenumberingNames[nbRenumberings];
 
 const int nbRenumberingMultFront = 3;
@@ -50,7 +51,7 @@ extern const Renumbering MultFrontRenumbering[nbRenumberingMultFront];
 const int nbRenumberingLdlt = 2;
 extern const Renumbering LdltRenumbering[nbRenumberingLdlt];
 
-const int nbRenumberingMumps = 7;
+const int nbRenumberingMumps = 9;
 extern const Renumbering MumpsRenumbering[nbRenumberingMumps];
 
 const int nbRenumberingPetsc = 2;

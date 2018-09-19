@@ -2,7 +2,7 @@
 #define ASTERCXX_H_
 
 /* ==================================================================== */
-/* Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org */
+/* Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org */
 /*                                                                      */
 /* This file is part of Code_Aster.                                     */
 /*                                                                      */
@@ -23,9 +23,11 @@
 /* person_in_charge: mathieu.courtois@edf.fr */
 
 #include "asterc_config.h"
+#include "aster.h"
 
 #ifdef __cplusplus
 
+#include <stdexcept>
 #include <list>
 #include <vector>
 #include <string>
@@ -37,7 +39,7 @@
 typedef std::complex< double > DoubleComplex;
 
 typedef std::vector< int > VectorInt;
-typedef std::vector< long > VectorLong;
+typedef std::vector< ASTERINTEGER > VectorLong;
 typedef std::vector< double > VectorDouble;
 typedef std::vector< DoubleComplex > VectorComplex;
 typedef std::vector< std::string > VectorString;

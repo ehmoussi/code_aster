@@ -125,14 +125,14 @@ class JeveuxVectorInstance: public JeveuxObjectInstance, private AllowedJeveuxTy
          * @param length Longueur du vecteur Jeveux a allouer
          * @return true si l'allocation s'est bien passee
          */
-        bool allocate( JeveuxMemory jeveuxBase, unsigned long length )
+        bool allocate( JeveuxMemory jeveuxBase, unsigned ASTERINTEGER length )
         {
             if ( _name != "" && length > 0 )
             {
                 _mem = jeveuxBase;
                 std::string strJeveuxBase( "V" );
                 if ( jeveuxBase == Permanent ) strJeveuxBase = "G";
-                long taille = length;
+                ASTERINTEGER taille = length;
                 const int intType = AllowedJeveuxType< ValueType >::numTypeJeveux;
                 std::string carac = strJeveuxBase + " V " + JeveuxTypesNames[intType];
                 CALLO_WKVECTC( _name, carac, &taille, (void*)(&_valuePtr));
@@ -167,7 +167,7 @@ class JeveuxVectorInstance: public JeveuxObjectInstance, private AllowedJeveuxTy
         {
             const std::string param( "DOCU" );
             std::string charval(4, ' ');
-            long valTmp;
+            ASTERINTEGER valTmp;
             CALLO_JELIRA( _name, param, &valTmp, charval );
             std::string toReturn( charval );
             return toReturn;
@@ -204,7 +204,7 @@ class JeveuxVectorInstance: public JeveuxObjectInstance, private AllowedJeveuxTy
         /**
          * @brief Set the value of LONUTI of jeveux object
          */
-        bool setUsedSize( long value )
+        bool setUsedSize( ASTERINTEGER value )
         {
             if( ! exists() ) return false;
 
@@ -216,11 +216,11 @@ class JeveuxVectorInstance: public JeveuxObjectInstance, private AllowedJeveuxTy
         /**
          * @brief Return the size of the vector
          */
-        long size() const
+        ASTERINTEGER size() const
         {
             if( ! exists() ) return 0;
 
-            long vectSize;
+            ASTERINTEGER vectSize;
             JeveuxChar8 param( "LONMAX" );
             JeveuxChar32 dummy( " " );
             CALLO_JELIRA( _name, param, &vectSize, dummy );
@@ -230,11 +230,11 @@ class JeveuxVectorInstance: public JeveuxObjectInstance, private AllowedJeveuxTy
         /**
          * @brief Return the size of the vector
          */
-        long usedSize() const
+        ASTERINTEGER usedSize() const
         {
             if( ! exists() ) return 0;
 
-            long vectSize;
+            ASTERINTEGER vectSize;
             JeveuxChar8 param( "LONUTI" );
             JeveuxChar32 dummy( " " );
             CALLO_JELIRA( _name, param, &vectSize, dummy );
@@ -312,7 +312,7 @@ class JeveuxVector
 };
 
 /** @typedef Definition d'un vecteur Jeveux long */
-typedef JeveuxVector< long > JeveuxVectorLong;
+typedef JeveuxVector< ASTERINTEGER > JeveuxVectorLong;
 /** @typedef Definition d'un vecteur Jeveux short int */
 typedef JeveuxVector< short int > JeveuxVectorShort;
 /** @typedef Definition d'un vecteur Jeveux double */

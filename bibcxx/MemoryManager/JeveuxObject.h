@@ -83,7 +83,7 @@ public:
         if ( _name == "" )
             return false;
 
-        long boolRetour;
+        ASTERINTEGER boolRetour;
         // Appel a jeexin pour verifier que le vecteur existe
         CALLO_JEEXIN( _name, &boolRetour );
         if ( boolRetour == 0 )

@@ -33,6 +33,7 @@
 #include <iostream>
 
 #include "Python.h"
+#include "aster.h"
 #include "astercxx.h"
 
 struct SyntaxMapContainer;
@@ -46,11 +47,11 @@ typedef ListSyntaxMapContainer::iterator ListSyntaxMapContainerIter;
 typedef ListSyntaxMapContainer::const_iterator ListSyntaxMapContainerCIter;
 
 /**
- * @typedef VectorInt
+ * @typedef VectorLong
  * @brief Vecteur STL d'entiers
  */
-typedef VectorInt::iterator VectorIntIter;
-typedef VectorInt::const_iterator VectorIntCIter;
+typedef VectorLong::iterator VectorLongIter;
+typedef VectorLong::const_iterator VectorLongCIter;
 
 /**
  * @typedef VectorString
@@ -82,9 +83,9 @@ class SyntaxMapContainer
 {
 public:
     /** @brief Typedef definissant un map associant une chaine a divers types */
-    typedef std::map< std::string, boost::variant< int, std::string, double, DoubleComplex,
-                                                   VectorInt, VectorString, VectorDouble,
-                                                   VectorComplex,
+    typedef std::map< std::string, boost::variant< ASTERINTEGER, std::string, double,
+                                                   DoubleComplex, VectorLong, VectorString,
+                                                   VectorDouble, VectorComplex,
                                                    ListSyntaxMapContainer > > SyntaxMap;
     typedef SyntaxMap::iterator SyntaxMapIter;
     typedef SyntaxMap::const_iterator SyntaxMapCIter;

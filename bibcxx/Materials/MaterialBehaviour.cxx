@@ -223,7 +223,7 @@ bool TractionMaterialBehaviourInstance::buildTractionFunction
     ( FunctionPtr& doubleValues ) const
     throw( std::runtime_error )
 {
-    long maxSize = 0, maxSize2 = 0;
+    ASTERINTEGER maxSize = 0, maxSize2 = 0;
     std::string resName;
     for( auto curIter : _mapOfFunctionMaterialProperties )
     {
@@ -249,7 +249,7 @@ bool MetaTractionMaterialBehaviourInstance::buildTractionFunction
     ( FunctionPtr& doubleValues ) const
     throw( std::runtime_error )
 {
-    long maxSize = 0, maxSize2 = 0;
+    ASTERINTEGER maxSize = 0, maxSize2 = 0;
     std::string resName;
     for( auto curIter : _mapOfFunctionMaterialProperties )
     {

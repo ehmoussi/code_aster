@@ -231,7 +231,7 @@ class StaticModeInterfInstance: public StaticModeAnalysisInstance
         /**
          * @brief Constructeur
          */
-        StaticModeInterfInstance(): _nbmod("NB_MODE", 1, true),
+        StaticModeInterfInstance(): _nbmod("NB_MODE", (ASTERINTEGER)1, true),
                                   _shift("SHIFT", 1.0,true)
         {};
 
@@ -239,7 +239,7 @@ class StaticModeInterfInstance: public StaticModeAnalysisInstance
          * @brief Set dirname
          * @param name the Wanted_dir
          */
-        void setNumberOfModes(const int nb )
+        void setNumberOfModes(const ASTERINTEGER nb )
         {
             _nbmod = GenParam("NB_MODE", nb, true);
         };

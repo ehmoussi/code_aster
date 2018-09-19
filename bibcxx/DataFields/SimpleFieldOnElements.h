@@ -171,7 +171,7 @@ typedef SimpleFieldOnElementsInstance< double > SimpleFieldOnElementsDoubleInsta
 typedef boost::shared_ptr< SimpleFieldOnElementsDoubleInstance > SimpleFieldOnElementsDoublePtr;
 
 /** @typedef SimpleFieldOnElementsInstanceLong Instance d'une carte de long */
-typedef SimpleFieldOnElementsInstance< long > SimpleFieldOnElementsLongInstance;
+typedef SimpleFieldOnElementsInstance< ASTERINTEGER > SimpleFieldOnElementsLongInstance;
 
 /**
  * @typedef SimpleFieldOnElementsPtrLong

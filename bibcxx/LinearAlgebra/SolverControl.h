@@ -6,7 +6,7 @@
  * @brief Control class to check if an iterative solver has converged
  * @author Natacha Béreux 
  * @section LICENCE
- *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -27,6 +27,7 @@
 /* person_in_charge: natacha.bereux at edf.fr */
 
 #include "astercxx.h"
+#include "aster.h"
 
 enum ConvergenceState { failure, success, iterate };
 
@@ -38,18 +39,18 @@ enum ConvergenceState { failure, success, iterate };
 class SolverControlInstance
 {
     public:
-    SolverControlInstance( double rTol=1.e-6, int nIterMax=100 ); 
+    SolverControlInstance( double rTol=1.e-6, ASTERINTEGER nIterMax=100 ); 
 
     ~SolverControlInstance()
     {}
 
-    virtual ConvergenceState check( const double relativeResNorm, const int iter ) const;
+    virtual ConvergenceState check( const double relativeResNorm, const ASTERINTEGER iter ) const;
 
     double getRelativeTolerance() const
     {
         return _relativeTol; 
     }
-    int getMaximumNumberOfIterations() const
+    ASTERINTEGER getMaximumNumberOfIterations() const
     {
         return _nIterMax; 
     }
@@ -57,16 +58,15 @@ class SolverControlInstance
     {
         _relativeTol=rTol; 
     }
-    void setMaximumNumberOfIterations( const int nIterMax) 
+    void setMaximumNumberOfIterations( const ASTERINTEGER nIterMax) 
     {
         _nIterMax=nIterMax ; 
     }
     protected: 
     /* iter_glob_maxi*/
-    int _nIterMax;
+    ASTERINTEGER _nIterMax;
     /* resi_rela*/
     double _relativeTol; 
-    
 };
 
 /**
