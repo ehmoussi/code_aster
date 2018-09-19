@@ -31,9 +31,9 @@ PyObject* SyntaxMapContainer::convertToPythonDictionnary( PyObject* returnDict )
          curIter != container.end();
          ++curIter )
     {
-        if ( (*curIter).second.type() == typeid( int ) )
+        if ( (*curIter).second.type() == typeid( ASTERINTEGER ) )
         {
-            const int& tmp = boost::get< int >( (*curIter).second );
+            const ASTERINTEGER& tmp = boost::get< ASTERINTEGER >( (*curIter).second );
             PyDict_SetItemString( returnDict, (*curIter).first.c_str(), PyLong_FromLong( tmp ) );
         }
         else if ( (*curIter).second.type() == typeid( VectorLong ) )
