@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -155,14 +155,16 @@ use lmp_module, only : lmp_update
 !   autorisee
        ASSERT( action == 'DETR_MAT' )
     else
-        call jeveuo(nosolv//'.SLVK', 'L', vk24=slvk)
-        precon = slvk(2)
-        algo = slvk(6)
-        call dismoi('MATR_DISTRIBUEE', nomat, 'MATR_ASSE', repk=matd)
-        lmd = matd.eq.'OUI'
-        call dismoi('MATR_HPC', nomat, 'MATR_ASSE', repk=matd)
-        lmhpc = matd.eq.'OUI'
-        ASSERT(.not.(lmd .and. lmhpc))
+        if( action.ne.'DETR_MAT' ) then
+            call jeveuo(nosolv//'.SLVK', 'L', vk24=slvk)
+            precon = slvk(2)
+            algo = slvk(6)
+            call dismoi('MATR_DISTRIBUEE', nomat, 'MATR_ASSE', repk=matd)
+            lmd = matd.eq.'OUI'
+            call dismoi('MATR_HPC', nomat, 'MATR_ASSE', repk=matd)
+            lmhpc = matd.eq.'OUI'
+            ASSERT(.not.(lmd .and. lmhpc))
+        endif
 !
     endif
 !
@@ -593,11 +595,8 @@ use lmp_module, only : lmp_update
 !
 !        -- PRECONDITIONNEUR UTILISE
 !
-        if (precon .eq. 'LDLT_SP') then
-!           MENAGE
-            spmat = ' '
-            spsolv = ' '
-        endif
+        spmat = ' '
+        spsolv = ' '
 !
     else
         ASSERT(.false.)

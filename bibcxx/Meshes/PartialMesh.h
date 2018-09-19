@@ -45,7 +45,8 @@
 class PartialMeshInstance: public BaseMeshInstance
 {
 private:
-    typedef JeveuxCollection< long, JeveuxBidirectionalMapChar24 > JeveuxCollectionLongNamePtr;
+    typedef JeveuxCollection< ASTERINTEGER,
+                              JeveuxBidirectionalMapChar24 > JeveuxCollectionLongNamePtr;
     /** @brief Base ParallelMesh */
     ParallelMeshPtr  _pMesh;
     /** @brief id of node in local numbering */

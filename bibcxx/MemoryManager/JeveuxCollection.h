@@ -52,22 +52,22 @@ class JeveuxCollectionObject: private AllowedJeveuxType< ValueType >
 {
 private:
     /** @brief Nom Jeveux de la collection */
-    std::string _collectionName;
+    std::string  _collectionName;
     /** @brief Position dans la collection */
-    int         _numberInCollection;
+    int          _numberInCollection;
     /** @brief Nom de l'objet de collection */
-    std::string _nameOfObject;
+    std::string  _nameOfObject;
     /** @brief Pointeur vers le vecteur Jeveux */
-    ValueType*  _valuePtr;
+    ValueType*   _valuePtr;
     /** @brief Pointeur vers le vecteur Jeveux */
-    long        _size;
+    ASTERINTEGER _size;
 
     /**
      * @brief Allocation
      */
     bool allocate( int size ) throw( std::runtime_error )
     {
-        long taille = size, ibid = 0;
+        ASTERINTEGER taille = size, ibid = 0;
 
         std::string nameOfObject( "" );
         if( _nameOfObject != "" )
@@ -96,7 +96,7 @@ public:
     {
         if( ! exists ) return;
         std::string tmp("L");
-        long iret=number;
+        ASTERINTEGER iret=number;
         const char* charName = collectionName.c_str();
         std::string charval(32, ' ');
         CALLO_JEXNUM( charval, collectionName, &iret );
@@ -112,9 +112,9 @@ public:
         CALLO_JEVEUOC( charval, tmp, (void*)(&_valuePtr) );
 
         std::string charJeveuxName(32, ' ');
-        long num = _numberInCollection;
+        ASTERINTEGER num = _numberInCollection;
         CALLO_JEXNUM( charJeveuxName, _collectionName, &num );
-        long valTmp;
+        ASTERINTEGER valTmp;
         JeveuxChar8 param( "LONMAX" );
         charval = std::string(32, ' ');
         CALLO_JELIRA( charJeveuxName, param, &valTmp, charval );
@@ -277,7 +277,7 @@ public:
 };
 
 /** @typedef Definition d'un objet de collection de type long */
-typedef JeveuxCollectionObject< long > JeveuxCollectionObjectLong;
+typedef JeveuxCollectionObject< ASTERINTEGER > JeveuxCollectionObjectLong;
 /** @typedef Definition d'un objet de collection de type short int */
 typedef JeveuxCollectionObject< short int > JeveuxCollectionObjectShort;
 /** @typedef Definition d'un objet de collection de type double */
@@ -375,7 +375,7 @@ private:
                             int totalSize = 0 )
         throw( std::runtime_error )
     {
-        long taille = size;
+        ASTERINTEGER taille = size;
         _size = size;
         std::string strJeveuxBase( "V" );
         if ( mem == Permanent ) strJeveuxBase = "G";
@@ -645,7 +645,7 @@ public:
      * @param number entier
      * @return Renvoit true si l'objet existe dans la collection
      */
-    bool existsObject( const long& number ) const;
+    bool existsObject( const ASTERINTEGER& number ) const;
 
     /**
      * @brief Methode permettant d'obtenir la liste des objets nommés dans la collection
@@ -724,10 +724,10 @@ public:
 template< class ValueType, class PointerType >
 bool JeveuxCollectionInstance< ValueType, PointerType >::buildFromJeveux( bool force )
 {
-    long nbColObj, valTmp;
+    ASTERINTEGER nbColObj, valTmp;
     JeveuxChar8 param( "NUTIOC" );
     std::string charval(32, ' ');
-    long iret=0;
+    ASTERINTEGER iret=0;
     CALLO_JEEXIN( _name, &iret);
     if( iret == 0 ) return false;
     CALLO_JELIRA( _name, param, &nbColObj, charval );
@@ -745,7 +745,7 @@ bool JeveuxCollectionInstance< ValueType, PointerType >::buildFromJeveux( bool f
 
     if ( resu == "NO" ) _isNamed = true;
 
-    for ( long i = 1; i <= nbColObj; ++i )
+    for ( ASTERINTEGER i = 1; i <= nbColObj; ++i )
     {
         if( ! existsObject( i ) )
         {
@@ -764,7 +764,7 @@ template< class ValueType, class PointerType >
 bool JeveuxCollectionInstance< ValueType, PointerType >::existsObject( const std::string& name ) const
 {
     std::string charJeveuxName(32, ' ');
-    long returnBool;
+    ASTERINTEGER returnBool;
     CALLO_JEXNOM( charJeveuxName, _name, name );
     CALLO_JEEXIN( charJeveuxName, &returnBool );
     if ( returnBool == 0 ) return false;
@@ -772,11 +772,11 @@ bool JeveuxCollectionInstance< ValueType, PointerType >::existsObject( const std
 };
 
 template< class ValueType, class PointerType >
-bool JeveuxCollectionInstance< ValueType, PointerType >::existsObject( const long& number ) const
+bool JeveuxCollectionInstance< ValueType, PointerType >::existsObject( const ASTERINTEGER& number ) const
 {
     const char* collName = _name.c_str();
     std::string charJeveuxName(32, ' ');
-    long returnBool = number;
+    ASTERINTEGER returnBool = number;
     CALLO_JEXNUM( charJeveuxName, _name, &returnBool );
     CALLO_JEEXIN( charJeveuxName, &returnBool );
     if ( returnBool == 0 ) return false;
@@ -853,7 +853,7 @@ public:
 };
 
 /** @typedef Definition d'une collection de type long */
-typedef JeveuxCollection< long > JeveuxCollectionLong;
+typedef JeveuxCollection< ASTERINTEGER > JeveuxCollectionLong;
 /** @typedef Definition d'une collection de type short int */
 typedef JeveuxCollection< short int > JeveuxCollectionShort;
 /** @typedef Definition d'une collection de type double */

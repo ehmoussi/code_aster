@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe TimeStepManager
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -85,7 +85,7 @@ public:
         _isEmpty( true ),
         _minimumTS( "PAS_MINI", false ),
         _maximumTS( "PAS_MAXI", false ),
-        _nbMaxiOfTS( "NB_PAS_MAXI", 1000000, false )
+        _nbMaxiOfTS( "NB_PAS_MAXI", (ASTERINTEGER)1000000, false )
     {};
 
     ~TimeStepManagerInstance()
@@ -121,7 +121,7 @@ public:
      * @brief Function de définition du nombre maxi de pas
      * @param max nombre maxi de pas
      */
-    void setMaximumNumberOfTimeStep( const int& max )
+    void setMaximumNumberOfTimeStep( const ASTERINTEGER& max )
     {
          _nbMaxiOfTS = max;
     };

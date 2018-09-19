@@ -32,16 +32,16 @@ void exportStateToPython()
 
     void (StateInstance::*c1)(const NonLinearEvolutionContainerPtr&, double, double) =
             &StateInstance::setFromNonLinearEvolution;
-    void (StateInstance::*c3)(const NonLinearEvolutionContainerPtr&, int) =
+    void (StateInstance::*c3)(const NonLinearEvolutionContainerPtr&, ASTERINTEGER) =
             &StateInstance::setFromNonLinearEvolution;
     void (StateInstance::*c4)(const NonLinearEvolutionContainerPtr&) =
             &StateInstance::setFromNonLinearEvolution;
 
     class_< StateInstance, StatePtr > ( "State", no_init )
         .def( "__init__", make_constructor(
-            &initFactoryPtr< StateInstance, int, double > ) )
+            &initFactoryPtr< StateInstance, ASTERINTEGER, double > ) )
         .def( "__init__", make_constructor(
-            &initFactoryPtr< StateInstance, int > ) )
+            &initFactoryPtr< StateInstance,ASTERINTEGER  > ) )
         .def( "__init__", make_constructor(
             &initFactoryPtr< StateInstance, double > ) )
         .def( "setFromNonLinearEvolution", c1 )

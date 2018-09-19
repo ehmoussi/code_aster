@@ -105,6 +105,8 @@ class AssemblyMatrixInstance: public DataStructure
         bool                          _isFactorized;
         /** @brief Liste de charges cinematiques */
         ListOfLoadsPtr                _listOfLoads;
+        /** @brief Solver name (MUMPS or PETSc) */
+        std::string                   _solverName;
 
         friend class BaseLinearSolverInstance;
 
@@ -133,6 +135,10 @@ class AssemblyMatrixInstance: public DataStructure
 #ifdef __DEBUG_GC__
             std::cout << "AssemblyMatrixInstance.destr: " << this->getName() << std::endl;
 #endif
+            if( _description->exists() && ( _solverName == "MUMPS" || _solverName == "PETSC" ) )
+            {
+                CALLO_DELETE_MATRIX( getName(), _solverName );
+            }
         };
 
         /**
@@ -243,6 +249,16 @@ class AssemblyMatrixInstance: public DataStructure
         {
             _listOfLoads = lLoads;
         };
+
+        /**
+         * @brief Function to set the solver name (MUMS or PETSc)
+         * @param sName name of solver ("MUMPS" or "PETSC")
+         * @todo delete this function and the attribute _solverName
+         */
+        void setSolverName( const std::string& sName )
+        {
+            _solverName = sName;
+        };
 };
 
 /** @typedef Definition d'une matrice assemblee de double */
@@ -325,7 +341,7 @@ bool AssemblyMatrixInstance< ValueType, PhysicalQuantity >::build() throw ( std:
     if ( _elemMatrix.size() == 0 )
         throw std::runtime_error( "Elementary matrix is empty" );
 
-    long typscal = 1;
+    ASTERINTEGER typscal = 1;
     VectorString names;
     std::vector< ElementaryMatrixPtr >::const_iterator elemIt = _elemMatrix.begin();
     for ( ; elemIt != _elemMatrix.end(); ++elemIt ) {
@@ -344,7 +360,7 @@ bool AssemblyMatrixInstance< ValueType, PhysicalQuantity >::build() throw ( std:
     std::string cumul( "ZERO" );
     if( _listOfLoads->isEmpty() && _listOfLoads->size() != 0 )
         _listOfLoads->build();
-    long nbMatrElem = 1;
+    ASTERINTEGER nbMatrElem = 1;
     CALL_ASMATR( &nbMatrElem, tabNames, blanc.c_str(),
                  _dofNum->getName().c_str(), _listOfLoads->getName().c_str(),
                  cumul.c_str(), base.c_str(), &typscal, getName().c_str() );

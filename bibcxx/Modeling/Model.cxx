@@ -121,7 +121,7 @@ bool ModelInstance::build() throw ( std::runtime_error )
 bool ModelInstance::existsThm()
 {
     const std::string typeco( "MODELE" );
-    long repi = 0, ier = 0;
+    ASTERINTEGER repi = 0, ier = 0;
     JeveuxChar32 repk( " " );
     const std::string arret( "C" );
     const std::string questi( "EXI_THM" );
@@ -135,7 +135,7 @@ bool ModelInstance::existsThm()
 bool ModelInstance::existsMultiFiberBeam()
 {
     const std::string typeco( "MODELE" );
-    long repi = 0, ier = 0;
+    ASTERINTEGER repi = 0, ier = 0;
     JeveuxChar32 repk( " " );
     const std::string arret( "C" );
     const std::string questi( "EXI_STR2" );

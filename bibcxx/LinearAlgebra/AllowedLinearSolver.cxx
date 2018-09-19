@@ -3,7 +3,7 @@
  * @brief Initialise les noms et possibles pour les solveurs et les renumeroteurs
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -25,14 +25,18 @@
 
 const char* LinearSolverNames[nbSolvers] = { "MULT_FRONT", "LDLT", "MUMPS", "PETSC", "GCPC" };
 const char* RenumberingNames[nbRenumberings] = { "MD", "MDA", "METIS", "RCMK", "AMD",
-                                                 "AMF", "PORD", "QAMD", "SCOTCH", "AUTO", "SANS" };
+                                                 "AMF", "PORD", "QAMD", "SCOTCH", "AUTO",
+                                                 "PARMETIS", "PTSCOTCH", "SANS" };
 const char* PreconditioningNames[nbPreconditionings] = { "LDLT_INC", "LDLT_SP", "JACOBI", "SOR",
-                                                         "ML", "BOOMER", "GAMG", "BLOC_LAGR", "SANS" };
+                                                         "ML", "BOOMER", "GAMG", "BLOC_LAGR",
+                                                         "SANS" };
 const char* MatrixTypeNames[nbMatrixTypes] = { "NONSYM", "SYMGEN", "SYMDEF", "AUTO" };
 
-const char* IterativeSolverAlgorithmNames[nbIterativeSolverAlgorithms] = { "CG", "CR", "GMRES", "GCR", "FGMRES" };
+const char* IterativeSolverAlgorithmNames[nbIterativeSolverAlgorithms] = { "CG", "CR", "GMRES",
+                                                                           "GCR", "FGMRES" };
 const char* LagrangeTreatmentNames[nbLagrangeTreatments] = { "OUI", "NON", "LAGR2" };
-const char* MemoryManagementNames[nbMemoryManagements] = { "IN_CORE", "OUT_OF_CORE", "AUTO", "EVAL" };
+const char* MemoryManagementNames[nbMemoryManagements] = { "IN_CORE", "OUT_OF_CORE",
+                                                           "AUTO", "EVAL" };
 const char* MumpsPostTreatmentNames[nbMumpsPostTreatments] = { "SANS", "AUTO", "FORCE", "MINI" };
 const char* MumpsAccelerationNames[nbMumpsAcceleration] = { "AUTO", "FR", "FR+", "LR", "LR+" };
 
@@ -41,10 +45,13 @@ const Renumbering MultFrontRenumbering[nbRenumberingMultFront] = { MD, MDA, Meti
 
 const Renumbering LdltRenumbering[nbRenumberingLdlt] = { RCMK, Sans };
 
-const Renumbering MumpsRenumbering[nbRenumberingMumps] = { AMD, AMF, PORD, Metis, QAMD, Scotch, Auto };
+const Renumbering MumpsRenumbering[nbRenumberingMumps] = { AMD, AMF, PORD, Metis, QAMD, Scotch,
+                                                           Auto, Parmetis, Ptscotch };
 
 const Renumbering PetscRenumbering[nbRenumberingPetsc] = { RCMK, Sans };
 
 const Renumbering GcpcRenumbering[nbRenumberingGcpc] = { RCMK, Sans };
 
-const Preconditioning GcpcPreconditioning[nbPreconditioningGcpc] = { IncompleteLdlt, SimplePrecisionLdlt, LagrBloc };
+const Preconditioning GcpcPreconditioning[nbPreconditioningGcpc] = { IncompleteLdlt,
+                                                                     SimplePrecisionLdlt,
+                                                                     LagrBloc };

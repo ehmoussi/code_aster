@@ -145,7 +145,7 @@ static void libaster_finalize()
 
 static void libaster_debugJeveuxContent( const std::string message )
 {
-    long unit_out = 6;
+    ASTERINTEGER unit_out = 6;
     std::string base("G");
     CALLO_JEIMPR(&unit_out, base, message);
 };

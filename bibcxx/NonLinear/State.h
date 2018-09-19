@@ -44,7 +44,7 @@ class StateInstance
 {
     private:
         /** @brief current index  */
-        int _currentIndex;
+        ASTERINTEGER _currentIndex;
         /** @brief current step */
         double _currentStep;
         /** @brief Champ de déplacement */
@@ -67,7 +67,7 @@ class StateInstance
          * @brief Constructeur
          * @param step index (default value 0)
          */
-        StateInstance( int index = 0, double step = 0.0 ):
+        StateInstance( ASTERINTEGER index = 0, double step = 0.0 ):
           _currentIndex(index),
           _currentStep(step),
           _evolParam("EVOL_NOLI", false),
@@ -103,19 +103,19 @@ class StateInstance
             _precisionParam = precision;
          // set default value of currentStepParam (INST_ETAT_INIT)
             //this-> setCurrentStep( sourceStep );
-	};
+        };
         /** @brief define the state from the result of a previous nonlinear anaysis
         */
 
         void setFromNonLinearEvolution( const NonLinearEvolutionContainerPtr&  evol_noli,
-                                        int sourceIndex )
+                                        ASTERINTEGER sourceIndex )
         {
             _evolParam =  evol_noli->getName();
             _sourceIndexParam = sourceIndex;
             // set default value of currentStepParam & currentStepParam(INST_ETAT_INIT)
             //this-> setCurrentStep( sourceIndex );
             _depl = evol_noli->getRealFieldOnNodes( "DEPL" , sourceIndex );
-	};
+        };
         /**
         * L'état est défini à partir d'evol_noli. Si on ne précise ni instant (sourceStep)
         * ni numéro d'ordre (sourceIndex), l'état est initialisé à partir du dernier
@@ -123,14 +123,14 @@ class StateInstance
         */
         void setFromNonLinearEvolution( const NonLinearEvolutionContainerPtr&  evol_noli )
         {
-            int lastIndex = evol_noli->getNumberOfRanks();
+            ASTERINTEGER lastIndex = evol_noli->getNumberOfRanks();
             setFromNonLinearEvolution( evol_noli, lastIndex );
-	}
+        }
         /** @brief set the value of the current step
         */
         void setCurrentStep ( double step )
         {
-	        _currentStep = step;
+                _currentStep = step;
             _currentStepParam = step;
         };
 
@@ -152,7 +152,7 @@ class StateInstance
         /**
         * @brief get current index
         */
-        int getIndex() const
+        ASTERINTEGER getIndex() const
         {
             return _currentIndex;
         }

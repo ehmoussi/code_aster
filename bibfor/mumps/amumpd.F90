@@ -127,35 +127,6 @@ subroutine amumpd(action, kxmps, rsolu, vcine, nbsol,&
     ASSERT((rouc.eq.'R').and.(prec.eq.'D'))
     dmpsk=>dmps(kxmps)
     iret=0
-    call jeveuo(nosolv//'.SLVK', 'E', vk24=slvk)
-    call jeveuo(nosolv//'.SLVR', 'L', vr=slvr)
-    call jeveuo(nosolv//'.SLVI', 'E', vi=slvi)
-!
-! --- L'UTILISATEUR VEUT-IL UNE ESTIMATION DE LA QUALITE DE LA SOL ?
-! --- => LQUALI
-    epsmax=slvr(2)
-    posttrait=slvk(11)
-    lquali=(epsmax.gt.0.d0)
-!
-! --- POUR "ELIMINER" LE 2EME LAGRANGE:
-! --- OPTION DEBRANCHEE SI CALCUL DE DETERMINANT
-    klag2=slvk(6)
-    lbis=klag2(1:5).eq.'LAGR2'
-!
-! --- TRES PROBABLEMENT COMMANDE FACTORISER (POSTTRAITEMENTS
-! --- INITIALISE A 'XXXX'). ON NE DETRUIRA RIEN A L'ISSU DE LA
-! --- FACTO, AU CAS OU UN OP. RESOUDRE + RESI_RELA>0 SUIVRAIT
-    if (slvk(11)(1:4) .eq. 'XXXX') then
-        lopfac=.true.
-    else
-        lopfac=.false.
-    endif
-!
-! --- TYPE DE RESOLUTION
-    ktypr=slvk(3)
-!
-! --- PARAMETRE NPREC
-    nprec=slvi(1)
 !
 ! --- MUMPS PARALLELE DISTRIBUE ?
     call jeveuo(nomat//'.REFA', 'L', vk24=refa)
@@ -163,24 +134,57 @@ subroutine amumpd(action, kxmps, rsolu, vcine, nbsol,&
     rang=dmpsk%myid
     nbproc=dmpsk%nprocs
 !
+    lquali=.false.
+    if( action(1:5).ne.'DETR_' ) then
+        call jeveuo(nosolv//'.SLVK', 'E', vk24=slvk)
+        call jeveuo(nosolv//'.SLVR', 'L', vr=slvr)
+        call jeveuo(nosolv//'.SLVI', 'E', vi=slvi)
+!
+! --- L'UTILISATEUR VEUT-IL UNE ESTIMATION DE LA QUALITE DE LA SOL ?
+! --- => LQUALI
+        epsmax=slvr(2)
+        posttrait=slvk(11)
+        lquali=(epsmax.gt.0.d0)
+!
+! --- POUR "ELIMINER" LE 2EME LAGRANGE:
+! --- OPTION DEBRANCHEE SI CALCUL DE DETERMINANT
+        klag2=slvk(6)
+        lbis=klag2(1:5).eq.'LAGR2'
+!
+! --- TRES PROBABLEMENT COMMANDE FACTORISER (POSTTRAITEMENTS
+! --- INITIALISE A 'XXXX'). ON NE DETRUIRA RIEN A L'ISSU DE LA
+! --- FACTO, AU CAS OU UN OP. RESOUDRE + RESI_RELA>0 SUIVRAIT
+        if (slvk(11)(1:4) .eq. 'XXXX') then
+            lopfac=.true.
+        else
+            lopfac=.false.
+        endif
+!
+! --- TYPE DE RESOLUTION
+        ktypr=slvk(3)
+!
+! --- PARAMETRE NPREC
+        nprec=slvi(1)
+!
 ! --- MATRICE ASTER DISTRIBUEE ?
-    call dismoi('MATR_DISTRIBUEE', nomat, 'MATR_ASSE', repk=matd)
-    lmd = matd.eq.'OUI'
+        call dismoi('MATR_DISTRIBUEE', nomat, 'MATR_ASSE', repk=matd)
+        lmd = matd.eq.'OUI'
 !
 ! --- MATRICE ASTER HPC ?
-    call dismoi('MATR_HPC', nomat, 'MATR_ASSE', repk=mathpc)
-    lmhpc = mathpc.eq.'OUI'
+        call dismoi('MATR_HPC', nomat, 'MATR_ASSE', repk=mathpc)
+        lmhpc = mathpc.eq.'OUI'
 !
 ! --- MUMPS EST-IL UTILISE COMME PRECONDITIONNEUR ?
 ! --- SI OUI, ON DEBRANCHE LES ALARMES ET INFO (PAS LES UTMESS_F)
-    lpreco = slvk(8)(1:3).eq.'OUI'
+        lpreco = slvk(8)(1:3).eq.'OUI'
 !
 ! --- FILTRAGE DE LA MATRICE DONNEE A MUMPS (UNIQUEMENT NON LINEAIRE)
-    epsmat=slvr(1)
+        epsmat=slvr(1)
 !
 ! --- STRATEGIE MEMOIRE POUR MUMPS
-    usersm=slvk(9)
-    nbfact=slvi(6)
+        usersm=slvk(9)
+        nbfact=slvi(6)
+    endif
 !
 ! --- POUR MONITORING
     call amumpt(0, kmonit, temps, rang, nbproc,&

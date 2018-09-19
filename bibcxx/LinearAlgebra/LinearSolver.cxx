@@ -91,7 +91,7 @@ bool BaseLinearSolverInstance::matrixFactorization( AssemblyMatrixDisplacementDo
     std::string base( "V" );
     if ( currentMatrix->getMemoryType() == Permanent )
         base = std::string( "G" );
-    long cret = 0, npvneg = 0, istop = -9999;
+    ASTERINTEGER cret = 0, npvneg = 0, istop = -9999;
     const std::string matpre( " " );
     const std::string matass = currentMatrix->getName();
 
@@ -101,6 +101,9 @@ bool BaseLinearSolverInstance::matrixFactorization( AssemblyMatrixDisplacementDo
 
     CALLO_MATRIX_FACTOR( solverName, base, &cret, matpre, matass, &npvneg, &istop );
     currentMatrix->_isFactorized = true;
+
+    auto solverType = std::string( LinearSolverNames[_linearSolver] );
+    currentMatrix->setSolverName( solverType );
 
     return true;
 };
@@ -114,13 +117,16 @@ FieldOnNodesDoublePtr BaseLinearSolverInstance::solveDoubleLinearSystem(
         result = FieldOnNodesDoublePtr( new FieldOnNodesDoubleInstance( Permanent ) );
 
     std::string blanc( " " );
-    long nsecm = 0, prepos = 1, istop = 0, iret = 0;
+    ASTERINTEGER nsecm = 0, prepos = 1, istop = 0, iret = 0;
     std::string base( JeveuxMemoryTypesNames[ result->getMemoryType() ] );
 
     CALLO_RESOUD_WRAP( currentMatrix->getName(), blanc, getName(),
                        blanc, &nsecm, currentRHS->getName(),
                        result->getName(), base, blanc,
                        &prepos, &istop, &iret );
+
+    auto solverType = std::string( LinearSolverNames[_linearSolver] );
+    currentMatrix->setSolverName( solverType );
 
     return result;
 };
@@ -135,13 +141,16 @@ FieldOnNodesDoublePtr BaseLinearSolverInstance::solveDoubleLinearSystemWithKinem
         result = FieldOnNodesDoublePtr( new FieldOnNodesDoubleInstance( Permanent ) );
 
     std::string blanc( " " );
-    long nsecm = 0, prepos = 1, istop = 0, iret = 0;
+    ASTERINTEGER nsecm = 0, prepos = 1, istop = 0, iret = 0;
     std::string base( JeveuxMemoryTypesNames[ result->getMemoryType() ] );
 
     CALLO_RESOUD_WRAP( currentMatrix->getName(), blanc, getName(),
                        kinematicsField->getName(), &nsecm, currentRHS->getName(),
                        result->getName(), base, blanc,
                        &prepos, &istop, &iret );
+
+    auto solverType = std::string( LinearSolverNames[_linearSolver] );
+    currentMatrix->setSolverName( solverType );
 
     return result;
 };

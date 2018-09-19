@@ -87,7 +87,7 @@ private:
     /** @brief Radius of th enriched zone */
     double                      _enrichmentRadiusZone;
     /** @brief Number of enriched elements layers */
-    int                         _enrichedLayersNumber;
+    ASTERINTEGER                _enrichedLayersNumber;
     /** @brief List of juncting cracks */
     std::vector< XfemCrackPtr > _junctingCracks;
     /** @brief Point to define juncting cracks */
@@ -333,7 +333,7 @@ public:
         _enrichmentRadiusZone = enrichmentRadiusZone;
     }
 
-    long getEnrichedLayersNumber() const
+    ASTERINTEGER getEnrichedLayersNumber() const
     {
         return _enrichedLayersNumber;
     }

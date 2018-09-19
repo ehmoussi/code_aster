@@ -71,9 +71,9 @@ DataStructure::~DataStructure()// throw ( std::runtime_error )
 #ifdef _DEBUG_CXX
     _tco->deallocate();
     std::string base( " " );
-    long pos = 1;
-    long nbval2 = 0;
-    long retour = 0;
+    ASTERINTEGER pos = 1;
+    ASTERINTEGER nbval2 = 0;
+    ASTERINTEGER retour = 0;
     JeveuxChar24 nothing( " " );
     if( nameWithoutBlanks == "&2" )
     {
@@ -85,7 +85,7 @@ DataStructure::~DataStructure()// throw ( std::runtime_error )
     {
         JeveuxVectorChar24 test( "&&TMP" );
         test->allocate( Temporary, -retour );
-        long nbval2 = -retour;
+        ASTERINTEGER nbval2 = -retour;
         CALLO_JELSTC( base, nameWithoutBlanks, &pos,
                       &nbval2, (*test)[0], &retour );
         std::cout << "Remaining jeveux objects in " << _name << std::endl;

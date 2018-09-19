@@ -120,6 +120,7 @@ bool BaseMeshInstance::readMeshFile( const std::string& fileName, const std::str
     {
         syntax.container[ "FORMAT" ] = format;
         syntax.container[ "UNITE" ] = file1.getLogicalUnit();
+        std::cout << "UNITE " << file1.getLogicalUnit() << std::endl;
 
         CommandSyntax cmdSt( "LIRE_MAILLAGE" );
         cmdSt.setResult( ResultNaming::getCurrentName(), "MAILLAGE" );

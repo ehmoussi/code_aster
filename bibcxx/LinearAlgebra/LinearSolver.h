@@ -253,13 +253,13 @@ class BaseLinearSolverInstance: public DataStructure
             {
                 _algo = "FGMRES";
                 _distMatrix = "NON";
-                _iterNumber = 0;
+                _iterNumber = (ASTERINTEGER)0;
                 _preconditioning = SimplePrecisionLdlt;
                 _precond = PreconditioningNames[ (int)_preconditioning ];
                 _residual = 1.e-6;
                 _precondResidual = -1.0;
-                _reac = 30;
-                _pivotPourcent = 20;
+                _reac = (ASTERINTEGER)30;
+                _pivotPourcent = (ASTERINTEGER)20;
                 _memory = "AUTO";
             }
             if ( currentBaseLinearSolver == Mumps )
@@ -270,8 +270,8 @@ class BaseLinearSolverInstance: public DataStructure
                 _lowRankSize = -1.0;
                 _distMatrix = "NON";
                 _precision = "NON";
-                _nPrec = 8;
-                _pivotPourcent = 20;
+                _nPrec = (ASTERINTEGER)8;
+                _pivotPourcent = (ASTERINTEGER)20;
                 _postPro = "AUTO";
                 _prePro = "AUTO";
                 _residual = -1.0;
@@ -281,17 +281,17 @@ class BaseLinearSolverInstance: public DataStructure
             }
             if ( currentBaseLinearSolver == MultFront )
             {
-                _nPrec = 8;
+                _nPrec = (ASTERINTEGER)8;
                 _stopSingular = "OUI";
             }
             if ( currentBaseLinearSolver == Ldlt )
             {
-                _nPrec = 8;
+                _nPrec = (ASTERINTEGER)8;
                 _stopSingular = "OUI";
             }
             if ( currentBaseLinearSolver == Gcpc )
             {
-                _iterNumber = 0;
+                _iterNumber = (ASTERINTEGER)0;
                 _preconditioning = IncompleteLdlt;
                 _precond = PreconditioningNames[ (int)_preconditioning ];
                 _residual = 1.e-6;
@@ -321,6 +321,13 @@ class BaseLinearSolverInstance: public DataStructure
             _listOfParameters.push_back( &_resolutionType );
             _listOfParameters.push_back( &_acceleration );
         };
+
+        /**
+         * @brief Destructor
+         */
+        ~BaseLinearSolverInstance()
+        {};
+
         /** @brief Returns a ListSyntaxMapContainer object "listsyntax",
             ready to be inserted  in a CommandSyntax object with the key SOLVEUR
         */
@@ -467,7 +474,7 @@ class BaseLinearSolverInstance: public DataStructure
             _filling = filLevel;
         };
 
-        void setFillingLevel( int filLevel ) throw ( std::runtime_error )
+        void setFillingLevel( ASTERINTEGER filLevel ) throw ( std::runtime_error )
         {
             if ( _linearSolver != Petsc && _linearSolver != Gcpc )
                 throw std::runtime_error( "Filling level only allowed with Gcpc or Petsc" );
@@ -501,7 +508,7 @@ class BaseLinearSolverInstance: public DataStructure
             _resolutionType = MatrixTypeNames[ (int)matType ];
         };
 
-        void setMaximumNumberOfIteration( int number ) throw ( std::runtime_error )
+        void setMaximumNumberOfIteration( ASTERINTEGER number ) throw ( std::runtime_error )
         {
             if ( _linearSolver != Petsc && _linearSolver != Gcpc )
                 throw std::runtime_error( "Only allowed with Gcpc or Petsc" );
@@ -513,7 +520,7 @@ class BaseLinearSolverInstance: public DataStructure
             _memory = MemoryManagementNames[ (int)memManagt ];
         };
 
-        void setPivotingMemory( int mem )
+        void setPivotingMemory( ASTERINTEGER mem )
         {
             _pivotPourcent = mem;
         };
@@ -543,14 +550,14 @@ class BaseLinearSolverInstance: public DataStructure
             _precond = PreconditioningNames[ (int)_preconditioning ];
             if ( _preconditioning == IncompleteLdlt )
             {
-                _fillingLevel = 0;
+                _fillingLevel = (ASTERINTEGER)0;
                 if ( _linearSolver == Petsc )
                     _filling = 1.0;
             }
             if ( _preconditioning == SimplePrecisionLdlt )
             {
-                _pivotPourcent = 20;
-                _reac = 30;
+                _pivotPourcent = (ASTERINTEGER)20;
+                _reac = (ASTERINTEGER)30;
                 _renumber = Sans;
                 _renum = std::string( RenumberingNames[ (int)Sans ] );
             }
@@ -566,7 +573,7 @@ class BaseLinearSolverInstance: public DataStructure
             _renumber = reum;
         };
 
-        void setSingularityDetectionThreshold( int nprec )
+        void setSingularityDetectionThreshold( ASTERINTEGER nprec )
         {
             _nPrec = nprec;
         };
@@ -576,7 +583,7 @@ class BaseLinearSolverInstance: public DataStructure
             _residual = residual;
         };
 
-        void setUpdatePreconditioningParameter( int value ) throw ( std::runtime_error )
+        void setUpdatePreconditioningParameter( ASTERINTEGER value ) throw ( std::runtime_error )
         {
             if ( _linearSolver != Petsc && _linearSolver != Gcpc )
                 throw std::runtime_error( "Preconditionong only allowed with Gcpc or Petsc" );
