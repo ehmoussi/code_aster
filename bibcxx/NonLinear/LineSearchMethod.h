@@ -3,10 +3,10 @@
 
 /**
  * @file LineSearchMethod.h
- * @brief Definition of the linesearch method 
+ * @brief Definition of the linesearch method
  * @author Natacha Béreux
  * @section LICENCE
- *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -28,7 +28,7 @@
 #include "astercxx.h"
 
 #include "LinearAlgebra/SolverControl.h"
-#include "Utilities/GenericParameter.h"  
+#include "Utilities/GenericParameter.h"
 
 enum LineSearchEnum { Corde, Mixte, Pilotage };
 const int nbLineSearch = 4;
@@ -38,84 +38,84 @@ class LineSearchMethodInstance
 {
     private:
         /** @brief LineSearch Method */
-        LineSearchEnum _lineSearchMethod; 
+        LineSearchEnum _lineSearchMethod;
         /** @brief Contrôle de la convergence de la méthode  */
         SolverControlPtr _control;
         /** LineSearch method name */
         GenParam _methode;
-        /** Intervalle de recherche de rho */ 
+        /** Intervalle de recherche de rho */
         GenParam _rhoMin ;
-        GenParam _rhoMax ; 
-        GenParam _rhoExcl ; 
+        GenParam _rhoMax ;
+        GenParam _rhoExcl ;
         /** Control */
         GenParam _resi_line_rela;
-        GenParam _iter_line_maxi; 
-        
+        GenParam _iter_line_maxi;
+
         ListGenParam _listOfParameters;
     public:
         /**
          * @brief Constructeur
          */
         LineSearchMethodInstance(  LineSearchEnum curLineSearch = Corde ):
-            _lineSearchMethod ( curLineSearch ), 
-            _control ( SolverControlPtr( new SolverControlInstance())), 
+            _lineSearchMethod ( curLineSearch ),
+            _control ( SolverControlPtr( new SolverControlInstance())),
             _methode( "METHODE", false),
             _rhoMin( "RHO_MIN", 1.e-2, false ),
             _rhoMax( "RHO_MAX", 1.e1, false ),
-            _rhoExcl("RHO_EXCL", 9.e-3, false ), 
-            _resi_line_rela( "RESI_LINE_RELA", false ), 
+            _rhoExcl("RHO_EXCL", 9.e-3, false ),
+            _resi_line_rela( "RESI_LINE_RELA", false ),
             _iter_line_maxi( "ITER_LINE_MAXI", false )
         {
-            _control->setRelativeTolerance( 1.e-1 );   
+            _control->setRelativeTolerance( 1.e-1 );
             _control->setMaximumNumberOfIterations( 3 );
 
             _methode = std::string( LineSearchNames[ (int)curLineSearch ] );
-            
+
             _resi_line_rela = _control->getRelativeTolerance();
             _iter_line_maxi = _control->getMaximumNumberOfIterations();
-            
+
             _listOfParameters.push_back( &_methode );
             _listOfParameters.push_back( &_rhoMin );
             _listOfParameters.push_back( &_rhoMax );
             _listOfParameters.push_back( &_rhoExcl );
             _listOfParameters.push_back( &_resi_line_rela );
-            _listOfParameters.push_back( &_iter_line_maxi ); 
+            _listOfParameters.push_back( &_iter_line_maxi );
         };
         /**
-        @brief set minimum value of rho   
+        @brief set minimum value of rho
         */
         void setMinimumRhoValue( double rhoMin )
         {
             _rhoMin = rhoMin ;
-        }; 
+        };
         /**
-        @brief set maximum value of rho   
+        @brief set maximum value of rho
         */
         void setMaximumRhoValue( double rhoMax )
         {
             _rhoMax = rhoMax ;
-        }; 
+        };
         /**
-        @brief   
+        @brief
         */
         void setExclRhoValue( double rhoExcl )
         {
             _rhoExcl = rhoExcl;
         };
         /**
-        @brief set maximum number of iterations  
+        @brief set maximum number of iterations
         */
-        void setMaximumNumberOfIterations( int nIterMax )
+        void setMaximumNumberOfIterations( ASTERINTEGER nIterMax )
         {
             _iter_line_maxi = nIterMax;
             _control->setMaximumNumberOfIterations( nIterMax );
         };
         /**
-        @brief set the relative tolerance 
+        @brief set the relative tolerance
         */
         void setRelativeTolerance( double reslin )
         {
-            _resi_line_rela = reslin ; 
+            _resi_line_rela = reslin ;
             _control->setRelativeTolerance( reslin );
         };
         /**

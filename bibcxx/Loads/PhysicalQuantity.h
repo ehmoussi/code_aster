@@ -6,7 +6,7 @@
  * @brief Definition of the  Physical Quantities used in Code_Aster
  * @author Natacha Béreux
  * @section LICENCE
- *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -64,7 +64,14 @@ extern const int nbComponent;
 * @def ComponentNames
 * @brief Aster names of the components of the physical quantities
 */
-extern const std::map< PhysicalQuantityComponent, std::string > ComponentNames;
+const std::map< PhysicalQuantityComponent, std::string > ComponentNames = {
+    { Dx, "DX" }, { Dy, "DY" }, { Dz, "DZ" }, { Drx, "DRX" }, { Dry, "DRY" }, { Drz, "DRZ" },
+    { Temp, "TEMP" }, { MiddleTemp, "TEMP_MIL" }, { Pres, "PRES" }, { Fx, "FX" }, { Fy, "FY" },
+    { Fz, "FZ" }, { Mx, "MX" }, { My, "MY" }, { Mz, "MZ" }, { N, "N" }, { Vy, "VY" },
+    { Vz, "VZ" }, { Mt, "MT" }, { Mfy, "MFY" }, { Mfz, "MFZ" }, { F1, "F1" }, { F2, "F2" },
+    { F3, "F3" }, { Mf1, "MF1" }, { Mf2, "MF2" }, { Impe, "IMPE" }, { Vnor, "VNOR" },
+    { Flun, "FLUN" }, { FlunHydr1, "FLUN_HYDR1" }, { FlunHydr2, "FLUN_HYDR2" },
+};
 
 typedef std::vector< PhysicalQuantityComponent > VectorComponent;
 extern const VectorComponent allComponents;

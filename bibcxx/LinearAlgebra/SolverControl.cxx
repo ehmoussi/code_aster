@@ -3,7 +3,7 @@
  * @brief Control class to eval the convergence status of an iterative solver 
  * @author Natacha Béreux 
  * @section LICENCE
- *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -28,12 +28,12 @@
 #include "LinearAlgebra/SolverControl.h"
 
 
-SolverControlInstance::SolverControlInstance( double rTol, int nIterMax ): 
+SolverControlInstance::SolverControlInstance( double rTol, ASTERINTEGER nIterMax ): 
     _relativeTol( rTol ), _nIterMax(nIterMax) 
 {}
 
 
-ConvergenceState SolverControlInstance::check( const double relativeResNorm, const int iter ) const
+ConvergenceState SolverControlInstance::check( const double relativeResNorm, const ASTERINTEGER iter ) const
 {
     if ( abs(relativeResNorm) <= _relativeTol ) 
     {

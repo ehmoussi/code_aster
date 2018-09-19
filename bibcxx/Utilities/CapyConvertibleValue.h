@@ -251,12 +251,12 @@ template< typename Type,
     // Pour les vecteurs d'autres grandeurs, le MatchingType sera un vecteur std::string
     // Pour le reste, le MatchingType sera un std::string
           typename MatchingType = typename
-                    std::conditional< std::is_same< Type, int >::value ||
+                    std::conditional< std::is_same< Type, ASTERINTEGER >::value ||
                                       std::is_same< Type, double >::value ||
                                       std::is_same< Type, DoubleComplex >::value ||
                                       std::is_same< Type, std::vector< double > >::value ||
                                       std::is_same< Type, std::vector< DoubleComplex > >::value ||
-                                      std::is_same< Type, std::vector< int > >::value,
+                                      std::is_same< Type, std::vector< ASTERINTEGER > >::value,
                                       Type, typename
                                             std::conditional< is_vector< Type >::value,
                                                               std::vector< std::string >,
@@ -340,12 +340,12 @@ private:
      * @warning la gestion du pointeur est déléguée à l'appelant !!
      */
     template< typename T = Type, typename M = MatchingType >
-    typename std::enable_if< (std::is_same< T, int >::value ||
+    typename std::enable_if< (std::is_same< T, ASTERINTEGER >::value ||
                              std::is_same< T, double >::value ||
                              std::is_same< T, DoubleComplex >::value ||
                              std::is_same< T, std::vector< double > >::value ||
                              std::is_same< T, std::vector< DoubleComplex > >::value ||
-                             std::is_same< T, std::vector< int > >::value) &&
+                             std::is_same< T, std::vector< ASTERINTEGER > >::value) &&
                              !std::is_same< M, std::string >::value, GenParam* >::type
     virtualGetValueOfKeyWord() const throw ( std::runtime_error )
     {
@@ -356,7 +356,7 @@ private:
     };
 
     template< typename T = Type, typename M = MatchingType >
-    typename std::enable_if< ( std::is_same< T, int >::value ||
+    typename std::enable_if< ( std::is_same< T, ASTERINTEGER >::value ||
                                std::is_same< T, double>::value ) &&
                              std::is_same< M, std::string >::value, GenParam* >::type
     virtualGetValueOfKeyWord() const throw ( std::runtime_error )
@@ -376,7 +376,7 @@ private:
     typename std::enable_if< is_vector< T >::value &&
                              !std::is_same< T, std::vector< double > >::value &&
                              !std::is_same< T, std::vector< DoubleComplex > >::value &&
-                             !std::is_same< T, std::vector< int > >::value &&
+                             !std::is_same< T, std::vector< ASTERINTEGER > >::value &&
                              !( is_vector< T >::value &&
                                std::is_base_of< DataStructure,
                                                 typename is_vector_of_shared_ptr< T >::value_type >::value ) &&
@@ -465,12 +465,12 @@ private:
      * @warning la gestion du pointeur est déléguée à l'appelant !!
      */
     template< typename T = Type, typename M = MatchingType >
-    typename std::enable_if< !std::is_same< T, int >::value &&
+    typename std::enable_if< !std::is_same< T, ASTERINTEGER >::value &&
                              !std::is_same< T, double >::value &&
                              !std::is_same< T, DoubleComplex >::value &&
                              !std::is_same< T, std::vector< double > >::value &&
                              !std::is_same< T, std::vector< DoubleComplex > >::value &&
-                             !std::is_same< T, std::vector< int > >::value &&
+                             !std::is_same< T, std::vector< ASTERINTEGER > >::value &&
                              !is_vector< T >::value &&
                              !( is_vector< T >::value &&
                                std::is_base_of< DataStructure,

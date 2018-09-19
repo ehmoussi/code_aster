@@ -146,7 +146,7 @@ ElementaryMatrixPtr DiscreteProblemInstance::buildElementaryRigidityMatrix( doub
     _study->buildListOfLoads();
     JeveuxVectorChar24 jvListOfLoads = _study->getListOfLoads()->getListVector();
     jvListOfLoads->updateValuePointer();
-    long nbLoad = jvListOfLoads->size();
+    ASTERINTEGER nbLoad = jvListOfLoads->size();
 
     std::string blanc( 24, ' ' );
     std::string modelName = curModel->getName();
@@ -162,10 +162,10 @@ ElementaryMatrixPtr DiscreteProblemInstance::buildElementaryRigidityMatrix( doub
     CommandSyntax cmdSt( "MECA_STATIQUE" );
     cmdSt.setResult( "AUCUN", "AUCUN" );
     SyntaxMapContainer dict;
-    dict.container["INFO"] = 1;
+    dict.container["INFO"] = (ASTERINTEGER)1;
     cmdSt.define( dict );
 
-    long nh = 0;
+    ASTERINTEGER nh = 0;
 
     CALLO_MERIME_WRAP( modelName, &nbLoad, *(jvListOfLoads->getDataPtr()),
                        codedMater->getName(), caraName, &time,

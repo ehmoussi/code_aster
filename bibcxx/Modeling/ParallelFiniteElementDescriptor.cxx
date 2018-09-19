@@ -45,7 +45,7 @@ ParallelFiniteElementDescriptorInstance::ParallelFiniteElementDescriptorInstance
 
     VectorInt delayedElemToKeep;
     VectorInt meshNodesToKeep( owner.size(), -1 );
-    long nbOldDelayedNodes = FEDesc->getNumberOfDelayedNodes();
+    ASTERINTEGER nbOldDelayedNodes = FEDesc->getNumberOfDelayedNodes();
     _delayedElemToKeep = VectorLong( nbOldDelayedNodes, 1 );
     VectorInt delayedNodesToKeep( nbOldDelayedNodes, -1 );
     VectorInt delayedNodesNumbering( nbOldDelayedNodes, 0 );
@@ -53,7 +53,7 @@ ParallelFiniteElementDescriptorInstance::ParallelFiniteElementDescriptorInstance
     VectorInt delayedNodesOwner( nbOldDelayedNodes, -1 );
     VectorInt nbOwnedDelayedNodes( nbProcs, 0 );
     std::vector< std::set< int > > sharedDelayedNodes( nbOldDelayedNodes );
-    long nbDelayedNodes = 0, nbElemToKeep = 0, totalSizeToKeep = 0;
+    ASTERINTEGER nbDelayedNodes = 0, nbElemToKeep = 0, totalSizeToKeep = 0;
     // On commence par regarder les noeuds et elements qui doivent etre
     // gardes dans le nouveau ligrel
     for( const auto meshElem : explorer )
@@ -68,7 +68,7 @@ ParallelFiniteElementDescriptorInstance::ParallelFiniteElementDescriptorInstance
             // Si on a un noeud physique...
             if( numNode > 0 )
             {
-                const long num2 = numNode - 1;
+                const ASTERINTEGER num2 = numNode - 1;
                 curOwner = owner[ num2 ];
                 // ... et que le processeur courant le possede, on conserve ce noeud
                 // et on conserve l'element
@@ -241,11 +241,11 @@ ParallelFiniteElementDescriptorInstance::ParallelFiniteElementDescriptorInstance
         const auto& liel = FEDesc->getListOfGroupOfElements();
         int nbCollObj = 0, totalCollSize = 0;
         std::vector< VectorLong > toLiel( liel.size(), VectorLong() );
-        long type = 0;
+        ASTERINTEGER type = 0;
         nbCollObj = 1;
         for( const auto& colObj : liel )
         {
-            const long numInColl = colObj.getElementNumber();
+            const ASTERINTEGER numInColl = colObj.getElementNumber();
             bool addedElem = false;
             for( const auto& val : colObj )
             {
@@ -314,11 +314,11 @@ ParallelFiniteElementDescriptorInstance::ParallelFiniteElementDescriptorInstance
         _dofOfDelayedNumberedConstraintNodes->allocate( memType, nbDelayedNodes*nec );
         const auto& dNodesComp = FEDesc->getDelayedNodesComponentDescriptor();
         const auto& numbering = FEDesc->getDelayedNodesNumbering();
-        for( long num = 0; num < nbOldDelayedNodes; ++num )
+        for( ASTERINTEGER num = 0; num < nbOldDelayedNodes; ++num )
         {
             if( delayedNodesToKeep[ num ] == rank )
             {
-                const long newNum = delayedNodesNumbering[ num ];
+                const ASTERINTEGER newNum = delayedNodesNumbering[ num ];
                 for( int j = 0; j < nec; ++j )
                 {
                     const int newPos = nec*newNum + j;

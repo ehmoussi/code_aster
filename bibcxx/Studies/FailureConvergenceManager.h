@@ -173,8 +173,8 @@ protected:
     GenericSubstepingOnErrorInstance( ActionTypeEnum type ):
         GenericActionInstance( type ),
         _isAuto( "SUBD_METHODE", std::string( "MANUEL" ), false ),
-        _step( "SUBD_PAS", 4, false ),
-        _level( "SUBD_NIVEAU", 3, false ),
+        _step( "SUBD_PAS", (ASTERINTEGER)4, false ),
+        _level( "SUBD_NIVEAU", (ASTERINTEGER)3, false ),
         _minimumStep( "SUBD_PAS_MINI", 0., false )
     {
         _listParam.push_back( &_isAuto );
@@ -206,8 +206,8 @@ public:
         else
         {
             _isAuto = "MANUEL";
-            _step.setValueIfUnset( 4 );
-            _level.setValueIfUnset( 3 );
+            _step.setValueIfUnset( (ASTERINTEGER)4 );
+            _level.setValueIfUnset( (ASTERINTEGER)3 );
         }
     };
 
@@ -215,7 +215,7 @@ public:
      * @brief Fixer le niveau de sous-découpage
      * @param level niveau
      */
-    void setLevel( const int& level )
+    void setLevel( const ASTERINTEGER& level )
     {
         _level = level;
     };
@@ -232,7 +232,7 @@ public:
     /**
      * @brief Fixer le nombre de découpage d'un pas de temps
      */
-    void setStep( const int& step )
+    void setStep( const ASTERINTEGER& step )
     {
         _step = step;
     };
@@ -345,8 +345,8 @@ public:
         {
             _isAuto = "MANUEL";
 
-            _step.setValueIfUnset( 4 );
-            _level.setValueIfUnset( 3 );
+            _step.setValueIfUnset( (ASTERINTEGER)4 );
+            _level.setValueIfUnset( (ASTERINTEGER)3 );
             _minimumStep.setValueIfUnset( 0. );
 
             _timeStepSubstep.setMandatory( false );
@@ -360,7 +360,7 @@ public:
      * @brief Fixer le niveau de sous-découpage
      * @param level niveau
      */
-    void setLevel( const int& level )
+    void setLevel( const ASTERINTEGER& level )
     {
         _level = level;
     };
@@ -377,7 +377,7 @@ public:
     /**
      * @brief Fixer le nombre de découpage d'un pas de temps
      */
-    void setStep( const int& step )
+    void setStep( const ASTERINTEGER& step )
     {
         _step = step;
     };
@@ -493,7 +493,9 @@ protected:
 
 public:
     /** @brief Constructeur par défaut */
-    GenericConvergenceErrorInstance(): _eventName( "EVENEMENT", NoErrorType, true )
+    GenericConvergenceErrorInstance(): _eventName( "EVENEMENT",
+                                                   std::string( ErrorNames[ NoErrorType ] ),
+                                                   true )
     {};
 
     ~GenericConvergenceErrorInstance()
