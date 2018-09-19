@@ -85,8 +85,8 @@ bool BaseMeshInstance::readMeshFile( const std::string& fileName, const std::str
 
         CommandSyntax* cmdSt2 = new CommandSyntax( preCmd );
         SyntaxMapContainer syntax2;
-        syntax2.container[ "UNITE_" + format ] = file1.getLogicalUnit();
-        syntax2.container[ "UNITE_MAILLAGE" ] = file2.getLogicalUnit();
+        syntax2.container[ "UNITE_" + format ] = (ASTERINTEGER)file1.getLogicalUnit();
+        syntax2.container[ "UNITE_MAILLAGE" ] = (ASTERINTEGER)file2.getLogicalUnit();
         cmdSt2->define( syntax2 );
 
         try
@@ -99,7 +99,7 @@ bool BaseMeshInstance::readMeshFile( const std::string& fileName, const std::str
         }
         delete cmdSt2;
         syntax.container[ "FORMAT" ] = "ASTER";
-        syntax.container[ "UNITE" ] = file2.getLogicalUnit();
+        syntax.container[ "UNITE" ] = (ASTERINTEGER)file2.getLogicalUnit();
 
         CommandSyntax cmdSt( "LIRE_MAILLAGE" );
         cmdSt.setResult( ResultNaming::getCurrentName(), "MAILLAGE" );
@@ -119,7 +119,7 @@ bool BaseMeshInstance::readMeshFile( const std::string& fileName, const std::str
     else
     {
         syntax.container[ "FORMAT" ] = format;
-        syntax.container[ "UNITE" ] = file1.getLogicalUnit();
+        syntax.container[ "UNITE" ] = (ASTERINTEGER)file1.getLogicalUnit();
 
         CommandSyntax cmdSt( "LIRE_MAILLAGE" );
         cmdSt.setResult( ResultNaming::getCurrentName(), "MAILLAGE" );

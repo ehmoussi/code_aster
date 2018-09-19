@@ -82,7 +82,7 @@ FieldOnNodesDoublePtr CalculationInputVariablesInstance::computeMechanicalLoads
 
     const auto compor = _mater->getBehaviourField();
     std::string numName( dofNUM->getName() ), out( 24, ' ' );
-    long a = 0, b = 0, c = 0, d = 0;
+    ASTERINTEGER a = 0, b = 0, c = 0, d = 0;
     if( _hydr ) a = 1;
     if( _sech ) b = 1;
     if( _temp ) c = 1;

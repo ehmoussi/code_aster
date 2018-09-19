@@ -36,12 +36,12 @@ PyObject* SyntaxMapContainer::convertToPythonDictionnary( PyObject* returnDict )
             const int& tmp = boost::get< int >( (*curIter).second );
             PyDict_SetItemString( returnDict, (*curIter).first.c_str(), PyLong_FromLong( tmp ) );
         }
-        else if ( (*curIter).second.type() == typeid( VectorInt ) )
+        else if ( (*curIter).second.type() == typeid( VectorLong ) )
         {
-            const VectorInt& currentList = boost::get< VectorInt >( (*curIter).second );
+            const VectorLong& currentList = boost::get< VectorLong >( (*curIter).second );
             PyObject* listValues = PyList_New( currentList.size() );
             int count = 0;
-            for ( VectorIntCIter iter = currentList.begin();
+            for ( VectorLongCIter iter = currentList.begin();
                   iter != currentList.end();
                   ++iter )
             {

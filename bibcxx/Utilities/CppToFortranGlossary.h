@@ -6,7 +6,7 @@
  * @brief Fichier entete de la struct CppToFortranGlossary
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -44,7 +44,7 @@ class Glossary
           * @todo Ce sera à changer quand on se passera des enums pour PhysicalQuantity, etc.
           */
         typedef std::map< std::string, int > MapStrInt;
-        typedef MapStrInt::iterator MapStrIntIter;
+        typedef MapStrInt::const_iterator MapStrIntIter;
 
         MapStrInt _strToInt;
         MapStrInt _memManagement;
@@ -73,7 +73,7 @@ class Glossary
          * @param searchPhysics Nom d'un nom de composante dans le fichier de commande
          * @return une valeur dans l'enum PhysicalQuantityComponent
          */
-        PhysicalQuantityComponent getComponent( std::string searchComp )
+        PhysicalQuantityComponent getComponent( std::string searchComp ) const
             throw( std::runtime_error )
         {
             MapStrIntIter curIter = _strToInt.find( searchComp );
@@ -85,7 +85,7 @@ class Glossary
         /**
          * @brief getIterativeSolverAlgorithm
          */
-        IterativeSolverAlgorithm getIterativeSolverAlgorithm( std::string searchMod )
+        IterativeSolverAlgorithm getIterativeSolverAlgorithm( std::string searchMod ) const
             throw( std::runtime_error )
         {
             MapStrIntIter curIter = _algo.find( searchMod );
@@ -97,7 +97,7 @@ class Glossary
         /**
          * @brief getLagrangeTreatment
          */
-        LagrangeTreatment getLagrangeTreatment( std::string searchMod )
+        LagrangeTreatment getLagrangeTreatment( std::string searchMod ) const
             throw( std::runtime_error )
         {
             MapStrIntIter curIter = _lagrTreatment.find( searchMod );
@@ -109,7 +109,7 @@ class Glossary
         /**
          * @brief getMatrixType
          */
-        MatrixType getMatrixType( std::string searchMod ) throw( std::runtime_error )
+        MatrixType getMatrixType( std::string searchMod ) const throw( std::runtime_error )
         {
             MapStrIntIter curIter = _matrTyp.find( searchMod );
             if( curIter == _matrTyp.end() )
@@ -120,7 +120,7 @@ class Glossary
         /**
          * @brief getMemoryManagement
          */
-        MemoryManagement getMemoryManagement( std::string searchMod )
+        MemoryManagement getMemoryManagement( std::string searchMod ) const
             throw( std::runtime_error )
         {
             MapStrIntIter curIter = _memManagement.find( searchMod );
@@ -134,7 +134,7 @@ class Glossary
          * @param searchMod Nom d'une physique dans le fichier de commande
          * @return une valeur dans l'enum Modelings
          */
-        Modelings getModeling( std::string searchMod ) throw( std::runtime_error )
+        Modelings getModeling( std::string searchMod ) const throw( std::runtime_error )
         {
             MapStrIntIter curIter = _strToInt.find( searchMod );
             if( curIter == _strToInt.end() )
@@ -145,7 +145,7 @@ class Glossary
         /**
          * @brief getMumpsAcceleration
          */
-        MumpsAcceleration getMumpsAcceleration( std::string searchMod )
+        MumpsAcceleration getMumpsAcceleration( std::string searchMod ) const
             throw( std::runtime_error )
         {
             MapStrIntIter curIter = _acce.find( searchMod );
@@ -157,7 +157,7 @@ class Glossary
         /**
          * @brief getMumpsPostTreatment
          */
-        MumpsPostTreatment getMumpsPostTreatment( std::string searchMod )
+        MumpsPostTreatment getMumpsPostTreatment( std::string searchMod ) const
             throw( std::runtime_error )
         {
             MapStrIntIter curIter = _post.find( searchMod );
@@ -171,7 +171,7 @@ class Glossary
          * @param searchPhysics Nom d'une physique dans le fichier de commande
          * @return une valeur dans l'enum Physics
          */
-        Physics getPhysics( std::string searchPhysics ) throw( std::runtime_error )
+        Physics getPhysics( std::string searchPhysics ) const throw( std::runtime_error )
         {
             MapStrIntIter curIter = _strToInt.find( searchPhysics );
             if( curIter == _strToInt.end() )
@@ -184,7 +184,7 @@ class Glossary
          * @param searchRenum Nom d'un solveur dans le fichier de commande
          * @return une valeur dans l'enum Renumbering
          */
-        Renumbering getRenumbering( std::string searchRenum ) throw( std::runtime_error )
+        Renumbering getRenumbering( std::string searchRenum ) const throw( std::runtime_error )
         {
             MapStrIntIter curIter = _renum.find( searchRenum );
             if( curIter == _renum.end() )
@@ -197,7 +197,7 @@ class Glossary
          * @param searchPrecond Nom d'un solveur dans le fichier de commande
          * @return une valeur dans l'enum Preconditioning
          */
-        Preconditioning getPreconditioning( std::string searchPrecond )
+        Preconditioning getPreconditioning( std::string searchPrecond ) const
             throw( std::runtime_error )
         {
             MapStrIntIter curIter = _precond.find( searchPrecond );
@@ -211,7 +211,7 @@ class Glossary
          * @param searchSol Nom d'un solveur dans le fichier de commande
          * @return une valeur dans l'enum LinearSolverEnum
          */
-        LinearSolverEnum getSolver( std::string searchSol ) throw( std::runtime_error )
+        LinearSolverEnum getSolver( std::string searchSol ) const throw( std::runtime_error )
         {
             MapStrIntIter curIter = _strToInt.find( searchSol );
             if( curIter == _strToInt.end() )
@@ -219,6 +219,8 @@ class Glossary
             return ( LinearSolverEnum )( curIter->second );
         };
 };
+
+extern Glossary* fortranGlossary2;
 
 Glossary* getGlossary();
 

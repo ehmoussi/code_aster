@@ -33,7 +33,7 @@ bool CodedMaterialInstance::allocate()
     std::string materName = _mater->getName();
     materName.resize(24, ' ');
     std::string mate = blanc;
-    long thm = 0;
+    ASTERINTEGER thm = 0;
     if( _model->existsThm() ) thm = 1;
     std::string strJeveuxBase( "G" );
     CALLO_RCMFMC_WRAP( materName, mate, &thm, getName(), strJeveuxBase );
@@ -43,7 +43,7 @@ bool CodedMaterialInstance::allocate()
 bool CodedMaterialInstance::constant() const
 {
     const std::string typeco( "CHAM_MATER" );
-    long repi = 0, ier = 0;
+    ASTERINTEGER repi = 0, ier = 0;
     JeveuxChar32 repk(" ");
     const std::string arret( "C" );
     const std::string questi( "ELAS_FO" );

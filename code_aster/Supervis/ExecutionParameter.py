@@ -179,9 +179,9 @@ class ExecutionParameter(object):
             help="turn on running mode for testcase")
 
         parser.add_argument('--memory',
-            action='store', type=float, default=2048,
+            action='store', type=float, default=2047,
             help="memory limit in MB used for code_aster objects "
-                 "(default: 2048 MB)")
+                 "(default: 2047 MB)")
         parser.add_argument('--tpmax',
             action='store', type=float, default=86400,
             help="time limit of the execution in seconds (default: 1 day)")

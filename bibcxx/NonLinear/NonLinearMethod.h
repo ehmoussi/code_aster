@@ -6,7 +6,7 @@
  * @brief Definition of the static mechanical solver
  * @author Natacha Béreux
  * @section LICENCE
- *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -27,7 +27,7 @@
 /* person_in_charge: natacha.bereux at edf.fr */
 #include "astercxx.h"
 
-#include "Utilities/GenericParameter.h"  
+#include "Utilities/GenericParameter.h"
 
 
 enum NonLinearMethodEnum { NewtonMethod, Implex, NewtonKrylov };
@@ -51,29 +51,29 @@ class NonLinearMethodInstance
         PredictionEnum _pred;
         /** @brief Iteration Matrix */
         MatrixEnum _mat;
-        // mot-clé simple METHODE 
-        GenParam     _methode; 
-        // mot-cle facteur NEWTON 
+        // mot-clé simple METHODE
+        GenParam     _methode;
+        // mot-cle facteur NEWTON
         GenParam     _prediction;
-        // evol_noli 
+        // evol_noli
         GenParam     _matr_rigi_syme;
         GenParam     _matrice;
         GenParam     _reac_incr;
         GenParam     _reac_iter;
         GenParam     _reac_iter_elas;
         GenParam     _pas_mini_elas;
-        
+
         ListGenParam _listOfMethodParameters;
         ListGenParam _listOfNewtonParameters;
     public:
         /**
          * @brief Constructeur
          */
-        NonLinearMethodInstance( const NonLinearMethodEnum curNLMethod = NewtonMethod): 
+        NonLinearMethodInstance( const NonLinearMethodEnum curNLMethod = NewtonMethod):
             _nonLinearMethod( curNLMethod ),
-            _methode("METHODE", false), 
-            _prediction( "PREDICTION", false), 
-            _matr_rigi_syme("MATR_RIGI_SYME", false), 
+            _methode("METHODE", false),
+            _prediction( "PREDICTION", false),
+            _matr_rigi_syme("MATR_RIGI_SYME", false),
             _matrice( "MATRICE", false),
             _reac_incr("REAC_INCR",false),
             _reac_iter("REAC_ITER", false),
@@ -87,11 +87,11 @@ class NonLinearMethodInstance
                 {
                 _prediction = "TANGENTE";
                 _matrice = "TANGENTE";
-                _reac_incr = 1;
-                _reac_iter = 0;
-                _reac_iter_elas = 0;
-                _pas_mini_elas = 0;
-                _matr_rigi_syme = "NON"; 
+                _reac_incr = (ASTERINTEGER)1;
+                _reac_iter = (ASTERINTEGER)0;
+                _reac_iter_elas = (ASTERINTEGER)0;
+                _pas_mini_elas = (ASTERINTEGER)0;
+                _matr_rigi_syme = "NON";
                 _listOfNewtonParameters.push_back( &_prediction );
                 _listOfNewtonParameters.push_back( &_matrice );
                 _listOfNewtonParameters.push_back( &_reac_incr );
@@ -101,28 +101,28 @@ class NonLinearMethodInstance
                 _listOfNewtonParameters.push_back( &_matr_rigi_syme );
                 }
         };
-        
+
         /**
-        * @brief Define prediction method 
+        * @brief Define prediction method
         */
         void setPrediction( PredictionEnum pred )
         {
           _pred = pred;
           _prediction = std::string( PredictionNames[ (int)_pred ] );
-        };        
-        
+        };
+
         /**
-        * @brief Define which matrix is used for the Newton iterations 
+        * @brief Define which matrix is used for the Newton iterations
         */
         void setMatrix( MatrixEnum matrix )
         {
           _mat = matrix;
           _matrice = std::string( MatrixNames[ (int)_mat ] );
-        };  
+        };
         /**
-        * @brief Force Symetry of the stiffness matrix during Newton iterations 
+        * @brief Force Symetry of the stiffness matrix during Newton iterations
         */
-        void forceStiffnessSymetry( bool force_symetry ) 
+        void forceStiffnessSymetry( bool force_symetry )
         {
             if ( force_symetry )
                _matr_rigi_syme = "OUI" ;

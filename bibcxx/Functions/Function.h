@@ -84,7 +84,7 @@ class BaseFunctionInstance: public GenericFunctionInstance
         /**
          * @brief Allocate function
          */
-        virtual void allocate( JeveuxMemory mem, long size ) throw ( std::runtime_error );
+        virtual void allocate( JeveuxMemory mem, ASTERINTEGER size ) throw ( std::runtime_error );
 
         /**
          * @brief Get the result name
@@ -175,7 +175,7 @@ class BaseFunctionInstance: public GenericFunctionInstance
         /**
          * @brief Return the number of points of the function
          */
-        virtual long maximumSize() const throw ( std::runtime_error )
+        virtual ASTERINTEGER maximumSize() const throw ( std::runtime_error )
         {
             return _value->size() / 2;
         }
@@ -183,7 +183,7 @@ class BaseFunctionInstance: public GenericFunctionInstance
         /**
          * @brief Return the number of points of the function
          */
-        virtual long size() const throw ( std::runtime_error )
+        virtual ASTERINTEGER size() const throw ( std::runtime_error )
         {
             return _value->size() / 2;
         }
@@ -278,12 +278,12 @@ public:
     /**
      * @brief Allocate function
      */
-    void allocate( JeveuxMemory mem, long size ) throw ( std::runtime_error );
+    void allocate( JeveuxMemory mem, ASTERINTEGER size ) throw ( std::runtime_error );
 
     /**
      * @brief Return the number of points of the function
      */
-    virtual long maximumSize() const throw ( std::runtime_error )
+    virtual ASTERINTEGER maximumSize() const throw ( std::runtime_error )
     {
         return _value->size() / 3;
     }
@@ -291,7 +291,7 @@ public:
     /**
      * @brief Return the number of points of the function
      */
-    long size() const throw ( std::runtime_error )
+    ASTERINTEGER size() const throw ( std::runtime_error )
     {
         return _value->size() / 3;
     }
