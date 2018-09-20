@@ -3,45 +3,43 @@
 
 import code_aster
 from code_aster.Commands import *
+import numpy as np
+# from mpi4py import MPI
 
 code_aster.init()
 
 test = code_aster.TestCase()
 
-#parallel=False
+# parallel=False
 parallel=True
 
 if (parallel):
     MA = code_aster.ParallelMesh()
-    MA.readMedFile( "xxParallelNonlinearMechanics001a" )
+    MA.readMedFile( "xxParallelLinearTransientDynamics001a" )
 else:
     MA = code_aster.Mesh()
-    MA.readMedFile("xxParallelNonlinearMechanics001a.med")
+    MA.readMedFile("xxParallelLinearTransientDynamics001a.med")
 
 MO=AFFE_MODELE(MAILLAGE=MA,DISTRIBUTION=_F(METHODE='CENTRALISE'),
                AFFE=(
-                   _F(TOUT='OUI', PHENOMENE='MECANIQUE', MODELISATION='3D',),
-                   _F(GROUP_MA = ('COTE_H','COTE_B'),PHENOMENE = 'MECANIQUE',
-                    MODELISATION = '3D_ABSO')),
+                    _F(TOUT='OUI', PHENOMENE='MECANIQUE', MODELISATION='3D',),
+                    _F(GROUP_MA = ('COTE_H'),PHENOMENE = 'MECANIQUE',
+                        MODELISATION = '3D_ABSO')),
                    )
 
-MAT=DEFI_MATERIAU(ELAS=_F(E=1., NU=0.3, RHO=1, AMOR_ALPHA=0.1, AMOR_BETA=0.1),)
+MAT=DEFI_MATERIAU(ELAS=_F(E=1000., NU=0.3, RHO=1000, AMOR_ALPHA=0.1, AMOR_BETA=0.1),)
 
 CHMAT=AFFE_MATERIAU(MAILLAGE=MA, AFFE=_F(TOUT='OUI', MATER=MAT,),)
 
-CHA1=AFFE_CHAR_CINE(MODELE=MO, MECA_IMPO=_F(GROUP_MA="COTE_H", DX=0.0,DY=0.0,DZ=0.0,))
-CHA2=AFFE_CHAR_CINE(MODELE=MO, MECA_IMPO=_F(GROUP_MA="COTE_B", DX=0.0,DY=0.0,DZ=0.01,))
-
-vitex=DEFI_FONCTION( NOM_PARA='INST', INTERPOL = 'LIN',
-                    PROL_DROITE='LINEAIRE',
-                    ABSCISSE=[0,1],  ORDONNEE=[0,1])
+sinus = FORMULE(VALE='sin(4*INST*pi*2.)',
+                NOM_PARA='INST',)
 
 ONDE=AFFE_CHAR_MECA_F(  MODELE=MO,
-              ONDE_PLANE=_F( DIRECTION = (0., 1., 0.), TYPE_ONDE = 'SH', #'P', #'S',
-                 FONC_SIGNAL = vitex,
-                 DIST=-10., #-2000.,
-                 DIST_REFLECHI=0.,
-                 GROUP_MA= ('COTE_H','COTE_B'),)
+              ONDE_PLANE=_F( DIRECTION = (0., 0., 1.), TYPE_ONDE = 'P',
+                 FONC_SIGNAL = sinus,
+                 DIST=0.,
+                 DIST_REFLECHI=0.5,
+                 GROUP_MA= ('COTE_H',),)
                           )
 
 KEL=CALC_MATR_ELEM(OPTION='RIGI_MECA', MODELE=MO, CHAM_MATER=CHMAT)
@@ -58,9 +56,7 @@ DAMPING=ASSE_MATRICE(MATR_ELEM=CEL, NUME_DDL=NUMEDDL)
 
 MASS=ASSE_MATRICE(MATR_ELEM=MEL, NUME_DDL=NUMEDDL)
 
-LISTINST=DEFI_LIST_REEL(DEBUT=0., INTERVALLE=(_F(JUSQU_A=10,NOMBRE=10,),),);
-
-print CHA1.getType()
+LISTINST=DEFI_LIST_REEL(DEBUT=0., INTERVALLE=(_F(JUSQU_A=1,NOMBRE=10,),),);
 
 DYNA=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='PHYS',
                         MODELE=MO,
@@ -69,8 +65,6 @@ DYNA=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='PHYS',
                         MATR_AMOR=DAMPING,
                         EXCIT=(
                           _F(  CHARGE = ONDE),
-                        #   _F(  CHARGE = CHA1),
-                        #   _F(  CHARGE = CHA2, ),
                           ),
                         SOLVEUR=_F(METHODE='PETSC', PRE_COND='GAMG',),
                         INCREMENT=_F( LIST_INST = LISTINST),
@@ -78,5 +72,15 @@ DYNA=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='PHYS',
                         SCHEMA_TEMPS=_F(SCHEMA='NEWMARK',),
                         INFO=2,
                         )
+
+# depl=DYNA.getRealFieldOnNodes("DEPL",10)
+# v=depl.EXTR_COMP()
+
+# total=np.sum(v.valeurs)
+
+# global_sum = np.zeros(1)
+
+# MPI.COMM_WORLD.Reduce(np.array(total), global_sum, op=MPI.SUM)
+# print global_sum[0]
 
 test.assertTrue(True)
