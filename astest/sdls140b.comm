@@ -43,7 +43,15 @@ Cs = sqrt((Gsol / Msol));
 
 lcara=((1 + alpha) * 2) * rb
 
-mail=LIRE_MAILLAGE( );
+mail1=LIRE_MAILLAGE( );
+
+mail=CREA_MAILLAGE(MAILLAGE=mail1,
+                    CREA_POI1 =(
+                                _F(NOM_GROUP_MA = 'PLATE',
+                                   GROUP_MA = ('FOND_RG','FOND_RD',)),  
+                                 ),
+                    );
+
 mail=DEFI_GROUP(reuse =mail,
                 MAILLAGE=mail,
                 CREA_GROUP_NO=_F(NOM='LSURF',NOEUD=('N785','N786','N540','N781',
@@ -61,6 +69,7 @@ mail=MODI_MAILLAGE(reuse =mail,
                 ORIE_PEAU_2D=_F(GROUP_MA='FOND',GROUP_MA_SURF='FONDAT',),
                 );
 
+IMPR_RESU(RESU=_F(MAILLAGE=mail,),FORMAT='ASTER',UNITE=8);
 
 sol=DEFI_MATERIAU(ELAS=_F(E=Esol,
                           NU=Nusol,
@@ -92,14 +101,27 @@ MODELE=AFFE_MODELE(MAILLAGE=mail,
                    AFFE=(_F(GROUP_MA=('FONDAT',),
                             PHENOMENE='MECANIQUE',
                             MODELISATION='D_PLAN',),
-            _F(GROUP_MA=('FOND_SS','FOND_RG','FOND_RD',),
+                         _F(GROUP_MA = 'PLATE',
+                            PHENOMENE = 'MECANIQUE',
+                            MODELISATION = '2D_DIS_T'),
+                         _F(GROUP_MA=('FOND_SS','FOND_RG','FOND_RD',),
                             PHENOMENE='MECANIQUE',
                             MODELISATION='D_PLAN_ABSO',),
-             ),
-              );
+                         ),
+                   );
+
+ELEM=AFFE_CARA_ELEM(MODELE=MODELE,
+                    DISCRET=(
+                             _F(GROUP_MA='PLATE',
+                                    REPERE='GLOBAL',
+                                    CARA='M_T_D_N',
+                                    VALE=(0.E10,)),
+                            ),        
+                    );
 
 ASSEMBLAGE(MODELE=MODELE,
            CHAM_MATER=CHMAT,
+           CARA_ELEM=ELEM,
            NUME_DDL=CO('NUMEDDL'),
            MATR_ASSE=(_F(MATRICE=CO('RIGI'),
                          OPTION='RIGI_MECA',),
@@ -116,7 +138,7 @@ fsin1 = FORMULE(NOM_PARA='INST', VALE='sinus(INST-1.0) ',sinus=sinus)
 LINST=DEFI_LIST_REEL(DEBUT=0.0,
                      INTERVALLE=_F(JUSQU_A=2.,
                                    PAS=0.005,),);
-LINST1=DEFI_LIST_REEL(DEBUT=0.995,
+LINST1=DEFI_LIST_REEL(DEBUT=1.0,
                      INTERVALLE=_F(JUSQU_A=2.,
                                    PAS=0.005,),);
 
@@ -134,6 +156,12 @@ sinus1=CALC_FONC_INTERP(FONCTION=fsin1,
                         LIST_PARA=LINSTB)
 
 d_sinus=CALC_FONCTION(DERIVE=_F(FONCTION=sinus1,),PROL_GAUCHE= 'CONSTANT',
+                      PROL_DROITE= 'CONSTANT',);
+
+i_sinus=CALC_FONCTION(INTEGRE=_F(FONCTION=sinus1,),PROL_GAUCHE= 'CONSTANT',
+                      PROL_DROITE= 'CONSTANT',);
+
+i2sinus=CALC_FONCTION(INTEGRE=_F(FONCTION=i_sinus,),PROL_GAUCHE= 'CONSTANT',
                       PROL_DROITE= 'CONSTANT',);
 
 a_sinus=CALC_FONCTION(DERIVE=_F(FONCTION=d_sinus,),PROL_GAUCHE= 'CONSTANT',
@@ -461,6 +489,7 @@ FSEISMX = DEFI_CHAR_SOL (
 
    # Unite d entree de table de signaux
    UNITE_TRAN_INIT = 41,
+   #LONG_CARA=lcara,
    NOM_CMP    ='DX',
    GROUP_MA_DROITE = 'FOND_RD',
    GROUP_MA_GAUCHE = 'FOND_RG',
@@ -474,6 +503,7 @@ FSEISMXG = DEFI_CHAR_SOL (
 
    # Unite d entree de table de signaux
    UNITE_TRAN_INIT = 41,
+   #LONG_CARA=lcara,
    NOM_CMP    ='DX',
    #GROUP_MA_DROITE = 'FOND_RD',
    GROUP_MA_GAUCHE = 'FOND_RG',
@@ -487,6 +517,7 @@ FSEISMXD = DEFI_CHAR_SOL (
 
    # Unite d entree de table de signaux
    UNITE_TRAN_INIT = 41,
+   #LONG_CARA=lcara,
    NOM_CMP    ='DX',
    GROUP_MA_DROITE = 'FOND_RD',
    #GROUP_MA_GAUCHE = 'FOND_RG',
@@ -501,6 +532,7 @@ FSEISMY = DEFI_CHAR_SOL (
 
    # Unite d entree de table de signaux
    UNITE_TRAN_INIT = 41,
+   #LONG_CARA=lcara,
    NOM_CMP    ='DX',
    GROUP_MA_DROITE = 'FOND_RD',
    GROUP_MA_GAUCHE = 'FOND_RG',
@@ -534,32 +566,33 @@ maxS1=CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R',
                 TYPE_RESU='VALE',
                 LIST_INST=LINST2,);
 
+
 TEST_RESU(
           CHAM_NO=(
                    _F(CHAM_GD=maxS1,
                       NOM_CMP='DX',
                       NOEUD='N785',
-                      VALE_CALC=1.51614650015,
+                      VALE_CALC=1.55013635703,
                       ),
                    _F(CHAM_GD=maxS1,
                       NOM_CMP='DX',
                       NOEUD='N408',
-                      VALE_CALC=2.67332765681,
+                      VALE_CALC=2.81853029988,
                       ),
                    _F(CHAM_GD=maxS1,
                       NOM_CMP='DY',
                       NOEUD='N408',
-                      VALE_CALC=1.53203131622,
+                      VALE_CALC=1.2660051322,
                       ),
                    _F(CHAM_GD=maxS1,
                       NOM_CMP='DX',
                       NOEUD='N775',
-                      VALE_CALC=1.37577672843,
+                      VALE_CALC=1.5400673432,
                       ),
                    _F(CHAM_GD=maxS1,
                       NOM_CMP='DY',
                       NOEUD='N775',
-                      VALE_CALC=1.32796528567,
+                      VALE_CALC=1.03875003989,
                       ),
                   ),
            );
@@ -648,21 +681,11 @@ DYNA0=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='PHYS',
                           _F(  CHARGE = ONDES0),
                           ),
                         INCREMENT=_F( LIST_INST = LINST),
-#                        ARCHIVAGE=_F( LIST_ARCH = INTLI),
                         SCHEMA_TEMPS=_F(SCHEMA='NEWMARK',),
                         )
 
-DYNA0=CALC_CHAMP(reuse =DYNA0,
-                             RESULTAT=DYNA0,
-                             MODELE=MODELE0,
-                             CHAM_MATER=CHAMPMA0,
-                             GROUP_MA=('SURF',),
-                             FORCE=('FORC_NODA',),
-                            );
-
 MATN=DEFI_MATERIAU( ELAS=_F(  E=0.001E0, NU=Nusol,
                           RHO=0.0001, AMOR_HYST=0.0,
-                          #AMOR_ALPHA=1.46E-04, AMOR_BETA=8.64E-02
                           )
                     )
 
@@ -680,7 +703,7 @@ FX = FORMULE(NOM_PARA=('X','Y'),VALE='X+201.')
 FY = FORMULE(NOM_PARA=('X','Y'),VALE='Y')
 FX2 = FORMULE(NOM_PARA=('X','Y'),VALE='X-200.')
 
-XX=PROJ_CHAMP(RESULTAT=DYNA0,METHODE='COLLOCATION',  NOM_CHAM=('DEPL','VITE','FORC_NODA'),
+XX=PROJ_CHAMP(RESULTAT=DYNA0,METHODE='COLLOCATION',  NOM_CHAM=('DEPL','VITE',), #'ACCE','FORC_NODA','REAC_NODA'),
               MODELE_1=MODELE0, MODELE_2=MODELE,
               VIS_A_VIS=(_F(GROUP_MA_2='FOND_RG',GROUP_MA_1='SURF', CAS_FIGURE='2D', TRANSF_GEOM_2=(FX,FY),),
                          _F(GROUP_MA_2='FOND_RD',GROUP_MA_1='SURF', CAS_FIGURE='2D', TRANSF_GEOM_2=(FX2,FY),),
@@ -691,16 +714,19 @@ XX=PROJ_CHAMP(RESULTAT=DYNA0,METHODE='COLLOCATION',  NOM_CHAM=('DEPL','VITE','FO
 RIGI_ELB=CALC_MATR_ELEM(    MODELE=MODELE,
                               OPTION='RIGI_MECA',
                               CHAM_MATER=CHAMPMAB,
+                              CARA_ELEM=ELEM,
                             )
 
 MASS_ELB=CALC_MATR_ELEM(    MODELE=MODELE,
-                              OPTION='RIGI_MECA',
+                              OPTION='MASS_MECA',
                               CHAM_MATER=CHAMPMAB,
+                              CARA_ELEM=ELEM,
                             )
 
 AMOR_ELB=CALC_MATR_ELEM(    MODELE=MODELE,
                               OPTION='AMOR_MECA',
                               CHAM_MATER=CHAMPMAB,
+                              CARA_ELEM=ELEM,
                               RIGI_MECA=RIGI_ELB,
                               MASS_MECA=MASS_ELB,
                             )
@@ -740,6 +766,7 @@ BlancS2=DYNA_VIBRA(BASE_CALCUL='PHYS',
                          _F(  CHARGE = EVOL_CHS),
                          ),
                  );
+
 maxS2=CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R',
                 OPERATION='EXTR',
                 RESULTAT=BlancS2,
@@ -753,27 +780,27 @@ TEST_RESU(
                    _F(CHAM_GD=maxS2,
                       NOM_CMP='DX',
                       NOEUD='N785',
-                      VALE_CALC=1.53714908971,
+                      VALE_CALC=1.571138946591,
                       ),
                    _F(CHAM_GD=maxS2,
                       NOM_CMP='DX',
                       NOEUD='N408',
-                      VALE_CALC=2.68629169308,
+                      VALE_CALC=2.81626135007,
                       ),
                    _F(CHAM_GD=maxS2,
                       NOM_CMP='DY',
                       NOEUD='N408',
-                      VALE_CALC=1.5711216463,
+                      VALE_CALC=1.30303136133,
                       ),
                    _F(CHAM_GD=maxS2,
                       NOM_CMP='DX',
                       NOEUD='N775',
-                      VALE_CALC=1.40205472348,
+                      VALE_CALC=1.56950618069,
                       ),
                    _F(CHAM_GD=maxS2,
                       NOM_CMP='DY',
                       NOEUD='N775',
-                      VALE_CALC=1.34194103249,
+                      VALE_CALC=1.05311079259,
                       ),
                   ),
            );
@@ -844,32 +871,33 @@ maxS3=CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R',
                 TYPE_RESU='VALE',
                 LIST_INST=LINST2,);
 
+
 TEST_RESU(
           CHAM_NO=(
                    _F(CHAM_GD=maxS3,
                       NOM_CMP='DX',
                       NOEUD='N785',
-                      VALE_CALC=1.53714908971,
+                      VALE_CALC=1.57113894659,
                       ),
                    _F(CHAM_GD=maxS3,
                       NOM_CMP='DX',
                       NOEUD='N408',
-                      VALE_CALC=2.68629169308,
+                      VALE_CALC=2.81626135007,
                       ),
                    _F(CHAM_GD=maxS3,
                       NOM_CMP='DY',
                       NOEUD='N408',
-                      VALE_CALC=1.5711216463,
+                      VALE_CALC=1.30303136133,
                       ),
                    _F(CHAM_GD=maxS3,
                       NOM_CMP='DX',
                       NOEUD='N775',
-                      VALE_CALC=1.40205472348,
+                      VALE_CALC=1.56950618069,
                       ),
                    _F(CHAM_GD=maxS3,
                       NOM_CMP='DY',
                       NOEUD='N775',
-                      VALE_CALC=1.34194103249,
+                      VALE_CALC=1.05311079259,
                       ),
                   ),
            );
@@ -880,11 +908,62 @@ IMPR_RESU(FORMAT="RESULTAT",UNITE=8,
                   GROUP_NO='LSURF',
                   IMPR_COOR='OUI',),);
 
+ONDES0B=AFFE_CHAR_MECA_F(  MODELE=MODELE0,
+
+              ONDE_PLANE=_F( DIRECTION = (0., 1., 0.), TYPE_ONDE = 'S',
+                 FONC_SIGNAL=i_sinus,
+                 DIST=-200., 
+                 DIST_REFLECHI=0.,
+                 GROUP_MA= ('BAS','LATE',),),
+                          );
+
+DYNA0B=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='PHYS',
+                        MODELE=MODELE0,
+                        MATR_MASS=MASSE0,
+                        MATR_RIGI=RIGI0,
+                        MATR_AMOR=AMOR0,
+                        EXCIT=(
+                          _F(  CHARGE = ONDES0B),
+                          ),
+                        INCREMENT=_F( LIST_INST = LINST),
+#                        ARCHIVAGE=_F( LIST_ARCH = INTLI),
+                        SCHEMA_TEMPS=_F(SCHEMA='NEWMARK',),
+                        )
+
+DYNA0B=CALC_CHAMP(reuse =DYNA0B,
+                             RESULTAT=DYNA0B,
+                             MODELE=MODELE0,
+                             CHAM_MATER=CHAMPMA0,
+                             GROUP_MA=('SURF',),
+                             FORCE=('FORC_NODA','REAC_NODA'),
+                            );
+
+XXB=PROJ_CHAMP(RESULTAT=DYNA0B,METHODE='COLLOCATION',  NOM_CHAM=('DEPL','VITE','ACCE','FORC_NODA','REAC_NODA'),
+              MODELE_1=MODELE0, MODELE_2=MODELE,
+              VIS_A_VIS=(_F(GROUP_MA_2='FOND_RG',GROUP_MA_1='SURF', CAS_FIGURE='2D', TRANSF_GEOM_2=(FX,FY),),
+                         _F(GROUP_MA_2='FOND_RD',GROUP_MA_1='SURF', CAS_FIGURE='2D', TRANSF_GEOM_2=(FX2,FY),),
+                         ),
+              PROL_ZERO='OUI',
+              );
+
+IMPR_RESU(RESU=_F(RESULTAT=XXB,NOM_CHAM=('ACCE','FORC_NODA',),NOEUD=('N775',),LIST_INST=LINST2,),FORMAT='RESULTAT',UNITE=6);
+
+ONDES1B=AFFE_CHAR_MECA_F(MODELE=MODELE,
+                       ONDE_PLANE=_F(DIRECTION=(0.0,1.0,0),
+                                     TYPE_ONDE='S',
+                                     FONC_SIGNAL=i_sinus,
+                                     DIST=-200., DIST_REFLECHI=0.,
+                                     DEPL_IMPO=i2sinus,
+                                     GROUP_MA='FOND_SS',
+                                     ),
+                      );
+
 EVOLCHSC=DEFI_CHAR_SOL (
    CHARGEMENT    ='FORCE',
    MODELE        = MODELE,
-   COEF=-0.5,
-   RESU_INIT=XX,
+   COEF=-1, #,
+   RESU_INIT=XXB,
+   DDL_EXCLUS='DX',
    NUME_DDL=NUMEDDL,
    PRECISION=1.E-6,CRITERE='RELATIF',
    LIST_INST=LINST,
@@ -893,7 +972,7 @@ EVOLCHSC=DEFI_CHAR_SOL (
 EVOLCHSD=DEFI_CHAR_SOL (
    CHARGEMENT    ='ONDE_PLANE',
    MODELE        = MODELE,
-   RESU_INIT=XX,
+   RESU_INIT=XXB,
    MATR_RIGI=RIGIDITB,
    MATR_AMOR=AMORTB,
    PRECISION=1.E-6,CRITERE='RELATIF',
@@ -910,7 +989,7 @@ BlancS4=DYNA_VIBRA(BASE_CALCUL='PHYS',
                   SCHEMA_TEMPS=_F(SCHEMA='NEWMARK',),
                   INCREMENT=_F(LIST_INST=LINST,),
                   EXCIT=(
-                         _F(  CHARGE = ONDES1),
+                         _F(  CHARGE = ONDES1B),
                          _F(  CHARGE = EVOLCHSC),
                          _F(  CHARGE = EVOLCHSD),
                          ),
@@ -919,37 +998,191 @@ BlancS4=DYNA_VIBRA(BASE_CALCUL='PHYS',
 maxS4=CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R',
                 OPERATION='EXTR',
                 RESULTAT=BlancS4,
-                NOM_CHAM='DEPL',
+                NOM_CHAM='ACCE',
                 TYPE_MAXI='MAXI',
                 TYPE_RESU='VALE',
                 LIST_INST=LINST2,);
+
 
 TEST_RESU(
           CHAM_NO=(
                    _F(CHAM_GD=maxS4,
                       NOM_CMP='DX',
                       NOEUD='N785',
-                      VALE_CALC=1.44366320686,
+                      VALE_CALC=1.41838250669,
                       ),
                    _F(CHAM_GD=maxS4,
                       NOM_CMP='DX',
                       NOEUD='N408',
-                      VALE_CALC=2.64658204631,
+                      VALE_CALC=2.9139823543,
                       ),
                    _F(CHAM_GD=maxS4,
                       NOM_CMP='DY',
                       NOEUD='N408',
-                      VALE_CALC=1.68862697482,
+                      VALE_CALC=1.47477413796,
                       ),
                    _F(CHAM_GD=maxS4,
                       NOM_CMP='DX',
                       NOEUD='N775',
-                      VALE_CALC=1.34715118032,
+                      VALE_CALC=1.53463867368,
                       ),
                    _F(CHAM_GD=maxS4,
                       NOM_CMP='DY',
                       NOEUD='N775',
-                      VALE_CALC=1.26955249447,
+                      VALE_CALC=0.905321312196,
+                      ),
+                  ),
+           );
+
+EVOLCHSE=DEFI_CHAR_SOL (
+   CHARGEMENT    ='FORCE',
+   MODELE        = MODELE,
+   COEF=-1, #,
+   NOM_CHAM_INIT='REAC_NODA',
+   RESU_INIT=XXB,
+   #DDL_EXCLUS='DX',
+   NUME_DDL=NUMEDDL,
+   PRECISION=1.E-6,CRITERE='RELATIF',
+   LIST_INST=LINST,
+                );
+
+
+BlancS5=DYNA_VIBRA(BASE_CALCUL='PHYS',
+                  TYPE_CALCUL='TRAN',
+                  MODELE=MODELE,
+                  CHAM_MATER=CHMAT,
+                  MATR_MASS=MASSE,
+                  MATR_RIGI=RIGI,
+                  MATR_AMOR=AMOR,
+                  SCHEMA_TEMPS=_F(SCHEMA='NEWMARK',),
+                  INCREMENT=_F(LIST_INST=LINST,),
+                  EXCIT=(
+                         _F(  CHARGE = ONDES1B),
+                         _F(  CHARGE = EVOLCHSE),
+                         _F(  CHARGE = EVOLCHSD),
+                         ),
+                 );
+
+maxS5=CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R',
+                OPERATION='EXTR',
+                RESULTAT=BlancS5,
+                NOM_CHAM='ACCE',
+                TYPE_MAXI='MAXI',
+                TYPE_RESU='VALE',
+                LIST_INST=LINST2,);
+
+
+TEST_RESU(
+          CHAM_NO=(
+                   _F(CHAM_GD=maxS5,
+                      NOM_CMP='DX',
+                      NOEUD='N785',
+                      VALE_CALC=1.41849307415,
+                      ),
+                   _F(CHAM_GD=maxS5,
+                      NOM_CMP='DX',
+                      NOEUD='N408',
+                      VALE_CALC=2.91397935438,
+                      ),
+                   _F(CHAM_GD=maxS5,
+                      NOM_CMP='DY',
+                      NOEUD='N408',
+                      VALE_CALC=1.47457495156,
+                      ),
+                   _F(CHAM_GD=maxS5,
+                      NOM_CMP='DX',
+                      NOEUD='N775',
+                      VALE_CALC=1.53543075406,
+                      ),
+                   _F(CHAM_GD=maxS5,
+                      NOM_CMP='DY',
+                      NOEUD='N775',
+                      VALE_CALC=0.905096806964,
+                      ),
+                  ),
+           );
+
+ELEM2=AFFE_CARA_ELEM(MODELE=MODELE,
+                    DISCRET=(
+                             _F(GROUP_MA='PLATE',
+                                    REPERE='GLOBAL',
+                                    CARA='M_T_D_N',
+                                    VALE=(1.E10,)),
+                            ),        
+                    );
+
+CHMAT2=AFFE_MATERIAU(MAILLAGE=mail,
+                    AFFE=(_F(TOUT='OUI',
+                            MATER=sol,),
+              _F(GROUP_MA=('FOND_SS',),
+                            MATER=sol1,),
+              _F(GROUP_MA=('FOND_RG','FOND_RD',),
+                            MATER=sol,),
+              ),
+           );
+
+ASSEMBLAGE(MODELE=MODELE,
+           CHAM_MATER=CHMAT2,
+           CARA_ELEM=ELEM2,
+           NUME_DDL=CO('NUMEDDL2'),
+           MATR_ASSE=(_F(MATRICE=CO('RIGI2'),
+                         OPTION='RIGI_MECA',),
+                      _F(MATRICE=CO('MASSE2'),
+                         OPTION='MASS_MECA',),
+                      _F(MATRICE=CO('AMOR2'),
+                         OPTION='AMOR_MECA',),),);
+
+EVOLCHSF=DEFI_CHAR_SOL (
+   CHARGEMENT    ='FORCE',
+   MODELE        = MODELE,
+   COEF=1.E10, #,
+   NOM_CHAM_INIT='ACCE',
+   RESU_INIT=XXB,
+   NUME_DDL=NUMEDDL2,
+   PRECISION=1.E-6,CRITERE='RELATIF',
+   LIST_INST=LINST,
+                );
+
+BlancS6=DYNA_VIBRA(BASE_CALCUL='PHYS',
+                  TYPE_CALCUL='TRAN',
+                  MODELE=MODELE,
+                  CHAM_MATER=CHMAT2,
+                  CARA_ELEM=ELEM2,
+                  MATR_MASS=MASSE2,
+                  MATR_RIGI=RIGI2,
+                  MATR_AMOR=AMOR2,
+                  SCHEMA_TEMPS=_F(SCHEMA='NEWMARK',),
+                  INCREMENT=_F(LIST_INST=LINST,),
+                  EXCIT=(
+                         _F(  CHARGE = ONDES1B),
+                         _F(  CHARGE = EVOLCHSF),
+                         ),
+                 );
+
+maxS6=CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R',
+                OPERATION='EXTR',
+                RESULTAT=BlancS6,
+                NOM_CHAM='ACCE',
+                TYPE_MAXI='MAXI',
+                TYPE_RESU='VALE',
+                LIST_INST=LINST2,);
+
+TEST_RESU(
+          CHAM_NO=(
+                   _F(CHAM_GD=maxS6,
+                      NOM_CMP='DX',
+                      NOEUD='N785',
+                      VALE_CALC=1.26480780685,
+                      ),
+                   _F(CHAM_GD=maxS6,
+                      NOM_CMP='DX',
+                      NOEUD='N408',
+                      VALE_CALC=5.5918643791,
+                      ),
+                   _F(CHAM_GD=maxS6,
+                      NOM_CMP='DX',
+                      NOEUD='N775',
+                      VALE_CALC=2.00418875219,
                       ),
                   ),
            );
