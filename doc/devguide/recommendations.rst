@@ -124,6 +124,24 @@ Required changes
         +          self.register_result(num, numeddl)
 
 
+Parallel specific DataStructures
+================================
+
+Q: How to pass a :py:class:`code_aster.Objects.ParallelMesh` to a command?
+
+A: The solution is in "a :py:class:`code_aster.Objects.ParallelMesh` is a :py:class:`code_aster.Objects.Mesh`". It is just necessary to eclare a
+DataStructure is the Python command description (*catalog*) that matches the
+same type.
+Example: :py:meth:`code_aster.Objects.ParallelMesh.getType()`
+returns ``MAILLAGE_P``, so one defines:
+
+.. code-block:: python
+
+    class maillage_p(maillage_sdaster):
+        pass
+
+
+
 Commons errors
 ==============
 
