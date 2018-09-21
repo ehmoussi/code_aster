@@ -61,5 +61,5 @@ except NameError:
 try:
     ParallelDOFNumbering
 except NameError:
-    class ParallelMechanicalLoad(object):
+    class ParallelDOFNumbering(object):
         pass
