@@ -299,7 +299,7 @@ public:
     /**
      * @brief Determination de la numerotation
      */
-    bool computeNumerotation() throw ( std::runtime_error );
+    bool computeNumbering() throw ( std::runtime_error );
 
     /**
      * @brief Get elementary matrix
