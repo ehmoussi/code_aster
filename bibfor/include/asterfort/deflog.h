@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -21,12 +21,12 @@
 interface
     subroutine deflog(ndim, f, epsl, gn, lamb,&
                       logl, iret)
-        integer :: ndim
-        real(kind=8) :: f(3, 3)
-        real(kind=8) :: epsl(6)
-        real(kind=8) :: gn(3, 3)
-        real(kind=8) :: lamb(3)
-        real(kind=8) :: logl(3)
-        integer :: iret
+        integer, intent(in) :: ndim
+        real(kind=8), intent(in) :: f(3,3)
+        real(kind=8), intent(out) :: epsl(6)
+        real(kind=8), intent(out) :: gn(3, 3)
+        real(kind=8), intent(out) :: lamb(3)
+        real(kind=8), intent(out) :: logl(3)
+        integer, intent(out) :: iret
     end subroutine deflog
 end interface

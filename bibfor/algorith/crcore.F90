@@ -44,6 +44,8 @@ subroutine crcore()
 #include "asterfort/jerecu.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/jexnom.h"
+#include "asterfort/jexnum.h"
+#include "asterfort/nbec.h"
 #include "asterfort/refdaj.h"
 #include "asterfort/rsadpa.h"
 #include "asterfort/rsagsd.h"
@@ -61,25 +63,26 @@ subroutine crcore()
 !
     integer :: ibid, ier, icompt, iret, numini, numfin
     integer :: n1, nis, nbinst, nbval, nume, j
-    integer :: iad, jinst, jchin, jchout
+    integer :: iad, jinst, jchin, jchout, iddl, icmp, aprno
     integer :: nbv(1), jrefe
-    integer :: jcpt, nbr, ivmx, k, iocc, nboini
+    integer :: jcpt, nbr, ivmx, k, iocc, nboini, inoe, ncmp
     integer :: tnum(1)
-    integer :: nbordr1, nbordr2, numei, neq
+    integer :: nbordr1, nbordr2, numei, neq, nbnoeu, gd, nec
 !
     real(kind=8) :: rbid, tps, prec, coefr
     complex(kind=8) :: cbid
+    aster_logical :: lddlex
 !
     character(len=1) :: typmat
     character(len=4) :: typabs
-    character(len=8) :: k8b, resu, criter, resui, matr
-    character(len=8) :: modele, materi, carele, blan8
+    character(len=8) :: k8b, resu, criter, resui, matr, nomcmp
+    character(len=8) :: modele, materi, carele, blan8, noma
     character(len=14) :: numedd
     character(len=16) :: type, oper
     character(len=19) :: nomch, listr8, list_load, resu19, profch
     character(len=19) :: chamno, chamn2
     character(len=24) :: linst, nsymb, nsymb0, typres, lcpt, o1, o2
-    character(len=24) :: matric(3)
+    character(len=24) :: matric(3), nprno
     real(kind=8), pointer :: val(:) => null()
 !
     data linst,listr8,lcpt/'&&CRCORE_LINST','&&CRCORE_LISR8',&
@@ -204,6 +207,13 @@ subroutine crcore()
     call dismoi('NOM_MODELE', numedd, 'NUME_DDL', repk=modele)
     call dismoi('PROF_CHNO', numedd, 'NUME_DDL', repk=profch)
     call dismoi('NB_EQUA', numedd, 'NUME_DDL', repi=neq)
+    call dismoi('NOM_MAILLA', modele, 'MODELE', repk=noma)
+    call dismoi('NB_NO_MAILLA', noma, 'MAILLAGE', repi=nbnoeu)
+    call dismoi('NUM_GD_SI', numedd, 'NUME_DDL', repi=gd)
+    nprno = numedd//'.NUME.PRNO'
+    call jenonu(jexnom(nprno(1:19)//'.LILI', '&MAILLA'), ibid)
+    call jeveuo(jexnum(nprno, ibid), 'L', aprno)
+    nec = nbec(gd)
     typmat='R'
     if ( typres(1:10)  .eq. 'DYNA_TRANS') then
        nsymb = 'DEPL'
@@ -213,6 +223,19 @@ subroutine crcore()
     chamn2='&&CRCORE.CHAM_NO'
     call vtcreb(chamn2, 'V', 'R', nume_ddlz = numedd)
     call rsagsd(resu, nbinst)
+    lddlex = .false.
+    call getvtx('CONV_RESU', 'DDL_EXCLUS', iocc=iocc, scal=nomcmp, nbret=ibid)
+    if (ibid.ne.0) then
+      lddlex = .true.
+    endif
+    if (lddlex) then
+        if (nomcmp .eq. 'DX') icmp = 1
+        if (nomcmp .eq. 'DY') icmp = 2
+        if (nomcmp .eq. 'DZ') icmp = 3
+        if (nomcmp .eq. 'DRX') icmp = 4
+        if (nomcmp .eq. 'DRY') icmp = 5
+        if (nomcmp .eq. 'DRZ') icmp = 6
+    endif
 !
     do j = 1, nbinst
         if (j .ge. 2) call jemarq()
@@ -236,6 +259,18 @@ subroutine crcore()
         call vtcopy(chamno, chamn2, ' ', ier)
 
         call jeveuo(chamn2//'.VALE', 'L', jchin)
+        if (lddlex) then
+          do inoe = 1, nbnoeu
+            iddl = zi( aprno + (nec+2)*(inoe-1) + 1 - 1 )
+            ncmp = zi( aprno + (nec+2)*(inoe-1) + 2 - 1 )
+            if (iddl .ne. 0) then
+              if (icmp .gt. ncmp) goto 50
+              zr(jchin-1+iddl+icmp-1) = 0.d0
+            endif
+ 50         continue
+          end do
+        endif
+
         call daxpy(neq, coefr, zr(jchin), 1, zr(jchout), 1)
 
         o1 = chamno//'.DESC'

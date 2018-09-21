@@ -29,6 +29,7 @@ implicit none
 #include "asterfort/codent.h"
 #include "asterfort/cfdisi.h"
 #include "asterfort/cfdisl.h"
+#include "asterfort/cfdisr.h"
 #include "asterfort/cfmmvd.h"
 #include "asterfort/cfnumm.h"
 #include "asterfort/detrsd.h"
@@ -122,8 +123,8 @@ implicit none
     real(kind=8), pointer :: v_sdcont_tabfin(:) => null()
     real(kind=8), pointer :: v_sdcont_jsupco(:) => null()
     real(kind=8), pointer :: v_sdcont_apjeu(:) => null()
-    real(kind=8)  :: vale_pene = 0.0, glis_maxi = 0.
-    real(kind=8)  :: sum_cont_press
+    real(kind=8)  :: vale_pene = 0.0, glis_maxi = 0., resi_cont=-1.0
+    real(kind=8)  :: sum_cont_press=-1.0,resi_press_curr=1.D6
     real(kind=8)  :: coor_escl_curr(3) = 0.0,coor_proj_curr(3) = 0.0
     aster_logical :: l_coef_adap
     character(len=8) :: iptxt
@@ -156,6 +157,7 @@ implicit none
     nb_cont_zone = cfdisi(ds_contact%sdcont_defi,'NZOCO')
     nb_cont_poin = cfdisi(ds_contact%sdcont_defi,'NTPC')
     l_frot       = cfdisl(ds_contact%sdcont_defi,'FROTTEMENT')
+    resi_cont    = cfdisr(ds_contact%sdcont_defi,'RESI_CONT')
 !
 ! - Acces to contact objects
 !
@@ -230,7 +232,7 @@ implicit none
         vale_pene    = mminfr(ds_contact%sdcont_defi,'PENE_MAXI' , i_zone)
         glis_maxi    = mminfr(ds_contact%sdcont_defi,'GLIS_MAXI' , i_zone)
         ! l'utilisateur n'a pas renseigne glis_maxi
-        if  (glis_maxi .le. r8prem()) glis_maxi   = ds_contact%arete_min
+        if  (glis_maxi .le. r8prem()) glis_maxi   = 0.1*ds_contact%arete_min
         l_granglis   = mminfl(ds_contact%sdcont_defi,'GRAND_GLIS' , i_zone)
 !
 ! ----- No computation: no contact point
@@ -473,6 +475,20 @@ implicit none
     end do
 ! Moyenne des pressions de contact
     sum_cont_press = sum_cont_press/nb_cont_poin
+!   Critere specifique au contact en mode : RESI_CONT ne -1
+    if (resi_cont .gt. r8prem()) then
+        if (max(ds_contact%cont_pressure,abs(sum_cont_press)) .gt. 1.d-15) then 
+            resi_press_curr = abs(ds_contact%cont_pressure-abs(sum_cont_press))/&
+                abs(max(ds_contact%cont_pressure,abs(sum_cont_press)))
+        else
+            resi_press_curr = abs(ds_contact%cont_pressure-abs(sum_cont_press))
+        endif
+        if ((ds_contact%resi_press_glob .lt. resi_cont*ds_contact%cont_pressure) .and. & 
+            .not. l_loop_cont) then 
+                loop_cont_conv = .true.
+        endif
+    endif
+    ds_contact%resi_press_glob = resi_press_curr
     ds_contact%cont_pressure = abs(sum_cont_press)
 !
 ! - Bilateral contact management
@@ -489,6 +505,7 @@ implicit none
 !
     l_coef_adap = ((type_adap .eq. 1) .or. (type_adap .eq. 2)  .or.  &
                   (type_adap .eq. 5) .or. (type_adap .eq. 6) )
+!     .or.  (type_adap .eq. 7) .or. (type_adap .eq. 11))
     if (l_coef_adap) then
         call mm_cycl_prop(ds_contact)
     endif
