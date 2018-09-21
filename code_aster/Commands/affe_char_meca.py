@@ -57,6 +57,10 @@ class MechanicalLoadDefinition(ExecuteCommand):
                         nodeGroups.update(mc2)
                     else:
                         raise NotImplementedError("Only GROUP_NO_1 and GROUP_NO_2 are accepted in parallel AFFE_CHAR_MECA")
+            elif key=="LIAISON_RBE3":
+                for mcf in keywords[key]:
+                    nodeGroups.add(mcf["GROUP_NO_MAIT"])
+                    nodeGroups.update(mcf["GROUP_NO_ESCL"])
             elif key in load_types:
                 raise NotImplementedError("Type of load {0!r} not yet "
                                       "implemented in parallel".format(key))
