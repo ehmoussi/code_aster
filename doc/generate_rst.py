@@ -23,7 +23,7 @@ import os
 import os.path as osp
 
 # Objects depending on conditional build
-IN_CONDITIONAL_BUILD = ["ParallelMechanicalLoad", ]
+IN_CONDITIONAL_BUILD = ["ParallelMechanicalLoad", "ParallelDOFNumbering" ]
 
 automodule_block = \
 """.. automodule:: {0}
