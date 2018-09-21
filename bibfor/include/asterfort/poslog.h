@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -25,31 +25,31 @@ interface
                       lgpg, vip, ndim, fp, g,&
                       dtde, sigm, cplan, fami, mate,&
                       instp, angmas, gn, lamb, logl,&
-                      sigp, dsidep, pk2m, pk2, codret)
-        integer :: ndim
-        integer :: lgpg
-        aster_logical :: resi
-        aster_logical :: rigi
-        real(kind=8) :: tn(6)
-        real(kind=8) :: tp(6)
-        real(kind=8) :: fm(3, 3)
-        real(kind=8) :: vip(lgpg)
-        real(kind=8) :: fp(3, 3)
-        integer :: g
-        real(kind=8) :: dtde(6, 6)
-        real(kind=8) :: sigm(2*ndim)
-        aster_logical :: cplan
-        character(len=*) :: fami
-        integer :: mate
-        real(kind=8) :: instp
-        real(kind=8) :: angmas(*)
-        real(kind=8) :: gn(3, 3)
-        real(kind=8) :: lamb(3)
-        real(kind=8) :: logl(3)
-        real(kind=8) :: sigp(2*ndim)
-        real(kind=8) :: dsidep(6, 6)
-        real(kind=8) :: pk2m(6)
-        real(kind=8) :: pk2(6)
-        integer :: codret
+                      sigp, dsidep, pk2m, pk2p, codret)
+        aster_logical, intent(in) :: resi
+        aster_logical, intent(in) :: rigi
+        aster_logical, intent(in) :: cplan
+        real(kind=8), intent(in) :: tn(6)
+        real(kind=8), intent(in) :: tp(6)
+        real(kind=8), intent(in) :: fm(3, 3)
+        real(kind=8), intent(in) :: fp(3, 3)
+        integer, intent(in) :: ndim
+        integer, intent(in) :: lgpg
+        real(kind=8), intent(out) :: vip(lgpg)
+        integer, intent(in) :: g
+        real(kind=8), intent(in) :: dtde(6,6)
+        real(kind=8), intent(in) :: sigm(2*ndim)
+        character(len=*), intent(in) :: fami
+        integer, intent(in) :: mate
+        real(kind=8), intent(in) :: instp
+        real(kind=8), intent(in) :: angmas(*)
+        real(kind=8), intent(in) :: gn(3, 3)
+        real(kind=8), intent(in) :: lamb(3)
+        real(kind=8), intent(in) :: logl(3)
+        real(kind=8), intent(out) :: sigp(2*ndim)
+        real(kind=8), intent(out) :: dsidep(6, 6)
+        real(kind=8), intent(out) :: pk2m(6)
+        real(kind=8), intent(out) :: pk2p(6)
+        integer, intent(out) :: codret
     end subroutine poslog
 end interface

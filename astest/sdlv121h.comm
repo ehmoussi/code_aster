@@ -319,7 +319,7 @@ DYNA2=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='PHYS',
                           _F(  CHARGE = FSEISMX1),
                           _F(  CHARGE = FSEISMX2),
                           _F(  CHARGE = FSEISMZ1),
-                          _F(  CHARGE = FSEISMZ2),
+                          #_F(  CHARGE = FSEISMZ2),
                               ),
                         INCREMENT=_F( LIST_INST = TEMPLI),
                         SCHEMA_TEMPS=_F(SCHEMA='NEWMARK',),
@@ -334,7 +334,6 @@ DXN31B=RECU_FONCTION(     RESULTAT=DYNA2,   NOEUD='N31',
                          NOM_CHAM='DEPL',
                          NOM_CMP='DX',
                        )
-
 
 TEST_FONCTION(VALEUR=(
                       _F(VALE_CALC=1.020781403469E-03,
@@ -358,23 +357,23 @@ TEST_FONCTION(VALEUR=(
                          CRITERE='RELATIF',
                          VALE_PARA=0.3544,
                          FONCTION=DXN31,),
-                      _F(VALE_CALC=1.016176825599E-03,
+                      _F(VALE_CALC=1.002706079640E-03,
                          VALE_REFE=1.E-3,
-                         PRECISION=2.0E-2,
+                         PRECISION=1.0E-2,
                          REFERENCE='ANALYTIQUE',
                          CRITERE='RELATIF',
                          VALE_PARA=0.2656,
                          FONCTION=DXN26B,),
-                      _F(VALE_CALC=1.004308004902E-03,
+                      _F(VALE_CALC=9.919598889797E-04,
                          VALE_REFE=1.E-3,
                          PRECISION=1.0E-2,
                          REFERENCE='ANALYTIQUE',
                          CRITERE='RELATIF',
                          VALE_PARA=0.44,
                          FONCTION=DXN26B,),
-                      _F(VALE_CALC=1.969131129072E-03,
+                      _F(VALE_CALC=1.988297104419E-03,
                          VALE_REFE=2.E-3,
-                         PRECISION=2.0E-2,
+                         PRECISION=1.0E-2,
                          REFERENCE='ANALYTIQUE',
                          CRITERE='RELATIF',
                          VALE_PARA=0.3544,
@@ -408,6 +407,14 @@ ONDE3=AFFE_CHAR_MECA_F(  MODELE=MODELE,
                  DIST=-50., DIST_REFLECHI = 0., 
                  FONC_SIGNAL = VITEX,
                  GROUP_MA=('ABSO',),
+                  ))
+
+ONDE4=AFFE_CHAR_MECA_F(  MODELE=MODELE,
+
+                ONDE_PLANE=_F( DIRECTION = (0., 1., 0.,), TYPE_ONDE = 'SH',
+                 DIST=-50., DIST_REFLECHI = 0., 
+                 FONC_SIGNAL = VITEX,
+                 GROUP_MA=('CONTOUR',),
                   ))
 
 DETRUIRE(CONCEPT=_F(NOM=(RIGI_ELE,MASS_ELE,AMOR_ELE)))
@@ -520,7 +527,7 @@ DYNA3=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='PHYS',
                           _F(  CHARGE = FSEISMX1),
                           _F(  CHARGE = FSEISMX2),
                           _F(  CHARGE = FSEISMY1),
-                          _F(  CHARGE = FSEISMY2),
+                          #_F(  CHARGE = FSEISMY2),
                               ),
                         INCREMENT=_F( LIST_INST = TEMPLI),
                         SCHEMA_TEMPS=_F(SCHEMA='NEWMARK',),
@@ -530,30 +537,61 @@ DXN26C=RECU_FONCTION(     RESULTAT=DYNA3,   NOEUD='N26',
                          NOM_CHAM='DEPL',
                          NOM_CMP='DX',
                        )
+DYN26C=RECU_FONCTION(     RESULTAT=DYNA3,   NOEUD='N26',
+                         NOM_CHAM='DEPL',
+                         NOM_CMP='DY', 
+                       )
+
+DZN26C=RECU_FONCTION(     RESULTAT=DYNA3,   NOEUD='N26',
+                         NOM_CHAM='DEPL',
+                         NOM_CMP='DZ'
+                       )
 
 DXN31C=RECU_FONCTION(     RESULTAT=DYNA3,   NOEUD='N31',
                          NOM_CHAM='DEPL',
                          NOM_CMP='DX',
                        )
 
+DYN31C=RECU_FONCTION(     RESULTAT=DYNA3,   NOEUD='N31',
+                         NOM_CHAM='DEPL',
+                         NOM_CMP='DY',
+                       )
+
+DZN31C=RECU_FONCTION(     RESULTAT=DYNA3,   NOEUD='N31',
+                         NOM_CHAM='DEPL',
+                         NOM_CMP='DZ',
+                       )
+
+IMPR_FONCTION(FORMAT='XMGRACE',
+                COURBE=(
+                        _F(FONCTION=DXN26C,),
+                        _F(FONCTION=DYN26C,),
+                        _F(FONCTION=DZN26C,),
+                        _F(FONCTION=DXN31C,),
+                        _F(FONCTION=DYN31C,),
+                        _F(FONCTION=DZN31C,),
+                        ),
+                UNITE=28,);
+
 TEST_FONCTION(VALEUR=(
-                      _F(VALE_CALC=1.016176825599E-03,
+
+                      _F(VALE_CALC=1.002706079640E-03,
                          VALE_REFE=1.E-3,
-                         PRECISION=2.0E-2,
+                         PRECISION=1.0E-2,
                          REFERENCE='ANALYTIQUE',
                          CRITERE='RELATIF',
                          VALE_PARA=0.2656,
                          FONCTION=DXN26C,),
-                      _F(VALE_CALC=1.004308004902E-03,
+                      _F(VALE_CALC=9.919598889797E-04,
                          VALE_REFE=1.E-3,
                          PRECISION=1.0E-2,
                          REFERENCE='ANALYTIQUE',
                          CRITERE='RELATIF',
                          VALE_PARA=0.44,
                          FONCTION=DXN26C,),
-                      _F(VALE_CALC=1.969131129072E-03,
+                      _F(VALE_CALC=1.988297104419E-03,
                          VALE_REFE=2.E-3,
-                         PRECISION=2.0E-2,
+                         PRECISION=1.0E-2,
                          REFERENCE='ANALYTIQUE',
                          CRITERE='RELATIF',
                          VALE_PARA=0.3544,
