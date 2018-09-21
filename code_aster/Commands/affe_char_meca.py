@@ -41,13 +41,22 @@ class MechanicalLoadDefinition(ExecuteCommand):
         load_types = [key for key in self._cata.keywords.keys() if isinstance(self._cata.keywords[key], FactorKeyword)]
         nodeGroups = set()
         for key in keywords.keys():
-            if key in ("LIAISON_DDL", "DDL_IMPO"):
+            if key in ("LIAISON_DDL", "DDL_IMPO", "LIAISON_OBLIQUE", "LIAISON_UNIF"):
                 for mcf in keywords[key]:
                     mc = mcf.get("GROUP_NO")
                     if mc:
                         nodeGroups.update(mc)
                     else:
                         raise NotImplementedError("Only GROUP_NO is accepted in parallel AFFE_CHAR_MECA")
+            elif key=="LIAISON_GROUP":
+                for mcf in keywords[key]:
+                    mc1 = mcf.get("GROUP_NO_1")
+                    mc2 = mcf.get("GROUP_NO_2")
+                    if mc1 and mc2:
+                        nodeGroups.update(mc1)
+                        nodeGroups.update(mc2)
+                    else:
+                        raise NotImplementedError("Only GROUP_NO_1 and GROUP_NO_2 are accepted in parallel AFFE_CHAR_MECA")
             elif key in load_types:
                 raise NotImplementedError("Type of load {0!r} not yet "
                                       "implemented in parallel".format(key))
