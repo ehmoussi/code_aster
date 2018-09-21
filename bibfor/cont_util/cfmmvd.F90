@@ -44,7 +44,7 @@ implicit none
     integer, parameter :: ztgde = 6 , zdirn = 6 , zdime = 18, zpoud = 3
     integer, parameter :: ztypm = 2 , zperc = 4 , ztypn = 2 , zmesx = 5
     integer, parameter :: zapme = 3 , zmaes = 4 , zresu = 30, zcmdf = 6
-    integer, parameter :: zcmxf = 16, zexcl = 3 , zparr = 6 , zpari = 30
+    integer, parameter :: zcmxf = 16, zexcl = 3 , zparr = 7 , zpari = 30
     integer, parameter :: ztaco = 2 , zeven = 5 , zcoco = 8 , ztacf = 4 
     integer, parameter :: zetat = 3
 !

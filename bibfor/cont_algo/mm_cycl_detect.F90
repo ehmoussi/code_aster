@@ -108,7 +108,7 @@ implicit none
 !
 ! - Detection of cycling: old flip/flop
 !
-        call mm_cycl_d4(ds_contact, i_cont_poin, indi_cont_eval,indi_cont_prev,&
-                        pres_cont_curr,pres_cont_prev)
+    call mm_cycl_d4(ds_contact, i_cont_poin, indi_cont_eval,indi_cont_prev,&
+                    pres_cont_curr,pres_cont_prev)
 !
 end subroutine
