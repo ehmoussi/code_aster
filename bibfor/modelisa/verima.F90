@@ -152,7 +152,7 @@ subroutine verima(nomz, limanz, lonlim, typz, nbval)
 !      --VERIFICATION DE L'APPARTENANCE DES MAILLES
 !        AUX MAILLES DU MAILLAGE
 !        -------------------------------------------------------
-        if (sdtyp .eq. 'MAILLAGE_P') ASSERT(.false.)
+        if (sdtyp .eq. 'MAILLAGE_P'.and.lonlim.ne.0) ASSERT(.false.)
         call jeexin(mailma, iret)
         if ((lonlim.ne.0) .and. (iret.eq.0)) then
             valk(1) = type
