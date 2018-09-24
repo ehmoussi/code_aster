@@ -38,6 +38,7 @@ void exportMechanicalModeContainerToPython()
             bases< FullResultsContainerInstance > > ( "MechanicalModeContainer", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< MechanicalModeContainerInstance > ) )
+        .def( "getDOFNumbering", &MechanicalModeContainerInstance::getDOFNumbering )
         .def( "setRigidityMatrix", c1 )
         .def( "setRigidityMatrix", c2 )
         .def( "setStructureInterface", &MechanicalModeContainerInstance::setStructureInterface )

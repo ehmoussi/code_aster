@@ -29,6 +29,7 @@
 #include "Results/FullResultsContainer.h"
 #include "LinearAlgebra/StructureInterface.h"
 #include "LinearAlgebra/AssemblyMatrix.h"
+#include "Discretization/DOFNumbering.h"
 
 /**
  * @class MechanicalModeContainerInstance
@@ -53,6 +54,20 @@ public:
         _rigidityDispMatrix( nullptr ),
         _rigidityTempMatrix( nullptr )
     {};
+
+    /**
+     * @brief Set the rigidity matrix
+     * @param matr AssemblyMatrixTemperatureDoublePtr
+     */
+    BaseDOFNumberingPtr getDOFNumbering( const AssemblyMatrixTemperatureDoublePtr& matr ) const
+        throw( std::runtime_error )
+    {
+        if( _rigidityDispMatrix != nullptr )
+            return _rigidityDispMatrix->getDOFNumbering();
+        if( _rigidityTempMatrix != nullptr )
+            return _rigidityTempMatrix->getDOFNumbering();
+        throw std::runtime_error( "No matrix set" );
+    };
 
     /**
      * @brief Set the rigidity matrix
