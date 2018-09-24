@@ -57,9 +57,8 @@ public:
 
     /**
      * @brief Set the rigidity matrix
-     * @param matr AssemblyMatrixTemperatureDoublePtr
      */
-    BaseDOFNumberingPtr getDOFNumbering( const AssemblyMatrixTemperatureDoublePtr& matr ) const
+    BaseDOFNumberingPtr getDOFNumbering() const
         throw( std::runtime_error )
     {
         if( _rigidityDispMatrix != nullptr )

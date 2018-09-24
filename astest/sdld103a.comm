@@ -32,7 +32,7 @@ DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'),
 MAILLAG0=LIRE_MAILLAGE(FORMAT="ASTER", )
 
 MAILLAG0=DEFI_GROUP(reuse=MAILLAG0,
-                    MAILLAGE=MAILLAG0,
+                    MAILLAfGE=MAILLAG0,
                     CREA_GROUP_NO=_F( NOM='GROUP_NO_GN5',
                                       NOEUD=('NO5',),),);
 
@@ -280,7 +280,7 @@ TRAN_GE2=DYNA_LINE(TYPE_CALCUL='TRAN',
                              DIRECTION = ( 1., 0., 0.,),
                              NOEUD = 'NO5',
                              ),),
-                   ARCHIVAGE=_F(  PAS_ARCH = 1.E8, LIST_INST=L_RECU),
+                   ARCHIVAGE=_F(  PAS_ARCH = 10**8, LIST_INST=L_RECU),
                    INCREMENT=_F(PAS=0.001,
                                 INST_FIN=1.),
                    )
@@ -299,7 +299,7 @@ TRAN_GED=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='GENE',
                         MULT_APPUI = 'OUI',
                         DIRECTION = ( 1., 0., 0.,), NOEUD = 'NO5',
                         VITE = VITESSE2, DEPL = DEPLACE2)),
-                 ARCHIVAGE=_F(  PAS_ARCH = 1.E8, LIST_INST=L_RECU),
+                 ARCHIVAGE=_F(  PAS_ARCH = 10**8, LIST_INST=L_RECU),
                  INCREMENT=_F(  INST_INIT = 0., INST_FIN = 1.0, PAS = 0.0001,),
                 )
 
@@ -318,7 +318,7 @@ TRAN_GEA=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='GENE',
                         MULT_APPUI = 'OUI',
                         DIRECTION = ( 1., 0., 0.,), NOEUD = 'NO5',
                         VITE = VITESSE2, DEPL = DEPLACE2)),
-                 ARCHIVAGE=_F(  PAS_ARCH = 1.E8, LIST_INST=L_RECU),
+                 ARCHIVAGE=_F(  PAS_ARCH = 10**8, LIST_INST=L_RECU),
                  INCREMENT=_F(  INST_INIT = 0., INST_FIN = 1.0, PAS = 0.0001,),
                 )
 #
@@ -335,7 +335,7 @@ TRA_RK54=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='GENE',
                         MULT_APPUI = 'OUI',
                         DIRECTION = ( 1., 0., 0.,), NOEUD = 'NO5',
                         VITE = VITESSE2, DEPL = DEPLACE2)),
-                 ARCHIVAGE=_F(  PAS_ARCH = 1.E8, LIST_INST=L_RECU),
+                 ARCHIVAGE=_F(  PAS_ARCH = 10**8, LIST_INST=L_RECU),
                  INCREMENT=_F( INST_INIT = 0., INST_FIN = 1.0, PAS = 0.0001))
 
 #
@@ -352,7 +352,7 @@ TRA_RK32=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='GENE',
                         MULT_APPUI = 'OUI',
                         DIRECTION = ( 1., 0., 0.,), NOEUD = 'NO5',
                         VITE = VITESSE2, DEPL = DEPLACE2)),
-                 ARCHIVAGE=_F(  PAS_ARCH = 1.E8, LIST_INST=L_RECU),
+                 ARCHIVAGE=_F(  PAS_ARCH = 10**8, LIST_INST=L_RECU),
                  INCREMENT=_F( INST_INIT = 0., INST_FIN = 1.0, PAS = 0.0001))
 
 
@@ -410,7 +410,7 @@ TRAN_DLI=DYNA_LINE(TYPE_CALCUL='TRAN',
                              DIRECTION = ( 1., 0., 0.,),
                              NOEUD = 'NO5',
                              ),),
-                   ARCHIVAGE=_F(PAS_ARCH = 1.E8, LIST_INST=L_RECU),
+                   ARCHIVAGE=_F(PAS_ARCH = 10**8, LIST_INST=L_RECU),
                    INCREMENT=_F(PAS=0.001,
                                 INST_FIN=1.),
                    )
@@ -438,7 +438,7 @@ TRAN_DLJ=DYNA_LINE(TYPE_CALCUL='TRAN',
                              DIRECTION = ( 1., 0., 0.,),
                              NOEUD = 'NO5',
                              ),),
-                   ARCHIVAGE=_F(PAS_ARCH = 1.E8, LIST_INST=L_RECU),
+                   ARCHIVAGE=_F(PAS_ARCH = 10**8, LIST_INST=L_RECU),
                    INCREMENT=_F(PAS=0.001,
                                 INST_FIN=1.),
                    )
