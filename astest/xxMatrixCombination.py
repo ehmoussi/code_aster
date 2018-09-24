@@ -57,7 +57,7 @@ study.addMechanicalLoad(char_meca_1)
 study.addMechanicalLoad(char_meca_2)
 problem = code_aster.DiscreteProblem(study)
 
-matr_elem_k = problem.computeMechanicalRigidityMatrix()
+matr_elem_k = problem.computeMechanicalStiffnessMatrix()
 
 
 solver = code_aster.MumpsSolver( code_aster.Renumbering.Metis )

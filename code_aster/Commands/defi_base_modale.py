@@ -42,11 +42,13 @@ class ModalBasisDef(ExecuteCommand):
         Arguments:
             keywords (dict): User's keywords.
         """
-        if keywords.has_key("CLASSIQUE") and keywords["CLASSIQUE"]:
-            self._result.setStructureInterface(keywords["CLASSIQUE"][0]["INTERF_DYNA"])
-            self._result.setDOFNumbering(keywords["CLASSIQUE"][0]["MODE_MECA"][0].getDOFNumbering())
-        elif keywords.has_key("RITZ") and keywords["RITZ"] and keywords["RITZ"][0].has_key("INTERF_DYNA"):
-            self._result.setStructureInterface(keywords["RITZ"][0]["INTERF_DYNA"])
+        classique = keywords.get("CLASSIQUE")
+        ritz = keywords.get("RITZ")
+        if classique is not None:
+            self._result.setStructureInterface(classique[0]["INTERF_DYNA"])
+            self._result.setDOFNumbering(classique[0]["MODE_MECA"][0].getDOFNumbering())
+        elif ritz is not None and ritz[0].has_key("INTERF_DYNA"):
+            self._result.setStructureInterface(ritz[0]["INTERF_DYNA"])
 
 
 DEFI_BASE_MODALE = ModalBasisDef.run

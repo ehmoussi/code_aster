@@ -37,7 +37,7 @@
 class AcousticModeContainerInstance: public FullResultsContainerInstance
 {
 private:
-    /** @brief Rigidity displacement matrix */
+    /** @brief Stiffness displacement matrix */
     AssemblyMatrixPressureDoublePtr _rigidityMatrix;
 
 public:
@@ -53,7 +53,7 @@ public:
      * @brief Set the rigidity matrix
      * @param matr AssemblyMatrixPressureDoublePtr
      */
-    bool setRigidityMatrix( const AssemblyMatrixPressureDoublePtr& matr )
+    bool setStiffnessMatrix( const AssemblyMatrixPressureDoublePtr& matr )
     {
         _rigidityMatrix = matr;
         return true;

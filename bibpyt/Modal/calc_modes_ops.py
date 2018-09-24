@@ -147,7 +147,7 @@ def calc_modes_ops(self, TYPE_RESU, OPTION, AMELIORATION, INFO, **args):
             pass
         else:
             modes.setDOFNumbering(matrRigi.getDOFNumbering())
-        modes.setRigidityMatrix(matrRigi)
+        modes.setStiffnessMatrix(matrRigi)
     matrAmor = args.get("MATR_AMOR")
     if matrAmor is not None:
         modes.setDampingMatrix(matrAmor)

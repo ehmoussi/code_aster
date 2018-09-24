@@ -112,7 +112,7 @@ public:
      * @param time Instant de calcul
      * @return Vecteur élémentaire contenant la rigidité mécanique
      */
-    ElementaryMatrixPtr buildElementaryRigidityMatrix( double time = 0. );
+    ElementaryMatrixPtr buildElementaryStiffnessMatrix( double time = 0. );
     /**
      * @brief Fonction permettant de calculer les matrices élémentaires pour la matrice tangente
      * utilisée pour l'étape de prédiction de la méthode de Newton
@@ -148,7 +148,7 @@ public:
     /**
      * @brief Calcul des matrices elementaires pour l'option RIGI_MECA
      */
-    ElementaryMatrixPtr computeMechanicalRigidityMatrix() throw ( std::runtime_error );
+    ElementaryMatrixPtr computeMechanicalStiffnessMatrix() throw ( std::runtime_error );
 
     /**
      * @brief Calcul des matrices elementaires pour l'option MASS_MECA

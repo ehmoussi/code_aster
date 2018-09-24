@@ -135,7 +135,7 @@ ElementaryVectorPtr DiscreteProblemInstance::buildElementaryNeumannVector( const
     return retour;
 };
 
-ElementaryMatrixPtr DiscreteProblemInstance::buildElementaryRigidityMatrix( double time )
+ElementaryMatrixPtr DiscreteProblemInstance::buildElementaryStiffnessMatrix( double time )
 {
     ElementaryMatrixPtr retour( new ElementaryMatrixInstance( "DEPL_R", Permanent ) );
     ModelPtr curModel = _study->getSupportModel();
@@ -179,13 +179,13 @@ ElementaryMatrixPtr DiscreteProblemInstance::buildElementaryRigidityMatrix( doub
 // TODO calcul de la matrice tangente pour l'étape de prédiction de la méthode de Newton
 ElementaryMatrixPtr DiscreteProblemInstance::buildElementaryTangentMatrix( double time )
 {
-    return this-> buildElementaryRigidityMatrix( time );
+    return this-> buildElementaryStiffnessMatrix( time );
 };
 
 // TODO calcul de la matrice jacobienne pour l'étape de correction de la méthode de Newton
 ElementaryMatrixPtr DiscreteProblemInstance::buildElementaryJacobianMatrix( double time )
 {
-    return this-> buildElementaryRigidityMatrix( time );
+    return this-> buildElementaryStiffnessMatrix( time );
 };
 
 FieldOnNodesDoublePtr DiscreteProblemInstance::buildKinematicsLoad( const BaseDOFNumberingPtr& curDOFNum,
@@ -380,7 +380,7 @@ ElementaryMatrixPtr DiscreteProblemInstance::computeMechanicalMassMatrix()
     return computeMechanicalMatrix( "RIGI_MECA" );
 };
 
-ElementaryMatrixPtr DiscreteProblemInstance::computeMechanicalRigidityMatrix()
+ElementaryMatrixPtr DiscreteProblemInstance::computeMechanicalStiffnessMatrix()
     throw ( std::runtime_error )
 {
     return computeMechanicalMatrix( "RIGI_MECA" );
