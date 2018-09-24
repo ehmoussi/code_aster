@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -24,18 +24,18 @@ interface
     subroutine prelog(ndim, lgpg, vim, gn, lamb,&
                       logl, fm, fp, epsml, deps,&
                       tn, resi, iret)
-        integer :: lgpg
-        integer :: ndim
-        real(kind=8) :: vim(lgpg)
-        real(kind=8) :: gn(3, 3)
-        real(kind=8) :: lamb(3)
-        real(kind=8) :: logl(3)
-        real(kind=8) :: fm(3, 3)
-        real(kind=8) :: fp(3, 3)
-        real(kind=8) :: epsml(6)
-        real(kind=8) :: deps(6)
-        real(kind=8) :: tn(6)
-        aster_logical :: resi
-        integer :: iret
+        integer, intent(in) :: ndim
+        integer, intent(in) :: lgpg
+        real(kind=8), intent(in) :: vim(lgpg)
+        real(kind=8), intent(in) :: fm(3, 3)
+        real(kind=8), intent(in) :: fp(3, 3)
+        real(kind=8), intent(out) :: epsml(6)
+        real(kind=8), intent(out) :: tn(6)
+        real(kind=8), intent(out) :: deps(6)
+        real(kind=8), intent(out) :: gn(3, 3)
+        real(kind=8), intent(out) :: lamb(3)
+        real(kind=8), intent(out) :: logl(3)
+        integer, intent(out) :: iret
+        aster_logical, intent(in) :: resi
     end subroutine prelog
 end interface

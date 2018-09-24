@@ -20,6 +20,7 @@
 # person_in_charge: nicolas.sellenet@edf.fr
 
 from ..Objects import DOFNumbering
+from ..Objects import ParallelDOFNumbering
 from ..Supervis import logger
 from .ExecuteCommand import ExecuteCommand
 
@@ -34,7 +35,10 @@ class NumberingCreation(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        self._result = DOFNumbering()
+        if keywords['MATR_RIGI'][0].getSupportModel().getSupportMesh().getType() == 'MAILLAGE_P':
+            self._result = ParallelDOFNumbering()
+        else:
+            self._result = DOFNumbering()
 
     def post_exec(self, keywords):
         """Store references to ElementaryMatrix objects.

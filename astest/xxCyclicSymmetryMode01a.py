@@ -55,7 +55,7 @@ massElem = dProblem.computeMechanicalMassMatrix()
 
 numeDDL = code_aster.DOFNumbering()
 numeDDL.setElementaryMatrix(rigiElem)
-numeDDL.computeNumerotation()
+numeDDL.computeNumbering()
 
 rigiAsse = code_aster.AssemblyMatrixDisplacementDouble()
 rigiAsse.appendElementaryMatrix(rigiElem)

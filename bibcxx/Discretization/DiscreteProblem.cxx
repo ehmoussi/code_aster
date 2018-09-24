@@ -233,7 +233,7 @@ BaseDOFNumberingPtr DiscreteProblemInstance::computeDOFNumbering( BaseDOFNumberi
 
     dofNum->setSupportModel( _study->getSupportModel() );
     dofNum->setListOfLoads( _study->getListOfLoads() );
-    dofNum->computeNumerotation();
+    dofNum->computeNumbering();
 
     return dofNum;
 };
