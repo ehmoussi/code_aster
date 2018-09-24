@@ -23,7 +23,7 @@
 interface
     subroutine mmvppe(typmae, typmam, iresog, ndim, nne,&
                   nnm, nnl, nbdm, laxis, ldyna,&
-                  lpenac, jeusup, ffe, ffm, dffm, ffl,&
+                  jeusup, ffe, ffm, dffm, ffl,&
                   norm, tau1, tau2, mprojt, jacobi,&
                   wpg, dlagrc, dlagrf, jeu, djeu,&
                   djeut, mprojn,&
@@ -44,7 +44,6 @@ interface
         aster_logical :: laxis
         aster_logical :: ldyna
         aster_logical :: l_previous
-        aster_logical :: lpenac
         real(kind=8) :: jeusup
         real(kind=8) :: ffe(9)
         real(kind=8) :: ffm(9)
@@ -53,9 +52,7 @@ interface
         real(kind=8) :: norm(3)
         real(kind=8) :: tau1(3)
         real(kind=8) :: tau2(3)
-        
         real(kind=8) :: dnepmait1 ,dnepmait2 ,taujeu1,taujeu2
-        
         real(kind=8) :: mprojt(3, 3)
         real(kind=8) :: jacobi
         real(kind=8) :: wpg
@@ -65,28 +62,22 @@ interface
         real(kind=8) :: djeu(3)
         real(kind=8) :: djeut(3)
         real(kind=8) :: ddepmam(9,3)
-    
         real(kind=8) :: mprojn(3, 3)
-    
         real(kind=8) :: mprt1n(3, 3)
         real(kind=8) :: mprt2n(3, 3)
         real(kind=8) :: mprt11(3, 3)
         real(kind=8) :: mprt21(3, 3)
-    real(kind=8) :: mprt22(3, 3)
-        
+        real(kind=8) :: mprt22(3, 3)
         real(kind=8) :: gene11(3, 3)
         real(kind=8) :: gene21(3, 3)
-    real(kind=8) :: gene22(3, 3)
-    
-    real(kind=8) :: kappa(2,2)
-    real(kind=8) :: h(2,2)    
-    real(kind=8) :: a(2,2)        
-    real(kind=8) :: ha(2,2)    
-    real(kind=8) :: hah(2,2)
-    
-    
-    real(kind=8) :: vech1(3)
-    real(kind=8) :: vech2(3)            
+        real(kind=8) :: gene22(3, 3)
+        real(kind=8) :: kappa(2,2)
+        real(kind=8) :: h(2,2)
+        real(kind=8) :: a(2,2)
+        real(kind=8) :: ha(2,2)
+        real(kind=8) :: hah(2,2)
+        real(kind=8) :: vech1(3)
+        real(kind=8) :: vech2(3)
     
     end subroutine mmvppe
 end interface

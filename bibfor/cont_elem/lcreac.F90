@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,29 +15,29 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine lcreac(nb_lagr       , indi_lagc      , elem_dime   , coef_upda_geom,&
-                  nb_node_slav  , nb_node_mast   ,&
-                  jv_geom       , jv_disp        , jv_disp_incr,&
-                  elem_slav_coor, elem_mast_coor , jv_ddisp)
+!
+subroutine lcreac(nb_lagr       , indi_lagc     , elem_dime, coef_upda_geom,&
+                  nb_node_slav  , nb_node_mast  ,&
+                  jv_disp       , jv_disp_incr  ,&
+                  elem_slav_init, elem_mast_init,&
+                  elem_slav_coor, elem_mast_coor,&
+                  jv_ddisp)
 !
 implicit none
 !
 #include "jeveux.h"
 !
-!
-    integer, intent(in) :: elem_dime
-    integer, intent(in) :: nb_lagr
-    integer, intent(in) :: indi_lagc(10)
-    integer, intent(in) :: nb_node_slav
-    integer, intent(in) :: nb_node_mast
-    real(kind=8), intent(in) :: coef_upda_geom     
-    integer, intent(in) :: jv_geom
-    integer, intent(in) :: jv_disp
-    integer, intent(in) :: jv_disp_incr
-    integer, intent(in), optional :: jv_ddisp
-    real(kind=8), intent(inout) :: elem_slav_coor(elem_dime, nb_node_slav)
-    real(kind=8), intent(inout) :: elem_mast_coor(elem_dime, nb_node_mast)
+integer, intent(in) :: elem_dime
+integer, intent(in) :: nb_lagr
+integer, intent(in) :: indi_lagc(10)
+integer, intent(in) :: nb_node_slav, nb_node_mast
+real(kind=8), intent(in) :: coef_upda_geom     
+integer, intent(in) :: jv_disp, jv_disp_incr
+integer, intent(in), optional :: jv_ddisp
+real(kind=8), intent(in) :: elem_slav_init(elem_dime, nb_node_slav)
+real(kind=8), intent(in) :: elem_mast_init(elem_dime, nb_node_mast)
+real(kind=8), intent(inout) :: elem_slav_coor(elem_dime, nb_node_slav)
+real(kind=8), intent(inout) :: elem_mast_coor(elem_dime, nb_node_mast)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -53,9 +53,10 @@ implicit none
 ! In  coef_upda_geom   : coefficient to update geometry
 ! In  nb_node_slav     : number of nodes of for slave side from contact element
 ! In  nb_node_mast     : number of nodes of for master side from contact element
-! In  jv_geom          : JEVEUX adress for initial geometry (from mesh)
 ! In  jv_disp          : JEVEUX adress for displacement at beginning of time step
 ! In  jv_disp_incr     : JEVEUX adress for increment of displacement from beginning of time step
+! In  elem_slav_init   : initial coordinates from slave side of contact element
+! In  elem_mast_init   : initial coordinates from master side of contact element
 ! IO  elem_slav_coor   : updated coordinates from slave side of contact element
 ! IO  elem_mast_coor   : updated coordinates from master side of contact element
 !
@@ -65,7 +66,7 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    deca=0
+    deca = 0
 !
 ! - Slave nodes
 !
@@ -73,16 +74,15 @@ implicit none
         deca = deca+indi_lagc(i_node_slav)
         do i_dime = 1, elem_dime          
             elem_slav_coor(i_dime, i_node_slav) =&
-                zr(jv_geom+(i_node_slav-1)*elem_dime+i_dime-1) +&
+                elem_slav_init(i_dime, i_node_slav) +&
                 zr(jv_disp+(i_node_slav-1)*(elem_dime)+deca+i_dime-1)+ &
                 coef_upda_geom*&
-                zr(jv_disp_incr+(i_node_slav-1)*(elem_dime)+deca+i_dime-1) 
-                
-                if(present(jv_ddisp)) then 
-                   elem_slav_coor(i_dime, i_node_slav) =&
-                      elem_slav_coor(i_dime, i_node_slav)-&
-                      zr(jv_ddisp+(i_node_slav-1)*(elem_dime)+deca+i_dime-1) 
-                end if                  
+                zr(jv_disp_incr+(i_node_slav-1)*(elem_dime)+deca+i_dime-1)  
+            if (present(jv_ddisp)) then 
+               elem_slav_coor(i_dime, i_node_slav) =&
+                  elem_slav_coor(i_dime, i_node_slav)-&
+                  zr(jv_ddisp+(i_node_slav-1)*(elem_dime)+deca+i_dime-1) 
+            end if                  
         end do
     end do
 !
@@ -91,16 +91,15 @@ implicit none
     do i_node_mast = 1, nb_node_mast
         do i_dime = 1, elem_dime
             elem_mast_coor(i_dime, i_node_mast) = &
-                zr(jv_geom+nb_node_slav*elem_dime+(i_node_mast-1)*elem_dime+i_dime- 1)+&
+                elem_mast_init(i_dime, i_node_mast)+&
                 zr(jv_disp+nb_node_slav*elem_dime+nb_lagr+(i_node_mast-1)*elem_dime+i_dime-1)+&
                 coef_upda_geom*&
                 zr(jv_disp_incr+nb_node_slav*elem_dime+nb_lagr+(i_node_mast-1)*elem_dime+i_dime-1)
-                
-                if(present(jv_ddisp)) then 
-                    elem_mast_coor(i_dime, i_node_mast) = &
-                        elem_mast_coor(i_dime, i_node_mast)-&
-                 zr(jv_ddisp+nb_node_slav*elem_dime+nb_lagr+(i_node_mast-1)*elem_dime+i_dime-1)
-                end if 
+            if (present(jv_ddisp)) then 
+                elem_mast_coor(i_dime, i_node_mast) = &
+                    elem_mast_coor(i_dime, i_node_mast)-&
+                    zr(jv_ddisp+nb_node_slav*elem_dime+nb_lagr+(i_node_mast-1)*elem_dime+i_dime-1)
+            end if 
         end do
   end do
 !

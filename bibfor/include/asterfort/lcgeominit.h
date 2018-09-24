@@ -16,18 +16,13 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-#include "asterf_types.h"
-!
 interface
-    subroutine mmmjac(l_axis   , nb_node  , elem_dime,&
-                      elem_code, elem_coor,&
-                      ff       , dff      ,&
-                      jacobi)
-        aster_logical, intent(in) :: l_axis
-        character(len=8), intent(in) :: elem_code
-        integer, intent(in) :: elem_dime, nb_node
-        real(kind=8), intent(in) :: elem_coor(3, 9)
-        real(kind=8), intent(in) :: ff(9), dff(2, 9)
-        real(kind=8), intent(out) :: jacobi
-    end subroutine mmmjac
+    subroutine lcgeominit(elem_dime     , &
+                          nb_node_slav  , nb_node_mast  ,&
+                          elem_mast_init, elem_slav_init)
+        integer, intent(in) :: elem_dime
+        integer, intent(in) :: nb_node_slav,  nb_node_mast
+        real(kind=8), intent(out) :: elem_slav_init(elem_dime, nb_node_slav)
+        real(kind=8), intent(out) :: elem_mast_init(elem_dime, nb_node_mast)
+    end subroutine lcgeominit
 end interface
