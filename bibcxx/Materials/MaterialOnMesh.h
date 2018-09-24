@@ -169,6 +169,20 @@ class MaterialOnMeshInstance: public DataStructure
         };
 
         /**
+         * @brief Ajout d'un materiau sur une entite du maillage
+         * @param curMater behaviour to add
+         * @param nameOfGroup Name of group
+         */
+        void addBehaviourOnElement( BehaviourDefinitionPtr& curBehav,
+                                            std::string nameOfElement ) throw ( std::runtime_error )
+        {
+            if ( ! _supportMesh ) throw std::runtime_error( "Support mesh is not defined" );
+
+            _behaviours.push_back( listOfBehavAndGrpsValue( curBehav,
+                                            MeshEntityPtr( new Element(nameOfElement) ) ) );
+        };
+
+        /**
          * @brief Ajout d'un materiau sur tout le maillage
          * @param curMater Materiau a ajouter
          */
@@ -192,6 +206,20 @@ class MaterialOnMeshInstance: public DataStructure
 
             _materialsOnMeshEntity.push_back( listOfMatsAndGrpsValue( curMater,
                                             MeshEntityPtr( new GroupOfElements(nameOfGroup) ) ) );
+        };
+
+        /**
+         * @brief Ajout d'un materiau sur une entite du maillage
+         * @param curMater Materiau a ajouter
+         * @param nameOfGroup Nom du groupe de mailles
+         */
+        void addMaterialOnElement( MaterialPtr& curMater,
+                                           std::string nameOfElement ) throw ( std::runtime_error )
+        {
+            if ( ! _supportMesh ) throw std::runtime_error( "Support mesh is not defined" );
+
+            _materialsOnMeshEntity.push_back( listOfMatsAndGrpsValue( curMater,
+                                            MeshEntityPtr( new Element(nameOfElement) ) ) );
         };
 
         /**
