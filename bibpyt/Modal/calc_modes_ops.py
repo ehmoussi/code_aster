@@ -19,7 +19,7 @@
 
 # person_in_charge: nicolas.brie at edf.fr
 
-from code_aster.Objects import GeneralizedModeContainer
+from code_aster.Objects import GeneralizedModeContainer, MechanicalModeContainer
 
 def calc_modes_ops(self, TYPE_RESU, OPTION, AMELIORATION, INFO, **args):
     """
@@ -141,8 +141,11 @@ def calc_modes_ops(self, TYPE_RESU, OPTION, AMELIORATION, INFO, **args):
 
     matrRigi = args.get("MATR_RIGI")
     if matrRigi is not None:
+        print "modes", modes
         if isinstance(modes, GeneralizedModeContainer):
             modes.setGeneralizedDOFNumbering(matrRigi.getGeneralizedDOFNumbering())
+        elif isinstance(modes, MechanicalModeContainer):
+            pass
         else:
             modes.setDOFNumbering(matrRigi.getDOFNumbering())
         modes.setRigidityMatrix(matrRigi)
