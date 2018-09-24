@@ -41,9 +41,9 @@ class GeneralizedModeContainerInstance: public FullResultsContainerInstance
 private:
     /** @brief Damping matrix */
     GeneralizedAssemblyMatrixDoublePtr   _dampingMatrix;
-    /** @brief Rigidity double matrix */
+    /** @brief Stiffness double matrix */
     GeneralizedAssemblyMatrixDoublePtr   _rigidityDoubleMatrix;
-    /** @brief Rigidity complex matrix */
+    /** @brief Stiffness complex matrix */
     GeneralizedAssemblyMatrixComplexPtr  _rigidityComplexMatrix;
     /** @brief generalized support DOFNumbering */
     GeneralizedDOFNumberingPtr           _genDOFNum;
@@ -105,7 +105,7 @@ public:
      * @brief Set the rigidity matrix
      * @param matr GeneralizedAssemblyMatrixDoublePtr
      */
-    bool setRigidityMatrix( const GeneralizedAssemblyMatrixDoublePtr& matr )
+    bool setStiffnessMatrix( const GeneralizedAssemblyMatrixDoublePtr& matr )
     {
         _rigidityComplexMatrix = nullptr;
         _rigidityDoubleMatrix = matr;
@@ -116,7 +116,7 @@ public:
      * @brief Set the rigidity matrix
      * @param matr GeneralizedAssemblyMatrixComplexPtr
      */
-    bool setRigidityMatrix( const GeneralizedAssemblyMatrixComplexPtr& matr )
+    bool setStiffnessMatrix( const GeneralizedAssemblyMatrixComplexPtr& matr )
     {
         _rigidityDoubleMatrix = nullptr;
         _rigidityComplexMatrix = matr;

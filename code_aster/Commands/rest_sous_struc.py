@@ -71,13 +71,13 @@ class RestSousStrucOper(ExecuteCommand):
                 if mat is None: mat = macroElem.getImpedanceDampingMatrix()
                 if mat is None: mat = macroElem.getImpedanceMatrix()
                 if mat is None: mat = macroElem.getImpedanceMassMatrix()
-                if mat is None: mat = macroElem.getImpedanceRigidityMatrix()
+                if mat is None: mat = macroElem.getImpedanceStiffnessMatrix()
                 if mat is not None:
                     raise NameError("Not yet implemented")
 
                 if mat is None: mat = macroElem.getMassMatrix()
-                if mat is None: mat = macroElem.getComplexRigidityMatrix()
-                if mat is None: mat = macroElem.getDoubleRigidityMatrix()
+                if mat is None: mat = macroElem.getComplexStiffnessMatrix()
+                if mat is None: mat = macroElem.getDoubleStiffnessMatrix()
                 if mat is not None:
                     modele = mat.getDOFNumbering().getSupportModel()
                     self._result.appendModelOnAllRanks(modele)

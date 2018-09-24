@@ -51,7 +51,7 @@ study.addKinematicsLoad(charCine)
 study.addMechanicalLoad(CHT1)
 dProblem = code_aster.DiscreteProblem(study)
 vect_elem = dProblem.buildElementaryMechanicalLoadsVector()
-matr_elem = dProblem.computeMechanicalRigidityMatrix()
+matr_elem = dProblem.computeMechanicalStiffnessMatrix()
 
 monSolver = code_aster.PetscSolver( code_aster.Renumbering.Sans )
 monSolver.setPreconditioning(code_aster.Preconditioning.Without)

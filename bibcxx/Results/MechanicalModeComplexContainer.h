@@ -54,9 +54,9 @@ private:
     StructureInterfacePtr                _structureInterface;
     /** @brief Damping matrix */
     AssemblyMatrixDisplacementDoublePtr  _dampingMatrix;
-    /** @brief Rigidity complex matrix */
+    /** @brief Stiffness complex matrix */
     AssemblyMatrixDisplacementComplexPtr _rigidityCMatrix;
-    /** @brief Rigidity double matrix */
+    /** @brief Stiffness double matrix */
     AssemblyMatrixDisplacementDoublePtr  _rigidityDMatrix;
 
 public:
@@ -102,7 +102,7 @@ public:
      * @brief Set the rigidity matrix
      * @param matr AssemblyMatrixDisplacementComplexPtr
      */
-    bool setRigidityMatrix( const AssemblyMatrixDisplacementComplexPtr& matr )
+    bool setStiffnessMatrix( const AssemblyMatrixDisplacementComplexPtr& matr )
     {
         _rigidityCMatrix = matr;
         _rigidityDMatrix = nullptr;
@@ -113,7 +113,7 @@ public:
      * @brief Set the rigidity matrix
      * @param matr AssemblyMatrixDisplacementDoublePtr
      */
-    bool setRigidityMatrix( const AssemblyMatrixDisplacementDoublePtr& matr )
+    bool setStiffnessMatrix( const AssemblyMatrixDisplacementDoublePtr& matr )
     {
         _rigidityDMatrix = matr;
         _rigidityCMatrix = nullptr;

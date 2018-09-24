@@ -36,6 +36,6 @@ void exportNormalModeAnalysisToPython()
         .def( "execute", &NormalModeAnalysisInstance::execute )
         .def( "setMassMatrix", &NormalModeAnalysisInstance::setMassMatrix )
         .def( "setNumberOfFrequencies", &NormalModeAnalysisInstance::setNumberOfFrequencies )
-        .def( "setRigidityMatrix", &NormalModeAnalysisInstance::setRigidityMatrix )
+        .def( "setStiffnessMatrix", &NormalModeAnalysisInstance::setStiffnessMatrix )
     ;
 };
