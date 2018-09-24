@@ -129,6 +129,7 @@ class MaterialAssignment(ExecuteCommand):
     def _addInputVariable(self, inputVarOnMesh, fkw, mesh):
         kwTout = fkw.get("TOUT")
         kwGrMa = fkw.get("GROUP_MA")
+        kwMail = fkw.get("MAILLE")
         nomVarc = fkw["NOM_VARC"]
         chamGd = fkw.get("CHAM_GD")
         valeRef = fkw.get("VALE_REF")
@@ -200,6 +201,10 @@ class MaterialAssignment(ExecuteCommand):
 
         if kwTout != None:
             inputVarOnMesh.addInputVariableOnAllMesh(inputVar)
+        elif kwMail != None:
+            kwMail = force_list(kwMail)
+            for elem in kwMail:
+                inputVarOnMesh.addInputVariableOnElement(inputVar, elem)
         elif kwGrMa != None:
             kwGrMa = force_list(kwGrMa)
             for grp in kwGrMa:
@@ -210,6 +215,7 @@ class MaterialAssignment(ExecuteCommand):
     def _addMaterial(self, fkw):
         kwTout = fkw.get("TOUT")
         kwGrMa = fkw.get("GROUP_MA")
+        kwMail = fkw.get("MAILLE")
         mater = fkw[ "MATER" ]
 
         for mater_i in mater:
@@ -219,9 +225,13 @@ class MaterialAssignment(ExecuteCommand):
                 kwGrMa = force_list(kwGrMa)
                 for grp in kwGrMa:
                     self._result.addMaterialOnGroupOfElements(mater_i, grp)
+            elif kwMail != None:
+                kwMail = force_list(kwMail)
+                for elem in kwMail:
+                    self._result.addMaterialOnElement(mater_i, elem)
             else:
-                raise TypeError("At least {0} or {1} is required"
-                                .format("TOUT", "GROUP_MA"))
+                raise TypeError("At least {0}, {1} or {2} is required"
+                                .format("TOUT", "GROUP_MA", "MAILLE"))
 
 
 AFFE_MATERIAU = MaterialAssignment.run

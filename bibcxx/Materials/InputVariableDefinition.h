@@ -459,6 +459,20 @@ public:
         _inputVars.push_back( VectorOfInputVarAndGrpsValue( curBehav,
                                         MeshEntityPtr( new GroupOfElements(nameOfGroup) ) ) );
     };
+
+    /**
+     * @brief Add an input variable on an element
+     */
+    template< class InputVariablePtr >
+    void addInputVariableOnElement( const InputVariablePtr& curBehav,
+                                            const std::string& nameOfElement )
+        throw ( std::runtime_error )
+    {
+        if ( ! _supportMesh ) throw std::runtime_error( "Support mesh is not defined" );
+
+        _inputVars.push_back( VectorOfInputVarAndGrpsValue( curBehav,
+                                        MeshEntityPtr( new Element(nameOfElement) ) ) );
+    };
 };
 
 /**
