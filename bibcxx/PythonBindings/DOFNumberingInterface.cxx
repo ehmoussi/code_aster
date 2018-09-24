@@ -35,11 +35,13 @@ void exportDOFNumberingToPython()
     class_< BaseDOFNumberingInstance, BaseDOFNumberingInstance::BaseDOFNumberingPtr,
             bases< DataStructure > > c1( "BaseDOFNumbering", no_init );
     c1.def( "addFiniteElementDescriptor", &BaseDOFNumberingInstance::addFiniteElementDescriptor );
-    c1.def( "computeNumerotation", &BaseDOFNumberingInstance::computeNumerotation );
+    c1.def( "computeNumbering", &BaseDOFNumberingInstance::computeNumbering );
     c1.def( "getFiniteElementDescriptors",
             &BaseDOFNumberingInstance::getFiniteElementDescriptors );
     c1.def( "isParallel", &BaseDOFNumberingInstance::isParallel );
     c1.def( "setElementaryMatrix", &BaseDOFNumberingInstance::setElementaryMatrix );
+    c1.def( "getSupportModel", &BaseDOFNumberingInstance::getSupportModel );
+    c1.def( "setSupportModel", &BaseDOFNumberingInstance::setSupportModel );
     addKinematicsLoadToInterface( c1 );
     addMechanicalLoadToInterface( c1 );
 
@@ -51,7 +53,5 @@ void exportDOFNumberingToPython()
             &initFactoryPtr< DOFNumberingInstance,
                              std::string >) )
         .def( "getFieldOnNodesDescription", &DOFNumberingInstance::getFieldOnNodesDescription )
-        .def( "getSupportModel", &DOFNumberingInstance::getSupportModel )
-        .def( "setSupportModel", &DOFNumberingInstance::setSupportModel )
     ;
 };

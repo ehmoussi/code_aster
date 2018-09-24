@@ -224,6 +224,14 @@ implicit none
                     logl, ftm, ftp, epsml, deps,&
                     tn, resi, cod(g))
 !
+        if (cod(g) .ne. 0) then
+            codret = cod(g)
+            if (.not. resi) then
+                call utmess('F', 'ALGORITH14_75')
+            endif
+            goto 999
+        endif
+!
         call nmcomp('RIGI', g, 1, ndim, typmod,&
                     mate, compor, crit, instm, instp,&
                     6, epsml, deps, 6, tn,&
@@ -238,8 +246,8 @@ implicit none
                     instp, angmas, gn, lamb, logl,&
                     sigp( 1, g), dsidep, pk2m, pk2, cod(g))
 !
-        if (cod(g) .eq. 1) then
-            codret = 1
+        if (cod(g) .ne. 0) then
+            codret = cod(g)
             if (.not. resi) then
                 call utmess('F', 'ALGORITH14_75')
             endif

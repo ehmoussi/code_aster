@@ -58,3 +58,8 @@ try:
 except NameError:
     class ParallelMechanicalLoad(object):
         pass
+try:
+    ParallelDOFNumbering
+except NameError:
+    class ParallelDOFNumbering(object):
+        pass

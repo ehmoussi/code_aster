@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -35,6 +35,7 @@ implicit none
 #include "asterfort/nmfdff.h"
 #include "asterfort/pk2sig.h"
 #include "asterfort/symt46.h"
+#include "asterc/r8prem.h"
 #include "blas/dgemm.h"
 #include "blas/dgemv.h"
 #include "blas/dger.h"
@@ -53,7 +54,7 @@ type GDLOG_DS
     real(kind=8) :: lamb(3)
     real(kind=8) :: logl(3)
     real(kind=8) :: pes(6,6)
-    real(kind=8) :: feta(4) 
+    real(kind=8) :: feta(4)
     real(kind=8) :: xi(3, 3)
     real(kind=8) :: me(3, 3, 3, 3)
     real(kind=8),dimension(:,:,:),pointer:: deft
@@ -110,7 +111,7 @@ end subroutine gdlog_init
 subroutine gdlog_defo(self, f, eps, iret)
 
 ! ----------------------------------------------------------------------
-!     CALCUL DES DEFORMATIONS LOGARITHMIQUES 
+!     CALCUL DES DEFORMATIONS LOGARITHMIQUES
 ! ----------------------------------------------------------------------
 !     in    f     gradient de la transformation sur la config initiale
 !     out   eps   def. log.
@@ -134,9 +135,9 @@ subroutine gdlog_defo(self, f, eps, iret)
     ASSERT(self%init_ds)
     ASSERT(size(eps).eq.2*self%ndim)
 
-    ! Controle numerique 
+    ! Controle numerique
     call lcdetf(self%ndim, f, jac)
-    iret = merge(1,0,jac.le.0.d0)
+    iret = merge(1,0,jac.le.r8prem())
     if (iret.ne.0) goto 999
 
     ! Calcul des elements cinematiques et des deformations
@@ -159,7 +160,7 @@ subroutine gdlog_matb(self,r,vff,dff,matb)
 !     Calcul matrice B tq dElog = B . dU
 ! ----------------------------------------------------------------------
 ! in  r    rayon courant (en axi)
-! in  vff  valeur des fonctions de forme 
+! in  vff  valeur des fonctions de forme
 ! in  dff  derivee des fonctions de forme
 ! out matb matrice b
 ! ----------------------------------------------------------------------
@@ -232,7 +233,7 @@ function gdlog_rigeo(self,t) result(matr)
     real(kind=8),allocatable:: marg(:,:)
     real(kind=8),allocatable:: trv(:,:,:)
 ! ---------------------------------------------------------------------
-    
+
     ASSERT(self%calc_matb)
 
     ! identification des dimensions
@@ -266,7 +267,7 @@ function gdlog_rigeo(self,t) result(matr)
     ! Terme axi : S(3) * Nn/r * Nm/r (termes i=j=1)
     maax = 0
     call dger(nno,nno,pk2(3),self%axf,1,self%axf,1,maax,nno)
-            
+
     ! Terme S(kl).PFF(kl,n,m) (termes i=j)
     call dgemv('t',ndimsi,nno*nno,1.d0,self%pff,ndimsi,pk2,1,0.d0,marg,1)
 

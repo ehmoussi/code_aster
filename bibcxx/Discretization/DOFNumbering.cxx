@@ -76,7 +76,7 @@ BaseDOFNumberingInstance::BaseDOFNumberingInstance( const std::string name,
     _isEmpty( true )
 {};
 
-bool BaseDOFNumberingInstance::computeNumerotation() throw ( std::runtime_error )
+bool BaseDOFNumberingInstance::computeNumbering() throw ( std::runtime_error )
 {
     if ( _supportModel )
     {
