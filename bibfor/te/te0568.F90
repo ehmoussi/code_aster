@@ -28,6 +28,7 @@ implicit none
 #include "asterfort/jevech.h"
 #include "asterfort/lcelem.h"
 #include "asterfort/lcstco.h"
+#include "asterfort/lcgeominit.h"
 #include "asterfort/lcgeog.h"
 #include "asterfort/lcpjit.h"
 #include "asterfort/lctria.h"
@@ -67,6 +68,7 @@ character(len=16), intent(in) :: nomte
     real(kind=8) :: norm(3)
     character(len=8) :: elem_slav_code, elem_mast_code
     real(kind=8) :: elem_mast_coor(27), elem_slav_coor(27)
+    real(kind=8) :: elem_mast_init(27), elem_slav_init(27)
     real(kind=8) :: elem_mast_coop(27), elem_slav_coop(27)
     real(kind=8) :: elin_mast_coor(3, 9)
     integer :: elin_mast_nbsub, elin_mast_sub(2,3), elin_mast_nbnode(2)
@@ -134,17 +136,30 @@ character(len=16), intent(in) :: nomte
                    gap_prev, mesure_prev, rho_n_prev, eval_prev, l_previous)
     end if
 !
+! - Get initial coordinates
+!
+    call lcgeominit(elem_dime     ,&
+                    nb_node_slav  , nb_node_mast  ,&
+                    elem_mast_init, elem_slav_init)
+!
 ! - Compute updated geometry
 !
-    call lcgeog(elem_dime     , nb_lagr       , indi_lagc ,&
-                nb_node_slav  , nb_node_mast  , &
-                algo_reso_geom, elem_mast_coor, elem_slav_coor,&
-                norm_smooth   , ASTER_FALSE)
+    call lcgeog(algo_reso_geom, ASTER_FALSE   ,&
+                elem_dime     , nb_lagr       , indi_lagc ,&
+                nb_node_slav  , nb_node_mast  ,&
+                elem_mast_init, elem_slav_init,&
+                elem_mast_coor, elem_slav_coor,&
+                norm_smooth)
+!
+! - S'il y a du cyclage, on calcul la géométrie à n-1 :
+!
     if (l_previous) then 
-         call lcgeog(elem_dime     , nb_lagr       , indi_lagc ,&
-            nb_node_slav  , nb_node_mast  , &
-            algo_reso_geom, elem_mast_coop, elem_slav_coop,&
-            norm_smooth, l_previous)
+        call lcgeog(algo_reso_geom, ASTER_TRUE    ,&
+                    elem_dime     , nb_lagr       , indi_lagc ,&
+                    nb_node_slav  , nb_node_mast  ,&
+                    elem_mast_init, elem_slav_init,&
+                    elem_mast_coop, elem_slav_coop,&
+                    norm_smooth)
     end if
 !
 ! - Compute vector
@@ -259,10 +274,11 @@ character(len=16), intent(in) :: nomte
                             end do
                             poidpg = gauss_weight(i_gauss)
 ! ------------------------- Compute geometric quantities for contact (slave side)
-                            call lctppe('Slave'     , elem_dime     , l_axis        ,&
-                                        nb_node_slav, elem_slav_coor, elem_slav_code,&
-                                        gauss_coot  , shape_func    , shape_dfunc   ,&
-                                        jacobian   , l_upda_jaco     , norm, jv_geom)
+                            call lctppe('Slave'       , l_axis        , l_upda_jaco,&
+                                        nb_node_slav  , elem_dime     , elem_slav_code  ,&
+                                        elem_slav_init, elem_slav_coor, &
+                                        gauss_coot    , shape_func    , shape_dfunc,&
+                                        jacobian      , norm)
 ! ------------------------- Compute contact vector - geometric (slave side)
                             call lcsees(elem_dime  , nb_node_slav, nb_lagr  ,&
                                         norm_smooth, norm        , indi_lagc, lagrc,&
@@ -294,11 +310,11 @@ character(len=16), intent(in) :: nomte
                             end do
                             poidpg = gauss_weight(i_gauss)
 ! ------------------------- Compute geometric quantities for contact (master side)
-                            call lctppe('Master'    , elem_dime     , l_axis        ,&
-                                        nb_node_mast, elem_mast_coor, elem_mast_code,&
-                                        gauss_coot  , shape_func    , shape_dfunc   ,&
-                                        jacobian  , l_upda_jaco     , norm, jv_geom ,&
-                                        elem_dime*nb_node_slav)
+                            call lctppe('Master'      , l_axis        , l_upda_jaco,&
+                                        nb_node_mast  , elem_dime     , elem_mast_code  ,&
+                                        elem_mast_init, elem_mast_coor, &
+                                        gauss_coot    , shape_func    , shape_dfunc,&
+                                        jacobian      , norm)
 ! ------------------------- Compute contact vector (master side)
                             call lcsema(elem_dime  , nb_node_mast, nb_node_slav, nb_lagr,&
                                         norm_smooth, norm        , lagrc   ,&
@@ -440,10 +456,11 @@ character(len=16), intent(in) :: nomte
                                     end do
                                     poidpg = gauss_weight(i_gauss)
 ! --------------------------------- Compute geometric quantities for contact (slave side)
-                                    call lctppe('Slave'     , elem_dime     , l_axis        ,&
-                                                nb_node_slav, elem_slav_coor, elem_slav_code,&
-                                                gauss_coot  , shape_func    , shape_dfunc   ,&
-                                                jacobian   , l_upda_jaco     , norm, jv_geom)
+                                    call lctppe('Slave'       , l_axis        , l_upda_jaco,&
+                                                nb_node_slav  , elem_dime     , elem_slav_code  ,&
+                                                elem_slav_init, elem_slav_coor, &
+                                                gauss_coot    , shape_func    , shape_dfunc,&
+                                                jacobian      , norm)
 ! --------------------------------- Compute contact vector - geometric (slave side)
                                     call lcsees(elem_dime  , nb_node_slav, nb_lagr  ,&
                                                 norm_smooth, norm        , indi_lagc, lagrc,&
@@ -477,11 +494,11 @@ character(len=16), intent(in) :: nomte
                                     end do
                                     poidpg = gauss_weight(i_gauss)
 ! --------------------------------- Compute geometric quantities for contact (master side)
-                                    call lctppe('Master'    , elem_dime     , l_axis        ,&
-                                                nb_node_mast, elem_mast_coor, elem_mast_code,&
-                                                gauss_coot  , shape_func    , shape_dfunc   ,&
-                                                jacobian  , l_upda_jaco     , norm, jv_geom ,&
-                                                elem_dime*nb_node_slav)
+                                    call lctppe('Master'      , l_axis        , l_upda_jaco   ,&
+                                                nb_node_mast  , elem_dime     , elem_mast_code,&
+                                                elem_mast_init, elem_mast_coor, &
+                                                gauss_coot    , shape_func    , shape_dfunc,&
+                                                jacobian      , norm)
 ! --------------------------------- Compute contact vector (master side)
                                     call lcsema(elem_dime  , nb_node_mast, nb_node_slav, nb_lagr,&
                                                 norm_smooth, norm        , lagrc   ,&
