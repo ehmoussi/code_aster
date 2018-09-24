@@ -141,7 +141,6 @@ def calc_modes_ops(self, TYPE_RESU, OPTION, AMELIORATION, INFO, **args):
 
     matrRigi = args.get("MATR_RIGI")
     if matrRigi is not None:
-        print "modes", modes
         if isinstance(modes, GeneralizedModeContainer):
             modes.setGeneralizedDOFNumbering(matrRigi.getGeneralizedDOFNumbering())
         elif isinstance(modes, MechanicalModeContainer):
