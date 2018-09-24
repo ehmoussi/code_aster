@@ -164,7 +164,6 @@ def calc_modes_inv(self, stop_erreur, sturm, TYPE_RESU, OPTION,  INFO, **args):
     if TITRE != None:
         motcles['TITRE'] = TITRE
 
-    print "Icvi"
     modes = MODE_ITER_INV(TYPE_RESU=TYPE_RESU,
                           INFO=INFO,
                           **motcles
