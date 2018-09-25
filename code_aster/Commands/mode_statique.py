@@ -35,4 +35,14 @@ class StaticModeCalculation(ExecuteCommand):
         """
         self._result = MechanicalModeContainer()
 
+    def post_exec(self, keywords):
+        """Execute the command.
+
+        Arguments:
+            keywords (dict): User's keywords.
+        """
+        matrRigi = keywords["MATR_RIGI"]
+        dofNum = matrRigi.getDOFNumbering()
+        self._result.appendModelOnAllRanks(dofNum.getSupportModel())
+
 MODE_STATIQUE = StaticModeCalculation.run

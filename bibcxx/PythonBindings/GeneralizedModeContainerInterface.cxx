@@ -30,9 +30,9 @@ void exportGeneralizedModeContainerToPython()
     using namespace boost::python;
 
     bool (GeneralizedModeContainerInstance::*c1)( const GeneralizedAssemblyMatrixDoublePtr& ) =
-        &GeneralizedModeContainerInstance::setRigidityMatrix;
+        &GeneralizedModeContainerInstance::setStiffnessMatrix;
     bool (GeneralizedModeContainerInstance::*c2)( const GeneralizedAssemblyMatrixComplexPtr& ) =
-        &GeneralizedModeContainerInstance::setRigidityMatrix;
+        &GeneralizedModeContainerInstance::setStiffnessMatrix;
 
     class_< GeneralizedModeContainerInstance, GeneralizedModeContainerPtr,
             bases< FullResultsContainerInstance > > ( "GeneralizedModeContainer", no_init )
@@ -46,7 +46,7 @@ void exportGeneralizedModeContainerToPython()
               &GeneralizedModeContainerInstance::getGeneralizedDOFNumbering )
         .def( "setGeneralizedDOFNumbering",
               &GeneralizedModeContainerInstance::setGeneralizedDOFNumbering )
-        .def( "setRigidityMatrix", c1 )
-        .def( "setRigidityMatrix", c2 )
+        .def( "setStiffnessMatrix", c1 )
+        .def( "setStiffnessMatrix", c2 )
     ;
 };

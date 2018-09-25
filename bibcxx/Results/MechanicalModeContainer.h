@@ -29,6 +29,7 @@
 #include "Results/FullResultsContainer.h"
 #include "LinearAlgebra/StructureInterface.h"
 #include "LinearAlgebra/AssemblyMatrix.h"
+#include "Discretization/DOFNumbering.h"
 
 /**
  * @class MechanicalModeContainerInstance
@@ -39,9 +40,9 @@ class MechanicalModeContainerInstance: public FullResultsContainerInstance
 {
 private:
     StructureInterfacePtr               _structureInterface;
-    /** @brief Rigidity displacement matrix */
+    /** @brief Stiffness displacement matrix */
     AssemblyMatrixDisplacementDoublePtr _rigidityDispMatrix;
-    /** @brief Rigidity temperature matrix */
+    /** @brief Stiffness temperature matrix */
     AssemblyMatrixTemperatureDoublePtr  _rigidityTempMatrix;
 
 public:
@@ -55,10 +56,39 @@ public:
     {};
 
     /**
+     * @brief Get the rigidity matrix
+     */
+    AssemblyMatrixDisplacementDoublePtr getDisplacementStiffnessMatrix() const
+    {
+        return _rigidityDispMatrix;
+    };
+
+    /**
+     * @brief Get the DOFNumbering
+     */
+    BaseDOFNumberingPtr getDOFNumbering() const
+        throw( std::runtime_error )
+    {
+        if( _rigidityDispMatrix != nullptr )
+            return _rigidityDispMatrix->getDOFNumbering();
+        if( _rigidityTempMatrix != nullptr )
+            return _rigidityTempMatrix->getDOFNumbering();
+        throw std::runtime_error( "No matrix set" );
+    };
+
+    /**
+     * @brief Get the rigidity matrix
+     */
+    AssemblyMatrixTemperatureDoublePtr getTemperatureStiffnessMatrix() const
+    {
+        return _rigidityTempMatrix;
+    };
+
+    /**
      * @brief Set the rigidity matrix
      * @param matr AssemblyMatrixDisplacementDoublePtr
      */
-    bool setRigidityMatrix( const AssemblyMatrixDisplacementDoublePtr& matr )
+    bool setStiffnessMatrix( const AssemblyMatrixDisplacementDoublePtr& matr )
     {
         _rigidityTempMatrix = nullptr;
         _rigidityDispMatrix = matr;
@@ -69,7 +99,7 @@ public:
      * @brief Set the rigidity matrix
      * @param matr AssemblyMatrixTemperatureDoublePtr
      */
-    bool setRigidityMatrix( const AssemblyMatrixTemperatureDoublePtr& matr )
+    bool setStiffnessMatrix( const AssemblyMatrixTemperatureDoublePtr& matr )
     {
         _rigidityDispMatrix = nullptr;
         _rigidityTempMatrix = matr;

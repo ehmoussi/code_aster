@@ -37,7 +37,7 @@ def mode_iter_inv_prod(TYPE_RESU, **args ):
     if (vale_rigi== None) : # si MATR_RIGI non renseigné
        # on retourne un type fictif pour que le plantage aie lieu dans la lecture du catalogue
        return ASSD
-    vale_amor = args['MATR_AMOR']
+    vale_amor = args.get('MATR_AMOR')
     if AsType(vale_amor) == matr_asse_depl_r : return mode_meca_c
     if AsType(vale_rigi) == matr_asse_depl_r : return mode_meca
     if AsType(vale_rigi) == matr_asse_pres_r : return mode_acou

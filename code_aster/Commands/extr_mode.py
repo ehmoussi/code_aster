@@ -34,10 +34,11 @@ class ExtrMode(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        if keywords['FILTRE_MODE'][0]['MODE'].getType() == "MODE_MECA":
+        mode = keywords['FILTRE_MODE'][0]['MODE']
+        if mode.getType() == "MODE_MECA":
             self._result = MechanicalModeContainer()
         else:
-            self._result = type(keywords['FILTRE_MODE'][0]['MODE'])()
+            self._result = type(mode)()
 
     def post_exec(self, keywords):
         """Execute the command.
@@ -45,9 +46,14 @@ class ExtrMode(ExecuteCommand):
         Arguments:
             keywords (dict): User's keywords.
         """
+        mode = keywords['FILTRE_MODE'][0]['MODE']
         try:
-            self._result.setDOFNumbering(keywords['FILTRE_MODE'][0]['MODE'].getDOFNumbering())
+            self._result.setDOFNumbering(mode.getDOFNumbering())
         except:
             pass
+        if isinstance(mode, MechanicalModeContainer):
+            stiffMat = mode.getStiffnessMatrix()
+            if stiffMat is not None:
+                self._result.setStiffnessMatrix(stiffMat)
 
 EXTR_MODE = ExtrMode.run

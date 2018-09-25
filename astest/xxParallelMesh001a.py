@@ -57,7 +57,7 @@ charCine.build()
 
 study = code_aster.StudyDescription(model, affectMat)
 dProblem = code_aster.DiscreteProblem(study)
-matr_elem = dProblem.computeMechanicalRigidityMatrix()
+matr_elem = dProblem.computeMechanicalStiffnessMatrix()
 
 monSolver = code_aster.MumpsSolver(code_aster.Renumbering.Metis)
 

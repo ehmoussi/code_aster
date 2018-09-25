@@ -45,7 +45,7 @@ class DynamicMacroElementDefinition(ExecuteCommand):
         self._result.setSupportMechanicalMode(keywords["BASE_MODALE"])
         matrRigi = keywords.get("MATR_RIGI")
         if matrRigi is not None:
-            self._result.setRigidityMatrix(matrRigi)
+            self._result.setStiffnessMatrix(matrRigi)
         matrMass = keywords.get("MATR_MASS")
         if matrMass is not None:
             self._result.setMassMatrix(matrMass)
@@ -57,7 +57,7 @@ class DynamicMacroElementDefinition(ExecuteCommand):
             self._result.setImpedanceMatrix(matrImpe)
         matrImpeRigi = keywords.get("MATR_IMPE_RIGI")
         if matrImpeRigi is not None:
-            self._result.setImpedanceRigidityMatrix(matrImpeRigi)
+            self._result.setImpedanceStiffnessMatrix(matrImpeRigi)
         matrImpeMass = keywords.get("MATR_IMPE_MASS")
         if matrImpeMass is not None:
             self._result.setMassMatrix(matrImpeMass)

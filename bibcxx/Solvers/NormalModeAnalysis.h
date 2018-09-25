@@ -69,7 +69,7 @@ public:
         _numberOfFreq = number;
     };
 
-    void setRigidityMatrix( const AssemblyMatrixDisplacementDoublePtr& matr )
+    void setStiffnessMatrix( const AssemblyMatrixDisplacementDoublePtr& matr )
     {
         _container[ "MATR_RIGI" ]->enable();
         _rigidity = matr;

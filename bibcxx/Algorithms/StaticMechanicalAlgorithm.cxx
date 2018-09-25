@@ -39,7 +39,7 @@ void StaticMechanicalAlgorithm::oneStep( const CurrentContext& ctx ) throw( Algo
 
     if( ctx._rank == 1 || !ctx._isConst )
     {
-        ElementaryMatrixPtr matrElem = ctx._discreteProblem->buildElementaryRigidityMatrix( ctx._time );
+        ElementaryMatrixPtr matrElem = ctx._discreteProblem->buildElementaryStiffnessMatrix( ctx._time );
 
         // Build assembly matrix
         ctx._aMatrix->clearElementaryMatrix();

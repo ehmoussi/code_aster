@@ -58,5 +58,13 @@ class NormMode(ExecuteCommand):
             return
         raise TypeError("unexpected type for keyword MODE")
 
+    def post_exec(self, keywords):
+        """Execute the command.
+
+        Arguments:
+            keywords (dict): User's keywords.
+        """
+        self._result.setDOFNumbering(keywords["MODE"].getDOFNumbering())
+
 
 NORM_MODE = NormMode.run

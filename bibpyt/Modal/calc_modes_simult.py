@@ -71,7 +71,7 @@ class ModalCalculationSimult(ExecuteCommand):
                 self._result.setGeneralizedDOFNumbering(matrRigi.getGeneralizedDOFNumbering())
             else:
                 self._result.setDOFNumbering(matrRigi.getDOFNumbering())
-            self._result.setRigidityMatrix(matrRigi)
+            self._result.setStiffnessMatrix(matrRigi)
         matrAmor = keywords.get("MATR_AMOR")
         if matrAmor is not None:
             self._result.setDampingMatrix(matrAmor)
