@@ -800,7 +800,7 @@
 .. autoclass:: code_aster.Objects.MechanicalModeContainer
    :show-inheritance:
    :members:
-
+   :exclude-members: getStiffnessMatrix
 
 ================================================================================
 :py:class:`~code_aster.Objects.Mesh` object
