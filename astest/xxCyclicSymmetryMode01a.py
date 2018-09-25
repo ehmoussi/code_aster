@@ -50,7 +50,7 @@ charCine.build()
 
 study = code_aster.StudyDescription(modele, affeMat)
 dProblem = code_aster.DiscreteProblem(study)
-rigiElem = dProblem.computeMechanicalRigidityMatrix()
+rigiElem = dProblem.computeMechanicalStiffnessMatrix()
 massElem = dProblem.computeMechanicalMassMatrix()
 
 numeDDL = code_aster.DOFNumbering()

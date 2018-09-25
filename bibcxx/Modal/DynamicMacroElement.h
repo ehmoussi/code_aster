@@ -182,7 +182,7 @@ public:
     /**
      * @brief Get impedance matrix
      */
-    GeneralizedAssemblyMatrixComplexPtr getImpedanceRigidityMatrix()
+    GeneralizedAssemblyMatrixComplexPtr getImpedanceStiffnessMatrix()
     {
         return _impeRigiMatrix;
     };
@@ -198,7 +198,7 @@ public:
     /**
      * @brief Get rigidity matrix
      */
-    AssemblyMatrixDisplacementComplexPtr getComplexRigidityMatrix()
+    AssemblyMatrixDisplacementComplexPtr getComplexStiffnessMatrix()
     {
         return _rigidityCMatrix;
     };
@@ -206,7 +206,7 @@ public:
     /**
      * @brief Get rigidity matrix
      */
-    AssemblyMatrixDisplacementDoublePtr getDoubleRigidityMatrix()
+    AssemblyMatrixDisplacementDoublePtr getDoubleStiffnessMatrix()
     {
         return _rigidityDMatrix;
     };
@@ -255,7 +255,7 @@ public:
      * @brief Set impedance matrix
      * @param matrix AssemblyMatrixDisplacementDoublePtr object
      */
-    bool setImpedanceRigidityMatrix( const GeneralizedAssemblyMatrixComplexPtr& matrix )
+    bool setImpedanceStiffnessMatrix( const GeneralizedAssemblyMatrixComplexPtr& matrix )
     {
         _impeRigiMatrix = matrix;
         return true;
@@ -285,7 +285,7 @@ public:
      * @brief Set rigidity matrix
      * @param matrix AssemblyMatrixDisplacementComplexPtr object
      */
-    bool setRigidityMatrix( const AssemblyMatrixDisplacementComplexPtr& matrix )
+    bool setStiffnessMatrix( const AssemblyMatrixDisplacementComplexPtr& matrix )
     {
         _rigidityCMatrix = matrix;
         _rigidityDMatrix = nullptr;
@@ -296,7 +296,7 @@ public:
      * @brief Set rigidity matrix
      * @param matrix AssemblyMatrixDisplacementDoublePtr object
      */
-    bool setRigidityMatrix( const AssemblyMatrixDisplacementDoublePtr& matrix )
+    bool setStiffnessMatrix( const AssemblyMatrixDisplacementDoublePtr& matrix )
     {
         _rigidityDMatrix = matrix;
         _rigidityCMatrix = nullptr;

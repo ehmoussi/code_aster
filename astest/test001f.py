@@ -83,7 +83,7 @@ study.addMechanicalLoad(CharMeca1)
 study.addMechanicalLoad(CharMeca2)
 dProblem = code_aster.DiscreteProblem(study)
 vectElem = dProblem.buildElementaryMechanicalLoadsVector()
-matr_elem = dProblem.computeMechanicalRigidityMatrix()
+matr_elem = dProblem.computeMechanicalStiffnessMatrix()
 
 test.assertEqual( matr_elem.getType(), "MATR_ELEM_DEPL_R" )
 

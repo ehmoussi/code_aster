@@ -65,7 +65,7 @@ study.addMechanicalLoad(CharMeca3)
 study.addMechanicalLoad(CharMeca4)
 
 dProblem = code_aster.DiscreteProblem(study)
-K_ELEM1 = dProblem.computeMechanicalRigidityMatrix()
+K_ELEM1 = dProblem.computeMechanicalStiffnessMatrix()
 M_ELEM1 = dProblem.computeMechanicalMassMatrix()
 A_ELEM1 = dProblem.computeMechanicalDampingMatrix(K_ELEM1, M_ELEM1)
 

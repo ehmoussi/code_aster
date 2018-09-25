@@ -46,8 +46,8 @@ void exportDiscreteProblemToPython()
               &DiscreteProblemInstance::buildElementaryLaplaceVector )
         .def( "buildElementaryNeumannVector",
               &DiscreteProblemInstance::buildElementaryNeumannVector )
-        .def( "buildElementaryRigidityMatrix",
-              &DiscreteProblemInstance::buildElementaryRigidityMatrix )
+        .def( "buildElementaryStiffnessMatrix",
+              &DiscreteProblemInstance::buildElementaryStiffnessMatrix )
         .def( "buildElementaryTangentMatrix",
               &DiscreteProblemInstance::buildElementaryTangentMatrix )
         .def( "buildElementaryJacobianMatrix",
@@ -59,8 +59,8 @@ void exportDiscreteProblemToPython()
               &DiscreteProblemInstance::computeDOFNumbering )
         .def( "computeMechanicalDampingMatrix",
               &DiscreteProblemInstance::computeMechanicalDampingMatrix )
-        .def( "computeMechanicalRigidityMatrix",
-              &DiscreteProblemInstance::computeMechanicalRigidityMatrix )
+        .def( "computeMechanicalStiffnessMatrix",
+              &DiscreteProblemInstance::computeMechanicalStiffnessMatrix )
         .def( "computeMechanicalMassMatrix",
               &DiscreteProblemInstance::computeMechanicalMassMatrix )
         .def( "getStudyDescription",

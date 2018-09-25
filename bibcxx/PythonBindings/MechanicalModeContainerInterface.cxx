@@ -24,24 +24,57 @@
 #include "PythonBindings/MechanicalModeContainerInterface.h"
 #include "PythonBindings/factory.h"
 #include <boost/python.hpp>
+#include <boost/variant.hpp>
+
+typedef boost::variant< AssemblyMatrixDisplacementDoublePtr,
+                        AssemblyMatrixTemperatureDoublePtr > MatrixVariant;
+
+struct variant_to_object: boost::static_visitor< PyObject * >
+{
+    static result_type convert( MatrixVariant const &v )
+    {
+        return apply_visitor( variant_to_object(), v );
+    }
+
+    template< typename T >
+    result_type operator()( T const &t ) const
+    {
+        return boost::python::incref( boost::python::object(t).ptr() );
+    }
+};
+
+MatrixVariant getStiffnessMatrix( MechanicalModeContainerPtr self )
+{
+    auto mat1 = self->getDisplacementStiffnessMatrix();
+    if( mat1 != nullptr )
+        return MatrixVariant( mat1 );
+    auto mat2 = self->getTemperatureStiffnessMatrix();
+    return MatrixVariant( mat2 );
+};
 
 void exportMechanicalModeContainerToPython()
 {
     using namespace boost::python;
 
     bool (MechanicalModeContainerInstance::*c1)( const AssemblyMatrixDisplacementDoublePtr& ) =
-        &MechanicalModeContainerInstance::setRigidityMatrix;
+        &MechanicalModeContainerInstance::setStiffnessMatrix;
     bool (MechanicalModeContainerInstance::*c2)( const AssemblyMatrixTemperatureDoublePtr& ) =
-        &MechanicalModeContainerInstance::setRigidityMatrix;
+        &MechanicalModeContainerInstance::setStiffnessMatrix;
 
     class_< MechanicalModeContainerInstance, MechanicalModeContainerPtr,
             bases< FullResultsContainerInstance > > ( "MechanicalModeContainer", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< MechanicalModeContainerInstance > ) )
-        .def( "setRigidityMatrix", c1 )
-        .def( "setRigidityMatrix", c2 )
+        .def( "getDOFNumbering", &MechanicalModeContainerInstance::getDOFNumbering )
+        .def( "getStiffnessMatrix", &getStiffnessMatrix )
+        .def( "setStiffnessMatrix", c1 )
+        .def( "setStiffnessMatrix", c2 )
         .def( "setStructureInterface", &MechanicalModeContainerInstance::setStructureInterface )
     ;
+
+    to_python_converter< MatrixVariant, variant_to_object >();
+    implicitly_convertible< AssemblyMatrixDisplacementDoublePtr, MatrixVariant >();
+    implicitly_convertible< AssemblyMatrixTemperatureDoublePtr, MatrixVariant >();
 };
 
 void exportMechanicalModeComplexContainerToPython()
@@ -49,17 +82,17 @@ void exportMechanicalModeComplexContainerToPython()
     using namespace boost::python;
 
     bool (MechanicalModeComplexContainerInstance::*c1)(const AssemblyMatrixDisplacementDoublePtr&)=
-        &MechanicalModeComplexContainerInstance::setRigidityMatrix;
+        &MechanicalModeComplexContainerInstance::setStiffnessMatrix;
     bool (MechanicalModeComplexContainerInstance::*c2)(const AssemblyMatrixDisplacementComplexPtr&)=
-        &MechanicalModeComplexContainerInstance::setRigidityMatrix;
+        &MechanicalModeComplexContainerInstance::setStiffnessMatrix;
 
     class_< MechanicalModeComplexContainerInstance, MechanicalModeComplexContainerPtr,
             bases< FullResultsContainerInstance > > ( "MechanicalModeComplexContainer", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< MechanicalModeComplexContainerInstance > ) )
         .def( "setDampingMatrix", &MechanicalModeComplexContainerInstance::setDampingMatrix )
-        .def( "setRigidityMatrix", c1 )
-        .def( "setRigidityMatrix", c2 )
+        .def( "setStiffnessMatrix", c1 )
+        .def( "setStiffnessMatrix", c2 )
         .def( "setStructureInterface",
               &MechanicalModeComplexContainerInstance::setStructureInterface )
     ;
