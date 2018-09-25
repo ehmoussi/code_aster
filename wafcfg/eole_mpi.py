@@ -42,6 +42,7 @@ def configure(self):
     self.env.append_value('OPT_ENV_FOOTER', [
         'module unload mkl',
         'module load mkl/2017.0.098 impi/2017.0.098',
+        'export LD_PRELOAD=/opt/mkl-2017.0.098/compilers_and_libraries_2017.0.098/linux/mkl/lib/intel64_lin/libmkl_scalapack_lp64.so:/opt/mkl-2017.0.098/compilers_and_libraries_2017.0.098/linux/mkl/lib/intel64_lin/libmkl_intel_lp64.so:/opt/mkl-2017.0.098/compilers_and_libraries_2017.0.098/linux/mkl/lib/intel64_lin/libmkl_intel_thread.so:/opt/mkl-2017.0.098/compilers_and_libraries_2017.0.098/linux/mkl/lib/intel64_lin/libmkl_core.so:/opt/mkl-2017.0.098/compilers_and_libraries_2017.0.098/linux/mkl/lib/intel64_lin/libmkl_blacs_intelmpi_lp64.so:/opt/mkl-2017.0.098/compilers_and_libraries_2017.0.098/linux/compiler/lib/intel64_lin/libiomp5.so',
         'export I_MPI_DAPL_TRANSLATION_CACHE=0'
     ])
 
