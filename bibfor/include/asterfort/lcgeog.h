@@ -18,13 +18,12 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine lcgeog(algo_reso_geom, l_previous    ,&
+    subroutine lcgeog(l_previous    ,&
                       elem_dime     , nb_lagr       , indi_lagc,&
                       nb_node_slav  , nb_node_mast  ,&
                       elem_mast_init, elem_slav_init,&
                       elem_mast_coor, elem_slav_coor,&
                       l_norm_smooth)
-        integer, intent(in) :: algo_reso_geom
         aster_logical, intent(in) :: l_previous
         integer, intent(in) :: elem_dime
         integer, intent(in) :: nb_lagr

@@ -50,10 +50,10 @@ character(len=16), intent(in) :: nomte
     integer :: indi_lagc(10)
     integer :: elem_dime
     integer :: jvect
-    real(kind=8) :: Lagrc, lagrc_prev
-    integer :: algo_reso_geom, indi_cont, indi_cont_prev
+    real(kind=8) :: lagrc, lagrc_prev
+    integer :: indi_cont
     aster_logical :: l_norm_smooth
-    aster_logical :: l_axis, l_elem_frot, debug, l_upda_jaco
+    aster_logical :: l_axis, debug, l_upda_jaco
     character(len=8) :: elem_slav_code, elem_mast_code
     real(kind=8) :: elem_mast_coor(27), elem_slav_coor(27)
     real(kind=8) :: elem_mast_init(27), elem_slav_init(27)
@@ -61,9 +61,7 @@ character(len=16), intent(in) :: nomte
     character(len=8) :: elga_fami_slav, elga_fami_mast 
     real(kind=8) :: vtmp(55), vtmp_prev(55), vtmp_(55)
     real(kind=8) :: gap_curr,gap_prev
-    real(kind=8) :: mesure, rho_n, eval, mesure_prev, rho_n_prev, eval_prev
     aster_logical :: l_previous
-    integer :: jpcf
     real(kind=8) :: alpha, max_value
 !
 ! --------------------------------------------------------------------------------------------------
@@ -85,29 +83,18 @@ character(len=16), intent(in) :: nomte
 ! - Get informations about contact element
 !
     call lcelem(nomte         , elem_dime     ,&
-                l_axis        , l_elem_frot   ,&
+                l_axis        , &
                 nb_dof        , nb_lagr       , indi_lagc   ,&
                 elem_slav_code, elga_fami_slav, nb_node_slav,&
                 elem_mast_code, elga_fami_mast, nb_node_mast)
     ASSERT(nb_dof .le. 55)
 !
-! - Get information about cycling
-!
-    call jevech('PCONFR', 'L', jpcf)
-    l_previous = nint(zr(jpcf-1+10 )).eq.1 
-
-!
 ! - Get indicators
 !
-    call lcstco(algo_reso_geom, indi_cont, l_upda_jaco, &
-                lagrc         , gap_curr , mesure, rho_n, eval, ASTER_FALSE)
-!
-! - S'il y a du cyclage, on récupère les informations à n-1 :
-!
-    if (l_previous) then
-       call lcstco(algo_reso_geom, indi_cont_prev, l_upda_jaco, lagrc_prev,&
-                   gap_prev, mesure_prev, rho_n_prev, eval_prev, l_previous)
-    end if
+    call lcstco(l_previous, l_upda_jaco  ,&
+                lagrc_prev, lagrc        ,&
+                gap_prev  , gap_curr     ,&
+                indi_cont , l_norm_smooth)
 !
 ! - Get initial coordinates
 !
@@ -117,7 +104,7 @@ character(len=16), intent(in) :: nomte
 !
 ! - Compute updated geometry
 !
-    call lcgeog(algo_reso_geom, ASTER_FALSE   ,&
+    call lcgeog(ASTER_FALSE   ,&
                 elem_dime     , nb_lagr       , indi_lagc ,&
                 nb_node_slav  , nb_node_mast  ,&
                 elem_mast_init, elem_slav_init,&
@@ -127,7 +114,7 @@ character(len=16), intent(in) :: nomte
 ! - S'il y a du cyclage, on calcul la géométrie à n-1 :
 !
     if (l_previous) then 
-        call lcgeog(algo_reso_geom, ASTER_TRUE    ,&
+        call lcgeog(ASTER_TRUE    ,&
                     elem_dime     , nb_lagr       , indi_lagc ,&
                     nb_node_slav  , nb_node_mast  ,&
                     elem_mast_init, elem_slav_init,&

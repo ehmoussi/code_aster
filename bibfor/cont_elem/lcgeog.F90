@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine lcgeog(algo_reso_geom, l_previous    ,&
+subroutine lcgeog(l_previous    ,&
                   elem_dime     , nb_lagr       , indi_lagc,&
                   nb_node_slav  , nb_node_mast  ,&
                   elem_mast_init, elem_slav_init,&
@@ -30,7 +30,6 @@ implicit none
 #include "asterfort/jevech.h"
 #include "asterfort/lcreac.h"
 !
-integer, intent(in) :: algo_reso_geom
 aster_logical, intent(in) :: l_previous
 integer, intent(in) :: elem_dime
 integer, intent(in) :: nb_lagr
@@ -51,9 +50,6 @@ aster_logical, intent(out) :: l_norm_smooth
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  algo_reso_geom   : algorithm for geometry loop
-!                         0 - fixed point
-!                         1 - Newton
 ! In  l_previous       : .true. to get previous state
 ! In  elem_dime        : dimension of elements
 ! In  nb_lagr          : total number of Lagrangian dof on contact element
@@ -64,12 +60,10 @@ aster_logical, intent(out) :: l_norm_smooth
 ! In  elem_mast_init   : initial coordinates from master side of contact element
 ! IO  elem_slav_coor   : updated coordinates from slave side of contact element
 ! IO  elem_mast_coor   : updated coordinates from master side of contact element
-! Out l_norm_smooth    : indicator for normals smoothing
 !
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: jpcf, jv_disp, jv_disp_incr, jv_ddisp
-    real(kind=8):: coef_upda_geom
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -81,19 +75,11 @@ aster_logical, intent(out) :: l_norm_smooth
 !
     l_norm_smooth = int(zr(jpcf-1+1)) .eq. 1
 !
-! - Coefficient to update geometry
-!
-    if (algo_reso_geom .eq. 1) then
-        coef_upda_geom = 1.d0
-    else
-        coef_upda_geom = 0.d0
-    endif            
-!
 ! - Get updated coordinates
 !
     if (l_previous) then 
         call jevech('PDDEPLA', 'L', jv_ddisp)
-        call lcreac(nb_lagr       , indi_lagc     , elem_dime, coef_upda_geom,&
+        call lcreac(nb_lagr       , indi_lagc     , elem_dime,&
                     nb_node_slav  , nb_node_mast  ,&
                     jv_disp       , jv_disp_incr  ,&
                     elem_slav_init, elem_mast_init,&
@@ -101,7 +87,7 @@ aster_logical, intent(out) :: l_norm_smooth
                     jv_ddisp)
                     
     else 
-        call lcreac(nb_lagr       , indi_lagc     , elem_dime, coef_upda_geom,&
+        call lcreac(nb_lagr       , indi_lagc     , elem_dime,&
                     nb_node_slav  , nb_node_mast  ,&
                     jv_disp       , jv_disp_incr  ,&
                     elem_slav_init, elem_mast_init,&
