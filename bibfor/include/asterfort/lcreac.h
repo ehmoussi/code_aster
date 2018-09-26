@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine lcreac(nb_lagr       , indi_lagc     , elem_dime, coef_upda_geom,&
+    subroutine lcreac(nb_lagr       , indi_lagc     , elem_dime,&
                       nb_node_slav  , nb_node_mast  ,&
                       jv_disp       , jv_disp_incr  ,&
                       elem_slav_init, elem_mast_init,&
@@ -27,7 +27,6 @@ interface
         integer, intent(in) :: nb_lagr
         integer, intent(in) :: indi_lagc(10)
         integer, intent(in) :: nb_node_slav, nb_node_mast
-        real(kind=8), intent(in) :: coef_upda_geom     
         integer, intent(in) :: jv_disp, jv_disp_incr
         integer, intent(in), optional :: jv_ddisp
         real(kind=8), intent(in) :: elem_slav_init(elem_dime, nb_node_slav)

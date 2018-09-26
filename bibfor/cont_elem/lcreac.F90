@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine lcreac(nb_lagr       , indi_lagc     , elem_dime, coef_upda_geom,&
+subroutine lcreac(nb_lagr       , indi_lagc     , elem_dime,&
                   nb_node_slav  , nb_node_mast  ,&
                   jv_disp       , jv_disp_incr  ,&
                   elem_slav_init, elem_mast_init,&
@@ -31,7 +31,6 @@ integer, intent(in) :: elem_dime
 integer, intent(in) :: nb_lagr
 integer, intent(in) :: indi_lagc(10)
 integer, intent(in) :: nb_node_slav, nb_node_mast
-real(kind=8), intent(in) :: coef_upda_geom     
 integer, intent(in) :: jv_disp, jv_disp_incr
 integer, intent(in), optional :: jv_ddisp
 real(kind=8), intent(in) :: elem_slav_init(elem_dime, nb_node_slav)
@@ -50,7 +49,6 @@ real(kind=8), intent(inout) :: elem_mast_coor(elem_dime, nb_node_mast)
 ! In  elem_dime        : dimension of elements
 ! In  nb_lagr          : total number of Lagrangian dof on contact element
 ! In  indi_lagc        : PREVIOUS node where Lagrangian dof is present (1) or not (0)
-! In  coef_upda_geom   : coefficient to update geometry
 ! In  nb_node_slav     : number of nodes of for slave side from contact element
 ! In  nb_node_mast     : number of nodes of for master side from contact element
 ! In  jv_disp          : JEVEUX adress for displacement at beginning of time step
@@ -76,7 +74,6 @@ real(kind=8), intent(inout) :: elem_mast_coor(elem_dime, nb_node_mast)
             elem_slav_coor(i_dime, i_node_slav) =&
                 elem_slav_init(i_dime, i_node_slav) +&
                 zr(jv_disp+(i_node_slav-1)*(elem_dime)+deca+i_dime-1)+ &
-                coef_upda_geom*&
                 zr(jv_disp_incr+(i_node_slav-1)*(elem_dime)+deca+i_dime-1)  
             if (present(jv_ddisp)) then 
                elem_slav_coor(i_dime, i_node_slav) =&
@@ -93,7 +90,6 @@ real(kind=8), intent(inout) :: elem_mast_coor(elem_dime, nb_node_mast)
             elem_mast_coor(i_dime, i_node_mast) = &
                 elem_mast_init(i_dime, i_node_mast)+&
                 zr(jv_disp+nb_node_slav*elem_dime+nb_lagr+(i_node_mast-1)*elem_dime+i_dime-1)+&
-                coef_upda_geom*&
                 zr(jv_disp_incr+nb_node_slav*elem_dime+nb_lagr+(i_node_mast-1)*elem_dime+i_dime-1)
             if (present(jv_ddisp)) then 
                 elem_mast_coor(i_dime, i_node_mast) = &
