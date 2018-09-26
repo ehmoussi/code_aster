@@ -343,14 +343,19 @@ def CHAR2D(self, POISSON, YOUNG, _tempsar, INFO):
 #
 
 
-def test_compor_ops(
-    self, OPTION, NEWTON, CONVERGENCE, COMPORTEMENT, LIST_MATER, VARI_TEST, INFO,
-        **args):
+def test_compor_ops(self, **args):
     # seule l'option "THER", c'est à dire le test thermomecanique est programmé à ce jour
     # ajouter l'option MECA (tests comp001,002), l'option HYDR, etc..
     ier = 0
     # La macro compte pour 1 dans la numerotation des commandes
     self.set_icmd(1)
+    OPTION = args.get("OPTION")
+    NEWTON = args.get("NEWTON")
+    CONVERGENCE = args.get("CONVERGENCE")
+    COMPORTEMENT = args.get("COMPORTEMENT")
+    LIST_MATER = args.get("LIST_MATER")
+    VARI_TEST = args.get("VARI_TEST")
+    INFO = args.get("INFO")
 
     # Le concept sortant (de type fonction) est nomme U dans
     # le contexte de la macro
