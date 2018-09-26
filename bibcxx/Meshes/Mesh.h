@@ -125,7 +125,12 @@ class BaseMeshInstance : public DataStructure {
     /**
      * @brief Get the connectivity
      */
-    const ConnectivityMeshExplorer &getConnectivityExplorer() const { return _explorer; };
+    const ConnectivityMeshExplorer &getConnectivityExplorer() const
+    {
+        _elementsType->updateValuePointer();
+        _connectivity->buildFromJeveux();
+        return _explorer;
+    };
 
     /**
      * @brief Recuperation des coordonnees du maillage
