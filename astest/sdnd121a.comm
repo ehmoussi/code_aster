@@ -248,8 +248,5 @@ FC_ADAP2=RECU_FONCTION(RESU_GENE=DTMADAP2,
                        GROUP_NO_CHOC='N_PATIN',
                        PARA_X='INST',
                        PARA_Y='FN',);
-import aster
-tmpd = aster.getvectjev('0000001b           .VALE        ')
-print "tmpd",tmpd
 
 FIN();

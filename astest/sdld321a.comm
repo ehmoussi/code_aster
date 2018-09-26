@@ -190,7 +190,7 @@ DYNMODNE=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='GENE',
 
                              INST_INIT = 0.,  INST_FIN = 0.5,
                              PAS = 0.0001),
-                             ARCHIVAGE=_F(INST=AR_LIST, PAS_ARCH=1.E6) )
+                             ARCHIVAGE=_F(INST=AR_LIST, PAS_ARCH=10**6) )
 #
 
 #
@@ -206,7 +206,7 @@ DYNMODEU=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='GENE',
                                     FONC_MULT = SINOMEGT),
                              INCREMENT=_F(INST_INIT = 0.,  INST_FIN = 0.5,
                                           PAS = 0.0001,),
-                             ARCHIVAGE=_F(INST=AR_LIST, PAS_ARCH=1.E6) )
+                             ARCHIVAGE=_F(INST=AR_LIST, PAS_ARCH=10**6) )
 #
 # 3- SCHEMA NEWMARK AVEC AMORTISSEMENT MODAL
 #
@@ -223,7 +223,7 @@ DYNMONE2=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='GENE',
 
                              INST_INIT = 0.,  INST_FIN = 0.5,
                              PAS = 0.0001),
-                             ARCHIVAGE=_F(INST=AR_LIST, PAS_ARCH=1.E6) )
+                             ARCHIVAGE=_F(INST=AR_LIST, PAS_ARCH=10**6) )
 #
 #
 # 3- SCHEMA NEWMARK AVEC AMORTISSEMENT MODAL ET STOCKAGE REDUIT
@@ -241,7 +241,7 @@ DYNMONE3=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='GENE',
 
                              INST_INIT = 0.,  INST_FIN = 0.5,
                              PAS = 0.0001),
-                             ARCHIVAGE=_F(INST=AR_LIST, PAS_ARCH=1.E6) )
+                             ARCHIVAGE=_F(INST=AR_LIST, PAS_ARCH=10**6) )
 #
 #
 # DEFINITION DES INSTANTS DE CALCUL DE LA SOLUTION
