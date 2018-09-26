@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,12 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine lcsegp(elem_dime   , nb_lagr       , indi_lagc     ,&
-                  nb_node_mast, elin_mast_coor, elin_mast_code,&
-                  nb_node_slav, elin_slav_coor, elin_slav_code,&
-                  poidspg     , gauss_coot    , jacobian      ,&
-                  norm        , vtmp)
+!
+subroutine lcsegp(elem_dime    , nb_lagr       , indi_lagc     ,&
+                  nb_node_mast , elin_mast_coor, elin_mast_code,&
+                  nb_node_slav , elin_slav_coor, elin_slav_code,&
+                  poidspg      , gauss_coot    , jacobian      ,&
+                  norm_g       , vtmp)
 !
 implicit none
 !
@@ -29,24 +29,24 @@ implicit none
 #include "asterfort/mmdonf.h"
 #include "asterfort/mmtang.h"
 #include "asterfort/mmnorm.h"
+#include "asterfort/lcnorm.h"
 #include "asterfort/reerel.h"
 #include "asterfort/apdist.h"
 !
-!
-    integer, intent(in) :: elem_dime
-    integer, intent(in) :: nb_lagr
-    integer, intent(in) :: indi_lagc(10)
-    integer, intent(in) :: nb_node_mast
-    real(kind=8), intent(in) :: elin_mast_coor(elem_dime,nb_node_mast)
-    character(len=8), intent(in) :: elin_mast_code
-    integer, intent(in) :: nb_node_slav
-    real(kind=8), intent(in) :: elin_slav_coor(elem_dime,nb_node_slav)
-    character(len=8), intent(in) :: elin_slav_code
-    real(kind=8), intent(in) :: poidspg
-    real(kind=8), intent(in) :: gauss_coot(2)
-    real(kind=8), intent(in) :: jacobian
-    real(kind=8), intent(in) :: norm(3)
-    real(kind=8), intent(inout) :: vtmp(55)
+integer, intent(in) :: elem_dime
+integer, intent(in) :: nb_lagr
+integer, intent(in) :: indi_lagc(10)
+integer, intent(in) :: nb_node_mast
+real(kind=8), intent(in) :: elin_mast_coor(elem_dime,nb_node_mast)
+character(len=8), intent(in) :: elin_mast_code
+integer, intent(in) :: nb_node_slav
+real(kind=8), intent(in) :: elin_slav_coor(elem_dime,nb_node_slav)
+character(len=8), intent(in) :: elin_slav_code
+real(kind=8), intent(in) :: poidspg
+real(kind=8), intent(in) :: gauss_coot(2)
+real(kind=8), intent(in) :: jacobian
+real(kind=8), intent(in) :: norm_g(3)
+real(kind=8), intent(inout) :: vtmp(55)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -68,6 +68,7 @@ implicit none
 ! In  poidspg          : weight at integration point
 ! In  gauss_coot       : coordiantes of current integration point
 ! In  jacobian         : jacobian at integration point
+! In  norm_g           : normal vector at integration point
 ! IO  vtmp             : vector
 !
 ! --------------------------------------------------------------------------------------------------
@@ -112,15 +113,15 @@ implicit none
     pdgr=jacobian*poidspg
 !
 ! - Projection of slave point on master element
-   
-     call mmnewd(elin_mast_code, nb_node_mast, elem_dime, mast_coor, &
-                 gauss_coor, 75,&
-                 proj_tole, norm , ksi1, ksi2,&
-                 tau1, tau2, niverr)
-     if (niverr.eq.1) then
-        write(*,*)"mmnewd failed"
-        ASSERT(.false.)
-     end if
+!
+    call mmnewd(elin_mast_code, nb_node_mast, elem_dime, mast_coor, &
+                gauss_coor, 75,&
+                proj_tole, norm_g, ksi1, ksi2,&
+                tau1, tau2, niverr)
+    if (niverr.eq.1) then
+       write(*,*)"mmnewd failed"
+       ASSERT(.false.)
+    end if
 !
 ! - Compute distance
 !
@@ -130,9 +131,9 @@ implicit none
 ! - Compute _algebrical_ distance
 !
     if (elem_dime .eq. 3) then
-        sig = vect_pm(1)*norm(1)+vect_pm(2)*norm(2)+vect_pm(3)*norm(3)
+        sig = vect_pm(1)*norm_g(1)+vect_pm(2)*norm_g(2)+vect_pm(3)*norm_g(3)
     elseif (elem_dime .eq. 2) then
-        sig = vect_pm(1)*norm(1)+vect_pm(2)*norm(2)
+        sig = vect_pm(1)*norm_g(1)+vect_pm(2)*norm_g(2)
     else
         ASSERT(.false.)
     end if

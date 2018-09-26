@@ -20,7 +20,7 @@
 interface
     subroutine lcnorm_line(elem_code, elem_coor, norm_line)
         character(len=8), intent(in) :: elem_code
-        real(kind=8), intent(in) :: elem_coor(27)
+        real(kind=8), intent(in) :: elem_coor(3,9)
         real(kind=8), intent(out) :: norm_line(3)
     end subroutine lcnorm_line
 end interface

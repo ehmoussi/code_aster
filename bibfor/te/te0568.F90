@@ -29,6 +29,7 @@ implicit none
 #include "asterfort/lcelem.h"
 #include "asterfort/lcstco.h"
 #include "asterfort/lcgeominit.h"
+#include "asterfort/lcnorm_line.h"
 #include "asterfort/lcgeog.h"
 #include "asterfort/lcpjit.h"
 #include "asterfort/lctria.h"
@@ -66,7 +67,7 @@ character(len=16), intent(in) :: nomte
     integer :: algo_reso_geom, indi_cont, indi_cont_prev
     aster_logical :: l_norm_smooth
     aster_logical :: l_axis, l_elem_frot, loptf, debug, l_upda_jaco
-    real(kind=8) :: norm(3)
+    real(kind=8) :: norm_g(3), norm_line(3)
     character(len=8) :: elem_slav_code, elem_mast_code
     real(kind=8) :: elem_mast_coor(27), elem_slav_coor(27)
     real(kind=8) :: elem_mast_init(27), elem_slav_init(27)
@@ -180,6 +181,8 @@ character(len=16), intent(in) :: nomte
                        elem_slav_coor((elin_slav_sub(i_elin_slav,i_node)-1)*elem_dime+i_dime)
                 end do
             end do
+! --------- Compute normal vector for current linearized slave sub-element       
+            call lcnorm_line(elin_slav_code, elin_slav_coor, norm_line)
 ! --------- Loop on linearized master sub-elements
             do i_elin_mast = 1, elin_mast_nbsub
 ! ------------- Get coordinates for current linearized master sub-element
@@ -278,19 +281,20 @@ character(len=16), intent(in) :: nomte
                                         nb_node_slav  , elem_dime     , elem_slav_code  ,&
                                         elem_slav_init, elem_slav_coor, &
                                         gauss_coot    , shape_func    , shape_dfunc,&
-                                        jacobian      , norm)
+                                        jacobian      , norm_g)
 ! ------------------------- Compute contact vector - geometric (slave side)
-                            call lcsees(elem_dime  , nb_node_slav, nb_lagr  ,&
-                                        l_norm_smooth, norm        , indi_lagc, lagrc,&
-                                        poidpg     , shape_func  , jacobian ,&
+                            call lcsees(elem_dime    , nb_node_slav, nb_lagr ,&
+                                        l_norm_smooth, norm_line   , norm_g  ,&
+                                        indi_lagc    , lagrc,&
+                                        poidpg       , shape_func  , jacobian,&
                                         vtmp )
                             call lcsegp(elem_dime   , nb_lagr       , indi_lagc     ,&
                                         nb_node_mast, elem_mast_coor,&
                                         elem_mast_code,&
                                         nb_node_slav, elem_slav_coor,&
                                         elem_slav_code,&
-                                        poidpg      , gauss_coot    , jacobian, norm ,&
-                                        vtmp)
+                                        poidpg        , gauss_coot    , jacobian,&
+                                        norm_g        , vtmp)
                         end do
 ! --------------------- Projection of triangle in master parametric space
                         call lcrtma(elem_dime       , proj_tole,&
@@ -314,11 +318,11 @@ character(len=16), intent(in) :: nomte
                                         nb_node_mast  , elem_dime     , elem_mast_code  ,&
                                         elem_mast_init, elem_mast_coor, &
                                         gauss_coot    , shape_func    , shape_dfunc,&
-                                        jacobian      , norm)
+                                        jacobian      , norm_g)
 ! ------------------------- Compute contact vector (master side)
-                            call lcsema(elem_dime  , nb_node_mast, nb_node_slav, nb_lagr,&
-                                        l_norm_smooth, norm        , lagrc   ,&
-                                        poidpg     , shape_func  , jacobian,&
+                            call lcsema(elem_dime    , nb_node_mast, nb_node_slav, nb_lagr,&
+                                        l_norm_smooth, norm_line   , norm_g      , lagrc  ,&
+                                        poidpg       , shape_func  , jacobian,&
                                         vtmp )
                         end do
                     end do
@@ -460,19 +464,20 @@ character(len=16), intent(in) :: nomte
                                                 nb_node_slav  , elem_dime     , elem_slav_code  ,&
                                                 elem_slav_init, elem_slav_coor, &
                                                 gauss_coot    , shape_func    , shape_dfunc,&
-                                                jacobian      , norm)
+                                                jacobian      , norm_g)
 ! --------------------------------- Compute contact vector - geometric (slave side)
-                                    call lcsees(elem_dime  , nb_node_slav, nb_lagr  ,&
-                                                l_norm_smooth, norm        , indi_lagc, lagrc,&
-                                                poidpg     , shape_func  , jacobian ,&
-                                                vtmp_prev )
+                                    call lcsees(elem_dime    , nb_node_slav, nb_lagr ,&
+                                                l_norm_smooth, norm_line   , norm_g  ,&
+                                                indi_lagc    , lagrc,&
+                                                poidpg       , shape_func  , jacobian,&
+                                                vtmp_prev)
                                     call lcsegp(elem_dime   , nb_lagr       , indi_lagc     ,&
                                                 nb_node_mast, elem_mast_coor,&
                                                 elem_mast_code,&
                                                 nb_node_slav, elem_slav_coor,&
                                                 elem_slav_code,&
-                                                poidpg      , gauss_coot    , jacobian, norm ,&
-                                                vtmp_prev)
+                                                poidpg        , gauss_coot    , jacobian,&
+                                                norm_g        , vtmp_prev)
                                 end do
 ! ----------------------------- Projection of triangle in master parametric space
                                 call lcrtma(elem_dime       , proj_tole,&
@@ -498,12 +503,13 @@ character(len=16), intent(in) :: nomte
                                                 nb_node_mast  , elem_dime     , elem_mast_code,&
                                                 elem_mast_init, elem_mast_coor, &
                                                 gauss_coot    , shape_func    , shape_dfunc,&
-                                                jacobian      , norm)
+                                                jacobian      , norm_g)
 ! --------------------------------- Compute contact vector (master side)
-                                    call lcsema(elem_dime  , nb_node_mast, nb_node_slav, nb_lagr,&
-                                                l_norm_smooth, norm        , lagrc   ,&
-                                                poidpg     , shape_func  , jacobian,&
-                                                vtmp_prev )
+                                    call lcsema(elem_dime    , nb_node_mast, nb_node_slav, nb_lagr,&
+                                                l_norm_smooth, norm_line   , norm_g      ,&
+                                                lagrc        ,&
+                                                poidpg       , shape_func  , jacobian    ,&
+                                                vtmp_prev)
                                 end do
                             end do
                         end if

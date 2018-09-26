@@ -29,6 +29,7 @@ implicit none
 #include "asterfort/lcelem.h"
 #include "asterfort/lcstco.h"
 #include "asterfort/lcgeominit.h"
+#include "asterfort/lcnorm_line.h"
 #include "asterfort/lcgeog.h"
 #include "asterfort/lcpjit.h"
 #include "asterfort/lctria.h"
@@ -65,7 +66,7 @@ character(len=16), intent(in) :: nomte
     integer :: algo_reso_geom, indi_cont, indi_cont_prev
     aster_logical :: l_norm_smooth, l_norm_smooth_p
     aster_logical :: l_axis, l_elem_frot, loptf, debug, l_upda_jaco, l_upda_jaco_prev
-    real(kind=8) :: norm(3)
+    real(kind=8) :: norm_g(3), norm_line(3)
     character(len=8) :: elem_slav_code, elem_mast_code
     real(kind=8) :: elem_mast_coor(27), elem_slav_coor(27)
     real(kind=8) :: elem_mast_init(27), elem_slav_init(27)
@@ -182,6 +183,8 @@ character(len=16), intent(in) :: nomte
                        elem_slav_coor((elin_slav_sub(i_elin_slav,i_node)-1)*elem_dime+i_dime)
                 end do
             end do
+! --------- Compute normal vector for current linearized slave sub-element       
+            call lcnorm_line(elin_slav_code, elin_slav_coor, norm_line)
 ! --------- Loop on linearized master sub-elements
             do i_elin_mast = 1, elin_mast_nbsub
 ! ------------- Get coordinates for current linearized master sub-element
@@ -260,15 +263,15 @@ character(len=16), intent(in) :: nomte
                             end do
                             poidpg = gauss_weight(i_gauss)
 ! ------------------------- Compute geometric quantities for contact (slave side)
-                            call lctppe('Slave'       , l_axis        , l_upda_jaco,&
-                                        nb_node_slav  , elem_dime     , elem_slav_code  ,&
+                            call lctppe('Slave'       , l_axis        , l_upda_jaco   ,&
+                                        nb_node_slav  , elem_dime     , elem_slav_code,&
                                         elem_slav_init, elem_slav_coor, &
-                                        gauss_coot    , shape_func    , shape_dfunc,&
-                                        jacobian      , norm)
+                                        gauss_coot    , shape_func    , shape_dfunc   ,&
+                                        jacobian      , norm_g)
 ! ------------------------- Compute contact matrix (slave side)
-                            call lccoes(elem_dime  , nb_node_slav, nb_lagr  ,&
-                                        l_norm_smooth, norm        , indi_lagc,&
-                                        poidpg     , shape_func  , jacobian ,&
+                            call lccoes(elem_dime    , nb_node_slav, nb_lagr   ,&
+                                        l_norm_smooth, norm_line   , norm_g    ,&
+                                        indi_lagc    , poidpg      , shape_func, jacobian,&
                                         mmat )
                         end do
 ! --------------------- Projection of triangle in master parametric space
@@ -293,12 +296,12 @@ character(len=16), intent(in) :: nomte
                                         nb_node_mast  , elem_dime     , elem_mast_code  ,&
                                         elem_mast_init, elem_mast_coor, &
                                         gauss_coot    , shape_func    , shape_dfunc,&
-                                        jacobian      , norm)
+                                        jacobian      , norm_g)
 ! ------------------------- Compute contact matrix (master side)
-                            call lccoma(elem_dime  , nb_node_mast, nb_node_slav, nb_lagr,&
-                                        l_norm_smooth, norm        , indi_lagc   ,&
-                                        poidpg     , shape_func  , jacobian    ,&
-                                        mmat       )
+                            call lccoma(elem_dime    , nb_node_mast, nb_node_slav, nb_lagr ,&
+                                        l_norm_smooth, norm_line   , norm_g      ,&
+                                        indi_lagc    , poidpg      , shape_func  , jacobian,&
+                                        mmat     )
                        end do
                     end do
                 end if
@@ -428,12 +431,12 @@ character(len=16), intent(in) :: nomte
                                                 nb_node_slav  , elem_dime     , elem_slav_code  ,&
                                                 elem_slav_init, elem_slav_coor, &
                                                 gauss_coot    , shape_func    , shape_dfunc,&
-                                                jacobian      , norm)
+                                                jacobian      , norm_g)
 ! --------------------------------- Compute contact matrix (slave side)
-                                    call lccoes(elem_dime  , nb_node_slav, nb_lagr  ,&
-                                                l_norm_smooth_p, norm        , indi_lagc,&
-                                                poidpg     , shape_func  , jacobian ,&
-                                                mmat_prev )          
+                                    call lccoes(elem_dime      , nb_node_slav, nb_lagr   ,&
+                                                l_norm_smooth_p, norm_line   , norm_g    ,&
+                                                indi_lagc      , poidpg      , shape_func,&
+                                                jacobian       , mmat_prev )
                                 end do             
 ! ----------------------------- Projection of triangle in master parametric space
                                 call lcrtma(elem_dime       , proj_tole,&
@@ -459,12 +462,13 @@ character(len=16), intent(in) :: nomte
                                                 nb_node_mast  , elem_dime     , elem_mast_code  ,&
                                                 elem_mast_init, elem_mast_coor, &
                                                 gauss_coot    , shape_func    , shape_dfunc,&
-                                                jacobian      , norm)
+                                                jacobian      , norm_g)
 ! --------------------------------- Compute contact matrix (master side)
-                                    call lccoma(elem_dime  , nb_node_mast, nb_node_slav, nb_lagr,&
-                                                l_norm_smooth, norm        , indi_lagc   ,&
-                                                poidpg     , shape_func  , jacobian    ,&
-                                                mmat_prev       )
+                                    call lccoma(elem_dime      , nb_node_mast, nb_node_slav,&
+                                                nb_lagr,&
+                                                l_norm_smooth_p, norm_line   , norm_g      ,&
+                                                indi_lagc      , poidpg      , shape_func  ,&
+                                                jacobian       , mmat_prev)
                                end do
                             end do
                         end if

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,15 +15,13 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
     subroutine lcsegp(elem_dime   , nb_lagr       , indi_lagc     ,&
                       nb_node_mast, elin_mast_coor, elin_mast_code,&
                       nb_node_slav, elin_slav_coor, elin_slav_code,&
                       poidspg     , gauss_coot    , jacobian      ,&
-                      norm        , vtmp)
+                      norm_g      , vtmp)
         integer, intent(in) :: elem_dime
         integer, intent(in) :: nb_lagr
         integer, intent(in) :: indi_lagc(10)
@@ -36,7 +34,7 @@ interface
         real(kind=8), intent(in) :: poidspg
         real(kind=8), intent(in) :: gauss_coot(2)
         real(kind=8), intent(in) :: jacobian
-        real(kind=8), intent(in) :: norm(3)
+        real(kind=8), intent(in) :: norm_g(3)
         real(kind=8), intent(inout) :: vtmp(55)
     end subroutine lcsegp
 end interface

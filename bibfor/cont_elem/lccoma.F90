@@ -16,10 +16,10 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine lccoma(elem_dime    , nb_node_mast   , nb_node_slav, nb_lagr,&
-                  l_norm_smooth, norm           , indi_lagc   ,&
-                  poidpg       , shape_mast_func, jaco_upda   ,&
-                  mmat         )
+subroutine lccoma(elem_dime    , nb_node_mast, nb_node_slav   , nb_lagr,&
+                  l_norm_smooth, norm_line   , norm_g         ,&
+                  indi_lagc    , poidpg      , shape_mast_func, jaco_upda,&
+                  mmat     )
 !
 implicit none
 !
@@ -27,13 +27,14 @@ implicit none
 #include "asterf_types.h"
 #include "asterfort/assert.h"
 #include "asterfort/jevech.h"
+#include "asterfort/lcnorm.h"
 !
 integer, intent(in) :: elem_dime
 integer, intent(in) :: nb_node_mast
 integer, intent(in) :: nb_node_slav
 integer, intent(in) :: nb_lagr
 aster_logical, intent(in) :: l_norm_smooth
-real(kind=8), intent(in) :: norm(3)
+real(kind=8), intent(in) :: norm_line(3), norm_g(3)
 integer, intent(in) :: indi_lagc(10)
 real(kind=8), intent(in) :: poidpg
 real(kind=8), intent(in) :: shape_mast_func(9)
@@ -53,7 +54,8 @@ real(kind=8), intent(inout) :: mmat(55,55)
 ! In  nb_node_slav     : number of nodes of for slave side from contact element
 ! In  nb_lagr          : total number of Lagrangian dof on contact element
 ! In  l_norm_smooth    : indicator for normals smoothing
-! In  norm             : normal at integration point
+! In  norm_line        : normal vector on linearized element
+! In  norm_g           : normal vector at integration point
 ! In  indi_lagc        : PREVIOUS node where Lagrangian dof is present (1) or not (0)
 ! In  poidspg          : weight at integration point
 ! In  shape_mast_func  : shape functions at integration point
@@ -62,14 +64,16 @@ real(kind=8), intent(inout) :: mmat(55,55)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: i_node_lagc, i_node_mast, i_dime, jj, indlgc, shift, jv_norm
-    real(kind=8) :: r_nb_lagr
+    integer :: i_node_lagc, i_node_mast, i_dime, jj, indlgc, shift
+    real(kind=8) :: r_nb_lagr, norm(3)
+    integer :: jv_norm
 !
 ! --------------------------------------------------------------------------------------------------
 !
     shift     = 0
     jj        = 0
     r_nb_lagr = real(nb_lagr,kind=8)
+!
     if (l_norm_smooth) then   
         call jevech('PSNO', 'L', jv_norm)
         do i_node_lagc = 1, nb_node_slav
@@ -90,6 +94,7 @@ real(kind=8), intent(inout) :: mmat(55,55)
             end if
         end do
     else
+        call lcnorm(norm_line, norm_g, norm)
         do i_node_lagc = 1, nb_node_slav
             shift = shift+indi_lagc(i_node_lagc)     
             if (indi_lagc(i_node_lagc+1).eq. 1) then
