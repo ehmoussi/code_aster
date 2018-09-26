@@ -800,7 +800,6 @@
 .. autoclass:: code_aster.Objects.MechanicalModeContainer
    :show-inheritance:
    :members:
-   :exclude-members: getStiffnessMatrix
 
 
 ================================================================================
