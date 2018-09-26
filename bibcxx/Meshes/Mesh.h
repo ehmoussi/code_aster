@@ -206,6 +206,15 @@ class BaseMeshInstance : public DataStructure {
     virtual bool isParallel() const { return false; };
 
     /**
+     * @brief Fonction permettant de savoir si un maillage est partiel
+     * @return retourne true si le maillage est partiel
+     */
+    virtual bool isPartial() const
+    {
+        return false;
+    };
+
+    /**
      * @brief Read a MED Mesh file
      * @return retourne true si tout est ok
      */

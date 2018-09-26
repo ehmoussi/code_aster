@@ -35,4 +35,6 @@ void exportFiniteElementDescriptorToPython() {
         "FiniteElementDescriptor", no_init );
         // fake initFactoryPtr: not directly created by user
         // fake initFactoryPtr: not directly created by user
+        .def( "transferDofDescriptorFrom", &FiniteElementDescriptorInstance::transferDofDescriptorFrom )
+    ;
 };
