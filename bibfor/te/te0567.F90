@@ -22,6 +22,7 @@ subroutine te0567(nomopt, nomte)
 implicit none
 !
 #include "jeveux.h"
+#include "asterf_types.h"
 #include "asterfort/assert.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jemarq.h"
@@ -31,19 +32,9 @@ implicit none
 #include "asterfort/lcgeominit.h"
 #include "asterfort/lcnorm_line.h"
 #include "asterfort/lcgeog.h"
-#include "asterfort/lcpjit.h"
-#include "asterfort/lctria.h"
-#include "asterfort/lcptga.h"
-#include "asterfort/lctppe.h"
-#include "asterfort/lccoes.h"
-#include "asterfort/lccoma.h"
 #include "asterfort/lclaze.h"
-#include "asterfort/lctrco.h"
-#include "asterfort/lcrtma.h"
 #include "asterfort/mmmtdb.h"
-#include "asterfort/apdcma.h"
-#include "asterfort/aprtpe.h"
-#include "asterf_types.h"
+#include "asterfort/lcmatr.h"
 !
 character(len=16), intent(in) :: nomopt
 character(len=16), intent(in) :: nomte
@@ -57,36 +48,22 @@ character(len=16), intent(in) :: nomte
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: i, j, ij, count_consi
-    integer :: nb_node_slav, nb_node_mast, nb_lagr, nb_poin_inte, nb_dof, nb_tria, nb_gauss
+    integer :: nb_node_slav, nb_node_mast, nb_lagr, nb_dof
     integer :: indi_lagc(10)
     integer :: elem_dime
     integer :: jmatt
-    integer :: i_tria, i_dime, i_elin_mast, i_elin_slav, i_node, i_gauss
-    real(kind=8) :: proj_tole, lagrc,lagrc_prev
+    real(kind=8) :: lagrc,lagrc_prev
     integer :: algo_reso_geom, indi_cont, indi_cont_prev
     aster_logical :: l_norm_smooth, l_norm_smooth_p
-    aster_logical :: l_axis, l_elem_frot, loptf, debug, l_upda_jaco, l_upda_jaco_prev
-    real(kind=8) :: norm_g(3), norm_line(3)
+    aster_logical :: l_axis, l_elem_frot, debug, l_upda_jaco, l_upda_jaco_prev
     character(len=8) :: elem_slav_code, elem_mast_code
     real(kind=8) :: elem_mast_coor(27), elem_slav_coor(27)
     real(kind=8) :: elem_mast_init(27), elem_slav_init(27)
     real(kind=8) :: elem_mast_coop(27), elem_slav_coop(27)
-    real(kind=8) :: elin_mast_coor(3, 9)
-    integer :: elin_mast_nbsub, elin_mast_sub(2,3), elin_mast_nbnode(2)
-    character(len=8) :: elin_mast_code
-    real(kind=8) :: elin_slav_coor(3, 9)
-    integer :: elin_slav_nbsub, elin_slav_sub(2,3), elin_slav_nbnode(2)
-    character(len=8) :: elin_slav_code
-    real(kind=8) :: poin_inte(32), tria_coot(2,3), tria_coor(32), tria_coor_aux(32)
-    integer :: tria_node(6,3)
-    real(kind=8) :: inte_weight
-    real(kind=8) :: gauss_weight(12), gauss_coor(2,12), gauss_coot(2)
     character(len=8) :: elga_fami_slav, elga_fami_mast
-    real(kind=8) :: poidpg, jacobian
-    real(kind=8) :: shape_func(9), shape_dfunc(2, 9)
-    real(kind=8) :: mmat(55, 55),mmat_prev(55, 55), mmat_(55,55)
-    real(kind=8) :: gap_curr,gap_prev
-    real(kind=8) :: mesure,rho_n,eval,mesure_prev,rho_n_prev,eval_prev
+    real(kind=8) :: mmat(55, 55), mmat_prev(55, 55), mmat_(55,55)
+    real(kind=8) :: gap_curr, gap_prev
+    real(kind=8) :: mesure, rho_n, eval, mesure_prev, rho_n_prev, eval_prev
     aster_logical :: l_previous
     integer :: jpcf
     real(kind=8) :: alpha
@@ -97,18 +74,16 @@ character(len=16), intent(in) :: nomte
 !
 ! - Initializations
 !
-    mmat(:,:)         = 0.d0
-    mmat_prev(:,:)    = 0.d0
-    elem_mast_coor(:) = 0.d0
-    elem_mast_coop(:) = 0.d0
-    elem_slav_coor(:) = 0.d0
-    elem_slav_coop(:) = 0.d0
-    proj_tole         = 1.d-9
-    alpha             = 0.7
-    debug             = ASTER_FALSE
-    l_norm_smooth_p   = ASTER_FALSE
-    loptf             = nomopt.eq.'RIGI_FROT'
-    ASSERT(.not.loptf)
+    mmat(1:55,1:55)      = 0.d0
+    mmat_prev(1:55,1:55) = 0.d0
+    elem_mast_coor(1:27) = 0.d0
+    elem_mast_coop(1:27) = 0.d0
+    elem_slav_coor(1:27) = 0.d0
+    elem_slav_coop(1:27) = 0.d0
+    alpha                = 0.7
+    debug                = ASTER_FALSE
+    l_norm_smooth_p      = ASTER_FALSE
+    ASSERT(nomopt.eq.'RIGI_CONT')
 !
 ! - Get informations about contact element
 !
@@ -168,145 +143,12 @@ character(len=16), intent(in) :: nomte
 ! - Compute matrix
 !
     if (indi_cont .eq. 1) then
-! ----- Cut elements in linearized sub-elements
-        call apdcma(elem_mast_code,&
-                    elin_mast_sub, elin_mast_nbnode, elin_mast_nbsub, elin_mast_code)
-        call apdcma(elem_slav_code,&
-                    elin_slav_sub, elin_slav_nbnode, elin_slav_nbsub, elin_slav_code)
-! ----- Loop on linearized slave sub-elements
-        do i_elin_slav = 1, elin_slav_nbsub
-! --------- Get coordinates for current linearized slave sub-element
-            elin_slav_coor(: , :) = 0.d0
-            do i_node = 1, elin_slav_nbnode(i_elin_slav)
-                do i_dime = 1, elem_dime
-                    elin_slav_coor(i_dime, i_node) = &
-                       elem_slav_coor((elin_slav_sub(i_elin_slav,i_node)-1)*elem_dime+i_dime)
-                end do
-            end do
-! --------- Compute normal vector for current linearized slave sub-element       
-            call lcnorm_line(elin_slav_code, elin_slav_coor, norm_line)
-! --------- Loop on linearized master sub-elements
-            do i_elin_mast = 1, elin_mast_nbsub
-! ------------- Get coordinates for current linearized master sub-element
-                elin_mast_coor(:, :) = 0.d0
-                do i_node = 1, elin_mast_nbnode(i_elin_mast)
-                    do i_dime = 1, elem_dime
-                        elin_mast_coor(i_dime, i_node) = &
-                            elem_mast_coor((elin_mast_sub(i_elin_mast,i_node)-1)*elem_dime+i_dime)
-                    end do
-                end do
-! ------------- Projection/intersection
-                call lcpjit(proj_tole                    , elem_dime     ,&
-                            elin_mast_nbnode(i_elin_mast), elin_mast_coor, elin_mast_code,&
-                            elin_slav_nbnode(i_elin_slav), elin_slav_coor, elin_slav_code,&
-                            poin_inte                    , inte_weight   , nb_poin_inte)
-                if (debug) then
-                    write(*,*) "Intersection - Master: ", 'Mast', i_elin_mast
-                    write(*,*) "Intersection - Slave : ", 'Slav', i_elin_slav
-                    write(*,*) "Intersection - Poids : ", inte_weight
-                    write(*,*) "Intersection - Nb    : ", nb_poin_inte
-                    write(*,*) "Intersection - Points: ", poin_inte
-                endif
-                if (inte_weight .gt. proj_tole) then
-! ----------------- Triangulation of convex polygon defined by intersection points
-                    if (elem_dime .eq. 3) then
-                        call lctria(nb_poin_inte, nb_tria, tria_node)
-                    elseif (elem_dime .eq. 2) then
-                        nb_tria = 1
-                    else
-                        ASSERT(ASTER_FALSE)
-                    end if
-                    if (debug) then
-                        write(*,*) "Triangulation: ", nb_poin_inte, nb_tria
-                    endif
-! ----------------- Loop on triangles
-                    do i_tria = 1, nb_tria
-! --------------------- Coordinates of current triangle
-                        if (elem_dime .eq. 3) then
-                            call lctrco(i_tria, tria_node, poin_inte, tria_coor)
-                        elseif (elem_dime .eq. 2) then
-                            tria_coor(1:32) = poin_inte(1:32)
-                        endif
-                        if (debug) then
-                            write(*,*) "Triangle: ", i_tria, tria_coor
-                        endif
-                        tria_coor_aux(1:32)=tria_coor(1:32)
-! --------------------- Projection from parametric space of triangle in real space
-                        if (elem_slav_code .ne. elin_slav_code ) then
-                            call aprtpe(elem_dime, elem_slav_code, i_elin_slav,&
-                                        3, tria_coor)
-                        endif
-! --------------------- Change shape of vector
-                        tria_coot(1:2,1:3)=0.d0
-                        if (elem_dime .eq. 3) then
-                            do i_node = 1,3
-                                do i_dime = 1,(elem_dime-1)
-                                    tria_coot(i_dime, i_node) = &
-                                        tria_coor((i_node-1)*(elem_dime-1)+i_dime)
-                                end do
-                            end do
-                        else
-                            tria_coot(1,1) = tria_coor(1)
-                            tria_coot(2,1) = 0.d0
-                            tria_coot(1,2) = tria_coor(2)
-                            tria_coot(2,2) = 0.d0
-                        end if
-! --------------------- Get integration points for slave element
-                        call lcptga(elem_dime, tria_coot , elga_fami_slav,&
-                                    nb_gauss , gauss_coor, gauss_weight)
-! --------------------- Loop on integration points in slave element
-                        do i_gauss = 1, nb_gauss
-! ------------------------- Get current integration point
-                            gauss_coot(1:2) = 0.d0
-                            do i_dime = 1, elem_dime-1
-                                gauss_coot(i_dime) = gauss_coor(i_dime, i_gauss)
-                            end do
-                            poidpg = gauss_weight(i_gauss)
-! ------------------------- Compute geometric quantities for contact (slave side)
-                            call lctppe('Slave'       , l_axis        , l_upda_jaco   ,&
-                                        nb_node_slav  , elem_dime     , elem_slav_code,&
-                                        elem_slav_init, elem_slav_coor, &
-                                        gauss_coot    , shape_func    , shape_dfunc   ,&
-                                        jacobian      , norm_g)
-! ------------------------- Compute contact matrix (slave side)
-                            call lccoes(elem_dime    , nb_node_slav, nb_lagr   ,&
-                                        l_norm_smooth, norm_line   , norm_g    ,&
-                                        indi_lagc    , poidpg      , shape_func, jacobian,&
-                                        mmat )
-                        end do
-! --------------------- Projection of triangle in master parametric space
-                        call lcrtma(elem_dime       , proj_tole,&
-                                    tria_coor_aux   , &
-                                    elin_slav_nbnode(i_elin_slav), elin_slav_coor, elin_slav_code,&
-                                    nb_node_mast                 , elem_mast_coor, elem_mast_code,&
-                                    tria_coot)
-! --------------------- Get integration points for master element
-                        call lcptga(elem_dime, tria_coot , elga_fami_mast,&
-                                    nb_gauss , gauss_coor, gauss_weight)
-! --------------------- Loop on integration points in master element
-                        do i_gauss = 1, nb_gauss
-! ------------------------- Get current integration point
-                            gauss_coot(1:2) = 0.d0
-                            do i_dime = 1, elem_dime-1
-                                gauss_coot(i_dime) = gauss_coor(i_dime,i_gauss)
-                            end do
-                            poidpg = gauss_weight(i_gauss)
-! ------------------------- Compute geometric quantities for contact (master side)
-                            call lctppe('Master'      , l_axis        , l_upda_jaco,&
-                                        nb_node_mast  , elem_dime     , elem_mast_code  ,&
-                                        elem_mast_init, elem_mast_coor, &
-                                        gauss_coot    , shape_func    , shape_dfunc,&
-                                        jacobian      , norm_g)
-! ------------------------- Compute contact matrix (master side)
-                            call lccoma(elem_dime    , nb_node_mast, nb_node_slav, nb_lagr ,&
-                                        l_norm_smooth, norm_line   , norm_g      ,&
-                                        indi_lagc    , poidpg      , shape_func  , jacobian,&
-                                        mmat     )
-                       end do
-                    end do
-                end if
-            end do
-        end do
+        call lcmatr(elem_dime   ,&
+                    l_axis      , l_upda_jaco   , l_norm_smooth ,&
+                    nb_lagr     , indi_lagc     ,&
+                    nb_node_slav, elem_slav_code, elem_slav_init, elga_fami_slav, elem_slav_coor,&
+                    nb_node_mast, elem_mast_code, elem_mast_init, elga_fami_mast, elem_mast_coor,&
+                    mmat)
         if (l_previous) then
             call lclaze(elem_dime, nb_lagr, nb_node_slav, indi_lagc,&
                         mmat_prev)
@@ -330,150 +172,12 @@ character(len=16), intent(in) :: nomte
         call lclaze(elem_dime, nb_lagr, nb_node_slav, indi_lagc,&
                     mmat     )
         if (l_previous) then
-! ------------- Cut elements in linearized sub-elements
-                call apdcma(elem_mast_code,&
-                            elin_mast_sub, elin_mast_nbnode, elin_mast_nbsub, elin_mast_code)
-                call apdcma(elem_slav_code,&
-                            elin_slav_sub, elin_slav_nbnode, elin_slav_nbsub, elin_slav_code)
-! ------------- Loop on linearized slave sub-elements
-
-                do i_elin_slav = 1, elin_slav_nbsub
-! ----------------- Get coordinates for current linearized slave sub-element
-                    elin_slav_coor(:, :) = 0.d0
-                    do i_node = 1, elin_slav_nbnode(i_elin_slav)
-                        do i_dime = 1, elem_dime
-                            elin_slav_coor(i_dime, i_node) = &
-                               elem_slav_coop((elin_slav_sub(i_elin_slav,i_node)-1)*&
-                               elem_dime+i_dime)
-                        end do
-                    end do
-! ----------------- Loop on linearized master sub-elements        
-
-                    do i_elin_mast = 1, elin_mast_nbsub
-! --------------------- Get coordinates for current linearized master sub-element
-                        elin_mast_coor(:, :) = 0.d0
-                        do i_node = 1, elin_mast_nbnode(i_elin_mast)
-                            do i_dime = 1, elem_dime
-                                elin_mast_coor(i_dime, i_node) = &
-                                    elem_mast_coop((elin_mast_sub(i_elin_mast,i_node)-1)*&
-                                    elem_dime+i_dime)
-                            end do
-                        end do
-! --------------------- Projection/intersection
-                        call lcpjit(proj_tole                    , elem_dime     ,&
-                                    elin_mast_nbnode(i_elin_mast), elin_mast_coor, elin_mast_code,&
-                                    elin_slav_nbnode(i_elin_slav), elin_slav_coor, elin_slav_code,&
-                                    poin_inte                    , inte_weight   , nb_poin_inte)
-                        if (debug) then
-                            write(*,*) "Intersection - Master: ", 'Mast', i_elin_mast
-                            write(*,*) "Intersection - Slave : ", 'Slav', i_elin_slav
-                            write(*,*) "Intersection - Poids : ", inte_weight
-                            write(*,*) "Intersection - Nb    : ", nb_poin_inte
-                            write(*,*) "Intersection - Points: ", poin_inte
-                        endif
-                        if (inte_weight .gt. proj_tole) then
-! ------------------------- Triangulation of convex polygon defined by intersection points
-                            if (elem_dime .eq. 3) then
-                                call lctria(nb_poin_inte, nb_tria, tria_node)
-                            elseif (elem_dime .eq. 2) then
-                                nb_tria = 1
-                            else
-                                ASSERT(ASTER_FALSE)
-                            end if
-                            if (debug) then
-                                write(*,*) "Triangulation: ", nb_poin_inte, nb_tria
-                            endif
-! ------------------------- Loop on triangles
-                            do i_tria = 1, nb_tria
-! ----------------------------- Coordinates of current triangle
-                                if (elem_dime .eq. 3) then
-                                    call lctrco(i_tria, tria_node, poin_inte, tria_coor)
-                                elseif (elem_dime .eq. 2) then
-                                    tria_coor(1:32) = poin_inte(1:32)
-                                endif
-                                if (debug) then
-                                    write(*,*) "Triangle: ", i_tria, tria_coor
-                                endif
-                                tria_coor_aux(1:32)=tria_coor(1:32)
-! ----------------------------- Projection from parametric space of triangle in real space
-                                if (elem_slav_code .ne. elin_slav_code ) then
-                                    call aprtpe(elem_dime, elem_slav_code, i_elin_slav,&
-                                                3, tria_coor)
-                                endif
-! ----------------------------- Change shape of vector
-                                tria_coot(1:2,1:3)=0.d0
-                                if (elem_dime .eq. 3) then
-                                    do i_node = 1,3
-                                        do i_dime = 1,(elem_dime-1)
-                                            tria_coot(i_dime, i_node) = &
-                                                tria_coor((i_node-1)*(elem_dime-1)+i_dime)
-                                        end do
-                                    end do
-                                else
-                                    tria_coot(1,1) = tria_coor(1)
-                                    tria_coot(2,1) = 0.d0
-                                    tria_coot(1,2) = tria_coor(2)
-                                    tria_coot(2,2) = 0.d0
-                                end if
-! ----------------------------- Get integration points for slave element
-                                call lcptga(elem_dime, tria_coot , elga_fami_slav,&
-                                            nb_gauss , gauss_coor, gauss_weight)
-! ----------------------------- Loop on integration points in slave element
-                                do i_gauss = 1, nb_gauss
-! --------------------------------- Get current integration point
-                                    gauss_coot(1:2) = 0.d0
-                                    do i_dime = 1, elem_dime-1
-                                        gauss_coot(i_dime) = gauss_coor(i_dime, i_gauss)
-                                    end do
-                                    poidpg = gauss_weight(i_gauss)
-! --------------------------------- Compute geometric quantities for contact (slave side)
-                                    call lctppe('Slave'       , l_axis        , l_upda_jaco,&
-                                                nb_node_slav  , elem_dime     , elem_slav_code  ,&
-                                                elem_slav_init, elem_slav_coor, &
-                                                gauss_coot    , shape_func    , shape_dfunc,&
-                                                jacobian      , norm_g)
-! --------------------------------- Compute contact matrix (slave side)
-                                    call lccoes(elem_dime      , nb_node_slav, nb_lagr   ,&
-                                                l_norm_smooth_p, norm_line   , norm_g    ,&
-                                                indi_lagc      , poidpg      , shape_func,&
-                                                jacobian       , mmat_prev )
-                                end do             
-! ----------------------------- Projection of triangle in master parametric space
-                                call lcrtma(elem_dime       , proj_tole,&
-                                            tria_coor_aux   , &
-                                            elin_slav_nbnode(i_elin_slav), &
-                                            elin_slav_coor, elin_slav_code,&
-                                            nb_node_mast                 , &
-                                            elem_mast_coor, elem_mast_code,&
-                                            tria_coot)
-! ----------------------------- Get integration points for master element
-                                call lcptga(elem_dime, tria_coot , elga_fami_mast,&
-                                            nb_gauss , gauss_coor, gauss_weight)
-! ----------------------------- Loop on integration points in master element
-                                do i_gauss = 1, nb_gauss
-! --------------------------------- Get current integration point
-                                    gauss_coot(1:2) = 0.d0
-                                    do i_dime = 1, elem_dime-1
-                                        gauss_coot(i_dime) = gauss_coor(i_dime,i_gauss)
-                                    end do
-                                    poidpg = gauss_weight(i_gauss)
-! --------------------------------- Compute geometric quantities for contact (master side)
-                                    call lctppe('Master'      , l_axis        , l_upda_jaco,&
-                                                nb_node_mast  , elem_dime     , elem_mast_code  ,&
-                                                elem_mast_init, elem_mast_coor, &
-                                                gauss_coot    , shape_func    , shape_dfunc,&
-                                                jacobian      , norm_g)
-! --------------------------------- Compute contact matrix (master side)
-                                    call lccoma(elem_dime      , nb_node_mast, nb_node_slav,&
-                                                nb_lagr,&
-                                                l_norm_smooth_p, norm_line   , norm_g      ,&
-                                                indi_lagc      , poidpg      , shape_func  ,&
-                                                jacobian       , mmat_prev)
-                               end do
-                            end do
-                        end if
-                    end do
-                enddo
+            call lcmatr(elem_dime   ,&
+                        l_axis      , l_upda_jaco   , l_norm_smooth ,&
+                        nb_lagr     , indi_lagc     ,&
+                      nb_node_slav, elem_slav_code, elem_slav_init, elga_fami_slav, elem_slav_coop,&
+                      nb_node_mast, elem_mast_code, elem_mast_init, elga_fami_mast, elem_mast_coop,&
+                        mmat_prev)
             if ((abs(lagrc_prev+100.d0*gap_prev)+abs(lagrc+100.d0*gap_curr)) .gt. 1.d-6 ) then
                 alpha = 1.0-abs(lagrc+100.d0*gap_curr)/&
                         (abs(lagrc_prev+100.d0*gap_prev)+abs(lagrc+100.d0*gap_curr))
