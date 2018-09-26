@@ -41,7 +41,7 @@ class MechanicalLoadDefinition(ExecuteCommand):
         load_types = [key for key in self._cata.keywords.keys() if isinstance(self._cata.keywords[key], FactorKeyword)]
         nodeGroups = set()
         for key in keywords.keys():
-            if key in ("LIAISON_DDL", "DDL_IMPO", "LIAISON_OBLIQUE", "LIAISON_UNIF"):
+            if key in ("LIAISON_DDL", "DDL_IMPO", "LIAISON_OBLIQUE", "LIAISON_UNIF", "LIAISON_SOLIDE", "DDL_POUTRE"):
                 for mcf in keywords[key]:
                     mc = mcf.get("GROUP_NO")
                     if mc:
