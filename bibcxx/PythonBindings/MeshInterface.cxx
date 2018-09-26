@@ -41,6 +41,7 @@ void exportMeshToPython() {
         //         })
         .def( "getCoordinates", &BaseMeshInstance::getCoordinates );
         .def( "isParallel", &BaseMeshInstance::isParallel )
+        .def( "getDimension", &BaseMeshInstance::getDimension )
     ;
 
     class_< MeshInstance, MeshInstance::MeshPtr, bases< BaseMeshInstance > >( "Mesh", no_init )
@@ -52,6 +53,5 @@ void exportMeshToPython() {
         .def( "readAsterMeshFile", &MeshInstance::readAsterMeshFile )
         .def( "readGibiFile", &MeshInstance::readGibiFile )
         .def( "readGmshFile", &MeshInstance::readGmshFile )
-        .def( "readMedFile", &MeshInstance::readMedFile )
-        .def( "getDimension", &MeshInstance::getDimension );
+        .def( "readMedFile", &MeshInstance::readMedFile );
 };
