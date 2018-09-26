@@ -260,6 +260,7 @@ class ModelInstance : public DataStructure {
         if ( currentMesh->isEmpty() )
             throw std::runtime_error( "Mesh is empty" );
         _supportBaseMesh = currentMesh;
+        _ligrel->setSupportMesh(currentMesh);
         return true;
     };
 
@@ -283,6 +284,7 @@ class ModelInstance : public DataStructure {
         if ( currentMesh->isEmpty() )
             throw std::runtime_error( "Mesh is empty" );
         _supportBaseMesh = currentMesh;
+        _ligrel->setSupportMesh(currentMesh);
         return true;
     };
 #endif /* _USE_MPI */
@@ -297,6 +299,7 @@ class ModelInstance : public DataStructure {
             throw std::runtime_error( "Mesh is empty" );
         _supportBaseMesh = currentMesh;
         _supportPartialMesh = currentMesh;
+        _ligrel->setSupportMesh(currentMesh);
         return true;
     };
 #endif /* _USE_MPI */
@@ -308,6 +311,7 @@ class ModelInstance : public DataStructure {
         if ( currentMesh->isEmpty() )
             throw std::runtime_error( "Mesh is empty" );
         _supportBaseMesh = currentMesh;
+        _ligrel->setSupportMesh(currentMesh);
         return true;
     };
 };
