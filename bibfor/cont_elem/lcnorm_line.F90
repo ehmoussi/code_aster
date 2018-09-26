@@ -24,7 +24,7 @@ implicit none
 #include "asterfort/provec.h"
 !
 character(len=8), intent(in) :: elem_code
-real(kind=8), intent(in) :: elem_coor(27)
+real(kind=8), intent(in) :: elem_coor(3,9)
 real(kind=8), intent(out) :: norm_line(3)
 !
 ! --------------------------------------------------------------------------------------------------
@@ -40,50 +40,36 @@ real(kind=8), intent(out) :: norm_line(3)
 ! Out norm_line        : normal vector on linearized element
 !
 ! --------------------------------------------------------------------------------------------------
-!  
-    real(kind=8) :: x1(3), x2(3), x3(3), x4(3)   
+!
     real(kind=8) :: norme  
     real(kind=8) :: e1(3), e2(3)  
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    x1(:) = 0.d0
-    x2(:) = 0.d0
-    x3(:) = 0.d0
-    x4(:) = 0.d0
     e1(:) = 0.d0
     e2(:) = 0.d0
     norm_line(:) = 0.d0
 !
     if (elem_code .eq. 'SE2' .or. elem_code .eq. 'SE3') then 
-        x1(1:2) = elem_coor(1:2)  
-        x2(1:2) = elem_coor(3:4) 
-        norm_line(1) = x1(2)-x2(2)
-        norm_line(2) = x2(1)-x1(1)
+        norm_line(1) = elem_coor(2,1)-elem_coor(2,2)
+        norm_line(2) = elem_coor(1,1)-elem_coor(1,2)
         norme        = sqrt(norm_line(1)*norm_line(1)+norm_line(2)*norm_line(2))
         norm_line(1) = norm_line(1)/norme
         norm_line(2) = norm_line(2)/norme                      
     elseif (elem_code .eq. 'TR3' .or. elem_code .eq. 'TR6') then
-        x1(1:3) = elem_coor(1:3)  
-        x2(1:3) = elem_coor(4:6)  
-        x3(1:3) = elem_coor(7:9)
-        e1(1:3) = x3(1:3)-x1(1:3) 
-        e2(1:3) = x3(1:3)-x2(1:3)
+        e1(1:3) = elem_coor(1:3,3)-elem_coor(1:3,1)
+        e2(1:3) = elem_coor(1:3,3)-elem_coor(1:3,2)
         call provec(e1, e2, norm_line) 
         norme = sqrt(norm_line(1)*norm_line(1)+norm_line(2)*norm_line(2)+norm_line(3)*norm_line(3))
         norm_line(1:3) = norm_line(1:3)/norme
     elseif (elem_code .eq. 'QU4'.or. elem_code .eq. 'QU9') then
-        x1(1:3) = elem_coor(1:3)  
-        x2(1:3) = elem_coor(4:6)  
-        x3(1:3) = elem_coor(7:9)
-        x4(1:3) = elem_coor(10:12)
-        e1(1:3) = x3(1:3)-x1(1:3) 
-        e2(1:3) = x4(1:3)-x2(1:3)
+        e1(1:3) = elem_coor(1:3,3)-elem_coor(1:3,1)
+        e2(1:3) = elem_coor(1:3,4)-elem_coor(1:3,2)
         call provec(e1, e2, norm_line) 
         norme = sqrt(norm_line(1)*norm_line(1)+norm_line(2)*norm_line(2)+norm_line(3)*norm_line(3))
         norm_line(1:3) = norm_line(1:3)/norme
     else
-       ASSERT(ASTER_FALSE)
+        ASSERT(ASTER_FALSE)
     end if 
 !
 end subroutine

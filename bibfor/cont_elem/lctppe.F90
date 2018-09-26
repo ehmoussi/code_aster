@@ -21,7 +21,7 @@ subroutine lctppe(side      , l_axis    , l_upda_jaco,&
                   nb_node   , elem_dime , elem_code  ,&
                   elem_init , elem_coor , &
                   gauss_coor, shape_func, shape_dfunc,&
-                  jacobian  , norm)
+                  jacobian  , norm_g)
 !
 implicit none
 !
@@ -52,7 +52,7 @@ character(len=8), intent(in) :: elem_code
 real(kind=8), intent(in) :: gauss_coor(2)
 real(kind=8), intent(out) :: shape_func(9), shape_dfunc(2, 9)
 real(kind=8), intent(out) :: jacobian 
-real(kind=8), intent(out) :: norm(3)
+real(kind=8), intent(out) :: norm_g(3)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -74,7 +74,7 @@ real(kind=8), intent(out) :: norm(3)
 ! Out shape_func       : shape functions at integration point
 ! Out shape_dfunc      : derivatives of shape functions at integration point
 ! Out jacobian         : jacobian at integration point
-! Out norm             : normal at integration point
+! Out norm_g           : normal at integration point
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -85,8 +85,7 @@ real(kind=8), intent(out) :: norm(3)
 !
     shape_func(:)    = 0.d0
     shape_dfunc(:,:) = 0.d0
-    shape_dfunc(2,:) = 0.d0
-    norm(:)          = 0.d0
+    norm_g(:)        = 0.d0
     tau1(:)          = 0.d0
     tau2(:)          = 0.d0
     jacobian         = 0.d0
@@ -104,13 +103,12 @@ real(kind=8), intent(out) :: norm(3)
                 gauss_coor(1), gauss_coor(2),&
                 shape_dfunc)
 !
-! - Compute normal
+! - Compute normal at integration point
 !
-    call mmtang(elem_dime, nb_node, elem_coot, shape_dfunc, tau1,&
-                tau2)
-    call mmnorm(elem_dime, tau1, tau2, norm)
-    if (side.eq.'Master') then
-        norm(1:3) = -norm(1:3)
+    call mmtang(elem_dime, nb_node, elem_coot, shape_dfunc, tau1, tau2)
+    call mmnorm(elem_dime, tau1, tau2, norm_g)
+    if (side .eq. 'Master') then
+        norm_g(1:3) = -norm_g(1:3)
     end if
 !
 ! - Compute updated surfacic jacobian of element

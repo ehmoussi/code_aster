@@ -18,9 +18,7 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine lcnorm(l_norm_smooth, norm_line, norm_g,&
-                      norm)
-        aster_logical, intent(in) :: l_norm_smooth
+    subroutine lcnorm(norm_line, norm_g, norm)
         real(kind=8), intent(in) :: norm_line(3), norm_g(3)
         real(kind=8), intent(out) :: norm(3)
     end subroutine lcnorm
