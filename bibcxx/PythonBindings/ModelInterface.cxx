@@ -69,5 +69,6 @@ void exportModelToPython() {
         .def( "setSupportMesh", c2 )
         .def( "setSupportMesh", c3 )
 #endif /* _USE_MPI */
-        .def( "setSupportMesh", c5 );
+        .def( "setSupportMesh", c5 )
+        .def( "getFiniteElementDescriptor", &ModelInstance::getFiniteElementDescriptor );
 };

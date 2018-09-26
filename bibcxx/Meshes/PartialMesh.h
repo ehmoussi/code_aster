@@ -81,6 +81,15 @@ class PartialMeshInstance : public BaseMeshInstance {
     const JeveuxVectorLong &getOwner() const { return _owner; };
 
     const ParallelMeshPtr &getParallelMesh() const { return _pMesh; };
+
+    /**
+     * @brief Fonction permettant de savoir si un maillage est partiel
+     * @return retourne true si le maillage est partiel
+     */
+    virtual bool isPartial() const
+    {
+        return true;
+    };
 };
 
 /**

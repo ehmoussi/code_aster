@@ -31,6 +31,14 @@
 #include "Meshes/MeshExplorer.h"
 #include "Meshes/Mesh.h"
 
+class FiniteElementDescriptorInstance;
+
+/**
+ * @typedef FiniteElementDescriptor
+ * @brief Pointeur intelligent vers un FiniteElementDescriptorInstance
+ */
+typedef boost::shared_ptr< FiniteElementDescriptorInstance > FiniteElementDescriptorPtr;
+
 /**
  * @class FiniteElementDescriptorInstance
  * @brief Class which describes the finite elements
@@ -125,10 +133,15 @@ class FiniteElementDescriptorInstance : public DataStructure {
     const BaseMeshPtr getSupportMesh() const { return _mesh; };
 };
 
-/**
- * @typedef FiniteElementDescriptor
- * @brief Pointeur intelligent vers un FiniteElementDescriptorInstance
- */
-typedef boost::shared_ptr< FiniteElementDescriptorInstance > FiniteElementDescriptorPtr;
+    void setSupportMesh( const BaseMeshPtr& currentMesh )
+    {
+        _mesh = currentMesh;
+    };
+
+    /** @brief Transert .PRNM from other FiniteElementDescriptor.
+     * this should be associated to a partialMesh,
+     * other should be associated to the parallelMesh of the partialMesh */
+    void transferDofDescriptorFrom(FiniteElementDescriptorPtr&);
+};
 
 #endif /* FINITEELEMENTDESCRIPTOR_H_ */
