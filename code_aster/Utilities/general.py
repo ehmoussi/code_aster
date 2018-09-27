@@ -17,33 +17,25 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: mathieu.courtois@edf.fr
+# person_in_charge: mathieu.courtois at edf.fr
+
 """
-:py:class:`Model` --- Modeling definition
-*****************************************
+:py:mod:`general` --- Definition of utilities for general purpose
+*****************************************************************
 """
 
-import aster
-from libaster import Model
+# This function exists in AsterStudy - keep consistency.
+def initial_context():
+    """Returns *initial* Python context used for evalutations of formula.
 
-from ..Utilities import injector
-
-
-class ExtendedModel(injector(Model), Model):
-    cata_sdj = "SD.sd_modele.sd_modele"
-
-    def __getstate__(self):
-        """Return internal state.
-
-        Returns:
-            dict: Internal state.
-        """
-        return (self.getSupportMesh(), )
-
-    def __setstate__(self, state):
-        """Restore internal state.
-
-        Arguments:
-            state (dict): Internal state.
-        """
-        self.setSupportMesh(state[0])
+    Returns:
+        dict: pairs of name per corresponding Python instance.
+    """
+    import __builtin__
+    import math
+    context = {}
+    context.update(__builtin__.__dict__)
+    for func in dir(math):
+        if not func.startswith('_'):
+            context[func] = getattr(math, func)
+    return context
