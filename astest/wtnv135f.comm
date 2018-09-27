@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -56,8 +56,8 @@ MODELE = AFFE_MODELE(MAILLAGE = MAILLAGE,
 # ::: LISTES DE TEMPS ---------------------------------------------------------------
 # ===================================================================================
 TEMPS1 = DEFI_LIST_REEL(DEBUT = 0.,
-                        INTERVALLE = (_F(JUSQU_A = 3600., NOMBRE = 1.),
-                                      _F(JUSQU_A = 7000., NOMBRE = 1.),),)
+                        INTERVALLE = (_F(JUSQU_A = 3600., NOMBRE = 1),
+                                      _F(JUSQU_A = 7000., NOMBRE = 1),),)
 
 DEFLIST1 = DEFI_LIST_INST(DEFI_LIST = _F(LIST_INST = TEMPS1),
                           ECHEC = _F(EVENEMENT = 'ERREUR',
@@ -67,20 +67,20 @@ DEFLIST1 = DEFI_LIST_INST(DEFI_LIST = _F(LIST_INST = TEMPS1),
 
 TEMPS2 = DEFI_LIST_REEL(DEBUT = 7000.,
                         INTERVALLE = (_F(JUSQU_A = 13000., 
-                                         NOMBRE = 600.,),),)
+                                         NOMBRE = 600,),),)
 
 # :::::: DECOUPE --------------------------------------------------------------------
 DEFLIST2 = DEFI_LIST_INST(DEFI_LIST = _F(LIST_INST = TEMPS2),
                           ECHEC = _F(EVENEMENT = 'ERREUR',
                                      ACTION = 'DECOUPE',
                                      SUBD_METHODE = 'MANUEL',
-                                     SUBD_NIVEAU = 5.,
-                                     SUBD_PAS = 2.,),)
+                                     SUBD_NIVEAU = 5,
+                                     SUBD_PAS = 2,),)
 
 # :::::: ARCHIVAGE PHASE 2 ----------------------------------------------------------
 ARCHI2 = DEFI_LIST_REEL(DEBUT = 7000.,
                         INTERVALLE = (_F(JUSQU_A = 13000., 
-                                         NOMBRE = 600.,),),)
+                                         NOMBRE = 600,),),)
 
 # ===================================================================================
 # ::: MATERIAU : SOL ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::

@@ -109,7 +109,7 @@ ASSEMBLAGE(MODELE=MO,
 #---------------------------------------------
 MODE_MEC=CALC_MODES(MATR_RIGI=RIGIDITE,
                     OPTION='PLUS_PETITE',
-                    CALC_FREQ=_F(NMAX_FREQ=10.,
+                    CALC_FREQ=_F(NMAX_FREQ=10,
                                  ),
                     MATR_MASS=MASSE,
                     )
