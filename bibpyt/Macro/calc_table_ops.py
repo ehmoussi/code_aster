@@ -210,5 +210,4 @@ def calc_table_ops(self, TABLE, ACTION, INFO, **args):
     # type de la table de sortie à passer à CREA_TABLE
     tabout = CREA_TABLE(TYPE_TABLE=typ_tabout,
                         **dprod)
-    print "tabout", tabout
     return tabout

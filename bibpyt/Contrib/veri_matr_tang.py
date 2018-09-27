@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -22,6 +22,12 @@ import string
 
 import numpy as NP
 from numpy import linalg as LA
+
+from code_aster.Commands.ExecuteCommand import ExecuteMacro
+
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
 
 
 class TANGENT:
@@ -160,7 +166,7 @@ class TANGENT:
         return self.Difference(tran, affi_ok=0, prec_diff=prec_diff)
 
 
-def veri_matr_tang_ops(self, SYMETRIE, DIFFERENCE, PRECISION, PREC_ZERO, **args):
+def veri_matr_tang_ops(self, **args):
     """
     Ecriture de la macro verif_matrice_tangente_ops
     """
@@ -174,19 +180,18 @@ def veri_matr_tang_ops(self, SYMETRIE, DIFFERENCE, PRECISION, PREC_ZERO, **args)
     # Le concept sortant (de type fonction) est nomme ROTGD dans
     # le contexte de la macro
 
-    self.DeclareOut('TAB_MAT', self.sd)
-    prec_zero = PREC_ZERO
+    prec_zero = args['PREC_ZERO']
     tgt = TANGENT(prec_zero=prec_zero)
     tgt.Aster(suffixe='MATA')
     matp = TANGENT(prec_zero=prec_zero)
     matp.Aster(suffixe='MATC')
-    prec_diff = PRECISION
-    if SYMETRIE == 'OUI':
+    prec_diff = args['PRECISION']
+    if args['SYMETRIE'] == 'OUI':
         symetgt = tgt.Symetrie(prec_diff)[-2]
         symeper = matp.Symetrie(prec_diff)[-2]
         print 'Symetrie de la matrice tangente', symetgt
         print 'Symetrie de la matrice pr pertubation', symeper
-    if DIFFERENCE == 'OUI':
+    if args['DIFFERENCE'] == 'OUI':
         liste_i, liste_j, liste_matt, liste_matp, liste_diff, nor_diff, max_diff = \
             tgt.Difference(matp, prec_diff)
         print 'difference entre matrice tangente et matrice par pertubation : norme=', \
@@ -198,15 +203,11 @@ def veri_matr_tang_ops(self, SYMETRIE, DIFFERENCE, PRECISION, PREC_ZERO, **args)
             _F(PARA='MAT_PERT',
                LISTE_R=liste_matp),
             _F(PARA='MAT_DIFF', LISTE_R=liste_diff),))
-    return 0
+    return TAB_MAT
 
 
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
-VERI_MATR_TANG = MACRO(
-    nom="VERI_MATR_TANG", op=veri_matr_tang_ops, sd_prod=table_sdaster,
+VERI_MATR_TANG_cata = MACRO(
+    nom="VERI_MATR_TANG", op=None, sd_prod=table_sdaster,
     docu="", reentrant='n',
     fr="verification de la matrice tangente : symetrie et difference "
     "par rapport a la matrice calculee par perturbation",
@@ -218,3 +219,15 @@ VERI_MATR_TANG = MACRO(
          PRECISION=SIMP(statut='f', typ='R', defaut=1.E-4),
          PREC_ZERO=SIMP(statut='f', typ='R', defaut=1.E-12),
 )
+
+
+class TangentMatrixChecking(ExecuteMacro):
+    """Execute legacy operator."""
+    command_name = "VERI_MATR_TANG"
+    command_cata = VERI_MATR_TANG_cata
+
+    @staticmethod
+    def command_op(self, **kwargs):
+        return veri_matr_tang_ops(self, **kwargs)
+
+VERI_MATR_TANG = TangentMatrixChecking.run
