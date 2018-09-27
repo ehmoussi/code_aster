@@ -114,13 +114,14 @@ class ExecuteCommand(object):
         self._counter = 0
 
     @classmethod
-    def run(cls, **keywords):
+    def run(cls, **kwargs):
         """Run the command.
 
         Arguments:
             keywords (dict): User keywords
         """
         cmd = cls()
+        keywords = mixedcopy(kwargs)
         cmd.keep_caller_infos(keywords)
         timer = ExecutionParameter().get_option("timer")
         if cls.command_name not in ("DEBUT", "POURSUITE"):
