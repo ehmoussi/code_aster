@@ -198,22 +198,25 @@ class Serializer(object):
                     logger.debug("loading: {0}...".format(name))
                     try:
                         obj = unpickler.load_one()
-                        if obj == UNSTACKED:
+                        if obj is UNSTACKED:
                             pool.insert(0, name)
                             continue
                         logger.debug("read object: {0}...".format(type(obj)))
                     except Exception as exc:
                         if isinstance(exc, EOFError):
                             raise
-                        logger.debug("can not restore object: {0}".format(name))
-                        # traceback.print_exc()
+                        logger.debug("can not restore object: {0}\n{1}"
+                                     .format(name, traceback.format_exc()))
                         continue
                     names.append(name)
                     objects.append(obj)
             except EOFError:
                 pass
 
-        assert len(objects) == len(objList), (objects, objList)
+        not_read = set(objList).difference(names)
+        if not_read:
+            logger.warn("These objects have not be reloaded: {0}"
+                        .format(tuple(not_read)))
         logger.info("Restored objects:")
         for name, obj in zip(objList, objects):
             logger.debug("restoring {0}...".format(name))
