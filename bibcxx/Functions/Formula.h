@@ -144,7 +144,7 @@ class FormulaInstance: public GenericFunctionInstance
         /**
          * @brief Assign the context for evaluation
          * @param context context containing objects needed for evaluation.
-         * @type  context string of pickled objects
+         * @type  context dict object
          */
         void setContext( PyObject* context ) throw(std::runtime_error)
         {
@@ -159,7 +159,7 @@ class FormulaInstance: public GenericFunctionInstance
 
         /**
          * @brief Return the context needed to evaluate the formula.
-         * @return context as pickled string.
+         * @return context a dict object.
          */
         PyObject* getContext()
         {
