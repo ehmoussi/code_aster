@@ -30,7 +30,7 @@ void exportGridToPython()
     using namespace boost::python;
 
     class_< GridInstance, GridInstance::GridPtr,
-            bases< DataStructure > > ( "Grid", no_init )
+            bases< MeshInstance > > ( "Grid", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< GridInstance > ) )
     ;
