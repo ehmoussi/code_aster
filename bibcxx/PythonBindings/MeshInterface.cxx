@@ -40,6 +40,7 @@ void exportMeshToPython() {
         //             return ConstViewer<MeshCoordinatesFieldInstance>( v.getCoordinates() );
         //         })
         .def( "getCoordinates", &BaseMeshInstance::getCoordinates );
+        .def( "isParallel", &BaseMeshInstance::isParallel )
     ;
 
     class_< MeshInstance, MeshInstance::MeshPtr, bases< BaseMeshInstance > >( "Mesh", no_init )
