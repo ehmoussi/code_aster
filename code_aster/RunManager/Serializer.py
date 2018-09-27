@@ -49,6 +49,10 @@ from ..Supervis import ExecutionParameter, logger
 
 ARGS = '_MARK_DS_ARGS_'
 STATE = '_MARK_DS_STATE_'
+LIST = '_MARK_LIST_'
+TUPLE = '_MARK_TUPLE_'
+DICT = '_MARK_DICT_'
+UNSTACKED = object()
 
 
 class Serializer(object):
@@ -194,6 +198,9 @@ class Serializer(object):
                     logger.debug("loading: {0}...".format(name))
                     try:
                         obj = unpickler.load_one()
+                        if obj == UNSTACKED:
+                            pool.insert(0, name)
+                            continue
                         logger.debug("read object: {0}...".format(type(obj)))
                     except Exception as exc:
                         if isinstance(exc, EOFError):
@@ -210,19 +217,32 @@ class Serializer(object):
         logger.info("Restored objects:")
         for name, obj in zip(objList, objects):
             logger.debug("restoring {0}...".format(name))
-            # build instance from BufferObject
-            if isinstance(obj, AsterUnpickler.BufferObject):
-                try:
-                    obj = obj.instance
-                except Exception:
-                    logger.error("can not restore object {0} <{1}>\n{2}"
-                                 .format(name, obj, traceback.format_exc()))
-                    continue
+            try:
+                obj = _restore(name, obj)
+            except Exception:
+                logger.error("can not restore object {0} <{1}>\n{2}"
+                                .format(name, obj, traceback.format_exc()))
+                continue
             self._ctxt[name] = obj
             logger.info("{0:<24s} {1}".format(name, type(obj)))
             assert not isinstance(obj, AsterUnpickler.BufferObject)
         # restore the objects counter
         ResultNaming.initCounter(lastId)
+
+
+def _restore(name, obj):
+    """Build instance from BufferObject."""
+    if isinstance(obj, list):
+        new = [_restore(name, i) for i in obj]
+    elif isinstance(obj, tuple):
+        new = tuple(_restore(name, list(obj)))
+    elif isinstance(obj, dict):
+        new = obj.__class__([(i, _restore(name, obj[i])) for i in obj])
+    elif isinstance(obj, AsterUnpickler.BufferObject):
+        new = obj.instance
+    else:
+        new = obj
+    return new
 
 
 def saveObjects(level=1, delete=True):
@@ -299,7 +319,13 @@ class AsterPickler(pickle.Pickler):
         Arguments:
             obj (*misc*): Object to save.
         """
-        if isinstance(obj, DataStructure):
+        if isinstance(obj, list):
+            if obj and isinstance(obj[0], DataStructure):
+                self.dump(LIST)
+                self.dump(len(obj))
+                for item in obj:
+                    self.save_one(item)
+        elif isinstance(obj, DataStructure):
             # save initial arguments
             if hasattr(obj, "__getinitargs__"):
                 init_args = obj.__getinitargs__()
@@ -460,7 +486,12 @@ class AsterUnpickler(pickle.Unpickler):
             *misc*: Loaded object.
         """
         obj = self.load()
-        if obj == ARGS:
+        if obj == LIST:
+            size = self.load_one()
+            for _ in range(size):
+                self.load_one()
+            return UNSTACKED
+        elif obj == ARGS:
             name, init_args = self.load_one()
             buffer = self._stack.buffer(name)
             buffer.args = init_args
