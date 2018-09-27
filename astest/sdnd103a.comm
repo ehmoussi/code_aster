@@ -135,7 +135,7 @@ TRAN_PHE=DYNA_LINE(TYPE_CALCUL='TRAN',
                    INCREMENT=_F(INST_INIT = 0.,
                                 INST_FIN = DER,
                                 PAS = PAS),
-                   ARCHIVAGE=_F(LIST_INST=L_RECU, PAS_ARCH = 1e8),
+                   ARCHIVAGE=_F(LIST_INST=L_RECU, PAS_ARCH = 10**8),
                    BASE_RESU = CO('MODE_ME2'),
                    )
 
@@ -160,7 +160,7 @@ TRAN_PHS=DYNA_LINE(TYPE_CALCUL='TRAN',
                    INCREMENT=_F(INST_INIT = 0.,
                                 INST_FIN = DER,
                                 PAS = PAS),
-                   ARCHIVAGE=_F(LIST_INST=L_RECU, PAS_ARCH = 1e8),
+                   ARCHIVAGE=_F(LIST_INST=L_RECU, PAS_ARCH = 10**8),
                    BASE_RESU = CO('MODE_ME'),
                    )
 
@@ -183,7 +183,7 @@ TRAN_PHD=DYNA_LINE(TYPE_CALCUL='TRAN',
                    INCREMENT=_F(INST_INIT = 0.,
                                 INST_FIN = DER,
                                 PAS = PAS),
-                   ARCHIVAGE=_F(LIST_INST=L_RECU, PAS_ARCH = 1e8),
+                   ARCHIVAGE=_F(LIST_INST=L_RECU, PAS_ARCH = 10**8),
                    )
 
 #

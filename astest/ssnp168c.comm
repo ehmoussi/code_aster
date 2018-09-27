@@ -256,7 +256,7 @@ EVOL = STAT_NON_LINE( MODELE = MODEMECA,
                                         ITER_GLOB_MAXI = 10),
                       SOLVEUR =_F( METHODE = 'MUMPS',
                                    PCENT_PIVOT = 30),
-                      ARCHIVAGE =_F( PAS_ARCH = 5.),);
+                      ARCHIVAGE =_F( PAS_ARCH = 5),);
 
 # DESTRUCTION DE LA RAMPE POUR REUTILISATION
 DETRUIRE( CONCEPT=_F( NOM = RAMPE,),); 
@@ -292,7 +292,7 @@ for i in inst2do :
                                             ITER_GLOB_MAXI = 20),
                           SOLVEUR =_F( METHODE = 'MUMPS',
                                        PCENT_PIVOT = 30),
-                          ARCHIVAGE =_F( PAS_ARCH = 5.),);
+                          ARCHIVAGE =_F( PAS_ARCH = 5),);
 
     inst_old = i
     DETRUIRE( CONCEPT=_F( NOM = RAMPE),); 

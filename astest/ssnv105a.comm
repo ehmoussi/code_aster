@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -65,9 +65,9 @@ FONC_S=DEFI_FONCTION(NOM_PARA='INST', NOM_RESU='SECH',
 
 L_INST=DEFI_LIST_REEL(DEBUT=0.0,
                     INTERVALLE=(_F(JUSQU_A=2.*day,
-                                   NOMBRE=1000.,),
+                                   NOMBRE=1000,),
                                 _F(JUSQU_A=instFin*day,
-                                   NOMBRE=1000.,),
+                                   NOMBRE=1000,),
                                    ),)
 
 DEFLIST =DEFI_LIST_INST(DEFI_LIST=_F(LIST_INST = L_INST,),)
