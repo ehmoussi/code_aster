@@ -158,7 +158,6 @@ RESU_TGT=SIMU_POINT_MAT(
                                   EPXY=eps_def[3], EPXZ=eps_def[4], EPYZ=eps_def[5]),
                         );
 
-
 DIFF_MAT=VERI_MATR_TANG()
 
 ###############################################################################

@@ -18,7 +18,7 @@
 # --------------------------------------------------------------------
 
 from code_aster.Cata.Syntax import _F
-from code_aster.Cata.Commands import CALC_TABLE, DETRUIRE
+from code_aster.Commands import CALC_TABLE, DETRUIRE
 
 
 def relative_error(X, Xref, coef=1., prec_zero=0.):

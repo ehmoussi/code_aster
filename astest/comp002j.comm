@@ -120,7 +120,7 @@ Ncal = 5
 N_pas = 2*[1] + [1, 5, 25]
 nbequi=2
 # les differents calculs effectues
-label_cal=['_Pa_','_rot_'] + 3* ['_N']
+label_cal=['p','r'] + 3* ['n']
 #pointeur materiau
 P_imat = [0] + [1] + (Ncal-2)*[1]
 
