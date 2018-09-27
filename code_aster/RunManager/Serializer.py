@@ -67,9 +67,9 @@ class Serializer(object):
             files.
     """
 
-    # TODO use repglob option?
     _sha_filename = "pick.code_aster.sha"
     _pick_filename = "pick.code_aster.objects"
+    _info_filename = "pick.code_aster.infos"
     _base = "glob.1"
 
     def __init__(self, context=None):
@@ -87,22 +87,37 @@ class Serializer(object):
         Returns:
             bool: *True* if the previous execution can be continued.
         """
-        if not (osp.exists(cls._base) and osp.exists(cls._pick_filename)
-                and osp.exists(cls._sha_filename)):
+        for fname in (cls._base, cls._pick_filename, cls._info_filename,
+                      cls._sha_filename):
+            if not osp.exists(fname):
+                return False
+
+        sign = read_signature(cls._sha_filename)
+        if len(sign) != 3:
+            logger.error("Invalid sha file: '{0}'".format(cls._sha_filename))
             return False
-        ref_pick, ref_base = read_signature(cls._sha_filename)
+        ref_pick, ref_info, ref_base = sign
         sign_pick = file_signature(cls._pick_filename)
         if sign_pick != ref_pick:
             logger.error("Current pickled file: {0}".format(sign_pick))
             logger.error("Expected signature  : {0}".format(ref_pick))
-            logger.error("The {0!r} file is not the expected one."
+            logger.error("The '{0}' file is not the expected one."
                          .format(cls._pick_filename))
             return False
+
+        sign_info = file_signature(cls._info_filename)
+        if sign_info != ref_info:
+            logger.error("Current info file : {0}".format(sign_info))
+            logger.error("Expected signature: {0}".format(ref_info))
+            logger.error("The '{0}' file is not the expected one."
+                         .format(cls._info_filename))
+            return False
+
         sign_base = file_signature(cls._base, 0, 8000000)
         if sign_base != ref_base:
             logger.error("Current base file : {0}".format(sign_base))
             logger.error("Expected signature: {0}".format(ref_base))
-            logger.error("The {0!r} file is not the expected one."
+            logger.error("The '{0}' file is not the expected one."
                          .format(cls._base))
             return False
         return True
@@ -135,37 +150,61 @@ class Serializer(object):
                     continue
                 if isinstance(obj, DataStructure):
                     saved.append(name)
+
+        with open(self._info_filename, "wb") as pick:
             # add management objects on the stack
-            pickler.dump(objList)
-            pickler.dump(ResultNaming.getCurrentName())
+            pickle.dump(objList, pick)
+            pickle.dump(ResultNaming.getCurrentName(), pick)
         return saved
 
     def sign(self):
         """Sign the saved files and store their SHA signatures."""
         with open(self._sha_filename, "wb") as pick:
             pickler = pickle.Pickler(pick)
+
             sign_pick = file_signature(self._pick_filename)
             logger.info("Signature of pickled file   : {0}".format(sign_pick))
+            sign_info = file_signature(self._info_filename)
+            logger.info("Signature of info file      : {0}".format(sign_info))
             sign_base = file_signature(self._base, 0, 8000000)
             logger.info("Signature of Jeveux database: {0}".format(sign_base))
+
             pickler.dump(sign_pick)
+            pickler.dump(sign_info)
             pickler.dump(sign_base)
 
     def load(self):
         """Load objects into the context."""
         assert self._ctxt is not None, "context is required"
+        with open(self._info_filename, "rb") as pick:
+            # add management objects on the stack
+            objList = pickle.load(pick)
+            lastId = int(pickle.load(pick), 16)
+
+        pool = objList[:]
+        logger.debug("Objects pool: {0}".format(pool))
         with open(self._pick_filename, "rb") as pick:
             unpickler = AsterUnpickler(pick)
             # load all the objects
             objects = []
+            names = []
             try:
                 while True:
-                    obj = unpickler.load_one()
+                    name = pool.pop(0) if pool else None
+                    logger.debug("loading: {0}...".format(name))
+                    try:
+                        obj = unpickler.load_one()
+                        logger.debug("read object: {0}...".format(type(obj)))
+                    except Exception as exc:
+                        if isinstance(exc, EOFError):
+                            raise
+                        logger.debug("can not restore object: {0}".format(name))
+                        # traceback.print_exc()
+                        continue
+                    names.append(name)
                     objects.append(obj)
             except EOFError:
-                # return management objects from the end of the end
-                lastId = int(objects.pop(), 16)
-                objList = objects.pop()
+                pass
 
         assert len(objects) == len(objList), (objects, objList)
         logger.info("Restored objects:")
@@ -381,10 +420,10 @@ class AsterUnpickler(pickle.Unpickler):
                 logger.debug("building {0._name!r} of type {0._class}"
                              .format(self))
                 # DataStructure must be in args (not in sub-objects)
-                args = [i.instance if isinstance(i, type(self)) else i \
+                args = [i.instance if isinstance(i, type(self)) else i
                         for i in self.args]
-                state = [i.instance if isinstance(i, type(self)) else i \
-                        for i in self.state]
+                state = [i.instance if isinstance(i, type(self)) else i
+                         for i in self.state]
                 logger.debug("initargs: {0}".format(args))
                 self._inst = getattr(Objects, self.classname)(*args)
                 setstate = getattr(self._inst, "__setstate__", None)
@@ -427,10 +466,16 @@ class AsterUnpickler(pickle.Unpickler):
             buffer.args = init_args
             # expecting the STATE mark
             assert self.load_one() == STATE
-            buffer.state = self.load_one()
+            try:
+                buffer.state = self.load_one()
+                assert isinstance(buffer.state, (list, tuple))
+            except:
+                logger.debug("internal state can not be loaded")
+                buffer.state = ()
+                raise pickle.PicklingError("internal state can not be loaded")
             # 'load' will call 'persistent_load'
             obj = self.load_one()
-            logger.debug("loaded DataStructure {0!r}".format(obj))
+            logger.debug("loaded DataStructure '{0}'".format(obj))
         return obj
 
     def recover_ds(self, class_id, key_id):
@@ -486,8 +531,10 @@ def _filteringContext(context):
             continue
         if not isinstance(obj, numpy.ndarray) and obj in ignored:
             continue
-        if type(obj) in (types.ModuleType, types.ClassType, types.MethodType):
+        if type(obj) in (types.ModuleType, types.ClassType, types.MethodType,
+                         types.FunctionType):
             continue
+        # aster-legacy try 'dumps' before keeping the object
         ctxt[name] = obj
     return ctxt
 
@@ -505,6 +552,7 @@ def read_signature(sha_file):
     sign = []
     try:
         with open(sha_file, "rb") as pick:
+            sign.append(pickle.Unpickler(pick).load())
             sign.append(pickle.Unpickler(pick).load())
             sign.append(pickle.Unpickler(pick).load())
     except (IOError, OSError):
