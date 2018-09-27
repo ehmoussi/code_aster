@@ -31,7 +31,6 @@ ParallelFiniteElementDescriptorInstance::ParallelFiniteElementDescriptorInstance
     ( const std::string& name, const FiniteElementDescriptorPtr& FEDesc,
       const PartialMeshPtr& mesh, const ModelPtr& model, const JeveuxMemory memType ):
                     FiniteElementDescriptorInstance( name, model->getSupportMesh(), memType ),
-                    _BaseFEDesc( FEDesc ),
                     _joins( JeveuxVectorLong( getName() + ".DOMJ" ) ),
                     _owner( JeveuxVectorLong( getName() + ".PNOE" ) ),
                     _multiplicity( JeveuxVectorLong( getName() + ".MULT" ) ),
