@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -48,7 +48,7 @@ subroutine op0134()
     character(len=16) :: nomcmd, typres
     character(len=19) :: nomfon, nomfin, listp, listf, typco
     character(len=24) :: noparp, noparf, valk(3)
-    character(len=8), pointer :: nova(:) => null()
+    character(len=24), pointer :: nova(:) => null()
 !     ------------------------------------------------------------------
 !
     call jemarq()
@@ -80,7 +80,7 @@ subroutine op0134()
     if (typco(1:7) .eq. 'FORMULE') then
         if (typco(1:9) .eq. 'FORMULE_C') compl = .true.
         call jelira(nomfin//'.NOVA', 'LONUTI', nbnova)
-        call jeveuo(nomfin//'.NOVA', 'L', vk8=nova)
+        call jeveuo(nomfin//'.NOVA', 'L', vk24=nova)
         if (nbnova .eq. 1) then
             noparp = nova(1)
         else if (nbnova .eq. 2) then
