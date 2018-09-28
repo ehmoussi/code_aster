@@ -17,33 +17,27 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: mathieu.courtois@edf.fr
-"""
-:py:class:`Model` --- Modeling definition
-*****************************************
-"""
+import code_aster
+from code_aster.Commands import *
 
-import aster
-from libaster import Model
+code_aster.init("--continue")
 
-from ..Utilities import injector
+test.assertNotIn("SIYYp", globals())
+test.assertIn("func", globals())
+test.assertIn("SIYY", globals())
+
+# User defined functions can not be unpickled.
+test.assertRaises(RuntimeError, SIYY, 0., 0., 0.)
 
 
-class ExtendedModel(injector(Model), Model):
-    cata_sdj = "SD.sd_modele.sd_modele"
+# Restore a valid evaluation context
+def SIYYp(x,y,z):
+    a0 =  2.0 ; ax = -1.0 ; ay = -3.0 ; az =  1.0
+    return (a0 + ax*x + ay*y + az*z)*1.0E+6
 
-    def __getstate__(self):
-        """Return internal state.
+SIYY.setContext(dict(SIYYp=SIYYp))
+test.assertEqual(SIYY(0, 0, 0), 2.0e6)
 
-        Returns:
-            dict: Internal state.
-        """
-        return (self.getSupportMesh(), )
+code_aster.saveObjects()
 
-    def __setstate__(self, state):
-        """Restore internal state.
-
-        Arguments:
-            state (dict): Internal state.
-        """
-        self.setSupportMesh(state[0])
+test.printSummary()

@@ -17,33 +17,25 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: mathieu.courtois@edf.fr
-"""
-:py:class:`Model` --- Modeling definition
-*****************************************
-"""
+import code_aster
+from code_aster.Commands import *
 
-import aster
-from libaster import Model
+test = code_aster.TestCase()
 
-from ..Utilities import injector
+code_aster.init()
 
+def SIYYp(x,y,z):
+    a0 =  2.0 ; ax = -1.0 ; ay = -3.0 ; az =  1.0
+    return (a0 + ax*x + ay*y + az*z)*1.0E+6
 
-class ExtendedModel(injector(Model), Model):
-    cata_sdj = "SD.sd_modele.sd_modele"
+SIYY = FORMULE(VALE='SIYYp(X,Y,Z)',
+               SIYYp=SIYYp,
+               NOM_PARA=['X', 'Y', 'Z'],)
 
-    def __getstate__(self):
-        """Return internal state.
+func = DEFI_FONCTION(VALE=(0, 0, 1, 1), NOM_PARA='X')
 
-        Returns:
-            dict: Internal state.
-        """
-        return (self.getSupportMesh(), )
+test.assertEqual(SIYY(0, 0, 0), 2.0e6)
 
-    def __setstate__(self, state):
-        """Restore internal state.
+code_aster.saveObjects()
 
-        Arguments:
-            state (dict): Internal state.
-        """
-        self.setSupportMesh(state[0])
+test.printSummary()
