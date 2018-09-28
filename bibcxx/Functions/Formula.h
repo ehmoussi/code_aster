@@ -47,8 +47,8 @@ class FormulaInstance: public GenericFunctionInstance
         std::string  _jeveuxName;
         // Vecteur Jeveux '.PROL'
         JeveuxVectorChar24 _property;
-        // Vecteur Jeveux '.VALE'
-        JeveuxVectorChar8 _variables;
+        // Vecteur Jeveux '.NOVA'
+        JeveuxVectorChar24 _variables;
         // Pointers to PyObject
         JeveuxVectorLong _pointers;
         // Expression

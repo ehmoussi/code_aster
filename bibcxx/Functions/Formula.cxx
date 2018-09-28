@@ -36,7 +36,7 @@ FormulaInstance::FormulaInstance( const std::string jeveuxName ):
     GenericFunctionInstance( jeveuxName, "FORMULE" ),
     _jeveuxName( getName() ),
     _property( JeveuxVectorChar24( getName() + ".PROL" ) ),
-    _variables( JeveuxVectorChar8( getName() + ".NOVA" ) ),
+    _variables( JeveuxVectorChar24( getName() + ".NOVA" ) ),
     _pointers( JeveuxVectorLong( getName() + ".ADDR" ) ),
     _expression( "" ),
     _code( NULL ),
