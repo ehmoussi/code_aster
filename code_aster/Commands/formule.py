@@ -20,7 +20,7 @@
 # person_in_charge: mathieu.courtois@edf.fr
 
 from ..Objects import Formula
-from ..Utilities import force_list
+from ..Utilities import force_list, initial_context
 from .ExecuteCommand import ExecuteCommand
 
 
@@ -32,23 +32,8 @@ class FormulaDefinition(ExecuteCommand):
     def __init__(self):
         """Initialization"""
         super(FormulaDefinition, self).__init__()
-        self._ctxt = self.initial_context()
-
-    @staticmethod
-    def initial_context():
-        """Returns `initial` Python context (independent of Stage and Command)
-
-        Returns:
-            dict: pairs of name per corresponding Python instance.
-        """
-        import __builtin__
-        import math
-        context = {}
-        context.update(__builtin__.__dict__)
-        for func in dir(math):
-            if not func.startswith('_'):
-                context[func] = getattr(math, func)
-        return context
+        # context used for evaluation
+        self._ctxt = initial_context()
 
     def adapt_syntax(self, keywords):
         """Adapt syntax to store the evaluation context.

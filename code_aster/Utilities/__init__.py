@@ -32,6 +32,7 @@ from .base_utils import (accept_array, array_to_list, force_list, force_tuple,
                          Singleton, value_is_sequence)
 from .compatibility import (compat_listr8, deprecated, remove_keyword,
                             required, unsupported)
+from .general import initial_context
 from .injector import injector
 from .i18n import localization
 from .strfunc import convert, from_unicode, get_encoding, to_unicode
