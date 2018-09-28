@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -112,29 +112,29 @@ MARASUPL=ASSE_MATRICE(MATR_ELEM=MATRUPL,
 #Test de non regression sur la matrice de masse (pour INCO_UPG, INCO_UPG et INCO_UP)
 
 TEST_RESU(OBJET=_F(VALE_CALC=6278.2285714285999,
-                   NOM='MATMUPG        .M01.RESL',),
+                   NOM=MATMUPG.getName()[:8] + '       .M01.RESL',),
           )
 
 TEST_RESU(OBJET=_F(VALE_CALC=6278.2285714285999,
-                   NOM='MATMUPQ        .M01.RESL',),
+                   NOM=MATMUPQ.getName()[:8] + '       .M01.RESL',),
           )
 
 TEST_RESU(OBJET=_F(VALE_CALC=6278.2285714285999,
-                   NOM='MATMUPL        .M01.RESL',),
+                   NOM=MATMUPL.getName()[:8] + '       .M01.RESL',),
           )
 
 #Test de non regression sur la matrice de rigidite (pour INCO_UPG, INCO_UPG et INCO_UP)
 
 TEST_RESU(OBJET=_F(VALE_CALC=2.6950725246896E+06,
-                   NOM='MATRUPG .ME001     .RESL',),
+                   NOM=MATRUPG.getName()[:8] + '.ME001     .RESL',),
           )
 
 TEST_RESU(OBJET=_F(VALE_CALC=2.6950725246896E+06,
-                   NOM='MATRUPQ .ME001     .RESL',),
+                   NOM=MATRUPQ.getName()[:8] + '.ME001     .RESL',),
           )
 
 TEST_RESU(OBJET=_F(VALE_CALC=1.5333753473997E+06,
-                   NOM='MATRUPL .ME001     .RESL',),
+                   NOM=MATRUPL.getName()[:8] + '.ME001     .RESL',),
           )
 
 FIN();

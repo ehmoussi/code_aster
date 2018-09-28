@@ -38,13 +38,6 @@ autoclass_block = \
    :members:
 """.format
 
-autoclass_block_mechamode = \
-""".. autoclass:: code_aster.Objects.{0}
-   :show-inheritance:
-   :members:
-   :exclude-members: getStiffnessMatrix
-""".format
-
 auto_documentation = \
 """.. AUTOMATICALLY CREATED BY generate_rst.py - DO NOT EDIT MANUALLY!
 
@@ -141,10 +134,7 @@ def all_objects(destdir):
         for name in objs:
             if typename in ('DataStructure', 'GeneralMaterialBehaviour'):
                 lines.append(subtitle(name))
-            if name == "MechanicalModeContainer":
-                lines.append(autoclass_block_mechamode(name))
-            else:
-                lines.append(autoclass_block(name))
+            lines.append(autoclass_block(name))
 
         dicttext[typename] = os.linesep.join(lines)
 

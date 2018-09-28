@@ -96,7 +96,7 @@ TEST_ECART(ch_param2,label_cal,N_pas,Ncal,nbequi,R_SI,prec_ecart,prec_zero,coef_
 TEST_TABLE(
            VALE_CALC=3.31336000E8,
            NOM_PARA='VMIS_Pa_1',
-           TABLE=R_SI_1,
+           TABLE=R_SI[1],
            FILTRE=_F(NOM_PARA='INST',
                      VALE=5.0,),
            )
@@ -104,7 +104,7 @@ TEST_TABLE(
 TEST_TABLE(
            VALE_CALC=2.079485379201E7,
            NOM_PARA='SIXX_Pa_1',
-           TABLE=R_SI_3,
+           TABLE=R_SI[3],
            FILTRE=_F(NOM_PARA='INST',
                      VALE=5.0,),
            )
@@ -157,7 +157,6 @@ RESU_TGT=SIMU_POINT_MAT(
                    EPSI_IMPOSE=_F(EPXX=eps_def[0], EPYY=eps_def[1], EPZZ=eps_def[2],
                                   EPXY=eps_def[3], EPXZ=eps_def[4], EPYZ=eps_def[5]),
                         );
-
 
 DIFF_MAT=VERI_MATR_TANG()
 
