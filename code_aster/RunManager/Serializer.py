@@ -50,7 +50,6 @@ from ..Supervis import ExecutionParameter, logger
 ARGS = '_MARK_DS_ARGS_'
 STATE = '_MARK_DS_STATE_'
 LIST = '_MARK_LIST_'
-TUPLE = '_MARK_TUPLE_'
 DICT = '_MARK_DICT_'
 UNSTACKED = object()
 
@@ -146,7 +145,7 @@ class Serializer(object):
                     continue
                 try:
                     logger.info("{0:<24s} {1}".format(name, type(obj)))
-                    pickler.save_one(obj)
+                    pickler.save_one(obj, main=True)
                     objList.append(name)
                 except (pickle.PicklingError, TypeError) as exc:
                     logger.warn("object can't be pickled: {0}".format(name))
@@ -316,17 +315,23 @@ class AsterPickler(pickle.Pickler):
     documentation.
     """
 
-    def save_one(self, obj):
+    def save_one(self, obj, main=False):
         """Save one object.
 
         Arguments:
             obj (*misc*): Object to save.
         """
-        if isinstance(obj, list):
+        if main and isinstance(obj, (list, tuple)):
             if obj and isinstance(obj[0], DataStructure):
                 self.dump(LIST)
                 self.dump(len(obj))
                 for item in obj:
+                    self.save_one(item)
+        elif main and isinstance(obj, dict):
+            if obj and isinstance(obj.values()[0], DataStructure):
+                self.dump(DICT)
+                self.dump(len(obj))
+                for item in obj.values():
                     self.save_one(item)
         elif isinstance(obj, DataStructure):
             # save initial arguments
@@ -339,6 +344,7 @@ class AsterPickler(pickle.Pickler):
             # save state
             if hasattr(obj, "__getstate__"):
                 state = obj.__getstate__()
+                assert isinstance(state, (list, tuple)), state
             else:
                 state = ()
             self.dump(STATE)
@@ -494,6 +500,11 @@ class AsterUnpickler(pickle.Unpickler):
             for _ in range(size):
                 self.load_one()
             return UNSTACKED
+        elif obj == DICT:
+            size = self.load_one()
+            for _ in range(size):
+                self.load_one()
+            return UNSTACKED
         elif obj == ARGS:
             name, init_args = self.load_one()
             buffer = self._stack.buffer(name)
@@ -502,9 +513,10 @@ class AsterUnpickler(pickle.Unpickler):
             assert self.load_one() == STATE
             try:
                 buffer.state = self.load_one()
-                assert isinstance(buffer.state, (list, tuple))
+                assert isinstance(buffer.state, (list, tuple)), buffer.state
             except:
-                logger.debug("internal state can not be loaded")
+                logger.debug("internal state can not be loaded\n{0}"
+                             .format(traceback.format_exc()))
                 buffer.state = ()
                 raise pickle.PicklingError("internal state can not be loaded")
             # 'load' will call 'persistent_load'
