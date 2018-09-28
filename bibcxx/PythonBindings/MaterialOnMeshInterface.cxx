@@ -53,9 +53,13 @@ void exportMaterialOnMeshToPython()
     c1.def( "addBehaviourOnAllMesh", &MaterialOnMeshInstance::addBehaviourOnAllMesh );
     c1.def( "addBehaviourOnGroupOfElements",
               &MaterialOnMeshInstance::addBehaviourOnGroupOfElements );
+    c1.def( "addBehaviourOnElement",
+              &MaterialOnMeshInstance::addBehaviourOnElement );
     c1.def( "addMaterialOnAllMesh", &MaterialOnMeshInstance::addMaterialOnAllMesh );
     c1.def( "addMaterialOnGroupOfElements",
               &MaterialOnMeshInstance::addMaterialOnGroupOfElements );
+    c1.def( "addMaterialOnElement",
+              &MaterialOnMeshInstance::addMaterialOnElement );
     c1.def( "buildWithoutInputVariables", &MaterialOnMeshInstance::buildWithoutInputVariables );
     c1.def( "getSupportMesh", &MaterialOnMeshInstance::getSupportMesh );
     c1.def( "getVectorOfMaterial", &MaterialOnMeshInstance::getVectorOfMaterial );
