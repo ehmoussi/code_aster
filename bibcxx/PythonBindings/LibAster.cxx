@@ -165,6 +165,9 @@ struct LibAsterInitializer
 
 BOOST_PYTHON_MODULE(libaster)
 {
+    // hide c++ signatures
+    boost::python::docstring_options doc_options(true, true, false);
+
     boost::shared_ptr< LibAsterInitializer > libGuard( new LibAsterInitializer() );
 
     class_< LibAsterInitializer, boost::shared_ptr< LibAsterInitializer >,
@@ -265,7 +268,7 @@ BOOST_PYTHON_MODULE(libaster)
     exportFullAcousticHarmonicResultsContainerToPython();
     exportFluidStructureModalBasisToPython();
     exportGeneralizedModeContainerToPython();
-  
+
 
 #ifdef _USE_MPI
     exportParallelMeshToPython();

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -44,7 +44,7 @@ subroutine fonbpa(nomf, vec, typfon, mxpf, nbpf,&
     integer :: vali(2)
     character(len=24) :: valk
     character(len=19) :: nomfon
-    character(len=8), pointer :: nova(:) => null()
+    character(len=24), pointer :: nova(:) => null()
 !     ------------------------------------------------------------------
     call jemarq()
 !
@@ -70,7 +70,7 @@ subroutine fonbpa(nomf, vec, typfon, mxpf, nbpf,&
     else if (vec(1)(1:8).eq.'INTERPRE') then
         nomfon = nomf
         call jelira(nomfon//'.NOVA', 'LONUTI', nbpf)
-        call jeveuo(nomfon//'.NOVA', 'L', vk8=nova)
+        call jeveuo(nomfon//'.NOVA', 'L', vk24=nova)
         do 12 ipa = 1, nbpf
             nompf(ipa) = nova(ipa)
 12      continue
