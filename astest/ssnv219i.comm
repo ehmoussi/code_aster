@@ -312,7 +312,7 @@ INCLUDE(UNITE=38)
 # Nombre de Test
 # nbtest=5
 # Nombre de remaillage
-Nb_Raffinement=5;
+Nb_Raffinement=4;
 TitreU      ='Erreur ||\qU\sh\N-\2U\N\Q || en norme L\s2\N, maillages en hexa\xe8dres'
 TitreP      ='Erreur ||\qP\sh\N-\2P\N\Q || en norme L\s2\N, maillages en hexa\xe8dres'
 
@@ -500,19 +500,19 @@ PenteLST=CREA_TABLE( LISTE= (
 TEST_TABLE (TABLE = PenteLST,
             NOM_PARA= 'PU',
             REFERENCE='ANALYTIQUE',
-            VALE_CALC= 2.97638645265,       # raffinement=5
-            VALE_REFE=2.5,                  # vitesse de convergence
-            PRECISION=0.191,                # surconvergence
-            )
+            VALE_CALC= 2.99909182813,       # raffinement=4
+            VALE_REFE=2.5,                  # taux de convergence
+            PRECISION=0.200,                # surconvergence: mélange de convergence de géométrie
+            )                               # (surface de contact courbée)
 
 
 TEST_TABLE (TABLE = PenteLST,
             NOM_PARA= 'PP',
             REFERENCE='ANALYTIQUE',
-            VALE_CALC=1.02461560696,        # raffinement=5
-            VALE_REFE=1.0,                  # vitesse de convergence
-            PRECISION=0.025,                # surconvergence
-            ) 
+            VALE_CALC=1.01524915695,        # raffinement=4
+            VALE_REFE=1.0,                  # taux de convergence
+            PRECISION=0.016,                # surconvergence: mélange de convergence de géométrie
+            )                               # (surface de contact courbée)
 
 sous_titreU='Ordres de convergence: cas HEXA27 %f'%(PenteL2U)
 sous_titreP='Ordres de convergence: cas HEXA27= %f'%(PenteL2P)
