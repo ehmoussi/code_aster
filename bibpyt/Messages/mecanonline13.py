@@ -73,4 +73,6 @@ cata_msg = {
 
    27  : _(u""" Initialisations des structures de données pour la résolution du contact."""),
 
+   28  : _(u""" Initialisations pour les lois de comportement."""),
+
 }
