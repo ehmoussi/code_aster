@@ -41,7 +41,7 @@ public:
     /**
      * @brief Constructeur
      */
-    MultElasContainerInstance(): ResultsContainerInstance( "FOURIER_ELAS" )
+    MultElasContainerInstance(): ResultsContainerInstance( "MULT_ELAS" )
     {};
 
 };
