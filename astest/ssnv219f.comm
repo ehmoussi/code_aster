@@ -311,7 +311,7 @@ INCLUDE(UNITE=38)
 # Debut de l'etude de la convergence
 # Nombre de Test
 # Nombre de remaillage
-Nb_Raffinement=5;
+Nb_Raffinement=4;
 TitreU='Erreur ||\qU\sh\N-\2U\N\Q || en norme L\s2\N, maillages en t\xe9tra\xe8dres'
 TitreP='Erreur ||\qP\sh\N-\2P\N\Q || en norme L\s2\N, maillages en t\xe9tra\xe8dres'
 Legende='Cas TETRA 10'
@@ -487,19 +487,19 @@ PenteLST=CREA_TABLE( LISTE= (
 TEST_TABLE (TABLE = PenteLST,
             NOM_PARA= 'PU',
             REFERENCE='ANALYTIQUE',
-            VALE_CALC= 2.98531237761,   # raffinement=5
+            VALE_CALC= 2.99578529889,   # raffinement=4
             VALE_REFE=2.5,              # vitesse de convergence
-            PRECISION=0.195,            # surconvergence
-            )
+            PRECISION=0.199,            # surconvergence : mélange de convergence de géométrie
+            )                           # (surface de contact courbée)
 
 
 TEST_TABLE (TABLE = PenteLST,
             NOM_PARA= 'PP',
             REFERENCE='ANALYTIQUE',
-            VALE_CALC=1.38303373416,    # raffinement=5  
+            VALE_CALC=1.99184450349,    # raffinement=5  
             VALE_REFE=1.0,              # vitesse de convergence
-            PRECISION=0.384,            # surconvergence
-            )            
+            PRECISION=0.992,            # surconvergence: mélange de convergence de géométrie
+            )                           # (surface de contact courbée)            
 
 sous_titreU='Ordres de convergence: cas TETRA10= %f'%(PenteL2U)
 sous_titreP='Ordres de convergence: cas TETRA10= %f'%(PenteL2P)
