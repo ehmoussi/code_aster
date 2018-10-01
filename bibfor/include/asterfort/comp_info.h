@@ -17,12 +17,8 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine nonlinIntegratePrepare(list_func_acti , sddyna, model,&
-                                      ds_constitutive)
-        use NonLin_Datastructure_type        
-        integer, intent(in) :: list_func_acti(*)
-        character(len=19), intent(in) :: sddyna
+    subroutine comp_info(model, compor)
         character(len=8), intent(in) :: model
-        type(NL_DS_Constitutive), intent(inout) :: ds_constitutive
-    end subroutine nonlinIntegratePrepare
+        character(len=19), intent(in) :: compor
+    end subroutine comp_info
 end interface

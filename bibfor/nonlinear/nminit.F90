@@ -310,7 +310,7 @@ type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
 !
 ! - Prepare integration of constitutive laws
 !
-    call nonlinIntegratePrepare(fonact, sddyna, ds_constitutive)
+    call nonlinIntegratePrepare(fonact, sddyna, model, ds_constitutive)
 !
 ! --- PRE-CALCUL DES MATR_ELEM CONSTANTES AU COURS DU CALCUL
 !

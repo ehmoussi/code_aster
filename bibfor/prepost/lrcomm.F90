@@ -27,6 +27,7 @@ subroutine lrcomm(resu, typres, nbordr, chmat, carael,&
 #include "asterfort/detrsd.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/gnomsd.h"
+#include "asterfort/infniv.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jedetr.h"
 #include "asterfort/jemarq.h"
@@ -41,6 +42,7 @@ subroutine lrcomm(resu, typres, nbordr, chmat, carael,&
 #include "asterfort/utmess.h"
 #include "asterfort/vrcomp.h"
 #include "asterfort/wkvect.h"
+#include "asterfort/comp_info.h"
     integer :: nbordr
     character(len=8) :: resu, chmat, carael, modele
     character(len=16) :: typres
@@ -65,7 +67,7 @@ subroutine lrcomm(resu, typres, nbordr, chmat, carael,&
 ! ......................................................................
 !
     integer :: iordr, lordr, nexci, jpara
-    integer :: i, iret, ibid, nbtrou, tord(1), nume_plan, nb_snap
+    integer :: i, iret, ibid, nbtrou, tord(1), nume_plan, nb_snap, niv, ifm
     real(kind=8) :: epsi, rbid
     character(len=8) :: crit, k8bid
     character(len=19) :: list_load, list_load_save, vari, ligrmo, list_load_resu
@@ -76,8 +78,8 @@ subroutine lrcomm(resu, typres, nbordr, chmat, carael,&
 ! ----------------------------------------------------------------------
 !
     call jemarq()
+    call infniv(ifm, niv)
 !
-    !blan8 = ' '
     compor = ' '
     l_etat_init = .false.
     l_load_user = .true.
@@ -102,8 +104,7 @@ subroutine lrcomm(resu, typres, nbordr, chmat, carael,&
     if (chmat .ne. ' ') then
         do i = 1, nbordr
             iordr=zi(lordr+i-1)
-            call rsadpa(resu, 'E', 1, 'CHAMPMAT', iordr,&
-                        0, sjv=jpara)
+            call rsadpa(resu, 'E', 1, 'CHAMPMAT', iordr, 0, sjv=jpara)
             zk8(jpara)=chmat
         end do
     endif
@@ -111,8 +112,7 @@ subroutine lrcomm(resu, typres, nbordr, chmat, carael,&
     if (carael .ne. ' ') then
         do i = 1, nbordr
             iordr=zi(lordr+i-1)
-            call rsadpa(resu, 'E', 1, 'CARAELEM', iordr,&
-                        0, sjv=jpara)
+            call rsadpa(resu, 'E', 1, 'CARAELEM', iordr, 0, sjv=jpara)
             zk8(jpara)=carael
         end do
     endif
@@ -137,6 +137,9 @@ subroutine lrcomm(resu, typres, nbordr, chmat, carael,&
     if (modele .ne. ' ') then
         if (typres(1:9) .eq. 'EVOL_NOLI') then
             call nmdorc(modele, chmat, l_etat_init, compor, carcri, l_implex_ = .false._1)
+            if (niv .ge. 2) then
+                call comp_info(modele(1:8), compor)
+            endif
             if (compor .ne. ' ') then
                 do i = 1, nbordr
                     iordr=zi(lordr+i-1)

@@ -19,26 +19,25 @@
 
 cata_msg = {
 
-    1: _(u"""
-Liste des comportements
+    1: _(u"""   Liste des comportements
 """),
 
     2: _(u"""
 Comportement - Occurrence  %(i1)d"""),
 
-    4: _(u"""Affecté sur %(i1)d éléments"""),
+    4: _(u"""   Affecté sur %(i1)d éléments"""),
 
-    5: _(u"""  Relation                             : %(k1)s"""),
+    5: _(u"""     Relation                             : %(k1)s"""),
 
-    6: _(u"""  Déformation                          : %(k1)s"""),
+    6: _(u"""     Déformation                          : %(k1)s"""),
 
-    8: _(u"""  Algorithme contraintes planes (ou 1D): Deborst"""),
+    8: _(u"""     Algorithme contraintes planes (ou 1D): Deborst"""),
 
-    9: _(u"""  Nombre total de variables internes   : %(i1)d"""),
+    9: _(u"""     Nombre total de variables internes   : %(i1)d"""),
 
-   10: _(u"""  Relation                             : prototype (MFRONT ou UMAT)"""),
+   10: _(u"""     Relation                             : prototype (MFRONT ou UMAT)"""),
 
-   11: _(u"""  Relation                             : défini par DEFI_COMPOR"""),
+   11: _(u"""     Relation                             : défini par DEFI_COMPOR"""),
 
     13: _(u"""
   Il y a deux types de modélisations différents pour une même affectation du comportement MFRONT.
@@ -63,13 +62,13 @@ Comportement - Occurrence  %(i1)d"""),
   Pour les comportements externes prototypes (MFRONT ou UMAT), on n'a pas d'informations sur le nom des variables internes.
 """),
 
-    20: _(u"""         V%(i1)d : %(k1)s"""),
+    20: _(u"""            V%(i1)d : %(k1)s"""),
 
     21: _(u"""
 Le comportement %(k1)s contient %(i1)d variables d'états externes (variables de commande):
 """),
 
-    22: _(u"""         Variable externe %(i1)d : %(k1)s"""),
+    22: _(u"""            Variable externe %(i1)d : %(k1)s"""),
 
     23: _(u"""
 Le comportement utilise la variable d'état externe %(k1)s (variables de commande).

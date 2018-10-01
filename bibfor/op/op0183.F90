@@ -15,11 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine op0183()
 !
-!
-    implicit none
+implicit none
 !
 !-----------------------------------------------------------------------
 !     COMMANDE :  CALC_FORC_NONL
@@ -40,6 +39,7 @@ subroutine op0183()
 #include "asterfort/infbav.h"
 #include "asterfort/infmaj.h"
 #include "asterfort/infmue.h"
+#include "asterfort/infniv.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jedetr.h"
 #include "asterfort/jeexin.h"
@@ -62,11 +62,12 @@ subroutine op0183()
 #include "asterfort/vrcins.h"
 #include "asterfort/vtcreb.h"
 #include "asterfort/wkvect.h"
+#include "asterfort/comp_info.h"
     integer :: ibid
     integer :: i, iachar, iad, ichar
     integer :: iordr, iret, iret2, j
     integer :: jfo, jinfc
-    integer :: jordr
+    integer :: jordr, ifm, niv
     integer :: lonch, lvafon, n0, n2, nbchar
     integer :: nbddl, nbordr, nc, nh, np
     integer :: ii, ltps, ltps2
@@ -101,6 +102,7 @@ subroutine op0183()
 !
     call jemarq()
     call infmaj()
+    call infniv(ifm, niv)
 !
 ! --- ON STOCKE LE COMPORTEMENT EN CAS D'ERREUR AVANT MNL : COMPEX
 ! --- PUIS ON PASSE DANS LE MODE "VALIDATION DU CONCEPT EN CAS D'ERREUR"
@@ -290,6 +292,9 @@ subroutine op0183()
         if (i .eq. 1) then
             compor='&&OP0183.COMPOR'
             call nmdocc(modele(1:8), materi, l_etat_init, l_implex, compor)
+            if (niv .ge. 2) then
+                call comp_info(modele(1:8), compor)
+            endif
         endif
 !
         call vefnme(option, modele, mater, carac,&
