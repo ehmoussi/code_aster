@@ -33,15 +33,22 @@ class FieldProjector(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        if keywords.has_key("RESULTAT"):
-            if keywords["RESULTAT"].getType() == "EVOL_ELAS":
-                self._result = type(keywords["RESULTAT"])()
-            else:
-                self._result = type(keywords["RESULTAT"])()
-        elif keywords.has_key("CHAM_GD"):
-            self._result = FieldOnElementsDouble()
-        else:
+        methode = keywords.get("SOUS_POINT")
+        resultat = keywords.get("RESULTAT")
+        chamGd = keywords.get("CHAM_GD")
+        if resultat is None and chamGd is None:
             self._result = MatchingMeshes()
+            return
+        if resultat is not None:
+            self._result = type(keywords["RESULTAT"])()
+            return
+        if chamGd != None and methode == "SOUS_POINT":
+            self._result = FieldOnElementsDouble()
+            return
+        else:
+            self._result = type(chamGd)()
+            return
+        raise NameError("Type not allowed")
 
     def post_exec(self, keywords):
         """Execute the command.
