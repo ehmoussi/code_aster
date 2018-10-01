@@ -316,7 +316,7 @@ def post_rupture_ops(self, TABLE, OPERATION, **args):
     nb_tabin = verif_nb_table(OPERATION, TABLE)
 
     # verification que reuse est correctement employe
-    verif_reuse(OPERATION, args["reuse"])
+    verif_reuse(OPERATION, args.get("reuse"))
 
     # extraction de la ou des tables en entree dans l'espace python -> table
     # python
@@ -601,7 +601,7 @@ def post_rupture_ops(self, TABLE, OPERATION, **args):
         # fin d'operation)
         l_para_tout = set(tabin.para)
         l_para_deja = set(
-            list_q + ('NUME_ORDRE', 'INST', 'NUM_PT', 'NUME_FOND'))
+            list_q + ['NUME_ORDRE', 'INST', 'NUM_PT', 'NUME_FOND'])
         l_para_aux = l_para_tout - l_para_deja
 
         #  comptage unitaire
@@ -1065,4 +1065,4 @@ def post_rupture_ops(self, TABLE, OPERATION, **args):
             # tous les K1 sont >=0: aucune modification a effectuer
             tabout = TABIN
 
-    return
+    return tabout
