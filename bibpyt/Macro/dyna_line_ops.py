@@ -60,14 +60,14 @@ class DynaLineFEM:
         self.parent = parent
         self.keywords = {"MODELE" : MODELE}
         try:
-            charge = tuple(filter(lambda x: x.getType()=="CHAR_MECA", CHARGE))
+            charge = tuple(filter(lambda x: x.getType()[:9]=="CHAR_MECA", CHARGE))
         except TypeError:
             charge = None
         if charge:
             self.keywords["CHARGE"] = charge
         self.char_cine = {}
         try:
-            char_cine = tuple(filter(lambda x: x.getType()=="CHAR_CINE_MECA", CHARGE))
+            char_cine = tuple(filter(lambda x: x.getType()[:14]=="CHAR_CINE_MECA", CHARGE))
         except TypeError:
             char_cine = None
         if char_cine:
@@ -478,7 +478,7 @@ class DynaLineFrequencyBand:
                     fonction = charge['FONC_MULT_C']
                 else:
                     raise NotImplementedError("Expected to have FONC_MULT or FONC_MULT_C defined in charge for automatic computation of cutoff frequency")
-                if fonction.getType() == "FORMULE":
+                if fonction.getType()[:7] == "FORMULE":
                     raise Exception("automatic computation of cutoff frequency is not possible if a CHARGE is defined with a FORMULE. " \
                                     "A FONCTION should be pass as FONC_MULT instead, you can use CALC_FONC_INTERP to convert your FORMULE to a discret FONCTION")
                 l_freq_fc.append(max(fonction.Absc()))
@@ -489,7 +489,7 @@ class DynaLineFrequencyBand:
                     fonction = charge['ACCE']
                 else:
                     raise NotImplementedError("Expected to have FONC_MULT or ACCE defined in charge")
-                if fonction.getType() == "FORMULE":
+                if fonction.getType()[:7] == "FORMULE":
                     raise Exception("automatic computation of cutoff frequency is not possible if a CHARGE is defined with a FORMULE. " \
                                     "A FONCTION should be pass as FONC_MULT instead, you can use CALC_FONC_INTERP to convert your FORMULE to a discret FONCTION")
                 # compute fft
@@ -1036,7 +1036,7 @@ class DynaLineInitialState:
         """project all self.etat_init to gene basis"""
         for key in ["DEPL", "VITE"]:
             if self.etat_init.has_key(key) and \
-               self.etat_init[key].getType() == "CHAM_NO":
+               self.etat_init[key].getType()[:7] == "CHAM_NO":
                 if self.__isBaseGene:
                     __vectGen = self.dynaLineFem.dynaLineBasis.vectPhyToGen(self.etat_init[key])
                     self.etat_init[key] = __vectGen

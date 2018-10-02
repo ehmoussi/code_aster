@@ -30,6 +30,7 @@ def calc_table_ops(self, TABLE, ACTION, INFO, **args):
     from code_aster.Cata.Syntax import _F
     from Noyau.N_types import force_list
     from code_aster.Cata.DataStructure import table_fonction, table_container
+    from code_aster.Commands import CREA_TABLE, DETRUIRE
     from Utilitai.Utmess import UTMESS
     from Utilitai.Table import merge
     from Utilitai.utils import get_titre_concept
@@ -45,11 +46,6 @@ def calc_table_ops(self, TABLE, ACTION, INFO, **args):
         typ_tabout = 'TABLE_CONTENEUR'
     else:
         typ_tabout = 'TABLE'
-
-    # On importe les definitions des commandes a utiliser dans la macro
-    # Le nom de la variable doit etre obligatoirement le nom de la commande
-    CREA_TABLE = self.get_cmd('CREA_TABLE')
-    DETRUIRE = self.get_cmd('DETRUIRE')
 
     tab = TABLE.EXTR_TABLE()
 

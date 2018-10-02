@@ -3,7 +3,7 @@
  * @brief Implementation de GridInstance
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -26,6 +26,7 @@
 #include "Meshes/Grid.h"
 
 GridInstance::GridInstance():
+    MeshInstance( ResultNaming::getNewResultName(), "GRILLE" ),
     _grlr( JeveuxVectorDouble( getName() + ".GRLR" ) ),
     _grli( JeveuxVectorLong( getName() + ".GRLI" ) )
 {};

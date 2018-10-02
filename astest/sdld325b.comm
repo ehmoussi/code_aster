@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -220,7 +220,7 @@ DYNMODEU=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='GENE',
                                      FONC_MULT = FONCALPH),
                              INCREMENT=_F(INST_INIT = 0.,  INST_FIN = 2.5,
                                           PAS = 0.001),
-                             ARCHIVAGE=_F(  PAS_ARCH = 1.E8, INST=AR_LIST),)
+                             ARCHIVAGE=_F(  PAS_ARCH = 10**8, INST=AR_LIST),)
 
 #
 # RETOUR DANS L'ESPACE PHYSIQUE
@@ -244,7 +244,7 @@ DYNMODAD=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='GENE',
                                      FONC_MULT = FONCALPH),
                              INCREMENT=_F(INST_INIT = 0.,  INST_FIN = 2.5, 
                                           PAS = 0.00005),
-                             ARCHIVAGE=_F(  PAS_ARCH = 1.E8, INST=AR_LIST),)
+                             ARCHIVAGE=_F(  PAS_ARCH = 10**8, INST=AR_LIST),)
 
 #
 # RETOUR DANS L'ESPACE PHYSIQUE
@@ -268,7 +268,7 @@ DYNMO_54=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='GENE',
                              INCREMENT=_F(
                              INST_INIT = 0.,  INST_FIN = 2.5,
                              PAS = 0.0001,),
-                             ARCHIVAGE=_F(  PAS_ARCH = 1.E8, INST=AR_LIST),)
+                             ARCHIVAGE=_F(  PAS_ARCH = 10**8, INST=AR_LIST),)
 
 DYNMO_32=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='GENE',
                              SCHEMA_TEMPS=_F(SCHEMA='RUNGE_KUTTA_32',TOLERANCE=1.0E-05,),
@@ -279,7 +279,7 @@ DYNMO_32=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='GENE',
                              INCREMENT=_F(
                              INST_INIT = 0.,  INST_FIN = 2.5,
                              PAS = 0.0001,),
-                             ARCHIVAGE=_F(  PAS_ARCH = 1.E8, INST=AR_LIST),)
+                             ARCHIVAGE=_F(  PAS_ARCH = 10**8, INST=AR_LIST),)
 
 #
 # 4- SCHEMA DE DE-VOGELEARE
@@ -292,7 +292,7 @@ DYNMO_DV=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='GENE',
                                       FONC_MULT = FONCALPH),
                              INCREMENT=_F(INST_INIT = 0.,  INST_FIN = 2.5,
                                           PAS = 0.00001,),
-                             ARCHIVAGE=_F(  PAS_ARCH = 1.E8, INST=AR_LIST),)
+                             ARCHIVAGE=_F(  PAS_ARCH = 10**8, INST=AR_LIST),)
 
 #
 # RETOUR DANS L'ESPACE PHYSIQUE

@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
-# person_in_charge: 
+# person_in_charge: nicolas.sellenet at edf.fr
 
 from ..Objects import Model
 from .ExecuteCommand import ExecuteCommand
@@ -41,9 +41,11 @@ class XfemModelModication(ExecuteCommand):
         Arguments:
             keywords (dict): User's keywords.
         """
-        if("MODELE_IN" in keywords):
-            self._result.setSupportMesh(keywords["MODELE_IN"].getSupportMesh())
-
+        if "MODELE_IN" in keywords:
+            modeleIn = keywords["MODELE_IN"]
+            if type(modeleIn) is tuple:
+                modeleIn = modeleIn[0]
+            self._result.setSupportMesh(modeleIn.getSupportMesh())
 
 
 MODI_MODELE_XFEM = XfemModelModication.run
