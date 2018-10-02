@@ -29,7 +29,7 @@ from math import pi, ceil, exp, sqrt, log
 import numpy as np
 import pickle
 import aster_core
-from code_aster.Cata.Commands import FORMULE
+from code_aster.Commands import FORMULE
 from Utilitai.Utmess import UTMESS
 
 def defi_prop_alea_ops(self, **kwargs):
@@ -38,7 +38,7 @@ def defi_prop_alea_ops(self, **kwargs):
     ier = 0
     # conteneur des paramètres du calcul
     params = Randomfield(**kwargs)
-    np.random.seed(params.seed)     
+    np.random.seed(params.seed)
     # création de l'objet generator
     generator = Generator.factory(self, params)
     try:
@@ -135,8 +135,8 @@ class Randomfield(object):
         self.data = cdict
         if len(liste_coord) > 3:
             raise ValueError('unknown configuration')
- 
-          
+
+
 class Generator(object):
 
     """Base class Generator"""
@@ -275,7 +275,7 @@ class Generator3(Generator):
 
     """3D class"""
 
-    def compute_KL(self): 
+    def compute_KL(self):
         Lcx1 = self.data['LONG_CORR'][0]
         Lcx2 = self.data['LONG_CORR'][1]
         Lcx3 = self.data['LONG_CORR'][2]
@@ -286,15 +286,15 @@ class Generator3(Generator):
         nbmod2 = int(self.data['NBTERMS'][1])
         nbmod3 = int(self.data['NBTERMS'][2])
 
-        KL_data1  = self. eval_eigfunc(self.data['XLISTE'][0], 
+        KL_data1  = self. eval_eigfunc(self.data['XLISTE'][0],
                                 Lcx1/dimx1, nbmod1)
         self.Ux1 = [ np.sqrt(leig) * np.array(veig)  for (leig, veig) in KL_data1 ]
 
-        KL_data2  = self.eval_eigfunc(self.data['XLISTE'][1], 
+        KL_data2  = self.eval_eigfunc(self.data['XLISTE'][1],
                                  Lcx2/dimx2, nbmod2)
         self.Ux2 = [ np.sqrt(leig) * np.array(veig)  for (leig, veig) in KL_data2 ]
 
-        KL_data3  = self.eval_eigfunc(self.data['XLISTE'][2], 
+        KL_data3  = self.eval_eigfunc(self.data['XLISTE'][2],
                                  Lcx3/dimx3, nbmod3)
         self.Ux3 = [ np.sqrt(leig) * np.array(veig)  for (leig, veig) in KL_data3 ]
 
@@ -307,4 +307,3 @@ class Generator3(Generator):
                 'mediane':  self.mediane , 'beta' : self.beta, 'seed': self.seed }
         formule_out = FORMULE(NOM_PARA=('X', 'Y', 'Z'), VALE="user_func(X, Y, Z, DIM, RANGE, XLISTE, Ux, beta, mediane, seed)" )
         formule_out.set_context(pickle.dumps(data))
-

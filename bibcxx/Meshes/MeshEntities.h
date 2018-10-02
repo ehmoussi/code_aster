@@ -28,7 +28,8 @@
 
 #include "MemoryManager/JeveuxCollection.h"
 
-enum EntityType { GroupOfNodesType, GroupOfElementsType, AllMeshEntitiesType, NoType };
+enum EntityType { GroupOfNodesType, GroupOfElementsType, AllMeshEntitiesType,
+                  ElementType, NodeType, NoType };
 
 /**
  * @todo Un MeshEntity pourrait etre concu comme un template qui prendrait
@@ -136,6 +137,48 @@ class AllMeshEntities: public VirtualMeshEntity
         };
 };
 
+/**
+ * @class ElementEntities
+ * @brief Cette classe permet de definir des éléments du maillage
+ * @author Nicolas Sellenet
+ */
+class Element: public VirtualMeshEntity
+{
+    public:
+        /**
+         * @brief Constructeur
+         * @param name nom de l'entite
+         */
+        Element( std::string name ): VirtualMeshEntity( name, ElementType )
+        {};
+
+        EntityType getType() const
+        {
+            return _type;
+        };
+};
+
+/**
+ * @class NodeEntities
+ * @brief Cette classe permet de definir des noeuds du maillage
+ * @author Nicolas Sellenet
+ */
+class Node: public VirtualMeshEntity
+{
+    public:
+        /**
+         * @brief Constructeur
+         * @param name nom de l'entite
+         */
+        Node( std::string name ): VirtualMeshEntity( name, NodeType )
+        {};
+
+        EntityType getType() const
+        {
+            return _type;
+        };
+};
+
 typedef boost::shared_ptr< VirtualMeshEntity > MeshEntityPtr;
 typedef std::vector< MeshEntityPtr > VectorOfMeshEntityPtr;
 
@@ -144,5 +187,11 @@ typedef std::vector< GroupOfNodesPtr > VectorOfGroupOfNodesPtr;
 
 typedef boost::shared_ptr< GroupOfElements > GroupOfElementsPtr;
 typedef std::vector< GroupOfElementsPtr > VectorOfGroupOfElementsPtr;
+
+typedef boost::shared_ptr< Element > ElementPtr;
+typedef std::vector< ElementPtr > VectorOfElementPtr;
+
+typedef boost::shared_ptr< Node > NodePtr;
+typedef std::vector< NodePtr > VectorOfNodePtr;
 
 #endif /* MESHENTITES_H_ */

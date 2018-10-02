@@ -10,7 +10,7 @@ from Noyau.N_ETAPE import check_sdprod
 
 def getListOfCommands():
     """Build the list of operators"""
-    from code_aster.Cata.Commands import commandStore
+    from code_aster.Commands import commandStore
     commands = [cmd for cmd in commandStore.values() if cmd.nom != 'VARIABLE']
     return commands
 
@@ -115,7 +115,7 @@ def printKeywordsUsage( commands, fileList=None ):
 
 def vocab01_ops(self, EXISTANT, INFO, **kwargs):
     """Fake macro-command to check the catalog"""
-    from code_aster.Cata.Commands import CREA_TABLE, TEST_TABLE
+    from code_aster.Commands import CREA_TABLE, TEST_TABLE
     from Utilitai.Utmess import UTMESS
     self.set_icmd(1)
 

@@ -181,6 +181,7 @@ class BaseLinearSolverInstance: public DataStructure
         GenParam     _resolutionType;
         GenParam     _acceleration;
         ListGenParam _listOfParameters;
+        AssemblyMatrixDisplacementDoublePtr _matrixPrec;
 
     public:
         /**
@@ -243,7 +244,9 @@ class BaseLinearSolverInstance: public DataStructure
             _precondResidual( "RESI_RELA_PC", false ),
             _stopSingular( "STOP_SINGULIER", false ),
             _resolutionType( "TYPE_RESOL", false ),
-            _acceleration( "ACCELERATION", false )
+            _acceleration( "ACCELERATION", false ),
+            _matrixPrec( new AssemblyMatrixDisplacementDoubleInstance
+                            ( ResultNaming::getNewResultName() + ".PREC" ) )
         {
             _renum = RenumberingNames[ (int)_renumber ];
 

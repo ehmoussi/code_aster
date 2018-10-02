@@ -236,7 +236,7 @@ F_ES=RECU_FONCTION(  NOEUD='N01',  NOM_CMP='DX',  NOM_CHAM='DEPL',
 
 #
 TEST_FONCTION(VALEUR=(
-                      
+
                        # DYNA_LINE : F_E2
                       _F(VALE_REFE=1.E-2,
                          PRECISION=1.E-3,
@@ -273,7 +273,7 @@ TEST_FONCTION(VALEUR=(
 
 #
 TEST_FONCTION(VALEUR=(
-                         
+
                      # DYNA_LINE : F_D2
                      _F(VALE_REFE=1.E-2,
                          PRECISION=1.E-3,
@@ -305,7 +305,7 @@ TEST_FONCTION(VALEUR=(
                          VALE_CALC=9.999870598095E-03 ,
                          VALE_PARA=18.0,
                          FONCTION=F_D2,),
-                         
+
                       ),
               )
 

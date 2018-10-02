@@ -17,33 +17,20 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: mathieu.courtois@edf.fr
-"""
-:py:class:`Model` --- Modeling definition
-*****************************************
-"""
+import code_aster
+from code_aster.Commands import *
 
-import aster
-from libaster import Model
+code_aster.init("--continue")
 
-from ..Utilities import injector
+test.assertEqual(func[0](1), 1)
+test.assertEqual(func[1](1), 2)
 
+test.assertEqual(tup[0](1), 1)
+test.assertEqual(tup[1](1), 2)
 
-class ExtendedModel(injector(Model), Model):
-    cata_sdj = "SD.sd_modele.sd_modele"
+test.assertEqual(results["one"](1), 1)
+test.assertEqual(results["two"](1), 2)
 
-    def __getstate__(self):
-        """Return internal state.
+code_aster.saveObjects()
 
-        Returns:
-            dict: Internal state.
-        """
-        return (self.getSupportMesh(), )
-
-    def __setstate__(self, state):
-        """Restore internal state.
-
-        Arguments:
-            state (dict): Internal state.
-        """
-        self.setSupportMesh(state[0])
+test.printSummary()

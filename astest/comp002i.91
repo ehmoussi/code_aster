@@ -1,7 +1,7 @@
 # coding=utf-8
 
 from code_aster.Cata.Syntax import _F
-from code_aster.Cata.Commands import CALC_TABLE, DETRUIRE, FORMULE, TEST_TABLE
+from code_aster.Commands import CALC_TABLE, DETRUIRE, FORMULE, TEST_TABLE
 from Contrib.testcomp_utils import relative_error
 
 

@@ -92,14 +92,15 @@ bool BaseLinearSolverInstance::matrixFactorization( AssemblyMatrixDisplacementDo
     if ( currentMatrix->getMemoryType() == Permanent )
         base = std::string( "G" );
     ASTERINTEGER cret = 0, npvneg = 0, istop = -9999;
-    const std::string matpre( " " );
+    const std::string matpre( _matrixPrec->getName() );
     const std::string matass = currentMatrix->getName();
 
     // AMUMPT appel getres
     CommandSyntax cmdSt( "AUTRE" );
     cmdSt.setResult( "AUCUN", "AUCUN" );
 
-    CALLO_MATRIX_FACTOR( solverName, base, &cret, matpre, matass, &npvneg, &istop );
+    CALLO_MATRIX_FACTOR( solverName, base, &cret, _matrixPrec->getName(),
+                         matass, &npvneg, &istop );
     currentMatrix->_isFactorized = true;
 
     auto solverType = std::string( LinearSolverNames[_linearSolver] );
@@ -120,7 +121,7 @@ FieldOnNodesDoublePtr BaseLinearSolverInstance::solveDoubleLinearSystem(
     ASTERINTEGER nsecm = 0, prepos = 1, istop = 0, iret = 0;
     std::string base( JeveuxMemoryTypesNames[ result->getMemoryType() ] );
 
-    CALLO_RESOUD_WRAP( currentMatrix->getName(), blanc, getName(),
+    CALLO_RESOUD_WRAP( currentMatrix->getName(), _matrixPrec->getName(), getName(),
                        blanc, &nsecm, currentRHS->getName(),
                        result->getName(), base, blanc,
                        &prepos, &istop, &iret );
@@ -144,7 +145,7 @@ FieldOnNodesDoublePtr BaseLinearSolverInstance::solveDoubleLinearSystemWithKinem
     ASTERINTEGER nsecm = 0, prepos = 1, istop = 0, iret = 0;
     std::string base( JeveuxMemoryTypesNames[ result->getMemoryType() ] );
 
-    CALLO_RESOUD_WRAP( currentMatrix->getName(), blanc, getName(),
+    CALLO_RESOUD_WRAP( currentMatrix->getName(), _matrixPrec->getName(), getName(),
                        kinematicsField->getName(), &nsecm, currentRHS->getName(),
                        result->getName(), base, blanc,
                        &prepos, &istop, &iret );

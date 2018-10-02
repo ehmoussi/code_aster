@@ -23,13 +23,48 @@
 ****************************************
 """
 
+import traceback
+from pickle import dumps, loads
+
 from libaster import Formula
 
-from ..Utilities import deprecated, force_list, injector
+from ..Utilities import deprecated, force_list, initial_context, injector
+from ..Supervis.logger import logger
 
 
 class ExtendedFormula(injector(Formula), Formula):
     cata_sdj = "SD.sd_fonction.sd_formule"
+
+    def __getstate__(self):
+        """Return internal state.
+
+        Returns:
+            dict: Internal state.
+        """
+        init = initial_context()
+        user_ctxt = {}
+        for key, val in self.getContext().items():
+            if val is not init.get(key):
+                user_ctxt[key] = val
+        return self.getExpression(), dumps(user_ctxt)
+
+    def __setstate__(self, state):
+        """Restore internal state.
+
+        Arguments:
+            state (dict): Internal state.
+        """
+        assert len(state) == 2, state
+        self.setExpression(state[0])
+        # try to load the context
+        try:
+            ctxt = initial_context()
+            ctxt.update(loads(state[1]))
+            self.setContext(ctxt)
+        except:
+            logger.warn("can not restore context of formula '{0}'"
+                        .format(self.getName()))
+            logger.debug(traceback.format_exc())
 
     def __call__(self, *val):
         """Evaluate the formula with the given variables values.
