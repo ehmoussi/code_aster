@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -19,7 +19,7 @@
 
 # person_in_charge: mathieu.courtois@edf.fr
 
-from ..Objects import FiberGeometry
+from ..Objects import Grid
 from .ExecuteCommand import ExecuteCommand
 
 
@@ -33,6 +33,6 @@ class GridDefinition(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        self._result = FiberGeometry()
+        self._result = Grid()
 
 DEFI_GRILLE = GridDefinition.run

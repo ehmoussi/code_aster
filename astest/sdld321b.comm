@@ -128,7 +128,7 @@ DNPYDEV=DYNA_LINE(TYPE_CALCUL='TRAN',
                   BASE_RESU = CO('MODES2'),
                   RESU_GENE = CO('DNMODEV'),
                   ENRI_STAT = 'NON',
-                  ARCHIVAGE=_F(INST=AR_LIST, PAS_ARCH=1.E8),
+                  ARCHIVAGE=_F(INST=AR_LIST, PAS_ARCH=10**8),
                  )
 
 #
@@ -151,7 +151,7 @@ DNPYDAD=DYNA_LINE(TYPE_CALCUL='TRAN',
                   BASE_RESU = CO('MODES3'),
                   RESU_GENE = CO('DNMODAD'),
                   ENRI_STAT = 'NON',
-                  ARCHIVAGE=_F(INST=AR_LIST, PAS_ARCH=1.E8),
+                  ARCHIVAGE=_F(INST=AR_LIST, PAS_ARCH=10**8),
                  )
 
 #
@@ -172,7 +172,7 @@ DNPY_54=DYNA_LINE(TYPE_CALCUL='TRAN',
                   BASE_RESU = CO('MODES4'),
                   RESU_GENE = CO('DNMO_54'),
                   ENRI_STAT = 'NON',
-                  ARCHIVAGE=_F(INST=AR_LIST, PAS_ARCH=1.E8),
+                  ARCHIVAGE=_F(INST=AR_LIST, PAS_ARCH=10**8),
                  )
 
 DNPY_32=DYNA_LINE(TYPE_CALCUL='TRAN',
@@ -189,7 +189,7 @@ DNPY_32=DYNA_LINE(TYPE_CALCUL='TRAN',
                   BASE_RESU = CO('MODES5'),
                   RESU_GENE = CO('DNMO_32'),
                   ENRI_STAT = 'NON',
-                  ARCHIVAGE=_F(INST=AR_LIST, PAS_ARCH=1.E8),
+                  ARCHIVAGE=_F(INST=AR_LIST, PAS_ARCH=10**8),
                  )
 
 #

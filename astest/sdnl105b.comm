@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -265,7 +265,7 @@ TRAN_GE1=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='GENE',
                              INCREMENT=_F(  INST_INIT = 0.,
                                          INST_FIN = 1.0,
                                          PAS = 2.E-4),
-                            ARCHIVAGE=_F( PAS_ARCH = 1.E8, LIST_INST=LISTINST),
+                            ARCHIVAGE=_F( PAS_ARCH = 10**8, LIST_INST=LISTINST),
                             COMPORTEMENT=(
                                     _F(RELATION='DIS_CHOC', 
                                        INTITULE = 'CHOC1',                                  
@@ -304,7 +304,7 @@ TRAN_GE2=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='GENE',
                              INCREMENT=_F(  INST_INIT = 0.,
                                          INST_FIN = 1.0,
                                          PAS = 1.E-5),
-                            ARCHIVAGE=_F( PAS_ARCH = 1.E8, LIST_INST=LISTINST),
+                            ARCHIVAGE=_F( PAS_ARCH = 10**8, LIST_INST=LISTINST),
                             COMPORTEMENT=(  _F(RELATION='DIS_CHOC', 
                                                INTITULE = 'CHOC1',                                  
                                                SOUS_STRUC_1 = 'BARRE1',
@@ -341,7 +341,7 @@ TRAN_GE3=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='GENE',
                              INCREMENT=_F(  INST_INIT = 0.,
                                          INST_FIN = 1.0,
                                          PAS = 1.E-4),
-                            ARCHIVAGE=_F( PAS_ARCH = 1.E8, LIST_INST=LISTINST),
+                            ARCHIVAGE=_F( PAS_ARCH = 10**8, LIST_INST=LISTINST),
                             COMPORTEMENT=(
                                     _F(RELATION='DIS_CHOC', 
                                        INTITULE = 'CHOC1',

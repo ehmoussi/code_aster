@@ -91,7 +91,7 @@ CHMAT=AFFE_MATERIAU(MAILLAGE=MA,
 
 LREEL=DEFI_LIST_REEL(DEBUT=0.,
                      INTERVALLE=_F(JUSQU_A=1.,
-                                   NOMBRE=10.,),);
+                                   NOMBRE=10,),);
 
 LINST=DEFI_LIST_INST(DEFI_LIST=_F(LIST_INST=LREEL),);
 

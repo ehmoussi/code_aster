@@ -55,10 +55,17 @@ def calc_fonction_prod(DERIVE=None, EXTRACTION=None, INTEGRE=None, INVERSE=None,
     if (DERIVE      != None): return Function
     if (INVERSE     != None): return Function
     if (COMB        != None):
-        type_vale=type(COMB[0]['FONCTION'])
+        if type(COMB[0]['FONCTION']) == tuple:
+            type_vale=type(COMB[0]['FONCTION'][0])
+        else:
+            type_vale=type(COMB[0]['FONCTION'])
         for mcfact in COMB :
-            if(type(mcfact['FONCTION'])!=type_vale):
-                raise AsException("CALC_FONCTION/COMB : pas de types hétérogènes nappe/fonction")
+            if type(mcfact['FONCTION']) == tuple:
+                if(type(mcfact['FONCTION'][0])!=type_vale):
+                    raise AsException("CALC_FONCTION/COMB : pas de types hétérogènes nappe/fonction")
+            else:
+                if(type(mcfact['FONCTION'])!=type_vale):
+                    raise AsException("CALC_FONCTION/COMB : pas de types hétérogènes nappe/fonction")
         return type_vale
     if (COMB_C      != None):
         vale=COMB_C[0]['FONCTION']

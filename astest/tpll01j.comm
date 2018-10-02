@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -103,7 +103,7 @@ for k in range(nbcalc):
 # La maille MA1 est le tetraedre du groupe TEST_V dans MA[0]
 TEST_RESU(RESU=_F(NUME_ORDRE=0,
                   POINT=1,
-                  RESULTAT=RESU_0,
+                  RESULTAT=RESU[0],
                   NOM_CHAM='ERTH_ELEM',
                   NOM_CMP='ERTREL',
                   VALE_CALC=3.1952033225416E-05,
@@ -114,7 +114,7 @@ TEST_RESU(RESU=_F(NUME_ORDRE=0,
 
 TEST_RESU(RESU=_F(NUME_ORDRE=0,
                   GROUP_NO='G',
-                  RESULTAT=RESU_0,
+                  RESULTAT=RESU[0],
                   NOM_CHAM='ERTH_ELNO',
                   NOM_CMP='ERTREL',
                   VALE_CALC=3.1952033225416E-05,
@@ -132,7 +132,7 @@ TEST_RESU(RESU=_F(NUME_ORDRE=0,
 # La maille MA65 est le tetraedre du groupe TEST_V dans MA[1]
 TEST_RESU(RESU=_F(NUME_ORDRE=0,
                   POINT=1,
-                  RESULTAT=RESU_1,
+                  RESULTAT=RESU[1],
                   NOM_CHAM='ERTH_ELEM',
                   NOM_CMP='ERTREL',
                   VALE_CALC=2.9540823691112E-05,

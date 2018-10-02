@@ -343,26 +343,32 @@ def CHAR2D(self, POISSON, YOUNG, _tempsar, INFO):
 #
 
 
-def test_compor_ops(
-    self, OPTION, NEWTON, CONVERGENCE, COMPORTEMENT, LIST_MATER, VARI_TEST, INFO,
-        **args):
+def test_compor_ops(self, **args):
     # seule l'option "THER", c'est à dire le test thermomecanique est programmé à ce jour
     # ajouter l'option MECA (tests comp001,002), l'option HYDR, etc..
     ier = 0
     # La macro compte pour 1 dans la numerotation des commandes
     self.set_icmd(1)
+    OPTION = args.get("OPTION")
+    NEWTON = args.get("NEWTON")
+    CONVERGENCE = args.get("CONVERGENCE")
+    COMPORTEMENT = args.get("COMPORTEMENT")
+    LIST_MATER = args.get("LIST_MATER")
+    VARI_TEST = args.get("VARI_TEST")
+    INFO = args.get("INFO")
 
     # Le concept sortant (de type fonction) est nomme U dans
     # le contexte de la macro
+    U = None
     if COMPORTEMENT:
         self.DeclareOut('U', self.sd)
 
     motscles = {}
     if COMPORTEMENT:
-        motscles['COMPORTEMENT'] = COMPORTEMENT.List_F()
+        motscles['COMPORTEMENT'] = COMPORTEMENT
 
-    motscles['CONVERGENCE'] = CONVERGENCE.List_F()
-    motscles['NEWTON'] = NEWTON.List_F()
+    motscles['CONVERGENCE'] = CONVERGENCE
+    motscles['NEWTON'] = NEWTON
 
     if OPTION == "THER":
         epsi = 1.E-10
@@ -453,7 +459,7 @@ def test_compor_ops(
 
                 SXM = SXM * (YOUNG(Ti) / YOUNG(Tm))
                 # cas particuliers
-                if COMPORTEMENT.List_F()[0]['RELATION'] == 'VMIS_CINE_LINE':
+                if COMPORTEMENT[0]['RELATION'] == 'VMIS_CINE_LINE':
 
                     if args['D_SIGM_EPSI'] != None:
                         D_SIGM_EPSI = args['D_SIGM_EPSI']
@@ -462,14 +468,14 @@ def test_compor_ops(
 
                     Vim[0:5] = Vim[0:5] * D_SIGM_EPSI(Ti) / D_SIGM_EPSI(Tm)
 
-                if COMPORTEMENT.List_F()[0]['RELATION'] == 'VMIS_ECMI_LINE':
+                if COMPORTEMENT[0]['RELATION'] == 'VMIS_ECMI_LINE':
                     if args['C_PRAG'] != None:
                         C_PRAG = args['C_PRAG']
                     else:
                         raise 'erreur'
                     Vim[2:7] = Vim[2:7] * C_PRAG(Ti) / C_PRAG(Tm)
 
-                if COMPORTEMENT.List_F()[0]['RELATION'] == 'VMIS_ECMI_TRAC':
+                if COMPORTEMENT[0]['RELATION'] == 'VMIS_ECMI_TRAC':
                     if args['C_PRAG'] != None:
                         C_PRAG = args['C_PRAG']
                     else:
@@ -611,7 +617,7 @@ def test_compor_ops(
         # parametres vitesse de sollicitation
         t_0 = 1.0
         if COMPORTEMENT:
-            if COMPORTEMENT.List_F()[0]['RELATION'][0:4] == 'VISC':
+            if COMPORTEMENT[0]['RELATION'][0:4] == 'VISC':
                 vitesse = 1.e-5
                 t_0 = 5.e-2 / (8.0 * vitesse)
         # liste d'archivage
@@ -771,7 +777,7 @@ def test_compor_ops(
                 motscles['COMPORTEMENT'][0]['TYPE_MATR_TANG'] = 'VERIFICATION'
                 if args['VERI_MATR_OPTION'] is not None:
                     motscles['COMPORTEMENT'][0]['VALE_PERT_RELA'] = args[
-                        'VERI_MATR_OPTION'].List_F()[0]['VALE_PERT_RELA']
+                        'VERI_MATR_OPTION'][0]['VALE_PERT_RELA']
                 __DEFLIS2 = DEFI_LIST_INST(DEFI_LIST=_F(LIST_INST=__Linst,),
                                            ECHEC=_F(EVENEMENT='ERREUR',
                                                     ACTION='DECOUPE',
@@ -790,9 +796,9 @@ def test_compor_ops(
                 motscles = {}
                 if args['VERI_MATR_OPTION'] is not None:
                     motscles['PRECISION'] = args[
-                        'VERI_MATR_OPTION'].List_F()[0]['PRECISION']
+                        'VERI_MATR_OPTION'][0]['PRECISION']
                     motscles['PREC_ZERO'] = args[
-                        'VERI_MATR_OPTION'].List_F()[0]['PREC_ZERO']
+                        'VERI_MATR_OPTION'][0]['PREC_ZERO']
 
                 __DIFFMAT = VERI_MATR_TANG(**motscles)
 
@@ -811,5 +817,7 @@ def test_compor_ops(
                 RetablirAlarme('TEST0_12')
                 if INFO == 2:
                     IMPR_TABLE(TABLE=__DIFFMAT)
-
-    return ier
+    if U is None:
+        return
+    else:
+        return U

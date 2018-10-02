@@ -215,7 +215,7 @@ DYNAMODA=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='GENE',
                                       PAS=pdt,),
                          EXCIT=_F(VECT_ASSE_GENE=EFFOGENE,
                                   FONC_MULT=FONCMULT,),
-                         ARCHIVAGE=_F(PAS_ARCH=1.e8, INST=listarch));
+                         ARCHIVAGE=_F(PAS_ARCH=10**8, INST=listarch));
 
 #
 # RETOUR DANS L'ESPACE PHYSIQUE
