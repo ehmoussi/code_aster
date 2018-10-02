@@ -46,6 +46,64 @@ The macro generates a wrapper with between 1 and 2 arguments.
 Source: `Boost Python Overloads <http://www.boost.org/doc/libs/1_65_1/libs/python/doc/html/reference/function_invocation_and_creation/boost_python_overloads_hpp.html#function_invocation_and_creation.boost_python_overloads_hpp.macros>`_.
 
 
+How to return different types from a single boost ``function::python``
+======================================================================
+
+The situation is as follows: we want to return different types from a single
+``boost::python`` function.
+
+On the C++ side, we have 2 member functions of the class ``MechanicalModeContainerInstance``
+with different names and which return different types:
+
+.. code-block:: c++
+
+    AssemblyMatrixDisplacementDoublePtr getDisplacementStiffnessMatrix()
+    AssemblyMatrixTemperatureDoublePtr getTemperatureStiffnessMatrix()
+
+
+We want to interface these 2 functions by only one ``getStiffnessMatrix`` on the
+python side but which returns the 2 different types according to the case.
+
+To do this, we use the ``boost::variant`` type to store both types returned by the 2 functions.
+
+.. code-block:: c++
+
+    typedef boost::variant< AssemblyMatrixDisplacementDoublePtr,
+                            AssemblyMatrixTemperatureDoublePtr > MatrixVariant;
+
+
+Then, we have to write a ``getStiffnessMatrix`` function that returns one or the
+other type depending on the case but storing it in a ``boost::variant``.
+This function will become a member function of the python class :py:class:`code_aster.Objects.MechanicalModeContainer` so the C++ function
+must take as argument a ``MechanicalModeContainerPtr``.
+
+.. code-block:: c++
+
+    MatrixVariant getStiffnessMatrix( const MechanicalModeContainerPtr self )
+    {
+        auto mat1 = self->getDisplacementStiffnessMatrix();
+        if( mat1 != nullptr )
+            return MatrixVariant( mat1 );
+        auto mat2 = self->getTemperatureStiffnessMatrix();
+        return MatrixVariant( mat2 );
+    };
+
+
+In the boost::python interface of the ``MechanicalModeContainer`` class, we must add the function:
+
+.. code-block:: c++
+
+    .def( "getStiffnessMatrix", &getStiffnessMatrix )
+
+Finally, we add the following 3 lines that allow ``boost::python`` to perform type conversions between the variant and the underlying types:
+
+.. code-block:: c++
+
+    to_python_converter< MatrixVariant, VariantToObject< MatrixVariant > >();
+    implicitly_convertible< AssemblyMatrixDisplacementDoublePtr, MatrixVariant >();
+    implicitly_convertible< AssemblyMatrixTemperatureDoublePtr, MatrixVariant >();
+
+
 Converting Macro-Commands
 =========================
 

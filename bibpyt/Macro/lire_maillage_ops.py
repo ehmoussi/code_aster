@@ -48,7 +48,7 @@ def catalog_op():
 
 def lire_maillage_ops(self, **args):
     """Corps de la macro CALC_FONCTION"""
-    from code_aster.Cata.Commands import PRE_GIBI, PRE_GMSH, PRE_IDEAS
+    from code_aster.Commands import PRE_GIBI, PRE_GMSH, PRE_IDEAS
     from Utilitai.UniteAster import UniteAster
 
     self.set_icmd(1)

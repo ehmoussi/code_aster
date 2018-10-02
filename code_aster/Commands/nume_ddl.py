@@ -35,7 +35,8 @@ class NumberingCreation(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        if keywords['MATR_RIGI'][0].getSupportModel().getSupportMesh().getType() == 'MAILLAGE_P':
+        matr = keywords.get('MATR_RIGI')
+        if matr and matr[0].getSupportModel().getSupportMesh().getType() == 'MAILLAGE_P':
             self._result = ParallelDOFNumbering()
         else:
             self._result = DOFNumbering()

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -27,16 +27,16 @@ subroutine ops005()
 #include "asterfort/jemarq.h"
 #include "asterfort/wkvect.h"
     character(len=1) :: kbid
-    character(len=8) :: nomres, nompar
     character(len=16) :: typres, nomcmd
     character(len=19) :: nomfon
+    character(len=24) :: nomres, nompar
     integer :: lprol, lnova, nk, ir
 !     ------------------------------------------------------------------
     call jemarq()
 !
     call getres(nomfon, typres, nomcmd)
 !
-    nompar = '  '
+    nompar = ' '
     nomres = 'TOUTRESU'
     call wkvect(nomfon//'.PROL', 'G V K24', 6, lprol)
     zk24(lprol) = 'INTERPRE'
@@ -47,8 +47,8 @@ subroutine ops005()
     zk24(lprol+5) = nomfon
     call getvtx(' ', 'NOM_PARA', scal=kbid, nbret=nk)
     if (nk .ne. 1) nk=-nk
-    call wkvect(nomfon//'.NOVA', 'G V K8', nk, lnova)
-    call getvtx(' ', 'NOM_PARA', nbval=nk, vect=zk8(lnova), nbret=ir)
+    call wkvect(nomfon//'.NOVA', 'G V K24', nk, lnova)
+    call getvtx(' ', 'NOM_PARA', nbval=nk, vect=zk24(lnova), nbret=ir)
 !
     call jedema()
 end subroutine

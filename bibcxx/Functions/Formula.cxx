@@ -36,19 +36,20 @@ FormulaInstance::FormulaInstance( const std::string jeveuxName ):
     GenericFunctionInstance( jeveuxName, "FORMULE" ),
     _jeveuxName( getName() ),
     _property( JeveuxVectorChar24( getName() + ".PROL" ) ),
-    _variables( JeveuxVectorChar8( getName() + ".NOVA" ) ),
+    _variables( JeveuxVectorChar24( getName() + ".NOVA" ) ),
     _pointers( JeveuxVectorLong( getName() + ".ADDR" ) ),
     _expression( "" ),
     _code( NULL ),
     _context( NULL )
 {
-    propertyAllocate();
-    _pointers->allocate( Permanent, 2 );
+    _context = PyDict_New();
 }
 
 FormulaInstance::FormulaInstance() :
     FormulaInstance::FormulaInstance( ResultNaming::getNewResultName() )
 {
+    propertyAllocate();
+    _pointers->allocate( Permanent, 2 );
 }
 
 FormulaInstance::~FormulaInstance()
@@ -93,6 +94,7 @@ void FormulaInstance::setExpression( const std::string expression )
     flags.cf_flags = CO_FUTURE_DIVISION;
     _code = Py_CompileStringFlags(_expression.c_str(), name.c_str(),
                                   Py_eval_input, &flags);
+    _pointers->updateValuePointer();
     (*_pointers)[0] = (long)_code;
     if ( _code == NULL ) {
         PyErr_Print();
@@ -123,6 +125,11 @@ VectorDouble evaluate_formula( const PyObject* code, PyObject* globals,
     const std::vector< std::string > &variables,
     const VectorDouble &values, int* retcode )
 {
+    if ( ! code ) {
+        std::cerr << "Formula has no expression:" << std::endl;
+        *retcode = 4;
+        return VectorDouble(0., 0);
+    }
     const long nbvars = variables.size();
     const long nbvalues = values.size();
     if ( nbvalues != nbvars ) {
@@ -137,13 +144,16 @@ VectorDouble evaluate_formula( const PyObject* code, PyObject* globals,
     }
 
     PyObject* res = PyEval_EvalCode((PyCodeObject*)code, globals, locals);
-    Py_DECREF(locals);
     if ( res == NULL ) {
-        PyErr_Print();
-        std::cout << "Parameters values:";
-        PyObject_Print(locals, stdout, 0);
-        std::cout << std::endl;
+        std::cerr << "Evaluation failed with: ";
+        PyObject_Print(locals, stderr, 0);
+        std::cerr << std::endl;
+        if ( PyErr_Occurred() ) {
+            std::cerr << "Detailed traceback of evaluation:" << std::endl;
+            PyErr_Print();
+        }
         *retcode = 4;
+        Py_DECREF(locals);
         return VectorDouble(0., 0);
     }
 
@@ -159,6 +169,7 @@ VectorDouble evaluate_formula( const PyObject* code, PyObject* globals,
     } else {
         result.push_back(PyFloat_AsDouble(res));
     }
+    Py_DECREF(locals);
     Py_DECREF(res);
 
     return result;

@@ -17,33 +17,31 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: mathieu.courtois@edf.fr
-"""
-:py:class:`Model` --- Modeling definition
-*****************************************
-"""
+import code_aster
+from code_aster.Commands import *
 
-import aster
-from libaster import Model
+test = code_aster.TestCase()
 
-from ..Utilities import injector
+code_aster.init()
 
+func = [None, None]
 
-class ExtendedModel(injector(Model), Model):
-    cata_sdj = "SD.sd_modele.sd_modele"
+func[0] = DEFI_FONCTION(VALE=(0, 0, 1, 1), NOM_PARA='X')
+func[1] = DEFI_FONCTION(VALE=(0, 0, 1, 2), NOM_PARA='X')
 
-    def __getstate__(self):
-        """Return internal state.
+test.assertEqual(func[0](1), 1)
+test.assertEqual(func[1](1), 2)
 
-        Returns:
-            dict: Internal state.
-        """
-        return (self.getSupportMesh(), )
+results = dict(
+    one=DEFI_FONCTION(VALE=(0, 0, 1, 1), NOM_PARA='X'),
+    two=DEFI_FONCTION(VALE=(0, 0, 1, 2), NOM_PARA='X')
+)
 
-    def __setstate__(self, state):
-        """Restore internal state.
+test.assertEqual(results["one"](1), 1)
+test.assertEqual(results["two"](1), 2)
 
-        Arguments:
-            state (dict): Internal state.
-        """
-        self.setSupportMesh(state[0])
+tup = tuple(func)
+
+code_aster.saveObjects()
+
+test.printSummary()
