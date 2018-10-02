@@ -32,6 +32,7 @@ from .datastructure_ext import DataStructure
 # extend DataStructures using metaclasses
 from .assemblymatrix_ext import AssemblyMatrixDisplacementDouble
 from .cracktip_ext import CrackTip
+from .dynamicresults_ext import TransientGeneralizedResultsContainer
 from .elementarycharacteristics_ext import ElementaryCharacteristics
 from .elementarymatrix_ext import ElementaryMatrix
 from .fieldonelements_ext import FieldOnElementsDouble
