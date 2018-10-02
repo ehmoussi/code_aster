@@ -187,34 +187,6 @@ class ExtendedTransientGeneralizedResultsContainer(injector(TransientGeneralized
     def VARI_INTERNE (self, inoli=-1, describe=True):
         """
         Returns a 2D numpy array of all internal variables for a given non linearity of index <inoli>
-
-        Output ARRAY : -----------------------------------------
-                      | VINT1    VINT2    VINT3    ...  VINTn
-               -------------------------------------------------
-              | INST1 |
-              | INST2 |
-              | INST3 |
-                ...
-              | INSTn |
-               -------------------------------------------------
-
-        ARRAY[I,J] => Instant I, Internal Variable J
-                      Use python's convention for indices, they range from 0 -> n-1
-
-
-
-        ex. Print the internal variables for the first nonlinearity (index 1) calculated at
-            the final (last archived) instant
-         ----------------------------------------
-        | ARRAY = RESUGENE.VARI_INTERNE(1)
-        | print ARRAY[-1,:]
-         ----------------------------------------
-
-        ex. Print the time evolution of the third internal variable for the first nonlinearity
-         ----------------------------------------
-        | ARRAY = RESUGENE.VARI_INTERNE(1)
-        | print ARRAY[:,(3-1)]
-         ----------------------------------------
         """
         if not self.accessible():
             raise AsException("Erreur dans tran_gene.VARI_INTERNE() en PAR_LOT='OUI'")
