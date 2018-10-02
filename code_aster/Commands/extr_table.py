@@ -63,19 +63,19 @@ class ExtrTable(ExecuteCommand):
         elif keywords['TYPE_RESU'] == 'FONCTION_SDASTER':
             self._result = Function()
         elif keywords['TYPE_RESU'] == 'TABLE_SDASTER':
-            self.result  = Table()
+            self._result  = Table()
         elif keywords['TYPE_RESU'] =='MATR_ASSE_GENE_R':
-            self.result = GeneralizedAssemblyMatrixDouble()
+            self._result = GeneralizedAssemblyMatrixDouble()
         elif keywords['TYPE_RESU'] =='MATR_ELEM_DEPL_R':
-            self.result = ElementaryMatrix()
+            self._result = ElementaryMatrix()
         elif keywords['TYPE_RESU'] =='NAPPE_SDASTER':
-            self.result = Surface()
+            self._result = Surface()
         elif keywords['TYPE_RESU'] =='MODE_MECA':
-            self.result = MechanicalModeContainer()
+            self._result = MechanicalModeContainer()
         elif keywords['TYPE_RESU'] =='CARTE_SDASTER':
-            self.result = PCFieldOnMeshDouble()
+            self._result = PCFieldOnMeshDouble()
         elif keywords['TYPE_RESU'] =='CHAM_ELEM':
-            self.result = FieldOnElementsDouble()
+            self._result = FieldOnElementsDouble()
         else:
             raise NotImplementedError()
 
