@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -22,9 +22,11 @@
 from code_aster.Cata.Syntax import *
 from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
+from code_aster.Objects import XfemCrack
+from code_aster.Commands.ExecuteCommand import ExecuteCommand
 
 
-PROPA_XFEM=OPER(nom="PROPA_XFEM",op=10,sd_prod=fiss_xfem,reentrant='n',
+PROPA_XFEM_CATA=OPER(nom="PROPA_XFEM",op=10,sd_prod=fiss_xfem,reentrant='n',
                 fr=tr("Propagation de fissure avec X-FEM"),
 
     METHODE =SIMP(statut='f',typ='TXM',into=("SIMPLEXE","GEOMETRIQUE","UPWIND"),defaut="GEOMETRIQUE"),
@@ -68,3 +70,21 @@ PROPA_XFEM=OPER(nom="PROPA_XFEM",op=10,sd_prod=fiss_xfem,reentrant='n',
 
     INFO           =SIMP(statut='f',typ='I',defaut= 0,into=(0,1,2) ),
 )  ;
+
+
+class CrackPropagation(ExecuteCommand):
+    """Command that defines :class:`~code_aster.Objects.XfemCrack`.
+    """
+    command_name = "PROPA_XFEM"
+    command_cata = PROPA_XFEM_CATA
+
+    def create_result(self, keywords):
+        """Initialize the result.
+
+        Arguments:
+            keywords (dict): Keywords arguments of user's keywords.
+        """
+        self._result = XfemCrack(keywords["MODELE"].getSupportMesh())
+
+
+PROPA_XFEM = CrackPropagation.run
