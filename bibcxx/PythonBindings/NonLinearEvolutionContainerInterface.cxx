@@ -34,5 +34,8 @@ void exportNonLinearEvolutionContainerToPython()
         ( "NonLinearEvolutionContainer", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< NonLinearEvolutionContainerInstance > ) )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< NonLinearEvolutionContainerInstance,
+                             std::string > ) )
     ;
 };
