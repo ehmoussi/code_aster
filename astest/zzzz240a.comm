@@ -190,7 +190,7 @@ TEMP2=LIRE_RESU(TYPE_RESU='EVOL_THER',
                 MODELE=MOTH2,
                 UNITE=80,
                 FORMAT_MED=_F(NOM_CHAM='TEMP',
-                              NOM_CHAM_MED='TEMP1B__TEMP',),
+                              NOM_CHAM_MED='00000016TEMP',),
                 TOUT_ORDRE='OUI',);
 
 CMME2=AFFE_MATERIAU(MAILLAGE=MA2,
@@ -208,15 +208,15 @@ U2=LIRE_RESU(TYPE_RESU='EVOL_NOLI',
              UNITE=80,
              FORMAT_MED=(
              _F(NOM_CHAM='DEPL',
-                NOM_CHAM_MED='U1B_____DEPL',),
+                NOM_CHAM_MED='00000017DEPL',),
              _F(NOM_CHAM='SIEF_ELGA',
-                NOM_CHAM_MED='U1B_____SIEF_ELGA',),
+                NOM_CHAM_MED='00000017SIEF_ELGA',),
              _F(NOM_CHAM='VARI_ELGA',
-                NOM_CHAM_MED='U1B_____VARI_ELGA',
+                NOM_CHAM_MED='00000017VARI_ELGA',
                 NOM_CMP='V1',
                 NOM_CMP_MED='V1',),
              _F(NOM_CHAM='SIGM_ELNO',
-                NOM_CHAM_MED='U1B_____SIGM_ELNO',),),
+                NOM_CHAM_MED='00000017SIGM_ELNO',),),
              TOUT_ORDRE='OUI',);
 
 #  3. ON VERIFIE U2 :
