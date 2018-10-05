@@ -339,7 +339,7 @@ IMPR_RESU(FORMAT='MED', RESU=_F(RESULTAT=VL),)
 VLMED=LIRE_RESU(TYPE_RESU='EVOL_NOLI', FORMAT='MED',  UNITE=80,
               MODELE=MO, TOUT_ORDRE='OUI',
               FORMAT_MED=(
-                   _F(NOM_RESU='VL', NOM_CHAM='EPME_NOEU'),
+                   _F(NOM_RESU='00000010', NOM_CHAM='EPME_NOEU'),
               )
               );
 

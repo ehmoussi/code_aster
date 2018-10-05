@@ -303,9 +303,9 @@ LUHYD=LIRE_RESU(TYPE_RESU='EVOL_THER',
                 UNITE=72,
                 FORMAT_MED=(
                 _F(NOM_CHAM='HYDR_ELNO',
-                   NOM_RESU='00000021',),
+                   NOM_RESU='00000020',),
                 _F(NOM_CHAM='HYDR_NOEU',
-                   NOM_RESU='00000021',),),
+                   NOM_RESU='00000020',),),
                 TOUT_ORDRE='OUI',);
 
 TEST_RESU(RESU=(_F(NUME_ORDRE=1,

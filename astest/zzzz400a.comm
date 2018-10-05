@@ -129,9 +129,9 @@ RESU21=LIRE_RESU(TYPE_RESU='EVOL_NOLI', FORMAT='MED', MODELE=MODELE, UNITE=80,
                                      _F(GROUP_MA='CARR2',  RELATION='VMIS_CINE_LINE',),
                                      ),
                 FORMAT_MED=(
-                    _F(   NOM_CHAM_MED='RESU20__DEPL',      NOM_CHAM ='DEPL',),
-                    _F(   NOM_CHAM_MED='RESU20__SIEF_ELGA', NOM_CHAM ='SIEF_ELGA',),
-                    _F(   NOM_CHAM_MED='RESU20__VARI_ELGA', NOM_CHAM ='VARI_ELGA',),
+                    _F(   NOM_CHAM_MED='0000000cDEPL',      NOM_CHAM ='DEPL',),
+                    _F(   NOM_CHAM_MED='0000000cSIEF_ELGA', NOM_CHAM ='SIEF_ELGA',),
+                    _F(   NOM_CHAM_MED='0000000cVARI_ELGA', NOM_CHAM ='VARI_ELGA',),
                 ))
 
 # NOM_CHAM ='VARI_ELGA',),)
