@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -721,7 +721,7 @@ TEST_FONCTION(VALEUR=_F(VALE_CALC=3.944964449815E+06,
                         #
                         VALE_PARA=100.0,
                         NOM_PARA='INST',
-                        FONCTION=rhoi_5,
+                        FONCTION=rhoi[5],
                         ),
               )
 
@@ -729,7 +729,7 @@ TEST_FONCTION(VALEUR=_F(VALE_CALC=9.086726836580E+06,
                         #
                         VALE_PARA=500.0,
                         NOM_PARA='INST',
-                        FONCTION=rhoi_5,
+                        FONCTION=rhoi[5],
                         ),
               )
 
@@ -737,7 +737,7 @@ TEST_FONCTION(VALEUR=_F(VALE_CALC=-0.05441691165723,
                         #
                         VALE_PARA=100.0,
                         NOM_PARA='INST',
-                        FONCTION=gammi_5,
+                        FONCTION=gammi[5],
                         ),
               )
 
@@ -745,7 +745,7 @@ TEST_FONCTION(VALEUR=_F(VALE_CALC=-0.28714372712474,
 
                         VALE_PARA=500.0,
                         NOM_PARA='INST',
-                        FONCTION=gammi_5,
+                        FONCTION=gammi[5],
                         ),
               )
 
