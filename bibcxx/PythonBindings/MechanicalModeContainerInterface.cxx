@@ -65,6 +65,9 @@ void exportMechanicalModeContainerToPython()
             bases< FullResultsContainerInstance > > ( "MechanicalModeContainer", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< MechanicalModeContainerInstance > ) )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< MechanicalModeContainerInstance,
+                             std::string > ) )
         .def( "getDOFNumbering", &MechanicalModeContainerInstance::getDOFNumbering )
         .def( "getStiffnessMatrix", &getStiffnessMatrix )
         .def( "setStiffnessMatrix", c1 )
@@ -90,6 +93,9 @@ void exportMechanicalModeComplexContainerToPython()
             bases< FullResultsContainerInstance > > ( "MechanicalModeComplexContainer", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< MechanicalModeComplexContainerInstance > ) )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< MechanicalModeComplexContainerInstance,
+                             std::string > ) )
         .def( "setDampingMatrix", &MechanicalModeComplexContainerInstance::setDampingMatrix )
         .def( "setStiffnessMatrix", c1 )
         .def( "setStiffnessMatrix", c2 )
