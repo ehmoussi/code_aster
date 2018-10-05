@@ -516,7 +516,7 @@ TEST_FONCTION(VALEUR=_F(VALE_CALC=9.797004669552E-07,
                         REFERENCE='AUTRE_ASTER',
                         PRECISION=5.0E-3,
                         NOM_PARA='INST',
-                        FONCTION=rho_1,),
+                        FONCTION=rho[1],),
               )
 
 TEST_FONCTION(VALEUR=_F(VALE_CALC=0.03864011491984,
@@ -525,7 +525,7 @@ TEST_FONCTION(VALEUR=_F(VALE_CALC=0.03864011491984,
                         REFERENCE='AUTRE_ASTER',
                         PRECISION=5.0E-3,
                         NOM_PARA='INST',
-                        FONCTION=gamma_1,),
+                        FONCTION=gamma[1],),
               )
 
 TEST_FONCTION(VALEUR=_F(VALE_CALC=9.334290937094E-08,
@@ -534,7 +534,7 @@ TEST_FONCTION(VALEUR=_F(VALE_CALC=9.334290937094E-08,
                         REFERENCE='AUTRE_ASTER',
                         PRECISION=0.14,
                         NOM_PARA='INST',
-                        FONCTION=rho_9,),
+                        FONCTION=rho[9],),
               )
 
 TEST_FONCTION(VALEUR=_F(VALE_CALC=7.102478025061E-04,
@@ -543,7 +543,7 @@ TEST_FONCTION(VALEUR=_F(VALE_CALC=7.102478025061E-04,
                         REFERENCE='AUTRE_ASTER',
                         PRECISION=0.33,
                         NOM_PARA='INST',
-                        FONCTION=gamma_9,),
+                        FONCTION=gamma[9],),
               )
 
 TEST_FONCTION(VALEUR=_F(VALE_CALC=9.334290937094E-08,
@@ -552,7 +552,7 @@ TEST_FONCTION(VALEUR=_F(VALE_CALC=9.334290937094E-08,
                         REFERENCE='NON_DEFINI',
                         PRECISION=1.E-2,
                         NOM_PARA='INST',
-                        FONCTION=rho_9,
+                        FONCTION=rho[9],
                         ),
               )
 
@@ -562,7 +562,7 @@ TEST_FONCTION(VALEUR=_F(VALE_CALC=7.102478025061E-04,
                         REFERENCE='NON_DEFINI',
                         PRECISION=1.E-2,
                         NOM_PARA='INST',
-                        FONCTION=gamma_9,
+                        FONCTION=gamma[9],
                         ),
               )
 
@@ -595,7 +595,7 @@ TEST_FONCTION(VALEUR=_F(VALE_CALC=1.426899803634E-05,
                         REFERENCE='AUTRE_ASTER',
                         PRECISION=0.18,
                         NOM_PARA='INST',
-                        FONCTION=rho_1,),
+                        FONCTION=rho[1],),
               )
 
 TEST_FONCTION(VALEUR=_F(VALE_CALC=0.29717808876263,
@@ -604,7 +604,7 @@ TEST_FONCTION(VALEUR=_F(VALE_CALC=0.29717808876263,
                         REFERENCE='AUTRE_ASTER',
                         PRECISION=0.6,
                         NOM_PARA='INST',
-                        FONCTION=gamma_1,),
+                        FONCTION=gamma[1],),
               )
 
 # ce systeme n'evolue plus
@@ -615,7 +615,7 @@ TEST_FONCTION(VALEUR=_F(VALE_CALC=7.868719945182E-07,
                         REFERENCE='AUTRE_ASTER',
                         PRECISION=0.06,
                         NOM_PARA='INST',
-                        FONCTION=rho_9,),
+                        FONCTION=rho[9],),
               )
 
 TEST_FONCTION(VALEUR=_F(VALE_CALC=9.783649815426E-03,
@@ -624,7 +624,7 @@ TEST_FONCTION(VALEUR=_F(VALE_CALC=9.783649815426E-03,
                         REFERENCE='AUTRE_ASTER',
                         PRECISION=0.07,
                         NOM_PARA='INST',
-                        FONCTION=gamma_9,),
+                        FONCTION=gamma[9],),
               )
 
 # systeme 12 active seulement en GDEF ou ROTA_RESEAU
@@ -635,7 +635,7 @@ TEST_FONCTION(VALEUR=_F(VALE_CALC=1.309624971622E-05,
                         REFERENCE='AUTRE_ASTER',
                         PRECISION=0.25,
                         NOM_PARA='INST',
-                        FONCTION=rho_12,),
+                        FONCTION=rho[12],),
               )
 
 TEST_FONCTION(VALEUR=_F(VALE_CALC=0.08852079550802,
@@ -644,7 +644,7 @@ TEST_FONCTION(VALEUR=_F(VALE_CALC=0.08852079550802,
                         REFERENCE='AUTRE_ASTER',
                         PRECISION=0.21,
                         NOM_PARA='INST',
-                        FONCTION=gamma_12,),
+                        FONCTION=gamma[12],),
               )
 
 # non regression
@@ -659,21 +659,21 @@ TEST_FONCTION(VALEUR=_F(VALE_CALC=293.3106487861,
 TEST_FONCTION(VALEUR=_F(VALE_CALC=1.426899803634E-05,
                         VALE_PARA=0.2,
                         NOM_PARA='INST',
-                        FONCTION=rho_1,
+                        FONCTION=rho[1],
                         ),
               )
 
 TEST_FONCTION(VALEUR=_F(VALE_CALC=0.29717808876263,
                         VALE_PARA=0.2,
                         NOM_PARA='INST',
-                        FONCTION=gamma_1,
+                        FONCTION=gamma[1],
                         ),
               )
 
 TEST_FONCTION(VALEUR=_F(VALE_CALC=7.868719945182E-07,
                         VALE_PARA=0.2,
                         NOM_PARA='INST',
-                        FONCTION=rho_9,
+                        FONCTION=rho[9],
                         ),
               )
 
@@ -683,21 +683,21 @@ TEST_FONCTION(VALEUR=_F(VALE_CALC=9.783649815426E-03,
                         REFERENCE='NON_DEFINI',
                         PRECISION=1.E-2,
                         NOM_PARA='INST',
-                        FONCTION=gamma_9,
+                        FONCTION=gamma[9],
                         ),
               )
 
 TEST_FONCTION(VALEUR=_F(VALE_CALC=1.309624971622E-05,
                         VALE_PARA=0.2,
                         NOM_PARA='INST',
-                        FONCTION=rho_12,
+                        FONCTION=rho[12],
                         ),
               )
 
 TEST_FONCTION(VALEUR=_F(VALE_CALC=0.08852079550802,
                         VALE_PARA=0.2,
                         NOM_PARA='INST',
-                        FONCTION=gamma_12,
+                        FONCTION=gamma[12],
                         ),
               )
 
