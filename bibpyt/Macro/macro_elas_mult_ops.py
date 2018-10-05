@@ -90,6 +90,7 @@ def macro_elas_mult_ops(self, MODELE, CAS_CHARGE,
             if numeddl != None:
                 self.DeclareOut('num', numeddl)
                 num = NUME_DDL(MATR_RIGI=__nomrig, **motscles)
+                self.register_result(num, numeddl)
             else:
                 _num = NUME_DDL(MATR_RIGI=__nomrig, **motscles)
                 num = _num
