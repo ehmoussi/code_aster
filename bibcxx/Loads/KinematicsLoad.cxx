@@ -39,6 +39,15 @@ KinematicsLoadInstance::KinematicsLoadInstance( const std::string& type ):
     _isEmpty( true )
 {};
 
+KinematicsLoadInstance::KinematicsLoadInstance( const std::string& name, const std::string& type ):
+    DataStructure( name, 19, "CHAR_CINE" + type ),
+    _supportModel( ModelPtr() ),
+    _intParam( JeveuxVectorLong( getName() + ".AFCI" ) ),
+    _charParam( JeveuxVectorChar8( getName() + ".AFCK" ) ),
+    _doubleParam( JeveuxVectorDouble( getName() + ".AFCV" ) ),
+    _isEmpty( true )
+{};
+
 bool KinematicsLoadInstance::build() throw ( std::runtime_error )
 {
     std::string cmd = "AFFE_CHAR_CINE";

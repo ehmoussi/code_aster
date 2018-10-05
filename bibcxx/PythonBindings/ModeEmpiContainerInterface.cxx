@@ -33,5 +33,8 @@ void exportModeEmpiContainerToPython()
             bases< ResultsContainerInstance > > ( "ModeEmpiContainer", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< ModeEmpiContainerInstance > ) )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< ModeEmpiContainerInstance,
+                             std::string >) )
     ;
 };

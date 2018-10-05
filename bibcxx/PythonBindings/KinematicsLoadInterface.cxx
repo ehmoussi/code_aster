@@ -80,6 +80,9 @@ void exportKinematicsLoadToPython()
             bases< KinematicsLoadInstance > > ( "KinematicsMechanicalLoad", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< KinematicsMechanicalLoadInstance > ) )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< KinematicsMechanicalLoadInstance,
+                             std::string >) )
         .def( "addImposedMechanicalDOFOnElements", c1 )
         .def( "addImposedMechanicalDOFOnElements", c2 )
         .def( "addImposedMechanicalDOFOnNodes", c3 )
@@ -90,6 +93,9 @@ void exportKinematicsLoadToPython()
             bases< KinematicsLoadInstance > > ( "KinematicsThermalLoad", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< KinematicsThermalLoadInstance > ) )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< KinematicsThermalLoadInstance,
+                             std::string >) )
         .def( "addImposedThermalDOFOnElements", c5 )
         .def( "addImposedThermalDOFOnElements", c6 )
         .def( "addImposedThermalDOFOnNodes", c7 )
@@ -102,5 +108,8 @@ void exportKinematicsLoadToPython()
             bases< KinematicsLoadInstance > > ( "KinematicsAcousticLoad", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< KinematicsAcousticLoadInstance > ) )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< KinematicsAcousticLoadInstance,
+                             std::string >) )
     ;
 };
