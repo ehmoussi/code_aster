@@ -15,7 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: ayaovi-dzifa.kudawoo at edf.fr
+! aslint: disable=W1504
+!
 subroutine mmtppe(typmae, typmam, ndim, nne, nnm,&
                   nnl, nbdm, iresog, laxis, ldyna,&
                   jeusup, ffe, ffm, dffm,ddffm, ffl,&
@@ -27,10 +29,8 @@ subroutine mmtppe(typmae, typmam, ndim, nne, nnm,&
                   mprt22,taujeu1, taujeu2, &
                   dnepmait1,dnepmait2,l_previous,granglis)
 !
-! person_in_charge: ayaovi-dzifa.kudawoo at edf.fr
+implicit none
 !
-! aslint: disable=W1504
-    implicit none
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterfort/jevech.h"
@@ -42,34 +42,26 @@ subroutine mmtppe(typmae, typmam, ndim, nne, nnm,&
 #include "asterfort/mmmjeu.h"
 #include "asterfort/mmreac.h"
 #include "asterfort/mmcalg.h"
+#include "asterfort/utmess.h"
 !
-!
-    character(len=8) :: typmae, typmam
-!
-    integer :: ndim, nne, nnm, nnl, nbdm
-!
-    integer :: iresog,granglis
-    aster_logical :: laxis, ldyna,l_previous
-!
-    real(kind=8) :: jeusup
-    real(kind=8) :: jacobi, wpg
-    real(kind=8) :: dlagrc, dlagrf(2)
-    real(kind=8) :: jeu, djeu(3), djeut(3)
-!
-    real(kind=8) :: ffe(9), ffm(9), ffl(9)
-    real(kind=8) :: dffm(2, 9)
-!
-    real(kind=8) :: norm(3), tau1(3), tau2(3)
-!
-    real(kind=8) :: mprojn(3, 3), mprojt(3, 3)
-    real(kind=8) :: mprt1n(3, 3), mprt2n(3, 3)
-    real(kind=8) :: mprt11(3, 3), mprt21(3, 3), mprt22(3, 3)
-!
-    real(kind=8) :: gene11(3, 3), gene21(3, 3), gene22(3, 3)
-!
-    real(kind=8) :: kappa(2, 2), a(2, 2), h(2, 2), ha(2, 2), hah(2, 2)
-!
-    real(kind=8) :: vech1(3), vech2(3)
+character(len=8) :: typmae, typmam
+integer :: ndim, nne, nnm, nnl, nbdm
+integer :: iresog, granglis
+aster_logical :: laxis, ldyna, l_previous
+real(kind=8) :: jeusup
+real(kind=8) :: jacobi, wpg
+real(kind=8) :: dlagrc, dlagrf(2)
+real(kind=8) :: jeu, djeu(3), djeut(3)
+real(kind=8) :: ffe(9), ffm(9), ffl(9)
+real(kind=8) :: dffm(2, 9)
+real(kind=8) :: norm(3), tau1(3), tau2(3)
+real(kind=8) :: mprojn(3, 3), mprojt(3, 3)
+real(kind=8) :: mprt1n(3, 3), mprt2n(3, 3)
+real(kind=8) :: mprt11(3, 3), mprt21(3, 3), mprt22(3, 3)
+real(kind=8) :: gene11(3, 3), gene21(3, 3), gene22(3, 3)
+real(kind=8) :: kappa(2, 2), a(2, 2), h(2, 2), ha(2, 2), hah(2, 2)
+real(kind=8) :: vech1(3), vech2(3)
+real(kind=8) :: dnepmait1, dnepmait2, taujeu1, taujeu2
 !
 ! ----------------------------------------------------------------------
 !
@@ -145,26 +137,23 @@ subroutine mmtppe(typmae, typmam, ndim, nne, nnm,&
 ! OUT VECH_i = KAPPA(i,m)*TAU_m
 ! ----------------------------------------------------------------------
 !
-    integer :: jpcf
+    integer :: jpcf, i_node, i_dime
     integer :: jgeom, jdepde, jdepm
     integer :: jaccm, jvitm, jvitp
     real(kind=8) :: ppe
-!
-    real(kind=8) :: geomae(9, 3), geomam(9, 3),ddepmam(9, 3)
+    real(kind=8) :: ddepmam(9, 3)
+    real(kind=8) :: geomae(9, 3), geomam(9, 3)
+    real(kind=8) :: slav_coor_init(3,9)
     real(kind=8) :: geomm(3), geome(3)
     real(kind=8) :: ddeple(3), ddeplm(3)
     real(kind=8) :: deplme(3), deplmm(3)
-!
     real(kind=8) :: dffe(2, 9), ddffe(3, 9)
     real(kind=8) :: ddffm(3, 9)
     real(kind=8) :: dffl(2, 9), ddffl(3, 9)
     real(kind=8) :: xpc, ypc, xpr, ypr
-    real(kind=8) :: dnepmait1 ,dnepmait2 ,taujeu1,taujeu2
+    aster_logical :: l_axis_warn
 !
 ! ----------------------------------------------------------------------
-!
-!
-! --- RECUPERATION DES DONNEES DE PROJECTION
 !
     call jevech('PCONFR', 'L', jpcf)
     xpc = zr(jpcf-1+1)
@@ -179,8 +168,6 @@ subroutine mmtppe(typmae, typmam, ndim, nne, nnm,&
     tau2(3) = zr(jpcf-1+10)
     wpg = zr(jpcf-1+11)
     ppe = 0.d0
-    geomae = 0.
-    geomam = 0.
 !
 ! TRAITEMENT CYCLAGE : ON REMPLACE LES VALEURS DE JEUX et DE NORMALES
 !                      POUR AVOIR UNE MATRICE CONSISTANTE
@@ -216,8 +203,6 @@ subroutine mmtppe(typmae, typmam, ndim, nne, nnm,&
         ppe = 1.0d0
     endif
 !
-!
-!
 ! --- FONCTIONS DE FORMES ET DERIVEES
 !
     call mmform(ndim, typmae, typmam, nne, nnm,&
@@ -225,10 +210,23 @@ subroutine mmtppe(typmae, typmam, ndim, nne, nnm,&
                 dffe, ddffe, ffm, dffm, ddffm,&
                 ffl, dffl, ddffl)
 !
-! --- JACOBIEN POUR LE POINT DE CONTACT
+! - Initial coordinates
 !
-    call mmmjac(typmae, jgeom, ffe, dffe, laxis,&
-                nne, ndim, jacobi)
+    do i_node = 1, nne
+        do i_dime = 1, ndim
+            slav_coor_init(i_dime, i_node) = zr(jgeom+(i_node-1)*ndim+i_dime-1)
+        end do
+    end do
+!
+! - Compute jacobian on slave element
+!
+    call mmmjac(laxis , nne           , ndim,&
+                typmae, slav_coor_init,&
+                ffe   , dffe,&
+                jacobi, l_axis_warn)
+    if (l_axis_warn) then
+        call utmess('A', 'CONTACT2_14')
+    endif
 !
 ! --- REACTUALISATION DE LA GEOMETRIE  (MAILLAGE+DEPMOI)+PPE*DEPDEL
 !     POINT_FIXE          --> PPE=0.0d0
@@ -236,7 +234,7 @@ subroutine mmtppe(typmae, typmam, ndim, nne, nnm,&
 !     NEWTON_GENE INEXACT --> 0.0d0<PPE<1.0d0
 !
     call mmreac(nbdm, ndim, nne, nnm, jgeom,&
-                jdepm, jdepde, ppe, geomae, geomam,ddepmam)
+                jdepm, jdepde, ppe, geomae, geomam, ddepmam)
 !
 ! --- CALCUL DES COORDONNEES ACTUALISEES
 !
@@ -282,25 +280,12 @@ subroutine mmtppe(typmae, typmam, ndim, nne, nnm,&
 !
 ! MATRICES UTILITAIRES POUR LA DEUXIEME VARIATION DU GAP NORMAL
 !
-!
-!
-!    if (iresog .eq. 1) then
-!
-!
-!
+
         call mmcalg(ndim, nnm, dffm, ddffm, geomam, tau1,&
                     tau2, jeu,djeu , ddepmam , norm, gene11, gene21,&
                     gene22, kappa, h, vech1, vech2,&
                     a, ha, hah, mprt11, mprt21,&
                     mprt22, mprt1n, mprt2n, granglis,taujeu1, taujeu2, &
                   dnepmait1,dnepmait2)
-
-
-
-
-!
-!    endif
-!
-!
 !
 end subroutine

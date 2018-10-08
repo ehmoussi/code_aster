@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -82,7 +82,7 @@ DEFI_FOND_FISS=OPER(nom="DEFI_FOND_FISS",
 
     CONFIG_INIT  = SIMP(statut='f',typ='TXM',into=("COLLEE","DECOLLEE"), defaut="COLLEE"),
 
-    SYME         = SIMP(statut='f',typ='TXM',into=("OUI","NON"), defaut="NON"),
+    SYME         = SIMP(statut='o',typ='TXM',into=("OUI","NON"),),
 
 #   remarque : dans le cas symetrique, il faut soit LEVRE_SUP, soit DTAN_ORIG
 #   mais impossible de faire une regle.

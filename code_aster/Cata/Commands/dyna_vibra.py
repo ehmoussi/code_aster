@@ -127,6 +127,32 @@ DYNA_VIBRA = OPER (nom      = "DYNA_VIBRA",
 
            # 1. Integration schemes
            SCHEMA_TEMPS    =     FACT(statut='d',
+               b_gene = BLOC(condition = """equal_to("BASE_CALCUL",'GENE')""",
+               SCHEMA      =         SIMP(statut='f', typ='TXM', defaut="DIFF_CENTRE",
+                                          into=("NEWMARK", "DIFF_CENTRE",
+                                                "DEVOGE", "ADAPT_ORDRE1", "ADAPT_ORDRE2",
+                                                "RUNGE_KUTTA_32", "RUNGE_KUTTA_54", "ITMI"),),
+               b_newmark   =         BLOC(condition = """equal_to("SCHEMA", 'NEWMARK')""",
+               BETA        =             SIMP(statut='f',typ='R',defaut= 0.25),
+               GAMMA       =             SIMP(statut='f',typ='R',defaut= 0.5),),
+
+               b_rk_devo   =         BLOC(condition="""equal_to("SCHEMA", 'RUNGE_KUTTA_54') or equal_to("SCHEMA", 'RUNGE_KUTTA_32') or equal_to("SCHEMA", 'DEVOGE')""",
+               TOLERANCE   =             SIMP(statut='f',typ='R',defaut= 1.E-5),
+               ALPHA       =             SIMP(statut='f',typ='R',defaut= 0.),),
+
+               b_adapt_ord =         BLOC(condition = """equal_to("SCHEMA", 'ADAPT_ORDRE1') or  equal_to("SCHEMA", 'ADAPT_ORDRE2')""",
+               VITE_MIN    =             SIMP(statut='f',typ='TXM',defaut="NORM",into=("MAXI","NORM"),),
+               COEF_MULT_PAS=            SIMP(statut='f',typ='R',defaut= 1.1),
+               COEF_DIVI_PAS=            SIMP(statut='f',typ='R',defaut= 1.3333334),
+               PAS_LIMI_RELA=            SIMP(statut='f',typ='R',defaut= 1.E-6),
+               NB_POIN_PERIODE=          SIMP(statut='f',typ='I',defaut= 50),),
+
+               b_alladapt  =         BLOC(condition = """is_in("SCHEMA", ('RUNGE_KUTTA_54','RUNGE_KUTTA_32','DEVOGE','ADAPT_ORDRE1','ADAPT_ORDRE2'))""",
+               PAS_MINI    =             SIMP(statut='f',typ='R'),
+               PAS_MAXI    =             SIMP(statut='f',typ='R'),
+               NMAX_ITER_PAS=            SIMP(statut='f',typ='I',defaut= 16),),
+               ),
+               b_not_gene = BLOC(condition = """not equal_to("BASE_CALCUL",'GENE')""",
                SCHEMA      =         SIMP(statut='f', typ='TXM', defaut="DIFF_CENTRE",
                                           into=("NEWMARK", "WILSON", "DIFF_CENTRE",
                                                 "DEVOGE", "ADAPT_ORDRE1", "ADAPT_ORDRE2",
@@ -153,6 +179,7 @@ DYNA_VIBRA = OPER (nom      = "DYNA_VIBRA",
                PAS_MINI    =             SIMP(statut='f',typ='R'),
                PAS_MAXI    =             SIMP(statut='f',typ='R'),
                NMAX_ITER_PAS=            SIMP(statut='f',typ='I',defaut= 16),),
+               ),
            ), # end fkw_schema_temps
 
            # 2. Time discretisation

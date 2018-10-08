@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -130,7 +130,7 @@ subroutine te0545(option, nomte)
 !
 !    BARYCENTRE ET ORIENTATION DU MASSIF
     do i = 1,ndim
-        xyz(ndim) = sum(zr(igeom-1+i:igeom-1+(nno-1)*ndim+i:ndim))/nno
+        xyz(i) = sum(zr(igeom-1+i:igeom-1+(nno-1)*ndim+i:ndim))/nno
     end do
     call rcangm(ndim, xyz, angmas)
 !

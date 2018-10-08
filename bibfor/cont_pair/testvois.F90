@@ -126,8 +126,8 @@ implicit none
 ! ------------- Projection/intersection of elements in slave parametric space     
 !
                 call prjint(pair_tole     , elem_dime,&
-                            elin_slav_coor, elin_slav_nbnode(i_elin_slav), elin_slav_code,&
-                            elin_mast_coor, elin_mast_nbnode(i_elin_mast), elin_mast_code,&
+                            elin_mast_nbnode(i_elin_mast), elin_mast_coor, elin_mast_code,&
+                            elin_slav_nbnode(i_elin_slav), elin_slav_coor, elin_slav_code,&
                             poin_inte     , ints_weight                  , nb_poin_inte  )
 !                       
                 inte_weight = inte_weight+ints_weight

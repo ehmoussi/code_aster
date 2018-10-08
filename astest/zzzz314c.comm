@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -23,12 +23,12 @@ DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),PAR_LOT='NON',DEBUG=_F(SDVERI='OUI'))
 
 M=LIRE_MAILLAGE(FORMAT='MED',)
 
-FISS0=DEFI_FOND_FISS(MAILLAGE=M,
+FISS0=DEFI_FOND_FISS(MAILLAGE=M, SYME='NON',
                     FOND_FISS=_F(GROUP_NO='FOND',),
                     LEVRE_SUP=_F(GROUP_MA='LEVR_SUP',),
                     LEVRE_INF=_F(GROUP_MA='LEVR_INF',),);
 
-FISS1=DEFI_FOND_FISS(MAILLAGE=M,
+FISS1=DEFI_FOND_FISS(MAILLAGE=M, SYME='NON',
                     FOND_FISS=_F(GROUP_NO='FOND',),);
 
 basefond0=FISS0.sdj.BASEFOND.get()
