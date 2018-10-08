@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -194,7 +194,7 @@ RESUINI=CALC_CHAMP(reuse=RESUINI,
 ## Calcul de G en utilisant les couronnes precedemment definies (dans le calcul thermique)
 # et les differentes possibilites de l'etat initial.
 ##Definition du fond de fissure et des couronnes pour reutilisation dans resuini
-FISS1=DEFI_FOND_FISS(MAILLAGE=MAILMECA,
+FISS1=DEFI_FOND_FISS(MAILLAGE=MAILMECA, SYME='NON',
                      FOND_FISS=_F(GROUP_NO='G',),
                      LEVRE_SUP=_F(GROUP_MA='lev_sup',),
                      LEVRE_INF=_F(GROUP_MA='lev_inf',),);

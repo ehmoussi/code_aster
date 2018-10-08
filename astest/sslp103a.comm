@@ -148,7 +148,7 @@ CM=AFFE_MATERIAU(MAILLAGE=M,
                  AFFE=_F(  TOUT = 'OUI',
                         MATER = MA) )
 
-FOND=DEFI_FOND_FISS( MAILLAGE=M,
+FOND=DEFI_FOND_FISS( MAILLAGE=M, SYME='NON',
                        FOND_FISS=_F( NOEUD = 'N1'),)
 
 #---------------------------------------------------------------------

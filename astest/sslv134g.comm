@@ -93,7 +93,7 @@ MODI_MAILLAGE( reuse=MA0,MAILLAGE=MA0,
                   MODI_MAILLE=_F(  OPTION = 'NOEUD_QUART',
                                    GROUP_NO_FOND = 'LFF1'),)
 
-FISS0=DEFI_FOND_FISS(MAILLAGE=MA0,
+FISS0=DEFI_FOND_FISS(MAILLAGE=MA0, SYME='NON',
                      FOND_FISS=_F(GROUP_MA = 'LFF1',),
                      LEVRE_SUP=_F(  GROUP_MA = 'LEVSUP_0'),
                      LEVRE_INF=_F(  GROUP_MA = 'LEVINF_0'),
@@ -185,7 +185,7 @@ RCOL12 = AFFE_CHAR_MECA(MODELE=MO1,
                                              COEF_IMPO = 0., ),),);
 
 
-FISS1=DEFI_FOND_FISS(MAILLAGE=MA1,
+FISS1=DEFI_FOND_FISS(MAILLAGE=MA1, SYME='NON',
                      FOND_FISS=(_F(TYPE_FOND='INF',
                                   GROUP_NO = 'FONDINF1',),
                                _F(TYPE_FOND='SUP',
@@ -314,7 +314,7 @@ RCOL24 = AFFE_CHAR_MECA(MODELE=MO2,
                                              COEF_IMPO = 0., ),),);
 
 
-FISS2=DEFI_FOND_FISS(MAILLAGE=MA2,
+FISS2=DEFI_FOND_FISS(MAILLAGE=MA2, SYME='NON',
                      FOND_FISS=(_F(TYPE_FOND='INF',
                                   GROUP_NO = 'FONDINF2',),
                                _F(TYPE_FOND='SUP',

@@ -187,7 +187,7 @@ subroutine te0365(option, nomte)
 !
         call mmvppe(typmae, typmam, iresog, ndim, nne,&
                   nnm, nnl, nbdm, laxis, ldyna,&
-                  lpenac, jeusup, ffe, ffm, dffm, ffl,&
+                  jeusup, ffe, ffm, dffm, ffl,&
                   norm, tau1, tau2, mprojt, jacobi,&
                   wpg, dlagrc, dlagrf, jeu, djeu,&
                   djeut, mprojn,&
@@ -200,7 +200,7 @@ subroutine te0365(option, nomte)
 !         if (l_previous) then
 !             call      mmvppe(typmae, typmam, iresog, ndim, nne,&
 !                   nnm, nnl, nbdm, laxis, ldyna,&
-!                   lpenac, jeusup, ffe, ffm, dffm, ffl,&
+!                   jeusup, ffe, ffm, dffm, ffl,&
 !                   norm_prev, tau1_prev, tau2_prev, mprojt_prev, jacobi,&
 !                   wpg, dlagrc, dlagrf_prev, jeu_prev, djeu_prev,&
 !                   djeut_prev, mprojn_prev,&

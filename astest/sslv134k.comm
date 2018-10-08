@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -40,11 +40,11 @@ LINST = DEFI_LIST_REEL   ( DEBUT      =  0.,
                            INTERVALLE =_F (JUSQU_A= 1.0, NOMBRE = 1   )
                                          );
 
-FISS=DEFI_FOND_FISS(MAILLAGE=MA,
+FISS=DEFI_FOND_FISS(MAILLAGE=MA, SYME='NON',
                     FOND_FISS=_F( GROUP_NO = ('P0',)),
                    )
 
-FISS2=DEFI_FOND_FISS(MAILLAGE=MA,
+FISS2=DEFI_FOND_FISS(MAILLAGE=MA, SYME='NON',
                     FOND_FISS=_F( GROUP_NO = ('P0',)),
                     LEVRE_SUP=_F(  GROUP_MA = 'LP0P8'),
                     LEVRE_INF=_F(  GROUP_MA = 'LP0P8S'),
