@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -109,7 +109,7 @@ TAB_SIG1 = MACR_LIGN_COUPE( RESULTAT=RESU1,
                                           REPERE='CYLINDRIQUE',),);
 IMPR_TABLE(TABLE = TAB_SIG1)
 
-FISS=DEFI_FOND_FISS(MAILLAGE=MAILLAGE,
+FISS=DEFI_FOND_FISS(MAILLAGE=MAILLAGE, SYME='NON',
                     FOND_FISS=_F( GROUP_NO = 'PF0',),
                     LEVRE_SUP=_F( GROUP_MA = 'LFIS'),
                     LEVRE_INF=_F( GROUP_MA = 'LFISI'),)

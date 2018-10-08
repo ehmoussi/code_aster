@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -89,7 +89,7 @@ CHAMDEPL=MECA_STATIQUE(        MODELE=MO,
                                    EXCIT=_F( CHARGE = CH)
                           )
 
-FOND1=DEFI_FOND_FISS(    MAILLAGE=MA,
+FOND1=DEFI_FOND_FISS(    MAILLAGE=MA, SYME='NON',
                             FOND_FISS=_F( GROUP_NO = ('P0',)),
                       )
 

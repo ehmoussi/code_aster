@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,9 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! aslint: disable=W1501
+!
 subroutine lcelem(nomte         , elem_dime     ,&
-                  l_axis        , l_elem_frot   ,&
+                  l_axis        , &
                   nb_dof        , nb_lagr       , indi_lagc   ,&
                   elem_slav_code, elga_fami_slav, nb_node_slav,&
                   elem_mast_code, elga_fami_mast, nb_node_mast)
@@ -28,21 +29,18 @@ implicit none
 #include "asterfort/assert.h"
 #include "asterfort/lteatt.h"
 !
-! aslint: disable=W1501
-!
-    character(len=16), intent(in) :: nomte
-    integer, intent(out) :: elem_dime
-    aster_logical, intent(out) :: l_axis
-    aster_logical, intent(out) :: l_elem_frot
-    integer, intent(out) :: nb_dof
-    integer, intent(out) :: nb_lagr
-    integer, intent(out) :: indi_lagc(10)
-    character(len=8), intent(out) :: elem_slav_code
-    character(len=8), intent(out) :: elga_fami_slav
-    integer, intent(out) :: nb_node_slav
-    character(len=8), intent(out) :: elem_mast_code
-    character(len=8), intent(out) :: elga_fami_mast
-    integer, intent(out) :: nb_node_mast
+character(len=16), intent(in) :: nomte
+integer, intent(out) :: elem_dime
+aster_logical, intent(out) :: l_axis
+integer, intent(out) :: nb_dof
+integer, intent(out) :: nb_lagr
+integer, intent(out) :: indi_lagc(10)
+character(len=8), intent(out) :: elem_slav_code
+character(len=8), intent(out) :: elga_fami_slav
+integer, intent(out) :: nb_node_slav
+character(len=8), intent(out) :: elem_mast_code
+character(len=8), intent(out) :: elga_fami_mast
+integer, intent(out) :: nb_node_mast
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -55,7 +53,6 @@ implicit none
 ! In  nomte            : type of finite element
 ! Out elem_dime        : dimension of elements
 ! Out l_axis           : .true. for axisymmetric element
-! Out l_elem_frot      : .true. for friction element
 ! Out nb_dof           : total number of dof on contact element
 ! Out nb_lagr          : total number of Lagrangian dof on contact element
 ! Out indi_lagc        : PREVIOUS node where Lagrangian dof is present (1) or not (0)
@@ -69,7 +66,6 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
     l_axis          = lteatt('AXIS','OUI')
-    l_elem_frot     = lteatt('FROTTEMENT','OUI')
     elem_dime       = 0
     indi_lagc(1:10) = 0
     nb_dof          = 0
@@ -80,7 +76,6 @@ implicit none
     elem_mast_code  = ' '
     elga_fami_mast  = ' '
     nb_node_mast    = 0
-    ASSERT(.not.l_elem_frot)
 !
 ! - 2D / SEG2
 !

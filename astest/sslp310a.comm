@@ -153,7 +153,7 @@ RESU=MACRO_ELAS_MULT(MODELE=MO,
 # POST TRAITEMENT MECA. RUPTURE
 # -----------------------------
 
-FOND=DEFI_FOND_FISS(    MAILLAGE=MA,
+FOND=DEFI_FOND_FISS(    MAILLAGE=MA, SYME='NON',
                         FOND_FISS=_F( GROUP_NO = ('P0',)),
                       )
 

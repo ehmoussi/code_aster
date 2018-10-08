@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,30 +15,30 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine lcsema(elem_dime  , nb_node_mast   , nb_node_slav, nb_lagr,&
-                  norm_smooth, norm           , lagrc,&
-                  poidspg    , shape_mast_func, jaco_upda,&
+!
+subroutine lcsema(elem_dime    , nb_node_mast   , nb_node_slav, nb_lagr,&
+                  l_norm_smooth, norm_line      , norm_g      ,&
+                  lagrc        ,&
+                  poidspg      , shape_mast_func, jaco_upda   ,&
                   vtmp )
 !
 implicit none
 !
+#include "asterf_types.h"
 #include "jeveux.h"
 #include "asterfort/assert.h"
 #include "asterfort/jevech.h"
+#include "asterfort/lcnorm.h"
 !
-!
-    integer, intent(in) :: elem_dime
-    integer, intent(in) :: nb_node_mast
-    integer, intent(in) :: nb_node_slav
-    integer, intent(in) :: nb_lagr
-    integer, intent(in) :: norm_smooth
-    real(kind=8), intent(in) :: norm(3)
-    real(kind=8), intent(in) :: shape_mast_func(9)
-    real(kind=8), intent(in) :: poidspg
-    real(kind=8), intent(in) :: jaco_upda
-    real(kind=8), intent(in) :: lagrc
-    real(kind=8), intent(inout) :: vtmp(55)
+integer, intent(in) :: elem_dime
+integer, intent(in) :: nb_node_mast, nb_node_slav, nb_lagr
+aster_logical, intent(in) :: l_norm_smooth
+real(kind=8), intent(in) :: norm_line(3), norm_g(3)
+real(kind=8), intent(in) :: shape_mast_func(9)
+real(kind=8), intent(in) :: poidspg
+real(kind=8), intent(in) :: jaco_upda
+real(kind=8), intent(in) :: lagrc
+real(kind=8), intent(inout) :: vtmp(55)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -52,8 +52,9 @@ implicit none
 ! In  nb_lagr          : total number of Lagrangian dof on contact element
 ! In  nb_node_mast     : number of nodes of for master side from contact element
 ! In  nb_node_slav     : number of nodes of for slave side from contact element
-! In  norm_smooth      : indicator for normals smoothing
-! In  norm             : normal at integration point
+! In  l_norm_smooth    : indicator for normals smoothing
+! In  norm_line        : normal vector on linearized element
+! In  norm_g           : normal vector at integration point
 ! In  lagrc            : value of contact pressure (lagrangian)
 ! In  poidspg          : weight at integration point
 ! In  shape_slav_func  : shape functions at integration point
@@ -63,34 +64,33 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: i_node_mast, i_dime, jj, jv_norm
-    real(kind=8) :: r_nb_lagr
+    real(kind=8) :: r_nb_lagr, norm(3)
 !
 ! --------------------------------------------------------------------------------------------------
 !
     jj        = 0
     r_nb_lagr = real(nb_lagr,kind=8)
 !
-    if (norm_smooth .eq. 1) then
+    if (l_norm_smooth) then
         call jevech('PSNO', 'L', jv_norm)
-        do i_node_mast=1, nb_node_mast                   
-            do i_dime=1, elem_dime        
+        do i_node_mast=1, nb_node_mast
+            do i_dime=1, elem_dime
                 jj=(i_node_mast-1)*elem_dime+nb_node_slav*elem_dime+nb_lagr+i_dime
                 vtmp(jj)= vtmp(jj)+&
                     (zr(jv_norm+nb_node_slav*elem_dime+(i_node_mast-1)*elem_dime+i_dime-1))*&
                      jaco_upda*poidspg*shape_mast_func(i_node_mast)*lagrc
             end do
         end do
-    else if (norm_smooth .eq. 0)  then
-        do i_node_mast=1, nb_node_mast                   
-            do i_dime=1, elem_dime        
+    else
+        call lcnorm(norm_line, norm_g, norm)
+        do i_node_mast=1, nb_node_mast
+            do i_dime=1, elem_dime
                 jj=(i_node_mast-1)*elem_dime+nb_node_slav*elem_dime+nb_lagr+i_dime
                 vtmp(jj)= vtmp(jj)+&
                     (-norm(i_dime))*&
                     jaco_upda*poidspg*shape_mast_func(i_node_mast)*lagrc
             end do
         end do
-    else
-        ASSERT(.false.)
     end if
 ! 
 end subroutine
