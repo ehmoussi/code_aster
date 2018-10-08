@@ -63,7 +63,18 @@ public:
     /**
      * @brief Constructeur
      */
-    MechanicalModeComplexContainerInstance(): FullResultsContainerInstance( "MODE_MECA_C" ),
+    MechanicalModeComplexContainerInstance():
+        FullResultsContainerInstance( "MODE_MECA_C" ),
+        _structureInterface( StructureInterfacePtr() ),
+        _dampingMatrix( nullptr ),
+        _rigidityCMatrix( nullptr ),
+        _rigidityDMatrix( nullptr )
+    {};
+    /**
+     * @brief Constructeur
+     */
+    MechanicalModeComplexContainerInstance( const std::string& name ):
+        FullResultsContainerInstance( name, "MODE_MECA_C" ),
         _structureInterface( StructureInterfacePtr() ),
         _dampingMatrix( nullptr ),
         _rigidityCMatrix( nullptr ),

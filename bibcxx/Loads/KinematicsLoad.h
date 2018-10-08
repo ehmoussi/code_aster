@@ -72,6 +72,11 @@ protected:
      */
     KinematicsLoadInstance( const std::string& type );
 
+    /**
+     * @brief Constructeur
+     */
+    KinematicsLoadInstance( const std::string& name, const std::string& type );
+
 public:
     /**
      * @typedef KinematicsLoadPtr
@@ -107,10 +112,17 @@ class KinematicsMechanicalLoadInstance: public KinematicsLoadInstance
 {
 public:
     /**
-        * @brief Constructeur
-        */
+     * @brief Constructeur
+     */
     KinematicsMechanicalLoadInstance():
         KinematicsLoadInstance( "_MECA" )
+    {};
+
+    /**
+     * @brief Constructeur
+     */
+    KinematicsMechanicalLoadInstance( const std::string name ):
+        KinematicsLoadInstance( name, "_MECA" )
     {};
 
     /**
@@ -211,6 +223,13 @@ public:
      */
     KinematicsThermalLoadInstance():
         KinematicsLoadInstance( "_THER" )
+    {};
+
+    /**
+     * @brief Constructeur
+     */
+    KinematicsThermalLoadInstance( const std::string name ):
+        KinematicsLoadInstance( name, "_THER" )
     {};
 
     /**
@@ -350,6 +369,13 @@ public:
      */
     KinematicsAcousticLoadInstance():
         KinematicsLoadInstance( "_ACOU" )
+    {};
+
+    /**
+     * @brief Constructeur
+     */
+    KinematicsAcousticLoadInstance( const std::string name ):
+        KinematicsLoadInstance( name, "_ACOU" )
     {};
 
     /**

@@ -44,6 +44,12 @@ public:
     ModeEmpiContainerInstance(): ResultsContainerInstance( "MODE_EMPI" )
     {};
 
+    /**
+     * @brief Constructeur
+     */
+    ModeEmpiContainerInstance( const std::string& name ):
+        ResultsContainerInstance( name, "MODE_EMPI" )
+    {};
 };
 
 /**

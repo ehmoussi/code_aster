@@ -19,7 +19,7 @@
 
 POURSUITE(CODE='OUI', PAR_LOT='OUI');
 
-resu='UP245___'
+resu='0000000d'
 
 depl=resu+'DEPL'
 

@@ -381,7 +381,7 @@ AN4SRMO2=CALC_FONCTION(SPEC_OSCI=_F(FONCTION=AN4MONO2,
 
 ENVEMO2=CALC_FONCTION(ENVELOPPE=_F(FONCTION=(AN2SRMO2,AN3SRMO2,AN4SRMO2,),
                                 CRITERE='SUP',),);
-
+ENVEMO2.debugPrint()
 #
 # 4. IMPRESSION
 # -----------------------------------------------------------

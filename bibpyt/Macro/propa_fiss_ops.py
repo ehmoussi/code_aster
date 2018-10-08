@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -364,9 +364,10 @@ def propa_fiss_ops(self, METHODE_PROPA, INFO, **args):
                 mcsimp['VITESSE'] = TABLE_VIT
 
                 if NumStep == StepTot - 1:
-                    self.DeclareOut('nomfiss', FissNou[numfis])
+                    #self.DeclareOut('nomfiss', FissNou[numfis])
                     nomfiss = PROPA_XFEM(
                         METHODE=METHODE_PROPA, INFO=INFO, **mcsimp)
+                    self.register_result(nomfiss, FissNou[numfis])
                 else:
                     __Fis[numfis + NumStep * len(FissAct)] = PROPA_XFEM(
                         METHODE=METHODE_PROPA, INFO=INFO, **mcsimp)
@@ -648,14 +649,14 @@ def propa_fiss_ops(self, METHODE_PROPA, INFO, **args):
             # Si METHODE_PROPA !='MAILLAGE'
             if TEST_MAIL == 'NON':
 
-                if not 'K3' in __tabsif.para and Fiss['NB_POINT_FOND'] != None:
+                if not 'K3' in __tabsif.para and Fiss.get('NB_POINT_FOND') != None:
                     UTMESS('A', 'XFEM2_73')
                     Fiss['NB_POINT_FOND'] = None
 
 #       Stockage de Da/Dt de beta et de gamma en fonction de l'abscisse curviligne
 #       pour permettre ensuite de trouver ces parametres aux points "physiques"
 #       par interpolation lineaire
-                if Fiss['NB_POINT_FOND'] != None:
+                if Fiss.get('NB_POINT_FOND') != None:
 
                     if ('ABSC_CURV' in tab_cumul.para):
                         absc = tab_cumul.ABSC_CURV.values()
@@ -770,7 +771,7 @@ def propa_fiss_ops(self, METHODE_PROPA, INFO, **args):
             Coorfo = Fiss['FISS_ACTUELLE'].sdj.FONDFISS.get()
 
 #     Si NB_POINT_FOND: calcul de beta et Da/Dt aux points "physiques"
-            if (Fiss['NB_POINT_FOND'] != None):
+            if (Fiss.get('NB_POINT_FOND') != None):
 
                 TABLE_BETA[numfis] = []
                 if calc_gamma :
@@ -863,7 +864,7 @@ def propa_fiss_ops(self, METHODE_PROPA, INFO, **args):
         mcsimp['TEST_MAIL'] = TEST_MAIL
         mcsimp['ZONE_MAJ'] = args['ZONE_MAJ']
         if mcsimp['ZONE_MAJ'] == 'TORE':
-            if args['RAYON_TORE'] != None:
+            if args.get('RAYON_TORE') != None:
                 mcsimp['RAYON_TORE'] = args['RAYON_TORE']
 
         FissAct = [Fiss['FISS_ACTUELLE'] for Fiss in Fissures]
@@ -885,8 +886,9 @@ def propa_fiss_ops(self, METHODE_PROPA, INFO, **args):
             mcsimp['VITESSE'] = TABLE_VIT[numfis]
             if (OPERATION != 'PROPA_COHESIF') and (OPERATION != 'DETECT_COHESIF'):
                 mcsimp['DA_FISS'] = Vmfiss[numfis] * NBCYCLE
-            self.DeclareOut('nomfiss', FissNou[numfis])
+            #self.DeclareOut('nomfiss', FissNou[numfis])
             nomfiss = PROPA_XFEM(METHODE=METHODE_PROPA, INFO=INFO, **mcsimp)
+            self.register_result(nomfiss, FissNou[numfis])
 
 #------------------------------------------------------------------
 # CAS 3 : METHODE_PROPA = 'MAILLAGE'
@@ -1243,13 +1245,15 @@ def propa_fiss_ops(self, METHODE_PROPA, INFO, **args):
                 print mm[numfis]
 
 # Sauvegarde maillage xfem
-            MAIL_FISS2 = Fiss['MAIL_PROPAGE']
-            if MAIL_FISS2 != None:
-                self.DeclareOut('ma_xfem2', MAIL_FISS2)
+            MAIL_FISS2 = Fiss.get('MAIL_PROPAGE')
+            #if MAIL_FISS2 != None:
+                #self.DeclareOut('ma_xfem2', MAIL_FISS2)
 
             unit = mm[numfis].ToAster()
             DEFI_FICHIER(UNITE=unit, ACTION="LIBERER")
             ma_xfem2 = LIRE_MAILLAGE(FORMAT='ASTER',UNITE=unit)
+            if MAIL_FISS2 != None:
+                self.register_result(ma_xfem2, MAIL_FISS2)
 
             if numfis == 0:
                 __MMX[0] = LIRE_MAILLAGE(FORMAT='ASTER',UNITE=unit)
@@ -1259,13 +1263,15 @@ def propa_fiss_ops(self, METHODE_PROPA, INFO, **args):
                                               OPERATION='SUPERPOSE')
 
 # Sauvegarde maillage concatene
-        MAIL_TOTAL = args['MAIL_TOTAL']
-        if MAIL_TOTAL != None:
-            self.DeclareOut('ma_tot', MAIL_TOTAL)
+        MAIL_TOTAL = args.get('MAIL_TOTAL')
+        #if MAIL_TOTAL != None:
+            #self.DeclareOut('ma_tot', MAIL_TOTAL)
         MAIL_STRUC = args['MAIL_STRUC']
         ma_tot = ASSE_MAILLAGE(MAILLAGE_1=MAIL_STRUC,
                                MAILLAGE_2=__MMX[Nbfissure - 1],
                                OPERATION='SUPERPOSE',)
+        if MAIL_TOTAL != None:
+            self.register_result(ma_tot, MAIL_TOTAL)
 
 #------------------------------------------------------------------
 # CAS 4 : METHODE_PROPA = 'INITIALISATION'
@@ -1493,20 +1499,25 @@ def propa_fiss_ops(self, METHODE_PROPA, INFO, **args):
             print mm
 
 # Sauvegarde (maillage xfem et maillage concatene)
-        MAIL_FISS2 = args['MAIL_FISS']
-        if MAIL_FISS2 != None:
-            self.DeclareOut('ma_xfem2', MAIL_FISS2)
+        MAIL_FISS2 = args.get('MAIL_FISS')
+        #if MAIL_FISS2 != None:
+            #self.DeclareOut('ma_xfem2', MAIL_FISS2)
         unit = mm.ToAster()
         DEFI_FICHIER(UNITE=unit, ACTION="LIBERER")
         self.DeclareOut('ma_xfem2', MAIL_FISS2)
         ma_xfem2 = LIRE_MAILLAGE(FORMAT='ASTER',UNITE=unit)
+        self.register_result(ma_xfem2, MAIL_FISS2)
+        if MAIL_FISS2 != None:
+            self.register_result(ma_xfem2, MAIL_FISS2)
 
-        MAIL_TOTAL = args['MAIL_TOTAL']
-        if MAIL_TOTAL != None:
-            self.DeclareOut('ma_tot', MAIL_TOTAL)
+        MAIL_TOTAL = args.get('MAIL_TOTAL')
+        #if MAIL_TOTAL != None:
+            #self.DeclareOut('ma_tot', MAIL_TOTAL)
         MAIL_STRUC = args['MAIL_STRUC']
         ma_tot = ASSE_MAILLAGE(MAILLAGE_1=MAIL_STRUC,
                                MAILLAGE_2=ma_xfem2,
                                OPERATION='SUPERPOSE')
+        if MAIL_TOTAL != None:
+            self.register_result(ma_tot, MAIL_TOTAL)
 
     return

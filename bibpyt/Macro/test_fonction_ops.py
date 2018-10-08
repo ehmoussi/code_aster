@@ -376,6 +376,9 @@ def test_fonction_ops(self, **args):
             epsi = dres['TOLE_MACHINE']
             crit = dres['CRITERE']
             fct = dres['FONCTION']
+            if type(fct) in (list, tuple):
+                assert len(fct) == 1
+                fct = fct[0]
             nompara = dres['NOM_PARA']
             if nompara == None:
                 nompara = ''

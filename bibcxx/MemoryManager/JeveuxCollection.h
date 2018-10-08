@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe JeveuxCollection
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -61,6 +61,8 @@ private:
     ValueType*   _valuePtr;
     /** @brief Pointeur vers le vecteur Jeveux */
     ASTERINTEGER _size;
+    /** @brief Pointeur vers le vecteur Jeveux */
+    ASTERINTEGER _jeveuxAdress;
 
     /**
      * @brief Allocation
@@ -76,7 +78,18 @@ private:
             ibid = _numberInCollection;
 
         CALLO_JUCROC_WRAP( _collectionName, nameOfObject,
-                          &ibid, &taille, (void*)(&_valuePtr) );
+                           &ibid, &taille, (void*)(&_valuePtr) );
+
+        std::string charJeveuxName(32, ' ');
+        ASTERINTEGER num = _numberInCollection;
+        CALLO_JEXNUM( charJeveuxName, _collectionName, &num );
+
+        ASTERINTEGER valTmp;
+        JeveuxChar8 param( "IADM" );
+        std::string charval = std::string( 32, ' ' );
+        CALLO_JELIRA( charJeveuxName, param, &valTmp, charval );
+        _jeveuxAdress = valTmp;
+
         return true;
     };
 
@@ -92,7 +105,7 @@ public:
         _collectionName( collectionName ),
         _numberInCollection( number ),
         _nameOfObject( "" ),
-        _valuePtr( nullptr ), _size( 0 )
+        _valuePtr( nullptr ), _size( 0 ), _jeveuxAdress( 0 )
     {
         if( ! exists ) return;
         std::string tmp("L");
@@ -119,6 +132,11 @@ public:
         charval = std::string(32, ' ');
         CALLO_JELIRA( charJeveuxName, param, &valTmp, charval );
         _size = valTmp;
+
+        param = "IADM";
+        charval = std::string( 32, ' ' );
+        CALLO_JELIRA( charJeveuxName, param, &valTmp, charval );
+        _jeveuxAdress = valTmp;
     };
 
     /**
@@ -131,7 +149,7 @@ public:
         _collectionName( collectionName ),
         _numberInCollection( number ),
         _nameOfObject( "" ),
-        _valuePtr( nullptr ), _size( size )
+        _valuePtr( nullptr ), _size( size ), _jeveuxAdress( 0 )
     {
         allocate( size );
     };
@@ -147,7 +165,7 @@ public:
         _collectionName( collectionName ),
         _numberInCollection( number ),
         _nameOfObject( trim( objectName ) ),
-        _valuePtr( nullptr ), _size( size )
+        _valuePtr( nullptr ), _size( size ), _jeveuxAdress( 0 )
     {
         allocate( size );
     };
@@ -234,6 +252,20 @@ public:
     const std::string& getStringName() const
     {
         return _nameOfObject;
+    };
+
+    bool hasMoved() const
+    {
+        std::string charJeveuxName(32, ' ');
+        ASTERINTEGER num = _numberInCollection;
+        CALLO_JEXNUM( charJeveuxName, _collectionName, &num );
+
+        ASTERINTEGER valTmp;
+        JeveuxChar8 param( "IADM" );
+        std::string charval = std::string( 32, ' ' );
+        CALLO_JELIRA( charJeveuxName, param, &valTmp, charval );
+        if( valTmp != _jeveuxAdress ) return true;
+        return false;
     };
 
     /** @brief Set values of collection object */
@@ -724,16 +756,26 @@ public:
 template< class ValueType, class PointerType >
 bool JeveuxCollectionInstance< ValueType, PointerType >::buildFromJeveux( bool force )
 {
+    ASTERINTEGER iret=0;
+    CALLO_JEEXIN( _name, &iret );
+    if( iret == 0 ) return false;
+
     ASTERINTEGER nbColObj, valTmp;
     JeveuxChar8 param( "NUTIOC" );
-    std::string charval(32, ' ');
-    ASTERINTEGER iret=0;
-    CALLO_JEEXIN( _name, &iret);
-    if( iret == 0 ) return false;
+    std::string charval( 32, ' ' );
     CALLO_JELIRA( _name, param, &nbColObj, charval );
 
     if( ! force && ! _isEmpty && _size == nbColObj )
-        return false;
+    {
+        for( ASTERINTEGER i = 0; i < nbColObj; ++i )
+            if( _listObjects[i].hasMoved() )
+            {
+                force = true;
+                break;
+            }
+        if( ! force )
+            return false;
+    }
 
     _size = nbColObj;
     _listObjects.clear();
@@ -745,14 +787,12 @@ bool JeveuxCollectionInstance< ValueType, PointerType >::buildFromJeveux( bool f
 
     if ( resu == "NO" ) _isNamed = true;
 
-    for ( ASTERINTEGER i = 1; i <= nbColObj; ++i )
+    for( ASTERINTEGER i = 1; i <= nbColObj; ++i )
     {
         if( ! existsObject( i ) )
-        {
             _listObjects.push_back( JeveuxCollObjValType( _name, i, _isNamed, false ) );
-            continue;
-        }
-        _listObjects.push_back( JeveuxCollObjValType( _name, i, _isNamed, true ) );
+        else
+            _listObjects.push_back( JeveuxCollObjValType( _name, i, _isNamed, true ) );
         if ( _isNamed )
             _mapNumObject[ trim( _listObjects[ _listObjects.size()-1 ].getStringName() ) ] = i-1;
     }

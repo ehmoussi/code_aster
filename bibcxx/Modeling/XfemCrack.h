@@ -125,7 +125,12 @@ public:
     /**
          * @brief Constructeur
          */
-    XfemCrackInstance(MeshPtr supportMesh);
+    XfemCrackInstance( MeshPtr supportMesh );
+
+    /**
+         * @brief Constructeur
+         */
+    XfemCrackInstance( const std::string name, MeshPtr supportMesh );
 
 
 

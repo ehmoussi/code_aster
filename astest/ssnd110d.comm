@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -514,7 +514,7 @@ sys2=5
 TEST_FONCTION(VALEUR=_F(VALE_CALC=1.000380734308E+11,
                         VALE_PARA=1.0,
                         NOM_PARA='INST',
-                        FONCTION=rho_8,
+                        FONCTION=rho[8],
                         ),
               )
 
@@ -524,13 +524,13 @@ TEST_FONCTION(VALEUR=_F(VALE_CALC=1.000384753312E+11,
                         REFERENCE='AUTRE_ASTER',
                         PRECISION=5.0000000000000001E-3,
                         NOM_PARA='INST',
-                        FONCTION=rhoi_8,),
+                        FONCTION=rhoi[8],),
               )
 
 TEST_FONCTION(VALEUR=_F(VALE_CALC=1.000177309670E+11,
                         VALE_PARA=1.0,
                         NOM_PARA='INST',
-                        FONCTION=rho_5,
+                        FONCTION=rho[5],
                         ),
               )
 
@@ -539,7 +539,7 @@ TEST_FONCTION(VALEUR=_F(VALE_CALC=1.000179188542E+11,
                         VALE_REFE=1.000177309670E+11,
                         REFERENCE='AUTRE_ASTER',
                         NOM_PARA='INST',
-                        FONCTION=rhoi_5,),
+                        FONCTION=rhoi[5],),
               )
 
 # glissement plastiques
@@ -547,7 +547,7 @@ TEST_FONCTION(VALEUR=_F(VALE_CALC=1.000179188542E+11,
 TEST_FONCTION(VALEUR=_F(VALE_CALC=2.470697430610E-07,
                         VALE_PARA=1.0,
                         NOM_PARA='INST',
-                        FONCTION=gamma_8,
+                        FONCTION=gamma[8],
                         ),
               )
 
@@ -557,13 +557,13 @@ TEST_FONCTION(VALEUR=_F(VALE_CALC=2.497105854366E-07,
                         REFERENCE='AUTRE_ASTER',
                         PRECISION=0.02,
                         NOM_PARA='INST',
-                        FONCTION=gammi_8,),
+                        FONCTION=gammi[8],),
               )
 
 TEST_FONCTION(VALEUR=_F(VALE_CALC=-1.139016265372E-07,
                         VALE_PARA=1.0,
                         NOM_PARA='INST',
-                        FONCTION=gamma_5,
+                        FONCTION=gamma[5],
                         ),
               )
 
@@ -573,7 +573,7 @@ TEST_FONCTION(VALEUR=_F(VALE_CALC=-1.151223563581E-07,
                         REFERENCE='AUTRE_ASTER',
                         PRECISION=0.02,
                         NOM_PARA='INST',
-                        FONCTION=gammi_5,),
+                        FONCTION=gammi[5],),
               )
 
 # deformation viscoplastique globale

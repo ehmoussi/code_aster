@@ -265,7 +265,7 @@ for j in range(0,len(comportement)):
              VALE_REFE=0.0,
              VALE_CALC=2.1449177384617E-05,
              NOM_PARA='DIFF',
-             TABLE=DIFF_0,
+             TABLE=DIFF[0],
              FILTRE=_F(CRIT_COMP='MAXI_ABS',
                        NOM_PARA='DIFF',),
              )
