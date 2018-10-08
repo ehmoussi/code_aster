@@ -31,8 +31,9 @@
 
 #include "Modeling/CrackShape.h"
 
-XfemCrackInstance::XfemCrackInstance(MeshPtr supportMesh):
-    DataStructure( ResultNaming::getNewResultName(), 8, "FISS_XFEM" ),
+XfemCrackInstance::XfemCrackInstance(const std::string name,
+                                     MeshPtr supportMesh):
+    DataStructure( name, 8, "FISS_XFEM" ),
     _jeveuxName( ResultNaming::getCurrentName() ),
     _supportMesh(supportMesh),
     _auxiliaryGrid(MeshPtr()),
@@ -63,6 +64,11 @@ XfemCrackInstance::XfemCrackInstance(MeshPtr supportMesh):
     _crackTipElements(JeveuxVectorLong( _jeveuxName + ".MAILFISS.CTIP" ) ),
     _heavisideElements(JeveuxVectorLong( _jeveuxName + ".MAILFISS.HEAV" ) ),
     _crackTipAndHeavisideElements(JeveuxVectorLong( _jeveuxName + ".MAILFISS.HECT" ) )
+{
+};
+
+XfemCrackInstance::XfemCrackInstance(MeshPtr supportMesh):
+    XfemCrackInstance( ResultNaming::getNewResultName(), supportMesh )
 {
 };
 
