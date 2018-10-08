@@ -129,7 +129,7 @@ subroutine fointr(nomfon, chprol, nbvar, var, fon,&
             else if (chprol(5)(1:1) .eq. 'I') then
                 call jeveuo(nomf//'.NOVA', 'L', lnova)
                 do 140 jres = 1, nbres
-                    call fointe('F ', nomf, 1, zk8(lnova), varres(jres),&
+                    call fointe('F ', nomf, 1, zk24(lnova), varres(jres),&
                                 fonres(jres), ier)
 140              continue
 !
@@ -169,7 +169,7 @@ subroutine fointr(nomfon, chprol, nbvar, var, fon,&
                         loglin(varres(ires), var(ivar), fon(ivar), var(ivar+1), fon(ivar+1))
                 else if (chprol(2)(1:3).eq.'INT') then
                     call jeveuo(nomf//'.NOVA', 'L', lnova)
-                    call fointe('F ', nomf, 1, zk8(lnova), varres(ires),&
+                    call fointe('F ', nomf, 1, zk24(lnova), varres(ires),&
                                 fonres(ires), ier)
                 else
                     ier = ier + 1
@@ -202,7 +202,7 @@ subroutine fointr(nomfon, chprol, nbvar, var, fon,&
 !           --- EXTRAPOLATION INTERPRETEE ----
                 call jeveuo(nomf//'.NOVA', 'L', lnova)
                 do 330 jres = ires, nbres
-                    call fointe('F ', nomf, 1, zk8(lnova), varres(jres),&
+                    call fointe('F ', nomf, 1, zk24(lnova), varres(jres),&
                                 fonres(jres), ier)
 330              continue
 !
@@ -230,7 +230,7 @@ subroutine fointr(nomfon, chprol, nbvar, var, fon,&
         endif
         call jeveuo(nomf//'.NOVA', 'L', lnova)
         do 1200 jres = 1, nbres
-            call fointe('F ', nomf, 1, zk8(lnova), varres(jres),&
+            call fointe('F ', nomf, 1, zk24(lnova), varres(jres),&
                         fonres( jres), ier)
 1200      continue
     else

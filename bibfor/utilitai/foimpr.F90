@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -54,7 +54,7 @@ subroutine foimpr(nomf, impr, iul, ind, fonins)
     integer :: lval1, nbfonc, nbnova, nbtitr, nbv, nbv2
     integer :: nbval
     real(kind=8) :: resuim, resure
-    character(len=8), pointer :: nova(:) => null()
+    character(len=24), pointer :: nova(:) => null()
 !-----------------------------------------------------------------------
     call jemarq()
     if (impr .le. 0) goto 9999
@@ -86,7 +86,7 @@ subroutine foimpr(nomf, impr, iul, ind, fonins)
 !     --- CAS D'UNE FONCTION "FORMULE" ---
     call jeexin(nomfon//'.NOVA', iret)
     if (iret .ne. 0 .and. ind .ne. 0) then
-        call jeveuo(nomfon//'.NOVA', 'L', vk8=nova)
+        call jeveuo(nomfon//'.NOVA', 'L', vk24=nova)
         call jelira(nomfon//'.NOVA', 'LONUTI', nbnova)
         if (nbnova .ne. 1) then
             call utmess('A', 'UTILITAI2_8')
