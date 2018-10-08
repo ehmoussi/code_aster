@@ -34,6 +34,8 @@ void exportXfemCrackToPython()
             bases< DataStructure > > ( "XfemCrack", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< XfemCrackInstance, MeshPtr > ) )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< XfemCrackInstance, std::string, MeshPtr > ) )
         .def( "build", &XfemCrackInstance::build )
         .def( "enrichModelWithXfem", &XfemCrackInstance::enrichModelWithXfem )
         .def( "getSupportMesh", &XfemCrackInstance::getSupportMesh )
