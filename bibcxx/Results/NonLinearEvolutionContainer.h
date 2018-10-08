@@ -47,6 +47,13 @@ public:
     NonLinearEvolutionContainerInstance(): 
         TimeDependantResultsContainerInstance( "EVOL_NOLI" )
     {};
+
+    /**
+     * @brief Constructeur
+     */
+    NonLinearEvolutionContainerInstance( const std::string name ):
+        TimeDependantResultsContainerInstance( name, "EVOL_NOLI" )
+    {};
 };
 
 /**

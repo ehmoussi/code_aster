@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -28,8 +28,7 @@ except:
 
 
 def macr_spectre_ops(
-    self, MAILLAGE, PLANCHER, NOM_CHAM, CALCUL, RESU, IMPRESSION=None,
-        FREQ=None, LIST_FREQ=None, LIST_INST=None, AMOR_SPEC=None, **args):
+    self, **args):
     """
         Ecriture de la macro MACR_SPECTRE
     """
@@ -37,6 +36,16 @@ def macr_spectre_ops(
     import string
     from types import ListType, TupleType, StringType
     EnumType = (ListType, TupleType)
+    MAILLAGE = args.get("MAILLAGE")
+    PLANCHER = args.get("PLANCHER")
+    NOM_CHAM = args.get("NOM_CHAM")
+    CALCUL = args.get("CALCUL")
+    RESU = args.get("RESU")
+    IMPRESSION = args.get("IMPRESSION")
+    FREQ = args.get("FREQ")
+    LIST_FREQ = args.get("LIST_FREQ")
+    LIST_INST = args.get("LIST_INST")
+    AMOR_SPEC = args.get("AMOR_SPEC")
 
     # On importe les definitions des commandes a utiliser dans la macro
     RECU_FONCTION = self.get_cmd('RECU_FONCTION')
@@ -485,4 +494,4 @@ def macr_spectre_ops(
         lListe.append(_F(LISTE_K=l_com2,TYPE_K='K24', PARA='COMMENTAIRE'))
         
     tab = CREA_TABLE(LISTE=lListe, TITRE=titre)
-    return ier
+    return tab

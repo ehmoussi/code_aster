@@ -50,25 +50,23 @@ def calc_fonction_prod(DERIVE=None, EXTRACTION=None, INTEGRE=None, INVERSE=None,
                        COMPOSE=None, CORR_ACCE=None, COHERENCE=None,
                        PUISSANCE=None, LISS_ENVELOP=None, ABS=None, REGR_POLYNOMIALE=None, DSP=None, MOYENNE=None,
                        INTERPOL_FFT=None, **args):
-
     if (INTEGRE     != None): return Function
     if (DERIVE      != None): return Function
     if (INVERSE     != None): return Function
     if (COMB        != None):
-        if type(COMB[0]['FONCTION']) == tuple:
-            type_vale=type(COMB[0]['FONCTION'][0])
-        else:
+        comb = COMB[0]['FONCTION']
+        if type(comb) not in (list, tuple):
+            type(COMB[0]['FONCTION'])
             type_vale=type(COMB[0]['FONCTION'])
+        else:
+            type_vale=type(COMB[0]['FONCTION'][0])
         for mcfact in COMB :
-            if type(mcfact['FONCTION']) == tuple:
-                if(type(mcfact['FONCTION'][0])!=type_vale):
-                    raise AsException("CALC_FONCTION/COMB : pas de types hétérogènes nappe/fonction")
-            else:
-                if(type(mcfact['FONCTION'])!=type_vale):
-                    raise AsException("CALC_FONCTION/COMB : pas de types hétérogènes nappe/fonction")
+            if(type(mcfact['FONCTION'])!=type_vale):
+                raise AsException("CALC_FONCTION/COMB : pas de types hétérogènes nappe/fonction")
         return type_vale
     if (COMB_C      != None):
         vale=COMB_C[0]['FONCTION']
+        if type(vale) is list: vale = vale[0]
         if(type(vale) == Surface):
             for mcfact in COMB_C[1:] :
                 if(type(mcfact['FONCTION'])!=Surface):
@@ -79,12 +77,26 @@ def calc_fonction_prod(DERIVE=None, EXTRACTION=None, INTEGRE=None, INVERSE=None,
                 if(type(mcfact['FONCTION'])==Surface):
                     raise AsException("CALC_FONCTION/COMB_C : pas de types hétérogènes nappe/fonction")
             return FunctionComplex
-    if (ENVELOPPE   != None): return type(ENVELOPPE[0]['FONCTION'])
-    if (FRACTILE    != None): return type(FRACTILE[0] ['FONCTION'])
-    if (MOYENNE    != None): return type(MOYENNE[0] ['FONCTION'])
-    if (EXTRACTION  != None): return Function
-    if (PROL_SPEC_OSCI   != None): return Function
-    if (SPEC_OSCI   != None): 
+    if (ENVELOPPE   != None):
+        if type(ENVELOPPE[0]['FONCTION']) not in (list, tuple):
+            return type(ENVELOPPE[0]['FONCTION'])
+        else:
+            return type(ENVELOPPE[0]['FONCTION'][0])
+    if (FRACTILE    != None):
+        if type(FRACTILE[0]['FONCTION']) not in (list, tuple):
+            return type(FRACTILE[0]['FONCTION'])
+        else:
+            return type(FRACTILE[0]['FONCTION'][0])
+    if (MOYENNE    != None):
+        if type(MOYENNE[0]['FONCTION']) not in (list, tuple):
+            return type(MOYENNE[0]['FONCTION'])
+        else:
+            return type(MOYENNE[0]['FONCTION'][0])
+    if (EXTRACTION  != None):
+        return Function
+    if (PROL_SPEC_OSCI   != None):
+        return Function
+    if (SPEC_OSCI   != None):
         if (SPEC_OSCI[0]['TYPE_RESU'] == "NAPPE"):
             return Surface
         else:
@@ -99,9 +111,17 @@ def calc_fonction_prod(DERIVE=None, EXTRACTION=None, INTEGRE=None, INVERSE=None,
     if (COMPOSE     != None): return Function
     if (ASSE        != None): return Function
     if (MULT        != None):
-        type_vale = type(MULT[0]['FONCTION'])
+        comb = MULT[0]['FONCTION']
+        if type(comb) not in (list, tuple):
+            type_vale=type(MULT[0]['FONCTION'])
+        else:
+            type_vale=type(MULT[0]['FONCTION'][0])
         for mcfact in MULT:
-            if(type(mcfact['FONCTION']) != type_vale):
+            if type(MULT[0]['FONCTION']) not in (list, tuple):
+                type_test = type(MULT[0]['FONCTION'])
+            else:
+                type_test = type(MULT[0]['FONCTION'][0])
+            if(type_test != type_vale):
                 raise AsException("CALC_FONCTION/MULT : pas de types hétérogènes nappe/fonction")
         return type_vale
     if (FFT         != None):
@@ -113,9 +133,14 @@ def calc_fonction_prod(DERIVE=None, EXTRACTION=None, INTEGRE=None, INVERSE=None,
     if (COHERENCE   != None): return Function
     if (LISS_ENVELOP!= None): return Surface
     if (REGR_POLYNOMIALE != None): return Function
-    if (PUISSANCE   != None): return type(PUISSANCE[0]['FONCTION'])
+    if (PUISSANCE   != None):
+        if type(PUISSANCE[0]['FONCTION']) not in (list, tuple):
+            return type(PUISSANCE[0]['FONCTION'])
+        else:
+            return type(PUISSANCE[0]['FONCTION'][0])
     if (ABS         != None): return Function
     raise AsException("type de concept resultat non prevu")
+
 
 def calc_fonction_ops(self, **args):
     """Corps de la macro CALC_FONCTION"""
@@ -239,14 +264,14 @@ class CalcFonctionOper(object):
         """Return the list of mcsimp values for all occurrences of mcfact."""
         # only one occurrence of MCFACT or only one value in MCSIMP
         value = []
-        try:
-            nbmf = len(self.kw)
-        except AttributeError:
-            nbmf = 1
         if type(self.kw) in (list, tuple):
             kw = self.kw
         else:
             kw = (self.kw,)
+        try:
+            nbmf = len(kw)
+        except AttributeError:
+            nbmf = 1
         for mcf in kw:
             val = force_list(mcf[mcsimp])
             assert nbmf == 1 or len(val) == 1, (nbmf, val)

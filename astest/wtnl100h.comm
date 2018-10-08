@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -181,7 +181,7 @@ for k in range(1,nbadap+1):
   if ( k == 1 ) :
     TEST_RESU(RESU=_F(GROUP_NO='NO_TEST',
                       INST=250.0,
-                      RESULTAT=RESU_1,
+                      RESULTAT=RESU[1],
                       NOM_CHAM='ERME_NOEU',
                       NOM_CMP='ESTERG1',
                       VALE_CALC=0.00520341695686,
@@ -191,7 +191,7 @@ for k in range(1,nbadap+1):
 
     TEST_RESU(RESU=_F(PARA='ERRE_TPS_GLOB',
                       INST=250.0,
-                      RESULTAT=RESU_1,
+                      RESULTAT=RESU[1],
                       VALE_CALC=0.0954606886887,
 
                       CRITERE='RELATIF',

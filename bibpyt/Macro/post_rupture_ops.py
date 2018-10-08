@@ -912,8 +912,8 @@ def post_rupture_ops(self, TABLE, OPERATION, **args):
 
         # Pilotage en increment du nombre de cycles ou en increment d'avancee
         # max ?
-        DN_pilo = args['DELTA_N']
-        DAmax_pilo = args['DELTA_A_MAX']
+        DN_pilo = args.get('DELTA_N')
+        DAmax_pilo = args.get('DELTA_A_MAX')
         assert (DN_pilo or DAmax_pilo)
 
         # si pilotage en increment d'avancee max : calcul du l'increment de

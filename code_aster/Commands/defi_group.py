@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -33,7 +33,10 @@ class GroupDefinition(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        self._result = keywords["MAILLAGE"]
+        if keywords.get("MAILLAGE"):
+            self._result = keywords["MAILLAGE"]
+        elif keywords.get("GRILLE"):
+            self._result = keywords["GRILLE"]
 
 
 DEFI_GROUP = GroupDefinition.run
