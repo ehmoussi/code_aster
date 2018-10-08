@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -146,10 +146,10 @@ subroutine crtype()
         modele = ' '
         call getvid('AFFE', 'MODELE', iocc=iocc, scal=modele, nbret=n1)
 !
-!   on compte les modeles, materiaux et les cara_ele différents d'un pas à l'autre 
-!   (y compris la chaine ' ' ) 
+!   on compte les modeles, materiaux et les cara_ele différents d'un pas à l'autre
+!   (y compris la chaine ' ' )
 !   si on en trouve au moins 2 différents, l'appel final à lrcomm se fera avec ' '
-!        
+!
         if (modele .ne. ' ' .and. modele .ne. modele_prev) nb_modele=nb_modele+1
         modele_prev=modele
         materi = blan8
@@ -259,28 +259,38 @@ subroutine crtype()
             call rsorac(resu, 'LONUTI', 0, rbid, k8b,&
                         cbid, rbid, k8b, tnum, 1,&
                         nbtrou)
-            numini=tnum(1)
+            numini = tnum(1)
+            j = 0
             if (typres .eq. 'MODE_MECA') then
                 call getvis('AFFE', 'NUME_MODE', iocc=iocc, scal=nume, nbret=n0)
                 if (n0 .ne. 0) then
-                    j = 0
                     do i = 1, numini
                         call rsadpa(resu, 'L', 1, 'NUME_MODE', i,&
                                     0, sjv=jnmo, styp=k8b)
                         nmode = zi(jnmo)
                         if (nmode .eq. nume) then
                             numini = nume
-                            j = j+1
+                            j = j + 1
                         endif
                     end do
-                    if (j .eq. 0) numini = numini+1
-                else
-                    numini = numini + 1
                 endif
-            else
+            else if (typres .eq. 'MULT_ELAS') then
+                call getvtx('AFFE', 'NOM_CAS', iocc=iocc, scal=acces, nbret=n0)
+                if (n0 .gt. 0) then
+                    call rsorac(resu, 'NOM_CAS', ibid, rbid, acces,&
+                                cbid, 1., 'ABSOLU', tnum, 1,&
+                                nbr)
+                    if (nbr .ne. 0) then
+                        numini = tnum(1)
+                        j = j + 1
+                    endif
+                endif
+            endif
+!           not found
+            if (j .eq. 0) then
                 numini = numini + 1
             endif
-!
+            !
             call rsexch(' ', resu, nsymb, numini, nomch,&
                         iret)
             if (iret .eq. 0) then
@@ -652,7 +662,7 @@ subroutine crtype()
  80     continue
     end do
 
-   
+
 !
 !     REMPLISSAGE DE .REFD POUR LES MODE_MECA  ET DYNA_*:
     call jelira(resu//'           .ORDR', 'LONUTI', nbordr2)
@@ -680,7 +690,7 @@ subroutine crtype()
             if (n1 .eq. 1) then
                 matric(2) = matr
             endif
-!           If no numbering information could be found, try to retrieve the 
+!           If no numbering information could be found, try to retrieve the
 !           information from the fields composing the sd_resultat
             if (numedd .eq. ' ') then
                 call getvid('AFFE', 'CHAM_GD', iocc=1, scal=champ, nbret=ier)
@@ -692,23 +702,23 @@ subroutine crtype()
             else
                 call refdaj('F', resu19, (nbordr2-nbordr1), numedd, 'DYNAMIQUE',&
                             matric, ier)
-!                            
-!               compare numedd and profchno of all the new fields added (only DEPL) 
-!                            
+!
+!               compare numedd and profchno of all the new fields added (only DEPL)
+!
                 do j = nbordr1+1,nbordr2-nbordr1
                    call rsexch(' ',resu19,'DEPL', j, nomch, ier1)
-                   if ( ier1 .eq. 0 ) then 
-                     call dismoi('PROF_CHNO', nomch, 'CHAMP', repk=profch,& 
+                   if ( ier1 .eq. 0 ) then
+                     call dismoi('PROF_CHNO', nomch, 'CHAMP', repk=profch,&
                                   arret='C',ier=ier)
-                     if ( ier .eq. 0 ) then 
+                     if ( ier .eq. 0 ) then
                        if (.not.idensd('PROF_CHNO',numedd(1:14)//'.NUME',profch)) then
                           valkk(1)=numedd
                           valkk(2)=profch
                           call utmess('A','ALGORITH2_51',nk=2,valk=valkk)
                        endif
-                     endif  
+                     endif
                    endif
-                end do                            
+                end do
             endif
         end if
     endif
