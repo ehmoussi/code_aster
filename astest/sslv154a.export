@@ -7,3 +7,4 @@ P testlist verification sequential
 
 F comm sslv154a.comm D 1
 F mmed sslv154a.mmed D 20
+F nom  sslv154a.py   D 0
