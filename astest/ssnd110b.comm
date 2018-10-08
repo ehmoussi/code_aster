@@ -247,7 +247,7 @@ TEST_FONCTION(VALEUR=_F(VALE_CALC=1.021521447826E+11,
 
                         VALE_PARA=1.0,
                         NOM_PARA='INST',
-                        FONCTION=rho_8,
+                        FONCTION=rho[8],
                         ),
               )
 
@@ -255,7 +255,7 @@ TEST_FONCTION(VALEUR=_F(VALE_CALC=1.011387884925E+11,
 
                         VALE_PARA=1.0,
                         NOM_PARA='INST',
-                        FONCTION=rho_5,
+                        FONCTION=rho[5],
                         ),
               )
 
@@ -265,7 +265,7 @@ TEST_FONCTION(VALEUR=_F(VALE_CALC=-4.57848E7,
                         REFERENCE='SOURCE_EXTERNE',
                         VALE_PARA=1.0,
                         NOM_PARA='INST',
-                        FONCTION=tau_5,
+                        FONCTION=tau[5],
                         ),
               )
 # tau_8
@@ -274,7 +274,7 @@ TEST_FONCTION(VALEUR=_F(VALE_CALC=4.96002E7,
                         REFERENCE='SOURCE_EXTERNE',
                         VALE_PARA=1.0,
                         NOM_PARA='INST',
-                        FONCTION=tau_8,
+                        FONCTION=tau[8],
                         ),
               )
 
@@ -284,7 +284,7 @@ TEST_FONCTION(VALEUR=_F(VALE_CALC=2.117300729091E-05,
 
                         VALE_PARA=1.0,
                         NOM_PARA='INST',
-                        FONCTION=gamma_8,
+                        FONCTION=gamma[8],
                         ),
               )
 
@@ -292,7 +292,7 @@ TEST_FONCTION(VALEUR=_F(VALE_CALC=-1.109265891005E-05,
 
                         VALE_PARA=1.0,
                         NOM_PARA='INST',
-                        FONCTION=gamma_5,
+                        FONCTION=gamma[5],
                         ),
               )
 
