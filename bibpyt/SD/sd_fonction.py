@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -36,7 +36,7 @@ class sd_formule(AsBase):
 #--------------------------------------
     nomj = SDNom(fin=19)
     PROL = AsVK24(lonmax=6, )
-    NOVA = AsVK8()
+    NOVA = AsVK24()
 
 
 class sd_fonction_aster(sd_titre):
@@ -157,7 +157,7 @@ class sd_fonction(sd_titre):
 #---------------------------
     nomj = SDNom(fin=19)
     PROL = AsVK24()
-    NOVA = Facultatif(AsVK8())
+    NOVA = Facultatif(AsVK24())
     VALE = Facultatif(AsObject())
     PARA = Facultatif(AsVR())
 
