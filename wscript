@@ -141,7 +141,7 @@ def configure(self):
     self.env.WAFCMDLINE = sys.argv[1:]
 
     # compute default prefix
-    if not self.env.PREFIX:
+    if self.env.PREFIX == '/':
         suffix = os.environ.get('WAF_SUFFIX', 'std')
         default_prefix = '../install/%s' % suffix
         self.env.PREFIX = osp.abspath(default_prefix)
