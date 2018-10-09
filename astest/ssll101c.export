@@ -6,4 +6,5 @@ P mpi_nbnoeud 1
 P testlist verification sequential
 
 F comm ssll101c.comm D 1
+F comm ssll101c.com1 D 1
 F msup ssll101c.msup D 19
