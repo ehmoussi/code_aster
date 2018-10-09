@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@ import os
 import os.path as osp
 from functools import partial
 from itertools import chain
+import shutil
 from waflib import TaskGen, Logs, Utils, Errors, Task, Context
 
 
@@ -122,7 +123,8 @@ def build_cata_ele(self, ojb, install_path):
         os.rename(after, before)
 
     elem = bldnode.find_node('elem.1')
-    tsk = self.do_install(elem.abspath(), install_path)
+    shutil.copy(elem.abspath(), install_path)
+    os.chmod(install_path, Utils.O644)
 
 def exec_pyaster(self, pyfile, args, with_aster=False, **kwargs):
     """Execute aster depending on the configuration"""
