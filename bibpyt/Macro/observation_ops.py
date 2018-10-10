@@ -469,7 +469,7 @@ def observation_ops(self,
             num_ordr = __proj.getRanks()
 
             for modif_rep in MODIF_REPERE:
-                modi_rep = modif_rep.val
+                modi_rep = modif_rep
                 type_cham = modif_rep['TYPE_CHAM']
                 nom_cmp = modif_rep['NOM_CMP']
 
@@ -769,10 +769,7 @@ def crea_normale(self, modele_1, modele_2,
     import aster
     from code_aster.Cata.Syntax import _F
     # recherche du maillage associe au modele numerique
-    nom_modele_num = modele_1.nom
-    _maillag = aster.getvectjev(nom_modele_num.ljust(8) + '.MODELE    .LGRF')
-    maillage = _maillag[0].strip()
-    mayanum = self.get_concept(maillage)
+    mayanum = modele_1.getSupportMesh()
 
     DEFI_GROUP(reuse=mayanum,
                MAILLAGE=mayanum,
@@ -991,11 +988,11 @@ def find_no(maya, mcsimp):
     import numpy
 
     list_no = []
-    if mcsimp.has_key('GROUP_NO') and type(mcsimp['GROUP_NO']) != tuple:
+    if mcsimp.has_key('GROUP_NO') and type(mcsimp['GROUP_NO']) not in (tuple, list):
         mcsimp['GROUP_NO'] = [mcsimp['GROUP_NO']]
-    if mcsimp.has_key('MAILLE') and type(mcsimp['MAILLE']) != tuple:
+    if mcsimp.has_key('MAILLE') and type(mcsimp['MAILLE']) not in (tuple, list):
         mcsimp['MAILLE'] = [mcsimp['MAILLE']]
-    if mcsimp.has_key('GROUP_MA') and type(mcsimp['GROUP_MA']) != tuple:
+    if mcsimp.has_key('GROUP_MA') and type(mcsimp['GROUP_MA']) not in (tuple, list):
         mcsimp['GROUP_MA'] = [mcsimp['GROUP_MA']]
 
     if mcsimp.has_key('NOEUD'):
