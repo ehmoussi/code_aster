@@ -117,13 +117,13 @@ def simu_point_mat_ops(
         elif ic1c2:
             if args.has_key('MATR_C1'):
                 if args['MATR_C1'] != None:
-                    motscles['MATR_C1'] = args['MATR_C1'].List_F()
+                    motscles['MATR_C1'] = args['MATR_C1']
             if args.has_key('MATR_C2'):
                 if args['MATR_C2'] != None:
-                    motscles['MATR_C2'] = args['MATR_C2'].List_F()
+                    motscles['MATR_C2'] = args['MATR_C2']
             if args.has_key('VECT_IMPO'):
                 if args['VECT_IMPO'] != None:
-                    motscles['VECT_IMPO'] = args['VECT_IMPO'].List_F()
+                    motscles['VECT_IMPO'] = args['VECT_IMPO']
         else:
             nbsig = 6
             for index in range(nbsig):
@@ -355,7 +355,7 @@ def simu_point_mat_ops(
         umail = UL.Libre(action='ASSOCIER', nom='simu.mail')
 
         __MA = LIRE_MAILLAGE(FORMAT='ASTER',UNITE=umail)
-        UL.EtatInit()
+        UL.Etat(umail, etat="F")
 
         if MODELISATION == "3D":
             __MO = AFFE_MODELE(MAILLAGE=__MA,
@@ -519,7 +519,7 @@ def simu_point_mat_ops(
         mcvarc = []
         if args.has_key('AFFE_VARC'):
             if args['AFFE_VARC'] != None:
-                lvarc = args['AFFE_VARC'].List_F()
+                lvarc = args['AFFE_VARC']
                 nbvarc = len(lvarc)
                 for ivarc in range(nbvarc):
                     dico = {}
@@ -836,27 +836,27 @@ def simu_point_mat_ops(
 #     -- Deroulement du calcul
         motscles = {}
         if COMPORTEMENT:
-            motscles['COMPORTEMENT'] = COMPORTEMENT.List_F()
+            motscles['COMPORTEMENT'] = COMPORTEMENT
 
         if lcomp['RELATION'] == 'META_LEMA_ANI':
             UTMESS('A', 'COMPOR2_92', valk=lcomp['RELATION'])
 
-        motscles['CONVERGENCE'] = CONVERGENCE.List_F()
+        motscles['CONVERGENCE'] = CONVERGENCE
 
-        motscles['NEWTON'] = NEWTON.List_F()
+        motscles['NEWTON'] = NEWTON
 
         if args.has_key('RECH_LINEAIRE'):
             if args['RECH_LINEAIRE'] != None:
-                motscles['RECH_LINEAIRE'] = args['RECH_LINEAIRE'].List_F()
+                motscles['RECH_LINEAIRE'] = args['RECH_LINEAIRE']
 
-        motscles['INCREMENT'] = INCREMENT.List_F()
+        motscles['INCREMENT'] = INCREMENT
 
         if ARCHIVAGE:
-            motscles['ARCHIVAGE'] = ARCHIVAGE.List_F()
+            motscles['ARCHIVAGE'] = ARCHIVAGE
 
         if args.has_key('SUIVI_DDL'):
             if args['SUIVI_DDL'] != None:
-                motscles['SUIVI_DDL'] = args['SUIVI_DDL'].List_F()
+                motscles['SUIVI_DDL'] = args['SUIVI_DDL']
 
         if etatinit == 1:
 

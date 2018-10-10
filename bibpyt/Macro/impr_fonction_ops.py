@@ -150,7 +150,6 @@ def impr_fonction_ops(self, FORMAT, COURBE, INFO, **args):
                     UTMESS(
                         'S', 'FONCT0_50', valk=obj.nom, vali=len(dpar['NOM_PARA']))
 
-            print "obj.getType()", obj.getType()
             if obj.getType() == "NAPPE_SDASTER":
                 lpar, lval = obj.Valeurs()
                 dico, ldicf = obj.Parametres()
