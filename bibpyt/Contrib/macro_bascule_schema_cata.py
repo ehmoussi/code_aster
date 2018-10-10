@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -22,9 +22,11 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 from macro_bascule_schema_ops import macro_bascule_schema_ops
+from code_aster.Objects import NonLinearEvolutionContainer
+from code_aster.Commands.ExecuteCommand import ExecuteCommand
 
 
-MACRO_BASCULE_SCHEMA = MACRO(
+MACRO_BASCULE_SCHEMA_CATA = MACRO(
     nom="MACRO_BASCULE_SCHEMA", op=macro_bascule_schema_ops, sd_prod=evol_noli, reentrant='f',
     fr="Macro permettant la bascule de schema en temps dans DYNA_NON_LINE",
     MODELE=SIMP(statut='o', typ=modele_sdaster),
@@ -385,3 +387,21 @@ MACRO_BASCULE_SCHEMA = MACRO(
     INFO=SIMP(statut='f', typ='I', defaut=1, into=(1, 2)),
     TITRE=SIMP(statut='f', typ='TXM', max='**'),
 )
+
+
+class MacroBasculeSchema(ExecuteCommand):
+    """Command that defines :class:`~code_aster.Objects.NonLinearEvolutionContainer`.
+    """
+    command_name = "MACRO_BASCULE_SCHEMA"
+    command_cata = MACRO_BASCULE_SCHEMA_CATA
+
+    def create_result(self, keywords):
+        """Initialize the result.
+
+        Arguments:
+            keywords (dict): Keywords arguments of user's keywords.
+        """
+        self._result = NonLinearEvolutionContainer()
+
+
+MACRO_BASCULE_SCHEMA = MacroBasculeSchema.run
