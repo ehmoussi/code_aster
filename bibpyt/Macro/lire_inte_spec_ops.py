@@ -235,8 +235,7 @@ def lire_inte_spec_ops(self,
         UTMESS('F', 'SPECTRAL0_12')
 
     # remet UNITE dans son état initial
-    UL.EtatInit()
-    return ier
+    return inte_out
 
 
 def comp(ddlno):
