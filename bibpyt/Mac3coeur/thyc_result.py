@@ -300,4 +300,7 @@ def lire_resu_thyc(coeur, MODELE, nom_fic):
     _co = AFFE_CHAR_MECA_F(MODELE=MODELE, FORCE_POUTRE=mcpf)
     res.chax_poutre = _co
 
+    f.close()
+    f2.close()
+
     return res

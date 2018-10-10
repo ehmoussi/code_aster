@@ -43,7 +43,7 @@ def calc_mac3coeur_ops(self, **args):
     """Fonction d'appel de la macro CALC_MAC3COEUR"""
     self.set_icmd(1)
     analysis = Mac3CoeurCalcul.factory(self, args)
-    analysis.run()
+    return analysis.run()
 
 # decorator to cache values of properties
 NULL = object()
@@ -164,8 +164,9 @@ class Mac3CoeurCalcul(object):
     def run(self,noresu=False):
         """Run all the calculation steps"""
         self._prepare_data(noresu)
-        self._run()
+        toReturn = self._run()
         self._build_result()
+        return toReturn
 
     @property
     def niv_fluence(self):
@@ -697,6 +698,7 @@ class Mac3CoeurDeformation(Mac3CoeurCalcul):
                                   INCREMENT=_F(LIST_INST=self.times),
                                   COMPORTEMENT=self.char_ini_comp,
                                   ))
+            self.macro.register_result(__RESULT, self.macro.sd)
 
         else :
 
@@ -708,7 +710,6 @@ class Mac3CoeurDeformation(Mac3CoeurCalcul):
             mater=[]
             ratio = 1.
             mater.append(self.cham_mater_contact_progressif(ratio))
-            print 'self.etat_init : ',self.etat_init
             __RESULT = None
             if (not self.etat_init) :
                 __RESULT = STAT_NON_LINE(**self.snl(CHAM_MATER=self.cham_mater_free,
@@ -833,6 +834,7 @@ class Mac3CoeurDeformation(Mac3CoeurCalcul):
                                 ETAT_INIT=_F(EVOL_NOLI=__RESULT),
                                 )
             __RESULT = STAT_NON_LINE(**keywords)
+        return __RESULT
 
 class Mac3CoeurLame(Mac3CoeurCalcul):
 
@@ -956,6 +958,7 @@ class Mac3CoeurLame(Mac3CoeurCalcul):
         __RESFIN = CREA_RESU(**self.cr(_pdt_ini_out,depl_tot_ini))
         CREA_RESU(**self.cr(_pdt_fin_out,depl_tot_fin,reuse=__RESFIN))
         self.res_def=__RESFIN
+        self.macro.register_result(__RESFIN, self.res_def)
 
 
     def _prepare_data(self,noresu=None):
@@ -1101,6 +1104,7 @@ class Mac3CoeurLame(Mac3CoeurCalcul):
 
         if self.res_def :
             self.output_resdef(__RESULT,depl_deformed,tinit,tfin)
+        return __RESULT
 
 class Mac3CoeurEtatInitial(Mac3CoeurLame):
 
@@ -1164,5 +1168,5 @@ def read_thyc(coeur, model, unit):
         fname = UL.Nom(unit)
         res = lire_resu_thyc(coeur, model, fname)
     finally:
-        UL.EtatInit()
+        pass
     return res

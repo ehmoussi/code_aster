@@ -143,6 +143,7 @@ def perm_mac3coeur_ops(self, **args):
                            SOLVEUR=_F(
                            METHODE='MUMPS', RENUM='AMF', GESTION_MEMOIRE='OUT_OF_CORE', ELIM_LAGR='NON', PCENT_PIVOT=80,),
                            )
+    self.register_result(BIDON, self.sd)
 # il faut un resultat avec un seul instant : 0.
 # on le reconstruit a partir de __BIDON
     _tini = __BIDON.LIST_PARA()['INST'][-1]

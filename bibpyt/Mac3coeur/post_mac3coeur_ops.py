@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -382,12 +382,12 @@ def post_mac3coeur_ops(self, **args):
     coeur_factory = CoeurFactory(datg)
 
     self.set_icmd(1)
-    _RESU = self['RESULTAT']
-    _typ_coeur = self['TYPE_COEUR']
-    POST_LAME = self['LAME']
-    POST_DEF = self['DEFORMATION']
-    _inst = self['INST']
-    _TAB_N = self['TABLE']
+    _RESU = args.get('RESULTAT')
+    _typ_coeur = args.get('TYPE_COEUR')
+    POST_LAME = args.get('LAME')
+    POST_DEF = args.get('DEFORMATION')
+    _inst = args.get('INST')
+    _TAB_N = args.get('TABLE')
 
     _table = _TAB_N.EXTR_TABLE()
     nameCoeur = _table.para[0]
@@ -1019,3 +1019,5 @@ def post_mac3coeur_ops(self, **args):
                            SEPARATEUR='\t',
                            FIN_LIGNE='\r\n',
                            )
+
+    return __TAB_OUT
