@@ -646,7 +646,7 @@ bool JeveuxCollectionInstance< ValueType, PointerType >::buildFromJeveux( bool f
         return false;
 
     ASTERINTEGER nbColObj, valTmp;
-    JeveuxChar8 param( "NUTIOC" );
+    JeveuxChar8 param( "NMAXOC" );
     std::string charval( 32, ' ' );
     CALLO_JELIRA( _name, param, &nbColObj, charval );
 
