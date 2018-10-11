@@ -112,7 +112,7 @@ class BaseFunctionInstance: public GenericFunctionInstance
         {
             if( !_property->isAllocated() )
                 propertyAllocate();
-            (*_property)[2] = name.c_str();
+            (*_property)[2] = name.substr(0, 8).c_str();
         }
 
         /**
@@ -124,7 +124,7 @@ class BaseFunctionInstance: public GenericFunctionInstance
         {
             if( !_property->isAllocated() )
                 propertyAllocate();
-            (*_property)[3] = name.c_str();
+            (*_property)[3] = name.substr(0, 8).c_str();
         }
 
         /**
