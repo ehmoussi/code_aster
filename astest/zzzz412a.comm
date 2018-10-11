@@ -16,6 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
+import os
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),);
 
@@ -36,9 +37,13 @@ mailcol=LIRE_MAILLAGE(FORMAT="MED",UNITE=20);
 #
 
 
-INCLUDE(UNITE=33,);
+# INCLUDE(UNITE=33,);
+os.rename("fort.33", "fort33.py")
+from fort33 import *
 
-INCLUDE(UNITE=34,);
+# INCLUDE(UNITE=34,);
+os.rename("fort.34", "fort34.py")
+from fort34 import *
 
 #
 #  ACCELEROGRAMMES NORMES A 0.1G
@@ -65,7 +70,7 @@ ACCEX=CALC_FONCTION(COMB=_F(FONCTION=LBNS,
 
 ACCEXL=CALC_FONCTION(COMB=_F(FONCTION=ACCEX,
                             COEF=1.e-6,),
-               LIST_PARA=linst,); 
+               LIST_PARA=linst,);
 
 ACCEY=CALC_FONCTION(COMB=_F(FONCTION=LBEW,
                                COEF=1.5,),
@@ -117,12 +122,12 @@ freqspec = DEFI_LIST_REEL ( DEBUT = 0.1,
                                        ),
                                        ),
                            );
-                           
-                           
+
+
 labsr = DEFI_LIST_REEL ( VALE=(0.000001, 0.000005, 0.000015, 0.00005,
                                  0.0001, 0.0004, 0.001, 0.004, 0.01),
                            );
-                           
+
 lfreqc = DEFI_LIST_REEL(DEBUT=0.15,
                           INTERVALLE=_F(PAS=0.15,
                                         JUSQU_A=8.4,),
@@ -380,12 +385,12 @@ TEST_TABLE(  TABLE=T_resu1,
                        CRITERE='RELATIF',
                        ),
              REFERENCE='AUTRE_ASTER',
-             VALE_REFE=7.96292E-01, 
+             VALE_REFE=7.96292E-01,
              VALE_CALC=(0.79629157, ),
              PRECISION=0.001,
              CRITERE='RELATIF',
              VALE_ABS='NON',)
-           
+
 TEST_TABLE(  TABLE=T_resu1,
              NOM_PARA='G/Gmax',
              FILTRE=_F(NOM_PARA='M',
@@ -393,7 +398,7 @@ TEST_TABLE(  TABLE=T_resu1,
                        CRITERE='RELATIF',
                        ),
              REFERENCE='AUTRE_ASTER',
-             VALE_REFE=6.83554E-01, 
+             VALE_REFE=6.83554E-01,
              VALE_CALC=(0.6835537, ),
              PRECISION=0.001,
              CRITERE='RELATIF',
@@ -408,12 +413,12 @@ TEST_TABLE(  TABLE=T_resu1,
                        CRITERE='RELATIF',
                        ),
              REFERENCE='AUTRE_ASTER',
-             VALE_REFE=5.24282E-02, 
+             VALE_REFE=5.24282E-02,
              VALE_CALC=(0.052428246, ),
              PRECISION=0.001,
              CRITERE='RELATIF',
              VALE_ABS='NON',)
-           
+
 TEST_TABLE(  TABLE=T_resu1,
              NOM_PARA='AHfin',
              FILTRE=_F(NOM_PARA='M',
@@ -421,7 +426,7 @@ TEST_TABLE(  TABLE=T_resu1,
                        CRITERE='RELATIF',
                        ),
              REFERENCE='AUTRE_ASTER',
-             VALE_REFE=6.63282E-02, 
+             VALE_REFE=6.63282E-02,
              VALE_CALC=(0.066328219, ),
              PRECISION=0.001,
              CRITERE='RELATIF',
@@ -436,12 +441,12 @@ TEST_TABLE(  TABLE=T_resu1,
                        CRITERE='RELATIF',
                        ),
              REFERENCE='AUTRE_ASTER',
-             VALE_REFE=2.51093E-04, 
+             VALE_REFE=2.51093E-04,
              VALE_CALC=(0.00025109334, ),
              PRECISION=0.001,
              CRITERE='RELATIF',
              VALE_ABS='NON',)
-            
+
 TEST_TABLE(  TABLE=T_resu1,
              NOM_PARA='gamma_ma',
              FILTRE=_F(NOM_PARA='M',
@@ -449,7 +454,7 @@ TEST_TABLE(  TABLE=T_resu1,
                        CRITERE='RELATIF',
                        ),
              REFERENCE='AUTRE_ASTER',
-             VALE_REFE=3.08768E-04, 
+             VALE_REFE=3.08768E-04,
              VALE_CALC=(0.00030876854, ),
              PRECISION=0.001,
              CRITERE='RELATIF',
