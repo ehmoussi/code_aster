@@ -123,7 +123,7 @@ class ExecuteCommand(object):
         cmd = cls()
         keywords = mixedcopy(kwargs)
         cmd.keep_caller_infos(keywords)
-        timer = ExecutionParameter().get_option("timer")
+        timer = ExecutionParameter().timer
         if cls.command_name not in ("DEBUT", "POURSUITE"):
             check_jeveux()
         if cmd._op is None:
@@ -226,7 +226,7 @@ class ExecuteCommand(object):
 
     def _print_timer(self):
         """Print the timer informations."""
-        timer = ExecutionParameter().get_option("timer")
+        timer = ExecutionParameter().timer
         logger.info(command_time(*timer.StopAndGet(str(self._counter))))
         logger.info(command_separator())
 

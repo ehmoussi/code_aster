@@ -70,7 +70,7 @@ class ExecutionStarter(object):
         cls.params.syntax = CommandSyntax
         aster_core.register(cls.params)
         aster.init(0)
-        if cls.params.get_option('abort'):
+        if cls.params.option & Options.Abort:
             aster.onFatalError('ABORT')
         cls._is_initialized = True
         return True
@@ -146,15 +146,15 @@ def init(*argv, **kwargs):
 
     Arguments:
         argv (list): List of command line arguments.
-        kwargs (dict): Keywords arguments passed to 'DEBUT'/'POURSUITE'.
+        kwargs (dict): Keywords arguments passed to 'DEBUT'/'POURSUITE'
+            + 'debug' to quickly enable debugging messages.
     """
     if not ExecutionStarter.init(argv):
         return
 
-    if 'debug' in kwargs:
-        if kwargs['debug']:
-            setlevel()
-        kwargs.pop('debug')
+    if kwargs.get('debug'):
+        ExecutionParameter().enable(Options.Debug)
+    kwargs.pop('debug', None)
 
     if ExecutionStarter.params.option & Options.Continue:
         Restarter.run_with_argv(**kwargs)

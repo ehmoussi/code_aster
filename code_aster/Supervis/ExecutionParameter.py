@@ -34,6 +34,7 @@ object.
 """
 
 import json
+import logging
 import os
 import os.path as osp
 import platform
@@ -66,7 +67,8 @@ class ExecutionParameter(object):
     """
     __metaclass__ = Singleton
     _singleton_id = 'Supervis.ExecutionParameter'
-    _args = None
+    _args = _bool = None
+    _timer = _command_counter = None
     _catalc = _unit = _syntax = None
 
     def __init__(self):
@@ -90,7 +92,7 @@ class ExecutionParameter(object):
         # boolean (on/off) options
         self._bool = Options.Null
 
-        # TODO probably to be removed
+        # TODO probably to be removed?
         self._args['repmat'] = '.'
         self._args['repdex'] = '.'
 
@@ -121,8 +123,8 @@ class ExecutionParameter(object):
         self._args['versionD0'] = '%d.%02d.%02d' % version
         self._args['versLabel'] = aster_pkginfo.get_version_desc()
 
-        self._args['timer'] = ASTER_TIMER(format="aster")
-        self._args['command_counter'] = 0
+        self._timer = ASTER_TIMER(format="aster")
+        self._command_counter = 0
 
     def set_option(self, option, value):
         """Set the value of an execution parameter.
@@ -174,6 +176,13 @@ class ExecutionParameter(object):
         """
         self._bool |= option
 
+        # for options that required an action
+        if option == Options.Debug:
+            setlevel()
+        elif option == Options.ShowDeprecated:
+            # disabled by default in python2.7
+            warnings.simplefilter('default')
+
     def disable(self, option):
         """Disable a boolean option.
 
@@ -181,6 +190,12 @@ class ExecutionParameter(object):
             option (int): An 'Options' value.
         """
         self._bool = (self._bool | option) ^ option
+
+        # for options that required an action
+        if option == Options.Debug:
+            setlevel(level=logging.INFO)
+        elif option == Options.ShowDeprecated:
+            warnings.resetwarnings()
 
     @property
     def option(self):
@@ -190,6 +205,15 @@ class ExecutionParameter(object):
             int: Bitwise combination of boolean execution parameters.
         """
         return self._bool
+
+    @property
+    def timer(self):
+        """Attribute that holds the timer object.
+
+        Returns:
+            ASTER_TIMER: Timer object.
+        """
+        return self._timer
 
     def parse_args(self, argv=None):
         """Parse the command line arguments to set the execution parameters"""
@@ -260,11 +284,6 @@ class ExecutionParameter(object):
             help="turn on deprecation warnings")
 
         args, ignored = parser.parse_known_args(argv or sys.argv)
-        if args.Debug:
-            setlevel()
-        if args.ShowDeprecated:
-            # disabled by default in python2.7
-            warnings.simplefilter('default')
 
         logger.debug("Ignored arguments: %r", ignored)
         logger.debug("Read options: %r", vars(args))
@@ -283,8 +302,8 @@ class ExecutionParameter(object):
         Returns:
             int: Current value of the counter.
         """
-        self._args["command_counter"] += 1
-        return self._args["command_counter"]
+        self._command_counter += 1
+        return self._command_counter
 
     # register objects callable from libaster
     @property
