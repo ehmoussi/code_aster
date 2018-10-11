@@ -67,7 +67,7 @@ from ..Cata.Language.SyntaxObjects import _F
 from ..Cata.SyntaxChecker import CheckerError, checkCommandSyntax
 from ..Cata.SyntaxUtils import mixedcopy, remove_none, search_for
 from ..Objects import DataStructure, ResultNaming
-from ..Supervis import CommandSyntax, ExecutionParameter, logger
+from ..Supervis import CommandSyntax, ExecutionParameter, Options, logger
 from ..Utilities import Singleton, deprecated, import_object
 from ..Utilities.outputs import (command_header, command_result,
                                  command_separator, command_text, command_time,
@@ -138,7 +138,7 @@ class ExecuteCommand(object):
         except CheckerError as exc:
             # in case of syntax error, show the syntax and raise the exception
             cmd.print_syntax(keywords)
-            if ExecutionParameter().get_option("debug"):
+            if ExecutionParameter().option & Options.Debug:
                 logger.error(exc.msg)
                 raise
             raise exc.original(exc.msg)
@@ -445,7 +445,7 @@ class ExecuteMacro(ExecuteCommand):
         output = self._op(self, **keywords)
         assert not isinstance(output, int), \
             "OPS must now return results, not 'int'."
-        if ExecutionParameter().get_option("use_legacy_mode"):
+        if ExecutionParameter().option & Options.UseLegacyMode:
             self._result = output
             if self._add_results:
                 publish_in(self._caller["context"], self._add_results)

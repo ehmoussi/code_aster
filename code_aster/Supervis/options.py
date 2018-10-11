@@ -20,14 +20,29 @@
 # person_in_charge: mathieu.courtois@edf.fr
 
 """
-This module supports basics to give access to Commands from code_aster
-objects.
+Definition of options/flags for execution.
 """
 
-from .CommandSyntax import CommandSyntax
-from .ExecutionParameter import ExecutionParameter
-from .logger import logger
-from .options import Options
+class Options(object):
+    """Enumerator for execution options.
+    """
+    Null = 0x0000
+    Debug = 0x0001
+    Abort = 0x0002
+    Continue = 0x0004
+    StrictUnpickling = 0x0008
+    UseLegacyMode = 0x0010
+    ShowDeprecated = 0x0020
 
-# TODO create a module dedicated to error management
-from Execution.E_Exception import error as CodeAsterError
+    @classmethod
+    def by_name(cls, name):
+        """Return an option value by its name.
+        *AttributeError* is raised if the option does not exist.
+
+        Arguments:
+            name (str): Option name.
+
+        Returns:
+            int: Option value.
+        """
+        return getattr(cls, name)
