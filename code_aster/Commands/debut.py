@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -38,7 +38,7 @@ import aster_core
 from Comportement import catalc
 
 from ..RunManager import LogicalUnitFile, Serializer, loadObjects
-from ..Supervis import CommandSyntax, ExecutionParameter, logger
+from ..Supervis import CommandSyntax, ExecutionParameter, Options, logger
 from ..Supervis.logger import setlevel
 
 from .ExecuteCommand import ExecuteCommand
@@ -126,7 +126,7 @@ class Restarter(Starter):
             syntax (*CommandSyntax*): Syntax description with user keywords.
         """
         if not Serializer.canRestart():
-            ExecutionStarter.params.set_option("continue", 0)
+            ExecutionStarter.params.disable(Options.Continue)
             super(Restarter, self)._call_oper(syntax)
         else:
             logger.info("restarting from a previous execution...")
@@ -146,6 +146,7 @@ def init(*argv, **kwargs):
 
     Arguments:
         argv (list): List of command line arguments.
+        kwargs (dict): Keywords arguments passed to 'DEBUT'/'POURSUITE'.
     """
     if not ExecutionStarter.init(argv):
         return
@@ -153,9 +154,9 @@ def init(*argv, **kwargs):
     if 'debug' in kwargs:
         if kwargs['debug']:
             setlevel()
-        del kwargs['debug']
+        kwargs.pop('debug')
 
-    if ExecutionStarter.params.get_option("continue"):
+    if ExecutionStarter.params.option & Options.Continue:
         Restarter.run_with_argv(**kwargs)
     else:
         Starter.run_with_argv(**kwargs)

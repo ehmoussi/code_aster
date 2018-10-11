@@ -40,7 +40,7 @@
 #                       PRE-TRAITEMENTS PYTHON
 #-------------------------------------------------------------------
 from code_aster.Commands import *
-from code_aster.Supervis.ExecutionParameter import ExecutionParameter
+from code_aster.Supervis.ExecutionParameter import ExecutionParameter, Options
 
 import numpy as NP
 
@@ -101,7 +101,7 @@ RESV    = [None]*nb_calc1
 #-------------------------------------------------------------------
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),PAR_LOT='NON',DEBUG=_F(SDVERI='OUI'))
 
-ExecutionParameter().set_option("use_legacy_mode", 0)
+ExecutionParameter().disable(Options.UseLegacyMode)
 
 # DEFINITION DU MATERIAU
 ACIER=DEFI_MATERIAU(ELAS=_F(E=210.E3,
