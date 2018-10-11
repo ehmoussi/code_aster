@@ -46,25 +46,22 @@ def perm_mac3coeur_ops(self, **args):
     datg = aster_core.get_option("repdex")
     coeur_factory = CoeurFactory(datg)
 
-    _typ_coeur_N = self['TYPE_COEUR_N']
-    _typ_coeur_P = self['TYPE_COEUR_NP1']
-    _TAB_N = self['TABLE_N']
+    _typ_coeur_N = args.get('TYPE_COEUR_N')
+    _typ_coeur_P = args.get('TYPE_COEUR_NP1')
+    _TAB_N = args.get('TABLE_N')
     _l_tabn1 = []
     for el in _TAB_N :
         _l_tabn1.append(el.EXTR_TABLE())
 
-    l_RESUI = self['RESU_N']
+    l_RESUI = args.get('RESU_N')
     assert (len(_TAB_N) == len(l_RESUI))
     l_last_i = []
     _l_MA_N = []
     for RESUI in l_RESUI :
         l_last_i.append(RESUI.LIST_PARA()['INST'][-1])
         # on recupere le concept maillage
-        iret, ibid, nom_mo = aster.dismoi('MODELE', RESUI.nom, 'RESULTAT', 'F')
-        iret, ibid, nom_ma = aster.dismoi(
-            'NOM_MAILLA', nom_mo.strip(), 'MODELE', 'F')
 
-        _MA_N = self.get_concept_by_type(nom_ma, maillage_sdaster)
+        _MA_N = RESUI.getModel().getSupportMesh()
         _l_MA_N.append(_MA_N)
 
     _l_coeur = []
@@ -79,7 +76,7 @@ def perm_mac3coeur_ops(self, **args):
         _l_coeur.append(_coeur)
 
 
-    _TAB_NP1 = self['TABLE_NP1']
+    _TAB_NP1 = args.get('TABLE_NP1')
     _tabp1 = _TAB_NP1.EXTR_TABLE()
 
     # on recupere le nom du coeurq
@@ -90,7 +87,7 @@ def perm_mac3coeur_ops(self, **args):
     _coeurp1 = coeur_factory.get(_typ_coeur_P)(namep1, _typ_coeur_P, self, datg)
     _coeurp1.init_from_table(_tabp1)
 
-    _MA1 = self['MAILLAGE_NP1']
+    _MA1 = args.get('MAILLAGE_NP1')
     _MA_NP1 = _coeurp1.affectation_maillage(_MA1)
     _MO_NP1 = _coeurp1.affectation_modele(_MA_NP1)
     _coeurp1.recuperation_donnees_geom(_MA_NP1)
@@ -143,7 +140,6 @@ def perm_mac3coeur_ops(self, **args):
                            SOLVEUR=_F(
                            METHODE='MUMPS', RENUM='AMF', GESTION_MEMOIRE='OUT_OF_CORE', ELIM_LAGR='NON', PCENT_PIVOT=80,),
                            )
-    self.register_result(BIDON, self.sd)
 # il faut un resultat avec un seul instant : 0.
 # on le reconstruit a partir de __BIDON
     _tini = __BIDON.LIST_PARA()['INST'][-1]
@@ -256,3 +252,4 @@ def perm_mac3coeur_ops(self, **args):
                     _coeur.nameAC[nom]), _coeurp1.position_todamac(_coeurp1.nameAC[nom])))
                 break
     UTMESS('I', 'COEUR0_2', vali=(indice))
+    return BIDON

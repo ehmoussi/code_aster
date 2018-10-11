@@ -152,7 +152,7 @@ class Mac3CoeurCalcul(object):
         # force the computation of the times to ensure it is done first
         # Note that times depends on niv_fluence and subdivis.
         self.times
-        self.fluence_cycle = self.keyw['FLUENCE_CYCLE']
+        self.fluence_cycle = self.keyw.get('FLUENCE_CYCLE')
 
     def _run(self):
         """Run the calculation itself"""
@@ -221,7 +221,7 @@ class Mac3CoeurCalcul(object):
     @cached_property
     def mesh(self):
         """Return the `maillage_sdaster` object"""
-        return self.coeur.affectation_maillage(self.keyw['MAILLAGE_N'])
+        return self.coeur.affectation_maillage(self.keyw.get('MAILLAGE_N'))
 
     @mesh.setter
     def mesh(self, value):
@@ -544,10 +544,10 @@ class Mac3CoeurCalcul(object):
     def set_from_resu(self, what, resu):
         """Extract a parameter from a result"""
         assert what in ('mesh', 'model')
-        key, typ = {'mesh': ('NOM_MAILLA', maillage_sdaster),
-                    'model': ('NOM_MODELE', modele_sdaster)}[what]
-        nom_co = aster.dismoi(key, resu.nom, 'RESULTAT', 'F')[2].strip()
-        return self.macro.get_concept_by_type(nom_co, typ)
+        if what == "mesh":
+            return resu.getModel().getSupportMesh()
+        else:
+            return resu.getModel()
 
 
 class Mac3CoeurDeformation(Mac3CoeurCalcul):
@@ -572,7 +572,7 @@ class Mac3CoeurDeformation(Mac3CoeurCalcul):
     @cached_property
     def mesh(self):
         """Return the `maillage_sdaster` object"""
-        mesh = self.keyw['MAILLAGE_N']
+        mesh = self.keyw.get('MAILLAGE_N')
         char_init = self.char_init
         if char_init :
             resu_init=None
@@ -965,7 +965,7 @@ class Mac3CoeurLame(Mac3CoeurCalcul):
         """Prepare the data for the calculation"""
         self.use_archimede = 'OUI'
         if (not noresu) :
-            self.res_def = self.keyw['RESU_DEF']
+            self.res_def = self.keyw.get('RESU_DEF')
             if self.res_def :
                 self.macro.DeclareOut('__RESFIN',self.res_def)
         super(Mac3CoeurLame, self)._prepare_data(noresu)
