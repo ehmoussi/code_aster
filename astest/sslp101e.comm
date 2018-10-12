@@ -71,7 +71,7 @@ RESU2=MECA_STATIQUE(   MODELE=MO,   CHAM_MATER=CHMAT,
 
 
 FOND=DEFI_FOND_FISS( MAILLAGE=MA,
-                       FOND_FISS=_F( NOEUD = 'N668'),
+                       FOND_FISS=_F( GROUP_NO = 'GRNO9'),
                        SYME='OUI',
                        LEVRE_SUP=_F(MAILLE='M306'),
 )
