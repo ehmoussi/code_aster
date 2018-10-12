@@ -582,8 +582,9 @@ def _filteringContext(context):
             continue
         if not isinstance(obj, numpy.ndarray) and obj in ignored:
             continue
-        if type(obj) in (types.ModuleType, types.ClassType, types.MethodType,
-                         types.FunctionType):
+        if type(obj) in (types.ModuleType, types.ClassType,
+                         types.MethodType, types.FunctionType,
+                         types.BuiltinMethodType, types.BuiltinFunctionType):
             continue
         # aster-legacy try 'dumps' before keeping the object
         ctxt[name] = obj
