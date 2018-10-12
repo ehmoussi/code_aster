@@ -125,6 +125,16 @@ Legacy Macro-commands do not work as is.
 #. The ``ops()`` function must now returns the result object it creates.
 
 
+For user Macro-commands or those from *Contrib* directory, an executor must be
+manually added (since the catalog description can not be imported from the
+official ones). A convenient function allows to easily define this executor:
+
+.. code-block:: python
+
+    from code_aster.Commands.ExecuteCommand
+    MA_MACRO = UserMacro("MA_MACRO", MA_MACRO_cata, ma_macro_ops)
+
+
 Required changes
 ----------------
 

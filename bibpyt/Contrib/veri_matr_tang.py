@@ -23,7 +23,7 @@ import string
 import numpy as NP
 from numpy import linalg as LA
 
-from code_aster.Commands.ExecuteCommand import ExecuteMacro
+from code_aster.Commands.ExecuteCommand import UserMacro
 
 from code_aster.Cata.Syntax import *
 from code_aster.Cata.DataStructure import *
@@ -221,13 +221,5 @@ VERI_MATR_TANG_cata = MACRO(
 )
 
 
-class TangentMatrixChecking(ExecuteMacro):
-    """Execute legacy operator."""
-    command_name = "VERI_MATR_TANG"
-    command_cata = VERI_MATR_TANG_cata
-
-    @staticmethod
-    def command_op(self, **kwargs):
-        return veri_matr_tang_ops(self, **kwargs)
-
-VERI_MATR_TANG = TangentMatrixChecking.run
+VERI_MATR_TANG = UserMacro("VERI_MATR_TANG", VERI_MATR_TANG_cata,
+                           veri_matr_tang_ops)
