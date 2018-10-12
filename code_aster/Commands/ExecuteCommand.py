@@ -513,6 +513,30 @@ class ExecuteMacro(ExecuteCommand):
         raise NotImplementedError("'get_concept()' does not exist anymore...")
 
 
+def UserMacro(name, cata, ops):
+    """Helper function that defines a user macro-command from its catalog
+    description and its operator.
+
+    Arguments:
+        name (str): Name of the macro-command.
+        cata (*PartOfSyntax*): Catalog description of the macro-command.
+        ops (str): OPS function of the macro-command.
+
+    Returns:
+        *ExecuteCommand.run*: Executor function.
+    """
+    class Macro(ExecuteMacro):
+        """Execute legacy operator."""
+        command_name = name
+        command_cata = cata
+
+        @staticmethod
+        def command_op(self, **kwargs):
+            return ops(self, **kwargs)
+
+    return Macro.run
+
+
 class CO(object):
 
     """Object that identify an auxiliary result of a Macro-Command."""
