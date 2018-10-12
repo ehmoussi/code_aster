@@ -103,7 +103,7 @@ CM=AFFE_MATERIAU(MAILLAGE=M,
                         MATER = MA) )
 
 FOND=DEFI_FOND_FISS( MAILLAGE=M, SYME='NON',
-                       FOND_FISS=_F( NOEUD = 'N1'),)
+                       FOND_FISS=_F( GROUP_NO = 'O'),)
 
 #---------------------------------------------------------------------
 #          MODELISATION ET CALCUL EN DEFORMATIONS PLANES

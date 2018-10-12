@@ -15,7 +15,7 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! aslint: disable=W0413
 subroutine fointr(nomfon, chprol, nbvar, var, fon,&
                   nbres, varres, fonres, ier)
     implicit none
@@ -89,22 +89,23 @@ subroutine fointr(nomfon, chprol, nbvar, var, fon,&
                 call utmess('F', 'FONCT0_22')
             endif
             if (chprol(5)(1:2) .eq. 'CC') then
-                do 10 i = 1, nbres
+                do i = 1, nbres
                     fonres(i) = fon(ivar)
-10              continue
+                enddo
             else
+!               strict equality is necessary
                 if (varres(ires) .eq. var(ivar)) then
                     fonres(ires) = fon(ivar)
                 else
                     call utmess('F', 'FONCT0_23')
                 endif
             endif
-            goto 9999
+            goto 999
         endif
 !
 !     RECHERCHE DU DEBUT DE L'INTERVALLE D'INTERPOLATION
 !
-100      continue
+100     continue
         if ((varres(ires).lt. var(ivar)) .and. (ires.lt.nbres)) then
             ires = ires + 1
             goto 100
@@ -116,22 +117,22 @@ subroutine fointr(nomfon, chprol, nbvar, var, fon,&
 !
             if (chprol(5)(1:1) .eq. 'C') then
 !           --- EXTRAPOLATION CONSTANTE ---
-                do 120 jres = 1, ires-1
+                do jres = 1, ires-1
                     fonres(jres) = fon(ivar)
-120              continue
+                enddo
 !
             else if (chprol(5)(1:1) .eq. 'L') then
 !           --- EXTRAPOLATION LINEAIRE ---
-                do 130 jres = 1, ires-1
+                do jres = 1, ires-1
                     fonres(jres)=linlin(varres(jres),var(ivar),fon(ivar), var(ivar+1),fon(ivar+1))
-130              continue
+                enddo
 !
             else if (chprol(5)(1:1) .eq. 'I') then
                 call jeveuo(nomf//'.NOVA', 'L', lnova)
-                do 140 jres = 1, nbres
+                do jres = 1, nbres
                     call fointe('F ', nomf, 1, zk24(lnova), varres(jres),&
                                 fonres(jres), ier)
-140              continue
+                enddo
 !
             else if (chprol(5)(1:1) .eq. 'E') then
 !           --- EXTRAPOLATION EXCLUE ---
@@ -147,9 +148,9 @@ subroutine fointr(nomfon, chprol, nbvar, var, fon,&
 !
 !     --- INTERPOLATION ---
 !
-200      continue
+200     continue
         if (ires .le. nbres) then
-210          continue
+210         continue
             if (varres(ires) .le. var(ivar+1)) then
                 if (chprol(2)(1:8) .eq. 'LIN LIN ') then
 !              --- INTERPOLATION LINEAIRE ---
@@ -190,21 +191,21 @@ subroutine fointr(nomfon, chprol, nbvar, var, fon,&
 !
             if (chprol(5)(2:2) .eq. 'C') then
 !           --- EXTRAPOLATION CONSTANTE ---
-                do 310 jres = ires, nbres
+                do jres = ires, nbres
                     fonres(jres) = fon(nbvar)
-310              continue
+                enddo
             else if (chprol(5)(2:2) .eq. 'L') then
-                do 320 jres = ires, nbres
+                do jres = ires, nbres
                     fonres(jres) = &
                         linlin(varres(jres),var(nbvar-1),fon(nbvar-1), var(nbvar),fon(nbvar))
-320              continue
+                enddo
             else if (chprol(5)(2:2) .eq. 'I') then
 !           --- EXTRAPOLATION INTERPRETEE ----
                 call jeveuo(nomf//'.NOVA', 'L', lnova)
-                do 330 jres = ires, nbres
+                do jres = ires, nbres
                     call fointe('F ', nomf, 1, zk24(lnova), varres(jres),&
                                 fonres(jres), ier)
-330              continue
+                enddo
 !
             else if (chprol(5)(2:2) .eq. 'E') then
 !           --- EXTRAPOLATION EXCLUE ---
@@ -217,28 +218,28 @@ subroutine fointr(nomfon, chprol, nbvar, var, fon,&
                 call utmess('F', 'FONCT0_21', sk=chprol(5)(2:2))
             endif
         endif
-        goto 9999
+        goto 999
 !     ------------------------------------------------------------------
     else if (chprol(1) .eq.'CONSTANT') then
-        do 1100 jres = 1, nbres
+        do jres = 1, nbres
             fonres(jres) = fon(1)
-1100      continue
+        enddo
     else if (chprol(1) .eq.'INTERPRE') then
         call jelira(nomf//'.NOVA', 'LONUTI', lonuti)
         if (lonuti .ne. 1) then
             call utmess('F', 'FONCT0_24', sk=nomf, si=lonuti)
         endif
         call jeveuo(nomf//'.NOVA', 'L', lnova)
-        do 1200 jres = 1, nbres
+        do jres = 1, nbres
             call fointe('F ', nomf, 1, zk24(lnova), varres(jres),&
                         fonres( jres), ier)
-1200      continue
+        enddo
     else
         valk(1)=nomf
         valk(2)=chprol(1)
         valk(3)='FOINTR'
         call utmess('F', 'FONCT0_25', nk=3, valk=valk)
     endif
-9999  continue
+999 continue
     call jedema()
 end subroutine
