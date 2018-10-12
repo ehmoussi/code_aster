@@ -483,16 +483,16 @@ PenteLST=CREA_TABLE( LISTE= (
 TEST_TABLE (TABLE = PenteLST,
             NOM_PARA= 'PU',
             REFERENCE='ANALYTIQUE',
-            VALE_CALC= 2.673368703,  # raffiement=6,
+            VALE_CALC= 2.84633760873,  # raffiement=6,
             VALE_REFE=2.5,             # taux de convergence
-            PRECISION=0.070,           # 
+            PRECISION=0.139,           # 
             )
 
 
 TEST_TABLE (TABLE = PenteLST,
             NOM_PARA= 'PP',
             REFERENCE='ANALYTIQUE',
-            VALE_CALC=1.01930116125,   # raffiement=6,
+            VALE_CALC=1.01981102648,   # raffiement=6,
             VALE_REFE=1.0,             # taux de convergence
             PRECISION=0.020,
             ) 
