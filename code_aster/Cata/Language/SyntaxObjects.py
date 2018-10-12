@@ -193,7 +193,7 @@ class UIDMixing(object):
         return self._id
 
     def __cmp__(self, other):
-        if other is None:
+        if other is None or not hasattr(other, 'uid'):
             return -1
         if self._id < other.uid:
             return -1
