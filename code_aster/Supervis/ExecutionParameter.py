@@ -136,7 +136,7 @@ class ExecutionParameter(object):
         # Options must at least be declared by __init__
         if option in self._args:
             self._args[option] = value
-        else:
+        elif value is not None:
             if value:
                 self.enable(Options.by_name(option))
             else:
@@ -280,7 +280,7 @@ class ExecutionParameter(object):
             help="use (=1) or not (=0) the legacy mode for macro-commands "
                  "results. (default: 1)")
         parser.add_argument('--deprecated', dest='ShowDeprecated',
-            action='store_const', const=1, default=0,
+            action='store_const', const=1,
             help="turn on deprecation warnings")
 
         args, ignored = parser.parse_known_args(argv or sys.argv)
@@ -291,6 +291,10 @@ class ExecutionParameter(object):
         # assign parameter values
         for opt, value in vars(args).items():
             self.set_option(opt, value)
+
+        # For convenience DEBUG can be set from environment
+        if os.getenv("DEBUG") == "1":
+            self.enable(Options.Debug)
 
     def sub_tpmax(self, tsub):
         """Reduce the cpu time limit of `tsub`."""
