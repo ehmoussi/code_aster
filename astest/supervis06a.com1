@@ -22,6 +22,8 @@ from code_aster.Commands import *
 
 code_aster.init("--continue")
 
+test.assertIn("one", globals())
+test.assertEqual(one, 1)
 test.assertNotIn("SIYYp", globals())
 test.assertIn("func", globals())
 test.assertIn("SIYY", globals())
