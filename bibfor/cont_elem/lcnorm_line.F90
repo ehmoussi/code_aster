@@ -52,7 +52,7 @@ real(kind=8), intent(out) :: norm_line(3)
 !
     if (elem_code .eq. 'SE2' .or. elem_code .eq. 'SE3') then 
         norm_line(1) = elem_coor(2,1)-elem_coor(2,2)
-        norm_line(2) = elem_coor(1,1)-elem_coor(1,2)
+        norm_line(2) = -elem_coor(1,1)+elem_coor(1,2)
         norme        = sqrt(norm_line(1)*norm_line(1)+norm_line(2)*norm_line(2))
         norm_line(1) = norm_line(1)/norme
         norm_line(2) = norm_line(2)/norme                      
