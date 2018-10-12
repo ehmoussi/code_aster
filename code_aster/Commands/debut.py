@@ -104,6 +104,25 @@ class Starter(ExecuteCommand):
         cmd._result = None
         cmd.exec_(keywords)
 
+    def exec_(self, keywords):
+        """Execute the command.
+
+        Arguments:
+            keywords (dict): User's keywords.
+        """
+        from Utilitai.Utmess import MessageLog
+
+        if keywords.get('LANG'):
+            from ..Utilities.i18n import localization
+            from ..Cata.Syntax import tr
+            translation = localization.install(keywords['LANG'])
+            tr.set_translator(translation.ugettext)
+
+        if keywords.get('IGNORE_ALARM'):
+            for idmess in keywords['IGNORE_ALARM']:
+                MessageLog.disable_alarm(idmess)
+        super(Starter, self).exec_(keywords)
+
     def _call_oper(self, syntax):
         """Call fortran operator.
 
@@ -131,9 +150,9 @@ class Restarter(Starter):
         else:
             logger.info("restarting from a previous execution...")
             aster.poursu(syntax)
-            # 1:_call_oper, 2:exec_, 3:Restarter.run, 4:ExecuteCmd.run, 5:user
-            # 1:_call_oper, 2:exec_, 3:run_with_argv, 4:init, 5:user
-            loadObjects(level=5)
+            # 1:_call_oper, 2-3:exec_, 4:Restarter.run, 5:ExecuteCmd.run, 6:user
+            # 1:_call_oper, 2-3:exec_, 4:run_with_argv, 5:init, 6:user
+            loadObjects(level=6)
 
 
 DEBUT = Starter.run
