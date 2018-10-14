@@ -250,7 +250,7 @@ class ExecuteCommand(object):
                 in place.
         """
         logger.debug("checking syntax of {0}...".format(self.name))
-        checkCommandSyntax(self._cata, keywords, add_default=True)
+        checkCommandSyntax(self._cata, keywords, in_place=True)
 
     def create_result(self, keywords):
         """Create the result before calling the *exec* command function
