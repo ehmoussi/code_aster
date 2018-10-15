@@ -15,19 +15,18 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
+#include "asterf_types.h"
 !
 interface
     subroutine mmmvmm(phasez, ndim, nnm, norm, tau1,&
                       tau2, mprojt, wpg, ffm, jacobi,&
                       jeu, coefac, coefaf, lambda, coefff,&
                       dlagrc, dlagrf, dvite, rese, nrese,&
-                      vectmm,mprt11,mprt21,mprt22,mprt1n,mprt2n,kappa,granglis)
+                      vectmm,mprt11,mprt21,mprt22,mprt1n,mprt2n,kappa,l_large_slip)
         character(len=*) :: phasez
         integer :: ndim
         integer :: nnm
-        integer :: granglis
+        aster_logical, intent(in) :: l_large_slip
         real(kind=8) :: norm(3),kappa(2,2)
         real(kind=8) :: tau1(3)
         real(kind=8) :: tau2(3)
