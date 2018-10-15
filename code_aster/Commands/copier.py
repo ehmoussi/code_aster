@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -19,6 +19,7 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
+from ..Objects import Model, PrestressingCableDefinition
 from .ExecuteCommand import ExecuteCommand
 
 
@@ -29,10 +30,37 @@ class Copier(ExecuteCommand):
 
     def create_result(self, keywords):
         """Initialize the result.
-        
+
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        self._result = type(keywords['CONCEPT'])()
+        other = keywords['CONCEPT']
+        if isinstance(other, PrestressingCableDefinition):
+            self._result = PrestressingCableDefinition(
+                other.getModel(),
+                other.getMaterialOnMesh(),
+                other.getElementaryCharacteristics())
+        else:
+            self._result = type(other)()
+
+    def post_exec(self, keywords):
+        """
+        Arguments:
+            keywords (dict): Keywords arguments of user's keywords.
+        """
+        # cabl_precont,
+        # listr8_sdaster,
+        # listis_sdaster,
+        # fonction_sdaster,
+        # nappe_sdaster,
+        # table_sdaster,
+        # maillage_sdaster,
+        # modele_sdaster,
+        # evol_elas,
+        # evol_noli,
+        # evol_ther,
+        if isinstance(self._result, Model):
+            self._result.setSupportMesh(keywords['CONCEPT'].getSupportMesh())
+
 
 COPIER = Copier.run
