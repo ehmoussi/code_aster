@@ -28,10 +28,12 @@
 #include "Modeling/PrestressingCableDefinition.h"
 #include "Supervis/ResultNaming.h"
 
-PrestressingCableDefinitionInstance::PrestressingCableDefinitionInstance( const ModelPtr& model,
-                                                                          const MaterialOnMeshPtr& mater,
-                                                                          const ElementaryCharacteristicsPtr& cara ):
-    DataStructure( ResultNaming::getNewResultName(), 8, "CABL_PRECONT" ),
+PrestressingCableDefinitionInstance::PrestressingCableDefinitionInstance(
+        const std::string jeveuxName,
+        const ModelPtr& model,
+        const MaterialOnMeshPtr& mater,
+        const ElementaryCharacteristicsPtr& cara ):
+    DataStructure( jeveuxName, 8, "CABL_PRECONT" ),
     _model( model ),
     _mater( mater ),
     _cara( cara ),
@@ -41,4 +43,13 @@ PrestressingCableDefinitionInstance::PrestressingCableDefinitionInstance( const 
     _cableGL( new TableInstance( getName() + "CABLEGL    " ) ),
     _lirela( new ListOfLinearRelationsDouble( getName() + ".LIRELA    " ) ),
     _isEmpty( true )
-{};
+{}
+
+PrestressingCableDefinitionInstance::PrestressingCableDefinitionInstance(
+        const ModelPtr& model,
+        const MaterialOnMeshPtr& mater,
+        const ElementaryCharacteristicsPtr& cara ):
+    PrestressingCableDefinitionInstance::PrestressingCableDefinitionInstance(
+        ResultNaming::getNewResultName(), model, mater, cara
+    )
+{}

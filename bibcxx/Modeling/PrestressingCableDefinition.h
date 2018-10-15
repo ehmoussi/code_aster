@@ -76,6 +76,28 @@ public:
                                          const MaterialOnMeshPtr&,
                                          const ElementaryCharacteristicsPtr& );
 
+    PrestressingCableDefinitionInstance( const std::string jeveuxName,
+                                         const ModelPtr&,
+                                         const MaterialOnMeshPtr&,
+                                         const ElementaryCharacteristicsPtr& );
+
+    // Since no constructor allows to have null or empty objects,
+    // it is not necessary to check if they exist.
+    ModelPtr getModel() const
+    {
+        return _model;
+    };
+
+    MaterialOnMeshPtr getMaterialOnMesh() const
+    {
+        return _mater;
+    };
+
+    ElementaryCharacteristicsPtr getElementaryCharacteristics() const
+    {
+        return _cara;
+    };
+
     /**
      * @brief Methode permettant de savoir si l'objet est vide
      * @return true si le modele est vide

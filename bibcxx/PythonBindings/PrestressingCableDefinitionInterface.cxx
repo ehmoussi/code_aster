@@ -36,5 +36,13 @@ void exportPrestressingCableDefinitionToPython()
             &initFactoryPtr< PrestressingCableDefinitionInstance, const ModelPtr&,
                                                                   const MaterialOnMeshPtr&,
                                                                   const ElementaryCharacteristicsPtr& > ) )
+        .def( "getModel", &PrestressingCableDefinitionInstance::getModel, R"(
+Return the support Model.
+
+Returns:
+    *Model*: Model object.
+        )" )
+        .def( "getMaterialOnMesh", &PrestressingCableDefinitionInstance::getMaterialOnMesh )
+        .def( "getElementaryCharacteristics", &PrestressingCableDefinitionInstance::getElementaryCharacteristics )
     ;
 };
