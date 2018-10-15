@@ -24,6 +24,8 @@ test = code_aster.TestCase()
 
 code_aster.init()
 
+one = 1
+
 def SIYYp(x,y,z):
     a0 =  2.0 ; ax = -1.0 ; ay = -3.0 ; az =  1.0
     return (a0 + ax*x + ay*y + az*z)*1.0E+6

@@ -116,7 +116,7 @@ def build_cata_ele(self, ojb, install_path):
     try:
         #  generate the command line
         exec_pyaster(self, comm.abspath(), cwd=bldnode.abspath(),
-                     args=['--build-elem --memory=1600'])
+                     args=['--memory=1600'])
     finally: # fort.4 -> .ojb
         os.rename(after, before)
 

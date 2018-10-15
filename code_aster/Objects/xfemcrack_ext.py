@@ -31,3 +31,9 @@ from ..Utilities import injector
 
 class ExtendedXfemCrack(injector(XfemCrack), XfemCrack):
     cata_sdj = "SD.sd_xfem.sd_fiss_xfem"
+
+    def __getinitargs__(self):
+        """Returns the argument required to reinitialize a XfemCrack
+        object during unpickling.
+        """
+        return (self.getName(), self.getSupportMesh())

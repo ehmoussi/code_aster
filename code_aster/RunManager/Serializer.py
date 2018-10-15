@@ -45,7 +45,7 @@ import libaster
 
 from .. import Objects
 from ..Objects import DataStructure, ResultNaming
-from ..Supervis import ExecutionParameter, logger
+from ..Supervis import ExecutionParameter, Options, logger
 
 ARGS = '_MARK_DS_ARGS_'
 STATE = '_MARK_DS_STATE_'
@@ -184,6 +184,7 @@ class Serializer(object):
             objList = pickle.load(pick)
             lastId = int(pickle.load(pick), 16)
 
+        should_fail = ExecutionParameter().option & Options.StrictUnpickling
         pool = objList[:]
         logger.debug("Objects pool: {0}".format(pool))
         with open(self._pick_filename, "rb") as pick:
@@ -206,6 +207,8 @@ class Serializer(object):
                             raise
                         logger.debug("can not restore object: {0}\n{1}"
                                      .format(name, traceback.format_exc()))
+                        if should_fail:
+                            raise
                         continue
                     names.append(name)
                     objects.append(obj)
@@ -222,7 +225,9 @@ class Serializer(object):
             try:
                 obj = _restore(name, obj)
             except Exception:
-                logger.error("can not restore object {0} <{1}>\n{2}"
+                if should_fail:
+                    raise
+                logger.error("can not restore object: {0} <{1}>\n{2}"
                                 .format(name, obj, traceback.format_exc()))
                 continue
             self._ctxt[name] = obj
@@ -263,7 +268,7 @@ def saveObjects(level=1, delete=True):
     finally:
         del caller
 
-    if ExecutionParameter().get_option("debug"):
+    if ExecutionParameter().option & Options.Debug:
         libaster.debugJeveuxContent("Saved jeveux objects:")
 
     pickler = Serializer(context)
@@ -292,7 +297,7 @@ def loadObjects(level=1):
         logger.debug("load objects in frame: {0}".format(context['__name__']))
     finally:
         del caller
-    if ExecutionParameter().get_option("debug"):
+    if ExecutionParameter().option & Options.Debug:
         libaster.debugJeveuxContent("Reloaded jeveux objects:")
     Serializer(context).load()
 
@@ -577,8 +582,9 @@ def _filteringContext(context):
             continue
         if not isinstance(obj, numpy.ndarray) and obj in ignored:
             continue
-        if type(obj) in (types.ModuleType, types.ClassType, types.MethodType,
-                         types.FunctionType):
+        if type(obj) in (types.ModuleType, types.ClassType,
+                         types.MethodType, types.FunctionType,
+                         types.BuiltinMethodType, types.BuiltinFunctionType):
             continue
         # aster-legacy try 'dumps' before keeping the object
         ctxt[name] = obj
