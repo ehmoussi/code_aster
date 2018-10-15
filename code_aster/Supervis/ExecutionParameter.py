@@ -34,6 +34,7 @@ object.
 """
 
 import json
+import logging
 import os
 import os.path as osp
 import platform
@@ -46,6 +47,7 @@ from Utilitai.as_timer import ASTER_TIMER
 
 from ..Utilities import Singleton, convert
 from .logger import logger, setlevel
+from .options import Options
 
 
 class ExecutionParameter(object):
@@ -56,6 +58,7 @@ class ExecutionParameter(object):
 
     Attributes:
         _args (dict): Command line arguments and execution parameters.
+        _bool (int): Bitwise combination of boolean parameters.
         _catalc (*CataLoiComportement*): Object that gives access to the
             catalog of behaviors.
         _unit (*LogicalUnitFile*): Class that manages the logical units.
@@ -64,17 +67,14 @@ class ExecutionParameter(object):
     """
     __metaclass__ = Singleton
     _singleton_id = 'Supervis.ExecutionParameter'
-    _args = None
+    _args = _bool = None
+    _timer = _command_counter = None
     _catalc = _unit = _syntax = None
 
     def __init__(self):
         """Initialization of attributes"""
         self._args = {}
-        self._args['debug'] = 0
-        self._args['abort'] = 0
-        self._args['buildelem'] = 0
-        self._args['autostart'] = 0
-
+        # options also used in F90
         self._args['dbgjeveux'] = 0
         self._args['jxveri'] = 0
         self._args['sdveri'] = 0
@@ -87,13 +87,15 @@ class ExecutionParameter(object):
         self._args['maxbase'] = 0.
         self._args['numthreads'] = 0
 
+        self._args['stage_number'] = 0
+
+        # boolean (on/off) options
+        self._bool = Options.Null
+
+        # TODO probably to be removed?
         self._args['repmat'] = '.'
         self._args['repdex'] = '.'
 
-        self._args['stage_number'] = 0
-        self._args['continue'] = 0
-        self._args['deprecated'] = 0
-        self._args['use_legacy_mode'] = 0
         self._computed()
 
     def _computed(self):
@@ -121,30 +123,97 @@ class ExecutionParameter(object):
         self._args['versionD0'] = '%d.%02d.%02d' % version
         self._args['versLabel'] = aster_pkginfo.get_version_desc()
 
-        self._args['timer'] = ASTER_TIMER(format="aster")
-        self._args['command_counter'] = 0
+        self._timer = ASTER_TIMER(format="aster")
+        self._command_counter = 0
 
     def set_option(self, option, value):
-        """Set the value of an execution parameter"""
-        # Options must at least declared by __init__
-        assert option in self._args, "unknown option: {0}".format(option)
-        self._args[option] = value
+        """Set the value of an execution parameter.
 
-    def get_option(self, option, default=None):
-        """Return the value of an execution parameter.
-        @param option Name of the parameter
-        @return value of the parameter
+        Arguments:
+            option (str): Name of the parameter.
+            value (misc): Parameter value.
         """
-        logger.debug("get_option {0!r} (default: {1})".format(option, default))
+        # Options must at least be declared by __init__
+        if option in self._args:
+            self._args[option] = value
+        elif value is not None:
+            if value:
+                self.enable(Options.by_name(option))
+            else:
+                self.disable(Options.by_name(option))
+
+    def get_option(self, option):
+        """Return the value of an execution parameter. If the *option* is
+        unknown, it returns *None*.
+
+        Arguments:
+            option (str): Name of the parameter.
+
+        Returns:
+            misc: Parameter value.
+        """
+        logger.debug("get_option {0!r}".format(option))
         if option.startswith("prog:"):
             value = get_program_path(re.sub('^prog:', '', option))
+        elif option in self._args:
+            value = self._args[option]
         else:
-            value = self._args.get(option, default)
+            try:
+                value = self.option & Options.by_name(option)
+            except AttributeError:
+                value = None
         if isinstance(value, (str, unicode)):
             value = convert(value)
         logger.debug("return for {0!r}: {1} {2}"
                      .format(option, value, type(value)))
         return value
+
+    def enable(self, option):
+        """Enable a boolean option.
+
+        Arguments:
+            option (int): An 'Options' value.
+        """
+        self._bool |= option
+
+        # for options that required an action
+        if option == Options.Debug:
+            setlevel()
+        elif option == Options.ShowDeprecated:
+            # disabled by default in python2.7
+            warnings.simplefilter('default')
+
+    def disable(self, option):
+        """Disable a boolean option.
+
+        Arguments:
+            option (int): An 'Options' value.
+        """
+        self._bool = (self._bool | option) ^ option
+
+        # for options that required an action
+        if option == Options.Debug:
+            setlevel(level=logging.INFO)
+        elif option == Options.ShowDeprecated:
+            warnings.resetwarnings()
+
+    @property
+    def option(self):
+        """Attribute that holds the boolean options.
+
+        Returns:
+            int: Bitwise combination of boolean execution parameters.
+        """
+        return self._bool
+
+    @property
+    def timer(self):
+        """Attribute that holds the timer object.
+
+        Returns:
+            ASTER_TIMER: Timer object.
+        """
+        return self._timer
 
     def parse_args(self, argv=None):
         """Parse the command line arguments to set the execution parameters"""
@@ -152,11 +221,11 @@ class ExecutionParameter(object):
         # command arguments parser
         parser = ArgumentParser(description='execute a Code_Aster study',
                                 prog="Code_Aster{called by Python}")
-        parser.add_argument('-g', '--debug', action='store_const',
-            const=1, default=0,
+        parser.add_argument('-g', '--debug', dest='Debug',
+            action='store_const', const=1, default=0,
             help="add debug informations")
 
-        parser.add_argument('--abort',
+        parser.add_argument('--abort', dest='Abort',
             action='store_const', const=1, default=0,
             help="abort execution in case of error (testcase mode, by default "
                  "raise an exception)")
@@ -203,23 +272,18 @@ class ExecutionParameter(object):
         parser.add_argument('--stage_number',
             action='store', type=int, default=1, metavar='NUM',
             help="Stage number in the Study")
-        parser.add_argument('--continue',
+        parser.add_argument('--continue', dest='Continue',
             action='store_const', const=1, default=0,
             help="turn on to continue a previous execution")
-        parser.add_argument('--use_legacy_mode',
+        parser.add_argument('--use_legacy_mode', dest='UseLegacyMode',
             action='store', default=1,
             help="use (=1) or not (=0) the legacy mode for macro-commands "
                  "results. (default: 1)")
-        parser.add_argument('--deprecated',
-            action='store_const', const=1, default=0,
+        parser.add_argument('--deprecated', dest='ShowDeprecated',
+            action='store_const', const=1,
             help="turn on deprecation warnings")
 
         args, ignored = parser.parse_known_args(argv or sys.argv)
-        if args.debug:
-            setlevel()
-        if args.deprecated:
-            # disabled by default in python2.7
-            warnings.simplefilter('default')
 
         logger.debug("Ignored arguments: %r", ignored)
         logger.debug("Read options: %r", vars(args))
@@ -227,6 +291,10 @@ class ExecutionParameter(object):
         # assign parameter values
         for opt, value in vars(args).items():
             self.set_option(opt, value)
+
+        # For convenience DEBUG can be set from environment
+        if os.getenv("DEBUG") == "1":
+            self.enable(Options.Debug)
 
     def sub_tpmax(self, tsub):
         """Reduce the cpu time limit of `tsub`."""
@@ -238,8 +306,8 @@ class ExecutionParameter(object):
         Returns:
             int: Current value of the counter.
         """
-        self._args["command_counter"] += 1
-        return self._args["command_counter"]
+        self._command_counter += 1
+        return self._command_counter
 
     # register objects callable from libaster
     @property

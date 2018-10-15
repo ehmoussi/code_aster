@@ -1,4 +1,8 @@
-print 'COUCHE DEBUT INCLUDE = ', COUCHE
+def include_function(COUCHE):
 
-COUCHE = COUCHE + 1
-print 'COUCHE FIN INCLUDE = ', COUCHE
+    print 'COUCHE DEBUT INCLUDE = ', COUCHE
+
+    COUCHE = COUCHE + 1
+    print 'COUCHE FIN INCLUDE = ', COUCHE
+
+    return COUCHE

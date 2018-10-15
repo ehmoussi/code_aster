@@ -35,7 +35,9 @@ mult2 = FORMULE(NOM_PARA='INST', VALE='INST * a', a=a)
 assert mult2(2.) == 4.
 print "mult2(2.) =", mult2(2.)
 
-INCLUDE(UNITE=11)
+from fort11 import formula_def
+
+mult3, mult2inc = formula_def(mult2)
 
 assert mult3(6.) == 18.
 print "mult3(6.) =", mult3(6.)

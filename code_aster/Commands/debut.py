@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -38,7 +38,7 @@ import aster_core
 from Comportement import catalc
 
 from ..RunManager import LogicalUnitFile, Serializer, loadObjects
-from ..Supervis import CommandSyntax, ExecutionParameter, logger
+from ..Supervis import CommandSyntax, ExecutionParameter, Options, logger
 from ..Supervis.logger import setlevel
 
 from .ExecuteCommand import ExecuteCommand
@@ -70,7 +70,7 @@ class ExecutionStarter(object):
         cls.params.syntax = CommandSyntax
         aster_core.register(cls.params)
         aster.init(0)
-        if cls.params.get_option('abort'):
+        if cls.params.option & Options.Abort:
             aster.onFatalError('ABORT')
         cls._is_initialized = True
         return True
@@ -104,6 +104,25 @@ class Starter(ExecuteCommand):
         cmd._result = None
         cmd.exec_(keywords)
 
+    def exec_(self, keywords):
+        """Execute the command.
+
+        Arguments:
+            keywords (dict): User's keywords.
+        """
+        from Utilitai.Utmess import MessageLog
+
+        if keywords.get('LANG'):
+            from ..Utilities.i18n import localization
+            from ..Cata.Syntax import tr
+            translation = localization.install(keywords['LANG'])
+            tr.set_translator(translation.ugettext)
+
+        if keywords.get('IGNORE_ALARM'):
+            for idmess in keywords['IGNORE_ALARM']:
+                MessageLog.disable_alarm(idmess)
+        super(Starter, self).exec_(keywords)
+
     def _call_oper(self, syntax):
         """Call fortran operator.
 
@@ -126,14 +145,14 @@ class Restarter(Starter):
             syntax (*CommandSyntax*): Syntax description with user keywords.
         """
         if not Serializer.canRestart():
-            ExecutionStarter.params.set_option("continue", 0)
+            ExecutionStarter.params.disable(Options.Continue)
             super(Restarter, self)._call_oper(syntax)
         else:
             logger.info("restarting from a previous execution...")
             aster.poursu(syntax)
-            # 1:_call_oper, 2:exec_, 3:Restarter.run, 4:ExecuteCmd.run, 5:user
-            # 1:_call_oper, 2:exec_, 3:run_with_argv, 4:init, 5:user
-            loadObjects(level=5)
+            # 1:_call_oper, 2-3:exec_, 4:Restarter.run, 5:ExecuteCmd.run, 6:user
+            # 1:_call_oper, 2-3:exec_, 4:run_with_argv, 5:init, 6:user
+            loadObjects(level=6)
 
 
 DEBUT = Starter.run
@@ -146,16 +165,17 @@ def init(*argv, **kwargs):
 
     Arguments:
         argv (list): List of command line arguments.
+        kwargs (dict): Keywords arguments passed to 'DEBUT'/'POURSUITE'
+            + 'debug' to quickly enable debugging messages.
     """
     if not ExecutionStarter.init(argv):
         return
 
-    if 'debug' in kwargs:
-        if kwargs['debug']:
-            setlevel()
-        del kwargs['debug']
+    if kwargs.get('debug'):
+        ExecutionParameter().enable(Options.Debug)
+    kwargs.pop('debug', None)
 
-    if ExecutionStarter.params.get_option("continue"):
+    if ExecutionStarter.params.option & Options.Continue:
         Restarter.run_with_argv(**kwargs)
     else:
         Starter.run_with_argv(**kwargs)
