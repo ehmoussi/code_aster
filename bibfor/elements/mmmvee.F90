@@ -20,16 +20,17 @@ subroutine mmmvee(phasez, ndim, nne, norm, tau1,&
                   tau2, mprojt, wpg, ffe, jacobi,&
                   jeu, coefac, coefaf, lambda, coefff,&
                   dlagrc, dlagrf, dvite, rese, nrese,&
-                  vectee,mprt11,mprt21,mprt22,kappa,granglis)
+                  vectee,mprt11,mprt21,mprt22,kappa,l_large_slip)
 !
 ! person_in_charge: mickael.abbas at edf.fr
 !
 ! aslint: disable=W1504
     implicit none
+#include "asterf_types.h"
 #include "asterfort/assert.h"
     character(len=*) :: phasez
     integer :: ndim, nne
-    integer :: granglis
+aster_logical, intent(in) :: l_large_slip
     real(kind=8) :: wpg, ffe(9), jacobi
     real(kind=8) :: dlagrc, dlagrf(2), dvite(3)
     real(kind=8) :: rese(3), nrese
@@ -105,7 +106,7 @@ subroutine mmmvee(phasez, ndim, nne, norm, tau1,&
   mprt12(2,3) = mprt21(3,2)  
   mprt12(3,1) = mprt21(1,3)
   mprt12(3,2) = mprt21(2,3) 
-!  granglis = 0
+
 ! --- PROJECTION DU LAGRANGE DE FROTTEMENT SUR LE PLAN TANGENT
 !
     do  i = 1, ndim
@@ -125,7 +126,7 @@ subroutine mmmvee(phasez, ndim, nne, norm, tau1,&
     if (phasep(1:4) .eq. 'GLIS') then
         do  i = 1, ndim
             do  j = 1, ndim
-                if (granglis .eq. 1) then 
+                if (l_large_slip) then 
                    g(i,j)=kappa(1,1)*mprt11(i,j)+kappa(1,2)*mprt12(i,j)&
                     +kappa(2,1)*mprt21(i,j)+kappa(2,2)*mprt22(i,j)
                     prese(i) = g(i,j)*rese(j)/nrese+prese(i)
