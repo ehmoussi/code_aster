@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -240,23 +240,28 @@ def command_header(counter, filename, lineno):
     return ("Command #{0:0>4} from file {1!r}, line {2}:"
             .format(counter, filename, lineno))
 
-def command_result(counter, command_name, result_name):
+def command_result(counter, command_name, result):
     """Return the command footer.
 
     Arguments:
         counter (int): Number of the command.
         command_name (str): Command name.
-        result_name (str): Name of the result of the command.
+        result (DataStructure|str|list[str]): Result object or name(s) of the
+            result(s) of the command.
 
     Returns:
         str: String representation.
     """
-    if isinstance(result_name, str):
-        show_name = decorate_name(result_name)
+    show_type = ""
+    if hasattr(result, "getName"):
+        show_name = decorate_name(result.getName().strip())
+        show_type = " of type <{0}>".format(type(result).__name__)
+    elif isinstance(result, str):
+        show_name = decorate_name(result)
     else:
-        show_name = str(result_name)
-    return "\nResult of command #{0:0>4} ({1}): {2}".format(
-        counter, command_name, show_name)
+        show_name = str(result)
+    return "\nResult of command #{0:0>4} ({1}): {2}{3}".format(
+        counter, command_name, show_name, show_type)
 
 def command_text(command_name, keywords, result="", limit=0):
     """Return a text representation of a command.

@@ -175,7 +175,7 @@ class ExecuteCommand(object):
                 else:
                     self._visitSyntax(value)
         elif type(toVisit) in (dict, _F):
-            for key, value in toVisit.iteritems():
+            for value in toVisit.itervalues():
                 self._visitSyntax(value)
         elif isinstance(toVisit, DataStructure):
             self._result.addReference(toVisit)
@@ -221,7 +221,7 @@ class ExecuteCommand(object):
         """Print an echo of the result of the command."""
         if self._result and type(self._result) is not int:
             logger.info(command_result(self._counter, self.name,
-                                       self._result.getName()))
+                                       self._result))
         self._print_timer()
 
     def _print_timer(self):
@@ -297,8 +297,7 @@ class ExecuteCommand(object):
             the result.
 
         Arguments:
-            keywords (dict): Keywords arguments of user's keywords, changed
-                in place.
+            keywords (dict): Keywords arguments of user's keywords.
         """
 
     def _result_name(self):
@@ -425,7 +424,7 @@ class ExecuteMacro(ExecuteCommand):
         """Print an echo of the result of the command."""
         if not self._sdprods and self._result:
             logger.info(command_result(self._counter, self.name,
-                                       self._result.getName()))
+                                       self._result))
         if self._result_names:
             names = []
             for name in self._result_names:
