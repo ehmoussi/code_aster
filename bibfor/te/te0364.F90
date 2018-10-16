@@ -15,7 +15,6 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
 ! person_in_charge: ayaovi-dzifa.kudawoo at edf.fr
 !
 subroutine te0364(option, nomte)
@@ -31,6 +30,7 @@ implicit none
 #include "asterfort/mmGetAlgo.h"
 #include "asterfort/mmGetCoefficients.h"
 #include "asterfort/mmGetProjection.h"
+#include "asterfort/mmGetStatus.h"
 #include "asterfort/mmmpha.h"
 #include "asterfort/mmmsta.h"
 #include "asterfort/mmnsta.h"
@@ -53,13 +53,13 @@ character(len=16), intent(in) :: option, nomte
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: jpcf
     integer :: i, j, ij, jmatt
     integer :: nne, nnm, nnl
     integer :: nddl, ndim, nbcps, nbdm
     integer :: iresof, iresog, ialgoc, ialgof
     integer :: count_consistency
     integer :: ndexfr
+    integer :: indco, indco_prev, indadhe_prev, indadhe2_prev
     character(len=8) :: typmae, typmam
     character(len=9) :: phasep
     character(len=9) :: phasep_prev
@@ -70,8 +70,6 @@ character(len=16), intent(in) :: option, nomte
     aster_logical :: debug = .false.
     aster_logical :: lcont_prev = .false., ladhe_prev = .false.
     aster_logical :: l_large_slip=ASTER_FALSE
-    aster_logical :: lpenac_prev, lpenaf_prev
-    aster_logical :: l_previous_cont, l_previous_frot
     real(kind=8) :: coefff = 0.0
     real(kind=8) :: lambda = 0.0, lambds = 0.0
     real(kind=8) :: lambda_prev = 0.0 , lambds_prev =0.0
@@ -110,7 +108,6 @@ character(len=16), intent(in) :: option, nomte
     real(kind=8) :: mprt21_prev(3, 3)=0.0, mprt22_prev(3, 3)=0.0
     real(kind=8) :: kappa_prev(2, 2)=0., h_prev(2, 2)=0.0
     real(kind=8) :: vech1_prev(3)=0.0, vech2_prev(3)=0.0
-    real(kind=8) :: jeusup_prev=0.0
 !
     real(kind=8) :: mmat_tmp(81, 81)
     real(kind=8) :: mmat(81, 81)
@@ -199,11 +196,11 @@ character(len=16), intent(in) :: option, nomte
     debug = .false.
 !
     loptf           = option.eq.'RIGI_FROT'
-    call jevech('PCONFR', 'L', jpcf)
-    l_previous_cont = (nint(zr(jpcf-1+30)) .eq. 1 )
-    l_previous_frot = (nint(zr(jpcf-1+44)) .eq. 1 )
-    if (option .eq. 'RIGI_CONT') l_previous = l_previous_cont
-    if (option .eq. 'RIGI_FROT') l_previous = l_previous_frot
+!
+! - Get status
+!
+    call mmGetStatus(option    ,&
+                     l_previous, indco, indco_prev, indadhe_prev, indadhe2_prev)
 !
 ! - Get coefficients
 !
@@ -249,13 +246,12 @@ character(len=16), intent(in) :: option, nomte
                 mprt11, mprt12, mprt21,&
                 mprt22,taujeu1, taujeu2, &
               dnepmait1,dnepmait2, .false._1,l_large_slip)
-                
     if (l_previous) then
         call mmtppe(typmae, typmam, ndim, nne, nnm,&
                     nnl, nbdm, iresog, laxis, &
                     xpc           , ypc      , xpr   , ypr     ,&
                     tau1_prev     , tau2_prev,&
-                    jeusup_prev, ffe, ffm, dffm,ddffm, ffl,&
+                    jeusup, ffe, ffm, dffm,ddffm, ffl,&
                     jacobi, jeu_prev, djeut_prev, dlagrc_prev,&
                     dlagrf_prev, norm_prev, mprojn_prev,&
                     mprojt_prev, mprt1n_prev, mprt2n_prev, mprnt1_prev, mprnt2_prev,&
@@ -263,7 +259,6 @@ character(len=16), intent(in) :: option, nomte
                     mprt11_prev, mprt12_prev, mprt21_prev,&
                     mprt22_prev,taujeu1_prev, taujeu2_prev, &
               dnepmait1_prev,dnepmait2_prev, .true._1,l_large_slip)  
-                          
     endif
 !
 !  --- PREPARATION DES DONNEES - CHOIX DU LAGRANGIEN DE CONTACT
@@ -278,24 +273,21 @@ character(len=16), intent(in) :: option, nomte
     call mmmsta(ndim, leltf, lpenaf, loptf, djeut,&
                 dlagrf, coefaf, tau1, tau2, lcont,&
                 ladhe, lambda, rese, nrese, .false._1)
+    if (l_previous) then
+        call mmmsta(ndim, leltf, lpenaf, loptf, djeut_prev,&
+                    dlagrf_prev, coefaf_prev, tau1_prev, tau2_prev, lcont_prev,&
+                    ladhe_prev, lambda_prev, rese_prev, nrese_prev, l_previous)
+    endif
 !
 ! - Select phase to compute
 !
-    call mmmpha(loptf, lcont, ladhe, ndexfr, lpenac,&
-                lpenaf, phasep)
-
+    call mmmpha(loptf , lpenac, lpenaf,&
+                lcont , ladhe , &
+                phasep)
     if (l_previous) then
-!
-! ----- Statuts  : previous
-!
-        call mmmsta(ndim, leltf, lpenaf_prev, loptf, djeut_prev,&
-                    dlagrf_prev, coefaf_prev, tau1_prev, tau2_prev, lcont_prev,&
-                    ladhe_prev, lambda_prev, rese_prev, nrese_prev, l_previous)
-!
-! ----- PHASE DE CALCUL : previous
-!
-        call mmmpha(loptf, lcont_prev, ladhe_prev, ndexfr, lpenac_prev,&
-                    lpenaf_prev, phasep_prev)
+        call mmmpha(loptf      , lpenac    , lpenaf,&
+                    lcont_prev , ladhe_prev,&
+                    phasep_prev)
     endif
 !
 ! - Large sliding hypothesis

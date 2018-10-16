@@ -15,7 +15,6 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
 ! person_in_charge: ayaovi-dzifa.kudawoo at edf.fr
 !
 subroutine te0365(option, nomte)
@@ -31,10 +30,11 @@ implicit none
 #include "asterfort/mmGetAlgo.h"
 #include "asterfort/mmGetCoefficients.h"
 #include "asterfort/mmGetProjection.h"
+#include "asterfort/mmGetStatus.h"
 #include "asterfort/mmmpha.h"
+#include "asterfort/mmmsta.h"
 #include "asterfort/mmnsta.h"
 #include "asterfort/mngliss.h"
-#include "asterfort/mmmsta.h"
 #include "asterfort/mmmvas.h"
 #include "asterfort/mmmvex.h"
 #include "asterfort/mmvape.h"
@@ -51,7 +51,6 @@ character(len=16), intent(in) :: option, nomte
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: jpcf
     integer :: iddl, jvect
     integer :: nne, nnm, nnl
     integer :: nddl, ndim, nbcps, nbdm
@@ -62,7 +61,7 @@ character(len=16), intent(in) :: option, nomte
     aster_logical :: laxis = .false. , leltf = .false.
     aster_logical :: lpenac = .false. , lpenaf = .false.
     aster_logical :: loptf = .false. , ldyna = .false., lcont = .false., ladhe = .false.
-    aster_logical :: l_previous_cont = .false. , l_previous_frot = .false. , l_previous = .false.
+    aster_logical :: l_previous = .false.
     aster_logical :: debug = .false.
     real(kind=8) :: coefff = 0.0
     real(kind=8) :: lambda = 0.0, lambds = 0.0
@@ -103,11 +102,6 @@ character(len=16), intent(in) :: option, nomte
 
     debug = ASTER_FALSE
     loptf = option.eq.'CHAR_MECA_FROT'
-    call jevech('PCONFR', 'L', jpcf)
-    l_previous_cont = (nint(zr(jpcf-1+30)) .eq. 1 )
-    l_previous_frot = (nint(zr(jpcf-1+44)) .eq. 1 ) .and. .false.
-    if (option .eq. 'RIGI_CONT') l_previous = l_previous_cont
-    if (option .eq. 'RIGI_FROT') l_previous = l_previous_frot
 !
 ! - Get coefficients
 !
@@ -161,8 +155,9 @@ character(len=16), intent(in) :: option, nomte
 !
 ! - Select phase to compute
 !
-    call mmmpha(loptf, lcont, ladhe, ndexfr, lpenac,&
-                lpenaf, phasep)
+    call mmmpha(loptf, lpenac, lpenaf,&
+                lcont, ladhe ,&
+                phasep)
 !
 ! - Large sliding hypothesis
 !

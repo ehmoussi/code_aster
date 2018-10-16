@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,54 +15,53 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine mmmpha(loptf, lcont, ladhe, ndexfr, lpenac,&
-                  lpenaf, phasep)
-!
 ! person_in_charge: mickael.abbas at edf.fr
 !
-    implicit none
+subroutine mmmpha(loptf , lpenac, lpenaf,&
+                  lcont , ladhe , &
+                  phasep)
+!
+implicit none
+!
 #include "asterf_types.h"
 #include "asterfort/assert.h"
-    aster_logical :: lpenaf, lpenac
-    aster_logical :: loptf, lcont, ladhe
-    integer :: ndexfr
-    character(len=9) :: phasep
 !
-! ----------------------------------------------------------------------
+aster_logical, intent(in) :: loptf, lpenaf, lpenac
+aster_logical, intent(in) :: lcont, ladhe
+character(len=9), intent(out) :: phasep
 !
-! ROUTINE CONTACT (METHODE CONTINUE - CALCUL)
+! --------------------------------------------------------------------------------------------------
 !
-! PREPARATION DES CALCULS - PHASE DE CALCUL
+! Contact - Elementary computations
 !
-! ----------------------------------------------------------------------
+! Select phase to compute
 !
+! --------------------------------------------------------------------------------------------------
 !
-! IN  LOPTF  : .TRUE. SI OPTION DE FROTTEMENT
-! IN  LCONT  : .TRUE. SI CONTACT (SU=1)
-! IN  LADHE  : .TRUE. SI ADHERENCE
-! IN  LPENAC : .TRUE. SI CONTACT PENALISE
-! IN  LPENAF : .TRUE. SI FROTTEMENT PENALISE
-! IN  NDEXFR : ENTIER CODE POUR EXCLUSION DIRECTION DE FROTTEMENT
-! OUT PHASEP : 'SANS' - PAS DE CONTACT
-!              'CONT' - CONTACT
-!              'ADHE' - CONTACT ADHERENT
-!              'GLIS' - CONTACT GLISSANT
-!              'SANS_PENA' - PENALISATION - PAS DE CONTACT
-!              'CONT_PENA' - PENALISATION - CONTACT
-!              'ADHE_PENA' - PENALISATION - CONTACT ADHERENT
-!              'GLIS_PENA' - PENALISATION - CONTACT GLISSANT
+! In  loptf            : flag if compute RIGI_FROT
+! In  lcont            : .true. if contact
+! In  ladhe            : .true. if stick
+! In  lpenac           : flag for penalized contact
+! In  lpenaf           : flag for penalized friction
+! Out phasep           : 'SANS' - No contact
+!                        'CONT' - Contact
+!                        'ADHE' - Stick
+!                        'GLIS' - Slip
+!                        'SANS_PENA' - PENALISATION - No contact
+!                        'CONT_PENA' - PENALISATION - Contact
+!                        'ADHE_PENA' - PENALISATION - Stick
+!                        'GLIS_PENA' - PENALISATION - Slip
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
     character(len=4) :: phase
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
-    phase = ' '
+    phase  = ' '
     phasep = ' '
 !
-! --- PHASE PRINCIPALE
+! - Main phase
 !
     if (loptf) then
         if (lcont) then
@@ -75,7 +74,6 @@ subroutine mmmpha(loptf, lcont, ladhe, ndexfr, lpenac,&
             phase = 'SANS'
         endif
     else
-        ndexfr = 0
         if (lcont) then
             phase = 'CONT'
         else
@@ -83,7 +81,7 @@ subroutine mmmpha(loptf, lcont, ladhe, ndexfr, lpenac,&
         endif
     endif
 !
-! --- PRISE EN COMPTE DE LA PENALISATION
+! - Phase for penalization
 !
     if (phase .eq. 'SANS') then
         if (lpenac .or. lpenaf) then
@@ -104,7 +102,7 @@ subroutine mmmpha(loptf, lcont, ladhe, ndexfr, lpenac,&
             phasep = phase(1:4)
         endif
     else
-        ASSERT(.false.)
+        ASSERT(ASTER_FALSE)
     endif
 !
 end subroutine
