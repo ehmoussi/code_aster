@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,22 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 #include "asterf_types.h"
 !
 interface
-    subroutine mmmlcf(coefff, coefac, coefaf, lpenac, lpenaf,&
-                      iresof, iresog, lambds, l_previous)
-        real(kind=8) :: coefff
-        real(kind=8) :: coefac
-        real(kind=8) :: coefaf
-        aster_logical :: lpenac
-        aster_logical :: lpenaf
-        aster_logical :: l_previous
-        integer :: iresof
-        integer :: iresog
-        real(kind=8) :: lambds
-    end subroutine mmmlcf
+    subroutine mmGetCoefficients(coefff, coefac, coefaf, alpha_cont)
+        real(kind=8), intent(out) :: coefff, coefac, coefaf
+        real(kind=8), intent(out) :: alpha_cont
+    end subroutine mmGetCoefficients
 end interface
