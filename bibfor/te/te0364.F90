@@ -203,7 +203,7 @@ character(len=16), intent(in) :: option, nomte
     loptf           = option.eq.'RIGI_FROT'
     call jevech('PCONFR', 'L', jpcf)
     l_previous_cont = (nint(zr(jpcf-1+30)) .eq. 1 )
-    l_previous_frot = (nint(zr(jpcf-1+44)) .eq. 1 )  
+    l_previous_frot = (nint(zr(jpcf-1+44)) .eq. 1 )
     if (option .eq. 'RIGI_CONT') l_previous = l_previous_cont
     if (option .eq. 'RIGI_FROT') l_previous = l_previous_frot
     l_large_slip = nint(zr(jpcf-1+48)) .eq. 1
@@ -243,9 +243,10 @@ character(len=16), intent(in) :: option, nomte
     call mmtppe(typmae, typmam, ndim, nne, nnm,&
                 nnl, nbdm, iresog, laxis, &
                 xpc           , ypc      , xpr   , ypr     ,&
+                tau1          , tau2     ,&
                 jeusup, ffe, ffm, dffm,ddffm, ffl,&
                 jacobi, jeu, djeut, dlagrc,&
-                dlagrf, norm, tau1, tau2, mprojn,&
+                dlagrf, norm, mprojn,&
                 mprojt, mprt1n, mprt2n, mprnt1, mprnt2,&
                 kappa, h, hah, vech1, vech2,&
                 mprt11, mprt12, mprt21,&
@@ -256,9 +257,10 @@ character(len=16), intent(in) :: option, nomte
         call mmtppe(typmae, typmam, ndim, nne, nnm,&
                     nnl, nbdm, iresog_prev, laxis, &
                     xpc           , ypc      , xpr   , ypr     ,&
+                    tau1_prev     , tau2_prev,&
                     jeusup_prev, ffe, ffm, dffm,ddffm, ffl,&
                     jacobi, jeu_prev, djeut_prev, dlagrc_prev,&
-                    dlagrf_prev, norm_prev, tau1_prev, tau2_prev, mprojn_prev,&
+                    dlagrf_prev, norm_prev, mprojn_prev,&
                     mprojt_prev, mprt1n_prev, mprt2n_prev, mprnt1_prev, mprnt2_prev,&
                     kappa_prev, h_prev, hah_prev, vech1_prev, vech2_prev,&
                     mprt11_prev, mprt12_prev, mprt21_prev,&
@@ -270,12 +272,12 @@ character(len=16), intent(in) :: option, nomte
 !  --- PREPARATION DES DONNEES - CHOIX DU LAGRANGIEN DE CONTACT
 !
     call mmlagc(lambds, dlagrc, iresof, lambda)
-    if (l_previous) then 
+    if (l_previous) then
         call mmlagc(lambds_prev, dlagrc_prev, iresof_prev, lambda_prev)
     endif
 !
 ! - Compute state of contact and friction
-!                              
+!
     call mmmsta(ndim, leltf, lpenaf, loptf, djeut,&
                 dlagrf, coefaf, tau1, tau2, lcont,&
                 ladhe, lambda, rese, nrese, .false._1)
@@ -284,7 +286,7 @@ character(len=16), intent(in) :: option, nomte
 !
     call mmmpha(loptf, lcont, ladhe, ndexfr, lpenac,&
                 lpenaf, phasep)
-                
+
     if (l_previous) then
 !
 ! ----- Statuts  : previous

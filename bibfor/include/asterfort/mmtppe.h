@@ -21,9 +21,10 @@ interface
     subroutine mmtppe(typmae,typmam,ndim  ,nne   ,nnm   , &
                       nnl   ,nbdm  ,iresog,laxis ,&
                       xpc        , ypc      , xpr     , ypr     ,&
+                      tau1  ,tau2  ,&
                       jeusup,ffe   ,ffm   ,dffm  ,ddffm,ffl   , &
                       jacobi,jeu   ,djeut ,dlagrc, &
-                      dlagrf,norm  ,tau1  ,tau2  ,mprojn, &
+                      dlagrf,norm  ,mprojn, &
                      mprojt, mprt1n, mprt2n, mprnt1, mprnt2,&
                      kappa ,h     , hah, vech1 ,vech2 , &
               mprt11,mprt12, mprt21, &
@@ -54,11 +55,9 @@ interface
         real(kind=8) :: dlagrc
         real(kind=8) :: dlagrf(2)
         real(kind=8) :: norm(3)
-        real(kind=8) :: tau1(3)
-        real(kind=8) :: tau2(3)
-        
+        real(kind=8), intent(in) :: tau1(3), tau2(3)
         real(kind=8) :: dnepmait1 ,dnepmait2 ,taujeu1,taujeu2
-    
+
         real(kind=8) :: mprojn(3, 3)
         real(kind=8) :: mprojt(3, 3)
         real(kind=8), intent(out) :: mprt11(3, 3), mprt12(3, 3), mprt21(3, 3), mprt22(3, 3)
@@ -68,9 +67,7 @@ interface
     real(kind=8) :: h(2,2), hah(2,2)
     
     real(kind=8) :: vech1(3)
-    real(kind=8) :: vech2(3)            
-    
-    
-    
+    real(kind=8) :: vech2(3)
+
     end subroutine mmtppe
 end interface

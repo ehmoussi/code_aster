@@ -22,9 +22,10 @@ subroutine mmtppe(typmae, typmam,&
                   ndim, nne, nnm, nnl, nbdm,&
                   iresog, laxis, &
                   xpc        , ypc      , xpr     , ypr     ,&
+                  tau1       , tau2     ,&                  
                   jeusup, ffe, ffm, dffm, ddffm, ffl,&
                   jacobi, jeu, djeut, dlagrc,&
-                  dlagrf, norm, tau1, tau2, mprojn,&
+                  dlagrf, norm, mprojn,&
                   mprojt, mprt1n, mprt2n, mprnt1, mprnt2,&
                   kappa, h, hah, vech1, vech2,&
                   mprt11, mprt12, mprt21, mprt22,&
@@ -54,11 +55,12 @@ aster_logical :: laxis, l_previous
 real(kind=8) :: jeusup
 real(kind=8) :: jacobi
 real(kind=8), intent(in) :: xpc, ypc, xpr, ypr
+real(kind=8), intent(in) :: tau1(3), tau2(3)
 real(kind=8) :: dlagrc, dlagrf(2)
 real(kind=8) :: jeu, djeu(3), djeut(3)
 real(kind=8) :: ffe(9), ffm(9), ffl(9)
 real(kind=8) :: dffm(2, 9)
-real(kind=8) :: norm(3), tau1(3), tau2(3)
+real(kind=8) :: norm(3)
 real(kind=8) :: mprojn(3, 3), mprojt(3, 3)
 real(kind=8), intent(out) :: mprt11(3, 3), mprt12(3, 3), mprt21(3, 3), mprt22(3, 3)
 real(kind=8), intent(out) :: mprt1n(3, 3), mprt2n(3, 3), mprnt1(3, 3), mprnt2(3, 3)
@@ -157,28 +159,7 @@ real(kind=8) :: dnepmait1, dnepmait2, taujeu1, taujeu2
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call jevech('PCONFR', 'L', jpcf)
-    tau1(1) = zr(jpcf-1+5)
-    tau1(2) = zr(jpcf-1+6)
-    tau1(3) = zr(jpcf-1+7)
-    tau2(1) = zr(jpcf-1+8)
-    tau2(2) = zr(jpcf-1+9)
-    tau2(3) = zr(jpcf-1+10)
-!
-! TRAITEMENT CYCLAGE : ON REMPLACE LES VALEURS DE JEUX et DE NORMALES
-!                      POUR AVOIR UNE MATRICE CONSISTANTE
-!
-    if (l_previous) then
-        tau1(1) = zr(jpcf-1+32)
-        tau1(2) = zr(jpcf-1+33)
-        tau1(3) = zr(jpcf-1+34)
-        tau2(1) = zr(jpcf-1+35)
-        tau2(2) = zr(jpcf-1+36)
-        tau2(3) = zr(jpcf-1+37)
-    endif
-!
-! --- RECUPERATION DE LA GEOMETRIE ET DES CHAMPS DE DEPLACEMENT
-!
+    call jevech('PCONFR' , 'L', jpcf)
     call jevech('PGEOMER', 'L', jgeom)
     call jevech('PDEPL_P', 'L', jdepde)
     call jevech('PDEPL_M', 'L', jdepm)

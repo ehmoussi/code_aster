@@ -24,8 +24,9 @@ interface
     subroutine mmvppe(typmae, typmam, iresog, ndim, nne,&
                   nnm, nnl, nbdm, laxis, ldyna,&
                   xpc        , ypc      , xpr     , ypr     ,&
+                  tau1       , tau2,&
                   jeusup, ffe, ffm, dffm, ffl,&
-                  norm, tau1, tau2, mprojt, jacobi,&
+                  norm, mprojt, jacobi,&
                   dlagrc, dlagrf, jeu, djeu,&
                   djeut, mprojn,&
                   mprt1n, mprt2n, mprnt1, mprnt2,&
@@ -51,8 +52,7 @@ interface
         real(kind=8) :: dffm(2, 9)
         real(kind=8) :: ffl(9)
         real(kind=8) :: norm(3)
-        real(kind=8) :: tau1(3)
-        real(kind=8) :: tau2(3)
+        real(kind=8), intent(in) :: tau1(3), tau2(3)
         real(kind=8) :: dnepmait1 ,dnepmait2 ,taujeu1,taujeu2
         real(kind=8) :: mprojt(3, 3)
         real(kind=8) :: jacobi

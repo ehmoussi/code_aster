@@ -23,8 +23,9 @@ subroutine mmvppe(typmae, typmam,&
                   iresog, ndim, nne,&
                   nnm, nnl, nbdm, laxis, ldyna,&
                   xpc        , ypc      , xpr     , ypr     ,&
+                  tau1       , tau2     ,&
                   jeusup, ffe, ffm, dffm, ffl,&
-                  norm, tau1, tau2, mprojt, jacobi,&
+                  norm, mprojt, jacobi,&
                   dlagrc, dlagrf, jeu, djeu,&
                   djeut, mprojn,&
                   mprt1n, mprt2n, mprnt1, mprnt2,&
@@ -52,7 +53,7 @@ character(len=8) :: typmae, typmam
 integer :: iresog
 integer :: ndim, nne, nnm, nnl, nbdm
 real(kind=8) :: ffe(9), ffm(9), ffl(9)
-real(kind=8) :: tau1(3), tau2(3)
+real(kind=8), intent(in) :: tau1(3), tau2(3)
 real(kind=8) :: norm(3)
 real(kind=8) :: mprojt(3, 3)
 aster_logical :: laxis, ldyna, l_previous
@@ -130,28 +131,10 @@ real(kind=8) :: vech1(3), vech2(3)
 ! ----------------------------------------------------------------------
 !
     call jevech('PCONFR', 'L', jpcf)
-    tau1(1) = zr(jpcf-1+5)
-    tau1(2) = zr(jpcf-1+6)
-    tau1(3) = zr(jpcf-1+7)
-    tau2(1) = zr(jpcf-1+8)
-    tau2(2) = zr(jpcf-1+9)
-    tau2(3) = zr(jpcf-1+10)
     djeut = 0.
     ddeple = 0.
     ddeplm = 0.
     ddepmam = 0.
-!
-! TRAITEMENT CYCLAGE : ON REMPLACE LES VALEURS DE JEUX et DE NORMALES
-!                      POUR AVOIR UNE MATRICE CONSISTANTE
-!
-    if (l_previous) then
-        tau1(1) = zr(jpcf-1+32)
-        tau1(2) = zr(jpcf-1+33)
-        tau1(3) = zr(jpcf-1+34)
-        tau2(1) = zr(jpcf-1+35)
-        tau2(2) = zr(jpcf-1+36)
-        tau2(3) = zr(jpcf-1+37)
-    endif
 !
 ! --- RECUPERATION DE LA GEOMETRIE ET DES CHAMPS DE DEPLACEMENT
 !
