@@ -102,7 +102,6 @@ character(len=16), intent(in) :: option, nomte
     vectmm(:) = 0.d0
 
     debug = ASTER_FALSE
-    l_large_slip = ASTER_FALSE
     loptf = option.eq.'CHAR_MECA_FROT'
     call jevech('PCONFR', 'L', jpcf)
     l_previous_cont = (nint(zr(jpcf-1+30)) .eq. 1 )
@@ -140,8 +139,9 @@ character(len=16), intent(in) :: option, nomte
     call mmvppe(typmae, typmam, iresog, ndim, nne,&
                 nnm, nnl, nbdm, laxis, ldyna,&
                 xpc        , ypc      , xpr     , ypr     ,&
+                tau1, tau2,&
                 jeusup, ffe, ffm, dffm, ffl,&
-                norm, tau1, tau2, mprojt, jacobi,&
+                norm, mprojt, jacobi,&
                 dlagrc, dlagrf, jeu, djeu,&
                 djeut, mprojn,&
                 mprt1n, mprt2n, mprnt1, mprnt2,&
