@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,15 +15,13 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine mmmcpt(noma, ds_measure, ds_contact, cnsinr)
+    subroutine mmmcpt(mesh, ds_measure, ds_contact, cnsinr)
         use NonLin_Datastructure_type
-        character(len=8) :: noma
+        character(len=8), intent(in) :: mesh
         type(NL_DS_Measure), intent(inout) :: ds_measure
+        character(len=19), intent(in) :: cnsinr
         type(NL_DS_Contact), intent(in) :: ds_contact
-        character(len=19) :: cnsinr
     end subroutine mmmcpt
 end interface

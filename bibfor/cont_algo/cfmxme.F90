@@ -57,7 +57,7 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
 !
     integer :: ifm, niv
     integer :: nt_cont_poin
-    aster_logical :: l_dyna, l_inte_node
+    aster_logical :: l_dyna, l_cont_node
     character(len=24) :: sdcont_etatct
     real(kind=8), pointer :: v_sdcont_etatct(:) => null()
     character(len=24) :: sdcont_tabfin
@@ -80,6 +80,7 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
     nt_cont_poin = cfdisi(ds_contact%sdcont_defi,'NTPC')
     l_pena_cont  = cfdisl(ds_contact%sdcont_defi,'EXIS_PENA')
     l_fric       = cfdisl(ds_contact%sdcont_defi,'FROTTEMENT')
+    l_cont_node  = ds_contact%l_cont_node
     l_dyna       = ndynlo(sddyna,'DYNAMIQUE')
 !
 ! - Create datastructure for general informations about contact
@@ -122,8 +123,7 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
 !
 ! - Warning if not node integration (=> no CONT_NOEU)
 !
-    l_inte_node = cfdisl(ds_contact%sdcont_defi,'ALL_INTEG_NOEUD')
-    if (.not.l_inte_node) then
+    if (.not.l_cont_node) then
         call utmess('A', 'CONTACT3_16')
     endif
 !

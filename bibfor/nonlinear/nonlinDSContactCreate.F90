@@ -55,17 +55,24 @@ type(NL_DS_Contact), intent(out) :: ds_contact
 !
 ! - Main parameters
 !
+! - Flag for contact (CONTACT keyword is present)
     ds_contact%l_contact   = ASTER_FALSE
+! - Flag for contact XFEM/CONTINUE/DISCRET
     ds_contact%l_meca_cont = ASTER_FALSE
+! - Flag for contact LIAISON_UNIL
     ds_contact%l_meca_unil = ASTER_FALSE
-    ds_contact%sdcont      = ' '
+! - Flag for contact CONTINUE (STANDARD/PENALISATION)
     ds_contact%l_form_cont = ASTER_FALSE
+! - Flag for contact DISCRET
     ds_contact%l_form_disc = ASTER_FALSE
+! - Flag for contact XFEM
     ds_contact%l_form_xfem = ASTER_FALSE
+! - Flag for contact CONTINUE (LAC)
     ds_contact%l_form_lac  = ASTER_FALSE
 !
 ! - Name of datastructures
 !
+    ds_contact%sdcont      = ' '
     ds_contact%sdcont_defi = '&&OP0070.DEFIC'
     ds_contact%sdunil_defi = '&&OP0070.DEFIU'
     ds_contact%sdcont_solv = '&&OP0070.RESOC'
@@ -166,5 +173,9 @@ type(NL_DS_Contact), intent(out) :: ds_contact
     ds_contact%l_cneltf     = ASTER_FALSE
     ds_contact%cneltf       = '&&OP0070.CNELTF'
     ds_contact%veeltf       = '&&OP0070.VEELTF'
+! - Flag if create CONT_NOEU
+    ds_contact%l_cont_node  = ASTER_FALSE
+! - Flag if create CONT_ELEM
+    ds_contact%l_cont_elem  = ASTER_FALSE
 !
 end subroutine
