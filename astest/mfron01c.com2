@@ -1,0 +1,301 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+POURSUITE(CODE=_F(NIV_PUB_WEB='INTERNET',),PAR_LOT='OUI');
+#Discretisation du calcul
+Ncal = ncal
+
+RESU=[None]*Ncal
+
+# liste de calcul, doit etre divisible par 4 (demi-cycles)
+#npas_par_cycle1=360
+npas_par_cycle1=48
+
+temps_ca=DEFI_LIST_REEL(DEBUT=0,INTERVALLE=_F(JUSQU_A=tmax,NOMBRE=npas_par_cycle1*nbcycle1*nbcycle2),);
+
+deflist=DEFI_LIST_INST(INFO=1,METHODE='MANUEL',
+                         DEFI_LIST=_F(LIST_INST=temps_ca,),
+                         ECHEC=_F(SUBD_NIVEAU=3,
+                                  SUBD_PAS=6,
+                                  SUBD_PAS_MINI=1.E-08,),
+                         );
+
+
+# pour les courbes
+courbes=[]
+courbe1=[]
+courbe2=[]
+courbe3=[]
+courbeder1=[]
+courbeder2=[]
+courbeder3=[]
+
+sigxx=[None]*Ncal
+sigxy=[None]*Ncal
+sixy3=[None]*Ncal
+epsxx=[None]*Ncal
+epsxy=[None]*Ncal
+gamm3=[None]*Ncal
+sixxd=[None]*Ncal
+sixyd=[None]*Ncal
+s3xyd=[None]*Ncal
+sixxm=[None]*Ncal
+sixym=[None]*Ncal
+tdebder=tmax-pas*npas0*nbcycle1
+tfinder=tmax
+tdern=[None]*Ncal
+tmaxx=[None]*Ncal
+tmixx=[None]*Ncal
+tmaxy=[None]*Ncal
+tmixy=[None]*Ncal
+
+for i in range(Ncal):
+   RESU[i]=SIMU_POINT_MAT(INFO=1,
+                   COMPORTEMENT=compor[i],
+                   NEWTON=_F(MATRICE='TANGENTE',
+                             REAC_ITER=1,),
+                   CONVERGENCE=_F(ITER_GLOB_MAXI=100,),
+                   MATER      = ACIER[typcal[i][2]],
+                   INCREMENT=_F(LIST_INST=deflist,),
+                   EPSI_IMPOSE=_F(EPXX=eps_xx,
+                                  EPXY=eps_xy,
+                                   ),
+                   NB_VARI_TABLE=2,
+                        );
+
+   DEFI_FICHIER(UNITE = 39,FICHIER = 'REPE_OUT/resu_'+str(i));
+   IMPR_TABLE(UNITE=39,TABLE=RESU[i],NOM_PARA=('INST','EPXX','EPXY','SIXX','SIXY'))
+   DEFI_FICHIER(UNITE = 39,ACTION = 'LIBERER');
+
+   sigxx[i]=RECU_FONCTION(TABLE=RESU[i],PARA_X='INST',PARA_Y='SIXX',INTERPOL='LIN');
+   sigxy[i]=RECU_FONCTION(TABLE=RESU[i],PARA_X='INST',PARA_Y='SIXY',INTERPOL='LIN');
+   sixy3[i]=CALC_FONCTION(COMB=_F(FONCTION=sigxy[i],COEF=sqrt(3.0),) )
+   epsxx[i]=RECU_FONCTION(TABLE=RESU[i],PARA_X='INST',PARA_Y='EPXX',INTERPOL='LIN');
+   epsxy[i]=RECU_FONCTION(TABLE=RESU[i],PARA_X='INST',PARA_Y='EPXY',INTERPOL='LIN');
+   gamm3[i]=CALC_FONCTION(COMB=_F(FONCTION=epsxy[i],COEF=2./sqrt(3.0),) )
+   sixxd[i]=RECU_FONCTION(TABLE=RESU[i],PARA_X='INST',PARA_Y='SIXX',INTERPOL='LIN',
+                             FILTRE=(
+                             _F(NOM_PARA='INST',CRIT_COMP='GE',VALE=tdebder),
+                             _F(NOM_PARA='INST',CRIT_COMP='LE',VALE=tfinder),
+                             ));
+
+   sixyd[i]=RECU_FONCTION(TABLE=RESU[i],PARA_X='INST',PARA_Y='SIXY',INTERPOL='LIN',
+                             FILTRE=(
+                             _F(NOM_PARA='INST',CRIT_COMP='GE',VALE=tdebder),
+                             _F(NOM_PARA='INST',CRIT_COMP='LE',VALE=tfinder),
+                             ));
+   s3xyd[i]=CALC_FONCTION(COMB=_F(FONCTION=sixyd[i],COEF=sqrt(3.0),) )
+   tdern[i] = CALC_TABLE(TABLE=RESU[i],
+                  ACTION=(
+                          _F(OPERATION='FILTRE',
+                             CRIT_COMP='GE',VALE=tdebder,
+                             NOM_PARA='INST',),
+                          _F(OPERATION='FILTRE',
+                             CRIT_COMP='LE',VALE=tfinder,
+                             NOM_PARA='INST',),
+                             ),)
+
+   tmaxx[i] = CALC_TABLE(TABLE=tdern[i],
+                  ACTION=(
+                          _F(OPERATION='FILTRE',
+                             CRIT_COMP='MAXI',
+                             NOM_PARA='SIXX',),
+                             ),)
+   tmixx[i] = CALC_TABLE(TABLE=tdern[i],
+                  ACTION=(
+                          _F(OPERATION='FILTRE',
+                             CRIT_COMP='MINI',
+                             NOM_PARA='SIXX',),
+                             ),)
+   tmaxy[i] = CALC_TABLE(TABLE=tdern[i],
+                  ACTION=(
+                          _F(OPERATION='FILTRE',
+                             CRIT_COMP='MAXI',
+                             NOM_PARA='SIXY',),
+                             ),)
+   tmixy[i] = CALC_TABLE(TABLE=tdern[i],
+                  ACTION=(
+                          _F(OPERATION='FILTRE',
+                             CRIT_COMP='MINI',
+                             NOM_PARA='SIXY',),
+                             ),)
+
+   dico={}
+   dico['FONC_X']=sixxd[i]
+   dico['FONC_Y']=s3xyd[i]
+   dico['LEGENDE']=legende[i]
+   dico['MARQUEUR']=0
+   courbeder1.append(dico)
+
+   dico={}
+   dico['FONCTION']=sixxd[i]
+   dico['LEGENDE']=legende[i]
+   dico['MARQUEUR']=0
+   courbeder2.append(dico)
+
+   dico={}
+   dico['FONCTION']=sixyd[i]
+   dico['LEGENDE']=legende[i]
+   dico['MARQUEUR']=0
+   courbeder3.append(dico)
+
+   dico={}
+   dico['FONC_X']=sigxx[i]
+   dico['FONC_Y']=sixy3[i]
+   dico['LEGENDE']=legende[i]
+   dico['MARQUEUR']=0
+   courbes.append(dico)
+
+   dico={}
+   dico['FONCTION']=sigxx[i]
+   dico['LEGENDE']=legende[i]
+   dico['MARQUEUR']=0
+   courbe1.append(dico)
+
+   dico={}
+   dico['FONCTION']=sigxy[i]
+   dico['LEGENDE']=legende[i]
+   dico['MARQUEUR']=0
+   courbe2.append(dico)
+
+   dic3={}
+   dic3['FONCTION']=epsxx[i]
+   dic3['LEGENDE']=legende[i]
+   courbe3.append(dic3)
+   dic3={}
+   dic3['FONCTION']=gamm3[i]
+   dic3['LEGENDE']=legende[i]
+   courbe3.append(dic3)
+
+
+# tau-sigma
+DEFI_FICHIER(UNITE = 39,FICHIER = 'REPE_OUT/sigmaXY-sigmaXX-tout.agr');
+IMPR_FONCTION(
+                FORMAT='XMGRACE',
+                PILOTE=pilote,UNITE=39,
+                LEGENDE_X='SigmaXX',
+                LEGENDE_Y='SigmaXY*sqrt(3)',
+                COURBE=courbes,
+                );
+DEFI_FICHIER(UNITE = 39,ACTION = 'LIBERER');
+
+# sigma
+DEFI_FICHIER(UNITE = 39,FICHIER = 'REPE_OUT/sigmaXX-tout.agr');
+IMPR_FONCTION(
+                FORMAT='XMGRACE',
+                PILOTE=pilote,UNITE=39,
+                LEGENDE_X='INST',
+                LEGENDE_Y='SigmaXX',
+                COURBE=courbe1,
+                );
+DEFI_FICHIER(UNITE = 39,ACTION = 'LIBERER');
+# tau
+DEFI_FICHIER(UNITE = 39,FICHIER = 'REPE_OUT/sigmaXY-tout.agr');
+IMPR_FONCTION(
+                FORMAT='XMGRACE',
+                PILOTE=pilote,UNITE=39,
+                LEGENDE_X='INST',
+                LEGENDE_Y='SigmaXY',
+                COURBE=courbe2,
+                );
+DEFI_FICHIER(UNITE = 39,ACTION = 'LIBERER');
+
+#################dernier cycle
+# tau-sigma
+DEFI_FICHIER(UNITE = 39,FICHIER = 'REPE_OUT/sigmaXY-sigmaXX-dernier_cycle.agr');
+IMPR_FONCTION(
+                FORMAT='XMGRACE',
+                PILOTE=pilote,UNITE=39,
+                LEGENDE_X='SigmaXX',
+                LEGENDE_Y='SigmaXY*sqrt(3)',
+                COURBE=courbeder1,
+                );
+DEFI_FICHIER(UNITE = 39,ACTION = 'LIBERER');
+# sigma
+DEFI_FICHIER(UNITE = 39,FICHIER = 'REPE_OUT/sigmaXX-dernier_cycle.agr');
+IMPR_FONCTION(
+                FORMAT='XMGRACE',
+                PILOTE=pilote,UNITE=39,
+                LEGENDE_X='INST',
+                LEGENDE_Y='SigmaXX',
+                COURBE=courbeder2,
+                );
+DEFI_FICHIER(UNITE = 39,ACTION = 'LIBERER');
+# tau
+DEFI_FICHIER(UNITE = 39,FICHIER = 'REPE_OUT/sigmaXY-dernier_cycle.agr');
+IMPR_FONCTION(
+                FORMAT='XMGRACE',
+                PILOTE=pilote,UNITE=39,
+                LEGENDE_X='INST',
+                LEGENDE_Y='SigmaXY',
+                COURBE=courbeder3,
+                );
+DEFI_FICHIER(UNITE = 39,ACTION = 'LIBERER');
+
+
+# valeurs de refence
+sxxaref=(398.+413.)/2.
+sxxmref=-5.
+sxxmaxref=sxxmref+sxxaref
+sxxminref=sxxmref-sxxaref
+
+sxyaref=(237.+231.)/2.
+sxymref=0.5
+sxymaxref=sxymref+sxyaref
+sxyminref=sxymref-sxyaref
+
+
+# test des valeurs extremes
+
+# reference aster
+
+TEST_TABLE(TABLE=RESU[2], NOM_PARA='SIXX',VALE_CALC=414.096971519, VALE_REFE=413.858729473,PRECISION=0.003,
+           FILTRE=_F(NOM_PARA='SIXX',CRIT_COMP='MAXI'), REFERENCE='AUTRE_ASTER',
+              );
+
+TEST_TABLE(TABLE=RESU[2],NOM_PARA='SIXX',VALE_CALC=-415.276974573,VALE_REFE=-415.033918274,PRECISION=0.003,
+           FILTRE=_F(NOM_PARA='SIXX',CRIT_COMP='MINI'),REFERENCE='AUTRE_ASTER',
+              );
+
+TEST_TABLE(TABLE=RESU[2],NOM_PARA='SIXY', VALE_CALC=244.283962874,VALE_REFE=244.147963974,PRECISION=0.003,
+           FILTRE=_F(NOM_PARA='SIXY',CRIT_COMP='MAXI'), REFERENCE='AUTRE_ASTER',
+              );
+
+TEST_TABLE(TABLE=RESU[2],NOM_PARA='SIXY',VALE_CALC=-243.51500543,VALE_REFE=-243.382146598,PRECISION=0.003,
+           FILTRE=_F(NOM_PARA='SIXY',CRIT_COMP='MINI'),REFERENCE='AUTRE_ASTER',
+              );
+
+# pas de reference car modèle sans effet de memeoire inadapté
+TEST_TABLE(TABLE=RESU[1], NOM_PARA='SIXX',VALE_CALC=257.746001518 ,
+           FILTRE=_F(NOM_PARA='SIXX',CRIT_COMP='MAXI'),
+              );
+
+TEST_TABLE(TABLE=RESU[1],NOM_PARA='SIXX',VALE_CALC=-257.746001516,
+           FILTRE=_F(NOM_PARA='SIXX',CRIT_COMP='MINI'),
+              );
+
+TEST_TABLE(TABLE=RESU[1],NOM_PARA='SIXY', VALE_CALC=149.688724685,
+           FILTRE=_F(NOM_PARA='SIXY',CRIT_COMP='MAXI'),
+              );
+
+TEST_TABLE(TABLE=RESU[1],NOM_PARA='SIXY',VALE_CALC=-149.688724686,
+           FILTRE=_F(NOM_PARA='SIXY',CRIT_COMP='MINI'),
+              );
+
+FIN();
