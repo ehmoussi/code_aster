@@ -1,4 +1,8 @@
-CHAMPCAR=AFFE_CARA_ELEM( MODELE=STRUCT,DISCRET=(
+from code_aster.Commands import AFFE_CARA_ELEM 
+
+def F_AFFE_CARA_ELEM(STRUCT) : 
+
+  CHAMPCAR=AFFE_CARA_ELEM( MODELE=STRUCT,DISCRET=(
                              _F( GROUP_MA = ('RESSORT1',),
                  CARA = 'K_TR_L',
                  VALE = (1., 
@@ -87,3 +91,4 @@ CHAMPCAR=AFFE_CARA_ELEM( MODELE=STRUCT,DISCRET=(
                        0., 0.,  0.,   0.,  0.,    0.,  0., 0., 0., 0., 0., 0.,)),),
 
                COQUE=_F( GROUP_MA = 'COQUES', EPAIS = 1.E-2))
+  return CHAMPCAR 

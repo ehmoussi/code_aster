@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -255,7 +255,9 @@ rigigen=PROJ_MATR_BASE(  BASE=bamo,  NUME_DDL_GENE=nddlgen,
 massgen=PROJ_MATR_BASE(  BASE=bamo,  NUME_DDL_GENE=nddlgen,
                             MATR_ASSE=MATMASS );
 
-INCLUDE(UNITE=31,);
+from fdlv112d import F_ACC_X
+acc_x = F_ACC_X()
+
 
 linst= DEFI_LIST_REEL ( DEBUT = 0.,
                           INTERVALLE = (
