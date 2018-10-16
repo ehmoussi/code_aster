@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -139,7 +139,7 @@ type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
     if (nomcmd(6:13) .eq. 'NON_LINE' ) then
         call gettco(cara_elem, typco)
         if (typco .eq. 'CARA_ELEM') then
-            call verif_affe(model,cara_elem, non_lin = .true._1)
+            call verif_affe(model,cara_elem, non_lin = ASTER_TRUE)
         endif
     endif
 !
@@ -176,7 +176,7 @@ type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
 !
 ! - Read parameters for contact management
 !
-    call nonlinDSContactRead(ds_contact,ds_conv%iter_glob_maxi)
+    call nonlinDSContactRead(ds_contact)
 !
 ! - Read parameters for energy management
 !

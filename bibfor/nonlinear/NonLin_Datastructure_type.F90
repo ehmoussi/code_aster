@@ -259,18 +259,33 @@ implicit none
 ! - Type: contact management
 ! 
     type NL_DS_Contact
-        aster_logical     :: l_contact
-        aster_logical     :: l_meca_cont
-        aster_logical     :: l_meca_unil
+! ----- Flag for contact (CONTACT keyword is present)
+        aster_logical     :: l_contact   = ASTER_FALSE
+! ----- Flag for contact XFEM/CONTINUE/DISCRET
+        aster_logical     :: l_meca_cont = ASTER_FALSE
+! ----- Flag for contact LIAISON_UNIL
+        aster_logical     :: l_meca_unil = ASTER_FALSE
+! ----- Flag for contact CONTINUE
+        aster_logical     :: l_form_cont = ASTER_FALSE
+! ----- Flag for contact DISCRET
+        aster_logical     :: l_form_disc = ASTER_FALSE
+! ----- Flag for contact XFEM
+        aster_logical     :: l_form_xfem = ASTER_FALSE
+! ----- Flag for contact LAC
+        aster_logical     :: l_form_lac  = ASTER_FALSE
+! ----- Flag if create CONT_NOEU
+        aster_logical     :: l_cont_node = ASTER_FALSE
+! ----- Flag if create CONT_ELEM
+        aster_logical     :: l_cont_elem = ASTER_FALSE
+
         character(len=8)  :: sdcont
         character(len=24) :: sdcont_defi
         character(len=24) :: sdcont_solv
         character(len=24) :: sdunil_defi
         character(len=24) :: sdunil_solv
-        aster_logical     :: l_form_cont
-        aster_logical     :: l_form_disc
-        aster_logical     :: l_form_xfem
-        aster_logical     :: l_form_lac
+
+
+
 ! ----- Name of <LIGREL> for slave elements (create in DEFI_CONTACT)
         character(len=8)  :: ligrel_elem_slav
         aster_logical     :: l_elem_slav

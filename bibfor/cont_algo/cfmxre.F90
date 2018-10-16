@@ -68,7 +68,7 @@ character(len=19), intent(in) :: hval_incr(*)
 ! --------------------------------------------------------------------------------------------------
 !
     aster_logical :: l_cont_cont, l_cont_disc, l_cont_xfem, l_cont_lac
-    aster_logical :: l_cont_exiv, l_all_verif, l_inte_node
+    aster_logical :: l_cont_exiv, l_all_verif, l_cont_node
     character(len=19) :: disp_iter, disp_cumu_inst, disp_curr
     real(kind=8) :: time_curr, time_prev, time_incr
     character(len=19) :: prno
@@ -88,7 +88,7 @@ character(len=19), intent(in) :: hval_incr(*)
     l_cont_lac  = cfdisl(ds_contact%sdcont_defi, 'FORMUL_LAC')
     l_cont_exiv = cfdisl(ds_contact%sdcont_defi,'EXIS_VERIF')
     l_all_verif = cfdisl(ds_contact%sdcont_defi,'ALL_VERIF') 
-    l_inte_node = cfdisl(ds_contact%sdcont_defi,'ALL_INTEG_NOEUD')
+    l_cont_node = ds_contact%l_cont_node
 !
 ! - Get fields name
 !
@@ -117,9 +117,10 @@ character(len=19), intent(in) :: hval_incr(*)
         if (l_cont_xfem) then
             call xmmres(disp_cumu_inst, model, cnsinr, ds_contact)
         else if (l_cont_cont) then
-            if (l_inte_node) then
+            if (l_cont_node) then
                 call mmmres(mesh  , time_incr, ds_contact, disp_cumu_inst, sddisc,&
                             cnsinr, cnsper)
+                call mmmcpt(mesh, ds_measure, ds_contact, cnsinr)
             endif
         else if (l_cont_disc) then
             call cfresu(time_incr, sddisc, ds_contact, disp_cumu_inst, disp_iter,&
@@ -127,13 +128,7 @@ character(len=19), intent(in) :: hval_incr(*)
         else if (l_cont_lac) then   
             call cfmxr0_lac(mesh, ds_contact, ds_measure)
         else
-            ASSERT(.false.)
-        endif
-!
-! ----- Number of contact links
-!
-        if (l_cont_cont) then
-            call mmmcpt(mesh, ds_measure, ds_contact, cnsinr)
+            ASSERT(ASTER_FALSE)
         endif
     endif
 !

@@ -35,8 +35,8 @@ implicit none
 #include "asterfort/lac_rela.h"
 #include "asterfort/wkvect.h"
 !
-    character(len=8), intent(in) :: mesh
-    character(len=8), intent(in) :: model
+character(len=8), intent(in) :: mesh
+character(len=8), intent(in) :: model
 type(NL_DS_Contact), intent(inout) :: ds_contact
 !
 ! --------------------------------------------------------------------------------------------------
@@ -60,7 +60,7 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
     aster_logical :: l_cont, l_unil
     aster_logical :: l_form_disc, l_form_cont, l_form_xfem, l_form_lac
     aster_logical :: l_cont_xfem_gg, l_edge_elim, l_all_verif, l_iden_rela
-    aster_logical :: l_unil_pena
+    aster_logical :: l_unil_pena, l_inte_node
     integer :: nt_patch
     integer :: i_exist
     character(len=8), pointer :: v_load_type(:) => null()
@@ -71,13 +71,6 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
 !
 ! - Initializations
 !
-    l_cont      = ASTER_FALSE
-    l_unil      = ASTER_FALSE
-    l_form_disc = ASTER_FALSE
-    l_form_cont = ASTER_FALSE
-    l_form_xfem = ASTER_FALSE
-    l_form_lac  = ASTER_FALSE
-    l_iden_rela = ASTER_FALSE
     iden_rela   = '&&CFMXR0.IDEN_RELA'
 ! 
     if (ds_contact%l_contact) then
@@ -106,14 +99,19 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
         l_cont         = cont_form .ne. 4
         l_cont_xfem_gg = cfdisl(ds_contact%sdcont_defi, 'CONT_XFEM_GG')
         l_edge_elim    = cfdisl(ds_contact%sdcont_defi, 'ELIM_ARETE')
-        l_all_verif    = cfdisl(ds_contact%sdcont_defi, 'ALL_VERIF')  
+        l_all_verif    = cfdisl(ds_contact%sdcont_defi, 'ALL_VERIF')
+        l_inte_node    = cfdisl(ds_contact%sdcont_defi, 'ALL_INTEG_NOEUD')
+        l_iden_rela    = ASTER_FALSE
 !
-! ----- Fields for CONT_NODE
+! ----- Fields for CONT_NOEU
 !
         if (l_form_cont .or. l_form_disc .or. l_form_xfem) then
             ds_contact%field_cont_node  = '&&CFMXR0.CNOINR'
             ds_contact%fields_cont_node = '&&CFMXR0.CNSINR'
             ds_contact%field_cont_perc  = '&&CFMXR0.CNSPER'
+            if (l_inte_node) then
+                ds_contact%l_cont_node = ASTER_TRUE
+            endif
         endif
 !
 ! ----- Fields for CONT_ELEM
@@ -121,6 +119,7 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
         if (l_form_lac) then
             ds_contact%field_cont_elem  = '&&CFMXR0.CEOINR'
             ds_contact%fields_cont_elem = '&&CFMXR0.CESINR'
+            ds_contact%l_cont_elem      = ASTER_TRUE
         endif
 !
 ! ----- Special for discrete contact
@@ -144,6 +143,7 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
             ds_contact%ligrel_elem_cont = '&&LIGRCF.CHME.LIGRE'
             call wkvect(ds_contact%ligrel_elem_cont(1:8)//'.TYPE', 'V V K8', 1, vk8 = v_load_type)
             v_load_type(1) = 'ME'
+            ds_contact%it_cycl_maxi     = 6
         endif
 !
 ! ----- Special for xfem contact
