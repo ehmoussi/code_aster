@@ -43,7 +43,7 @@ def calc_mac3coeur_ops(self, **args):
     """Fonction d'appel de la macro CALC_MAC3COEUR"""
     self.set_icmd(1)
     analysis = Mac3CoeurCalcul.factory(self, args)
-    analysis.run()
+    return analysis.run()
 
 # decorator to cache values of properties
 NULL = object()
@@ -152,7 +152,7 @@ class Mac3CoeurCalcul(object):
         # force the computation of the times to ensure it is done first
         # Note that times depends on niv_fluence and subdivis.
         self.times
-        self.fluence_cycle = self.keyw['FLUENCE_CYCLE']
+        self.fluence_cycle = self.keyw.get('FLUENCE_CYCLE')
 
     def _run(self):
         """Run the calculation itself"""
@@ -164,8 +164,9 @@ class Mac3CoeurCalcul(object):
     def run(self,noresu=False):
         """Run all the calculation steps"""
         self._prepare_data(noresu)
-        self._run()
+        toReturn = self._run()
         self._build_result()
+        return toReturn
 
     @property
     def niv_fluence(self):
@@ -220,7 +221,7 @@ class Mac3CoeurCalcul(object):
     @cached_property
     def mesh(self):
         """Return the `maillage_sdaster` object"""
-        return self.coeur.affectation_maillage(self.keyw['MAILLAGE_N'])
+        return self.coeur.affectation_maillage(self.keyw.get('MAILLAGE_N'))
 
     @mesh.setter
     def mesh(self, value):
@@ -543,10 +544,10 @@ class Mac3CoeurCalcul(object):
     def set_from_resu(self, what, resu):
         """Extract a parameter from a result"""
         assert what in ('mesh', 'model')
-        key, typ = {'mesh': ('NOM_MAILLA', maillage_sdaster),
-                    'model': ('NOM_MODELE', modele_sdaster)}[what]
-        nom_co = aster.dismoi(key, resu.nom, 'RESULTAT', 'F')[2].strip()
-        return self.macro.get_concept_by_type(nom_co, typ)
+        if what == "mesh":
+            return resu.getModel().getSupportMesh()
+        else:
+            return resu.getModel()
 
 
 class Mac3CoeurDeformation(Mac3CoeurCalcul):
@@ -571,7 +572,7 @@ class Mac3CoeurDeformation(Mac3CoeurCalcul):
     @cached_property
     def mesh(self):
         """Return the `maillage_sdaster` object"""
-        mesh = self.keyw['MAILLAGE_N']
+        mesh = self.keyw.get('MAILLAGE_N')
         char_init = self.char_init
         if char_init :
             resu_init=None
@@ -697,6 +698,7 @@ class Mac3CoeurDeformation(Mac3CoeurCalcul):
                                   INCREMENT=_F(LIST_INST=self.times),
                                   COMPORTEMENT=self.char_ini_comp,
                                   ))
+            self.macro.register_result(__RESULT, self.macro.sd)
 
         else :
 
@@ -708,7 +710,6 @@ class Mac3CoeurDeformation(Mac3CoeurCalcul):
             mater=[]
             ratio = 1.
             mater.append(self.cham_mater_contact_progressif(ratio))
-            print 'self.etat_init : ',self.etat_init
             __RESULT = None
             if (not self.etat_init) :
                 __RESULT = STAT_NON_LINE(**self.snl(CHAM_MATER=self.cham_mater_free,
@@ -833,6 +834,7 @@ class Mac3CoeurDeformation(Mac3CoeurCalcul):
                                 ETAT_INIT=_F(EVOL_NOLI=__RESULT),
                                 )
             __RESULT = STAT_NON_LINE(**keywords)
+        return __RESULT
 
 class Mac3CoeurLame(Mac3CoeurCalcul):
 
@@ -956,13 +958,14 @@ class Mac3CoeurLame(Mac3CoeurCalcul):
         __RESFIN = CREA_RESU(**self.cr(_pdt_ini_out,depl_tot_ini))
         CREA_RESU(**self.cr(_pdt_fin_out,depl_tot_fin,reuse=__RESFIN))
         self.res_def=__RESFIN
+        self.macro.register_result(__RESFIN, self.res_def)
 
 
     def _prepare_data(self,noresu=None):
         """Prepare the data for the calculation"""
         self.use_archimede = 'OUI'
         if (not noresu) :
-            self.res_def = self.keyw['RESU_DEF']
+            self.res_def = self.keyw.get('RESU_DEF')
             if self.res_def :
                 self.macro.DeclareOut('__RESFIN',self.res_def)
         super(Mac3CoeurLame, self)._prepare_data(noresu)
@@ -1101,6 +1104,7 @@ class Mac3CoeurLame(Mac3CoeurCalcul):
 
         if self.res_def :
             self.output_resdef(__RESULT,depl_deformed,tinit,tfin)
+        return __RESULT
 
 class Mac3CoeurEtatInitial(Mac3CoeurLame):
 
@@ -1164,5 +1168,5 @@ def read_thyc(coeur, model, unit):
         fname = UL.Nom(unit)
         res = lire_resu_thyc(coeur, model, fname)
     finally:
-        UL.EtatInit()
+        pass
     return res
