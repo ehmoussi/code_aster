@@ -23,6 +23,7 @@ from math import log
 from code_aster.Cata.Syntax import *
 from code_aster.Cata.DataStructure import *
 from code_aster.Commands import (AFFE_CHAR_THER, AFFE_MATERIAU, CALC_CHAMP, CALC_CHAM_ELEM, CREA_CHAMP, DEFI_MATERIAU, PROJ_CHAMP)
+from code_aster.Commands.ExecuteCommand import UserMacro
 
 
 def NT(epsp, Nl, Kt, a1, a2, a3):
@@ -76,19 +77,15 @@ def FLUX(cl, GRSHx, GRSHy, DIME, GRSHz, Vh, R, T):
 # macro calculant a chaque pas de temps la concentration d'H2
 # "
 
-def char_grad_impo_ops(self, RESU_H2, TINIT, TFIN, RESUMECA, GRMAVOL, DIME, Ctot0, CHARGRD0, Vh, R, T, INFO, **args):
+def char_grad_impo_ops(self, RESU_H2, TINIT, TFIN, RESUMECA, GRMAVOL, DIME, Ctot0, CHARGRD0, Vh, R, T, **args):
 # macro pour calculer le chargement thermique specfique a la diffusion H2
 
     import numpy as NP
     import aster
     from code_aster.Cata.Syntax import _F
-    ier = 0
-   # La macro compte pour 1 dans la numerotation des commandes
-    self.set_icmd(1)
-   #    Le concept sortant dans le contexte de la macro
-    self.DeclareOut('chth', self.sd)
+    INFO = args.get('INFO')
 
-   # On importe les definitions des commandes a utiliser dans la macro
+    # On importe les definitions des commandes a utiliser dans la macro
     CREA_CHAMP = self.get_cmd('CREA_CHAMP')
     AFFE_CHAR_THER = self.get_cmd('AFFE_CHAR_THER')
     CALC_CHAMP = self.get_cmd('CALC_CHAMP')
@@ -96,21 +93,14 @@ def char_grad_impo_ops(self, RESU_H2, TINIT, TFIN, RESUMECA, GRMAVOL, DIME, Ctot
 
     dt = TFIN - TINIT
 
-   # Recuperation du modele a partir du resultat
-    iret, ibid, __n_modele = aster.dismoi(
-        'MODELE', RESU_H2.nom, 'RESULTAT', 'F')
-    __n_modele = __n_modele.rstrip()
-    __MOTH = self.get_concept(__n_modele)
+    # Recuperation du modele a partir du resultat
+    moth = RESU_H2.getModel()
 
-   # Recuperation du maillage a partir du resultat
-    iret, ibid, nom_ma = aster.dismoi(
-        'NOM_MAILLA', RESU_H2.nom, 'RESULTAT', 'F')
-    __MAIL = self.get_concept(nom_ma.strip())
+    # Recuperation du maillage a partir du resultat
+    mesh = moth.getSupportMesh()
 
-   # Recuperation du modele mecanique a partir du resultat
-    iret, ibid, nom_momec = aster.dismoi(
-        'MODELE', RESUMECA.nom, 'RESULTAT', 'F')
-    __MOME = self.get_concept(nom_momec.rstrip())
+    # Recuperation du modele mecanique a partir du resultat
+    mome = RESUMECA.getModel()
 
     # extraction du champ de cl instant -
     __C20 = CREA_CHAMP(OPERATION='EXTR', TYPE_CHAM='NOEU_TEMP_R',
@@ -130,8 +120,8 @@ def char_grad_impo_ops(self, RESU_H2, TINIT, TFIN, RESUMECA, GRMAVOL, DIME, Ctot
     __SIEQN = PROJ_CHAMP(
         METHODE='COLLOCATION',
                 RESULTAT=__SIEQN2,
-                MODELE_1=__MOME,
-                MODELE_2=__MOTH,
+                MODELE_1=mome,
+                MODELE_2=moth,
                 NOM_CHAM='SIEQ_NOEU',
                 TOUT_ORDRE='OUI')
     __SIEQ = CREA_CHAMP(OPERATION='EXTR', TYPE_CHAM='NOEU_SIEF_R',
@@ -139,14 +129,14 @@ def char_grad_impo_ops(self, RESU_H2, TINIT, TFIN, RESUMECA, GRMAVOL, DIME, Ctot
 
     # on renome la CMP pour pouvoir calculer le flux "thermique"
     __TRSIG = CREA_CHAMP(
-        OPERATION='ASSE', TYPE_CHAM='NOEU_TEMP_R', MODELE=__MOTH,
+        OPERATION='ASSE', TYPE_CHAM='NOEU_TEMP_R', MODELE=moth,
         ASSE=(_F(CHAM_GD=__SIEQ, GROUP_MA=GRMAVOL, NOM_CMP='TRSIG', NOM_CMP_RESU='TEMP', COEF_R=1. / 3.),), INFO=INFO)
     # calcul du gradient de Trace(Sigma)
     __MAT1 = DEFI_MATERIAU(THER=_F(LAMBDA=-1., RHO_CP=0.))
     __CMT1 = AFFE_MATERIAU(
-        MAILLAGE=__MAIL, AFFE=_F(TOUT='OUI', MATER=__MAT1,),)
+        MAILLAGE=mesh, AFFE=_F(TOUT='OUI', MATER=__MAT1,),)
     __GRSH = CALC_CHAM_ELEM(
-        MODELE=__MOTH, CHAM_MATER=__CMT1, GROUP_MA=GRMAVOL, OPTION='FLUX_ELGA', TEMP=__TRSIG)
+        MODELE=moth, CHAM_MATER=__CMT1, GROUP_MA=GRMAVOL, OPTION='FLUX_ELGA', TEMP=__TRSIG)
 
     gradsighe = __GRSH.EXTR_COMP('FLUX', [], 1)
     gradsighx = gradsighe.valeurs
@@ -182,9 +172,9 @@ def char_grad_impo_ops(self, RESU_H2, TINIT, TFIN, RESUMECA, GRMAVOL, DIME, Ctot
     champ = NP.zeros(nbrvale)
     bidon = NP.zeros(nbrvale)
 
-    nommai = __MAIL.sdj.NOMMAI.get()
-    connex = __MAIL.sdj.CONNEX.get()
-    groupma = __MAIL.sdj.GROUPEMA.get()[GRMAVOL.ljust(24)]
+    nommai = mesh.sdj.NOMMAI.get()
+    connex = mesh.sdj.CONNEX.get()
+    groupma = mesh.sdj.GROUPEMA.get()[GRMAVOL.ljust(24)]
     nbzone = tabdesc[1]
 #   print "tabdesc",tabdesc
 #   print "tablima",dicolima
@@ -217,64 +207,54 @@ def char_grad_impo_ops(self, RESU_H2, TINIT, TFIN, RESUMECA, GRMAVOL, DIME, Ctot
     aster.putvectjev(nomvale, nbrvale, tuple(
         range(1, nbrvale + 1)), tuple(champ), tuple(bidon), 1)
 
-    #
 
+CHAR_GRAD_IMPO_cata = MACRO(
+    nom="CHAR_GRAD_IMPO",
+    op=char_grad_impo_ops,
+    # sd_prod   = char_ther,
+    docu="",
+    reentrant='n',
+    fr="calcul du chargement de gradient(trace(sigma)) pour la diffusion d'h2",
 
-CHAR_GRAD_IMPO = MACRO(nom="CHAR_GRAD_IMPO",
-                       op=char_grad_impo_ops,
-                       # sd_prod   = char_ther,
-                       docu="",
-                       reentrant='n',
-                       fr="calcul du chargement de gradient(trace(sigma)) pour la diffusion d'h2",
+    RESU_H2=SIMP(statut='o', typ=evol_ther),
+    TINIT=SIMP(statut='o', typ='R'),
+    TFIN=SIMP(statut='o', typ='R'),
+    Ctot0=SIMP(statut='o', typ='R'),
+    DIME=SIMP(statut='o', typ='I'),
+    RESUMECA=SIMP(
+    statut='o', typ=resultat_sdaster, fr="Resultat de STAT_NON_LINE"),
+    GRMAVOL=SIMP(
+    statut='o', typ=grma, validators=NoRepeat(), max=1),
+    INFO=SIMP(statut='f', typ='I', into=(1, 2)),
+    CHARGRD0 =SIMP(statut='o', typ=char_ther),
+    Vh =SIMP(statut='f', typ='R', defaut=2.e-6),
+    R =SIMP(statut='f', typ='R', defaut=8.3144),
+    T =SIMP(statut='f', typ='R', defaut=293.),
+    )
 
-                       RESU_H2=SIMP(statut='o', typ=evol_ther),
-                       TINIT=SIMP(statut='o', typ='R'),
-                       TFIN=SIMP(statut='o', typ='R'),
-                       Ctot0=SIMP(statut='o', typ='R'),
-                       DIME=SIMP(statut='o', typ='I'),
-                       RESUMECA=SIMP(
-                       statut='o', typ=resultat_sdaster, fr="Resultat de STAT_NON_LINE"),
-                       GRMAVOL=SIMP(
-                       statut='o', typ=grma, validators=NoRepeat(), max=1),
-                       INFO=SIMP(statut='f', typ='I', into=(1, 2)),
-                       CHARGRD0 =SIMP(statut='o', typ=char_ther),
-                       Vh =SIMP(statut='f', typ='R', defaut=2.e-6),
-                       R =SIMP(statut='f', typ='R', defaut=8.3144),
-                       T =SIMP(statut='f', typ='R', defaut=293.),
-                       )
-
+CHAR_GRAD_IMPO = UserMacro("CHAR_GRAD_IMPO", CHAR_GRAD_IMPO_cata, char_grad_impo_ops)
 
 #
 # macro pour initialiser le chargement thermique de gradient specifique a la diffusion H2
 #
 
-def char_grad_ini_ops(self, RESU_H2, GRMAVOL, DIME, INFO, **args):
+def char_grad_ini_ops(self, RESU_H2, GRMAVOL, DIME, **args):
 
     import aster
     from code_aster.Cata.Syntax import _F
-    ier = 0
-   # La macro compte pour 1 dans la numerotation des commandes
-    self.set_icmd(1)
-   #    Le concept sortant dans le contexte de la macro
-    self.DeclareOut('chth', self.sd)
 
     grad = []
     # On boucle sur les mailles du groupe de mailles GRMAVOL
 
-   # Recuperation du modele a partir du resultat
-    iret, ibid, __n_modele = aster.dismoi(
-        'MODELE', RESU_H2.nom, 'RESULTAT', 'F')
-    __n_modele = __n_modele.rstrip()
-    __MOTH = self.get_concept(__n_modele)
+    # Recuperation du modele a partir du resultat
+    moth = RESU_H2.getModel()
 
-   # Recuperation du maillage a partir du resultat
-    iret, ibid, nom_ma = aster.dismoi(
-        'NOM_MAILLA', RESU_H2.nom, 'RESULTAT', 'F')
-    __MAIL = self.get_concept(nom_ma.strip())
+    # Recuperation du maillage a partir du resultat
+    mesh = moth.getSupportMesh()
 
-    nommai = __MAIL.sdj.NOMMAI.get()
-    connex = __MAIL.sdj.CONNEX.get()
-    groupma = __MAIL.sdj.GROUPEMA.get()[GRMAVOL.ljust(24)]
+    nommai = mesh.sdj.NOMMAI.get()
+    connex = mesh.sdj.CONNEX.get()
+    groupma = mesh.sdj.GROUPEMA.get()[GRMAVOL.ljust(24)]
 
     for ima in groupma:
         # ATTENTION : dans Python, les tableaux commencent a 0
@@ -291,42 +271,40 @@ def char_grad_ini_ops(self, RESU_H2, GRMAVOL, DIME, INFO, **args):
             mon_dico["FLUX_Z"] = 0.
         grad.append(mon_dico)
 
-    chth = AFFE_CHAR_THER(MODELE=__MOTH, INFO=INFO,
+    chth = AFFE_CHAR_THER(MODELE=moth, INFO=args.get('INFO'),
                           PRE_GRAD_TEMP=grad,
                           )
+    return chth
 
-    #
 
-CHAR_GRAD_INI = MACRO(nom="CHAR_GRAD_INI",
-                      op=char_grad_ini_ops,
-                      sd_prod=char_ther,
-                      docu="",
-                      reentrant='n',
-                      fr="calcul du chargement de gradient(trace(sigma)) initial pour la diffusion d'h2",
+CHAR_GRAD_INI_cata = MACRO(
+    nom="CHAR_GRAD_INI",
+    op=char_grad_ini_ops,
+    sd_prod=char_ther,
+    docu="",
+    reentrant='n',
+    fr="calcul du chargement de gradient(trace(sigma)) initial pour la diffusion d'h2",
 
-                      RESU_H2=SIMP(statut='o', typ=evol_ther),
-                      DIME=SIMP(statut='o', typ='I'),
-                      GRMAVOL=SIMP(
-                      statut='o', typ=grma, validators=NoRepeat(), max=1),
-                      INFO=SIMP(statut='f', typ='I', into=(1, 2)),
-                      )
+    RESU_H2=SIMP(statut='o', typ=evol_ther),
+    DIME=SIMP(statut='o', typ='I'),
+    GRMAVOL=SIMP(
+    statut='o', typ=grma, validators=NoRepeat(), max=1),
+    INFO=SIMP(statut='f', typ='I', into=(1, 2)),
+    )
 
+CHAR_GRAD_INI = UserMacro("CHAR_GRAD_INI", CHAR_GRAD_INI_cata, char_grad_ini_ops)
 
 # "
 # macro calculant a chaque pas de temps la source volumique
 # "
 
-def char_source_ops(self, RESU_H2, TINIT, TFIN, RESUMECA, GRMAVOL, DIME, Ctot0, Nl, Kt, a1, a2, a3, INFO, **args):
+def char_source_ops(self, RESU_H2, TINIT, TFIN, RESUMECA, GRMAVOL, DIME, Ctot0, Nl, Kt, a1, a2, a3, **args):
 # macro pour calculer le chargement thermique specfique a la diffusion H2
 
     import numpy as NP
     import aster
     from code_aster.Cata.Syntax import _F
-    ier = 0
-   # La macro compte pour 1 dans la numerotation des commandes
-    self.set_icmd(1)
-   #    Le concept sortant dans le contexte de la macro
-    self.DeclareOut('chth', self.sd)
+    INFO = args.get('INFO')
 
    # On importe les definitions des commandes a utiliser dans la macro
     DETRUIRE = self.get_cmd('DETRUIRE')
@@ -337,21 +315,14 @@ def char_source_ops(self, RESU_H2, TINIT, TFIN, RESUMECA, GRMAVOL, DIME, Ctot0, 
 
     dt = TFIN - TINIT
 
-   # Recuperation du modele thermique a partir du resultat
-    iret, ibid, __n_modele = aster.dismoi(
-        'MODELE', RESU_H2.nom, 'RESULTAT', 'F')
-    __n_modele = __n_modele.rstrip()
-    __MOTH = self.get_concept(__n_modele)
+    # Recuperation du modele thermique a partir du resultat
+    moth = RESU_H2.getModel()
 
-   # Recuperation du maillage a partir du resultat
-    iret, ibid, nom_ma = aster.dismoi(
-        'NOM_MAILLA', RESU_H2.nom, 'RESULTAT', 'F')
-    __MAIL = self.get_concept(nom_ma.strip())
+    # Recuperation du maillage a partir du resultat
+    mesh = moth.getSupportMesh()
 
-   # Recuperation du modele mecanique a partir du resultat
-    iret, ibid, nom_momec = aster.dismoi(
-        'MODELE', RESUMECA.nom, 'RESULTAT', 'F')
-    __MOME = self.get_concept(nom_momec.rstrip())
+    # Recuperation du modele mecanique a partir du resultat
+    mome = RESUMECA.getModel()
 
     # extraction du champ de Cl instant -
     __C20 = CREA_CHAMP(OPERATION='EXTR', TYPE_CHAM='NOEU_TEMP_R',
@@ -361,8 +332,8 @@ def char_source_ops(self, RESU_H2, TINIT, TFIN, RESUMECA, GRMAVOL, DIME, Ctot0, 
     __EPEQN = PROJ_CHAMP(
         METHODE='COLLOCATION',
                 RESULTAT=__EPEQN2,
-                MODELE_1=__MOME,
-                MODELE_2=__MOTH,
+                MODELE_1=mome,
+                MODELE_2=moth,
                 NOM_CHAM='VARI_NOEU',
                 TOUT_ORDRE='OUI')
     __VINT0 = CREA_CHAMP(OPERATION='EXTR', TYPE_CHAM='NOEU_VAR2_R',
@@ -372,7 +343,7 @@ def char_source_ops(self, RESU_H2, TINIT, TFIN, RESUMECA, GRMAVOL, DIME, Ctot0, 
 
     # recopie du champ C20 pour initialiser le futur champ source
     __chtmp = CREA_CHAMP(
-        OPERATION='AFFE', TYPE_CHAM='NOEU_NEUT_R', MAILLAGE=__MAIL,
+        OPERATION='AFFE', TYPE_CHAM='NOEU_NEUT_R', MAILLAGE=mesh,
         AFFE=(_F(VALE=0., GROUP_MA=GRMAVOL, NOM_CMP='X1',),))
     nomcham = __chtmp.sdj.nomj()
 
@@ -403,59 +374,55 @@ def char_source_ops(self, RESU_H2, TINIT, TFIN, RESUMECA, GRMAVOL, DIME, Ctot0, 
     aster.putvectjev(nomvect, nbnode, tuple(
         range(1, nbnode + 1)), tuple(source), tuple(bidon), 1)
     __NEUTG = CREA_CHAMP(OPERATION='DISC', TYPE_CHAM='ELGA_NEUT_R',
-                         MODELE=__MOTH, PROL_ZERO='OUI', CHAM_GD=__chtmp, INFO=INFO)
+                         MODELE=moth, PROL_ZERO='OUI', CHAM_GD=__chtmp, INFO=INFO)
     __CHSOUR = CREA_CHAMP(
-        OPERATION='ASSE', TYPE_CHAM='ELGA_SOUR_R', MODELE=__MOTH, INFO=INFO, PROL_ZERO='OUI',
+        OPERATION='ASSE', TYPE_CHAM='ELGA_SOUR_R', MODELE=moth, INFO=INFO, PROL_ZERO='OUI',
         ASSE=(_F(CHAM_GD=__NEUTG, GROUP_MA=GRMAVOL, NOM_CMP='X1', NOM_CMP_RESU='SOUR',),))
 
-    chth = AFFE_CHAR_THER(MODELE=__MOTH, INFO=INFO,
+    chth = AFFE_CHAR_THER(MODELE=moth, INFO=INFO,
                           SOURCE=_F(SOUR_CALCULEE=__CHSOUR,),
                           )
+    return chth
 
 
-    #
+CHAR_SOURCE_cata = MACRO(
+    nom="CHAR_SOURCE",
+    op=char_source_ops,
+    sd_prod=char_ther,
+    docu="",
+    reentrant='n',
+    fr="calcul du chargement pour la diffusion d'h2",
 
+    RESU_H2=SIMP(statut='o', typ=evol_ther),
+    TINIT=SIMP(statut='o', typ='R'),
+    TFIN=SIMP(statut='o', typ='R'),
+    Ctot0=SIMP(statut='o', typ='R'),
+    DIME=SIMP(statut='o', typ='I'),
+    RESUMECA=SIMP(
+    statut='o', typ=resultat_sdaster, fr="Resultat de STAT_NON_LINE"),
+    GRMAVOL=SIMP(
+    statut='o', typ=grma, validators=NoRepeat(), max=1),
+    Nl=SIMP(statut='f', typ='R', defaut=5.1e29),
+    Kt=SIMP(
+    statut='f', typ='R', defaut=49703276456.589699),
+    a1=SIMP(statut='f', typ='R', defaut=23.26),
+    a2=SIMP(statut='f', typ='R', defaut=-2.33),
+    a3=SIMP(statut='f', typ='R', defaut=-5.5),
+    INFO=SIMP(statut='f', typ='I', into=(1, 2)),
+    )
 
-CHAR_SOURCE = MACRO(nom="CHAR_SOURCE",
-                    op=char_source_ops,
-                    sd_prod=char_ther,
-                    docu="",
-                    reentrant='n',
-                    fr="calcul du chargement pour la diffusion d'h2",
-
-                    RESU_H2=SIMP(statut='o', typ=evol_ther),
-                    TINIT=SIMP(statut='o', typ='R'),
-                    TFIN=SIMP(statut='o', typ='R'),
-                    Ctot0=SIMP(statut='o', typ='R'),
-                    DIME=SIMP(statut='o', typ='I'),
-                    RESUMECA=SIMP(
-                    statut='o', typ=resultat_sdaster, fr="Resultat de STAT_NON_LINE"),
-                    GRMAVOL=SIMP(
-                    statut='o', typ=grma, validators=NoRepeat(), max=1),
-                    Nl=SIMP(statut='f', typ='R', defaut=5.1e29),
-                    Kt=SIMP(
-                    statut='f', typ='R', defaut=49703276456.589699),
-                    a1=SIMP(statut='f', typ='R', defaut=23.26),
-                    a2=SIMP(statut='f', typ='R', defaut=-2.33),
-                    a3=SIMP(statut='f', typ='R', defaut=-5.5),
-                    INFO=SIMP(statut='f', typ='I', into=(1, 2)),
-                    )
-
+CHAR_SOURCE = UserMacro("CHAR_SOURCE", CHAR_SOURCE_cata, char_source_ops)
 
 # "
 # macro calculant a chaque pas de temps la source volumique
 # "
-def champ_detoile_ops(self, RESU_H2, TINIT, TFIN, RESUMECA, GRMAVOL, DIME, Ctot0, Nl, Kt, a1, a2, a3, INFO, **args):
+def champ_detoile_ops(self, RESU_H2, TINIT, TFIN, RESUMECA, GRMAVOL, DIME, Ctot0, Nl, Kt, a1, a2, a3, **args):
 # macro pour calculer le chargement thermique specfique a la diffusion H2
 
     import numpy as NP
     import aster
     from code_aster.Cata.Syntax import _F
-    ier = 0
-   # La macro compte pour 1 dans la numerotation des commandes
-    self.set_icmd(1)
-   #    Le concept sortant dans le contexte de la macro
-    self.DeclareOut('NEUTG', self.sd)
+    INFO = args.get('INFO')
 
    # On importe les definitions des commandes a utiliser dans la macro
     DETRUIRE = self.get_cmd('DETRUIRE')
@@ -463,20 +430,13 @@ def champ_detoile_ops(self, RESU_H2, TINIT, TFIN, RESUMECA, GRMAVOL, DIME, Ctot0
     CALC_CHAMP = self.get_cmd('CALC_CHAMP')
 
    # Recuperation du modele a partir du resultat
-    iret, ibid, __n_modele = aster.dismoi(
-        'MODELE', RESU_H2.nom, 'RESULTAT', 'F')
-    __n_modele = __n_modele.rstrip()
-    __MOTH = self.get_concept(__n_modele)
+    moth = RESU_H2.getModel()
 
    # Recuperation du maillage a partir du resultat
-    iret, ibid, nom_ma = aster.dismoi(
-        'NOM_MAILLA', RESU_H2.nom, 'RESULTAT', 'F')
-    __MAIL = self.get_concept(nom_ma.strip())
+    mesh = moth.getSupportMesh()
 
    # Recuperation du modele mecanique a partir du resultat
-    iret, ibid, nom_momec = aster.dismoi(
-        'MODELE', RESUMECA.nom, 'RESULTAT', 'F')
-    __MOME = self.get_concept(nom_momec.rstrip())
+    mome = RESUMECA.getModel()
 
     # extraction du champ de Cl instant -
     __C20 = CREA_CHAMP(OPERATION='EXTR', TYPE_CHAM='NOEU_TEMP_R',
@@ -486,8 +446,8 @@ def champ_detoile_ops(self, RESU_H2, TINIT, TFIN, RESUMECA, GRMAVOL, DIME, Ctot0
     __EPEQN = PROJ_CHAMP(
         METHODE='COLLOCATION',
                 RESULTAT=__EPEQN2,
-                MODELE_1=__MOME,
-                MODELE_2=__MOTH,
+                MODELE_1=mome,
+                MODELE_2=moth,
                 NOM_CHAM='VARI_NOEU',
                 TOUT_ORDRE='OUI')
     __VINT1 = CREA_CHAMP(OPERATION='EXTR', TYPE_CHAM='NOEU_VAR2_R',
@@ -495,7 +455,7 @@ def champ_detoile_ops(self, RESU_H2, TINIT, TFIN, RESUMECA, GRMAVOL, DIME, Ctot0
 
     # recopie du champ C20 pour initialiser le futur champ source
     __chtmp = CREA_CHAMP(
-        OPERATION='AFFE', TYPE_CHAM='NOEU_NEUT_R', MAILLAGE=__MAIL,
+        OPERATION='AFFE', TYPE_CHAM='NOEU_NEUT_R', MAILLAGE=mesh,
         AFFE=(_F(VALE=0., GROUP_MA=GRMAVOL, NOM_CMP='X1',),))
     nomcham = __chtmp.sdj.nomj()
 
@@ -520,32 +480,35 @@ def champ_detoile_ops(self, RESU_H2, TINIT, TFIN, RESUMECA, GRMAVOL, DIME, Ctot0
     aster.putvectjev(nomvect, nbnode, tuple(
         range(1, nbnode + 1)), tuple(detoile), tuple(bidon), 1)
     NEUTG = CREA_CHAMP(OPERATION='DISC', TYPE_CHAM='ELNO_NEUT_R',
-                       MODELE=__MOTH, PROL_ZERO='OUI', CHAM_GD=__chtmp, INFO=INFO)
+                       MODELE=moth, PROL_ZERO='OUI', CHAM_GD=__chtmp, INFO=INFO)
 
-    #
+    return NEUTG
 
 
-CHAMP_DETOILE = MACRO(nom="CHAMP_DETOILE",
-                      op=champ_detoile_ops,
-                      sd_prod=cham_elem,
-                      docu="",
-                      reentrant='n',
-                      fr="calcul du cham de Detoile",
+CHAMP_DETOILE_cata = MACRO(
+    nom="CHAMP_DETOILE",
+    op=champ_detoile_ops,
+    sd_prod=cham_elem,
+    docu="",
+    reentrant='n',
+    fr="calcul du cham de Detoile",
 
-                      RESU_H2=SIMP(statut='o', typ=evol_ther),
-                      TINIT=SIMP(statut='o', typ='R'),
-                      TFIN=SIMP(statut='o', typ='R'),
-                      Ctot0=SIMP(statut='o', typ='R'),
-                      DIME=SIMP(statut='o', typ='I'),
-                      RESUMECA=SIMP(
-                      statut='o', typ=resultat_sdaster, fr="Resultat de STAT_NON_LINE"),
-                      GRMAVOL=SIMP(
-                      statut='o', typ=grma, validators=NoRepeat(), max=1),
-                      Nl=SIMP(statut='f', typ='R', defaut=5.1e29),
-                      Kt=SIMP(
-                      statut='f', typ='R', defaut=49703276456.589699),
-                      a1=SIMP(statut='f', typ='R', defaut=23.26),
-                      a2=SIMP(statut='f', typ='R', defaut=-2.33),
-                      a3=SIMP(statut='f', typ='R', defaut=-5.5),
-                      INFO=SIMP(statut='f', typ='I', into=(1, 2)),
-                      )
+    RESU_H2=SIMP(statut='o', typ=evol_ther),
+    TINIT=SIMP(statut='o', typ='R'),
+    TFIN=SIMP(statut='o', typ='R'),
+    Ctot0=SIMP(statut='o', typ='R'),
+    DIME=SIMP(statut='o', typ='I'),
+    RESUMECA=SIMP(
+    statut='o', typ=resultat_sdaster, fr="Resultat de STAT_NON_LINE"),
+    GRMAVOL=SIMP(
+    statut='o', typ=grma, validators=NoRepeat(), max=1),
+    Nl=SIMP(statut='f', typ='R', defaut=5.1e29),
+    Kt=SIMP(
+    statut='f', typ='R', defaut=49703276456.589699),
+    a1=SIMP(statut='f', typ='R', defaut=23.26),
+    a2=SIMP(statut='f', typ='R', defaut=-2.33),
+    a3=SIMP(statut='f', typ='R', defaut=-5.5),
+    INFO=SIMP(statut='f', typ='I', into=(1, 2)),
+    )
+
+CHAMP_DETOILE = UserMacro("CHAMP_DETOILE", CHAMP_DETOILE_cata, champ_detoile_ops)
