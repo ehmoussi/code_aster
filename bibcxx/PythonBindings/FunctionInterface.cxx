@@ -34,7 +34,7 @@ void exportFunctionToPython()
     using namespace boost::python;
 
     class_< BaseFunctionInstance, BaseFunctionInstance::BaseFunctionPtr,
-            bases< DataStructure > > ( "BaseFunction", no_init )
+            bases< GenericFunctionInstance > > ( "BaseFunction", no_init )
         .def( "setParameterName", &FunctionInstance::setParameterName )
         .def( "setResultName", &FunctionInstance::setResultName )
         .def( "setInterpolation", &FunctionInstance::setInterpolation )
