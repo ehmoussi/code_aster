@@ -37,4 +37,4 @@ def FIN(**keywords):
     if aster.jeveux_status():
         saveObjects(level=2)
 
-    logger.info(repr(ExecutionParameter().get_option("timer")))
+    logger.info(repr(ExecutionParameter().timer))

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -32,18 +32,18 @@ import aster
 
 MA=LIRE_MAILLAGE(FORMAT="ASTER",)
 
-coord = aster.getvectjev("MA      .COORDO    .VALE        ")
+coord = aster.getvectjev(MA.getName() + ".COORDO    .VALE        ")
 assert min(coord) == 0.0, coord
 assert max(coord) == 0.1, coord
 
-conn = aster.getcolljev("MA      .CONNEX         ")
+conn = aster.getcolljev(MA.getName() + ".CONNEX         ")
 assert conn.keys() == [1, ], conn
 assert conn[1] == (1, 2), conn
 
-nommai = aster.getvectjev("MA      .NOMMAI                 ")
+nommai = aster.getvectjev(MA.getName() + ".NOMMAI                 ")
 assert nommai == ('ELN1    ', ), nommai
 
-nomno = aster.getvectjev("MA      .NOMNOE                 ")
+nomno = aster.getvectjev(MA.getName() + ".NOMNOE                 ")
 assert nomno == ('NO1     ', 'NO2     '), nomno
 
 UN = 1
@@ -52,7 +52,7 @@ TUP = (10., 11., 12., 13.)
 
 I02 = DEFI_LIST_ENTI(VALE=UN)
 I03 = DEFI_LIST_ENTI(VALE=(5, 6, 7))
-vale = aster.getvectjev("I02                .VALE")
+vale = aster.getvectjev(I02.getName() + ".VALE")
 assert vale == (1, ), vale
 
 FO3 = DEFI_FONCTION(NOM_PARA='X',

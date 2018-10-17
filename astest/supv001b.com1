@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -45,7 +45,10 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
 
 DETRUIRE(CONCEPT=_F(NOM=tab))
 
-INCLUDE(UNITE=50)
+import os
+os.rename('fort.50', 'fort50.py')
+from fort50 import include_function
+COUCHE = include_function(COUCHE)
 
 print 'COUCHE APRES INCLUDE = ', COUCHE
 

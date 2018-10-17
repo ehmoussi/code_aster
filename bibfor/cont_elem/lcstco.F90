@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,9 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine lcstco(algo_reso_geom, indi_cont, l_upda_jaco, lagrc_,&
-            gap_curr, mesure, rho_n, eval,l_previous)
+!
+subroutine lcstco(l_previous, l_upda_jaco  ,&
+                  lagrc_prev, lagrc_curr   ,&
+                  gap_prev  , gap_curr     ,&
+                  indi_cont , l_norm_smooth)
 !
 implicit none
 !
@@ -25,15 +27,12 @@ implicit none
 #include "asterfort/jevech.h"
 #include "asterf_types.h"
 !
-    integer, intent(out) :: algo_reso_geom
-    integer, intent(out) :: indi_cont
-    aster_logical, intent(out) :: l_upda_jaco
-    aster_logical, intent(in) :: l_previous
-    real(kind=8), optional, intent(out) :: lagrc_
-    real(kind=8), intent(out) :: gap_curr
-    real(kind=8), intent(out) :: mesure
-    real(kind=8), intent(out) :: rho_n
-    real(kind=8), intent(out) :: eval
+aster_logical, intent(out) :: l_previous
+real(kind=8), intent(out) :: lagrc_curr, lagrc_prev
+real(kind=8), intent(out) :: gap_curr, gap_prev
+aster_logical, intent(out) :: l_upda_jaco
+integer, intent(out) :: indi_cont
+aster_logical, intent(out) :: l_norm_smooth
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -43,45 +42,35 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
+! Out l_upda_jaco      : .true. to use updated jacobian
+! Out l_previous       : .true. to get previous parameters
 ! Out indi_cont        : contact indicator
 !                        -1 No pairing
 !                         0 Paired - No contact
 !                        +1 Paired - Contact
-! Out algo_reso_geom   : algorithm for geometry loop
-!                         0 - fixed point
-!                         1 - Newton
-! Out l_upda_jaco      : .true. to use updated jacobian
-! Out lagrc            : value of contact lagrangian
+! Out lagrc_curr       : current value of contact lagrangian
+! Out lagrc_prev       : previous value of contact lagrangian
+! Out gap_curr         : current value of gap
+! Out gap_prev         : previous value of gap
+! Out l_norm_smooth    : indicator for normals smoothing
 !
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: jpcf
-    real(kind=8) :: lagrc
 !
 ! --------------------------------------------------------------------------------------------------
 !
     call jevech('PCONFR', 'L', jpcf)
-    algo_reso_geom = nint(zr(jpcf-1+25))
-    
-    if(l_previous) then 
-       indi_cont      = nint(zr(jpcf-1+12+25))
-       lagrc          =     (zr(jpcf-1+13+25))
-       l_upda_jaco    = nint(zr(jpcf-1+2+25 )).eq.1
-       mesure         =     (zr(jpcf-1+16+25))
-       rho_n          =     (zr(jpcf-1+17+25))
-       eval           =     (zr(jpcf-1+18+25))
-       gap_curr       =     (zr(jpcf-1+15+25))   
-    else 
-       indi_cont      = nint(zr(jpcf-1+12))
-       lagrc          =     (zr(jpcf-1+13))
-       l_upda_jaco    = nint(zr(jpcf-1+2 )).eq.1
-       mesure         =     (zr(jpcf-1+16))
-       rho_n          =     (zr(jpcf-1+17))
-       eval           =     (zr(jpcf-1+18))
-       gap_curr       =     (zr(jpcf-1+15))  
-    end if 
-    if (present(lagrc_)) then
-        lagrc_ = lagrc
-    endif
+!
+    l_previous     = nint(zr(jpcf-1+10 )) .eq. 1
+    lagrc_prev     =     (zr(jpcf-1+13+25))
+    gap_prev       =     (zr(jpcf-1+15+25)) 
+    indi_cont      = nint(zr(jpcf-1+12))
+    lagrc_curr     =     (zr(jpcf-1+13))
+    l_upda_jaco    = nint(zr(jpcf-1+2 )) .eq. 1
+    gap_curr       =     (zr(jpcf-1+15))
+    l_norm_smooth  = nint(zr(jpcf-1+1)) .eq. 1
+! On s'assure que le patch n'a pas change de maille maitre. 
+    l_previous     = l_previous  .and. (nint(zr(jpcf-1+28 )) .eq. 1)
 !
 end subroutine

@@ -33,10 +33,12 @@ void exportThermalLoadToPython()
     class_< ThermalLoadInstance, ThermalLoadInstance::ThermalLoadPtr,
             bases< DataStructure > > ( "ThermalLoad", no_init )
         .def( "__init__", make_constructor(
-            &initFactoryPtr< ThermalLoadInstance, ModelPtr& >) )
+            &initFactoryPtr< ThermalLoadInstance,
+                             ModelPtr& >) )
         .def( "__init__", make_constructor(
             &initFactoryPtr< ThermalLoadInstance,
-                             std::string, ModelPtr& >) )
+                             std::string,
+                             ModelPtr& >) )
         .def( "addUnitaryThermalLoad",
               &ThermalLoadInstance::addUnitaryThermalLoad )
         .def( "build", &ThermalLoadInstance::build )

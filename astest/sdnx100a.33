@@ -1,3 +1,5 @@
+from code_aster.Commands import *
+
 LBEW=DEFI_FONCTION(NOM_PARA='INST',
                    NOM_RESU='ACCE',
                    VALE=
