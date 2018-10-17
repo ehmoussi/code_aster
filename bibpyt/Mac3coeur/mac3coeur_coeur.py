@@ -713,7 +713,8 @@ class Coeur(object):
 
         def m_time(a):
             m_time = (
-                _F(JUSQU_A=self.temps_simu[self._time[a]], NOMBRE=self.sub_temps_simu[self._subtime[a]],),)
+                _F(JUSQU_A=self.temps_simu[self._time[a]],
+                   NOMBRE=int(self.sub_temps_simu[self._subtime[a]]),),)
             return m_time
 
         self.init_temps_simu(fluence, subdivis)
