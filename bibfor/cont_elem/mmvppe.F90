@@ -19,20 +19,21 @@
 ! person_in_charge: ayaovi-dzifa.kudawoo at edf.fr
 ! aslint: disable=W1504
 !
-subroutine mmvppe(typmae, typmam,&
-                  iresog, ndim, nne,&
-                  nnm, nnl, nbdm, laxis, ldyna,&
-                  xpc        , ypc      , xpr     , ypr     ,&
-                  tau1       , tau2     ,&
-                  jeusup, ffe, ffm, dffm, ffl,&
-                  norm, mprojt, jacobi,&
-                  dlagrc, dlagrf, jeu, djeu, &
-                  djeut, mprojn,&
-                  mprt1n, mprt2n, mprnt1, mprnt2,&
-                  kappa, h, vech1, vech2,&
-                  mprt11, mprt12, mprt21,&
-                  mprt22,taujeu1, taujeu2, &
-                  dnepmait1,dnepmait2, l_large_slip)
+subroutine mmvppe(typmae   , typmam   ,&
+                  ndim     , nne      , nnm     , nnl   , nbdm  ,&
+                  iresog   , l_large_slip ,&
+                  laxis    , ldyna    , jeusup  ,&
+                  xpc      , ypc      , xpr     , ypr   ,&
+                  tau1     , tau2     ,&
+                  ffe      , ffm      , ffl     ,&
+                  jacobi   , jeu      , djeu    , djeut ,&
+                  dlagrc   , dlagrf   ,&
+                  norm     , mprojt   ,&
+                  mprt1n   , mprt2n   , &
+                  mprt11   , mprt12   , mprt21  , mprt22,&
+                  kappa    , &
+                  taujeu1  , taujeu2  ,&
+                  dnepmait1, dnepmait2)
 !
 implicit none
 !
@@ -50,25 +51,23 @@ implicit none
 #include "asterfort/mmvitm.h"
 #include "asterfort/utmess.h"
 !
-character(len=8) :: typmae, typmam
-integer :: iresog
-integer :: ndim, nne, nnm, nnl, nbdm
-real(kind=8) :: ffe(9), ffm(9), ffl(9)
-real(kind=8), intent(in) :: tau1(3), tau2(3)
-real(kind=8) :: norm(3)
-real(kind=8) :: mprojt(3, 3)
-aster_logical :: laxis, ldyna
+aster_logical, intent(in) :: laxis, ldyna
+character(len=8), intent(in) :: typmae, typmam
+integer, intent(in) :: ndim, nne, nnm, nnl, nbdm
+integer, intent(in) :: iresog
 aster_logical, intent(in) :: l_large_slip
-real(kind=8) :: jacobi
-real(kind=8) :: jeusup
-real(kind=8) :: dlagrc, dlagrf(2)
-real(kind=8) :: jeu, djeu(3), djeut(3)
-real(kind=8) :: dnepmait1 ,dnepmait2 ,taujeu1,taujeu2
+real(kind=8), intent(in) :: jeusup
 real(kind=8), intent(in) :: xpc, ypc, xpr, ypr
+real(kind=8), intent(in) :: tau1(3), tau2(3)
+real(kind=8), intent(out) :: ffe(9), ffm(9), ffl(9)
+real(kind=8), intent(out) :: jacobi, jeu
+real(kind=8), intent(out) :: djeut(3), djeu(3), dlagrc, dlagrf(2)
+real(kind=8), intent(out) :: norm(3)
+real(kind=8), intent(out) :: mprojt(3, 3)
+real(kind=8), intent(out) :: mprt1n(3, 3), mprt2n(3, 3)
 real(kind=8), intent(out) :: mprt11(3, 3), mprt12(3, 3), mprt21(3, 3), mprt22(3, 3)
-real(kind=8), intent(out) :: mprt1n(3, 3), mprt2n(3, 3), mprnt1(3, 3), mprnt2(3, 3)
-real(kind=8) :: kappa(2, 2), h(2, 2)
-real(kind=8) :: vech1(3), vech2(3)
+real(kind=8), intent(out) :: kappa(2, 2)
+real(kind=8), intent(out) :: dnepmait1, dnepmait2, taujeu1, taujeu2
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -91,7 +90,7 @@ real(kind=8) :: vech1(3), vech2(3)
 ! In  iresof           : algorithm for friction
 !                        0 - Fixed point
 !                        1 - Newton
-! In  granglis         : flag for GRAND_GLISSEMENT
+! In  l_large_slip     : flag for GRAND_GLISSEMENT
 ! In  laxis            : flag for axisymmetric
 ! In  ldyna            : flag when dynamic
 ! In  jeusup           : gap from DIST_ESCL/DIST_MAIT
@@ -116,12 +115,9 @@ real(kind=8) :: vech1(3), vech2(3)
 ! Out norm             : normal at current contact point
 ! Out tau1             : first tangent at current contact point
 ! Out tau2             : second tangent at current contact point
-! Out mprojn           : matrix of normal projection
 ! Out mprojt           : matrix of tangent projection
 ! Out mprt1n           : projection matrix first tangent/normal
 ! Out mprt2n           : projection matrix second tangent/normal
-! Out mprnt1           : projection matrix normal/first tangent
-! Out mprnt2           : projection matrix normal/second tangent
 ! Out mprt11           : projection matrix first tangent/first tangent
 !                        tau1*TRANSPOSE(tau1)(matrice 3*3)
 ! Out mprt12           : projection matrix first tangent/second tangent
@@ -132,14 +128,6 @@ real(kind=8) :: vech1(3), vech2(3)
 !                        tau2*TRANSPOSE(tau2)(matrice 3*3)
 ! Out KAPPA            : MATRICE DE SCALAIRES LIEES A LA CINEMATIQUE DU GLISSEMENT
 !                        KAPPA(i,j) = INVERSE[tau_i.tau_j-JEU*(ddFFM*geomm)](matrice 2*2)
-! Out H                : MATRICE DE SCALAIRES EULERIENNE DUE A LA REGULARITE DE LA SURFACE MAITRE
-!                        H(i,j) = JEU*{[DDGEOMM(i,j)].n} (matrice 2*2)
-! Out A                : MATRICE DE SCALAIRES DUE AU TENSEUR DE WEINTGARTEN
-!                        A(i,j) = [tau_i.tau_j] (matrice 2*2)
-! Out HA               : H/A   (matrice 2*2)
-! Out HAH              : HA/H  (matrice 2*2)
-! Out VECH_1           : KAPPA(1,m)*tau_m
-! Out VECH_2           : KAPPA(2,m)*tau_m
 ! Out dnepmait1, dnepmait2, taujeu1, taujeu2
 !
 ! --------------------------------------------------------------------------------------------------
@@ -161,7 +149,9 @@ real(kind=8) :: vech1(3), vech2(3)
     real(kind=8) :: mprojn(3, 3)
     aster_logical :: l_axis_warn
     real(kind=8) :: gene11(3,3), gene21(3,3), gene22(3,3)
-    real(kind=8) :: a(2, 2), ha(2, 2), hah(2, 2)
+    real(kind=8) :: a(2, 2), ha(2, 2), h(2, 2), hah(2, 2)
+    real(kind=8) :: mprnt1(3, 3), mprnt2(3, 3)
+    real(kind=8) :: vech1(3), vech2(3)
 !
 ! --------------------------------------------------------------------------------------------------
 !

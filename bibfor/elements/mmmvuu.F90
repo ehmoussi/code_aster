@@ -20,7 +20,8 @@ subroutine mmmvuu(phasez, ndim, nne, nnm, norm,&
                   tau1, tau2, mprojt, wpg, ffe,&
                   ffm, jacobi, jeu, coefac, coefaf,&
                   lambda, coefff, dlagrc, dlagrf, dvite,&
-                  rese, nrese, vectee, vectmm,mprt11,mprt21,mprt22,mprt1n,mprt2n,kappa,l_large_slip)
+                  rese, nrese, vectee, vectmm,mprt11,mprt12,mprt21,mprt22,mprt1n,mprt2n,&
+                   kappa,l_large_slip)
 !
 ! person_in_charge: mickael.abbas at edf.fr
 !
@@ -40,7 +41,7 @@ aster_logical, intent(in) :: l_large_slip
     real(kind=8) :: coefac, coefaf, jeu
     real(kind=8) :: lambda, coefff
     real(kind=8) :: vectee(27), vectmm(27)
-    real(kind=8) :: mprt11(3, 3), mprt21(3, 3), mprt22(3, 3)
+    real(kind=8) :: mprt11(3, 3), mprt12(3, 3), mprt21(3, 3), mprt22(3, 3)
     real(kind=8) :: mprt1n(3,3),mprt2n(3,3)  
 !
 ! ----------------------------------------------------------------------
@@ -100,7 +101,7 @@ aster_logical, intent(in) :: l_large_slip
                 tau2, mprojt, wpg, ffe, jacobi,&
                 jeu, coefac, coefaf, lambda, coefff,&
                 dlagrc, dlagrf, dvite, rese, nrese,&
-                vectee,mprt11,mprt21,mprt22,kappa,l_large_slip)
+                vectee,mprt11,mprt12,mprt21,mprt22,kappa,l_large_slip)
 !
 ! --- DEPL_MAIT
 !
@@ -108,6 +109,6 @@ aster_logical, intent(in) :: l_large_slip
                 tau2, mprojt, wpg, ffm, jacobi,&
                 jeu, coefac, coefaf, lambda, coefff,&
                 dlagrc, dlagrf, dvite, rese, nrese,&
-                vectmm,mprt11,mprt21,mprt22,mprt1n,mprt2n,kappa,l_large_slip)
+                vectmm,mprt11,mprt12,mprt21,mprt22,mprt1n,mprt2n,kappa,l_large_slip)
 !
 end subroutine

@@ -20,7 +20,7 @@ subroutine mmmvmm(phasez, ndim, nnm, norm, tau1,&
                   tau2, mprojt, wpg, ffm, jacobi,&
                   jeu, coefac, coefaf, lambda, coefff,&
                   dlagrc, dlagrf, dvite, rese, nrese,&
-                  vectmm,mprt11,mprt21,mprt22,mprt1n,mprt2n,kappa,l_large_slip)
+                  vectmm,mprt11,mprt12, mprt21,mprt22,mprt1n,mprt2n,kappa,l_large_slip)
 !
 ! person_in_charge: mickael.abbas at edf.fr
 !
@@ -40,7 +40,7 @@ aster_logical, intent(in) :: l_large_slip
     real(kind=8) :: lambda, coefff,dffm(2, 9)
     real(kind=8) :: vectmm(27),matr(27)
     real(kind=8) :: mprt1n(3,3),mprt2n(3,3)  
-    real(kind=8) :: mprt11(3, 3), mprt21(3, 3), mprt22(3, 3) 
+    real(kind=8) :: mprt11(3, 3), mprt12(3, 3),mprt21(3, 3), mprt22(3, 3) 
     
 !
 ! ----------------------------------------------------------------------
@@ -87,7 +87,6 @@ aster_logical, intent(in) :: l_large_slip
     real(kind=8) :: dlagft(3), plagft(3), prese(3), prese1(3), prese2(3)
     real(kind=8) :: dvitet(3), pdvitt(3), g(3, 3), g1(3, 3), g2(3, 3)
     character(len=9) :: phasep
-    real(kind=8) :: mprt12(3, 3)
 !
 ! ----------------------------------------------------------------------
 !
@@ -99,16 +98,6 @@ aster_logical, intent(in) :: l_large_slip
         dvitet(i) = 0.d0
         pdvitt(i) = 0.d0
   end do
-
-  mprt12(1,1) = mprt21(1,1)
-  mprt12(2,2) = mprt21(2,2)  
-  mprt12(3,3) = mprt21(3,3)
-  mprt12(1,2) = mprt21(2,1)
-  mprt12(1,3) = mprt21(3,1)  
-  mprt12(2,1) = mprt21(1,2)
-  mprt12(2,3) = mprt21(3,2)  
-  mprt12(3,1) = mprt21(1,3)
-  mprt12(3,2) = mprt21(2,3)  
   matr = 0.
 ! --- PROJECTION DU LAGRANGE DE FROTTEMENT SUR LE PLAN TANGENT
 !

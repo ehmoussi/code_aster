@@ -18,19 +18,22 @@
 ! person_in_charge: ayaovi-dzifa.kudawoo at edf.fr
 ! aslint: disable=W1504
 !
-subroutine mmtppe(typmae, typmam,&
-                  ndim, nne, nnm, nnl, nbdm,&
-                  iresog, laxis, &
-                  xpc        , ypc      , xpr     , ypr     ,&
+subroutine mmtppe(typmae     , typmam   ,&
+                  ndim       , nne      , nnm     , nnl   , nbdm  ,&
+                  iresog     , l_large_slip, &
+                  laxis      , jeusup   ,&
+                  xpc        , ypc      , xpr     , ypr   ,&
                   tau1       , tau2     ,&
-                  jeusup, ffe, ffm, dffm, ddffm, ffl,&
-                  jacobi, jeu, djeut, dlagrc,&
-                  dlagrf, norm, mprojn,&
-                  mprojt, mprt1n, mprt2n, mprnt1, mprnt2,&
-                  kappa, h, hah, vech1, vech2,&
-                  mprt11, mprt12, mprt21, mprt22,&
-                  taujeu1, taujeu2, &
-                  dnepmait1,dnepmait2,l_previous, l_large_slip)
+                  ffe        , ffm      , dffm    , ddffm , ffl   ,&
+                  jacobi     , jeu      , djeut   ,&
+                  dlagrc     , dlagrf   , &
+                  norm       , mprojn   , mprojt  ,&
+                  mprt1n     , mprt2n   , mprnt1  , mprnt2,&
+                  mprt11     , mprt12   , mprt21  , mprt22,&
+                  kappa      , h        , hah     ,&
+                  vech1      , vech2    ,&
+                  taujeu1    , taujeu2  ,&
+                  dnepmait1  , dnepmait2)
 !
 implicit none
 !
@@ -47,101 +50,99 @@ implicit none
 #include "asterfort/mmcalg.h"
 #include "asterfort/utmess.h"
 !
-character(len=8) :: typmae, typmam
-integer :: ndim, nne, nnm, nnl, nbdm
-integer :: iresog
+aster_logical, intent(in) :: laxis
+character(len=8), intent(in) :: typmae, typmam
+integer, intent(in) :: ndim, nne, nnm, nnl, nbdm
+integer, intent(in) :: iresog
 aster_logical, intent(in) :: l_large_slip
-aster_logical :: laxis, l_previous
-real(kind=8) :: jeusup
-real(kind=8) :: jacobi
+real(kind=8), intent(in) :: jeusup
 real(kind=8), intent(in) :: xpc, ypc, xpr, ypr
 real(kind=8), intent(in) :: tau1(3), tau2(3)
-real(kind=8) :: dlagrc, dlagrf(2)
-real(kind=8) :: jeu, djeu(3), djeut(3)
-real(kind=8) :: ffe(9), ffm(9), ffl(9)
-real(kind=8) :: dffm(2, 9)
-real(kind=8) :: norm(3)
-real(kind=8) :: mprojn(3, 3), mprojt(3, 3)
-real(kind=8), intent(out) :: mprt11(3, 3), mprt12(3, 3), mprt21(3, 3), mprt22(3, 3)
+real(kind=8), intent(out) :: ffe(9), ffm(9), dffm(2,9), ddffm(3, 9), ffl(9)
+real(kind=8), intent(out) :: jacobi, jeu
+real(kind=8), intent(out) :: djeut(3), dlagrc, dlagrf(2)
+real(kind=8), intent(out) :: norm(3)
+real(kind=8), intent(out) :: mprojn(3, 3), mprojt(3, 3)
 real(kind=8), intent(out) :: mprt1n(3, 3), mprt2n(3, 3), mprnt1(3, 3), mprnt2(3, 3)
-real(kind=8) :: kappa(2, 2), h(2, 2), hah(2, 2)
-real(kind=8) :: vech1(3), vech2(3)
-real(kind=8) :: dnepmait1, dnepmait2, taujeu1, taujeu2
+real(kind=8), intent(out) :: mprt11(3, 3), mprt12(3, 3), mprt21(3, 3), mprt22(3, 3)
+real(kind=8), intent(out) :: kappa(2, 2), h(2, 2), hah(2, 2)
+real(kind=8), intent(out) :: vech1(3), vech2(3)
+real(kind=8), intent(out) :: dnepmait1, dnepmait2, taujeu1, taujeu2
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
-! ROUTINE CONTACT (METHODE CONTINUE - CALCUL)
+! Contact - Elementary computations
 !
-! PREPARATION DES CALCULS DES MATRICES - CALCUL DES QUANTITES
-! CAS POIN_ELEM
+! Compute quantities (for matrix)
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
+! In  l_previous       : flag for previous state
+! In  typmae           : type of slave element
+! In  typmam           : type of master element
+! In  ndim             : dimension of problem (2 or 3)
+! In  nne              : number of slave nodes
+! In  nnm              : number of master nodes
+! In  nnl              : number of nodes with Lagrange multiplicators (contact and friction)
+! In  nbdm             : number of components by node for all dof
+! In  iresog           : algorithm for geometry
+!                        0 - Fixed point
+!                        1 - Newton
+! In  iresof           : algorithm for friction
+!                        0 - Fixed point
+!                        1 - Newton
+! In  granglis         : flag for GRAND_GLISSEMENT
+! In  laxis            : flag for axisymmetric
+! In  jeusup           : gap from DIST_ESCL/DIST_MAIT
+! In  lambds           : contact pressure (fixed trigger)
+! In  xpc              : X-coordinate for contact point
+! In  ypc              : Y-coordinate for contact point
+! In  xpr              : X-coordinate for projection of contact point
+! In  ypr              : Y-coordinate for projection of contact point
+! In  tau1             : first tangent at current contact point
+! In  tau2             : second tangent at current contact point
+! Out ffe              : shape function for slave nodes
+! Out ffm              : shape function for master nodes
+! Out dffm             : first derivative of shape function for master nodes
+! Out ddffm            : second derivative of shape function for master nodes
+! Out ffl              : shape function for Lagrange dof
+! Out jacobi           : jacobian at integration point
+! Out jeu              : normal gap
+! Out djeut            : increment of tangent gaps
+! Out dlagrc           : increment of contact Lagrange from beginning of time step
+! Out dlagrf           : increment of friction Lagrange from beginning of time step
+! Out norm             : normal at current contact point
+! Out tau1             : first tangent at current contact point
+! Out tau2             : second tangent at current contact point
+! Out mprojn           : matrix of normal projection
+! Out mprojt           : matrix of tangent projection
+! Out mprt1n           : projection matrix first tangent/normal
+! Out mprt2n           : projection matrix second tangent/normal
+! Out mprnt1           : projection matrix normal/first tangent
+! Out mprnt2           : projection matrix normal/second tangent
+! Out mprt11           : projection matrix first tangent/first tangent
+!                        tau1*TRANSPOSE(tau1)(matrice 3*3)
+! Out mprt12           : projection matrix first tangent/second tangent
+!                        tau1*TRANSPOSE(tau2)(matrice 3*3)
+! Out mprt21           : Projection matrix second tangent/first tangent
+!                        tau2*TRANSPOSE(tau1)(matrice 3*3)
+! Out mprt22           : Projection matrix second tangent/second tangent
+!                        tau2*TRANSPOSE(tau2)(matrice 3*3)
+! Out kappa            : MATRICE DE SCALAIRES LIEES A LA CINEMATIQUE DU GLISSEMENT
+!                        KAPPA(i,j) = INVERSE[tau_i.tau_j-JEU*(ddFFM*geomm)](matrice 2*2)
+! Out H                : MATRICE DE SCALAIRES EULERIENNE DUE A LA REGULARITE DE LA SURFACE MAITRE
+!                        H(i,j) = JEU*{[DDGEOMM(i,j)].n} (matrice 2*2)
+! Out A                : MATRICE DE SCALAIRES DUE AU TENSEUR DE WEINTGARTEN
+!                        A(i,j) = [tau_i.tau_j] (matrice 2*2)
+! Out HA               : H/A   (matrice 2*2)
+! Out HAH              : HA/H  (matrice 2*2)
+! Out VECH_1           : KAPPA(1,m)*tau_m
+! Out VECH_2           : KAPPA(2,m)*tau_m
+! Out dnepmait1, dnepmait2, taujeu1, taujeu2
 !
-! IN  TYPMAE : NOM DE LA MAILLE ESCLAVE
-! IN  TYPMAM : NOM DE LA MAILLE MAITRE
-! IN  NDIM   : DIMENSION DE LA MAILLE DE CONTACT
-! IN  NNE    : NOMBRE DE NOEUDS DE LA MAILLE ESCLAVE
-! IN  NNM    : NOMBRE DE NOEUDS DE LA MAILLE MAITRE
-! IN  NNL    : NOMBRE DE NOEUDS PORTANT UN LAGRANGE DE CONTACT/FROTT
-! IN  NBDM   : NOMBRE DE COMPOSANTES/NOEUD DES DEPL+LAGR_C+LAGR_F
-! IN  IRESOG : ALGO. DE RESOLUTION POUR LA GEOMETRIE
-!              0 - POINT FIXE
-!              1 - NEWTON
-! IN  LAXIS  : .TRUE. SI AXISYMETRIE
-! IN  JEUSUP : JEU SUPPLEMENTAIRE PAR DIST_ESCL/DIST_MAIT
-! ----
-! ----INCONNUES STANDARDS
-! OUT FFE    : FONCTIONS DE FORMES DEPL_ESCL
-! OUT FFM    : FONCTIONS DE FORMES DEPL_MAIT
-! OUT FFL    : FONCTIONS DE FORMES LAGR.
-! OUT DFFM   : DERIVEES PREMIERES DES FONCTIONS DE FORME MAITRES
-! OUT JACOBI : JACOBIEN DE LA MAILLE AU POINT DE CONTACT
-! OUT WPG    : POIDS DU POINT INTEGRATION DU POINT DE CONTACT
-! OUT DLAGRC : INCREMENT DEPDEL DU LAGRANGIEN DE CONTACT
-! OUT DLAGRF : INCREMENT DEPDEL DES LAGRANGIENS DE FROTTEMENT
-! OUT JEU    : JEU NORMAL ACTUALISE
-! OUT DJEUT  : INCREMENT DEPDEL DU JEU TANGENT
-! OUT NORM   : NORMALE
-! OUT TAU1   : PREMIER VECTEUR TANGENT
-! OUT TAU2   : SECOND VECTEUR TANGENT
-! -----------------------------------------------------------------------
-!     MATRICES ISSUES DE LA GEOMETRIE DIFFERENTIELLE POUR NEWTON GENE
-! -----------------------------------------------------------------------
-! OUT MPRT11 : MATRICE DE PROJECTION TANGENTE DANS LA DIRECTION 1
-! OUT MPRT11 = TAU1*TRANSPOSE(TAU1)(matrice 3*3)
+! --------------------------------------------------------------------------------------------------
 !
-! OUT MPRT12 : MATRICE DE PROJECTION TANGENTE DANS LA DIRECTION 1/2
-! OUT MPRT12 = TAU1*TRANSPOSE(TAU2)(matrice 3*3)
-!
-! OUT MPRT12 : MATRICE DE PROJECTION TANGENTE DANS LA DIRECTION 2
-! OUT MPRT12 = TAU2*TRANSPOSE(TAU2)(matrice 3*3)
-!
-! OUT GENE11 : MATRICE EULERIENNE DUE A LA REGULARITE DE LA SURFACE MAITRE
-! OUT          DDGEOMM(1,1)/NORMALE  (matrice 3*3)
-!
-! OUT GENE21 : MATRICE EULERIENNE DUE A LA REGULARITE DE LA SURFACE MAITRE
-! OUT          DDGEOMM(2,1)/NORMALE  (matrice 3*3)
-!
-! OUT GENE22 : MATRICE EULERIENNE DUE A LA REGULARITE DE LA SURFACE MAITRE
-! OUT          DDGEOMM(2,2)/NORMALE  (matrice 3*3)
-!
-! OUT KAPPA  : MATRICE DE SCALAIRES LIEES A LA CINEMATIQUE DU GLISSEMENT
-! OUT KAPPA(i,j) = INVERSE[TAU_i.TAU_j-JEU*(ddFFM*geomm)](matrice 2*2)
-!
-! OUT H : MATRICE DE SCALAIRES EULERIENNE DUE A LA REGULARITE DE LA SURFACE MAITRE
-! OUT H(i,j) = JEU*{[ddFFM(i,j)*geomm].n} (matrice 2*2)
-!
-! OUT A : MATRICE DE SCALAIRES DUE AU TENSEUR DE WEINTGARTEN
-! OUT A(i,j) = [TAU_i.TAU_j] (matrice 2*2)
-!
-! OUT HA  = H/A   (matrice 2*2)
-! OUT HAH = HA/H  (matrice 2*2)
-!
-! OUT VECH_i = KAPPA(i,m)*TAU_m
-! ----------------------------------------------------------------------
-!
-    integer :: jpcf, i_node, i_dime
+    integer :: i_node, i_dime
     integer :: jgeom, jdepde, jdepm
     real(kind=8) :: ppe
     real(kind=8) :: ddepmam(9, 3)
@@ -151,15 +152,13 @@ real(kind=8) :: dnepmait1, dnepmait2, taujeu1, taujeu2
     real(kind=8) :: ddeple(3), ddeplm(3)
     real(kind=8) :: deplme(3), deplmm(3)
     real(kind=8) :: dffe(2, 9), ddffe(3, 9)
-    real(kind=8) :: ddffm(3, 9)
-    real(kind=8) :: dffl(2, 9), ddffl(3, 9)
+    real(kind=8) :: dffl(2, 9), ddffl(3, 9), djeu(3)
     aster_logical :: l_axis_warn
     real(kind=8) :: gene11(3,3)=0.0, gene21(3,3)=0.0, gene22(3,3)=0.0
     real(kind=8) :: a(2, 2), ha(2, 2)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call jevech('PCONFR' , 'L', jpcf)
     call jevech('PGEOMER', 'L', jgeom)
     call jevech('PDEPL_P', 'L', jdepde)
     call jevech('PDEPL_M', 'L', jdepm)
@@ -237,14 +236,6 @@ real(kind=8) :: dnepmait1, dnepmait2, taujeu1, taujeu2
                 ddeple, ddeplm,&
                 norm  , mprojt,&
                 jeu   , djeu  , djeut )
-!
-! TRAITEMENT CYCLAGE : ON REMPLACE LES VALEURS DE JEUX et DE NORMALES
-!                      POUR AVOIR UNE MATRICE CONSISTANTE
-!
-    if (l_previous) then
-        jeu    = zr(jpcf-1+29)
-        dlagrc = zr(jpcf-1+26)
-    endif
 !
 ! - Compute geometric quantities for second variation of gap
 !

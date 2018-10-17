@@ -54,7 +54,7 @@ real(kind=8), intent(out) :: jeu, djeu(3), djeut(3)
 ! In  ddeplm           : increment of displacement for projection of contact point
 ! In  mprojt           : matrix of tangent projection
 ! Out jeu              : normal gap
-! Out djeu             : increment of normal gap
+! Out djeu             : increment of gap
 ! Out djeut            : increment of tangent gaps
 !
 ! --------------------------------------------------------------------------------------------------

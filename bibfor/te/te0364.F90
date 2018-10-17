@@ -231,37 +231,48 @@ character(len=16), intent(in) :: option, nomte
                 typmam, nnm  ,&
                 nnl   , nbcps, nbdm,&
                 laxis , leltf)
+    if (.not.loptf) then
+        leltf = .false.
+    endif
 !
 ! - Compute quantities
 !
-    call mmtppe(typmae, typmam, ndim, nne, nnm,&
-                nnl, nbdm, iresog, laxis, &
-                xpc           , ypc      , xpr   , ypr     ,&
-                tau1          , tau2     ,&
-                jeusup, ffe, ffm, dffm,ddffm, ffl,&
-                jacobi, jeu, djeut, dlagrc,&
-                dlagrf, norm, mprojn,&
-                mprojt, mprt1n, mprt2n, mprnt1, mprnt2,&
-                kappa, h, hah, vech1, vech2,&
-                mprt11, mprt12, mprt21,&
-                mprt22,taujeu1, taujeu2, &
-              dnepmait1,dnepmait2, .false._1,l_large_slip)
+    call mmtppe(typmae   , typmam   ,&
+                ndim     , nne      , nnm   , nnl     , nbdm  ,&
+                iresog   , l_large_slip, &
+                laxis    , jeusup   ,&
+                xpc      , ypc      , xpr   , ypr     ,&
+                tau1     , tau2     ,&
+                ffe      , ffm      , dffm  , ddffm   , ffl   ,&
+                jacobi   , jeu      , djeut ,&
+                dlagrc   , dlagrf   , &
+                norm     , mprojn   , mprojt,&
+                mprt1n   , mprt2n   , mprnt1, mprnt2, &
+                mprt11   , mprt12   , mprt21, mprt22,&
+                kappa    , h        , hah,&
+                vech1    , vech2    ,&
+                taujeu1  , taujeu2  ,&
+                dnepmait1, dnepmait2)
     if (l_previous) then
-        call mmtppe(typmae, typmam, ndim, nne, nnm,&
-                    nnl, nbdm, iresog, laxis, &
-                    xpc           , ypc      , xpr   , ypr     ,&
-                    tau1_prev     , tau2_prev,&
-                    jeusup, ffe, ffm, dffm,ddffm, ffl,&
-                    jacobi, jeu_prev, djeut_prev, dlagrc_prev,&
-                    dlagrf_prev, norm_prev, mprojn_prev,&
-                    mprojt_prev, mprt1n_prev, mprt2n_prev, mprnt1_prev, mprnt2_prev,&
-                    kappa_prev, h_prev, hah_prev, vech1_prev, vech2_prev,&
-                    mprt11_prev, mprt12_prev, mprt21_prev,&
-                    mprt22_prev,taujeu1_prev, taujeu2_prev, &
-              dnepmait1_prev,dnepmait2_prev, .true._1,l_large_slip)  
+        call mmtppe(typmae     , typmam   ,&
+                    ndim       , nne      , nnm     , nnl     , nbdm  ,&
+                    iresog     , l_large_slip, &
+                    laxis      , jeusup   ,&
+                    xpc_prev   , ypc_prev , xpr_prev, ypr_prev,&
+                    tau1_prev  , tau2_prev,&
+                    ffe        , ffm      , dffm    , ddffm   , ffl   ,&
+                    jacobi     , jeu_prev , djeut_prev,&
+                    dlagrc_prev, dlagrf_prev,&
+                    norm_prev, mprojn_prev, mprojt_prev,&
+                    mprt1n_prev, mprt2n_prev, mprnt1_prev, mprnt2_prev,&
+                    mprt11_prev, mprt12_prev, mprt21_prev, mprt22_prev,&
+                    kappa_prev  , h_prev   , hah_prev   ,&
+                    vech1_prev , vech2_prev,&
+                    taujeu1_prev, taujeu2_prev,&
+                    dnepmait1_prev, dnepmait2_prev)
     endif
 !
-!  --- PREPARATION DES DONNEES - CHOIX DU LAGRANGIEN DE CONTACT
+! - Get contact pressure
 !
     call mmlagc(lambds, dlagrc, iresof, lambda)
     if (l_previous) then
@@ -270,13 +281,23 @@ character(len=16), intent(in) :: option, nomte
 !
 ! - Compute state of contact and friction
 !
-    call mmmsta(ndim, leltf, lpenaf, loptf, djeut,&
-                dlagrf, coefaf, tau1, tau2, lcont,&
-                ladhe, lambda, rese, nrese, .false._1)
+    call mmmsta(ndim  , loptf , indco,&
+                ialgoc, ialgof,&
+                lpenaf, coefaf,&
+                lambda, djeut , dlagrf,&
+                tau1  , tau2  ,&
+                lcont , ladhe ,&
+                rese  , nrese )
     if (l_previous) then
-        call mmmsta(ndim, leltf, lpenaf, loptf, djeut_prev,&
-                    dlagrf_prev, coefaf_prev, tau1_prev, tau2_prev, lcont_prev,&
-                    ladhe_prev, lambda_prev, rese_prev, nrese_prev, l_previous)
+        call mmmsta(ndim        , loptf        , indco,&
+                    ialgoc      , ialgof       ,&
+                    lpenaf      , coefaf       ,&
+                    lambda_prev , djeut_prev   , dlagrf_prev,&
+                    tau1_prev   , tau2_prev    ,&
+                    lcont_prev  , ladhe_prev   ,&
+                    rese_prev   , nrese_prev   ,&
+                    l_previous  , indco_prev   ,&
+                    indadhe_prev, indadhe2_prev)
     endif
 !
 ! - Select phase to compute
@@ -299,9 +320,13 @@ character(len=16), intent(in) :: option, nomte
                      taujeu1  , taujeu2  ,&
                      dnepmait1, dnepmait2,&
                      djeut )
-        call mmnsta(ndim, leltf, lpenaf, loptf, djeut,&
-                    dlagrf, coefaf, tau1, tau2, lcont,&
-                    ladhe, lambda, rese, nrese)
+        call mmnsta(ndim  , loptf ,&
+                    lpenaf, coefaf,&
+                    indco ,&
+                    lambda, djeut , dlagrf,&
+                    tau1  , tau2  ,&
+                    lcont , ladhe ,&
+                    rese  , nrese)
     endif
 !
 ! - Weak form of contact/friction force

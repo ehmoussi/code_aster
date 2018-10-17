@@ -15,57 +15,39 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-!
 #include "asterf_types.h"
 !
 interface
-    subroutine mmvppe(typmae, typmam, iresog, ndim, nne,&
-                  nnm, nnl, nbdm, laxis, ldyna,&
-                  xpc        , ypc      , xpr     , ypr     ,&
-                  tau1       , tau2,&
-                  jeusup, ffe, ffm, dffm, ffl,&
-                  norm, mprojt, jacobi,&
-                  dlagrc, dlagrf, jeu, djeu,&
-                  djeut, mprojn,&
-                  mprt1n, mprt2n, mprnt1, mprnt2,&
-                  kappa, h, vech1, vech2,&
-                  mprt11, mprt12, mprt21,&
-                  mprt22,taujeu1, taujeu2, &
-                  dnepmait1,dnepmait2, l_large_slip)
-        character(len=8) :: typmae
-        character(len=8) :: typmam
-        integer :: iresog
-        integer :: ndim
-        integer :: nne
-        integer :: nnm
-        integer :: nnl
-        integer :: nbdm
+    subroutine mmvppe(typmae   , typmam   ,&
+                      ndim     , nne      , nnm     , nnl   , nbdm  ,&
+                      iresog   , l_large_slip,&
+                      laxis    , ldyna    , jeusup  ,&
+                      xpc      , ypc      , xpr     , ypr   ,&
+                      tau1     , tau2     ,&
+                      ffe      , ffm      , ffl     ,&
+                      jacobi   , jeu      , djeu    , djeut , &
+                      dlagrc   , dlagrf   , &
+                      norm     , mprojt   ,&
+                      mprt1n   , mprt2n   , &
+                      mprt11  , mprt12  ,mprt21, mprt22,&
+                      kappa    ,&
+                      taujeu1  , taujeu2  ,&
+                      dnepmait1, dnepmait2)
+        aster_logical, intent(in) :: laxis, ldyna
+        character(len=8), intent(in) :: typmae, typmam
+        integer, intent(in) :: ndim, nne, nnm, nnl, nbdm
+        integer, intent(in) :: iresog
         aster_logical, intent(in) :: l_large_slip
-        aster_logical :: laxis
-        aster_logical :: ldyna
-        real(kind=8) :: jeusup
-        real(kind=8) :: ffe(9)
-        real(kind=8) :: ffm(9)
-        real(kind=8) :: dffm(2, 9)
-        real(kind=8) :: ffl(9)
-        real(kind=8) :: norm(3)
-        real(kind=8), intent(in) :: tau1(3), tau2(3)
-        real(kind=8) :: dnepmait1 ,dnepmait2 ,taujeu1,taujeu2
-        real(kind=8) :: mprojt(3, 3)
-        real(kind=8) :: jacobi
+        real(kind=8), intent(in) :: jeusup
         real(kind=8), intent(in) :: xpc, ypc, xpr, ypr
-        real(kind=8) :: dlagrc
-        real(kind=8) :: dlagrf(2)
-        real(kind=8) :: jeu
-        real(kind=8) :: djeu(3)
-        real(kind=8) :: djeut(3)
-        real(kind=8) :: mprojn(3, 3)
+        real(kind=8), intent(in) :: tau1(3), tau2(3)
+        real(kind=8), intent(out) :: ffe(9), ffm(9), ffl(9)
+        real(kind=8), intent(out) :: jacobi, jeu, djeu(3)
+        real(kind=8), intent(out) :: djeut(3), dlagrc, dlagrf(2)
+        real(kind=8), intent(out) :: norm(3), mprojt(3, 3)
+        real(kind=8), intent(out) :: mprt1n(3, 3), mprt2n(3, 3)
         real(kind=8), intent(out) :: mprt11(3, 3), mprt12(3, 3), mprt21(3, 3), mprt22(3, 3)
-        real(kind=8), intent(out) :: mprt1n(3, 3), mprt2n(3, 3), mprnt1(3, 3), mprnt2(3, 3)
-        real(kind=8) :: kappa(2,2)
-        real(kind=8) :: h(2,2)
-        real(kind=8) :: vech1(3)
-        real(kind=8) :: vech2(3)
-    
+        real(kind=8), intent(out) :: kappa(2, 2)
+        real(kind=8), intent(out) :: dnepmait1, dnepmait2, taujeu1, taujeu2
     end subroutine mmvppe
 end interface
