@@ -73,4 +73,6 @@ cata_msg = {
    26 : _(u"""   Création des données d'entrée pour le contact."""),
 
    27 : _(u"""  Calcul des matrices pour le contact."""),
+
+   28 : _(u"""  Calcul du second membre pour le contact."""),
 }

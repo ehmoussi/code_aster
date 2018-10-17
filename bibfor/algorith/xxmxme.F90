@@ -69,7 +69,7 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
     integer :: ztabf, contac
     character(len=19) :: ligrel
     character(len=19) :: xindc0, xseuc0, xcohe0
-    aster_logical :: lxffm, lxczm, lxfcm
+    aster_logical :: lxffm, lxczm, l_thm
     integer, pointer :: nfis(:) => null()
     integer, pointer :: xfem_cont(:) => null()
 !
@@ -84,10 +84,10 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
 ! - Active functionnalities
 !
     ntpc = cfdisi(ds_contact%sdcont_defi,'NTPC' )
-    lxfcm = isfonc(list_func_acti,'CONT_XFEM')
     lxffm = isfonc(list_func_acti,'FROT_XFEM')
+    l_thm = isfonc(list_func_acti,'THM')
     lxczm = cfdisl(ds_contact%sdcont_defi,'EXIS_XFEM_CZM')
-    ASSERT(lxfcm)
+    ds_contact%l_cont_thm = l_thm
 !
 ! --- INITIALISATIONS
 !
@@ -119,7 +119,6 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
 ! --- FONCTIONNALITES ACTIVEES
 !
     ntpc = cfdisi(ds_contact%sdcont_defi,'NTPC' )
-    lxfcm = isfonc(list_func_acti,'CONT_XFEM')
     lxffm = isfonc(list_func_acti,'FROT_XFEM')
     lxczm = cfdisl(ds_contact%sdcont_defi,'EXIS_XFEM_CZM')
 !

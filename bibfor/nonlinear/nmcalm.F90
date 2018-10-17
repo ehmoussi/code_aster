@@ -19,8 +19,7 @@
 !
 subroutine nmcalm(typmat         , modelz, lischa, ds_material, carele,&
                   ds_constitutive, instam, instap, valinc     , solalg,&
-                  optmaz         , base  , meelem, ds_contact , matele,&
-                  l_xthm)
+                  optmaz         , base  , meelem, matele)
 !
 use NonLin_Datastructure_type
 !
@@ -41,7 +40,6 @@ implicit none
 #include "asterfort/merige.h"
 #include "asterfort/nmchex.h"
 #include "asterfort/nmvcex.h"
-#include "asterfort/nmelcm.h"
 #include "asterfort/wkvect.h"
 !
 character(len=*) :: modelz
@@ -49,14 +47,12 @@ character(len=*) :: carele
 type(NL_DS_Material), intent(in) :: ds_material
 type(NL_DS_Constitutive), intent(in) :: ds_constitutive
 real(kind=8) :: instam, instap
-type(NL_DS_Contact), intent(in) :: ds_contact
 character(len=19) :: lischa
 character(len=6) :: typmat
 character(len=*) :: optmaz
 character(len=1) :: base
 character(len=19) :: meelem(*), solalg(*), valinc(*)
 character(len=19) :: matele
-aster_logical, intent(in) :: l_xthm
 !
 ! ----------------------------------------------------------------------
 !
@@ -189,20 +185,6 @@ aster_logical, intent(in) :: l_xthm
     else if (typmat.eq.'MESSTR') then
         call messtr(base  , optmat, model, carele, ds_material%field_mate,&
                     matele)
-!
-! --- MATR_ELEM DES ELTS DE CONTACT (XFEM+CONTINUE)
-!
-    else if (typmat.eq.'MEELTC') then
-        call nmelcm('CONT'   , mesh     , model    , ds_material     , ds_contact    ,&
-                    disp_prev, vite_prev, acce_prev, vite_curr, disp_cumu_inst,&
-                    disp_newt_curr,matele   , time_prev, time_curr, ds_constitutive, l_xthm)
-!
-! --- MATR_ELEM DES ELTS DE FROTTEMENT (XFEM+CONTINUE)
-!
-    else if (typmat.eq.'MEELTF') then
-        call nmelcm('FROT'   , mesh     , model    , ds_material, ds_contact    ,&
-                    disp_prev, vite_prev, acce_prev, vite_curr, disp_cumu_inst,&
-                    disp_newt_curr,matele   , time_prev, time_curr, ds_constitutive, l_xthm)
     else
         ASSERT(.false.)
     endif

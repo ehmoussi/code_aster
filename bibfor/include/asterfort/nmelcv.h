@@ -19,11 +19,10 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine nmelcv(phase    , mesh     , model    , ds_material, ds_contact    ,&
+    subroutine nmelcv(mesh     , model    , ds_material, ds_contact    ,&
                       disp_prev, vite_prev, acce_prev, vite_curr      , disp_cumu_inst,&
                       disp_newt_curr, vect_elem, time_prev, time_curr, ds_constitutive)
         use NonLin_Datastructure_type
-        character(len=4), intent(in) :: phase
         character(len=8), intent(in) :: mesh
         character(len=24), intent(in) :: model
         type(NL_DS_Material), intent(in) :: ds_material

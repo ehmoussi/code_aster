@@ -18,7 +18,7 @@
 ! person_in_charge: mickael.abbas at edf.fr
 ! aslint: disable=W1504
 !
-subroutine nmdesc(modele  , numedd         , numfix    , ds_material, carele     ,&
+subroutine nmdesc(mesh, modele  , numedd         , numfix    , ds_material, carele     ,&
                   ds_constitutive, lischa    , ds_contact, ds_algopara,&
                   solveu  , fonact         , numins    , iterat    , sddisc     ,&
                   ds_print, ds_measure     , ds_algorom, sddyna    , sdnume     ,&
@@ -43,6 +43,7 @@ implicit none
 #include "asterfort/vtzero.h"
 !
 integer :: numins, iterat
+character(len=8), intent(in) :: mesh
 type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 character(len=19) :: matass, maprec
 type(NL_DS_Measure), intent(inout) :: ds_measure
@@ -130,7 +131,7 @@ aster_logical :: lerrit
 !
 ! --- CALCUL DE LA MATRICE GLOBALE
 !
-    call nmcoma(modele, ds_material, carele    , ds_constitutive, ds_algopara,&
+    call nmcoma(mesh, modele, ds_material, carele    , ds_constitutive, ds_algopara,&
                 lischa, numedd, numfix    , solveu         , &
                 sddisc, sddyna, ds_print  , ds_measure     , ds_algorom ,numins     ,&
                 iterat, fonact, ds_contact, valinc         , solalg     ,&

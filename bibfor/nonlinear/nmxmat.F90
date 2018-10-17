@@ -23,7 +23,7 @@ subroutine nmxmat(modelz    , ds_material, carele, ds_constitutive, sddisc,&
                   solalg    , lischa     , numedd, numfix,&
                   ds_measure, ds_algopara, nbmatr, ltypma         , loptme,&
                   loptma    , lcalme     , lassme, lcfint         , meelem,&
-                  measse    , veelem     , ldccvg, ds_contact_)
+                  measse    , veelem     , ldccvg)
 !
 use NonLin_Datastructure_type
 !
@@ -32,7 +32,6 @@ implicit none
 #include "asterf_types.h"
 #include "asterfort/assert.h"
 #include "asterfort/diinst.h"
-#include "asterfort/isfonc.h"
 #include "asterfort/nmassm.h"
 #include "asterfort/nmcalm.h"
 #include "asterfort/nmchex.h"
@@ -57,7 +56,6 @@ character(len=19) :: solalg(*), valinc(*)
 integer :: fonact(*)
 aster_logical :: lcfint
 type(NL_DS_AlgoPara), intent(in) :: ds_algopara
-type(NL_DS_Contact), optional, intent(in) :: ds_contact_
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -75,7 +73,6 @@ type(NL_DS_Contact), optional, intent(in) :: ds_contact_
 ! In  ds_constitutive  : datastructure for constitutive laws management
 ! IN  LISCHA : LISTE DES CHARGES
 ! IO  ds_measure       : datastructure for measure and statistics management
-! In  ds_contact       : datastructure for contact management
 ! IN  SDDYNA : SD POUR LA DYNAMIQUE
 ! IN  SDDISC : SD DISCRETISATION TEMPORELLE
 ! IN  NUMINS : NUMERO D'INSTANT
@@ -105,7 +102,7 @@ type(NL_DS_Contact), optional, intent(in) :: ds_contact_
     character(len=19) :: matele, matass
     character(len=1) :: base
     real(kind=8) :: instam, instap
-    aster_logical :: lcalc, lasse, l_xthm
+    aster_logical :: lcalc, lasse
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -113,7 +110,6 @@ type(NL_DS_Contact), optional, intent(in) :: ds_contact_
     instam = diinst(sddisc,numins-1)
     instap = diinst(sddisc,numins)
     ldccvg = -1
-    l_xthm = isfonc(fonact,'CONT_XFEM_THM')
 !
 ! --- SI CALCUL DES FORCES INTERNES
 !
@@ -147,10 +143,9 @@ type(NL_DS_Contact), optional, intent(in) :: ds_contact_
                     call nmtime(ds_measure, 'Init', 'Cont_Elem')
                     call nmtime(ds_measure, 'Launch', 'Cont_Elem')
                 endif
-                call nmcalm(typmat, modelz, lischa, ds_material, carele,&
+                call nmcalm(typmat         , modelz, lischa, ds_material, carele,&
                             ds_constitutive, instam, instap, valinc     , solalg,&
-                            optcal, base  , meelem, ds_contact_, matele,&
-                            l_xthm)
+                            optcal         , base  , meelem, matele)
                 if ((typmat.eq.'MEELTC') .or. (typmat.eq.'MEELTF')) then
                     call nmtime(ds_measure, 'Stop', 'Cont_Elem')
                     call nmrinc(ds_measure, 'Cont_Elem')

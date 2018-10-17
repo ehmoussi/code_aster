@@ -19,25 +19,18 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine nmelcm(phase    , mesh     , model    , ds_material, ds_contact    , &
-                      disp_prev, vite_prev, acce_prev, vite_curr, disp_cumu_inst,&
-                      disp_newt_curr,matr_elem, time_prev, time_curr, ds_constitutive, l_xthm)
+    subroutine nmelcm(mesh       , model     ,&
+                      ds_material, ds_contact, ds_constitutive, ds_measure,&
+                      hval_incr  , hval_algo ,&
+                      matr_elem)
         use NonLin_Datastructure_type
-        character(len=4), intent(in) :: phase
         character(len=8), intent(in) :: mesh
         character(len=24), intent(in) :: model
         type(NL_DS_Material), intent(in) :: ds_material
         type(NL_DS_Contact), intent(in) :: ds_contact
-        character(len=19), intent(in) :: disp_prev
-        character(len=19), intent(in) :: vite_prev
-        character(len=19), intent(in) :: acce_prev
-        character(len=19), intent(in) :: vite_curr
-        character(len=19), intent(in) :: disp_cumu_inst
-        character(len=19), intent(in) :: disp_newt_curr
-        character(len=19), intent(out) :: matr_elem
-        character(len=19), intent(in) :: time_prev
-        character(len=19), intent(in) :: time_curr
         type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-        aster_logical, intent(in) :: l_xthm
+        type(NL_DS_Measure), intent(inout) :: ds_measure
+        character(len=19), intent(in) :: hval_incr(*), hval_algo(*)
+        character(len=19), intent(out) :: matr_elem
     end subroutine nmelcm
 end interface
