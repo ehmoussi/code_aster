@@ -46,7 +46,10 @@ void MaterialOnMeshBuilderInstance::buildInstance( MaterialOnMeshInstance& curMa
     for (auto &curIter : curMater._materialsOnMeshEntity)
     {
         SyntaxMapContainer dict2;
-        dict2.container["MATER"] = curIter.first->getName();
+        VectorString listOfMater;
+        for( const auto& curIter2 : curIter.first )
+            listOfMater.push_back( curIter2->getName() );
+        dict2.container["MATER"] = listOfMater;
         const MeshEntityPtr &tmp = curIter.second;
         if (tmp->getType() == AllMeshEntitiesType)
             dict2.container["TOUT"] = "OUI";

@@ -94,7 +94,8 @@ std::vector< MaterialPtr > MaterialOnMeshInstance::getVectorOfMaterial() const
 {
     std::vector< MaterialPtr > toReturn;
     for( const auto& curIter : _materialsOnMeshEntity )
-        toReturn.push_back( curIter.first );
+        for( const auto& curIter2 : curIter.first )
+            toReturn.push_back( curIter2 );
     return toReturn;
 };
 
