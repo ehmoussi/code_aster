@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -88,7 +88,7 @@ implicit none
     else
         chmace = chmat//'.MATE_CODE'
         chmatgrp = chmat//'.MATE_CODE.GRP'
-        chmatngrp = basename//'.MATE_CODE.NGRP'
+        chmatngrp = chmat//'.MATE_CODE.NGRP'
     endif
     if( present(base) ) then
         bas = base

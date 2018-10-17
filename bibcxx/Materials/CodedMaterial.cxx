@@ -26,6 +26,19 @@
 #include "Materials/CodedMaterial.h"
 #include "aster_fort.h"
 
+CodedMaterialInstance::CodedMaterialInstance( const MaterialOnMeshPtr& mater,
+                                              const ModelPtr& model ):
+    _name( mater->getName() ),
+    _type( "MATER_CODE" ),
+    _mater( mater ),
+    _model( model ),
+    _field( new PCFieldOnMeshLongInstance( getName() + ".MATE_CODE",
+                                           _model->getSupportMesh(),
+                                           Permanent ) ),
+    _grp( JeveuxVectorChar8( getName() + ".MATE_CODE.GRP" ) ),
+    _nGrp( JeveuxVectorLong( getName() + ".MATE_CODE.NGRP" ) )
+{};
+
 bool CodedMaterialInstance::allocate()
 {
     if( _field->exists() ) return false;
@@ -37,6 +50,35 @@ bool CodedMaterialInstance::allocate()
     if( _model->existsThm() ) thm = 1;
     std::string strJeveuxBase( "G" );
     CALLO_RCMFMC_WRAP( materName, mate, &thm, getName(), strJeveuxBase );
+
+    auto vecOfMater = _mater->getVectorOfMaterial();
+    int compteur = 0;
+    for( auto curIter : vecOfMater )
+    {
+        std::string nameWithoutBlanks = trim( curIter->getName() ) + ".0";
+        std::string base( " " );
+        ASTERINTEGER pos = 1;
+        ASTERINTEGER nbval2 = 0;
+        ASTERINTEGER retour = 0;
+        JeveuxChar24 nothing( " " );
+        CALLO_JELSTC( base, nameWithoutBlanks, &pos,
+                      &nbval2, nothing, &retour );
+        if ( retour != 0 )
+        {
+            JeveuxVectorChar24 test( "&&TMP" );
+            test->allocate( Temporary, -retour );
+            ASTERINTEGER nbval2 = -retour;
+            CALLO_JELSTC( base, nameWithoutBlanks, &pos,
+                        &nbval2, (*test)[0], &retour );
+            for( int i = 0; i < retour; ++i )
+            {
+                std::string name = (*test)[i].toString();
+                std::string name2( name, 19, 5 );
+                if( name2 == ".CODI" )
+                    _vecOfCodiVectors.push_back( JeveuxVectorLong( name ) );
+            }
+        }
+    }
     return true;
 };
 
