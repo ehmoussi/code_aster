@@ -26,6 +26,7 @@
 #include <boost/python.hpp>
 #include <PythonBindings/factory.h>
 #include "PythonBindings/DataStructureInterface.h"
+#include "PythonBindings/GenericDataFieldInterface.h"
 #include "PythonBindings/PCFieldOnMeshInterface.h"
 
 
@@ -33,7 +34,7 @@ void exportPCFieldOnMeshToPython()
 {
     using namespace boost::python;
     class_< PCFieldOnMeshDoubleInstance, PCFieldOnMeshDoublePtr,
-            bases< DataStructure > >("PCFieldOnMeshDouble", no_init)
+            bases< GenericDataFieldInstance > >("PCFieldOnMeshDouble", no_init)
         .def( "__init__", make_constructor(
             &initFactoryPtr< PCFieldOnMeshDoubleInstance,
                              BaseMeshPtr >) )
