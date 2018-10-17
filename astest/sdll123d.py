@@ -2,7 +2,7 @@ def EXTR_MATR(matrrr,vall) :
 # fonction permettant de recuperer les matrices assemblees au format numpy
 # attention a l'espace memoire
         import numpy as NP
-
+        import aster
 # construction des vecteurs jeveux
         nommatr=matrrr.nom
         lenm=len(nommatr)

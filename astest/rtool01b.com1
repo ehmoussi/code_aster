@@ -16,6 +16,12 @@
 # You should have received a copy of the GNU General Public License
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
+#
+# Cas Test pour la validation de l'outil de relachement de DDLs 'Rtool'
+# person_in_charge : stefano.cherubini@edf.fr
+#
+
+POURSUITE (CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
 
 # Reecriture des liaisons cinématiques pour les DDLs rélachés (via Rtool)
 
@@ -34,3 +40,5 @@ BLOQ = AFFE_CHAR_MECA(
            COEF_MULT=(-1.0, 1.0),),
     ),
 )
+
+FIN()
