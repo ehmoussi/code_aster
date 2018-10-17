@@ -30,6 +30,7 @@ from Contrib.diffusion_H2 import CHAMP_DETOILE
 from Contrib.diffusion_H2 import CHAR_GRAD_IMPO
 from Contrib.diffusion_H2 import CHAR_GRAD_INI
 import numpy as NP
+from math import sqrt
 
 #......................................................................
 # PLAQUE CARREE 2D CONTRAINTES PLANES
