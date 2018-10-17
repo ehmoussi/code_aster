@@ -94,9 +94,6 @@ def options(self):
                      help='installation prefix [default: %r]' % default_prefix)
 
     group = self.get_option_group("Configuration options")
-    group.add_option('--with-data', dest='with_data',
-                    action='store', default='../data',
-                    help='location of the data repository (default: ../data)')
     group.add_option('--with-validation', dest='with_validation',
                     action='store', default='../validation',
                     help='location of the validation repository '
@@ -141,7 +138,7 @@ def configure(self):
     self.env.WAFCMDLINE = sys.argv[1:]
 
     # compute default prefix
-    if self.env.PREFIX == '/':
+    if self.env.PREFIX in ('', '/'):
         suffix = os.environ.get('WAF_SUFFIX', 'std')
         default_prefix = '../install/%s' % suffix
         self.env.PREFIX = osp.abspath(default_prefix)
@@ -157,7 +154,6 @@ def configure(self):
     self.load('use_config')
     self.load('gnu_dirs')
     self.env['BIBPYTPATH'] = self.path.find_dir('bibpyt').abspath()
-    self.env.data_path = self.options.with_data
     self.env.validation_path = self.options.with_validation
 
     self.env.ASTER_EMBEDS = []
@@ -233,7 +229,6 @@ def build(self):
     self.env['all_dependencies'] = [
         'MED', 'HDF5','PETSC','MUMPS', 'METIS', 'SCOTCH', 'MFRONT',
         'MATH', 'MPI', 'OPENMP', 'CLIB', 'SYS']
-    get_srcs = self.path.get_src().ant_glob
     if not self.variant:
         self.fatal('Call "waf build_debug" or "waf build_release", and read ' \
                    'the comments in the wscript file!')
@@ -257,8 +252,7 @@ def build(self):
     self.recurse('i18n')
     self.recurse('catalo')
 
-    lsub = [osp.join(self.env.data_path or '', 'materiau'),
-            osp.join(self.env.data_path or '', 'datg')]
+    lsub = []
     if self.env.install_tests:
         lsub.extend(['astest', osp.join(self.env.validation_path, 'astest')])
     else:
