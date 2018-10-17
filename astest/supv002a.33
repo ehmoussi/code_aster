@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -35,7 +35,7 @@ import signal
 
 from Noyau.N_types import is_int
 from Utilitai.Utmess import UTMESS, MessageLog
-from Execution.i18n import localization as LO
+from code_aster.Utilities.i18n import localization as LO
 from Execution.strfunc import ufmt, convert
 import Messages
 
@@ -461,14 +461,17 @@ def supv002_ops(self, ERREUR, **kwargs):
                NOM_PARA='NBWARN',
                TABLE=__tabw,
                )
-    return 0
+    return
 
 
 if __name__ != '__main__':
-    SUPV002 = MACRO(nom='SUPV002', op=supv002_ops,
-                    ERREUR = SIMP(statut='o',typ='TXM', max='**',),
-                    INFO = SIMP(statut='f',typ='I', defaut=1, into=(1, 2),),
+    from code_aster.Cata.Syntax import MACRO, SIMP
+    from code_aster.Commands.ExecuteCommand import UserMacro
+    supv_cata = MACRO(nom='SUPV002', op=supv002_ops,
+                      ERREUR = SIMP(statut='o',typ='TXM', max='**',),
+                      INFO = SIMP(statut='f',typ='I', defaut=1, into=(1, 2),),
     )
+    SUPV002 = UserMacro("SUPV002", supv_cata, supv002_ops)
 else:
     # run as unittest
     # PYTHONPATH=$PYTHONPATH:/home/courtois/dev/codeaster/install/std/lib/python2.7/site-packages

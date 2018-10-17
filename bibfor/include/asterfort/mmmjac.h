@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,21 +15,20 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 #include "asterf_types.h"
 !
 interface
-    subroutine mmmjac(alias, jgeom, ff, dff, laxis,&
-                      nne, ndim, jacobi)
-        character(len=8) :: alias
-        integer :: jgeom
-        real(kind=8) :: ff(9)
-        real(kind=8) :: dff(2, 9)
-        aster_logical :: laxis
-        integer :: nne
-        integer :: ndim
-        real(kind=8) :: jacobi
+    subroutine mmmjac(l_axis   , nb_node     , elem_dime,&
+                      elem_code, elem_coor   ,&
+                      ff       , dff         ,&
+                      jacobi   , l_axis_warn_)
+        aster_logical, intent(in) :: l_axis
+        character(len=8), intent(in) :: elem_code
+        integer, intent(in) :: elem_dime, nb_node
+        real(kind=8), intent(in) :: elem_coor(3, 9)
+        real(kind=8), intent(in) :: ff(9), dff(2, 9)
+        real(kind=8), intent(out) :: jacobi
+        aster_logical, intent(out), optional :: l_axis_warn_
     end subroutine mmmjac
 end interface

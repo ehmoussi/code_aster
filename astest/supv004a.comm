@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -20,15 +20,9 @@
 #
 # person_in_charge: mathieu.courtois at edf.fr
 
-import sys
 import unittest
 
-# to be runnable without aster module
-if not 'DEBUT' in globals().keys():
-    def does_nothing(**kwargs):
-        """empty function"""
-        return
-    DEBUT = FIN = _F = does_nothing
+
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),)
 

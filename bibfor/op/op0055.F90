@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -102,9 +102,8 @@ subroutine op0055()
 !
 !       DANS LE CAS D'UN FOND FERME, ON INTERDIT LES MCS NOEUD ET GROUP_NO
         if (typfon.eq.'FERME') then
-            call getvtx('FOND_FISS', 'NOEUD', iocc=iocc, nbval=0, nbret=n1)
-            call getvtx('FOND_FISS', 'GROUP_NO', iocc=iocc, nbval=0, nbret=n2)
-            if ((n1.ne.0) .or. (n2.ne.0)) then
+            call getvtx('FOND_FISS', 'GROUP_NO', iocc=iocc, nbval=0, nbret=n1)
+            if (n1 .ne. 0) then
                 call utmess('F', 'RUPTURE0_98')
             endif
         endif
@@ -114,32 +113,28 @@ subroutine op0055()
 !     ET CONSTRUCTION DE VECTEURS DE TRAVAIL POUR CHACUNE D'ELLES
 !     ---------------------------------------------------------------
 !
-        entit(1) = '.NOMNOE'
-        entit(2) = '.NOMMAI'
-        entit(3) = '.GROUPENO'
-        entit(4) = '.GROUPEMA'
-        entit(5) = '.NOMNOE'
-        entit(6) = '.GROUPENO'
-        motcl(1) = 'NOEUD'
-        motcl(2) = 'MAILLE'
-        motcl(3) = 'GROUP_NO'
-        motcl(4) = 'GROUP_MA'
-        motcl(5) = 'NOEUD_ORIG'
-        motcl(6) = 'GROUP_NO_ORIG'
+        entit(1) = '.GROUPENO'
+        entit(2) = '.GROUPEMA'
+        entit(3) = '.NOMNOE'
+        entit(4) = '.GROUPENO'
+        motcl(1) = 'GROUP_NO'
+        motcl(2) = 'GROUP_MA'
+        motcl(3) = 'NOEUD_ORIG'
+        motcl(4) = 'GROUP_NO_ORIG'
         if (typfon .eq. 'OUVERT') then
-            entit(7) = '.NOMNOE'
-            entit(8) = '.GROUPENO'
-            motcl(7) = 'NOEUD_EXTR'
-            motcl(8) = 'GROUP_NO_EXTR'
-            ndonn = 8
-        else if (typfon.eq.'FERME') then
-            entit(7) = '.NOMMAI'
-            entit(8) = '.GROUPEMA'
-            motcl(7) = 'MAILLE_ORIG'
-            motcl(8) = 'GROUP_MA_ORIG'
-            ndonn = 8
-        else
+            entit(5) = '.NOMNOE'
+            entit(6) = '.GROUPENO'
+            motcl(5) = 'NOEUD_EXTR'
+            motcl(6) = 'GROUP_NO_EXTR'
             ndonn = 6
+        else if (typfon.eq.'FERME') then
+            entit(5) = '.NOMMAI'
+            entit(6) = '.GROUPEMA'
+            motcl(5) = 'MAILLE_ORIG'
+            motcl(6) = 'GROUP_MA_ORIG'
+            ndonn = 6
+        else
+            ndonn = 4
         endif
         do 11 idonn = 1, ndonn
             call getvtx('FOND_FISS', motcl(idonn), iocc=iocc, nbval=0, nbret=n1)

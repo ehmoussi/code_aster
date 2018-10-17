@@ -67,7 +67,7 @@ from ..Cata.Language.SyntaxObjects import _F
 from ..Cata.SyntaxChecker import CheckerError, checkCommandSyntax
 from ..Cata.SyntaxUtils import mixedcopy, remove_none, search_for
 from ..Objects import DataStructure, ResultNaming
-from ..Supervis import CommandSyntax, ExecutionParameter, logger
+from ..Supervis import CommandSyntax, ExecutionParameter, Options, logger
 from ..Utilities import Singleton, deprecated, import_object
 from ..Utilities.outputs import (command_header, command_result,
                                  command_separator, command_text, command_time,
@@ -123,7 +123,7 @@ class ExecuteCommand(object):
         cmd = cls()
         keywords = mixedcopy(kwargs)
         cmd.keep_caller_infos(keywords)
-        timer = ExecutionParameter().get_option("timer")
+        timer = ExecutionParameter().timer
         if cls.command_name not in ("DEBUT", "POURSUITE"):
             check_jeveux()
         if cmd._op is None:
@@ -138,7 +138,7 @@ class ExecuteCommand(object):
         except CheckerError as exc:
             # in case of syntax error, show the syntax and raise the exception
             cmd.print_syntax(keywords)
-            if ExecutionParameter().get_option("debug"):
+            if ExecutionParameter().option & Options.Debug:
                 logger.error(exc.msg)
                 raise
             raise exc.original(exc.msg)
@@ -226,7 +226,7 @@ class ExecuteCommand(object):
 
     def _print_timer(self):
         """Print the timer informations."""
-        timer = ExecutionParameter().get_option("timer")
+        timer = ExecutionParameter().timer
         logger.info(command_time(*timer.StopAndGet(str(self._counter))))
         logger.info(command_separator())
 
@@ -250,7 +250,7 @@ class ExecuteCommand(object):
                 in place.
         """
         logger.debug("checking syntax of {0}...".format(self.name))
-        checkCommandSyntax(self._cata, keywords, add_default=True)
+        checkCommandSyntax(self._cata, keywords, in_place=True)
 
     def create_result(self, keywords):
         """Create the result before calling the *exec* command function
@@ -445,7 +445,7 @@ class ExecuteMacro(ExecuteCommand):
         output = self._op(self, **keywords)
         assert not isinstance(output, int), \
             "OPS must now return results, not 'int'."
-        if ExecutionParameter().get_option("use_legacy_mode"):
+        if ExecutionParameter().option & Options.UseLegacyMode:
             self._result = output
             if self._add_results:
                 publish_in(self._caller["context"], self._add_results)
@@ -511,6 +511,30 @@ class ExecuteMacro(ExecuteCommand):
 
     def get_concept(self, name):
         raise NotImplementedError("'get_concept()' does not exist anymore...")
+
+
+def UserMacro(name, cata, ops):
+    """Helper function that defines a user macro-command from its catalog
+    description and its operator.
+
+    Arguments:
+        name (str): Name of the macro-command.
+        cata (*PartOfSyntax*): Catalog description of the macro-command.
+        ops (str): OPS function of the macro-command.
+
+    Returns:
+        *ExecuteCommand.run*: Executor function.
+    """
+    class Macro(ExecuteMacro):
+        """Execute legacy operator."""
+        command_name = name
+        command_cata = cata
+
+        @staticmethod
+        def command_op(self, **kwargs):
+            return ops(self, **kwargs)
+
+    return Macro.run
 
 
 class CO(object):

@@ -17,25 +17,32 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-#
-# person_in_charge: mathieu.courtois at edf.fr
+# person_in_charge: mathieu.courtois@edf.fr
 
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),
-      PAR_LOT='NON',)
+"""
+Definition of options/flags for execution.
+"""
 
-INCLUDE(UNITE=11)
+class Options(object):
+    """Enumerator for execution options.
+    """
+    Null = 0x0000
+    Debug = 0x0001
+    Abort = 0x0002
+    Continue = 0x0004
+    StrictUnpickling = 0x0008
+    UseLegacyMode = 0x0010
+    ShowDeprecated = 0x0020
 
-# normal que fonc ne doit pas connu, on ne peut pas deviner que MON_INCLUDE fait un INCLUDE
-TEST_FONCTION(VALEUR=_F(VALE_CALC=1.2345600000000001,
-                        VALE_PARA=1.0,
-                        FONCTION=fonc,),
-              )
+    @classmethod
+    def by_name(cls, name):
+        """Return an option value by its name.
+        *AttributeError* is raised if the option does not exist.
 
-TEST_TABLE(VALE_CALC=2.4691200000000002,
-           NOM_PARA='TOUTRESU',
-           TABLE=tab,
-           FILTRE=_F(NOM_PARA='INST',
-                     VALE=2.0,),
-           )
+        Arguments:
+            name (str): Option name.
 
-FIN()
+        Returns:
+            int: Option value.
+        """
+        return getattr(cls, name)

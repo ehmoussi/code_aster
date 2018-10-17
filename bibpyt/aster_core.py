@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -60,16 +60,15 @@ def _is_initialized():
     return getattr(_aster_core, 'get_option', None) is not None
 
 
-def get_option(option, default=None):
+def get_option(option):
     '''return the setting parameter value.
 
     :option: a string containing the option name
-    :default: the value to be returned if the option is not present
     '''
     if not _is_initialized():
         raise EnvironmentError(
             'aster_core must be initialized before (see aster_core.register) ')
-    return _aster_core.get_option(option, default)
+    return _aster_core.get_option(option)
 
 
 def get_version():

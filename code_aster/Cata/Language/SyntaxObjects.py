@@ -193,7 +193,7 @@ class UIDMixing(object):
         return self._id
 
     def __cmp__(self, other):
-        if other is None:
+        if other is None or not hasattr(other, 'uid'):
             return -1
         if self._id < other.uid:
             return -1
@@ -668,7 +668,7 @@ class Command(PartOfSyntax):
         strict = args.pop("__strict__", ConversionLevel.Syntaxic)
         if strict & ConversionLevel.Syntaxic:
             from .SyntaxChecker import checkCommandSyntax
-            checkCommandSyntax(self, args, add_default=False)
+            checkCommandSyntax(self, args, in_place=False)
             resultType = self.get_type_sd_prod(**args)
         else:
             try:
