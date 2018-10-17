@@ -93,12 +93,6 @@ def options(self):
     group.add_option('--prefix', dest='prefix', default=None,
                      help='installation prefix [default: %r]' % default_prefix)
 
-    group = self.get_option_group("Configuration options")
-    group.add_option('--with-validation', dest='with_validation',
-                    action='store', default='../validation',
-                    help='location of the validation repository '
-                         '(default: ../validation)')
-
     group = self.add_option_group('code_aster options')
 
     self.load('parallel', tooldir='waftools')
@@ -114,9 +108,6 @@ def options(self):
     group.add_option('-E', '--embed-all', dest='embed_all',
                     action='store_true', default=False,
                     help='activate all embed-* options (except embed-python)')
-    group.add_option('--install-tests', dest='install_tests',
-                    action='store_true', default=False,
-                    help='install the testcases files')
     group.add_option('--install-as', dest='astervers',
                     action='store', default='',
                     help='install as this version name, used for '
@@ -129,6 +120,7 @@ def options(self):
     self.recurse('mfront')
     self.recurse('i18n')
     self.recurse('data')
+    self.recurse('astest')
 
 
 def configure(self):
@@ -154,7 +146,6 @@ def configure(self):
     self.load('use_config')
     self.load('gnu_dirs')
     self.env['BIBPYTPATH'] = self.path.find_dir('bibpyt').abspath()
-    self.env.validation_path = self.options.with_validation
 
     self.env.ASTER_EMBEDS = []
 
@@ -211,19 +202,16 @@ def configure(self):
     self.recurse('mfront')
     self.recurse('i18n')
     self.recurse('data')
+    self.recurse('astest')
 
     # keep compatibility for as_run
     if self.get_define('HAVE_MPI'):
         self.env.ASRUN_MPI_VERSION = 1
     # variants
     self.check_optimization_options()
-    # only install tests during release install
-    self.setenv('release')
-    self.env.install_tests = self.options.install_tests
     self.write_config_headers()
 
 def build(self):
-    self.env.install_tests = self.options.install_tests or self.env.install_tests
     # shared the list of dependencies between bibc/bibfor
     # the order may be important
     self.env['all_dependencies'] = [
@@ -251,22 +239,8 @@ def build(self):
     self.recurse('mfront')
     self.recurse('i18n')
     self.recurse('catalo')
-
-    lsub = []
-    if self.env.install_tests:
-        lsub.extend(['astest', osp.join(self.env.validation_path, 'astest')])
-    else:
-        dest = osp.join(self.env.ASTERDATADIR, 'tests')
-        if osp.exists(dest) and not osp.islink(dest):
-            Logs.warn("Symlink not created, {0!r} already exists "
-                      "(use '--install-tests' to update this directory)."
-                      .format(dest))
-        elif not osp.exists(dest):
-            self.symlink_as(dest, osp.abspath("astest"))
-    for optional in lsub:
-        if osp.exists(osp.join(optional, 'wscript')):
-            self.recurse(optional)
     self.recurse('data')
+    self.recurse('astest')
 
 def build_elements(self):
     self.recurse('catalo')

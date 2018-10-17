@@ -96,7 +96,7 @@ def configure(self):
 @Configure.conf
 def configure_data(self):
     opts = self.options
-    self.start_msg('Checking for data repository')
+    self.start_msg("Checking for 'data' repository")
     self.env.data_path = None
 
     default = osp.join(self.path.parent.parent.abspath(), 'data')
