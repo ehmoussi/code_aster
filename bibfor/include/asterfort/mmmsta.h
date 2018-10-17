@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,29 +15,29 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 #include "asterf_types.h"
 !
 interface
-    subroutine mmmsta(ndim, leltf, lpenaf, loptf, djeut,&
-                      dlagrf, coefaf,  tau1, tau2,&
-                      lcont, ladhe, lambda, rese, nrese, l_previous)
-        integer, intent(in) :: ndim
-        aster_logical, intent(inout) :: leltf
-        aster_logical, intent(out) :: lpenaf
+    subroutine mmmsta(ndim         , loptf         , indco ,&
+                      ialgoc       , ialgof        ,&
+                      lpenaf       , coefaf        ,&
+                      lambda       , djeut         , dlagrf,&
+                      tau1         , tau2          ,&
+                      lcont        , ladhe         ,&
+                      rese         , nrese         ,&
+                      l_previous_  , indco_prev_   ,&
+                      indadhe_prev_, indadhe2_prev_)
+        integer, intent(in)  :: ndim
         aster_logical, intent(in) :: loptf
-        aster_logical, intent(in) :: l_previous
-        real(kind=8), intent(in)  :: djeut(3)
-        real(kind=8), intent(in)  :: dlagrf(2)
-        real(kind=8), intent(in)   :: coefaf
-        real(kind=8), intent(in) :: tau1(3)
-        real(kind=8), intent(in) :: tau2(3)
-        aster_logical, intent(out)  :: lcont
-        aster_logical, intent(out) :: ladhe
-        real(kind=8), intent(in)   :: lambda
-        real(kind=8), intent(out)  :: rese(3)
-        real(kind=8), intent(out)  :: nrese
+        integer, intent(in) :: ialgoc, ialgof, indco
+        aster_logical, intent(in) :: lpenaf
+        real(kind=8), intent(in) :: coefaf, lambda
+        real(kind=8), intent(in) :: djeut(3), dlagrf(2)
+        real(kind=8), intent(in)  :: tau1(3), tau2(3)
+        aster_logical, intent(out) :: lcont, ladhe
+        real(kind=8), intent(out) :: rese(3), nrese
+        aster_logical, optional, intent(in) :: l_previous_
+        integer, optional, intent(in) :: indco_prev_, indadhe_prev_, indadhe2_prev_
     end subroutine mmmsta
 end interface

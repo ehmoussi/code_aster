@@ -23,7 +23,7 @@ interface
                       ffm, jacobi, jeu, coefac, coefaf,&
                       lambda, coefff, dlagrc, dlagrf, dvite,&
                       rese, nrese,&
-                    vectee, vectmm,mprt11,mprt21,mprt22,mprt1n,mprt2n,kappa,l_large_slip)
+                    vectee, vectmm,mprt11,mprt12,mprt21,mprt22,mprt1n,mprt2n,kappa,l_large_slip)
         character(len=9) :: phasep
         integer :: ndim
         integer :: nne
@@ -49,7 +49,7 @@ interface
         real(kind=8) :: nrese
         real(kind=8) :: vectee(27)
         real(kind=8) :: vectmm(27)
-        real(kind=8) :: mprt11(3, 3), mprt21(3, 3), mprt22(3, 3)
+        real(kind=8) :: mprt11(3, 3), mprt12(3, 3), mprt21(3, 3), mprt22(3, 3)
     real(kind=8) :: mprt1n(3,3),mprt2n(3,3),kappa(2,2) 
 
     end subroutine mmvfpe

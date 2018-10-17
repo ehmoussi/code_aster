@@ -15,28 +15,25 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 #include "asterf_types.h"
 !
 interface
-    subroutine mmnsta(ndim, leltf, lpenaf, loptf, djeut,&
-                      dlagrf, coefaf,  tau1, tau2,&
-                      lcont, ladhe, lambda, rese, nrese)
-        integer :: ndim
-        aster_logical :: leltf
-        aster_logical :: lpenaf
-        aster_logical :: loptf
-        real(kind=8) :: djeut(3)
-        real(kind=8) :: dlagrf(2)
-        real(kind=8) :: coefaf
-        real(kind=8) :: tau1(3)
-        real(kind=8) :: tau2(3)
-        aster_logical :: lcont
-        aster_logical :: ladhe
-        real(kind=8) :: lambda
-        real(kind=8) :: rese(3)
-        real(kind=8) :: nrese
+    subroutine mmnsta(ndim  , loptf ,&
+                      lpenaf, coefaf,&
+                      indco ,&
+                      lambda, djeut , dlagrf,&
+                      tau1  , tau2  ,&
+                      lcont , ladhe ,&
+                      rese  , nrese)
+        integer, intent(in) :: ndim
+        aster_logical, intent(in) :: loptf
+        aster_logical, intent(in) :: lpenaf
+        integer, intent(in) :: indco
+        real(kind=8), intent(in) :: coefaf, lambda
+        real(kind=8), intent(in) :: djeut(3), dlagrf(2)
+        real(kind=8), intent(in)  :: tau1(3), tau2(3)
+        aster_logical, intent(out) :: lcont, ladhe
+        real(kind=8), intent(out) :: rese(3), nrese
     end subroutine mmnsta
 end interface

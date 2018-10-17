@@ -22,14 +22,14 @@ interface
                       tau1, tau2, mprojt, wpg, ffe,&
                       ffm, jacobi, jeu, coefac, coefaf,&
                       lambda, coefff, dlagrc, dlagrf, dvite,&
-                      rese, nrese, vectee, vectmm,mprt11,mprt21,&
+                      rese, nrese, vectee, vectmm,mprt11,mprt12,mprt21,&
                       mprt22,mprt1n,mprt2n,kappa,l_large_slip)
         character(len=*) :: phasez
         integer :: ndim
         integer :: nne
         integer :: nnm
         aster_logical, intent(in) :: l_large_slip
-        real(kind=8) :: mprt11(3, 3), mprt21(3, 3), mprt22(3, 3)
+        real(kind=8) :: mprt11(3, 3), mprt12(3, 3), mprt21(3, 3), mprt22(3, 3)
         real(kind=8) :: norm(3)
         real(kind=8) :: tau1(3)
         real(kind=8) :: tau2(3),kappa(2,2)

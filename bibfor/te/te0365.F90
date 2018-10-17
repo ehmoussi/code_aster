@@ -74,13 +74,9 @@ character(len=16), intent(in) :: option, nomte
     real(kind=8) :: rese(3)=0.0, nrese=0.0
     real(kind=8) :: mprojt(3, 3)=0.0
     real(kind=8) :: mprt1n(3, 3)=0.0, mprt2n(3, 3)=0.0
-    real(kind=8) :: mprnt1(3, 3)=0.0, mprnt2(3, 3)=0.0
     real(kind=8) :: mprt11(3, 3)=0.0, mprt12(3, 3)=0.0, mprt21(3, 3)=0.0, mprt22(3, 3)=0.0
     real(kind=8) :: kappa(2, 2)=0.0
-    real(kind=8) :: mprojn(3, 3)=0.0, h(2, 2)=0.d0
-    real(kind=8) :: vech1(3)=0.0, vech2(3)=0.0
     real(kind=8) :: ffe(9), ffm(9), ffl(9)
-    real(kind=8) :: dffm(2, 9)
     real(kind=8) :: alpha_cont=0.0
     real(kind=8) :: dnepmait1, dnepmait2, taujeu1, taujeu2
     real(kind=8) :: xpc, ypc, xpr, ypr
@@ -94,7 +90,7 @@ character(len=16), intent(in) :: option, nomte
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    vtmp (:) = 0.d0
+    vtmp(:)   = 0.d0
     vectcc(:) = 0.d0
     vectff(:) = 0.d0
     vectee(:) = 0.d0
@@ -130,32 +126,41 @@ character(len=16), intent(in) :: option, nomte
                 typmam, nnm  ,&
                 nnl   , nbcps, nbdm,&
                 laxis , leltf)
+    if (.not.loptf) then
+        leltf = .false.
+    endif
 !
 ! - Compute quantities (for vector)
 !
-    call mmvppe(typmae, typmam, iresog, ndim, nne,&
-                nnm, nnl, nbdm, laxis, ldyna,&
-                xpc        , ypc      , xpr     , ypr     ,&
-                tau1, tau2,&
-                jeusup, ffe, ffm, dffm, ffl,&
-                norm, mprojt, jacobi,&
-                dlagrc, dlagrf, jeu, djeu,&
-                djeut, mprojn,&
-                mprt1n, mprt2n, mprnt1, mprnt2,&
-                kappa, h, vech1, vech2,&
-                mprt11, mprt12, mprt21,&
-                mprt22,taujeu1, taujeu2, &
-                dnepmait1,dnepmait2, l_large_slip)
+    call mmvppe(typmae   , typmam   ,&
+                ndim     , nne      , nnm     , nnl    , nbdm ,&
+                iresog   , l_large_slip ,&
+                laxis    , ldyna    , jeusup  ,&
+                xpc      , ypc      , xpr     , ypr   ,&
+                tau1     , tau2     ,&
+                ffe      , ffm      , ffl     ,&
+                jacobi   , jeu      , djeu    , djeut ,&
+                dlagrc   , dlagrf   , &
+                norm     , mprojt  ,&
+                mprt1n   , mprt2n   , &
+                mprt11  , mprt12, mprt21, mprt22,&
+                kappa    , &
+                taujeu1  , taujeu2  ,&
+                dnepmait1, dnepmait2)
 !
-!  --- PREPARATION DES DONNEES - CHOIX DU LAGRANGIEN DE CONTACT
+! - Get contact pressure
 !
     call mmlagc(lambds, dlagrc, iresof, lambda)
 !
 ! - Compute state of contact and friction
 !
-    call mmmsta(ndim, leltf, lpenaf, loptf, djeut,&
-                dlagrf, coefaf, tau1, tau2, lcont,&
-                ladhe, lambda, rese, nrese,.false._1)
+    call mmmsta(ndim  , loptf , indco,&
+                ialgoc, ialgof,&
+                lpenaf, coefaf,&
+                lambda, djeut , dlagrf,&
+                tau1  , tau2  ,&
+                lcont , ladhe ,&
+                rese  , nrese)
 !
 ! - Select phase to compute
 !
@@ -172,10 +177,14 @@ character(len=16), intent(in) :: option, nomte
                      taujeu1  , taujeu2  ,&
                      dnepmait1, dnepmait2,&
                      djeut )
-        call mmnsta(ndim, leltf, lpenaf, loptf, djeut,&
-                    dlagrf, coefaf, tau1, tau2, lcont,&
-                    ladhe, lambda, rese, nrese)
-    endif
+        call mmnsta(ndim  , loptf ,&
+                    lpenaf, coefaf,&
+                    indco ,&
+                    lambda, djeut , dlagrf,&
+                    tau1  , tau2  ,&
+                    lcont , ladhe ,&
+                    rese  , nrese)
+      endif
 !
 ! - Weak form of contact/friction force
 !
@@ -184,7 +193,9 @@ character(len=16), intent(in) :: option, nomte
                 ffm, jacobi, jeu, coefac, coefaf,&
                 lambda, coefff, dlagrc, dlagrf, djeu,&
                 rese, nrese, &
-                vectee, vectmm,mprt11,mprt21,mprt22,mprt1n,mprt2n,kappa,l_large_slip)
+                vectee, vectmm,mprt11,mprt12,mprt21,mprt22,&
+                mprt1n,mprt2n,&
+                kappa,l_large_slip)
 !
 ! - Weak form of contact/friction law
 !

@@ -22,7 +22,7 @@ interface
                       tau2, mprojt, wpg, ffm, jacobi,&
                       jeu, coefac, coefaf, lambda, coefff,&
                       dlagrc, dlagrf, dvite, rese, nrese,&
-                      vectmm,mprt11,mprt21,mprt22,mprt1n,mprt2n,kappa,l_large_slip)
+                      vectmm,mprt11,mprt12,mprt21,mprt22,mprt1n,mprt2n,kappa,l_large_slip)
         character(len=*) :: phasez
         integer :: ndim
         integer :: nnm
@@ -46,6 +46,6 @@ interface
         real(kind=8) :: nrese
         real(kind=8) :: vectmm(27)
            real(kind=8) :: mprt1n(3,3),mprt2n(3,3)  
-    real(kind=8) :: mprt11(3, 3), mprt21(3, 3), mprt22(3, 3)
+    real(kind=8) :: mprt11(3, 3), mprt12(3, 3), mprt21(3, 3), mprt22(3, 3)
     end subroutine mmmvmm
 end interface
