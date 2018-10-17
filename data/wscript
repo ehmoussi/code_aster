@@ -47,6 +47,11 @@ def options(self):
                      action='store_false',
                      help='do not create legacy files')
 
+    group = self.get_option_group("Configuration options")
+    group.add_option('--with-data', dest='with_data',
+                    action='store', default=None,
+                    help='location of the data repository (default: ../data)')
+
     group = self.add_option_group('External programs options')
     group.add_option('--with-prog-metis', action='store_true', default=None,
                      dest='with_prog_metis',
@@ -84,8 +89,25 @@ def configure(self):
     self.env['ASTER_ENVIRON'] = cPickle.dumps(dict_conv)
 
     self.getAsrunTmp()
-
     self.check_external_programs()
+    self.configure_data()
+
+
+@Configure.conf
+def configure_data(self):
+    opts = self.options
+    self.start_msg('Checking for data repository')
+    self.env.data_path = None
+
+    default = osp.join(self.path.parent.parent.abspath(), 'data')
+    data_path = osp.abspath(opts.with_data or default)
+    if osp.isdir(data_path):
+        self.end_msg(data_path)
+        self.env.data_path = data_path
+    elif opts.with_data is None:
+        self.end_msg("{0} not found".format(data_path), 'YELLOW')
+    else:
+        raise Errors.ConfigurationError("{0} not found".format(data_path))
 
 
 def build(self):
@@ -111,6 +133,19 @@ def build(self):
                                  indent=4, separators=(',', ': ')),
         **dict_conv
     )
+    # install files from data repository
+    if self.env.data_path:
+        data_path = osp.relpath(self.env.data_path,
+                                self.path.get_src().abspath())
+        data_node = self.path.get_src().find_node(data_path)
+
+        dest = osp.join(self.env.ASTERDATADIR, 'datg')
+        files = data_node.ant_glob('datg/*.datg')
+        self.install_files(dest, files)
+
+        dest = osp.join(self.env.ASTERDATADIR, 'materiau')
+        files = data_node.ant_glob('materiau/*.NOMI')
+        self.install_files(dest, files)
 
 
 SRCTEST_TMPL = """SRCTEST        | src     | -     | %s"""
