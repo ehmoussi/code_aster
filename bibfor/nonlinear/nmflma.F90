@@ -21,7 +21,7 @@
 subroutine nmflma(typmat, mod45 , l_hpp  , ds_algopara, modelz,&
                   ds_material, carele, sddisc, sddyna     , fonact,&
                   numins, valinc, solalg, lischa     ,&
-                  ds_contact, numedd     , numfix,&
+                  numedd     , numfix,&
                   ds_constitutive, ds_measure, meelem,&
                   measse, veelem, nddle , ds_posttimestep, modrig,&
                   ldccvg, matass, matgeo)
@@ -65,7 +65,6 @@ type(NL_DS_Constitutive), intent(in) :: ds_constitutive
 type(NL_DS_Measure), intent(inout) :: ds_measure
 integer :: numins, ldccvg, nddle
 character(len=19) :: sddisc, sddyna, lischa
-type(NL_DS_Contact), intent(in) :: ds_contact
 character(len=24) :: numedd, numfix
 character(len=19) :: meelem(*), measse(*), veelem(*)
 character(len=19) :: solalg(*), valinc(*)
@@ -96,7 +95,6 @@ type(NL_DS_PostTimeStep), intent(in) :: ds_posttimestep
 ! In  ds_constitutive  : datastructure for constitutive laws management
 ! IN  LISCHA : LISTE DES CHARGES
 ! IO  ds_measure       : datastructure for measure and statistics management
-! In  ds_contact       : datastructure for contact management
 ! IN  SDDYNA : SD POUR LA DYNAMIQUE
 ! In  ds_algopara      : datastructure for algorithm parameters
 ! IN  SDDISC : SD DISC_INST
@@ -269,7 +267,7 @@ type(NL_DS_PostTimeStep), intent(in) :: ds_posttimestep
                     numedd, numfix, ds_measure, ds_algopara,&
                     nb_matr, list_matr_type, list_calc_opti, list_asse_opti,&
                     list_l_calc, list_l_asse, lcfint, meelem, measse,&
-                    veelem, ldccvg, ds_contact)
+                    veelem, ldccvg)
     endif
 !
 ! --- ON RECONSTRUIT RIGI2 TOUJOURS SYMETRIQUE

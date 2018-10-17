@@ -314,9 +314,9 @@ type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
 !
 ! --- PRE-CALCUL DES MATR_ELEM CONSTANTES AU COURS DU CALCUL
 !
-    call nminmc(fonact, list_load  , sddyna    , model      , ds_constitutive,&
-                numedd, numfix     , ds_contact, ds_algopara, solalg         ,&
-                valinc, ds_material, cara_elem , sddisc     , ds_measure     ,&
+    call nminmc(fonact, list_load  , sddyna     , model , ds_constitutive,&
+                numedd, numfix     , ds_algopara, solalg,&
+                valinc, ds_material, cara_elem  , sddisc, ds_measure     ,&
                 meelem, measse     , veelem)
 !
 ! - Compute reference vector for RESI_REFE_RELA

@@ -18,7 +18,7 @@
 ! person_in_charge: mickael.abbas at edf.fr
 ! aslint: disable=W1504
 !
-subroutine nmcoma(modelz, ds_material, cara_elem    , ds_constitutive, ds_algopara,&
+subroutine nmcoma(mesh , modelz, ds_material, cara_elem    , ds_constitutive, ds_algopara,&
                   lischa, numedd, numfix    , solveu         , &
                   sddisc, sddyna, ds_print  , ds_measure     , ds_algorom, numins     ,&
                   iter_newt, list_func_acti, ds_contact, hval_incr         , hval_algo     ,&
@@ -36,7 +36,7 @@ implicit none
 #include "asterfort/isfonc.h"
 #include "asterfort/ndynlo.h"
 #include "asterfort/nmaint.h"
-#include "asterfort/nmchcc.h"
+#include "asterfort/nmelcm.h"
 #include "asterfort/nmchex.h"
 #include "asterfort/nmchoi.h"
 #include "asterfort/nmchra.h"
@@ -56,6 +56,7 @@ implicit none
 type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 integer :: list_func_acti(*)
 character(len=*) :: modelz
+character(len=8), intent(in) :: mesh
 character(len=24) :: cara_elem
 type(NL_DS_Measure), intent(inout) :: ds_measure
 character(len=24) :: numedd, numfix
@@ -121,11 +122,11 @@ integer :: faccvg, ldccvg
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    aster_logical :: reasma, lcamor, l_diri_undead, l_rom
+    aster_logical :: reasma, lcamor, l_diri_undead, l_rom, l_cont_elem
     aster_logical :: ldyna, lamor, l_neum_undead, lcrigi, lcfint, larigi
     character(len=16) :: metcor, metpre
     character(len=16) :: optrig, optamo
-    character(len=19) :: vefint, cnfint
+    character(len=19) :: vefint, cnfint, matr_elem
     character(len=24) :: model
     aster_logical :: renume
     integer :: ifm, niv
@@ -160,6 +161,7 @@ integer :: faccvg, ldccvg
     l_rom         = isfonc(list_func_acti,'ROM')
     l_neum_undead = isfonc(list_func_acti,'NEUM_UNDEAD')
     l_diri_undead = isfonc(list_func_acti,'DIRI_UNDEAD')
+    l_cont_elem   = isfonc(list_func_acti,'ELT_CONTACT')
 !
 ! --- RE-CREATION DU NUME_DDL OU PAS
 !
@@ -206,10 +208,15 @@ integer :: faccvg, ldccvg
                     vefint, cnfint)
     endif
 !
-! --- CALCUL DES MATR_ELEM CONTACT/XFEM_CONTACT
+! - Compute matrices for contact
 !
-    call nmchcc(list_func_acti, nb_matr, list_matr_type, list_calc_opti, list_asse_opti,&
-                list_l_asse, list_l_calc)
+    if (l_cont_elem) then
+        call nmchex(meelem, 'MEELEM', 'MEELTC', matr_elem)
+        call nmelcm(mesh       , model         ,&
+                    ds_material, ds_contact, ds_constitutive, ds_measure,&
+                    hval_incr  , hval_algo ,&
+                    matr_elem)
+    endif
 !
 ! - Update dualized matrix for non-linear Dirichlet boundary conditions (undead)
 !
@@ -265,7 +272,7 @@ integer :: faccvg, ldccvg
                     hval_algo     , lischa     , numedd         , numfix        ,&
                     ds_measure    , ds_algopara, nb_matr    , list_matr_type , list_calc_opti,&
                     list_asse_opti, list_l_calc, list_l_asse, lcfint         , meelem        ,&
-                    measse        , veelem     , ldccvg     , ds_contact)
+                    measse        , veelem     , ldccvg     )
     endif
 !
 ! --- ERREUR SANS POSSIBILITE DE CONTINUER

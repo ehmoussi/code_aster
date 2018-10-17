@@ -277,7 +277,8 @@ implicit none
         aster_logical     :: l_cont_node = ASTER_FALSE
 ! ----- Flag if create CONT_ELEM
         aster_logical     :: l_cont_elem = ASTER_FALSE
-
+! ----- Flag for THM in contact
+        aster_logical     :: l_cont_thm  = ASTER_FALSE
         character(len=8)  :: sdcont
         character(len=24) :: sdcont_defi
         character(len=24) :: sdcont_solv

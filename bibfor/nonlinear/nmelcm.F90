@@ -17,9 +17,10 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nmelcm(phase    , mesh     , model    , ds_material, ds_contact    ,&
-                  disp_prev, vite_prev, acce_prev, vite_curr, disp_cumu_inst,&
-                  disp_newt_curr,matr_elem, time_prev, time_curr, ds_constitutive, l_xthm)
+subroutine nmelcm(mesh       , model          ,&
+                  ds_material, ds_contact, ds_constitutive, ds_measure,&
+                  hval_incr  , hval_algo ,&
+                  matr_elem)
 !
 use NonLin_Datastructure_type
 !
@@ -39,24 +40,20 @@ implicit none
 #include "asterfort/memare.h"
 #include "asterfort/nmelco_prep.h"
 #include "asterfort/reajre.h"
+#include "asterfort/nmchex.h"
+#include "asterfort/nmvcex.h"
+#include "asterfort/nmrinc.h"
+#include "asterfort/nmtime.h"
 #include "asterfort/utmess.h"
 !
-character(len=4), intent(in) :: phase
 character(len=8), intent(in) :: mesh
 character(len=24), intent(in) :: model
 type(NL_DS_Material), intent(in) :: ds_material
 type(NL_DS_Contact), intent(in) :: ds_contact
-character(len=19), intent(in) :: disp_prev
-character(len=19), intent(in) :: vite_prev
-character(len=19), intent(in) :: acce_prev
-character(len=19), intent(in) :: vite_curr
-character(len=19), intent(in) :: disp_cumu_inst
-character(len=19), intent(in) :: disp_newt_curr
-character(len=19), intent(out) :: matr_elem
-character(len=19), intent(in) :: time_prev
-character(len=19), intent(in) :: time_curr
 type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-aster_logical, intent(in) :: l_xthm
+type(NL_DS_Measure), intent(inout) :: ds_measure
+character(len=19), intent(in) :: hval_incr(*), hval_algo(*)
+character(len=19), intent(out) :: matr_elem
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -66,21 +63,15 @@ aster_logical, intent(in) :: l_xthm
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  phase            : phase (contact or friction)
 ! In  mesh             : name of mesh
 ! In  model            : name of model
 ! In  ds_material      : datastructure for material parameters
 ! In  ds_contact       : datastructure for contact management
-! In  disp_prev        : displacement at beginning of current time
-! In  vite_prev        : speed at beginning of current time
-! In  vite_curr        : speed at current time
-! In  acce_prev        : acceleration at beginning of current time
-! In  disp_cumu_inst   : displacement increment from beginning of current time
-! In  time_prev        : previous time
-! In  time_curr        : current time
 ! In  ds_constitutive  : datastructure for constitutive laws management
+! IO  ds_measure       : datastructure for measure and statistics management
+! In  hval_incr        : hat-variable for incremental values fields
+! In  hval_algo        : hat-variable for algorithms fields
 ! Out matr_elem        : elementary matrix
-! In  l_xthm           : contact with THM and XFEM (!)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -93,8 +84,10 @@ aster_logical, intent(in) :: l_xthm
     character(len=19) :: ligrel
     character(len=19) :: xcohes, ccohes
     character(len=16) :: option
-    aster_logical :: l_cont_cont, l_cont_xfem, l_cont_xfem_gg, l_cont_lac
-    aster_logical :: l_cont_pena, l_all_verif, l_xfem_czm    
+    aster_logical :: l_cont_lac, l_all_verif, l_xfem_czm, l_xthm
+    character(len=19) :: disp_prev, vite_prev, acce_prev, vite_curr, varc_prev, varc_curr
+    character(len=19) :: disp_cumu_inst, disp_newt_curr
+    character(len=19) :: time_prev, time_curr
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -105,85 +98,75 @@ aster_logical, intent(in) :: l_xthm
 !
     base = 'V'
 !
+! - Begin measure
+!
+    call nmtime(ds_measure, 'Init', 'Cont_Elem')
+    call nmtime(ds_measure, 'Launch', 'Cont_Elem')
+!
+! - Get hat variables
+!
+    call nmchex(hval_algo, 'SOLALG', 'DEPDEL', disp_cumu_inst)
+    call nmchex(hval_algo, 'SOLALG', 'DDEPLA', disp_newt_curr)
+    call nmchex(hval_incr, 'VALINC', 'DEPMOI', disp_prev)
+    call nmchex(hval_incr, 'VALINC', 'VITMOI', vite_prev)
+    call nmchex(hval_incr, 'VALINC', 'ACCMOI', acce_prev)
+    call nmchex(hval_incr, 'VALINC', 'VITPLU', vite_curr)
+    call nmchex(hval_incr, 'VALINC', 'COMMOI', varc_prev)
+    call nmchex(hval_incr, 'VALINC', 'COMPLU', varc_curr)
+    call nmvcex('INST', varc_prev, time_prev)
+    call nmvcex('INST', varc_curr, time_curr)
+!
 ! - Get contact parameters
 !
-    l_cont_cont    = cfdisl(ds_contact%sdcont_defi,'FORMUL_CONTINUE')
-    l_cont_xfem    = cfdisl(ds_contact%sdcont_defi,'FORMUL_XFEM')
-    l_cont_lac     = cfdisl(ds_contact%sdcont_defi,'FORMUL_LAC')
-    l_cont_xfem_gg = cfdisl(ds_contact%sdcont_defi,'CONT_XFEM_GG')
-    l_cont_pena    = cfdisl(ds_contact%sdcont_defi,'EXIS_PENA')
-    l_xfem_czm     = cfdisl(ds_contact%sdcont_defi,'EXIS_XFEM_CZM')
-    l_all_verif    = cfdisl(ds_contact%sdcont_defi,'ALL_VERIF')
-    
+    l_cont_lac  = cfdisl(ds_contact%sdcont_defi, 'FORMUL_LAC')
+    l_xfem_czm  = cfdisl(ds_contact%sdcont_defi, 'EXIS_XFEM_CZM')
+    l_all_verif = cfdisl(ds_contact%sdcont_defi, 'ALL_VERIF')
+    l_xthm      = ds_contact%l_cont_thm
+
     if (.not.l_all_verif .and. ((.not.l_cont_lac) .or. ds_contact%nb_cont_pair.ne.0)) then
-!
 ! ----- Display
-!
         if (niv .ge. 2) then
             call utmess('I','CONTACT5_27')
         endif
-!
 ! ----- Init fields
-!
-        call inical(nbin, lpain, lchin, nbout, lpaout,&
-                    lchout)
-!
+        call inical(nbin, lpain, lchin, nbout, lpaout, lchout)
 ! ----- Prepare input fields
-!
-        call nmelco_prep(phase    , 'MATR'   ,&
+        call nmelco_prep('MATR'   ,&
                          mesh     , model    , ds_material, ds_contact,&
                          disp_prev, vite_prev, acce_prev, vite_curr , disp_cumu_inst,&
                          disp_newt_curr,nbin     , lpain    , lchin    ,&
                          option   , time_prev, time_curr , ds_constitutive,&
                          ccohes   , xcohes)
-!
 ! ----- <LIGREL> for contact elements
-!
         ligrel = ds_contact%ligrel_elem_cont
-!
 ! ----- Preparation of elementary matrix
-!
         call detrsd('MATR_ELEM', matr_elem)
-        call memare('V', matr_elem, model, ' ', ' ',&
-                    'RIGI_MECA')
-!
+        call memare('V', matr_elem, model, ' ', ' ', 'RIGI_MECA')
 ! ----- Prepare output fields
-!
-
         lpaout(1) = 'PMATUNS'
         lchout(1) = matr_elem(1:15)//'.M01'
-
-        if (l_xthm) then
-           lpaout(2) = 'PCOHESO'
-           lchout(2) = ccohes
-        else
-           lpaout(2) = 'PMATUUR'
-           lchout(2) = matr_elem(1:15)//'.M02'
-        endif
-
-        if (phase .eq. 'CONT' .and. l_xfem_czm .and. .not.l_xthm) then
+        lpaout(2) = 'PMATUUR'
+        lchout(2) = matr_elem(1:15)//'.M02'
+        if (l_xthm .or. l_xfem_czm) then
            lpaout(3) = 'PCOHESO'
            lchout(3) = ccohes
         endif
-!
 ! ----- Computation
-!
         call calcul('S', option, ligrel, nbin, lchin,&
                     lpain, nbout, lchout, lpaout, base,&
                     'OUI')
-!
 ! ----- Copy output fields
-!
         call reajre(matr_elem, lchout(1), base)
         call reajre(matr_elem, lchout(2), base)
-        if (l_xfem_czm .and. phase .eq. 'CONT') then
-           if (l_xthm) then
-              call copisd('CHAMP_GD', 'V', lchout(2), xcohes)
-           else
-              call copisd('CHAMP_GD', 'V', lchout(3), xcohes)
-           endif
+        if (l_xthm .or. l_xfem_czm) then
+            call copisd('CHAMP_GD', 'V', lchout(3), xcohes)
         endif
     endif
+!
+! - End measure
+!
+    call nmtime(ds_measure, 'Stop', 'Cont_Elem')
+    call nmrinc(ds_measure, 'Cont_Elem')
 !
     call jedema()
 !

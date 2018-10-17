@@ -18,7 +18,7 @@
 ! person_in_charge: mickael.abbas at edf.fr
 ! aslint: disable=W1504
 !
-subroutine nmprma(modelz     , ds_material, carele    , ds_constitutive,&
+subroutine nmprma(mesh       , modelz     , ds_material, carele    , ds_constitutive,&
                   ds_algopara, lischa     , numedd    , numfix         , solveu,&
                   ds_print   , ds_measure , ds_algorom, sddisc         ,&
                   sddyna     , numins     , fonact    , ds_contact     ,&
@@ -35,7 +35,7 @@ implicit none
 #include "asterfort/infdbg.h"
 #include "asterfort/isfonc.h"
 #include "asterfort/ndynlo.h"
-#include "asterfort/nmchcc.h"
+#include "asterfort/nmelcm.h"
 #include "asterfort/nmchoi.h"
 #include "asterfort/nmchra.h"
 #include "asterfort/nmchrm.h"
@@ -52,10 +52,12 @@ implicit none
 #include "asterfort/cfdisl.h"
 #include "asterfort/sdmpic.h"
 #include "asterfort/dismoi.h"
+#include "asterfort/nmchex.h"
 #include "asterfort/romAlgoNLCorrEFMatrixModify.h"
 !
 type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 integer :: fonact(*)
+character(len=8), intent(in) :: mesh
 character(len=*) :: modelz
 character(len=24) :: carele
 type(NL_DS_Material), intent(in) :: ds_material
@@ -122,9 +124,10 @@ integer :: faccvg, ldccvg
 !
     aster_logical :: reasma, renume
     aster_logical :: lcrigi, lcfint, lcamor, larigi
-    aster_logical :: ldyna, lamor, l_neum_undead, l_diri_undead, l_rom
+    aster_logical :: ldyna, lamor, l_neum_undead, l_diri_undead, l_rom, l_cont_elem
     character(len=16) :: metcor, metpre
     character(len=16) :: optrig, optamo
+    character(len=19) :: matr_elem
     integer :: ifm, niv, ibid
     integer :: iterat
     integer :: nb_matr
@@ -149,6 +152,7 @@ integer :: faccvg, ldccvg
     l_neum_undead = isfonc(fonact,'NEUM_UNDEAD')
     l_diri_undead = isfonc(fonact,'DIRI_UNDEAD')
     l_rom         = isfonc(fonact,'ROM')
+    l_cont_elem   = isfonc(fonact,'ELT_CONTACT')
 !
 ! - Initializations
 !
@@ -181,15 +185,17 @@ integer :: faccvg, ldccvg
     call nmchoi('PREDICTION', sddyna, numins, fonact, metpre,&
                 metcor, reasma, lcamor, optrig, lcrigi,&
                 larigi, lcfint)
+    ASSERT(.not. lcfint)
 !
-    if (lcfint) then
-        ASSERT(.false.)
+! - Compute matrices for contact
+!
+    if (l_cont_elem) then
+        call nmchex(meelem, 'MEELEM', 'MEELTC', matr_elem)
+        call nmelcm(mesh       , modelz    ,&
+                    ds_material, ds_contact, ds_constitutive, ds_measure,&
+                    valinc     , solalg    ,&
+                    matr_elem)
     endif
-!
-! --- CALCUL DES MATR_ELEM CONTACT/XFEM_CONTACT
-!
-    call nmchcc(fonact, nb_matr, list_matr_type, list_calc_opti, list_asse_opti,&
-                list_l_asse, list_l_calc)
 !
 ! --- CALCUL DES MATR-ELEM DE RIGIDITE
 !
@@ -244,7 +250,7 @@ integer :: faccvg, ldccvg
                     solalg        , lischa     , numedd         , numfix        ,&
                     ds_measure    , ds_algopara, nb_matr    , list_matr_type , list_calc_opti,&
                     list_asse_opti, list_l_calc, list_l_asse, lcfint         , meelem        ,&
-                    measse        , veelem     , ldccvg     , ds_contact)
+                    measse        , veelem     , ldccvg     )
     endif
 !
 ! --- ERREUR SANS POSSIBILITE DE CONTINUER
@@ -259,29 +265,29 @@ integer :: faccvg, ldccvg
         call nmimck(ds_print, 'MATR_ASSE', metpre, .true._1)
     else
         call nmimck(ds_print, 'MATR_ASSE', ' '   , .false._1)
-    endif 
+    endif
     l_cont_cont         = isfonc(fonact,'CONT_CONTINU')
     if (l_cont_cont) then
     !   -- Avant la factorisation et pour le cas ou il y a du contact continu avec adaptation de
     !      coefficient
     !   -- On cherche le coefficient optimal pour eviter une possible singularite de matrice
-    !   -- La valeur est estimee une seule fois a la premiere prediction du premier pas de 
+    !   -- La valeur est estimee une seule fois a la premiere prediction du premier pas de
     !      temps pour l'etape de calcul
-    !   -- Cette valeur estimee est passee directement a mmchml_c sans passer par mmalgo car 
+    !   -- Cette valeur estimee est passee directement a mmchml_c sans passer par mmalgo car
     !   -- a la premiere iteration on ne passe pas par mmalgo
         l_contact_adapt = cfdisl(ds_contact%sdcont_defi,'EXIS_ADAP')
 !            write (6,*) "l_contact_adapt", &
 !                l_contact_adapt,ds_contact%update_init_coefficient
-        if ((nint(ds_contact%update_init_coefficient) .eq. 0) .and. l_contact_adapt) then 
+        if ((nint(ds_contact%update_init_coefficient) .eq. 0) .and. l_contact_adapt) then
             call dismoi('MPI_COMPLET', matass, 'MATR_ASSE', repk=kmpic1)
-            if (kmpic1 .eq. 'NON') then 
+            if (kmpic1 .eq. 'NON') then
                 call sdmpic('MATR_ASSE', matass)
             endif
-            call echmat(matass, .false._1, minmat, maxmat) 
+            call echmat(matass, .false._1, minmat, maxmat)
             ds_contact%max_coefficient = maxmat
-            if (abs(log(minmat)) .ne. 0.0) then 
-            
-                if (abs(log(maxmat))/abs(log(minmat)) .lt. 4.0) then 
+            if (abs(log(minmat)) .ne. 0.0) then
+
+                if (abs(log(maxmat))/abs(log(minmat)) .lt. 4.0) then
 !                     Le rapport d'arete max/min est
 !  un bon compromis pour initialiser le coefficient
                     ds_contact%estimated_coefficient =&
@@ -292,7 +298,7 @@ integer :: faccvg, ldccvg
                     ds_contact%estimated_coefficient = 10**(exponent_val)
                     ds_contact%update_init_coefficient = 1.0
                 endif
-            else 
+            else
                ds_contact%estimated_coefficient = 1.d16*ds_contact%arete_min
                     ds_contact%update_init_coefficient = 1.0
             endif
@@ -300,8 +306,6 @@ integer :: faccvg, ldccvg
 !                 minmat,maxmat,ds_contact%estimated_coefficient,abs(log(maxmat))/abs(log(minmat))
         endif
     endif
-!
-
 !
 ! --- FACTORISATION DE LA MATRICE ASSEMBLEE GLOBALE
 !

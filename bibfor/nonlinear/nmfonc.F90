@@ -570,9 +570,6 @@ integer, intent(inout) :: list_func_acti(*)
         if (isfonc(list_func_acti,'ELT_CONTACT')) then
             call utmess('I', 'MECANONLINE14_31')
         endif
-        if (isfonc(list_func_acti,'ELT_FROTTEMENT')) then
-            write (ifm,*) '<MECANONLINE> ...... ELEMENTS DE FROTTEMENT'
-        endif
         if (isfonc(list_func_acti,'DIS_CHOC')) then
             call utmess('I', 'MECANONLINE14_33')
         endif

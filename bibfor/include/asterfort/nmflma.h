@@ -15,15 +15,13 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-! aslint: disable=W1504
-!
 #include "asterf_types.h"
 !
 interface
     subroutine nmflma(typmat, mod45 , l_hpp  , ds_algopara, modelz,&
                       ds_material, carele, sddisc, sddyna     , fonact,&
                       numins, valinc, solalg, lischa     ,&
-                      ds_contact, numedd, numfix,&
+                      numedd, numfix,&
                       ds_constitutive, ds_measure, meelem,&
                       measse, veelem, nddle , ds_posttimestep, modrig,&
                       ldccvg, matass, matgeo)
@@ -42,7 +40,6 @@ interface
         character(len=19) :: valinc(*)
         character(len=19) :: solalg(*)
         character(len=19) :: lischa
-        type(NL_DS_Contact), intent(in) :: ds_contact
         character(len=24) :: numedd
         character(len=24) :: numfix
         type(NL_DS_Constitutive), intent(in) :: ds_constitutive

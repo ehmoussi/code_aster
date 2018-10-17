@@ -243,7 +243,7 @@ integer :: nbiter
 !
 ! --- PREDICTION D'UNE DIRECTION DE DESCENTE
 !
-    call nmpred(model , numedd         , numfix    , ds_material, cara_elem,&
+    call nmpred(mesh, model , numedd         , numfix    , ds_material, cara_elem,&
                 ds_constitutive, list_load , ds_algopara, solveu   ,&
                 fonact, ds_print       , ds_measure, ds_algorom , sddisc   ,&
                 sdnume, sderro         , numins    , valinc     , solalg   ,&
@@ -329,7 +329,7 @@ integer :: nbiter
 !
 320 continue
 !
-    call nmdesc(model   , numedd         , numfix    , ds_material, cara_elem  ,&
+    call nmdesc(mesh    , model   , numedd         , numfix    , ds_material, cara_elem  ,&
                 ds_constitutive, list_load , ds_contact, ds_algopara,&
                 solveu  , fonact         , numins    , iterat    , sddisc     ,&
                 ds_print, ds_measure     , ds_algorom, sddyna    , sdnume     ,&
