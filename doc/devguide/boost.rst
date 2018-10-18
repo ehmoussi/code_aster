@@ -24,6 +24,11 @@ Constructors
 
 *DataStructure* objects must be wrapped by a ``boost::shared_ptr``.
 
+The definition of the wrapper must reflect the inheritance of the underlying
+C++ DataStructures. In the following example, ``FunctionInstance`` is derivated
+from ``BaseFunctionInstance``. It is necessary to pass a Python ``Function``
+object where is generic ``BaseFunction`` is expected.
+
 .. note:: The constructors of the underlying *Instance* should not be available
     to the final user. That's why the definition should use ``no_init``.
 
