@@ -3,7 +3,7 @@
  * @brief Interface python de StructureInterface
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -53,7 +53,7 @@ void exportStructureInterfaceToPython()
             &initFactoryPtr< StructureInterfaceInstance,
                              std::string,
                              DOFNumberingPtr >) )
-	    .def( "addInterface", &StructureInterfaceInstance::addInterface,
+        .def( "addInterface", &StructureInterfaceInstance::addInterface,
                               StructureInterfaceInstance_overloads() )
     ;
 };

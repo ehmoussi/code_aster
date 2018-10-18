@@ -3,7 +3,7 @@
  * @brief Definition of the (nonlinear) behaviour
  * @author Natacha Béreux
  * @section LICENCE
- *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -65,7 +65,7 @@ BehaviourInstance::BehaviourInstance( ConstitutiveLawEnum law, StrainEnum strain
          _toCapyConverter.add( new CapyConvertibleValue< double >
                                                       ( false, "PARM_THETA", _theta, true ) );
          _alpha = 1.0;
- 	 _toCapyConverter.add( new CapyConvertibleValue< double >
+         _toCapyConverter.add( new CapyConvertibleValue< double >
                                                       ( false, "PARM_ALPHA", _alpha, true ) );
 
          _toCapyConverter.add( new CapyConvertibleValue< double >

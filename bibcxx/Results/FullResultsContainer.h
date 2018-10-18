@@ -4,7 +4,7 @@
 /**
  * @file FullResultsContainer.h
  * @brief Fichier entete de la classe FullResultsContainer
- * @author Natacha Béreux 
+ * @author Natacha Béreux
  * @section LICENCE
  *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
@@ -29,11 +29,12 @@
 #include "Results/DynamicResultsIndexing.h"
 #include "Results/ResultsContainer.h"
 #include "Discretization/DOFNumbering.h"
+#include "Supervis/ResultNaming.h"
 
 /**
  * @class FullResultsContainerInstance
  * @brief Cette classe correspond à un sd_dyna_phys
- * @author Natacha Béreux 
+ * @author Natacha Béreux
  */
 class FullResultsContainerInstance: public ResultsContainerInstance
 {

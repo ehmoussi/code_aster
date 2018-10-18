@@ -6,7 +6,7 @@
  * @brief Fichier definissant les physiques et les modelisations disponibles
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -44,7 +44,8 @@ extern const char* const PhysicNames[nbPhysics];
  * @brief Modelisations existantes dans Code_Aster
  * @author Nicolas Sellenet
  */
-enum Modelings { Axisymmetrical, Tridimensional, TridimensionalAbsorbingBoundary, Planar, PlaneStrain, PlaneStress, DKT, DKTG, PlanarBar };
+enum Modelings { Axisymmetrical, Tridimensional, TridimensionalAbsorbingBoundary,
+    Planar, PlaneStrain, PlaneStress, DKT, DKTG, PlanarBar };
 const int nbModelings = 9;
 /**
  * @var ModelingNames

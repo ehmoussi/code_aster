@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe UnitaryThermalLoad
  * @author Jean-Pierre Lefebvre
  * @section LICENCE
- *   Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -118,7 +118,7 @@ public:
         _fluxn(val)
     {
        _toCapyConverter.add( new CapyConvertibleValue< double >  (true, "FLUX_REP", _fluxn,  false ) );
-	};
+    };
 
     void addGroupOfElements( const std::string& nameOfGroup )
     {
@@ -129,13 +129,13 @@ public:
 
     void setNormalFlow( ValueType val=0.0 ) throw ( std::runtime_error )
     {
-		_fluxn = val;
+        _fluxn = val;
         _toCapyConverter.add( new CapyConvertibleValue< double >  (true, "FLUX_REP", _fluxn,  false ) );
     };
 
     void setLowerNormalFlow( ValueType val=0.0 ) throw ( std::runtime_error )
     {
-		_fluxnInf = val;
+        _fluxnInf = val;
         _toCapyConverter.add( new CapyConvertibleValue< double >  (true, "FLUN_INF", _fluxnInf,  false ) );
     };
 

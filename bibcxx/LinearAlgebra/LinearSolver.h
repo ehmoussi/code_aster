@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe LinearSolver
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -411,9 +411,12 @@ class BaseLinearSolverInstance: public DataStructure
          * @param result champ aux noeuds résultat (optionnel)
          * @return champ aux noeuds resultat
          */
-        FieldOnNodesDoublePtr solveDoubleLinearSystem( const AssemblyMatrixDisplacementDoublePtr& currentMatrix,
-                                                       const FieldOnNodesDoublePtr& currentRHS,
-                                                       FieldOnNodesDoublePtr result = FieldOnNodesDoublePtr( new FieldOnNodesDoubleInstance( Permanent ) ) ) const;
+        FieldOnNodesDoublePtr solveDoubleLinearSystem(
+            const AssemblyMatrixDisplacementDoublePtr& currentMatrix,
+            const FieldOnNodesDoublePtr& currentRHS,
+            FieldOnNodesDoublePtr result = FieldOnNodesDoublePtr(
+                new FieldOnNodesDoubleInstance( Permanent ) )
+        ) const;
 
         /**
          * @brief Inversion du systeme lineaire

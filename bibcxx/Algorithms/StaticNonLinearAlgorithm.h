@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe StaticNonLinearAlgorithm
  * @author Natacha Béreux
  * @section LICENCE
- *   Copyright (C) 1991 - 2015  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -158,7 +158,8 @@ void StaticNonLinearAlgorithm< Stepper >::oneStep() throw( AlgoException& )
 }
 
 template< class Stepper >
-void StaticNonLinearAlgorithm< Stepper >::doPrediction( DiscreteProblemPtr dProblem, BaseLinearSolverPtr linSolv, FieldOnNodesDoublePtr uField )
+void StaticNonLinearAlgorithm< Stepper >::doPrediction( DiscreteProblemPtr dProblem,
+    BaseLinearSolverPtr linSolv, FieldOnNodesDoublePtr uField )
 {
     // A déplacer
     DOFNumberingPtr dofNum1 = _results->getLastDOFNumbering();
@@ -204,7 +205,9 @@ void StaticNonLinearAlgorithm< Stepper >::doPrediction( DiscreteProblemPtr dProb
 
 
 template< class Stepper >
-void StaticNonLinearAlgorithm< Stepper >::doCorrection( DiscreteProblemPtr _discreteProblem, FieldOnNodesDoublePtr duField, int nIter )
+void StaticNonLinearAlgorithm< Stepper >::doCorrection(
+    DiscreteProblemPtr _discreteProblem,
+    FieldOnNodesDoublePtr duField, int nIter )
 {
     std::cout << " Etape de correction : " << nIter << std::endl;
 }

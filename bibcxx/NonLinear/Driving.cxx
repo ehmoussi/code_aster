@@ -1,9 +1,9 @@
 /**
  * @file Driving.cxx
  * @brief Driving implementation
- * @author Natacha Béreux 
+ * @author Natacha Béreux
  * @section LICENCE
- *   Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -23,11 +23,18 @@
 
 #include "NonLinear/Driving.h"
 
-const std::vector< DrivingTypeEnum > allDrivingType = { DisplacementValue, DisplacementNorm, JumpOnCrackValue, JumpOnCrackNorm, LimitLoad, MonotonicStrain,  ElasticityLimit };
-const std::vector< std::string > allDrivingTypeNames = { "DDL_IMPO", "LONG_ARC", "SAUT_IMPO", "SAUT_LONG_ARC", "ANA_LIM", "DEFORMATION", "PRED_ELAS"  };
+const std::vector< DrivingTypeEnum > allDrivingType = { DisplacementValue,
+    DisplacementNorm, JumpOnCrackValue, JumpOnCrackNorm, LimitLoad,
+    MonotonicStrain,  ElasticityLimit };
+const std::vector< std::string > allDrivingTypeNames = {
+    "DDL_IMPO", "LONG_ARC", "SAUT_IMPO", "SAUT_LONG_ARC", "ANA_LIM",
+    "DEFORMATION", "PRED_ELAS"  };
 
 
-const std::vector<SelectionCriterionEnum> allSelectionCriterion = { SmallestDisplacementIncrement, SmallestAngleIncrement, SmallestResidual, MixedCriterion };
-const std::vector< std::string > allSelectionCriterionNames = { "NORM_INCR_DEPL", "ANGL_INCR_DEPL", "RESIDU", "MIXTE"}; 
+const std::vector<SelectionCriterionEnum> allSelectionCriterion = {
+    SmallestDisplacementIncrement, SmallestAngleIncrement, SmallestResidual, MixedCriterion };
+const std::vector< std::string > allSelectionCriterionNames = {
+    "NORM_INCR_DEPL", "ANGL_INCR_DEPL", "RESIDU", "MIXTE"};
 
-const std::vector< PhysicalQuantityComponent > allDisplacementComponent (std::begin(DisplacementComponents), std::end(DisplacementComponents));
+const std::vector< PhysicalQuantityComponent > allDisplacementComponent (
+    std::begin(DisplacementComponents), std::end(DisplacementComponents));

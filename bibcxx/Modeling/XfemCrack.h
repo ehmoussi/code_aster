@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe XfemCrack
  * @author Nicolas Tardieu
  * @section LICENCE
- *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -170,7 +170,9 @@ public:
 
     void setAuxiliaryGrid(const MeshPtr &auxiliaryGrid)
     {
-        if (_existingCrackWithGrid) throw std::runtime_error( "Cannot define auxiliary grid with already assigned Crack definition " );
+        if (_existingCrackWithGrid)
+            throw std::runtime_error( "Cannot define auxiliary grid with already "
+                                      "assigned Crack definition " );
         _auxiliaryGrid = auxiliaryGrid;
     }
 
@@ -181,7 +183,9 @@ public:
 
     void setExistingCrackWithGrid(const XfemCrackPtr &existingCrackWithGrid)
     {
-        if (_auxiliaryGrid) throw std::runtime_error( "Cannot define existing Crack definition with already assigned auxiliary grid" );
+        if (_auxiliaryGrid)
+            throw std::runtime_error( "Cannot define existing Crack definition "
+                                      "with already assigned auxiliary grid" );
         _existingCrackWithGrid = existingCrackWithGrid;
     }
 
@@ -208,7 +212,8 @@ public:
         if (!(_crackShape && _normalLevelSetField && _normalLevelSetFunction)) {
             _crackLipsEntity = crackLips;
         } else {
-            throw std::runtime_error( "Only one to be assigned into crackShape, normalLevelSetFunction, crackLips, normalLevelSetField" );
+            throw std::runtime_error( "Only one to be assigned into crackShape, "
+                                      "normalLevelSetFunction, crackLips, normalLevelSetField" );
         }
     }
 
@@ -243,7 +248,8 @@ public:
         if (!(_crackShape && _normalLevelSetField && _crackLipsEntity.size()!=0 )) {
             _normalLevelSetFunction = normalLevelSetFunction;
         } else {
-            throw std::runtime_error( "Only one to be assigned into crackShape, normalLevelSetFunction, crackLips, normalLevelSetField" );
+            throw std::runtime_error( "Only one to be assigned into crackShape, "
+                                      "normalLevelSetFunction, crackLips, normalLevelSetField" );
         }
     }
 
@@ -267,7 +273,8 @@ public:
         if (!(_normalLevelSetFunction && _normalLevelSetField && _crackLipsEntity.size()!=0 )) {
             _crackShape = crackShape;
         } else {
-            throw std::runtime_error( "Only one to be assigned into crackShape, normalLevelSetFunction, crackLips, normalLevelSetField" );
+            throw std::runtime_error( "Only one to be assigned into crackShape, "
+                                      "normalLevelSetFunction, crackLips, normalLevelSetField" );
         }
     }
 
@@ -282,7 +289,8 @@ public:
         if (!(_crackShape && _crackLipsEntity.size()!=0 && _normalLevelSetFunction)) {
             _normalLevelSetField = normalLevelSetField;
         } else {
-            throw std::runtime_error( "Only one to be assigned into crackShape, normalLevelSetFunction, crackLips, normalLevelSetField" );
+            throw std::runtime_error( "Only one to be assigned into crackShape, "
+                                      "normalLevelSetFunction, crackLips, normalLevelSetField" );
         }
     }
 
@@ -362,7 +370,7 @@ public:
     {
         _pointForJunctingCracks = point;
     }
-    
+
     std::string getJeveuxName() const
     {
         return _jeveuxName;
@@ -377,4 +385,3 @@ typedef boost::shared_ptr< XfemCrackInstance > XfemCrackPtr;
 
 
 #endif /* XFEMCRACK_H_ */
-

@@ -6,7 +6,7 @@
  * @brief Definition of the (nonlinear) behaviour
  * @author Natacha Béreux
  * @section LICENCE
- *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -94,23 +94,23 @@ public:
                 _toCapyConverter[ "AMPLITUDE" ]->enable();
                 _returnRate =0.05;
                 _toCapyConverter[ "TAUX_RETOUR" ]->enable();
-	    };
+            };
         };
         /** @brief Set theta parameter */
         void setTheta( double theta ) throw ( std::runtime_error )
         {
             if ( ( theta >= 0.0 ) && ( theta <= 1.0 ) )
-	    {
+            {
                  _theta = theta;
                  _toCapyConverter[ "PARM_THETA" ] ->enable();
             }
             else
- 		throw std::runtime_error( "0 <= theta <= 1" );
+                throw std::runtime_error( "0 <= theta <= 1" );
         };
         /** @brief  Set alpha parameter */
         void setAlpha( double alpha )
         {
-	    _alpha = alpha;
+            _alpha = alpha;
             _toCapyConverter[ "PARM_ALPHA" ] ->enable();
         };
         /** @brief define a radial relative residual */
@@ -127,7 +127,7 @@ public:
 
         void setPlasticityCreepConstitutiveLaw( ConstitutiveLawEnum law1, ConstitutiveLawEnum law2 )
         {
-	    _constitutiveLaw = Kit_Ddi;
+            _constitutiveLaw = Kit_Ddi;
 
             _laws.push_back( law1 );
             _laws.push_back( law2 );
