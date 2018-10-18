@@ -278,7 +278,7 @@ subroutine crtype()
                 call getvtx('AFFE', 'NOM_CAS', iocc=iocc, scal=acces, nbret=n0)
                 if (n0 .gt. 0) then
                     call rsorac(resu, 'NOM_CAS', ibid, rbid, acces,&
-                                cbid, 1., 'ABSOLU', tnum, 1,&
+                                cbid, 1.d0, 'ABSOLU', tnum, 1,&
                                 nbr)
                     if (nbr .ne. 0) then
                         numini = tnum(1)
