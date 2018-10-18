@@ -291,8 +291,10 @@ typedef boost::shared_ptr< AssemblyMatrixPressureDoubleInstance > AssemblyMatrix
 typedef boost::shared_ptr< AssemblyMatrixPressureComplexInstance > AssemblyMatrixPressureComplexPtr;
 
 template< class ValueType, PhysicalQuantityEnum PhysicalQuantity >
-AssemblyMatrixInstance< ValueType, PhysicalQuantity >::AssemblyMatrixInstance( const JeveuxMemory memType ):
-    DataStructure( "MATR_ASSE_" + std::string(PhysicalQuantityNames[PhysicalQuantity]) + (typeid(ValueType)==typeid(double)?"_R":"_C"), memType, 19 ),
+AssemblyMatrixInstance< ValueType, PhysicalQuantity >::AssemblyMatrixInstance(
+        const JeveuxMemory memType ):
+    DataStructure( "MATR_ASSE_" + std::string(PhysicalQuantityNames[PhysicalQuantity]) +
+                   (typeid(ValueType)==typeid(double)?"_R":"_C"), memType, 19 ),
     _description( JeveuxVectorChar24( getName() + ".REFA" ) ),
     _matrixValues( JeveuxCollection< ValueType >( getName() + ".VALM" ) ),
     _scaleFactorLagrangian( JeveuxVectorDouble( getName() + ".CONL" ) ),
@@ -313,7 +315,9 @@ AssemblyMatrixInstance< ValueType, PhysicalQuantity >::AssemblyMatrixInstance( c
 
 template< class ValueType, PhysicalQuantityEnum PhysicalQuantity >
 AssemblyMatrixInstance< ValueType, PhysicalQuantity >::AssemblyMatrixInstance( const std::string& name ):
-    DataStructure( name, 19, "MATR_ASSE_" + std::string(PhysicalQuantityNames[PhysicalQuantity]) + (typeid(ValueType)==typeid(double)?"_R":"_C")),
+    DataStructure( name, 19, "MATR_ASSE_" +
+                   std::string(PhysicalQuantityNames[PhysicalQuantity]) +
+                   (typeid(ValueType)==typeid(double)?"_R":"_C")),
     _description( JeveuxVectorChar24( getName() + ".REFA" ) ),
     _matrixValues( JeveuxCollection< ValueType >( getName() + ".VALM" ) ),
     _scaleFactorLagrangian( JeveuxVectorDouble( getName() + ".CONL" ) ),

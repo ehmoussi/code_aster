@@ -41,7 +41,9 @@
  * @brief Inventory of all physical quantities available in Code_Aster
  * @todo attention confusion entre Pressure et Pres
  */
-enum PhysicalQuantityEnum { Force, StructuralForce, LocalBeamForce, LocalShellForce, Displacement, Pressure, Temperature, Impedance, NormalSpeed, HeatFlux, HydraulicFlux };
+enum PhysicalQuantityEnum { Force, StructuralForce, LocalBeamForce,
+    LocalShellForce, Displacement, Pressure, Temperature, Impedance, NormalSpeed,
+    HeatFlux, HydraulicFlux };
 
 const int nbPhysicalQuantities = 11;
 

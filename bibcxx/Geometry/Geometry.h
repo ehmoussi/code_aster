@@ -3,10 +3,10 @@
 
 /**
  * @file GEOMETRY.h
- * @brief Geometry data 
- * @author Natacha Béreux 
+ * @brief Geometry data
+ * @author Natacha Béreux
  * @section LICENCE
- *   Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -28,8 +28,9 @@
 #include <vector>
 /**
  * @enum UnitVectorEnum
- * @brief Any unit vector : cartesian standard basis = (Ex, Ey, Ez), local xfem basis = ( FirstTangentVector, SecondTangentVector, NormalVector )
- * @author Natacha Béreux 
+ * @brief Any unit vector : cartesian standard basis = (Ex, Ey, Ez),
+ *        local xfem basis = ( FirstTangentVector, SecondTangentVector, NormalVector )
+ * @author Natacha Béreux
  */
 
 enum UnitVectorEnum { Ex, Ey, Ez, FirstTangentVector, SecondTangentVector, NormalVector };

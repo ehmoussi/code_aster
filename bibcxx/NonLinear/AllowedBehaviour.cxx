@@ -3,7 +3,7 @@
  * @brief Initialise les noms et possibles pour les comportements
  * @author Natacha Béreux
  * @section LICENCE
- *   Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -24,7 +24,7 @@
 #include "AllowedBehaviour.h"
 
 
-const std::vector<ConstitutiveLawEnum> allConstitutiveLaw = { 
+const std::vector<ConstitutiveLawEnum> allConstitutiveLaw = {
             Elas,
             Elas_Vmis_Line,
             Elas_Vmis_Trac,
@@ -146,7 +146,7 @@ const std::vector<ConstitutiveLawEnum> allConstitutiveLaw = {
             Rouss_Pr,
             Rouss_Visc,
             Rupt_Frag,
-// Originellement Sans 
+// Originellement Sans
             WithoutConstitutiveLaw,
             Vendochab,
             Visc_Endo_Lema,
@@ -331,14 +331,15 @@ const std::vector< std::string > allConstitutiveLawNames =  {
                                         "UMAT",
                                         "MFRONT",};
 
-const std::vector<StrainEnum> allStrain = { SmallStrain, PetitReac, LargeStrainAndRotation, SimoMiehe, GdefLog }; 
+const std::vector<StrainEnum> allStrain = { SmallStrain, PetitReac, LargeStrainAndRotation, SimoMiehe, GdefLog };
 const std::vector< std::string > allStrainNames = {"PETIT","PETIT_REAC","GROT_GDEP","SIMO_MIEHE","GDEF_LOG"};
 
 const std::vector<TangentMatrixEnum> allTangentMatrix = { PerturbationMatrix, VerificationMatrix, TangentSecantMatrix };
-const std::vector< std::string > allTangentMatrixNames =  {"PERTURBATION","VERIFICATION","TANGENTE_SECANTE" }; 
+const std::vector< std::string > allTangentMatrixNames =  {"PERTURBATION","VERIFICATION","TANGENTE_SECANTE" };
 
-const std::vector<IntegrationAlgoEnum> allIntegrationAlgo =  { AnalyticalAlgo, SecantAlgo, DekkerAlgo, Newton1DAlgo, BrentAlgo, NewtonAlgo, NewtonReliAlgo, 
-NewtonLossAlgo, RungeKuttaAlgo, ParticularAlgo, NoAlgo }; 
+const std::vector<IntegrationAlgoEnum> allIntegrationAlgo =  {
+    AnalyticalAlgo, SecantAlgo, DekkerAlgo, Newton1DAlgo, BrentAlgo, NewtonAlgo, NewtonReliAlgo,
+    NewtonLossAlgo, RungeKuttaAlgo, ParticularAlgo, NoAlgo };
 const std::vector< std::string >  allIntegrationAlgoNames = { "ANALYTIQUE", "SECANTE", "DEKKER", "NEWTON_1D","BRENT",
                                                               "NEWTON", "NEWTON_RELI", "NEWTON_PERT", "RUNGE_KUTTA",
                                                               "SPECIFIQUE", "SANS_OBJET" };

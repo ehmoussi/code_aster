@@ -5,7 +5,7 @@
  * @file MechanicalLoad.h
  * @author Natacha Bereux
  * @section LICENCE
- *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -530,7 +530,8 @@ class MechanicalLoadInstance: public GenericMechanicalLoadInstance
             _supportMeshEntity = MeshEntityPtr( new GroupOfNodes( nameOfGroup ) );
         }
         else
-            throw  std::runtime_error( nameOfGroup + " does not exist in the mesh or it is not authorized as a localization of the current load " );
+            throw  std::runtime_error( nameOfGroup + " does not exist in the mesh " +
+                "or it is not authorized as a localization of the current load " );
 
         // Copy the shared pointer of the Physical Quantity
         _physicalQuantity = physPtr;
