@@ -79,3 +79,5 @@ IMPR_JEVEUX ( ENTITE='MEMOIRE' )
 
 test.printSummary()
 # Fin du TEST_RESU
+
+FIN()

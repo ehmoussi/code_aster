@@ -33,5 +33,8 @@ void exportLinearDisplacementEvolutionContainerToPython()
             bases< ResultsContainerInstance > > ( "LinearDisplacementEvolutionContainer", no_init )
         .def( "__init__", make_constructor(
             &initFactoryPtr< LinearDisplacementEvolutionContainerInstance > ) )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< LinearDisplacementEvolutionContainerInstance,
+                             std::string > ) )
     ;
 };
