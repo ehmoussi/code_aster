@@ -21,6 +21,7 @@ DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),DEBUG=_F(SDVERI='NON'))
 # SDVERI='NON' car la verification est trop couteuse en CPU
 #
 import aster
+from sdls119a_accel import accel
 #
 mail = LIRE_MAILLAGE(FORMAT='MED', VERI_MAIL = _F( VERIF = 'OUI' ) , );
 #
@@ -170,10 +171,6 @@ mono_x = CALC_CHAR_SEISME( MATR_MASS = masse ,
 #
 chseism = AFFE_CHAR_MECA( MODELE = mode ,
                           VECT_ASSE = mono_x , );
-#
-INCLUDE( UNITE = 22 );
-#
-#
 
 L_INST=DEFI_LIST_REEL(DEBUT=-10.0,
                       INTERVALLE=_F(JUSQU_A=0.0,
