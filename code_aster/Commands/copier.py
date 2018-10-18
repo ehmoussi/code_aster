@@ -19,7 +19,7 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import Model, PrestressingCableDefinition
+from ..Objects import Model, PrestressingCableDefinition, ResultsContainer
 from .ExecuteCommand import ExecuteCommand
 
 
@@ -40,6 +40,11 @@ class Copier(ExecuteCommand):
                 other.getModel(),
                 other.getMaterialOnMesh(),
                 other.getElementaryCharacteristics())
+        elif isinstance(other, ResultsContainer):
+            # do not support several models
+            mesh = other.getModel().getSupportMesh()
+            self._result = type(other)()
+            self._result.setMesh(mesh)
         else:
             self._result = type(other)()
 
@@ -48,17 +53,6 @@ class Copier(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        # cabl_precont,
-        # listr8_sdaster,
-        # listis_sdaster,
-        # fonction_sdaster,
-        # nappe_sdaster,
-        # table_sdaster,
-        # maillage_sdaster,
-        # modele_sdaster,
-        # evol_elas,
-        # evol_noli,
-        # evol_ther,
         if isinstance(self._result, Model):
             self._result.setSupportMesh(keywords['CONCEPT'].getSupportMesh())
 
