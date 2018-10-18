@@ -1,3 +1,5 @@
+from code_aster.Commands import DEFI_FONCTION
+
 accel = DEFI_FONCTION(NOM_PARA='INST',
                     VALE=
                     ( 0.0000000E+00 , 0.0000000E+00
