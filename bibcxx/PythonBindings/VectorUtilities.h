@@ -35,15 +35,15 @@ struct Vector_to_python_list
         using namespace std;
         using namespace boost::python;
         using boost::python::list;
-        list l;
+        list blst;
         typename vector<T>::const_iterator p;
         for(p=v.begin();p!=v.end();++p){
-            l.append(object(*p));
+            blst.append(object(*p));
         }
-        return incref(l.ptr());
+        return incref(blst.ptr());
     }
 };
- 
+
 template<typename T>
 struct Vector_from_python_list
 {
@@ -65,7 +65,7 @@ struct Vector_from_python_list
         }
         return obj_ptr;
     }
- 
+
     // Convert obj_ptr into a std::vector<T>
     static void construct(
         PyObject* obj_ptr,
@@ -74,22 +74,22 @@ struct Vector_from_python_list
         using namespace boost::python;
         // Extract the character data from the python string
         //      const char* value = PyString_AsString(obj_ptr);
-        list l(handle<>(borrowed(obj_ptr)));
+        list blst(handle<>(borrowed(obj_ptr)));
 
         // // Verify that obj_ptr is a string (should be ensured by convertible())
         // assert(value);
- 
+
         // Grab pointer to memory into which to construct the new std::vector<T>
         void* storage = (
             (boost::python::converter::rvalue_from_python_storage<std::vector<T> >*)
             data)->storage.bytes;
- 
+
         // in-place construct the new std::vector<T> using the character data
         // extraced from the python object
         std::vector<T>& v = *(new (storage) std::vector<T>());
- 
+
         // populate the vector from list contains !!!
-        int le = len(l);
+        int le = len(blst);
         v.resize(le);
         bool error = false;
         int count = 0;
@@ -97,7 +97,7 @@ struct Vector_from_python_list
         {
             for(int i = 0;i!=le;++i)
             {
-                v[i] = extract<T>(l[i]);
+                v[i] = extract<T>(blst[i]);
                 count += 1;
             }
         }
@@ -124,7 +124,7 @@ void exportVectorUtilities()
 
     // register the to-python converter
     to_python_converter< std::vector< T >, Vector_to_python_list< T > >();
- 
+
     // register the from-python converter
     Vector_from_python_list< T >();
 };

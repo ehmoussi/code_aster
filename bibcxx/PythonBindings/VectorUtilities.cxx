@@ -25,6 +25,7 @@
 #include "Loads/PhysicalQuantity.h"
 #include "Materials/Material.h"
 #include "Modeling/FiniteElementDescriptor.h"
+#include "Functions/Function.h"
 
 void exportVectorUtilitiesToPython()
 {
@@ -36,4 +37,5 @@ void exportVectorUtilitiesToPython()
     exportVectorUtilities< PhysicalQuantityComponent >();
     exportVectorUtilities< MaterialPtr >();
     exportVectorUtilities< FiniteElementDescriptorPtr >();
+    exportVectorUtilities< BaseFunctionPtr >();
 };
