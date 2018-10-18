@@ -567,21 +567,21 @@ TEST_FONCTION(VALEUR=_F(VALE_CALC=278.9784075357,
 TEST_FONCTION(VALEUR=_F(VALE_CALC=0.18838793303088,
                         VALE_PARA=tmax,
                         NOM_PARA='INST',
-                        FONCTION=gamma_1,),
+                        FONCTION=gamma[1],),
               )
 
 
 TEST_FONCTION(VALEUR=_F(VALE_CALC=3.978200332455E-03,
                         VALE_PARA=tmax,
                         NOM_PARA='INST',
-                        FONCTION=gamma_9,),
+                        FONCTION=gamma[9],),
               )
 
 
 TEST_FONCTION(VALEUR=_F(VALE_CALC=6.184097118002E-03,
                         VALE_PARA=tmax,
                         NOM_PARA='INST',
-                        FONCTION=gamma_12,),
+                        FONCTION=gamma[12],),
               )
 
 
@@ -614,7 +614,7 @@ TEST_FONCTION(VALEUR=_F(VALE_CALC=0.18805469100285,
                         REFERENCE='AUTRE_ASTER',
                         PRECISION=0.003,
                         NOM_PARA='INST',
-                        FONCTION=gammf_1,),
+                        FONCTION=gammf[1],),
               )
 
 
@@ -624,7 +624,7 @@ TEST_FONCTION(VALEUR=_F(VALE_CALC=4.258794162677E-03,
                         REFERENCE='AUTRE_ASTER',
                         PRECISION=0.08,
                         NOM_PARA='INST',
-                        FONCTION=gammf_9,),
+                        FONCTION=gammf[9],),
               )
 
 
@@ -635,7 +635,7 @@ TEST_FONCTION(VALEUR=_F(VALE_CALC=6.248249513246E-03,
                         REFERENCE='AUTRE_ASTER',
                         PRECISION=0.02,
                         NOM_PARA='INST',
-                        FONCTION=gammf_12,),
+                        FONCTION=gammf[12],),
               )
 
 
