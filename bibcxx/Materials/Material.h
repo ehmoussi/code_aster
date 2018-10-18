@@ -111,8 +111,8 @@ class MaterialInstance: public DataStructure
             _vectorKOrdr.push_back( JeveuxVectorLong( currentName + ".KORD" ) );
 
             numUser << std::setw( 7 ) << std::setfill( '0' ) << _nbMaterialBehaviour;
-            const std::string currentName2 = _jeveuxName + numUser.str() + ".LISV_R8";
-            const std::string currentName3 = _jeveuxName + numUser.str() + ".LISV_FO";
+            const std::string currentName2 = _jeveuxName + "." + numUser.str() + ".LISV_R8";
+            const std::string currentName3 = _jeveuxName + "." + numUser.str() + ".LISV_FO";
             _vectorOfUserDoubleValues.push_back( JeveuxVectorDouble( currentName2 ) );
             _vectorOfUserFunctionValues.push_back( JeveuxVectorChar8( currentName2 ) );
 
