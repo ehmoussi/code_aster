@@ -29,6 +29,7 @@
 #include "astercxx.h"
 
 #include "Results/ResultsContainer.h"
+#include "Supervis/ResultNaming.h"
 
 
 /**
@@ -44,7 +45,11 @@ public:
      * @todo  Ajouter les objets Jeveux de la SD
      */
     LinearDisplacementEvolutionContainerInstance():
-        ResultsContainerInstance( "EVOL_ELAS" )
+        LinearDisplacementEvolutionContainerInstance( ResultNaming::getNewResultName() )
+    {};
+
+    LinearDisplacementEvolutionContainerInstance( const std::string& name ):
+        ResultsContainerInstance( name, "EVOL_ELAS" )
     {};
 
 };

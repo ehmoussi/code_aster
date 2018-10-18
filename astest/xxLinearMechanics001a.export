@@ -6,4 +6,5 @@ P mpi_nbnoeud 1
 P testlist asterxx verification sequential
 
 F comm xxLinearMechanics001a.py D 1
+F comm xxLinearMechanics001a_step2.py D 1
 F mmed test001f.mmed D 20
