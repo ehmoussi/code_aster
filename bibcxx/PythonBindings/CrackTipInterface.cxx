@@ -30,5 +30,6 @@ void exportCrackTipToPython() {
 
     class_< CrackTipInstance, CrackTipInstance::CrackTipPtr, bases< DataStructure > >( "CrackTip",
                                                                                        no_init )
-        .def( "__init__", make_constructor(&initFactoryPtr< CrackTipInstance >));
+        .def( "__init__", make_constructor( &initFactoryPtr< CrackTipInstance > ) )
+        .def( "__init__", make_constructor( &initFactoryPtr< CrackTipInstance, std::string > ) );
 };

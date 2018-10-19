@@ -29,12 +29,13 @@
 #include "astercxx.h"
 
 #include "DataStructures/DataStructure.h"
-#include "MemoryManager/JeveuxVector.h"
-#include "MemoryManager/JeveuxCollection.h"
 #include "Discretization/DOFNumbering.h"
-#include "Results/MechanicalModeContainer.h"
 #include "LinearAlgebra/AssemblyMatrix.h"
 #include "LinearAlgebra/GeneralizedAssemblyMatrix.h"
+#include "MemoryManager/JeveuxCollection.h"
+#include "MemoryManager/JeveuxVector.h"
+#include "Results/MechanicalModeContainer.h"
+#include "Supervis/ResultNaming.h"
 
 /**
  * @class DynamicMacroElementInstance
@@ -113,7 +114,10 @@ class DynamicMacroElementInstance : public DataStructure {
      * @brief Constructeur
      */
     DynamicMacroElementInstance()
-        : DataStructure( "MACR_ELEM_DYNA", Permanent, 8 ),
+        : DynamicMacroElementInstance( ResultNaming::getNewResultName() ){};
+
+    DynamicMacroElementInstance( const std::string name )
+        : DataStructure( name, 8, "MACR_ELEM_DYNA", Permanent ),
           _desm( JeveuxVectorLong( getName() + ".DESM" ) ),
           _refm( JeveuxVectorChar8( getName() + ".REFM" ) ),
           _conx( JeveuxVectorLong( getName() + ".CONX" ) ),
