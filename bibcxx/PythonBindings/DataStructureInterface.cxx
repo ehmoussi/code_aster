@@ -21,6 +21,8 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+// DataStructure is always subclassed
+// aslint: disable=C3006
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 #include "PythonBindings/DataStructureInterface.h"

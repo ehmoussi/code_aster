@@ -26,10 +26,10 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "astercxx.h"
+#include "DataFields/FieldOnNodes.h"
 #include "DataStructures/DataStructure.h"
 #include "MemoryManager/JeveuxVector.h"
-#include "DataFields/FieldOnNodes.h"
+#include "astercxx.h"
 
 /**
  * @class CrackTipInstance
@@ -87,7 +87,7 @@ class CrackTipInstance : public DataStructure {
     /**
      * @brief Constructeur
      */
-    CrackTipInstance();
+    CrackTipInstance( const std::string name = ResultNaming::getNewResultName() );
 };
 
 /**

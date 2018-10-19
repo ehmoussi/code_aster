@@ -37,6 +37,8 @@ void exportDynamicMacroElementToPython() {
     class_< DynamicMacroElementInstance, DynamicMacroElementInstance::DynamicMacroElementPtr,
             bases< DataStructure > >( "DynamicMacroElement", no_init )
         .def( "__init__", make_constructor(&initFactoryPtr< DynamicMacroElementInstance >))
+        .def( "__init__",
+              make_constructor(&initFactoryPtr< DynamicMacroElementInstance, std::string >))
         .def( "getDampingMatrix", &DynamicMacroElementInstance::getDampingMatrix )
         .def( "getImpedanceDampingMatrix", &DynamicMacroElementInstance::getImpedanceDampingMatrix )
         .def( "getImpedanceMatrix", &DynamicMacroElementInstance::getImpedanceMatrix )
