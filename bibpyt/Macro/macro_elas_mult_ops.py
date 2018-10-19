@@ -230,8 +230,6 @@ def macro_elas_mult_ops(self, MODELE, CAS_CHARGE,
     motscle2 = {}
     if CHAM_MATER:
         motscle2['CHAM_MATER'] = CHAM_MATER
-        iret, ibid, nom_ma = aster.dismoi('EXI_VARC', CHAM_MATER.nom, 'CHAM_MATER', 'F')
-        print 'toto:',nom_ma
     if CARA_ELEM:
         motscle2['CARA_ELEM'] = CARA_ELEM
     if ielas:

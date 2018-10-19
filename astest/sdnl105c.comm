@@ -299,14 +299,14 @@ for k in range(1,5):
                        OPERATION='AFFE',
                        TYPE_RESU= 'MULT_ELAS', NOM_CHAM='DEPL',
          AFFE=(
-              _F( CHAM_GD= CHS1[k], NOM_CAS= 'CAS1'),
+              _F( CHAM_GD= CHS1[k], NOM_CAS= 'CAS A {0}'.format(k)),
               ),
                      );
     MODESTAB = CREA_RESU (
                        OPERATION='AFFE',
                        TYPE_RESU= 'MULT_ELAS', NOM_CHAM='DEPL',
          AFFE=(
-              _F( CHAM_GD= CHS2[k], NOM_CAS= 'CAS1'),
+              _F( CHAM_GD= CHS2[k], NOM_CAS= 'CAS B {0}'.format(k)),
               ),
                      );
   else:
@@ -315,7 +315,7 @@ for k in range(1,5):
                          OPERATION='AFFE',
                          TYPE_RESU= 'MULT_ELAS', NOM_CHAM='DEPL',
          AFFE=(
-              _F( CHAM_GD= CHS1[k], NOM_CAS= 'CAS1'),
+              _F( CHAM_GD= CHS1[k], NOM_CAS= 'CAS A {0}'.format(k)),
               ),
                      );
     MODESTAB = CREA_RESU (reuse = MODESTAB,
@@ -323,7 +323,7 @@ for k in range(1,5):
                          OPERATION='AFFE',
                          TYPE_RESU= 'MULT_ELAS', NOM_CHAM='DEPL',
          AFFE=(
-              _F( CHAM_GD= CHS2[k], NOM_CAS= 'CAS1'),
+              _F( CHAM_GD= CHS2[k], NOM_CAS= 'CAS B {0}'.format(k)),
               ),
                      );
 

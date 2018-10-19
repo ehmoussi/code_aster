@@ -188,7 +188,21 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
                      VALE_K='NUIT BLEUE AZURE',),
            )
 
-#
+# Test with long parameters names
+TB10=CREA_TABLE(LISTE=(_F(LISTE_I=(0, 1),
+                          PARA='P23456789X123456a'),
+                       _F(LISTE_R=(0.5, 1.5),
+                          PARA='P23456789X123456b')))
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=1.5,
+           VALE_REFE=1.5,
+           NOM_PARA='P23456789X123456b',
+           TABLE=TB10,
+           FILTRE=_F(NOM_PARA='P23456789X123456a',
+                     VALE_I=1),
+           )
+
 # TEST DES VALEURS DE LA TABLE CREE
 #
 SIYY=DEFI_FONCTION(      NOM_PARA='EPSI',
