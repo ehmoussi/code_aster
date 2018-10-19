@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe InterspectralMatrix
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -32,37 +32,35 @@
 #include "MemoryManager/JeveuxVector.h"
 #include "MemoryManager/JeveuxCollection.h"
 
-
 /**
  * @class InterspectralMatrixInstance
  * @brief Cette classe correspond a un comb_fourier
  * @author Nicolas Sellenet
  */
-class InterspectralMatrixInstance: public DataStructure
-{
-private:
+class InterspectralMatrixInstance : public DataStructure {
+  private:
     /** @brief Objet Jeveux '.REFE' */
-    JeveuxVectorChar16     _refe;
+    JeveuxVectorChar16 _refe;
     /** @brief Objet Jeveux '.DISC' */
-    JeveuxVectorDouble     _disc;
+    JeveuxVectorDouble _disc;
     /** @brief Objet Jeveux '.VALE' */
     JeveuxCollectionDouble _vale;
     /** @brief Objet Jeveux '.NUMI' */
-    JeveuxVectorLong       _numi;
+    JeveuxVectorLong _numi;
     /** @brief Objet Jeveux '.NUMJ' */
-    JeveuxVectorLong       _numj;
+    JeveuxVectorLong _numj;
     /** @brief Objet Jeveux '.NUME_ORDRE' */
-    JeveuxVectorLong       _numeOrdre;
+    JeveuxVectorLong _numeOrdre;
     /** @brief Objet Jeveux '.NOEI' */
-    JeveuxVectorChar8      _noei;
+    JeveuxVectorChar8 _noei;
     /** @brief Objet Jeveux '.NOEJ' */
-    JeveuxVectorChar8      _noej;
+    JeveuxVectorChar8 _noej;
     /** @brief Objet Jeveux '.CMPI' */
-    JeveuxVectorChar8      _cmpi;
+    JeveuxVectorChar8 _cmpi;
     /** @brief Objet Jeveux '.CMPJ' */
-    JeveuxVectorChar8      _cmpj;
+    JeveuxVectorChar8 _cmpj;
 
-public:
+  public:
     /**
      * @typedef InterspectralMatrixPtr
      * @brief Pointeur intelligent vers un InterspectralMatrix
@@ -72,27 +70,24 @@ public:
     /**
      * @brief Constructeur
      */
-    InterspectralMatrixInstance():
-        InterspectralMatrixInstance( ResultNaming::getNewResultName() )
-    {};
+    InterspectralMatrixInstance()
+        : InterspectralMatrixInstance( ResultNaming::getNewResultName() ){};
 
     /**
      * @brief Constructeur
      */
-    InterspectralMatrixInstance( const std::string name ):
-        DataStructure( name, 8, "INTERSPECTRE", Permanent ),
-        _refe( JeveuxVectorChar16( getName() + ".REFE" ) ),
-        _disc( JeveuxVectorDouble( getName() + ".DISC" ) ),
-        _vale( JeveuxCollectionDouble( getName() + ".VALE" ) ),
-        _numi( JeveuxVectorLong( getName() + ".NUMI" ) ),
-        _numj( JeveuxVectorLong( getName() + ".NUMJ" ) ),
-        _numeOrdre( JeveuxVectorLong( getName() + ".NUME_ORDRE" ) ),
-        _noei( JeveuxVectorChar8( getName() + ".NOEI" ) ),
-        _noej( JeveuxVectorChar8( getName() + ".NOEJ" ) ),
-        _cmpi( JeveuxVectorChar8( getName() + ".CMPI" ) ),
-        _cmpj( JeveuxVectorChar8( getName() + ".CMPJ" ) )
-    {};
-
+    InterspectralMatrixInstance( const std::string name )
+        : DataStructure( name, 8, "INTERSPECTRE", Permanent ),
+          _refe( JeveuxVectorChar16( getName() + ".REFE" ) ),
+          _disc( JeveuxVectorDouble( getName() + ".DISC" ) ),
+          _vale( JeveuxCollectionDouble( getName() + ".VALE" ) ),
+          _numi( JeveuxVectorLong( getName() + ".NUMI" ) ),
+          _numj( JeveuxVectorLong( getName() + ".NUMJ" ) ),
+          _numeOrdre( JeveuxVectorLong( getName() + ".NUME_ORDRE" ) ),
+          _noei( JeveuxVectorChar8( getName() + ".NOEI" ) ),
+          _noej( JeveuxVectorChar8( getName() + ".NOEJ" ) ),
+          _cmpi( JeveuxVectorChar8( getName() + ".CMPI" ) ),
+          _cmpj( JeveuxVectorChar8( getName() + ".CMPJ" ) ){};
 };
 
 /**

@@ -3,7 +3,7 @@
  * @brief Interface python de DataStructure
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -26,21 +26,18 @@
 #include "PythonBindings/DataStructureInterface.h"
 #include <boost/python.hpp>
 
-
-void exportDataStructureToPython()
-{
+void exportDataStructureToPython() {
     using namespace boost::python;
 
-    void (DataStructure::*c1)(const int) const = &DataStructure::debugPrint;
-    void (DataStructure::*c2)() const = &DataStructure::debugPrint;
+    void ( DataStructure::*c1 )( const int ) const = &DataStructure::debugPrint;
+    void ( DataStructure::*c2 )() const = &DataStructure::debugPrint;
 
     class_< DataStructure, DataStructure::DataStructurePtr >( "DataStructure", no_init )
         .enable_pickling()
         .def( "addReference", &DataStructure::addReference )
-        .def( "getName", &DataStructure::getName, return_value_policy<return_by_value>() )
-        .def( "getType", &DataStructure::getType, return_value_policy<return_by_value>() )
+        .def( "getName", &DataStructure::getName, return_value_policy< return_by_value >() )
+        .def( "getType", &DataStructure::getType, return_value_policy< return_by_value >() )
         .def( "debugPrint", c1 )
         .def( "debugPrint", c2 )
-        .def( "update", &DataStructure::update )
-    ;
+        .def( "update", &DataStructure::update );
 };

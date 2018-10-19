@@ -4,9 +4,9 @@
 /**
  * @file FluidStructureModalBasis.h
  * @brief Fichier entete de la classe FluidStructureModalBasis
- * @author Natacha Béreux 
+ * @author Natacha Béreux
  * @section LICENCE
- *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -32,31 +32,29 @@
 #include "MemoryManager/JeveuxVector.h"
 #include "Supervis/ResultNaming.h"
 
-
 /**
  * @class FluidStructureModalBasisInstance
  * @brief Cette classe correspond a une sd_melasflu
- * @author Natacha Béreux 
+ * @author Natacha Béreux
  */
-class FluidStructureModalBasisInstance: public DataStructure
-{
-private:
+class FluidStructureModalBasisInstance : public DataStructure {
+  private:
     /** @brief Objet Jeveux '.REMF' */
-    JeveuxVectorChar8    _remf;
+    JeveuxVectorChar8 _remf;
     /** @brief Objet Jeveux '.DESC' */
-    JeveuxVectorChar16   _desc;
+    JeveuxVectorChar16 _desc;
     /** @brief Objet Jeveux '.FACT' */
-    JeveuxVectorDouble   _fact;
+    JeveuxVectorDouble _fact;
     /** @brief Objet Jeveux '.FREQ' */
-    JeveuxVectorDouble   _freq;
+    JeveuxVectorDouble _freq;
     /** @brief Objet Jeveux '.MASG' */
-    JeveuxVectorDouble   _masg;
+    JeveuxVectorDouble _masg;
     /** @brief Objet Jeveux '.NUMO' */
-    JeveuxVectorLong     _numo;
+    JeveuxVectorLong _numo;
     /** @brief Objet Jeveux '.VITE' */
-    JeveuxVectorDouble   _vite;
+    JeveuxVectorDouble _vite;
 
-public:
+  public:
     /**
      * @typedef FluidStructureModalBasisPtr
      * @brief Pointeur intelligent vers un FluidStructureModalBasis
@@ -66,22 +64,20 @@ public:
     /**
      * @brief Constructeur
      */
-    FluidStructureModalBasisInstance():
-        FluidStructureModalBasisInstance( ResultNaming::getNewResultName() )
-    {};
+    FluidStructureModalBasisInstance()
+        : FluidStructureModalBasisInstance( ResultNaming::getNewResultName() ){};
     /**
      * @brief Constructeur
      */
-    FluidStructureModalBasisInstance( const std::string name ):
-        DataStructure( name, 8, "MELASFLU", Permanent ),
-        _remf( JeveuxVectorChar8( getName() + ".REMF" ) ),
-        _desc( JeveuxVectorChar16( getName() + ".DESC" ) ),
-        _fact( JeveuxVectorDouble( getName() + ".FACT" ) ),
-        _freq( JeveuxVectorDouble( getName() + ".FREQ" ) ),
-        _masg( JeveuxVectorDouble( getName() + ".MASG" ) ),
-        _numo( JeveuxVectorLong( getName() + ".NUMO" ) ),
-        _vite( JeveuxVectorDouble( getName() + ".VITE" ) )
-    {};
+    FluidStructureModalBasisInstance( const std::string name )
+        : DataStructure( name, 8, "MELASFLU", Permanent ),
+          _remf( JeveuxVectorChar8( getName() + ".REMF" ) ),
+          _desc( JeveuxVectorChar16( getName() + ".DESC" ) ),
+          _fact( JeveuxVectorDouble( getName() + ".FACT" ) ),
+          _freq( JeveuxVectorDouble( getName() + ".FREQ" ) ),
+          _masg( JeveuxVectorDouble( getName() + ".MASG" ) ),
+          _numo( JeveuxVectorLong( getName() + ".NUMO" ) ),
+          _vite( JeveuxVectorDouble( getName() + ".VITE" ) ){};
 };
 
 /**

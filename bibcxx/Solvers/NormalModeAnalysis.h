@@ -6,7 +6,7 @@
  * @brief Definition of the normal mode solver
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -31,47 +31,39 @@
 #include "Utilities/CapyConvertibleValue.h"
 #include "Results/MechanicalModeContainer.h"
 
-class NormalModeAnalysisInstance: public GenericSolver
-{
-private:
-    AssemblyMatrixDisplacementDoublePtr  _rigidity;
-    AssemblyMatrixDisplacementDoublePtr  _mass;
-    int                      _numberOfFreq;
+class NormalModeAnalysisInstance : public GenericSolver {
+  private:
+    AssemblyMatrixDisplacementDoublePtr _rigidity;
+    AssemblyMatrixDisplacementDoublePtr _mass;
+    int _numberOfFreq;
 
     CapyConvertibleContainer _container;
     CapyConvertibleContainer _containerCalcFreq;
 
-public:
+  public:
     /**
      * @brief Constructeur
      */
-    NormalModeAnalysisInstance(): _numberOfFreq( 10 ),
-                                  _containerCalcFreq( "CALC_FREQ" )
-    {
-        _container.add( new CapyConvertibleValue< AssemblyMatrixDisplacementDoublePtr >
-                            ( false, "MATR_RIGI", _rigidity, false ) );
-        _container.add( new CapyConvertibleValue< AssemblyMatrixDisplacementDoublePtr >
-                            ( false, "MATR_MASS", _mass, false ) );
-        _container.add( new CapyConvertibleValue< int >
-                            ( false, "NMAX_FREQ", _numberOfFreq, true ) );
+    NormalModeAnalysisInstance() : _numberOfFreq( 10 ), _containerCalcFreq( "CALC_FREQ" ) {
+        _container.add( new CapyConvertibleValue< AssemblyMatrixDisplacementDoublePtr >(
+            false, "MATR_RIGI", _rigidity, false ) );
+        _container.add( new CapyConvertibleValue< AssemblyMatrixDisplacementDoublePtr >(
+            false, "MATR_MASS", _mass, false ) );
+        _container.add(
+            new CapyConvertibleValue< int >( false, "NMAX_FREQ", _numberOfFreq, true ) );
     };
 
     MechanicalModeContainerPtr execute();
 
-    void setMassMatrix( const AssemblyMatrixDisplacementDoublePtr& matr )
-    {
-        _container[ "MATR_MASS" ]->enable();
+    void setMassMatrix( const AssemblyMatrixDisplacementDoublePtr &matr ) {
+        _container["MATR_MASS"]->enable();
         _mass = matr;
     };
 
-    void setNumberOfFrequencies( const int& number )
-    {
-        _numberOfFreq = number;
-    };
+    void setNumberOfFrequencies( const int &number ) { _numberOfFreq = number; };
 
-    void setStiffnessMatrix( const AssemblyMatrixDisplacementDoublePtr& matr )
-    {
-        _container[ "MATR_RIGI" ]->enable();
+    void setStiffnessMatrix( const AssemblyMatrixDisplacementDoublePtr &matr ) {
+        _container["MATR_RIGI"]->enable();
         _rigidity = matr;
     };
 };

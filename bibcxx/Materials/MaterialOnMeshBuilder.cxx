@@ -31,117 +31,106 @@
 #include "Utilities/SyntaxDictionary.h"
 #include "Supervis/CommandSyntax.h"
 
-
-void MaterialOnMeshBuilderInstance::buildInstance( MaterialOnMeshInstance& curMater,
-                                           const InputVariableOnMeshPtr& curInputVariables )
-    throw ( std::runtime_error )
-{
+void MaterialOnMeshBuilderInstance::buildInstance(
+    MaterialOnMeshInstance &curMater,
+    const InputVariableOnMeshPtr &curInputVariables ) throw( std::runtime_error ) {
     SyntaxMapContainer dict;
 
-    if ( ! curMater._supportMesh )
-        throw std::runtime_error("Support mesh is undefined");
+    if ( !curMater._supportMesh )
+        throw std::runtime_error( "Support mesh is undefined" );
     dict.container["MAILLAGE"] = curMater._supportMesh->getName();
 
     ListSyntaxMapContainer listeAFFE;
-    for (auto &curIter : curMater._materialsOnMeshEntity)
-    {
+    for ( auto &curIter : curMater._materialsOnMeshEntity ) {
         SyntaxMapContainer dict2;
         dict2.container["MATER"] = curIter.first->getName();
         const MeshEntityPtr &tmp = curIter.second;
-        if (tmp->getType() == AllMeshEntitiesType)
+        if ( tmp->getType() == AllMeshEntitiesType )
             dict2.container["TOUT"] = "OUI";
-        else if (tmp->getType() == GroupOfElementsType)
-            dict2.container["GROUP_MA"] = (curIter.second)->getName();
-        else if (tmp->getType() == GroupOfNodesType)
-            dict2.container["GROUP_NO"] = (curIter.second)->getName();
-        else if (tmp->getType() == ElementType)
-            dict2.container["MAILLE"] = (curIter.second)->getName();
+        else if ( tmp->getType() == GroupOfElementsType )
+            dict2.container["GROUP_MA"] = ( curIter.second )->getName();
+        else if ( tmp->getType() == GroupOfNodesType )
+            dict2.container["GROUP_NO"] = ( curIter.second )->getName();
+        else if ( tmp->getType() == ElementType )
+            dict2.container["MAILLE"] = ( curIter.second )->getName();
         else
-            throw std::runtime_error("Support entity undefined");
-        listeAFFE.push_back(dict2);
+            throw std::runtime_error( "Support entity undefined" );
+        listeAFFE.push_back( dict2 );
     }
     dict.container["AFFE"] = listeAFFE;
 
     ListSyntaxMapContainer listeAFFE_COMPOR;
-    for ( auto& curIter : curMater._behaviours )
-    {
+    for ( auto &curIter : curMater._behaviours ) {
         SyntaxMapContainer dict2;
         dict2.container["COMPOR"] = curIter.first->getName();
-        const MeshEntityPtr& tmp = curIter.second;
+        const MeshEntityPtr &tmp = curIter.second;
         if ( tmp->getType() == AllMeshEntitiesType )
             dict2.container["TOUT"] = "OUI";
         else if ( tmp->getType() == GroupOfElementsType )
-            dict2.container["GROUP_MA"] = (curIter.second)->getName();
-        else if ( tmp->getType() == ElementType  )
-            dict2.container["MAILLE"] = (curIter.second)->getName();
+            dict2.container["GROUP_MA"] = ( curIter.second )->getName();
+        else if ( tmp->getType() == ElementType )
+            dict2.container["MAILLE"] = ( curIter.second )->getName();
         else
-            throw std::runtime_error("Support entity undefined");
+            throw std::runtime_error( "Support entity undefined" );
         listeAFFE_COMPOR.push_back( dict2 );
     }
     dict.container["AFFE_COMPOR"] = listeAFFE_COMPOR;
 
-    if (curInputVariables != nullptr)
-    {
+    if ( curInputVariables != nullptr ) {
         ListSyntaxMapContainer listeAFFE_VARC;
-        for (auto &curIter : curInputVariables->_inputVars)
-        {
+        for ( auto &curIter : curInputVariables->_inputVars ) {
             SyntaxMapContainer dict2;
 
-            const auto &inputVar = (*curIter.first);
+            const auto &inputVar = ( *curIter.first );
             dict2.container["NOM_VARC"] = inputVar.getVariableName();
             const auto &inputField = inputVar.getInputValuesField();
             const auto &evolParam = inputVar.getEvolutionParameter();
-            if (inputField != nullptr)
+            if ( inputField != nullptr )
                 dict2.container["CHAM_GD"] = inputField->getName();
 
-            if (evolParam != nullptr)
-            {
+            if ( evolParam != nullptr ) {
                 dict2.container["EVOL"] = evolParam->getTimeDependantResultsContainer()->getName();
                 dict2.container["PROL_DROITE"] = evolParam->getRightExtension();
                 dict2.container["PROL_GAUCHE"] = evolParam->getLeftExtension();
-                if (evolParam->getFieldName() != "")
+                if ( evolParam->getFieldName() != "" )
                     dict2.container["NOM_CHAM"] = evolParam->getFieldName();
-                if (evolParam->getTimeFormula() != nullptr)
+                if ( evolParam->getTimeFormula() != nullptr )
                     dict2.container["FONC_INST"] = evolParam->getTimeFormula()->getName();
-                if (evolParam->getTimeFunction() != nullptr)
+                if ( evolParam->getTimeFunction() != nullptr )
                     dict2.container["FONC_INST"] = evolParam->getTimeFunction()->getName();
             }
-            if (inputVar.existsReferenceValue())
+            if ( inputVar.existsReferenceValue() )
                 dict2.container["VALE_REF"] = inputVar.getReferenceValue();
 
             const MeshEntityPtr &tmp = curIter.second;
-            if (tmp->getType() == AllMeshEntitiesType)
+            if ( tmp->getType() == AllMeshEntitiesType )
                 dict2.container["TOUT"] = "OUI";
-            else if (tmp->getType() == GroupOfElementsType)
-                dict2.container["GROUP_MA"] = (curIter.second)->getName();
-            else if (tmp->getType() == ElementType)
-                dict2.container["MAILLE"] = (curIter.second)->getName();
+            else if ( tmp->getType() == GroupOfElementsType )
+                dict2.container["GROUP_MA"] = ( curIter.second )->getName();
+            else if ( tmp->getType() == ElementType )
+                dict2.container["MAILLE"] = ( curIter.second )->getName();
             else
-                throw std::runtime_error("Support entity undefined");
-            listeAFFE_VARC.push_back(dict2);
+                throw std::runtime_error( "Support entity undefined" );
+            listeAFFE_VARC.push_back( dict2 );
         }
         dict.container["AFFE_VARC"] = listeAFFE_VARC;
     }
 
-    auto syntax = CommandSyntax("AFFE_MATERIAU");
-    syntax.setResult(curMater.getName(), curMater.getType());
-    syntax.define(dict);
+    auto syntax = CommandSyntax( "AFFE_MATERIAU" );
+    syntax.setResult( curMater.getName(), curMater.getType() );
+    syntax.define( dict );
     // Maintenant que le fichier de commande est pret, on appelle OP006
-    try
-    {
+    try {
         ASTERINTEGER op = 6;
-        CALL_EXECOP(&op);
-    }
-    catch (...)
-    {
+        CALL_EXECOP( &op );
+    } catch ( ... ) {
         throw;
     }
 };
 
-MaterialOnMeshPtr MaterialOnMeshBuilderInstance::build
-    ( MaterialOnMeshPtr& curMater, const InputVariableOnMeshPtr& curInputVariables )
-    throw ( std::runtime_error )
-{
-    MaterialOnMeshBuilderInstance::buildInstance(*curMater, curInputVariables);
+MaterialOnMeshPtr MaterialOnMeshBuilderInstance::build(
+    MaterialOnMeshPtr &curMater,
+    const InputVariableOnMeshPtr &curInputVariables ) throw( std::runtime_error ) {
+    MaterialOnMeshBuilderInstance::buildInstance( *curMater, curInputVariables );
     return curMater;
 };

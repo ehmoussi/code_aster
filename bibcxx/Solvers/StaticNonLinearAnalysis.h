@@ -44,195 +44,174 @@
 #include "Solvers/GenericSolver.h"
 #include "Studies/TimeStepManager.h"
 
-
 /**
  @brief the StaticNonLinearAnalysis class is used to run
  a static non linear analysis on the FE_Model.
 */
 
-class StaticNonLinearAnalysisInstance: public GenericSolver
-{
-    private:
-        /** @typedef std::list of Excitations */
-        typedef std::list< ExcitationPtr > ListExcitation;
-        /** @typedef Iterator on a std::list of Excitation */
-        typedef ListExcitation::iterator ListExcitationIter;
-        /** @typedef Const Iterator on a std::list of Excitation */
-        typedef ListExcitation::const_iterator ListExcitationCIter;
-        /** @typedef List of Behaviours */
-        typedef std::list < LocatedBehaviourPtr > ListLocatedBehaviour;
-        /** @typedef Iterator on a std::list of LocatedBehaviourPtr */
-        typedef ListLocatedBehaviour::iterator ListLocatedBehaviourIter;
-        /** @typedef Constant Iterator on a std::list of LocatedBehaviourPtr */
-        typedef ListLocatedBehaviour::const_iterator ListLocatedBehaviourCIter;
-        /** @brief Support model */
-        ModelPtr          _supportModel;
-        /** @brief Material field  */
-        MaterialOnMeshPtr _materialOnMesh;
-        /** @brief List of excitations */
-        ListExcitation _listOfExcitations;
-        /** @brief List of load steps  */
-        TimeStepManagerPtr _loadStepManager;
-        /** @brief NonLinear Behaviour */
-        ListLocatedBehaviour _listOfBehaviours ;
-        /** @brief Initial State of the Analysis */
-        StatePtr         _initialState;
-        /** @brief Definition of the nonlinear method */
-        NonLinearMethodPtr  _nonLinearMethod;
-        /** @brief Control of the nonlinear method :
-         *         convergence criterion, tolerances ... */
-        NonLinearControlPtr _control;
-        /** @brief Linear solver */
-        BaseLinearSolverPtr    _linearSolver;
-        /** @brief Definition of the line search method */
-        LineSearchMethodPtr _lineSearch;
-        /** @brief Definition of the driving method */
-        DrivingPtr _driving;
-       /**
-        *  @function addMechanicalExcitation
-        * @brief Add a Mechanical Excitation to the analysis
-        */
-        void addMechanicalExcitation( const GenericMechanicalLoadPtr& currentLoad,
-                                      ExcitationEnum typeOfExcit,
-                                      const FunctionPtr& scalF = nullptr );
-        /**
-         * @function addKinematicExcitation
-         * @brief Add a Kinematic Excitation to the analysis
-         */
-        void addKinematicExcitation( const KinematicsLoadPtr& currentLoad,
-                                    ExcitationEnum typeOfExcit,
-                                    const FunctionPtr& scalF = nullptr );
+class StaticNonLinearAnalysisInstance : public GenericSolver {
+  private:
+    /** @typedef std::list of Excitations */
+    typedef std::list< ExcitationPtr > ListExcitation;
+    /** @typedef Iterator on a std::list of Excitation */
+    typedef ListExcitation::iterator ListExcitationIter;
+    /** @typedef Const Iterator on a std::list of Excitation */
+    typedef ListExcitation::const_iterator ListExcitationCIter;
+    /** @typedef List of Behaviours */
+    typedef std::list< LocatedBehaviourPtr > ListLocatedBehaviour;
+    /** @typedef Iterator on a std::list of LocatedBehaviourPtr */
+    typedef ListLocatedBehaviour::iterator ListLocatedBehaviourIter;
+    /** @typedef Constant Iterator on a std::list of LocatedBehaviourPtr */
+    typedef ListLocatedBehaviour::const_iterator ListLocatedBehaviourCIter;
+    /** @brief Support model */
+    ModelPtr _supportModel;
+    /** @brief Material field  */
+    MaterialOnMeshPtr _materialOnMesh;
+    /** @brief List of excitations */
+    ListExcitation _listOfExcitations;
+    /** @brief List of load steps  */
+    TimeStepManagerPtr _loadStepManager;
+    /** @brief NonLinear Behaviour */
+    ListLocatedBehaviour _listOfBehaviours;
+    /** @brief Initial State of the Analysis */
+    StatePtr _initialState;
+    /** @brief Definition of the nonlinear method */
+    NonLinearMethodPtr _nonLinearMethod;
+    /** @brief Control of the nonlinear method :
+     *         convergence criterion, tolerances ... */
+    NonLinearControlPtr _control;
+    /** @brief Linear solver */
+    BaseLinearSolverPtr _linearSolver;
+    /** @brief Definition of the line search method */
+    LineSearchMethodPtr _lineSearch;
+    /** @brief Definition of the driving method */
+    DrivingPtr _driving;
+    /**
+     *  @function addMechanicalExcitation
+     * @brief Add a Mechanical Excitation to the analysis
+     */
+    void addMechanicalExcitation( const GenericMechanicalLoadPtr &currentLoad,
+                                  ExcitationEnum typeOfExcit, const FunctionPtr &scalF = nullptr );
+    /**
+     * @function addKinematicExcitation
+     * @brief Add a Kinematic Excitation to the analysis
+     */
+    void addKinematicExcitation( const KinematicsLoadPtr &currentLoad, ExcitationEnum typeOfExcit,
+                                 const FunctionPtr &scalF = nullptr );
 
-    public:
-        /**
-         * @brief Constructor
-         */
-        StaticNonLinearAnalysisInstance();
-        /**
-         * @brief Define a Constitutive Law on a MeshEntity
-         * @param BehaviourPtr is the constitutive law
-         * @param nameOfGroup is the name of the group defining the support MeshEntity.
-         * Default value corresponds to set the bahaviour on the whole mesh.
-        */
-        void addBehaviourOnElements( const BehaviourPtr& behaviour, std::string nameOfGroup= "")
-            throw ( std::runtime_error )
-        {
-             // Check that the pointer to the support model is not empty
-            if ( ( ! _supportModel ) || _supportModel->isEmpty() )
-                throw std::runtime_error( "Model is empty" );
-            // Define the support Mesh Entity
-            MeshEntityPtr supportMeshEntity;
-            BaseMeshPtr currentMesh= _supportModel->getSupportMesh();
-            // If the support MeshEntity is not given, the behaviour is set on the whole mesh
-            if ( nameOfGroup.size() == 0  )
-            {
-                supportMeshEntity = MeshEntityPtr( new  AllMeshEntities() ) ;
-            }
-            // otherwise, if nameOfGroup is the name of a group of elements in the support mesh
-            else if ( currentMesh->hasGroupOfElements( nameOfGroup )  )
-            {
-                supportMeshEntity = MeshEntityPtr( new GroupOfElements( nameOfGroup ) );
-            }
-            else
-                //  otherwise, throw an exception
-                throw  std::runtime_error( nameOfGroup + " does not exist in the mesh "
-                                           "or it is not authorized as a localization "
-                                           "of the behaviour " );
-            // Insert the current behaviour with its support Mesh Entity in the list of behaviours
-            _listOfBehaviours.push_back( LocatedBehaviourPtr (
-                new LocatedBehaviourInstance (behaviour,  supportMeshEntity) ) );
-         };
-
-        /**
-         * @brief run the analysis
-         *        this function wraps Code_Aster's legacy operator for nonlinear analysis
-         *        (op0070)
-         */
-        NonLinearEvolutionContainerPtr execute() throw ( std::runtime_error );
-
-        /** @brief Define the nonlinear method
-        */
-        void setNonLinearMethod( const NonLinearMethodPtr& currentMethod )
-        {
-            _nonLinearMethod = currentMethod;
-        };
-
-        /**
-         * @brief method to define the material set on mesh
-         * @param currentMaterial objet MaterialOnMeshPtr
-         */
-        void setMaterialOnMesh( const MaterialOnMeshPtr& currentMaterial )
-        {
-            _materialOnMesh = currentMaterial;
-        };
-
-        /**
-         * @brief definition of  the finite element model
-         * @param currentModel Model
-         */
-        void setSupportModel( const ModelPtr& currentModel )
-        {
-           _supportModel = currentModel;
-        };
-
-        /**
-         * @brief definition of the load steps
-         * @param curTimeStepManager load step object
-         */
-        void setLoadStepManager( const TimeStepManagerPtr& curTimeStepManager )
-        {
-            _loadStepManager = curTimeStepManager;
-        };
-        /**
-         * @brief definition of the linear search method
-         * @param currentLineSearch linesearch method
-         */
-        void setLineSearchMethod( const LineSearchMethodPtr& currentLineSearch )
-        {
-            _lineSearch = currentLineSearch;
-        };
-
-        /**
-         * @brief definition of the linear solver
-         * @param
-         */
-        void setLinearSolver( const BaseLinearSolverPtr& currentSolver )
-        {
-            _linearSolver = currentSolver;
-        };
-        /**
-        * @brief definition of the initial state of the analysis
-        */
-        void setInitialState( const StatePtr& currentState )
-        {
-            _initialState = currentState;
+  public:
+    /**
+     * @brief Constructor
+     */
+    StaticNonLinearAnalysisInstance();
+    /**
+     * @brief Define a Constitutive Law on a MeshEntity
+     * @param BehaviourPtr is the constitutive law
+     * @param nameOfGroup is the name of the group defining the support MeshEntity.
+     * Default value corresponds to set the bahaviour on the whole mesh.
+    */
+    void addBehaviourOnElements( const BehaviourPtr &behaviour,
+                                 std::string nameOfGroup = "" ) throw( std::runtime_error ) {
+        // Check that the pointer to the support model is not empty
+        if ( ( !_supportModel ) || _supportModel->isEmpty() )
+            throw std::runtime_error( "Model is empty" );
+        // Define the support Mesh Entity
+        MeshEntityPtr supportMeshEntity;
+        BaseMeshPtr currentMesh = _supportModel->getSupportMesh();
+        // If the support MeshEntity is not given, the behaviour is set on the whole mesh
+        if ( nameOfGroup.size() == 0 ) {
+            supportMeshEntity = MeshEntityPtr( new AllMeshEntities() );
         }
-        /**
-         * @brief get the linear solver
-         */
-        BaseLinearSolverPtr&  getBaseLinearSolver()
-        {
-             return _linearSolver;
-        };
-        /**
-        * @brief definition of the driving method
-        */
-        void setDriving( const DrivingPtr& currentDriving )
-        {
-            _driving = currentDriving;
-        }
-        /**
-         * @brief definition of several excitations
-         */
-        void addStandardExcitation( const GenericMechanicalLoadPtr& currentLoad );
-        void addStandardScaledExcitation( const GenericMechanicalLoadPtr& currentLoad, const FunctionPtr& scalF );
-        void addStandardExcitation( const KinematicsLoadPtr& currentLoad );
-        void addStandardScaledExcitation( const KinematicsLoadPtr& currentLoad, const FunctionPtr& scalF );
-        void addDrivenExcitation( const GenericMechanicalLoadPtr& currentLoad );
-        void addExcitationOnUpdatedGeometry( const GenericMechanicalLoadPtr& currentLoad );
-        void addScaledExcitationOnUpdatedGeometry( const GenericMechanicalLoadPtr& currentLoad, const FunctionPtr& scalF );
-        void addIncrementalDirichletExcitation( const GenericMechanicalLoadPtr& currentLoad );
-        void addIncrementalDirichletScaledExcitation( const GenericMechanicalLoadPtr& currentLoad, const FunctionPtr& scalF );
+        // otherwise, if nameOfGroup is the name of a group of elements in the support mesh
+        else if ( currentMesh->hasGroupOfElements( nameOfGroup ) ) {
+            supportMeshEntity = MeshEntityPtr( new GroupOfElements( nameOfGroup ) );
+        } else
+            //  otherwise, throw an exception
+            throw std::runtime_error( nameOfGroup + " does not exist in the mesh "
+                                                    "or it is not authorized as a localization "
+                                                    "of the behaviour " );
+        // Insert the current behaviour with its support Mesh Entity in the list of behaviours
+        _listOfBehaviours.push_back(
+            LocatedBehaviourPtr( new LocatedBehaviourInstance( behaviour, supportMeshEntity ) ) );
+    };
+
+    /**
+     * @brief run the analysis
+     *        this function wraps Code_Aster's legacy operator for nonlinear analysis
+     *        (op0070)
+     */
+    NonLinearEvolutionContainerPtr execute() throw( std::runtime_error );
+
+    /** @brief Define the nonlinear method
+    */
+    void setNonLinearMethod( const NonLinearMethodPtr &currentMethod ) {
+        _nonLinearMethod = currentMethod;
+    };
+
+    /**
+     * @brief method to define the material set on mesh
+     * @param currentMaterial objet MaterialOnMeshPtr
+     */
+    void setMaterialOnMesh( const MaterialOnMeshPtr &currentMaterial ) {
+        _materialOnMesh = currentMaterial;
+    };
+
+    /**
+     * @brief definition of  the finite element model
+     * @param currentModel Model
+     */
+    void setSupportModel( const ModelPtr &currentModel ) { _supportModel = currentModel; };
+
+    /**
+     * @brief definition of the load steps
+     * @param curTimeStepManager load step object
+     */
+    void setLoadStepManager( const TimeStepManagerPtr &curTimeStepManager ) {
+        _loadStepManager = curTimeStepManager;
+    };
+    /**
+     * @brief definition of the linear search method
+     * @param currentLineSearch linesearch method
+     */
+    void setLineSearchMethod( const LineSearchMethodPtr &currentLineSearch ) {
+        _lineSearch = currentLineSearch;
+    };
+
+    /**
+     * @brief definition of the linear solver
+     * @param
+     */
+    void setLinearSolver( const BaseLinearSolverPtr &currentSolver ) {
+        _linearSolver = currentSolver;
+    };
+    /**
+    * @brief definition of the initial state of the analysis
+    */
+    void setInitialState( const StatePtr &currentState ) { _initialState = currentState; }
+    /**
+     * @brief get the linear solver
+     */
+    BaseLinearSolverPtr &getBaseLinearSolver() { return _linearSolver; };
+    /**
+    * @brief definition of the driving method
+    */
+    void setDriving( const DrivingPtr &currentDriving ) { _driving = currentDriving; }
+    /**
+     * @brief definition of several excitations
+     */
+    void addStandardExcitation( const GenericMechanicalLoadPtr &currentLoad );
+    void addStandardScaledExcitation( const GenericMechanicalLoadPtr &currentLoad,
+                                      const FunctionPtr &scalF );
+    void addStandardExcitation( const KinematicsLoadPtr &currentLoad );
+    void addStandardScaledExcitation( const KinematicsLoadPtr &currentLoad,
+                                      const FunctionPtr &scalF );
+    void addDrivenExcitation( const GenericMechanicalLoadPtr &currentLoad );
+    void addExcitationOnUpdatedGeometry( const GenericMechanicalLoadPtr &currentLoad );
+    void addScaledExcitationOnUpdatedGeometry( const GenericMechanicalLoadPtr &currentLoad,
+                                               const FunctionPtr &scalF );
+    void addIncrementalDirichletExcitation( const GenericMechanicalLoadPtr &currentLoad );
+    void addIncrementalDirichletScaledExcitation( const GenericMechanicalLoadPtr &currentLoad,
+                                                  const FunctionPtr &scalF );
 };
 
 /**

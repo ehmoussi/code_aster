@@ -3,7 +3,7 @@
  * @brief Interface python de ElementaryCharacteristics
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -27,21 +27,17 @@
 #include <PythonBindings/factory.h>
 #include "PythonBindings/ElementaryCharacteristicsInterface.h"
 
-
-void exportElementaryCharacteristicsToPython()
-{
+void exportElementaryCharacteristicsToPython() {
     using namespace boost::python;
 
-    class_< ElementaryCharacteristicsInstance, ElementaryCharacteristicsInstance::ElementaryCharacteristicsPtr,
-            bases< DataStructure > > ( "ElementaryCharacteristics", no_init )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< ElementaryCharacteristicsInstance,
-                             ModelPtr >) )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< ElementaryCharacteristicsInstance,
-                             std::string,
-                             ModelPtr >) )
+    class_< ElementaryCharacteristicsInstance,
+            ElementaryCharacteristicsInstance::ElementaryCharacteristicsPtr,
+            bases< DataStructure > >( "ElementaryCharacteristics", no_init )
+        .def( "__init__",
+              make_constructor(&initFactoryPtr< ElementaryCharacteristicsInstance, ModelPtr >))
+        .def( "__init__",
+              make_constructor(
+                  &initFactoryPtr< ElementaryCharacteristicsInstance, std::string, ModelPtr >))
         .def( "getModel", &ElementaryCharacteristicsInstance::getModel,
-              return_value_policy<copy_const_reference>() )
-    ;
+              return_value_policy< copy_const_reference >() );
 };

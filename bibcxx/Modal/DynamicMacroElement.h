@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe DynamicMacroElement
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -36,75 +36,73 @@
 #include "LinearAlgebra/AssemblyMatrix.h"
 #include "LinearAlgebra/GeneralizedAssemblyMatrix.h"
 
-
 /**
  * @class DynamicMacroElementInstance
  * @brief Cette classe correspond a un MACR_ELEM_DYNA
  * @author Nicolas Sellenet
  */
-class DynamicMacroElementInstance: public DataStructure
-{
-private:
+class DynamicMacroElementInstance : public DataStructure {
+  private:
     /** @brief Objet Jeveux '.DESM' */
-    JeveuxVectorLong                     _desm;
+    JeveuxVectorLong _desm;
     /** @brief Objet Jeveux '.REFM' */
-    JeveuxVectorChar8                    _refm;
+    JeveuxVectorChar8 _refm;
     /** @brief Objet Jeveux '.CONX' */
-    JeveuxVectorLong                     _conx;
+    JeveuxVectorLong _conx;
     /** @brief Objet Jeveux '.LINO' */
-    JeveuxVectorLong                     _lino;
+    JeveuxVectorLong _lino;
     /** @brief Objet Jeveux '.MAEL_DESC' */
-    JeveuxVectorLong                     _maelDesc;
+    JeveuxVectorLong _maelDesc;
     /** @brief Objet Jeveux '.MAEL_REFE' */
-    JeveuxVectorChar24                   _maelRefe;
+    JeveuxVectorChar24 _maelRefe;
     /** @brief Objet Jeveux '.LICH' */
-    JeveuxCollectionChar8                _lich;
+    JeveuxCollectionChar8 _lich;
     /** @brief Objet Jeveux '.LICA' */
-    JeveuxCollectionDouble               _lica;
+    JeveuxCollectionDouble _lica;
     /** @brief Objet Jeveux '.MAEL_RAID_DESC' */
-    JeveuxVectorLong                     _maelRaidDesc;
+    JeveuxVectorLong _maelRaidDesc;
     /** @brief Objet Jeveux '.MAEL_RAID_REFE' */
-    JeveuxVectorChar24                   _maelRaidRefe;
+    JeveuxVectorChar24 _maelRaidRefe;
     /** @brief Objet Jeveux '.MAEL_RAID_VALE' */
-    JeveuxVectorDouble                   _maelRaidVale;
+    JeveuxVectorDouble _maelRaidVale;
     /** @brief Objet Jeveux '.MAEL_MASS_DESC' */
-    JeveuxVectorLong                     _maelMassDesc;
+    JeveuxVectorLong _maelMassDesc;
     /** @brief Objet Jeveux '.MAEL_MASS_REFE' */
-    JeveuxVectorChar24                   _maelMassRefe;
+    JeveuxVectorChar24 _maelMassRefe;
     /** @brief Objet Jeveux '.MAEL_MASS_VALE' */
-    JeveuxVectorDouble                   _maelMassVale;
+    JeveuxVectorDouble _maelMassVale;
     /** @brief Objet Jeveux '.MAEL_AMOR_DESC' */
-    JeveuxVectorLong                     _maelAmorDesc;
+    JeveuxVectorLong _maelAmorDesc;
     /** @brief Objet Jeveux '.MAEL_AMOR_REFE' */
-    JeveuxVectorChar24                   _maelAmorRefe;
+    JeveuxVectorChar24 _maelAmorRefe;
     /** @brief Objet Jeveux '.MAEL_AMOR_VALE' */
-    JeveuxVectorDouble                   _maelAmorVale;
+    JeveuxVectorDouble _maelAmorVale;
     /** @brief Objet Jeveux '.MAEL_INER_REFE' */
-    JeveuxVectorChar24                   _maelInerRefe;
+    JeveuxVectorChar24 _maelInerRefe;
     /** @brief Objet Jeveux '.MAEL_INER_VALE' */
-    JeveuxVectorDouble                   _maelInterVale;
+    JeveuxVectorDouble _maelInterVale;
     /** @brief Objet NUME_DDL */
-    DOFNumberingPtr                      _numeDdl;
+    DOFNumberingPtr _numeDdl;
     /** @brief Mode Meca sur lequel repose le macro emement */
-    MechanicalModeContainerPtr           _supportMechanicalMode;
+    MechanicalModeContainerPtr _supportMechanicalMode;
     /** @brief double rigidity matrix */
-    AssemblyMatrixDisplacementDoublePtr  _rigidityDMatrix;
+    AssemblyMatrixDisplacementDoublePtr _rigidityDMatrix;
     /** @brief complex rigidity matrix */
     AssemblyMatrixDisplacementComplexPtr _rigidityCMatrix;
     /** @brief mass matrix */
-    AssemblyMatrixDisplacementDoublePtr  _massMatrix;
+    AssemblyMatrixDisplacementDoublePtr _massMatrix;
     /** @brief damping matrix */
-    AssemblyMatrixDisplacementDoublePtr  _dampingMatrix;
+    AssemblyMatrixDisplacementDoublePtr _dampingMatrix;
     /** @brief MATR_IMPE */
-    GeneralizedAssemblyMatrixComplexPtr  _impeMatrix;
+    GeneralizedAssemblyMatrixComplexPtr _impeMatrix;
     /** @brief MATR_IMPE_RIGI */
-    GeneralizedAssemblyMatrixComplexPtr  _impeRigiMatrix;
+    GeneralizedAssemblyMatrixComplexPtr _impeRigiMatrix;
     /** @brief MATR_IMPE_MASS */
-    GeneralizedAssemblyMatrixComplexPtr  _impeMassMatrix;
+    GeneralizedAssemblyMatrixComplexPtr _impeMassMatrix;
     /** @brief MATR_IMPE_AMOR */
-    GeneralizedAssemblyMatrixComplexPtr  _impeAmorMatrix;
+    GeneralizedAssemblyMatrixComplexPtr _impeAmorMatrix;
 
-public:
+  public:
     /**
      * @typedef DynamicMacroElementPtr
      * @brief Pointeur intelligent vers un DynamicMacroElementInstance
@@ -114,109 +112,78 @@ public:
     /**
      * @brief Constructeur
      */
-    DynamicMacroElementInstance():
-        DataStructure( "MACR_ELEM_DYNA", Permanent, 8 ),
-        _desm( JeveuxVectorLong( getName() + ".DESM" ) ),
-        _refm( JeveuxVectorChar8( getName() + ".REFM" ) ),
-        _conx( JeveuxVectorLong( getName() + ".CONX" ) ),
-        _lino( JeveuxVectorLong( getName() + ".LINO" ) ),
-        _maelDesc( JeveuxVectorLong( getName() + ".MAEL_DESC" ) ),
-        _maelRefe( JeveuxVectorChar24( getName() + ".MAEL_REFE" ) ),
-        _lich( JeveuxCollectionChar8( getName() + ".LICH" ) ),
-        _lica( JeveuxCollectionDouble( getName() + ".LICA" ) ),
-        _maelRaidDesc( JeveuxVectorLong( getName() + ".MAEL_RAID_DESC" ) ),
-        _maelRaidRefe( JeveuxVectorChar24( getName() + ".MAEL_RAID_REFE" ) ),
-        _maelRaidVale( JeveuxVectorDouble( getName() + ".MAEL_RAID_VALE" ) ),
-        _maelMassDesc( JeveuxVectorLong( getName() + ".MAEL_MASS_DESC" ) ),
-        _maelMassRefe( JeveuxVectorChar24( getName() + ".MAEL_MASS_REFE" ) ),
-        _maelMassVale( JeveuxVectorDouble( getName() + ".MAEL_MASS_VALE" ) ),
-        _maelAmorDesc( JeveuxVectorLong( getName() + ".MAEL_AMOR_DESC" ) ),
-        _maelAmorRefe( JeveuxVectorChar24( getName() + ".MAEL_AMOR_REFE" ) ),
-        _maelAmorVale( JeveuxVectorDouble( getName() + ".MAEL_AMOR_VALE" ) ),
-        _maelInerRefe( JeveuxVectorChar24( getName() + ".MAEL_INER_REFE" ) ),
-        _maelInterVale( JeveuxVectorDouble( getName() + ".MAEL_INER_VALE" ) ),
-        _numeDdl( new DOFNumberingInstance( getName() ) ),
-        _supportMechanicalMode( MechanicalModeContainerPtr() ),
-        _rigidityDMatrix( nullptr ),
-        _rigidityCMatrix( nullptr ),
-        _massMatrix( nullptr ),
-        _dampingMatrix( nullptr ),
-        _impeMatrix( nullptr ),
-        _impeRigiMatrix( nullptr ),
-        _impeMassMatrix( nullptr ),
-        _impeAmorMatrix( nullptr )
-    {};
+    DynamicMacroElementInstance()
+        : DataStructure( "MACR_ELEM_DYNA", Permanent, 8 ),
+          _desm( JeveuxVectorLong( getName() + ".DESM" ) ),
+          _refm( JeveuxVectorChar8( getName() + ".REFM" ) ),
+          _conx( JeveuxVectorLong( getName() + ".CONX" ) ),
+          _lino( JeveuxVectorLong( getName() + ".LINO" ) ),
+          _maelDesc( JeveuxVectorLong( getName() + ".MAEL_DESC" ) ),
+          _maelRefe( JeveuxVectorChar24( getName() + ".MAEL_REFE" ) ),
+          _lich( JeveuxCollectionChar8( getName() + ".LICH" ) ),
+          _lica( JeveuxCollectionDouble( getName() + ".LICA" ) ),
+          _maelRaidDesc( JeveuxVectorLong( getName() + ".MAEL_RAID_DESC" ) ),
+          _maelRaidRefe( JeveuxVectorChar24( getName() + ".MAEL_RAID_REFE" ) ),
+          _maelRaidVale( JeveuxVectorDouble( getName() + ".MAEL_RAID_VALE" ) ),
+          _maelMassDesc( JeveuxVectorLong( getName() + ".MAEL_MASS_DESC" ) ),
+          _maelMassRefe( JeveuxVectorChar24( getName() + ".MAEL_MASS_REFE" ) ),
+          _maelMassVale( JeveuxVectorDouble( getName() + ".MAEL_MASS_VALE" ) ),
+          _maelAmorDesc( JeveuxVectorLong( getName() + ".MAEL_AMOR_DESC" ) ),
+          _maelAmorRefe( JeveuxVectorChar24( getName() + ".MAEL_AMOR_REFE" ) ),
+          _maelAmorVale( JeveuxVectorDouble( getName() + ".MAEL_AMOR_VALE" ) ),
+          _maelInerRefe( JeveuxVectorChar24( getName() + ".MAEL_INER_REFE" ) ),
+          _maelInterVale( JeveuxVectorDouble( getName() + ".MAEL_INER_VALE" ) ),
+          _numeDdl( new DOFNumberingInstance( getName() ) ),
+          _supportMechanicalMode( MechanicalModeContainerPtr() ), _rigidityDMatrix( nullptr ),
+          _rigidityCMatrix( nullptr ), _massMatrix( nullptr ), _dampingMatrix( nullptr ),
+          _impeMatrix( nullptr ), _impeRigiMatrix( nullptr ), _impeMassMatrix( nullptr ),
+          _impeAmorMatrix( nullptr ){};
 
     /**
      * @brief Get damping matrix
      */
-    AssemblyMatrixDisplacementDoublePtr getDampingMatrix()
-    {
-        return _dampingMatrix;
-    };
+    AssemblyMatrixDisplacementDoublePtr getDampingMatrix() { return _dampingMatrix; };
 
     /**
      * @brief Get impedance matrix
      */
-    GeneralizedAssemblyMatrixComplexPtr getImpedanceDampingMatrix()
-    {
-        return _impeAmorMatrix;
-    };
+    GeneralizedAssemblyMatrixComplexPtr getImpedanceDampingMatrix() { return _impeAmorMatrix; };
 
     /**
      * @brief Get impedance matrix
      */
-    GeneralizedAssemblyMatrixComplexPtr getImpedanceMatrix()
-    {
-        return _impeMatrix;
-    };
+    GeneralizedAssemblyMatrixComplexPtr getImpedanceMatrix() { return _impeMatrix; };
 
     /**
      * @brief Get impedance matrix
      */
-    GeneralizedAssemblyMatrixComplexPtr getImpedanceMassMatrix()
-    {
-        return _impeMassMatrix;
-    };
+    GeneralizedAssemblyMatrixComplexPtr getImpedanceMassMatrix() { return _impeMassMatrix; };
 
     /**
      * @brief Get impedance matrix
      */
-    GeneralizedAssemblyMatrixComplexPtr getImpedanceStiffnessMatrix()
-    {
-        return _impeRigiMatrix;
-    };
+    GeneralizedAssemblyMatrixComplexPtr getImpedanceStiffnessMatrix() { return _impeRigiMatrix; };
 
     /**
      * @brief Get mass matrix
      */
-    AssemblyMatrixDisplacementDoublePtr getMassMatrix()
-    {
-        return _massMatrix;
-    };
+    AssemblyMatrixDisplacementDoublePtr getMassMatrix() { return _massMatrix; };
 
     /**
      * @brief Get rigidity matrix
      */
-    AssemblyMatrixDisplacementComplexPtr getComplexStiffnessMatrix()
-    {
-        return _rigidityCMatrix;
-    };
+    AssemblyMatrixDisplacementComplexPtr getComplexStiffnessMatrix() { return _rigidityCMatrix; };
 
     /**
      * @brief Get rigidity matrix
      */
-    AssemblyMatrixDisplacementDoublePtr getDoubleStiffnessMatrix()
-    {
-        return _rigidityDMatrix;
-    };
+    AssemblyMatrixDisplacementDoublePtr getDoubleStiffnessMatrix() { return _rigidityDMatrix; };
 
     /**
      * @brief Set damping matrix
      * @param matrix AssemblyMatrixDisplacementDoublePtr object
      */
-    bool setDampingMatrix( const AssemblyMatrixDisplacementDoublePtr& matrix )
-    {
+    bool setDampingMatrix( const AssemblyMatrixDisplacementDoublePtr &matrix ) {
         _dampingMatrix = matrix;
         return true;
     };
@@ -225,8 +192,7 @@ public:
      * @brief Set impedance matrix
      * @param matrix AssemblyMatrixDisplacementDoublePtr object
      */
-    bool setImpedanceDampingMatrix( const GeneralizedAssemblyMatrixComplexPtr& matrix )
-    {
+    bool setImpedanceDampingMatrix( const GeneralizedAssemblyMatrixComplexPtr &matrix ) {
         _impeAmorMatrix = matrix;
         return true;
     };
@@ -235,8 +201,7 @@ public:
      * @brief Set impedance matrix
      * @param matrix AssemblyMatrixDisplacementDoublePtr object
      */
-    bool setImpedanceMatrix( const GeneralizedAssemblyMatrixComplexPtr& matrix )
-    {
+    bool setImpedanceMatrix( const GeneralizedAssemblyMatrixComplexPtr &matrix ) {
         _impeMatrix = matrix;
         return true;
     };
@@ -245,8 +210,7 @@ public:
      * @brief Set impedance matrix
      * @param matrix AssemblyMatrixDisplacementDoublePtr object
      */
-    bool setImpedanceMassMatrix( const GeneralizedAssemblyMatrixComplexPtr& matrix )
-    {
+    bool setImpedanceMassMatrix( const GeneralizedAssemblyMatrixComplexPtr &matrix ) {
         _impeMassMatrix = matrix;
         return true;
     };
@@ -255,8 +219,7 @@ public:
      * @brief Set impedance matrix
      * @param matrix AssemblyMatrixDisplacementDoublePtr object
      */
-    bool setImpedanceStiffnessMatrix( const GeneralizedAssemblyMatrixComplexPtr& matrix )
-    {
+    bool setImpedanceStiffnessMatrix( const GeneralizedAssemblyMatrixComplexPtr &matrix ) {
         _impeRigiMatrix = matrix;
         return true;
     };
@@ -265,8 +228,7 @@ public:
      * @brief Set mass matrix
      * @param matrix AssemblyMatrixDisplacementDoublePtr object
      */
-    bool setMassMatrix( const AssemblyMatrixDisplacementDoublePtr& matrix )
-    {
+    bool setMassMatrix( const AssemblyMatrixDisplacementDoublePtr &matrix ) {
         _massMatrix = matrix;
         return true;
     };
@@ -275,8 +237,7 @@ public:
      * @brief Set the support MechanicalModeContainer
      * @param mechanicalMode MechanicalModeContainerPtr object
      */
-    bool setSupportMechanicalMode( MechanicalModeContainerPtr& mechanicalMode )
-    {
+    bool setSupportMechanicalMode( MechanicalModeContainerPtr &mechanicalMode ) {
         _supportMechanicalMode = mechanicalMode;
         return true;
     };
@@ -285,8 +246,7 @@ public:
      * @brief Set rigidity matrix
      * @param matrix AssemblyMatrixDisplacementComplexPtr object
      */
-    bool setStiffnessMatrix( const AssemblyMatrixDisplacementComplexPtr& matrix )
-    {
+    bool setStiffnessMatrix( const AssemblyMatrixDisplacementComplexPtr &matrix ) {
         _rigidityCMatrix = matrix;
         _rigidityDMatrix = nullptr;
         return true;
@@ -296,8 +256,7 @@ public:
      * @brief Set rigidity matrix
      * @param matrix AssemblyMatrixDisplacementDoublePtr object
      */
-    bool setStiffnessMatrix( const AssemblyMatrixDisplacementDoublePtr& matrix )
-    {
+    bool setStiffnessMatrix( const AssemblyMatrixDisplacementDoublePtr &matrix ) {
         _rigidityDMatrix = matrix;
         _rigidityCMatrix = nullptr;
         return true;

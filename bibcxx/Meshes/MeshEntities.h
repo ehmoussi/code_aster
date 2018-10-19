@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe MeshEntities
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -28,8 +28,14 @@
 
 #include "MemoryManager/JeveuxCollection.h"
 
-enum EntityType { GroupOfNodesType, GroupOfElementsType, AllMeshEntitiesType,
-                  ElementType, NodeType, NoType };
+enum EntityType {
+    GroupOfNodesType,
+    GroupOfElementsType,
+    AllMeshEntitiesType,
+    ElementType,
+    NodeType,
+    NoType
+};
 
 /**
  * @todo Un MeshEntity pourrait etre concu comme un template qui prendrait
@@ -43,34 +49,29 @@ enum EntityType { GroupOfNodesType, GroupOfElementsType, AllMeshEntitiesType,
  *        groupe de mailles ou groupe de noeuds
  * @author Nicolas Sellenet
  */
-class VirtualMeshEntity
-{
-    private:
-        /** @brief Nom de l'entite */
-        const std::string _name;
+class VirtualMeshEntity {
+  private:
+    /** @brief Nom de l'entite */
+    const std::string _name;
 
-    protected:
-        /** @brief Type de l'entite */
-        const EntityType  _type;
+  protected:
+    /** @brief Type de l'entite */
+    const EntityType _type;
 
-    public:
-        /**
-         * @brief Constructeur
-         * @param name nom de l'entite
-         */
-        VirtualMeshEntity( std::string name, EntityType type ): _name( name ), _type( type )
-        {};
+  public:
+    /**
+     * @brief Constructeur
+     * @param name nom de l'entite
+     */
+    VirtualMeshEntity( std::string name, EntityType type ) : _name( name ), _type( type ){};
 
-        /**
-         * @brief Obtenir le nom de l'entite
-         * @return renvoit le nom de l'entite
-         */
-        const std::string& getName() const
-        {
-            return _name;
-        };
+    /**
+     * @brief Obtenir le nom de l'entite
+     * @return renvoit le nom de l'entite
+     */
+    const std::string &getName() const { return _name; };
 
-        virtual EntityType getType() const = 0;
+    virtual EntityType getType() const = 0;
 };
 
 /**
@@ -78,20 +79,15 @@ class VirtualMeshEntity
  * @brief Cette classe permet de definir des groupes de noeuds
  * @author Nicolas Sellenet
  */
-class GroupOfNodes: public VirtualMeshEntity
-{
-    public:
-        /**
-         * @brief Constructeur
-         * @param name nom de l'entite
-         */
-        GroupOfNodes( std::string name ): VirtualMeshEntity( name, GroupOfNodesType )
-        {};
+class GroupOfNodes : public VirtualMeshEntity {
+  public:
+    /**
+     * @brief Constructeur
+     * @param name nom de l'entite
+     */
+    GroupOfNodes( std::string name ) : VirtualMeshEntity( name, GroupOfNodesType ){};
 
-        EntityType getType() const
-        {
-            return _type;
-        };
+    EntityType getType() const { return _type; };
 };
 
 /**
@@ -99,20 +95,15 @@ class GroupOfNodes: public VirtualMeshEntity
  * @brief Cette classe permet de definir des groupes de mailles
  * @author Nicolas Sellenet
  */
-class GroupOfElements: public VirtualMeshEntity
-{
-    public:
-        /**
-         * @brief Constructeur
-         * @param name nom de l'entite
-         */
-        GroupOfElements( std::string name ): VirtualMeshEntity( name, GroupOfElementsType )
-        {};
+class GroupOfElements : public VirtualMeshEntity {
+  public:
+    /**
+     * @brief Constructeur
+     * @param name nom de l'entite
+     */
+    GroupOfElements( std::string name ) : VirtualMeshEntity( name, GroupOfElementsType ){};
 
-        EntityType getType() const
-        {
-            return _type;
-        };
+    EntityType getType() const { return _type; };
 };
 
 /**
@@ -121,20 +112,15 @@ class GroupOfElements: public VirtualMeshEntity
  *        Equivalent du mot cle simple TOUT = 'OUI'
  * @author Nicolas Sellenet
  */
-class AllMeshEntities: public VirtualMeshEntity
-{
-    public:
-        /**
-         * @brief Constructeur
-         * @param name nom de l'entite
-         */
-        AllMeshEntities(): VirtualMeshEntity( "OUI", AllMeshEntitiesType )
-        {};
+class AllMeshEntities : public VirtualMeshEntity {
+  public:
+    /**
+     * @brief Constructeur
+     * @param name nom de l'entite
+     */
+    AllMeshEntities() : VirtualMeshEntity( "OUI", AllMeshEntitiesType ){};
 
-        EntityType getType() const
-        {
-            return _type;
-        };
+    EntityType getType() const { return _type; };
 };
 
 /**
@@ -142,20 +128,15 @@ class AllMeshEntities: public VirtualMeshEntity
  * @brief Cette classe permet de definir des éléments du maillage
  * @author Nicolas Sellenet
  */
-class Element: public VirtualMeshEntity
-{
-    public:
-        /**
-         * @brief Constructeur
-         * @param name nom de l'entite
-         */
-        Element( std::string name ): VirtualMeshEntity( name, ElementType )
-        {};
+class Element : public VirtualMeshEntity {
+  public:
+    /**
+     * @brief Constructeur
+     * @param name nom de l'entite
+     */
+    Element( std::string name ) : VirtualMeshEntity( name, ElementType ){};
 
-        EntityType getType() const
-        {
-            return _type;
-        };
+    EntityType getType() const { return _type; };
 };
 
 /**
@@ -163,20 +144,15 @@ class Element: public VirtualMeshEntity
  * @brief Cette classe permet de definir des noeuds du maillage
  * @author Nicolas Sellenet
  */
-class Node: public VirtualMeshEntity
-{
-    public:
-        /**
-         * @brief Constructeur
-         * @param name nom de l'entite
-         */
-        Node( std::string name ): VirtualMeshEntity( name, NodeType )
-        {};
+class Node : public VirtualMeshEntity {
+  public:
+    /**
+     * @brief Constructeur
+     * @param name nom de l'entite
+     */
+    Node( std::string name ) : VirtualMeshEntity( name, NodeType ){};
 
-        EntityType getType() const
-        {
-            return _type;
-        };
+    EntityType getType() const { return _type; };
 };
 
 typedef boost::shared_ptr< VirtualMeshEntity > MeshEntityPtr;

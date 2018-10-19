@@ -23,7 +23,7 @@
 
 #include "Loads/Excitation.h"
 
-const std::vector<ExcitationEnum> allExcitation = {
-    StandardExcitation, DrivenExcitation, OnUpdatedGeometryExcitation,
-    IncrementalDirichletExcitation };
-const std::vector<std::string> allExcitationNames = { "FIXE_CSTE", "FIXE_PILO", "SUIV", "DIDI" };
+const std::vector< ExcitationEnum > allExcitation = {StandardExcitation, DrivenExcitation,
+                                                     OnUpdatedGeometryExcitation,
+                                                     IncrementalDirichletExcitation};
+const std::vector< std::string > allExcitationNames = {"FIXE_CSTE", "FIXE_PILO", "SUIV", "DIDI"};

@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe MeshCoordinatesField
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -32,8 +32,7 @@
 #include "DataStructures/DataStructure.h"
 
 /** @brief Forward declaration of FieldOnNodesInstance */
-template< class ValueType >
-class FieldOnNodesInstance;
+template < class ValueType > class FieldOnNodesInstance;
 
 typedef FieldOnNodesInstance< double > FieldOnNodesDoubleInstance;
 
@@ -42,11 +41,10 @@ typedef FieldOnNodesInstance< double > FieldOnNodesDoubleInstance;
  * @brief Cette classe template permet de definir un champ aux noeuds Aster
  * @author Nicolas Sellenet
  */
-class MeshCoordinatesFieldInstance: public DataStructure
-{
-private:
+class MeshCoordinatesFieldInstance : public DataStructure {
+  private:
     /** @brief Vecteur Jeveux '.DESC' */
-    JeveuxVectorLong   _descriptor;
+    JeveuxVectorLong _descriptor;
     /** @brief Vecteur Jeveux '.REFE' */
     JeveuxVectorChar24 _reference;
     /** @brief Vecteur Jeveux '.VALE' */
@@ -54,7 +52,7 @@ private:
 
     friend FieldOnNodesDoubleInstance;
 
-public:
+  public:
     /**
      * @typedef MeshCoordinatesFieldPtr
      * @brief Pointeur intelligent vers un MeshCoordinatesField
@@ -65,62 +63,47 @@ public:
      * @brief Constructeur
      * @param name Nom Jeveux du champ aux noeuds
      */
-    MeshCoordinatesFieldInstance( const std::string& name ):
-                    DataStructure( name, 19, "CHAM_NO" ),
-                    _descriptor( JeveuxVectorLong( getName() + ".DESC" ) ),
-                    _reference( JeveuxVectorChar24( getName() + ".REFE" ) ),
-                    _valuesList( JeveuxVectorDouble( getName() + ".VALE" ) )
-    {
+    MeshCoordinatesFieldInstance( const std::string &name )
+        : DataStructure( name, 19, "CHAM_NO" ),
+          _descriptor( JeveuxVectorLong( getName() + ".DESC" ) ),
+          _reference( JeveuxVectorChar24( getName() + ".REFE" ) ),
+          _valuesList( JeveuxVectorDouble( getName() + ".VALE" ) ) {
         assert( name.size() == 19 );
     };
 
     /**
      * @brief Get _descriptor
      */
-    const JeveuxVectorLong getFieldDescriptor() const
-    {
-        return _descriptor;
-    };
+    const JeveuxVectorLong getFieldDescriptor() const { return _descriptor; };
 
     /**
      * @brief Get _reference
      */
-    const JeveuxVectorChar24 getFieldReference() const
-    {
-        return _reference;
-    };
+    const JeveuxVectorChar24 getFieldReference() const { return _reference; };
 
     /**
      * @brief Get _valuesList
      */
-    const JeveuxVectorDouble getFieldValues() const
-    {
-        return _valuesList;
-    };
+    const JeveuxVectorDouble getFieldValues() const { return _valuesList; };
 
     /**
      * @brief Surcharge de l'operateur []
      * @param i Indice dans le tableau Jeveux
      * @return la valeur du tableau Jeveux a la position i
      */
-    const double operator[]( int i ) const
-    {
-        return _valuesList->operator[](i);
-    };
+    const double operator[]( int i ) const { return _valuesList->operator[]( i ); };
 
     /**
      * @brief Mise a jour des pointeurs Jeveux
      * @return renvoie true si la mise a jour s'est bien deroulee, false sinon
      */
-    bool updateValuePointers() const
-    {
+    bool updateValuePointers() const {
         bool retour = _descriptor->updateValuePointer();
         retour = ( retour && _reference->updateValuePointer() );
         retour = ( retour && _valuesList->updateValuePointer() );
         return retour;
     };
 };
-
 
 /**
  * @typedef MeshCoordinatesFieldPtr

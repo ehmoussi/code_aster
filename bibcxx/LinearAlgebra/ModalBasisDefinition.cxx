@@ -3,7 +3,7 @@
  * @brief
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -25,27 +25,22 @@
 
 #include "LinearAlgebra/ModalBasisDefinition.h"
 
-bool GenericModalBasisInstance::build() throw( std::runtime_error )
-{
+bool GenericModalBasisInstance::build() throw( std::runtime_error ) {
     CommandSyntax cmdSt( "DEFI_BASE_MODALE" );
     cmdSt.setResult( getName(), "MODE_MECA" );
 
     CapyConvertibleSyntax syntax;
-    CapyConvertibleContainer solverSyntaxContainer( "SOLVEUR",
-                                                    _solver->getListOfParameters() );
+    CapyConvertibleContainer solverSyntaxContainer( "SOLVEUR", _solver->getListOfParameters() );
     syntax.addCapyConvertibleContainer( solverSyntaxContainer );
-    for( const auto& iter : _vectorOfModalBasis )
+    for ( const auto &iter : _vectorOfModalBasis )
         syntax.addCapyConvertibleContainer( iter._container );
 
     cmdSt.define( syntax );
 
-    try
-    {
+    try {
         ASTERINTEGER op = 99;
         CALL_EXECOP( &op );
-    }
-    catch( ... )
-    {
+    } catch ( ... ) {
         throw;
     }
     _isEmpty = false;

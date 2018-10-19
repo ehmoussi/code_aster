@@ -3,7 +3,7 @@
  * @brief Interface python de Function
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -28,49 +28,38 @@
 #include "PythonBindings/factory.h"
 #include "PythonBindings/FunctionInterface.h"
 
-
-void exportFunctionToPython()
-{
+void exportFunctionToPython() {
     using namespace boost::python;
 
     class_< BaseFunctionInstance, BaseFunctionInstance::BaseFunctionPtr,
-            bases< GenericFunctionInstance > > ( "BaseFunction", no_init )
+            bases< GenericFunctionInstance > >( "BaseFunction", no_init )
         .def( "setParameterName", &FunctionInstance::setParameterName )
         .def( "setResultName", &FunctionInstance::setResultName )
         .def( "setInterpolation", &FunctionInstance::setInterpolation )
         .def( "setExtrapolation", &FunctionInstance::setExtrapolation )
         .def( "setValues", &FunctionInstance::setValues )
         .def( "getProperties", &FunctionInstance::getProperties )
-        .def( "getValues", &FunctionInstance::getValues )
-    ;
+        .def( "getValues", &FunctionInstance::getValues );
 
-    class_< FunctionInstance, FunctionInstance::FunctionPtr,
-            bases< BaseFunctionInstance > > ( "Function", no_init )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< FunctionInstance >) )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< FunctionInstance,
-                             std::string >) )
+    class_< FunctionInstance, FunctionInstance::FunctionPtr, bases< BaseFunctionInstance > >(
+        "Function", no_init )
+        .def( "__init__", make_constructor(&initFactoryPtr< FunctionInstance >))
+        .def( "__init__", make_constructor(&initFactoryPtr< FunctionInstance, std::string >))
         .def( "setValues", &FunctionInstance::setValues )
         .def( "size", &FunctionInstance::size )
-        .def( "setAsConstant", &FunctionInstance::setAsConstant )
-    ;
+        .def( "setAsConstant", &FunctionInstance::setAsConstant );
 
     // Candidates for setValues
-    void (FunctionComplexInstance::*c1)(const VectorDouble &absc, const VectorDouble &ord) =
+    void ( FunctionComplexInstance::*c1 )( const VectorDouble &absc, const VectorDouble &ord ) =
         &FunctionComplexInstance::setValues;
-    void (FunctionComplexInstance::*c2)(const VectorDouble &absc, const VectorComplex &ord) =
+    void ( FunctionComplexInstance::*c2 )( const VectorDouble &absc, const VectorComplex &ord ) =
         &FunctionComplexInstance::setValues;
 
     class_< FunctionComplexInstance, FunctionComplexInstance::FunctionComplexPtr,
-            bases< BaseFunctionInstance > > ( "FunctionComplex", no_init )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< FunctionComplexInstance >) )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< FunctionComplexInstance,
-                             std::string >) )
+            bases< BaseFunctionInstance > >( "FunctionComplex", no_init )
+        .def( "__init__", make_constructor(&initFactoryPtr< FunctionComplexInstance >))
+        .def( "__init__", make_constructor(&initFactoryPtr< FunctionComplexInstance, std::string >))
         .def( "setValues", c1 )
         .def( "setValues", c2 )
-        .def( "size", &FunctionComplexInstance::size )
-    ;
+        .def( "size", &FunctionComplexInstance::size );
 };

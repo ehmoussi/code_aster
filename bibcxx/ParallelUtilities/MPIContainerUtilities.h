@@ -11,7 +11,7 @@
  * @brief Fichier entete contenant des utilitaires de manipulation de containers STL en parallèle
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -37,45 +37,40 @@
 #include "MemoryManager/JeveuxString.h"
 #include <set>
 
-class MPIContainerUtilities
-{
-private:
-    int           _nbProcs;
-    int           _rank;
-    aster_comm_t* _commWorld;
+class MPIContainerUtilities {
+  private:
+    int _nbProcs;
+    int _rank;
+    aster_comm_t *_commWorld;
 
-public:
+  public:
     MPIContainerUtilities();
 
-    template< int length >
+    template < int length >
     std::vector< JeveuxString< length > >
-    gatheringVectorsOnAllProcs( std::vector< JeveuxString< length > >& toGather ) const
-    {
+    gatheringVectorsOnAllProcs( std::vector< JeveuxString< length > > &toGather ) const {
         typedef JeveuxString< length > JeveuxChar;
         VectorInt sizes( _nbProcs, 0 );
         VectorInt sizes2( _nbProcs, 0 );
-        sizes[ 0 ] = toGather.size();
-        aster_mpi_allgather( sizes.data(), 1, MPI_INTEGER,
-                             sizes2.data(), 1, MPI_INTEGER,
+        sizes[0] = toGather.size();
+        aster_mpi_allgather( sizes.data(), 1, MPI_INTEGER, sizes2.data(), 1, MPI_INTEGER,
                              _commWorld );
         int sum = 0;
-        for( auto taille : sizes2 )
+        for ( auto taille : sizes2 )
             sum += taille;
 
         std::vector< JeveuxChar > toReturn;
-        for( int rank = 0; rank < _nbProcs; ++rank )
-        {
-            JeveuxChar* retour = new JeveuxChar[ sizes2[ rank ] ];
+        for ( int rank = 0; rank < _nbProcs; ++rank ) {
+            JeveuxChar *retour = new JeveuxChar[sizes2[rank]];
 
-            if( rank == _rank )
-                for( int position = 0; position < sizes2[ rank ]; ++position )
-                    retour[ position ] = toGather[ position ];
+            if ( rank == _rank )
+                for ( int position = 0; position < sizes2[rank]; ++position )
+                    retour[position] = toGather[position];
 
-            aster_mpi_bcast( retour, length*sizes2[ rank ],
-                             MPI_CHAR, rank, _commWorld );
-            for( int position = 0; position < sizes2[ rank ]; ++position )
+            aster_mpi_bcast( retour, length * sizes2[rank], MPI_CHAR, rank, _commWorld );
+            for ( int position = 0; position < sizes2[rank]; ++position )
                 toReturn.push_back( JeveuxChar( retour[position] ) );
-            delete [] retour;
+            delete[] retour;
         }
 
         return toReturn;

@@ -27,20 +27,15 @@
 #include <PythonBindings/factory.h>
 #include "PythonBindings/GeneralizedDOFNumberingInterface.h"
 
-
-void exportGeneralizedDOFNumberingToPython()
-{
+void exportGeneralizedDOFNumberingToPython() {
     using namespace boost::python;
 
     class_< GeneralizedDOFNumberingInstance,
-            GeneralizedDOFNumberingInstance::GeneralizedDOFNumberingPtr,
-            bases< DataStructure > > ( "GeneralizedDOFNumbering", no_init )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< GeneralizedDOFNumberingInstance >) )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< GeneralizedDOFNumberingInstance,
-                             std::string >) )
+            GeneralizedDOFNumberingInstance::GeneralizedDOFNumberingPtr, bases< DataStructure > >(
+        "GeneralizedDOFNumbering", no_init )
+        .def( "__init__", make_constructor(&initFactoryPtr< GeneralizedDOFNumberingInstance >))
+        .def( "__init__",
+              make_constructor(&initFactoryPtr< GeneralizedDOFNumberingInstance, std::string >))
         .def( "getGeneralizedModel", &GeneralizedDOFNumberingInstance::getGeneralizedModel )
-        .def( "setGeneralizedModel", &GeneralizedDOFNumberingInstance::setGeneralizedModel )
-    ;
+        .def( "setGeneralizedModel", &GeneralizedDOFNumberingInstance::setGeneralizedModel );
 };

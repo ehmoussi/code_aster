@@ -3,7 +3,7 @@
  * @brief Implementation de BaseMeshInstance
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -33,93 +33,79 @@
 #include "Supervis/ResultNaming.h"
 #include "RunManager/LogicalUnitManagerCython.h"
 
-bool MeshInstance::addGroupOfNodesFromNodes( const std::string& name, const VectorString& vec )
-    throw( std::runtime_error )
-{
+bool MeshInstance::addGroupOfNodesFromNodes( const std::string &name,
+                                             const VectorString &vec ) throw( std::runtime_error ) {
     CommandSyntax cmdSt( "DEFI_GROUP" );
     cmdSt.setResult( ResultNaming::getCurrentName(), "MAILLAGE" );
 
     CapyConvertibleContainer toCapyConverter;
-    toCapyConverter.add( new CapyConvertibleValue< std::string >
-                                ( false, "MAILLAGE", getName(), true ) );
+    toCapyConverter.add(
+        new CapyConvertibleValue< std::string >( false, "MAILLAGE", getName(), true ) );
 
     CapyConvertibleContainer toCapyConverter2( "CREA_GROUP_NO" );
-    toCapyConverter2.add( new CapyConvertibleValue< VectorString >
-                                ( false, "NOEUD", vec, true ) );
-    toCapyConverter2.add( new CapyConvertibleValue< std::string >
-                                ( false, "NOM", name, true ) );
+    toCapyConverter2.add( new CapyConvertibleValue< VectorString >( false, "NOEUD", vec, true ) );
+    toCapyConverter2.add( new CapyConvertibleValue< std::string >( false, "NOM", name, true ) );
 
     CapyConvertibleSyntax syntax;
     syntax.setSimpleKeywordValues( toCapyConverter );
     syntax.addCapyConvertibleContainer( toCapyConverter2 );
 
     cmdSt.define( syntax );
-    try
-    {
+    try {
         ASTERINTEGER op = 104;
         CALL_EXECOP( &op );
-    }
-    catch( ... )
-    {
+    } catch ( ... ) {
         throw;
     }
     return true;
 };
 
-bool BaseMeshInstance::readMeshFile( const std::string& fileName, const std::string& format )
-    throw ( std::runtime_error )
-{
+bool BaseMeshInstance::readMeshFile( const std::string &fileName,
+                                     const std::string &format ) throw( std::runtime_error ) {
     FileTypeCython type = Ascii;
-    if( format == "MED" ) type = Binary;
+    if ( format == "MED" )
+        type = Binary;
     LogicalUnitFileCython file1( fileName, type, Old );
 
     SyntaxMapContainer syntax;
 
-    if( format == "GIBI" || format == "GMSH" )
-    {
+    if ( format == "GIBI" || format == "GMSH" ) {
         // Fichier temporaire
         LogicalUnitFileCython file2( "", Ascii, Append );
         std::string preCmd = "PRE_" + format;
         ASTERINTEGER op2 = 47;
-        if( format == "GIBI" ) op2 = 49;
+        if ( format == "GIBI" )
+            op2 = 49;
 
-        CommandSyntax* cmdSt2 = new CommandSyntax( preCmd );
+        CommandSyntax *cmdSt2 = new CommandSyntax( preCmd );
         SyntaxMapContainer syntax2;
-        syntax2.container[ "UNITE_" + format ] = file1.getLogicalUnit();
-        syntax2.container[ "UNITE_MAILLAGE" ] = file2.getLogicalUnit();
+        syntax2.container["UNITE_" + format] = file1.getLogicalUnit();
+        syntax2.container["UNITE_MAILLAGE"] = file2.getLogicalUnit();
         cmdSt2->define( syntax2 );
 
-        try
-        {
+        try {
             CALL_EXECOP( &op2 );
-        }
-        catch( ... )
-        {
+        } catch ( ... ) {
             throw;
         }
         delete cmdSt2;
-        syntax.container[ "FORMAT" ] = "ASTER";
-        syntax.container[ "UNITE" ] = file2.getLogicalUnit();
+        syntax.container["FORMAT"] = "ASTER";
+        syntax.container["UNITE"] = file2.getLogicalUnit();
 
         CommandSyntax cmdSt( "LIRE_MAILLAGE" );
         cmdSt.setResult( ResultNaming::getCurrentName(), "MAILLAGE" );
 
         cmdSt.define( syntax );
 
-        try
-        {
+        try {
             ASTERINTEGER op = 1;
             CALL_EXECOP( &op );
-        }
-        catch( ... )
-        {
+        } catch ( ... ) {
             throw;
         }
-    }
-    else
-    {
-        syntax.container[ "FORMAT" ] = format;
-        syntax.container[ "UNITE" ] = file1.getLogicalUnit();
+    } else {
+        syntax.container["FORMAT"] = format;
+        syntax.container["UNITE"] = file1.getLogicalUnit();
         std::cout << "UNITE " << file1.getLogicalUnit() << std::endl;
 
         CommandSyntax cmdSt( "LIRE_MAILLAGE" );
@@ -127,13 +113,10 @@ bool BaseMeshInstance::readMeshFile( const std::string& fileName, const std::str
 
         cmdSt.define( syntax );
 
-        try
-        {
+        try {
             ASTERINTEGER op = 1;
             CALL_EXECOP( &op );
-        }
-        catch( ... )
-        {
+        } catch ( ... ) {
             throw;
         }
     }
@@ -141,33 +124,25 @@ bool BaseMeshInstance::readMeshFile( const std::string& fileName, const std::str
     return true;
 };
 
-bool MeshInstance::readAsterMeshFile( const std::string& fileName )
-    throw ( std::runtime_error )
-{
+bool MeshInstance::readAsterMeshFile( const std::string &fileName ) throw( std::runtime_error ) {
     readMeshFile( fileName, "ASTER" );
 
     return true;
 };
 
-bool MeshInstance::readGibiFile( const std::string& fileName )
-    throw ( std::runtime_error )
-{
+bool MeshInstance::readGibiFile( const std::string &fileName ) throw( std::runtime_error ) {
     readMeshFile( fileName, "GIBI" );
 
     return true;
 };
 
-bool MeshInstance::readGmshFile( const std::string& fileName )
-    throw ( std::runtime_error )
-{
+bool MeshInstance::readGmshFile( const std::string &fileName ) throw( std::runtime_error ) {
     readMeshFile( fileName, "GMSH" );
 
     return true;
 };
 
-bool BaseMeshInstance::readMedFile( const std::string& fileName )
-    throw ( std::runtime_error )
-{
+bool BaseMeshInstance::readMedFile( const std::string &fileName ) throw( std::runtime_error ) {
     readMeshFile( fileName, "MED" );
 
     return true;

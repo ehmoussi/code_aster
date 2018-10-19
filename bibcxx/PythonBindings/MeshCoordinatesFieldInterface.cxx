@@ -3,7 +3,7 @@
  * @brief Interface python de MeshCoordinates
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -28,16 +28,11 @@
 #include "DataFields/MeshCoordinatesField.h"
 #include <boost/python.hpp>
 
-void exportMeshCoordinatesFieldToPython()
-{
+void exportMeshCoordinatesFieldToPython() {
     using namespace boost::python;
 
-    class_< MeshCoordinatesFieldInstance, MeshCoordinatesFieldPtr,
-            bases< DataStructure > >("MeshCoordinatesField", no_init)
-        .def( "__getitem__", +[](const MeshCoordinatesFieldInstance& v, int i)
-        {
-            return v.operator[](i);
-        })
-    ;
-
+    class_< MeshCoordinatesFieldInstance, MeshCoordinatesFieldPtr, bases< DataStructure > >(
+        "MeshCoordinatesField", no_init )
+        .def( "__getitem__",
+              +[]( const MeshCoordinatesFieldInstance &v, int i ) { return v.operator[]( i ); } );
 };

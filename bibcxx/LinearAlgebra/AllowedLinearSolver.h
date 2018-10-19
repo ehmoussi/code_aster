@@ -33,17 +33,30 @@
  */
 enum LinearSolverEnum { MultFront, Ldlt, Mumps, Petsc, Gcpc };
 const int nbSolvers = 5;
-extern const char* LinearSolverNames[nbSolvers];
+extern const char *LinearSolverNames[nbSolvers];
 
 /**
  * @enum Renumbering
  * @brief Declaration des renumeroteurs
  * @author Nicolas Sellenet
  */
-enum Renumbering { MD, MDA, Metis, RCMK, AMD, AMF, PORD, QAMD,
-                   Scotch, Auto, Parmetis, Ptscotch, Sans };
+enum Renumbering {
+    MD,
+    MDA,
+    Metis,
+    RCMK,
+    AMD,
+    AMF,
+    PORD,
+    QAMD,
+    Scotch,
+    Auto,
+    Parmetis,
+    Ptscotch,
+    Sans
+};
 const int nbRenumberings = 13;
-extern const char* RenumberingNames[nbRenumberings];
+extern const char *RenumberingNames[nbRenumberings];
 
 const int nbRenumberingMultFront = 3;
 extern const Renumbering MultFrontRenumbering[nbRenumberingMultFront];
@@ -64,10 +77,19 @@ extern const Renumbering GcpcRenumbering[nbRenumberingGcpc];
  * @enum Preconditioning
  * @author Nicolas Sellenet
  */
-enum Preconditioning { IncompleteLdlt, SimplePrecisionLdlt, Jacobi, Sor, Ml,
-                       Boomer, Gamg, LagrBloc, Without };
+enum Preconditioning {
+    IncompleteLdlt,
+    SimplePrecisionLdlt,
+    Jacobi,
+    Sor,
+    Ml,
+    Boomer,
+    Gamg,
+    LagrBloc,
+    Without
+};
 const int nbPreconditionings = 9;
-extern const char* PreconditioningNames[nbPreconditionings];
+extern const char *PreconditioningNames[nbPreconditionings];
 
 const int nbPreconditioningGcpc = 3;
 extern const Preconditioning GcpcPreconditioning[nbPreconditioningGcpc];
@@ -78,7 +100,7 @@ extern const Preconditioning GcpcPreconditioning[nbPreconditioningGcpc];
  */
 enum IterativeSolverAlgorithm { ConjugateGradiant, ConjugateResidual, GMRes, GCR, FGMRes };
 const int nbIterativeSolverAlgorithms = 5;
-extern const char* IterativeSolverAlgorithmNames[nbIterativeSolverAlgorithms];
+extern const char *IterativeSolverAlgorithmNames[nbIterativeSolverAlgorithms];
 
 /**
  * @enum LagrangeTreatment
@@ -86,7 +108,7 @@ extern const char* IterativeSolverAlgorithmNames[nbIterativeSolverAlgorithms];
  */
 enum LagrangeTreatment { Eliminate, NotEliminate, DoubleLagrangeEliminate };
 const int nbLagrangeTreatments = 3;
-extern const char* LagrangeTreatmentNames[nbLagrangeTreatments];
+extern const char *LagrangeTreatmentNames[nbLagrangeTreatments];
 
 /**
  * @enum MemoryManagement
@@ -94,7 +116,7 @@ extern const char* LagrangeTreatmentNames[nbLagrangeTreatments];
  */
 enum MemoryManagement { InCore, OutOfCore, Automatic, Evaluation };
 const int nbMemoryManagements = 4;
-extern const char* MemoryManagementNames[nbMemoryManagements];
+extern const char *MemoryManagementNames[nbMemoryManagements];
 
 /**
  * @enum MatrixType
@@ -102,24 +124,27 @@ extern const char* MemoryManagementNames[nbMemoryManagements];
  */
 enum MatrixType { NonSymetric, Symetric, SymetricPositiveDefinite, Undefined };
 const int nbMatrixTypes = 4;
-extern const char* MatrixTypeNames[nbMatrixTypes];
+extern const char *MatrixTypeNames[nbMatrixTypes];
 
 /**
  * @enum MumpsPosttreatment
  * @author Nicolas Sellenet
  */
-enum MumpsPostTreatment { WithoutPostTreatment, AutomaticPostTreatment,
-                          ForcedPostTreatment, MinimalPostTreatment };
+enum MumpsPostTreatment {
+    WithoutPostTreatment,
+    AutomaticPostTreatment,
+    ForcedPostTreatment,
+    MinimalPostTreatment
+};
 const int nbMumpsPostTreatments = 4;
-extern const char* MumpsPostTreatmentNames[nbMumpsPostTreatments];
+extern const char *MumpsPostTreatmentNames[nbMumpsPostTreatments];
 
 /**
  * @enum MumpsAcceleration
  * @author Nicolas Sellenet
  */
-enum MumpsAcceleration { AutomaticAcceleration, FullRank, FullRankPlus,
-                         LowRank, LowRankPlus };
+enum MumpsAcceleration { AutomaticAcceleration, FullRank, FullRankPlus, LowRank, LowRankPlus };
 const int nbMumpsAcceleration = 5;
-extern const char* MumpsAccelerationNames[nbMumpsAcceleration];
+extern const char *MumpsAccelerationNames[nbMumpsAcceleration];
 
 #endif /* ALLOWEDLINEARSOLVER_H_ */

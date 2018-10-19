@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe FiberGeometry
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -38,28 +38,27 @@
  * @brief Cette classe decrit la sd gfibre
  * @author Nicolas Sellenet
  */
-class FiberGeometryInstance: public DataStructure
-{
-private:
+class FiberGeometryInstance : public DataStructure {
+  private:
     /** @brief Objet Jeveux '.NOMS_GROUPES' */
     JeveuxBidirectionalMapChar24 _nomsGroupes;
     /** @brief Objet Jeveux '.NB_FIBRE_GROUPE' */
-    JeveuxVectorLong             _nbFibreGroupe;
+    JeveuxVectorLong _nbFibreGroupe;
     /** @brief Objet Jeveux '.POINTEUR' */
-    JeveuxVectorLong             _pointeur;
+    JeveuxVectorLong _pointeur;
     /** @brief Objet Jeveux '.TYPE_GROUPE' */
-    JeveuxVectorLong             _typeGroupe;
+    JeveuxVectorLong _typeGroupe;
     /** @brief Objet Jeveux '.CARFI' */
-    JeveuxVectorDouble           _carfi;
+    JeveuxVectorDouble _carfi;
     /** @brief Objet Jeveux '.GFMA' */
-    JeveuxVectorChar8            _gfma;
+    JeveuxVectorChar8 _gfma;
     /** @brief Objet Jeveux '.CARACSD' */
-    JeveuxVectorLong             _caracsd;
+    JeveuxVectorLong _caracsd;
 
     /** @brief Booleen indiquant si le maillage est vide */
-    bool                         _isEmpty;
+    bool _isEmpty;
 
-public:
+  public:
     /**
      * @typedef FiberGeometryPtr
      * @brief Pointeur intelligent vers un FiberGeometry
@@ -69,43 +68,32 @@ public:
     /**
      * @brief Constructeur
      */
-    FiberGeometryInstance():
-        FiberGeometryInstance( ResultNaming::getNewResultName() )
-    {
-    };
+    FiberGeometryInstance() : FiberGeometryInstance( ResultNaming::getNewResultName() ){};
 
     /**
      * @brief Constructeur
      */
-    FiberGeometryInstance( const std::string name ):
-        DataStructure( name, 8, "GFIBRE" ),
-        _nomsGroupes( JeveuxBidirectionalMapChar24( getName() + ".NOMS_GROUPES" ) ),
-        _nbFibreGroupe( JeveuxVectorLong( getName() + ".NB_FIBRE_GROUPE" ) ),
-        _pointeur( JeveuxVectorLong( getName() + ".POINTEUR" ) ),
-        _typeGroupe( JeveuxVectorLong( getName() + ".TYPE_GROUPE" ) ),
-        _carfi( JeveuxVectorDouble( getName() + ".CARFI" ) ),
-        _gfma( JeveuxVectorChar8( getName() + ".GFMA" ) ),
-        _caracsd( JeveuxVectorLong( getName() + ".CARACSD" ) ),
-        _isEmpty( true )
-    {};
+    FiberGeometryInstance( const std::string name )
+        : DataStructure( name, 8, "GFIBRE" ),
+          _nomsGroupes( JeveuxBidirectionalMapChar24( getName() + ".NOMS_GROUPES" ) ),
+          _nbFibreGroupe( JeveuxVectorLong( getName() + ".NB_FIBRE_GROUPE" ) ),
+          _pointeur( JeveuxVectorLong( getName() + ".POINTEUR" ) ),
+          _typeGroupe( JeveuxVectorLong( getName() + ".TYPE_GROUPE" ) ),
+          _carfi( JeveuxVectorDouble( getName() + ".CARFI" ) ),
+          _gfma( JeveuxVectorChar8( getName() + ".GFMA" ) ),
+          _caracsd( JeveuxVectorLong( getName() + ".CARACSD" ) ), _isEmpty( true ){};
 
     /**
      * @brief Destructeur
      */
-    ~FiberGeometryInstance()
-    {};
+    ~FiberGeometryInstance(){};
 
     /**
      * @brief Fonction permettant de savoir si un maillage est vide (non relu par exemple)
      * @return retourne true si le maillage est vide
      */
-    bool isEmpty() const
-    {
-        return _isEmpty;
-    };
+    bool isEmpty() const { return _isEmpty; };
 };
-
-
 
 /**
  * @typedef FiberGeometryPtr

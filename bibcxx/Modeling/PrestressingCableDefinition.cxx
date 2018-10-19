@@ -3,7 +3,7 @@
  * @brief Implementation de PrestressingCableDefinitionInstance
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 20146 EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 22018 EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -29,27 +29,18 @@
 #include "Supervis/ResultNaming.h"
 
 PrestressingCableDefinitionInstance::PrestressingCableDefinitionInstance(
-        const std::string jeveuxName,
-        const ModelPtr& model,
-        const MaterialOnMeshPtr& mater,
-        const ElementaryCharacteristicsPtr& cara ):
-    DataStructure( jeveuxName, 8, "CABL_PRECONT" ),
-    _model( model ),
-    _mater( mater ),
-    _cara( cara ),
-    _mesh( boost::static_pointer_cast<MeshInstance>(_model->getSupportMesh()) ),
-    _sigin( new PCFieldOnMeshDoubleInstance( getName() + ".CHME.SIGIN", _mesh ) ),
-    _cableBP( new TableInstance( getName() + "CABLEBP    " ) ),
-    _cableGL( new TableInstance( getName() + "CABLEGL    " ) ),
-    _lirela( new ListOfLinearRelationsDouble( getName() + ".LIRELA    " ) ),
-    _isEmpty( true )
-{}
+    const std::string jeveuxName, const ModelPtr &model, const MaterialOnMeshPtr &mater,
+    const ElementaryCharacteristicsPtr &cara )
+    : DataStructure( jeveuxName, 8, "CABL_PRECONT" ), _model( model ), _mater( mater ),
+      _cara( cara ),
+      _mesh( boost::static_pointer_cast< MeshInstance >( _model->getSupportMesh() ) ),
+      _sigin( new PCFieldOnMeshDoubleInstance( getName() + ".CHME.SIGIN", _mesh ) ),
+      _cableBP( new TableInstance( getName() + "CABLEBP    " ) ),
+      _cableGL( new TableInstance( getName() + "CABLEGL    " ) ),
+      _lirela( new ListOfLinearRelationsDouble( getName() + ".LIRELA    " ) ), _isEmpty( true ) {}
 
 PrestressingCableDefinitionInstance::PrestressingCableDefinitionInstance(
-        const ModelPtr& model,
-        const MaterialOnMeshPtr& mater,
-        const ElementaryCharacteristicsPtr& cara ):
-    PrestressingCableDefinitionInstance::PrestressingCableDefinitionInstance(
-        ResultNaming::getNewResultName(), model, mater, cara
-    )
-{}
+    const ModelPtr &model, const MaterialOnMeshPtr &mater,
+    const ElementaryCharacteristicsPtr &cara )
+    : PrestressingCableDefinitionInstance::PrestressingCableDefinitionInstance(
+          ResultNaming::getNewResultName(), model, mater, cara ) {}

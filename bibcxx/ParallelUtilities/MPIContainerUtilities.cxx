@@ -3,7 +3,7 @@
  * @brief Implementation de MPIContainerUtilities
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -29,9 +29,8 @@
 
 #include "ParallelUtilities/MPIContainerUtilities.h"
 
-MPIContainerUtilities::MPIContainerUtilities(): _nbProcs( getMPINumberOfProcs() ),
-                                                _rank( getMPIRank() ),
-                                                _commWorld( aster_get_comm_world() )
-{};
+MPIContainerUtilities::MPIContainerUtilities()
+    : _nbProcs( getMPINumberOfProcs() ), _rank( getMPIRank() ),
+      _commWorld( aster_get_comm_world() ){};
 
 #endif /* _USE_MPI */

@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe FunctionInterface
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -26,13 +26,11 @@
 
 #include <boost/python.hpp>
 
-
 /** @brief Factory for '__init__' constructor without 'DSTypePtr'.
  */
-template< typename DSType, typename... Args >
-static boost::shared_ptr<DSType> initFactoryPtr( Args... args )
-{
-    return boost::shared_ptr<DSType>( new DSType( args... ) );
+template < typename DSType, typename... Args >
+static boost::shared_ptr< DSType > initFactoryPtr( Args... args ) {
+    return boost::shared_ptr< DSType >( new DSType( args... ) );
 };
 
 #endif /* FACTORY_H_ */

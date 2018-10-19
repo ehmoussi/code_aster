@@ -3,7 +3,7 @@
  * @brief Implementation de CapyConvertibleContainer
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -23,10 +23,9 @@
 
 #include "Utilities/CapyConvertibleValue.h"
 
-CapyConvertibleContainer operator+( const CapyConvertibleContainer& toAdd1,
-                                    const CapyConvertibleContainer& toAdd2 )
-{
+CapyConvertibleContainer operator+( const CapyConvertibleContainer &toAdd1,
+                                    const CapyConvertibleContainer &toAdd2 ) {
     CapyConvertibleContainer retour = toAdd1;
-    retour += toAdd2; 
+    retour += toAdd2;
     return retour;
 };

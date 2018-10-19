@@ -4,9 +4,9 @@
 /**
  * @file MultElasContainer.h
  * @brief Fichier entete de la classe MultElasContainer
- * @author Natacha Béreux 
+ * @author Natacha Béreux
  * @section LICENCE
- *   Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -33,17 +33,13 @@
  * @brief Cette classe correspond a un mode_meca
  * @author Nicolas Sellenet
  */
-class MultElasContainerInstance: public ResultsContainerInstance
-{
-private:
-
-public:
+class MultElasContainerInstance : public ResultsContainerInstance {
+  private:
+  public:
     /**
      * @brief Constructeur
      */
-    MultElasContainerInstance(): ResultsContainerInstance( "MULT_ELAS" )
-    {};
-
+    MultElasContainerInstance() : ResultsContainerInstance( "MULT_ELAS" ){};
 };
 
 /**

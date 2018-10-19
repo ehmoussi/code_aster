@@ -6,7 +6,7 @@
  * @brief Fichier entete permettant de decrire un fichier sur unité logique
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -35,69 +35,59 @@ enum FileAccessCython { New, Append, Old };
  * @brief This class is a mirror of class LogicalUnitFile in Python.
  * @author Nicolas Sellenet
  */
-class LogicalUnitFileCython
-{
-    private:
-        /** @brief Nom du fichier */
-        std::string _fileName;
-        /** @brief Booleen pour savoir si un fichier est utilisable */
-        bool _isUsable;
-        /** @brief Associated logical unit */
-        int _logicalUnit;
+class LogicalUnitFileCython {
+  private:
+    /** @brief Nom du fichier */
+    std::string _fileName;
+    /** @brief Booleen pour savoir si un fichier est utilisable */
+    bool _isUsable;
+    /** @brief Associated logical unit */
+    int _logicalUnit;
 
-    public:
-        /**
-         * @brief Constructeur
-         * @param name Nom du fichier
-         * @param type type du fichier
-         * @param access Accés au fichier
-         */
-        LogicalUnitFileCython():
-            _fileName( "" ),
-            _isUsable( false )
-        {};
+  public:
+    /**
+     * @brief Constructeur
+     * @param name Nom du fichier
+     * @param type type du fichier
+     * @param access Accés au fichier
+     */
+    LogicalUnitFileCython() : _fileName( "" ), _isUsable( false ){};
 
-        /**
-         * @brief Constructeur
-         * @param name Nom du fichier
-         * @param type type du fichier
-         * @param access Accés au fichier
-         */
-        LogicalUnitFileCython( const std::string name, const FileTypeCython type,
-                               const FileAccessCython access ):
-            _fileName( name ),
-            _isUsable( true )
-        {
-            _logicalUnit = openLogicalUnitFile( name.c_str(), type, access );
-        };
+    /**
+     * @brief Constructeur
+     * @param name Nom du fichier
+     * @param type type du fichier
+     * @param access Accés au fichier
+     */
+    LogicalUnitFileCython( const std::string name, const FileTypeCython type,
+                           const FileAccessCython access )
+        : _fileName( name ), _isUsable( true ) {
+        _logicalUnit = openLogicalUnitFile( name.c_str(), type, access );
+    };
 
-        /**
-         * @brief Destructeur
-         */
-        ~LogicalUnitFileCython()
-        {
-            if( _isUsable ) releaseLogicalUnitFile( _logicalUnit );
-        };
+    /**
+     * @brief Destructeur
+     */
+    ~LogicalUnitFileCython() {
+        if ( _isUsable )
+            releaseLogicalUnitFile( _logicalUnit );
+    };
 
-        /**
-         * @brief Recuperer le numéro d'unité logique correspondant
-         * @return Unité logique
-         */
-        bool isUsable( void ) const
-        {
-            return _isUsable;
-        };
+    /**
+     * @brief Recuperer le numéro d'unité logique correspondant
+     * @return Unité logique
+     */
+    bool isUsable( void ) const { return _isUsable; };
 
-        /**
-         * @brief Recuperer le numéro d'unité logique correspondant
-         * @return Unité logique
-         */
-        ASTERINTEGER getLogicalUnit( void ) const throw( std::runtime_error )
-        {
-            if( !_isUsable )
-                throw std::runtime_error( "File not initialized" );
-            return _logicalUnit;
-        };
+    /**
+     * @brief Recuperer le numéro d'unité logique correspondant
+     * @return Unité logique
+     */
+    ASTERINTEGER getLogicalUnit( void ) const throw( std::runtime_error ) {
+        if ( !_isUsable )
+            throw std::runtime_error( "File not initialized" );
+        return _logicalUnit;
+    };
 };
 
 #endif /* LOGICALUNITMANAGER_H_ */

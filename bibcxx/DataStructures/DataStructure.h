@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe DataStructure
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -38,121 +38,101 @@
 #include "MemoryManager/JeveuxAllowedTypes.h"
 #include "DataStructures/DataStructureNaming.h"
 
-
 /**
  * @class DataStructure
  * @brief Classe mere des classes representant des sd_aster
  * @author Nicolas Sellenet
  * @todo rendre cette classe virtuelle pure ?
  */
-class DataStructure
-{
-    public:
-        /** @typedef shared_ptr d'une DataStructure */
-        typedef boost::shared_ptr< DataStructure > DataStructurePtr;
+class DataStructure {
+  public:
+    /** @typedef shared_ptr d'une DataStructure */
+    typedef boost::shared_ptr< DataStructure > DataStructurePtr;
 
-    private:
-        /** @brief Nom de la sd */
-        /** @todo remettre le const */
-        std::string  _name;
-        /** @brief Type of memory allocation */
-        JeveuxMemory _memoryType;
-        /** @brief Object that stores the DataStructure type for jeveux requests */
-        JeveuxVectorChar24 _tco;
-        /** @brief Vector which contains reference to other DataStructure */
-        std::vector< DataStructurePtr > _referenceVector;
+  private:
+    /** @brief Nom de la sd */
+    /** @todo remettre le const */
+    std::string _name;
+    /** @brief Type of memory allocation */
+    JeveuxMemory _memoryType;
+    /** @brief Object that stores the DataStructure type for jeveux requests */
+    JeveuxVectorChar24 _tco;
+    /** @brief Vector which contains reference to other DataStructure */
+    std::vector< DataStructurePtr > _referenceVector;
 
-    public:
-        /**
-         * @brief Constructeur
-         * @param name Name of the jeveux datastructure
-         * @param nameLength Length of the jeveux basename
-         * @param type code_aster type of the datastructure
-         * @param memType Jeveux memory type
-         */
-        DataStructure( const std::string name, const int nameLength,
-                       const std::string type = "",
-                       const JeveuxMemory memType = Permanent );
+  public:
+    /**
+     * @brief Constructeur
+     * @param name Name of the jeveux datastructure
+     * @param nameLength Length of the jeveux basename
+     * @param type code_aster type of the datastructure
+     * @param memType Jeveux memory type
+     */
+    DataStructure( const std::string name, const int nameLength, const std::string type = "",
+                   const JeveuxMemory memType = Permanent );
 
-        /**
-         * @brief Constructeur
-         * @param type code_aster type of the datastructure
-         * @param memType Jeveux memory type
-         * @param nameLength Length of the jeveux basename
-         */
-        DataStructure( const std::string type, const JeveuxMemory memType,
-                       int nameLength );
+    /**
+     * @brief Constructeur
+     * @param type code_aster type of the datastructure
+     * @param memType Jeveux memory type
+     * @param nameLength Length of the jeveux basename
+     */
+    DataStructure( const std::string type, const JeveuxMemory memType, int nameLength );
 
-        /**
-         * @brief Destructeur
-         */
-        ~DataStructure();
+    /**
+     * @brief Destructeur
+     */
+    ~DataStructure();
 
-        /**
-         * @brief Function to add a reference to another datastructure
-         * @param ds datastructure to reference
-         */
-        void addReference( const DataStructurePtr& ds )
-        {
-            _referenceVector.push_back( ds );
-        };
+    /**
+     * @brief Function to add a reference to another datastructure
+     * @param ds datastructure to reference
+     */
+    void addReference( const DataStructurePtr &ds ) { _referenceVector.push_back( ds ); };
 
-        /**
-         * @brief Function membre debugPrint
-         * @param logicalUnit Unite logique d'impression
-         */
-        void debugPrint( const int logicalUnit = 6 ) const;
+    /**
+     * @brief Function membre debugPrint
+     * @param logicalUnit Unite logique d'impression
+     */
+    void debugPrint( const int logicalUnit = 6 ) const;
 
-        /**
-         * @brief Function membre debugPrint
-         */
-        void debugPrint() const
-        {
-            debugPrint(6);
-        };
+    /**
+     * @brief Function membre debugPrint
+     */
+    void debugPrint() const { debugPrint( 6 ); };
 
-        /**
-         * @brief Function membre getMemoryType
-         * @return le type de mémoire (globale ou volatile)
-         */
-        const JeveuxMemory& getMemoryType() const
-        {
-            return _memoryType;
-        };
+    /**
+     * @brief Function membre getMemoryType
+     * @return le type de mémoire (globale ou volatile)
+     */
+    const JeveuxMemory &getMemoryType() const { return _memoryType; };
 
-        /**
-         * @brief Function membre getName
-         * @return une chaine contenant le nom de la sd
-         */
-        const std::string& getName() const
-        {
-            return _name;
-        };
+    /**
+     * @brief Function membre getName
+     * @return une chaine contenant le nom de la sd
+     */
+    const std::string &getName() const { return _name; };
 
-        /**
-         * @brief Function membre getType
-         * @return le type de la sd
-         */
-        const std::string getType() const
-        {
-            _tco->updateValuePointer();
-            return (*_tco)[0].rstrip();
-        };
+    /**
+     * @brief Function membre getType
+     * @return le type de la sd
+     */
+    const std::string getType() const {
+        _tco->updateValuePointer();
+        return ( *_tco )[0].rstrip();
+    };
 
-        /**
-         * @brief Virtual function to update DataStructure
-         */
-        virtual bool update() throw ( std::runtime_error )
-        {
-            return true;
-        };
+    /**
+     * @brief Virtual function to update DataStructure
+     */
+    virtual bool update() throw( std::runtime_error ) { return true; };
 
-    protected:
-        /**
-         * @brief Methode servant a fixer a posteriori le type d'une sd
-         * @param newType chaine contenant le nouveau type
-         */
-        void setType( const std::string newType );
+  protected:
+    /**
+     * @brief Methode servant a fixer a posteriori le type d'une sd
+     * @param newType chaine contenant le nouveau type
+     */
+    void setType( const std::string newType );
 };
 
 #endif

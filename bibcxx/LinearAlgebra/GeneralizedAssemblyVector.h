@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe GeneralizedAssemblyVector
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -29,33 +29,29 @@
 #include "astercxx.h"
 
 #include "DataStructures/DataStructure.h"
-#include "MemoryManager/JeveuxVector.h"
 #include "MemoryManager/JeveuxCollection.h"
-
+#include "MemoryManager/JeveuxVector.h"
 
 /**
  * @class GenericGeneralizedAssemblyVectorInstance
  * @brief Cette classe correspond a un matr_asse_gene
  * @author Nicolas Sellenet
  */
-class GenericGeneralizedAssemblyVectorInstance: public DataStructure
-{
-private:
+class GenericGeneralizedAssemblyVectorInstance : public DataStructure {
+  private:
     /** @brief Objet Jeveux '.DESC' */
     JeveuxVectorDouble _desc;
     /** @brief Objet Jeveux '.REFE' */
     JeveuxVectorChar24 _refe;
 
-public:
-
+  public:
     /**
      * @brief Constructeur
      */
-    GenericGeneralizedAssemblyVectorInstance( const std::string name ):
-        DataStructure( name, 19, "VECT_ASSE_GENE", Permanent ),
-        _desc( JeveuxVectorDouble( getName() + ".DISC" ) ),
-        _refe( JeveuxVectorChar24( getName() + ".REFE" ) )
-    {};
+    GenericGeneralizedAssemblyVectorInstance( const std::string name )
+        : DataStructure( name, 19, "VECT_ASSE_GENE", Permanent ),
+          _desc( JeveuxVectorDouble( getName() + ".DISC" ) ),
+          _refe( JeveuxVectorChar24( getName() + ".REFE" ) ){};
 };
 
 /**
@@ -63,56 +59,50 @@ public:
  * @brief Cette classe correspond a un vect_asse_gene
  * @author Nicolas Sellenet
  */
-template< class ValueType >
-class GeneralizedAssemblyVectorInstance: public GenericGeneralizedAssemblyVectorInstance
-{
-private:
+template < class ValueType >
+class GeneralizedAssemblyVectorInstance : public GenericGeneralizedAssemblyVectorInstance {
+  private:
     /** @brief Objet Jeveux '.VALE' */
     JeveuxVector< ValueType > _valm;
 
     /**
      * @brief definir le type
      */
-    template< class type = ValueType >
-    typename std::enable_if< std::is_same< type, double >::value, void>::type
-    setVectorType()
-    {
+    template < class type = ValueType >
+    typename std::enable_if< std::is_same< type, double >::value, void >::type setVectorType() {
         setType( "VECT_ASSE_GENE" );
     };
 
     /**
      * @brief definir le type
      */
-    template< class type = ValueType >
-    typename std::enable_if< std::is_same< type, DoubleComplex >::value, void>::type
-    setVectorType()
-    {
+    template < class type = ValueType >
+    typename std::enable_if< std::is_same< type, DoubleComplex >::value, void >::type
+    setVectorType() {
         setType( "VECT_ASSE_GENE_C" );
     };
 
-public:
+  public:
     /**
      * @typedef GeneralizedAssemblyVectorPtr
      * @brief Pointeur intelligent vers un GeneralizedAssemblyVector
      */
-    typedef boost::shared_ptr< GeneralizedAssemblyVectorInstance<ValueType> >
-            GeneralizedAssemblyVectorPtr;
+    typedef boost::shared_ptr< GeneralizedAssemblyVectorInstance< ValueType > >
+        GeneralizedAssemblyVectorPtr;
 
     /**
      * @brief Constructeur
      */
-    GeneralizedAssemblyVectorInstance():
-        GeneralizedAssemblyVectorInstance( ResultNaming::getNewResultName() )
-    {};
+    GeneralizedAssemblyVectorInstance()
+        : GeneralizedAssemblyVectorInstance( ResultNaming::getNewResultName() ){};
 
     /**
      * @brief Constructeur
      */
 
-    GeneralizedAssemblyVectorInstance( const std::string name ):
-        GenericGeneralizedAssemblyVectorInstance( name ),
-        _valm( JeveuxVector< ValueType >( getName() + ".VALE" ) )
-    {
+    GeneralizedAssemblyVectorInstance( const std::string name )
+        : GenericGeneralizedAssemblyVectorInstance( name ),
+          _valm( JeveuxVector< ValueType >( getName() + ".VALE" ) ) {
         GeneralizedAssemblyVectorInstance< ValueType >::setVectorType();
     };
 };
@@ -126,18 +116,21 @@ typedef GeneralizedAssemblyVectorInstance< DoubleComplex > GeneralizedAssemblyVe
  * @typedef GenericGeneralizedAssemblyVectorPtr
  * @brief Pointeur intelligent vers un GenericGeneralizedAssemblyVectorInstance
  */
-typedef boost::shared_ptr< GenericGeneralizedAssemblyVectorInstance > GenericGeneralizedAssemblyVectorPtr;
+typedef boost::shared_ptr< GenericGeneralizedAssemblyVectorInstance >
+    GenericGeneralizedAssemblyVectorPtr;
 
 /**
  * @typedef GeneralizedAssemblyVectorDoublePtr
  * @brief Pointeur intelligent vers un GeneralizedAssemblyVectorDoubleInstance
  */
-typedef boost::shared_ptr< GeneralizedAssemblyVectorDoubleInstance > GeneralizedAssemblyVectorDoublePtr;
+typedef boost::shared_ptr< GeneralizedAssemblyVectorDoubleInstance >
+    GeneralizedAssemblyVectorDoublePtr;
 
 /**
  * @typedef GeneralizedAssemblyVectorComplexPtr
  * @brief Pointeur intelligent vers un GeneralizedAssemblyVectorComplexInstance
  */
-typedef boost::shared_ptr< GeneralizedAssemblyVectorComplexInstance > GeneralizedAssemblyVectorComplexPtr;
+typedef boost::shared_ptr< GeneralizedAssemblyVectorComplexInstance >
+    GeneralizedAssemblyVectorComplexPtr;
 
 #endif /* GENERALIZEDASSEMBLYVECTOR_H_ */

@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe GeneralizedResultsContainer
  * @author Natacha Béreux
  * @section LICENCE
- *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -41,142 +41,132 @@
  * dynamique sur base généralisée.
  * @author Natacha Béreux
  */
-template <class ValueType>
-class GeneralizedResultsContainerInstance: public DataStructure
-{
-private:
+template < class ValueType > class GeneralizedResultsContainerInstance : public DataStructure {
+  private:
     /** @brief DynamicResultsIndexing */
     DynamicResultsIndexingPtr _index;
     /** @brief Vecteur Jeveux '.DESC' */
-    JeveuxVectorLong             _desc;
+    JeveuxVectorLong _desc;
     /** @brief Vecteur Jeveux '.DISC' */
     /* Valeur des instants/fréquences sauvegardées */
-    JeveuxVectorDouble           _abscissasOfSamples;
+    JeveuxVectorDouble _abscissasOfSamples;
     /** @brief Vecteur Jeveux '.ORDR' */
-    JeveuxVectorLong             _indicesOfSamples;
+    JeveuxVectorLong _indicesOfSamples;
     /** @brief Vecteur Jeveux '.DEPL' */
-    JeveuxVector<ValueType>           _displacement;
+    JeveuxVector< ValueType > _displacement;
     /** @brief Vecteur Jeveux '.VITE' */
-    JeveuxVector<ValueType>           _velocity;
+    JeveuxVector< ValueType > _velocity;
     /** @brief Vecteur Jeveux '.ACCE' */
-    JeveuxVector<ValueType>           _acceleration;
+    JeveuxVector< ValueType > _acceleration;
     /** @brief si résulte d'un proj_mesu_modal */
-    ProjMesuPtr               _projM;
+    ProjMesuPtr _projM;
 
-public:
+  public:
     /**
      * @brief Constructeur
      */
-    GeneralizedResultsContainerInstance( const std::string &name, const std::string &resuTyp ):
-            DataStructure( name, 19, resuTyp ), 
-            _index( new DynamicResultsIndexingInstance( getName(), resuTyp )),
-            _desc( JeveuxVectorLong( getName() + ".DESC" ) ),
-            _abscissasOfSamples( JeveuxVectorDouble( getName() +".DISC"  ) ),
-            _indicesOfSamples( JeveuxVectorLong ( getName() +".ORDR"  ) ),
-            _displacement( JeveuxVector<ValueType>( getName() +".DEPL"  ) ),
-            _velocity( JeveuxVector<ValueType>( getName() +".VITE"  ) ),
-            _acceleration( JeveuxVector<ValueType>( getName() +".ACCE"  ) ),
-            _projM( new ProjMesuInstance( getName() + ".PROJM" ) )
-    {};
-    GeneralizedResultsContainerInstance( const std::string &resuTyp ): 
-            GeneralizedResultsContainerInstance( ResultNaming::getNewResultName(), resuTyp )
-    {};
+    GeneralizedResultsContainerInstance( const std::string &name, const std::string &resuTyp )
+        : DataStructure( name, 19, resuTyp ),
+          _index( new DynamicResultsIndexingInstance( getName(), resuTyp ) ),
+          _desc( JeveuxVectorLong( getName() + ".DESC" ) ),
+          _abscissasOfSamples( JeveuxVectorDouble( getName() + ".DISC" ) ),
+          _indicesOfSamples( JeveuxVectorLong( getName() + ".ORDR" ) ),
+          _displacement( JeveuxVector< ValueType >( getName() + ".DEPL" ) ),
+          _velocity( JeveuxVector< ValueType >( getName() + ".VITE" ) ),
+          _acceleration( JeveuxVector< ValueType >( getName() + ".ACCE" ) ),
+          _projM( new ProjMesuInstance( getName() + ".PROJM" ) ){};
+    GeneralizedResultsContainerInstance( const std::string &resuTyp )
+        : GeneralizedResultsContainerInstance( ResultNaming::getNewResultName(), resuTyp ){};
 };
 
 /** @typedef Définition d'un résultat généralisé à valeurs réelles */
 template class GeneralizedResultsContainerInstance< double >;
 typedef GeneralizedResultsContainerInstance< double > GeneralizedResultsContainerDoubleInstance;
-typedef boost::shared_ptr< GeneralizedResultsContainerDoubleInstance > GeneralizedResultsContainerDoublePtr;
+typedef boost::shared_ptr< GeneralizedResultsContainerDoubleInstance >
+    GeneralizedResultsContainerDoublePtr;
 
 /** @typedef Définition d'un résultat généralisé à valeurs complexes */
 template class GeneralizedResultsContainerInstance< DoubleComplex >;
-typedef GeneralizedResultsContainerInstance< DoubleComplex > GeneralizedResultsContainerComplexInstance;
-typedef boost::shared_ptr< GeneralizedResultsContainerComplexInstance > GeneralizedResultsContainerComplexPtr;
+typedef GeneralizedResultsContainerInstance< DoubleComplex >
+    GeneralizedResultsContainerComplexInstance;
+typedef boost::shared_ptr< GeneralizedResultsContainerComplexInstance >
+    GeneralizedResultsContainerComplexPtr;
 
-class NonLinearDescriptor 
-{
-    private:
+class NonLinearDescriptor {
+  private:
     /** @brief Vecteur Jeveux '.NL.TYPE' */
-    JeveuxVectorLong           _type;
+    JeveuxVectorLong _type;
     /** @brief Vecteur Jeveux '.NL.VINT' */
-    JeveuxVectorDouble          _internalVar;
+    JeveuxVectorDouble _internalVar;
     /** @brief Vecteur Jeveux '.NL.VIND' */
-    JeveuxVectorLong            _vIndi;
+    JeveuxVectorLong _vIndi;
     /** @brief Vecteur Jeveux '.NL.INTI */
-    JeveuxVectorChar24          _vInti;
-    public: 
+    JeveuxVectorChar24 _vInti;
+
+  public:
     /**
      * @brief Constructeur
     */
-    NonLinearDescriptor(const std::string &name):
-    _type( JeveuxVectorLong( name +".NL.TYPE")),
-    _internalVar( JeveuxVectorDouble ( name + ".NL.VINT" )),
-    _vIndi( JeveuxVectorLong( name + ".NL.VIND")),
-    _vInti( JeveuxVectorChar24( name + ".NL.INTI"))
-    {};
+    NonLinearDescriptor( const std::string &name )
+        : _type( JeveuxVectorLong( name + ".NL.TYPE" ) ),
+          _internalVar( JeveuxVectorDouble( name + ".NL.VINT" ) ),
+          _vIndi( JeveuxVectorLong( name + ".NL.VIND" ) ),
+          _vInti( JeveuxVectorChar24( name + ".NL.INTI" ) ){};
 };
 
-class TransientGeneralizedResultsContainerInstance: public GeneralizedResultsContainerDoubleInstance
-{
-private:
+class TransientGeneralizedResultsContainerInstance
+    : public GeneralizedResultsContainerDoubleInstance {
+  private:
     /** @brief Vecteur Jeveux '.PTEM' */
     /*  valeur du pas de temps aux instants de calcul sauvegardés*/
-    JeveuxVectorDouble           _timeSteps;
+    JeveuxVectorDouble _timeSteps;
     /** @brief Vecteur Jeveux '.FACC' */
     /* Nom et type des fonctions d’excitation de type accélération */
-    JeveuxVectorChar8           _acceExcitFunction;
+    JeveuxVectorChar8 _acceExcitFunction;
     /** @brief Vecteur Jeveux '.FVIT' */
     /* Nom et type des fonctions d’excitation de type vitesse */
-    JeveuxVectorChar8           _veloExcitFunction;
+    JeveuxVectorChar8 _veloExcitFunction;
     /** @brief Vecteur Jeveux '.FDEP' */
     /* Nom et type des fonctions d’excitation de type vitesse */
-    JeveuxVectorChar8           _displExcitFunction;
+    JeveuxVectorChar8 _displExcitFunction;
     /** @brief Vecteur Jeveux '.IPSD' */
-    JeveuxVectorLong           _ipsd;
+    JeveuxVectorLong _ipsd;
     /** @brief Description des nonlinéarités (si mot-clé COMPORTEMENT) */
-    NonLinearDescriptor        _nonLinDesc;
+    NonLinearDescriptor _nonLinDesc;
     /** @brief Support DOFNumbering */
-    DOFNumberingPtr            _dofNum;
-  
-public:
+    DOFNumberingPtr _dofNum;
+
+  public:
     /**
      * @typedef TransientGeneralizedResultsContainerPtr
      * @brief Pointeur intelligent vers un TransientGeneralizedResultsContainerInstance
      */
-    typedef boost::shared_ptr< TransientGeneralizedResultsContainerInstance > TransientGeneralizedResultsContainerPtr;
+    typedef boost::shared_ptr< TransientGeneralizedResultsContainerInstance >
+        TransientGeneralizedResultsContainerPtr;
 
     /**
      * @brief Constructeur
      */
-    TransientGeneralizedResultsContainerInstance():
-        TransientGeneralizedResultsContainerInstance( ResultNaming::getNewResultName() )
-    {};
+    TransientGeneralizedResultsContainerInstance()
+        : TransientGeneralizedResultsContainerInstance( ResultNaming::getNewResultName() ){};
 
     /**
      * @brief Constructeur
      */
-    TransientGeneralizedResultsContainerInstance( const std::string &name ):
-        GeneralizedResultsContainerDoubleInstance( name, "TRAN_GENE" ),
-        _nonLinDesc( name ),
-        _timeSteps( JeveuxVectorDouble( getName() +".PTEM"  ) ),
-        _acceExcitFunction(  JeveuxVectorChar8( getName() +".FACC"  ) ),
-        _veloExcitFunction(  JeveuxVectorChar8( getName() +".FVIT"  ) ),
-        _displExcitFunction(  JeveuxVectorChar8( getName() +".FDEP"  ) ),
-        _ipsd( JeveuxVectorLong( getName() + ".IPSD" ) ),
-        _dofNum( nullptr )
-    {};
+    TransientGeneralizedResultsContainerInstance( const std::string &name )
+        : GeneralizedResultsContainerDoubleInstance( name, "TRAN_GENE" ), _nonLinDesc( name ),
+          _timeSteps( JeveuxVectorDouble( getName() + ".PTEM" ) ),
+          _acceExcitFunction( JeveuxVectorChar8( getName() + ".FACC" ) ),
+          _veloExcitFunction( JeveuxVectorChar8( getName() + ".FVIT" ) ),
+          _displExcitFunction( JeveuxVectorChar8( getName() + ".FDEP" ) ),
+          _ipsd( JeveuxVectorLong( getName() + ".IPSD" ) ), _dofNum( nullptr ){};
 
-    DOFNumberingPtr getDOFNumbering() const
-    {
-        return _dofNum;
-    };
+    DOFNumberingPtr getDOFNumbering() const { return _dofNum; };
 
-    bool setDOFNumbering( const DOFNumberingPtr& dofNum )
-    {
-        _dofNum = dofNum;
-    };
+    bool setDOFNumbering( const DOFNumberingPtr &dofNum ) { _dofNum = dofNum; };
 };
-typedef boost::shared_ptr< TransientGeneralizedResultsContainerInstance > TransientGeneralizedResultsContainerPtr;
+typedef boost::shared_ptr< TransientGeneralizedResultsContainerInstance >
+    TransientGeneralizedResultsContainerPtr;
 
 /**
  * @class HarmoGeneralizedResultsContainerInstance
@@ -184,31 +174,30 @@ typedef boost::shared_ptr< TransientGeneralizedResultsContainerInstance > Transi
  * résultats de calcul dynamique harmonique sur base généralisée
  * @author Natacha Béreux
  */
-class HarmoGeneralizedResultsContainerInstance: public GeneralizedResultsContainerComplexInstance
-{
-private:
-public:
+class HarmoGeneralizedResultsContainerInstance : public GeneralizedResultsContainerComplexInstance {
+  private:
+  public:
     /**
      * @typedef HarmoGeneralizedResultsContainerPtr
      * @brief Pointeur intelligent vers un HarmoGeneralizedResultsContainerInstance
      */
-    typedef boost::shared_ptr< HarmoGeneralizedResultsContainerInstance > HarmoGeneralizedResultsContainerPtr;
+    typedef boost::shared_ptr< HarmoGeneralizedResultsContainerInstance >
+        HarmoGeneralizedResultsContainerPtr;
 
     /**
      * @brief Constructeur
      */
-    HarmoGeneralizedResultsContainerInstance():
-        HarmoGeneralizedResultsContainerInstance( ResultNaming::getNewResultName() )
-    {};
+    HarmoGeneralizedResultsContainerInstance()
+        : HarmoGeneralizedResultsContainerInstance( ResultNaming::getNewResultName() ){};
 
     /**
      * @brief Constructeur
      */
-    HarmoGeneralizedResultsContainerInstance( const std::string &name ):
-        GeneralizedResultsContainerComplexInstance( name, "HARM_GENE" )
-    {};
+    HarmoGeneralizedResultsContainerInstance( const std::string &name )
+        : GeneralizedResultsContainerComplexInstance( name, "HARM_GENE" ){};
 };
 
-typedef boost::shared_ptr< HarmoGeneralizedResultsContainerInstance > HarmoGeneralizedResultsContainerPtr;
+typedef boost::shared_ptr< HarmoGeneralizedResultsContainerInstance >
+    HarmoGeneralizedResultsContainerPtr;
 
 #endif /* GENERALIZEDRESULTSCONTAINER_H_ */

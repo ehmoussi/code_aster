@@ -3,7 +3,7 @@
  * @brief Création de LibAster
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -135,47 +135,37 @@ using namespace boost::python;
 #include "aster_init.h"
 #include "aster_fort.h"
 
-static void libaster_finalize()
-{
-    if( get_sh_jeveux_status() != 1 )
+static void libaster_finalize() {
+    if ( get_sh_jeveux_status() != 1 )
         return;
     CALL_OP9999();
     register_sh_jeveux_status( 0 );
 };
 
-static void libaster_debugJeveuxContent( const std::string message )
-{
+static void libaster_debugJeveuxContent( const std::string message ) {
     ASTERINTEGER unit_out = 6;
-    std::string base("G");
-    CALLO_JEIMPR(&unit_out, base, message);
+    std::string base( "G" );
+    CALLO_JEIMPR( &unit_out, base, message );
 };
 
-struct LibAsterInitializer
-{
-    LibAsterInitializer()
-    {
-        initAsterModules();
-    };
+struct LibAsterInitializer {
+    LibAsterInitializer() { initAsterModules(); };
 
-    ~LibAsterInitializer()
-    {
-        libaster_finalize();
-    };
+    ~LibAsterInitializer() { libaster_finalize(); };
 };
 
-BOOST_PYTHON_MODULE(libaster)
-{
+BOOST_PYTHON_MODULE( libaster ) {
     // hide c++ signatures
-    boost::python::docstring_options doc_options(true, true, false);
+    boost::python::docstring_options doc_options( true, true, false );
 
     boost::shared_ptr< LibAsterInitializer > libGuard( new LibAsterInitializer() );
 
-    class_< LibAsterInitializer, boost::shared_ptr< LibAsterInitializer >,
-            boost::noncopyable >("LibAsterInitializer", no_init);
+    class_< LibAsterInitializer, boost::shared_ptr< LibAsterInitializer >, boost::noncopyable >(
+        "LibAsterInitializer", no_init );
 
-    scope().attr("__libguard") = libGuard;
-    scope().attr("finalize") = &libaster_finalize;
-    scope().attr("debugJeveuxContent") = &libaster_debugJeveuxContent;
+    scope().attr( "__libguard" ) = libGuard;
+    scope().attr( "finalize" ) = &libaster_finalize;
+    scope().attr( "debugJeveuxContent" ) = &libaster_debugJeveuxContent;
 
     exportVectorUtilitiesToPython();
     exportDataStructureToPython();
@@ -268,7 +258,6 @@ BOOST_PYTHON_MODULE(libaster)
     exportFullAcousticHarmonicResultsContainerToPython();
     exportFluidStructureModalBasisToPython();
     exportGeneralizedModeContainerToPython();
-
 
 #ifdef _USE_MPI
     exportParallelMeshToPython();

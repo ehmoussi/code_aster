@@ -3,7 +3,7 @@
  * @brief Implementation des fonctions membres de DataStructure
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -33,34 +33,28 @@
 
 TemporaryDataStructure tempName = TemporaryDataStructure();
 
-DataStructure::DataStructure( const std::string name, const int nameLength,
-                              const std::string type, const JeveuxMemory memType ):
-    _name( name ),
-    _memoryType( memType )
-{
-    _name.resize(nameLength, ' ');
+DataStructure::DataStructure( const std::string name, const int nameLength, const std::string type,
+                              const JeveuxMemory memType )
+    : _name( name ), _memoryType( memType ) {
+    _name.resize( nameLength, ' ' );
 
     std::string name19( _name );
-    name19.resize(19, ' ');
+    name19.resize( 19, ' ' );
     _tco = JeveuxVectorChar24( name19 + "._TCO" );
-    if ( ! _tco->isAllocated() && name != "" )
-    {
+    if ( !_tco->isAllocated() && name != "" ) {
         _tco->allocate( _memoryType, 1 );
-        if( type.size() <= 8 && type != "FORMULE" )
-            (*_tco)[0] = std::string( trim( type ) + "_SDASTER" );
+        if ( type.size() <= 8 && type != "FORMULE" )
+            ( *_tco )[0] = std::string( trim( type ) + "_SDASTER" );
         else
-            (*_tco)[0] = type;
+            ( *_tco )[0] = type;
     }
 }
 
-DataStructure::DataStructure( const std::string type,
-                              const JeveuxMemory memType, int nameLength ):
-    DataStructure::DataStructure( DataStructureNaming::getNewName( memType, nameLength ),
-                                  nameLength, type, memType )
-{
-}
+DataStructure::DataStructure( const std::string type, const JeveuxMemory memType, int nameLength )
+    : DataStructure::DataStructure( DataStructureNaming::getNewName( memType, nameLength ),
+                                    nameLength, type, memType ) {}
 
-DataStructure::~DataStructure()// throw ( std::runtime_error )
+DataStructure::~DataStructure() // throw ( std::runtime_error )
 {
 #ifdef __DEBUG_GC__
     std::cout << "DataStructure.destr: " << this->getName() << std::endl;
@@ -75,29 +69,24 @@ DataStructure::~DataStructure()// throw ( std::runtime_error )
     ASTERINTEGER nbval2 = 0;
     ASTERINTEGER retour = 0;
     JeveuxChar24 nothing( " " );
-    if( nameWithoutBlanks == "&2" )
-    {
+    if ( nameWithoutBlanks == "&2" ) {
         retour = 1;
     }
-    CALLO_JELSTC( base, nameWithoutBlanks, &pos,
-                  &nbval2, nothing, &retour );
-    if ( retour != 0 )
-    {
+    CALLO_JELSTC( base, nameWithoutBlanks, &pos, &nbval2, nothing, &retour );
+    if ( retour != 0 ) {
         JeveuxVectorChar24 test( "&&TMP" );
         test->allocate( Temporary, -retour );
         ASTERINTEGER nbval2 = -retour;
-        CALLO_JELSTC( base, nameWithoutBlanks, &pos,
-                      &nbval2, (*test)[0], &retour );
+        CALLO_JELSTC( base, nameWithoutBlanks, &pos, &nbval2, ( *test )[0], &retour );
         std::cout << "Remaining jeveux objects in " << _name << std::endl;
         std::cout << "List of objects:" << std::endl;
-        for( int i = 0; i < retour; ++i )
-            std::cout << "  - " << (*test)[i].toString() << std::endl;
+        for ( int i = 0; i < retour; ++i )
+            std::cout << "  - " << ( *test )[i].toString() << std::endl;
     }
 #endif
 };
 
-void DataStructure::debugPrint( int logicalUnit ) const
-{
+void DataStructure::debugPrint( int logicalUnit ) const {
     ASTERINTEGER unit, niveau, ipos, True, False;
     unit = ASTERINTEGER( logicalUnit );
     niveau = 2;
@@ -108,20 +97,16 @@ void DataStructure::debugPrint( int logicalUnit ) const
     JeveuxString< 3 > no( "NON" );
     std::string nameWithoutBlanks = trim( _name );
     try {
-        CALLO_UTIMSD( &unit, &niveau, &False, &True, nameWithoutBlanks,
-                      &ipos, base, no );
-    }
-    catch (...)
-    {
+        CALLO_UTIMSD( &unit, &niveau, &False, &True, nameWithoutBlanks, &ipos, base, no );
+    } catch ( ... ) {
         throw std::runtime_error( "debugPrint failed!" );
     }
 };
 
-void DataStructure::setType( const std::string newType )
-{
+void DataStructure::setType( const std::string newType ) {
     _tco->updateValuePointer();
-    if( newType.size() <= 8 && newType != "FORMULE" )
-        (*_tco)[0] = std::string( trim( newType ) + "_SDASTER" );
+    if ( newType.size() <= 8 && newType != "FORMULE" )
+        ( *_tco )[0] = std::string( trim( newType ) + "_SDASTER" );
     else
-        (*_tco)[0] = newType;
+        ( *_tco )[0] = newType;
 };

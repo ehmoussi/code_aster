@@ -3,7 +3,7 @@
  * @brief Implementation de DOFNumbering
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+ *   Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
  *   This file is part of code_aster.
  *
  *   code_aster is free software: you can redistribute it and/or modify
@@ -26,60 +26,46 @@
 #include "Supervis/CommandSyntax.h"
 #include "Supervis/ResultNaming.h"
 
-FieldOnNodesDescriptionInstance::FieldOnNodesDescriptionInstance( const JeveuxMemory memType ):
-    DataStructure( ResultNaming::getNewResultName(), 19, "PROF_CHNO", memType ),
-    _componentsOnNodes( getName() + ".PRNO" ),
-    _namesOfGroupOfElements( getName() + ".LILI" ),
-    _indexationVector( getName() + ".NUEQ" ),
-    _nodeAndComponentsNumberFromDOF( getName() + ".DEEQ" )
-{};
+FieldOnNodesDescriptionInstance::FieldOnNodesDescriptionInstance( const JeveuxMemory memType )
+    : DataStructure( ResultNaming::getNewResultName(), 19, "PROF_CHNO", memType ),
+      _componentsOnNodes( getName() + ".PRNO" ), _namesOfGroupOfElements( getName() + ".LILI" ),
+      _indexationVector( getName() + ".NUEQ" ),
+      _nodeAndComponentsNumberFromDOF( getName() + ".DEEQ" ){};
 
 FieldOnNodesDescriptionInstance::FieldOnNodesDescriptionInstance( const std::string name,
-                                                                  const JeveuxMemory memType ):
-    DataStructure( name, 19, "PROF_CHNO", memType ),
-    _componentsOnNodes( getName() + ".PRNO" ),
-    _namesOfGroupOfElements( getName() + ".LILI" ),
-    _indexationVector( getName() + ".NUEQ" ),
-    _nodeAndComponentsNumberFromDOF( getName() + ".DEEQ" )
-{};
+                                                                  const JeveuxMemory memType )
+    : DataStructure( name, 19, "PROF_CHNO", memType ), _componentsOnNodes( getName() + ".PRNO" ),
+      _namesOfGroupOfElements( getName() + ".LILI" ), _indexationVector( getName() + ".NUEQ" ),
+      _nodeAndComponentsNumberFromDOF( getName() + ".DEEQ" ){};
 
-BaseDOFNumberingInstance::BaseDOFNumberingInstance( const std::string& type,
-                                                    const JeveuxMemory memType ):
-    DataStructure( ResultNaming::getNewResultName(), 14, type, memType ),
-    _nameOfSolverDataStructure( JeveuxVectorChar24( getName() + ".NSLV" ) ),
-    _globalNumbering( new GlobalEquationNumberingInstance( getName() + ".NUME" ) ),
-    _dofDescription( new FieldOnNodesDescriptionInstance( getName() + ".NUME" ) ),
-    _localNumbering( new LocalEquationNumberingInstance( getName() + ".NUML" ) ),
-    _supportModel( ModelPtr( nullptr ) ),
-    _supportMatrix( nullptr ),
-    _listOfLoads( new ListOfLoadsInstance() ),
-    _smos( new MorseStorageInstance( getName() + ".SMOS" ) ),
-    _slcs( new LigneDeCielInstance( getName() + ".SLCS" ) ),
-    _mltf( new MultFrontGarbageInstance( getName() + ".MLTF" ) ),
-    _isEmpty( true )
-{};
+BaseDOFNumberingInstance::BaseDOFNumberingInstance( const std::string &type,
+                                                    const JeveuxMemory memType )
+    : DataStructure( ResultNaming::getNewResultName(), 14, type, memType ),
+      _nameOfSolverDataStructure( JeveuxVectorChar24( getName() + ".NSLV" ) ),
+      _globalNumbering( new GlobalEquationNumberingInstance( getName() + ".NUME" ) ),
+      _dofDescription( new FieldOnNodesDescriptionInstance( getName() + ".NUME" ) ),
+      _localNumbering( new LocalEquationNumberingInstance( getName() + ".NUML" ) ),
+      _supportModel( ModelPtr( nullptr ) ), _supportMatrix( nullptr ),
+      _listOfLoads( new ListOfLoadsInstance() ),
+      _smos( new MorseStorageInstance( getName() + ".SMOS" ) ),
+      _slcs( new LigneDeCielInstance( getName() + ".SLCS" ) ),
+      _mltf( new MultFrontGarbageInstance( getName() + ".MLTF" ) ), _isEmpty( true ){};
 
-BaseDOFNumberingInstance::BaseDOFNumberingInstance( const std::string name,
-                                                    const std::string& type,
-                                                    const JeveuxMemory memType ):
-    DataStructure( name, 14, type, memType ),
-    _nameOfSolverDataStructure( JeveuxVectorChar24( getName() + ".NSLV" ) ),
-    _globalNumbering( new GlobalEquationNumberingInstance( getName() + ".NUME" ) ),
-    _dofDescription( new FieldOnNodesDescriptionInstance( getName() + ".NUME" ) ),
-    _localNumbering( new LocalEquationNumberingInstance( getName() + ".NUML" ) ),
-    _supportModel( ModelPtr( nullptr ) ),
-    _supportMatrix( nullptr ),
-    _listOfLoads( new ListOfLoadsInstance() ),
-    _smos( new MorseStorageInstance( getName() + ".SMOS" ) ),
-    _slcs( new LigneDeCielInstance( getName() + ".SLCS" ) ),
-    _mltf( new MultFrontGarbageInstance( getName() + ".MLTF" ) ),
-    _isEmpty( true )
-{};
+BaseDOFNumberingInstance::BaseDOFNumberingInstance( const std::string name, const std::string &type,
+                                                    const JeveuxMemory memType )
+    : DataStructure( name, 14, type, memType ),
+      _nameOfSolverDataStructure( JeveuxVectorChar24( getName() + ".NSLV" ) ),
+      _globalNumbering( new GlobalEquationNumberingInstance( getName() + ".NUME" ) ),
+      _dofDescription( new FieldOnNodesDescriptionInstance( getName() + ".NUME" ) ),
+      _localNumbering( new LocalEquationNumberingInstance( getName() + ".NUML" ) ),
+      _supportModel( ModelPtr( nullptr ) ), _supportMatrix( nullptr ),
+      _listOfLoads( new ListOfLoadsInstance() ),
+      _smos( new MorseStorageInstance( getName() + ".SMOS" ) ),
+      _slcs( new LigneDeCielInstance( getName() + ".SLCS" ) ),
+      _mltf( new MultFrontGarbageInstance( getName() + ".MLTF" ) ), _isEmpty( true ){};
 
-bool BaseDOFNumberingInstance::computeNumbering() throw ( std::runtime_error )
-{
-    if ( _supportModel )
-    {
+bool BaseDOFNumberingInstance::computeNumbering() throw( std::runtime_error ) {
+    if ( _supportModel ) {
         if ( _supportModel->isEmpty() )
             throw std::runtime_error( "Support Model is empty" );
 
@@ -90,11 +76,9 @@ bool BaseDOFNumberingInstance::computeNumbering() throw ( std::runtime_error )
 
         const std::string base( "VG" );
         const std::string null( " " );
-        CALLO_NUMERO_WRAP( getName(), base, null, null,
-                           _supportModel->getName(), _listOfLoads->getName() );
-    }
-    else if ( ! _supportMatrix.use_count() == 0 )
-    {
+        CALLO_NUMERO_WRAP( getName(), base, null, null, _supportModel->getName(),
+                           _listOfLoads->getName() );
+    } else if ( !_supportMatrix.use_count() == 0 ) {
         CommandSyntax cmdSt( "NUME_DDL" );
         cmdSt.setResult( getName(), getType() );
 
@@ -102,15 +86,14 @@ bool BaseDOFNumberingInstance::computeNumbering() throw ( std::runtime_error )
         if ( _supportMatrix->isEmpty() )
             throw std::runtime_error( "Support ElementaryMatrix is empty" );
 
-        dict.container[ "MATR_RIGI" ] = _supportMatrix->getName();
+        dict.container["MATR_RIGI"] = _supportMatrix->getName();
 
         cmdSt.define( dict );
 
         // Maintenant que le fichier de commande est pret, on appelle OP0011
         ASTERINTEGER op = 11;
         CALL_EXECOP( &op );
-    }
-    else
+    } else
         throw std::runtime_error( "No support matrix or support model defined" );
     _isEmpty = false;
 

@@ -33,81 +33,68 @@
 
 #include "Materials/MaterialOnMeshBuilder.h"
 
-MaterialOnMeshInstance::MaterialOnMeshInstance( const std::string &name,
-                                                const MeshPtr& mesh ):
-    _supportMesh( mesh ),
-    DataStructure( name, 8, "CHAM_MATER" ),
-    _listOfMaterials( PCFieldOnMeshChar8Ptr(
-        new PCFieldOnMeshChar8Instance( getName() + ".CHAMP_MAT ", mesh ) ) ),
-    _listOfTemperatures( PCFieldOnMeshDoublePtr(
-        new PCFieldOnMeshDoubleInstance( getName() + ".TEMPE_REF ", mesh ) ) ),
-    _behaviourField( PCFieldOnMeshDoublePtr(
-        new PCFieldOnMeshDoubleInstance( getName() + ".COMPOR ", mesh ) ) ),
-    _cvrcNom( JeveuxVectorChar8( getName() + ".CVRCNOM" ) ),
-    _cvrcGd( JeveuxVectorChar8( getName() + ".CVRCGD" ) ),
-    _cvrcVarc( JeveuxVectorChar8( getName() + ".CVRCVARC" ) ),
-    _cvrcCmp( JeveuxVectorChar8( getName() + ".CVRCCMP" ) )
-{};
+MaterialOnMeshInstance::MaterialOnMeshInstance( const std::string &name, const MeshPtr &mesh )
+    : _supportMesh( mesh ), DataStructure( name, 8, "CHAM_MATER" ),
+      _listOfMaterials( PCFieldOnMeshChar8Ptr(
+          new PCFieldOnMeshChar8Instance( getName() + ".CHAMP_MAT ", mesh ) ) ),
+      _listOfTemperatures( PCFieldOnMeshDoublePtr(
+          new PCFieldOnMeshDoubleInstance( getName() + ".TEMPE_REF ", mesh ) ) ),
+      _behaviourField( PCFieldOnMeshDoublePtr(
+          new PCFieldOnMeshDoubleInstance( getName() + ".COMPOR ", mesh ) ) ),
+      _cvrcNom( JeveuxVectorChar8( getName() + ".CVRCNOM" ) ),
+      _cvrcGd( JeveuxVectorChar8( getName() + ".CVRCGD" ) ),
+      _cvrcVarc( JeveuxVectorChar8( getName() + ".CVRCVARC" ) ),
+      _cvrcCmp( JeveuxVectorChar8( getName() + ".CVRCCMP" ) ){};
 
-MaterialOnMeshInstance::MaterialOnMeshInstance( const std::string &name,
-                                                const SkeletonPtr& mesh ):
-    _supportMesh( mesh ),
-    DataStructure( name, 8, "CHAM_MATER" ),
-    _listOfMaterials( PCFieldOnMeshChar8Ptr(
-        new PCFieldOnMeshChar8Instance( getName() + ".CHAMP_MAT ", mesh ) ) ),
-    _listOfTemperatures( PCFieldOnMeshDoublePtr(
-        new PCFieldOnMeshDoubleInstance( getName() + ".TEMPE_REF ", mesh ) ) ),
-    _behaviourField( PCFieldOnMeshDoublePtr(
-        new PCFieldOnMeshDoubleInstance( getName() + ".COMPOR ", mesh ) ) ),
-    _cvrcNom( JeveuxVectorChar8( getName() + ".CVRCNOM" ) ),
-    _cvrcGd( JeveuxVectorChar8( getName() + ".CVRCGD" ) ),
-    _cvrcVarc( JeveuxVectorChar8( getName() + ".CVRCVARC" ) ),
-    _cvrcCmp( JeveuxVectorChar8( getName() + ".CVRCCMP" ) )
-{};
+MaterialOnMeshInstance::MaterialOnMeshInstance( const std::string &name, const SkeletonPtr &mesh )
+    : _supportMesh( mesh ), DataStructure( name, 8, "CHAM_MATER" ),
+      _listOfMaterials( PCFieldOnMeshChar8Ptr(
+          new PCFieldOnMeshChar8Instance( getName() + ".CHAMP_MAT ", mesh ) ) ),
+      _listOfTemperatures( PCFieldOnMeshDoublePtr(
+          new PCFieldOnMeshDoubleInstance( getName() + ".TEMPE_REF ", mesh ) ) ),
+      _behaviourField( PCFieldOnMeshDoublePtr(
+          new PCFieldOnMeshDoubleInstance( getName() + ".COMPOR ", mesh ) ) ),
+      _cvrcNom( JeveuxVectorChar8( getName() + ".CVRCNOM" ) ),
+      _cvrcGd( JeveuxVectorChar8( getName() + ".CVRCGD" ) ),
+      _cvrcVarc( JeveuxVectorChar8( getName() + ".CVRCVARC" ) ),
+      _cvrcCmp( JeveuxVectorChar8( getName() + ".CVRCCMP" ) ){};
 
 #ifdef _USE_MPI
 MaterialOnMeshInstance::MaterialOnMeshInstance( const std::string &name,
-                                                const ParallelMeshPtr& mesh ):
-    _supportMesh( mesh ),
-    DataStructure( name, 8, "CHAM_MATER" ),
-    _listOfMaterials( PCFieldOnMeshChar8Ptr(
-        new PCFieldOnMeshChar8Instance( getName() + ".CHAMP_MAT ", mesh ) ) ),
-    _listOfTemperatures( PCFieldOnMeshDoublePtr(
-        new PCFieldOnMeshDoubleInstance( getName() + ".TEMPE_REF ", mesh ) ) ),
-    _behaviourField( PCFieldOnMeshDoublePtr(
-        new PCFieldOnMeshDoubleInstance( getName() + ".COMPOR ", mesh ) ) ),
-    _cvrcNom( JeveuxVectorChar8( getName() + ".CVRCNOM" ) ),
-    _cvrcGd( JeveuxVectorChar8( getName() + ".CVRCGD" ) ),
-    _cvrcVarc( JeveuxVectorChar8( getName() + ".CVRCVARC" ) ),
-    _cvrcCmp( JeveuxVectorChar8( getName() + ".CVRCCMP" ) )
-{};
+                                                const ParallelMeshPtr &mesh )
+    : _supportMesh( mesh ), DataStructure( name, 8, "CHAM_MATER" ),
+      _listOfMaterials( PCFieldOnMeshChar8Ptr(
+          new PCFieldOnMeshChar8Instance( getName() + ".CHAMP_MAT ", mesh ) ) ),
+      _listOfTemperatures( PCFieldOnMeshDoublePtr(
+          new PCFieldOnMeshDoubleInstance( getName() + ".TEMPE_REF ", mesh ) ) ),
+      _behaviourField( PCFieldOnMeshDoublePtr(
+          new PCFieldOnMeshDoubleInstance( getName() + ".COMPOR ", mesh ) ) ),
+      _cvrcNom( JeveuxVectorChar8( getName() + ".CVRCNOM" ) ),
+      _cvrcGd( JeveuxVectorChar8( getName() + ".CVRCGD" ) ),
+      _cvrcVarc( JeveuxVectorChar8( getName() + ".CVRCVARC" ) ),
+      _cvrcCmp( JeveuxVectorChar8( getName() + ".CVRCCMP" ) ){};
 #endif /* _USE_MPI */
 
-bool MaterialOnMeshInstance::buildWithoutInputVariables() throw ( std::runtime_error )
-{
-    MaterialOnMeshBuilderInstance::buildInstance(*this);
+bool MaterialOnMeshInstance::buildWithoutInputVariables() throw( std::runtime_error ) {
+    MaterialOnMeshBuilderInstance::buildInstance( *this );
 
     return true;
 };
 
-std::vector< MaterialPtr > MaterialOnMeshInstance::getVectorOfMaterial() const
-{
+std::vector< MaterialPtr > MaterialOnMeshInstance::getVectorOfMaterial() const {
     std::vector< MaterialPtr > toReturn;
-    for( const auto& curIter : _materialsOnMeshEntity )
+    for ( const auto &curIter : _materialsOnMeshEntity )
         toReturn.push_back( curIter.first );
     return toReturn;
 };
 
-bool MaterialOnMeshInstance::existsCalculationInputVariable( const std::string& name )
-{
-    if( _cvrcVarc->exists() )
-    {
+bool MaterialOnMeshInstance::existsCalculationInputVariable( const std::string &name ) {
+    if ( _cvrcVarc->exists() ) {
         _cvrcVarc->updateValuePointer();
         JeveuxChar8 toTest( name );
         auto size = _cvrcVarc->size();
-        for( int i = 0; i < size; ++i )
-        {
-            if( (*_cvrcVarc)[i] == toTest )
+        for ( int i = 0; i < size; ++i ) {
+            if ( ( *_cvrcVarc )[i] == toTest )
                 return true;
         }
     }

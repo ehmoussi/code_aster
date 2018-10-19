@@ -4,9 +4,9 @@
 /**
  * @file FourierElasContainer.h
  * @brief Fichier entete de la classe FourierElasContainer
- * @author Natacha Béreux 
+ * @author Natacha Béreux
  * @section LICENCE
- *   Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -33,17 +33,13 @@
  * @brief Cette classe correspond a un fourier_elas
  * @author Nicolas Sellenet
  */
-class FourierElasContainerInstance: public ResultsContainerInstance
-{
-private:
-
-public:
+class FourierElasContainerInstance : public ResultsContainerInstance {
+  private:
+  public:
     /**
      * @brief Constructeur
      */
-    FourierElasContainerInstance(): ResultsContainerInstance( "FOURIER_ELAS" )
-    {};
-
+    FourierElasContainerInstance() : ResultsContainerInstance( "FOURIER_ELAS" ){};
 };
 
 /**

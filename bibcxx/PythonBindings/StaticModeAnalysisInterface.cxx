@@ -3,7 +3,7 @@
  * @brief Interface python de StaticModeAnalysis
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -25,14 +25,11 @@
 #include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
-void exportStaticModeAnalysisToPython()
-{
+void exportStaticModeAnalysisToPython() {
     using namespace boost::python;
 
-    class_< StaticModeDeplInstance, StaticModeDeplPtr >
-        ( "StaticModeDepl", no_init )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< StaticModeDeplInstance > ) )
+    class_< StaticModeDeplInstance, StaticModeDeplPtr >( "StaticModeDepl", no_init )
+        .def( "__init__", make_constructor(&initFactoryPtr< StaticModeDeplInstance >))
         .def( "setMassMatrix", &StaticModeDeplInstance::setMassMatrix )
         .def( "setStiffMatrix", &StaticModeDeplInstance::setStiffMatrix )
         .def( "setLinearSolver", &StaticModeDeplInstance::setLinearSolver )
@@ -41,13 +38,10 @@ void exportStaticModeAnalysisToPython()
         .def( "WantedGroupOfNodes", &StaticModeDeplInstance::WantedGroupOfNodes )
         .def( "UnwantedComponent", &StaticModeDeplInstance::UnwantedComponent )
         .def( "WantedComponent", &StaticModeDeplInstance::WantedComponent )
-        .def( "execute", &StaticModeDeplInstance::execute )
-    ;
+        .def( "execute", &StaticModeDeplInstance::execute );
 
-    class_< StaticModeForcInstance, StaticModeForcPtr >
-        ( "StaticModeForc", no_init )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< StaticModeForcInstance > ) )
+    class_< StaticModeForcInstance, StaticModeForcPtr >( "StaticModeForc", no_init )
+        .def( "__init__", make_constructor(&initFactoryPtr< StaticModeForcInstance >))
         .def( "setMassMatrix", &StaticModeForcInstance::setMassMatrix )
         .def( "setStiffMatrix", &StaticModeForcInstance::setStiffMatrix )
         .def( "setLinearSolver", &StaticModeForcInstance::setLinearSolver )
@@ -56,13 +50,10 @@ void exportStaticModeAnalysisToPython()
         .def( "WantedGroupOfNodes", &StaticModeForcInstance::WantedGroupOfNodes )
         .def( "UnwantedComponent", &StaticModeForcInstance::UnwantedComponent )
         .def( "WantedComponent", &StaticModeForcInstance::WantedComponent )
-        .def( "execute", &StaticModeForcInstance::execute )
-    ;
+        .def( "execute", &StaticModeForcInstance::execute );
 
-    class_< StaticModePseudoInstance, StaticModePseudoPtr >
-        ( "StaticModePseudo", no_init )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< StaticModePseudoInstance > ) )
+    class_< StaticModePseudoInstance, StaticModePseudoPtr >( "StaticModePseudo", no_init )
+        .def( "__init__", make_constructor(&initFactoryPtr< StaticModePseudoInstance >))
         .def( "setMassMatrix", &StaticModePseudoInstance::setMassMatrix )
         .def( "setStiffMatrix", &StaticModePseudoInstance::setStiffMatrix )
         .def( "setLinearSolver", &StaticModePseudoInstance::setLinearSolver )
@@ -74,13 +65,10 @@ void exportStaticModeAnalysisToPython()
         .def( "WantedAxe", &StaticModePseudoInstance::WantedAxe )
         .def( "UnwantedComponent", &StaticModePseudoInstance::UnwantedComponent )
         .def( "WantedComponent", &StaticModePseudoInstance::WantedComponent )
-        .def( "execute", &StaticModePseudoInstance::execute )
-    ;
+        .def( "execute", &StaticModePseudoInstance::execute );
 
-    class_< StaticModeInterfInstance, StaticModeInterfPtr >
-        ( "StaticModeInterf", no_init )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< StaticModeInterfInstance > ) )
+    class_< StaticModeInterfInstance, StaticModeInterfPtr >( "StaticModeInterf", no_init )
+        .def( "__init__", make_constructor(&initFactoryPtr< StaticModeInterfInstance >))
         .def( "setMassMatrix", &StaticModeInterfInstance::setMassMatrix )
         .def( "setStiffMatrix", &StaticModeInterfInstance::setStiffMatrix )
         .def( "setLinearSolver", &StaticModeInterfInstance::setLinearSolver )
@@ -91,6 +79,5 @@ void exportStaticModeAnalysisToPython()
         .def( "WantedComponent", &StaticModeInterfInstance::WantedComponent )
         .def( "setNumberOfModes", &StaticModeInterfInstance::setNumberOfModes )
         .def( "setShift", &StaticModeInterfInstance::setShift )
-        .def( "execute", &StaticModeInterfInstance::execute )
-    ;
+        .def( "execute", &StaticModeInterfInstance::execute );
 };

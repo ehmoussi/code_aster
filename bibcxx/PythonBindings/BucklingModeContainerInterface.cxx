@@ -25,16 +25,12 @@
 #include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
-void exportBucklingModeContainerToPython()
-{
+void exportBucklingModeContainerToPython() {
     using namespace boost::python;
 
     class_< BucklingModeContainerInstance, BucklingModeContainerPtr,
-            bases< FullResultsContainerInstance > > ( "BucklingModeContainer", no_init )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< BucklingModeContainerInstance > ) )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< BucklingModeContainerInstance,
-                             std::string > ) )
-    ;
+            bases< FullResultsContainerInstance > >( "BucklingModeContainer", no_init )
+        .def( "__init__", make_constructor(&initFactoryPtr< BucklingModeContainerInstance >))
+        .def( "__init__",
+              make_constructor(&initFactoryPtr< BucklingModeContainerInstance, std::string >));
 };

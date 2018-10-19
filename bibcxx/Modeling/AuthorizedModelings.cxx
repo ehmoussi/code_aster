@@ -3,7 +3,7 @@
  * @brief Initialisation des modelisations autorisees pour chaque physique
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -26,11 +26,11 @@
  * Initialisation des modelisations autorisees pour chaque physique
  */
 
-const std::set< Modelings > WrapMechanics::setOfModelings( MechanicsModelings,
-                                                           MechanicsModelings + nbModelingsMechanics );
+const std::set< Modelings >
+    WrapMechanics::setOfModelings( MechanicsModelings, MechanicsModelings + nbModelingsMechanics );
 
 const std::set< Modelings > WrapThermal::setOfModelings( ThermalModelings,
                                                          ThermalModelings + nbModelingsThermal );
 
-const std::set< Modelings > WrapAcoustics::setOfModelings( AcousticsModelings,
-                                                           AcousticsModelings + nbModelingsAcoustics );
+const std::set< Modelings >
+    WrapAcoustics::setOfModelings( AcousticsModelings, AcousticsModelings + nbModelingsAcoustics );

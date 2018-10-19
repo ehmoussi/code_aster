@@ -4,7 +4,7 @@
 /**
  * @file MechanicalModeContainer.h
  * @brief Fichier entete de la classe MechanicalModeContainer
- * @author Natacha Béreux 
+ * @author Natacha Béreux
  * @section LICENCE
  *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
@@ -36,53 +36,45 @@
  * @brief Cette classe correspond a un mode_meca
  * @author Nicolas Sellenet
  */
-class MechanicalModeContainerInstance: public FullResultsContainerInstance
-{
-private:
-    StructureInterfacePtr               _structureInterface;
+class MechanicalModeContainerInstance : public FullResultsContainerInstance {
+  private:
+    StructureInterfacePtr _structureInterface;
     /** @brief Stiffness displacement matrix */
     AssemblyMatrixDisplacementDoublePtr _rigidityDispMatrix;
     /** @brief Stiffness temperature matrix */
-    AssemblyMatrixTemperatureDoublePtr  _rigidityTempMatrix;
+    AssemblyMatrixTemperatureDoublePtr _rigidityTempMatrix;
 
-public:
+  public:
     /**
      * @brief Constructeur
      */
-    MechanicalModeContainerInstance():
-        FullResultsContainerInstance( "MODE_MECA" ),
-        _structureInterface( StructureInterfacePtr() ),
-        _rigidityDispMatrix( nullptr ),
-        _rigidityTempMatrix( nullptr )
-    {};
+    MechanicalModeContainerInstance()
+        : FullResultsContainerInstance( "MODE_MECA" ),
+          _structureInterface( StructureInterfacePtr() ), _rigidityDispMatrix( nullptr ),
+          _rigidityTempMatrix( nullptr ){};
 
     /**
      * @brief Constructeur
      */
-    MechanicalModeContainerInstance( const std::string& name ):
-        FullResultsContainerInstance( name, "MODE_MECA" ),
-        _structureInterface( StructureInterfacePtr() ),
-        _rigidityDispMatrix( nullptr ),
-        _rigidityTempMatrix( nullptr )
-    {};
+    MechanicalModeContainerInstance( const std::string &name )
+        : FullResultsContainerInstance( name, "MODE_MECA" ),
+          _structureInterface( StructureInterfacePtr() ), _rigidityDispMatrix( nullptr ),
+          _rigidityTempMatrix( nullptr ){};
 
     /**
      * @brief Get the rigidity matrix
      */
-    AssemblyMatrixDisplacementDoublePtr getDisplacementStiffnessMatrix() const
-    {
+    AssemblyMatrixDisplacementDoublePtr getDisplacementStiffnessMatrix() const {
         return _rigidityDispMatrix;
     };
 
     /**
      * @brief Get the DOFNumbering
      */
-    BaseDOFNumberingPtr getDOFNumbering() const
-        throw( std::runtime_error )
-    {
-        if( _rigidityDispMatrix != nullptr )
+    BaseDOFNumberingPtr getDOFNumbering() const throw( std::runtime_error ) {
+        if ( _rigidityDispMatrix != nullptr )
             return _rigidityDispMatrix->getDOFNumbering();
-        if( _rigidityTempMatrix != nullptr )
+        if ( _rigidityTempMatrix != nullptr )
             return _rigidityTempMatrix->getDOFNumbering();
         throw std::runtime_error( "No matrix set" );
     };
@@ -90,8 +82,7 @@ public:
     /**
      * @brief Get the rigidity matrix
      */
-    AssemblyMatrixTemperatureDoublePtr getTemperatureStiffnessMatrix() const
-    {
+    AssemblyMatrixTemperatureDoublePtr getTemperatureStiffnessMatrix() const {
         return _rigidityTempMatrix;
     };
 
@@ -99,8 +90,7 @@ public:
      * @brief Set the rigidity matrix
      * @param matr AssemblyMatrixDisplacementDoublePtr
      */
-    bool setStiffnessMatrix( const AssemblyMatrixDisplacementDoublePtr& matr )
-    {
+    bool setStiffnessMatrix( const AssemblyMatrixDisplacementDoublePtr &matr ) {
         _rigidityTempMatrix = nullptr;
         _rigidityDispMatrix = matr;
         return true;
@@ -110,8 +100,7 @@ public:
      * @brief Set the rigidity matrix
      * @param matr AssemblyMatrixTemperatureDoublePtr
      */
-    bool setStiffnessMatrix( const AssemblyMatrixTemperatureDoublePtr& matr )
-    {
+    bool setStiffnessMatrix( const AssemblyMatrixTemperatureDoublePtr &matr ) {
         _rigidityDispMatrix = nullptr;
         _rigidityTempMatrix = matr;
         return true;
@@ -121,27 +110,25 @@ public:
      * @brief set interf_dyna
      * @param structureInterface objet StructureInterfacePtr
      */
-    bool setStructureInterface( StructureInterfacePtr& structureInterface ) throw ( std::runtime_error )
-    {
+    bool
+    setStructureInterface( StructureInterfacePtr &structureInterface ) throw( std::runtime_error ) {
         _structureInterface = structureInterface;
         return true;
     };
 
-    bool update() throw ( std::runtime_error )
-    {
+    bool update() throw( std::runtime_error ) {
         BaseDOFNumberingPtr numeDdl( nullptr );
-        if( _rigidityDispMatrix != nullptr )
+        if ( _rigidityDispMatrix != nullptr )
             numeDdl = _rigidityDispMatrix->getDOFNumbering();
-        if( _rigidityTempMatrix != nullptr )
+        if ( _rigidityTempMatrix != nullptr )
             numeDdl = _rigidityTempMatrix->getDOFNumbering();
 
-        if( numeDdl != nullptr )
-        {
+        if ( numeDdl != nullptr ) {
             const auto model = numeDdl->getSupportModel();
             const auto matrElem = numeDdl->getElementaryMatrix();
-            if( model != nullptr )
+            if ( model != nullptr )
                 _mesh = model->getSupportMesh();
-            if( matrElem != nullptr )
+            if ( matrElem != nullptr )
                 _mesh = matrElem->getSupportModel()->getSupportMesh();
         }
         return ResultsContainerInstance::update();

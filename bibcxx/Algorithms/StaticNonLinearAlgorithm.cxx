@@ -1,9 +1,9 @@
 /**
  * @file StaticNonLinearAlgorithm.cxx
- * @brief StaticNonLinearAlgorithm class 
- * @author Natacha Béreux 
+ * @brief StaticNonLinearAlgorithm class
+ * @author Natacha Béreux
  * @section LICENCE
- *   Copyright (C) 1991 - 2015  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -24,5 +24,3 @@
 /* person_in_charge: natacha.bereux at edf.fr */
 
 #include "Algorithms/StaticNonLinearAlgorithm.h"
-
-

@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe FourierCombination
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -35,16 +35,12 @@
  * @brief Cette classe correspond a un comb_fourier
  * @author Nicolas Sellenet
  */
-class FourierCombinationInstance: public ResultsContainerInstance
-{
-public:
+class FourierCombinationInstance : public ResultsContainerInstance {
+  public:
     /**
      * @brief Constructeur
      */
-    FourierCombinationInstance(): 
-        ResultsContainerInstance( "COMB_FOURIER" )
-    {};
-
+    FourierCombinationInstance() : ResultsContainerInstance( "COMB_FOURIER" ){};
 };
 
 /**

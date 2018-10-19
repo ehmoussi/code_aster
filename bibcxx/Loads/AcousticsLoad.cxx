@@ -3,7 +3,7 @@
  * @brief Implementation de AcousticsLoad
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -28,9 +28,8 @@
 const char SANS_GROUP_MA[] = "SANS_GROUP_MA";
 const char SANS_GROUP_NO[] = "SANS_GROUP_NO";
 
-bool AcousticsLoadInstance::build()
-{
-    if ( ! _supportModel )
+bool AcousticsLoadInstance::build() {
+    if ( !_supportModel )
         throw std::runtime_error( "Support Model not set" );
 
     CommandSyntax cmdSt( "AFFE_CHAR_ACOU" );
@@ -39,32 +38,32 @@ bool AcousticsLoadInstance::build()
     CapyConvertibleSyntax syntax;
     syntax.setSimpleKeywordValues( _toCapyConverter );
 
-    if( _pressure.size() != 0 )
-    {
+    if ( _pressure.size() != 0 ) {
         CapyConvertibleFactorKeyword zonePres( "PRES_IMPO" );
-        for( const auto& curPresPtr : _pressure )
-            zonePres.addContainer( curPresPtr->UnitaryAcousticsLoadInstance::getCapyConvertibleContainer() );
+        for ( const auto &curPresPtr : _pressure )
+            zonePres.addContainer(
+                curPresPtr->UnitaryAcousticsLoadInstance::getCapyConvertibleContainer() );
         syntax.addFactorKeywordValues( zonePres );
     }
-    if( _speed.size() != 0 )
-    {
+    if ( _speed.size() != 0 ) {
         CapyConvertibleFactorKeyword zoneVite( "VITE_FACE" );
-        for( const auto& curPresPtr : _speed )
-            zoneVite.addContainer( curPresPtr->UnitaryAcousticsLoadInstance::getCapyConvertibleContainer() );
+        for ( const auto &curPresPtr : _speed )
+            zoneVite.addContainer(
+                curPresPtr->UnitaryAcousticsLoadInstance::getCapyConvertibleContainer() );
         syntax.addFactorKeywordValues( zoneVite );
     }
-    if( _impedance.size() != 0 )
-    {
+    if ( _impedance.size() != 0 ) {
         CapyConvertibleFactorKeyword zoneImpe( "IMPE_FACE" );
-        for( const auto& curPresPtr : _impedance )
-            zoneImpe.addContainer( curPresPtr->UnitaryAcousticsLoadInstance::getCapyConvertibleContainer() );
+        for ( const auto &curPresPtr : _impedance )
+            zoneImpe.addContainer(
+                curPresPtr->UnitaryAcousticsLoadInstance::getCapyConvertibleContainer() );
         syntax.addFactorKeywordValues( zoneImpe );
     }
-    if( _connection.size() != 0 )
-    {
+    if ( _connection.size() != 0 ) {
         CapyConvertibleFactorKeyword zoneConnect( "LIAISON_UNIF" );
-        for( const auto& curPresPtr : _connection )
-            zoneConnect.addContainer( curPresPtr->UnitaryAcousticsLoadInstance::getCapyConvertibleContainer() );
+        for ( const auto &curPresPtr : _connection )
+            zoneConnect.addContainer(
+                curPresPtr->UnitaryAcousticsLoadInstance::getCapyConvertibleContainer() );
         syntax.addFactorKeywordValues( zoneConnect );
     }
 
@@ -72,13 +71,10 @@ bool AcousticsLoadInstance::build()
     cmdSt.define( test );
 
     // Maintenant que le fichier de commande est pret, on appelle OP0030
-    try
-    {
+    try {
         ASTERINTEGER op = 68;
         CALL_EXECOP( &op );
-    }
-    catch( ... )
-    {
+    } catch ( ... ) {
         throw;
     }
     return true;

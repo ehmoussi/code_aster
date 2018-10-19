@@ -3,7 +3,7 @@
  * @brief Implementation de MechanicalLoad
  * @author Natacha Bereux
  * @section LICENCE
- *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -41,7 +41,7 @@ const std::string LoadTraits< PressureOnPipe >::factorKeyword = "FORCE_TUYAU";
 
 const std::string LoadTraits< ImposedDoF >::factorKeyword = "DDL_IMPO";
 
-const std::string LoadTraits< DistributedPressure >::factorKeyword = "PRES_REP"; 
+const std::string LoadTraits< DistributedPressure >::factorKeyword = "PRES_REP";
 
 const std::string LoadTraits< ImpedanceOnFace >::factorKeyword = "IMPE_FACE";
 

@@ -35,21 +35,20 @@
  * @class MaterialOnMeshBuilderInstance
  * @author Nicolas Sellenet
  */
-class MaterialOnMeshBuilderInstance: public DataStructure
-{
+class MaterialOnMeshBuilderInstance : public DataStructure {
     friend class MaterialOnMeshInstance;
 
-protected:
+  protected:
     /**
      * @brief Build MaterialOnMeshPtr
      * @param curMater Material to build
      * @param curInputVariables Input variables to add in MaterialOnMeshPtr
      */
-    static void buildInstance( MaterialOnMeshInstance& curMater,
-                               const InputVariableOnMeshPtr& curInputVariables = nullptr )
-        throw ( std::runtime_error );
+    static void buildInstance(
+        MaterialOnMeshInstance &curMater,
+        const InputVariableOnMeshPtr &curInputVariables = nullptr ) throw( std::runtime_error );
 
-public:
+  public:
     /**
      * @typedef MaterialOnMeshBuilderPtr
      * @brief Pointeur intelligent vers un MaterialOnMeshBuilderInstance
@@ -61,9 +60,9 @@ public:
      * @param curMater Material to build
      * @param curInputVariables Input variables to add in MaterialOnMeshPtr
      */
-    static MaterialOnMeshPtr build( MaterialOnMeshPtr& curMater,
-                                    const InputVariableOnMeshPtr& curInputVariables = nullptr )
-        throw ( std::runtime_error );
+    static MaterialOnMeshPtr
+    build( MaterialOnMeshPtr &curMater,
+           const InputVariableOnMeshPtr &curInputVariables = nullptr ) throw( std::runtime_error );
 };
 
 #endif /* MATERIALONMESHBUILDER_H_ */

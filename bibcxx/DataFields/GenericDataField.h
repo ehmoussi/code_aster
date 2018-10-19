@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe GenericDataField
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -33,11 +33,9 @@
  * @brief Generic class which describe a field of data
  * @author Nicolas Sellenet
  */
-class GenericDataFieldInstance: public DataStructure
-{
-private:
-
-public:
+class GenericDataFieldInstance : public DataStructure {
+  private:
+  public:
     /**
      * @typedef GenericDataFieldPtr
      * @brief Pointeur intelligent vers un GenericDataField
@@ -48,20 +46,17 @@ public:
      * @brief Constructor
      * @param name Jeveux name
      */
-    GenericDataFieldInstance( const std::string name,
-                              const std::string type = "CHAM_GD",
-                              const JeveuxMemory memType = Permanent ):
-        DataStructure( name, 19, type, memType )
-    {};
+    GenericDataFieldInstance( const std::string name, const std::string type = "CHAM_GD",
+                              const JeveuxMemory memType = Permanent )
+        : DataStructure( name, 19, type, memType ){};
 
     /**
      * @brief Constructor
      * @param memType allocation memory
      */
     GenericDataFieldInstance( const JeveuxMemory memType = Permanent,
-                              const std::string type = "CHAM_GD" ):
-        DataStructure( type, memType, 19 )
-    {};
+                              const std::string type = "CHAM_GD" )
+        : DataStructure( type, memType, 19 ){};
 };
 
 /**

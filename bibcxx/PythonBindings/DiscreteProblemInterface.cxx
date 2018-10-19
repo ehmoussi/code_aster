@@ -3,7 +3,7 @@
  * @brief Interface python de DiscreteProblem
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -27,17 +27,15 @@
 #include <PythonBindings/factory.h>
 #include "PythonBindings/DiscreteProblemInterface.h"
 
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(buildKinematicsLoad_overloads, buildKinematicsLoad, 2, 2)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS( buildKinematicsLoad_overloads, buildKinematicsLoad, 2, 2 )
 
-void exportDiscreteProblemToPython()
-{
+void exportDiscreteProblemToPython() {
     using namespace boost::python;
 
-    class_< DiscreteProblemInstance, DiscreteProblemInstance::DiscreteProblemPtr >
-            ( "DiscreteProblem", no_init )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< DiscreteProblemInstance,
-                             StudyDescriptionPtr >) )
+    class_< DiscreteProblemInstance, DiscreteProblemInstance::DiscreteProblemPtr >(
+        "DiscreteProblem", no_init )
+        .def( "__init__",
+              make_constructor(&initFactoryPtr< DiscreteProblemInstance, StudyDescriptionPtr >))
         .def( "buildElementaryMechanicalLoadsVector",
               &DiscreteProblemInstance::buildElementaryMechanicalLoadsVector )
         .def( "buildElementaryDirichletVector",
@@ -52,18 +50,13 @@ void exportDiscreteProblemToPython()
               &DiscreteProblemInstance::buildElementaryTangentMatrix )
         .def( "buildElementaryJacobianMatrix",
               &DiscreteProblemInstance::buildElementaryJacobianMatrix )
-        .def( "buildKinematicsLoad",
-              &DiscreteProblemInstance::buildKinematicsLoad,
+        .def( "buildKinematicsLoad", &DiscreteProblemInstance::buildKinematicsLoad,
               buildKinematicsLoad_overloads() )
-        .def( "computeDOFNumbering",
-              &DiscreteProblemInstance::computeDOFNumbering )
+        .def( "computeDOFNumbering", &DiscreteProblemInstance::computeDOFNumbering )
         .def( "computeMechanicalDampingMatrix",
               &DiscreteProblemInstance::computeMechanicalDampingMatrix )
         .def( "computeMechanicalStiffnessMatrix",
               &DiscreteProblemInstance::computeMechanicalStiffnessMatrix )
-        .def( "computeMechanicalMassMatrix",
-              &DiscreteProblemInstance::computeMechanicalMassMatrix )
-        .def( "getStudyDescription",
-              &DiscreteProblemInstance::getStudyDescription )
-    ;
+        .def( "computeMechanicalMassMatrix", &DiscreteProblemInstance::computeMechanicalMassMatrix )
+        .def( "getStudyDescription", &DiscreteProblemInstance::getStudyDescription );
 };

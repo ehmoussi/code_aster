@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe EvolutiveThermalLoad
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -30,21 +30,17 @@
 
 #include "Results/TimeDependantResultsContainer.h"
 
-
 /**
  * @class EvolutiveThermalLoadInstance
  * @brief Cette classe correspond a un evol_ther
  * @author Nicolas Sellenet
  */
-class EvolutiveThermalLoadInstance: public TimeDependantResultsContainerInstance
-{
-public:
+class EvolutiveThermalLoadInstance : public TimeDependantResultsContainerInstance {
+  public:
     /**
      * @brief Constructeur
      */
-    EvolutiveThermalLoadInstance(): 
-        TimeDependantResultsContainerInstance( "EVOL_THER" )
-    {};
+    EvolutiveThermalLoadInstance() : TimeDependantResultsContainerInstance( "EVOL_THER" ){};
 };
 
 /**

@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe Grid
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -35,15 +35,14 @@
  * @brief Cette classe decrit une sd_grille
  * @author Nicolas Sellenet
  */
-class GridInstance: public MeshInstance
-{
-private:
+class GridInstance : public MeshInstance {
+  private:
     /** @brief Objet Jeveux '.GRLR' */
     JeveuxVectorDouble _grlr;
     /** @brief Objet Jeveux '.GRLI' */
-    JeveuxVectorLong   _grli;
+    JeveuxVectorLong _grli;
 
-public:
+  public:
     /**
      * @typedef GridPtr
      * @brief Pointeur intelligent vers un GridInstance

@@ -27,8 +27,7 @@
 #include "Modeling/FiniteElementDescriptor.h"
 #include "Functions/Function.h"
 
-void exportVectorUtilitiesToPython()
-{
+void exportVectorUtilitiesToPython() {
     using namespace boost::python;
 
     exportVectorUtilities< long >();

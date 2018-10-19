@@ -4,9 +4,9 @@
 /**
  * @file NonLinearEvolutionContainer.h
  * @brief Fichier entete de la classe NonLinearEvolutionContainer
- * @author Natacha Béreux 
+ * @author Natacha Béreux
  * @section LICENCE
- *   Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -30,30 +30,25 @@
 
 #include "Results/TimeDependantResultsContainer.h"
 
-
 /**
  * @class NonLinearEvolutionContainerInstance
  * @brief Cette classe correspond a un evol_noli, elle hérite de ResultsContainer
-          et stocke des champs 
- * @author Natacha Béreux 
+          et stocke des champs
+ * @author Natacha Béreux
  */
-class NonLinearEvolutionContainerInstance: public TimeDependantResultsContainerInstance
-{
-private:
-public:
+class NonLinearEvolutionContainerInstance : public TimeDependantResultsContainerInstance {
+  private:
+  public:
     /**
      * @brief Constructeur
      */
-    NonLinearEvolutionContainerInstance(): 
-        TimeDependantResultsContainerInstance( "EVOL_NOLI" )
-    {};
+    NonLinearEvolutionContainerInstance() : TimeDependantResultsContainerInstance( "EVOL_NOLI" ){};
 
     /**
      * @brief Constructeur
      */
-    NonLinearEvolutionContainerInstance( const std::string name ):
-        TimeDependantResultsContainerInstance( name, "EVOL_NOLI" )
-    {};
+    NonLinearEvolutionContainerInstance( const std::string name )
+        : TimeDependantResultsContainerInstance( name, "EVOL_NOLI" ){};
 };
 
 /**

@@ -3,7 +3,7 @@
  * @brief Interface python de TimeStepManager
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -25,22 +25,17 @@
 #include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
-void exportTimeStepManagerToPython()
-{
+void exportTimeStepManagerToPython() {
     using namespace boost::python;
 
-    class_< TimeStepManagerInstance, TimeStepManagerPtr,
-            bases< DataStructure > >
-        ( "TimeStepManager", no_init )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< TimeStepManagerInstance > ) )
+    class_< TimeStepManagerInstance, TimeStepManagerPtr, bases< DataStructure > >(
+        "TimeStepManager", no_init )
+        .def( "__init__", make_constructor(&initFactoryPtr< TimeStepManagerInstance >))
         .def( "addErrorManager", &TimeStepManagerInstance::addErrorManager )
         .def( "build", &TimeStepManagerInstance::build )
         .def( "setAutomaticManagement", &TimeStepManagerInstance::setAutomaticManagement )
-        .def( "setMaximumNumberOfTimeStep",
-              &TimeStepManagerInstance::setMaximumNumberOfTimeStep )
+        .def( "setMaximumNumberOfTimeStep", &TimeStepManagerInstance::setMaximumNumberOfTimeStep )
         .def( "setMaximumTimeStep", &TimeStepManagerInstance::setMaximumTimeStep )
         .def( "setMinimumTimeStep", &TimeStepManagerInstance::setMinimumTimeStep )
-        .def( "setTimeList", &TimeStepManagerInstance::setTimeList )
-    ;
+        .def( "setTimeList", &TimeStepManagerInstance::setTimeList );
 };

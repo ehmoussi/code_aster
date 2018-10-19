@@ -3,7 +3,7 @@
  * @brief Interface python de CppToFortranGlossary
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -25,8 +25,7 @@
 #include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
-void exportCppToFortranGlossaryToPython()
-{
+void exportCppToFortranGlossaryToPython() {
     using namespace boost::python;
 
     class_< Glossary >( "Glossary", no_init )
@@ -41,9 +40,8 @@ void exportCppToFortranGlossaryToPython()
         .def( "getPhysics", &Glossary::getPhysics )
         .def( "getRenumbering", &Glossary::getRenumbering )
         .def( "getPreconditioning", &Glossary::getPreconditioning )
-        .def( "getSolver", &Glossary::getSolver )
-    ;
+        .def( "getSolver", &Glossary::getSolver );
 
     def( "getGlossary", &getReferenceToGlossary,
-         return_value_policy<reference_existing_object>() );
+         return_value_policy< reference_existing_object >() );
 };

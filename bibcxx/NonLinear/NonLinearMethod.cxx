@@ -1,9 +1,9 @@
 /**
  * @file NonLinearMethod.cxx
- * @brief Implementation of LineSearch 
+ * @brief Implementation of LineSearch
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -27,8 +27,6 @@
 
 #include "NonLinear/NonLinearMethod.h"
 
-const char* NonLinearMethodNames[nbMethod] = { "NEWTON", "IMPLEX", "NEWTON_KRYLOV" };
-const char* PredictionNames[nbPrediction] = { "TANGENTE", "ELASTIQUE", "EXTRAPOLE", "DEPL_CALCULE"}; 
-const char* MatrixNames[nbMatrix] = { "TANGENTE", "ELASTIQUE"}; 
-
-
+const char *NonLinearMethodNames[nbMethod] = {"NEWTON", "IMPLEX", "NEWTON_KRYLOV"};
+const char *PredictionNames[nbPrediction] = {"TANGENTE", "ELASTIQUE", "EXTRAPOLE", "DEPL_CALCULE"};
+const char *MatrixNames[nbMatrix] = {"TANGENTE", "ELASTIQUE"};
