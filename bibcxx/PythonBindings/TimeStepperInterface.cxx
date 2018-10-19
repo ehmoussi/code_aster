@@ -3,7 +3,7 @@
  * @brief Interface python de TimeStepper
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -29,18 +29,12 @@
 #include "PythonBindings/TimeStepperInterface.h"
 #include "PythonBindings/DataStructureInterface.h"
 
-
-void exportTimeStepperToPython()
-{
+void exportTimeStepperToPython() {
     using namespace boost::python;
 
-    class_< TimeStepperInstance, TimeStepperInstance::TimeStepperPtr,
-            bases< DataStructure > >( "TimeStepper", no_init )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< TimeStepperInstance >) )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< TimeStepperInstance,
-                             std::string >) )
-        .def( "setValues", &TimeStepperInstance::setValues )
-    ;
+    class_< TimeStepperInstance, TimeStepperInstance::TimeStepperPtr, bases< DataStructure > >(
+        "TimeStepper", no_init )
+        .def( "__init__", make_constructor(&initFactoryPtr< TimeStepperInstance >))
+        .def( "__init__", make_constructor(&initFactoryPtr< TimeStepperInstance, std::string >))
+        .def( "setValues", &TimeStepperInstance::setValues );
 };

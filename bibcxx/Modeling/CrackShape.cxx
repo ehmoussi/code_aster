@@ -22,92 +22,85 @@
  */
 #include "CrackShape.h"
 
-CrackShapeInstance::CrackShapeInstance()
-{
-    _shape=Shape::NoShape;
+CrackShapeInstance::CrackShapeInstance() { _shape = Shape::NoShape; };
+
+void CrackShapeInstance::setEllipseCrackShape( double semiMajorAxis, double semiMinorAxis,
+                                               std::vector< double > center,
+                                               std::vector< double > vectX,
+                                               std::vector< double > vectY,
+                                               std::string crackSide ) {
+    _shape = Shape::Ellipse;
+    _semiMajorAxis = semiMajorAxis;
+    _semiMinorAxis = semiMinorAxis;
+    _center = center;
+    _vectX = vectX;
+    _vectY = vectY;
+    _crackSide = crackSide;
 };
 
-
-void CrackShapeInstance::setEllipseCrackShape(
-    double semiMajorAxis, double semiMinorAxis, std::vector<double> center,
-    std::vector<double> vectX, std::vector<double> vectY, std::string crackSide)
-{
-    _shape=Shape::Ellipse;
-    _semiMajorAxis=semiMajorAxis;
-    _semiMinorAxis=semiMinorAxis;
-    _center=center;
-    _vectX=vectX;
-    _vectY=vectY;
-    _crackSide=crackSide;
+void CrackShapeInstance::setSquareCrackShape( double semiMajorAxis, double semiMinorAxis,
+                                              double filletRadius, std::vector< double > center,
+                                              std::vector< double > vectX,
+                                              std::vector< double > vectY, std::string crackSide ) {
+    _shape = Shape::Square;
+    _semiMajorAxis = semiMajorAxis;
+    _semiMinorAxis = semiMinorAxis;
+    _filletRadius = filletRadius;
+    _center = center;
+    _vectX = vectX;
+    _vectY = vectY;
+    _crackSide = crackSide;
 };
 
-void CrackShapeInstance::setSquareCrackShape(
-    double semiMajorAxis, double semiMinorAxis, double filletRadius,
-    std::vector<double> center, std::vector<double> vectX, std::vector<double> vectY,
-    std::string crackSide)
-{
-    _shape=Shape::Square;
-    _semiMajorAxis=semiMajorAxis;
-    _semiMinorAxis=semiMinorAxis;
-    _filletRadius=filletRadius;
-    _center=center;
-    _vectX=vectX;
-    _vectY=vectY;
-    _crackSide=crackSide;
+void CrackShapeInstance::setCylinderCrackShape( double semiMajorAxis, double semiMinorAxis,
+                                                std::vector< double > center,
+                                                std::vector< double > vectX,
+                                                std::vector< double > vectY ) {
+    _shape = Shape::Cylinder;
+    _semiMajorAxis = semiMajorAxis;
+    _semiMinorAxis = semiMinorAxis;
+    _center = center;
+    _vectX = vectX;
+    _vectY = vectY;
 };
 
-void CrackShapeInstance::setCylinderCrackShape(
-    double semiMajorAxis, double semiMinorAxis, std::vector<double> center,
-    std::vector<double> vectX, std::vector<double> vectY)
-{
-    _shape=Shape::Cylinder;
-    _semiMajorAxis=semiMajorAxis;
-    _semiMinorAxis=semiMinorAxis;
-    _center=center;
-    _vectX=vectX;
-    _vectY=vectY;
+void CrackShapeInstance::setNotchCrackShape( double halfLength, double filletRadius,
+                                             std::vector< double > center,
+                                             std::vector< double > vectX,
+                                             std::vector< double > vectY ) {
+    _shape = Shape::Notch;
+    _halfLength = halfLength;
+    _filletRadius = filletRadius;
+    _center = center;
+    _vectX = vectX;
+    _vectY = vectY;
 };
 
-void CrackShapeInstance::setNotchCrackShape(
-    double halfLength, double filletRadius, std::vector<double> center,
-    std::vector<double> vectX, std::vector<double> vectY)
-{
-    _shape=Shape::Notch;
-    _halfLength=halfLength;
-    _filletRadius=filletRadius;
-    _center=center;
-    _vectX=vectX;
-    _vectY=vectY;
+void CrackShapeInstance::setHalfPlaneCrackShape( std::vector< double > endPoint,
+                                                 std::vector< double > normal,
+                                                 std::vector< double > tangent ) {
+    _shape = Shape::HalfPlane;
+    _endPoint = endPoint;
+    _normal = normal;
+    _tangent = tangent;
+};
+void CrackShapeInstance::setSegmentCrackShape( std::vector< double > startingPoint,
+                                               std::vector< double > endPoint ) {
+    _shape = Shape::Segment;
+    _startingPoint = startingPoint;
+    _endPoint = endPoint;
 };
 
-void CrackShapeInstance::setHalfPlaneCrackShape(
-    std::vector<double> endPoint, std::vector<double> normal, std::vector<double> tangent)
-{
-    _shape=Shape::HalfPlane;
-    _endPoint=endPoint;
-    _normal=normal;
-    _tangent=tangent;
-};
-void CrackShapeInstance::setSegmentCrackShape(
-    std::vector<double> startingPoint, std::vector<double> endPoint)
-{
-    _shape=Shape::Segment;
-    _startingPoint=startingPoint;
-    _endPoint=endPoint;
+void CrackShapeInstance::setHalfLineCrackShape( std::vector< double > startingPoint,
+                                                std::vector< double > tangent ) {
+    _shape = Shape::HalfLine;
+    _startingPoint = startingPoint;
+    _tangent = tangent;
 };
 
-void CrackShapeInstance::setHalfLineCrackShape(
-    std::vector<double> startingPoint, std::vector<double> tangent)
-{
-    _shape=Shape::HalfLine;
-    _startingPoint=startingPoint;
-    _tangent=tangent;
-};
-
-void CrackShapeInstance::setLineCrackShape(
-    std::vector<double> startingPoint, std::vector<double> tangent)
-{
-    _shape=Shape::Line;
-    _startingPoint=startingPoint;
-    _tangent=tangent;
+void CrackShapeInstance::setLineCrackShape( std::vector< double > startingPoint,
+                                            std::vector< double > tangent ) {
+    _shape = Shape::Line;
+    _startingPoint = startingPoint;
+    _tangent = tangent;
 };

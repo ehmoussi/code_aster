@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe FullHarmonicResultsContainer
  * @author Natacha Béreux
  * @section LICENCE
- *   Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -34,20 +34,17 @@
  * @brief Cette classe correspond à un dyna_harmo
  * @author Natacha Béreux
  */
-class FullHarmonicResultsContainerInstance: public FullResultsContainerInstance
-{
-private:
-
-public:
+class FullHarmonicResultsContainerInstance : public FullResultsContainerInstance {
+  private:
+  public:
     /**
      * @brief Constructeur
      * @todo  Ajouter les objets Jeveux de la SD
      */
-    FullHarmonicResultsContainerInstance( const std::string &name ): FullResultsContainerInstance( name, "DYNA_HARMO" )
-    {};
-    FullHarmonicResultsContainerInstance(): FullHarmonicResultsContainerInstance(ResultNaming::getNewResultName() )
-    {};
-
+    FullHarmonicResultsContainerInstance( const std::string &name )
+        : FullResultsContainerInstance( name, "DYNA_HARMO" ){};
+    FullHarmonicResultsContainerInstance()
+        : FullHarmonicResultsContainerInstance( ResultNaming::getNewResultName() ){};
 };
 
 /**

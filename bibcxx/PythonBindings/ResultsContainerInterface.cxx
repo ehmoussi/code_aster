@@ -25,24 +25,21 @@
 #include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
-
-void exportResultsContainerToPython()
-{
+void exportResultsContainerToPython() {
     using namespace boost::python;
 
-    MaterialOnMeshPtr (ResultsContainerInstance::*c1)() =
-            &ResultsContainerInstance::getMaterialOnMesh;
-    MaterialOnMeshPtr (ResultsContainerInstance::*c2)(int) =
-            &ResultsContainerInstance::getMaterialOnMesh;
+    MaterialOnMeshPtr ( ResultsContainerInstance::*c1 )() =
+        &ResultsContainerInstance::getMaterialOnMesh;
+    MaterialOnMeshPtr ( ResultsContainerInstance::*c2 )( int ) =
+        &ResultsContainerInstance::getMaterialOnMesh;
 
     class_< ResultsContainerInstance, ResultsContainerInstance::ResultsContainerPtr,
-            bases< DataStructure > > ( "ResultsContainer", no_init )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< ResultsContainerInstance,
-                             std::string > ) )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< ResultsContainerInstance,
-                             std::string, std::string > ) )
+            bases< DataStructure > >( "ResultsContainer", no_init )
+        .def( "__init__",
+              make_constructor(&initFactoryPtr< ResultsContainerInstance, std::string >))
+        .def( "__init__",
+              make_constructor(
+                  &initFactoryPtr< ResultsContainerInstance, std::string, std::string >))
         .def( "appendMaterialOnMeshOnAllRanks",
               &ResultsContainerInstance::appendMaterialOnMeshOnAllRanks )
         .def( "appendModelOnAllRanks", &ResultsContainerInstance::appendModelOnAllRanks )
@@ -58,6 +55,5 @@ void exportResultsContainerToPython()
         .def( "getRealFieldOnElements", &ResultsContainerInstance::getRealFieldOnElements )
         .def( "printMedFile", &ResultsContainerInstance::printMedFile )
         .def( "setMesh", &ResultsContainerInstance::setMesh )
-        .def( "update", &ResultsContainerInstance::update )
-    ;
+        .def( "update", &ResultsContainerInstance::update );
 };

@@ -2,7 +2,7 @@
  * @file ResultNamingInterface.h
  * @brief Python bindings for ResultNaming class.
  * --------------------------------------------------------------------
- * Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+ * Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
  * This file is part of code_aster.
  *
  * code_aster is free software: you can redistribute it and/or modify
@@ -25,16 +25,14 @@
 #include "PythonBindings/ResultNamingInterface.h"
 #include <boost/python.hpp>
 
-void exportResultNamingToPython()
-{
+void exportResultNamingToPython() {
     using namespace boost::python;
 
-    class_< ResultNaming > ( "ResultNaming", no_init )
+    class_< ResultNaming >( "ResultNaming", no_init )
         .def( "initCounter", &ResultNaming::initCounter )
         .staticmethod( "initCounter" )
         .def( "getNewResultName", &ResultNaming::getNewResultName )
         .staticmethod( "getNewResultName" )
         .def( "getCurrentName", &ResultNaming::getCurrentName )
-        .staticmethod( "getCurrentName" )
-    ;
+        .staticmethod( "getCurrentName" );
 };

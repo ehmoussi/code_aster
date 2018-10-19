@@ -34,21 +34,17 @@
  * @brief Cette classe correspond a un mode_flamb
  * @author Natacha Béreux
  */
-class BucklingModeContainerInstance: public FullResultsContainerInstance
-{
-private:
-
-public:
+class BucklingModeContainerInstance : public FullResultsContainerInstance {
+  private:
+  public:
     /**
      * @brief Constructeur
      */
-    BucklingModeContainerInstance():
-        BucklingModeContainerInstance( ResultNaming::getNewResultName() )
-    {};
+    BucklingModeContainerInstance()
+        : BucklingModeContainerInstance( ResultNaming::getNewResultName() ){};
 
-    BucklingModeContainerInstance( const std::string &name ):
-        FullResultsContainerInstance( name, "MODE_FLAMB" )
-    {};
+    BucklingModeContainerInstance( const std::string &name )
+        : FullResultsContainerInstance( name, "MODE_FLAMB" ){};
 };
 
 /**

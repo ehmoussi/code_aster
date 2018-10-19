@@ -3,7 +3,7 @@
  * @brief Initialisation des renumeroteurs autorises pour les solvers
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -30,34 +30,30 @@
 #include "Supervis/ResultNaming.h"
 
 const std::set< Renumbering > WrapMultFront::setOfAllowedRenumbering( MultFrontRenumbering,
-                                                                 MultFrontRenumbering + nbRenumberingMultFront );
+                                                                      MultFrontRenumbering +
+                                                                          nbRenumberingMultFront );
 
-const std::set< Renumbering > WrapLdlt::setOfAllowedRenumbering( LdltRenumbering,
-                                                            LdltRenumbering + nbRenumberingLdlt );
+const std::set< Renumbering >
+    WrapLdlt::setOfAllowedRenumbering( LdltRenumbering, LdltRenumbering + nbRenumberingLdlt );
 
-const std::set< Renumbering > WrapMumps::setOfAllowedRenumbering( MumpsRenumbering,
-                                                             MumpsRenumbering + nbRenumberingMumps );
+const std::set< Renumbering >
+    WrapMumps::setOfAllowedRenumbering( MumpsRenumbering, MumpsRenumbering + nbRenumberingMumps );
 
-const std::set< Renumbering > WrapPetsc::setOfAllowedRenumbering( PetscRenumbering,
-                                                             PetscRenumbering + nbRenumberingPetsc );
+const std::set< Renumbering >
+    WrapPetsc::setOfAllowedRenumbering( PetscRenumbering, PetscRenumbering + nbRenumberingPetsc );
 
-const std::set< Renumbering > WrapGcpc::setOfAllowedRenumbering( GcpcRenumbering,
-                                                            GcpcRenumbering + nbRenumberingGcpc );
+const std::set< Renumbering >
+    WrapGcpc::setOfAllowedRenumbering( GcpcRenumbering, GcpcRenumbering + nbRenumberingGcpc );
 
-
-
-ListSyntaxMapContainer BaseLinearSolverInstance::buildListSyntax()
-{
+ListSyntaxMapContainer BaseLinearSolverInstance::buildListSyntax() {
     ListSyntaxMapContainer listeSolver;
     SyntaxMapContainer dict1 = buildSyntaxMapFromParamList( _listOfParameters );
     listeSolver.push_back( dict1 );
     return listeSolver;
 };
 
-bool BaseLinearSolverInstance::build()
-{
-    if( _charValues->exists() )
-    {
+bool BaseLinearSolverInstance::build() {
+    if ( _charValues->exists() ) {
         _charValues->deallocate();
         _doubleValues->deallocate();
         _integerValues->deallocate();
@@ -72,20 +68,20 @@ bool BaseLinearSolverInstance::build()
     SyntaxMapContainer dict;
     ListSyntaxMapContainer listeSolver = this->buildListSyntax();
 
-    dict.container[ "SOLVEUR" ] = listeSolver;
+    dict.container["SOLVEUR"] = listeSolver;
     cmdSt.define( dict );
 
-    std::string base("G");
+    std::string base( "G" );
     CALLO_CRESOL_WRAP( newName, base );
     _isEmpty = false;
 
     return true;
 };
 
-bool BaseLinearSolverInstance::matrixFactorization( AssemblyMatrixDisplacementDoublePtr currentMatrix )
-     throw( std::runtime_error )
-{
-    if( _isEmpty ) build();
+bool BaseLinearSolverInstance::matrixFactorization(
+    AssemblyMatrixDisplacementDoublePtr currentMatrix ) throw( std::runtime_error ) {
+    if ( _isEmpty )
+        build();
 
     const std::string solverName( getName() + "           " );
     std::string base( "V" );
@@ -99,8 +95,7 @@ bool BaseLinearSolverInstance::matrixFactorization( AssemblyMatrixDisplacementDo
     CommandSyntax cmdSt( "AUTRE" );
     cmdSt.setResult( "AUCUN", "AUCUN" );
 
-    CALLO_MATRIX_FACTOR( solverName, base, &cret, _matrixPrec->getName(),
-                         matass, &npvneg, &istop );
+    CALLO_MATRIX_FACTOR( solverName, base, &cret, _matrixPrec->getName(), matass, &npvneg, &istop );
     currentMatrix->_isFactorized = true;
 
     auto solverType = std::string( LinearSolverNames[_linearSolver] );
@@ -110,21 +105,18 @@ bool BaseLinearSolverInstance::matrixFactorization( AssemblyMatrixDisplacementDo
 };
 
 FieldOnNodesDoublePtr BaseLinearSolverInstance::solveDoubleLinearSystem(
-            const AssemblyMatrixDisplacementDoublePtr& currentMatrix,
-            const FieldOnNodesDoublePtr& currentRHS,
-            FieldOnNodesDoublePtr result ) const
-{
+    const AssemblyMatrixDisplacementDoublePtr &currentMatrix,
+    const FieldOnNodesDoublePtr &currentRHS, FieldOnNodesDoublePtr result ) const {
     if ( result->getName() == "" )
         result = FieldOnNodesDoublePtr( new FieldOnNodesDoubleInstance( Permanent ) );
 
     std::string blanc( " " );
     ASTERINTEGER nsecm = 0, prepos = 1, istop = 0, iret = 0;
-    std::string base( JeveuxMemoryTypesNames[ result->getMemoryType() ] );
+    std::string base( JeveuxMemoryTypesNames[result->getMemoryType()] );
 
-    CALLO_RESOUD_WRAP( currentMatrix->getName(), _matrixPrec->getName(), getName(),
-                       blanc, &nsecm, currentRHS->getName(),
-                       result->getName(), base, blanc,
-                       &prepos, &istop, &iret );
+    CALLO_RESOUD_WRAP( currentMatrix->getName(), _matrixPrec->getName(), getName(), blanc, &nsecm,
+                       currentRHS->getName(), result->getName(), base, blanc, &prepos, &istop,
+                       &iret );
 
     auto solverType = std::string( LinearSolverNames[_linearSolver] );
     currentMatrix->setSolverName( solverType );
@@ -133,22 +125,19 @@ FieldOnNodesDoublePtr BaseLinearSolverInstance::solveDoubleLinearSystem(
 };
 
 FieldOnNodesDoublePtr BaseLinearSolverInstance::solveDoubleLinearSystemWithKinematicsLoad(
-            const AssemblyMatrixDisplacementDoublePtr& currentMatrix,
-            const FieldOnNodesDoublePtr& kinematicsField,
-            const FieldOnNodesDoublePtr& currentRHS,
-            FieldOnNodesDoublePtr result ) const
-{
+    const AssemblyMatrixDisplacementDoublePtr &currentMatrix,
+    const FieldOnNodesDoublePtr &kinematicsField, const FieldOnNodesDoublePtr &currentRHS,
+    FieldOnNodesDoublePtr result ) const {
     if ( result->getName() == "" )
         result = FieldOnNodesDoublePtr( new FieldOnNodesDoubleInstance( Permanent ) );
 
     std::string blanc( " " );
     ASTERINTEGER nsecm = 0, prepos = 1, istop = 0, iret = 0;
-    std::string base( JeveuxMemoryTypesNames[ result->getMemoryType() ] );
+    std::string base( JeveuxMemoryTypesNames[result->getMemoryType()] );
 
     CALLO_RESOUD_WRAP( currentMatrix->getName(), _matrixPrec->getName(), getName(),
-                       kinematicsField->getName(), &nsecm, currentRHS->getName(),
-                       result->getName(), base, blanc,
-                       &prepos, &istop, &iret );
+                       kinematicsField->getName(), &nsecm, currentRHS->getName(), result->getName(),
+                       base, blanc, &prepos, &istop, &iret );
 
     auto solverType = std::string( LinearSolverNames[_linearSolver] );
     currentMatrix->setSolverName( solverType );

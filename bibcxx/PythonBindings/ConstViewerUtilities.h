@@ -6,7 +6,7 @@
  * @brief Utilitaires pour convertir un vector en list et inversement
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -27,12 +27,8 @@
 #include "astercxx.h"
 #include <boost/python.hpp>
 
-template< typename T >
-struct ConstViewer
-{
-    ConstViewer( boost::shared_ptr< const T > p ):
-        ptr(p)
-    {};
+template < typename T > struct ConstViewer {
+    ConstViewer( boost::shared_ptr< const T > p ) : ptr( p ){};
 
     boost::shared_ptr< const T > ptr;
 };

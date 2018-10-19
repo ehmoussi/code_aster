@@ -3,7 +3,7 @@
  * @brief Interface python de StaticNonLinearAnalysis
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -25,41 +25,36 @@
 #include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(addBehaviourOnElements_overloads,
-    addBehaviourOnElements, 1, 2)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS( addBehaviourOnElements_overloads, addBehaviourOnElements, 1,
+                                        2 )
 
-void exportStaticNonLinearAnalysisToPython()
-{
+void exportStaticNonLinearAnalysisToPython() {
     using namespace boost::python;
 
-    void (StaticNonLinearAnalysisInstance::*c1)( const GenericMechanicalLoadPtr& ) =
-            &StaticNonLinearAnalysisInstance::addStandardExcitation;
+    void ( StaticNonLinearAnalysisInstance::*c1 )( const GenericMechanicalLoadPtr & ) =
+        &StaticNonLinearAnalysisInstance::addStandardExcitation;
 
-    void (StaticNonLinearAnalysisInstance::*c2)( const KinematicsLoadPtr& ) =
-            &StaticNonLinearAnalysisInstance::addStandardExcitation;
+    void ( StaticNonLinearAnalysisInstance::*c2 )( const KinematicsLoadPtr & ) =
+        &StaticNonLinearAnalysisInstance::addStandardExcitation;
 
-    void (StaticNonLinearAnalysisInstance::*c3)( const GenericMechanicalLoadPtr&,
-                                                 const FunctionPtr& scalF ) =
-            &StaticNonLinearAnalysisInstance::addStandardScaledExcitation;
+    void ( StaticNonLinearAnalysisInstance::*c3 )( const GenericMechanicalLoadPtr &,
+                                                   const FunctionPtr &scalF ) =
+        &StaticNonLinearAnalysisInstance::addStandardScaledExcitation;
 
-    void (StaticNonLinearAnalysisInstance::*c4)( const KinematicsLoadPtr&,
-                                                 const FunctionPtr& scalF ) =
-            &StaticNonLinearAnalysisInstance::addStandardScaledExcitation;
+    void ( StaticNonLinearAnalysisInstance::*c4 )( const KinematicsLoadPtr &,
+                                                   const FunctionPtr &scalF ) =
+        &StaticNonLinearAnalysisInstance::addStandardScaledExcitation;
 
-    class_< StaticNonLinearAnalysisInstance, StaticNonLinearAnalysisPtr >
-        ( "StaticNonLinearAnalysis", no_init )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< StaticNonLinearAnalysisInstance > ) )
+    class_< StaticNonLinearAnalysisInstance, StaticNonLinearAnalysisPtr >(
+        "StaticNonLinearAnalysis", no_init )
+        .def( "__init__", make_constructor(&initFactoryPtr< StaticNonLinearAnalysisInstance >))
         .def( "execute", &StaticNonLinearAnalysisInstance::execute )
-        .def( "addBehaviourOnElements",
-              &StaticNonLinearAnalysisInstance::addBehaviourOnElements,
-              addBehaviourOnElements_overloads())
-        .def( "setNonLinearMethod",
-              &StaticNonLinearAnalysisInstance::setNonLinearMethod )
+        .def( "addBehaviourOnElements", &StaticNonLinearAnalysisInstance::addBehaviourOnElements,
+              addBehaviourOnElements_overloads() )
+        .def( "setNonLinearMethod", &StaticNonLinearAnalysisInstance::setNonLinearMethod )
         .def( "setLinearSolver", &StaticNonLinearAnalysisInstance::setLinearSolver )
         .def( "setInitialState", &StaticNonLinearAnalysisInstance::setInitialState )
-        .def( "setLineSearchMethod",
-              &StaticNonLinearAnalysisInstance::setLineSearchMethod )
+        .def( "setLineSearchMethod", &StaticNonLinearAnalysisInstance::setLineSearchMethod )
         .def( "setMaterialOnMesh", &StaticNonLinearAnalysisInstance::setMaterialOnMesh )
         .def( "setLoadStepManager", &StaticNonLinearAnalysisInstance::setLoadStepManager )
         .def( "setSupportModel", &StaticNonLinearAnalysisInstance::setSupportModel )
@@ -68,8 +63,7 @@ void exportStaticNonLinearAnalysisToPython()
         .def( "addStandardExcitation", c2 )
         .def( "addStandardScaledExcitation", c3 )
         .def( "addStandardScaledExcitation", c4 )
-        .def( "addDrivenExcitation",
-              &StaticNonLinearAnalysisInstance::addDrivenExcitation )
+        .def( "addDrivenExcitation", &StaticNonLinearAnalysisInstance::addDrivenExcitation )
         .def( "addExcitationOnUpdatedGeometry",
               &StaticNonLinearAnalysisInstance::addExcitationOnUpdatedGeometry )
         .def( "addScaledExcitationOnUpdatedGeometry",
@@ -77,6 +71,5 @@ void exportStaticNonLinearAnalysisToPython()
         .def( "addIncrementalDirichletExcitation",
               &StaticNonLinearAnalysisInstance::addIncrementalDirichletExcitation )
         .def( "addIncrementalDirichletScaledExcitation",
-              &StaticNonLinearAnalysisInstance::addIncrementalDirichletScaledExcitation )
-    ;
+              &StaticNonLinearAnalysisInstance::addIncrementalDirichletScaledExcitation );
 };

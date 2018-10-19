@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe FiniteElementDescriptor
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -36,53 +36,50 @@
  * @brief Class which describes the finite elements
  * @author Nicolas Sellenet
  */
-class FiniteElementDescriptorInstance: public DataStructure
-{
-public:
-    typedef MeshExplorer< ElementBuilderFromFiniteElementDescriptor,
-                          const JeveuxCollectionLong& > ConnectivityDelayedElementsExplorer;
+class FiniteElementDescriptorInstance : public DataStructure {
+  public:
+    typedef MeshExplorer< ElementBuilderFromFiniteElementDescriptor, const JeveuxCollectionLong & >
+        ConnectivityDelayedElementsExplorer;
 
-protected:
+  protected:
     /** @brief Vecteur Jeveux '.NBNO' */
-    JeveuxVectorLong                          _numberOfDelayedNumberedConstraintNodes;
+    JeveuxVectorLong _numberOfDelayedNumberedConstraintNodes;
     /** @brief Vecteur Jeveux '.LGRF' */
-    JeveuxVectorChar8                         _parameters;
+    JeveuxVectorChar8 _parameters;
     /** @brief Vecteur Jeveux '.PRNM' */
-    JeveuxVectorLong                          _dofDescriptor;
+    JeveuxVectorLong _dofDescriptor;
     /** @brief Collection '.LIEL' */
-    JeveuxCollectionLong                      _listOfGroupOfElements;
+    JeveuxCollectionLong _listOfGroupOfElements;
     /** @brief Vecteur Jeveux '.REPE' */
-    JeveuxVectorLong                          _groupOfElementsNumberByElement;
+    JeveuxVectorLong _groupOfElementsNumberByElement;
     /** @brief Collection '.NEMA' */
-    JeveuxCollectionLong                      _delayedNumberedConstraintElementsDescriptor;
+    JeveuxCollectionLong _delayedNumberedConstraintElementsDescriptor;
     /** @brief Vecteur Jeveux '.PRNS' */
-    JeveuxVectorLong                          _dofOfDelayedNumberedConstraintNodes;
+    JeveuxVectorLong _dofOfDelayedNumberedConstraintNodes;
     /** @brief Vecteur Jeveux '.LGNS' */
-    JeveuxVectorLong                          _delayedNodesNumbering;
+    JeveuxVectorLong _delayedNodesNumbering;
     /** @brief Vecteur Jeveux '.SSSA' */
-    JeveuxVectorLong                          _superElementsDescriptor;
+    JeveuxVectorLong _superElementsDescriptor;
     /** @brief Vecteur Jeveux '.NVGE' */
-    JeveuxVectorChar16                        _nameOfNeighborhoodStructure;
+    JeveuxVectorChar16 _nameOfNeighborhoodStructure;
     /** @brief Base mesh */
-    BaseMeshPtr                               _mesh;
+    BaseMeshPtr _mesh;
     /** @brief Object to allow loop over connectivity of delayed numbered elements */
     const ConnectivityDelayedElementsExplorer _explorer;
     /** @brief Object to allow loop over list of group of elements */
     const ConnectivityDelayedElementsExplorer _explorer2;
 
-public:
+  public:
     /**
      * @brief Constructeur
      */
-    FiniteElementDescriptorInstance( const std::string& name,
-                                     const BaseMeshPtr mesh,
+    FiniteElementDescriptorInstance( const std::string &name, const BaseMeshPtr mesh,
                                      const JeveuxMemory memType = Permanent );
 
     /**
      * @brief Destructor
      */
-    ~FiniteElementDescriptorInstance()
-    {};
+    ~FiniteElementDescriptorInstance(){};
 
     /**
      * @typedef FiniteElementDescriptorPtr
@@ -90,52 +87,42 @@ public:
      */
     typedef boost::shared_ptr< FiniteElementDescriptorInstance > FiniteElementDescriptorPtr;
 
-    const ConnectivityDelayedElementsExplorer& getDelayedElementsExplorer() const
-    {
+    const ConnectivityDelayedElementsExplorer &getDelayedElementsExplorer() const {
         _delayedNumberedConstraintElementsDescriptor->buildFromJeveux();
         return _explorer;
     };
 
-    const JeveuxVectorLong& getDelayedNodesComponentDescriptor() const
-    {
+    const JeveuxVectorLong &getDelayedNodesComponentDescriptor() const {
         _dofOfDelayedNumberedConstraintNodes->updateValuePointer();
         return _dofOfDelayedNumberedConstraintNodes;
     };
 
-    const JeveuxVectorLong& getDelayedNodesNumbering() const
-    {
+    const JeveuxVectorLong &getDelayedNodesNumbering() const {
         _delayedNodesNumbering->updateValuePointer();
         return _delayedNodesNumbering;
     };
 
-    const ConnectivityDelayedElementsExplorer& getListOfGroupOfElements() const
-    {
+    const ConnectivityDelayedElementsExplorer &getListOfGroupOfElements() const {
         _listOfGroupOfElements->buildFromJeveux();
         return _explorer2;
     };
 
-    ASTERINTEGER getNumberOfDelayedNodes() const
-    {
+    ASTERINTEGER getNumberOfDelayedNodes() const {
         _numberOfDelayedNumberedConstraintNodes->updateValuePointer();
-        return (*_numberOfDelayedNumberedConstraintNodes)[0];
+        return ( *_numberOfDelayedNumberedConstraintNodes )[0];
     };
 
-    JeveuxVectorChar8 getParameters() const
-    {
+    JeveuxVectorChar8 getParameters() const {
         _parameters->updateValuePointer();
         return _parameters;
     };
 
-    const JeveuxVectorLong& getPhysicalNodesComponentDescriptor() const
-    {
+    const JeveuxVectorLong &getPhysicalNodesComponentDescriptor() const {
         _dofDescriptor->updateValuePointer();
         return _dofDescriptor;
     };
 
-    const BaseMeshPtr getSupportMesh() const
-    {
-        return _mesh;
-    };
+    const BaseMeshPtr getSupportMesh() const { return _mesh; };
 };
 
 /**

@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe MeshExplorer
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -29,170 +29,123 @@
 #include "MemoryManager/JeveuxVector.h"
 #include "MemoryManager/JeveuxCollection.h"
 
-class MeshElement
-{
-    const ASTERINTEGER        _elemNum;
-    const ASTERINTEGER* const _listOfNodes;
-    const ASTERINTEGER        _nbNodes;
-    const ASTERINTEGER        _type;
+class MeshElement {
+    const ASTERINTEGER _elemNum;
+    const ASTERINTEGER *const _listOfNodes;
+    const ASTERINTEGER _nbNodes;
+    const ASTERINTEGER _type;
 
-public:
-    MeshElement( const ASTERINTEGER& num, const ASTERINTEGER* const listOfNodes,
-                 const ASTERINTEGER& nbNodes, const ASTERINTEGER& type ):
-        _elemNum( num ),
-        _listOfNodes( listOfNodes ),
-        _nbNodes( nbNodes ),
-        _type( type )
-    {};
+  public:
+    MeshElement( const ASTERINTEGER &num, const ASTERINTEGER *const listOfNodes,
+                 const ASTERINTEGER &nbNodes, const ASTERINTEGER &type )
+        : _elemNum( num ), _listOfNodes( listOfNodes ), _nbNodes( nbNodes ), _type( type ){};
 
-    const ASTERINTEGER& getNumberOfNodes() const
-    {
-        return _nbNodes;
-    };
+    const ASTERINTEGER &getNumberOfNodes() const { return _nbNodes; };
 
-    const ASTERINTEGER& getElementNumber() const
-    {
-        return _elemNum;
-    };
+    const ASTERINTEGER &getElementNumber() const { return _elemNum; };
 
-    const ASTERINTEGER& getType() const
-    {
-        return _type;
-    };
+    const ASTERINTEGER &getType() const { return _type; };
 
-    struct const_iterator
-    {
-        const ASTERINTEGER* positionInList;
+    struct const_iterator {
+        const ASTERINTEGER *positionInList;
 
-        inline const_iterator( const ASTERINTEGER* curList ):
-            positionInList( curList )
-        {};
+        inline const_iterator( const ASTERINTEGER *curList ) : positionInList( curList ){};
 
-        inline const_iterator( const const_iterator& iter ):
-            positionInList( iter.positionInList )
-        {};
+        inline const_iterator( const const_iterator &iter )
+            : positionInList( iter.positionInList ){};
 
-        inline const_iterator& operator=( const const_iterator& testIter )
-        {
+        inline const_iterator &operator=( const const_iterator &testIter ) {
             positionInList = testIter.positionInList;
             return *this;
         };
 
-        inline const_iterator& operator++()
-        {
+        inline const_iterator &operator++() {
             ++positionInList;
             return *this;
         };
 
-        inline bool operator==( const const_iterator& testIter ) const
-        {
-            if ( testIter.positionInList != positionInList ) return false;
+        inline bool operator==( const const_iterator &testIter ) const {
+            if ( testIter.positionInList != positionInList )
+                return false;
             return true;
         };
 
-        inline bool operator!=( const const_iterator& testIter ) const
-        {
-            if ( testIter.positionInList != positionInList ) return true;
+        inline bool operator!=( const const_iterator &testIter ) const {
+            if ( testIter.positionInList != positionInList )
+                return true;
             return false;
         };
 
-        inline const ASTERINTEGER& operator->() const
-        {
-            return *positionInList;
-        };
+        inline const ASTERINTEGER &operator->() const { return *positionInList; };
 
-        inline const ASTERINTEGER& operator*() const
-        {
-            return *positionInList;
-        };
+        inline const ASTERINTEGER &operator*() const { return *positionInList; };
     };
 
     /**
-     * @brief 
+     * @brief
      */
-    const_iterator begin() const
-    {
-        return const_iterator( _listOfNodes );
-    };
+    const_iterator begin() const { return const_iterator( _listOfNodes ); };
 
     /**
-     * @brief 
+     * @brief
      * @todo revoir le fonctionnement du end car il peut provoquer de segfault
      */
-    const_iterator end() const
-    {
-        return const_iterator( &_listOfNodes[ _nbNodes ] );
-    };
+    const_iterator end() const { return const_iterator( &_listOfNodes[_nbNodes] ); };
 };
 
-class ElementBuilderFromConnectivity
-{
-private:
+class ElementBuilderFromConnectivity {
+  private:
     const JeveuxCollectionLong _connect;
-    const JeveuxVectorLong     _type;
+    const JeveuxVectorLong _type;
 
-public:
-    ElementBuilderFromConnectivity( const JeveuxCollectionLong& connect,
-                                    const JeveuxVectorLong& type ):
-        _connect( connect ),
-        _type( type )
-    {
+  public:
+    ElementBuilderFromConnectivity( const JeveuxCollectionLong &connect,
+                                    const JeveuxVectorLong &type )
+        : _connect( connect ), _type( type ) {
         _connect->buildFromJeveux();
         _type->updateValuePointer();
     };
 
-    MeshElement getElement( const int& pos ) const
-        throw( std::runtime_error )
-    {
+    MeshElement getElement( const int &pos ) const throw( std::runtime_error ) {
         const int size2 = _connect->size();
-        if( size2 <= 0 )
-            throw std::runtime_error ( "Connectivity not available" );
+        if ( size2 <= 0 )
+            throw std::runtime_error( "Connectivity not available" );
 
-        if( pos > size2 || pos < 0 )
+        if ( pos > size2 || pos < 0 )
             return MeshElement( 0, nullptr, 0, -1 );
-        const auto& obj = _connect->getObject( pos + 1 );
+        const auto &obj = _connect->getObject( pos + 1 );
         const auto size = obj.size();
-        const ASTERINTEGER type = (*_type)[ pos ];
-        return MeshElement( pos+1, &obj.operator[]( 0 ), size, type );
+        const ASTERINTEGER type = ( *_type )[pos];
+        return MeshElement( pos + 1, &obj.operator[]( 0 ), size, type );
     };
 
-    int size() const throw( std::runtime_error )
-    {
-        return _type->size();
-    };
+    int size() const throw( std::runtime_error ) { return _type->size(); };
 };
 
-class ElementBuilderFromFiniteElementDescriptor
-{
-private:
+class ElementBuilderFromFiniteElementDescriptor {
+  private:
     const JeveuxCollectionLong _connectAndType;
 
-public:
-    ElementBuilderFromFiniteElementDescriptor( const JeveuxCollectionLong& connect ):
-        _connectAndType( connect )
-    {
+  public:
+    ElementBuilderFromFiniteElementDescriptor( const JeveuxCollectionLong &connect )
+        : _connectAndType( connect ) {
         _connectAndType->buildFromJeveux();
     };
 
-    MeshElement getElement( const int& pos ) const
-        throw( std::runtime_error )
-    {
+    MeshElement getElement( const int &pos ) const throw( std::runtime_error ) {
         const int size2 = _connectAndType->size();
-        if( size2 <= 0 )
-            throw std::runtime_error ( "Connectivity not available" );
+        if ( size2 <= 0 )
+            throw std::runtime_error( "Connectivity not available" );
 
-        if( pos > size2 || pos < 0 )
+        if ( pos > size2 || pos < 0 )
             return MeshElement( 0, nullptr, 0, -1 );
-        const auto& obj = _connectAndType->getObject( pos + 1 );
+        const auto &obj = _connectAndType->getObject( pos + 1 );
         const auto size = obj.size() - 1;
-        const ASTERINTEGER type = obj[ size ];
-        return MeshElement( pos+1, &obj.operator[]( 0 ), size, type );
+        const ASTERINTEGER type = obj[size];
+        return MeshElement( pos + 1, &obj.operator[]( 0 ), size, type );
     };
 
-    int size() const throw( std::runtime_error )
-    {
-        return _connectAndType->size();
-    };
+    int size() const throw( std::runtime_error ) { return _connectAndType->size(); };
 };
 
 /**
@@ -200,104 +153,76 @@ public:
  * @brief Utility to loop over mesh elements
  * @author Nicolas Sellenet
  */
-template< class ElemBuilder, typename... Args >
-class MeshExplorer
-{
-private:
+template < class ElemBuilder, typename... Args > class MeshExplorer {
+  private:
     const ElemBuilder _builder;
 
-public:
+  public:
     /**
      * @brief Constructeur
      */
-    MeshExplorer( const Args... a ):
-        _builder( a... )
-    {};
+    MeshExplorer( const Args... a ) : _builder( a... ){};
 
     /**
      * @brief Destructeur
      */
-    ~MeshExplorer()
-    {};
+    ~MeshExplorer(){};
 
-    struct const_iterator
-    {
-        int                position;
-        const ElemBuilder& builder;
+    struct const_iterator {
+        int position;
+        const ElemBuilder &builder;
 
-        inline const_iterator( int memoryPosition, const ElemBuilder& test ):
-            position( memoryPosition ), builder( test )
-        {};
+        inline const_iterator( int memoryPosition, const ElemBuilder &test )
+            : position( memoryPosition ), builder( test ){};
 
-        inline const_iterator( const const_iterator& iter ):
-            position( iter.position ), builder( iter.builder )
-        {};
+        inline const_iterator( const const_iterator &iter )
+            : position( iter.position ), builder( iter.builder ){};
 
-        inline const_iterator& operator=( const const_iterator& testIter )
-        {
+        inline const_iterator &operator=( const const_iterator &testIter ) {
             position = testIter.position;
             builder = testIter.builder;
             return *this;
         };
 
-        inline const_iterator& operator++()
-        {
+        inline const_iterator &operator++() {
             ++position;
             return *this;
         };
 
-        inline bool operator==( const const_iterator& testIter ) const
-        {
-            if ( testIter.position != position ) return false;
+        inline bool operator==( const const_iterator &testIter ) const {
+            if ( testIter.position != position )
+                return false;
             return true;
         };
 
-        inline bool operator!=( const const_iterator& testIter ) const
-        {
-            if ( testIter.position != position ) return true;
+        inline bool operator!=( const const_iterator &testIter ) const {
+            if ( testIter.position != position )
+                return true;
             return false;
         };
 
-        inline MeshElement operator->() const
-        {
-            return builder.getElement( position );
-        };
+        inline MeshElement operator->() const { return builder.getElement( position ); };
 
-        inline MeshElement operator*() const
-        {
-            return builder.getElement( position );
-        };
+        inline MeshElement operator*() const { return builder.getElement( position ); };
     };
 
-    inline MeshElement operator[]( int i ) const
-    {
-        return _builder.getElement(i-1);
-    };
+    inline MeshElement operator[]( int i ) const { return _builder.getElement( i - 1 ); };
 
     /**
-     * @brief 
+     * @brief
      */
-    const_iterator begin() const
-    {
-        return const_iterator( 0, _builder );
-    };
+    const_iterator begin() const { return const_iterator( 0, _builder ); };
 
     /**
-     * @brief 
+     * @brief
      * @todo revoir le fonctionnement du end car il peut provoquer de segfault
      */
-    const_iterator end() const
-    {
-        return const_iterator( _builder.size(), _builder );
-    };
+    const_iterator end() const { return const_iterator( _builder.size(), _builder ); };
 
     /**
      * @brief Size of the explorer
      */
-    ASTERINTEGER size() const
-    {
-        return _builder.size();
-    };
+    ASTERINTEGER size() const { return _builder.size(); };
 };
 
 #endif /* MESHEXPLORER_H_ */

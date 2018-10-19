@@ -1,9 +1,9 @@
 /**
  * @file GeneralizedResultsContainer.cxx
  * @brief Implementation de la classe GeneralizedResultsContainer
- * @author Natacha Béreux 
+ * @author Natacha Béreux
  * @section LICENCE
- *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *

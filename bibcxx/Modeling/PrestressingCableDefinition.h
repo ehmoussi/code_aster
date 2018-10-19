@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe PrestressingCableDefinition
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -44,25 +44,24 @@
  * @author Nicolas Sellenet
  * @todo ajouter un test pour valider des qu'on aura les macros
  */
-class PrestressingCableDefinitionInstance: public DataStructure
-{
-private:
+class PrestressingCableDefinitionInstance : public DataStructure {
+  private:
     ModelPtr _model;
     ElementaryCharacteristicsPtr _cara;
     MaterialOnMeshPtr _mater;
-    MeshPtr                        _mesh;
+    MeshPtr _mesh;
     /** @brief Carte '.CHME.SIGIN' */
-    PCFieldOnMeshDoublePtr         _sigin;
+    PCFieldOnMeshDoublePtr _sigin;
     /** @brief Table 'CABLEBP' */
-    TablePtr                       _cableBP;
+    TablePtr _cableBP;
     /** @brief Table 'CABLEGL' */
-    TablePtr                       _cableGL;
+    TablePtr _cableGL;
     /** @brief Table '.LIRELA' */
     ListOfLinearRelationsDoublePtr _lirela;
     /** @brief Booleen indiquant si la sd a deja ete remplie */
-    bool                           _isEmpty;
+    bool _isEmpty;
 
-public:
+  public:
     /**
      * @typedef PrestressingCableDefinition
      * @brief Pointeur intelligent vers un PrestressingCableDefinitionInstance
@@ -72,42 +71,27 @@ public:
     /**
      * @brief Constructeur
      */
-    PrestressingCableDefinitionInstance( const ModelPtr&,
-                                         const MaterialOnMeshPtr&,
-                                         const ElementaryCharacteristicsPtr& );
+    PrestressingCableDefinitionInstance( const ModelPtr &, const MaterialOnMeshPtr &,
+                                         const ElementaryCharacteristicsPtr & );
 
-    PrestressingCableDefinitionInstance( const std::string jeveuxName,
-                                         const ModelPtr&,
-                                         const MaterialOnMeshPtr&,
-                                         const ElementaryCharacteristicsPtr& );
+    PrestressingCableDefinitionInstance( const std::string jeveuxName, const ModelPtr &,
+                                         const MaterialOnMeshPtr &,
+                                         const ElementaryCharacteristicsPtr & );
 
     // Since no constructor allows to have null or empty objects,
     // it is not necessary to check if they exist.
-    ModelPtr getModel() const
-    {
-        return _model;
-    };
+    ModelPtr getModel() const { return _model; };
 
-    MaterialOnMeshPtr getMaterialOnMesh() const
-    {
-        return _mater;
-    };
+    MaterialOnMeshPtr getMaterialOnMesh() const { return _mater; };
 
-    ElementaryCharacteristicsPtr getElementaryCharacteristics() const
-    {
-        return _cara;
-    };
+    ElementaryCharacteristicsPtr getElementaryCharacteristics() const { return _cara; };
 
     /**
      * @brief Methode permettant de savoir si l'objet est vide
      * @return true si le modele est vide
      */
-    bool isEmpty()
-    {
-        return _isEmpty;
-    };
+    bool isEmpty() { return _isEmpty; };
 };
-
 
 /**
  * @typedef PrestressingCableDefinition

@@ -29,17 +29,14 @@
 #include "astercxx.h"
 #include "DataStructures/DataStructure.h"
 
-
 /**
  * @class GenericFunctionInstance
  * @brief Base class of Function, Formula and Table
  * @author Nicolas Sellenet
  */
-class GenericFunctionInstance: public DataStructure
-{
-private:
-
-public:
+class GenericFunctionInstance : public DataStructure {
+  private:
+  public:
     /**
      * @typedef GenericFunctionPtr
      * @brief Pointeur intelligent vers un GenericFunction
@@ -49,34 +46,24 @@ public:
     /**
      * @brief Constructeur
      */
-    GenericFunctionInstance( const std::string& name, const std::string& type ):
-        DataStructure( name, 19, type )
-    {};
+    GenericFunctionInstance( const std::string &name, const std::string &type )
+        : DataStructure( name, 19, type ){};
 
     /**
      * @brief Get the result name
      * @return  name of the result
      */
-    virtual std::string getResultName()
-    {
-        return "";
-    };
+    virtual std::string getResultName() { return ""; };
 
     /**
      * @brief Return the number of points of the function
      */
-    virtual ASTERINTEGER maximumSize() const throw ( std::runtime_error )
-    {
-        return 0;
-    };
+    virtual ASTERINTEGER maximumSize() const throw( std::runtime_error ) { return 0; };
 
     /**
      * @brief Return the number of points of the function
      */
-    virtual ASTERINTEGER size() const throw ( std::runtime_error )
-    {
-        return 0;
-    };
+    virtual ASTERINTEGER size() const throw( std::runtime_error ) { return 0; };
 };
 
 /**

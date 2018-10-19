@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe StudyDescription
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2015  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -44,51 +44,42 @@
  * @brief Cette classe permet de definir une étude au sens Aster
  * @author Nicolas Sellenet
  */
-class StudyDescriptionInstance
-{
-private:
+class StudyDescriptionInstance {
+  private:
     /** @brief Modèle support */
-    ModelPtr                     _supportModel;
+    ModelPtr _supportModel;
     /** @brief Materiau affecté */
-    MaterialOnMeshPtr            _materialOnMesh;
+    MaterialOnMeshPtr _materialOnMesh;
     /** @brief Liste des chargements */
-    ListOfLoadsPtr               _listOfLoads;
+    ListOfLoadsPtr _listOfLoads;
     /** @brief Liste des chargements */
     ElementaryCharacteristicsPtr _elemChara;
     /** @brief coded material */
-    CodedMaterialPtr             _codedMater;
+    CodedMaterialPtr _codedMater;
     /** @brief Input variables */
     CalculationInputVariablesPtr _varCom;
 
-public:
+  public:
     /**
      * @brief Constructeur
      * @param ModelPtr Modèle de l'étude
      * @param MaterialOnMeshPtr Matériau de l'étude
      */
-    StudyDescriptionInstance( const ModelPtr& curModel,
-                              const MaterialOnMeshPtr& curMat,
-                              const ElementaryCharacteristicsPtr& cara = nullptr ):
-        _supportModel( curModel ),
-        _materialOnMesh( curMat ),
-        _listOfLoads( ListOfLoadsPtr( new ListOfLoadsInstance() ) ),
-        _elemChara( cara ),
-        _codedMater( new CodedMaterialInstance( _materialOnMesh, _supportModel ) ),
-        _varCom( new CalculationInputVariablesInstance
-                                            ( _supportModel, _materialOnMesh,
-                                              _elemChara, _codedMater ) )
-    {};
+    StudyDescriptionInstance( const ModelPtr &curModel, const MaterialOnMeshPtr &curMat,
+                              const ElementaryCharacteristicsPtr &cara = nullptr )
+        : _supportModel( curModel ), _materialOnMesh( curMat ),
+          _listOfLoads( ListOfLoadsPtr( new ListOfLoadsInstance() ) ), _elemChara( cara ),
+          _codedMater( new CodedMaterialInstance( _materialOnMesh, _supportModel ) ),
+          _varCom( new CalculationInputVariablesInstance( _supportModel, _materialOnMesh,
+                                                          _elemChara, _codedMater ) ){};
 
-    ~StudyDescriptionInstance()
-    {};
+    ~StudyDescriptionInstance(){};
 
     /**
      * @brief Add a load (mechanical or kinematic) with function, formula...
      * @param Args... template list of arguments (load and function or formula)
      */
-    template< typename... Args >
-    void addLoad( const Args&... a )
-    {
+    template < typename... Args > void addLoad( const Args &... a ) {
         _listOfLoads->addLoad( a... );
     };
 
@@ -96,68 +87,47 @@ public:
      * @brief Construction de la liste de chargements
      * @return true si tout s'est bien passé
      */
-    bool buildListOfLoads()
-    {
-        return _listOfLoads->build();
-    };
+    bool buildListOfLoads() { return _listOfLoads->build(); };
 
     /**
      * @brief Get elementary characteristics
      */
-    const ElementaryCharacteristicsPtr& getElementaryCharacteristics() const
-    {
-        return _elemChara;
-    };
+    const ElementaryCharacteristicsPtr &getElementaryCharacteristics() const { return _elemChara; };
 
     /**
      * @brief Get the build coded material
      */
-    const CodedMaterialPtr& getCodedMaterial() const
-    {
-        return _codedMater;
-    };
+    const CodedMaterialPtr &getCodedMaterial() const { return _codedMater; };
 
     /**
      * @brief Obtenir la liste des chargements cinematiques
      */
-    const ListKineLoad& getListOfKinematicsLoads() const
-    {
+    const ListKineLoad &getListOfKinematicsLoads() const {
         return _listOfLoads->getListOfKinematicsLoads();
     };
 
     /**
      * @brief Renvoit la liste de chargements
      */
-    const ListOfLoadsPtr& getListOfLoads() const
-    {
-        return _listOfLoads;
-    };
+    const ListOfLoadsPtr &getListOfLoads() const { return _listOfLoads; };
 
     /**
      * @brief Obtenir la liste des chargements mecaniques
      */
-    const ListMecaLoad& getListOfMechanicalLoads() const
-    {
+    const ListMecaLoad &getListOfMechanicalLoads() const {
         return _listOfLoads->getListOfMechanicalLoads();
     };
 
     /**
      * @brief Obtenir le matériau affecté
      */
-    const MaterialOnMeshPtr& getMaterialOnMesh() const
-    {
-        return _materialOnMesh;
-    };
+    const MaterialOnMeshPtr &getMaterialOnMesh() const { return _materialOnMesh; };
 
     /**
      * @brief Obtenir le modèle de l'étude
      */
-    const ModelPtr& getSupportModel() const
-    {
-        return _supportModel;
-    };
+    const ModelPtr &getSupportModel() const { return _supportModel; };
 };
-
 
 /**
  * @typedef StudyDescriptionPtr

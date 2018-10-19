@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe LoadInterface
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -31,22 +31,17 @@
 #include "Loads/MechanicalLoad.h"
 #include "Loads/ParallelMechanicalLoad.h"
 
-template< class firstClass, typename... Args >
-void addKinematicsLoadToInterface( boost::python::class_< firstClass, Args... > myInstance )
-{
+template < class firstClass, typename... Args >
+void addKinematicsLoadToInterface( boost::python::class_< firstClass, Args... > myInstance ) {
     typedef firstClass myClass;
 
-    void (myClass::*c1)(const KinematicsLoadPtr&) =
-            &myClass::addLoad;
-    void (myClass::*c2)(const KinematicsLoadPtr& currentLoad,
-                        const FunctionPtr& func) =
-            &myClass::addLoad;
-    void (myClass::*c3)(const KinematicsLoadPtr& currentLoad,
-                        const FormulaPtr& func) =
-            &myClass::addLoad;
-    void (myClass::*c4)(const KinematicsLoadPtr& currentLoad,
-                        const SurfacePtr& func) =
-            &myClass::addLoad;
+    void ( myClass::*c1 )( const KinematicsLoadPtr & ) = &myClass::addLoad;
+    void ( myClass::*c2 )( const KinematicsLoadPtr &currentLoad, const FunctionPtr &func ) =
+        &myClass::addLoad;
+    void ( myClass::*c3 )( const KinematicsLoadPtr &currentLoad, const FormulaPtr &func ) =
+        &myClass::addLoad;
+    void ( myClass::*c4 )( const KinematicsLoadPtr &currentLoad, const SurfacePtr &func ) =
+        &myClass::addLoad;
 
     myInstance.def( "addKinematicsLoad", c1 );
     myInstance.def( "addKinematicsLoad", c2 );
@@ -54,22 +49,17 @@ void addKinematicsLoadToInterface( boost::python::class_< firstClass, Args... > 
     myInstance.def( "addKinematicsLoad", c4 );
 };
 
-template< class firstClass, typename... Args >
-void addMechanicalLoadToInterface( boost::python::class_< firstClass, Args... > myInstance )
-{
+template < class firstClass, typename... Args >
+void addMechanicalLoadToInterface( boost::python::class_< firstClass, Args... > myInstance ) {
     typedef firstClass myClass;
 
-    void (myClass::*c5)(const GenericMechanicalLoadPtr&) =
-            &myClass::addLoad;
-    void (myClass::*c6)(const GenericMechanicalLoadPtr& currentLoad,
-                        const FunctionPtr& func) =
-            &myClass::addLoad;
-    void (myClass::*c7)(const GenericMechanicalLoadPtr& currentLoad,
-                        const FormulaPtr& func) =
-            &myClass::addLoad;
-    void (myClass::*c8)(const GenericMechanicalLoadPtr& currentLoad,
-                        const SurfacePtr& func) =
-            &myClass::addLoad;
+    void ( myClass::*c5 )( const GenericMechanicalLoadPtr & ) = &myClass::addLoad;
+    void ( myClass::*c6 )( const GenericMechanicalLoadPtr &currentLoad, const FunctionPtr &func ) =
+        &myClass::addLoad;
+    void ( myClass::*c7 )( const GenericMechanicalLoadPtr &currentLoad, const FormulaPtr &func ) =
+        &myClass::addLoad;
+    void ( myClass::*c8 )( const GenericMechanicalLoadPtr &currentLoad, const SurfacePtr &func ) =
+        &myClass::addLoad;
 
     myInstance.def( "addMechanicalLoad", c5 );
     myInstance.def( "addMechanicalLoad", c6 );
@@ -78,22 +68,18 @@ void addMechanicalLoadToInterface( boost::python::class_< firstClass, Args... > 
 };
 
 #ifdef _USE_MPI
-template< class firstClass, typename... Args >
-void addParallelMechanicalLoadToInterface( boost::python::class_< firstClass, Args... > myInstance )
-{
+template < class firstClass, typename... Args >
+void
+addParallelMechanicalLoadToInterface( boost::python::class_< firstClass, Args... > myInstance ) {
     typedef firstClass myClass;
 
-    void (myClass::*c5)(const ParallelMechanicalLoadPtr&) =
-            &myClass::addLoad;
-    void (myClass::*c6)(const ParallelMechanicalLoadPtr& currentLoad,
-                        const FunctionPtr& func) =
-            &myClass::addLoad;
-    void (myClass::*c7)(const ParallelMechanicalLoadPtr& currentLoad,
-                        const FormulaPtr& func) =
-            &myClass::addLoad;
-    void (myClass::*c8)(const ParallelMechanicalLoadPtr& currentLoad,
-                        const SurfacePtr& func) =
-            &myClass::addLoad;
+    void ( myClass::*c5 )( const ParallelMechanicalLoadPtr & ) = &myClass::addLoad;
+    void ( myClass::*c6 )( const ParallelMechanicalLoadPtr &currentLoad, const FunctionPtr &func ) =
+        &myClass::addLoad;
+    void ( myClass::*c7 )( const ParallelMechanicalLoadPtr &currentLoad, const FormulaPtr &func ) =
+        &myClass::addLoad;
+    void ( myClass::*c8 )( const ParallelMechanicalLoadPtr &currentLoad, const SurfacePtr &func ) =
+        &myClass::addLoad;
 
     myInstance.def( "addParallelMechanicalLoad", c5 );
     myInstance.def( "addParallelMechanicalLoad", c6 );

@@ -11,7 +11,7 @@
  * @brief Fichier entete de la classe ParallelFiniteElementDescriptor
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -39,53 +39,47 @@
  * @brief Classe definissant un ligrel parallèle
  * @author Nicolas Sellenet
  */
-class ParallelFiniteElementDescriptorInstance: public FiniteElementDescriptorInstance
-{
-protected:
+class ParallelFiniteElementDescriptorInstance : public FiniteElementDescriptorInstance {
+  protected:
     /** @brief Base FiniteElementDescriptor */
     const FiniteElementDescriptorPtr _BaseFEDesc;
     /** @brief Matching numbering between keeped delayed elements and base elements */
-    VectorLong                       _delayedElemToKeep;
+    VectorLong _delayedElemToKeep;
     /** @brief Join to send */
-    std::vector< JeveuxVectorLong >  _joinToSend;
+    std::vector< JeveuxVectorLong > _joinToSend;
     /** @brief Join to receive */
-    std::vector< JeveuxVectorLong >  _joinToReceive;
+    std::vector< JeveuxVectorLong > _joinToReceive;
     /** @brief All joins */
-    JeveuxVectorLong                 _joins;
+    JeveuxVectorLong _joins;
     /** @brief Delayed nodes owner */
-    JeveuxVectorLong                 _owner;
+    JeveuxVectorLong _owner;
     /** @brief Number of elements in which a given node is located */
-    JeveuxVectorLong                 _multiplicity;
+    JeveuxVectorLong _multiplicity;
     /** @brief Number of non local elements in which a given node is located */
-    JeveuxVectorLong                 _outerMultiplicity;
+    JeveuxVectorLong _outerMultiplicity;
     /** @brief Communication graph */
-    CommunicationGraphPtr            _commGraph;
+    CommunicationGraphPtr _commGraph;
 
-public:
+  public:
     /**
      * @brief Constructeur
      */
-    ParallelFiniteElementDescriptorInstance( const std::string& name,
-                                             const FiniteElementDescriptorPtr& FEDesc,
-                                             const PartialMeshPtr& mesh,
-                                             const ModelPtr& model,
+    ParallelFiniteElementDescriptorInstance( const std::string &name,
+                                             const FiniteElementDescriptorPtr &FEDesc,
+                                             const PartialMeshPtr &mesh, const ModelPtr &model,
                                              const JeveuxMemory memType = Permanent );
 
     /**
      * @brief Get vector of delayed elements keeped from the base FiniteElementDescriptor
      * @return reference on VectorLong
      */
-    const VectorLong& getDelayedElementsToKeep() const
-    {
-        return _delayedElemToKeep;
-    };
+    const VectorLong &getDelayedElementsToKeep() const { return _delayedElemToKeep; };
 
     /**
      * @brief Get vector of joins between subdomains
      * @return reference on VectorLong
      */
-    const JeveuxVectorLong& getJoins() const
-    {
+    const JeveuxVectorLong &getJoins() const {
         _joins->updateValuePointer();
         return _joins;
     };
@@ -94,14 +88,16 @@ public:
      * @typedef ParallelFiniteElementDescriptorPtr
      * @brief Pointeur intelligent vers un ParallelFiniteElementDescriptor
      */
-    typedef boost::shared_ptr< ParallelFiniteElementDescriptorInstance > ParallelFiniteElementDescriptorPtr;
+    typedef boost::shared_ptr< ParallelFiniteElementDescriptorInstance >
+        ParallelFiniteElementDescriptorPtr;
 };
 
 /**
  * @typedef ParallelFiniteElementDescriptorPtr
  * @brief Pointeur intelligent vers un ParallelFiniteElementDescriptorInstance
  */
-typedef boost::shared_ptr< ParallelFiniteElementDescriptorInstance > ParallelFiniteElementDescriptorPtr;
+typedef boost::shared_ptr< ParallelFiniteElementDescriptorInstance >
+    ParallelFiniteElementDescriptorPtr;
 
 #endif /* PARALLELFINITEELEMENTDESCRIPTOR_H_ */
 

@@ -39,59 +39,53 @@
  *        FieldOnNodesDescription and FiniteElementDescriptor
  * @author Nicolas Sellenet
  */
-class FieldBuilder
-{
-private:
+class FieldBuilder {
+  private:
     std::map< std::string, FieldOnNodesDescriptionPtr > _mapProfChno;
     std::map< std::string, FiniteElementDescriptorPtr > _mapLigrel;
 
-public:
+  public:
     /**
      * @brief Constructor
      */
-    FieldBuilder()
-    {};
+    FieldBuilder(){};
 
     /**
      * @brief Add a existing FieldOnNodesDescription in FieldBuilder
      */
-    void addFieldOnNodesDescription( const FieldOnNodesDescriptionPtr& fond )
-    {
-        _mapProfChno[ trim( fond->getName() ) ] = fond;
+    void addFieldOnNodesDescription( const FieldOnNodesDescriptionPtr &fond ) {
+        _mapProfChno[trim( fond->getName() )] = fond;
     };
 
     /**
      * @brief Add a existing FiniteElementDescriptor in FieldBuilder
      */
-    void addFiniteElementDescriptor( const FiniteElementDescriptorPtr& fed )
-    {
-        _mapLigrel[ trim( fed->getName() ) ] = fed;
+    void addFiniteElementDescriptor( const FiniteElementDescriptorPtr &fed ) {
+        _mapLigrel[trim( fed->getName() )] = fed;
     };
 
     /**
      * @brief Build a FieldOnElements with a FiniteElementDescriptor
      */
-    template< typename ValueType >
+    template < typename ValueType >
     boost::shared_ptr< FieldOnElementsInstance< ValueType > >
-    buildFieldOnElements( const std::string& name, const BaseMeshPtr mesh )
-    {
+    buildFieldOnElements( const std::string &name, const BaseMeshPtr mesh ) {
         typedef FiniteElementDescriptorInstance FEDDesc;
         typedef FiniteElementDescriptorPtr FEDDescP;
 
-        boost::shared_ptr< FieldOnElementsInstance< ValueType > > result
-            ( new FieldOnElementsDoubleInstance( name ) );
+        boost::shared_ptr< FieldOnElementsInstance< ValueType > > result(
+            new FieldOnElementsDoubleInstance( name ) );
         result->updateValuePointers();
 
-        const std::string name2 = trim( (*(*result)._reference)[0].toString() );
+        const std::string name2 = trim( ( *( *result )._reference )[0].toString() );
 
         auto curIter = _mapLigrel.find( name2 );
         FEDDescP curDesc;
-        if( curIter != _mapLigrel.end() )
+        if ( curIter != _mapLigrel.end() )
             curDesc = curIter->second;
-        else
-        {
+        else {
             curDesc = FEDDescP( new FEDDesc( name2, mesh, result->getMemoryType() ) );
-            _mapLigrel[ name2 ] = curDesc;
+            _mapLigrel[name2] = curDesc;
         }
         result->setDescription( curDesc );
 
@@ -101,26 +95,24 @@ public:
     /**
      * @brief Build a FieldOnElements with a FieldOnNodesDescription
      */
-    template< typename ValueType >
-    boost::shared_ptr< FieldOnNodesInstance< ValueType > > buildFieldOnNodes( std::string name )
-    {
+    template < typename ValueType >
+    boost::shared_ptr< FieldOnNodesInstance< ValueType > > buildFieldOnNodes( std::string name ) {
         typedef FieldOnNodesDescriptionInstance FONDesc;
         typedef FieldOnNodesDescriptionPtr FONDescP;
 
-        boost::shared_ptr< FieldOnNodesInstance< ValueType > > result
-            ( new FieldOnNodesDoubleInstance( name ) );
+        boost::shared_ptr< FieldOnNodesInstance< ValueType > > result(
+            new FieldOnNodesDoubleInstance( name ) );
         result->updateValuePointers();
 
-        const std::string name2 = trim( (*(*result)._reference)[1].toString() );
+        const std::string name2 = trim( ( *( *result )._reference )[1].toString() );
 
         auto curIter = _mapProfChno.find( name2 );
         FONDescP curDesc;
-        if( curIter != _mapProfChno.end() )
+        if ( curIter != _mapProfChno.end() )
             curDesc = curIter->second;
-        else
-        {
+        else {
             curDesc = FONDescP( new FONDesc( name2, result->getMemoryType() ) );
-            _mapProfChno[ name2 ] = curDesc;
+            _mapProfChno[name2] = curDesc;
         }
         result->setDescription( curDesc );
 

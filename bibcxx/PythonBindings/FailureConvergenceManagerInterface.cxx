@@ -3,7 +3,7 @@
  * @brief Interface python de FailureConvergenceManager
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -25,128 +25,80 @@
 #include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
-void exportFailureConvergenceManagerToPython()
-{
+void exportFailureConvergenceManagerToPython() {
     using namespace boost::python;
 
-    class_< GenericActionInstance, GenericActionPtr > ( "GenericAction", no_init )
-    ;
+    class_< GenericActionInstance, GenericActionPtr >( "GenericAction", no_init );
 
-    class_< StopOnErrorInstance, StopOnErrorPtr,
-            bases< GenericActionInstance > >
-        ( "StopOnError", no_init )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< StopOnErrorInstance > ) )
-    ;
+    class_< StopOnErrorInstance, StopOnErrorPtr, bases< GenericActionInstance > >( "StopOnError",
+                                                                                   no_init )
+        .def( "__init__", make_constructor(&initFactoryPtr< StopOnErrorInstance >));
 
-    class_< ContinueOnErrorInstance, ContinueOnErrorPtr,
-            bases< GenericActionInstance > >
-        ( "ContinueOnError", no_init )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< ContinueOnErrorInstance > ) )
-    ;
+    class_< ContinueOnErrorInstance, ContinueOnErrorPtr, bases< GenericActionInstance > >(
+        "ContinueOnError", no_init )
+        .def( "__init__", make_constructor(&initFactoryPtr< ContinueOnErrorInstance >));
 
     class_< GenericSubstepingOnErrorInstance, GenericSubstepingOnErrorPtr,
-            bases< GenericActionInstance > >
-        ( "GenericSubstepingOnError", no_init )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< GenericSubstepingOnErrorInstance > ) )
+            bases< GenericActionInstance > >( "GenericSubstepingOnError", no_init )
+        .def( "__init__", make_constructor(&initFactoryPtr< GenericSubstepingOnErrorInstance >))
         .def( "setAutomatic", &GenericSubstepingOnErrorInstance::setAutomatic )
         .def( "setLevel", &GenericSubstepingOnErrorInstance::setLevel )
         .def( "setMinimumStep", &GenericSubstepingOnErrorInstance::setMinimumStep )
-        .def( "setStep", &GenericSubstepingOnErrorInstance::setStep )
-    ;
+        .def( "setStep", &GenericSubstepingOnErrorInstance::setStep );
 
     class_< SubstepingOnErrorInstance, SubstepingOnErrorPtr,
-            bases< GenericSubstepingOnErrorInstance > >
-        ( "SubstepingOnError", no_init )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< SubstepingOnErrorInstance > ) )
-    ;
+            bases< GenericSubstepingOnErrorInstance > >( "SubstepingOnError", no_init )
+        .def( "__init__", make_constructor(&initFactoryPtr< SubstepingOnErrorInstance >));
 
     class_< AddIterationOnErrorInstance, AddIterationOnErrorPtr,
-            bases< GenericSubstepingOnErrorInstance > >
-        ( "AddIterationOnError", no_init )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< AddIterationOnErrorInstance > ) )
+            bases< GenericSubstepingOnErrorInstance > >( "AddIterationOnError", no_init )
+        .def( "__init__", make_constructor(&initFactoryPtr< AddIterationOnErrorInstance >))
         .def( "setPourcentageOfAddedIteration",
-              &AddIterationOnErrorInstance::setPourcentageOfAddedIteration )
-    ;
+              &AddIterationOnErrorInstance::setPourcentageOfAddedIteration );
 
-    class_< SubstepingOnContactInstance, SubstepingOnContactPtr,
-            bases< GenericActionInstance > >
-        ( "SubstepingOnContact", no_init )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< SubstepingOnContactInstance > ) )
+    class_< SubstepingOnContactInstance, SubstepingOnContactPtr, bases< GenericActionInstance > >(
+        "SubstepingOnContact", no_init )
+        .def( "__init__", make_constructor(&initFactoryPtr< SubstepingOnContactInstance >))
         .def( "setSubstepDuration", &SubstepingOnContactInstance::setSubstepDuration )
-        .def( "setTimeStepSubstep", &SubstepingOnContactInstance::setTimeStepSubstep )
-    ;
+        .def( "setTimeStepSubstep", &SubstepingOnContactInstance::setTimeStepSubstep );
 
-    class_< PilotageErrorInstance, PilotageErrorPtr,
-            bases< GenericSubstepingOnErrorInstance > >
-        ( "PilotageError", no_init )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< PilotageErrorInstance > ) )
-    ;
+    class_< PilotageErrorInstance, PilotageErrorPtr, bases< GenericSubstepingOnErrorInstance > >(
+        "PilotageError", no_init )
+        .def( "__init__", make_constructor(&initFactoryPtr< PilotageErrorInstance >));
 
     class_< ChangePenalisationOnErrorInstance, ChangePenalisationOnErrorPtr,
-            bases< GenericActionInstance > >
-        ( "ChangePenalisationOnError", no_init )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< ChangePenalisationOnErrorInstance > ) )
+            bases< GenericActionInstance > >( "ChangePenalisationOnError", no_init )
+        .def( "__init__", make_constructor(&initFactoryPtr< ChangePenalisationOnErrorInstance >))
         .def( "setMaximumPenalisationCoefficient",
-              &ChangePenalisationOnErrorInstance::setMaximumPenalisationCoefficient )
-    ;
+              &ChangePenalisationOnErrorInstance::setMaximumPenalisationCoefficient );
 
-
-
-    class_< GenericConvergenceErrorInstance,
-            GenericConvergenceErrorPtr, boost::noncopyable >
-        ( "GenericConvergenceError", no_init )
-        .def( "setAction", &GenericConvergenceErrorInstance::setAction )
-    ;
+    class_< GenericConvergenceErrorInstance, GenericConvergenceErrorPtr, boost::noncopyable >(
+        "GenericConvergenceError", no_init )
+        .def( "setAction", &GenericConvergenceErrorInstance::setAction );
 
     class_< ConvergenceErrorInstance, ConvergenceErrorPtr,
-            bases< GenericConvergenceErrorInstance > >
-        ( "ConvergenceError", no_init )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< ConvergenceErrorInstance > ) )
-    ;
+            bases< GenericConvergenceErrorInstance > >( "ConvergenceError", no_init )
+        .def( "__init__", make_constructor(&initFactoryPtr< ConvergenceErrorInstance >));
 
     class_< ResidualDivergenceErrorInstance, ResidualDivergenceErrorPtr,
-            bases< GenericConvergenceErrorInstance > >
-        ( "ResidualDivergenceError", no_init )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< ResidualDivergenceErrorInstance > ) )
-    ;
+            bases< GenericConvergenceErrorInstance > >( "ResidualDivergenceError", no_init )
+        .def( "__init__", make_constructor(&initFactoryPtr< ResidualDivergenceErrorInstance >));
 
     class_< IncrementOverboundErrorInstance, IncrementOverboundErrorPtr,
-            bases< GenericConvergenceErrorInstance > >
-        ( "IncrementOverboundError", no_init )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< IncrementOverboundErrorInstance > ) )
-        .def( "setValueToInspect", &IncrementOverboundErrorInstance::setValueToInspect )
-    ;
+            bases< GenericConvergenceErrorInstance > >( "IncrementOverboundError", no_init )
+        .def( "__init__", make_constructor(&initFactoryPtr< IncrementOverboundErrorInstance >))
+        .def( "setValueToInspect", &IncrementOverboundErrorInstance::setValueToInspect );
 
     class_< ContactDetectionErrorInstance, ContactDetectionErrorPtr,
-            bases< GenericConvergenceErrorInstance > >
-        ( "ContactDetectionError", no_init )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< ContactDetectionErrorInstance > ) )
-    ;
+            bases< GenericConvergenceErrorInstance > >( "ContactDetectionError", no_init )
+        .def( "__init__", make_constructor(&initFactoryPtr< ContactDetectionErrorInstance >));
 
     class_< InterpenetrationErrorInstance, InterpenetrationErrorPtr,
-            bases< GenericConvergenceErrorInstance > >
-        ( "InterpenetrationError", no_init )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< InterpenetrationErrorInstance > ) )
-        .def( "setMaximalPenetration", &InterpenetrationErrorInstance::setMaximalPenetration )
-    ;
+            bases< GenericConvergenceErrorInstance > >( "InterpenetrationError", no_init )
+        .def( "__init__", make_constructor(&initFactoryPtr< InterpenetrationErrorInstance >))
+        .def( "setMaximalPenetration", &InterpenetrationErrorInstance::setMaximalPenetration );
 
     class_< InstabilityErrorInstance, InstabilityErrorPtr,
-            bases< GenericConvergenceErrorInstance > >
-        ( "InstabilityError", no_init )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< InstabilityErrorInstance > ) )
-    ;
+            bases< GenericConvergenceErrorInstance > >( "InstabilityError", no_init )
+        .def( "__init__", make_constructor(&initFactoryPtr< InstabilityErrorInstance >));
 };

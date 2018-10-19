@@ -36,19 +36,18 @@
  * @brief Cette classe correspond a une listr8
  * @author Nicolas Sellenet
  */
-class ListOfIntegersInstance: public DataStructure
-{
-private:
+class ListOfIntegersInstance : public DataStructure {
+  private:
     /** @brief Objet Jeveux '.BINT' */
-    JeveuxVectorDouble   _bint;
+    JeveuxVectorDouble _bint;
     /** @brief Objet Jeveux '.LPAS' */
-    JeveuxVectorDouble   _lpas;
+    JeveuxVectorDouble _lpas;
     /** @brief Objet Jeveux '.NBPA' */
-    JeveuxVectorLong     _nbPa;
+    JeveuxVectorLong _nbPa;
     /** @brief Objet Jeveux '.VALE' */
-    JeveuxVectorLong     _vale;
+    JeveuxVectorLong _vale;
 
-public:
+  public:
     /**
      * @typedef ListOfIntegersPtr
      * @brief Pointeur intelligent vers un ListOfIntegers
@@ -58,20 +57,17 @@ public:
     /**
      * @brief Constructeur
      */
-    ListOfIntegersInstance():
-        ListOfIntegersInstance( ResultNaming::getNewResultName() )
-    {};
+    ListOfIntegersInstance() : ListOfIntegersInstance( ResultNaming::getNewResultName() ){};
 
     /**
      * @brief Constructeur
      */
-    ListOfIntegersInstance( const std::string name ):
-        DataStructure( name, 19, "LISTIS", Permanent ),
-        _bint( JeveuxVectorDouble( getName() + ".BINT" ) ),
-        _lpas( JeveuxVectorDouble( getName() + ".LPAS" ) ),
-        _nbPa( JeveuxVectorLong( getName() + ".NBPA" ) ),
-        _vale( JeveuxVectorLong( getName() + ".VALE" ) )
-    {};
+    ListOfIntegersInstance( const std::string name )
+        : DataStructure( name, 19, "LISTIS", Permanent ),
+          _bint( JeveuxVectorDouble( getName() + ".BINT" ) ),
+          _lpas( JeveuxVectorDouble( getName() + ".LPAS" ) ),
+          _nbPa( JeveuxVectorLong( getName() + ".NBPA" ) ),
+          _vale( JeveuxVectorLong( getName() + ".VALE" ) ){};
 };
 
 /**

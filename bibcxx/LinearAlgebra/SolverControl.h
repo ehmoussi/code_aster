@@ -4,7 +4,7 @@
 /**
  * @file SolverControl.h
  * @brief Control class to check if an iterative solver has converged
- * @author Natacha Béreux 
+ * @author Natacha Béreux
  * @section LICENCE
  *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
@@ -33,40 +33,27 @@ enum ConvergenceState { failure, success, iterate };
 
 /**
  * @class SolverControl
- * @brief Base control class used to check convergence of an iterative solver 
- * @author Natacha Béreux 
+ * @brief Base control class used to check convergence of an iterative solver
+ * @author Natacha Béreux
  */
-class SolverControlInstance
-{
-    public:
-    SolverControlInstance( double rTol=1.e-6, ASTERINTEGER nIterMax=100 ); 
+class SolverControlInstance {
+  public:
+    SolverControlInstance( double rTol = 1.e-6, ASTERINTEGER nIterMax = 100 );
 
-    ~SolverControlInstance()
-    {}
+    ~SolverControlInstance() {}
 
     virtual ConvergenceState check( const double relativeResNorm, const ASTERINTEGER iter ) const;
 
-    double getRelativeTolerance() const
-    {
-        return _relativeTol; 
-    }
-    ASTERINTEGER getMaximumNumberOfIterations() const
-    {
-        return _nIterMax; 
-    }
-    void setRelativeTolerance( const double rTol ) 
-    {
-        _relativeTol=rTol; 
-    }
-    void setMaximumNumberOfIterations( const ASTERINTEGER nIterMax) 
-    {
-        _nIterMax=nIterMax ; 
-    }
-    protected: 
+    double getRelativeTolerance() const { return _relativeTol; }
+    ASTERINTEGER getMaximumNumberOfIterations() const { return _nIterMax; }
+    void setRelativeTolerance( const double rTol ) { _relativeTol = rTol; }
+    void setMaximumNumberOfIterations( const ASTERINTEGER nIterMax ) { _nIterMax = nIterMax; }
+
+  protected:
     /* iter_glob_maxi*/
     ASTERINTEGER _nIterMax;
     /* resi_rela*/
-    double _relativeTol; 
+    double _relativeTol;
 };
 
 /**
@@ -74,6 +61,5 @@ class SolverControlInstance
  * @brief Pointeur intelligent vers un SolverControl
  */
 typedef boost::shared_ptr< SolverControlInstance > SolverControlPtr;
-
 
 #endif

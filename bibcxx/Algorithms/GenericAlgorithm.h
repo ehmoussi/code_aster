@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe GenericAlgorithm
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -38,35 +38,26 @@
  * @brief template class to iterate over an algorithm with a given Stepper and a Context
  * @author Nicolas Sellenet
  */
-template< class StepperAlgo, class CurrentContext, class... GenericUnitaryAlgorithm >
-class Algorithm
-{
-public:
+template < class StepperAlgo, class CurrentContext, class... GenericUnitaryAlgorithm >
+class Algorithm {
+  public:
     /**
      * @brief Run over an algorithm
      * @param timeStep Object to do the loop
      * @param context Context around algorithm
      */
-    static bool runAllStepsOverAlgorithm( StepperAlgo& timeStep, CurrentContext& context )
-        throw ( std::runtime_error )
-    {
-        if ( ! timeStep.update() ) throw std::runtime_error( "Error with the Stepper" );
+    static bool runAllStepsOverAlgorithm( StepperAlgo &timeStep,
+                                          CurrentContext &context ) throw( std::runtime_error ) {
+        if ( !timeStep.update() )
+            throw std::runtime_error( "Error with the Stepper" );
 
         typedef typename StepperAlgo::const_iterator it;
-        for( it curVal = timeStep.begin();
-            curVal != timeStep.end();
-            ++curVal )
-        {
-            try
-            {
+        for ( it curVal = timeStep.begin(); curVal != timeStep.end(); ++curVal ) {
+            try {
                 updateContextFromStepper( curVal, context );
-                (void)std::initializer_list<int>
-                {
-                    (GenericUnitaryAlgorithm::oneStep( context ), 0 )...
-                };
-            }
-            catch( AlgoException& exc )
-            {
+                (void)std::initializer_list< int >{
+                    ( GenericUnitaryAlgorithm::oneStep( context ), 0 )...};
+            } catch ( AlgoException &exc ) {
                 std::cout << exc.what() << std::endl;
                 break;
             }

@@ -3,7 +3,7 @@
  * @brief Implementation de TimeStepManager
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -27,8 +27,7 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-void TimeStepManagerInstance::build() throw ( std::runtime_error )
-{
+void TimeStepManagerInstance::build() throw( std::runtime_error ) {
     CommandSyntax cmdSt( "DEFI_LIST_INST" );
     cmdSt.setResult( ResultNaming::getCurrentName(), "LIST_INST" );
 
@@ -41,35 +40,29 @@ void TimeStepManagerInstance::build() throw ( std::runtime_error )
     else
         throw std::runtime_error( "Time list undefined" );
 
-    if ( _isAutomatic )
-    {
+    if ( _isAutomatic ) {
         dictDEFI.container["METHODE"] = "AUTO";
         if ( _minimumTS.isSet() )
-            dictDEFI.container[ _minimumTS.getName() ] = _minimumTS.getValue();
+            dictDEFI.container[_minimumTS.getName()] = _minimumTS.getValue();
         if ( _maximumTS.isSet() )
-            dictDEFI.container[ _maximumTS.getName() ] = _maximumTS.getValue();
+            dictDEFI.container[_maximumTS.getName()] = _maximumTS.getValue();
         dictDEFI.container["NB_PAS_MAXI"] = _nbMaxiOfTS.getValue();
-    }
-    else
-    {
+    } else {
         dictDEFI.container["METHODE"] = "MANUEL";
     }
     listeDEFI.push_back( dictDEFI );
     dict.container["DEFI_LIST"] = listeDEFI;
 
-    if ( _listErrorManager.size() != 0 )
-    {
+    if ( _listErrorManager.size() != 0 ) {
         ListSyntaxMapContainer listeECHEC;
         for ( ListConvErrorCIter curIter = _listErrorManager.begin();
-              curIter != _listErrorManager.end();
-              ++curIter )
-        {
-            GenericActionInstance& curAction = *( (*curIter)->getAction() );
+              curIter != _listErrorManager.end(); ++curIter ) {
+            GenericActionInstance &curAction = *( ( *curIter )->getAction() );
 
-            const ListGenParam& listParam = curAction.getListOfParameters();
+            const ListGenParam &listParam = curAction.getListOfParameters();
             SyntaxMapContainer dict2 = buildSyntaxMapFromParamList( listParam );
 
-            const ListGenParam& listParam2 = (*curIter)->getListOfParameters();
+            const ListGenParam &listParam2 = ( *curIter )->getListOfParameters();
             SyntaxMapContainer dict3 = buildSyntaxMapFromParamList( listParam2 );
 
             listeECHEC.push_back( dict2 + dict3 );
@@ -78,13 +71,10 @@ void TimeStepManagerInstance::build() throw ( std::runtime_error )
     }
     cmdSt.define( dict );
 
-    try
-    {
+    try {
         ASTERINTEGER op = 28;
         CALL_EXECOP( &op );
-    }
-    catch( ... )
-    {
+    } catch ( ... ) {
         throw;
     }
     _isEmpty = false;

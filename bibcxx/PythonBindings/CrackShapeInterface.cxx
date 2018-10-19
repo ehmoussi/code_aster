@@ -3,7 +3,7 @@
  * @brief Interface python de CrackShape
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -25,13 +25,11 @@
 #include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
-void exportCrackShapeToPython()
-{
+void exportCrackShapeToPython() {
     using namespace boost::python;
 
-    class_< CrackShapeInstance, CrackShapeInstance::CrackShapePtr > ( "CrackShape", no_init )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< CrackShapeInstance > ) )
+    class_< CrackShapeInstance, CrackShapeInstance::CrackShapePtr >( "CrackShape", no_init )
+        .def( "__init__", make_constructor(&initFactoryPtr< CrackShapeInstance >))
         .def( "setEllipseCrackShape", &CrackShapeInstance::setEllipseCrackShape )
         .def( "setSquareCrackShape", &CrackShapeInstance::setSquareCrackShape )
         .def( "setCylinderCrackShape", &CrackShapeInstance::setCylinderCrackShape )
@@ -53,6 +51,5 @@ void exportCrackShapeToPython()
         .def( "getEndPoint", &CrackShapeInstance::getEndPoint )
         .def( "getNormal", &CrackShapeInstance::getNormal )
         .def( "getTangent", &CrackShapeInstance::getTangent )
-        .def( "getStartingPoint", &CrackShapeInstance::getStartingPoint )
-    ;
+        .def( "getStartingPoint", &CrackShapeInstance::getStartingPoint );
 };

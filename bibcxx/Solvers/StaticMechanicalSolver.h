@@ -6,7 +6,7 @@
  * @brief Definition of the static mechanical solver
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -39,74 +39,65 @@
 #include "Studies/StudyDescription.h"
 #include "Results/ElasticEvolutionContainer.h"
 
-class StaticMechanicalSolverInstance: public GenericSolver
-{
-    private:
-        /** @typedef std::list de MechanicalLoad */
-        typedef std::list< GenericMechanicalLoadPtr > ListMecaLoad;
-        /** @typedef Iterateur sur une std::list de MechanicalLoad */
-        typedef ListMecaLoad::iterator ListMecaLoadIter;
-        /** @typedef std::list de KinematicsLoad */
-        typedef std::list< KinematicsLoadPtr > ListKineLoad;
-        /** @typedef Iterateur sur une std::list de KinematicsLoad */
-        typedef ListKineLoad::iterator ListKineLoadIter;
+class StaticMechanicalSolverInstance : public GenericSolver {
+  private:
+    /** @typedef std::list de MechanicalLoad */
+    typedef std::list< GenericMechanicalLoadPtr > ListMecaLoad;
+    /** @typedef Iterateur sur une std::list de MechanicalLoad */
+    typedef ListMecaLoad::iterator ListMecaLoadIter;
+    /** @typedef std::list de KinematicsLoad */
+    typedef std::list< KinematicsLoadPtr > ListKineLoad;
+    /** @typedef Iterateur sur une std::list de KinematicsLoad */
+    typedef ListKineLoad::iterator ListKineLoadIter;
 #ifdef _USE_MPI
-        /** @typedef std::list de ParallelMechanicalLoad */
-        typedef std::list< ParallelMechanicalLoadPtr > ListParaMechaLoad;
-        /** @typedef Iterateur sur une std::list de ParallelMechanicalLoad */
-        typedef ListKineLoad::iterator ListParaMechaLoadIter;
+    /** @typedef std::list de ParallelMechanicalLoad */
+    typedef std::list< ParallelMechanicalLoadPtr > ListParaMechaLoad;
+    /** @typedef Iterateur sur une std::list de ParallelMechanicalLoad */
+    typedef ListKineLoad::iterator ListParaMechaLoadIter;
 #endif /* _USE_MPI */
 
-        /** @brief Modele support */
-        ModelPtr            _supportModel;
-        /** @brief Champ de materiau a utiliser */
-        MaterialOnMeshPtr   _materialOnMesh;
-        /** @brief Solveur lineaire */
-        BaseLinearSolverPtr _linearSolver;
-        /** @brief Liste de pas de temps */
-        TimeStepperPtr      _timeStep;
-        /** @brief Study */
-        StudyDescriptionPtr _study;
+    /** @brief Modele support */
+    ModelPtr _supportModel;
+    /** @brief Champ de materiau a utiliser */
+    MaterialOnMeshPtr _materialOnMesh;
+    /** @brief Solveur lineaire */
+    BaseLinearSolverPtr _linearSolver;
+    /** @brief Liste de pas de temps */
+    TimeStepperPtr _timeStep;
+    /** @brief Study */
+    StudyDescriptionPtr _study;
 
-    public:
-        /**
-         * @brief Constructeur
-         */
-        StaticMechanicalSolverInstance( const ModelPtr&, const MaterialOnMeshPtr&,
-                                        const ElementaryCharacteristicsPtr& cara = nullptr );
+  public:
+    /**
+     * @brief Constructeur
+     */
+    StaticMechanicalSolverInstance( const ModelPtr &, const MaterialOnMeshPtr &,
+                                    const ElementaryCharacteristicsPtr &cara = nullptr );
 
-        /**
-         * @brief Function d'ajout d'un chargement
-         * @param Args... Liste d'arguments template
-         */
-        template< typename... Args >
-        void addLoad( const Args&... a )
-        {
-            _study->addLoad( a... );
-        };
+    /**
+     * @brief Function d'ajout d'un chargement
+     * @param Args... Liste d'arguments template
+     */
+    template < typename... Args > void addLoad( const Args &... a ) { _study->addLoad( a... ); };
 
-        /**
-         * @brief Lancement de la resolution
-         */
-        ElasticEvolutionContainerPtr execute() throw ( std::runtime_error );
+    /**
+     * @brief Lancement de la resolution
+     */
+    ElasticEvolutionContainerPtr execute() throw( std::runtime_error );
 
-        /**
-         * @brief Methode permettant de definir le solveur lineaire
-         * @param currentSolver Solveur lineaire
-         */
-        void setLinearSolver( const BaseLinearSolverPtr& currentSolver )
-        {
-            _linearSolver = currentSolver;
-        };
+    /**
+     * @brief Methode permettant de definir le solveur lineaire
+     * @param currentSolver Solveur lineaire
+     */
+    void setLinearSolver( const BaseLinearSolverPtr &currentSolver ) {
+        _linearSolver = currentSolver;
+    };
 
-        /**
-         * @brief Methode permettant de definir les pas de temps
-         * @param curVec Liste de pas de temps
-         */
-        void setTimeStepManager( const VectorDouble& curVec )
-        {
-            *_timeStep = curVec;
-        };
+    /**
+     * @brief Methode permettant de definir les pas de temps
+     * @param curVec Liste de pas de temps
+     */
+    void setTimeStepManager( const VectorDouble &curVec ) { *_timeStep = curVec; };
 };
 
 /**

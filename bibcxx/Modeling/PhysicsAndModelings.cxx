@@ -3,7 +3,7 @@
  * @brief Initialisation des modelisations autorisees pour chaque physique
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -23,14 +23,14 @@
 
 #include "PhysicsAndModelings.h"
 
-const char* const PhysicNames[nbPhysics] = { "MECANIQUE", "THERMIQUE", "ACOUSTIQUE" };
-const char* const ModelingNames[nbModelings] = { "AXIS", "3D", "3D_ABSO", "PLAN", "D_PLAN", "C_PLAN", "DKT", "DKTG", "2D_BARRE" };
+const char *const PhysicNames[nbPhysics] = {"MECANIQUE", "THERMIQUE", "ACOUSTIQUE"};
+const char *const ModelingNames[nbModelings] = {"AXIS",   "3D",  "3D_ABSO", "PLAN",    "D_PLAN",
+                                                "C_PLAN", "DKT", "DKTG",    "2D_BARRE"};
 
+const Modelings MechanicsModelings[nbModelingsMechanics] = {
+    Axisymmetrical, Tridimensional, TridimensionalAbsorbingBoundary, PlaneStrain,
+    PlaneStress,    DKT,            DKTG,                            PlanarBar};
 
-const Modelings MechanicsModelings[nbModelingsMechanics] = { Axisymmetrical, Tridimensional, TridimensionalAbsorbingBoundary,
-                                                             PlaneStrain, PlaneStress, DKT, DKTG, PlanarBar };
+const Modelings ThermalModelings[nbModelingsThermal] = {Axisymmetrical, Tridimensional, Planar};
 
-const Modelings ThermalModelings[nbModelingsThermal] = { Axisymmetrical, Tridimensional,
-                                                         Planar };
-
-const Modelings AcousticsModelings[nbModelingsAcoustics] = { Tridimensional, Planar };
+const Modelings AcousticsModelings[nbModelingsAcoustics] = {Tridimensional, Planar};

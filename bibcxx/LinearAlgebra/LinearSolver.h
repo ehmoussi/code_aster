@@ -24,19 +24,19 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdexcept>
 #include <list>
 #include <set>
+#include <stdexcept>
 #include <string>
 
-#include "astercxx.h"
 #include "DataFields/FieldOnNodes.h"
+#include "DataStructures/DataStructure.h"
 #include "LinearAlgebra/AllowedLinearSolver.h"
 #include "LinearAlgebra/AssemblyMatrix.h"
-#include "DataStructures/DataStructure.h"
 #include "MemoryManager/JeveuxVector.h"
-#include "Utilities/GenericParameter.h"
 #include "Supervis/ResultNaming.h"
+#include "Utilities/GenericParameter.h"
+#include "astercxx.h"
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
@@ -46,8 +46,7 @@
  * @struct WrapMultFront
  * @brief Structure destinee a contenir les renumeroteurs autorises pour MultFront
  */
-struct WrapMultFront
-{
+struct WrapMultFront {
     static const LinearSolverEnum solverType = MultFront;
     static const std::set< Renumbering > setOfAllowedRenumbering;
     static const bool isHPCCompliant = false;
@@ -58,8 +57,7 @@ struct WrapMultFront
  * @struct WrapLdlt
  * @brief Structure destinee a contenir les renumeroteurs autorises pour Ldlt
  */
-struct WrapLdlt
-{
+struct WrapLdlt {
     static const LinearSolverEnum solverType = Ldlt;
     static const std::set< Renumbering > setOfAllowedRenumbering;
     static const bool isHPCCompliant = false;
@@ -70,8 +68,7 @@ struct WrapLdlt
  * @struct WrapMumps
  * @brief Structure destinee a contenir les renumeroteurs autorises pour Mumps
  */
-struct WrapMumps
-{
+struct WrapMumps {
     static const LinearSolverEnum solverType = Mumps;
     static const std::set< Renumbering > setOfAllowedRenumbering;
     static const bool isHPCCompliant = true;
@@ -82,8 +79,7 @@ struct WrapMumps
  * @struct WrapPetsc
  * @brief Structure destinee a contenir les renumeroteurs autorises pour Petsc
  */
-struct WrapPetsc
-{
+struct WrapPetsc {
     static const LinearSolverEnum solverType = Petsc;
     static const std::set< Renumbering > setOfAllowedRenumbering;
     static const bool isHPCCompliant = true;
@@ -94,8 +90,7 @@ struct WrapPetsc
  * @struct WrapGcpc
  * @brief Structure destinee a contenir les renumeroteurs autorises pour Gcpc
  */
-struct WrapGcpc
-{
+struct WrapGcpc {
     static const LinearSolverEnum solverType = Gcpc;
     static const std::set< Renumbering > setOfAllowedRenumbering;
     static const bool isHPCCompliant = false;
@@ -108,20 +103,15 @@ struct WrapGcpc
          pour un solveur donne
  * @author Nicolas Sellenet
  */
-template< class Wrapping >
-struct RenumberingChecker
-{
-    static bool isAllowedRenumbering( Renumbering test )
-    {
-        if ( Wrapping::setOfAllowedRenumbering.find( test ) == Wrapping::setOfAllowedRenumbering.end() )
+template < class Wrapping > struct RenumberingChecker {
+    static bool isAllowedRenumbering( Renumbering test ) {
+        if ( Wrapping::setOfAllowedRenumbering.find( test ) ==
+             Wrapping::setOfAllowedRenumbering.end() )
             return false;
         return true;
     }
 
-    static bool isHPCCompliant()
-    {
-        return Wrapping::isHPCCompliant;
-    }
+    static bool isHPCCompliant() { return Wrapping::isHPCCompliant; }
 };
 
 /** @typedef Definition du verificateur de renumeroteur pour MultFront */
@@ -141,462 +131,376 @@ typedef RenumberingChecker< WrapGcpc > GcpcRenumberingChecker;
  * @author Nicolas Sellenet
  * @todo verifier que tous les mots-clés sont modifiables par des set
  */
-class BaseLinearSolverInstance: public DataStructure
-{
-    protected:
-        /** @brief Type du solveur lineaire */
-        LinearSolverEnum    _linearSolver;
-        /** @brief Type du renumeroteur */
-        Renumbering         _renumber;
-        /** @brief Le solveur est-il vide ? */
-        bool                _isEmpty;
-        Preconditioning     _preconditioning;
+class BaseLinearSolverInstance : public DataStructure {
+  protected:
+    /** @brief Type du solveur lineaire */
+    LinearSolverEnum _linearSolver;
+    /** @brief Type du renumeroteur */
+    Renumbering _renumber;
+    /** @brief Le solveur est-il vide ? */
+    bool _isEmpty;
+    Preconditioning _preconditioning;
 
-        JeveuxVectorChar24  _charValues;
-        JeveuxVectorDouble  _doubleValues;
-        JeveuxVectorLong    _integerValues;
+    JeveuxVectorChar24 _charValues;
+    JeveuxVectorDouble _doubleValues;
+    JeveuxVectorLong _integerValues;
 
-        GenParam     _algo;
-        GenParam     _lagr;
-        GenParam     _matrFilter;
-        GenParam     _memory;
-        GenParam     _lowRankThreshold;
-        GenParam     _lowRankSize;
-        GenParam     _distMatrix;
-        GenParam     _method;
-        GenParam     _precision;
-        GenParam     _fillingLevel;
-        GenParam     _iterNumber;
-        GenParam     _nPrec;
-        GenParam     _pivotPourcent;
-        GenParam     _postPro;
-        GenParam     _precond;
-        GenParam     _prePro;
-        GenParam     _reac;
-        GenParam     _filling;
-        GenParam     _renum;
-        GenParam     _residual;
-        GenParam     _precondResidual;
-        GenParam     _stopSingular;
-        GenParam     _resolutionType;
-        GenParam     _acceleration;
-        ListGenParam _listOfParameters;
-        AssemblyMatrixDisplacementDoublePtr _matrixPrec;
+    GenParam _algo;
+    GenParam _lagr;
+    GenParam _matrFilter;
+    GenParam _memory;
+    GenParam _lowRankThreshold;
+    GenParam _lowRankSize;
+    GenParam _distMatrix;
+    GenParam _method;
+    GenParam _precision;
+    GenParam _fillingLevel;
+    GenParam _iterNumber;
+    GenParam _nPrec;
+    GenParam _pivotPourcent;
+    GenParam _postPro;
+    GenParam _precond;
+    GenParam _prePro;
+    GenParam _reac;
+    GenParam _filling;
+    GenParam _renum;
+    GenParam _residual;
+    GenParam _precondResidual;
+    GenParam _stopSingular;
+    GenParam _resolutionType;
+    GenParam _acceleration;
+    ListGenParam _listOfParameters;
+    AssemblyMatrixDisplacementDoublePtr _matrixPrec;
 
-    public:
-        /**
-         * @typedef BaseLinearSolverPtr
-         * @brief Pointeur intelligent vers un BaseLinearSolverInstance
-         */
-        typedef boost::shared_ptr< BaseLinearSolverInstance > BaseLinearSolverPtr;
+  public:
+    /**
+     * @typedef BaseLinearSolverPtr
+     * @brief Pointeur intelligent vers un BaseLinearSolverInstance
+     */
+    typedef boost::shared_ptr< BaseLinearSolverInstance > BaseLinearSolverPtr;
 
-        /**
-         * @brief Constructeur
-         * @param currentBaseLinearSolver Type de solveur
-         * @param currentRenumber Type de renumeroteur
-         * @todo recuperer le code retour de isAllowedRenumberingForSolver
-         */
-        BaseLinearSolverInstance( const LinearSolverEnum currentBaseLinearSolver = MultFront,
-                                  const Renumbering currentRenumber = Metis ):
-            BaseLinearSolverInstance( ResultNaming::getNewResultName(),
-                                      currentBaseLinearSolver,
-                                      currentRenumber )
-        {};
+    /**
+     * @brief Constructeur
+     * @param currentBaseLinearSolver Type de solveur
+     * @param currentRenumber Type de renumeroteur
+     * @todo recuperer le code retour de isAllowedRenumberingForSolver
+     */
+    BaseLinearSolverInstance( const LinearSolverEnum currentBaseLinearSolver = MultFront,
+                              const Renumbering currentRenumber = Metis )
+        : BaseLinearSolverInstance( ResultNaming::getNewResultName(), currentBaseLinearSolver,
+                                    currentRenumber ){};
 
-        /**
-         * @brief Constructeur
-         * @param name Name of the DataStructure
-         * @param currentBaseLinearSolver Type de solveur
-         * @param currentRenumber Type de renumeroteur
-         * @todo recuperer le code retour de isAllowedRenumberingForSolver
-         */
-        BaseLinearSolverInstance( const std::string name,
-                                  const LinearSolverEnum currentBaseLinearSolver = MultFront,
-                                  const Renumbering currentRenumber = Metis ):
-            DataStructure( name, 19, "SOLVEUR" ),
-            _linearSolver( currentBaseLinearSolver ),
-            _renumber( currentRenumber ),
-            _isEmpty( true ),
-            _preconditioning( Without ),
-            _charValues( JeveuxVectorChar24( getName() + ".SLVK" ) ),
-            _doubleValues( JeveuxVectorDouble( getName() + ".SLVR" ) ),
-            _integerValues( JeveuxVectorLong( getName() + ".SLVI" ) ),
-            _algo( "ALGORITHME", false ),
-            _lagr( "ELIM_LAGR", false ),
-            _matrFilter( "FILTRAGE_MATRICE", false ),
-            _memory( "GESTION_MEMOIRE", false ),
-            _lowRankThreshold( "LOW_RANK_SEUIL", false ),
-            _lowRankSize( "LOW_RANK_TAILLE", false ),
-            _distMatrix( "MATR_DISTRIBUEE", false ),
-            _method( "METHODE", false ),
-            _precision( "MIXER_PRECISION", false ),
-            _fillingLevel( "NIVE_REMPLISSAGE", false ),
-            _iterNumber( "NMAX_ITER", false ),
-            _nPrec( "NPREC", false ),
-            _pivotPourcent( "PCENT_PIVOT", false ),
-            _postPro( "POSTTRAITEMENTS", false ),
-            _precond( "PRE_COND", false ),
-            _prePro( "PRETRAITEMENTS", false ),
-            _reac( "REAC_PRECOND", false ),
-            _filling( "REMPLISSAGE", false ),
-            _renum( "RENUM", false ),
-            _residual( "RESI_RELA", false ),
-            _precondResidual( "RESI_RELA_PC", false ),
-            _stopSingular( "STOP_SINGULIER", false ),
-            _resolutionType( "TYPE_RESOL", false ),
-            _acceleration( "ACCELERATION", false ),
-            _matrixPrec( new AssemblyMatrixDisplacementDoubleInstance
-                            ( ResultNaming::getNewResultName() + ".PREC" ) )
-        {
-            _renum = RenumberingNames[ (int)_renumber ];
+    /**
+     * @brief Constructeur
+     * @param name Name of the DataStructure
+     * @param currentBaseLinearSolver Type de solveur
+     * @param currentRenumber Type de renumeroteur
+     * @todo recuperer le code retour de isAllowedRenumberingForSolver
+     */
+    BaseLinearSolverInstance( const std::string name,
+                              const LinearSolverEnum currentBaseLinearSolver = MultFront,
+                              const Renumbering currentRenumber = Metis )
+        : DataStructure( name, 19, "SOLVEUR" ), _linearSolver( currentBaseLinearSolver ),
+          _renumber( currentRenumber ), _isEmpty( true ), _preconditioning( Without ),
+          _charValues( JeveuxVectorChar24( getName() + ".SLVK" ) ),
+          _doubleValues( JeveuxVectorDouble( getName() + ".SLVR" ) ),
+          _integerValues( JeveuxVectorLong( getName() + ".SLVI" ) ), _algo( "ALGORITHME", false ),
+          _lagr( "ELIM_LAGR", false ), _matrFilter( "FILTRAGE_MATRICE", false ),
+          _memory( "GESTION_MEMOIRE", false ), _lowRankThreshold( "LOW_RANK_SEUIL", false ),
+          _lowRankSize( "LOW_RANK_TAILLE", false ), _distMatrix( "MATR_DISTRIBUEE", false ),
+          _method( "METHODE", false ), _precision( "MIXER_PRECISION", false ),
+          _fillingLevel( "NIVE_REMPLISSAGE", false ), _iterNumber( "NMAX_ITER", false ),
+          _nPrec( "NPREC", false ), _pivotPourcent( "PCENT_PIVOT", false ),
+          _postPro( "POSTTRAITEMENTS", false ), _precond( "PRE_COND", false ),
+          _prePro( "PRETRAITEMENTS", false ), _reac( "REAC_PRECOND", false ),
+          _filling( "REMPLISSAGE", false ), _renum( "RENUM", false ),
+          _residual( "RESI_RELA", false ), _precondResidual( "RESI_RELA_PC", false ),
+          _stopSingular( "STOP_SINGULIER", false ), _resolutionType( "TYPE_RESOL", false ),
+          _acceleration( "ACCELERATION", false ),
+          _matrixPrec( new AssemblyMatrixDisplacementDoubleInstance(
+              ResultNaming::getNewResultName() + ".PREC" ) ) {
+        _renum = RenumberingNames[(int)_renumber];
 
-            _method = std::string( LinearSolverNames[ (int)_linearSolver ] );
-            _lagr = "NON";
-            if ( currentBaseLinearSolver == Petsc )
-            {
-                _algo = "FGMRES";
-                _distMatrix = "NON";
-                _iterNumber = (ASTERINTEGER)0;
-                _preconditioning = SimplePrecisionLdlt;
-                _precond = PreconditioningNames[ (int)_preconditioning ];
-                _residual = 1.e-6;
-                _precondResidual = -1.0;
-                _reac = (ASTERINTEGER)30;
-                _pivotPourcent = (ASTERINTEGER)20;
-                _memory = "AUTO";
-            }
-            if ( currentBaseLinearSolver == Mumps )
-            {
-                _lagr = "LAGR2";
-                _memory = "AUTO";
-                _lowRankThreshold = 0.;
-                _lowRankSize = -1.0;
-                _distMatrix = "NON";
-                _precision = "NON";
-                _nPrec = (ASTERINTEGER)8;
-                _pivotPourcent = (ASTERINTEGER)20;
-                _postPro = "AUTO";
-                _prePro = "AUTO";
-                _residual = -1.0;
-                _stopSingular = "OUI";
-                _resolutionType = "AUTO";
-                _acceleration = "AUTO";
-            }
-            if ( currentBaseLinearSolver == MultFront )
-            {
-                _nPrec = (ASTERINTEGER)8;
-                _stopSingular = "OUI";
-            }
-            if ( currentBaseLinearSolver == Ldlt )
-            {
-                _nPrec = (ASTERINTEGER)8;
-                _stopSingular = "OUI";
-            }
-            if ( currentBaseLinearSolver == Gcpc )
-            {
-                _iterNumber = (ASTERINTEGER)0;
-                _preconditioning = IncompleteLdlt;
-                _precond = PreconditioningNames[ (int)_preconditioning ];
-                _residual = 1.e-6;
-            }
-            _listOfParameters.push_back( &_algo );
-            _listOfParameters.push_back( &_lagr );
-            _listOfParameters.push_back( &_matrFilter );
-            _listOfParameters.push_back( &_memory );
-            _listOfParameters.push_back( &_lowRankThreshold );
-            _listOfParameters.push_back( &_lowRankSize );
-            _listOfParameters.push_back( &_distMatrix );
-            _listOfParameters.push_back( &_method );
-            _listOfParameters.push_back( &_precision );
-            _listOfParameters.push_back( &_fillingLevel );
-            _listOfParameters.push_back( &_iterNumber );
-            _listOfParameters.push_back( &_nPrec );
-            _listOfParameters.push_back( &_pivotPourcent );
-            _listOfParameters.push_back( &_postPro );
-            _listOfParameters.push_back( &_precond );
-            _listOfParameters.push_back( &_prePro );
-            _listOfParameters.push_back( &_reac );
-            _listOfParameters.push_back( &_filling );
-            _listOfParameters.push_back( &_renum );
-            _listOfParameters.push_back( &_residual );
-            _listOfParameters.push_back( &_precondResidual );
-            _listOfParameters.push_back( &_stopSingular );
-            _listOfParameters.push_back( &_resolutionType );
-            _listOfParameters.push_back( &_acceleration );
-        };
+        _method = std::string( LinearSolverNames[(int)_linearSolver] );
+        _lagr = "NON";
+        if ( currentBaseLinearSolver == Petsc ) {
+            _algo = "FGMRES";
+            _distMatrix = "NON";
+            _iterNumber = (ASTERINTEGER)0;
+            _preconditioning = SimplePrecisionLdlt;
+            _precond = PreconditioningNames[(int)_preconditioning];
+            _residual = 1.e-6;
+            _precondResidual = -1.0;
+            _reac = (ASTERINTEGER)30;
+            _pivotPourcent = (ASTERINTEGER)20;
+            _memory = "AUTO";
+        }
+        if ( currentBaseLinearSolver == Mumps ) {
+            _lagr = "LAGR2";
+            _memory = "AUTO";
+            _lowRankThreshold = 0.;
+            _lowRankSize = -1.0;
+            _distMatrix = "NON";
+            _precision = "NON";
+            _nPrec = (ASTERINTEGER)8;
+            _pivotPourcent = (ASTERINTEGER)20;
+            _postPro = "AUTO";
+            _prePro = "AUTO";
+            _residual = -1.0;
+            _stopSingular = "OUI";
+            _resolutionType = "AUTO";
+            _acceleration = "AUTO";
+        }
+        if ( currentBaseLinearSolver == MultFront ) {
+            _nPrec = (ASTERINTEGER)8;
+            _stopSingular = "OUI";
+        }
+        if ( currentBaseLinearSolver == Ldlt ) {
+            _nPrec = (ASTERINTEGER)8;
+            _stopSingular = "OUI";
+        }
+        if ( currentBaseLinearSolver == Gcpc ) {
+            _iterNumber = (ASTERINTEGER)0;
+            _preconditioning = IncompleteLdlt;
+            _precond = PreconditioningNames[(int)_preconditioning];
+            _residual = 1.e-6;
+        }
+        _listOfParameters.push_back( &_algo );
+        _listOfParameters.push_back( &_lagr );
+        _listOfParameters.push_back( &_matrFilter );
+        _listOfParameters.push_back( &_memory );
+        _listOfParameters.push_back( &_lowRankThreshold );
+        _listOfParameters.push_back( &_lowRankSize );
+        _listOfParameters.push_back( &_distMatrix );
+        _listOfParameters.push_back( &_method );
+        _listOfParameters.push_back( &_precision );
+        _listOfParameters.push_back( &_fillingLevel );
+        _listOfParameters.push_back( &_iterNumber );
+        _listOfParameters.push_back( &_nPrec );
+        _listOfParameters.push_back( &_pivotPourcent );
+        _listOfParameters.push_back( &_postPro );
+        _listOfParameters.push_back( &_precond );
+        _listOfParameters.push_back( &_prePro );
+        _listOfParameters.push_back( &_reac );
+        _listOfParameters.push_back( &_filling );
+        _listOfParameters.push_back( &_renum );
+        _listOfParameters.push_back( &_residual );
+        _listOfParameters.push_back( &_precondResidual );
+        _listOfParameters.push_back( &_stopSingular );
+        _listOfParameters.push_back( &_resolutionType );
+        _listOfParameters.push_back( &_acceleration );
+    };
 
-        /**
-         * @brief Destructor
-         */
-        ~BaseLinearSolverInstance()
-        {};
+    /**
+     * @brief Destructor
+     */
+    ~BaseLinearSolverInstance(){};
 
-        /** @brief Returns a ListSyntaxMapContainer object "listsyntax",
-            ready to be inserted  in a CommandSyntax object with the key SOLVEUR
-        */
-        ListSyntaxMapContainer buildListSyntax();
+    /** @brief Returns a ListSyntaxMapContainer object "listsyntax",
+        ready to be inserted  in a CommandSyntax object with the key SOLVEUR
+    */
+    ListSyntaxMapContainer buildListSyntax();
 
-        /**
-         * @brief Construction de la sd_solveur
-         * @return vrai si tout s'est bien passé
-         */
-        bool build();
+    /**
+     * @brief Construction de la sd_solveur
+     * @return vrai si tout s'est bien passé
+     */
+    bool build();
 
-        /**
-         * @brief Récupération de la liste des paramètres du solveur
-         * @return Liste constante des paramètres déclarés
-         */
-        const ListGenParam& getListOfParameters() const
-        {
-            return _listOfParameters;
-        };
+    /**
+     * @brief Récupération de la liste des paramètres du solveur
+     * @return Liste constante des paramètres déclarés
+     */
+    const ListGenParam &getListOfParameters() const { return _listOfParameters; };
 
-        /**
-         * @brief Recuperer le précond
-         * @return le type de preconditionneur
-         */
-        Preconditioning getPreconditioning() const
-        {
-            return _preconditioning;
-        };
+    /**
+     * @brief Recuperer le précond
+     * @return le type de preconditionneur
+     */
+    Preconditioning getPreconditioning() const { return _preconditioning; };
 
-        /**
-         * @brief Recuperer le nom du solveur
-         * @return chaine contenant le nom Aster du solveur
-         */
-        const std::string getSolverName() const
-        {
-            return LinearSolverNames[ (int)_linearSolver ];
-        };
+    /**
+     * @brief Recuperer le nom du solveur
+     * @return chaine contenant le nom Aster du solveur
+     */
+    const std::string getSolverName() const { return LinearSolverNames[(int)_linearSolver]; };
 
-        /**
-         * @brief Recuperer le nom du renumeroteur
-         * @return chaine contenant le nom Aster du renumeroteur
-         */
-        const std::string getRenumberingName() const
-        {
-            return RenumberingNames[ (int)_renumber ];
-        };
+    /**
+     * @brief Recuperer le nom du renumeroteur
+     * @return chaine contenant le nom Aster du renumeroteur
+     */
+    const std::string getRenumberingName() const { return RenumberingNames[(int)_renumber]; };
 
-        /**
-         * @brief Methode permettant de savoir si la matrice est vide
-         * @return true si vide
-         */
-        bool isEmpty()
-        {
-            return _isEmpty;
-        };
+    /**
+     * @brief Methode permettant de savoir si la matrice est vide
+     * @return true si vide
+     */
+    bool isEmpty() { return _isEmpty; };
 
-        /**
-         * @brief Methode permettant de savoir si le HPC est autorise
-         * @return true si le découpage de domain est autorisé
-         */
-        virtual bool isHPCCompliant()
-        {
-            return false;
-        };
+    /**
+     * @brief Methode permettant de savoir si le HPC est autorise
+     * @return true si le découpage de domain est autorisé
+     */
+    virtual bool isHPCCompliant() { return false; };
 
-        /**
-         * @brief Factorisation d'une matrice
-         * @param currentMatrix Matrice assemblee
-         */
-        bool matrixFactorization( AssemblyMatrixDisplacementDoublePtr currentMatrix )
-            throw( std::runtime_error );
+    /**
+     * @brief Factorisation d'une matrice
+     * @param currentMatrix Matrice assemblee
+     */
+    bool matrixFactorization( AssemblyMatrixDisplacementDoublePtr currentMatrix ) throw(
+        std::runtime_error );
 
-        /**
-         * @brief Inversion du systeme lineaire
-         * @param currentMatrix Matrice assemblee
-         * @param kinematicsField Charge cinématique
-         * @param currentRHS Second membre
-         * @param result champ aux noeuds résultat (optionnel)
-         * @return champ aux noeuds resultat
-         */
-        FieldOnNodesDoublePtr solveDoubleLinearSystem(
-            const AssemblyMatrixDisplacementDoublePtr& currentMatrix,
-            const FieldOnNodesDoublePtr& currentRHS,
-            FieldOnNodesDoublePtr result = FieldOnNodesDoublePtr(
-                new FieldOnNodesDoubleInstance( Permanent ) )
-        ) const;
+    /**
+     * @brief Inversion du systeme lineaire
+     * @param currentMatrix Matrice assemblee
+     * @param kinematicsField Charge cinématique
+     * @param currentRHS Second membre
+     * @param result champ aux noeuds résultat (optionnel)
+     * @return champ aux noeuds resultat
+     */
+    FieldOnNodesDoublePtr
+    solveDoubleLinearSystem( const AssemblyMatrixDisplacementDoublePtr &currentMatrix,
+                             const FieldOnNodesDoublePtr &currentRHS,
+                             FieldOnNodesDoublePtr result = FieldOnNodesDoublePtr(
+                                 new FieldOnNodesDoubleInstance( Permanent ) ) ) const;
 
-        /**
-         * @brief Inversion du systeme lineaire
-         * @param currentMatrix Matrice assemblee
-         * @param kinematicsField Charge cinématique
-         * @param currentRHS Second membre
-         * @param result champ aux noeuds résultat (optionnel)
-         * @return champ aux noeuds resultat
-         */
-        FieldOnNodesDoublePtr solveDoubleLinearSystemWithKinematicsLoad
-            ( const AssemblyMatrixDisplacementDoublePtr& currentMatrix,
-              const FieldOnNodesDoublePtr& kinematicsField,
-              const FieldOnNodesDoublePtr& currentRHS,
-              FieldOnNodesDoublePtr result = FieldOnNodesDoublePtr( new FieldOnNodesDoubleInstance( Permanent ) ) ) const;
+    /**
+     * @brief Inversion du systeme lineaire
+     * @param currentMatrix Matrice assemblee
+     * @param kinematicsField Charge cinématique
+     * @param currentRHS Second membre
+     * @param result champ aux noeuds résultat (optionnel)
+     * @return champ aux noeuds resultat
+     */
+    FieldOnNodesDoublePtr solveDoubleLinearSystemWithKinematicsLoad(
+        const AssemblyMatrixDisplacementDoublePtr &currentMatrix,
+        const FieldOnNodesDoublePtr &kinematicsField, const FieldOnNodesDoublePtr &currentRHS,
+        FieldOnNodesDoublePtr result =
+            FieldOnNodesDoublePtr( new FieldOnNodesDoubleInstance( Permanent ) ) ) const;
 
-        void disablePreprocessing() throw ( std::runtime_error )
-        {
-            if ( _linearSolver != Mumps )
-                throw std::runtime_error( "Algorithm only allowed with Mumps" );
-            _prePro = "SANS";
-        };
+    void disablePreprocessing() throw( std::runtime_error ) {
+        if ( _linearSolver != Mumps )
+            throw std::runtime_error( "Algorithm only allowed with Mumps" );
+        _prePro = "SANS";
+    };
 
-        void setAcceleration( MumpsAcceleration post )
-        {
-            if ( _linearSolver != Mumps )
-                throw std::runtime_error( "Only allowed with Mumps" );
-            _acceleration = MumpsAccelerationNames[ (int)post ];
-        };
+    void setAcceleration( MumpsAcceleration post ) {
+        if ( _linearSolver != Mumps )
+            throw std::runtime_error( "Only allowed with Mumps" );
+        _acceleration = MumpsAccelerationNames[(int)post];
+    };
 
-        void setAlgorithm( IterativeSolverAlgorithm algo ) throw ( std::runtime_error )
-        {
-            if ( _linearSolver != Petsc )
-                throw std::runtime_error( "Algorithm only allowed with Petsc" );
-            _algo = std::string( IterativeSolverAlgorithmNames[ (int)algo ] );
-        };
+    void setAlgorithm( IterativeSolverAlgorithm algo ) throw( std::runtime_error ) {
+        if ( _linearSolver != Petsc )
+            throw std::runtime_error( "Algorithm only allowed with Petsc" );
+        _algo = std::string( IterativeSolverAlgorithmNames[(int)algo] );
+    };
 
-        void setDistributedMatrix( bool matDist ) throw ( std::runtime_error )
-        {
-            if ( _linearSolver != Petsc && _linearSolver != Mumps )
-                throw std::runtime_error( "Distributed matrix only allowed with Mumps or Petsc" );
-            if ( matDist )
-                _distMatrix = "OUI";
-            else
-                _distMatrix = "NON";
-        };
+    void setDistributedMatrix( bool matDist ) throw( std::runtime_error ) {
+        if ( _linearSolver != Petsc && _linearSolver != Mumps )
+            throw std::runtime_error( "Distributed matrix only allowed with Mumps or Petsc" );
+        if ( matDist )
+            _distMatrix = "OUI";
+        else
+            _distMatrix = "NON";
+    };
 
-        void setErrorOnMatrixSingularity( bool error )
-        {
-            if ( error )
-                _stopSingular = "OUI";
-            else
-                _stopSingular = "NON";
-        };
+    void setErrorOnMatrixSingularity( bool error ) {
+        if ( error )
+            _stopSingular = "OUI";
+        else
+            _stopSingular = "NON";
+    };
 
-        void setFilling( double filLevel ) throw ( std::runtime_error )
-        {
-            if ( _linearSolver != Petsc && _linearSolver != Gcpc )
-                throw std::runtime_error( "Filling level only allowed with Gcpc or Petsc" );
-            if ( _preconditioning != IncompleteLdlt )
-                throw std::runtime_error( "Filling level only allowed with IncompleteLdlt" );
-            _filling = filLevel;
-        };
+    void setFilling( double filLevel ) throw( std::runtime_error ) {
+        if ( _linearSolver != Petsc && _linearSolver != Gcpc )
+            throw std::runtime_error( "Filling level only allowed with Gcpc or Petsc" );
+        if ( _preconditioning != IncompleteLdlt )
+            throw std::runtime_error( "Filling level only allowed with IncompleteLdlt" );
+        _filling = filLevel;
+    };
 
-        void setFillingLevel( ASTERINTEGER filLevel ) throw ( std::runtime_error )
-        {
-            if ( _linearSolver != Petsc && _linearSolver != Gcpc )
-                throw std::runtime_error( "Filling level only allowed with Gcpc or Petsc" );
-            if ( _preconditioning != IncompleteLdlt )
-                throw std::runtime_error( "Filling level only allowed with IncompleteLdlt" );
-            _fillingLevel = filLevel;
-        };
+    void setFillingLevel( ASTERINTEGER filLevel ) throw( std::runtime_error ) {
+        if ( _linearSolver != Petsc && _linearSolver != Gcpc )
+            throw std::runtime_error( "Filling level only allowed with Gcpc or Petsc" );
+        if ( _preconditioning != IncompleteLdlt )
+            throw std::runtime_error( "Filling level only allowed with IncompleteLdlt" );
+        _fillingLevel = filLevel;
+    };
 
-        void setLagrangeElimination( LagrangeTreatment lagrTreat )
-        {
-            _lagr = std::string( LagrangeTreatmentNames[ (int)lagrTreat ] );
-        };
+    void setLagrangeElimination( LagrangeTreatment lagrTreat ) {
+        _lagr = std::string( LagrangeTreatmentNames[(int)lagrTreat] );
+    };
 
-        void setLowRankSize( double size )
-        {
-            _lowRankSize = size;
-        };
+    void setLowRankSize( double size ) { _lowRankSize = size; };
 
-        void setLowRankThreshold( double threshold )
-        {
-            _lowRankThreshold = threshold;
-        };
+    void setLowRankThreshold( double threshold ) { _lowRankThreshold = threshold; };
 
-        void setMatrixFilter( double filter )
-        {
-            _matrFilter = filter;
-        };
+    void setMatrixFilter( double filter ) { _matrFilter = filter; };
 
-        void setMatrixType( MatrixType matType )
-        {
-            _resolutionType = MatrixTypeNames[ (int)matType ];
-        };
+    void setMatrixType( MatrixType matType ) { _resolutionType = MatrixTypeNames[(int)matType]; };
 
-        void setMaximumNumberOfIteration( ASTERINTEGER number ) throw ( std::runtime_error )
-        {
-            if ( _linearSolver != Petsc && _linearSolver != Gcpc )
-                throw std::runtime_error( "Only allowed with Gcpc or Petsc" );
-            _iterNumber = number;
-        };
+    void setMaximumNumberOfIteration( ASTERINTEGER number ) throw( std::runtime_error ) {
+        if ( _linearSolver != Petsc && _linearSolver != Gcpc )
+            throw std::runtime_error( "Only allowed with Gcpc or Petsc" );
+        _iterNumber = number;
+    };
 
-        void setMemoryManagement( MemoryManagement memManagt )
-        {
-            _memory = MemoryManagementNames[ (int)memManagt ];
-        };
+    void setMemoryManagement( MemoryManagement memManagt ) {
+        _memory = MemoryManagementNames[(int)memManagt];
+    };
 
-        void setPivotingMemory( ASTERINTEGER mem )
-        {
-            _pivotPourcent = mem;
-        };
+    void setPivotingMemory( ASTERINTEGER mem ) { _pivotPourcent = mem; };
 
-        void setPostTreatment( MumpsPostTreatment post )
-        {
-            if ( _linearSolver != Mumps )
-                throw std::runtime_error( "Only allowed with Mumps" );
-            _postPro = MumpsPostTreatmentNames[ (int)post ];
-        };
+    void setPostTreatment( MumpsPostTreatment post ) {
+        if ( _linearSolver != Mumps )
+            throw std::runtime_error( "Only allowed with Mumps" );
+        _postPro = MumpsPostTreatmentNames[(int)post];
+    };
 
-        void setPrecisionMix( bool precMix ) throw ( std::runtime_error )
-        {
-            if ( _linearSolver != Petsc && _linearSolver != Mumps )
-                throw std::runtime_error( "Precision mixing only allowed with Mumps or Petsc" );
-            if ( precMix )
-                _precision = "OUI";
-            else
-                _precision = "NON";
-        };
+    void setPrecisionMix( bool precMix ) throw( std::runtime_error ) {
+        if ( _linearSolver != Petsc && _linearSolver != Mumps )
+            throw std::runtime_error( "Precision mixing only allowed with Mumps or Petsc" );
+        if ( precMix )
+            _precision = "OUI";
+        else
+            _precision = "NON";
+    };
 
-        void setPreconditioning( Preconditioning precond ) throw ( std::runtime_error )
-        {
-            if ( _linearSolver != Petsc && _linearSolver != Gcpc )
-                throw std::runtime_error( "Preconditionong only allowed with Gcpc or Petsc" );
-            _preconditioning = precond;
-            _precond = PreconditioningNames[ (int)_preconditioning ];
-            if ( _preconditioning == IncompleteLdlt )
-            {
-                _fillingLevel = (ASTERINTEGER)0;
-                if ( _linearSolver == Petsc )
-                    _filling = 1.0;
-            }
-            if ( _preconditioning == SimplePrecisionLdlt )
-            {
-                _pivotPourcent = (ASTERINTEGER)20;
-                _reac = (ASTERINTEGER)30;
-                _renumber = Sans;
-                _renum = std::string( RenumberingNames[ (int)Sans ] );
-            }
-        };
+    void setPreconditioning( Preconditioning precond ) throw( std::runtime_error ) {
+        if ( _linearSolver != Petsc && _linearSolver != Gcpc )
+            throw std::runtime_error( "Preconditionong only allowed with Gcpc or Petsc" );
+        _preconditioning = precond;
+        _precond = PreconditioningNames[(int)_preconditioning];
+        if ( _preconditioning == IncompleteLdlt ) {
+            _fillingLevel = (ASTERINTEGER)0;
+            if ( _linearSolver == Petsc )
+                _filling = 1.0;
+        }
+        if ( _preconditioning == SimplePrecisionLdlt ) {
+            _pivotPourcent = (ASTERINTEGER)20;
+            _reac = (ASTERINTEGER)30;
+            _renumber = Sans;
+            _renum = std::string( RenumberingNames[(int)Sans] );
+        }
+    };
 
-        void setPreconditioningResidual( double residual )
-        {
-            _precondResidual = residual;
-        };
+    void setPreconditioningResidual( double residual ) { _precondResidual = residual; };
 
-        void setRenumbering( Renumbering reum )
-        {
-            _renumber = reum;
-        };
+    void setRenumbering( Renumbering reum ) { _renumber = reum; };
 
-        void setSingularityDetectionThreshold( ASTERINTEGER nprec )
-        {
-            _nPrec = nprec;
-        };
+    void setSingularityDetectionThreshold( ASTERINTEGER nprec ) { _nPrec = nprec; };
 
-        void setSolverResidual( double residual )
-        {
-            _residual = residual;
-        };
+    void setSolverResidual( double residual ) { _residual = residual; };
 
-        void setUpdatePreconditioningParameter( ASTERINTEGER value ) throw ( std::runtime_error )
-        {
-            if ( _linearSolver != Petsc && _linearSolver != Gcpc )
-                throw std::runtime_error( "Preconditionong only allowed with Gcpc or Petsc" );
-            if ( _preconditioning != SimplePrecisionLdlt )
-                throw std::runtime_error( "Update preconditioning parameter only allowed with IncompleteLdlt" );
-            _reac = value;
-        };
+    void setUpdatePreconditioningParameter( ASTERINTEGER value ) throw( std::runtime_error ) {
+        if ( _linearSolver != Petsc && _linearSolver != Gcpc )
+            throw std::runtime_error( "Preconditionong only allowed with Gcpc or Petsc" );
+        if ( _preconditioning != SimplePrecisionLdlt )
+            throw std::runtime_error(
+                "Update preconditioning parameter only allowed with IncompleteLdlt" );
+        _reac = value;
+    };
 };
 
 /**
@@ -611,10 +515,8 @@ typedef boost::shared_ptr< BaseLinearSolverInstance > BaseLinearSolverPtr;
  * @author Nicolas Sellenet
  * @todo verifier que tous les mots-clés sont modifiables par des set
  */
-template< typename linSolvWrap >
-class LinearSolverInstance: public BaseLinearSolverInstance
-{
-public:
+template < typename linSolvWrap > class LinearSolverInstance : public BaseLinearSolverInstance {
+  public:
     /**
      * @typedef LinearSolverPtr
      * @brief Pointeur intelligent vers un LinearSolver
@@ -624,21 +526,15 @@ public:
     /**
      * @brief Constructeur
      */
-    LinearSolverInstance( const Renumbering currentRenumber = Metis ):
-        LinearSolverInstance( ResultNaming::getNewResultName() )
-    {};
+    LinearSolverInstance( const Renumbering currentRenumber = Metis )
+        : LinearSolverInstance( ResultNaming::getNewResultName() ){};
 
-    LinearSolverInstance( const std::string name,
-                          const Renumbering currentRenumber = Metis ):
-        BaseLinearSolverInstance( name, linSolvWrap::solverType, currentRenumber )
-    {
+    LinearSolverInstance( const std::string name, const Renumbering currentRenumber = Metis )
+        : BaseLinearSolverInstance( name, linSolvWrap::solverType, currentRenumber ) {
         RenumberingChecker< linSolvWrap >::isAllowedRenumbering( currentRenumber );
     };
 
-    bool isHPCCompliant()
-    {
-        return RenumberingChecker< linSolvWrap >::isHPCCompliant();
-    };
+    bool isHPCCompliant() { return RenumberingChecker< linSolvWrap >::isHPCCompliant(); };
 };
 
 typedef LinearSolverInstance< WrapMultFront > MultFrontSolverInstance;
@@ -646,7 +542,6 @@ typedef LinearSolverInstance< WrapLdlt > LdltSolverInstance;
 typedef LinearSolverInstance< WrapMumps > MumpsSolverInstance;
 typedef LinearSolverInstance< WrapPetsc > PetscSolverInstance;
 typedef LinearSolverInstance< WrapGcpc > GcpcSolverInstance;
-
 
 /** @brief Enveloppe d'un pointeur intelligent vers un BaseLinearSolverInstance< MultFront > */
 typedef boost::shared_ptr< MultFrontSolverInstance > MultFrontSolverPtr;

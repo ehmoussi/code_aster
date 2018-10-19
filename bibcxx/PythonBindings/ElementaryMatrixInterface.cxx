@@ -27,28 +27,22 @@
 #include <PythonBindings/factory.h>
 #include "PythonBindings/ElementaryMatrixInterface.h"
 
-
-void exportElementaryMatrixToPython()
-{
+void exportElementaryMatrixToPython() {
     using namespace boost::python;
 
     class_< ElementaryMatrixInstance, ElementaryMatrixInstance::ElementaryMatrixPtr,
-            bases< DataStructure > > ( "ElementaryMatrix", no_init )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< ElementaryMatrixInstance >) )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< ElementaryMatrixInstance,
-                             std::string >) )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< ElementaryMatrixInstance,
-                             std::string,
-                             std::string >) )
+            bases< DataStructure > >( "ElementaryMatrix", no_init )
+        .def( "__init__", make_constructor(&initFactoryPtr< ElementaryMatrixInstance >))
+        .def( "__init__",
+              make_constructor(&initFactoryPtr< ElementaryMatrixInstance, std::string >))
+        .def( "__init__",
+              make_constructor(
+                  &initFactoryPtr< ElementaryMatrixInstance, std::string, std::string >))
         .def( "addFiniteElementDescriptor", &ElementaryMatrixInstance::addFiniteElementDescriptor )
         .def( "getFiniteElementDescriptors",
               &ElementaryMatrixInstance::getFiniteElementDescriptors )
         .def( "getMaterialOnMesh", &ElementaryMatrixInstance::getMaterialOnMesh )
         .def( "getSupportModel", &ElementaryMatrixInstance::getSupportModel )
         .def( "setMaterialOnMesh", &ElementaryMatrixInstance::setMaterialOnMesh )
-        .def( "setSupportModel", &ElementaryMatrixInstance::setSupportModel )
-    ;
+        .def( "setSupportModel", &ElementaryMatrixInstance::setSupportModel );
 };

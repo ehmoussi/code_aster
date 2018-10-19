@@ -25,17 +25,13 @@
 #include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
-void exportAcousticModeContainerToPython()
-{
+void exportAcousticModeContainerToPython() {
     using namespace boost::python;
 
     class_< AcousticModeContainerInstance, AcousticModeContainerPtr,
-            bases< FullResultsContainerInstance > > ( "AcousticModeContainer", no_init )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< AcousticModeContainerInstance > ) )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< AcousticModeContainerInstance,
-                             std::string > ) )
-        .def( "setStiffnessMatrix", &AcousticModeContainerInstance::setStiffnessMatrix )
-    ;
+            bases< FullResultsContainerInstance > >( "AcousticModeContainer", no_init )
+        .def( "__init__", make_constructor(&initFactoryPtr< AcousticModeContainerInstance >))
+        .def( "__init__",
+              make_constructor(&initFactoryPtr< AcousticModeContainerInstance, std::string >))
+        .def( "setStiffnessMatrix", &AcousticModeContainerInstance::setStiffnessMatrix );
 };

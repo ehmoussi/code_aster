@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe FieldOnElements
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -43,27 +43,26 @@
  * @brief Cette classe template permet de definir un champ aux éléments Aster
  * @author Nicolas Sellenet
  */
-template< class ValueType >
-class FieldOnElementsInstance: public GenericDataFieldInstance
-{
-private:
+template < class ValueType > class FieldOnElementsInstance : public GenericDataFieldInstance {
+  private:
     typedef SimpleFieldOnElementsInstance< ValueType > SimpleFieldOnElementsValueTypeInstance;
-    typedef boost::shared_ptr< SimpleFieldOnElementsDoubleInstance > SimpleFieldOnElementsValueTypePtr;
+    typedef boost::shared_ptr< SimpleFieldOnElementsDoubleInstance >
+        SimpleFieldOnElementsValueTypePtr;
 
     /** @brief Vecteur Jeveux '.CELD' */
-    JeveuxVectorLong           _descriptor;
+    JeveuxVectorLong _descriptor;
     /** @brief Vecteur Jeveux '.CELK' */
-    JeveuxVectorChar24         _reference;
+    JeveuxVectorChar24 _reference;
     /** @brief Vecteur Jeveux '.CELV' */
-    JeveuxVector<ValueType>    _valuesList;
+    JeveuxVector< ValueType > _valuesList;
     /** @brief Modele support */
-    ModelPtr                   _supportModel;
+    ModelPtr _supportModel;
     /** @brief Finite element description */
     FiniteElementDescriptorPtr _dofDescription;
     /** @brief jeveux vector '.TITR' */
-    JeveuxVectorChar80         _title;
+    JeveuxVectorChar80 _title;
 
-public:
+  public:
     /**
      * @typedef FieldOnElementsPtr
      * @brief Pointeur intelligent vers un FieldOnElements
@@ -74,30 +73,25 @@ public:
      * @brief Constructeur
      * @param name Nom Jeveux du champ aux éléments
      */
-    FieldOnElementsInstance( const std::string name ):
-                    GenericDataFieldInstance( name, "CHAM_ELEM" ),
-                    _descriptor( JeveuxVectorLong( getName() + ".CELD" ) ),
-                    _reference( JeveuxVectorChar24( getName() + ".CELK" ) ),
-                    _valuesList( JeveuxVector< ValueType >( getName() + ".CELV" ) ),
-                    _supportModel( nullptr ),
-                    _title( JeveuxVectorChar80( getName() + ".TITR" ) )
-    {};
+    FieldOnElementsInstance( const std::string name )
+        : GenericDataFieldInstance( name, "CHAM_ELEM" ),
+          _descriptor( JeveuxVectorLong( getName() + ".CELD" ) ),
+          _reference( JeveuxVectorChar24( getName() + ".CELK" ) ),
+          _valuesList( JeveuxVector< ValueType >( getName() + ".CELV" ) ), _supportModel( nullptr ),
+          _title( JeveuxVectorChar80( getName() + ".TITR" ) ){};
 
     /**
      * @brief Constructeur
      * @param memType Mémoire d'allocation
      */
-    FieldOnElementsInstance( const JeveuxMemory memType = Permanent ):
-                    GenericDataFieldInstance( memType,  "CHAM_ELEM" ),
-                    _descriptor( JeveuxVectorLong( getName() + ".CELD" ) ),
-                    _reference( JeveuxVectorChar24( getName() + ".CELK" ) ),
-                    _valuesList( JeveuxVector< ValueType >( getName() + ".CELV" ) ),
-                    _supportModel( nullptr ),
-                    _title( JeveuxVectorChar80( getName() + ".TITR" ) )
-    {};
+    FieldOnElementsInstance( const JeveuxMemory memType = Permanent )
+        : GenericDataFieldInstance( memType, "CHAM_ELEM" ),
+          _descriptor( JeveuxVectorLong( getName() + ".CELD" ) ),
+          _reference( JeveuxVectorChar24( getName() + ".CELK" ) ),
+          _valuesList( JeveuxVector< ValueType >( getName() + ".CELV" ) ), _supportModel( nullptr ),
+          _title( JeveuxVectorChar80( getName() + ".TITR" ) ){};
 
-    ~FieldOnElementsInstance()
-    {
+    ~FieldOnElementsInstance() {
 #ifdef __DEBUG_GC__
         std::cout << "FieldOnElements.destr: " << this->getName() << std::endl;
 #endif
@@ -107,8 +101,7 @@ public:
      * @brief
      * @return
      */
-    void deallocate()
-    {
+    void deallocate() {
         _descriptor->deallocate();
         _reference->deallocate();
         _valuesList->deallocate();
@@ -118,13 +111,13 @@ public:
      * @brief
      * @return
      */
-    SimpleFieldOnElementsValueTypePtr exportToSimpleFieldOnElements()
-    {
-        SimpleFieldOnElementsValueTypePtr toReturn( new SimpleFieldOnElementsValueTypeInstance( getMemoryType() ) );
+    SimpleFieldOnElementsValueTypePtr exportToSimpleFieldOnElements() {
+        SimpleFieldOnElementsValueTypePtr toReturn(
+            new SimpleFieldOnElementsValueTypeInstance( getMemoryType() ) );
         const std::string resultName = toReturn->getName();
         const std::string inName = getName();
         const std::string copyNan( "OUI" );
-        CALLO_CELCES_WRAP( inName, JeveuxMemoryTypesNames[ getMemoryType() ], resultName );
+        CALLO_CELCES_WRAP( inName, JeveuxMemoryTypesNames[getMemoryType()], resultName );
         toReturn->updateValuePointers();
         return toReturn;
     };
@@ -132,8 +125,7 @@ public:
     /**
      * @brief Get the support model
      */
-    ModelPtr getModel() const
-    {
+    ModelPtr getModel() const {
         if ( _supportModel->isEmpty() )
             throw std::runtime_error( "Model is empty" );
         return _supportModel;
@@ -143,9 +135,8 @@ public:
      * @brief Set the description of finite elements
      * @param curDesc object FiniteElementDescriptorPtr
      */
-    void setDescription( FiniteElementDescriptorPtr& curDesc )
-    {
-        if( _dofDescription )
+    void setDescription( FiniteElementDescriptorPtr &curDesc ) {
+        if ( _dofDescription )
             throw std::runtime_error( "FiniteElementDescriptor already set" );
         _dofDescription = curDesc;
     };
@@ -154,8 +145,7 @@ public:
      * @brief Definition du modele support
      * @param currentMesh objet Model sur lequel la charge reposera
      */
-    bool setModel( ModelPtr& currentModel )
-    {
+    bool setModel( ModelPtr &currentModel ) {
         if ( currentModel->isEmpty() )
             throw std::runtime_error( "Model is empty" );
         _supportModel = currentModel;
@@ -165,11 +155,9 @@ public:
     /**
      * @brief Update field and build FiniteElementDescriptor if necessary
      */
-    bool update() throw ( std::runtime_error )
-    {
-        if( _dofDescription == nullptr && updateValuePointers() )
-        {
-            if( _supportModel == nullptr )
+    bool update() throw( std::runtime_error ) {
+        if ( _dofDescription == nullptr && updateValuePointers() ) {
+            if ( _supportModel == nullptr )
                 throw std::runtime_error( "Model is empty" );
             _dofDescription = _supportModel->getFiniteElementDescriptor();
         }
@@ -180,8 +168,7 @@ public:
      * @brief Mise a jour des pointeurs Jeveux
      * @return renvoie true si la mise a jour s'est bien deroulee, false sinon
      */
-    bool updateValuePointers()
-    {
+    bool updateValuePointers() {
         bool retour = _descriptor->updateValuePointer();
         retour = ( retour && _reference->updateValuePointer() );
         retour = ( retour && _valuesList->updateValuePointer() );
@@ -190,7 +177,6 @@ public:
 
     friend class FieldBuilder;
 };
-
 
 /** @typedef FieldOnElementsInstanceDouble Instance d'une carte de double */
 typedef FieldOnElementsInstance< double > FieldOnElementsDoubleInstance;

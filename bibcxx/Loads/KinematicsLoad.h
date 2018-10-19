@@ -24,23 +24,22 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdexcept>
-#include <list>
-#include <string>
-#include "astercxx.h"
-#include "Modeling/Model.h"
-#include "Loads/UnitaryLoad.h"
 #include "Functions/Function.h"
+#include "Loads/UnitaryLoad.h"
 #include "MemoryManager/JeveuxVector.h"
+#include "Modeling/Model.h"
+#include "astercxx.h"
+#include <list>
+#include <stdexcept>
+#include <string>
 
 /**
  * @class KinematicsLoadInstance
  * @brief Classe definissant une charge cinematique (issue d'AFFE_CHAR_CINE)
  * @author Nicolas Sellenet
  */
-class KinematicsLoadInstance: public DataStructure
-{
-protected:
+class KinematicsLoadInstance : public DataStructure {
+  protected:
     /** @typedef Pointeur intelligent sur un VirtualMeshEntity */
     typedef boost::shared_ptr< VirtualMeshEntity > MeshEntityPtr;
 
@@ -56,28 +55,28 @@ protected:
     typedef ListDoubleTemp::iterator ListDoubleTempIter;
 
     /** @brief Modele support */
-    ModelPtr           _supportModel;
+    ModelPtr _supportModel;
     /** @brief Listes des valeurs imposees DEPL_R et TEMP_R */
-    ListDoubleDisp     _listOfDoubleImposedDisplacement;
-    ListDoubleTemp     _listOfDoubleImposedTemperature;
-    ListFunctionTemp   _listOfFunctionImposedTemperature;
-    JeveuxVectorLong   _intParam;
-    JeveuxVectorChar8  _charParam;
+    ListDoubleDisp _listOfDoubleImposedDisplacement;
+    ListDoubleTemp _listOfDoubleImposedTemperature;
+    ListFunctionTemp _listOfFunctionImposedTemperature;
+    JeveuxVectorLong _intParam;
+    JeveuxVectorChar8 _charParam;
     JeveuxVectorDouble _doubleParam;
     /** @brief La SD est-elle vide ? */
-    bool               _isEmpty;
+    bool _isEmpty;
 
     /**
      * @brief Constructeur
      */
-    KinematicsLoadInstance( const std::string& type );
+    KinematicsLoadInstance( const std::string &type );
 
     /**
      * @brief Constructeur
      */
-    KinematicsLoadInstance( const std::string& name, const std::string& type );
+    KinematicsLoadInstance( const std::string &name, const std::string &type );
 
-public:
+  public:
     /**
      * @typedef KinematicsLoadPtr
      * @brief Pointeur intelligent vers un KinematicsLoad
@@ -88,14 +87,13 @@ public:
      * @brief Construction de la charge (appel a OP0101)
      * @return Booleen indiquant que tout s'est bien passe
      */
-    bool build() throw ( std::runtime_error );
+    bool build() throw( std::runtime_error );
 
     /**
      * @brief Definition du modele support
      * @param currentModel objet Model sur lequel la charge reposera
      */
-    bool setSupportModel( ModelPtr& currentModel )
-    {
+    bool setSupportModel( ModelPtr &currentModel ) {
         if ( currentModel->isEmpty() )
             throw std::runtime_error( "Model is empty" );
         _supportModel = currentModel;
@@ -108,22 +106,18 @@ public:
  * @brief Classe definissant une charge cinematique (issue d'AFFE_CHAR_CINE)
  * @author Nicolas Sellenet
  */
-class KinematicsMechanicalLoadInstance: public KinematicsLoadInstance
-{
-public:
+class KinematicsMechanicalLoadInstance : public KinematicsLoadInstance {
+  public:
     /**
      * @brief Constructeur
      */
-    KinematicsMechanicalLoadInstance():
-        KinematicsLoadInstance( "_MECA" )
-    {};
+    KinematicsMechanicalLoadInstance() : KinematicsLoadInstance( "_MECA" ){};
 
     /**
      * @brief Constructeur
      */
-    KinematicsMechanicalLoadInstance( const std::string name ):
-        KinematicsLoadInstance( name, "_MECA" )
-    {};
+    KinematicsMechanicalLoadInstance( const std::string name )
+        : KinematicsLoadInstance( name, "_MECA" ){};
 
     /**
      * @typedef KinematicsMechanicalLoadPtr
@@ -137,15 +131,14 @@ public:
      * @param value Valeur imposee
      * @return Booleen indiquant que tout s'est bien passe
      */
-    bool addImposedMechanicalDOFOnElements( const PhysicalQuantityComponent& coordinate,
-                                            const double& value,
-                                            const std::string& nameOfGroup ) throw ( std::runtime_error )
-    {
+    bool addImposedMechanicalDOFOnElements(
+        const PhysicalQuantityComponent &coordinate, const double &value,
+        const std::string &nameOfGroup ) throw( std::runtime_error ) {
         // On verifie que le pointeur vers le modele support ET que le modele lui-meme
         // ne sont pas vides
-        if ( ( ! _supportModel ) || _supportModel->isEmpty() )
+        if ( ( !_supportModel ) || _supportModel->isEmpty() )
             throw std::runtime_error( "The support model is empty" );
-        if ( ! _supportModel->getSupportMesh()->hasGroupOfElements( nameOfGroup ) )
+        if ( !_supportModel->getSupportMesh()->hasGroupOfElements( nameOfGroup ) )
             throw std::runtime_error( nameOfGroup + " not in support mesh" );
 
         MeshEntityPtr meshEnt( new GroupOfElements( nameOfGroup ) );
@@ -160,12 +153,10 @@ public:
      * @param value Valeur imposee
      * @return Booleen indiquant que tout s'est bien passe
      */
-    bool addImposedMechanicalDOFOnElements( const PhysicalQuantityComponent& coordinate,
-                                            const double& value,
-                                            const std::vector< std::string >& namesOfGroup )
-        throw ( std::runtime_error )
-    {
-        for( const auto& nameOfGroup : namesOfGroup )
+    bool addImposedMechanicalDOFOnElements(
+        const PhysicalQuantityComponent &coordinate, const double &value,
+        const std::vector< std::string > &namesOfGroup ) throw( std::runtime_error ) {
+        for ( const auto &nameOfGroup : namesOfGroup )
             addImposedMechanicalDOFOnElements( coordinate, value, nameOfGroup );
         return true;
     };
@@ -176,15 +167,15 @@ public:
      * @param value Valeur imposee
      * @return Booleen indiquant que tout s'est bien passe
      */
-    bool addImposedMechanicalDOFOnNodes( const PhysicalQuantityComponent& coordinate,
-                                         const double& value,
-                                         const std::string& nameOfGroup ) throw ( std::runtime_error )
-    {
+    bool
+    addImposedMechanicalDOFOnNodes( const PhysicalQuantityComponent &coordinate,
+                                    const double &value,
+                                    const std::string &nameOfGroup ) throw( std::runtime_error ) {
         // On verifie que le pointeur vers le modele support ET que le modele lui-meme
         // ne sont pas vides
-        if ( ( ! _supportModel ) || _supportModel->isEmpty() )
+        if ( ( !_supportModel ) || _supportModel->isEmpty() )
             throw std::runtime_error( "The support model is empty" );
-        if ( ! _supportModel->getSupportMesh()->hasGroupOfNodes( nameOfGroup ) )
+        if ( !_supportModel->getSupportMesh()->hasGroupOfNodes( nameOfGroup ) )
             throw std::runtime_error( nameOfGroup + " not in support mesh" );
 
         MeshEntityPtr meshEnt( new GroupOfNodes( nameOfGroup ) );
@@ -199,12 +190,10 @@ public:
      * @param value Valeur imposee
      * @return Booleen indiquant que tout s'est bien passe
      */
-    bool addImposedMechanicalDOFOnNodes( const PhysicalQuantityComponent& coordinate,
-                                         const double& value,
-                                         const std::vector< std::string >& namesOfGroup )
-        throw ( std::runtime_error )
-    {
-        for( const auto& nameOfGroup : namesOfGroup )
+    bool addImposedMechanicalDOFOnNodes(
+        const PhysicalQuantityComponent &coordinate, const double &value,
+        const std::vector< std::string > &namesOfGroup ) throw( std::runtime_error ) {
+        for ( const auto &nameOfGroup : namesOfGroup )
             addImposedMechanicalDOFOnNodes( coordinate, value, nameOfGroup );
         return true;
     };
@@ -215,22 +204,18 @@ public:
  * @brief Classe definissant une charge cinematique (issue d'AFFE_CHAR_CINE)
  * @author Nicolas Sellenet
  */
-class KinematicsThermalLoadInstance: public KinematicsLoadInstance
-{
-public:
+class KinematicsThermalLoadInstance : public KinematicsLoadInstance {
+  public:
     /**
      * @brief Constructeur
      */
-    KinematicsThermalLoadInstance():
-        KinematicsLoadInstance( "_THER" )
-    {};
+    KinematicsThermalLoadInstance() : KinematicsLoadInstance( "_THER" ){};
 
     /**
      * @brief Constructeur
      */
-    KinematicsThermalLoadInstance( const std::string name ):
-        KinematicsLoadInstance( name, "_THER" )
-    {};
+    KinematicsThermalLoadInstance( const std::string name )
+        : KinematicsLoadInstance( name, "_THER" ){};
 
     /**
      * @typedef KinematicsThermalLoadPtr
@@ -244,15 +229,15 @@ public:
      * @param value Valeur imposee
      * @return Booleen indiquant que tout s'est bien passe
      */
-    bool addImposedThermalDOFOnElements( const PhysicalQuantityComponent& coordinate,
-                                         const double& value,
-                                         const std::string& nameOfGroup ) throw ( std::runtime_error )
-    {
+    bool
+    addImposedThermalDOFOnElements( const PhysicalQuantityComponent &coordinate,
+                                    const double &value,
+                                    const std::string &nameOfGroup ) throw( std::runtime_error ) {
         // On verifie que le pointeur vers le modele support ET que le modele lui-meme
         // ne sont pas vides
-        if ( ( ! _supportModel ) || _supportModel->isEmpty() )
-            throw std::runtime_error( "The support model is empty");
-        if ( ! _supportModel->getSupportMesh()->hasGroupOfElements( nameOfGroup ) )
+        if ( ( !_supportModel ) || _supportModel->isEmpty() )
+            throw std::runtime_error( "The support model is empty" );
+        if ( !_supportModel->getSupportMesh()->hasGroupOfElements( nameOfGroup ) )
             throw std::runtime_error( nameOfGroup + " not in support mesh" );
 
         MeshEntityPtr meshEnt( new GroupOfElements( nameOfGroup ) );
@@ -267,12 +252,10 @@ public:
      * @param value Valeur imposee
      * @return Booleen indiquant que tout s'est bien passe
      */
-    bool addImposedThermalDOFOnElements( const PhysicalQuantityComponent& coordinate,
-                                         const double& value,
-                                         const std::vector< std::string >& namesOfGroup )
-        throw ( std::runtime_error )
-    {
-        for( const auto& nameOfGroup : namesOfGroup )
+    bool addImposedThermalDOFOnElements(
+        const PhysicalQuantityComponent &coordinate, const double &value,
+        const std::vector< std::string > &namesOfGroup ) throw( std::runtime_error ) {
+        for ( const auto &nameOfGroup : namesOfGroup )
             addImposedThermalDOFOnElements( coordinate, value, nameOfGroup );
         return true;
     };
@@ -283,15 +266,14 @@ public:
      * @param value Valeur imposee
      * @return Booleen indiquant que tout s'est bien passe
      */
-    bool addImposedThermalDOFOnNodes( const PhysicalQuantityComponent& coordinate,
-                                      const double& value,
-                                      const std::string& nameOfGroup ) throw ( std::runtime_error )
-    {
+    bool addImposedThermalDOFOnNodes( const PhysicalQuantityComponent &coordinate,
+                                      const double &value,
+                                      const std::string &nameOfGroup ) throw( std::runtime_error ) {
         // On verifie que le pointeur vers le modele support ET que le modele lui-meme
         // ne sont pas vides
-        if ( ( ! _supportModel ) || _supportModel->isEmpty() )
+        if ( ( !_supportModel ) || _supportModel->isEmpty() )
             throw std::runtime_error( "The support model is empty" );
-        if ( ! _supportModel->getSupportMesh()->hasGroupOfNodes( nameOfGroup ) )
+        if ( !_supportModel->getSupportMesh()->hasGroupOfNodes( nameOfGroup ) )
             throw std::runtime_error( nameOfGroup + " not in support mesh" );
 
         MeshEntityPtr meshEnt( new GroupOfNodes( nameOfGroup ) );
@@ -306,12 +288,10 @@ public:
      * @param value Valeur imposee
      * @return Booleen indiquant que tout s'est bien passe
      */
-    bool addImposedThermalDOFOnNodes( const PhysicalQuantityComponent& coordinate,
-                                      const double& value,
-                                      const std::vector< std::string >& namesOfGroup )
-        throw ( std::runtime_error )
-    {
-        for( const auto& nameOfGroup : namesOfGroup )
+    bool addImposedThermalDOFOnNodes(
+        const PhysicalQuantityComponent &coordinate, const double &value,
+        const std::vector< std::string > &namesOfGroup ) throw( std::runtime_error ) {
+        for ( const auto &nameOfGroup : namesOfGroup )
             addImposedThermalDOFOnNodes( coordinate, value, nameOfGroup );
         return true;
     };
@@ -322,15 +302,14 @@ public:
      * @param FunctionPtr function imposee
      * @return Booleen indiquant que tout s'est bien passe
      */
-    bool addImposedThermalDOFOnNodes( const PhysicalQuantityComponent& coordinate,
-                                      const FunctionPtr& function,
-                                      const std::string& nameOfGroup ) throw ( std::runtime_error )
-    {
+    bool addImposedThermalDOFOnNodes( const PhysicalQuantityComponent &coordinate,
+                                      const FunctionPtr &function,
+                                      const std::string &nameOfGroup ) throw( std::runtime_error ) {
         // On verifie que le pointeur vers le modele support ET que le modele lui-meme
         // ne sont pas vides
-        if ( ( ! _supportModel ) || _supportModel->isEmpty() )
+        if ( ( !_supportModel ) || _supportModel->isEmpty() )
             throw std::runtime_error( "The support model is empty" );
-        if ( ! _supportModel->getSupportMesh()->hasGroupOfNodes( nameOfGroup ) )
+        if ( !_supportModel->getSupportMesh()->hasGroupOfNodes( nameOfGroup ) )
             throw std::runtime_error( nameOfGroup + " not in support mesh" );
 
         MeshEntityPtr meshEnt( new GroupOfNodes( nameOfGroup ) );
@@ -345,12 +324,10 @@ public:
      * @param FunctionPtr function imposee
      * @return Booleen indiquant que tout s'est bien passe
      */
-    bool addImposedThermalDOFOnNodes( const PhysicalQuantityComponent& coordinate,
-                                      const FunctionPtr& function,
-                                      const std::vector< std::string >& namesOfGroup )
-        throw ( std::runtime_error )
-    {
-        for( const auto& nameOfGroup : namesOfGroup )
+    bool addImposedThermalDOFOnNodes(
+        const PhysicalQuantityComponent &coordinate, const FunctionPtr &function,
+        const std::vector< std::string > &namesOfGroup ) throw( std::runtime_error ) {
+        for ( const auto &nameOfGroup : namesOfGroup )
             addImposedThermalDOFOnNodes( coordinate, function, nameOfGroup );
         return true;
     };
@@ -361,22 +338,18 @@ public:
  * @brief Classe definissant une charge cinematique (issue d'AFFE_CHAR_CINE)
  * @author Nicolas Sellenet
  */
-class KinematicsAcousticLoadInstance: public KinematicsLoadInstance
-{
-public:
+class KinematicsAcousticLoadInstance : public KinematicsLoadInstance {
+  public:
     /**
      * @brief Constructeur
      */
-    KinematicsAcousticLoadInstance():
-        KinematicsLoadInstance( "_ACOU" )
-    {};
+    KinematicsAcousticLoadInstance() : KinematicsLoadInstance( "_ACOU" ){};
 
     /**
      * @brief Constructeur
      */
-    KinematicsAcousticLoadInstance( const std::string name ):
-        KinematicsLoadInstance( name, "_ACOU" )
-    {};
+    KinematicsAcousticLoadInstance( const std::string name )
+        : KinematicsLoadInstance( name, "_ACOU" ){};
 
     /**
      * @typedef KinematicsAcousticLoadPtr
@@ -390,9 +363,8 @@ public:
      * @param value Valeur imposee
      * @return Booleen indiquant que tout s'est bien passe
      */
-    bool addImposedAcousticDOFOnElements( const std::string& nameOfGroup,
-                                          const double& value ) throw ( std::runtime_error )
-    {
+    bool addImposedAcousticDOFOnElements( const std::string &nameOfGroup,
+                                          const double &value ) throw( std::runtime_error ) {
         throw std::runtime_error( "Not yet implemented" );
     };
 
@@ -402,9 +374,8 @@ public:
      * @param value Valeur imposee
      * @return Booleen indiquant que tout s'est bien passe
      */
-    bool addImposedAcousticDOFOnNodes( const std::string& nameOfGroup,
-                                       double value ) throw ( std::runtime_error )
-    {
+    bool addImposedAcousticDOFOnNodes( const std::string &nameOfGroup,
+                                       double value ) throw( std::runtime_error ) {
         throw std::runtime_error( "Not yet implemented" );
     };
 };

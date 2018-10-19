@@ -28,7 +28,7 @@
 
 #include "astercxx.h"
 
-#include "DataStructures/DataStructure.h" 
+#include "DataStructures/DataStructure.h"
 #include "MemoryManager/JeveuxVector.h"
 #include "MemoryManager/JeveuxCollection.h"
 #include "Supervis/ResultNaming.h"
@@ -38,21 +38,21 @@
  * i.e. les résultats sur base modale.
  * @author Natacha Béreux
  */
-class DynamicResultsIndexingInstance : public DataStructure
-{
-private:
+class DynamicResultsIndexingInstance : public DataStructure {
+  private:
     /** @brief Collection '.REFD' */
     /** Collection de vecteurs contenant les informations sur les matrices de masse, amortissement
         et rigidité mais également d’autres informations telles que la numérotation (NUME_DDL)
-        ou encore la liste d’interfaces dynamiques et statiques ayant servi au calcul produisant le concept*/
-    JeveuxCollectionChar24       _refd;
+        ou encore la liste d’interfaces dynamiques et statiques ayant servi au calcul produisant le
+       concept*/
+    JeveuxCollectionChar24 _refd;
 
     /** @brief Vecteur Jeveux '.INDI' */
     /** Cet objet définit l’indirection entre le numéro d’ordre des champs enregistrés et les objets
         enregistrés dans  la collection .REFD */
-    JeveuxVectorLong             _indi;
+    JeveuxVectorLong _indi;
 
-public:
+  public:
     /**
      * @typedef DynamicResultsIndexingPtr
      * @brief Pointeur intelligent vers un DynamicResultsIndexingInstance
@@ -62,19 +62,16 @@ public:
     /**
      * @brief Constructeur
      */
-    DynamicResultsIndexingInstance( const std::string resuTyp ):
-        DynamicResultsIndexingInstance( ResultNaming::getNewResultName(), resuTyp )
-    {};
+    DynamicResultsIndexingInstance( const std::string resuTyp )
+        : DynamicResultsIndexingInstance( ResultNaming::getNewResultName(), resuTyp ){};
 
     /**
      * @brief Constructeur
      */
-    DynamicResultsIndexingInstance( const std::string &name,
-                                    std::string resuTyp ):
-        DataStructure( name, 19, resuTyp ),
-        _refd( JeveuxCollectionChar24( getName() + ".REFD" ) ),
-        _indi( JeveuxVectorLong( getName() + ".INDI" ) )
-    {};
+    DynamicResultsIndexingInstance( const std::string &name, std::string resuTyp )
+        : DataStructure( name, 19, resuTyp ),
+          _refd( JeveuxCollectionChar24( getName() + ".REFD" ) ),
+          _indi( JeveuxVectorLong( getName() + ".INDI" ) ){};
 };
 
 typedef boost::shared_ptr< DynamicResultsIndexingInstance > DynamicResultsIndexingPtr;

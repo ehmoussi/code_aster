@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe TurbulentSpectrum
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -37,19 +37,18 @@
  * @brief Cette classe correspond a une sd spectre
  * @author Nicolas Sellenet
  */
-class TurbulentSpectrumInstance: public DataStructure
-{
-private:
+class TurbulentSpectrumInstance : public DataStructure {
+  private:
     /** @brief Objet Jeveux '.VAIN' */
-    JeveuxVectorLong   _vain;
+    JeveuxVectorLong _vain;
     /** @brief Objet Jeveux '.VARE' */
     JeveuxVectorDouble _vare;
     /** @brief Objet Jeveux '.VATE' */
     JeveuxVectorChar16 _vate;
     /** @brief Objet Jeveux '.NNOE' */
-    JeveuxVectorChar8  _nnoe;
+    JeveuxVectorChar8 _nnoe;
 
-public:
+  public:
     /**
      * @typedef TurbulentSpectrumPtr
      * @brief Pointeur intelligent vers un TurbulentSpectrum
@@ -59,20 +58,17 @@ public:
     /**
      * @brief Constructeur
      */
-    TurbulentSpectrumInstance():
-        TurbulentSpectrumInstance( ResultNaming::getNewResultName() )
-    {};
+    TurbulentSpectrumInstance() : TurbulentSpectrumInstance( ResultNaming::getNewResultName() ){};
 
     /**
      * @brief Constructeur
      */
-    TurbulentSpectrumInstance( const std::string name ):
-        DataStructure( name, 19, "SPECTRE", Permanent ),
-        _vain( JeveuxVectorLong( getName() + ".REFE" ) ),
-        _vare( JeveuxVectorDouble( getName() + ".DISC" ) ),
-        _vate( JeveuxVectorChar16( getName() + ".VALE" ) ),
-        _nnoe( JeveuxVectorChar8( getName() + ".NUMI" ) )
-    {};
+    TurbulentSpectrumInstance( const std::string name )
+        : DataStructure( name, 19, "SPECTRE", Permanent ),
+          _vain( JeveuxVectorLong( getName() + ".REFE" ) ),
+          _vare( JeveuxVectorDouble( getName() + ".DISC" ) ),
+          _vate( JeveuxVectorChar16( getName() + ".VALE" ) ),
+          _nnoe( JeveuxVectorChar8( getName() + ".NUMI" ) ){};
 };
 
 /**

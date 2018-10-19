@@ -11,7 +11,7 @@
  * @brief Fichier entete de la classe ParallelMesh
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -41,35 +41,34 @@
  * @brief Cette classe decrit un maillage Aster parallèle
  * @author Nicolas Sellenet
  */
-class ParallelMeshInstance: public BaseMeshInstance
-{
-private:
+class ParallelMeshInstance : public BaseMeshInstance {
+  private:
     typedef std::set< std::string > SetOfString;
     typedef SetOfString::iterator SetOfStringIter;
     typedef SetOfString::const_iterator SetOfStringCIter;
 
     /** @brief All groups of nodes (parallel mesh) */
-    JeveuxVectorChar32  _allGroupOfNodes;
+    JeveuxVectorChar32 _allGroupOfNodes;
     /** @brief Set of all groups of nodes (parallel mesh) */
-    SetOfString         _setOfAllGON;
+    SetOfString _setOfAllGON;
     /** @brief All groups of elements (parallel mesh) */
-    JeveuxVectorChar32  _allGroupOfEements;
+    JeveuxVectorChar32 _allGroupOfEements;
     /** @brief Set of all groups of elements (parallel mesh) */
-    SetOfString         _setOfAllGOE;
+    SetOfString _setOfAllGOE;
     /** @brief Identify outer nodes */
-    JeveuxVectorLong    _outerNodes;
+    JeveuxVectorLong _outerNodes;
     /** @brief Global numbering */
-    JeveuxVectorLong    _globalNumbering;
+    JeveuxVectorLong _globalNumbering;
     /** @brief List of joins (send) */
-    JeveuxVectorChar24  _listOfSendingJoins;
+    JeveuxVectorChar24 _listOfSendingJoins;
     /** @brief List of joins (receive) */
-    JeveuxVectorChar24  _listOfReceivingJoins;
+    JeveuxVectorChar24 _listOfReceivingJoins;
     /** @brief List of opposite domain */
-    JeveuxVectorChar24  _listOfOppositeDomain;
+    JeveuxVectorChar24 _listOfOppositeDomain;
     /** @brief Vector of JeveuxVectorLong which contains matching nodes */
     std::vector< JeveuxVectorLong > _vectorOfMatchingNodes;
 
-public:
+  public:
     /**
      * @typedef ParallelMeshPtr
      * @brief Pointeur intelligent vers un ParallelMeshInstance
@@ -79,29 +78,23 @@ public:
     /**
      * @brief Constructeur
      */
-    ParallelMeshInstance():
-        ParallelMeshInstance( ResultNaming::getNewResultName() )
-    {};
+    ParallelMeshInstance() : ParallelMeshInstance( ResultNaming::getNewResultName() ){};
 
     /**
      * @brief Constructeur
      */
-    ParallelMeshInstance( const std::string& name ):
-        BaseMeshInstance( name, "MAILLAGE_P" ),
-        _allGroupOfNodes( getName() + ".PAR_GRPNOE" ),
-        _allGroupOfEements( getName() + ".PAR_GRPMAI" ),
-        _outerNodes( getName() + ".NOEX" ),
-        _globalNumbering( getName() + ".NULOGL" ),
-        _listOfSendingJoins( getName() + ".NO_JO_ENV" ),
-        _listOfReceivingJoins( getName() + ".NO_JO_REC" ),
-        _listOfOppositeDomain( getName() + ".DOMJOINTS" )
-    {};
+    ParallelMeshInstance( const std::string &name )
+        : BaseMeshInstance( name, "MAILLAGE_P" ), _allGroupOfNodes( getName() + ".PAR_GRPNOE" ),
+          _allGroupOfEements( getName() + ".PAR_GRPMAI" ), _outerNodes( getName() + ".NOEX" ),
+          _globalNumbering( getName() + ".NULOGL" ),
+          _listOfSendingJoins( getName() + ".NO_JO_ENV" ),
+          _listOfReceivingJoins( getName() + ".NO_JO_REC" ),
+          _listOfOppositeDomain( getName() + ".DOMJOINTS" ){};
 
     /**
      * @brief Destructeur
      */
-    ~ParallelMeshInstance() throw ( std::runtime_error )
-    {
+    ~ParallelMeshInstance() throw( std::runtime_error ) {
 #ifdef __DEBUG_GC__
         std::cout << "ParallelMesh.destr: " << this->getName() << std::endl;
 #endif
@@ -111,28 +104,21 @@ public:
      * @brief Get the JeveuxVector for global nodes numbering
      * @return _globalNumbering
      */
-    const JeveuxVectorLong getGlobalNodesNumbering() const
-    {
-        return _globalNumbering;
-    };
+    const JeveuxVectorLong getGlobalNodesNumbering() const { return _globalNumbering; };
 
     /**
      * @brief Get the JeveuxVector for outer subdomain nodes
      * @return _outerNodes
      */
-    const JeveuxVectorLong getOuterNodesVector() const
-    {
-        return _outerNodes;
-    };
+    const JeveuxVectorLong getOuterNodesVector() const { return _outerNodes; };
 
     /**
      * @brief Teste l'existence d'un groupe de mailles dans le maillage
      * @return true si le groupe existe
      */
-    bool hasGroupOfElements( const std::string& name ) const
-    {
+    bool hasGroupOfElements( const std::string &name ) const {
         SetOfStringCIter curIter = _setOfAllGOE.find( name );
-        if( curIter != _setOfAllGOE.end() )
+        if ( curIter != _setOfAllGOE.end() )
             return true;
         return false;
     };
@@ -141,10 +127,9 @@ public:
      * @brief Teste l'existence d'un groupe de noeuds dans le maillage
      * @return true si le groupe existe
      */
-    bool hasGroupOfNodes( const std::string& name ) const
-    {
+    bool hasGroupOfNodes( const std::string &name ) const {
         SetOfStringCIter curIter = _setOfAllGON.find( name );
-        if( curIter != _setOfAllGON.end() )
+        if ( curIter != _setOfAllGON.end() )
             return true;
         return false;
     };
@@ -153,34 +138,29 @@ public:
      * @brief Teste l'existence d'un groupe de mailles dans le maillage
      * @return true si le groupe existe
      */
-    bool hasLocalGroupOfElements( const std::string& name ) const
-    {
-        return _groupsOfElements->existsObject(name);
+    bool hasLocalGroupOfElements( const std::string &name ) const {
+        return _groupsOfElements->existsObject( name );
     };
 
     /**
      * @brief Teste l'existence d'un groupe de noeuds dans le maillage
      * @return true si le groupe existe
      */
-    bool hasLocalGroupOfNodes( const std::string& name ) const
-    {
-        return _groupsOfNodes->existsObject(name);
+    bool hasLocalGroupOfNodes( const std::string &name ) const {
+        return _groupsOfNodes->existsObject( name );
     };
 
     /**
      * @brief Fonction permettant de savoir si un maillage est parallel
      * @return retourne true si le maillage est parallel
      */
-    virtual bool isParallel() const
-    {
-        return true;
-    };
+    virtual bool isParallel() const { return true; };
 
     /**
      * @brief Read a MED ParallelMesh file
      * @return retourne true si tout est ok
      */
-    bool readMedFile( const std::string& fileName ) throw ( std::runtime_error );
+    bool readMedFile( const std::string &fileName ) throw( std::runtime_error );
 };
 
 /**

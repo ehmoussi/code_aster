@@ -2,7 +2,7 @@
  * @file ResultNaming.cxx
  * @brief Implementation of automatic naming of jeveux objects.
  * @section LICENCE
- * Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+ * Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
  * This file is part of code_aster.
  *
  * code_aster is free software: you can redistribute it and/or modify
@@ -25,46 +25,38 @@
 #include <string>
 #include <vector>
 
-#include "astercxx.h"
 #include "Functions/Function.h"
 #include "Supervis/ResultNaming.h"
+#include "astercxx.h"
 
 FunctionPtr emptyDoubleFunction( new FunctionInstance( "" ) );
 
-BaseFunctionInstance::BaseFunctionInstance( const std::string jeveuxName,
-                                            const std::string type ):
-    GenericFunctionInstance( jeveuxName, type ),
-    _jeveuxName( getName() ),
-    _property( JeveuxVectorChar24( getName() + ".PROL" ) ),
-    _value( JeveuxVectorDouble( getName() + ".VALE" ) ),
-    _funct_type( type )
-{
-}
+BaseFunctionInstance::BaseFunctionInstance( const std::string jeveuxName, const std::string type )
+    : GenericFunctionInstance( jeveuxName, type ), _jeveuxName( getName() ),
+      _property( JeveuxVectorChar24( getName() + ".PROL" ) ),
+      _value( JeveuxVectorDouble( getName() + ".VALE" ) ), _funct_type( type ) {}
 
-BaseFunctionInstance::BaseFunctionInstance( const std::string type ) :
-    BaseFunctionInstance::BaseFunctionInstance( ResultNaming::getNewResultName(), type )
-{
-}
+BaseFunctionInstance::BaseFunctionInstance( const std::string type )
+    : BaseFunctionInstance::BaseFunctionInstance( ResultNaming::getNewResultName(), type ) {}
 
-void BaseFunctionInstance::allocate( JeveuxMemory mem, ASTERINTEGER size ) throw ( std::runtime_error )
-{
-    if( _property->exists() )
+void BaseFunctionInstance::allocate( JeveuxMemory mem,
+                                     ASTERINTEGER size ) throw( std::runtime_error ) {
+    if ( _property->exists() )
         _property->deallocate();
     propertyAllocate();
 
-    if( _value->exists() )
+    if ( _value->exists() )
         _value->deallocate();
-    _value->allocate( mem, 2*size );
+    _value->allocate( mem, 2 * size );
 }
 
-void FunctionComplexInstance::allocate( JeveuxMemory mem, ASTERINTEGER size ) throw ( std::runtime_error )
-{
+void FunctionComplexInstance::allocate( JeveuxMemory mem,
+                                        ASTERINTEGER size ) throw( std::runtime_error ) {
     throw std::runtime_error( "Not yet implemented!" );
 }
 
-void BaseFunctionInstance::setValues( const VectorDouble &absc, const VectorDouble &ordo )
-    throw ( std::runtime_error )
-{
+void BaseFunctionInstance::setValues( const VectorDouble &absc,
+                                      const VectorDouble &ordo ) throw( std::runtime_error ) {
     if ( absc.size() != ordo.size() )
         throw std::runtime_error( "Function: length of abscissa and ordinates must be equal" );
 
@@ -76,70 +68,62 @@ void BaseFunctionInstance::setValues( const VectorDouble &absc, const VectorDoub
     VectorDouble::const_iterator abscIt = absc.begin();
     VectorDouble::const_iterator ordoIt = ordo.begin();
     int idx = 0;
-    for ( ; abscIt != absc.end(); ++abscIt, ++ordoIt )
-    {
-        (*_value)[idx] = *abscIt;
-        (*_value)[nbpts + idx] = *ordoIt;
+    for ( ; abscIt != absc.end(); ++abscIt, ++ordoIt ) {
+        ( *_value )[idx] = *abscIt;
+        ( *_value )[nbpts + idx] = *ordoIt;
         ++idx;
     }
 }
 
-void BaseFunctionInstance::setInterpolation( const std::string type )
-    throw ( std::runtime_error )
-{
+void BaseFunctionInstance::setInterpolation( const std::string type ) throw( std::runtime_error ) {
     std::string interp;
-    if( !_property->isAllocated() )
+    if ( !_property->isAllocated() )
         propertyAllocate();
 
     if ( type.length() != 7 )
-        throw std::runtime_error("Function: interpolation must be 7 characters long.");
+        throw std::runtime_error( "Function: interpolation must be 7 characters long." );
 
-    interp = type.substr(0, 3);
+    interp = type.substr( 0, 3 );
     if ( interp != "LIN" && interp != "LOG" && interp != "NON" )
-        throw std::runtime_error("Function: invalid interpolation for abscissa.");
+        throw std::runtime_error( "Function: invalid interpolation for abscissa." );
 
-    interp = type.substr(4, 3);
+    interp = type.substr( 4, 3 );
     if ( interp != "LIN" && interp != "LOG" && interp != "NON" )
-        throw std::runtime_error("Function: invalid interpolation for ordinates.");
+        throw std::runtime_error( "Function: invalid interpolation for ordinates." );
 
-    (*_property)[1] = type.c_str();
+    ( *_property )[1] = type.c_str();
 }
 
-void BaseFunctionInstance::setExtrapolation( const std::string type )
-    throw ( std::runtime_error )
-{
-    if( !_property->isAllocated() )
+void BaseFunctionInstance::setExtrapolation( const std::string type ) throw( std::runtime_error ) {
+    if ( !_property->isAllocated() )
         propertyAllocate();
 
     if ( type.length() != 2 )
-        throw std::runtime_error("Function: interpolation must be 2 characters long.");
+        throw std::runtime_error( "Function: interpolation must be 2 characters long." );
 
-    std::string auth("CELI");
-    if ( auth.find(type[0]) == std::string::npos )
-        throw std::runtime_error("Function: invalid extrapolation for abscissa.");
+    std::string auth( "CELI" );
+    if ( auth.find( type[0] ) == std::string::npos )
+        throw std::runtime_error( "Function: invalid extrapolation for abscissa." );
 
-    if ( auth.find(type[1]) == std::string::npos )
-        throw std::runtime_error("Function: invalid extrapolation for ordinates.");
+    if ( auth.find( type[1] ) == std::string::npos )
+        throw std::runtime_error( "Function: invalid extrapolation for ordinates." );
 
-    (*_property)[4] = type.c_str();
+    ( *_property )[4] = type.c_str();
 }
 
-
-void BaseFunctionInstance::setAsConstant()
-{
-    if( !_property->isAllocated() )
+void BaseFunctionInstance::setAsConstant() {
+    if ( !_property->isAllocated() )
         propertyAllocate();
     _funct_type = "CONSTANT";
-    (*_property)[0] = _funct_type;
+    ( *_property )[0] = _funct_type;
 }
 
 /* Complex function */
 void FunctionComplexInstance::setValues( const VectorDouble &absc,
-                                         const VectorDouble &ordo )
-    throw ( std::runtime_error )
-{
+                                         const VectorDouble &ordo ) throw( std::runtime_error ) {
     if ( absc.size() * 2 != ordo.size() )
-        throw std::runtime_error( "Function: The length of ordinates must be twice that of abscissas." );
+        throw std::runtime_error(
+            "Function: The length of ordinates must be twice that of abscissas." );
 
     // Create Jeveux vector ".VALE"
     const int nbpts = absc.size();
@@ -149,19 +133,16 @@ void FunctionComplexInstance::setValues( const VectorDouble &absc,
     VectorDouble::const_iterator abscIt = absc.begin();
     VectorDouble::const_iterator ordoIt = ordo.begin();
     int idx = 0;
-    for ( ; abscIt != absc.end(); ++abscIt, ++ordoIt )
-    {
-        (*_value)[idx] = *abscIt;
-        (*_value)[nbpts + 2 * idx] = *ordoIt;
+    for ( ; abscIt != absc.end(); ++abscIt, ++ordoIt ) {
+        ( *_value )[idx] = *abscIt;
+        ( *_value )[nbpts + 2 * idx] = *ordoIt;
         ++ordoIt;
-        (*_value)[nbpts + 2 * idx + 1] = *ordoIt;
+        ( *_value )[nbpts + 2 * idx + 1] = *ordoIt;
         ++idx;
     }
 }
 
 void FunctionComplexInstance::setValues( const VectorDouble &absc,
-                                         const VectorComplex &ordo )
-    throw ( std::runtime_error )
-{
+                                         const VectorComplex &ordo ) throw( std::runtime_error ) {
     throw std::runtime_error( "Not yet implemented!" );
 }

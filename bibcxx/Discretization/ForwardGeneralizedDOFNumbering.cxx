@@ -3,7 +3,7 @@
  * @brief Implementation de GeneralizedDOFNumbering
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -26,37 +26,27 @@
 #include "Discretization/ForwardGeneralizedDOFNumbering.h"
 #include "Discretization/GeneralizedDOFNumbering.h"
 
-ForwardGeneralizedDOFNumberingPtr::ForwardGeneralizedDOFNumberingPtr():
-    _isSet( false )
-{};
+ForwardGeneralizedDOFNumberingPtr::ForwardGeneralizedDOFNumberingPtr() : _isSet( false ){};
 
-ForwardGeneralizedDOFNumberingPtr::ForwardGeneralizedDOFNumberingPtr
-    ( const GeneralizedDOFNumberingPtr& ptr ):
-    _ptr( ptr ),
-    _isSet( true )
-{};
+ForwardGeneralizedDOFNumberingPtr::ForwardGeneralizedDOFNumberingPtr(
+    const GeneralizedDOFNumberingPtr &ptr )
+    : _ptr( ptr ), _isSet( true ){};
 
-void ForwardGeneralizedDOFNumberingPtr::operator=( const GeneralizedDOFNumberingPtr& ptr )
-{
+void ForwardGeneralizedDOFNumberingPtr::operator=( const GeneralizedDOFNumberingPtr &ptr ) {
     _ptr = ptr;
     _isSet = true;
 };
 
-GeneralizedDOFNumberingPtr ForwardGeneralizedDOFNumberingPtr::getPointer()
-    throw( std::runtime_error )
-{
-    if( !_isSet )
+GeneralizedDOFNumberingPtr
+ForwardGeneralizedDOFNumberingPtr::getPointer() throw( std::runtime_error ) {
+    if ( !_isSet )
         throw std::runtime_error( "No pointer set" );
     return _ptr;
 };
 
-bool ForwardGeneralizedDOFNumberingPtr::isSet() const
-{
-    return _isSet;
-};
+bool ForwardGeneralizedDOFNumberingPtr::isSet() const { return _isSet; };
 
-void ForwardGeneralizedDOFNumberingPtr::setPointer( const GeneralizedDOFNumberingPtr& ptr )
-{
+void ForwardGeneralizedDOFNumberingPtr::setPointer( const GeneralizedDOFNumberingPtr &ptr ) {
     _ptr = ptr;
     _isSet = true;
 };

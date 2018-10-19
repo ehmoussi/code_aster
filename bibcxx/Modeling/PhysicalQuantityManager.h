@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe PhysicalQuantityManager
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -27,12 +27,9 @@
 #include "astercxx.h"
 #include "MemoryManager/JeveuxCollection.h"
 
-template< typename T >
-class Singleton
-{
-public:
-    static T& Instance()
-    {
+template < typename T > class Singleton {
+  public:
+    static T &Instance() {
         static T theSingleInstance;
         return theSingleInstance;
     }
@@ -43,22 +40,22 @@ public:
  * @brief Class to manage "catalogue" interactions
  * @author Nicolas Sellenet
  */
-class PhysicalQuantityManager: public Singleton< PhysicalQuantityManager >
-{
-private:
-    const JeveuxCollectionChar8       _nameOfCmp;
+class PhysicalQuantityManager : public Singleton< PhysicalQuantityManager > {
+  private:
+    const JeveuxCollectionChar8 _nameOfCmp;
     const JeveuxBidirectionalMapChar8 _nameOfPhysicalQuantity;
 
     PhysicalQuantityManager();
 
-public:
+  public:
     friend class Singleton< PhysicalQuantityManager >;
 
-    const JeveuxCollectionObjectChar8& getComponentNames( const ASTERINTEGER& quantityNumber ) const;
+    const JeveuxCollectionObjectChar8 &
+    getComponentNames( const ASTERINTEGER &quantityNumber ) const;
 
-    ASTERINTEGER getNumberOfEncodedInteger( const ASTERINTEGER& quantityNumber ) const;
+    ASTERINTEGER getNumberOfEncodedInteger( const ASTERINTEGER &quantityNumber ) const;
 
-    std::string getPhysicalQuantityName( const ASTERINTEGER& quantityNumber ) const
+    std::string getPhysicalQuantityName( const ASTERINTEGER &quantityNumber ) const
         throw( std::runtime_error );
 };
 

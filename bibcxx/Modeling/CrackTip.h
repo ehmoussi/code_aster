@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe CrackTip
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -36,9 +36,8 @@
  * @brief Cette classe decrit un fond_fiss
  * @author Nicolas Sellenet
  */
-class CrackTipInstance: public DataStructure
-{
-private:
+class CrackTipInstance : public DataStructure {
+  private:
     /** @brief Objet Jeveux '.INFO' */
     JeveuxVectorChar8 _info;
     /** @brief Objet Jeveux '.FONDFISS' */
@@ -78,7 +77,7 @@ private:
     /** @brief Objet Jeveux '.INFNORM.NOEU' */
     JeveuxVectorChar8 _infNormNoeud;
 
-public:
+  public:
     /**
      * @typedef CrackTipPtr
      * @brief Pointeur intelligent vers un CrackTipInstance
@@ -90,7 +89,6 @@ public:
      */
     CrackTipInstance();
 };
-
 
 /**
  * @typedef CrackTipPtr

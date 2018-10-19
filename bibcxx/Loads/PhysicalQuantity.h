@@ -24,68 +24,132 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <iterator>
 #include <list>
 #include <map>
 #include <set>
 #include <stdexcept>
 #include <string>
-#include <iterator>
 
 #include "astercxx.h"
 
-#include "Utilities/CapyConvertibleValue.h"
 #include "Functions/Function.h"
+#include "Utilities/CapyConvertibleValue.h"
 
 /**
  * @enum PhysicalQuantityEnum
  * @brief Inventory of all physical quantities available in Code_Aster
  * @todo attention confusion entre Pressure et Pres
  */
-enum PhysicalQuantityEnum { Force, StructuralForce, LocalBeamForce,
-    LocalShellForce, Displacement, Pressure, Temperature, Impedance, NormalSpeed,
-    HeatFlux, HydraulicFlux };
+enum PhysicalQuantityEnum {
+    Force,
+    StructuralForce,
+    LocalBeamForce,
+    LocalShellForce,
+    Displacement,
+    Pressure,
+    Temperature,
+    Impedance,
+    NormalSpeed,
+    HeatFlux,
+    HydraulicFlux
+};
 
 const int nbPhysicalQuantities = 11;
 
 /**
-* @def PhysicalQuantityNames
-* @brief Aster names of the physical quantities
-*/
-extern const char* PhysicalQuantityNames[nbPhysicalQuantities];
+ * @def PhysicalQuantityNames
+ * @brief Aster names of the physical quantities
+ */
+extern const char *PhysicalQuantityNames[nbPhysicalQuantities];
 
 /**
  * @enum PhysicalQuantityComponent
  * @brief Inventory of components of the physical quantities listed in PhysicalQuantityEnum
  */
-enum PhysicalQuantityComponent { Dx, Dy, Dz, Drx, Dry, Drz, Temp, MiddleTemp, Pres,
-    Fx, Fy, Fz, Mx, My, Mz, N, Vy, Vz, Mt, Mfy, Mfz, F1, F2, F3, Mf1, Mf2,
-    Impe, Vnor, Flun, FlunHydr1, FlunHydr2 };
+enum PhysicalQuantityComponent {
+    Dx,
+    Dy,
+    Dz,
+    Drx,
+    Dry,
+    Drz,
+    Temp,
+    MiddleTemp,
+    Pres,
+    Fx,
+    Fy,
+    Fz,
+    Mx,
+    My,
+    Mz,
+    N,
+    Vy,
+    Vz,
+    Mt,
+    Mfy,
+    Mfz,
+    F1,
+    F2,
+    F3,
+    Mf1,
+    Mf2,
+    Impe,
+    Vnor,
+    Flun,
+    FlunHydr1,
+    FlunHydr2
+};
 
 extern const int nbComponent;
 /**
-* @def ComponentNames
-* @brief Aster names of the components of the physical quantities
-*/
+ * @def ComponentNames
+ * @brief Aster names of the components of the physical quantities
+ */
 const std::map< PhysicalQuantityComponent, std::string > ComponentNames = {
-    { Dx, "DX" }, { Dy, "DY" }, { Dz, "DZ" }, { Drx, "DRX" }, { Dry, "DRY" }, { Drz, "DRZ" },
-    { Temp, "TEMP" }, { MiddleTemp, "TEMP_MIL" }, { Pres, "PRES" }, { Fx, "FX" }, { Fy, "FY" },
-    { Fz, "FZ" }, { Mx, "MX" }, { My, "MY" }, { Mz, "MZ" }, { N, "N" }, { Vy, "VY" },
-    { Vz, "VZ" }, { Mt, "MT" }, { Mfy, "MFY" }, { Mfz, "MFZ" }, { F1, "F1" }, { F2, "F2" },
-    { F3, "F3" }, { Mf1, "MF1" }, { Mf2, "MF2" }, { Impe, "IMPE" }, { Vnor, "VNOR" },
-    { Flun, "FLUN" }, { FlunHydr1, "FLUN_HYDR1" }, { FlunHydr2, "FLUN_HYDR2" },
+    {Dx, "DX"},
+    {Dy, "DY"},
+    {Dz, "DZ"},
+    {Drx, "DRX"},
+    {Dry, "DRY"},
+    {Drz, "DRZ"},
+    {Temp, "TEMP"},
+    {MiddleTemp, "TEMP_MIL"},
+    {Pres, "PRES"},
+    {Fx, "FX"},
+    {Fy, "FY"},
+    {Fz, "FZ"},
+    {Mx, "MX"},
+    {My, "MY"},
+    {Mz, "MZ"},
+    {N, "N"},
+    {Vy, "VY"},
+    {Vz, "VZ"},
+    {Mt, "MT"},
+    {Mfy, "MFY"},
+    {Mfz, "MFZ"},
+    {F1, "F1"},
+    {F2, "F2"},
+    {F3, "F3"},
+    {Mf1, "MF1"},
+    {Mf2, "MF2"},
+    {Impe, "IMPE"},
+    {Vnor, "VNOR"},
+    {Flun, "FLUN"},
+    {FlunHydr1, "FLUN_HYDR1"},
+    {FlunHydr2, "FLUN_HYDR2"},
 };
 
 typedef std::vector< PhysicalQuantityComponent > VectorComponent;
 extern const VectorComponent allComponents;
 // extern const VectorString allComponentsNames;
 
-const std::string& value(const std::pair<PhysicalQuantityComponent,
-                                         std::string>& keyValue);
+const std::string &value( const std::pair< PhysicalQuantityComponent, std::string > &keyValue );
 
 /**
-* @class PhysicalQuantityTraits
-* @brief Traits class for a Physical Quantity
-*/
+ * @class PhysicalQuantityTraits
+ * @brief Traits class for a Physical Quantity
+ */
 /* This is the most general case (defined but intentionally not implemented) */
 /* It will be specialized for each physical quantity listed in the inventory */
 /*
@@ -110,13 +174,12 @@ const int nbForceComponents = 3;
 extern const PhysicalQuantityComponent ForceComponents[nbForceComponents];
 
 /** @def PhysicalQuantityTraits <Force>
-*  @brief Declare specialization for Force
-*  A Force is defined by its 3 components in the global basis.
-*  It is applied to a 3D (or 2D) domain.
-*/
+ *  @brief Declare specialization for Force
+ *  A Force is defined by its 3 components in the global basis.
+ *  It is applied to a 3D (or 2D) domain.
+ */
 
-template <> struct PhysicalQuantityTraits< Force >
-{
+template <> struct PhysicalQuantityTraits< Force > {
     static const std::set< PhysicalQuantityComponent > components;
     static const std::string name;
     static const PhysicalQuantityEnum type;
@@ -138,13 +201,12 @@ const int nbStructuralForceComponents = 6;
 extern const PhysicalQuantityComponent StructuralForceComponents[nbStructuralForceComponents];
 
 /** @def PhysicalQuantityTraits <StructuralForce>
-*  @brief Declare specialization for StructuralForce
-* A Structural Force is defined in the global basis. It is applied on structural elements
-* (0d, 1d, 2d)
-*/
+ *  @brief Declare specialization for StructuralForce
+ * A Structural Force is defined in the global basis. It is applied on structural elements
+ * (0d, 1d, 2d)
+ */
 
-template <> struct PhysicalQuantityTraits< StructuralForce >
-{
+template <> struct PhysicalQuantityTraits< StructuralForce > {
     static const std::set< PhysicalQuantityComponent > components;
     static const std::string name;
     static const PhysicalQuantityEnum type;
@@ -166,12 +228,11 @@ const int nbLocalBeamForceComponents = 6;
 extern const PhysicalQuantityComponent LocalBeamForceComponents[nbLocalBeamForceComponents];
 
 /** @def PhysicalQuantityTraits <LocalBeamForce>
-*  @brief Declare specialization for LocalBeamForce
-* A LocalBeam Force is defined in the local basis of the beam. It is applied on beam elements.
-*/
+ *  @brief Declare specialization for LocalBeamForce
+ * A LocalBeam Force is defined in the local basis of the beam. It is applied on beam elements.
+ */
 
-template <> struct PhysicalQuantityTraits< LocalBeamForce >
-{
+template <> struct PhysicalQuantityTraits< LocalBeamForce > {
     static const std::set< PhysicalQuantityComponent > components;
     static const std::string name;
     static const PhysicalQuantityEnum type;
@@ -193,18 +254,16 @@ const int nbLocalShellForceComponents = 5;
 extern const PhysicalQuantityComponent LocalShellForceComponents[nbLocalShellForceComponents];
 
 /** @def PhysicalQuantityTraits <LocalShellForce>
-*  @brief Declare specialization for LocalShellForce
-* A LocalShell Force is defined in the local basis of the plate/shell. It is applied on plate/shell elements.
-*/
+ *  @brief Declare specialization for LocalShellForce
+ * A LocalShell Force is defined in the local basis of the plate/shell. It is applied on plate/shell
+ * elements.
+ */
 
-template <> struct PhysicalQuantityTraits< LocalShellForce >
-{
+template <> struct PhysicalQuantityTraits< LocalShellForce > {
     static const std::set< PhysicalQuantityComponent > components;
     static const std::string name;
     static const PhysicalQuantityEnum type;
 };
-
-
 
 /****************************************/
 /*        Displacement                  */
@@ -222,8 +281,7 @@ const int nbDisplacementComponents = 6;
  */
 extern const PhysicalQuantityComponent DisplacementComponents[nbDisplacementComponents];
 
-template <> struct PhysicalQuantityTraits< Displacement >
-{
+template <> struct PhysicalQuantityTraits< Displacement > {
     static const std::set< PhysicalQuantityComponent > components;
     static const std::string name;
     static const PhysicalQuantityEnum type;
@@ -245,8 +303,7 @@ const int nbPressureComponents = 1;
  */
 extern const PhysicalQuantityComponent PressureComponents[nbPressureComponents];
 
-template <> struct PhysicalQuantityTraits< Pressure >
-{
+template <> struct PhysicalQuantityTraits< Pressure > {
     static const std::set< PhysicalQuantityComponent > components;
     static const std::string name;
     static const PhysicalQuantityEnum type;
@@ -268,8 +325,7 @@ const int nbTemperatureComponents = 2;
  */
 extern const PhysicalQuantityComponent TemperatureComponents[nbTemperatureComponents];
 
-template <> struct PhysicalQuantityTraits< Temperature >
-{
+template <> struct PhysicalQuantityTraits< Temperature > {
     static const std::set< PhysicalQuantityComponent > components;
     static const std::string name;
     static const PhysicalQuantityEnum type;
@@ -291,8 +347,7 @@ const int nbImpedanceComponents = 1;
  */
 extern const PhysicalQuantityComponent ImpedanceComponents[nbImpedanceComponents];
 
-template <> struct PhysicalQuantityTraits< Impedance >
-{
+template <> struct PhysicalQuantityTraits< Impedance > {
     static const std::set< PhysicalQuantityComponent > components;
     static const std::string name;
     static const PhysicalQuantityEnum type;
@@ -314,8 +369,7 @@ const int nbNormalSpeedComponents = 1;
  */
 extern const PhysicalQuantityComponent NormalSpeedComponents[nbNormalSpeedComponents];
 
-template <> struct PhysicalQuantityTraits< NormalSpeed >
-{
+template <> struct PhysicalQuantityTraits< NormalSpeed > {
     static const std::set< PhysicalQuantityComponent > components;
     static const std::string name;
     static const PhysicalQuantityEnum type;
@@ -337,8 +391,7 @@ const int nbHeatFluxComponents = 1;
  */
 extern const PhysicalQuantityComponent HeatFluxComponents[nbHeatFluxComponents];
 
-template <> struct PhysicalQuantityTraits< HeatFlux >
-{
+template <> struct PhysicalQuantityTraits< HeatFlux > {
     static const std::set< PhysicalQuantityComponent > components;
     static const std::string name;
     static const PhysicalQuantityEnum type;
@@ -360,106 +413,96 @@ const int nbHydraulicFluxComponents = 2;
  */
 extern const PhysicalQuantityComponent HydraulicFluxComponents[nbHydraulicFluxComponents];
 
-template <> struct PhysicalQuantityTraits< HydraulicFlux >
-{
+template <> struct PhysicalQuantityTraits< HydraulicFlux > {
     static const std::set< PhysicalQuantityComponent > components;
     static const std::string name;
     static const PhysicalQuantityEnum type;
 };
-
 
 /******************************************/
 /* @class PhysicalQuantityInstance
 /* @brief Defines a physical quantity
 /******************************************/
 
-template< class ValueType, PhysicalQuantityEnum PhysicalQuantity >
-class PhysicalQuantityInstance
-{
+template < class ValueType, PhysicalQuantityEnum PhysicalQuantity > class PhysicalQuantityInstance {
     /** @brief Conteneur des mots-clés avec traduction */
     CapyConvertibleContainer _toCapyConverter;
 
-    public:
+  public:
     /**
      * @typedef PhysicalQuantityPtr
      * @brief Pointeur intelligent vers un PhysicalQuantity
      */
-    typedef boost::shared_ptr< PhysicalQuantityInstance<ValueType,
-                                                      PhysicalQuantity> > PhysicalQuantityPtr;
+    typedef boost::shared_ptr< PhysicalQuantityInstance< ValueType, PhysicalQuantity > >
+        PhysicalQuantityPtr;
 
     /** @typedef Define the Traits type */
-    typedef PhysicalQuantityTraits<PhysicalQuantity> Traits;
+    typedef PhysicalQuantityTraits< PhysicalQuantity > Traits;
     /** @typedef Value type of the physical quantity (double, function ...) */
     typedef ValueType QuantityType;
     /** @typedef Components and Values of the PhysicalQuantityInstance */
     typedef typename std::map< PhysicalQuantityComponent, QuantityType > MapOfCompAndVal;
     typedef typename MapOfCompAndVal::iterator MapIt;
-    typedef typename std::pair<PhysicalQuantityComponent, QuantityType> CompAndVal;
+    typedef typename std::pair< PhysicalQuantityComponent, QuantityType > CompAndVal;
 
     /* @def  _compAndVal Components and Values  */
-    MapOfCompAndVal          _compAndVal;
+    MapOfCompAndVal _compAndVal;
     std::vector< ValueType > _values;
 
     /**
-    * @brief Constructor
-    */
+     * @brief Constructor
+     */
     PhysicalQuantityInstance(){};
 
     /**
-    * @brief Destructor
-    */
-     ~PhysicalQuantityInstance(){};
+     * @brief Destructor
+     */
+    ~PhysicalQuantityInstance(){};
 
     /**
-    * @function hasComponent
-    * @brief test if a component is authorized for the physical quantity
-    */
-    static bool hasComponent( PhysicalQuantityComponent comp )
-    {
-        if ( Traits::components.find( comp ) == Traits::components.end() ) return false;
+     * @function hasComponent
+     * @brief test if a component is authorized for the physical quantity
+     */
+    static bool hasComponent( PhysicalQuantityComponent comp ) {
+        if ( Traits::components.find( comp ) == Traits::components.end() )
+            return false;
         return true;
     }
 
-    void setValue( PhysicalQuantityComponent comp, QuantityType val )
-        throw( std::runtime_error )
-    {
-        if ( ! hasComponent( comp ) )
-        {
-            throw std::runtime_error( "This component is not allowed for the current Physical Quantity" );
+    void setValue( PhysicalQuantityComponent comp, QuantityType val ) throw( std::runtime_error ) {
+        if ( !hasComponent( comp ) ) {
+            throw std::runtime_error(
+                "This component is not allowed for the current Physical Quantity" );
         }
         // On teste le retour de map.insert pour savoir si le terme existe déjà */
-        std::pair< MapIt , bool> ret = _compAndVal.insert( CompAndVal( comp, val ) );
-        if (! ret.second )
-        {
+        std::pair< MapIt, bool > ret = _compAndVal.insert( CompAndVal( comp, val ) );
+        if ( !ret.second ) {
             // S'il existe déjà, on le retire et on le remplace par un nouveau */
             _compAndVal.erase( comp );
             _compAndVal.insert( CompAndVal( comp, val ) );
         }
         _values.push_back( val );
-        std::string name =  ComponentNames.find(comp)->second;
-        _toCapyConverter.add( new CapyConvertibleValue< QuantityType >
-                                                      ( false, name,
-                                                        _values[ _values.size()-1 ], true ) );
+        std::string name = ComponentNames.find( comp )->second;
+        _toCapyConverter.add( new CapyConvertibleValue< QuantityType >(
+            false, name, _values[_values.size() - 1], true ) );
     }
 
     /**
      * @brief debugPrint
      */
-    void debugPrint() const
-    {
+    void debugPrint() const {
         std::cout << "Nom de la grandeur physique : " << Traits::name << std::endl;
         std::cout << "Nb de composantes   : " << Traits::components.size() << std::endl;
-        std::cout << "Nom des composantes : " ;
-        for (std::set<PhysicalQuantityComponent>::iterator it(Traits::components.begin());
-             it!=Traits::components.end(); it++)
-        {
-            std::cout << ComponentNames.find(*it)->second << " , " ;
+        std::cout << "Nom des composantes : ";
+        for ( std::set< PhysicalQuantityComponent >::iterator it( Traits::components.begin() );
+              it != Traits::components.end(); it++ ) {
+            std::cout << ComponentNames.find( *it )->second << " , ";
         }
         std::cout << std::endl;
-        for ( typename MapOfCompAndVal::const_iterator it(_compAndVal.begin());
-              it!= _compAndVal.end(); it++)
-        {
-            std::cout << ComponentNames.find(it->first)->second << " : " << it->second << std::endl;
+        for ( typename MapOfCompAndVal::const_iterator it( _compAndVal.begin() );
+              it != _compAndVal.end(); it++ ) {
+            std::cout << ComponentNames.find( it->first )->second << " : " << it->second
+                      << std::endl;
         }
     };
 
@@ -467,25 +510,17 @@ class PhysicalQuantityInstance
      * @brief getMap
      * @return Map storing components and values of the physical quantity
      */
-    const MapOfCompAndVal& getMap() const
-    {
-        return _compAndVal;
-    };
+    const MapOfCompAndVal &getMap() const { return _compAndVal; };
 
-    const CapyConvertibleContainer& getCapyConvertibleContainer() const
-    {
+    const CapyConvertibleContainer &getCapyConvertibleContainer() const {
         return _toCapyConverter;
     };
 
     /**
-    * @brief get the name of the PhysicalQuantity
-    */
-    std::string getName() const
-    {
-        return Traits::name;
-    };
+     * @brief get the name of the PhysicalQuantity
+     */
+    std::string getName() const { return Traits::name; };
 };
-
 
 /**********************************************************/
 /*  Explicit instantiation of template classes

@@ -4,7 +4,7 @@
 /**
  * @file FourierTherContainer.h
  * @brief Fichier entete de la classe FourierTherContainer
- * @author Natacha Béreux 
+ * @author Natacha Béreux
  * @section LICENCE
  *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
@@ -33,17 +33,13 @@
  * @brief Cette classe correspond a un fourier_elas
  * @author Nicolas Sellenet
  */
-class FourierTherContainerInstance: public ResultsContainerInstance
-{
-private:
-
-public:
+class FourierTherContainerInstance : public ResultsContainerInstance {
+  private:
+  public:
     /**
      * @brief Constructeur
      */
-    FourierTherContainerInstance(): ResultsContainerInstance( "FOURIER_THER" )
-    {};
-
+    FourierTherContainerInstance() : ResultsContainerInstance( "FOURIER_THER" ){};
 };
 
 /**

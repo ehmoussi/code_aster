@@ -2,7 +2,7 @@
  * @file ResultNaming.cxx
  * @brief Implementation of automatic naming of jeveux objects.
  * @section LICENCE
- * Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+ * Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
  * This file is part of code_aster.
  *
  * code_aster is free software: you can redistribute it and/or modify
@@ -28,21 +28,15 @@
 
 long ResultNaming::numberOfObjects = 0;
 
-void ResultNaming::initCounter( const long initValue )
-{
-    numberOfObjects = initValue;
-}
+void ResultNaming::initCounter( const long initValue ) { numberOfObjects = initValue; }
 
-std::string ResultNaming::getCurrentName()
-{
+std::string ResultNaming::getCurrentName() {
     std::stringstream sstream;
-    sstream << std::setfill ('0') << std::setw(8) << std::hex
-            << ResultNaming::numberOfObjects;
+    sstream << std::setfill( '0' ) << std::setw( 8 ) << std::hex << ResultNaming::numberOfObjects;
     return sstream.str();
 }
 
-std::string ResultNaming::getNewResultName()
-{
+std::string ResultNaming::getNewResultName() {
     numberOfObjects += 1;
     return getCurrentName();
 }

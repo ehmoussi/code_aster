@@ -3,7 +3,7 @@
  * @brief Interface python de StaticMechanicalSolver
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -26,18 +26,17 @@
 #include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
-void exportStaticMechanicalSolverToPython()
-{
+void exportStaticMechanicalSolverToPython() {
     using namespace boost::python;
 
-    class_< StaticMechanicalSolverInstance, StaticMechanicalSolverPtr >
-        c1( "StaticMechanicalSolver", no_init );
-    c1.def( "__init__", make_constructor(
-            &initFactoryPtr< StaticMechanicalSolverInstance,
-                             ModelPtr, MaterialOnMeshPtr > ) );
-    c1.def( "__init__", make_constructor(
-            &initFactoryPtr< StaticMechanicalSolverInstance,
-                             ModelPtr, MaterialOnMeshPtr, ElementaryCharacteristicsPtr > ) );
+    class_< StaticMechanicalSolverInstance, StaticMechanicalSolverPtr > c1(
+        "StaticMechanicalSolver", no_init );
+    c1.def( "__init__",
+            make_constructor(
+                &initFactoryPtr< StaticMechanicalSolverInstance, ModelPtr, MaterialOnMeshPtr >));
+    c1.def( "__init__",
+            make_constructor(&initFactoryPtr< StaticMechanicalSolverInstance, ModelPtr,
+                                              MaterialOnMeshPtr, ElementaryCharacteristicsPtr >));
     addKinematicsLoadToInterface( c1 );
     addMechanicalLoadToInterface( c1 );
 #ifdef _USE_MPI
