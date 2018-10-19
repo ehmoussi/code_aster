@@ -37,7 +37,6 @@ subroutine gcucon(result_name, type_name, ier)
 !
     result = result_name
 !
-    write(6,*)"type_name", type_name
     select case (type_name)
     case ("EVOL_NOLI", "EVOL_THER", "DYNA_HARMO", "MODE_EMPI", "MODE_MECA", "MODE_MECA_C")
         call jeexin(result//".DESC", ier)
