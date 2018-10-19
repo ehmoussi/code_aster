@@ -17,67 +17,49 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine caraxi(sdcont, model, mesh, model_ndim)
+subroutine defContactCreateObjects(sdcont)
 !
 implicit none
 !
-#include "asterf_types.h"
-#include "asterfort/jeveuo.h"
-#include "asterfort/cfdisl.h"
-#include "asterfort/cfdisi.h"
-#include "asterfort/mmmaxi.h"
+#include "asterfort/cfmmvd.h"
+#include "asterfort/wkvect.h"
 !
 character(len=8), intent(in) :: sdcont
-character(len=8), intent(in) :: model
-character(len=8), intent(in) :: mesh
-integer, intent(in) :: model_ndim
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! DEFI_CONTACT
 !
-! Check if elements of contact zones are axisymmetric
+! Creation of datastructures for all formulations (Not depending on contact zone)
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  sdcont           : name of contact concept (DEFI_CONTACT)
-! In  model            : name of model
-! In  mesh             : name of mesh
-! In  model_ndim       : dimension of model
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    aster_logical :: l_verif_all, l_elem_axis
-    integer :: nb_cont_elem
-    character(len=24) :: sdcont_defi
-    character(len=24) :: sdcont_paraci
-    integer, pointer :: v_sdcont_paraci(:) => null()
+    character(len=1) :: jv_base
+    character(len=24) :: sdcont_paraci, sdcont_paracr
+    integer :: j_sdcont_paracr, j_sdcont_paraci
+    integer :: zparr, zpari
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    sdcont_defi = sdcont(1:8)//'.CONTACT'
+    jv_base = 'G'
 !
 ! - Datastructure for contact definition
 !
     sdcont_paraci = sdcont(1:8)//'.PARACI'
-    call jeveuo(sdcont_paraci, 'E', vi=v_sdcont_paraci)
+    sdcont_paracr = sdcont(1:8)//'.PARACR'
 !
-! - Parameters
+! - Sizes
 !
-    l_verif_all  = cfdisl(sdcont     , 'ALL_VERIF')
-    nb_cont_elem = cfdisi(sdcont_defi, 'NMACO')
+    zparr = cfmmvd('ZPARR')
+    zpari = cfmmvd('ZPARI')
 !
-! - Only if not verification on all zones !
+! - Creation
 !
-    if (.not.l_verif_all) then
-        l_elem_axis = ASTER_FALSE
-        if (model_ndim .eq. 2) then
-            l_elem_axis = mmmaxi(sdcont_defi, model, mesh)
-        endif
-        if (l_elem_axis) then
-            v_sdcont_paraci(16) = 1
-        else
-            v_sdcont_paraci(16) = 0
-        endif
-    endif
+    call wkvect(sdcont_paracr, jv_base//' V R', zparr, j_sdcont_paracr)
+    call wkvect(sdcont_paraci, jv_base//' V I', zpari, j_sdcont_paraci)
+!
 end subroutine

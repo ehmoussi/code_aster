@@ -15,14 +15,14 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine caraun(char, motfac, nzocu, nbgdcu, coefcu,&
+!
+subroutine caraun(sdcont, nzocu , nbgdcu, coefcu,&
                   compcu, multcu, penacu, ntcmp)
 !
+implicit none
 !
-    implicit none
-#include "jeveux.h"
 #include "asterfort/assert.h"
+#include "asterfort/cazouu.h"
 #include "asterfort/getvr8.h"
 #include "asterfort/getvid.h"
 #include "asterfort/getvtx.h"
@@ -31,25 +31,21 @@ subroutine caraun(char, motfac, nzocu, nbgdcu, coefcu,&
 #include "asterfort/jeveuo.h"
 #include "asterfort/utmess.h"
 #include "asterfort/wkvect.h"
-    character(len=8) :: char
-    character(len=16) :: motfac
-    integer :: nzocu, ntcmp
-    character(len=24) :: nbgdcu
-    character(len=24) :: coefcu
-    character(len=24) :: compcu
-    character(len=24) :: multcu
-    character(len=24) :: penacu
 !
-! ----------------------------------------------------------------------
+character(len=8), intent(in) :: sdcont
+integer, intent(in) :: nzocu
+character(len=24), intent(in) :: nbgdcu, coefcu, compcu, multcu, penacu
+integer, intent(out) :: ntcmp
 !
-! ROUTINE LIAISON_UNILATERALE (LECTURE)
+! --------------------------------------------------------------------------------------------------
 !
-! LIRE LES CARACTERISTIQUES DE LA LIAISON UNILATERALE
+! DEFI_CONTACT
 !
-! ----------------------------------------------------------------------
+! Read informations for LIAISON_UNILATER in command
 !
+! --------------------------------------------------------------------------------------------------
 !
-! IN  CHAR   : NOM DU CONCEPT CHARGE
+! In  sdcont           : name of contact concept (DEFI_CONTACT)
 ! IN  MOTFAC : MOT_CLEF FACTEUR POUR LIAISON UNILATERALE
 ! IN  NZOCU  : NOMBRE DE ZONES DE LIAISON_UNILATERALE
 ! IN  NBGDCU : NOM JEVEUX DE LA SD INFOS POINTEURS GRANDEURS
@@ -77,120 +73,105 @@ subroutine caraun(char, motfac, nzocu, nbgdcu, coefcu,&
 !              VECTEUR TYPE ZR, MEME ACCES QUE COEFCU
 ! OUT NTCMP  : NOMBRE TOTAL DE COMPOSANTES SUR TOUTES LES ZONES
 !
+! --------------------------------------------------------------------------------------------------
 !
-!
-!
-!
-    integer :: zmax
-    parameter     (zmax = 30)
+    integer, parameter :: zmax = 30
     character(len=8) :: cmpgd(zmax), k8bid, ccoef, ccmult(zmax)
     integer :: noc, nbcmp, nbcmul
-    integer :: izone, icmp, iform
-    character(len=24) :: defico
-    character(len=24) :: paraci
-    integer :: jparci
-    integer :: jcoef, jnbgd, jcmpg, jmult, jpena
-    character(len=16) :: vale_k, s_algo_cont
+    integer :: i_zone, icmp, iform
+    character(len=16) :: s_algo_cont, keywf
     real(kind=8) :: pena
+    character(len=24) :: sdcont_paraci
+    integer, pointer :: v_sdcont_paraci(:) => null()
+    real(kind=8), pointer :: v_sdunil_penacu(:) => null()
+    character(len=8), pointer :: v_sdunil_coefcu(:) => null()
+    integer, pointer :: v_sdunil_nbgdcu(:) => null()
+    character(len=8), pointer :: v_sdunil_compcu(:) => null()
+    character(len=8), pointer :: v_sdunil_multcu(:) => null()
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
     call jemarq()
 !
-! --- INITIALISATIONS
+! - Initializations
 !
-    iform = 4
-    ntcmp = 0
-    defico = char(1:8)//'.CONTACT'
+    iform       = 4
+    keywf       = 'ZONE'
+    ntcmp       = 0
 !
-! --- LECTURE DES STRUCTURES DE DONNEES DE CONTACT
+! - Datastructure for contact definition
 !
-    paraci = defico(1:16)//'.PARACI'
-    call jeveuo(paraci, 'E', jparci)
+    sdcont_paraci = sdcont(1:8)//'.PARACI'
+    call jeveuo(sdcont_paraci, 'E', vi=v_sdcont_paraci)
 !
-! --- LA FORMULATION (UNIQUE !)
+! - Set the formulation
 !
-    zi(jparci+4-1) = iform
+    v_sdcont_paraci(4) = iform
 !
-! --- METHODE: CONTRAINTES ACTIVES OU PENALISATION
+! - Get algorithm
 !
-    do izone = 1, nzocu
-        call getvtx(motfac, 'ALGO_CONT', iocc=izone, scal=vale_k)
-        if (izone.eq.1) then
-            s_algo_cont = vale_k
-        else
-            if (vale_k.ne.s_algo_cont) then
-                call utmess('F', 'CONTACT3_4', sk='ALGO_CONT')
-            endif
-        endif
-    enddo
+    call cazouu(keywf, nzocu, 'ALGO_CONT', 'T')
+    call getvtx(keywf, 'ALGO_CONT', iocc=1, scal=s_algo_cont)
     if (s_algo_cont .eq. 'CONTRAINTE') then
-        zi(jparci+30-1) = 1
+        v_sdcont_paraci(30) = 1
     else if (s_algo_cont .eq. 'PENALISATION') then
-        zi(jparci+30-1) = 4
-!
-! --- COEFFICIENTS DE PENALISATION
-!
-        call wkvect(penacu, 'V V R', nzocu, jpena)
-        do izone = 1, nzocu
-            call getvr8(motfac, 'COEF_PENA', iocc=izone, scal=pena)
-            zr(jpena-1+izone) = pena
+        v_sdcont_paraci(30) = 4
+        call wkvect(penacu, 'V V R', nzocu, vr = v_sdunil_penacu)
+        do i_zone = 1, nzocu
+            call getvr8(keywf, 'COEF_PENA', iocc=i_zone, scal=pena)
+            v_sdunil_penacu(i_zone) = pena
         enddo
     else
-        ASSERT(.false.)
+        ASSERT(ASTER_FALSE)
     endif
 !
-! --- PARAMETRES
+! - Parameter
 !
-    zi(jparci+3-1) = 10
+    v_sdcont_paraci(3) = 10
 !
-! --- MEMBRE DE DROITE DE L'INEGALITE
+! - Right-hand side
 !
-    coefcu = '&&CARAUN.COEFCU'
-    call wkvect(coefcu, 'V V K8', nzocu, jcoef)
-    do izone = 1, nzocu
-        call getvid(motfac, 'COEF_IMPO', iocc=izone, scal=ccoef, nbret=noc)
-        zk8(jcoef-1+izone) = ccoef
+    call wkvect(coefcu, 'V V K8', nzocu, vk8 = v_sdunil_coefcu)
+    do i_zone = 1, nzocu
+        call getvid(keywf, 'COEF_IMPO', iocc=i_zone, scal=ccoef, nbret=noc)
+        v_sdunil_coefcu(i_zone) = ccoef
     end do
 !
-! --- MEMBRE DE GAUCHE DE L'INEGALITE
-! --- COMPTAGE PREALABLE DU NOMBRE DE DDLS
+! - Left-hand side - Count DOF
 !
-    call wkvect(nbgdcu, 'V V I', nzocu+1, jnbgd)
-    zi(jnbgd) = 1
+    call wkvect(nbgdcu, 'V V I', nzocu+1, vi = v_sdunil_nbgdcu)
+    v_sdunil_nbgdcu(1) = 1
     ntcmp = 0
-    do izone = 1, nzocu
-        call getvtx(motfac, 'NOM_CMP', iocc=izone, scal=k8bid, nbret=nbcmp)
-        call getvid(motfac, 'COEF_MULT', iocc=izone, scal=k8bid, nbret=nbcmul)
+    do i_zone = 1, nzocu
+        call getvtx(keywf, 'NOM_CMP'  , iocc=i_zone, scal=k8bid, nbret=nbcmp)
+        call getvid(keywf, 'COEF_MULT', iocc=i_zone, scal=k8bid, nbret=nbcmul)
         if (nbcmp .ne. nbcmul) then
             call utmess('F', 'UNILATER_42')
         endif
-        nbcmp = abs(nbcmp)
+        nbcmp  = abs(nbcmp)
         nbcmul = abs(nbcmul)
-        ntcmp = ntcmp + nbcmp
+        ntcmp  = ntcmp + nbcmp
         if (ntcmp .gt. zmax) then
             call utmess('F', 'UNILATER_43')
         endif
-        zi(jnbgd+izone) = zi(jnbgd+izone-1) + nbcmp
+        v_sdunil_nbgdcu(i_zone+1) = v_sdunil_nbgdcu(i_zone) + nbcmp
     end do
 !
-! --- MEMBRE DE GAUCHE DE L'INEGALITE: CREATION DES OBJETS
+    call wkvect(compcu, 'V V K8', ntcmp, vk8 = v_sdunil_compcu)
+    call wkvect(multcu, 'V V K8', ntcmp, vk8 = v_sdunil_multcu)
 !
-    call wkvect(compcu, 'V V K8', ntcmp, jcmpg)
-    call wkvect(multcu, 'V V K8', ntcmp, jmult)
+! - Left-hand side - List of parameters
 !
-! --- MEMBRE DE GAUCHE DE L'INEGALITE: REMPLISSAGE DES OBJETS
-!
-    do izone = 1, nzocu
-        nbcmp = zi(jnbgd+izone) - zi(jnbgd+izone-1)
-        call getvtx(motfac, 'NOM_CMP', iocc=izone, nbval=nbcmp, vect=cmpgd,&
+    do i_zone = 1, nzocu
+        nbcmp = v_sdunil_nbgdcu(i_zone+1) - v_sdunil_nbgdcu(i_zone)
+        call getvtx(keywf, 'NOM_CMP', iocc=i_zone, nbval=nbcmp, vect=cmpgd,&
                     nbret=noc)
-        call getvid(motfac, 'COEF_MULT', iocc=izone, nbval=nbcmp, vect=ccmult,&
+        call getvid(keywf, 'COEF_MULT', iocc=i_zone, nbval=nbcmp, vect=ccmult,&
                     nbret=noc)
-        do 11 icmp = 1, nbcmp
-            zk8(jcmpg-1+zi(jnbgd+izone-1)+icmp-1) = cmpgd(icmp)
-            zk8(jmult-1+zi(jnbgd+izone-1)+icmp-1) = ccmult(icmp)
-11      continue
+        do icmp = 1, nbcmp
+            v_sdunil_compcu(v_sdunil_nbgdcu(i_zone)+icmp-1) = cmpgd(icmp)
+            v_sdunil_multcu(v_sdunil_nbgdcu(i_zone)+icmp-1) = ccmult(icmp)
+        end do
     end do
 !
     call jedema()

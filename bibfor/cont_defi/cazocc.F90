@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: ayaovi-dzifa.kudawoo at edf.fr
+!
 subroutine cazocc(sdcont, keywf, i_zone,nb_cont_zone)
 !
 implicit none
@@ -33,12 +34,10 @@ implicit none
 #include "asterfort/infniv.h"
 #include "asterc/r8prem.h"
 !
-! person_in_charge: ayaovi-dzifa.kudawoo at edf.fr
-!
-    character(len=8), intent(in) :: sdcont
-    integer, intent(in) :: i_zone
-    character(len=16), intent(in) :: keywf
-    integer, intent(in),optional :: nb_cont_zone
+character(len=8), intent(in) :: sdcont
+integer, intent(in) :: i_zone
+character(len=16), intent(in) :: keywf
+integer, intent(in),optional :: nb_cont_zone
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -65,7 +64,7 @@ implicit none
     real(kind=8) :: dire_excl_frot_i, dire_excl_frot(3)
     real(kind=8) :: coef_cont, coef_frot, seuil_init, coef_coul_frot
     real(kind=8) :: coef_augm_frot, coef_augm_cont
-    real(kind=8) :: coef_pena_frot, coef_pena_cont,pene_maxi,glis_maxi
+    real(kind=8) :: coef_pena_frot, coef_pena_cont, pene_maxi, glis_maxi
     real(kind=8) :: algo_cont, algo_frot
     real(kind=8) :: type_inte, cont_init, seuil_auto
     integer :: inte_order
@@ -79,8 +78,8 @@ implicit none
     real(kind=8), pointer :: v_sdcont_exclfr(:) => null()
     character(len=24) :: sdcont_paraci
     integer, pointer :: v_sdcont_paraci(:) => null()
-    aster_logical ::  l_newt_fr = .false._1, l_cont_cont = .false._1,l_pena_cont = .false._1
-    aster_logical ::  l_granglis = .false._1
+    aster_logical ::  l_newt_fr = ASTER_FALSE, l_cont_cont = ASTER_FALSE, l_pena_cont = ASTER_FALSE
+    aster_logical ::  l_granglis = ASTER_FALSE
     character(len=24) :: sdcont_paracr
     real(kind=8), pointer :: v_sdcont_paracr(:) => null()
     real(kind=8) :: pene_critere
@@ -89,6 +88,7 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
+    call infniv(ifm, niv)
     inte_order        = 0
     type_inte         = 0.d0
     algo_cont         = 0.d0
@@ -108,25 +108,24 @@ implicit none
     dire_excl_frot(1) = 0.d0
     dire_excl_frot(2) = 0.d0
     dire_excl_frot(3) = 0.d0
-    l_inte_node       = .false.
-    l_node_excl       = .false.
-    l_frot_excl       = .false.
-    l_gliss           = .false.
-    l_granglis        = .false.
-    l_dire_excl_frot  = .false.
-    l_newt_fr  = .false.
-    l_cont_cont= .false.
+    l_inte_node       = ASTER_FALSE
+    l_node_excl       = ASTER_FALSE
+    l_frot_excl       = ASTER_FALSE
+    l_gliss           = ASTER_FALSE
+    l_dire_excl_frot  = ASTER_FALSE
+    l_newt_fr         = ASTER_FALSE
+    l_cont_cont       = ASTER_FALSE
     s_algo_frot       = ' '
-    pene_maxi         =1.d3
-    glis_maxi         =1.d3
+    pene_maxi         = 1.d3
+    glis_maxi         = 1.d3
 !
 ! - Datastructure for contact
 !
     sdcont_defi   = sdcont(1:8)//'.CONTACT'
     sdcont_caracf = sdcont_defi(1:16)//'.CARACF'
     sdcont_exclfr = sdcont_defi(1:16)//'.EXCLFR'
-    sdcont_paraci = sdcont_defi(1:16)//'.PARACI'
-    sdcont_paracr = sdcont_defi(1:16)//'.PARACR'
+    sdcont_paraci = sdcont(1:8)//'.PARACI'
+    sdcont_paracr = sdcont(1:8)//'.PARACR'
     call jeveuo(sdcont_caracf, 'E', vr = v_sdcont_caracf)
     call jeveuo(sdcont_exclfr, 'E', vr = v_sdcont_exclfr)
     call jeveuo(sdcont_paraci, 'E', vi = v_sdcont_paraci)
@@ -138,7 +137,7 @@ implicit none
 !
     l_frot      = cfdisl(sdcont_defi,'FROTTEMENT')
     l_cont_cont = cfdisl(sdcont_defi,'FORMUL_CONTINUE')
-    l_newt_fr = cfdisl(sdcont_defi,'FROT_NEWTON')
+    l_newt_fr   = cfdisl(sdcont_defi,'FROT_NEWTON')
     l_newt_geom = cfdisl(sdcont_defi,'GEOM_NEWTON')
     l_newt_cont = cfdisl(sdcont_defi,'CONT_NEWTON')
     l_pena_cont = cfdisl(sdcont_defi,'EXIS_PENA')
@@ -147,7 +146,7 @@ implicit none
 !
     call getvtx(keywf, 'INTEGRATION', iocc=i_zone, scal=s_type_inte)
     if (s_type_inte .eq. 'AUTO') then
-        l_inte_node = .true.
+        l_inte_node = ASTER_TRUE
         type_inte   = 1.d0
     else if (s_type_inte .eq. 'GAUSS') then
         call getvis(keywf, 'ORDRE_INT', iocc=i_zone, scal=inte_order)
@@ -159,7 +158,7 @@ implicit none
         call getvis(keywf, 'ORDRE_INT', iocc=i_zone, scal=inte_order)
         type_inte = 10.d0*inte_order + 4.d0
     else
-        ASSERT(.false.)
+        ASSERT(ASTER_FALSE)
     endif
     v_sdcont_caracf(zcmcf*(i_zone-1)+1) = type_inte
 !
@@ -168,13 +167,11 @@ implicit none
 !      - Dans le cas  ADAPTATION=NON ou CYCLAGE+PENALISATION,
 !        le critere PENE_MAXI n'a pas de sens. Au moment de la résolution,
 !        dans STAT_NON_LINE, on ne cherche pas à le vérifier. La parade c'est
-!        de prendre le critère volontairement tres grand pour ne pas avoir à le vérifier. 
+!        de prendre le critère volontairement tres grand pour ne pas avoir à le vérifier.
 !      - Dans le cas STANDARD,LAC PENE_MAXI n'a pas de sens. Il ne sert qu'à initialiser
 !        la variable .PARACR(6) sinon bug dans certaines configurations multi-zone.
-
-
+!
     call getvtx(keywf, 'ALGO_CONT', iocc=i_zone, scal=s_algo_cont)
-!    write (6,*) "algo_cont",s_algo_cont,s_algo_frot
     if (s_algo_cont .eq. 'STANDARD') then
         call getvr8(keywf, 'COEF_CONT', iocc=i_zone, scal=coef_augm_cont)
         algo_cont = 1.d0
@@ -184,17 +181,17 @@ implicit none
         call getvtx(keywf, 'ADAPTATION', iocc=i_zone, scal=adaptation)
         ! L'utilisateur peut ne pas renseigner pene_maxi
         call getvr8(keywf, 'PENE_MAXI', iocc=i_zone, scal=pene_maxi,nbret=nbret)
-        if ((adaptation .eq. 'NON' .or. adaptation .eq. 'CYCLAGE') .and. (nbret .le. 0) )then
+        if ((adaptation .eq. 'NON' .or. adaptation .eq. 'CYCLAGE') .and. (nbret .le. 0) ) then
             call getvr8(keywf, 'COEF_PENA_CONT', iocc=i_zone, scal=coef_pena_cont)
             pene_maxi = 1.d3
-        elseif (adaptation .eq. 'ADAPT_COEF' .or. adaptation .eq. 'TOUT' .or.(nbret .ge. 1))then
-!            write (6,*) "nbret=",nbret
-            if (nbret .le. 0) then 
+        elseif (adaptation .eq. 'ADAPT_COEF' .or. adaptation .eq. 'TOUT' .or.(nbret .ge. 1)) then
+            if (nbret .le. 0) then
                 pene_maxi = -1
-                call infniv(ifm, niv)
-                if(niv .ge. 2) call utmess('I', 'CONTACT_21')
-            endif               
-            coef_pena_cont = 1.d2    
+                if (niv .ge. 2) then
+                    call utmess('I', 'CONTACT_21')
+                endif
+            endif
+            coef_pena_cont = 1.d2
         endif
         algo_cont = 3.d0
         coef_cont = coef_pena_cont
@@ -203,24 +200,24 @@ implicit none
         coef_cont = coef_augm_cont
         pene_maxi = 1.d3
     else
-        ASSERT(.false.)
+        ASSERT(ASTER_FALSE)
     endif
-    v_sdcont_caracf(zcmcf*(i_zone-1)+2) = coef_cont
-    v_sdcont_caracf(zcmcf*(i_zone-1)+3) = algo_cont
+    v_sdcont_caracf(zcmcf*(i_zone-1)+2)  = coef_cont
+    v_sdcont_caracf(zcmcf*(i_zone-1)+3)  = algo_cont
     v_sdcont_caracf(zcmcf*(i_zone-1)+14) = pene_maxi
-    if (present(nb_cont_zone)) then 
+    if (present(nb_cont_zone)) then
     ! On cherche le minimum des pene_maxi.
-        if (i_zone .eq. nb_cont_zone  ) then 
+        if (i_zone .eq. nb_cont_zone  ) then
         ! On va parcourir toutes les zones et determiner le min des pene_maxi : pene_critere
         ! On initialise pene_critere à la valeur courante : soit la valeur de la derniere zone
             pene_critere = pene_maxi
             do i_pene_zone =1,nb_cont_zone
-                 if (v_sdcont_caracf(zcmcf*(i_pene_zone-1)+14) .lt. pene_critere) &
-                     v_sdcont_paracr(6) =  v_sdcont_caracf(zcmcf*(i_pene_zone-1)+14)               
+                if (v_sdcont_caracf(zcmcf*(i_pene_zone-1)+14) .lt. pene_critere) then
+                    v_sdcont_paracr(6) =  v_sdcont_caracf(zcmcf*(i_pene_zone-1)+14)
+                endif
             enddo
         endif
     endif
-
 !
 ! - Friction method
 !
@@ -237,15 +234,8 @@ implicit none
             algo_frot = 3.d0
             coef_frot = coef_pena_frot
         else
-            ASSERT(.false.)
+            ASSERT(ASTER_FALSE)
         endif
-!        if (s_algo_cont .ne. s_algo_frot) then
-!            if (s_algo_cont .eq. 'STANDARD' .and.&
-!                s_algo_frot .eq. 'PENALISATION') then 
-!            else 
-!                call utmess('F', 'CONTACT_89')
-!            endif
-!        endif
     else
         coef_frot = 0.d0
         algo_frot = 0.d0
@@ -273,16 +263,6 @@ implicit none
 !
 ! - Check
 !
-!    if (l_frot .and. (s_algo_cont.ne.s_algo_frot)) then
-!        if (s_algo_cont .eq. 'STANDARD' .and.&
-!            s_algo_frot .eq. 'PENALISATION') then 
-!        else 
-!            call utmess('F', 'CONTACT_89')
-!        endif
-!    endif
-!    if ((s_algo_cont.eq.'PENALISATION') .and. l_newt_geom) then
-!        call utmess('A', 'CONTACT_21')
-!    endif
     if (l_newt_geom .and. (.not.l_newt_cont)) then
         call utmess('F', 'CONTACT_20')
     endif
@@ -350,7 +330,7 @@ implicit none
     else if (s_cont_init .eq. 'NON') then
         cont_init = 0.d0
     else
-        ASSERT(.false.)
+        ASSERT(ASTER_FALSE)
     endif
 !
 ! - Bilateral contact
@@ -358,31 +338,29 @@ implicit none
     if (s_algo_cont .ne. 'LAC') then
         call getvtx(keywf, 'GLISSIERE', iocc=i_zone, scal=s_gliss)
         if (s_gliss .eq. 'OUI') then
-            l_gliss = .true.
+            l_gliss = ASTER_TRUE
         else if (s_gliss .eq. 'NON') then
-            l_gliss = .false.
+            l_gliss = ASTER_FALSE
         else
-            ASSERT(.false.)
+            ASSERT(ASTER_FALSE)
         endif
     endif
 !
-
+! --- GRAND_GLISSEMENT
 !
-! --- GRAND_GLISSEMENT 
-!
-    if (l_frot .and. l_cont_cont) then 
+    if (l_frot .and. l_cont_cont) then
         call getvtx(keywf, 'GRAND_GLIS', iocc=i_zone, scal=s_grglis, nbret=noc)
-        if (noc .ge. 1) then  
+        if (noc .ge. 1) then
             if (s_grglis(1:3) .eq. 'OUI') then
-                l_granglis = .true.
+                l_granglis = ASTER_TRUE
             elseif (s_grglis(1:3) .eq. 'NON') then
-                l_granglis = .false.
+                l_granglis = ASTER_FALSE
             else
                 print s_grglis(1:3)
-                ASSERT(.false.)
+                ASSERT(ASTER_FALSE)
             endif
-        else 
-            l_granglis = .false.
+        else
+            l_granglis = ASTER_FALSE
         endif
     !
         if (l_granglis) then
@@ -391,9 +369,7 @@ implicit none
             v_sdcont_caracf(zcmcf*(i_zone-1)+15) = 0.d0
         endif
     endif
-    write (6,*) "granglis cazocc", v_sdcont_caracf(zcmcf*(i_zone-1)+15)
-
-
+!
     v_sdcont_caracf(zcmcf*(i_zone-1)+8) = cont_init
     if (l_gliss) then
        v_sdcont_caracf(zcmcf*(i_zone-1)+9) = 1.d0
@@ -417,15 +393,12 @@ implicit none
 !
 ! - Adptation method for Node-to-segment method only
 !
-    if (s_algo_cont .ne. 'LAC') then 
+    if (s_algo_cont .ne. 'LAC') then
         call getvtx(keywf, 'ADAPTATION', iocc=i_zone, scal=adaptation)
         v_sdcont_paraci(20) = -1
-        
         if (adaptation .eq. 'NON') then
         ! Aucun traitement adaptatif inactif
              v_sdcont_paraci(20) = 0
-             
-             
         else if (adaptation .eq. 'ADAPT_COEF') then
         ! IL FAUT DISTINGUER 3 CAS DE FIGURES :
         ! FROTTEMENT NEWTON ACTIF : ON ADAPTE COEF_FROT COMME DECRIT DANS LA DOC R + THESE DK
@@ -437,21 +410,22 @@ implicit none
         ! CONTACT STANDARD ACTIF FROTTEMENT TRESCA ACTIF  : ON NE FAIT RIEN
         !                    PARACI = 0
             if (l_cont_cont) then
-                if (l_newt_fr) then 
+                if (l_newt_fr) then
                     v_sdcont_paraci(20) = 1
-                    if (s_algo_cont .eq. 'PENALISATION')  v_sdcont_paraci(20) = 2
-                    if (s_algo_frot .eq. 'PENALISATION' .and. s_algo_cont .eq. 'STANDARD')  &
-                    v_sdcont_paraci(20) = 7
-                elseif (s_algo_cont .eq. 'PENALISATION'  ) then 
+                    if (s_algo_cont .eq. 'PENALISATION') then
+                        v_sdcont_paraci(20) = 2
+                    endif
+                    if (s_algo_frot .eq. 'PENALISATION' .and. s_algo_cont .eq. 'STANDARD') then
+                        v_sdcont_paraci(20) = 7
+                    endif
+                elseif (s_algo_cont .eq. 'PENALISATION') then
                     v_sdcont_paraci(20) = 3
                 else
-                    v_sdcont_paraci(20) = 0 
+                    v_sdcont_paraci(20) = 0
                 endif
             endif
-            
         else if (adaptation .eq. 'CYCLAGE') then
             v_sdcont_paraci(20) = 4
-            
         else if (adaptation .eq. 'TOUT') then
         ! IL FAUT DISTINGUER 3 CAS DE FIGURES :
         ! FROTTEMENT NEWTON ACTIF : ON ADAPTE COEF_FROT COMME DECRIT DANS LA DOC R + THESE DK
@@ -464,34 +438,34 @@ implicit none
         !                    PARACI = 0+4
             v_sdcont_paraci(20) = 4
             if (l_cont_cont) then
-                if (l_newt_fr) then 
+                if (l_newt_fr) then
                     v_sdcont_paraci(20) = 1+4
-                    if (s_algo_cont .eq. 'PENALISATION')  v_sdcont_paraci(20) = 2+4
-                    if (s_algo_frot .eq. 'PENALISATION' .and. s_algo_cont .eq. 'STANDARD')  &
+                    if (s_algo_cont .eq. 'PENALISATION') then 
+                        v_sdcont_paraci(20) = 2+4
+                    endif
+                    if (s_algo_frot .eq. 'PENALISATION' .and. s_algo_cont .eq. 'STANDARD') then
                         v_sdcont_paraci(20) = 7+4
-                else if (s_algo_cont .eq. 'PENALISATION' ) then 
+                    endif
+                else if (s_algo_cont .eq. 'PENALISATION' ) then
                     v_sdcont_paraci(20) = 3+4
                 else
-                    v_sdcont_paraci(20) = 0+4      
+                    v_sdcont_paraci(20) = 0+4
                 endif
             endif
-                         
         else 
-            ASSERT(.false.)
+            ASSERT(ASTER_FALSE)
         endif
-    elseif  (s_algo_cont .eq. 'LAC') then 
-        
+    elseif  (s_algo_cont .eq. 'LAC') then
         call getvtx(keywf, 'ADAPTATION', iocc=i_zone, scal=adaptation,nbret=nbret)
         if ( nbret .le. 0 )  adaptation='NON'
         v_sdcont_paraci(20) = 0
-    
         if (adaptation .eq. 'NON') then
         ! Aucun traitement adaptatif inactif
              v_sdcont_paraci(20) = 0
         else if (adaptation .eq. 'CYCLAGE') then
             v_sdcont_paraci(20) = 4
-        else 
-            ASSERT(.false.)
+        else
+            ASSERT(ASTER_FALSE)
         endif
     endif
 !

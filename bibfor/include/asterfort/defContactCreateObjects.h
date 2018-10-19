@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine caliun(sdcont_, mesh_, model_)
-        character(len=*), intent(in) :: sdcont_, mesh_, model_
-    end subroutine caliun
+    subroutine defContactCreateObjects(sdcont)
+        character(len=8), intent(in) :: sdcont
+    end subroutine defContactCreateObjects
 end interface
