@@ -1,0 +1,50 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+# Non-regression testcase for issue28120 - CREA_RESU / MULT_ELAS
+POURSUITE(PAR_LOT='OUI',CODE='OUI')
+
+# create a new field with ones
+chone = CREA_CHAMP(AFFE=_F(NOM_CMP=('DNSXS', ),
+                           TOUT='OUI',
+                           VALE=(1.0, )),
+                   MODELE=MODELE,
+                   OPERATION='AFFE',
+                   TYPE_CHAM='NOEU_FER2_R')
+
+# add the field for the 2nd case
+RESU = CREA_RESU(reuse=RESU,
+                 AFFE=_F(CHAM_GD=chone,
+                         NOM_CAS='CHARGE NUMERO 2'),
+                 NOM_CHAM='FERRAILLAGE',
+                 OPERATION='AFFE',
+                 RESULTAT=RESU,
+                 TYPE_RESU='MULT_ELAS')
+
+# before issue28120 a third case was added
+TEST_RESU(RESU=_F(NOM_CAS='CHARGE NUMERO 2',
+                  NOM_CHAM='FERRAILLAGE',
+                  NOM_CMP='DNSXS',
+                  REFERENCE='ANALYTIQUE',
+                  RESULTAT=RESU,
+                  TYPE_TEST='SOMM',
+                  VALE_CALC=(57.0, ),
+                  VALE_REFE=(57.0, )))
+
+FIN()

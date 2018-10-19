@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,13 +17,76 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+import os
 import os.path as osp
 
+from waflib import Configure, Errors, Logs
+
+
+def options(self):
+    group = self.get_option_group("Configuration options")
+    group.add_option('--with-validation', dest='with_validation',
+                    action='store', default=None,
+                    help='location of the validation repository '
+                         '(default: ../validation)')
+
+    group = self.add_option_group('code_aster options')
+    group.add_option('--install-tests', dest='install_tests',
+                    action='store_true', default=False,
+                    help='install the testcases files')
+
+
+def configure(self):
+    # only install tests during release install
+    # self.setenv('release')
+    self.env.install_tests = self.options.install_tests
+
+    self.setenv('default')
+    self.configure_validation()
+
+
+@Configure.conf
+def configure_validation(self):
+    opts = self.options
+    self.start_msg("Checking for 'validation' repository")
+    self.env.validation_path = None
+
+    default = osp.join(self.path.parent.parent.abspath(), 'validation')
+    validation_path = osp.abspath(opts.with_validation or default)
+    if osp.isdir(validation_path):
+        self.end_msg(validation_path)
+        self.env.validation_path = validation_path
+    elif opts.with_validation is None:
+        self.end_msg("{0} not found".format(validation_path), 'YELLOW')
+    else:
+        raise Errors.ConfigurationError("{0} not found".format(validation_path))
+
+
 def build(self):
-    get_srcs = self.path.get_src().ant_glob
-    env = self.all_envs['default']
-    self.install_files(
-        osp.join(env.ASTERDATADIR, 'tests'),
-        get_srcs('**/*', excl='wscript'),
-        relative_trick=True,
-    )
+    env = self.all_envs[self.variant]
+    env.install_tests = self.options.install_tests or env.install_tests
+
+    if not env.install_tests:
+        dest = osp.join(env.ASTERDATADIR, 'tests')
+        if osp.exists(dest) and not osp.islink(dest):
+            Logs.warn("Symlink not created, {0!r} already exists "
+                      "(use '--install-tests' to update this directory)."
+                      .format(dest))
+        elif not osp.exists(dest):
+            self.symlink_as(dest, osp.abspath("astest"))
+
+    else:
+        dest = osp.join(env.ASTERDATADIR, 'tests')
+        if osp.islink(dest):
+            os.remove(dest)
+        astest_node = self.path.get_src()
+
+        files = astest_node.ant_glob('**/*', excl='wscript')
+        self.install_files(dest, files, relative_trick=True)
+        # install files from validation repository
+        if env.validation_path:
+            astest_path = osp.relpath(osp.join(env.validation_path, 'astest'),
+                                      self.path.get_src().abspath())
+            astest_node = self.path.get_src().find_node(astest_path)
+            files = astest_node.ant_glob('**/*')
+            self.install_files(dest, files, cwd=astest_node, relative_trick=True)

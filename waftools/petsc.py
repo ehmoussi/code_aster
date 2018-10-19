@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -66,7 +66,7 @@ def check_petsc(self):
     if opts.petsc_libs is None:
         opts.petsc_libs = 'petsc'
         # add optional libs
-        optlibs ='ml HYPRE stdc++'
+        optlibs ='ml HYPRE superlu stdc++'
     if opts.petsc_libs:
         self.check_petsc_libs(optlibs)
 
@@ -77,10 +77,12 @@ def check_petsc(self):
 def check_petsc_libs(self, optlibs):
     opts = self.options
     keylib = ('st' if opts.embed_all or opts.embed_scotch else '') + 'lib'
-    for lib in Utils.to_list(opts.petsc_libs):
-        self.check_cc(uselib_store='PETSC', use='MPI', mandatory=True, **{ keylib: lib})
     for lib in Utils.to_list(optlibs or ''):
-        self.check_cc(uselib_store='PETSC', use='MPI', mandatory=False, **{ keylib: lib})
+        self.check_cc(uselib_store='PETSC', use='MPI', uselib='PETSC',
+                      mandatory=False, **{ keylib: lib})
+    for lib in Utils.to_list(opts.petsc_libs):
+        self.check_cc(uselib_store='PETSC', use='MPI', uselib='PETSC',
+                      mandatory=True, **{ keylib: lib})
 
 @Configure.conf
 def check_petsc_headers(self):

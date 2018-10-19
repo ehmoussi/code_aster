@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -441,7 +441,7 @@ TEST_TABLE(CRITERE='RELATIF',
 TEST_TABLE(CRITERE='RELATIF',
            VALE_CALC=565.685,
 
-           NOM_PARA='D_K_EQ_QUADRATIQ',
+           NOM_PARA='D_K_EQ_QUADRATIQUE',
            TABLE=TAB51,
            FILTRE=(_F(CRIT_COMP='EQ',
                      NOM_PARA='NUM_PT',
