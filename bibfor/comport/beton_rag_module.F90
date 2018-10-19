@@ -291,6 +291,7 @@ contains
         real(kind=8)     :: nu, young, sigut, mt, siguc, mc, delthom, NormSigm
         real(kind=8)     :: b1, b2, b3, sigceq, sigdp, UnMoinsDc
         real(kind=8)     :: Dommage_Rag(3), bgel, EpsiVRAG(6)
+        real(kind=8)     :: xx1,xx2,xx3
         !
         logical          :: perturb, fluage, isendomtrac, isendomcomp
         ! ------------------------------------------------------------------------------------------
@@ -345,10 +346,13 @@ contains
             endif
             ! SigmaRP : tenseur propre et base propre du tenseur d'endommagement
             SigmaRP = basevecteurpropre( SigmaR, NormSigm )
-            ! calcul des bi
-            b1 = exp( ((SigmaRP%valep%vect(1)/sigut)**mt)/mt )
-            b2 = exp( ((SigmaRP%valep%vect(2)/sigut)**mt)/mt )
-            b3 = exp( ((SigmaRP%valep%vect(3)/sigut)**mt)/mt )
+            ! Calcul des bi. On se protège des VP légèrement négatives, numériquement possible
+            xx1 = (max( 0.0, SigmaRP%valep%vect(1)/sigut )**mt)/mt
+            xx2 = (max( 0.0, SigmaRP%valep%vect(2)/sigut )**mt)/mt
+            xx3 = (max( 0.0, SigmaRP%valep%vect(3)/sigut )**mt)/mt
+            ! On protège contre un argument trop grand, on limite donc l'endommagement.
+            ! Avec 10 c'est d <= 0.999955
+            b1 = exp( min(10.0,xx1) ); b2 = exp( min(10.0,xx2) ); b3 = exp( min(10.0,xx3) )
             if ( isendomtrac ) then
                 UnMoinsDt = [b1,b2,b3]
             else
@@ -356,7 +360,8 @@ contains
             endif
             ! Dans le cas d'un calcul avec RAG
             if ( param_br%loi_integre == 3 ) then
-                bgel = exp( ((mater_br%gel%bg*grd_press%Pgel/sigut)**mt)/mt )
+                xx1  = (max( 0.0, mater_br%gel%bg*grd_press%Pgel/sigut )**mt)/mt
+                bgel = exp( min(10.0,xx1) )
                 Dommage_Rag(1) = max( Dommage_Rag(1) , min(b1,bgel) - 1.0 )
                 Dommage_Rag(2) = max( Dommage_Rag(2) , min(b2,bgel) - 1.0 )
                 Dommage_Rag(3) = max( Dommage_Rag(3) , min(b3,bgel) - 1.0 )
@@ -384,7 +389,8 @@ contains
                 sigdp  = max(sigdp, max(0.0d0,sigceq))
             endif
             if ( isendomcomp ) then
-                UnMoinsDc = exp( -((sigdp/siguc)**mc)/mc )
+                xx1 = -((sigdp/siguc)**mc)/mc
+                UnMoinsDc = exp( max( -10.0, xx1 ) )
             else
                 UnMoinsDc = 1.0d0
             endif
@@ -393,7 +399,8 @@ contains
         else
             SigmaCompD = 0.0d0
             if ( isendomcomp ) then
-                UnMoinsDc = exp( -((sigdp/siguc)**mc)/mc )
+                xx1 = -((sigdp/siguc)**mc)/mc
+                UnMoinsDc = exp( max(-10.0, xx1) )
             else
                 UnMoinsDc = 1.0d0
             endif
@@ -551,7 +558,7 @@ contains
         real(kind=8)   :: deps(6), sigma_m(6), vip(1), dsidep(6, 6), epsflua(6)
         real(kind=8)   :: vimloc(BR_VARI_NOMBRE)
         real(kind=8)   :: epsmeca(6) = 0.0d0 , epsanel(6) = 0.0d0, epsvrag(6)=0.0d0
-        real(kind=8)   :: k1, n1, k2, n2, sigma_sph, vaux1
+        real(kind=8)   :: k1, n1, k2, n2, sigma_sph, vaux1, xx1
         type(SpheDev)  :: TSpheDev
         type(beton_rag_parametres) :: param_br_loc
         integer, parameter :: iflu = 10
@@ -622,7 +629,8 @@ contains
             if ( (yy0(9) > mater_br%gel%sr0) .and. &
                  (yy0(9) > yy0(24)) ) then
                 vaux1 = (yy0(7)-mater_br%gel%Tref)/(yy0(7)+273.15)/(mater_br%gel%Tref+273.15)
-                vaux1 = mater_br%gel%alpha0 * exp( mater_br%gel%ear*vaux1 )
+                xx1   = mater_br%gel%ear*vaux1
+                vaux1 = mater_br%gel%alpha0 * exp( min(max(-100.0,xx1),100.0) )
                 dyy(24) = vaux1 * (yy0(9)-mater_br%gel%sr0)*(yy0(9)-yy0(24))/(1.0-mater_br%gel%sr0)
             endif
         endif

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -86,7 +86,7 @@ real(kind=8), intent(out) :: subd_duree
     call getvr8(keywf, 'SUBD_PAS_MINI', iocc=i_fail, scal=subd_pas_mini, nbret = nbret)
     ASSERT(nbret .le. 1)
     if (subd_pas_mini .gt. dtmin) then
-        call utmess('F', 'DISCRETISATION_2')
+        call utmess('F', 'DISCRETISATION_6', sr = dtmin)
     endif
     if (subd_methode .eq. 'MANUEL') then
         call getvis(keywf, 'SUBD_NIVEAU', iocc=i_fail, scal=subd_niveau)
