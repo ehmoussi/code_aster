@@ -114,7 +114,7 @@ class MaterialInstance: public DataStructure
             const std::string currentName2 = _jeveuxName + "." + numUser.str() + ".LISV_R8";
             const std::string currentName3 = _jeveuxName + "." + numUser.str() + ".LISV_FO";
             _vectorOfUserDoubleValues.push_back( JeveuxVectorDouble( currentName2 ) );
-            _vectorOfUserFunctionValues.push_back( JeveuxVectorChar8( currentName2 ) );
+            _vectorOfUserFunctionValues.push_back( JeveuxVectorChar8( currentName3 ) );
 
             _vecMatBehaviour.push_back( curMaterBehav );
         };
@@ -127,6 +127,35 @@ class MaterialInstance: public DataStructure
          * @todo pouvoir compléter un matériau (ajout d'un comportement après build)
          */
         bool build() throw ( std::runtime_error );
+
+        /**
+         * @brief Get the number of behviours
+         * @return number of added behaviours
+         */
+        int getNumberOfMaterialBehviour()
+        {
+            return _nbMaterialBehaviour;
+        };
+
+        /**
+         * @brief Get vector of double values for a given material behaviour
+         * @param position number of the material behaviour
+         * @return jeveux vector of double values
+         */
+        JeveuxVectorDouble getBehviourVectorOfDoubleValues( int position )
+        {
+            return _vectorOfUserDoubleValues[ position ];
+        };
+
+        /**
+         * @brief Get vector of double values for a given material behaviour
+         * @param position number of the material behaviour
+         * @return jeveux vector of double values
+         */
+        JeveuxVectorChar8 getBehviourVectorOfFunctions( int position )
+        {
+            return _vectorOfUserFunctionValues[ position ];
+        };
 };
 
 /**
