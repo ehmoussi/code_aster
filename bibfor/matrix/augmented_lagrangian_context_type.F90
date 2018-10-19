@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 2016 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 2016 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -169,17 +169,23 @@ subroutine set_precond_data( ctxt )
         ASSERT(ierr.eq.0)
         call PCFactorSetMatOrderingType(ctxt%pcphy,MATORDERINGNATURAL,ierr)
         ASSERT(ierr.eq.0)
-#if PETSC_VERSION_LT(3,7,0)
-#else
+
     else if ( pre_type == mumps_pre ) then
     ! Ou encore  mumps mais à partir du moment où petsc est compilée
     ! avec support de l'interface MUMPS
        call PCSetType(ctxt%pcphy, PCLU, ierr)
        ASSERT(ierr == 0)
+#if PETSC_VERSION_LT(3,9,0)
        call PCFactorSetMatSolverPackage(ctxt%pcphy,MATSOLVERMUMPS,ierr)
        ASSERT(ierr.eq.0)
        call PCFactorSetUpMatSolverPackage(ctxt%pcphy,ierr)
        ASSERT(ierr.eq.0)
+#else
+       call PCFactorSetMatSolverType(ctxt%pcphy,MATSOLVERMUMPS,ierr)
+       ASSERT(ierr.eq.0)
+       call PCFactorSetUpMatSolverType(ctxt%pcphy,ierr)
+       ASSERT(ierr.eq.0)
+#endif
        call PCFactorGetMatrix(ctxt%pcphy,F,ierr)
        ASSERT(ierr.eq.0)
  ! ICNTL(7) (sequential matrix ordering): 5 (METIS)
@@ -197,7 +203,6 @@ subroutine set_precond_data( ctxt )
 !  CNTL(3) (absolute pivoting threshold):      1e-06
        call MatMumpsSetCntl(F,to_petsc_int(3),1.D-6,ierr)
        ASSERT(ierr.eq.0)
-#endif
     else
         ASSERT(.false.)
     endif

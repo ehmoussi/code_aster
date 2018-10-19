@@ -65,13 +65,14 @@ subroutine chmima(nomsd, nomsy, typcha, typmax, nocham)
     character(len=16) :: noms2
     character(len=19) :: nocha2, chextr, knum, chs1, chs2
     character(len=24) :: nomnoe
-    character(len=5) :: sufv
+    character(len=5) :: sufv, sufsl
 !-----------------------------------------------------------------------
     integer :: i, iad, in, inoe, inumer
     integer :: iret, ivale, j, jddlx, jddly, jddlz, jdlrx
     integer :: jdlry, jdlrz, jordr, jvpnt, n2, nbnoe, nc
-    integer :: neq, np, nvale, neq2
+    integer :: neq, np, nvale, neq2, icsl
     real(kind=8) :: epsi, rs1, x, y, z
+    logical :: verif
 !-----------------------------------------------------------------------
     call jemarq()
     knum = '&&CHMIMA.NUME_ORDRE'
@@ -137,8 +138,10 @@ subroutine chmima(nomsd, nomsy, typcha, typmax, nocham)
                         iret)
             if (typcha(1:4).eq.'NOEU')then
                 call cnocns(chextr, 'V', chs2)
+                sufsl='.CNSL'
             else
                 chs2 = chextr
+                sufsl='.CESL'
             endif
 !           verification pour les cham_elem
             call jelira(chs2(1:19)//sufv, 'LONMAX', neq2)
@@ -147,13 +150,31 @@ subroutine chmima(nomsd, nomsy, typcha, typmax, nocham)
 !         - RECUPERATION DU VALE DU CHAMP EXTRAIT
 !
             call jeveuo(chs2//sufv, 'L', ivale)
+            call jeexin(chs2//sufsl,iret)
+            if (iret.eq.0) then 
+                verif=.false.
+            else 
+                verif=.true.
+                call jeveuo(chs2//sufsl,'L', icsl)
+            endif
 !
-            do j = 1, neq
-                if (zr(ivale+j-1) .gt. zr(nvale+j-1)) then
+            if ( verif ) then 
+              do j = 1, neq
+                if ( zl(icsl+j-1) ) then 
+                  if (zr(ivale+j-1) .gt. zr(nvale+j-1)) then
                     zr(nvale+j-1) = zr(ivale+j-1)
                     zi(inumer+j-1) = zi(jordr+i-1)
+                  endif
                 endif
-            end do
+              end do
+            else
+              do j = 1, neq
+                  if (zr(ivale+j-1) .gt. zr(nvale+j-1)) then
+                    zr(nvale+j-1) = zr(ivale+j-1)
+                    zi(inumer+j-1) = zi(jordr+i-1)
+                  endif
+              end do
+            endif
             
             if (typcha(1:4).eq.'NOEU') call detrsd('CHAM_NO_S', chs2)
 !
@@ -170,8 +191,10 @@ subroutine chmima(nomsd, nomsy, typcha, typmax, nocham)
                         iret)
             if (typcha(1:4).eq.'NOEU')then
                 call cnocns(chextr, 'V', chs2)
+                sufsl='.CNSL'
             else
                 chs2 = chextr
+                sufsl='.CESL'
             endif
 !           verification pour les cham_elem
             call jelira(chs2(1:19)//sufv, 'LONMAX', neq2)
@@ -180,24 +203,56 @@ subroutine chmima(nomsd, nomsy, typcha, typmax, nocham)
 !         - RECUPERATION DU VALE DU CHAMP EXTRAIT
 !
             call jeveuo(chs2//sufv, 'L', ivale)
+            call jeexin(chs2//sufsl,iret)
+            if (iret.eq.0) then 
+                verif=.false.
+            else 
+                verif=.true.
+                call jeveuo(chs2//sufsl,'L', icsl)
+            endif
 !
-            if (valeur.eq.'VALE_ABS')then
-                do j = 1, neq
+!         - L'OBJET .CNSL EST UTILISE POUR EVITER DE TESTER DES VALEURS NaN
+!
+            if (valeur.eq.'VALE_ABS') then
+                if (verif) then                
+                  do j = 1, neq
                     if (i.eq.2) zr(nvale+j-1) = abs(zr(nvale+j-1))
-                    if (abs(zr(ivale+j-1)) .gt. zr(nvale+j-1)) then
-                        zr(nvale+j-1) = abs(zr(ivale+j-1))
-                        zi(inumer+j-1) = zi(jordr+i-1)
-                    endif
-                end do
+                      if ( zl(icsl+j-1) ) then   
+                        if (abs(zr(ivale+j-1)) .gt. zr(nvale+j-1)) then
+                          zr(nvale+j-1) = abs(zr(ivale+j-1))
+                          zi(inumer+j-1) = zi(jordr+i-1)
+                        endif
+                     endif
+                  end do
+                else
+                  do j = 1, neq
+                    if (i.eq.2) zr(nvale+j-1) = abs(zr(nvale+j-1))
+                        if (abs(zr(ivale+j-1)) .gt. zr(nvale+j-1)) then
+                          zr(nvale+j-1) = abs(zr(ivale+j-1))
+                          zi(inumer+j-1) = zi(jordr+i-1)
+                        endif
+                  end do
+                endif
             else
-                do j = 1, neq
-                    if (abs(zr(ivale+j-1)) .gt. abs(zr(nvale+j-1))) then
+                if (verif) then
+                  do j = 1, neq
+                    if ( zl(icsl+j-1) ) then   
+                      if (abs(zr(ivale+j-1)) .gt. abs(zr(nvale+j-1))) then
                         zr(nvale+j-1) = zr(ivale+j-1)
                         zi(inumer+j-1) = zi(jordr+i-1)
+                      endif
                     endif
-                end do
+                  end do
+                else
+                  do j = 1, neq
+                      if (abs(zr(ivale+j-1)) .gt. abs(zr(nvale+j-1))) then
+                        zr(nvale+j-1) = zr(ivale+j-1)
+                        zi(inumer+j-1) = zi(jordr+i-1)
+                      endif
+                  end do               
+                endif
             endif
-        
+
             if (typcha(1:4).eq.'NOEU') call detrsd('CHAM_NO_S', chs2)
 !
         end do
@@ -213,8 +268,10 @@ subroutine chmima(nomsd, nomsy, typcha, typmax, nocham)
                         iret)
             if (typcha(1:4).eq.'NOEU')then
                 call cnocns(chextr, 'V', chs2)
+                sufsl='.CNSL'
             else
                 chs2 = chextr
+                sufsl='.CESL'
             endif
 !           verification pour les cham_elem
             call jelira(chs2(1:19)//sufv, 'LONMAX', neq2)
@@ -223,15 +280,31 @@ subroutine chmima(nomsd, nomsy, typcha, typmax, nocham)
 !         - RECUPERATION DU VALE DU CHAMP EXTRAIT
 !
             call jeveuo(chs2//sufv, 'L', ivale)
+            call jeexin(chs2//sufsl,iret)
+            if (iret.eq.0) then 
+                verif=.false.
+            else 
+                verif=.true.
+                call jeveuo(chs2//sufsl,'L', icsl)
+            endif
 !
-            do j = 1, neq
-!
-                if (zr(ivale+j-1) .lt. zr(nvale+j-1)) then
-                    zr(nvale+j-1) = zr(ivale+j-1)
-                    zi(inumer+j-1) = zi(jordr+i-1)
+            if ( verif ) then 
+              do j = 1, neq                             
+                if (zl(icsl+j-1) ) then  
+                  if (zr(ivale+j-1) .lt. zr(nvale+j-1)) then
+                     zr(nvale+j-1) = zr(ivale+j-1)
+                     zi(inumer+j-1) = zi(jordr+i-1)
+                  endif
                 endif
-            end do
-                    
+              end do
+            else
+              do j = 1, neq                             
+                  if (zr(ivale+j-1) .lt. zr(nvale+j-1)) then
+                     zr(nvale+j-1) = zr(ivale+j-1)
+                     zi(inumer+j-1) = zi(jordr+i-1)
+                  endif
+              end do
+            endif                    
             if (typcha(1:4).eq.'NOEU') call detrsd('CHAM_NO_S', chs2)
 !
         end do
@@ -247,8 +320,10 @@ subroutine chmima(nomsd, nomsy, typcha, typmax, nocham)
                         iret)
             if (typcha(1:4).eq.'NOEU')then
                 call cnocns(chextr, 'V', chs2)
+                sufsl='.CNSL'
             else
                 chs2 = chextr
+                sufsl='.CESL'
             endif
 !           verification pour les cham_elem
             call jelira(chs2(1:19)//sufv, 'LONMAX', neq2)
@@ -257,22 +332,52 @@ subroutine chmima(nomsd, nomsy, typcha, typmax, nocham)
 !         - RECUPERATION DU VALE DU CHAMP EXTRAIT
 !
             call jeveuo(chs2//sufv, 'L', ivale)
+            call jeexin(chs2//sufsl,iret)
+            if (iret.eq.0) then 
+                verif=.false.
+            else 
+                verif=.true.
+                call jeveuo(chs2//sufsl,'L', icsl)
+            endif
 !
-            if (valeur.eq.'VALE_ABS')then
-                do j = 1, neq
+            if (valeur.eq.'VALE_ABS') then
+                if (verif) then
+                  do j = 1, neq
+                    if (i.eq.2) zr(nvale+j-1) = abs(zr(nvale+j-1))
+                    if ( zl(icsl+j-1) ) then
+                       if (abs(zr(ivale+j-1)) .lt. zr(nvale+j-1)) then
+                          zr(nvale+j-1) = abs(zr(ivale+j-1))
+                          zi(inumer+j-1) = zi(jordr+i-1)
+                       endif
+                    endif
+                  end do
+                else
+                  do j = 1, neq
                     if (i.eq.2) zr(nvale+j-1) = abs(zr(nvale+j-1))
                     if (abs(zr(ivale+j-1)) .lt. zr(nvale+j-1)) then
                         zr(nvale+j-1) = abs(zr(ivale+j-1))
                         zi(inumer+j-1) = zi(jordr+i-1)
-                    endif
-                end do
+                     endif
+                  end do
+                endif
             else
-                do j = 1, neq
-                    if (abs(zr(ivale+j-1)) .lt. abs(zr(nvale+j-1))) then
-                        zr(nvale+j-1) = zr(ivale+j-1)
-                        zi(inumer+j-1) = zi(jordr+i-1)
+                if (verif) then
+                  do j = 1, neq
+                    if ( zl(icsl+j-1) ) then
+                      if (abs(zr(ivale+j-1)) .lt. abs(zr(nvale+j-1))) then
+                         zr(nvale+j-1) = zr(ivale+j-1)
+                         zi(inumer+j-1) = zi(jordr+i-1)
+                      endif
                     endif
-                end do
+                  end do
+                else
+                  do j = 1, neq
+                    if (abs(zr(ivale+j-1)) .lt. abs(zr(nvale+j-1))) then
+                       zr(nvale+j-1) = zr(ivale+j-1)
+                       zi(inumer+j-1) = zi(jordr+i-1)
+                    endif
+                  end do
+                endif
             endif
                    
             if (typcha(1:4).eq.'NOEU') call detrsd('CHAM_NO_S', chs2)
