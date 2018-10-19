@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -76,7 +76,7 @@ implicit none
 !
 ! - Datastructure for contact definition
 !
-    sdcont_paraci = sdcont_defi(1:16)//'.PARACI'
+    sdcont_paraci = sdcont(1:8)//'.PARACI'
     sdcont_caracf = sdcont_defi(1:16)//'.CARACF'
     call jeveuo(sdcont_paraci, 'L', vi=v_sdcont_paraci)
     call jeveuo(sdcont_caracf, 'L', vr=v_sdcont_caracf)

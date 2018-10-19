@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: ayaovi-dzifa.kudawoo at edf.fr
+!
 subroutine cazocp(sdcont, model)
 !
 implicit none
@@ -29,10 +30,8 @@ implicit none
 #include "asterfort/jeveuo.h"
 #include "asterfort/utmess.h"
 !
-! person_in_charge: ayaovi-dzifa.kudawoo at edf.fr
-!
-    character(len=8), intent(in) :: sdcont
-    character(len=8), intent(in) :: model
+character(len=8), intent(in) :: sdcont
+character(len=8), intent(in) :: model
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -54,7 +53,7 @@ implicit none
     character(len=16) :: algo_reso_cont, algo_reso_frot, algo_reso_geom
     integer :: noc
     real(kind=8) :: resi_abso, gcp_coef_resi
-    real(kind=8) :: geom_resi, frot_resi,cont_resi=-1
+    real(kind=8) :: geom_resi, frot_resi, cont_resi=-1
     aster_logical :: l_cont_gcp, l_newt_fr
     aster_logical :: l_cont_disc, l_cont_cont, l_cont_xfem, l_frot, l_cont_lac
     aster_logical :: l_xfem_mortar
@@ -78,12 +77,12 @@ implicit none
     geom_resi      = 1.d-2
     frot_resi      = 1.d-2
     cont_resi      = 1.d-2
-    l_newt_fr      = .false.
+    l_newt_fr      = ASTER_FALSE
 !
 ! - Access to datastructure
 !
-    sdcont_paracr = sdcont_defi(1:16)//'.PARACR'
-    sdcont_paraci = sdcont_defi(1:16)//'.PARACI'
+    sdcont_paracr = sdcont(1:8)//'.PARACR'
+    sdcont_paraci = sdcont(1:8)//'.PARACI'
     call jeveuo(sdcont_paracr, 'E', vr = v_sdcont_paracr)
     call jeveuo(sdcont_paraci, 'E', vi = v_sdcont_paraci)
 !
@@ -107,7 +106,7 @@ implicit none
     else if (l_cont_lac) then
         call getvtx(' ', 'ALGO_RESO_GEOM', scal=algo_reso_geom)
     else
-        ASSERT(.false.)
+        ASSERT(ASTER_FALSE)
     endif
 !
     if (algo_reso_geom .eq. 'POINT_FIXE') then
@@ -115,7 +114,7 @@ implicit none
     else if (algo_reso_geom.eq.'NEWTON') then
         v_sdcont_paraci(9) = 1
     else
-        ASSERT(.false.)
+        ASSERT(ASTER_FALSE)
     endif
 !
 ! - Geometric parameters
@@ -136,7 +135,7 @@ implicit none
             v_sdcont_paraci(1) = geom_nbiter
             v_sdcont_paracr(1) = geom_resi
         else
-            ASSERT(.false.)
+            ASSERT(ASTER_FALSE)
         endif
         if (l_cont_lac) then
             call utmess('F', 'CONTACT4_1')
@@ -146,7 +145,7 @@ implicit none
         v_sdcont_paraci(1) = 0
         v_sdcont_paracr(1) = geom_resi
     else
-        ASSERT(.false.)
+        ASSERT(ASTER_FALSE)
     endif
 !
 ! - Friction algorithm
@@ -165,7 +164,7 @@ implicit none
         else if (l_cont_lac) then
              call utmess('F', 'CONTACT4_4')
         else
-            ASSERT(.false.)
+            ASSERT(ASTER_FALSE)
         endif
     endif
 !
@@ -174,9 +173,9 @@ implicit none
             v_sdcont_paraci(28) = 0
         else if (algo_reso_frot.eq.'NEWTON') then
             v_sdcont_paraci(28) = 1
-            l_newt_fr = .true.
+            l_newt_fr = ASTER_TRUE
         else
-            ASSERT(.false.)
+            ASSERT(ASTER_FALSE)
         endif
         ASSERT(.not.l_cont_lac)
     endif
@@ -214,7 +213,7 @@ implicit none
     else if (l_cont_lac) then
         call getvtx(' ', 'ALGO_RESO_CONT', scal=algo_reso_cont)
     else
-        ASSERT(.false.)
+        ASSERT(ASTER_FALSE)
     endif
 !
     if (algo_reso_cont .eq. 'POINT_FIXE') then
@@ -222,7 +221,7 @@ implicit none
     else if (algo_reso_cont.eq.'NEWTON') then
         v_sdcont_paraci(27) = 1
     else
-        ASSERT(.false.)
+        ASSERT(ASTER_FALSE)
     endif
 !
 ! - Contact parameters
@@ -241,7 +240,7 @@ implicit none
                 v_sdcont_paraci(10) = cont_mult
                 v_sdcont_paraci(5)  = -1
             else
-                ASSERT(.false.)
+                ASSERT(ASTER_FALSE)
             endif
             if (l_cont_cont) v_sdcont_paracr(7) = -1
         else if (l_cont_disc) then
@@ -251,7 +250,7 @@ implicit none
         else if (l_cont_lac) then
             call utmess('F', 'CONTACT4_1')
         else
-            ASSERT(.false.)
+            ASSERT(ASTER_FALSE)
         endif
     else if (algo_reso_cont.eq.'NEWTON') then
         if (l_cont_cont ) then
@@ -259,7 +258,7 @@ implicit none
             v_sdcont_paracr(7) = cont_resi
         endif
     else
-        ASSERT(.false.)
+        ASSERT(ASTER_FALSE)
     endif
 !
 ! - Discrete formulation
@@ -271,7 +270,7 @@ implicit none
         else if (stop_singular .eq. 'NON') then
             v_sdcont_paraci(2) = 1
         else
-            ASSERT(.false.)
+            ASSERT(ASTER_FALSE)
         endif
 !
         call getvis(' ', 'NB_RESOL', scal=nb_resol)
@@ -297,7 +296,7 @@ implicit none
                 call getvis(' ', 'ITER_PRE_MAXI', scal=gcp_pre_maxi)
                 v_sdcont_paraci(14) = gcp_pre_maxi
             else
-                ASSERT(.false.)
+                ASSERT(ASTER_FALSE)
             endif
 !
             call getvtx(' ', 'RECH_LINEAIRE', scal=gcp_rech_line)
@@ -306,7 +305,7 @@ implicit none
             else if (gcp_rech_line.eq.'NON_ADMISSIBLE') then
                 v_sdcont_paraci(15) = 1
             else
-                ASSERT(.false.)
+                ASSERT(ASTER_FALSE)
             endif
         endif
     endif
@@ -320,7 +319,7 @@ implicit none
         else if (lissage(1:3) .eq. 'OUI') then
             v_sdcont_paraci(19) = 1
         else
-            ASSERT(.false.)
+            ASSERT(ASTER_FALSE)
         endif
     endif
 !
@@ -338,7 +337,7 @@ implicit none
             endif
             v_sdcont_paraci(29) = 1
         else
-            ASSERT(.false.)
+            ASSERT(ASTER_FALSE)
         endif
     endif
 !
@@ -351,7 +350,7 @@ implicit none
         else if (stop_singular.eq.'NON') then
             v_sdcont_paraci(25) = 0
         else
-            ASSERT(.false.)
+            ASSERT(ASTER_FALSE)
         endif
     endif
 !
