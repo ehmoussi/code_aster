@@ -39,14 +39,16 @@
 class CodedMaterialInstance
 {
 private:
-    std::string                     _name;
-    std::string                     _type;
-    MaterialOnMeshPtr               _mater;
-    ModelPtr                        _model;
-    PCFieldOnMeshLongPtr            _field;
-    JeveuxVectorChar8               _grp;
-    JeveuxVectorLong                _nGrp;
-    std::vector< JeveuxVectorLong > _vecOfCodiVectors;
+    std::string                       _name;
+    std::string                       _type;
+    MaterialOnMeshPtr                 _mater;
+    ModelPtr                          _model;
+    PCFieldOnMeshLongPtr              _field;
+    JeveuxVectorChar8                 _grp;
+    JeveuxVectorLong                  _nGrp;
+    std::vector< JeveuxVectorLong >   _vecOfCodiVectors;
+    std::vector< JeveuxVectorDouble > _vecOfR8;
+    std::vector< JeveuxVectorLong >   _vecOfIa;
 
 public:
     /**

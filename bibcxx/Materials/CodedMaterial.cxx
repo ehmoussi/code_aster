@@ -78,6 +78,21 @@ bool CodedMaterialInstance::allocate()
                     _vecOfCodiVectors.push_back( JeveuxVectorLong( name ) );
             }
         }
+
+        const int nbMB = curIter->getNumberOfMaterialBehviour();
+        for( int i = 0; i < nbMB; ++i )
+        {
+            auto vec1 = curIter->getBehviourVectorOfDoubleValues( i );
+            auto vec2 = curIter->getBehviourVectorOfFunctions( i );
+            if( vec1->exists() || vec2->exists() )
+            {
+                const std::string name( vec1->getName(), 0, 16 );
+                const std::string name1 = name + ".LISV_VR";
+                const std::string name2 = name + ".LISV_IA";
+                _vecOfR8.push_back( JeveuxVectorDouble( name1 ) );
+                _vecOfIa.push_back( JeveuxVectorLong( name2 ) );
+            }
+        }
     }
     return true;
 };
