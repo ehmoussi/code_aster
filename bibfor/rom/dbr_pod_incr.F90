@@ -192,6 +192,9 @@ integer, intent(out) :: nb_snap_redu
         endif
 ! ----- Compute norm of current snapshot
         call norm_frobenius(nb_equa, qi, norm_q)
+        if (norm_q .le. r8prem()) then
+            cycle
+        endif
 ! ----- Compute kt = v^T q (projection of current snaphot on empiric base)
         AS_ALLOCATE(vr  = kt  , size = p)
         call dgemm('T', 'N', p, 1, nb_equa, 1.d0,&
