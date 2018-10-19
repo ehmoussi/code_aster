@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 function ischar(list_load, load_type_1, load_type_2, i_load_)
 !
 implicit none
@@ -29,13 +30,11 @@ implicit none
 #include "asterfort/jeveuo.h"
 #include "asterfort/ischar_iden.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    aster_logical :: ischar
-    character(len=19), intent(in) :: list_load
-    character(len=4), intent(in) :: load_type_1
-    character(len=4), intent(in) :: load_type_2
-    integer, optional, intent(in) :: i_load_
+aster_logical :: ischar
+character(len=19), intent(in) :: list_load
+character(len=4), intent(in) :: load_type_1
+character(len=4), intent(in) :: load_type_2
+integer, optional, intent(in) :: i_load_
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -106,6 +105,7 @@ implicit none
 !
     if (present(i_load_)) then
         ischar_iload = ischar_iden(v_load_info, i_load_, nb_load, load_type_1, load_type_2)
+        ischar = ischar_iload
     else
         do i_load = 1, nb_load
 !
