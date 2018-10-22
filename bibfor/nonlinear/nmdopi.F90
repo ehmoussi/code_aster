@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine nmdopi(modelz, numedd, ds_algopara, sdpilo)
 !
 use NonLin_Datastructure_type
@@ -51,12 +52,10 @@ implicit none
 #include "asterfort/vtcreb.h"
 #include "asterfort/wkvect.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=*), intent(in) :: modelz
-    character(len=24), intent(in) :: numedd
-    type(NL_DS_AlgoPara), intent(in) :: ds_algopara
-    character(len=19), intent(in) :: sdpilo
+character(len=*), intent(in) :: modelz
+character(len=24), intent(in) :: numedd
+type(NL_DS_AlgoPara), intent(in) :: ds_algopara
+character(len=19), intent(in) :: sdpilo
 !
 ! ----------------------------------------------------------------------
 !
@@ -127,7 +126,7 @@ implicit none
     call jemarq()
     call infdbg('MECA_NON_LINE', ifm, niv)
     if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE> ... CREATION SD PILOTAGE'
+        call utmess('I','MECANONLINE13_17')
     endif
 !
 ! --- INITIALISATIONS

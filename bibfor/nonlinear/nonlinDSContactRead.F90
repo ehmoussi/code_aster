@@ -25,6 +25,7 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/infniv.h"
+#include "asterfort/utmess.h"
 #include "asterfort/getvid.h"
 !
 type(NL_DS_Contact), intent(inout) :: ds_contact
@@ -50,7 +51,7 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
 !
     call infniv(ifm, niv)
     if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE> . Read parameters contact management'
+        call utmess('I', 'MECANONLINE12_10')
     endif
 !
 ! - Initializations

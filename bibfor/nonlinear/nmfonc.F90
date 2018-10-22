@@ -45,6 +45,7 @@ implicit none
 #include "asterfort/jeveuo.h"
 #include "asterfort/matdis.h"
 #include "asterfort/ndynlo.h"
+#include "asterfort/utmess.h"
 !
 type(NL_DS_Conv), intent(in) :: ds_conv
 type(NL_DS_AlgoPara), intent(in) :: ds_algopara
@@ -119,7 +120,7 @@ integer, intent(inout) :: list_func_acti(*)
 !
     call infniv(ifm, niv)
     if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE> ... CREATION VECTEUR FONCTIONNALITES ACTIVEES: '
+        call utmess('I', 'MECANONLINE13_11')
     endif
 !
 ! - Command
@@ -468,215 +469,218 @@ integer, intent(inout) :: list_func_acti(*)
 ! ----- Solving methods
 !
         if (isfonc(list_func_acti,'IMPLEX')) then
-            write (ifm,*) '<MECANONLINE> ...... METHODE IMPLEX'
+            call utmess('I', 'MECANONLINE14_1')
         endif
         if (isfonc(list_func_acti,'EXPLICITE')) then
-            write (ifm,*) '<MECANONLINE> ...... METHODE EXPLICITE'
+            call utmess('I', 'MECANONLINE14_2')
         endif
         if (isfonc(list_func_acti,'NEWTON_KRYLOV')) then
-            write (ifm,*) '<MECANONLINE> ...... METHODE NEWTON_KRYLOV'
+            call utmess('I', 'MECANONLINE14_3')
         endif
         if (isfonc(list_func_acti,'ROM')) then
-            write (ifm,*) '<MECANONLINE> ...... METHODE ROM'
+            call utmess('I', 'MECANONLINE14_4')
         endif
         if (isfonc(list_func_acti,'HROM')) then
-            write (ifm,*) '<MECANONLINE> ...... METHODE HROM'
+            call utmess('I', 'MECANONLINE14_5')
         endif
         if (isfonc(list_func_acti,'HROM_CORR_EF')) then
-            write (ifm,*) '<MECANONLINE> ...... METHODE HROM AVEC CORRECTION EF'
+            call utmess('I', 'MECANONLINE14_6')
         endif
         if (isfonc(list_func_acti,'RECH_LINE')) then
-            write (ifm,*) '<MECANONLINE> ...... RECHERCHE LINEAIRE'
+            call utmess('I', 'MECANONLINE14_7')
         endif
         if (isfonc(list_func_acti,'PILOTAGE')) then
-            write (ifm,*) '<MECANONLINE> ...... PILOTAGE'
+            call utmess('I', 'MECANONLINE14_8')
         endif
         if (isfonc(list_func_acti,'DEBORST')) then
-            write (ifm,*) '<MECANONLINE> ...... METHODE DEBORST'
+            call utmess('I', 'MECANONLINE14_9')
         endif
         if (isfonc(list_func_acti,'SOUS_STRUC')) then
-            write (ifm,*) '<MECANONLINE> ...... CALCUL PAR SOUS-STRUCTURATION'
+            call utmess('I', 'MECANONLINE14_10')
         endif
         if (isfonc(list_func_acti,'PROJ_MODAL')) then
-            write (ifm,*) '<MECANONLINE> ...... CALCUL PAR PROJECTION MODALE'
+            call utmess('I', 'MECANONLINE14_11')
         endif
 !
 ! ----- Contact
 !
         if (isfonc(list_func_acti,'CONTACT')) then
-            write (ifm,*) '<MECANONLINE> ...... CONTACT'
+            call utmess('I', 'MECANONLINE14_12')
         endif
         if (isfonc(list_func_acti,'CONT_DISCRET')) then
-            write (ifm,*) '<MECANONLINE> ...... CONTACT DISCRET'
+            call utmess('I', 'MECANONLINE14_13')
         endif
         if (isfonc(list_func_acti,'CONT_CONTINU')) then
-            write (ifm,*) '<MECANONLINE> ...... CONTACT CONTINU'
+            call utmess('I', 'MECANONLINE14_14')
         endif
         if (isfonc(list_func_acti,'CONT_XFEM')) then
-            write (ifm,*) '<MECANONLINE> ...... CONTACT XFEM'
+            call utmess('I', 'MECANONLINE14_15')
         endif
         if (isfonc(list_func_acti,'CONT_XFEM_THM')) then
-            write (ifm,*) '<MECANONLINE> ...... CONTACT XFEM_THM'
+            call utmess('I', 'MECANONLINE14_16')
         endif
         if (isfonc(list_func_acti,'CONT_LAC')) then
-            write (ifm,*) '<MECANONLINE> ...... CONTACT LAC'
+            call utmess('I', 'MECANONLINE14_17')
         endif
         if (isfonc(list_func_acti,'BOUCLE_EXT_GEOM')) then
-            write (ifm,*) '<MECANONLINE> ...... CONTACT BOUCLE GEOM'
+            call utmess('I', 'MECANONLINE14_18')
         endif
         if (isfonc(list_func_acti,'BOUCLE_EXT_CONT')) then
-            write (ifm,*) '<MECANONLINE> ...... CONTACT BOUCLE CONTACT'
+            call utmess('I', 'MECANONLINE14_19')
         endif
         if (isfonc(list_func_acti,'BOUCLE_EXT_FROT')) then
-            write (ifm,*) '<MECANONLINE> ...... CONTACT BOUCLE FROT'
+            call utmess('I', 'MECANONLINE14_20')
         endif
         if (isfonc(list_func_acti,'BOUCLE_EXTERNE')) then
-            write (ifm,*) '<MECANONLINE> ...... BOUCLE EXTERNE'
+            call utmess('I', 'MECANONLINE14_21')
         endif
         if (isfonc(list_func_acti,'GEOM_NEWTON')) then
-            write (ifm,*) '<MECANONLINE> ...... GEOMETRIE AVEC NEWTON GENERALISE'
+            call utmess('I', 'MECANONLINE14_22')
         endif
         if (isfonc(list_func_acti,'FROT_NEWTON')) then
-            write (ifm,*) '<MECANONLINE> ...... FROTTEMENT AVEC NEWTON GENERALISE'
+            call utmess('I', 'MECANONLINE14_23')
         endif
         if (isfonc(list_func_acti,'CONT_NEWTON')) then
-            write (ifm,*) '<MECANONLINE> ...... CONTACT AVEC NEWTON GENERALISE'
+            call utmess('I', 'MECANONLINE14_24')
         endif
         if (isfonc(list_func_acti,'CONT_ALL_VERIF')) then
-            write (ifm,*) '<MECANONLINE> ...... CONTACT SANS CALCUL SUR TOUTES LES ZONES'
+            call utmess('I', 'MECANONLINE14_25')
         endif
         if (isfonc(list_func_acti,'CONTACT_INIT')) then
-            write (ifm,*) '<MECANONLINE> ...... CONTACT INITIAL'
+            call utmess('I', 'MECANONLINE14_26')
         endif
         if (isfonc(list_func_acti,'LIAISON_UNILATER')) then
-            write (ifm,*) '<MECANONLINE> ...... LIAISON UNILATERALE'
+            call utmess('I', 'MECANONLINE14_27')
         endif
         if (isfonc(list_func_acti,'FROT_DISCRET')) then
-            write (ifm,*) '<MECANONLINE> ...... FROTTEMENT DISCRET'
+            call utmess('I', 'MECANONLINE14_28')
         endif
         if (isfonc(list_func_acti,'FROT_CONTINU')) then
-            write (ifm,*) '<MECANONLINE> ...... FROTTEMENT CONTINU'
+            call utmess('I', 'MECANONLINE14_29')
         endif
         if (isfonc(list_func_acti,'FROT_XFEM')) then
-            write (ifm,*) '<MECANONLINE> ...... FROTTEMENT XFEM'
+            call utmess('I', 'MECANONLINE14_30')
+        endif
+        if (isfonc(list_func_acti,'EXIS_PENA')) then
+            call utmess('I', 'MECANONLINE14_64')
         endif
 !
 ! ----- Finite elements
 !
         if (isfonc(list_func_acti,'ELT_CONTACT')) then
-            write (ifm,*) '<MECANONLINE> ...... ELEMENTS DE CONTACT'
+            call utmess('I', 'MECANONLINE14_31')
         endif
         if (isfonc(list_func_acti,'ELT_FROTTEMENT')) then
             write (ifm,*) '<MECANONLINE> ...... ELEMENTS DE FROTTEMENT'
         endif
         if (isfonc(list_func_acti,'DIS_CHOC')) then
-            write (ifm,*) '<MECANONLINE> ...... ELEMENTS DIS_CHOC '
+            call utmess('I', 'MECANONLINE14_33')
         endif
         if (isfonc(list_func_acti,'GD_ROTA')) then
-            write (ifm,*) '<MECANONLINE> ...... ELEMENTS DE STRUCTURES EN GRANDES ROTATIONS'
+            call utmess('I', 'MECANONLINE14_34')
         endif
         if (isfonc(list_func_acti,'XFEM')) then
-            write (ifm,*) '<MECANONLINE> ...... ELEMENTS XFEM'
+            call utmess('I', 'MECANONLINE14_35')
         endif
         if (isfonc(list_func_acti,'EXI_STRX')) then
-            write (ifm,*) '<MECANONLINE> ...... ELEMENTS DE STRUCTURES DE TYPE PMF'
+            call utmess('I', 'MECANONLINE14_36')
         endif
 !
 ! ----- CONVERGENCE
 !
         if (isfonc(list_func_acti,'RESI_REFE')) then
-            write (ifm,*) '<MECANONLINE> ...... CONVERGENCE PAR RESI_REFE'
+            call utmess('I', 'MECANONLINE14_37')
         endif
         if (isfonc(list_func_acti,'RESI_COMP')) then
-            write (ifm,*) '<MECANONLINE> ...... CONVERGENCE PAR RESI_COMP'
+            call utmess('I', 'MECANONLINE14_38')
         endif
 !
 ! ----- Loads
 !
         if (isfonc(list_func_acti,'NEUM_UNDEAD')) then
-            write (ifm,*) '<MECANONLINE> ...... CHARGEMENTS SUIVEURS DE TYPE NEUMANN'
+            call utmess('I', 'MECANONLINE14_39')
         endif
         if (isfonc(list_func_acti,'DIRI_UNDEAD')) then
-            write (ifm,*) '<MECANONLINE> ...... CHARGEMENTS SUIVEURS DE TYPE DIRICHLET'
+            call utmess('I', 'MECANONLINE14_40')
         endif
         if (isfonc(list_func_acti,'DIDI')) then
-            write (ifm,*) '<MECANONLINE> ...... CHARGEMENTS DE DIRICHLET DIFFERENTIEL'
+            call utmess('I', 'MECANONLINE14_41')
         endif
         if (isfonc(list_func_acti,'DIRI_CINE')) then
-            write (ifm,*) '<MECANONLINE> ...... CHARGEMENTS CINEMATIQUES PAR ELIMINATION'
+            call utmess('I', 'MECANONLINE14_42')
         endif
         if (isfonc(list_func_acti,'LAPLACE')) then
-            write (ifm,*) '<MECANONLINE> ...... CHARGEMENTS DE LAPLACE'
+            call utmess('I', 'MECANONLINE14_43')
         endif
 !
 ! ----- MODELISATION
 !
         if (isfonc(list_func_acti,'MACR_ELEM_STAT')) then
-            write (ifm,*) '<MECANONLINE> ...... MACRO-ELEMENTS STATIQUES'
+            call utmess('I', 'MECANONLINE14_44')
         endif
         if (isfonc(list_func_acti,'THM')) then
-            write (ifm,*) '<MECANONLINE> ...... MODELISATION THM'
+            call utmess('I', 'MECANONLINE14_45')
         endif
         if (isfonc(list_func_acti,'ENDO_NO')) then
-            write (ifm,*) '<MECANONLINE> ...... MODELISATION GVNO'
+            call utmess('I', 'MECANONLINE14_46')
         endif
 !
 ! ----- Post-treatments
 !
         if (isfonc(list_func_acti,'CRIT_STAB')) then
-            write (ifm,*) '<MECANONLINE> ...... CALCUL CRITERE FLAMBEMENT'
+            call utmess('I', 'MECANONLINE14_47')
         endif
         if (isfonc(list_func_acti,'DDL_STAB')) then
-            write (ifm,*) '<MECANONLINE> ...... CALCUL CRITERE STABILITE'
+            call utmess('I', 'MECANONLINE14_48')
         endif
         if (isfonc(list_func_acti,'MODE_VIBR')) then
-            write (ifm,*) '<MECANONLINE> ...... CALCUL MODES VIBRATOIRES'
+            call utmess('I', 'MECANONLINE14_49')
         endif
         if (isfonc(list_func_acti,'ENERGIE')) then
-            write (ifm,*) '<MECANONLINE> ...... CALCUL DES ENERGIES'
+            call utmess('I', 'MECANONLINE14_50')
         endif
         if (isfonc(list_func_acti,'ERRE_TEMPS_THM')) then
-            write (ifm,*) '<MECANONLINE> ...... CALCUL ERREUR TEMPS EN THM'
+            call utmess('I', 'MECANONLINE14_51')
         endif
         if (isfonc(list_func_acti,'POST_INCR')) then
-            write (ifm,*) '<MECANONLINE> ...... CALCUL POST_INCR'
+            call utmess('I', 'MECANONLINE14_52')
         endif
         if (isfonc(list_func_acti,'EXI_VARC')) then
-            write (ifm,*) '<MECANONLINE> ...... VARIABLES DE COMMANDE'
+            call utmess('I', 'MECANONLINE14_53')
         endif
         if (isfonc(list_func_acti,'ELAS_FO')) then
-            write (ifm,*) '<MECANONLINE> ...... Elasticite fonction'
+            call utmess('I', 'MECANONLINE14_54')
         endif
 !
         if (isfonc(list_func_acti,'REUSE')) then
-            write (ifm,*) '<MECANONLINE> ...... CONCEPT RE-ENTRANT'
+            call utmess('I', 'MECANONLINE14_55')
         endif
         if (isfonc(list_func_acti,'ETAT_INIT')) then
-            write (ifm,*) '<MECANONLINE> ...... Etat initial present'
+            call utmess('I', 'MECANONLINE14_56')
         endif
 !
 ! ----- Solver options
 !
         if (isfonc(list_func_acti,'LDLT')) then
-            write (ifm,*) '<MECANONLINE> ...... SOLVEUR LDLT'
+            call utmess('I', 'MECANONLINE14_57')
         endif
         if (isfonc(list_func_acti,'MULT_FRONT')) then
-            write (ifm,*) '<MECANONLINE> ...... SOLVEUR MULT_FRONT'
+            call utmess('I', 'MECANONLINE14_58')
         endif
         if (isfonc(list_func_acti,'GCPC')) then
-            write (ifm,*) '<MECANONLINE> ...... SOLVEUR GCPC'
+            call utmess('I', 'MECANONLINE14_59')
         endif
         if (isfonc(list_func_acti,'MUMPS')) then
-            write (ifm,*) '<MECANONLINE> ...... SOLVEUR MUMPS'
+            call utmess('I', 'MECANONLINE14_60')
         endif
         if (isfonc(list_func_acti,'PETSC')) then
-            write (ifm,*) '<MECANONLINE> ...... SOLVEUR PETSC'
+            call utmess('I', 'MECANONLINE14_61')
         endif
         if (isfonc(list_func_acti,'LDLT_SP')) then
-            write (ifm,*) '<MECANONLINE> ...... PRECONDITIONNEUR LDLT_SP'
+            call utmess('I', 'MECANONLINE14_62')
         endif
         if (isfonc(list_func_acti,'MATR_DISTRIBUEE')) then
-            write (ifm,*) '<MECANONLINE> ...... MATRICE GLOBALE DISTRIBUEE'
+            call utmess('I', 'MECANONLINE14_63')
         endif
     endif
 !

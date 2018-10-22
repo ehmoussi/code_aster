@@ -92,7 +92,7 @@ type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 !
     call infdbg('MECA_NON_LINE', ifm, niv)
     if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE> PRECALCUL DES MATR_ELEM CONSTANTES'
+        call utmess('I','MECANONLINE13_18')
     endif
 !
 ! --- FONCTIONNALITES ACTIVEES
@@ -123,7 +123,7 @@ type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 ! --- MATRICE DE RIGIDITE ASSOCIEE AUX LAGRANGE
 !
     if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE> ... MATR_ELEM DE RIGIDITE ASSOCIEE AUX LAGRANGE'
+        call utmess('I','MECANONLINE13_19')
     endif
     call nmcmat('MEDIRI', ' ', ' ', .true._1,&
                 .false._1, nb_matr, list_matr_type, list_calc_opti, list_asse_opti,&
@@ -133,7 +133,7 @@ type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 !
     if (ldyna) then
         if (niv .ge. 2) then
-            write (ifm,*) '<MECANONLINE> ... MATR_ELEM DE MASSE'
+            call utmess('I','MECANONLINE13_20')
         endif
         if (lexpl) then
             if (ndynlo(sddyna,'MASS_DIAG')) then
@@ -155,7 +155,7 @@ type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 !
     if (lmacr) then
         if (niv .ge. 2) then
-            write (ifm,*) '<MECANONLINE> ... MATR_ELEM DES MACRO_ELEMENTS'
+            call utmess('I','MECANONLINE13_21')
         endif
         oprigi = 'RIGI_MECA'
         call nmcmat('MESSTR', oprigi, ' ', .true._1,&

@@ -29,7 +29,6 @@ implicit none
 #include "jeveux.h"
 #include "asterfort/assert.h"
 #include "asterfort/dismoi.h"
-#include "asterfort/infdbg.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jedetr.h"
 #include "asterfort/jemarq.h"
@@ -42,7 +41,6 @@ implicit none
 #include "asterfort/merige.h"
 #include "asterfort/nmchex.h"
 #include "asterfort/nmvcex.h"
-#include "asterfort/nmdebg.h"
 #include "asterfort/nmelcm.h"
 #include "asterfort/wkvect.h"
 !
@@ -92,8 +90,6 @@ aster_logical, intent(in) :: l_xthm
 ! In  l_xthm           : contact with THM and XFEM (!)
 !
 !
-!
-    integer :: ifm, niv
     character(len=19) :: memass, merigi
     character(len=24) :: model
     integer :: jinfc, jchar, jchar2
@@ -109,19 +105,12 @@ aster_logical, intent(in) :: l_xthm
 ! ----------------------------------------------------------------------
 !
     call jemarq()
-    call infdbg('MECA_NON_LINE', ifm, niv)
 !
 ! --- INITIALISATIONS
 !
     optmat = optmaz
     model = modelz
     call dismoi('NOM_MAILLA', model, 'MODELE', repk=mesh)
-!
-! --- AFFICHAGE
-!
-    if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE><MATR> CALCUL DES MATR_ELEM DE TYPE <',typmat,'>'
-    endif
 !
 ! --- DECOMPACTION DES VARIABLES CHAPEAUX
 !
@@ -216,12 +205,6 @@ aster_logical, intent(in) :: l_xthm
                     disp_newt_curr,matele   , time_prev, time_curr, ds_constitutive, l_xthm)
     else
         ASSERT(.false.)
-    endif
-!
-! --- DEBUG
-!
-    if (niv .eq. 2) then
-        call nmdebg(' ', matele, ifm)
     endif
 !
 ! --- MENAGE

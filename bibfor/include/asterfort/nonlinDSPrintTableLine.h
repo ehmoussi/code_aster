@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,14 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine PrintTableLine(table, col_sep, unit_print)
+    subroutine nonlinDSPrintTableLine(table, col_sep, unit_print)
         use NonLin_Datastructure_type
         type(NL_DS_Table), intent(in) :: table
         character(len=1), intent(in) :: col_sep
         integer, intent(in) :: unit_print
-    end subroutine PrintTableLine
+    end subroutine nonlinDSPrintTableLine
 end interface

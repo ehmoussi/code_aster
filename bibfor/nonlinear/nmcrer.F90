@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,11 +16,12 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine nmcrer(carcri, sdcriq)
-!
 ! person_in_charge: mickael.abbas at edf.fr
 !
-    implicit none
+subroutine nmcrer(carcri, sdcriq)
+!
+implicit none
+!
 #include "jeveux.h"
 #include "asterfort/getvtx.h"
 #include "asterfort/infdbg.h"
@@ -28,8 +29,10 @@ subroutine nmcrer(carcri, sdcriq)
 #include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/wkvect.h"
+#include "asterfort/utmess.h"
 #include "asterfort/Behaviour_type.h"
-    character(len=24) :: sdcriq, carcri
+!
+character(len=24) :: sdcriq, carcri
 !
 ! ----------------------------------------------------------------------
 !
@@ -57,11 +60,8 @@ subroutine nmcrer(carcri, sdcriq)
 !
     call jemarq()
     call infdbg('MECA_NON_LINE', ifm, niv)
-!
-! --- AFFICHAGE
-!
     if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE> ... LECTURE CALCUL ERREUR'
+        call utmess('I', 'MECANONLINE12_12')
     endif
 !
 ! --- INITIALISATIONS

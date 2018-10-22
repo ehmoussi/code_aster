@@ -87,7 +87,7 @@ type(NL_DS_Print), intent(in) :: ds_print
 !
     call infdbg('MECA_NON_LINE', ifm, niv)
     if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE> PREPARATION DE LA SD EVOL_NOLI'
+        call utmess('I', 'MECANONLINE13_25')
     endif
 !
 ! --- FONCTIONNALITES ACTIVEES

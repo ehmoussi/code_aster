@@ -56,7 +56,7 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
 !
     call infdbg('MECANONLINE', ifm, niv)
     if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE> ... Initializations for algorithm parameters management'
+        call utmess('I', 'MECANONLINE13_6')
     endif
 !
 ! - Active functionnalites

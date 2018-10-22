@@ -17,9 +17,9 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nmdata(model    , mesh      , mate      , cara_elem , ds_constitutive,&
-                  list_load, solver    , ds_conv   , sddyna    , ds_posttimestep,&
-                  sderro   , ds_energy , sdcriq    , ds_print  , ds_algopara    ,&
+subroutine nmdata(model    , mesh      , mate      , cara_elem  , ds_constitutive,&
+                  list_load, solver    , ds_conv   , sddyna     , ds_posttimestep,&
+                  ds_energy, sdcriq    , ds_print  , ds_algopara,&
                   ds_inout , ds_contact, ds_measure, ds_algorom)
 !
 use NonLin_Datastructure_type
@@ -36,7 +36,6 @@ implicit none
 #include "asterfort/ndcrdy.h"
 #include "asterfort/ndlect.h"
 #include "asterfort/nmcrer.h"
-#include "asterfort/nmcrga.h"
 #include "asterfort/nmdocn.h"
 #include "asterfort/nonlinDSContactRead.h"
 #include "asterfort/nonlinDSPrintRead.h"
@@ -52,6 +51,8 @@ implicit none
 #include "asterfort/nmdorc.h"
 #include "asterfort/nmetdo.h"
 #include "asterfort/nmlect.h"
+#include "asterfort/utmess.h"
+#include "asterfort/nonlinDSPrintSepLine.h"
 !
 character(len=*), intent(out) :: model
 character(len=*), intent(out) :: mesh
@@ -63,7 +64,6 @@ character(len=*), intent(out) :: solver
 type(NL_DS_Conv), intent(inout) :: ds_conv
 character(len=19) :: sddyna
 type(NL_DS_PostTimeStep), intent(inout) :: ds_posttimestep
-character(len=24) :: sderro
 type(NL_DS_Energy), intent(inout) :: ds_energy
 character(len=24) :: sdcriq
 type(NL_DS_Print), intent(inout) :: ds_print
@@ -91,7 +91,6 @@ type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
 ! IO  ds_conv          : datastructure for convergence management
 ! IN  SDDYNA : SD DYNAMIQUE
 ! IO  ds_posttimestep  : datastructure for post-treatment at each time step
-! OUT SDERRO : SD ERREUR
 ! IO  ds_energy        : datastructure for energy management
 ! OUT SDCRIQ : SD CRITERE QUALITE
 ! IO  ds_print         : datastructure for printing parameters
@@ -113,7 +112,8 @@ type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
 !
     call infdbg('MECA_NON_LINE', ifm, niv)
     if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE> Read parameters'
+        call nonlinDSPrintSepLine()
+        call utmess('I', 'MECANONLINE12_1')
     endif
 !
 ! - Get command parameters
@@ -185,10 +185,6 @@ type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
 ! - Read parameters for measure and statistic management
 !
     call nonlinDSMeasureRead(ds_measure)
-!
-! --- LECTURE DES DONNEES GESTION ALGORITHME
-!
-    call nmcrga(sderro)
 !
 ! --- LECTURE DES DONNEES CRITERE QUALITE
 !

@@ -65,10 +65,6 @@ cata_msg = {
 
    22  : _(u"""Préparation du second membre pour le pas de temps courant (dynamique explicite)."""),
 
-   23  : _(u"""Création de la structure de données pour la gestion des lois de comportement."""),
-
-   24  : _(u"""Initialisation de la structure de données pour la gestion des lois de comportement."""),
-
    25  : _(u"""Intégration de la loi de comportement (calcul des efforts internes élémentaires)."""),
 
    26  : _(u"""Préparations pour l'intégration de la loi de comportement."""),
@@ -76,4 +72,6 @@ cata_msg = {
    27  : _(u"""Calcul des efforts internes en prédiction."""),
 
    28  : _(u"""Intégration de la loi de comportement (assemblage des efforts internes élémentaires)."""),
+
+
 }

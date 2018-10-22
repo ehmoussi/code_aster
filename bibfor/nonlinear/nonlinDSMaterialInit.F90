@@ -69,7 +69,7 @@ type(NL_DS_Material), intent(inout) :: ds_material
 !
     call infdbg('MECANONLINE', ifm, niv)
     if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE> ... Initializations for material parameters management'
+        call utmess('I', 'MECANONLINE13_8')
     endif
 !
 ! - Save material field

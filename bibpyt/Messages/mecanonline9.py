@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -147,16 +147,14 @@ cata_msg = {
 
     65 : _(u"""
    La solution périodique est stable
-   --------------------------------------------------------------------------
 """),
 
     66 : _(u"""
    La solution périodique est instable
-   --------------------------------------------------------------------------
 """),
 
     67 : _(u"""
-   --------------------- Numéro ordre : %(i1)d -----------------------------------
+                         Numéro ordre : %(i1)d
 """),
 
     68 : _(u"""Le mot-clé GROUP_NO du mot-clé facteur CHOC ne doit contenir qu'un noeud."""),
