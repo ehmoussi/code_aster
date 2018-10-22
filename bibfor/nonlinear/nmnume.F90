@@ -30,6 +30,8 @@ implicit none
 #include "asterfort/nunuco.h"
 #include "asterfort/nunuco_l.h"
 #include "asterfort/nurota.h"
+#include "asterfort/infdbg.h"
+#include "asterfort/utmess.h"
 !
 character(len=8), intent(in) :: mesh
 character(len=24), intent(in) :: model
@@ -59,11 +61,16 @@ character(len=19), intent(in) :: sdnume
 !
 ! --------------------------------------------------------------------------------------------------
 !
+    integer :: ifm, niv
     character(len=24) :: sdnuro, sdnuen, sdnuco
 !
 ! --------------------------------------------------------------------------------------------------
 !
 
+    call infdbg('MECANONLINE', ifm, niv)
+    if (niv .ge. 2) then
+        call utmess('I', 'MECANONLINE13_12')
+    endif
 !
 ! - Create numbering 
 !

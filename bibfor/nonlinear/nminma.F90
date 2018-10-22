@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine nminma(fonact, lischa, sddyna, numedd, ds_algopara,&
                   numfix, meelem, measse)
 !
@@ -31,14 +32,13 @@ implicit none
 #include "asterfort/ndynlo.h"
 #include "asterfort/nmassm.h"
 #include "asterfort/nmchex.h"
+#include "asterfort/utmess.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    integer :: fonact(*)
-    character(len=19) :: lischa, sddyna
-    character(len=24) :: numedd, numfix
-    character(len=19) :: meelem(*), measse(*)
-    type(NL_DS_AlgoPara), intent(in) :: ds_algopara
+integer :: fonact(*)
+character(len=19) :: lischa, sddyna
+character(len=24) :: numedd, numfix
+character(len=19) :: meelem(*), measse(*)
+type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 !
 ! ----------------------------------------------------------------------
 !
@@ -69,11 +69,8 @@ implicit none
 !
     call jemarq()
     call infdbg('MECA_NON_LINE', ifm, niv)
-!
-! --- AFFICHAGE
-!
     if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE> PRECALCUL DES MATR_ASSE CONSTANTES'
+        call utmess('I','MECANONLINE13_22')
     endif
 !
 ! --- INITIALISATIONS
@@ -100,7 +97,7 @@ implicit none
             ASSERT(.false.)
         endif
         if (niv .ge. 2) then
-            write (ifm,*) '<MECANONLINE> ... MATR_ASSE DE MASSE'
+            call utmess('I','MECANONLINE13_23')
         endif
         call nmassm(fonact, lischa, numedd, numfix, ds_algopara,&
                     'MEMASS', optass, meelem, masse)
@@ -110,7 +107,7 @@ implicit none
 !
     if (lamor .and. .not.lktan) then
         if (niv .ge. 2) then
-            write (ifm,*) '<MECANONLINE> ... MATR_ASSE AMORTISSEMENT'
+            call utmess('I','MECANONLINE13_24')
         endif
         optass = ' '
         call nmassm(fonact, lischa,  numedd, numfix, ds_algopara,&

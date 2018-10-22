@@ -16,6 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
+! aslint: disable=W1403
 !
 subroutine nonlinDSMaterialCreate(ds_material)
 !
@@ -25,7 +26,6 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/assert.h"
-#include "asterfort/infdbg.h"
 !
 type(NL_DS_Material), intent(out) :: ds_material
 !
@@ -40,17 +40,6 @@ type(NL_DS_Material), intent(out) :: ds_material
 ! Out ds_material      : datastructure for material parameters
 !
 ! --------------------------------------------------------------------------------------------------
-!
-    integer :: ifm, niv
-!
-! --------------------------------------------------------------------------------------------------
-!
-    call infdbg('MECANONLINE', ifm, niv)
-    if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE> . Create material management datastructure'
-    endif
-!
-! - Initializations
 !
     ds_material%field_mate = ' '
     ds_material%varc_refe  = '&&OP0070.VARC_REFE'

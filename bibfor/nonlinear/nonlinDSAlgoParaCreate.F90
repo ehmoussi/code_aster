@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,6 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
+! aslint: disable=W1403
 !
 subroutine nonlinDSAlgoParaCreate(ds_algopara)
 !
@@ -26,7 +27,6 @@ implicit none
 #include "asterf_types.h"
 #include "asterc/r8vide.h"
 #include "asterfort/assert.h"
-#include "asterfort/infdbg.h"
 !
 type(NL_DS_AlgoPara), intent(out) :: ds_algopara
 !
@@ -41,17 +41,6 @@ type(NL_DS_AlgoPara), intent(out) :: ds_algopara
 ! Out ds_algopara      : datastructure for algorithm parameters
 !
 ! --------------------------------------------------------------------------------------------------
-!
-    integer :: ifm, niv
-!
-! --------------------------------------------------------------------------------------------------
-!
-    call infdbg('MECANONLINE', ifm, niv)
-    if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE> . Create algorithm parameters datastructure'
-    endif
-!
-! - General parameters
 !
     ds_algopara%method           = ' '
     ds_algopara%matrix_pred      = ' '

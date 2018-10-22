@@ -31,6 +31,7 @@ implicit none
 #include "asterfort/cfdisl.h"
 #include "asterfort/jeexin.h"
 #include "asterfort/jelira.h"
+#include "asterfort/utmess.h"
 #include "asterfort/xrela_elim.h"
 #include "asterfort/lac_rela.h"
 #include "asterfort/wkvect.h"
@@ -71,6 +72,13 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
 !
 ! - Initializations
 !
+    l_cont      = ASTER_FALSE
+    l_unil      = ASTER_FALSE
+    l_form_disc = ASTER_FALSE
+    l_form_cont = ASTER_FALSE
+    l_form_xfem = ASTER_FALSE
+    l_form_lac  = ASTER_FALSE
+    l_iden_rela = ASTER_FALSE
     iden_rela   = '&&CFMXR0.IDEN_RELA'
 ! 
     if (ds_contact%l_contact) then
@@ -78,7 +86,7 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
 ! ----- Print
 !
         if (niv .ge. 2) then
-            write (ifm,*) '<MECANONLINE> ... Initializations for contact management'
+            call utmess('I', 'MECANONLINE13_3')
         endif
 !
 ! ----- Datastructure from DEFI_CONTACT

@@ -27,7 +27,6 @@ implicit none
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterfort/cfdisl.h"
-#include "asterfort/infdbg.h"
 #include "asterfort/isfonc.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jemarq.h"
@@ -61,7 +60,6 @@ character(len=19), intent(in) :: veasse(*)
 !
 ! ----------------------------------------------------------------------
 !
-    integer :: ifm, niv
     character(len=24) :: sdcont_defi
     aster_logical :: ldyna, lammo, lmpas, lrefe, lmacr, lmuap, lviss
     aster_logical :: lsstf, limpe
@@ -89,10 +87,6 @@ character(len=19), intent(in) :: veasse(*)
 ! ----------------------------------------------------------------------
 !
     call jemarq()
-    call infdbg('MECA_NON_LINE', ifm, niv)
-    if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE> ... CREATION VECTEURS INCONNUES'
-    endif
 !
 ! - Initializations
 !

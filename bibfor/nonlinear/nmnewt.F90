@@ -18,13 +18,13 @@
 ! person_in_charge: mickael.abbas at edf.fr
 ! aslint: disable=W1504
 !
-subroutine nmnewt(mesh       , model    , numins         , numedd         , numfix   ,&
+subroutine nmnewt(mesh       , model    , numins         , numedd    , numfix   ,&
                   ds_material, cara_elem, ds_constitutive, list_load,&
-                  ds_algopara, fonact   , ds_measure     , sderro         , ds_print ,&
-                  sdnume     , sddyna   , sddisc         , sdcrit         , sdsuiv   ,&
-                  sdpilo     , ds_conv  , solveu         , maprec         , matass   ,&
-                  ds_inout   , valinc   , solalg         , meelem         , measse   ,&
-                  veelem     , veasse   , ds_contact     , ds_algorom     , eta      ,&
+                  ds_algopara, fonact   , ds_measure     , sderro    , ds_print ,&
+                  sdnume     , sddyna   , sddisc         , sdcrit    , sdsuiv   ,&
+                  sdpilo     , ds_conv  , solveu         , maprec    , matass   ,&
+                  ds_inout   , valinc   , solalg         , meelem    , measse   ,&
+                  veelem     , veasse   , ds_contact     , ds_algorom, eta      ,&
                   nbiter  )
 !
 use NonLin_Datastructure_type
@@ -66,6 +66,8 @@ implicit none
 #include "asterfort/nmtime.h"
 #include "asterfort/nmtimr.h"
 #include "asterfort/nmforc_step.h"
+#include "asterfort/infdbg.h"
+#include "asterfort/nonlinDSPrintSepLine.h"
 !
 character(len=8), intent(in) :: mesh
 character(len=24), intent(in) :: model
@@ -139,6 +141,7 @@ integer :: nbiter
 !
 ! --------------------------------------------------------------------------------------------------
 !
+    integer :: ifm, niv
     integer :: niveau, iterat
     aster_logical :: lerrit
     aster_logical :: l_loop_exte, l_cont_disc, l_cont, l_hrom_corref
@@ -151,6 +154,10 @@ integer :: nbiter
     niveau = 0
     nbiter = 0
     lerrit = ASTER_FALSE
+    call infdbg('MECANONLINE', ifm, niv)
+    if (niv .ge. 2) then
+        call nonlinDSPrintSepLine()
+    endif
 !
 ! - Active functionnalities
 !
@@ -422,5 +429,9 @@ integer :: nbiter
 ! ======================================================================
 !     FIN BOUCLE POINTS FIXES
 ! ======================================================================
+!
+    if (niv .ge. 2) then
+        call nonlinDSPrintSepLine()
+    endif
 !
 end subroutine

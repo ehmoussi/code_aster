@@ -17,21 +17,18 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine nmini0(list_func_acti, eta      , nume_inst      , matass     , zmeelm    ,&
-                      zmeass        , zveelm   , zveass         , zsolal     , zvalin    ,&
-                      ds_print      , ds_conv  , ds_algopara    , ds_inout   , ds_contact,&
-                      ds_measure    , ds_energy, ds_constitutive, ds_material)
+    subroutine nmini0(eta       , nume_inst, matass         ,&
+                      zmeelm    , zmeass   , zveelm         ,&
+                      zveass    , zsolal   , zvalin         ,&
+                      ds_print  , ds_conv  , ds_algopara    , ds_inout   , ds_contact ,&
+                      ds_measure, ds_energy, ds_constitutive, ds_material,&
+                      sderro)
         use NonLin_Datastructure_type
-        integer, intent(out) :: list_func_acti(*)
         character(len=19), intent(out) :: matass
         integer, intent(out) :: nume_inst
         real(kind=8), intent(out) :: eta
-        integer, intent(in) :: zmeelm
-        integer, intent(in) :: zmeass
-        integer, intent(in) :: zveelm
-        integer, intent(in) :: zveass
-        integer, intent(in) :: zsolal
-        integer, intent(in) :: zvalin
+        integer, intent(in) :: zmeelm, zmeass, zveelm
+        integer, intent(in) :: zveass, zsolal, zvalin
         type(NL_DS_Print), intent(out) :: ds_print
         type(NL_DS_Conv), intent(out) :: ds_conv
         type(NL_DS_AlgoPara), intent(out) :: ds_algopara
@@ -41,5 +38,6 @@ interface
         type(NL_DS_Energy), intent(out) :: ds_energy
         type(NL_DS_Constitutive), intent(out) :: ds_constitutive
         type(NL_DS_Material), intent(out) :: ds_material
+        character(len=24) :: sderro
     end subroutine nmini0
 end interface

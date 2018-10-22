@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,6 +16,8 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine nmcrar(result, sddisc, fonact)
 !
 implicit none
@@ -25,6 +27,7 @@ implicit none
 #include "asterc/getfac.h"
 #include "asterfort/assert.h"
 #include "asterfort/infdbg.h"
+#include "asterfort/utmess.h"
 #include "asterfort/isfonc.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jemarq.h"
@@ -35,11 +38,9 @@ implicit none
 #include "asterfort/nmdide.h"
 #include "asterfort/wkvect.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=19) :: sddisc
-    character(len=8) :: result
-    integer :: fonact(*)
+character(len=19) :: sddisc
+character(len=8) :: result
+integer :: fonact(*)
 !
 ! ----------------------------------------------------------------------
 !
@@ -72,11 +73,8 @@ implicit none
 !
     call jemarq()
     call infdbg('MECA_NON_LINE', ifm, niv)
-!
-! --- AFFICHAGE
-!
     if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE> ... CREATION SD ARCHIVAGE'
+        call utmess('I','MECANONLINE13_14')
     endif
 !
 ! --- FONCTIONNALITES ACTIVEES

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine nmdocn(ds_conv)
 !
 use NonLin_Datastructure_type
@@ -31,12 +32,11 @@ implicit none
 #include "asterfort/getvr8.h"
 #include "asterfort/getvtx.h"
 #include "asterfort/infdbg.h"
+#include "asterfort/utmess.h"
 #include "asterfort/SetResi.h"
 #include "asterfort/SetResiRefe.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    type(NL_DS_Conv), intent(inout) :: ds_conv
+type(NL_DS_Conv), intent(inout) :: ds_conv
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -60,7 +60,7 @@ implicit none
 !
     call infdbg('MECA_NON_LINE', ifm, niv)
     if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE> . Read parameters for convergence parameters'
+        call utmess('I', 'MECANONLINE12_8')
     endif
 !
 ! - Initializations

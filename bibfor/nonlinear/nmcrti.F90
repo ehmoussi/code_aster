@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -29,6 +29,7 @@ implicit none
 #include "asterfort/isfonc.h"
 #include "asterfort/ulopen.h"
 #include "asterfort/uttcpu.h"
+#include "asterfort/utmess.h"
 #include "asterfort/nonlinDSColumnWriteValue.h"
 #include "asterfort/ActivateDevice.h"
 #include "asterfort/nonlinDSTableIOCreate.h"
@@ -71,7 +72,7 @@ type(NL_DS_Measure), intent(inout) :: ds_measure
 !
     call infdbg('MECA_NON_LINE', ifm, niv)
     if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE> ... Initializations for measure and statistics management'
+        call utmess('I', 'MECANONLINE13_5')
     endif
 !
 ! - Get active functionnalities

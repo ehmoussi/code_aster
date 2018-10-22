@@ -17,46 +17,36 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nonlinDSEnergyRead(ds_energy)
+subroutine nonlinDSPrintSepLine()
 !
 use NonLin_Datastructure_type
 !
 implicit none
 !
-#include "asterfort/infniv.h"
+#include "asterfort/infdbg.h"
 #include "asterfort/utmess.h"
-#include "asterc/getfac.h"
-!
-type(NL_DS_Energy), intent(inout) :: ds_energy
+#include "asterfort/nonlinDSColumnWriteValue.h"
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! MECA_NON_LINE - Energy management
+! MECA_NON_LINE - Table management
 !
-! Read parameters for energy management
-!
-! --------------------------------------------------------------------------------------------------
-!
-! IO  ds_energy        : datastructure for energy management
+! Print line for separation
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: ifm, niv, nocc
+    integer :: ifm, niv
+    integer :: line_width
+    character(len=512) :: sep_line
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call infniv(ifm, niv)
-    if (niv .ge. 2) then
-        call utmess('I', 'MECANONLINE12_11')
-    endif
-!
-! - Activation ?
-!
-    call getfac('ENERGIE', nocc)
-    ds_energy%l_comp  = nocc.gt.0
-!
-! - Command
-!
-    ds_energy%command = 'MECA_NON_LINE'
+    call infdbg('MECANONLINE', ifm, niv)
+    sep_line   = &
+'=================================================================================================='
+    line_width = 98
+    call nonlinDSColumnWriteValue(line_width,&
+                                  output_unit_ = ifm,&
+                                  value_k_     = sep_line)
 !
 end subroutine

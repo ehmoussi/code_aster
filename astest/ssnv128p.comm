@@ -146,7 +146,7 @@ U2M=STAT_NON_LINE(MODELE     = MO,
                   CONVERGENCE= _F(ARRET = 'OUI',
                                  ITER_GLOB_MAXI = 15,
                                  RESI_GLOB_RELA = 1.0E-4),
-#                  INFO=2,
+                  INFO=2,
                );
 
 

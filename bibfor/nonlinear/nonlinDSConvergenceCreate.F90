@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -27,7 +27,6 @@ implicit none
 #include "asterc/r8nnem.h"
 #include "asterc/r8vide.h"
 #include "asterfort/assert.h"
-#include "asterfort/infdbg.h"
 #include "asterfort/SetResi.h"
 #include "asterfort/SetResiRefe.h"
 !
@@ -45,15 +44,11 @@ type(NL_DS_Conv), intent(out) :: ds_conv
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: ifm, niv
     integer :: nb_resi, nb_refe
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call infdbg('MECANONLINE', ifm, niv)
-    if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE> . Create convergence management datastructure'
-    endif
+
 !
 ! - Checks
 !

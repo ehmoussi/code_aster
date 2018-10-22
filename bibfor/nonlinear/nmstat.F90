@@ -29,7 +29,7 @@ implicit none
 #include "asterfort/diinst.h"
 #include "asterfort/impmem.h"
 #include "asterfort/GetDevice.h"
-#include "asterfort/PrintTableLine.h"
+#include "asterfort/nonlinDSPrintTableLine.h"
 #include "asterfort/nmrini.h"
 #include "asterfort/nmrvai.h"
 #include "asterfort/nmrtim.h"
@@ -128,7 +128,7 @@ character(len=24), intent(in) :: sderro
 ! - Save in file
 !
     if ((phasis.eq.'P') .and. ds_measure%table%l_csv) then
-        call PrintTableLine(ds_measure%table, ',', ds_measure%table%unit_csv)
+        call nonlinDSPrintTableLine(ds_measure%table, ',', ds_measure%table%unit_csv)
     endif
 !
 ! - Print at end of computation

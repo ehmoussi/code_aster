@@ -17,10 +17,11 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nmini0(list_func_acti, eta      , nume_inst      , matass     , zmeelm    ,&
-                  zmeass        , zveelm   , zveass         , zsolal     , zvalin    ,&
-                  ds_print      , ds_conv  , ds_algopara    , ds_inout   , ds_contact,&
-                  ds_measure    , ds_energy, ds_constitutive, ds_material)
+subroutine nmini0(eta       , nume_inst, matass         ,&
+                  zmeelm    , zmeass   , zveelm         ,&
+                  zveass    , zsolal   , zvalin         ,&
+                  ds_print  , ds_conv  , ds_algopara    , ds_inout   , ds_contact,&
+                  ds_measure, ds_energy, ds_constitutive, ds_material, sderro)
 !
 use NonLin_Datastructure_type
 !
@@ -30,6 +31,7 @@ implicit none
 #include "asterfort/assert.h"
 #include "asterfort/nmchai.h"
 #include "asterfort/infdbg.h"
+#include "asterfort/utmess.h"
 #include "asterfort/nonlinDSConvergenceCreate.h"
 #include "asterfort/nonlinDSPrintCreate.h"
 #include "asterfort/nonlinDSAlgoParaCreate.h"
@@ -39,8 +41,9 @@ implicit none
 #include "asterfort/nonlinDSEnergyCreate.h"
 #include "asterfort/nonlinDSConstitutiveCreate.h"
 #include "asterfort/nonlinDSMaterialCreate.h"
+#include "asterfort/nmcrga.h"
+#include "asterfort/nonlinDSPrintSepLine.h"
 !
-integer, intent(out) :: list_func_acti(*)
 character(len=19), intent(out) :: matass
 integer, intent(out) :: nume_inst
 real(kind=8), intent(out) :: eta
@@ -55,6 +58,7 @@ type(NL_DS_Measure), intent(out) :: ds_measure
 type(NL_DS_Energy), intent(out) :: ds_energy
 type(NL_DS_Constitutive), intent(out) :: ds_constitutive
 type(NL_DS_Material), intent(out) :: ds_material
+character(len=24) :: sderro
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -64,7 +68,6 @@ type(NL_DS_Material), intent(out) :: ds_material
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! Out list_func_acti   : list of active functionnalities
 ! Out nume_inst        : index of current time step
 ! Out ds_print         : datastructure for printing parameters
 ! Out ds_conv          : datastructure for convergence management
@@ -86,7 +89,8 @@ type(NL_DS_Material), intent(out) :: ds_material
 !
     call infdbg('MECANONLINE', ifm, niv)
     if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE> Create datastructures'
+        call nonlinDSPrintSepLine()
+        call utmess('I', 'MECANONLINE14_99')
     endif
 !
 ! - Create printing management datastructure
@@ -125,9 +129,9 @@ type(NL_DS_Material), intent(out) :: ds_material
 !
     call nonlinDSMaterialCreate(ds_material)
 !
-! --- FONCTIONNALITES ACTIVEES               (NMFONC/ISFONC)
+! - Create non-linear algorithm management datastructure
 !
-    list_func_acti(1:100) = 0
+    call nmcrga(sderro)
 !
 ! --- INITIALISATION BOUCLE EN TEMPS
 !

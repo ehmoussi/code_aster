@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -28,6 +28,7 @@ implicit none
 #include "asterfort/getvis.h"
 #include "asterfort/getvtx.h"
 #include "asterfort/infdbg.h"
+#include "asterfort/utmess.h"
 !
 type(NL_DS_Print), intent(inout) :: ds_print
 !
@@ -52,7 +53,7 @@ type(NL_DS_Print), intent(inout) :: ds_print
 !
     call infdbg('MECANONLINE', ifm, niv)
     if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE> . Read parameters for printing'
+        call utmess('I', 'MECANONLINE12_14')
     endif
 !
 ! - Initializations

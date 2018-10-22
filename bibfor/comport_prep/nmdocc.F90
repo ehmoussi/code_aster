@@ -39,6 +39,7 @@ implicit none
 #include "asterfort/imvari.h"
 #include "asterfort/nocart.h"
 #include "asterfort/utmess.h"
+#include "asterfort/infniv.h"
 !
 character(len=8), intent(in) :: model
 character(len=8), intent(in) :: chmate
@@ -62,6 +63,7 @@ character(len=19), intent(in) :: compor
 !
 ! --------------------------------------------------------------------------------------------------
 !
+    integer :: ifm, niv
     aster_logical :: l_auto_elas, l_auto_deborst, l_comp_erre
     integer :: nb_cmp
     character(len=8) :: mesh
@@ -70,6 +72,13 @@ character(len=19), intent(in) :: compor
     type(Behaviour_PrepPara) :: ds_compor_prep
 !
 ! --------------------------------------------------------------------------------------------------
+!
+    call infniv(ifm, niv)
+    if (niv .ge. 2) then
+        call utmess('I', 'MECANONLINE12_4')
+    endif
+!
+! - Initialisations
 !
     comp_elas   = '&&NMDOCC.COMP_ELAS'
     full_elem_s = '&&NMDOCC.FULL_ELEM'
