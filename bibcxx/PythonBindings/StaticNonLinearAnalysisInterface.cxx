@@ -48,6 +48,7 @@ void exportStaticNonLinearAnalysisToPython() {
     class_< StaticNonLinearAnalysisInstance, StaticNonLinearAnalysisPtr >(
         "StaticNonLinearAnalysis", no_init )
         .def( "__init__", make_constructor(&initFactoryPtr< StaticNonLinearAnalysisInstance >))
+        // fake initFactoryPtr: not a DataStructure
         .def( "execute", &StaticNonLinearAnalysisInstance::execute )
         .def( "addBehaviourOnElements", &StaticNonLinearAnalysisInstance::addBehaviourOnElements,
               addBehaviourOnElements_overloads() )

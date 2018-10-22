@@ -33,6 +33,8 @@ void exportMaterialOnMeshBuilderToPython() {
 
     class_< MaterialOnMeshBuilderInstance, MaterialOnMeshBuilderInstance::MaterialOnMeshBuilderPtr >
         c1( "MaterialOnMeshBuilder", no_init );
+        // fake initFactoryPtr: no constructor
+        // fake initFactoryPtr: no constructor
 
     c1.def( "build", &MaterialOnMeshBuilderInstance::build, MaterialOnMeshBuilderbuild() );
     c1.staticmethod( "build" );

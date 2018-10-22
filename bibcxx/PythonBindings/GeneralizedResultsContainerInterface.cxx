@@ -30,9 +30,13 @@ void exportGeneralizedResultsContainerToPython() {
 
     class_< GeneralizedResultsContainerDoubleInstance, GeneralizedResultsContainerDoublePtr,
             bases< DataStructure > >( "GeneralizedResultsContainerDouble", no_init );
+        // fake initFactoryPtr: created by subclasses
+        // fake initFactoryPtr: created by subclasses
 
     class_< GeneralizedResultsContainerComplexInstance, GeneralizedResultsContainerComplexPtr,
             bases< DataStructure > >( "GeneralizedResultsContainerComplex", no_init );
+        // fake initFactoryPtr: created by subclasses
+        // fake initFactoryPtr: created by subclasses
 
     class_< TransientGeneralizedResultsContainerInstance, TransientGeneralizedResultsContainerPtr,
             bases< GeneralizedResultsContainerDoubleInstance > >(

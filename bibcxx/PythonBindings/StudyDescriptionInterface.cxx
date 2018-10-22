@@ -30,6 +30,7 @@ void exportStudyDescriptionToPython() {
     using namespace boost::python;
 
     class_< StudyDescriptionInstance, StudyDescriptionPtr > c1( "StudyDescription", no_init );
+    // fake initFactoryPtr: not a DataStructure
     c1.def(
         "__init__",
         make_constructor(&initFactoryPtr< StudyDescriptionInstance, ModelPtr, MaterialOnMeshPtr >));

@@ -21,8 +21,6 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-// DataStructure is always subclassed
-// aslint: disable=C3006
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 #include "PythonBindings/DataStructureInterface.h"
@@ -36,6 +34,8 @@ void exportDataStructureToPython() {
 
     class_< DataStructure, DataStructure::DataStructurePtr >( "DataStructure", no_init )
         .enable_pickling()
+        // fake initFactoryPtr: created by subclasses
+        // fake initFactoryPtr: created by subclasses
         .def( "addReference", &DataStructure::addReference )
         .def( "getName", &DataStructure::getName, return_value_policy< return_by_value >() )
         .def( "getType", &DataStructure::getType, return_value_policy< return_by_value >() )

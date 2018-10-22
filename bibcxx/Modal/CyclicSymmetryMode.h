@@ -33,6 +33,7 @@
 #include "LinearAlgebra/StructureInterface.h"
 #include "MemoryManager/JeveuxVector.h"
 #include "Meshes/Mesh.h"
+#include "Supervis/ResultNaming.h"
 
 /**
  * @class CyclicSymmetryModeInstance
@@ -74,8 +75,8 @@ class CyclicSymmetryModeInstance : public DataStructure {
     /**
      * @brief Constructeur
      */
-    CyclicSymmetryModeInstance()
-        : DataStructure( "MODE_CYCL", Permanent, 8 ),
+    CyclicSymmetryModeInstance( const std::string name = ResultNaming::getNewResultName() )
+        : DataStructure( name, 8, "MODE_CYCL", Permanent ),
           _type( JeveuxVectorChar8( getName() + ".CYCL_TYPE" ) ),
           _desc( JeveuxVectorLong( getName() + ".CYCL_DESC" ) ),
           _diam( JeveuxVectorLong( getName() + "CYCL_DIAM" ) ),
@@ -88,7 +89,7 @@ class CyclicSymmetryModeInstance : public DataStructure {
           _supportMesh( MeshPtr() ), _structInterf( StructureInterfacePtr() ),
           _modalBasis( StandardModalBasisPtr() )
 
-          {};
+              {};
 
     bool setSupportMesh( MeshPtr &currentMesh ) throw( std::runtime_error ) {
         if ( currentMesh->isEmpty() )

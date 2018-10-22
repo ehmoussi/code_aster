@@ -30,5 +30,7 @@ void exportFourierCombinationToPython() {
 
     class_< FourierCombinationInstance, FourierCombinationPtr, bases< ResultsContainerInstance > >(
         "FourierCombination", no_init )
-        .def( "__init__", make_constructor(&initFactoryPtr< FourierCombinationInstance >));
+        .def( "__init__", make_constructor( &initFactoryPtr< FourierCombinationInstance > ) )
+        .def( "__init__",
+              make_constructor( &initFactoryPtr< FourierCombinationInstance, std::string > ) );
 };

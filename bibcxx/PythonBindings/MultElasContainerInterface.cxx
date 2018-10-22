@@ -30,5 +30,7 @@ void exportMultElasContainerToPython() {
 
     class_< MultElasContainerInstance, MultElasContainerPtr, bases< ResultsContainerInstance > >(
         "MultElasContainer", no_init )
-        .def( "__init__", make_constructor(&initFactoryPtr< MultElasContainerInstance >));
+        .def( "__init__", make_constructor( &initFactoryPtr< MultElasContainerInstance > ) )
+        .def( "__init__",
+              make_constructor( &initFactoryPtr< MultElasContainerInstance, std::string > ) );
 };

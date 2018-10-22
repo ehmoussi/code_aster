@@ -39,6 +39,7 @@ void exportDrivingToPython() {
 
     class_< DrivingInstance, DrivingPtr >( "Driving", no_init )
         .def( "__init__", make_constructor(&initFactoryPtr< DrivingInstance, DrivingTypeEnum >))
+        // fake initFactoryPtr: not a DataStructure
         .def( "addObservationGroupOfNodes", &DrivingInstance::addObservationGroupOfNodes )
         .def( "addObservationGroupOfElements", &DrivingInstance::addObservationGroupOfElements )
         .def( "setDrivingDirectionOnCrack", &DrivingInstance::setDrivingDirectionOnCrack )

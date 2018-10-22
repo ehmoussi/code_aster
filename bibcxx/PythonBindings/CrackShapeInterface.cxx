@@ -21,9 +21,6 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-// Not a DataStructure
-// aslint: disable=C3006
-
 #include "PythonBindings/CrackShapeInterface.h"
 #include "PythonBindings/factory.h"
 #include <boost/python.hpp>
@@ -33,6 +30,7 @@ void exportCrackShapeToPython() {
 
     class_< CrackShapeInstance, CrackShapeInstance::CrackShapePtr >( "CrackShape", no_init )
         .def( "__init__", make_constructor(&initFactoryPtr< CrackShapeInstance >))
+        // fake initFactoryPtr: not a DataStructure
         .def( "setEllipseCrackShape", &CrackShapeInstance::setEllipseCrackShape )
         .def( "setSquareCrackShape", &CrackShapeInstance::setSquareCrackShape )
         .def( "setCylinderCrackShape", &CrackShapeInstance::setCylinderCrackShape )

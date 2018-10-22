@@ -27,6 +27,7 @@
 #include "astercxx.h"
 
 #include "Results/ResultsContainer.h"
+#include "Supervis/ResultNaming.h"
 
 /**
  * @class FourierTherContainerInstance
@@ -39,7 +40,8 @@ class FourierTherContainerInstance : public ResultsContainerInstance {
     /**
      * @brief Constructeur
      */
-    FourierTherContainerInstance() : ResultsContainerInstance( "FOURIER_THER" ){};
+    FourierTherContainerInstance( const std::string name = ResultNaming::getNewResultName() )
+        : ResultsContainerInstance( name, "FOURIER_THER" ){};
 };
 
 /**

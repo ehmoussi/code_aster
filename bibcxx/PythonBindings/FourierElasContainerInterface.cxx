@@ -30,5 +30,7 @@ void exportFourierElasContainerToPython() {
 
     class_< FourierElasContainerInstance, FourierElasContainerPtr,
             bases< ResultsContainerInstance > >( "FourierElasContainer", no_init )
-        .def( "__init__", make_constructor(&initFactoryPtr< FourierElasContainerInstance >));
+        .def( "__init__", make_constructor( &initFactoryPtr< FourierElasContainerInstance > ) )
+        .def( "__init__",
+              make_constructor( &initFactoryPtr< FourierElasContainerInstance, std::string > ) );
 };

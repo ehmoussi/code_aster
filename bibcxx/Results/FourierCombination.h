@@ -29,6 +29,7 @@
 #include "astercxx.h"
 
 #include "Results/ResultsContainer.h"
+#include "Supervis/ResultNaming.h"
 
 /**
  * @class FourierCombinationInstance
@@ -40,7 +41,8 @@ class FourierCombinationInstance : public ResultsContainerInstance {
     /**
      * @brief Constructeur
      */
-    FourierCombinationInstance() : ResultsContainerInstance( "COMB_FOURIER" ){};
+    FourierCombinationInstance( const std::string name = ResultNaming::getNewResultName() )
+        : ResultsContainerInstance( name, "COMB_FOURIER" ){};
 };
 
 /**

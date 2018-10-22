@@ -21,8 +21,6 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-// Not a DataStructure
-// aslint: disable=C3006
 
 #include "PythonBindings/CppToFortranGlossaryInterface.h"
 #include "PythonBindings/factory.h"
@@ -32,6 +30,8 @@ void exportCppToFortranGlossaryToPython() {
     using namespace boost::python;
 
     class_< Glossary >( "Glossary", no_init )
+        // fake initFactoryPtr: not a DataStructure
+        // fake initFactoryPtr: not a DataStructure
         .def( "getComponent", &Glossary::getComponent )
         .def( "getIterativeSolverAlgorithm", &Glossary::getIterativeSolverAlgorithm )
         .def( "getLagrangeTreatment", &Glossary::getLagrangeTreatment )

@@ -30,6 +30,8 @@ void exportMatchingMeshesToPython() {
 
     class_< MatchingMeshesInstance, MatchingMeshesInstance::MatchingMeshesPtr,
             bases< DataStructure > >( "MatchingMeshes", no_init )
-        .def( "__init__", make_constructor(&initFactoryPtr< MatchingMeshesInstance >))
+        .def( "__init__", make_constructor( &initFactoryPtr< MatchingMeshesInstance > ) )
+        .def( "__init__",
+              make_constructor( &initFactoryPtr< MatchingMeshesInstance, std::string > ) )
         .def( "setFirstMesh", &MatchingMeshesInstance::setFirstMesh );
 };

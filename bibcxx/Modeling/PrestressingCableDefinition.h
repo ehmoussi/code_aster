@@ -26,17 +26,18 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include <stdexcept>
-#include "astercxx.h"
 #include "DataStructures/DataStructure.h"
+#include "astercxx.h"
+#include <stdexcept>
 
-#include "DataFields/Table.h"
-#include "Loads/ListOfLinearRelations.h"
 #include "DataFields/PCFieldOnMesh.h"
+#include "DataFields/Table.h"
+#include "Discretization/ElementaryCharacteristics.h"
+#include "Loads/ListOfLinearRelations.h"
+#include "Materials/MaterialOnMesh.h"
 #include "Meshes/Mesh.h"
 #include "Modeling/Model.h"
-#include "Discretization/ElementaryCharacteristics.h"
-#include "Materials/MaterialOnMesh.h"
+#include "Supervis/ResultNaming.h"
 
 /**
  * @class PrestressingCableDefinitionInstance

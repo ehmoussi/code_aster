@@ -25,7 +25,7 @@
 
 #include "Meshes/Grid.h"
 
-GridInstance::GridInstance()
-    : MeshInstance( ResultNaming::getNewResultName(), "GRILLE" ),
+GridInstance::GridInstance( const std::string name )
+    : MeshInstance( name, "GRILLE" ),
       _grlr( JeveuxVectorDouble( getName() + ".GRLR" ) ),
       _grli( JeveuxVectorLong( getName() + ".GRLI" ) ){};

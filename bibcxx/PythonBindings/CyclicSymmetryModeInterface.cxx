@@ -30,5 +30,7 @@ void exportCyclicSymmetryModeToPython() {
 
     class_< CyclicSymmetryModeInstance, CyclicSymmetryModeInstance::CyclicSymmetryModePtr,
             bases< DataStructure > >( "CyclicSymmetryMode", no_init )
-        .def( "__init__", make_constructor(&initFactoryPtr< CyclicSymmetryModeInstance >));
+        .def( "__init__", make_constructor( &initFactoryPtr< CyclicSymmetryModeInstance > ) )
+        .def( "__init__",
+              make_constructor( &initFactoryPtr< CyclicSymmetryModeInstance, std::string > ) );
 };

@@ -29,6 +29,7 @@
 #include "astercxx.h"
 
 #include "Results/TimeDependantResultsContainer.h"
+#include "Supervis/ResultNaming.h"
 
 /**
  * @class InputVariableEvolutionContainerInstance
@@ -42,8 +43,9 @@ class InputVariableEvolutionContainerInstance : public TimeDependantResultsConta
     /**
      * @brief Constructeur
      */
-    InputVariableEvolutionContainerInstance()
-        : TimeDependantResultsContainerInstance( "EVOL_VARC" ){};
+    InputVariableEvolutionContainerInstance(
+        const std::string name = ResultNaming::getNewResultName() )
+        : TimeDependantResultsContainerInstance( name, "EVOL_VARC" ){};
 };
 
 /**

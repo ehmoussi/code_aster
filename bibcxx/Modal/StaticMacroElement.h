@@ -29,9 +29,10 @@
 #include "astercxx.h"
 
 #include "DataStructures/DataStructure.h"
-#include "MemoryManager/JeveuxVector.h"
-#include "MemoryManager/JeveuxCollection.h"
 #include "LinearAlgebra/AssemblyMatrix.h"
+#include "MemoryManager/JeveuxCollection.h"
+#include "MemoryManager/JeveuxVector.h"
+#include "Supervis/ResultNaming.h"
 
 /**
  * @class ProjMesuInstance
@@ -122,8 +123,8 @@ class StaticMacroElementInstance : public DataStructure {
     /**
      * @brief Constructeur
      */
-    StaticMacroElementInstance()
-        : DataStructure( "MACR_ELEM_STAT", Permanent, 8 ),
+    StaticMacroElementInstance( const std::string name = ResultNaming::getNewResultName() )
+        : DataStructure( name, 8, "MACR_ELEM_STAT", Permanent ),
           _desm( JeveuxVectorLong( getName() + ".DESM" ) ),
           _lino( JeveuxVectorLong( getName() + ".LINO" ) ),
           _refm( JeveuxVectorChar8( getName() + ".REFM" ) ),

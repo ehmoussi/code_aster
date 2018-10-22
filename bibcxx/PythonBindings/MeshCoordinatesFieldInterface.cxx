@@ -23,9 +23,10 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "PythonBindings/DataStructureInterface.h"
 #include "PythonBindings/MeshCoordinatesFieldInterface.h"
 #include "DataFields/MeshCoordinatesField.h"
+#include "PythonBindings/DataStructureInterface.h"
+#include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
 void exportMeshCoordinatesFieldToPython() {
@@ -33,6 +34,9 @@ void exportMeshCoordinatesFieldToPython() {
 
     class_< MeshCoordinatesFieldInstance, MeshCoordinatesFieldPtr, bases< DataStructure > >(
         "MeshCoordinatesField", no_init )
+        // fake initFactoryPtr: no default constructor, only for restart
+        .def( "__init__",
+              make_constructor( &initFactoryPtr< MeshCoordinatesFieldInstance, std::string > ) )
         .def( "__getitem__",
               +[]( const MeshCoordinatesFieldInstance &v, int i ) { return v.operator[]( i ); } );
 };

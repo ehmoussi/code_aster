@@ -28,12 +28,12 @@
 
 #include "astercxx.h"
 
-#include "MemoryManager/JeveuxVector.h"
 #include "DataStructures/DataStructure.h"
-#include "Studies/FailureConvergenceManager.h"
-#include "Utilities/GenericParameter.h"
+#include "MemoryManager/JeveuxVector.h"
 #include "Results/ResultsContainer.h"
+#include "Studies/FailureConvergenceManager.h"
 #include "Supervis/ResultNaming.h"
+#include "Utilities/GenericParameter.h"
 
 /**
  * @class TimeStepManagerInstance
@@ -73,8 +73,8 @@ class TimeStepManagerInstance : public DataStructure {
     /**
      * @brief Constructeur
      */
-    TimeStepManagerInstance()
-        : DataStructure( ResultNaming::getNewResultName(), 8, "LIST_INST" ),
+    TimeStepManagerInstance( const std::string name = ResultNaming::getNewResultName() )
+        : DataStructure( name, 8, "LIST_INST" ),
           _timeList( JeveuxVectorDouble( getName() + ".LIST.DITR" ) ),
           _infoList( JeveuxVectorDouble( getName() + ".LIST.INFOR" ) ),
           _doubleFailureManagerInfo( JeveuxVectorDouble( getName() + ".ECHE.EVENR" ) ),

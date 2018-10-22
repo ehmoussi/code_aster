@@ -30,5 +30,7 @@ void exportStaticMacroElementToPython() {
 
     class_< StaticMacroElementInstance, StaticMacroElementInstance::StaticMacroElementPtr,
             bases< DataStructure > >( "StaticMacroElement", no_init )
-        .def( "__init__", make_constructor(&initFactoryPtr< StaticMacroElementInstance >));
+        .def( "__init__", make_constructor( &initFactoryPtr< StaticMacroElementInstance > ) )
+        .def( "__init__",
+              make_constructor( &initFactoryPtr< StaticMacroElementInstance, std::string > ) );
 };

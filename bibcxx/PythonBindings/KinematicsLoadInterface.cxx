@@ -62,6 +62,8 @@ void exportKinematicsLoadToPython() {
 
     class_< KinematicsLoadInstance, KinematicsLoadInstance::KinematicsLoadPtr,
             bases< DataStructure > >( "KinematicsLoad", no_init )
+        // fake initFactoryPtr: created by subclasses
+        // fake initFactoryPtr: created by subclasses
         .def( "build", &KinematicsLoadInstance::build )
         .def( "setSupportModel", &KinematicsLoadInstance::setSupportModel );
 

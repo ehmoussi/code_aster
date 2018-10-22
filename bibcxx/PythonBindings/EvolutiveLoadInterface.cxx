@@ -30,5 +30,7 @@ void exportEvolutiveLoadToPython() {
 
     class_< EvolutiveLoadInstance, EvolutiveLoadPtr,
             bases< TimeDependantResultsContainerInstance > >( "EvolutiveLoad", no_init )
-        .def( "__init__", make_constructor(&initFactoryPtr< EvolutiveLoadInstance >));
+        .def( "__init__", make_constructor( &initFactoryPtr< EvolutiveLoadInstance > ) )
+        .def( "__init__",
+              make_constructor( &initFactoryPtr< EvolutiveLoadInstance, std::string > ) );
 };

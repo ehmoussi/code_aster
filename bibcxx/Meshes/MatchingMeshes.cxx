@@ -25,8 +25,8 @@
 
 #include "Meshes/MatchingMeshes.h"
 
-MatchingMeshesInstance::MatchingMeshesInstance()
-    : DataStructure( "CORRESP_2_MAILLA", Permanent, 16 ),
+MatchingMeshesInstance::MatchingMeshesInstance( const std::string name )
+    : DataStructure( name, 16, "CORRESP_2_MAILLA", Permanent ),
       _pjxxK1( JeveuxVectorChar24( getName() + ".PJXX_K1" ) ),
       _pjefNb( JeveuxVectorLong( getName() + ".PJEF_NB" ) ),
       _pjefNu( JeveuxVectorLong( getName() + ".PJEF_NU" ) ),

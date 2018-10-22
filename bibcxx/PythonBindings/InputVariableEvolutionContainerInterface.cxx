@@ -32,5 +32,8 @@ void exportInputVariableEvolutionContainerToPython() {
             bases< TimeDependantResultsContainerInstance > >( "InputVariableEvolutionContainer",
                                                               no_init )
         .def( "__init__",
-              make_constructor(&initFactoryPtr< InputVariableEvolutionContainerInstance >));
+              make_constructor( &initFactoryPtr< InputVariableEvolutionContainerInstance > ) )
+        .def( "__init__",
+              make_constructor(
+                  &initFactoryPtr< InputVariableEvolutionContainerInstance, std::string > ) );
 };

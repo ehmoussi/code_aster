@@ -30,7 +30,9 @@ void exportGeneralizedModelToPython() {
 
     class_< GeneralizedModelInstance, GeneralizedModelInstance::GeneralizedModelPtr,
             bases< DataStructure > >( "GeneralizedModel", no_init )
-        .def( "__init__", make_constructor(&initFactoryPtr< GeneralizedModelInstance >))
+        .def( "__init__", make_constructor( &initFactoryPtr< GeneralizedModelInstance > ) )
+        .def( "__init__",
+              make_constructor( &initFactoryPtr< GeneralizedModelInstance, std::string > ) )
         .def( "addDynamicMacroElement", &GeneralizedModelInstance::addDynamicMacroElement )
         .def( "getDynamicMacroElementFromName",
               &GeneralizedModelInstance::getDynamicMacroElementFromName );

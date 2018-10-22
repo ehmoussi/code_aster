@@ -40,7 +40,8 @@ class EvolutiveLoadInstance : public TimeDependantResultsContainerInstance {
     /**
      * @brief Constructeur
      */
-    EvolutiveLoadInstance() : TimeDependantResultsContainerInstance( "EVOL_CHAR" ){};
+    EvolutiveLoadInstance( const std::string name = ResultNaming::getNewResultName() )
+        : TimeDependantResultsContainerInstance( name, "EVOL_CHAR" ){};
 };
 
 /**

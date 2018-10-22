@@ -29,6 +29,7 @@ void exportNormalModeAnalysisToPython() {
     using namespace boost::python;
 
     class_< NormalModeAnalysisInstance, NormalModeAnalysisPtr >( "NormalModeAnalysis", no_init )
+        // fake initFactoryPtr: not a DataStructure
         .def( "__init__", make_constructor(&initFactoryPtr< NormalModeAnalysisInstance >))
         .def( "execute", &NormalModeAnalysisInstance::execute )
         .def( "setMassMatrix", &NormalModeAnalysisInstance::setMassMatrix )

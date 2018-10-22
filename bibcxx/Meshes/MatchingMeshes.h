@@ -29,7 +29,7 @@
 #include "astercxx.h"
 #include "DataStructures/DataStructure.h"
 #include "MemoryManager/JeveuxVector.h"
-
+#include "Supervis/ResultNaming.h"
 #include "Meshes/Mesh.h"
 
 /**
@@ -74,7 +74,7 @@ class MatchingMeshesInstance : public DataStructure {
     /**
      * @brief Constructeur
      */
-    MatchingMeshesInstance();
+    MatchingMeshesInstance( const std::string name = ResultNaming::getNewResultName() );
 
     bool setFirstMesh( MeshPtr &currentMesh ) throw( std::runtime_error ) {
         if ( currentMesh->isEmpty() )

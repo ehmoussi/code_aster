@@ -21,6 +21,9 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+// Not a DataStructure
+// aslint: disable=C3006
+
 #include "PythonBindings/FailureConvergenceManagerInterface.h"
 #include "PythonBindings/factory.h"
 #include <boost/python.hpp>
