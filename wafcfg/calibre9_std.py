@@ -37,7 +37,7 @@ def configure(self):
     opts = self.options
 
     official_programs.configure(self)
-    official_programs.check_prerequisites_package(self, YAMMROOT, '20180417')
+    official_programs.check_prerequisites_package(self, YAMMROOT, '20181019')
 
     self.env.append_value('CXXFLAGS', ['-D_GLIBCXX_USE_CXX11_ABI=0'])
     self.env['ADDMEM'] = 350
