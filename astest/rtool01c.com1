@@ -19,6 +19,9 @@
 
 # Reecriture des liaisons cinématiques pour les DDLs rélachés (via Rtool)
 
+POURSUITE(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
+
+
 BLOQ = AFFE_CHAR_MECA(
     MODELE= MODEL,
     LIAISON_ELEM=(
@@ -30,3 +33,4 @@ BLOQ = AFFE_CHAR_MECA(
         _F(GROUP_MA_1='GCharEnew_3233', GROUP_NO_2='GCharNold_14', OPTION='PLAQ_POUT_ORTH', VERIF_EXCENT='NON',),
     ),
 )
+FIN()
