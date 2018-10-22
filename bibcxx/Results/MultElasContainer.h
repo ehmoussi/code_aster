@@ -27,6 +27,7 @@
 #include "astercxx.h"
 
 #include "Results/ResultsContainer.h"
+#include "Supervis/ResultNaming.h"
 
 /**
  * @class MultElasContainerInstance
@@ -39,7 +40,8 @@ class MultElasContainerInstance : public ResultsContainerInstance {
     /**
      * @brief Constructeur
      */
-    MultElasContainerInstance() : ResultsContainerInstance( "MULT_ELAS" ){};
+    MultElasContainerInstance( const std::string name = ResultNaming::getNewResultName() )
+        : ResultsContainerInstance( name, "MULT_ELAS" ){};
 };
 
 /**

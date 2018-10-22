@@ -33,6 +33,8 @@ void exportFunctionToPython() {
 
     class_< BaseFunctionInstance, BaseFunctionInstance::BaseFunctionPtr,
             bases< GenericFunctionInstance > >( "BaseFunction", no_init )
+        // fake initFactoryPtr: created by subclasses
+        // fake initFactoryPtr: created by subclasses
         .def( "setParameterName", &FunctionInstance::setParameterName )
         .def( "setResultName", &FunctionInstance::setResultName )
         .def( "setInterpolation", &FunctionInstance::setInterpolation )

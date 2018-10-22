@@ -21,6 +21,8 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+// Not DataStructures
+// aslint: disable=C3006
 #include "PythonBindings/MaterialBehaviourInterface.h"
 #include "PythonBindings/factory.h"
 #include <boost/python.hpp>
@@ -30,7 +32,8 @@ void exportMaterialBehaviourToPython() {
 
     class_< GeneralMaterialBehaviourInstance, GeneralMaterialBehaviourPtr >(
         "GeneralMaterialBehaviour", no_init )
-        .def( "__init__", make_constructor(&initFactoryPtr< GeneralMaterialBehaviourInstance >))
+        // fake initFactoryPtr: created by subclasses
+        // fake initFactoryPtr: created by subclasses
         .def( "getAsterName", &GeneralMaterialBehaviourInstance::getAsterName )
         .def( "hasTractionFunction", &GeneralMaterialBehaviourInstance::hasTractionFunction )
         .def( "setComplexValue", &GeneralMaterialBehaviourInstance::setComplexValue )

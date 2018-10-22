@@ -32,6 +32,8 @@ void exportGeneralizedAssemblyVectorToPython() {
 
     class_< GenericGeneralizedAssemblyVectorInstance, GenericGeneralizedAssemblyVectorPtr,
             bases< DataStructure > >( "GeneralizedAssemblyVector", no_init );
+        // fake initFactoryPtr: created by subclasses
+        // fake initFactoryPtr: created by subclasses
 
     class_< GeneralizedAssemblyVectorDoubleInstance, GeneralizedAssemblyVectorDoublePtr,
             bases< GenericGeneralizedAssemblyVectorInstance > >( "GeneralizedAssemblyVectorDouble",

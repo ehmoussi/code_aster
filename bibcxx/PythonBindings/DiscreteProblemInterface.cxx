@@ -36,6 +36,7 @@ void exportDiscreteProblemToPython() {
         "DiscreteProblem", no_init )
         .def( "__init__",
               make_constructor(&initFactoryPtr< DiscreteProblemInstance, StudyDescriptionPtr >))
+        // fake initFactoryPtr: not a DataStructure
         .def( "buildElementaryMechanicalLoadsVector",
               &DiscreteProblemInstance::buildElementaryMechanicalLoadsVector )
         .def( "buildElementaryDirichletVector",

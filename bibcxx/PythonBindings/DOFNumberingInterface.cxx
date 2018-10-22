@@ -33,6 +33,8 @@ void exportDOFNumberingToPython() {
 
     class_< BaseDOFNumberingInstance, BaseDOFNumberingInstance::BaseDOFNumberingPtr,
             bases< DataStructure > > c1( "BaseDOFNumbering", no_init );
+    // fake initFactoryPtr: created by subclasses
+    // fake initFactoryPtr: created by subclasses
     c1.def( "addFiniteElementDescriptor", &BaseDOFNumberingInstance::addFiniteElementDescriptor );
     c1.def( "computeNumbering", &BaseDOFNumberingInstance::computeNumbering );
     c1.def( "getFiniteElementDescriptors", &BaseDOFNumberingInstance::getFiniteElementDescriptors );

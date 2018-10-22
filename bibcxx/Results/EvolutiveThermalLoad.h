@@ -29,6 +29,7 @@
 #include "astercxx.h"
 
 #include "Results/TimeDependantResultsContainer.h"
+#include "Supervis/ResultNaming.h"
 
 /**
  * @class EvolutiveThermalLoadInstance
@@ -40,7 +41,8 @@ class EvolutiveThermalLoadInstance : public TimeDependantResultsContainerInstanc
     /**
      * @brief Constructeur
      */
-    EvolutiveThermalLoadInstance() : TimeDependantResultsContainerInstance( "EVOL_THER" ){};
+    EvolutiveThermalLoadInstance( const std::string name = ResultNaming::getNewResultName() )
+        : TimeDependantResultsContainerInstance( name, "EVOL_THER" ){};
 };
 
 /**

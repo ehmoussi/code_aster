@@ -30,5 +30,7 @@ void exportEvolutiveThermalLoadToPython() {
 
     class_< EvolutiveThermalLoadInstance, EvolutiveThermalLoadPtr,
             bases< TimeDependantResultsContainerInstance > >( "EvolutiveThermalLoad", no_init )
-        .def( "__init__", make_constructor(&initFactoryPtr< EvolutiveThermalLoadInstance >));
+        .def( "__init__", make_constructor( &initFactoryPtr< EvolutiveThermalLoadInstance > ) )
+        .def( "__init__",
+              make_constructor( &initFactoryPtr< EvolutiveThermalLoadInstance, std::string > ) );
 };

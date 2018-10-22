@@ -43,6 +43,7 @@ void exportNonLinearMethodToPython() {
         "MatriceElastique", MatriceElastique );
 
     class_< NonLinearMethodInstance, NonLinearMethodPtr >( "NonLinearMethod", no_init )
+        // fake initFactoryPtr: not a DataStructure
         .def( "__init__",
               make_constructor(&initFactoryPtr< NonLinearMethodInstance, NonLinearMethodEnum >))
         .def( "setPrediction", &NonLinearMethodInstance::setPrediction )

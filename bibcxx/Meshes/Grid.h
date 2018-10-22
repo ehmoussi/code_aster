@@ -26,9 +26,10 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "astercxx.h"
-#include "Meshes/Mesh.h"
 #include "MemoryManager/JeveuxVector.h"
+#include "Meshes/Mesh.h"
+#include "Supervis/ResultNaming.h"
+#include "astercxx.h"
 
 /**
  * @class GridInstance
@@ -52,7 +53,7 @@ class GridInstance : public MeshInstance {
     /**
      * @brief Constructeur
      */
-    GridInstance();
+    GridInstance( const std::string name = ResultNaming::getNewResultName() );
 };
 
 /**

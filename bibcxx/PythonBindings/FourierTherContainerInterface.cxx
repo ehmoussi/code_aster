@@ -30,5 +30,7 @@ void exportFourierTherContainerToPython() {
 
     class_< FourierTherContainerInstance, FourierTherContainerPtr,
             bases< ResultsContainerInstance > >( "FourierTherContainer", no_init )
-        .def( "__init__", make_constructor(&initFactoryPtr< FourierTherContainerInstance >));
+        .def( "__init__", make_constructor( &initFactoryPtr< FourierTherContainerInstance > ) )
+        .def( "__init__",
+              make_constructor( &initFactoryPtr< FourierTherContainerInstance, std::string > ) );
 };

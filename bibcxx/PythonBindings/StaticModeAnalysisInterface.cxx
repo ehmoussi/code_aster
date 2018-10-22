@@ -30,6 +30,7 @@ void exportStaticModeAnalysisToPython() {
 
     class_< StaticModeDeplInstance, StaticModeDeplPtr >( "StaticModeDepl", no_init )
         .def( "__init__", make_constructor(&initFactoryPtr< StaticModeDeplInstance >))
+        // fake initFactoryPtr: not a DataStructure
         .def( "setMassMatrix", &StaticModeDeplInstance::setMassMatrix )
         .def( "setStiffMatrix", &StaticModeDeplInstance::setStiffMatrix )
         .def( "setLinearSolver", &StaticModeDeplInstance::setLinearSolver )
@@ -42,6 +43,7 @@ void exportStaticModeAnalysisToPython() {
 
     class_< StaticModeForcInstance, StaticModeForcPtr >( "StaticModeForc", no_init )
         .def( "__init__", make_constructor(&initFactoryPtr< StaticModeForcInstance >))
+        // fake initFactoryPtr: not a DataStructure
         .def( "setMassMatrix", &StaticModeForcInstance::setMassMatrix )
         .def( "setStiffMatrix", &StaticModeForcInstance::setStiffMatrix )
         .def( "setLinearSolver", &StaticModeForcInstance::setLinearSolver )
@@ -54,6 +56,7 @@ void exportStaticModeAnalysisToPython() {
 
     class_< StaticModePseudoInstance, StaticModePseudoPtr >( "StaticModePseudo", no_init )
         .def( "__init__", make_constructor(&initFactoryPtr< StaticModePseudoInstance >))
+        // fake initFactoryPtr: not a DataStructure
         .def( "setMassMatrix", &StaticModePseudoInstance::setMassMatrix )
         .def( "setStiffMatrix", &StaticModePseudoInstance::setStiffMatrix )
         .def( "setLinearSolver", &StaticModePseudoInstance::setLinearSolver )
@@ -69,6 +72,7 @@ void exportStaticModeAnalysisToPython() {
 
     class_< StaticModeInterfInstance, StaticModeInterfPtr >( "StaticModeInterf", no_init )
         .def( "__init__", make_constructor(&initFactoryPtr< StaticModeInterfInstance >))
+        // fake initFactoryPtr: not a DataStructure
         .def( "setMassMatrix", &StaticModeInterfInstance::setMassMatrix )
         .def( "setStiffMatrix", &StaticModeInterfInstance::setStiffMatrix )
         .def( "setLinearSolver", &StaticModeInterfInstance::setLinearSolver )

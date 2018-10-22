@@ -32,6 +32,7 @@
 #include "MemoryManager/JeveuxVector.h"
 #include "MemoryManager/JeveuxCollection.h"
 #include "Modal/DynamicMacroElement.h"
+#include "Supervis/ResultNaming.h"
 
 /**
  * @class GeneralizedModelInstance
@@ -71,8 +72,8 @@ class GeneralizedModelInstance : public DataStructure {
     /**
      * @brief Constructeur
      */
-    GeneralizedModelInstance()
-        : DataStructure( "MODELE_GENE", Permanent, 14 ),
+    GeneralizedModelInstance( const std::string name = ResultNaming::getNewResultName())
+        : DataStructure( name, 14, "MODELE_GENE", Permanent ),
           _modgDesc( JeveuxVectorLong( getName() + ".MODG.DESC" ) ),
           _modgLidf( JeveuxCollectionChar8( getName() + ".MODG.DESC" ) ),
           _modgLipr( JeveuxVectorLong( getName() + ".MODG.DESC" ) ),

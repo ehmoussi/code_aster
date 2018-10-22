@@ -33,6 +33,8 @@ void exportMeshToPython() {
     using namespace boost::python;
     class_< BaseMeshInstance, BaseMeshInstance::BaseMeshPtr, bases< DataStructure > >( "BaseMesh",
                                                                                        no_init )
+        // fake initFactoryPtr: created by subclass
+        // fake initFactoryPtr: created by subclass
         //         .def( "getCoordinates", +[](const BaseMeshInstance& v)
         //         {
         //             return ConstViewer<MeshCoordinatesFieldInstance>( v.getCoordinates() );

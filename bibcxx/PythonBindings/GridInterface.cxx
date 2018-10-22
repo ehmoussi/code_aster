@@ -29,5 +29,6 @@ void exportGridToPython() {
     using namespace boost::python;
 
     class_< GridInstance, GridInstance::GridPtr, bases< MeshInstance > >( "Grid", no_init )
-        .def( "__init__", make_constructor(&initFactoryPtr< GridInstance >));
+        .def( "__init__", make_constructor( &initFactoryPtr< GridInstance > ) )
+        .def( "__init__", make_constructor( &initFactoryPtr< GridInstance, std::string > ) );
 };

@@ -32,6 +32,8 @@ void exportModalBasisDefinitionToPython() {
 
     class_< GenericModalBasisInstance, GenericModalBasisInstance::GenericModalBasisPtr,
             bases< DataStructure > >( "GenericModalBasis", no_init );
+        // fake initFactoryPtr: created by subclass
+        // fake initFactoryPtr: created by subclass
 
     class_< StandardModalBasisInstance, StandardModalBasisInstance::StandardModalBasisPtr,
             bases< GenericModalBasisInstance > >( "StandardModalBasis", no_init )

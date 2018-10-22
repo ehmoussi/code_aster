@@ -23,16 +23,18 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include <boost/python.hpp>
-#include <PythonBindings/factory.h>
 #include "PythonBindings/GeneralizedAssemblyMatrixInterface.h"
 #include "Discretization/GeneralizedDOFNumbering.h"
+#include <PythonBindings/factory.h>
+#include <boost/python.hpp>
 
 void exportGeneralizedAssemblyMatrixToPython() {
     using namespace boost::python;
 
     class_< GenericGeneralizedAssemblyMatrixInstance, GenericGeneralizedAssemblyMatrixPtr,
             bases< DataStructure > >( "GeneralizedAssemblyMatrix", no_init )
+        // fake initFactoryPtr: created by subclasses
+        // fake initFactoryPtr: created by subclasses
         .def( "getGeneralizedDOFNumbering",
               &GenericGeneralizedAssemblyMatrixInstance::getGeneralizedDOFNumbering )
         .def( "setGeneralizedDOFNumbering",
@@ -42,17 +44,17 @@ void exportGeneralizedAssemblyMatrixToPython() {
             bases< GenericGeneralizedAssemblyMatrixInstance > >( "GeneralizedAssemblyMatrixDouble",
                                                                  no_init )
         .def( "__init__",
-              make_constructor(&initFactoryPtr< GeneralizedAssemblyMatrixDoubleInstance >))
+              make_constructor( &initFactoryPtr< GeneralizedAssemblyMatrixDoubleInstance > ) )
         .def( "__init__",
               make_constructor(
-                  &initFactoryPtr< GeneralizedAssemblyMatrixDoubleInstance, std::string >));
+                  &initFactoryPtr< GeneralizedAssemblyMatrixDoubleInstance, std::string > ) );
 
     class_< GeneralizedAssemblyMatrixComplexInstance, GeneralizedAssemblyMatrixComplexPtr,
             bases< GenericGeneralizedAssemblyMatrixInstance > >( "GeneralizedAssemblyMatrixComplex",
                                                                  no_init )
         .def( "__init__",
-              make_constructor(&initFactoryPtr< GeneralizedAssemblyMatrixComplexInstance >))
+              make_constructor( &initFactoryPtr< GeneralizedAssemblyMatrixComplexInstance > ) )
         .def( "__init__",
               make_constructor(
-                  &initFactoryPtr< GeneralizedAssemblyMatrixComplexInstance, std::string >));
+                  &initFactoryPtr< GeneralizedAssemblyMatrixComplexInstance, std::string > ) );
 };

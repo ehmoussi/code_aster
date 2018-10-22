@@ -27,6 +27,7 @@
 #include "astercxx.h"
 
 #include "Results/ResultsContainer.h"
+#include "Supervis/ResultNaming.h"
 
 /**
  * @class FourierElasContainerInstance
@@ -39,7 +40,8 @@ class FourierElasContainerInstance : public ResultsContainerInstance {
     /**
      * @brief Constructeur
      */
-    FourierElasContainerInstance() : ResultsContainerInstance( "FOURIER_ELAS" ){};
+    FourierElasContainerInstance( const std::string name = ResultNaming::getNewResultName() )
+        : ResultsContainerInstance( name, "FOURIER_ELAS" ){};
 };
 
 /**

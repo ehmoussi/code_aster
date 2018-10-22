@@ -35,4 +35,5 @@ void exportLineSearchMethodToPython() {
 
     class_< LineSearchMethodInstance, LineSearchMethodPtr >( "LineSearchMethod", no_init ).def(
         "__init__", make_constructor(&initFactoryPtr< LineSearchMethodInstance, LineSearchEnum >));
+        // fake initFactoryPtr: not a DataStructure
 };

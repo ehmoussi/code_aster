@@ -26,10 +26,10 @@
 
 #include "astercxx.h"
 
-#include "Solvers/GenericSolver.h"
 #include "LinearAlgebra/AssemblyMatrix.h"
-#include "Utilities/CapyConvertibleValue.h"
 #include "Results/MechanicalModeContainer.h"
+#include "Solvers/GenericSolver.h"
+#include "Utilities/CapyConvertibleValue.h"
 
 class NormalModeAnalysisInstance : public GenericSolver {
   private:

@@ -29,6 +29,8 @@ void exportResultNamingToPython() {
     using namespace boost::python;
 
     class_< ResultNaming >( "ResultNaming", no_init )
+        // fake initFactoryPtr: not a DataStructure
+        // fake initFactoryPtr: not a DataStructure
         .def( "initCounter", &ResultNaming::initCounter )
         .staticmethod( "initCounter" )
         .def( "getNewResultName", &ResultNaming::getNewResultName )
