@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-POURSUITE(CODE=_F(NIV_PUB_WEB='INTERNET',),
+POURSUITE(CODE=_F(NIV_PUB_WEB='INTERNET',),)
 
 # Nombre de frequences utiles
 NF=8
