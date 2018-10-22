@@ -37,7 +37,7 @@ def configure(self):
     opts = self.options
 
     official_programs.configure(self)
-    official_programs.check_prerequisites_package(self, YAMMROOT, '20180413')
+    official_programs.check_prerequisites_package(self, YAMMROOT, '20180830')
 
 #   for using metis with standard integer (since Metis_aster-510_aster4)
     self.env.append_value('CFLAGS', ['-DINTSIZE32'])
