@@ -1,0 +1,167 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+POURSUITE(CODE='OUI');
+
+MAIL=DEFI_GROUP(reuse =MAIL,
+                MAILLAGE=MAIL,
+                CREA_GROUP_NO=_F(GROUP_MA=('SRADIER'),),);
+
+CH_CLDYN=AFFE_CHAR_MECA(MODELE=MODELE,
+                        DDL_IMPO=_F(GROUP_NO=('SRADIER'),
+                                    DX=0.0,
+                                    DY=0.0,
+                                    DZ=0.0,
+                                    DRX=0.0,
+                                    DRY=0.0,
+                                    DRZ=0.0,),);
+
+RIGIELEM=CALC_MATR_ELEM(OPTION='RIGI_MECA',
+                        MODELE=MODELE,
+                        CHARGE=CH_CLDYN,
+                        CHAM_MATER=MATER,
+                        CARA_ELEM = ELEM);
+
+MASELEM=CALC_MATR_ELEM(OPTION='MASS_MECA',
+                       MODELE=MODELE,
+                       CHARGE=CH_CLDYN,
+                        CHAM_MATER=MATER,
+                       CARA_ELEM = ELEM);
+
+NUM_DYN=NUME_DDL(MATR_RIGI=RIGIELEM,);
+
+MATMASS=ASSE_MATRICE(MATR_ELEM=MASELEM,
+                     NUME_DDL=NUM_DYN,);
+
+MATRIGI=ASSE_MATRICE(MATR_ELEM=RIGIELEM,
+                     NUME_DDL=NUM_DYN,);
+
+
+#
+#-----------------------------------------
+#      calcul des masses
+#-----------------------------------------
+#
+#
+#
+# MASSES = POST_ELEM (
+#                        MODELE     = MODELE,
+#                        INFO       = 1,
+#                        CHAM_MATER = MATER,
+#                        CARA_ELEM  = ELEM,
+#                        MASS_INER  = _F(TOUT ='OUI',),
+#                      ) ;
+#
+#
+# ----------------------------------------------------------
+# calcul des modes propres par bandes successives
+# ----------------------------------------------------------
+#
+#
+#
+MOD_DYN=CALC_MODES(MATR_RIGI=MATRIGI,
+                   VERI_MODE=_F(STURM='LOCAL',
+                                ),
+                   OPTION='BANDE',
+                   CALC_FREQ=_F(FREQ=(0.1,4.,5.,6.,7.,8.,9.,10.,11.,12.,),
+                                ),
+                   MATR_MASS=MATMASS,
+                   FILTRE_MODE=_F(CRIT_EXTR='MASS_EFFE_UN',
+                                  SEUIL=1.E-3,),
+                   NORM_MODE=_F(INFO=1,
+                                NORME='TRAN_ROTA',),
+                   )
+
+
+CH_CLSTA=AFFE_CHAR_MECA(MODELE=MODELE,
+                        DDL_IMPO=_F(GROUP_NO=('PO'),
+                                    DX=0.0,
+                                    DY=0.0,
+                                    DZ=0.0,
+                                    DRX=0.0,
+                                    DRY=0.0,
+                                    DRZ=0.0,),
+                        LIAISON_SOLIDE=_F(GROUP_NO=('SRADIER'),),);
+
+STARIELE=CALC_MATR_ELEM(OPTION='RIGI_MECA',
+                        MODELE=MODELE,
+                        CHARGE=CH_CLSTA,
+                        CHAM_MATER=MATER,
+                        CARA_ELEM = ELEM);
+
+STAMAELE=CALC_MATR_ELEM(OPTION='MASS_MECA',
+                        MODELE=MODELE,
+                        CHARGE=CH_CLSTA,
+                        CHAM_MATER=MATER,
+                        CARA_ELEM = ELEM);
+
+NUM_STA=NUME_DDL(MATR_RIGI=STARIELE,);
+
+MASSETAT=ASSE_MATRICE(MATR_ELEM=STAMAELE,
+                      NUME_DDL=NUM_STA,);
+
+RIGISTAT=ASSE_MATRICE(MATR_ELEM=STARIELE,
+                      NUME_DDL=NUM_STA,);
+
+MOD_STA=MODE_STATIQUE(MATR_RIGI=RIGISTAT,
+                      MATR_MASS=MASSETAT,
+                      MODE_STAT=_F(GROUP_NO='PO',
+                                  TOUT_CMP='OUI',),);
+
+BASMO=DEFI_BASE_MODALE(RITZ=(_F(MODE_MECA=MOD_DYN,),
+                             _F(NMAX_MODE=6,
+                                MODE_INTF=MOD_STA,),),
+                       NUME_REF=NUM_DYN,);
+
+#-----------------------------
+#
+#    DEFI_FONCTION : UL 31
+#    ACCELEROGRAMME : ACC1.C2
+#
+#-----------------------------
+#
+#    DEFI_FONCTION : UL 32
+#    ACCELEROGRAMME : ACC2.C2
+#
+#-----------------------------
+#
+#    DEFI_FONCTION : UL 33
+#    ACCELEROGRAMME : ACC3.C2
+#
+#
+listinst = DEFI_LIST_REEL(DEBUT=0.0,
+             INTERVALLE=_F(JUSQU_A=20.47, PAS=0.01),
+                          );
+from sdlx101a import F_FONC
+ACCE1, ACCE2, ACCE3 = F_FONC()
+
+ACCE_X=CALC_FONCTION(COMB=_F(FONCTION=ACCE1,
+                             COEF=9.8100000000000005,),
+                             LIST_PARA=listinst);
+
+ACCE_Y=CALC_FONCTION(COMB=_F(FONCTION=ACCE2,
+                             COEF=9.8100000000000005,),
+                             LIST_PARA=listinst);
+
+ACCE_Z=CALC_FONCTION(COMB=_F(FONCTION=ACCE3,
+                             COEF=6.54,),
+                             LIST_PARA=listinst);
+
+
+FIN()

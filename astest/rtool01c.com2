@@ -22,7 +22,7 @@
 # person_in_charge : stefano.cherubini@edf.fr
 #
 
-POURSUITE(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
+POURSUITE(CODE='OUI',DEBUG=_F(SDVERI='OUI'))
 # Definition des conditions limites d'encastrement
 
 BLOQ2 = AFFE_CHAR_MECA(MODELE   = MODEL,

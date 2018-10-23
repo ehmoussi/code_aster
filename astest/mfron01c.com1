@@ -16,7 +16,8 @@
 # You should have received a copy of the GNU General Public License
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
-POURSUITE(CODE=_F(NIV_PUB_WEB='INTERNET',),PAR_LOT='OUI');
+
+POURSUITE(CODE='OUI',PAR_LOT='OUI');
 
 #######################################################################
 
