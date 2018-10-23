@@ -130,7 +130,8 @@ ASSEMBLAGE(MODELE=MODELE,
                       _F(MATRICE=CO('AMOR'),
                          OPTION='AMOR_MECA',),),);
 
-INCLUDE(UNITE=28,);
+from sdls140a import F_FONC
+sinus = F_FONC()
 
 fsin1 = FORMULE(NOM_PARA='INST', VALE='sinus(INST-1.0) ',sinus=sinus)
 
