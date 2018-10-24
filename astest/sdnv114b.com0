@@ -1,18 +1,23 @@
-# coding: utf-8
-# Parameters for the DHRC law
-
-# Project properties of the DHRC identification tool
-#   project name        : SDNV114_Voile
-#   working directory   : /home/TT246F9N/DHRC/Tache_3/DHRC_plug_in
-#   template directory  : /home/TT246F9N/dev/smeca/salome-meca-dhrc/share/dhrc
-#   created on          : mer. 23 sept. 2015 11:52:07 CEST
-#   by DHRC plugin version 0.1 - Salome-Meca 
-
-# Include this file using the INCLUDE operator of Code_Aster.
-# It creates a material called "mat_dhrc" that you should pass to AFFE_MATERIAU.
-# It uses the International System of Units (metre, kilogram and second)
-
-
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+POURSUITE(CODE='OUI', DEBUG=_F(SDVERI='OUI',),)
+ 
 DHRC_V = DEFI_MATERIAU(
     ELAS_DHRC = _F(
         A0 = [7459996997.2751589, 1469351593.4644833, 0.0, 0.0, 0.0, 0.0, 7458669347.2547302, 0.0, 0.0, 0.0, 0.0, 2776923654.6810207, 0.0, 0.0, 0.0, 25805083.369712371, 5001772.249118886, 0.0, 25471100.713351842, 0.0, 12111062.804935826],
@@ -32,3 +37,5 @@ DHRC_V = DEFI_MATERIAU(
         GC = [0.21002370928548122, 1.0, 1.0, 0.21710503539266407, 0.21002370939183607, 1.0, 1.0, 0.21710503524008867],
     ),
 )
+
+FIN();

@@ -6,9 +6,9 @@ P mpi_nbnoeud 1
 P testlist verification sequential
 
 F comm zzzz186a.comm D 1
+F comm zzzz186a.com1 D 1
 F datg zzzz186a.datg D 16
-F msh zzzz186a.msh D 19
+F msh  zzzz186a.msh  D 19
 F mmed zzzz186a.mmed D 20
-F libr zzzz186a.21 D 21
-F libr zzzz186a.40 D 40
-F libr zzzz186a.41 D 41
+F libr zzzz186a.21   D 21
+
