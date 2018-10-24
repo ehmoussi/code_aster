@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -16,18 +16,6 @@
 # You should have received a copy of the GNU General Public License
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
-
-import math
-
-try:
-  # Import du module de calcul symbolique Sympy
-  import sympy
-  sympy_available = True
-  # cet import inutile est du au plantage sur la machine clpaster (fiche 17434)
-  import numpy
-except ImportError:
-  sympy_available = False
-
 
 # ================================================================================================================================================================================
 def NormeAster(RESULTAT, Sol_Ana, MAIL, MODELE, GROUP_MA):
@@ -172,7 +160,8 @@ ACIER=DEFI_MATERIAU(THER=_F(LAMBDA=Lambda),);
 #          Creation de la solution manufacturee
 # ========================================================================================
 
-INCLUDE(UNITE=38)
+from tplp107b import Solu_Manu
+TT, SS, NN = Solu_Manu()
 
 #================================================================================================
 # Debut de l'etude de la convergence

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -16,53 +16,85 @@
 # You should have received a copy of the GNU General Public License
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
-
 #
 POURSUITE(CODE='OUI',
-          LANG='DE')
+          LANG='EN')
 
-RESUR1=REST_GENE_PHYS(  RESU_GENE=TRAN_GE1,
-                        LIST_INST=LISTIMP,
-                        INTERPOL='LIN',
-                        NOM_CHAM='DEPL',
-                       )
+DEPL2 = FORMULE(NOM_PARA='INST',VALE='sin(OMEGAA*INST)/(OMEGAA**xx)',
+                OMEGAA=OMEGAA, xx=xx)
+DEPLACE2=CALC_FONC_INTERP( FONCTION=DEPL2,
+                           LIST_PARA=L_INST,
+                           NOM_PARA='INST',
+                           PROL_DROITE='LINEAIRE',
+                           PROL_GAUCHE='LINEAIRE',
+                           NOM_RESU='DEPL'       )
+
+MONO_X=CALC_CHAR_SEISME(  MATR_MASS=MASSE,
+                          DIRECTION=( 1., 0., 0.,),
+                          MONO_APPUI='OUI' )
 
 
-NO2_DXA=RECU_FONCTION(  NOEUD='NO2',  NOM_CMP='DX',  NOM_CHAM='DEPL',
-                        RESULTAT=RESUA1,
-                        LIST_INST=LISTIMP,   INTERPOL='LIN' )
+PROJ_BASE(BASE=MODE_MEC,MATR_ASSE_GENE=(
+          _F( MATRICE = CO("MASS_GEN"), MATR_ASSE = MASSE),
+          _F( MATRICE = CO("RIGI_GEN"), MATR_ASSE = RIGIDITE)),
+          VECT_ASSE_GENE=_F( VECTEUR = CO("VECT_X"), VECT_ASSE = MONO_X)
+         )
 
-NO2_DX_A=RECU_FONCTION(  NOEUD='NO2',  NOM_CMP='DX',  NOM_CHAM='DEPL',
-                         RESU_GENE=TRAN_GE2,
-                         MULT_APPUI='OUI',        INTERP_NUME='LIN',
-                         LIST_INST=LISTIMP,   INTERPOL='LIN' )
+MUR=DEFI_OBSTACLE(TYPE='PLAN_Z',)
 
-DIFF=CALC_FONCTION(COMB=(
-               _F(  FONCTION = NO2_DX_A,  COEF = 1.),
-               _F(  FONCTION = NO2_DXA,   COEF = -1.))
-                    )
+TRAN_GE1=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='GENE',
+                         SCHEMA_TEMPS=_F(SCHEMA='DIFF_CENTRE'),
+                         MATR_MASS=MASS_GEN,
+                         MATR_RIGI=RIGI_GEN,
+                         MODE_STAT=MODE_STA,
+                         AMOR_MODAL=_F(AMOR_REDUIT=0.07,),
+                         INCREMENT=_F(INST_INIT=0.0,
+                                      INST_FIN=1.0,
+                                      PAS=2.0E-4,),
+                         ARCHIVAGE=_F(PAS_ARCH=8,),
+                         EXCIT=_F(VECT_ASSE_GENE=VECT_X,
+                                  ACCE=ACCELER1,
+                                  VITE=VITESSE1,
+                                  DEPL=DEPLACE1,
+                                  MULT_APPUI='OUI',
+                                  DIRECTION=(1.0,0.0,0.0,),
+                                  NOEUD='NO1',),
+                         COMPORTEMENT=_F(RELATION='DIS_CHOC',
+                                 INTITULE='NO2/MUR',
+                                 GROUP_NO_1='MASSES',
+                                 OBSTACLE=MUR,
+                                 ORIG_OBST=(-1.0,0.0,0.0,),
+                                 NORM_OBST=(0.0,0.0,1.0,),
+                                 JEU=1.1005,
+                                 RIGI_NOR=5.76E7,
+                                 AMOR_NOR=0.0,
+                                 RIGI_TAN=0.0,
+                                 FROTTEMENT='COULOMB_STAT_DYNA',
+                                 COULOMB_STAT=0.0,COULOMB_DYNA=0.0,),)
 
-TEST_FONCTION(VALEUR=(_F(VALE_CALC=5.888422670935E-07,
-                         CRITERE='ABSOLU',
-                         VALE_PARA=0.1,
-                         FONCTION=DIFF,),
-                      _F(VALE_CALC=-1.889118168218E-06,
-                         CRITERE='ABSOLU',
-                         VALE_PARA=0.3,
-                         FONCTION=DIFF,),
-                      _F(VALE_CALC=-1.558628271781E-07,
-                         CRITERE='ABSOLU',
-                         VALE_PARA=0.5,
-                         FONCTION=DIFF,),
-                      _F(VALE_CALC=1.821311498010E-06,
-                         CRITERE='ABSOLU',
-                         VALE_PARA=0.7,
-                         FONCTION=DIFF,),
-                      _F(VALE_CALC=1.723092572558E-06,
-                         CRITERE='ABSOLU',
-                         VALE_PARA=1.0,
-                         FONCTION=DIFF,),
-                      ),
-              )
+MULT_X1=CALC_CHAR_SEISME(MATR_MASS=MASS_BIC,
+                         DIRECTION=(1.0,0.0,0.0,),
+                         MODE_STAT=MSTA_BIC,
+                         NOEUD='NO1',)
+
+MULT_X2=CALC_CHAR_SEISME(MATR_MASS=MASS_BIC,
+                         DIRECTION=(1.0,0.0,0.0,),
+                         MODE_STAT=MSTA_BIC,
+                         NOEUD='NO11',)
+
+PROJ_BASE(BASE=MODE_BIC,
+          STOCKAGE='DIAG',
+          MATR_ASSE_GENE=(_F(MATRICE=CO('MGEN_BIC'),
+                             MATR_ASSE=MASS_BIC,),
+                          _F(MATRICE=CO('RGEN_BIC'),
+                             MATR_ASSE=RIGI_BIC,),),
+          VECT_ASSE_GENE=(_F(VECTEUR=CO('VECT_X1'),
+                             VECT_ASSE=MULT_X1,),
+                          _F(VECTEUR=CO('VECT_X2'),
+                             VECT_ASSE=MULT_X2,),),)
+
+GRILLE=DEFI_OBSTACLE(TYPE='BI_PLAN_Z',)
+
+MAILLA3=LIRE_MAILLAGE(FORMAT="ASTER",UNITE=22,)
 
 FIN()
