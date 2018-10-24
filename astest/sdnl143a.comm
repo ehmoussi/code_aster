@@ -64,7 +64,7 @@ encas14=AFFE_CHAR_MECA(MODELE=mo,
                                    DRY=0.,
                                    DRZ=0.,),);
 
-INCLUDE(UNITE=77,);
+from sdnl143a import *
 
 FXP = FORMULE(VALE='FP(rhoeau,Cd,Ca,D,X,Y,Z,INST,H,T,L,thetai,0.,0.,proinf,depth,lstrech,VITE_X,VITE_Y,VITE_Z,DX,DY,DZ,1,cinelin,projvect,dragquad)',
               FP=FP,

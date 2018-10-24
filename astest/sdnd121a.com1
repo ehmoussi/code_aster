@@ -140,8 +140,10 @@ t_inout_adapt.sort()
 
 # Instants d'entrees et sorties de contact pour la solution quasi-analytique
 # (a 10^-9 s pres) :
-INCLUDE(UNITE=60);
 
+from sdnd121a import F_linst
+t_inout_analyique=F_linst()
+ 
 # Test du bilan energetique :
 TEMPSFIN = DEFI_LIST_REEL(VALE=duree,);
 
@@ -513,8 +515,6 @@ for i in range(0,len(t_inout_adapt)):
 # # numeriquement a 10^-9 s pres) :
 # #####################################################################
 # c_rappel=0. # amortissement au noeud de rappel (pour un probleme plus general)
-# INCLUDE(UNITE=61);
-# INCLUDE(UNITE=62);
 #
 # err_globale_D_euler = NP.sqrt( NP.sum((d_euler-D)**2) / NP.sum(D**2) ) *100
 # err_globale_V_euler = NP.sqrt( NP.sum((v_euler-V)**2) / NP.sum(V**2) ) *100
