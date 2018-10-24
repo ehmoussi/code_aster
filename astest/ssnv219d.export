@@ -7,4 +7,6 @@ P testlist verification sequential
 
 F comm ssnv219d.comm D 1
 F mmed ssnv219d.mmed D 20
-F libr ssnv219a.38 D 38
+F comm ssnv219a.com1 D 1
+F comm ssnv219d.com2 D 1
+
