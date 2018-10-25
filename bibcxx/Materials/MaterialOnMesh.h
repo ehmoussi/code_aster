@@ -199,14 +199,15 @@ class MaterialOnMeshInstance: public DataStructure
          * @param nameOfGroup Nom du groupe de mailles
          */
         void addMaterialsOnGroupOfElements( std::vector< MaterialPtr > curMaters,
-                                            std::string nameOfGroup ) throw ( std::runtime_error )
+                                            VectorString namesOfGroup ) throw ( std::runtime_error )
         {
             if ( ! _supportMesh ) throw std::runtime_error( "Support mesh is not defined" );
-            if ( ! _supportMesh->hasGroupOfElements( nameOfGroup ) )
-                throw std::runtime_error( nameOfGroup + "not in support mesh" );
+            for( const auto& nameOfGroup : namesOfGroup )
+                if ( ! _supportMesh->hasGroupOfElements( nameOfGroup ) )
+                    throw std::runtime_error( nameOfGroup + "not in support mesh" );
 
             _materialsOnMeshEntity.push_back( listOfMatsAndGrpsValue( curMaters,
-                                            MeshEntityPtr( new GroupOfElements(nameOfGroup) ) ) );
+                                           MeshEntityPtr( new GroupOfElements(namesOfGroup) ) ) );
         };
 
         /**
@@ -215,12 +216,12 @@ class MaterialOnMeshInstance: public DataStructure
          * @param nameOfElement Nom des mailles
          */
         void addMaterialsOnElement( std::vector< MaterialPtr > curMaters,
-                                    std::string nameOfElement ) throw ( std::runtime_error )
+                                    VectorString namesOfElement ) throw ( std::runtime_error )
         {
             if ( ! _supportMesh ) throw std::runtime_error( "Support mesh is not defined" );
 
             _materialsOnMeshEntity.push_back( listOfMatsAndGrpsValue( curMaters,
-                                            MeshEntityPtr( new Element(nameOfElement) ) ) );
+                                            MeshEntityPtr( new Element(namesOfElement) ) ) );
         };
 
         /**
@@ -239,14 +240,15 @@ class MaterialOnMeshInstance: public DataStructure
          * @param nameOfGroup Nom du groupe de mailles
          */
         void addMaterialOnGroupOfElements( MaterialPtr& curMater,
-                                           std::string nameOfGroup ) throw ( std::runtime_error )
+                                           VectorString namesOfGroup ) throw ( std::runtime_error )
         {
             if ( ! _supportMesh ) throw std::runtime_error( "Support mesh is not defined" );
-            if ( ! _supportMesh->hasGroupOfElements( nameOfGroup ) )
-                throw std::runtime_error( nameOfGroup + "not in support mesh" );
+            for( const auto& nameOfGroup : namesOfGroup )
+                if ( ! _supportMesh->hasGroupOfElements( nameOfGroup ) )
+                    throw std::runtime_error( nameOfGroup + "not in support mesh" );
 
             _materialsOnMeshEntity.push_back( listOfMatsAndGrpsValue( { curMater },
-                                            MeshEntityPtr( new GroupOfElements(nameOfGroup) ) ) );
+                                           MeshEntityPtr( new GroupOfElements(namesOfGroup) ) ) );
         };
 
         /**
@@ -255,12 +257,12 @@ class MaterialOnMeshInstance: public DataStructure
          * @param nameOfElement Nom des mailles
          */
         void addMaterialOnElement( MaterialPtr& curMater,
-                                   std::string nameOfElement ) throw ( std::runtime_error )
+                                   VectorString namesOfElement ) throw ( std::runtime_error )
         {
             if ( ! _supportMesh ) throw std::runtime_error( "Support mesh is not defined" );
 
             _materialsOnMeshEntity.push_back( listOfMatsAndGrpsValue( { curMater },
-                                            MeshEntityPtr( new Element(nameOfElement) ) ) );
+                                            MeshEntityPtr( new Element(namesOfElement) ) ) );
         };
 
         /**

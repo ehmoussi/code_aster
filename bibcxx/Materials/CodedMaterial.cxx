@@ -79,7 +79,7 @@ bool CodedMaterialInstance::allocate()
             }
         }
 
-        const int nbMB = curIter->getNumberOfMaterialBehviour();
+        const int nbMB = curIter->getNumberOfUserMaterialBehviour();
         for( int i = 0; i < nbMB; ++i )
         {
             auto vec1 = curIter->getBehviourVectorOfDoubleValues( i );

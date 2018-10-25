@@ -54,11 +54,11 @@ void MaterialOnMeshBuilderInstance::buildInstance( MaterialOnMeshInstance& curMa
         if (tmp->getType() == AllMeshEntitiesType)
             dict2.container["TOUT"] = "OUI";
         else if (tmp->getType() == GroupOfElementsType)
-            dict2.container["GROUP_MA"] = (curIter.second)->getName();
+            dict2.container["GROUP_MA"] = (curIter.second)->getNames();
         else if (tmp->getType() == GroupOfNodesType)
-            dict2.container["GROUP_NO"] = (curIter.second)->getName();
+            dict2.container["GROUP_NO"] = (curIter.second)->getNames();
         else if (tmp->getType() == ElementType)
-            dict2.container["MAILLE"] = (curIter.second)->getName();
+            dict2.container["MAILLE"] = (curIter.second)->getNames();
         else
             throw std::runtime_error("Support entity undefined");
         listeAFFE.push_back(dict2);
