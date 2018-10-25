@@ -17,6 +17,9 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 # ================================================================================================================================================================================
+
+import math 
+
 def NormeAster(RESULTAT, Depl_Ana, P_ana, MAIL, MODELE, GROUP_MA_VOL, GROUP_MA_SUR):
      """ RESULTAT  : SD Resultat contenant la solution calculee
          Depl_Ana  : Solution analytique sous forme d une liste de FORMULEs Aster du deplacement
