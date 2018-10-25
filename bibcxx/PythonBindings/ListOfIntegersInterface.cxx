@@ -27,18 +27,11 @@
 #include <PythonBindings/factory.h>
 #include "PythonBindings/ListOfIntegersInterface.h"
 
-
-void exportListOfIntegersToPython()
-{
+void exportListOfIntegersToPython() {
     using namespace boost::python;
 
-    class_< ListOfIntegersInstance,
-            ListOfIntegersInstance::ListOfIntegersPtr,
-            bases< DataStructure > > ( "ListOfIntegers", no_init )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< ListOfIntegersInstance >) )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< ListOfIntegersInstance,
-                             std::string >) )
-    ;
+    class_< ListOfIntegersInstance, ListOfIntegersInstance::ListOfIntegersPtr,
+            bases< DataStructure > >( "ListOfIntegers", no_init )
+        .def( "__init__", make_constructor(&initFactoryPtr< ListOfIntegersInstance >))
+        .def( "__init__", make_constructor(&initFactoryPtr< ListOfIntegersInstance, std::string >));
 };

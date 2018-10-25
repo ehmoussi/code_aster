@@ -3,7 +3,7 @@
  * @brief Implementation de ModelInstance
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -31,41 +31,32 @@
 
 #include "Supervis/CommandSyntax.h"
 
+const char *const ModelSplitingMethodNames[nbModelSplitingMethod] = {"CENTRALISE", "SOUS_DOMAINE",
+                                                                     "GROUP_ELEM"};
+const char *const GraphPartitionerNames[nbGraphPartitioner] = {"SCOTCH", "METIS"};
 
-const char* const ModelSplitingMethodNames[nbModelSplitingMethod] = { "CENTRALISE",
-                                                                        "SOUS_DOMAINE",
-                                                                        "GROUP_ELEM" };
-const char* const GraphPartitionerNames[nbGraphPartitioner] = { "SCOTCH", "METIS" };
-
-
-SyntaxMapContainer ModelInstance::buildModelingsSyntaxMapContainer() const
-{
+SyntaxMapContainer ModelInstance::buildModelingsSyntaxMapContainer() const {
     SyntaxMapContainer dict;
 
     dict.container["VERI_JACOBIEN"] = "OUI";
-    if ( ! _supportBaseMesh )
-        throw std::runtime_error("Support mesh is undefined");
+    if ( !_supportBaseMesh )
+        throw std::runtime_error( "Support mesh is undefined" );
     dict.container["MAILLAGE"] = _supportBaseMesh->getName();
 
     ListSyntaxMapContainer listeAFFE;
-    for ( listOfModsAndGrpsCIter curIter = _modelisations.begin();
-          curIter != _modelisations.end();
-          ++curIter )
-    {
+    for ( listOfModsAndGrpsCIter curIter = _modelisations.begin(); curIter != _modelisations.end();
+          ++curIter ) {
         SyntaxMapContainer dict2;
         dict2.container["PHENOMENE"] = curIter->first.getPhysic();
         dict2.container["MODELISATION"] = curIter->first.getModeling();
 
-        if ( ( *(curIter->second) ).getType() == AllMeshEntitiesType )
-        {
+        if ( ( *( curIter->second ) ).getType() == AllMeshEntitiesType ) {
             dict2.container["TOUT"] = "OUI";
-        }
-        else
-        {
-            if ( ( *(curIter->second) ).getType() == GroupOfNodesType )
-                dict2.container["GROUP_NO"] = (curIter->second)->getName();
-            else if ( ( *(curIter->second) ).getType() == GroupOfElementsType )
-                dict2.container["GROUP_MA"] = (curIter->second)->getName();
+        } else {
+            if ( ( *( curIter->second ) ).getType() == GroupOfNodesType )
+                dict2.container["GROUP_NO"] = ( curIter->second )->getName();
+            else if ( ( *( curIter->second ) ).getType() == GroupOfElementsType )
+                dict2.container["GROUP_MA"] = ( curIter->second )->getName();
         }
         listeAFFE.push_back( dict2 );
     }
@@ -73,21 +64,16 @@ SyntaxMapContainer ModelInstance::buildModelingsSyntaxMapContainer() const
     return dict;
 };
 
-bool ModelInstance::buildWithSyntax( SyntaxMapContainer& dict )
-    throw ( std::runtime_error )
-{
+bool ModelInstance::buildWithSyntax( SyntaxMapContainer &dict ) throw( std::runtime_error ) {
     CommandSyntax cmdSt( "AFFE_MODELE" );
     cmdSt.setResult( ResultNaming::getCurrentName(), "MODELE" );
     cmdSt.define( dict );
 
     // Maintenant que le fichier de commande est pret, on appelle OP0018
-    try
-    {
+    try {
         ASTERINTEGER op = 18;
         CALL_EXECOP( &op );
-    }
-    catch( ... )
-    {
+    } catch ( ... ) {
         throw;
     }
     // Attention, la connection des objets a leur image JEVEUX n'est pas necessaire
@@ -96,21 +82,19 @@ bool ModelInstance::buildWithSyntax( SyntaxMapContainer& dict )
     return true;
 };
 
-bool ModelInstance::build() throw ( std::runtime_error )
-{
+bool ModelInstance::build() throw( std::runtime_error ) {
     SyntaxMapContainer dict = buildModelingsSyntaxMapContainer();
-    if( _supportBaseMesh->isParallel() )
-    {
+    if ( _supportBaseMesh->isParallel() ) {
         ListSyntaxMapContainer listeDISTRIBUTION;
         SyntaxMapContainer dict2;
-        dict2.container["METHODE"] = ModelSplitingMethodNames[ (int)Centralized ];
+        dict2.container["METHODE"] = ModelSplitingMethodNames[(int)Centralized];
         listeDISTRIBUTION.push_back( dict2 );
         dict.container["DISTRIBUTION"] = listeDISTRIBUTION;
     } else {
         ListSyntaxMapContainer listeDISTRIBUTION;
         SyntaxMapContainer dict2;
-        dict2.container["METHODE"] = ModelSplitingMethodNames[ (int)getSplittingMethod() ];
-        dict2.container["PARTITIONNEUR"] = GraphPartitionerNames[ (int)getGraphPartitioner() ];
+        dict2.container["METHODE"] = ModelSplitingMethodNames[(int)getSplittingMethod()];
+        dict2.container["PARTITIONNEUR"] = GraphPartitionerNames[(int)getGraphPartitioner()];
         listeDISTRIBUTION.push_back( dict2 );
         dict.container["DISTRIBUTION"] = listeDISTRIBUTION;
     }
@@ -118,8 +102,7 @@ bool ModelInstance::build() throw ( std::runtime_error )
     return buildWithSyntax( dict );
 };
 
-bool ModelInstance::existsThm()
-{
+bool ModelInstance::existsThm() {
     const std::string typeco( "MODELE" );
     ASTERINTEGER repi = 0, ier = 0;
     JeveuxChar32 repk( " " );
@@ -128,12 +111,12 @@ bool ModelInstance::existsThm()
 
     CALLO_DISMOI( questi, getName(), typeco, &repi, repk, arret, &ier );
     auto retour = trim( repk.toString() );
-    if( retour == "OUI" ) return true;
+    if ( retour == "OUI" )
+        return true;
     return false;
 };
 
-bool ModelInstance::existsMultiFiberBeam()
-{
+bool ModelInstance::existsMultiFiberBeam() {
     const std::string typeco( "MODELE" );
     ASTERINTEGER repi = 0, ier = 0;
     JeveuxChar32 repk( " " );
@@ -142,6 +125,7 @@ bool ModelInstance::existsMultiFiberBeam()
 
     CALLO_DISMOI( questi, getName(), typeco, &repi, repk, arret, &ier );
     auto retour = trim( repk.toString() );
-    if( retour == "OUI" ) return true;
+    if ( retour == "OUI" )
+        return true;
     return false;
 };

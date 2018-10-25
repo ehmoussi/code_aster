@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe JeveuxBidirectionnalMap
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -37,115 +37,105 @@
  * @brief Equivalent du pointeur de nom dans Jeveux
  * @author Nicolas Sellenet
  */
-template< typename ValueType >
-class JeveuxBidirectionalMapInstance: public JeveuxObjectInstance,
-                                      private AllowedJeveuxType< ValueType >
-{
-    private:
-        ASTERINTEGER _size;
+template < typename ValueType >
+class JeveuxBidirectionalMapInstance : public JeveuxObjectInstance,
+                                       private AllowedJeveuxType< ValueType > {
+  private:
+    ASTERINTEGER _size;
 
-    public:
-        /**
-         * @brief Constructeur
-         * @param name Nom Jeveux de l'objet
-         */
-        JeveuxBidirectionalMapInstance( std::string name, JeveuxMemory mem = Permanent ):
-            JeveuxObjectInstance( name, mem ),
-            _size( 0 )
-        {};
+  public:
+    /**
+     * @brief Constructeur
+     * @param name Nom Jeveux de l'objet
+     */
+    JeveuxBidirectionalMapInstance( std::string name, JeveuxMemory mem = Permanent )
+        : JeveuxObjectInstance( name, mem ), _size( 0 ){};
 
-        /**
-         * @brief Destructeur
-         */
-        ~JeveuxBidirectionalMapInstance()
-        {};
+    /**
+     * @brief Destructeur
+     */
+    ~JeveuxBidirectionalMapInstance(){};
 
-        /**
-         * @brief Ajout d'un élément
-         * @param position position of element to add
-         * @param toAdd value to add
-         * @return true if adding is ok
-         */
-        bool add( const int& position, const ValueType& toAdd )
-        {
-            if ( position <= _size )
-            {
-                JeveuxChar32 objName( " " );
-                CALLO_JEXNOM( objName, _name, toAdd );
-                CALLO_JECROC( objName );
-                return true;
-            }
-            return false;
-        };
-
-        /**
-         * @brief Allocation
-         * @param mem Mémoire d'allocation
-         * @param size Taille
-         * @return vrai en cas d'allocation
-         */
-        bool allocate( JeveuxMemory mem, int size )
-        {
-            _mem = mem;
-            if ( _name != "" && size > 0 )
-            {
-                std::string strJeveuxBase( "V" );
-                if ( mem == Permanent ) strJeveuxBase = "G";
-                ASTERINTEGER taille = size;
-                const int intType = AllowedJeveuxType< ValueType >::numTypeJeveux;
-                std::string carac = strJeveuxBase + " N " + JeveuxTypesNames[intType];
-                CALLO_JECREO( _name, carac );
-                std::string param( "NOMMAX" );
-                CALLO_JEECRA_WRAP( _name, param, &taille );
-                _size = size;
-                return true;
-            }
-            return false;
-        };
-
-        /**
-         * @brief Recuperation de la chaine correspondante a l'entier
-         * @param elementNumber Numero de l'element demande
-         * @return Chaine de caractere correspondante
-         */
-        std::string findStringOfElement( ASTERINTEGER elementNumber ) const
-        {
+    /**
+     * @brief Ajout d'un élément
+     * @param position position of element to add
+     * @param toAdd value to add
+     * @return true if adding is ok
+     */
+    bool add( const int &position, const ValueType &toAdd ) {
+        if ( position <= _size ) {
             JeveuxChar32 objName( " " );
-            JeveuxChar32 charName( " " );
-            CALLO_JEXNUM(objName, _name, &elementNumber);
-            CALLO_JENUNO(objName, charName);
-            return charName.toString();
-        };
+            CALLO_JEXNOM( objName, _name, toAdd );
+            CALLO_JECROC( objName );
+            return true;
+        }
+        return false;
+    };
 
+    /**
+     * @brief Allocation
+     * @param mem Mémoire d'allocation
+     * @param size Taille
+     * @return vrai en cas d'allocation
+     */
+    bool allocate( JeveuxMemory mem, int size ) {
+        _mem = mem;
+        if ( _name != "" && size > 0 ) {
+            std::string strJeveuxBase( "V" );
+            if ( mem == Permanent )
+                strJeveuxBase = "G";
+            ASTERINTEGER taille = size;
+            const int intType = AllowedJeveuxType< ValueType >::numTypeJeveux;
+            std::string carac = strJeveuxBase + " N " + JeveuxTypesNames[intType];
+            CALLO_JECREO( _name, carac );
+            std::string param( "NOMMAX" );
+            CALLO_JEECRA_WRAP( _name, param, &taille );
+            _size = size;
+            return true;
+        }
+        return false;
+    };
 
-        /**
-         * @brief Recuperation de l'entier correspondant a une chaine
-         * @param elementName Chaine recherchee
-         * @return Entier correspondant
-         */
-        ASTERINTEGER findIntegerOfElement( const std::string& elementName ) const
-        {
-            JeveuxChar32 objName( " " );
-            CALLO_JEXNOM(objName, _name, elementName );
-            ASTERINTEGER resu = -1;
-            CALLO_JENONU(objName, &resu);
-            return resu;
-        };
+    /**
+     * @brief Recuperation de la chaine correspondante a l'entier
+     * @param elementNumber Numero de l'element demande
+     * @return Chaine de caractere correspondante
+     */
+    std::string findStringOfElement( ASTERINTEGER elementNumber ) const {
+        JeveuxChar32 objName( " " );
+        JeveuxChar32 charName( " " );
+        CALLO_JEXNUM( objName, _name, &elementNumber );
+        CALLO_JENUNO( objName, charName );
+        return charName.toString();
+    };
 
-        /**
-         * @brief Get the size
-         * @return size of object
-         */
-        ASTERINTEGER size() const
-        {
-            if( ! exists() ) return 0;
+    /**
+     * @brief Recuperation de l'entier correspondant a une chaine
+     * @param elementName Chaine recherchee
+     * @return Entier correspondant
+     */
+    ASTERINTEGER findIntegerOfElement( const std::string &elementName ) const {
+        JeveuxChar32 objName( " " );
+        CALLO_JEXNOM( objName, _name, elementName );
+        ASTERINTEGER resu = -1;
+        CALLO_JENONU( objName, &resu );
+        return resu;
+    };
 
-            ASTERINTEGER vectSize;
-            JeveuxChar8 param( "NOMMAX" );
-            JeveuxChar32 dummy( " " );
-            CALLO_JELIRA( _name, param, &vectSize, dummy );
-            return vectSize;
-        };
+    /**
+     * @brief Get the size
+     * @return size of object
+     */
+    ASTERINTEGER size() const {
+        if ( !exists() )
+            return 0;
+
+        ASTERINTEGER vectSize;
+        JeveuxChar8 param( "NOMMAX" );
+        JeveuxChar32 dummy( " " );
+        CALLO_JELIRA( _name, param, &vectSize, dummy );
+        return vectSize;
+    };
 };
 
 /**
@@ -153,39 +143,34 @@ class JeveuxBidirectionalMapInstance: public JeveuxObjectInstance,
  *   Enveloppe d'un pointeur intelligent vers un JeveuxBidirectionalMapInstance
  * @author Nicolas Sellenet
  */
-template< class ValueType >
-class JeveuxBidirectionalMap
-{
-    public:
-        typedef boost::shared_ptr< JeveuxBidirectionalMapInstance< ValueType > > JeveuxBidirectionalMapPtr;
+template < class ValueType > class JeveuxBidirectionalMap {
+  public:
+    typedef boost::shared_ptr< JeveuxBidirectionalMapInstance< ValueType > >
+        JeveuxBidirectionalMapPtr;
 
-    private:
-        JeveuxBidirectionalMapPtr _jeveuxBidirectionalMapPtr;
+  private:
+    JeveuxBidirectionalMapPtr _jeveuxBidirectionalMapPtr;
 
-    public:
-        JeveuxBidirectionalMap( std::string nom ):
-            _jeveuxBidirectionalMapPtr( new JeveuxBidirectionalMapInstance< ValueType >(nom) )
-        {};
+  public:
+    JeveuxBidirectionalMap( std::string nom )
+        : _jeveuxBidirectionalMapPtr( new JeveuxBidirectionalMapInstance< ValueType >( nom ) ){};
 
-        ~JeveuxBidirectionalMap()
-        {};
+    ~JeveuxBidirectionalMap(){};
 
-        JeveuxBidirectionalMap& operator=(const JeveuxBidirectionalMap< ValueType >& tmp)
-        {
-            _jeveuxBidirectionalMapPtr = tmp._jeveuxBidirectionalMapPtr;
-            return *this;
-        };
+    JeveuxBidirectionalMap &operator=( const JeveuxBidirectionalMap< ValueType > &tmp ) {
+        _jeveuxBidirectionalMapPtr = tmp._jeveuxBidirectionalMapPtr;
+        return *this;
+    };
 
-        const JeveuxBidirectionalMapPtr& operator->(void) const
-        {
-            return _jeveuxBidirectionalMapPtr;
-        };
+    const JeveuxBidirectionalMapPtr &operator->( void ) const {
+        return _jeveuxBidirectionalMapPtr;
+    };
 
-        bool isEmpty() const
-        {
-            if ( _jeveuxBidirectionalMapPtr.use_count() == 0 ) return true;
-            return false;
-        };
+    bool isEmpty() const {
+        if ( _jeveuxBidirectionalMapPtr.use_count() == 0 )
+            return true;
+        return false;
+    };
 };
 
 /** @typedef Definition d'un pointeur de nom Jeveux long */

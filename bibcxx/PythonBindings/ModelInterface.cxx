@@ -3,7 +3,7 @@
  * @brief Interface python de Model
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -25,48 +25,33 @@
 #include <PythonBindings/factory.h>
 #include "PythonBindings/ModelInterface.h"
 
-
-void exportModelToPython()
-{
+void exportModelToPython() {
     using namespace boost::python;
 
-     enum_< ModelSplitingMethod >( "ModelSplitingMethod" )
-         .value( "Centralized", Centralized )
-         .value( "SubDomain", SubDomain )
-         .value( "GroupOfElements", GroupOfElementsSplit )
-         ;
+    enum_< ModelSplitingMethod >( "ModelSplitingMethod" )
+        .value( "Centralized", Centralized )
+        .value( "SubDomain", SubDomain )
+        .value( "GroupOfElements", GroupOfElementsSplit );
 
-     enum_< GraphPartitioner >( "GraphPartitioner" )
-         .value( "Scotch", ScotchPartitioner )
-         .value( "Metis", MetisPartitioner )
-         ;
+    enum_< GraphPartitioner >( "GraphPartitioner" ).value( "Scotch", ScotchPartitioner ).value(
+        "Metis", MetisPartitioner );
 
-    bool (ModelInstance::*c1)(MeshPtr&) =
-            &ModelInstance::setSupportMesh;
-    bool (ModelInstance::*c4)(SkeletonPtr&) =
-            &ModelInstance::setSupportMesh;
+    bool ( ModelInstance::*c1 )( MeshPtr & ) = &ModelInstance::setSupportMesh;
+    bool ( ModelInstance::*c4 )( SkeletonPtr & ) = &ModelInstance::setSupportMesh;
 
-    void (ModelInstance::*split1)(ModelSplitingMethod) =
-            &ModelInstance::setSplittingMethod;
+    void ( ModelInstance::*split1 )( ModelSplitingMethod ) = &ModelInstance::setSplittingMethod;
 
-    void (ModelInstance::*split2)(ModelSplitingMethod, GraphPartitioner) =
-            &ModelInstance::setSplittingMethod;
+    void ( ModelInstance::*split2 )( ModelSplitingMethod, GraphPartitioner ) =
+        &ModelInstance::setSplittingMethod;
 #ifdef _USE_MPI
-    bool (ModelInstance::*c2)(ParallelMeshPtr&) =
-            &ModelInstance::setSupportMesh;
-    bool (ModelInstance::*c3)(PartialMeshPtr&) =
-            &ModelInstance::setSupportMesh;
+    bool ( ModelInstance::*c2 )( ParallelMeshPtr & ) = &ModelInstance::setSupportMesh;
+    bool ( ModelInstance::*c3 )( PartialMeshPtr & ) = &ModelInstance::setSupportMesh;
 #endif /* _USE_MPI */
-    bool (ModelInstance::*c5)(BaseMeshPtr&) =
-            &ModelInstance::setSupportMesh;
-    
-    class_< ModelInstance, ModelInstance::ModelPtr,
-            bases< DataStructure > > ( "Model", no_init )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< ModelInstance >) )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< ModelInstance,
-                             std::string >) )
+    bool ( ModelInstance::*c5 )( BaseMeshPtr & ) = &ModelInstance::setSupportMesh;
+
+    class_< ModelInstance, ModelInstance::ModelPtr, bases< DataStructure > >( "Model", no_init )
+        .def( "__init__", make_constructor(&initFactoryPtr< ModelInstance >))
+        .def( "__init__", make_constructor(&initFactoryPtr< ModelInstance, std::string >))
         .def( "addModelingOnAllMesh", &ModelInstance::addModelingOnAllMesh )
         .def( "addModelingOnGroupOfElements", &ModelInstance::addModelingOnGroupOfElements )
         .def( "addModelingOnGroupOfNodes", &ModelInstance::addModelingOnGroupOfNodes )
@@ -84,6 +69,5 @@ void exportModelToPython()
         .def( "setSupportMesh", c2 )
         .def( "setSupportMesh", c3 )
 #endif /* _USE_MPI */
-        .def( "setSupportMesh", c5 )
-    ;
+        .def( "setSupportMesh", c5 );
 };

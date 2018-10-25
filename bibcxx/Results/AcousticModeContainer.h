@@ -4,7 +4,7 @@
 /**
  * @file AcousticModeContainer.h
  * @brief Fichier entete de la classe AcousticModeContainer
- * @author Natacha Béreux 
+ * @author Natacha Béreux
  * @section LICENCE
  *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
@@ -28,41 +28,37 @@
 
 #include "Results/FullResultsContainer.h"
 #include "LinearAlgebra/AssemblyMatrix.h"
+#include "Supervis/ResultNaming.h"
 
 /**
  * @class AcousticModeContainerInstance
  * @brief Cette classe correspond a un mode_acou
  * @author Natacha Béreux
  */
-class AcousticModeContainerInstance: public FullResultsContainerInstance
-{
-private:
+class AcousticModeContainerInstance : public FullResultsContainerInstance {
+  private:
     /** @brief Stiffness displacement matrix */
     AssemblyMatrixPressureDoublePtr _rigidityMatrix;
 
-public:
+  public:
     /**
      * @brief Constructeur
      */
-    AcousticModeContainerInstance():
-        FullResultsContainerInstance( "MODE_ACOU" ),
-        _rigidityMatrix( nullptr )
-    {};
+    AcousticModeContainerInstance( const std::string &name )
+        : FullResultsContainerInstance( name, "MODE_ACOU" ), _rigidityMatrix( nullptr ){};
 
+    AcousticModeContainerInstance()
+        : AcousticModeContainerInstance( ResultNaming::getNewResultName() ){};
     /**
      * @brief Set the rigidity matrix
      * @param matr AssemblyMatrixPressureDoublePtr
      */
-    bool setStiffnessMatrix( const AssemblyMatrixPressureDoublePtr& matr )
-    {
+    bool setStiffnessMatrix( const AssemblyMatrixPressureDoublePtr &matr ) {
         _rigidityMatrix = matr;
         return true;
     };
 
-    bool update() throw ( std::runtime_error )
-    {
-        return ResultsContainerInstance::update();
-    };
+    bool update() throw( std::runtime_error ) { return ResultsContainerInstance::update(); };
 };
 
 /**

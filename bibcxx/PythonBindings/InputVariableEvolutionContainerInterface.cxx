@@ -25,14 +25,15 @@
 #include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
-void exportInputVariableEvolutionContainerToPython()
-{
+void exportInputVariableEvolutionContainerToPython() {
     using namespace boost::python;
 
     class_< InputVariableEvolutionContainerInstance, InputVariableEvolutionContainerPtr,
-            bases< TimeDependantResultsContainerInstance > >
-        ( "InputVariableEvolutionContainer", no_init )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< InputVariableEvolutionContainerInstance > ) )
-    ;
+            bases< TimeDependantResultsContainerInstance > >( "InputVariableEvolutionContainer",
+                                                              no_init )
+        .def( "__init__",
+              make_constructor( &initFactoryPtr< InputVariableEvolutionContainerInstance > ) )
+        .def( "__init__",
+              make_constructor(
+                  &initFactoryPtr< InputVariableEvolutionContainerInstance, std::string > ) );
 };

@@ -3,7 +3,7 @@
  * @brief Implementation de MatchingMeshesInstance
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -25,17 +25,16 @@
 
 #include "Meshes/MatchingMeshes.h"
 
-MatchingMeshesInstance::MatchingMeshesInstance():
-    DataStructure( "CORRESP_2_MAILLA", Permanent, 16 ),
-    _pjxxK1( JeveuxVectorChar24( getName() + ".PJXX_K1" ) ),
-    _pjefNb( JeveuxVectorLong( getName() + ".PJEF_NB" ) ),
-    _pjefNu( JeveuxVectorLong( getName() + ".PJEF_NU" ) ),
-    _pjefM1( JeveuxVectorLong( getName() + ".PJEF_M1" ) ),
-    _pjefCf( JeveuxVectorDouble( getName() + ".PJEF_CF" ) ),
-    _pjefTr( JeveuxVectorLong( getName() + ".PJEF_TR" ) ),
-    _pjefCo( JeveuxVectorDouble( getName() + ".PJEF_CO" ) ),
-    _pjefEl( JeveuxVectorLong( getName() + ".PJEF_EL" ) ),
-    _pjefMp( JeveuxVectorChar8( getName() + ".PJEF_MP" ) ),
-    _pjngI1( JeveuxVectorLong( getName() + ".PJNG_I1" ) ),
-    _pjngI2( JeveuxVectorLong( getName() + ".PJNG_I2" ) )
-{};
+MatchingMeshesInstance::MatchingMeshesInstance( const std::string name )
+    : DataStructure( name, 16, "CORRESP_2_MAILLA", Permanent ),
+      _pjxxK1( JeveuxVectorChar24( getName() + ".PJXX_K1" ) ),
+      _pjefNb( JeveuxVectorLong( getName() + ".PJEF_NB" ) ),
+      _pjefNu( JeveuxVectorLong( getName() + ".PJEF_NU" ) ),
+      _pjefM1( JeveuxVectorLong( getName() + ".PJEF_M1" ) ),
+      _pjefCf( JeveuxVectorDouble( getName() + ".PJEF_CF" ) ),
+      _pjefTr( JeveuxVectorLong( getName() + ".PJEF_TR" ) ),
+      _pjefCo( JeveuxVectorDouble( getName() + ".PJEF_CO" ) ),
+      _pjefEl( JeveuxVectorLong( getName() + ".PJEF_EL" ) ),
+      _pjefMp( JeveuxVectorChar8( getName() + ".PJEF_MP" ) ),
+      _pjngI1( JeveuxVectorLong( getName() + ".PJNG_I1" ) ),
+      _pjngI2( JeveuxVectorLong( getName() + ".PJNG_I2" ) ){};

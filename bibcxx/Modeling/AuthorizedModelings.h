@@ -6,7 +6,7 @@
  * @brief Fichier definissant les modelisations autorisees
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -37,8 +37,7 @@
  * @struct WrapMechanics
  * @brief Structure destinee a definir les modelisations autorisees en mecanique
  */
-struct WrapMechanics
-{
+struct WrapMechanics {
     static const std::set< Modelings > setOfModelings;
 };
 
@@ -46,8 +45,7 @@ struct WrapMechanics
  * @struct WrapThermal
  * @brief Structure destinee a definir les modelisations autorisees en thermique
  */
-struct WrapThermal
-{
+struct WrapThermal {
     static const std::set< Modelings > setOfModelings;
 };
 
@@ -55,8 +53,7 @@ struct WrapThermal
  * @struct WrapAcoustics
  * @brief Structure destinee a definir les modelisations autorisees en thermique
  */
-struct WrapAcoustics
-{
+struct WrapAcoustics {
     static const std::set< Modelings > setOfModelings;
 };
 
@@ -66,14 +63,11 @@ struct WrapAcoustics
           pour un physique donnee
  * @author Nicolas Sellenet
  */
-template< class Wrapping >
-struct ModelingsChecker
-{
+template < class Wrapping > struct ModelingsChecker {
     /**
      * @brief Fonction statique verifiant qu'une modelisation est autorisee pour la physique
      */
-    static bool isAllowedModeling( Modelings test )
-    {
+    static bool isAllowedModeling( Modelings test ) {
         if ( Wrapping::setOfModelings.find( test ) == Wrapping::setOfModelings.end() )
             return false;
         return true;
@@ -92,23 +86,21 @@ typedef ModelingsChecker< WrapAcoustics > AcousticsModelingsChecker;
  * @brief Structure verifiant une paire Physics / Modelisations
  * @author Nicolas Sellenet
  */
-struct PhysicsChecker
-{
+struct PhysicsChecker {
     /**
      * @brief Fonction statique verifiant qu'une paire physique modelisation est autorisee
      */
-    static bool isAllowedModelingForPhysics( Physics phys, Modelings model ) throw ( std::runtime_error )
-    {
-        switch ( phys )
-        {
-            case Mechanics:
-                return MechanicsModelingsChecker::isAllowedModeling( model );
-            case Thermal:
-                return ThermalModelingsChecker::isAllowedModeling( model );
-            case Acoustics:
-                return AcousticsModelingsChecker::isAllowedModeling( model );
-            default:
-                throw std::runtime_error( "Not a valid physics" );
+    static bool isAllowedModelingForPhysics( Physics phys,
+                                             Modelings model ) throw( std::runtime_error ) {
+        switch ( phys ) {
+        case Mechanics:
+            return MechanicsModelingsChecker::isAllowedModeling( model );
+        case Thermal:
+            return ThermalModelingsChecker::isAllowedModeling( model );
+        case Acoustics:
+            return AcousticsModelingsChecker::isAllowedModeling( model );
+        default:
+            throw std::runtime_error( "Not a valid physics" );
         }
     };
 };

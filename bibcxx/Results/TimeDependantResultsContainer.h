@@ -36,25 +36,20 @@
  * @brief Cette classe correspond a un evol_sd_aster
  * @author Natacha Béreux
  */
-class TimeDependantResultsContainerInstance: public ResultsContainerInstance
-{
-private:
-public:
+class TimeDependantResultsContainerInstance : public ResultsContainerInstance {
+  private:
+  public:
     /**
      * @brief Constructeur
      */
-    TimeDependantResultsContainerInstance( const std::string resuTyp = "EVOL" ):
-            TimeDependantResultsContainerInstance( ResultNaming::getNewResultName(),
-                                                   resuTyp )
-    {};
+    TimeDependantResultsContainerInstance( const std::string resuTyp = "EVOL" )
+        : TimeDependantResultsContainerInstance( ResultNaming::getNewResultName(), resuTyp ){};
 
     /**
      * @brief Constructeur
      */
-    TimeDependantResultsContainerInstance( const std::string name,
-                                           const std::string resuTyp ):
-            ResultsContainerInstance( name, resuTyp )
-    {};
+    TimeDependantResultsContainerInstance( const std::string name, const std::string resuTyp )
+        : ResultsContainerInstance( name, resuTyp ){};
 };
 
 /**

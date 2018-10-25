@@ -3,7 +3,7 @@
  * @brief Implementation de GenericParameter
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -23,17 +23,16 @@
 
 #include "Utilities/GenericParameter.h"
 
-SyntaxMapContainer buildSyntaxMapFromParamList( const ListGenParam& listParam ) throw ( std::runtime_error )
-{
+SyntaxMapContainer
+buildSyntaxMapFromParamList( const ListGenParam &listParam ) throw( std::runtime_error ) {
     SyntaxMapContainer dict;
-    for( const auto& listIter : listParam )
-    {
-        if ( ! listIter->isSet() && listIter->isMandatory() )
-            throw std::runtime_error( "Value of parameter " + listIter->getName() + " is not set but mandatory" );
+    for ( const auto &listIter : listParam ) {
+        if ( !listIter->isSet() && listIter->isMandatory() )
+            throw std::runtime_error( "Value of parameter " + listIter->getName() +
+                                      " is not set but mandatory" );
 
-        if ( listIter->isSet() )
-        {
-            dict.container[ listIter->getName() ] = listIter->getValue();
+        if ( listIter->isSet() ) {
+            dict.container[listIter->getName()] = listIter->getValue();
         }
     }
     return dict;

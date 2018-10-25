@@ -26,9 +26,8 @@
 #include "Functions/Surface.h"
 #include <boost/python.hpp>
 
-PyObject* SurfaceInstance::exportExtensionToPython() const throw ( std::runtime_error )
-{
-    if( ! _property->exists() )
+PyObject *SurfaceInstance::exportExtensionToPython() const throw( std::runtime_error ) {
+    if ( !_property->exists() )
         throw std::runtime_error( getName() + " does not exist" );
 
     _property->updateValuePointer();
@@ -37,17 +36,15 @@ PyObject* SurfaceInstance::exportExtensionToPython() const throw ( std::runtime_
     using boost::python::list;
 
     list toReturn;
-    for( int pos = 0; pos < _property->size(); ++pos )
-    {
-        const std::string toCopy = (*_property)[ pos ].toString();
+    for ( int pos = 0; pos < _property->size(); ++pos ) {
+        const std::string toCopy = ( *_property )[pos].toString();
         toReturn.append( toCopy );
     }
     return incref( toReturn.ptr() );
 };
 
-PyObject* SurfaceInstance::exportParametersToPython() const throw ( std::runtime_error )
-{
-    if( ! _parameters->exists() )
+PyObject *SurfaceInstance::exportParametersToPython() const throw( std::runtime_error ) {
+    if ( !_parameters->exists() )
         throw std::runtime_error( getName() + " does not exist" );
 
     _parameters->updateValuePointer();
@@ -56,16 +53,14 @@ PyObject* SurfaceInstance::exportParametersToPython() const throw ( std::runtime
     using boost::python::list;
 
     list toReturn;
-    for( int pos = 0; pos < _parameters->size(); ++pos )
-    {
-        toReturn.append( (*_parameters)[ pos ] );
+    for ( int pos = 0; pos < _parameters->size(); ++pos ) {
+        toReturn.append( ( *_parameters )[pos] );
     }
     return incref( toReturn.ptr() );
 };
 
-PyObject* SurfaceInstance::exportValuesToPython() const throw ( std::runtime_error )
-{
-    if( ! _value->exists() )
+PyObject *SurfaceInstance::exportValuesToPython() const throw( std::runtime_error ) {
+    if ( !_value->exists() )
         throw std::runtime_error( getName() + " does not exist" );
 
     _value->buildFromJeveux();
@@ -74,16 +69,14 @@ PyObject* SurfaceInstance::exportValuesToPython() const throw ( std::runtime_err
     using boost::python::list;
 
     list toReturn;
-    for( const auto& curIter : *_value )
-    {
-        const auto size = curIter.size()/2;
+    for ( const auto &curIter : *_value ) {
+        const auto size = curIter.size() / 2;
         list list1;
         list list2;
         list list3;
-        for( int pos = 0; pos < size; ++pos )
-        {
-            list2.append( curIter[ pos ] );
-            list3.append( curIter[ pos + size ] );
+        for ( int pos = 0; pos < size; ++pos ) {
+            list2.append( curIter[pos] );
+            list3.append( curIter[pos + size] );
         }
         list1.append( list2 );
         list1.append( list3 );

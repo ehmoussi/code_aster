@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -19,7 +19,7 @@
 
 # person_in_charge: nicolas.tardieu@edf.fr
 
-from ..Objects import Mesh, XfemCrack, CrackShape
+from ..Objects import XfemCrack
 from .ExecuteCommand import ExecuteCommand
 
 class XFEMCrackDefinition(ExecuteCommand):

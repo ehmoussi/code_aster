@@ -5,7 +5,7 @@
  * @file CommandSyntax.h
  * @brief Implementation of API to CommandSyntax Python object.
  * @section LICENCE
- * Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+ * Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
  * This file is part of code_aster.
  *
  * code_aster is free software: you can redistribute it and/or modify
@@ -30,66 +30,64 @@
 #include "Utilities/SyntaxDictionary.h"
 #include "Utilities/CapyConvertibleValue.h"
 
-extern "C" PyObject* GetJdcAttr(_IN char *);
+extern "C" PyObject *GetJdcAttr( _IN char * );
 
 /**
  * @class CommandSyntax
  * @brief Implementation of API to CommandSyntax Python object.
  */
-class CommandSyntax
-{
-    private:
-        /** @brief The command name. */
-        const std::string _commandName;
-        /** @brief CommandSyntax Python object handling the command syntax. */
-        PyObject *_pySyntax;
+class CommandSyntax {
+  private:
+    /** @brief The command name. */
+    const std::string _commandName;
+    /** @brief CommandSyntax Python object handling the command syntax. */
+    PyObject *_pySyntax;
 
-    public:
-        /** @brief CommandSyntax Python class object, cached to be retreive
-         *  only once.
-         */
-        static PyObject *pyClass;
+  public:
+    /** @brief CommandSyntax Python class object, cached to be retreive
+     *  only once.
+     */
+    static PyObject *pyClass;
 
-        /**
-         * @brief Constructeur
-         * @param name Nom de la commande
-         */
-        CommandSyntax(const std::string name);
+    /**
+     * @brief Constructeur
+     * @param name Nom de la commande
+     */
+    CommandSyntax( const std::string name );
 
-        /**
-         * @brief Destructeur
-         */
-        ~CommandSyntax();
+    /**
+     * @brief Destructeur
+     */
+    ~CommandSyntax();
 
-        /**
-         * @brief Function to manually release the command currently executed.
-         */
-        void free();
+    /**
+     * @brief Function to manually release the command currently executed.
+     */
+    void free();
 
-        /**
-         * @brief Impression de debug
-         */
-        void debugPrint() const;
+    /**
+     * @brief Impression de debug
+     */
+    void debugPrint() const;
 
-        /**
-         * @brief Fonction permettant de definir la syntax
-         * @param syntax Objet de type SyntaxMapContainer
-         */
-        void define(SyntaxMapContainer& syntax);
+    /**
+     * @brief Fonction permettant de definir la syntax
+     * @param syntax Objet de type SyntaxMapContainer
+     */
+    void define( SyntaxMapContainer &syntax );
 
-        /**
-         * @brief Fonction permettant de definir la syntax
-         * @param syntax Objet de type CapyConvertibleSyntax
-         */
-        void define(const CapyConvertibleSyntax& syntax);
+    /**
+     * @brief Fonction permettant de definir la syntax
+     * @param syntax Objet de type CapyConvertibleSyntax
+     */
+    void define( const CapyConvertibleSyntax &syntax );
 
-        /**
-         * @brief Definit le nom du résultat ainsi que son type
-         * @param resultName std::string contenant le nom du résultat
-         * @param typeSd std::string contenant le nom de la commande
-         */
-        void setResult(const std::string resultName,
-                       const std::string typeSd) const;
+    /**
+     * @brief Definit le nom du résultat ainsi que son type
+     * @param resultName std::string contenant le nom du résultat
+     * @param typeSd std::string contenant le nom de la commande
+     */
+    void setResult( const std::string resultName, const std::string typeSd ) const;
 };
 
 #endif /* COMMANDSYNTAX_H_ */

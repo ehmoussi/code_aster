@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe StaticMechanicalContext
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2015  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -39,60 +39,53 @@ class StaticMechanicalAlgorithm;
  * @brief Context around static mechanical algorithm
  * @author Nicolas Sellenet
  */
-class StaticMechanicalContext
-{
-private:
+class StaticMechanicalContext {
+  private:
     /** @brief Problème discret */
-    DiscreteProblemPtr           _discreteProblem;
+    DiscreteProblemPtr _discreteProblem;
     /** @brief Solveur linéaire */
-    BaseLinearSolverPtr          _linearSolver;
+    BaseLinearSolverPtr _linearSolver;
     /** @brief Sd de stockage des résultats */
-    ResultsContainerPtr          _results;
+    ResultsContainerPtr _results;
     /** @brief Chargements */
-    ListOfLoadsPtr               _listOfLoads;
+    ListOfLoadsPtr _listOfLoads;
     /** @brief Pas de temps courant */
-    double                       _time;
+    double _time;
     /** @brief rank */
-    int                          _rank;
+    int _rank;
     /** @brief Assembly matrix */
-    AssemblyMatrixDisplacementDoublePtr      _aMatrix;
+    AssemblyMatrixDisplacementDoublePtr _aMatrix;
     /** @brief Are elastic properties constant */
-    bool                         _isConst;
+    bool _isConst;
     /** @brief Input variables */
     CalculationInputVariablesPtr _varCom;
 
-public:
+  public:
     /**
      * @brief Constructeur
      * @param DiscreteProblemPtr Problème discret a résoudre par l'algo
      * @param BaseLinearSolverPtr Sovleur linéaire qui sera utilisé
      * @param ResultContainerPtr Résultat pour le stockage des déplacements
      */
-    StaticMechanicalContext( const DiscreteProblemPtr& curPb,
-                             const BaseLinearSolverPtr linSolv,
-                             const ResultsContainerPtr container ):
-        _discreteProblem( curPb ),
-        _linearSolver( linSolv ),
-        _listOfLoads( _discreteProblem->getStudyDescription()->getListOfLoads() ),
-        _results( container ),
-        _time( 0. ),
-        _rank( 1 ),
-        _aMatrix( new AssemblyMatrixDisplacementDoubleInstance( Temporary ) ),
-        _isConst( _discreteProblem->getStudyDescription()->getCodedMaterial()->constant() ),
-        _varCom( new CalculationInputVariablesInstance
-                    ( _discreteProblem->getStudyDescription()->getSupportModel(),
-                      _discreteProblem->getStudyDescription()->getMaterialOnMesh(),
-                      _discreteProblem->getStudyDescription()->getElementaryCharacteristics(),
-                      _discreteProblem->getStudyDescription()->getCodedMaterial() ) )
-    {};
+    StaticMechanicalContext( const DiscreteProblemPtr &curPb, const BaseLinearSolverPtr linSolv,
+                             const ResultsContainerPtr container )
+        : _discreteProblem( curPb ), _linearSolver( linSolv ),
+          _listOfLoads( _discreteProblem->getStudyDescription()->getListOfLoads() ),
+          _results( container ), _time( 0. ), _rank( 1 ),
+          _aMatrix( new AssemblyMatrixDisplacementDoubleInstance( Temporary ) ),
+          _isConst( _discreteProblem->getStudyDescription()->getCodedMaterial()->constant() ),
+          _varCom( new CalculationInputVariablesInstance(
+              _discreteProblem->getStudyDescription()->getSupportModel(),
+              _discreteProblem->getStudyDescription()->getMaterialOnMesh(),
+              _discreteProblem->getStudyDescription()->getElementaryCharacteristics(),
+              _discreteProblem->getStudyDescription()->getCodedMaterial() ) ){};
 
     /**
      * @brief Function to set the "position" of the context
      * @param time time value
      * @param rank number of iteration
      */
-    void setStep( const double& time, const int& rank )
-    {
+    void setStep( const double &time, const int &rank ) {
         _time = time;
         _rank = rank;
     };

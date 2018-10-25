@@ -3,7 +3,7 @@
  * @brief Implementation de MaterialInstance
  * @author Nicolas Tardieu
  * @section LICENCE
- *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -31,51 +31,34 @@
 
 #include "Modeling/CrackShape.h"
 
-XfemCrackInstance::XfemCrackInstance(const std::string name,
-                                     MeshPtr supportMesh):
-    DataStructure( name, 8, "FISS_XFEM" ),
-    _jeveuxName( ResultNaming::getCurrentName() ),
-    _supportMesh(supportMesh),
-    _auxiliaryGrid(MeshPtr()),
-    _existingCrackWithGrid(XfemCrackPtr()),
-    _discontinuityType("Crack"),
-    _crackLipsEntity(),
-    _crackTipEntity(),
-    _normalLevelSetFunction(FunctionPtr()),
-    _tangentialLevelSetFunction(FunctionPtr()),
-    _crackShape(CrackShapePtr()),
-    _enrichedElements(),
-    _discontinuousField("DEPL"),
-    _enrichmentType(std::string()),
-    _enrichmentRadiusZone(0),
-    _enrichedLayersNumber(0),
+XfemCrackInstance::XfemCrackInstance( const std::string name, MeshPtr supportMesh )
+    : DataStructure( name, 8, "FISS_XFEM" ), _jeveuxName( ResultNaming::getCurrentName() ),
+      _supportMesh( supportMesh ), _auxiliaryGrid( MeshPtr() ),
+      _existingCrackWithGrid( XfemCrackPtr() ), _discontinuityType( "Crack" ), _crackLipsEntity(),
+      _crackTipEntity(), _normalLevelSetFunction( FunctionPtr() ),
+      _tangentialLevelSetFunction( FunctionPtr() ), _crackShape( CrackShapePtr() ),
+      _enrichedElements(), _discontinuousField( "DEPL" ), _enrichmentType( std::string() ),
+      _enrichmentRadiusZone( 0 ), _enrichedLayersNumber( 0 ),
 
-    _tangentialLevelSetField(new FieldOnNodesDoubleInstance( _jeveuxName + ".LTNO      " ) ),
-    _normalLevelSetField(new FieldOnNodesDoubleInstance( _jeveuxName + ".LNNO      " ) ),
-    _tangentialLevelSetGradient(new FieldOnNodesDoubleInstance( _jeveuxName + ".GRLTNO    " ) ),
-    _normalLevelSetGradient(new FieldOnNodesDoubleInstance( _jeveuxName + ".GRLNNO    " ) ),
-    _localBasis(new FieldOnNodesDoubleInstance( _jeveuxName + ".BASLOC    " ) ),
-    _crackTipCoords(JeveuxVectorDouble( _jeveuxName + ".FONDFISS" ) ),
-    _crackTipBasis(JeveuxVectorDouble( _jeveuxName + ".BASEFOND" ) ),
-    _crackTipMultiplicity(JeveuxVectorLong( _jeveuxName + ".FONDMULT" ) ),
-    _crackTipCharacteristics(JeveuxVectorDouble( _jeveuxName + ".CARAFOND" ) ),
-    _elementSize(JeveuxVectorDouble( _jeveuxName + ".FOND.TAILLE_R" ) ),
-    _enrichedNodes(JeveuxVectorLong( _jeveuxName + ".GROUP_NO_ENRI" ) ),
-    _crackTipElements(JeveuxVectorLong( _jeveuxName + ".MAILFISS.CTIP" ) ),
-    _heavisideElements(JeveuxVectorLong( _jeveuxName + ".MAILFISS.HEAV" ) ),
-    _crackTipAndHeavisideElements(JeveuxVectorLong( _jeveuxName + ".MAILFISS.HECT" ) )
-{
-};
+      _tangentialLevelSetField( new FieldOnNodesDoubleInstance( _jeveuxName + ".LTNO      " ) ),
+      _normalLevelSetField( new FieldOnNodesDoubleInstance( _jeveuxName + ".LNNO      " ) ),
+      _tangentialLevelSetGradient( new FieldOnNodesDoubleInstance( _jeveuxName + ".GRLTNO    " ) ),
+      _normalLevelSetGradient( new FieldOnNodesDoubleInstance( _jeveuxName + ".GRLNNO    " ) ),
+      _localBasis( new FieldOnNodesDoubleInstance( _jeveuxName + ".BASLOC    " ) ),
+      _crackTipCoords( JeveuxVectorDouble( _jeveuxName + ".FONDFISS" ) ),
+      _crackTipBasis( JeveuxVectorDouble( _jeveuxName + ".BASEFOND" ) ),
+      _crackTipMultiplicity( JeveuxVectorLong( _jeveuxName + ".FONDMULT" ) ),
+      _crackTipCharacteristics( JeveuxVectorDouble( _jeveuxName + ".CARAFOND" ) ),
+      _elementSize( JeveuxVectorDouble( _jeveuxName + ".FOND.TAILLE_R" ) ),
+      _enrichedNodes( JeveuxVectorLong( _jeveuxName + ".GROUP_NO_ENRI" ) ),
+      _crackTipElements( JeveuxVectorLong( _jeveuxName + ".MAILFISS.CTIP" ) ),
+      _heavisideElements( JeveuxVectorLong( _jeveuxName + ".MAILFISS.HEAV" ) ),
+      _crackTipAndHeavisideElements( JeveuxVectorLong( _jeveuxName + ".MAILFISS.HECT" ) ){};
 
-XfemCrackInstance::XfemCrackInstance(MeshPtr supportMesh):
-    XfemCrackInstance( ResultNaming::getNewResultName(), supportMesh )
-{
-};
+XfemCrackInstance::XfemCrackInstance( MeshPtr supportMesh )
+    : XfemCrackInstance( ResultNaming::getNewResultName(), supportMesh ){};
 
-
-
-bool XfemCrackInstance::build() throw( std::runtime_error )
-{
+bool XfemCrackInstance::build() throw( std::runtime_error ) {
     CommandSyntax cmdSt( "DEFI_FISS_XFEM" );
     cmdSt.setResult( ResultNaming::getCurrentName(), "FISS_XFEM" );
 
@@ -83,44 +66,46 @@ bool XfemCrackInstance::build() throw( std::runtime_error )
 
     dict.container["MAILLAGE"] = _supportMesh->getName();
 
-
-    if (_auxiliaryGrid) {
+    if ( _auxiliaryGrid ) {
         dict.container["MAILLAGE_GRILLE"] = _auxiliaryGrid->getName();
     }
-    if (_existingCrackWithGrid) {
+    if ( _existingCrackWithGrid ) {
         dict.container["FISS_GRILLE"] = _existingCrackWithGrid->getName();
     }
 
-    if (_discontinuityType == "Crack")      dict.container["TYPE_DISCONTINUITE"] = "FISSURE";
-    if (_discontinuityType == "Interface")  dict.container["TYPE_DISCONTINUITE"] = "INTERFACE";
-    if (_discontinuityType == "Cohesive")   dict.container["TYPE_DISCONTINUITE"] = "COHESIVE";
+    if ( _discontinuityType == "Crack" )
+        dict.container["TYPE_DISCONTINUITE"] = "FISSURE";
+    if ( _discontinuityType == "Interface" )
+        dict.container["TYPE_DISCONTINUITE"] = "INTERFACE";
+    if ( _discontinuityType == "Cohesive" )
+        dict.container["TYPE_DISCONTINUITE"] = "COHESIVE";
 
     dict.container["CHAM_DISCONTINUITE"] = _discontinuousField;
 
     SyntaxMapContainer dict2;
-    if (_crackLipsEntity.size()!=0) {
+    if ( _crackLipsEntity.size() != 0 ) {
         dict2.container["GROUP_MA_FISS"] = _crackLipsEntity;
-        if (_crackTipEntity.size()!=0) {
+        if ( _crackTipEntity.size() != 0 ) {
             dict2.container["GROUP_MA_FOND"] = _crackTipEntity;
         }
     }
 
-    if (_normalLevelSetFunction) {
+    if ( _normalLevelSetFunction ) {
         dict2.container["FONC_LN"] = _normalLevelSetFunction->getName();
-        if (_tangentialLevelSetFunction) {
+        if ( _tangentialLevelSetFunction ) {
             dict2.container["FONC_LT"] = _tangentialLevelSetFunction->getName();
         }
     }
 
-    if (_crackShape->getShape()!=Shape::NoShape) {
-        if (_crackShape->getShape()==Shape::Ellipse) {
+    if ( _crackShape->getShape() != Shape::NoShape ) {
+        if ( _crackShape->getShape() == Shape::Ellipse ) {
             dict2.container["DEMI_GRAND_AXE"] = _crackShape->getSemiMajorAxis();
             dict2.container["DEMI_PETIT_AXE"] = _crackShape->getSemiMinorAxis();
             dict2.container["CENTRE"] = _crackShape->getCenter();
             dict2.container["VECT_X"] = _crackShape->getVectX();
             dict2.container["VECT_Y"] = _crackShape->getVectY();
             dict2.container["COTE_FISS"] = _crackShape->getCrackSide();
-        } else if (_crackShape->getShape()==Shape::Square) {
+        } else if ( _crackShape->getShape() == Shape::Square ) {
             dict2.container["DEMI_GRAND_AXE"] = _crackShape->getSemiMajorAxis();
             dict2.container["DEMI_PETIT_AXE"] = _crackShape->getSemiMinorAxis();
             dict2.container["RAYON_CONGE"] = _crackShape->getFilletRadius();
@@ -128,98 +113,95 @@ bool XfemCrackInstance::build() throw( std::runtime_error )
             dict2.container["VECT_X"] = _crackShape->getVectX();
             dict2.container["VECT_Y"] = _crackShape->getVectY();
             dict2.container["COTE_FISS"] = _crackShape->getCrackSide();
-        } else if (_crackShape->getShape()==Shape::Cylinder) {
+        } else if ( _crackShape->getShape() == Shape::Cylinder ) {
             dict2.container["DEMI_GRAND_AXE"] = _crackShape->getSemiMajorAxis();
             dict2.container["DEMI_PETIT_AXE"] = _crackShape->getSemiMinorAxis();
             dict2.container["CENTRE"] = _crackShape->getCenter();
             dict2.container["VECT_X"] = _crackShape->getVectX();
             dict2.container["VECT_Y"] = _crackShape->getVectY();
-        } else if (_crackShape->getShape()==Shape::Notch) {
+        } else if ( _crackShape->getShape() == Shape::Notch ) {
             dict2.container["DEMI_LONGUEUR"] = _crackShape->getHalfLength();
             dict2.container["RAYON_CONGE"] = _crackShape->getFilletRadius();
             dict2.container["CENTRE"] = _crackShape->getCenter();
             dict2.container["VECT_X"] = _crackShape->getVectX();
             dict2.container["VECT_Y"] = _crackShape->getVectY();
-        } else if (_crackShape->getShape()==Shape::HalfPlane) {
+        } else if ( _crackShape->getShape() == Shape::HalfPlane ) {
             dict2.container["PFON"] = _crackShape->getEndPoint();
             dict2.container["DTAN"] = _crackShape->getTangent();
             dict2.container["NORMALE"] = _crackShape->getNormal();
-        } else if (_crackShape->getShape()==Shape::Segment) {
+        } else if ( _crackShape->getShape() == Shape::Segment ) {
             dict2.container["PFON_ORIG"] = _crackShape->getStartingPoint();
             dict2.container["PFON_EXTR"] = _crackShape->getEndPoint();
-        } else if (_crackShape->getShape()==Shape::HalfLine) {
+        } else if ( _crackShape->getShape() == Shape::HalfLine ) {
             dict2.container["PFON"] = _crackShape->getStartingPoint();
             dict2.container["DTAN"] = _crackShape->getTangent();
-        } else if (_crackShape->getShape()==Shape::Line) {
+        } else if ( _crackShape->getShape() == Shape::Line ) {
             dict2.container["POINT"] = _crackShape->getStartingPoint();
             dict2.container["DTAN"] = _crackShape->getTangent();
         }
         dict2.container["FORM_FISS"] = _crackShape->getShapeName();
     }
 
-    if (_normalLevelSetField) {
+    if ( _normalLevelSetField ) {
         dict2.container["CHAM_NO_LSN"] = _normalLevelSetField->getName();
-        if (_tangentialLevelSetField) {
+        if ( _tangentialLevelSetField ) {
             dict2.container["CHAM_NO_LST"] = _tangentialLevelSetField->getName();
         }
     }
 
     ListSyntaxMapContainer crackDefinition;
-    crackDefinition.push_back(dict2);
+    crackDefinition.push_back( dict2 );
     dict.container["DEFI_FISS"] = crackDefinition;
 
+    if ( _enrichedElements.size() != 0 )
+        dict.container["GROUP_MA_ENRI"] = _enrichedElements;
 
-    if (_enrichedElements.size()!=0) dict.container["GROUP_MA_ENRI"] = _enrichedElements;
-
-    if (_enrichmentType=="GEOMETRIQUE") {
+    if ( _enrichmentType == "GEOMETRIQUE" ) {
         dict.container["TYPE_FOND_ENRI"] = "GEOMETRIQUE";
-        if (_enrichmentRadiusZone) {
+        if ( _enrichmentRadiusZone ) {
             dict.container["RAYON_ENRI"] = _enrichmentRadiusZone;
         } else {
             dict.container["NB_COUCHES"] = _enrichedLayersNumber;
         }
     }
 
-    if (_junctingCracks.size()!=0) {
+    if ( _junctingCracks.size() != 0 ) {
         SyntaxMapContainer dict3;
-        std::vector<std::string> junctingCracksNames;
-        for (std::vector<XfemCrackPtr>::iterator  crack = _junctingCracks.begin(); crack != _junctingCracks.end(); ++crack) {
-            junctingCracksNames.push_back((*(*crack)).getName());
+        std::vector< std::string > junctingCracksNames;
+        for ( std::vector< XfemCrackPtr >::iterator crack = _junctingCracks.begin();
+              crack != _junctingCracks.end(); ++crack ) {
+            junctingCracksNames.push_back( ( *( *crack ) ).getName() );
         }
-        dict3.container["FISSURE"]=junctingCracksNames;
-        dict3.container["POINT"]=_pointForJunctingCracks;
+        dict3.container["FISSURE"] = junctingCracksNames;
+        dict3.container["POINT"] = _pointForJunctingCracks;
         ListSyntaxMapContainer junctionDefinition;
-        junctionDefinition.push_back(dict3);
+        junctionDefinition.push_back( dict3 );
     }
 
     cmdSt.define( dict );
 
-
     try {
         ASTERINTEGER op = 41;
         CALL_EXECOP( &op );
-    } catch( ... ) {
+    } catch ( ... ) {
         throw;
     }
-
-
 
     return true;
 };
 
-ModelPtr XfemCrackInstance::enrichModelWithXfem( ModelPtr &baseModel ) throw ( std::runtime_error )
-{
+ModelPtr XfemCrackInstance::enrichModelWithXfem( ModelPtr &baseModel ) throw( std::runtime_error ) {
     CommandSyntax cmdSt( "MODI_MODELE_XFEM" );
 
     // Create empty model and get its name
-    ModelPtr newModelPtr(new ModelInstance());
+    ModelPtr newModelPtr( new ModelInstance() );
     cmdSt.setResult( newModelPtr->getName(), "MODELE" );
 
     SyntaxMapContainer dict;
 
     dict.container["MODELE_IN"] = baseModel->getName();
     if ( baseModel->isEmpty() )
-        throw std::runtime_error("The Model must be built first");
+        throw std::runtime_error( "The Model must be built first" );
     dict.container["FISSURE"] = this->getName();
 
     // Set some default kwd values (TODO : support other values for the kwd)
@@ -230,16 +212,12 @@ ModelPtr XfemCrackInstance::enrichModelWithXfem( ModelPtr &baseModel ) throw ( s
     cmdSt.define( dict );
 
     // Call  OP00113
-    try
-    {
+    try {
         ASTERINTEGER op = 113;
         CALL_EXECOP( &op );
-    }
-    catch( ... )
-    {
+    } catch ( ... ) {
         throw;
     }
 
     return newModelPtr;
-
 };

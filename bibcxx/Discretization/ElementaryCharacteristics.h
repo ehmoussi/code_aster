@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe ElementaryCharacteristics
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -38,15 +38,14 @@
  * @brief Cette classe decrit un cara_elem
  * @author Nicolas Sellenet
  */
-class ElementaryCharacteristicsInstance: public DataStructure
-{
-private:
+class ElementaryCharacteristicsInstance : public DataStructure {
+  private:
     /** @brief Support model */
-    ModelPtr               _model;
+    ModelPtr _model;
     /** @brief Support mesh */
-    BaseMeshPtr            _mesh;
+    BaseMeshPtr _mesh;
     /** @brief Objet Jeveux '.CANBSP' */
-    PCFieldOnMeshLongPtr   _numberOfSubpoints;
+    PCFieldOnMeshLongPtr _numberOfSubpoints;
     /** @brief Objet Jeveux '.CARARCPO' */
     PCFieldOnMeshDoublePtr _curveBeam;
     /** @brief Objet Jeveux '.CARCABLE' */
@@ -73,9 +72,9 @@ private:
     PCFieldOnMeshDoublePtr _beamCharacteristics;
 
     /** @brief Booleen indiquant si le maillage est vide */
-    bool                   _isEmpty;
+    bool _isEmpty;
 
-public:
+  public:
     /**
      * @typedef ElementaryCharacteristicsPtr
      * @brief Pointeur intelligent vers un ElementaryCharacteristics
@@ -85,29 +84,23 @@ public:
     /**
      * @brief Constructeur
      */
-    ElementaryCharacteristicsInstance( const std::string name,
-                                       const ModelPtr& model );
+    ElementaryCharacteristicsInstance( const std::string name, const ModelPtr &model );
 
     /**
      * @brief Constructeur
      */
-    ElementaryCharacteristicsInstance( const ModelPtr& model ):
-        ElementaryCharacteristicsInstance( ResultNaming::getNewResultName(), model )
-    {
-    };
+    ElementaryCharacteristicsInstance( const ModelPtr &model )
+        : ElementaryCharacteristicsInstance( ResultNaming::getNewResultName(), model ){};
 
     /**
      * @brief Destructeur
      */
-    ~ElementaryCharacteristicsInstance()
-    {};
+    ~ElementaryCharacteristicsInstance(){};
 
     /**
      * @brief Get the model
      */
-    const ModelPtr& getModel() const
-        throw ( std::runtime_error )
-    {
+    const ModelPtr &getModel() const throw( std::runtime_error ) {
         if ( _model->isEmpty() )
             throw std::runtime_error( "Support model is empty" );
         return _model;
@@ -117,13 +110,8 @@ public:
      * @brief Fonction permettant de savoir si un maillage est vide (non relu par exemple)
      * @return retourne true si le maillage est vide
      */
-    bool isEmpty() const
-    {
-        return _isEmpty;
-    };
+    bool isEmpty() const { return _isEmpty; };
 };
-
-
 
 /**
  * @typedef ElementaryCharacteristicsPtr

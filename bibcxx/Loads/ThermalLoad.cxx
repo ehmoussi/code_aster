@@ -3,7 +3,7 @@
  * @brief Implementation de ThermalLoad
  * @author Jean-Pierre Lefebvre
  * @section LICENCE
- *   Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -28,37 +28,31 @@
 #include "Loads/ThermalLoad.h"
 #include "Supervis/ResultNaming.h"
 
-
-bool ThermalLoadInstance::build() throw ( std::runtime_error )
-{
+bool ThermalLoadInstance::build() throw( std::runtime_error ) {
     CapyConvertibleSyntax syntax;
-//    syntax.setSimpleKeywordValues( _toCapyConverter );
+    //    syntax.setSimpleKeywordValues( _toCapyConverter );
 
     CapyConvertibleFactorKeyword echangeFKW( "ECHANGE" );
-//    for( auto curIter : _exchange )
-//    {
-//        CapyConvertibleContainer toAdd = (*curIter)->getCapyConvertibleContainer();
-//        echangeFKW.addContainer( toAdd );
-//    }
+    //    for( auto curIter : _exchange )
+    //    {
+    //        CapyConvertibleContainer toAdd = (*curIter)->getCapyConvertibleContainer();
+    //        echangeFKW.addContainer( toAdd );
+    //    }
     syntax.addFactorKeywordValues( echangeFKW );
 
     SyntaxMapContainer test = syntax.toSyntaxMapContainer();
-//    cmdSt.define( test );
+    //    cmdSt.define( test );
 
-//
-// Maintenant que le fichier de commande est pret, on appelle OP0034
-//
+    //
+    // Maintenant que le fichier de commande est pret, on appelle OP0034
+    //
 
-    try
-    {
+    try {
         ASTERINTEGER op = 34;
         CALL_EXECOP( &op );
-    }
-    catch( ... )
-    {
+    } catch ( ... ) {
         throw;
     }
     _isEmpty = false;
     return true;
-
 };

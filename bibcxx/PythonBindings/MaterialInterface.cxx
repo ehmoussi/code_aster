@@ -3,7 +3,7 @@
  * @brief Interface python de Material
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -25,19 +25,13 @@
 #include <PythonBindings/factory.h>
 #include "PythonBindings/MaterialInterface.h"
 
-
-void exportMaterialToPython()
-{
+void exportMaterialToPython() {
     using namespace boost::python;
 
-    class_< MaterialInstance, MaterialInstance::MaterialPtr,
-            bases< DataStructure > > ( "Material", no_init )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< MaterialInstance >) )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< MaterialInstance,
-                             std::string >) )
+    class_< MaterialInstance, MaterialInstance::MaterialPtr, bases< DataStructure > >( "Material",
+                                                                                       no_init )
+        .def( "__init__", make_constructor(&initFactoryPtr< MaterialInstance >))
+        .def( "__init__", make_constructor(&initFactoryPtr< MaterialInstance, std::string >))
         .def( "addMaterialBehaviour", &MaterialInstance::addMaterialBehaviour )
-        .def( "build", &MaterialInstance::build )
-    ;
+        .def( "build", &MaterialInstance::build );
 };

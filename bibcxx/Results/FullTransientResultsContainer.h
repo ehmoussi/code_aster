@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe FullTransientResultsContainer
  * @author Nicolas Tardieu
  * @section LICENCE
- *   Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -33,20 +33,17 @@
  * @brief Cette classe correspond à un dyna_tran
  * @author Nicolas Tardieu
  */
-class FullTransientResultsContainerInstance: public FullResultsContainerInstance
-{
-private:
-
-public:
+class FullTransientResultsContainerInstance : public FullResultsContainerInstance {
+  private:
+  public:
     /**
      * @brief Constructeur
      * @todo  Ajouter les objets Jeveux de la SD
      */
-    FullTransientResultsContainerInstance(const std::string &name ): FullResultsContainerInstance(name, "DYNA_TRANS" )
-    {};
-    FullTransientResultsContainerInstance(): FullResultsContainerInstance(ResultNaming::getNewResultName(), "DYNA_TRANS" )
-    {};
-
+    FullTransientResultsContainerInstance( const std::string &name )
+        : FullResultsContainerInstance( name, "DYNA_TRANS" ){};
+    FullTransientResultsContainerInstance()
+        : FullResultsContainerInstance( ResultNaming::getNewResultName(), "DYNA_TRANS" ){};
 };
 
 /**

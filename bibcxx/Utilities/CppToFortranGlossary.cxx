@@ -23,92 +23,73 @@
 
 #include "Utilities/CppToFortranGlossary.h"
 
-Glossary::Glossary()
-{
-    for( int i = 0; i < nbPhysics; ++i )
-    {
+Glossary::Glossary() {
+    for ( int i = 0; i < nbPhysics; ++i ) {
         const std::string curName( PhysicNames[i] );
-        _strToInt[ curName ] = i;
+        _strToInt[curName] = i;
     }
 
-    for( int i = 0; i < nbModelings; ++i )
-    {
+    for ( int i = 0; i < nbModelings; ++i ) {
         const std::string curName( ModelingNames[i] );
-        _strToInt[ curName ] = i;
+        _strToInt[curName] = i;
     }
 
     int i = 0;
-    for( const auto& component : ComponentNames )
-    {
-        const std::string& toto = component.second;
-        _strToInt[ component.second ] = i;
+    for ( const auto &component : ComponentNames ) {
+        const std::string &toto = component.second;
+        _strToInt[component.second] = i;
         ++i;
     }
 
-    for( int i = 0; i < nbSolvers; ++i )
-    {
+    for ( int i = 0; i < nbSolvers; ++i ) {
         const std::string curName( LinearSolverNames[i] );
-        _strToInt[ curName ] = i;
+        _strToInt[curName] = i;
     }
 
-    for( int i = 0; i < nbRenumberings; ++i )
-    {
+    for ( int i = 0; i < nbRenumberings; ++i ) {
         const std::string curName( RenumberingNames[i] );
-        _renum[ curName ] = i;
+        _renum[curName] = i;
     }
 
-    for( int i = 0; i < nbPreconditionings; ++i )
-    {
+    for ( int i = 0; i < nbPreconditionings; ++i ) {
         const std::string curName( PreconditioningNames[i] );
-        _precond[ curName ] = i;
+        _precond[curName] = i;
     }
 
-    for( int i = 0; i < nbLagrangeTreatments; ++i )
-    {
+    for ( int i = 0; i < nbLagrangeTreatments; ++i ) {
         const std::string curName( LagrangeTreatmentNames[i] );
-        _lagrTreatment[ curName ] = i;
+        _lagrTreatment[curName] = i;
     }
 
-    for( int i = 0; i < nbMatrixTypes; ++i )
-    {
+    for ( int i = 0; i < nbMatrixTypes; ++i ) {
         const std::string curName( MatrixTypeNames[i] );
-        _matrTyp[ curName ] = i;
+        _matrTyp[curName] = i;
     }
 
-    for( int i = 0; i < nbMemoryManagements; ++i )
-    {
+    for ( int i = 0; i < nbMemoryManagements; ++i ) {
         const std::string curName( MemoryManagementNames[i] );
-        _memManagement[ curName ] = i;
+        _memManagement[curName] = i;
     }
 
-    for( int i = 0; i < nbIterativeSolverAlgorithms; ++i )
-    {
+    for ( int i = 0; i < nbIterativeSolverAlgorithms; ++i ) {
         const std::string curName( IterativeSolverAlgorithmNames[i] );
-        _algo[ curName ] = i;
+        _algo[curName] = i;
     }
 
-    for( int i = 0; i < nbMumpsPostTreatments; ++i )
-    {
+    for ( int i = 0; i < nbMumpsPostTreatments; ++i ) {
         const std::string curName( MumpsPostTreatmentNames[i] );
-        _post[ curName ] = i;
+        _post[curName] = i;
     }
 
-    for( int i = 0; i < nbMumpsAcceleration; ++i )
-    {
+    for ( int i = 0; i < nbMumpsAcceleration; ++i ) {
         const std::string curName( MumpsAccelerationNames[i] );
-        _acce[ curName ] = i;
+        _acce[curName] = i;
     }
 };
 
 // Glossary fortranGlossary;
-Glossary* fortranGlossary2 = new Glossary();
+Glossary *fortranGlossary2 = new Glossary();
 
-Glossary* getGlossary()
-{
-    return fortranGlossary2;
-};
+Glossary *getGlossary() { return fortranGlossary2; };
 
-const Glossary& getReferenceToGlossary()
-{
-    return *fortranGlossary2;
-};
+const Glossary &getReferenceToGlossary() { return *fortranGlossary2; };

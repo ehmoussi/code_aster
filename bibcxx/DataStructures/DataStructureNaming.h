@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe DataStructureNaming
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -38,26 +38,22 @@
  * @brief Classe permet de donner un nom temporaire a une sd
  * @author Nicolas Sellenet
  */
-class DataStructureNaming
-{
-    public:
-        /**
-         * @brief Function membre getNewName
-         */
-        static std::string getNewName( JeveuxMemory memoryType, int lengthName = 8 )
-            throw ( std::runtime_error )
-        {
-            if ( memoryType == Permanent )
-            {
-                std::string tmpName = ResultNaming::getNewResultName();
-                return std::string( tmpName + "                        ", 0, lengthName );
-            }
-            else if ( memoryType == Temporary )
-                return TemporaryDataStructure::getNewTemporaryName( lengthName );
-            else
-                throw std::runtime_error( "Programming error" );
-            return "";
-        };
+class DataStructureNaming {
+  public:
+    /**
+     * @brief Function membre getNewName
+     */
+    static std::string getNewName( JeveuxMemory memoryType,
+                                   int lengthName = 8 ) throw( std::runtime_error ) {
+        if ( memoryType == Permanent ) {
+            std::string tmpName = ResultNaming::getNewResultName();
+            return std::string( tmpName + "                        ", 0, lengthName );
+        } else if ( memoryType == Temporary )
+            return TemporaryDataStructure::getNewTemporaryName( lengthName );
+        else
+            throw std::runtime_error( "Programming error" );
+        return "";
+    };
 };
 
 #endif /* DATASTRUCTURENAMING_H_ */

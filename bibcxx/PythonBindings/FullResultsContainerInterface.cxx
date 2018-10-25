@@ -3,7 +3,7 @@
  * @brief Interface python de FullResultsContainer
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -25,19 +25,17 @@
 #include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
-void exportFullResultsContainerToPython()
-{
+void exportFullResultsContainerToPython() {
     using namespace boost::python;
 
     class_< FullResultsContainerInstance, FullResultsContainerPtr,
-            bases< ResultsContainerInstance > > ( "FullResultsContainer", no_init )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< FullResultsContainerInstance,
-                             std::string , std::string> ) )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< FullResultsContainerInstance, std::string> ) )
+            bases< ResultsContainerInstance > >( "FullResultsContainer", no_init )
+        .def( "__init__",
+              make_constructor(
+                  &initFactoryPtr< FullResultsContainerInstance, std::string, std::string >))
+        .def( "__init__",
+              make_constructor(&initFactoryPtr< FullResultsContainerInstance, std::string >))
         .def( "getDOFNumbering", &FullResultsContainerInstance::getDOFNumbering )
         .def( "printMedFile", &FullResultsContainerInstance::printMedFile )
-        .def( "setDOFNumbering", &FullResultsContainerInstance::setDOFNumbering )
-    ;
+        .def( "setDOFNumbering", &FullResultsContainerInstance::setDOFNumbering );
 };

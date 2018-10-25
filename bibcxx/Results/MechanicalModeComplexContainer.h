@@ -4,7 +4,7 @@
 /**
  * @file MechanicalModeComplexContainer.h
  * @brief Fichier entete de la classe MechanicalModeComplexContainer
- * @author Natacha Béreux 
+ * @author Natacha Béreux
  * @section LICENCE
  *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
@@ -33,13 +33,12 @@
 /**
  * @class MechanicalModeComplexContainerInstance
  * @brief Cette classe correspond a un mode_meca_c
- * On a choisi de définir un MechanicalModeComplexContainerInstance comme 
-   un résultat disposant, en plus des membres usuels d'un résultat, de champs aux noeuds complexes. 
+ * On a choisi de définir un MechanicalModeComplexContainerInstance comme
+   un résultat disposant, en plus des membres usuels d'un résultat, de champs aux noeuds complexes.
  * @author Natacha Béreux
  */
-class MechanicalModeComplexContainerInstance: public FullResultsContainerInstance
-{
-private:
+class MechanicalModeComplexContainerInstance : public FullResultsContainerInstance {
+  private:
     typedef std::vector< FieldOnNodesComplexPtr > VectorOfComplexFieldsNodes;
 
     /** @typedef std::map d'une chaine et des pointers vers toutes les DataStructure */
@@ -49,37 +48,31 @@ private:
     /** @typedef Valeur contenue dans mapStrVOFN */
     typedef mapStrVOCFN::value_type mapStrVOCFNValue;
     /** @brief Liste des champs aux noeuds */
-    mapStrVOCFN                          _dictOfVectorOfComplexFieldsNodes;
+    mapStrVOCFN _dictOfVectorOfComplexFieldsNodes;
     /** */
-    StructureInterfacePtr                _structureInterface;
+    StructureInterfacePtr _structureInterface;
     /** @brief Damping matrix */
-    AssemblyMatrixDisplacementDoublePtr  _dampingMatrix;
+    AssemblyMatrixDisplacementDoublePtr _dampingMatrix;
     /** @brief Stiffness complex matrix */
     AssemblyMatrixDisplacementComplexPtr _rigidityCMatrix;
     /** @brief Stiffness double matrix */
-    AssemblyMatrixDisplacementDoublePtr  _rigidityDMatrix;
+    AssemblyMatrixDisplacementDoublePtr _rigidityDMatrix;
 
-public:
+  public:
     /**
      * @brief Constructeur
      */
-    MechanicalModeComplexContainerInstance():
-        FullResultsContainerInstance( "MODE_MECA_C" ),
-        _structureInterface( StructureInterfacePtr() ),
-        _dampingMatrix( nullptr ),
-        _rigidityCMatrix( nullptr ),
-        _rigidityDMatrix( nullptr )
-    {};
+    MechanicalModeComplexContainerInstance()
+        : FullResultsContainerInstance( "MODE_MECA_C" ),
+          _structureInterface( StructureInterfacePtr() ), _dampingMatrix( nullptr ),
+          _rigidityCMatrix( nullptr ), _rigidityDMatrix( nullptr ){};
     /**
      * @brief Constructeur
      */
-    MechanicalModeComplexContainerInstance( const std::string& name ):
-        FullResultsContainerInstance( name, "MODE_MECA_C" ),
-        _structureInterface( StructureInterfacePtr() ),
-        _dampingMatrix( nullptr ),
-        _rigidityCMatrix( nullptr ),
-        _rigidityDMatrix( nullptr )
-    {};
+    MechanicalModeComplexContainerInstance( const std::string &name )
+        : FullResultsContainerInstance( name, "MODE_MECA_C" ),
+          _structureInterface( StructureInterfacePtr() ), _dampingMatrix( nullptr ),
+          _rigidityCMatrix( nullptr ), _rigidityDMatrix( nullptr ){};
 
     /**
      * @brief Obtenir un champ aux noeuds complexe vide à partir de son nom et de son numéro d'ordre
@@ -87,24 +80,24 @@ public:
      * @param rank numéro d'ordre
      * @return FieldOnNodesDoublePtr pointant vers le champ
      */
-    FieldOnNodesComplexPtr getEmptyFieldOnNodesComplex( const std::string name, const int rank )
-        throw ( std::runtime_error );
+    FieldOnNodesComplexPtr
+    getEmptyFieldOnNodesComplex( const std::string name,
+                                 const int rank ) throw( std::runtime_error );
 
-     /**
-     * @brief Obtenir un champ aux noeuds complexe à partir de son nom et de son numéro d'ordre
-     * @param name nom Aster du champ
-     * @param rank numéro d'ordre
-     * @return FieldOnNodesDoublePtr pointant vers le champ
-     */
+    /**
+    * @brief Obtenir un champ aux noeuds complexe à partir de son nom et de son numéro d'ordre
+    * @param name nom Aster du champ
+    * @param rank numéro d'ordre
+    * @return FieldOnNodesDoublePtr pointant vers le champ
+    */
     FieldOnNodesComplexPtr getComplexFieldOnNodes( const std::string name, const int rank ) const
-        throw ( std::runtime_error );
+        throw( std::runtime_error );
 
     /**
      * @brief Set the damping matrix
      * @param matr AssemblyMatrixDisplacementDoublePtr
      */
-    bool setDampingMatrix( const AssemblyMatrixDisplacementDoublePtr& matr )
-    {
+    bool setDampingMatrix( const AssemblyMatrixDisplacementDoublePtr &matr ) {
         _dampingMatrix = matr;
         return true;
     };
@@ -113,8 +106,7 @@ public:
      * @brief Set the rigidity matrix
      * @param matr AssemblyMatrixDisplacementComplexPtr
      */
-    bool setStiffnessMatrix( const AssemblyMatrixDisplacementComplexPtr& matr )
-    {
+    bool setStiffnessMatrix( const AssemblyMatrixDisplacementComplexPtr &matr ) {
         _rigidityCMatrix = matr;
         _rigidityDMatrix = nullptr;
         return true;
@@ -124,8 +116,7 @@ public:
      * @brief Set the rigidity matrix
      * @param matr AssemblyMatrixDisplacementDoublePtr
      */
-    bool setStiffnessMatrix( const AssemblyMatrixDisplacementDoublePtr& matr )
-    {
+    bool setStiffnessMatrix( const AssemblyMatrixDisplacementDoublePtr &matr ) {
         _rigidityDMatrix = matr;
         _rigidityCMatrix = nullptr;
         return true;
@@ -135,29 +126,27 @@ public:
      * @brief set interf_dyna
      * @param structureInterface objet StructureInterfacePtr
      */
-    bool setStructureInterface( StructureInterfacePtr& structureInterface ) throw ( std::runtime_error )
-    {
+    bool
+    setStructureInterface( StructureInterfacePtr &structureInterface ) throw( std::runtime_error ) {
         _structureInterface = structureInterface;
         return true;
     };
 
-    bool update() throw ( std::runtime_error )
-    {
+    bool update() throw( std::runtime_error ) {
         BaseDOFNumberingPtr numeDdl( nullptr );
-        if( _dampingMatrix != nullptr )
+        if ( _dampingMatrix != nullptr )
             numeDdl = _dampingMatrix->getDOFNumbering();
-        if( _rigidityCMatrix != nullptr )
+        if ( _rigidityCMatrix != nullptr )
             numeDdl = _rigidityCMatrix->getDOFNumbering();
-        if( _rigidityDMatrix != nullptr )
+        if ( _rigidityDMatrix != nullptr )
             numeDdl = _rigidityDMatrix->getDOFNumbering();
 
-        if( numeDdl != nullptr )
-        {
+        if ( numeDdl != nullptr ) {
             const auto model = numeDdl->getSupportModel();
             const auto matrElem = numeDdl->getElementaryMatrix();
-            if( model != nullptr )
+            if ( model != nullptr )
                 _mesh = model->getSupportMesh();
-            if( matrElem != nullptr )
+            if ( matrElem != nullptr )
                 _mesh = matrElem->getSupportModel()->getSupportMesh();
         }
         return ResultsContainerInstance::update();
@@ -168,6 +157,7 @@ public:
  * @typedef MechanicalModeComplexContainerPtr
  * @brief Pointeur intelligent vers un MechanicalModeComplexContainerInstance
  */
-typedef boost::shared_ptr< MechanicalModeComplexContainerInstance > MechanicalModeComplexContainerPtr;
+typedef boost::shared_ptr< MechanicalModeComplexContainerInstance >
+    MechanicalModeComplexContainerPtr;
 
 #endif /* MECHANICALMODECOMPLEXCONTAINER_H_ */

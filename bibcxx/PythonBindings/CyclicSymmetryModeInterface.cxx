@@ -3,7 +3,7 @@
  * @brief Interface python de CyclicSymmetryMode
  * @author Natacha Béreux
  * @section LICENCE
- *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -25,13 +25,12 @@
 #include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
-void exportCyclicSymmetryModeToPython()
-{
+void exportCyclicSymmetryModeToPython() {
     using namespace boost::python;
 
     class_< CyclicSymmetryModeInstance, CyclicSymmetryModeInstance::CyclicSymmetryModePtr,
-            bases< DataStructure > > ( "CyclicSymmetryMode", no_init )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< CyclicSymmetryModeInstance > ) )
-    ;
+            bases< DataStructure > >( "CyclicSymmetryMode", no_init )
+        .def( "__init__", make_constructor( &initFactoryPtr< CyclicSymmetryModeInstance > ) )
+        .def( "__init__",
+              make_constructor( &initFactoryPtr< CyclicSymmetryModeInstance, std::string > ) );
 };

@@ -3,7 +3,7 @@
  * @brief Interface python de ParallelMesh
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -28,21 +28,15 @@
 #include "PythonBindings/ParallelMeshInterface.h"
 #include "PythonBindings/factory.h"
 
-
 #ifdef _USE_MPI
 
-void exportParallelMeshToPython()
-{
+void exportParallelMeshToPython() {
     using namespace boost::python;
     class_< ParallelMeshInstance, ParallelMeshInstance::ParallelMeshPtr,
             bases< BaseMeshInstance > >( "ParallelMesh", no_init )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< ParallelMeshInstance >) )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< ParallelMeshInstance,
-                             std::string >) )
-        .def( "readMedFile", &ParallelMeshInstance::readMedFile )
-    ;
+        .def( "__init__", make_constructor(&initFactoryPtr< ParallelMeshInstance >))
+        .def( "__init__", make_constructor(&initFactoryPtr< ParallelMeshInstance, std::string >))
+        .def( "readMedFile", &ParallelMeshInstance::readMedFile );
 };
 
 #endif /* _USE_MPI */

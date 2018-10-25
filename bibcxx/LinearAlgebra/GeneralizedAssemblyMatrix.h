@@ -29,48 +29,45 @@
 #include "astercxx.h"
 
 #include "DataStructures/DataStructure.h"
-#include "MemoryManager/JeveuxVector.h"
-#include "MemoryManager/JeveuxCollection.h"
 #include "Discretization/ForwardGeneralizedDOFNumbering.h"
+#include "MemoryManager/JeveuxCollection.h"
+#include "MemoryManager/JeveuxVector.h"
 
 /**
  * @class GenericGeneralizedAssemblyMatrixInstance
  * @brief Cette classe correspond a un matr_asse_gene
  * @author Nicolas Sellenet
  */
-class GenericGeneralizedAssemblyMatrixInstance: public DataStructure
-{
-private:
+class GenericGeneralizedAssemblyMatrixInstance : public DataStructure {
+  private:
     /** @brief Objet Jeveux '.DESC' */
-    JeveuxVectorDouble         _desc;
+    JeveuxVectorDouble _desc;
     /** @brief Objet Jeveux '.REFE' */
-    JeveuxVectorChar24         _refe;
+    JeveuxVectorChar24 _refe;
     /** @brief Support GeneralizedDOFNumbering */
     ForwardGeneralizedDOFNumberingPtr _dofNum;
 
-public:
+  public:
     /**
      * @typedef GeneralizedAssemblyMatrixPtr
      * @brief Pointeur intelligent vers un GeneralizedAssemblyMatrix
      */
     typedef boost::shared_ptr< GenericGeneralizedAssemblyMatrixInstance >
-            GenericGeneralizedAssemblyMatrixPtr;
+        GenericGeneralizedAssemblyMatrixPtr;
 
     /**
      * @brief Constructeur
      */
-    GenericGeneralizedAssemblyMatrixInstance( const std::string name ):
-        DataStructure( name, 19, "MATR_ASSE_GENE", Permanent ),
-        _desc( JeveuxVectorDouble( getName() + ".DESC" ) ),
-        _refe( JeveuxVectorChar24( getName() + ".REFE" ) )
-    {};
+    GenericGeneralizedAssemblyMatrixInstance( const std::string name )
+        : DataStructure( name, 19, "MATR_ASSE_GENE", Permanent ),
+          _desc( JeveuxVectorDouble( getName() + ".DESC" ) ),
+          _refe( JeveuxVectorChar24( getName() + ".REFE" ) ){};
 
     /**
      * @brief Get support GeneralizedDOFNumering
      */
-    GeneralizedDOFNumberingPtr getGeneralizedDOFNumbering() throw ( std::runtime_error )
-    {
-        if( _dofNum.isSet() )
+    GeneralizedDOFNumberingPtr getGeneralizedDOFNumbering() throw( std::runtime_error ) {
+        if ( _dofNum.isSet() )
             return _dofNum.getPointer();
         throw std::runtime_error( "GeneralizedDOFNumbering is empty" );
     };
@@ -78,10 +75,8 @@ public:
     /**
      * @brief Set support GeneralizedDOFNumering
      */
-    bool setGeneralizedDOFNumbering( const GeneralizedDOFNumberingPtr& dofNum )
-    {
-        if( dofNum != nullptr )
-        {
+    bool setGeneralizedDOFNumbering( const GeneralizedDOFNumberingPtr &dofNum ) {
+        if ( dofNum != nullptr ) {
             _dofNum = dofNum;
             return true;
         }
@@ -94,55 +89,49 @@ public:
  * @brief Cette classe correspond a un matr_asse_gene
  * @author Nicolas Sellenet
  */
-template< class ValueType >
-class GeneralizedAssemblyMatrixInstance: public GenericGeneralizedAssemblyMatrixInstance
-{
-private:
+template < class ValueType >
+class GeneralizedAssemblyMatrixInstance : public GenericGeneralizedAssemblyMatrixInstance {
+  private:
     /** @brief Objet Jeveux '.VALM' */
     JeveuxVector< ValueType > _valm;
 
     /**
      * @brief definir le type
      */
-    template< class type = ValueType >
-    typename std::enable_if< std::is_same< type, double >::value, void>::type
-    setMatrixType()
-    {
+    template < class type = ValueType >
+    typename std::enable_if< std::is_same< type, double >::value, void >::type setMatrixType() {
         setType( "MATR_ASSE_GENE_R" );
     };
 
     /**
      * @brief definir le type
      */
-    template< class type = ValueType >
-    typename std::enable_if< std::is_same< type, DoubleComplex >::value, void>::type
-    setMatrixType()
-    {
+    template < class type = ValueType >
+    typename std::enable_if< std::is_same< type, DoubleComplex >::value, void >::type
+    setMatrixType() {
         setType( "MATR_ASSE_GENE_C" );
     };
 
-public:
+  public:
     /**
      * @typedef GeneralizedAssemblyMatrixPtr
      * @brief Pointeur intelligent vers un GeneralizedAssemblyMatrix
      */
-    typedef boost::shared_ptr< GeneralizedAssemblyMatrixInstance<ValueType> >
-            GeneralizedAssemblyMatrixPtr;
+    typedef boost::shared_ptr< GeneralizedAssemblyMatrixInstance< ValueType > >
+        GeneralizedAssemblyMatrixPtr;
 
     /**
      * @brief Constructeur
      */
-    GeneralizedAssemblyMatrixInstance():
-        GeneralizedAssemblyMatrixInstance( ResultNaming::getNewResultName() )
-    {};
+    GeneralizedAssemblyMatrixInstance()
+        : GeneralizedAssemblyMatrixInstance( ResultNaming::getNewResultName() ){};
 
     /**
      * @brief Constructeur
      */
-    GeneralizedAssemblyMatrixInstance( const std::string name ):
-        GenericGeneralizedAssemblyMatrixInstance( name ),
-        _valm( JeveuxVector< ValueType >( getName() + ".VALM" ) )
-    {
+    GeneralizedAssemblyMatrixInstance( const std::string name )
+        : GenericGeneralizedAssemblyMatrixInstance( name ),
+          _valm( JeveuxVector< ValueType >( getName() + ".VALM" ) ) {
         GeneralizedAssemblyMatrixInstance< ValueType >::setMatrixType();
     };
 };
@@ -156,18 +145,21 @@ typedef GeneralizedAssemblyMatrixInstance< DoubleComplex > GeneralizedAssemblyMa
  * @typedef GenericGeneralizedAssemblyMatrixPtr
  * @brief Pointeur intelligent vers un GenericGeneralizedAssemblyMatrixInstance
  */
-typedef boost::shared_ptr< GenericGeneralizedAssemblyMatrixInstance > GenericGeneralizedAssemblyMatrixPtr;
+typedef boost::shared_ptr< GenericGeneralizedAssemblyMatrixInstance >
+    GenericGeneralizedAssemblyMatrixPtr;
 
 /**
  * @typedef GeneralizedAssemblyMatrixDoublePtr
  * @brief Pointeur intelligent vers un GeneralizedAssemblyMatrixDoubleInstance
  */
-typedef boost::shared_ptr< GeneralizedAssemblyMatrixDoubleInstance > GeneralizedAssemblyMatrixDoublePtr;
+typedef boost::shared_ptr< GeneralizedAssemblyMatrixDoubleInstance >
+    GeneralizedAssemblyMatrixDoublePtr;
 
 /**
  * @typedef GeneralizedAssemblyMatrixComplexPtr
  * @brief Pointeur intelligent vers un GeneralizedAssemblyMatrixComplexInstance
  */
-typedef boost::shared_ptr< GeneralizedAssemblyMatrixComplexInstance > GeneralizedAssemblyMatrixComplexPtr;
+typedef boost::shared_ptr< GeneralizedAssemblyMatrixComplexInstance >
+    GeneralizedAssemblyMatrixComplexPtr;
 
 #endif /* GENERALIZEDASSEMBLYMATRIX_H_ */

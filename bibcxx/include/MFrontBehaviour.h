@@ -32,45 +32,44 @@
  * \brief A simplified wrapper to a MFront behaviour to request
  *        some informations.
  */
-class MFrontBehaviour
-{
-    public:
-        MFrontBehaviour(std::string hyp, std::string lib, std::string behav);
-        /**
-         * \brief Return a vector of the properties names
-         */
-        std::vector<std::string> getMaterialPropertiesNames();
-        ~MFrontBehaviour();
+class MFrontBehaviour {
+  public:
+    MFrontBehaviour( std::string hyp, std::string lib, std::string behav );
+    /**
+     * \brief Return a vector of the properties names
+     */
+    std::vector< std::string > getMaterialPropertiesNames();
+    ~MFrontBehaviour();
 
-    private:
-        //! hypothesis
-        const std::string _hypothesis;
-        //! library
-        const std::string _libname;
-        //! behaviour
-            const std::string _bname;
-        //! names of the material properties
-        std::vector<std::string> _mpnames;
-        //! indicator to compute properties names only once
-        bool _mpnames_computed;
+  private:
+    //! hypothesis
+    const std::string _hypothesis;
+    //! library
+    const std::string _libname;
+    //! behaviour
+    const std::string _bname;
+    //! names of the material properties
+    std::vector< std::string > _mpnames;
+    //! indicator to compute properties names only once
+    bool _mpnames_computed;
 
-        /**
-         * \brief fill the _mpnames attribute
-         */
-        void fillMaterialPropertiesNames();
+    /**
+     * \brief fill the _mpnames attribute
+     */
+    void fillMaterialPropertiesNames();
 };
 
 /**
  * \brief Convert a MFront parameter name to a Code_Aster one
  *        Example: 'name[i]' into 'name_i'
  */
-std::string toAsterParameter(const std::string &);
+std::string toAsterParameter( const std::string & );
 
 /**
  * \brief Apply toAsterParameter to the elements of a vector
  * \return a new vector
  */
-std::vector<std::string> toAsterParameterVect(const std::vector<std::string> &);
+std::vector< std::string > toAsterParameterVect( const std::vector< std::string > & );
 
 /**
  * \brief Convert a vector of strings into a char** and size
@@ -79,10 +78,9 @@ std::vector<std::string> toAsterParameterVect(const std::vector<std::string> &);
  * \param[out] size : number of elements in the vector
  * \return char**
  */
-char** vectorOfStringsAsCharArray(const std::vector<std::string> &, unsigned int *);
+char **vectorOfStringsAsCharArray( const std::vector< std::string > &, unsigned int * );
 
-extern "C"
-{
+extern "C" {
 #endif // __cplusplus
 
 /**
@@ -92,8 +90,7 @@ extern "C"
  * @param function
  * @param size      Size of the array, number of properties
  */
-char** getMaterialPropertiesNames(const char*, const char*, const char*,
-                                  unsigned int *);
+char **getMaterialPropertiesNames( const char *, const char *, const char *, unsigned int * );
 
 /**
  * \brief Return an array of strings of the properties names
@@ -101,8 +98,7 @@ char** getMaterialPropertiesNames(const char*, const char*, const char*,
  * @param behaviour name
  * @param size      Size of the array, number of properties
  */
-char** getTridimMaterialPropertiesNames(const char*,
-                                        unsigned int *);
+char **getTridimMaterialPropertiesNames( const char *, unsigned int * );
 
 #ifdef __cplusplus
 }

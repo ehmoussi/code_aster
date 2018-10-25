@@ -11,7 +11,7 @@
  * @brief Fichier entete de la classe
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -39,16 +39,16 @@
 
 /**
  * @class PartialMeshInstance
- * @brief Cette classe decrit un maillage partiel reconstruit a partir d'une liste de groupe de noeuds
+ * @brief Cette classe decrit un maillage partiel reconstruit a partir d'une liste de groupe de
+ * noeuds
  * @author Nicolas Sellenet
  */
-class PartialMeshInstance: public BaseMeshInstance
-{
-private:
-    typedef JeveuxCollection< ASTERINTEGER,
-                              JeveuxBidirectionalMapChar24 > JeveuxCollectionLongNamePtr;
+class PartialMeshInstance : public BaseMeshInstance {
+  private:
+    typedef JeveuxCollection< ASTERINTEGER, JeveuxBidirectionalMapChar24 >
+        JeveuxCollectionLongNamePtr;
     /** @brief Base ParallelMesh */
-    ParallelMeshPtr  _pMesh;
+    ParallelMeshPtr _pMesh;
     /** @brief id of node in local numbering */
     JeveuxVectorLong _localNumbering;
     /** @brief id of node in global numbering */
@@ -56,7 +56,7 @@ private:
     /** @brief number of owner proc for each nodes */
     JeveuxVectorLong _owner;
 
-public:
+  public:
     /**
      * @typedef PartialMeshPtr
      * @brief Pointeur intelligent vers un PartialMeshInstance
@@ -66,36 +66,21 @@ public:
     /**
      * @brief Constructeur
      */
-    PartialMeshInstance( const ParallelMeshPtr& mesh,
-                         const VectorString& toFind ):
-        PartialMeshInstance( ResultNaming::getNewResultName(), mesh, toFind )
-    {};
+    PartialMeshInstance( const ParallelMeshPtr &mesh, const VectorString &toFind )
+        : PartialMeshInstance( ResultNaming::getNewResultName(), mesh, toFind ){};
 
     /**
      * @brief Constructeur
      */
-    PartialMeshInstance( const std::string& name,
-                         const ParallelMeshPtr&, const VectorString& );
+    PartialMeshInstance( const std::string &name, const ParallelMeshPtr &, const VectorString & );
 
-    const JeveuxVectorLong& getGlobalNumbering() const
-    {
-        return _globalNumbering;
-    };
+    const JeveuxVectorLong &getGlobalNumbering() const { return _globalNumbering; };
 
-    const JeveuxVectorLong& getLocalNumbering() const
-    {
-        return _localNumbering;
-    };
+    const JeveuxVectorLong &getLocalNumbering() const { return _localNumbering; };
 
-    const JeveuxVectorLong& getOwner() const
-    {
-        return _owner;
-    };
+    const JeveuxVectorLong &getOwner() const { return _owner; };
 
-    const ParallelMeshPtr& getParallelMesh() const
-    {
-        return _pMesh;
-    };
+    const ParallelMeshPtr &getParallelMesh() const { return _pMesh; };
 };
 
 /**

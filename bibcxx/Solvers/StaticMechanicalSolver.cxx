@@ -3,7 +3,7 @@
  * @brief Fichier source contenant le source du solveur de mecanique statique
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2015  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -34,27 +34,23 @@
 #include "Algorithms/StaticMechanicalAlgorithm.h"
 #include "Algorithms/StaticMechanicalContext.h"
 
-StaticMechanicalSolverInstance::StaticMechanicalSolverInstance( const ModelPtr& model,
-                                                                const MaterialOnMeshPtr& mater,
-                                                                const ElementaryCharacteristicsPtr& cara ):
-    _supportModel( model ),
-    _materialOnMesh( mater ),
-    _linearSolver( BaseLinearSolverPtr() ),
-    _timeStep( TimeStepperPtr( new TimeStepperInstance() ) ),
-    _study( new StudyDescriptionInstance( _supportModel, _materialOnMesh, cara ) )
-{
+StaticMechanicalSolverInstance::StaticMechanicalSolverInstance(
+    const ModelPtr &model, const MaterialOnMeshPtr &mater,
+    const ElementaryCharacteristicsPtr &cara )
+    : _supportModel( model ), _materialOnMesh( mater ), _linearSolver( BaseLinearSolverPtr() ),
+      _timeStep( TimeStepperPtr( new TimeStepperInstance() ) ),
+      _study( new StudyDescriptionInstance( _supportModel, _materialOnMesh, cara ) ) {
     _timeStep->setValues( VectorDouble( 1, 0. ) );
 };
 
-ElasticEvolutionContainerPtr StaticMechanicalSolverInstance::execute() throw ( std::runtime_error )
-{
+ElasticEvolutionContainerPtr StaticMechanicalSolverInstance::execute() throw( std::runtime_error ) {
     ElasticEvolutionContainerPtr resultC( new ElasticEvolutionContainerInstance() );
 
     _study->getCodedMaterial()->allocate();
 
-    if( !_timeStep )
+    if ( !_timeStep )
         throw std::runtime_error( "No time list" );
-    if( _timeStep->size() == 0 )
+    if ( _timeStep->size() == 0 )
         resultC->allocate( 1 );
     else
         resultC->allocate( _timeStep->size() );
@@ -62,11 +58,10 @@ ElasticEvolutionContainerPtr StaticMechanicalSolverInstance::execute() throw ( s
     // Define the discrete problem
     DiscreteProblemPtr dProblem( new DiscreteProblemInstance( _study ) );
 
-    if( _supportModel->getSupportMesh()->isParallel() )
-    {
-        if( ! _linearSolver->isHPCCompliant() )
+    if ( _supportModel->getSupportMesh()->isParallel() ) {
+        if ( !_linearSolver->isHPCCompliant() )
             throw std::runtime_error( "ParallelMesh not allowed with this linear solver" );
-        if( _linearSolver->getPreconditioning() == SimplePrecisionLdlt )
+        if ( _linearSolver->getPreconditioning() == SimplePrecisionLdlt )
             throw std::runtime_error( "ParallelMesh not allowed with this preconditioning" );
     }
     // Build the linear solver (sd_solver)
@@ -74,7 +69,7 @@ ElasticEvolutionContainerPtr StaticMechanicalSolverInstance::execute() throw ( s
 
     BaseDOFNumberingPtr dofNum1;
 #ifdef _USE_MPI
-    if( _supportModel->getSupportMesh()->isParallel() )
+    if ( _supportModel->getSupportMesh()->isParallel() )
         dofNum1 = resultC->getEmptyParallelDOFNumbering();
     else
 #endif /* _USE_MPI */
@@ -84,8 +79,8 @@ ElasticEvolutionContainerPtr StaticMechanicalSolverInstance::execute() throw ( s
     vecass->allocateFromDOFNumering( dofNum1 );
 
     StaticMechanicalContext currentContext( dProblem, _linearSolver, resultC );
-    typedef Algorithm< TimeStepperInstance, StaticMechanicalContext, 
-                       StaticMechanicalAlgorithm > MSAlgo;
+    typedef Algorithm< TimeStepperInstance, StaticMechanicalContext, StaticMechanicalAlgorithm >
+        MSAlgo;
     MSAlgo::runAllStepsOverAlgorithm( *_timeStep, currentContext );
 
     return resultC;

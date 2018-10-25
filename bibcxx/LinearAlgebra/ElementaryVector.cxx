@@ -3,7 +3,7 @@
  * @brief Implementation de ElementaryVector
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -21,22 +21,20 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdexcept>
 #include "astercxx.h"
+#include <stdexcept>
 
 #include "LinearAlgebra/ElementaryVector.h"
 #include "Supervis/CommandSyntax.h"
 
-
-FieldOnNodesDoublePtr ElementaryVectorInstance::assembleVector( const BaseDOFNumberingPtr& currentNumerotation,
-                                                                const double& time,
-                                                                const JeveuxMemory memType )
-    throw ( std::runtime_error )
-{
+FieldOnNodesDoublePtr
+ElementaryVectorInstance::assembleVector( const BaseDOFNumberingPtr &currentNumerotation,
+                                          const double &time,
+                                          const JeveuxMemory memType ) throw( std::runtime_error ) {
     if ( _isEmpty )
         throw std::runtime_error( "The ElementaryVector is empty" );
 
-    if ( (! currentNumerotation ) || currentNumerotation->isEmpty() )
+    if ( ( !currentNumerotation ) || currentNumerotation->isEmpty() )
         throw std::runtime_error( "Numerotation is empty" );
 
     FieldOnNodesDoublePtr vectTmp( new FieldOnNodesDoubleInstance( Permanent ) );
@@ -50,18 +48,16 @@ FieldOnNodesDoublePtr ElementaryVectorInstance::assembleVector( const BaseDOFNum
     CommandSyntax cmdSt( "ASSE_VECT_ELEM" );
     cmdSt.setResult( getName(), getType() );
     SyntaxMapContainer dict;
-    dict.container[ "OPTION" ] = "CHAR_MECA";
+    dict.container["OPTION"] = "CHAR_MECA";
     cmdSt.define( dict );
-    if( ! _corichRept->exists() )
-    {
+    if ( !_corichRept->exists() ) {
         _listOfElementaryResults->updateValuePointer();
-        for( ASTERINTEGER i = 1; i <= _listOfLoads->getListOfMechanicalLoads().size(); ++i )
-        {
+        for ( ASTERINTEGER i = 1; i <= _listOfLoads->getListOfMechanicalLoads().size(); ++i ) {
             std::string detr( "E" );
-            std::string vectElem( (*_listOfElementaryResults)[i-1].c_str() );
+            std::string vectElem( ( *_listOfElementaryResults )[i - 1].c_str() );
             vectElem.resize( 24, ' ' );
             ASTERINTEGER in;
-            CALLO_CORICH( detr, vectElem, &i, &in);
+            CALLO_CORICH( detr, vectElem, &i, &in );
         }
     }
     /**/
@@ -72,13 +68,13 @@ FieldOnNodesDoublePtr ElementaryVectorInstance::assembleVector( const BaseDOFNum
     std::string detr( "D" );
     std::string fomult( " " );
     const JeveuxVectorChar24 lOF = _listOfLoads->getListOfFunctions();
-    if ( ! lOF.isEmpty() )
+    if ( !lOF.isEmpty() )
         fomult = lOF->getName();
     std::string param( "INST" );
 
     JeveuxVectorChar24 vectTmp2( name );
     vectTmp2->updateValuePointer();
-    std::string name2( (*vectTmp2)[0].toString(), 0, 19 );
+    std::string name2( ( *vectTmp2 )[0].toString(), 0, 19 );
     FieldOnNodesDoublePtr vectTmp3( new FieldOnNodesDoubleInstance( name2 ) );
     vectTmp->allocateFrom( *vectTmp3 );
 
