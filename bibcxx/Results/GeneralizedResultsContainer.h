@@ -87,13 +87,17 @@ public:
 
 /** @typedef Définition d'un résultat généralisé à valeurs réelles */
 template class GeneralizedResultsContainerInstance< double >;
-typedef GeneralizedResultsContainerInstance< double > GeneralizedResultsContainerDoubleInstance;
-typedef boost::shared_ptr< GeneralizedResultsContainerDoubleInstance > GeneralizedResultsContainerDoublePtr;
+typedef GeneralizedResultsContainerInstance< double >
+    GeneralizedResultsContainerDoubleInstance;
+typedef boost::shared_ptr< GeneralizedResultsContainerDoubleInstance >
+    GeneralizedResultsContainerDoublePtr;
 
 /** @typedef Définition d'un résultat généralisé à valeurs complexes */
 template class GeneralizedResultsContainerInstance< DoubleComplex >;
-typedef GeneralizedResultsContainerInstance< DoubleComplex > GeneralizedResultsContainerComplexInstance;
-typedef boost::shared_ptr< GeneralizedResultsContainerComplexInstance > GeneralizedResultsContainerComplexPtr;
+typedef GeneralizedResultsContainerInstance< DoubleComplex >
+    GeneralizedResultsContainerComplexInstance;
+typedef boost::shared_ptr< GeneralizedResultsContainerComplexInstance >
+    GeneralizedResultsContainerComplexPtr;
 
 class NonLinearDescriptor 
 {
@@ -118,7 +122,8 @@ class NonLinearDescriptor
     {};
 };
 
-class TransientGeneralizedResultsContainerInstance: public GeneralizedResultsContainerDoubleInstance
+class TransientGeneralizedResultsContainerInstance:
+    public GeneralizedResultsContainerDoubleInstance
 {
 private:
     /** @brief Vecteur Jeveux '.PTEM' */
@@ -145,7 +150,8 @@ public:
      * @typedef TransientGeneralizedResultsContainerPtr
      * @brief Pointeur intelligent vers un TransientGeneralizedResultsContainerInstance
      */
-    typedef boost::shared_ptr< TransientGeneralizedResultsContainerInstance > TransientGeneralizedResultsContainerPtr;
+    typedef boost::shared_ptr< TransientGeneralizedResultsContainerInstance >
+        TransientGeneralizedResultsContainerPtr;
 
     /**
      * @brief Constructeur
@@ -178,7 +184,8 @@ public:
         _dofNum = dofNum;
     };
 };
-typedef boost::shared_ptr< TransientGeneralizedResultsContainerInstance > TransientGeneralizedResultsContainerPtr;
+typedef boost::shared_ptr< TransientGeneralizedResultsContainerInstance >
+    TransientGeneralizedResultsContainerPtr;
 
 /**
  * @class HarmoGeneralizedResultsContainerInstance
@@ -197,7 +204,8 @@ public:
      * @typedef HarmoGeneralizedResultsContainerPtr
      * @brief Pointeur intelligent vers un HarmoGeneralizedResultsContainerInstance
      */
-    typedef boost::shared_ptr< HarmoGeneralizedResultsContainerInstance > HarmoGeneralizedResultsContainerPtr;
+    typedef boost::shared_ptr< HarmoGeneralizedResultsContainerInstance >
+        HarmoGeneralizedResultsContainerPtr;
 
     /**
      * @brief Constructeur
@@ -224,6 +232,7 @@ public:
     };
 };
 
-typedef boost::shared_ptr< HarmoGeneralizedResultsContainerInstance > HarmoGeneralizedResultsContainerPtr;
+typedef boost::shared_ptr< HarmoGeneralizedResultsContainerInstance >
+    HarmoGeneralizedResultsContainerPtr;
 
 #endif /* GENERALIZEDRESULTSCONTAINER_H_ */
