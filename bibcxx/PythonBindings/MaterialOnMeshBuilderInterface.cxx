@@ -3,7 +3,7 @@
  * @brief Interface python de MaterialOnMeshBuilder
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -25,16 +25,16 @@
 #include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
-BOOST_PYTHON_FUNCTION_OVERLOADS( MaterialOnMeshBuilderbuild,
-                                 MaterialOnMeshBuilderInstance::build, 1, 2 )
+BOOST_PYTHON_FUNCTION_OVERLOADS( MaterialOnMeshBuilderbuild, MaterialOnMeshBuilderInstance::build,
+                                 1, 2 )
 
-void exportMaterialOnMeshBuilderToPython()
-{
+void exportMaterialOnMeshBuilderToPython() {
     using namespace boost::python;
 
-    class_< MaterialOnMeshBuilderInstance,
-            MaterialOnMeshBuilderInstance::MaterialOnMeshBuilderPtr >
-            c1( "MaterialOnMeshBuilder", no_init );
+    class_< MaterialOnMeshBuilderInstance, MaterialOnMeshBuilderInstance::MaterialOnMeshBuilderPtr >
+        c1( "MaterialOnMeshBuilder", no_init );
+        // fake initFactoryPtr: no constructor
+        // fake initFactoryPtr: no constructor
 
     c1.def( "build", &MaterialOnMeshBuilderInstance::build, MaterialOnMeshBuilderbuild() );
     c1.staticmethod( "build" );

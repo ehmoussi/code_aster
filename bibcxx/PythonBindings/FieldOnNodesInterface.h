@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe FieldOnNodesInterface
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -30,15 +30,13 @@
 #include "DataFields/FieldOnNodes.h"
 #include <boost/python.hpp>
 
-struct MeshCoordinatesFieldToFieldOnNodes
-{
-    static PyObject* convert( MeshCoordinatesFieldPtr toConvert )
-    {
+struct MeshCoordinatesFieldToFieldOnNodes {
+    static PyObject *convert( MeshCoordinatesFieldPtr toConvert ) {
         using namespace boost::python;
         using namespace boost;
         return boost::python::incref(
-            boost::python::object( FieldOnNodesDoublePtr(
-                new FieldOnNodesDoubleInstance( toConvert ) ) ).ptr() );
+            boost::python::object(
+                FieldOnNodesDoublePtr( new FieldOnNodesDoubleInstance( toConvert ) ) ).ptr() );
     }
 };
 

@@ -5,7 +5,7 @@
  * @file MechanicalLoad.h
  * @author Natacha Bereux
  * @section LICENCE
- *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -23,16 +23,16 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <iostream>
-#include <stdexcept>
-#include <string>
-#include "astercxx.h"
+#include "DataFields/PCFieldOnMesh.h"
 #include "DataStructures/DataStructure.h"
 #include "Loads/PhysicalQuantity.h"
 #include "Meshes/MeshEntities.h"
-#include "Modeling/Model.h"
 #include "Modeling/FiniteElementDescriptor.h"
-#include "DataFields/PCFieldOnMesh.h"
+#include "Modeling/Model.h"
+#include "astercxx.h"
+#include <iostream>
+#include <stdexcept>
+#include <string>
 
 #include "Supervis/CommandSyntax.h"
 #include "Supervis/ResultNaming.h"
@@ -41,9 +41,22 @@
  * @enum LoadEnum
  * @brief Inventory of all mechanical loads available in Code_Aster
  */
-enum LoadEnum { NodalForce, ForceOnEdge, ForceOnFace, LineicForce, InternalForce, ForceOnBeam, ForceOnShell,
-                PressureOnPipe, ImposedDoF, DistributedPressure, ImpedanceOnFace, NormalSpeedOnFace, WavePressureOnFace,
-                THMFlux};
+enum LoadEnum {
+    NodalForce,
+    ForceOnEdge,
+    ForceOnFace,
+    LineicForce,
+    InternalForce,
+    ForceOnBeam,
+    ForceOnShell,
+    PressureOnPipe,
+    ImposedDoF,
+    DistributedPressure,
+    ImpedanceOnFace,
+    NormalSpeedOnFace,
+    WavePressureOnFace,
+    THMFlux
+};
 
 /**
  * @class LoadTraits
@@ -52,7 +65,7 @@ enum LoadEnum { NodalForce, ForceOnEdge, ForceOnFace, LineicForce, InternalForce
 // This is the most general case (defined but intentionally not implemented)
 // It will be specialized for each load listed in the inventory
 
-template< LoadEnum Load > struct LoadTraits;
+template < LoadEnum Load > struct LoadTraits;
 
 /*************************************************************/
 /*  Loads consisting of a force applied to some localization */
@@ -61,8 +74,7 @@ template< LoadEnum Load > struct LoadTraits;
  * @def LoadTraits<NodalForce>
  * @brief Declare specialization for NodalForce
  */
-template <> struct LoadTraits< NodalForce >
-{
+template <> struct LoadTraits< NodalForce > {
     // Mot clé facteur pour AFFE_CHAR_MECA
     static const std::string factorKeyword;
     // Authorized support MeshEntity
@@ -75,8 +87,7 @@ template <> struct LoadTraits< NodalForce >
  * @def LoadTraits<ForceOnFace>
  * @brief Declare specialization for ForceOnFace
  */
-template <> struct LoadTraits< ForceOnFace >
-{
+template <> struct LoadTraits< ForceOnFace > {
     // Mot clé facteur pour AFFE_CHAR_MECA
     static const std::string factorKeyword;
     // Authorized support MeshEntity
@@ -89,8 +100,7 @@ template <> struct LoadTraits< ForceOnFace >
  * @def LoadTraits<ForceOnEdge>
  * @brief Declare specialization for ForceOnEdge
  */
-template <> struct LoadTraits< ForceOnEdge >
-{
+template <> struct LoadTraits< ForceOnEdge > {
     // Mot clé facteur pour AFFE_CHAR_MECA
     static const std::string factorKeyword;
     // Authorized support MeshEntity
@@ -103,8 +113,7 @@ template <> struct LoadTraits< ForceOnEdge >
  * @def LoadTraits<LineicForce>
  * @brief Declare specialization for LineicForce
  */
-template <> struct LoadTraits< LineicForce >
-{
+template <> struct LoadTraits< LineicForce > {
     // Mot clé facteur pour AFFE_CHAR_MECA
     static const std::string factorKeyword;
     // Authorized support MeshEntity
@@ -117,8 +126,7 @@ template <> struct LoadTraits< LineicForce >
  * @def LoadTraits<InternalForce>
  * @brief Declare specialization for InternalForce
  */
-template <> struct LoadTraits< InternalForce >
-{
+template <> struct LoadTraits< InternalForce > {
     // Mot clé facteur pour AFFE_CHAR_MECA
     static const std::string factorKeyword;
     // Authorized support MeshEntity
@@ -131,8 +139,7 @@ template <> struct LoadTraits< InternalForce >
  * @def LoadTraits<ForceOnBeam>
  * @brief Declare specialization for ForceOnBeam
  */
-template <> struct LoadTraits< ForceOnBeam >
-{
+template <> struct LoadTraits< ForceOnBeam > {
     // Mot clé facteur pour AFFE_CHAR_MECA
     static const std::string factorKeyword;
     // Authorized support MeshEntity
@@ -146,8 +153,7 @@ template <> struct LoadTraits< ForceOnBeam >
  * @def LoadTraits<ForceOnShell>
  * @brief Declare specialization for ForceOnShell
  */
-template <> struct LoadTraits< ForceOnShell >
-{
+template <> struct LoadTraits< ForceOnShell > {
     // Mot clé facteur pour AFFE_CHAR_MECA
     static const std::string factorKeyword;
     // Authorized support MeshEntity
@@ -160,8 +166,7 @@ template <> struct LoadTraits< ForceOnShell >
  * @def LoadTraits<PressureOnPipe>
  * @brief Declare specialization for PressureOnPipe
  */
-template <> struct LoadTraits< PressureOnPipe >
-{
+template <> struct LoadTraits< PressureOnPipe > {
     // Mot clé facteur pour AFFE_CHAR_MECA
     static const std::string factorKeyword;
     // Authorized support MeshEntity
@@ -174,8 +179,7 @@ template <> struct LoadTraits< PressureOnPipe >
  * @def LoadTraits<ImposedDoF>
  * @brief Declare specialization for ImposedDoF
  */
-template <> struct LoadTraits< ImposedDoF >
-{
+template <> struct LoadTraits< ImposedDoF > {
     // Mot clé facteur pour AFFE_CHAR_MECA
     static const std::string factorKeyword;
     // Authorized support MeshEntity
@@ -188,8 +192,7 @@ template <> struct LoadTraits< ImposedDoF >
  * @def LoadTraits<DistributedPressure>
  * @brief Declare specialization for DistributedPressure
  */
-template <> struct LoadTraits< DistributedPressure >
-{
+template <> struct LoadTraits< DistributedPressure > {
     // Mot clé facteur pour AFFE_CHAR_MECA
     static const std::string factorKeyword;
     // Authorized support MeshEntity
@@ -202,8 +205,7 @@ template <> struct LoadTraits< DistributedPressure >
  * @def LoadTraits<ImpedanceOnFace>
  * @brief Declare specialization for ImpedanceOnFace
  */
-template <> struct LoadTraits< ImpedanceOnFace >
-{
+template <> struct LoadTraits< ImpedanceOnFace > {
     // Mot clé facteur pour AFFE_CHAR_MECA
     static const std::string factorKeyword;
     // Authorized support MeshEntity
@@ -216,8 +218,7 @@ template <> struct LoadTraits< ImpedanceOnFace >
  * @def LoadTraits<NormalSpeedOnFace>
  * @brief Declare specialization for NormalSpeedOnFace
  */
-template <> struct LoadTraits< NormalSpeedOnFace >
-{
+template <> struct LoadTraits< NormalSpeedOnFace > {
     // Mot clé facteur pour AFFE_CHAR_MECA
     static const std::string factorKeyword;
     // Authorized support MeshEntity
@@ -230,8 +231,7 @@ template <> struct LoadTraits< NormalSpeedOnFace >
  * @def LoadTraits<WavePressureOnFace>
  * @brief Declare specialization for WavePressureOnFace
  */
-template <> struct LoadTraits< WavePressureOnFace >
-{
+template <> struct LoadTraits< WavePressureOnFace > {
     // Mot clé facteur pour AFFE_CHAR_MECA
     static const std::string factorKeyword;
     // Authorized support MeshEntity
@@ -244,8 +244,7 @@ template <> struct LoadTraits< WavePressureOnFace >
  * @def LoadTraits<THMFlux>
  * @brief Declare specialization for THMFlux
  */
-template <> struct LoadTraits< THMFlux >
-{
+template <> struct LoadTraits< THMFlux > {
     // Mot clé facteur pour AFFE_CHAR_MECA
     static const std::string factorKeyword;
     // Authorized support MeshEntity
@@ -254,198 +253,173 @@ template <> struct LoadTraits< THMFlux >
     static bool const isAllowedOnGroupOfNodes = false;
 };
 
-
 /**
  * @class GenericMechanicalLoadInstance
  * @brief Define a generic mechanical load
  * @author Nicolas Sellenet
  */
-class GenericMechanicalLoadInstance: public DataStructure
-{
-    public:
-        struct MecaLoad
-        {
-            /** @brief Modèle support */
-            ModelPtr                    _supportModel;
-            /** @brief support mesh */
-            BaseMeshPtr                 _mesh;
-            /** @brief Vecteur Jeveux '.TEMPE.TEMP' */
-            JeveuxVectorChar8           _temperatureField;
-            /** @brief Vecteur Jeveux '.MODEL.NOMO' */
-            JeveuxVectorChar8           _modelName;
-            /** @brief Vecteur Jeveux '.VEASS' */
-            JeveuxVectorChar8           _nameOfAssemblyVector;
-            /** @brief Vecteur Jeveux '.VEISS' */
-            JeveuxVectorChar8           _veiss;
-            /** @brief Vecteur Jeveux '.EVOL.CHAR' */
-            JeveuxVectorChar8           _evolChar;
-            /** @brief Vecteur Jeveux '.LIGRE' */
-            FiniteElementDescriptorPtr  _FEDesc;
-            /** @brief Carte '.CIMPO' */
-            PCFieldOnMeshDoublePtr      _cimpo;
-            /** @brief Carte '.CMULT' */
-            PCFieldOnMeshDoublePtr      _cmult;
-            /** @brief Carte '.DPGEN' */
-            PCFieldOnMeshDoublePtr      _dpgen;
-            /** @brief Carte '.EPSIN' */
-            PCFieldOnMeshDoublePtr      _epsin;
-            /** @brief Carte '.F1D2D' */
-            PCFieldOnMeshDoublePtr      _f1d2d;
-            /** @brief Carte '.F1D3D' */
-            PCFieldOnMeshDoublePtr      _f1d3d;
-            /** @brief Carte '.F2D3D' */
-            PCFieldOnMeshDoublePtr      _f2d3d;
-            /** @brief Carte '.FCO2D' */
-            PCFieldOnMeshDoublePtr      _fco2d;
-            /** @brief Carte '.FCO3D' */
-            PCFieldOnMeshDoublePtr      _fco3d;
-            /** @brief Carte '.FELEC' */
-            PCFieldOnMeshDoublePtr      _felec;
-            /** @brief Carte '.FL101' */
-            PCFieldOnMeshDoublePtr      _fl101;
-            /** @brief Carte '.FL102' */
-            PCFieldOnMeshDoublePtr      _fl102;
-            /** @brief Carte '.FORNO' */
-            PCFieldOnMeshDoublePtr      _forno;
-            /** @brief Carte '.IMPE' */
-            PCFieldOnMeshDoublePtr      _impe;
-            /** @brief Carte '.PESAN' */
-            PCFieldOnMeshDoublePtr      _pesan;
-            /** @brief Carte '.PRESS' */
-            PCFieldOnMeshDoublePtr      _press;
-            /** @brief Carte '.ROTAT' */
-            PCFieldOnMeshDoublePtr      _rotat;
-            /** @brief Carte '.SIGIN' */
-            PCFieldOnMeshDoublePtr      _sigin;
-            /** @brief Carte '.SIINT' */
-            PCFieldOnMeshDoublePtr      _siint;
-            /** @brief Carte '.VNOR' */
-            PCFieldOnMeshDoublePtr      _vnor;
-            /** @brief Carte '.ONDPL' */
-            PCFieldOnMeshDoublePtr      _ondpl;
-            /** @brief Carte '.ONDPR' */
-            PCFieldOnMeshDoublePtr      _ondpr;
+class GenericMechanicalLoadInstance : public DataStructure {
+  public:
+    struct MecaLoad {
+        /** @brief Modèle support */
+        ModelPtr _supportModel;
+        /** @brief support mesh */
+        BaseMeshPtr _mesh;
+        /** @brief Vecteur Jeveux '.TEMPE.TEMP' */
+        JeveuxVectorChar8 _temperatureField;
+        /** @brief Vecteur Jeveux '.MODEL.NOMO' */
+        JeveuxVectorChar8 _modelName;
+        /** @brief Vecteur Jeveux '.VEASS' */
+        JeveuxVectorChar8 _nameOfAssemblyVector;
+        /** @brief Vecteur Jeveux '.VEISS' */
+        JeveuxVectorChar8 _veiss;
+        /** @brief Vecteur Jeveux '.EVOL.CHAR' */
+        JeveuxVectorChar8 _evolChar;
+        /** @brief Vecteur Jeveux '.LIGRE' */
+        FiniteElementDescriptorPtr _FEDesc;
+        /** @brief Carte '.CIMPO' */
+        PCFieldOnMeshDoublePtr _cimpo;
+        /** @brief Carte '.CMULT' */
+        PCFieldOnMeshDoublePtr _cmult;
+        /** @brief Carte '.DPGEN' */
+        PCFieldOnMeshDoublePtr _dpgen;
+        /** @brief Carte '.EPSIN' */
+        PCFieldOnMeshDoublePtr _epsin;
+        /** @brief Carte '.F1D2D' */
+        PCFieldOnMeshDoublePtr _f1d2d;
+        /** @brief Carte '.F1D3D' */
+        PCFieldOnMeshDoublePtr _f1d3d;
+        /** @brief Carte '.F2D3D' */
+        PCFieldOnMeshDoublePtr _f2d3d;
+        /** @brief Carte '.FCO2D' */
+        PCFieldOnMeshDoublePtr _fco2d;
+        /** @brief Carte '.FCO3D' */
+        PCFieldOnMeshDoublePtr _fco3d;
+        /** @brief Carte '.FELEC' */
+        PCFieldOnMeshDoublePtr _felec;
+        /** @brief Carte '.FL101' */
+        PCFieldOnMeshDoublePtr _fl101;
+        /** @brief Carte '.FL102' */
+        PCFieldOnMeshDoublePtr _fl102;
+        /** @brief Carte '.FORNO' */
+        PCFieldOnMeshDoublePtr _forno;
+        /** @brief Carte '.IMPE' */
+        PCFieldOnMeshDoublePtr _impe;
+        /** @brief Carte '.PESAN' */
+        PCFieldOnMeshDoublePtr _pesan;
+        /** @brief Carte '.PRESS' */
+        PCFieldOnMeshDoublePtr _press;
+        /** @brief Carte '.ROTAT' */
+        PCFieldOnMeshDoublePtr _rotat;
+        /** @brief Carte '.SIGIN' */
+        PCFieldOnMeshDoublePtr _sigin;
+        /** @brief Carte '.SIINT' */
+        PCFieldOnMeshDoublePtr _siint;
+        /** @brief Carte '.VNOR' */
+        PCFieldOnMeshDoublePtr _vnor;
+        /** @brief Carte '.ONDPL' */
+        PCFieldOnMeshDoublePtr _ondpl;
+        /** @brief Carte '.ONDPR' */
+        PCFieldOnMeshDoublePtr _ondpr;
 
-            /** @brief Constructeur */
-            MecaLoad( const std::string& name, const ModelPtr& currentModel ):
-                _supportModel( currentModel ),
-                _mesh( _supportModel->getSupportMesh() ),
-                _temperatureField( name + ".TEMPE.TEMP" ),
-                _modelName( name + ".MODEL.NOMO" ),
-                _nameOfAssemblyVector( name + ".VEASS" ),
-                _veiss( name + ".VEISS" ),
-                _evolChar( name + ".EVOL.CHAR" ),
-                _FEDesc( new FiniteElementDescriptorInstance( name + ".LIGRE", _mesh ) ),
-                _cimpo( new PCFieldOnMeshDoubleInstance( name + ".CIMPO", _FEDesc ) ),
-                _cmult( new PCFieldOnMeshDoubleInstance( name + ".CMULT", _FEDesc ) ),
-                _dpgen( new PCFieldOnMeshDoubleInstance( name + ".DPGEN", _FEDesc ) ),
-                _epsin( new PCFieldOnMeshDoubleInstance( name + ".EPSIN", _FEDesc ) ),
-                _f1d2d( new PCFieldOnMeshDoubleInstance( name + ".F1D2D", _FEDesc ) ),
-                _f1d3d( new PCFieldOnMeshDoubleInstance( name + ".F1D3D", _FEDesc ) ),
-                _f2d3d( new PCFieldOnMeshDoubleInstance( name + ".F2D3D", _FEDesc ) ),
-                _fco2d( new PCFieldOnMeshDoubleInstance( name + ".FCO2D", _FEDesc ) ),
-                _fco3d( new PCFieldOnMeshDoubleInstance( name + ".FCO3D", _FEDesc ) ),
-                _felec( new PCFieldOnMeshDoubleInstance( name + ".FELEC", _FEDesc ) ),
-                _fl101( new PCFieldOnMeshDoubleInstance( name + ".FL101", _FEDesc ) ),
-                _fl102( new PCFieldOnMeshDoubleInstance( name + ".FL102", _FEDesc ) ),
-                _forno( new PCFieldOnMeshDoubleInstance( name + ".FORNO", _FEDesc ) ),
-                _impe( new PCFieldOnMeshDoubleInstance( name + ".IMPE", _FEDesc ) ),
-                _pesan( new PCFieldOnMeshDoubleInstance( name + ".PESAN", _FEDesc ) ),
-                _press( new PCFieldOnMeshDoubleInstance( name + ".PRESS", _FEDesc ) ),
-                _rotat( new PCFieldOnMeshDoubleInstance( name + ".ROTAT", _FEDesc ) ),
-                _sigin( new PCFieldOnMeshDoubleInstance( name + ".SIGIN", _FEDesc ) ),
-                _siint( new PCFieldOnMeshDoubleInstance( name + ".SIINT", _FEDesc ) ),
-                _vnor( new PCFieldOnMeshDoubleInstance( name + ".VNOR", _FEDesc ) ),
-                _ondpl( new PCFieldOnMeshDoubleInstance( name + ".ONDPL", _FEDesc ) ),
-                _ondpr( new PCFieldOnMeshDoubleInstance( name + ".ONDPR", _FEDesc ) )
-            {};
-        };
+        /** @brief Constructeur */
+        MecaLoad( const std::string &name, const ModelPtr &currentModel )
+            : _supportModel( currentModel ), _mesh( _supportModel->getSupportMesh() ),
+              _temperatureField( name + ".TEMPE.TEMP" ), _modelName( name + ".MODEL.NOMO" ),
+              _nameOfAssemblyVector( name + ".VEASS" ), _veiss( name + ".VEISS" ),
+              _evolChar( name + ".EVOL.CHAR" ),
+              _FEDesc( new FiniteElementDescriptorInstance( name + ".LIGRE", _mesh ) ),
+              _cimpo( new PCFieldOnMeshDoubleInstance( name + ".CIMPO", _FEDesc ) ),
+              _cmult( new PCFieldOnMeshDoubleInstance( name + ".CMULT", _FEDesc ) ),
+              _dpgen( new PCFieldOnMeshDoubleInstance( name + ".DPGEN", _FEDesc ) ),
+              _epsin( new PCFieldOnMeshDoubleInstance( name + ".EPSIN", _FEDesc ) ),
+              _f1d2d( new PCFieldOnMeshDoubleInstance( name + ".F1D2D", _FEDesc ) ),
+              _f1d3d( new PCFieldOnMeshDoubleInstance( name + ".F1D3D", _FEDesc ) ),
+              _f2d3d( new PCFieldOnMeshDoubleInstance( name + ".F2D3D", _FEDesc ) ),
+              _fco2d( new PCFieldOnMeshDoubleInstance( name + ".FCO2D", _FEDesc ) ),
+              _fco3d( new PCFieldOnMeshDoubleInstance( name + ".FCO3D", _FEDesc ) ),
+              _felec( new PCFieldOnMeshDoubleInstance( name + ".FELEC", _FEDesc ) ),
+              _fl101( new PCFieldOnMeshDoubleInstance( name + ".FL101", _FEDesc ) ),
+              _fl102( new PCFieldOnMeshDoubleInstance( name + ".FL102", _FEDesc ) ),
+              _forno( new PCFieldOnMeshDoubleInstance( name + ".FORNO", _FEDesc ) ),
+              _impe( new PCFieldOnMeshDoubleInstance( name + ".IMPE", _FEDesc ) ),
+              _pesan( new PCFieldOnMeshDoubleInstance( name + ".PESAN", _FEDesc ) ),
+              _press( new PCFieldOnMeshDoubleInstance( name + ".PRESS", _FEDesc ) ),
+              _rotat( new PCFieldOnMeshDoubleInstance( name + ".ROTAT", _FEDesc ) ),
+              _sigin( new PCFieldOnMeshDoubleInstance( name + ".SIGIN", _FEDesc ) ),
+              _siint( new PCFieldOnMeshDoubleInstance( name + ".SIINT", _FEDesc ) ),
+              _vnor( new PCFieldOnMeshDoubleInstance( name + ".VNOR", _FEDesc ) ),
+              _ondpl( new PCFieldOnMeshDoubleInstance( name + ".ONDPL", _FEDesc ) ),
+              _ondpr( new PCFieldOnMeshDoubleInstance( name + ".ONDPR", _FEDesc ) ){};
+    };
 
-    protected:
-        /** @typedef Definition d'un pointeur intelligent sur un VirtualMeshEntity */
-        typedef boost::shared_ptr< VirtualMeshEntity > MeshEntityPtr;
+  protected:
+    /** @typedef Definition d'un pointeur intelligent sur un VirtualMeshEntity */
+    typedef boost::shared_ptr< VirtualMeshEntity > MeshEntityPtr;
 
-        /** @brief MeshEntity sur laquelle repose le "blocage" */
-        MeshEntityPtr      _supportMeshEntity;
-        MecaLoad           _mecaLoad;
-        /** @brief Vecteur Jeveux '.TYPE' */
-        JeveuxVectorChar8  _type;
-        /** @brief Vecteur Jeveux '.LISMA01' */
-        JeveuxVectorLong   _lisma01;
-        /** @brief Vecteur Jeveux '.LISMA02' */
-        JeveuxVectorLong   _lisma02;
-        /** @brief Vecteur Jeveux '.TRANS01' */
-        JeveuxVectorDouble _trans01;
-        /** @brief Vecteur Jeveux '.TRANS02' */
-        JeveuxVectorDouble _trans02;
-        /** @brief Vecteur Jeveux '.POIDS_MAILLE' */
-        JeveuxVectorDouble _poidsMaille;
+    /** @brief MeshEntity sur laquelle repose le "blocage" */
+    MeshEntityPtr _supportMeshEntity;
+    MecaLoad _mecaLoad;
+    /** @brief Vecteur Jeveux '.TYPE' */
+    JeveuxVectorChar8 _type;
+    /** @brief Vecteur Jeveux '.LISMA01' */
+    JeveuxVectorLong _lisma01;
+    /** @brief Vecteur Jeveux '.LISMA02' */
+    JeveuxVectorLong _lisma02;
+    /** @brief Vecteur Jeveux '.TRANS01' */
+    JeveuxVectorDouble _trans01;
+    /** @brief Vecteur Jeveux '.TRANS02' */
+    JeveuxVectorDouble _trans02;
+    /** @brief Vecteur Jeveux '.POIDS_MAILLE' */
+    JeveuxVectorDouble _poidsMaille;
 
-    public:
-        /**
-         * @typedef MechanicalLoadPtr
-         * @brief Pointeur intelligent vers un MechanicalLoad
-         */
-        typedef boost::shared_ptr< GenericMechanicalLoadInstance > GenericMechanicalLoadPtr;
+  public:
+    /**
+     * @typedef MechanicalLoadPtr
+     * @brief Pointeur intelligent vers un MechanicalLoad
+     */
+    typedef boost::shared_ptr< GenericMechanicalLoadInstance > GenericMechanicalLoadPtr;
 
-        /**
-         * @brief Constructor
-         */
-        GenericMechanicalLoadInstance( const ModelPtr& currentModel ):
-            GenericMechanicalLoadInstance( ResultNaming::getNewResultName(),
-                                           currentModel )
-        {};
+    /**
+     * @brief Constructor
+     */
+    GenericMechanicalLoadInstance( const ModelPtr &currentModel )
+        : GenericMechanicalLoadInstance( ResultNaming::getNewResultName(), currentModel ){};
 
-        /**
-         * @brief Constructor
-         */
-        GenericMechanicalLoadInstance( const std::string name,
-                                       const ModelPtr& currentModel ):
-            DataStructure( name, 8, "CHAR_MECA" ),
-            _mecaLoad( getName() + ".CHME", currentModel ),
-            _type( getName() + ".TYPE" ),
-            _lisma01( getName() + ".LISMA01" ),
-            _lisma02( getName() + ".LISMA02" ),
-            _trans01( getName() + ".TRANS01" ),
-            _trans02( getName() + ".TRANS02" ),
-            _poidsMaille( getName() + ".POIDS_MAILLE" )
-        {};
+    /**
+     * @brief Constructor
+     */
+    GenericMechanicalLoadInstance( const std::string name, const ModelPtr &currentModel )
+        : DataStructure( name, 8, "CHAR_MECA" ), _mecaLoad( getName() + ".CHME", currentModel ),
+          _type( getName() + ".TYPE" ), _lisma01( getName() + ".LISMA01" ),
+          _lisma02( getName() + ".LISMA02" ), _trans01( getName() + ".TRANS01" ),
+          _trans02( getName() + ".TRANS02" ), _poidsMaille( getName() + ".POIDS_MAILLE" ){};
 
-        /**
-         * @brief Destructor
-         */
-        ~GenericMechanicalLoadInstance()
-        {};
+    /**
+     * @brief Destructor
+     */
+    ~GenericMechanicalLoadInstance(){};
 
-        /**
-         * @brief Get the support finite element descriptor
-         */
-        FiniteElementDescriptorPtr getFiniteElementDescriptor() const
-        {
-            return _mecaLoad._FEDesc;
-        };
+    /**
+     * @brief Get the support finite element descriptor
+     */
+    FiniteElementDescriptorPtr getFiniteElementDescriptor() const { return _mecaLoad._FEDesc; };
 
-        /**
-         * @brief Get the support model
-         */
-        const MecaLoad& getMechanicalLoadDescription() const
-        {
-            return _mecaLoad;
-        };
+    /**
+     * @brief Get the support model
+     */
+    const MecaLoad &getMechanicalLoadDescription() const { return _mecaLoad; };
 
-        /**
-         * @brief Get the support model
-         */
-        const ModelPtr& getSupportModel() const
-            throw ( std::runtime_error )
-        {
-            if ( ( ! _mecaLoad._supportModel ) || _mecaLoad._supportModel->isEmpty() )
-                throw std::runtime_error( "Support model of current load is empty" );
-            return _mecaLoad._supportModel;
-        };
+    /**
+     * @brief Get the support model
+     */
+    const ModelPtr &getSupportModel() const throw( std::runtime_error ) {
+        if ( ( !_mecaLoad._supportModel ) || _mecaLoad._supportModel->isEmpty() )
+            throw std::runtime_error( "Support model of current load is empty" );
+        return _mecaLoad._supportModel;
+    };
 
-        virtual bool build()
-        {};
+    virtual bool build(){};
 };
 
 /**
@@ -453,49 +427,43 @@ class GenericMechanicalLoadInstance: public DataStructure
  * @brief Define a mechanical load
  * @author Natacha Bereux
  */
-template< class PhysicalQuantity, LoadEnum Load >
-class MechanicalLoadInstance: public GenericMechanicalLoadInstance
-{
-    public:
+template < class PhysicalQuantity, LoadEnum Load >
+class MechanicalLoadInstance : public GenericMechanicalLoadInstance {
+  public:
     /** @typedef Traits Define the Traits type */
     typedef LoadTraits< Load > Traits;
     /** @typedef PhysicalQuantity Define the underlying PhysicalQuantity */
     typedef PhysicalQuantity PhysicalQuantityType;
 
-    private:
+  private:
     /** @typedef Definition d'un pointeur intelligent sur une PhysicalQuantity */
     typedef boost::shared_ptr< PhysicalQuantity > PhysicalQuantityPtr;
 
     /** @typedef PhysicalQuantity que l'on veut imposer*/
     PhysicalQuantityPtr _physicalQuantity;
 
-    public:
+  public:
     /**
      * @typedef MechanicalLoadPtr
      * @brief Pointeur intelligent vers un MechanicalLoad
      */
-    typedef boost::shared_ptr< MechanicalLoadInstance< PhysicalQuantity,
-                                                     Load > > MechanicalLoadPtr;
+    typedef boost::shared_ptr< MechanicalLoadInstance< PhysicalQuantity, Load > > MechanicalLoadPtr;
 
     /**
      * @brief Constructor
      */
-    MechanicalLoadInstance( const ModelPtr& model ):
-        GenericMechanicalLoadInstance( model )
-    {};
+    MechanicalLoadInstance( const ModelPtr &model ) : GenericMechanicalLoadInstance( model ){};
 
     /**
      * @brief Constructor
      */
-    MechanicalLoadInstance( const std::string name, const ModelPtr& model ):
-        GenericMechanicalLoadInstance( name, model )
-    {};
+    MechanicalLoadInstance( const std::string name, const ModelPtr &model )
+        : GenericMechanicalLoadInstance( name, model ){};
 
     /**
      * @brief Destructor
      */
-    ~MechanicalLoadInstance()
-    {};
+    ~MechanicalLoadInstance(){};
 
     /**
      * @brief Set a physical quantity on a MeshEntity (group of nodes
@@ -504,33 +472,32 @@ class MechanicalLoadInstance: public GenericMechanicalLoadInstance
      * @param nameOfGroup name of the group of elements
      * @return bool success/failure index
      */
-    bool setValue( PhysicalQuantityPtr physPtr, std::string nameOfGroup = "") throw ( std::runtime_error )
-    {
+    bool setValue( PhysicalQuantityPtr physPtr,
+                   std::string nameOfGroup = "" ) throw( std::runtime_error ) {
         // Check that the pointer to the support model is not empty
-        if ( ( ! _mecaLoad._supportModel ) || _mecaLoad._supportModel->isEmpty() )
+        if ( ( !_mecaLoad._supportModel ) || _mecaLoad._supportModel->isEmpty() )
             throw std::runtime_error( "Model is empty" );
 
         // Get the type of MeshEntity
-        BaseMeshPtr currentMesh= _mecaLoad._supportModel->getSupportMesh();
+        BaseMeshPtr currentMesh = _mecaLoad._supportModel->getSupportMesh();
         // If the support MeshEntity is not given, the quantity is set on the whole mesh
-        if ( nameOfGroup.size() == 0  && Traits::isAllowedOnWholeMesh )
-        {
-            _supportMeshEntity = MeshEntityPtr( new  AllMeshEntities() ) ;
+        if ( nameOfGroup.size() == 0 && Traits::isAllowedOnWholeMesh ) {
+            _supportMeshEntity = MeshEntityPtr( new AllMeshEntities() );
         }
         // nameOfGroup is the name of a group of elements and
         // LoadTraits authorizes to base the current load on such a group
-        else if ( currentMesh->hasGroupOfElements( nameOfGroup ) && Traits::isAllowedOnGroupOfElements )
-        {
+        else if ( currentMesh->hasGroupOfElements( nameOfGroup ) &&
+                  Traits::isAllowedOnGroupOfElements ) {
             _supportMeshEntity = MeshEntityPtr( new GroupOfElements( nameOfGroup ) );
         }
         // nameOfGroup is the name of a group of nodes and LoadTraits authorizes
-        //to base the current load on such a group
-        else if ( currentMesh->hasGroupOfNodes( nameOfGroup ) && Traits::isAllowedOnGroupOfNodes )
-        {
+        // to base the current load on such a group
+        else if ( currentMesh->hasGroupOfNodes( nameOfGroup ) && Traits::isAllowedOnGroupOfNodes ) {
             _supportMeshEntity = MeshEntityPtr( new GroupOfNodes( nameOfGroup ) );
-        }
-        else
-            throw  std::runtime_error( nameOfGroup + " does not exist in the mesh or it is not authorized as a localization of the current load " );
+        } else
+            throw std::runtime_error(
+                nameOfGroup + " does not exist in the mesh " +
+                "or it is not authorized as a localization of the current load " );
 
         // Copy the shared pointer of the Physical Quantity
         _physicalQuantity = physPtr;
@@ -540,54 +507,44 @@ class MechanicalLoadInstance: public GenericMechanicalLoadInstance
     /**
      * @brief appel de op0007
      */
-    bool build() throw ( std::runtime_error )
-    {
-        //std::cout << " build " << std::endl;
+    bool build() throw( std::runtime_error ) {
+        // std::cout << " build " << std::endl;
         CommandSyntax cmdSt( "AFFE_CHAR_MECA" );
         cmdSt.setResult( ResultNaming::getCurrentName(), "CHAR_MECA" );
 
         SyntaxMapContainer dict;
-        if ( ! _mecaLoad._supportModel )
-            throw std::runtime_error("Support model is undefined");
+        if ( !_mecaLoad._supportModel )
+            throw std::runtime_error( "Support model is undefined" );
         dict.container["MODELE"] = _mecaLoad._supportModel->getName();
         ListSyntaxMapContainer listeLoad;
         SyntaxMapContainer dict2;
         /* On itere sur les composantes de la "PhysicalQuantity" */
-        typename PhysicalQuantityType::MapOfCompAndVal comp_val=_physicalQuantity-> getMap();
-        for ( typename PhysicalQuantityType::MapIt curIter(comp_val.begin());
-              curIter != comp_val.end();
-              ++curIter )
-        {
-            const auto& tmp = ComponentNames.find(curIter-> first);
+        typename PhysicalQuantityType::MapOfCompAndVal comp_val = _physicalQuantity->getMap();
+        for ( typename PhysicalQuantityType::MapIt curIter( comp_val.begin() );
+              curIter != comp_val.end(); ++curIter ) {
+            const auto &tmp = ComponentNames.find( curIter->first );
             dict2.container[tmp->second] = curIter->second;
         }
         /* Caractéristiques du MeshEntity */
-        if ( _supportMeshEntity->getType() == AllMeshEntitiesType )
-        {
+        if ( _supportMeshEntity->getType() == AllMeshEntitiesType ) {
             dict2.container["TOUT"] = "OUI";
-        }
-        else
-        {
-            if ( _supportMeshEntity->getType()  == GroupOfNodesType )
-                {dict2.container["GROUP_NO"] = _supportMeshEntity->getName();
-        //        std::cout << "GROUP_NO " <<  _supportMeshEntity->getName() << std::endl;
-                }
-            else if ( _supportMeshEntity->getType()  ==  GroupOfElementsType )
+        } else {
+            if ( _supportMeshEntity->getType() == GroupOfNodesType ) {
+                dict2.container["GROUP_NO"] = _supportMeshEntity->getName();
+                //        std::cout << "GROUP_NO " <<  _supportMeshEntity->getName() << std::endl;
+            } else if ( _supportMeshEntity->getType() == GroupOfElementsType )
                 dict2.container["GROUP_MA"] = _supportMeshEntity->getName();
         }
         listeLoad.push_back( dict2 );
-        //mot-clé facteur
+        // mot-clé facteur
         std::string kw = Traits::factorKeyword;
         dict.container[kw] = listeLoad;
         cmdSt.define( dict );
-        //cmdSt.debugPrint();
-        try
-        {
+        // cmdSt.debugPrint();
+        try {
             ASTERINTEGER op = 7;
             CALL_EXECOP( &op );
-        }
-        catch( ... )
-        {
+        } catch ( ... ) {
             throw;
         }
         return true;
@@ -610,7 +567,8 @@ typedef boost::shared_ptr< NodalForceDoubleInstance > NodalForceDoublePtr;
 /* Appliquer une force nodale sur des éléments de structure */
 /** @typedef NodalStructuralForceDouble  */
 template class MechanicalLoadInstance< StructuralForceDoubleInstance, NodalForce >;
-typedef MechanicalLoadInstance< StructuralForceDoubleInstance, NodalForce > NodalStructuralForceDoubleInstance;
+typedef MechanicalLoadInstance< StructuralForceDoubleInstance, NodalForce >
+    NodalStructuralForceDoubleInstance;
 typedef boost::shared_ptr< NodalStructuralForceDoubleInstance > NodalStructuralForceDoublePtr;
 
 /** @typedef ForceOnFaceDouble  */
@@ -627,7 +585,8 @@ typedef boost::shared_ptr< ForceOnEdgeDoubleInstance > ForceOnEdgeDoublePtr;
 /* Appliquer une force sur une arête d'élément de structure (coque/plaque) */
 /** @typedef StructuralForceOnEdgeDouble  */
 template class MechanicalLoadInstance< StructuralForceDoubleInstance, ForceOnEdge >;
-typedef MechanicalLoadInstance< StructuralForceDoubleInstance, ForceOnEdge > StructuralForceOnEdgeDoubleInstance;
+typedef MechanicalLoadInstance< StructuralForceDoubleInstance, ForceOnEdge >
+    StructuralForceOnEdgeDoubleInstance;
 typedef boost::shared_ptr< StructuralForceOnEdgeDoubleInstance > StructuralForceOnEdgeDoublePtr;
 
 /** @typedef LineicForceDouble  */
@@ -643,43 +602,50 @@ typedef boost::shared_ptr< InternalForceDoubleInstance > InternalForceDoublePtr;
 /* Appliquer une force (définie dans le repère global) à une poutre */
 /** @typedef StructuralForceOnBeamDouble  */
 template class MechanicalLoadInstance< StructuralForceDoubleInstance, ForceOnBeam >;
-typedef MechanicalLoadInstance< StructuralForceDoubleInstance, ForceOnBeam > StructuralForceOnBeamDoubleInstance;
+typedef MechanicalLoadInstance< StructuralForceDoubleInstance, ForceOnBeam >
+    StructuralForceOnBeamDoubleInstance;
 typedef boost::shared_ptr< StructuralForceOnBeamDoubleInstance > StructuralForceOnBeamDoublePtr;
 
 /* Appliquer une force (définie dans le repère local) à une poutre */
 /** @typedef LocalForceOnBeamDouble  */
 template class MechanicalLoadInstance< LocalBeamForceDoubleInstance, ForceOnBeam >;
-typedef MechanicalLoadInstance< LocalBeamForceDoubleInstance, ForceOnBeam > LocalForceOnBeamDoubleInstance;
+typedef MechanicalLoadInstance< LocalBeamForceDoubleInstance, ForceOnBeam >
+    LocalForceOnBeamDoubleInstance;
 typedef boost::shared_ptr< LocalForceOnBeamDoubleInstance > LocalForceOnBeamDoublePtr;
 
 /* Appliquer une force (définie dans le repère global) à une coque/plaque */
 /** @typedef StructuralForceOnShellDouble  */
 template class MechanicalLoadInstance< StructuralForceDoubleInstance, ForceOnShell >;
-typedef MechanicalLoadInstance< StructuralForceDoubleInstance, ForceOnShell > StructuralForceOnShellDoubleInstance;
+typedef MechanicalLoadInstance< StructuralForceDoubleInstance, ForceOnShell >
+    StructuralForceOnShellDoubleInstance;
 typedef boost::shared_ptr< StructuralForceOnShellDoubleInstance > StructuralForceOnShellDoublePtr;
 
 /* Appliquer une force (définie dans le repère local) à une coque/plaque */
 /** @typedef LocalForceOnShellDouble  */
 template class MechanicalLoadInstance< LocalShellForceDoubleInstance, ForceOnShell >;
-typedef MechanicalLoadInstance< LocalShellForceDoubleInstance, ForceOnShell > LocalForceOnShellDoubleInstance;
+typedef MechanicalLoadInstance< LocalShellForceDoubleInstance, ForceOnShell >
+    LocalForceOnShellDoubleInstance;
 typedef boost::shared_ptr< LocalForceOnShellDoubleInstance > LocalForceOnShellDoublePtr;
 
 /* Appliquer une pression à une coque/plaque */
 /** @typedef PressureOnShellDouble  */
 template class MechanicalLoadInstance< PressureDoubleInstance, ForceOnShell >;
-typedef MechanicalLoadInstance< PressureDoubleInstance, ForceOnShell > PressureOnShellDoubleInstance;
+typedef MechanicalLoadInstance< PressureDoubleInstance, ForceOnShell >
+    PressureOnShellDoubleInstance;
 typedef boost::shared_ptr< PressureOnShellDoubleInstance > PressureOnShellDoublePtr;
 
 /* Appliquer une pression à un tuyau */
 /** @typedef PressureOnPipeDouble  */
 template class MechanicalLoadInstance< PressureDoubleInstance, PressureOnPipe >;
-typedef MechanicalLoadInstance< PressureDoubleInstance, PressureOnPipe > PressureOnPipeDoubleInstance;
+typedef MechanicalLoadInstance< PressureDoubleInstance, PressureOnPipe >
+    PressureOnPipeDoubleInstance;
 typedef boost::shared_ptr< PressureOnPipeDoubleInstance > PressureOnPipeDoublePtr;
 
 /* Imposer un déplacement sur des noeuds */
 /** @typedef ImposedDisplacementDouble  */
 template class MechanicalLoadInstance< DisplacementDoubleInstance, ImposedDoF >;
-typedef MechanicalLoadInstance< DisplacementDoubleInstance, ImposedDoF > ImposedDisplacementDoubleInstance;
+typedef MechanicalLoadInstance< DisplacementDoubleInstance, ImposedDoF >
+    ImposedDisplacementDoubleInstance;
 typedef boost::shared_ptr< ImposedDisplacementDoubleInstance > ImposedDisplacementDoublePtr;
 
 /* Imposer une pression sur des noeuds */
@@ -688,25 +654,28 @@ template class MechanicalLoadInstance< PressureDoubleInstance, ImposedDoF >;
 typedef MechanicalLoadInstance< PressureDoubleInstance, ImposedDoF > ImposedPressureDoubleInstance;
 typedef boost::shared_ptr< ImposedPressureDoubleInstance > ImposedPressureDoublePtr;
 
-
 /** @typedef DistributedPressureDouble  */
 template class MechanicalLoadInstance< PressureDoubleInstance, DistributedPressure >;
-typedef MechanicalLoadInstance< PressureDoubleInstance, DistributedPressure > DistributedPressureDoubleInstance;
+typedef MechanicalLoadInstance< PressureDoubleInstance, DistributedPressure >
+    DistributedPressureDoubleInstance;
 typedef boost::shared_ptr< DistributedPressureDoubleInstance > DistributedPressureDoublePtr;
 
 /** @typedef ImpedanceOnFaceDouble  */
 template class MechanicalLoadInstance< ImpedanceDoubleInstance, ImpedanceOnFace >;
-typedef MechanicalLoadInstance< ImpedanceDoubleInstance, ImpedanceOnFace > ImpedanceOnFaceDoubleInstance;
+typedef MechanicalLoadInstance< ImpedanceDoubleInstance, ImpedanceOnFace >
+    ImpedanceOnFaceDoubleInstance;
 typedef boost::shared_ptr< ImpedanceOnFaceDoubleInstance > ImpedanceOnFaceDoublePtr;
 
 /** @typedef NormalSpeedOnFaceDouble  */
 template class MechanicalLoadInstance< NormalSpeedDoubleInstance, NormalSpeedOnFace >;
-typedef MechanicalLoadInstance< NormalSpeedDoubleInstance, NormalSpeedOnFace > NormalSpeedOnFaceDoubleInstance;
+typedef MechanicalLoadInstance< NormalSpeedDoubleInstance, NormalSpeedOnFace >
+    NormalSpeedOnFaceDoubleInstance;
 typedef boost::shared_ptr< NormalSpeedOnFaceDoubleInstance > NormalSpeedOnFaceDoublePtr;
 
 /** @typedef WavePressureOnFaceDouble  */
 template class MechanicalLoadInstance< PressureDoubleInstance, WavePressureOnFace >;
-typedef MechanicalLoadInstance< PressureDoubleInstance, WavePressureOnFace > WavePressureOnFaceDoubleInstance;
+typedef MechanicalLoadInstance< PressureDoubleInstance, WavePressureOnFace >
+    WavePressureOnFaceDoubleInstance;
 typedef boost::shared_ptr< WavePressureOnFaceDoubleInstance > WavePressureOnFaceDoublePtr;
 
 /** @typedef DistributedHeatFluxDouble  */
@@ -716,8 +685,10 @@ typedef boost::shared_ptr< DistributedHeatFluxDoubleInstance > DistributedHeatFl
 
 /** @typedef DistributedHydraulicFluxDouble  */
 template class MechanicalLoadInstance< HydraulicFluxDoubleInstance, THMFlux >;
-typedef MechanicalLoadInstance< HydraulicFluxDoubleInstance, THMFlux > DistributedHydraulicFluxDoubleInstance;
-typedef boost::shared_ptr< DistributedHydraulicFluxDoubleInstance > DistributedHydraulicFluxDoublePtr;
+typedef MechanicalLoadInstance< HydraulicFluxDoubleInstance, THMFlux >
+    DistributedHydraulicFluxDoubleInstance;
+typedef boost::shared_ptr< DistributedHydraulicFluxDoubleInstance >
+    DistributedHydraulicFluxDoublePtr;
 
 /** @typedef std::list de MechanicalLoad */
 typedef std::list< GenericMechanicalLoadPtr > ListMecaLoad;

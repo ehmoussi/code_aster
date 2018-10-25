@@ -44,8 +44,7 @@ typedef std::vector< double > VectorDouble;
 typedef std::vector< DoubleComplex > VectorComplex;
 typedef std::vector< std::string > VectorString;
 
-extern "C"
-{
+extern "C" {
 
 #include "Python.h"
 

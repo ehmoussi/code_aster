@@ -25,16 +25,15 @@
 #include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
-void exportGeneralizedModelToPython()
-{
+void exportGeneralizedModelToPython() {
     using namespace boost::python;
 
     class_< GeneralizedModelInstance, GeneralizedModelInstance::GeneralizedModelPtr,
-            bases< DataStructure > > ( "GeneralizedModel", no_init )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< GeneralizedModelInstance > ) )
+            bases< DataStructure > >( "GeneralizedModel", no_init )
+        .def( "__init__", make_constructor( &initFactoryPtr< GeneralizedModelInstance > ) )
+        .def( "__init__",
+              make_constructor( &initFactoryPtr< GeneralizedModelInstance, std::string > ) )
         .def( "addDynamicMacroElement", &GeneralizedModelInstance::addDynamicMacroElement )
         .def( "getDynamicMacroElementFromName",
-              &GeneralizedModelInstance::getDynamicMacroElementFromName )
-    ;
+              &GeneralizedModelInstance::getDynamicMacroElementFromName );
 };

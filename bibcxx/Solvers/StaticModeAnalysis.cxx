@@ -3,7 +3,7 @@
  * @brief Implementation de ModelInstance
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -31,73 +31,67 @@
 
 #include "Supervis/CommandSyntax.h"
 
-//StaticModeDeplInstance::StaticModeDeplInstance():  //?????
- //                                _supportModel( ModelPtr() ),
-  //                               _materialOnMesh( MaterialOnMeshPtr() ),
-   //                              _listOfLoads( ListOfLoadsPtr( new ListOfLoadsInstance() ) ),
-    //                             _loadStep( TimeStepperPtr( new TimeStepperInstance( Temporary ) ) ), 
-     //                            _nonLinearMethod( NonLinearMethodPtr())
-                                 //?????
+// StaticModeDeplInstance::StaticModeDeplInstance():  //?????
+//                                _supportModel( ModelPtr() ),
+//                               _materialOnMesh( MaterialOnMeshPtr() ),
+//                              _listOfLoads( ListOfLoadsPtr( new ListOfLoadsInstance() ) ),
+//                             _loadStep( TimeStepperPtr( new TimeStepperInstance( Temporary ) ) ),
+//                            _nonLinearMethod( NonLinearMethodPtr())
+//?????
 //{};
 
-
-ResultsContainerPtr StaticModeDeplInstance::execute() throw ( std::runtime_error )
-{
-    ResultsContainerPtr resultC( new ResultsContainerInstance ( std::string( "MODE_MECA" ) ) );
+ResultsContainerPtr StaticModeDeplInstance::execute() throw( std::runtime_error ) {
+    ResultsContainerPtr resultC( new ResultsContainerInstance( std::string( "MODE_MECA" ) ) );
     std::string nameOfSD = resultC->getName();
 
     CommandSyntax cmdSt( "MODE_STATIQUE" );
     cmdSt.setResult( nameOfSD, resultC->getType() );
 
     SyntaxMapContainer dict;
-    // On récupère la matrice de rigidité et éventuellement de masse 
-    if ( ! _StiffMatrix )
-       throw std::runtime_error("Stiffness Matrix is undefined");
+    // On récupère la matrice de rigidité et éventuellement de masse
+    if ( !_StiffMatrix )
+        throw std::runtime_error( "Stiffness Matrix is undefined" );
     dict.container["MATR_RIGI"] = _StiffMatrix->getName();
-    if (_MassMatrix)
-    {
-    dict.container["MATR_MASS"] = _MassMatrix->getName();
+    if ( _MassMatrix ) {
+        dict.container["MATR_MASS"] = _MassMatrix->getName();
     }
-    
+
     ListSyntaxMapContainer FactorMODE_STAT;
     SyntaxMapContainer FactorMODE_STAT_1;
     SyntaxMapContainer FactorMODE_STAT_2;
     ListGenParam listParam;
     // FactorMODE_STAT_1 localization
-    
-    listParam.push_back(&_loc);
-    FactorMODE_STAT_1=buildSyntaxMapFromParamList(listParam);
+
+    listParam.push_back( &_loc );
+    FactorMODE_STAT_1 = buildSyntaxMapFromParamList( listParam );
     listParam.pop_back();
 
     // FactorMODE_STAT_2 wanted cmp
-    
-    listParam.push_back(&_cmp);
-    FactorMODE_STAT_2=buildSyntaxMapFromParamList(listParam);
 
-    //Concatenate FactorMODE_STAT_1 + FactorMODE_STAT_2
+    listParam.push_back( &_cmp );
+    FactorMODE_STAT_2 = buildSyntaxMapFromParamList( listParam );
 
-    FactorMODE_STAT.push_back( FactorMODE_STAT_1 + FactorMODE_STAT_2);
+    // Concatenate FactorMODE_STAT_1 + FactorMODE_STAT_2
+
+    FactorMODE_STAT.push_back( FactorMODE_STAT_1 + FactorMODE_STAT_2 );
 
     dict.container["MODE_STAT"] = FactorMODE_STAT;
-    
-    //Factor keyword Solver treatment
-    
-    ListSyntaxMapContainer FactorSOLVEUR;
-    
-    FactorSOLVEUR.push_back(buildSyntaxMapFromParamList(_linearSolver->getListOfParameters()));
 
-    dict.container["SOLVEUR"] =  FactorSOLVEUR;
-   
+    // Factor keyword Solver treatment
+
+    ListSyntaxMapContainer FactorSOLVEUR;
+
+    FactorSOLVEUR.push_back( buildSyntaxMapFromParamList( _linearSolver->getListOfParameters() ) );
+
+    dict.container["SOLVEUR"] = FactorSOLVEUR;
+
     cmdSt.define( dict );
 
     // Maintenant que le fichier de commande est pret, on appelle OP0093
-    try
-    {
+    try {
         ASTERINTEGER op = 93;
         CALL_EXECOP( &op );
-    }
-    catch( ... )
-    {
+    } catch ( ... ) {
         throw;
     }
     //_isEmpty = false;
@@ -107,66 +101,59 @@ ResultsContainerPtr StaticModeDeplInstance::execute() throw ( std::runtime_error
     return resultC;
 };
 
-ResultsContainerPtr StaticModeForcInstance::execute() throw ( std::runtime_error )
-{
-    ResultsContainerPtr resultC( new ResultsContainerInstance ( std::string( "MODE_MECA" ) ) );
+ResultsContainerPtr StaticModeForcInstance::execute() throw( std::runtime_error ) {
+    ResultsContainerPtr resultC( new ResultsContainerInstance( std::string( "MODE_MECA" ) ) );
     std::string nameOfSD = resultC->getName();
 
     CommandSyntax cmdSt( "MODE_STATIQUE" );
     cmdSt.setResult( nameOfSD, resultC->getType() );
 
     SyntaxMapContainer dict;
-    
-    // On récupère la matrice de rigidité et éventuellement de masse 
-    if ( ! _StiffMatrix )
-       throw std::runtime_error("Stiffness Matrix is undefined");
+
+    // On récupère la matrice de rigidité et éventuellement de masse
+    if ( !_StiffMatrix )
+        throw std::runtime_error( "Stiffness Matrix is undefined" );
     dict.container["MATR_RIGI"] = _StiffMatrix->getName();
-    if (_MassMatrix)
-    {
-    dict.container["MATR_MASS"] = _MassMatrix->getName();
+    if ( _MassMatrix ) {
+        dict.container["MATR_MASS"] = _MassMatrix->getName();
     }
-    
+
     ListSyntaxMapContainer FactorMODE_STAT;
     SyntaxMapContainer FactorMODE_STAT_1;
     SyntaxMapContainer FactorMODE_STAT_2;
     ListGenParam listParam;
     // FactorMODE_STAT_1 localization
-    
-    listParam.push_back(&_loc);
-    FactorMODE_STAT_1=buildSyntaxMapFromParamList(listParam);
+
+    listParam.push_back( &_loc );
+    FactorMODE_STAT_1 = buildSyntaxMapFromParamList( listParam );
     listParam.pop_back();
 
     // FactorMODE_STAT_2 wanted cmp
-    
-    listParam.push_back(&_cmp);
-    FactorMODE_STAT_2=buildSyntaxMapFromParamList(listParam);
 
-    //Concatenate FactorMODE_STAT_1 + FactorMODE_STAT_2
+    listParam.push_back( &_cmp );
+    FactorMODE_STAT_2 = buildSyntaxMapFromParamList( listParam );
 
-    FactorMODE_STAT.push_back( FactorMODE_STAT_1 + FactorMODE_STAT_2);
+    // Concatenate FactorMODE_STAT_1 + FactorMODE_STAT_2
+
+    FactorMODE_STAT.push_back( FactorMODE_STAT_1 + FactorMODE_STAT_2 );
 
     dict.container["FORCE_NODALE"] = FactorMODE_STAT;
-    
-    //Factor keyword Solver treatment
-    
-    ListSyntaxMapContainer FactorSOLVEUR;
-    
-    FactorSOLVEUR.push_back(buildSyntaxMapFromParamList(_linearSolver->getListOfParameters()));
 
-    dict.container["SOLVEUR"] =  FactorSOLVEUR;
-   
+    // Factor keyword Solver treatment
+
+    ListSyntaxMapContainer FactorSOLVEUR;
+
+    FactorSOLVEUR.push_back( buildSyntaxMapFromParamList( _linearSolver->getListOfParameters() ) );
+
+    dict.container["SOLVEUR"] = FactorSOLVEUR;
+
     cmdSt.define( dict );
 
-    
-
     // Maintenant que le fichier de commande est pret, on appelle OP0093
-    try
-    {
+    try {
         ASTERINTEGER op = 93;
         CALL_EXECOP( &op );
-    }
-    catch( ... )
-    {
+    } catch ( ... ) {
         throw;
     }
     //_isEmpty = false;
@@ -176,72 +163,65 @@ ResultsContainerPtr StaticModeForcInstance::execute() throw ( std::runtime_error
     return resultC;
 };
 
-ResultsContainerPtr StaticModePseudoInstance::execute() throw ( std::runtime_error )
-{
-    ResultsContainerPtr resultC( new ResultsContainerInstance ( std::string( "MODE_MECA" ) ) );
+ResultsContainerPtr StaticModePseudoInstance::execute() throw( std::runtime_error ) {
+    ResultsContainerPtr resultC( new ResultsContainerInstance( std::string( "MODE_MECA" ) ) );
     std::string nameOfSD = resultC->getName();
 
     CommandSyntax cmdSt( "MODE_STATIQUE" );
     cmdSt.setResult( nameOfSD, resultC->getType() );
 
     SyntaxMapContainer dict;
-    // On récupère les matrices de rigidité et de masse 
-    if ( ! _StiffMatrix )
-       throw std::runtime_error("Stiffness Matrix is undefined");
+    // On récupère les matrices de rigidité et de masse
+    if ( !_StiffMatrix )
+        throw std::runtime_error( "Stiffness Matrix is undefined" );
     dict.container["MATR_RIGI"] = _StiffMatrix->getName();
-    if (! _MassMatrix)
-       throw std::runtime_error("Mass Matrix is undefined");
+    if ( !_MassMatrix )
+        throw std::runtime_error( "Mass Matrix is undefined" );
     dict.container["MATR_MASS"] = _MassMatrix->getName();
-    
-    
+
     ListSyntaxMapContainer FactorPSEUDO;
     SyntaxMapContainer FactorPSEUDO_1;
     SyntaxMapContainer FactorPSEUDO_2;
     SyntaxMapContainer FactorPSEUDO_3;
     ListGenParam listParam;
     // FactorPSEUDO_1 localization
-    
-    listParam.push_back(&_loc);
-    FactorPSEUDO_1=buildSyntaxMapFromParamList(listParam);
+
+    listParam.push_back( &_loc );
+    FactorPSEUDO_1 = buildSyntaxMapFromParamList( listParam );
     listParam.pop_back();
     // FactorPSEUDO_2 wanted cmp
-    if (_loc.getName()=="TOUT" | _loc.getName()=="GROUP_NO"){
-        listParam.push_back(&_cmp);
-        FactorPSEUDO_2=buildSyntaxMapFromParamList(listParam);
+    if ( _loc.getName() == "TOUT" | _loc.getName() == "GROUP_NO" ) {
+        listParam.push_back( &_cmp );
+        FactorPSEUDO_2 = buildSyntaxMapFromParamList( listParam );
         listParam.pop_back();
-        }
+    }
     // FactorPSEUDO_3 dirname
-    if (_loc.getName()=="DIRECTION" && _dirname.isSet()){
-        listParam.push_back(&_dirname);
-        FactorPSEUDO_3=buildSyntaxMapFromParamList(listParam);
+    if ( _loc.getName() == "DIRECTION" && _dirname.isSet() ) {
+        listParam.push_back( &_dirname );
+        FactorPSEUDO_3 = buildSyntaxMapFromParamList( listParam );
         listParam.pop_back();
-        }
-    //Concatenate FactorPSEUDO_1 + FactorPSEUDO_2 + FactorPSEUDO_3
+    }
+    // Concatenate FactorPSEUDO_1 + FactorPSEUDO_2 + FactorPSEUDO_3
 
-    FactorPSEUDO.push_back( FactorPSEUDO_1 + FactorPSEUDO_2 + FactorPSEUDO_3);
+    FactorPSEUDO.push_back( FactorPSEUDO_1 + FactorPSEUDO_2 + FactorPSEUDO_3 );
 
     dict.container["PSEUDO_MODE"] = FactorPSEUDO;
-    
-    //Factor keyword Solver treatment
-    
+
+    // Factor keyword Solver treatment
+
     ListSyntaxMapContainer FactorSOLVEUR;
-    
-    FactorSOLVEUR.push_back(buildSyntaxMapFromParamList(_linearSolver->getListOfParameters()));
 
-    dict.container["SOLVEUR"] =  FactorSOLVEUR;
+    FactorSOLVEUR.push_back( buildSyntaxMapFromParamList( _linearSolver->getListOfParameters() ) );
 
-   
+    dict.container["SOLVEUR"] = FactorSOLVEUR;
+
     cmdSt.define( dict );
-    
 
     // Maintenant que le fichier de commande est pret, on appelle OP0093
-    try
-    {
+    try {
         ASTERINTEGER op = 93;
         CALL_EXECOP( &op );
-    }
-    catch( ... )
-    {
+    } catch ( ... ) {
         throw;
     }
     //_isEmpty = false;
@@ -251,25 +231,23 @@ ResultsContainerPtr StaticModePseudoInstance::execute() throw ( std::runtime_err
     return resultC;
 };
 
-ResultsContainerPtr StaticModeInterfInstance::execute() throw ( std::runtime_error )
-{
-    ResultsContainerPtr resultC( new ResultsContainerInstance ( std::string( "MODE_MECA" ) ) );
+ResultsContainerPtr StaticModeInterfInstance::execute() throw( std::runtime_error ) {
+    ResultsContainerPtr resultC( new ResultsContainerInstance( std::string( "MODE_MECA" ) ) );
     std::string nameOfSD = resultC->getName();
 
     CommandSyntax cmdSt( "MODE_STATIQUE" );
     cmdSt.setResult( nameOfSD, resultC->getType() );
 
     SyntaxMapContainer dict;
-    std::cout<<"cxx!"<<std::endl;
-    // On récupère la matrice de rigidité et éventuellement de masse 
-    if ( ! _StiffMatrix )
-       throw std::runtime_error("Stiffness Matrix is undefined");
+    std::cout << "cxx!" << std::endl;
+    // On récupère la matrice de rigidité et éventuellement de masse
+    if ( !_StiffMatrix )
+        throw std::runtime_error( "Stiffness Matrix is undefined" );
     dict.container["MATR_RIGI"] = _StiffMatrix->getName();
-    if (! _MassMatrix)
-       throw std::runtime_error("Mass Matrix is undefined");
+    if ( !_MassMatrix )
+        throw std::runtime_error( "Mass Matrix is undefined" );
     dict.container["MATR_MASS"] = _MassMatrix->getName();
-    
-    
+
     ListSyntaxMapContainer FactorMODE_STAT;
     SyntaxMapContainer FactorMODE_STAT_1;
     SyntaxMapContainer FactorMODE_STAT_2;
@@ -277,59 +255,55 @@ ResultsContainerPtr StaticModeInterfInstance::execute() throw ( std::runtime_err
     SyntaxMapContainer FactorMODE_STAT_4;
     ListGenParam listParam;
     // FactorMODE_STAT_1 localization
-    
-    listParam.push_back(&_loc);
-    FactorMODE_STAT_1=buildSyntaxMapFromParamList(listParam);
+
+    listParam.push_back( &_loc );
+    FactorMODE_STAT_1 = buildSyntaxMapFromParamList( listParam );
     listParam.pop_back();
 
     // FactorMODE_STAT_2 wanted cmp
-    
-    listParam.push_back(&_cmp);
-    FactorMODE_STAT_2=buildSyntaxMapFromParamList(listParam);
+
+    listParam.push_back( &_cmp );
+    FactorMODE_STAT_2 = buildSyntaxMapFromParamList( listParam );
     listParam.pop_back();
-    
+
     // FactorMODE_STAT_3 nb_mode
-    
-    listParam.push_back(&_nbmod);
-    FactorMODE_STAT_3=buildSyntaxMapFromParamList(listParam);
+
+    listParam.push_back( &_nbmod );
+    FactorMODE_STAT_3 = buildSyntaxMapFromParamList( listParam );
     listParam.pop_back();
-    
+
     // FactorMODE_STAT_4 shift
-    
-    listParam.push_back(&_shift);
-    FactorMODE_STAT_4=buildSyntaxMapFromParamList(listParam);
+
+    listParam.push_back( &_shift );
+    FactorMODE_STAT_4 = buildSyntaxMapFromParamList( listParam );
     listParam.pop_back();
-    
-    //Concatenate FactorMODE_STAT_1 + FactorMODE_STAT_2
+
+    // Concatenate FactorMODE_STAT_1 + FactorMODE_STAT_2
 
     FactorMODE_STAT.push_back( FactorMODE_STAT_1 + FactorMODE_STAT_2 );
 
     dict.container["MODE_INTERF"] = FactorMODE_STAT;
-    
-    //Factor keyword Solver treatment
-    
+
+    // Factor keyword Solver treatment
+
     ListSyntaxMapContainer FactorSOLVEUR;
-    
-    FactorSOLVEUR.push_back(buildSyntaxMapFromParamList(_linearSolver->getListOfParameters()));
 
-    dict.container["SOLVEUR"] =  FactorSOLVEUR;
-   
+    FactorSOLVEUR.push_back( buildSyntaxMapFromParamList( _linearSolver->getListOfParameters() ) );
+
+    dict.container["SOLVEUR"] = FactorSOLVEUR;
+
     cmdSt.define( dict );
-    
 
-    std::cout<<"Je lance !"<<std::endl;
+    std::cout << "Je lance !" << std::endl;
 
     // Maintenant que le fichier de commande est pret, on appelle OP0093
-    try
-    {
+    try {
         ASTERINTEGER op = 93;
         CALL_EXECOP( &op );
-    }
-    catch( ... )
-    {
+    } catch ( ... ) {
         throw;
     }
-    std::cout<<"OK !"<<std::endl;
+    std::cout << "OK !" << std::endl;
     //_isEmpty = false;
     // Attention, la connection des objets a leur image JEVEUX n'est pas necessaire ???
     //_typeOfElements->updateValuePointer();

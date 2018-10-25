@@ -6,7 +6,7 @@
  * @brief Fichier entete des outils
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -28,15 +28,12 @@
 
 #include "astercxx.h"
 
-
-std::string trim( const std::string& str,
-                  const std::string& whitespace = " \t" );
-
+std::string trim( const std::string &str, const std::string &whitespace = " \t" );
 
 /**
  * @brief vectorStringToFStr Create an array of Fortran strings from a vector of strings.
  *      The output array must be freed by the caller.
  */
-char* vectorStringAsFStrArray( const VectorString &vector, const int size );
+char *vectorStringAsFStrArray( const VectorString &vector, const int size );
 
 #endif /* TOOLS_H_ */

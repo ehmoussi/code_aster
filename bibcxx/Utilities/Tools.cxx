@@ -3,7 +3,7 @@
  * @brief Implementation des outils
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -24,26 +24,23 @@
 #include "aster_utils.h"
 #include "Utilities/Tools.h"
 
-std::string trim( const std::string& str,
-                  const std::string& whitespace )
-{
-    const int strBegin = str.find_first_not_of(whitespace);
-    if (strBegin == std::string::npos)
+std::string trim( const std::string &str, const std::string &whitespace ) {
+    const int strBegin = str.find_first_not_of( whitespace );
+    if ( strBegin == std::string::npos )
         return ""; // no content
 
-    const int strEnd = str.find_last_not_of(whitespace);
+    const int strEnd = str.find_last_not_of( whitespace );
     const int strRange = strEnd - strBegin + 1;
 
-    return str.substr(strBegin, strRange);
+    return str.substr( strBegin, strRange );
 };
 
-char* vectorStringAsFStrArray( const VectorString &vector, const int size )
-{
-    char * tabFStr = MakeTabFStr( vector.size(), size );
+char *vectorStringAsFStrArray( const VectorString &vector, const int size ) {
+    char *tabFStr = MakeTabFStr( vector.size(), size );
     VectorString::const_iterator vecIt = vector.begin();
     int i = 0;
     for ( ; vecIt != vector.end(); ++vecIt ) {
-        SetTabFStr( tabFStr, i, (char*)vecIt->c_str(), size );
+        SetTabFStr( tabFStr, i, (char *)vecIt->c_str(), size );
         ++i;
     }
     return tabFStr;

@@ -1,10 +1,11 @@
 /**
  * @file NonLinearControl.cxx
- * @brief NonLinearControl class is derived from SolverControl class. It evals the convergence status of
- * a nonlinear iterative method 
+ * @brief NonLinearControl class is derived from SolverControl class. It evals the convergence
+ *status of
+ * a nonlinear iterative method
  * @author Natacha Béreux
  * @section LICENCE
- *   Copyright (C) 1991 - 2015  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -28,65 +29,56 @@
 
 /**
  * @class  NonLinearControl
- * @brief  Control class used to check convergence of Newton solver 
- * @author Natacha Béreux 
+ * @brief  Control class used to check convergence of Newton solver
+ * @author Natacha Béreux
  */
 
-NonLinearControlInstance::NonLinearControlInstance( double rTol, int nIterMax, 
-    double maxTol, double relMaxTol, double relTolCmp):
-     SolverControlInstance(rTol, nIterMax),
-    _maxTol(maxTol), _relativeMaxTol(relMaxTol), _relativeTolByComponent(relTolCmp)
-{
-     std::vector<double> v(nIterMax,0.);
-    _relResNorm=v;
+NonLinearControlInstance::NonLinearControlInstance( double rTol, int nIterMax, double maxTol,
+                                                    double relMaxTol, double relTolCmp )
+    : SolverControlInstance( rTol, nIterMax ), _maxTol( maxTol ), _relativeMaxTol( relMaxTol ),
+      _relativeTolByComponent( relTolCmp ) {
+    std::vector< double > v( nIterMax, 0. );
+    _relResNorm = v;
 }
 
-
-ConvergenceState NonLinearControlInstance::check( const DiscreteProblemPtr& dProblem, const FieldOnNodesDoublePtr& uField, int nIter )
-{
-    double relativeResNorm(0.0) ;
+ConvergenceState NonLinearControlInstance::check( const DiscreteProblemPtr &dProblem,
+                                                  const FieldOnNodesDoublePtr &uField, int nIter ) {
+    double relativeResNorm( 0.0 );
     // Get the residual
-    /* Aucune de ces fonctions  n'existe encore ... 
+    /* Aucune de ces fonctions  n'existe encore ...
     FieldOnNodesDoublePtr res =  dProblem->buildResidual( uField );
     resnorm = res-> getNorm( "NORM2" );
     // Normalisation ??
-    double relativeResNorm = dProblem-> getRelativeResidualNorm( "NORM2" ); 
+    double relativeResNorm = dProblem-> getRelativeResidualNorm( "NORM2" );
     */
-    // Store the residual norm 
-    if ( nIter < _relResNorm.size()) 
-        {
-            _relResNorm[nIter] = relativeResNorm;
-        }
-    // Has the linear solver converged? 
-    ConvergenceState status(iterate); 
-    if ( relativeResNorm  < _relativeTol ) 
-        { 
-            status = success ;
-        }
-    if ( nIter >= _nIterMax ) 
-        { 
-            status = failure;
-        }
-    std::cout << " Check -> status = " << status << std::endl; 
-    return status ; 
+    // Store the residual norm
+    if ( nIter < _relResNorm.size() ) {
+        _relResNorm[nIter] = relativeResNorm;
+    }
+    // Has the linear solver converged?
+    ConvergenceState status( iterate );
+    if ( relativeResNorm < _relativeTol ) {
+        status = success;
+    }
+    if ( nIter >= _nIterMax ) {
+        status = failure;
+    }
+    std::cout << " Check -> status = " << status << std::endl;
+    return status;
 }
 
-
-    /* Clean convergence history */
-void NonLinearControlInstance::cleanLog() 
-{
-    for ( std::vector<double>::iterator it( _relResNorm.begin()); it<_relResNorm.end(); it ++ )
-        {
-            *it = 0.0; 
-        }
+/* Clean convergence history */
+void NonLinearControlInstance::cleanLog() {
+    for ( std::vector< double >::iterator it( _relResNorm.begin() ); it < _relResNorm.end();
+          it++ ) {
+        *it = 0.0;
+    }
 }
 
-    /* Print convergence history */
-void NonLinearControlInstance::printLog()
-{
-    for ( int ii(0); ii < _relResNorm.size(); ii++) 
-        {
-        if ( _relResNorm[ii] > 0.0 ) 
-        std::cout << " Résidu à l'itération  " << ii << " : " <<  _relResNorm[ii] <<std::endl;  
-        }
+/* Print convergence history */
+void NonLinearControlInstance::printLog() {
+    for ( int ii( 0 ); ii < _relResNorm.size(); ii++ ) {
+        if ( _relResNorm[ii] > 0.0 )
+            std::cout << " Résidu à l'itération  " << ii << " : " << _relResNorm[ii] << std::endl;
+    }
 }

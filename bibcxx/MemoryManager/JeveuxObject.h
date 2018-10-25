@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe JeveuxObject
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -41,44 +41,38 @@ enum JeveuxMemory { Permanent, Temporary };
  * @def JeveuxTypesNames
  * @brief Fournit la lettre correspondant aux différentes base Jeveux
  */
-static const std::string JeveuxMemoryTypesNames[2] = { "G", "V" };
+static const std::string JeveuxMemoryTypesNames[2] = {"G", "V"};
 
 /**
  * @class JeveuxObjectInstance
  * @brief Cette classe permet de definir un objet Jeveux
  * @author Nicolas Sellenet
  */
-class JeveuxObjectInstance
-{
-protected:
+class JeveuxObjectInstance {
+  protected:
     /** @brief Nom de l'objet Jeveux */
-    std::string  _name;
+    std::string _name;
     /** @brief Mémoire d'allocation */
     JeveuxMemory _mem;
 
-public:
+  public:
     /**
      * @brief Constructeur
      * @param name Nom jeveux du vecteur
      */
-    JeveuxObjectInstance( const std::string& nom, JeveuxMemory mem = Permanent ):
-        _name( nom ),
-        _mem( mem )
-    {};
+    JeveuxObjectInstance( const std::string &nom, JeveuxMemory mem = Permanent )
+        : _name( nom ), _mem( mem ){};
 
     /**
      * @brief Destructeur
      */
-    ~JeveuxObjectInstance()
-    {
-        if ( _name != "" && get_sh_jeveux_status() == 1 )
-        {
+    ~JeveuxObjectInstance() {
+        if ( _name != "" && get_sh_jeveux_status() == 1 ) {
             CALLO_JEDETR( _name );
         }
     };
 
-    bool exists() const
-    {
+    bool exists() const {
         // Si on n'a pas de nom, on sort
         if ( _name == "" )
             return false;
@@ -94,10 +88,7 @@ public:
     /**
      * @brief Return the name
      */
-    std::string getName() const
-    {
-        return _name;
-    };
+    std::string getName() const { return _name; };
 };
 
 #endif /* JEVEUXOBJECT_H_ */

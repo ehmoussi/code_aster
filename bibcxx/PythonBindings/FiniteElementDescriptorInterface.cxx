@@ -27,13 +27,12 @@
 #include <PythonBindings/factory.h>
 #include "PythonBindings/FiniteElementDescriptorInterface.h"
 
-
-void exportFiniteElementDescriptorToPython()
-{
+void exportFiniteElementDescriptorToPython() {
     using namespace boost::python;
 
     class_< FiniteElementDescriptorInstance,
-            FiniteElementDescriptorInstance::FiniteElementDescriptorPtr,
-            bases< DataStructure > > ( "FiniteElementDescriptor", no_init )
-    ;
+            FiniteElementDescriptorInstance::FiniteElementDescriptorPtr, bases< DataStructure > >(
+        "FiniteElementDescriptor", no_init );
+        // fake initFactoryPtr: not directly created by user
+        // fake initFactoryPtr: not directly created by user
 };

@@ -3,7 +3,7 @@
  * @brief Interface python de FullAcousticHarmonicResultsContainer
  * @author Natacha Béreux
  * @section LICENCE
- *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -25,16 +25,16 @@
 #include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
-void exportFullAcousticHarmonicResultsContainerToPython()
-{
+void exportFullAcousticHarmonicResultsContainerToPython() {
     using namespace boost::python;
 
     class_< FullAcousticHarmonicResultsContainerInstance, FullAcousticHarmonicResultsContainerPtr,
-            bases< FullResultsContainerInstance > > ( "FullAcousticHarmonicResultsContainer", no_init )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< FullAcousticHarmonicResultsContainerInstance , std::string > ) )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< FullAcousticHarmonicResultsContainerInstance > ) )
-        .def( "printMedFile", &FullAcousticHarmonicResultsContainerInstance::printMedFile )
-    ;
+            bases< FullResultsContainerInstance > >( "FullAcousticHarmonicResultsContainer",
+                                                     no_init )
+        .def( "__init__",
+              make_constructor(
+                  &initFactoryPtr< FullAcousticHarmonicResultsContainerInstance, std::string >))
+        .def( "__init__",
+              make_constructor(&initFactoryPtr< FullAcousticHarmonicResultsContainerInstance >))
+        .def( "printMedFile", &FullAcousticHarmonicResultsContainerInstance::printMedFile );
 };

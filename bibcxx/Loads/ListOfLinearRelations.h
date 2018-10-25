@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe ListOfLinearRelations
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2016  EDF R&D     www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D     www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -36,52 +36,48 @@
  * @author Nicolas Sellenet
  * @todo Prendre en compte le cas Function
  */
-template< class ValueType >
-class ListOfLinearRelationsInstance: public DataStructure
-{
-private:
+template < class ValueType > class ListOfLinearRelationsInstance : public DataStructure {
+  private:
     /** @brief Objet '.RLCO' */
     JeveuxVector< ValueType > _coefficients;
     /** @brief Objet '.RLBE' */
     JeveuxVector< ValueType > _rhs;
     /** @brief Objet '.RLDD' */
-    JeveuxVectorChar8         _componentsNames;
+    JeveuxVectorChar8 _componentsNames;
     /** @brief Objet '.RLNO' */
-    JeveuxVectorChar8         _nodesNames;
+    JeveuxVectorChar8 _nodesNames;
     /** @brief Objet '.RLNT' */
-    JeveuxVectorLong          _numberOfCoeff;
+    JeveuxVectorLong _numberOfCoeff;
     /** @brief Objet '.RLPO' */
-    JeveuxVectorLong          _pointer;
+    JeveuxVectorLong _pointer;
     /** @brief Objet '.RLSU' */
-    JeveuxVectorLong          _onOrOff;
+    JeveuxVectorLong _onOrOff;
     /** @brief Objet '.RLTC' */
-    JeveuxVectorChar8         _typeOfCoeff;
+    JeveuxVectorChar8 _typeOfCoeff;
     /** @brief Objet '.RLTV' */
-    JeveuxVectorChar8         _typeOfRhs;
+    JeveuxVectorChar8 _typeOfRhs;
     /** @brief Objet '.RLNR' */
-    JeveuxVectorLong          _numberOfRelations;
+    JeveuxVectorLong _numberOfRelations;
     /** @brief La chargement est-il vide ? */
-    bool                      _isEmpty;
+    bool _isEmpty;
 
-public:
+  public:
     /**
         * @brief Constructeur
         */
-    ListOfLinearRelationsInstance( const std::string name ) throw( std::runtime_error ):
-        DataStructure( name, 19, "LISTE_RELA" ),
-        _coefficients( JeveuxVector< ValueType >( getName() + ".RLCO" ) ),
-        _rhs( JeveuxVector< ValueType >( getName() + ".RLBE" ) ),
-        _componentsNames( JeveuxVectorChar8( getName() + ".RLDD" ) ),
-        _nodesNames( JeveuxVectorChar8( getName() + ".RLNO" ) ),
-        _numberOfCoeff( JeveuxVectorLong( getName() + ".RLNT" ) ),
-        _pointer( JeveuxVectorLong( getName() + ".RLPO" ) ),
-        _onOrOff( JeveuxVectorLong( getName() + ".RLSU" ) ),
-        _typeOfCoeff( JeveuxVectorChar8( getName() + ".RLTC" ) ),
-        _typeOfRhs( JeveuxVectorChar8( getName() + ".RLTV" ) ),
-        _numberOfRelations( JeveuxVectorLong( getName() + ".RLNR" ) ),
-        _isEmpty( true )
-    {
-        if( getName().size() != 19 )
+    ListOfLinearRelationsInstance( const std::string name ) throw( std::runtime_error )
+        : DataStructure( name, 19, "LISTE_RELA" ),
+          _coefficients( JeveuxVector< ValueType >( getName() + ".RLCO" ) ),
+          _rhs( JeveuxVector< ValueType >( getName() + ".RLBE" ) ),
+          _componentsNames( JeveuxVectorChar8( getName() + ".RLDD" ) ),
+          _nodesNames( JeveuxVectorChar8( getName() + ".RLNO" ) ),
+          _numberOfCoeff( JeveuxVectorLong( getName() + ".RLNT" ) ),
+          _pointer( JeveuxVectorLong( getName() + ".RLPO" ) ),
+          _onOrOff( JeveuxVectorLong( getName() + ".RLSU" ) ),
+          _typeOfCoeff( JeveuxVectorChar8( getName() + ".RLTC" ) ),
+          _typeOfRhs( JeveuxVectorChar8( getName() + ".RLTV" ) ),
+          _numberOfRelations( JeveuxVectorLong( getName() + ".RLNR" ) ), _isEmpty( true ) {
+        if ( getName().size() != 19 )
             throw std::runtime_error( "Bad name size" );
     };
 };

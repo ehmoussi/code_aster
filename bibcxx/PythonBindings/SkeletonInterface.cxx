@@ -3,7 +3,7 @@
  * @brief Interface python de Skeleton
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -25,16 +25,11 @@
 #include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
-void exportSkeletonToPython()
-{
+void exportSkeletonToPython() {
     using namespace boost::python;
 
-    class_< SkeletonInstance, SkeletonInstance::SkeletonPtr,
-            bases< BaseMeshInstance > > ( "Skeleton", no_init )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< SkeletonInstance > ) )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< SkeletonInstance,
-                             std::string >) )
-    ;
+    class_< SkeletonInstance, SkeletonInstance::SkeletonPtr, bases< BaseMeshInstance > >(
+        "Skeleton", no_init )
+        .def( "__init__", make_constructor(&initFactoryPtr< SkeletonInstance >))
+        .def( "__init__", make_constructor(&initFactoryPtr< SkeletonInstance, std::string >));
 };

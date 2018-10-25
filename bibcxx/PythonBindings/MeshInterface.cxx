@@ -3,7 +3,7 @@
  * @brief Interface python de Mesh
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -29,26 +29,22 @@
 #include "PythonBindings/factory.h"
 #include "PythonBindings/ConstViewerUtilities.h"
 
-
-void exportMeshToPython()
-{
+void exportMeshToPython() {
     using namespace boost::python;
-    class_< BaseMeshInstance, BaseMeshInstance::BaseMeshPtr,
-            bases< DataStructure > >( "BaseMesh", no_init )
-//         .def( "getCoordinates", +[](const BaseMeshInstance& v)
-//         {
-//             return ConstViewer<MeshCoordinatesFieldInstance>( v.getCoordinates() );
-//         })
+    class_< BaseMeshInstance, BaseMeshInstance::BaseMeshPtr, bases< DataStructure > >( "BaseMesh",
+                                                                                       no_init )
+        // fake initFactoryPtr: created by subclass
+        // fake initFactoryPtr: created by subclass
+        //         .def( "getCoordinates", +[](const BaseMeshInstance& v)
+        //         {
+        //             return ConstViewer<MeshCoordinatesFieldInstance>( v.getCoordinates() );
+        //         })
         .def( "getCoordinates", &BaseMeshInstance::getCoordinates );
     ;
 
-    class_< MeshInstance, MeshInstance::MeshPtr,
-            bases< BaseMeshInstance > >( "Mesh", no_init )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< MeshInstance >) )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< MeshInstance,
-                             std::string >) )
+    class_< MeshInstance, MeshInstance::MeshPtr, bases< BaseMeshInstance > >( "Mesh", no_init )
+        .def( "__init__", make_constructor(&initFactoryPtr< MeshInstance >))
+        .def( "__init__", make_constructor(&initFactoryPtr< MeshInstance, std::string >))
         .def( "addGroupOfNodesFromNodes", &MeshInstance::addGroupOfNodesFromNodes )
         .def( "hasGroupOfElements", &MeshInstance::hasGroupOfElements )
         .def( "hasGroupOfNodes", &MeshInstance::hasGroupOfNodes )
@@ -56,6 +52,5 @@ void exportMeshToPython()
         .def( "readGibiFile", &MeshInstance::readGibiFile )
         .def( "readGmshFile", &MeshInstance::readGmshFile )
         .def( "readMedFile", &MeshInstance::readMedFile )
-        .def( "getDimension", &MeshInstance::getDimension )
-    ;
+        .def( "getDimension", &MeshInstance::getDimension );
 };

@@ -30,194 +30,166 @@
 #include "Supervis/CommandSyntax.h"
 #include "Utilities/Tools.h"
 
-bool ResultsContainerInstance::allocate( int nbRanks ) throw ( std::runtime_error )
-{
-    std::string base( JeveuxMemoryTypesNames[ getMemoryType() ] );
+bool ResultsContainerInstance::allocate( int nbRanks ) throw( std::runtime_error ) {
+    std::string base( JeveuxMemoryTypesNames[getMemoryType()] );
     ASTERINTEGER nbordr = nbRanks;
     CALLO_RSCRSD( base, getName(), getType(), &nbordr );
     _nbRanks = nbRanks;
     return true;
 };
 
-void ResultsContainerInstance::addElementaryCharacteristics( const ElementaryCharacteristicsPtr& cara,
-                                                             int rank )
-    throw ( std::runtime_error )
-{
+void
+ResultsContainerInstance::addElementaryCharacteristics( const ElementaryCharacteristicsPtr &cara,
+                                                        int rank ) throw( std::runtime_error ) {
     _mapElemCara[rank] = cara;
     ASTERINTEGER rang = rank;
-    std::string type("CARAELEM");
+    std::string type( "CARAELEM" );
     CALLO_RSADPA_ZK8_WRAP( getName(), &rang, cara->getName(), type );
 };
 
-void ResultsContainerInstance::addListOfLoads( const ListOfLoadsPtr& load,
-                                               int rank ) throw ( std::runtime_error )
-{
+void ResultsContainerInstance::addListOfLoads( const ListOfLoadsPtr &load,
+                                               int rank ) throw( std::runtime_error ) {
     _mapLoads[rank] = load;
     ASTERINTEGER rang = rank;
-    std::string type("EXCIT");
+    std::string type( "EXCIT" );
     CALLO_RSADPA_ZK24_WRAP( getName(), &rang, load->getName(), type );
 };
 
-ListOfLoadsPtr ResultsContainerInstance::getListOfLoads( int rank )
-    throw ( std::runtime_error )
-{
+ListOfLoadsPtr ResultsContainerInstance::getListOfLoads( int rank ) throw( std::runtime_error ) {
     auto curIter = _mapLoads.find( rank );
-    if( curIter == _mapLoads.end() )
+    if ( curIter == _mapLoads.end() )
         throw std::runtime_error( "Rank not find" );
-    return (*curIter).second;
+    return ( *curIter ).second;
 };
 
-ElementaryCharacteristicsPtr ResultsContainerInstance::getElementaryCharacteristics( int rank )
-    throw ( std::runtime_error )
-{
+ElementaryCharacteristicsPtr
+ResultsContainerInstance::getElementaryCharacteristics( int rank ) throw( std::runtime_error ) {
     auto curIter = _mapElemCara.find( rank );
-    if( curIter == _mapElemCara.end() )
+    if ( curIter == _mapElemCara.end() )
         throw std::runtime_error( "Rank not find" );
-    return (*curIter).second;
+    return ( *curIter ).second;
 };
 
-void ResultsContainerInstance::addMaterialOnMesh( const MaterialOnMeshPtr& mater,
-                                                  int rank ) throw ( std::runtime_error )
-{
+void ResultsContainerInstance::addMaterialOnMesh( const MaterialOnMeshPtr &mater,
+                                                  int rank ) throw( std::runtime_error ) {
     _mapMaterial[rank] = mater;
     ASTERINTEGER rang = rank;
-    std::string type("CHAMPMAT");
+    std::string type( "CHAMPMAT" );
     CALLO_RSADPA_ZK8_WRAP( getName(), &rang, mater->getName(), type );
 };
 
-void ResultsContainerInstance::addModel( const ModelPtr& model,
-                                         int rank ) throw ( std::runtime_error )
-{
+void ResultsContainerInstance::addModel( const ModelPtr &model,
+                                         int rank ) throw( std::runtime_error ) {
     _mapModel[rank] = model;
     ASTERINTEGER rang = rank;
-    std::string type("MODELE");
+    std::string type( "MODELE" );
     CALLO_RSADPA_ZK8_WRAP( getName(), &rang, model->getName(), type );
     const auto fed = model->getFiniteElementDescriptor();
     _fieldBuidler.addFiniteElementDescriptor( fed );
 };
 
-void ResultsContainerInstance::appendMaterialOnMeshOnAllRanks( const MaterialOnMeshPtr& mater )
-{
+void ResultsContainerInstance::appendMaterialOnMeshOnAllRanks( const MaterialOnMeshPtr &mater ) {
     _serialNumber->updateValuePointer();
     ASTERINTEGER nbRanks = _serialNumber->usedSize();
-    for( int rank = 0; rank < nbRanks; ++rank )
-    {
-        const ASTERINTEGER iordr = (*_serialNumber)[rank];
-        if( _mapMaterial.find( iordr ) == _mapMaterial.end() )
+    for ( int rank = 0; rank < nbRanks; ++rank ) {
+        const ASTERINTEGER iordr = ( *_serialNumber )[rank];
+        if ( _mapMaterial.find( iordr ) == _mapMaterial.end() )
             addMaterialOnMesh( mater, iordr );
     }
 };
 
-void ResultsContainerInstance::appendModelOnAllRanks( const ModelPtr& model )
-{
+void ResultsContainerInstance::appendModelOnAllRanks( const ModelPtr &model ) {
     _serialNumber->updateValuePointer();
     ASTERINTEGER nbRanks = _serialNumber->usedSize();
-    for( int rank = 0; rank < nbRanks; ++rank )
-    {
-        const ASTERINTEGER iordr = (*_serialNumber)[rank];
-        if( _mapModel.find( iordr ) == _mapModel.end() )
+    for ( int rank = 0; rank < nbRanks; ++rank ) {
+        const ASTERINTEGER iordr = ( *_serialNumber )[rank];
+        if ( _mapModel.find( iordr ) == _mapModel.end() )
             addModel( model, iordr );
     }
 };
 
-MaterialOnMeshPtr ResultsContainerInstance::getMaterialOnMesh( int rank )
-    throw ( std::runtime_error )
-{
+MaterialOnMeshPtr
+ResultsContainerInstance::getMaterialOnMesh( int rank ) throw( std::runtime_error ) {
     auto curIter = _mapMaterial.find( rank );
-    if( curIter == _mapMaterial.end() )
+    if ( curIter == _mapMaterial.end() )
         throw std::runtime_error( "Rank not find" );
-    return (*curIter).second;
+    return ( *curIter ).second;
 };
 
-MaterialOnMeshPtr ResultsContainerInstance::getMaterialOnMesh() throw ( std::runtime_error )
-{
-    std::string name("");
+MaterialOnMeshPtr ResultsContainerInstance::getMaterialOnMesh() throw( std::runtime_error ) {
+    std::string name( "" );
     MaterialOnMeshPtr toReturn( nullptr );
-    for( const auto& curIter: _mapMaterial )
-    {
-        if( name == "" )
-        {
+    for ( const auto &curIter : _mapMaterial ) {
+        if ( name == "" ) {
             toReturn = curIter.second;
             name = toReturn->getName();
         }
-        if( name != curIter.second->getName() )
+        if ( name != curIter.second->getName() )
             throw std::runtime_error( "Error: multiple materials" );
     }
-    if( toReturn == nullptr )
+    if ( toReturn == nullptr )
         throw std::runtime_error( "Error: no material on mesh" );
     return toReturn;
 };
 
-ModelPtr ResultsContainerInstance::getModel() throw ( std::runtime_error )
-{
-    std::string name("");
+ModelPtr ResultsContainerInstance::getModel() throw( std::runtime_error ) {
+    std::string name( "" );
     ModelPtr toReturn( nullptr );
-    for( const auto& curIter: _mapModel )
-    {
-        if( name == "" )
-        {
+    for ( const auto &curIter : _mapModel ) {
+        if ( name == "" ) {
             toReturn = curIter.second;
             name = toReturn->getName();
         }
-        if( name != curIter.second->getName() )
+        if ( name != curIter.second->getName() )
             throw std::runtime_error( "Error: multiple models" );
     }
-    if( toReturn == nullptr )
+    if ( toReturn == nullptr )
         throw std::runtime_error( "Error: no model" );
     return toReturn;
 };
 
-void ResultsContainerInstance::addTimeValue( double value,
-                                             int rank ) throw ( std::runtime_error )
-{
+void ResultsContainerInstance::addTimeValue( double value, int rank ) throw( std::runtime_error ) {
     ASTERINTEGER rang = rank;
-    std::string type("INST");
+    std::string type( "INST" );
     CALLO_RSADPA_ZR_WRAP( getName(), &rang, &value, type );
 };
 
-void ResultsContainerInstance::listFields() const
-{
+void ResultsContainerInstance::listFields() const {
     std::cout << "Content of DataStructure : ";
-    for ( auto curIter : _dictOfVectorOfFieldsNodes )
-    {
-        std::cout << curIter.first << " - " ;
+    for ( auto curIter : _dictOfVectorOfFieldsNodes ) {
+        std::cout << curIter.first << " - ";
     }
-    for ( auto curIter : _dictOfVectorOfFieldsElements )
-    {
-        std::cout << curIter.first << " - "  ;
+    for ( auto curIter : _dictOfVectorOfFieldsElements ) {
+        std::cout << curIter.first << " - ";
     }
     std::cout << std::endl;
 };
 
-bool ResultsContainerInstance::update() throw ( std::runtime_error )
-{
+bool ResultsContainerInstance::update() throw( std::runtime_error ) {
     _serialNumber->updateValuePointer();
     auto boolRet = _namesOfFields->buildFromJeveux( true );
     const auto numberOfSerialNum = _serialNumber->usedSize();
     _nbRanks = numberOfSerialNum;
     BaseMeshPtr curMesh( nullptr );
-    const ASTERINTEGER iordr = (*_serialNumber)[_nbRanks-1];
-    if( _mapModel.find( iordr ) != _mapModel.end() )
-        curMesh = _mapModel[ iordr ]->getSupportMesh();
-    else if( _mesh != nullptr )
+    const ASTERINTEGER iordr = ( *_serialNumber )[_nbRanks - 1];
+    if ( _mapModel.find( iordr ) != _mapModel.end() )
+        curMesh = _mapModel[iordr]->getSupportMesh();
+    else if ( _mesh != nullptr )
         curMesh = _mesh;
 
     int cmpt = 1;
-    for( const auto curIter : _namesOfFields->getVectorOfObjects() )
-    {
+    for ( const auto curIter : _namesOfFields->getVectorOfObjects() ) {
         auto nomSymb = trim( _symbolicNamesOfFields->findStringOfElement( cmpt ) );
-        if( numberOfSerialNum > curIter.size() )
+        if ( numberOfSerialNum > curIter.size() )
             throw std::runtime_error( "Programming error" );
 
-        for( int rank = 0; rank < numberOfSerialNum; ++rank )
-        {
-            std::string name( trim( curIter[ rank ].toString() ) );
-            if( name != "" )
-            {
+        for ( int rank = 0; rank < numberOfSerialNum; ++rank ) {
+            std::string name( trim( curIter[rank].toString() ) );
+            if ( name != "" ) {
                 const std::string questi( "TYPE_CHAMP" );
                 const std::string typeco( "CHAMP" );
                 ASTERINTEGER repi = 0, ier = 0;
-                JeveuxChar32 repk(" ");
+                JeveuxChar32 repk( " " );
                 const std::string arret( "C" );
                 const std::string questi2( "TYPE_SCA" );
 
@@ -229,47 +201,41 @@ bool ResultsContainerInstance::update() throw ( std::runtime_error )
                 CALLO_DISMOI( questi, name, typeco, &repi, repk, arret, &ier );
                 const std::string resu( trim( repk.toString() ) );
 
-                if( resu == "NOEU" )
-                {
-                    const auto& curIter2 = _dictOfVectorOfFieldsNodes.find( nomSymb );
-                    if( curIter2 == _dictOfVectorOfFieldsNodes.end() )
-                        _dictOfVectorOfFieldsNodes[ nomSymb ] = VectorOfFieldsNodes( numberOfSerialNum,
-                            FieldOnNodesDoublePtr( nullptr ) );
-                    else if( curIter2->second.size() != numberOfSerialNum )
-                    {
+                if ( resu == "NOEU" ) {
+                    const auto &curIter2 = _dictOfVectorOfFieldsNodes.find( nomSymb );
+                    if ( curIter2 == _dictOfVectorOfFieldsNodes.end() )
+                        _dictOfVectorOfFieldsNodes[nomSymb] = VectorOfFieldsNodes(
+                            numberOfSerialNum, FieldOnNodesDoublePtr( nullptr ) );
+                    else if ( curIter2->second.size() != numberOfSerialNum ) {
                         curIter2->second.resize( numberOfSerialNum,
                                                  FieldOnNodesDoublePtr( nullptr ) );
                     }
 
-                    ASTERINTEGER test2 = _dictOfVectorOfFieldsNodes[ nomSymb ][ rank ].use_count();
-                    if( test2 == 0 )
-                    {
-                        FieldOnNodesDoublePtr result = _fieldBuidler.buildFieldOnNodes< double >
-                            ( name );
-                        _dictOfVectorOfFieldsNodes[ nomSymb ][ rank ] = result;
+                    ASTERINTEGER test2 = _dictOfVectorOfFieldsNodes[nomSymb][rank].use_count();
+                    if ( test2 == 0 ) {
+                        FieldOnNodesDoublePtr result =
+                            _fieldBuidler.buildFieldOnNodes< double >( name );
+                        _dictOfVectorOfFieldsNodes[nomSymb][rank] = result;
                     }
-                }
-                else if( resu == "ELEM" || resu == "ELNO" || resu == "ELGA" )
-                {
-                    const auto& curIter2 = _dictOfVectorOfFieldsElements.find( nomSymb );
-                    if( curIter2 == _dictOfVectorOfFieldsElements.end() )
-                        _dictOfVectorOfFieldsElements[ nomSymb ] = VectorOfFieldsElements( numberOfSerialNum,
-                            FieldOnElementsDoublePtr( nullptr ) );
-                    else if( curIter2->second.size() != numberOfSerialNum )
-                    {
+                } else if ( resu == "ELEM" || resu == "ELNO" || resu == "ELGA" ) {
+                    const auto &curIter2 = _dictOfVectorOfFieldsElements.find( nomSymb );
+                    if ( curIter2 == _dictOfVectorOfFieldsElements.end() )
+                        _dictOfVectorOfFieldsElements[nomSymb] = VectorOfFieldsElements(
+                            numberOfSerialNum, FieldOnElementsDoublePtr( nullptr ) );
+                    else if ( curIter2->second.size() != numberOfSerialNum ) {
                         curIter2->second.resize( numberOfSerialNum,
                                                  FieldOnElementsDoublePtr( nullptr ) );
                     }
 
-                    ASTERINTEGER test2 = _dictOfVectorOfFieldsElements[ nomSymb ][ rank ].use_count();
-                    if( test2 == 0 )
-                    {
-                        if( curMesh == nullptr )
-                            throw std::runtime_error( "No mesh, impossible to build FieldOnElements" );
-                        FieldOnElementsDoublePtr result =_fieldBuidler.buildFieldOnElements<double>
-                            ( name, curMesh );
+                    ASTERINTEGER test2 = _dictOfVectorOfFieldsElements[nomSymb][rank].use_count();
+                    if ( test2 == 0 ) {
+                        if ( curMesh == nullptr )
+                            throw std::runtime_error(
+                                "No mesh, impossible to build FieldOnElements" );
+                        FieldOnElementsDoublePtr result =
+                            _fieldBuidler.buildFieldOnElements< double >( name, curMesh );
                         ( new FieldOnElementsDoubleInstance( name ) );
-                        _dictOfVectorOfFieldsElements[ nomSymb ][ rank ] = result;
+                        _dictOfVectorOfFieldsElements[nomSymb][rank] = result;
                     }
                 }
             }
@@ -280,35 +246,32 @@ bool ResultsContainerInstance::update() throw ( std::runtime_error )
     return true;
 };
 
-BaseDOFNumberingPtr ResultsContainerInstance::getEmptyDOFNumbering()
-{
+BaseDOFNumberingPtr ResultsContainerInstance::getEmptyDOFNumbering() {
     std::string resuName( getName() );
     std::string name( "12345678.00000          " );
     ASTERINTEGER a = 10, b = 14;
     CALLO_GNOMSD( resuName, name, &a, &b );
-    DOFNumberingPtr retour( new DOFNumberingInstance( name.substr(0, 14) ) );
+    DOFNumberingPtr retour( new DOFNumberingInstance( name.substr( 0, 14 ) ) );
     _listOfDOFNum.push_back( retour );
     return retour;
 };
 
 #ifdef _USE_MPI
-BaseDOFNumberingPtr ResultsContainerInstance::getEmptyParallelDOFNumbering()
-{
+BaseDOFNumberingPtr ResultsContainerInstance::getEmptyParallelDOFNumbering() {
     std::string resuName( getName() );
     std::string name( "12345678.00000          " );
     ASTERINTEGER a = 10, b = 14;
     CALLO_GNOMSD( resuName, name, &a, &b );
-    ParallelDOFNumberingPtr retour( new ParallelDOFNumberingInstance( name.substr(0, 14) ) );
+    ParallelDOFNumberingPtr retour( new ParallelDOFNumberingInstance( name.substr( 0, 14 ) ) );
     _listOfDOFNum.push_back( retour );
     return retour;
 };
 #endif /* _USE_MPI */
 
-FieldOnNodesDoublePtr ResultsContainerInstance::getEmptyFieldOnNodesDouble( const std::string name,
-                                                                            const int rank )
-    throw ( std::runtime_error )
-{
-    if( rank > _nbRanks || rank <= 0 )
+FieldOnNodesDoublePtr
+ResultsContainerInstance::getEmptyFieldOnNodesDouble( const std::string name,
+                                                      const int rank ) throw( std::runtime_error ) {
+    if ( rank > _nbRanks || rank <= 0 )
         throw std::runtime_error( "Order number out of range" );
     ASTERINTEGER retour;
     retour = 0;
@@ -321,71 +284,64 @@ FieldOnNodesDoublePtr ResultsContainerInstance::getEmptyFieldOnNodesDouble( cons
     FieldOnNodesDoublePtr result( new FieldOnNodesDoubleInstance( bis ) );
 
     auto curIter = _dictOfVectorOfFieldsNodes.find( name );
-    if( curIter == _dictOfVectorOfFieldsNodes.end() )
-    {
-        _dictOfVectorOfFieldsNodes[ name ] = VectorOfFieldsNodes( _nbRanks );
+    if ( curIter == _dictOfVectorOfFieldsNodes.end() ) {
+        _dictOfVectorOfFieldsNodes[name] = VectorOfFieldsNodes( _nbRanks );
     }
-    _dictOfVectorOfFieldsNodes[ name ][ rank-1 ] = result;
+    _dictOfVectorOfFieldsNodes[name][rank - 1] = result;
     return result;
 };
 
 FieldOnElementsDoublePtr ResultsContainerInstance::getRealFieldOnElements( const std::string name,
                                                                            const int rank ) const
-    throw ( std::runtime_error )
-{
-    if( rank > _nbRanks || rank <= 0 )
+    throw( std::runtime_error ) {
+    if ( rank > _nbRanks || rank <= 0 )
         throw std::runtime_error( "Order number out of range" );
 
     auto curIter = _dictOfVectorOfFieldsElements.find( trim( name ) );
-    if( curIter == _dictOfVectorOfFieldsElements.end() )
+    if ( curIter == _dictOfVectorOfFieldsElements.end() )
         throw std::runtime_error( "Field " + name + " unknown in the results container" );
 
-    FieldOnElementsDoublePtr toReturn = curIter->second[ rank-1 ];
+    FieldOnElementsDoublePtr toReturn = curIter->second[rank - 1];
     return toReturn;
 };
 
 FieldOnNodesDoublePtr ResultsContainerInstance::getRealFieldOnNodes( const std::string name,
                                                                      const int rank ) const
-    throw ( std::runtime_error )
-{
-    if( rank > _nbRanks || rank <= 0 )
+    throw( std::runtime_error ) {
+    if ( rank > _nbRanks || rank <= 0 )
         throw std::runtime_error( "Order number out of range" );
 
     auto curIter = _dictOfVectorOfFieldsNodes.find( trim( name ) );
-    if( curIter == _dictOfVectorOfFieldsNodes.end() )
+    if ( curIter == _dictOfVectorOfFieldsNodes.end() )
         throw std::runtime_error( "Field " + name + " unknown in the results container" );
 
-    FieldOnNodesDoublePtr toReturn = curIter->second[ rank-1 ];
+    FieldOnNodesDoublePtr toReturn = curIter->second[rank - 1];
     return toReturn;
 };
 
 bool ResultsContainerInstance::printMedFile( const std::string fileName ) const
-    throw ( std::runtime_error )
-{
+    throw( std::runtime_error ) {
     LogicalUnitFileCython a( fileName, Binary, New );
     ASTERINTEGER retour = a.getLogicalUnit();
     CommandSyntax cmdSt( "IMPR_RESU" );
 
     SyntaxMapContainer dict;
-    dict.container[ "FORMAT" ] = "MED";
-    dict.container[ "UNITE" ] = retour;
+    dict.container["FORMAT"] = "MED";
+    dict.container["UNITE"] = retour;
 
     ListSyntaxMapContainer listeResu;
     SyntaxMapContainer dict2;
-    dict2.container[ "RESULTAT" ] = getName();
-    dict2.container[ "TOUT_ORDRE" ] = "OUI";
+    dict2.container["RESULTAT"] = getName();
+    dict2.container["TOUT_ORDRE"] = "OUI";
     listeResu.push_back( dict2 );
-    dict.container[ "RESU" ] = listeResu;
+    dict.container["RESU"] = listeResu;
 
     cmdSt.define( dict );
 
-    try
-    {
+    try {
         ASTERINTEGER op = 39;
         CALL_EXECOP( &op );
-    }
-    catch( ... )
-    {
+    } catch ( ... ) {
         throw;
     }
 

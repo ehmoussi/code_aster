@@ -35,18 +35,16 @@
  * @brief Class which describe a RESUELEM
  * @author Nicolas Sellenet
  */
-template< class ValueType >
-class ElementaryResultInstance: public DataStructure
-{
-private:
+template < class ValueType > class ElementaryResultInstance : public DataStructure {
+  private:
     /** @brief Objet Jeveux '.NOLI' */
-    JeveuxVectorChar24            _noli;
+    JeveuxVectorChar24 _noli;
     /** @brief Objet Jeveux '.DESC' */
-    JeveuxVectorLong              _desc;
+    JeveuxVectorLong _desc;
     /** @brief Objet Jeveux '.RESL' */
     JeveuxCollection< ValueType > _resl;
 
-public:
+  public:
     /**
      * @typedef ElementaryResultPtr
      * @brief Pointeur intelligent vers un ElementaryResult
@@ -57,26 +55,22 @@ public:
      * @brief Constructor
      * @param name Jeveux name
      */
-    ElementaryResultInstance( const std::string name,
-                              const std::string type = "RESUELEM",
-                              const JeveuxMemory memType = Permanent ):
-        DataStructure( name, 19, type, memType ),
-        _noli( JeveuxVectorChar24( getName() + ".NOLI" ) ),
-        _desc( JeveuxVectorLong( getName() + ".DESC" ) ),
-        _resl( JeveuxCollection< ValueType >( getName() + ".RESL" ) )
-    {};
+    ElementaryResultInstance( const std::string name, const std::string type = "RESUELEM",
+                              const JeveuxMemory memType = Permanent )
+        : DataStructure( name, 19, type, memType ),
+          _noli( JeveuxVectorChar24( getName() + ".NOLI" ) ),
+          _desc( JeveuxVectorLong( getName() + ".DESC" ) ),
+          _resl( JeveuxCollection< ValueType >( getName() + ".RESL" ) ){};
 
     /**
      * @brief Constructor
      * @param memType allocation memory
      */
     ElementaryResultInstance( const JeveuxMemory memType = Permanent,
-                              const std::string type = "RESUELEM" ):
-        DataStructure( type, memType, 19 ),
-        _noli( JeveuxVectorChar24( getName() + ".NOLI" ) ),
-        _desc( JeveuxVectorLong( getName() + ".DESC" ) ),
-        _resl( JeveuxCollection< ValueType >( getName() + ".RESL" ) )
-    {};
+                              const std::string type = "RESUELEM" )
+        : DataStructure( type, memType, 19 ), _noli( JeveuxVectorChar24( getName() + ".NOLI" ) ),
+          _desc( JeveuxVectorLong( getName() + ".DESC" ) ),
+          _resl( JeveuxCollection< ValueType >( getName() + ".RESL" ) ){};
 };
 
 /**

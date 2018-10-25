@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -46,19 +46,19 @@ subroutine op0036()
     complex(kind=8) :: cbid
     character(len=1) :: kbid
     character(len=3) :: ntyp
-    character(len=8) :: resu, typarr(2), typarc(3)
-    character(len=16) :: concep, nomcmd, nmpar, nmpar1, nmparf(2), nmparc(3)
+    character(len=8) :: resu
+    character(len=16) :: concep, nomcmd
     character(len=19) :: nfct
     character(len=24) :: trav, ldbl, indic, ltyp, work
-    character(len=24) :: vectcr, vectci
+    character(len=24) :: vectcr, vectci, nmpar, nmpar1, nmparf(2), nmparc(3)
     integer :: ivcr, ivci
     character(len=24), pointer :: prol(:) => null()
-    cbid = dcmplx(0.d0, 0.d0)
-    data typarr / 'R'       , 'R'       /
-    data typarc / 'R'       , 'R'       , 'R'       /
+    character(len=8), parameter :: typarr(2) = (/ 'R', 'R'/)
+    character(len=8), parameter :: typarc(3) = (/ 'R', 'R', 'R'/)
 !
 !     ------------------------------------------------------------------
 !
+    cbid = dcmplx(0.d0, 0.d0)
     call jemarq()
 !
     call getres(resu, concep, nomcmd)
@@ -78,13 +78,13 @@ subroutine op0036()
 !     ==========
     if (nocc .ne. 0) then
         call wkvect(work, 'V V I', nocc, jlng)
-        call wkvect(ldbl, 'V V K16', nocc, jd)
+        call wkvect(ldbl, 'V V K24', nocc, jd)
         call wkvect(ltyp, 'V V K8', nocc, jy)
         dimmax=0
 !
         do iocc = 1, nocc
             call getvtx('LISTE', 'PARA', iocc=iocc, scal=nmpar, nbret=jp)
-            zk16(jd+iocc-1)=nmpar
+            zk24(jd+iocc-1) = nmpar
             call getvis('LISTE', 'LISTE_I', iocc=iocc, nbval=0, nbret=ni)
             call getvis('LISTE', 'NUME_LIGN', iocc=iocc, nbval=0, nbret=nindi)
             call getvr8('LISTE', 'LISTE_R', iocc=iocc, nbval=0, nbret=nr)
@@ -126,7 +126,7 @@ subroutine op0036()
         end do
 !
 !       ---CREATION DE LA TABLE
-        call tbcrsv(resu, 'G', nocc, zk16(jd), zk8(jy),&
+        call tbcrsv(resu, 'G', nocc, zk24(jd), zk8(jy),&
                     dimmax)
 !
         do iocc = 1, nocc
@@ -136,7 +136,7 @@ subroutine op0036()
             call getvtx('LISTE', 'LISTE_K', iocc=iocc, nbval=0, nbret=nk)
             call getvtx('LISTE', 'PARA', iocc=iocc, scal=nmpar, nbret=jp)
             do j = 1, nocc
-                nmpar1=zk16(jd+j-1)
+                nmpar1 = zk24(jd+j-1)
                 if ((nmpar.eq.nmpar1) .and. (j.ne.iocc)) then
                     call utmess('F', 'UTILITAI2_76')
                 endif

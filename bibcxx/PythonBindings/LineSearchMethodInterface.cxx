@@ -3,7 +3,7 @@
  * @brief Interface python de LineSearchMethod
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -25,18 +25,15 @@
 #include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
-void exportLineSearchMethodToPython()
-{
+void exportLineSearchMethodToPython() {
     using namespace boost::python;
 
     enum_< LineSearchEnum >( "LineSearchEnum" )
         .value( "Corde", Corde )
         .value( "Mixte", Mixte )
-        .value( "Pilotage", Pilotage )
-        ;
+        .value( "Pilotage", Pilotage );
 
-    class_< LineSearchMethodInstance, LineSearchMethodPtr > ( "LineSearchMethod", no_init )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< LineSearchMethodInstance, LineSearchEnum > ) )
-    ;
+    class_< LineSearchMethodInstance, LineSearchMethodPtr >( "LineSearchMethod", no_init ).def(
+        "__init__", make_constructor(&initFactoryPtr< LineSearchMethodInstance, LineSearchEnum >));
+        // fake initFactoryPtr: not a DataStructure
 };

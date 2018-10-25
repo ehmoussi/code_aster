@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe StaticMechanicalAlgorithm
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2015  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -31,25 +31,23 @@
 #include "Algorithms/TimeStepper.h"
 #include "Algorithms/AlgorithmException.h"
 
-template<>
-void updateContextFromStepper< TimeStepperInstance::const_iterator, StaticMechanicalContext >
-    ( const TimeStepperInstance::const_iterator& curStep,
-      StaticMechanicalContext& context );
+template <>
+void updateContextFromStepper< TimeStepperInstance::const_iterator, StaticMechanicalContext >(
+    const TimeStepperInstance::const_iterator &curStep, StaticMechanicalContext &context );
 
 /**
  * @class StaticMechanicalAlgorithm
  * @brief Un pas de l'algorithme de l'opérateur de mécanqiue statique linéaire
  * @author Nicolas Sellenet
  */
-class StaticMechanicalAlgorithm
-{
+class StaticMechanicalAlgorithm {
     typedef StaticMechanicalContext CurrentContext;
 
-public:
+  public:
     /**
      * @brief Avancer d'un pas dans un algorithme
      */
-    static void oneStep( const CurrentContext& ) throw( AlgoException& );
+    static void oneStep( const CurrentContext & ) throw( AlgoException & );
 };
 
 #endif /* STATICMECHANICALGORITHM_H_ */

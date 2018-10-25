@@ -6,7 +6,7 @@
  * @brief Definition of the static mode solver
  * @author Guillaume Drouet
  * @section LICENCE
- *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -32,231 +32,193 @@
 #include "Solvers/GenericSolver.h"
 #include "Utilities/GenericParameter.h"
 
-
 /**
  @brief the StaticModeAnalysis class is used to perform
  a static mode analysis from ....
 */
 
-class StaticModeAnalysisInstance: public GenericSolver
-{
-    protected:
-        /** @brief Mass Matrix */
-        AssemblyMatrixDisplacementDoublePtr    _MassMatrix;
-        /** @brief Stiffness Matrix */
-        AssemblyMatrixDisplacementDoublePtr    _StiffMatrix;
-        /** @brief Solveur lineaire */
-        BaseLinearSolverPtr   _linearSolver;
-        /** @brief factor keyword composant description */
-        GenParam _cmp;
-        GenParam _loc;
-    public:
-        /**
-         * @brief Constructeur
-         */
-        StaticModeAnalysisInstance():_cmp("TOUT_CMP", true),
-                                     _loc("TOUT", true)
-        {};
+class StaticModeAnalysisInstance : public GenericSolver {
+  protected:
+    /** @brief Mass Matrix */
+    AssemblyMatrixDisplacementDoublePtr _MassMatrix;
+    /** @brief Stiffness Matrix */
+    AssemblyMatrixDisplacementDoublePtr _StiffMatrix;
+    /** @brief Solveur lineaire */
+    BaseLinearSolverPtr _linearSolver;
+    /** @brief factor keyword composant description */
+    GenParam _cmp;
+    GenParam _loc;
 
-        /**
-         * @brief Set GROUP_NO
-         * @param listloc wanted groups of nodes
-         */
-        void enableOnAllMesh()
-        {
-            _loc = GenParam("TOUT", "OUI", true);
-        };
+  public:
+    /**
+     * @brief Constructeur
+     */
+    StaticModeAnalysisInstance() : _cmp( "TOUT_CMP", true ), _loc( "TOUT", true ){};
 
-        /**
-         * @brief Set GROUP_NO
-         * @param listloc wanted groups of nodes
-         */
-        void setAllComponents()
-        {
-            _cmp = GenParam("TOUT_CMP", "OUI", true);
-        };
+    /**
+     * @brief Set GROUP_NO
+     * @param listloc wanted groups of nodes
+     */
+    void enableOnAllMesh() { _loc = GenParam( "TOUT", "OUI", true ); };
 
-         /**
-         * @brief Set GROUP_NO
-         * @param listloc wanted groups of nodes
-         */
-        void WantedGroupOfNodes(const std::vector<std::string> listloc)
-        {
-            _loc = GenParam("GROUP_NO", listloc, true);
-        };
+    /**
+     * @brief Set GROUP_NO
+     * @param listloc wanted groups of nodes
+     */
+    void setAllComponents() { _cmp = GenParam( "TOUT_CMP", "OUI", true ); };
 
-        /**
-         * @brief Set AVEC_CMP
-         * @param listcmp wanted component
-         */
-        void WantedComponent(const std::vector<std::string> listcmp)
-        {
-            _cmp = GenParam("AVEC_CMP", listcmp, true);
-        };
+    /**
+    * @brief Set GROUP_NO
+    * @param listloc wanted groups of nodes
+    */
+    void WantedGroupOfNodes( const std::vector< std::string > listloc ) {
+        _loc = GenParam( "GROUP_NO", listloc, true );
+    };
 
-        /**
-         * @brief Set SANS_CMP
-         * @param listcmp unwanted component
-         */
-        void UnwantedComponent(const std::vector<std::string> listcmp)
-        {
-            _cmp = GenParam("SANS_CMP", listcmp, true);
-        };
+    /**
+     * @brief Set AVEC_CMP
+     * @param listcmp wanted component
+     */
+    void WantedComponent( const std::vector< std::string > listcmp ) {
+        _cmp = GenParam( "AVEC_CMP", listcmp, true );
+    };
 
-        /**
-         * @brief Lancement de la resolution en appelant op0093
-         */
-        virtual ResultsContainerPtr execute()= 0;
+    /**
+     * @brief Set SANS_CMP
+     * @param listcmp unwanted component
+     */
+    void UnwantedComponent( const std::vector< std::string > listcmp ) {
+        _cmp = GenParam( "SANS_CMP", listcmp, true );
+    };
 
-         /**
-         * @brief Methode permettant de definir la matrice de masse
-         * @param currentMatrix Matrice de masse
-         */
-        void setMassMatrix( const AssemblyMatrixDisplacementDoublePtr& currentMatrix )
-        {
-            _MassMatrix = currentMatrix;
-        };
+    /**
+     * @brief Lancement de la resolution en appelant op0093
+     */
+    virtual ResultsContainerPtr execute() = 0;
 
-        /**
-         * @brief Methode permettant de definir la matrice de rigidite
-         * @param currentMatrix Matrice de masse
-         */
-        void setStiffMatrix( const AssemblyMatrixDisplacementDoublePtr& currentMatrix )
-        {
-            _StiffMatrix = currentMatrix;
-        };
+    /**
+    * @brief Methode permettant de definir la matrice de masse
+    * @param currentMatrix Matrice de masse
+    */
+    void setMassMatrix( const AssemblyMatrixDisplacementDoublePtr &currentMatrix ) {
+        _MassMatrix = currentMatrix;
+    };
 
-        /**
-         * @brief Methode permettant de definir le solveur lineaire
-         * @param currentSolver Solveur lineaire
-         */
-        void setLinearSolver( const BaseLinearSolverPtr& currentSolver )
-        {
-            _linearSolver = currentSolver;
-        };
+    /**
+     * @brief Methode permettant de definir la matrice de rigidite
+     * @param currentMatrix Matrice de masse
+     */
+    void setStiffMatrix( const AssemblyMatrixDisplacementDoublePtr &currentMatrix ) {
+        _StiffMatrix = currentMatrix;
+    };
+
+    /**
+     * @brief Methode permettant de definir le solveur lineaire
+     * @param currentSolver Solveur lineaire
+     */
+    void setLinearSolver( const BaseLinearSolverPtr &currentSolver ) {
+        _linearSolver = currentSolver;
+    };
 };
 
-class StaticModeDeplInstance: public StaticModeAnalysisInstance
-{
-    protected:
+class StaticModeDeplInstance : public StaticModeAnalysisInstance {
+  protected:
+  public:
+    /**
+     * @brief Constructeur
+     */
+    StaticModeDeplInstance(){};
 
-
-    public:
-        /**
-         * @brief Constructeur
-         */
-        StaticModeDeplInstance()
-        {};
-
-
-        /**
-         * @brief Lancement de la resolution en appelant op0093
-         */
-        ResultsContainerPtr execute() throw ( std::runtime_error );
+    /**
+     * @brief Lancement de la resolution en appelant op0093
+     */
+    ResultsContainerPtr execute() throw( std::runtime_error );
 };
 
-class StaticModeForcInstance: public StaticModeAnalysisInstance
-{
-    protected:
+class StaticModeForcInstance : public StaticModeAnalysisInstance {
+  protected:
+  public:
+    /**
+     * @brief Constructeur
+     */
+    StaticModeForcInstance(){};
 
-    public:
-        /**
-         * @brief Constructeur
-         */
-        StaticModeForcInstance()
-        {};
-
-
-        /**
-         * @brief Lancement de la resolution en appelant op0093
-         */
-        ResultsContainerPtr execute() throw ( std::runtime_error );
+    /**
+     * @brief Lancement de la resolution en appelant op0093
+     */
+    ResultsContainerPtr execute() throw( std::runtime_error );
 };
 
-class StaticModePseudoInstance: public StaticModeAnalysisInstance
-{
-    protected:
-        /** @brief keyword NOM_DIR description */
-        GenParam _dirname;
+class StaticModePseudoInstance : public StaticModeAnalysisInstance {
+  protected:
+    /** @brief keyword NOM_DIR description */
+    GenParam _dirname;
 
-    public:
-        /**
-         * @brief Constructeur
-         */
-        StaticModePseudoInstance(): _dirname("NOM_DIR",false)
-        {};
+  public:
+    /**
+     * @brief Constructeur
+     */
+    StaticModePseudoInstance() : _dirname( "NOM_DIR", false ){};
 
+    /**
+     * @brief Setdir
+     * @param dir wanted direction
+     */
+    void WantedDirection( const std::vector< double > dir ) {
+        _loc = GenParam( "DIRECTION", dir, true );
+    };
 
-        /**
-         * @brief Setdir
-         * @param dir wanted direction
-         */
-        void WantedDirection(const std::vector<double> dir)
-        {
-            _loc = GenParam("DIRECTION", dir, true);
-        };
+    /**
+     * @brief Set axe
+     * @param listaxe wanted axes
+     */
+    void WantedAxe( const std::vector< std::string > listaxe ) {
+        _loc = GenParam( "AXE", listaxe, true );
+    };
 
-        /**
-         * @brief Set axe
-         * @param listaxe wanted axes
-         */
-        void WantedAxe(const std::vector<std::string> listaxe)
-        {
-            _loc = GenParam("AXE", listaxe, true);
-        };
+    /**
+     * @brief Set dirname
+     * @param name the Wanted_dir
+     */
+    void setNameForDirection( const std::string dirname ) {
+        _dirname = GenParam( "NOM_DIR", dirname, false );
+    };
 
-        /**
-         * @brief Set dirname
-         * @param name the Wanted_dir
-         */
-        void setNameForDirection(const std::string dirname)
-        {
-            _dirname = GenParam("NOM_DIR", dirname, false);
-        };
-
-
-        /**
-         * @brief Lancement de la resolution en appelant op0093
-         */
-        ResultsContainerPtr execute() throw ( std::runtime_error );
+    /**
+     * @brief Lancement de la resolution en appelant op0093
+     */
+    ResultsContainerPtr execute() throw( std::runtime_error );
 };
 
-class StaticModeInterfInstance: public StaticModeAnalysisInstance
-{
-    protected:
-        /** @brief keyword diranme description */
-        GenParam _shift;
-        GenParam _nbmod;
-    public:
-        /**
-         * @brief Constructeur
-         */
-        StaticModeInterfInstance(): _nbmod("NB_MODE", (ASTERINTEGER)1, true),
-                                  _shift("SHIFT", 1.0,true)
-        {};
+class StaticModeInterfInstance : public StaticModeAnalysisInstance {
+  protected:
+    /** @brief keyword diranme description */
+    GenParam _shift;
+    GenParam _nbmod;
 
-        /**
-         * @brief Set dirname
-         * @param name the Wanted_dir
-         */
-        void setNumberOfModes(const ASTERINTEGER nb )
-        {
-            _nbmod = GenParam("NB_MODE", nb, true);
-        };
+  public:
+    /**
+     * @brief Constructeur
+     */
+    StaticModeInterfInstance()
+        : _nbmod( "NB_MODE", (ASTERINTEGER)1, true ), _shift( "SHIFT", 1.0, true ){};
 
-        /**
-         * @brief Set dirname
-         * @param name the Wanted_dir
-         */
-        void setShift(const double shift)
-        {
-            _shift = GenParam("SHIFT", shift, true);
-        };
+    /**
+     * @brief Set dirname
+     * @param name the Wanted_dir
+     */
+    void setNumberOfModes( const ASTERINTEGER nb ) { _nbmod = GenParam( "NB_MODE", nb, true ); };
 
-        /**
-         * @brief Lancement de la resolution en appelant op0093
-         */
-        ResultsContainerPtr execute() throw ( std::runtime_error );
+    /**
+     * @brief Set dirname
+     * @param name the Wanted_dir
+     */
+    void setShift( const double shift ) { _shift = GenParam( "SHIFT", shift, true ); };
+
+    /**
+     * @brief Lancement de la resolution en appelant op0093
+     */
+    ResultsContainerPtr execute() throw( std::runtime_error );
 };
 /**
  * @typedef StaticNonLinearAnalysisPtr

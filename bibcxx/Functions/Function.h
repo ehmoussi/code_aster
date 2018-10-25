@@ -30,188 +30,166 @@
 #include "MemoryManager/JeveuxVector.h"
 #include "Functions/GenericFunction.h"
 
-
 /**
  * class BaseFunctionInstance
  *   Create a datastructure for a function with real values
  * @author Mathieu Courtois
  */
-class BaseFunctionInstance: public GenericFunctionInstance
-{
-    private:
-        // Nom Jeveux de la SD
-        /** @todo remettre le const */
-        std::string  _jeveuxName;
-        // Vecteur Jeveux '.PROL'
-        JeveuxVectorChar24 _property;
+class BaseFunctionInstance : public GenericFunctionInstance {
+  private:
+    // Nom Jeveux de la SD
+    /** @todo remettre le const */
+    std::string _jeveuxName;
+    // Vecteur Jeveux '.PROL'
+    JeveuxVectorChar24 _property;
 
-        void propertyAllocate()
-        {
-            // Create Jeveux vector ".PROL"
-            _property->allocate( Permanent, 6 );
-            (*_property)[0] = _funct_type;
-            (*_property)[1] = "LIN LIN";
-            (*_property)[2] = "";
-            (*_property)[3] = "TOUTRESU";
-            (*_property)[4] = "EE";
-            (*_property)[5] = _jeveuxName;
-        };
+    void propertyAllocate() {
+        // Create Jeveux vector ".PROL"
+        _property->allocate( Permanent, 6 );
+        ( *_property )[0] = _funct_type;
+        ( *_property )[1] = "LIN LIN";
+        ( *_property )[2] = "";
+        ( *_property )[3] = "TOUTRESU";
+        ( *_property )[4] = "EE";
+        ( *_property )[5] = _jeveuxName;
+    };
 
-    protected:
-        // Vecteur Jeveux '.VALE'
-        JeveuxVectorDouble _value;
-        // Type of Function
-        std::string _funct_type;
+  protected:
+    // Vecteur Jeveux '.VALE'
+    JeveuxVectorDouble _value;
+    // Type of Function
+    std::string _funct_type;
 
-    public:
-        /**
-         * @typedef BaseFunctionPtr
-         * @brief Pointeur intelligent vers un BaseFunction
-         */
-        typedef boost::shared_ptr< BaseFunctionInstance > BaseFunctionPtr;
+  public:
+    /**
+     * @typedef BaseFunctionPtr
+     * @brief Pointeur intelligent vers un BaseFunction
+     */
+    typedef boost::shared_ptr< BaseFunctionInstance > BaseFunctionPtr;
 
-        /**
-         * Constructeur
-         */
-        BaseFunctionInstance( const std::string type );
+    /**
+     * Constructeur
+     */
+    BaseFunctionInstance( const std::string type );
 
-        BaseFunctionInstance( const std::string jeveuxName, const std::string type );
+    BaseFunctionInstance( const std::string jeveuxName, const std::string type );
 
-        ~BaseFunctionInstance()
-        {};
+    ~BaseFunctionInstance(){};
 
+    /**
+     * @brief Allocate function
+     */
+    virtual void allocate( JeveuxMemory mem, ASTERINTEGER size ) throw( std::runtime_error );
 
-        /**
-         * @brief Allocate function
-         */
-        virtual void allocate( JeveuxMemory mem, ASTERINTEGER size ) throw ( std::runtime_error );
+    /**
+     * @brief Get the result name
+     * @return  name of the result
+     */
+    std::string getResultName() {
+        if ( !_property->exists() )
+            return "";
+        _property->updateValuePointer();
+        return ( *_property )[3].toString();
+    }
 
-        /**
-         * @brief Get the result name
-         * @return  name of the result
-         */
-        std::string getResultName()
-        {
-            if( !_property->exists() )
-                return "";
-            _property->updateValuePointer();
-            return (*_property)[3].toString();
+    /**
+     * @brief Set the function type to CONSTANT
+     */
+    void setAsConstant();
+
+    /**
+     * @brief Definition of the name of the parameter (abscissa)
+     * @param name name of the parameter
+     * @type  name string
+     */
+    void setParameterName( const std::string name ) {
+        if ( !_property->isAllocated() )
+            propertyAllocate();
+        ( *_property )[2] = name.substr( 0, 8 ).c_str();
+    }
+
+    /**
+     * @brief Definition of the name of the result (ordinate)
+     * @param name name of the result
+     * @type  name string
+     */
+    void setResultName( const std::string name ) {
+        if ( !_property->isAllocated() )
+            propertyAllocate();
+        ( *_property )[3] = name.substr( 0, 8 ).c_str();
+    }
+
+    /**
+     * @brief Definition of the type of interpolation
+     * @param interpolation type of interpolation
+     * @type  interpolation string
+     * @todo checking
+     */
+    void setInterpolation( const std::string type ) throw( std::runtime_error );
+
+    /**
+     * @brief Definition of the type of extrapolation
+     * @param extrapolation type of extrapolation
+     * @type  extrapolation string
+     * @todo checking
+     */
+    void setExtrapolation( const std::string type ) throw( std::runtime_error );
+
+    /**
+     * @brief Assign the values of the function
+     * @param absc values of the abscissa
+     * @type  absc vector of double
+     * @param ord values of the ordinates
+     * @type  ord vector of double
+     */
+    virtual void setValues( const VectorDouble &absc,
+                            const VectorDouble &ord ) throw( std::runtime_error );
+
+    /**
+     * @brief Return the values of the function as an unidimensional vector
+     */
+    std::vector< double > getValues() const {
+        _value->updateValuePointer();
+        const double *ptr = getDataPtr();
+        std::vector< double > vect( ptr, ptr + _value->size() );
+        return vect;
+    }
+
+    /**
+     * @brief Return a pointer to the vector of data
+     */
+    const double *getDataPtr() const { return _value->getDataPtr(); }
+
+    /**
+     * @brief Return the number of points of the function
+     */
+    virtual ASTERINTEGER maximumSize() const throw( std::runtime_error ) {
+        return _value->size() / 2;
+    }
+
+    /**
+     * @brief Return the number of points of the function
+     */
+    virtual ASTERINTEGER size() const throw( std::runtime_error ) { return _value->size() / 2; }
+
+    /**
+     * @brief Return the properties of the function
+     * @return vector of strings
+     */
+    std::vector< std::string > getProperties() const {
+        _property->updateValuePointer();
+        std::vector< std::string > prop;
+        for ( int i = 0; i < 6; ++i ) {
+            prop.push_back( ( *_property )[i].rstrip() );
         }
+        return prop;
+    }
 
-        /**
-         * @brief Set the function type to CONSTANT
-         */
-        void setAsConstant();
-
-        /**
-         * @brief Definition of the name of the parameter (abscissa)
-         * @param name name of the parameter
-         * @type  name string
-         */
-        void setParameterName( const std::string name )
-        {
-            if( !_property->isAllocated() )
-                propertyAllocate();
-            (*_property)[2] = name.substr(0, 8).c_str();
-        }
-
-        /**
-         * @brief Definition of the name of the result (ordinate)
-         * @param name name of the result
-         * @type  name string
-         */
-        void setResultName( const std::string name )
-        {
-            if( !_property->isAllocated() )
-                propertyAllocate();
-            (*_property)[3] = name.substr(0, 8).c_str();
-        }
-
-        /**
-         * @brief Definition of the type of interpolation
-         * @param interpolation type of interpolation
-         * @type  interpolation string
-         * @todo checking
-         */
-        void setInterpolation( const std::string type ) throw ( std::runtime_error );
-
-        /**
-         * @brief Definition of the type of extrapolation
-         * @param extrapolation type of extrapolation
-         * @type  extrapolation string
-         * @todo checking
-         */
-        void setExtrapolation( const std::string type ) throw ( std::runtime_error );
-
-        /**
-         * @brief Assign the values of the function
-         * @param absc values of the abscissa
-         * @type  absc vector of double
-         * @param ord values of the ordinates
-         * @type  ord vector of double
-         */
-        virtual void setValues( const VectorDouble &absc, const VectorDouble &ord )
-            throw ( std::runtime_error );
-
-        /**
-         * @brief Return the values of the function as an unidimensional vector
-         */
-        std::vector<double> getValues() const
-        {
-            _value->updateValuePointer();
-            const double* ptr = getDataPtr();
-            std::vector<double> vect( ptr, ptr + _value->size() );
-            return vect;
-        }
-
-        /**
-         * @brief Return a pointer to the vector of data
-         */
-        const double* getDataPtr() const
-        {
-            return _value->getDataPtr();
-        }
-
-        /**
-         * @brief Return the number of points of the function
-         */
-        virtual ASTERINTEGER maximumSize() const throw ( std::runtime_error )
-        {
-            return _value->size() / 2;
-        }
-
-        /**
-         * @brief Return the number of points of the function
-         */
-        virtual ASTERINTEGER size() const throw ( std::runtime_error )
-        {
-            return _value->size() / 2;
-        }
-
-        /**
-         * @brief Return the properties of the function
-         * @return vector of strings
-         */
-        std::vector< std::string > getProperties() const
-        {
-            _property->updateValuePointer();
-            std::vector< std::string > prop;
-            for ( int i = 0; i < 6; ++i )
-            {
-                prop.push_back( (*_property)[i].rstrip() );
-            }
-            return prop;
-        }
-
-        /**
-         * @brief Update the pointers to the Jeveux objects
-         * @return Return true if ok
-         */
-        bool build( )
-        {
-            return _property->updateValuePointer() && _value->updateValuePointer();
-        }
-
+    /**
+     * @brief Update the pointers to the Jeveux objects
+     * @return Return true if ok
+     */
+    bool build() { return _property->updateValuePointer() && _value->updateValuePointer(); }
 };
 
 /**
@@ -219,10 +197,9 @@ class BaseFunctionInstance: public GenericFunctionInstance
  *   Create a datastructure for a function with real values
  * @author Mathieu Courtois
  */
-class FunctionInstance: public BaseFunctionInstance
-{
+class FunctionInstance : public BaseFunctionInstance {
 
-public:
+  public:
     /**
      * @typedef FunctionPtr
      * @brief Pointeur intelligent vers un Function
@@ -232,16 +209,10 @@ public:
     /**
     * Constructeur
     */
-    FunctionInstance():
-        BaseFunctionInstance( "FONCTION" )
-    {
-    };
+    FunctionInstance() : BaseFunctionInstance( "FONCTION" ){};
 
-    FunctionInstance( const std::string jeveuxName ):
-        BaseFunctionInstance( jeveuxName, "FONCTION" )
-    {
-    };
-
+    FunctionInstance( const std::string jeveuxName )
+        : BaseFunctionInstance( jeveuxName, "FONCTION" ){};
 };
 
 /**
@@ -249,10 +220,9 @@ public:
  *   Create a datastructure for a function with complex values
  * @author Mathieu Courtois
  */
-class FunctionComplexInstance: public BaseFunctionInstance
-{
+class FunctionComplexInstance : public BaseFunctionInstance {
 
-public:
+  public:
     /**
      * @typedef FunctionPtr
      * @brief Pointeur intelligent vers un FunctionComplex
@@ -262,39 +232,29 @@ public:
     /**
     * Constructeur
     */
-    FunctionComplexInstance( const std::string jeveuxName ):
-        BaseFunctionInstance( jeveuxName, "FONCTION_C" )
-    {
+    FunctionComplexInstance( const std::string jeveuxName )
+        : BaseFunctionInstance( jeveuxName, "FONCTION_C" ) {
         _funct_type = "FONCT_C";
     };
 
-    FunctionComplexInstance():
-        BaseFunctionInstance( "FONCTION_C" )
-    {
-        _funct_type = "FONCT_C";
-    };
-
+    FunctionComplexInstance() : BaseFunctionInstance( "FONCTION_C" ) { _funct_type = "FONCT_C"; };
 
     /**
      * @brief Allocate function
      */
-    void allocate( JeveuxMemory mem, ASTERINTEGER size ) throw ( std::runtime_error );
+    void allocate( JeveuxMemory mem, ASTERINTEGER size ) throw( std::runtime_error );
 
     /**
      * @brief Return the number of points of the function
      */
-    virtual ASTERINTEGER maximumSize() const throw ( std::runtime_error )
-    {
+    virtual ASTERINTEGER maximumSize() const throw( std::runtime_error ) {
         return _value->size() / 3;
     }
 
     /**
      * @brief Return the number of points of the function
      */
-    ASTERINTEGER size() const throw ( std::runtime_error )
-    {
-        return _value->size() / 3;
-    }
+    ASTERINTEGER size() const throw( std::runtime_error ) { return _value->size() / 3; }
 
     /**
      * @brief Assign the values of the function
@@ -303,8 +263,7 @@ public:
      * @param ord values of the ordinates (real1, imag1, real2, imag2...)
      * @type  ord vector of double
      */
-    void setValues( const VectorDouble &absc, const VectorDouble &ord )
-        throw ( std::runtime_error );
+    void setValues( const VectorDouble &absc, const VectorDouble &ord ) throw( std::runtime_error );
 
     /**
      * @brief Assign the values of the function
@@ -313,11 +272,9 @@ public:
      * @param ord values of the ordinates
      * @type  ord vector of complex
      */
-    void setValues( const VectorDouble &absc, const VectorComplex &ord )
-        throw ( std::runtime_error );
-
+    void setValues( const VectorDouble &absc,
+                    const VectorComplex &ord ) throw( std::runtime_error );
 };
-
 
 /**
  * @typedef BaseFunctionPtr

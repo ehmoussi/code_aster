@@ -3,7 +3,7 @@
  * @brief Implementation de ParallelMeshInstance
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -30,22 +30,20 @@
 #include "ParallelUtilities/MPIInfos.h"
 #include "aster_fort.h"
 
-int getMPINumberOfProcs() throw( std::runtime_error )
-{
+int getMPINumberOfProcs() throw( std::runtime_error ) {
     int rank = -1, nbProcs = -1;
-    aster_comm_t* comm = aster_get_comm_world();
-    aster_get_mpi_info(comm, &rank, &nbProcs);
-    if( rank == -1 || nbProcs == -1 )
+    aster_comm_t *comm = aster_get_comm_world();
+    aster_get_mpi_info( comm, &rank, &nbProcs );
+    if ( rank == -1 || nbProcs == -1 )
         throw std::runtime_error( "Error with MPI Infos" );
     return nbProcs;
 };
 
-int getMPIRank() throw( std::runtime_error )
-{
+int getMPIRank() throw( std::runtime_error ) {
     int rank = -1, nbProcs = -1;
-    aster_comm_t* comm = aster_get_comm_world();
-    aster_get_mpi_info(comm, &rank, &nbProcs);
-    if( rank == -1 || nbProcs == -1 )
+    aster_comm_t *comm = aster_get_comm_world();
+    aster_get_mpi_info( comm, &rank, &nbProcs );
+    if ( rank == -1 || nbProcs == -1 )
         throw std::runtime_error( "Error with MPI Infos" );
     return rank;
 };

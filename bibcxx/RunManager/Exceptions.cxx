@@ -3,7 +3,7 @@
  * @brief Implementation of Exceptions
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -27,67 +27,40 @@
 
 #include "Exceptions.h"
 
-void AsterCythonCustomException()
-{
-    try
-    {
+void AsterCythonCustomException() {
+    try {
         if ( PyErr_Occurred() )
-        ;
+            ;
         else
-        throw;
-    }
-    catch ( const std::bad_alloc& exn )
-    {
+            throw;
+    } catch ( const std::bad_alloc &exn ) {
         PyErr_SetString( PyExc_MemoryError, exn.what() );
-    }
-    catch ( const std::bad_cast& exn )
-    {
+    } catch ( const std::bad_cast &exn ) {
         PyErr_SetString( PyExc_TypeError, exn.what() );
-    }
-    catch ( const std::domain_error& exn )
-    {
+    } catch ( const std::domain_error &exn ) {
         PyErr_SetString( PyExc_ValueError, exn.what() );
-    }
-    catch ( const std::invalid_argument& exn )
-    {
+    } catch ( const std::invalid_argument &exn ) {
         PyErr_SetString( PyExc_ValueError, exn.what() );
-    }
-    catch ( const std::ios_base::failure& exn )
-    {
+    } catch ( const std::ios_base::failure &exn ) {
         PyErr_SetString( PyExc_IOError, exn.what() );
-    }
-    catch ( const std::out_of_range& exn )
-    {
+    } catch ( const std::out_of_range &exn ) {
         PyErr_SetString( PyExc_IndexError, exn.what() );
-    }
-    catch ( const std::overflow_error& exn )
-    {
+    } catch ( const std::overflow_error &exn ) {
         PyErr_SetString( PyExc_OverflowError, exn.what() );
-    }
-    catch ( const std::range_error& exn )
-    {
+    } catch ( const std::range_error &exn ) {
         PyErr_SetString( PyExc_ArithmeticError, exn.what() );
-    }
-    catch ( const std::underflow_error& exn )
-    {
+    } catch ( const std::underflow_error &exn ) {
         PyErr_SetString( PyExc_ArithmeticError, exn.what() );
-    }
-    catch ( const std::exception& exn )
-    {
+    } catch ( const std::exception &exn ) {
         PyErr_SetString( PyExc_RuntimeError, exn.what() );
-    }
-    catch ( std::string error )
-    {
+    } catch ( std::string error ) {
         PyErr_SetString( PyExc_RuntimeError, error.c_str() );
-    }
-    catch (...)
-    {
+    } catch ( ... ) {
         PyErr_SetString( PyExc_RuntimeError, "Unknown exception" );
     }
 };
 
-void _raiseException()
-{
+void _raiseException() {
     throw std::runtime_error( "Code_Aster exception raised" );
     return;
 };

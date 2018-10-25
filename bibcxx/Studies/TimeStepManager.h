@@ -28,12 +28,12 @@
 
 #include "astercxx.h"
 
-#include "MemoryManager/JeveuxVector.h"
 #include "DataStructures/DataStructure.h"
-#include "Studies/FailureConvergenceManager.h"
-#include "Utilities/GenericParameter.h"
+#include "MemoryManager/JeveuxVector.h"
 #include "Results/ResultsContainer.h"
+#include "Studies/FailureConvergenceManager.h"
 #include "Supervis/ResultNaming.h"
+#include "Utilities/GenericParameter.h"
 
 /**
  * @class TimeStepManagerInstance
@@ -41,9 +41,8 @@
  * @author Nicolas Sellenet
  * @todo ajouter les mots cles manquants
  */
-class TimeStepManagerInstance: public DataStructure
-{
-private:
+class TimeStepManagerInstance : public DataStructure {
+  private:
     /** @brief Liste d'instants */
     JeveuxVectorDouble _timeList;
     /** @brief Liste d'informations portant sur la liste d'instants */
@@ -57,47 +56,43 @@ private:
     JeveuxVectorDouble _doubleFailureManagerInfo2;
 
     /** @brief Liste de pas de temps donnée par l'utilisateur */
-    VectorDouble       _timeListVector;
+    VectorDouble _timeListVector;
     /** @brief Gestion automatique du pas de temps */
-    bool               _isAutomatic;
+    bool _isAutomatic;
     /** @brief Liste de comportement en cas d'erreurs */
-    ListConvError      _listErrorManager;
-    bool               _isEmpty;
+    ListConvError _listErrorManager;
+    bool _isEmpty;
     /** @brief Pas de temps mini */
-    GenParam           _minimumTS;
+    GenParam _minimumTS;
     /** @brief Pas de temps maxi */
-    GenParam           _maximumTS;
+    GenParam _maximumTS;
     /** @brief Nombre maxi de pas de temps */
-    GenParam           _nbMaxiOfTS;
+    GenParam _nbMaxiOfTS;
 
-public:
+  public:
     /**
      * @brief Constructeur
      */
-    TimeStepManagerInstance():
-        DataStructure( ResultNaming::getNewResultName(), 8, "LIST_INST" ),
-        _timeList( JeveuxVectorDouble( getName() + ".LIST.DITR" ) ),
-        _infoList( JeveuxVectorDouble( getName() + ".LIST.INFOR" ) ),
-        _doubleFailureManagerInfo( JeveuxVectorDouble( getName() + ".ECHE.EVENR" ) ),
-        _charFailureManagerInfo( JeveuxVectorChar16( getName() + ".ECHE.INFOK" ) ),
-        _doubleFailureManagerInfo2( JeveuxVectorDouble( getName() + ".ECHE.SUBDR" ) ),
-        _isAutomatic( false ),
-        _isEmpty( true ),
-        _minimumTS( "PAS_MINI", false ),
-        _maximumTS( "PAS_MAXI", false ),
-        _nbMaxiOfTS( "NB_PAS_MAXI", (ASTERINTEGER)1000000, false )
-    {};
+    TimeStepManagerInstance( const std::string name = ResultNaming::getNewResultName() )
+        : DataStructure( name, 8, "LIST_INST" ),
+          _timeList( JeveuxVectorDouble( getName() + ".LIST.DITR" ) ),
+          _infoList( JeveuxVectorDouble( getName() + ".LIST.INFOR" ) ),
+          _doubleFailureManagerInfo( JeveuxVectorDouble( getName() + ".ECHE.EVENR" ) ),
+          _charFailureManagerInfo( JeveuxVectorChar16( getName() + ".ECHE.INFOK" ) ),
+          _doubleFailureManagerInfo2( JeveuxVectorDouble( getName() + ".ECHE.SUBDR" ) ),
+          _isAutomatic( false ), _isEmpty( true ), _minimumTS( "PAS_MINI", false ),
+          _maximumTS( "PAS_MAXI", false ),
+          _nbMaxiOfTS( "NB_PAS_MAXI", (ASTERINTEGER)1000000, false ){};
 
-    ~TimeStepManagerInstance()
-    {};
+    ~TimeStepManagerInstance(){};
 
     /**
      * @brief Fonction permettant d'ajouter un gestionnaire d'erreur
      * @param currentError erreur à ajouter
      */
-    void addErrorManager( const GenericConvergenceErrorPtr& currentError ) throw ( std::runtime_error )
-    {
-        if ( ! currentError->isActionSet() )
+    void
+    addErrorManager( const GenericConvergenceErrorPtr &currentError ) throw( std::runtime_error ) {
+        if ( !currentError->isActionSet() )
             throw std::runtime_error( "Action on error not set" );
         _listErrorManager.push_back( currentError );
     };
@@ -105,63 +100,49 @@ public:
     /**
      * @brief Construction de la sd_list_inst
      */
-    void build() throw ( std::runtime_error );
+    void build() throw( std::runtime_error );
 
     /**
      * @brief Fonction permettant de preciser le mode de gestion de la liste d'instants
      * @param isAuto true si la gestion est automatique
      */
-    void setAutomaticManagement( const bool& isAuto ) throw ( std::runtime_error )
-    {
+    void setAutomaticManagement( const bool &isAuto ) throw( std::runtime_error ) {
         _isAutomatic = isAuto;
-        if ( _isAutomatic ) throw std::runtime_error( "Not yet implemented" );
+        if ( _isAutomatic )
+            throw std::runtime_error( "Not yet implemented" );
     };
 
     /**
      * @brief Function de définition du nombre maxi de pas
      * @param max nombre maxi de pas
      */
-    void setMaximumNumberOfTimeStep( const ASTERINTEGER& max )
-    {
-         _nbMaxiOfTS = max;
-    };
+    void setMaximumNumberOfTimeStep( const ASTERINTEGER &max ) { _nbMaxiOfTS = max; };
 
     /**
      * @brief Function de définition du pas de temps maxi
      * @param max pas de temps maxi
      */
-    void setMaximumTimeStep( const double& max )
-    {
-        _maximumTS = max;
-    };
+    void setMaximumTimeStep( const double &max ) { _maximumTS = max; };
 
     /**
      * @brief Function de définition du pas de temps mini
      * @param min pas de temps mini
      */
-    void setMinimumTimeStep( const double& min )
-    {
-        _minimumTS = min;
-    };
+    void setMinimumTimeStep( const double &min ) { _minimumTS = min; };
 
     /**
      * @brief Function de définition de la liste d'instants
      * @param timeList liste d'instants
      */
-    void setTimeList( const VectorDouble& timeList )
-    {
-        _timeListVector = timeList;
-    };
+    void setTimeList( const VectorDouble &timeList ) { _timeListVector = timeList; };
 
     /**
      * @brief Function de définition de la liste d'instants à partir d'un résu
      */
-    void setTimeListFromResultsContainer() throw ( std::runtime_error )
-    {
+    void setTimeListFromResultsContainer() throw( std::runtime_error ) {
         throw std::runtime_error( "Not yet implemented" );
     };
 };
-
 
 /**
  * @typedef TimeStepManagerPtr

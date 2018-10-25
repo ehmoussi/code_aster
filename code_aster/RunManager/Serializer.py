@@ -147,7 +147,7 @@ class Serializer(object):
                     logger.info("{0:<24s} {1}".format(name, type(obj)))
                     pickler.save_one(obj, main=True)
                     objList.append(name)
-                except (pickle.PicklingError, TypeError) as exc:
+                except Exception as exc:
                     logger.warn("object can't be pickled: {0}".format(name))
                     logger.debug(str(exc))
                     continue

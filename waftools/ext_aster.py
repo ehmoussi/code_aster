@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -80,7 +80,7 @@ def format_error(self):
     if self.hasrun == CRASHED:
         msg = getattr(self, 'last_cmd', '')
         name = getattr(self.generator, 'name', '')
-        bldlog = osp.join(self.generator.bld.cwd, '%s.log' % name)
+        bldlog = osp.join(self.generator.bld.path.get_bld().abspath(), '%s.log' % name)
         try:
             os.makedirs(osp.dirname(bldlog))
         except:

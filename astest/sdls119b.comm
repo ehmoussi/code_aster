@@ -22,6 +22,7 @@ DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),
       IMPR_MACRO='OUI',DEBUG=_F(SDVERI='NON'));
 #
 import aster
+from sdls119a_accel import accel
 #
 mail = LIRE_MAILLAGE(FORMAT="ASTER", VERI_MAIL = _F( VERIF = 'OUI' ) , );
 #
@@ -180,10 +181,6 @@ CHVA_x=AFFE_CHAR_MECA(MODELE=mode,VECT_ASSE=mono_x)
 #
 chseism = AFFE_CHAR_MECA( MODELE = mode ,
                           VECT_ASSE = mono_x , );
-#
-INCLUDE( UNITE = 22 );
-#
-#
 
 CHVA_F=AFFE_CHAR_MECA(MODELE=mode,VECT_ASSE=FASSE)
 

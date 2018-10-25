@@ -3,7 +3,7 @@
  * @brief Interface python de PhysicsAndModelings
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -24,15 +24,11 @@
 #include "PythonBindings/PhysicsAndModelingsInterface.h"
 #include <boost/python.hpp>
 
-void exportPhysicsAndModelingsToPython()
-{
+void exportPhysicsAndModelingsToPython() {
     using namespace boost::python;
 
-    enum_< Physics >( "Physics" )
-        .value( "Mechanics", Mechanics )
-        .value( "Thermal", Thermal )
-        .value( "Acoustics", Acoustics )
-        ;
+    enum_< Physics >( "Physics" ).value( "Mechanics", Mechanics ).value( "Thermal", Thermal ).value(
+        "Acoustics", Acoustics );
 
     enum_< Modelings >( "Modelings" )
         .value( "Axisymmetrical", Axisymmetrical )
@@ -43,6 +39,5 @@ void exportPhysicsAndModelingsToPython()
         .value( "PlaneStress", PlaneStress )
         .value( "DKT", DKT )
         .value( "DKTG", DKTG )
-        .value( "PlanarBar", PlanarBar )
-        ;
+        .value( "PlanarBar", PlanarBar );
 };

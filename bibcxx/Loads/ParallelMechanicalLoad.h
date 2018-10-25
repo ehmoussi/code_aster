@@ -11,7 +11,7 @@
  * @brief Fichier entete de la classe ParallelMechanicalLoad
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -41,45 +41,39 @@
  * @brief Classe definissant une charge dualisée parallèle
  * @author Nicolas Sellenet
  */
-class ParallelMechanicalLoadInstance: public DataStructure
-{
-private:
-    void transferPCFieldOnMesh( const PCFieldOnMeshDoublePtr& fieldIn,
-                                PCFieldOnMeshDoublePtr& fieldOut )
-        throw( std::runtime_error );
+class ParallelMechanicalLoadInstance : public DataStructure {
+  private:
+    void transferPCFieldOnMesh( const PCFieldOnMeshDoublePtr &fieldIn,
+                                PCFieldOnMeshDoublePtr &fieldOut ) throw( std::runtime_error );
 
-protected:
+  protected:
     /** @brief Modèle support */
-    ModelPtr                           _supportModel;
+    ModelPtr _supportModel;
     /** @brief Vecteur Jeveux '.LIGRE' */
-    FiniteElementDescriptorPtr         _BaseFEDesc;
+    FiniteElementDescriptorPtr _BaseFEDesc;
     /** @brief Vecteur Jeveux '.LIGRE' */
     ParallelFiniteElementDescriptorPtr _FEDesc;
     /** @brief Carte '.CIMPO' */
-    PCFieldOnMeshDoublePtr             _cimpo;
+    PCFieldOnMeshDoublePtr _cimpo;
     /** @brief Carte '.CMULT' */
-    PCFieldOnMeshDoublePtr             _cmult;
+    PCFieldOnMeshDoublePtr _cmult;
     /** @brief Vecteur Jeveux '.TYPE' */
-    JeveuxVectorChar8                  _type;
+    JeveuxVectorChar8 _type;
     /** @brief Vecteur Jeveux '.MODEL.NOMO' */
-    JeveuxVectorChar8                  _modelName;
+    JeveuxVectorChar8 _modelName;
 
-public:
+  public:
     /**
      * @brief Constructeur
      */
-    ParallelMechanicalLoadInstance( const GenericMechanicalLoadPtr& load,
-                                    const ModelPtr& model ):
-        ParallelMechanicalLoadInstance( ResultNaming::getNewResultName(),
-                                        load, model )
-    {};
+    ParallelMechanicalLoadInstance( const GenericMechanicalLoadPtr &load, const ModelPtr &model )
+        : ParallelMechanicalLoadInstance( ResultNaming::getNewResultName(), load, model ){};
 
     /**
      * @brief Constructeur
      */
-    ParallelMechanicalLoadInstance( const std::string& name,
-                                    const GenericMechanicalLoadPtr& load,
-                                    const ModelPtr& model );
+    ParallelMechanicalLoadInstance( const std::string &name, const GenericMechanicalLoadPtr &load,
+                                    const ModelPtr &model );
 
     /**
      * @typedef ParallelMechanicalLoadPtr

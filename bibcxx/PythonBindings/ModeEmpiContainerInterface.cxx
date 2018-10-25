@@ -3,7 +3,7 @@
  * @brief Interface python de ModeEmpiContainer
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -25,16 +25,12 @@
 #include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
-void exportModeEmpiContainerToPython()
-{
+void exportModeEmpiContainerToPython() {
     using namespace boost::python;
 
-    class_< ModeEmpiContainerInstance, ModeEmpiContainerPtr,
-            bases< ResultsContainerInstance > > ( "ModeEmpiContainer", no_init )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< ModeEmpiContainerInstance > ) )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< ModeEmpiContainerInstance,
-                             std::string >) )
-    ;
+    class_< ModeEmpiContainerInstance, ModeEmpiContainerPtr, bases< ResultsContainerInstance > >(
+        "ModeEmpiContainer", no_init )
+        .def( "__init__", make_constructor(&initFactoryPtr< ModeEmpiContainerInstance >))
+        .def( "__init__",
+              make_constructor(&initFactoryPtr< ModeEmpiContainerInstance, std::string >));
 };

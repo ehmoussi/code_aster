@@ -3,7 +3,7 @@
  * @brief Interface python de DOFNumbering
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -28,16 +28,16 @@
 #include "PythonBindings/DOFNumberingInterface.h"
 #include "PythonBindings/LoadInterface.h"
 
-void exportDOFNumberingToPython()
-{
+void exportDOFNumberingToPython() {
     using namespace boost::python;
 
     class_< BaseDOFNumberingInstance, BaseDOFNumberingInstance::BaseDOFNumberingPtr,
             bases< DataStructure > > c1( "BaseDOFNumbering", no_init );
+    // fake initFactoryPtr: created by subclasses
+    // fake initFactoryPtr: created by subclasses
     c1.def( "addFiniteElementDescriptor", &BaseDOFNumberingInstance::addFiniteElementDescriptor );
     c1.def( "computeNumbering", &BaseDOFNumberingInstance::computeNumbering );
-    c1.def( "getFiniteElementDescriptors",
-            &BaseDOFNumberingInstance::getFiniteElementDescriptors );
+    c1.def( "getFiniteElementDescriptors", &BaseDOFNumberingInstance::getFiniteElementDescriptors );
     c1.def( "isParallel", &BaseDOFNumberingInstance::isParallel );
     c1.def( "setElementaryMatrix", &BaseDOFNumberingInstance::setElementaryMatrix );
     c1.def( "getSupportModel", &BaseDOFNumberingInstance::getSupportModel );
@@ -46,12 +46,8 @@ void exportDOFNumberingToPython()
     addMechanicalLoadToInterface( c1 );
 
     class_< DOFNumberingInstance, DOFNumberingInstance::DOFNumberingPtr,
-            bases< BaseDOFNumberingInstance > > ( "DOFNumbering", no_init )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< DOFNumberingInstance >) )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< DOFNumberingInstance,
-                             std::string >) )
-        .def( "getFieldOnNodesDescription", &DOFNumberingInstance::getFieldOnNodesDescription )
-    ;
+            bases< BaseDOFNumberingInstance > >( "DOFNumbering", no_init )
+        .def( "__init__", make_constructor(&initFactoryPtr< DOFNumberingInstance >))
+        .def( "__init__", make_constructor(&initFactoryPtr< DOFNumberingInstance, std::string >))
+        .def( "getFieldOnNodesDescription", &DOFNumberingInstance::getFieldOnNodesDescription );
 };
