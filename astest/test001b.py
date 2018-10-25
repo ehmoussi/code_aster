@@ -24,7 +24,7 @@ monMaillage.debugPrint( 8 )
 affectMat = code_aster.MaterialOnMesh(monMaillage)
 
 affectMat.addMaterialOnAllMesh( acier )
-affectMat.addMaterialOnGroupOfElements( acier, "Tout" )
+affectMat.addMaterialOnGroupOfElements( acier, ["Tout"] )
 affectMat.buildWithoutInputVariables()
 affectMat.debugPrint( 8 )
 

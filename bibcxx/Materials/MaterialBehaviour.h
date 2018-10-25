@@ -687,6 +687,26 @@ class GeneralMaterialBehaviourInstance
             return false;
         };
 
+        /**
+         * @brief Function to know if behaviour own a list of double parameter
+         */
+        bool hasVectorOfDoubleParameters() const
+        {
+            if( _mapOfVectorDoubleMaterialProperties.size() != 0 )
+                return true;
+            return false;
+        };
+
+        /**
+         * @brief Function to know if behaviour own a list of double parameter
+         */
+        bool hasVectorOfFunctionParameters() const
+        {
+            if( _mapOfVectorFunctionMaterialProperties.size() != 0 )
+                return true;
+            return false;
+        };
+
     protected:
         bool addDoubleProperty( std::string key, ElementaryMaterialPropertyDouble value )
         {

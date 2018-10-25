@@ -224,12 +224,10 @@ class MaterialAssignment(ExecuteCommand):
             self._result.addMaterialsOnAllMesh(mater)
         elif kwGrMa != None:
             kwGrMa = force_list(kwGrMa)
-            for grp in kwGrMa:
-                self._result.addMaterialsOnGroupOfElements(mater, grp)
+            self._result.addMaterialsOnGroupOfElements(mater, kwGrMa)
         elif kwMail != None:
             kwMail = force_list(kwMail)
-            for elem in kwMail:
-                self._result.addMaterialsOnElement(mater, elem)
+            self._result.addMaterialsOnElement(mater, kwMail)
         else:
             raise TypeError("At least {0}, {1} or {2} is required"
                             .format("TOUT", "GROUP_MA", "MAILLE"))

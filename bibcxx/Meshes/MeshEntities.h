@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe MeshEntities
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -45,32 +45,53 @@ enum EntityType { GroupOfNodesType, GroupOfElementsType, AllMeshEntitiesType,
  */
 class VirtualMeshEntity
 {
-    private:
-        /** @brief Nom de l'entite */
-        const std::string _name;
+private:
+    /** @brief Nom de l'entite */
+    const VectorString _names;
 
-    protected:
-        /** @brief Type de l'entite */
-        const EntityType  _type;
+protected:
+    /** @brief Type de l'entite */
+    const EntityType  _type;
 
-    public:
-        /**
-         * @brief Constructeur
-         * @param name nom de l'entite
-         */
-        VirtualMeshEntity( std::string name, EntityType type ): _name( name ), _type( type )
-        {};
+public:
+    /**
+     * @brief Constructeur
+     * @param name nom de l'entite
+     */
+    VirtualMeshEntity( const std::string& name,
+                       EntityType type ): _names( { name } ), _type( type )
+    {};
 
-        /**
-         * @brief Obtenir le nom de l'entite
-         * @return renvoit le nom de l'entite
-         */
-        const std::string& getName() const
-        {
-            return _name;
-        };
+    /**
+     * @brief Constructor
+     * @param names names in entity
+     */
+    VirtualMeshEntity( const VectorString& names,
+                       EntityType type ): _names( names ), _type( type )
+    {};
 
-        virtual EntityType getType() const = 0;
+    /**
+     * @brief Obtenir le nom de l'entite
+     * @return renvoit le nom de l'entite
+     */
+    const std::string& getName() const throw( std::runtime_error )
+    {
+        if( _names.size() > 1 )
+            throw std::runtime_error( "Error in mesh entity. This entity must not be a list" );
+
+        return _names[0];
+    };
+
+    /**
+     * @brief Get the names inside the entity
+     * @return vector of strings
+     */
+    const VectorString& getNames()
+    {
+        return _names;
+    };
+
+    virtual EntityType getType() const = 0;
 };
 
 /**
@@ -80,18 +101,25 @@ class VirtualMeshEntity
  */
 class GroupOfNodes: public VirtualMeshEntity
 {
-    public:
-        /**
-         * @brief Constructeur
-         * @param name nom de l'entite
-         */
-        GroupOfNodes( std::string name ): VirtualMeshEntity( name, GroupOfNodesType )
-        {};
+public:
+    /**
+     * @brief Constructeur
+     * @param name nom de l'entite
+     */
+    GroupOfNodes( std::string name ): VirtualMeshEntity( name, GroupOfNodesType )
+    {};
 
-        EntityType getType() const
-        {
-            return _type;
-        };
+    /**
+     * @brief Constructor
+     * @param names names in entity
+     */
+    GroupOfNodes( const VectorString& names): VirtualMeshEntity( names, GroupOfNodesType )
+    {};
+
+    EntityType getType() const
+    {
+        return _type;
+    };
 };
 
 /**
@@ -101,18 +129,25 @@ class GroupOfNodes: public VirtualMeshEntity
  */
 class GroupOfElements: public VirtualMeshEntity
 {
-    public:
-        /**
-         * @brief Constructeur
-         * @param name nom de l'entite
-         */
-        GroupOfElements( std::string name ): VirtualMeshEntity( name, GroupOfElementsType )
-        {};
+public:
+    /**
+     * @brief Constructeur
+     * @param name nom de l'entite
+     */
+    GroupOfElements( std::string name ): VirtualMeshEntity( name, GroupOfElementsType )
+    {};
 
-        EntityType getType() const
-        {
-            return _type;
-        };
+    /**
+     * @brief Constructor
+     * @param names names in entity
+     */
+    GroupOfElements( const VectorString& names ): VirtualMeshEntity( names, GroupOfElementsType )
+    {};
+
+    EntityType getType() const
+    {
+        return _type;
+    };
 };
 
 /**
@@ -123,18 +158,18 @@ class GroupOfElements: public VirtualMeshEntity
  */
 class AllMeshEntities: public VirtualMeshEntity
 {
-    public:
-        /**
-         * @brief Constructeur
-         * @param name nom de l'entite
-         */
-        AllMeshEntities(): VirtualMeshEntity( "OUI", AllMeshEntitiesType )
-        {};
+public:
+    /**
+     * @brief Constructeur
+     * @param name nom de l'entite
+     */
+    AllMeshEntities(): VirtualMeshEntity( "OUI", AllMeshEntitiesType )
+    {};
 
-        EntityType getType() const
-        {
-            return _type;
-        };
+    EntityType getType() const
+    {
+        return _type;
+    };
 };
 
 /**
@@ -144,18 +179,25 @@ class AllMeshEntities: public VirtualMeshEntity
  */
 class Element: public VirtualMeshEntity
 {
-    public:
-        /**
-         * @brief Constructeur
-         * @param name nom de l'entite
-         */
-        Element( std::string name ): VirtualMeshEntity( name, ElementType )
-        {};
+public:
+    /**
+     * @brief Constructeur
+     * @param name nom de l'entite
+     */
+    Element( std::string name ): VirtualMeshEntity( name, ElementType )
+    {};
 
-        EntityType getType() const
-        {
-            return _type;
-        };
+    /**
+     * @brief Constructor
+     * @param names names in entity
+     */
+    Element( const VectorString& names ): VirtualMeshEntity( names, ElementType )
+    {};
+
+    EntityType getType() const
+    {
+        return _type;
+    };
 };
 
 /**
@@ -165,18 +207,25 @@ class Element: public VirtualMeshEntity
  */
 class Node: public VirtualMeshEntity
 {
-    public:
-        /**
-         * @brief Constructeur
-         * @param name nom de l'entite
-         */
-        Node( std::string name ): VirtualMeshEntity( name, NodeType )
-        {};
+public:
+    /**
+     * @brief Constructeur
+     * @param name nom de l'entite
+     */
+    Node( std::string name ): VirtualMeshEntity( name, NodeType )
+    {};
 
-        EntityType getType() const
-        {
-            return _type;
-        };
+    /**
+     * @brief Constructor
+     * @param names names in entity
+     */
+    Node( const VectorString& names ): VirtualMeshEntity( names, NodeType )
+    {};
+
+    EntityType getType() const
+    {
+        return _type;
+    };
 };
 
 typedef boost::shared_ptr< VirtualMeshEntity > MeshEntityPtr;

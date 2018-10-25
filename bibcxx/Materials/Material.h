@@ -110,11 +110,22 @@ class MaterialInstance: public DataStructure
             _vectorOrdr.push_back( JeveuxVectorChar16( currentName + ".ORDR" ) );
             _vectorKOrdr.push_back( JeveuxVectorLong( currentName + ".KORD" ) );
 
-            numUser << std::setw( 7 ) << std::setfill( '0' ) << _nbMaterialBehaviour;
-            const std::string currentName2 = _jeveuxName + "." + numUser.str() + ".LISV_R8";
-            const std::string currentName3 = _jeveuxName + "." + numUser.str() + ".LISV_FO";
-            _vectorOfUserDoubleValues.push_back( JeveuxVectorDouble( currentName2 ) );
-            _vectorOfUserFunctionValues.push_back( JeveuxVectorChar8( currentName3 ) );
+            auto test1 = curMaterBehav->hasVectorOfDoubleParameters();
+            auto test2 = curMaterBehav->hasVectorOfFunctionParameters();
+            ++_nbUserMaterialBehaviour;
+            if( test1 || test2 )
+            {
+                numUser << std::setw( 7 ) << std::setfill( '0' ) << _nbUserMaterialBehaviour;
+                std::string currentName2 = _jeveuxName + "." + numUser.str() + ".LISV_R8";
+                _vectorOfUserDoubleValues.push_back( JeveuxVectorDouble( currentName2 ) );
+                std::string currentName3 = _jeveuxName + "." + numUser.str() + ".LISV_FO";
+                _vectorOfUserFunctionValues.push_back( JeveuxVectorChar8( currentName3 ) );
+            }
+            else
+            {
+                _vectorOfUserDoubleValues.push_back( JeveuxVectorDouble( "EMPTY" ) );
+                _vectorOfUserFunctionValues.push_back( JeveuxVectorChar8( "EMPTY" ) );
+            }
 
             _vecMatBehaviour.push_back( curMaterBehav );
         };
@@ -135,6 +146,15 @@ class MaterialInstance: public DataStructure
         int getNumberOfMaterialBehviour()
         {
             return _nbMaterialBehaviour;
+        };
+
+        /**
+         * @brief Get the number of users behviours
+         * @return number of added users behaviours
+         */
+        int getNumberOfUserMaterialBehviour()
+        {
+            return _nbUserMaterialBehaviour;
         };
 
         /**
