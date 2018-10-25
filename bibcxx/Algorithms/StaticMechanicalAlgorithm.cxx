@@ -3,7 +3,7 @@
  * @brief Implementation de StaticMechanicalAlgorithm
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2015  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -25,21 +25,18 @@
 
 #include "Algorithms/StaticMechanicalAlgorithm.h"
 
-template<>
-void updateContextFromStepper< TimeStepperInstance::const_iterator, StaticMechanicalContext >
-    ( const TimeStepperInstance::const_iterator& curStep,
-      StaticMechanicalContext& context )
-{
+template <>
+void updateContextFromStepper< TimeStepperInstance::const_iterator, StaticMechanicalContext >(
+    const TimeStepperInstance::const_iterator &curStep, StaticMechanicalContext &context ) {
     context.setStep( *curStep, curStep.rank );
 };
 
-void StaticMechanicalAlgorithm::oneStep( const CurrentContext& ctx ) throw( AlgoException& )
-{
+void StaticMechanicalAlgorithm::oneStep( const CurrentContext &ctx ) throw( AlgoException & ) {
     BaseDOFNumberingPtr dofNum1 = ctx._results->getLastDOFNumbering();
 
-    if( ctx._rank == 1 || !ctx._isConst )
-    {
-        ElementaryMatrixPtr matrElem = ctx._discreteProblem->buildElementaryStiffnessMatrix( ctx._time );
+    if ( ctx._rank == 1 || !ctx._isConst ) {
+        ElementaryMatrixPtr matrElem =
+            ctx._discreteProblem->buildElementaryStiffnessMatrix( ctx._time );
 
         // Build assembly matrix
         ctx._aMatrix->clearElementaryMatrix();
@@ -53,13 +50,13 @@ void StaticMechanicalAlgorithm::oneStep( const CurrentContext& ctx ) throw( Algo
     }
 
     // Build Dirichlet loads
-    ElementaryVectorPtr vectElem1 = ctx._discreteProblem->buildElementaryDirichletVector( ctx._time );
+    ElementaryVectorPtr vectElem1 =
+        ctx._discreteProblem->buildElementaryDirichletVector( ctx._time );
     FieldOnNodesDoublePtr chNoDir = vectElem1->assembleVector( dofNum1, ctx._time, Temporary );
 
     // Build Laplace forces
     ElementaryVectorPtr vectElem2 = ctx._discreteProblem->buildElementaryLaplaceVector();
     FieldOnNodesDoublePtr chNoLap = vectElem2->assembleVector( dofNum1, ctx._time, Temporary );
-
 
     // Build Neumann loads
     VectorDouble times;
@@ -73,8 +70,7 @@ void StaticMechanicalAlgorithm::oneStep( const CurrentContext& ctx ) throw( Algo
     chNoDir->addFieldOnNodes( *chNoNeu );
 
     ctx._varCom->compute( ctx._time );
-    if( ctx._varCom->existsMechanicalLoads() )
-    {
+    if ( ctx._varCom->existsMechanicalLoads() ) {
         auto varComLoad = ctx._varCom->computeMechanicalLoads( dofNum1 );
         chNoDir->addFieldOnNodes( *varComLoad );
     }
@@ -82,27 +78,25 @@ void StaticMechanicalAlgorithm::oneStep( const CurrentContext& ctx ) throw( Algo
     CommandSyntax cmdSt( "MECA_STATIQUE" );
     cmdSt.setResult( ctx._results->getName(), ctx._results->getType() );
 
-    FieldOnNodesDoublePtr kineLoadsFON = ctx._discreteProblem->buildKinematicsLoad( dofNum1,
-                                                                                    ctx._time,
-                                                                                    Temporary );
+    FieldOnNodesDoublePtr kineLoadsFON =
+        ctx._discreteProblem->buildKinematicsLoad( dofNum1, ctx._time, Temporary );
 
-    FieldOnNodesDoublePtr resultField = ctx._results->getEmptyFieldOnNodesDouble( "DEPL",
-                                                                                  ctx._rank );
+    FieldOnNodesDoublePtr resultField =
+        ctx._results->getEmptyFieldOnNodesDouble( "DEPL", ctx._rank );
 
-    resultField = ctx._linearSolver->solveDoubleLinearSystemWithKinematicsLoad
-        ( ctx._aMatrix, kineLoadsFON, chNoDir, resultField );
+    resultField = ctx._linearSolver->solveDoubleLinearSystemWithKinematicsLoad(
+        ctx._aMatrix, kineLoadsFON, chNoDir, resultField );
 
-    const auto& study = ctx._discreteProblem->getStudyDescription();
-    const auto& model = study->getSupportModel();
-    const auto& mater = study->getMaterialOnMesh();
-    const auto& load = study->getListOfLoads();
-    const auto& cara = study->getElementaryCharacteristics();
+    const auto &study = ctx._discreteProblem->getStudyDescription();
+    const auto &model = study->getSupportModel();
+    const auto &mater = study->getMaterialOnMesh();
+    const auto &load = study->getListOfLoads();
+    const auto &cara = study->getElementaryCharacteristics();
     ctx._results->addModel( model, ctx._rank );
     ctx._results->addMaterialOnMesh( mater, ctx._rank );
     ctx._results->addTimeValue( ctx._time, ctx._rank );
     ctx._results->addListOfLoads( load, ctx._rank );
-    if( cara != nullptr )
-    {
+    if ( cara != nullptr ) {
         ctx._results->addElementaryCharacteristics( cara, ctx._rank );
     }
 };

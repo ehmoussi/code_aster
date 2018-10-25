@@ -3,7 +3,7 @@
  * @brief Implementation de PhysicalQuantityManager
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -24,29 +24,27 @@
 #include "Modeling/PhysicalQuantityManager.h"
 #include "aster_fort.h"
 
-PhysicalQuantityManager::PhysicalQuantityManager():
-    _nameOfCmp( JeveuxCollectionChar8( "&CATA.GD.NOMCMP" ) ),
-    _nameOfPhysicalQuantity( JeveuxBidirectionalMapChar8( "&CATA.GD.NOMGD" ) )
-{};
+PhysicalQuantityManager::PhysicalQuantityManager()
+    : _nameOfCmp( JeveuxCollectionChar8( "&CATA.GD.NOMCMP" ) ),
+      _nameOfPhysicalQuantity( JeveuxBidirectionalMapChar8( "&CATA.GD.NOMGD" ) ){};
 
-const JeveuxCollectionObjectChar8& PhysicalQuantityManager::getComponentNames
-    ( const ASTERINTEGER& quantityNumber ) const
-{
+const JeveuxCollectionObjectChar8 &
+PhysicalQuantityManager::getComponentNames( const ASTERINTEGER &quantityNumber ) const {
     _nameOfCmp->buildFromJeveux();
     return _nameOfCmp->getObject( quantityNumber );
 };
 
-ASTERINTEGER PhysicalQuantityManager::getNumberOfEncodedInteger( const ASTERINTEGER& quantityNumber ) const
-{
+ASTERINTEGER
+PhysicalQuantityManager::getNumberOfEncodedInteger( const ASTERINTEGER &quantityNumber ) const {
     ASTERINTEGER toReturn = 0;
     toReturn = CALL_NBEC( &quantityNumber );
     return toReturn;
 };
 
-std::string PhysicalQuantityManager::getPhysicalQuantityName( const ASTERINTEGER& quantityNumber ) const
-    throw( std::runtime_error )
-{
-    if( quantityNumber <= 0 || quantityNumber > _nameOfPhysicalQuantity->size() )
+std::string
+PhysicalQuantityManager::getPhysicalQuantityName( const ASTERINTEGER &quantityNumber ) const
+    throw( std::runtime_error ) {
+    if ( quantityNumber <= 0 || quantityNumber > _nameOfPhysicalQuantity->size() )
         throw std::runtime_error( "Not a known physical quantity" );
     return _nameOfPhysicalQuantity->findStringOfElement( quantityNumber );
 };

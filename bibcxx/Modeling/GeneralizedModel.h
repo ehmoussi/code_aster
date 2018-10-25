@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe GeneralizedModel
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -32,38 +32,37 @@
 #include "MemoryManager/JeveuxVector.h"
 #include "MemoryManager/JeveuxCollection.h"
 #include "Modal/DynamicMacroElement.h"
-
+#include "Supervis/ResultNaming.h"
 
 /**
  * @class GeneralizedModelInstance
  * @brief Cette classe correspond a un sd_modele_gene
  * @author Nicolas Sellenet
  */
-class GeneralizedModelInstance: public DataStructure
-{
-private:
+class GeneralizedModelInstance : public DataStructure {
+  private:
     /** @brief Objet Jeveux '.MODG.DESC' */
-    JeveuxVectorLong       _modgDesc;
+    JeveuxVectorLong _modgDesc;
     /** @brief Objet Jeveux '.MODG.LIDF' */
-    JeveuxCollectionChar8  _modgLidf;
+    JeveuxCollectionChar8 _modgLidf;
     /** @brief Objet Jeveux '.MODG.LIPR' */
-    JeveuxVectorLong       _modgLipr;
+    JeveuxVectorLong _modgLipr;
     /** @brief Objet Jeveux '.MODG.LIMA' */
-    JeveuxVectorDouble     _modgLima;
+    JeveuxVectorDouble _modgLima;
     /** @brief Objet Jeveux '.MODG.SSME' */
-    JeveuxVectorChar8      _modgSsme;
+    JeveuxVectorChar8 _modgSsme;
     /** @brief Objet Jeveux '.MODG.SSNO' */
-    JeveuxVectorChar8      _modgSsno;
+    JeveuxVectorChar8 _modgSsno;
     /** @brief Objet Jeveux '.MODG.SSOR' */
-    JeveuxVectorDouble     _modgSsor;
+    JeveuxVectorDouble _modgSsor;
     /** @brief Objet Jeveux '.MODG.SSTR' */
-    JeveuxVectorDouble     _modgSstr;
+    JeveuxVectorDouble _modgSstr;
     typedef std::map< std::string, DynamicMacroElementPtr > MapStrMacroElem;
     typedef MapStrMacroElem::iterator MapStrMacroElemIter;
     /** @brief Map which associates a name to a DynamicMacroElementPtr */
-    MapStrMacroElem        _map;
+    MapStrMacroElem _map;
 
-public:
+  public:
     /**
      * @typedef GeneralizedModelPtr
      * @brief Pointeur intelligent vers un GeneralizedModelInstance
@@ -73,33 +72,30 @@ public:
     /**
      * @brief Constructeur
      */
-    GeneralizedModelInstance(): 
-        DataStructure( "MODELE_GENE", Permanent, 14 ),
-        _modgDesc( JeveuxVectorLong( getName() + ".MODG.DESC" ) ),
-        _modgLidf( JeveuxCollectionChar8( getName() + ".MODG.DESC" ) ),
-        _modgLipr( JeveuxVectorLong( getName() + ".MODG.DESC" ) ),
-        _modgLima( JeveuxVectorDouble( getName() + ".MODG.DESC" ) ),
-        _modgSsme( JeveuxVectorChar8( getName() + ".MODG.DESC" ) ),
-        _modgSsno( JeveuxVectorChar8( getName() + ".MODG.DESC" ) ),
-        _modgSsor( JeveuxVectorDouble( getName() + ".MODG.DESC" ) ),
-        _modgSstr( JeveuxVectorDouble( getName() + ".MODG.DESC" ) )
-    {};
+    GeneralizedModelInstance( const std::string name = ResultNaming::getNewResultName())
+        : DataStructure( name, 14, "MODELE_GENE", Permanent ),
+          _modgDesc( JeveuxVectorLong( getName() + ".MODG.DESC" ) ),
+          _modgLidf( JeveuxCollectionChar8( getName() + ".MODG.DESC" ) ),
+          _modgLipr( JeveuxVectorLong( getName() + ".MODG.DESC" ) ),
+          _modgLima( JeveuxVectorDouble( getName() + ".MODG.DESC" ) ),
+          _modgSsme( JeveuxVectorChar8( getName() + ".MODG.DESC" ) ),
+          _modgSsno( JeveuxVectorChar8( getName() + ".MODG.DESC" ) ),
+          _modgSsor( JeveuxVectorDouble( getName() + ".MODG.DESC" ) ),
+          _modgSstr( JeveuxVectorDouble( getName() + ".MODG.DESC" ) ){};
 
     /**
      * @brief Add a DynamicMacroElement associated to a name
      */
-    bool addDynamicMacroElement( const std::string& name, const DynamicMacroElementPtr& elem )
-    {
-        _map[ name ] = elem;
+    bool addDynamicMacroElement( const std::string &name, const DynamicMacroElementPtr &elem ) {
+        _map[name] = elem;
         return true;
     };
 
     /**
      * @brief Get DynamicMacroElementPtr from name
      */
-    DynamicMacroElementPtr getDynamicMacroElementFromName( const std::string& name )
-    {
-        return _map[ name ];
+    DynamicMacroElementPtr getDynamicMacroElementFromName( const std::string &name ) {
+        return _map[name];
     };
 };
 

@@ -6,7 +6,7 @@
  * @brief Fichier entete de la struct SyntaxMapContainer
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -79,14 +79,13 @@ typedef VectorComplex::const_iterator VectorComplexCIter;
  * @brief Cette struct decrit un dictionnaire permettant de contenir la syntaxe des commandes Aster
  * @author Nicolas Sellenet
  */
-class SyntaxMapContainer
-{
-public:
+class SyntaxMapContainer {
+  public:
     /** @brief Typedef definissant un map associant une chaine a divers types */
-    typedef std::map< std::string, boost::variant< ASTERINTEGER, std::string, double,
-                                                   DoubleComplex, VectorLong, VectorString,
-                                                   VectorDouble, VectorComplex,
-                                                   ListSyntaxMapContainer > > SyntaxMap;
+    typedef std::map<
+        std::string,
+        boost::variant< ASTERINTEGER, std::string, double, DoubleComplex, VectorLong, VectorString,
+                        VectorDouble, VectorComplex, ListSyntaxMapContainer > > SyntaxMap;
     typedef SyntaxMap::iterator SyntaxMapIter;
     typedef SyntaxMap::const_iterator SyntaxMapCIter;
 
@@ -98,13 +97,12 @@ public:
     * @param toAdd SyntaxMapContainer à ajouter
     * @return reference to the current object
     */
-    SyntaxMapContainer& operator+=( const SyntaxMapContainer& toAdd )
-    {
-         container.insert( toAdd.container.begin(), toAdd.container.end() );
-         return *this;
+    SyntaxMapContainer &operator+=( const SyntaxMapContainer &toAdd ) {
+        container.insert( toAdd.container.begin(), toAdd.container.end() );
+        return *this;
     };
 
-protected:
+  protected:
     /**
         * @brief Convertisseur du conteneur en dictionnaire python
         * @return un dict python contenant la syntaxe valorisable par l'objet CommandSyntax
@@ -112,12 +110,12 @@ protected:
         * @todo seul CommandSyntax devrait pouvoir appeler cette fonction ?
         * @todo ajouter un const pour this
         */
-    PyObject* convertToPythonDictionnary( PyObject* returnDict = NULL ) const;
+    PyObject *convertToPythonDictionnary( PyObject *returnDict = NULL ) const;
 
-private:
+  private:
     friend class CommandSyntax;
     friend class MaterialOnMeshInstance;
-    friend SyntaxMapContainer operator+( const SyntaxMapContainer&, const SyntaxMapContainer& );
+    friend SyntaxMapContainer operator+( const SyntaxMapContainer &, const SyntaxMapContainer & );
 };
 
 /**
@@ -126,6 +124,6 @@ private:
  * @param toAdd2 SyntaxMapContainer à ajouter
  * @return SyntaxMapContainer résultat
  */
-SyntaxMapContainer operator+( const SyntaxMapContainer& toAdd1, const SyntaxMapContainer& toAdd2 );
+SyntaxMapContainer operator+( const SyntaxMapContainer &toAdd1, const SyntaxMapContainer &toAdd2 );
 
 #endif /* SYNTAXDICTIONARY_H_ */

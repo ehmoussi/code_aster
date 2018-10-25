@@ -33,23 +33,21 @@
 #include "Supervis/ResultNaming.h"
 #include "Functions/GenericFunction.h"
 
-
 /**
  * @class SurfaceInstance
  * @brief Cette classe correspond a une nappe
  * @author Nicolas Sellenet
  */
-class SurfaceInstance: public GenericFunctionInstance
-{
-private:
+class SurfaceInstance : public GenericFunctionInstance {
+  private:
     // Vecteur Jeveux '.PROL'
-    JeveuxVectorChar24     _property;
+    JeveuxVectorChar24 _property;
     // Vecteur Jeveux '.PARA'
-    JeveuxVectorDouble     _parameters;
+    JeveuxVectorDouble _parameters;
     // Vecteur Jeveux '.VALE'
     JeveuxCollectionDouble _value;
 
-public:
+  public:
     /**
      * @typedef SurfacePtr
      * @brief Pointeur intelligent vers un Surface
@@ -59,60 +57,54 @@ public:
     /**
      * @brief Constructeur
      */
-    SurfaceInstance():
-        SurfaceInstance( ResultNaming::getNewResultName() )
-    {};
+    SurfaceInstance() : SurfaceInstance( ResultNaming::getNewResultName() ){};
 
     /**
      * @brief Constructeur
      */
-    SurfaceInstance( const std::string name ):
-        GenericFunctionInstance( name, "NAPPE" ),
-        _property( JeveuxVectorChar24( getName() + ".PROL" ) ),
-        _parameters( JeveuxVectorDouble( getName() + ".PARA" ) ),
-        _value( JeveuxCollectionDouble( getName() + ".VALE" ) )
-    {};
+    SurfaceInstance( const std::string name )
+        : GenericFunctionInstance( name, "NAPPE" ),
+          _property( JeveuxVectorChar24( getName() + ".PROL" ) ),
+          _parameters( JeveuxVectorDouble( getName() + ".PARA" ) ),
+          _value( JeveuxCollectionDouble( getName() + ".VALE" ) ){};
 
     /**
      * @brief Copy extension parameters to python list
      * @return  return list of parameters
      */
-    PyObject* exportExtensionToPython() const throw ( std::runtime_error );
+    PyObject *exportExtensionToPython() const throw( std::runtime_error );
 
     /**
      * @brief Copy parameters to python list
      * @return  return list of parameters
      */
-    PyObject* exportParametersToPython() const throw ( std::runtime_error );
+    PyObject *exportParametersToPython() const throw( std::runtime_error );
 
     /**
      * @brief Copy values to python list [[[func1_abs],[func1_ord]],[[func2_abs],[func2_ord]],...]
      * @return  return list of list of list of values
      */
-    PyObject* exportValuesToPython() const throw ( std::runtime_error );
+    PyObject *exportValuesToPython() const throw( std::runtime_error );
 
     /**
      * @brief Get the result name
      * @return  name of the result
      */
-    std::string getResultName()
-    {
-        if( !_property->exists() )
+    std::string getResultName() {
+        if ( !_property->exists() )
             return "";
         _property->updateValuePointer();
-        return (*_property)[3].toString();
+        return ( *_property )[3].toString();
     };
 
     /**
      * @brief Return the number of points of the function
      */
-    ASTERINTEGER maximumSize() const throw ( std::runtime_error )
-    {
+    ASTERINTEGER maximumSize() const throw( std::runtime_error ) {
         _value->buildFromJeveux();
         ASTERINTEGER toReturn = 0;
-        for( const auto& curIter : *_value )
-        {
-            if( curIter.size() > toReturn )
+        for ( const auto &curIter : *_value ) {
+            if ( curIter.size() > toReturn )
                 toReturn = curIter.size();
         }
         return toReturn;
@@ -121,12 +113,10 @@ public:
     /**
      * @brief Return the number of points of the function
      */
-    ASTERINTEGER size() const throw ( std::runtime_error )
-    {
+    ASTERINTEGER size() const throw( std::runtime_error ) {
         _value->buildFromJeveux();
         ASTERINTEGER toReturn = 0;
-        for( const auto& curIter : *_value )
-        {
+        for ( const auto &curIter : *_value ) {
             toReturn += curIter.size();
         }
         return toReturn;

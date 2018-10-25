@@ -15,11 +15,11 @@ Development rules
 
     - Add a testcase for all new features.
 
-    - Check the source code conformance using tools like ``aslint``, ``pylint``,
-      etc.
+    - Coding standards: http://llvm.org/docs/CodingStandards.html
 
-      .. todo:: Add script to automatically run these tools.
-        For example as ``hg submit`` does.
+      Le code peut (*doit*) être reformatté en utilisant
+      :file:`$HOME/dev/codeaster/devtools/bin/beautify` (utilise le style LLVM,
+      plus les paramètres indiqués dans le fichier :file:`.clang-format`).
 
     - Document all new objects and methods.
 

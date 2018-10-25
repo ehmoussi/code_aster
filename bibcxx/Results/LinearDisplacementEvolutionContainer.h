@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe LinearDisplacementEvolutionContainer
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -29,30 +29,31 @@
 #include "astercxx.h"
 
 #include "Results/ResultsContainer.h"
-
+#include "Supervis/ResultNaming.h"
 
 /**
  * @class LinearDisplacementEvolutionContainerInstance
  * @brief Cette classe correspond a un evol_elas
  * @author Nicolas Sellenet
  */
-class LinearDisplacementEvolutionContainerInstance: public ResultsContainerInstance
-{
-public:
+class LinearDisplacementEvolutionContainerInstance : public ResultsContainerInstance {
+  public:
     /**
      * @brief Constructeur
      * @todo  Ajouter les objets Jeveux de la SD
      */
-    LinearDisplacementEvolutionContainerInstance():
-        ResultsContainerInstance( "EVOL_ELAS" )
-    {};
+    LinearDisplacementEvolutionContainerInstance()
+        : LinearDisplacementEvolutionContainerInstance( ResultNaming::getNewResultName() ){};
 
+    LinearDisplacementEvolutionContainerInstance( const std::string &name )
+        : ResultsContainerInstance( name, "EVOL_ELAS" ){};
 };
 
 /**
  * @typedef LinearDisplacementEvolutionContainerPtr
  * @brief Pointeur intelligent vers un LinearDisplacementEvolutionContainerInstance
  */
-typedef boost::shared_ptr< LinearDisplacementEvolutionContainerInstance > LinearDisplacementEvolutionContainerPtr;
+typedef boost::shared_ptr< LinearDisplacementEvolutionContainerInstance >
+    LinearDisplacementEvolutionContainerPtr;
 
 #endif /* LINEARDISPLACEMENTEVOLUTIONCONTAINER_H_ */

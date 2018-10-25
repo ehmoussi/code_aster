@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe StructureInterface
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -47,62 +47,53 @@ extern const std::vector< std::string > allInterfaceTypeNames;
  * @brief Cette classe permet de definir les interfaces d'une structure et leur affecter un type
  * @author Nicolas Sellenet
  */
-class StructureInterfaceInstance: public DataStructure
-{
-private:
+class StructureInterfaceInstance : public DataStructure {
+  private:
     /** @brief Numérotation */
-    const DOFNumberingPtr    _dofNum;
-    double                   _frequency;
-    bool                     _isEmpty;
+    const DOFNumberingPtr _dofNum;
+    double _frequency;
+    bool _isEmpty;
 
-    JeveuxCollectionLong     _codingNumbers;
-    JeveuxVectorLong         _numbering;
-    JeveuxVectorLong         _description;
-    JeveuxCollectionLong     _nodes;
-    JeveuxVectorChar8        _names;
-    JeveuxVectorChar24       _reference;
-    JeveuxVectorChar8        _types;
-    JeveuxVectorDouble       _frequencyValue;
+    JeveuxCollectionLong _codingNumbers;
+    JeveuxVectorLong _numbering;
+    JeveuxVectorLong _description;
+    JeveuxCollectionLong _nodes;
+    JeveuxVectorChar8 _names;
+    JeveuxVectorChar24 _reference;
+    JeveuxVectorChar8 _types;
+    JeveuxVectorDouble _frequencyValue;
     CapyConvertibleContainer _container;
 
-    struct InterfaceDefinition
-    {
-        const std::string        _name;
-        const InterfaceTypeEnum  _type;
-        VectorOfGroupOfNodesPtr  _groupsOfNodes;
-        const VectorComponent    _components;
+    struct InterfaceDefinition {
+        const std::string _name;
+        const InterfaceTypeEnum _type;
+        VectorOfGroupOfNodesPtr _groupsOfNodes;
+        const VectorComponent _components;
         CapyConvertibleContainer _container;
 
-        InterfaceDefinition(const std::string& name, const InterfaceTypeEnum& type,
-                            const VectorString& groupsOfNodes,
-                            const VectorComponent& components):
-            _name( name ),
-            _type( type ),
-            _components( components ),
-            _container( CapyConvertibleContainer( "INTERFACE" ) )
-        {
+        InterfaceDefinition( const std::string &name, const InterfaceTypeEnum &type,
+                             const VectorString &groupsOfNodes, const VectorComponent &components )
+            : _name( name ), _type( type ), _components( components ),
+              _container( CapyConvertibleContainer( "INTERFACE" ) ) {
             _container.add( new CapyConvertibleValue< std::string >( true, "NOM", _name, true ) );
-            _container.add( new CapyConvertibleValue< InterfaceTypeEnum >( true, "TYPE", _type,
-                                                                           allInterfaceType,
-                                                                           allInterfaceTypeNames,
-                                                                           true ) );
+            _container.add( new CapyConvertibleValue< InterfaceTypeEnum >(
+                true, "TYPE", _type, allInterfaceType, allInterfaceTypeNames, true ) );
 
-            for( const auto& iter : groupsOfNodes )
+            for ( const auto &iter : groupsOfNodes )
                 _groupsOfNodes.emplace_back( new GroupOfNodes( iter ) );
-            _container.add( new CapyConvertibleValue< VectorOfGroupOfNodesPtr >
-                                    ( true, "GROUP_NO", _groupsOfNodes, true ) );
+            _container.add( new CapyConvertibleValue< VectorOfGroupOfNodesPtr >(
+                true, "GROUP_NO", _groupsOfNodes, true ) );
 
             VectorString values( ComponentNames.size() );
             transform( ComponentNames.begin(), ComponentNames.end(), values.begin(), value );
-            _container.add( new CapyConvertibleValue< VectorComponent >
-                                    ( true, "MASQUE", _components,
-                                      allComponents, values, true ) );
+            _container.add( new CapyConvertibleValue< VectorComponent >(
+                true, "MASQUE", _components, allComponents, values, true ) );
         };
     };
 
     std::vector< InterfaceDefinition > _interfDefs;
 
-public:
+  public:
     /**
      * @typedef StructureInterfacePtr
      * @brief Pointeur intelligent vers un StructureInterface
@@ -112,64 +103,51 @@ public:
     /**
      * @brief Constructeur
      */
-    StructureInterfaceInstance():
-        StructureInterfaceInstance( ResultNaming::getNewResultName() )
-    {};
+    StructureInterfaceInstance() : StructureInterfaceInstance( ResultNaming::getNewResultName() ){};
 
     /**
      * @brief Constructeur
      */
 
-    StructureInterfaceInstance( const std::string name ):
-        DataStructure( name, 8, "INTERF_DYNA_CLAS", Permanent ),
-        _frequency( 1. ),
-        _isEmpty( true ),
-        _codingNumbers( JeveuxCollectionLong( getName() + ".IDC_DDAC" ) ),
-        _numbering( JeveuxVectorLong( getName() + ".IDC_DEFO" ) ),
-        _description( JeveuxVectorLong( getName() + ".IDC_DESC" ) ),
-        _nodes( JeveuxCollectionLong( getName() + ".IDC_LINO" ) ),
-        _names( JeveuxVectorChar8( getName() + ".IDC_NOMS" ) ),
-        _reference( JeveuxVectorChar24( getName() + ".IDC_REFE" ) ),
-        _types( JeveuxVectorChar8( getName() + ".IDC_TYPE" ) ),
-        _frequencyValue( JeveuxVectorDouble( getName() + ".IDC_DY_FREQ" ) )
-    {};
+    StructureInterfaceInstance( const std::string name )
+        : DataStructure( name, 8, "INTERF_DYNA_CLAS", Permanent ), _frequency( 1. ),
+          _isEmpty( true ), _codingNumbers( JeveuxCollectionLong( getName() + ".IDC_DDAC" ) ),
+          _numbering( JeveuxVectorLong( getName() + ".IDC_DEFO" ) ),
+          _description( JeveuxVectorLong( getName() + ".IDC_DESC" ) ),
+          _nodes( JeveuxCollectionLong( getName() + ".IDC_LINO" ) ),
+          _names( JeveuxVectorChar8( getName() + ".IDC_NOMS" ) ),
+          _reference( JeveuxVectorChar24( getName() + ".IDC_REFE" ) ),
+          _types( JeveuxVectorChar8( getName() + ".IDC_TYPE" ) ),
+          _frequencyValue( JeveuxVectorDouble( getName() + ".IDC_DY_FREQ" ) ){};
 
     /**
      * @brief Constructeur
      */
-    StructureInterfaceInstance( const DOFNumberingPtr& curDof ):
-        StructureInterfaceInstance( ResultNaming::getNewResultName(), curDof )
-    {};
+    StructureInterfaceInstance( const DOFNumberingPtr &curDof )
+        : StructureInterfaceInstance( ResultNaming::getNewResultName(), curDof ){};
 
     /**
      * @brief Constructeur
      */
 
-    StructureInterfaceInstance( const std::string name,
-                                const DOFNumberingPtr& curDof ):
-        DataStructure( name, 8, "INTERF_DYNA_CLAS", Permanent ),
-        _frequency( 1. ),
-        _isEmpty( true ),
-        _codingNumbers( JeveuxCollectionLong( getName() + ".IDC_DDAC" ) ),
-        _numbering( JeveuxVectorLong( getName() + ".IDC_DEFO" ) ),
-        _description( JeveuxVectorLong( getName() + ".IDC_DESC" ) ),
-        _nodes( JeveuxCollectionLong( getName() + ".IDC_LINO" ) ),
-        _names( JeveuxVectorChar8( getName() + ".IDC_NOMS" ) ),
-        _reference( JeveuxVectorChar24( getName() + ".IDC_REFE" ) ),
-        _types( JeveuxVectorChar8( getName() + ".IDC_TYPE" ) ),
-        _frequencyValue( JeveuxVectorDouble( getName() + ".IDC_DY_FREQ" ) ),
-        _dofNum( curDof )
-    {
-        _container.add( new CapyConvertibleValue< DOFNumberingPtr >
-                                    ( true, "NUME_DDL", _dofNum, true ) );
-        _container.add( new CapyConvertibleValue< double >
-                                    ( false, "NUME_DDL", _frequency, false ) );
+    StructureInterfaceInstance( const std::string name, const DOFNumberingPtr &curDof )
+        : DataStructure( name, 8, "INTERF_DYNA_CLAS", Permanent ), _frequency( 1. ),
+          _isEmpty( true ), _codingNumbers( JeveuxCollectionLong( getName() + ".IDC_DDAC" ) ),
+          _numbering( JeveuxVectorLong( getName() + ".IDC_DEFO" ) ),
+          _description( JeveuxVectorLong( getName() + ".IDC_DESC" ) ),
+          _nodes( JeveuxCollectionLong( getName() + ".IDC_LINO" ) ),
+          _names( JeveuxVectorChar8( getName() + ".IDC_NOMS" ) ),
+          _reference( JeveuxVectorChar24( getName() + ".IDC_REFE" ) ),
+          _types( JeveuxVectorChar8( getName() + ".IDC_TYPE" ) ),
+          _frequencyValue( JeveuxVectorDouble( getName() + ".IDC_DY_FREQ" ) ), _dofNum( curDof ) {
+        _container.add(
+            new CapyConvertibleValue< DOFNumberingPtr >( true, "NUME_DDL", _dofNum, true ) );
+        _container.add(
+            new CapyConvertibleValue< double >( false, "NUME_DDL", _frequency, false ) );
     };
 
-    void addInterface( const std::string& name, const InterfaceTypeEnum& type,
-                       const VectorString& groupsOfNodes,
-                       const VectorComponent& components = {} )
-    {
+    void addInterface( const std::string &name, const InterfaceTypeEnum &type,
+                       const VectorString &groupsOfNodes, const VectorComponent &components = {} ) {
         _interfDefs.emplace_back( name, type, groupsOfNodes, components );
     };
 

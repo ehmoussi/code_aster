@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe XfemCrack
  * @author Nicolas Tardieu
  * @section LICENCE
- *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -34,94 +34,90 @@
 #include "Functions/Function.h"
 #include "Modeling/CrackShape.h"
 
-
 /**
  * @class XfemCrackInstance
  * @brief generates a data structure identical to DEFI_FISS_XFEM
  * @author Nicolas Tardieu
  */
-class XfemCrackInstance: public DataStructure
-{
-public:
+class XfemCrackInstance : public DataStructure {
+  public:
     /**
          * @brief kind of forward declaration
          */
     typedef boost::shared_ptr< XfemCrackInstance > XfemCrackPtr;
 
-private:
+  private:
     /** @typedef Definition of a smart pointer on VirtualMeshEntity */
     typedef boost::shared_ptr< VirtualMeshEntity > MeshEntityPtr;
 
     /** @brief Name of the JEVEUX Data Structure */
-    const std::string           _jeveuxName;
+    const std::string _jeveuxName;
     /** @brief Mesh supporting the crack */
-    MeshPtr                     _supportMesh;
+    MeshPtr _supportMesh;
     /** @brief Mesh of the auxiliary grid */
-    MeshPtr                     _auxiliaryGrid;
+    MeshPtr _auxiliaryGrid;
     /** @brief Mesh of the previous auxiliary grid */
-    XfemCrackPtr                _existingCrackWithGrid;
+    XfemCrackPtr _existingCrackWithGrid;
     /** @brief Type de discontinuité */
-    std::string                 _discontinuityType;
+    std::string _discontinuityType;
     /** @brief MeshEntity defining the lips of the crack */
-    std::vector< std::string >  _crackLipsEntity;
+    std::vector< std::string > _crackLipsEntity;
     /** @brief MeshEntity defining the tip of the crack */
-    std::vector< std::string >  _crackTipEntity;
+    std::vector< std::string > _crackTipEntity;
     /** @brief Function defining the normal level set */
-    FunctionPtr                 _normalLevelSetFunction;
+    FunctionPtr _normalLevelSetFunction;
     /** @brief Function defining the tangential level set */
-    FunctionPtr                 _tangentialLevelSetFunction;
+    FunctionPtr _tangentialLevelSetFunction;
     /** @brief Crack Shape */
-    CrackShapePtr               _crackShape;
-    /** @brief List of group of elements that define the crack tip in case of propagation in the cohesive case */
-    std::vector< std::string >  _cohesiveCrackTipForPropagation;
+    CrackShapePtr _crackShape;
+    /** @brief List of group of elements that define the crack tip in case of propagation in the
+     * cohesive case */
+    std::vector< std::string > _cohesiveCrackTipForPropagation;
     /** @brief Field defining the normal level set */
-    FieldOnNodesDoublePtr       _normalLevelSetField;
+    FieldOnNodesDoublePtr _normalLevelSetField;
     /** @brief Field defining the tangential level set */
-    FieldOnNodesDoublePtr       _tangentialLevelSetField;
+    FieldOnNodesDoublePtr _tangentialLevelSetField;
     /** @brief MeshEntity defining the enriched elements */
-    std::vector< std::string >  _enrichedElements;
+    std::vector< std::string > _enrichedElements;
     /** @brief Name of the discontinuous field */
-    std::string                 _discontinuousField;
+    std::string _discontinuousField;
     /** @brief Type of the enrichment */
-    std::string                 _enrichmentType;
+    std::string _enrichmentType;
     /** @brief Radius of th enriched zone */
-    double                      _enrichmentRadiusZone;
+    double _enrichmentRadiusZone;
     /** @brief Number of enriched elements layers */
-    ASTERINTEGER                _enrichedLayersNumber;
+    ASTERINTEGER _enrichedLayersNumber;
     /** @brief List of juncting cracks */
     std::vector< XfemCrackPtr > _junctingCracks;
     /** @brief Point to define juncting cracks */
-    std::vector< double >       _pointForJunctingCracks;
-
+    std::vector< double > _pointForJunctingCracks;
 
     /** @brief Nodal Field named '.GRLTNO' */
-    FieldOnNodesDoublePtr  _tangentialLevelSetGradient;
+    FieldOnNodesDoublePtr _tangentialLevelSetGradient;
     /** @brief Nodal Field  named '.GRLNNO' */
-    FieldOnNodesDoublePtr  _normalLevelSetGradient;
+    FieldOnNodesDoublePtr _normalLevelSetGradient;
     /** @brief Nodal Field named '.BASLOC' */
-    FieldOnNodesDoublePtr  _localBasis;
+    FieldOnNodesDoublePtr _localBasis;
     /** @brief JeveuxVectorDouble  named '.FONDFISS' */
-    JeveuxVectorDouble   _crackTipCoords;
+    JeveuxVectorDouble _crackTipCoords;
     /** @brief JeveuxVectorDouble  named '.BASEFOND' */
-    JeveuxVectorDouble   _crackTipBasis;
+    JeveuxVectorDouble _crackTipBasis;
     /** @brief JeveuxVectorLong  named '.FONDMULT' */
-    JeveuxVectorLong   _crackTipMultiplicity;
+    JeveuxVectorLong _crackTipMultiplicity;
     /** @brief JeveuxVectorDouble  named '.CARAFOND' */
-    JeveuxVectorDouble   _crackTipCharacteristics;
+    JeveuxVectorDouble _crackTipCharacteristics;
     /** @brief JeveuxVectorDouble  named '.FOND.TAILLE_R' */
-    JeveuxVectorDouble   _elementSize;
+    JeveuxVectorDouble _elementSize;
     /** @brief JeveuxVectorLong  named '.GROUP_NO_ENRI' */
-    JeveuxVectorLong   _enrichedNodes;
+    JeveuxVectorLong _enrichedNodes;
     /** @brief JeveuxVectorLong  named '.MAILFISS.CTIP' */
-    JeveuxVectorLong   _crackTipElements;
+    JeveuxVectorLong _crackTipElements;
     /** @brief JeveuxVectorLong  named '.MAILFISS.HEAV' */
-    JeveuxVectorLong   _heavisideElements;
+    JeveuxVectorLong _heavisideElements;
     /** @brief JeveuxVectorLong  named '.MAILFISS.HECT' */
-    JeveuxVectorLong   _crackTipAndHeavisideElements;
+    JeveuxVectorLong _crackTipAndHeavisideElements;
 
-
-
-public:
+  public:
     /**
          * @brief Constructeur
          */
@@ -132,241 +128,174 @@ public:
          */
     XfemCrackInstance( const std::string name, MeshPtr supportMesh );
 
-
-
-
-
     /**
          * @brief Construction du XfemCrackInstance
          * @return Booleen indiquant que la construction s'est bien deroulee
          */
-    bool build() throw ( std::runtime_error );
+    bool build() throw( std::runtime_error );
 
     /**
      * @brief Enrichissement d'un ModelPtr avec la fissure XFEM
      * @param baseModel modèle à enrichir
      * @return Modèle enrichi
      */
-    ModelPtr enrichModelWithXfem( ModelPtr &baseModel ) throw ( std::runtime_error );
+    ModelPtr enrichModelWithXfem( ModelPtr &baseModel ) throw( std::runtime_error );
 
     /**
          * @brief Series of getters and setters that check the syntax rules
          */
 
-    const MeshPtr getSupportMesh() const
-    {
-        return _supportMesh;
-    };
+    const MeshPtr getSupportMesh() const { return _supportMesh; };
 
-    void setSupportMesh(const MeshPtr &supportMesh)
-    {
-        _supportMesh = supportMesh;
-    }
+    void setSupportMesh( const MeshPtr &supportMesh ) { _supportMesh = supportMesh; }
 
-    MeshPtr getAuxiliaryGrid() const
-    {
-        return _auxiliaryGrid;
-    }
+    MeshPtr getAuxiliaryGrid() const { return _auxiliaryGrid; }
 
-    void setAuxiliaryGrid(const MeshPtr &auxiliaryGrid)
-    {
-        if (_existingCrackWithGrid) throw std::runtime_error( "Cannot define auxiliary grid with already assigned Crack definition " );
+    void setAuxiliaryGrid( const MeshPtr &auxiliaryGrid ) {
+        if ( _existingCrackWithGrid )
+            throw std::runtime_error( "Cannot define auxiliary grid with already "
+                                      "assigned Crack definition " );
         _auxiliaryGrid = auxiliaryGrid;
     }
 
-    const XfemCrackPtr getExistingCrackWithGrid() const
-    {
-        return _existingCrackWithGrid;
-    }
+    const XfemCrackPtr getExistingCrackWithGrid() const { return _existingCrackWithGrid; }
 
-    void setExistingCrackWithGrid(const XfemCrackPtr &existingCrackWithGrid)
-    {
-        if (_auxiliaryGrid) throw std::runtime_error( "Cannot define existing Crack definition with already assigned auxiliary grid" );
+    void setExistingCrackWithGrid( const XfemCrackPtr &existingCrackWithGrid ) {
+        if ( _auxiliaryGrid )
+            throw std::runtime_error( "Cannot define existing Crack definition "
+                                      "with already assigned auxiliary grid" );
         _existingCrackWithGrid = existingCrackWithGrid;
     }
 
-    std::string getDiscontinuityType() const
-    {
-        return _discontinuityType;
-    }
+    std::string getDiscontinuityType() const { return _discontinuityType; }
 
-    void setDiscontinuityType(const std::string &discontinuityType)
-    {
-        if (discontinuityType!="Crack" && discontinuityType!="Interface" && discontinuityType!="Cohesive") {
+    void setDiscontinuityType( const std::string &discontinuityType ) {
+        if ( discontinuityType != "Crack" && discontinuityType != "Interface" &&
+             discontinuityType != "Cohesive" ) {
             throw std::runtime_error( "discontinuityType can only be Crack, Interface, Cohesive" );
-        } else {_discontinuityType = discontinuityType;
+        } else {
+            _discontinuityType = discontinuityType;
         }
     }
 
-    std::vector< std::string > getCrackLipsEntity() const
-    {
-        return _crackLipsEntity;
-    }
+    std::vector< std::string > getCrackLipsEntity() const { return _crackLipsEntity; }
 
-    void setCrackLipsEntity(const std::vector< std::string > &crackLips)
-    {
-        if (!(_crackShape && _normalLevelSetField && _normalLevelSetFunction)) {
+    void setCrackLipsEntity( const std::vector< std::string > &crackLips ) {
+        if ( !( _crackShape && _normalLevelSetField && _normalLevelSetFunction ) ) {
             _crackLipsEntity = crackLips;
         } else {
-            throw std::runtime_error( "Only one to be assigned into crackShape, normalLevelSetFunction, crackLips, normalLevelSetField" );
+            throw std::runtime_error( "Only one to be assigned into crackShape, "
+                                      "normalLevelSetFunction, crackLips, normalLevelSetField" );
         }
     }
 
-    std::vector< std::string > getCrackTipEntity() const
-    {
-        return _crackTipEntity;
-    }
+    std::vector< std::string > getCrackTipEntity() const { return _crackTipEntity; }
 
-    void setCrackTipEntity(const std::vector< std::string > &crackTip)
-    {
+    void setCrackTipEntity( const std::vector< std::string > &crackTip ) {
         _crackTipEntity = crackTip;
     }
 
-
-    std::vector< std::string > getCohesiveCrackTipForPropagation() const
-    {
+    std::vector< std::string > getCohesiveCrackTipForPropagation() const {
         return _cohesiveCrackTipForPropagation;
     }
 
-    void setCohesiveCrackTipForPropagation(const std::vector< std::string > &crackTipEntity)
-    {
+    void setCohesiveCrackTipForPropagation( const std::vector< std::string > &crackTipEntity ) {
         _cohesiveCrackTipForPropagation = crackTipEntity;
     }
 
-    FunctionPtr getNormalLevelSetFunction() const
-    {
-        return _normalLevelSetFunction;
-    }
+    FunctionPtr getNormalLevelSetFunction() const { return _normalLevelSetFunction; }
 
-    void setNormalLevelSetFunction(const FunctionPtr &normalLevelSetFunction)
-    {
-        if (!(_crackShape && _normalLevelSetField && _crackLipsEntity.size()!=0 )) {
+    void setNormalLevelSetFunction( const FunctionPtr &normalLevelSetFunction ) {
+        if ( !( _crackShape && _normalLevelSetField && _crackLipsEntity.size() != 0 ) ) {
             _normalLevelSetFunction = normalLevelSetFunction;
         } else {
-            throw std::runtime_error( "Only one to be assigned into crackShape, normalLevelSetFunction, crackLips, normalLevelSetField" );
+            throw std::runtime_error( "Only one to be assigned into crackShape, "
+                                      "normalLevelSetFunction, crackLips, normalLevelSetField" );
         }
     }
 
-    FunctionPtr getTangentialLevelSetFunction() const
-    {
-        return _tangentialLevelSetFunction;
-    }
+    FunctionPtr getTangentialLevelSetFunction() const { return _tangentialLevelSetFunction; }
 
-    void setTangentialLevelSetFunction(const FunctionPtr &tangentialLevelSetFunction)
-    {
+    void setTangentialLevelSetFunction( const FunctionPtr &tangentialLevelSetFunction ) {
         _tangentialLevelSetFunction = tangentialLevelSetFunction;
     }
 
-    CrackShapePtr getCrackShape() const
-    {
-        return _crackShape;
-    }
+    CrackShapePtr getCrackShape() const { return _crackShape; }
 
-    void setCrackShape(const CrackShapePtr &crackShape)
-    {
-        if (!(_normalLevelSetFunction && _normalLevelSetField && _crackLipsEntity.size()!=0 )) {
+    void setCrackShape( const CrackShapePtr &crackShape ) {
+        if ( !( _normalLevelSetFunction && _normalLevelSetField &&
+                _crackLipsEntity.size() != 0 ) ) {
             _crackShape = crackShape;
         } else {
-            throw std::runtime_error( "Only one to be assigned into crackShape, normalLevelSetFunction, crackLips, normalLevelSetField" );
+            throw std::runtime_error( "Only one to be assigned into crackShape, "
+                                      "normalLevelSetFunction, crackLips, normalLevelSetField" );
         }
     }
 
-    FieldOnNodesDoublePtr getNormalLevelSetField() const
-    {
+    FieldOnNodesDoublePtr getNormalLevelSetField() const {
         _normalLevelSetField->updateValuePointers();
         return _normalLevelSetField;
     }
 
-    void setNormalLevelSetField(const FieldOnNodesDoublePtr &normalLevelSetField)
-    {
-        if (!(_crackShape && _crackLipsEntity.size()!=0 && _normalLevelSetFunction)) {
+    void setNormalLevelSetField( const FieldOnNodesDoublePtr &normalLevelSetField ) {
+        if ( !( _crackShape && _crackLipsEntity.size() != 0 && _normalLevelSetFunction ) ) {
             _normalLevelSetField = normalLevelSetField;
         } else {
-            throw std::runtime_error( "Only one to be assigned into crackShape, normalLevelSetFunction, crackLips, normalLevelSetField" );
+            throw std::runtime_error( "Only one to be assigned into crackShape, "
+                                      "normalLevelSetFunction, crackLips, normalLevelSetField" );
         }
     }
 
-    FieldOnNodesDoublePtr getTangentialLevelSetField() const
-    {
+    FieldOnNodesDoublePtr getTangentialLevelSetField() const {
         _tangentialLevelSetField->updateValuePointers();
         return _tangentialLevelSetField;
     }
 
-    void setTangentialLevelSetField(const FieldOnNodesDoublePtr &tangentialLevelSet)
-    {
+    void setTangentialLevelSetField( const FieldOnNodesDoublePtr &tangentialLevelSet ) {
         _tangentialLevelSetField = tangentialLevelSet;
     }
 
-    std::vector< std::string > getEnrichedElements() const
-    {
-        return _enrichedElements;
-    }
+    std::vector< std::string > getEnrichedElements() const { return _enrichedElements; }
 
-    void setEnrichedElements(const std::vector< std::string > &enrichedElements)
-    {
+    void setEnrichedElements( const std::vector< std::string > &enrichedElements ) {
         _enrichedElements = enrichedElements;
     }
 
-    std::string getDiscontinuousField() const
-    {
-        return _discontinuousField;
-    }
+    std::string getDiscontinuousField() const { return _discontinuousField; }
 
-    void setDiscontinuousField(const std::string &discontinuousField)
-    {
+    void setDiscontinuousField( const std::string &discontinuousField ) {
         _discontinuousField = discontinuousField;
     }
 
+    std::string getEnrichmentType() const { return _enrichmentType; }
 
-    std::string getEnrichmentType() const
-    {
-        return _enrichmentType;
-    }
-
-    void setEnrichmentType(const std::string &enrichmentType)
-    {
+    void setEnrichmentType( const std::string &enrichmentType ) {
         _enrichmentType = enrichmentType;
     }
 
-    double getEnrichmentRadiusZone() const
-    {
-        return _enrichmentRadiusZone;
-    }
+    double getEnrichmentRadiusZone() const { return _enrichmentRadiusZone; }
 
-    void setEnrichmentRadiusZone(double enrichmentRadiusZone)
-    {
+    void setEnrichmentRadiusZone( double enrichmentRadiusZone ) {
         _enrichmentRadiusZone = enrichmentRadiusZone;
     }
 
-    ASTERINTEGER getEnrichedLayersNumber() const
-    {
-        return _enrichedLayersNumber;
-    }
+    ASTERINTEGER getEnrichedLayersNumber() const { return _enrichedLayersNumber; }
 
-    void setEnrichedLayersNumber(long enrichedLayersNumber)
-    {
+    void setEnrichedLayersNumber( long enrichedLayersNumber ) {
         _enrichedLayersNumber = enrichedLayersNumber;
     }
 
-    std::vector<XfemCrackPtr> getJunctingCracks() const
-    {
-        return _junctingCracks;
+    std::vector< XfemCrackPtr > getJunctingCracks() const { return _junctingCracks; }
+
+    void insertJunctingCracks( const XfemCrackPtr &junctingCracks ) {
+        _junctingCracks.push_back( junctingCracks );
     }
 
-    void insertJunctingCracks(const XfemCrackPtr &junctingCracks)
-    {
-        _junctingCracks.push_back(junctingCracks);
-    }
-
-    void setPointForJunction(const std::vector<double> point)
-    {
+    void setPointForJunction( const std::vector< double > point ) {
         _pointForJunctingCracks = point;
     }
-    
-    std::string getJeveuxName() const
-    {
-        return _jeveuxName;
-    }
+
+    std::string getJeveuxName() const { return _jeveuxName; }
 };
 
 /**
@@ -375,6 +304,4 @@ public:
  */
 typedef boost::shared_ptr< XfemCrackInstance > XfemCrackPtr;
 
-
 #endif /* XFEMCRACK_H_ */
-

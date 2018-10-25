@@ -3,7 +3,7 @@
  * @brief Interface python de NonLinearMethod
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -25,33 +25,28 @@
 #include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
-void exportNonLinearMethodToPython()
-{
+void exportNonLinearMethodToPython() {
     using namespace boost::python;
 
     enum_< NonLinearMethodEnum >( "NonLinearMethodEnum" )
         .value( "NewtonMethod", NewtonMethod )
         .value( "Implex", Implex )
-        .value( "NewtonKrylov", NewtonKrylov )
-        ;
+        .value( "NewtonKrylov", NewtonKrylov );
 
     enum_< PredictionEnum >( "PredictionEnum" )
         .value( "Tangente", Tangente )
         .value( "Elastique", Elastique )
         .value( "Extrapole", Extrapole )
-        .value( "DeplCalcule", DeplCalcule )
-        ;
+        .value( "DeplCalcule", DeplCalcule );
 
-    enum_< MatrixEnum >( "MatrixEnum" )
-        .value( "MatriceTangente", MatriceTangente )
-        .value( "MatriceElastique",MatriceElastique  )
-        ;
+    enum_< MatrixEnum >( "MatrixEnum" ).value( "MatriceTangente", MatriceTangente ).value(
+        "MatriceElastique", MatriceElastique );
 
-    class_< NonLinearMethodInstance, NonLinearMethodPtr > ( "NonLinearMethod", no_init )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< NonLinearMethodInstance, NonLinearMethodEnum > ) )
+    class_< NonLinearMethodInstance, NonLinearMethodPtr >( "NonLinearMethod", no_init )
+        // fake initFactoryPtr: not a DataStructure
+        .def( "__init__",
+              make_constructor(&initFactoryPtr< NonLinearMethodInstance, NonLinearMethodEnum >))
         .def( "setPrediction", &NonLinearMethodInstance::setPrediction )
         .def( "setMatrix", &NonLinearMethodInstance::setMatrix )
-        .def( "forceStiffnessSymetry", &NonLinearMethodInstance::forceStiffnessSymetry )
-    ;
+        .def( "forceStiffnessSymetry", &NonLinearMethodInstance::forceStiffnessSymetry );
 };

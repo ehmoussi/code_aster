@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe MatchingMeshes
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -29,7 +29,7 @@
 #include "astercxx.h"
 #include "DataStructures/DataStructure.h"
 #include "MemoryManager/JeveuxVector.h"
-
+#include "Supervis/ResultNaming.h"
 #include "Meshes/Mesh.h"
 
 /**
@@ -37,35 +37,34 @@
  * @brief Cette classe decrit un corresp_2_mailla
  * @author Nicolas Sellenet
  */
-class MatchingMeshesInstance: public DataStructure
-{
-private:
+class MatchingMeshesInstance : public DataStructure {
+  private:
     /** @brief Objet Jeveux '.PJXX_K1' */
     JeveuxVectorChar24 _pjxxK1;
     /** @brief Objet Jeveux '.PJEF_NB' */
-    JeveuxVectorLong   _pjefNb;
+    JeveuxVectorLong _pjefNb;
     /** @brief Objet Jeveux '.PJEF_NU' */
-    JeveuxVectorLong   _pjefNu;
+    JeveuxVectorLong _pjefNu;
     /** @brief Objet Jeveux '.PJEF_M1' */
-    JeveuxVectorLong   _pjefM1;
+    JeveuxVectorLong _pjefM1;
     /** @brief Objet Jeveux '.PJEF_CF' */
     JeveuxVectorDouble _pjefCf;
     /** @brief Objet Jeveux '.PJEF_TR' */
-    JeveuxVectorLong   _pjefTr;
+    JeveuxVectorLong _pjefTr;
     /** @brief Objet Jeveux '.PJEF_CO' */
     JeveuxVectorDouble _pjefCo;
     /** @brief Objet Jeveux '.PJEF_EL' */
-    JeveuxVectorLong   _pjefEl;
+    JeveuxVectorLong _pjefEl;
     /** @brief Objet Jeveux '.PJEF_MP' */
-    JeveuxVectorChar8  _pjefMp;
+    JeveuxVectorChar8 _pjefMp;
     /** @brief Objet Jeveux '.PJNG_I1' */
-    JeveuxVectorLong   _pjngI1;
+    JeveuxVectorLong _pjngI1;
     /** @brief Objet Jeveux '.PJNG_I2' */
-    JeveuxVectorLong   _pjngI2;
+    JeveuxVectorLong _pjngI2;
     /** @brief Premier Maillage */
-    BaseMeshPtr          _firstBaseMesh;
+    BaseMeshPtr _firstBaseMesh;
 
-public:
+  public:
     /**
      * @typedef MatchingMeshesPtr
      * @brief Pointeur intelligent vers un MatchingMeshesInstance
@@ -75,17 +74,15 @@ public:
     /**
      * @brief Constructeur
      */
-    MatchingMeshesInstance();
+    MatchingMeshesInstance( const std::string name = ResultNaming::getNewResultName() );
 
-    bool setFirstMesh( MeshPtr& currentMesh ) throw ( std::runtime_error )
-    {
+    bool setFirstMesh( MeshPtr &currentMesh ) throw( std::runtime_error ) {
         if ( currentMesh->isEmpty() )
             throw std::runtime_error( "Mesh is empty" );
         _firstBaseMesh = currentMesh;
         return true;
     };
 };
-
 
 /**
  * @typedef MatchingMeshesPtr

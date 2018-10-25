@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe GenericStepper
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2015  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -28,10 +28,9 @@
 
 /**
  * @class GenericStepper
- * @brief 
+ * @brief
  * @author Nicolas Sellenet
  */
-class GenericStepper
-{};
+class GenericStepper {};
 
 #endif /* GENERICSTEPPER_H_ */

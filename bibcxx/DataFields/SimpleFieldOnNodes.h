@@ -40,26 +40,24 @@
  * @brief Cette classe template permet de definir un champ aux noeuds Aster
  * @author Nicolas Sellenet
  */
-template< class ValueType >
-class SimpleFieldOnNodesInstance: public DataStructure
-{
-private:
+template < class ValueType > class SimpleFieldOnNodesInstance : public DataStructure {
+  private:
     /** @brief Vecteur Jeveux '.CNSK' */
-    JeveuxVectorChar8       _descriptor;
+    JeveuxVectorChar8 _descriptor;
     /** @brief Vecteur Jeveux '.CNSD' */
-    JeveuxVectorLong        _size;
+    JeveuxVectorLong _size;
     /** @brief Vecteur Jeveux '.CNSC' */
-    JeveuxVectorChar8       _component;
+    JeveuxVectorChar8 _component;
     /** @brief Vecteur Jeveux '.CNSV' */
-    JeveuxVector<ValueType> _values;
+    JeveuxVector< ValueType > _values;
     /** @brief Vecteur Jeveux '.CNSL' */
-    JeveuxVectorLogical     _allocated;
+    JeveuxVectorLogical _allocated;
     /** @brief Nombre de noeuds */
-    int                     _nbNodes;
+    int _nbNodes;
     /** @brief Nombre de composantes */
-    int                     _nbComp;
+    int _nbComp;
 
-public:
+  public:
     /**
      * @typedef SimpleFieldOnNodesPtr
      * @brief Pointeur intelligent vers un SimpleFieldOnNodes
@@ -70,36 +68,27 @@ public:
      * @brief Constructeur
      * @param name Nom Jeveux du champ aux noeuds
      */
-    SimpleFieldOnNodesInstance( const std::string name ):
-                    DataStructure( name, 19, "CHAM_NO_S" ),
-                    _descriptor( JeveuxVectorChar8( getName() + ".CNSK" ) ),
-                    _size( JeveuxVectorLong( getName() + ".CNSD" ) ),
-                    _component( JeveuxVectorChar8( getName() + ".CNSC" ) ),
-                    _values( JeveuxVector<ValueType>( getName() + ".CNSV" ) ),
-                    _allocated( JeveuxVectorLogical( getName() + ".CNSL" ) ),
-                    _nbNodes( 0 ),
-                    _nbComp( 0 )
-    {
-    };
+    SimpleFieldOnNodesInstance( const std::string name )
+        : DataStructure( name, 19, "CHAM_NO_S" ),
+          _descriptor( JeveuxVectorChar8( getName() + ".CNSK" ) ),
+          _size( JeveuxVectorLong( getName() + ".CNSD" ) ),
+          _component( JeveuxVectorChar8( getName() + ".CNSC" ) ),
+          _values( JeveuxVector< ValueType >( getName() + ".CNSV" ) ),
+          _allocated( JeveuxVectorLogical( getName() + ".CNSL" ) ), _nbNodes( 0 ), _nbComp( 0 ){};
 
     /**
      * @brief Constructeur
      * @param memType Mémoire d'allocation
      */
-    SimpleFieldOnNodesInstance( const JeveuxMemory memType = Permanent ):
-                    DataStructure( "CHAM_NO_S", memType, 19 ),
-                    _descriptor( JeveuxVectorChar8( getName() + ".CNSK" ) ),
-                    _size( JeveuxVectorLong( getName() + ".CNSD" ) ),
-                    _component( JeveuxVectorChar8( getName() + ".CNSC" ) ),
-                    _values( JeveuxVector<ValueType>( getName() + ".CNSV" ) ),
-                    _allocated( JeveuxVectorLogical( getName() + ".CNSL" ) ),
-                    _nbNodes( 0 ),
-                    _nbComp( 0 )
-    {
-    };
+    SimpleFieldOnNodesInstance( const JeveuxMemory memType = Permanent )
+        : DataStructure( "CHAM_NO_S", memType, 19 ),
+          _descriptor( JeveuxVectorChar8( getName() + ".CNSK" ) ),
+          _size( JeveuxVectorLong( getName() + ".CNSD" ) ),
+          _component( JeveuxVectorChar8( getName() + ".CNSC" ) ),
+          _values( JeveuxVector< ValueType >( getName() + ".CNSV" ) ),
+          _allocated( JeveuxVectorLogical( getName() + ".CNSL" ) ), _nbNodes( 0 ), _nbComp( 0 ){};
 
-    ~SimpleFieldOnNodesInstance()
-    {
+    ~SimpleFieldOnNodesInstance() {
 #ifdef __DEBUG_GC__
         std::cout << "SimpleFieldOnNodes.destr: " << this->getName() << std::endl;
 #endif
@@ -110,46 +99,40 @@ public:
      * @param i Indice dans le tableau Jeveux
      * @return la valeur du tableau Jeveux a la position i
      */
-    ValueType &operator[]( int i )
-    {
-        return _values->operator[](i);
-    };
+    ValueType &operator[]( int i ) { return _values->operator[]( i ); };
 
-    const ValueType& getValue( int nodeNumber, int compNumber ) const
+    const ValueType &getValue( int nodeNumber, int compNumber ) const
 #ifdef __DEBUG_GC__
         throw( std::runtime_error )
 #endif
     {
 #ifdef __DEBUG_GC__
-        if( _nbNodes == 0 || _nbComp == 0 )
+        if ( _nbNodes == 0 || _nbComp == 0 )
             throw std::runtime_error( "First call of updateValuePointers is mandatory" );
 #endif
-        const long position = nodeNumber*_nbComp + compNumber;
-        return (*_values)[ position ];
+        const long position = nodeNumber * _nbComp + compNumber;
+        return ( *_values )[position];
     };
 
     /**
      * @brief Mise a jour des pointeurs Jeveux
      * @return renvoie true si la mise a jour s'est bien deroulee, false sinon
      */
-    bool updateValuePointers() throw( std::runtime_error )
-    {
+    bool updateValuePointers() throw( std::runtime_error ) {
         bool retour = _descriptor->updateValuePointer();
         retour = ( retour && _size->updateValuePointer() );
         retour = ( retour && _component->updateValuePointer() );
         retour = ( retour && _values->updateValuePointer() );
         retour = ( retour && _allocated->updateValuePointer() );
-        if( retour )
-        {
-            _nbNodes = (*_size)[0];
-            _nbComp = (*_size)[1];
-            if( _values->size() != _nbNodes*_nbComp )
+        if ( retour ) {
+            _nbNodes = ( *_size )[0];
+            _nbComp = ( *_size )[1];
+            if ( _values->size() != _nbNodes * _nbComp )
                 throw std::runtime_error( "Programming error" );
         }
         return retour;
     };
 };
-
 
 /** @typedef SimpleFieldOnNodesDoubleInstance Instance d'une champ simple de doubles */
 typedef SimpleFieldOnNodesInstance< double > SimpleFieldOnNodesDoubleInstance;

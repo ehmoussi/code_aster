@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe DiscreteProblem
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2015  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -30,34 +30,33 @@
 
 #include <vector>
 
-#include "Studies/StudyDescription.h"
-#include "LinearAlgebra/ElementaryVector.h"
-#include "LinearAlgebra/ElementaryMatrix.h"
 #include "Discretization/DOFNumbering.h"
+#include "LinearAlgebra/ElementaryMatrix.h"
+#include "LinearAlgebra/ElementaryVector.h"
+#include "Studies/StudyDescription.h"
 
 /**
  * @class DiscreteProblemInstance
  * @brief Cette classe permet de definir une étude au sens Aster
  * @author Nicolas Sellenet
  */
-class DiscreteProblemInstance
-{
-private:
+class DiscreteProblemInstance {
+  private:
     /** @brief Etude definie par l'utilisateur */
     StudyDescriptionPtr _study;
 
     /**
      * @brief Production d'un CommandSyntax pour CALC_MATR_ELEM
      */
-    SyntaxMapContainer computeMatrixSyntax( const std::string& optionName );
+    SyntaxMapContainer computeMatrixSyntax( const std::string &optionName );
 
     /**
      * @brief Calcul des matrices elementaires pour une option quelconque
      */
-    ElementaryMatrixPtr computeMechanicalMatrix( const std::string& optionName )
-        throw ( std::runtime_error );
+    ElementaryMatrixPtr
+    computeMechanicalMatrix( const std::string &optionName ) throw( std::runtime_error );
 
-public:
+  public:
     /**
      * @typedef DiscreteProblemPtr
      * @brief Pointeur intelligent vers un DiscreteProblem
@@ -68,20 +67,17 @@ public:
      * @brief Constructeur
      * @param StudyDescriptionPtr Etude utilisateur
      */
-    DiscreteProblemInstance( const StudyDescriptionPtr& currentStudy ):
-        _study( currentStudy )
-    {};
+    DiscreteProblemInstance( const StudyDescriptionPtr &currentStudy ) : _study( currentStudy ){};
 
     /**
      * @brief Desctructeur
      */
-    ~DiscreteProblemInstance()
-    {};
+    ~DiscreteProblemInstance(){};
 
     /**
      * @brief Calcul des matrices elementaires pour l'option CHAR_MECA
      */
-    ElementaryVectorPtr buildElementaryMechanicalLoadsVector() throw ( std::runtime_error );
+    ElementaryVectorPtr buildElementaryMechanicalLoadsVector() throw( std::runtime_error );
 
     /**
      * @brief Fonction permettant de calculer les vecteurs élémentaires pour les
@@ -101,11 +97,12 @@ public:
     /**
      * @brief Fonction permettant de calculer les vecteurs élémentaires pour les
               chargements de Neumann
-     * @param time Instants de calcul (vecteur de longueur 3 : instant courant, deltat, paramètre theta
+     * @param time Instants de calcul (vecteur de longueur 3 : instant courant, deltat, paramètre
+     theta
      * @return Vecteur élémentaire
      */
-    ElementaryVectorPtr buildElementaryNeumannVector( const VectorDouble time )
-        throw ( std::runtime_error );
+    ElementaryVectorPtr
+    buildElementaryNeumannVector( const VectorDouble time ) throw( std::runtime_error );
 
     /**
      * @brief Fonction permettant de calculer les matrices élémentaires de rigidité
@@ -127,44 +124,41 @@ public:
      * @brief Construction d'un vecteur de chargement cinématique
      * @return Booleen indiquant que tout s'est bien passe
      */
-    FieldOnNodesDoublePtr buildKinematicsLoad( const BaseDOFNumberingPtr& curDOFNum,
-                                               const double& time,
-                                               const JeveuxMemory& memType = Permanent )
-        const throw ( std::runtime_error );
+    FieldOnNodesDoublePtr buildKinematicsLoad( const BaseDOFNumberingPtr &curDOFNum,
+                                               const double &time,
+                                               const JeveuxMemory &memType = Permanent ) const
+        throw( std::runtime_error );
 
     /**
      * @brief Détermination de la numérotation de ddl
      * @return Numérotation du problème discret
      */
-    BaseDOFNumberingPtr computeDOFNumbering( BaseDOFNumberingPtr dofNum = BaseDOFNumberingPtr( nullptr ) );
+    BaseDOFNumberingPtr
+    computeDOFNumbering( BaseDOFNumberingPtr dofNum = BaseDOFNumberingPtr( nullptr ) );
 
     /**
      * @brief Calcul des matrices elementaires pour l'option AMOR_MECA
      */
-    ElementaryMatrixPtr computeMechanicalDampingMatrix( const ElementaryMatrixPtr& rigidity,
-                                                        const ElementaryMatrixPtr& mass )
-        throw ( std::runtime_error );
+    ElementaryMatrixPtr
+    computeMechanicalDampingMatrix( const ElementaryMatrixPtr &rigidity,
+                                    const ElementaryMatrixPtr &mass ) throw( std::runtime_error );
 
     /**
      * @brief Calcul des matrices elementaires pour l'option RIGI_MECA
      */
-    ElementaryMatrixPtr computeMechanicalStiffnessMatrix() throw ( std::runtime_error );
+    ElementaryMatrixPtr computeMechanicalStiffnessMatrix() throw( std::runtime_error );
 
     /**
      * @brief Calcul des matrices elementaires pour l'option MASS_MECA
      */
-    ElementaryMatrixPtr computeMechanicalMassMatrix() throw ( std::runtime_error );
+    ElementaryMatrixPtr computeMechanicalMassMatrix() throw( std::runtime_error );
 
     /**
      * @brief Récupération de l'étude
      * @return Numérotation du problème discret
      */
-    StudyDescriptionPtr getStudyDescription()
-    {
-        return _study;
-    };
+    StudyDescriptionPtr getStudyDescription() { return _study; };
 };
-
 
 /**
  * @typedef DiscreteProblemPtr

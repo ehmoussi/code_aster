@@ -37,10 +37,7 @@ class ComputeAdditionalField(ExecuteCommand):
         if keywords.has_key("reuse"):
             self._result = keywords["reuse"]
         else:
-            if keywords["RESULTAT"].getType() == "EVOL_ELAS":
-                self._result = type(keywords["RESULTAT"])()
-            else:
-                self._result = type(keywords["RESULTAT"])()
+            self._result = type(keywords["RESULTAT"])()
 
     def post_exec(self, keywords):
         """Execute the command.

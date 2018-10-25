@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe LocalizationManager
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -36,148 +36,113 @@ extern const char GROUP_NO[];
 typedef CapyConvertibleValue< VectorOfMeshEntityPtr > LocalizationCapyConvertibleValue;
 typedef boost::shared_ptr< LocalizationCapyConvertibleValue > LocalizationCapyConvertibleValuePtr;
 
-class GenericLocalizationManager
-{
-private:
-    std::string  _name;
-    bool         _isMandatory;
+class GenericLocalizationManager {
+  private:
+    std::string _name;
+    bool _isMandatory;
 
-protected:
+  protected:
     CapyValuePtr _skw;
 
-public:
-    GenericLocalizationManager( const std::string& name, const bool& mandatory ):
-        _name( name ),
-        _isMandatory( mandatory )
-    {};
+  public:
+    GenericLocalizationManager( const std::string &name, const bool &mandatory )
+        : _name( name ), _isMandatory( mandatory ){};
 
-    void disable()
-    {
-        _skw->disable();
-    };
+    void disable() { _skw->disable(); };
 
-    void enable()
-    {
-        _skw->enable();
-    };
+    void enable() { _skw->enable(); };
 
-    std::string getName() const
-    {
-        return _name;
-    };
+    std::string getName() const { return _name; };
 
-    CapyValuePtr getCapyConvertibleValuePtr() const throw( std::runtime_error )
-    {
-        return _skw;
-    };
+    CapyValuePtr getCapyConvertibleValuePtr() const throw( std::runtime_error ) { return _skw; };
 
-    void setMandatory( const bool& mandatory )
-    {
-        _skw->setMandatory( mandatory );
-    };
+    void setMandatory( const bool &mandatory ) { _skw->setMandatory( mandatory ); };
 };
 
-template< const char* tmp = GROUP_MA >
-class GroupOfElementsManager: public GenericLocalizationManager
-{
-private:
+template < const char *tmp = GROUP_MA >
+class GroupOfElementsManager : public GenericLocalizationManager {
+  private:
     VectorOfMeshEntityPtr _vecOfGrp;
 
-public:
-    GroupOfElementsManager( const bool& mandatory = false ):
-        GenericLocalizationManager( tmp, mandatory )
-    {
+  public:
+    GroupOfElementsManager( const bool &mandatory = false )
+        : GenericLocalizationManager( tmp, mandatory ) {
         _skw = CapyValuePtr( new LocalizationCapyConvertibleValue( mandatory, std::string( tmp ),
                                                                    _vecOfGrp, false ) );
     };
 
-    void addGroupOfElements( const std::string& name )
-    {
+    void addGroupOfElements( const std::string &name ) {
         _vecOfGrp.push_back( GroupOfElementsPtr( new GroupOfElements( name ) ) );
         _skw->enable();
     };
 };
 
-template< const char* tmp = GROUP_NO >
-class GroupOfNodesManager: public GenericLocalizationManager
-{
-private:
+template < const char *tmp = GROUP_NO >
+class GroupOfNodesManager : public GenericLocalizationManager {
+  private:
     VectorOfMeshEntityPtr _vecOfGrp;
 
-public:
-    GroupOfNodesManager( const bool& mandatory = false ):
-        GenericLocalizationManager( tmp, mandatory )
-    {
+  public:
+    GroupOfNodesManager( const bool &mandatory = false )
+        : GenericLocalizationManager( tmp, mandatory ) {
         _skw = CapyValuePtr( new LocalizationCapyConvertibleValue( mandatory, std::string( tmp ),
                                                                    _vecOfGrp, false ) );
     };
 
-    void addGroupOfNodes( const std::string& name )
-    {
+    void addGroupOfNodes( const std::string &name ) {
         _vecOfGrp.push_back( GroupOfNodesPtr( new GroupOfNodes( name ) ) );
         _skw->enable();
     };
 };
 
-class AllMeshEntitiesManager: public GenericLocalizationManager
-{
-private:
+class AllMeshEntitiesManager : public GenericLocalizationManager {
+  private:
     bool _on;
 
-public:
-    AllMeshEntitiesManager( const bool& mandatory = false ):
-        GenericLocalizationManager( "TOUT", mandatory ),
-        _on( false )
-    {
-        _skw = CapyValuePtr( new CapyConvertibleValue< bool >( mandatory, "TOUT", _on,
-                                                               { true, false }, { "OUI", "NON" },
-                                                               false ) );
+  public:
+    AllMeshEntitiesManager( const bool &mandatory = false )
+        : GenericLocalizationManager( "TOUT", mandatory ), _on( false ) {
+        _skw = CapyValuePtr( new CapyConvertibleValue< bool >(
+            mandatory, "TOUT", _on, {true, false}, {"OUI", "NON"}, false ) );
     };
 
-    void setOnAllMeshEntities()
-    {
+    void setOnAllMeshEntities() {
         _on = true;
         _skw->enable();
     };
 };
 
-template< typename... EntityLocalization >
-class CapyLocalizationManager: public EntityLocalization...
-{
-private:
+template < typename... EntityLocalization >
+class CapyLocalizationManager : public EntityLocalization... {
+  private:
     template < class... B >
-    typename std::enable_if< sizeof...(B) == 0, CapyConvertibleContainer >::type
-    loopOverVariadicValues( CapyConvertibleContainer toReturn )
-    {
+    typename std::enable_if< sizeof...( B ) == 0, CapyConvertibleContainer >::type
+    loopOverVariadicValues( CapyConvertibleContainer toReturn ) {
         return toReturn;
     };
 
     template < class A, class... B >
     CapyConvertibleContainer
-    loopOverVariadicValues( CapyConvertibleContainer toReturn = CapyConvertibleContainer() )
-    {
+    loopOverVariadicValues( CapyConvertibleContainer toReturn = CapyConvertibleContainer() ) {
         toReturn.add( A::getCapyConvertibleValuePtr() );
-        return loopOverVariadicValues<B... >( toReturn );
+        return loopOverVariadicValues< B... >( toReturn );
     };
 
-public:
-    CapyLocalizationManager(): EntityLocalization()...
-    {};
+  public:
+    CapyLocalizationManager() : EntityLocalization()... {};
 
-    CapyConvertibleContainer getCapyConvertibleContainer()
-    {
+    CapyConvertibleContainer getCapyConvertibleContainer() {
         return loopOverVariadicValues< EntityLocalization... >();
     };
 };
 
-typedef CapyLocalizationManager< GroupOfElementsManager<>,
-                                 GroupOfNodesManager<>,
+typedef CapyLocalizationManager< GroupOfElementsManager<>, GroupOfNodesManager<>,
                                  AllMeshEntitiesManager > AllNodesElementsLocalization;
 
-typedef CapyLocalizationManager< GroupOfElementsManager<>,
-                                 AllMeshEntitiesManager > AllElementsLocalization;
+typedef CapyLocalizationManager< GroupOfElementsManager<>, AllMeshEntitiesManager >
+    AllElementsLocalization;
 
-typedef CapyLocalizationManager< GroupOfElementsManager<>,
-                                 GroupOfNodesManager<> > NodesElementsLocalization;
+typedef CapyLocalizationManager< GroupOfElementsManager<>, GroupOfNodesManager<> >
+    NodesElementsLocalization;
 
 #endif /* LOCALIZATIONMANEGER_H_ */

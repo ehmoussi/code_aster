@@ -29,13 +29,10 @@
 #include "Supervis/CommandSyntax.h"
 #include "Utilities/Tools.h"
 
-
-FieldOnNodesComplexPtr MechanicalModeComplexContainerInstance::getEmptyFieldOnNodesComplex( const std::string name,
-                                                                              const int rank )
-    throw ( std::runtime_error )
-{
+FieldOnNodesComplexPtr MechanicalModeComplexContainerInstance::getEmptyFieldOnNodesComplex(
+    const std::string name, const int rank ) throw( std::runtime_error ) {
     const ASTERINTEGER nbRanks = getNumberOfRanks();
-    if( rank > nbRanks || rank <= 0 )
+    if ( rank > nbRanks || rank <= 0 )
         throw std::runtime_error( "Order number out of range" );
     ASTERINTEGER retour;
     retour = 0;
@@ -48,29 +45,23 @@ FieldOnNodesComplexPtr MechanicalModeComplexContainerInstance::getEmptyFieldOnNo
     FieldOnNodesComplexPtr result( new FieldOnNodesComplexInstance( bis ) );
 
     auto curIter = _dictOfVectorOfComplexFieldsNodes.find( name );
-    if( curIter == _dictOfVectorOfComplexFieldsNodes.end() )
-    {
-        _dictOfVectorOfComplexFieldsNodes[ name ] = VectorOfComplexFieldsNodes( nbRanks );
+    if ( curIter == _dictOfVectorOfComplexFieldsNodes.end() ) {
+        _dictOfVectorOfComplexFieldsNodes[name] = VectorOfComplexFieldsNodes( nbRanks );
     }
-    _dictOfVectorOfComplexFieldsNodes[ name ][ rank-1 ] = result;
+    _dictOfVectorOfComplexFieldsNodes[name][rank - 1] = result;
     return result;
 };
 
-
-FieldOnNodesComplexPtr MechanicalModeComplexContainerInstance::getComplexFieldOnNodes( const std::string name,
-                                                                     const int rank ) const
-    throw ( std::runtime_error )
-{
+FieldOnNodesComplexPtr MechanicalModeComplexContainerInstance::getComplexFieldOnNodes(
+    const std::string name, const int rank ) const throw( std::runtime_error ) {
     const ASTERINTEGER nbRanks = getNumberOfRanks();
-    if( rank > nbRanks || rank <= 0 )
+    if ( rank > nbRanks || rank <= 0 )
         throw std::runtime_error( "Order number out of range" );
 
     auto curIter = _dictOfVectorOfComplexFieldsNodes.find( trim( name ) );
-    if( curIter == _dictOfVectorOfComplexFieldsNodes.end() )
+    if ( curIter == _dictOfVectorOfComplexFieldsNodes.end() )
         throw std::runtime_error( "Field " + name + " unknown in the results container" );
 
-    FieldOnNodesComplexPtr toReturn = curIter->second[ rank-1 ];
+    FieldOnNodesComplexPtr toReturn = curIter->second[rank - 1];
     return toReturn;
 };
-
-

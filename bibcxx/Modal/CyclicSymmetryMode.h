@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe CyclicSymmetryMode
  * @author Natacha Bereux
  * @section LICENCE
- *   Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -33,40 +33,39 @@
 #include "LinearAlgebra/StructureInterface.h"
 #include "MemoryManager/JeveuxVector.h"
 #include "Meshes/Mesh.h"
-
+#include "Supervis/ResultNaming.h"
 
 /**
  * @class CyclicSymmetryModeInstance
  * @brief Cette classe correspond a un MOD_CYCL
  * @author Natacha Bereux
  */
-class CyclicSymmetryModeInstance: public DataStructure
-{
-private:
+class CyclicSymmetryModeInstance : public DataStructure {
+  private:
     /** @brief Objet Jeveux '.CYCL_TYPE */
-    JeveuxVectorChar8      _type;
+    JeveuxVectorChar8 _type;
     /** @brief Objet Jeveux '.CYCL_DESC' */
-    JeveuxVectorLong       _desc;
+    JeveuxVectorLong _desc;
     /** @brief Objet Jeveux '.CYCL_DIAM' */
-    JeveuxVectorLong       _diam;
+    JeveuxVectorLong _diam;
     /** @brief Objet Jeveux '.CYCL_NBSC' */
-    JeveuxVectorLong       _numberOfSectors;
+    JeveuxVectorLong _numberOfSectors;
     /** @brief Objet Jeveux '.CYCL_REFE' */
-    JeveuxVectorChar24     _refe;
+    JeveuxVectorChar24 _refe;
     /** @brief Objet Jeveux '.CYCL_NUIN' */
-    JeveuxVectorLong        _interfaceIndices;
+    JeveuxVectorLong _interfaceIndices;
     /** @brief Objet Jeveux '.CYCL_CMODE' */
-    JeveuxVectorComplex     _cMode;
+    JeveuxVectorComplex _cMode;
     /** @brief Objet Jeveux .CYCL_FREQ */
-    JeveuxVectorComplex     _cFreq;
+    JeveuxVectorComplex _cFreq;
     /** @brief Support Mesh  */
-    MeshPtr                 _supportMesh;
+    MeshPtr _supportMesh;
     /** @brief Structure Interface */
-    StructureInterfacePtr   _structInterf;
+    StructureInterfacePtr _structInterf;
     /** @brief Modal Basis */
-    StandardModalBasisPtr   _modalBasis;
+    StandardModalBasisPtr _modalBasis;
 
-public:
+  public:
     /**
      * @typedef CyclicSymmetryModePtr
      * @brief Pointeur intelligent vers un CyclicSymmetryModeInstance
@@ -76,38 +75,34 @@ public:
     /**
      * @brief Constructeur
      */
-    CyclicSymmetryModeInstance():
-        DataStructure( "MODE_CYCL", Permanent, 8 ),
-        _type( JeveuxVectorChar8( getName() + ".CYCL_TYPE" ) ),
-        _desc( JeveuxVectorLong( getName() + ".CYCL_DESC" ) ),
-        _diam( JeveuxVectorLong( getName() +"CYCL_DIAM" ) ),
-        _numberOfSectors( JeveuxVectorLong( getName() + ".CYCL_NBSC" ) ),
-        _refe( JeveuxVectorChar24( getName() + ".CYCL_REFE" ) ),
-        _cFreq( JeveuxVectorComplex( getName() + ".CYCL_FREQ" ) ),
-        _interfaceIndices( JeveuxVectorLong( getName() + ".CYCL_NUIN") ),
-        _cMode( JeveuxVectorComplex( getName() + ".CYCL_MODE" ) ),
-        /** Pointers to objects listed in _refe */
-        _supportMesh( MeshPtr() ),
-        _structInterf( StructureInterfacePtr() ),
-        _modalBasis( StandardModalBasisPtr())
+    CyclicSymmetryModeInstance( const std::string name = ResultNaming::getNewResultName() )
+        : DataStructure( name, 8, "MODE_CYCL", Permanent ),
+          _type( JeveuxVectorChar8( getName() + ".CYCL_TYPE" ) ),
+          _desc( JeveuxVectorLong( getName() + ".CYCL_DESC" ) ),
+          _diam( JeveuxVectorLong( getName() + "CYCL_DIAM" ) ),
+          _numberOfSectors( JeveuxVectorLong( getName() + ".CYCL_NBSC" ) ),
+          _refe( JeveuxVectorChar24( getName() + ".CYCL_REFE" ) ),
+          _cFreq( JeveuxVectorComplex( getName() + ".CYCL_FREQ" ) ),
+          _interfaceIndices( JeveuxVectorLong( getName() + ".CYCL_NUIN" ) ),
+          _cMode( JeveuxVectorComplex( getName() + ".CYCL_MODE" ) ),
+          /** Pointers to objects listed in _refe */
+          _supportMesh( MeshPtr() ), _structInterf( StructureInterfacePtr() ),
+          _modalBasis( StandardModalBasisPtr() )
 
-    {};
+              {};
 
-
-     bool setSupportMesh( MeshPtr& currentMesh ) throw ( std::runtime_error )
-    {
+    bool setSupportMesh( MeshPtr &currentMesh ) throw( std::runtime_error ) {
         if ( currentMesh->isEmpty() )
-           throw std::runtime_error( "Mesh is empty" );
-           _supportMesh = currentMesh;
+            throw std::runtime_error( "Mesh is empty" );
+        _supportMesh = currentMesh;
         return true;
     };
-    bool setStructureInterface( StructureInterfacePtr& currentStructInterf ) throw ( std::runtime_error )
-    {
+    bool setStructureInterface( StructureInterfacePtr &currentStructInterf ) throw(
+        std::runtime_error ) {
         _structInterf = currentStructInterf;
         return true;
     };
-    bool setModalBasis( StandardModalBasisPtr& currentModalBasis ) throw ( std::runtime_error )
-    {
+    bool setModalBasis( StandardModalBasisPtr &currentModalBasis ) throw( std::runtime_error ) {
         _modalBasis = currentModalBasis;
         return true;
     };
@@ -123,6 +118,5 @@ typedef boost::shared_ptr< CyclicSymmetryModeInstance > CyclicSymmetryModePtr;
  * @brief Definition du maillage
  * @param currentMesh objet MeshPtr sur lequel le Mode Cyclique reposera
  */
-
 
 #endif /* CyclicSymmetryMode_H_ */

@@ -1,9 +1,9 @@
 /**
  * @file Geometry.cxx
  * @brief Geometry implementation
- * @author Natacha Béreux 
+ * @author Natacha Béreux
  * @section LICENCE
- *   Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -20,9 +20,9 @@
  *   You should have received a copy of the GNU General Public License
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <vector>
 #include "Geometry/Geometry.h"
+#include <vector>
 
-const std::vector<UnitVectorEnum> allUnitVector = { Ex, Ey, Ez, FirstTangentVector, SecondTangentVector, NormalVector };
-const std::vector< std::string > allUnitVectorNames = { "DX", "DY", "DZ", "DTAN", "DTAN2", "DNOR"};
-
+const std::vector< UnitVectorEnum > allUnitVector = {
+    Ex, Ey, Ez, FirstTangentVector, SecondTangentVector, NormalVector};
+const std::vector< std::string > allUnitVectorNames = {"DX", "DY", "DZ", "DTAN", "DTAN2", "DNOR"};

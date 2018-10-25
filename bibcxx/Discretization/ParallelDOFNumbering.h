@@ -11,7 +11,7 @@
  * @brief Fichier entete de la classe ParallelDOFNumbering
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -38,11 +38,9 @@
  * @brief Cette classe decrit un maillage Aster parallèle
  * @author Nicolas Sellenet
  */
-class ParallelDOFNumberingInstance: public BaseDOFNumberingInstance
-{
-private:
-
-public:
+class ParallelDOFNumberingInstance : public BaseDOFNumberingInstance {
+  private:
+  public:
     /**
      * @typedef ParallelDOFNumberingPtr
      * @brief Pointeur intelligent vers un ParallelDOFNumberingInstance
@@ -52,23 +50,20 @@ public:
     /**
      * @brief Constructeur
      */
-    ParallelDOFNumberingInstance( const JeveuxMemory memType = Permanent ):
-        BaseDOFNumberingInstance( "NUME_DDL_P", memType )
-    {};
+    ParallelDOFNumberingInstance( const JeveuxMemory memType = Permanent )
+        : BaseDOFNumberingInstance( "NUME_DDL_P", memType ){};
 
     /**
      * @brief Constructeur
      * @param name nom souhaité de la sd (utile pour le BaseDOFNumberingInstance d'une sd_resu)
      */
-    ParallelDOFNumberingInstance( const std::string name, const JeveuxMemory memType = Permanent ):
-        BaseDOFNumberingInstance( name, "NUME_DDL_P", memType )
-    {};
+    ParallelDOFNumberingInstance( const std::string name, const JeveuxMemory memType = Permanent )
+        : BaseDOFNumberingInstance( name, "NUME_DDL_P", memType ){};
 
     /**
      * @brief Destructeur
      */
-    ~ParallelDOFNumberingInstance() throw ( std::runtime_error )
-    {
+    ~ParallelDOFNumberingInstance() throw( std::runtime_error ) {
 #ifdef __DEBUG_GC__
         std::cout << "ParallelDOFNumbering.destr: " << this->getName() << std::endl;
 #endif
@@ -78,19 +73,15 @@ public:
      * @brief Methode permettant de savoir si l'objet est parallel
      * @return true
      */
-    bool isParallel()
-    {
-        return true;
-    };
+    bool isParallel() { return true; };
 
     /**
      * @brief Methode permettant de definir les matrices elementaires
      * @param currentMatrix objet ElementaryMatrix
      */
-    void setElementaryMatrix( const ElementaryMatrixPtr& currentMatrix )
-        throw ( std::runtime_error )
-    {
-        if( ! currentMatrix->getSupportModel()->getSupportMesh()->isParallel() )
+    void
+    setElementaryMatrix( const ElementaryMatrixPtr &currentMatrix ) throw( std::runtime_error ) {
+        if ( !currentMatrix->getSupportModel()->getSupportMesh()->isParallel() )
             throw std::runtime_error( "Support mesh must be parallel" );
         BaseDOFNumberingInstance::setElementaryMatrix( currentMatrix );
     };
@@ -99,10 +90,8 @@ public:
      * @brief Methode permettant de definir le modele support
      * @param currentModel Model support de la numerotation
      */
-    void setSupportModel( const ModelPtr& currentModel )
-        throw ( std::runtime_error )
-    {
-        if( ! currentModel->getSupportMesh()->isParallel() )
+    void setSupportModel( const ModelPtr &currentModel ) throw( std::runtime_error ) {
+        if ( !currentModel->getSupportMesh()->isParallel() )
             throw std::runtime_error( "Support mesh must be parallel" );
         BaseDOFNumberingInstance::setSupportModel( currentModel );
     };

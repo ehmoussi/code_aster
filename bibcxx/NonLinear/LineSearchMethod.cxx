@@ -1,9 +1,9 @@
 /**
  * @file LineSearchMethod.cxx
- * @brief Implementation of LineSearch 
+ * @brief Implementation of LineSearch
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -26,7 +26,4 @@
 #include "astercxx.h"
 
 #include "NonLinear/LineSearchMethod.h"
-const char* LineSearchNames[nbLineSearch] = { "CORDE", "MIXTE", "PILOTAGE" };
-
-
-
+const char *LineSearchNames[nbLineSearch] = {"CORDE", "MIXTE", "PILOTAGE"};

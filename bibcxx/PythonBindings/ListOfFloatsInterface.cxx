@@ -3,7 +3,7 @@
  * @brief Interface python de ListOfFloats
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -27,22 +27,15 @@
 #include <PythonBindings/factory.h>
 #include "PythonBindings/ListOfFloatsInterface.h"
 
-
-void exportListOfFloatsToPython()
-{
+void exportListOfFloatsToPython() {
     using namespace boost::python;
 
-    class_< ListOfFloatsInstance,
-            ListOfFloatsInstance::ListOfFloatsPtr,
-            bases< DataStructure > > ( "ListOfFloats", no_init )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< ListOfFloatsInstance >) )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< ListOfFloatsInstance,
-                             std::string >) )
+    class_< ListOfFloatsInstance, ListOfFloatsInstance::ListOfFloatsPtr, bases< DataStructure > >(
+        "ListOfFloats", no_init )
+        .def( "__init__", make_constructor(&initFactoryPtr< ListOfFloatsInstance >))
+        .def( "__init__", make_constructor(&initFactoryPtr< ListOfFloatsInstance, std::string >))
         .def( "getValues", &ListOfFloatsInstance::getValues )
         .def( "setVectorValues", &ListOfFloatsInstance::setVectorValues )
-//         .def( "size", &ListOfFloatsInstance::size )
-        .add_property("size", &ListOfFloatsInstance::size)
-    ;
+        //         .def( "size", &ListOfFloatsInstance::size )
+        .add_property( "size", &ListOfFloatsInstance::size );
 };

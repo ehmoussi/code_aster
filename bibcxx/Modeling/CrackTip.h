@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe CrackTip
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -26,19 +26,18 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "astercxx.h"
+#include "DataFields/FieldOnNodes.h"
 #include "DataStructures/DataStructure.h"
 #include "MemoryManager/JeveuxVector.h"
-#include "DataFields/FieldOnNodes.h"
+#include "astercxx.h"
 
 /**
  * @class CrackTipInstance
  * @brief Cette classe decrit un fond_fiss
  * @author Nicolas Sellenet
  */
-class CrackTipInstance: public DataStructure
-{
-private:
+class CrackTipInstance : public DataStructure {
+  private:
     /** @brief Objet Jeveux '.INFO' */
     JeveuxVectorChar8 _info;
     /** @brief Objet Jeveux '.FONDFISS' */
@@ -78,7 +77,7 @@ private:
     /** @brief Objet Jeveux '.INFNORM.NOEU' */
     JeveuxVectorChar8 _infNormNoeud;
 
-public:
+  public:
     /**
      * @typedef CrackTipPtr
      * @brief Pointeur intelligent vers un CrackTipInstance
@@ -88,9 +87,8 @@ public:
     /**
      * @brief Constructeur
      */
-    CrackTipInstance();
+    CrackTipInstance( const std::string name = ResultNaming::getNewResultName() );
 };
-
 
 /**
  * @typedef CrackTipPtr

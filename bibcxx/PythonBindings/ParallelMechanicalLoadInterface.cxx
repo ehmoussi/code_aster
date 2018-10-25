@@ -3,7 +3,7 @@
  * @brief Interface python de ParallelMechanicalLoad
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -25,26 +25,19 @@
 #include <PythonBindings/factory.h>
 #include "PythonBindings/ParallelMechanicalLoadInterface.h"
 
-
 #ifdef _USE_MPI
 
-void exportParallelMechanicalLoadToPython()
-{
+void exportParallelMechanicalLoadToPython() {
     using namespace boost::python;
 
     class_< ParallelMechanicalLoadInstance,
-            ParallelMechanicalLoadInstance::ParallelMechanicalLoadPtr,
-            bases< DataStructure > > ( "ParallelMechanicalLoad", no_init )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< ParallelMechanicalLoadInstance,
-                             GenericMechanicalLoadPtr,
-                             ModelPtr >) )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< ParallelMechanicalLoadInstance,
-                             std::string,
-                             GenericMechanicalLoadPtr,
-                             ModelPtr >) )
-    ;
+            ParallelMechanicalLoadInstance::ParallelMechanicalLoadPtr, bases< DataStructure > >(
+        "ParallelMechanicalLoad", no_init )
+        .def( "__init__", make_constructor(&initFactoryPtr< ParallelMechanicalLoadInstance,
+                                                            GenericMechanicalLoadPtr, ModelPtr >))
+        .def( "__init__",
+              make_constructor(&initFactoryPtr< ParallelMechanicalLoadInstance, std::string,
+                                                GenericMechanicalLoadPtr, ModelPtr >));
 };
 
 #endif /* _USE_MPI */

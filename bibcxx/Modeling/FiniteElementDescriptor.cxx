@@ -3,7 +3,7 @@
  * @brief Implementation de FiniteElementDescriptor
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -24,23 +24,19 @@
 #include "Modeling/FiniteElementDescriptor.h"
 #include <algorithm>
 
-FiniteElementDescriptorInstance::FiniteElementDescriptorInstance(
-            const std::string& name,
-            const BaseMeshPtr mesh,
-            const JeveuxMemory memType ):
-    DataStructure( name, 19, "LIGREL", memType ),
-    _numberOfDelayedNumberedConstraintNodes( getName() + ".NBNO" ),
-    _parameters( getName() + ".LGRF" ),
-    _dofDescriptor( getName() + ".PRNM" ),
-    _listOfGroupOfElements( getName() + ".LIEL" ),
-    _groupOfElementsNumberByElement( getName() + ".REPE" ),
-    _delayedNumberedConstraintElementsDescriptor( getName() + ".NEMA" ),
-    _dofOfDelayedNumberedConstraintNodes( getName() + ".PRNS" ),
-    _delayedNodesNumbering( getName() + ".LGNS" ),
-    _superElementsDescriptor( getName() + ".SSSA" ),
-    _nameOfNeighborhoodStructure( getName() + ".NVGE" ),
-    _mesh( mesh ),
-    _explorer( ConnectivityDelayedElementsExplorer( _delayedNumberedConstraintElementsDescriptor ) ),
-    _explorer2( ConnectivityDelayedElementsExplorer( _listOfGroupOfElements ) )
-{
-};
+FiniteElementDescriptorInstance::FiniteElementDescriptorInstance( const std::string &name,
+                                                                  const BaseMeshPtr mesh,
+                                                                  const JeveuxMemory memType )
+    : DataStructure( name, 19, "LIGREL", memType ),
+      _numberOfDelayedNumberedConstraintNodes( getName() + ".NBNO" ),
+      _parameters( getName() + ".LGRF" ), _dofDescriptor( getName() + ".PRNM" ),
+      _listOfGroupOfElements( getName() + ".LIEL" ),
+      _groupOfElementsNumberByElement( getName() + ".REPE" ),
+      _delayedNumberedConstraintElementsDescriptor( getName() + ".NEMA" ),
+      _dofOfDelayedNumberedConstraintNodes( getName() + ".PRNS" ),
+      _delayedNodesNumbering( getName() + ".LGNS" ),
+      _superElementsDescriptor( getName() + ".SSSA" ),
+      _nameOfNeighborhoodStructure( getName() + ".NVGE" ), _mesh( mesh ),
+      _explorer(
+          ConnectivityDelayedElementsExplorer( _delayedNumberedConstraintElementsDescriptor ) ),
+      _explorer2( ConnectivityDelayedElementsExplorer( _listOfGroupOfElements ) ){};

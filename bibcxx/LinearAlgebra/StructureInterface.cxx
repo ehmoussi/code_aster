@@ -3,7 +3,7 @@
  * @brief
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -25,31 +25,25 @@
 
 #include "LinearAlgebra/StructureInterface.h"
 
-const std::vector< InterfaceTypeEnum > allInterfaceType = { MacNeal, CraigBampton,
-                                                            HarmonicCraigBampton,
-                                                            NoInterfaceType };
-const std::vector< std::string > allInterfaceTypeNames = { "MNEAL", "CRAIGB",
-                                                           "CB_HARMO", "AUCUN" };
+const std::vector< InterfaceTypeEnum > allInterfaceType = {MacNeal, CraigBampton,
+                                                           HarmonicCraigBampton, NoInterfaceType};
+const std::vector< std::string > allInterfaceTypeNames = {"MNEAL", "CRAIGB", "CB_HARMO", "AUCUN"};
 
-bool StructureInterfaceInstance::build() throw( std::runtime_error )
-{
+bool StructureInterfaceInstance::build() throw( std::runtime_error ) {
     CommandSyntax cmdSt( "DEFI_INTERF_DYNA" );
     cmdSt.setResult( getName(), "INTERF_DYNA_CLAS" );
 
     CapyConvertibleSyntax syntax;
     syntax.setSimpleKeywordValues( _container );
-    for( const auto& iter : _interfDefs )
+    for ( const auto &iter : _interfDefs )
         syntax.addCapyConvertibleContainer( iter._container );
 
     cmdSt.define( syntax );
 
-    try
-    {
+    try {
         ASTERINTEGER op = 98;
         CALL_EXECOP( &op );
-    }
-    catch( ... )
-    {
+    } catch ( ... ) {
         throw;
     }
     _isEmpty = false;

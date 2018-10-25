@@ -3,7 +3,7 @@
  * @brief Interface python de AcousticsLoad
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -25,20 +25,14 @@
 #include <PythonBindings/factory.h>
 #include "PythonBindings/AcousticsLoadInterface.h"
 
-
-void exportAcousticsLoadToPython()
-{
+void exportAcousticsLoadToPython() {
     using namespace boost::python;
 
     class_< AcousticsLoadInstance, AcousticsLoadInstance::AcousticsLoadPtr,
-            bases< DataStructure > > ( "AcousticsLoad", no_init )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< AcousticsLoadInstance,
-                             ModelPtr >) )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< AcousticsLoadInstance,
-                             std::string,
-                             ModelPtr >) )
+            bases< DataStructure > >( "AcousticsLoad", no_init )
+        .def( "__init__", make_constructor(&initFactoryPtr< AcousticsLoadInstance, ModelPtr >))
+        .def( "__init__",
+              make_constructor(&initFactoryPtr< AcousticsLoadInstance, std::string, ModelPtr >))
         .def( "addImposedNormalSpeedOnAllMesh",
               &AcousticsLoadInstance::addImposedNormalSpeedOnAllMesh )
         .def( "addImposedNormalSpeedOnGroupsOfElements",
@@ -46,8 +40,7 @@ void exportAcousticsLoadToPython()
         .def( "addImpedanceOnAllMesh", &AcousticsLoadInstance::addImpedanceOnAllMesh )
         .def( "addImpedanceOnGroupsOfElements",
               &AcousticsLoadInstance::addImpedanceOnGroupsOfElements )
-        .def( "addImposedPressureOnAllMesh",
-              &AcousticsLoadInstance::addImposedPressureOnAllMesh )
+        .def( "addImposedPressureOnAllMesh", &AcousticsLoadInstance::addImposedPressureOnAllMesh )
         .def( "addImposedPressureOnGroupsOfElements",
               &AcousticsLoadInstance::addImposedPressureOnGroupsOfElements )
         .def( "addImposedPressureOnGroupsOfNodes",
@@ -57,6 +50,5 @@ void exportAcousticsLoadToPython()
         .def( "addUniformConnectionOnGroupsOfNodes",
               &AcousticsLoadInstance::addUniformConnectionOnGroupsOfNodes )
         .def( "build", &AcousticsLoadInstance::build )
-        .def( "getFiniteElementDescriptor", &AcousticsLoadInstance::getFiniteElementDescriptor )
-    ;
+        .def( "getFiniteElementDescriptor", &AcousticsLoadInstance::getFiniteElementDescriptor );
 };

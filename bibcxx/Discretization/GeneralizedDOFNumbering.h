@@ -29,106 +29,102 @@
 #include "astercxx.h"
 
 #include "DataStructures/DataStructure.h"
-#include "MemoryManager/JeveuxVector.h"
-#include "MemoryManager/JeveuxCollection.h"
 #include "LinearAlgebra/MatrixStorage.h"
-#include "Supervis/ResultNaming.h"
+#include "MemoryManager/JeveuxCollection.h"
+#include "MemoryManager/JeveuxVector.h"
 #include "Modeling/GeneralizedModel.h"
+#include "Supervis/ResultNaming.h"
 
 /**
  * @class GeneralizedFieldOnNodesDescriptionInstance
  * @brief This class describes the structure of dof stored in a field on nodes
  * @author Nicolas Sellenet
  */
-class GeneralizedFieldOnNodesDescriptionInstance: public DataStructure
-{
+class GeneralizedFieldOnNodesDescriptionInstance : public DataStructure {
     /** @brief Objet Jeveux '.DESC' */
-    JeveuxVectorLong       _desc;
+    JeveuxVectorLong _desc;
     /** @brief Objet Jeveux '.NEQU' */
-    JeveuxVectorLong       _nequ;
+    JeveuxVectorLong _nequ;
     /** @brief Objet Jeveux '.REFN' */
-    JeveuxVectorChar24     _refn;
+    JeveuxVectorChar24 _refn;
     /** @brief Objet Jeveux '.DEEQ' */
-    JeveuxVectorLong       _deeq;
+    JeveuxVectorLong _deeq;
     /** @brief Objet Jeveux '.DELG' */
-    JeveuxVectorLong       _delg;
+    JeveuxVectorLong _delg;
     /** @brief Objet Jeveux '.LILI' */
-    JeveuxVectorChar24     _lili;
+    JeveuxVectorChar24 _lili;
     /** @brief Objet Jeveux '.NUEQ' */
-    JeveuxVectorLong       _nueq;
+    JeveuxVectorLong _nueq;
     /** @brief Objet Jeveux '.PRNO' */
-    JeveuxCollectionLong   _prno;
+    JeveuxCollectionLong _prno;
     /** @brief Objet Jeveux '.ORIG' */
-    JeveuxCollectionLong   _orig;
+    JeveuxCollectionLong _orig;
 
-public:
+  public:
     /**
      * @brief Constructeur
      */
-    GeneralizedFieldOnNodesDescriptionInstance( const JeveuxMemory memType = Permanent ):
-        DataStructure( ResultNaming::getNewResultName(), 19, "PROF_GENE", memType ),
-        _desc( JeveuxVectorLong( getName() + ".DESC" ) ),
-        _nequ( JeveuxVectorLong( getName() + ".NEQU" ) ),
-        _refn( JeveuxVectorChar24( getName() + ".REFN" ) ),
-        _deeq( JeveuxVectorLong( getName() + ".DEEQ" ) ),
-        _delg( JeveuxVectorLong( getName() + ".DELG" ) ),
-        _lili( JeveuxVectorChar24( getName() + ".LILI" ) ),
-        _nueq( JeveuxVectorLong( getName() + ".NUEQ" ) ),
-        _prno( JeveuxCollectionLong( getName() + ".PRNO" ) ),
-        _orig( JeveuxCollectionLong( getName() + ".ORIG" ) )
-    {};
+    GeneralizedFieldOnNodesDescriptionInstance( const JeveuxMemory memType = Permanent )
+        : DataStructure( ResultNaming::getNewResultName(), 19, "PROF_GENE", memType ),
+          _desc( JeveuxVectorLong( getName() + ".DESC" ) ),
+          _nequ( JeveuxVectorLong( getName() + ".NEQU" ) ),
+          _refn( JeveuxVectorChar24( getName() + ".REFN" ) ),
+          _deeq( JeveuxVectorLong( getName() + ".DEEQ" ) ),
+          _delg( JeveuxVectorLong( getName() + ".DELG" ) ),
+          _lili( JeveuxVectorChar24( getName() + ".LILI" ) ),
+          _nueq( JeveuxVectorLong( getName() + ".NUEQ" ) ),
+          _prno( JeveuxCollectionLong( getName() + ".PRNO" ) ),
+          _orig( JeveuxCollectionLong( getName() + ".ORIG" ) ){};
 
     /**
      * @brief Destructor
      */
-    ~GeneralizedFieldOnNodesDescriptionInstance()
-    {};
+    ~GeneralizedFieldOnNodesDescriptionInstance(){};
 
     /**
      * @brief Constructeur
-     * @param name nom souhaité de la sd (utile pour le GeneralizedFieldOnNodesDescriptionInstance d'une sd_resu)
+     * @param name nom souhaité de la sd (utile pour le GeneralizedFieldOnNodesDescriptionInstance
+     * d'une sd_resu)
      */
     GeneralizedFieldOnNodesDescriptionInstance( const std::string name,
-                                                const JeveuxMemory memType = Permanent ):
-        DataStructure( name, 19, "PROF_GENE", memType ),
-        _desc( JeveuxVectorLong( getName() + ".DESC" ) ),
-        _nequ( JeveuxVectorLong( getName() + ".NEQU" ) ),
-        _refn( JeveuxVectorChar24( getName() + ".REFN" ) ),
-        _deeq( JeveuxVectorLong( getName() + ".DEEQ" ) ),
-        _delg( JeveuxVectorLong( getName() + ".DELG" ) ),
-        _lili( JeveuxVectorChar24( getName() + ".LILI" ) ),
-        _nueq( JeveuxVectorLong( getName() + ".NUEQ" ) ),
-        _prno( JeveuxCollectionLong( getName() + ".PRNO" ) ),
-        _orig( JeveuxCollectionLong( getName() + ".ORIG" ) )
-    {};
+                                                const JeveuxMemory memType = Permanent )
+        : DataStructure( name, 19, "PROF_GENE", memType ),
+          _desc( JeveuxVectorLong( getName() + ".DESC" ) ),
+          _nequ( JeveuxVectorLong( getName() + ".NEQU" ) ),
+          _refn( JeveuxVectorChar24( getName() + ".REFN" ) ),
+          _deeq( JeveuxVectorLong( getName() + ".DEEQ" ) ),
+          _delg( JeveuxVectorLong( getName() + ".DELG" ) ),
+          _lili( JeveuxVectorChar24( getName() + ".LILI" ) ),
+          _nueq( JeveuxVectorLong( getName() + ".NUEQ" ) ),
+          _prno( JeveuxCollectionLong( getName() + ".PRNO" ) ),
+          _orig( JeveuxCollectionLong( getName() + ".ORIG" ) ){};
 };
 typedef boost::shared_ptr< GeneralizedFieldOnNodesDescriptionInstance >
-        GeneralizedFieldOnNodesDescriptionPtr;
+    GeneralizedFieldOnNodesDescriptionPtr;
 
 /**
  * @class GeneralizedDOFNumberingInstance
  * @brief Cette classe correspond a un sd_nume_ddl_gene
  * @author Nicolas Sellenet
  */
-class GeneralizedDOFNumberingInstance: public DataStructure
-{
-private:
+class GeneralizedDOFNumberingInstance : public DataStructure {
+  private:
     /** @brief Objet Jeveux '.BASE' */
-    JeveuxVectorDouble                    _base;
+    JeveuxVectorDouble _base;
     /** @brief Objet Jeveux '.NOMS' */
-    JeveuxVectorChar8                     _noms;
+    JeveuxVectorChar8 _noms;
     /** @brief Objet Jeveux '.TAIL' */
-    JeveuxVectorLong                      _tail;
+    JeveuxVectorLong _tail;
     /** @brief Objet Jeveux '.SMOS' */
-    MorseStoragePtr                       _smos;
+    MorseStoragePtr _smos;
     /** @brief Objet Jeveux '.SLCS' */
-    LigneDeCielPtr                        _slcs;
+    LigneDeCielPtr _slcs;
     /** @brief support GeneralizedFieldOnNodesDescription */
     GeneralizedFieldOnNodesDescriptionPtr _nume;
     /** @brief support GeneralizedFieldOnNodesDescription */
-    GeneralizedModelPtr                   _model;
+    GeneralizedModelPtr _model;
 
-public:
+  public:
     /**
      * @typedef GeneralizedDOFNumberingPtr
      * @brief Pointeur intelligent vers un GeneralizedDOFNumbering
@@ -138,37 +134,31 @@ public:
     /**
      * @brief Constructeur
      */
-    GeneralizedDOFNumberingInstance():
-        GeneralizedDOFNumberingInstance( ResultNaming::getNewResultName() )
-    {};
+    GeneralizedDOFNumberingInstance()
+        : GeneralizedDOFNumberingInstance( ResultNaming::getNewResultName() ){};
 
     /**
      * @brief Constructeur
      */
-    GeneralizedDOFNumberingInstance( const std::string name ):
-        DataStructure( name, 14, "NUME_DDL_GENE", Permanent ),
-        _base( JeveuxVectorDouble( getName() + ".ELIM.BASE" ) ),
-        _noms( JeveuxVectorChar8( getName() + ".ELIM.NOMS" ) ),
-        _tail( JeveuxVectorLong( getName() + ".ELIM.TAIL" ) ),
-        _smos( new MorseStorageInstance( getName() + ".SMOS" ) ),
-        _slcs( new LigneDeCielInstance( getName() + ".SLCS" ) ),
-        _nume( new GeneralizedFieldOnNodesDescriptionInstance( getName() + ".NUME" ) ),
-        _model( nullptr )
-    {};
+    GeneralizedDOFNumberingInstance( const std::string name )
+        : DataStructure( name, 14, "NUME_DDL_GENE", Permanent ),
+          _base( JeveuxVectorDouble( getName() + ".ELIM.BASE" ) ),
+          _noms( JeveuxVectorChar8( getName() + ".ELIM.NOMS" ) ),
+          _tail( JeveuxVectorLong( getName() + ".ELIM.TAIL" ) ),
+          _smos( new MorseStorageInstance( getName() + ".SMOS" ) ),
+          _slcs( new LigneDeCielInstance( getName() + ".SLCS" ) ),
+          _nume( new GeneralizedFieldOnNodesDescriptionInstance( getName() + ".NUME" ) ),
+          _model( nullptr ){};
 
     /**
      * @brief Get the support GeneralizedModel
      */
-    GeneralizedModelPtr getGeneralizedModel() const
-    {
-        return _model;
-    };
+    GeneralizedModelPtr getGeneralizedModel() const { return _model; };
 
     /**
      * @brief Set the support GeneralizedModel
      */
-    bool setGeneralizedModel( const GeneralizedModelPtr& model )
-    {
+    bool setGeneralizedModel( const GeneralizedModelPtr &model ) {
         _model = model;
         return true;
     };

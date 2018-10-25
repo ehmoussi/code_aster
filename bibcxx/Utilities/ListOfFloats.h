@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe ListOfFloats
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -36,19 +36,18 @@
  * @brief Cette classe correspond a une listr8
  * @author Nicolas Sellenet
  */
-class ListOfFloatsInstance: public DataStructure
-{
-private:
+class ListOfFloatsInstance : public DataStructure {
+  private:
     /** @brief Objet Jeveux '.BINT' */
-    JeveuxVectorDouble   _bint;
+    JeveuxVectorDouble _bint;
     /** @brief Objet Jeveux '.LPAS' */
-    JeveuxVectorDouble   _lpas;
+    JeveuxVectorDouble _lpas;
     /** @brief Objet Jeveux '.NBPA' */
-    JeveuxVectorLong     _nbPa;
+    JeveuxVectorLong _nbPa;
     /** @brief Objet Jeveux '.VALE' */
-    JeveuxVectorDouble   _vale;
+    JeveuxVectorDouble _vale;
 
-public:
+  public:
     /**
      * @typedef ListOfFloatsPtr
      * @brief Pointeur intelligent vers un ListOfFloats
@@ -58,24 +57,21 @@ public:
     /**
      * @brief Constructeur
      */
-    ListOfFloatsInstance():
-        ListOfFloatsInstance( ResultNaming::getNewResultName() )
-    {};
+    ListOfFloatsInstance() : ListOfFloatsInstance( ResultNaming::getNewResultName() ){};
 
     /**
      * @brief Constructeur
      */
-    ListOfFloatsInstance( const std::string name ):
-        DataStructure( name, 19, "LISTR8", Permanent ),
-        _bint( JeveuxVectorDouble( getName() + ".BINT" ) ),
-        _lpas( JeveuxVectorDouble( getName() + ".LPAS" ) ),
-        _nbPa( JeveuxVectorLong( getName() + ".NBPA" ) ),
-        _vale( JeveuxVectorDouble( getName() + ".VALE" ) )
-    {};
+    ListOfFloatsInstance( const std::string name )
+        : DataStructure( name, 19, "LISTR8", Permanent ),
+          _bint( JeveuxVectorDouble( getName() + ".BINT" ) ),
+          _lpas( JeveuxVectorDouble( getName() + ".LPAS" ) ),
+          _nbPa( JeveuxVectorLong( getName() + ".NBPA" ) ),
+          _vale( JeveuxVectorDouble( getName() + ".VALE" ) ){};
 
     VectorDouble getValues() const throw( std::runtime_error );
 
-    void setVectorValues( const VectorDouble& ) throw( std::runtime_error );
+    void setVectorValues( const VectorDouble & ) throw( std::runtime_error );
 
     int size();
 };

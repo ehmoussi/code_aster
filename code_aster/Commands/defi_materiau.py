@@ -27,6 +27,7 @@ import numpy
 
 
 class MaterialDefinition(ExecuteCommand):
+
     """Definition of the material properties.
     Returns a :class:`~code_aster.Objects.Material` object.
     """
@@ -59,7 +60,7 @@ class MaterialDefinition(ExecuteCommand):
                 klass = classByName.get(fkwName)
                 if not klass:
                     raise NotImplementedError("Unsupported behaviour: '{0}'"
-                                            .format(fkwName))
+                                              .format(fkwName))
                 matBehav = klass()
                 klassName = klass.__name__
             for skwName, skw in fkw.iteritems():
@@ -103,8 +104,8 @@ class MaterialDefinition(ExecuteCommand):
                         cRet = matBehav.setComplexValue(iName, comp)
                     else:
                         raise NotImplementedError("Unsupported type for keyword: "
-                                                "{0} <{1}>"
-                                                .format(skwName, type(skw)))
+                                                  "{0} <{1}>"
+                                                  .format(skwName, type(skw)))
                 else:
                     raise NotImplementedError("Unsupported type for keyword: "
                                               "{0} <{1}>"
@@ -123,7 +124,6 @@ class MaterialDefinition(ExecuteCommand):
         Returns:
             dict: Behaviour instances from keywords of command.
         """
-
         objects = {}
         for materName, skws in keywords.iteritems():
             if dictClasses.has_key(materName):
@@ -135,7 +135,8 @@ class MaterialDefinition(ExecuteCommand):
                     objects[materName] = materClass()
                     continue
             asterNewName = ""
-            if materName[-2:] == "FO": asterNewName = materName[:-3]
+            if materName[-2:] == "FO":
+                asterNewName = materName[:-3]
             mater = MaterialBehaviour(materName, asterNewName)
             if isinstance(skws, _F) or type(skws) is dict:
                 for kwName, kwValue in skws.iteritems():
@@ -155,11 +156,13 @@ class MaterialDefinition(ExecuteCommand):
                         mater.addNewFunctionProperty(kwName, mandatory)
                     elif isinstance(kwValue, Table):
                         mater.addNewTableProperty(kwName, mandatory)
-                    elif curType is tuple:
+                    elif isinstance(kwValue, (list, tuple)):
                         if type(kwValue[0]) is float:
-                            mater.addNewVectorOfDoubleProperty(kwName, mandatory)
+                            mater.addNewVectorOfDoubleProperty(
+                                kwName, mandatory)
                         elif isinstance(kwValue[0], DataStructure):
-                            mater.addNewVectorOfFunctionProperty(kwName, mandatory)
+                            mater.addNewVectorOfFunctionProperty(
+                                kwName, mandatory)
                         elif type(kwValue[0]) is str:
                             pass
                         else:

@@ -32,6 +32,23 @@ from ..Utilities import injector
 class ExtendedResultsContainer(injector(ResultsContainer), ResultsContainer):
     cata_sdj = "SD.sd_resultat.sd_resultat"
 
+    # TODO if several models?!
+    def __getstate__(self):
+        """Return internal state.
+
+        Returns:
+            dict: Internal state.
+        """
+        return (self.getModel(), )
+
+    def __setstate__(self, state):
+        """Restore internal state.
+
+        Arguments:
+            state (dict): Internal state.
+        """
+        self.appendModelOnAllRanks(state[0])
+
     def LIST_VARI_ACCES (self):
         if not self.accessible():
             raise AsException("Erreur dans resultat.LIST_VARI_ACCES " +

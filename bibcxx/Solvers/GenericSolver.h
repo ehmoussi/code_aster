@@ -6,7 +6,7 @@
  * @brief Definition de ce qu'est un solveur generique
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -34,13 +34,10 @@
  * @brief Classe virtuelle definissant un solveur generique
  * @author Nicolas Sellenet
  */
-class GenericSolver
-{
-    private:
-
-    public:
-        GenericSolver()
-        {};
+class GenericSolver {
+  private:
+  public:
+    GenericSolver(){};
 };
 
 #endif /* GENERICSOLVER_H_ */

@@ -4,9 +4,9 @@
 /**
  * @file BucklingModeContainer.h
  * @brief Fichier entete de la classe BucklingModeContainer
- * @author Natacha Béreux 
+ * @author Natacha Béreux
  * @section LICENCE
- *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -27,22 +27,24 @@
 #include "astercxx.h"
 
 #include "Results/FullResultsContainer.h"
+#include "Supervis/ResultNaming.h"
 
 /**
  * @class BucklingModeContainerInstance
  * @brief Cette classe correspond a un mode_flamb
  * @author Natacha Béreux
  */
-class BucklingModeContainerInstance: public FullResultsContainerInstance
-{
-private:
-    
-public:
+class BucklingModeContainerInstance : public FullResultsContainerInstance {
+  private:
+  public:
     /**
      * @brief Constructeur
      */
-    BucklingModeContainerInstance(): FullResultsContainerInstance( "MODE_FLAMB" )
-    {};   
+    BucklingModeContainerInstance()
+        : BucklingModeContainerInstance( ResultNaming::getNewResultName() ){};
+
+    BucklingModeContainerInstance( const std::string &name )
+        : FullResultsContainerInstance( name, "MODE_FLAMB" ){};
 };
 
 /**
