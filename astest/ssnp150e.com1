@@ -19,14 +19,6 @@
 
 import math
 
-try:
-  # Import du module de calcul symbolique Sympy
-  import sympy
-  sympy_available = True
-except ImportError:
-  sympy_available = False
-
-
 # ================================================================================================================================================================================
 def NormeAster(RESULTAT, Depl_Ana, P_ana, MAIL, MODELE, GROUP_MA_VOL, GROUP_MA_SUR):
      """ RESULTAT  : SD Resultat contenant la solution calculee
@@ -102,7 +94,8 @@ def NormeAster(RESULTAT, Depl_Ana, P_ana, MAIL, MODELE, GROUP_MA_VOL, GROUP_MA_S
 
      Pcalc = CREA_CHAMP(OPERATION='EXTR',
                         INST=1.,
-                        NOM_CHAM = 'CONT_ELEM' , TYPE_CHAM = 'ELEM_CLAC_R',
+#                        NOM_CHAM = 'CONT_ELEM' , TYPE_CHAM = 'ELEM_NEUT_R',
+                        NOM_CHAM = 'CONT_ELEM' , TYPE_CHAM = 'ELEM_CONTALAC',
                         RESULTAT = RESULTAT ,);
 
 
@@ -277,27 +270,11 @@ def NormeAster(RESULTAT, Depl_Ana, P_ana, MAIL, MODELE, GROUP_MA_VOL, GROUP_MA_S
 
 
 
-
-
-
-
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),
+POURSUITE(CODE='OUI',
       DEBUG=_F(SDVERI='OUI'),
       PAR_LOT='NON',
-      IGNORE_ALARM = ( 'SUPERVIS_1'),
+      IGNORE_ALARM = ( 'SUPERVIS_1','MODELE1_63'),
       )
-
-#================================================================================================
-# Definition des caracteristiques du materiau
-#================================================================================================
-E=1;
-NU=0.;
-
-#================================================================================================
-# Calcul de la solution de reference
-#================================================================================================
-
-INCLUDE(UNITE=38)
 
 #================================================================================================
 # Debut de l'etude de la convergence
@@ -306,12 +283,10 @@ INCLUDE(UNITE=38)
 # nbtest=4
 # Nombre de remaillage
 Nb_Raffinement=6;
-TitreU      ='Erreur ||\qU\sh\N-\2U\N\Q || en norme L\s2\N, maillages en triangles'
+TitreU      ='Erreur ||\qU\sh\N-\2U\N\Q || en norme L\s2\N, maillages en quadrangles'
+TitreP      ='Erreur ||\qP\sh\N-\2P\N\Q || en norme L\s2\N, maillages en quadrangles'
 
-TitreP      ='Erreur ||\qP\sh\N-\2P\N\Q || en norme L\s2\N, maillages en triangles'
-
-Legende      ='Cas TRIA 3'
-
+Legende      ='Cas QUAD 4'
 
 # Initialisation des listes
 MA0                 =[None]*(Nb_Raffinement);
@@ -447,7 +422,7 @@ for Raff in range(0,Nb_Raffinement):
                        MAILLAGE_N =MA0[Raff],
                        MAILLAGE_NP1 =MA0[Raff+1],
                        )
-        
+
         MALine[Raff+1]=CREA_MAILLAGE(MAILLAGE=MA0[Raff+1],
                                 QUAD_LINE=_F(GROUP_MA=('BAS','GAUCHE','DROITE','HAUT','SURFACE'),),);
         MA[Raff+1]=CREA_MAILLAGE(MAILLAGE=MALine[Raff+1],
@@ -490,7 +465,7 @@ PenteLST=CREA_TABLE( LISTE= (
 TEST_TABLE (TABLE = PenteLST,
             NOM_PARA= 'PU',
             REFERENCE='ANALYTIQUE',
-            VALE_CALC= 1.9976453888,  # raffiement=6,
+            VALE_CALC= 2.00221480429,  # raffiement=6,
             VALE_REFE=2.0,             # taux de convergence
             PRECISION=0.002,           # 
             )
@@ -499,13 +474,13 @@ TEST_TABLE (TABLE = PenteLST,
 TEST_TABLE (TABLE = PenteLST,
             NOM_PARA= 'PP',
             REFERENCE='ANALYTIQUE',
-            VALE_CALC=1.04123030275,   # raffiement=6,
+            VALE_CALC=1.01326300018,   # raffiement=6,
             VALE_REFE=0.5,             # taux de convergence
-            PRECISION=1.083,
+            PRECISION=1.027,
             ) 
 
-sous_titreU='Ordres de convergence: cas TRIA3= %f'%(PenteL2U)
-sous_titreP='Ordres de convergence: cas TRIA3= %f'%(PenteL2P)
+sous_titreU='Ordres de convergence: cas QUAD4= %f'%(PenteL2U)
+sous_titreP='Ordres de convergence: cas QUAD4= %f'%(PenteL2P)
 Bxmin=min(TailleMaille)*0.7
 Bxmax=max(TailleMaille)*1.3
 ByminU=min(NormeL2ErreurU)*0.7
@@ -591,11 +566,13 @@ DETRUIRE(CONCEPT=(_F(NOM=modl,),
                   ),
            INFO=1,);
 for n in range(0,Nb_Raffinement):
+ 
     DETRUIRE(CONCEPT=(_F(NOM=MA0[n],),
                       _F(NOM=MALine[n]),
                       _F(NOM=MA[n]),
                       ),
              INFO=1,);
+
 
 
 FIN();

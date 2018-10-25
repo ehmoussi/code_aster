@@ -102,7 +102,8 @@ def NormeAster(RESULTAT, Depl_Ana, P_ana, MAIL, MODELE, GROUP_MA_VOL, GROUP_MA_S
 
      Pcalc = CREA_CHAMP(OPERATION='EXTR',
                         INST=1.,
-                        NOM_CHAM = 'CONT_ELEM' , TYPE_CHAM = 'ELEM_CLAC_R',
+#                        NOM_CHAM = 'CONT_ELEM' , TYPE_CHAM = 'ELEM_NEUT_R',
+                        NOM_CHAM = 'CONT_ELEM' , TYPE_CHAM = 'ELEM_CONTALAC',
                         RESULTAT = RESULTAT ,);
 
 
@@ -275,29 +276,11 @@ def NormeAster(RESULTAT, Depl_Ana, P_ana, MAIL, MODELE, GROUP_MA_VOL, GROUP_MA_S
      return {'NormeL2ErreurU':NormeL2ErreurU,'NormeL2ErreurP':NormeL2ErreurP,'Ucalc':Ucalc,'Uana':Uana,'Pcalc':Pcalc,'Pana':Pana, 'DIFFUN':DIFFUN, 'DIFFPG':DIFFPG }
 # ================================================================================================================================================================================
 
-
-
-
-
-
-
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),
+POURSUITE(CODE='OUI',
       DEBUG=_F(SDVERI='OUI'),
       PAR_LOT='NON',
-      IGNORE_ALARM = ( 'SUPERVIS_1'),
+      IGNORE_ALARM = ( 'SUPERVIS_1','MODELE1_63'),
       )
-
-#================================================================================================
-# Definition des caracteristiques du materiau
-#================================================================================================
-E=1;
-NU=0.;
-
-#================================================================================================
-# Calcul de la solution de reference
-#================================================================================================
-
-INCLUDE(UNITE=38)
 
 #================================================================================================
 # Debut de l'etude de la convergence
@@ -310,13 +293,13 @@ TitreU      ='Erreur ||\qU\sh\N-\2U\N\Q || en norme L\s2\N, maillages en triangl
 
 TitreP      ='Erreur ||\qP\sh\N-\2P\N\Q || en norme L\s2\N, maillages en triangles'
 
-Legende      ='Cas TRIA 3'
+Legende      ='Cas TRIA 6'
 
 
 # Initialisation des listes
 MA0                 =[None]*(Nb_Raffinement);
 MA                  =[None]*(Nb_Raffinement);
-MALine              =[None]*(Nb_Raffinement);
+# MALine              =[None]*(Nb_Raffinement);
 NormeL2ErreurU      =[None]*(Nb_Raffinement);
 NormeL2ErreurP      =[None]*(Nb_Raffinement);
 
@@ -332,11 +315,8 @@ MA0[0]=MODI_MAILLAGE(reuse=MA0[0],
                               )
                         );
 
-MALine[0]=CREA_MAILLAGE(MAILLAGE=MA0[0],
-                        QUAD_LINE=_F(GROUP_MA=('BAS','GAUCHE','DROITE','HAUT','SURFACE'),),);
-MA[0]=CREA_MAILLAGE(MAILLAGE=MALine[0],
+MA[0]=CREA_MAILLAGE(MAILLAGE=MA0[0],
                     DECOUPE_LAC=_F(GROUP_MA_ESCL='BAS',),);
-
 
 #Definition du materiau cas isotrope
 acier=DEFI_MATERIAU(ELAS=_F(E=E, NU=NU,),);
@@ -448,11 +428,8 @@ for Raff in range(0,Nb_Raffinement):
                        MAILLAGE_NP1 =MA0[Raff+1],
                        )
         
-        MALine[Raff+1]=CREA_MAILLAGE(MAILLAGE=MA0[Raff+1],
-                                QUAD_LINE=_F(GROUP_MA=('BAS','GAUCHE','DROITE','HAUT','SURFACE'),),);
-        MA[Raff+1]=CREA_MAILLAGE(MAILLAGE=MALine[Raff+1],
+        MA[Raff+1]=CREA_MAILLAGE(MAILLAGE=MA0[Raff+1],
                             DECOUPE_LAC=_F(GROUP_MA_ESCL='BAS',),);
-
 
      # DESTRUCTION DES CONCEPTS INUTILISES DANS LES PROCHAINES ETAPES DE LA BOUCLE
         DETRUIRE(CONCEPT=(_F(NOM=modl,),
@@ -479,6 +456,7 @@ for Raff in range(0,Nb_Raffinement):
 
 
 
+
 PenteL2U=-math.log( NormeL2ErreurU[-1]/NormeL2ErreurU[-2])/math.log(2.)
 PenteL2P=-math.log( NormeL2ErreurP[-1]/NormeL2ErreurP[-2])/math.log(2.)
 
@@ -490,22 +468,22 @@ PenteLST=CREA_TABLE( LISTE= (
 TEST_TABLE (TABLE = PenteLST,
             NOM_PARA= 'PU',
             REFERENCE='ANALYTIQUE',
-            VALE_CALC= 1.9976453888,  # raffiement=6,
-            VALE_REFE=2.0,             # taux de convergence
-            PRECISION=0.002,           # 
+            VALE_CALC= 2.9415110159,  # raffiement=6,
+            VALE_REFE=2.5,             # taux de convergence
+            PRECISION=0.177,           # normal
             )
 
 
 TEST_TABLE (TABLE = PenteLST,
             NOM_PARA= 'PP',
             REFERENCE='ANALYTIQUE',
-            VALE_CALC=1.04123030275,   # raffiement=6,
-            VALE_REFE=0.5,             # taux de convergence
-            PRECISION=1.083,
-            ) 
+            VALE_CALC=1.01229288913,   # raffiement=6,
+            VALE_REFE=1.0,             # taux de convergence
+            PRECISION=0.013,
+            )     
 
-sous_titreU='Ordres de convergence: cas TRIA3= %f'%(PenteL2U)
-sous_titreP='Ordres de convergence: cas TRIA3= %f'%(PenteL2P)
+sous_titreU='Ordres de convergence: cas TRIA6= %f'%(PenteL2U)
+sous_titreP='Ordres de convergence: cas TRIA6= %f'%(PenteL2P)
 Bxmin=min(TailleMaille)*0.7
 Bxmax=max(TailleMaille)*1.3
 ByminU=min(NormeL2ErreurU)*0.7
@@ -513,14 +491,6 @@ BymaxU=max(NormeL2ErreurU)*1.3
 ByminP=min(NormeL2ErreurP)*0.7
 BymaxP=max(NormeL2ErreurP)*1.3
 
-axByminU=min(NormeL2ErreurU)*0.7
-axBymaxU=max(NormeL2ErreurU)*1.3
-axByminP=min(NormeL2ErreurP)*0.7
-axBymaxP=max(NormeL2ErreurP)*1.3
-ByminU=min(axByminU,ByminU)
-BymaxU=max(axBymaxU,BymaxU)
-ByminU=min(axByminP,ByminP)
-BymaxU=max(axBymaxP,BymaxP)
 
 IMPR_FONCTION(FORMAT='XMGRACE',
               #PILOTE='EPS',
@@ -591,8 +561,8 @@ DETRUIRE(CONCEPT=(_F(NOM=modl,),
                   ),
            INFO=1,);
 for n in range(0,Nb_Raffinement):
+    
     DETRUIRE(CONCEPT=(_F(NOM=MA0[n],),
-                      _F(NOM=MALine[n]),
                       _F(NOM=MA[n]),
                       ),
              INFO=1,);
