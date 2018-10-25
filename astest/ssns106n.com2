@@ -1,0 +1,333 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+# person_in_charge: sebastien.fayolle at edf.fr
+#  DETAILS : MODELISATION : MULTI-COUCHES
+#                          (DKT- ENDO_ISOT_BETON+2*GRILLE ACIER)
+#                                           VS.
+#                           DKTG (GLRC_DM)
+#            MAILLAGE     : TRIA3
+#            CHARGEMENT   : CYCLIQUE DISTORSION ET CISAILLEMENT
+
+POURSUITE(CODE='OUI',DEBUG=_F(SDVERI='NON'))
+# SDVERI='NON' car la verification est trop couteuse en CPU
+
+
+MATER_G=AFFE_MATERIAU(MAILLAGE=MA,
+                      AFFE=(_F(GROUP_MA='DALLE',
+                               MATER=MAT_G,),),);
+
+MATER_D=AFFE_MATERIAU(MAILLAGE=MA,
+                      AFFE=(_F(GROUP_MA='DALLE',
+                               MATER=MAT_D,),),);
+
+
+CAEL_G=AFFE_CARA_ELEM(MODELE=MO_G,
+                      COQUE=_F(GROUP_MA='DALLE',
+                               EPAIS=EP,
+                               ANGL_REP=(0.0,0.0,),
+                               COEF_RIGI_DRZ=1.E-10,
+                               INER_ROTA='OUI',),);
+
+FL_IMPOS = FORMULE(VALE='D0*X*Y',
+                   D0=D0,
+                   NOM_PARA=['X', 'Y'],)
+
+COND_0=AFFE_CHAR_MECA(MODELE=MO_G,
+                      DDL_IMPO=(_F(GROUP_NO='A1',
+                                   DX=0.0,
+                                   DY=0.0,
+                                   DZ=0.0,
+                                   DRX=0.0,
+                                   DRY=0.0,
+                                   DRZ=0.0,),
+                                _F(GROUP_NO='B',
+                                   DX=0.0,),),);
+
+COND_1=AFFE_CHAR_MECA_F(MODELE=MO_G,
+                        DDL_IMPO=_F(GROUP_NO='CL_IMPOS',
+                                    DZ=FL_IMPOS,),);
+
+chf1=DEFI_FONCTION(NOM_PARA='INST',
+                   VALE=(0.,0.,
+                         t1,1.,
+                         t2,-1.,
+                         t3,0.,),
+                   PROL_DROITE='CONSTANT',
+                   PROL_GAUCHE='CONSTANT',);
+
+inst1=DEFI_LIST_REEL(DEBUT=0.0,
+                     INTERVALLE=_F(JUSQU_A=t3,
+                                   PAS=dt,),);
+
+DEFLIST=DEFI_LIST_INST(METHODE='MANUEL',
+                       DEFI_LIST=_F(LIST_INST=inst1,),
+                       ECHEC=_F(ACTION='DECOUPE',
+                                SUBD_METHODE='MANUEL',
+                                SUBD_PAS=4,
+                                SUBD_PAS_MINI=0.0001,),);
+
+RESU_G=STAT_NON_LINE(MODELE=MO_G,
+                     CHAM_MATER=MATER_G,
+                     CARA_ELEM=CAEL_G,
+                     EXCIT=(_F(CHARGE=COND_0,
+                               FONC_MULT=chf1,),
+                            _F(CHARGE=COND_1,
+                               FONC_MULT=chf1,),),
+                     COMPORTEMENT=_F(RELATION='GLRC_DM',),
+                     INCREMENT=_F(LIST_INST=DEFLIST,
+                                  PRECISION=0.1,),
+                     NEWTON=_F(REAC_ITER=1,),
+                     CONVERGENCE=_F(ITER_GLOB_MAXI=25,),);
+
+RESU_G=CALC_CHAMP(reuse=RESU_G,
+                  RESULTAT=RESU_G,
+                  CONTRAINTE=('EFGE_ELNO',),
+                  DEFORMATION=('DEGE_ELNO',),
+                  VARI_INTERNE=('VARI_ELNO','VARI_NOEU',),);
+
+RESU_D=STAT_NON_LINE(MODELE=MO_G,
+                     CHAM_MATER=MATER_D,
+                     CARA_ELEM=CAEL_G,
+                     EXCIT=(_F(CHARGE=COND_0,
+                               FONC_MULT=chf1,),
+                            _F(CHARGE=COND_1,
+                               FONC_MULT=chf1,),),
+                     COMPORTEMENT=_F(RELATION='DHRC',),
+                     INCREMENT=_F(LIST_INST=DEFLIST,
+                                  PRECISION=0.1,),
+                     NEWTON=_F(REAC_ITER=1,),
+                     CONVERGENCE=_F(ITER_GLOB_MAXI=25,),);
+
+RESU_D=CALC_CHAMP(reuse=RESU_D,
+                  RESULTAT=RESU_D,
+                  CONTRAINTE=('EFGE_ELNO',),
+                  DEFORMATION=('DEGE_ELNO',),
+                  VARI_INTERNE=('VARI_ELNO','VARI_NOEU',),);
+
+################ POST TRAITEMENT #################################
+
+TKXY_B=POST_RELEVE_T(ACTION=_F(OPERATION='EXTRACTION',
+                               INTITULE='B_KXY',
+                               RESULTAT=RESU_G,
+                               NOM_CHAM='DEGE_ELNO',
+                               GROUP_NO='B',
+                               NOM_CMP=('KXY',),),);
+TKXY_B=CALC_TABLE(reuse=TKXY_B,
+                  TABLE=TKXY_B,
+                  ACTION=_F(OPERATION='EXTR',
+                            NOM_PARA=('INST','KXY',),),);
+
+TKXY_D=POST_RELEVE_T(ACTION=_F(OPERATION='EXTRACTION',
+                               INTITULE='B_KXY',
+                               RESULTAT=RESU_D,
+                               NOM_CHAM='DEGE_ELNO',
+                               GROUP_NO='B',
+                               NOM_CMP=('KXY',),),);
+
+TKXY_D=CALC_TABLE(reuse =TKXY_D,
+                  TABLE=TKXY_D,
+                  ACTION=_F(OPERATION='EXTR',
+                            NOM_PARA=('INST','KXY',),),);
+
+IMPR_TABLE(TABLE=TKXY_B,);
+IMPR_TABLE(TABLE=TKXY_D,);
+
+TMN_B_G=POST_RELEVE_T(ACTION=_F(OPERATION='EXTRACTION',
+                                INTITULE='B_MNG',
+                                RESULTAT=RESU_G,
+                                NOM_CHAM='EFGE_ELNO',
+                                GROUP_NO='B',
+                                NOM_CMP=('MXY',),),);
+
+TMN_B_G=CALC_TABLE(reuse =TMN_B_G,
+                   TABLE=TMN_B_G,
+                   ACTION=_F(OPERATION='EXTR',
+                             NOM_PARA=('INST','MXY',),),);
+
+TMN_B_G=CALC_TABLE(reuse =TMN_B_G,
+                   TABLE=TMN_B_G,
+                   ACTION=_F(OPERATION='RENOMME',
+                              NOM_PARA=('MXY','MXYG',),),);
+
+TVAR_G=POST_RELEVE_T(ACTION=_F(OPERATION='EXTRACTION',
+                               INTITULE='D',
+                               RESULTAT=RESU_G,
+                               NOM_CHAM='VARI_NOEU',
+                               GROUP_NO='A4',
+                               TOUT_CMP='OUI',),);
+
+TVAR_G=CALC_TABLE(reuse =TVAR_G,
+                  TABLE=TVAR_G,
+                  ACTION=(_F(OPERATION='EXTR',
+                             NOM_PARA=('INST','V1','V2',),),
+                          _F(OPERATION='RENOMME',
+                             NOM_PARA=('V1','D1',),),
+                          _F(OPERATION='RENOMME',
+                             NOM_PARA=('V2','D2',),),),);
+
+IMPR_TABLE(TABLE=TMN_B_G,);
+
+#####################################################################
+
+TMN_B_D=POST_RELEVE_T(ACTION=_F(OPERATION='EXTRACTION',
+                                INTITULE='B_MND',
+                                RESULTAT=RESU_D,
+                                NOM_CHAM='EFGE_ELNO',
+                                GROUP_NO='B',
+                                NOM_CMP=('MXY',),),);
+
+TMN_B_D=CALC_TABLE(reuse =TMN_B_D,
+                   TABLE=TMN_B_D,
+                   ACTION=_F(OPERATION='EXTR',
+                             NOM_PARA=('INST','MXY',),),);
+
+TMN_B_D=CALC_TABLE(reuse =TMN_B_D,
+                   TABLE=TMN_B_D,
+                   ACTION=_F(OPERATION='RENOMME',
+                              NOM_PARA=('MXY','MXYD',),),);
+
+TVAR_D=POST_RELEVE_T(ACTION=_F(OPERATION='EXTRACTION',
+                               INTITULE='VARI',
+                               RESULTAT=RESU_D,
+                               NOM_CHAM='VARI_NOEU',
+                               GROUP_NO='A4',
+                               TOUT_CMP='OUI',),);
+
+TVAR_D=CALC_TABLE(reuse =TVAR_D,
+                  TABLE=TVAR_D,
+                  ACTION=(_F(OPERATION='EXTR',
+                             NOM_PARA=('INST','V1','V2','V3','V4','V5','V6',),),
+                          _F(OPERATION='RENOMME',
+                             NOM_PARA=('V1','D1',),),
+                          _F(OPERATION='RENOMME',
+                             NOM_PARA=('V2','D2',),),
+                          _F(OPERATION='RENOMME',
+                             NOM_PARA=('V3','EX1',),),
+                          _F(OPERATION='RENOMME',
+                             NOM_PARA=('V4','EY1',),),
+                          _F(OPERATION='RENOMME',
+                             NOM_PARA=('V5','EX2',),),
+                          _F(OPERATION='RENOMME',
+                             NOM_PARA=('V6','EY2',),),),);
+
+IMPR_TABLE(TABLE=TMN_B_D,);
+
+#----- ANTICLASTIQUE POSITIF - PHASE ELASTIQUE -----
+
+TEST_TABLE(CRITERE='ABSOLU',
+           VALE_CALC=4130.34188034,
+           NOM_PARA='MXYG',
+           TABLE=TMN_B_G,
+           FILTRE=_F(NOM_PARA='INST',
+                     VALE=0.05,),
+           )
+
+#----- ANTICLASTIQUE POSITIF - PHASE ENDOMMAGEMENT -----
+
+TEST_TABLE(CRITERE='ABSOLU',
+           VALE_CALC=23107.3615939,
+           NOM_PARA='MXYG',
+           TABLE=TMN_B_G,
+           FILTRE=_F(NOM_PARA='INST',
+                     VALE=0.5,),
+           )
+
+#----- ANTICLASTIQUE POSITIF - PHASE DECHARGEMENT -----
+
+TEST_TABLE(CRITERE='ABSOLU',
+           VALE_CALC=20846.2867086,
+           NOM_PARA='MXYG',
+           TABLE=TMN_B_G,
+           FILTRE=_F(NOM_PARA='INST',
+                     VALE=1.5,),
+           )
+
+#----- ANTICLASTIQUE NEGATIF - PHASE CHARGEMENT -----
+
+TEST_TABLE(CRITERE='ABSOLU',
+           VALE_CALC=-41692.5734172,
+           NOM_PARA='MXYG',
+           TABLE=TMN_B_G,
+           FILTRE=_F(NOM_PARA='INST',
+                     VALE=3.0,),
+           )
+
+#----- ANTICLASTIQUE NEGATIF - PHASE DECHARGEMENT -----
+
+TEST_TABLE(CRITERE='ABSOLU',
+           VALE_CALC=-20846.2867086,
+           NOM_PARA='MXYG',
+           TABLE=TMN_B_G,
+           FILTRE=_F(NOM_PARA='INST',
+                     VALE=3.5,),
+           )
+
+#-------------------- DHRC -------------------------
+#----- ANTICLASTIQUE POSITIF - PHASE ELASTIQUE -----
+
+TEST_TABLE(CRITERE='ABSOLU',
+           VALE_CALC=4280.86194881,
+           NOM_PARA='MXYD',
+           TABLE=TMN_B_D,
+           FILTRE=_F(NOM_PARA='INST',
+                     VALE=0.05,),
+           )
+
+#----- ANTICLASTIQUE POSITIF - PHASE ENDOMMAGEMENT -----
+
+TEST_TABLE(CRITERE='ABSOLU',
+           VALE_CALC=32217.7102153,
+           NOM_PARA='MXYD',
+           TABLE=TMN_B_D,
+           FILTRE=_F(NOM_PARA='INST',
+                     VALE=0.5,),
+           )
+
+#----- ANTICLASTIQUE POSITIF - PHASE DECHARGEMENT -----
+
+TEST_TABLE(CRITERE='ABSOLU',
+           VALE_CALC=31038.2340162,
+           NOM_PARA='MXYD',
+           TABLE=TMN_B_D,
+           FILTRE=_F(NOM_PARA='INST',
+                     VALE=1.5,),
+           )
+
+#----- ANTICLASTIQUE NEGATIF - PHASE CHARGEMENT -----
+
+TEST_TABLE(CRITERE='ABSOLU',
+           VALE_CALC=-62076.4680325,
+           NOM_PARA='MXYD',
+           TABLE=TMN_B_D,
+           FILTRE=_F(NOM_PARA='INST',
+                     VALE=3.0,),
+           )
+
+#----- ANTICLASTIQUE NEGATIF - PHASE DECHARGEMENT -----
+
+TEST_TABLE(CRITERE='ABSOLU',
+           VALE_CALC=-31038.2340162,
+           NOM_PARA='MXYD',
+           TABLE=TMN_B_D,
+           FILTRE=_F(NOM_PARA='INST',
+                     VALE=3.5,),
+           )
+
+FIN();
