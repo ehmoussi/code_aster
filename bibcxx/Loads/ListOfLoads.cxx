@@ -3,7 +3,7 @@
  * @brief Implementation de ListOfLoads
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -28,63 +28,57 @@
 #include "Loads/ListOfLoads.h"
 #include "Supervis/CommandSyntax.h"
 
-ListOfLoadsInstance::ListOfLoadsInstance( const JeveuxMemory memType ):
-    DataStructure( DataStructureNaming::getNewName( memType, 8 ) + ".LIST_LOAD",
-                   19, "L_CHARGES", memType ),
-    _loadInformations( JeveuxVectorLong( getName() + ".INFC" ) ),
-    _list( JeveuxVectorChar24( getName() + ".LCHA" ) ),
-    _listOfFunctions( JeveuxVectorChar24( getName() + ".FCHA" ) ),
-    _isEmpty( true )
-{};
+ListOfLoadsInstance::ListOfLoadsInstance( const JeveuxMemory memType )
+    : DataStructure( DataStructureNaming::getNewName( memType, 8 ) + ".LIST_LOAD", 19, "L_CHARGES",
+                     memType ),
+      _loadInformations( JeveuxVectorLong( getName() + ".INFC" ) ),
+      _list( JeveuxVectorChar24( getName() + ".LCHA" ) ),
+      _listOfFunctions( JeveuxVectorChar24( getName() + ".FCHA" ) ), _isEmpty( true ){};
 
-bool ListOfLoadsInstance::build() throw ( std::runtime_error )
-{
-    if ( ! _isEmpty )
+bool ListOfLoadsInstance::build() throw( std::runtime_error ) {
+    if ( !_isEmpty )
         return true;
     CommandSyntax cmdSt( "MECA_STATIQUE" );
 
     SyntaxMapContainer dict;
     ListSyntaxMapContainer listeExcit;
     int pos = 0;
-    for ( const auto& curIter : _listOfMechanicalLoads )
-    {
+    for ( const auto &curIter : _listOfMechanicalLoads ) {
         SyntaxMapContainer dict2;
-        dict2.container[ "CHARGE" ] = curIter->getName();
-        if( _listOfMechaFun[pos].getName() != emptyDoubleFunction->getName() )
-            dict2.container[ "FONC_MULT" ] = _listOfMechaFun[pos].getName();
+        dict2.container["CHARGE"] = curIter->getName();
+        if ( _listOfMechaFun[pos].getName() != emptyDoubleFunction->getName() )
+            dict2.container["FONC_MULT"] = _listOfMechaFun[pos].getName();
         ++pos;
         listeExcit.push_back( dict2 );
     }
 #ifdef _USE_MPI
     pos = 0;
-    for ( const auto& curIter : _listOfParallelMechanicalLoads )
-    {
+    for ( const auto &curIter : _listOfParallelMechanicalLoads ) {
         SyntaxMapContainer dict2;
-        dict2.container[ "CHARGE" ] = curIter->getName();
-        if( _listOfParaMechaFun[pos].getName() != emptyDoubleFunction->getName() )
-            dict2.container[ "FONC_MULT" ] = _listOfParaMechaFun[pos].getName();
+        dict2.container["CHARGE"] = curIter->getName();
+        if ( _listOfParaMechaFun[pos].getName() != emptyDoubleFunction->getName() )
+            dict2.container["FONC_MULT"] = _listOfParaMechaFun[pos].getName();
         ++pos;
         listeExcit.push_back( dict2 );
     }
 #endif /* _USE_MPI */
     pos = 0;
-    for ( const auto& curIter : _listOfKinematicsLoads )
-    {
+    for ( const auto &curIter : _listOfKinematicsLoads ) {
         SyntaxMapContainer dict2;
-        dict2.container[ "CHARGE" ] = curIter->getName();
-        if( _listOfKineFun[pos].getName() != emptyDoubleFunction->getName() )
-            dict2.container[ "FONC_MULT" ] = _listOfKineFun[pos].getName();
+        dict2.container["CHARGE"] = curIter->getName();
+        if ( _listOfKineFun[pos].getName() != emptyDoubleFunction->getName() )
+            dict2.container["FONC_MULT"] = _listOfKineFun[pos].getName();
         ++pos;
         listeExcit.push_back( dict2 );
     }
-    dict.container[ "EXCIT" ] = listeExcit;
+    dict.container["EXCIT"] = listeExcit;
     cmdSt.define( dict );
     ASTERINTEGER iexcit = 1;
     std::string name( getName().c_str() );
     name.resize( 19, ' ' );
     std::string blank( " " );
     blank.resize( 19, ' ' );
-    std::string base( JeveuxMemoryTypesNames[ (int)getMemoryType() ] );
+    std::string base( JeveuxMemoryTypesNames[(int)getMemoryType()] );
     CALLO_NMDOCH_WRAP( name, &iexcit, blank, base );
     _isEmpty = false;
     return true;
@@ -92,42 +86,36 @@ bool ListOfLoadsInstance::build() throw ( std::runtime_error )
 
 /* buildListExcit : construit la liste des charges utilisées pour valoriser le mot-clé facteur EXCIT
 dans STAT_NON_LINE. C'est une méthode temporaire qui disparaîtra avec la réécriture d'op0070 */
-ListSyntaxMapContainer ListOfLoadsInstance::buildListExcit() throw ( std::runtime_error )
-{
+ListSyntaxMapContainer ListOfLoadsInstance::buildListExcit() throw( std::runtime_error ) {
     ListSyntaxMapContainer listeExcit;
     int pos = 0;
     for ( ListMecaLoadCIter curIter = _listOfMechanicalLoads.begin();
-          curIter != _listOfMechanicalLoads.end();
-          ++curIter )
-    {
+          curIter != _listOfMechanicalLoads.end(); ++curIter ) {
         SyntaxMapContainer dict2;
-        dict2.container[ "CHARGE" ] = (*curIter)->getName();
-        if( _listOfMechaFun[pos].getName() != emptyDoubleFunction->getName() )
-            dict2.container[ "FONC_MULT" ] = _listOfMechaFun[pos].getName();
+        dict2.container["CHARGE"] = ( *curIter )->getName();
+        if ( _listOfMechaFun[pos].getName() != emptyDoubleFunction->getName() )
+            dict2.container["FONC_MULT"] = _listOfMechaFun[pos].getName();
         ++pos;
         listeExcit.push_back( dict2 );
     }
 #ifdef _USE_MPI
     pos = 0;
-    for ( const auto& curIter : _listOfParallelMechanicalLoads )
-    {
+    for ( const auto &curIter : _listOfParallelMechanicalLoads ) {
         SyntaxMapContainer dict2;
-        dict2.container[ "CHARGE" ] = curIter->getName();
-        if( _listOfParaMechaFun[pos].getName() != emptyDoubleFunction->getName() )
-            dict2.container[ "FONC_MULT" ] = _listOfParaMechaFun[pos].getName();
+        dict2.container["CHARGE"] = curIter->getName();
+        if ( _listOfParaMechaFun[pos].getName() != emptyDoubleFunction->getName() )
+            dict2.container["FONC_MULT"] = _listOfParaMechaFun[pos].getName();
         ++pos;
         listeExcit.push_back( dict2 );
     }
 #endif /* _USE_MPI */
     pos = 0;
     for ( ListKineLoadCIter curIter = _listOfKinematicsLoads.begin();
-          curIter != _listOfKinematicsLoads.end();
-          ++curIter )
-    {
+          curIter != _listOfKinematicsLoads.end(); ++curIter ) {
         SyntaxMapContainer dict2;
-        dict2.container[ "CHARGE" ] = (*curIter)->getName();
-        if( _listOfKineFun[pos].getName() != emptyDoubleFunction->getName() )
-            dict2.container[ "FONC_MULT" ] = _listOfKineFun[pos].getName();
+        dict2.container["CHARGE"] = ( *curIter )->getName();
+        if ( _listOfKineFun[pos].getName() != emptyDoubleFunction->getName() )
+            dict2.container["FONC_MULT"] = _listOfKineFun[pos].getName();
         ++pos;
         listeExcit.push_back( dict2 );
     }

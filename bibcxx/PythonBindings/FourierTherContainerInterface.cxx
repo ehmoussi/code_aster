@@ -3,7 +3,7 @@
  * @brief Interface python de FourierTherContainer
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -25,13 +25,12 @@
 #include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
-void exportFourierTherContainerToPython()
-{
+void exportFourierTherContainerToPython() {
     using namespace boost::python;
 
     class_< FourierTherContainerInstance, FourierTherContainerPtr,
-            bases< ResultsContainerInstance > > ( "FourierTherContainer", no_init )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< FourierTherContainerInstance > ) )
-    ;
+            bases< ResultsContainerInstance > >( "FourierTherContainer", no_init )
+        .def( "__init__", make_constructor( &initFactoryPtr< FourierTherContainerInstance > ) )
+        .def( "__init__",
+              make_constructor( &initFactoryPtr< FourierTherContainerInstance, std::string > ) );
 };

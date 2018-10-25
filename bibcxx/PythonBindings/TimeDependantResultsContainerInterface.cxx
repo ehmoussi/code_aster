@@ -25,13 +25,13 @@
 #include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
-void exportTimeDependantResultsContainerToPython()
-{
+void exportTimeDependantResultsContainerToPython() {
     using namespace boost::python;
 
     class_< TimeDependantResultsContainerInstance, TimeDependantResultsContainerPtr,
-            bases< ResultsContainerInstance > > ( "TimeDependantResultsContainer", no_init )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< TimeDependantResultsContainerInstance > ) )
-    ;
+            bases< ResultsContainerInstance > >( "TimeDependantResultsContainer", no_init )
+        .def( "__init__",
+              make_constructor( &initFactoryPtr< TimeDependantResultsContainerInstance > ) )
+        .def( "__init__", make_constructor( &initFactoryPtr< TimeDependantResultsContainerInstance,
+                                                             std::string, std::string > ) );
 };

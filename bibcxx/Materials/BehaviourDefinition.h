@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe BehaviourDefinition
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -36,17 +36,16 @@
  * @brief produit une sd identique a celle produite par DEFI_COMPOR
  * @author Nicolas Sellenet
  */
-class BehaviourDefinitionInstance: public DataStructure
-{
-private:
+class BehaviourDefinitionInstance : public DataStructure {
+  private:
     /** @brief Objet '.CPRK' */
     JeveuxVectorChar24 _cprk;
     /** @brief Objet '.CPRR' */
     JeveuxVectorDouble _cprr;
     /** @brief Objet '.CPRI' */
-    JeveuxVectorLong   _cpri;
+    JeveuxVectorLong _cpri;
 
-public:
+  public:
     /**
      * @typedef BehaviourDefinitionPtr
      * @brief Pointeur intelligent vers un BehaviourDefinition
@@ -56,19 +55,17 @@ public:
     /**
      * @brief Constructeur
      */
-    BehaviourDefinitionInstance():
-        BehaviourDefinitionInstance( ResultNaming::getNewResultName() )
-    {};
+    BehaviourDefinitionInstance()
+        : BehaviourDefinitionInstance( ResultNaming::getNewResultName() ){};
 
     /**
      * @brief Constructeur
      */
-    BehaviourDefinitionInstance( const std::string &name ):
-        DataStructure( name, 19, "COMPOR", Permanent ),
-        _cprk( JeveuxVectorChar24( getName() + ".CPRK" ) ),
-        _cprr( JeveuxVectorDouble( getName() + ".CPRR" ) ),
-        _cpri( JeveuxVectorLong( getName() + ".CPRI" ) )
-    {};
+    BehaviourDefinitionInstance( const std::string &name )
+        : DataStructure( name, 19, "COMPOR", Permanent ),
+          _cprk( JeveuxVectorChar24( getName() + ".CPRK" ) ),
+          _cprr( JeveuxVectorDouble( getName() + ".CPRR" ) ),
+          _cpri( JeveuxVectorLong( getName() + ".CPRI" ) ){};
 };
 
 /**

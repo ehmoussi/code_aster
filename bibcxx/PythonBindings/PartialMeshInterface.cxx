@@ -3,7 +3,7 @@
  * @brief Interface python de PartialMesh
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -27,23 +27,16 @@
 #include "PythonBindings/factory.h"
 #include "PythonBindings/PartialMeshInterface.h"
 
-
-void exportPartialMeshToPython()
-{
+void exportPartialMeshToPython() {
     using namespace boost::python;
 
 #ifdef _USE_MPI
-    class_< PartialMeshInstance, PartialMeshInstance::PartialMeshPtr,
-            bases< BaseMeshInstance > >( "PartialMesh", no_init )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< PartialMeshInstance,
-                             ParallelMeshPtr,
-                             VectorString >) )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< PartialMeshInstance,
-                             std::string,
-                             ParallelMeshPtr,
-                             VectorString >) )
-    ;
+    class_< PartialMeshInstance, PartialMeshInstance::PartialMeshPtr, bases< BaseMeshInstance > >(
+        "PartialMesh", no_init )
+        .def( "__init__",
+              make_constructor(
+                  &initFactoryPtr< PartialMeshInstance, ParallelMeshPtr, VectorString >))
+        .def( "__init__", make_constructor(&initFactoryPtr< PartialMeshInstance, std::string,
+                                                            ParallelMeshPtr, VectorString >));
 #endif /* _USE_MPI */
 };

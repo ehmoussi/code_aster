@@ -25,17 +25,12 @@
 #include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
-void exportElasticEvolutionContainerToPython()
-{
+void exportElasticEvolutionContainerToPython() {
     using namespace boost::python;
 
     class_< ElasticEvolutionContainerInstance, ElasticEvolutionContainerPtr,
-            bases< TimeDependantResultsContainerInstance > >
-        ( "ElasticEvolutionContainer", no_init )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< ElasticEvolutionContainerInstance > ) )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< ElasticEvolutionContainerInstance,
-                             std::string > ) )
-    ;
+            bases< TimeDependantResultsContainerInstance > >( "ElasticEvolutionContainer", no_init )
+        .def( "__init__", make_constructor(&initFactoryPtr< ElasticEvolutionContainerInstance >))
+        .def( "__init__",
+              make_constructor(&initFactoryPtr< ElasticEvolutionContainerInstance, std::string >));
 };

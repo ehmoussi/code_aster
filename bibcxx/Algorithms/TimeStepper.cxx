@@ -3,7 +3,7 @@
  * @brief Implementation de TimeStepper
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2015  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -25,29 +25,25 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-bool TimeStepperInstance::setValues( const VectorDouble& values ) throw ( std::runtime_error )
-{
-    if( _values->isAllocated() )
+bool TimeStepperInstance::setValues( const VectorDouble &values ) throw( std::runtime_error ) {
+    if ( _values->isAllocated() )
         _values->deallocate();
 
-//     _values->allocate( getMemoryType(), values.size() + 1 );
+    //     _values->allocate( getMemoryType(), values.size() + 1 );
     _values->allocate( getMemoryType(), values.size() );
-    if ( ! _values->updateValuePointer() )
+    if ( !_values->updateValuePointer() )
         throw std::runtime_error( "Unable to update pointers of TimeStepperInstance" );
 
     int compteur = 0;
     double save = 0.;
-    for( VectorDoubleCIter tmp = values.begin();
-            tmp != values.end();
-            ++tmp )
-    {
-        ( *_values )[ compteur ] = *tmp;
-        const double& curVal = *tmp;
+    for ( VectorDoubleCIter tmp = values.begin(); tmp != values.end(); ++tmp ) {
+        ( *_values )[compteur] = *tmp;
+        const double &curVal = *tmp;
         if ( compteur != 0 && save >= curVal )
             throw std::runtime_error( "Time function not strictly increasing" );
         save = *tmp;
         ++compteur;
     }
-//     ( *_values )[ compteur ] = -9999.;
+    //     ( *_values )[ compteur ] = -9999.;
     return true;
 };

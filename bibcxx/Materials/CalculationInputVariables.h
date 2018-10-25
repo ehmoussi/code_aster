@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe CalculationInputVariables
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -43,23 +43,22 @@
  * @brief Calculation Input Variables
  * @author Nicolas Sellenet
  */
-class CalculationInputVariablesInstance: public DataStructure
-{
-private:
-    ModelPtr                     _model;
-    MaterialOnMeshPtr            _mater;
-    CodedMaterialPtr             _codMater;
+class CalculationInputVariablesInstance : public DataStructure {
+  private:
+    ModelPtr _model;
+    MaterialOnMeshPtr _mater;
+    CodedMaterialPtr _codMater;
     ElementaryCharacteristicsPtr _elemCara;
-    FieldOnElementsDoublePtr     _varRef;
-    FieldOnElementsDoublePtr     _varInst;
-    PCFieldOnMeshDoublePtr       _timeValue;
-    double                       _currentTime;
-    bool                         _pTot;
-    bool                         _hydr;
-    bool                         _sech;
-    bool                         _temp;
+    FieldOnElementsDoublePtr _varRef;
+    FieldOnElementsDoublePtr _varInst;
+    PCFieldOnMeshDoublePtr _timeValue;
+    double _currentTime;
+    bool _pTot;
+    bool _hydr;
+    bool _sech;
+    bool _temp;
 
-public:
+  public:
     /**
      * @typedef CalculationInputVariablesPtr
      * @brief Pointeur intelligent vers un CalculationInputVariables
@@ -69,32 +68,26 @@ public:
     /**
      * @brief Constructeur
      */
-    CalculationInputVariablesInstance( const ModelPtr& model, const MaterialOnMeshPtr& mater,
-                                       const ElementaryCharacteristicsPtr& cara,
-                                       const CodedMaterialPtr& codMater );
+    CalculationInputVariablesInstance( const ModelPtr &model, const MaterialOnMeshPtr &mater,
+                                       const ElementaryCharacteristicsPtr &cara,
+                                       const CodedMaterialPtr &codMater );
 
     /**
      * @brief Destructeur
      */
-    ~CalculationInputVariablesInstance()
-    {
-        return;
-    };
+    ~CalculationInputVariablesInstance() { return; };
 
     /**
      * @brief Compute Input Variables at a given time
      */
-    void compute( const double& time );
+    void compute( const double &time );
 
     /**
      * @brief Compute Loads after computing of input variables
      */
-    FieldOnNodesDoublePtr computeMechanicalLoads( const BaseDOFNumberingPtr& dofNUM );
+    FieldOnNodesDoublePtr computeMechanicalLoads( const BaseDOFNumberingPtr &dofNUM );
 
-    bool existsMechanicalLoads()
-    {
-        return _pTot || _hydr || _sech || _temp;
-    };
+    bool existsMechanicalLoads() { return _pTot || _hydr || _sech || _temp; };
 };
 
 /**
@@ -102,6 +95,5 @@ public:
  * @brief Pointeur intelligent vers un CalculationInputVariablesInstance
  */
 typedef boost::shared_ptr< CalculationInputVariablesInstance > CalculationInputVariablesPtr;
-
 
 #endif /* CALCULATIONINPUTVARIABLES_H_ */

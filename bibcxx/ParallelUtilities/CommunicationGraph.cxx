@@ -3,7 +3,7 @@
  * @brief Implementation of CommunicationGraph
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -30,41 +30,38 @@
 #include "ParallelUtilities/CommunicationGraph.h"
 #include "ParallelUtilities/MPIInfos.h"
 
-CommunicationGraph::CommunicationGraph( const std::string& name, const JeveuxVectorLong& pFED ):
-    _graph( JeveuxVectorLong( name + ".NBJO" ) )
-{
-    aster_comm_t* commWorld = aster_get_comm_world();
-    const auto& joins = *(pFED);
+CommunicationGraph::CommunicationGraph( const std::string &name, const JeveuxVectorLong &pFED )
+    : _graph( JeveuxVectorLong( name + ".NBJO" ) ) {
+    aster_comm_t *commWorld = aster_get_comm_world();
+    const auto &joins = *( pFED );
     auto nbJoin = joins.size();
 
     int nbProcs = getMPINumberOfProcs(), rank = getMPIRank();
-    VectorInt commGraph( nbProcs*nbProcs, 0 );
-    for( int i = 0; i < nbJoin; ++i )
-        commGraph[ rank*nbProcs + joins[i] ] = 1;
-    nbJoin = nbJoin/2;
+    VectorInt commGraph( nbProcs * nbProcs, 0 );
+    for ( int i = 0; i < nbJoin; ++i )
+        commGraph[rank * nbProcs + joins[i]] = 1;
+    nbJoin = nbJoin / 2;
 
-    for( int i = 0; i < nbProcs; ++i )
-        aster_mpi_bcast( (void*)(&(commGraph[i*nbProcs])), nbProcs, MPI_INT, i, commWorld );
+    for ( int i = 0; i < nbProcs; ++i )
+        aster_mpi_bcast( (void *)( &( commGraph[i * nbProcs] ) ), nbProcs, MPI_INT, i, commWorld );
 
     int nbEdge = 0;
-    for( int i = 0; i < nbProcs*nbProcs-1; ++i )
-        if( commGraph[i] == 1 ) ++nbEdge;
+    for ( int i = 0; i < nbProcs * nbProcs - 1; ++i )
+        if ( commGraph[i] == 1 )
+            ++nbEdge;
     nbEdge /= 2;
 
-    VectorInt masque( nbProcs*nbProcs, 0 );
+    VectorInt masque( nbProcs * nbProcs, 0 );
     int nMatch = 1;
-    while( nbEdge > 0 )
-    {
+    while ( nbEdge > 0 ) {
         VectorInt tmp( nbProcs, 0 );
-        for( int i = 0; i < nbProcs; ++i )
-            for( int j = 0; j < nbProcs; ++j )
-            {
-                const int pos = i*nbProcs + j;
-                if( commGraph[pos] == 1 && tmp[i] == 0 &&  tmp[j] == 0 )
-                {
+        for ( int i = 0; i < nbProcs; ++i )
+            for ( int j = 0; j < nbProcs; ++j ) {
+                const int pos = i * nbProcs + j;
+                if ( commGraph[pos] == 1 && tmp[i] == 0 && tmp[j] == 0 ) {
                     commGraph[pos] = 0;
                     masque[pos] = nMatch;
-                    const int pos2 = j*nbProcs + i;
+                    const int pos2 = j * nbProcs + i;
                     commGraph[pos2] = 0;
                     masque[pos2] = nMatch;
                     --nbEdge;
@@ -78,18 +75,16 @@ CommunicationGraph::CommunicationGraph( const std::string& name, const JeveuxVec
 
     VectorInt joinList( nMatch, -1 );
     int nbJVer = 0;
-    for( int i = 0; i < nbProcs; ++i )
-    {
-        const auto num = masque[ rank*nbProcs + i ];
-        if( num != 0 )
-        {
-            joinList[num-1] = i;
+    for ( int i = 0; i < nbProcs; ++i ) {
+        const auto num = masque[rank * nbProcs + i];
+        if ( num != 0 ) {
+            joinList[num - 1] = i;
             ++nbJVer;
         }
     }
     _graph->allocate( Permanent, nMatch );
-    for( int i = 0; i < nMatch; ++i )
-        (*_graph)[i] = joinList[i];
+    for ( int i = 0; i < nMatch; ++i )
+        ( *_graph )[i] = joinList[i];
 };
 
 #endif /* _USE_MPI */

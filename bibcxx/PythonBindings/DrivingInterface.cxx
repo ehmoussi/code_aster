@@ -3,7 +3,7 @@
  * @brief Interface python de Driving
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -25,8 +25,7 @@
 #include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
-void exportDrivingToPython()
-{
+void exportDrivingToPython() {
     using namespace boost::python;
 
     enum_< DrivingTypeEnum >( "DrivingType" )
@@ -36,27 +35,21 @@ void exportDrivingToPython()
         .value( "JumpOnCrackNorm", JumpOnCrackNorm )
         .value( "LimitLoad", LimitLoad )
         .value( "MonotonicStrain", MonotonicStrain )
-        .value( "ElasticityLimit", ElasticityLimit )
-        ;
+        .value( "ElasticityLimit", ElasticityLimit );
 
-    class_< DrivingInstance, DrivingPtr > ( "Driving", no_init )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< DrivingInstance, DrivingTypeEnum > ) )
+    class_< DrivingInstance, DrivingPtr >( "Driving", no_init )
+        .def( "__init__", make_constructor(&initFactoryPtr< DrivingInstance, DrivingTypeEnum >))
+        // fake initFactoryPtr: not a DataStructure
         .def( "addObservationGroupOfNodes", &DrivingInstance::addObservationGroupOfNodes )
-        .def( "addObservationGroupOfElements",
-              &DrivingInstance::addObservationGroupOfElements )
+        .def( "addObservationGroupOfElements", &DrivingInstance::addObservationGroupOfElements )
         .def( "setDrivingDirectionOnCrack", &DrivingInstance::setDrivingDirectionOnCrack )
         .def( "setMaximumValueOfDrivingParameter",
               &DrivingInstance::setMaximumValueOfDrivingParameter )
         .def( "setMinimumValueOfDrivingParameter",
               &DrivingInstance::setMinimumValueOfDrivingParameter )
-        .def( "setLowerBoundOfDrivingParameter",
-              &DrivingInstance::setLowerBoundOfDrivingParameter )
-        .def( "setUpperBoundOfDrivingParameter",
-              &DrivingInstance::setUpperBoundOfDrivingParameter )
+        .def( "setLowerBoundOfDrivingParameter", &DrivingInstance::setLowerBoundOfDrivingParameter )
+        .def( "setUpperBoundOfDrivingParameter", &DrivingInstance::setUpperBoundOfDrivingParameter )
         .def( "activateThreshold", &DrivingInstance::activateThreshold )
         .def( "deactivateThreshold", &DrivingInstance::deactivateThreshold )
-        .def( "setMultiplicativeCoefficient",
-              &DrivingInstance::setMultiplicativeCoefficient )
-    ;
+        .def( "setMultiplicativeCoefficient", &DrivingInstance::setMultiplicativeCoefficient );
 };

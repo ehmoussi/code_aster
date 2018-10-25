@@ -36,14 +36,13 @@ typedef boost::shared_ptr< GeneralizedDOFNumberingInstance > GeneralizedDOFNumbe
  * @brief Forward definition of GeneralizedDOFNumberingPtr
  * @author Nicolas Sellenet
  */
-class ForwardGeneralizedDOFNumberingPtr
-{
-private:
+class ForwardGeneralizedDOFNumberingPtr {
+  private:
     /** @brief Pointer to GeneralizedDOFNumberingInstance */
     GeneralizedDOFNumberingPtr _ptr;
-    bool                       _isSet;
+    bool _isSet;
 
-public:
+  public:
     /**
      * @brief Constructor
      */
@@ -52,15 +51,15 @@ public:
     /**
      * @brief Constructor
      */
-    ForwardGeneralizedDOFNumberingPtr( const GeneralizedDOFNumberingPtr& ptr );
+    ForwardGeneralizedDOFNumberingPtr( const GeneralizedDOFNumberingPtr &ptr );
 
-    void operator=( const GeneralizedDOFNumberingPtr& ptr );
+    void operator=( const GeneralizedDOFNumberingPtr &ptr );
 
     GeneralizedDOFNumberingPtr getPointer() throw( std::runtime_error );
 
     bool isSet() const;
 
-    void setPointer( const GeneralizedDOFNumberingPtr& ptr );
+    void setPointer( const GeneralizedDOFNumberingPtr &ptr );
 };
 
 #endif /* FORWARDGENERALIZEDDOFNUMBERING_H_ */

@@ -36,23 +36,20 @@
  * @brief Cette classe correspond a un evol_elas
  * @author Natacha Béreux
  */
-class ElasticEvolutionContainerInstance: public TimeDependantResultsContainerInstance
-{
-private:
-public:
+class ElasticEvolutionContainerInstance : public TimeDependantResultsContainerInstance {
+  private:
+  public:
     /**
      * @brief Constructeur
      */
-    ElasticEvolutionContainerInstance():
-        ElasticEvolutionContainerInstance( ResultNaming::getNewResultName() )
-    {};
+    ElasticEvolutionContainerInstance()
+        : ElasticEvolutionContainerInstance( ResultNaming::getNewResultName() ){};
 
     /**
      * @brief Constructeur
      */
-    ElasticEvolutionContainerInstance( const std::string name ):
-        TimeDependantResultsContainerInstance( name, "EVOL_ELAS" )
-    {};
+    ElasticEvolutionContainerInstance( const std::string name )
+        : TimeDependantResultsContainerInstance( name, "EVOL_ELAS" ){};
 };
 
 /**

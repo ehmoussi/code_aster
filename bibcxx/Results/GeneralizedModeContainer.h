@@ -36,44 +36,38 @@
  * @brief Cette classe correspond à un mode_gene
  * @author Nicolas Sellenet
  */
-class GeneralizedModeContainerInstance: public FullResultsContainerInstance
-{
-private:
+class GeneralizedModeContainerInstance : public FullResultsContainerInstance {
+  private:
     /** @brief Damping matrix */
-    GeneralizedAssemblyMatrixDoublePtr   _dampingMatrix;
+    GeneralizedAssemblyMatrixDoublePtr _dampingMatrix;
     /** @brief Stiffness double matrix */
-    GeneralizedAssemblyMatrixDoublePtr   _rigidityDoubleMatrix;
+    GeneralizedAssemblyMatrixDoublePtr _rigidityDoubleMatrix;
     /** @brief Stiffness complex matrix */
-    GeneralizedAssemblyMatrixComplexPtr  _rigidityComplexMatrix;
+    GeneralizedAssemblyMatrixComplexPtr _rigidityComplexMatrix;
     /** @brief generalized support DOFNumbering */
-    GeneralizedDOFNumberingPtr           _genDOFNum;
+    GeneralizedDOFNumberingPtr _genDOFNum;
 
-public:
+  public:
     /**
      * @brief Constructeur
      * @todo  Ajouter les objets Jeveux de la SD
      */
-    GeneralizedModeContainerInstance( const std::string &name ):
-        FullResultsContainerInstance( name, "MODE_GENE" ),
-        _rigidityDoubleMatrix( nullptr ),
-        _rigidityComplexMatrix( nullptr ),
-        _genDOFNum( nullptr )
-    {};
+    GeneralizedModeContainerInstance( const std::string &name )
+        : FullResultsContainerInstance( name, "MODE_GENE" ), _rigidityDoubleMatrix( nullptr ),
+          _rigidityComplexMatrix( nullptr ), _genDOFNum( nullptr ){};
 
     /**
      * @brief Constructeur
      * @todo  Ajouter les objets Jeveux de la SD
      */
-    GeneralizedModeContainerInstance():
-        GeneralizedModeContainerInstance( ResultNaming::getNewResultName())
-    {};
+    GeneralizedModeContainerInstance()
+        : GeneralizedModeContainerInstance( ResultNaming::getNewResultName() ){};
 
     /**
      * @brief Get support GeneralizedDOFNumering
      */
-    GeneralizedDOFNumberingPtr getGeneralizedDOFNumbering() const throw ( std::runtime_error )
-    {
-        if( _genDOFNum != nullptr )
+    GeneralizedDOFNumberingPtr getGeneralizedDOFNumbering() const throw( std::runtime_error ) {
+        if ( _genDOFNum != nullptr )
             return _genDOFNum;
         throw std::runtime_error( "GeneralizedDOFNumbering is empty" );
     };
@@ -82,8 +76,7 @@ public:
      * @brief Set the damping matrix
      * @param matr GeneralizedAssemblyMatrixDoublePtr
      */
-    bool setDampingMatrix( const GeneralizedAssemblyMatrixDoublePtr& matr )
-    {
+    bool setDampingMatrix( const GeneralizedAssemblyMatrixDoublePtr &matr ) {
         _dampingMatrix = matr;
         return true;
     };
@@ -91,10 +84,8 @@ public:
     /**
      * @brief Set support GeneralizedDOFNumering
      */
-    bool setGeneralizedDOFNumbering( const GeneralizedDOFNumberingPtr& dofNum )
-    {
-        if( dofNum != nullptr )
-        {
+    bool setGeneralizedDOFNumbering( const GeneralizedDOFNumberingPtr &dofNum ) {
+        if ( dofNum != nullptr ) {
             _genDOFNum = dofNum;
             return true;
         }
@@ -105,8 +96,7 @@ public:
      * @brief Set the rigidity matrix
      * @param matr GeneralizedAssemblyMatrixDoublePtr
      */
-    bool setStiffnessMatrix( const GeneralizedAssemblyMatrixDoublePtr& matr )
-    {
+    bool setStiffnessMatrix( const GeneralizedAssemblyMatrixDoublePtr &matr ) {
         _rigidityComplexMatrix = nullptr;
         _rigidityDoubleMatrix = matr;
         return true;
@@ -116,17 +106,13 @@ public:
      * @brief Set the rigidity matrix
      * @param matr GeneralizedAssemblyMatrixComplexPtr
      */
-    bool setStiffnessMatrix( const GeneralizedAssemblyMatrixComplexPtr& matr )
-    {
+    bool setStiffnessMatrix( const GeneralizedAssemblyMatrixComplexPtr &matr ) {
         _rigidityDoubleMatrix = nullptr;
         _rigidityComplexMatrix = matr;
         return true;
     };
 
-    bool update() throw ( std::runtime_error )
-    {
-        return ResultsContainerInstance::update();
-    };
+    bool update() throw( std::runtime_error ) { return ResultsContainerInstance::update(); };
 };
 
 /**

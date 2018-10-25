@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe ElementaryModeling
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -36,50 +36,40 @@
  * @brief Element de base d'un modele, c'est une paire PHYSIQUE, MODELISATION
  * @author Nicolas Sellenet
  */
-class ElementaryModeling
-{
-    private:
-        /** @brief Physique de la modelisation elementaire */
-        Physics       _physic;
-        /** @brief Modelisation de la modelisation elementaire */
-        Modelings _modelisation;
+class ElementaryModeling {
+  private:
+    /** @brief Physique de la modelisation elementaire */
+    Physics _physic;
+    /** @brief Modelisation de la modelisation elementaire */
+    Modelings _modelisation;
 
-    public:
-        /**
-         * @brief Constructeur
-         * @param phys Physique
-         * @param mod Modelisation
-         */
-        ElementaryModeling( const Physics phys, const Modelings mod ) throw ( std::runtime_error ):
-                                                                       _physic(phys),
-                                                                       _modelisation(mod)
-        {
-            bool retour = PhysicsChecker::isAllowedModelingForPhysics( phys, mod );
-            if ( ! retour )
-            {
-                std::string error( std::string( PhysicNames[_physic] ) + " with " +
-                                   std::string ( ModelingNames[_modelisation] ) + " not allowed" );
-                throw std::runtime_error( error );
-            }
-        };
+  public:
+    /**
+     * @brief Constructeur
+     * @param phys Physique
+     * @param mod Modelisation
+     */
+    ElementaryModeling( const Physics phys, const Modelings mod ) throw( std::runtime_error )
+        : _physic( phys ), _modelisation( mod ) {
+        bool retour = PhysicsChecker::isAllowedModelingForPhysics( phys, mod );
+        if ( !retour ) {
+            std::string error( std::string( PhysicNames[_physic] ) + " with " +
+                               std::string( ModelingNames[_modelisation] ) + " not allowed" );
+            throw std::runtime_error( error );
+        }
+    };
 
-        /**
-         * @brief Recuperation de la chaine modelisation
-         * @return chaine de caracteres
-         */
-        const std::string getModeling() const
-        {
-            return ModelingNames[_modelisation];
-        };
+    /**
+     * @brief Recuperation de la chaine modelisation
+     * @return chaine de caracteres
+     */
+    const std::string getModeling() const { return ModelingNames[_modelisation]; };
 
-        /**
-         * @brief Recuperation de la chaine physics
-         * @return chaine de caracteres
-         */
-        const std::string getPhysic() const
-        {
-            return PhysicNames[_physic];
-        };
+    /**
+     * @brief Recuperation de la chaine physics
+     * @return chaine de caracteres
+     */
+    const std::string getPhysic() const { return PhysicNames[_physic]; };
 };
 
 #endif /* ELEMENTARYMODELISATION_H_ */

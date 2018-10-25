@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe AlgorithmException
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2015  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -33,10 +33,9 @@
  * @brief Classe mère des exceptions levées par un algorithme
  * @author Nicolas Sellenet
  */
-class AlgoException
-{
-    public:
-        virtual const std::string what() const throw() = 0;
+class AlgoException {
+  public:
+    virtual const std::string what() const throw() = 0;
 };
 
 #endif /* ALGORITHMEEXCEPTION_H_ */

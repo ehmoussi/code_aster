@@ -3,7 +3,7 @@
  * @brief Interface python de FourierCombination
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -25,13 +25,12 @@
 #include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
-void exportFourierCombinationToPython()
-{
+void exportFourierCombinationToPython() {
     using namespace boost::python;
 
-    class_< FourierCombinationInstance, FourierCombinationPtr,
-            bases< ResultsContainerInstance > > ( "FourierCombination", no_init )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< FourierCombinationInstance > ) )
-    ;
+    class_< FourierCombinationInstance, FourierCombinationPtr, bases< ResultsContainerInstance > >(
+        "FourierCombination", no_init )
+        .def( "__init__", make_constructor( &initFactoryPtr< FourierCombinationInstance > ) )
+        .def( "__init__",
+              make_constructor( &initFactoryPtr< FourierCombinationInstance, std::string > ) );
 };

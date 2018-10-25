@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe FieldOnNodesShape
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -38,17 +38,13 @@
  * @brief Class definissant un prof_chno
  * @author Nicolas Sellenet
  */
-class FieldOnNodesShapeInstance: public DataStructure
-{
-private:
-
-public:
+class FieldOnNodesShapeInstance : public DataStructure {
+  private:
+  public:
     /**
      * @brief Constructeur
      */
-    FieldOnNodesShapeInstance():
-        DataStructure("", Permanent, 8)
-    {};
+    FieldOnNodesShapeInstance() : DataStructure( "", Permanent, 8 ){};
 
     /**
      * @typedef FieldOnNodesShapePtr
@@ -56,7 +52,6 @@ public:
      */
     typedef boost::shared_ptr< FieldOnNodesShapeInstance > FieldOnNodesShapePtr;
 };
-
 
 /**
  * @typedef FieldOnNodesShapePtr

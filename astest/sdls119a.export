@@ -7,4 +7,4 @@ P testlist verification sequential
 
 F comm sdls119a.comm D 1
 F mmed sdls119a.mmed D 20
-F libr sdls119a.22 D 22
+F nom sdls119a_accel.py D 0

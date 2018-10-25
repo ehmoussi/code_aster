@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe ResultsContainer
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2014  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -49,9 +49,8 @@
  * @brief Cette classe correspond a la sd_resultat de Code_Aster, elle stocke des champs
  * @author Nicolas Sellenet
  */
-class ResultsContainerInstance: public DataStructure
-{
-private:
+class ResultsContainerInstance : public DataStructure {
+  private:
     typedef std::vector< FieldOnNodesDoublePtr > VectorOfFieldsNodes;
     typedef std::vector< FieldOnElementsDoublePtr > VectorOfFieldsElements;
 
@@ -80,50 +79,50 @@ private:
     /** @brief Pointeur de nom Jeveux '.DESC' */
     JeveuxBidirectionalMapChar16 _symbolicNamesOfFields;
     /** @brief Collection '.TACH' */
-    JeveuxCollectionChar24       _namesOfFields;
+    JeveuxCollectionChar24 _namesOfFields;
     /** @brief Pointeur de nom Jeveux '.NOVA' */
     JeveuxBidirectionalMapChar16 _accessVariables;
     /** @brief Collection '.TAVA' */
-    JeveuxCollectionChar8        _calculationParameter;
+    JeveuxCollectionChar8 _calculationParameter;
     /** @brief Vecteur Jeveux '.ORDR' */
-    JeveuxVectorLong             _serialNumber;
+    JeveuxVectorLong _serialNumber;
     /** @brief Nombre de numéros d'ordre */
-    int                          _nbRanks;
+    int _nbRanks;
     /** @brief Vecteur Jeveux '.RSPI' */
-    JeveuxVectorLong             _rspi;
+    JeveuxVectorLong _rspi;
     /** @brief Vecteur Jeveux '.RSPR' */
-    JeveuxVectorDouble           _rspr;
+    JeveuxVectorDouble _rspr;
     /** @brief Vecteur Jeveux '.RSP8' */
-    JeveuxVectorChar8            _rsp8;
+    JeveuxVectorChar8 _rsp8;
     /** @brief Vecteur Jeveux '.RS16' */
-    JeveuxVectorChar16           _rs16;
+    JeveuxVectorChar16 _rs16;
     /** @brief Vecteur Jeveux '.RS24' */
-    JeveuxVectorChar24           _rs24;
+    JeveuxVectorChar24 _rs24;
     /** @brief jeveux vector '.TITR' */
-    JeveuxVectorChar80          _title;
+    JeveuxVectorChar80 _title;
 
     /** @brief Liste des champs aux noeuds */
-    mapStrVOFN                         _dictOfVectorOfFieldsNodes;
+    mapStrVOFN _dictOfVectorOfFieldsNodes;
     /** @brief Liste des champs aux éléments */
-    mapStrVOFE                         _dictOfVectorOfFieldsElements;
+    mapStrVOFE _dictOfVectorOfFieldsElements;
     /** @brief Liste des NUME_DDL */
     std::vector< BaseDOFNumberingPtr > _listOfDOFNum;
     /** @brief List of ElementaryCharacteristicsPtr */
-    mapRankCaraElem                    _mapElemCara;
+    mapRankCaraElem _mapElemCara;
     /** @brief List of ListOfLoadsPtr */
-    mapRankLoads                       _mapLoads;
+    mapRankLoads _mapLoads;
     /** @brief List of MaterialOnMeshPtr */
-    mapRankMaterial                    _mapMaterial;
+    mapRankMaterial _mapMaterial;
     /** @brief List of ModelPtr */
-    mapRankModel                       _mapModel;
+    mapRankModel _mapModel;
 
-protected:
+  protected:
     /** @brief Maillage sur lequel repose la resultat */
-    BaseMeshPtr                        _mesh;
+    BaseMeshPtr _mesh;
     /** @brief Object to correctly manage fields and field descriptions */
-    FieldBuilder                       _fieldBuidler;
+    FieldBuilder _fieldBuidler;
 
-public:
+  public:
     /**
      * @typedef ResultsContainerPtr
      * @brief Pointeur intelligent vers un ResultsContainerInstance
@@ -133,90 +132,81 @@ public:
     /**
      * @brief Constructeur
      */
-    ResultsContainerInstance( const std::string& resuTyp ):
-        ResultsContainerInstance( ResultNaming::getNewResultName(), resuTyp )
-    {};
+    ResultsContainerInstance( const std::string &resuTyp )
+        : ResultsContainerInstance( ResultNaming::getNewResultName(), resuTyp ){};
 
     /**
      * @brief Constructeur
      */
-    ResultsContainerInstance( const std::string& name,
-                              const std::string& resuTyp ):
-        DataStructure( name, 19, resuTyp ),
-        _symbolicNamesOfFields( JeveuxBidirectionalMapChar16( getName() + ".DESC" ) ),
-        _namesOfFields( JeveuxCollectionChar24( getName() + ".TACH" ) ),
-        _accessVariables( JeveuxBidirectionalMapChar16( getName() + ".NOVA" ) ),
-        _calculationParameter( JeveuxCollectionChar8( getName() + ".TAVA" ) ),
-        _serialNumber( JeveuxVectorLong( getName() + ".ORDR" ) ),
-        _nbRanks( 0 ),
-        _rspi( JeveuxVectorLong( getName() + ".RSPI" ) ),
-        _rspr( JeveuxVectorDouble( getName() + ".RSPR" ) ),
-        _rsp8( JeveuxVectorChar8( getName() + ".RSP8" ) ),
-        _rs16( JeveuxVectorChar16( getName() + ".RS16" ) ),
-        _rs24( JeveuxVectorChar24( getName() + ".RS24" ) ),
-        _title( JeveuxVectorChar80( getName() + ".TITR" ) ),
-        _mesh( nullptr ),
-        _fieldBuidler( FieldBuilder() )
-    {};
+    ResultsContainerInstance( const std::string &name, const std::string &resuTyp )
+        : DataStructure( name, 19, resuTyp ),
+          _symbolicNamesOfFields( JeveuxBidirectionalMapChar16( getName() + ".DESC" ) ),
+          _namesOfFields( JeveuxCollectionChar24( getName() + ".TACH" ) ),
+          _accessVariables( JeveuxBidirectionalMapChar16( getName() + ".NOVA" ) ),
+          _calculationParameter( JeveuxCollectionChar8( getName() + ".TAVA" ) ),
+          _serialNumber( JeveuxVectorLong( getName() + ".ORDR" ) ), _nbRanks( 0 ),
+          _rspi( JeveuxVectorLong( getName() + ".RSPI" ) ),
+          _rspr( JeveuxVectorDouble( getName() + ".RSPR" ) ),
+          _rsp8( JeveuxVectorChar8( getName() + ".RSP8" ) ),
+          _rs16( JeveuxVectorChar16( getName() + ".RS16" ) ),
+          _rs24( JeveuxVectorChar24( getName() + ".RS24" ) ),
+          _title( JeveuxVectorChar80( getName() + ".TITR" ) ), _mesh( nullptr ),
+          _fieldBuidler( FieldBuilder() ){};
 
     /**
      * @brief Allouer une sd_resultat
      * @param nbRanks nombre de numéro d'ordre
      * @return true si l'allocation s'est bien passée
      */
-    bool allocate( int nbRanks ) throw ( std::runtime_error );
+    bool allocate( int nbRanks ) throw( std::runtime_error );
 
     /**
      * @brief Add elementary characteristics to container
      * @param rank
      */
-    void addElementaryCharacteristics( const ElementaryCharacteristicsPtr&, int rank )
-        throw ( std::runtime_error );
+    void addElementaryCharacteristics( const ElementaryCharacteristicsPtr &,
+                                       int rank ) throw( std::runtime_error );
 
     /**
      * @brief Add elementary characteristics to container
      * @param rank
      */
-    void addListOfLoads( const ListOfLoadsPtr&, int rank )
-        throw ( std::runtime_error );
+    void addListOfLoads( const ListOfLoadsPtr &, int rank ) throw( std::runtime_error );
 
     /**
      * @brief Add material definition
      * @param rank
      */
-    void addMaterialOnMesh( const MaterialOnMeshPtr&, int rank ) throw ( std::runtime_error );
+    void addMaterialOnMesh( const MaterialOnMeshPtr &, int rank ) throw( std::runtime_error );
 
     /**
      * @brief Add model
      * @param rank
      */
-    void addModel( const ModelPtr&, int rank ) throw ( std::runtime_error );
+    void addModel( const ModelPtr &, int rank ) throw( std::runtime_error );
 
     /**
      * @brief Set model
      */
-    void setMesh( const BaseMeshPtr& mesh ) throw ( std::runtime_error )
-    {
-        _mesh = mesh;
-    };
+    void setMesh( const BaseMeshPtr &mesh ) throw( std::runtime_error ) { _mesh = mesh; };
 
     /**
      * @brief Add time value for one rank
      * @param rank
      */
-    void addTimeValue( double, int rank ) throw ( std::runtime_error );
+    void addTimeValue( double, int rank ) throw( std::runtime_error );
 
     /**
      * @brief Append a material on all rank of ResultsContainer
      * @param MaterialOnMeshPtr
      */
-    void appendMaterialOnMeshOnAllRanks( const MaterialOnMeshPtr& );
+    void appendMaterialOnMeshOnAllRanks( const MaterialOnMeshPtr & );
 
     /**
      * @brief Append a model on all rank of ResultsContainer
      * @param ModelPtr
      */
-    void appendModelOnAllRanks( const ModelPtr& );
+    void appendModelOnAllRanks( const ModelPtr & );
 
     /**
      * @brief Obtenir un DOFNumbering à remplir
@@ -224,10 +214,10 @@ public:
      */
     BaseDOFNumberingPtr getEmptyDOFNumbering();
 
-    /**
-     * @brief Obtenir un DOFNumbering à remplir
-     * @return DOFNumbering à remplir
-     */
+/**
+ * @brief Obtenir un DOFNumbering à remplir
+ * @return DOFNumbering à remplir
+ */
 #ifdef _USE_MPI
     BaseDOFNumberingPtr getEmptyParallelDOFNumbering();
 #endif /* _USE_MPI */
@@ -238,45 +228,45 @@ public:
      * @param rank numéro d'ordre
      * @return FieldOnNodesDoublePtr pointant vers le champ
      */
-    FieldOnNodesDoublePtr getEmptyFieldOnNodesDouble( const std::string name, const int rank )
-        throw ( std::runtime_error );
+    FieldOnNodesDoublePtr getEmptyFieldOnNodesDouble( const std::string name,
+                                                      const int rank ) throw( std::runtime_error );
 
     /**
      * @brief Obtenir le dernier DOFNumbering
      * @return Dernier DOFNumbering
      */
-    BaseDOFNumberingPtr getLastDOFNumbering() const
-    {
-        return _listOfDOFNum[ _listOfDOFNum.size() - 1 ];
+    BaseDOFNumberingPtr getLastDOFNumbering() const {
+        return _listOfDOFNum[_listOfDOFNum.size() - 1];
     };
 
     /**
      * @brief Add elementary characteristics to container
      * @param rank
      */
-    ListOfLoadsPtr getListOfLoads( int rank ) throw ( std::runtime_error );
+    ListOfLoadsPtr getListOfLoads( int rank ) throw( std::runtime_error );
 
     /**
      * @brief Get elementary characteristics
      * @param rank
      */
-    ElementaryCharacteristicsPtr getElementaryCharacteristics( int rank ) throw ( std::runtime_error );
+    ElementaryCharacteristicsPtr
+    getElementaryCharacteristics( int rank ) throw( std::runtime_error );
 
     /**
      * @brief Get material
      */
-    MaterialOnMeshPtr getMaterialOnMesh() throw ( std::runtime_error );
+    MaterialOnMeshPtr getMaterialOnMesh() throw( std::runtime_error );
 
     /**
      * @brief Get material
      * @param rank
      */
-    MaterialOnMeshPtr getMaterialOnMesh( int rank ) throw ( std::runtime_error );
+    MaterialOnMeshPtr getMaterialOnMesh( int rank ) throw( std::runtime_error );
 
     /**
      * @brief Get model
      */
-    ModelPtr getModel() throw ( std::runtime_error );
+    ModelPtr getModel() throw( std::runtime_error );
 
     /**
      * @brief Obtenir un champ aux noeuds réel à partir de son nom et de son numéro d'ordre
@@ -285,7 +275,7 @@ public:
      * @return FieldOnElementsDoublePtr pointant vers le champ
      */
     FieldOnElementsDoublePtr getRealFieldOnElements( const std::string name, const int rank ) const
-        throw ( std::runtime_error );
+        throw( std::runtime_error );
 
     /**
      * @brief Obtenir un champ aux noeuds réel à partir de son nom et de son numéro d'ordre
@@ -294,7 +284,7 @@ public:
      * @return FieldOnNodesDoublePtr pointant vers le champ
      */
     FieldOnNodesDoublePtr getRealFieldOnNodes( const std::string name, const int rank ) const
-        throw ( std::runtime_error );
+        throw( std::runtime_error );
 
     /**
      * @brief Impression de la sd au format MED
@@ -303,26 +293,22 @@ public:
      * @todo revoir la gestion des mot-clés par défaut (ex : TOUT_ORDRE)
      * @todo revoir la gestion des unités logiques (notamment si fort.20 existe déjà)
      */
-    bool printMedFile( std::string fileName ) const throw ( std::runtime_error );
+    bool printMedFile( std::string fileName ) const throw( std::runtime_error );
 
     /**
     * @brief Get the number of steps stored in the ResultContainer
     * @return nbRanks
     */
-    const int getNumberOfRanks() const
-    {
-        return _nbRanks;
-    };
+    const int getNumberOfRanks() const { return _nbRanks; };
 
     /**
     * @brief Get the number of steps stored in the ResultContainer
     * @return nbRanks
     */
-    std::vector<long> getRanks() const
-    {
-        std::vector<long> v;
-        for(int j=0; j<_serialNumber->size(); ++j){
-            v.push_back((*_serialNumber)[j]);
+    std::vector< long > getRanks() const {
+        std::vector< long > v;
+        for ( int j = 0; j < _serialNumber->size(); ++j ) {
+            v.push_back( ( *_serialNumber )[j] );
         }
         return v;
     };
@@ -331,14 +317,14 @@ public:
     * @brief Print all the fields stored in the ResultContainer
     * @return nbRanks
     */
-    void listFields() const ;
+    void listFields() const;
 
     /**
      * @brief Construire une sd_resultat à partir d'objet produit dans le Fortran
      * @return true si l'allocation s'est bien passée
      * @todo revoir l'agrandissement de dictOfVectorOfFieldsNodes et dictOfVectorOfFieldsElements
      */
-    bool update() throw ( std::runtime_error );
+    bool update() throw( std::runtime_error );
 };
 
 /**

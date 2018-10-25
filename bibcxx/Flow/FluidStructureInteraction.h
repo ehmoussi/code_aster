@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe FluidStructureInteraction
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -32,21 +32,19 @@
 #include "MemoryManager/JeveuxVector.h"
 #include "Supervis/ResultNaming.h"
 
-
 /**
  * @class FluidStructureInteractionInstance
  * @brief Cette classe correspond a une sd spectre
  * @author Nicolas Sellenet
  */
-class FluidStructureInteractionInstance: public DataStructure
-{
-private:
+class FluidStructureInteractionInstance : public DataStructure {
+  private:
     /** @brief Objet Jeveux '.FSIC' */
-    JeveuxVectorLong   _fsic;
+    JeveuxVectorLong _fsic;
     /** @brief Objet Jeveux '.FSVI' */
-    JeveuxVectorLong   _fsvi;
+    JeveuxVectorLong _fsvi;
     /** @brief Objet Jeveux '.FSVK' */
-    JeveuxVectorChar8  _fsvk;
+    JeveuxVectorChar8 _fsvk;
     /** @brief Objet Jeveux '.FSVR' */
     JeveuxVectorDouble _fsvr;
     /** @brief Objet Jeveux '.FSGM' */
@@ -56,11 +54,11 @@ private:
     /** @brief Objet Jeveux '.FSCR' */
     JeveuxVectorDouble _fscr;
     /** @brief Objet Jeveux '.UNIT_FAISCEAU' */
-    JeveuxVectorLong   _unitFaisceau;
+    JeveuxVectorLong _unitFaisceau;
     /** @brief Objet Jeveux '.UNIT_GRAPPES' */
-    JeveuxVectorLong   _unitGrappes;
+    JeveuxVectorLong _unitGrappes;
 
-public:
+  public:
     /**
      * @typedef FluidStructureInteractionPtr
      * @brief Pointeur intelligent vers un FluidStructureInteraction
@@ -70,24 +68,22 @@ public:
     /**
      * @brief Constructeur
      */
-    FluidStructureInteractionInstance():
-        FluidStructureInteractionInstance( ResultNaming::getNewResultName() )
-    {};
+    FluidStructureInteractionInstance()
+        : FluidStructureInteractionInstance( ResultNaming::getNewResultName() ){};
     /**
      * @brief Constructeur
      */
-    FluidStructureInteractionInstance( const std::string name ):
-        DataStructure( name, 8, "TYPE_FLUI_STRU", Permanent ),
-        _fsic( JeveuxVectorLong( getName() + "           .FSIC" ) ),
-        _fsvi( JeveuxVectorLong( getName() + "           .FSVI" ) ),
-        _fsvk( JeveuxVectorChar8( getName() + "           .FSVK" ) ),
-        _fsvr( JeveuxVectorDouble( getName() + "           .FSVR" ) ),
-        _fsgm( JeveuxVectorChar24( getName() + "           .FSGM" ) ),
-        _fsgr( JeveuxVectorDouble( getName() + "           .FSGR" ) ),
-        _fscr( JeveuxVectorDouble( getName() + "           .FSCR" ) ),
-        _unitFaisceau( JeveuxVectorLong( getName() + ".UNIT_FAISCEAU" ) ),
-        _unitGrappes( JeveuxVectorLong( getName() + ".UNIT_GRAPPES" ) )
-    {};
+    FluidStructureInteractionInstance( const std::string name )
+        : DataStructure( name, 8, "TYPE_FLUI_STRU", Permanent ),
+          _fsic( JeveuxVectorLong( getName() + "           .FSIC" ) ),
+          _fsvi( JeveuxVectorLong( getName() + "           .FSVI" ) ),
+          _fsvk( JeveuxVectorChar8( getName() + "           .FSVK" ) ),
+          _fsvr( JeveuxVectorDouble( getName() + "           .FSVR" ) ),
+          _fsgm( JeveuxVectorChar24( getName() + "           .FSGM" ) ),
+          _fsgr( JeveuxVectorDouble( getName() + "           .FSGR" ) ),
+          _fscr( JeveuxVectorDouble( getName() + "           .FSCR" ) ),
+          _unitFaisceau( JeveuxVectorLong( getName() + ".UNIT_FAISCEAU" ) ),
+          _unitGrappes( JeveuxVectorLong( getName() + ".UNIT_GRAPPES" ) ){};
 };
 
 /**

@@ -3,7 +3,7 @@
  * @brief Interface python de PrestressingCableDefinition
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -25,16 +25,28 @@
 #include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
-void exportPrestressingCableDefinitionToPython()
-{
+void exportPrestressingCableDefinitionToPython() {
     using namespace boost::python;
 
     class_< PrestressingCableDefinitionInstance,
             PrestressingCableDefinitionInstance::PrestressingCableDefinitionPtr,
-            bases< DataStructure > > ( "PrestressingCableDefinition", no_init )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< PrestressingCableDefinitionInstance, const ModelPtr&,
-                                                                  const MaterialOnMeshPtr&,
-                                                                  const ElementaryCharacteristicsPtr& > ) )
-    ;
+            bases< DataStructure > >( "PrestressingCableDefinition", no_init )
+        .def( "__init__",
+              make_constructor( &initFactoryPtr< PrestressingCableDefinitionInstance,
+                                                 const ModelPtr &, const MaterialOnMeshPtr &,
+                                                 const ElementaryCharacteristicsPtr & > ) )
+        .def( "__init__",
+              make_constructor(
+                  &initFactoryPtr< PrestressingCableDefinitionInstance, std::string,
+                                   const ModelPtr &, const MaterialOnMeshPtr &,
+                                   const ElementaryCharacteristicsPtr & > ) )
+        .def( "getModel", &PrestressingCableDefinitionInstance::getModel, R"(
+Return the support Model.
+
+Returns:
+    *Model*: Model object.
+        )" )
+        .def( "getMaterialOnMesh", &PrestressingCableDefinitionInstance::getMaterialOnMesh )
+        .def( "getElementaryCharacteristics",
+              &PrestressingCableDefinitionInstance::getElementaryCharacteristics );
 };

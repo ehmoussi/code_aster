@@ -3,7 +3,7 @@
  * @brief Implementation de ParallelMeshInstance
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -30,9 +30,7 @@
 
 #ifdef _USE_MPI
 
-bool ParallelMeshInstance::readMedFile( const std::string& fileName )
-    throw ( std::runtime_error )
-{
+bool ParallelMeshInstance::readMedFile( const std::string &fileName ) throw( std::runtime_error ) {
     std::string completeFileName = fileName + "/" + std::to_string( getMPIRank() ) + ".med";
     BaseMeshInstance::readMedFile( completeFileName );
 
@@ -43,13 +41,12 @@ bool ParallelMeshInstance::readMedFile( const std::string& fileName )
     auto gONNames = _groupsOfNodes->getObjectNames();
     auto allgONNames = util.gatheringVectorsOnAllProcs( gONNames );
 
-    for( auto& nameOfGrp : allgONNames )
+    for ( auto &nameOfGrp : allgONNames )
         _setOfAllGON.insert( trim( nameOfGrp.toString() ) );
     _allGroupOfNodes->allocate( Permanent, _setOfAllGON.size() );
     int num = 0;
-    for( auto& nameOfGrp : _setOfAllGON )
-    {
-        (*_allGroupOfNodes)[ num ] = nameOfGrp;
+    for ( auto &nameOfGrp : _setOfAllGON ) {
+        ( *_allGroupOfNodes )[num] = nameOfGrp;
         ++num;
     }
 
@@ -57,13 +54,12 @@ bool ParallelMeshInstance::readMedFile( const std::string& fileName )
     auto gOENames = _groupsOfElements->getObjectNames();
     auto allgOENames = util.gatheringVectorsOnAllProcs( gOENames );
 
-    for( auto& nameOfGrp : allgOENames )
+    for ( auto &nameOfGrp : allgOENames )
         _setOfAllGOE.insert( trim( nameOfGrp.toString() ) );
     _allGroupOfEements->allocate( Permanent, _setOfAllGOE.size() );
     num = 0;
-    for( auto& nameOfGrp : _setOfAllGOE )
-    {
-        (*_allGroupOfEements)[ num ] = nameOfGrp;
+    for ( auto &nameOfGrp : _setOfAllGOE ) {
+        ( *_allGroupOfEements )[num] = nameOfGrp;
         ++num;
     }
 

@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe NonLinearControl
  * @author Natacha Béreux
  * @section LICENCE
- *   Copyright (C) 1991 - 2015  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -26,50 +26,49 @@
 
 /* person_in_charge: natacha.bereux at edf.fr */
 
-#include <vector> 
+#include <vector>
 
 #include "Discretization/DiscreteProblem.h"
 #include "LinearAlgebra/SolverControl.h"
 
-
 /**
  * @class NonLinearControl
- * @brief Control class used to check convergence of Newton solver 
- * @author Natacha Béreux 
+ * @brief Control class used to check convergence of Newton solver
+ * @author Natacha Béreux
  */
 
-class NonLinearControlInstance : public SolverControlInstance
-{
-    public:
-    NonLinearControlInstance( double rTol=1.e-6, int nIterMax=10, double maxTol=1.e-6, double relMaxTol=0.0, double relTolCmp=0.0);
+class NonLinearControlInstance : public SolverControlInstance {
+  public:
+    NonLinearControlInstance( double rTol = 1.e-6, int nIterMax = 10, double maxTol = 1.e-6,
+                              double relMaxTol = 0.0, double relTolCmp = 0.0 );
 
-    ~NonLinearControlInstance()
-    {}
+    ~NonLinearControlInstance() {}
 
     /** @brief Eval convergence status
-        @param dProblem discrete problem 
-        @param uField solution candidate 
-        @param nIter current step 
+        @param dProblem discrete problem
+        @param uField solution candidate
+        @param nIter current step
     */
-    virtual  ConvergenceState check( const DiscreteProblemPtr& dProblem, const FieldOnNodesDoublePtr& uField, int nIter ); 
-    
+    virtual ConvergenceState check( const DiscreteProblemPtr &dProblem,
+                                    const FieldOnNodesDoublePtr &uField, int nIter );
+
     /** @brief Print convergence history */
     void printLog();
 
     /** @brief Clean convergence history */
     void cleanLog();
 
-    protected:
-/* resi_glob_maxi*/
+  protected:
+    /* resi_glob_maxi*/
     double _maxTol;
-/* resi_glob_rela */ 
+    /* resi_glob_rela */
     double _relativeMaxTol;
-/* resi_comp_rela */
+    /* resi_comp_rela */
     double _relativeTolByComponent;
-/* TODO resi_refe_rela */
+    /* TODO resi_refe_rela */
 
-   private: 
-   std::vector<double> _relResNorm;
+  private:
+    std::vector< double > _relResNorm;
 };
 
 /**

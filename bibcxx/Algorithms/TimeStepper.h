@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe TimeStepper
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2015  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -38,150 +38,117 @@ typedef VectorDouble::const_iterator VectorDoubleCIter;
  * @brief Cette classe permet de definir une liste d'instants
  * @author Nicolas Sellenet
  */
-class TimeStepperInstance: public DataStructure, public GenericStepper
-{
-    private:
-        /** @brief Liste des instants */
-        JeveuxVectorDouble _values;
+class TimeStepperInstance : public DataStructure, public GenericStepper {
+  private:
+    /** @brief Liste des instants */
+    JeveuxVectorDouble _values;
 
-    public:
-        /**
-         * @typedef TimeStepperPtr
-         * @brief Pointeur intelligent vers un TimeStepper
-         */
-        typedef boost::shared_ptr< TimeStepperInstance > TimeStepperPtr;
+  public:
+    /**
+     * @typedef TimeStepperPtr
+     * @brief Pointeur intelligent vers un TimeStepper
+     */
+    typedef boost::shared_ptr< TimeStepperInstance > TimeStepperPtr;
 
-        /**
-         * @brief Constructeur
-         */
-        TimeStepperInstance( const std::string jeveuxName,
-                             const JeveuxMemory memType = Permanent ):
-            DataStructure( jeveuxName, 8, "LIST_INST", memType ),
-            _values( getName() + ".LIST" )
-        {};
+    /**
+     * @brief Constructeur
+     */
+    TimeStepperInstance( const std::string jeveuxName, const JeveuxMemory memType = Permanent )
+        : DataStructure( jeveuxName, 8, "LIST_INST", memType ), _values( getName() + ".LIST" ){};
 
-        /**
-         * @brief Constructeur
-         */
-        TimeStepperInstance( JeveuxMemory memType = Permanent ):
-            TimeStepperInstance( DataStructureNaming::getNewName( memType, 8 ),
-                                 memType )
-        {};
+    /**
+     * @brief Constructeur
+     */
+    TimeStepperInstance( JeveuxMemory memType = Permanent )
+        : TimeStepperInstance( DataStructureNaming::getNewName( memType, 8 ), memType ){};
 
-        /**
-         * @brief Destructeur
-         */
-        ~TimeStepperInstance()
-        {};
+    /**
+     * @brief Destructeur
+     */
+    ~TimeStepperInstance(){};
 
-        struct const_iterator
-        {
-            double* position;
-            int     rank;
+    struct const_iterator {
+        double *position;
+        int rank;
 
-            inline const_iterator(): position( NULL ), rank(1)
-            {};
+        inline const_iterator() : position( NULL ), rank( 1 ){};
 
-            inline const_iterator( double* memoryPosition, int curRank ):
-                position( memoryPosition ),
-                rank( curRank )
-            {};
+        inline const_iterator( double *memoryPosition, int curRank )
+            : position( memoryPosition ), rank( curRank ){};
 
-            inline const_iterator( const const_iterator& iter ):
-                position( iter.position ),
-                rank( iter.rank )
-            {};
+        inline const_iterator( const const_iterator &iter )
+            : position( iter.position ), rank( iter.rank ){};
 
-            inline const_iterator& operator=( const const_iterator& testIter )
-            {
-                position = testIter.position;
-                rank = testIter.rank;
-                return *this;
-            };
+        inline const_iterator &operator=( const const_iterator &testIter ) {
+            position = testIter.position;
+            rank = testIter.rank;
+            return *this;
+        };
 
-            inline const_iterator& operator++()
-            {
-                ++position;
-                ++rank;
-                return *this;
-            };
+        inline const_iterator &operator++() {
+            ++position;
+            ++rank;
+            return *this;
+        };
 
-            inline bool operator==( const const_iterator& testIter ) const
-            {
-                if ( testIter.position != position ) return false;
-                return true;
-            };
-
-            inline bool operator!=( const const_iterator& testIter ) const
-            {
-                if ( testIter.position != position ) return true;
+        inline bool operator==( const const_iterator &testIter ) const {
+            if ( testIter.position != position )
                 return false;
-            };
-
-            inline const double& operator->() const
-            {
-                return *position;
-            };
-
-            inline const double& operator*() const
-            {
-                return *position;
-            };
+            return true;
         };
 
-        /**
-         * @brief
-         * @return
-         */
-        const_iterator begin() const
-        {
-            return const_iterator( &( *_values )[0], 1 );
+        inline bool operator!=( const const_iterator &testIter ) const {
+            if ( testIter.position != position )
+                return true;
+            return false;
         };
 
-        /**
-         * @brief
-         * @return
-         */
-        const_iterator end() const
-        {
-//             return const_iterator( &( *_values )[ _values->size() - 1 ] );
-            return const_iterator( &( *_values )[ _values->size() ], _values->size() );
-        };
+        inline const double &operator->() const { return *position; };
 
-        /**
-         * @brief Fonction permettant de mettre a jour le stepper
-         * @return true si tout s'est bien passé
-         */
-        bool operator=( const VectorDouble& vecDouble ) throw ( std::runtime_error )
-        {
-            return setValues( vecDouble );
-        };
+        inline const double &operator*() const { return *position; };
+    };
 
-        /**
-         * @brief Fonction permettant de fixer la liste de pas de temps
-         * @param values Liste des valeurs
-         */
-        bool setValues( const VectorDouble& values ) throw ( std::runtime_error );
+    /**
+     * @brief
+     * @return
+     */
+    const_iterator begin() const { return const_iterator( &( *_values )[0], 1 ); };
 
-        /**
-         * @brief Fonction permettant de connaître le nombre de pas de temps
-         * @return nombre de pas de temps
-         */
-        ASTERINTEGER size() const
-        {
-            return _values->size();
-        };
+    /**
+     * @brief
+     * @return
+     */
+    const_iterator end() const {
+        //             return const_iterator( &( *_values )[ _values->size() - 1 ] );
+        return const_iterator( &( *_values )[_values->size()], _values->size() );
+    };
 
-        /**
-         * @brief Fonction permettant de mettre a jour le stepper
-         * @return true si tout s'est bien passé
-         */
-        bool update() const
-        {
-            return _values->updateValuePointer();
-        };
+    /**
+     * @brief Fonction permettant de mettre a jour le stepper
+     * @return true si tout s'est bien passé
+     */
+    bool operator=( const VectorDouble &vecDouble ) throw( std::runtime_error ) {
+        return setValues( vecDouble );
+    };
+
+    /**
+     * @brief Fonction permettant de fixer la liste de pas de temps
+     * @param values Liste des valeurs
+     */
+    bool setValues( const VectorDouble &values ) throw( std::runtime_error );
+
+    /**
+     * @brief Fonction permettant de connaître le nombre de pas de temps
+     * @return nombre de pas de temps
+     */
+    ASTERINTEGER size() const { return _values->size(); };
+
+    /**
+     * @brief Fonction permettant de mettre a jour le stepper
+     * @return true si tout s'est bien passé
+     */
+    bool update() const { return _values->updateValuePointer(); };
 };
-
 
 /**
  * @typedef TimeStepperPtr

@@ -3,7 +3,7 @@
  * @brief Interface python de ElementaryVector
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -27,34 +27,29 @@
 #include <PythonBindings/factory.h>
 #include "PythonBindings/ElementaryVectorInterface.h"
 
-
-void exportElementaryVectorToPython()
-{
+void exportElementaryVectorToPython() {
     using namespace boost::python;
 
-    FieldOnNodesDoublePtr (ElementaryVectorInstance::*c1)(const DOFNumberingPtr&) =
-            &ElementaryVectorInstance::assembleVector;
+    FieldOnNodesDoublePtr ( ElementaryVectorInstance::*c1 )( const DOFNumberingPtr & ) =
+        &ElementaryVectorInstance::assembleVector;
 #ifdef _USE_MPI
-    FieldOnNodesDoublePtr (ElementaryVectorInstance::*c2)(const ParallelDOFNumberingPtr&) =
-            &ElementaryVectorInstance::assembleVector;
+    FieldOnNodesDoublePtr ( ElementaryVectorInstance::*c2 )( const ParallelDOFNumberingPtr & ) =
+        &ElementaryVectorInstance::assembleVector;
 #endif /* _USE_MPI */
 
-    void (ElementaryVectorInstance::*c3)(const GenericMechanicalLoadPtr&) =
-            &ElementaryVectorInstance::addLoad;
+    void ( ElementaryVectorInstance::*c3 )( const GenericMechanicalLoadPtr & ) =
+        &ElementaryVectorInstance::addLoad;
 
     class_< ElementaryVectorInstance, ElementaryVectorInstance::ElementaryVectorPtr,
-            bases< DataStructure > > ( "ElementaryVector", no_init )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< ElementaryVectorInstance >) )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< ElementaryVectorInstance,
-                             std::string >) )
+            bases< DataStructure > >( "ElementaryVector", no_init )
+        .def( "__init__", make_constructor(&initFactoryPtr< ElementaryVectorInstance >))
+        .def( "__init__",
+              make_constructor(&initFactoryPtr< ElementaryVectorInstance, std::string >))
         .def( "addMechanicalLoad", c3 )
         .def( "assembleVector", c1 )
         .def( "setType", &ElementaryVectorInstance::setType )
 #ifdef _USE_MPI
         .def( "assembleVector", c2 )
 #endif /* _USE_MPI */
-        .def( "setListOfLoads", &ElementaryVectorInstance::setListOfLoads )
-    ;
+        .def( "setListOfLoads", &ElementaryVectorInstance::setListOfLoads );
 };

@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe StaticMacroElement
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2016  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -29,49 +29,46 @@
 #include "astercxx.h"
 
 #include "DataStructures/DataStructure.h"
-#include "MemoryManager/JeveuxVector.h"
-#include "MemoryManager/JeveuxCollection.h"
 #include "LinearAlgebra/AssemblyMatrix.h"
-
+#include "MemoryManager/JeveuxCollection.h"
+#include "MemoryManager/JeveuxVector.h"
+#include "Supervis/ResultNaming.h"
 
 /**
  * @class ProjMesuInstance
  * @brief Cette classe correspond a un PROJ_MESU
  * @author Nicolas Sellenet
  */
-class ProjMesuInstance: public DataStructure
-{
-private:
+class ProjMesuInstance : public DataStructure {
+  private:
     /** @brief Objet Jeveux '.PJMNO' */
-    JeveuxVectorLong        _pjmno;
+    JeveuxVectorLong _pjmno;
     /** @brief Objet Jeveux '.PJMRG' */
-    JeveuxVectorChar8       _pjmrg;
+    JeveuxVectorChar8 _pjmrg;
     /** @brief Objet Jeveux '.PJMBP' */
-    JeveuxVectorDouble      _pjmbp;
+    JeveuxVectorDouble _pjmbp;
     /** @brief Objet Jeveux '.PJMRF' */
-    JeveuxVectorChar16      _pjmrf;
+    JeveuxVectorChar16 _pjmrf;
     /** @brief Objet Jeveux '.PJMOR' */
-    JeveuxVectorDouble      _pjmor;
+    JeveuxVectorDouble _pjmor;
     /** @brief Objet Jeveux '.PJMMM' */
-    JeveuxVectorDouble      _pjmmm;
+    JeveuxVectorDouble _pjmmm;
     /** @brief Objet Jeveux '.PJMIG' */
-    JeveuxVectorDouble      _pjmig;
+    JeveuxVectorDouble _pjmig;
 
-public:
+  public:
     /**
      * @brief Constructeur
      */
-    ProjMesuInstance( const std::string& name ):
-        DataStructure( name, 18, "PROJ_MESU", Permanent ),
-        _pjmno( JeveuxVectorLong( getName() + ".PJMNO" ) ),
-        _pjmrg( JeveuxVectorChar8( getName() + ".PJMRG" ) ),
-        _pjmbp( JeveuxVectorDouble( getName() + ".PJMBP" ) ),
-        _pjmrf( JeveuxVectorChar16( getName() + ".PJMRF" ) ),
-        _pjmor( JeveuxVectorDouble( getName() + ".PJMOR" ) ),
-        _pjmmm( JeveuxVectorDouble( getName() + ".PJMMM" ) ),
-        _pjmig( JeveuxVectorDouble( getName() + ".PJMIG" ) )
-    {};
-
+    ProjMesuInstance( const std::string &name )
+        : DataStructure( name, 18, "PROJ_MESU", Permanent ),
+          _pjmno( JeveuxVectorLong( getName() + ".PJMNO" ) ),
+          _pjmrg( JeveuxVectorChar8( getName() + ".PJMRG" ) ),
+          _pjmbp( JeveuxVectorDouble( getName() + ".PJMBP" ) ),
+          _pjmrf( JeveuxVectorChar16( getName() + ".PJMRF" ) ),
+          _pjmor( JeveuxVectorDouble( getName() + ".PJMOR" ) ),
+          _pjmmm( JeveuxVectorDouble( getName() + ".PJMMM" ) ),
+          _pjmig( JeveuxVectorDouble( getName() + ".PJMIG" ) ){};
 };
 
 /**
@@ -85,39 +82,38 @@ typedef boost::shared_ptr< ProjMesuInstance > ProjMesuPtr;
  * @brief Cette classe correspond a un MACR_ELEM_STAT
  * @author Nicolas Sellenet
  */
-class StaticMacroElementInstance: public DataStructure
-{
-private:
+class StaticMacroElementInstance : public DataStructure {
+  private:
     /** @brief Objet Jeveux '.DESM' */
-    JeveuxVectorLong        _desm;
+    JeveuxVectorLong _desm;
     /** @brief Objet Jeveux '.LINO' */
-    JeveuxVectorLong        _lino;
+    JeveuxVectorLong _lino;
     /** @brief Objet Jeveux '.REFM' */
-    JeveuxVectorChar8       _refm;
+    JeveuxVectorChar8 _refm;
     /** @brief Objet Jeveux '.VARM' */
-    JeveuxVectorDouble      _varm;
+    JeveuxVectorDouble _varm;
     /** @brief Objet Jeveux '.CONX' */
-    JeveuxVectorLong        _conx;
+    JeveuxVectorLong _conx;
     /** @brief Objet Jeveux '.RIGIMECA' */
     AssemblyMatrixDisplacementDoublePtr _rigiMeca;
     /** @brief Objet Jeveux '.MAEL_RAID_VALE' */
-    JeveuxVectorDouble      _maelRaidVale;
+    JeveuxVectorDouble _maelRaidVale;
     /** @brief Objet Jeveux '.PHI_IE' */
-    JeveuxCollectionDouble  _phiIe;
+    JeveuxCollectionDouble _phiIe;
     /** @brief Objet Jeveux '.MASSMECA' */
     AssemblyMatrixDisplacementDoublePtr _masseMeca;
     /** @brief Objet Jeveux '.MAEL_MASS_VALE' */
-    JeveuxVectorDouble      _maelMassVale;
+    JeveuxVectorDouble _maelMassVale;
     /** @brief Objet Jeveux '.MAEL_AMOR_VALE' */
-    JeveuxVectorDouble      _maelAmorVale;
+    JeveuxVectorDouble _maelAmorVale;
     /** @brief Objet Jeveux '.LICA' */
-    JeveuxCollectionDouble  _lica;
+    JeveuxCollectionDouble _lica;
     /** @brief Objet Jeveux '.LICH' */
-    JeveuxCollectionChar8   _lich;
+    JeveuxCollectionChar8 _lich;
     /** @brief Objet PROJ_MESU '        .PROJM    ' */
-    ProjMesuPtr             _projM;
+    ProjMesuPtr _projM;
 
-public:
+  public:
     /**
      * @typedef StaticMacroElementPtr
      * @brief Pointeur intelligent vers un StaticMacroElementInstance
@@ -127,24 +123,22 @@ public:
     /**
      * @brief Constructeur
      */
-    StaticMacroElementInstance():
-        DataStructure( "MACR_ELEM_STAT", Permanent, 8 ),
-        _desm( JeveuxVectorLong( getName() + ".DESM" ) ),
-        _lino( JeveuxVectorLong( getName() + ".LINO" ) ),
-        _refm( JeveuxVectorChar8( getName() + ".REFM" ) ),
-        _varm( JeveuxVectorDouble( getName() + ".VARM" ) ),
-        _conx( JeveuxVectorLong( getName() + ".CONX" ) ),
-        _rigiMeca( new AssemblyMatrixDisplacementDoubleInstance( getName() + ".RIGIMECA" ) ),
-        _maelRaidVale( JeveuxVectorDouble( getName() + ".MAEL_RAID_VALE" ) ),
-        _phiIe( JeveuxCollectionDouble( getName() + ".PHI_IE" ) ),
-        _masseMeca( new AssemblyMatrixDisplacementDoubleInstance( getName() + ".MASSMECA" ) ),
-        _maelMassVale( JeveuxVectorDouble( getName() + ".MAEL_MASS_VALE" ) ),
-        _maelAmorVale( JeveuxVectorDouble( getName() + ".MAEL_AMOR_VALE" ) ),
-        _lica( JeveuxCollectionDouble( getName() + ".LICA" ) ),
-        _lich( JeveuxCollectionChar8( getName() + ".LICH" ) ),
-        _projM( new ProjMesuInstance( getName() + ".PROJM    " ) )
-    {};
-
+    StaticMacroElementInstance( const std::string name = ResultNaming::getNewResultName() )
+        : DataStructure( name, 8, "MACR_ELEM_STAT", Permanent ),
+          _desm( JeveuxVectorLong( getName() + ".DESM" ) ),
+          _lino( JeveuxVectorLong( getName() + ".LINO" ) ),
+          _refm( JeveuxVectorChar8( getName() + ".REFM" ) ),
+          _varm( JeveuxVectorDouble( getName() + ".VARM" ) ),
+          _conx( JeveuxVectorLong( getName() + ".CONX" ) ),
+          _rigiMeca( new AssemblyMatrixDisplacementDoubleInstance( getName() + ".RIGIMECA" ) ),
+          _maelRaidVale( JeveuxVectorDouble( getName() + ".MAEL_RAID_VALE" ) ),
+          _phiIe( JeveuxCollectionDouble( getName() + ".PHI_IE" ) ),
+          _masseMeca( new AssemblyMatrixDisplacementDoubleInstance( getName() + ".MASSMECA" ) ),
+          _maelMassVale( JeveuxVectorDouble( getName() + ".MAEL_MASS_VALE" ) ),
+          _maelAmorVale( JeveuxVectorDouble( getName() + ".MAEL_AMOR_VALE" ) ),
+          _lica( JeveuxCollectionDouble( getName() + ".LICA" ) ),
+          _lich( JeveuxCollectionChar8( getName() + ".LICH" ) ),
+          _projM( new ProjMesuInstance( getName() + ".PROJM    " ) ){};
 };
 
 /**

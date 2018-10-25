@@ -3,7 +3,7 @@
  * @brief Interface python de FieldOnNodes
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -30,44 +30,34 @@
 #include "DataFields/MeshCoordinatesField.h"
 #include "PythonBindings/ConstViewerUtilities.h"
 
-
-void exportFieldOnNodesToPython()
-{
+void exportFieldOnNodesToPython() {
     using namespace boost::python;
 
-    class_< FieldOnNodesDoubleInstance, FieldOnNodesDoublePtr,
-            bases< GenericDataFieldInstance > >("FieldOnNodesDouble", no_init)
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< FieldOnNodesDoubleInstance >) )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< FieldOnNodesDoubleInstance,
-                             std::string >) )
+    class_< FieldOnNodesDoubleInstance, FieldOnNodesDoublePtr, bases< GenericDataFieldInstance > >(
+        "FieldOnNodesDouble", no_init )
+        .def( "__init__", make_constructor(&initFactoryPtr< FieldOnNodesDoubleInstance >))
+        .def( "__init__",
+              make_constructor(&initFactoryPtr< FieldOnNodesDoubleInstance, std::string >))
 
-        .def( "exportToSimpleFieldOnNodes", &FieldOnNodesDoubleInstance::exportToSimpleFieldOnNodes )
-        .def( "__getitem__", +[](const FieldOnNodesDoubleInstance& v, int i)
-        {
-            return v.operator[](i);
-        })
+        .def( "exportToSimpleFieldOnNodes",
+              &FieldOnNodesDoubleInstance::exportToSimpleFieldOnNodes )
+        .def( "__getitem__",
+              +[]( const FieldOnNodesDoubleInstance &v, int i ) { return v.operator[]( i ); } )
         .def( "printMedFile", &FieldOnNodesDoubleInstance::printMedFile )
         .def( "setDOFNumering", &FieldOnNodesDoubleInstance::setDOFNumering )
         .def( "update", &FieldOnNodesDoubleInstance::update )
-        .def( "updateValuePointers", &FieldOnNodesDoubleInstance::updateValuePointers )
-    ;
+        .def( "updateValuePointers", &FieldOnNodesDoubleInstance::updateValuePointers );
     class_< FieldOnNodesComplexInstance, FieldOnNodesComplexPtr,
-            bases< GenericDataFieldInstance > > ( "FieldOnNodesComplex", no_init )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< FieldOnNodesComplexInstance >) )
-        .def( "__init__", make_constructor(
-            &initFactoryPtr< FieldOnNodesComplexInstance,
-                             std::string >) )
-        .def( "exportToSimpleFieldOnNodes", &FieldOnNodesComplexInstance::exportToSimpleFieldOnNodes )
-        .def( "__getitem__", +[](const FieldOnNodesComplexInstance& v, int i)  
-         {
-            return v.operator[](i);
-         })
+            bases< GenericDataFieldInstance > >( "FieldOnNodesComplex", no_init )
+        .def( "__init__", make_constructor(&initFactoryPtr< FieldOnNodesComplexInstance >))
+        .def( "__init__",
+              make_constructor(&initFactoryPtr< FieldOnNodesComplexInstance, std::string >))
+        .def( "exportToSimpleFieldOnNodes",
+              &FieldOnNodesComplexInstance::exportToSimpleFieldOnNodes )
+        .def( "__getitem__",
+              +[]( const FieldOnNodesComplexInstance &v, int i ) { return v.operator[]( i ); } )
         .def( "printMedFile", &FieldOnNodesComplexInstance::printMedFile )
         .def( "setDOFNumering", &FieldOnNodesComplexInstance::setDOFNumering )
         .def( "update", &FieldOnNodesComplexInstance::update )
-        .def( "updateValuePointers", &FieldOnNodesComplexInstance::updateValuePointers )
-    ;
+        .def( "updateValuePointers", &FieldOnNodesComplexInstance::updateValuePointers );
 };
