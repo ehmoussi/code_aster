@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,23 +15,13 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine mmmvas(ndim, nne, nnm, nnl, nbdm,&
-                      nbcps, vectee, vectmm, vectcc, vectff,&
+    subroutine mmmvas(ndim  , nne   , nnm   , nnl   , nbdm, nbcps,&
+                      vectee, vectmm, vectcc, vectff,&
                       vtmp)
-        integer :: ndim
-        integer :: nne
-        integer :: nnm
-        integer :: nnl
-        integer :: nbdm
-        integer :: nbcps
-        real(kind=8) :: vectee(27)
-        real(kind=8) :: vectmm(27)
-        real(kind=8) :: vectcc(9)
-        real(kind=8) :: vectff(18)
-        real(kind=8) :: vtmp(81)
+        integer, intent(in) :: nbdm, ndim, nnl, nne, nnm, nbcps
+        real(kind=8), intent(in) :: vectcc(9), vectff(18), vectee(27), vectmm(27)
+        real(kind=8), intent(inout) :: vtmp(81)
     end subroutine mmmvas
 end interface

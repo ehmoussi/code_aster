@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,30 +15,22 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine mmmtem(phasep,ndim  ,nne   ,nnm   ,mprojn, &
-                  mprojt,wpg   ,ffe   ,ffm   , &
-          jacobi,coefac,coefaf,coefff,rese  , &
-          nrese, lambda, matrem)
-        character(len=9) :: phasep
-        integer :: ndim
-        integer :: nne
-        integer :: nnm
-        real(kind=8) :: mprojn(3, 3)
-        real(kind=8) :: mprojt(3, 3)
-        real(kind=8) :: wpg
-        real(kind=8) :: ffe(9)
-        real(kind=8) :: ffm(9)
-        real(kind=8) :: jacobi
-        real(kind=8) :: coefac
-        real(kind=8) :: coefaf
-        real(kind=8) :: coefff
-        real(kind=8) :: rese(3)
-        real(kind=8) :: nrese
-        real(kind=8) :: lambda
-        real(kind=8) :: matrem(27, 27)
+    subroutine mmmtem(phase ,&
+                      ndim  , nne   ,nnm   ,&
+                      mprojn, mprojt,wpg   , jacobi,&
+                      ffe   , ffm   , &
+                      coefac, coefaf,coefff, lambda,&
+                      rese  , nrese,&
+                      matrem)
+        character(len=4), intent(in) :: phase
+        integer, intent(in) :: ndim, nne, nnm
+        real(kind=8), intent(in) :: mprojn(3, 3), mprojt(3, 3)
+        real(kind=8), intent(in) :: wpg, jacobi
+        real(kind=8), intent(in) :: ffe(9), ffm(9)
+        real(kind=8), intent(in) :: coefac, coefaf, coefff, lambda
+        real(kind=8), intent(in) :: rese(3), nrese
+        real(kind=8), intent(out) :: matrem(27, 27)
     end subroutine mmmtem
 end interface

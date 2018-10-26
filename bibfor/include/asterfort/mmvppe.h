@@ -21,10 +21,10 @@ interface
     subroutine mmvppe(typmae   , typmam   ,&
                       ndim     , nne      , nnm     , nnl   , nbdm  ,&
                       iresog   , l_large_slip,&
-                      laxis    , ldyna    , jeusup  ,&
+                      laxis    , jeusup  ,&
                       xpc      , ypc      , xpr     , ypr   ,&
                       tau1     , tau2     ,&
-                      ffe      , ffm      , ffl     ,&
+                      ffe      , ffm      , ffl     , dffm  ,&
                       jacobi   , jeu      , djeu    , djeut , &
                       dlagrc   , dlagrf   , &
                       norm     , mprojt   ,&
@@ -33,15 +33,16 @@ interface
                       kappa    ,&
                       taujeu1  , taujeu2  ,&
                       dnepmait1, dnepmait2)
-        aster_logical, intent(in) :: laxis, ldyna
+
         character(len=8), intent(in) :: typmae, typmam
         integer, intent(in) :: ndim, nne, nnm, nnl, nbdm
         integer, intent(in) :: iresog
         aster_logical, intent(in) :: l_large_slip
+        aster_logical, intent(in) :: laxis
         real(kind=8), intent(in) :: jeusup
         real(kind=8), intent(in) :: xpc, ypc, xpr, ypr
         real(kind=8), intent(in) :: tau1(3), tau2(3)
-        real(kind=8), intent(out) :: ffe(9), ffm(9), ffl(9)
+        real(kind=8), intent(out) :: ffe(9), ffm(9), ffl(9), dffm(2,9)
         real(kind=8), intent(out) :: jacobi, jeu, djeu(3)
         real(kind=8), intent(out) :: djeut(3), dlagrc, dlagrf(2)
         real(kind=8), intent(out) :: norm(3), mprojt(3, 3)

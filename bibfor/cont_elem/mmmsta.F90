@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: ayaovi-dzifa.kudawoo at edf.fr
 !
-subroutine mmmsta(ndim         , loptf         , indco ,&
+subroutine mmmsta(ndim         , leltf         , indco ,&
                   ialgoc       , ialgof        ,&
                   lpenaf       , coefaf        ,&
                   lambda       , djeut         , dlagrf,&
@@ -35,7 +35,7 @@ implicit none
 #include "asterfort/mmtrpr.h"
 !
 integer, intent(in) :: ndim
-aster_logical, intent(in) :: loptf
+aster_logical, intent(in) :: leltf
 integer, intent(in) :: indco
 integer, intent(in) :: ialgoc, ialgof
 aster_logical, intent(in) :: lpenaf
@@ -56,7 +56,7 @@ integer, optional, intent(in) :: indco_prev_, indadhe_prev_, indadhe2_prev_
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  ndim             : dimension of problem (2 or 3)
-! In  loptf            : flag if compute RIGI_FROT
+! In  leltf            : flag for friction
 ! In  l_previous       : flag to manage cycling (previous iteration)
 ! In  ialgoc           : formulation for contact
 !                        1 - Standard
@@ -113,20 +113,20 @@ integer, optional, intent(in) :: indco_prev_, indadhe_prev_, indadhe2_prev_
     else
         lcont = (indco .eq. 1)
     endif
-    if (loptf) then
-! This test influence highly the NON_REGRESSION & CONVERGENCE
-! ONE MUST HAVE ATTENTION WHEN MODIFYING
-        if (lambda .eq. 0.d0) then
-            lcont = ASTER_FALSE
-        endif
-    endif
+!    if (leltf) then
+!! This test influence highly the NON_REGRESSION & CONVERGENCE
+!! ONE MUST HAVE ATTENTION WHEN MODIFYING
+!        if (lambda .eq. 0.d0) then
+!            lcont = ASTER_FALSE
+!        endif
+!    endif
 !
 ! - Compute state of friction
 !
-    if (loptf .and. lcont) then
+    if (leltf .and. lcont) then
         call mmtrpr(ndim, lpenaf, djeut, dlagrf, coefaf,&
                     tau1, tau2  , ladhe, rese, nrese)
-! On est en penalisatio  ou en algo_cont=penalisation, algo_frot=standard/penalisation
+! On est en penalisation ou en algo_cont=penalisation, algo_frot=standard/penalisation
         if (indadhe_prev .eq. 1 .and. l_previous) then
             ladhe = ASTER_TRUE
         endif

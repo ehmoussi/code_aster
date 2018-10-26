@@ -19,7 +19,7 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine mmnsta(ndim  , loptf ,&
+    subroutine mmnsta(ndim  , leltf ,&
                       lpenaf, coefaf,&
                       indco ,&
                       lambda, djeut , dlagrf,&
@@ -27,7 +27,7 @@ interface
                       lcont , ladhe ,&
                       rese  , nrese)
         integer, intent(in) :: ndim
-        aster_logical, intent(in) :: loptf
+        aster_logical, intent(in) :: leltf
         aster_logical, intent(in) :: lpenaf
         integer, intent(in) :: indco
         real(kind=8), intent(in) :: coefaf, lambda

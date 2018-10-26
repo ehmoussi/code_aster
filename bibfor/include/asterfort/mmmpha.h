@@ -19,11 +19,8 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine mmmpha(loptf , lpenac, lpenaf,&
-                      lcont , ladhe , &
-                      phasep)
-        aster_logical, intent(in) :: loptf, lcont, ladhe
-        aster_logical, intent(in) :: lpenaf, lpenac
-        character(len=9), intent(out) :: phasep
+    subroutine mmmpha(leltf, lcont, ladhe, phase)
+        aster_logical, intent(in) :: leltf, lcont, ladhe
+        character(len=4), intent(out) :: phase
     end subroutine mmmpha
 end interface

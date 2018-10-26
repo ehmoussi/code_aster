@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine mmGetStatus(option     , indco      ,&
+subroutine mmGetStatus(leltf      , indco      ,&
                        l_previous_, indco_prev_, indadhe_prev_, indadhe2_prev_)
 !
 implicit none
@@ -26,7 +26,7 @@ implicit none
 #include "jeveux.h"
 #include "asterfort/jevech.h"
 !
-character(len=16), intent(in) :: option
+aster_logical, intent(in) :: leltf
 integer, intent(out) :: indco
 aster_logical, optional, intent(out) :: l_previous_
 integer, optional, intent(out) :: indco_prev_, indadhe_prev_, indadhe2_prev_
@@ -39,7 +39,7 @@ integer, optional, intent(out) :: indco_prev_, indadhe_prev_, indadhe2_prev_
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  option           : option to compute
+! In  leltf            : flag for friction
 ! Out l_previous       : flag to manage cycling (previous iteration)
 ! Out indco            : flag for contact status
 ! Out indco_prev       : flag for contact status (previous iteration)
@@ -55,10 +55,13 @@ integer, optional, intent(out) :: indco_prev_, indadhe_prev_, indadhe2_prev_
 ! --------------------------------------------------------------------------------------------------
 !
     call jevech('PCONFR', 'L', jpcf)
-    l_previous_cont = (nint(zr(jpcf-1+30)) .eq. 1 )
-    l_previous_fric = (nint(zr(jpcf-1+44)) .eq. 1 )
-    if (option .eq. 'RIGI_CONT') l_previous = l_previous_cont
-    if (option .eq. 'RIGI_FROT') l_previous = l_previous_fric
+    l_previous_cont = (nint(zr(jpcf-1+30)) .eq. 1)
+    l_previous_fric = (nint(zr(jpcf-1+44)) .eq. 1)
+    if (leltf) then
+        l_previous = l_previous_fric
+    else
+        l_previous = l_previous_cont
+    endif
     indco         = nint(zr(jpcf-1+12))
     indco_prev    = nint(zr(jpcf-1+27))
     indadhe_prev  = nint(zr(jpcf-1+44))
@@ -67,6 +70,5 @@ integer, optional, intent(out) :: indco_prev_, indadhe_prev_, indadhe2_prev_
     if (present(indco_prev_)) indco_prev_ = indco_prev
     if (present(indadhe_prev_)) indadhe_prev_ = indadhe_prev
     if (present(indadhe2_prev_)) indadhe2_prev_ = indadhe2_prev
-
 !
 end subroutine

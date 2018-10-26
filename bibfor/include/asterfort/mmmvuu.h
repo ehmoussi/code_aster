@@ -18,39 +18,27 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine mmmvuu(phasez, ndim, nne, nnm, norm,&
-                      tau1, tau2, mprojt, wpg, ffe,&
-                      ffm, jacobi, jeu, coefac, coefaf,&
-                      lambda, coefff, dlagrc, dlagrf, dvite,&
-                      rese, nrese, vectee, vectmm,mprt11,mprt12,mprt21,&
-                      mprt22,mprt1n,mprt2n,kappa,l_large_slip)
-        character(len=*) :: phasez
-        integer :: ndim
-        integer :: nne
-        integer :: nnm
-        aster_logical, intent(in) :: l_large_slip
-        real(kind=8) :: mprt11(3, 3), mprt12(3, 3), mprt21(3, 3), mprt22(3, 3)
-        real(kind=8) :: norm(3)
-        real(kind=8) :: tau1(3)
-        real(kind=8) :: tau2(3),kappa(2,2)
-        real(kind=8) :: mprojt(3, 3)
-        real(kind=8) :: wpg
-        real(kind=8) :: ffe(9)
-        real(kind=8) :: ffm(9)
-        real(kind=8) :: jacobi
-        real(kind=8) :: jeu
-        real(kind=8) :: coefac
-        real(kind=8) :: coefaf
-        real(kind=8) :: lambda
-        real(kind=8) :: coefff
-        real(kind=8) :: dlagrc
-        real(kind=8) :: dlagrf(2)
-        real(kind=8) :: dvite(3)
-        real(kind=8) :: rese(3)
-        real(kind=8) :: nrese
-        real(kind=8) :: vectee(27)
-        real(kind=8) :: vectmm(27)
-
-    real(kind=8) :: mprt1n(3,3),mprt2n(3,3)  
+    subroutine mmmvuu(phase , l_pena_cont, l_pena_fric, l_large_slip,&
+                      ndim  , nne   , nnm   ,&
+                      norm  , tau1  , tau2  , mprojt,&
+                      wpg   , ffe   , ffm   , dffm  , jacobi, jeu   ,&
+                      coefac, coefaf, lambda, coefff,&
+                      dlagrc, dlagrf, djeu  ,&
+                      rese  , nrese ,&
+                      mprt1n, mprt2n,&
+                      mprt11, mprt12, mprt21, mprt22, kappa,&
+                      vectee, vectmm)
+        character(len=4), intent(in) :: phase
+        aster_logical, intent(in) :: l_pena_cont, l_pena_fric, l_large_slip
+        integer, intent(in) :: ndim, nne, nnm
+        real(kind=8), intent(in) :: norm(3), tau1(3), tau2(3), mprojt(3, 3)
+        real(kind=8), intent(in) :: wpg, ffe(9), ffm(9), dffm(2,9), jacobi, jeu
+        real(kind=8), intent(in) :: coefac, coefaf, lambda, coefff
+        real(kind=8), intent(in) :: dlagrc, dlagrf(2), djeu(3)
+        real(kind=8), intent(in) :: rese(3), nrese
+        real(kind=8), intent(in) :: mprt1n(3, 3), mprt2n(3, 3)
+        real(kind=8), intent(in) :: mprt11(3, 3), mprt12(3, 3), mprt21(3, 3), mprt22(3, 3)
+        real(kind=8), intent(in) :: kappa(2,2)
+        real(kind=8), intent(out) :: vectee(27), vectmm(27)
     end subroutine mmmvuu
 end interface

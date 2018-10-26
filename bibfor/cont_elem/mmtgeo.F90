@@ -34,7 +34,7 @@ implicit none
 #include "asterfort/mmgnuu.h"
 #include "asterfort/mmgtuu.h"
 !
-character(len=9), intent(in) :: phase
+character(len=4), intent(in) :: phase
 aster_logical, intent(in) :: l_large_slip
 integer, intent(in) :: ndim, nne, nnm
 real(kind=8), intent(in) :: wpg, ffe(9), ffm(9), dffm(2,9), ddffm(3,9)
@@ -94,16 +94,10 @@ real(kind=8), intent(inout) :: matree(27,27), matrmm(27,27)
 ! IO  matrmm           : matrix for DOF [master x master]
 ! IO  matrem           : matrix for DOF [slave x master]
 ! IO  matrme           : matrix for DOF [master x slave]
-! ----------------------------------------------------------------------
 !
-! ROUTINE CONTACT (METHODE CONTINUE - CALCUL)
+! --------------------------------------------------------------------------------------------------
 !
-! CALCUL DES MATRICES - EQUATION EQUILIBRE - CAS POIN_ELEM
-!
-! ----------------------------------------------------------------------
-!
-    if (phase(1:4) .eq. 'CONT') then
-! ------Compute matrices for first variation of gap
+    if (phase .ne. 'SANS') then
         call mmgnuu(ndim  , nne   , nnm   ,&
                     wpg   , ffe   , ffm   , dffm  ,&
                     jacobi, coefac, jeu   , dlagrc,&
@@ -113,8 +107,8 @@ real(kind=8), intent(inout) :: matree(27,27), matrmm(27,27)
                     kappa , vech1 , vech2 ,&
                     h     , hah   , &
                     matree, matrmm, matrem, matrme)
-    elseif (phase(1:4) .eq. 'GLIS' .and. l_large_slip) then
-! ------Compute matrices for second variation of gap
+    endif
+    if (phase .eq. 'GLIS' .and. l_large_slip) then
         call mmgtuu(ndim  , nne   , nnm   ,&
                     wpg   , ffe   , ffm   , dffm  , ddffm ,&
                     jacobi, coefac, coefff, jeu   , dlagrc,&

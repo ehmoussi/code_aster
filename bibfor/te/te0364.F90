@@ -49,7 +49,7 @@ character(len=16), intent(in) :: option, nomte
 !
 ! Elementary computation
 !
-! Options: RIGI_CONT / RIGI_FROT
+! Options: RIGI_CONT
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -57,19 +57,17 @@ character(len=16), intent(in) :: option, nomte
     integer :: nne, nnm, nnl
     integer :: nddl, ndim, nbcps, nbdm
     integer :: iresof, iresog, ialgoc, ialgof
-    integer :: count_consistency
+    integer :: count_consi
     integer :: ndexfr
     integer :: indco, indco_prev, indadhe_prev, indadhe2_prev
     character(len=8) :: typmae, typmam
-    character(len=9) :: phasep
-    character(len=9) :: phasep_prev
+    character(len=4) :: phase, phase_prev
     aster_logical :: laxis = .false. , leltf = .false.
     aster_logical :: lpenac = .false. , lpenaf = .false.
-    aster_logical :: loptf = .false. , ldyna = .false., lcont = .false., ladhe = .false.
+    aster_logical :: lcont = .false., ladhe = .false.
     aster_logical :: l_previous = .false.
-    aster_logical :: debug = .false.
+    aster_logical :: debug = .false., l_large_slip = .false.
     aster_logical :: lcont_prev = .false., ladhe_prev = .false.
-    aster_logical :: l_large_slip=ASTER_FALSE
     real(kind=8) :: coefff = 0.0
     real(kind=8) :: lambda = 0.0, lambds = 0.0
     real(kind=8) :: lambda_prev = 0.0 , lambds_prev =0.0
@@ -195,11 +193,17 @@ character(len=16), intent(in) :: option, nomte
 !
     debug = .false.
 !
-    loptf           = option.eq.'RIGI_FROT'
+! - Get informations on cell (slave and master)
+!
+    call mmelem(nomte , ndim , nddl,&
+                typmae, nne  ,&
+                typmam, nnm  ,&
+                nnl   , nbcps, nbdm,&
+                laxis , leltf)
 !
 ! - Get status
 !
-    call mmGetStatus(option    , indco     , &
+    call mmGetStatus(leltf     , indco     , &
                      l_previous, indco_prev, indadhe_prev, indadhe2_prev)
 !
 ! - Get coefficients
@@ -219,21 +223,10 @@ character(len=16), intent(in) :: option, nomte
 !
 ! - Get algorithms
 !
-    call mmGetAlgo(l_large_slip, ndexfr  , jeusup, ldyna , lambds,&
+    call mmGetAlgo(l_large_slip, ndexfr  , jeusup, lambds,&
                    ialgoc      , ialgof  , iresof, iresog,&
                    lpenac      , lpenaf  ,&
                    lambds_prev , jeu_prev)
-!
-! - Get informations on cell (slave and master)
-!
-    call mmelem(nomte , ndim , nddl,&
-                typmae, nne  ,&
-                typmam, nnm  ,&
-                nnl   , nbcps, nbdm,&
-                laxis , leltf)
-    if (.not.loptf) then
-        leltf = .false.
-    endif
 !
 ! - Compute quantities
 !
@@ -281,7 +274,7 @@ character(len=16), intent(in) :: option, nomte
 !
 ! - Compute state of contact and friction
 !
-    call mmmsta(ndim  , loptf , indco,&
+    call mmmsta(ndim  , leltf , indco,&
                 ialgoc, ialgof,&
                 lpenaf, coefaf,&
                 lambda, djeut , dlagrf,&
@@ -289,7 +282,7 @@ character(len=16), intent(in) :: option, nomte
                 lcont , ladhe ,&
                 rese  , nrese )
     if (l_previous) then
-        call mmmsta(ndim        , loptf        , indco,&
+        call mmmsta(ndim        , leltf        , indco,&
                     ialgoc      , ialgof       ,&
                     lpenaf      , coefaf       ,&
                     lambda_prev , djeut_prev   , dlagrf_prev,&
@@ -302,25 +295,20 @@ character(len=16), intent(in) :: option, nomte
 !
 ! - Select phase to compute
 !
-    call mmmpha(loptf , lpenac, lpenaf,&
-                lcont , ladhe , &
-                phasep)
+    call mmmpha(leltf, lcont, ladhe, phase)
     if (l_previous) then
-        call mmmpha(loptf      , lpenac    , lpenaf,&
-                    lcont_prev , ladhe_prev,&
-                    phasep_prev)
+        call mmmpha(leltf, lcont_prev, ladhe_prev, phase_prev)
     endif
 !
 ! - Large sliding hypothesis
 !
-    if (lcont .and.  (phasep(1:4) .eq. 'GLIS') .and. (l_large_slip) &
-        .and. (abs(jeu) .lt. 1.d-6 )) then
+    if (lcont .and.  (phase .eq. 'GLIS') .and. (l_large_slip) .and. (abs(jeu) .lt. 1.d-6 )) then
         call mngliss(ndim     , kappa    ,&
                      tau1     , tau2     ,&
                      taujeu1  , taujeu2  ,&
                      dnepmait1, dnepmait2,&
                      djeut )
-        call mmnsta(ndim  , loptf ,&
+        call mmnsta(ndim  , leltf ,&
                     lpenaf, coefaf,&
                     indco ,&
                     lambda, djeut , dlagrf,&
@@ -331,76 +319,89 @@ character(len=16), intent(in) :: option, nomte
 !
 ! - Weak form of contact/friction force
 !
-    call mmtfpe(phasep, iresof, ndim, nne, nnm,&
-                nnl, nbcps, wpg, jacobi, ffl,&
-                ffe, ffm, norm, tau1, tau2,&
-                mprojn, mprojt, rese, nrese, lambda,&
-                coefff, coefaf, coefac, dlagrf, djeut,&
-                matree, matrmm, matrem, matrme, matrec,&
-                matrmc, matref, matrmf)
+    call mmtfpe(phase , iresof, lpenac, lpenaf,&
+                ndim  , nne   , nnm   , nnl   , nbcps ,&
+                wpg   , jacobi,&
+                ffl   , ffe   , ffm   ,&
+                norm  , tau1  , tau2  , mprojn, mprojt,&
+                rese  , nrese , &
+                lambda, coefff, coefaf, coefac, &
+                dlagrf, djeut ,&
+                matree, matrmm,&
+                matrem, matrme,&
+                matrec, matrmc,&
+                matref, matrmf)
     if (l_previous) then
-        call mmtfpe(phasep_prev, iresof, ndim, nne, nnm,&
-                    nnl, nbcps, wpg, jacobi, ffl,&
-                    ffe, ffm, norm, tau1_prev, tau2_prev,&
-                    mprojn_prev, mprojt_prev, rese_prev, nrese_prev, lambda_prev,&
-                    coefff, coefaf_prev, coefac_prev, dlagrf_prev, djeut_prev,&
-                    matree_prev, matrmm_prev, matrem_prev, matrme_prev, matrec_prev,&
-                    matrmc_prev, matref_prev, matrmf_prev)
+        call mmtfpe(phase_prev , iresof     , lpenac     , lpenaf    ,&
+                    ndim       , nne        , nnm        , nnl        , nbcps      ,&
+                    wpg        , jacobi     ,&
+                    ffl        , ffe        , ffm        ,&
+                    norm       , tau1_prev  , tau2_prev  , mprojn_prev, mprojt_prev,&
+                    rese_prev  , nrese_prev , &
+                    lambda_prev, coefff     , coefaf_prev, coefac_prev, &
+                    dlagrf_prev, djeut_prev ,&
+                    matree_prev, matrmm_prev,&
+                    matrem_prev, matrme_prev,&
+                    matrec_prev, matrmc_prev,&
+                    matref_prev, matrmf_prev)
     endif
 !
 ! - Non-linear contribution for geometric loop
 !
     if (iresog .eq. 1) then
-        call mmtgeo(phasep, l_large_slip,&
+        call mmtgeo(phase, l_large_slip,&
                     ndim  , nne   , nnm   ,&
                     wpg   , ffe   , ffm   , dffm  , ddffm ,&
                     jacobi, coefac, coefff, jeu   , dlagrc,&
                     mprojn,&
                     mprt1n, mprt2n, mprnt1, mprnt2,&
-                    kappa , vech1 , vech2 , h     , hah   ,&
+                    kappa , vech1 , vech2 , h     , hah,&
                     mprt11, mprt12, mprt21, mprt22,&
                     matree, matrmm, matrem, matrme)
         if (l_previous) then
-            call mmtgeo(phasep_prev, l_large_slip,&
-                        ndim       , nne        , nnm        ,&
-                        wpg        , ffe        , ffm        , dffm       , ddffm      ,&
-                        jacobi     , coefac_prev, coefff     , jeu_prev   , dlagrc_prev,&
+            call mmtgeo(phase_prev , l_large_slip,&
+                        ndim       , nne, nnm,&
+                        wpg        , ffe, ffm, dffm, ddffm,&
+                        jacobi     , coefac_prev, coefff, jeu_prev, dlagrc_prev,&
                         mprojn_prev,&
                         mprt1n_prev, mprt2n_prev, mprnt1_prev, mprnt2_prev,&
-                        kappa_prev , vech1_prev , vech2_prev , h_prev     , hah_prev,&
+                        kappa_prev , vech1_prev , vech2_prev , h_prev, hah_prev,&
                         mprt11_prev, mprt12_prev, mprt21_prev, mprt22_prev,&
-                        matree_prev, matrmm_prev, matrem_prev, matrme_prev)
+                        matree_prev, matrmm_prev,&
+                        matrem_prev, matrme_prev)
         endif
     endif
 !
 ! - Weak form of contact/friction force
 !
-    call mmtape(phasep, leltf, ndim, nnl, nne,&
-                nnm, nbcps, wpg, jacobi, ffl,&
-                ffe, ffm, norm, tau1, tau2,&
-                mprojt, rese, nrese, lambda, coefff,&
-                coefaf, coefac,&
-                matrcc, matrff, matrce,&
-                matrcm, matrfe, matrfm)
+    call mmtape(phase , leltf , lpenac, lpenaf,&
+                ndim  , nnl   , nne   , nnm   , nbcps, &
+                wpg   , jacobi,&
+                ffl   , ffe   , ffm   ,&
+                norm  , tau1  , tau2  , mprojt,&
+                rese  , nrese , lambda,&
+                coefff, coefaf, coefac,&
+                matrcc, matrff,&
+                matrce, matrcm, matrfe, matrfm)
     if (l_previous) then
-        call mmtape(phasep_prev, leltf, ndim, nnl, nne,&
-                    nnm, nbcps, wpg, jacobi, ffl,&
-                    ffe, ffm, norm, tau1_prev, tau2_prev,&
-                    mprojt_prev, rese_prev, nrese_prev, lambda_prev, coefff,&
-                    coefaf_prev, coefac_prev,&
-                matrcc_prev, matrff_prev, matrce_prev,&
-                    matrcm_prev, matrfe_prev, matrfm_prev)
+        call mmtape(phase_prev , leltf      , lpenac     , lpenaf     ,&
+                    ndim       , nnl        , nne        , nnm        , nbcps, &
+                    wpg        , jacobi     ,&
+                    ffl        , ffe        , ffm        ,&
+                    norm       , tau1_prev  , tau2_prev  , mprojt_prev,&
+                    rese_prev  , nrese_prev , lambda_prev,&
+                    coefff     , coefaf_prev, coefac_prev,&
+                    matrcc_prev, matrff_prev,&
+                    matrce_prev, matrcm_prev, matrfe_prev, matrfm_prev)
     endif
 !
 ! - Excluded nodes
 !
-    call mmmtex(ndexfr, ndim, nnl, nne, nnm,&
-                nbcps, matrff, matrfe, matrfm, matref,&
-                matrmf)
+    call mmmtex(ndexfr, ndim  , nnl   , nne   , nnm   , nbcps,&
+                matrff, matrfe, matrfm, matref, matrmf)
     if (l_previous) then
-        call mmmtex(ndexfr, ndim, nnl, nne, nnm,&
-                    nbcps, matrff_prev, matrfe_prev, matrfm_prev, matref_prev,&
-                    matrmf_prev)
+        call mmmtex(ndexfr     , ndim       , nnl        , nne        , nnm        , nbcps,&
+                    matrff_prev, matrfe_prev, matrfm_prev, matref_prev, matrmf_prev)
     endif
 
 !
@@ -420,40 +421,32 @@ character(len=16), intent(in) :: option, nomte
     endif
 !
     if (l_previous) then
-            mmat_tmp = alpha_cont*mmat+(1-alpha_cont)*mmat_prev
-            count_consistency = 0
-            51 continue
-            count_consistency = count_consistency+1
-            alpha_cont = 0.5*(alpha_cont+1.0)
-            mmat_tmp = alpha_cont*mmat+(1.0-alpha_cont)*mmat_prev
-
-            if ( norm2(mmat_tmp-mmat) &
-                .gt. 1.d-6*norm2(mmat) .and. count_consistency .le. 15) then 
-                       goto 51
-            elseif ( norm2(mmat_tmp-mmat) .lt. 1.d-6*norm2(mmat)) then 
-                       mmat = mmat_tmp
-            else 
-                       mmat = 0.9999d0*mmat + 0.0001d0*mmat_tmp
-            endif
-            ! Ce critere peut influencer les perfs : ssnv505l 26s a 35s. 
+        mmat_tmp = alpha_cont*mmat+(1-alpha_cont)*mmat_prev
+        count_consi = 0
+        51 continue
+        count_consi = count_consi+1
+        alpha_cont = 0.5*(alpha_cont+1.0)
+        mmat_tmp   = alpha_cont*mmat+(1.0-alpha_cont)*mmat_prev
+        if ( norm2(mmat_tmp-mmat) &
+            .gt. 1.d-6*norm2(mmat) .and. count_consi .le. 15) then 
+           goto 51
+        elseif ( norm2(mmat_tmp-mmat) .lt. 1.d-6*norm2(mmat)) then 
+           mmat = mmat_tmp
+        else 
+           mmat = 0.9999d0*mmat + 0.0001d0*mmat_tmp
+        endif
     endif
 !
 ! - Copy
 !
-    if ((lpenac.and.(option.eq.'RIGI_CONT')) .or.&
-        ((option.eq.'RIGI_FROT').and.(iresof.ne.0)) .or.&
-        (lpenaf.and.(option.eq.'RIGI_FROT'))) then
+    if ((lpenac.and.(.not.leltf)) .or.&
+        (leltf.and.(iresof.ne.0)) .or.&
+        (lpenaf.and.leltf)) then
         call jevech('PMATUNS', 'E', jmatt)
         do j = 1, nddl
             do i = 1, nddl
                 ij = j+nddl*(i-1)
-                if (lpenac.and.(option.eq.'RIGI_CONT')) then
-                        zr(jmatt+ij-1) = mmat(i,j)
-                else if ((option.eq.'RIGI_FROT').and.(iresof.ne.0)) then
-                        zr(jmatt+ij-1) = mmat(i,j)
-                else if (lpenaf.and.(option.eq.'RIGI_FROT')) then
-                        zr(jmatt+ij-1) = 1.0 * mmat(i,j)
-                endif
+                zr(jmatt+ij-1) = mmat(i,j)
                 if (debug) then
                     call mmmtdb(mmat(i, j), 'IJ', i, j)
                 endif
@@ -464,7 +457,7 @@ character(len=16), intent(in) :: option, nomte
         do j = 1, nddl
             do i = 1, j
                 ij = (j-1)*j/2 + i
-                    zr(jmatt+ij-1) = mmat(i,j)
+                zr(jmatt+ij-1) = mmat(i,j)
                 if (debug) then
                     call mmmtdb(mmat(i, j), 'IJ', i, j)
                 endif

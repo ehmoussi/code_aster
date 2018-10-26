@@ -1,0 +1,157 @@
+! --------------------------------------------------------------------
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! This file is part of code_aster.
+!
+! code_aster is free software: you can redistribute it and/or modify
+! it under the terms of the GNU General Public License as published by
+! the Free Software Foundation, either version 3 of the License, or
+! (at your option) any later version.
+!
+! code_aster is distributed in the hope that it will be useful,
+! but WITHOUT ANY WARRANTY; without even the implied warranty of
+! MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+! GNU General Public License for more details.
+!
+! You should have received a copy of the GNU General Public License
+! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+! --------------------------------------------------------------------
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine mmmtfe(phase,&
+                  ndim  , nne   , nnl   , nbcps ,&
+                  wpg   , jacobi, ffe   , ffl   ,&
+                  tau1  , tau2  , mprojt,&
+                  rese  , nrese , lambda, coefff,&
+                  matrfe)
+!
+implicit none
+!
+#include "asterfort/assert.h"
+#include "asterfort/mmmmpb.h"
+#include "asterfort/pmavec.h"
+!
+character(len=4), intent(in) :: phase
+integer, intent(in) :: ndim, nne, nnl, nbcps
+real(kind=8), intent(in) :: ffe(9), ffl(9)
+real(kind=8), intent(in) :: wpg, jacobi
+real(kind=8), intent(in) :: tau1(3), tau2(3), mprojt(3, 3)
+real(kind=8), intent(in) :: rese(3), nrese
+real(kind=8), intent(in) :: lambda, coefff
+real(kind=8), intent(out) :: matrfe(18, 27)
+!
+! --------------------------------------------------------------------------------------------------
+!
+! Contact - Elementary computations
+!
+! Compute matrix for DOF [friction x slave]
+!
+! --------------------------------------------------------------------------------------------------
+!
+! In  phase            : phase to compute
+!                        'SANS' - No contact
+!                        'ADHE' - Stick
+!                        'GLIS' - Slip
+! In  ndim             : dimension of problem (2 or 3)
+! In  nnl              : number of nodes with Lagrange multiplicators (contact and friction)
+! In  nne              : number of slave nodes
+! In  nbcps            : number of components by node for Lagrange multiplicators
+! In  wpg              : weight for current Gauss point
+! In  jacobi           : jacobian at integration point
+! In  ffe              : shape function for slave nodes
+! In  ffl              : shape function for Lagrange dof
+! In  tau1             : first tangent at current contact point
+! In  tau2             : second tangent at current contact point
+! In  mprojt           : matrix of tangent projection
+! In  rese             : Lagrange (semi) multiplier for friction
+! In  nrese            : norm of Lagrange (semi) multiplier for friction
+! In  lambda           : contact pressure
+! In  coefff           : friction coefficient (Coulomb)
+! Out matrfe           : matrix for DOF [friction x slave]
+!
+! --------------------------------------------------------------------------------------------------
+!
+    integer :: inof, inoe, icmp, idim, i, j, k, ii, jj, nbcpf
+    real(kind=8) :: a(2, 3), b(2, 3), h(3, 2), matprb(3, 3)
+    real(kind=8) :: h1(3), h2(3)
+!
+! --------------------------------------------------------------------------------------------------
+!
+    a(:,:) = 0.d0
+    b(:,:) = 0.d0
+    h(:,:) = 0.d0
+    h1(:)  = 0.d0
+    h2(:)  = 0.d0
+    nbcpf  = nbcps - 1
+!
+! - MATRICE [A] = [T]t*[P]
+!
+    if (phase .eq. 'ADHE') then
+        do i = 1, ndim
+            do k = 1, ndim
+                a(1,i) = tau1(k)*mprojt(k,i) + a(1,i)
+            end do
+        end do
+        do i = 1, ndim
+            do k = 1, ndim
+                a(2,i) = tau2(k)*mprojt(k,i) + a(2,i)
+            end do
+        end do
+    endif
+!
+! - MATRICE DE PROJECTION SUR LA BOULE UNITE
+!
+    if (phase .eq. 'GLIS') then
+        call mmmmpb(rese, nrese, ndim, matprb)
+    endif
+!
+! - VECTEUR PROJ. BOULE SUR TANGENTES: {H1} = [K].{T1}
+!
+    if (phase .eq. 'GLIS') then
+        call pmavec('ZERO', 3, matprb, tau1, h1)
+        call pmavec('ZERO', 3, matprb, tau2, h2)
+! ----- MATRICE [H] = [{H1}{H2}]
+        h(:,1) = h1(:)
+        h(:,2) = h2(:)
+! ----- MATRICE [B] = [P]*[H]t
+        do icmp = 1, nbcpf
+            do j = 1, ndim
+                do k = 1, ndim
+                    b(icmp,j) = h(k,icmp)*mprojt(k,j)+b(icmp,j)
+                end do
+            end do
+        end do
+    endif
+!
+! - CALCUL DES TERMES
+!
+    if (phase .eq. 'ADHE') then
+        do inof = 1, nnl
+            do inoe = 1, nne
+                do icmp = 1, nbcpf
+                    do idim = 1, ndim
+                        ii = nbcpf*(inof-1)+icmp
+                        jj = ndim*(inoe-1)+idim
+                        matrfe(ii,jj) = matrfe(ii,jj)-&
+                                        wpg*ffl(inof)*ffe(inoe)*jacobi* lambda*coefff*a(icmp,idim)
+                    end do
+                end do
+            end do
+        end do
+    else if (phase .eq. 'GLIS') then
+        do inof = 1, nnl
+            do inoe = 1, nne
+                do icmp = 1, nbcpf
+                    do idim = 1, ndim
+                        ii = nbcpf*(inof-1)+icmp
+                        jj = ndim*(inoe-1)+idim
+                        matrfe(ii,jj) = matrfe(ii,jj)-&
+                                        wpg*ffl(inof)*ffe(inoe)*jacobi* lambda*coefff*b(icmp,idim)
+                    end do
+                end do
+            end do
+        end do
+    else
+        ASSERT(ASTER_FALSE)
+    endif
+!
+end subroutine

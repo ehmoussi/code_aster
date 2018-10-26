@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine mmnsta(ndim  , loptf ,&
+subroutine mmnsta(ndim  , leltf ,&
                   lpenaf, coefaf,&
                   indco ,&
                   lambda, djeut , dlagrf,&
@@ -32,7 +32,7 @@ implicit none
 #include "asterfort/mmtrpr.h"
 !
 integer, intent(in) :: ndim
-aster_logical, intent(in) :: loptf
+aster_logical, intent(in) :: leltf
 aster_logical, intent(in) :: lpenaf
 integer, intent(in) :: indco
 real(kind=8), intent(in) :: coefaf, lambda
@@ -50,7 +50,7 @@ real(kind=8), intent(out) :: rese(3), nrese
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  ndim             : dimension of problem (2 or 3)
-! In  loptf            : flag if compute RIGI_FROT
+! In  leltf            : flag for friction
 ! In  lpenaf           : flag for penalized friction
 ! In  coefaf           : coefficient for updated Lagrangian method (friction)
 ! In  lambda           : contact pressure
@@ -75,7 +75,7 @@ real(kind=8), intent(out) :: rese(3), nrese
 ! - Contact state of contact
 !
     lcont = (indco .eq. 1)
-    if (loptf) then
+    if (leltf) then
 ! This test influence highly the NON_REGRESSION & CONVERGENCE
 ! ONE MUST HAVE ATTENTION WHEN MODIFYING
         if (lambda .eq. 0.d0) then
@@ -85,7 +85,7 @@ real(kind=8), intent(out) :: rese(3), nrese
 !
 ! - Compute state of friction
 !
-    if (loptf .and. lcont) then
+    if (leltf .and. lcont) then
         call mmtrpr(ndim, lpenaf, djeut, dlagrf, coefaf,&
                     tau1, tau2  , ladhe, rese  , nrese)
     endif

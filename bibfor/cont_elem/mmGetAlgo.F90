@@ -17,9 +17,9 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine mmGetAlgo(l_large_slip, ndexfr   , jeusup, ldyna , lambds,&
-                     ialgoc      , ialgof   , iresof, iresog,&
-                     lpenac      , lpenaf   ,&
+subroutine mmGetAlgo(l_large_slip, ndexfr     , jeusup, lambds,&
+                     ialgoc      , ialgof     , iresof, iresog,&
+                     l_pena_cont , l_pena_fric,&
                      lambds_prev_, jeu_prev_)
 !
 implicit none
@@ -31,10 +31,9 @@ implicit none
 aster_logical, intent(out) :: l_large_slip
 integer, intent(out) :: ndexfr
 real(kind=8), intent(out) :: jeusup
-aster_logical, intent(out) :: ldyna
 real(kind=8), intent(out) :: lambds
 integer, intent(out) :: ialgoc, iresof, ialgof, iresog
-aster_logical, intent(out) :: lpenac, lpenaf
+aster_logical, intent(out) :: l_pena_cont, l_pena_fric
 real(kind=8), optional, intent(out) :: lambds_prev_, jeu_prev_
 !
 ! --------------------------------------------------------------------------------------------------
@@ -48,7 +47,6 @@ real(kind=8), optional, intent(out) :: lambds_prev_, jeu_prev_
 ! Out l_large_slip     : flag for GRAND_GLISSEMENT
 ! Out ndexfr           : integer for EXCL_FROT_* keyword
 ! Out jeusup           : gap from DIST_ESCL/DIST_MAIT
-! Out ldyna            : flag when dynamic
 ! Out lambds           : contact pressure (fixed trigger)
 ! Out ialgoc           : formulation for contact
 !                        1 - Standard
@@ -63,14 +61,14 @@ real(kind=8), optional, intent(out) :: lambds_prev_, jeu_prev_
 ! Out iresog           : algorithm for geometry
 !                        0 - Fixed point
 !                        1 - Newton
-! Out lpenac           : flag for penalized contact
-! Out lpenaf           : flag for penalized friction
+! Out l_pena_cont      : flag for penalized contact
+! Out l_pena_fric      : flag for penalized friction
 ! Out lambds_prev      : contact pressure from previous iteration (fixed trigger)
 ! Out jeu_prev         : gap from previous iteration
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: jpcf, iform
+    integer :: jpcf
     real(kind=8) :: lambds_prev, jeu_prev
 !
 ! --------------------------------------------------------------------------------------------------
@@ -83,14 +81,12 @@ real(kind=8), optional, intent(out) :: lambds_prev_, jeu_prev_
     iresof       = nint(zr(jpcf-1+17))
     ialgof       = nint(zr(jpcf-1+18))
     ndexfr       = nint(zr(jpcf-1+21))
-    iform        = nint(zr(jpcf-1+22))
     iresog       = nint(zr(jpcf-1+25))
     l_large_slip = nint(zr(jpcf-1+48)) .eq. 1
     lambds_prev  = zr(jpcf-1+26)
     jeu_prev     = zr(jpcf-1+29)
-    ldyna        = iform.ne.0
-    lpenac       = (ialgoc .eq. 3) .or. nint(zr(jpcf-1+45)) .eq. 4
-    lpenaf       = (ialgof .eq. 3) .or. nint(zr(jpcf-1+46)) .eq. 4
+    l_pena_cont  = (ialgoc .eq. 3) .or. nint(zr(jpcf-1+45)) .eq. 4
+    l_pena_fric  = (ialgof .eq. 3) .or. nint(zr(jpcf-1+46)) .eq. 4
     if (present(lambds_prev_)) lambds_prev_ = lambds_prev
     if (present(jeu_prev_)) jeu_prev_ = jeu_prev
 !

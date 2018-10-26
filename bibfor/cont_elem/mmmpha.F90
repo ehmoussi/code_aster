@@ -17,18 +17,16 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine mmmpha(loptf , lpenac, lpenaf,&
-                  lcont , ladhe , &
-                  phasep)
+subroutine mmmpha(leltf, lcont, ladhe, phase)
 !
 implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/assert.h"
 !
-aster_logical, intent(in) :: loptf, lpenaf, lpenac
+aster_logical, intent(in) :: leltf
 aster_logical, intent(in) :: lcont, ladhe
-character(len=9), intent(out) :: phasep
+character(len=4), intent(out) :: phase
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -38,32 +36,22 @@ character(len=9), intent(out) :: phasep
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  loptf            : flag if compute RIGI_FROT
+! In  leltf            : flag for friction
 ! In  lcont            : .true. if contact
 ! In  ladhe            : .true. if stick
-! In  lpenac           : flag for penalized contact
-! In  lpenaf           : flag for penalized friction
-! Out phasep           : 'SANS' - No contact
+! Out phase            : phase to compute
+!                        'SANS' - No contact
 !                        'CONT' - Contact
 !                        'ADHE' - Stick
 !                        'GLIS' - Slip
-!                        'SANS_PENA' - PENALISATION - No contact
-!                        'CONT_PENA' - PENALISATION - Contact
-!                        'ADHE_PENA' - PENALISATION - Stick
-!                        'GLIS_PENA' - PENALISATION - Slip
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    character(len=4) :: phase
-!
-! --------------------------------------------------------------------------------------------------
-!
-    phase  = ' '
-    phasep = ' '
+    phase  = 'SANS'
 !
 ! - Main phase
 !
-    if (loptf) then
+    if (leltf) then
         if (lcont) then
             if (ladhe) then
                 phase = 'ADHE'
@@ -79,30 +67,6 @@ character(len=9), intent(out) :: phasep
         else
             phase = 'SANS'
         endif
-    endif
-!
-! - Phase for penalization
-!
-    if (phase .eq. 'SANS') then
-        if (lpenac .or. lpenaf) then
-            phasep = phase(1:4)//'_PENA'
-        else
-            phasep = phase(1:4)
-        endif
-    else if (phase.eq.'CONT') then
-        if (lpenac) then
-            phasep = phase(1:4)//'_PENA'
-        else
-            phasep = phase(1:4)
-        endif
-    else if ((phase.eq.'ADHE').or.(phase.eq.'GLIS')) then
-        if (lpenaf) then
-            phasep = phase(1:4)//'_PENA'
-        else
-            phasep = phase(1:4)
-        endif
-    else
-        ASSERT(ASTER_FALSE)
     endif
 !
 end subroutine
