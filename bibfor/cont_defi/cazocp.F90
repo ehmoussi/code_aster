@@ -54,7 +54,7 @@ character(len=8), intent(in) :: model
     integer :: noc
     real(kind=8) :: resi_abso, gcp_coef_resi
     real(kind=8) :: geom_resi, frot_resi, cont_resi=-1
-    aster_logical :: l_cont_gcp, l_newt_fr
+    aster_logical :: l_cont_gcp
     aster_logical :: l_cont_disc, l_cont_cont, l_cont_xfem, l_frot, l_cont_lac
     aster_logical :: l_xfem_mortar
     character(len=16) :: lissage
@@ -77,7 +77,6 @@ character(len=8), intent(in) :: model
     geom_resi      = 1.d-2
     frot_resi      = 1.d-2
     cont_resi      = 1.d-2
-    l_newt_fr      = ASTER_FALSE
 !
 ! - Access to datastructure
 !
@@ -111,7 +110,7 @@ character(len=8), intent(in) :: model
 !
     if (algo_reso_geom .eq. 'POINT_FIXE') then
         v_sdcont_paraci(9) = 0
-    else if (algo_reso_geom.eq.'NEWTON') then
+    else if (algo_reso_geom .eq. 'NEWTON') then
         v_sdcont_paraci(9) = 1
     else
         ASSERT(ASTER_FALSE)
@@ -173,7 +172,6 @@ character(len=8), intent(in) :: model
             v_sdcont_paraci(28) = 0
         else if (algo_reso_frot.eq.'NEWTON') then
             v_sdcont_paraci(28) = 1
-            l_newt_fr = ASTER_TRUE
         else
             ASSERT(ASTER_FALSE)
         endif
@@ -224,6 +222,12 @@ character(len=8), intent(in) :: model
         ASSERT(ASTER_FALSE)
     endif
 !
+! - Check
+!
+    if (algo_reso_geom .eq. 'NEWTON' .and. algo_reso_cont .ne. 'NEWTON') then
+        call utmess('F', 'CONTACT_20')
+    endif
+!
 ! - Contact parameters
 !
     if (algo_reso_cont .eq. 'POINT_FIXE') then
@@ -254,7 +258,7 @@ character(len=8), intent(in) :: model
         endif
     else if (algo_reso_cont.eq.'NEWTON') then
         if (l_cont_cont ) then
-                call getvr8(' ', 'RESI_CONT', scal=cont_resi)
+            call getvr8(' ', 'RESI_CONT', scal=cont_resi)
             v_sdcont_paracr(7) = cont_resi
         endif
     else
