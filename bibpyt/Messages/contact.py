@@ -17,7 +17,6 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: josselin.delmas at edf.fr
 
 cata_msg = {
 
@@ -78,24 +77,6 @@ Contact méthode continue.
   La méthode de Newton généralisée pour la boucle de géométrie exige que le contact soit aussi résolu par le Newton généralisé.
 """),
 
-    21 : _(u"""
-  Contact méthode continue : DEFI_CONTACT/ALGO_CONT=PENALISATION/ADAPTATION=PENE_MAXI.
-  Vous utilisez la méthode adaptative de pénalisation de contact et vous avez renseigné PENE_MAXI. Cette valeur est un critère absolu. 
-  C'est-à-dire que la pénétration maximum ne dépasse pas la valeur renseignée pour PENE_MAXI.
-"""),
-
-    #22 : _(u"""
-#Contact méthode continue.
-  #La méthode ALGO_CONT='PENALISATION  autorise une pénétration des zones de contact. On estime cette pénétration à %(r1)f pour cent par rapport à la plus petite maille du maillage.
-  #COEF_PENA_CONT doit être suffisamment grand pour empêcher une trop grande pénétration. Il faut donc augmenter la valeur de COEF_PENA_CONT (et de COEF_PENA_FROT )
-  #de sorte à inférieur à cinq pour cent de pénétration.
-  #Conseils :
-  #-------
-  #Il n'y a pas de méthode de référence pour le choix des coefficients de pénalisation.
-  #- une estimation empirique serait de multiplier COEF_PENA_CONT par (1+%(r1)f)/100*module d'Young du corps le plus dur
-  #- Il n'y a pas d'estimation empirique pour COEF_PENA_FROT.
-#"""),
-
     60 : _(u"""
 La maille %(k1)s est de type 'SEG' (poutres) en 3D. Pour ces mailles la normale ne peut pas être déterminée automatiquement.
 Vous devez utilisez l'option NORMALE :
@@ -125,12 +106,6 @@ avec des mailles affectées d'une modélisation 3D.
     88 : _(u"""
 N'utilisez pas REAC_INCR=0 avec le frottement.
 """),
-
-    #89 : _(u"""
-#Contact méthode continue.
-#On ne peut avoir des modélisations différentes entre contact et frottement (pénalisation ou lagrangien augmenté) différents sur la même zone.
-#Il faut avoir la même option pour ALGO_CONT et ALGO_FROT.
-#"""),
 
     93 : _(u"""
 Contact méthode sans résolution.
