@@ -18,8 +18,7 @@
 # --------------------------------------------------------------------
 from code_aster.Commands import DEFI_FONCTION
 
-def F_FONC() : 
-         accel = DEFI_FONCTION(NOM_PARA='INST',
+accel = DEFI_FONCTION(NOM_PARA='INST',
                 VALE=
          ( 0.0000000E+00 , 0.0000000E+00
          , 1.0000000E-02 , 0.0000000E+00
@@ -1025,4 +1024,3 @@ def F_FONC() :
          PROL_DROITE='LINEAIRE',
          PROL_GAUCHE='LINEAIRE')
 
-         return accel

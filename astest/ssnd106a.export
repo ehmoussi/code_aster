@@ -7,4 +7,4 @@ P testlist verification sequential
 
 F comm ssnd106a.comm D 1
 F mail ssnd106a.mail D 20
-F libr ssnd106a.30 D 30
+F nom  ssnd106a.py   D 0
