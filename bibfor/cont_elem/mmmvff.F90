@@ -145,7 +145,7 @@ real(kind=8), intent(out) :: vectff(18)
 !
 ! - CALCUL DU VECTEUR
 !
-    if (phase .eq. 'SANS') then
+    if (phase .eq. 'SANS' .or. phase .eq. 'NCON') then
         if (l_pena_cont .or. l_pena_fric) then
             do i = 1, nnl
                 do l = 1, nbcpf

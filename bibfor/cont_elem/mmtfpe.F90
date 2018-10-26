@@ -169,6 +169,24 @@ real(kind=8), intent(out) :: matrmf(27, 18), matref(27, 18)
                         rese  , nrese ,&
                         matrec, matrmc)
         endif
+    elseif (phase .eq. 'NCON') then
+! ----- For friction without contact
+        call mmmtuc(phase , l_pena_cont, l_pena_fric,&
+                    ndim  , nnl        , nne        , nnm,&
+                    norm  , tau1       , tau2       , mprojt,&
+                    wpg   , ffl        , ffe        , ffm   , jacobi,&
+                    coefff, coefaf,&
+                    dlagrf, djeut ,&
+                    rese  , nrese ,&
+                    matrec, matrmc)
+        call mmmtuu(phase , l_pena_cont, l_pena_fric,&
+                    ndim  , nne        , nnm        ,&
+                    mprojn, mprojt     ,&
+                    wpg   , ffe        , ffm        , jacobi,&
+                    coefac, coefaf     , coefff     , lambda,&
+                    rese  , nrese      ,&
+                    matree, matrmm     ,&
+                    matrem, matrme)
     endif
 !
 end subroutine

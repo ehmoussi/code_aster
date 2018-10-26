@@ -64,10 +64,10 @@ character(len=16), intent(in) :: option, nomte
     character(len=4) :: phase, phase_prev
     aster_logical :: laxis = .false. , leltf = .false.
     aster_logical :: lpenac = .false. , lpenaf = .false.
-    aster_logical :: lcont = .false., ladhe = .false.
+    aster_logical :: lcont = .false., ladhe = .false., l_fric_no = .false.
     aster_logical :: l_previous = .false.
     aster_logical :: debug = .false., l_large_slip = .false.
-    aster_logical :: lcont_prev = .false., ladhe_prev = .false.
+    aster_logical :: lcont_prev = .false., ladhe_prev = .false., l_fric_no_p = .false.
     real(kind=8) :: coefff = 0.0
     real(kind=8) :: lambda = 0.0, lambds = 0.0
     real(kind=8) :: lambda_prev = 0.0 , lambds_prev =0.0
@@ -279,7 +279,7 @@ character(len=16), intent(in) :: option, nomte
                 lpenaf, coefaf,&
                 lambda, djeut , dlagrf,&
                 tau1  , tau2  ,&
-                lcont , ladhe ,&
+                lcont , ladhe , l_fric_no,&
                 rese  , nrese )
     if (l_previous) then
         call mmmsta(ndim        , leltf        , indco,&
@@ -287,7 +287,7 @@ character(len=16), intent(in) :: option, nomte
                     lpenaf      , coefaf       ,&
                     lambda_prev , djeut_prev   , dlagrf_prev,&
                     tau1_prev   , tau2_prev    ,&
-                    lcont_prev  , ladhe_prev   ,&
+                    lcont_prev  , ladhe_prev   , l_fric_no_p,&
                     rese_prev   , nrese_prev   ,&
                     l_previous  , indco_prev   ,&
                     indadhe_prev, indadhe2_prev)
@@ -295,9 +295,9 @@ character(len=16), intent(in) :: option, nomte
 !
 ! - Select phase to compute
 !
-    call mmmpha(leltf, lcont, ladhe, phase)
+    call mmmpha(leltf, lcont, ladhe, l_fric_no, phase)
     if (l_previous) then
-        call mmmpha(leltf, lcont_prev, ladhe_prev, phase_prev)
+        call mmmpha(leltf, lcont_prev, ladhe_prev, l_fric_no_p, phase_prev)
     endif
 !
 ! - Large sliding hypothesis

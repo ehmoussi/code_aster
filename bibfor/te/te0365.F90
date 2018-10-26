@@ -61,7 +61,7 @@ character(len=16), intent(in) :: option, nomte
     character(len=4) :: phase
     aster_logical :: laxis = .false. , leltf = .false.
     aster_logical :: l_pena_cont = .false. , l_pena_fric = .false.
-    aster_logical :: lcont = .false., ladhe = .false.
+    aster_logical :: lcont = .false., ladhe = .false., l_fric_no = .false.
     aster_logical :: debug = .false.
     real(kind=8) :: coefff = 0.0
     real(kind=8) :: lambda = 0.0, lambds = 0.0
@@ -153,12 +153,12 @@ character(len=16), intent(in) :: option, nomte
                 l_pena_fric, coefaf,&
                 lambda     , djeut , dlagrf,&
                 tau1       , tau2  ,&
-                lcont      , ladhe ,&
+                lcont      , ladhe , l_fric_no,&
                 rese       , nrese)
 !
 ! - Select phase to compute
 !
-    call mmmpha(leltf, lcont, ladhe, phase)
+    call mmmpha(leltf, lcont, ladhe, l_fric_no, phase)
 !
 ! - Large sliding hypothesis
 !
