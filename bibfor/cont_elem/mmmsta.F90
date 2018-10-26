@@ -22,7 +22,7 @@ subroutine mmmsta(ndim         , leltf         , indco ,&
                   lpenaf       , coefaf        ,&
                   lambda       , djeut         , dlagrf,&
                   tau1         , tau2          ,&
-                  lcont        , ladhe         ,&
+                  lcont        , ladhe         , l_fric_no,&
                   rese         , nrese         ,&
                   l_previous_  , indco_prev_   ,&
                   indadhe_prev_, indadhe2_prev_)
@@ -42,7 +42,7 @@ aster_logical, intent(in) :: lpenaf
 real(kind=8), intent(in) :: coefaf, lambda
 real(kind=8), intent(in) :: djeut(3), dlagrf(2)
 real(kind=8), intent(in)  :: tau1(3), tau2(3)
-aster_logical, intent(out) :: lcont, ladhe
+aster_logical, intent(out) :: lcont, ladhe, l_fric_no
 real(kind=8), intent(out) :: rese(3), nrese
 aster_logical, optional, intent(in) :: l_previous_
 integer, optional, intent(in) :: indco_prev_, indadhe_prev_, indadhe2_prev_
@@ -80,6 +80,7 @@ integer, optional, intent(in) :: indco_prev_, indadhe_prev_, indadhe2_prev_
 ! Out ladhe            : .true. if stick
 ! Out rese             : Lagrange (semi) multiplier for friction
 ! Out nrese            : norm of Lagrange (semi) multiplier for friction
+! Out l_fric_no        : .true. if desactivation of contact during contact
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -88,6 +89,7 @@ integer, optional, intent(in) :: indco_prev_, indadhe_prev_, indadhe2_prev_
 !
 ! --------------------------------------------------------------------------------------------------
 !
+    l_fric_no = ASTER_FALSE
     lcont   = ASTER_FALSE
     ladhe   = ASTER_FALSE
     nrese   = 0.d0
@@ -113,17 +115,18 @@ integer, optional, intent(in) :: indco_prev_, indadhe_prev_, indadhe2_prev_
     else
         lcont = (indco .eq. 1)
     endif
-!    if (leltf) then
+    if (leltf) then
 !! This test influence highly the NON_REGRESSION & CONVERGENCE
 !! ONE MUST HAVE ATTENTION WHEN MODIFYING
-!        if (lambda .eq. 0.d0) then
+        if (lambda .eq. 0.d0) then
 !            lcont = ASTER_FALSE
-!        endif
-!    endif
+            l_fric_no = ASTER_TRUE
+        endif
+    endif
 !
 ! - Compute state of friction
 !
-    if (leltf .and. lcont) then
+    if (leltf .and. lcont .and. (.not.l_fric_no)) then
         call mmtrpr(ndim, lpenaf, djeut, dlagrf, coefaf,&
                     tau1, tau2  , ladhe, rese, nrese)
 ! On est en penalisation ou en algo_cont=penalisation, algo_frot=standard/penalisation

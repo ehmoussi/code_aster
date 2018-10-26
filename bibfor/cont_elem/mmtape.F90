@@ -61,6 +61,7 @@ real(kind=8), intent(out) :: matrfe(18, 27), matrfm(18, 27)
 !                        'SANS' - No contact
 !                        'ADHE' - Stick
 !                        'GLIS' - Slip
+!                        'NCON' - Friction but not contact (!)
 ! In  leltf            : flag for friction
 ! In  l_pena_cont      : flag for penalized contact
 ! In  l_pena_fric      : flag for penalized friction
@@ -103,6 +104,21 @@ real(kind=8), intent(out) :: matrfe(18, 27), matrfm(18, 27)
                         rese  , nrese      , lambda,&
                         coefaf, coefff,&
                         matrff)
+        endif
+    else if (phase .eq. 'NCON') then
+        call mmmtff(phase , l_pena_fric,&
+                    ndim  , nbcps      , nnl   ,&
+                    wpg   , ffl        , jacobi,&
+                    tau1  , tau2       ,&
+                    rese  , nrese      , lambda,&
+                    coefaf, coefff,&
+                    matrff)
+        call mmmtcu(ndim  , nnl   , nne   , nnm,&
+                    ffl   , ffe   , ffm   ,&
+                    norm  , wpg   , jacobi,&
+                    matrce, matrcm)
+        if (l_pena_cont) then
+            call mmmtcc(nnl, wpg, ffl, jacobi, coefac, matrcc)
         endif
     else if (phase .eq. 'ADHE') then
 ! ----- For contact

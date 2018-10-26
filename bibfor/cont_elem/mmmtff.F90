@@ -101,7 +101,7 @@ real(kind=8), intent(out) :: matrff(18, 18)
 !
 ! - CALCUL DES TERMES
 !
-    if (phase .eq. 'SANS') then
+    if (phase .eq. 'SANS' .or. phase .eq. 'NCON') then
         do i = 1, nnl
             do j = 1, nnl
                 do l = 1, nbcpf

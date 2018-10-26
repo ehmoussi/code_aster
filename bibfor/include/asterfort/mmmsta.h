@@ -24,7 +24,7 @@ interface
                       lpenaf       , coefaf        ,&
                       lambda       , djeut         , dlagrf,&
                       tau1         , tau2          ,&
-                      lcont        , ladhe         ,&
+                      lcont        , ladhe         , l_fric_no,&
                       rese         , nrese         ,&
                       l_previous_  , indco_prev_   ,&
                       indadhe_prev_, indadhe2_prev_)
@@ -35,7 +35,7 @@ interface
         real(kind=8), intent(in) :: coefaf, lambda
         real(kind=8), intent(in) :: djeut(3), dlagrf(2)
         real(kind=8), intent(in)  :: tau1(3), tau2(3)
-        aster_logical, intent(out) :: lcont, ladhe
+        aster_logical, intent(out) :: lcont, ladhe, l_fric_no
         real(kind=8), intent(out) :: rese(3), nrese
         aster_logical, optional, intent(in) :: l_previous_
         integer, optional, intent(in) :: indco_prev_, indadhe_prev_, indadhe2_prev_

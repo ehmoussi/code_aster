@@ -129,6 +129,19 @@ real(kind=8), intent(out) :: vectcc(9), vectff(18)
                         tau1  , tau2       , mprojt     , &
                         dlagrf, rese       , &
                         vectff)
+        elseif (phase .eq. 'NCON') then
+            call mmmvcc(phase , l_pena_cont, &
+                        nnl   , wpg        , ffl   , jacobi,&
+                        jeu   , coefac     , dlagrc,&
+                        vectcc)
+            call mmmvff(phase , l_pena_cont, l_pena_fric,&
+                        ndim  , nnl        , nbcps      ,&
+                        ffl   ,&
+                        wpg   , jacobi     , djeu       , lambda,&
+                        coefaf, coefff     , &
+                        tau1  , tau2       , mprojt     , &
+                        dlagrf, rese       , &
+                        vectff)
         endif
     endif
 !

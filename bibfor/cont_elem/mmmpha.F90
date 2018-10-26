@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine mmmpha(leltf, lcont, ladhe, phase)
+subroutine mmmpha(leltf, lcont, ladhe, l_fric_no, phase)
 !
 implicit none
 !
@@ -25,7 +25,7 @@ implicit none
 #include "asterfort/assert.h"
 !
 aster_logical, intent(in) :: leltf
-aster_logical, intent(in) :: lcont, ladhe
+aster_logical, intent(in) :: lcont, ladhe, l_fric_no
 character(len=4), intent(out) :: phase
 !
 ! --------------------------------------------------------------------------------------------------
@@ -39,11 +39,13 @@ character(len=4), intent(out) :: phase
 ! In  leltf            : flag for friction
 ! In  lcont            : .true. if contact
 ! In  ladhe            : .true. if stick
+! In  l_fric_no        : .true. if desactivation of contact during contact
 ! Out phase            : phase to compute
 !                        'SANS' - No contact
 !                        'CONT' - Contact
 !                        'ADHE' - Stick
 !                        'GLIS' - Slip
+!                        'NCON' - Friction but not contact (!)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -55,6 +57,8 @@ character(len=4), intent(out) :: phase
         if (lcont) then
             if (ladhe) then
                 phase = 'ADHE'
+            elseif (l_fric_no) then
+                phase = 'NCON'
             else
                 phase = 'GLIS'
             endif
