@@ -72,7 +72,7 @@ real(kind=8), intent(out) :: dnepmait1, dnepmait2
 ! In  tau2             : second tangent at current contact point
 ! In  norm             : normal at current contact point
 ! In  jeu              : normal gap
-! In  djeu             : increment of normal gap
+! In  djeu             : increment of gap
 ! Out mprt1n           : projection matrix first tangent/normal
 ! Out mprt2n           : projection matrix second tangent/normal
 ! Out mprnt1           : projection matrix normal/first tangent

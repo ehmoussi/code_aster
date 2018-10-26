@@ -47,7 +47,7 @@ character(len=16), intent(in) :: option, nomte
 !
 ! Elementary computation
 !
-! Options: CHAR_MECA_CONT / CHAR_MECA_FROT
+! Options: CHAR_MECA_CONT
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -58,10 +58,10 @@ character(len=16), intent(in) :: option, nomte
     integer :: ndexfr
     integer :: indco
     character(len=8) :: typmae, typmam
-    character(len=9) :: phasep
+    character(len=4) :: phase
     aster_logical :: laxis = .false. , leltf = .false.
-    aster_logical :: lpenac = .false. , lpenaf = .false.
-    aster_logical :: loptf = .false. , ldyna = .false., lcont = .false., ladhe = .false.
+    aster_logical :: l_pena_cont = .false. , l_pena_fric = .false.
+    aster_logical :: lcont = .false., ladhe = .false.
     aster_logical :: debug = .false.
     real(kind=8) :: coefff = 0.0
     real(kind=8) :: lambda = 0.0, lambds = 0.0
@@ -76,7 +76,7 @@ character(len=16), intent(in) :: option, nomte
     real(kind=8) :: mprt1n(3, 3)=0.0, mprt2n(3, 3)=0.0
     real(kind=8) :: mprt11(3, 3)=0.0, mprt12(3, 3)=0.0, mprt21(3, 3)=0.0, mprt22(3, 3)=0.0
     real(kind=8) :: kappa(2, 2)=0.0
-    real(kind=8) :: ffe(9), ffm(9), ffl(9)
+    real(kind=8) :: ffe(9), ffm(9), ffl(9), dffm(2,9)
     real(kind=8) :: alpha_cont=0.0
     real(kind=8) :: dnepmait1, dnepmait2, taujeu1, taujeu2
     real(kind=8) :: xpc, ypc, xpr, ypr
@@ -95,9 +95,15 @@ character(len=16), intent(in) :: option, nomte
     vectff(:) = 0.d0
     vectee(:) = 0.d0
     vectmm(:) = 0.d0
-
     debug = ASTER_FALSE
-    loptf = option.eq.'CHAR_MECA_FROT'
+!
+! - Get informations on cell (slave and master)
+!
+    call mmelem(nomte , ndim , nddl,&
+                typmae, nne  ,&
+                typmam, nnm  ,&
+                nnl   , nbcps, nbdm,&
+                laxis , leltf)
 !
 ! - Get coefficients
 !
@@ -107,43 +113,31 @@ character(len=16), intent(in) :: option, nomte
 !
     call mmGetProjection(iresog, wpg,&
                          xpc   , ypc, xpr, ypr, tau1, tau2)
-
 !
 ! - Get algorithms
 !
-    call mmGetAlgo(l_large_slip, ndexfr, jeusup, ldyna , lambds,&
+    call mmGetAlgo(l_large_slip, ndexfr, jeusup, lambds,&
                    ialgoc      , ialgof, iresof, iresog,&
-                   lpenac      , lpenaf)
+                   l_pena_cont , l_pena_fric)
 !
 ! - Get status
 !
-    call mmGetStatus(option, indco)
-!
-! - Get informations on cell (slave and master)
-!
-    call mmelem(nomte , ndim , nddl,&
-                typmae, nne  ,&
-                typmam, nnm  ,&
-                nnl   , nbcps, nbdm,&
-                laxis , leltf)
-    if (.not.loptf) then
-        leltf = .false.
-    endif
+    call mmGetStatus(leltf, indco)
 !
 ! - Compute quantities (for vector)
 !
     call mmvppe(typmae   , typmam   ,&
                 ndim     , nne      , nnm     , nnl    , nbdm ,&
-                iresog   , l_large_slip ,&
-                laxis    , ldyna    , jeusup  ,&
+                iresog   , l_large_slip,&
+                laxis    , jeusup   ,&
                 xpc      , ypc      , xpr     , ypr   ,&
                 tau1     , tau2     ,&
-                ffe      , ffm      , ffl     ,&
+                ffe      , ffm      , ffl     , dffm  ,&
                 jacobi   , jeu      , djeu    , djeut ,&
                 dlagrc   , dlagrf   , &
-                norm     , mprojt  ,&
+                norm     , mprojt   ,&
                 mprt1n   , mprt2n   , &
-                mprt11  , mprt12, mprt21, mprt22,&
+                mprt11   , mprt12   , mprt21  , mprt22,&
                 kappa    , &
                 taujeu1  , taujeu2  ,&
                 dnepmait1, dnepmait2)
@@ -154,55 +148,57 @@ character(len=16), intent(in) :: option, nomte
 !
 ! - Compute state of contact and friction
 !
-    call mmmsta(ndim  , loptf , indco,&
-                ialgoc, ialgof,&
-                lpenaf, coefaf,&
-                lambda, djeut , dlagrf,&
-                tau1  , tau2  ,&
-                lcont , ladhe ,&
-                rese  , nrese)
+    call mmmsta(ndim       , leltf , indco,&
+                ialgoc     , ialgof,&
+                l_pena_fric, coefaf,&
+                lambda     , djeut , dlagrf,&
+                tau1       , tau2  ,&
+                lcont      , ladhe ,&
+                rese       , nrese)
 !
 ! - Select phase to compute
 !
-    call mmmpha(loptf, lpenac, lpenaf,&
-                lcont, ladhe ,&
-                phasep)
+    call mmmpha(leltf, lcont, ladhe, phase)
 !
 ! - Large sliding hypothesis
 !
-    if (lcont .and.  (phasep(1:4) .eq. 'GLIS') .and. (l_large_slip)&
-         .and. (abs(jeu) .lt. 1.d-6 )) then
+    if (lcont .and. (phase .eq. 'GLIS') .and. (l_large_slip) .and. (abs(jeu) .lt. 1.d-6 )) then
         call mngliss(ndim     , kappa    ,&
                      tau1     , tau2     ,&
                      taujeu1  , taujeu2  ,&
                      dnepmait1, dnepmait2,&
                      djeut )
-        call mmnsta(ndim  , loptf ,&
-                    lpenaf, coefaf,&
+        call mmnsta(ndim  , leltf ,&
+                    l_pena_fric, coefaf,&
                     indco ,&
                     lambda, djeut , dlagrf,&
                     tau1  , tau2  ,&
                     lcont , ladhe ,&
                     rese  , nrese)
-      endif
+    endif
 !
 ! - Weak form of contact/friction force
 !
-    call mmvfpe(phasep, ndim, nne, nnm, norm,&
-                tau1, tau2, mprojt, wpg, ffe,&
-                ffm, jacobi, jeu, coefac, coefaf,&
-                lambda, coefff, dlagrc, dlagrf, djeu,&
-                rese, nrese, &
-                vectee, vectmm,mprt11,mprt12,mprt21,mprt22,&
-                mprt1n,mprt2n,&
-                kappa,l_large_slip)
+    call mmvfpe(phase , l_pena_cont, l_pena_fric, l_large_slip,&
+                ndim  , nne   , nnm   ,&
+                norm  , tau1  , tau2  , mprojt,&
+                wpg   , ffe   , ffm   , dffm  , jacobi, jeu   ,&
+                coefac, coefaf, lambda, coefff,&
+                dlagrc, dlagrf, djeu  ,&
+                rese  , nrese ,&
+                mprt1n, mprt2n,&
+                mprt11, mprt12, mprt21, mprt22, kappa,&
+                vectee, vectmm)
 !
 ! - Weak form of contact/friction law
 !
-    call mmvape(phasep, leltf, ndim, nnl, nbcps,&
-                coefac, coefaf, coefff, ffl, wpg,&
-                jeu, jacobi, lambda, tau1, tau2,&
-                mprojt, dlagrc, dlagrf, djeu, rese,&
+    call mmvape(phase , leltf , l_pena_cont, l_pena_fric,&
+                ndim  , nnl   , nbcps      ,&
+                ffl   ,&
+                wpg   , jacobi, jeu   , djeu, lambda,&
+                coefac, coefaf, coefff, &
+                tau1  , tau2  , mprojt, &
+                dlagrc, dlagrf, rese,&
                 vectcc, vectff)
 !
 ! - Excluded nodes

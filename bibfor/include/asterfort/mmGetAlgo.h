@@ -15,21 +15,19 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-!
 #include "asterf_types.h"
 !
 interface
-    subroutine mmGetAlgo(l_large_slip, ndexfr   , jeusup, ldyna , lambds,&
-                         ialgoc      , ialgof   , iresof, iresog,&
-                         lpenac      , lpenaf   ,&
+    subroutine mmGetAlgo(l_large_slip, ndexfr     , jeusup, lambds,&
+                         ialgoc      , ialgof     , iresof, iresog,&
+                         l_pena_cont , l_pena_fric,&
                          lambds_prev_, jeu_prev_)
         aster_logical, intent(out) :: l_large_slip
         integer, intent(out) :: ndexfr
         real(kind=8), intent(out) :: jeusup
-        aster_logical, intent(out) :: ldyna
         real(kind=8), intent(out) :: lambds
-        integer, intent(out) :: ialgoc, iresof, ialgof, iresog
-        aster_logical, intent(out) :: lpenac, lpenaf
+        integer, intent(out) :: ialgoc, ialgof, iresof, iresog
+        aster_logical, intent(out) :: l_pena_cont, l_pena_fric
         real(kind=8), optional, intent(out) :: lambds_prev_, jeu_prev_
     end subroutine mmGetAlgo
 end interface

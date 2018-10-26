@@ -19,9 +19,9 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine mmGetStatus(option     , indco      ,&
+    subroutine mmGetStatus(leltf      , indco      ,&
                            l_previous_, indco_prev_, indadhe_prev_, indadhe2_prev_)
-        character(len=16), intent(in) :: option
+        aster_logical, intent(in) :: leltf
         integer, intent(out) :: indco
         aster_logical, optional, intent(out) :: l_previous_
         integer, optional, intent(out) :: indco_prev_, indadhe_prev_, indadhe2_prev_

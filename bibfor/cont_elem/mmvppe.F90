@@ -22,10 +22,10 @@
 subroutine mmvppe(typmae   , typmam   ,&
                   ndim     , nne      , nnm     , nnl   , nbdm  ,&
                   iresog   , l_large_slip ,&
-                  laxis    , ldyna    , jeusup  ,&
+                  laxis    , jeusup  ,&
                   xpc      , ypc      , xpr     , ypr   ,&
                   tau1     , tau2     ,&
-                  ffe      , ffm      , ffl     ,&
+                  ffe      , ffm      , ffl     , dffm  ,&
                   jacobi   , jeu      , djeu    , djeut ,&
                   dlagrc   , dlagrf   ,&
                   norm     , mprojt   ,&
@@ -48,10 +48,9 @@ implicit none
 #include "asterfort/mmmjeu.h"
 #include "asterfort/mmcalg.h"
 #include "asterfort/mmreac.h"
-#include "asterfort/mmvitm.h"
 #include "asterfort/utmess.h"
 !
-aster_logical, intent(in) :: laxis, ldyna
+aster_logical, intent(in) :: laxis
 character(len=8), intent(in) :: typmae, typmam
 integer, intent(in) :: ndim, nne, nnm, nnl, nbdm
 integer, intent(in) :: iresog
@@ -59,7 +58,7 @@ aster_logical, intent(in) :: l_large_slip
 real(kind=8), intent(in) :: jeusup
 real(kind=8), intent(in) :: xpc, ypc, xpr, ypr
 real(kind=8), intent(in) :: tau1(3), tau2(3)
-real(kind=8), intent(out) :: ffe(9), ffm(9), ffl(9)
+real(kind=8), intent(out) :: ffe(9), ffm(9), ffl(9), dffm(2,9)
 real(kind=8), intent(out) :: jacobi, jeu
 real(kind=8), intent(out) :: djeut(3), djeu(3), dlagrc, dlagrf(2)
 real(kind=8), intent(out) :: norm(3)
@@ -87,14 +86,9 @@ real(kind=8), intent(out) :: dnepmait1, dnepmait2, taujeu1, taujeu2
 ! In  iresog           : algorithm for geometry
 !                        0 - Fixed point
 !                        1 - Newton
-! In  iresof           : algorithm for friction
-!                        0 - Fixed point
-!                        1 - Newton
 ! In  l_large_slip     : flag for GRAND_GLISSEMENT
 ! In  laxis            : flag for axisymmetric
-! In  ldyna            : flag when dynamic
 ! In  jeusup           : gap from DIST_ESCL/DIST_MAIT
-! In  lambds           : contact pressure (fixed trigger)
 ! In  xpc              : X-coordinate for contact point
 ! In  ypc              : Y-coordinate for contact point
 ! In  xpr              : X-coordinate for projection of contact point
@@ -103,15 +97,12 @@ real(kind=8), intent(out) :: dnepmait1, dnepmait2, taujeu1, taujeu2
 ! In  tau2             : second tangent at current contact point
 ! Out ffe              : shape function for slave nodes
 ! Out ffm              : shape function for master nodes
-! Out dffm             : first derivative of shape function for master nodes
-! Out ddffm            : second derivative of shape function for master nodes
 ! Out ffl              : shape function for Lagrange dof
 ! Out jacobi           : jacobian at integration point
 ! Out jeu              : normal gap
 ! Out djeut            : increment of tangent gaps
 ! Out dlagrc           : increment of contact Lagrange from beginning of time step
 ! Out dlagrf           : increment of friction Lagrange from beginning of time step
-! Out lambda           : contact pressure
 ! Out norm             : normal at current contact point
 ! Out tau1             : first tangent at current contact point
 ! Out tau2             : second tangent at current contact point
@@ -126,7 +117,7 @@ real(kind=8), intent(out) :: dnepmait1, dnepmait2, taujeu1, taujeu2
 !                        tau2*TRANSPOSE(tau1)(matrice 3*3)
 ! Out mprt22           : Projection matrix second tangent/second tangent
 !                        tau2*TRANSPOSE(tau2)(matrice 3*3)
-! Out KAPPA            : MATRICE DE SCALAIRES LIEES A LA CINEMATIQUE DU GLISSEMENT
+! Out kappa            : scalar matrix for sliding kinematic
 !                        KAPPA(i,j) = INVERSE[tau_i.tau_j-JEU*(ddFFM*geomm)](matrice 2*2)
 ! Out dnepmait1, dnepmait2, taujeu1, taujeu2
 !
@@ -141,10 +132,8 @@ real(kind=8), intent(out) :: dnepmait1, dnepmait2, taujeu1, taujeu2
     real(kind=8) :: geomm(3), geome(3)
     real(kind=8) :: ddeple(3), ddeplm(3)
     real(kind=8) :: deplme(3), deplmm(3)
-    real(kind=8) :: accme(3), vitme(3), accmm(3), vitmm(3)
-    real(kind=8) :: vitpe(3), vitpm(3)
     real(kind=8) :: dffe(2, 9), ddffe(3, 9)
-    real(kind=8) :: dffm(2, 9), ddffm(3, 9)
+    real(kind=8) :: ddffm(3, 9)
     real(kind=8) :: dffl(2, 9), ddffl(3, 9)
     real(kind=8) :: mprojn(3, 3)
     aster_logical :: l_axis_warn
@@ -225,15 +214,6 @@ real(kind=8), intent(out) :: dnepmait1, dnepmait2, taujeu1, taujeu2
                 ffe   , ffm   ,&
                 ddeple, ddeplm,&
                 deplme, deplmm)
-!
-! - Compute increment of speeds/accelerations
-!
-    if (ldyna) then
-        call mmvitm(nbdm , ndim , nne  , nnm  ,&
-                    ffe  , ffm  ,&
-                    vitme, vitmm, vitpe, vitpm,&
-                    accme, accmm)
-    endif
 !
 ! - Compute gaps
 !

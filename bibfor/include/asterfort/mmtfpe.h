@@ -15,52 +15,33 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
+#include "asterf_types.h"
 !
 interface
-    subroutine mmtfpe(phasep,iresof,ndim  ,nne   ,nnm   , &
-                  nnl   ,nbcps ,wpg   ,jacobi, ffl  , &
-                  ffe   ,ffm    ,norm  ,tau1  , &
-                  tau2  ,mprojn,mprojt,rese  ,nrese , &
-                  lambda,coefff,coefaf,coefac, &
-                  dlagrf,djeut ,&
-                  matree,matrmm, &
-                  matrem,matrme,matrec,matrmc,matref, &
-                  matrmf)
-        character(len=9) :: phasep
-        integer :: iresof
-        integer :: ndim
-        integer :: nne
-        integer :: nnm
-        integer :: nnl
-        integer :: nbcps
-        real(kind=8) :: wpg
-        real(kind=8) :: jacobi
-        real(kind=8) :: ffl(9)
-        real(kind=8) :: ffe(9)
-        real(kind=8) :: ffm(9)
-        real(kind=8) :: norm(3)
-        real(kind=8) :: tau1(3)
-        real(kind=8) :: tau2(3)
-        real(kind=8) :: mprojn(3, 3)
-        real(kind=8) :: mprojt(3, 3)
-        real(kind=8) :: rese(3)
-        real(kind=8) :: nrese
-        real(kind=8) :: lambda
-        real(kind=8) :: jeu
-        real(kind=8) :: coefff
-        real(kind=8) :: coefaf
-        real(kind=8) :: coefac
-        real(kind=8) :: dlagrf(2)
-        real(kind=8) :: djeut(3)
-        real(kind=8) :: matree(27, 27)
-        real(kind=8) :: matrmm(27, 27)
-        real(kind=8) :: matrem(27, 27)
-        real(kind=8) :: matrme(27, 27)
-        real(kind=8) :: matrec(27, 9)
-        real(kind=8) :: matrmc(27, 9)
-        real(kind=8) :: matref(27, 18)
-        real(kind=8) :: matrmf(27, 18)
+    subroutine mmtfpe(phase , iresof, l_pena_cont, l_pena_fric,&
+                      ndim  , nne   , nnm        ,  nnl       , nbcps ,&
+                      wpg   , jacobi,&
+                      ffl   , ffe   , ffm        ,&
+                      norm  , tau1  , tau2       , mprojn     , mprojt,&
+                      rese  , nrese , &
+                      lambda, coefff, coefaf     , coefac, &
+                      dlagrf, djeut ,&
+                      matree, matrmm,&
+                      matrem, matrme,&
+                      matrec, matrmc,&
+                      matref, matrmf)
+        character(len=4), intent(in) :: phase
+        aster_logical, intent(in) :: l_pena_cont, l_pena_fric
+        integer, intent(in) :: iresof, ndim, nne, nnm, nnl, nbcps
+        real(kind=8), intent(in) :: norm(3), tau1(3), tau2(3), mprojn(3, 3), mprojt(3, 3)
+        real(kind=8), intent(in) :: ffe(9), ffm(9), ffl(9)
+        real(kind=8), intent(in) :: wpg, jacobi
+        real(kind=8), intent(in) :: rese(3), nrese
+        real(kind=8), intent(in) :: coefac, coefaf, lambda, coefff
+        real(kind=8), intent(in) :: dlagrf(2), djeut(3)
+        real(kind=8), intent(out) :: matrem(27, 27), matrme(27, 27)
+        real(kind=8), intent(out) :: matree(27, 27), matrmm(27, 27)
+        real(kind=8), intent(out) :: matrec(27, 9), matrmc(27, 9)
+        real(kind=8), intent(out) :: matrmf(27, 18), matref(27, 18)
     end subroutine mmtfpe
 end interface
