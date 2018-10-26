@@ -122,7 +122,6 @@ for icomp,comp in enumerate(compor) :
         tini=dureetrac+ dureetracrot*incr
         tfinrot=dureetracrot+dureetracrot*incr
         tfintrac=dureetrac+dureetracrot+dureetracrot*incr
-        # appel a la macro dans INCLUDE
         icl+=1
         Rota2[icl]=CHAR_ROTA(MODELE=modele,ANGLE_DEGRES=angle_degres,TINI=tini,TFIN=tfinrot,RESU=resu[icomp],MAIL=MA)
 

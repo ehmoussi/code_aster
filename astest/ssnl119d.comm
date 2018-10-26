@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -57,7 +57,8 @@ MO=AFFE_MODELE(MAILLAGE=MA,
 #-----------------------------------------------
 # DEFINTION DES MATERIAUX
 #-----------------------------------------------
-INCLUDE(UNITE=22, INFO=1)
+ 
+from ssnl119d import mat_dhrc 
 
 MATER=AFFE_MATERIAU(MAILLAGE=MA,
                     AFFE=(_F(GROUP_MA='POUTRE',
@@ -131,7 +132,7 @@ CALC_CHAMP(reuse=RESU,
 
 # les resultats experimentaux sont donnees dans le fichier joint
 # il s'agit de Fy_(N)Uy_(m)Eps_xx(S)_traction
-INCLUDE(UNITE=12)
+from ssnl119b import val_exp
 
 POST=POST_RELEVE_T(ACTION=_F(INTITULE='RESULTANTE',
                              RESULTAT=RESU,

@@ -1,6 +1,33 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+import math
+from code_aster.Cata.Syntax import _F, MACRO, SIMP
+from code_aster.Cata.DataStructure import CO as typCO
+from code_aster.Cata.DataStructure import (maillage_sdaster, modele_sdaster, mater_sdaster,
+    cham_no_sdaster, listr8_sdaster, cham_mater, char_meca,resultat_sdaster, table_sdaster)
+from code_aster.Commands.ExecuteCommand import UserMacro
+from code_aster.Commands import DEFI_FONCTION 
+from code_aster.Commands import SIMU_POINT_MAT
+
 def test_init_ops(self,TINI,TFIN,TMIL,MATER,LIST_INST,**args):
     import numpy as NP
-    from code_aster.Cata.Syntax import _F
+
     ier=0
   # La macro compte pour 1 dans la numerotation des commandes
     self.set_icmd(1)
@@ -27,15 +54,15 @@ def test_init_ops(self,TINI,TFIN,TMIL,MATER,LIST_INST,**args):
                                RESI_INTE_RELA=1E-8,
                                ITER_INTE_PAS =-5,
                                ALGO_INTE='SPECIFIQUE'),
-                  MATER=MATE,
-                  INCREMENT=_F(LIST_INST=TEMPS1,
+                  MATER=MATER,
+                  INCREMENT=_F(LIST_INST=LIST_INST,
                                INST_INIT=TINI,
                                INST_FIN=TMIL,),
                   NEWTON=_F(MATRICE='TANGENTE',
                             REAC_ITER=1,),
                   CONVERGENCE=_F(RESI_GLOB_RELA = 1.E-6,
                                  ITER_GLOB_MAXI = 10),
-                  ARCHIVAGE=_F(LIST_INST=TEMPS1,),
+                  ARCHIVAGE=_F(LIST_INST=LIST_INST,),
                   SIGM_IMPOSE=_F(SIXX=__coef2b,
                                  SIYY=__coef2b,
                                  SIZZ=__coef2b,
@@ -75,15 +102,15 @@ def test_init_ops(self,TINI,TFIN,TMIL,MATER,LIST_INST,**args):
                                RESI_INTE_RELA=1E-8,
                                ITER_INTE_PAS =-5,
                                ALGO_INTE='SPECIFIQUE'),
-                  MATER=MATE,
-                  INCREMENT=_F(LIST_INST=TEMPS1,
+                  MATER=MATER,
+                  INCREMENT=_F(LIST_INST=LIST_INST,
                                INST_INIT=TMIL,
                                INST_FIN=TFIN,),
                   NEWTON=_F(MATRICE='TANGENTE',
                             REAC_ITER=1,),
                   CONVERGENCE=_F(RESI_GLOB_RELA = 1.E-6,
                                  ITER_GLOB_MAXI = 10),
-                  ARCHIVAGE=_F(LIST_INST=TEMPS1,),
+                  ARCHIVAGE=_F(LIST_INST=LIST_INST,),
                   SIGM_IMPOSE=_F(SIXX=__coef2b,
                                  SIYY=__coef2b,
                                  SIZZ=__coef2b,
@@ -102,9 +129,9 @@ def test_init_ops(self,TINI,TFIN,TMIL,MATER,LIST_INST,**args):
                                EPXY=EPXY_INI,
                                EPXZ=EPXZ_INI,
                                EPYZ=EPYZ_INI,),);
-    return ier
+    return SPM
 
-TEST_INIT =MACRO(nom="TEST_INIT", op=test_init_ops,sd_prod=table_sdaster,
+TEST_INIT_cata =MACRO(nom="TEST_INIT", op=test_init_ops,sd_prod=table_sdaster,
                        docu="",reentrant='n',fr="creation d'une charge de rotation du cube",
          TINI            =SIMP(statut='o',typ='R'),
          TMIL            =SIMP(statut='o',typ='R'),
@@ -112,3 +139,7 @@ TEST_INIT =MACRO(nom="TEST_INIT", op=test_init_ops,sd_prod=table_sdaster,
          LIST_INST       =SIMP(statut='o',typ=(listr8_sdaster) ),
          MATER           =SIMP(statut='o',typ=mater_sdaster,max=30),
          )
+
+TEST_INIT = UserMacro("TEST_INIT", TEST_INIT_cata, test_init_ops)
+
+
