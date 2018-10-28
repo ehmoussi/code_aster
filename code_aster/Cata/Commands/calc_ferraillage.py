@@ -26,7 +26,7 @@ from code_aster.Cata.Commons import *
 
 def calc_ferraillage_prod(RESULTAT,**args):
    if args.get('__all__'):
-       return (evol_elas, evol_noli, dyna_trans)
+       return (evol_elas, evol_noli, dyna_trans, mult_elas)
 
    if AsType(RESULTAT) != None : return AsType(RESULTAT)
    raise AsException("type de concept resultat non prevu")
@@ -37,7 +37,7 @@ CALC_FERRAILLAGE=OPER(nom="CALC_FERRAILLAGE",op=175,sd_prod=calc_ferraillage_pro
          fr=tr("calcul de cartes de densité de ferraillage "),
 
          reuse=SIMP(statut='c', typ=CO),
-         RESULTAT        =SIMP(statut='o',typ=(evol_elas,evol_noli,dyna_trans,) ),
+         RESULTAT        =SIMP(statut='o',typ=(evol_elas,evol_noli,dyna_trans,mult_elas,) ),
 #
 #====
 # Sélection des numéros d'ordre pour lesquels on fait le calcul :
