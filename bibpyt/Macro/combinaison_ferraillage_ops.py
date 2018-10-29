@@ -85,7 +85,7 @@ def combinaison_ferraillage_ops(self, **args):
     # Build instant list (lst_inst_value of float) and instant index
     # and control about existing or duplicates NUM_CAS and NUME_ORDRE.
     #
-    lst_inst_index, lst_inst_value, resu_nom_cas, resu_num_ord = \
+    lst_inst_index, lst_inst_value, resu_nom_cas, resu_num_ord, lst_type_combo = \
         lstInst(nmb_cas,combinaison,resu)
 
     aster.affiche( 'MESSAGE', '         instant   value = ' + \
@@ -93,15 +93,8 @@ def combinaison_ferraillage_ops(self, **args):
     aster.affiche( 'MESSAGE', 'seelected from   NOM_CAS = ' + \
         string.join( [str(i) for i in resu_nom_cas], '*') )
     aster.affiche( 'MESSAGE', 'seelected from NUMEORDRE = ' + \
-        string.join( [str(i) for i in resu_num_ord], '*') )
-
-    # - Build result type EVOL_ELAS from MULTI_ELAS and combo type list in order
-    #   to select the right verify.
-    # - [lst_type_combo] and [inst] heve a relationship one-to-one
-    #
-    __resfer, lst_type_combo = \
-        evolElasFromMulti(nmb_cas,combinaison,lst_inst_value,resu,modele,caraelem)
-
+        string.join( [str(i) for i in resu_num_ord], '*') ) 
+              
     aster.affiche( 'MESSAGE', ' type combo = ' + \
     '\n' + string.join( [str(i) for i in lst_type_combo], '\n') )
 
@@ -111,7 +104,8 @@ def combinaison_ferraillage_ops(self, **args):
         # [structure_type] selects design algorithm.
         if structure_type == '2D' :
             # Algorithm is CALC_FERRAILLAGE
-            __resfer = algo_2D(__resfer, i_affe, lst_inst_value, codification, lst_type_combo)
+            # __resfer = algo_2D(__resfer, i_affe, lst_inst_value, codification, lst_type_combo)
+            resu = algo_2D(resu, i_affe, lst_inst_index, codification, lst_type_combo)
 
         elif structure_type == 'POUTRE' :
             # Algorithm un available
@@ -122,14 +116,23 @@ def combinaison_ferraillage_ops(self, **args):
             algo_POTEAU()
 
         else:
-            pass
-
-    print "champs FERRAILLAGE -->", __resfer.LIST_CHAMPS()['FERRAILLAGE']
-
+            pass                
+         
+    print "champs FERRAILLAGE resu -->", resu.LIST_CHAMPS()['FERRAILLAGE']         
+   
+    # - Build result type EVOL_ELAS from MULTI_ELAS and combo type list in order
+    #   to select the right verify.
+    #
+    __resfer = \
+        evolElasFromMulti(nmb_cas,combinaison,lst_inst_value,resu,modele,caraelem)
+        
+    print "champs FERRAILLAGE __resfer -->", __resfer.LIST_CHAMPS()['FERRAILLAGE']
+        
     # Maximum reinforcement field (elementwise, component by component)
     __maxifer = CREA_CHAMP (
         # INFO = 2,
         RESULTAT = __resfer,
+        # RESULTAT = resu,
         NOM_CHAM = 'FERRAILLAGE',
         TYPE_CHAM = 'ELEM_FER2_R',
         OPERATION = 'EXTR',
@@ -144,6 +147,7 @@ def combinaison_ferraillage_ops(self, **args):
     # NUME_ORDRE is not available now as an option of CREA_CHAMP-MAXI
     __instfer = CREA_CHAMP (
           RESULTAT = __resfer,
+          # RESULTAT = resu,    
           NOM_CHAM = 'FERRAILLAGE',
          TYPE_CHAM = 'ELEM_FER2_R',
          OPERATION = 'EXTR',
@@ -161,7 +165,7 @@ def combinaison_ferraillage_ops(self, **args):
 
     # Build result type EVOL_ELAS from MULTI_ELAS and combo type list in order
     #
-    resu = multiFromEvolElas(nmb_cas, resu_nom_cas, lst_inst_index, lst_inst_value, __resfer, resu, modele, caraelem)
+    # resu = multiFromEvolElas(nmb_cas, resu_nom_cas, lst_inst_index, lst_inst_value, __resfer, resu, modele, caraelem)
 
 
     # Adding COMB_DIME_ACIER and COMB_DIME_ORDRE tu resu
@@ -194,7 +198,43 @@ def combinaison_ferraillage_ops(self, **args):
 
     # Messages.__dict__.update(olddict) # TEMP-TEMP-TEMP-TEMP
     return 0
-
+    
+def algo_2D (_resfer, affe, lst_nume_ordre, code, type_combo):
+    print "def option_2D:"
+    
+    dict_affe = affe.List_F()[0]
+    dict_affe.pop('TYPE_STRUCTURE') # print dict_affe
+                
+    for idx, nume_ordre in enumerate(lst_nume_ordre):
+                    
+        # seelction of mot-clè TYPE_COMB by [lst_type_combo]
+        dic_type_comb = {}
+        if type_combo [idx]  == 'ELS_CARACTERISTIQUE':
+            dic_type_comb['TYPE_COMB'] = 'ELS'
+                    
+        elif type_combo [idx]  == 'ELU_FONDAMENTAL':
+            dic_type_comb['TYPE_COMB'] = 'ELU'
+       
+        elif type_combo [idx]  == 'ELU_ACCIDENTEL':
+            dic_type_comb['TYPE_COMB'] = 'ELU'
+      
+        else:
+            dic_type_comb['TYPE_COMB'] = 'ELU'
+   
+        dic_calc_ferraillage = dict(dic_type_comb.items() + [('CODIFICATION', code)])
+            
+        _resfer = CALC_FERRAILLAGE (
+            reuse = _resfer,
+            RESULTAT = _resfer,
+            # INST = inst,
+            NUME_ORDRE = nume_ordre,
+            AFFE = _F(**dict_affe),
+            **dic_calc_ferraillage  
+        )
+    
+    return _resfer
+    
+'''
 def algo_2D (_resfer, affe, inst_value, code, type_combo):
     print "def option_2D:"
 
@@ -229,7 +269,7 @@ def algo_2D (_resfer, affe, inst_value, code, type_combo):
         )
 
     return _resfer
-
+'''    
 def algo_POUTRE ():
     print "def option_POUTRE:"
     UTMESS('A', 'COMBFERR_2')
@@ -260,7 +300,8 @@ def lstInst(ncas, comb, resultat):
 
     lst_inst_value = [None] * ncas # list of float value as time for AFFE
     lst_inst_index = [None] * ncas # list of int value as index
-
+    type_combo     = [None] * ncas # list of string as type of combo
+    
     # Recupero i numeri d'ordine e nomi dei casi
     resu_nume_ordre = resultat.LIST_VARI_ACCES()['NUME_ORDRE']
     resu_nom_cas = resultat.LIST_VARI_ACCES()['NOM_CAS']
@@ -282,6 +323,10 @@ def lstInst(ncas, comb, resultat):
             key_name_combo = 'NOM_CAS'
 
         for idx_combo, val_combo in enumerate( lst_combo ):
+            
+            # type combo list couple with instant
+            type_combo [idx_shift] = i_combo.get('TYPE'); 
+            
             if key_name_combo == 'NUME_ORDRE':
                 inst = val_combo
                 if not (inst in resu_nume_ordre):
@@ -300,8 +345,9 @@ def lstInst(ncas, comb, resultat):
             lst_inst_value [ idx_shift ] = float(inst)
             idx_shift = idx_shift + 1
 
-    return lst_inst_index, lst_inst_value, resu_nom_cas, resu_nume_ordre
-
+    return lst_inst_index, lst_inst_value, resu_nom_cas, resu_nume_ordre, type_combo
+    
+'''    
 # Build result type MULTI_ELAS from EVOL_ELAS
 #
 def multiFromEvolElas(ncas, resu_nom_cas, inst_index, inst_value, resfer, resu, modele, caraelem):
@@ -341,6 +387,7 @@ def multiFromEvolElas(ncas, resu_nom_cas, inst_index, inst_value, resfer, resu, 
         AFFE = lst_AFFE_ACIER,
     )
     return resu
+'''
 
 # Build result type EVOL_ELAS from MULTI_ELAS
 #
@@ -348,7 +395,7 @@ def evolElasFromMulti(ncas, comb, lst_inst_value, resu, modele, caraelem):
 
     __EFGE         = [None] * ncas
     lst_AFFE_EFGE  = [None] * ncas
-    type_combo = [None] * ncas # list of string as type of combo
+    # type_combo     = [None] * ncas # list of string as type of combo 
 
     idx_shift = 0
     for idx_i_combo, i_combo in enumerate( comb ) :
@@ -367,15 +414,18 @@ def evolElasFromMulti(ncas, comb, lst_inst_value, resu, modele, caraelem):
         for idx_combo, val_combo in enumerate( lst_combo ):
 
             # type combo list couple with instant
-            type_combo [idx_shift] = i_combo.get('TYPE');
-
+            # type_combo [idx_shift] = i_combo.get('TYPE'); 
+    
             dic_idx_combo = { key_name_combo : val_combo }
 
             __EFGE[ idx_shift ] = CREA_CHAMP (
-            TYPE_CHAM = 'ELNO_SIEF_R',
+
             OPERATION = 'EXTR',
             RESULTAT = resu,
-            NOM_CHAM = 'EFGE_ELNO',
+            # TYPE_CHAM = 'ELNO_SIEF_R',
+            # NOM_CHAM = 'EFGE_ELNO',
+            TYPE_CHAM = 'ELEM_FER2_R', 
+            NOM_CHAM = 'FERRAILLAGE',                       
             **dic_idx_combo
             )
 
@@ -391,11 +441,12 @@ def evolElasFromMulti(ncas, comb, lst_inst_value, resu, modele, caraelem):
     _resfer = CREA_RESU (
         OPERATION='AFFE',
         TYPE_RESU ='EVOL_ELAS',
-        NOM_CHAM ='EFGE_ELNO',
+        # NOM_CHAM ='EFGE_ELNO',
+        NOM_CHAM ='FERRAILLAGE',        
         AFFE = lst_AFFE_EFGE,
     )
 
-    return _resfer, type_combo
+    return _resfer# , type_combo
 
 # INFODEV
 #
