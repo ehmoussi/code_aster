@@ -7,7 +7,7 @@
 #define PARTIALMESH_H_
 
 /**
- * @file TestMesh.h
+ * @file PartialMesh.h
  * @brief Fichier entete de la classe
  * @author Nicolas Sellenet
  * @section LICENCE

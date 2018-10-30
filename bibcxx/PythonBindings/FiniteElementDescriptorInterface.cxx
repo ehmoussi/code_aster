@@ -32,9 +32,12 @@ void exportFiniteElementDescriptorToPython() {
 
     class_< FiniteElementDescriptorInstance,
             FiniteElementDescriptorInstance::FiniteElementDescriptorPtr, bases< DataStructure > >(
-        "FiniteElementDescriptor", no_init );
-        // fake initFactoryPtr: not directly created by user
-        // fake initFactoryPtr: not directly created by user
-        .def( "transferDofDescriptorFrom", &FiniteElementDescriptorInstance::transferDofDescriptorFrom )
-    ;
+        "FiniteElementDescriptor", no_init )
+// fake initFactoryPtr: not directly created by user
+// fake initFactoryPtr: not directly created by user
+#ifdef _USE_MPI
+        .def( "transferDofDescriptorFrom",
+              &FiniteElementDescriptorInstance::transferDofDescriptorFrom )
+#endif /* _USE_MPI */
+        ;
 };

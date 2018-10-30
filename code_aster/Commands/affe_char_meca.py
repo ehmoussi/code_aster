@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -19,7 +19,7 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import GenericMechanicalLoad, ParallelMechanicalLoad, PartialMesh
+from ..Objects import GenericMechanicalLoad
 from .affe_modele import AFFE_MODELE
 from .ExecuteCommand import ExecuteCommand
 from ..Cata.Language.SyntaxObjects import FactorKeyword
@@ -99,6 +99,7 @@ class MechanicalLoadDefinition(ExecuteCommand):
         if isinstance(self._result, GenericMechanicalLoad):
             super(MechanicalLoadDefinition, self).exec_(keywords)
         else:
+            from ..Objects import ParallelMechanicalLoad, PartialMesh
             model = keywords.pop("MODELE")
             partialMesh = PartialMesh(model.getSupportMesh(), self._getNodeGroups(keywords))
             if partialMesh.getDimension()==3:
