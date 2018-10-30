@@ -39,7 +39,7 @@ void exportMeshToPython() {
         //         {
         //             return ConstViewer<MeshCoordinatesFieldInstance>( v.getCoordinates() );
         //         })
-        .def( "getCoordinates", &BaseMeshInstance::getCoordinates );
+        .def( "getCoordinates", &BaseMeshInstance::getCoordinates )
         .def( "isParallel", &BaseMeshInstance::isParallel )
         .def( "getDimension", &BaseMeshInstance::getDimension )
     ;
