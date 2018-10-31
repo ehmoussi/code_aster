@@ -43,9 +43,11 @@ from Utilitai.Utmess import UTMESS
 from code_aster.Cata.Syntax import _F
 
 # Comandi ASTER da usare nella macro
+from code_aster.Cata.Commands import CALC_CHAMP
 from code_aster.Cata.Commands import CREA_CHAMP
 from code_aster.Cata.Commands import CREA_RESU
 from code_aster.Cata.Commands import CALC_FERRAILLAGE
+from code_aster.Cata.Commands import FORMULE
 
 #
 # TODO 01:  Controllare la presenza dei campi necessari al CALC_FERRAILLAGE
@@ -166,7 +168,63 @@ def combinaison_ferraillage_ops(self, **args):
     # Build result type EVOL_ELAS from MULTI_ELAS and combo type list in order
     #
     # resu = multiFromEvolElas(nmb_cas, resu_nom_cas, lst_inst_index, lst_inst_value, __resfer, resu, modele, caraelem)
+    __resutmp = CREA_RESU(
+					OPERATION = 'AFFE',
+					TYPE_RESU = 'MULT_ELAS' ,
+					NOM_CHAM = 'FERRAILLAGE',
+					AFFE = (
+							_F(
+							 NOM_CAS = 'COMB_DIME_ACIER',
+							 CHAM_GD = __maxifer,
+							 MODELE = modele,
+							 CARA_ELEM = caraelem,
+								),
+							_F(
+							 NOM_CAS = 'COMB_DIME_ORDRE',
+							 CHAM_GD = __instfer,
+							 MODELE = modele,
+							 CARA_ELEM = caraelem,
+								),
+						),)
+      
+      
+    # The reinforcement has 7 components
+    #  DNSXI : 
+    #  DNSXS : 
+    #  DNSYI : 
+    #  DNSYS : 
+    #   DNST : 
+    # EPSIBE : 
+    # SIGMBE : 
 
+    '''    
+    __fDNSXI = FORMULE(
+        NOM_PARA=('DNSXI'), 
+        VALE=' combdimferr( DNSXI ) ', 
+        combdimferr=combdimferr
+        )
+
+    __resutmp = CALC_CHAMP(
+        reuse = __resutmp,
+        RESULTAT = __resutmp,
+        MODELE = modele,
+        CARA_ELEM = caraelem,        
+        NOM_CAS = 'COMB_DIME_ACIER',
+        CHAM_UTIL =
+            _F(
+                NOM_CHAM='fDNSXI',
+                FORMULE=(__fDNSXI,),
+                NUME_CHAM_RESU=1,
+                ),
+        )
+    eDNSXI = CREA_CHAMP (
+        OPERATION ='EXTR',
+        RESULTAT = __resutmp,
+        TYPE_CHAM = 'ELEM_FER2_R',
+        NOM_CHAM = 'fDNSXI',
+        NOM_CAS = 'COMB_DIME_ACIER',
+    )
+    '''        
 
     # Adding COMB_DIME_ACIER and COMB_DIME_ORDRE tu resu
     #
@@ -233,43 +291,7 @@ def algo_2D (_resfer, affe, lst_nume_ordre, code, type_combo):
         )
     
     return _resfer
-    
-'''
-def algo_2D (_resfer, affe, inst_value, code, type_combo):
-    print "def option_2D:"
-
-    dict_affe = affe.List_F()[0]
-    dict_affe.pop('TYPE_STRUCTURE') # print dict_affe
-
-    for idx_inst, inst in enumerate(inst_value):
-
-        # seelction of mot-clè TYPE_COMB by [lst_type_combo]
-        dic_type_comb = {}
-        if type_combo [idx_inst]  == 'ELS_CARACTERISTIQUE':
-            dic_type_comb['TYPE_COMB'] = 'ELS'
-
-        elif type_combo [idx_inst]  == 'ELU_FONDAMENTAL':
-            dic_type_comb['TYPE_COMB'] = 'ELU'
-
-        elif type_combo [idx_inst]  == 'ELU_ACCIDENTEL':
-            dic_type_comb['TYPE_COMB'] = 'ELU'
-
-        else:
-            dic_type_comb['TYPE_COMB'] = 'ELU'
-
-        dic_calc_ferraillage = dict(dic_type_comb.items() + [('CODIFICATION', code)])
-
-        _resfer = CALC_FERRAILLAGE (
-            reuse = _resfer,
-            RESULTAT = _resfer,
-            INST = inst,
-            TOUT_ORDRE = 'OUI',
-            AFFE = _F(**dict_affe),
-            **dic_calc_ferraillage
-        )
-
-    return _resfer
-'''    
+       
 def algo_POUTRE ():
     print "def option_POUTRE:"
     UTMESS('A', 'COMBFERR_2')
@@ -281,6 +303,12 @@ def algo_POTEAU ():
     return None
 
 
+def combdimferr(fer):
+    if fer <= 0.:
+        return 0.
+    else:
+        return 1.
+        
 # Counting numbers of load combinations.
 #
 def countCase(comb):
