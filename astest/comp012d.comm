@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -46,7 +46,7 @@ MATE=DEFI_MATERIAU(ELAS=_F(E=YOUNG,
 TABCISA1 = CO('TCISA1')
 TABBILAN = CO('TBILAN')
 #donnees de l'essai
-p_confCISA=(-50000.);
+p_confCISA=(50000.);
 gamma_impCISA=(4e-5,4e-4,4e-3)
 nb_cy=1;
 
@@ -60,10 +60,11 @@ CALC_ESSAI_GEOMECA(INFO=1,
                    CONVERGENCE=_F(RESI_GLOB_RELA = 1.E-8,
                                   ITER_GLOB_MAXI = 20,
                                   ),
-                   ESSAI_CISA_C = _F(PRES_CONF   = p_confCISA,
-                                     GAMMA_IMPOSE = gamma_impCISA , 
-                                     GAMMA_ELAS = 1.0e-10,
-                                     NB_INST = 200,
+                   ESSAI_CISA_DR_C_D = _F(PRES_CONF= p_confCISA,
+                                     GAMMA_IMPOSE  = gamma_impCISA , 
+                                     GAMMA_ELAS  = 1.0e-10,
+                                     NB_INST     = 200,
+                                     TYPE_CHARGE = 'TRIANGULAIRE',
                                      NB_CYCLE    = nb_cy, 
                                      TABLE_RESU  = (TABCISA1,TABBILAN),), 
                    );
