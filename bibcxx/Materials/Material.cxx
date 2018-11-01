@@ -29,6 +29,54 @@
 #include "Materials/Material.h"
 #include "Supervis/ResultNaming.h"
 
+void MaterialInstance::addMaterialBehaviour( const GeneralMaterialBehaviourPtr& curMaterBehav )
+{
+    ++_nbMaterialBehaviour;
+
+    std::ostringstream numString;
+    numString << std::setw( 6 ) << std::setfill( '0' ) << _nbMaterialBehaviour;
+    const std::string currentName = _jeveuxName + ".CPT." + numString.str();
+    _vectorOfComplexValues.push_back( JeveuxVectorComplex( currentName + ".VALC" ) );
+    _vectorOfDoubleValues.push_back( JeveuxVectorDouble( currentName + ".VALR" ) );
+    _vectorOfChar16Values.push_back( JeveuxVectorChar16( currentName + ".VALK" ) );
+    _vectorOrdr.push_back( JeveuxVectorChar16( currentName + ".ORDR" ) );
+    _vectorKOrdr.push_back( JeveuxVectorLong( currentName + ".KORD" ) );
+
+    auto test1 = curMaterBehav->hasVectorOfDoubleParameters();
+    auto test2 = curMaterBehav->hasVectorOfFunctionParameters();
+    const auto cP = _vectorOfUserDoubleValues.size();
+    _vectorOfUserDoubleValues.push_back( VectorOfJeveuxVectorDouble() );
+    _vectorOfUserFunctionValues.push_back( VectorOfJeveuxVectorChar8() );
+    if( test1 || test2 )
+    {
+        const int num1 = curMaterBehav->getNumberOfListOfDoubleProperties();
+        const int num2 = curMaterBehav->getNumberOfListOfFunctionProperties();
+        const int numTot = num1 + num2;
+        for( int pos = 0; pos < numTot; ++pos )
+        {
+            ++_nbUserMaterialBehaviour;
+            std::ostringstream numUser2;
+            numUser2 << std::setw( 7 ) << std::setfill( '0' ) << _nbUserMaterialBehaviour;
+            std::string currentName2 = _jeveuxName + "." + numUser2.str() + ".LISV_R8";
+            auto o1 = JeveuxVectorDouble( currentName2 );
+            _vectorOfUserDoubleValues[cP].push_back( o1 );
+            std::string currentName3 = _jeveuxName + "." + numUser2.str() + ".LISV_FO";
+            auto o2 = JeveuxVectorChar8( currentName3 );
+            _vectorOfUserFunctionValues[cP].push_back( o2 );
+        }
+    }
+    else
+    {
+        ++_nbUserMaterialBehaviour;
+        auto o1 = JeveuxVectorDouble( "EMPTY" );
+        _vectorOfUserDoubleValues[cP].push_back( o1 );
+        auto o2 = JeveuxVectorChar8( "EMPTY" );
+        _vectorOfUserFunctionValues[cP].push_back( o2 );
+    }
+
+    _vecMatBehaviour.push_back( curMaterBehav );
+};
+
 bool MaterialInstance::build() throw( std::runtime_error ) {
     // Recuperation du nombre de GeneralMaterialBehaviourPtr ajoutes par l'utilisateur
     const int nbMCF = _vecMatBehaviour.size();
@@ -58,8 +106,8 @@ bool MaterialInstance::build() throw( std::runtime_error ) {
         JeveuxVectorChar16 &vec3 = _vectorOfChar16Values[num];
         JeveuxVectorChar16 &vec4 = _vectorOrdr[num];
         JeveuxVectorLong &vec5 = _vectorKOrdr[num];
-        JeveuxVectorDouble &vec6 = _vectorOfUserDoubleValues[num];
-        JeveuxVectorChar8 &vec7 = _vectorOfUserFunctionValues[num];
+        auto &vec6 = _vectorOfUserDoubleValues[num];
+        auto &vec7 = _vectorOfUserFunctionValues[num];
         const bool retour = curIter->buildJeveuxVectors( vec1, vec2, vec3, vec4, vec5, vec6, vec7 );
         const bool retour2 = curIter->buildTractionFunction( _doubleValues );
         if ( !retour )

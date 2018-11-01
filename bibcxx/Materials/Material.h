@@ -41,6 +41,8 @@ class MaterialInstance: public DataStructure
     private:
         typedef std::vector< GeneralMaterialBehaviourPtr > VectorOfGeneralMaterialBehaviour;
         typedef VectorOfGeneralMaterialBehaviour::iterator VectorOfGeneralMaterialIter;
+        typedef std::vector< JeveuxVectorDouble > VectorOfJeveuxVectorDouble;
+        typedef std::vector< JeveuxVectorChar8 > VectorOfJeveuxVectorChar8;
 
         /** @brief Nom Jeveux de la SD */
         const std::string                  _jeveuxName;
@@ -63,9 +65,9 @@ class MaterialInstance: public DataStructure
         /** @brief Vector of JeveuxVectorLong named '.KORD' */
         std::vector< JeveuxVectorLong >    _vectorKOrdr;
         /** @brief Vector of JeveuxVectorDouble named '.XXXXXXX.LISV_R8' */
-        std::vector< JeveuxVectorDouble >  _vectorOfUserDoubleValues;
+        std::vector< VectorOfJeveuxVectorDouble > _vectorOfUserDoubleValues;
         /** @brief Vector of JeveuxVectorChar8 named '.XXXXXXX.LISV_FO' */
-        std::vector< JeveuxVectorChar8 >   _vectorOfUserFunctionValues;
+        std::vector< VectorOfJeveuxVectorChar8 >  _vectorOfUserFunctionValues;
         /** @brief Vector of JeveuxVectorDouble named '.&&RDEP' */
         FunctionPtr                        _doubleValues;
 
@@ -97,38 +99,7 @@ class MaterialInstance: public DataStructure
          * @param curMaterBehav GeneralMaterialBehaviourPtr a ajouter au MaterialInstance
          * @todo pouvoiur utiliser addMaterialBehaviour plusieurs fois après build
          */
-        void addMaterialBehaviour( const GeneralMaterialBehaviourPtr& curMaterBehav )
-        {
-            ++_nbMaterialBehaviour;
-
-            std::ostringstream numString, numUser;
-            numString << std::setw( 6 ) << std::setfill( '0' ) << _nbMaterialBehaviour;
-            const std::string currentName = _jeveuxName + ".CPT." + numString.str();
-            _vectorOfComplexValues.push_back( JeveuxVectorComplex( currentName + ".VALC" ) );
-            _vectorOfDoubleValues.push_back( JeveuxVectorDouble( currentName + ".VALR" ) );
-            _vectorOfChar16Values.push_back( JeveuxVectorChar16( currentName + ".VALK" ) );
-            _vectorOrdr.push_back( JeveuxVectorChar16( currentName + ".ORDR" ) );
-            _vectorKOrdr.push_back( JeveuxVectorLong( currentName + ".KORD" ) );
-
-            auto test1 = curMaterBehav->hasVectorOfDoubleParameters();
-            auto test2 = curMaterBehav->hasVectorOfFunctionParameters();
-            ++_nbUserMaterialBehaviour;
-            if( test1 || test2 )
-            {
-                numUser << std::setw( 7 ) << std::setfill( '0' ) << _nbUserMaterialBehaviour;
-                std::string currentName2 = _jeveuxName + "." + numUser.str() + ".LISV_R8";
-                _vectorOfUserDoubleValues.push_back( JeveuxVectorDouble( currentName2 ) );
-                std::string currentName3 = _jeveuxName + "." + numUser.str() + ".LISV_FO";
-                _vectorOfUserFunctionValues.push_back( JeveuxVectorChar8( currentName3 ) );
-            }
-            else
-            {
-                _vectorOfUserDoubleValues.push_back( JeveuxVectorDouble( "EMPTY" ) );
-                _vectorOfUserFunctionValues.push_back( JeveuxVectorChar8( "EMPTY" ) );
-            }
-
-            _vecMatBehaviour.push_back( curMaterBehav );
-        };
+        void addMaterialBehaviour( const GeneralMaterialBehaviourPtr& curMaterBehav );
 
         /**
          * @brief Construction du MaterialInstance
@@ -162,7 +133,7 @@ class MaterialInstance: public DataStructure
          * @param position number of the material behaviour
          * @return jeveux vector of double values
          */
-        JeveuxVectorDouble getBehviourVectorOfDoubleValues( int position )
+        VectorOfJeveuxVectorDouble getBehviourVectorOfDoubleValues( int position )
         {
             return _vectorOfUserDoubleValues[ position ];
         };
@@ -172,7 +143,7 @@ class MaterialInstance: public DataStructure
          * @param position number of the material behaviour
          * @return jeveux vector of double values
          */
-        JeveuxVectorChar8 getBehviourVectorOfFunctions( int position )
+        VectorOfJeveuxVectorChar8 getBehviourVectorOfFunctions( int position )
         {
             return _vectorOfUserFunctionValues[ position ];
         };
