@@ -30,7 +30,8 @@
 bool GeneralMaterialBehaviourInstance::buildJeveuxVectors(
     JeveuxVectorComplex &complexValues, JeveuxVectorDouble &doubleValues,
     JeveuxVectorChar16 &char16Values, JeveuxVectorChar16 &ordr, JeveuxVectorLong &kOrd,
-    JeveuxVectorDouble &userDoubles, JeveuxVectorChar8 &userFunctions ) const
+    std::vector< JeveuxVectorDouble > &userDoubles,
+    std::vector< JeveuxVectorChar8 > &userFunctions ) const
     throw( std::runtime_error ) {
     const int nbOfMaterialProperties = getNumberOfPropertiesWithValue();
     complexValues->allocate( Permanent, nbOfMaterialProperties );
@@ -157,20 +158,20 @@ bool GeneralMaterialBehaviourInstance::buildJeveuxVectors(
                                       " is missing" );
     }
 
-    if ( _mapOfVectorDoubleMaterialProperties.size() > 1 )
-        throw std::runtime_error( "Unconsistent size" );
+    int position3 = 0;
     for ( auto curIter : _mapOfVectorDoubleMaterialProperties ) {
         std::string nameOfProperty = curIter.second.getName();
         if ( curIter.second.hasValue() ) {
             nameOfProperty.resize( 16, ' ' );
             ( *char16Values )[position] = nameOfProperty.c_str();
-            ( *char16Values )[position2] = userDoubles->getName();
+            ( *char16Values )[position2] = userDoubles[position3]->getName();
 
             auto values = curIter.second.getValue();
-            userDoubles->allocate( Permanent, values.size() );
-            ( *userDoubles ) = values;
+            userDoubles[position3]->allocate( Permanent, values.size() );
+            ( *userDoubles[position3] ) = values;
             ++position;
             ++position2;
+            ++position3;
         }
 
         if ( curIter.second.isMandatory() && !curIter.second.hasValue() )
@@ -185,12 +186,12 @@ bool GeneralMaterialBehaviourInstance::buildJeveuxVectors(
         if ( curIter.second.hasValue() ) {
             nameOfProperty.resize( 16, ' ' );
             ( *char16Values )[position] = nameOfProperty.c_str();
-            ( *char16Values )[position2] = userFunctions->getName();
+            ( *char16Values )[position2] = userFunctions[0]->getName();
 
             auto values = curIter.second.getValue();
-            userFunctions->allocate( Permanent, values.size() );
+            userFunctions[0]->allocate( Permanent, values.size() );
             for ( int i = 0; i < values.size(); ++i )
-                ( *userFunctions )[i] = values[i]->getName();
+                ( *userFunctions[0] )[i] = values[i]->getName();
             ++position;
             ++position2;
         }

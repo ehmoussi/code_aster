@@ -423,6 +423,20 @@ class GeneralMaterialBehaviourInstance {
     const std::string getAsterNewName() const { return _asterNewName; };
 
     /**
+     * @brief Get number of properties containing a list of doubles
+     */
+    int getNumberOfListOfDoubleProperties() const {
+        return _mapOfVectorDoubleMaterialProperties.size();
+    };
+
+    /**
+     * @brief Get number of properties containing a list of functions
+     */
+    int getNumberOfListOfFunctionProperties() const {
+        return _mapOfVectorFunctionMaterialProperties.size();
+    };
+
+    /**
      * @brief Get number of properties with a value
      */
     int getNumberOfPropertiesWithValue() const;
@@ -597,8 +611,10 @@ class GeneralMaterialBehaviourInstance {
      */
     bool buildJeveuxVectors( JeveuxVectorComplex &complexValues, JeveuxVectorDouble &doubleValues,
                              JeveuxVectorChar16 &char16Values, JeveuxVectorChar16 &ordr,
-                             JeveuxVectorLong &kOrdr, JeveuxVectorDouble &userDoubles,
-                             JeveuxVectorChar8 &userFunctions ) const throw( std::runtime_error );
+                             JeveuxVectorLong &kOrdr,
+                             std::vector< JeveuxVectorDouble >&,
+                             std::vector< JeveuxVectorChar8 >& )
+        const throw( std::runtime_error );
 
     /**
      * @brief Build ".RDEP" if necessary

@@ -73,16 +73,26 @@ bool CodedMaterialInstance::allocate() {
         const int nbMB = curIter->getNumberOfUserMaterialBehviour();
         for( int i = 0; i < nbMB; ++i )
         {
-            auto vec1 = curIter->getBehviourVectorOfDoubleValues( i );
-            auto vec2 = curIter->getBehviourVectorOfFunctions( i );
-            if( vec1->exists() || vec2->exists() )
-            {
-                const std::string name( vec1->getName(), 0, 16 );
-                const std::string name1 = name + ".LISV_VR";
-                const std::string name2 = name + ".LISV_IA";
-                _vecOfR8.push_back( JeveuxVectorDouble( name1 ) );
-                _vecOfIa.push_back( JeveuxVectorLong( name2 ) );
-            }
+            auto vecVec1 = curIter->getBehviourVectorOfDoubleValues( i );
+            auto vecVec2 = curIter->getBehviourVectorOfFunctions( i );
+            for( auto vec1 : vecVec1 )
+                if( vec1->exists() )
+                {
+                    const std::string name( vec1->getName(), 0, 16 );
+                    const std::string name1 = name + ".LISV_VR";
+                    const std::string name2 = name + ".LISV_IA";
+                    _vecOfR8.push_back( JeveuxVectorDouble( name1 ) );
+                    _vecOfIa.push_back( JeveuxVectorLong( name2 ) );
+                }
+            for( auto vec2 : vecVec2 )
+                if( vec2->exists() )
+                {
+                    const std::string name( vec2->getName(), 0, 16 );
+                    const std::string name1 = name + ".LISV_VR";
+                    const std::string name2 = name + ".LISV_IA";
+                    _vecOfR8.push_back( JeveuxVectorDouble( name1 ) );
+                    _vecOfIa.push_back( JeveuxVectorLong( name2 ) );
+                }
         }
     }
     return true;
