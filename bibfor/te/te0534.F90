@@ -15,9 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: samuel.geniaut at edf.fr
+!
 subroutine te0534(option, nomte)
-    implicit none
+!
+implicit none
+!
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterfort/assert.h"
@@ -29,7 +32,6 @@ subroutine te0534(option, nomte)
 #include "asterfort/teattr.h"
 #include "asterfort/tecach.h"
 #include "asterfort/tecael.h"
-#include "asterfort/vecini.h"
 #include "asterfort/xdocon.h"
 #include "asterfort/xmprep.h"
 #include "asterfort/xmulco.h"
@@ -40,30 +42,29 @@ subroutine te0534(option, nomte)
 #include "asterfort/xxlagm.h"
 #include "asterfort/xkamat.h"
 !
-    character(len=16) :: option, nomte
+character(len=16) :: option, nomte
 !
-! person_in_charge: samuel.geniaut at edf.fr
-!
-!.......................................................................
+! --------------------------------------------------------------------------------------------------
 !
 !               CALCUL DES SECONDS MEMBRES DE CONTACT FROTTEMENT
 !                   POUR X-FEM  (METHODE CONTINUE)
 !
+! --------------------------------------------------------------------------------------------------
 !
 !  OPTION : 'CHAR_MECA_CONT' (CALCUL DU SECOND MEMBRE DE CONTACT)
 !
 !  ENTREES  ---> OPTION : OPTION DE CALCUL
 !           ---> NOMTE  : NOM DU TYPE ELEMENT
 !
-!.......................................................................
+! --------------------------------------------------------------------------------------------------
 !
-!
-    integer :: i, j, ifa, ipgf, isspg
-    integer :: jindco, jdonco, jlst, ipoids, ivf, idfde, jgano, igeom
+    integer :: i, ifa, ipgf, isspg
+    integer :: jindco, jdonco, jlst, igeom
     integer :: idepm, idepl, jptint, jaint, jcface, jlonch
-    integer :: ivff, iadzi, iazk24, ibid, ivect, jbasec
+    integer :: ivff, iadzi, iazk24, ibid, jbasec
+    integer :: jv_cont, jv_fric
     integer :: ndim, nfh, ddlc, ddls, nddl, nno, nnos, nnom, nnof, ddlm
-    integer :: npg, npgf, jseuil
+    integer :: npgf, jseuil
     integer :: indco, ninter, nface, cface(30, 6)
     integer :: nfe, singu, jstno, nvit, algocr, algofr, nvec
     integer :: nnol, pla(27), lact(8), nlact, jcohes, jheavn
@@ -72,7 +73,7 @@ subroutine te0534(option, nomte)
     integer :: jtab(7), iret, ncompd, ncompp, ncompa, ncompb, ncompc, ncompn
     integer :: jheafa, nptf, jta2(3)
     integer :: jbaslo, jlsn
-    real(kind=8) :: vtmp(400), reac, reac12(3), jac
+    real(kind=8) :: vcont(400), vfric(400), reac, reac12(3), jac
     real(kind=8) :: nd(3), ffp(27), ffc(8), seuil, coefcp, coefcr, coeffp
     real(kind=8) :: mu, tau1(3), tau2(3), coeffr
     real(kind=8) :: rr, cohes(3), rela
@@ -83,35 +84,31 @@ subroutine te0534(option, nomte)
     character(len=8) :: elc, fpg
     character(len=16) :: enr
 !
-!.......................................................................
+! --------------------------------------------------------------------------------------------------
 !
+    lact(:)  = 0
+    ffp(:)   = 0.d0
+    tau2(:)  = 0.d0
+    rr       = 0.d0
+    ncomph   = 0
+    lelim    = ASTER_FALSE
+    nbspg    = 0
+    vcont(:) = 0.d0
+    vfric(:) = 0.d0
 !
-! --- INITIALISATIONS
+! - Get informations about finite element
 !
-    do i = 1, 8
-        lact(i) = 0
-    end do
-    call vecini(27, 0.d0, ffp)
-    rr = 0.d0
-    ncomph = 0
-    lelim = .false.
-    nbspg = 0
-    call vecini(3, 0.d0, tau2)
     call elref1(elref)
-    call elrefe_info(fami='RIGI', ndim=ndim, nno=nno, nnos=nnos, npg=npg,&
-                     jpoids=ipoids, jvf=ivf, jdfde=idfde, jgano=jgano)
+    call elrefe_info(fami='RIGI', ndim=ndim, nno=nno, nnos=nnos)
+    call tecael(iadzi, iazk24, noms=0)
+    typma = zk24(iazk24-1+3+zi(iadzi-1+2)+3)(1:8)
 !
-!     INITIALISATION DES DIMENSIONS DES DDLS X-FEM
+! - Get sizes and dimensions
+!
     call xteini(nomte, nfh, nfe, singu, ddlc,&
                 nnom, ddls, nddl, ddlm, nfiss,&
                 contac)
-!
-    call tecael(iadzi, iazk24, noms=0)
-    typma=zk24(iazk24-1+3+zi(iadzi-1+2)+3)
-!
-    do j = 1, nddl
-        vtmp(j)=0.d0
-    end do
+    ASSERT(nddl .le. 400)
 !
 ! --- ROUTINE SPECIFIQUE P2P1
 !
@@ -136,7 +133,6 @@ subroutine te0534(option, nomte)
     call jevech('PCFACE', 'L', jcface)
     call jevech('PLONGCO', 'L', jlonch)
     call jevech('PBASECO', 'L', jbasec)
-    call jevech('PVECTUR', 'E', ivect)
     if (nfh.gt.0) then
         call jevech('PHEA_NO', 'L', jheavn)
         call tecach('OOO', 'PHEA_NO', 'L', iret, nval=7,&
@@ -152,20 +148,15 @@ subroutine te0534(option, nomte)
         ncomph = jtab(2)
     endif
 !     DIMENSSION DES GRANDEURS DANS LA CARTE
-    call tecach('OOO', 'PDONCO', 'L', iret, nval=2,&
-                itab=jtab)
+    call tecach('OOO', 'PDONCO', 'L', iret, nval=2, itab=jtab)
     ncompd = jtab(2)
-    call tecach('OOO', 'PPINTER', 'L', iret, nval=2,&
-                itab=jtab)
+    call tecach('OOO', 'PPINTER', 'L', iret, nval=2, itab=jtab)
     ncompp = jtab(2)
-    call tecach('OOO', 'PAINTER', 'L', iret, nval=2,&
-                itab=jtab)
+    call tecach('OOO', 'PAINTER', 'L', iret, nval=2, itab=jtab)
     ncompa = jtab(2)
-    call tecach('OOO', 'PBASECO', 'L', iret, nval=2,&
-                itab=jtab)
+    call tecach('OOO', 'PBASECO', 'L', iret, nval=2, itab=jtab)
     ncompb = jtab(2)
-    call tecach('OOO', 'PCFACE', 'L', iret, nval=2,&
-                itab=jtab)
+    call tecach('OOO', 'PCFACE', 'L', iret, nval=2, itab=jtab)
     ncompc = jtab(2)
     if (nfe.gt.0) then
        call jevech('PMATERC', 'L', jmate)
@@ -176,7 +167,7 @@ subroutine te0534(option, nomte)
     else
        ka=3.d0
        mu2=1.d0
-       axi=.false._1
+       axi= ASTER_FALSE
        jmate=0
        jbaslo=0
        jlsn=0
@@ -188,7 +179,6 @@ subroutine te0534(option, nomte)
         vstnc(i) = 1
     end do
     call teattr('S', 'XFEM', enr, ibid)
-!
 !
 ! --- BOUCLE SUR LES FISSURES
 !
@@ -202,107 +192,84 @@ subroutine te0534(option, nomte)
                     mu, nspfis, ncompd, ndim, nface,&
                     ninter, nnof, nomte, npgf, nptf,&
                     rela)
-        if (ninter .eq. 0) goto 91
-!
-! --- RECUPERATION MATERIAU ET VARIABLES INTERNES COHESIF
-!
-        if (algocr .eq. 3) then
-            call jevech('PMATERC', 'L', jmate)
-            call jevech('PCOHES', 'L', jcohes)
-            call tecach('OOO', 'PCOHES', 'L', iret, nval=3,&
-                        itab=jta2)
-!
-!           CAS CONTACT TYPE "MORTAR"
-            if(contac.eq.2) ncompv = jta2(2)/jta2(3)
-!
-!           CAS CONTACT CLASSIQUE
-            if(contac.eq.1.or.contac.eq.3) ncompv = jta2(2)
-        endif
-!
-! --- RECUP MULTIPLICATEURS ACTIFS ET LEURS INDICES
-!
-        call xmulco(contac, ddls, ddlc, ddlm, jaint, ifiss,&
-                    jheano, vstnc, lact, .true._1, lelim,&
-                    ndim, nfh, nfiss, ninter,&
-                    nlact, nno, nnol, nnom, nnos,&
-                    pla, typma)
-!
-! --- BOUCLE SUR LES FACETTES
-!
-        do ifa = 1, nface
-!
-! --- BOUCLE SUR LES POINTS DE GAUSS DES FACETTES
-!
-            do ipgf = 1, npgf
-!
-! --- RECUPERATION DES STATUTS POUR LE POINT DE GAUSS
-!
-                isspg = npgf*(ifa-1)+ipgf
-                indco = zi(jindco-1+nbspg+isspg)
-                if (algofr .ne. 0) seuil = zr(jseuil-1+nbspg+isspg)
-!
-!               SI COHESIF CLASSIQUE, ON LIT LES VARIABLES INTERNES
-                if (algocr .eq. 3 .and. (contac.eq.1.or.contac.eq.3)) then
-                    do i = 1, ncompv
-                        cohes(i) = zr(jcohes+ncompv*(nbspg+isspg-1)-1+ i)
-                    end do
+        if (ninter .ne. 0) then
+! --------- RECUPERATION MATERIAU ET VARIABLES INTERNES COHESIF
+            if (algocr .eq. 3) then
+                call jevech('PMATERC', 'L', jmate)
+                call jevech('PCOHES', 'L', jcohes)
+                call tecach('OOO', 'PCOHES', 'L', iret, nval=3,&
+                            itab=jta2)
+                if (contac .eq. 2) then
+                    ncompv = jta2(2)/jta2(3)
+                elseif (contac .eq. 1 .or. contac .eq. 3) then
+                    ncompv = jta2(2)
+                else
+                    ASSERT(ASTER_FALSE)
                 endif
+            endif
+! --------- RECUP MULTIPLICATEURS ACTIFS ET LEURS INDICES
+            call xmulco(contac, ddls, ddlc, ddlm, jaint, ifiss,&
+                        jheano, vstnc, lact, .true._1, lelim,&
+                        ndim, nfh, nfiss, ninter,&
+                        nlact, nno, nnol, nnom, nnos,&
+                        pla, typma)
+! --------- BOUCLE SUR LES FACETTES
+            do ifa = 1, nface
+! ------------- BOUCLE SUR LES POINTS DE GAUSS DES FACETTES
+                do ipgf = 1, npgf
+! ----------------- RECUPERATION DES STATUTS POUR LE POINT DE GAUSS
+                    isspg = npgf*(ifa-1)+ipgf
+                    indco = zi(jindco-1+nbspg+isspg)
+                    if (algofr .ne. 0) then
+                        seuil = zr(jseuil-1+nbspg+isspg)
+                    endif
+! ----------------- SI COHESIF CLASSIQUE, ON LIT LES VARIABLES INTERNES
+                    if (algocr .eq. 3 .and. (contac.eq.1 .or. contac.eq.3)) then
+                        do i = 1, ncompv
+                            cohes(i) = zr(jcohes+ncompv*(nbspg+isspg-1)-1+ i)
+                        end do
+                    endif
+! ----------------- PREPARATION DU MATERIAU POUR L ENRICHISSEMENT VECTORIEL EN FOND
+                    if (nfe.gt.0) then
+                        call xkamat(zi(jmate), ndim, axi, ka, mu2)
+                    endif
 !
-! --- PREPARATION DU CALCUL
-!
-!       ---- PREPARATION DU MATERIAU POUR L ENRICHISSEMENT VECTORIEL EN FOND
-                if (nfe.gt.0) call xkamat(zi(jmate), ndim, axi, ka, mu2)
-!
-                call xmprep(cface, contac, elref, elrefc, elc,&
-                            ffc, ffp, fpg, jaint, jbasec,&
-                            jptint, ifa, igeom, ipgf, jac,&
-                            jlst, lact, nd, ndim, ninter,&
-                            nlact, nno, nnos, nptf, nvit,&
-                            rr, singu, tau1, tau2, ka, mu2,&
-                            jbaslo, jstno, jlsn, fk)
-!
-! --- CALCUL REACTION DE CONTACT ET DE FROTTEMENT
-!
-                nvec = 2
-                call xxlagm(ffc, idepl, idepm, lact, ndim,&
-                            nnol, pla, reac, reac12, tau1,&
-                            tau2, nvec)
-!
-! --- CALCUL DES SECONDS MEMBRES DE CONTACT
-!     .....................................
-!
-
-                call xvcont(algocr, cohes, jcohes, ncompv,&
-                            coefcp, coefcr, ddlm,&
-                            ddls, ffc, ffp, idepl, idepm,&
-                            ifa, ifiss, zi( jmate), indco, ipgf,&
-                            jac, jheavn, ncompn, jheafa, lact, ncomph,&
-                            nd, nddl, ndim, nfh, nfiss,&
-                            nno, nnol, nnos, nvit, pla,&
-                            rela, reac, singu, fk, tau1,&
-                            tau2, vtmp)
-!
-! --- CALCUL DES SECONDS MEMBRES DE FROTTEMENT
-!     ........................................
-!
-                if (rela.eq.0.d0 .or. rela.eq.1.d0 .or. rela.eq.2.d0) then
-                    call xvfrot(algofr, coeffp, coeffr, ddlm, ddls,&
-                                ffc, ffp, idepl, idepm, ifa,&
-                                ifiss, indco, jac, jheavn, ncompn, jheafa,&
-                                lact, mu, ncomph, nd, nddl,&
-                                ndim, nfh, nfiss, nno, nnol,&
-                                nnos, nvit, pla, reac12,&
-                                seuil, singu, fk, tau1, tau2, vtmp)
-                endif
-!
-! --- FIN DE BOUCLE SUR LES POINTS DE GAUSS
+                    call xmprep(cface, contac, elref, elrefc, elc,&
+                                ffc, ffp, fpg, jaint, jbasec,&
+                                jptint, ifa, igeom, ipgf, jac,&
+                                jlst, lact, nd, ndim, ninter,&
+                                nlact, nno, nnos, nptf, nvit,&
+                                rr, singu, tau1, tau2, ka, mu2,&
+                                jbaslo, jstno, jlsn, fk)
+! ----------------- CALCUL REACTION DE CONTACT ET DE FROTTEMENT
+                    nvec = 2
+                    call xxlagm(ffc, idepl, idepm, lact, ndim,&
+                                nnol, pla, reac, reac12, tau1,&
+                                tau2, nvec)
+! ----------------- CALCUL DES SECONDS MEMBRES DE CONTACT
+                    call xvcont(algocr, cohes, jcohes, ncompv,&
+                                coefcp, coefcr, ddlm,&
+                                ddls, ffc, ffp, idepl, idepm,&
+                                ifa, ifiss, zi( jmate), indco, ipgf,&
+                                jac, jheavn, ncompn, jheafa, lact, ncomph,&
+                                nd, nddl, ndim, nfh, nfiss,&
+                                nno, nnol, nnos, nvit, pla,&
+                                rela, reac, singu, fk, tau1,&
+                                tau2, vcont)
+! ----------------- CALCUL DES SECONDS MEMBRES DE FROTTEMENT
+                    if (rela .eq. 0.d0 .or. rela .eq. 1.d0 .or. rela .eq. 2.d0) then
+                        call xvfrot(algofr, coeffp, coeffr, ddlm, ddls,&
+                                    ffc, ffp, idepl, idepm, ifa,&
+                                    ifiss, indco, jac, jheavn, ncompn, jheafa,&
+                                    lact, mu, ncomph, nd, nddl,&
+                                    ndim, nfh, nfiss, nno, nnol,&
+                                    nnos, nvit, pla, reac12,&
+                                    seuil, singu, fk, tau1, tau2, vcont)
+                    endif
+                end do
             end do
-!
-! --- FIN DE BOUCLE SUR LES FACETTES
-        end do
-! --- FIN BOUCLE SUR LES FISSURES
-        nbspg = nbspg + nspfis
- 91     continue
+            nbspg = nbspg + nspfis
+        endif
         jbasec = jbasec + ncompb
         jptint = jptint + ncompp
         jaint = jaint + ncompa
@@ -313,23 +280,42 @@ subroutine te0534(option, nomte)
 !     COPIE DES CHAMPS DE SORTIES ET FIN
 !-----------------------------------------------------------------------
 !
+    call jevech('PVECTCR', 'E', jv_cont)
     do i = 1, nddl
-        zr(ivect-1+i)=vtmp(i)
+        zr(jv_cont-1+i)=vcont(i)
     end do
+    if (algofr .gt. 0) then
+        call jevech('PVECTFR', 'E', jv_fric)
+        do i = 1, nddl
+            zr(jv_fric-1+i) = vfric(i)
+        end do
+    endif
 !     SUPPRESSION DES DDLS DE DEPLACEMENT SEULEMENT POUR LES XHTC
     if (nfh .ne. 0) then
         call jevech('PSTANO', 'L', jstno)
         call xteddl(ndim, nfh, nfe, ddls, nddl,&
                     nno, nnos, zi(jstno), .false._1, lbid,&
                     option, nomte, ddlm, nfiss, jfisno,&
-                    vect=zr(ivect))
+                    vect=zr(jv_cont))
+        if (algofr .gt. 0) then
+            call xteddl(ndim, nfh, nfe, ddls, nddl,&
+                        nno, nnos, zi(jstno), .false._1, lbid,&
+                        option, nomte, ddlm, nfiss, jfisno,&
+                        vect=zr(jv_fric))
+        endif
     endif
 !     SUPPRESSION DES DDLS DE CONTACT
     if (lelim) then
         call xteddl(ndim, nfh, nfe, ddls, nddl,&
                     nno, nnos, vstnc, .true._1, .true._1,&
                     option, nomte, ddlm, nfiss, jfisno,&
-                    vect=zr(ivect))
+                    vect=zr(jv_cont))
+        if (algofr .gt. 0) then
+            call xteddl(ndim, nfh, nfe, ddls, nddl,&
+                        nno, nnos, vstnc, .true._1, .true._1,&
+                        option, nomte, ddlm, nfiss, jfisno,&
+                        vect=zr(jv_fric))
+        endif
     endif
 !
 end subroutine

@@ -86,11 +86,12 @@ character(len=16), intent(in) :: option, nomte
     real(kind=8) :: vectcc(9)
     real(kind=8) :: vectff(18)
     real(kind=8) :: vectee(27), vectmm(27)
-    real(kind=8) :: vtmp(81)
+    real(kind=8) :: vcont(81), vfric(81)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    vtmp(:)   = 0.d0
+    vcont(:)  = 0.d0
+    vfric(:)  = 0.d0
     vectcc(:) = 0.d0
     vectff(:) = 0.d0
     vectee(:) = 0.d0
@@ -207,15 +208,21 @@ character(len=16), intent(in) :: option, nomte
 !
 ! - Assembling
 !
-    call mmmvas(ndim, nne, nnm, nnl, nbdm,&
+    call mmmvas(ndim , nne   , nnm   , nnl   , nbdm  ,&
                 nbcps, vectee, vectmm, vectcc, vectff,&
-                vtmp)
+                vcont)
 !
 ! - Copy
 !
-    call jevech('PVECTUR', 'E', jvect)
+    call jevech('PVECTCR', 'E', jvect)
     do iddl = 1, nddl
-        zr(jvect-1+iddl) = 1.0d0 * vtmp(iddl)
+        zr(jvect-1+iddl) = vcont(iddl)
     end do
+    if (leltf) then
+        call jevech('PVECTFR', 'E', jvect)
+        do iddl = 1, nddl
+            zr(jvect-1+iddl) = vfric(iddl)
+        end do
+    endif
 !
 end subroutine

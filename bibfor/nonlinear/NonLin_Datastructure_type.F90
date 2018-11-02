@@ -279,48 +279,45 @@ implicit none
         aster_logical     :: l_cont_elem = ASTER_FALSE
 ! ----- Flag for THM in contact
         aster_logical     :: l_cont_thm  = ASTER_FALSE
-        character(len=8)  :: sdcont
-        character(len=24) :: sdcont_defi
-        character(len=24) :: sdcont_solv
-        character(len=24) :: sdunil_defi
-        character(len=24) :: sdunil_solv
-
-
-
+        character(len=8)  :: sdcont = ' '
+        character(len=24) :: sdcont_defi = ' '
+        character(len=24) :: sdcont_solv = ' '
+        character(len=24) :: sdunil_defi = ' '
+        character(len=24) :: sdunil_solv = ' '
 ! ----- Name of <LIGREL> for slave elements (create in DEFI_CONTACT)
-        character(len=8)  :: ligrel_elem_slav
-        aster_logical     :: l_elem_slav
+        character(len=8)  :: ligrel_elem_slav = ' '
+        aster_logical     :: l_elem_slav = ASTER_FALSE
 ! ----- Name of <LIGREL> for contact elements (create in MECA_NON_LINE)
-        character(len=19) :: ligrel_elem_cont
-        aster_logical     :: l_elem_cont
+        character(len=19) :: ligrel_elem_cont = ' '
+        aster_logical     :: l_elem_cont = ASTER_FALSE
 ! ----- Identity relations between dof (XFEM with ELIM_ARETE or LAC method)
-        aster_logical     :: l_iden_rela
-        character(len=24) :: iden_rela
+        aster_logical     :: l_iden_rela = ASTER_FALSE
+        character(len=24) :: iden_rela = ' '
 ! ----- Relations between dof (QUAD8 in discrete methods or XFEM, create in DEFI_CONTACT)
         aster_logical     :: l_dof_rela
-        character(len=8)  :: ligrel_dof_rela
+        character(len=8)  :: ligrel_dof_rela = ' '
 ! ----- Name of <CHELEM> - Input field
-        character(len=19) :: field_input
+        character(len=19) :: field_input = ' '
 ! ----- NUME_DOF for discrete friction methods 
-        character(len=14) :: nume_dof_frot
+        character(len=14) :: nume_dof_frot = ' '
 ! ----- NUME_DOF for unil methods 
-        character(len=14) :: nume_dof_unil
+        character(len=14) :: nume_dof_unil = ' '
 ! ----- Fields for CONT_NODE 
-        character(len=19) :: field_cont_node
-        character(len=19) :: fields_cont_node
-        character(len=19) :: field_cont_perc
+        character(len=19) :: field_cont_node  = ' '
+        character(len=19) :: fields_cont_node = ' '
+        character(len=19) :: field_cont_perc  = ' '
 ! ----- Fields for CONT_ELEM 
-        character(len=19) :: field_cont_elem
-        character(len=19) :: fields_cont_elem
+        character(len=19) :: field_cont_elem  = ' '
+        character(len=19) :: fields_cont_elem = ' '
 ! ----- Loops
-        integer           :: nb_loop
+        integer           :: nb_loop = 0
         integer           :: nb_loop_maxi = 3
         integer           :: iteration_newton = 0
         integer           :: it_cycl_maxi = 0
         integer           :: it_adapt_maxi = 0
         type(NL_DS_Loop)  :: loop(3)
 ! ----- Flag for (re) numbering
-        aster_logical     :: l_renumber
+        aster_logical     :: l_renumber = ASTER_FALSE
 ! ----- Geometric loop control
         real(kind=8)      :: geom_maxi
         real(kind=8)      :: arete_min
@@ -351,25 +348,25 @@ implicit none
         real(kind=8)      :: time_curr  = -1.0
 ! ----- Automatic update of resi_geom
         real(kind=8)      :: critere_geom  = 0.0
-        character(len=16)      :: crit_geom_noeu  = ' '
+        character(len=16) :: crit_geom_noeu  = ' '
         integer           :: flag_mast_nume  = 1
 ! ----- Force for DISCRETE contact (friction)
-        aster_logical     :: l_cnctdf
-        character(len=19) :: cnctdf
+        aster_logical     :: l_cnctdf = ASTER_FALSE
+        character(len=19) :: cnctdf   = ' '
 ! ----- Force for DISCRETE contact (contact)
-        aster_logical     :: l_cnctdc
-        character(len=19) :: cnctdc
+        aster_logical     :: l_cnctdc = ASTER_FALSE
+        character(len=19) :: cnctdc   = ' '
 ! ----- Force for DISCRETE contact (LIAISON_UNIL)
-        aster_logical     :: l_cnunil
-        character(len=19) :: cnunil
+        aster_logical     :: l_cnunil = ASTER_FALSE
+        character(len=19) :: cnunil   = ' '
 ! ----- Force for CONTINUE contact (contact)
-        aster_logical     :: l_cneltc
-        character(len=19) :: cneltc
-        character(len=19) :: veeltc
+        aster_logical     :: l_cneltc = ASTER_FALSE
+        character(len=19) :: cneltc   = ' '
+        character(len=19) :: veeltc   = ' '
 ! ----- Force for CONTINUE contact (friction)
-        aster_logical     :: l_cneltf
-        character(len=19) :: cneltf
-        character(len=19) :: veeltf
+        aster_logical     :: l_cneltf = ASTER_FALSE
+        character(len=19) :: cneltf   = ' '
+        character(len=19) :: veeltf   = ' '
     end type NL_DS_Contact
 !
 ! - Type: timer management

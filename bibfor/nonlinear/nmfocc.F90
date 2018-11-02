@@ -78,8 +78,8 @@ type(NL_DS_Constitutive), intent(in) :: ds_constitutive
     aster_logical :: l_cont_elem, l_fric, l_all_verif, l_newt_cont, l_newt_geom, l_cont_lac
     aster_logical :: l_xthm
     character(len=8) :: mesh
-    character(len=19) :: vect_elem_cont, vect_elem_frot
-    character(len=19) :: vect_asse_frot, vect_asse_cont
+    character(len=19) :: vect_elem_cont, vect_elem_fric
+    character(len=19) :: vect_asse_cont, vect_asse_fric
     character(len=19) :: disp_prev, disp_cumu_inst, disp_newt_curr, vite_prev, acce_prev, vite_curr
     character(len=19) :: varc_prev, varc_curr, time_prev, time_curr
 !
@@ -110,9 +110,9 @@ type(NL_DS_Constitutive), intent(in) :: ds_constitutive
     call nmchex(hval_algo, 'SOLALG', 'DEPDEL', disp_cumu_inst)
     call nmchex(hval_algo, 'SOLALG', 'DDEPLA', disp_newt_curr)
     vect_elem_cont = ds_contact%veeltc
-    vect_elem_frot = ds_contact%veeltf
+    vect_elem_fric = ds_contact%veeltf
     vect_asse_cont = ds_contact%cneltc
-    vect_asse_frot = ds_contact%cneltf
+    vect_asse_fric = ds_contact%cneltf
     call nmchex(hval_incr, 'VALINC', 'COMMOI', varc_prev)
     call nmchex(hval_incr, 'VALINC', 'COMPLU', varc_curr)
     call nmvcex('INST', varc_prev, time_prev)
@@ -130,34 +130,26 @@ type(NL_DS_Constitutive), intent(in) :: ds_constitutive
         ((.not.l_cont_lac) .or. ds_contact%nb_cont_pair.ne.0)) then
         call nmtime(ds_measure, 'Init'  , 'Cont_Elem')
         call nmtime(ds_measure, 'Launch', 'Cont_Elem')
-        call nmelcv(mesh          , model    , ds_material, ds_contact    ,&
-                    disp_prev     , vite_prev, acce_prev, vite_curr, disp_cumu_inst,&
-                    disp_newt_curr, vect_elem_cont, time_prev, time_curr, ds_constitutive)
-        call assvec('V', vect_asse_cont, 1, vect_elem_cont, [1.d0],&
-                    nume_dof, ' ', 'ZERO', 1)
+        call nmelcv(mesh          , model         ,&
+                    ds_material   , ds_contact    , ds_constitutive,&
+                    disp_prev     , vite_prev     ,&
+                    acce_prev     , vite_curr     ,&
+                    time_prev     , time_curr     ,&
+                    disp_cumu_inst, disp_newt_curr,&
+                    vect_elem_cont, vect_elem_fric)
+        call assvec('V', vect_asse_cont, 1, vect_elem_cont, [1.d0], nume_dof, ' ', 'ZERO', 1)
+        if (l_fric) then
+            call assvec('V', vect_asse_fric, 1, vect_elem_fric, [1.d0], nume_dof, ' ', 'ZERO', 1)
+        endif
         call nmtime(ds_measure, 'Stop', 'Cont_Elem')
         call nmrinc(ds_measure, 'Cont_Elem')
         if (niv .eq. 2) then
             call nmdebg('VECT', vect_asse_cont, ifm)
+            if (l_fric) then
+                call nmdebg('VECT', vect_asse_fric, ifm)
+            endif
         endif
     endif
-!
-! - Compute friction forces
-!
-    !if (l_fric .and. (.not.l_all_verif) .and. (.not.l_xthm)) then
-    !    call nmtime(ds_measure, 'Init'  , 'Cont_Elem')
-    !    call nmtime(ds_measure, 'Launch', 'Cont_Elem')
-    !    call nmelcv('FROT'        , mesh     , model    , ds_material, ds_contact    ,&
-    !                disp_prev     , vite_prev, acce_prev, vite_curr, disp_cumu_inst,&
-    !                disp_newt_curr, vect_elem_frot, time_prev, time_curr, ds_constitutive)
-    !    call assvec('V', vect_asse_frot, 1, vect_elem_frot, [1.d0],&
-    !                nume_dof, ' ', 'ZERO', 1)
-    !    call nmtime(ds_measure, 'Stop', 'Cont_Elem')
-    !    call nmrinc(ds_measure, 'Cont_Elem')
-    !    if (niv .eq. 2) then
-    !        call nmdebg('VECT', vect_asse_frot, ifm)
-    !    endif
-    !endif
 !
 ! - Special post-treatment for LAC contact method
 !
