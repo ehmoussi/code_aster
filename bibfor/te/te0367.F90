@@ -15,11 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine te0367(option, nomte)
 !
+implicit none
 !
-    implicit none
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterfort/assert.h"
@@ -30,7 +30,6 @@ subroutine te0367(option, nomte)
 #include "asterfort/normev.h"
 #include "asterfort/ttprsm.h"
 #include "asterfort/utmess.h"
-#include "asterfort/vecini.h"
 #include "asterfort/xlacti.h"
 #include "asterfort/xmelet.h"
 #include "asterfort/xmmjac.h"
@@ -49,26 +48,28 @@ subroutine te0367(option, nomte)
 #include "asterfort/xcalfev_wrap.h"
 #include "asterfort/xkamat.h"
 !
-    character(len=16) :: option, nomte
+character(len=16) :: option, nomte
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
+!
 !  CALCUL DES SECONDS MEMBRES DE CONTACT ET DE FROTTEMENT DE COULOMB STD
 !   POUR LA METHODE XFEM EN GRANDS GLISSEMENTS
+!
+! --------------------------------------------------------------------------------------------------
+!
 !  OPTION : 'CHAR_MECA_CONT' (CALCUL DU SECOND MEMBRE DE CONTACT)
 !
 !  ENTREES  ---> OPTION : OPTION DE CALCUL
 !           ---> NOMTE  : NOM DU TYPE ELEMENT
 !
+! --------------------------------------------------------------------------------------------------
 !
-!
-!
-    integer :: n
-    parameter    (n=336)
-!
+    real(kind=8) :: vcont(336), vfric(336)
     integer :: i, nfaes
     integer :: ndim, nddl, nne(3), nnm(3), nnc
     integer :: nsinge, nsingm
-    integer :: jpcpo, jpcpi, jpcai, jpccf, ivect, jstno
+    integer :: jpcpo, jpcpi, jpcai, jpccf, jstno
+    integer :: jv_cont, jv_fric
     integer :: indnor, ifrott, indco
     integer :: jdepde, jdepm, jgeom, jheafa, jheano, jheavn, ncompn, jtab(7), iret
     real(kind=8) :: tau1(3), tau2(3), norm(3)
@@ -85,7 +86,6 @@ subroutine te0367(option, nomte)
     real(kind=8) :: rese(3), nrese
     real(kind=8) :: ddeple(3), ddeplm(3), dlagrc, dlagrf(2)
     aster_logical :: lfrott, lpenaf, lpenac, lesclx, lmaitx, lcontx
-    real(kind=8) :: vtmp(n)
     integer :: contac, ibid, npte
     integer :: ndeple, ddle(2), ddlm(2), nfhe, nfhm
     real(kind=8) :: ffec(8)
@@ -93,29 +93,25 @@ subroutine te0367(option, nomte)
     real(kind=8) :: fk_escl(27,3,3), fk_mait(27,3,3), ka, mu
     aster_logical :: lmulti
 !
-! ----------------------------------------------------------------------
-!
-!
-! --- INFOS SUR LA MAILLE DE CONTACT
+! --------------------------------------------------------------------------------------------------
 !
     call xmelet(nomte, typmai, elrees, elrema, elreco,&
                 ndim, nddl, nne, nnm, nnc,&
                 ddle, ddlm, contac, ndeple, nsinge,&
                 nsingm, nfhe, nfhm)
 !
-    ASSERT(nddl.le.n)
-    lmulti = .false.
-    if (nfhe .gt. 1 .or. nfhm .gt. 1) lmulti = .true.
+    ASSERT(nddl .le. 336)
+    lmulti = (nfhe .gt. 1 .or. nfhm .gt. 1)
 !
 ! --- INITIALISATIONS
 !
-    call vecini(n, 0.d0, vtmp)
-    call vecini(18, 0.d0, geopi)
-    call vecini(2, 0.d0, dlagrf)
-    dlagrc = 0.d0
-!
-    call vecini(3, 0.d0, ddeple)
-    call vecini(3, 0.d0, ddeplm)
+    vcont(:)  = 0.d0
+    vfric(:)  = 0.d0
+    geopi(:)  = 0.d0
+    dlagrf(:) = 0.d0
+    dlagrc    = 0.d0
+    ddeple(:) = 0.d0
+    ddeplm(:) = 0.d0
 !
 ! --- RECUPERATION DES DONNEES DE LA CARTE CONTACT POINT (VOIR XMCART)
 !
@@ -154,24 +150,26 @@ subroutine te0367(option, nomte)
 ! --- SQRT LSN PT ESCLAVE ET MAITRE
     rre = zr(jpcpo-1+18)
     rrm = zr(jpcpo-1+23)
-    if (nnm(1) .eq. 0) rre = 2*rre
+    if (nnm(1) .eq. 0) then
+        rre = 2*rre
+    endif
     lfrott = ifrott.eq.3
-    lpenaf=((coeffr.eq.0.d0).and.(coeffp.ne.0.d0))
-    lpenac=((coefcr.eq.0.d0).and.(coefcp.ne.0.d0))
+    lpenaf = ((coeffr.eq.0.d0).and.(coeffp.ne.0.d0))
+    lpenac = ((coefcr.eq.0.d0).and.(coefcp.ne.0.d0))
 !
-! --- RECUPERATION DES DONNEES DE LA CARTE CONTACT PINTER (VOIR XMCART)
+!-- RECUPERATION DES DONNEES DE LA CARTE CONTACT PINTER (VOIR XMCART)
 !
     call jevech('PCAR_PI', 'L', jpcpi)
 !
-! --- RECUPERATION DES DONNEES DE LA CARTE CONTACT AINTER (VOIR XMCART)
+! - RECUPERATION DES DONNEES DE LA CARTE CONTACT AINTER (VOIR XMCART)
 !
     call jevech('PCAR_AI', 'L', jpcai)
 !
-! --- RECUPERATION DES DONNEES DE LA CARTE CONTACT CFACE (VOIR XMCART)
+! - RECUPERATION DES DONNEES DE LA CARTE CONTACT CFACE (VOIR XMCART)
 !
     call jevech('PCAR_CF', 'L', jpccf)
 !
-! --- RECUPERATION DE LA GEOMETRIE ET DES CHAMPS DE DEPLACEMENT
+! - RECUPERATION DE LA GEOMETRIE ET DES CHAMPS DE DEPLACEMENT
 !
     call jevech('PGEOMER', 'L', jgeom)
     call jevech('PDEPL_P', 'L', jdepde)
@@ -183,32 +181,29 @@ subroutine te0367(option, nomte)
       ncompn = jtab(2)/jtab(3)
     endif
 !
+! - Multi-cracks
+!
     if (lmulti) then
-!
-! --- RECUPERATION DES FONCTION HEAVISIDES SUR LES FACETTES
-!
+! ----- RECUPERATION DES FONCTION HEAVISIDES SUR LES FACETTES
         call jevech('PHEA_FA', 'L', jheafa)
-!
-! --- RECUPERATION DE LA PLACE DES LAGRANGES
-!
+! ----- RECUPERATION DE LA PLACE DES LAGRANGES
         call jevech('PHEAVNO', 'L', jheano)
     else
         jheafa=1
         jheano=1
     endif
 !
-! --- CALCUL DES COORDONNEES REELLES DES POINTS D'INTERSECTION ESCLAVES
+! - CALCUL DES COORDONNEES REELLES DES POINTS D'INTERSECTION ESCLAVES
 !
-    call xmpint(ndim, npte, nfaes, jpcpi, jpccf,&
-                geopi)
+    call xmpint(ndim, npte, nfaes, jpcpi, jpccf, geopi)
 !
-! --- FONCTIONS DE FORME
+! - FONCTIONS DE FORME
 !
     call xtform(ndim, elrees, elrema, elreco, ndeple,&
                 nnm(1), nnc, coore, coorm, coorc,&
                 ffe, ffm, dffc)
 !
-! --- CALCUL DES FCTS SINGULIERES
+! - CALCUL DES FCTS SINGULIERES
 !
     call jevech('PSTANO', 'L', jstno)
     if (nsinge.eq.1 .and. nne(1).gt. 0) then
@@ -220,9 +215,12 @@ subroutine te0367(option, nomte)
                    zr(jlsn), zr(jlsn), zr(jgeom), ka, mu, ffe, fk_escl, face='ESCL')
     endif
 !
-! --- BRICOLAGES POUR RESPECTER LES ANCIENNES CONVENTIONS DE SIGNE 
-    fk_escl=-1.d0*fk_escl
-    if (nnm(1) .eq. 0) fk_escl=2.d0*fk_escl
+! - BRICOLAGES POUR RESPECTER LES ANCIENNES CONVENTIONS DE SIGNE
+!
+    fk_escl = -1.d0*fk_escl
+    if (nnm(1) .eq. 0) then
+        fk_escl = 2.d0*fk_escl
+    endif
     if (nsingm.eq.1 .and. nnm(1).gt.0) then
       call jevech('PLSNGG', 'L', jlsn)
       call jevech('PBASLOC', 'L', jbaslo)
@@ -233,54 +231,47 @@ subroutine te0367(option, nomte)
                    ka, mu, ffm, fk_mait, face='MAIT')
     endif
 !
-! --- FONCTION DE FORMES POUR LES LAGRANGIENS
+! - FONCTION DE FORMES POUR LES LAGRANGIENS
 !
     if (contac .eq. 1) then
         nnc = nne(2)
         call xlacti(typmai, ninter, jpcai, lact, nlact)
         call xmoffc(lact, nlact, nnc, ffe, ffc)
-    else if (contac.eq.3) then
+    else if (contac .eq. 3) then
         nnc = nne(2)
         call elelin(contac, elrees, typmec, ibid, ibid)
         call elrfvf(typmec, coore, nnc, ffec, ibid)
         call xlacti(typmai, ninter, jpcai, lact, nlact)
         call xmoffc(lact, nlact, nnc, ffec, ffc)
     else
-        ASSERT(contac.eq.0)
+        ASSERT(contac .eq. 0)
     endif
 !
-! --- JACOBIEN POUR LE POINT DE CONTACT
+! - JACOBIEN POUR LE POINT DE CONTACT
 !
     call xmmjac(elreco, geopi, dffc, jacobi)
 !
-! --- CALCUL DE LA NORMALE ET DES MATRICES DE PROJECTION
+! - CALCUL DE LA NORMALE ET DES MATRICES DE PROJECTION
 !
     call xtcaln(ndim, tau1, tau2, norm, mprojt)
 !
-! --- CALCUL DES INCREMENTS - LAGRANGE DE CONTACT ET FROTTEMENT
+! - CALCUL DES INCREMENTS - LAGRANGE DE CONTACT ET FROTTEMENT
 !
     call xtlagm(ndim, nnc, nne, ddle(1),&
                 jdepde, ffc,&
                 lfrott, nfhe, lmulti, zi(jheano),&
                 dlagrc, dlagrf)
 !
-! --- NOEUDS EXCLUS PAR PROJECTION HORS ZONE
+! - NOEUDS EXCLUS PAR PROJECTION HORS ZONE
 !
     if (indnor .eq. 1) then
         indco = 0
     endif
 !
-! --- RECUPERATION DES VECTEURS 'OUT' (A REMPLIR DONC MODE ECRITURE)
+! - CALCUL DES SECONDS MEMBRES DE CONTACT
 !
-    call jevech('PVECTUR', 'E', ivect)
-!
-! --- CALCUL DES SECOND MEMBRES DE CONTACT/FROTTEMENT
-!
-
     if (indco .eq. 1) then
-!
-! --- VECTEUR SECOND MEMBRE SI CONTACT
-!
+! ----- VECTEUR SECOND MEMBRE SI CONTACT
         call xmmjeu(ndim, nnm, nne, ndeple, nsinge,&
                     nsingm, ffe, ffm, norm, jgeom,&
                     jdepde, jdepm, fk_escl, fk_mait, ddle,&
@@ -293,58 +284,56 @@ subroutine te0367(option, nomte)
                     coefcp, lpenac, jeu, norm,&
                     nsinge, nsingm, fk_escl, fk_mait,&
                     ddle, ddlm, nfhe, nfhm, lmulti,&
-                    zi(jheano), zi(jheavn), zi(jheafa), vtmp)
+                    zi(jheano), zi(jheavn), zi(jheafa), vcont)
 !
     else if (indco .eq. 0) then
         if (nvit .eq. 1) then
-!
-! --- CALCUL DU VECTEUR - CAS SANS CONTACT
-!
+! --------- CALCUL DU VECTEUR - CAS SANS CONTACT
             call xmvec0(ndim, nne, nnc, dlagrc,&
                         hpg, ffc, jacobi,&
                         coefcr, coefcp, lpenac, ddle,&
-                        nfhe, lmulti, zi(jheano), vtmp)
+                        nfhe, lmulti, zi(jheano), vcont)
         endif
     else
         ASSERT(ASTER_FALSE)
     endif
 !
-    if (coefff .eq. 0.d0) indco = 0
+! - Set status of contact
+!
+    if (coefff .eq. 0.d0) then
+        indco = 0
+    endif
 ! ON MET LA SECURITE EN PENALISATION EGALEMENT
-    if (dlagrc .eq. 0.d0) indco = 0
-    if (ifrott .ne. 3) indco = 0
+    if (dlagrc .eq. 0.d0) then
+        indco = 0
+    endif
+    if (ifrott .ne. 3) then
+        indco = 0
+    endif
+!
+! - CALCUL DES SECONDS MEMBRES DE FROTTEMENT
 !
     if (indco .eq. 0) then
         if (nvit .eq. 1) then
-!
-! --- CALCUL DU VECTEUR - CAS SANS FROTTEMENT
-!
-!
+! --------- CALCUL DU VECTEUR - CAS SANS FROTTEMENT
             call xmvef0(ndim, nne, nnc,&
                         hpg, ffc, jacobi, lpenac,&
                         dlagrf, tau1, tau2,&
                         ddle, nfhe, lmulti, zi(jheano),&
-                        vtmp)
+                        vcont)
         endif
-    else if (indco.eq.1) then
-!
-! --- CALCUL DES INCREMENTS - DEPLACEMENTS
-!
+    else if (indco .eq. 1) then
+! ----- CALCUL DES INCREMENTS - DEPLACEMENTS
         call xtdepm(ndim, nnm, nne, ndeple, nsinge,&
                     nsingm, ffe, ffm, jdepde, fk_escl,&
                     fk_mait, ddle, ddlm, nfhe, nfhm, lmulti,&
                     zi(jheavn), zi(jheafa),&
                     ddeple, ddeplm)
-!
-!
-! --- ON CALCULE L'ETAT DE CONTACT ADHERENT OU GLISSANT
-!
+! ----- ON CALCULE L'ETAT DE CONTACT ADHERENT OU GLISSANT
         call ttprsm(ndim, ddeple, ddeplm, dlagrf, coeffr,&
                     tau1, tau2, mprojt, inadh, rese,&
                     nrese, coeffp, lpenaf, dvitet)
-!
-! --- CALCUL DU JEU
-!
+! ----- CALCUL DU JEU
         jeu = 0.d0
         if (ndim .eq. 3 .and. contac .eq. 3) then
             call xmmjeu(ndim, nnm, nne, ndeple, nsinge,&
@@ -353,13 +342,11 @@ subroutine te0367(option, nomte)
                         ddlm, nfhe, nfhm, lmulti, zi(jheavn), zi(jheafa),&
                         jeu)
         endif
-!
-! --- SI GLISSANT, NORMALISATION RESE
-!
-        if (inadh .eq. 0) call normev(rese, nrese)
-!
-! --- VECTEUR FROTTEMENT
-!
+! ----- SI GLISSANT, NORMALISATION RESE
+        if (inadh .eq. 0) then
+            call normev(rese, nrese)
+        endif
+! ----- VECTEUR FROTTEMENT
         call xmvef1(ndim, nne, nnm, ndeple, nnc,&
                     hpg, ffc, ffe,&
                     ffm, jacobi, dlagrc, dlagrf,&
@@ -368,10 +355,10 @@ subroutine te0367(option, nomte)
                     jeu, nsinge, nsingm, fk_escl, fk_mait,&
                     nvit, contac, ddle, ddlm,&
                     nfhe, nfhm, lmulti,  zi(jheavn), zi(jheafa),&
-                    vtmp)
+                    vcont)
     endif
 !
-! --- SUPPRESSION DES DDLS SUPERFLUS (CONTACT ET XHTC)
+! - SUPPRESSION DES DDLS SUPERFLUS (CONTACT ET XHTC)
 !
     lesclx = nsinge.eq.1.and.nnm(1).ne.0
     lmaitx = nsingm.eq.1
@@ -379,13 +366,19 @@ subroutine te0367(option, nomte)
     call xtedd2(ndim, nne, ndeple, nnm, nddl,&
                 option, lesclx, lmaitx, lcontx, zi(jstno),&
                 lact, ddle, ddlm, nfhe, nfhm,&
-                lmulti, zi(jheano), vtmp=vtmp)
+                lmulti, zi(jheano), vtmp=vcont)
 !
+! - RECOPIE VALEURS FINALES
 !
-! --- RECOPIE VALEURS FINALES
-!
+    call jevech('PVECTCR', 'E', jv_cont)
     do i = 1, nddl
-        zr(ivect-1+i)=vtmp(i)
+        zr(jv_cont-1+i) = vcont(i)
     end do
+    if (lfrott) then
+        call jevech('PVECTFR', 'E', jv_fric)
+        do i = 1, nddl
+            zr(jv_fric-1+i) = vfric(i)
+        end do
+    endif
 !
 end subroutine

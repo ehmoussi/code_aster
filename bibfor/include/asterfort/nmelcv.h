@@ -19,23 +19,22 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine nmelcv(mesh     , model    , ds_material, ds_contact    ,&
-                      disp_prev, vite_prev, acce_prev, vite_curr      , disp_cumu_inst,&
-                      disp_newt_curr, vect_elem, time_prev, time_curr, ds_constitutive)
+    subroutine nmelcv(mesh          , model         ,&
+                      ds_material   , ds_contact    , ds_constitutive,&
+                      disp_prev     , vite_prev     ,&
+                      acce_prev     , vite_curr     ,&
+                      time_prev     , time_curr     ,&
+                      disp_cumu_inst, disp_newt_curr,&
+                      vect_elem_cont, vect_elem_fric)
         use NonLin_Datastructure_type
         character(len=8), intent(in) :: mesh
         character(len=24), intent(in) :: model
         type(NL_DS_Material), intent(in) :: ds_material
         type(NL_DS_Contact), intent(in) :: ds_contact
-        character(len=19), intent(in) :: disp_prev
-        character(len=19), intent(in) :: vite_prev
-        character(len=19), intent(in) :: acce_prev
-        character(len=19), intent(in) :: vite_curr
-        character(len=19), intent(in) :: disp_cumu_inst
-        character(len=19), intent(in) :: disp_newt_curr
-        character(len=19), intent(out) :: vect_elem
-        character(len=19), intent(in) :: time_prev
-        character(len=19), intent(in) :: time_curr
         type(NL_DS_Constitutive), intent(in) :: ds_constitutive
+        character(len=19), intent(in) :: disp_prev, vite_prev, acce_prev, vite_curr
+        character(len=19), intent(in) :: time_prev, time_curr
+        character(len=19), intent(in) :: disp_cumu_inst, disp_newt_curr
+        character(len=19), intent(out) :: vect_elem_cont, vect_elem_fric
     end subroutine nmelcv
 end interface
