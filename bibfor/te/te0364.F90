@@ -43,6 +43,7 @@ implicit none
 #include "asterfort/mmtfpe.h"
 #include "asterfort/mmtgeo.h"
 #include "asterfort/mmtppe.h"
+#include "asterfort/mmCombLineMatr.h"
 !
 character(len=16), intent(in) :: option, nomte
 !
@@ -58,7 +59,6 @@ character(len=16), intent(in) :: option, nomte
     integer :: nne, nnm, nnl
     integer :: nddl, ndim, nbcps, nbdm
     integer :: iresof, iresog, ialgoc, ialgof
-    integer :: count_consi
     integer :: ndexfr
     integer :: indco, indco_prev, indadhe_prev, indadhe2_prev
     character(len=8) :: typmae, typmam
@@ -109,7 +109,6 @@ character(len=16), intent(in) :: option, nomte
     real(kind=8) :: kappa_prev(2, 2)=0., h_prev(2, 2)=0.0
     real(kind=8) :: vech1_prev(3)=0.0, vech2_prev(3)=0.0
 !
-    real(kind=8) :: mmat_tmp(81, 81)
     real(kind=8) :: mmat(81, 81)
     real(kind=8) :: mmat_prev(81, 81)
 !
@@ -143,9 +142,8 @@ character(len=16), intent(in) :: option, nomte
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    mmat(:,:) = 0.d0
+    mmat(:,:)      = 0.d0
     mmat_prev(:,:) = 0.d0
-    mmat_tmp(:,:) = 0.d0
     matrcc(:,:) = 0.d0
     matrcc_prev(:,:) = 0.d0
     matree(:,:) = 0.d0
@@ -436,21 +434,10 @@ character(len=16), intent(in) :: option, nomte
                     mmat_prev)
     endif
 !
+! - Linear combination of matrix
+!
     if (l_previous) then
-        mmat_tmp = alpha_cont*mmat+(1-alpha_cont)*mmat_prev
-        count_consi = 0
-        51 continue
-        count_consi = count_consi+1
-        alpha_cont = 0.5*(alpha_cont+1.0)
-        mmat_tmp   = alpha_cont*mmat+(1.0-alpha_cont)*mmat_prev
-        if ( norm2(mmat_tmp-mmat) &
-            .gt. 1.d-6*norm2(mmat) .and. count_consi .le. 15) then 
-           goto 51
-        elseif ( norm2(mmat_tmp-mmat) .lt. 1.d-6*norm2(mmat)) then 
-           mmat = mmat_tmp
-        else 
-           mmat = 0.9999d0*mmat + 0.0001d0*mmat_tmp
-        endif
+        call mmCombLineMatr(alpha_cont, mmat_prev, mmat)
     endif
 !
 ! - Copy
