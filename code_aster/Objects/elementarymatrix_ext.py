@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -24,16 +24,50 @@
 """
 
 import aster
-from libaster import ElementaryMatrix
+from libaster import ElementaryMatrixDisplacementDouble
+from libaster import ElementaryMatrixDisplacementComplex
+from libaster import ElementaryMatrixTemperatureDouble
+from libaster import ElementaryMatrixPressureComplex
 
 from ..Utilities import injector
 
 
-class ExtendedElementaryMatrix(injector(ElementaryMatrix), ElementaryMatrix):
+class ExtendedElementaryMatrixDisplacementDouble(injector(ElementaryMatrixDisplacementDouble),
+                                                 ElementaryMatrixDisplacementDouble):
     cata_sdj = "SD.sd_matr_elem.sd_matr_elem"
 
     def __getinitargs__(self):
         """Returns the argument required to reinitialize a ElementaryMatrix
         object during unpickling.
         """
-        return (self.getName(), self.getType())
+        return (self.getName(), )
+
+class ExtendedElementaryMatrixDisplacementComplex(injector(ElementaryMatrixDisplacementComplex),
+                                                  ElementaryMatrixDisplacementComplex):
+    cata_sdj = "SD.sd_matr_elem.sd_matr_elem"
+
+    def __getinitargs__(self):
+        """Returns the argument required to reinitialize a ElementaryMatrix
+        object during unpickling.
+        """
+        return (self.getName(), )
+
+class ExtendedElementaryMatrixTemperatureDouble(injector(ElementaryMatrixTemperatureDouble),
+                                                ElementaryMatrixTemperatureDouble):
+    cata_sdj = "SD.sd_matr_elem.sd_matr_elem"
+
+    def __getinitargs__(self):
+        """Returns the argument required to reinitialize a ElementaryMatrix
+        object during unpickling.
+        """
+        return (self.getName(), )
+
+class ExtendedElementaryMatrixPressureComplex(injector(ElementaryMatrixPressureComplex),
+                                              ElementaryMatrixPressureComplex):
+    cata_sdj = "SD.sd_matr_elem.sd_matr_elem"
+
+    def __getinitargs__(self):
+        """Returns the argument required to reinitialize a ElementaryMatrix
+        object during unpickling.
+        """
+        return (self.getName(), )

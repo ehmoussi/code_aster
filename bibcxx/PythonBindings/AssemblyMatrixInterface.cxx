@@ -45,14 +45,15 @@ void exportAssemblyMatrixToPython() {
                   &initFactoryPtr< AssemblyMatrixDisplacementDoubleInstance, std::string >))
         .def( "addKinematicsLoad", c1 )
         .def( "addKinematicsLoad", c2 )
+        .def( "appendElementaryMatrix",
+              &AssemblyMatrixDisplacementDoubleInstance::appendElementaryMatrix )
         .def( "build", &AssemblyMatrixDisplacementDoubleInstance::build )
         .def( "getDOFNumbering", &AssemblyMatrixDisplacementDoubleInstance::getDOFNumbering )
         .def( "getMaterialOnMesh", &AssemblyMatrixDisplacementDoubleInstance::getMaterialOnMesh )
         .def( "getNumberOfElementaryMatrix",
               &AssemblyMatrixDisplacementDoubleInstance::getNumberOfElementaryMatrix )
         .def( "setDOFNumbering", &AssemblyMatrixDisplacementDoubleInstance::setDOFNumbering )
-        .def( "appendElementaryMatrix",
-              &AssemblyMatrixDisplacementDoubleInstance::appendElementaryMatrix );
+        .def( "setSolverName", &AssemblyMatrixDisplacementDoubleInstance::setSolverName );
 
     void ( AssemblyMatrixDisplacementComplexInstance::*c3 )(
         const KinematicsLoadPtr &currentLoad ) =
@@ -70,14 +71,15 @@ void exportAssemblyMatrixToPython() {
                   &initFactoryPtr< AssemblyMatrixDisplacementComplexInstance, std::string >))
         .def( "addKinematicsLoad", c3 )
         .def( "addKinematicsLoad", c4 )
+        .def( "appendElementaryMatrix",
+              &AssemblyMatrixDisplacementComplexInstance::appendElementaryMatrix )
         .def( "build", &AssemblyMatrixDisplacementComplexInstance::build )
         .def( "getDOFNumbering", &AssemblyMatrixDisplacementComplexInstance::getDOFNumbering )
         .def( "getMaterialOnMesh", &AssemblyMatrixDisplacementComplexInstance::getMaterialOnMesh )
         .def( "getNumberOfElementaryMatrix",
               &AssemblyMatrixDisplacementComplexInstance::getNumberOfElementaryMatrix )
         .def( "setDOFNumbering", &AssemblyMatrixDisplacementComplexInstance::setDOFNumbering )
-        .def( "appendElementaryMatrix",
-              &AssemblyMatrixDisplacementComplexInstance::appendElementaryMatrix );
+        .def( "setSolverName", &AssemblyMatrixDisplacementComplexInstance::setSolverName );
 
     void ( AssemblyMatrixTemperatureDoubleInstance::*c5 )( const KinematicsLoadPtr &currentLoad ) =
         &AssemblyMatrixTemperatureDoubleInstance::addLoad;
@@ -94,14 +96,15 @@ void exportAssemblyMatrixToPython() {
                   &initFactoryPtr< AssemblyMatrixTemperatureDoubleInstance, std::string >))
         .def( "addKinematicsLoad", c5 )
         .def( "addKinematicsLoad", c6 )
+        .def( "appendElementaryMatrix",
+              &AssemblyMatrixTemperatureDoubleInstance::appendElementaryMatrix )
         .def( "build", &AssemblyMatrixTemperatureDoubleInstance::build )
         .def( "getDOFNumbering", &AssemblyMatrixTemperatureDoubleInstance::getDOFNumbering )
         .def( "getMaterialOnMesh", &AssemblyMatrixTemperatureDoubleInstance::getMaterialOnMesh )
         .def( "getNumberOfElementaryMatrix",
               &AssemblyMatrixTemperatureDoubleInstance::getNumberOfElementaryMatrix )
         .def( "setDOFNumbering", &AssemblyMatrixTemperatureDoubleInstance::setDOFNumbering )
-        .def( "appendElementaryMatrix",
-              &AssemblyMatrixTemperatureDoubleInstance::appendElementaryMatrix );
+        .def( "setSolverName", &AssemblyMatrixTemperatureDoubleInstance::setSolverName );
 
     void ( AssemblyMatrixTemperatureComplexInstance::*c7 )( const KinematicsLoadPtr &currentLoad ) =
         &AssemblyMatrixTemperatureComplexInstance::addLoad;
@@ -118,14 +121,15 @@ void exportAssemblyMatrixToPython() {
                   &initFactoryPtr< AssemblyMatrixTemperatureComplexInstance, std::string >))
         .def( "addKinematicsLoad", c7 )
         .def( "addKinematicsLoad", c8 )
+        .def( "appendElementaryMatrix",
+              &AssemblyMatrixTemperatureComplexInstance::appendElementaryMatrix )
         .def( "build", &AssemblyMatrixTemperatureComplexInstance::build )
         .def( "getDOFNumbering", &AssemblyMatrixTemperatureComplexInstance::getDOFNumbering )
         .def( "getMaterialOnMesh", &AssemblyMatrixTemperatureComplexInstance::getMaterialOnMesh )
         .def( "getNumberOfElementaryMatrix",
               &AssemblyMatrixTemperatureComplexInstance::getNumberOfElementaryMatrix )
         .def( "setDOFNumbering", &AssemblyMatrixTemperatureComplexInstance::setDOFNumbering )
-        .def( "appendElementaryMatrix",
-              &AssemblyMatrixTemperatureComplexInstance::appendElementaryMatrix );
+        .def( "setSolverName", &AssemblyMatrixTemperatureComplexInstance::setSolverName );
 
     void ( AssemblyMatrixPressureDoubleInstance::*c9 )( const KinematicsLoadPtr &currentLoad ) =
         &AssemblyMatrixPressureDoubleInstance::addLoad;
@@ -140,14 +144,15 @@ void exportAssemblyMatrixToPython() {
                               &initFactoryPtr< AssemblyMatrixPressureDoubleInstance, std::string >))
         .def( "addKinematicsLoad", c9 )
         .def( "addKinematicsLoad", c10 )
+        .def( "appendElementaryMatrix",
+              &AssemblyMatrixPressureDoubleInstance::appendElementaryMatrix )
         .def( "build", &AssemblyMatrixPressureDoubleInstance::build )
         .def( "getDOFNumbering", &AssemblyMatrixPressureDoubleInstance::getDOFNumbering )
         .def( "getMaterialOnMesh", &AssemblyMatrixPressureDoubleInstance::getMaterialOnMesh )
         .def( "getNumberOfElementaryMatrix",
               &AssemblyMatrixPressureDoubleInstance::getNumberOfElementaryMatrix )
         .def( "setDOFNumbering", &AssemblyMatrixPressureDoubleInstance::setDOFNumbering )
-        .def( "appendElementaryMatrix",
-              &AssemblyMatrixPressureDoubleInstance::appendElementaryMatrix );
+        .def( "setSolverName", &AssemblyMatrixPressureDoubleInstance::setSolverName );
 
     void ( AssemblyMatrixPressureComplexInstance::*c11 )( const KinematicsLoadPtr &currentLoad ) =
         &AssemblyMatrixPressureComplexInstance::addLoad;
@@ -164,12 +169,13 @@ void exportAssemblyMatrixToPython() {
                   &initFactoryPtr< AssemblyMatrixPressureComplexInstance, std::string >))
         .def( "addKinematicsLoad", c11 )
         .def( "addKinematicsLoad", c12 )
+        .def( "appendElementaryMatrix",
+              &AssemblyMatrixPressureComplexInstance::appendElementaryMatrix )
         .def( "build", &AssemblyMatrixPressureComplexInstance::build )
         .def( "getDOFNumbering", &AssemblyMatrixPressureComplexInstance::getDOFNumbering )
         .def( "getMaterialOnMesh", &AssemblyMatrixPressureComplexInstance::getMaterialOnMesh )
         .def( "getNumberOfElementaryMatrix",
               &AssemblyMatrixPressureComplexInstance::getNumberOfElementaryMatrix )
         .def( "setDOFNumbering", &AssemblyMatrixPressureComplexInstance::setDOFNumbering )
-        .def( "appendElementaryMatrix",
-              &AssemblyMatrixPressureComplexInstance::appendElementaryMatrix );
+        .def( "setSolverName", &AssemblyMatrixPressureComplexInstance::setSolverName );
 };

@@ -53,7 +53,7 @@ class DiscreteProblemInstance {
     /**
      * @brief Calcul des matrices elementaires pour une option quelconque
      */
-    ElementaryMatrixPtr
+    ElementaryMatrixDisplacementDoublePtr
     computeMechanicalMatrix( const std::string &optionName ) throw( std::runtime_error );
 
   public:
@@ -109,16 +109,16 @@ class DiscreteProblemInstance {
      * @param time Instant de calcul
      * @return Vecteur élémentaire contenant la rigidité mécanique
      */
-    ElementaryMatrixPtr buildElementaryStiffnessMatrix( double time = 0. );
+    ElementaryMatrixDisplacementDoublePtr buildElementaryStiffnessMatrix( double time = 0. );
     /**
      * @brief Fonction permettant de calculer les matrices élémentaires pour la matrice tangente
      * utilisée pour l'étape de prédiction de la méthode de Newton
      * @param time Instant de calcul
      * @return Matrice élémentaire contenant la rigidité mécanique
      */
-    ElementaryMatrixPtr buildElementaryTangentMatrix( double time = 0. );
+    ElementaryMatrixDisplacementDoublePtr buildElementaryTangentMatrix( double time = 0. );
 
-    ElementaryMatrixPtr buildElementaryJacobianMatrix( double time = 0. );
+    ElementaryMatrixDisplacementDoublePtr buildElementaryJacobianMatrix( double time = 0. );
 
     /**
      * @brief Construction d'un vecteur de chargement cinématique
@@ -139,19 +139,22 @@ class DiscreteProblemInstance {
     /**
      * @brief Calcul des matrices elementaires pour l'option AMOR_MECA
      */
-    ElementaryMatrixPtr
-    computeMechanicalDampingMatrix( const ElementaryMatrixPtr &rigidity,
-                                    const ElementaryMatrixPtr &mass ) throw( std::runtime_error );
+    ElementaryMatrixDisplacementDoublePtr
+    computeMechanicalDampingMatrix( const ElementaryMatrixDisplacementDoublePtr &rigidity,
+                                    const ElementaryMatrixDisplacementDoublePtr &mass )
+        throw( std::runtime_error );
 
     /**
      * @brief Calcul des matrices elementaires pour l'option RIGI_MECA
      */
-    ElementaryMatrixPtr computeMechanicalStiffnessMatrix() throw( std::runtime_error );
+    ElementaryMatrixDisplacementDoublePtr computeMechanicalStiffnessMatrix()
+        throw( std::runtime_error );
 
     /**
      * @brief Calcul des matrices elementaires pour l'option MASS_MECA
      */
-    ElementaryMatrixPtr computeMechanicalMassMatrix() throw( std::runtime_error );
+    ElementaryMatrixDisplacementDoublePtr computeMechanicalMassMatrix()
+        throw( std::runtime_error );
 
     /**
      * @brief Récupération de l'étude

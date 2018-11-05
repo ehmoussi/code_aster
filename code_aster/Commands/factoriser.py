@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -37,5 +37,15 @@ class Factoriser(ExecuteCommand):
             self._result = keywords["reuse"]
         else:
             self._result = type(keywords["MATR_ASSE"])()
+
+    def post_exec(self, keywords):
+        """Execute the command.
+
+        Arguments:
+            keywords (dict): User's keywords.
+        """
+        solverName = keywords.get("METHODE")
+        if solverName in ("MUMPS", "PETSC"):
+            self._result.setSolverName(solverName)
 
 FACTORISER = Factoriser.run

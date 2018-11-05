@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -33,12 +33,7 @@ class KinematicsLoadComputation(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        if keywords['CHAR_CINE'][0].getType() == 'CHAR_CINE_MECA':
-            self._result = FieldOnNodesDouble()
-        elif keywords['CHAR_CINE'][0].getType() == 'CHAR_CINE_THER':
-            self._result = FieldOnNodesDouble()
-        else:
-            raise NotImplementedError("Not implemented yet")
+        self._result = FieldOnNodesDouble()
 
 
 CALC_CHAR_CINE = KinematicsLoadComputation.run

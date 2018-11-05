@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2017  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -39,5 +39,14 @@ class ComputeElementaryVector(ExecuteCommand):
         elif keywords['OPTION'] == "CHAR_THER": self._result.setType('VECT_ELEM_TEMP_R')
         elif keywords['OPTION'] == "CHAR_ACOU": self._result.setType('VECT_ELEM_PRES_C')
         else: raise NotImplementedError("Must be implemented")
+
+    def post_exec(self, keywords):
+        """Store references to ElementaryVector objects.
+
+        Arguments:
+            keywords (dict): Keywords arguments of user's keywords, changed
+                in place.
+        """
+        self._result.update()
 
 CALC_VECT_ELEM = ComputeElementaryVector.run

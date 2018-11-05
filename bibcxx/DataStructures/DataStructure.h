@@ -88,7 +88,10 @@ class DataStructure {
      * @brief Function to add a reference to another datastructure
      * @param ds datastructure to reference
      */
-    void addReference( const DataStructurePtr &ds ) { _referenceVector.push_back( ds ); };
+    void addReference( const DataStructurePtr &ds )
+    {
+        _referenceVector.push_back( ds );
+    };
 
     /**
      * @brief Function membre debugPrint

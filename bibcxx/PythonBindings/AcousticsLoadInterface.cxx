@@ -50,5 +50,6 @@ void exportAcousticsLoadToPython() {
         .def( "addUniformConnectionOnGroupsOfNodes",
               &AcousticsLoadInstance::addUniformConnectionOnGroupsOfNodes )
         .def( "build", &AcousticsLoadInstance::build )
-        .def( "getFiniteElementDescriptor", &AcousticsLoadInstance::getFiniteElementDescriptor );
+        .def( "getFiniteElementDescriptor", &AcousticsLoadInstance::getFiniteElementDescriptor )
+        .def( "getSupportModel", &AcousticsLoadInstance::getSupportModel );
 };

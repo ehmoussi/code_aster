@@ -61,6 +61,8 @@ class BaseLinearSolverInstance;
 template < class ValueType, PhysicalQuantityEnum PhysicalQuantity >
 class AssemblyMatrixInstance : public DataStructure {
   private:
+    typedef boost::shared_ptr< ElementaryMatrixInstance< ValueType, PhysicalQuantity > >
+        ElementaryMatrixPtr;
     /** @typedef std::list de KinematicsLoad */
     typedef std::list< KinematicsLoadPtr > ListKinematicsLoad;
     /** @typedef Iterateur sur une std::list de KinematicsLoad */
@@ -95,7 +97,7 @@ class AssemblyMatrixInstance : public DataStructure {
     JeveuxVectorLong _ccii;
 
     /** @brief ElementaryMatrix sur lesquelles sera construit la matrice */
-    std::vector< ElementaryMatrixPtr > _elemMatrix;
+    std::vector< ElementaryMatrixPtr >  _elemMatrix;
     /** @brief Objet nume_ddl */
     BaseDOFNumberingPtr _dofNum;
     /** @brief La matrice est elle vide ? */
@@ -151,7 +153,8 @@ class AssemblyMatrixInstance : public DataStructure {
      * @brief Methode permettant de definir les matrices elementaires
      * @param currentElemMatrix objet ElementaryMatrix
      */
-    void appendElementaryMatrix( const ElementaryMatrixPtr &currentElemMatrix ) {
+    void appendElementaryMatrix( const ElementaryMatrixPtr &currentElemMatrix )
+    {
         _elemMatrix.push_back( currentElemMatrix );
     };
 
@@ -163,7 +166,10 @@ class AssemblyMatrixInstance : public DataStructure {
     /**
      * @brief Clear all ElementaryMatrixPtr
      */
-    void clearElementaryMatrix() { _elemMatrix.clear(); };
+    void clearElementaryMatrix()
+    {
+        _elemMatrix.clear();
+    };
 
     /**
      * @brief Get the internal DOFNumbering
@@ -175,17 +181,19 @@ class AssemblyMatrixInstance : public DataStructure {
      * @brief Get support MaterialOnMesh
      * @return MaterialOnMesh of the first ElementaryMatrix (all others must be the same)
      */
-    MaterialOnMeshPtr getMaterialOnMesh() const throw( std::runtime_error ) {
-        if ( _elemMatrix.size() == 0 )
-            throw std::runtime_error( "No ElementaryMatrix in AssemblyMatrix" );
-        return _elemMatrix[0]->getMaterialOnMesh();
+    MaterialOnMeshPtr getMaterialOnMesh() const throw( std::runtime_error )
+    {
+        if ( _elemMatrix.size() != 0 )
+            return _elemMatrix[0]->getMaterialOnMesh();
+        throw std::runtime_error( "No ElementaryMatrix in AssemblyMatrix" );
     };
 
     /**
      * @brief Get the number of defined ElementaryMatrix
      * @return size of vector containing ElementaryMatrix
      */
-    int getNumberOfElementaryMatrix() const throw( std::runtime_error ) {
+    int getNumberOfElementaryMatrix() const throw( std::runtime_error )
+    {
         return _elemMatrix.size();
     };
 
@@ -318,21 +326,16 @@ bool AssemblyMatrixInstance< ValueType, PhysicalQuantity >::build() throw( std::
     if ( _dofNum->isEmpty() )
         throw std::runtime_error( "Numbering is empty" );
 
-    if ( _elemMatrix.size() == 0 )
+    if ( getNumberOfElementaryMatrix() == 0 )
         throw std::runtime_error( "Elementary matrix is empty" );
 
-    ASTERINTEGER typscal = 1;
+    ASTERINTEGER typscal = 2;
+    if ( typeid( ValueType ) == typeid(double) )
+        typscal = 1;
     VectorString names;
-    std::vector< ElementaryMatrixPtr >::const_iterator elemIt = _elemMatrix.begin();
-    for ( ; elemIt != _elemMatrix.end(); ++elemIt ) {
-        names.push_back( ( *elemIt )->getName() );
-        if ( ( *elemIt )->getType() != "MATR_ELEM_DEPL_R" ) {
-            typscal = -1;
-        }
-    }
-    if ( typscal < 0 ) {
-        throw std::runtime_error( "Only MATR_ASSE_DEPL_R is currently supported." );
-    }
+    for ( const auto elemIt : _elemMatrix )
+        names.push_back( elemIt->getName() );
+
     char *tabNames = vectorStringAsFStrArray( names, 8 );
 
     std::string base( "G" );
