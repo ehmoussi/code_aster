@@ -72,6 +72,7 @@ subroutine op0100()
 #include "asterfort/titre.h"
 #include "asterfort/utmess.h"
 #include "asterfort/wkvect.h"
+#include "asterfort/deprecated_algom.h"
 #include "asterfort/xcourb.h"
     integer :: nbord, iord, i, iad, jnord, ivec, iret, nbpara
     integer :: lnoff, jinst, ndeg, nbropt, iadrco, iadrno, ipuls, iord0
@@ -167,6 +168,9 @@ subroutine op0100()
         else
             call utmess('F', 'RUPTURE0_27')
         endif
+    endif
+    if (typsd .eq. 'MULT_ELAS') then
+        call deprecated_algom('CALC_G_MULT_ELAS')
     endif
 !
 !     PREMIER NUME_ORDRE

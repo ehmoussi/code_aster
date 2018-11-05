@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,46 +15,19 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine mmgnmm(ndim  ,nnm   ,mprt1n,mprt2n, &
-                  mprojn,wpg   , &
-          ffm    ,dffm  ,jacobi,coefac,jeu   , &
-          dlagrc,kappa ,vech1 ,vech2 ,h     , &
-          matrmm)
-          
-    
-        integer :: ndim
-        integer :: nnm
-        
-    real(kind=8) :: mprojn(3, 3)
-        
-        real(kind=8) :: wpg
-        real(kind=8) :: ffm(9)
-        real(kind=8) :: dffm(2, 9)
-        real(kind=8) :: jacobi
-        real(kind=8) :: coefac        
-        real(kind=8) :: jeu
-        real(kind=8) :: dlagrc
-    
-        real(kind=8) :: mprt1n(3, 3)
-        real(kind=8) :: mprt2n(3, 3)
-        real(kind=8) :: mprt11(3, 3)
-        real(kind=8) :: mprt21(3, 3)
-    real(kind=8) :: mprt22(3, 3)
-        
-    real(kind=8) ::  kappa(2, 2)
-    real(kind=8) ::  h(2,2)    
-    real(kind=8) ::  a(2,2)        
-    real(kind=8) ::  ha(2,2)    
-    real(kind=8) ::  hah(2,2)    
-    
-    real(kind=8) :: vech1(3)
-    real(kind=8) :: vech2(3)
-        
-        real(kind=8) :: matrmm(27, 27)
-
+    subroutine mmgnmm(ndim  , nnm   ,&
+                      wpg   , ffm   , dffm  ,&
+                      jacobi, coefac, jeu   , dlagrc,&
+                      mprojn, mprt1n, mprt2n, mprnt1, mprnt2,&
+                      kappa , vech1 , vech2 , h     , &
+                      matrmm)
+        integer, intent(in) :: ndim, nnm
+        real(kind=8), intent(in) :: wpg, ffm(9),dffm(2,9)
+        real(kind=8), intent(in) :: mprojn(3, 3), mprt1n(3,3), mprt2n(3,3), mprnt1(3,3), mprnt2(3,3)
+        real(kind=8), intent(in) :: jacobi, coefac, jeu, dlagrc
+        real(kind=8), intent(in) :: kappa(2,2), vech1(3), vech2(3), h(2,2)
+        real(kind=8), intent(inout) :: matrmm(27, 27)
     end subroutine mmgnmm
 end interface

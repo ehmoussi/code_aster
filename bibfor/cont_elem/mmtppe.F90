@@ -23,11 +23,12 @@ subroutine mmtppe(typmae, typmam, ndim, nne, nnm,&
                   jeusup, ffe, ffm, dffm,ddffm, ffl,&
                   jacobi, wpg, jeu, djeut, dlagrc,&
                   dlagrf, norm, tau1, tau2, mprojn,&
-                  mprojt, mprt1n, mprt2n, gene11, gene21,&
+                  mprojt, mprt1n, mprt2n, mprnt1, mprnt2,&
+                  gene11, gene21,&
                   gene22, kappa, h, vech1, vech2,&
-                  a, ha, hah, mprt11, mprt21,&
+                  a, ha, hah, mprt11, mprt12, mprt21,&
                   mprt22,taujeu1, taujeu2, &
-                  dnepmait1,dnepmait2,l_previous,granglis)
+                  dnepmait1,dnepmait2,l_previous,l_large_slip)
 !
 implicit none
 !
@@ -46,7 +47,8 @@ implicit none
 !
 character(len=8) :: typmae, typmam
 integer :: ndim, nne, nnm, nnl, nbdm
-integer :: iresog, granglis
+integer :: iresog
+aster_logical, intent(in) :: l_large_slip
 aster_logical :: laxis, ldyna, l_previous
 real(kind=8) :: jeusup
 real(kind=8) :: jacobi, wpg
@@ -56,8 +58,8 @@ real(kind=8) :: ffe(9), ffm(9), ffl(9)
 real(kind=8) :: dffm(2, 9)
 real(kind=8) :: norm(3), tau1(3), tau2(3)
 real(kind=8) :: mprojn(3, 3), mprojt(3, 3)
-real(kind=8) :: mprt1n(3, 3), mprt2n(3, 3)
-real(kind=8) :: mprt11(3, 3), mprt21(3, 3), mprt22(3, 3)
+real(kind=8), intent(out) :: mprt11(3, 3), mprt12(3, 3), mprt21(3, 3), mprt22(3, 3)
+real(kind=8), intent(out) :: mprt1n(3, 3), mprt2n(3, 3), mprnt1(3, 3), mprnt2(3, 3)
 real(kind=8) :: gene11(3, 3), gene21(3, 3), gene22(3, 3)
 real(kind=8) :: kappa(2, 2), a(2, 2), h(2, 2), ha(2, 2), hah(2, 2)
 real(kind=8) :: vech1(3), vech2(3)
@@ -265,27 +267,23 @@ real(kind=8) :: dnepmait1, dnepmait2, taujeu1, taujeu2
     
     if (l_previous) then 
         jeu    = zr(jpcf-1+29)
-!       djeu(1)    = zr(jpcf-1+29)
-!       djeu(2)    = zr(jpcf-1+29)
-!       djeu(3)    = zr(jpcf-1+29)
-!       djeut(1)    = zr(jpcf-1+29)
-!       djeut(2)    = zr(jpcf-1+29)
-!       djeut(3)    = zr(jpcf-1+29)
         dlagrc = zr(jpcf-1+26)
-!       dlagrf(1) = zr(jpcf-1+26)
-!       dlagrf(2) = zr(jpcf-1+26)
-        
     endif
-
 !
-! MATRICES UTILITAIRES POUR LA DEUXIEME VARIATION DU GAP NORMAL
+! - Compute geometric quantities for second variation of gap
 !
-
-        call mmcalg(ndim, nnm, dffm, ddffm, geomam, tau1,&
-                    tau2, jeu,djeu , ddepmam , norm, gene11, gene21,&
-                    gene22, kappa, h, vech1, vech2,&
-                    a, ha, hah, mprt11, mprt21,&
-                    mprt22, mprt1n, mprt2n, granglis,taujeu1, taujeu2, &
-                  dnepmait1,dnepmait2)
+    call mmcalg(ndim     , l_large_slip,&
+                nnm      , dffm     , ddffm ,&
+                geomam   , ddepmam  ,&
+                tau1     , tau2     , norm  ,&
+                jeu      , djeu     ,&
+                gene11   , gene21   , gene22,&
+                kappa    , h        ,&
+                vech1    , vech2    ,&
+                a        , ha       , hah   ,&
+                mprt11   , mprt12   , mprt21, mprt22,&
+                mprt1n   , mprt2n   , mprnt1, mprnt2,&
+                taujeu1  , taujeu2  ,&
+                dnepmait1, dnepmait2)
 !
 end subroutine
