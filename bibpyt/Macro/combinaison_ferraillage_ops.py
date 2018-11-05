@@ -43,11 +43,11 @@ from Utilitai.Utmess import UTMESS
 from code_aster.Cata.Syntax import _F
 
 # Comandi ASTER da usare nella macro
-from code_aster.Cata.Commands import CALC_CHAMP
 from code_aster.Cata.Commands import CREA_CHAMP
 from code_aster.Cata.Commands import CREA_RESU
 from code_aster.Cata.Commands import CALC_FERRAILLAGE
 from code_aster.Cata.Commands import FORMULE
+from code_aster.Cata.Commands import DETRUIRE
 
 #
 # TODO 01:  Controllare la presenza dei campi necessari al CALC_FERRAILLAGE
@@ -70,12 +70,30 @@ def combinaison_ferraillage_ops(self, **args):
     self.DeclareOut('resu', self.sd)
 
     resu         = self.reuse
-    combinaison  = self [ 'COMBINAISON' ]
-    modele       = self [ 'MODELE' ]
+    combinaison  = self [ 'COMBINAISON' ]         
     affe         = self [ 'AFFE' ]
-    caraelem     = self [ 'CARA_ELEM' ]
     codification = self [ 'CODIFICATION' ]
 
+    # modele       = self [ 'MODELE' ] 
+    iret, ibid, n_modele = aster.dismoi('MODELE', resu.nom, 'RESULTAT', 'F')
+    n_model = n_modele.rstrip()
+    if len(n_modele) == 0 or n_model == "#PLUSIEURS":
+            aster.affiche( 'MESSAGE', 'MANNAGGIA MODELLO PLUSIEURS !!!')
+    
+    modele = self.get_concept(n_modele)
+    
+    # caraelem     = self [ 'CARA_ELEM' ]    
+    iret, ibid, n_cara_elem = aster.dismoi('CARA_ELEM', resu.nom, 'RESULTAT', 'F')
+    n_cara_elem = n_cara_elem.rstrip()
+    print('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA')    
+    print(n_cara_elem)
+    print(n_cara_elem.strip())
+    print('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA')        
+    if len(n_cara_elem) == 0 or n_cara_elem == "#PLUSIEURS":
+            aster.affiche( 'MESSAGE', 'MANNAGGIA CARA_ELEM PLUSIEURS !!!')
+    
+    caraelem = self.get_concept(n_cara_elem.strip())    
+    
     if codification != 'EC2':
         UTMESS('F', 'COMBFERR_1')
 
@@ -168,26 +186,6 @@ def combinaison_ferraillage_ops(self, **args):
     # Build result type EVOL_ELAS from MULTI_ELAS and combo type list in order
     #
     # resu = multiFromEvolElas(nmb_cas, resu_nom_cas, lst_inst_index, lst_inst_value, __resfer, resu, modele, caraelem)
-    __resutmp = CREA_RESU(
-					OPERATION = 'AFFE',
-					TYPE_RESU = 'MULT_ELAS' ,
-					NOM_CHAM = 'FERRAILLAGE',
-					AFFE = (
-							_F(
-							 NOM_CAS = 'COMB_DIME_ACIER',
-							 CHAM_GD = __maxifer,
-							 MODELE = modele,
-							 CARA_ELEM = caraelem,
-								),
-							_F(
-							 NOM_CAS = 'COMB_DIME_ORDRE',
-							 CHAM_GD = __instfer,
-							 MODELE = modele,
-							 CARA_ELEM = caraelem,
-								),
-						),)
-      
-      
     # The reinforcement has 7 components
     #  DNSXI : 
     #  DNSXS : 
@@ -195,37 +193,64 @@ def combinaison_ferraillage_ops(self, **args):
     #  DNSYS : 
     #   DNST : 
     # EPSIBE : 
-    # SIGMBE : 
+    # SIGMBE :      
 
-    '''    
-    __fDNSXI = FORMULE(
-        NOM_PARA=('DNSXI'), 
-        VALE=' combdimferr( DNSXI ) ', 
-        combdimferr=combdimferr
-        )
+    # Workaround to Bug: "ELEM_NEUT_R can use only X1"
+    __CHP = [None] * 7
+    for cmp_index, cmp_name in enumerate(['DNSXI','DNSXS','DNSYI','DNSYS','DNST','SIGMBE','EPSIBE']):
+        
+        # Renaming component(s) in COMB_DIME_ORDRE to avoid overlapping with COMB_DIME_ACIER
+        __CHORD2=CREA_CHAMP(OPERATION='ASSE',
+                          MODELE=modele,
+                          TYPE_CHAM='ELEM_NEUT_R',
+                          ASSE=(
+                                # ~ _F(CHAM_GD=CHORD,TOUT='OUI',NOM_CMP=('DNSXI','DNSXS','DNSYI','DNSYS','DNST','SIGMBE','EPSIBE'),NOM_CMP_RESU=('X8','X9','X10','X11','X12','X13','X14')),
+                                _F(CHAM_GD=__instfer,TOUT='OUI',NOM_CMP=cmp_name,NOM_CMP_RESU='X1',),
+                              ),
+                              PROL_ZERO='OUI',
+                              )
 
-    __resutmp = CALC_CHAMP(
-        reuse = __resutmp,
-        RESULTAT = __resutmp,
-        MODELE = modele,
-        CARA_ELEM = caraelem,        
-        NOM_CAS = 'COMB_DIME_ACIER',
-        CHAM_UTIL =
-            _F(
-                NOM_CHAM='fDNSXI',
-                FORMULE=(__fDNSXI,),
-                NUME_CHAM_RESU=1,
-                ),
-        )
-    eDNSXI = CREA_CHAMP (
-        OPERATION ='EXTR',
-        RESULTAT = __resutmp,
-        TYPE_CHAM = 'ELEM_FER2_R',
-        NOM_CHAM = 'fDNSXI',
-        NOM_CAS = 'COMB_DIME_ACIER',
-    )
-    '''        
+        __FDNSXI=FORMULE(NOM_PARA=(cmp_name,'X1'),VALE="X1 if "+cmp_name+" > 0 else -1")
 
+        __CHFMU=CREA_CHAMP(OPERATION='AFFE',
+                         TYPE_CHAM='ELEM_NEUT_F',
+                         # ~ TYPE_CHAM='CART_NEUT_F',
+                         # ~ TYPE_CHAM='ELGA_NEUT_F',
+                         MODELE=modele,
+                         AFFE=(
+                                # ~ _F(TOUT = 'OUI',NOM_CMP = ('X1','X2','X3','X4','X5','X6','X7'),VALE_F = (FDNSXI,FDNSXS,FDNSYI,FDNSYS,FDNST,FSIGMBE,FEPSIBE)),
+                                _F(TOUT = 'OUI',NOM_CMP = 'X1',VALE_F = __FDNSXI,),
+                              ),
+                              PROL_ZERO='OUI',
+                              )
+
+        # Bug 3 : cannot EVAL functions on CART_NEUT_F, ELGA_NEUT_F : 
+        __CHP[cmp_index]=CREA_CHAMP(OPERATION='EVAL',
+                          TYPE_CHAM='ELEM_NEUT_R',
+                          CHAM_F=__CHFMU,
+                          CHAM_PARA=(__maxifer,__CHORD2),
+                          )
+                          
+        DETRUIRE(CONCEPT=(_F(NOM=(__CHORD2,__FDNSXI,__CHFMU)),),)               
+
+    # Bug il n y a pas de paramètre  INOUT  associe a la grandeur: FER2_R  dans l option: TOU_INI_ELEM
+    # see https://www.code-aster.org/forum2/viewtopic.php?id=21005
+    __CHORD4=CREA_CHAMP(OPERATION='ASSE',
+                      # ~ TYPE_CHAM='ELEM_FER2_R',
+                      TYPE_CHAM='CART_NEUT_R',
+                      MODELE=modele,
+                      # ~ PROL_ZERO='OUI',
+                      ASSE=(
+                            _F(TOUT='OUI',CHAM_GD=__CHP[0],NOM_CMP=('X1',), NOM_CMP_RESU=('X1',),),
+                            _F(TOUT='OUI',CHAM_GD=__CHP[1],NOM_CMP=('X1',), NOM_CMP_RESU=('X2',),),
+                            _F(TOUT='OUI',CHAM_GD=__CHP[2],NOM_CMP=('X1',), NOM_CMP_RESU=('X3',),),
+                            _F(TOUT='OUI',CHAM_GD=__CHP[3],NOM_CMP=('X1',), NOM_CMP_RESU=('X4',),),
+                            _F(TOUT='OUI',CHAM_GD=__CHP[4],NOM_CMP=('X1',), NOM_CMP_RESU=('X5',),),
+                            _F(TOUT='OUI',CHAM_GD=__CHP[5],NOM_CMP=('X1',), NOM_CMP_RESU=('X6',),),
+                            _F(TOUT='OUI',CHAM_GD=__CHP[6],NOM_CMP=('X1',), NOM_CMP_RESU=('X7',),),
+                          )
+                          )
+                 
     # Adding COMB_DIME_ACIER and COMB_DIME_ORDRE tu resu
     #
     resu = CREA_RESU(
@@ -241,14 +266,27 @@ def combinaison_ferraillage_ops(self, **args):
 							 MODELE = modele,
 							 CARA_ELEM = caraelem,
 								),
+						),)
+      
+    # Adding COMB_DIME_ACIER and COMB_DIME_ORDRE tu resu
+    #
+    resu = CREA_RESU(
+					reuse = resu,
+					RESULTAT = resu,
+					OPERATION = 'AFFE',
+					TYPE_RESU = 'MULT_ELAS' ,
+					NOM_CHAM = 'UT01_ELEM',
+					AFFE = (
 							_F(
 							 NOM_CAS = 'COMB_DIME_ORDRE',
-							 CHAM_GD = __instfer,
+							 # CHAM_GD = __instfer,
+							 CHAM_GD = __CHORD4,
 							 MODELE = modele,
 							 CARA_ELEM = caraelem,
 								),
 						),)
-
+      
+        
     nc = resu.LIST_VARI_ACCES()['NOM_CAS']
 
     aster.affiche( 'MESSAGE', ' name case = ' + \
@@ -375,47 +413,7 @@ def lstInst(ncas, comb, resultat):
 
     return lst_inst_index, lst_inst_value, resu_nom_cas, resu_nume_ordre, type_combo
     
-'''    
-# Build result type MULTI_ELAS from EVOL_ELAS
-#
-def multiFromEvolElas(ncas, resu_nom_cas, inst_index, inst_value, resfer, resu, modele, caraelem):
 
-    __ACIER        = [None] * ncas
-    lst_AFFE_ACIER = [None] * ncas
-
-    for i, inst_index in enumerate(inst_index):
-        __ACIER [ i ] = CREA_CHAMP(
-            OPERATION='EXTR',
-            # INFO = 1,
-            TYPE_CHAM = 'ELEM_FER2_R',
-            NOM_CHAM = 'FERRAILLAGE',
-            RESULTAT = resfer,
-            INST = inst_value [ i ],
-                             )
-
-        # Index needs to be [inst_index - 1] because MUME_ORDRE is index + 1
-        #
-        nomcas = resu_nom_cas [ inst_index - 1]
-        print 'NOME CASO --> ', nomcas  # TEMP-TEMP-TEMP-TEMP
-
-        lst_AFFE_ACIER [ i ] = _F(
-            NOM_CAS = nomcas + 'F',
-            CHAM_GD = __ACIER [ i ],
-            MODELE = modele,
-            # CHAM_MATER = affe,
-            CARA_ELEM = caraelem,
-        )
-
-    resu = CREA_RESU(
-        reuse = resu,
-        RESULTAT = resu,
-        OPERATION = 'AFFE',
-        TYPE_RESU = 'MULT_ELAS' ,
-        NOM_CHAM = 'FERRAILLAGE',
-        AFFE = lst_AFFE_ACIER,
-    )
-    return resu
-'''
 
 # Build result type EVOL_ELAS from MULTI_ELAS
 #
