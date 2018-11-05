@@ -34,6 +34,7 @@
 #include "DataFields/FieldOnNodes.h"
 #include "Discretization/DOFNumbering.h"
 #include "Discretization/ParallelDOFNumbering.h"
+#include "DataFields/ElementaryResult.h"
 
 /**
  * @class ElementaryVectorInstance
@@ -53,6 +54,8 @@ class ElementaryVectorInstance : public DataStructure {
     JeveuxVectorChar24 _listOfElementaryResults;
     /** @brief Booleen indiquant si la sd est vide */
     bool _isEmpty;
+    /** @brief Vectors of RESUELEM */
+    std::vector< ElementaryResultDoublePtr > _realVector;
 
     /** @brief Liste de charges */
     ListOfLoadsPtr _listOfLoads;
@@ -160,6 +163,25 @@ class ElementaryVectorInstance : public DataStructure {
      * @param currentList Liste charge
      */
     void setListOfLoads( const ListOfLoadsPtr &currentList ) { _listOfLoads = currentList; };
+
+    /**
+     * @brief function to update ElementaryResultInstance
+     */
+    bool update() throw( std::runtime_error )
+    {
+        _listOfElementaryResults->updateValuePointer();
+        _realVector.clear();
+        for ( int pos = 0; pos < _listOfElementaryResults->size(); ++pos )
+        {
+            const std::string name = ( *_listOfElementaryResults )[pos].toString();
+            if ( trim( name ) != "" )
+            {
+                ElementaryResultDoublePtr toPush( new ElementaryResultInstance< double >( name ) );
+                _realVector.push_back( toPush );
+            }
+        }
+        return true;
+    };
 
     friend class DiscreteProblemInstance;
 };

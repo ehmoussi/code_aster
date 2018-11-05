@@ -20,7 +20,7 @@
 # person_in_charge: nicolas.sellenet@edf.fr
 
 from ..Objects import AssemblyMatrixDisplacementDouble, AssemblyMatrixTemperatureDouble
-from ..Objects import AssemblyMatrixDisplacementComplex
+from ..Objects import AssemblyMatrixDisplacementComplex, AssemblyMatrixPressureComplex
 from .ExecuteCommand import ExecuteCommand
 
 
@@ -34,12 +34,16 @@ class AssembleMatrixOperator(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
+        if keywords['MATR_ELEM'].getType() == "MATR_ELEM_DEPL_R":
+            self._result = AssemblyMatrixDisplacementDouble()
+        if keywords['MATR_ELEM'].getType() == "MATR_ELEM_DEPL_C":
+            self._result = AssemblyMatrixDisplacementComplex()
         if keywords['MATR_ELEM'].getType() == "MATR_ELEM_TEMP_R":
             self._result = AssemblyMatrixTemperatureDouble()
-        elif keywords['MATR_ELEM'].getType() == "MATR_ELEM_DEPL_C":
-            self._result = AssemblyMatrixDisplacementComplex()
+        elif keywords['MATR_ELEM'].getType() == "MATR_ELEM_PRES_C":
+            self._result = AssemblyMatrixPressureComplex()
         else:
-            self._result = AssemblyMatrixDisplacementDouble()
+            raise TypeError("Type not authorized")
 
     def post_exec(self, keywords):
         """Store references to ElementaryMatrix objects.

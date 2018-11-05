@@ -30,11 +30,15 @@ from libaster import *
 from .datastructure_ext import DataStructure
 
 # extend DataStructures using metaclasses
+from .acousticsload_ext import AcousticsLoad
 from .assemblymatrix_ext import AssemblyMatrixDisplacementDouble
 from .cracktip_ext import CrackTip
 from .dynamicresults_ext import TransientGeneralizedResultsContainer
 from .elementarycharacteristics_ext import ElementaryCharacteristics
-from .elementarymatrix_ext import ElementaryMatrix
+from .elementarymatrix_ext import ElementaryMatrixDisplacementDouble
+from .elementarymatrix_ext import ElementaryMatrixDisplacementComplex
+from .elementarymatrix_ext import ElementaryMatrixTemperatureDouble
+from .elementarymatrix_ext import ElementaryMatrixPressureComplex
 from .fieldonelements_ext import FieldOnElementsDouble
 from .fieldonnodes_ext import FieldOnNodesDouble
 from .formula_ext import Formula

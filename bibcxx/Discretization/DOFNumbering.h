@@ -27,6 +27,7 @@
 #include "astercxx.h"
 #include <stdexcept>
 #include <string>
+#include "boost/variant.hpp"
 
 #include "DataStructures/DataStructure.h"
 #include "LinearAlgebra/ElementaryMatrix.h"
@@ -80,7 +81,34 @@ typedef boost::shared_ptr< FieldOnNodesDescriptionInstance > FieldOnNodesDescrip
  *        Cette classe est volontairement succinte car on n'en connait pas encore l'usage
  * @author Nicolas Sellenet
  */
-class BaseDOFNumberingInstance : public DataStructure {
+class BaseDOFNumberingInstance : public DataStructure
+{
+  private:
+    typedef boost::variant< ElementaryMatrixDisplacementDoublePtr,
+                            ElementaryMatrixDisplacementComplexPtr,
+                            ElementaryMatrixTemperatureDoublePtr,
+                            ElementaryMatrixPressureComplexPtr > MatrElem;
+
+    class ElementaryMatrixGetModel: public boost::static_visitor< ModelPtr >
+    {
+      public:
+        template< typename T >
+        ModelPtr operator()( const T& operand ) const
+        {
+            return operand->getSupportModel();
+        };
+    };
+
+    class ElementaryMatrixGetName: public boost::static_visitor< std::string >
+    {
+      public:
+        template< typename T >
+        std::string operator()( const T& operand ) const
+        {
+            return operand->getName();
+        };
+    };
+
   private:
     class MultFrontGarbageInstance {
         /** @brief Objet Jeveux '.ADNT' */
@@ -199,7 +227,7 @@ class BaseDOFNumberingInstance : public DataStructure {
     /** @brief Modele support */
     ModelPtr _supportModel;
     /** @brief Matrices elementaires */
-    ElementaryMatrixPtr _supportMatrix;
+    std::vector< MatrElem > _supportMatrix;
     /** @brief Chargements */
     ListOfLoadsPtr _listOfLoads;
     /** @brief Objet Jeveux '.SMOS' */
@@ -272,11 +300,6 @@ class BaseDOFNumberingInstance : public DataStructure {
     bool computeNumbering() throw( std::runtime_error );
 
     /**
-     * @brief Get elementary matrix
-     */
-    ElementaryMatrixPtr getElementaryMatrix() { return _supportMatrix; };
-
-    /**
      * @brief Get support FieldOnNodesDescription
      */
     FieldOnNodesDescriptionPtr getFieldOnNodesDescription() { return _dofDescription; };
@@ -290,7 +313,16 @@ class BaseDOFNumberingInstance : public DataStructure {
     /**
      * @brief Get model
      */
-    ModelPtr getSupportModel() { return _supportModel; };
+    ModelPtr getSupportModel()
+    {
+        if( _supportModel != nullptr )
+            return _supportModel;
+        else
+        {
+            if( _supportMatrix.size() != 0 )
+                return boost::apply_visitor( ElementaryMatrixGetModel(), _supportMatrix[0] );
+        }
+    };
 
     /**
      * @brief Methode permettant de savoir si la numerotation est vide
@@ -308,12 +340,52 @@ class BaseDOFNumberingInstance : public DataStructure {
      * @brief Methode permettant de definir les matrices elementaires
      * @param currentMatrix objet ElementaryMatrix
      */
-    virtual void
-    setElementaryMatrix( const ElementaryMatrixPtr &currentMatrix ) throw( std::runtime_error ) {
+    virtual void setElementaryMatrix( const ElementaryMatrixDisplacementDoublePtr &currentMatrix )
+        throw( std::runtime_error )
+    {
         if ( _supportModel )
             throw std::runtime_error(
                 "It is not allowed to defined Model and ElementaryMatrix together" );
-        _supportMatrix = currentMatrix;
+        _supportMatrix.push_back( currentMatrix );
+    };
+
+    /**
+     * @brief Methode permettant de definir les matrices elementaires
+     * @param currentMatrix objet ElementaryMatrix
+     */
+    virtual void setElementaryMatrix( const ElementaryMatrixDisplacementComplexPtr &currentMatrix )
+        throw( std::runtime_error )
+    {
+        if ( _supportModel )
+            throw std::runtime_error(
+                "It is not allowed to defined Model and ElementaryMatrix together" );
+        _supportMatrix.push_back( currentMatrix );
+    };
+
+    /**
+     * @brief Methode permettant de definir les matrices elementaires
+     * @param currentMatrix objet ElementaryMatrix
+     */
+    virtual void setElementaryMatrix( const ElementaryMatrixTemperatureDoublePtr &currentMatrix )
+        throw( std::runtime_error )
+    {
+        if ( _supportModel )
+            throw std::runtime_error(
+                "It is not allowed to defined Model and ElementaryMatrix together" );
+        _supportMatrix.push_back( currentMatrix );
+    };
+
+    /**
+     * @brief Methode permettant de definir les matrices elementaires
+     * @param currentMatrix objet ElementaryMatrix
+     */
+    virtual void setElementaryMatrix( const ElementaryMatrixPressureComplexPtr &currentMatrix )
+        throw( std::runtime_error )
+    {
+        if ( _supportModel )
+            throw std::runtime_error(
+                "It is not allowed to defined Model and ElementaryMatrix together" );
+        _supportMatrix.push_back( currentMatrix );
     };
 
     /**
@@ -327,7 +399,7 @@ class BaseDOFNumberingInstance : public DataStructure {
      * @param currentModel Model support de la numerotation
      */
     virtual void setSupportModel( const ModelPtr &currentModel ) throw( std::runtime_error ) {
-        if ( !_supportMatrix.use_count() == 0 )
+        if ( _supportMatrix.size() != 0 )
             throw std::runtime_error(
                 "It is not allowed to defined Model and ElementaryMatrix together" );
         _supportModel = currentModel;
@@ -370,8 +442,45 @@ class DOFNumberingInstance : public BaseDOFNumberingInstance {
      * @brief Methode permettant de definir les matrices elementaires
      * @param currentMatrix objet ElementaryMatrix
      */
-    void
-    setElementaryMatrix( const ElementaryMatrixPtr &currentMatrix ) throw( std::runtime_error ) {
+    void setElementaryMatrix( const ElementaryMatrixDisplacementDoublePtr &currentMatrix )
+        throw( std::runtime_error )
+    {
+        if ( currentMatrix->getSupportModel()->getSupportMesh()->isParallel() )
+            throw std::runtime_error( "Support mesh must not be parallel" );
+        BaseDOFNumberingInstance::setElementaryMatrix( currentMatrix );
+    };
+
+    /**
+     * @brief Methode permettant de definir les matrices elementaires
+     * @param currentMatrix objet ElementaryMatrix
+     */
+    void setElementaryMatrix( const ElementaryMatrixDisplacementComplexPtr &currentMatrix )
+        throw( std::runtime_error )
+    {
+        if ( currentMatrix->getSupportModel()->getSupportMesh()->isParallel() )
+            throw std::runtime_error( "Support mesh must not be parallel" );
+        BaseDOFNumberingInstance::setElementaryMatrix( currentMatrix );
+    };
+
+    /**
+     * @brief Methode permettant de definir les matrices elementaires
+     * @param currentMatrix objet ElementaryMatrix
+     */
+    void setElementaryMatrix( const ElementaryMatrixTemperatureDoublePtr &currentMatrix )
+        throw( std::runtime_error )
+    {
+        if ( currentMatrix->getSupportModel()->getSupportMesh()->isParallel() )
+            throw std::runtime_error( "Support mesh must not be parallel" );
+        BaseDOFNumberingInstance::setElementaryMatrix( currentMatrix );
+    };
+
+    /**
+     * @brief Methode permettant de definir les matrices elementaires
+     * @param currentMatrix objet ElementaryMatrix
+     */
+    void setElementaryMatrix( const ElementaryMatrixPressureComplexPtr &currentMatrix )
+        throw( std::runtime_error )
+    {
         if ( currentMatrix->getSupportModel()->getSupportMesh()->isParallel() )
             throw std::runtime_error( "Support mesh must not be parallel" );
         BaseDOFNumberingInstance::setElementaryMatrix( currentMatrix );

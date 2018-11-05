@@ -458,7 +458,6 @@ class CommandSyntax(object):
         """
         value = self.getValue( factName, occurrence, simpName )
         if len( value ) > 0:
-            print value
             if value[0] in ('RI', 'MP'):
                 val2 = tuple(value),
                 if maxval < 1:

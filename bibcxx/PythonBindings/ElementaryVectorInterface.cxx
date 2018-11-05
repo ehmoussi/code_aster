@@ -51,5 +51,6 @@ void exportElementaryVectorToPython() {
 #ifdef _USE_MPI
         .def( "assembleVector", c2 )
 #endif /* _USE_MPI */
-        .def( "setListOfLoads", &ElementaryVectorInstance::setListOfLoads );
+        .def( "setListOfLoads", &ElementaryVectorInstance::setListOfLoads )
+        .def( "update", &ElementaryVectorInstance::update );
 };
