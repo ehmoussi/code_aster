@@ -61,7 +61,6 @@ subroutine te0365(option, nomte)
     integer :: jvect, jpcf
     integer :: iresof, iresog
     integer :: ndexfr
-    integer :: granglis
 !    
     real(kind=8) :: norm(3)=0.0, tau1(3)=0.0, tau2(3)=0.0
     real(kind=8) :: mprojt(3, 3)=0.0,mprojn(3, 3)=0.0
@@ -79,7 +78,7 @@ subroutine te0365(option, nomte)
     aster_logical :: laxis = .false. , leltf = .false. 
     aster_logical :: lpenac = .false. , lpenaf = .false. 
     aster_logical :: loptf = .false. , ldyna = .false. ,  lcont = .false. 
-    aster_logical :: ladhe = .false. 
+    aster_logical :: ladhe = .false. , l_large_slip = ASTER_FALSE
     aster_logical :: l_previous_cont = .false. , l_previous_frot = .false. , l_previous = .false. 
 !    
     aster_logical :: debug = .false. 
@@ -94,16 +93,13 @@ subroutine te0365(option, nomte)
     real(kind=8) :: dnepmait1 ,dnepmait2 ,taujeu1,taujeu2
 !
     real(kind=8) :: mprt1n(3, 3), mprt2n(3, 3)
-
-    real(kind=8) :: mprt11(3, 3), mprt21(3, 3), mprt22(3, 3)
+    real(kind=8) :: mprnt1(3, 3), mprnt2(3, 3)
+    real(kind=8) :: mprt11(3, 3), mprt12(3, 3), mprt21(3, 3), mprt22(3, 3)
 !
     real(kind=8) :: gene11(3, 3), gene21(3, 3), gene22(3, 3)
     real(kind=8) :: kappa(2, 2), a(2, 2), h(2, 2), ha(2, 2), hah(2, 2)
 !
     real(kind=8) :: vech1(3), vech2(3)
-! 
-! !
-!     real(kind=8) :: geomae(9, 3), geomam(9, 3),ddepmam(9, 3)
     
 !
 ! ----------------------------------------------------------------------
@@ -122,8 +118,8 @@ subroutine te0365(option, nomte)
     taujeu1   =0.0
     taujeu2   =0.0
     
-    debug = .false.
-    granglis = 0
+    debug = ASTER_FALSE
+    l_large_slip = ASTER_FALSE
 !
 ! --- TYPE DE MAILLE DE CONTACT
 !
@@ -134,7 +130,7 @@ subroutine te0365(option, nomte)
     l_previous_frot = (nint(zr(jpcf-1+44)) .eq. 1 ) .and. .false.
     if (option .eq. 'RIGI_CONT') l_previous = l_previous_cont
     if (option .eq. 'RIGI_FROT') l_previous = l_previous_frot
-    granglis = nint(zr(jpcf-1+48))
+    l_large_slip = nint(zr(jpcf-1+48)).eq. 1
     
 !
 ! --- PREPARATION DES CALCULS - INFOS SUR LA MAILLE DE CONTACT
@@ -151,33 +147,7 @@ subroutine te0365(option, nomte)
                 
     call mmmlav(ldyna, jeusup, ndexfr)
                 
-                
-!     if (l_previous) then
-!         call mmmlcf(coefff, coefac_prev, coefaf_prev, lpenac_prev, lpenaf_prev,&
-!                     iresof_prev, iresog_prev, lambds_prev, l_previous)
-!         call mmmlav(ldyna, jeusup_prev, ndexfr_prev)
-        
-!        debug = .false.
-!        if (debug) then 
-        
-!            write (6,*) "MMLCF : DEBUGGING PREVIOUS AND CURRENT"
-!            write (6,*) "coefac_prev",coefac_prev, "coefac",coefac
-!            write (6,*) "coefaf_prev",coefaf_prev,"coefaf",coefaf
-!            write (6,*) "lpenac_prev",lpenac_prev,"lpenac",lpenac
-!            write (6,*) "lpenaf_prev",lpenaf_prev,"lpenaf",lpenaf
-!            write (6,*) "iresof_prev",iresof_prev,"iresof",iresof
-!            write (6,*) "iresog_prev",iresog_prev,"iresog",iresog
-!            write (6,*) "lambs_prev",lambds_prev,"lambds",lambds
-!            write (6,*) "MMLCF : END DEBUGGING PREVIOUS AND CURRENT"
-        
-!            write (6,*) "MMLAV : DEBUGGING PREVIOUS AND CURRENT"
-!            write (6,*) "jeusup_prev",jeusup_prev, "jeusup",jeusup
-!            write (6,*) "ndexfr_prev",ndexfr_prev,"ndexfr_prev",ndexfr
-!            write (6,*) "MMLAV : END DEBUGGING PREVIOUS AND CURRENT"
-            
-!        endif
-!        debug = .false.
-!     endif
+
 !
 ! --- PREPARATION DES DONNEES
 !
@@ -191,47 +161,16 @@ subroutine te0365(option, nomte)
                   norm, tau1, tau2, mprojt, jacobi,&
                   wpg, dlagrc, dlagrf, jeu, djeu,&
                   djeut, mprojn,&
-                   mprt1n, mprt2n, gene11, gene21,&
+                  mprt1n, mprt2n, mprnt1, mprnt2,&
+                  gene11, gene21,&
                   gene22, kappa, h, vech1, vech2,&
-                  a, ha, hah, mprt11, mprt21,&
+                  a, ha, hah, mprt11, mprt12, mprt21,&
                   mprt22,taujeu1, taujeu2, &
-                  dnepmait1,dnepmait2, l_previous,granglis)
-                             
-!         if (l_previous) then
-!             call      mmvppe(typmae, typmam, iresog, ndim, nne,&
-!                   nnm, nnl, nbdm, laxis, ldyna,&
-!                   jeusup, ffe, ffm, dffm, ffl,&
-!                   norm_prev, tau1_prev, tau2_prev, mprojt_prev, jacobi,&
-!                   wpg, dlagrc, dlagrf_prev, jeu_prev, djeu_prev,&
-!                   djeut_prev, mprojn_prev,&
-!                    mprt1n_prev, mprt2n_prev, gene11_prev, gene21_prev,&
-!                   gene22, kappa_prev, h_prev, vech1_prev, vech2_prev,&
-!                   a_prev, ha_prev, hah_prev, mprt11_prev, mprt21_prev,&
-!                   mprt22_prev,taujeu1_prev, taujeu2_prev, &
-!                   dnepmait1_prev,dnepmait2_prev, l_previous)
-! !              call modification_quantity_previous(jeu_prev,dlagrc_prev) 
-!         endif
-!
-!
-!
+                  dnepmait1,dnepmait2, l_previous,l_large_slip)
+
 !  --- PREPARATION DES DONNEES - CHOIX DU LAGRANGIEN DE CONTACT
 !
         call mmlagc(lambds, dlagrc, iresof, lambda)
-!         if (l_previous) then 
-!             call mmlagc(lambds_prev, dlagrc_prev, iresof_prev, lambda_prev)
-! !            debug = .false.
-! !            if (debug) then 
-!                    
-! !                write (6,*) "MMLAGC : DEBUGGING PREVIOUS AND CURRENT"
-! !                write (6,*) "lambds_prev",lambds_prev, "lambds",lambds
-! !                write (6,*) "dlagrc_prev",dlagrc_prev,"dlagrc",dlagrc
-! !                write (6,*) "iresof_prev",iresof_prev,"iresof",iresof
-! !                write (6,*) "lambda_prev",lambda_prev,"lambda",lambda
-! !                write (6,*) "MMLAGC : END DEBUGGING PREVIOUS AND CURRENT"
-!                 
-! !            endif
-! !            debug = .false.
-!         endif
 
 !
 ! ----- STATUTS
@@ -245,56 +184,13 @@ subroutine te0365(option, nomte)
         call mmmpha(loptf, lcont, ladhe, ndexfr, lpenac,&
                     lpenaf, phasep)
                     
-!         if (l_previous) then
-! !
-! ! ----- Statuts  : previous
-! !
-!             call mmmsta(ndim, leltf, lpenaf_prev, loptf, djeut_prev,&
-!                         dlagrf_prev, coefaf_prev, tau1_prev, tau2_prev, lcont_prev,&
-!                         ladhe_prev, lambda_prev, rese_prev, nrese_prev, l_previous)
-! !            debug = .false.
-! !            if (debug) then
-! !                write (6,*) "MMMSTA : DEBUGGING PREVIOUS AND CURRENT"
-! !                write (6,*) "lpenaf_prev",lpenaf_prev,"lpenaf_prev",lpenaf
-! !                write (6,*) "djeut_prev",djeut_prev,"djeut_prev",djeut
-! !                write (6,*) "dlagrf_prev",djeut_prev,"djeut_prev",djeut
-! !                write (6,*) "coefaf_prev",djeut_prev,"djeut_prev",djeut
-! !                write (6,*) "tau1_prev",tau1_prev,"tau1",tau1
-! !                write (6,*) "tau2_prev",tau2_prev,"tau2",tau2
-! !                write (6,*) "lcont_prev",lcont_prev,"lcont",lcont
-! !                write (6,*) "ladhe_prev",ladhe_prev,"ladhe",ladhe
-! !                write (6,*) "lambda_prev",lambda_prev,"lambda",lambda
-! !                write (6,*) "rese_prev",rese_prev,"rese",rese
-! !                write (6,*) "nrese_prev",nrese_prev,"nrese",nrese
-! !                write (6,*) "MMMSTA : END DEBUGGING PREVIOUS AND CURRENT"
-! !            endif
-! !            debug = .false.
-! !
-! ! ----- PHASE DE CALCUL : previous
-! !
-!             call mmmpha(loptf, lcont_prev, ladhe_prev, ndexfr_prev, lpenac_prev,&
-!                         lpenaf_prev, phasep_prev)
-! !            debug = .false.
-! !            if (debug) then 
-! !                write (6,*) "mmmpha : DEBUGGING PREVIOUS AND CURRENT"
-! !                write (6,*) "lcont_prev",lcont_prev, "lcont",lcont
-! !                write (6,*) "ladhe_prev",ladhe_prev,"ladhe",ladhe
-! !                write (6,*) "ndexfr_prev",ndexfr_prev,"ndexfr",ndexfr
-! !                write (6,*) "lpenac_prev",lpenac_prev,"lpenac",lpenac
-! !                write (6,*) "lpenaf_prev",lpenaf_prev,"lpenaf",lpenaf
-! !                write (6,*) "phasep_prev",phasep_prev,"phasep",phasep
-! !                write (6,*) "mmmpha : END DEBUGGING PREVIOUS AND CURRENT"
-! !            endif
-! !            debug = .false.
-!         endif
-!
 
 
 !
 ! Modification du jeu tangent pour le grand glissement
 !
 
-     if (lcont .and.  (phasep(1:4) .eq. 'GLIS') .and. (granglis .eq. 1)&
+     if (lcont .and.  (phasep(1:4) .eq. 'GLIS') .and. (l_large_slip)&
          .and. (abs(jeu) .lt. 1.d-6 )) then
         call mngliss(tau1  ,tau2  ,djeut,kappa ,taujeu1, taujeu2, &
                      dnepmait1,dnepmait2,ndim )
@@ -314,17 +210,7 @@ subroutine te0365(option, nomte)
                     ffm, jacobi, jeu, coefac, coefaf,&
                     lambda, coefff, dlagrc, dlagrf, djeu,&
                     rese, nrese, &
-                    vectee, vectmm,mprt11,mprt21,mprt22,mprt1n,mprt2n,kappa,granglis)
-                    
-!         if (l_previous) then
-!             call mmvfpe(phasep_prev, ndim, nne, nnm, norm_prev,&
-!                         tau1_prev, tau2_prev, mprojt_prev, wpg, ffe,&
-!                         ffm, jacobi, jeu_prev, coefac_prev, coefaf_prev,&
-!                         lambda_prev, coefff, dlagrc_prev, dlagrf_prev, djeu_prev,&
-!                         rese_prev, nrese_prev, vectee_prev, vectmm_prev,mprt11_prev,&
-! mprt21_prev,mprt22_prev,mprt1n_prev,mprt2n_prev,kappa_prev)
-!         endif
-                        
+                    vectee, vectmm,mprt11,mprt21,mprt22,mprt1n,mprt2n,kappa,l_large_slip)
     else
         ASSERT(.false.)
     endif
@@ -337,14 +223,6 @@ subroutine te0365(option, nomte)
                     jeu, jacobi, lambda, tau1, tau2,&
                     mprojt, dlagrc, dlagrf, djeu, rese,&
                     vectcc, vectff)
-                   
-!         if (l_previous) then
-!             call mmvape(phasep_prev, leltf, ndim, nnl, nbcps,&
-!                         coefac_prev, coefaf_prev, coefff, ffl, wpg,&
-!                         jeu_prev, jacobi, lambda_prev, tau1_prev, tau2_prev,&
-!                         mprojt_prev, dlagrc_prev, dlagrf_prev, djeu_prev, rese_prev,&
-!                         vectcc_prev, vectff_prev)
-!         endif
     else
         ASSERT(.false.)
     endif
@@ -352,30 +230,19 @@ subroutine te0365(option, nomte)
 ! --- MODIFICATIONS EXCLUSION
 !
     call mmmvex(nnl, nbcps, ndexfr, vectff)
-                  
-!     if (l_previous) then
-!         call mmmvex(nnl, nbcps, ndexfr, vectff_prev)
-!     endif
 !
 ! --- ASSEMBLAGE FINAL
 !
     call mmmvas(ndim, nne, nnm, nnl, nbdm,&
                 nbcps, vectee, vectmm, vectcc, vectff,&
                 vtmp)
-              
-!     if (l_previous) then
-!         call mmmvas(ndim, nne, nnm, nnl, nbdm,&
-!                     nbcps, vectee_prev, vectmm_prev, vectcc_prev, vectff_prev,&
-!                     vtmp_prev)
-!     endif
     
 !---------------------------------------------------------------
 !-------------- RECOPIE DANS LA BASE DE TRAVAIL ----------------
 !---------------------------------------------------------------
 
     alpha_cont = zr(jpcf-1+31)
-!    if (alpha_cont .lt. 1.d0 ) write (6,*) "alpha_cont",alpha_cont
-!    l_previous = .true.   .and. (iresog .ne. 1) .and. (.not. loptf)
+
 !
 ! --- RECUPERATION DES VECTEURS 'OUT' (A REMPLIR => MODE ECRITURE)
 !
@@ -384,12 +251,7 @@ subroutine te0365(option, nomte)
 ! --- RECOPIE VALEURS FINALES
 !
     do iddl = 1, nddl
-!         if (l_previous) then 
-!             zr(jvect-1+iddl) = alpha_cont * vtmp(iddl) &
-!                              + (1-alpha_cont) * vtmp_prev(iddl)
-!         else 
             zr(jvect-1+iddl) = 1.0d0 * vtmp(iddl)
-!         endif
         
 !        if (debug) then
 !            if (vtmp(iddl) .ne. 0.d0) then

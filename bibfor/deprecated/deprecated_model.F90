@@ -51,6 +51,9 @@ character(len=*), intent(in) :: model
     else if (model .eq. 'D_PLAN_INCO_UPGB') then
         vali = 14
         valk    = "MODELISATION='D_PLAN_INCO_UPGB'"
+    else if (model .eq. 'SHB') then
+        vali = 14
+        valk    = "MODELISATION='SHB'"
     else
         goto 999
     endif

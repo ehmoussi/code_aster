@@ -92,12 +92,12 @@ subroutine mdflam(dnorm, vitloc, knorm, cnorm, cost, sint,&
 !     --- Si decharge ou charge inferieure a la limite
             if ( vnorm .gt. 0.d0 .or. -dnorm .le. defmax) then 
                 fnorma = -rigifl*(dnorm+defpla)  - cnorm*vnorm
-                if ((defmax .lt. deft0) .and.(fnorma .ge. flim))  then
+                if ((-dnorm .lt. deft0) .and.(fnorma .ge. flim))  then
                         fnorma=flim 
-                else if ((fnorma .ge. flim+((fseuil-flim)/enfo_fl)*(defmax-deft0)) &
-                    .and.(defmax .lt. deft(1))) then 
-                        fnorma = flim+((fseuil-flim)/enfo_fl)*(defmax-deft0) 
-                else if (fnorma .ge. fseuil) then 
+                else if ((fnorma .ge. flim+((fseuil-flim)/enfo_fl)*(-dnorm-deft0)) &  
+                    .and.(defmax .lt. deft(1))) then             
+                        fnorma = flim+((fseuil-flim)/enfo_fl)*(-dnorm-deft0)          
+                else if ((fnorma .ge. fseuil) .and. (-dnorm .ge. deft(1))) then   
                         fnorma=fseuil 
                 endif
                 if (fnorma .lt. 0.d0) fnorma = 0.d0
@@ -138,9 +138,10 @@ subroutine mdflam(dnorm, vitloc, knorm, cnorm, cost, sint,&
         endif
     endif
 
-    if (-dnorm .gt. defmax) then
-        defmax=-dnorm
-    endif    
+    if (defpla .lt. 0.d0) defpla = 0.d0
+
+    if (-dnorm .gt. defmax) defmax=-dnorm
+
     flocal(1)=0.d0
     flocal(2)=fnorma*cost
     flocal(3)=fnorma*sint

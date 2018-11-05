@@ -15,56 +15,35 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
+#include "asterf_types.h"
 !
 interface
-    subroutine mmcalg(ndim  ,nnm   ,  dffm,  &
-          ddffm ,geomam, &
-          tau1  ,tau2  ,jeu  ,djeu, ddepmam ,norm  , &
-          gene11,gene21,gene22,kappa ,h        , &
-          vech1 ,vech2 ,a     ,ha    ,hah   , &
-          mprt11,mprt21,mprt22,mprt1n,mprt2n, granglis,taujeu1, taujeu2, &
-                  dnepmait1,dnepmait2)
-
-        integer :: ndim
-        integer :: nnm
-        integer :: iresog,granglis
-    
-        real(kind=8) :: geomam(9, 3),ddepmam(9, 3)
-    real(kind=8) :: ddgeo1(3),ddgeo2(3),ddgeo3(3),detkap,ddepmait1(3),ddepmait2(3)
-    real(kind=8) :: dnepmait1 ,dnepmait2 ,taujeu1,taujeu2
-
-        real(kind=8) :: ddffm(3, 9),dffm(2, 9)
-
-        real(kind=8) :: jeu , djeu(3)
-        real(kind=8) :: djeut(3)
-
-        real(kind=8) :: norm(3)
-        real(kind=8) :: tau1(3)
-        real(kind=8) :: tau2(3)
-    
-        real(kind=8) :: mprojn(3, 3)
-        real(kind=8) :: mprojt(3, 3)
-    
-        real(kind=8) :: mprt1n(3, 3)
-        real(kind=8) :: mprt2n(3, 3)
-        real(kind=8) :: mprt11(3, 3)
-        real(kind=8) :: mprt21(3, 3)
-        real(kind=8) :: mprt22(3, 3)
-        
-        real(kind=8) :: gene11(3, 3)
-        real(kind=8) :: gene21(3, 3)
-        real(kind=8) :: gene22(3, 3)
-    
-        real(kind=8) :: kappa(2,2)
-        real(kind=8) :: h(2,2)    
-        real(kind=8) :: a(2,2)        
-        real(kind=8) :: ha(2,2)    
-        real(kind=8) :: hah(2,2)
-    
-    real(kind=8) :: vech1(3)
-    real(kind=8) :: vech2(3)
-    
+    subroutine mmcalg(ndim     , l_large_slip,&
+                      nnm      , dffm     , ddffm ,&
+                      geomam   , ddepmam  ,&
+                      tau1     , tau2     , norm  ,&
+                      jeu      , djeu     ,&
+                      gene11   , gene21   , gene22,&
+                      kappa    , h        ,&
+                      vech1    , vech2    ,&
+                      a        , ha       , hah   ,&
+                      mprt11   , mprt12   , mprt21, mprt22,&
+                      mprt1n   , mprt2n   , mprnt1, mprnt2,&
+                      taujeu1  , taujeu2  ,&
+                      dnepmait1, dnepmait2)
+        integer, intent(in) :: ndim, nnm
+        aster_logical, intent(in) :: l_large_slip
+        real(kind=8), intent(in) :: dffm(2, 9), ddffm(3,9)
+        real(kind=8), intent(in) :: geomam(9, 3), ddepmam(9, 3)
+        real(kind=8), intent(in) :: tau1(3), tau2(3), norm(3)
+        real(kind=8), intent(in) :: jeu, djeu(3)
+        real(kind=8), intent(out) :: gene11(3, 3), gene21(3, 3), gene22(3, 3)
+        real(kind=8), intent(out) :: kappa(2,2), h(2,2)
+        real(kind=8), intent(out) :: vech1(3), vech2(3)
+        real(kind=8), intent(out) :: a(2,2), ha(2,2), hah(2,2)
+        real(kind=8), intent(out) :: mprt11(3, 3), mprt12(3, 3), mprt21(3, 3), mprt22(3, 3)
+        real(kind=8), intent(out) :: mprt1n(3, 3), mprt2n(3, 3), mprnt1(3, 3), mprnt2(3, 3)
+        real(kind=8), intent(out) :: taujeu1, taujeu2
+        real(kind=8), intent(out) :: dnepmait1, dnepmait2
     end subroutine mmcalg
 end interface

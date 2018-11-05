@@ -16,24 +16,24 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine deprecated_algom(algo)
+subroutine deprecated_keyw(keyw)
 !
 implicit none
 !
 #include "asterfort/assert.h"
 #include "asterfort/utmess.h"
 !
-character(len=*), intent(in) :: algo
+character(len=*), intent(in) :: keyw
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! DEPRECATED FEATURES
 !
-! Warning for deprecated algorithm
+! Warning for deprecated keywords
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  algo : name of deprecated algorithm
+! In  keyw : keywords
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -42,10 +42,7 @@ character(len=*), intent(in) :: algo
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    if (algo .eq. 'CALC_G_MULT_ELAS') then
-        vali = 14
-        valk = "type(RESULTAT)='MULT_ELAS'"
-    elseif (algo .eq. 'TITRE') then
+    if (keyw .eq. 'TITRE') then
         vali = 14
         valk = "mot-clef TITRE"
     else
