@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,11 +15,13 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine titrea(niv, nomcon, nomcha, nomobj, st,&
                   motfac, iocc, base, formr, nomsym,&
                   iordr)
-    implicit none
+!
+implicit none
+!
 #include "jeveux.h"
 #include "asterc/getfac.h"
 #include "asterc/getltx.h"
@@ -33,6 +35,7 @@ subroutine titrea(niv, nomcon, nomcha, nomobj, st,&
 #include "asterfort/titred.h"
 #include "asterfort/utmess.h"
 #include "asterfort/wkvect.h"
+#include "asterfort/deprecated_keyw.h"
     character(len=1) :: niv, st, base
     character(len=*) :: nomcon, nomcha, nomobj, motfac, formr
     integer :: iocc
@@ -72,7 +75,7 @@ subroutine titrea(niv, nomcon, nomcha, nomobj, st,&
             vali = iocc
             valk = motfac
             call utmess('A', 'UTILITAI7_4', sk=valk, si=vali)
-            goto 9999
+            goto 999 
         endif
     endif
 !
@@ -100,6 +103,7 @@ subroutine titrea(niv, nomcon, nomcha, nomobj, st,&
         call jeveuo('&&TITRE .TAMPON.ENTREE', 'E', ldon)
         call jeveuo('&&TITRE .LONGUEUR', 'E', llon)
     else
+        call deprecated_keyw('TITRE')
 !        --- TITRE UTILISATEUR ---
         call wkvect('&&TITRE .TAMPON.ENTREE', 'V V K80', nbtitr, ldon)
         call wkvect('&&TITRE .LONGUEUR     ', 'V V I  ', nbtitr, llon)
@@ -112,6 +116,6 @@ subroutine titrea(niv, nomcon, nomcha, nomobj, st,&
                 zi(llon), formr, nomsym, iordr)
     call jedetr('&&TITRE .TAMPON.ENTREE')
     call jedetr('&&TITRE .LONGUEUR     ')
-9999  continue
+999 continue
     call jedema()
 end subroutine

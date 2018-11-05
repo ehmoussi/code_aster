@@ -61,7 +61,7 @@ def configure(self):
         TFELHOME + '/lib',
         # for openblas
         ASTER_ROOT + '/public/lib',
-    ])     
+    ])
 
     self.env.append_value('INCLUDES', [
         YAMMROOT + '/prerequisites/Python-2710/include/python2.7',
@@ -87,6 +87,5 @@ def configure(self):
 
     opts.enable_petsc = False
 
-
-    opts.boost_includes='/home/aster/public/lib_boost_1_55_0_gcc49/include'
-    opts.boost_libs='/home/aster/public/lib_boost_1_55_0_gcc49/lib'
+    opts.boost_includes = '/home/aster/public/lib_boost_1_55_0_gcc49/include'
+    opts.boost_libs = '/home/aster/public/lib_boost_1_55_0_gcc49/lib'

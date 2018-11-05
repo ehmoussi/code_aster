@@ -70,7 +70,7 @@ subroutine te0364(option, nomte)
     integer :: iresof, iresog,count_consistency
     integer :: iresof_prev, iresog_prev
     integer :: ndexfr
-    integer :: granglis=0
+    aster_logical :: l_large_slip=ASTER_FALSE
     integer :: ndexfr_prev
     aster_logical :: laxis, leltf
     aster_logical :: lpenac, lpenaf
@@ -112,8 +112,11 @@ subroutine te0364(option, nomte)
     real(kind=8) :: ffe(9), ffm(9), ffl(9), dffm(2, 9), ddffm(3, 9)
 !
     real(kind=8) :: mprt1n(3, 3)=0.0, mprt2n(3, 3)=0.0
+    real(kind=8) :: mprnt1(3, 3)=0.0, mprnt2(3, 3)=0.0
     real(kind=8) :: mprt1n_prev(3, 3)=0.0, mprt2n_prev(3, 3)=0.0
-    real(kind=8) :: mprt11(3, 3)=0.0, mprt21(3, 3)=0.0, mprt22(3, 3)=0.0
+    real(kind=8) :: mprnt1_prev(3, 3)=0.0, mprnt2_prev(3, 3)=0.0
+    real(kind=8) :: mprt11(3, 3)=0.0, mprt12(3, 3)=0.0, mprt21(3, 3)=0.0, mprt22(3, 3)=0.0
+    real(kind=8) :: mprt12_prev(3, 3)=0.0
     real(kind=8) :: mprt11_prev(3, 3)=0.0, mprt21_prev(3, 3)=0.0, mprt22_prev(3, 3)=0.0
 !
     real(kind=8) :: gene11(3, 3)=0.0, gene21(3, 3)=0.0, gene22(3, 3)=0.0
@@ -233,7 +236,7 @@ subroutine te0364(option, nomte)
     l_previous_frot = (nint(zr(jpcf-1+44)) .eq. 1 )  
     if (option .eq. 'RIGI_CONT') l_previous = l_previous_cont
     if (option .eq. 'RIGI_FROT') l_previous = l_previous_frot
-    granglis = nint(zr(jpcf-1+48))
+    l_large_slip = nint(zr(jpcf-1+48)) .eq. 1
     
 !---------------------------------------------------------------
 !------------- PREPARATION DES CALCULS -------------------------
@@ -293,11 +296,12 @@ subroutine te0364(option, nomte)
                     jeusup, ffe, ffm, dffm,ddffm, ffl,&
                     jacobi, wpg, jeu, djeut, dlagrc,&
                     dlagrf, norm, tau1, tau2, mprojn,&
-                    mprojt, mprt1n, mprt2n, gene11, gene21,&
+                    mprojt, mprt1n, mprt2n, mprnt1, mprnt2,&
+                    gene11, gene21,&
                     gene22, kappa, h, vech1, vech2,&
-                    a, ha, hah, mprt11, mprt21,&
+                    a, ha, hah, mprt11, mprt12, mprt21,&
                     mprt22,taujeu1, taujeu2, &
-                  dnepmait1,dnepmait2, .false._1,granglis)
+                  dnepmait1,dnepmait2, .false._1,l_large_slip)
                     
         if (l_previous) then
             call mmtppe(typmae, typmam, ndim, nne, nnm,&
@@ -305,11 +309,12 @@ subroutine te0364(option, nomte)
                         jeusup_prev, ffe, ffm, dffm,ddffm, ffl,&
                         jacobi, wpg, jeu_prev, djeut_prev, dlagrc_prev,&
                         dlagrf_prev, norm_prev, tau1_prev, tau2_prev, mprojn_prev,&
-                        mprojt_prev, mprt1n_prev, mprt2n_prev, gene11_prev, gene21_prev,&
+                        mprojt_prev, mprt1n_prev, mprt2n_prev, mprnt1_prev, mprnt2_prev,&
+                        gene11_prev, gene21_prev,&
                         gene22_prev, kappa_prev, h_prev, vech1_prev, vech2_prev,&
-                        a_prev, ha_prev, hah_prev, mprt11_prev, mprt21_prev,&
+                        a_prev, ha_prev, hah_prev, mprt11_prev, mprt12_prev, mprt21_prev,&
                         mprt22_prev,taujeu1_prev, taujeu2_prev, &
-                  dnepmait1_prev,dnepmait2_prev, .true._1,granglis)  
+                  dnepmait1_prev,dnepmait2_prev, .true._1,l_large_slip)  
                               
 !            debug = .false.
 !            if (debug) then 
@@ -431,7 +436,7 @@ subroutine te0364(option, nomte)
         endif
 !
 
-     if (lcont .and.  (phasep(1:4) .eq. 'GLIS') .and. (granglis .eq. 1) &
+     if (lcont .and.  (phasep(1:4) .eq. 'GLIS') .and. (l_large_slip) &
          .and. (abs(jeu) .lt. 1.d-6 )) then
             call mngliss(tau1  ,tau2  ,djeut,kappa ,taujeu1, taujeu2, &
                         dnepmait1,dnepmait2,ndim )
@@ -483,25 +488,25 @@ subroutine te0364(option, nomte)
 ! ----- CONTRIBUTIONS NON-LINEARITES GEOMETRIQUES NEWTON GENE
 !
         if (iresog .eq. 1) then
-            call mmtgeo(phasep, ndim, nne, nnm, mprt1n,&
-                        mprt2n, mprojn, mprt11, mprt21, mprt22,&
-                        wpg, ffe, ffm, dffm,ddffm, jacobi,&
-                        coefac, jeu, dlagrc, kappa, vech1,vech2, h, &
-                        coefff,granglis,&
-                            matree, matrmm,&
-                        matrem, matrme)
-                     
+            call mmtgeo(phasep, l_large_slip,&
+                        ndim  , nne   , nnm   ,&
+                        wpg   , ffe   , ffm   , dffm  , ddffm ,&
+                        jacobi, coefac, coefff, jeu   , dlagrc,&
+                        mprojn,&
+                        mprt1n, mprt2n, mprnt1, mprnt2,&
+                        kappa , vech1 , vech2 , h     , hah   ,&
+                        mprt11, mprt12, mprt21, mprt22,&
+                        matree, matrmm, matrem, matrme)
             if (l_previous) then
-                call mmtgeo(phasep_prev, ndim, nne, nnm, mprt1n_prev,&
-                            mprt2n_prev, mprojn_prev, mprt11_prev, mprt21_prev, mprt22_prev,&
-                            wpg, ffe, ffm, dffm,ddffm, jacobi,&
-                            coefac_prev, jeu_prev, dlagrc_prev, kappa_prev,&
-                            vech1_prev,&
-                            vech2_prev, h_prev, &
-                        coefff,granglis,&
-                            matree_prev, matrmm_prev,&
-                            matrem_prev, matrme_prev)
-            
+                call mmtgeo(phasep_prev, l_large_slip,&
+                            ndim       , nne        , nnm        ,&
+                            wpg        , ffe        , ffm        , dffm       , ddffm      ,&
+                            jacobi     , coefac_prev, coefff     , jeu_prev   , dlagrc_prev,&
+                            mprojn_prev,&
+                            mprt1n_prev, mprt2n_prev, mprnt1_prev, mprnt2_prev,&
+                            kappa_prev , vech1_prev , vech2_prev , h_prev     , hah_prev,&
+                            mprt11_prev, mprt12_prev, mprt21_prev, mprt22_prev,&
+                            matree_prev, matrmm_prev, matrem_prev, matrme_prev)
             endif
         endif
 !

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,40 +15,19 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine mmgnem(ndim  ,nnm   ,nne,mprt1n,mprt2n, &
-                  wpg   , &
-          ffe,dffm  ,jacobi,coefac,jeu   , &
-          dlagrc,kappa ,vech1 ,vech2 ,h     , &
-          matrem)
-    
-        integer :: ndim
-        integer :: nnm, nne
-        
-
-        
-        real(kind=8) :: wpg
-        real(kind=8) :: ffe(9)
-        real(kind=8) :: dffm(2, 9)
-        real(kind=8) :: jacobi
-        real(kind=8) :: coefac        
-        real(kind=8) :: jeu
-        real(kind=8) :: dlagrc
-    
-        real(kind=8) :: mprt1n(3, 3)
-        real(kind=8) :: mprt2n(3, 3)
-
-    real(kind=8) :: mprt22(3, 3)
-        
-    real(kind=8) ::  kappa(2, 2)
-    real(kind=8) ::  h(2,2)     
-    
-    real(kind=8) :: vech1(3)
-    real(kind=8) :: vech2(3)
-        
-        real(kind=8) :: matrem(27, 27) 
+    subroutine mmgnem(ndim   ,nnm   , nne   ,&
+                      wpg   , ffe   , dffm  ,&
+                      jacobi, coefac, jeu   , dlagrc,&
+                      mprt1n, mprt2n, &
+                      kappa , vech1 , vech2 , h     ,&
+                      matrem)
+        integer, intent(in) :: ndim, nnm, nne
+        real(kind=8), intent(in) :: wpg, ffe(9),dffm(2,9)
+        real(kind=8), intent(in) :: jacobi, coefac, jeu, dlagrc
+        real(kind=8), intent(in) :: mprt1n(3,3), mprt2n(3,3)
+        real(kind=8), intent(in) :: kappa(2,2), vech1(3), vech2(3), h(2,2)
+        real(kind=8), intent(inout) :: matrem(27, 27)
     end subroutine mmgnem
 end interface
