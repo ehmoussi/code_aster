@@ -23,6 +23,7 @@
 This module defines the different types of calculations
 """
 
+import os.path as osp
 from functools import wraps
 
 import aster_core
@@ -1146,7 +1147,8 @@ class Mac3CoeurEtatInitial(Mac3CoeurLame):
 # helper functions
 def _build_coeur(typ_coeur, macro, sdtab):
     """Return a `Coeur` object of the given type"""
-    datg = aster_core.get_option("repdex")
+    rcdir = aster_core.get_option("rcdir")
+    datg = osp.join(rcdir, "datg")
     factory = CoeurFactory(datg)
     # prepare the Table object
     tab = sdtab.EXTR_TABLE()

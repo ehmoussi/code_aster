@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -111,8 +111,8 @@ def include_materiau_ops(self,
     if not fmat:
         bnmat = ''.join([args['NOM_AFNOR'], '_', args['TYPE_MODELE'],
                          '_', args['VARIANTE'], '.', args['TYPE_VALE']])
-        repmat = aster_core.get_option("repmat")
-        fmat = osp.join(repmat, bnmat)
+        rcdir = aster_core.get_option("rcdir")
+        fmat = osp.join(rcdir, "materiau", bnmat)
 
     if not osp.exists(fmat):
         UTMESS('F', 'FICHIER_1', valk=fmat)
