@@ -32,21 +32,13 @@ def combinaison_ferraillage_prod ( self, **args ):
 COMBINAISON_FERRAILLAGE = MACRO(
     nom = 'COMBINAISON_FERRAILLAGE',
     op = OPS('Macro.combinaison_ferraillage_ops.combinaison_ferraillage_ops'),
-
-    # Need to include Macro directory in export or copy files inside C_A Macro
-    # dir (and adapt next line) :
-
-    #
     fr = tr("COMBINAISON_FERRAILLAGE"),
-
-    #
     sd_prod = combinaison_ferraillage_prod,
     reentrant = 'o:RESULTAT',
     reuse = SIMP ( statut = 'c', typ = CO ),
-    #
+
     RESULTAT = SIMP ( statut = 'o', typ = mult_elas ),
 
-    #
     COMBINAISON   = FACT ( statut = 'o', min = 1 , max = '**',
         TYPE = SIMP ( statut = 'o', typ = 'TXM',
                       into = (
@@ -63,11 +55,6 @@ COMBINAISON_FERRAILLAGE = MACRO(
     CODIFICATION  = SIMP ( statut = 'd', typ = 'TXM', defaut = 'EC2' ,
                            into = ('EC2','UTILISATEUR') ),
 
-    MODELE  = SIMP ( statut = 'o', typ = modele_sdaster ),
-
-    CARA_ELEM  = SIMP ( statut = 'o', typ = cara_elem ),
-
-    #
     b_ec2 = BLOC (
         condition = "equal_to('CODIFICATION', 'EC2')",
         fr = tr ("Paramètres de la méthode EC2"),
@@ -126,10 +113,3 @@ COMBINAISON_FERRAILLAGE = MACRO(
         ),
     ),
 )
-
-
-# INFODEV
-#
-# Moving file in bibpyt/Macro
-#
-# INFODEV
