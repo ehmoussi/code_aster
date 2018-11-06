@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -47,7 +47,6 @@ subroutine op0072()
 #include "asterfort/trlds.h"
 #include "asterfort/utmess.h"
 #include "asterfort/wkvect.h"
-#include "asterfort/zerlag.h"
 #include "blas/dcopy.h"
 #include "blas/ddot.h"
 #include "blas/zcopy.h"
@@ -213,11 +212,6 @@ subroutine op0072()
 !
             call dcopy(neq, zr(idbase+(i-1)*neq), 1, zr(idvect), 1)
 !
-!
-! ------- MISE A ZERO DES DDLS DE LAGRANGE
-!
-            call zerlag(neq, zi(iddeeq), vectr=zr(idvect))
-!
 ! ------- PRODUIT SCALAIRE VECTASS * MODE
 !
             if (typvec .eq. 'R') then
@@ -248,10 +242,6 @@ subroutine op0072()
 !
             call dcopy(neq, zr(idbase+(i-1)*neq), 1, zr(idvec1), 1)
 !
-! ------- MISE A ZERO DES DDLS DE LAGRANGE
-!
-            call zerlag(neq, zi(iddeeq), vectr=zr(idvec1))
-!
 !-------- PRODUIT SCALAIRE MODE(I)*MODE(J)
 !
             do j = i, nbmode
@@ -259,9 +249,6 @@ subroutine op0072()
 ! ------- RECOPIE DU JEME MODE
 !
                 call dcopy(neq, zr(idbase+(j-1)*neq), 1, zr(idvec2), 1)
-! --------- MISE A ZERO DES DDLS DE LAGRANGE
-!
-                call zerlag(neq, zi(iddeeq), vectr=zr(idvec2))
 !
 ! --------- PRODUIT SCALAIRE MODE(I)*MODE(J)
 !
@@ -278,10 +265,6 @@ subroutine op0072()
 ! ------- RECOPIE DU IEME MODE
 !
             call dcopy(neq, zr(idbase+(i-1)*neq), 1, zr(idvec1), 1)
-!
-! ------- MISE A ZERO DES DDLS DE LAGRANGE
-!
-            call zerlag(neq, zi(iddeeq), vectr=zr(idvec1))
 !
 ! ------- PRODUIT SCALAIRE VECTASS * MODE
 !

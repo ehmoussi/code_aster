@@ -21,15 +21,17 @@ subroutine mmvfpe(phasep, ndim, nne, nnm, norm,&
                   ffm, jacobi, jeu, coefac, coefaf,&
                   lambda, coefff, dlagrc, dlagrf, dvite,&
                   rese, nrese,&
-                    vectee, vectmm,mprt11,mprt21,mprt22,mprt1n,mprt2n,kappa,granglis)
+                    vectee, vectmm,mprt11,mprt21,mprt22,mprt1n,mprt2n,kappa,l_large_slip)
 !
 ! person_in_charge: mickael.abbas at edf.fr
 !
 ! aslint: disable=W1504
     implicit none
+#include "asterf_types.h"
 #include "asterfort/mmmvuu.h"
     character(len=9) :: phasep
-    integer :: ndim, nne, nnm,granglis
+    integer :: ndim, nne, nnm
+aster_logical, intent(in) :: l_large_slip
     real(kind=8) :: wpg, ffe(9), ffm(9), jacobi
     real(kind=8) :: dlagrc, dlagrf(2), dvite(3),kappa(2,2)
     real(kind=8) :: rese(3), nrese
@@ -90,6 +92,6 @@ subroutine mmvfpe(phasep, ndim, nne, nnm, norm,&
                 tau1, tau2, mprojt, wpg, ffe,&
                 ffm, jacobi, jeu, coefac, coefaf,&
                 lambda, coefff, dlagrc, dlagrf, dvite,&
-                rese, nrese, vectee, vectmm,mprt11,mprt21,mprt22,mprt1n,mprt2n,kappa,granglis)
+                rese, nrese, vectee, vectmm,mprt11,mprt21,mprt22,mprt1n,mprt2n,kappa,l_large_slip)
 !
 end subroutine
