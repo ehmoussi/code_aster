@@ -236,10 +236,37 @@
 
 
 ================================================================================
-:py:class:`~code_aster.Objects.ElementaryMatrix` object
+:py:class:`~code_aster.Objects.ElementaryMatrixDisplacementComplex` object
 ================================================================================
 
-.. autoclass:: code_aster.Objects.ElementaryMatrix
+.. autoclass:: code_aster.Objects.ElementaryMatrixDisplacementComplex
+   :show-inheritance:
+   :members:
+
+
+================================================================================
+:py:class:`~code_aster.Objects.ElementaryMatrixDisplacementDouble` object
+================================================================================
+
+.. autoclass:: code_aster.Objects.ElementaryMatrixDisplacementDouble
+   :show-inheritance:
+   :members:
+
+
+================================================================================
+:py:class:`~code_aster.Objects.ElementaryMatrixPressureComplex` object
+================================================================================
+
+.. autoclass:: code_aster.Objects.ElementaryMatrixPressureComplex
+   :show-inheritance:
+   :members:
+
+
+================================================================================
+:py:class:`~code_aster.Objects.ElementaryMatrixTemperatureDouble` object
+================================================================================
+
+.. autoclass:: code_aster.Objects.ElementaryMatrixTemperatureDouble
    :show-inheritance:
    :members:
 
