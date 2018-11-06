@@ -1,17 +1,15 @@
 #!/usr/bin/python
 
 import code_aster
+from code_aster.Commands import *
 code_aster.init()
 
 test = code_aster.TestCase()
 
 acier = code_aster.Material()
-elas = code_aster.ElasMaterialBehaviour()
-elas.setDoubleValue( "E", 2.e11 )
-elas.setDoubleValue( "Nu", 0.3 )
 
-acier.addMaterialBehaviour( elas )
-acier.build()
+acier = DEFI_MATERIAU(ELAS = _F(E = 2.e11,
+                               NU = 0.3,),)
 acier.debugPrint( 8 )
 
 # Creation du maillage

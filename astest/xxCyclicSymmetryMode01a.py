@@ -25,14 +25,9 @@ Young = 2.E11
 Poisson = 0.3
 Rho = 7800.0
 
-materElas = code_aster.ElasMaterialBehaviour()
-materElas.setDoubleValue("E", Young)
-materElas.setDoubleValue("Nu", Poisson)
-materElas.setDoubleValue("Rho", Rho)
-
-acier = code_aster.Material()
-acier.addMaterialBehaviour(materElas)
-acier.build()
+acier = DEFI_MATERIAU(ELAS = _F(E = Young,
+                                NU = Poisson,
+                                RHO = Rho),)
 
 affeMat = code_aster.MaterialOnMesh(secteur)
 affeMat.addMaterialOnAllMesh(acier)

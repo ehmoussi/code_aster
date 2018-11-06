@@ -21,5 +21,8 @@
 
 def DETRUIRE(**keywords):
     if keywords.has_key("CONCEPT"):
-        toDelete = keywords["CONCEPT"]["NOM"]
-        del toDelete
+        concepts = keywords["CONCEPT"]
+        if type(concepts) not in (list, tuple):
+            concepts = (concepts,)
+        for concept in concepts:
+            del concept["NOM"]
