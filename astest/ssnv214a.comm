@@ -1,0 +1,213 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+#
+#  TEST A DU  BENCHMARK SUR L EVALUATION DES MODELES POUR LE BETON (2001)
+#  TEST LOI Beton_RAG
+# ________________________________________________________
+#  MAILLAGE : 1 CUB20
+#
+#  CHARGEMENT : 
+#      1 - direction (DEPSxx,DEPSyy,DEPSxy)=(1,0,0)jusqu a EPSxx = 0.00014
+#      2 - direction (DEPSxx,DEPSyy,DEPSxy)=(1,0,0)jusqu a SIGxx = 0.0
+#      3 - direction (DEPSxx,DEPSyy,DEPSxy)=(1,0,0)jusqu a EPSxx = 0.0010
+#      4 - direction (DEPSxx,DEPSyy,DEPSxy)=(1,0,0)jusqu a EPSxx = -0.0040
+#      5 - direction (DEPSxx,DEPSyy,DEPSxy)=(1,0,0)jusqu a SIGxx = 0.0
+#      6 - direction (DEPSxx,DEPSyy,DEPSxy)=(1,0,0)jusqu a EPSxx = -0.005
+#      7 - direction (DEPSxx,DEPSyy,DEPSxy)=(1,0,0)jusqu a EPSxx = 0.0
+# ________________________________________________________
+
+DEBUT( CODE = _F( NIV_PUB_WEB = 'INTERNET'), DEBUG = _F( SDVERI = 'NON'),);
+
+MAIL = LIRE_MAILLAGE( FORMAT = "MED");
+
+MODELE = AFFE_MODELE( MAILLAGE = MAIL,
+                      AFFE =_F( TOUT = 'OUI',
+                                PHENOMENE = 'MECANIQUE',
+                                MODELISATION = '3D'),);
+
+coef = 1.0e6 # Pa
+#coef = 1.   # MPa
+
+ENDO_MC__ = 1.5
+ENDO_MT__ = 1.7
+ENDO_SIGUC__ = 38.3*coef
+ENDO_SIGUT__ = 5.66*coef
+YOUNG__ = 32000.0*coef
+
+MATERIAU = DEFI_MATERIAU( BETON_RAG =_F( COMP_BETON  = 'ENDO',
+                                         ENDO_SIGUC  = ENDO_SIGUC__,
+                                         ENDO_SIGUT  = ENDO_SIGUT__,
+                                         ENDO_MC = ENDO_MC__,
+                                         ENDO_MT = ENDO_MT__,
+                                         ENDO_DRUPRA = 0.15),
+                          ELAS =_F( NU = 0.2,
+                                    E = YOUNG__,
+                                    ALPHA = 0.0),)
+
+CH_MAT = AFFE_MATERIAU( AFFE = _F( MATER = MATERIAU,
+                                   TOUT = 'OUI'),
+                                   MAILLAGE = MAIL);
+
+CLIM = AFFE_CHAR_MECA( MODELE = MODELE,
+                       DDL_IMPO = (_F( GROUP_NO = 'COTEG', DX = 0.0),
+                                   _F( NOEUD = 'N1', DY = 0.0, DZ = 0.0),
+                                   _F( NOEUD = 'N5', DY = 0.0),),);
+
+F_DEPL = DEFI_FONCTION( NOM_PARA = 'INST',
+                        VALE = ( 0.0, 0.0,
+                                 1.0, 1.4e-4,
+                                 2.0, 0.0,
+                                 3.0, 1.0e-3,
+                                 4.0, -4.0e-3,
+                                 5.0, 0.0,
+                                 6.0, -5.0e-3,
+                                 7.0, 0.0),
+                        PROL_DROITE = 'EXCLU',
+                        PROL_GAUCHE = 'EXCLU');
+
+CHAR = AFFE_CHAR_MECA_F( MODELE = MODELE,
+                         DDL_IMPO = _F( GROUP_NO = 'COTED', DX = F_DEPL),);
+
+L_INST = DEFI_LIST_REEL( DEBUT = 0.0,
+                         INTERVALLE = (_F( JUSQU_A = 1.0, NOMBRE = 50),
+                                       _F( JUSQU_A = 2.0, NOMBRE = 50),
+                                       _F( JUSQU_A = 3.0, NOMBRE = 50),
+                                       _F( JUSQU_A = 4.0, NOMBRE = 32),
+                                       _F( JUSQU_A = 5.0, NOMBRE = 50),
+                                       _F( JUSQU_A = 6.0, NOMBRE = 50),
+                                       _F( JUSQU_A = 7.0, NOMBRE = 50),),);
+
+L_DECOUP = DEFI_LIST_INST( DEFI_LIST = _F( LIST_INST = L_INST),
+                                           ECHEC = _F( EVENEMENT = 'ERREUR',
+                                                       ACTION = 'DECOUPE',
+                                                       SUBD_METHODE = 'MANUEL',
+                                                       SUBD_PAS = 4,
+                                                       SUBD_NIVEAU = 4),);
+
+RESU = STAT_NON_LINE( MODELE = MODELE,
+                      CHAM_MATER = CH_MAT,
+                      EXCIT = (_F( CHARGE = CLIM),
+                               _F( CHARGE = CHAR),),
+                      CONVERGENCE = _F( RESI_GLOB_RELA = 1e-6, ITER_GLOB_MAXI = 100),
+                      INCREMENT = _F( LIST_INST = L_DECOUP),
+                      COMPORTEMENT =_F( RELATION = 'BETON_RAG'),
+                      NEWTON = _F( MATRICE = 'ELASTIQUE'),
+                      TITRE = 'BENCH-B LOI BETON_RAG',);
+
+'''
+# NE PAS EFFACER SERT A FAIRE LES COURBES DE LA DOCUMENTATION
+
+# POST TRAITEMENT : COURBE SIGMA-EPSI
+RESU = CALC_CHAMP( reuse = RESU, RESULTAT = RESU, CONTRAINTE = ('SIEF_ELNO'),);
+
+T_DEF = POST_RELEVE_T( ACTION = _F( OPERATION = 'EXTRACTION',
+                                    INTITULE = 'epsi',
+                                    NOEUD='N6',
+                                    RESULTAT = RESU,
+                                    NOM_CHAM = 'DEPL',
+                                    NOM_CMP = 'DX'),);
+
+T_SIG = POST_RELEVE_T( ACTION = _F( OPERATION = 'EXTRACTION',
+                                    INTITULE = 'sigma',
+                                    NOEUD='N6',
+                                    RESULTAT = RESU,
+                                    NOM_CHAM = 'SIEF_ELNO',
+                                    NOM_CMP = 'SIXX'),);
+
+DEF_ECH = FORMULE( NOM_PARA = 'DX', VALE = 'DX*1e4');
+SIG_ECH = FORMULE( NOM_PARA = 'SIXX', VALE = ('SIXX/'+str(coef)),);
+
+T_DEF = CALC_TABLE( reuse = T_DEF, TABLE = T_DEF,
+                    ACTION = _F( OPERATION = 'OPER',
+                                 FORMULE = DEF_ECH,
+                                 NOM_PARA = 'DX_ECH'),);
+
+T_SIG = CALC_TABLE( reuse = T_SIG, TABLE = T_SIG,
+                    ACTION = _F( OPERATION = 'OPER',
+                                 FORMULE = SIG_ECH,
+                                 NOM_PARA = 'SIXX_ECH'),);
+
+deformation = T_DEF.EXTR_TABLE()
+contrainte = T_SIG.EXTR_TABLE()
+
+DEFI_FICHIER( ACTION = 'ASSOCIER', UNITE = 33,
+              FICHIER = ('REPE_OUT/ssnv214a.png'),);
+IMPR_FONCTION( FORMAT = 'XMGRACE',
+               UNITE = 33,
+               PILOTE = 'PNG',
+               BORNE_X = (-60, 0.),
+               BORNE_Y = (-40, 0.),
+               LEGENDE_X = 'Deformation [1.e-4]',
+               LEGENDE_Y = 'Contrainte [MPa]',
+               COURBE = (_F( LEGENDE = 'SIGMA-EPSI',
+                             MARQUEUR = 0,
+                             FREQ_MARQUEUR = 2,
+                             ABSCISSE = deformation.values()['DX_ECH'],
+                             ORDONNEE = contrainte.values()['SIXX_ECH'],),),);
+DEFI_FICHIER( ACTION = 'LIBERER', UNITE = 33);
+'''
+
+## TESTS
+RESU = CALC_CHAMP( reuse = RESU, RESULTAT = RESU, CONTRAINTE = 'SIGM_ELNO');
+
+## VALEURS DE NON-REGRESSION
+TEST_RESU( RESU = (_F( NUME_ORDRE = 282,
+                       RESULTAT = RESU,
+                       NOM_CHAM = 'SIGM_ELNO',
+                       NOEUD = 'N6',
+                       NOM_CMP = 'SIXX',
+                       VALE_CALC = -18.08820482*coef,
+                       MAILLE = 'M1'),),);
+
+## VALEURS EXPERIMENTALES
+TEST_RESU( RESU = (_F( NUME_ORDRE = 50,
+                       REFERENCE = 'SOURCE_EXTERNE',
+                       RESULTAT = RESU,
+                       NOM_CHAM = 'SIGM_ELNO',
+                       NOEUD = 'N6',
+                       NOM_CMP = 'SIXX',
+                       VALE_CALC = 2.939677*coef,
+                       VALE_REFE = 3.0*coef,
+                       PRECISION = 0.07,
+                       MAILLE = 'M1'),
+                   _F( NUME_ORDRE = 150,
+                       REFERENCE = 'SOURCE_EXTERNE',
+                       RESULTAT = RESU,
+                       NOM_CHAM = 'SIGM_ELNO',
+                       NOEUD = 'N6',
+                       NOM_CMP = 'SIXX',
+                       VALE_CALC = 0.001452797752*coef,
+                       VALE_REFE = 0.0*coef,
+                       CRITERE = 'ABSOLU',
+                       PRECISION = 0.02*coef,
+                       MAILLE = 'M1'),
+                   _F( NUME_ORDRE = 332,
+                       REFERENCE = 'SOURCE_EXTERNE',
+                       RESULTAT = RESU,
+                       NOM_CHAM = 'SIGM_ELNO',
+                       NOEUD = 'N6',
+                       NOM_CMP = 'SIXX',
+                       VALE_CALC = 0.*coef,
+                       VALE_REFE = 0.0*coef,
+                       CRITERE = 'ABSOLU',
+                       PRECISION=1.0E-05,
+                       MAILLE = 'M1'),),);
+
+FIN();
