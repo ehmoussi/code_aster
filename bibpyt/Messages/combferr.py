@@ -55,6 +55,21 @@ cata_msg = {
 7 : _(u"""
  -> Qualche NUME_ORDRE non appartiene ai casi disponibili.
 """),
+
+8 : _(u"""
+ -> L'utilisation de COMBINAISON_FERRAILLAGE n'est possible qu'avec 1 seul 
+ -> MODELE
+"""),
+
+9 : _(u"""
+ -> Il caso COMB_DIME_ORDRE esiste già. Verrà sovrascritto !!!
+ -> MODELE
+"""),
+
+10 : _(u"""
+ -> Il caso COMB_DIME_ACIER esiste già. Verrà sovrascritto !!!
+ -> MODELE
+"""),
 }
 
 # INFODEV

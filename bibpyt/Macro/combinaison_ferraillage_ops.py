@@ -60,10 +60,7 @@ def combinaison_ferraillage_ops(self, **args):
 
     # magic always required
     self.set_icmd(1)
-
-    # olddict = copy.copy(Messages.__dict__)        # TEMP-TEMP-TEMP-TEMP
-    # Messages.__dict__.update(GCMessages.__dict__) # TEMP-TEMP-TEMP-TEMP
-
+       
     #
     # declaration of the return variable.
     #
@@ -74,23 +71,23 @@ def combinaison_ferraillage_ops(self, **args):
     affe         = self [ 'AFFE' ]
     codification = self [ 'CODIFICATION' ]
 
-    # modele       = self [ 'MODELE' ] 
+    #
+    # Retriving MODELE from RESULTAT
+    #
+    # modele       = self [ 'MODELE' ] changed with dismoi
     iret, ibid, n_modele = aster.dismoi('MODELE', resu.nom, 'RESULTAT', 'F')
     n_model = n_modele.rstrip()
     if len(n_modele) == 0 or n_model == "#PLUSIEURS":
-            aster.affiche( 'MESSAGE', 'MANNAGGIA MODELLO PLUSIEURS !!!')
+        UTMESS('F', 'COMBFERR_8')
     
     modele = self.get_concept(n_modele)
     
-    # caraelem     = self [ 'CARA_ELEM' ]    
+    #
+    # Retriving CARA_ELEM from RESULTAT
+    #    
+    # caraelem     = self [ 'CARA_ELEM' ] changed with dismoi  
     iret, ibid, n_cara_elem = aster.dismoi('CARA_ELEM', resu.nom, 'RESULTAT', 'F')
-    n_cara_elem = n_cara_elem.rstrip()
-    print('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA')    
-    print(n_cara_elem)
-    print(n_cara_elem.strip())
-    print('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA')        
-    if len(n_cara_elem) == 0 or n_cara_elem == "#PLUSIEURS":
-            aster.affiche( 'MESSAGE', 'MANNAGGIA CARA_ELEM PLUSIEURS !!!')
+    n_cara_elem = n_cara_elem.rstrip()    
     
     caraelem = self.get_concept(n_cara_elem.strip())    
     
@@ -114,7 +111,15 @@ def combinaison_ferraillage_ops(self, **args):
         string.join( [str(i) for i in resu_nom_cas], '*') )
     aster.affiche( 'MESSAGE', 'seelected from NUMEORDRE = ' + \
         string.join( [str(i) for i in resu_num_ord], '*') ) 
-              
+                          
+    # Controlling overwriting results
+    #                           
+    if 'COMB_DIME_ORDRE' in resu_nom_cas:
+        UTMESS('A', 'COMBFERR_9')
+        
+    if 'COMB_DIME_ACIER' in resu_nom_cas:
+        UTMESS('A', 'COMBFERR_10')        
+    
     aster.affiche( 'MESSAGE', ' type combo = ' + \
     '\n' + string.join( [str(i) for i in lst_type_combo], '\n') )
 
@@ -150,7 +155,6 @@ def combinaison_ferraillage_ops(self, **args):
         
     # Maximum reinforcement field (elementwise, component by component)
     __maxifer = CREA_CHAMP (
-        # INFO = 2,
         RESULTAT = __resfer,
         # RESULTAT = resu,
         NOM_CHAM = 'FERRAILLAGE',
@@ -285,8 +289,7 @@ def combinaison_ferraillage_ops(self, **args):
 							 CARA_ELEM = caraelem,
 								),
 						),)
-      
-        
+
     nc = resu.LIST_VARI_ACCES()['NOM_CAS']
 
     aster.affiche( 'MESSAGE', ' name case = ' + \
