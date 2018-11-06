@@ -78,7 +78,7 @@ def includeExternalData(theFile):
     """Retrieve a file in the external data folder"""
     import os.path as osp
     rcdir = aster_core.get_option('rcdir')
-    return osp.join(rcdir, 'datg', theFile)
+    return osp.join(rcdir, 'tests_data', theFile)
 
 CD = includeExternalData('sdll110a.70.datg')
 CK = includeExternalData('sdll110a.71.datg')
