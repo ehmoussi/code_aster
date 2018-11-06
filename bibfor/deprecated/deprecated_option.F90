@@ -47,6 +47,9 @@ character(len=*), intent(in) :: option
     else if (option .eq. 'VAEX_ELGA') then
         vali = 14
         valk = "OPTION='VAEX_ELGA'"
+    else if (option .eq. 'CALC_GTP') then
+        vali = 14
+        valk = "OPTION='CALC_GTP'"
     else
         goto 999
     endif

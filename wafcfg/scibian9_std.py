@@ -18,40 +18,29 @@
 # --------------------------------------------------------------------
 
 """
-Configuration for aster5
+Configuration for Scibian 9
 
 . $HOME/dev/codeaster/devtools/etc/env_unstable.sh
 
-waf configure --use-config=aster5_std --prefix=../install/std
+waf configure --use-config=scibian9_std --prefix=../install/std
 waf install -p
 """
 
 import os
 ASTER_ROOT = os.environ['ASTER_ROOT']
-YAMMROOT = ASTER_ROOT + '/public/default'
+YAMMROOT = os.environ['ROOT_SALOME']
 
-import intel
 import official_programs
 
 
 def configure(self):
     opts = self.options
 
-    intel.configure(self)
     official_programs.configure(self)
     official_programs.check_prerequisites_package(self, YAMMROOT, '20181015')
-    opts.with_prog_salome = True
 
-    # enable TEST_STRICT on the reference server
-    self.env.append_value('DEFINES', ['TEST_STRICT'])
-
-    self.env['ADDMEM'] = 600
-    self.env.append_value('OPT_ENV', [
-        '. /etc/profile.d/lmod.sh',
-        'module load ifort/2016.0.047 icc/2016.0.047 mkl/2016.0.047',
-        'export LD_PRELOAD=/opt/intel/2016.0.047/compilers_and_libraries_2016.0.109/linux/mkl/lib/intel64_lin/libmkl_scalapack_lp64.so:/opt/intel/2016.0.047/compilers_and_libraries_2016.0.109/linux/mkl/lib/intel64_lin/libmkl_intel_lp64.so:/opt/intel/2016.0.047/compilers_and_libraries_2016.0.109/linux/mkl/lib/intel64_lin/libmkl_intel_thread.so:/opt/intel/2016.0.047/compilers_and_libraries_2016.0.109/linux/mkl/lib/intel64_lin/libmkl_core.so:/opt/intel/2016.0.047/compilers_and_libraries_2016.0.109/linux/mkl/lib/intel64_lin/libmkl_blacs_intelmpi_lp64.so:/opt/intel/2016.0.047/compilers_and_libraries_2016.0.109/linux/compiler/lib/intel64_lin/libiomp5.so',
-        'export PATH=' + YAMMROOT + '/prerequisites/Medfichier-331/bin:$PATH',
-    ])
+    self.env.append_value('CXXFLAGS', ['-D_GLIBCXX_USE_CXX11_ABI=0'])
+    self.env['ADDMEM'] = 350
 
     TFELHOME = YAMMROOT + '/prerequisites/Mfront-TFEL311_aster'
     TFELVERS = '3.1.1'

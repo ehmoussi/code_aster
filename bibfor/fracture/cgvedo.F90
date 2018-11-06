@@ -15,18 +15,21 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: samuel.geniaut at edf.fr
+!
 subroutine cgvedo(ndim, option)
-    implicit none
+!
+implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/assert.h"
 #include "asterfort/utmess.h"
-    integer :: ndim
-    character(len=16) :: option
+#include "asterfort/deprecated_option.h"
 !
-! person_in_charge: samuel.geniaut at edf.fr
+integer :: ndim
+character(len=16) :: option
 !
+
 !      SOUS-ROUTINE DE L'OPERATEUR CALC_G
 !
 !      BUT : VERIFICATION DE LA COMPATIBILITE ENTRE NDIM ET OPTION
@@ -46,6 +49,8 @@ subroutine cgvedo(ndim, option)
     if (.not.(ndim.eq.2.or.ndim.eq.3)) then
         call utmess('F', 'RUPTURE0_2')
     endif
+!
+    call deprecated_option(option)
 !
 !     VERIFICATION DE L'OPTION (NORMALEMENT, C'EST FAIT DANS LE CAPY)
     bool = option .eq. 'CALC_G' .or. option .eq. 'CALC_G_GLOB' .or. option .eq. 'CALC_K_G' .or.&

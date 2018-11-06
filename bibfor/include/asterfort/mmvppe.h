@@ -27,11 +27,12 @@ interface
                   norm, tau1, tau2, mprojt, jacobi,&
                   wpg, dlagrc, dlagrf, jeu, djeu,&
                   djeut, mprojn,&
-                   mprt1n, mprt2n, gene11, gene21,&
+                  mprt1n, mprt2n, mprnt1, mprnt2,&
+                  gene11, gene21,&
                   gene22, kappa, h, vech1, vech2,&
-                  a, ha, hah, mprt11, mprt21,&
+                  a, ha, hah, mprt11, mprt12, mprt21,&
                   mprt22,taujeu1, taujeu2, &
-                  dnepmait1,dnepmait2, l_previous,granglis)
+                  dnepmait1,dnepmait2, l_previous,l_large_slip)
         character(len=8) :: typmae
         character(len=8) :: typmam
         integer :: iresog
@@ -40,7 +41,7 @@ interface
         integer :: nnm
         integer :: nnl
         integer :: nbdm
-        integer :: granglis
+        aster_logical, intent(in) :: l_large_slip
         aster_logical :: laxis
         aster_logical :: ldyna
         aster_logical :: l_previous
@@ -63,11 +64,8 @@ interface
         real(kind=8) :: djeut(3)
         real(kind=8) :: ddepmam(9,3)
         real(kind=8) :: mprojn(3, 3)
-        real(kind=8) :: mprt1n(3, 3)
-        real(kind=8) :: mprt2n(3, 3)
-        real(kind=8) :: mprt11(3, 3)
-        real(kind=8) :: mprt21(3, 3)
-        real(kind=8) :: mprt22(3, 3)
+        real(kind=8), intent(out) :: mprt11(3, 3), mprt12(3, 3), mprt21(3, 3), mprt22(3, 3)
+        real(kind=8), intent(out) :: mprt1n(3, 3), mprt2n(3, 3), mprnt1(3, 3), mprnt2(3, 3)
         real(kind=8) :: gene11(3, 3)
         real(kind=8) :: gene21(3, 3)
         real(kind=8) :: gene22(3, 3)
