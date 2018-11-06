@@ -222,13 +222,10 @@ def build(self):
                    'the comments in the wscript file!')
     if self.cmd.startswith('install'):
         # because we can't know which files are obsolete `rm *.py{,c,o}`
-        instdir = self.root.find_node(self.env.ASTERLIBDIR)
-        if instdir and instdir.abspath().startswith(osp.abspath(self.env['PREFIX'])):
-            files = instdir.ant_glob('**/*.py')
-            files.extend(instdir.ant_glob('**/*.pyc'))
-            files.extend(instdir.ant_glob('**/*.pyo'))
-            for i in [i.abspath() for i in files]:
-                os.remove(i)
+        _remove_previous(self.root.find_node(self.env.ASTERLIBDIR),
+                         ['**/*.py', '**/*.pyc', '**/*.pyo'])
+        _remove_previous(self.root.find_node(self.env.ASTERDATADIR),
+                         ['datg/**/*', 'materiau/**/*', 'tests_data/**/*'])
 
     self.load('ext_aster', tooldir='waftools')
     self.recurse('bibfor')
@@ -408,3 +405,13 @@ def get_config_h(self, language):
         else:
             lst.append(cmt % '#undef %s' % x)
     return "\n".join(lst)
+
+
+def _remove_previous(install_node, patterns):
+    # used to remove previously installed files (that are just copied to dest)
+    if not install_node:
+        return
+
+    for pattern in patterns:
+        for i in install_node.ant_glob(pattern):
+            os.remove(i.abspath())
