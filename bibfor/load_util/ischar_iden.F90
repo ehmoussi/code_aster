@@ -87,15 +87,17 @@ character(len=4), intent(in) :: load_type_2
 !
     load_nume_diri = v_load_info(i_load+1)
     load_nume_neum = v_load_info(i_load+nb_load+1)
-    if (load_nume_diri .eq. -1) then
-        ldiri = ASTER_TRUE
-        lelim = ASTER_TRUE
-    else if (load_nume_diri .eq. -2) then
-        ldiri = ASTER_TRUE
-        lelim = ASTER_TRUE
-    else if (load_nume_diri .eq. -3) then
-        ldiri = ASTER_TRUE
-        lelim = ASTER_TRUE
+    if ((load_nume_diri .eq. -1).or.(load_nume_diri .eq. -2).or.(load_nume_diri .eq. -3)) then
+        if (present(load_name)) then
+            char19=load_name
+            call jeveuo(char19//'.AFCI','L',jafci)
+            if (zi(jafci-1+1).gt.0) then
+                ldiri  = ASTER_TRUE
+                lelim  = ASTER_TRUE
+            endif
+        else
+            ASSERT(.false.)
+        endif
     else if (load_nume_diri .eq. 1) then
         ldiri = ASTER_TRUE
         ldual = ASTER_TRUE
