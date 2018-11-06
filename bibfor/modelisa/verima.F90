@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -99,7 +99,9 @@ subroutine verima(nomz, limanz, lonlim, typz, nbval)
 !      --VERIFICATION DE L'APPARTENANCE DES NOEUDS
 !        AUX NOEUDS DU MAILLAGE
 !        -------------------------------------------------------
-        if (sdtyp .eq. 'MAILLAGE_P') ASSERT(.false.)
+        if (sdtyp .eq. 'MAILLAGE_P') then
+            ASSERT(.false.)
+        endif
         call jeexin(noeuma, iret)
         if ((lonlim.ne.0) .and. (iret.eq.0)) then
             valk(1) = type
@@ -152,7 +154,9 @@ subroutine verima(nomz, limanz, lonlim, typz, nbval)
 !      --VERIFICATION DE L'APPARTENANCE DES MAILLES
 !        AUX MAILLES DU MAILLAGE
 !        -------------------------------------------------------
-        if (sdtyp .eq. 'MAILLAGE_P'.and.lonlim.ne.0) ASSERT(.false.)
+        if (sdtyp .eq. 'MAILLAGE_P'.and.lonlim.ne.0) then
+            ASSERT(.false.)
+        endif
         call jeexin(mailma, iret)
         if ((lonlim.ne.0) .and. (iret.eq.0)) then
             valk(1) = type

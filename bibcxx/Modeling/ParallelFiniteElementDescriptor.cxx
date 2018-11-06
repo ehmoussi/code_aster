@@ -207,7 +207,8 @@ ParallelFiniteElementDescriptorInstance::ParallelFiniteElementDescriptorInstance
             }
             toCopy.push_back( explorer[numElem].getType() );
             _delayedNumberedConstraintElementsDescriptor->allocateObject( toCopy.size() );
-            _delayedNumberedConstraintElementsDescriptor->getObject( posInCollection ).setValues( toCopy );
+            _delayedNumberedConstraintElementsDescriptor->getObject( posInCollection ).setValues(
+                toCopy );
             ++posInCollection;
         }
 

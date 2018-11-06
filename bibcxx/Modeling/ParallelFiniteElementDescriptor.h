@@ -92,14 +92,16 @@ public:
      * @typedef ParallelFiniteElementDescriptorPtr
      * @brief Pointeur intelligent vers un ParallelFiniteElementDescriptor
      */
-    typedef boost::shared_ptr< ParallelFiniteElementDescriptorInstance > ParallelFiniteElementDescriptorPtr;
+    typedef boost::shared_ptr< ParallelFiniteElementDescriptorInstance >
+        ParallelFiniteElementDescriptorPtr;
 };
 
 /**
  * @typedef ParallelFiniteElementDescriptorPtr
  * @brief Pointeur intelligent vers un ParallelFiniteElementDescriptorInstance
  */
-typedef boost::shared_ptr< ParallelFiniteElementDescriptorInstance > ParallelFiniteElementDescriptorPtr;
+typedef boost::shared_ptr< ParallelFiniteElementDescriptorInstance >
+    ParallelFiniteElementDescriptorPtr;
 
 #endif /* PARALLELFINITEELEMENTDESCRIPTOR_H_ */
 
