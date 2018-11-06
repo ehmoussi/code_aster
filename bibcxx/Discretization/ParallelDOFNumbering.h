@@ -79,17 +79,6 @@ class ParallelDOFNumberingInstance : public BaseDOFNumberingInstance {
      * @brief Methode permettant de definir les matrices elementaires
      * @param currentMatrix objet ElementaryMatrix
      */
-    void
-    setElementaryMatrix( const ElementaryMatrixPtr &currentMatrix ) throw( std::runtime_error ) {
-        if ( !currentMatrix->getSupportModel()->getSupportMesh()->isParallel() )
-            throw std::runtime_error( "Support mesh must be parallel" );
-        BaseDOFNumberingInstance::setElementaryMatrix( currentMatrix );
-    };
-
-    /**
-     * @brief Methode permettant de definir les matrices elementaires
-     * @param currentMatrix objet ElementaryMatrix
-     */
     void setElementaryMatrix( const ElementaryMatrixDisplacementDoublePtr &currentMatrix )
         throw( std::runtime_error )
     {
