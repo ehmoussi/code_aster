@@ -21,13 +21,8 @@ monModel.build()
 testMesh = monModel.getSupportMesh()
 test.assertEqual(testMesh.getType(), "MAILLAGE_P")
 
-elas = code_aster.ElasMaterialBehaviour()
-elas.setDoubleValue("E", 2.e11)
-elas.setDoubleValue("Nu", 0.3)
-
-acier = code_aster.Material()
-acier.addMaterialBehaviour(elas)
-acier.build()
+acier = DEFI_MATERIAU(ELAS = _F(E = 2.e11,
+                                NU = 0.3,),)
 
 affectMat = code_aster.MaterialOnMesh(pMesh)
 affectMat.addMaterialOnAllMesh( acier )
@@ -43,20 +38,9 @@ charCine.addImposedMechanicalDOFOnNodes(code_aster.PhysicalQuantityComponent.Dy,
 charCine.addImposedMechanicalDOFOnNodes(code_aster.PhysicalQuantityComponent.Dz, 0., "COTE_B")
 charCine.build()
 
-a = code_aster.PartialMesh(pMesh, ["COTE_H"])
-if( rank == 0 ): a.debugPrint(8)
-
-model1 = AFFE_MODELE(MAILLAGE=a,
-                     AFFE=_F(TOUT='OUI',
-                             PHENOMENE='MECANIQUE',
-                             MODELISATION='DIS_T',),
-                     DISTRIBUTION=_F(METHODE='CENTRALISE',),)
-
-charMeca1 = AFFE_CHAR_MECA(MODELE=model1,
+charMeca = AFFE_CHAR_MECA(MODELE=monModel,
                            DDL_IMPO=_F(GROUP_NO=("COTE_H"),
                                        DZ=1.0,),)
-
-charMeca = code_aster.ParallelMechanicalLoad(charMeca1, monModel)
 
 monSolver = code_aster.MumpsSolver(code_aster.Renumbering.Metis)
 

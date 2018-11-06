@@ -28,14 +28,8 @@
 
 #include "MemoryManager/JeveuxCollection.h"
 
-enum EntityType {
-    GroupOfNodesType,
-    GroupOfElementsType,
-    AllMeshEntitiesType,
-    ElementType,
-    NodeType,
-    NoType
-};
+enum EntityType { GroupOfNodesType, GroupOfElementsType, AllMeshEntitiesType,
+                  ElementType, NodeType, NoType };
 
 /**
  * @todo Un MeshEntity pourrait etre concu comme un template qui prendrait
@@ -49,27 +43,53 @@ enum EntityType {
  *        groupe de mailles ou groupe de noeuds
  * @author Nicolas Sellenet
  */
-class VirtualMeshEntity {
-  private:
+class VirtualMeshEntity
+{
+private:
     /** @brief Nom de l'entite */
-    const std::string _name;
+    const VectorString _names;
 
-  protected:
+protected:
     /** @brief Type de l'entite */
-    const EntityType _type;
+    const EntityType  _type;
 
-  public:
+public:
     /**
      * @brief Constructeur
      * @param name nom de l'entite
      */
-    VirtualMeshEntity( std::string name, EntityType type ) : _name( name ), _type( type ){};
+    VirtualMeshEntity( const std::string& name,
+                       EntityType type ): _names( { name } ), _type( type )
+    {};
+
+    /**
+     * @brief Constructor
+     * @param names names in entity
+     */
+    VirtualMeshEntity( const VectorString& names,
+                       EntityType type ): _names( names ), _type( type )
+    {};
 
     /**
      * @brief Obtenir le nom de l'entite
      * @return renvoit le nom de l'entite
      */
-    const std::string &getName() const { return _name; };
+    const std::string& getName() const throw( std::runtime_error )
+    {
+        if( _names.size() > 1 )
+            throw std::runtime_error( "Error in mesh entity. This entity must not be a list" );
+
+        return _names[0];
+    };
+
+    /**
+     * @brief Get the names inside the entity
+     * @return vector of strings
+     */
+    const VectorString& getNames()
+    {
+        return _names;
+    };
 
     virtual EntityType getType() const = 0;
 };
@@ -79,15 +99,27 @@ class VirtualMeshEntity {
  * @brief Cette classe permet de definir des groupes de noeuds
  * @author Nicolas Sellenet
  */
-class GroupOfNodes : public VirtualMeshEntity {
-  public:
+class GroupOfNodes: public VirtualMeshEntity
+{
+public:
     /**
      * @brief Constructeur
      * @param name nom de l'entite
      */
-    GroupOfNodes( std::string name ) : VirtualMeshEntity( name, GroupOfNodesType ){};
+    GroupOfNodes( std::string name ): VirtualMeshEntity( name, GroupOfNodesType )
+    {};
 
-    EntityType getType() const { return _type; };
+    /**
+     * @brief Constructor
+     * @param names names in entity
+     */
+    GroupOfNodes( const VectorString& names): VirtualMeshEntity( names, GroupOfNodesType )
+    {};
+
+    EntityType getType() const
+    {
+        return _type;
+    };
 };
 
 /**
@@ -95,15 +127,27 @@ class GroupOfNodes : public VirtualMeshEntity {
  * @brief Cette classe permet de definir des groupes de mailles
  * @author Nicolas Sellenet
  */
-class GroupOfElements : public VirtualMeshEntity {
-  public:
+class GroupOfElements: public VirtualMeshEntity
+{
+public:
     /**
      * @brief Constructeur
      * @param name nom de l'entite
      */
-    GroupOfElements( std::string name ) : VirtualMeshEntity( name, GroupOfElementsType ){};
+    GroupOfElements( std::string name ): VirtualMeshEntity( name, GroupOfElementsType )
+    {};
 
-    EntityType getType() const { return _type; };
+    /**
+     * @brief Constructor
+     * @param names names in entity
+     */
+    GroupOfElements( const VectorString& names ): VirtualMeshEntity( names, GroupOfElementsType )
+    {};
+
+    EntityType getType() const
+    {
+        return _type;
+    };
 };
 
 /**
@@ -112,15 +156,20 @@ class GroupOfElements : public VirtualMeshEntity {
  *        Equivalent du mot cle simple TOUT = 'OUI'
  * @author Nicolas Sellenet
  */
-class AllMeshEntities : public VirtualMeshEntity {
-  public:
+class AllMeshEntities: public VirtualMeshEntity
+{
+public:
     /**
      * @brief Constructeur
      * @param name nom de l'entite
      */
-    AllMeshEntities() : VirtualMeshEntity( "OUI", AllMeshEntitiesType ){};
+    AllMeshEntities(): VirtualMeshEntity( "OUI", AllMeshEntitiesType )
+    {};
 
-    EntityType getType() const { return _type; };
+    EntityType getType() const
+    {
+        return _type;
+    };
 };
 
 /**
@@ -128,15 +177,27 @@ class AllMeshEntities : public VirtualMeshEntity {
  * @brief Cette classe permet de definir des éléments du maillage
  * @author Nicolas Sellenet
  */
-class Element : public VirtualMeshEntity {
-  public:
+class Element: public VirtualMeshEntity
+{
+public:
     /**
      * @brief Constructeur
      * @param name nom de l'entite
      */
-    Element( std::string name ) : VirtualMeshEntity( name, ElementType ){};
+    Element( std::string name ): VirtualMeshEntity( name, ElementType )
+    {};
 
-    EntityType getType() const { return _type; };
+    /**
+     * @brief Constructor
+     * @param names names in entity
+     */
+    Element( const VectorString& names ): VirtualMeshEntity( names, ElementType )
+    {};
+
+    EntityType getType() const
+    {
+        return _type;
+    };
 };
 
 /**
@@ -144,15 +205,27 @@ class Element : public VirtualMeshEntity {
  * @brief Cette classe permet de definir des noeuds du maillage
  * @author Nicolas Sellenet
  */
-class Node : public VirtualMeshEntity {
-  public:
+class Node: public VirtualMeshEntity
+{
+public:
     /**
      * @brief Constructeur
      * @param name nom de l'entite
      */
-    Node( std::string name ) : VirtualMeshEntity( name, NodeType ){};
+    Node( std::string name ): VirtualMeshEntity( name, NodeType )
+    {};
 
-    EntityType getType() const { return _type; };
+    /**
+     * @brief Constructor
+     * @param names names in entity
+     */
+    Node( const VectorString& names ): VirtualMeshEntity( names, NodeType )
+    {};
+
+    EntityType getType() const
+    {
+        return _type;
+    };
 };
 
 typedef boost::shared_ptr< VirtualMeshEntity > MeshEntityPtr;

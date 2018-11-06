@@ -74,8 +74,7 @@ subroutine ops026()
         endif
         unite = -unite
 !
-        elseif ( (action .eq. 'ASSOCIER') .or. (action .eq. 'RESERVER') )&
-    then
+    elseif ( (action .eq. 'ASSOCIER') .or. (action .eq. 'RESERVER') ) then
 !               ---------------------
         if (nu .eq. 0 .and. nf .gt. 0) then
             sortie = .true.

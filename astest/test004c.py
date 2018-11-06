@@ -3,6 +3,7 @@
 # validation du pilotage inspiré de ssnv176c
 
 import code_aster
+from code_aster.Commands import *
 import numpy as np
 
 code_aster.init()
@@ -20,23 +21,14 @@ monModel.build()
 Young = 32000.0;
 Poisson = 0.2
 
-materElas = code_aster.ElasMaterialBehaviour()
-materElas.setDoubleValue( "E", Young )
-materElas.setDoubleValue( "Nu", Poisson )
-
-materBeton = code_aster.EndoOrthBetonMaterialBehaviour()
-materBeton.setDoubleValue("Alpha", 0.87 )
-materBeton.setDoubleValue("K0", 3.e-4 )
-materBeton.setDoubleValue("K1", 10.5 )
-materBeton.setDoubleValue("K2", 6.e-4)
-materBeton.setDoubleValue("Ecrob",1.e-3)
-materBeton.setDoubleValue("Ecrod", 0.06)
-
-
-beton = code_aster.Material()
-beton.addMaterialBehaviour( materElas )
-beton.addMaterialBehaviour( materBeton )
-beton.build()
+beton = DEFI_MATERIAU(ELAS = _F(E = Young,
+                                NU = Poisson,),
+                      ENDO_ORTH_BETON = _F(ALPHA = 0.87,
+                                           K0 = 3.e-4,
+                                           K1 = 10.5,
+                                           K2 = 6.e-4,
+                                           ECROB = 1.e-3,
+                                           ECROD = 0.06,),)
 
 affectMat = code_aster.MaterialOnMesh(monMaillage)
 affectMat.addMaterialOnAllMesh( beton )

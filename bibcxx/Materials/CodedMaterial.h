@@ -36,18 +36,21 @@
  * @brief Coded material
  * @author Nicolas Sellenet
  */
-class CodedMaterialInstance {
-  private:
-    std::string _name;
-    std::string _type;
-    MaterialOnMeshPtr _mater;
-    ModelPtr _model;
-    PCFieldOnMeshLongPtr _field;
-    JeveuxVectorChar8 _grp;
-    JeveuxVectorLong _nGrp;
-    std::vector< JeveuxVectorLong > _vecOfCodiVectors;
+class CodedMaterialInstance
+{
+private:
+    std::string                       _name;
+    std::string                       _type;
+    MaterialOnMeshPtr                 _mater;
+    ModelPtr                          _model;
+    PCFieldOnMeshLongPtr              _field;
+    JeveuxVectorChar8                 _grp;
+    JeveuxVectorLong                  _nGrp;
+    std::vector< JeveuxVectorLong >   _vecOfCodiVectors;
+    std::vector< JeveuxVectorDouble > _vecOfR8;
+    std::vector< JeveuxVectorLong >   _vecOfIa;
 
-  public:
+public:
     /**
      * @typedef CodedMaterialPtr
      * @brief Pointeur intelligent vers un CodedMaterial
@@ -57,12 +60,15 @@ class CodedMaterialInstance {
     /**
      * @brief Constructeur
      */
-    CodedMaterialInstance( const MaterialOnMeshPtr &mater, const ModelPtr &model );
+    CodedMaterialInstance( const MaterialOnMeshPtr& mater, const ModelPtr& model );
 
     /**
      * @brief Destructeur
      */
-    ~CodedMaterialInstance() { return; };
+    ~CodedMaterialInstance()
+    {
+        return;
+    };
 
     /**
      * @brief Function to allocate the coded material
@@ -78,7 +84,8 @@ class CodedMaterialInstance {
     /**
      * @brief Get the .MATE_CODE
      */
-    PCFieldOnMeshLongPtr getCodedMaterialField() const {
+    PCFieldOnMeshLongPtr getCodedMaterialField() const
+    {
         _field->updateValuePointers();
         return _field;
     };
@@ -87,13 +94,19 @@ class CodedMaterialInstance {
      * @brief Function membre getName
      * @return une chaine contenant le nom de la sd
      */
-    const std::string &getName() const { return _name; };
+    const std::string& getName() const
+    {
+        return _name;
+    };
 
     /**
      * @brief Function membre getType
      * @return le type de la sd
      */
-    const std::string getType() const { return _type; };
+    const std::string getType() const
+    {
+        return _type;
+    };
 };
 
 /**
@@ -101,5 +114,6 @@ class CodedMaterialInstance {
  * @brief Pointeur intelligent vers un CodedMaterialInstance
  */
 typedef boost::shared_ptr< CodedMaterialInstance > CodedMaterialPtr;
+
 
 #endif /* CODEDMATERIAL_H_ */

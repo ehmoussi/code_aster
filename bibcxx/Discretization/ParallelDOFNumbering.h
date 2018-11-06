@@ -79,8 +79,45 @@ class ParallelDOFNumberingInstance : public BaseDOFNumberingInstance {
      * @brief Methode permettant de definir les matrices elementaires
      * @param currentMatrix objet ElementaryMatrix
      */
-    void
-    setElementaryMatrix( const ElementaryMatrixPtr &currentMatrix ) throw( std::runtime_error ) {
+    void setElementaryMatrix( const ElementaryMatrixDisplacementDoublePtr &currentMatrix )
+        throw( std::runtime_error )
+    {
+        if ( !currentMatrix->getSupportModel()->getSupportMesh()->isParallel() )
+            throw std::runtime_error( "Support mesh must be parallel" );
+        BaseDOFNumberingInstance::setElementaryMatrix( currentMatrix );
+    };
+
+    /**
+     * @brief Methode permettant de definir les matrices elementaires
+     * @param currentMatrix objet ElementaryMatrix
+     */
+    void setElementaryMatrix( const ElementaryMatrixDisplacementComplexPtr &currentMatrix )
+        throw( std::runtime_error )
+    {
+        if ( !currentMatrix->getSupportModel()->getSupportMesh()->isParallel() )
+            throw std::runtime_error( "Support mesh must be parallel" );
+        BaseDOFNumberingInstance::setElementaryMatrix( currentMatrix );
+    };
+
+    /**
+     * @brief Methode permettant de definir les matrices elementaires
+     * @param currentMatrix objet ElementaryMatrix
+     */
+    void setElementaryMatrix( const ElementaryMatrixTemperatureDoublePtr &currentMatrix )
+        throw( std::runtime_error )
+    {
+        if ( !currentMatrix->getSupportModel()->getSupportMesh()->isParallel() )
+            throw std::runtime_error( "Support mesh must be parallel" );
+        BaseDOFNumberingInstance::setElementaryMatrix( currentMatrix );
+    };
+
+    /**
+     * @brief Methode permettant de definir les matrices elementaires
+     * @param currentMatrix objet ElementaryMatrix
+     */
+    void setElementaryMatrix( const ElementaryMatrixPressureComplexPtr &currentMatrix )
+        throw( std::runtime_error )
+    {
         if ( !currentMatrix->getSupportModel()->getSupportMesh()->isParallel() )
             throw std::runtime_error( "Support mesh must be parallel" );
         BaseDOFNumberingInstance::setElementaryMatrix( currentMatrix );

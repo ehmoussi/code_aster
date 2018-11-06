@@ -216,22 +216,21 @@ class MaterialAssignment(ExecuteCommand):
         kwTout = fkw.get("TOUT")
         kwGrMa = fkw.get("GROUP_MA")
         kwMail = fkw.get("MAILLE")
-        mater = fkw[ "MATER" ]
+        mater = fkw["MATER"]
+        if type(mater) is not list:
+            mater = list(mater)
 
-        for mater_i in mater:
-            if kwTout != None:
-                self._result.addMaterialOnAllMesh(mater_i)
-            elif kwGrMa != None:
-                kwGrMa = force_list(kwGrMa)
-                for grp in kwGrMa:
-                    self._result.addMaterialOnGroupOfElements(mater_i, grp)
-            elif kwMail != None:
-                kwMail = force_list(kwMail)
-                for elem in kwMail:
-                    self._result.addMaterialOnElement(mater_i, elem)
-            else:
-                raise TypeError("At least {0}, {1} or {2} is required"
-                                .format("TOUT", "GROUP_MA", "MAILLE"))
+        if kwTout != None:
+            self._result.addMaterialsOnAllMesh(mater)
+        elif kwGrMa != None:
+            kwGrMa = force_list(kwGrMa)
+            self._result.addMaterialsOnGroupOfElements(mater, kwGrMa)
+        elif kwMail != None:
+            kwMail = force_list(kwMail)
+            self._result.addMaterialsOnElement(mater, kwMail)
+        else:
+            raise TypeError("At least {0}, {1} or {2} is required"
+                            .format("TOUT", "GROUP_MA", "MAILLE"))
 
 
 AFFE_MATERIAU = MaterialAssignment.run

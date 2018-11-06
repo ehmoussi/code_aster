@@ -193,7 +193,7 @@ KI_broek=sigma*sqrt(3.1415*a/cos(3.1415*a/W));
 TOL_K2=0.01*KI_broek
 
 #TEST sur KI
-TEST_TABLE(TABLE=SIF_1,
+TEST_TABLE(TABLE=SIF[1],
            NOM_PARA='K1',
            REFERENCE='ANALYTIQUE',
            VALE_CALC=22870811.7146,
@@ -203,7 +203,7 @@ TEST_TABLE(TABLE=SIF_1,
            CRITERE='RELATIF',)
 
 #TEST ABSOLU sur KII
-TEST_TABLE(TABLE=SIF_1,
+TEST_TABLE(TABLE=SIF[1],
            NOM_PARA='K2',
            CRITERE='ABSOLU',
            REFERENCE='ANALYTIQUE',
@@ -212,7 +212,7 @@ TEST_TABLE(TABLE=SIF_1,
            VALE_REFE=(0.0, ),
            PRECISION=TOL_K2,)
 
-IMPR_TABLE(TABLE=SIF_1,
+IMPR_TABLE(TABLE=SIF[1],
            FORMAT_R='E20.13');
 
 #==================================
@@ -224,7 +224,7 @@ KI_broek=sigma*sqrt(3.1415*a/cos(3.1415*a/W));
 TOL_K2=0.01*KI_broek
 
 #TEST sur KI
-TEST_TABLE(TABLE=SIF_2,
+TEST_TABLE(TABLE=SIF[2],
            NOM_PARA='K1',
            REFERENCE='ANALYTIQUE',
            VALE_CALC=25819168.8221,
@@ -234,7 +234,7 @@ TEST_TABLE(TABLE=SIF_2,
            CRITERE='RELATIF',)
 
 #TEST ABSOLU sur KII
-TEST_TABLE(TABLE=SIF_2,
+TEST_TABLE(TABLE=SIF[2],
            NOM_PARA='K2',
            CRITERE='ABSOLU',
            REFERENCE='ANALYTIQUE',
@@ -243,7 +243,7 @@ TEST_TABLE(TABLE=SIF_2,
            VALE_REFE=(0.0, ),
            PRECISION=TOL_K2,)
 
-IMPR_TABLE(TABLE=SIF_2,
+IMPR_TABLE(TABLE=SIF[2],
            FORMAT_R='E20.13');
 
 #==================================
@@ -255,7 +255,7 @@ KI_broek=sigma*sqrt(3.1415*a/cos(3.1415*a/W));
 TOL_K2=0.01*KI_broek
 
 #TEST sur KI
-TEST_TABLE(TABLE=SIF_3,
+TEST_TABLE(TABLE=SIF[3],
            NOM_PARA='K1',
            REFERENCE='ANALYTIQUE',
            VALE_CALC=28733993.6364,
@@ -265,7 +265,7 @@ TEST_TABLE(TABLE=SIF_3,
            CRITERE='RELATIF',)
 
 #TEST ABSOLU sur KII
-TEST_TABLE(TABLE=SIF_3,
+TEST_TABLE(TABLE=SIF[3],
            NOM_PARA='K2',
            CRITERE='ABSOLU',
            REFERENCE='ANALYTIQUE',
@@ -274,7 +274,7 @@ TEST_TABLE(TABLE=SIF_3,
            VALE_REFE=(0.0, ),
            PRECISION=TOL_K2,)
 
-IMPR_TABLE(TABLE=SIF_3,
+IMPR_TABLE(TABLE=SIF[3],
            FORMAT_R='E20.13');
 
 #----------------------------------------------

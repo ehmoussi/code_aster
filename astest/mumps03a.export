@@ -6,4 +6,5 @@ P mpi_nbnoeud 1
 P testlist verification sequential
 
 F comm mumps03a.comm D 1
+F comm mumps03a.com1 D 1
 F mmed ahlv100a.mmed D 20

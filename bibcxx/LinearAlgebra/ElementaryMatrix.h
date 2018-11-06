@@ -34,26 +34,20 @@
 #include "Loads/MechanicalLoad.h"
 #include "DataFields/ElementaryResult.h"
 #include "Modeling/FiniteElementDescriptor.h"
+#include "Loads/PhysicalQuantity.h"
 
 /**
- * @class ElementaryMatrixInstance
+ * @class BaseElementaryMatrixInstance
  * @brief Class definissant une sd_matr_elem
  * @author Nicolas Sellenet
  */
-class ElementaryMatrixInstance : public DataStructure {
-  private:
-    /** @typedef std::list de MechanicalLoad */
-    typedef std::list< GenericMechanicalLoadPtr > ListMecaLoad;
-    /** @typedef Iterateur sur une std::list de MechanicalLoad */
-    typedef ListMecaLoad::iterator ListMecaLoadIter;
-
+class BaseElementaryMatrixInstance : public DataStructure
+{
+protected:
     /** @brief Objet Jeveux '.RERR' */
     JeveuxVectorChar24 _description;
     /** @brief Objet Jeveux '.RELR' */
     JeveuxVectorChar24 _listOfElementaryResults;
-    /** @brief Vectors of RESUELEM */
-    std::vector< ElementaryResultDoublePtr > _realVector;
-    std::vector< ElementaryResultComplexPtr > _complexVector;
     /** @brief Booleen indiquant si la sd est vide */
     bool _isEmpty;
     /** @brief Modele support */
@@ -64,51 +58,29 @@ class ElementaryMatrixInstance : public DataStructure {
     std::vector< FiniteElementDescriptorPtr > _FEDVector;
     std::set< std::string > _FEDNames;
 
-  public:
     /**
-     * @typedef ElementaryMatrixPtr
-     * @brief Pointeur intelligent vers un ElementaryMatrix
+     * @brief Constructor with a name
      */
-    typedef boost::shared_ptr< ElementaryMatrixInstance > ElementaryMatrixPtr;
+    BaseElementaryMatrixInstance( const std::string name,
+                                  const JeveuxMemory memType = Permanent,
+                                  const std::string type = "MATR_ELEM" ):
+        DataStructure( name, 19, type, memType ),
+        _description( JeveuxVectorChar24( getName() + ".RERR" ) ),
+        _listOfElementaryResults( JeveuxVectorChar24( getName() + ".RELR" ) ),
+        _isEmpty( true ),
+        _supportModel( nullptr ), _materOnMesh( nullptr )
+    {};
 
     /**
-     * @brief Constructeur
+     * @brief Constructor
      */
-    ElementaryMatrixInstance( const std::string name, const std::string type,
-                              const JeveuxMemory memType )
-        : DataStructure( name, 19, type, memType ),
-          _description( JeveuxVectorChar24( getName() + ".RERR" ) ),
-          _listOfElementaryResults( JeveuxVectorChar24( getName() + ".RELR" ) ), _isEmpty( true ),
-          _supportModel( nullptr ), _materOnMesh( nullptr ){};
+    BaseElementaryMatrixInstance( const JeveuxMemory memType = Permanent,
+                                  const std::string type = "MATR_ELEM" ):
+        BaseElementaryMatrixInstance( ResultNaming::getNewResultName(), memType, type )
+    {};
 
-    /**
-     * @brief Constructeur
-     */
-    ElementaryMatrixInstance( const std::string name, const std::string type )
-        : ElementaryMatrixInstance( name, type, Permanent ){};
 
-    /**
-     * @brief Constructeur: 'type' should be the full type
-     */
-    ElementaryMatrixInstance( std::string type, const JeveuxMemory memType = Permanent )
-        : ElementaryMatrixInstance( ResultNaming::getNewResultName(), "MATR_ELEM_" + type,
-                                    memType ){};
-
-    /**
-     * @brief Constructeur
-     */
-    ElementaryMatrixInstance( const JeveuxMemory memType = Permanent )
-        : ElementaryMatrixInstance( ResultNaming::getNewResultName(), "MATR_ELEM", memType ){};
-
-    /**
-     * @brief Destructeur
-     */
-    ~ElementaryMatrixInstance() {
-#ifdef __DEBUG_GC__
-        std::cout << "ElementaryMatrixInstance.destr: " << this->getName() << std::endl;
-#endif
-    };
-
+public:
     /**
      * @brief Add a FiniteElementDescriptor to elementary matrix
      * @param FiniteElementDescriptorPtr support FiniteElementDescriptor
@@ -176,6 +148,55 @@ class ElementaryMatrixInstance : public DataStructure {
             _FEDNames.insert( name );
         }
     };
+};
+
+typedef boost::shared_ptr< BaseElementaryMatrixInstance > BaseElementaryMatrixPtr;
+
+/**
+ * @class ElementaryMatrixInstance
+ * @brief Class definissant une sd_matr_elem template
+ * @author Nicolas Sellenet
+ */
+template < class ValueType, PhysicalQuantityEnum PhysicalQuantity >
+class ElementaryMatrixInstance : public BaseElementaryMatrixInstance
+{
+  private:
+    /** @brief Vectors of RESUELEM */
+    std::vector< ElementaryResultDoublePtr > _realVector;
+    std::vector< ElementaryResultComplexPtr > _complexVector;
+
+  public:
+    /**
+     * @typedef ElementaryMatrixPtr
+     * @brief Pointeur intelligent vers un ElementaryMatrix
+     */
+    typedef boost::shared_ptr< ElementaryMatrixInstance< ValueType, PhysicalQuantity > >
+        ElementaryMatrixPtr;
+
+    /**
+     * @brief Constructor with a name
+     */
+    ElementaryMatrixInstance( const std::string name,  const JeveuxMemory memType = Permanent ):
+        BaseElementaryMatrixInstance( name, memType,
+            "MATR_ELEM_" + std::string( PhysicalQuantityNames[PhysicalQuantity] ) +
+            ( typeid( ValueType ) == typeid(double)? "_R" : "_C" ) )
+    {};
+
+    /**
+     * @brief Constructor
+     */
+    ElementaryMatrixInstance( const JeveuxMemory memType = Permanent ):
+        ElementaryMatrixInstance( ResultNaming::getNewResultName(), memType )
+    {};
+
+    /**
+     * @brief Destructeur
+     */
+    ~ElementaryMatrixInstance() {
+#ifdef __DEBUG_GC__
+        std::cout << "ElementaryMatrixInstance.destr: " << this->getName() << std::endl;
+#endif
+    };
 
     /**
      * @brief function to update ElementaryResultInstance
@@ -196,10 +217,32 @@ class ElementaryMatrixInstance : public DataStructure {
     friend class DiscreteProblemInstance;
 };
 
-/**
- * @typedef ElementaryMatrixPtr
- * @brief Pointeur intelligent vers un ElementaryMatrixInstance
- */
-typedef boost::shared_ptr< ElementaryMatrixInstance > ElementaryMatrixPtr;
+/** @typedef Definition d'une matrice élémentaire de double */
+template class ElementaryMatrixInstance< double, Displacement >;
+typedef ElementaryMatrixInstance< double, Displacement > ElementaryMatrixDisplacementDoubleInstance;
+
+/** @typedef Definition d'une matrice élémentaire de complexe */
+template class ElementaryMatrixInstance< DoubleComplex, Displacement >;
+typedef ElementaryMatrixInstance< DoubleComplex,
+                                  Displacement > ElementaryMatrixDisplacementComplexInstance;
+
+/** @typedef Definition d'une matrice élémentaire de double temperature */
+template class ElementaryMatrixInstance< double, Temperature >;
+typedef ElementaryMatrixInstance< double,
+                                  Temperature > ElementaryMatrixTemperatureDoubleInstance;
+
+/** @typedef Definition d'une matrice élémentaire de DoubleComplex pression */
+template class ElementaryMatrixInstance< DoubleComplex, Pressure >;
+typedef ElementaryMatrixInstance< DoubleComplex,
+                                  Pressure > ElementaryMatrixPressureComplexInstance;
+
+typedef boost::shared_ptr< ElementaryMatrixDisplacementDoubleInstance >
+    ElementaryMatrixDisplacementDoublePtr;
+typedef boost::shared_ptr< ElementaryMatrixDisplacementComplexInstance >
+    ElementaryMatrixDisplacementComplexPtr;
+typedef boost::shared_ptr< ElementaryMatrixTemperatureDoubleInstance >
+    ElementaryMatrixTemperatureDoublePtr;
+typedef boost::shared_ptr< ElementaryMatrixPressureComplexInstance >
+    ElementaryMatrixPressureComplexPtr;
 
 #endif /* ELEMENTARYMATRIX_H_ */

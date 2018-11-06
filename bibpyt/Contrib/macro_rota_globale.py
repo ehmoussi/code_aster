@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -20,9 +20,10 @@
 from code_aster.Cata.Syntax import *
 from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
+from code_aster.Commands.ExecuteCommand import UserMacro
 
 
-def macr_rota_globale_ops(self, RESULTAT, GROUP_NO_ORIG, GROUP_NO_EXTR, **args):
+def macr_rota_globale_ops(self, **args):
     """
     Macro MACR_ROTA_GLOBALE : rotation globale sur une tuyauterie
 
@@ -39,6 +40,9 @@ def macr_rota_globale_ops(self, RESULTAT, GROUP_NO_ORIG, GROUP_NO_EXTR, **args):
     import os
     from code_aster.Cata.Syntax import _F
     from Noyau.N_utils import AsType
+    RESULTAT = args["RESULTAT"]
+    GROUP_NO_ORIG = args["GROUP_NO_ORIG"]
+    GROUP_NO_EXTR = args["GROUP_NO_EXTR"]
     ier = 0
     # On importe les definitions des commandes a utiliser dans la macro
     POST_RELEVE_T = self.get_cmd('POST_RELEVE_T')
@@ -92,15 +96,18 @@ def macr_rota_globale_ops(self, RESULTAT, GROUP_NO_ORIG, GROUP_NO_EXTR, **args):
     ROTGD = DEFI_FONCTION(NOM_PARA='INST',
                           VALE_PARA=__LINST,
                           VALE_FONC=__LROTG,)
-    return ier
+    return ROTGD
 
 
-MACR_ROTA_GLOBALE = MACRO(nom="MACR_ROTA_GLOBALE", op=macr_rota_globale_ops,
-                          sd_prod=fonction_sdaster,
-                          docu="", reentrant='n',
-                          fr="calcul de la rotation globale dans un coude.",
-                          RESULTAT=SIMP(
-                          statut='o', typ=(evol_elas, evol_noli, evol_ther)),
-                          GROUP_NO_ORIG = SIMP(statut='o', typ=grno, max=1),
-                          GROUP_NO_EXTR = SIMP(statut='o', typ=grno, max=1),
-                          )
+MACR_ROTA_GLOBALE_CATA = MACRO(nom="MACR_ROTA_GLOBALE", op=macr_rota_globale_ops,
+                               sd_prod=fonction_sdaster,
+                               docu="", reentrant='n',
+                               fr="calcul de la rotation globale dans un coude.",
+                               RESULTAT=SIMP(
+                               statut='o', typ=(evol_elas, evol_noli, evol_ther)),
+                               GROUP_NO_ORIG = SIMP(statut='o', typ=grno, max=1),
+                               GROUP_NO_EXTR = SIMP(statut='o', typ=grno, max=1),
+                               )
+
+
+MACR_ROTA_GLOBALE = UserMacro("MACR_ROTA_GLOBALE", MACR_ROTA_GLOBALE_CATA, macr_rota_globale_ops)

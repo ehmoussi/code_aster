@@ -2,6 +2,7 @@
 # coding: utf-8
 
 import code_aster
+from code_aster.Commands import *
 code_aster.init()
 
 test = code_aster.TestCase()
@@ -17,13 +18,8 @@ monModel.build()
 YOUNG = 200000.0;
 POISSON = 0.3;
 
-materElas = code_aster.ElasMaterialBehaviour()
-materElas.setDoubleValue( "E", YOUNG )
-materElas.setDoubleValue( "Nu", POISSON )
-
-acier = code_aster.Material()
-acier.addMaterialBehaviour( materElas )
-acier.build()
+acier = DEFI_MATERIAU(ELAS = _F(E = YOUNG,
+                                NU = POISSON,),)
 #acier.debugPrint(6)
 
 affectMat = code_aster.MaterialOnMesh(monMaillage)

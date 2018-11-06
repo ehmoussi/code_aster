@@ -106,6 +106,8 @@ class MaterialDefinition(ExecuteCommand):
                         raise NotImplementedError("Unsupported type for keyword: "
                                                   "{0} <{1}>"
                                                   .format(skwName, type(skw)))
+                elif type(skw) in (list, tuple) and type(skw[0]) in (float, int, numpy.float64):
+                        cRet = matBehav.setVectorOfDoubleValue(iName, skw)
                 else:
                     raise NotImplementedError("Unsupported type for keyword: "
                                               "{0} <{1}>"

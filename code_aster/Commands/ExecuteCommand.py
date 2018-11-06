@@ -168,17 +168,20 @@ class ExecuteCommand(object):
         return self._cata.name
 
     def _visitSyntax(self, toVisit):
+        name = self._result.getName()
         if type(toVisit) in (list, tuple):
             for value in toVisit:
                 if isinstance(value, DataStructure):
-                    self._result.addReference(value)
+                    if name != value.getName():
+                        self._result.addReference(value)
                 else:
                     self._visitSyntax(value)
         elif type(toVisit) in (dict, _F):
             for value in toVisit.itervalues():
                 self._visitSyntax(value)
         elif isinstance(toVisit, DataStructure):
-            self._result.addReference(toVisit)
+            if name != toVisit.getName():
+                self._result.addReference(toVisit)
 
     def add_references(self, keywords):
         """Add reference to DataStructure in self._result
