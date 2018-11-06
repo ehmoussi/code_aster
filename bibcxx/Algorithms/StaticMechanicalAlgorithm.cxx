@@ -35,8 +35,7 @@ void StaticMechanicalAlgorithm::oneStep( const CurrentContext &ctx ) throw( Algo
     BaseDOFNumberingPtr dofNum1 = ctx._results->getLastDOFNumbering();
 
     if ( ctx._rank == 1 || !ctx._isConst ) {
-        ElementaryMatrixPtr matrElem =
-            ctx._discreteProblem->buildElementaryStiffnessMatrix( ctx._time );
+        auto matrElem = ctx._discreteProblem->buildElementaryStiffnessMatrix( ctx._time );
 
         // Build assembly matrix
         ctx._aMatrix->clearElementaryMatrix();

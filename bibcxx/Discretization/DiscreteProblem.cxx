@@ -132,8 +132,11 @@ ElementaryVectorPtr DiscreteProblemInstance::buildElementaryNeumannVector(
     return retour;
 };
 
-ElementaryMatrixPtr DiscreteProblemInstance::buildElementaryStiffnessMatrix( double time ) {
-    ElementaryMatrixPtr retour( new ElementaryMatrixInstance( "DEPL_R", Permanent ) );
+ElementaryMatrixDisplacementDoublePtr
+    DiscreteProblemInstance::buildElementaryStiffnessMatrix( double time )
+{
+    ElementaryMatrixDisplacementDoublePtr
+        retour( new ElementaryMatrixDisplacementDoubleInstance( Permanent ) );
     ModelPtr curModel = _study->getSupportModel();
     retour->setSupportModel( curModel );
     MaterialOnMeshPtr curMater = _study->getMaterialOnMesh();
@@ -173,12 +176,16 @@ ElementaryMatrixPtr DiscreteProblemInstance::buildElementaryStiffnessMatrix( dou
 };
 
 // TODO calcul de la matrice tangente pour l'étape de prédiction de la méthode de Newton
-ElementaryMatrixPtr DiscreteProblemInstance::buildElementaryTangentMatrix( double time ) {
+ElementaryMatrixDisplacementDoublePtr DiscreteProblemInstance::buildElementaryTangentMatrix
+    ( double time )
+{
     return this->buildElementaryStiffnessMatrix( time );
 };
 
 // TODO calcul de la matrice jacobienne pour l'étape de correction de la méthode de Newton
-ElementaryMatrixPtr DiscreteProblemInstance::buildElementaryJacobianMatrix( double time ) {
+ElementaryMatrixDisplacementDoublePtr DiscreteProblemInstance::buildElementaryJacobianMatrix
+    ( double time )
+{
     return this->buildElementaryStiffnessMatrix( time );
 };
 
@@ -292,13 +299,12 @@ SyntaxMapContainer DiscreteProblemInstance::computeMatrixSyntax( const std::stri
     return dict;
 };
 
-ElementaryMatrixPtr DiscreteProblemInstance::computeMechanicalMatrix(
-    const std::string &optionName ) throw( std::runtime_error ) {
-    ElementaryMatrixPtr retour( new ElementaryMatrixInstance( Permanent ) );
+ElementaryMatrixDisplacementDoublePtr DiscreteProblemInstance::computeMechanicalMatrix(
+    const std::string &optionName ) throw( std::runtime_error )
+{
+    ElementaryMatrixDisplacementDoublePtr retour(
+         new ElementaryMatrixDisplacementDoubleInstance( Permanent ) );
     retour->setSupportModel( _study->getSupportModel() );
-
-    // Comme on calcul *_MECA, il faut preciser le type de la sd
-    retour->setType( retour->getType() + "_DEPL_R" );
 
     // Definition du bout de fichier de commande correspondant a CALC_MATR_ELEM
     CommandSyntax cmdSt( "CALC_MATR_ELEM" );
@@ -318,14 +324,13 @@ ElementaryMatrixPtr DiscreteProblemInstance::computeMechanicalMatrix(
     return retour;
 };
 
-ElementaryMatrixPtr DiscreteProblemInstance::computeMechanicalDampingMatrix(
-    const ElementaryMatrixPtr &rigidity,
-    const ElementaryMatrixPtr &mass ) throw( std::runtime_error ) {
-    ElementaryMatrixPtr retour( new ElementaryMatrixInstance( Permanent ) );
+ElementaryMatrixDisplacementDoublePtr DiscreteProblemInstance::computeMechanicalDampingMatrix(
+    const ElementaryMatrixDisplacementDoublePtr &rigidity,
+    const ElementaryMatrixDisplacementDoublePtr &mass ) throw( std::runtime_error )
+{
+    ElementaryMatrixDisplacementDoublePtr
+        retour( new ElementaryMatrixDisplacementDoubleInstance( Permanent ) );
     retour->setSupportModel( rigidity->getSupportModel() );
-
-    // Comme on calcul *_MECA, il faut preciser le type de la sd
-    retour->setType( retour->getType() + "_DEPL_R" );
 
     // Definition du bout de fichier de commande correspondant a CALC_MATR_ELEM
     CommandSyntax cmdSt( "CALC_MATR_ELEM" );
@@ -347,12 +352,12 @@ ElementaryMatrixPtr DiscreteProblemInstance::computeMechanicalDampingMatrix(
     return retour;
 };
 
-ElementaryMatrixPtr
+ElementaryMatrixDisplacementDoublePtr
 DiscreteProblemInstance::computeMechanicalMassMatrix() throw( std::runtime_error ) {
     return computeMechanicalMatrix( "RIGI_MECA" );
 };
 
-ElementaryMatrixPtr
+ElementaryMatrixDisplacementDoublePtr
 DiscreteProblemInstance::computeMechanicalStiffnessMatrix() throw( std::runtime_error ) {
     return computeMechanicalMatrix( "RIGI_MECA" );
 };

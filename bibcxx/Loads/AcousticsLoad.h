@@ -244,6 +244,14 @@ class AcousticsLoadInstance : public DataStructure {
      * @brief Get the support finite element descriptor
      */
     FiniteElementDescriptorPtr getFiniteElementDescriptor() const { return _FEDesc; };
+
+    /**
+     * @brief Get the support model
+     */
+    ModelPtr getSupportModel()
+    {
+        return _supportModel;
+    };
 };
 
 typedef boost::shared_ptr< AcousticsLoadInstance > AcousticsLoadPtr;

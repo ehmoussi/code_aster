@@ -143,11 +143,8 @@ class MechanicalModeComplexContainerInstance : public FullResultsContainerInstan
 
         if ( numeDdl != nullptr ) {
             const auto model = numeDdl->getSupportModel();
-            const auto matrElem = numeDdl->getElementaryMatrix();
             if ( model != nullptr )
                 _mesh = model->getSupportMesh();
-            if ( matrElem != nullptr )
-                _mesh = matrElem->getSupportModel()->getSupportMesh();
         }
         return ResultsContainerInstance::update();
     };

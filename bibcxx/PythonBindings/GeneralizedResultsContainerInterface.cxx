@@ -21,40 +21,58 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+
 #include <boost/python.hpp>
 #include <PythonBindings/factory.h>
 #include "PythonBindings/GeneralizedResultsContainerInterface.h"
 
-void exportGeneralizedResultsContainerToPython() {
+
+void exportGeneralizedResultsContainerToPython()
+{
     using namespace boost::python;
 
-    class_< GeneralizedResultsContainerDoubleInstance, GeneralizedResultsContainerDoublePtr,
-            bases< DataStructure > >( "GeneralizedResultsContainerDouble", no_init );
-        // fake initFactoryPtr: created by subclasses
-        // fake initFactoryPtr: created by subclasses
 
-    class_< GeneralizedResultsContainerComplexInstance, GeneralizedResultsContainerComplexPtr,
-            bases< DataStructure > >( "GeneralizedResultsContainerComplex", no_init );
+    class_< GeneralizedResultsContainerDoubleInstance,
+            GeneralizedResultsContainerDoublePtr,
+            bases< DataStructure > >
+            ( "GeneralizedResultsContainerDouble", no_init )
         // fake initFactoryPtr: created by subclasses
         // fake initFactoryPtr: created by subclasses
+    ;
 
-    class_< TransientGeneralizedResultsContainerInstance, TransientGeneralizedResultsContainerPtr,
-            bases< GeneralizedResultsContainerDoubleInstance > >(
-        "TransientGeneralizedResultsContainer", no_init )
-        .def( "__init__",
-              make_constructor(&initFactoryPtr< TransientGeneralizedResultsContainerInstance >))
-        .def( "__init__",
-              make_constructor(
-                  &initFactoryPtr< TransientGeneralizedResultsContainerInstance, std::string >))
+    class_< GeneralizedResultsContainerComplexInstance,
+            GeneralizedResultsContainerComplexPtr,
+            bases< DataStructure > >
+            ( "GeneralizedResultsContainerComplex", no_init )
+        // fake initFactoryPtr: created by subclasses
+        // fake initFactoryPtr: created by subclasses
+    ;
+
+    class_< TransientGeneralizedResultsContainerInstance,
+            TransientGeneralizedResultsContainerPtr,
+            bases< GeneralizedResultsContainerDoubleInstance > >
+            ( "TransientGeneralizedResultsContainer", no_init )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< TransientGeneralizedResultsContainerInstance >) )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< TransientGeneralizedResultsContainerInstance,
+                             std::string >) )
         .def( "getDOFNumbering", &TransientGeneralizedResultsContainerInstance::getDOFNumbering )
-        .def( "setDOFNumbering", &TransientGeneralizedResultsContainerInstance::setDOFNumbering );
+        .def( "setDOFNumbering", &TransientGeneralizedResultsContainerInstance::setDOFNumbering )
+    ;
 
-    class_< HarmoGeneralizedResultsContainerInstance, HarmoGeneralizedResultsContainerPtr,
-            bases< GeneralizedResultsContainerComplexInstance > >(
-        "HarmoGeneralizedResultsContainer", no_init )
-        .def( "__init__",
-              make_constructor(&initFactoryPtr< HarmoGeneralizedResultsContainerInstance >))
-        .def( "__init__",
-              make_constructor(
-                  &initFactoryPtr< HarmoGeneralizedResultsContainerInstance, std::string >));
+    class_< HarmoGeneralizedResultsContainerInstance,
+            HarmoGeneralizedResultsContainerPtr,
+            bases< GeneralizedResultsContainerComplexInstance > >
+            ( "HarmoGeneralizedResultsContainer", no_init )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< HarmoGeneralizedResultsContainerInstance >) )
+        .def( "__init__", make_constructor(
+            &initFactoryPtr< HarmoGeneralizedResultsContainerInstance,
+                             std::string >) )
+        .def( "getGeneralizedDOFNumbering",
+              &HarmoGeneralizedResultsContainerInstance::getGeneralizedDOFNumbering )
+        .def( "setGeneralizedDOFNumbering",
+              &HarmoGeneralizedResultsContainerInstance::setGeneralizedDOFNumbering )
+    ;
 };

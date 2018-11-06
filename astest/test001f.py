@@ -2,6 +2,7 @@
 # coding: utf-8
 
 import code_aster
+from code_aster.Commands import *
 
 code_aster.init()
 
@@ -19,10 +20,6 @@ test.assertEqual( monModel.getType(), "MODELE_SDASTER" )
 YOUNG = 200000.0;
 POISSON = 0.3;
 
-materElas = code_aster.ElasMaterialBehaviour()
-materElas.setDoubleValue( "E", YOUNG )
-materElas.setDoubleValue( "Nu", POISSON )
-
 Kinv= 3.2841e-4
 Kv=1./Kinv
 SY = 437.0;
@@ -36,24 +33,20 @@ Gam1 = 341.0
 Gam2 = 341.0
 C_Pa = 1.e+6
 
-materViscochab = code_aster.ViscochabMaterialBehaviour()
-materViscochab.setDoubleValue( "K",  SY*C_Pa )
-materViscochab.setDoubleValue( "B",  b )
-materViscochab.setDoubleValue( "Mu", 10 )
-materViscochab.setDoubleValue( "Q_m", Qinf * C_Pa )
-materViscochab.setDoubleValue( "Q_0", Qzer * C_Pa )
-materViscochab.setDoubleValue( "C1", C1inf * C_Pa )
-materViscochab.setDoubleValue( "C2", C2inf * C_Pa )
-materViscochab.setDoubleValue( "G1_0", Gam1 )
-materViscochab.setDoubleValue( "G2_0", Gam2 )
-materViscochab.setDoubleValue( "K_0", Kv * C_Pa)
-materViscochab.setDoubleValue( "N", 11)
-materViscochab.setDoubleValue( "A_k", 1.)
-
-acier = code_aster.Material()
-acier.addMaterialBehaviour( materElas )
-acier.addMaterialBehaviour( materViscochab )
-acier.build()
+acier = DEFI_MATERIAU(ELAS = _F(E = YOUNG,
+                                NU = POISSON,),
+                      VISCOCHAB = _F(K = SY*C_Pa,
+                                     B = b,
+                                     MU = 10,
+                                     Q_M = Qinf * C_Pa,
+                                     Q_0 = Qzer * C_Pa,
+                                     C1 = C1inf * C_Pa,
+                                     C2 = C2inf * C_Pa,
+                                     G1_0 = Gam1,
+                                     G2_0 = Gam2,
+                                     K_0 = Kv * C_Pa,
+                                     N = 11,
+                                     A_K = 1.,),)
 # acier.debugPrint(6)
 test.assertEqual( acier.getType(), "MATER_SDASTER" )
 

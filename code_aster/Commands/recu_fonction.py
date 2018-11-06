@@ -35,7 +35,7 @@ class ExtractFunction(ExecuteCommand):
         if keywords.has_key("RESULTAT") and keywords["RESULTAT"].getType() == "DYNA_HARMO":
             self._result = FunctionComplex()
             return
-        if keywords.has_key("RESU_GENE") and keywords["RESU_GENE"] == "HARM_GENE":
+        if keywords.has_key("RESU_GENE") and keywords["RESU_GENE"].getType() == "HARM_GENE":
             self._result = FunctionComplex()
             return
         if keywords.has_key("INTE_SPEC"):

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -456,9 +456,14 @@ class CommandSyntax(object):
             ``isdef`` is 1 if the value is the default, 0 if it has been
             explicitly provided by the user.
         """
-        # TODO: Support of ('RI', a, b) notation
         value = self.getValue( factName, occurrence, simpName )
         if len( value ) > 0:
+            if value[0] in ('RI', 'MP'):
+                val2 = tuple(value),
+                if maxval < 1:
+                    return -1, val2, 0
+                else:
+                    return 1, val2, 0
             try:
                 complex( value[0] )
             except TypeError:

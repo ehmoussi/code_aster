@@ -31,6 +31,15 @@
 void exportDOFNumberingToPython() {
     using namespace boost::python;
 
+    void ( BaseDOFNumberingInstance::*f1 )( const ElementaryMatrixDisplacementDoublePtr & ) =
+        &BaseDOFNumberingInstance::setElementaryMatrix;
+    void ( BaseDOFNumberingInstance::*f2 )( const ElementaryMatrixDisplacementComplexPtr & ) =
+        &BaseDOFNumberingInstance::setElementaryMatrix;
+    void ( BaseDOFNumberingInstance::*f3 )( const ElementaryMatrixTemperatureDoublePtr & ) =
+        &BaseDOFNumberingInstance::setElementaryMatrix;
+    void ( BaseDOFNumberingInstance::*f4 )( const ElementaryMatrixPressureComplexPtr & ) =
+        &BaseDOFNumberingInstance::setElementaryMatrix;
+
     class_< BaseDOFNumberingInstance, BaseDOFNumberingInstance::BaseDOFNumberingPtr,
             bases< DataStructure > > c1( "BaseDOFNumbering", no_init );
     // fake initFactoryPtr: created by subclasses
@@ -39,7 +48,10 @@ void exportDOFNumberingToPython() {
     c1.def( "computeNumbering", &BaseDOFNumberingInstance::computeNumbering );
     c1.def( "getFiniteElementDescriptors", &BaseDOFNumberingInstance::getFiniteElementDescriptors );
     c1.def( "isParallel", &BaseDOFNumberingInstance::isParallel );
-    c1.def( "setElementaryMatrix", &BaseDOFNumberingInstance::setElementaryMatrix );
+    c1.def( "setElementaryMatrix", f1 );
+    c1.def( "setElementaryMatrix", f2 );
+    c1.def( "setElementaryMatrix", f3 );
+    c1.def( "setElementaryMatrix", f4 );
     c1.def( "getSupportModel", &BaseDOFNumberingInstance::getSupportModel );
     c1.def( "setSupportModel", &BaseDOFNumberingInstance::setSupportModel );
     addKinematicsLoadToInterface( c1 );

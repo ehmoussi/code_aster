@@ -32,14 +32,8 @@ test.assertEqual(testMesh.getType(), "MAILLAGE_P")
 
 model.debugPrint(rank+30)
 
-acier = code_aster.Material()
-
-elas = code_aster.ElasMaterialBehaviour()
-elas.setDoubleValue("E", 2.e11)
-elas.setDoubleValue("Nu", 0.3)
-
-acier.addMaterialBehaviour(elas)
-acier.build()
+acier = DEFI_MATERIAU(ELAS = _F(E = 2.e11,
+                                NU = 0.3,),)
 acier.debugPrint(8)
 
 affectMat = code_aster.MaterialOnMesh(pMesh)

@@ -125,7 +125,12 @@ class BaseMeshInstance : public DataStructure {
     /**
      * @brief Get the connectivity
      */
-    const ConnectivityMeshExplorer &getConnectivityExplorer() const { return _explorer; };
+    const ConnectivityMeshExplorer &getConnectivityExplorer() const
+    {
+        _elementsType->updateValuePointer();
+        _connectivity->buildFromJeveux();
+        return _explorer;
+    };
 
     /**
      * @brief Recuperation des coordonnees du maillage
@@ -204,6 +209,15 @@ class BaseMeshInstance : public DataStructure {
      * @return retourne true si le maillage est parallel
      */
     virtual bool isParallel() const { return false; };
+
+    /**
+     * @brief Fonction permettant de savoir si un maillage est partiel
+     * @return retourne true si le maillage est partiel
+     */
+    virtual bool isPartial() const
+    {
+        return false;
+    };
 
     /**
      * @brief Read a MED Mesh file

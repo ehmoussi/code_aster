@@ -20,7 +20,7 @@
 # person_in_charge: nicolas.sellenet@edf.fr
 
 from ..Objects import FullTransientResultsContainer, MechanicalModeContainer
-from ..Objects import NonLinearEvolutionContainer
+from ..Objects import NonLinearEvolutionContainer, FullHarmonicResultsContainer
 from .ExecuteCommand import ExecuteCommand
 
 
@@ -44,7 +44,7 @@ class RestSousStrucOper(ExecuteCommand):
             if resu_gene.getType() == "MODE_CYCL":
                 self._result = MechanicalModeContainer()
             if resu_gene.getType() == "HARM_GENE":
-                raise NotImplementedError("Unsupported type")
+                self._result = FullHarmonicResultsContainer()
 
         if resultat != None:
             if resultat.getType() == "EVOL_NOLI":
@@ -65,22 +65,22 @@ class RestSousStrucOper(ExecuteCommand):
             resuGene = keywords.get("RESU_GENE")
             if resuGene is not None:
                 dofNum = resuGene.getGeneralizedDOFNumbering()
+                print dofNum.getName()
                 modeleGene = dofNum.getGeneralizedModel()
-                macroElem = modeleGene.getDynamicMacroElementFromName(sousStruc)
-                mat = macroElem.getDampingMatrix()
-                if mat is None: mat = macroElem.getImpedanceDampingMatrix()
-                if mat is None: mat = macroElem.getImpedanceMatrix()
-                if mat is None: mat = macroElem.getImpedanceMassMatrix()
-                if mat is None: mat = macroElem.getImpedanceStiffnessMatrix()
-                if mat is not None:
-                    raise NameError("Not yet implemented")
+                if modeleGene is not None:
+                    macroElem = modeleGene.getDynamicMacroElementFromName(sousStruc)
+                    mat = macroElem.getDampingMatrix()
+                    if mat is None: mat = macroElem.getImpedanceDampingMatrix()
+                    if mat is None: mat = macroElem.getImpedanceMatrix()
+                    if mat is None: mat = macroElem.getImpedanceMassMatrix()
+                    if mat is None: mat = macroElem.getImpedanceStiffnessMatrix()
 
-                if mat is None: mat = macroElem.getMassMatrix()
-                if mat is None: mat = macroElem.getComplexStiffnessMatrix()
-                if mat is None: mat = macroElem.getDoubleStiffnessMatrix()
-                if mat is not None:
-                    modele = mat.getDOFNumbering().getSupportModel()
-                    self._result.appendModelOnAllRanks(modele)
+                    if mat is None: mat = macroElem.getMassMatrix()
+                    if mat is None: mat = macroElem.getComplexStiffnessMatrix()
+                    if mat is None: mat = macroElem.getDoubleStiffnessMatrix()
+                    if mat is not None:
+                        modele = mat.getDOFNumbering().getSupportModel()
+                        self._result.appendModelOnAllRanks(modele)
 
 
 REST_SOUS_STRUC = RestSousStrucOper.run

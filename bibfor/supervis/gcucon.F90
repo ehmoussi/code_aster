@@ -40,7 +40,7 @@ subroutine gcucon(result_name, type_name, ier)
     select case (type_name)
     case ("EVOL_NOLI", "EVOL_THER", "DYNA_HARMO", "MODE_EMPI", "MODE_MECA", "MODE_MECA_C")
         call jeexin(result//".DESC", ier)
-    case ("MODE_FLAMB")
+    case ("MODE_FLAMB", "HARM_GENE")
         call jeexin(result//".DESC", ier)
     case default
         ASSERT(ASTER_FALSE)

@@ -45,7 +45,7 @@ BaseDOFNumberingInstance::BaseDOFNumberingInstance( const std::string &type,
       _globalNumbering( new GlobalEquationNumberingInstance( getName() + ".NUME" ) ),
       _dofDescription( new FieldOnNodesDescriptionInstance( getName() + ".NUME" ) ),
       _localNumbering( new LocalEquationNumberingInstance( getName() + ".NUML" ) ),
-      _supportModel( ModelPtr( nullptr ) ), _supportMatrix( nullptr ),
+      _supportModel( ModelPtr( nullptr ) ),
       _listOfLoads( new ListOfLoadsInstance() ),
       _smos( new MorseStorageInstance( getName() + ".SMOS" ) ),
       _slcs( new LigneDeCielInstance( getName() + ".SLCS" ) ),
@@ -58,14 +58,16 @@ BaseDOFNumberingInstance::BaseDOFNumberingInstance( const std::string name, cons
       _globalNumbering( new GlobalEquationNumberingInstance( getName() + ".NUME" ) ),
       _dofDescription( new FieldOnNodesDescriptionInstance( getName() + ".NUME" ) ),
       _localNumbering( new LocalEquationNumberingInstance( getName() + ".NUML" ) ),
-      _supportModel( ModelPtr( nullptr ) ), _supportMatrix( nullptr ),
+      _supportModel( ModelPtr( nullptr ) ),
       _listOfLoads( new ListOfLoadsInstance() ),
       _smos( new MorseStorageInstance( getName() + ".SMOS" ) ),
       _slcs( new LigneDeCielInstance( getName() + ".SLCS" ) ),
       _mltf( new MultFrontGarbageInstance( getName() + ".MLTF" ) ), _isEmpty( true ){};
 
-bool BaseDOFNumberingInstance::computeNumbering() throw( std::runtime_error ) {
-    if ( _supportModel ) {
+bool BaseDOFNumberingInstance::computeNumbering() throw( std::runtime_error )
+{
+    if ( _supportModel )
+    {
         if ( _supportModel->isEmpty() )
             throw std::runtime_error( "Support Model is empty" );
 
@@ -78,22 +80,26 @@ bool BaseDOFNumberingInstance::computeNumbering() throw( std::runtime_error ) {
         const std::string null( " " );
         CALLO_NUMERO_WRAP( getName(), base, null, null, _supportModel->getName(),
                            _listOfLoads->getName() );
-    } else if ( !_supportMatrix.use_count() == 0 ) {
+    }
+    else if ( _supportMatrix.size() != 0 )
+    {
         CommandSyntax cmdSt( "NUME_DDL" );
         cmdSt.setResult( getName(), getType() );
 
         SyntaxMapContainer dict;
-        if ( _supportMatrix->isEmpty() )
-            throw std::runtime_error( "Support ElementaryMatrix is empty" );
 
-        dict.container["MATR_RIGI"] = _supportMatrix->getName();
+        VectorString names;
+        for( const auto& mat : _supportMatrix )
+            names.push_back( boost::apply_visitor( ElementaryMatrixGetName(), mat ) );
+        dict.container["MATR_RIGI"] = names;
 
         cmdSt.define( dict );
 
         // Maintenant que le fichier de commande est pret, on appelle OP0011
         ASTERINTEGER op = 11;
         CALL_EXECOP( &op );
-    } else
+    }
+    else
         throw std::runtime_error( "No support matrix or support model defined" );
     _isEmpty = false;
 

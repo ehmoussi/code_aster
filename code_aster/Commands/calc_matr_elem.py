@@ -19,7 +19,10 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import ElementaryMatrix
+from ..Objects import ElementaryMatrixDisplacementDouble
+from ..Objects import ElementaryMatrixDisplacementComplex
+from ..Objects import ElementaryMatrixTemperatureDouble
+from ..Objects import ElementaryMatrixPressureComplex
 from .ExecuteCommand import ExecuteCommand
 
 
@@ -39,15 +42,13 @@ class ComputeElementaryMatrix(ExecuteCommand):
                         'MASS_FLUI_STRU', 'MASS_MECA', 'MASS_MECA_DIAG',
                         'MECA_GYRO', 'ONDE_FLUI', 'RIGI_FLUI_STRU', 'RIGI_GEOM',
                         'RIGI_GYRO', 'RIGI_MECA', 'RIGI_ROTA'):
-            myType = "DEPL_R"
+            self._result = ElementaryMatrixDisplacementDouble()
         elif myOption == "RIGI_MECA_HYST":
-            myType = "DEPL_C"
+            self._result = ElementaryMatrixDisplacementComplex()
         elif myOption in ("RIGI_THER", "MASS_THER"):
-            myType = "TEMP_R"
+            self._result = ElementaryMatrixTemperatureDouble()
         elif myOption in ("RIGI_ACOU", "MASS_ACOU", "AMOR_ACOU"):
-            myType = "PRES_C"
-
-        self._result = ElementaryMatrix(myType)
+            self._result = ElementaryMatrixPressureComplex()
 
     def post_exec(self, keywords):
         """Store references to ElementaryMatrix objects.
@@ -65,5 +66,6 @@ class ComputeElementaryMatrix(ExecuteCommand):
         chamMater = keywords.get("CHAM_MATER")
         if chamMater is not None:
             self._result.setMaterialOnMesh(chamMater)
+        self._result.update()
 
 CALC_MATR_ELEM = ComputeElementaryMatrix.run
