@@ -23,14 +23,8 @@ model.build()
 young = 200000.0
 poisson = 0.3
 
-mater_elas = code_aster.ElasMaterialBehaviour()
-mater_elas.setDoubleValue("E", young)
-mater_elas.setDoubleValue("Nu", poisson)
-
-
-acier = code_aster.Material()
-acier.addMaterialBehaviour(mater_elas)
-acier.build()
+acier = DEFI_MATERIAU(ELAS = _F(E = young,
+                                NU = poisson,),)
 
 affe_mat = code_aster.MaterialOnMesh(mesh)
 affe_mat.addMaterialOnAllMesh(acier)
