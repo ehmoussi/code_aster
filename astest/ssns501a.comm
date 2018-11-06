@@ -27,7 +27,9 @@
 #- MODELISATION AVEC DES ELEMENTS 'COQUE_3D' (TRIA7)
 #---------------------------------------------------------------------
 #
-DEBUT( CODE=_F(NIV_PUB_WEB='INTERNET'))
+DEBUT( CODE=_F(NIV_PUB_WEB='INTERNET'),
+       IGNORE_ALARM = ('COMPOR1_47',),
+     )
 
 #
 #
