@@ -19,8 +19,8 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import FullTransientResultsContainer
-from ..Objects import FullHarmonicResultsContainer
+from ..Objects import FullTransientResultsContainer, AssemblyMatrixPressureComplex
+from ..Objects import FullAcousticHarmonicResultsContainer
 from ..Objects import TransientGeneralizedResultsContainer, HarmoGeneralizedResultsContainer
 from .ExecuteCommand import ExecuteCommand
 
@@ -36,18 +36,17 @@ class VibrationDynamics(ExecuteCommand):
             keywords (dict): Keywords arguments of user's keywords.
         """
         base = keywords["BASE_CALCUL"]
-        typ  = keywords["TYPE_CALCUL"]
-        if base == "PHYS" and typ == "TRAN":
-            self._result = FullTransientResultsContainer()
-        elif base == "PHYS" and typ == "HARM":
-            self._result = FullHarmonicResultsContainer()
-        elif base == "GENE" and typ == "TRAN":
-            self._result = TransientGeneralizedResultsContainer()
-        elif base == "GENE" and typ == "HARM":
-            self._result = HarmoGeneralizedResultsContainer()
+        typ = keywords["TYPE_CALCUL"]
+        matrRigi = keywords["MATR_RIGI"]
+        if base == "PHYS":
+            if typ == "TRAN":
+                self._result = FullTransientResultsContainer()
+                return
+            if isinstance(matrRigi, AssemblyMatrixPressureComplex):
+                self._result = FullAcousticHarmonicResultsContainer()
         else:
-            raise NotImplementedError("Types of analysis {0!r} and {0!r} not yet "
-                                      "implemented".format(typ, base))
+            if typ == "TRAN":
+                self._result = TransientGeneralizedResultsContainer()
 
     def post_exec(self, keywords):
         """Execute the command.
