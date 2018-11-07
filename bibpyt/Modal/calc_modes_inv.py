@@ -19,53 +19,13 @@
 
 # person_in_charge: nicolas.brie at edf.fr
 
-from code_aster.Commands.ExecuteCommand import ExecuteCommand
-from code_aster.Objects import (BucklingModeContainer,
-                                MechanicalModeComplexContainer,
-                                MechanicalModeContainer,
-                                AcousticModeContainer,
-                                GeneralizedModeContainer)
-from Modal.mode_iter_inv import MODE_ITER_INV as MODE_ITER_INV_CATA
-
-class ModalCalculationInv(ExecuteCommand):
-    """Internal (non public) command to call the underlying operator."""
-    command_name = "MODE_ITER_INV"
-    command_cata = MODE_ITER_INV_CATA
-
-    def create_result(self, keywords):
-        """Initialize the result.
-
-        Arguments:
-            keywords (dict): Keywords arguments of user's keywords.
-        """
-        TYPE_RESU = keywords.get("TYPE_RESU")
-        if TYPE_RESU not in ("DYNAMIQUE","MODE_FLAMB","GENERAL"):
-            raise NotImplementedError("Unsupported value: {0}"
-                                      .format(keywords["TYPE_RESU"]))
-
-        if TYPE_RESU in ("MODE_FLAMB", "GENERAL"):
-            self._result = BucklingModeContainer()
-            return
-
-        vale_rigi = keywords['MATR_RIGI']
-        vale_amor = keywords.get('MATR_AMOR')
-        if vale_amor!= None and vale_amor.getType() == "MATR_ASSE_DEPL_R":
-            self._result = MechanicalModeComplexContainer()
-        if vale_rigi.getType() == "MATR_ASSE_DEPL_R":
-            self._result = MechanicalModeContainer()
-        if vale_rigi.getType() == "MATR_ASSE_PRESS_R":
-            self._result = AcousticModeContainer()
-        if vale_rigi.getType() == "MATR_ASSE_GENE_R":
-            self._result = GeneralizedModeContainer()
-
-MODE_ITER_INV = ModalCalculationInv.run
-
 
 def calc_modes_inv(self, stop_erreur, sturm, TYPE_RESU, OPTION,  INFO, **args):
     """
        Macro-command CALC_MODES, case of the inverse iterations method
     """
     from code_aster.Cata.Syntax import _F
+    from Modal.mode_iter_inv import MODE_ITER_INV
 
     args = _F(args)
     SOLVEUR = args.get("SOLVEUR")

@@ -21,6 +21,7 @@
 
 from code_aster import AssemblyMatrixDisplacementComplex, GeneralizedAssemblyMatrixComplex
 
+
 def calc_modes_amelioration(self, modes, TYPE_RESU, INFO, **args):
     """
        Macro-command CALC_MODES, file for improving the quality of the eigenmodes
