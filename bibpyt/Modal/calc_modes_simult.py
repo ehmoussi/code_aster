@@ -22,7 +22,13 @@ from code_aster.Commands.ExecuteCommand import ExecuteCommand
 from code_aster.Objects import (MechanicalModeContainer,
                                 GeneralizedModeContainer,
                                 ResultsContainer)
-from code_aster.Objects import MechanicalModeComplexContainer
+from code_aster.Objects import (AssemblyMatrixDisplacementDouble,
+                                AssemblyMatrixTemperatureDouble,
+                                AssemblyMatrixDisplacementComplex,
+                                AssemblyMatrixPressureDouble,
+                                GeneralizedAssemblyMatrixDouble,
+                                GeneralizedAssemblyMatrixComplex)
+from code_aster.Objects import MechanicalModeComplexContainer, BucklingModeContainer
 from Modal.mode_iter_simult import MODE_ITER_SIMULT as MODE_ITER_SIMULT_CATA
 
 
@@ -37,26 +43,26 @@ class ModalCalculationSimult(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        if keywords.get("TYPE_RESU") in ("MODE_FLAMB", "GENERAL"):
-            raise NotImplementedError("Unsupported value: {0}"
-                                      .format(keywords["TYPE_RESU"]))
-
+        TYPE_RESU = keywords.get("TYPE_RESU")
+        if TYPE_RESU in ("MODE_FLAMB", "GENERAL"):
+            self._result = BucklingModeContainer()
+            return
 
         vale_rigi = keywords.get("MATR_RIGI")
         vale_amor = keywords.get("MATR_AMOR")
-        if vale_amor is not None and vale_amor.getType() == "MATR_ASSE_DEPL_R":
+        if vale_amor is not None and isinstance(vale_amor, AssemblyMatrixDisplacementDouble):
             self._result = MechanicalModeComplexContainer()
-        elif vale_rigi.getType() == "MATR_ASSE_DEPL_R":
+        elif isinstance(vale_rigi, AssemblyMatrixDisplacementDouble):
             self._result = MechanicalModeContainer()
-        elif vale_rigi.getType() == "MATR_ASSE_TEMP_R":
+        elif isinstance(vale_rigi, AssemblyMatrixTemperatureDouble):
             self._result = MechanicalModeContainer()
-        elif vale_rigi.getType() == "MATR_ASSE_DEPL_C":
+        elif isinstance(vale_rigi, AssemblyMatrixDisplacementComplex):
             self._result = MechanicalModeComplexContainer()
-        elif vale_rigi.getType() == "MATR_ASSE_PRESS_R":
+        elif isinstance(vale_rigi, AssemblyMatrixPressureDouble):
             self._result = MechanicalModeComplexContainer()
-        elif vale_rigi.getType() == "MATR_ASSE_GENE_R":
+        elif isinstance(vale_rigi, GeneralizedAssemblyMatrixDouble):
             self._result = GeneralizedModeContainer()
-        elif vale_rigi.getType() == "MATR_ASSE_GENE_C":
+        elif isinstance(vale_rigi, GeneralizedAssemblyMatrixComplex):
             self._result = GeneralizedModeContainer()
 
     def post_exec(self, keywords):
