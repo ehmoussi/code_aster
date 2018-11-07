@@ -43,10 +43,9 @@ class ModalCalculationInv(ExecuteCommand):
             raise NotImplementedError("Unsupported value: {0}"
                                       .format(keywords["TYPE_RESU"]))
 
-        if TYPE_RESU == "MODE_FLAMB":
+        if TYPE_RESU in ("MODE_FLAMB", "GENERAL"):
             self._result = BucklingModeContainer()
-        if TYPE_RESU == "GENERAL":
-            self._result = BucklingModeContainer()
+            return
 
         vale_rigi = keywords['MATR_RIGI']
         vale_amor = keywords.get('MATR_AMOR')
