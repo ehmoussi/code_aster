@@ -91,7 +91,7 @@ REPLO_1 = LIRE_CHAMP(
                       NUME_ORDRE  = 0,
                       MAILLAGE    = MAILLAGE,
                       MODELE      = MODELE,
-                      NOM_MED     = 'CARAELEM.REPLO_1',
+                      NOM_MED     = '00000005.REPLO_1',
                       NOM_CMP_IDEM='OUI',
                      )
 REPLO_2 = LIRE_CHAMP(
@@ -101,7 +101,7 @@ REPLO_2 = LIRE_CHAMP(
                       NUME_ORDRE  = 0,
                       MAILLAGE    = MAILLAGE,
                       MODELE      = MODELE,
-                      NOM_MED     = 'CARAELEM.REPLO_2',
+                      NOM_MED     = '00000005.REPLO_2',
                       NOM_CMP_IDEM='OUI',
                      )
 REPLO_3 = LIRE_CHAMP(
@@ -111,7 +111,7 @@ REPLO_3 = LIRE_CHAMP(
                       NUME_ORDRE  = 0,
                       MAILLAGE    = MAILLAGE,
                       MODELE      = MODELE,
-                      NOM_MED     = 'CARAELEM.REPLO_3',
+                      NOM_MED     = '00000005.REPLO_3',
                       NOM_CMP_IDEM='OUI',
                      )
 
