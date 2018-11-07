@@ -44,6 +44,7 @@ class ModalCalculationSimult(ExecuteCommand):
             keywords (dict): Keywords arguments of user's keywords.
         """
         TYPE_RESU = keywords.get("TYPE_RESU")
+        print "TYPE_RESU", TYPE_RESU
         if TYPE_RESU in ("MODE_FLAMB", "GENERAL"):
             self._result = BucklingModeContainer()
             return
@@ -253,6 +254,7 @@ def calc_modes_simult(self, stop_erreur, sturm, TYPE_RESU, OPTION, INFO, **args)
                              INFO=INFO,
                              **motcles
                              )
+
     materialOnMesh = None
     for matrice in matrices.values():
         try:
