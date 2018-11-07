@@ -61,6 +61,12 @@ void exportMechanicalModeComplexContainerToPython() {
     bool ( MechanicalModeComplexContainerInstance::*c2 )(
         const AssemblyMatrixDisplacementComplexPtr & ) =
         &MechanicalModeComplexContainerInstance::setStiffnessMatrix;
+    bool ( MechanicalModeComplexContainerInstance::*c3 )(
+        const AssemblyMatrixDisplacementComplexPtr & ) =
+        &MechanicalModeComplexContainerInstance::setStiffnessMatrix;
+    bool ( MechanicalModeComplexContainerInstance::*c4 )(
+        const AssemblyMatrixPressureDoublePtr & ) =
+        &MechanicalModeComplexContainerInstance::setStiffnessMatrix;
 
     class_< MechanicalModeComplexContainerInstance, MechanicalModeComplexContainerPtr,
             bases< FullResultsContainerInstance > >( "MechanicalModeComplexContainer", no_init )
@@ -72,6 +78,8 @@ void exportMechanicalModeComplexContainerToPython() {
         .def( "setDampingMatrix", &MechanicalModeComplexContainerInstance::setDampingMatrix )
         .def( "setStiffnessMatrix", c1 )
         .def( "setStiffnessMatrix", c2 )
+        .def( "setStiffnessMatrix", c3 )
+        .def( "setStiffnessMatrix", c4 )
         .def( "setStructureInterface",
               &MechanicalModeComplexContainerInstance::setStructureInterface );
 };
