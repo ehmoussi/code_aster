@@ -128,6 +128,7 @@
 #include "PythonBindings/ElasticEvolutionContainerInterface.h"
 #include "PythonBindings/InputVariableEvolutionContainerInterface.h"
 #include "PythonBindings/MaterialOnMeshBuilderInterface.h"
+#include "PythonBindings/VariantStiffnessMatrix.h"
 
 using namespace boost::python;
 
@@ -167,6 +168,7 @@ BOOST_PYTHON_MODULE( libaster ) {
     scope().attr( "finalize" ) = &libaster_finalize;
     scope().attr( "debugJeveuxContent" ) = &libaster_debugJeveuxContent;
 
+    exportStiffnessMatrixVariantToPython();
     exportVectorUtilitiesToPython();
     exportDataStructureToPython();
     exportMeshToPython();
