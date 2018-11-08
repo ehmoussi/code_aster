@@ -85,7 +85,7 @@ fsin = DEFI_FONCTION(NOM_PARA="INST",
                      VALE=values,
                      INTERPOL=("LIN", "LIN"),)
 
-with test.assertRaisesRegexp(code_aster.CodeAsterError, "listes.*longueurs"):
+with test.assertRaisesRegexp(code_aster.AsterError, "listes.*longueurs"):
     fsin = DEFI_FONCTION(NOM_PARA="INST",
                          NOM_RESU="TEMP",
                          ABSCISSE=valx,
