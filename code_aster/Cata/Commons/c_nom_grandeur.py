@@ -157,5 +157,5 @@ def C_NOM_GRANDEUR():
         "VOISIN",
         "WEIBULL",
         "XCONTAC",
-        "CONTALAC",
+        "CLAC_R",
     )
