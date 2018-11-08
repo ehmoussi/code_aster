@@ -456,23 +456,27 @@ class CommandSyntax(object):
             ``isdef`` is 1 if the value is the default, 0 if it has been
             explicitly provided by the user.
         """
-        value = self.getValue( factName, occurrence, simpName )
-        if len( value ) > 0:
-            if value[0] in ('RI', 'MP'):
-                val2 = tuple(value),
-                if maxval < 1:
-                    return -1, val2, 0
+        values = self.getValue( factName, occurrence, simpName )
+        if len( values ) > 0:
+            if type(values[0]) not in (list, tuple):
+                values = values,
+            toReturn = []
+            for value in values:
+                if type(value) in (list, tuple):
+                    assert value[0] in ('RI', 'MP')
+                    toReturn.append(tuple(value))
                 else:
-                    return 1, val2, 0
-            try:
-                complex( value[0] )
-            except TypeError:
-                raise TypeError( "complex expected, got %s" % type( value[0] ) )
-        size = len(value)
+                    toReturn.append(value)
+
+            size = len(toReturn)
+            if size > maxval:
+                size = -size
+            return size, tuple(toReturn[:maxval]), 0
+        size = len(values)
         if size > maxval:
             size = -size
-        # TODO: last returned value is "is_default"
-        return size, tuple(value[:maxval]), 0
+        # TODO: last returned values is "is_default"
+        return size, tuple(values[:maxval]), 0
 
     def getres(self):
         """Return the name and type of the result, and the command name.
