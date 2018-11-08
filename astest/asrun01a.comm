@@ -37,13 +37,14 @@ Le fichier de paramètres contient les variables suivantes :
    info_cmd      : 1 / 2 niveau d'info des commandes
 """
 
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),
+      PAR_LOT='NON')
+
 import os
 
 fpara = 'fort.70'
 unite_in    = 71
 unite_out   = 72
-
-opts_debut = {}
 
 # -----------------------------------------------------------------------------
 # version de Code_Aster
@@ -62,12 +63,6 @@ except ImportError:
     else:
        vers = ' 6. x. y'
 
-if vers < ' 8. 2. 0' :
-   raise aster.error, """ <meshtool> doesn't work before version 8.2"""
-
-if vers >= ' 9. 2.18':
-    opts_debut['IGNORE_ALARM'] = 'SUPERVIS_1'
-
 # -----------------------------------------------------------------------------
 # lecture du fichier de paramètres
 if os.path.exists(fpara):
@@ -85,10 +80,6 @@ else:
             It should have been created by meshtool script...""" % fpara
 
 # -----------------------------------------------------------------------------
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'), 
-      PAR_LOT='NON',
-      **opts_debut)
-
 unite_mail = 20
 if format_in in ('aster', 'med'):
    # lecture directe du fichier IN
