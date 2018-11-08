@@ -48,20 +48,19 @@ __all__ = []
 # import libaster to call initAsterModules
 import libaster
 
-from .Supervis import CodeAsterError
-
 # import datastructures enriched by pure python extensions
 from .Objects import *
 
+# import general purpose functions
+from .Supervis import AsterError
+from .RunManager import saveObjects
+from .Utilities import TestCase
+
 from .Algorithms import (ConstitutiveLaw, IntegrationAlgorithm, StrainType,
                          TangentMatrixType)
-
-from .Commands.debut import init
 
 # # install i18n function as soon as possible
 # from .Utilities import localization
 # localization.install()
 
-# import general purpose functions
-from .RunManager import saveObjects
-from .Utilities import TestCase
+from .Commands.debut import init
