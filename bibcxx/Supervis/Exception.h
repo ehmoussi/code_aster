@@ -33,24 +33,26 @@
 
 class AsterException : public std::exception {
   private:
-    std::string _message;
-    std::string _extraData;
+    std::string _idmess;
+    VectorString _valk;
+    VectorLong _vali;
+    VectorDouble _valr;
 
   public:
-    AsterException( std::string message, std::string extraData = "" )
-        : _message( message ), _extraData( extraData ) {}
+    AsterException( std::string idmess = "", VectorString valk = {}, VectorLong vali = {},
+                    VectorDouble valr = {} )
+        : _idmess( idmess ), _valk( valk ), _vali( vali ), _valr( valr ) {}
 
-    const char *what() const throw() { return _message.c_str(); }
+    const char *what() const throw() { return _idmess.c_str(); }
 
     ~AsterException() throw() {}
 
-    std::string getMessage() { return _message; }
-
-    std::string getExtraData() { return _extraData; }
+    /* Build arguments for the Python exception */
+    PyObject *py_attrs() const;
 };
 
 PyObject *createExceptionClass( const char *name, PyObject *baseTypeObj = PyExc_Exception );
 
-void raiseAsterException( const std::string message = "" ) throw( AsterException );
+void raiseAsterException( const std::string idmess = "" ) throw( AsterException );
 
 #endif
