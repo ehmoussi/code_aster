@@ -241,7 +241,7 @@ class CalculMiss(object):
                        SOUS_TITRE='PRODUIT PAR CALC_MISS',
                        UNITE=ulaster,
                        **other_groups)
-        self.param.UL.EtatInit(ulaster)
+        self.param.UL.Etat(ulaster, etat="F")
         copie_fichier(self.param.UL.Nom(ulaster), self._fichier_tmp("aster"))
         self.data = self.resu_aster_reader.read(self._fichier_tmp("aster"))
         self._dbg_trace("Stop")
