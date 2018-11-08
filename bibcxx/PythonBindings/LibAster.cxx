@@ -158,10 +158,12 @@ struct LibAsterInitializer {
 
 PyObject *AsterErrorType = (PyObject *)0;
 
-void translateAsterException( AsterException const &e ) {
+void translateAsterException( AsterException const &exc ) {
     assert( AsterErrorType != NULL );
 
-    PyErr_SetString( AsterErrorType, e.what() );
+    PyObject *py_err = exc.py_attrs();
+    PyErr_SetObject( AsterErrorType, py_err );
+    Py_DECREF( py_err );
 }
 
 BOOST_PYTHON_FUNCTION_OVERLOADS( raiseAsterException_overloads, raiseAsterException, 0, 1 )

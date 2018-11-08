@@ -30,6 +30,35 @@
 
 #include "Supervis/Exception.h"
 
+PyObject *AsterException::py_attrs() const {
+    int idx = 0;
+    PyObject *py_err = PyTuple_New( 4 );
+
+    PyObject *py_id = PyString_FromString( _idmess.c_str() );
+
+    PyObject *py_valk = PyTuple_New( _valk.size() );
+    idx = 0;
+    for ( auto it = _valk.begin(); it != _valk.end(); ++it, ++idx )
+        PyTuple_SetItem( py_valk, idx, PyString_FromString( it->c_str() ) );
+
+    PyObject *py_vali = PyTuple_New( _vali.size() );
+    idx = 0;
+    for ( auto it = _vali.begin(); it != _vali.end(); ++it, ++idx )
+        PyTuple_SetItem( py_vali, idx, PyLong_FromLong( *it ) );
+
+    PyObject *py_valr = PyTuple_New( _valr.size() );
+    idx = 0;
+    for ( auto it = _valr.begin(); it != _valr.end(); ++it, ++idx )
+        PyTuple_SetItem( py_valr, idx, PyFloat_FromDouble( *it ) );
+
+    PyTuple_SetItem( py_err, 0, py_id );
+    PyTuple_SetItem( py_err, 1, py_valk );
+    PyTuple_SetItem( py_err, 2, py_vali );
+    PyTuple_SetItem( py_err, 3, py_valr );
+
+    return py_err;
+}
+
 PyObject *createExceptionClass( const char *name, PyObject *baseTypeObj ) {
     namespace py = boost::python;
 
@@ -37,7 +66,7 @@ PyObject *createExceptionClass( const char *name, PyObject *baseTypeObj ) {
     std::string qualifiedName0 = scopeName + "." + name;
     char *qualifiedName1 = const_cast< char * >( qualifiedName0.c_str() );
 
-    PyObject *typeObj = PyErr_NewException( qualifiedName1, baseTypeObj, 0 );
+    PyObject *typeObj = PyErr_NewException( qualifiedName1, baseTypeObj, NULL );
     if ( !typeObj ) {
         py::throw_error_already_set();
     }
@@ -46,7 +75,7 @@ PyObject *createExceptionClass( const char *name, PyObject *baseTypeObj ) {
     return typeObj;
 }
 
-void raiseAsterException( const std::string message ) throw( AsterException ) {
-    std::cout << "Raising C++ AsterException..." << std::endl;
-    throw AsterException( message );
+void raiseAsterException( const std::string idmess ) throw( AsterException ) {
+    std::cout << "Raising C++ AsterException with id '" << idmess << "'..." << std::endl;
+    throw AsterException( idmess );
 }
