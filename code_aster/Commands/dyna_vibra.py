@@ -47,6 +47,8 @@ class VibrationDynamics(ExecuteCommand):
         else:
             if typ == "TRAN":
                 self._result = TransientGeneralizedResultsContainer()
+            else:
+                self._result = HarmoGeneralizedResultsContainer()
 
     def post_exec(self, keywords):
         """Execute the command.
