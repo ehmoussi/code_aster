@@ -458,7 +458,7 @@ class CommandSyntax(object):
         """
         values = self.getValue( factName, occurrence, simpName )
         if len( values ) > 0:
-            if type(values[0]) not in (list, tuple):
+            if type(values[0]) is str:
                 values = values,
             toReturn = []
             for value in values:
