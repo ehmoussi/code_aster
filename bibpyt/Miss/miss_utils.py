@@ -207,7 +207,7 @@ class MISS_PARAMETER(object):
         return iter(self._keywords)
 
     def __getitem__(self, key):
-        return self._keywords[key]
+        return self._keywords.get(key)
 
     def __setitem__(self, key, value):
         ASSERT(self.get(key) is None)
