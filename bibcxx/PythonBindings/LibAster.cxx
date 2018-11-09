@@ -156,17 +156,17 @@ struct LibAsterInitializer {
     ~LibAsterInitializer() { libaster_finalize(); };
 };
 
-PyObject *AsterErrorType = (PyObject *)0;
+PyObject *AsterErrorPy = (PyObject *)0;
 
-void translateAsterException( AsterException const &exc ) {
-    assert( AsterErrorType != NULL );
+void translateAsterError( AsterErrorCpp const &exc ) {
+    assert( AsterErrorPy != NULL );
 
     PyObject *py_err = exc.py_attrs();
-    PyErr_SetObject( AsterErrorType, py_err );
+    PyErr_SetObject( AsterErrorPy, py_err );
     Py_DECREF( py_err );
 }
 
-BOOST_PYTHON_FUNCTION_OVERLOADS( raiseAsterException_overloads, raiseAsterException, 0, 1 )
+BOOST_PYTHON_FUNCTION_OVERLOADS( raiseAsterError_overloads, raiseAsterError, 0, 1 )
 
 BOOST_PYTHON_MODULE( libaster ) {
     // hide c++ signatures
@@ -182,10 +182,10 @@ BOOST_PYTHON_MODULE( libaster ) {
     py::scope().attr( "debugJeveuxContent" ) = &libaster_debugJeveuxContent;
 
     // Exceptions
-    AsterErrorType = createExceptionClass( "AsterError" );
-    py::register_exception_translator< AsterException >( &translateAsterException );
+    AsterErrorPy = createExceptionClass( "AsterError" );
+    py::register_exception_translator< AsterErrorCpp >( &translateAsterError );
 
-    py::def( "raiseAsterException", &raiseAsterException, raiseAsterException_overloads() );
+    py::def( "raiseAsterError", &raiseAsterError, raiseAsterError_overloads() );
 
     exportVectorUtilitiesToPython();
     exportDataStructureToPython();

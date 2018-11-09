@@ -30,7 +30,7 @@
 
 #include "Supervis/Exception.h"
 
-PyObject *AsterException::py_attrs() const {
+PyObject *AsterErrorCpp::py_attrs() const {
     int idx = 0;
     PyObject *py_err = PyTuple_New( 4 );
 
@@ -75,7 +75,12 @@ PyObject *createExceptionClass( const char *name, PyObject *baseTypeObj ) {
     return typeObj;
 }
 
-void raiseAsterException( const std::string idmess ) throw( AsterException ) {
-    std::cout << "Raising C++ AsterException with id '" << idmess << "'..." << std::endl;
-    throw AsterException( idmess );
+void raiseAsterError( const std::string idmess ) throw( AsterErrorCpp ) {
+    std::cout << "Raising C++ AsterErrorCpp with id '" << idmess << "'..." << std::endl;
+    throw AsterErrorCpp( idmess );
+}
+
+
+extern "C" void DEF0(UEXCEP, uexcep) {
+    raiseAsterError();
 }

@@ -117,8 +117,3 @@ void _end_try()
      */
     gExcLvl -= 1;
 }
-
-void DEF0(UEXCEP, uexcep)
-{
-    _raiseException();
-}

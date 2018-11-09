@@ -740,8 +740,8 @@ def raise_UTMESS(exc):
         except AsterError as exc:
             raise_UTMESS(exc)
 
+    .. todo :: several messages is not yet supported ('related' attribute)
     """
-    # TODO several messages is not yet supported ('related' attribute)
     # for err in exc.related:
     #     UTMESS('F+', err.id_message, valk=err.valk,
     #            vali=err.vali, valr=err.valr)

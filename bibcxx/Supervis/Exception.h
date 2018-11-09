@@ -31,7 +31,7 @@
 
 #include "astercxx.h"
 
-class AsterException : public std::exception {
+class AsterErrorCpp : public std::exception {
   private:
     std::string _idmess;
     VectorString _valk;
@@ -39,13 +39,13 @@ class AsterException : public std::exception {
     VectorDouble _valr;
 
   public:
-    AsterException( std::string idmess = "", VectorString valk = {}, VectorLong vali = {},
+    AsterErrorCpp( std::string idmess, VectorString valk = {}, VectorLong vali = {},
                     VectorDouble valr = {} )
         : _idmess( idmess ), _valk( valk ), _vali( vali ), _valr( valr ) {}
 
     const char *what() const throw() { return _idmess.c_str(); }
 
-    ~AsterException() throw() {}
+    ~AsterErrorCpp() throw() {}
 
     /* Build arguments for the Python exception */
     PyObject *py_attrs() const;
@@ -53,6 +53,8 @@ class AsterException : public std::exception {
 
 PyObject *createExceptionClass( const char *name, PyObject *baseTypeObj = PyExc_Exception );
 
-void raiseAsterException( const std::string idmess = "" ) throw( AsterException );
+void raiseAsterError( const std::string idmess = "DVP_1" ) throw( AsterErrorCpp );
+
+extern "C" void DEF0(UEXCEP, uexcep);
 
 #endif
