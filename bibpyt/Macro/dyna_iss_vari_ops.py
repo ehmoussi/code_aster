@@ -45,7 +45,7 @@ def dyna_iss_vari_ops(self, **kwargs):
     # création de l'objet generator
     generator = Generator.factory(self, params)
     try:
-        generator.run()
+        return generator.run()
     except Exception, err:
         trace = ''.join(traceback.format_tb(sys.exc_traceback))
         UTMESS('F', 'SUPERVIS2_5', valk=('DYNA_ISS_VARI', trace, str(err)))
@@ -66,16 +66,16 @@ class DynaISSParameters(object):
             cohekeys.mc_liste)
         self.mat_gene_keys = genekeys.cree_dict_valeurs(genekeys.mc_liste)
         self.interf_keys = interfkeys.cree_dict_valeurs(interfkeys.mc_liste)
-        if kwargs['EXCIT_SOL']:
+        if kwargs.get('EXCIT_SOL'):
             self.cas = 'TRANS'
             excit_sol = kwargs['EXCIT_SOL'][0]
             self.excit_sol_keys = excit_sol.cree_dict_valeurs(excit_sol.mc_liste)
+            others.remove('EXCIT_SOL')
         else :
             self.cas = 'SPEC'
         others.remove('MATR_GENE')
         others.remove('MATR_COHE')
         others.remove('INTERF')
-        others.remove('EXCIT_SOL')
         self.other_keys = {}
         for key in others:
             self.other_keys[key] = kwargs.get(key)
@@ -101,7 +101,7 @@ class Generator(object):
 
     def __init__(self, macro, params):
         """Constructor Base class"""
-        self.name = macro.sd.nom
+        #self.name = macro.sd.nom
         self.macro = macro
         self.case = params.cas
         self.INFO = params.other_keys['INFO']
@@ -129,11 +129,18 @@ class Generator(object):
 
     def prepare_input(self):
         """run prepare data"""
-        v_refa_rigi = self.mat_gene_params['MATR_RIGI'].sdj.REFA.get()
-        nom_bamo = v_refa_rigi[0]
-        nom_ddlgene = v_refa_rigi[1]
-        self.mat_gene_params['NUME_DDL'] = self.macro.get_concept(nom_ddlgene)
-        self.mat_gene_params['BASE'] = self.macro.get_concept(nom_bamo)
+        #v_refa_rigi = self.mat_gene_params['MATR_RIGI'].sdj.REFA.get()
+        #nom_bamo = v_refa_rigi[0]
+        #nom_ddlgene = v_refa_rigi[1]
+        #self.mat_gene_params['NUME_DDL'] = self.macro.get_concept(nom_ddlgene)
+        #self.mat_gene_params['BASE'] = self.macro.get_concept(nom_bamo)
+        matr_rigi = self.mat_gene_params['MATR_RIGI']
+        bamo = matr_rigi.getModalBasis()
+        ddlgene = matr_rigi.getGeneralizedDOFNumbering()
+        nom_bamo = bamo.getName()
+        nom_ddlgene = ddlgene.getName()
+        self.mat_gene_params['NUME_DDL'] = ddlgene
+        self.mat_gene_params['BASE'] = bamo
         ir, ib, nume_ddl = aster.dismoi('NUME_DDL', nom_bamo,'RESU_DYNA','F')
         ir, ib, nom_mail = aster.dismoi('NOM_MAILLA', nume_ddl,'NUME_DDL','F')
         self.cohe_params['MAILLAGE'] = nom_mail
@@ -173,7 +180,7 @@ class Generator(object):
         """compute SSI with spatial variability"""
         self.prepare_input()
         self.sampling()
-        self.build_result()
+        return self.build_result()
 
 #     -----------------------------------------------------------------
 #         CLASSE TRANS
@@ -252,7 +259,7 @@ class GeneratorTRANS(Generator):
     def build_result(self):
        # declaration concept sortant
         self.macro.DeclareOut('dyha', self.macro.sd)
-        dyha = self.compute_result()
+        return self.compute_result()
 
     def compute_result(self):
         L_VEC = self.compute_harm_gene()
@@ -373,11 +380,11 @@ class GeneratorTRANS(Generator):
         for k in range(len(self.liste_freq_sig)):
             #                                     1         2         3
             #                                   8901234567890123456789012
-            aster.putvectjev(__dyge0.get_name() + '           .DEPL        ', nbmodt, tuple(
+            aster.putvectjev(__dyge0.get_name() + '.DEPL        ', nbmodt, tuple(
             range(nbmodt * k + 1, nbmodt * (k + 1) + 1)), tuple(tup_re1[k]), tuple(tup_im1[k]), 1)
-            aster.putvectjev(__dyge0.get_name() + '           .VITE        ', nbmodt, tuple(
+            aster.putvectjev(__dyge0.get_name() + '.VITE        ', nbmodt, tuple(
             range(nbmodt * k + 1, nbmodt * (k + 1) + 1)), tuple(tup_re2[k]), tuple(tup_im2[k]), 1)
-            aster.putvectjev(__dyge0.get_name() + '           .ACCE        ', nbmodt, tuple(
+            aster.putvectjev(__dyge0.get_name() + '.ACCE        ', nbmodt, tuple(
                 range(nbmodt * k + 1, nbmodt * (k + 1) + 1)), tuple(tup_re[k]), tuple(tup_im[k]), 1)
 
         aster.affiche('MESSAGE','START REST_SPEC_TEMP' )
@@ -637,7 +644,7 @@ class GeneratorSPEC(Generator):
     def build_result(self):
        # Declaration concept sortant
         self.macro.DeclareOut('dsp_out', self.macro.sd)
-        dsp_out = self.compute_result()
+        return self.compute_result()
 
 
     def append_Vec(self, RS, k , SPEC=None):
