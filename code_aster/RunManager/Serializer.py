@@ -220,7 +220,7 @@ class Serializer(object):
             logger.warn("These objects have not be reloaded: {0}"
                         .format(tuple(not_read)))
         logger.info("Restored objects:")
-        for name, obj in zip(objList, objects):
+        for name, obj in zip(names, objects):
             logger.debug("restoring {0}...".format(name))
             try:
                 obj = _restore(name, obj)
