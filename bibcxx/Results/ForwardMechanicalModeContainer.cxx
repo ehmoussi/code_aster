@@ -1,6 +1,6 @@
 /**
- * @file ForwardGeneralizedDOFNumbering.cxx
- * @brief Implementation de ForwardGeneralizedDOFNumbering
+ * @file MechanicalModeContainer.cxx
+ * @brief Implementation de MechanicalModeContainer
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
@@ -23,30 +23,30 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "Discretization/ForwardGeneralizedDOFNumbering.h"
-#include "Discretization/GeneralizedDOFNumbering.h"
+#include "Results/ForwardMechanicalModeContainer.h"
+#include "Results/MechanicalModeContainer.h"
 
-ForwardGeneralizedDOFNumberingPtr::ForwardGeneralizedDOFNumberingPtr() : _isSet( false ){};
+ForwardMechanicalModeContainerPtr::ForwardMechanicalModeContainerPtr() : _isSet( false ){};
 
-ForwardGeneralizedDOFNumberingPtr::ForwardGeneralizedDOFNumberingPtr(
-    const GeneralizedDOFNumberingPtr &ptr )
+ForwardMechanicalModeContainerPtr::ForwardMechanicalModeContainerPtr(
+    const MechanicalModeContainerPtr &ptr )
     : _ptr( ptr ), _isSet( true ){};
 
-void ForwardGeneralizedDOFNumberingPtr::operator=( const GeneralizedDOFNumberingPtr &ptr ) {
+void ForwardMechanicalModeContainerPtr::operator=( const MechanicalModeContainerPtr &ptr ) {
     _ptr = ptr;
     _isSet = true;
 };
 
-GeneralizedDOFNumberingPtr
-ForwardGeneralizedDOFNumberingPtr::getPointer() throw( std::runtime_error ) {
+MechanicalModeContainerPtr
+ForwardMechanicalModeContainerPtr::getPointer() throw( std::runtime_error ) {
     if ( !_isSet )
         throw std::runtime_error( "No pointer set" );
     return _ptr;
 };
 
-bool ForwardGeneralizedDOFNumberingPtr::isSet() const { return _isSet; };
+bool ForwardMechanicalModeContainerPtr::isSet() const { return _isSet; };
 
-void ForwardGeneralizedDOFNumberingPtr::setPointer( const GeneralizedDOFNumberingPtr &ptr ) {
+void ForwardMechanicalModeContainerPtr::setPointer( const MechanicalModeContainerPtr &ptr ) {
     _ptr = ptr;
     _isSet = true;
 };

@@ -50,6 +50,7 @@ class ProjMatrBase(ExecuteCommand):
             keywords (dict): User's keywords.
         """
         self._result.setGeneralizedDOFNumbering(keywords['NUME_DDL_GENE'])
+        self._result.setModalBasis(keywords['BASE'])
 
 
 PROJ_MATR_BASE = ProjMatrBase.run
