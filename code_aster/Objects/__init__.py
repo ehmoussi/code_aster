@@ -45,6 +45,7 @@ from .fieldonnodes_ext import FieldOnNodesDouble
 from .formula_ext import Formula
 from .function_ext import Function
 from .generalizedassemblymatrix_ext import GeneralizedAssemblyMatrixDouble
+from .generalizedassemblymatrix_ext import GeneralizedAssemblyMatrixComplex
 from .listoffloats import ListOfFloats
 from .material_ext import Material
 from .materialonmesh_ext import MaterialOnMesh

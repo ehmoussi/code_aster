@@ -24,15 +24,60 @@
 """
 
 from libaster import GeneralizedAssemblyMatrixDouble
+from libaster import GeneralizedAssemblyMatrixComplex
 
 from ..Utilities import injector
 
 _orig_getType = GeneralizedAssemblyMatrixDouble.getType
 
 
+class ExtendedGeneralizedAssemblyMatrixComplex(injector(GeneralizedAssemblyMatrixComplex),
+                                   GeneralizedAssemblyMatrixComplex):
+    cata_sdj = "SD.sd_matr_asse_gene.sd_matr_asse_gene"
+
+    def __getstate__(self):
+        """Return internal state.
+
+        Returns:
+            dict: Internal state.
+        """
+        return (True, self.getGeneralizedDOFNumbering(), self.getModalBasis())
+
+    def __setstate__(self, state):
+        """Restore internal state.
+
+        Arguments:
+            state (dict): Internal state.
+        """
+        if state[1] is not None:
+            self.setGeneralizedDOFNumbering(state[1])
+        if state[2] is not None:
+            self.setModalBasis(state[2])
+
 class ExtendedGeneralizedAssemblyMatrixDouble(injector(GeneralizedAssemblyMatrixDouble),
                                    GeneralizedAssemblyMatrixDouble):
     cata_sdj = "SD.sd_matr_asse_gene.sd_matr_asse_gene"
+
+    def __getstate__(self):
+        """Return internal state.
+
+        Returns:
+            dict: Internal state.
+        """
+        print self.getGeneralizedDOFNumbering()
+        print self.getModalBasis()
+        return (True, self.getGeneralizedDOFNumbering(), self.getModalBasis())
+
+    def __setstate__(self, state):
+        """Restore internal state.
+
+        Arguments:
+            state (dict): Internal state.
+        """
+        if state[1] is not None:
+            self.setGeneralizedDOFNumbering(state[1])
+        if state[2] is not None:
+            self.setModalBasis(state[2])
 
     def EXTR_MATR(self, sparse=False):
         """Retourne les valeurs de la matrice dans un format numpy
