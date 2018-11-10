@@ -56,17 +56,19 @@ def format_exception(exc):
     """
     return format(exc, 'Z')
 
-def format_info(exc):
-    """Return the text of an exception.
+
+def get_idmess(exc):
+    """Return the message identifier of the exception.
 
     Arguments:
         exc (AsterError): Exception raised.
 
     Returns;
-        str: Message of the exception.
+        str: Message identifier (example: ``CALCUL_12``).
     """
-    return format(exc, 'I')
-
+    return len(exc.args) >=1 and exc.args[0] or ""
 
 AsterError.__repr__ = format_exception
-AsterError.__str__ = format_info
+AsterError.__str__ = format_exception
+AsterError.id_message = property(get_idmess)
+AsterError.message = property(format_exception)

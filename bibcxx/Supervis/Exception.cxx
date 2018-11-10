@@ -29,6 +29,7 @@
 #include <string>
 
 #include "Supervis/Exception.h"
+#include "Utilities/Tools.h"
 
 PyObject *AsterErrorCpp::py_attrs() const {
     int idx = 0;
@@ -80,7 +81,23 @@ void raiseAsterError( const std::string idmess ) throw( AsterErrorCpp ) {
     throw AsterErrorCpp( idmess );
 }
 
+extern "C" void DEFPSPSPPPP( UEXCEP, uexcep, _IN ASTERINTEGER *exc_type, _IN char *idmess,
+                             _IN STRING_SIZE lidmess, _IN ASTERINTEGER *nbk, _IN char *valk,
+                             _IN STRING_SIZE lvk, _IN ASTERINTEGER *nbi, _IN ASTERINTEGER *vali,
+                             _IN ASTERINTEGER *nbr, _IN ASTERDOUBLE *valr ) {
+    // exc_type: not yet used, always throw AsterError
+    VectorString argk = {};
+    VectorLong argi = {};
+    VectorDouble argr = {};
+    for ( int i = 0; i < *nbk; ++i ) {
+        argk.push_back( trim( std::string( valk[i], lvk ) ) );
+    }
+    for ( int i = 0; i < *nbi; ++i ) {
+        argi.push_back( vali[i] );
+    }
+    for ( int i = 0; i < *nbr; ++i ) {
+        argr.push_back( valr[i] );
+    }
 
-extern "C" void DEF0(UEXCEP, uexcep) {
-    raiseAsterError();
+    throw AsterErrorCpp( trim( std::string( idmess ) ), argk, argi, argr );
 }
