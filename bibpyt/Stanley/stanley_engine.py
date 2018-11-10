@@ -77,6 +77,7 @@ from Utilitai.Utmess import UTMESS
 from graphiqueTk import *
 import ihm_parametres
 
+from code_aster import onFatalError
 from code_aster.Commands import (AFFE_MODELE, MODI_MODELE, COPIER, CREA_MAILLAGE,
     CREA_RESU, DEFI_FICHIER, DETRUIRE, IMPR_FONCTION, IMPR_RESU, DEFI_GROUP,
     INFO_EXEC_ASTER, POST_RELEVE_T, PROJ_CHAMP, STANLEY)
@@ -102,8 +103,8 @@ cata = cata_champs.CATA_CHAMPS()
 texte_onFatalError = "Une erreur est intervenue. L'operation a ete annulee."
 
 # Pour la gestion des Exceptions
-prev_onFatalError = aster.onFatalError()
-aster.onFatalError('EXCEPTION')
+prev_onFatalError = onFatalError()
+onFatalError('EXCEPTION')
 
 
 # ========================================================================
@@ -1886,7 +1887,7 @@ class STANLEY:
         self.interface.Kill()
 
         # Pour la gestion des Exceptions
-        aster.onFatalError(prev_onFatalError)
+        onFatalError(prev_onFatalError)
 
     def Clavier(self, event):
         """

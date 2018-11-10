@@ -27,10 +27,16 @@
 
 #include "PythonBindings/FortranInterface.h"
 
+BOOST_PYTHON_FUNCTION_OVERLOADS( onFatalError_overloads, onFatalError, 0, 1 )
+
 void exportFortranToPython() {
     using namespace boost::python;
 
     // These functions are for internal use.
+    def( "jeveux_init", &jeveux_init, R"(
+Initialize the memory manager (Jeveux).
+        )" );
+
     def( "call_oper", &call_oper, R"(
 Call a Fortran operator ('op' subroutine).
 
@@ -48,6 +54,22 @@ Arguments:
     ops (int): Number of the `ops00x` subroutine.
         )",
          ( arg( "syntax" ), arg( "ops" ) ) );
+
+    def( "call_debut", &call_debut, R"(
+Call a Fortran 'debut' subroutine.
+
+Arguments:
+    syntax (CommandSyntax): Object containing the user syntax.
+        )",
+         ( arg( "syntax" ) ) );
+
+    def( "call_poursuite", &call_poursuite, R"(
+Call a Fortran 'poursuite' subroutine.
+
+Arguments:
+    syntax (CommandSyntax): Object containing the user syntax.
+        )",
+         ( arg( "syntax" ) ) );
 
     def( "write", &call_print, R"(
 Print a string using the fortran subroutine.
@@ -72,4 +94,18 @@ Return the status of the Jeveux memory manager.
 Returns:
     int: 0 after initialization and after shutdown, 1 during the execution.
         )" );
+
+//     def( "onFatalError", &onFatalError, R"(
+// Get/set the behavior in case of error.
+
+// Arguments:
+//     value (str, optional): Set the new behavior in case of error (one of "ABORT",
+//         "EXCEPTION", "EXCEPTION+VALID" or "INIT"). If `value` is not provided,
+//         the current behavior is returned.
+
+// Returns:
+//     str: Current value
+//         )",
+//          ( arg( "value" ) ) );
+    def( "onFatalError", &onFatalError, onFatalError_overloads() );
 };

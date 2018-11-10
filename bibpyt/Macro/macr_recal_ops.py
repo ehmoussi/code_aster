@@ -78,14 +78,15 @@ def force_list(obj, typref=list):
 
 
 # ------------------------------------------------------------------------
-def macr_recal_ops(self, UNITE_ESCL, RESU_EXP=None, LIST_POIDS=None, LIST_PARA=None, RESU_CALC=None, 
-                    ITER_MAXI=None, ITER_FONC_MAXI=None, RESI_GLOB_RELA=None, UNITE_RESU=None, PARA_DIFF_FINI=None, 
+def macr_recal_ops(self, UNITE_ESCL, RESU_EXP=None, LIST_POIDS=None, LIST_PARA=None, RESU_CALC=None,
+                    ITER_MAXI=None, ITER_FONC_MAXI=None, RESI_GLOB_RELA=None, UNITE_RESU=None, PARA_DIFF_FINI=None,
                     GRAPHIQUE=None, PARA_OPTI=None, COURBE=None, METHODE=None, INFO=None, **args):
     """ Macro commande realisant le recalage de modeles Aster """
 
     # Initialisation du compteur d'erreurs
     ier = 0
 
+    from code_aster import onFatalError
     import aster
     import Macro
     #from code_aster.Commands import (DEFI_LIST_REEL, CREA_TABLE,
@@ -101,8 +102,8 @@ def macr_recal_ops(self, UNITE_ESCL, RESU_EXP=None, LIST_POIDS=None, LIST_PARA=N
     from Macro.reca_controles import gestion
 
     # Gestion des Exceptions
-    prev_onFatalError = aster.onFatalError()
-    aster.onFatalError('EXCEPTION')
+    prev_onFatalError = onFatalError()
+    onFatalError('EXCEPTION')
 
     # La macro compte pour 1 dans l'execution des commandes
     self.set_icmd(1)
@@ -160,7 +161,7 @@ def macr_recal_ops(self, UNITE_ESCL, RESU_EXP=None, LIST_POIDS=None, LIST_PARA=N
         ITER_MAXI, ITER_FONC_MAXI, RESI_GLOB_RELA, UNITE_RESU, PARA_DIFF_FINI,
         GRAPHIQUE, METHODE, INFO, **args)
 
-    aster.onFatalError(prev_onFatalError)
+    onFatalError(prev_onFatalError)
     return
 
 

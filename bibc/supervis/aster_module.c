@@ -1611,50 +1611,6 @@ PyObject *args;
 }
 
 /* ------------------------------------------------------------------ */
-static PyObject * aster_onFatalError(self, args)
-PyObject *self; /* Not used */
-PyObject *args;
-{
-/*
-   Cette méthode définie le comportement lors des erreurs Fatales :
-
-   aster.onFatalError('ABORT')
-         => on s'arrête avec un JEFINI('ERREUR') dans UTFINM
-
-   aster.onFatalError('EXCEPTION')
-         => on lève l'exception aster.error
-
-   aster.onFatalError()
-         => retourne la valeur actuelle : 'ABORT' ou 'EXCEPTION'.
-*/
-      int len;
-      ASTERINTEGER lng=0;
-      char *tmp;
-      char *comport;
-      PyObject *res=NULL;
-
-      tmp = MakeBlankFStr(16);
-      len = -1;
-      if (!PyArg_ParseTuple(args, "|s#:onFatalError",&comport ,&len)) return NULL;
-      if (len == -1 || len == 0) {
-            CALL_ONERRF(" ", tmp, &lng);
-            res = PyString_FromStringAndSize(tmp, (Py_ssize_t)lng);
-
-      } else if (strcmp(comport,"ABORT")==0 || strcmp(comport, "EXCEPTION")==0 ||
-                 strcmp(comport, "EXCEPTION+VALID")==0 || strcmp(comport, "INIT")==0) {
-            CALL_ONERRF(comport, tmp, &lng);
-            Py_INCREF( Py_None ) ;
-            res = Py_None;
-
-      } else {
-            printf("ERREUR : '%s' n'est pas une valeur autorisee.\n", comport);
-            MYABORT("Argument incorrect dans onFatalError.");
-      }
-      FreeStr(tmp);
-      return res;
-}
-
-/* ------------------------------------------------------------------ */
 static PyObject * aster_ulopen(self, args)
 PyObject *self; /* Not used */
 PyObject *args;
@@ -1955,111 +1911,6 @@ PyObject *args;
     return temp;
 }
 
-
-/* ------------------------------------------------------------------ */
-static PyObject * aster_poursu(self, args)
-PyObject *self; /* Not used */
-PyObject *args;
-{
-        /*
-        FONCTIONALITE : poursuite
-        est appele par cata.POURSUITE (cf. ops.py)
-        */
-        PyObject *temp = (PyObject*)0 ;
-        static int nbPassages=0 ;
-                                     DEBUG_ASSERT((nbPassages==1)||(get_sh_etape()==(PyObject*)0));
-        nbPassages++ ;
-        if (!PyArg_ParseTuple(args, "O",&temp)) return NULL;
-
-        /* On empile le nouvel appel */
-        register_sh_etape(append_etape(temp));
-
-        if ( PyErr_Occurred() ) {
-            fprintf(stderr,"Warning: une exception n'a pas ete traitee\n");
-            PyErr_Print();
-            fprintf(stderr,"Warning: on l'annule pour continuer mais elle aurait\n\
-                            etre traitee avant\n");
-            PyErr_Clear();
-        }
-        fflush(stderr) ;
-        fflush(stdout) ;
-        try {
-            /* appel de la commande POURSUTE */
-            CALL_POURSU();
-        }
-        exceptAll {
-            /* On depile l'appel */
-            register_sh_etape(pop_etape());
-            raiseException();
-        }
-        endTry();
-        /* On depile l'appel */
-        register_sh_etape(pop_etape());
-        Py_INCREF(Py_None);
-        return Py_None;
-}
-
-/* ------------------------------------------------------------------ */
-static PyObject * aster_debut(self, args)
-PyObject *self; /* Not used */
-PyObject *args;
-{
-        PyObject *temp = (PyObject*)0 ;
-        static int nbPassages=0 ;
-                                     DEBUG_ASSERT((nbPassages==1)||(get_sh_etape()==(PyObject*)0));
-        nbPassages++ ;
-        if (!PyArg_ParseTuple(args, "O",&temp)) return NULL;
-
-        /* On empile le nouvel appel */
-        register_sh_etape(append_etape(temp));
-
-        if ( PyErr_Occurred() ) {
-            fprintf(stderr,"Warning: une exception n'a pas ete traitee\n");
-            PyErr_Print();
-            fprintf(stderr,"Warning: on l'annule pour continuer mais elle aurait\n\
-                            etre traitee avant\n");
-            PyErr_Clear();
-        }
-        fflush(stderr) ;
-        fflush(stdout) ;
-        try {
-            /* appel de la commande debut */
-            CALL_DEBUT();
-        }
-        exceptAll {
-            /* On depile l'appel */
-            register_sh_etape(pop_etape());
-            raiseException();
-        }
-        endTry();
-        /* On depile l'appel */
-        register_sh_etape(pop_etape());
-        Py_INCREF(Py_None);
-        return Py_None;
-}
-
-/* ------------------------------------------------------------------ */
-static PyObject *aster_init(self, args)
-PyObject *self; /* Not used */
-PyObject *args;
-{
-   ASTERINTEGER ier=0 ;
-   int idbg=0;
-   ASTERINTEGER dbg ; /* FORTRAN_FALSE */
-
-   if (!PyArg_ParseTuple(args, "i",&idbg)) return NULL;
-   dbg = (ASTERINTEGER)idbg;
-
-   fflush(stderr) ;
-   fflush(stdout) ;
-
-   CALL_IBMAIN();
-
-   /* jeveux est parti ! */
-   register_sh_jeveux_status(1);
-
-return PyInt_FromLong((long)ier);
-}
 
 /* ------------------------------------------------------------------ */
 static PyObject *jeveux_getobjects( PyObject* self, PyObject* args)
@@ -2474,13 +2325,13 @@ static PyObject *aster_argv( _UNUSED  PyObject *self, _IN PyObject *args )
 
 /* List of functions defined in the module */
 static PyMethodDef aster_methods[] = {
-                {"onFatalError", aster_onFatalError, METH_VARARGS},
+                // {"onFatalError", aster_onFatalError, METH_VARARGS},
                 {"fclose",       aster_fclose,       METH_VARARGS},
                 {"ulopen",       aster_ulopen,       METH_VARARGS},
                 {"affiche",      aster_affich,       METH_VARARGS},
-                {"init",         aster_init,         METH_VARARGS},
-                {"debut",        aster_debut,        METH_VARARGS},
-                {"poursu",       aster_poursu,       METH_VARARGS},
+                // {"init",         aster_init,         METH_VARARGS},
+                // {"debut",        aster_debut,        METH_VARARGS},
+                // {"poursu",       aster_poursu,       METH_VARARGS},
                 // {"oper",         aster_oper,         METH_VARARGS},
                 // {"opsexe",       aster_opsexe,       METH_VARARGS},
                 {"impers",       aster_impers,       METH_VARARGS},

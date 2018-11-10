@@ -28,12 +28,20 @@
 
 #include "astercxx.h"
 
+void jeveux_init();
+
 void call_oper( PyObject *syntax, int jxveri );
 
 void call_ops( PyObject *syntax, int ops );
 
+void call_debut( PyObject *syntax );
+
+void call_poursuite( PyObject *syntax );
+
 void call_affich( const std::string &code, const std::string &text );
 
 void call_print( const std::string &text );
+
+std::string onFatalError( const std::string value = "" );
 
 #endif

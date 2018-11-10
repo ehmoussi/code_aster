@@ -25,8 +25,17 @@
 
 #include "RunManager/Fortran.h"
 #include "aster_fort.h"
+#include "aster_utils.h"
 #include "astercxx.h"
 #include "shared_vars.h"
+
+void jeveux_init() {
+    ASTERINTEGER dbg = 0;
+    CALL_IBMAIN();
+
+    // now Jeveux is available
+    register_sh_jeveux_status( 1 );
+}
 
 void call_oper( PyObject *syntax, int jxveri ) {
     ASTERINTEGER jxvrf = jxveri;
@@ -64,8 +73,24 @@ void call_ops( PyObject *syntax, int ops ) {
     register_sh_etape( pop_etape() );
 }
 
-void call_affich( const std::string &code, const std::string &text ) {
-    CALL_AFFICH( code, text );
-}
+void call_debut( PyObject *syntax ) { return call_ops( syntax, -1 ); }
+
+void call_poursuite( PyObject *syntax ) { return call_ops( syntax, -2 ); }
+
+void call_affich( const std::string &code, const std::string &text ) { CALL_AFFICH( code, text ); }
 
 void call_print( const std::string &text ) { call_affich( "MESSAGE", text ); }
+
+std::string onFatalError( const std::string value ) {
+    ASTERINTEGER lng = 16;
+    char *tmp = MakeBlankFStr( lng );
+    std::string blank = " ";
+
+    if ( value == "ABORT" || value == "EXCEPTION" ||
+         value == "EXCEPTION+VALID" | value == "INIT" ) {
+        CALL_ONERRF( (char *)value.c_str(), tmp, &lng );
+    } else {
+        CALL_ONERRF( (char *)blank.c_str(), tmp, &lng );
+    }
+    return std::string( tmp, lng );
+}
