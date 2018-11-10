@@ -129,7 +129,7 @@
 #include "PythonBindings/VectorUtilities.h"
 #include "PythonBindings/XfemCrackInterface.h"
 
-#include "Supervis/Exception.h"
+#include "RunManager/Exceptions.h"
 
 #include "aster_fort.h"
 #include "aster_init.h"

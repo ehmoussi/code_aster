@@ -26,7 +26,6 @@
 
 #include "aster.h"
 #include "aster_fort.h"
-#include "RunManager/Exceptions.h"
 #include "aster_exceptions.h"
 
 /*
