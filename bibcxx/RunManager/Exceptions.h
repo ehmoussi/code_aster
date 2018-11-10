@@ -1,10 +1,10 @@
-#ifndef EXCEPTIONS_H_
-#define EXCEPTIONS_H_
+#ifndef EXCEPTION_H_
+#define EXCEPTION_H_
 
 /**
- * @file Exceptions.h
- * @brief Fichier entete de la classe Exceptions
- * @author Nicolas Sellenet
+ * @file Exception.h
+ * @brief Definition of code_aster exceptions
+ * @author Mathieu Courtois
  * @section LICENCE
  *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
@@ -24,26 +24,46 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "Python.h"
+/* person_in_charge: mathieu.courtois@edf.fr */
 
 #ifdef __cplusplus
 
-#include <iostream>
-#include <stdexcept>
+#include <exception>
+#include <string>
 
-#define __Pyx_CppExn2PyErr AsterCythonCustomException
+#include "astercxx.h"
 
-/**
- * @brief Catch an exception in cython to raise a python exception
- */
-void AsterCythonCustomException();
+class AsterErrorCpp : public std::exception {
+  private:
+    std::string _idmess;
+    VectorString _valk;
+    VectorLong _vali;
+    VectorDouble _valr;
+
+  public:
+    AsterErrorCpp( std::string idmess, VectorString valk = {}, VectorLong vali = {},
+                   VectorDouble valr = {} )
+        : _idmess( idmess ), _valk( valk ), _vali( vali ), _valr( valr ) {}
+
+    const char *what() const throw() { return _idmess.c_str(); }
+
+    ~AsterErrorCpp() throw() {}
+
+    /* Build arguments for the Python exception */
+    PyObject *py_attrs() const;
+};
+
+PyObject *createExceptionClass( const char *name, PyObject *baseTypeObj = PyExc_Exception );
+
+void raiseAsterError( const std::string idmess = "VIDE_1" ) throw( AsterErrorCpp );
+
+extern "C" void DEFPSPSPPPP( UEXCEP, uexcep, _IN ASTERINTEGER *exc_type, _IN char *idmess,
+                             _IN STRING_SIZE lidmess, _IN ASTERINTEGER *nbk, _IN char *valk,
+                             _IN STRING_SIZE lvk, _IN ASTERINTEGER *nbi, _IN ASTERINTEGER *vali,
+                             _IN ASTERINTEGER *nbr, _IN ASTERDOUBLE *valr );
 
 extern "C" {
-#endif
-
-/**
- * @brief Raise an C++ exception from the Fortran of Aster
- */
+#endif // __cplusplus
 void _raiseException();
 
 #ifdef __cplusplus

@@ -30,7 +30,7 @@
 #include "Python.h"
 #include "RunManager/LogicalUnitManagerCython.h"
 #include "Supervis/CommandSyntax.h"
-#include "Supervis/Exception.h"
+#include "RunManager/Exceptions.h"
 #include "Supervis/ResultNaming.h"
 #include "Utilities/CapyConvertibleValue.h"
 
