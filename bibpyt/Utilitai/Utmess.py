@@ -26,6 +26,7 @@ import re
 
 from code_aster import AsterError
 
+import libaster
 import aster
 import aster_core
 
@@ -706,7 +707,7 @@ du calcul ont été sauvées dans la base jusqu'au moment de l'arret."""),
     def affiche(self, unite, txt):
         """Affichage du message"""
         txt = convert(txt)
-        aster.affiche(unite, txt)
+        libaster.affich(unite, txt)
 
     def onFatalError(self):
         """Récupérer le comportement en cas d'erreur fatale."""

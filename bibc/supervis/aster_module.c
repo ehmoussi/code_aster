@@ -1587,89 +1587,6 @@ PyObject *args;
 
 
 /* ------------------------------------------------------------------ */
-static PyObject* aster_oper(self, args)
-PyObject *self; /* Not used */
-PyObject *args;
-{
-        PyObject *temp;
-        ASTERINTEGER jxvrf=1 ; /* FORTRAN_TRUE */
-        int ijxvrf;
-
-        if (!PyArg_ParseTuple(args, "Oi",&temp,&ijxvrf)) return NULL;
-        jxvrf = (ASTERINTEGER)ijxvrf;
-        /* On empile le nouvel appel */
-        register_sh_etape(append_etape(temp));
-
-        if ( PyErr_Occurred() ) {
-            fprintf(stderr,"Warning: une exception n'a pas ete traitee\n");
-            PyErr_Print();
-            fprintf(stderr,"Warning: on l'annule pour continuer mais elle aurait\n\
-                            etre traitee avant\n");
-            PyErr_Clear();
-        }
-
-        fflush(stderr) ;
-        fflush(stdout) ;
-
-        try {
-            /*  appel du sous programme expass pour verif ou exec */
-            CALL_EXPASS (&jxvrf);
-        }
-        exceptAll {
-            /* On depile l'appel */
-            register_sh_etape(pop_etape());
-            raiseException();
-        }
-        endTry();
-        /* On depile l'appel */
-        register_sh_etape(pop_etape());
-        Py_INCREF(Py_None);
-        return Py_None;
-}
-
-/* ------------------------------------------------------------------ */
-static PyObject* aster_opsexe(self, args)
-PyObject *self; /* Not used */
-PyObject *args;
-{
-        PyObject *temp;
-        ASTERINTEGER oper=0 ;
-        int ioper=0;
-
-        if (!PyArg_ParseTuple(args, "Oi",&temp,&ioper)) return NULL;
-        oper=(ASTERINTEGER)ioper;
-
-        /* On empile le nouvel appel */
-        register_sh_etape(append_etape(temp));
-
-        if ( PyErr_Occurred() ) {
-            fprintf(stderr,"Warning: une exception n'a pas ete traitee\n");
-            PyErr_Print();
-            fprintf(stderr,"Warning: on l'annule pour continuer mais elle aurait\n\
-                            etre traitee avant\n");
-            PyErr_Clear();
-        }
-        fflush(stderr) ;
-        fflush(stdout) ;
-
-        try {
-            /*  appel du sous programme opsexe */
-            CALL_OPSEXE (&oper);
-        }
-        exceptAll {
-            /* On depile l'appel */
-            register_sh_etape(pop_etape());
-            raiseException();
-        }
-        endTry();
-        /* On depile l'appel */
-        register_sh_etape(pop_etape());
-        Py_INCREF(Py_None);
-        return Py_None;
-}
-
-
-/* ------------------------------------------------------------------ */
 static PyObject * aster_impers(self,args)
 PyObject *self, *args; /* Not used */
 {
@@ -1687,7 +1604,7 @@ PyObject *args;
       char *nomfic;
 
       if (!PyArg_ParseTuple(args, "ss:affiche",&nomfic,&texte)) return NULL;
-      CALL_AFFICH (nomfic,texte);
+      CALLSS(AFFICH,affich,nomfic,texte);
 
       Py_INCREF( Py_None ) ;
       return Py_None;
@@ -2228,11 +2145,6 @@ static PyObject *jeveux_exists( PyObject* self, PyObject* args)
     }
 }
 
-static PyObject *jeveux_status( PyObject* self, PyObject* args)
-{
-    return PyInt_FromLong((long)get_sh_jeveux_status());
-}
-
 /* ------------------------------------------------------------------ */
 /*   Routines d'interface pour le catalogue de loi de comportement    */
 /* ------------------------------------------------------------------ */
@@ -2569,8 +2481,8 @@ static PyMethodDef aster_methods[] = {
                 {"init",         aster_init,         METH_VARARGS},
                 {"debut",        aster_debut,        METH_VARARGS},
                 {"poursu",       aster_poursu,       METH_VARARGS},
-                {"oper",         aster_oper,         METH_VARARGS},
-                {"opsexe",       aster_opsexe,       METH_VARARGS},
+                // {"oper",         aster_oper,         METH_VARARGS},
+                // {"opsexe",       aster_opsexe,       METH_VARARGS},
                 {"impers",       aster_impers,       METH_VARARGS},
                 {"mdnoma",       aster_mdnoma,       METH_VARARGS},
                 {"mdnoch",       aster_mdnoch,       METH_VARARGS},
@@ -2588,7 +2500,7 @@ static PyMethodDef aster_methods[] = {
                 {"jeveux_getobjects", jeveux_getobjects, METH_VARARGS},
                 {"jeveux_getattr", jeveux_getattr,   METH_VARARGS},
                 {"jeveux_exists", jeveux_exists,     METH_VARARGS},
-                {"jeveux_status", jeveux_status,     METH_VARARGS},
+                // {"jeveux_status", jeveux_status,     METH_VARARGS},
                 {"get_nom_concept_unique", aster_gcncon, METH_VARARGS},
                 {NULL,                NULL}/* sentinel */
 };
