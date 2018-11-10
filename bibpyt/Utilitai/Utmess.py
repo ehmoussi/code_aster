@@ -711,7 +711,7 @@ du calcul ont été sauvées dans la base jusqu'au moment de l'arret."""),
 
     def onFatalError(self):
         """Récupérer le comportement en cas d'erreur fatale."""
-        return aster.onFatalError()
+        return libaster.onFatalError()
 
 # could be share elsewhere
 def in_testcase():

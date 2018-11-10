@@ -23,13 +23,13 @@
 
 The :py:class:`CommandSyntax` provides an interface between operators originally
 defined in Fortran (:file:`opXXXX` subroutines) and the user syntax.
-The C/Fortran interface is defined in :file:`astermodule.c`.
+The C/Fortran interface is defined in :file:`aster_module.c`.
 
 It is also used in some C++ objects to emulate a user command.
 The C++ interface is available from C++ ``CommandSyntax`` class.
 
 The method :py:meth:`~CommandSyntax.define` stores the user keywords.
-The execution of an operator (by :py:func:`aster.oper` for example) registers
+The execution of an operator (by :py:func:`libaster.call_oper` for example) registers
 the current :py:class:`CommandSyntax` instance that can be requested by the
 operator using the functions:
 
