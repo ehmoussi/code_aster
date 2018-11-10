@@ -40,7 +40,7 @@ class AsterErrorCpp : public std::exception {
 
   public:
     AsterErrorCpp( std::string idmess, VectorString valk = {}, VectorLong vali = {},
-                    VectorDouble valr = {} )
+                   VectorDouble valr = {} )
         : _idmess( idmess ), _valk( valk ), _vali( vali ), _valr( valr ) {}
 
     const char *what() const throw() { return _idmess.c_str(); }
@@ -53,8 +53,11 @@ class AsterErrorCpp : public std::exception {
 
 PyObject *createExceptionClass( const char *name, PyObject *baseTypeObj = PyExc_Exception );
 
-void raiseAsterError( const std::string idmess = "DVP_1" ) throw( AsterErrorCpp );
+void raiseAsterError( const std::string idmess = "VIDE_1" ) throw( AsterErrorCpp );
 
-extern "C" void DEF0(UEXCEP, uexcep);
+extern "C" void DEFPSPSPPPP( UEXCEP, uexcep, _IN ASTERINTEGER *exc_type, _IN char *idmess,
+                             _IN STRING_SIZE lidmess, _IN ASTERINTEGER *nbk, _IN char *valk,
+                             _IN STRING_SIZE lvk, _IN ASTERINTEGER *nbi, _IN ASTERINTEGER *vali,
+                             _IN ASTERINTEGER *nbr, _IN ASTERDOUBLE *valr );
 
 #endif
