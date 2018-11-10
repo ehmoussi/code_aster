@@ -55,6 +55,7 @@
 #include "PythonBindings/FluidStructureInteractionInterface.h"
 #include "PythonBindings/FluidStructureModalBasisInterface.h"
 #include "PythonBindings/FormulaInterface.h"
+#include "PythonBindings/FortranInterface.h"
 #include "PythonBindings/FourierCombinationInterface.h"
 #include "PythonBindings/FourierElasContainerInterface.h"
 #include "PythonBindings/FourierTherContainerInterface.h"
@@ -209,6 +210,7 @@ BOOST_PYTHON_MODULE( libaster ) {
     exportGenericFunctionToPython();
     exportFunctionToPython();
     exportFormulaToPython();
+    exportFortranToPython();
     exportSurfaceToPython();
     exportContactDefinitionToPython();
     exportAssemblyMatrixToPython();

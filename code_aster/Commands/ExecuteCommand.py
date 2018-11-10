@@ -61,6 +61,7 @@ import inspect
 import re
 from collections import namedtuple
 
+import libaster
 import aster
 
 from ..Cata import Commands
@@ -161,7 +162,7 @@ class ExecuteCommand(object):
         Arguments:
             syntax (*CommandSyntax*): Syntax description with user keywords.
         """
-        return aster.oper(syntax, 0)
+        return libaster.call_oper(syntax, 0)
 
     @property
     def name(self):
@@ -289,8 +290,10 @@ class ExecuteCommand(object):
             result_name = self._result.getName()
         syntax.setResult(result_name, type_name)
 
-        self._call_oper(syntax)
-        syntax.free()
+        try:
+            self._call_oper(syntax)
+        finally:
+            syntax.free()
 
     def post_exec(self, keywords):
         """Hook that allows to add post-treatments after the *exec* function.
@@ -351,7 +354,7 @@ class ExecuteCommand(object):
 
 def check_jeveux():
     """Check that the memory manager (Jeveux) is up."""
-    if not aster.jeveux_status():
+    if not libaster.jeveux_status():
         raise RuntimeError("code_aster memory manager is not started. "
                            "No command can be executed.")
 
@@ -367,7 +370,7 @@ class ExecuteCommandOps(ExecuteCommand):
         Arguments:
             syntax (*CommandSyntax*): Syntax description with user keywords.
         """
-        return aster.opsexe(syntax, self._op)
+        return libaster.call_ops(syntax, self._op)
 
 
 class ExecuteMacro(ExecuteCommand):
