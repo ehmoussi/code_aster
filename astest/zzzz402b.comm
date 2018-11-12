@@ -1,0 +1,317 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+DEBUT(PAR_LOT='NON', CODE=_F(NIV_PUB_WEB='INTERNET',),);
+
+from numpy import array,shape,reshape,real
+from cmath import *
+
+#
+# --------
+# RECALAGE DES VALEURS D'AMORTISSEMENT DE RAYLEIGH 
+# PAR RAPPORT A L'AMORTISSEMENT REDUIT
+# ========================================================
+def recal_rayleigh(amor_reduit, f1, f2,):
+  """
+  Calcule les coefficients d''amortissement de Rayleigh ALPHA et BETA
+  a partir des hypotheses suivantes:
+  
+  + 2*amor_reduit = 1/(w2-w1) * integral(w1,w2){alpha*w+beta/w}
+  
+  + alpha*w1+beta/w1 = alpha*w2+beta/w2
+  
+  avec w = 2*pi*f
+  
+  DONNEES D''ENTREE:
+  -----------------
+  * amortissement reduit
+  * la plage de frequences [f1, f2]
+  
+  """
+
+  from numpy import linalg
+  from math  import log, pi
+  
+  w1,w2, = 2.*pi*f1,2.*pi*f2,
+  
+  T = [[.5*(w1+w2), log(w2/w1)/(w2-w1),],
+       [w1-w2     , 1./w1-1./w2       ,],]
+  V = [2.*amor_reduit,0.,]
+  
+  coef =linalg.solve(T,V); # list
+  
+  return tuple(coef);
+  
+
+MA = LIRE_MAILLAGE(FORMAT = 'MED',);
+                                
+MA = DEFI_GROUP(reuse=MA, MAILLAGE=MA, CREA_GROUP_NO=_F(TOUT_GROUP_MA='OUI',),);
+                                
+                                                                                
+# Orientation des mailles surfaciques
+MA = MODI_MAILLAGE(reuse        = MA,
+                   MAILLAGE     = MA,
+                   ORIE_PEAU_2D =_F(GROUP_MA=('SLATD','SLATG', 'SFREEDRO','SFREEGAU',),),);
+
+mail_barrage = ('ENR','ENRW','ENROC','ENROCW','TRANS','TRANSW','NOYAU','FILTRE')
+Cotes     = ('DRO', 'GAU')
+Paraxiaux = ('BAS',)
+
+#Orientation des mailles surfaciques
+MA = MODI_MAILLAGE(reuse        = MA,
+                   MAILLAGE     = MA,
+                   ORIE_PEAU_2D = _F(GROUP_MA=Paraxiaux+Cotes,
+                                     GROUP_MA_SURF=('Fondation'),),);
+
+MODYN = AFFE_MODELE(MAILLAGE = MA,
+                    AFFE  = (_F(GROUP_MA     = mail_barrage,
+                                PHENOMENE    = 'MECANIQUE',
+                                MODELISATION = 'D_PLAN',),
+                             _F(GROUP_MA     = ('Fondation'),
+                                PHENOMENE    = 'MECANIQUE',
+                                MODELISATION = 'D_PLAN',),
+                             _F(GROUP_MA     = Paraxiaux+Cotes,
+                                PHENOMENE    ='MECANIQUE',
+                                MODELISATION ='D_PLAN_ABSO',),),
+                    VERI_JACOBIEN = 'NON',);
+
+#================================================================================
+#     MATERIAUX 
+#================================================================================
+# ROCHER 
+YOUNG_1 =50000.E06 ;
+NU_1    =0.48 ;
+
+RHO_1   = 2300 ;
+
+f1,f2,amor_reduit,=4.,22.,.02,
+alpha,beta, = recal_rayleigh(amor_reduit, f1, f2,);
+
+#############################################
+ROCHER= DEFI_MATERIAU (ELAS=_F(E=YOUNG_1,NU=NU_1,RHO =RHO_1,
+                              AMOR_ALPHA = alpha, #AMOR RAYLEIGH  
+                              AMOR_BETA  = beta,    
+                              ALPHA=0.,
+),)
+
+YOUNG_2 =500.E06 ;
+NU_2    =0.49 ;
+RHO_2   = 1800  ;  # Valeur Sèche
+GammaRef=1.25e-4
+n_iwan=0.78
+GamRef_2 = GammaRef
+n_2 = n_iwan
+
+BARRAGE= DEFI_MATERIAU (ELAS=_F(E=YOUNG_2,NU=NU_2,RHO =RHO_2,
+                              AMOR_ALPHA = alpha, #AMOR RAYLEIGH  
+                              AMOR_BETA  = beta,    
+                              ALPHA=0.,
+),
+                        Iwan=_F(YoungModulus = YOUNG_2,
+                               PoissonRatio = NU_2,
+                               GammaRef = GamRef_2,
+                               n = n_2,),
+)
+
+affe_materiau =[_F(GROUP_MA=('Fondation','BAS','DRO','GAU',),MATER=ROCHER,),
+                _F(GROUP_MA=mail_barrage,MATER=BARRAGE,),]
+
+Tout = ('Fondation','BAS','DRO','GAU','ENR','ENRW','ENROC','ENROCW','TRANS','TRANSW','NOYAU','FILTRE')
+
+MATDYN=AFFE_MATERIAU(INFO=1,MAILLAGE=MA,
+                           AFFE = affe_materiau);
+                      
+### ===============================================================  
+###                    
+###                  Calcul DYNAMIQUE
+###
+### ===============================================================
+ACCEX_1=LIRE_FONCTION(UNITE=31,
+           NOM_PARA='INST',
+           INDIC_PARA=[1,1],
+           NOM_RESU='ACCE',
+           INDIC_RESU=[1,2],
+           SEPAR=',',
+           )
+
+###############################################
+
+ACCEX1=CALC_FONCTION(COMB=_F(FONCTION=ACCEX_1,COEF=0.5))
+
+ACCEXX1=CALC_FONCTION(CORR_ACCE=_F(FONCTION=ACCEX1,METHODE='FILTRAGE',FREQ_FILTRE=0.05))
+
+ao1=ACCEXX1.Ordo()[:10300]
+ab1=ACCEXX1.Absc()[:10300]
+
+ACCEX11=DEFI_FONCTION(NOM_PARA='INST',ORDONNEE=ao1,ABSCISSE=ab1)
+VITX1=CALC_FONCTION(INTEGRE=_F(FONCTION=ACCEX11),PROL_DROITE='CONSTANT',)
+
+CHARGX=AFFE_CHAR_MECA_F(MODELE=MODYN,
+                     VERI_NORM='OUI',
+                     ONDE_PLANE=_F(GROUP_MA=('BAS'),
+                                   TYPE_ONDE='S',
+                                   DIST        =72.,
+                                   DIRECTION=(0,1,0),
+                                    FONC_SIGNAL=VITX1,),);
+
+ONDELATE=AFFE_CHAR_MECA_F(MODELE      =MODYN,
+                      ONDE_PLANE  =_F(DIRECTION = (0.,1.,0.),
+                                      TYPE_ONDE   ='S',
+                                      GROUP_MA    =Cotes,
+                                      DIST        =72.,
+                                      DIST_REFLECHI=146.,
+                                      FONC_SIGNAL =VITX1,
+                                      #DEPL_IMPO=depx,
+),);
+
+
+TEMPS=DEFI_LIST_REEL(DEBUT=0.,
+                INTERVALLE=_F(JUSQU_A=1.0, PAS=0.01,),);
+             
+DEFLIST=DEFI_LIST_INST(DEFI_LIST=_F(LIST_INST =TEMPS,),
+#                                  METHODE='MANUEL', ),
+                   ECHEC=_F(SUBD_METHODE='MANUEL',
+                            SUBD_PAS=2,
+                            SUBD_NIVEAU=10,
+                            SUBD_PAS_MINI=0.,),);
+
+##################################################""
+
+
+
+###############################################
+# Etape de calcul dynamique####################
+###############################################
+
+ASSEMBLAGE(MODELE    =MODYN,
+           CHAM_MATER=MATDYN,
+           CHARGE    =(CHARGX,ONDELATE),
+           NUME_DDL  =CO('NUMEROTA'),
+           MATR_ASSE=(_F(MATRICE=CO('MATRRIGI'),
+                         OPTION='RIGI_MECA',),
+                      _F(MATRICE=CO('MATRMASS'),
+                         OPTION='MASS_MECA',),
+                      _F(MATRICE=CO('MATRAMOR'),
+                         OPTION='AMOR_MECA',),),);
+
+CHA_ON=CREA_RESU(OPERATION='CONV_CHAR',
+                  TYPE_RESU='DYNA_TRANS',
+                  CONV_CHAR=_F(MATR_RIGI=MATRRIGI,
+                          CHARGE=(CHARGX,ONDELATE),
+                          PRECISION=1.E-6,CRITERE='RELATIF',
+                          LIST_INST=TEMPS,),
+                );
+
+CHA_ON2=CREA_RESU(OPERATION='CONV_RESU',
+                  TYPE_RESU='EVOL_CHAR',
+                  CONV_RESU=_F(
+                          MATR_RIGI=MATRRIGI, 
+                          NOM_CHAM_INIT='DEPL',
+                          COEF=1.0,
+                          PRECISION=1.E-6,CRITERE='RELATIF',
+                          LIST_INST=TEMPS,
+                          RESU_INIT=CHA_ON),
+                );
+
+EVOL_CH=AFFE_CHAR_MECA(MODELE=MODYN,
+                        EVOL_CHAR=CHA_ON2,);
+
+
+DYNA_V = DYNA_NON_LINE(MODELE=MODYN,
+                       CHAM_MATER=MATDYN,
+                       EXCIT=(_F(CHARGE=CHARGX,),
+                              _F(CHARGE=ONDELATE,),
+),
+#                       EXCIT=(_F(CHARGE=EVOL_CH,),
+#),
+                       COMPORTEMENT=(
+#                                _F(
+#                                    RELATION='Iwan',
+#                               RESI_INTE_RELA=1E-15,
+#                               ITER_INTE_MAXI=10,
+##                               ITER_INTE_PAS=12,
+#                               GROUP_MA=mail_barrage,
+#                        ),
+                                _F(
+                                    RELATION='ELAS',
+                               GROUP_MA=mail_barrage,
+                        ),
+                                    _F(RELATION='ELAS',
+#                               RESI_INTE_RELA=1E-8,
+                               GROUP_MA=('Fondation','BAS','DRO','GAU',),
+                        ),),
+                  INCREMENT=_F(LIST_INST=DEFLIST,
+                               INST_INIT=0.,
+                               INST_FIN=1.0,),
+                  NEWTON=_F(MATRICE='ELASTIQUE',
+                            REAC_ITER=1,
+                            REAC_INCR=1,
+                            PREDICTION='TANGENTE',),
+                  CONVERGENCE=_F(RESI_GLOB_RELA = 1.E-4,
+                                 ITER_GLOB_MAXI = 5),
+                  ARCHIVAGE=_F(LIST_INST=TEMPS,),
+                  SCHEMA_TEMPS=_F(SCHEMA='NEWMARK',
+                                BETA=0.25,
+                                GAMMA=0.5,
+                                  FORMULATION='DEPLACEMENT',),
+                  SOLVEUR=_F(NPREC=8,
+                             METHODE='MUMPS',),
+                    )
+
+ky=0.001
+posx=80.
+posy=220.
+r=50.
+
+TAB_RESU = POST_NEWMARK(RESULTAT=DYNA_V,
+                 KY=ky,
+                 RAYON= r,
+                 CENTRE_X=posx,
+                 CENTRE_Y=posy,
+                 GROUP_MA_CALC=Tout)
+
+IMPR_TABLE(UNITE=38,TABLE=TAB_RESU)
+
+TEST_TABLE(  TABLE=TAB_RESU,
+              NOM_PARA='DEPL',
+              FILTRE=_F(NOM_PARA='INST',
+                        VALE= 6.00000E-01,
+                        CRITERE='RELATIF',
+                        ),
+              REFERENCE='AUTRE_ASTER',
+              VALE_REFE=9.44055232681E-05,
+              VALE_CALC=9.44048091513E-05,
+              PRECISION=0.00001,
+              CRITERE='RELATIF',
+              VALE_ABS='NON',)
+
+TEST_TABLE(  TABLE=TAB_RESU,
+              NOM_PARA='DEPL',
+              FILTRE=_F(NOM_PARA='INST',
+                        VALE= 9.00000E-01,
+                        CRITERE='RELATIF',
+                        ),
+              REFERENCE='AUTRE_ASTER',
+              VALE_REFE=0.000228145272925,
+              VALE_CALC=0.000228145474251,
+              PRECISION=0.00001,
+              CRITERE='RELATIF',
+              VALE_ABS='NON',)
+
+FIN();

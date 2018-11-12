@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -230,5 +230,8 @@ Erreur d'utilisation dans MACR_LIGN_COUPE :
   Il faut renseigner le mot clé VECT_Y
 """),
 
+    51 : _(u"""
+CALC_NEWMARK ne sait pas traiter des maillages 3D
+"""),
 
 }
