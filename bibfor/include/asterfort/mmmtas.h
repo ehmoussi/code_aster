@@ -17,16 +17,18 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine mmmtas(nbdm  , ndim  , nnl   , nne   , nnm   , nbcps,&
-                      matrcc, matree, matrmm, matrem,&
-                      matrme, matrce, matrcm, matrmc, matrec,&
-                      matrff, matrfe, matrfm, matrmf, matref,&
-                      mmat)
+    subroutine mmmtas(nbdm   , ndim   , nnl    , nne    , nnm    , nbcps,&
+                      matrcc , matree , matrmm , matrem ,&
+                      matrme , matrce , matrcm , matrmc , matrec ,&
+                      matr   ,&
+                      matrff_, matrfe_, matrfm_, matrmf_, matref_)
         integer, intent(in) :: nbdm, ndim, nnl, nne, nnm, nbcps
         real(kind=8), intent(in) :: matrcc(9, 9), matree(27, 27), matrmm(27, 27)
         real(kind=8), intent(in) :: matrem(27, 27), matrme(27, 27), matrce(9, 27), matrcm(9, 27)
-        real(kind=8), intent(in) :: matrec(27, 9), matrmc(27, 9), matrff(18, 18)
-        real(kind=8), intent(in) :: matrfe(18, 27), matrfm(18, 27), matrmf(27, 18), matref(27, 18)
-        real(kind=8), intent(inout) :: mmat(81, 81)
+        real(kind=8), intent(in) :: matrec(27, 9), matrmc(27, 9)
+        real(kind=8), intent(inout) :: matr(81, 81)
+        real(kind=8), optional, intent(in) :: matrff_(18, 18)
+        real(kind=8), optional, intent(in) :: matrfe_(18, 27), matrfm_(18, 27)
+        real(kind=8), optional, intent(in) :: matrmf_(27, 18), matref_(27, 18)
     end subroutine mmmtas
 end interface

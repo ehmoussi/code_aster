@@ -44,6 +44,7 @@ implicit none
 #include "asterfort/mmtgeo.h"
 #include "asterfort/mmtppe.h"
 #include "asterfort/mmCombLineMatr.h"
+#include "asterfort/mmCompMatrCont.h"
 !
 character(len=16), intent(in) :: option, nomte
 !
@@ -55,7 +56,7 @@ character(len=16), intent(in) :: option, nomte
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: i, j, ij, jmatt
+    integer :: i, j, ij, jv_matr
     integer :: nne, nnm, nnl
     integer :: nddl, ndim, nbcps, nbdm
     integer :: iresof, iresog, ialgoc, ialgof
@@ -109,8 +110,9 @@ character(len=16), intent(in) :: option, nomte
     real(kind=8) :: kappa_prev(2, 2)=0., h_prev(2, 2)=0.0
     real(kind=8) :: vech1_prev(3)=0.0, vech2_prev(3)=0.0
 !
-    real(kind=8) :: mmat(81, 81)
-    real(kind=8) :: mmat_prev(81, 81)
+    real(kind=8) :: matr(81, 81)
+    real(kind=8) :: matr_prev(81, 81)
+    real(kind=8) :: matr_cont(81, 81), matr_conp(81, 81)
 !
     real(kind=8) :: matrcc(9, 9)
     real(kind=8) :: matrcc_prev(9, 9)
@@ -142,8 +144,10 @@ character(len=16), intent(in) :: option, nomte
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    mmat(:,:)      = 0.d0
-    mmat_prev(:,:) = 0.d0
+    matr(:,:)      = 0.d0
+    matr_prev(:,:) = 0.d0
+    matr_cont(:,:) = 0.d0
+    matr_conp(:,:) = 0.d0
     matrcc(:,:) = 0.d0
     matrcc_prev(:,:) = 0.d0
     matree(:,:) = 0.d0
@@ -263,7 +267,7 @@ character(len=16), intent(in) :: option, nomte
                 vech1    , vech2    ,&
                 taujeu1  , taujeu2  ,&
                 dnepmait1, dnepmait2)
-    if (l_previous) then
+    if (l_prev_cont .or. l_prev_fric) then
         call mmtppe(ndim          , nne      , nnm     , nnl     , nbdm  ,&
                     iresog        , l_large_slip, &
                     jeusup   ,&
@@ -283,7 +287,7 @@ character(len=16), intent(in) :: option, nomte
 ! - Get contact pressure
 !
     call mmlagc(lambds, dlagrc, iresof, lambda)
-    if (l_previous) then
+    if (l_prev_cont .or. l_prev_fric) then
         call mmlagc(lambds_prev, dlagrc_prev, iresof, lambda_prev)
     endif
 !
@@ -296,7 +300,7 @@ character(len=16), intent(in) :: option, nomte
                 tau1  , tau2  ,&
                 lcont , ladhe , l_fric_no,&
                 rese  , nrese )
-    if (l_previous) then
+    if (l_prev_cont .or. l_prev_fric) then
         call mmmsta(ndim        , leltf        , indco,&
                     ialgoc      , ialgof       ,&
                     lpenaf      , coefaf       ,&
@@ -330,6 +334,35 @@ character(len=16), intent(in) :: option, nomte
                     tau1  , tau2  ,&
                     lcont , ladhe ,&
                     rese  , nrese)
+    endif
+!
+! - Compute matrices for contact
+!
+    call mmCompMatrCont(phase    , lpenac, iresog, &
+                        nbdm     , &
+                        ndim     , nne   , nnm   , nnl,&
+                        wpg      , jacobi, coefac,&
+                        jeu      , dlagrc,&
+                        ffe      , ffm   , ffl   , dffm  ,&
+                        norm     , mprojn,&
+                        mprt1n   , mprt2n, mprnt1, mprnt2,&
+                        mprt11   , mprt12, mprt21, mprt22,&
+                        kappa    , vech1 , vech2 ,&
+                        h        , hah   , &
+                        matr_cont)
+    if (l_prev_cont) then
+        call mmCompMatrCont(phase_prev , lpenac     , iresog, &
+                            nbdm       , &
+                            ndim       , nne        , nnm        , nnl,&
+                            wpg        , jacobi     , coefac_prev,&
+                            jeu_prev   , dlagrc_prev,&
+                            ffe        , ffm        , ffl        , dffm    ,&
+                            norm       , mprojn_prev,&
+                            mprt1n_prev, mprt2n_prev, mprnt1_prev, mprnt2_prev,&
+                            mprt11_prev, mprt12_prev, mprt21_prev, mprt22_prev,&
+                            kappa_prev , vech1_prev , vech2_prev ,&
+                            h_prev     , hah_prev   , &
+                            matr_conp)
     endif
 !
 ! - Weak form of contact/friction force
@@ -424,20 +457,20 @@ character(len=16), intent(in) :: option, nomte
     call mmmtas(nbdm, ndim, nnl, nne, nnm,&
                 nbcps, matrcc, matree, matrmm, matrem,&
                 matrme, matrce, matrcm, matrmc, matrec,&
-                matrff, matrfe, matrfm, matrmf, matref,&
-                mmat)
+                matr,&
+                matrff, matrfe, matrfm, matrmf, matref)
     if (l_previous) then
         call mmmtas(nbdm, ndim, nnl, nne, nnm,&
                     nbcps, matrcc_prev, matree_prev, matrmm_prev, matrem_prev,&
                     matrme_prev, matrce_prev, matrcm_prev, matrmc_prev, matrec_prev,&
-                    matrff_prev, matrfe_prev, matrfm_prev, matrmf_prev, matref_prev,&
-                    mmat_prev)
+                    matr_prev,&
+                    matrff_prev, matrfe_prev, matrfm_prev, matrmf_prev, matref_prev)
     endif
 !
 ! - Linear combination of matrix
 !
     if (l_previous) then
-        call mmCombLineMatr(alpha_cont, mmat_prev, mmat)
+        call mmCombLineMatr(alpha_cont, matr_prev, matr)
     endif
 !
 ! - Copy
@@ -445,24 +478,24 @@ character(len=16), intent(in) :: option, nomte
     if ((lpenac.and.(.not.leltf)) .or.&
         (leltf.and.(iresof.ne.0)) .or.&
         (lpenaf.and.leltf)) then
-        call jevech('PMATUNS', 'E', jmatt)
+        call jevech('PMATUNS', 'E', jv_matr)
         do j = 1, nddl
             do i = 1, nddl
                 ij = j+nddl*(i-1)
-                zr(jmatt+ij-1) = mmat(i,j)
+                zr(jv_matr+ij-1) = matr(i,j)
                 if (debug) then
-                    call mmmtdb(mmat(i, j), 'IJ', i, j)
+                    call mmmtdb(matr(i, j), 'IJ', i, j)
                 endif
             enddo
         enddo
     else
-        call jevech('PMATUUR', 'E', jmatt)
+        call jevech('PMATUUR', 'E', jv_matr)
         do j = 1, nddl
             do i = 1, j
                 ij = (j-1)*j/2 + i
-                zr(jmatt+ij-1) = mmat(i,j)
+                zr(jv_matr+ij-1) = matr(i,j)
                 if (debug) then
-                    call mmmtdb(mmat(i, j), 'IJ', i, j)
+                    call mmmtdb(matr(i, j), 'IJ', i, j)
                 endif
             end do
         end do
