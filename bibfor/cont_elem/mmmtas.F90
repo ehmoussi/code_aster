@@ -18,11 +18,11 @@
 ! person_in_charge: mickael.abbas at edf.fr
 ! aslint: disable=W1504
 !
-subroutine mmmtas(nbdm  , ndim  , nnl   , nne   , nnm   , nbcps,&
-                  matrcc, matree, matrmm, matrem,&
-                  matrme, matrce, matrcm, matrmc, matrec,&
-                  matrff, matrfe, matrfm, matrmf, matref,&
-                  mmat)
+subroutine mmmtas(nbdm   , ndim   , nnl    , nne    , nnm    , nbcps,&
+                  matrcc , matree , matrmm , matrem ,&
+                  matrme , matrce , matrcm , matrmc , matrec ,&
+                  matr   ,&
+                  matrff_, matrfe_, matrfm_, matrmf_, matref_)
 !
 implicit none
 !
@@ -32,9 +32,11 @@ implicit none
 integer, intent(in) :: nbdm, ndim, nnl, nne, nnm, nbcps
 real(kind=8), intent(in) :: matrcc(9, 9), matree(27, 27), matrmm(27, 27)
 real(kind=8), intent(in) :: matrem(27, 27), matrme(27, 27), matrce(9, 27), matrcm(9, 27)
-real(kind=8), intent(in) :: matrec(27, 9), matrmc(27, 9), matrff(18, 18)
-real(kind=8), intent(in) :: matrfe(18, 27), matrfm(18, 27), matrmf(27, 18), matref(27, 18)
-real(kind=8), intent(inout) :: mmat(81, 81)
+real(kind=8), intent(in) :: matrec(27, 9), matrmc(27, 9)
+real(kind=8), intent(inout) :: matr(81, 81)
+real(kind=8), optional, intent(in) :: matrff_(18, 18)
+real(kind=8), optional, intent(in) :: matrfe_(18, 27), matrfm_(18, 27)
+real(kind=8), optional, intent(in) :: matrmf_(27, 18), matref_(27, 18)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -64,7 +66,7 @@ real(kind=8), intent(inout) :: mmat(81, 81)
 ! In  matrmc           : matrix for DOF [master x contact]
 ! In  matref           : matrix for DOF [slave x friction]
 ! In  matrmf           : matrix for DOF [master x friction]
-! IO  mmat             : resultant matrix
+! IO  matr             : resultant matrix
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -86,7 +88,7 @@ real(kind=8), intent(inout) :: mmat(81, 81)
             jj = nbdm*(inoc2-1)+ndim+1
             kk = inoc1
             ll = inoc2
-            mmat(ii,jj) = mmat(ii,jj)+matrcc(kk,ll)
+            matr(ii,jj) = matr(ii,jj)+matrcc(kk,ll)
             if (debug) call mmmtdb(matrcc(kk, ll), 'CC', ii, jj)
         end do
     end do
@@ -98,7 +100,7 @@ real(kind=8), intent(inout) :: mmat(81, 81)
                 jj = nbdm*(inoe-1)+idim
                 kk = inoc
                 ll = ndim*(inoe-1)+idim
-                mmat(ii,jj) = mmat(ii,jj)+matrce(kk,ll)
+                matr(ii,jj) = matr(ii,jj)+matrce(kk,ll)
                 if (debug) call mmmtdb(matrce(kk, ll), 'CE', ii, jj)
             end do
         end do
@@ -111,7 +113,7 @@ real(kind=8), intent(inout) :: mmat(81, 81)
                 jj = nbdm*(inoe-1)+idim
                 kk = inoc
                 ll = ndim*(inoe-1)+idim
-                mmat(jj,ii) = mmat(jj,ii)+matrec(ll,kk)
+                matr(jj,ii) = matr(jj,ii)+matrec(ll,kk)
                 if (debug) call mmmtdb(matrec(ll, kk), 'EC', jj, ii)
             end do
         end do
@@ -124,7 +126,7 @@ real(kind=8), intent(inout) :: mmat(81, 81)
                 jj = nbdm*nne+ndim*(inom-1)+idim
                 kk = inoc
                 ll = ndim*(inom-1)+idim
-                mmat(ii,jj) = mmat(ii,jj)+matrcm(kk,ll)
+                matr(ii,jj) = matr(ii,jj)+matrcm(kk,ll)
                 if (debug) call mmmtdb(matrcm(kk, ll), 'CM', ii, jj)
             end do
         end do
@@ -137,7 +139,7 @@ real(kind=8), intent(inout) :: mmat(81, 81)
                 jj = nbdm*nne+ndim*(inom-1)+idim
                 kk = ndim*(inom-1)+idim
                 ll = inoc
-                mmat(jj,ii) = mmat(jj,ii)+matrmc(kk,ll)
+                matr(jj,ii) = matr(jj,ii)+matrmc(kk,ll)
                 if (debug) call mmmtdb(matrmc(kk, ll), 'MC', jj, ii)
             end do
         end do
@@ -151,7 +153,7 @@ real(kind=8), intent(inout) :: mmat(81, 81)
                     jj = nbdm*(inoe2-1)+idim2
                     kk = ndim*(inoe1-1)+idim1
                     ll = ndim*(inoe2-1)+idim2
-                    mmat(ii,jj) = mmat(ii,jj)+matree(kk,ll)
+                    matr(ii,jj) = matr(ii,jj)+matree(kk,ll)
                     if (debug) call mmmtdb(matree(kk, ll), 'EE', ii, jj)
                 end do
             end do
@@ -166,7 +168,7 @@ real(kind=8), intent(inout) :: mmat(81, 81)
                     ll = ndim*(inom2-1)+idim2
                     ii = nbdm*nne+ndim*(inom1-1)+idim1
                     jj = nbdm*nne+ndim*(inom2-1)+idim2
-                    mmat(ii,jj) = mmat(ii,jj)+matrmm(kk,ll)
+                    matr(ii,jj) = matr(ii,jj)+matrmm(kk,ll)
                     if (debug) call mmmtdb(matrmm(kk, ll), 'MM', ii, jj)
                 end do
             end do
@@ -181,7 +183,7 @@ real(kind=8), intent(inout) :: mmat(81, 81)
                     ll = ndim*(inom-1)+idim2
                     ii = nbdm*(inoe-1)+idim1
                     jj = nbdm*nne+ndim*(inom-1)+idim2
-                    mmat(ii,jj) = mmat(ii,jj)+matrem(kk,ll)
+                    matr(ii,jj) = matr(ii,jj)+matrem(kk,ll)
                     if (debug) call mmmtdb(matrem(kk, ll), 'EM', ii, jj)
                 end do
             end do
@@ -196,14 +198,16 @@ real(kind=8), intent(inout) :: mmat(81, 81)
                     jj = nbdm*(inoe-1)+idim1
                     kk = ndim*(inom-1)+idim2
                     ll = ndim*(inoe-1)+idim1
-                    mmat(ii,jj) = mmat(ii,jj)+matrme(kk,ll)
+                    matr(ii,jj) = matr(ii,jj)+matrme(kk,ll)
                     if (debug) call mmmtdb(matrme(kk, ll), 'ME', ii, jj)
                 end do
             end do
         end do
     end do
 !
-    if (nbcpf .ne. 0) then
+! - For friction
+!
+    if (nbcpf .gt. 0) then
 !
         do inof1 = 1, nnl
             do inof2 = 1, nnl
@@ -213,8 +217,8 @@ real(kind=8), intent(inout) :: mmat(81, 81)
                         jj = nbdm*(inof2-1)+ndim+1+icmp2
                         kk = (ndim-1)*(inof1-1)+icmp1
                         ll = (ndim-1)*(inof2-1)+icmp2
-                        mmat(ii,jj) = mmat(ii,jj)+matrff(kk,ll)
-                        if (debug) call mmmtdb(matrff(kk, ll), 'FF', ii, jj)
+                        matr(ii,jj) = matr(ii,jj)+matrff_(kk,ll)
+                        if (debug) call mmmtdb(matrff_(kk, ll), 'FF', ii, jj)
                     end do
                 end do
             end do
@@ -228,8 +232,8 @@ real(kind=8), intent(inout) :: mmat(81, 81)
                         ll = ndim*(inoe-1)+idim
                         ii = nbdm*(inof-1)+ndim+1+icmp
                         jj = nbdm*(inoe-1)+idim
-                        mmat(ii,jj) = mmat(ii,jj)+matrfe(kk,ll)
-                        if (debug) call mmmtdb(matrfe(kk, ll), 'FE', ii, jj)
+                        matr(ii,jj) = matr(ii,jj)+matrfe_(kk,ll)
+                        if (debug) call mmmtdb(matrfe_(kk, ll), 'FE', ii, jj)
                     end do
                 end do
             end do
@@ -243,8 +247,8 @@ real(kind=8), intent(inout) :: mmat(81, 81)
                         ll = nbcpf*(inof-1)+icmp
                         ii = nbdm*(inoe-1)+idim
                         jj = nbdm*(inof-1)+ndim+1+icmp
-                        mmat(ii,jj) = mmat(ii,jj)+matref(kk,ll)
-                        if (debug) call mmmtdb(matrfe(kk, ll), 'FE', ii, jj)
+                        matr(ii,jj) = matr(ii,jj)+matref_(kk,ll)
+                        if (debug) call mmmtdb(matrfe_(kk, ll), 'FE', ii, jj)
                     end do
                 end do
             end do
@@ -258,8 +262,8 @@ real(kind=8), intent(inout) :: mmat(81, 81)
                         ll = ndim*(inom-1)+idim
                         ii = nbdm*(inof-1)+ndim+1+icmp
                         jj = nbdm*nne+ndim*(inom-1)+idim
-                        mmat(ii,jj) = mmat(ii,jj)+matrfm(kk,ll)
-                        if (debug) call mmmtdb(matrfm(kk, ll), 'FM', ii, jj)
+                        matr(ii,jj) = matr(ii,jj)+matrfm_(kk,ll)
+                        if (debug) call mmmtdb(matrfm_(kk, ll), 'FM', ii, jj)
                     end do
                 end do
             end do
@@ -273,8 +277,8 @@ real(kind=8), intent(inout) :: mmat(81, 81)
                         ll = nbcpf*(inof-1)+icmp
                         ii = nbdm*nne+ndim*(inom-1)+idim
                         jj = nbdm*(inof-1)+ndim+1+icmp
-                        mmat(ii,jj) = mmat(ii,jj)+matrmf(kk,ll)
-                        if (debug) call mmmtdb(matrmf(kk, ll), 'MF', ii, jj)
+                        matr(ii,jj) = matr(ii,jj)+matrmf_(kk,ll)
+                        if (debug) call mmmtdb(matrmf_(kk, ll), 'MF', ii, jj)
                     end do
                 end do
             end do
