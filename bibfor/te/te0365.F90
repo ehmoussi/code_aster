@@ -30,6 +30,7 @@ implicit none
 #include "asterfort/mmlagc.h"
 #include "asterfort/mmGetAlgo.h"
 #include "asterfort/mmGetCoefficients.h"
+#include "asterfort/mmGetProjection.h"
 #include "asterfort/mmmpha.h"
 #include "asterfort/mmnsta.h"
 #include "asterfort/mngliss.h"
@@ -39,7 +40,6 @@ implicit none
 #include "asterfort/mmvape.h"
 #include "asterfort/mmvfpe.h"
 #include "asterfort/mmvppe.h"
-#include "asterfort/vecini.h"
 !
 character(len=16), intent(in) :: option, nomte
 !
@@ -59,50 +59,47 @@ character(len=16), intent(in) :: option, nomte
     integer :: ndexfr
     character(len=8) :: typmae, typmam
     character(len=9) :: phasep
-    real(kind=8) :: norm(3)=0.0, tau1(3)=0.0, tau2(3)=0.0
-    real(kind=8) :: mprojt(3, 3)=0.0,mprojn(3, 3)=0.0
-    real(kind=8) :: rese(3)=0.0, nrese=0.0
-    real(kind=8) :: wpg, jacobi
+    aster_logical :: laxis = .false. , leltf = .false.
+    aster_logical :: lpenac = .false. , lpenaf = .false.
+    aster_logical :: loptf = .false. , ldyna = .false., lcont = .false., ladhe = .false.
+    aster_logical :: l_previous_cont = .false. , l_previous_frot = .false. , l_previous = .false.
+    aster_logical :: debug = .false.
     real(kind=8) :: coefff = 0.0
     real(kind=8) :: lambda = 0.0, lambds = 0.0
     real(kind=8) :: coefac = 0.0, coefaf = 0.0
+    real(kind=8) :: wpg, jacobi
+    real(kind=8) :: norm(3) = 0.0, tau1(3) = 0.0, tau2(3) = 0.0
     real(kind=8) :: jeusup=0.0
     real(kind=8) :: dlagrc=0.0, dlagrf(2)=0.0
     real(kind=8) :: jeu=0.0, djeut(3)=0.0
+    real(kind=8) :: rese(3)=0.0, nrese=0.0
+    real(kind=8) :: mprojt(3, 3)=0.0
+    real(kind=8) :: mprt1n(3, 3)=0.0, mprt2n(3, 3)=0.0
+    real(kind=8) :: mprnt1(3, 3)=0.0, mprnt2(3, 3)=0.0
+    real(kind=8) :: mprt11(3, 3)=0.0, mprt12(3, 3)=0.0, mprt21(3, 3)=0.0, mprt22(3, 3)=0.0
+    real(kind=8) :: kappa(2, 2)=0.0
+    real(kind=8) :: mprojn(3, 3)=0.0, h(2, 2)=0.d0
+    real(kind=8) :: vech1(3)=0.0, vech2(3)=0.0
+    real(kind=8) :: ffe(9), ffm(9), ffl(9)
+    real(kind=8) :: dffm(2, 9)
     real(kind=8) :: alpha_cont=1.0
-    aster_logical :: laxis = .false. , leltf = .false.
-    aster_logical :: lpenac = .false. , lpenaf = .false.
-    aster_logical :: loptf = .false. , ldyna = .false. ,  lcont = .false.
-    aster_logical :: ladhe = .false.
-    aster_logical :: l_previous_cont = .false. , l_previous_frot = .false. , l_previous = .false.
-    aster_logical :: debug = .false.
+    real(kind=8) :: dnepmait1, dnepmait2, taujeu1, taujeu2
+    real(kind=8) :: xpc, ypc, xpr, ypr
     aster_logical :: l_large_slip = ASTER_FALSE
-    real(kind=8) :: ffe(9), ffm(9), ffl(9), dffm(2, 9)
     real(kind=8) :: djeu(3)=0.0
 !
     real(kind=8) :: vectcc(9)
     real(kind=8) :: vectff(18)
     real(kind=8) :: vectee(27), vectmm(27)
     real(kind=8) :: vtmp(81)
-    real(kind=8) :: dnepmait1 ,dnepmait2 ,taujeu1,taujeu2
-    real(kind=8) :: mprt1n(3, 3), mprt2n(3, 3)
-    real(kind=8) :: mprnt1(3, 3), mprnt2(3, 3)
-    real(kind=8) :: mprt11(3, 3), mprt12(3, 3), mprt21(3, 3), mprt22(3, 3)
-    real(kind=8) :: gene11(3, 3), gene21(3, 3), gene22(3, 3)
-    real(kind=8) :: kappa(2, 2), a(2, 2), h(2, 2), ha(2, 2), hah(2, 2)
-    real(kind=8) :: vech1(3), vech2(3)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call vecini(81, 0.d0, vtmp)
-    call vecini(9, 0.d0, vectcc)
-    call vecini(18, 0.d0, vectff)
-    call vecini(27, 0.d0, vectee)
-    call vecini(27, 0.d0, vectmm)
-    dnepmait1 =0.0
-    dnepmait2 =0.0
-    taujeu1   =0.0
-    taujeu2   =0.0
+    vtmp (:) = 0.d0
+    vectcc(:) = 0.d0
+    vectff(:) = 0.d0
+    vectee(:) = 0.d0
+    vectmm(:) = 0.d0
 
     debug = ASTER_FALSE
     l_large_slip = ASTER_FALSE
@@ -118,6 +115,12 @@ character(len=16), intent(in) :: option, nomte
 !
     call mmGetCoefficients(coefff, coefac, coefaf, alpha_cont)
 !
+! - Get projections datas
+!
+    call mmGetProjection(iresog, wpg,&
+                         xpc   , ypc, xpr, ypr, tau1, tau2)
+
+!
 ! - Get algorithms
 !
     call mmGetAlgo(l_large_slip, ndexfr, jeusup, ldyna , lambds,&
@@ -126,22 +129,24 @@ character(len=16), intent(in) :: option, nomte
 !
 ! - Get informations on cell (slave and master)
 !
-    call mmelem(nomte, ndim, nddl, typmae, nne,&
-                typmam, nnm, nnl, nbcps, nbdm,&
-                laxis, leltf)
+    call mmelem(nomte , ndim , nddl,&
+                typmae, nne  ,&
+                typmam, nnm  ,&
+                nnl   , nbcps, nbdm,&
+                laxis , leltf)
 !
 ! - Compute quantities (for vector)
 !
     call mmvppe(typmae, typmam, iresog, ndim, nne,&
                 nnm, nnl, nbdm, laxis, ldyna,&
+                xpc        , ypc      , xpr     , ypr     ,&
                 jeusup, ffe, ffm, dffm, ffl,&
                 norm, tau1, tau2, mprojt, jacobi,&
-                wpg, dlagrc, dlagrf, jeu, djeu,&
+                dlagrc, dlagrf, jeu, djeu,&
                 djeut, mprojn,&
                 mprt1n, mprt2n, mprnt1, mprnt2,&
-                gene11, gene21,&
-                gene22, kappa, h, vech1, vech2,&
-                a, ha, hah, mprt11, mprt12, mprt21,&
+                kappa, h, vech1, vech2,&
+                mprt11, mprt12, mprt21,&
                 mprt22,taujeu1, taujeu2, &
                 dnepmait1,dnepmait2, l_previous,l_large_slip)
 !
@@ -197,8 +202,6 @@ character(len=16), intent(in) :: option, nomte
     call mmmvas(ndim, nne, nnm, nnl, nbdm,&
                 nbcps, vectee, vectmm, vectcc, vectff,&
                 vtmp)
-    alpha_cont = zr(jpcf-1+31)
-
 !
 ! - Copy
 !

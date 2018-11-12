@@ -26,11 +26,11 @@ implicit none
 #include "jeveux.h"
 #include "asterfort/assert.h"
 #include "asterfort/jevech.h"
-#include "asterfort/matini.h"
 #include "asterfort/mmelem.h"
 #include "asterfort/mmlagc.h"
 #include "asterfort/mmGetAlgo.h"
 #include "asterfort/mmGetCoefficients.h"
+#include "asterfort/mmGetProjection.h"
 #include "asterfort/mmmpha.h"
 #include "asterfort/mmmsta.h"
 #include "asterfort/mmnsta.h"
@@ -60,59 +60,61 @@ character(len=16), intent(in) :: option, nomte
     integer :: iresof, iresog, ialgoc, ialgof
     integer :: count_consistency
     integer :: ndexfr
+    integer :: iresof_prev, iresog_prev
+    integer :: ndexfr_prev
     character(len=8) :: typmae, typmam
     character(len=9) :: phasep
     character(len=9) :: phasep_prev
-    integer :: iresof_prev, iresog_prev
+    aster_logical :: laxis = .false. , leltf = .false.
+    aster_logical :: lpenac = .false. , lpenaf = .false.
+    aster_logical :: loptf = .false. , ldyna = .false., lcont = .false., ladhe = .false.
+    aster_logical :: l_previous = .false.
+    aster_logical :: debug = .false.
+    aster_logical :: lcont_prev = .false., ladhe_prev = .false.
     aster_logical :: l_large_slip=ASTER_FALSE
-    integer :: ndexfr_prev
-    aster_logical :: laxis, leltf
-    aster_logical :: lpenac, lpenaf
     aster_logical :: lpenac_prev, lpenaf_prev
-    aster_logical :: loptf, ldyna,  lcont
-    aster_logical :: lcont_prev
-    aster_logical :: ladhe
-    aster_logical :: ladhe_prev
-    aster_logical :: debug
-    aster_logical :: l_previous_cont, l_previous_frot, l_previous
-    real(kind=8) :: coefff  =  0.0
+    aster_logical :: l_previous_cont, l_previous_frot
+    real(kind=8) :: coefff = 0.0
     real(kind=8) :: lambda = 0.0, lambds = 0.0
     real(kind=8) :: lambda_prev = 0.0 , lambds_prev =0.0
-    real(kind=8) :: coefac = 0.0 , coefaf=0.0
+    real(kind=8) :: coefac = 0.0 , coefaf = 0.0
     real(kind=8) :: coefac_prev =0.0, coefaf_prev=0.0
     real(kind=8) :: wpg, jacobi
-    real(kind=8) :: norm(3) = 0.0 , tau1(3) = 0.0 , tau2(3) =0.0 
-    real(kind=8) :: norm_prev(3) = 0.0 , tau1_prev(3) = 0.0 , tau2_prev(3)=0.0
-    real(kind=8) :: mprojn(3, 3)=0.0, mprojt(3, 3)=0.0
-    real(kind=8) :: mprojn_prev(3, 3)=0.0, mprojt_prev(3, 3)=0.0
-    real(kind=8) :: rese(3)=0.0, nrese=0.0
-    real(kind=8) :: rese_prev(3)=0.0, nrese_prev=0.0
+    real(kind=8) :: norm(3) = 0.0, tau1(3) = 0.0, tau2(3) = 0.0
     real(kind=8) :: jeusup=0.0
-    real(kind=8) :: jeusup_prev=0.0
     real(kind=8) :: dlagrc=0.0, dlagrf(2)=0.0
-    real(kind=8) :: dlagrc_prev=0.0, dlagrf_prev(2)=0.0
     real(kind=8) :: jeu=0.0, djeut(3)=0.0
-    real(kind=8) :: jeu_prev=0.0, djeut_prev(3) = 0.0
-    real(kind=8) :: alpha_cont=0.0 , alpha_frot=0.0
-    real(kind=8) :: dnepmait1 ,dnepmait2 ,taujeu1,taujeu2
-    real(kind=8) :: dnepmait1_prev ,dnepmait2_prev ,taujeu1_prev,taujeu2_prev
-    real(kind=8) :: ffe(9), ffm(9), ffl(9), dffm(2, 9), ddffm(3, 9)
+    real(kind=8) :: rese(3)=0.0, nrese=0.0
+    real(kind=8) :: mprojt(3, 3)=0.0
     real(kind=8) :: mprt1n(3, 3)=0.0, mprt2n(3, 3)=0.0
     real(kind=8) :: mprnt1(3, 3)=0.0, mprnt2(3, 3)=0.0
+    real(kind=8) :: mprt11(3, 3)=0.0, mprt12(3, 3)=0.0
+    real(kind=8) :: mprt21(3, 3)=0.0, mprt22(3, 3)=0.0
+    real(kind=8) :: kappa(2, 2)=0.0
+    real(kind=8) :: mprojn(3, 3)=0.0, h(2, 2)=0.d0
+    real(kind=8) :: vech1(3)=0.0, vech2(3)=0.0
+    real(kind=8) :: ffe(9), ffm(9), ffl(9)
+    real(kind=8) :: alpha_cont=0.0
+    real(kind=8) :: dnepmait1, dnepmait2, taujeu1, taujeu2
+    real(kind=8) :: xpc, ypc, xpr, ypr
+    real(kind=8) :: xpc_prev, ypc_prev, xpr_prev, ypr_prev
+    real(kind=8) :: mprojn_prev(3, 3)=0.0, mprojt_prev(3, 3)=0.0
+    real(kind=8) :: norm_prev(3) = 0.0 , tau1_prev(3) = 0.0 , tau2_prev(3)=0.0
+    real(kind=8) :: rese_prev(3)=0.0, nrese_prev=0.0
+    real(kind=8) :: dlagrc_prev=0.0, dlagrf_prev(2)=0.0
+    real(kind=8) :: hah(2,2)=0.0, hah_prev(2,2)=0.0
+    real(kind=8) :: jeu_prev=0.0, djeut_prev(3) = 0.0
+    real(kind=8) :: dnepmait1_prev, dnepmait2_prev, taujeu1_prev, taujeu2_prev
+    real(kind=8) :: ddffm(3, 9), dffm(2, 9)
     real(kind=8) :: mprt1n_prev(3, 3)=0.0, mprt2n_prev(3, 3)=0.0
     real(kind=8) :: mprnt1_prev(3, 3)=0.0, mprnt2_prev(3, 3)=0.0
-    real(kind=8) :: mprt11(3, 3)=0.0, mprt12(3, 3)=0.0, mprt21(3, 3)=0.0, mprt22(3, 3)=0.0
-    real(kind=8) :: mprt12_prev(3, 3)=0.0
-    real(kind=8) :: mprt11_prev(3, 3)=0.0, mprt21_prev(3, 3)=0.0, mprt22_prev(3, 3)=0.0
-    real(kind=8) :: gene11(3, 3)=0.0, gene21(3, 3)=0.0, gene22(3, 3)=0.0
-    real(kind=8) :: gene11_prev(3, 3)=0.0, gene21_prev(3, 3)=0.0, gene22_prev(3, 3)=0.0
-    real(kind=8) :: kappa(2, 2)=0.0, a(2, 2)=0.0, h(2, 2)=0.0, ha(2, 2)=0.0, hah(2, 2)=0.0
-    real(kind=8) :: kappa_prev(2, 2)=0., a_prev(2, 2)=0.0, h_prev(2, 2)=0.0
-    real(kind=8) :: ha_prev(2, 2)=0.0, hah_prev(2, 2)=0.0
-    real(kind=8) :: vech1(3)=0.0, vech2(3)=0.0
+    real(kind=8) :: mprt11_prev(3, 3)=0.0, mprt12_prev(3, 3)=0.0
+    real(kind=8) :: mprt21_prev(3, 3)=0.0, mprt22_prev(3, 3)=0.0
+    real(kind=8) :: kappa_prev(2, 2)=0., h_prev(2, 2)=0.0
     real(kind=8) :: vech1_prev(3)=0.0, vech2_prev(3)=0.0
+    real(kind=8) :: jeusup_prev=0.0
 !
-    real(kind=8) :: mmat_tmp(81, 81)   
+    real(kind=8) :: mmat_tmp(81, 81)
     real(kind=8) :: mmat(81, 81)
     real(kind=8) :: mmat_prev(81, 81)
 !
@@ -146,65 +148,57 @@ character(len=16), intent(in) :: option, nomte
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call matini(81, 81, 0.d0, mmat)
-    call matini(81, 81, 0.d0, mmat_prev)
-    call matini(81, 81, 0.d0, mmat_tmp)
-!
-    call matini(9, 9, 0.d0, matrcc)
-    call matini(9, 9, 0.d0, matrcc_prev)
-!
-    call matini(27, 27, 0.d0, matree)
-    call matini(27, 27, 0.d0, matree_prev)
-    call matini(27, 27, 0.d0, matnee)
-    call matini(27, 27, 0.d0, matnee_prev)
-    call matini(27, 27, 0.d0, matfee)
-    call matini(27, 27, 0.d0, matfee_prev)
-!
-    call matini(27, 27, 0.d0, matrmm)
-    call matini(27, 27, 0.d0, matrmm_prev)
-    call matini(27, 27, 0.d0, matnmm)
-    call matini(27, 27, 0.d0, matnmm_prev)
-    call matini(27, 27, 0.d0, matfmm)
-    call matini(27, 27, 0.d0, matfmm_prev)
-!
-    call matini(27, 27, 0.d0, matrem)
-    call matini(27, 27, 0.d0, matrem_prev)
-    call matini(27, 27, 0.d0, matnem)
-    call matini(27, 27, 0.d0, matnem_prev)
-    call matini(27, 27, 0.d0, matfem)
-    call matini(27, 27, 0.d0, matfem_prev)
-!
-    call matini(27, 27, 0.d0, matrme)
-    call matini(27, 27, 0.d0, matrme_prev)
-    call matini(27, 27, 0.d0, matnme)
-    call matini(27, 27, 0.d0, matnme_prev)
-    call matini(27, 27, 0.d0, matnme)
-    call matini(27, 27, 0.d0, matnme_prev)
-    call matini(27, 27, 0.d0, matfme)
-    call matini(27, 27, 0.d0, matfme_prev)
-!
-    call matini(9, 27, 0.d0, matrce)
-    call matini(9, 27, 0.d0, matrce_prev)
-    call matini(9, 27, 0.d0, matrcm)
-    call matini(9, 27, 0.d0, matrcm_prev)
-    call matini(27, 9, 0.d0, matrec)
-    call matini(27, 9, 0.d0, matrec_prev)
-    call matini(27, 9, 0.d0, matrmc)
-    call matini(27, 9, 0.d0, matrmc_prev)
-    call matini(18, 18, 0.d0, matrff)
-    call matini(18, 18, 0.d0, matrff_prev)
-    call matini(18, 27, 0.d0, matrfe)
-    call matini(18, 27, 0.d0, matrfe_prev)
-    call matini(18, 27, 0.d0, matrfm)
-    call matini(18, 27, 0.d0, matrfm_prev)
-    call matini(27, 18, 0.d0, matref)
-    call matini(27, 18, 0.d0, matref_prev)
-    call matini(27, 18, 0.d0, matrmf)
-    call matini(27, 18, 0.d0, matrmf_prev)
+    mmat(:,:) = 0.d0
+    mmat_prev(:,:) = 0.d0
+    mmat_tmp(:,:) = 0.d0
+    matrcc(:,:) = 0.d0
+    matrcc_prev(:,:) = 0.d0
+    matree(:,:) = 0.d0
+    matree_prev(:,:) = 0.d0
+    matnee(:,:) = 0.d0
+    matnee_prev(:,:) = 0.d0
+    matfee(:,:) = 0.d0
+    matfee_prev(:,:) = 0.d0
+    matrmm(:,:) = 0.d0
+    matrmm_prev(:,:) = 0.d0
+    matnmm(:,:) = 0.d0
+    matnmm_prev(:,:) = 0.d0
+    matfmm(:,:) = 0.d0
+    matfmm_prev(:,:) = 0.d0
+    matrem(:,:) = 0.d0
+    matrem_prev(:,:) = 0.d0
+    matnem(:,:) = 0.d0
+    matnem_prev(:,:) = 0.d0
+    matfem(:,:) = 0.d0
+    matfem_prev(:,:) = 0.d0
+    matrme(:,:) = 0.d0
+    matrme_prev(:,:) = 0.d0
+    matnme(:,:) = 0.d0
+    matnme_prev(:,:) = 0.d0
+    matnme(:,:) = 0.d0
+    matnme_prev(:,:) = 0.d0
+    matfme(:,:) = 0.d0
+    matfme_prev(:,:) = 0.d0
+    matrce(:,:) = 0.d0
+    matrce_prev(:,:) = 0.d0
+    matrcm(:,:) = 0.d0
+    matrcm_prev(:,:) = 0.d0
+    matrec(:,:) = 0.d0
+    matrec_prev(:,:) = 0.d0
+    matrmc(:,:) = 0.d0
+    matrmc_prev(:,:) = 0.d0
+    matrff(:,:) = 0.d0
+    matrff_prev(:,:) = 0.d0
+    matrfe(:,:) = 0.d0
+    matrfe_prev(:,:) = 0.d0
+    matrfm(:,:) = 0.d0
+    matrfm_prev(:,:) = 0.d0
+    matref(:,:) = 0.d0
+    matref_prev(:,:) = 0.d0
+    matrmf(:,:) = 0.d0
+    matrmf_prev(:,:) = 0.d0
 !
     debug = .false.
-!
-! --- TYPE DE MAILLE DE CONTACT
 !
     loptf           = option.eq.'RIGI_FROT'
     call jevech('PCONFR', 'L', jpcf)
@@ -222,6 +216,13 @@ character(len=16), intent(in) :: option, nomte
         coefaf_prev = coefaf
     endif
 !
+! - Get projections datas
+!
+    call mmGetProjection(iresog  , wpg     ,&
+                         xpc     , ypc     , xpr     , ypr     , tau1     , tau2     ,&
+                         xpc_prev, ypc_prev, xpr_prev, ypr_prev, tau1_prev, tau2_prev)
+
+!
 ! - Get algorithms
 !
     call mmGetAlgo(l_large_slip, ndexfr  , jeusup, ldyna , lambds,&
@@ -237,30 +238,30 @@ character(len=16), intent(in) :: option, nomte
                 nnl   , nbcps, nbdm,&
                 laxis , leltf)
 !
-! --- PREPARATION DES DONNEES - Quantités géométriques et mécaniques élémentaires
+! - Compute quantities
 !
     call mmtppe(typmae, typmam, ndim, nne, nnm,&
                 nnl, nbdm, iresog, laxis, &
+                xpc           , ypc      , xpr   , ypr     ,&
                 jeusup, ffe, ffm, dffm,ddffm, ffl,&
-                jacobi, wpg, jeu, djeut, dlagrc,&
+                jacobi, jeu, djeut, dlagrc,&
                 dlagrf, norm, tau1, tau2, mprojn,&
                 mprojt, mprt1n, mprt2n, mprnt1, mprnt2,&
-                gene11, gene21,&
-                gene22, kappa, h, vech1, vech2,&
-                a, ha, hah, mprt11, mprt12, mprt21,&
+                kappa, h, hah, vech1, vech2,&
+                mprt11, mprt12, mprt21,&
                 mprt22,taujeu1, taujeu2, &
               dnepmait1,dnepmait2, .false._1,l_large_slip)
                 
     if (l_previous) then
         call mmtppe(typmae, typmam, ndim, nne, nnm,&
                     nnl, nbdm, iresog_prev, laxis, &
+                    xpc           , ypc      , xpr   , ypr     ,&
                     jeusup_prev, ffe, ffm, dffm,ddffm, ffl,&
-                    jacobi, wpg, jeu_prev, djeut_prev, dlagrc_prev,&
+                    jacobi, jeu_prev, djeut_prev, dlagrc_prev,&
                     dlagrf_prev, norm_prev, tau1_prev, tau2_prev, mprojn_prev,&
                     mprojt_prev, mprt1n_prev, mprt2n_prev, mprnt1_prev, mprnt2_prev,&
-                    gene11_prev, gene21_prev,&
-                    gene22_prev, kappa_prev, h_prev, vech1_prev, vech2_prev,&
-                    a_prev, ha_prev, hah_prev, mprt11_prev, mprt12_prev, mprt21_prev,&
+                    kappa_prev, h_prev, hah_prev, vech1_prev, vech2_prev,&
+                    mprt11_prev, mprt12_prev, mprt21_prev,&
                     mprt22_prev,taujeu1_prev, taujeu2_prev, &
               dnepmait1_prev,dnepmait2_prev, .true._1,l_large_slip)  
                           
@@ -273,13 +274,13 @@ character(len=16), intent(in) :: option, nomte
         call mmlagc(lambds_prev, dlagrc_prev, iresof_prev, lambda_prev)
     endif
 !
-! ----- Statuts  : current
-!
+! - Compute state of contact and friction
+!                              
     call mmmsta(ndim, leltf, lpenaf, loptf, djeut,&
                 dlagrf, coefaf, tau1, tau2, lcont,&
                 ladhe, lambda, rese, nrese, .false._1)
 !
-! ----- PHASE DE CALCUL : current
+! - Select phase to compute
 !
     call mmmpha(loptf, lcont, ladhe, ndexfr, lpenac,&
                 lpenaf, phasep)
@@ -298,7 +299,8 @@ character(len=16), intent(in) :: option, nomte
                     lpenaf_prev, phasep_prev)
     endif
 !
-
+! - Large sliding hypothesis
+!
     if (lcont .and.  (phasep(1:4) .eq. 'GLIS') .and. (l_large_slip) &
          .and. (abs(jeu) .lt. 1.d-6 )) then
         call mngliss(tau1  ,tau2  ,djeut,kappa ,taujeu1, taujeu2, &
@@ -308,7 +310,7 @@ character(len=16), intent(in) :: option, nomte
                     ladhe, lambda, rese, nrese)
     endif
 !
-! --- CALCUL FORME FAIBLE FORCE DE CONTACT/FROTTEMENT
+! - Weak form of contact/friction force
 !
     call mmtfpe(phasep, iresof, ndim, nne, nnm,&
                 nnl, nbcps, wpg, jacobi, ffl,&
@@ -317,7 +319,6 @@ character(len=16), intent(in) :: option, nomte
                 coefff, coefaf, coefac, dlagrf, djeut,&
                 matree, matrmm, matrem, matrme, matrec,&
                 matrmc, matref, matrmf)
-                
     if (l_previous) then
         call mmtfpe(phasep_prev, iresof_prev, ndim, nne, nnm,&
                     nnl, nbcps, wpg, jacobi, ffl,&
@@ -328,7 +329,7 @@ character(len=16), intent(in) :: option, nomte
                     matrmc_prev, matref_prev, matrmf_prev)
     endif
 !
-! ----- CONTRIBUTIONS NON-LINEARITES GEOMETRIQUES NEWTON GENE
+! - Non-linear contribution for geometric loop
 !
     if (iresog .eq. 1) then
         call mmtgeo(phasep, l_large_slip,&
@@ -353,7 +354,7 @@ character(len=16), intent(in) :: option, nomte
         endif
     endif
 !
-! --- CALCUL FORME FAIBLE LOI DE CONTACT/FROTTEMENT
+! - Weak form of contact/friction force
 !
     call mmtape(phasep, leltf, ndim, nnl, nne,&
                 nnm, nbcps, wpg, jacobi, ffl,&
@@ -362,64 +363,47 @@ character(len=16), intent(in) :: option, nomte
                 coefaf, coefac,&
                 matrcc, matrff, matrce,&
                 matrcm, matrfe, matrfm)
-                
-    if (l_previous) then 
+    if (l_previous) then
         call mmtape(phasep_prev, leltf, ndim, nnl, nne,&
                     nnm, nbcps, wpg, jacobi, ffl,&
                     ffe, ffm, norm, tau1_prev, tau2_prev,&
                     mprojt_prev, rese_prev, nrese_prev, lambda_prev, coefff,&
                     coefaf_prev, coefac_prev,&
                 matrcc_prev, matrff_prev, matrce_prev,&
-                    matrcm_prev, matrfe_prev, matrfm_prev)        
+                    matrcm_prev, matrfe_prev, matrfm_prev)
     endif
 !
-! --- MODIFICATIONS EXCLUSION
+! - Excluded nodes
 !
     call mmmtex(ndexfr, ndim, nnl, nne, nnm,&
                 nbcps, matrff, matrfe, matrfm, matref,&
                 matrmf)
-                
     if (l_previous) then
         call mmmtex(ndexfr, ndim, nnl, nne, nnm,&
                     nbcps, matrff_prev, matrfe_prev, matrfm_prev, matref_prev,&
                     matrmf_prev)
     endif
 
-!---------------------------------------------------------------
-!------------- FIN CALCULS DES FORMES FAIBLES  -----------------
-!--------------------------------------------------------------- 
-
-!---------------------------------------------------------------
-!-------------- ASSEMBLAGE FINAL -------------------------------
-!---------------------------------------------------------------
+!
+! - Assembling
+!
     call mmmtas(nbdm, ndim, nnl, nne, nnm,&
                 nbcps, matrcc, matree, matrmm, matrem,&
                 matrme, matrce, matrcm, matrmc, matrec,&
                 matrff, matrfe, matrfm, matrmf, matref,&
                 mmat)
-         
     if (l_previous) then
         call mmmtas(nbdm, ndim, nnl, nne, nnm,&
                     nbcps, matrcc_prev, matree_prev, matrmm_prev, matrem_prev,&
                     matrme_prev, matrce_prev, matrcm_prev, matrmc_prev, matrec_prev,&
                     matrff_prev, matrfe_prev, matrfm_prev, matrmf_prev, matref_prev,&
                     mmat_prev)
-    endif 
-
-!---------------------------------------------------------------
-!-------------- FIN ASSEMBLAGE FINAL ---------------------------
-!---------------------------------------------------------------
-
-
-!---------------------------------------------------------------
-!-------------- RECOPIE DANS LA BASE DE TRAVAIL ----------------
-!---------------------------------------------------------------
+    endif
 
     alpha_cont = zr(jpcf-1+28)
-    alpha_frot = zr(jpcf-1+42)
-    if (l_previous) then    
+    if (l_previous) then
             mmat_tmp = alpha_cont*mmat+(1-alpha_cont)*mmat_prev
-            count_consistency = 0 
+            count_consistency = 0
             51 continue
             count_consistency = count_consistency+1
             alpha_cont = 0.5*(alpha_cont+1.0)
@@ -435,25 +419,22 @@ character(len=16), intent(in) :: option, nomte
             endif
             ! Ce critere peut influencer les perfs : ssnv505l 26s a 35s. 
     endif
+!
+! - Copy
+!
     if ((lpenac.and.(option.eq.'RIGI_CONT')) .or.&
         ((option.eq.'RIGI_FROT').and.(iresof.ne.0)) .or.&
         (lpenaf.and.(option.eq.'RIGI_FROT'))) then
-!
-! --- RECUPERATION DE LA MATRICE 'OUT' NON SYMETRIQUE
-!
         call jevech('PMATUNS', 'E', jmatt)
-!
-! --- FIN DE CHANGEMENT ET COPIE
-!
-        do     j = 1, nddl
-            do     i = 1, nddl
+        do j = 1, nddl
+            do i = 1, nddl
                 ij = j+nddl*(i-1)
                 if (lpenac.and.(option.eq.'RIGI_CONT')) then
                         zr(jmatt+ij-1) = mmat(i,j)
-                else if ((option.eq.'RIGI_FROT').and.(iresof.ne.0)) then 
-                        zr(jmatt+ij-1) = mmat(i,j) 
-                else if (lpenaf.and.(option.eq.'RIGI_FROT')) then 
-                        zr(jmatt+ij-1) = 1.0 * mmat(i,j)        
+                else if ((option.eq.'RIGI_FROT').and.(iresof.ne.0)) then
+                        zr(jmatt+ij-1) = mmat(i,j)
+                else if (lpenaf.and.(option.eq.'RIGI_FROT')) then
+                        zr(jmatt+ij-1) = 1.0 * mmat(i,j)
                 endif
                 if (debug) then
                     call mmmtdb(mmat(i, j), 'IJ', i, j)
@@ -461,10 +442,6 @@ character(len=16), intent(in) :: option, nomte
             enddo
         enddo
     else
-!
-! --- RECUPERATION DE LA MATRICE 'OUT' SYMETRIQUE
-!
-        call jevech('PMATUUR', 'E', jmatt)
         call jevech('PMATUUR', 'E', jmatt)
         do j = 1, nddl
             do i = 1, j
