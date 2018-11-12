@@ -23,7 +23,6 @@ from code_aster.Cata.Syntax import *
 from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
-
 def calc_essai_geomeca_prod(self, **args):
     if args.get('__all__'):
         return ([None],
@@ -43,184 +42,258 @@ def calc_essai_geomeca_prod(self, **args):
     return None
 
 
-CALC_ESSAI_GEOMECA = MACRO(nom="CALC_ESSAI_GEOMECA",
-                     op=OPS('Macro.calc_essai_geomeca_ops.calc_essai_geomeca_ops'),
-                     sd_prod=calc_essai_geomeca_prod,
-                     reentrant='n',
-                     MATER       = SIMP(statut='o',typ=mater_sdaster),
-                     COMPORTEMENT   = C_COMPORTEMENT('CALC_ESSAI_GEOMECA'),
-                     CONVERGENCE = C_CONVERGENCE('SIMU_POINT_MAT'),
-                     regles=(AU_MOINS_UN('COMPORTEMENT'), # car COMPORTEMENT est facultatif dans C_COMPORTEMENT
-                             AU_MOINS_UN(
-                                         'ESSAI_TD'    ,
-                                         'ESSAI_TND'   ,
-                                         'ESSAI_CISA_C',
-                                         'ESSAI_TND_C' ,
-                                         'ESSAI_TD_A' ,
-                                         'ESSAI_TD_NA' ,
-                                         'ESSAI_OEDO_C' ,
-                                         'ESSAI_ISOT_C' ,
+CALC_ESSAI_GEOMECA = MACRO(nom    ="CALC_ESSAI_GEOMECA",
+                     op           =OPS('Macro.calc_essai_geomeca_ops.calc_essai_geomeca_ops'),
+                     sd_prod      =calc_essai_geomeca_prod,
+                     fr=tr("Simulation 0D des essais de laboratoire pour les lois geomecaniques du Code_Aster (Hujeux, Mohr-Coulomb etc.)"),
+                     reentrant    ='n',
+                     MATER        = SIMP(statut='o',typ=mater_sdaster),
+                     COMPORTEMENT = C_COMPORTEMENT('CALC_ESSAI_GEOMECA'),
+                     CONVERGENCE  = C_CONVERGENCE('SIMU_POINT_MAT'),
+                     
+                     regles=(# COMPORTEMENT est facultatif dans C_COMPORTEMENT
+                             AU_MOINS_UN('COMPORTEMENT'),
+                             
+                             AU_MOINS_UN('ESSAI_TRIA_DR_M_D',
+                                         'ESSAI_TRIA_ND_M_D',
+                                         'ESSAI_CISA_DR_C_D',
+                                         'ESSAI_TRIA_ND_C_F',
+                                         'ESSAI_TRIA_ND_C_D',
+                                         'ESSAI_TRIA_DR_C_D',
+                                         'ESSAI_OEDO_DR_C_F',
+                                         'ESSAI_ISOT_DR_C_F',
                                          #'ESSAI_XXX'   ,
                                          ),),
                      # ---
-                     # Essai Triaxial Monotone Draine ('TD')
+                     # Essai TRIAxial DRaine Monotone a Deformation imposee (TRIA_DR_M_D)
                      # ---
-                     ESSAI_TD = FACT(statut='f',max='**',
+                     ESSAI_TRIA_DR_M_D = FACT(statut='f',max='**',
+                     
+                          fr=tr("Essai triaxial monotone draine a deformation controlee"),
 
                           PRES_CONF   = SIMP(statut='o',typ='R',max='**',),
                           EPSI_IMPOSE = SIMP(statut='o',typ='R',max='**',),
-                          NB_INST     = SIMP(statut='f',typ='I',val_min=100,defaut=100),
-                          KZERO      = SIMP(statut='f',typ='R',defaut=1.,),
-
+                          NB_INST     = SIMP(statut='f',typ='I',val_min=5,defaut=100),
+                          KZERO       = SIMP(statut='f',typ='R',defaut=1.,),
                           TABLE_RESU  = SIMP(statut='f',typ=CO,max='**',validators=NoRepeat(),),
                           GRAPHIQUE   = SIMP(statut='f',typ='TXM',max='**',validators=NoRepeat(),
-                                             into=  ('P-Q','EPS_AXI-Q','EPS_AXI-EPS_VOL','P-EPS_VOL',),
                                              defaut=('P-Q','EPS_AXI-Q','EPS_AXI-EPS_VOL','P-EPS_VOL',),),
+                          PREFIXE_FICHIER = SIMP(statut='f',typ='TXM',max=1,
+                                                   fr=tr("prefixe des noms de fichier xmgrace recuperes",),),
                           TABLE_REF   = SIMP(statut='f',typ=table_sdaster,max='**',),
-
+                          NOM_CMP     = SIMP(statut='f',typ='TXM',max='**',validators=NoRepeat(),),
+                          COULEUR     = SIMP(statut='f',typ='I',max='**',),
+                          MARQUEUR    = SIMP(statut='f',typ='I',max='**',),
+                          STYLE       = SIMP(statut='f',typ='I',max='**',),
                                       ),
-
                      # ---
-                     #  Essai Triaxial Monotone Non Draine ('TND')
+                     #  Essai TRIAxial Non Draine Monotone a Deformation imposee (TRIA_ND_M_D)
                      # ---
-                     ESSAI_TND = FACT(statut='f',max='**',
+                     ESSAI_TRIA_ND_M_D = FACT(statut='f',max='**',
+                     
+                          fr=tr("Essai triaxial monotone non draine a deformation controlee"),
 
                           PRES_CONF   = SIMP(statut='o',typ='R',max='**',),
                           EPSI_IMPOSE = SIMP(statut='o',typ='R',max='**',),
                           BIOT_COEF   = SIMP(statut='f',typ='R',defaut=1.,),
-                          KZERO      = SIMP(statut='f',typ='R',defaut=1.,),
-                          NB_INST     = SIMP(statut='f',typ='I',val_min=100,defaut=100),
-
+                          KZERO       = SIMP(statut='f',typ='R',defaut=1.,),
+                          NB_INST     = SIMP(statut='f',typ='I',val_min=5,defaut=100),
                           TABLE_RESU  = SIMP(statut='f',typ=CO,max='**',validators=NoRepeat(),),
                           GRAPHIQUE   = SIMP(statut='f',typ='TXM',max='**',validators=NoRepeat(),
-                                             into=  ('P-Q','EPS_AXI-Q','EPS_AXI-PRE_EAU',),
                                              defaut=('P-Q','EPS_AXI-Q','EPS_AXI-PRE_EAU',),),
+                          PREFIXE_FICHIER = SIMP(statut='f',typ='TXM',max=1,
+                                                   fr=tr("prefixe des noms de fichier xmgrace recuperes",),),
                           TABLE_REF   = SIMP(statut='f',typ=table_sdaster,max='**',),
-
+                          NOM_CMP     = SIMP(statut='f',typ='TXM',max='**',validators=NoRepeat(),),
+                          COULEUR     = SIMP(statut='f',typ='I',max='**',),
+                          MARQUEUR    = SIMP(statut='f',typ='I',max='**',),
+                          STYLE       = SIMP(statut='f',typ='I',max='**',),
                                       ),
-
                      # ---
-                     #  Essai de Cisaillement Cyclique Draine ('CISA_C')
+                     #  Essai de CISAillement DRaine Cyclique a Deformation imposee (CISA_DR_C_D)
                      # ---
-                     ESSAI_CISA_C = FACT(statut='f',max='**',
+                     ESSAI_CISA_DR_C_D = FACT(statut='f',max='**',
+                     
+                          fr=tr("Essai de cisaillement cyclique draine a deformation controlee"),
 
                           PRES_CONF    = SIMP(statut='o',typ='R',max='**',),
                           GAMMA_IMPOSE = SIMP(statut='o',typ='R',max='**',),
                           GAMMA_ELAS   = SIMP(statut='f',typ='R',defaut=1.E-7,val_max=1.E-7),
                           NB_CYCLE     = SIMP(statut='o',typ='I',val_min=1),
                           KZERO        = SIMP(statut='f',typ='R',defaut=1.,),
-                          NB_INST      = SIMP(statut='f',typ='I',val_min=25,defaut=25),
-
+                          NB_INST      = SIMP(statut='f',typ='I',val_min=5,defaut=25),
                           TABLE_RESU   = SIMP(statut='f',typ=CO,max='**',validators=NoRepeat(),),
                           GRAPHIQUE    = SIMP(statut='f',typ='TXM',max='**',validators=NoRepeat(),
-                                             into=  ('GAMMA-SIGXY','GAMMA-G','GAMMA-D','G-D',),
-                                             defaut=('GAMMA-SIGXY','GAMMA-G','GAMMA-D','G-D',),),
+                                             defaut=('GAMMA-SIG_XY','GAMMA-G_SUR_GMAX','GAMMA-DAMPING',
+                                                     'G_SUR_GMAX-DAMPING',),),
+                          PREFIXE_FICHIER = SIMP(statut='f',typ='TXM',max=1,
+                                                   fr=tr("prefixe des noms de fichier xmgrace recuperes",),),
                           TABLE_REF    = SIMP(statut='f',typ=table_sdaster,max='**',),
-
+                          NOM_CMP      = SIMP(statut='f',typ='TXM',max='**',validators=NoRepeat(),),
+                          COULEUR_NIV1 = SIMP(statut='f',typ='I',max='**',),
+                          MARQUEUR_NIV1= SIMP(statut='f',typ='I',max='**',),
+                          STYLE_NIV1   = SIMP(statut='f',typ='I',max='**',),
+                          COULEUR_NIV2 = SIMP(statut='f',typ='I',max='**',),
+                          MARQUEUR_NIV2= SIMP(statut='f',typ='I',max='**',),
+                          STYLE_NIV2   = SIMP(statut='f',typ='I',max='**',),
+                          TYPE_CHARGE  = SIMP(statut='f',typ='TXM',max=1,defaut='SINUSOIDAL',
+                                                   into=("SINUSOIDAL","TRIANGULAIRE"),),
                                       ),
-
                      # ---
-                     #  Essai Triaxial Non Draine Cyclique ('TND_C')
+                     #  Essai TRIAxial Non Draine Cyclique a Force imposee ('TRIA_ND_C_F')
                      # ---
-                     ESSAI_TND_C = FACT(statut='f',max='**',
+                     ESSAI_TRIA_ND_C_F = FACT(statut='f',max='**',
+                                              #regles=(UN_PARMI('RU_MAX','EPSI_AXI_MAX',),),
+                     
+                          fr=tr("Essai triaxial cyclique non draine a force controlee"),
 
                           PRES_CONF   = SIMP(statut='o',typ='R',max='**',),
                           SIGM_IMPOSE = SIMP(statut='o',typ='R',max='**',),
                           BIOT_COEF   = SIMP(statut='f',typ='R',defaut=1.,),
-                          KZERO      = SIMP(statut='f',typ='R',defaut=1.,),
+                          KZERO       = SIMP(statut='f',typ='R',defaut=1.,),
+                          CRIT_LIQUEFACTION = SIMP(statut='o',typ='TXM',max=3,
+                                              into=("RU_MAX","EPSI_ABSO_MAX","EPSI_RELA_MAX"),),
+                          VALE_CRIT   = SIMP(statut='o',typ='R',max=3,),
+                          ARRET_LIQUEFACTION= SIMP(statut='f',typ='TXM',max=1,defaut='OUI',
+                                              into=("OUI","NON"),),
+                          UN_SUR_K    = SIMP(statut='o',typ='R',),
+                          NB_CYCLE    = SIMP(statut='o',typ='I',val_min=1),
+                          NB_INST     = SIMP(statut='f',typ='I',val_min=5,defaut=25),
+                          NB_INST_MONO= SIMP(statut='f',typ='I',val_min=100,defaut=400),
+                          TABLE_RESU  = SIMP(statut='f',typ=CO,max='**',validators=NoRepeat(),),
+                          GRAPHIQUE   = SIMP(statut='f',typ='TXM',max='**',validators=NoRepeat(),
+                                             defaut=('NCYCL-DSIGM','P-Q','SIG_AXI-PRE_EAU','EPS_AXI-PRE_EAU',
+                                                     'SIG_AXI-RU','EPS_AXI-RU','EPS_AXI-Q',),),
+                          PREFIXE_FICHIER = SIMP(statut='f',typ='TXM',max=1,
+                                                   fr=tr("prefixe des noms de fichier xmgrace recuperes",),),
+                          TABLE_REF   = SIMP(statut='f',typ=table_sdaster,max='**',),
+                          NOM_CMP     = SIMP(statut='f',typ='TXM',max='**',validators=NoRepeat(),),
+                          COULEUR_NIV1 = SIMP(statut='f',typ='I',max='**',),
+                          MARQUEUR_NIV1= SIMP(statut='f',typ='I',max='**',),
+                          STYLE_NIV1   = SIMP(statut='f',typ='I',max='**',),
+                          COULEUR_NIV2 = SIMP(statut='f',typ='I',max='**',),
+                          MARQUEUR_NIV2= SIMP(statut='f',typ='I',max='**',),
+                          STYLE_NIV2   = SIMP(statut='f',typ='I',max='**',),
+                          TYPE_CHARGE  = SIMP(statut='f',typ='TXM',max=1,defaut='SINUSOIDAL',
+                                                   into=("SINUSOIDAL","TRIANGULAIRE"),),
+                                      ),
+                     # ---
+                     # Essai TRIAxial Non Draine Cylique a Deplacement impose (TRIA_ND_C_D)
+                     # ---
+                     ESSAI_TRIA_ND_C_D = FACT(statut='f',max='**',
+                     
+                          fr=tr("Essai triaxial cyclique non draine a deformation controlee"),
+
+                          PRES_CONF   = SIMP(statut='o',typ='R',max='**',),
+                          EPSI_MINI   = SIMP(statut='o',typ='R',max='**',),
+                          EPSI_MAXI   = SIMP(statut='o',typ='R',max='**',),
+                          EPSI_ELAS   = SIMP(statut='f',typ='R',defaut=1.E-7,val_max=1.E-7),
+                          NB_INST     = SIMP(statut='f',typ='I',val_min=5,defaut=25),
+                          NB_CYCLE    = SIMP(statut='o',typ='I',val_min=1),
+                          BIOT_COEF   = SIMP(statut='f',typ='R',defaut=1.,),
+                          KZERO       = SIMP(statut='f',typ='R',defaut=1.,),
                           UN_SUR_K    = SIMP(statut='o',typ='R',),
                           RU_MAX      = SIMP(statut='f',typ='R',defaut=0.8,),
-                          NB_CYCLE    = SIMP(statut='o',typ='I',val_min=1),
-                          NB_INST     = SIMP(statut='f',typ='I',val_min=25,defaut=25),
-
                           TABLE_RESU  = SIMP(statut='f',typ=CO,max='**',validators=NoRepeat(),),
                           GRAPHIQUE   = SIMP(statut='f',typ='TXM',max='**',validators=NoRepeat(),
-                                             into=  ('NCYCL-DSIGM','P-Q','SIG_AXI-PRE_EAU','EPS_AXI-PRE_EAU','EPS_AXI-Q',),
-                                             defaut=('NCYCL-DSIGM','P-Q','SIG_AXI-PRE_EAU','EPS_AXI-PRE_EAU','EPS_AXI-Q',),),
+                                             defaut=("NCYCL-DEPSI","DEPSI-RU_MAX","DEPSI-E_SUR_EMAX","DEPSI-DAMPING",
+                                                     "P-Q","EPS_AXI-EPS_VOL","EPS_AXI-Q","P-EPS_VOL",
+                                                     "EPS_AXI-PRE_EAU","EPS_AXI-RU","P-PRE_EAU",),),
+                          PREFIXE_FICHIER = SIMP(statut='f',typ='TXM',max=1,
+                                                   fr=tr("prefixe des noms de fichier xmgrace recuperes",),),
                           TABLE_REF   = SIMP(statut='f',typ=table_sdaster,max='**',),
-
+                          NOM_CMP     = SIMP(statut='f',typ='TXM',max='**',validators=NoRepeat(),),
+                          COULEUR_NIV1 = SIMP(statut='f',typ='I',max='**',),
+                          MARQUEUR_NIV1= SIMP(statut='f',typ='I',max='**',),
+                          STYLE_NIV1   = SIMP(statut='f',typ='I',max='**',),
+                          COULEUR_NIV2 = SIMP(statut='f',typ='I',max='**',),
+                          MARQUEUR_NIV2= SIMP(statut='f',typ='I',max='**',),
+                          STYLE_NIV2   = SIMP(statut='f',typ='I',max='**',),
+                          TYPE_CHARGE  = SIMP(statut='f',typ='TXM',max=1,defaut='SINUSOIDAL',
+                                                   into=("SINUSOIDAL","TRIANGULAIRE"),),
                                       ),
-
                      # ---
-                     # Essai Triaxial Draine Cylique Alterné ('TD_A')
+                     # Essai TRIAxial DRaine Cylique a Deplacement impose (TRIA_DR_C_D)
                      # ---
-                     ESSAI_TD_A = FACT(statut='f',max='**',
+                     ESSAI_TRIA_DR_C_D = FACT(statut='f',max='**',
+                     
+                          fr=tr("Essai triaxial cyclique draine a deformation controlee"),
 
                           PRES_CONF   = SIMP(statut='o',typ='R',max='**',),
-                          EPSI_IMPOSE = SIMP(statut='o',typ='R',max='**',),
+                          EPSI_MINI   = SIMP(statut='o',typ='R',max='**',),
+                          EPSI_MAXI   = SIMP(statut='o',typ='R',max='**',),
                           EPSI_ELAS   = SIMP(statut='f',typ='R',defaut=1.E-7,val_max=1.E-7),
-                          NB_INST     = SIMP(statut='f',typ='I',val_min=25,defaut=25),
+                          NB_INST     = SIMP(statut='f',typ='I',val_min=5,defaut=25),
                           NB_CYCLE    = SIMP(statut='o',typ='I',val_min=1),
                           KZERO       = SIMP(statut='f',typ='R',defaut=1.,),
-
                           TABLE_RESU  = SIMP(statut='f',typ=CO,max='**',validators=NoRepeat(),),
                           GRAPHIQUE   = SIMP(statut='f',typ='TXM',max='**',validators=NoRepeat(),
-                                             into=  ('P-Q','EPS_AXI-Q','EPS_VOL-Q','EPS_AXI-EPS_VOL','P-EPS_VOL','EPSI-E'),
-                                             defaut=('P-Q','EPS_AXI-Q','EPS_VOL-Q','EPS_AXI-EPS_VOL','P-EPS_VOL','EPSI-E'),),
+                                             defaut=('P-Q','EPS_AXI-Q','EPS_VOL-Q','EPS_AXI-EPS_VOL','P-EPS_VOL',
+                                                     'DEPSI-E_SUR_EMAX','DEPSI-DAMPING'),),
+                          PREFIXE_FICHIER = SIMP(statut='f',typ='TXM',max=1,
+                                                   fr=tr("prefixe des noms de fichier xmgrace recuperes",),),
                           TABLE_REF   = SIMP(statut='f',typ=table_sdaster,max='**',),
-
+                          NOM_CMP     = SIMP(statut='f',typ='TXM',max='**',validators=NoRepeat(),),
+                          COULEUR_NIV1 = SIMP(statut='f',typ='I',max='**',),
+                          MARQUEUR_NIV1= SIMP(statut='f',typ='I',max='**',),
+                          STYLE_NIV1   = SIMP(statut='f',typ='I',max='**',),
+                          COULEUR_NIV2 = SIMP(statut='f',typ='I',max='**',),
+                          MARQUEUR_NIV2= SIMP(statut='f',typ='I',max='**',),
+                          STYLE_NIV2   = SIMP(statut='f',typ='I',max='**',),
+                          TYPE_CHARGE  = SIMP(statut='f',typ='TXM',max=1,defaut='SINUSOIDAL',
+                                                   into=("SINUSOIDAL","TRIANGULAIRE"),),
                                       ),
-
+                                      
                      # ---
-                     # Essai Triaxial Draine Cylique non Alterné ('TD_NA')
+                     #  Essai OEDOmetrique DRaine Cyclique a force imposee (OEDO_DR_C_F)
                      # ---
-                     ESSAI_TD_NA = FACT(statut='f',max='**',
-
-                          PRES_CONF   = SIMP(statut='o',typ='R',max='**',),
-                          EPSI_IMPOSE = SIMP(statut='o',typ='R',max='**',),
-                          EPSI_ELAS   = SIMP(statut='f',typ='R',defaut=1.E-7,val_max=1.E-7),
-                          NB_INST     = SIMP(statut='f',typ='I',val_min=25,defaut=25),
-                          NB_CYCLE    = SIMP(statut='o',typ='I',val_min=1),
-                          KZERO       = SIMP(statut='f',typ='R',defaut=1.,),
-
-                          TABLE_RESU  = SIMP(statut='f',typ=CO,max='**',validators=NoRepeat(),),
-                          GRAPHIQUE   = SIMP(statut='f',typ='TXM',max='**',validators=NoRepeat(),
-                                             into=  ('P-Q','EPS_AXI-Q','EPS_VOL-Q','EPS_AXI-EPS_VOL','P-EPS_VOL','EPSI-E'),
-                                             defaut=('P-Q','EPS_AXI-Q','EPS_VOL-Q','EPS_AXI-EPS_VOL','P-EPS_VOL','EPSI-E'),),
-                          TABLE_REF   = SIMP(statut='f',typ=table_sdaster,max='**',),
-
-                                      ),
-
-                     # ---
-                     #  Essai Oedometrique Draine Cyclique  ('OEDO_C')
-                     # ---
-                     ESSAI_OEDO_C = FACT(statut='f',max='**',
+                     ESSAI_OEDO_DR_C_F = FACT(statut='f',max='**',
+                     
+                          fr=tr("Essai eodometrique cyclique draine a force controlee"),
 
                           PRES_CONF   = SIMP(statut='o',typ='R',max='**',),
                           SIGM_IMPOSE = SIMP(statut='o',typ='R',max='**',),
                           SIGM_DECH   = SIMP(statut='o',typ='R',max='**',),
                           KZERO       = SIMP(statut='f',typ='R',defaut=1.,),
-                          NB_INST     = SIMP(statut='f',typ='I',val_min=25,defaut=25),
+                          NB_INST     = SIMP(statut='f',typ='I',val_min=5,defaut=25),
 
                           TABLE_RESU  = SIMP(statut='f',typ=CO,max='**',validators=NoRepeat(),),
                           GRAPHIQUE   = SIMP(statut='f',typ='TXM',max='**',validators=NoRepeat(),
-                                             into=  ('P-EPS_VOL','SIG_AXI-EPS_VOL'),
                                              defaut=('P-EPS_VOL','SIG_AXI-EPS_VOL'),),
+                          PREFIXE_FICHIER = SIMP(statut='f',typ='TXM',max=1,
+                                                   fr=tr("prefixe des noms de fichier xmgrace recuperes",),),
                           TABLE_REF   = SIMP(statut='f',typ=table_sdaster,max='**',),
-
+                          NOM_CMP     = SIMP(statut='f',typ='TXM',max='**',validators=NoRepeat(),),
+                          COULEUR     = SIMP(statut='f',typ='I',max='**',),
+                          MARQUEUR    = SIMP(statut='f',typ='I',max='**',),
+                          STYLE       = SIMP(statut='f',typ='I',max='**',),
+                          TYPE_CHARGE = SIMP(statut='f',typ='TXM',max=1,defaut='SINUSOIDAL',
+                                                   into=("SINUSOIDAL","TRIANGULAIRE"),),
                                       ),
-
+                     # --
+                     #  Essai de compression ISOTrope DRainee Cyclique a force imposee (ISOT_DR_C_F)
                      # ---
-                     #  Essai De Comsolidation Isotrope Drainee Cyclique  ('ISOT_C')
-                     # ---
-                     ESSAI_ISOT_C = FACT(statut='f',max='**',
+                     ESSAI_ISOT_DR_C_F = FACT(statut='f',max='**',
+                     
+                          fr=tr("Essai isotrope cyclique draine a force controlee"),
 
-                          PRES_CONF    = SIMP(statut='o',typ='R',max='**',),
+                          PRES_CONF   = SIMP(statut='o',typ='R',max='**',),
                           SIGM_IMPOSE = SIMP(statut='o',typ='R',max='**',),
                           SIGM_DECH   = SIMP(statut='o',typ='R',max='**',),
-                          KZERO      = SIMP(statut='f',typ='R',defaut=1.,),
-                          NB_INST     = SIMP(statut='f',typ='I',val_min=25,defaut=25),
-
-                          TABLE_RESU = SIMP(statut='f',typ=CO,max='**',validators=NoRepeat(),),
-                          GRAPHIQUE  = SIMP(statut='f',typ='TXM',max='**',validators=NoRepeat(),
-                                             into=  ('P-EPS_VOL', ),
+                          NB_INST     = SIMP(statut='f',typ='I',val_min=5,defaut=25),
+                          TABLE_RESU  = SIMP(statut='f',typ=CO,max='**',validators=NoRepeat(),),
+                          GRAPHIQUE   = SIMP(statut='f',typ='TXM',max='**',validators=NoRepeat(),
                                              defaut='P-EPS_VOL',),
-                          TABLE_REF  = SIMP(statut='f',typ=table_sdaster,max='**',),
-
+                          PREFIXE_FICHIER = SIMP(statut='f',typ='TXM',max=1,
+                                                   fr=tr("prefixe des noms de fichier xmgrace recuperes",),),
+                          TABLE_REF   = SIMP(statut='f',typ=table_sdaster,max='**',),
+                          NOM_CMP     = SIMP(statut='f',typ='TXM',max='**',validators=NoRepeat(),),
+                          COULEUR     = SIMP(statut='f',typ='I',max='**',),
+                          MARQUEUR    = SIMP(statut='f',typ='I',max='**',),
+                          STYLE       = SIMP(statut='f',typ='I',max='**',),
+                          TYPE_CHARGE = SIMP(statut='f',typ='TXM',max=1,defaut='SINUSOIDAL',
+                                                   into=("SINUSOIDAL","TRIANGULAIRE"),),
                                       ),
-
-
-
                      # ---
                      #  Essai ... ('XXX')
                      # ---
@@ -237,4 +310,5 @@ CALC_ESSAI_GEOMECA = MACRO(nom="CALC_ESSAI_GEOMECA",
                      #
                      #                 ),
 
-                    INFO = SIMP(statut='f',typ='I',defaut= 1,into=(1,2) ),)
+                    INFO = SIMP(statut='f',typ='I',defaut= 1,into=(1,2),),
+                       )
