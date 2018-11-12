@@ -33,11 +33,7 @@ class ExtendedGeneralizedAssemblyVectorComplex(injector(GeneralizedAssemblyVecto
                                                GeneralizedAssemblyVectorComplex):
     cata_sdj = "SD.sd_cham_gene.sd_cham_gene"
 
-    def EXTR_VECT_GENE_C(self) :
-        """ retourne les valeurs du vecteur generalisee
-        dans un format numpy
-            Attributs retourne
-                - self.valeurs : numpy.array contenant les valeurs """
+    def EXTR_VECT_GENE_C(self):
         import numpy
         if not self.accessible():
             raise AsException("Erreur dans vect_asse_gene_c.EXTR_VECT_GENE en PAR_LOT='OUI'")
@@ -45,10 +41,7 @@ class ExtendedGeneralizedAssemblyVectorComplex(injector(GeneralizedAssemblyVecto
 
         return valeur
 
-    def RECU_VECT_GENE_C(self,vecteur) :
-        """ envoie les valeurs d'un tableau numpy dans un vecteur generalise
-        complexe definie dans jeveux
-            Attributs ne retourne rien """
+    def RECU_VECT_GENE_C(self,vecteur):
         if not self.accessible():
             raise AsException("Erreur dans vect_asse_gene_c.RECU_VECT_GENE en PAR_LOT='OUI'")
         import numpy
@@ -78,11 +71,7 @@ class ExtendedGeneralizedAssemblyVectorDouble(injector(GeneralizedAssemblyVector
                                               GeneralizedAssemblyVectorDouble):
     cata_sdj = "SD.sd_cham_gene.sd_cham_gene"
 
-    def EXTR_VECT_GENE_C(self) :
-        """ retourne les valeurs du vecteur generalisee
-        dans un format numpy
-            Attributs retourne
-                - self.valeurs : numpy.array contenant les valeurs """
+    def EXTR_VECT_GENE_C(self):
         import numpy
         if not self.accessible():
             raise AsException("Erreur dans vect_asse_gene_c.EXTR_VECT_GENE en PAR_LOT='OUI'")
@@ -90,10 +79,7 @@ class ExtendedGeneralizedAssemblyVectorDouble(injector(GeneralizedAssemblyVector
 
         return valeur
 
-    def RECU_VECT_GENE_C(self,vecteur) :
-        """ envoie les valeurs d'un tableau numpy dans un vecteur generalise
-        complexe definie dans jeveux
-            Attributs ne retourne rien """
+    def RECU_VECT_GENE_C(self,vecteur):
         if not self.accessible():
             raise AsException("Erreur dans vect_asse_gene_c.RECU_VECT_GENE en PAR_LOT='OUI'")
         import numpy
