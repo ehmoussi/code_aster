@@ -232,6 +232,27 @@ class _F(dict):
     def mc_liste(self):
         return self.keys()
 
+    def List_F(self):
+        """Return the object itself, for backward compatibility."""
+        return self
+
+class _ListFact(list):
+    """For backward compatibility to add `List_F` method to a list of
+    FactorKeywords."""
+
+    def List_F(self):
+        """Return the object itself, for backward compatibility."""
+        return self
+
+def ListFact(fact):
+    """Add `List_F` method to list of FactorKeywords.
+
+    It only avoids to remove all `List_F` calls that are now useless.
+    """
+    if isinstance(fact, (list, tuple)):
+        return _ListFact(fact)
+    return fact
+
 
 class PartOfSyntax(UIDMixing):
 
