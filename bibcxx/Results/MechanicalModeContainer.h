@@ -102,13 +102,15 @@ class MechanicalModeContainerInstance : public FullResultsContainerInstance
     /**
      * @brief Get the DOFNumbering
      */
-    BaseDOFNumberingPtr getDOFNumbering() const throw( std::runtime_error )
+    BaseDOFNumberingPtr getDOFNumbering() const
     {
+        if ( _dofNum != nullptr )
+            return _dofNum;
         if ( _rigidityDispDMatrix != nullptr )
             return _rigidityDispDMatrix->getDOFNumbering();
         if ( _rigidityTempDMatrix != nullptr )
             return _rigidityTempDMatrix->getDOFNumbering();
-        throw std::runtime_error( "No matrix set" );
+        return BaseDOFNumberingPtr( nullptr );
     };
 
     /**

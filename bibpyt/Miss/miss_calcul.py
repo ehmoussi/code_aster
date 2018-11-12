@@ -100,7 +100,7 @@ class CalculMiss(object):
         """Enchaine les tâches élémentaires"""
         self.prepare_donnees()
         self.execute()
-        self.post_traitement()
+        return self.post_traitement()
 
     def init_reader(self):
         """Initialise le lecteur de fichier Aster"""
@@ -175,12 +175,13 @@ class CalculMiss(object):
         post = PostMissFactory(
             self.param['TYPE_RESU'], self.parent, self.param)
         post.set_filename_callback(self._fichier_tmp)
-        post.run()
+        toReturn = post.run()
         # nécessaire s'il y a deux exécutions Miss dans le même calcul Aster
         self.menage()
         self._dbg_trace("Stop")
         if self.debug:
             print self.timer
+        return toReturn
 
     def fichier_resultat(self):
         """Copie les fichiers résultats dans les unités logiques."""
@@ -514,8 +515,7 @@ class CalculMissFichierTemps(CalculMiss):
 
 def get_number_PC(parent, macr_elem, lgrpc):
     """Retourne le nombre de points de contrôle"""
-    nomail = macr_elem.sdj.REFM.get()[1]
-    mail = parent.get_concept(nomail)
+    mail = macr_elem.getDOFNumbering().getSupportModel().getSupportMesh()
     assert mail is not None, \
         'impossible de récupérer le maillage du macro-élément'
     lgrpma = mail.LIST_GROUP_MA()
