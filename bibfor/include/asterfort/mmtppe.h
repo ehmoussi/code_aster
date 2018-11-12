@@ -20,13 +20,13 @@
 interface
     subroutine mmtppe(typmae,typmam,ndim  ,nne   ,nnm   , &
                       nnl   ,nbdm  ,iresog,laxis ,&
+                      xpc        , ypc      , xpr     , ypr     ,&
                       jeusup,ffe   ,ffm   ,dffm  ,ddffm,ffl   , &
-                      jacobi,wpg   ,jeu   ,djeut ,dlagrc, &
+                      jacobi,jeu   ,djeut ,dlagrc, &
                       dlagrf,norm  ,tau1  ,tau2  ,mprojn, &
                      mprojt, mprt1n, mprt2n, mprnt1, mprnt2,&
-                     gene11,gene21, &
-              gene22,kappa ,h     ,vech1 ,vech2 , &
-              a     ,ha    ,hah   ,mprt11,mprt12, mprt21, &
+                     kappa ,h     , hah, vech1 ,vech2 , &
+              mprt11,mprt12, mprt21, &
               mprt22,taujeu1, taujeu2, &
                   dnepmait1,dnepmait2, l_previous,l_large_slip)
               
@@ -41,7 +41,7 @@ interface
         integer :: iresog
         aster_logical :: laxis
         aster_logical :: l_previous
-    
+        real(kind=8), intent(in) :: xpc, ypc, xpr, ypr
         real(kind=8) :: jeusup
         real(kind=8) :: ffe(9)
         real(kind=8) :: ffm(9)
@@ -49,7 +49,6 @@ interface
         real(kind=8) :: ddffm(3, 9)
         real(kind=8) :: ffl(9)
         real(kind=8) :: jacobi
-        real(kind=8) :: wpg
         real(kind=8) :: jeu
         real(kind=8) :: djeut(3)
         real(kind=8) :: dlagrc
@@ -64,16 +63,9 @@ interface
         real(kind=8) :: mprojt(3, 3)
         real(kind=8), intent(out) :: mprt11(3, 3), mprt12(3, 3), mprt21(3, 3), mprt22(3, 3)
         real(kind=8), intent(out) :: mprt1n(3, 3), mprt2n(3, 3), mprnt1(3, 3), mprnt2(3, 3)
-        
-        real(kind=8) :: gene11(3, 3)
-        real(kind=8) :: gene21(3, 3)
-    real(kind=8) :: gene22(3, 3)
     
     real(kind=8) :: kappa(2,2)
-    real(kind=8) :: h(2,2)    
-    real(kind=8) :: a(2,2)        
-    real(kind=8) :: ha(2,2)    
-    real(kind=8) :: hah(2,2)
+    real(kind=8) :: h(2,2), hah(2,2)
     
     real(kind=8) :: vech1(3)
     real(kind=8) :: vech2(3)            
