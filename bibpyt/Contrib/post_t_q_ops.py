@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -100,7 +100,7 @@ def InterpolBaseFiss(s0, Basefo, Coorfo):
 #-------------------------------------------------------------------------
 def expand_values(self, tabout, liste_noeu_a_extr, titre, type_para):
 
-    from Accas import _F
+    from code_aster.Cata.Syntax import _F
     from Utilitai.Table import Table
 
     CREA_TABLE = self.get_cmd('CREA_TABLE')
@@ -315,7 +315,7 @@ def get_coor_libre(self, Lnoff, RESULTAT, ndim):
     """ retourne les coordonnees des noeuds de FOND_FISS en dictionnaire"""
 
     import numpy as NP
-    from Accas import _F
+    from code_aster.Cata.Syntax import _F
     import string as S
 
     POST_RELEVE_T = self.get_cmd('POST_RELEVE_T')
@@ -403,7 +403,7 @@ def get_tab_dep(self, Lnocal, Nnocal, d_coorf, dicVDIR, dicVNOR, RESULTAT, MODEL
     """ retourne les tables des deplacements sup et inf pour les noeuds perpendiculaires pour
     tous les points du fond de fissure"""
 
-    from Accas import _F
+    from code_aster.Cata.Syntax import _F
     import numpy as NP
     DEFI_GROUP = self.get_cmd('DEFI_GROUP')
 
@@ -575,7 +575,7 @@ def get_coor_regle(self, RESULTAT, ndim, Lnoff, Lnocal, dicoS, syme_char, dicoI)
     import numpy as NP
     import string as S
     import copy
-    from Accas import _F
+    from code_aster.Cata.Syntax import _F
 
     POST_RELEVE_T = self.get_cmd('POST_RELEVE_T')
     CALC_TABLE = self.get_cmd('CALC_TABLE')
@@ -761,7 +761,7 @@ def verif_resxfem(self, RESULTAT):
 #-------------------------------------------------------------------------
 def get_resxfem(self, xcont, RESULTAT, MODELISATION, MODEL):
     """ retourne le resultat """
-    from Accas import _F
+    from code_aster.Cata.Syntax import _F
     import aster
 
     AFFE_MODELE = self.get_cmd('AFFE_MODELE')
@@ -884,7 +884,7 @@ def get_direction_xfem(Nnoff, Vpropa, Coorfo, ndim):
 
 def get_sauts_xfem(self, Nnoff, Coorfo, VDIR, hmax, NB_NOEUD_COUPE, dmax, __RESX):
     """retourne la table des sauts"""
-    from Accas import _F
+    from code_aster.Cata.Syntax import _F
     import numpy as NP
 
     MACR_LIGN_COUPE = self.get_cmd('MACR_LIGN_COUPE')
@@ -912,7 +912,7 @@ def get_sauts_xfem(self, Nnoff, Coorfo, VDIR, hmax, NB_NOEUD_COUPE, dmax, __RESX
 
 def affiche_xfem(self, INFO, Nnoff, VNOR, VDIR):
     """affiche des infos"""
-    from Accas import _F
+    from code_aster.Cata.Syntax import _F
     import aster
 
     CREA_TABLE = self.get_cmd('CREA_TABLE')
@@ -1447,7 +1447,7 @@ def get_pgl(syme_char, FISSURE, ino, VDIR, VNOR, dicVDIR, dicVNOR, Lnofon, ndim)
 def get_saut(self, pgl, ds, Ss, di, Si, Sh, Sv, Sq, INFO, FISSURE, syme_char, abscs, ndim):
     """retourne le saut de déplacements dans le nouveau repère"""
 
-    from Accas import _F
+    from code_aster.Cata.Syntax import _F
     import aster
     import numpy as NP
     from Utilitai.Utmess import UTMESS
@@ -1577,7 +1577,7 @@ def get_kgsig(saut, sautt, sauttt, nbval, coetd):
 
 def get_meth1(self, abscs, absch, abscq, coetd, isig, tgsig,isigt,ttgsig, isigtt, tttgsig, saut2, sautt2, sauttt2, INFO, ndim):
     """retourne kg1"""
-    from Accas import _F
+    from code_aster.Cata.Syntax import _F
     import aster
     import numpy as NP
     import math
@@ -1639,7 +1639,7 @@ def get_meth1(self, abscs, absch, abscq, coetd, isig, tgsig,isigt,ttgsig, isigtt
 def get_erreur(self, ndim, __tabi, type_para):
     """retourne l'erreur selon les méthodes.
     En FEM/X-FEM, on ne retient que le K_MAX de la méthode 1."""
-    from Accas import _F
+    from code_aster.Cata.Syntax import _F
     import aster
     import string
     import numpy as NP
@@ -1753,7 +1753,7 @@ def get_tabout(
     self, tg, args, TITRE, FOND_FISS, MODELISATION, FISSURE, ndim, ino, inst, iord,
         Lnofon, dicoF, absfon, Nnoff, tabout, type_para, nume):
     """retourne la table de sortie"""
-    from Accas import _F
+    from code_aster.Cata.Syntax import _F
     from Utilitai.utils import get_titre_concept
     import numpy as NP
 
@@ -1841,7 +1841,7 @@ def post_t_q_ops(self, MODELISATION, FOND_FISS, FISSURE, MATER, RESULTAT,
     import numpy as NP
     from math import pi
     from types import ListType, TupleType
-    from Accas import _F
+    from code_aster.Cata.Syntax import _F
     from Utilitai.Table import Table, merge
     from SD.sd_mater import sd_compor1
     from code_aster.Cata.DataStructure import mode_meca

@@ -32,8 +32,9 @@ from .DataStructure import AsType
 from .Rules import (AllTogether, AtLeastOne, AtMostOne, ExactlyOne,
                     IfFirstAllPresent, OnlyFirstPresent)
 from .SyntaxChecker import SyntaxCheckerVisitor
-from .SyntaxObjects import (_F, Bloc, CataError, FactorKeyword, Formule, Macro,
-                            Operator, Procedure, SimpleKeyword)
+from .SyntaxObjects import (_F, Bloc, CataError, FactorKeyword, Formule,
+                            ListFact, Macro, Operator, Procedure,
+                            SimpleKeyword)
 from .Validators import (Absent, AndVal, Compulsory, LongStr, NoRepeat,
                          NotEqualTo, OrdList, OrVal, Together)
 

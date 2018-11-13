@@ -1,0 +1,214 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'));
+
+SABLE=DEFI_MATERIAU(ELAS=_F(E=670.E+6, NU=0.25, RHO  =1850., ALPHA=0.),
+                    HUJEUX=_F(N     = 0.5,
+                              BETA  = 29.,
+                              D     = 5.8,
+                              B     = 0.2,
+                              PHI   = 40.,
+                              ANGDIL= 40.,
+                              PCO   = -150.E+3,
+                              PREF  = -1.E+6,
+                              AMON  = 0.0024,
+                              ACYC  = 0.00024,
+                              CMON  = 0.01,
+                              CCYC  = 0.005,
+                              RD_ELA= 0.06,
+                              RI_ELA= 0.006,
+                              RHYS  = 0.15,
+                              RMOB  = 0.9,
+                              XM    = 2.5,
+                              RD_CYC= 0.06,
+                              RI_CYC= 0.006,
+                              DILA  = 2.,),);
+TABTNDC1 = CO('TTNDC1');
+TABTNDC2 = CO('TTNDC2');
+TABTNDC3 = CO('TTNDC3');
+TABTNDC4 = CO('TTNDC4');
+TABTNDC5 = CO('TTNDC5');
+TABTNDC6 = CO('TTNDC6');
+TABTNDC7 = CO('TTNDC7');
+TABTNDC8 = CO('TTNDC8');
+
+CALC_ESSAI_GEOMECA(INFO        =1,
+                   MATER       =SABLE,
+                   COMPORTEMENT=_F(RELATION      ='HUJEUX',
+                                   ITER_INTE_MAXI=50,
+                                   RESI_INTE_RELA=1.E-7,
+                                   ALGO_INTE     ='SPECIFIQUE',
+                                   ITER_INTE_PAS =-50,),
+                   CONVERGENCE =_F(RESI_GLOB_RELA =1.E-6,
+                                  ITER_GLOB_MAXI =10,),
+
+                   ESSAI_TRIA_ND_C_F =( _F(PRES_CONF  = (50.E+3,100.E+3,150.E+3,),
+                                   SIGM_IMPOSE= 100.e+3,
+                                   NB_CYCLE   = 10,
+                                   TYPE_CHARGE ='SINUSOIDAL',
+                                   UN_SUR_K   = 1.E-12,
+                                   KZERO      = .5,
+                                   CRIT_LIQUEFACTION ='RU_MAX',
+                                   ARRET_LIQUEFACTION='OUI',
+                                   VALE_CRIT  = .705,
+                                   NB_INST    = 25, # Discr. par quart de cycle
+                                   NB_INST_MONO = 400,
+                                   TABLE_RESU = (TABTNDC1,TABTNDC2,TABTNDC3,TABTNDC4,),
+                                   GRAPHIQUE  = ('P-Q','INST-P','INST-Q','EPS_AXI-Q',
+                                                 'EPS_AXI-RU','INST-RU',
+                                                 'INST-EPS_AXI','INST-V23','NCYCL-DSIGM',),
+                                   NOM_CMP    = 'V23',
+                                   COULEUR_NIV1 = (2,3,4),
+                                   MARQUEUR_NIV1= (2,3,4),
+                                   STYLE_NIV1   = (0,0,0),
+                                   PREFIXE_FICHIER='eps',),
+                                   
+                                 _F(PRES_CONF  = (50.E+3,100.E+3,150.E+3,),
+                                   SIGM_IMPOSE= 100.e+3,
+                                   NB_CYCLE   = 10,
+                                   TYPE_CHARGE ='SINUSOIDAL',
+                                   UN_SUR_K   = 1.E-12,
+                                   KZERO      = .5,
+                                   CRIT_LIQUEFACTION =('RU_MAX','EPSI_ABSO_MAX',),
+                                   ARRET_LIQUEFACTION='OUI',
+                                   VALE_CRIT  = (.705,.05,),
+                                   NB_INST    = 25, # Discr. par quart de cycle
+                                   NB_INST_MONO = 400,
+                                   TABLE_RESU = (TABTNDC5,TABTNDC6,TABTNDC7,TABTNDC8,),
+                                   GRAPHIQUE  = ('P-Q','INST-P','INST-Q','EPS_AXI-Q',
+                                                 'EPS_AXI-RU','INST-RU',
+                                                 'INST-EPS_AXI','INST-V23','NCYCL-DSIGM',),
+                                   NOM_CMP    = 'V23',
+                                   COULEUR_NIV1 = (5,6,7),
+                                   MARQUEUR_NIV1= (5,6,7),
+                                   STYLE_NIV1   = (0,0,0),
+                                   PREFIXE_FICHIER='ru-eps',),),);
+                                   
+# IMPR_TABLE(TABLE=TABTNDC1,UNITE=8,);
+# IMPR_TABLE(TABLE=TABTNDC2,UNITE=8,);
+# IMPR_TABLE(TABLE=TABTNDC3,UNITE=8,);
+IMPR_TABLE(TABLE=TABTNDC4,UNITE=8,);
+# IMPR_TABLE(TABLE=TABTNDC5,UNITE=8,);
+# IMPR_TABLE(TABLE=TABTNDC6,UNITE=8,);
+# IMPR_TABLE(TABLE=TABTNDC7,UNITE=8,);
+IMPR_TABLE(TABLE=TABTNDC8,UNITE=8,);
+# =======================================================================================
+#
+#                    CODES COULEUR / MARQUEUR / STYLE POUR XMGRACE
+#                    ---------------------------------------------
+#
+# * color   : choix de la couleur [Integer]
+# 
+#             = | 0  : blanc
+#               | 1  : noir
+#               | 2  : rouge
+#               | 3  : vert
+#               | 4  : bleu
+#               | 5  : jaune
+#               | 6  : brun
+#               | 7  : gris
+#               | 8  : violet
+#               | 9  : cyan
+#               | 10 : magenta
+#               | 11 : orange
+#               | 12 : marron
+#               | 13 : indigo
+#               | 14 : turquoise
+#               | 15 : vert fonce
+#             
+# * mark    : choix du marqueur   [Integer]
+# 
+#             = | 0  : neant
+#               | 1  : cercle
+#               | 2  : carre
+#               | 3  : losange
+#               | 4  : triangle haut
+#               | 5  : triangle gauche
+#               | 6  : triangle bas
+#               | 7  : triangle droit
+#               | 8  : plus
+#               | 9  : croix
+#               | 10 : etoile
+#             
+# * style   : choix du style de trait   [Integer]
+# 
+#             = | 0  : neant
+#               | 1  : trait continu
+#               | 2  : pointilles
+#               | 3  : tirets courts
+#               | 4  : tirets longs
+#               | 5  : tirets alternes pointilles
+#               | 6  : tirets alternes pointilles
+#               | 7  : tirets alternes pointilles
+#               | 8  : tirets alternes pointilles
+
+TEST_TABLE(CRITERE='ABSOLU',
+           REFERENCE='AUTRE_ASTER',
+           VALE_CALC_I=0,
+           VALE_REFE_I=0,
+           NOM_PARA ='NCYCL_1',
+           TABLE=TABTNDC4,
+           FILTRE=_F(CRITERE='ABSOLU',
+                     NOM_PARA='PRES_CONF_1',
+                     VALE=5.e+04,),);
+
+TEST_TABLE(CRITERE='ABSOLU',
+           VALE_CALC_I=1,
+           NOM_PARA ='NCYCL_2',
+           TABLE=TABTNDC4,
+           FILTRE=_F(CRITERE='ABSOLU',
+                     NOM_PARA='PRES_CONF_2',
+                     VALE=10.e+04,),);
+
+TEST_TABLE(CRITERE='ABSOLU',
+           VALE_CALC_I=1,
+           NOM_PARA ='NCYCL_3',
+           TABLE=TABTNDC4,
+           FILTRE=_F(CRITERE='ABSOLU',
+                     NOM_PARA='PRES_CONF_3',
+                     VALE=15.e+04,),);
+
+TEST_TABLE(CRITERE='ABSOLU',
+           REFERENCE='AUTRE_ASTER',
+           VALE_CALC_I=0,
+           VALE_REFE_I=0,
+           NOM_PARA ='NCYCL_1',
+           TABLE=TABTNDC8,
+           FILTRE=_F(CRITERE='ABSOLU',
+                     NOM_PARA='PRES_CONF_1',
+                     VALE=5.e+04,),);
+
+TEST_TABLE(CRITERE='ABSOLU',
+           VALE_CALC_I=3,
+           NOM_PARA ='NCYCL_2',
+           TABLE=TABTNDC8,
+           FILTRE=_F(CRITERE='ABSOLU',
+                     NOM_PARA='PRES_CONF_2',
+                     VALE=10.e+04,),);
+
+TEST_TABLE(CRITERE='ABSOLU',
+           VALE_CALC_I=1,
+           NOM_PARA ='NCYCL_3',
+           TABLE=TABTNDC8,
+           FILTRE=_F(CRITERE='ABSOLU',
+                     NOM_PARA='PRES_CONF_3',
+                     VALE=15.e+04,),);
+                     
+FIN();
