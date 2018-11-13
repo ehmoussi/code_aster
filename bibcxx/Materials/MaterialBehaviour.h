@@ -80,7 +80,7 @@ template < class ValueType1, class ValueType2 > class ConvertibleValue {
      * @brief Recuperation de la valeur du parametre
      * @return la valeur du parametre
      */
-    const ReturnValue &getValue() const throw( std::runtime_error ) {
+    const ReturnValue &getValue() const {
         const auto &curIter = _matchMap.find( _valToConvert );
         if ( curIter == _matchMap.end() )
             throw std::runtime_error( "Impossible to convert " + _valToConvert );
@@ -614,14 +614,14 @@ class GeneralMaterialBehaviourInstance {
                              JeveuxVectorLong &kOrdr,
                              std::vector< JeveuxVectorDouble >&,
                              std::vector< JeveuxVectorChar8 >& )
-        const throw( std::runtime_error );
+        const ;
 
     /**
      * @brief Build ".RDEP" if necessary
      * @return true
      */
     virtual bool buildTractionFunction( FunctionPtr &doubleValues ) const
-        throw( std::runtime_error );
+        ;
 
     /**
      * @brief Function to know if ".RDEP" is necessary
@@ -1118,7 +1118,7 @@ class MetaTractionMaterialBehaviourInstance : public GeneralMaterialBehaviourIns
      * @brief Build ".RDEP"
      * @return true
      */
-    bool buildTractionFunction( FunctionPtr &doubleValues ) const throw( std::runtime_error );
+    bool buildTractionFunction( FunctionPtr &doubleValues ) const ;
 
     /**
      * @brief Get name link to the class
@@ -1264,7 +1264,7 @@ class TractionMaterialBehaviourInstance : public GeneralMaterialBehaviourInstanc
      * @brief Build ".RDEP"
      * @return true
      */
-    bool buildTractionFunction( FunctionPtr &doubleValues ) const throw( std::runtime_error );
+    bool buildTractionFunction( FunctionPtr &doubleValues ) const ;
 
     /**
      * @brief Get name link to the class

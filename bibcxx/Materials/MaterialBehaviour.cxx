@@ -32,7 +32,7 @@ bool GeneralMaterialBehaviourInstance::buildJeveuxVectors(
     JeveuxVectorChar16 &char16Values, JeveuxVectorChar16 &ordr, JeveuxVectorLong &kOrd,
     std::vector< JeveuxVectorDouble > &userDoubles,
     std::vector< JeveuxVectorChar8 > &userFunctions ) const
-    throw( std::runtime_error ) {
+    {
     const int nbOfMaterialProperties = getNumberOfPropertiesWithValue();
     complexValues->allocate( Permanent, nbOfMaterialProperties );
     doubleValues->allocate( Permanent, nbOfMaterialProperties );
@@ -206,12 +206,12 @@ bool GeneralMaterialBehaviourInstance::buildJeveuxVectors(
 };
 
 bool GeneralMaterialBehaviourInstance::buildTractionFunction( FunctionPtr &doubleValues ) const
-    throw( std::runtime_error ) {
+    {
     return true;
 };
 
 bool TractionMaterialBehaviourInstance::buildTractionFunction( FunctionPtr &doubleValues ) const
-    throw( std::runtime_error ) {
+    {
     ASTERINTEGER maxSize = 0, maxSize2 = 0;
     std::string resName;
     for ( auto curIter : _mapOfFunctionMaterialProperties ) {
@@ -232,7 +232,7 @@ bool TractionMaterialBehaviourInstance::buildTractionFunction( FunctionPtr &doub
 };
 
 bool MetaTractionMaterialBehaviourInstance::buildTractionFunction( FunctionPtr &doubleValues ) const
-    throw( std::runtime_error ) {
+    {
     ASTERINTEGER maxSize = 0, maxSize2 = 0;
     std::string resName;
     for ( auto curIter : _mapOfFunctionMaterialProperties ) {

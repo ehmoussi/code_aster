@@ -74,7 +74,7 @@ public:
      * @brief Obtenir le nom de l'entite
      * @return renvoit le nom de l'entite
      */
-    const std::string& getName() const throw( std::runtime_error )
+    const std::string& getName() const
     {
         if( _names.size() > 1 )
             throw std::runtime_error( "Error in mesh entity. This entity must not be a list" );

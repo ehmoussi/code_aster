@@ -35,7 +35,7 @@
 #include "Utilities/CapyConvertibleValue.h"
 
 bool MeshInstance::addGroupOfNodesFromNodes( const std::string &name,
-                                             const VectorString &vec ) throw( std::runtime_error ) {
+                                             const VectorString &vec ) {
     CommandSyntax cmdSt( "DEFI_GROUP" );
     cmdSt.setResult( ResultNaming::getCurrentName(), "MAILLAGE" );
 
@@ -119,19 +119,19 @@ bool BaseMeshInstance::readMeshFile( const std::string &fileName, const std::str
     return true;
 };
 
-bool MeshInstance::readAsterMeshFile( const std::string &fileName ) throw( std::runtime_error ) {
+bool MeshInstance::readAsterMeshFile( const std::string &fileName ) {
     readMeshFile( fileName, "ASTER" );
 
     return true;
 };
 
-bool MeshInstance::readGibiFile( const std::string &fileName ) throw( std::runtime_error ) {
+bool MeshInstance::readGibiFile( const std::string &fileName ) {
     readMeshFile( fileName, "GIBI" );
 
     return true;
 };
 
-bool MeshInstance::readGmshFile( const std::string &fileName ) throw( std::runtime_error ) {
+bool MeshInstance::readGmshFile( const std::string &fileName ) {
     readMeshFile( fileName, "GMSH" );
 
     return true;

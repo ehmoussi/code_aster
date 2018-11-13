@@ -25,14 +25,15 @@
 
 #include <stdexcept>
 
-#include "Solvers/StaticMechanicalSolver.h"
-#include "Supervis/CommandSyntax.h"
-#include "Discretization/DiscreteProblem.h"
-#include "Discretization/DOFNumbering.h"
-#include "DataStructures/TemporaryDataStructureName.h"
 #include "Algorithms/GenericAlgorithm.h"
 #include "Algorithms/StaticMechanicalAlgorithm.h"
 #include "Algorithms/StaticMechanicalContext.h"
+#include "DataStructures/TemporaryDataStructureName.h"
+#include "Discretization/DOFNumbering.h"
+#include "Discretization/DiscreteProblem.h"
+#include "RunManager/Exceptions.h"
+#include "Solvers/StaticMechanicalSolver.h"
+#include "Supervis/CommandSyntax.h"
 
 StaticMechanicalSolverInstance::StaticMechanicalSolverInstance(
     const ModelPtr &model, const MaterialOnMeshPtr &mater,
@@ -43,7 +44,7 @@ StaticMechanicalSolverInstance::StaticMechanicalSolverInstance(
     _timeStep->setValues( VectorDouble( 1, 0. ) );
 };
 
-ElasticEvolutionContainerPtr StaticMechanicalSolverInstance::execute() throw( std::runtime_error ) {
+ElasticEvolutionContainerPtr StaticMechanicalSolverInstance::execute() {
     ElasticEvolutionContainerPtr resultC( new ElasticEvolutionContainerInstance() );
 
     _study->getCodedMaterial()->allocate();

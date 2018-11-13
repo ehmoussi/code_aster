@@ -82,7 +82,7 @@ class MechanicalModeComplexContainerInstance : public FullResultsContainerInstan
      */
     FieldOnNodesComplexPtr
     getEmptyFieldOnNodesComplex( const std::string name,
-                                 const int rank ) throw( std::runtime_error );
+                                 const int rank ) ;
 
     /**
     * @brief Obtenir un champ aux noeuds complexe à partir de son nom et de son numéro d'ordre
@@ -91,7 +91,7 @@ class MechanicalModeComplexContainerInstance : public FullResultsContainerInstan
     * @return FieldOnNodesDoublePtr pointant vers le champ
     */
     FieldOnNodesComplexPtr getComplexFieldOnNodes( const std::string name, const int rank ) const
-        throw( std::runtime_error );
+        ;
 
     /**
      * @brief Set the damping matrix
@@ -127,12 +127,12 @@ class MechanicalModeComplexContainerInstance : public FullResultsContainerInstan
      * @param structureInterface objet StructureInterfacePtr
      */
     bool
-    setStructureInterface( StructureInterfacePtr &structureInterface ) throw( std::runtime_error ) {
+    setStructureInterface( StructureInterfacePtr &structureInterface ) {
         _structureInterface = structureInterface;
         return true;
     };
 
-    bool update() throw( std::runtime_error ) {
+    bool update() {
         BaseDOFNumberingPtr numeDdl( nullptr );
         if ( _dampingMatrix != nullptr )
             numeDdl = _dampingMatrix->getDOFNumbering();

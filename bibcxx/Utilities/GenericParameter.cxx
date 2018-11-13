@@ -24,7 +24,7 @@
 #include "Utilities/GenericParameter.h"
 
 SyntaxMapContainer
-buildSyntaxMapFromParamList( const ListGenParam &listParam ) throw( std::runtime_error ) {
+buildSyntaxMapFromParamList( const ListGenParam &listParam ) {
     SyntaxMapContainer dict;
     for ( const auto &listIter : listParam ) {
         if ( !listIter->isSet() && listIter->isMandatory() )

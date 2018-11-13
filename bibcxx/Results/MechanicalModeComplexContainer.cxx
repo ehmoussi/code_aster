@@ -30,7 +30,7 @@
 #include "Utilities/Tools.h"
 
 FieldOnNodesComplexPtr MechanicalModeComplexContainerInstance::getEmptyFieldOnNodesComplex(
-    const std::string name, const int rank ) throw( std::runtime_error ) {
+    const std::string name, const int rank ) {
     const ASTERINTEGER nbRanks = getNumberOfRanks();
     if ( rank > nbRanks || rank <= 0 )
         throw std::runtime_error( "Order number out of range" );
@@ -53,7 +53,7 @@ FieldOnNodesComplexPtr MechanicalModeComplexContainerInstance::getEmptyFieldOnNo
 };
 
 FieldOnNodesComplexPtr MechanicalModeComplexContainerInstance::getComplexFieldOnNodes(
-    const std::string name, const int rank ) const throw( std::runtime_error ) {
+    const std::string name, const int rank ) const {
     const ASTERINTEGER nbRanks = getNumberOfRanks();
     if ( rank > nbRanks || rank <= 0 )
         throw std::runtime_error( "Order number out of range" );

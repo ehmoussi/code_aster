@@ -64,7 +64,7 @@ BaseDOFNumberingInstance::BaseDOFNumberingInstance( const std::string name, cons
       _slcs( new LigneDeCielInstance( getName() + ".SLCS" ) ),
       _mltf( new MultFrontGarbageInstance( getName() + ".MLTF" ) ), _isEmpty( true ){};
 
-bool BaseDOFNumberingInstance::computeNumbering() throw( std::runtime_error )
+bool BaseDOFNumberingInstance::computeNumbering()
 {
     if ( _supportModel )
     {

@@ -66,7 +66,7 @@ class GeneralizedModeContainerInstance : public FullResultsContainerInstance {
     /**
      * @brief Get support GeneralizedDOFNumering
      */
-    GeneralizedDOFNumberingPtr getGeneralizedDOFNumbering() const throw( std::runtime_error ) {
+    GeneralizedDOFNumberingPtr getGeneralizedDOFNumbering() const {
         if ( _genDOFNum != nullptr )
             return _genDOFNum;
         throw std::runtime_error( "GeneralizedDOFNumbering is empty" );
@@ -112,7 +112,7 @@ class GeneralizedModeContainerInstance : public FullResultsContainerInstance {
         return true;
     };
 
-    bool update() throw( std::runtime_error ) { return ResultsContainerInstance::update(); };
+    bool update() { return ResultsContainerInstance::update(); };
 };
 
 /**

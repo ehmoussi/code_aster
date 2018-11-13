@@ -93,7 +93,7 @@ ElementaryVectorPtr DiscreteProblemInstance::buildElementaryLaplaceVector() {
 };
 
 ElementaryVectorPtr DiscreteProblemInstance::buildElementaryNeumannVector(
-    const VectorDouble time ) throw( std::runtime_error ) {
+    const VectorDouble time ) {
     if ( time.size() != 3 )
         throw std::runtime_error( "Invalid number of parameter" );
 
@@ -191,7 +191,7 @@ ElementaryMatrixDisplacementDoublePtr DiscreteProblemInstance::buildElementaryJa
 
 FieldOnNodesDoublePtr DiscreteProblemInstance::buildKinematicsLoad(
     const BaseDOFNumberingPtr &curDOFNum, const double &time, const JeveuxMemory &memType ) const
-    throw( std::runtime_error ) {
+    {
     const auto &_listOfLoad = _study->getListOfLoads();
     const auto &list = _listOfLoad->getListVector();
     const auto &loadInformations = _listOfLoad->getInformationVector();
@@ -234,7 +234,7 @@ BaseDOFNumberingPtr DiscreteProblemInstance::computeDOFNumbering( BaseDOFNumberi
 };
 
 ElementaryVectorPtr
-DiscreteProblemInstance::buildElementaryMechanicalLoadsVector() throw( std::runtime_error ) {
+DiscreteProblemInstance::buildElementaryMechanicalLoadsVector() {
     ElementaryVectorPtr retour( new ElementaryVectorInstance( Permanent ) );
 
     // Comme on calcul RIGI_MECA, il faut preciser le type de la sd
@@ -300,7 +300,7 @@ SyntaxMapContainer DiscreteProblemInstance::computeMatrixSyntax( const std::stri
 };
 
 ElementaryMatrixDisplacementDoublePtr DiscreteProblemInstance::computeMechanicalMatrix(
-    const std::string &optionName ) throw( std::runtime_error )
+    const std::string &optionName )
 {
     ElementaryMatrixDisplacementDoublePtr retour(
          new ElementaryMatrixDisplacementDoubleInstance( Permanent ) );
@@ -326,7 +326,7 @@ ElementaryMatrixDisplacementDoublePtr DiscreteProblemInstance::computeMechanical
 
 ElementaryMatrixDisplacementDoublePtr DiscreteProblemInstance::computeMechanicalDampingMatrix(
     const ElementaryMatrixDisplacementDoublePtr &rigidity,
-    const ElementaryMatrixDisplacementDoublePtr &mass ) throw( std::runtime_error )
+    const ElementaryMatrixDisplacementDoublePtr &mass )
 {
     ElementaryMatrixDisplacementDoublePtr
         retour( new ElementaryMatrixDisplacementDoubleInstance( Permanent ) );
@@ -353,11 +353,11 @@ ElementaryMatrixDisplacementDoublePtr DiscreteProblemInstance::computeMechanical
 };
 
 ElementaryMatrixDisplacementDoublePtr
-DiscreteProblemInstance::computeMechanicalMassMatrix() throw( std::runtime_error ) {
+DiscreteProblemInstance::computeMechanicalMassMatrix() {
     return computeMechanicalMatrix( "RIGI_MECA" );
 };
 
 ElementaryMatrixDisplacementDoublePtr
-DiscreteProblemInstance::computeMechanicalStiffnessMatrix() throw( std::runtime_error ) {
+DiscreteProblemInstance::computeMechanicalStiffnessMatrix() {
     return computeMechanicalMatrix( "RIGI_MECA" );
 };

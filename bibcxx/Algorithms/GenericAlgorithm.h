@@ -47,7 +47,7 @@ class Algorithm {
      * @param context Context around algorithm
      */
     static bool runAllStepsOverAlgorithm( StepperAlgo &timeStep,
-                                          CurrentContext &context ) throw( std::runtime_error ) {
+                                          CurrentContext &context ) {
         if ( !timeStep.update() )
             throw std::runtime_error( "Error with the Stepper" );
 

@@ -76,7 +76,7 @@ PyObject *createExceptionClass( const char *name, PyObject *baseTypeObj ) {
     return typeObj;
 }
 
-void raiseAsterError( const std::string idmess ) throw( AsterErrorCpp ) {
+void raiseAsterError( const std::string idmess ) {
     std::cout << "Raising C++ AsterErrorCpp with id '" << idmess << "'..." << std::endl;
     throw AsterErrorCpp( idmess );
 }

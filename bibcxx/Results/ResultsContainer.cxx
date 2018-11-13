@@ -30,7 +30,7 @@
 #include "Supervis/CommandSyntax.h"
 #include "Utilities/Tools.h"
 
-bool ResultsContainerInstance::allocate( int nbRanks ) throw( std::runtime_error ) {
+bool ResultsContainerInstance::allocate( int nbRanks ) {
     std::string base( JeveuxMemoryTypesNames[getMemoryType()] );
     ASTERINTEGER nbordr = nbRanks;
     CALLO_RSCRSD( base, getName(), getType(), &nbordr );
@@ -40,7 +40,7 @@ bool ResultsContainerInstance::allocate( int nbRanks ) throw( std::runtime_error
 
 void
 ResultsContainerInstance::addElementaryCharacteristics( const ElementaryCharacteristicsPtr &cara,
-                                                        int rank ) throw( std::runtime_error ) {
+                                                        int rank ) {
     _mapElemCara[rank] = cara;
     ASTERINTEGER rang = rank;
     std::string type( "CARAELEM" );
@@ -48,14 +48,14 @@ ResultsContainerInstance::addElementaryCharacteristics( const ElementaryCharacte
 };
 
 void ResultsContainerInstance::addListOfLoads( const ListOfLoadsPtr &load,
-                                               int rank ) throw( std::runtime_error ) {
+                                               int rank ) {
     _mapLoads[rank] = load;
     ASTERINTEGER rang = rank;
     std::string type( "EXCIT" );
     CALLO_RSADPA_ZK24_WRAP( getName(), &rang, load->getName(), type );
 };
 
-ListOfLoadsPtr ResultsContainerInstance::getListOfLoads( int rank ) throw( std::runtime_error ) {
+ListOfLoadsPtr ResultsContainerInstance::getListOfLoads( int rank ) {
     auto curIter = _mapLoads.find( rank );
     if ( curIter == _mapLoads.end() )
         throw std::runtime_error( "Rank not find" );
@@ -63,7 +63,7 @@ ListOfLoadsPtr ResultsContainerInstance::getListOfLoads( int rank ) throw( std::
 };
 
 ElementaryCharacteristicsPtr
-ResultsContainerInstance::getElementaryCharacteristics( int rank ) throw( std::runtime_error ) {
+ResultsContainerInstance::getElementaryCharacteristics( int rank ) {
     auto curIter = _mapElemCara.find( rank );
     if ( curIter == _mapElemCara.end() )
         throw std::runtime_error( "Rank not find" );
@@ -71,7 +71,7 @@ ResultsContainerInstance::getElementaryCharacteristics( int rank ) throw( std::r
 };
 
 void ResultsContainerInstance::addMaterialOnMesh( const MaterialOnMeshPtr &mater,
-                                                  int rank ) throw( std::runtime_error ) {
+                                                  int rank ) {
     _mapMaterial[rank] = mater;
     ASTERINTEGER rang = rank;
     std::string type( "CHAMPMAT" );
@@ -79,7 +79,7 @@ void ResultsContainerInstance::addMaterialOnMesh( const MaterialOnMeshPtr &mater
 };
 
 void ResultsContainerInstance::addModel( const ModelPtr &model,
-                                         int rank ) throw( std::runtime_error ) {
+                                         int rank ) {
     _mapModel[rank] = model;
     ASTERINTEGER rang = rank;
     std::string type( "MODELE" );
@@ -109,14 +109,14 @@ void ResultsContainerInstance::appendModelOnAllRanks( const ModelPtr &model ) {
 };
 
 MaterialOnMeshPtr
-ResultsContainerInstance::getMaterialOnMesh( int rank ) throw( std::runtime_error ) {
+ResultsContainerInstance::getMaterialOnMesh( int rank ) {
     auto curIter = _mapMaterial.find( rank );
     if ( curIter == _mapMaterial.end() )
         throw std::runtime_error( "Rank not find" );
     return ( *curIter ).second;
 };
 
-MaterialOnMeshPtr ResultsContainerInstance::getMaterialOnMesh() throw( std::runtime_error ) {
+MaterialOnMeshPtr ResultsContainerInstance::getMaterialOnMesh() {
     std::string name( "" );
     MaterialOnMeshPtr toReturn( nullptr );
     for ( const auto &curIter : _mapMaterial ) {
@@ -132,7 +132,7 @@ MaterialOnMeshPtr ResultsContainerInstance::getMaterialOnMesh() throw( std::runt
     return toReturn;
 };
 
-ModelPtr ResultsContainerInstance::getModel() throw( std::runtime_error ) {
+ModelPtr ResultsContainerInstance::getModel() {
     std::string name( "" );
     ModelPtr toReturn( nullptr );
     for ( const auto &curIter : _mapModel ) {
@@ -148,7 +148,7 @@ ModelPtr ResultsContainerInstance::getModel() throw( std::runtime_error ) {
     return toReturn;
 };
 
-void ResultsContainerInstance::addTimeValue( double value, int rank ) throw( std::runtime_error ) {
+void ResultsContainerInstance::addTimeValue( double value, int rank ) {
     ASTERINTEGER rang = rank;
     std::string type( "INST" );
     CALLO_RSADPA_ZR_WRAP( getName(), &rang, &value, type );
@@ -165,7 +165,7 @@ void ResultsContainerInstance::listFields() const {
     std::cout << std::endl;
 };
 
-bool ResultsContainerInstance::update() throw( std::runtime_error ) {
+bool ResultsContainerInstance::update() {
     _serialNumber->updateValuePointer();
     auto boolRet = _namesOfFields->buildFromJeveux( true );
     const auto numberOfSerialNum = _serialNumber->usedSize();
@@ -270,7 +270,7 @@ BaseDOFNumberingPtr ResultsContainerInstance::getEmptyParallelDOFNumbering() {
 
 FieldOnNodesDoublePtr
 ResultsContainerInstance::getEmptyFieldOnNodesDouble( const std::string name,
-                                                      const int rank ) throw( std::runtime_error ) {
+                                                      const int rank ) {
     if ( rank > _nbRanks || rank <= 0 )
         throw std::runtime_error( "Order number out of range" );
     ASTERINTEGER retour;
@@ -293,7 +293,7 @@ ResultsContainerInstance::getEmptyFieldOnNodesDouble( const std::string name,
 
 FieldOnElementsDoublePtr ResultsContainerInstance::getRealFieldOnElements( const std::string name,
                                                                            const int rank ) const
-    throw( std::runtime_error ) {
+    {
     if ( rank > _nbRanks || rank <= 0 )
         throw std::runtime_error( "Order number out of range" );
 
@@ -307,7 +307,7 @@ FieldOnElementsDoublePtr ResultsContainerInstance::getRealFieldOnElements( const
 
 FieldOnNodesDoublePtr ResultsContainerInstance::getRealFieldOnNodes( const std::string name,
                                                                      const int rank ) const
-    throw( std::runtime_error ) {
+    {
     if ( rank > _nbRanks || rank <= 0 )
         throw std::runtime_error( "Order number out of range" );
 
@@ -320,7 +320,7 @@ FieldOnNodesDoublePtr ResultsContainerInstance::getRealFieldOnNodes( const std::
 };
 
 bool ResultsContainerInstance::printMedFile( const std::string fileName ) const
-    throw( std::runtime_error ) {
+    {
     LogicalUnitFileCython a( fileName, Binary, New );
     ASTERINTEGER retour = a.getLogicalUnit();
     CommandSyntax cmdSt( "IMPR_RESU" );

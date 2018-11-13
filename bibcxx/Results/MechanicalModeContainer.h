@@ -71,7 +71,7 @@ class MechanicalModeContainerInstance : public FullResultsContainerInstance {
     /**
      * @brief Get the DOFNumbering
      */
-    BaseDOFNumberingPtr getDOFNumbering() const throw( std::runtime_error ) {
+    BaseDOFNumberingPtr getDOFNumbering() const {
         if ( _rigidityDispMatrix != nullptr )
             return _rigidityDispMatrix->getDOFNumbering();
         if ( _rigidityTempMatrix != nullptr )
@@ -111,12 +111,12 @@ class MechanicalModeContainerInstance : public FullResultsContainerInstance {
      * @param structureInterface objet StructureInterfacePtr
      */
     bool
-    setStructureInterface( StructureInterfacePtr &structureInterface ) throw( std::runtime_error ) {
+    setStructureInterface( StructureInterfacePtr &structureInterface ) {
         _structureInterface = structureInterface;
         return true;
     };
 
-    bool update() throw( std::runtime_error ) {
+    bool update() {
         BaseDOFNumberingPtr numeDdl( nullptr );
         if ( _rigidityDispMatrix != nullptr )
             numeDdl = _rigidityDispMatrix->getDOFNumbering();
