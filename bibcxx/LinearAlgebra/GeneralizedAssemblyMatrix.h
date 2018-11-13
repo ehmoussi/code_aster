@@ -66,7 +66,7 @@ class GenericGeneralizedAssemblyMatrixInstance : public DataStructure {
     /**
      * @brief Get support GeneralizedDOFNumering
      */
-    GeneralizedDOFNumberingPtr getGeneralizedDOFNumbering() throw( std::runtime_error ) {
+    GeneralizedDOFNumberingPtr getGeneralizedDOFNumbering() {
         if ( _dofNum.isSet() )
             return _dofNum.getPointer();
         throw std::runtime_error( "GeneralizedDOFNumbering is empty" );

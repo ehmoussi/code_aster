@@ -69,9 +69,9 @@ class ListOfFloatsInstance : public DataStructure {
           _nbPa( JeveuxVectorLong( getName() + ".NBPA" ) ),
           _vale( JeveuxVectorDouble( getName() + ".VALE" ) ){};
 
-    VectorDouble getValues() const throw( std::runtime_error );
+    VectorDouble getValues() const ;
 
-    void setVectorValues( const VectorDouble & ) throw( std::runtime_error );
+    void setVectorValues( const VectorDouble & ) ;
 
     int size();
 };

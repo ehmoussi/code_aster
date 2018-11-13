@@ -87,7 +87,7 @@ class KinematicsLoadInstance : public DataStructure {
      * @brief Construction de la charge (appel a OP0101)
      * @return Booleen indiquant que tout s'est bien passe
      */
-    bool build() throw( std::runtime_error );
+    bool build() ;
 
     /**
      * @brief Definition du modele support
@@ -133,7 +133,7 @@ class KinematicsMechanicalLoadInstance : public KinematicsLoadInstance {
      */
     bool addImposedMechanicalDOFOnElements(
         const PhysicalQuantityComponent &coordinate, const double &value,
-        const std::string &nameOfGroup ) throw( std::runtime_error ) {
+        const std::string &nameOfGroup ) {
         // On verifie que le pointeur vers le modele support ET que le modele lui-meme
         // ne sont pas vides
         if ( ( !_supportModel ) || _supportModel->isEmpty() )
@@ -155,7 +155,7 @@ class KinematicsMechanicalLoadInstance : public KinematicsLoadInstance {
      */
     bool addImposedMechanicalDOFOnElements(
         const PhysicalQuantityComponent &coordinate, const double &value,
-        const std::vector< std::string > &namesOfGroup ) throw( std::runtime_error ) {
+        const std::vector< std::string > &namesOfGroup ) {
         for ( const auto &nameOfGroup : namesOfGroup )
             addImposedMechanicalDOFOnElements( coordinate, value, nameOfGroup );
         return true;
@@ -170,7 +170,7 @@ class KinematicsMechanicalLoadInstance : public KinematicsLoadInstance {
     bool
     addImposedMechanicalDOFOnNodes( const PhysicalQuantityComponent &coordinate,
                                     const double &value,
-                                    const std::string &nameOfGroup ) throw( std::runtime_error ) {
+                                    const std::string &nameOfGroup ) {
         // On verifie que le pointeur vers le modele support ET que le modele lui-meme
         // ne sont pas vides
         if ( ( !_supportModel ) || _supportModel->isEmpty() )
@@ -192,7 +192,7 @@ class KinematicsMechanicalLoadInstance : public KinematicsLoadInstance {
      */
     bool addImposedMechanicalDOFOnNodes(
         const PhysicalQuantityComponent &coordinate, const double &value,
-        const std::vector< std::string > &namesOfGroup ) throw( std::runtime_error ) {
+        const std::vector< std::string > &namesOfGroup ) {
         for ( const auto &nameOfGroup : namesOfGroup )
             addImposedMechanicalDOFOnNodes( coordinate, value, nameOfGroup );
         return true;
@@ -232,7 +232,7 @@ class KinematicsThermalLoadInstance : public KinematicsLoadInstance {
     bool
     addImposedThermalDOFOnElements( const PhysicalQuantityComponent &coordinate,
                                     const double &value,
-                                    const std::string &nameOfGroup ) throw( std::runtime_error ) {
+                                    const std::string &nameOfGroup ) {
         // On verifie que le pointeur vers le modele support ET que le modele lui-meme
         // ne sont pas vides
         if ( ( !_supportModel ) || _supportModel->isEmpty() )
@@ -254,7 +254,7 @@ class KinematicsThermalLoadInstance : public KinematicsLoadInstance {
      */
     bool addImposedThermalDOFOnElements(
         const PhysicalQuantityComponent &coordinate, const double &value,
-        const std::vector< std::string > &namesOfGroup ) throw( std::runtime_error ) {
+        const std::vector< std::string > &namesOfGroup ) {
         for ( const auto &nameOfGroup : namesOfGroup )
             addImposedThermalDOFOnElements( coordinate, value, nameOfGroup );
         return true;
@@ -268,7 +268,7 @@ class KinematicsThermalLoadInstance : public KinematicsLoadInstance {
      */
     bool addImposedThermalDOFOnNodes( const PhysicalQuantityComponent &coordinate,
                                       const double &value,
-                                      const std::string &nameOfGroup ) throw( std::runtime_error ) {
+                                      const std::string &nameOfGroup ) {
         // On verifie que le pointeur vers le modele support ET que le modele lui-meme
         // ne sont pas vides
         if ( ( !_supportModel ) || _supportModel->isEmpty() )
@@ -290,7 +290,7 @@ class KinematicsThermalLoadInstance : public KinematicsLoadInstance {
      */
     bool addImposedThermalDOFOnNodes(
         const PhysicalQuantityComponent &coordinate, const double &value,
-        const std::vector< std::string > &namesOfGroup ) throw( std::runtime_error ) {
+        const std::vector< std::string > &namesOfGroup ) {
         for ( const auto &nameOfGroup : namesOfGroup )
             addImposedThermalDOFOnNodes( coordinate, value, nameOfGroup );
         return true;
@@ -304,7 +304,7 @@ class KinematicsThermalLoadInstance : public KinematicsLoadInstance {
      */
     bool addImposedThermalDOFOnNodes( const PhysicalQuantityComponent &coordinate,
                                       const FunctionPtr &function,
-                                      const std::string &nameOfGroup ) throw( std::runtime_error ) {
+                                      const std::string &nameOfGroup ) {
         // On verifie que le pointeur vers le modele support ET que le modele lui-meme
         // ne sont pas vides
         if ( ( !_supportModel ) || _supportModel->isEmpty() )
@@ -326,7 +326,7 @@ class KinematicsThermalLoadInstance : public KinematicsLoadInstance {
      */
     bool addImposedThermalDOFOnNodes(
         const PhysicalQuantityComponent &coordinate, const FunctionPtr &function,
-        const std::vector< std::string > &namesOfGroup ) throw( std::runtime_error ) {
+        const std::vector< std::string > &namesOfGroup ) {
         for ( const auto &nameOfGroup : namesOfGroup )
             addImposedThermalDOFOnNodes( coordinate, function, nameOfGroup );
         return true;
@@ -364,7 +364,7 @@ class KinematicsAcousticLoadInstance : public KinematicsLoadInstance {
      * @return Booleen indiquant que tout s'est bien passe
      */
     bool addImposedAcousticDOFOnElements( const std::string &nameOfGroup,
-                                          const double &value ) throw( std::runtime_error ) {
+                                          const double &value ) {
         throw std::runtime_error( "Not yet implemented" );
     };
 
@@ -375,7 +375,7 @@ class KinematicsAcousticLoadInstance : public KinematicsLoadInstance {
      * @return Booleen indiquant que tout s'est bien passe
      */
     bool addImposedAcousticDOFOnNodes( const std::string &nameOfGroup,
-                                       double value ) throw( std::runtime_error ) {
+                                       double value ) {
         throw std::runtime_error( "Not yet implemented" );
     };
 };

@@ -25,7 +25,7 @@
 
 #include "LinearAlgebra/ModalBasisDefinition.h"
 
-bool GenericModalBasisInstance::build() throw( std::runtime_error ) {
+bool GenericModalBasisInstance::build() {
     CommandSyntax cmdSt( "DEFI_BASE_MODALE" );
     cmdSt.setResult( getName(), "MODE_MECA" );
 

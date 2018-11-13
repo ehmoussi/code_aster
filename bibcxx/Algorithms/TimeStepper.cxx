@@ -25,7 +25,7 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-bool TimeStepperInstance::setValues( const VectorDouble &values ) throw( std::runtime_error ) {
+bool TimeStepperInstance::setValues( const VectorDouble &values ) {
     if ( _values->isAllocated() )
         _values->deallocate();
 

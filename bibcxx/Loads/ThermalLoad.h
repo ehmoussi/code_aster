@@ -134,7 +134,7 @@ class ThermalLoadInstance : public DataStructure {
      * @param value Valeur imposee
      * @return Booleen indiquant que tout s'est bien passe
      */
-    bool addUnitaryThermalLoad( const UnitaryThermalLoadPtr &toAdd ) throw( std::runtime_error ) {
+    bool addUnitaryThermalLoad( const UnitaryThermalLoadPtr &toAdd ) {
         //         if ( ! _supportModel ) throw std::runtime_error( "Support model is not defined"
         //         );
         //         MeshPtr mesh = _supportModel->getSupportMesh();
@@ -148,7 +148,7 @@ class ThermalLoadInstance : public DataStructure {
      * @brief Construction de la charge (appel a OP0101)
      * @return Booleen indiquant que tout s'est bien passe
      */
-    bool build() throw( std::runtime_error );
+    bool build() ;
 
     /**
      * @brief Get the support finite element descriptor

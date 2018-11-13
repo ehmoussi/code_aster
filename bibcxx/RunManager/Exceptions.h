@@ -45,9 +45,9 @@ class AsterErrorCpp : public std::exception {
                    VectorDouble valr = {} )
         : _idmess( idmess ), _valk( valk ), _vali( vali ), _valr( valr ) {}
 
-    const char *what() const throw() { return _idmess.c_str(); }
+    const char *what() const noexcept { return _idmess.c_str(); }
 
-    ~AsterErrorCpp() throw() {}
+    ~AsterErrorCpp() noexcept {}
 
     /* Build arguments for the Python exception */
     PyObject *py_attrs() const;
@@ -55,7 +55,7 @@ class AsterErrorCpp : public std::exception {
 
 PyObject *createExceptionClass( const char *name, PyObject *baseTypeObj = PyExc_Exception );
 
-void raiseAsterError( const std::string idmess = "VIDE_1" ) throw( AsterErrorCpp );
+void raiseAsterError( const std::string idmess = "VIDE_1" );
 
 extern "C" void DEFPSPSPPPP( UEXCEP, uexcep, _IN ASTERINTEGER *exc_type, _IN char *idmess,
                              _IN STRING_SIZE lidmess, _IN ASTERINTEGER *nbk, _IN char *valk,

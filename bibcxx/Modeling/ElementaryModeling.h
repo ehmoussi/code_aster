@@ -49,7 +49,7 @@ class ElementaryModeling {
      * @param phys Physique
      * @param mod Modelisation
      */
-    ElementaryModeling( const Physics phys, const Modelings mod ) throw( std::runtime_error )
+    ElementaryModeling( const Physics phys, const Modelings mod )
         : _physic( phys ), _modelisation( mod ) {
         bool retour = PhysicsChecker::isAllowedModelingForPhysics( phys, mod );
         if ( !retour ) {

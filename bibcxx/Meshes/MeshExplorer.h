@@ -108,7 +108,7 @@ public:
     };
 
     /**
-     * @brief 
+     * @brief
      */
     const_iterator begin() const
     {
@@ -116,7 +116,7 @@ public:
     };
 
     /**
-     * @brief 
+     * @brief
      * @todo revoir le fonctionnement du end car il peut provoquer de segfault
      */
     const_iterator end() const
@@ -139,7 +139,7 @@ public:
     {};
 
     MeshElement getElement( const int& pos ) const
-        throw( std::runtime_error )
+
     {
         const int size2 = _connect->size();
         if( size2 <= 0 )
@@ -153,7 +153,7 @@ public:
         return MeshElement( pos+1, &obj.operator[]( 0 ), size, type );
     };
 
-    int size() const throw( std::runtime_error )
+    int size() const
     {
         return _type->size();
     };
@@ -172,7 +172,7 @@ public:
     };
 
     MeshElement getElement( const int& pos ) const
-        throw( std::runtime_error )
+
     {
         const int size2 = _connectAndType->size();
         if( size2 <= 0 )
@@ -186,7 +186,7 @@ public:
         return MeshElement( pos+1, &obj.operator[]( 0 ), size, type );
     };
 
-    int size() const throw( std::runtime_error )
+    int size() const
     {
         return _connectAndType->size();
     };
@@ -272,7 +272,7 @@ public:
     };
 
     /**
-     * @brief 
+     * @brief
      */
     const_iterator begin() const
     {
@@ -280,7 +280,7 @@ public:
     };
 
     /**
-     * @brief 
+     * @brief
      * @todo revoir le fonctionnement du end car il peut provoquer de segfault
      */
     const_iterator end() const

@@ -57,12 +57,12 @@ FiniteElementDescriptorInstance::transferDofDescriptorFrom( FiniteElementDescrip
             "parallel mesh associated to partial mesh of FiniteElementDescriptorInstance \n"
             "does not correspond to other FiniteElementDescriptorInstance mesh" );
     getPhysicalNodesComponentDescriptor();
-    //
+
     const int rank = getMPIRank();
     aster_comm_t *commWorld = aster_get_comm_world();
     int nbNodes = partialMesh->getNumberOfNodes();
     int nec = _dofDescriptor->size() / nbNodes;
-    //
+
     const JeveuxVectorLong &localNumbering = partialMesh->getLocalNumbering();
     const JeveuxVectorLong &owner = partialMesh->getOwner();
     const JeveuxVectorLong &otherDofDescriptor = other->getPhysicalNodesComponentDescriptor();

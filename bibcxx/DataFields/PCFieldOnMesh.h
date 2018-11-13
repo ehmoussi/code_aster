@@ -79,7 +79,7 @@ class PCFieldZone {
     PCFieldZone( FiniteElementDescriptorPtr ligrel, const VectorLong &indexes )
         : _ligrel( ligrel ), _localisation( ListOfDelayedElements ), _indexes( indexes ){};
 
-    BaseMeshPtr getMesh() const throw( std::runtime_error ) {
+    BaseMeshPtr getMesh() const {
         if ( _localisation != AllMesh and _localisation != OnGroupOfElements and
              _localisation != ListOfElements )
             throw std::runtime_error( "Zone not on a mesh" );
@@ -87,7 +87,7 @@ class PCFieldZone {
     };
 
     const FiniteElementDescriptorPtr &getFiniteElementDescriptor() const
-        throw( std::runtime_error ) {
+        {
         if ( _localisation != AllDelayedElements and _localisation != ListOfDelayedElements )
             throw std::runtime_error( "Zone not on a FiniteElementDescriptor" );
         return _ligrel;
@@ -150,7 +150,7 @@ template < class ValueType > class PCFieldOnMeshInstance : public GenericDataFie
     void fortranAddValues( const ASTERINTEGER &code, const std::string &grp,
                            const std::string &mode, const ASTERINTEGER &nma,
                            const JeveuxVectorLong &limanu, const JeveuxVectorChar8 &component,
-                           JeveuxVector< ValueType > &values ) throw( std::runtime_error ) {
+                           JeveuxVector< ValueType > &values ) {
         if ( ( code == -1 || code == -3 ) && !_FEDesc )
             throw std::runtime_error(
                 "Build of PCFieldOnMesh impossible, FiniteElementDescriptor is missing" );
@@ -182,7 +182,7 @@ template < class ValueType > class PCFieldOnMeshInstance : public GenericDataFie
     void fortranAddValues( const ASTERINTEGER &code, const std::string &grp,
                            const std::string &mode, const ASTERINTEGER &nma,
                            const JeveuxVectorLong &limanu, const VectorString &component,
-                           const std::vector< ValueType > &values ) throw( std::runtime_error ) {
+                           const std::vector< ValueType > &values ) {
         if ( ( code == -1 || code == -3 ) && !_FEDesc )
             throw std::runtime_error(
                 "Build of PCFieldOnMesh impossible, FiniteElementDescriptor is missing" );
@@ -215,7 +215,7 @@ template < class ValueType > class PCFieldOnMeshInstance : public GenericDataFie
     };
 
     void fortranAllocate( const std::string base,
-                          const std::string quantity ) throw( std::runtime_error ) {
+                          const std::string quantity ) {
         try {
             CALLO_ALCART( base, getName(), _supportMesh->getName(), quantity );
         } catch ( ... ) {
@@ -305,7 +305,7 @@ template < class ValueType > class PCFieldOnMeshInstance : public GenericDataFie
      * @return true si l'allocation s'est bien deroulee, false sinon
      */
     void allocate( const JeveuxMemory jeveuxBase,
-                   const std::string componant ) throw( std::runtime_error ) {
+                   const std::string componant ) {
         if ( _supportMesh.use_count() == 0 || _supportMesh->isEmpty() )
             throw std::runtime_error( "Mesh is empty" );
 
@@ -321,7 +321,7 @@ template < class ValueType > class PCFieldOnMeshInstance : public GenericDataFie
      * @return true si l'allocation s'est bien deroulee, false sinon
      */
     void allocate( const JeveuxMemory jeveuxBase,
-                   const PCFieldOnMeshValueTypePtr &model ) throw( std::runtime_error ) {
+                   const PCFieldOnMeshValueTypePtr &model ) {
         auto componant = model->getPhysicalQuantityName();
         std::string strJeveuxBase( "V" );
         if ( jeveuxBase == Permanent )
@@ -362,7 +362,7 @@ template < class ValueType > class PCFieldOnMeshInstance : public GenericDataFie
     /**
      * @brief Get values of a zone
      */
-    PCFieldValues< ValueType > getValues( const int &position ) const throw( std::runtime_error ) {
+    PCFieldValues< ValueType > getValues( const int &position ) const {
         _valuesList->updateValuePointer();
         _descriptor->updateValuePointer();
         if ( position >= ( *_descriptor )[2] )
@@ -396,7 +396,7 @@ template < class ValueType > class PCFieldOnMeshInstance : public GenericDataFie
     /**
      * @brief Get zone description
      */
-    PCFieldZone getZoneDescription( const int &position ) const throw( std::runtime_error ) {
+    PCFieldZone getZoneDescription( const int &position ) const {
         _descriptor->updateValuePointer();
         if ( position >= ( *_descriptor )[2] )
             throw std::runtime_error( "Out of PCFieldOnMesh bound" );
@@ -432,7 +432,7 @@ template < class ValueType > class PCFieldOnMeshInstance : public GenericDataFie
      * @return renvoit true si l'ajout s'est bien deroulee, false sinon
      */
     bool setValueOnAllMesh( const JeveuxVectorChar8 &component,
-                            const JeveuxVector< ValueType > &values ) throw( std::runtime_error ) {
+                            const JeveuxVector< ValueType > &values ) {
         if ( _supportMesh.use_count() == 0 || _supportMesh->isEmpty() )
             throw std::runtime_error( "Mesh is empty" );
 
@@ -455,7 +455,7 @@ template < class ValueType > class PCFieldOnMeshInstance : public GenericDataFie
      */
     bool setValueOnListOfDelayedElements( const JeveuxVectorChar8 &component,
                                           const JeveuxVector< ValueType > &values,
-                                          const VectorLong &grp ) throw( std::runtime_error ) {
+                                          const VectorLong &grp ) {
         if ( _supportMesh.use_count() == 0 || _supportMesh->isEmpty() )
             throw std::runtime_error( "Mesh is empty" );
 
@@ -480,7 +480,7 @@ template < class ValueType > class PCFieldOnMeshInstance : public GenericDataFie
      */
     bool setValueOnGroupOfElements( const JeveuxVectorChar8 &component,
                                     const JeveuxVector< ValueType > &values,
-                                    const GroupOfElements &grp ) throw( std::runtime_error ) {
+                                    const GroupOfElements &grp ) {
         if ( _supportMesh.use_count() == 0 || _supportMesh->isEmpty() )
             throw std::runtime_error( "Mesh is empty" );
         if ( !_supportMesh->hasGroupOfElements( grp.getName() ) )
@@ -502,7 +502,7 @@ template < class ValueType > class PCFieldOnMeshInstance : public GenericDataFie
      * @return renvoit true si l'ajout s'est bien deroulee, false sinon
      */
     bool setValueOnZone( const PCFieldZone &zone,
-                         const PCFieldValues< ValueType > &values ) throw( std::runtime_error ) {
+                         const PCFieldValues< ValueType > &values ) {
         if ( _supportMesh.use_count() == 0 || _supportMesh->isEmpty() )
             throw std::runtime_error( "Mesh is empty" );
 

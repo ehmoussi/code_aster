@@ -176,7 +176,7 @@ class FieldOnNodesInstance : public GenericDataFieldInstance,
      * @brief Allouer un champ au noeud à partir d'un DOFNumbering
      * @return renvoit true
      */
-    bool allocateFromDOFNumering( const BaseDOFNumberingPtr &dofNum ) throw( std::runtime_error ) {
+    bool allocateFromDOFNumering( const BaseDOFNumberingPtr &dofNum ) {
         _dofNum = dofNum;
         if ( _dofNum->isEmpty() )
             throw std::runtime_error( "DOFNumering is empty" );
@@ -200,12 +200,12 @@ class FieldOnNodesInstance : public GenericDataFieldInstance,
         return toReturn;
     };
 
-    bool printMedFile( const std::string fileName ) const throw( std::runtime_error );
+    bool printMedFile( const std::string fileName ) const ;
 
     /**
      * @brief Set support DOFNumering
      */
-    void setDOFNumering( const BaseDOFNumberingPtr &dofNum ) throw( std::runtime_error ) {
+    void setDOFNumering( const BaseDOFNumberingPtr &dofNum ) {
         if ( _dofNum )
             throw std::runtime_error( "DOFNumbering already set" );
         _dofNum = dofNum;
@@ -215,7 +215,7 @@ class FieldOnNodesInstance : public GenericDataFieldInstance,
      * @brief Set FieldOnNodes description
      * @param desc object FieldOnNodesDescriptionPtr
      */
-    void setDescription( const FieldOnNodesDescriptionPtr &desc ) throw( std::runtime_error ) {
+    void setDescription( const FieldOnNodesDescriptionPtr &desc ) {
         if ( _dofDescription )
             throw std::runtime_error( "FieldOnNodesDescription already set" );
         _dofDescription = desc;
@@ -224,7 +224,7 @@ class FieldOnNodesInstance : public GenericDataFieldInstance,
     /**
      * @brief Update field and build FieldOnNodesDescription if necessary
      */
-    bool update() throw( std::runtime_error ) {
+    bool update() {
         if ( _dofNum != nullptr ) {
             _dofDescription = _dofNum->getFieldOnNodesDescription();
         } else if ( _dofDescription == nullptr && updateValuePointers() ) {
@@ -253,7 +253,7 @@ class FieldOnNodesInstance : public GenericDataFieldInstance,
 
 template < class ValueType >
 bool FieldOnNodesInstance< ValueType >::printMedFile( const std::string fileName ) const
-    throw( std::runtime_error ) {
+    {
     LogicalUnitFileCython a( fileName, Binary, New );
     int retour = a.getLogicalUnit();
     CommandSyntax cmdSt( "IMPR_RESU" );

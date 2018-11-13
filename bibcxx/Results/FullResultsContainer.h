@@ -55,13 +55,13 @@ class FullResultsContainerInstance : public ResultsContainerInstance {
     FullResultsContainerInstance( const std::string &resuTyp )
         : FullResultsContainerInstance( ResultNaming::getNewResultName(), resuTyp ){};
 
-    DOFNumberingPtr getDOFNumbering() const throw( std::runtime_error ) {
+    DOFNumberingPtr getDOFNumbering() const {
         if ( _dofNum != nullptr )
             return _dofNum;
         throw std::runtime_error( "DOFNumbering is empty" );
     };
 
-    bool printMedFile( std::string fileName ) const throw( std::runtime_error ) {
+    bool printMedFile( std::string fileName ) const {
         return ResultsContainerInstance::printMedFile( fileName );
     };
 

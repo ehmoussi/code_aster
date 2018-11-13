@@ -30,7 +30,7 @@
 #include "ParallelUtilities/MPIInfos.h"
 #include "aster_fort.h"
 
-int getMPINumberOfProcs() throw( std::runtime_error ) {
+int getMPINumberOfProcs() {
     int rank = -1, nbProcs = -1;
     aster_comm_t *comm = aster_get_comm_world();
     aster_get_mpi_info( comm, &rank, &nbProcs );
@@ -39,7 +39,7 @@ int getMPINumberOfProcs() throw( std::runtime_error ) {
     return nbProcs;
 };
 
-int getMPIRank() throw( std::runtime_error ) {
+int getMPIRank() {
     int rank = -1, nbProcs = -1;
     aster_comm_t *comm = aster_get_comm_world();
     aster_get_mpi_info( comm, &rank, &nbProcs );

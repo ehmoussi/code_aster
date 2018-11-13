@@ -32,10 +32,10 @@
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 /** @brief Get MPI number of procs */
-int getMPINumberOfProcs() throw( std::runtime_error );
+int getMPINumberOfProcs() ;
 
 /** @brief Get MPI rank */
-int getMPIRank() throw( std::runtime_error );
+int getMPIRank() ;
 
 #endif /* MPIINFOS_H_ */
 

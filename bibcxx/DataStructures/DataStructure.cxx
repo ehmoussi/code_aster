@@ -54,7 +54,7 @@ DataStructure::DataStructure( const std::string type, const JeveuxMemory memType
     : DataStructure::DataStructure( DataStructureNaming::getNewName( memType, nameLength ),
                                     nameLength, type, memType ) {}
 
-DataStructure::~DataStructure() // throw ( std::runtime_error )
+DataStructure::~DataStructure()
 {
 #ifdef __DEBUG_GC__
     std::cout << "DataStructure.destr: " << this->getName() << std::endl;

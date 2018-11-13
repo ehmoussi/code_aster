@@ -40,7 +40,7 @@ BaseFunctionInstance::BaseFunctionInstance( const std::string type )
     : BaseFunctionInstance::BaseFunctionInstance( ResultNaming::getNewResultName(), type ) {}
 
 void BaseFunctionInstance::allocate( JeveuxMemory mem,
-                                     ASTERINTEGER size ) throw( std::runtime_error ) {
+                                     ASTERINTEGER size ) {
     if ( _property->exists() )
         _property->deallocate();
     propertyAllocate();
@@ -51,12 +51,12 @@ void BaseFunctionInstance::allocate( JeveuxMemory mem,
 }
 
 void FunctionComplexInstance::allocate( JeveuxMemory mem,
-                                        ASTERINTEGER size ) throw( std::runtime_error ) {
+                                        ASTERINTEGER size ) {
     throw std::runtime_error( "Not yet implemented!" );
 }
 
 void BaseFunctionInstance::setValues( const VectorDouble &absc,
-                                      const VectorDouble &ordo ) throw( std::runtime_error ) {
+                                      const VectorDouble &ordo ) {
     if ( absc.size() != ordo.size() )
         throw std::runtime_error( "Function: length of abscissa and ordinates must be equal" );
 
@@ -75,7 +75,7 @@ void BaseFunctionInstance::setValues( const VectorDouble &absc,
     }
 }
 
-void BaseFunctionInstance::setInterpolation( const std::string type ) throw( std::runtime_error ) {
+void BaseFunctionInstance::setInterpolation( const std::string type ) {
     std::string interp;
     if ( !_property->isAllocated() )
         propertyAllocate();
@@ -94,7 +94,7 @@ void BaseFunctionInstance::setInterpolation( const std::string type ) throw( std
     ( *_property )[1] = type.c_str();
 }
 
-void BaseFunctionInstance::setExtrapolation( const std::string type ) throw( std::runtime_error ) {
+void BaseFunctionInstance::setExtrapolation( const std::string type ) {
     if ( !_property->isAllocated() )
         propertyAllocate();
 
@@ -120,7 +120,7 @@ void BaseFunctionInstance::setAsConstant() {
 
 /* Complex function */
 void FunctionComplexInstance::setValues( const VectorDouble &absc,
-                                         const VectorDouble &ordo ) throw( std::runtime_error ) {
+                                         const VectorDouble &ordo ) {
     if ( absc.size() * 2 != ordo.size() )
         throw std::runtime_error(
             "Function: The length of ordinates must be twice that of abscissas." );
@@ -143,6 +143,6 @@ void FunctionComplexInstance::setValues( const VectorDouble &absc,
 }
 
 void FunctionComplexInstance::setValues( const VectorDouble &absc,
-                                         const VectorComplex &ordo ) throw( std::runtime_error ) {
+                                         const VectorComplex &ordo ) {
     throw std::runtime_error( "Not yet implemented!" );
 }

@@ -27,17 +27,18 @@
 /* person_in_charge: nicolas.sellenet at edf.fr */
 #include "astercxx.h"
 
-#include "Solvers/GenericSolver.h"
-#include "Modeling/Model.h"
-#include "Materials/MaterialOnMesh.h"
-#include "Loads/MechanicalLoad.h"
-#include "Loads/KinematicsLoad.h"
-#include "Loads/ParallelMechanicalLoad.h"
-#include "Loads/ListOfLoads.h"
-#include "LinearAlgebra/LinearSolver.h"
 #include "Algorithms/TimeStepper.h"
-#include "Studies/StudyDescription.h"
+#include "LinearAlgebra/LinearSolver.h"
+#include "Loads/KinematicsLoad.h"
+#include "Loads/ListOfLoads.h"
+#include "Loads/MechanicalLoad.h"
+#include "Loads/ParallelMechanicalLoad.h"
+#include "Materials/MaterialOnMesh.h"
+#include "Modeling/Model.h"
 #include "Results/ElasticEvolutionContainer.h"
+#include "RunManager/Exceptions.h"
+#include "Solvers/GenericSolver.h"
+#include "Studies/StudyDescription.h"
 
 class StaticMechanicalSolverInstance : public GenericSolver {
   private:
@@ -83,7 +84,7 @@ class StaticMechanicalSolverInstance : public GenericSolver {
     /**
      * @brief Lancement de la resolution
      */
-    ElasticEvolutionContainerPtr execute() throw( std::runtime_error );
+    ElasticEvolutionContainerPtr execute();
 
     /**
      * @brief Methode permettant de definir le solveur lineaire

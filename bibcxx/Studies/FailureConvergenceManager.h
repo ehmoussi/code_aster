@@ -471,7 +471,7 @@ class GenericConvergenceErrorInstance {
      * @brief Fonction permettant de preciser l'action à réaliser en cas d'erreur
      * @param action action à réaliser
      */
-    void setAction( const GenericActionPtr &action ) throw( std::runtime_error ) {
+    void setAction( const GenericActionPtr &action ) {
         _actionOnError = action;
         checkAllowedAction( action );
     };
@@ -488,7 +488,7 @@ class ConvergenceErrorInstance : public GenericConvergenceErrorInstance {
      * @brief Fonction permettant de vérifier qu'une action est bien autorisée
      * @param action Action a tester
      */
-    void checkAllowedAction( const GenericActionPtr &action ) throw( std::runtime_error ) {
+    void checkAllowedAction( const GenericActionPtr &action ) {
         const ActionTypeEnum &type = action->getType();
         if ( type != StopOnErrorType && type != SubstepingOnErrorType &&
              type != AddIterationOnErrorType && type != PilotageErrorType )
@@ -513,7 +513,7 @@ class ResidualDivergenceErrorInstance : public GenericConvergenceErrorInstance {
      * @brief Fonction permettant de vérifier qu'une action est bien autorisée
      * @param action Action a tester
      */
-    void checkAllowedAction( const GenericActionPtr &action ) throw( std::runtime_error ) {
+    void checkAllowedAction( const GenericActionPtr &action ) {
         const ActionTypeEnum &type = action->getType();
         if ( type != SubstepingOnErrorType )
             throw std::runtime_error( "Action not allowed" );
@@ -545,7 +545,7 @@ class IncrementOverboundErrorInstance : public GenericConvergenceErrorInstance {
      * @brief Fonction permettant de vérifier qu'une action est bien autorisée
      * @param action Action a tester
      */
-    void checkAllowedAction( const GenericActionPtr &action ) throw( std::runtime_error ) {
+    void checkAllowedAction( const GenericActionPtr &action ) {
         const ActionTypeEnum &type = action->getType();
         if ( type != StopOnErrorType && type != SubstepingOnErrorType )
             throw std::runtime_error( "Action not allowed" );
@@ -589,7 +589,7 @@ class ContactDetectionErrorInstance : public GenericConvergenceErrorInstance {
      * @brief Fonction permettant de vérifier qu'une action est bien autorisée
      * @param action Action a tester
      */
-    void checkAllowedAction( const GenericActionPtr &action ) throw( std::runtime_error ) {
+    void checkAllowedAction( const GenericActionPtr &action ) {
         const ActionTypeEnum &type = action->getType();
         if ( type != StopOnErrorType && type != SubstepingOnContactType )
             throw std::runtime_error( "Action not allowed" );
@@ -617,7 +617,7 @@ class InterpenetrationErrorInstance : public GenericConvergenceErrorInstance {
      * @brief Fonction permettant de vérifier qu'une action est bien autorisée
      * @param action Action a tester
      */
-    void checkAllowedAction( const GenericActionPtr &action ) throw( std::runtime_error ) {
+    void checkAllowedAction( const GenericActionPtr &action ) {
         const ActionTypeEnum &type = action->getType();
         if ( type != StopOnErrorType && type != ChangePenalisationOnErrorType )
             throw std::runtime_error( "Action not allowed" );
@@ -651,7 +651,7 @@ class InstabilityErrorInstance : public GenericConvergenceErrorInstance {
      * @brief Fonction permettant de vérifier qu'une action est bien autorisée
      * @param action Action a tester
      */
-    void checkAllowedAction( const GenericActionPtr &action ) throw( std::runtime_error ) {
+    void checkAllowedAction( const GenericActionPtr &action ) {
         const ActionTypeEnum &type = action->getType();
         if ( type != StopOnErrorType && type != ContinueOnErrorType )
             throw std::runtime_error( "Action not allowed" );

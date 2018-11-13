@@ -116,7 +116,7 @@ class BaseMeshInstance : public DataStructure {
     /**
      * @brief Destructeur
      */
-    ~BaseMeshInstance() throw( std::runtime_error ) {
+    ~BaseMeshInstance() {
 #ifdef __DEBUG_GC__
         std::cout << "Mesh.destr: " << this->getName() << std::endl;
 #endif
@@ -145,7 +145,7 @@ class BaseMeshInstance : public DataStructure {
      * @return Objet de collection contenant la liste des noeuds
      */
     const JeveuxCollectionObject< ASTERINTEGER > &getGroupOfNodes( const std::string &name ) const
-        throw( std::runtime_error ) {
+        {
         if ( _groupsOfNodes->size() == -1 )
             _groupsOfNodes->buildFromJeveux();
         return _groupsOfNodes->getObjectFromName( name );
@@ -259,7 +259,7 @@ class MeshInstance : public BaseMeshInstance {
      * @return Retourne true si tout s'est bien déroulé
      */
     bool addGroupOfNodesFromNodes( const std::string &name,
-                                   const VectorString &vec ) throw( std::runtime_error );
+                                   const VectorString &vec ) ;
 
     /**
      * @brief Teste l'existence d'un groupe de mailles dans le maillage
@@ -281,19 +281,19 @@ class MeshInstance : public BaseMeshInstance {
      * @brief Read a Aster Mesh file
      * @return retourne true si tout est ok
      */
-    bool readAsterMeshFile( const std::string &fileName ) throw( std::runtime_error );
+    bool readAsterMeshFile( const std::string &fileName ) ;
 
     /**
      * @brief Read a Aster Mesh file
      * @return retourne true si tout est ok
      */
-    bool readGibiFile( const std::string &fileName ) throw( std::runtime_error );
+    bool readGibiFile( const std::string &fileName ) ;
 
     /**
      * @brief Read a Aster Mesh file
      * @return retourne true si tout est ok
      */
-    bool readGmshFile( const std::string &fileName ) throw( std::runtime_error );
+    bool readGmshFile( const std::string &fileName ) ;
 };
 
 /**

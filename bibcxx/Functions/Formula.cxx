@@ -51,8 +51,7 @@ FormulaInstance::~FormulaInstance() {
     Py_XDECREF( _context );
 }
 
-void FormulaInstance::setVariables( const std::vector< std::string > &names ) throw(
-    std::runtime_error ) {
+void FormulaInstance::setVariables( const std::vector< std::string > &names ) {
     const int nbvar = names.size();
     _variables->allocate( Permanent, nbvar );
 
@@ -73,7 +72,7 @@ std::vector< std::string > FormulaInstance::getVariables() const {
     return vars;
 }
 
-void FormulaInstance::setExpression( const std::string expression ) throw( std::runtime_error ) {
+void FormulaInstance::setExpression( const std::string expression ) {
     const std::string name = "formula";
     _expression = expression;
     Py_XDECREF( _code );
@@ -89,7 +88,7 @@ void FormulaInstance::setExpression( const std::string expression ) throw( std::
 }
 
 VectorDouble FormulaInstance::evaluate( const VectorDouble &values ) const
-    throw( std::runtime_error ) {
+    {
     int iret = 0;
     std::vector< std::string > vars = getVariables();
     VectorDouble result = evaluate_formula( _code, _context, vars, values, &iret );

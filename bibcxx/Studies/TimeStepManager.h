@@ -91,7 +91,7 @@ class TimeStepManagerInstance : public DataStructure {
      * @param currentError erreur à ajouter
      */
     void
-    addErrorManager( const GenericConvergenceErrorPtr &currentError ) throw( std::runtime_error ) {
+    addErrorManager( const GenericConvergenceErrorPtr &currentError ) {
         if ( !currentError->isActionSet() )
             throw std::runtime_error( "Action on error not set" );
         _listErrorManager.push_back( currentError );
@@ -100,13 +100,13 @@ class TimeStepManagerInstance : public DataStructure {
     /**
      * @brief Construction de la sd_list_inst
      */
-    void build() throw( std::runtime_error );
+    void build() ;
 
     /**
      * @brief Fonction permettant de preciser le mode de gestion de la liste d'instants
      * @param isAuto true si la gestion est automatique
      */
-    void setAutomaticManagement( const bool &isAuto ) throw( std::runtime_error ) {
+    void setAutomaticManagement( const bool &isAuto ) {
         _isAutomatic = isAuto;
         if ( _isAutomatic )
             throw std::runtime_error( "Not yet implemented" );
@@ -139,7 +139,7 @@ class TimeStepManagerInstance : public DataStructure {
     /**
      * @brief Function de définition de la liste d'instants à partir d'un résu
      */
-    void setTimeListFromResultsContainer() throw( std::runtime_error ) {
+    void setTimeListFromResultsContainer() {
         throw std::runtime_error( "Not yet implemented" );
     };
 };
