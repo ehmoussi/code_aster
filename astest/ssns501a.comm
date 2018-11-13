@@ -27,7 +27,9 @@
 #- MODELISATION AVEC DES ELEMENTS 'COQUE_3D' (TRIA7)
 #---------------------------------------------------------------------
 #
-DEBUT( CODE=_F(NIV_PUB_WEB='INTERNET'))
+DEBUT( CODE=_F(NIV_PUB_WEB='INTERNET'),
+       IGNORE_ALARM = ('COMPOR1_47',),
+     )
 
 #
 #
@@ -153,7 +155,7 @@ RESULTAT=STAT_NON_LINE(reuse=RESULTAT,      MODELE=MODELE,
                               PILOTAGE=_F( TYPE = 'LONG_ARC',
                                        SELECTION='ANGL_INCR_DEPL',
                                        GROUP_NO = 'TOUT_ELT',
-                                        NOM_CMP = ('DX', 'DY', 'DZ',),
+                                        NOM_CMP = ('DX','DY','DZ',),
 #DELT_T=0.03 --> DELTA_W=2.5E-4
                                         ETA_PILO_MAX=5.,
                                         COEF_MULT = 120.),

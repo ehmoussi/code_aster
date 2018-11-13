@@ -37,7 +37,7 @@ if not HAVE_ASTERSTUDY:
 
 else:
     from .Language.Syntax import *
-    from .Language.Syntax import _F
+    from .Language.Syntax import _F, ListFact
 
 
 class Translation(object):

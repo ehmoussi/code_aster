@@ -1,6 +1,6 @@
 def test_init_ops(self,TINI,TFIN,TMIL,MATER,LIST_INST,**args):
     import numpy as NP
-    from Accas import _F
+    from code_aster.Cata.Syntax import _F
     ier=0
   # La macro compte pour 1 dans la numerotation des commandes
     self.set_icmd(1)
