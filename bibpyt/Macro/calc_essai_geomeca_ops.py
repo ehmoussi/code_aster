@@ -21,20 +21,23 @@ from geomec_utils import *
 from geomec_essais import *
 
 def calc_essai_geomeca_ops(self, MATER, COMPORTEMENT, CONVERGENCE, INFO,
-                           ESSAI_TRIA_DR_M_D,
-                           ESSAI_TRIA_ND_M_D,
-                           ESSAI_CISA_DR_C_D,
-                           ESSAI_TRIA_ND_C_F,
-                           ESSAI_TRIA_ND_C_D,
-                           ESSAI_TRIA_DR_C_D,
-                           ESSAI_OEDO_DR_C_F,
-                           ESSAI_ISOT_DR_C_F,
                            # ESSAI_XXX,
                            **args):
     """
     Objet : Programme principal CALC_ESSAI_GEOMECA
     """
+    from code_aster.Cata.Syntax import _F, ListFact
     args = _F(args)
+    COMPORTEMENT = ListFact(COMPORTEMENT)
+    CONVERGENCE = ListFact(CONVERGENCE)
+    ESSAI_TRIA_DR_M_D = ListFact(args.get('ESSAI_TRIA_DR_M_D'))
+    ESSAI_TRIA_ND_M_D = ListFact(args.get('ESSAI_TRIA_ND_M_D'))
+    ESSAI_CISA_DR_C_D = ListFact(args.get('ESSAI_CISA_DR_C_D'))
+    ESSAI_TRIA_ND_C_F = ListFact(args.get('ESSAI_TRIA_ND_C_F'))
+    ESSAI_TRIA_ND_C_D = ListFact(args.get('ESSAI_TRIA_ND_C_D'))
+    ESSAI_TRIA_DR_C_D = ListFact(args.get('ESSAI_TRIA_DR_C_D'))
+    ESSAI_OEDO_DR_C_F = ListFact(args.get('ESSAI_OEDO_DR_C_F'))
+    ESSAI_ISOT_DR_C_F = ListFact(args.get('ESSAI_ISOT_DR_C_F'))
     ier     = 0
     str_num = None
 
@@ -53,117 +56,117 @@ def calc_essai_geomeca_ops(self, MATER, COMPORTEMENT, CONVERGENCE, INFO,
                  ESSAI_OEDO_DR_C_F,
                  ESSAI_ISOT_DR_C_F,)
                  # ESSAI_XXX,)
-                 
+
     # ---
     # Essai TRIA_DR_M_D
     # ---
     if ESSAI_TRIA_DR_M_D != None:
-                 
+
         nb_essai = len(ESSAI_TRIA_DR_M_D.List_F())
 
         for iocc, DicoEssai in enumerate(ESSAI_TRIA_DR_M_D.List_F()):
-        
+
             if nb_essai>1:
                str_num = int_2_str(iocc+1, nb_essai)
-            
+
             essai_TRIA_DR_M_D(self, str_num, DicoEssai,
                               MATER, COMPORTEMENT, CONVERGENCE, INFO)
     # ---
     # Essai TRIA_ND_M_D
     # ---
     if ESSAI_TRIA_ND_M_D != None:
-                 
+
         nb_essai = len(ESSAI_TRIA_ND_M_D.List_F())
 
         for iocc, DicoEssai in enumerate(ESSAI_TRIA_ND_M_D.List_F()):
-        
+
             if nb_essai>1:
                str_num = int_2_str(iocc+1, nb_essai)
-            
+
             essai_TRIA_ND_M_D(self, str_num, DicoEssai,
                               MATER, COMPORTEMENT, CONVERGENCE, INFO)
     # ---
     # Essai CISA_DR_C_D
     # ---
     if ESSAI_CISA_DR_C_D != None:
-                 
+
         nb_essai = len(ESSAI_CISA_DR_C_D.List_F())
 
         for iocc, DicoEssai in enumerate(ESSAI_CISA_DR_C_D.List_F()):
-        
+
             if nb_essai>1:
                str_num = int_2_str(iocc+1, nb_essai)
-            
+
             essai_CISA_DR_C_D(self, str_num, DicoEssai,
                               MATER, COMPORTEMENT, CONVERGENCE, INFO)
     # ---
     # Essai TRIA_ND_C_F
     # ---
     if ESSAI_TRIA_ND_C_F != None:
-                 
+
         nb_essai = len(ESSAI_TRIA_ND_C_F.List_F())
 
         for iocc, DicoEssai in enumerate(ESSAI_TRIA_ND_C_F .List_F()):
-        
+
             if nb_essai>1:
                str_num = int_2_str(iocc+1, nb_essai)
-            
+
             essai_TRIA_ND_C_F (self, str_num, DicoEssai,
                                MATER, COMPORTEMENT, CONVERGENCE, INFO)
     # ---
     # Essai TRIA_ND_C_D
     # ---
     if ESSAI_TRIA_ND_C_D != None:
-                 
+
         nb_essai = len(ESSAI_TRIA_ND_C_D.List_F())
 
         for iocc, DicoEssai in enumerate(ESSAI_TRIA_ND_C_D .List_F()):
-        
+
             if nb_essai>1:
                str_num = int_2_str(iocc+1, nb_essai)
-            
+
             essai_TRIA_ND_C_D (self, str_num, DicoEssai,
                                MATER, COMPORTEMENT, CONVERGENCE, INFO)
     # ---
     # Essai TRIA_DR_C_D
     # ---
     if ESSAI_TRIA_DR_C_D != None:
-                 
+
         nb_essai = len(ESSAI_TRIA_DR_C_D.List_F())
 
         for iocc, DicoEssai in enumerate(ESSAI_TRIA_DR_C_D.List_F()):
-        
+
             if nb_essai>1:
                str_num = int_2_str(iocc+1, nb_essai,)
-            
+
             essai_TRIA_DR_C_D(self, str_num, DicoEssai,
                               MATER, COMPORTEMENT, CONVERGENCE, INFO)
     # ---
     # Essai OEDO_DR_C_F
     # ---
     if ESSAI_OEDO_DR_C_F != None:
-                 
+
         nb_essai = len(ESSAI_OEDO_DR_C_F.List_F())
 
         for iocc, DicoEssai in enumerate(ESSAI_OEDO_DR_C_F.List_F()):
-        
+
             if nb_essai>1:
                str_num = int_2_str(iocc+1, nb_essai,)
-            
+
             essai_OEDO_DR_C_F(self, str_num, DicoEssai,
                               MATER, COMPORTEMENT, CONVERGENCE, INFO)
     # ---
     # Essai ISOT_DR_C_F
     # ---
     if ESSAI_ISOT_DR_C_F != None:
-                 
+
         nb_essai = len(ESSAI_ISOT_DR_C_F.List_F())
 
         for iocc, DicoEssai in enumerate(ESSAI_ISOT_DR_C_F.List_F()):
-        
+
             if nb_essai>1:
                str_num = int_2_str(iocc+1, nb_essai,)
-            
+
             essai_ISOT_DR_C_F(self, str_num, DicoEssai,
                               MATER, COMPORTEMENT, CONVERGENCE, INFO)
     # ---
