@@ -176,6 +176,9 @@ Required changes
 
   Replace ``POUTRE.List_F()`` by ``force_list(POUTRE)``.
 
+  Temporarly one can use ``POUTRE = ListFact(POUTRE)`` not to change the code
+  and let ``POUTRE.List_F()`` with a dummy ``.List_F()`` function that does nothing.
+
 - Usage of logical units: See :mod:`code_aster.RunManager.LogicalUnit`.
 
 - Additional results (**CO()** objects):
@@ -190,6 +193,15 @@ Required changes
         +          # self.DeclareOut('num', numeddl)
                    num = NUME_DDL(MATR_RIGI=_a, INFO=info)
         +          self.register_result(num, numeddl)
+
+  In the legacy version some testcases sometimes define ``OBJ = CO('NAME')`` and
+  then pass either ``NAME`` or ``OBJ`` to children commands.
+  Now using the legacy mode of macro that publishes ``NAME`` in the parent context
+  ``OBJ`` can not be passed to children commands. It will not have the expected type
+  (it stays a ``CO`` object and not becomes a ``Table`` or ``Mesh``!).
+
+  When the new mode will be enabled one will just use ``result.NAME`` without
+  ambiguity.
 
 
 Parallel specific DataStructures
