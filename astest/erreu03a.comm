@@ -34,7 +34,8 @@
 # AVEC MUMPS, VALIDATION DE LA VALEUR 'EVAL' DU MOT-CLE GESTION_MEMOIRE
 #########################################################################
 
-import aster
+from code_aster import AsterError
+from code_aster.Commands import *
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET', ),
      DEBUG=_F(SDVERI='OUI'),
@@ -83,7 +84,7 @@ try :
                      SOLVEUR=_F(METHODE='MUMPS',GESTION_MEMOIRE='EVAL',),
                    )
 
-except aster.error,err:
+except AsterError as err:
    print fmt_raison % str(err)
    # on verifie que l'erreur fatale est bien celle que l'on attendait :
    if err.id_message == "FACTOR_77":
@@ -99,7 +100,7 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
                      VALE_K='VALEUR  ',),
            )
 
-DETRUIRE(CONCEPT=_F(NOM=(RESU01, TAB01),),)
+DETRUIRE(CONCEPT=_F(NOM=(TAB01),),)
 
 # 1 : MANQUE DE BLOCAGE DETECTE VIA LE MECANISME NPREC/STOP_SINGULIER
 #     TEST AVEC LDLT/MF/MUMPS. AVEC MUMPS ON TESTE AUSSI LE MECANISME NPREC<0
@@ -111,7 +112,7 @@ try :
                      SOLVEUR=_F(METHODE='LDLT',NPREC=8,STOP_SINGULIER='OUI',),
                    )
 
-except aster.error,err:
+except AsterError as err:
    print fmt_raison % str(err)
    # on verifie que l'erreur fatale est bien celle que l'on attendait :
    if err.id_message == "FACTOR_10":
@@ -135,7 +136,7 @@ try :
                      EXCIT=( _F(CHARGE = CHAR),),
                      SOLVEUR=_F(METHODE='MULT_FRONT',NPREC=8,STOP_SINGULIER='OUI',),
                    )
-except aster.error,err:
+except AsterError as err:
    print fmt_raison % str(err)
    # on verifie que l'erreur fatale est bien celle que l'on attendait :
    if err.id_message == "FACTOR_10":
@@ -159,7 +160,7 @@ try :
                      EXCIT=( _F(CHARGE = CHAR),),
                      SOLVEUR=_F(METHODE='MUMPS',NPREC=8,STOP_SINGULIER='OUI',),
                    )
-except aster.error,err:
+except AsterError as err:
    print fmt_raison % str(err)
    # on verifie que l'erreur fatale est bien celle que l'on attendait :
    if err.id_message == "FACTOR_11":
@@ -183,7 +184,7 @@ try :
                      EXCIT=( _F(CHARGE = CHAR),),
                      SOLVEUR=_F(METHODE='MUMPS',NPREC=-8,STOP_SINGULIER='OUI',),
                    )
-except aster.error,err:
+except AsterError as err:
    print fmt_raison % str(err)
    # on verifie que l'erreur fatale est bien celle que l'on attendait :
    if err.id_message == "FACTOR_57":
@@ -212,7 +213,7 @@ try :
                      SOLVEUR=_F(METHODE='LDLT',NPREC=8,STOP_SINGULIER='OUI',),
                    )
 
-except aster.error,err:
+except AsterError as err:
    print fmt_raison % str(err)
    # on verifie que l'erreur fatale est bien celle que l'on attendait :
    if err.id_message == "FACTOR_11":
@@ -236,7 +237,7 @@ try :
                      EXCIT=( _F(CHARGE = CTROP),_F(CHARGE = CHARCI)),
                      SOLVEUR=_F(METHODE='MULT_FRONT',NPREC=8,STOP_SINGULIER='OUI',),
                    )
-except aster.error,err:
+except AsterError as err:
    print fmt_raison % str(err)
    # on verifie que l'erreur fatale est bien celle que l'on attendait :
    if err.id_message == "FACTOR_11":
@@ -260,7 +261,7 @@ try :
                      EXCIT=( _F(CHARGE = CTROP),_F(CHARGE = CHARCI)),
                      SOLVEUR=_F(METHODE='MUMPS',NPREC=8,STOP_SINGULIER='OUI',),
                    )
-except aster.error,err:
+except AsterError as err:
    print fmt_raison % str(err)
    # on verifie que l'erreur fatale est bien celle que l'on attendait :
    if err.id_message == "FACTOR_11":
@@ -284,7 +285,7 @@ try :
                      EXCIT=( _F(CHARGE = CTROP),_F(CHARGE = CHARCI)),
                      SOLVEUR=_F(METHODE='MUMPS',NPREC=-8,STOP_SINGULIER='OUI',),
                    )
-except aster.error,err:
+except AsterError as err:
    print fmt_raison % str(err)
    # on verifie que l'erreur fatale est bien celle que l'on attendait :
    if err.id_message == "FACTOR_42":
@@ -308,7 +309,7 @@ try :
                      EXCIT=( _F(CHARGE = CTROP),_F(CHARGE = CHARCI)),
                      SOLVEUR=_F(METHODE='MUMPS',TYPE_RESOL='SYMDEF'),
                    )
-except aster.error,err:
+except AsterError as err:
    print fmt_raison % str(err)
    # on verifie que l'erreur fatale est bien celle que l'on attendait :
    if err.id_message == "FACTOR_84":

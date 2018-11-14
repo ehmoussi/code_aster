@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,8 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-import aster
+from code_aster import AsterError
+from code_aster.Commands import *
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET', ),
       ERREUR=_F(ERREUR_F='EXCEPTION',),
@@ -36,7 +37,7 @@ is_ok = 0
 
 try:
    TEST_RESU(TEST_NAN='OUI',)
-except aster.error,err:
+except AsterError as err:
    print fmt_raison % str(err)
    # on verifie que l'erreur fatale est bien celle que l'on attendait :
    if err.id_message == "DVP_2":

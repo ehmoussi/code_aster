@@ -72,3 +72,11 @@ AsterError.__repr__ = format_exception
 AsterError.__str__ = format_exception
 AsterError.id_message = property(get_idmess)
 AsterError.message = property(format_exception)
+
+
+import aster
+
+aster.ArretCpuError = AsterError
+aster.BandeFrequenceVideError = AsterError
+aster.EventError = AsterError
+aster.NonConvergenceError = AsterError

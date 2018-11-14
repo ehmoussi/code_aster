@@ -17,30 +17,32 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-from Noyau.N_types import force_list
-from Noyau.N_utils import AsType
-import numpy as NP
 import pprint
+
+import numpy as NP
+
 import Accas
 import aster
-
-from Utilitai.Utmess import UTMESS, ASSERT
+from code_aster import AsterError
+from code_aster.Cata.DataStructure import (cara_elem, cham_mater, fonction_c,
+                                           fonction_sdaster, maillage_sdaster,
+                                           modele_sdaster, nappe_sdaster)
+from code_aster.Cata.Syntax import _F
+from code_aster.Commands import (AFFE_CARA_ELEM, AFFE_CHAR_MECA, AFFE_MATERIAU,
+                                 AFFE_MODELE, ASSE_MAILLAGE, ASSE_MATRICE,
+                                 CALC_MATR_ELEM, CALC_MODES, COMB_MATR_ASSE,
+                                 CREA_CHAMP, CREA_MAILLAGE, DEFI_BASE_MODALE,
+                                 DEFI_FONCTION, DEFI_GROUP, DEFI_INTERF_DYNA,
+                                 DEFI_LIST_INST, DEFI_LIST_REEL, DEFI_MAILLAGE,
+                                 DETRUIRE, DYNA_NON_LINE, LIRE_IMPE_MISS,
+                                 LIRE_MAILLAGE, MACR_ELEM_DYNA, MODE_STATIQUE,
+                                 NUME_DDL, NUME_DDL_GENE, PROD_MATR_CHAM,
+                                 STAT_NON_LINE)
+from Noyau.N_types import force_list
+from Noyau.N_utils import AsType
 from Utilitai.partition import MAIL_PY
 from Utilitai.UniteAster import UniteAster
-
-from code_aster.Cata.Syntax import _F
-
-from code_aster.Cata.DataStructure import (fonction_sdaster, fonction_c,
-nappe_sdaster, cara_elem, cham_mater, maillage_sdaster, modele_sdaster)
-
-from code_aster.Commands import (DETRUIRE, DEFI_MAILLAGE, ASSE_MAILLAGE,
-    AFFE_MATERIAU, AFFE_MODELE, AFFE_CARA_ELEM, LIRE_MAILLAGE,
-    AFFE_CHAR_MECA, ASSE_MATRICE, DEFI_INTERF_DYNA, CALC_MATR_ELEM,
-    DEFI_BASE_MODALE, CALC_MODES, NUME_DDL, MODE_STATIQUE,
-    MACR_ELEM_DYNA, DEFI_FONCTION, DEFI_LIST_REEL, STAT_NON_LINE,
-    CREA_CHAMP, NUME_DDL_GENE, LIRE_IMPE_MISS, COMB_MATR_ASSE,
-    PROD_MATR_CHAM, DEFI_LIST_INST, CREA_MAILLAGE, DYNA_NON_LINE,
-    DEFI_GROUP)
+from Utilitai.Utmess import ASSERT, UTMESS
 
 
 def pre_seisme_nonl_ops(self, **args):
@@ -56,7 +58,7 @@ def pre_seisme_nonl_ops(self, **args):
     calcul = PreSeismeNonL.Factory(self, param)
     try:
         calcul.run()
-    except aster.error, err:
+    except AsterError as err:
         UTMESS('F', err.id_message, valk=err.valk,
                vali=err.vali, valr=err.valr)
 
