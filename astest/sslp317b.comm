@@ -158,7 +158,7 @@ MA[nb_raff]=DEFI_GROUP(reuse=MA[nb_raff],
 # alors on bidouille un truc en python :
 # creation d'une table contenant le plus petit diametre non nul
 
-diam=aster.getvectjev("DIAM_4             .VALE        ")
+diam=aster.getvectjev(DIAM[4].getName() + ".VALE        ")
 
 def notzero(n):
    return n !=0
