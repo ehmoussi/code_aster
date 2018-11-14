@@ -51,9 +51,6 @@ def raff_xfem_ops(self, FISSURE, TYPE, **args):
     # La macro compte pour 1 dans la numerotation des commandes
     self.set_icmd(1)
 
-    # Le concept sortant
-    self.DeclareOut('chamout', self.sd)
-
     # On importe les definitions des commandes a utiliser dans la macro
     # Le nom de la variable doit etre obligatoirement le nom de la commande
     FORMULE = self.get_cmd('FORMULE')
@@ -236,4 +233,4 @@ def raff_xfem_ops(self, FISSURE, TYPE, **args):
                              ASSE=list_asse
                              )
 
-    return
+    return chamout
