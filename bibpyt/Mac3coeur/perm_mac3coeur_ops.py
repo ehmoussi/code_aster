@@ -43,7 +43,8 @@ def perm_mac3coeur_ops(self, **args):
     AFFE_CHAR_CINE = self.get_cmd('AFFE_CHAR_CINE')
 
     self.set_icmd(1)
-    datg = aster_core.get_option("repdex")
+    rcdir = aster_core.get_option("rcdir")
+    datg = osp.join(rcdir, "datg")
     coeur_factory = CoeurFactory(datg)
 
     _typ_coeur_N = args.get('TYPE_COEUR_N')
