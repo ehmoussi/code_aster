@@ -27,7 +27,7 @@ subroutine mmmvmm(phase , l_pena_cont, l_pena_fric, l_large_slip,&
                   rese  , nrese ,&
                   mprt1n, mprt2n,&
                   mprt11, mprt12, mprt21, mprt22, kappa,&
-                  vectmm)
+                  vectcm, vectfm)
 !
 implicit none
 !
@@ -45,7 +45,7 @@ real(kind=8), intent(in) :: rese(3), nrese
 real(kind=8), intent(in) :: mprt1n(3, 3), mprt2n(3, 3)
 real(kind=8), intent(in) :: mprt11(3, 3), mprt12(3, 3), mprt21(3, 3), mprt22(3, 3)
 real(kind=8), intent(in) :: kappa(2,2)
-real(kind=8), intent(out) :: vectmm(27)
+real(kind=8), intent(out) :: vectcm(27), vectfm(27)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -93,7 +93,8 @@ real(kind=8), intent(out) :: vectmm(27)
 ! In  mprt22           : Projection matrix second tangent/second tangent
 !                        tau2*TRANSPOSE(tau2)(matrice 3*3)
 ! In  kappa            : scalar matrix for sliding kinematic
-! Out vectmm           : vector for DOF [master]
+! Out vectcm           : vector for DOF [master] - For contact part
+! Out vectfm           : vector for DOF [master] - For friction part
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -167,7 +168,7 @@ real(kind=8), intent(out) :: vectmm(27)
             do inom = 1, nnm
                 do idim = 1, ndim
                     ii = ndim*(inom-1)+idim
-                    vectmm(ii) = vectmm(ii)-&
+                    vectcm(ii) = vectcm(ii)-&
                                  wpg*ffm(inom)*jacobi*norm(idim)*jeu*coefac
                 end do
             end do
@@ -175,7 +176,7 @@ real(kind=8), intent(out) :: vectmm(27)
             do inom = 1, nnm
                 do idim = 1, ndim
                     ii = ndim*(inom-1)+idim
-                    vectmm(ii) = vectmm(ii)+&
+                    vectcm(ii) = vectcm(ii)+&
                                  wpg*ffm(inom)*jacobi*norm(idim)*(dlagrc-jeu*coefac)
                 end do
             end do
@@ -189,9 +190,9 @@ real(kind=8), intent(out) :: vectmm(27)
                 if (l_large_slip) then 
                     matr(ii)   = ffm(inom)*prese(idim)+1.* dffm(1,inom)*&
                         prese1(idim)+1.*dffm(2,inom)*prese2(idim)
-                    vectmm(ii) = vectmm(ii)+ wpg*matr(ii)*jacobi*(lambda-0.*jeu)*coefff
+                    vectfm(ii) = vectfm(ii)+ wpg*matr(ii)*jacobi*(lambda-0.*jeu)*coefff
                 else
-                    vectmm(ii) = vectmm(ii)+ wpg*ffm(inom)*jacobi*prese(idim)*lambda*coefff
+                    vectfm(ii) = vectfm(ii)+ wpg*ffm(inom)*jacobi*prese(idim)*lambda*coefff
                 endif
             end do
         end do
@@ -202,7 +203,7 @@ real(kind=8), intent(out) :: vectmm(27)
             do inom = 1, nnm
                 do idim = 1, ndim
                     ii = ndim*(inom-1)+idim
-                    vectmm(ii) = vectmm(ii)+&
+                    vectfm(ii) = vectfm(ii)+&
                                  wpg*ffm(inom)*jacobi*pdvitt(idim)*lambda*coefff*coefaf
                 end do
             end do
@@ -210,7 +211,7 @@ real(kind=8), intent(out) :: vectmm(27)
             do inom = 1, nnm
                 do idim = 1, ndim
                     ii = ndim*(inom-1)+idim
-                    vectmm(ii) = vectmm(ii)+&
+                    vectfm(ii) = vectfm(ii)+&
                                  wpg*ffm(inom)*jacobi*(lambda-0.*jeu)*coefff*(&
                                    plagft(idim)+pdvitt(idim)*coefaf)
                 end do

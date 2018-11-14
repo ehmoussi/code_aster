@@ -27,7 +27,7 @@ interface
                       rese  , nrese ,&
                       mprt1n, mprt2n,&
                       mprt11, mprt12, mprt21, mprt22, kappa,&
-                      vectmm)
+                      vectcm, vectfm)
         character(len=4), intent(in) :: phase
         aster_logical, intent(in) :: l_pena_cont, l_pena_fric, l_large_slip
         integer, intent(in) :: ndim, nnm
@@ -39,6 +39,6 @@ interface
         real(kind=8), intent(in) :: mprt1n(3, 3), mprt2n(3, 3)
         real(kind=8), intent(in) :: mprt11(3, 3), mprt12(3, 3), mprt21(3, 3), mprt22(3, 3)
         real(kind=8), intent(in) :: kappa(2,2)
-        real(kind=8), intent(out) :: vectmm(27)
+        real(kind=8), intent(out) :: vectcm(27), vectfm(27)
     end subroutine mmmvmm
 end interface

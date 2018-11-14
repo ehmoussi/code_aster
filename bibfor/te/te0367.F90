@@ -320,7 +320,7 @@ character(len=16) :: option, nomte
                         hpg, ffc, jacobi, lpenac,&
                         dlagrf, tau1, tau2,&
                         ddle, nfhe, lmulti, zi(jheano),&
-                        vcont)
+                        vfric)
         endif
     else if (indco .eq. 1) then
 ! ----- CALCUL DES INCREMENTS - DEPLACEMENTS
@@ -355,7 +355,7 @@ character(len=16) :: option, nomte
                     jeu, nsinge, nsingm, fk_escl, fk_mait,&
                     nvit, contac, ddle, ddlm,&
                     nfhe, nfhm, lmulti,  zi(jheavn), zi(jheafa),&
-                    vcont)
+                    vfric)
     endif
 !
 ! - SUPPRESSION DES DDLS SUPERFLUS (CONTACT ET XHTC)
@@ -367,6 +367,10 @@ character(len=16) :: option, nomte
                 option, lesclx, lmaitx, lcontx, zi(jstno),&
                 lact, ddle, ddlm, nfhe, nfhm,&
                 lmulti, zi(jheano), vtmp=vcont)
+    call xtedd2(ndim, nne, ndeple, nnm, nddl,&
+                option, lesclx, lmaitx, lcontx, zi(jstno),&
+                lact, ddle, ddlm, nfhe, nfhm,&
+                lmulti, zi(jheano), vtmp=vfric)
 !
 ! - RECOPIE VALEURS FINALES
 !
@@ -374,11 +378,9 @@ character(len=16) :: option, nomte
     do i = 1, nddl
         zr(jv_cont-1+i) = vcont(i)
     end do
-    if (lfrott) then
-        call jevech('PVECTFR', 'E', jv_fric)
-        do i = 1, nddl
-            zr(jv_fric-1+i) = vfric(i)
-        end do
-    endif
+    call jevech('PVECTFR', 'E', jv_fric)
+    do i = 1, nddl
+        zr(jv_fric-1+i) = vfric(i)
+    end do
 !
 end subroutine

@@ -264,7 +264,7 @@ character(len=16) :: option, nomte
                                     lact, mu, ncomph, nd, nddl,&
                                     ndim, nfh, nfiss, nno, nnol,&
                                     nnos, nvit, pla, reac12,&
-                                    seuil, singu, fk, tau1, tau2, vcont)
+                                    seuil, singu, fk, tau1, tau2, vfric)
                     endif
                 end do
             end do
@@ -281,10 +281,16 @@ character(len=16) :: option, nomte
 !-----------------------------------------------------------------------
 !
     call jevech('PVECTCR', 'E', jv_cont)
-    do i = 1, nddl
-        zr(jv_cont-1+i)=vcont(i)
-    end do
-    if (algofr .gt. 0) then
+    if (algofr.eq.0) then
+        do i = 1, nddl
+            zr(jv_cont-1+i) = vcont(i)+vfric(i)
+        end do
+    else
+        do i = 1, nddl
+            zr(jv_cont-1+i) = vcont(i)
+        end do
+    endif
+    if (algofr.gt.0) then
         call jevech('PVECTFR', 'E', jv_fric)
         do i = 1, nddl
             zr(jv_fric-1+i) = vfric(i)

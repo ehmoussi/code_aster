@@ -26,7 +26,7 @@ subroutine mmmvee(phase , l_pena_cont, l_pena_fric, l_large_slip,&
                   dlagrc, dlagrf, djeu  ,&
                   rese  , nrese ,&
                   mprt11, mprt12, mprt21, mprt22, kappa,&
-                  vectee)
+                  vectce, vectfe)
 !
 implicit none
 !
@@ -42,7 +42,7 @@ real(kind=8), intent(in) :: coefac, coefaf, lambda, coefff
 real(kind=8), intent(in) :: dlagrc, dlagrf(2), djeu(3)
 real(kind=8), intent(in) :: rese(3), nrese
 real(kind=8), intent(in) :: mprt11(3, 3), mprt12(3, 3), mprt21(3, 3), mprt22(3, 3), kappa(2,2)
-real(kind=8), intent(out) :: vectee(27)
+real(kind=8), intent(out) :: vectce(27), vectfe(27)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -87,7 +87,8 @@ real(kind=8), intent(out) :: vectee(27)
 ! In  mprt22           : Projection matrix second tangent/second tangent
 !                        tau2*TRANSPOSE(tau2)(matrice 3*3)
 ! In  kappa            : scalar matrix for sliding kinematic
-! Out vectee           : vector for DOF [slave]
+! Out vectce           : vector for DOF [slave] - For contact part
+! Out vectfe           : vector for DOF [slave] - For friction part
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -158,7 +159,7 @@ real(kind=8), intent(out) :: vectee(27)
             do inoe = 1, nne
                 do idim = 1, ndim
                     ii = ndim*(inoe-1)+idim
-                    vectee(ii) = vectee(ii)+&
+                    vectce(ii) = vectce(ii)+&
                                  wpg*ffe(inoe)*jacobi*norm(idim)*(jeu*coefac)
                 enddo
             enddo
@@ -166,7 +167,7 @@ real(kind=8), intent(out) :: vectee(27)
             do inoe = 1, nne
                 do idim = 1, ndim
                     ii = ndim*(inoe-1)+idim
-                    vectee(ii) = vectee(ii)-&
+                    vectce(ii) = vectce(ii)-&
                                  wpg*ffe(inoe)*jacobi*norm(idim)*(dlagrc-jeu*coefac)
                 enddo
             enddo
@@ -176,7 +177,7 @@ real(kind=8), intent(out) :: vectee(27)
         do inoe = 1, nne
             do idim = 1, ndim
                 ii = ndim*(inoe-1)+idim
-                vectee(ii) = vectee(ii)-&
+                vectfe(ii) = vectfe(ii)-&
                              wpg*ffe(inoe)*jacobi*prese(idim)*(lambda-0.*jeu)*coefff
             end do
         end do
@@ -186,7 +187,7 @@ real(kind=8), intent(out) :: vectee(27)
             do inoe = 1, nne
                 do idim = 1, ndim
                     ii = ndim*(inoe-1)+idim
-                    vectee(ii) = vectee(ii)-&
+                    vectfe(ii) = vectfe(ii)-&
                                  wpg*ffe(inoe)*jacobi*lambda*coefff*pdvitt(idim)*coefaf
                 enddo
             enddo
@@ -194,7 +195,7 @@ real(kind=8), intent(out) :: vectee(27)
             do inoe = 1, nne
                 do idim = 1, ndim
                     ii = ndim*(inoe-1)+idim
-                    vectee(ii) = vectee(ii)-&
+                    vectfe(ii) = vectfe(ii)-&
                                  wpg*ffe(inoe)*jacobi* (lambda-0.*jeu)*coefff*&
                                  (plagft(idim)+pdvitt(idim)*coefaf)
                  enddo
