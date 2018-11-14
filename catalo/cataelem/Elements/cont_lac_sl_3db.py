@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -40,7 +40,7 @@ DDL_MECA = LocatedComponents(phys=PHY.DEPL_R, type='ELNO', diff=True,
     ('EN1',('DX','DY','DZ','LAGS_C',)),
     ('EN2',('DX','DY','DZ',)),))
     
-ECNEUT_R = LocatedComponents(phys=PHY.CONTALAC, type='ELEM', 
+ECNEUT_R = LocatedComponents(phys=PHY.CLAC_R, type='ELEM', 
     components=('PRES', 'JEU', 'CONT', 'COEFSURF', 'PRESCOOR'))
 
 

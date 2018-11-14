@@ -18,27 +18,29 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: samuel.geniaut at edf.fr
-import aster_core
-from mac3coeur_coeur import CoeurFactory
-from Utilitai.UniteAster import UniteAster
+import os.path as osp
 
 import numpy as N
 import numpy.linalg as LA
+
+import aster_core
+from mac3coeur_coeur import CoeurFactory
 from scipy import stats
+from Utilitai.UniteAster import UniteAster
 
 UL=UniteAster()
 
 K_star = 100000.
 
 def NodePos(coeur,k):
-    
+
     return coeur.get_XYOut('%s_%s'%(k[0],k[1]))
 
 def compute_cos_alpha(G_0,G_1,G_2):
     a=G_1-G_0
     b=G_2-G_1
     cos_alpha_ = N.dot(a,b)/LA.norm(a)/LA.norm(b)
-    # cos_alpha_ = dotProduct(coorVect(G_0,G_1),coorVect(G_1,G_2))/(norm(G_0,G_1)*norm(G_1,G_2))  
+    # cos_alpha_ = dotProduct(coorVect(G_0,G_1),coorVect(G_1,G_2))/(norm(G_0,G_1)*norm(G_1,G_2))
     return cos_alpha_
 
 
@@ -99,24 +101,24 @@ def makeXMGRACEjeu(unit, post, coeur, valjeuac, valjeucu):
             #x = +0.5
         #elif (position == 'S'):
             #y = +0.5
-            
+
         (x,y) = coeur.get_bordXY(position)
 
         return (x, y)
 
     POSITION = coeur.get_geom_coeur()
-    
+
     #filename = './fort.%d' % (unit)
     filename = UL.Nom(unit)
 
     xmgrfile = open(filename, 'w')
-    
+
     makeXMGRACE_entete(coeur,xmgrfile)
 
     ind = 0
     for k in POSITION:
         ind = ind + 1
-        (x,y) = NodePos(coeur,k) 
+        (x,y) = NodePos(coeur,k)
         #print '(x,y) = ',x,y
         xmgrfile.write('@kill s%d\n@s%d symbol 2\n@s%d symbol pattern 1\n@s%d symbol size 0.4\n'
                        '@s%d symbol color 1\n@s%d symbol fill pattern 1\n@s%d symbol fill color 1\n'
@@ -126,7 +128,7 @@ def makeXMGRACEjeu(unit, post, coeur, valjeuac, valjeucu):
         position1 = name[3:5]
         position2 = name[6:7]
         #print 'position 1 = ',position1
-        #print 'position 2 = ',position2     
+        #print 'position 2 = ',position2
         (x1, y1) = NodePos(coeur,position1)
         (x2, y2) = NodePosCu(position2)
         if (post == 'MAXI'):
@@ -200,7 +202,7 @@ def makeXMGRACEdef_amp(unit, post, coeur, valdefac):
     makeXMGRACE_entete(coeur,xmgrfile)
     ind = 0
     for name in valdefac.keys():
-        ind = ind + 1            
+        ind = ind + 1
         position = name[0:3]
         #print 'position = ',position
         (x,y) = coeur.get_XYOut(position)
@@ -268,16 +270,16 @@ def makeXMGRACEdef_mod(unit, post, coeur, valdefac):
 
 
 def makeXMGRACEdef_vec(unit, post, coeur, valdefac, valdirYac, valdirZac):
-  
+
     outGraceXY = coeur.get_outGraceXY()
-  
+
     def computeVector(value, Y, Z):
         valmin = 0.
         valmax = 20.
         Rvec = value / 20.
         #Xvec = 1000. * Y / 20.
         #Yvec = -1000. * Z / 20.
-        
+
         vec = {'X' : Y / 20., 'Y' : Z / 20.}
         Xvec = vec[outGraceXY['X'][0]]*outGraceXY['X'][1]
         Yvec = vec[outGraceXY['Y'][0]]*outGraceXY['Y'][1]
@@ -378,7 +380,8 @@ def post_mac3coeur_ops(self, **args):
     DEFI_FICHIER = self.get_cmd('DEFI_FICHIER')
     IMPR_TABLE = self.get_cmd('IMPR_TABLE')
 
-    datg = aster_core.get_option("repdex")
+    rcdir = aster_core.get_option("rcdir")
+    datg = osp.join(rcdir, "datg")
     coeur_factory = CoeurFactory(datg)
 
     self.set_icmd(1)
@@ -537,7 +540,7 @@ def post_mac3coeur_ops(self, **args):
                 })
 
 
-    
+
         print 'liste_out : ',liste_out
 
         __TAB_OUT = CREA_TABLE(TITRE='RESU_GLOB_'+nameCoeur,
@@ -797,7 +800,7 @@ def post_mac3coeur_ops(self, **args):
             l_cycle.append(cycle)
             l_repere.append(repere)
             l_def_max.append(def_max)
-            try : 
+            try :
                 moyenneRhoParType[Milieu].append(def_max)
             except KeyError :
                 moyenneRhoParType[Milieu]=[def_max]
@@ -810,7 +813,7 @@ def post_mac3coeur_ops(self, **args):
             except KeyError :
                 maxRhoParType[Milieu] = def_max
             listeGravite.append(gravite)
-            try : 
+            try :
                 moyenneGraviteParType[Milieu].append(gravite)
             except KeyError :
                 moyenneGraviteParType[Milieu]=[gravite]
@@ -899,7 +902,7 @@ def post_mac3coeur_ops(self, **args):
             liste_out.append({'LISTE_K' : locMaxDeplGrille[i-1],
                               'PARA'    : 'locMaxDeplG%i'%i,
                               'TYPE_K'  : 'K8' })
-    
+
         print 'liste_out : ',liste_out
 
         if tableCreated :
@@ -908,11 +911,11 @@ def post_mac3coeur_ops(self, **args):
             for el in liste_out :
                 try :
                     tmp_vale.append(el['LISTE_R'])
-                except KeyError : 
+                except KeyError :
                     tmp_vale.append(el['LISTE_K'])
                 tmp_para.append(el['PARA'])
             __TAB_OUT = CALC_TABLE(reuse=__TAB_OUT,TABLE=__TAB_OUT,
-                                   ACTION=(_F(OPERATION = 'AJOUT_COLONNE', 
+                                   ACTION=(_F(OPERATION = 'AJOUT_COLONNE',
                                               NOM_PARA  = tmp_para,
                                               VALE      = tmp_vale)))
 
@@ -1007,7 +1010,7 @@ def post_mac3coeur_ops(self, **args):
                                      )
 
                 # impression de la table de sortie
-                if _format_standard : 
+                if _format_standard :
                     formt = 'E12.5'
                 else :
                     formt = 'F5.1'
