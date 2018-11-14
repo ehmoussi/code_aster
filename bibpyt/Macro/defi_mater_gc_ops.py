@@ -178,7 +178,24 @@ def Mazars_Unil(DMATER, args):
     for xx in listepara:
         if (MATER.has_key(xx)):
             if (MATER[xx] != None):
-                exec('%s = %s' % (xx, MATER[xx]))
+                if (xx == 'NU'):
+                    NU = MATER[xx]
+                elif (xx == 'EPSD0'):
+                    EPSD0 = MATER[xx]
+                elif (xx == 'K'):
+                    K = MATER[xx]
+                elif (xx == 'BT'):
+                    BT = MATER[xx]
+                elif (xx == 'AT'):
+                    AT = MATER[xx]
+                elif (xx == 'BC'):
+                    BC = MATER[xx]
+                elif (xx == 'AC'):
+                    AC = MATER[xx]
+                elif (xx == 'SIGM_LIM'):
+                    SIGM_LIM = MATER[xx]
+                elif (xx == 'EPSI_LIM'):
+                    EPSI_LIM = MATER[xx]
             elif (xx == 'NU'):
                 NU = 0.200
             elif (xx == 'EPSD0'):
@@ -250,7 +267,14 @@ def Acier_Cine_Line(DMATER, args):
     for xx in listepara:
         if (MATER.has_key(xx)):
             if (MATER[xx] != None):
-                exec('%s = %s' % (xx, MATER[xx]))
+                if   ( xx == 'D_SIGM_EPSI' ):
+                    D_SIGM_EPSI = MATER[xx]
+                elif ( xx == 'NU' ):
+                    NU = MATER[xx]
+                elif ( xx == 'SIGM_LIM' ):
+                    SIGM_LIM = MATER[xx]
+                elif ( xx == 'EPSI_LIM' ):
+                    EPSI_LIM = MATER[xx]
             elif (xx == 'NU'):
                 NU = 0.30
             elif (xx == 'D_SIGM_EPSI'):
