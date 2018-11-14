@@ -3648,7 +3648,7 @@ XCONTAC  = PhysicalQuantity(type='R',
 """)
 
 
-CONTALAC   = PhysicalQuantity(type='R',
+CLAC_R = PhysicalQuantity(type='R',
     components=(
         'PRES',
         'JEU',
@@ -3656,7 +3656,7 @@ CONTALAC   = PhysicalQuantity(type='R',
         'COEFSURF',
         'PRESCOOR',
     ),
-    comment="""  CONTALAC Type:R Contact LAC
+    comment="""  CLAC_R Type:R Contact LAC
         PRES        : Pression de contact
         JEU           : Gap intégré au sens LAC
         CONT          : Indicateur de contact

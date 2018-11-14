@@ -127,9 +127,9 @@ import aster_core
 
 def includeExternalData(theFile):
     """Retrieve a file in the external data folder"""
-    repdex = aster_core.get_option('repdex')
     import os.path as osp
-    return osp.join(repdex, theFile)
+    rcdir = aster_core.get_option('rcdir')
+    return osp.join(rcdir, 'tests_data', theFile)
 
 spec = includeExternalData('sdll152e.msup.datg')
 DEFI_FICHIER(ACTION='ASSOCIER', FICHIER=spec, ACCES='NEW', UNITE=19)

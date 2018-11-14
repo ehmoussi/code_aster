@@ -28,20 +28,23 @@ Ces fonctions sont indépendantes des étapes (sinon elles seraient dans
 B_ETAPE/E_ETAPE) et des concepts/ASSD.
 """
 
-from optparse import OptionParser
+import json
 import os
 import os.path as osp
 import platform
 import re
-import json
 import sys
-from warnings import warn, simplefilter
+from optparse import SUPPRESS_HELP, OptionParser
+from warnings import simplefilter, warn
 
-import aster_pkginfo
 import aster
 import aster_core
-
+import aster_pkginfo
 from code_aster.Utilities import localization, convert
+
+
+RCDIR = osp.abspath(osp.join(osp.dirname(__file__), os.pardir, os.pardir,
+                    'share', 'aster'))
 
 
 def check_value(option, opt, value, parser):
@@ -112,14 +115,21 @@ class CoreOptions(object):
             "execution of the command file.")
 
         parser.add_option(
+            '--rcdir', dest='rcdir', type='str', action='store', metavar='DIR',
+            default=RCDIR,
+            help="directory containing resources (material properties, "
+                 "additional data files...). Defaults to {0}".format(RCDIR))
+        # rep_outils/rep_mat/rep_dex options are deprecated, replaced by rcdir
+        parser.add_option(
             '--rep_outils', dest='repout', type='str', action='store', metavar='DIR',
-            help="directory of Code_Aster tools (ex. $ASTER_ROOT/outils)")
+            help=SUPPRESS_HELP)
         parser.add_option(
             '--rep_mat', dest='repmat', type='str', action='store', metavar='DIR',
-            help="directory of materials properties")
+            help=SUPPRESS_HELP)
         parser.add_option(
             '--rep_dex', dest='repdex', type='str', action='store', metavar='DIR',
-            help="directory of external datas (geometrical datas or properties...)")
+            help=SUPPRESS_HELP)
+
         parser.add_option(
             '--rep_glob', dest='repglob', type='str', action='store', metavar='DIR',
             default='.',
@@ -154,7 +164,6 @@ class CoreOptions(object):
 
     def init_info(self):
         """Stocke les informations générales (machine, os...)."""
-        import re
         # hostname
         self.info['hostname'] = platform.node()
         # ex. i686/x86_64
@@ -271,7 +280,7 @@ def _bwc_arguments(argv):
     # removed options
     long_opts_rm = ('rep', 'mem', 'mxmemdy', 'memory_stat', 'memjeveux_stat',
                     'type_alloc', 'taille', 'partition', 'rep_outils',
-                    'origine', 'eficas_path')
+                    'rep_mat', 'rep_dex', 'origine', 'eficas_path')
     # renamed options
     long_opts_mv = {
         'verif': 'syntax',
