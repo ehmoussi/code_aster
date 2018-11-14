@@ -85,7 +85,7 @@ character(len=16), intent(in) :: option, nomte
 !
     real(kind=8) :: vectcc(9)
     real(kind=8) :: vectff(18)
-    real(kind=8) :: vectee(27), vectmm(27)
+    real(kind=8) :: vectce(27), vectcm(27), vectfe(27), vectfm(27)
     real(kind=8) :: vcont(81), vfric(81)
 !
 ! --------------------------------------------------------------------------------------------------
@@ -94,8 +94,10 @@ character(len=16), intent(in) :: option, nomte
     vfric(:)  = 0.d0
     vectcc(:) = 0.d0
     vectff(:) = 0.d0
-    vectee(:) = 0.d0
-    vectmm(:) = 0.d0
+    vectce(:) = 0.d0
+    vectcm(:) = 0.d0
+    vectfe(:) = 0.d0
+    vectfm(:) = 0.d0
     debug = ASTER_FALSE
 !
 ! - Get informations on cell (slave and master)
@@ -189,7 +191,7 @@ character(len=16), intent(in) :: option, nomte
                 rese  , nrese ,&
                 mprt1n, mprt2n,&
                 mprt11, mprt12, mprt21, mprt22, kappa,&
-                vectee, vectmm)
+                vectce, vectcm, vectfe, vectfm)
 !
 ! - Weak form of contact/friction law
 !
@@ -208,9 +210,10 @@ character(len=16), intent(in) :: option, nomte
 !
 ! - Assembling
 !
-    call mmmvas(ndim , nne   , nnm   , nnl   , nbdm  ,&
-                nbcps, vectee, vectmm, vectcc, vectff,&
-                vcont)
+    call mmmvas(ndim  , nne   , nnm   , nnl   , nbdm, nbcps,&
+                vectce, vectcm, vectfe, vectfm,&
+                vectcc, vectff,&
+                vcont , vfric)
 !
 ! - Copy
 !

@@ -27,12 +27,13 @@ subroutine mmvfpe(phase , l_pena_cont, l_pena_fric, l_large_slip,&
                   rese  , nrese ,&
                   mprt1n, mprt2n,&
                   mprt11, mprt12, mprt21, mprt22, kappa,&
-                  vectee, vectmm)
+                  vectce, vectcm, vectfe, vectfm)
 !
 implicit none
 !
 #include "asterf_types.h"
-#include "asterfort/mmmvuu.h"
+#include "asterfort/mmmvee.h"
+#include "asterfort/mmmvmm.h"
 !
 character(len=4), intent(in) :: phase
 aster_logical, intent(in) :: l_pena_cont, l_pena_fric, l_large_slip
@@ -45,7 +46,8 @@ real(kind=8), intent(in) :: rese(3), nrese
 real(kind=8), intent(in) :: mprt1n(3, 3), mprt2n(3, 3)
 real(kind=8), intent(in) :: mprt11(3, 3), mprt12(3, 3), mprt21(3, 3), mprt22(3, 3)
 real(kind=8), intent(in) :: kappa(2,2)
-real(kind=8), intent(out) :: vectee(27), vectmm(27)
+real(kind=8), intent(out) :: vectce(27), vectcm(27)
+real(kind=8), intent(out) :: vectfe(27), vectfm(27)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -95,20 +97,32 @@ real(kind=8), intent(out) :: vectee(27), vectmm(27)
 ! In  mprt22           : Projection matrix second tangent/second tangent
 !                        tau2*TRANSPOSE(tau2)(matrice 3*3)
 ! In  kappa            : scalar matrix for sliding kinematic
-! Out vectee           : vector for DOF [slave]
-! Out vectmm           : vector for DOF [master]
+! Out vectce           : vector for DOF [slave] - For contact part
+! Out vectfe           : vector for DOF [slave] - For friction part
+! Out vectcm           : vector for DOF [master] - For contact part
+! Out vectfm           : vector for DOF [master] - For friction part
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call mmmvuu(phase , l_pena_cont, l_pena_fric, l_large_slip,&
-                ndim  , nne   , nnm   ,&
+    call mmmvee(phase , l_pena_cont, l_pena_fric, l_large_slip,&
+                ndim  , nne   ,&
                 norm  , tau1  , tau2  , mprojt,&
-                wpg   , ffe   , ffm   , dffm  , jacobi, jeu   ,&
+                wpg   , ffe   , jacobi, jeu   ,&
+                coefac, coefaf, lambda, coefff,&
+                dlagrc, dlagrf, djeu  ,&
+                rese  , nrese ,&
+                mprt11, mprt12, mprt21, mprt22, kappa,&
+                vectce, vectfe)
+!
+    call mmmvmm(phase , l_pena_cont, l_pena_fric, l_large_slip,&
+                ndim  , nnm   ,&
+                norm  , tau1  , tau2  , mprojt,&
+                wpg   , ffm   , dffm  , jacobi, jeu   ,&
                 coefac, coefaf, lambda, coefff,&
                 dlagrc, dlagrf, djeu  ,&
                 rese  , nrese ,&
                 mprt1n, mprt2n,&
                 mprt11, mprt12, mprt21, mprt22, kappa,&
-                vectee, vectmm)
+                vectcm, vectfm)
 !
 end subroutine

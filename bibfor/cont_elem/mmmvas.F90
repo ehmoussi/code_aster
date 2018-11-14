@@ -18,14 +18,17 @@
 ! person_in_charge: mickael.abbas at edf.fr
 !
 subroutine mmmvas(ndim  , nne   , nnm   , nnl   , nbdm, nbcps,&
-                  vectee, vectmm, vectcc, vectff,&
-                  vtmp)
+                  vectce, vectcm, vectfe, vectfm,&
+                  vectcc, vectff,&
+                  vcont , vfric)
 !
 implicit none
 !
 integer, intent(in) :: nbdm, ndim, nnl, nne, nnm, nbcps
-real(kind=8), intent(in) :: vectcc(9), vectff(18), vectee(27), vectmm(27)
-real(kind=8), intent(inout) :: vtmp(81)
+real(kind=8), intent(in) :: vectce(27), vectcm(27)
+real(kind=8), intent(in) :: vectfe(27), vectfm(27)
+real(kind=8), intent(in) :: vectcc(9), vectff(18)
+real(kind=8), intent(inout) :: vcont(81), vfric(81)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -43,9 +46,12 @@ real(kind=8), intent(inout) :: vtmp(81)
 ! In  nbcps            : number of components by node for Lagrange multiplicators
 ! In  vectcc           : vector for DOF [contact]
 ! In  vectff           : vector for DOF [friction]
-! In  vectee           : vector for DOF [slave]
-! In  vectmm           : vector for DOF [master]
-! IO  vtmp             : resultant vector
+! In  vectce           : vector for DOF [slave] - For contact part
+! In  vectfe           : vector for DOF [slave] - For friction part
+! In  vectcm           : vector for DOF [master] - For contact part
+! In  vectfm           : vector for DOF [master] - For friction part
+! IO  vcont            : resultant vector for contact
+! IO  vfric            : resultant vector for friction
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -59,7 +65,8 @@ real(kind=8), intent(inout) :: vtmp(81)
         do idim = 1, ndim
             ii = nbdm*(inoe-1)+idim
             jj = ndim*(inoe-1)+idim
-            vtmp(ii) = vtmp(ii)+vectee(jj)
+            vcont(ii) = vcont(ii)+vectce(jj)
+            vfric(ii) = vfric(ii)+vectfe(jj)
         end do
     end do
 !
@@ -67,14 +74,15 @@ real(kind=8), intent(inout) :: vtmp(81)
         do idim = 1, ndim
             ii = nbdm*nne+ndim*(inom-1)+idim
             jj = ndim*(inom-1)+idim
-            vtmp(ii) = vtmp(ii)+vectmm(jj)
+            vcont(ii) = vcont(ii)+vectcm(jj)
+            vfric(ii) = vfric(ii)+vectfm(jj)
         end do
     end do
 !
     do inoc = 1, nnl
         ii = nbdm*(inoc-1)+ndim+1
         jj = inoc
-        vtmp(ii) = vtmp(ii)+vectcc(jj)
+        vcont(ii) = vcont(ii)+vectcc(jj)
     end do
 !
     nbcpf = nbcps-1
@@ -82,7 +90,7 @@ real(kind=8), intent(inout) :: vtmp(81)
         do icmp = 1, nbcpf
             ii = nbdm*(inof-1)+ndim+1+icmp
             jj = nbcpf*(inof-1)+icmp
-            vtmp(ii) = vtmp(ii)+vectff(jj)
+            vfric(ii) = vfric(ii)+vectff(jj)
         end do
     end do
 !
