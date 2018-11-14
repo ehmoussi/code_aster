@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,8 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-import aster
+from code_aster import AsterError
+from code_aster.Commands import *
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET', ),DEBUG=_F(SDVERI='OUI'),
       ERREUR=_F(ERREUR_F='EXCEPTION',),IGNORE_ALARM=('SUPERVIS_1',), PAR_LOT='NON',)
@@ -62,7 +63,7 @@ CHMAT1=AFFE_MATERIAU(MAILLAGE=MAIL, AFFE=_F(  TOUT = 'OUI', MATER = ACIER),
 is_ok = 0
 try :
    DEF1=MECA_STATIQUE( MODELE=MO, CHAM_MATER=CHMAT1,  EXCIT=_F(CHARGE = CHARGT)  )
-except aster.error,err:
+except AsterError as err:
    print fmt_raison % str(err)
    # on verifie que l'erreur fatale est bien celle que l'on attendait :
    if err.id_message == "CALCULEL6_62":
@@ -97,7 +98,7 @@ CHMAT3=AFFE_MATERIAU(MAILLAGE=MAIL, AFFE=_F(  TOUT = 'OUI', MATER = ACIER),
 is_ok = 0
 try :
    DEF3=MECA_STATIQUE( MODELE=MO, CHAM_MATER=CHMAT3,  EXCIT=_F(CHARGE = CHARGT)  )
-except aster.error,err:
+except AsterError as err:
    print fmt_raison % str(err)
    # on verifie que l'erreur fatale est bien celle que l'on attendait :
    if err.id_message == "CALCULEL6_62":
@@ -122,7 +123,7 @@ CHMAT4=AFFE_MATERIAU(MAILLAGE=MAIL, AFFE=_F(  TOUT = 'OUI', MATER = ACIER),
 is_ok = 0
 try :
    DEF4=MECA_STATIQUE( MODELE=MO, CHAM_MATER=CHMAT4,  EXCIT=_F(CHARGE = CHARGT)  )
-except aster.error,err:
+except AsterError as err:
    print fmt_raison % str(err)
    # on verifie que l'erreur fatale est bien celle que l'on attendait :
    if err.id_message == "CALCULEL6_62":
@@ -145,7 +146,7 @@ try :
 
     CHAR_FI=AFFE_CHAR_MECA(MODELE=MO,
                        FORCE_INTERNE=_F(GROUP_MA=('CARRE','BORD1'), FX=4.0,),);
-except aster.error,err:
+except AsterError as err:
    print fmt_raison % str(err)
    # on verifie que l'erreur fatale est bien celle que l'on attendait :
    if err.id_message == "MODELISA6_96":

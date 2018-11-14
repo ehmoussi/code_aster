@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -19,9 +19,11 @@
 
 # person_in_charge: mathieu.courtois at edf.fr
 
-import sys
 import os
+import sys
 import traceback
+
+from code_aster import AsterError
 
 
 def post_miss_ops(self, **kwargs):
@@ -43,7 +45,7 @@ def post_miss_ops(self, **kwargs):
         post.argument()
         post.execute()
         post.sortie()
-    except aster.error, err:
+    except AsterError as err:
         UTMESS('F', err.id_message, valk=err.valk,
                vali=err.vali, valr=err.valr)
     except Exception, err:

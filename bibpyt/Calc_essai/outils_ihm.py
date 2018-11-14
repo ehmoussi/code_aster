@@ -19,23 +19,23 @@
 
 # person_in_charge: albert.alarcon at edf.fr
 
+import os
+import string
+from subprocess import Popen
 from Tkinter import *
 
-import aster_core
+from numpy import arange, array, log, maximum, minimum
+
 import aster
-import string
-import os
-from subprocess import Popen
-
+import aster_core
 import tkFont
-
-from Stanley.xmgrace import Xmgr
-from Stanley.as_courbes import Courbe
-from code_aster.Cata.Syntax import _F, ASSD
-
-from numpy import minimum, maximum, array, arange, log
-from Utilitai.Utmess import UTMESS, MESSAGE_LOGGER
 from Calc_essai.cata_ce import DynaHarmo, ModeMeca
+from code_aster import AsterError
+from code_aster.Cata.Syntax import _F, ASSD
+from Stanley.as_courbes import Courbe
+from Stanley.xmgrace import Xmgr
+from Utilitai.Utmess import MESSAGE_LOGGER, UTMESS
+
 # from Calc_essai.ce_ihm_parametres import CalcEssaiSalome
 
 palette = ["#%02x%02x%02x" % (255 - i, 255 - i, 255 - i) for i in range(256)]
@@ -1582,7 +1582,7 @@ class DispFRFDialogue(Toplevel):
                 try:
                     __DYNAM = DEPL_INTERNE(
                         DEPL_GLOBAL=self.dyna[num_resu].obj, SUPER_MAILLE=self.sumail)
-                except aster.error, err:
+                except AsterError as err:
                     message = "ERREUR ASTER : " + \
                         mess.GetText(
                             'I', err.id_message, err.valk, err.vali, err.valr)
@@ -1691,7 +1691,7 @@ class DispFRFDialogue(Toplevel):
                                     MODELE = modele,
                                     EXCIT = _F(CHARGE=__char,
                                                COEF_MULT_C=('RI', 1., 0.)))
-        except aster.error, err:
+        except AsterError as err:
             message = "ERREUR ASTER : " + \
                 mess.GetText('I', err.id_message, err.valk, err.vali, err.valr)
             self.mess.disp_mess(message)
@@ -1738,7 +1738,7 @@ class DispFRFDialogue(Toplevel):
                                                NOM_CHAM=champ,
                                                NOEUD=noeud,
                                                NOM_CMP=ddl)
-                    except aster.error, err:
+                    except AsterError as err:
                         message = "ERREUR ASTER, COLONNE " + \
                             str(ind + 1) + " : " + mess.GetText(
                                 'I', err.id_message, err.valk, err.vali, err.valr)

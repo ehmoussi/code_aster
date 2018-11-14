@@ -18,39 +18,24 @@
 # --------------------------------------------------------------------
 # person_in_charge: yannick.tampango at edf.fr
 #
-
-from code_aster.Commands import CALC_MATR_ELEM
-from code_aster.Commands import ASSE_MATRICE
-from code_aster.Commands import CALC_VECT_ELEM
-from code_aster.Commands import ASSE_VECTEUR
-from code_aster.Commands import NUME_DDL
-from code_aster.Commands import DYNA_VIBRA
-from code_aster.Commands import CALC_FONCTION
-from code_aster.Commands import CALC_MODES
-from code_aster.Commands import MACRO_ELAS_MULT
-from code_aster.Commands import DEFI_BASE_MODALE
-from code_aster.Commands import PROJ_MATR_BASE
-from code_aster.Commands import PROJ_VECT_BASE
-from code_aster.Commands import NUME_DDL_GENE
-from code_aster.Commands import CALC_CHAR_SEISME
-from code_aster.Commands import MODE_STATIQUE
-from code_aster.Commands import REST_GENE_PHYS
-#from code_aster.Commands import NORM_MODE
-from code_aster.Commands import DEFI_INTERF_DYNA
-from code_aster.Commands import MACR_ELEM_DYNA
-from code_aster.Commands import CALC_MISS
-from code_aster.Commands import AFFE_CHAR_MECA
-from code_aster.Commands import CREA_CHAMP
-from code_aster.Commands import CREA_RESU
-from code_aster.Commands import FACTORISER
-from code_aster.Commands import RESOUDRE
-from code_aster.Commands import MACRO_MATR_AJOU
-from code_aster.Commands import COMB_MATR_ASSE
-from code_aster.Cata.Syntax import _F
-import aster
 import numpy as np
-from Utilitai.Utmess import UTMESS
+
+import aster
+from code_aster import AsterError
+from code_aster.Cata.Syntax import _F
+from code_aster.Commands import (AFFE_CHAR_MECA, ASSE_MATRICE, ASSE_VECTEUR,
+                                 CALC_CHAR_SEISME, CALC_FONCTION,
+                                 CALC_MATR_ELEM, CALC_MISS, CALC_MODES,
+                                 CALC_VECT_ELEM, COMB_MATR_ASSE, CREA_CHAMP,
+                                 CREA_RESU, DEFI_BASE_MODALE, DEFI_INTERF_DYNA,
+                                 DYNA_VIBRA, FACTORISER, MACR_ELEM_DYNA,
+                                 MACRO_ELAS_MULT, MACRO_MATR_AJOU,
+                                 MODE_STATIQUE, NUME_DDL, NUME_DDL_GENE,
+                                 PROJ_MATR_BASE, PROJ_VECT_BASE, RESOUDRE,
+                                 REST_GENE_PHYS)
 from code_aster.Utilities import force_list
+from Utilitai.Utmess import UTMESS
+
 
 class DynaLineFEM:
     """hold the FEM model used for dyna_line"""
@@ -299,7 +284,7 @@ class DynaLineFEM:
         return self.__rigiPhyInv
     def getActiveDofsForNodesOrNodeGroups(self, nodes_or_node_groups, filter_dofs = ('DX', 'DY', 'DZ')):
         """retrieve active dofs for nodes or node groups containded in nodes_or_node_groups
-        A dof is considered as active for the current model, if a force_nodale imply a non 
+        A dof is considered as active for the current model, if a force_nodale imply a non
         null displacement in the dof direction for all nodes or node groups contained in nodes_or_node_groups"""
         active_dofs = []
         for dof in filter_dofs:
@@ -311,13 +296,13 @@ class DynaLineFEM:
             try:
                 __ch = AFFE_CHAR_MECA(MODELE = self.getModele(),
                                       FORCE_NODALE = force_nodale)
-            except aster.error,err:
+            except AsterError as err:
                 continue
-            
+
             __vectelem = CALC_VECT_ELEM(OPTION='CHAR_MECA',CHARGE=__ch)
             __vect = ASSE_VECTEUR(VECT_ELEM=__vectelem,
                                   NUME_DDL=self.getNumeddl())
-            
+
             __champ = RESOUDRE(MATR = self.__getRigiPhyInv(), CHAM_NO = __vect)
             py = __champ.EXTR_COMP(dof,[])
             if max(abs(py.valeurs)) > np.finfo(float).eps:
@@ -419,7 +404,7 @@ class DynaLineExcit:
                     del charge[key]
             del charge['TYPE_APPUI']
             self.__charges.append(charge)
-        
+
         for monoAppuiLoading in self.getMonoAppuiLoadings():
             charge = monoAppuiLoading.copy()
             if 'GROUP_NO' in charge or 'NOEUD' in charge:
@@ -434,9 +419,9 @@ class DynaLineExcit:
                 __vect=CALC_CHAR_SEISME(MATR_MASS=self.dynaLineFEM.getMassPhy(),
                                         MONO_APPUI="OUI",
                                         DIRECTION=charge["DIRECTION"])
-            
+
             self.__setVectOrVectGeneToCharge(charge, __vect)
-            
+
             for key in ["GROUP_NO", "NOEUD", "DIRECTION"]:
                 if charge.has_key(key):
                     del charge[key]
@@ -671,7 +656,7 @@ class DynaLineBasis:
         __rigiGen = PROJ_MATR_BASE(BASE=__modalBasis,
                                    NUME_DDL_GENE=__numeDdlGene,
                                    MATR_ASSE=self.dynaLineFEM.getRigiPhy())
-        
+
         if self.fc_stat:
             freq = self.dynaLineFrequencyBand.get()
             args = _F(OPTION='BANDE',
@@ -812,7 +797,7 @@ class DynaLineBasis:
                         **keywords)
         self.__addedMass = __addedMass
         return self.__addedMass, self.__excitForcAjou
-    
+
     def __getElasModes(self):
         """perform static linear analysis to retrieve the static elas modes"""
         if hasattr(self, "_DynaLineBasis__elasModes"):
@@ -866,7 +851,7 @@ class DynaLineBasis:
                                         **keywords)
         self.__elasModes = __elasModes
         return self.__elasModes
-    
+
     def __getStaticNonLinearModes(self):
         """return a mode_statique corresponding to non linear behaviours. A MODE_STAT is performed
          with FORCE_NODALE for all components of NOEUD and GROUP_NO involved in self.comportement"""
@@ -886,7 +871,7 @@ class DynaLineBasis:
             for key in self.group_no_keys:
                 if comportement.has_key(key):
                     node_groups.append(comportement[key])
-            
+
             if nodes:
                 dic_node = {}
                 dic_node["NOEUD"] = nodes
@@ -896,7 +881,7 @@ class DynaLineBasis:
                     dic_node['AVEC_CMP'] = self.dynaLineFEM.getActiveDofsForNodesOrNodeGroups(dic_node)
                 force_nodale.append(dic_node)
                 aster.affiche('MESSAGE','%s' %dic_node)
-            
+
             if node_groups:
                 dic_gno = {}
                 dic_gno["GROUP_NO"] = node_groups
@@ -906,7 +891,7 @@ class DynaLineBasis:
                     dic_gno['AVEC_CMP'] = self.dynaLineFEM.getActiveDofsForNodesOrNodeGroups(dic_gno)
                 force_nodale.append(dic_gno)
                 aster.affiche('MESSAGE','%s' %dic_gno)
-        
+
         __staticNonLinearModes=MODE_STATIQUE(MATR_MASS=self.dynaLineFEM.getMassPhy(),
                                              MATR_RIGI=self.dynaLineFEM.getRigiPhy(),
                                              FORCE_NODALE=force_nodale)
@@ -918,7 +903,7 @@ class DynaLineBasis:
         if self.enri_stat and not self.ortho or self.ifs:
             return 'PLEIN'
         return 'DIAG'
-    
+
     def __assembleModeIntf(self,l_mode_intf):
         """Assemble the interface modes in one concept"""
         ichamp = 0
@@ -955,7 +940,7 @@ class DynaLineBasis:
             # workarround: retrieve the basis comming from REST_GENE_PHYS and skip DEFI_BASE_MODALE
             self.__modalBasis = mode_meca
             return self.__modalBasis
-        
+
         mode_intf = []
         if self.__getPseudoMultiModes():
             mode_intf.append(self.__getPseudoMultiModes())
@@ -965,7 +950,7 @@ class DynaLineBasis:
             mode_intf.append(self.__getElasModes())
         if self.__getStaticNonLinearModes():
             mode_intf.append(self.__getStaticNonLinearModes())
-        
+
         ritz = [{"MODE_MECA": mode_meca}]
         args = {}
         if len(mode_intf) > 1:
@@ -990,7 +975,7 @@ class DynaLineBasis:
             if self.ortho and mode_intf:
                 __modalBasis = self.__orthogonalize(__modalBasis)
 
-        
+
         self.__modalBasis = __modalBasis
         return self.__modalBasis
 
@@ -1070,7 +1055,7 @@ class DynaLineResu:
         self.resu_gene = RESU_GENE
         self.iss = ISS == "OUI"
         self.solveur = SOLVEUR
-        
+
         if self.iss:
             self.__init_iss(**args)
         self.comportement = COMPORTEMENT
@@ -1236,29 +1221,29 @@ class DynaLineResu:
                                  TOUT_CHAM='OUI',
                                  **keywords)
         return nomresu
-    
+
     def get(self):
         """return the result for DYNA_LINE"""
         if not self.iss:
             return self.__getDynaVibra()
         else:
             return self.__getCalcMiss()
-    
+
 def dyna_line_ops(self, **args):
     """Ecriture de la macro DYNA_LINE"""
-    
+
     ier=0
-    
+
     # La macro compte pour 1 dans la numérotation des commandes
     self.set_icmd(1)
-    
+
     dynaLineFEM = DynaLineFEM(self, **args)
     dynaLineFrequencyBand = DynaLineFrequencyBand(**args)
     dynaLineBasis = DynaLineBasis(self, dynaLineFEM, dynaLineFrequencyBand, **args)
     dynaLineExcit = DynaLineExcit(dynaLineFEM, **args)
     dynaLineIncrement = DynaLineIncrement(dynaLineFrequencyBand, **args)
     dynaLineInitialState = DynaLineInitialState(dynaLineFEM, **args)
-    
+
     dynaLineResu = DynaLineResu(self, dynaLineFEM, dynaLineExcit, \
                                 dynaLineIncrement, dynaLineInitialState, **args)
     return dynaLineResu.get()
