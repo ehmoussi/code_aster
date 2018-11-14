@@ -50,6 +50,9 @@ from .logger import logger, setlevel
 from .options import Options
 
 
+RCDIR = osp.abspath(osp.join(osp.dirname(__file__), os.pardir, os.pardir,
+                    os.pardir, os.pardir, 'share', 'aster'))
+
 class ExecutionParameter(object):
     """This class stores and provides the execution parameters.
 
@@ -92,6 +95,7 @@ class ExecutionParameter(object):
         # boolean (on/off) options
         self._bool = Options.Null
 
+        self._args['rcdir'] = RCDIR
         # TODO probably to be removed?
         self._args['repmat'] = '.'
         self._args['repdex'] = '.'
@@ -217,7 +221,7 @@ class ExecutionParameter(object):
 
     def parse_args(self, argv=None):
         """Parse the command line arguments to set the execution parameters"""
-        from argparse import ArgumentParser
+        from argparse import ArgumentParser, SUPPRESS
         # command arguments parser
         parser = ArgumentParser(description='execute a Code_Aster study',
                                 prog="Code_Aster{called by Python}")
@@ -262,12 +266,16 @@ class ExecutionParameter(object):
             action='store', type=int, default=1,
             help="maximum number of threads")
 
+        parser.add_argument('--rcdir', dest='rcdir',
+            action='store', type=str, metavar='DIR', default=RCDIR,
+            help="directory containing resources (material properties, "
+                 "additional data files...). Defaults to {0}".format(RCDIR))
         parser.add_argument('--rep_mat', dest='repmat',
             action='store', metavar='DIR', default='.',
-            help="directory of materials properties")
+            help=SUPPRESS)
         parser.add_argument('--rep_dex', dest='repdex',
             action='store', metavar='DIR', default='.',
-            help="directory of external datas (geometrical datas or properties...)")
+            help=SUPPRESS)
 
         parser.add_argument('--stage_number',
             action='store', type=int, default=1, metavar='NUM',
