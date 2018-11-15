@@ -16,6 +16,14 @@
 # You should have received a copy of the GNU General Public License
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
+import math
+
+POURSUITE(CODE='OUI',
+      DEBUG=_F(SDVERI='OUI'),
+      PAR_LOT='NON',
+      IGNORE_ALARM = ('SUPERVIS_1', 'MODELE1_63', 'SUPERVIS_25'),
+      )
+
 # ================================================================================================================================================================================
 def NormeAster(RESULTAT, Depl_Ana, P_ana, MAIL, MODELE, GROUP_MA_VOL, GROUP_MA_SUR):
      """ RESULTAT  : SD Resultat contenant la solution calculee
@@ -96,7 +104,7 @@ def NormeAster(RESULTAT, Depl_Ana, P_ana, MAIL, MODELE, GROUP_MA_VOL, GROUP_MA_S
 
      Pcalc = CREA_CHAMP(OPERATION='EXTR',
                         INST=1.,
-                        NOM_CHAM = 'CONT_ELEM' , TYPE_CHAM = 'ELEM_CONTALAC',
+                        NOM_CHAM = 'CONT_ELEM' , TYPE_CHAM = 'ELEM_CLAC_R',
                         RESULTAT = RESULTAT ,);
 
 
@@ -274,11 +282,6 @@ def NormeAster(RESULTAT, Depl_Ana, P_ana, MAIL, MODELE, GROUP_MA_VOL, GROUP_MA_S
      return {'NormeL2ErreurU':NormeL2ErreurU,'NormeL2ErreurP':NormeL2ErreurP,'Ucalc':Ucalc,'Uana':Uana,'Pcalc':Pcalc,'Pana':Pana, 'DIFFUN':DIFFUN, 'DIFFPG': DIFFPG}
 # ================================================================================================================================================================================
 
-POURSUITE(CODE='OUI',
-      DEBUG=_F(SDVERI='OUI'),
-      PAR_LOT='NON',
-      IGNORE_ALARM = ('MODELISA4_1','SUPERVIS_1', 'MODELE1_63', 'SUPERVIS_25'),
-      )
 
 #================================================================================================
 # Debut de l'etude de la convergence
@@ -444,12 +447,12 @@ for Raff in range(0,Nb_Raffinement):
                        _F(NOM=Contact),
                        _F(NOM=ForceInt),
                        _F(NOM=EVOLNOLI),
-                       _F(NOM=Uana),
-                       _F(NOM=Ucalc),
-                       _F(NOM=DIFFUN),
-                       _F(NOM=DIFFPG),
-                       _F(NOM=Pana),
-                       _F(NOM=Pcalc),
+                       _F(NOM=dicResu['Uana']),
+                       _F(NOM=dicResu['Ucalc']),
+                       _F(NOM=dicResu['DIFFUN']),
+                       _F(NOM=dicResu['DIFFPG']),
+                       _F(NOM=dicResu['Pana']),
+                       _F(NOM=dicResu['Pcalc']),
                        ),
                INFO=1,
               );
@@ -547,12 +550,12 @@ DETRUIRE(CONCEPT=(_F(NOM=modl,),
                   _F(NOM=Contact),
                   _F(NOM=ForceInt),
                   _F(NOM=EVOLNOLI),
-                  _F(NOM=Uana),
-                  _F(NOM=Ucalc),
-                  _F(NOM=DIFFUN),
-                  _F(NOM=Pana),
-                  _F(NOM=Pcalc),
-                  _F(NOM=DIFFPG),
+                  _F(NOM=dicResu['Uana']),
+                  _F(NOM=dicResu['Ucalc']),
+                  _F(NOM=dicResu['DIFFUN']),
+                  _F(NOM=dicResu['Pana']),
+                  _F(NOM=dicResu['Pcalc']),
+                  _F(NOM=dicResu['DIFFPG']),
                   _F(NOM=RAMPE),
                   _F(NOM=LINST),
                   _F(NOM=acier),  
