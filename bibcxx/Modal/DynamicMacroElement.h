@@ -137,7 +137,7 @@ class DynamicMacroElementInstance : public DataStructure {
           _maelAmorVale( JeveuxVectorDouble( getName() + ".MAEL_AMOR_VALE" ) ),
           _maelInerRefe( JeveuxVectorChar24( getName() + ".MAEL_INER_REFE" ) ),
           _maelInterVale( JeveuxVectorDouble( getName() + ".MAEL_INER_VALE" ) ),
-          _numeDdl( new DOFNumberingInstance( getName() ) ),
+          _numeDdl( nullptr ),
           _supportMechanicalMode( MechanicalModeContainerPtr() ), _rigidityDMatrix( nullptr ),
           _rigidityCMatrix( nullptr ), _massMatrix( nullptr ), _dampingMatrix( nullptr ),
           _impeMatrix( nullptr ), _impeRigiMatrix( nullptr ), _impeMassMatrix( nullptr ),
@@ -147,6 +147,11 @@ class DynamicMacroElementInstance : public DataStructure {
      * @brief Get damping matrix
      */
     AssemblyMatrixDisplacementDoublePtr getDampingMatrix() { return _dampingMatrix; };
+
+    DOFNumberingPtr getDOFNumbering() const
+    {
+        return _numeDdl;
+    };
 
     /**
      * @brief Get impedance matrix
@@ -189,6 +194,12 @@ class DynamicMacroElementInstance : public DataStructure {
      */
     bool setDampingMatrix( const AssemblyMatrixDisplacementDoublePtr &matrix ) {
         _dampingMatrix = matrix;
+        return true;
+    };
+
+    bool setDOFNumbering( const DOFNumberingPtr &dofNum )
+    {
+        _numeDdl = dofNum;
         return true;
     };
 

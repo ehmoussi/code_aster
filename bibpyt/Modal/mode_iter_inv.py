@@ -20,6 +20,13 @@
 from code_aster.Cata.Syntax import *
 from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
+from code_aster.Commands.ExecuteCommand import ExecuteCommand
+
+from code_aster import (AssemblyMatrixDisplacementDouble, AssemblyMatrixPressureDouble,
+                        GeneralizedAssemblyMatrixDouble)
+from code_aster.Objects import (BucklingModeContainer, MechanicalModeComplexContainer,
+                                MechanicalModeContainer, AcousticModeContainer,
+                                GeneralizedModeContainer)
 
 
 def mode_iter_inv_prod(TYPE_RESU, **args ):
@@ -44,7 +51,7 @@ def mode_iter_inv_prod(TYPE_RESU, **args ):
     if AsType(vale_rigi) == matr_asse_gene_r : return mode_gene
     raise AsException("type de concept resultat non prevu")
 
-MODE_ITER_INV=OPER(nom="MODE_ITER_INV",op=  44,sd_prod=mode_iter_inv_prod
+MODE_ITER_INV_CATA=OPER(nom="MODE_ITER_INV",op=  44,sd_prod=mode_iter_inv_prod
                     ,fr=tr("Calcul des modes propres par itérations inverses ; valeurs propres et modes réels ou complexes"),
                      reentrant='n',
 
@@ -123,3 +130,52 @@ MODE_ITER_INV=OPER(nom="MODE_ITER_INV",op=  44,sd_prod=mode_iter_inv_prod
          INFO            =SIMP(statut='f',typ='I',defaut= 1,into=( 1 , 2) ),
          TITRE           =SIMP(statut='f',typ='TXM',validators=NoRepeat(),max='**'),
 )  ;
+
+
+class ModalCalculationInv(ExecuteCommand):
+    """Internal (non public) command to call the underlying operator."""
+    command_name = "MODE_ITER_INV"
+    command_cata = MODE_ITER_INV_CATA
+
+    def create_result(self, keywords):
+        """Initialize the result.
+
+        Arguments:
+            keywords (dict): Keywords arguments of user's keywords.
+        """
+        TYPE_RESU = keywords.get("TYPE_RESU")
+        if TYPE_RESU in ("MODE_FLAMB", "GENERAL"):
+            self._result = BucklingModeContainer()
+            return
+
+        vale_rigi = keywords.get("MATR_RIGI")
+        vale_amor = keywords.get("MATR_AMOR")
+        if vale_amor is not None and isinstance(vale_amor, AssemblyMatrixDisplacementDouble):
+            self._result = MechanicalModeComplexContainer()
+        elif isinstance(vale_rigi, AssemblyMatrixDisplacementDouble):
+            self._result = MechanicalModeContainer()
+        elif isinstance(vale_rigi, AssemblyMatrixPressureDouble):
+            self._result = AcousticModeContainer()
+        elif isinstance(vale_rigi, GeneralizedAssemblyMatrixDouble):
+            self._result = GeneralizedModeContainer()
+
+    def post_exec(self, keywords):
+        """Execute the command.
+
+        Arguments:
+            keywords (dict): User's keywords.
+        """
+        matrRigi = keywords.get("MATR_RIGI")
+        if matrRigi is not None:
+            if isinstance(self._result, GeneralizedModeContainer):
+                self._result.setGeneralizedDOFNumbering(matrRigi.getGeneralizedDOFNumbering())
+            else:
+                self._result.setDOFNumbering(matrRigi.getDOFNumbering())
+            self._result.setStiffnessMatrix(matrRigi)
+        matrAmor = keywords.get("MATR_AMOR")
+        if matrAmor is not None:
+            self._result.setDampingMatrix(matrAmor)
+        self._result.update()
+
+
+MODE_ITER_INV = ModalCalculationInv.run

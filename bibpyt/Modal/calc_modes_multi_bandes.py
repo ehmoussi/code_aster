@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -22,7 +22,7 @@ from Utilitai.Utmess import UTMESS
 import aster_core
 import aster
 from Noyau.N_utils import AsType
-from code_aster.Cata.DataStructure import matr_asse_depl_r
+from code_aster.Objects import AssemblyMatrixDisplacementDouble
 
 
 def calc_modes_multi_bandes( self, stop_erreur, sturm, INFO, **args):
@@ -51,7 +51,7 @@ def calc_modes_multi_bandes( self, stop_erreur, sturm, INFO, **args):
     ier = 0
     dbg = False  # True si on souhaite faire un IMPR_CO intermediaire, False sinon
     lmatphys = True   # True si matrices d'entrée de type matr_asse_depl_r, False sinon
-    if (AsType(MATR_RIGI) != matr_asse_depl_r):
+    if isinstance(MATR_RIGI, AssemblyMatrixDisplacementDouble):
         lmatphys = False
 
     # On importe les definitions des commandes a utiliser dans la macro

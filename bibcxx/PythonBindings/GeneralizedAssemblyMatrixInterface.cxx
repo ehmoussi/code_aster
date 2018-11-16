@@ -37,8 +37,12 @@ void exportGeneralizedAssemblyMatrixToPython() {
         // fake initFactoryPtr: created by subclasses
         .def( "getGeneralizedDOFNumbering",
               &GenericGeneralizedAssemblyMatrixInstance::getGeneralizedDOFNumbering )
+        .def( "getModalBasis",
+              &GenericGeneralizedAssemblyMatrixInstance::getModalBasis )
         .def( "setGeneralizedDOFNumbering",
-              &GenericGeneralizedAssemblyMatrixInstance::setGeneralizedDOFNumbering );
+              &GenericGeneralizedAssemblyMatrixInstance::setGeneralizedDOFNumbering )
+        .def( "setModalBasis",
+              &GenericGeneralizedAssemblyMatrixInstance::setModalBasis );
 
     class_< GeneralizedAssemblyMatrixDoubleInstance, GeneralizedAssemblyMatrixDoublePtr,
             bases< GenericGeneralizedAssemblyMatrixInstance > >( "GeneralizedAssemblyMatrixDouble",
