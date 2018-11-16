@@ -165,7 +165,9 @@ VECAS=ASSE_VECTEUR( VECT_ELEM=VECT_ELE, NUME_DDL=nume_ddl );
 fo1 = DEFI_FONCTION ( NOM_PARA= 'FREQ',
          VALE= ( 0., 1., 100., 1. ) );
 
-INCLUDE(UNITE=31,);
+from fdlv112d import F_ACC_X
+acc_x = F_ACC_X()
+
 
 #Parametres
 # Solution de reference :

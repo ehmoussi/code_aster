@@ -36,12 +36,9 @@ mailcol=LIRE_MAILLAGE(FORMAT="MED",UNITE=20);
 #    (LONG BEACH EAST WEST)
 #
 
-
-# INCLUDE(UNITE=33,);
 os.rename("fort.33", "fort33.py")
 from fort33 import *
 
-# INCLUDE(UNITE=34,);
 os.rename("fort.34", "fort34.py")
 from fort34 import *
 

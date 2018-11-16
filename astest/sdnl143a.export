@@ -6,5 +6,5 @@ P mpi_nbnoeud 1
 P testlist verification sequential
 
 F comm sdnl143a.comm D 1
-F datg sdnl143a.datg D 77
+F nom  sdnl143a.py   D 0
 F mmed sdnl143a.mmed D 20

@@ -7,6 +7,5 @@ P testlist verification sequential
 
 F comm ssns114f.comm D 1
 F mail ssns106a.mail D 20
-F libr ssns106i.12 D 12
 F datg ssns106i.datg D 16
 

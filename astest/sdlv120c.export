@@ -7,4 +7,4 @@ P testlist verification sequential
 
 F comm sdlv120c.comm D 1
 F mmed sdlv120c.mmed D 20
-F libr sdlv120c.11 D 11
+F nom  sdlv120c.py   D 0

@@ -7,4 +7,4 @@ P testlist verification sequential
 
 F comm sdls106h.comm D 1
 F mmed sdls106h.mmed D 20
-F libr sdls106h.38 D 38
+F nom  sdls106h.py D 0

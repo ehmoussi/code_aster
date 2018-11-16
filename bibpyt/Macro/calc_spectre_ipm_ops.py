@@ -125,6 +125,9 @@ def calc_spectre_ipm_ops(
 
     dico_global = {}
     # ---------------------------------------------------------------------------------------------
+    # only one occurrence of RESU
+    RESU = RESU[0]
+
     # boucle 1 sur les planchers
     for plancher in l_plancher:
         AMOR_EQUI = planch_param[plancher]['AMOR_EQUI']

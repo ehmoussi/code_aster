@@ -6,4 +6,5 @@ P mpi_nbnoeud 1
 P testlist verification sequential
 
 F comm ssnd115a.comm D 1
-F libr ssnd115a.93 D 93
+F comm ssnd115a.com1 D 1
+F comm ssnd115a.com2 D 1

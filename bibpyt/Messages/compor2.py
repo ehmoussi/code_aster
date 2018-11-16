@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -217,13 +217,6 @@ Risques & conseils :
   Il faut donc renseigner une valeur strictement inférieure à  <%(r1)E> pour <%(k3)s>
 """),
 
-    37: _(u"""
-  CALC_ESSAI_GEOMECA : Erreur dans la saisie du mot clef facteur <%(k1)s> (occurrence %(i1)d).
-  Incohérence entre les valeurs saisies pour les mot clef simples <PRES_CONF> et <SIGM_IMPOSE>.
-  On doit toujours avoir PRES_CONF + SIGM_IMPOSE < 0.
-  Or vous avez renseigné <PRES_CONF=%(r1)E> et <SIGM_IMPOSE=%(r2)E>, soit PRES_CONF + SIGM_IMPOSE = %(r3)E
-"""),
-
     38: _(u"""
   CALC_ESSAI_GEOMECA : Erreur dans la saisie du mot clef facteur <%(k1)s> (occurrence %(i1)d).
   La liste de valeurs renseignées pour le mot clef simple <%(k2)s> doit être %(k4)s .
@@ -305,13 +298,6 @@ Risques & conseils :
   Incohérence entre les valeurs saisies pour les mot clef simples <PRES_CONF>, <SIGM_IMPO> et <SIGM_décharge>.
   On doit toujours avoir PRES_CONF + SIGM_IMPO <= SIGM_décharge .
   Or vous avez renseigné < PRES_CONF = %(r1)E> et <SIGM_IMPO = %(r2)E>, soit PRES_CONF + SIGM_IMPO = %(r3)E supérieur à %(r4)E
-"""),
-
-    48: _(u"""
-  CALC_ESSAI_GEOMECA : Erreur dans la saisie du mot clef facteur <%(k1)s> (occurrence %(i1)d).
-  Incohérence entre les valeurs saisies pour les mot clef simples <PRES_CONF> et <SIGM_décharge>.
-  On doit toujours avoir SIGM_décharge <= PRES_CONF.
-  Or vous avez renseigné < SIGM_décharge = %(r1)E> et <PRES_CONF = %(r2)E>
 """),
 
     50 : _(u"""Maille: %(k1)-8s - Pas de points d'intégration"""),

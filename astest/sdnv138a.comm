@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -151,82 +151,5 @@ U_JF=STAT_NON_LINE(MODELE=MO,
                   ARCHIVAGE=_F(LIST_INST=LR,),
                   );
 
+FIN();
 
-# CREATION DE LISTE D'INSTANT
-# SEISMIC SIGNAL Friuli_GEFDYN : FONC_MULT=ACCELE
-INCLUDE(UNITE=90, INFO=1,);
-
-T000 = 0.;
-T_END = 4. ;
-pas_gro = 0.0100;
-pas_hfin = pas_gro/1. ;
-
-# Instant list devoted to seism
-
-L_INSTh=DEFI_LIST_REEL(DEBUT=T000,
-                       INTERVALLE=(_F(JUSQU_A=T_END, PAS=pas_hfin,),),);
-
-L_ARCH=DEFI_LIST_REEL(DEBUT=T000,
-                      INTERVALLE=_F(JUSQU_A=T_END, PAS=pas_gro,),);
-
-L_COMB=DEFI_LIST_REEL(DEBUT=T000,
-                      INTERVALLE=_F(JUSQU_A=T_END, PAS=pas_gro,),);
-
-DEFLISTh =DEFI_LIST_INST(DEFI_LIST=_F(LIST_INST =L_INSTh ),
-                        ECHEC=_F(ACTION        = 'DECOUPE',
-                                 SUBD_METHODE  = 'MANUEL',
-                                 SUBD_PAS=2,
-                                 SUBD_NIVEAU=20),);
-
-
-# CALCUL JOINT_MECA_FROT
-U_JF=DYNA_NON_LINE(reuse=U_JF,
-                  MODELE=MO,
-                  CHAM_MATER=CM_JF,
-                  EXCIT=(_F(CHARGE=CL_GAUCH),
-                         _F(CHARGE=CL_DROIT),
-                         _F(CHARGE=PESAX),
-                         _F(CHARGE=MONOX, FONC_MULT=ACCEINI,),
-                         ),
-                  COMPORTEMENT=(_F(RELATION='JOINT_MECA_FROT',
-                                GROUP_MA='JOINT',),
-                             _F(RELATION='ELAS',
-                                GROUP_MA=('BARRAGE')),),
-                  NEWTON=_F(MATRICE='TANGENTE',
-                            REAC_ITER=1,),
-                  CONVERGENCE=_F(ITER_GLOB_MAXI=10,
-                                 RESI_GLOB_RELA=1E-5),
-                  SOLVEUR=_F(METHODE='MUMPS',),
-                  ETAT_INIT=_F(EVOL_NOLI=U_JF,
-                              INST=0.0,PRECISION=1.E-6,
-                              ),
-                  INCREMENT=_F(LIST_INST=DEFLISTh,
-                              PRECISION=1.E-6,),
-                  ARCHIVAGE=_F(LIST_INST=L_ARCH,),
-                 
-                  SCHEMA_TEMPS=_F(SCHEMA='HHT',
-                                 FORMULATION='DEPLACEMENT',
-                                 ALPHA=-0.1,
-                                 ),
-                  );
-
-DEPR1X=RECU_FONCTION(RESULTAT=U_JF,
-                      TITRE='DEPR1X',
-                      NOM_CHAM='DEPL',
-                      NOM_CMP='DX',
-                      NOEUD='N1',
-                      LIST_INST=L_COMB,
-                      PROL_DROITE='CONSTANT',
-                      PROL_GAUCHE='CONSTANT',
-                      INTERPOL='LIN',); 
-
-TEST_FONCTION(VALEUR=(_F(VALE_CALC=-1.688516183856e-4,
-                         VALE_PARA=2.56,
-                         FONCTION=DEPR1X,),
-                      _F(VALE_CALC=-2.203995391174e-4,
-                         VALE_PARA=3.11,
-                         FONCTION=DEPR1X,),
-                      ),
-              );
-
-FIN()

@@ -8,5 +8,6 @@ P testlist verification sequential
 F comm sdnx100a.comm D 1
 F comm sdnx100a.com1 D 1
 F comm sdnx100a.com2 D 1
-F comm sdnx100a.com3 D 1
 F mmed sdnx100a.mmed D 20
+F nom  sdnx100a.py   D 0
+

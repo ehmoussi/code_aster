@@ -7,4 +7,4 @@ P testlist verification sequential
 
 F comm sdlv121d.comm D 1
 F mail sdlv121d.mail D 20
-F libr sdlv121a.11 D 11
+F nom  sdlv121a.py D 0

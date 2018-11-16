@@ -393,7 +393,8 @@ class SyntaxCheckerVisitor(object):
                 else:
                     nmax = kwd.definition.get('max', 1)
                     if nmax == 1:
-                        if value_is_sequence(value) and len(value) == 1:
+                        if (value_is_sequence(value) and len(value) == 1
+                                and not isinstance(value[0], dict)):
                             value = userOcc[key] = value[0]
                     else:
                         if value is not None and not value_is_sequence(value):

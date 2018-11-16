@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -33,7 +33,7 @@ POISSON = (3.*K-2.*G) /(6.*K+2.*G)
 print 'young=',YOUNG,' /// nu=',POISSON
 
 # pression de preconsolidation [en kPa]
-PCO=-50.E+3
+PCO=50.E+3
 
 #*******************************************************************
 #
@@ -43,7 +43,7 @@ PCO=-50.E+3
 
 nb_inst =200
 #depzz   =-.000001
-epzz_max=-.0003
+epzz_max=.0003
 depzz   =epzz_max/nb_inst
 tfin    =100.
 
@@ -67,7 +67,7 @@ CALC_ESSAI_GEOMECA(INFO=1,
                                   ITER_GLOB_MAXI = 5,),
                    #
                    # Essai triaxial draine
-                   ESSAI_TD = _F(PRES_CONF   = PCO,
+                   ESSAI_TRIA_DR_M_D = _F(PRES_CONF   = PCO,
                                  EPSI_IMPOSE = epzz_max, 
                                  NB_INST     = nb_inst,
                                  TABLE_RESU  = TABTD),);
@@ -85,29 +85,29 @@ IMPR_TABLE(TABLE=TABTD);
 from Contrib.essai_triaxial import Triaxial_DR
 
 epzz,sizz,sixx,epsivp,epsidp, =\
-                Triaxial_DR(K,G,33.,27.,1.e+3,PCO,depzz,epzz_max)
+                Triaxial_DR(K,G,33.,27.,1.e+3,-PCO,-depzz,-epzz_max)
 
 
 TEST_TABLE(NOM_PARA='SIG_LAT', TABLE=TSIMU,
            FILTRE=_F(NOM_PARA ='EPS_AXI',
-                     VALE     =-3.E-4,
+                     VALE     =3.E-4,
                      CRITERE  ='ABSOLU',
                      PRECISION=1e-7,),
            # Non-regression
-           VALE_CALC=-50000.,
+           VALE_CALC=50000.,
            # Reference
            REFERENCE='ANALYTIQUE',
-           VALE_REFE=sixx[-1],);
+           VALE_REFE=-sixx[-1],);
 
 TEST_TABLE(NOM_PARA='SIG_AXI', TABLE=TSIMU,
            FILTRE=_F(NOM_PARA ='EPS_AXI',
-                     VALE     =-3.E-4,
+                     VALE     =3.E-4,
                      CRITERE  ='ABSOLU',
                      PRECISION=1e-7,),
            # Non-regression
-           VALE_CALC=-1.7328954160409E+05,
+           VALE_CALC=1.7328954160409E+05,
            # Reference
            REFERENCE='ANALYTIQUE',
-           VALE_REFE=sizz[-1],);
+           VALE_REFE=-sizz[-1],);
 
 FIN();
