@@ -31,6 +31,7 @@ implicit none
 #include "asterfort/mmGetCoefficients.h"
 #include "asterfort/mmGetProjection.h"
 #include "asterfort/mmGetStatus.h"
+#include "asterfort/mmGetShapeFunctions.h"
 #include "asterfort/mmmpha.h"
 #include "asterfort/mmmsta.h"
 #include "asterfort/mmnsta.h"
@@ -76,7 +77,8 @@ character(len=16), intent(in) :: option, nomte
     real(kind=8) :: mprt1n(3, 3)=0.0, mprt2n(3, 3)=0.0
     real(kind=8) :: mprt11(3, 3)=0.0, mprt12(3, 3)=0.0, mprt21(3, 3)=0.0, mprt22(3, 3)=0.0
     real(kind=8) :: kappa(2, 2)=0.0
-    real(kind=8) :: ffe(9), ffm(9), ffl(9), dffm(2,9)
+    real(kind=8) :: ffe(9), ffm(9), ffl(9)
+    real(kind=8) :: ddffm(3, 9), dffm(2, 9)
     real(kind=8) :: alpha_cont=0.0
     real(kind=8) :: dnepmait1, dnepmait2, taujeu1, taujeu2
     real(kind=8) :: xpc, ypc, xpr, ypr
@@ -125,18 +127,24 @@ character(len=16), intent(in) :: option, nomte
 !
 ! - Get status
 !
-    call mmGetStatus(leltf, indco)
+    call mmGetStatus(indco)
+!
+! - Get shape functions
+!
+    call mmGetShapeFunctions(laxis, typmae, typmam, &
+                             ndim , nne   , nnm   , &
+                             xpc  , ypc   , xpr   , ypr  ,&
+                             ffe  , ffm   , dffm  , ddffm,&
+                             ffl  , jacobi)
 !
 ! - Compute quantities (for vector)
 !
-    call mmvppe(typmae   , typmam   ,&
-                ndim     , nne      , nnm     , nnl    , nbdm ,&
+    call mmvppe(ndim     , nne      , nnm     , nnl    , nbdm ,&
                 iresog   , l_large_slip,&
-                laxis    , jeusup   ,&
-                xpc      , ypc      , xpr     , ypr   ,&
+                jeusup   ,&
                 tau1     , tau2     ,&
-                ffe      , ffm      , ffl     , dffm  ,&
-                jacobi   , jeu      , djeu    , djeut ,&
+                ffe      , ffm      , ffl     , dffm   , ddffm,&
+                jeu      , djeu    , djeut ,&
                 dlagrc   , dlagrf   , &
                 norm     , mprojt   ,&
                 mprt1n   , mprt2n   , &

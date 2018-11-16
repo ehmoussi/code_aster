@@ -17,8 +17,9 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine mmGetStatus(leltf      , indco      ,&
-                       l_previous_, indco_prev_, indadhe_prev_, indadhe2_prev_)
+subroutine mmGetStatus(indco       ,&
+                       l_prev_cont_, l_prev_fric_ ,&
+                       indco_prev_ , indadhe_prev_, indadhe2_prev_)
 !
 implicit none
 !
@@ -26,9 +27,8 @@ implicit none
 #include "jeveux.h"
 #include "asterfort/jevech.h"
 !
-aster_logical, intent(in) :: leltf
 integer, intent(out) :: indco
-aster_logical, optional, intent(out) :: l_previous_
+aster_logical, optional, intent(out) :: l_prev_cont_, l_prev_fric_
 integer, optional, intent(out) :: indco_prev_, indadhe_prev_, indadhe2_prev_
 !
 ! --------------------------------------------------------------------------------------------------
@@ -39,8 +39,8 @@ integer, optional, intent(out) :: indco_prev_, indadhe_prev_, indadhe2_prev_
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  leltf            : flag for friction
-! Out l_previous       : flag to manage cycling (previous iteration)
+! Out l_prev_cont      : flag to manage cycling (previous iteration) - Contact
+! Out l_prev_fric      : flag to manage cycling (previous iteration) - Friction
 ! Out indco            : flag for contact status
 ! Out indco_prev       : flag for contact status (previous iteration)
 ! Out indadhe_prev
@@ -49,26 +49,22 @@ integer, optional, intent(out) :: indco_prev_, indadhe_prev_, indadhe2_prev_
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: jpcf
-    aster_logical :: l_previous_cont, l_previous_fric, l_previous
+    aster_logical :: l_prev_cont, l_prev_fric
     integer :: indco_prev, indadhe_prev, indadhe2_prev
 !
 ! --------------------------------------------------------------------------------------------------
 !
     call jevech('PCONFR', 'L', jpcf)
-    l_previous_cont = (nint(zr(jpcf-1+30)) .eq. 1)
-    l_previous_fric = (nint(zr(jpcf-1+44)) .eq. 1)
-    if (leltf) then
-        l_previous = l_previous_fric
-    else
-        l_previous = l_previous_cont
-    endif
+    l_prev_cont   = (nint(zr(jpcf-1+30)) .eq. 1)
+    l_prev_fric   = (nint(zr(jpcf-1+44)) .eq. 1)
     indco         = nint(zr(jpcf-1+12))
     indco_prev    = nint(zr(jpcf-1+27))
     indadhe_prev  = nint(zr(jpcf-1+44))
     indadhe2_prev = nint(zr(jpcf-1+47))
-    if (present(l_previous_)) l_previous_ = l_previous
-    if (present(indco_prev_)) indco_prev_ = indco_prev
-    if (present(indadhe_prev_)) indadhe_prev_ = indadhe_prev
+    if (present(l_prev_cont_))   l_prev_cont_ = l_prev_cont
+    if (present(l_prev_fric_))   l_prev_fric_ = l_prev_fric
+    if (present(indco_prev_))    indco_prev_ = indco_prev
+    if (present(indadhe_prev_))  indadhe_prev_ = indadhe_prev
     if (present(indadhe2_prev_)) indadhe2_prev_ = indadhe2_prev
 !
 end subroutine

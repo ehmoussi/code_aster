@@ -19,11 +19,16 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine mmGetStatus(indco       ,&
-                           l_prev_cont_, l_prev_fric_ ,&
-                           indco_prev_ , indadhe_prev_, indadhe2_prev_)
-        integer, intent(out) :: indco
-        aster_logical, optional, intent(out) :: l_prev_cont_, l_prev_fric_
-        integer, optional, intent(out) :: indco_prev_, indadhe_prev_, indadhe2_prev_
-    end subroutine mmGetStatus
+    subroutine mmGetShapeFunctions(laxis, typmae, typmam, &
+                                   ndim , nne   , nnm   , &
+                                   xpc  , ypc   , xpr   , ypr   ,&
+                                   ffe  , ffm   , dffm  , ddffm ,&
+                                   ffl  , jacobi)
+        aster_logical, intent(in) :: laxis
+        character(len=8), intent(in) :: typmae, typmam
+        integer, intent(in) :: ndim, nne, nnm
+        real(kind=8), intent(in) :: xpc, ypc, xpr, ypr
+        real(kind=8), intent(out) :: ffe(9), ffm(9), dffm(2,9), ddffm(3, 9), ffl(9)
+        real(kind=8), intent(out) :: jacobi
+    end subroutine mmGetShapeFunctions
 end interface

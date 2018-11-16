@@ -31,6 +31,7 @@ implicit none
 #include "asterfort/mmGetCoefficients.h"
 #include "asterfort/mmGetProjection.h"
 #include "asterfort/mmGetStatus.h"
+#include "asterfort/mmGetShapeFunctions.h"
 #include "asterfort/mmmpha.h"
 #include "asterfort/mmmsta.h"
 #include "asterfort/mmnsta.h"
@@ -65,6 +66,7 @@ character(len=16), intent(in) :: option, nomte
     aster_logical :: laxis = .false. , leltf = .false.
     aster_logical :: lpenac = .false. , lpenaf = .false.
     aster_logical :: lcont = .false., ladhe = .false., l_fric_no = .false.
+    aster_logical :: l_prev_cont = .false., l_prev_fric = .false.
     aster_logical :: l_previous = .false.
     aster_logical :: debug = .false., l_large_slip = .false.
     aster_logical :: lcont_prev = .false., ladhe_prev = .false., l_fric_no_p = .false.
@@ -203,13 +205,18 @@ character(len=16), intent(in) :: option, nomte
 !
 ! - Get status
 !
-    call mmGetStatus(leltf     , indco     , &
-                     l_previous, indco_prev, indadhe_prev, indadhe2_prev)
+    call mmGetStatus(indco      ,&
+                     l_prev_cont, l_prev_fric ,&
+                     indco_prev , indadhe_prev, indadhe2_prev)
+    l_previous = l_prev_cont .or. l_prev_fric
 !
 ! - Get coefficients
 !
     call mmGetCoefficients(coefff, coefac, coefaf, alpha_cont)
-    if (l_previous) then
+    if (l_prev_cont) then
+        coefac_prev = coefac
+    endif
+    if (l_prev_fric) then
         coefac_prev = coefac
         coefaf_prev = coefaf
     endif
@@ -219,7 +226,6 @@ character(len=16), intent(in) :: option, nomte
     call mmGetProjection(iresog  , wpg     ,&
                          xpc     , ypc     , xpr     , ypr     , tau1     , tau2     ,&
                          xpc_prev, ypc_prev, xpr_prev, ypr_prev, tau1_prev, tau2_prev)
-
 !
 ! - Get algorithms
 !
@@ -228,16 +234,29 @@ character(len=16), intent(in) :: option, nomte
                    lpenac      , lpenaf  ,&
                    lambds_prev , jeu_prev)
 !
+! - Get shape functions
+!
+    if (l_prev_cont .or. l_prev_fric) then
+        call mmGetShapeFunctions(laxis   , typmae  , typmam  , &
+                                 ndim    , nne     , nnm     , &
+                                 xpc_prev, ypc_prev, xpr_prev, ypr_prev,&
+                                 ffe     , ffm     , dffm    , ddffm   ,&
+                                 ffl     , jacobi)
+    endif
+    call mmGetShapeFunctions(laxis, typmae, typmam, &
+                             ndim , nne   , nnm   , &
+                             xpc  , ypc   , xpr   , ypr  ,&
+                             ffe  , ffm   , dffm  , ddffm,&
+                             ffl  , jacobi)
+!
 ! - Compute quantities
 !
-    call mmtppe(typmae   , typmam   ,&
-                ndim     , nne      , nnm   , nnl     , nbdm  ,&
+    call mmtppe(ndim     , nne      , nnm   , nnl     , nbdm  ,&
                 iresog   , l_large_slip, &
-                laxis    , jeusup   ,&
-                xpc      , ypc      , xpr   , ypr     ,&
+                jeusup   ,&
                 tau1     , tau2     ,&
                 ffe      , ffm      , dffm  , ddffm   , ffl   ,&
-                jacobi   , jeu      , djeut ,&
+                jeu      , djeut ,&
                 dlagrc   , dlagrf   , &
                 norm     , mprojn   , mprojt,&
                 mprt1n   , mprt2n   , mprnt1, mprnt2, &
@@ -247,21 +266,19 @@ character(len=16), intent(in) :: option, nomte
                 taujeu1  , taujeu2  ,&
                 dnepmait1, dnepmait2)
     if (l_previous) then
-        call mmtppe(typmae     , typmam   ,&
-                    ndim       , nne      , nnm     , nnl     , nbdm  ,&
-                    iresog     , l_large_slip, &
-                    laxis      , jeusup   ,&
-                    xpc_prev   , ypc_prev , xpr_prev, ypr_prev,&
-                    tau1_prev  , tau2_prev,&
-                    ffe        , ffm      , dffm    , ddffm   , ffl   ,&
-                    jacobi     , jeu_prev , djeut_prev,&
-                    dlagrc_prev, dlagrf_prev,&
-                    norm_prev, mprojn_prev, mprojt_prev,&
-                    mprt1n_prev, mprt2n_prev, mprnt1_prev, mprnt2_prev,&
-                    mprt11_prev, mprt12_prev, mprt21_prev, mprt22_prev,&
-                    kappa_prev  , h_prev   , hah_prev   ,&
-                    vech1_prev , vech2_prev,&
-                    taujeu1_prev, taujeu2_prev,&
+        call mmtppe(ndim          , nne      , nnm     , nnl     , nbdm  ,&
+                    iresog        , l_large_slip, &
+                    jeusup   ,&
+                    tau1_prev     , tau2_prev,&
+                    ffe           , ffm      , dffm    , ddffm   , ffl   ,&
+                    jeu_prev , djeut_prev,&
+                    dlagrc_prev   , dlagrf_prev,&
+                    norm_prev     , mprojn_prev, mprojt_prev,&
+                    mprt1n_prev   , mprt2n_prev, mprnt1_prev, mprnt2_prev,&
+                    mprt11_prev   , mprt12_prev, mprt21_prev, mprt22_prev,&
+                    kappa_prev    , h_prev        , hah_prev   ,&
+                    vech1_prev    , vech2_prev    ,&
+                    taujeu1_prev  , taujeu2_prev  ,&
                     dnepmait1_prev, dnepmait2_prev)
     endif
 !
@@ -403,7 +420,6 @@ character(len=16), intent(in) :: option, nomte
         call mmmtex(ndexfr     , ndim       , nnl        , nne        , nnm        , nbcps,&
                     matrff_prev, matrfe_prev, matrfm_prev, matref_prev, matrmf_prev)
     endif
-
 !
 ! - Assembling
 !
