@@ -38,16 +38,21 @@ class FieldCreator(ExecuteCommand):
         """
         location = keywords["TYPE_CHAM"][:5]
         typ = keywords["TYPE_CHAM"][10:]
-        if (typ != "R" and typ != "F" or location not in ("CART_", "NOEU_", "ELGA_", "ELNO_", "ELEM_")) \
-            and not (typ == "C" and location == "NOEU_"):
-            raise NotImplementedError("Type of field {0!r} not yet supported"
-                                      .format(keywords["TYPE_CHAM"]))
 
         if location == "CART_":
-            if keywords.has_key("MAILLAGE"):
-                mesh = keywords["MAILLAGE"]
-            else:
-                mesh = keywords["MODELE"].getSupportMesh()
+            mesh = keywords.get("MAILLAGE")
+            model = keywords.get("MODELE")
+            caraElem = keywords.get("CARA_ELEM")
+            charge = keywords.get("CHARGE")
+            if mesh is None:
+                if model is not None:
+                    mesh = model.getSupportMesh()
+                elif caraElem is not None:
+                    mesh = caraElem.getModel().getSupportMesh()
+                elif charge is not None:
+                    mesh = charge.getSupportModel().getSupportMesh()
+                else:
+                    raise NotImplementedError("Must have Mesh, Model or ElementaryCharacteristics")
             self._result = PCFieldOnMeshDouble(mesh)
         elif location == "NOEU_":
             if typ == "C":
@@ -65,6 +70,7 @@ class FieldCreator(ExecuteCommand):
             modele = keywords.get("MODELE")
             resultat = keywords.get("RESULTAT")
             chamF = keywords.get("CHAM_F")
+            caraElem = keywords.get("CARA_ELEM")
             if modele is not None:
                 self._result.setModel(modele)
             elif resultat is not None:
@@ -73,6 +79,8 @@ class FieldCreator(ExecuteCommand):
                     self._result.setDescription(dofNum.getFiniteElementDescriptors()[0])
                 else:
                     self._result.setModel(resultat.getModel())
+            elif caraElem is not None:
+                self._result.setModel(caraElem.getModel())
             elif chamF is not None:
                 self._result.setModel(chamF.getModel())
 

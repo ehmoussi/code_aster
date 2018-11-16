@@ -43,7 +43,9 @@ def calc_miss_ops(self, **kwargs):
     calcul = CalculMiss.factory(self, param)
 
     try:
-        return calcul.run()
+        toReturn = calcul.run()
+        print "toReturn",toReturn
+        return toReturn
     except aster.error, err:
         UTMESS('F', err.id_message, valk=err.valk,
                vali=err.vali, valr=err.valr)

@@ -40,7 +40,9 @@ void exportDynamicMacroElementToPython() {
         .def( "__init__",
               make_constructor(&initFactoryPtr< DynamicMacroElementInstance, std::string >))
         .def( "getDampingMatrix", &DynamicMacroElementInstance::getDampingMatrix )
-        .def( "getImpedanceDampingMatrix", &DynamicMacroElementInstance::getImpedanceDampingMatrix )
+        .def( "getDOFNumbering", &DynamicMacroElementInstance::getDOFNumbering )
+        .def( "getImpedanceDampingMatrix",
+&DynamicMacroElementInstance::getImpedanceDampingMatrix )
         .def( "getImpedanceMatrix", &DynamicMacroElementInstance::getImpedanceMatrix )
         .def( "getImpedanceMassMatrix", &DynamicMacroElementInstance::getImpedanceMassMatrix )
         .def( "getImpedanceStiffnessMatrix",
@@ -49,6 +51,7 @@ void exportDynamicMacroElementToPython() {
         .def( "getComplexStiffnessMatrix", &DynamicMacroElementInstance::getComplexStiffnessMatrix )
         .def( "getDoubleStiffnessMatrix", &DynamicMacroElementInstance::getDoubleStiffnessMatrix )
         .def( "setDampingMatrix", &DynamicMacroElementInstance::setDampingMatrix )
+        .def( "setDOFNumbering", &DynamicMacroElementInstance::setDOFNumbering )
         .def( "setImpedanceDampingMatrix", &DynamicMacroElementInstance::setImpedanceDampingMatrix )
         .def( "setImpedanceMatrix", &DynamicMacroElementInstance::setImpedanceMatrix )
         .def( "setImpedanceMassMatrix", &DynamicMacroElementInstance::setImpedanceMassMatrix )

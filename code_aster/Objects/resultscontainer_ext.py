@@ -39,7 +39,7 @@ class ExtendedResultsContainer(injector(ResultsContainer), ResultsContainer):
         Returns:
             dict: Internal state.
         """
-        return (self.getModel(), )
+        return (True, self.getModel(), )
 
     def __setstate__(self, state):
         """Restore internal state.
@@ -47,7 +47,8 @@ class ExtendedResultsContainer(injector(ResultsContainer), ResultsContainer):
         Arguments:
             state (dict): Internal state.
         """
-        self.appendModelOnAllRanks(state[0])
+        if state[1] is not None:
+            self.appendModelOnAllRanks(state[1])
 
     def LIST_VARI_ACCES (self):
         if not self.accessible():

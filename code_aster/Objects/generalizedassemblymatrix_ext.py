@@ -24,15 +24,108 @@
 """
 
 from libaster import GeneralizedAssemblyMatrixDouble
+from libaster import GeneralizedAssemblyMatrixComplex
 
 from ..Utilities import injector
 
 _orig_getType = GeneralizedAssemblyMatrixDouble.getType
 
 
+def VALM_triang2array(dict_VALM, dim, dtype=None):
+    """Conversion (par recopie) de l'objet .VALM decrivant une matrice pleine
+    par sa triangulaire inf (et parfois triang sup) en numpy.array plein.
+    """
+    import numpy
+    # stockage symetrique ou non (triang inf+sup)
+    sym = len(dict_VALM) == 1
+    triang_sup = numpy.array(dict_VALM[1])
+    assert dim*(dim+1)/2 == len(triang_sup), \
+            'Matrice non pleine : %d*(%d+1)/2 != %d' % (dim, dim, len(triang_sup))
+    if sym:
+        triang_inf = triang_sup
+    else:
+        triang_inf = numpy.array(dict_VALM[2])
+    valeur=numpy.zeros([dim, dim], dtype=dtype)
+    for i in range(1, dim+1):
+        for j in range(1, i+1):
+            k = i*(i-1)/2 + j
+            valeur[i-1, j-1]=triang_inf[k-1]
+            valeur[j-1, i-1]=triang_sup[k-1]
+    return valeur
+
+class ExtendedGeneralizedAssemblyMatrixComplex(injector(GeneralizedAssemblyMatrixComplex),
+                                   GeneralizedAssemblyMatrixComplex):
+    cata_sdj = "SD.sd_matr_asse_gene.sd_matr_asse_gene"
+
+    def __getstate__(self):
+        """Return internal state.
+
+        Returns:
+            dict: Internal state.
+        """
+        return (True, self.getGeneralizedDOFNumbering(), self.getModalBasis())
+
+    def __setstate__(self, state):
+        """Restore internal state.
+
+        Arguments:
+            state (dict): Internal state.
+        """
+        if state[1] is not None:
+            self.setGeneralizedDOFNumbering(state[1])
+        if state[2] is not None:
+            self.setModalBasis(state[2])
+
+    def EXTR_MATR_GENE(self) :
+        """ retourne les valeurs de la matrice generalisee complexe
+            dans un format numpy
+            Attributs retourne
+            - self.valeurs : numpy.array contenant les valeurs """
+        import numpy
+        if not self.accessible():
+            raise AsException("Erreur dans matr_asse_gene_c.EXTR_MATR_GENE en PAR_LOT='OUI'")
+
+        desc = self.sdj.DESC.get()
+        # On teste si le DESC de la matrice existe
+        if not desc:
+            raise AsException("L'objet matrice {0!r} n'existe pas"
+                              .format(self.sdj.DESC.nomj()))
+        desc = numpy.array(desc)
+        # Si le stockage est plein
+        if desc[2] == 2 :
+            valeur = VALM_triang2array(self.sdj.VALM.get(), desc[1], complex)
+
+        # Si le stockage est diagonal
+        elif desc[2]==1 :
+            valeur = VALM_diag2array(self.sdj.VALM.get(), desc[1], complex)
+
+        # Sinon on arrete tout
+        else:
+            raise KeyError
+        return valeur
+
 class ExtendedGeneralizedAssemblyMatrixDouble(injector(GeneralizedAssemblyMatrixDouble),
                                    GeneralizedAssemblyMatrixDouble):
     cata_sdj = "SD.sd_matr_asse_gene.sd_matr_asse_gene"
+
+    def __getstate__(self):
+        """Return internal state.
+
+        Returns:
+            dict: Internal state.
+        """
+        return (True, self.getGeneralizedDOFNumbering(), self.getModalBasis())
+
+    def __setstate__(self, state):
+        """Restore internal state.
+
+        Arguments:
+            state (dict): Internal state.
+        """
+        if state[1] is not None:
+            self.setGeneralizedDOFNumbering(state[1])
+        if state[2] is not None:
+            self.setModalBasis(state[2])
 
     def EXTR_MATR(self, sparse=False):
         """Retourne les valeurs de la matrice dans un format numpy
@@ -74,3 +167,32 @@ class ExtendedGeneralizedAssemblyMatrixDouble(injector(GeneralizedAssemblyMatrix
             else:
                 ntype = float
             return make_sym_matrix(dim,triang_sup,ntype)
+
+    def EXTR_MATR_GENE(self):
+        """ retourne les valeurs de la matrice generalisee reelle
+            dans un format numpyal Array
+            Attributs retourne
+            - self.valeurs : numpy.array contenant les valeurs """
+        if not self.accessible():
+            raise AsException("Erreur dans matr_asse_gene.EXTR_MATR_GENE en PAR_LOT='OUI'")
+        import numpy
+
+        desc = self.sdj.DESC.get()
+        # On teste si le DESC du vecteur existe
+        if not desc:
+            raise AsException("L'objet vecteur {0!r} n'existe pas"
+                              .format(self.sdj.DESC.nomj()))
+        desc = numpy.array(desc)
+
+        # Si le stockage est plein
+        if desc[2]==2:
+            valeur = VALM_triang2array(self.sdj.VALM.get(), desc[1])
+
+        # Si le stockage est diagonal
+        elif desc[2]==1:
+            valeur = VALM_diag2array(self.sdj.VALM.get(), desc[1])
+
+        # Sinon on arrete tout
+        else:
+            raise KeyError
+        return valeur
