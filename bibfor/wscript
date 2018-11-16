@@ -326,7 +326,7 @@ def check_sizeof_string_size(self):
     self.start_msg('Setting type for fortran string length')
     # prefer use ISO_C_BINDING
     # ref: http://gcc.gnu.org/onlinedocs/gfortran/Interoperability-with-C.html
-    if self.env.FC_NAME == 'IFORT' or self.env['']:
+    if self.env.FC_NAME == 'IFORT':
         typ = "size_t"
     else:
         typ = "unsigned int"

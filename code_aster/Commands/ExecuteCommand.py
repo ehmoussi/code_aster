@@ -29,7 +29,8 @@ When a new command is added there are different levels of complexity:
 - Commands that are automatically added just using their catalog.
   Only the commands that return no result can work with this method.
   Other commands will raise a *NotImplementedError* exception at runtime.
-  Macro-commands should work without adding anything else.
+  Macro-commands do not need a specific executor. Their catalog and ``ops()``
+  function is sufficient.
 
   .. note:: All Commands that are not explicitly imported by
     :mod:`code_aster.Commands.__init__` are automatically created using this
@@ -87,12 +88,12 @@ class ExecuteCommand(object):
         - :meth:`.adapt_syntax` to eventually change the user's keywords to
           adapt the syntax from an older version. Does nothing by default.
 
+        - :meth:`.check_syntax` to check the user's keywords conformance to
+          to catalog definition.
+
         - :meth:`.create_result` to create the *DataStructure* object.
           The default implementation only works if the operator creates no
           object.
-
-        - :meth:`.check_syntax` to check the user's keywords conformance to
-          to catalog definition.
 
         - :meth:`.exec_` that is the main function of the Command.
           The default implementation calls the *legacy* Fortran operator.

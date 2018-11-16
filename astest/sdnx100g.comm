@@ -445,9 +445,8 @@ PESAZ=AFFE_CHAR_MECA(MODELE=MODELB,
                     PESANTEUR=_F(GRAVITE=9.81,
                                  DIRECTION=(0.0,0.0,-1.0,),),);
 
-
-INCLUDE(UNITE=33,);
-INCLUDE(UNITE=34,);
+from sdnx100a import F_FONC
+LBNS, LBEW= F_FONC()
 
 N=2000
 dt=0.01

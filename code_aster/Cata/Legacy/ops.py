@@ -364,8 +364,8 @@ def INCLUDE(self, UNITE, DONNEE, **args):
     else:
         fname = DONNEE
         if aster_exists:
-            repdex = aster_core.get_option('repdex')
-            fname = osp.join(repdex, fname)
+            rcdir = aster_core.get_option('rcdir')
+            fname = osp.join(rcdir, 'tests_data', fname)
     try:
         if aster_exists:
             self.make_include(fname=fname)

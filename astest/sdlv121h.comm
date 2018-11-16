@@ -66,7 +66,9 @@ MAT2=DEFI_MATERIAU( ELAS=_F(  E = 4.44E+8, RHO = 1900.,  NU = 0.48, ) #LONG_CARA
                     )
 MATN=DEFI_MATERIAU( ELAS=_F(  E = 0.01E+0, RHO = 0.0001,  NU = 0.48)
                     )
-INCLUDE(   UNITE=11,   INFO=1 )
+ 
+from sdlv121a import F_FONC
+FONCT = F_FONC()
 
 MODELE=AFFE_MODELE(    MAILLAGE=MAIL,AFFE=(
                          _F(  GROUP_MA = 'VOLU',
@@ -336,42 +338,42 @@ DXN31B=RECU_FONCTION(     RESULTAT=DYNA2,   NOEUD='N31',
                        )
 
 TEST_FONCTION(VALEUR=(
-                      _F(VALE_CALC=1.020781403469E-03,
+                      _F(VALE_CALC=1.021278995791E-03,
                          VALE_REFE=1.E-3,
-                         PRECISION=2.1E-2,
+                         PRECISION=2.2E-2,
                          REFERENCE='ANALYTIQUE',
                          CRITERE='RELATIF',
                          VALE_PARA=0.2656,
                          FONCTION=DXN26,),
-                      _F(VALE_CALC=1.012173473105E-03,
+                      _F(VALE_CALC=1.015039626191E-03,
                          VALE_REFE=1.E-3,
                          PRECISION=2.0E-2,
                          REFERENCE='ANALYTIQUE',
                          CRITERE='RELATIF',
                          VALE_PARA=0.44,
                          FONCTION=DXN26,),
-                      _F(VALE_CALC=2.040424765922E-03,
+                      _F(VALE_CALC=2.042019847573E-03,
                          VALE_REFE=2.E-3,
-                         PRECISION=2.1E-2,
+                         PRECISION=2.2E-2,
                          REFERENCE='ANALYTIQUE',
                          CRITERE='RELATIF',
                          VALE_PARA=0.3544,
                          FONCTION=DXN31,),
-                      _F(VALE_CALC=1.002706079640E-03,
+                      _F(VALE_CALC=1.002262726956E-03,
                          VALE_REFE=1.E-3,
                          PRECISION=1.0E-2,
                          REFERENCE='ANALYTIQUE',
                          CRITERE='RELATIF',
                          VALE_PARA=0.2656,
                          FONCTION=DXN26B,),
-                      _F(VALE_CALC=9.919598889797E-04,
+                      _F(VALE_CALC=9.908996619813E-04,
                          VALE_REFE=1.E-3,
                          PRECISION=1.0E-2,
                          REFERENCE='ANALYTIQUE',
                          CRITERE='RELATIF',
                          VALE_PARA=0.44,
                          FONCTION=DXN26B,),
-                      _F(VALE_CALC=1.988297104419E-03,
+                      _F(VALE_CALC=1.986532335533E-03,
                          VALE_REFE=2.E-3,
                          PRECISION=1.0E-2,
                          REFERENCE='ANALYTIQUE',
@@ -380,6 +382,7 @@ TEST_FONCTION(VALEUR=(
                          FONCTION=DXN31B,),
                      )
               )
+        
 MAIL=MODI_MAILLAGE(reuse=MAIL,
                    MAILLAGE=MAIL,
                    ROTATION=_F(POIN_1=(0,0,0,),
@@ -575,21 +578,21 @@ IMPR_FONCTION(FORMAT='XMGRACE',
 
 TEST_FONCTION(VALEUR=(
 
-                      _F(VALE_CALC=1.002706079640E-03,
+                      _F(VALE_CALC=1.002262726956E-03,
                          VALE_REFE=1.E-3,
                          PRECISION=1.0E-2,
                          REFERENCE='ANALYTIQUE',
                          CRITERE='RELATIF',
                          VALE_PARA=0.2656,
                          FONCTION=DXN26C,),
-                      _F(VALE_CALC=9.919598889797E-04,
+                      _F(VALE_CALC=9.908996619813E-04,
                          VALE_REFE=1.E-3,
                          PRECISION=1.0E-2,
                          REFERENCE='ANALYTIQUE',
                          CRITERE='RELATIF',
                          VALE_PARA=0.44,
                          FONCTION=DXN26C,),
-                      _F(VALE_CALC=1.988297104419E-03,
+                      _F(VALE_CALC=1.986532335533E-03,
                          VALE_REFE=2.E-3,
                          PRECISION=1.0E-2,
                          REFERENCE='ANALYTIQUE',

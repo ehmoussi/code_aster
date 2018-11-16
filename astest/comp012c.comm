@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -45,7 +45,7 @@ TABTND   = CO('TTND');
 TABTNDC1 = CO('TTNDC1');
 TABTNDC2 = CO('TTNDC2');
 
-CALC_ESSAI_GEOMECA(INFO        =2,
+CALC_ESSAI_GEOMECA(INFO        =1,
                    MATER       =SABLE,
                    COMPORTEMENT=_F(RELATION      ='HUJEUX',
                                    ITER_INTE_MAXI=50,
@@ -55,18 +55,22 @@ CALC_ESSAI_GEOMECA(INFO        =2,
                    CONVERGENCE =_F(RESI_GLOB_RELA =1.E-6,
                                   ITER_GLOB_MAXI =10,),
 
-                   ESSAI_TND_C =_F(PRES_CONF  = -2.e+5,
-                                   SIGM_IMPOSE= 11.e+4,
+                   ESSAI_TRIA_ND_C_F =_F(PRES_CONF  = 2.e+5,
+                                   SIGM_IMPOSE= -11.e+4, # 1er chgt en traction
                                    NB_CYCLE   = 3,
+                                   TYPE_CHARGE='TRIANGULAIRE',
                                    UN_SUR_K   = 1.E-12,
-                                   #RU_MAX     = 0.99,
+                                   KZERO      =1,
+                                   CRIT_LIQUEFACTION ='RU_MAX',
+                                   ARRET_LIQUEFACTION='OUI',
+                                   VALE_CRIT  = .8,
                                    NB_INST    = 25, # Discr. par quart de cycle
                                    TABLE_RESU = (TABTNDC1,TABTNDC2,),
-                                   GRAPHIQUE  = ('P-Q','EPS_AXI-Q',
+                                   GRAPHIQUE  = ('P-Q','INST-Q','EPS_AXI-Q',
                                                  'EPS_AXI-PRE_EAU',
                                                   'SIG_AXI-PRE_EAU',),),);
-# IMPR_TABLE(TABLE=TABTNDC1,);
-# IMPR_TABLE(TABLE=TABTNDC2,);
+IMPR_TABLE(TABLE=TABTNDC1,);
+IMPR_TABLE(TABLE=TABTNDC2,);
 
 # pour l'essai 'TND_C' -> valeurs de reference de wtnv134b ('TRACE')
 
@@ -74,8 +78,8 @@ CALC_ESSAI_GEOMECA(INFO        =2,
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='AUTRE_ASTER',
            PRECISION=1.E-2,
-           VALE_CALC=-167596.551051,
-           VALE_REFE=-167596.551051,
+           VALE_CALC=167596.551051,
+           VALE_REFE=167596.551051,
            NOM_PARA ='P_1',
            TABLE=TABTNDC1,
            FILTRE=_F(CRITERE='ABSOLU',
@@ -86,8 +90,8 @@ TEST_TABLE(CRITERE='RELATIF',
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='AUTRE_ASTER',
            PRECISION=1.E-2,
-           VALE_CALC=-109999.984793,
-           VALE_REFE=-1.1E+05,
+           VALE_CALC=109999.984793,
+           VALE_REFE=1.1E+05,
            NOM_PARA ='Q_1',
            TABLE=TABTNDC1,
            FILTRE=_F(CRITERE='ABSOLU',
@@ -98,50 +102,50 @@ TEST_TABLE(CRITERE='RELATIF',
 # Valeurs de P et Q lors de la 1ere reprise de dilatance   
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='AUTRE_ASTER',
-           PRECISION=1.E-2,
-           VALE_CALC=-65366.1349332,
-           VALE_REFE=-65366.1349332,
+           PRECISION=2.E-2,
+           VALE_CALC=66200.1037075,
+           VALE_REFE=65366.1349332,
            NOM_PARA ='P_1',
            TABLE=TABTNDC1,
            FILTRE=_F(CRITERE='ABSOLU',
                      PRECISION=9.0E-05,
                      NOM_PARA='INST_1',
-                     VALE=100.6,),);
+                     VALE=91.15,),);
 
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='AUTRE_ASTER',
            PRECISION=1.E-2,
-           VALE_CALC=69200.9510567,
-           VALE_REFE=69200.9510567,
+           VALE_CALC=-69158.1549861,
+           VALE_REFE=-69200.9510567,
            NOM_PARA ='Q_1',
            TABLE=TABTNDC1,
            FILTRE=_F(CRITERE='ABSOLU',
                      PRECISION=9.0E-05,
                      NOM_PARA='INST_1',
-                     VALE=100.6,),);
+                     VALE=91.15,),);
 
 # Valeurs de P et Q lors de la 2eme reprise de dilatance
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='AUTRE_ASTER',
            PRECISION=1.E-2,
-           VALE_CALC=-3623.17388583,
-           VALE_REFE=-3623.17388583,
+           VALE_CALC=3626.59504438,
+           VALE_REFE=3623.17388583,
            NOM_PARA ='P_1',
            TABLE=TABTNDC1,
            FILTRE=_F(CRITERE='ABSOLU',
                      PRECISION=9.0E-05,
                      NOM_PARA='INST_1',
-                     VALE=139.8,),);
+                     VALE=99.3,),);
 
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='AUTRE_ASTER',
            PRECISION=1.E-2,
-           VALE_CALC=-5920.04567725,
-           VALE_REFE=-5920.04567725,
+           VALE_CALC=5926.27717192,
+           VALE_REFE=5920.04567725,
            NOM_PARA ='Q_1',
            TABLE=TABTNDC1,
            FILTRE=_F(CRITERE='ABSOLU',
                      PRECISION=9.0E-05,
                      NOM_PARA='INST_1',
-                     VALE=139.8,),);
+                     VALE=99.3,),);
 FIN();

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -133,11 +133,11 @@ MAIL=DEFI_GROUP(reuse =MAIL,
 
 # evaluate the elsets for each grain and add it to the mesh
 if mail_libre==0 :
-   if defi_groups==1 :
-       INCLUDE(UNITE=21,);
+   if defi_groups==1 : 
+       from perfe03a_1 import F_DEFI_GROUP
    else :
-       INCLUDE(UNITE=22,);
-
+       from perfe03a_2 import F_DEFI_GROUP
+   MAIL = F_DEFI_GROUP(MAIL)
 
 MO=AFFE_MODELE(MAILLAGE=MAIL,
                AFFE=_F(TOUT='OUI',
@@ -146,10 +146,11 @@ MO=AFFE_MODELE(MAILLAGE=MAIL,
 
 # define the orientations of each elset for each germ
 if defi_orientations==1 :
-   INCLUDE(UNITE=32,);
+   from perfe03a_3 import F_AFFE_CARA_ELEM
+   ORIELEM=F_AFFE_CARA_ELEM(MO)
 else:
-   INCLUDE(UNITE=31,);
-
+   from perfe03a_4 import F_AFFE_CARA_ELEM
+   ORIELEM=F_AFFE_CARA_ELEM(MO, Ng, prefix_nomgr)
 #=====  2 - MATERIAL DEFINITION ================================================
 #print "Defining the material..."
 Coef = 1000000.0;

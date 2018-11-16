@@ -6,4 +6,4 @@ P mpi_nbnoeud 1
 P testlist verification sequential
 
 F comm zzzz100b.comm D 1
-F libr zzzz100b.11 D 11
+F nom  zzzz100b.py D 0

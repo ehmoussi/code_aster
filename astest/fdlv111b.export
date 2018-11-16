@@ -7,4 +7,4 @@ P testlist verification sequential
 
 F comm fdlv111b.comm D 1
 F mmed fdlv111b.mmed D 20
-F libr fdlv111b.11 D 11
+F nom  fdlv111a.py D 0

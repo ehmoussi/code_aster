@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -211,7 +211,8 @@ RESU=STAT_NON_LINE(MODELE=MO,
 #-----------------------------------------------
 # les resultats experimentaux sont donnees dans le fichier joint
 # il s'agit des points de la numerisation de la courbe de reponse du specimen: deformation (-) et force (kN)                   
-INCLUDE(UNITE = 12)
+ 
+from ssns112a import val_exp
 
 # on a identifie les points numerises les plus proches des pic de chaque cycle pour la comparaison avec la solution numerique
 # les deformations sont converties en deplacement par la multiplication par la longueur du speciment l= 0.7m

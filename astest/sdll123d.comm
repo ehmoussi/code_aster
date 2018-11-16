@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -19,15 +19,15 @@
 
 # person_in_charge: mohamed-amine.hassini at edf.fr
 #
-import aster
-import aster_core
+#import aster
+#import aster_core
 import numpy as NP
 import numpy.linalg as LA
 
 DEBUT( CODE=_F(NIV_PUB_WEB='INTERNET'),
        PAR_LOT='NON', DEBUG=_F(SDVERI='OUI'), IMPR_MACRO='OUI')
 
-INCLUDE(UNITE=66)
+from sdll123d import EXTR_MATR
 
 # Lecture du maillage filiere
 MAIL=LIRE_MAILLAGE(FORMAT="ASTER",)

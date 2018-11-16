@@ -214,6 +214,41 @@ BAMO=DEFI_BASE_MODALE(CLASSIQUE=_F(INTERF_DYNA=INTERDYN,
                                    MODE_MECA=MODE,
                                    NMAX_MODE=30,),);
 
+#
+#-----------------------------
+#
+#    DEFI_FONCTION : UL 33
+#    ACCELEROGRAMME : LBEW
+#    (LONG BEACH NORTH SOUTH)
+#
+#-----------------------------
+#
+#    DEFI_FONCTION : UL 34
+#    ACCELEROGRAMME : LBNS
+#    (LONG BEACH EAST WEST)
+#
 
+from sdnx100a import F_FONC
+LBNS, LBEW= F_FONC()
+
+#
+#  ACCELEROGRAMMES NORMES A 0.1G
+#
+#
+#
+
+
+ACCELERX=CALC_FONCTION(COMB=_F(FONCTION=LBNS,
+                               COEF=1.5,),);
+
+ACCELERY=CALC_FONCTION(COMB=_F(FONCTION=LBEW,
+                               COEF=1.5,),);
+#
+#
+# PRE-TRAITEMENT DE MISS3D:
+#--------------------------
+# MAILLAGE ET IMPEDANCES D INTERFACE
+#
+#
 
 FIN()

@@ -79,29 +79,34 @@ DEFI_FOND_FISS=OPER(nom="DEFI_FOND_FISS",
 
     CONFIG_INIT  = SIMP(statut='f',typ='TXM',into=("COLLEE","DECOLLEE"), defaut="COLLEE"),
 
-    SYME         = SIMP(statut='o',typ='TXM',into=("OUI","NON"),),
-
 #   remarque : dans le cas symetrique, il faut soit LEVRE_SUP, soit DTAN_ORIG
 #   mais impossible de faire une regle.
 
-    LEVRE_SUP =FACT(statut='f',max=1,
-                    regles=(UN_PARMI('GROUP_MA','MAILLE'),),
-                    GROUP_MA =SIMP(statut='f',typ=grma,validators=NoRepeat(),max='**'),
-                    MAILLE   =SIMP(statut='c',typ=ma  ,validators=NoRepeat(),max='**'),
-                    ),
-
-    b_levre_inf  = BLOC(condition = """exists("LEVRE_SUP") and equal_to("SYME", 'NON')""",
-
-                        LEVRE_INF =FACT(statut='o',max=1,
+    # dans le cas collé
+    b_colle = BLOC(condition = """equal_to("CONFIG_INIT", 'COLLEE')""",
+    #   SYME doit êter présent tout le temps mais afin de rendre possible la règle pour la définition de la LEVRE_INF
+    #   on a besoin de SYME dans ce bloc. SYME est donc dupliqué ici et dans le bloc b_decolle
+                        SYME = SIMP(statut='o',typ='TXM',into=("OUI","NON"),),
+                        LEVRE_SUP = FACT(statut='f',max=1,
                                         regles=(UN_PARMI('GROUP_MA','MAILLE'),),
                                         GROUP_MA =SIMP(statut='f',typ=grma,validators=NoRepeat(),max='**'),
                                         MAILLE   =SIMP(statut='c',typ=ma  ,validators=NoRepeat(),max='**'),
                                         ),
-                        ),
+                        b_levre_inf  = BLOC(condition = """exists("LEVRE_SUP") and equal_to("SYME", 'NON')""",
 
-    # dans le cas decolle
+                                        LEVRE_INF = FACT(statut='o',max=1,
+                                                        regles=(UN_PARMI('GROUP_MA','MAILLE'),),
+                                                        GROUP_MA =SIMP(statut='f',typ=grma,validators=NoRepeat(),max='**'),
+                                                        MAILLE   =SIMP(statut='c',typ=ma  ,validators=NoRepeat(),max='**'),
+                                                        ),
+                                            ),
+                    ),
+    # dans le cas décollé
     b_decolle    = BLOC(condition = """equal_to("CONFIG_INIT", 'DECOLLEE')""",
-                     NORMALE   =SIMP(statut='o',typ='R',max=3),),
+    #   SYME doit être présent tout le temps
+    #   SYME est donc dupliqué ici et dans le bloc b_colle
+                    SYME      = SIMP(statut='o',typ='TXM',into=("OUI","NON"),),
+                    NORMALE   = SIMP(statut='o',typ='R',max=3),),
 
     PREC_NORM    = SIMP(statut='f',typ='R',defaut=0.1),
 

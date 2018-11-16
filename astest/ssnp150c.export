@@ -6,5 +6,6 @@ P mpi_nbnoeud 1
 P testlist verification sequential
 
 F comm ssnp150c.comm D 1
+F comm ssnp150c.com1 D 1
 F mmed ssnp150c.mmed D 20
-F libr ssnp150c.38 D 38
+

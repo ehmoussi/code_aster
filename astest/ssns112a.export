@@ -7,4 +7,4 @@ P testlist verification sequential
 
 F comm ssns112a.comm D 1
 F mmed ssns112a.mmed D 20
-F libr ssns112a.12 D 12
+F nom  ssns112a.py D 0

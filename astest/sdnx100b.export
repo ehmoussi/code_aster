@@ -6,6 +6,5 @@ P mpi_nbnoeud 1
 P testlist verification sequential
 
 F comm sdnx100b.comm D 1
-F comm sdnx100a.com1 D 1
-F comm sdnx100b.com2 D 1
 F mail sdnx100b.mail D 20
+F nom  sdnx100a.py D 0

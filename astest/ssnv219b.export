@@ -6,5 +6,7 @@ P mpi_nbnoeud 1
 P testlist verification sequential
 
 F comm ssnv219b.comm D 1
+F comm ssnv219a.com1 D 1
+F comm ssnv219b.com2 D 1
 F mmed ssnv219b.mmed D 20
-F libr ssnv219a.38 D 38
+

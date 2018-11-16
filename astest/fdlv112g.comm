@@ -279,7 +279,9 @@ PESAX=AFFE_CHAR_MECA(MODELE=MODELB,
                     PESANTEUR=_F(GRAVITE=1.0,
                                  DIRECTION=(-1.0,0.0,0.0,),),);
 
-INCLUDE(UNITE=31,);
+from fdlv112d import F_ACC_X
+acc_x = F_ACC_X()
+
 
 
 N=200 

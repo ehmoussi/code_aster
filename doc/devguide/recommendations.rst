@@ -104,8 +104,8 @@ Finally, we add the following 3 lines that allow ``boost::python`` to perform ty
     implicitly_convertible< AssemblyMatrixTemperatureDoublePtr, MatrixVariant >();
 
 
-Converting Macro-Commands
-=========================
+Macro-Commands
+==============
 
 Legacy Macro-commands do not work as is.
 
@@ -174,7 +174,12 @@ Required changes
   Just use :func:`~code_aster.Utilities.force_list` to ensure to have a list
   even if the user passed only one occurrence.
 
+- ``.List_F()`` does not exist anymore.
+
   Replace ``POUTRE.List_F()`` by ``force_list(POUTRE)``.
+
+  Temporarly one can use ``POUTRE = ListFact(POUTRE)`` not to change the code
+  and let ``POUTRE.List_F()`` with a dummy ``.List_F()`` function that does nothing.
 
 - Usage of logical units: See :mod:`code_aster.RunManager.LogicalUnit`.
 
@@ -190,6 +195,16 @@ Required changes
         +          # self.DeclareOut('num', numeddl)
                    num = NUME_DDL(MATR_RIGI=_a, INFO=info)
         +          self.register_result(num, numeddl)
+
+  In the legacy version some testcases sometimes define ``OBJ = CO('NAME')`` and
+  then pass either ``NAME`` or ``OBJ`` to children commands.
+  Now using the legacy mode of macro-commands that publishes ``NAME`` in the parent
+  context ``OBJ`` can not be passed to children commands. It will not have the
+  expected type (it stays a ``CO`` object and not becomes a ``Table`` or
+  ``Mesh``!).
+
+  When the new mode will be enabled one will just use ``result.NAME`` without
+  ambiguity.
 
 
 Parallel specific DataStructures

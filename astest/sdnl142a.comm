@@ -19,8 +19,6 @@
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),DEBUG=_F(SDVERI='OUI'));
 
-import numpy
-
 ma=LIRE_MAILLAGE();
 
 mo=AFFE_MODELE(MAILLAGE=ma,
@@ -71,11 +69,8 @@ encas14=AFFE_CHAR_MECA(MODELE=mo,
                                    DRX=0.,
                                    DRY=0.,
                                    DRZ=0.,),);
-
-
-INCLUDE(UNITE=77,);
-
-
+ 
+from sdnl142a import *
 
 FXP = FORMULE(VALE='FP(rhoeau,Cd1,D1,X,Y,Z,INST,H,T,L,thetai,0.,0.,proinf,depth,lstrech,VITE_X,VITE_Y,VITE_Z,DX,DY,DZ,1,cinelin,projvect,dragquad)',
               FP=FP,
