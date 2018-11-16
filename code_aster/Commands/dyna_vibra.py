@@ -20,7 +20,7 @@
 # person_in_charge: nicolas.sellenet@edf.fr
 
 from ..Objects import FullTransientResultsContainer, AssemblyMatrixPressureComplex
-from ..Objects import FullAcousticHarmonicResultsContainer
+from ..Objects import FullAcousticHarmonicResultsContainer, FullHarmonicResultsContainer
 from ..Objects import TransientGeneralizedResultsContainer, HarmoGeneralizedResultsContainer
 from .ExecuteCommand import ExecuteCommand
 
@@ -44,6 +44,7 @@ class VibrationDynamics(ExecuteCommand):
                 return
             if isinstance(matrRigi, AssemblyMatrixPressureComplex):
                 self._result = FullAcousticHarmonicResultsContainer()
+            self._result = FullHarmonicResultsContainer()
         else:
             if typ == "TRAN":
                 self._result = TransientGeneralizedResultsContainer()
