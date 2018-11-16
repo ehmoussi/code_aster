@@ -44,6 +44,7 @@ class VibrationDynamics(ExecuteCommand):
                 return
             if isinstance(matrRigi, AssemblyMatrixPressureComplex):
                 self._result = FullAcousticHarmonicResultsContainer()
+                return
             self._result = FullHarmonicResultsContainer()
         else:
             if typ == "TRAN":
