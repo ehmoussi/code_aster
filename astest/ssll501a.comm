@@ -68,7 +68,7 @@ def include_maillage(MAILLAGE):
     rcdir = aster_core.get_option('rcdir')
     return osp.join(rcdir, 'tests_data', MAILLAGE)
 
-nom_maillage = include_maillage('ssll501a.mail.datg')
+nom_maillage = include_maillage('ssll501a.mail')
 unite=DEFI_FICHIER(ACTION='ASSOCIER', FICHIER=nom_maillage, ACCES='NEW', UNITE=20)
 
 MAILL=LIRE_MAILLAGE(VERI_MAIL=_F(VERIF='OUI'),FORMAT='ASTER',UNITE=unite,  )

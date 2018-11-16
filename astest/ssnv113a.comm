@@ -31,7 +31,7 @@ DEBUT(CODE=_F(NIV_PUB_WEB='INTRANET'), DEBUG=_F(SDVERI='OUI'),)
 M=LIRE_MAILLAGE(FORMAT="ASTER",)
 
 MO=AFFE_MODELE(
-            MAILLAGE=M, 
+            MAILLAGE=M,
            AFFE=_F( TOUT = 'OUI',PHENOMENE = 'MECANIQUE',MODELISATION = '3D')
            )
 
@@ -80,18 +80,18 @@ for i,inst in enumerate(list_inst):
         TYPE_CHAM='NOEU_NEUT_R', CHAM_F=CHRES,
         CHAM_PARA=(INST0_1,),
     )
-    
+
     CHFLU[i]=CREA_CHAMP(
         OPERATION='ASSE', TYPE_CHAM='NOEU_IRRA_R', MAILLAGE=M,
         ASSE=   _F( TOUT = 'OUI', CHAM_GD =NEUT,
                     NOM_CMP = ('X1',),  NOM_CMP_RESU = ('IRRA',)),
     )
-    
-    
+
+
     affe.append({'CHAM_GD' : CHFLU[i],
                  'INST'    : inst,
                })
-    
+
     DETRUIRE(CONCEPT=_F(NOM=(INST0_1,NEUT)))
 
 FLUX1=CREA_RESU(
@@ -99,7 +99,7 @@ FLUX1=CREA_RESU(
     AFFE=affe
 )
 
-INCLUDE(DONNEE='ssnv113a.mater.datg')
+INCLUDE(DONNEE='ssnv113a_mater.comm')
 
 
 CM=AFFE_MATERIAU(
