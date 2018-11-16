@@ -1,0 +1,397 @@
+DEBUT(PAR_LOT = 'NON', IGNORE_ALARM=('SUPERVIS_9','SUPERVIS_1','CALCULEL6_77','POSTRELE_41'))
+
+print_results = True
+
+mesh = LIRE_MAILLAGE(
+    FORMAT = 'MED', 
+    UNITE=2
+)
+
+mesh = DEFI_GROUP(
+    reuse = mesh,
+    MAILLAGE = mesh,
+    CREA_GROUP_NO = (
+        _F(
+            NOM = "N1",
+            INTERSEC = ('MED01','UPPER'),
+        ),
+        _F(
+            NOM = "N2",
+            INTERSEC = ('END','LOWER'),
+        ),
+    ),
+);
+
+cls = DEFI_MATERIAU(
+    ELAS =
+        _F(
+            E = 30000.0, 
+            NU = 0.3
+    )
+)
+
+model = AFFE_MODELE(
+    AFFE = 
+        _F(
+            MODELISATION = ('DKT', ),
+            PHENOMENE = 'MECANIQUE',
+            TOUT = 'OUI'
+    ),
+    MAILLAGE = mesh
+)
+
+fieldmat = AFFE_MATERIAU(
+    AFFE = 
+        _F(
+            MATER = (cls, ), 
+            TOUT = 'OUI'
+        ), 
+    MODELE = model
+)
+
+elemprop = AFFE_CARA_ELEM(
+    MODELE = model,
+    COQUE =
+        _F(
+            GROUP_MA = 'ELEMENTS',
+            EPAIS = 300.0,
+            VECTEUR = (0 , 0 , 1),
+        )
+)
+
+boundary = AFFE_CHAR_MECA(
+    MODELE = model,
+    DDL_IMPO = 
+        _F(
+            GROUP_NO = (
+                'START',
+            ), 
+            DX = 0.,
+            DY = 0.,
+            DZ = 0.,
+            # DRX = 0.,
+            DRY = 0.,
+            DRZ = 0.
+        ),
+)
+
+shearLd1 = AFFE_CHAR_MECA(
+    MODELE=model,
+    FORCE_NODALE = _F(
+        GROUP_NO = (
+            #'MED01',
+            #'MED02',
+            #'MED03',
+            'END',
+        ),
+        FZ = -1500E+3/11 # -136.36E+3,
+    ),
+)
+
+shearLd2 = AFFE_CHAR_MECA(
+    MODELE=model,
+    FORCE_NODALE = _F(
+        GROUP_NO = (
+            #'MED01',
+            #'MED02',
+            #'MED03',
+            'END',
+        ),
+        FZ = -3000E+3/11 # -136.36E+3,
+    ),
+)
+
+reslin = MACRO_ELAS_MULT (
+    MODELE = model,
+    CHAM_MATER = fieldmat,
+    CARA_ELEM = elemprop,
+    CHAR_MECA_GLOBAL = boundary,
+    # NUME_DDL = nu_ddl, # on donne un nom afin de recupérer le concept NUME_DDL
+    CAS_CHARGE = (
+        _F( 
+               NOM_CAS = 'shearLd1',
+            SOUS_TITRE = 'nodal load FZ = -15E+3 [KN]',
+             CHAR_MECA = shearLd1,
+                OPTION = 'SANS',
+        ),
+        _F( 
+               NOM_CAS = 'shearLd2',
+            SOUS_TITRE = 'nodal load FZ = -30E+3 [KN]',
+             CHAR_MECA = shearLd2,
+                OPTION = 'SANS',
+        ),
+
+    ),
+)
+
+TEST_RESU(
+    RESU = (
+        _F(
+		    RESULTAT=reslin,
+		    NOM_CAS = 'shearLd1',
+			NOM_CHAM = 'DEPL',
+			CRITERE='RELATIF',					  
+			NOM_CMP='DZ',
+			GROUP_NO='N2',
+			VALE_CALC = -4.43388814176537E+01,
+			VALE_REFE = -4.266E+01,
+			PRECISION = 4.E-2,
+			REFERENCE='ANALYTIQUE',
+        ),
+        _F(
+		    RESULTAT=reslin,
+		    NOM_CAS = 'shearLd2',
+			NOM_CHAM = 'DEPL',
+			CRITERE='RELATIF',					  
+			NOM_CMP='DZ',
+			GROUP_NO='N2',
+			VALE_CALC = 2*(-4.43388814176537E+01),
+			VALE_REFE = 2*(-4.266E+01),
+			PRECISION = 4.E-2,
+			REFERENCE='ANALYTIQUE',
+        ),
+    ),
+);
+
+# The field SIEF_ELGA means SIgma (stress) or EFfort (force or moment), per ELement at GAuss points.
+# The field SIEF_ELNO means SIgma (stress) or EFfort (force or moment), per ELement at NOde.
+# The fields DEPL and SIEF_ELGA are calculated even if we do not request it in CALC_CHAMP
+# [U2.01.05]
+#
+
+reslin = CALC_CHAMP(
+         reuse = reslin,
+        MODELE = model,
+    CHAM_MATER = fieldmat,
+     CARA_ELEM = elemprop,
+      RESULTAT = reslin,
+     CONTRAINTE = (
+         'EFGE_ELNO',
+         'SIEF_ELNO',
+     ),
+)
+
+postres = POST_CHAMP (
+    RESULTAT = reslin,
+    GROUP_MA = ('ELEMENTS',),
+    EXTR_COQUE = _F(
+        NUME_COUCHE = 1,
+        NIVE_COUCHE = 'MOY' ,
+        NOM_CHAM = (
+        'SIEF_ELNO',
+        ),
+    ),
+);
+
+postres = CALC_CHAMP(
+         reuse = postres,
+        MODELE = model,
+    CHAM_MATER = fieldmat,
+     CARA_ELEM = elemprop,
+      RESULTAT = postres,
+     CONTRAINTE = (
+         'SIEF_NOEU',
+     ),
+);
+
+TEST_RESU(
+    RESU = (
+        _F(
+		    RESULTAT=postres,
+		    NOM_CAS = 'shearLd1',
+			NOM_CHAM = 'SIEF_NOEU',
+			CRITERE='RELATIF',					  
+			NOM_CMP='SIYY',
+			GROUP_NO='N1',
+			VALE_CALC = 3.01492627573424E+01,
+			VALE_REFE = 2.997E+01,
+			PRECISION = 1.E-2,
+			REFERENCE='ANALYTIQUE',
+        ),
+        _F(
+		    RESULTAT=postres,
+		    NOM_CAS = 'shearLd2',
+			NOM_CHAM = 'SIEF_NOEU',
+			CRITERE='RELATIF',					  
+			NOM_CMP='SIYY',
+			GROUP_NO='N1',
+			VALE_CALC = 2*3.01492627573424E+01,
+			VALE_REFE = 2*2.997E+01,
+			PRECISION = 1.E-2,
+			REFERENCE='ANALYTIQUE',
+        ),
+    ),
+);
+
+#~ Units
+Pa=1.
+sec=1.
+m=1.
+N=1.
+
+MPa = 1.E6
+GPa = 1.E9
+mm  = 1.E-3
+
+# Slab thickness
+EP = 0.12;
+
+# Concrete properties
+EB  = 35700000000.0; # Young Modulus
+NUB = 0.0; # Poisson ration equal to 0.0
+fck = 35*MPa
+
+# Steel rebars properties
+E   = 2.1e+11; # Young Modulus
+NU  = 0.0; # Poisson ration equal to 0.0
+fyk = 450*MPa
+
+# Cases MULTI_ELAS
+lst_nomcas_slu = ('shearLd1','shearLd2')
+lst_numord_slu = (1,2)
+
+ferrDatSlu = dict(
+    TOUT = 'OUI', 
+    C_INF = 0.04, 
+    C_SUP = 0.04,
+    FCK = fck,
+    FYK = fyk,
+    E_S = E,
+    GAMMA_S = 1.15,
+    GAMMA_C = 1.5,
+    SIGS_ELS = 0.8*fyk,
+    SIGC_ELS = 0.6*fck,
+    ALPHA_E  =  15,
+    CLASSE_ACIER = 'B',
+    ALPHA_CC = 1.0 ,
+    UNITE_CONTRAINTE = 'Pa',
+    TYPE_STRUCTURE = '2D',
+)
+
+# INCLUDE(UNITE=45, INFO=2)
+
+reslin = COMBINAISON_FERRAILLAGE (
+    reuse = reslin,
+    RESULTAT = reslin, 
+    CODIFICATION = 'EC2',
+    COMBINAISON = (
+        _F (
+            TYPE = 'ELU_FONDAMENTAL', 
+            NOM_CAS = ('shearLd1','shearLd2')
+         ),
+    ),
+    AFFE = ( _F ( **ferrDatSlu ), ), 
+    )
+
+TEST_RESU(
+    RESU=(
+        _F(
+            RESULTAT=reslin,
+			NOM_CAS = 'shearLd1',
+			NOM_CHAM = 'FERRAILLAGE',
+			CRITERE='RELATIF',
+			NOM_CMP='DNSYS',
+			MAILLE='M230',
+			POINT=1,				  
+			PRECISION = 1.E-6,
+			VALE_CALC = 1.06670257901892E-05,
+			VALE_REFE = 1.06670257901892E-05,
+			REFERENCE='ANALYTIQUE',
+        ),
+        _F(
+            RESULTAT=reslin,
+			NOM_CAS = 'shearLd2',
+			NOM_CHAM = 'FERRAILLAGE',
+			CRITERE='RELATIF',
+			NOM_CMP='DNSYS',
+			MAILLE='M230',
+			POINT=1,				  
+			PRECISION = 1.E-6,
+			VALE_CALC = 2.13340515803783E-05,
+			VALE_REFE = 2.13340515803783E-05,
+			REFERENCE='ANALYTIQUE',
+        ),
+        _F(
+            RESULTAT=reslin,
+			NOM_CAS = 'COMB_DIME_ACIER',
+			NOM_CHAM = 'FERRAILLAGE',
+			CRITERE='RELATIF',
+			NOM_CMP='DNSYS',
+			MAILLE='M230',
+			POINT=1,				  
+			PRECISION = 1.E-6,
+			VALE_CALC = 2.13340515803783E-05,
+			VALE_REFE = 2.13340515803783E-05,
+			REFERENCE='ANALYTIQUE',
+        ),
+    )
+)
+
+TOTEST = CREA_CHAMP (
+    OPERATION ='EXTR',
+    RESULTAT = reslin,
+    TYPE_CHAM = 'CART_NEUT_R',
+    NOM_CHAM ='UT01_ELEM',
+    NOM_CAS = 'COMB_DIME_ORDRE',
+);
+
+TEST_RESU(
+    CARTE = _F(
+        CHAM_GD = TOTEST,
+        MAILLE='M230',
+        NOM_CMP='X4',
+        REFERENCE='ANALYTIQUE',
+        PRECISION=1.E-6,
+		VALE_CALC=2.,
+        VALE_REFE=2.,
+    )
+)
+
+if print_results :
+
+    IMPR_RESU(
+        UNITE=8, 
+        FORMAT='RESULTAT', 
+        RESU= (
+            _F(
+                RESULTAT=reslin,
+                NOM_CHAM = ('DEPL',),
+                GROUP_NO = ('N1','N2'),
+            ),
+            _F(
+                RESULTAT=postres,
+                NOM_CHAM = ('SIEF_NOEU',),
+                GROUP_NO = ('N1','N2'),
+           ),
+           _F(
+               RESULTAT=reslin,
+               NOM_CHAM = ('FERRAILLAGE',),
+            ),
+        )
+    );
+
+    IMPR_RESU(
+        FORMAT='MED', 
+        RESU = (
+            _F(
+                RESULTAT = reslin, 
+                GROUP_MA = ('ELEMENTS',),
+            ),
+            _F(
+                RESULTAT = postres, 
+                GROUP_MA = ('ELEMENTS',),
+                NOM_CHAM = ('SIEF_NOEU',),
+            ),
+        ),
+        ######################################################
+        # Per visualizzare i riferimenti locali degli elementi
+        ######################################################
+        CONCEPT =_F(
+            CARA_ELEM = elemprop,
+            REPERE_LOCAL = 'ELEM',
+            MODELE = model,
+            ),
+        UNITE=3
+    );
+
+FIN()
