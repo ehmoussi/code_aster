@@ -18,14 +18,12 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine mmtppe(typmae     , typmam   ,&
-                      ndim       , nne      , nnm   , nnl     , nbdm  ,&
+    subroutine mmtppe(ndim       , nne      , nnm   , nnl     , nbdm  ,&
                       iresog     , l_large_slip, &
-                      laxis      , jeusup   , &
-                      xpc        , ypc      , xpr     , ypr   ,&
+                      jeusup   , &
                       tau1       , tau2     ,&
                       ffe        , ffm      , dffm    , ddffm , ffl   ,&
-                      jacobi     , jeu      , djeut   ,&
+                      jeu      , djeut   ,&
                       dlagrc     , dlagrf   , &
                       norm       , mprojn   , mprojt  ,&
                       mprt1n     , mprt2n   , mprnt1  , mprnt2,&
@@ -34,16 +32,13 @@ interface
                       vech1      , vech2    ,&
                       taujeu1    , taujeu2  ,&
                       dnepmait1  , dnepmait2)
-        aster_logical, intent(in) :: laxis
-        character(len=8), intent(in) :: typmae, typmam
         integer, intent(in) :: ndim, nne, nnm, nnl, nbdm
         integer, intent(in) :: iresog
         aster_logical, intent(in) :: l_large_slip
         real(kind=8), intent(in) :: jeusup
-        real(kind=8), intent(in) :: xpc, ypc, xpr, ypr
         real(kind=8), intent(in) :: tau1(3), tau2(3)
-        real(kind=8), intent(out) :: ffe(9), ffm(9), dffm(2,9), ddffm(3, 9), ffl(9)
-        real(kind=8), intent(out) :: jacobi, jeu
+        real(kind=8), intent(in) :: ffe(9), ffm(9), dffm(2,9), ddffm(3, 9), ffl(9)
+        real(kind=8), intent(out) :: jeu
         real(kind=8), intent(out) :: djeut(3), dlagrc, dlagrf(2)
         real(kind=8), intent(out) :: norm(3)
         real(kind=8), intent(out) :: mprojn(3, 3), mprojt(3, 3)
