@@ -1,0 +1,591 @@
+# File: launcher_pre.comm
+
+DEBUT(PAR_LOT = 'NON',IGNORE_ALARM=('SUPERVIS_1','CALCULEL6_77','POSTRELE_41'))
+
+print_results = True
+
+mesh = LIRE_MAILLAGE (
+    FORMAT = 'MED', 
+    UNITE=2
+)
+
+cls = DEFI_MATERIAU (
+    ELAS =
+        _F(
+            E = 30000.0*1000, # from N/mm2 to KN/m2
+            NU = 0.3
+    )
+)
+
+model = AFFE_MODELE(
+    AFFE = (
+        _F(
+            MODELISATION = (
+                'DKT',
+            ),
+            PHENOMENE = 'MECANIQUE',
+            GROUP_MA = 'GrPLATES'
+        ),
+        _F(
+            MODELISATION = (
+                'POU_D_E',
+            ),
+            PHENOMENE = 'MECANIQUE',
+            GROUP_MA = 'GrCOLUMNS'
+        ),
+    ),
+    MAILLAGE = mesh
+)
+
+fieldmat = AFFE_MATERIAU(
+    AFFE = 
+        _F(
+            MATER = (cls, ), 
+            TOUT = 'OUI'
+        ), 
+    MODELE = model
+)
+
+elemprop = AFFE_CARA_ELEM(
+    MODELE = model,
+    COQUE = (
+        _F( GROUP_MA = 'GrGeomSLAB_21', EPAIS = 0.21, VECTEUR = (1 , 0 , 0), ), # Concrete slabs
+        _F( GROUP_MA = 'GrGeomWALL_60', EPAIS = 0.60, VECTEUR = (0 , 0 , 1), ), # Undergound walls
+        _F( GROUP_MA = 'GrGeomWALS_25', EPAIS = 0.25, VECTEUR = (0 , 0 , 1), ), # Shear walls
+    ),
+    POUTRE = (
+        _F( GROUP_MA = ('GrGeomCOLUMN_25_70', ), SECTION = 'RECTANGLE', CARA = ('HY', 'HZ'), VALE = (0.250 , 0.700) ),
+        _F( GROUP_MA = ('GrGeomCOLUMN_25_50', ), SECTION = 'RECTANGLE', CARA = ('HY', 'HZ'), VALE = (0.250 , 0.500) ),
+        _F( GROUP_MA = ('GrGeomCOLUMN_50_50', ), SECTION = 'RECTANGLE', CARA = ('HY', 'HZ'), VALE = (0.500 , 0.500) ),
+    ),
+)
+
+bound = AFFE_CHAR_MECA(
+    MODELE = model,
+    DDL_IMPO = (
+        _F(
+            GROUP_NO = (
+                'BOUNDARY_COLUMNS',
+            ), DX = 0., DY = 0., DZ = 0., DRX = 0., DRY = 0., DRZ = 0.
+        ),
+        _F(
+            GROUP_NO = (
+                'BOUNDARY_WALL',
+            ), DX = 0., DY = 0., DZ = 0.,
+        ),
+    )
+)
+
+floor0 = AFFE_CHAR_MECA(
+    MODELE = model,
+    FORCE_COQUE = 
+        _F(
+            GROUP_MA = (
+                'GrSLAB_L0_05_Faces',
+            ),
+            FZ = -(250.0) * (0.21),
+        ),
+)
+
+floor1 = AFFE_CHAR_MECA(
+    MODELE = model,
+    FORCE_COQUE = 
+        _F(
+            GROUP_MA = (
+                'GrSLAB_L1_05_Faces',
+            ),
+            FZ = -(250.0) * (0.21),
+        ),
+)
+
+floor2 = AFFE_CHAR_MECA(
+    MODELE = model,
+    FORCE_COQUE = 
+        _F(
+            GROUP_MA = (
+                'GrSLAB_L2_05_Faces',
+            ),
+            FZ = -(250.0) * (0.21),
+        ),
+)
+
+floor3 = AFFE_CHAR_MECA(
+    MODELE = model,
+    FORCE_COQUE = 
+        _F(
+            GROUP_MA = (
+                'GrSLAB_L3_05_Faces',
+            ),
+            FZ = -(250.0) * (0.21),
+        ),
+)
+
+floor4 = AFFE_CHAR_MECA(
+    MODELE = model,
+    FORCE_COQUE = 
+        _F(
+            GROUP_MA = (
+                'GrSLAB_L4_05_Faces',
+            ),
+            FZ = -(250.0) * (0.21),
+        ),
+)
+
+floor5 = AFFE_CHAR_MECA(
+    MODELE = model,
+    FORCE_COQUE = 
+        _F(
+            GROUP_MA = (
+                'GrSLAB_L5_05_Faces',
+            ),
+            FZ = -(250.0) * (0.21),
+        ),
+)
+
+floor6 = AFFE_CHAR_MECA(
+    MODELE = model,
+    FORCE_COQUE = 
+        _F(
+            GROUP_MA = (
+                'GrSLAB_L6_05_Faces',
+            ),
+            FZ = -(250.0) * (0.21),
+        ),
+)
+
+reslin = MACRO_ELAS_MULT (
+    MODELE = model,
+    CHAM_MATER = fieldmat,
+    CARA_ELEM = elemprop,
+    CHAR_MECA_GLOBAL = bound,
+    # NUME_DDL = nu_ddl, # on donne un nom afin de recupérer le concept NUME_DDL
+    CAS_CHARGE = (
+        _F( 
+        NOM_CAS = 'floor0',
+#        SOUS_TITRE ='floor0',
+        CHAR_MECA = floor0,
+        OPTION = 'SANS',
+        ),
+        _F( 
+        NOM_CAS = 'floor1',
+#        SOUS_TITRE ='floor1',
+        CHAR_MECA = floor1,
+        OPTION = 'SANS',
+        ),
+        _F( 
+        NOM_CAS = 'floor2',
+#        SOUS_TITRE ='floor2',
+        CHAR_MECA = floor2,
+        OPTION = 'SANS',
+        ),
+        _F( 
+        NOM_CAS = 'floor3',
+#        SOUS_TITRE ='floor3',
+        CHAR_MECA = floor3,
+        OPTION = 'SANS',
+        ),
+        _F( 
+        NOM_CAS = 'floor4',
+#        SOUS_TITRE ='floor4',
+        CHAR_MECA = floor4,
+        OPTION = 'SANS',
+        ),
+        _F( 
+        NOM_CAS = 'floor5',
+#        SOUS_TITRE ='floor5',
+        CHAR_MECA = floor5,
+        OPTION = 'SANS',
+        ),
+        _F( 
+        NOM_CAS = 'floor6',
+#        SOUS_TITRE ='floor6',
+        CHAR_MECA = floor6,
+        OPTION = 'SANS',
+        ),
+    ),
+)
+
+# The field SIEF_ELGA means SIgma (stress) or EFfort (force or moment), per ELement at GAuss points.
+# The field SIEF_ELNO means SIgma (stress) or EFfort (force or moment), per ELement at NOde.
+# The fields DEPL and SIEF_ELGA are calculated even if we do not request it in CALC_CHAMP [U2.01.05]
+
+reslin = CALC_CHAMP(
+         reuse = reslin,
+        MODELE = model,
+    CHAM_MATER = fieldmat,
+     CARA_ELEM = elemprop,
+      RESULTAT = reslin,
+     CONTRAINTE = (
+         'EFGE_ELNO',
+         'SIEF_ELNO',
+     ),
+         FORCE = (
+        'REAC_NODA',
+    ),
+);
+
+CFLOOR0 = CREA_CHAMP (
+    OPERATION ='EXTR',
+    RESULTAT = reslin,
+    TYPE_CHAM = 'ELNO_SIEF_R',
+    NOM_CHAM ='EFGE_ELNO',
+    NOM_CAS = 'floor0',
+);
+
+CFLOOR1 = CREA_CHAMP (
+    OPERATION ='EXTR',
+    RESULTAT = reslin,
+    TYPE_CHAM = 'ELNO_SIEF_R',
+    NOM_CHAM ='EFGE_ELNO',
+    NOM_CAS = 'floor1',
+);
+
+CFLOOR2 = CREA_CHAMP (
+    OPERATION ='EXTR',
+    RESULTAT = reslin,
+    TYPE_CHAM = 'ELNO_SIEF_R',
+    NOM_CHAM ='EFGE_ELNO',
+    NOM_CAS = 'floor2',
+);
+
+CFLOOR3 = CREA_CHAMP (
+    OPERATION ='EXTR',
+    RESULTAT = reslin,
+    TYPE_CHAM = 'ELNO_SIEF_R',
+    NOM_CHAM ='EFGE_ELNO',
+    NOM_CAS = 'floor3',
+);
+
+CFLOOR4 = CREA_CHAMP (
+    OPERATION ='EXTR',
+    RESULTAT = reslin,
+    TYPE_CHAM = 'ELNO_SIEF_R',
+    NOM_CHAM ='EFGE_ELNO',
+    NOM_CAS = 'floor4',
+);
+
+CFLOOR5 = CREA_CHAMP (
+    OPERATION ='EXTR',
+    RESULTAT = reslin,
+    TYPE_CHAM = 'ELNO_SIEF_R',
+    NOM_CHAM ='EFGE_ELNO',
+    NOM_CAS = 'floor5',
+);
+
+CFLOOR6 = CREA_CHAMP (
+    OPERATION ='EXTR',
+    RESULTAT = reslin,
+    TYPE_CHAM = 'ELNO_SIEF_R',
+    NOM_CHAM ='EFGE_ELNO',
+    NOM_CAS = 'floor6',
+);
+
+RESUMULT = CREA_RESU (
+    OPERATION = 'AFFE',
+    TYPE_RESU = 'MULT_ELAS',
+    NOM_CHAM = 'EFGE_ELNO',
+    AFFE = (
+        _F( CHAM_GD = CFLOOR0 , NOM_CAS = "floor0",   MODELE = model, CARA_ELEM = elemprop, ),
+        _F( CHAM_GD = CFLOOR1 , NOM_CAS = "floor1",   MODELE = model, CARA_ELEM = elemprop, ),
+        _F( CHAM_GD = CFLOOR2 , NOM_CAS = "floor2",   MODELE = model, CARA_ELEM = elemprop, ),
+        _F( CHAM_GD = CFLOOR3 , NOM_CAS = "floor3",   MODELE = model, CARA_ELEM = elemprop, ),
+        _F( CHAM_GD = CFLOOR4 , NOM_CAS = "floor4",   MODELE = model, CARA_ELEM = elemprop, ),
+        _F( CHAM_GD = CFLOOR5 , NOM_CAS = "floor5",   MODELE = model, CARA_ELEM = elemprop, ),
+        _F( CHAM_GD = CFLOOR6 , NOM_CAS = "floor6",   MODELE = model, CARA_ELEM = elemprop, ),
+    )
+)
+
+#~ Units
+Pa=1.
+sec=1.
+m=1.
+N=1.
+
+MPa = 1.E6
+GPa = 1.E9
+mm  = 1.E-3
+
+# Slab thickness
+EP = 0.12;
+
+# Concrete properties
+EB  = 35700000000.0; # Young Modulus
+NUB = 0.0; # Poisson ration equal to 0.0
+fck = 35*MPa
+
+# Steel rebars properties
+E   = 2.1e+11; # Young Modulus
+NU  = 0.0; # Poisson ration equal to 0.0
+fyk = 450*MPa
+
+lst_nomcas_floor = ('floor0','floor1','floor2','floor3','floor4','floor5','floor6')
+lst_numord_floor = (1,2,3,4,5,6,7)
+
+ferrDatSlu = dict(
+    TOUT = 'OUI', 
+    C_INF = 0.04, 
+    C_SUP = 0.04,
+    FCK = fck,
+    FYK = fyk,
+    E_S = E,
+    GAMMA_S = 1.15,
+    GAMMA_C = 1.5,
+    SIGS_ELS = 0.8*fyk,
+    SIGC_ELS = 0.6*fck,
+    ALPHA_E  =  15,
+    CLASSE_ACIER = 'B',
+    ALPHA_CC = 1.0 ,
+    UNITE_CONTRAINTE = 'Pa',
+    TYPE_STRUCTURE = '2D', # test OK
+)
+
+reslin = COMBINAISON_FERRAILLAGE (
+    reuse = reslin,
+    RESULTAT = reslin, 
+    CODIFICATION = 'EC2',
+    COMBINAISON = (
+        _F (
+            TYPE = 'ELU_FONDAMENTAL', 
+            NOM_CAS = lst_nomcas_floor,
+        ),
+    ),
+    AFFE = ( _F ( **ferrDatSlu ), ), 
+)
+
+# ID M3452 ordre n. 1 cmp X2 DNSXS --> 1.38709219710163E-06
+# ID M4511 ordre n. 2 cmp X2 DNSXS --> 1.61010640170952E-06
+# ID M5114 ordre n. 3 cmp X2 DNSXS --> 1.57361830265693E-06
+# ID M5960 ordre n. 4 cmp X2 DNSXS --> 1.57462247057179E-06
+# ID M6815 ordre n. 5 cmp X2 DNSXS --> 1.68028272274199E-06
+# ID M7652 ordre n. 6 cmp X2 DNSXS --> 1.57844940913345E-06
+# ID M8601 ordre n. 7 cmp X2 DNSXS --> 1.82966291073997E-06
+
+TEST_RESU(
+    RESU=(
+        _F(
+            RESULTAT=reslin,
+			NOM_CAS = 'COMB_DIME_ACIER',
+			NOM_CHAM = 'FERRAILLAGE',
+			CRITERE='RELATIF',
+			NOM_CMP='DNSXS',
+			MAILLE='M3452',
+			POINT=1,				  
+			PRECISION = 1.E-6,
+			VALE_CALC = 1.38709219710163E-06,
+			VALE_REFE = 1.38709219710163E-06,
+			REFERENCE='ANALYTIQUE',
+        ),
+        _F(
+            RESULTAT=reslin,
+			NOM_CAS = 'COMB_DIME_ACIER',
+			NOM_CHAM = 'FERRAILLAGE',
+			CRITERE='RELATIF',
+			NOM_CMP='DNSXS',
+			MAILLE='M4511',
+			POINT=1,				  
+			PRECISION = 1.E-6,
+			VALE_CALC = 1.61010640170952E-06,
+			VALE_REFE = 1.61010640170952E-06,
+			REFERENCE='ANALYTIQUE',
+        ),
+        _F(
+            RESULTAT=reslin,
+			NOM_CAS = 'COMB_DIME_ACIER',
+			NOM_CHAM = 'FERRAILLAGE',
+			CRITERE='RELATIF',
+			NOM_CMP='DNSXS',
+			MAILLE='M5114',
+			POINT=1,				  
+			PRECISION = 1.E-6,
+			VALE_CALC = 1.57361830265693E-06,
+			VALE_REFE = 1.57361830265693E-06,
+			REFERENCE='ANALYTIQUE',
+        ),
+        _F(
+            RESULTAT=reslin,
+			NOM_CAS = 'COMB_DIME_ACIER',
+			NOM_CHAM = 'FERRAILLAGE',
+			CRITERE='RELATIF',
+			NOM_CMP='DNSXS',
+			MAILLE='M5960',
+			POINT=1,				  
+			PRECISION = 1.E-6,
+			VALE_CALC = 1.57462247057179E-06,
+			VALE_REFE = 1.57462247057179E-06,
+			REFERENCE='ANALYTIQUE',
+        ),
+        _F(
+            RESULTAT=reslin,
+			NOM_CAS = 'COMB_DIME_ACIER',
+			NOM_CHAM = 'FERRAILLAGE',
+			CRITERE='RELATIF',
+			NOM_CMP='DNSXS',
+			MAILLE='M6815',
+			POINT=1,				  
+			PRECISION = 1.E-6,
+			VALE_CALC = 1.68028272274199E-06,
+			VALE_REFE = 1.68028272274199E-06,
+			REFERENCE='ANALYTIQUE',
+        ),
+        _F(
+            RESULTAT=reslin,
+			NOM_CAS = 'COMB_DIME_ACIER',
+			NOM_CHAM = 'FERRAILLAGE',
+			CRITERE='RELATIF',
+			NOM_CMP='DNSXS',
+			MAILLE='M7652',
+			POINT=1,				  
+			PRECISION = 1.E-6,
+			VALE_CALC = 1.57844940913345E-06,
+			VALE_REFE = 1.57844940913345E-06,
+			REFERENCE='ANALYTIQUE',
+        ),
+        _F(
+            RESULTAT=reslin,
+			NOM_CAS = 'COMB_DIME_ACIER',
+			NOM_CHAM = 'FERRAILLAGE',
+			CRITERE='RELATIF',
+			NOM_CMP='DNSXS',
+			MAILLE='M8601',
+			POINT=1,				  
+			PRECISION = 1.E-6,
+			VALE_CALC = 1.82966291073997E-06,
+			VALE_REFE = 1.82966291073997E-06,
+			REFERENCE='ANALYTIQUE',
+        ),
+    )
+)
+
+TOTEST = CREA_CHAMP (
+    OPERATION ='EXTR',
+    RESULTAT = reslin,
+    TYPE_CHAM = 'CART_NEUT_R',
+    NOM_CHAM ='UT01_ELEM',
+    NOM_CAS = 'COMB_DIME_ORDRE',
+);
+
+TEST_RESU(
+    CARTE = _F(
+        CHAM_GD = TOTEST,
+        MAILLE='M3452',
+        NOM_CMP='X2',
+        REFERENCE='ANALYTIQUE',
+        PRECISION=1.E-6,
+		VALE_CALC=1.,
+        VALE_REFE=1.,
+    )
+)
+
+TEST_RESU(
+    CARTE = _F(
+        CHAM_GD = TOTEST,
+        MAILLE='M4511',
+        NOM_CMP='X2',
+        REFERENCE='ANALYTIQUE',
+        PRECISION=1.E-6,
+		VALE_CALC=2.,
+        VALE_REFE=2.,
+    )
+)
+
+TEST_RESU(
+    CARTE = _F(
+        CHAM_GD = TOTEST,
+        MAILLE='M5114',
+        NOM_CMP='X2',
+        REFERENCE='ANALYTIQUE',
+        PRECISION=1.E-6,
+		VALE_CALC=3.,
+        VALE_REFE=3.,
+    )
+)
+
+TEST_RESU(
+    CARTE = _F(
+        CHAM_GD = TOTEST,
+        MAILLE='M5960',
+        NOM_CMP='X2',
+        REFERENCE='ANALYTIQUE',
+        PRECISION=1.E-6,
+		VALE_CALC=4.,
+        VALE_REFE=4.,
+    )
+)
+
+TEST_RESU(
+    CARTE = _F(
+        CHAM_GD = TOTEST,
+        MAILLE='M6815',
+        NOM_CMP='X2',
+        REFERENCE='ANALYTIQUE',
+        PRECISION=1.E-6,
+		VALE_CALC=5.,
+        VALE_REFE=5.,
+    )
+)
+
+TEST_RESU(
+    CARTE = _F(
+        CHAM_GD = TOTEST,
+        MAILLE='M7652',
+        NOM_CMP='X2',
+        REFERENCE='ANALYTIQUE',
+        PRECISION=1.E-6,
+		VALE_CALC=6.,
+        VALE_REFE=6.,
+    )
+)
+
+TEST_RESU(
+    CARTE = _F(
+        CHAM_GD = TOTEST,
+        MAILLE='M8601',
+        NOM_CMP='X2',
+        REFERENCE='ANALYTIQUE',
+        PRECISION=1.E-6,
+		VALE_CALC=7.,
+        VALE_REFE=7.,
+    )
+)
+
+if print_results :
+    IMPR_RESU  (
+        FORMAT = 'MED', 
+        RESU = ( 
+            _F( 
+                RESULTAT = reslin, 
+                NOM_CHAM = ('FERRAILLAGE',), 
+            ),
+            _F( 
+                RESULTAT = reslin, 
+                NOM_CHAM = ('UT01_ELEM',), 
+            ),
+            _F( 
+                RESULTAT = reslin, 
+                NOM_CHAM = ('EFGE_ELNO',), 
+            ),
+            _F( 
+                RESULTAT = reslin, 
+                NOM_CHAM = ('DEPL',), 
+            ),
+            _F( 
+                RESULTAT = reslin, 
+                NOM_CHAM = ('SIEF_ELNO',), 
+            ),
+        ), UNITE = 3 
+    )
+    IMPR_RESU  (
+        FORMAT = 'RESULTAT', 
+        RESU = ( 
+            _F( 
+                RESULTAT = reslin, 
+                NOM_CHAM = ('FERRAILLAGE',), 
+            ),
+            _F( 
+                RESULTAT = reslin, 
+                NOM_CHAM = ('UT01_ELEM',), 
+            ),
+        ), UNITE = 8 
+    )
+
+FIN()
