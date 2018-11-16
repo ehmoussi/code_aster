@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -27,7 +27,7 @@ MODEL=AFFE_MODELE(MAILLAGE=MAIL,
    AFFE=_F(TOUT='OUI', PHENOMENE='MECANIQUE', MODELISATION='C_PLAN',),
 )
 
-INCLUDE(DONNEE='ssnp132a.mater.datg')
+INCLUDE(DONNEE='ssnp132a_mater.comm')
 
 
 IRRA_0=CREA_CHAMP(
@@ -128,7 +128,7 @@ TEST_RESU(RESU=_F(POINT=1,
                   VALE_REFE=(-256.06598386635, ),
                   PRECISION=2.E-08,
                   VALE_ABS='NON',),
-          TEST_NAN='NON',)  
+          TEST_NAN='NON',)
 
 TEST_RESU(RESU=_F(POINT=1,
                   NOM_CMP='SIYY',
@@ -257,8 +257,8 @@ TEST_RESU(RESU=_F(POINT=1,
                   VALE_ABS='NON',),
           TEST_NAN='NON',)
 
- 
- 
+
+
 
 TEST_RESU(RESU=_F(POINT=1,
                   NOM_CMP='V4',

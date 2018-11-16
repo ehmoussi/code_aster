@@ -131,7 +131,7 @@ def includeExternalData(theFile):
     rcdir = aster_core.get_option('rcdir')
     return osp.join(rcdir, 'tests_data', theFile)
 
-spec = includeExternalData('sdll152e.msup.datg')
+spec = includeExternalData('sdll152e.msup')
 DEFI_FICHIER(ACTION='ASSOCIER', FICHIER=spec, ACCES='NEW', UNITE=19)
 
 INTSPEX=LIRE_INTE_SPEC( UNITE=19,

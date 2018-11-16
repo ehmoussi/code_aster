@@ -159,7 +159,7 @@ CAREG=AFFE_CARA_ELEM(MODELE=MO,
                                 VALE=(0.,0.,1.),),),
                         );
 
-INCLUDE(DONNEE='ssnl131d.mater.datg')
+INCLUDE(DONNEE='ssnl131d_mater.comm')
 
 
 

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -84,7 +84,7 @@ CH_FPL_R=CREA_CHAMP(TYPE_CHAM='NOEU_NEUT_R',
 #------------------
 
 MULT = FORMULE(VALE='X1*X2*INST',
-               NOM_PARA=('X1','X2','INST',),);
+               NOM_PARA=['X1', 'X2', 'INST'],)
 
 CHRES=CREA_CHAMP(TYPE_CHAM='NOEU_NEUT_F',
                  OPERATION='AFFE',
@@ -270,7 +270,7 @@ FLUENC1=CREA_RESU(OPERATION='AFFE',
                      INST=5000.,),),);
 # DEFINITION DES MATERIAUX
 
-INCLUDE(DONNEE='ssnl128b.mater.datg')
+INCLUDE(DONNEE='ssnl128b_mater.comm')
 
 FON_T=DEFI_FONCTION(NOM_PARA='X',
                     NOM_RESU='TEMP',

@@ -288,7 +288,7 @@ CAREL=AFFE_CARA_ELEM(   MODELE=MO,
     INFO = 2
  )
 
-INCLUDE(DONNEE='ssnl121c.mater.datg')
+INCLUDE(DONNEE='ssnl121c_mater.comm')
 
 
 
