@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -50,20 +50,27 @@ def calc_pression_ops(self, MAILLAGE, RESULTAT, GROUP_MA, INST,GEOMETRIE, **args
     # RESULTAT
     __RESU = self['RESULTAT']
     # Modele & BLINDAGES
+
+
+    # Recupération à partir de ASTER.DISMOI
+    iret, ibid, n_modele = aster.dismoi(
+        'MODELE', __RESU.nom, 'RESULTAT', 'F')
+    auto_modele = n_modele.rstrip()
+    if auto_modele in ('', '#AUCUN'):
+        UTMESS('I', 'POST0_23', valk=nomresu)
+    elif auto_modele == '#PLUSIEURS':
+        UTMESS('F', 'CALCPRESSION0_2')
+
+
     MODELE = self['MODELE']
     if MODELE == None:
-        UTMESS('A', 'CALCPRESSION0_1')
-        # Recupération à partir de ASTER.DISMOI
-        iret, ibid, n_modele = aster.dismoi(
-            'MODELE', __RESU.nom, 'RESULTAT', 'F')
-        n_modele = n_modele.rstrip()
-        if n_modele in ('', '#AUCUN'):
-            UTMESS('I', 'POST0_23', valk=nomresu)
-    elif n_modele == '#PLUSIEURS':
-        UTMESS('F', 'CALCPRESSION0_2')
+        n_modele = auto_modele
     else:
         n_modele = MODELE.nom
-
+        if not n_modele == auto_modele :
+            UTMESS('F', 'CALCPRESSION0_1')
+        
+        
     __model = self.get_concept(n_modele)
 
     # BLINDAGE : on poursuit le calcul uniquement que si le modèle n'est pas
