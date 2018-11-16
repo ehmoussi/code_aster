@@ -6,5 +6,6 @@ P mpi_nbnoeud 1
 P testlist verification sequential
 
 F comm rtool01c.comm D 1
-F libr rtool01c.70   D 70
+F comm rtool01c.com1 D 1
+F comm rtool01c.com2 D 1
 F mmed rtool01c.mmed D 20

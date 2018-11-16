@@ -21,7 +21,7 @@ DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),DEBUG=_F(SDVERI='NON'))
 # SDVERI='NON' car la verification est trop couteuse en CPU
 #
 import aster
-from sdls119a_accel import accel
+from sdls119a import accel
 #
 mail = LIRE_MAILLAGE(FORMAT='MED', VERI_MAIL = _F( VERIF = 'OUI' ) , );
 #

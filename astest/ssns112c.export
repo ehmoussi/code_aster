@@ -8,6 +8,6 @@ P testlist verification sequential
 F comm ssns112c.comm D 1
 F comm ssns112c.com1 D 1
 F comm ssns112c.com2 D 1
+F nom  ssns112a.py   D 0
 F mmed ssns112c.mmed D 20
-F libr ssns112a.12 D 12
 F datg ssns112c.datg D 16

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,19 +17,8 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-import math
-
-try:
-  # Import du module de calcul symbolique Sympy
-  import sympy
-  sympy_available = True
-  # cet import inutile est du au plantage sur la machine clpaster (fiche 17434)
-  import numpy
-except ImportError:
-  sympy_available = False
-
-
 # ================================================================================================================================================================================
+import math
 def NormeAster(RESULTAT, Sol_Ana, MAIL, MODELE, GROUP_MA):
      """ RESULTAT  : SD Resultat contenant la solution calculee
          Sol_Ana   : Solution analytique sous forme d une liste de FORMULEs Aster
@@ -172,7 +161,8 @@ ACIER=DEFI_MATERIAU(THER=_F(LAMBDA=Lambda),);
 #          Creation de la solution manufacturee
 # ========================================================================================
 
-INCLUDE(UNITE=38)
+from tplp107b import Solu_Manu
+TT, SS, NN = Solu_Manu()
 
 #================================================================================================
 # Debut de l'etude de la convergence
@@ -268,9 +258,9 @@ for remail in range(0,nb_remail):
                            _F(NOM=CHMAT),
                            _F(NOM=CLIMIT),
                            _F(NOM=resolut),
-                           _F(NOM=Uana),
-                           _F(NOM=Ucalc),
-                           _F(NOM=DIFFN),
+                           _F(NOM=dicResu['Uana']),
+                           _F(NOM=dicResu['Ucalc']),
+                           _F(NOM=dicResu['DIFFN']),
                            ),
                    INFO=1,
                   );
@@ -309,7 +299,7 @@ IMPR_FONCTION(FORMAT='XMGRACE',
 
 TEST_RESU(CHAM_NO=_F(
                      TYPE_TEST='SOMM_ABS',
-                     CHAM_GD=DIFFN,
+                     CHAM_GD=dicResu['DIFFN'],
                      VALE_CALC=1.6435694872364,),
           )
 
