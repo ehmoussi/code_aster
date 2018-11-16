@@ -6,6 +6,6 @@ P mpi_nbnoeud 1
 P testlist verification sequential
 
 F comm ssnl131d.comm D 1
-F comm ssnl131d.mater.datg D 1
+F comm ssnl131d_mater.comm D 1
 F comm ssnl131d.com2 D 1
 F mail ssnl131a.mail D 20
