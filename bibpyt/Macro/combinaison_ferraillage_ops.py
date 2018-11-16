@@ -254,7 +254,7 @@ def combinaison_ferraillage_ops(self, **args):
                             _F(TOUT='OUI',CHAM_GD=__CHP[6],NOM_CMP=('X1',), NOM_CMP_RESU=('X7',),),
                           )
                           )
-                 
+
     # Adding COMB_DIME_ACIER and COMB_DIME_ORDRE tu resu
     #
     resu = CREA_RESU(
@@ -271,7 +271,7 @@ def combinaison_ferraillage_ops(self, **args):
 							 CARA_ELEM = caraelem,
 								),
 						),)
-      
+    
     # Adding COMB_DIME_ACIER and COMB_DIME_ORDRE tu resu
     #
     resu = CREA_RESU(
@@ -325,7 +325,6 @@ def algo_2D (_resfer, affe, lst_nume_ordre, code, type_combo):
         _resfer = CALC_FERRAILLAGE (
             reuse = _resfer,
             RESULTAT = _resfer,
-            # INST = inst,
             NUME_ORDRE = nume_ordre,
             AFFE = _F(**dict_affe),
             **dic_calc_ferraillage  

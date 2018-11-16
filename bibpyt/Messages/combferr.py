@@ -21,59 +21,50 @@
 # aslint: disable=W4004
 
 cata_msg = {
-
 1 : _(u"""
- -> Avete richiesto ............................... CODIFICATION = "UTILISATEUR"
- -> Nella versione 1.0.0. non sono attive le opzioni diverse da "EC2". Il
-    calcolo per le altro opzioni non sarà effettuato.
+ -> Vous avez demandé ...................... CODIFICATION = "UTILISATEUR"
+ -> En cette version la seule valeur disponible est "EC2". Le calcun
+    ne sera pas effectué pour les autres valeurs.
 """),
 
 2 : _(u"""
- -> Avete richiesto .................................. TYPE_STRUCTURE = "POUTRE"
- -> Nella versione 1.0.0. non sono attive le opzioni diverse da "2D". Il
-    calcolo per questa opzione non sarà effettuato.
+ -> Vous avez demandé ........................ TYPE_STRUCTURE = "POUTRE"
+ -> En cette version la seule valeur disponible est "2D". Le calcul pour
+    ne sera pas effectué pour les autres valeurs.
 """),
 
 3 : _(u"""
- -> Avete richiesto ................................. TYPE_STRUCTURE = "POUTEAU"
- -> Nella versione 1.0.0. non sono attive le opzioni diverse da "2D". Il
-    calcolo per questa opzione non sarà effettuato.
+ -> Vous avez demandé ....................... TYPE_STRUCTURE = "POUTEAU"
+ -> En cette version la seule valeur disponible est "2D". Le calcul pour
+    ne sera pas effectué pour les autres valeurs.
 """),
 
 4 : _(u"""
- -> La lista di NUME_ORDRE contiene almeno un valore duplicato.
+ -> La liste NUME_ORDRE contient au moins une valeur répétée.
 """),
 
 5 : _(u"""
- -> La lista di NOM_CAS contiene almeno un valore duplicato.
+ -> La liste NOM_CAS contient au moins une valeur répétée.
 """),
 
 6 : _(u"""
- -> Qualche NOM_CAS non appartiene ai casi disponibili.
+ -> Un NOM_CAS indiqué n'appartient pas aux cas disponibles 
 """),
 
 7 : _(u"""
- -> Qualche NUME_ORDRE non appartiene ai casi disponibili.
+ -> Un NUME_ORDRE indiqué n'appartient pas aux cas disponibles 
 """),
 
 8 : _(u"""
- -> L'utilisation de COMBINAISON_FERRAILLAGE n'est possible qu'avec 1 seul 
+ -> L'utilisation de COMBINAISON_FERRAILLAGE n'est possible qu'avec un seul 
  -> MODELE
 """),
 
 9 : _(u"""
- -> Il caso COMB_DIME_ORDRE esiste già. Verrà sovrascritto !!!
- -> MODELE
+ -> Le cas COMB_DIME_ORDRE existe déjà. Il sera écrasé !!!
 """),
 
 10 : _(u"""
- -> Il caso COMB_DIME_ACIER esiste già. Verrà sovrascritto !!!
- -> MODELE
+ -> Le cas COMB_DIME_ACIER existe déjà. Il sera écrasé !!!
 """),
 }
-
-# INFODEV
-#
-# Moving file in ../bibpyt/Messages
-#
-# INFODEV
