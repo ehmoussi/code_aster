@@ -7,5 +7,5 @@ P testlist verification sequential
 
 F comm fdlv112h.comm D 1
 F mail fdlv112h.mail D 20
-F libr fdlv112d.31 D 31
+F nom  fdlv112d.py D 0
 

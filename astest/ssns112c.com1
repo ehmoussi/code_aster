@@ -25,7 +25,7 @@
 #   created on          : mar. 06 oct. 2015 16:46:47 CEST
 #   by DHRC plugin version 0.1 - Salome-Meca 
 
-# Include this file using the INCLUDE operator of Code_Aster.
+# Include this file using a new stage for Code_Aster.
 # It creates a material called "mat_dhrc" that you should pass to AFFE_MATERIAU.
 # It uses the International System of Units (metre, kilogram and second)
 

@@ -6,5 +6,6 @@ P mpi_nbnoeud 1
 P testlist verification sequential
 
 F comm ssns106n.comm D 1
+F comm ssns106i.com1 D 1
+F comm ssns106n.com2 D 1
 F mmed ssns106d.mmed D 20
-F libr ssns106i.12 D 12

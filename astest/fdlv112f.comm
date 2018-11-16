@@ -315,7 +315,9 @@ TABSOL=DEFI_SOL_MISS(MATERIAU=_F(E=3.0e11,
                      TITRE='SOL HOMOGENE',INFO=2,);
 
 
-INCLUDE(UNITE=31,);
+from fdlv112d import F_ACC_X
+acc_x = F_ACC_X()
+
 
 N=200 
 dt=0.01

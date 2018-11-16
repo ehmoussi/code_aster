@@ -8,4 +8,4 @@ P testlist verification sequential
 F comm sdnv114a.comm D 1
 F mmed sdnv114a.mmed D 20
 F libr sdnv114a.12 D 12
-F libr sdnv114a.11 D 11
+F nom  sdnv114a.py D 0

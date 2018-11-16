@@ -183,7 +183,7 @@ BAMO=MODE_STATIQUE(MATR_RIGI=KASSUP,
 ### numerique, on va creer BAMOEXP en calculant la correspondance
 ### experimental numerique :
 ##
-##INCLUDE(UNITE=2);
+## insertion du contenu de fort.2
 ##
 ##calc_modestat_capteurs(MAILSUP,MAILEXP,MODLSUP,
 ##                       CHMATSUP,CHCARSUP,CONDLSUP,

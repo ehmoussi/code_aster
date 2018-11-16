@@ -7,4 +7,4 @@ P testlist verification sequential
 
 F comm sdnl130b.comm D 1
 F mmed ssnl119b.mmed D 20
-F libr sdll130a.92 D 92
+F nom  sdll130a.py   D 0

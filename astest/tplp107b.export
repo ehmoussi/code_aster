@@ -8,4 +8,4 @@ P testlist verification sequential
 F comm tplp107b.comm D 1
 F mail tplp107b.mail D 20
 F datg tplp107a.datg D 16
-F libr tplp107b.38 D 38
+F nom  tplp107b.py D 0
