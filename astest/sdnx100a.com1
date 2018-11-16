@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-POURSUITE();
+POURSUITE(CODE='OUI');
 
 LBEW=DEFI_FONCTION(NOM_PARA='INST',
                    NOM_RESU='ACCE',
