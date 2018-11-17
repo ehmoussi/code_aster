@@ -1,8 +1,44 @@
-# File: launcher_pre.comm
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
 
-DEBUT(PAR_LOT = 'NON',IGNORE_ALARM=('SUPERVIS_1','CALCULEL6_77','POSTRELE_41'))
+# AUTEUR : L. DALL OLIO (AlterEgo), L. PAONE (Kobe Innovation Engineering)
+#          VALIDATION DE COMBINAISON_FERRAILLAGE et CALC_FERRAILLAGE
+#
+#  DETAILS : MODELISATION DKT
+#            Mailles TRIA3
+#
+# - Model is a multistory building with 7th floors.
+# - Computation with macr_elas_mult
+# - Applied loads in 7 NOM_CAS one for each floor named 'floor0'...'floor6'
+# - The  elements
+#       ID M3452 floor nb 1
+#       ID M4511 floor nb 2
+#       ID M5114 floor nb 3
+#       ID M5960 floor nb 4
+#       ID M6815 floor nb 5
+#       ID M7652 floor nb 6
+#       ID M8601 floor nb 7
+#   will have governing combination ordered by number floor
 
-print_results = True
+DEBUT(PAR_LOT = 'NON',IGNORE_ALARM=('SUPERVIS_1','CALCULEL6_77'))
+
+print_results = False
 
 mesh = LIRE_MAILLAGE (
     FORMAT = 'MED', 

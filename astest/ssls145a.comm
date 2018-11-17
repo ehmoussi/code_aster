@@ -1,3 +1,35 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+# AUTEUR : L. DALL OLIO (AlterEgo), L. PAONE (Kobe Innovation Engineering)
+#          VALIDATION DE COMBINAISON_FERRAILLAGE et CALC_FERRAILLAGE
+#
+#  DETAILS : MODELISATION DKT
+#            Mailles QUAD4
+#
+# - Based on analytical results of beam with one fixed support and point load
+#   on free ending.
+# - Computation with macr_elas_mult
+# - Applied loads for macr_elas_mult-shearLd2 is double than for shearLd1
+# - macr_elas_mult-shearLd2 must be the governing combination for density DNSYS
+#   that is X4 component for UT01_ELEM maked by COMBINAISON_FERRAILLAGE
+
 DEBUT(PAR_LOT = 'NON', IGNORE_ALARM=('SUPERVIS_9','SUPERVIS_1','CALCULEL6_77','POSTRELE_41'))
 
 print_results = True
