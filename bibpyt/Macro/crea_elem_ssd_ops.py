@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,8 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-def crea_elem_ssd_ops(self,  NUME_DDL, INTERFACE, BASE_MODALE,
-                      CALC_FREQ, SOLVEUR, **args):
+def crea_elem_ssd_ops(self, **args):
     """
      Enchainement des commandes :
         CALC_MATR_ELEM + ASSE_MATRICE + CALC_MODES + MODE_STATIQUE
@@ -26,6 +25,11 @@ def crea_elem_ssd_ops(self,  NUME_DDL, INTERFACE, BASE_MODALE,
     """
 
     from code_aster.Cata.Syntax import _F
+    NUME_DDL = args.get("NUME_DDL")
+    INTERFACE = args.get("INTERFACE")
+    BASE_MODALE = args.get("BASE_MODALE")
+    CALC_FREQ = args.get("CALC_FREQ")
+    SOLVEUR = args.get("SOLVEUR")
 
     # On met le mot cle NUME_DDL dans une variable locale pour le proteger
     numeddl = NUME_DDL

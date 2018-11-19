@@ -372,15 +372,15 @@ def test_compor_ops(self, **args):
 
     if OPTION == "THER":
         epsi = 1.E-10
-        MATER = args['MATER']
-        ALPHA = args['ALPHA']
-        YOUNG = args['YOUNG']
-        TEMP_INIT = args['TEMP_INIT']
-        TEMP_FIN = args['TEMP_FIN']
-        NB_VARI = args['NB_VARI']
+        MATER = args.get('MATER')
+        ALPHA = args.get('ALPHA')
+        YOUNG = args.get('YOUNG')
+        TEMP_INIT = args.get('TEMP_INIT')
+        TEMP_FIN = args.get('TEMP_FIN')
+        NB_VARI = args.get('NB_VARI')
 
-        if args['INST_FIN'] != None:
-            INST_FIN = args['INST_FIN']
+        if args.get('INST_FIN') != None:
+            INST_FIN = args.get('INST_FIN')
 
         NCAL = len(LIST_MATER)
 
@@ -406,8 +406,8 @@ def test_compor_ops(self, **args):
 
         __zero = DEFI_CONSTANTE(VALE=0.)
 
-        if args['SUPPORT'] != None:
-            motscles['SUPPORT'] = args['SUPPORT']
+        if args.get('SUPPORT') != None:
+            motscles['SUPPORT'] = args.get('SUPPORT')
 
         __U = SIMU_POINT_MAT(MATER=MATER, INFO=INFO,
                              AFFE_VARC=(
@@ -461,23 +461,23 @@ def test_compor_ops(self, **args):
                 # cas particuliers
                 if COMPORTEMENT[0]['RELATION'] == 'VMIS_CINE_LINE':
 
-                    if args['D_SIGM_EPSI'] != None:
-                        D_SIGM_EPSI = args['D_SIGM_EPSI']
+                    if args.get('D_SIGM_EPSI') != None:
+                        D_SIGM_EPSI = args.get('D_SIGM_EPSI')
                     else:
                         raise 'erreur'
 
                     Vim[0:5] = Vim[0:5] * D_SIGM_EPSI(Ti) / D_SIGM_EPSI(Tm)
 
                 if COMPORTEMENT[0]['RELATION'] == 'VMIS_ECMI_LINE':
-                    if args['C_PRAG'] != None:
-                        C_PRAG = args['C_PRAG']
+                    if args.get('C_PRAG') != None:
+                        C_PRAG = args.get('C_PRAG')
                     else:
                         raise 'erreur'
                     Vim[2:7] = Vim[2:7] * C_PRAG(Ti) / C_PRAG(Tm)
 
                 if COMPORTEMENT[0]['RELATION'] == 'VMIS_ECMI_TRAC':
-                    if args['C_PRAG'] != None:
-                        C_PRAG = args['C_PRAG']
+                    if args.get('C_PRAG') != None:
+                        C_PRAG = args.get('C_PRAG')
                     else:
                         raise 'erreur'
                     Vim[2:7] = Vim[2:7] * C_PRAG(Ti) / C_PRAG(Tm)
@@ -587,14 +587,14 @@ def test_compor_ops(self, **args):
             DETRUIRE(CONCEPT=_F(NOM=__RES[i]), INFO=1)
 
     elif OPTION == "MECA":
-        TEST_TANGENTE = args['TEST_TANGENTE']
-        LIST_NPAS = args['LIST_NPAS']
-        YOUNG = args['YOUNG']
-        POISSON = args['POISSON']
+        TEST_TANGENTE = args.get('TEST_TANGENTE')
+        LIST_NPAS = args.get('LIST_NPAS')
+        YOUNG = args.get('YOUNG')
+        POISSON = args.get('POISSON')
 
         # Discretisation du calcul
-        if args['LIST_NPAS'] != None:
-            LIST_NPAS = args['LIST_NPAS']
+        if args.get('LIST_NPAS') != None:
+            LIST_NPAS = args.get('LIST_NPAS')
         else:
             LIST_NPAS = 4 * [1] + [1, 5, 25]
         Ncal = len(LIST_NPAS)
@@ -602,13 +602,13 @@ def test_compor_ops(self, **args):
         # les differents calculs effectues et les precisions sur chaque
         # TEST_RESU
         label_cal = ['_Pa_', '_Th_', '_sym_', '_rot_'] + (Ncal - 4) * ['_N']
-        if args['LIST_TOLE'] != None:
-            LIST_TOLE = args['LIST_TOLE']
+        if args.get('LIST_TOLE') != None:
+            LIST_TOLE = args.get('LIST_TOLE')
         else:
             LIST_TOLE = 4 * [1.E-10] + [1.E-1] + (Ncal - 5) * [1.E-2] + [1.E-8]
 
-        if args['PREC_ZERO'] != None:
-            PREC_ZERO = args['PREC_ZERO']
+        if args.get('PREC_ZERO') != None:
+            PREC_ZERO = args.get('PREC_ZERO')
         else:
             PREC_ZERO = len(VARI_TEST) * [1.E-10]
 
@@ -623,8 +623,8 @@ def test_compor_ops(self, **args):
         # liste d'archivage
         __tempsar = DEFI_LIST_REEL(VALE=[t_0 * i for i in range(9)],)
 
-        if args['MODELISATION'] != None:
-            modelisation = args['MODELISATION']
+        if args.get('MODELISATION') != None:
+            modelisation = args.get('MODELISATION')
         else:
             modelisation = "3D"
         if modelisation == "3D":
@@ -678,12 +678,12 @@ def test_compor_ops(self, **args):
         ldicoeps.append(dicoeps)
         motscles['EPSI_IMPOSE'] = ldicoeps
 
-        if args['SUPPORT'] != None:
+        if args.get('SUPPORT') != None:
             if modelisation == "C_PLAN":
                 motscles['MODELISATION'] = 'C_PLAN'
                 motscles['SUPPORT'] = 'ELEMENT'
             else:
-                motscles['SUPPORT'] = args['SUPPORT']
+                motscles['SUPPORT'] = args.get('SUPPORT')
 
         # Boucle sur l'ensemble des calculs
         for i in range(Ncal):
@@ -775,9 +775,9 @@ def test_compor_ops(self, **args):
 
             if COMPORTEMENT:
                 motscles['COMPORTEMENT'][0]['TYPE_MATR_TANG'] = 'VERIFICATION'
-                if args['VERI_MATR_OPTION'] is not None:
-                    motscles['COMPORTEMENT'][0]['VALE_PERT_RELA'] = args[
-                        'VERI_MATR_OPTION'][0]['VALE_PERT_RELA']
+                if args.get('VERI_MATR_OPTION') is not None:
+                    motscles['COMPORTEMENT'][0]['VALE_PERT_RELA'] = args.get(
+                        'VERI_MATR_OPTION')[0]['VALE_PERT_RELA']
                 __DEFLIS2 = DEFI_LIST_INST(DEFI_LIST=_F(LIST_INST=__Linst,),
                                            ECHEC=_F(EVENEMENT='ERREUR',
                                                     ACTION='DECOUPE',
@@ -794,11 +794,11 @@ def test_compor_ops(self, **args):
                                    )
                 DEBUG(SDVERI='OUI')
                 motscles = {}
-                if args['VERI_MATR_OPTION'] is not None:
-                    motscles['PRECISION'] = args[
-                        'VERI_MATR_OPTION'][0]['PRECISION']
-                    motscles['PREC_ZERO'] = args[
-                        'VERI_MATR_OPTION'][0]['PREC_ZERO']
+                if args.get('VERI_MATR_OPTION') is not None:
+                    motscles['PRECISION'] = args.get(
+                        'VERI_MATR_OPTION')[0]['PRECISION']
+                    motscles['PREC_ZERO'] = args.get(
+                        'VERI_MATR_OPTION')[0]['PREC_ZERO']
 
                 __DIFFMAT = VERI_MATR_TANG(**motscles)
 
