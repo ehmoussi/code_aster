@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -24,13 +24,16 @@ from numpy.linalg import *
 from Calc_essai.cata_ce import crea_champ
 from Utilitai.Utmess import UTMESS
 
-def calc_stabilite_ops(self, reuse, SCHEMA_TEMPS, FILTRE, **args):
+def calc_stabilite_ops(self, **args):
     """
     Filtre sur une table mode_non_line.
     On evalue egalement la stabilite du systeme
     """
 
     from code_aster.Cata.Syntax import _F
+    reuse = args.get("reuse")
+    SCHEMA_TEMPS = args.get("SCHEMA_TEMPS")
+    FILTRE = args.get("FILTRE")
 
     # La macro compte pour 1 dans la numerotation des commandes
     self.set_icmd(1)

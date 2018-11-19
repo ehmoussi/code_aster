@@ -111,14 +111,21 @@ def calc_grid(gx,gy):
     return grid_out
 
 #-----------------------------------------------------------------------
-def impr_acce_seisme_ops(
-    self, TABLE, NOCI_REFE, SPEC_OSCI, TITRE=None, DUREE=None,
-    SPEC_1_SIGMA=None, LIST_FREQ=None, FREQ_MIN=None, FREQ_MAX=None,
-    RATIO_HV=None, **args):
+def impr_acce_seisme_ops(self, **args):
     """
         Ecriture de la macro IMPR_ACCE_SEISME
     """
     ier = 0
+    TABLE = args.get("TABLE")
+    NOCI_REFE = args.get("NOCI_REFE")
+    SPEC_OSCI = args.get("SPEC_OSCI")
+    TITRE = args.get("TITRE")
+    DUREE = args.get("DUREE")
+    SPEC_1_SIGMA = args.get("SPEC_1_SIGMA")
+    LIST_FREQ = args.get("LIST_FREQ")
+    FREQ_MIN = args.get("FREQ_MIN")
+    FREQ_MAX = args.get("FREQ_MAX")
+    RATIO_HV = args.get("RATIO_HV")
 
     # On importe les definitions des commandes a utiliser dans la macro
     INFO_FONCTION = self.get_cmd('INFO_FONCTION')
