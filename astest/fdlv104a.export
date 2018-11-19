@@ -7,4 +7,4 @@ P testlist verification sequential
 
 F comm fdlv104a.comm D 1
 F mail fdlv104a.mmed D 20
-F libr fdlv104a.21 D 21
+F nom  fdlv104a.py   D 0

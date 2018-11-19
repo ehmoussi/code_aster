@@ -106,7 +106,8 @@ MAT1=DEFI_MATERIAU(ELAS=_F(E =YOUNG, NU =NU, RHO =RHO, ALPHA=0.),
 
 MAT_PAR=DEFI_MATERIAU(ELAS=_F(E =YOUNG, NU =NU, RHO =RHO));
 
-INCLUDE(UNITE=38,INFO=1);
+from wdnp102a import f_vite
+vite=f_vite()
 
 Paraxia = 'BAS';
 

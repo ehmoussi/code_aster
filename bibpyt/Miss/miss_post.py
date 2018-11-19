@@ -97,7 +97,7 @@ class PostMiss(object):
         """Enchaine les tâches élémentaires"""
         self.argument()
         self.execute()
-        self.sortie()
+        return self.sortie()
 
     def argument(self):
         """Vérification des arguments d'entrée."""
@@ -336,6 +336,7 @@ class PostMissTran(PostMiss):
                                   SYMETRIE = 'NON',
                                   TOUT_CHAM = 'OUI')
         self.initco()
+        return resugene
 
 
     def initco(self):
@@ -496,6 +497,7 @@ class PostMissHarm(PostMissTran):
     def sortie(self):
         """Prépare et produit les concepts de sortie."""
         self.initco()
+        return self.parent.sd
 
     def dyna_vibra_harm(self, **kwargs):
         """Execution de DYNA_VIBRA. Produit le concept définitif."""
@@ -538,6 +540,7 @@ class PostMissTabl(PostMiss):
         tabout = CREA_TABLE(TYPE_TABLE='TABLE',
                             **dprod)
         self.initco()
+        return tabout
 
     def initco(self):
         """Ajoute les concepts"""
@@ -749,6 +752,7 @@ class PostMissControl(PostMiss):
         tabout = CREA_TABLE(TYPE_TABLE='TABLE',
                             **dprod)
         self.initco()
+        return tabout
 
     def recombinaison(self):
         """Recombinaison des réponses unitaires."""
@@ -1224,6 +1228,7 @@ class PostMissChar(PostMiss):
         """Prépare et produit les concepts de sortie."""
         self.parent.DeclareOut('Force_no', self.parent.sd)
         Force_no = AFFE_CHAR_MECA_F(MODELE=self.MODELE, FORCE_NODALE=self.Force_Nodale,);
+        return Force_no
 
     def calc_forc_temps(self):
         """Calcul de l'effort sismique dans le domaine temporel"""
@@ -1409,8 +1414,10 @@ class ListPost(list):
 
     def run(self):
         """Lance les post-traitements"""
+        toReturn = None
         for post in self:
-            post.run()
+            toReturn = post.run()
+        return toReturn
 
 def PostMissFactory(type_post, parent, param):
     """create the list of instances of a subclass of PostMiss"""

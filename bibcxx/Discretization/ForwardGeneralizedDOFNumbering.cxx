@@ -1,6 +1,6 @@
 /**
- * @file GeneralizedDOFNumbering.cxx
- * @brief Implementation de GeneralizedDOFNumbering
+ * @file ForwardGeneralizedDOFNumbering.cxx
+ * @brief Implementation de ForwardGeneralizedDOFNumbering
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org

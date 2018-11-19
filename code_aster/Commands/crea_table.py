@@ -34,14 +34,11 @@ class TableCreation(ExecuteCommand):
             keywords (dict): Keywords arguments of user's keywords.
         """
         typ = keywords["TYPE_TABLE"]
-        if typ == "TABLE":
-            self._result = Table()
-        elif typ == "TABLE_FONCTION":
+        if typ == "TABLE_FONCTION":
             self._result = TableOfFunctions()
         elif typ == "TABLE_CONTENEUR":
             self._result = TableContainer()
         else:
-            raise NotImplementedError("Type of table {0!r} not yet "
-                                      "implemented".format(typ))
+            self._result = Table()
 
 CREA_TABLE = TableCreation.run

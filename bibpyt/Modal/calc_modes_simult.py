@@ -18,67 +18,8 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: nicolas.brie at edf.fr
-from code_aster.Commands.ExecuteCommand import ExecuteCommand
-from code_aster.Objects import (MechanicalModeContainer,
-                                GeneralizedModeContainer,
-                                ResultsContainer)
-from code_aster.Objects import MechanicalModeComplexContainer
-from Modal.mode_iter_simult import MODE_ITER_SIMULT as MODE_ITER_SIMULT_CATA
 
-
-class ModalCalculationSimult(ExecuteCommand):
-    """Internal (non public) command to call the underlying operator."""
-    command_name = "MODE_ITER_SIMULT"
-    command_cata = MODE_ITER_SIMULT_CATA
-
-    def create_result(self, keywords):
-        """Initialize the result.
-
-        Arguments:
-            keywords (dict): Keywords arguments of user's keywords.
-        """
-        if keywords.get("TYPE_RESU") in ("MODE_FLAMB", "GENERAL"):
-            raise NotImplementedError("Unsupported value: {0}"
-                                      .format(keywords["TYPE_RESU"]))
-
-
-        vale_rigi = keywords.get("MATR_RIGI")
-        vale_amor = keywords.get("MATR_AMOR")
-        if vale_amor is not None and vale_amor.getType() == "MATR_ASSE_DEPL_R":
-            self._result = MechanicalModeComplexContainer()
-        elif vale_rigi.getType() == "MATR_ASSE_DEPL_R":
-            self._result = MechanicalModeContainer()
-        elif vale_rigi.getType() == "MATR_ASSE_TEMP_R":
-            self._result = MechanicalModeContainer()
-        elif vale_rigi.getType() == "MATR_ASSE_DEPL_C":
-            self._result = MechanicalModeComplexContainer()
-        elif vale_rigi.getType() == "MATR_ASSE_PRESS_R":
-            self._result = MechanicalModeComplexContainer()
-        elif vale_rigi.getType() == "MATR_ASSE_GENE_R":
-            self._result = GeneralizedModeContainer()
-        elif vale_rigi.getType() == "MATR_ASSE_GENE_C":
-            self._result = GeneralizedModeContainer()
-
-    def post_exec(self, keywords):
-        """Execute the command.
-
-        Arguments:
-            keywords (dict): User's keywords.
-        """
-        matrRigi = keywords.get("MATR_RIGI")
-        if matrRigi is not None:
-            if isinstance(self._result, GeneralizedModeContainer):
-                self._result.setGeneralizedDOFNumbering(matrRigi.getGeneralizedDOFNumbering())
-            else:
-                self._result.setDOFNumbering(matrRigi.getDOFNumbering())
-            self._result.setStiffnessMatrix(matrRigi)
-        matrAmor = keywords.get("MATR_AMOR")
-        if matrAmor is not None:
-            self._result.setDampingMatrix(matrAmor)
-        self._result.update()
-
-
-MODE_ITER_SIMULT = ModalCalculationSimult.run
+from Modal.mode_iter_simult import MODE_ITER_SIMULT
 
 
 def calc_modes_simult(self, stop_erreur, sturm, TYPE_RESU, OPTION, INFO, **args):
@@ -247,6 +188,7 @@ def calc_modes_simult(self, stop_erreur, sturm, TYPE_RESU, OPTION, INFO, **args)
                              INFO=INFO,
                              **motcles
                              )
+
     materialOnMesh = None
     for matrice in matrices.values():
         try:

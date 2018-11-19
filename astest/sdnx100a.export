@@ -9,5 +9,5 @@ F comm sdnx100a.comm D 1
 F comm sdnx100a.com1 D 1
 F comm sdnx100a.com2 D 1
 F mmed sdnx100a.mmed D 20
-F libr sdnx100a.33 D 33
-F libr sdnx100a.34 D 34
+F nom  sdnx100a.py   D 0
+

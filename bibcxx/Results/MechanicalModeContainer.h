@@ -29,6 +29,7 @@
 #include "Results/FullResultsContainer.h"
 #include "LinearAlgebra/StructureInterface.h"
 #include "LinearAlgebra/AssemblyMatrix.h"
+#include "LinearAlgebra/GeneralizedAssemblyMatrix.h"
 #include "Discretization/DOFNumbering.h"
 
 /**
@@ -36,63 +37,125 @@
  * @brief Cette classe correspond a un mode_meca
  * @author Nicolas Sellenet
  */
-class MechanicalModeContainerInstance : public FullResultsContainerInstance {
+class MechanicalModeContainerInstance : public FullResultsContainerInstance
+{
   private:
     StructureInterfacePtr _structureInterface;
-    /** @brief Stiffness displacement matrix */
-    AssemblyMatrixDisplacementDoublePtr _rigidityDispMatrix;
-    /** @brief Stiffness temperature matrix */
-    AssemblyMatrixTemperatureDoublePtr _rigidityTempMatrix;
+    /** @brief Stiffness double displacement matrix */
+    AssemblyMatrixDisplacementDoublePtr _rigidityDispDMatrix;
+    /** @brief Stiffness complex displacement matrix */
+    AssemblyMatrixDisplacementComplexPtr _rigidityDispCMatrix;
+    /** @brief Stiffness double temperature matrix */
+    AssemblyMatrixTemperatureDoublePtr _rigidityTempDMatrix;
+    /** @brief Stiffness double pressure matrix */
+    AssemblyMatrixPressureDoublePtr _rigidityPressDMatrix;
+    /** @brief Stiffness generalized double matrix */
+    GeneralizedAssemblyMatrixDoublePtr _rigidityGDMatrix;
+    /** @brief Stiffness generalized complex matrix */
+    GeneralizedAssemblyMatrixComplexPtr _rigidityGCMatrix;
 
   public:
     /**
      * @brief Constructeur
      */
-    MechanicalModeContainerInstance()
-        : FullResultsContainerInstance( "MODE_MECA" ),
-          _structureInterface( StructureInterfacePtr() ), _rigidityDispMatrix( nullptr ),
-          _rigidityTempMatrix( nullptr ){};
+    MechanicalModeContainerInstance():
+        FullResultsContainerInstance( "MODE_MECA" ),
+        _structureInterface( StructureInterfacePtr() ),
+        _rigidityDispDMatrix( nullptr ),
+        _rigidityDispCMatrix( nullptr ),
+        _rigidityTempDMatrix( nullptr ),
+        _rigidityPressDMatrix( nullptr ),
+        _rigidityGDMatrix( nullptr ),
+        _rigidityGCMatrix( nullptr )
+    {};
 
     /**
      * @brief Constructeur
      */
-    MechanicalModeContainerInstance( const std::string &name )
-        : FullResultsContainerInstance( name, "MODE_MECA" ),
-          _structureInterface( StructureInterfacePtr() ), _rigidityDispMatrix( nullptr ),
-          _rigidityTempMatrix( nullptr ){};
+    MechanicalModeContainerInstance( const std::string &name ):
+        FullResultsContainerInstance( name, "MODE_MECA" ),
+        _structureInterface( StructureInterfacePtr() ),
+        _rigidityDispDMatrix( nullptr ),
+        _rigidityDispCMatrix( nullptr ),
+        _rigidityTempDMatrix( nullptr ),
+        _rigidityPressDMatrix( nullptr ),
+        _rigidityGDMatrix( nullptr ),
+        _rigidityGCMatrix( nullptr )
+    {};
 
     /**
      * @brief Get the rigidity matrix
      */
-    AssemblyMatrixDisplacementDoublePtr getDisplacementStiffnessMatrix() const {
-        return _rigidityDispMatrix;
+    AssemblyMatrixDisplacementComplexPtr getDisplacementComplexStiffnessMatrix() const
+    {
+        return _rigidityDispCMatrix;
+    };
+
+    /**
+     * @brief Get the rigidity matrix
+     */
+    AssemblyMatrixDisplacementDoublePtr getDisplacementDoubleStiffnessMatrix() const
+    {
+        return _rigidityDispDMatrix;
     };
 
     /**
      * @brief Get the DOFNumbering
      */
-    BaseDOFNumberingPtr getDOFNumbering() const {
-        if ( _rigidityDispMatrix != nullptr )
-            return _rigidityDispMatrix->getDOFNumbering();
-        if ( _rigidityTempMatrix != nullptr )
-            return _rigidityTempMatrix->getDOFNumbering();
-        throw std::runtime_error( "No matrix set" );
+    BaseDOFNumberingPtr getDOFNumbering() const
+    {
+        if ( _dofNum != nullptr )
+            return _dofNum;
+        if ( _rigidityDispDMatrix != nullptr )
+            return _rigidityDispDMatrix->getDOFNumbering();
+        if ( _rigidityTempDMatrix != nullptr )
+            return _rigidityTempDMatrix->getDOFNumbering();
+        return BaseDOFNumberingPtr( nullptr );
     };
 
     /**
      * @brief Get the rigidity matrix
      */
-    AssemblyMatrixTemperatureDoublePtr getTemperatureStiffnessMatrix() const {
-        return _rigidityTempMatrix;
+    AssemblyMatrixPressureDoublePtr getPressureDoubleStiffnessMatrix() const
+    {
+        return _rigidityPressDMatrix;
+    };
+
+    /**
+     * @brief Get the rigidity matrix
+     */
+    AssemblyMatrixTemperatureDoublePtr getTemperatureDoubleStiffnessMatrix() const
+    {
+        return _rigidityTempDMatrix;
     };
 
     /**
      * @brief Set the rigidity matrix
      * @param matr AssemblyMatrixDisplacementDoublePtr
      */
-    bool setStiffnessMatrix( const AssemblyMatrixDisplacementDoublePtr &matr ) {
-        _rigidityTempMatrix = nullptr;
-        _rigidityDispMatrix = matr;
+    bool setStiffnessMatrix( const AssemblyMatrixDisplacementDoublePtr &matr )
+    {
+        _rigidityDispDMatrix = matr;
+        _rigidityDispCMatrix = nullptr;
+        _rigidityTempDMatrix = nullptr;
+        _rigidityPressDMatrix = nullptr;
+        _rigidityGDMatrix = nullptr;
+        _rigidityGCMatrix = nullptr;
+        return true;
+    };
+
+    /**
+     * @brief Set the rigidity matrix
+     * @param matr AssemblyMatrixDisplacementComplexPtr
+     */
+    bool setStiffnessMatrix( const AssemblyMatrixDisplacementComplexPtr &matr )
+    {
+        _rigidityDispDMatrix = nullptr;
+        _rigidityDispCMatrix = matr;
+        _rigidityTempDMatrix = nullptr;
+        _rigidityPressDMatrix = nullptr;
+        _rigidityGDMatrix = nullptr;
+        _rigidityGCMatrix = nullptr;
         return true;
     };
 
@@ -100,9 +163,59 @@ class MechanicalModeContainerInstance : public FullResultsContainerInstance {
      * @brief Set the rigidity matrix
      * @param matr AssemblyMatrixTemperatureDoublePtr
      */
-    bool setStiffnessMatrix( const AssemblyMatrixTemperatureDoublePtr &matr ) {
-        _rigidityDispMatrix = nullptr;
-        _rigidityTempMatrix = matr;
+    bool setStiffnessMatrix( const AssemblyMatrixTemperatureDoublePtr &matr )
+    {
+        _rigidityDispDMatrix = nullptr;
+        _rigidityDispCMatrix = nullptr;
+        _rigidityTempDMatrix = matr;
+        _rigidityPressDMatrix = nullptr;
+        _rigidityGDMatrix = nullptr;
+        _rigidityGCMatrix = nullptr;
+        return true;
+    };
+
+    /**
+     * @brief Set the rigidity matrix
+     * @param matr AssemblyMatrixPressureDoublePtr
+     */
+    bool setStiffnessMatrix( const AssemblyMatrixPressureDoublePtr &matr )
+    {
+        _rigidityDispDMatrix = nullptr;
+        _rigidityDispCMatrix = nullptr;
+        _rigidityTempDMatrix = nullptr;
+        _rigidityPressDMatrix = matr;
+        _rigidityGDMatrix = nullptr;
+        _rigidityGCMatrix = nullptr;
+        return true;
+    };
+
+    /**
+     * @brief Set the rigidity matrix
+     * @param matr GeneralizedAssemblyMatrixDoublePtr
+     */
+    bool setStiffnessMatrix( const GeneralizedAssemblyMatrixDoublePtr &matr )
+    {
+        _rigidityDispDMatrix = nullptr;
+        _rigidityDispCMatrix = nullptr;
+        _rigidityTempDMatrix = nullptr;
+        _rigidityPressDMatrix = nullptr;
+        _rigidityGDMatrix = matr;
+        _rigidityGCMatrix = nullptr;
+        return true;
+    };
+
+    /**
+     * @brief Set the rigidity matrix
+     * @param matr GeneralizedAssemblyMatrixComplexPtr
+     */
+    bool setStiffnessMatrix( const GeneralizedAssemblyMatrixComplexPtr &matr )
+    {
+        _rigidityDispDMatrix = nullptr;
+        _rigidityDispCMatrix = nullptr;
+        _rigidityTempDMatrix = nullptr;
+        _rigidityPressDMatrix = nullptr;
+        _rigidityGDMatrix = nullptr;
+        _rigidityGCMatrix = matr;
         return true;
     };
 
@@ -110,20 +223,24 @@ class MechanicalModeContainerInstance : public FullResultsContainerInstance {
      * @brief set interf_dyna
      * @param structureInterface objet StructureInterfacePtr
      */
-    bool
-    setStructureInterface( StructureInterfacePtr &structureInterface ) {
+    bool setStructureInterface( StructureInterfacePtr &structureInterface ) {
         _structureInterface = structureInterface;
         return true;
     };
 
     bool update() {
         BaseDOFNumberingPtr numeDdl( nullptr );
-        if ( _rigidityDispMatrix != nullptr )
-            numeDdl = _rigidityDispMatrix->getDOFNumbering();
-        if ( _rigidityTempMatrix != nullptr )
-            numeDdl = _rigidityTempMatrix->getDOFNumbering();
+        if ( _rigidityDispDMatrix != nullptr )
+            numeDdl = _rigidityDispDMatrix->getDOFNumbering();
+        if ( _rigidityDispCMatrix != nullptr )
+            numeDdl = _rigidityDispCMatrix->getDOFNumbering();
+        if ( _rigidityTempDMatrix != nullptr )
+            numeDdl = _rigidityTempDMatrix->getDOFNumbering();
+        if ( _rigidityPressDMatrix != nullptr )
+            numeDdl = _rigidityPressDMatrix->getDOFNumbering();
 
-        if ( numeDdl != nullptr ) {
+        if ( numeDdl != nullptr )
+        {
             const auto model = numeDdl->getSupportModel();
             if ( model != nullptr )
                 _mesh = model->getSupportMesh();

@@ -30,6 +30,7 @@
 
 #include "DataStructures/DataStructure.h"
 #include "Discretization/ForwardGeneralizedDOFNumbering.h"
+#include "Results/ForwardMechanicalModeContainer.h"
 #include "MemoryManager/JeveuxCollection.h"
 #include "MemoryManager/JeveuxVector.h"
 
@@ -38,7 +39,8 @@
  * @brief Cette classe correspond a un matr_asse_gene
  * @author Nicolas Sellenet
  */
-class GenericGeneralizedAssemblyMatrixInstance : public DataStructure {
+class GenericGeneralizedAssemblyMatrixInstance: public DataStructure
+{
   private:
     /** @brief Objet Jeveux '.DESC' */
     JeveuxVectorDouble _desc;
@@ -46,6 +48,8 @@ class GenericGeneralizedAssemblyMatrixInstance : public DataStructure {
     JeveuxVectorChar24 _refe;
     /** @brief Support GeneralizedDOFNumbering */
     ForwardGeneralizedDOFNumberingPtr _dofNum;
+    /** @brief Support MechanicalModeContainer */
+    ForwardMechanicalModeContainerPtr _mecaModeC;
 
   public:
     /**
@@ -58,13 +62,14 @@ class GenericGeneralizedAssemblyMatrixInstance : public DataStructure {
     /**
      * @brief Constructeur
      */
-    GenericGeneralizedAssemblyMatrixInstance( const std::string name )
-        : DataStructure( name, 19, "MATR_ASSE_GENE", Permanent ),
-          _desc( JeveuxVectorDouble( getName() + ".DESC" ) ),
-          _refe( JeveuxVectorChar24( getName() + ".REFE" ) ){};
+    GenericGeneralizedAssemblyMatrixInstance( const std::string name ):
+        DataStructure( name, 19, "MATR_ASSE_GENE", Permanent ),
+        _desc( JeveuxVectorDouble( getName() + ".DESC" ) ),
+        _refe( JeveuxVectorChar24( getName() + ".REFE" ) )
+    {};
 
     /**
-     * @brief Get support GeneralizedDOFNumering
+     * @brief Get support GeneralizedDOFNumbering
      */
     GeneralizedDOFNumberingPtr getGeneralizedDOFNumbering() {
         if ( _dofNum.isSet() )
@@ -73,11 +78,36 @@ class GenericGeneralizedAssemblyMatrixInstance : public DataStructure {
     };
 
     /**
-     * @brief Set support GeneralizedDOFNumering
+     * @brief Get support MechanicalModeContainer
      */
-    bool setGeneralizedDOFNumbering( const GeneralizedDOFNumberingPtr &dofNum ) {
-        if ( dofNum != nullptr ) {
+    MechanicalModeContainerPtr getModalBasis() throw( std::runtime_error )
+    {
+        if ( _mecaModeC.isSet() )
+            return _mecaModeC.getPointer();
+        throw std::runtime_error( "MechanicalModeContainer is empty" );
+    };
+
+    /**
+     * @brief Set support GeneralizedDOFNumbering
+     */
+    bool setGeneralizedDOFNumbering( const GeneralizedDOFNumberingPtr &dofNum )
+    {
+        if ( dofNum != nullptr )
+        {
             _dofNum = dofNum;
+            return true;
+        }
+        return false;
+    };
+
+    /**
+     * @brief Set support MechanicalModeContainer
+     */
+    bool setModalBasis( const MechanicalModeContainerPtr &mecaModeC )
+    {
+        if ( mecaModeC != nullptr )
+        {
+            _mecaModeC = mecaModeC;
             return true;
         }
         return false;
@@ -90,7 +120,8 @@ class GenericGeneralizedAssemblyMatrixInstance : public DataStructure {
  * @author Nicolas Sellenet
  */
 template < class ValueType >
-class GeneralizedAssemblyMatrixInstance : public GenericGeneralizedAssemblyMatrixInstance {
+class GeneralizedAssemblyMatrixInstance : public GenericGeneralizedAssemblyMatrixInstance
+{
   private:
     /** @brief Objet Jeveux '.VALM' */
     JeveuxVector< ValueType > _valm;
@@ -99,7 +130,8 @@ class GeneralizedAssemblyMatrixInstance : public GenericGeneralizedAssemblyMatri
      * @brief definir le type
      */
     template < class type = ValueType >
-    typename std::enable_if< std::is_same< type, double >::value, void >::type setMatrixType() {
+    typename std::enable_if< std::is_same< type, double >::value, void >::type setMatrixType()
+    {
         setType( "MATR_ASSE_GENE_R" );
     };
 
@@ -108,7 +140,8 @@ class GeneralizedAssemblyMatrixInstance : public GenericGeneralizedAssemblyMatri
      */
     template < class type = ValueType >
     typename std::enable_if< std::is_same< type, DoubleComplex >::value, void >::type
-    setMatrixType() {
+    setMatrixType()
+    {
         setType( "MATR_ASSE_GENE_C" );
     };
 
@@ -124,14 +157,16 @@ class GeneralizedAssemblyMatrixInstance : public GenericGeneralizedAssemblyMatri
      * @brief Constructeur
      */
     GeneralizedAssemblyMatrixInstance()
-        : GeneralizedAssemblyMatrixInstance( ResultNaming::getNewResultName() ){};
+        : GeneralizedAssemblyMatrixInstance( ResultNaming::getNewResultName() )
+    {};
 
     /**
      * @brief Constructeur
      */
     GeneralizedAssemblyMatrixInstance( const std::string name )
         : GenericGeneralizedAssemblyMatrixInstance( name ),
-          _valm( JeveuxVector< ValueType >( getName() + ".VALM" ) ) {
+          _valm( JeveuxVector< ValueType >( getName() + ".VALM" ) )
+    {
         GeneralizedAssemblyMatrixInstance< ValueType >::setMatrixType();
     };
 };

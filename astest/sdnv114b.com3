@@ -1,0 +1,170 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+POURSUITE(CODE='OUI', DEBUG=_F(SDVERI='OUI',),);
+
+#-----------------------------------------------
+# CALCUL DES TEST_RESU
+#-----------------------------------------------    
+# les resultats experimentaux sont donnees dans le fichier joint (sdnv114a.py)
+# il s'agit des points de la numerisation de la courbe de reponse du specimen: deplacement (mm) et force (N) 
+
+from sdnv114a import f_val_exp
+val_exp=f_val_exp()
+                   
+TEST_TABLE(TABLE=FX,
+           NOM_PARA='DX',
+           FILTRE=_F(NOM_PARA='INST',
+                     VALE=11.07,
+                     CRITERE='ABSOLU',
+                     CRIT_COMP='EQ',
+                     PRECISION=1.E-3,),
+           REFERENCE='SOURCE_EXTERNE',
+           VALE_CALC=2510934.29623,
+           VALE_REFE=val_exp[1107*2+1],
+           PRECISION=0.14,
+           CRITERE='RELATIF',
+           VALE_ABS='NON',);
+
+TEST_TABLE(TABLE=FX,
+           NOM_PARA='DX',
+           FILTRE=_F(NOM_PARA='INST',
+                     VALE=11.96,
+                     CRITERE='ABSOLU',
+                     CRIT_COMP='EQ',
+                     PRECISION=1.E-3,),
+           REFERENCE='SOURCE_EXTERNE',
+           VALE_CALC=-2879971.90026 ,
+           VALE_REFE=val_exp[1196*2+1],
+           PRECISION=0.12,
+           CRITERE='RELATIF',
+           VALE_ABS='NON',);
+
+TEST_TABLE(TABLE=FX,
+           NOM_PARA='DX',
+           FILTRE=_F(NOM_PARA='INST',
+                     VALE=12.13,
+                     CRITERE='ABSOLU',
+                     CRIT_COMP='EQ',
+                     PRECISION=1.E-3,),
+           REFERENCE='SOURCE_EXTERNE',
+           VALE_CALC=2248961.33707,
+           VALE_REFE=val_exp[1213*2+1],
+           PRECISION=0.17,
+           CRITERE='RELATIF',
+           VALE_ABS='NON',);
+
+TEST_TABLE(TABLE=FX,
+           NOM_PARA='DX',
+           FILTRE=_F(NOM_PARA='INST',
+                     VALE=13.09 ,
+                     CRITERE='ABSOLU',
+                     CRIT_COMP='EQ',
+                     PRECISION=1.E-3,),
+           REFERENCE='SOURCE_EXTERNE',
+           VALE_CALC=-2661149.4932,
+           VALE_REFE=val_exp[1309*2+1],
+           PRECISION=0.08,
+           CRITERE='RELATIF',
+           VALE_ABS='NON',);
+
+TEST_TABLE(TABLE=FX,
+           NOM_PARA='DX',
+           FILTRE=_F(NOM_PARA='INST',
+                     VALE=13.30,
+                     CRITERE='ABSOLU',
+                     CRIT_COMP='EQ',
+                     PRECISION=1.E-3,),
+           REFERENCE='SOURCE_EXTERNE',
+           VALE_CALC=2800095.90776,
+           VALE_REFE=val_exp[1330*2+1],
+           PRECISION=0.13,
+           CRITERE='RELATIF',
+           VALE_ABS='NON',);
+
+TEST_TABLE(TABLE=FX,
+           NOM_PARA='DX',
+           FILTRE=_F(NOM_PARA='INST',
+                     VALE=13.47,
+                     CRITERE='ABSOLU',
+                     CRIT_COMP='EQ',
+                     PRECISION=1.E-3,),
+           REFERENCE='SOURCE_EXTERNE',
+           VALE_CALC=-3045569.66743,
+           VALE_REFE=val_exp[1347*2+1],
+           PRECISION=0.12,
+           CRITERE='RELATIF',
+           VALE_ABS='NON',);
+
+TEST_TABLE(TABLE=FX,
+           NOM_PARA='DX',
+           FILTRE=_F(NOM_PARA='INST',
+                     VALE=14.06,
+                     CRITERE='ABSOLU',
+                     CRIT_COMP='EQ',
+                     PRECISION=1.E-3,),
+           REFERENCE='SOURCE_EXTERNE',
+           VALE_CALC=2189453.09429,
+           VALE_REFE=val_exp[1406*2+1],
+           PRECISION=0.09,
+           CRITERE='RELATIF',
+           VALE_ABS='NON',);
+
+TEST_TABLE(TABLE=FX,
+           NOM_PARA='DX',
+           FILTRE=_F(NOM_PARA='INST',
+                     VALE=16.34 ,
+                     CRITERE='ABSOLU',
+                     CRIT_COMP='EQ',
+                     PRECISION=1.E-3,),
+           REFERENCE='SOURCE_EXTERNE',
+           VALE_CALC=-2884628.58481,
+           VALE_REFE=val_exp[1634*2+1],
+           PRECISION=0.09,
+           CRITERE='RELATIF',
+           VALE_ABS='NON',);
+
+TEST_TABLE(TABLE=FX,
+           NOM_PARA='DX',
+           FILTRE=_F(NOM_PARA='INST',
+                     VALE=16.53,
+                     CRITERE='ABSOLU',
+                     CRIT_COMP='EQ',
+                     PRECISION=1.E-3,),
+           REFERENCE='SOURCE_EXTERNE',
+           VALE_CALC=3109356.34521,
+           VALE_REFE=val_exp[1653*2+1],
+           PRECISION=0.09,
+           CRITERE='RELATIF',
+           VALE_ABS='NON',);
+
+TEST_TABLE(TABLE=FX,
+           NOM_PARA='DX',
+           FILTRE=_F(NOM_PARA='INST',
+                     VALE=16.72 ,
+                     CRITERE='ABSOLU',
+                     CRIT_COMP='EQ',
+                     PRECISION=1.E-3,),
+           REFERENCE='SOURCE_EXTERNE',
+           VALE_CALC=-2839761.88172,
+           VALE_REFE=val_exp[1672*2+1],
+           PRECISION=0.09,
+           CRITERE='RELATIF',
+           VALE_ABS='NON',);
+
+FIN();

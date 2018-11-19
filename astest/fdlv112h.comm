@@ -249,7 +249,8 @@ vecasx=CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R',
 fo1 = DEFI_FONCTION ( NOM_PARA= 'FREQ', 
          VALE= ( 0., 1., 100., 1. ) );
          
-INCLUDE(UNITE=31,);
+from fdlv112d import F_ACC_X
+acc_x = F_ACC_X()
 
 linst= DEFI_LIST_REEL ( DEBUT = 0.,
                           INTERVALLE = (

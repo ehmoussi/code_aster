@@ -37,7 +37,7 @@
  * @author Natacha Béreux
  */
 class FullResultsContainerInstance : public ResultsContainerInstance {
-  private:
+  protected:
     /** @brief indexage des résultats de calcul dynamiques */
     DynamicResultsIndexingPtr _index;
     /** @brief the support DOFNumbering */
@@ -55,10 +55,9 @@ class FullResultsContainerInstance : public ResultsContainerInstance {
     FullResultsContainerInstance( const std::string &resuTyp )
         : FullResultsContainerInstance( ResultNaming::getNewResultName(), resuTyp ){};
 
-    DOFNumberingPtr getDOFNumbering() const {
-        if ( _dofNum != nullptr )
-            return _dofNum;
-        throw std::runtime_error( "DOFNumbering is empty" );
+    DOFNumberingPtr getDOFNumbering() const
+    {
+        return _dofNum;
     };
 
     bool printMedFile( std::string fileName ) const {
