@@ -17,10 +17,10 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-import numpy as NP
-
-DEBUT(CODE='OUI',
-IGNORE_ALARM=('RECAL0_43'),PAR_LOT='NON',DEBUG=_F(SDVERI='OUI'))
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),
+      PAR_LOT='NON',
+      IGNORE_ALARM=('RECAL0_43'),
+      DEBUG=_F(SDVERI='OUI'))
 # le modèle "expérimental"
 
 EP=0.5
@@ -40,12 +40,12 @@ MODEXP=AFFE_MODELE(MAILLAGE=MAILEXP2,
                         _F(GROUP_MA = 'MASS',
                           PHENOMENE='MECANIQUE',
                           MODELISATION='DIS_T',),
-  
+
                           ),);
 
 #
 #---------------------------------------------------------------------
-#                     CARACTERISTIQUES ELEMENTAIRES 
+#                     CARACTERISTIQUES ELEMENTAIRES
 #---------------------------------------------------------------------
 
 CAREXP=AFFE_CARA_ELEM(MODELE=MODEXP,
@@ -56,9 +56,9 @@ CAREXP=AFFE_CARA_ELEM(MODELE=MODEXP,
                                      VALE = MP,),
                                   _F(  GROUP_MA = 'MASS',
                                      CARA = 'K_T_D_N',
-                                     VALE = (0.,0.,0.)),           
+                                     VALE = (0.,0.,0.)),
                         ));
-                         
+
 
 #
 

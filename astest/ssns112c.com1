@@ -23,13 +23,13 @@
 #   working directory   : /home/D47456/Bureau/DHRC/final/ssns112c
 #   template directory  : /home/D47456/dev/salome-meca-dhrc/share/dhrc
 #   created on          : mar. 06 oct. 2015 16:46:47 CEST
-#   by DHRC plugin version 0.1 - Salome-Meca 
+#   by DHRC plugin version 0.1 - Salome-Meca
 
 # Include this file using a new stage for Code_Aster.
 # It creates a material called "mat_dhrc" that you should pass to AFFE_MATERIAU.
 # It uses the International System of Units (metre, kilogram and second)
 
-POURSUITE()
+POURSUITE(CODE='OUI')
 
 mat_dhrc = DEFI_MATERIAU(
     ELAS_DHRC = _F(
