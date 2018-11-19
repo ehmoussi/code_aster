@@ -6,6 +6,6 @@ P mpi_nbnoeud 1
 P testlist verification sequential
 
 F comm ssnl128b.comm D 1
-F comm ssnl128b.mater.datg D 1
+F comm ssnl128b_mater.comm D 1
 F comm ssnl128b.com2 D 1
 F mmed ssnl121b.mmed D 20

@@ -6,6 +6,6 @@ P mpi_nbnoeud 1
 P testlist verification sequential
 
 F comm ssna117c.comm D 1
-F comm ssna117c.mater.datg D 1
+F comm ssna117c_mater.comm D 1
 F comm ssna117c.com2 D 1
 F mail ssna117a.mail D 20

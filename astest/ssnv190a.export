@@ -6,6 +6,6 @@ P mpi_nbnoeud 1
 P testlist verification sequential
 
 F comm ssnv190a.comm D 1
-F comm ssnv190a.mater.datg D 1
+F comm ssnv190a_mater.comm D 1
 F comm ssnv190a.com2 D 1
 F mail ssnv230a.mail D 20
