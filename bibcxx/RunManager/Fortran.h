@@ -44,4 +44,6 @@ void call_print( const std::string &text );
 
 std::string onFatalError( const std::string value = "" );
 
+void set_option( const std::string &option, double value );
+
 #endif

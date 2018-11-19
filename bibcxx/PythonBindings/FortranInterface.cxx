@@ -108,4 +108,12 @@ Returns:
 //         )",
 //          ( arg( "value" ) ) );
     def( "onFatalError", &onFatalError, onFatalError_overloads() );
+
+    def( "set_option", &set_option, R"(
+Set an option value to be used from Fortran operators.
+
+Arguments:
+    option (str): Option name.
+    value (float): Option value.
+        )");
 };

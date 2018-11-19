@@ -136,7 +136,8 @@ try:
                               PREDICTION='ELASTIQUE',MATR_RIGI_SYME='OUI',
                               REAC_ITER=1,),
                      ARCHIVAGE=_F(LIST_INST=L_INST,),);
-except aster.ArretCPUError, msg:
+except aster.ArretCPUError as msg:
+   assert msg.id_message == "MECANONLINE9_2", msg.id_message
    is_ok = 1
 
 print "Restore time limit to {0} s".format(tpmax)
@@ -144,8 +145,8 @@ params.set_option("tpmax", tpmax)
 
 
 TAB1=CREA_TABLE(LISTE=(_F(PARA='TEST',TYPE_K='K8',LISTE_K='VALEUR  ',),
-                     _F(PARA='BOOLEEN',LISTE_I=is_ok,),
-                     ),
+                       _F(PARA='BOOLEEN',LISTE_I=is_ok,),
+                      ),
                )
 TEST_TABLE(REFERENCE='ANALYTIQUE',
            VALE_CALC_I=1,
