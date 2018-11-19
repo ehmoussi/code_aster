@@ -99,8 +99,8 @@ def includeExternalData(theFile):
     rcdir = aster_core.get_option('rcdir')
     return osp.join(rcdir, 'tests_data', theFile)
 
-CD = includeExternalData('sdll110a.70.datg')
-CK = includeExternalData('sdll110a.71.datg')
+CD = includeExternalData('sdll110a.70')
+CK = includeExternalData('sdll110a.71')
 DEFI_FICHIER(ACTION='ASSOCIER', FICHIER=CD, ACCES='NEW', UNITE=70)
 DEFI_FICHIER(ACTION='ASSOCIER', FICHIER=CK, ACCES='NEW', UNITE=71)
 
