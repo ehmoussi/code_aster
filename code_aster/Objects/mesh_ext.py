@@ -31,3 +31,20 @@ from ..Utilities import injector
 
 class ExtendedMesh(injector(Mesh), Mesh):
     cata_sdj = "SD.sd_maillage.sd_maillage"
+
+    def LIST_GROUP_MA(self) :
+        """ retourne la liste des groupes de mailles sous la forme :
+            [ (gma1, nb mailles gma1, dime max des mailles gma1), ...] """
+        if not self.accessible():
+            raise AsException("Erreur dans maillage.LIST_GROUP_MA en PAR_LOT='OUI'")
+        ltyma = aster.getvectjev("&CATA.TM.NOMTM")
+        catama = aster.getcolljev("&CATA.TM.TMDIM")
+        dic_gpma = self.sdj.GROUPEMA.get()
+        if dic_gpma is None:
+            return []
+        dimama = [catama[ltyma[ma-1].ljust(24)][0] for ma in self.sdj.TYPMAIL.get()]
+        ngpma = []
+        for grp in dic_gpma.keys():
+            dim = max([dimama[ma-1] for ma in dic_gpma[grp]])
+            ngpma.append((grp.strip(), len(dic_gpma[grp]),dim))
+        return ngpma

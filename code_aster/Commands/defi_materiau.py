@@ -165,6 +165,8 @@ class MaterialDefinition(ExecuteCommand):
                         elif isinstance(kwValue[0], DataStructure):
                             mater.addNewVectorOfFunctionProperty(
                                 kwName, mandatory)
+                        elif kwValue[0] == 'RI':
+                            mater.addNewComplexProperty(kwName, mandatory)
                         elif type(kwValue[0]) is str:
                             pass
                         else:

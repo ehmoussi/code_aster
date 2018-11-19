@@ -49,8 +49,7 @@ def ellipse(modx,mody,thetx,thety) :
 
 # MISE EN DONNEES
 
-INCLUDE(UNITE=66)
-
+from sdll123d import EXTR_MATR
 
 MAIL=LIRE_MAILLAGE(FORMAT="ASTER",);
 

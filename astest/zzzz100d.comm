@@ -24,7 +24,8 @@ DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'), DEBUG=_F(SDVERI='OUI'), PAR_LOT='NON')
 
 #--------------------------------------------------------
 #
-INCLUDE(UNITE=20, ALARME='NON')
+from zzzz100d import F_FLBNS
+LBNS=F_FLBNS()
 
 #
 #--------------------------------------------------------
@@ -754,8 +755,9 @@ TEST_FONCTION(VALEUR=(   _F(VALE_CALC=0.31829528014329, VALE_REFE=0.3183,
 
 # VALIDATION DE L'INTERPOLATION DES ACCELEROGRAMMES : INTERPOL_FFT
 # ----------------------------------------------------------------
+from zzzz100b import F_FCTS
+X, Y, XP, YP=F_FCTS()
 
-INCLUDE(UNITE=11,   INFO=1)
 # (voir zzzz100b)
 FREQ11=49.916805324459233
 FREQ12=119.80033277870216

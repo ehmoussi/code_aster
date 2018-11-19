@@ -7,5 +7,5 @@ P testlist verification sequential
 
 F comm sdls118d.comm D 1
 F mmed sdls118b.mmed D 20
-F libr sdls118b.34 D 34
-F libr sdls118b.35 D 35
+F nom  sdls118b.py D 0
+

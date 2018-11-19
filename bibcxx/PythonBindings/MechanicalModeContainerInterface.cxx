@@ -24,28 +24,7 @@
 #include "PythonBindings/MechanicalModeContainerInterface.h"
 #include "PythonBindings/factory.h"
 #include <boost/python.hpp>
-#include <boost/variant.hpp>
-
-typedef boost::variant< AssemblyMatrixDisplacementDoublePtr, AssemblyMatrixTemperatureDoublePtr >
-    MatrixVariant;
-
-struct variant_to_object : boost::static_visitor< PyObject * > {
-    static result_type convert( MatrixVariant const &v ) {
-        return apply_visitor( variant_to_object(), v );
-    }
-
-    template < typename T > result_type operator()( T const &t ) const {
-        return boost::python::incref( boost::python::object( t ).ptr() );
-    }
-};
-
-MatrixVariant getStiffnessMatrix( MechanicalModeContainerPtr self ) {
-    auto mat1 = self->getDisplacementStiffnessMatrix();
-    if ( mat1 != nullptr )
-        return MatrixVariant( mat1 );
-    auto mat2 = self->getTemperatureStiffnessMatrix();
-    return MatrixVariant( mat2 );
-};
+#include "PythonBindings/VariantStiffnessMatrix.h"
 
 void exportMechanicalModeContainerToPython() {
     using namespace boost::python;
@@ -54,6 +33,10 @@ void exportMechanicalModeContainerToPython() {
         &MechanicalModeContainerInstance::setStiffnessMatrix;
     bool ( MechanicalModeContainerInstance::*c2 )( const AssemblyMatrixTemperatureDoublePtr & ) =
         &MechanicalModeContainerInstance::setStiffnessMatrix;
+    bool ( MechanicalModeContainerInstance::*c3 )( const AssemblyMatrixDisplacementComplexPtr & ) =
+        &MechanicalModeContainerInstance::setStiffnessMatrix;
+    bool ( MechanicalModeContainerInstance::*c4 )( const AssemblyMatrixPressureDoublePtr & ) =
+        &MechanicalModeContainerInstance::setStiffnessMatrix;
 
     class_< MechanicalModeContainerInstance, MechanicalModeContainerPtr,
             bases< FullResultsContainerInstance > >( "MechanicalModeContainer", no_init )
@@ -61,14 +44,12 @@ void exportMechanicalModeContainerToPython() {
         .def( "__init__",
               make_constructor(&initFactoryPtr< MechanicalModeContainerInstance, std::string >))
         .def( "getDOFNumbering", &MechanicalModeContainerInstance::getDOFNumbering )
-        .def( "getStiffnessMatrix", &getStiffnessMatrix )
+        .def( "getStiffnessMatrix", &getStiffnessMatrix< MechanicalModeContainerPtr > )
         .def( "setStiffnessMatrix", c1 )
         .def( "setStiffnessMatrix", c2 )
+        .def( "setStiffnessMatrix", c3 )
+        .def( "setStiffnessMatrix", c4 )
         .def( "setStructureInterface", &MechanicalModeContainerInstance::setStructureInterface );
-
-    to_python_converter< MatrixVariant, variant_to_object >();
-    implicitly_convertible< AssemblyMatrixDisplacementDoublePtr, MatrixVariant >();
-    implicitly_convertible< AssemblyMatrixTemperatureDoublePtr, MatrixVariant >();
 };
 
 void exportMechanicalModeComplexContainerToPython() {
@@ -79,6 +60,12 @@ void exportMechanicalModeComplexContainerToPython() {
         &MechanicalModeComplexContainerInstance::setStiffnessMatrix;
     bool ( MechanicalModeComplexContainerInstance::*c2 )(
         const AssemblyMatrixDisplacementComplexPtr & ) =
+        &MechanicalModeComplexContainerInstance::setStiffnessMatrix;
+    bool ( MechanicalModeComplexContainerInstance::*c3 )(
+        const AssemblyMatrixDisplacementComplexPtr & ) =
+        &MechanicalModeComplexContainerInstance::setStiffnessMatrix;
+    bool ( MechanicalModeComplexContainerInstance::*c4 )(
+        const AssemblyMatrixPressureDoublePtr & ) =
         &MechanicalModeComplexContainerInstance::setStiffnessMatrix;
 
     class_< MechanicalModeComplexContainerInstance, MechanicalModeComplexContainerPtr,
@@ -91,6 +78,8 @@ void exportMechanicalModeComplexContainerToPython() {
         .def( "setDampingMatrix", &MechanicalModeComplexContainerInstance::setDampingMatrix )
         .def( "setStiffnessMatrix", c1 )
         .def( "setStiffnessMatrix", c2 )
+        .def( "setStiffnessMatrix", c3 )
+        .def( "setStiffnessMatrix", c4 )
         .def( "setStructureInterface",
               &MechanicalModeComplexContainerInstance::setStructureInterface );
 };

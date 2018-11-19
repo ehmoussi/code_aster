@@ -553,8 +553,6 @@ for n in range(1,nbcouche-1):
 
 # <--10: fin boucle for
 
-# INCLUDE(UNITE=38);
-
 U[n]=CALC_CHAMP(reuse=U[n],GROUP_MA=list_group_ma[1:n+2],CRITERES=('PDIL_ELGA','INDL_ELGA'),RESULTAT=U[n])
 
 ##################################

@@ -127,6 +127,7 @@
 #include "PythonBindings/TimeStepperInterface.h"
 #include "PythonBindings/TurbulentSpectrumInterface.h"
 #include "PythonBindings/UnitaryThermalLoadInterface.h"
+#include "PythonBindings/VariantStiffnessMatrix.h"
 #include "PythonBindings/VectorUtilities.h"
 #include "PythonBindings/XfemCrackInterface.h"
 
@@ -188,6 +189,7 @@ BOOST_PYTHON_MODULE( libaster ) {
 
     py::def( "raiseAsterError", &raiseAsterError, raiseAsterError_overloads() );
 
+    exportStiffnessMatrixVariantToPython();
     exportVectorUtilitiesToPython();
     exportDataStructureToPython();
     exportMeshToPython();

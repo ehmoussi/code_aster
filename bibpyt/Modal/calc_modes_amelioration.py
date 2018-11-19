@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -18,6 +18,8 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: nicolas.brie at edf.fr
+
+from code_aster import AssemblyMatrixDisplacementComplex, GeneralizedAssemblyMatrixComplex
 
 
 def calc_modes_amelioration(self, modes, TYPE_RESU, INFO, **args):
@@ -66,7 +68,8 @@ def calc_modes_amelioration(self, modes, TYPE_RESU, INFO, **args):
     iret, ibid, type_matr_A = aster.dismoi('TYPE_MATRICE', args[matr_A].nom, 'MATR_ASSE', 'F')
     if not type_matr_A == 'SYMETRI':
         lsym = False
-    if AsType(args[matr_A]).__name__ in ('matr_asse_depl_c', 'matr_asse_gene_c'):
+    if isinstance(args[matr_A], AssemblyMatrixDisplacementComplex) or\
+        isinstance(args[matr_A], GeneralizedAssemblyMatrixComplex):
         lreel = False
     iret, ibid, type_matr_B = aster.dismoi('TYPE_MATRICE', args[matr_B].nom, 'MATR_ASSE', 'F')
     if not type_matr_B == 'SYMETRI':

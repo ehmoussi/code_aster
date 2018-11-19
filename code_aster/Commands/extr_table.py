@@ -35,14 +35,14 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import Function
+from ..Objects import Function, FunctionComplex, Surface
 from ..Objects import ElementaryVector
 from ..Objects import Table
 from ..Objects import GeneralizedAssemblyMatrixDouble
-from ..Objects import ElementaryMatrixDisplacementDouble
+from ..Objects import ElementaryMatrixDisplacementDouble, ElementaryMatrixTemperatureDouble
 from ..Objects import Surface
 from ..Objects import MechanicalModeContainer
-from ..Objects import PCFieldOnMeshDouble, FieldOnElementsDouble
+from ..Objects import PCFieldOnMeshDouble, FieldOnElementsDouble, FieldOnNodesDouble
 from .ExecuteCommand import ExecuteCommand
 
 
@@ -57,25 +57,31 @@ class ExtrTable(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        
-        if keywords['TYPE_RESU'] == 'VECT_ELEM_DEPL_R':
+        typeResu = keywords['TYPE_RESU']
+        if typeResu in ('VECT_ELEM_DEPL_R', 'VECT_ELEM_TEMP_R'):
             self._result = ElementaryVector()
-        elif keywords['TYPE_RESU'] == 'FONCTION_SDASTER':
+        elif typeResu == 'FONCTION_SDASTER':
             self._result = Function()
-        elif keywords['TYPE_RESU'] == 'TABLE_SDASTER':
+        elif typeResu == 'FONCTION_C':
+            self._result = FunctionComplex()
+        elif typeResu == 'TABLE_SDASTER':
             self._result  = Table()
-        elif keywords['TYPE_RESU'] =='MATR_ASSE_GENE_R':
+        elif typeResu == 'MATR_ASSE_GENE_R':
             self._result = GeneralizedAssemblyMatrixDouble()
-        elif keywords['TYPE_RESU'] =='MATR_ELEM_DEPL_R':
+        elif typeResu == 'MATR_ELEM_DEPL_R':
             self._result = ElementaryMatrixDisplacementDouble()
-        elif keywords['TYPE_RESU'] =='NAPPE_SDASTER':
+        elif typeResu == 'MATR_ELEM_TEMP_R':
+            self._result = ElementaryMatrixTemperatureDouble()
+        elif typeResu == 'NAPPE_SDASTER':
             self._result = Surface()
-        elif keywords['TYPE_RESU'] =='MODE_MECA':
+        elif typeResu == 'MODE_MECA':
             self._result = MechanicalModeContainer()
-        elif keywords['TYPE_RESU'] =='CARTE_SDASTER':
+        elif typeResu == 'CARTE_SDASTER':
             self._result = PCFieldOnMeshDouble()
-        elif keywords['TYPE_RESU'] =='CHAM_ELEM':
+        elif typeResu == 'CHAM_ELEM':
             self._result = FieldOnElementsDouble()
+        elif typeResu == 'CHAM_NO_SDASTER':
+            self._result = FieldOnNodesDouble()
         else:
             raise NotImplementedError()
 

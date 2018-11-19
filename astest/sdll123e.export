@@ -7,4 +7,4 @@ P testlist verification sequential
 
 F comm sdll123e.comm D 1
 F mail sdll123d.mail D 20
-F libr sdll123d.66 D 66
+F nom  sdll123d.py D 0

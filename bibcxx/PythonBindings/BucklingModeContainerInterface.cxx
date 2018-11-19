@@ -24,13 +24,28 @@
 #include "PythonBindings/BucklingModeContainerInterface.h"
 #include "PythonBindings/factory.h"
 #include <boost/python.hpp>
+#include "PythonBindings/VariantStiffnessMatrix.h"
 
 void exportBucklingModeContainerToPython() {
     using namespace boost::python;
+
+    bool ( BucklingModeContainerInstance::*c1 )( const AssemblyMatrixDisplacementDoublePtr & ) =
+        &BucklingModeContainerInstance::setStiffnessMatrix;
+    bool ( BucklingModeContainerInstance::*c2 )( const AssemblyMatrixTemperatureDoublePtr & ) =
+        &BucklingModeContainerInstance::setStiffnessMatrix;
+    bool ( BucklingModeContainerInstance::*c3 )( const AssemblyMatrixDisplacementComplexPtr & ) =
+        &BucklingModeContainerInstance::setStiffnessMatrix;
+    bool ( BucklingModeContainerInstance::*c4 )( const AssemblyMatrixPressureDoublePtr & ) =
+        &BucklingModeContainerInstance::setStiffnessMatrix;
 
     class_< BucklingModeContainerInstance, BucklingModeContainerPtr,
             bases< FullResultsContainerInstance > >( "BucklingModeContainer", no_init )
         .def( "__init__", make_constructor(&initFactoryPtr< BucklingModeContainerInstance >))
         .def( "__init__",
-              make_constructor(&initFactoryPtr< BucklingModeContainerInstance, std::string >));
+              make_constructor(&initFactoryPtr< BucklingModeContainerInstance, std::string >))
+        .def( "getStiffnessMatrix", &getStiffnessMatrix< BucklingModeContainerPtr > )
+        .def( "setStiffnessMatrix", c1 )
+        .def( "setStiffnessMatrix", c2 )
+        .def( "setStiffnessMatrix", c3 )
+        .def( "setStiffnessMatrix", c4 );
 };

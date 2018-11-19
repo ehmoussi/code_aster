@@ -23,6 +23,16 @@ from code_aster.Cata.Syntax import *
 from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
+from code_aster.Commands.ExecuteCommand import ExecuteCommand
+from code_aster.Objects import (MechanicalModeContainer, GeneralizedModeContainer)
+from code_aster.Objects import (AssemblyMatrixDisplacementDouble,
+                                AssemblyMatrixTemperatureDouble,
+                                AssemblyMatrixDisplacementComplex,
+                                AssemblyMatrixPressureDouble,
+                                GeneralizedAssemblyMatrixDouble,
+                                GeneralizedAssemblyMatrixComplex)
+from code_aster.Objects import MechanicalModeComplexContainer, BucklingModeContainer
+
 
 def mode_iter_simult_prod(TYPE_RESU, **args ):
     if args.get('__all__'):
@@ -52,7 +62,7 @@ def mode_iter_simult_prod(TYPE_RESU, **args ):
 
 
 
-MODE_ITER_SIMULT=OPER(nom="MODE_ITER_SIMULT",op=  45, sd_prod= mode_iter_simult_prod,
+MODE_ITER_SIMULT_CATA=OPER(nom="MODE_ITER_SIMULT",op=  45, sd_prod= mode_iter_simult_prod,
                       fr=tr("Calcul des modes propres par itérations simultanées : valeurs propres et modes propres réels ou complexes"),
                       reentrant='n',
          METHODE         =SIMP(statut='f',typ='TXM',defaut="SORENSEN",
@@ -192,3 +202,58 @@ MODE_ITER_SIMULT=OPER(nom="MODE_ITER_SIMULT",op=  45, sd_prod= mode_iter_simult_
          INFO            =SIMP(statut='f',typ='I',defaut= 1,into=( 1 , 2) ),
          TITRE           =SIMP(statut='f',typ='TXM',max='**'),
 )  ;
+
+
+class ModalCalculationSimult(ExecuteCommand):
+    """Internal (non public) command to call the underlying operator."""
+    command_name = "MODE_ITER_SIMULT"
+    command_cata = MODE_ITER_SIMULT_CATA
+
+    def create_result(self, keywords):
+        """Initialize the result.
+
+        Arguments:
+            keywords (dict): Keywords arguments of user's keywords.
+        """
+        TYPE_RESU = keywords.get("TYPE_RESU")
+        if TYPE_RESU in ("MODE_FLAMB", "GENERAL"):
+            self._result = BucklingModeContainer()
+            return
+
+        vale_rigi = keywords.get("MATR_RIGI")
+        vale_amor = keywords.get("MATR_AMOR")
+        if vale_amor is not None and isinstance(vale_amor, AssemblyMatrixDisplacementDouble):
+            self._result = MechanicalModeComplexContainer()
+        elif isinstance(vale_rigi, AssemblyMatrixDisplacementDouble):
+            self._result = MechanicalModeContainer()
+        elif isinstance(vale_rigi, AssemblyMatrixTemperatureDouble):
+            self._result = MechanicalModeContainer()
+        elif isinstance(vale_rigi, AssemblyMatrixDisplacementComplex):
+            self._result = MechanicalModeComplexContainer()
+        elif isinstance(vale_rigi, AssemblyMatrixPressureDouble):
+            self._result = MechanicalModeComplexContainer()
+        elif isinstance(vale_rigi, GeneralizedAssemblyMatrixDouble):
+            self._result = GeneralizedModeContainer()
+        elif isinstance(vale_rigi, GeneralizedAssemblyMatrixComplex):
+            self._result = GeneralizedModeContainer()
+
+    def post_exec(self, keywords):
+        """Execute the command.
+
+        Arguments:
+            keywords (dict): User's keywords.
+        """
+        matrRigi = keywords.get("MATR_RIGI")
+        if matrRigi is not None:
+            if isinstance(self._result, GeneralizedModeContainer):
+                self._result.setGeneralizedDOFNumbering(matrRigi.getGeneralizedDOFNumbering())
+            else:
+                self._result.setDOFNumbering(matrRigi.getDOFNumbering())
+            self._result.setStiffnessMatrix(matrRigi)
+        matrAmor = keywords.get("MATR_AMOR")
+        if matrAmor is not None:
+            self._result.setDampingMatrix(matrAmor)
+        self._result.update()
+
+
+MODE_ITER_SIMULT = ModalCalculationSimult.run

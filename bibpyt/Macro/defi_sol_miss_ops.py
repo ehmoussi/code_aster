@@ -492,8 +492,9 @@ def defi_sol_miss_ops(self, MATERIAU, COUCHE=None, COUCHE_AUTO=None,
         id_mate = id_mate - 1
         couche["NUME_COUCHE"] = idc
         couche.update(l_mate[id_mate])
-        if couche.get("SUBSTRATUM") is None:
-            del couche["SUBSTRATUM"]
+        if couche.has_key("SUBSTRATUM"):
+            if couche["SUBSTRATUM"] is None:
+                del couche["SUBSTRATUM"]
         if couche["EPAIS"] is None:
             couche["EPAIS"] = 0.
         tab.append(couche)

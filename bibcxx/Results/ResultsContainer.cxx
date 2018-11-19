@@ -143,8 +143,6 @@ ModelPtr ResultsContainerInstance::getModel() {
         if ( name != curIter.second->getName() )
             throw std::runtime_error( "Error: multiple models" );
     }
-    if ( toReturn == nullptr )
-        throw std::runtime_error( "Error: no model" );
     return toReturn;
 };
 

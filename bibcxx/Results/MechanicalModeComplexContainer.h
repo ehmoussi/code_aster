@@ -29,6 +29,7 @@
 #include "Results/FullResultsContainer.h"
 #include "LinearAlgebra/StructureInterface.h"
 #include "LinearAlgebra/AssemblyMatrix.h"
+#include "LinearAlgebra/GeneralizedAssemblyMatrix.h"
 
 /**
  * @class MechanicalModeComplexContainerInstance
@@ -53,26 +54,48 @@ class MechanicalModeComplexContainerInstance : public FullResultsContainerInstan
     StructureInterfacePtr _structureInterface;
     /** @brief Damping matrix */
     AssemblyMatrixDisplacementDoublePtr _dampingMatrix;
-    /** @brief Stiffness complex matrix */
-    AssemblyMatrixDisplacementComplexPtr _rigidityCMatrix;
-    /** @brief Stiffness double matrix */
-    AssemblyMatrixDisplacementDoublePtr _rigidityDMatrix;
+    /** @brief Stiffness double displacement matrix */
+    AssemblyMatrixDisplacementDoublePtr _rigidityDispDMatrix;
+    /** @brief Stiffness complex displacement matrix */
+    AssemblyMatrixDisplacementComplexPtr _rigidityDispCMatrix;
+    /** @brief Stiffness double temperature matrix */
+    AssemblyMatrixTemperatureDoublePtr _rigidityTempDMatrix;
+    /** @brief Stiffness double pressure matrix */
+    AssemblyMatrixPressureDoublePtr _rigidityPressDMatrix;
+    /** @brief Stiffness generalized double matrix */
+    GeneralizedAssemblyMatrixDoublePtr _rigidityGDMatrix;
+    /** @brief Stiffness generalized complex matrix */
+    GeneralizedAssemblyMatrixComplexPtr _rigidityGCMatrix;
 
   public:
     /**
      * @brief Constructeur
      */
-    MechanicalModeComplexContainerInstance()
-        : FullResultsContainerInstance( "MODE_MECA_C" ),
-          _structureInterface( StructureInterfacePtr() ), _dampingMatrix( nullptr ),
-          _rigidityCMatrix( nullptr ), _rigidityDMatrix( nullptr ){};
+    MechanicalModeComplexContainerInstance():
+        FullResultsContainerInstance( "MODE_MECA_C" ),
+        _structureInterface( StructureInterfacePtr() ),
+        _dampingMatrix( nullptr ),
+        _rigidityDispDMatrix( nullptr ),
+        _rigidityDispCMatrix( nullptr ),
+        _rigidityTempDMatrix( nullptr ),
+        _rigidityPressDMatrix( nullptr ),
+        _rigidityGDMatrix( nullptr ),
+        _rigidityGCMatrix( nullptr )
+    {};
     /**
      * @brief Constructeur
      */
-    MechanicalModeComplexContainerInstance( const std::string &name )
-        : FullResultsContainerInstance( name, "MODE_MECA_C" ),
-          _structureInterface( StructureInterfacePtr() ), _dampingMatrix( nullptr ),
-          _rigidityCMatrix( nullptr ), _rigidityDMatrix( nullptr ){};
+    MechanicalModeComplexContainerInstance( const std::string &name ):
+        FullResultsContainerInstance( name, "MODE_MECA_C" ),
+        _structureInterface( StructureInterfacePtr() ),
+        _dampingMatrix( nullptr ),
+        _rigidityDispDMatrix( nullptr ),
+        _rigidityDispCMatrix( nullptr ),
+        _rigidityTempDMatrix( nullptr ),
+        _rigidityPressDMatrix( nullptr ),
+        _rigidityGDMatrix( nullptr ),
+        _rigidityGCMatrix( nullptr )
+    {};
 
     /**
      * @brief Obtenir un champ aux noeuds complexe vide à partir de son nom et de son numéro d'ordre
@@ -104,21 +127,91 @@ class MechanicalModeComplexContainerInstance : public FullResultsContainerInstan
 
     /**
      * @brief Set the rigidity matrix
-     * @param matr AssemblyMatrixDisplacementComplexPtr
+     * @param matr AssemblyMatrixDisplacementDoublePtr
      */
-    bool setStiffnessMatrix( const AssemblyMatrixDisplacementComplexPtr &matr ) {
-        _rigidityCMatrix = matr;
-        _rigidityDMatrix = nullptr;
+    bool setStiffnessMatrix( const AssemblyMatrixDisplacementDoublePtr &matr )
+    {
+        _rigidityDispDMatrix = matr;
+        _rigidityDispCMatrix = nullptr;
+        _rigidityTempDMatrix = nullptr;
+        _rigidityPressDMatrix = nullptr;
+        _rigidityGDMatrix = nullptr;
+        _rigidityGCMatrix = nullptr;
         return true;
     };
 
     /**
      * @brief Set the rigidity matrix
-     * @param matr AssemblyMatrixDisplacementDoublePtr
+     * @param matr AssemblyMatrixDisplacementComplexPtr
      */
-    bool setStiffnessMatrix( const AssemblyMatrixDisplacementDoublePtr &matr ) {
-        _rigidityDMatrix = matr;
-        _rigidityCMatrix = nullptr;
+    bool setStiffnessMatrix( const AssemblyMatrixDisplacementComplexPtr &matr )
+    {
+        _rigidityDispDMatrix = nullptr;
+        _rigidityDispCMatrix = matr;
+        _rigidityTempDMatrix = nullptr;
+        _rigidityPressDMatrix = nullptr;
+        _rigidityGDMatrix = nullptr;
+        _rigidityGCMatrix = nullptr;
+        return true;
+    };
+
+    /**
+     * @brief Set the rigidity matrix
+     * @param matr AssemblyMatrixTemperatureDoublePtr
+     */
+    bool setStiffnessMatrix( const AssemblyMatrixTemperatureDoublePtr &matr )
+    {
+        _rigidityDispDMatrix = nullptr;
+        _rigidityDispCMatrix = nullptr;
+        _rigidityTempDMatrix = matr;
+        _rigidityPressDMatrix = nullptr;
+        _rigidityGDMatrix = nullptr;
+        _rigidityGCMatrix = nullptr;
+        return true;
+    };
+
+    /**
+     * @brief Set the rigidity matrix
+     * @param matr AssemblyMatrixPressureDoublePtr
+     */
+    bool setStiffnessMatrix( const AssemblyMatrixPressureDoublePtr &matr )
+    {
+        _rigidityDispDMatrix = nullptr;
+        _rigidityDispCMatrix = nullptr;
+        _rigidityTempDMatrix = nullptr;
+        _rigidityPressDMatrix = matr;
+        _rigidityGDMatrix = nullptr;
+        _rigidityGCMatrix = nullptr;
+        return true;
+    };
+
+    /**
+     * @brief Set the rigidity matrix
+     * @param matr GeneralizedAssemblyMatrixDoublePtr
+     */
+    bool setStiffnessMatrix( const GeneralizedAssemblyMatrixDoublePtr &matr )
+    {
+        _rigidityDispDMatrix = nullptr;
+        _rigidityDispCMatrix = nullptr;
+        _rigidityTempDMatrix = nullptr;
+        _rigidityPressDMatrix = nullptr;
+        _rigidityGDMatrix = matr;
+        _rigidityGCMatrix = nullptr;
+        return true;
+    };
+
+    /**
+     * @brief Set the rigidity matrix
+     * @param matr GeneralizedAssemblyMatrixComplexPtr
+     */
+    bool setStiffnessMatrix( const GeneralizedAssemblyMatrixComplexPtr &matr )
+    {
+        _rigidityDispDMatrix = nullptr;
+        _rigidityDispCMatrix = nullptr;
+        _rigidityTempDMatrix = nullptr;
+        _rigidityPressDMatrix = nullptr;
+        _rigidityGDMatrix = nullptr;
+        _rigidityGCMatrix = matr;
         return true;
     };
 
@@ -136,10 +229,14 @@ class MechanicalModeComplexContainerInstance : public FullResultsContainerInstan
         BaseDOFNumberingPtr numeDdl( nullptr );
         if ( _dampingMatrix != nullptr )
             numeDdl = _dampingMatrix->getDOFNumbering();
-        if ( _rigidityCMatrix != nullptr )
-            numeDdl = _rigidityCMatrix->getDOFNumbering();
-        if ( _rigidityDMatrix != nullptr )
-            numeDdl = _rigidityDMatrix->getDOFNumbering();
+        if ( _rigidityDispDMatrix != nullptr )
+            numeDdl = _rigidityDispDMatrix->getDOFNumbering();
+        if ( _rigidityDispCMatrix != nullptr )
+            numeDdl = _rigidityDispCMatrix->getDOFNumbering();
+        if ( _rigidityTempDMatrix != nullptr )
+            numeDdl = _rigidityTempDMatrix->getDOFNumbering();
+        if ( _rigidityPressDMatrix != nullptr )
+            numeDdl = _rigidityPressDMatrix->getDOFNumbering();
 
         if ( numeDdl != nullptr ) {
             const auto model = numeDdl->getSupportModel();
