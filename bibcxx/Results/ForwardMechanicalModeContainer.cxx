@@ -38,7 +38,7 @@ void ForwardMechanicalModeContainerPtr::operator=( const MechanicalModeContainer
 };
 
 MechanicalModeContainerPtr
-ForwardMechanicalModeContainerPtr::getPointer() throw( std::runtime_error ) {
+ForwardMechanicalModeContainerPtr::getPointer() {
     if ( !_isSet )
         throw std::runtime_error( "No pointer set" );
     return _ptr;

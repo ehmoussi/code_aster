@@ -80,7 +80,7 @@ class GenericGeneralizedAssemblyMatrixInstance: public DataStructure
     /**
      * @brief Get support MechanicalModeContainer
      */
-    MechanicalModeContainerPtr getModalBasis() throw( std::runtime_error )
+    MechanicalModeContainerPtr getModalBasis()
     {
         if ( _mecaModeC.isSet() )
             return _mecaModeC.getPointer();

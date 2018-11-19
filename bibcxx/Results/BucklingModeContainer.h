@@ -192,7 +192,7 @@ class BucklingModeContainerInstance : public FullResultsContainerInstance
         return true;
     };
 
-    bool update() throw( std::runtime_error )
+    bool update()
     {
         BaseDOFNumberingPtr numeDdl( nullptr );
         if ( _rigidityDispDMatrix != nullptr )
