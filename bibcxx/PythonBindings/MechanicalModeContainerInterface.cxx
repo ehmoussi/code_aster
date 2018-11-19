@@ -24,7 +24,7 @@
 #include "PythonBindings/MechanicalModeContainerInterface.h"
 #include "PythonBindings/factory.h"
 #include <boost/python.hpp>
-#include "PythonBindings/VariantStiffnessMatrix.h"
+#include "PythonBindings/VariantStiffnessMatrixInterface.h"
 
 void exportMechanicalModeContainerToPython() {
     using namespace boost::python;
