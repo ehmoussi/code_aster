@@ -93,15 +93,14 @@ def simu_point_mat_ops(
         igrd = 0
         ic1c2 = 0
         if SIGM_IMPOSE:
-            SIG = SIGM_IMPOSE[0].cree_dict_valeurs(SIGM_IMPOSE[0].mc_liste)
+            SIG = dict(SIGM_IMPOSE[0])
             isig = 1
         if EPSI_IMPOSE:
-            EPS = EPSI_IMPOSE[0].cree_dict_valeurs(EPSI_IMPOSE[0].mc_liste)
+            EPS = dict(EPSI_IMPOSE[0])
             ieps = 1
         if args.has_key('GRAD_IMPOSE'):
             if args['GRAD_IMPOSE'] != None:
-                FIJ = args['GRAD_IMPOSE'][0].cree_dict_valeurs(
-                    args['GRAD_IMPOSE'][0].mc_liste)
+                FIJ = dict(args['GRAD_IMPOSE'][0])
                 igrd = 1
         if args.has_key('MATR_C1'):
             if args['MATR_C1'] != None:
@@ -132,10 +131,10 @@ def simu_point_mat_ops(
                 inds = 0
                 inde = 0
                 if ieps:
-                    if EPS[ike] != None:
+                    if EPS.get(ike) != None:
                         inde = 1
                 if isig:
-                    if SIG[iks] != None:
+                    if SIG.get(iks) != None:
                         inds = 1
                 if inde * inds != 0:
                     UTMESS('F', 'COMPOR2_2', valk=iks)
@@ -234,7 +233,7 @@ def simu_point_mat_ops(
         Titre = 'CALC_POINT_MAT'
         if ARCHIVAGE != None:
 #         on ne prend en compte que ARCHIVAGE / LIST_INST
-            if ARCHIVAGE['LIST_INST'] != None:
+            if ARCHIVAGE.get('LIST_INST') != None:
                 __REP1 = CALC_POINT_MAT(
                     INFO=INFO, MATER=MATER, ANGLE=ANGLE, **motscles)
                 lr8 = ARCHIVAGE['LIST_INST']
@@ -274,7 +273,7 @@ def simu_point_mat_ops(
             CMP_SIG = ['SIXX', 'SIYY', 'SIXY']
 
         if SIGM_IMPOSE:
-            SIG = SIGM_IMPOSE[0].cree_dict_valeurs(SIGM_IMPOSE[0].mc_liste)
+            SIG = dict(SIGM_IMPOSE[0])
             for i in SIG.keys():
                 if SIG[i] == None:
                     SIG[i] = __fonczero
@@ -283,7 +282,7 @@ def simu_point_mat_ops(
                 SIG[CMP_SIG[i]] = __fonczero
 
         if EPSI_IMPOSE:
-            EPS = EPSI_IMPOSE[0].cree_dict_valeurs(EPSI_IMPOSE[0].mc_liste)
+            EPS = dict(EPSI_IMPOSE[0])
         else:
             for i in range(nbsig):
                 EPS[CMP_EPS[i]] = None
@@ -291,7 +290,7 @@ def simu_point_mat_ops(
         for index in range(nbsig):
             iks = CMP_SIG[index]
             ike = CMP_EPS[index]
-            if EPS[ike] != None and SIG[iks] != __fonczero:
+            if EPS.get(ike) != None and SIG[iks] != __fonczero:
                 UTMESS('F', 'COMPOR2_3', valk=str(iks) + ' ' + str(ike))
 
 #     -- Definition du maillage
@@ -415,7 +414,7 @@ def simu_point_mat_ops(
 
 #     --MASSIF : orientation du materiau (monocristal, orthotropie)
         if MASSIF:
-            ANGMAS = MASSIF[0].cree_dict_valeurs(MASSIF[0].mc_liste)
+            ANGMAS = dict(MASSIF[0])
             if ANGMAS["ANGL_REP"] == None:
                 __CARA = AFFE_CARA_ELEM(MODELE=__MO, MASSIF=_F(
                     MAILLE='VOLUME', ANGL_EULER=ANGMAS["ANGL_EULER"]),)
@@ -508,7 +507,7 @@ def simu_point_mat_ops(
 
         for i in xrange(nbsig):
             ike = CMP_EPS[i]
-            if EPS[ike]:
+            if EPS.get(ike):
                 l_char.append(_F(CHARGE=__E[i], FONC_MULT=EPS[ike]))
 
         for i in xrange(nbsig):
@@ -518,7 +517,7 @@ def simu_point_mat_ops(
 #     variables de commande
         mcvarc = []
         if args.has_key('AFFE_VARC'):
-            if args['AFFE_VARC'] != None:
+            if args.get('AFFE_VARC') != None:
                 lvarc = args['AFFE_VARC']
                 nbvarc = len(lvarc)
                 for ivarc in range(nbvarc):
@@ -700,7 +699,7 @@ def simu_point_mat_ops(
                         dico["NOM_VARC"] = "M_ACIER"
                     else:
                         dico["NOM_VARC"] = lvarc[ivarc]['NOM_VARC']
-                        if lvarc[ivarc]['VALE_REF'] != None:
+                        if lvarc[ivarc].get('VALE_REF') != None:
                             dico["VALE_REF"] = lvarc[ivarc]['VALE_REF']
                     mcvarc.append(dico)
 #      -- Materiau et modele
@@ -724,9 +723,9 @@ def simu_point_mat_ops(
 #     --contraintes initiales
         if SIGM_INIT:
             etatinit = 1
-            SIGINI = SIGM_INIT[0].cree_dict_valeurs(SIGM_INIT[0].mc_liste)
+            SIGINI = dict(SIGM_INIT[0])
             for i in SIGINI.keys():
-                if SIGINI[i] != None:
+                if SIGINI.get(i) != None:
                     LCSIG.append(i)
                     LVSIG.append(SIGINI[i])
 
@@ -740,7 +739,7 @@ def simu_point_mat_ops(
             etatinit = 1
             lnomneu = []
             lnomvar = []
-            VARINI = VARI_INIT[0].cree_dict_valeurs(VARI_INIT[0].mc_liste)
+            VARINI = dict(VARI_INIT[0])
             if (not is_sequence(VARINI['VALE'])):
                 VARINI['VALE'] = [VARINI['VALE'], ]
             nbvari = len(VARINI['VALE'])
@@ -771,7 +770,7 @@ def simu_point_mat_ops(
             mon_dico["VALE"] = (0., 0., 0.)
             LIST_AFFE.append(mon_dico)
 
-            EPSINI = EPSI_INIT[0].cree_dict_valeurs(EPSI_INIT[0].mc_liste)
+            EPSINI = dict(EPSI_INIT[0])
             mon_dico = {}
             mon_dico["NOEUD"] = 'P1'
             mon_dico["NOM_CMP"] = 'DX'
@@ -846,7 +845,7 @@ def simu_point_mat_ops(
         motscles['NEWTON'] = NEWTON
 
         if args.has_key('RECH_LINEAIRE'):
-            if args['RECH_LINEAIRE'] != None:
+            if args.get('RECH_LINEAIRE') != None:
                 motscles['RECH_LINEAIRE'] = args['RECH_LINEAIRE']
 
         motscles['INCREMENT'] = INCREMENT
