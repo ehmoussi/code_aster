@@ -76,7 +76,7 @@ AsterError.message = property(format_exception)
 
 import aster
 
-aster.ArretCpuError = AsterError
+aster.ArretCPUError = AsterError
 aster.BandeFrequenceVideError = AsterError
 aster.EventError = AsterError
 aster.NonConvergenceError = AsterError

@@ -94,3 +94,12 @@ std::string onFatalError( const std::string value ) {
     }
     return std::string( tmp, lng );
 }
+
+extern "C" void _reset_tpmax();
+
+void set_option( const std::string &option, double value ) {
+    if ( option == "tpmax" ) {
+        // only reset the cached value for the moment
+        _reset_tpmax();
+    }
+}
