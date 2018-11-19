@@ -25,6 +25,13 @@
 
 #include "astercxx.h"
 
+#include "aster_fort.h"
+#include "aster_init.h"
+#include "shared_vars.h"
+
+#include "RunManager/Exceptions.h"
+
+// Please keep '*Interface.h' files in alphabetical order to ease merging
 #include "PythonBindings/AcousticModeContainerInterface.h"
 #include "PythonBindings/AcousticsLoadInterface.h"
 #include "PythonBindings/AssemblyMatrixInterface.h"
@@ -36,9 +43,9 @@
 #include "PythonBindings/CrackShapeInterface.h"
 #include "PythonBindings/CrackTipInterface.h"
 #include "PythonBindings/CyclicSymmetryModeInterface.h"
-#include "PythonBindings/DOFNumberingInterface.h"
 #include "PythonBindings/DataStructureInterface.h"
 #include "PythonBindings/DiscreteProblemInterface.h"
+#include "PythonBindings/DOFNumberingInterface.h"
 #include "PythonBindings/DrivingInterface.h"
 #include "PythonBindings/DynamicMacroElementInterface.h"
 #include "PythonBindings/ElasticEvolutionContainerInterface.h"
@@ -77,12 +84,11 @@
 #include "PythonBindings/InputVariableEvolutionContainerInterface.h"
 #include "PythonBindings/InterspectralMatrixInterface.h"
 #include "PythonBindings/KinematicsLoadInterface.h"
-#include "PythonBindings/LineSearchMethodInterface.h"
 #include "PythonBindings/LinearDisplacementEvolutionContainerInterface.h"
 #include "PythonBindings/LinearSolverInterface.h"
+#include "PythonBindings/LineSearchMethodInterface.h"
 #include "PythonBindings/ListOfFloatsInterface.h"
 #include "PythonBindings/ListOfIntegersInterface.h"
-#include "PythonBindings/MPIInfosInterface.h"
 #include "PythonBindings/MatchingMeshesInterface.h"
 #include "PythonBindings/MaterialBehaviourInterface.h"
 #include "PythonBindings/MaterialInterface.h"
@@ -95,15 +101,16 @@
 #include "PythonBindings/ModalBasisDefinitionInterface.h"
 #include "PythonBindings/ModeEmpiContainerInterface.h"
 #include "PythonBindings/ModelInterface.h"
+#include "PythonBindings/MPIInfosInterface.h"
 #include "PythonBindings/MultElasContainerInterface.h"
 #include "PythonBindings/NonLinearEvolutionContainerInterface.h"
 #include "PythonBindings/NonLinearMethodInterface.h"
 #include "PythonBindings/NormalModeAnalysisInterface.h"
-#include "PythonBindings/PCFieldOnMeshInterface.h"
 #include "PythonBindings/ParallelDOFNumberingInterface.h"
 #include "PythonBindings/ParallelMechanicalLoadInterface.h"
 #include "PythonBindings/ParallelMeshInterface.h"
 #include "PythonBindings/PartialMeshInterface.h"
+#include "PythonBindings/PCFieldOnMeshInterface.h"
 #include "PythonBindings/PhysicalQuantityInterface.h"
 #include "PythonBindings/PhysicsAndModelingsInterface.h"
 #include "PythonBindings/PrestressingCableDefinitionInterface.h"
@@ -127,15 +134,10 @@
 #include "PythonBindings/TimeStepperInterface.h"
 #include "PythonBindings/TurbulentSpectrumInterface.h"
 #include "PythonBindings/UnitaryThermalLoadInterface.h"
-#include "PythonBindings/VariantStiffnessMatrix.h"
-#include "PythonBindings/VectorUtilities.h"
+#include "PythonBindings/VariantStiffnessMatrixInterface.h"
+#include "PythonBindings/VectorUtilitiesInterface.h"
 #include "PythonBindings/XfemCrackInterface.h"
-
-#include "RunManager/Exceptions.h"
-
-#include "aster_fort.h"
-#include "aster_init.h"
-#include "shared_vars.h"
+// Please keep '*Interface.h' files in alphabetical order to ease merging
 
 namespace py = boost::python;
 

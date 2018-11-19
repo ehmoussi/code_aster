@@ -18,9 +18,11 @@
 
 subroutine opsexe(nuoper)
     implicit none
+#include "asterfort/debut.h"
 #include "asterfort/ops005.h"
 #include "asterfort/ops007.h"
 #include "asterfort/ops026.h"
+#include "asterfort/poursu.h"
 #include "asterfort/utmess.h"
     integer :: nuoper
     integer :: vali
