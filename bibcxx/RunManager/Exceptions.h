@@ -53,11 +53,18 @@ class AsterErrorCpp : public std::exception {
     PyObject *py_attrs() const;
 };
 
+class TimeLimitErrorCpp : public AsterErrorCpp {
+  public:
+    TimeLimitErrorCpp( std::string idmess, VectorString valk = {}, VectorLong vali = {},
+                       VectorDouble valr = {} )
+        : AsterErrorCpp( idmess, valk, vali, valr ) {}
+};
+
 PyObject *createExceptionClass( const char *name, PyObject *baseTypeObj = PyExc_Exception );
 
 void raiseAsterError( const std::string idmess = "VIDE_1" );
 
-extern "C" void DEFPSPSPPPP( UEXCEP, uexcep, _IN ASTERINTEGER *exc_type, _IN char *idmess,
+extern "C" void DEFPSPSPPPP( UEXCEP, uexcep, _IN ASTERINTEGER *exc_id, _IN char *idmess,
                              _IN STRING_SIZE lidmess, _IN ASTERINTEGER *nbk, _IN char *valk,
                              _IN STRING_SIZE lvk, _IN ASTERINTEGER *nbi, _IN ASTERINTEGER *vali,
                              _IN ASTERINTEGER *nbr, _IN ASTERDOUBLE *valr );

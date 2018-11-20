@@ -23,7 +23,7 @@
 ********************************************************
 """
 
-from libaster import AsterError
+from libaster import AsterError, TimeLimitError
 
 from ..Utilities import convert
 
@@ -76,7 +76,7 @@ AsterError.message = property(format_exception)
 
 import aster
 
-aster.ArretCPUError = AsterError
+aster.ArretCPUError = TimeLimitError
 aster.BandeFrequenceVideError = AsterError
 aster.EventError = AsterError
 aster.NonConvergenceError = AsterError
