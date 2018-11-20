@@ -108,7 +108,7 @@ subroutine utmess_core(typ, idmess, nk, valk, ni,&
     lvalid = (idf.eq.6 .or. idf.eq.7) .or. (idf.eq.2 .and. compex(1:lout).eq.'EXCEPTION+VALID')
 !     DOIT-ON S'ARRETER BRUTALEMENT (POUR DEBUG) ?
     labort = idf.eq.2 .and. compex(1:lout).eq.'ABORT'
-!     AFFICHIER LE TRACEBACK SI DISPONIBLE
+!     AFFICHER LE TRACEBACK SI DISPONIBLE
     ltrb = labort .or. (lerror .and. msgId(1:4).eq.'DVP_') .or. idf.eq.8
 !
     numex = nexcep
