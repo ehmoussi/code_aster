@@ -43,9 +43,9 @@
 #include "PythonBindings/CrackShapeInterface.h"
 #include "PythonBindings/CrackTipInterface.h"
 #include "PythonBindings/CyclicSymmetryModeInterface.h"
+#include "PythonBindings/DOFNumberingInterface.h"
 #include "PythonBindings/DataStructureInterface.h"
 #include "PythonBindings/DiscreteProblemInterface.h"
-#include "PythonBindings/DOFNumberingInterface.h"
 #include "PythonBindings/DrivingInterface.h"
 #include "PythonBindings/DynamicMacroElementInterface.h"
 #include "PythonBindings/ElasticEvolutionContainerInterface.h"
@@ -84,11 +84,12 @@
 #include "PythonBindings/InputVariableEvolutionContainerInterface.h"
 #include "PythonBindings/InterspectralMatrixInterface.h"
 #include "PythonBindings/KinematicsLoadInterface.h"
+#include "PythonBindings/LineSearchMethodInterface.h"
 #include "PythonBindings/LinearDisplacementEvolutionContainerInterface.h"
 #include "PythonBindings/LinearSolverInterface.h"
-#include "PythonBindings/LineSearchMethodInterface.h"
 #include "PythonBindings/ListOfFloatsInterface.h"
 #include "PythonBindings/ListOfIntegersInterface.h"
+#include "PythonBindings/MPIInfosInterface.h"
 #include "PythonBindings/MatchingMeshesInterface.h"
 #include "PythonBindings/MaterialBehaviourInterface.h"
 #include "PythonBindings/MaterialInterface.h"
@@ -101,16 +102,15 @@
 #include "PythonBindings/ModalBasisDefinitionInterface.h"
 #include "PythonBindings/ModeEmpiContainerInterface.h"
 #include "PythonBindings/ModelInterface.h"
-#include "PythonBindings/MPIInfosInterface.h"
 #include "PythonBindings/MultElasContainerInterface.h"
 #include "PythonBindings/NonLinearEvolutionContainerInterface.h"
 #include "PythonBindings/NonLinearMethodInterface.h"
 #include "PythonBindings/NormalModeAnalysisInterface.h"
+#include "PythonBindings/PCFieldOnMeshInterface.h"
 #include "PythonBindings/ParallelDOFNumberingInterface.h"
 #include "PythonBindings/ParallelMechanicalLoadInterface.h"
 #include "PythonBindings/ParallelMeshInterface.h"
 #include "PythonBindings/PartialMeshInterface.h"
-#include "PythonBindings/PCFieldOnMeshInterface.h"
 #include "PythonBindings/PhysicalQuantityInterface.h"
 #include "PythonBindings/PhysicsAndModelingsInterface.h"
 #include "PythonBindings/PrestressingCableDefinitionInterface.h"
@@ -160,24 +160,6 @@ struct LibAsterInitializer {
     ~LibAsterInitializer() { libaster_finalize(); };
 };
 
-PyObject *AsterErrorPy = (PyObject *)0;
-PyObject *TimeLimitErrorPy = (PyObject *)0;
-
-void translateAsterError( AsterErrorCpp const &exc ) {
-    assert( AsterErrorPy != NULL );
-
-    PyObject *py_err = exc.py_attrs();
-    PyErr_SetObject( AsterErrorPy, py_err );
-    Py_DECREF( py_err );
-}
-
-void translateTimeLimitError( TimeLimitErrorCpp const &exc ) {
-    assert( TimeLimitErrorPy != NULL );
-
-    PyObject *py_err = exc.py_attrs();
-    PyErr_SetObject( TimeLimitErrorPy, py_err );
-    Py_DECREF( py_err );
-}
 
 BOOST_PYTHON_FUNCTION_OVERLOADS( raiseAsterError_overloads, raiseAsterError, 0, 1 )
 
@@ -195,10 +177,12 @@ BOOST_PYTHON_MODULE( libaster ) {
     py::scope().attr( "debugJeveuxContent" ) = &libaster_debugJeveuxContent;
 
     // Exceptions
-    AsterErrorPy = createExceptionClass( "AsterError" );
-    TimeLimitErrorPy = createExceptionClass( "TimeLimitError", AsterErrorPy );
-    py::register_exception_translator< AsterErrorCpp >( &translateAsterError );
-    py::register_exception_translator< TimeLimitErrorCpp >( &translateTimeLimitError );
+    ErrorPy[21] = createPyException( "AsterError" );
+    ErrorPy[22] = createPyException( "ConvergenceError", ErrorPy[22] );
+    ErrorPy[28] = createPyException( "TimeLimitError", ErrorPy[21] );
+    py::register_exception_translator< ErrorCpp< 21 > >( &translateError< 21 > );
+    py::register_exception_translator< ErrorCpp< 22 > >( &translateError< 22 > );
+    py::register_exception_translator< ErrorCpp< 28 > >( &translateError< 28 > );
 
     py::def( "raiseAsterError", &raiseAsterError, raiseAsterError_overloads() );
 

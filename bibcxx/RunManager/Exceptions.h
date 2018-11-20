@@ -33,7 +33,10 @@
 
 #include "astercxx.h"
 
-class AsterErrorCpp : public std::exception {
+// static table of Python exceptions
+static std::map< int, PyObject * > ErrorPy;
+
+class AbstractErrorCpp : public std::exception {
   private:
     std::string _idmess;
     VectorString _valk;
@@ -41,26 +44,43 @@ class AsterErrorCpp : public std::exception {
     VectorDouble _valr;
 
   public:
-    AsterErrorCpp( std::string idmess, VectorString valk = {}, VectorLong vali = {},
+    AbstractErrorCpp( std::string idmess, VectorString valk = {}, VectorLong vali = {},
                    VectorDouble valr = {} )
         : _idmess( idmess ), _valk( valk ), _vali( vali ), _valr( valr ) {}
 
     const char *what() const noexcept { return _idmess.c_str(); }
 
-    ~AsterErrorCpp() noexcept {}
+    virtual ~AbstractErrorCpp() noexcept {}
 
     /* Build arguments for the Python exception */
     PyObject *py_attrs() const;
 };
 
-class TimeLimitErrorCpp : public AsterErrorCpp {
+// Subclasses
+template < int Id > class ErrorCpp : public AbstractErrorCpp {
+  private:
+    int _id = Id;
+
   public:
-    TimeLimitErrorCpp( std::string idmess, VectorString valk = {}, VectorLong vali = {},
-                       VectorDouble valr = {} )
-        : AsterErrorCpp( idmess, valk, vali, valr ) {}
+    ErrorCpp< Id >( std::string idmess, VectorString valk = {}, VectorLong vali = {},
+                    VectorDouble valr = {} )
+        : AbstractErrorCpp( idmess, valk, vali, valr ) {}
 };
 
-PyObject *createExceptionClass( const char *name, PyObject *baseTypeObj = PyExc_Exception );
+typedef ErrorCpp< 21 > AsterErrorCpp;
+
+// Translation functions: C++ exception to Python exception
+template < int Id >
+void translateError( const ErrorCpp< Id > &exc ) {
+    assert( ErrorPy[Id] != NULL );
+
+    PyObject *py_err = exc.py_attrs();
+    PyErr_SetObject( ErrorPy[Id], py_err );
+    Py_DECREF( py_err );
+}
+
+
+PyObject *createPyException( const char *name, PyObject *baseTypeObj = PyExc_Exception );
 
 void raiseAsterError( const std::string idmess = "VIDE_1" );
 
