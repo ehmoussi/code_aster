@@ -1,34 +1,25 @@
 def EXTR_MATR(matrrr,vall) :
+        from SD.sd_stoc_morse import sd_stoc_morse
+        from SD.sd_nume_equa import sd_nume_equa
 # fonction permettant de recuperer les matrices assemblees au format numpy
 # attention a l'espace memoire
         import numpy as NP
         import aster
 # construction des vecteurs jeveux
-        nommatr=matrrr.nom
-        lenm=len(nommatr)
-        nommatr=nommatr+' '*(8-lenm+1)
-        vectrav=nommatr+'          .REFA        '
-        nom=aster.getvectjev(vectrav)
-        nomnume=nom[1]
+        nom = matrrr.sdj.REFA.get()
         typm=nom[8]
-        lenm=len(nomnume)
-        nomnume=nomnume[0:9]
 
-        nvar=nommatr+'          .VALM'
-        nadia=nomnume+'     .SMOS.SMDI        '
-        nnuml=nomnume+'     .SMOS.SMHC        '
-        nrtt=nomnume+'     .NUME.DELG        '
-        nrtt2=nomnume+'     .NUME.DEEQ        '
-        nlili=nomnume+'     .NUME.LILI        '
-        nrefn=nomnume+'     .NUME.REFN        '
+        var = matrrr.sdj.VALM.get()
+        nume = matrrr.getDOFNumbering().getName().strip()
+        smos = sd_stoc_morse('{0:<14s}.SMOS'.format(nume))
+        neq = sd_nume_equa('{0:<14s}.NUME'.format(nume))
 
-        var=aster.getcolljev(nvar)
-        adia=aster.getvectjev(nadia)
-        numl=aster.getvectjev(nnuml)
-        rtt=aster.getvectjev(nrtt)
-        rtt2=aster.getvectjev(nrtt2)
-        lili=aster.getvectjev(nlili)
-        refn=aster.getvectjev(nrefn)
+        adia = smos.SMDI.get()
+        numl = smos.SMHC.get()
+        rtt = neq.DELG.get()
+        rtt2 = neq.DEEQ.get()
+        lili = neq.LILI.get()
+        refn = neq.REFN.get()
 
         valr=var[1]
         if(typm[0:2]=='MS'):
