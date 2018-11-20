@@ -20,7 +20,7 @@
 #  IDENTIQUE A SSNA111A JUSQU'A STAT_NON_LINE.
 #  LANCE EN ETUDE SIMPLE, LE DIAGNOSTIC EST CPU_LIMIT
 #
-from code_aster import AsterError
+from code_aster import TimeLimitError
 from code_aster.Commands import *
 from code_aster.Supervis import ExecutionParameter
 import aster
@@ -136,8 +136,8 @@ try:
                               PREDICTION='ELASTIQUE',MATR_RIGI_SYME='OUI',
                               REAC_ITER=1,),
                      ARCHIVAGE=_F(LIST_INST=L_INST,),);
-except aster.ArretCPUError as msg:
-   assert msg.id_message == "MECANONLINE9_2", msg.id_message
+except TimeLimitError as msg:
+   assert msg.id_message in ("MECANONLINE9_1", "MECANONLINE9_2"), msg.id_message
    is_ok = 1
 
 print "Restore time limit to {0} s".format(tpmax)

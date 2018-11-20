@@ -52,7 +52,7 @@ import libaster
 from .Objects import *
 
 # import general purpose functions
-from .Supervis import AsterError
+from .Supervis import AsterError, TimeLimitError
 from .RunManager import saveObjects
 from .Utilities import TestCase
 

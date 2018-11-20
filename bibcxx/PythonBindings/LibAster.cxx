@@ -161,12 +161,21 @@ struct LibAsterInitializer {
 };
 
 PyObject *AsterErrorPy = (PyObject *)0;
+PyObject *TimeLimitErrorPy = (PyObject *)0;
 
 void translateAsterError( AsterErrorCpp const &exc ) {
     assert( AsterErrorPy != NULL );
 
     PyObject *py_err = exc.py_attrs();
     PyErr_SetObject( AsterErrorPy, py_err );
+    Py_DECREF( py_err );
+}
+
+void translateTimeLimitError( TimeLimitErrorCpp const &exc ) {
+    assert( TimeLimitErrorPy != NULL );
+
+    PyObject *py_err = exc.py_attrs();
+    PyErr_SetObject( TimeLimitErrorPy, py_err );
     Py_DECREF( py_err );
 }
 
@@ -187,7 +196,9 @@ BOOST_PYTHON_MODULE( libaster ) {
 
     // Exceptions
     AsterErrorPy = createExceptionClass( "AsterError" );
+    TimeLimitErrorPy = createExceptionClass( "TimeLimitError", AsterErrorPy );
     py::register_exception_translator< AsterErrorCpp >( &translateAsterError );
+    py::register_exception_translator< TimeLimitErrorCpp >( &translateTimeLimitError );
 
     py::def( "raiseAsterError", &raiseAsterError, raiseAsterError_overloads() );
 

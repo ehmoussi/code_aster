@@ -81,11 +81,10 @@ void raiseAsterError( const std::string idmess ) {
     throw AsterErrorCpp( idmess );
 }
 
-extern "C" void DEFPSPSPPPP( UEXCEP, uexcep, _IN ASTERINTEGER *exc_type, _IN char *idmess,
+extern "C" void DEFPSPSPPPP( UEXCEP, uexcep, _IN ASTERINTEGER *exc_id, _IN char *idmess,
                              _IN STRING_SIZE lidmess, _IN ASTERINTEGER *nbk, _IN char *valk,
                              _IN STRING_SIZE lvk, _IN ASTERINTEGER *nbi, _IN ASTERINTEGER *vali,
                              _IN ASTERINTEGER *nbr, _IN ASTERDOUBLE *valr ) {
-    // exc_type: not yet used, always throw AsterError
     VectorString argk = {};
     VectorLong argi = {};
     VectorDouble argr = {};
@@ -99,7 +98,13 @@ extern "C" void DEFPSPSPPPP( UEXCEP, uexcep, _IN ASTERINTEGER *exc_type, _IN cha
         argr.push_back( valr[i] );
     }
 
-    throw AsterErrorCpp( trim( std::string( idmess ) ), argk, argi, argr );
+    // exc_id: not yet used, always throw AsterError
+    std::string idm( trim( std::string( idmess ) ) );
+    if ( *exc_id == 28 ) {
+        throw TimeLimitErrorCpp( idm, argk, argi, argr );
+    }
+
+    throw AsterErrorCpp( idm, argk, argi, argr );
 }
 
 // TODO for aster_exceptions, to be removed in the future

@@ -26,6 +26,6 @@ objects.
 
 from .CommandSyntax import CommandSyntax
 from .ExecutionParameter import ExecutionParameter
-from .exceptions_ext import AsterError
+from .exceptions_ext import AsterError, TimeLimitError
 from .logger import logger
 from .options import Options
