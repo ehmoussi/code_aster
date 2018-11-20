@@ -31,7 +31,7 @@
 #include "RunManager/Exceptions.h"
 #include "Utilities/Tools.h"
 
-PyObject *AsterErrorCpp::py_attrs() const {
+PyObject *AbstractErrorCpp::py_attrs() const {
     int idx = 0;
     PyObject *py_err = PyTuple_New( 4 );
 
@@ -60,7 +60,7 @@ PyObject *AsterErrorCpp::py_attrs() const {
     return py_err;
 }
 
-PyObject *createExceptionClass( const char *name, PyObject *baseTypeObj ) {
+PyObject *createPyException( const char *name, PyObject *baseTypeObj ) {
     namespace py = boost::python;
 
     std::string scopeName = py::extract< std::string >( py::scope().attr( "__name__" ) );
@@ -98,13 +98,18 @@ extern "C" void DEFPSPSPPPP( UEXCEP, uexcep, _IN ASTERINTEGER *exc_id, _IN char 
         argr.push_back( valr[i] );
     }
 
-    // exc_id: not yet used, always throw AsterError
+    // The identifier of each Python exception is defined in 'LibAster.cxx'
     std::string idm( trim( std::string( idmess ) ) );
-    if ( *exc_id == 28 ) {
-        throw TimeLimitErrorCpp( idm, argk, argi, argr );
-    }
 
-    throw AsterErrorCpp( idm, argk, argi, argr );
+    switch ( *exc_id ) {
+    case 22:
+        throw ErrorCpp< 22 >( idm, argk, argi, argr );
+    case 28:
+        throw ErrorCpp< 28 >( idm, argk, argi, argr );
+
+    default: // exc_id = 21
+        throw AsterErrorCpp( idm, argk, argi, argr );
+    }
 }
 
 // TODO for aster_exceptions, to be removed in the future
