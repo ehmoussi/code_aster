@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -23,6 +23,7 @@
 
 # required: data attributes
 
+import os
 import math
 import numpy
 # because some parameters may be 'repr'esented as `array` or `matrix`
@@ -173,7 +174,7 @@ for i in range(len(coupe_orig)):
                      LIGN_COUPE=_F(INTITULE='LIGNE',
                                    NOM_CMP=('TEMP',),
                                    TYPE='SEGMENT',
-                                   NB_POINTS=10.,
+                                   NB_POINTS=10,
                                    COOR_ORIG=coupe_orig[i],
                                    COOR_EXTR=coupe_extr[i],
                                   ),
