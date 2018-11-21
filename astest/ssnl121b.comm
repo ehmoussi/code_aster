@@ -274,5 +274,6 @@ CHTH=CREA_RESU(    OPERATION='AFFE', TYPE_RESU='EVOL_THER',
                    )
 
 
+INCLUDE(DONNEE='ssnl121b_mater.comm')
 FIN()
 
