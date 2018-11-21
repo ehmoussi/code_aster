@@ -51,4 +51,12 @@ extern "C" {
 } // extern "C"
 #endif
 
+// Exceptions identifiers
+#define ASTER_ERROR 21
+#define CONVERGENCE_ERROR 22
+#define INTEGRATION_ERROR 23
+#define SOLVER_ERROR 25
+#define CONTACT_ERROR 26
+#define TIMELIMIT_ERROR 28
+
 #endif // ASTERCXX_H_

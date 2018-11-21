@@ -565,7 +565,7 @@ implicit none
         valr(2) = nbpasc*tps1(4)
         valr(3) = tps1(1)
         call utmess('Z', 'DYNAMIQUE_11', ni=3, vali=vali, nr=3,&
-                    valr=valr, num_except=28)
+                    valr=valr, num_except=TIMELIMIT_ERROR)
     endif
 !
     vali(1) = ipas

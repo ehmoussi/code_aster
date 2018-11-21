@@ -102,31 +102,24 @@ extern "C" void DEFPSPSPPPP( UEXCEP, uexcep, _IN ASTERINTEGER *exc_id, _IN char 
     std::string idm( trim( std::string( idmess ) ) );
 
     switch ( *exc_id ) {
-    case 22: // ConvergenceError (ex. NonConvergenceError)
-    case 29: // ConvergenceError (ex. PilotageError)
-        throw ErrorCpp< 22 >( idm, argk, argi, argr );
+    case CONVERGENCE_ERROR: // ex. NonConvergenceError, PilotageError
+        throw ErrorCpp< CONVERGENCE_ERROR >( idm, argk, argi, argr );
 
-    case 23: // IntegrationError (ex. EchecComportementError)
-        throw ErrorCpp< 23 >( idm, argk, argi, argr );
+    case INTEGRATION_ERROR: // ex. EchecComportementError
+        throw ErrorCpp< INTEGRATION_ERROR >( idm, argk, argi, argr );
 
-    case 24: // SolverError (ex. BandeFrequenceVideError)
-    case 25: // SolverError (ex. MatriceSinguliereError)
-    case 27: // SolverError (ex. MatriceContactSinguliereError)
-    case 35: // SolverError (ex. ResolutionError)
-        throw ErrorCpp< 25 >( idm, argk, argi, argr );
+    case SOLVER_ERROR: // ex. BandeFrequenceVideError, MatriceSinguliereError,
+                       // MatriceContactSinguliereError, ResolutionError
+        throw ErrorCpp< SOLVER_ERROR >( idm, argk, argi, argr );
 
-    case 26: // ContactError (ex. TraitementContactError)
-    case 30: // ContactError (ex. BoucleGeometrieError)
-    case 31: // ContactError (ex. BoucleFrottementError)
-    case 32: // ContactError (ex. BoucleContactError)
-        throw ErrorCpp< 26 >( idm, argk, argi, argr );
+    case CONTACT_ERROR: // ex. TraitementContactError, BoucleGeometrieError,
+                        // BoucleFrottementError, BoucleContactError
+        throw ErrorCpp< CONTACT_ERROR >( idm, argk, argi, argr );
 
-    case 28: // TimeLimitError
-        throw ErrorCpp< 28 >( idm, argk, argi, argr );
+    case TIMELIMIT_ERROR: // ex. ArretCPUError
+        throw ErrorCpp< TIMELIMIT_ERROR >( idm, argk, argi, argr );
 
-    case 33: // (ex. EventError)
-    case 34: // (ex. ActionError)
-    default: // Generic AsterError (exc_id = 21)
+    case ASTER_ERROR: // AsterError
         throw AsterErrorCpp( idm, argk, argi, argr );
     }
 }

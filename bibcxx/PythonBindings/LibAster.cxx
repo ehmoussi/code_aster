@@ -160,7 +160,6 @@ struct LibAsterInitializer {
     ~LibAsterInitializer() { libaster_finalize(); };
 };
 
-
 BOOST_PYTHON_FUNCTION_OVERLOADS( raiseAsterError_overloads, raiseAsterError, 0, 1 )
 
 BOOST_PYTHON_MODULE( libaster ) {
@@ -177,23 +176,30 @@ BOOST_PYTHON_MODULE( libaster ) {
     py::scope().attr( "debugJeveuxContent" ) = &libaster_debugJeveuxContent;
 
     // Definition of exceptions, thrown from 'Exceptions.cxx'/uexcep
-    ErrorPy[21] = createPyException( "AsterError" );
-    py::register_exception_translator< ErrorCpp< 21 > >( &translateError< 21 > );
+    ErrorPy[ASTER_ERROR] = createPyException( "AsterError" );
+    py::register_exception_translator< ErrorCpp< ASTER_ERROR > >( &translateError< ASTER_ERROR > );
 
-    ErrorPy[22] = createPyException( "ConvergenceError", ErrorPy[22] );
-    py::register_exception_translator< ErrorCpp< 22 > >( &translateError< 22 > );
+    ErrorPy[CONVERGENCE_ERROR] =
+        createPyException( "ConvergenceError", ErrorPy[ASTER_ERROR] );
+    py::register_exception_translator< ErrorCpp< CONVERGENCE_ERROR > >(
+        &translateError< CONVERGENCE_ERROR > );
 
-    ErrorPy[23] = createPyException( "IntegrationError", ErrorPy[23] );
-    py::register_exception_translator< ErrorCpp< 23 > >( &translateError< 23 > );
+    ErrorPy[INTEGRATION_ERROR] =
+        createPyException( "IntegrationError", ErrorPy[ASTER_ERROR] );
+    py::register_exception_translator< ErrorCpp< INTEGRATION_ERROR > >(
+        &translateError< INTEGRATION_ERROR > );
 
-    ErrorPy[25] = createPyException( "SolverError", ErrorPy[25] );
-    py::register_exception_translator< ErrorCpp< 25 > >( &translateError< 25 > );
+    ErrorPy[SOLVER_ERROR] = createPyException( "SolverError", ErrorPy[ASTER_ERROR] );
+    py::register_exception_translator< ErrorCpp< SOLVER_ERROR > >(
+        &translateError< SOLVER_ERROR > );
 
-    ErrorPy[26] = createPyException( "ContactError", ErrorPy[26] );
-    py::register_exception_translator< ErrorCpp< 26 > >( &translateError< 26 > );
+    ErrorPy[CONTACT_ERROR] = createPyException( "ContactError", ErrorPy[ASTER_ERROR] );
+    py::register_exception_translator< ErrorCpp< CONTACT_ERROR > >(
+        &translateError< CONTACT_ERROR > );
 
-    ErrorPy[28] = createPyException( "TimeLimitError", ErrorPy[21] );
-    py::register_exception_translator< ErrorCpp< 28 > >( &translateError< 28 > );
+    ErrorPy[TIMELIMIT_ERROR] = createPyException( "TimeLimitError", ErrorPy[ASTER_ERROR] );
+    py::register_exception_translator< ErrorCpp< TIMELIMIT_ERROR > >(
+        &translateError< TIMELIMIT_ERROR > );
 
     py::def( "raiseAsterError", &raiseAsterError, raiseAsterError_overloads() );
 

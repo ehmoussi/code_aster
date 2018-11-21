@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -223,7 +223,7 @@ implicit none
         valr(1) = tps1(4)
         valr(2) = tps1(1)
         call utmess('Z', 'ALGORITH16_68', si=vali, nr=2, valr=valr,&
-                    num_except=28)
+                    num_except=TIMELIMIT_ERROR)
     else
         write (ifm,'(A,1X,I6,2(1X,A,1X,1PE11.3))') 'NUMERO D''ORDRE:',&
         nume_inst,'INSTANT:',instap, 'DUREE MOYENNE:',tps1(4)

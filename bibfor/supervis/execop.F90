@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -22,6 +22,7 @@ use superv_module, only: superv_before, superv_after
 !     EXECUTION DE LA COMMANDE
 !     ------------------------------------------------------------------
 !     COMMON POUR LE NIVEAU D'"INFO"
+#include "asterf.h"
 #include "asterc/etausr.h"
 #include "asterc/gcecdu.h"
 #include "asterc/uttrst.h"
@@ -83,7 +84,7 @@ use superv_module, only: superv_before, superv_after
 !
     call uttrst(tpres)
     if (tpres .lt. 0.d0) then
-        call utmess('Z', 'SUPERVIS_63', sr=-tpres, num_except=28)
+        call utmess('Z', 'SUPERVIS_63', sr=-tpres, num_except=TIMELIMIT_ERROR)
     endif
 !
 !     -- CONTROLE DE L'APPARIEMMENT DES JEMARQ/JEDEMA

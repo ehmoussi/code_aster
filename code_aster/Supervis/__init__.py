@@ -25,8 +25,8 @@ objects.
 """
 
 from .CommandSyntax import CommandSyntax
-from .exceptions_ext import (AsterError, ConvergenceError, IntegrationError,
-                             SolverError, TimeLimitError)
+from .exceptions_ext import (AsterError, ContactError, ConvergenceError,
+                             IntegrationError, SolverError, TimeLimitError)
 from .ExecutionParameter import ExecutionParameter
 from .logger import logger
 from .options import Options
