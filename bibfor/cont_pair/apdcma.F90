@@ -23,8 +23,8 @@ implicit none
 #include "asterfort/assert.h"
 !
 character(len=8), intent(in) :: elem_code
-integer, intent(out) :: elin_sub(2,3)
-integer, intent(out) :: elin_nbnode(2)
+integer, intent(out) :: elin_sub(1,4)
+integer, intent(out) :: elin_nbnode(1)
 integer, intent(out) :: elin_nbsub
 character(len=8), intent(out) :: elin_code
 !
@@ -37,12 +37,12 @@ character(len=8), intent(out) :: elin_code
 ! --------------------------------------------------------------------------------------------------
 !
 ! SEG2  => 1xSEG2
-! SEG3  => 2xSEG2
+! SEG3  => 1xSEG2
 ! TRIA3 => 1xTRIA3
-! TRIA6 => 4xTRIA3
-! QUAD4 => 2xTRIA3
-! QUAD8 => 6xTRIA3
-! QUAD9 => 2xTRIA3
+! TRIA6 => 1xTRIA3
+! QUAD4 => 1xQUAD4
+! QUAD8 => 1xQUAD4
+! QUAD9 => 1xQUAD4
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -72,16 +72,13 @@ character(len=8), intent(out) :: elin_code
         elin_code      = 'TR3'
     else if (elem_code .eq. 'QU4' .or. elem_code .eq. 'QU8' .or.&
              elem_code .eq. 'QU9') then
-        elin_nbsub     = 2
-        elin_nbnode(1) = 3
+        elin_nbsub     = 1
+        elin_nbnode(1) = 4
         elin_sub(1,1)  = 1
         elin_sub(1,2)  = 2
         elin_sub(1,3)  = 3
-        elin_nbnode(2) = 3
-        elin_sub(2,1)  = 3
-        elin_sub(2,2)  = 4
-        elin_sub(2,3)  = 1
-        elin_code      = 'TR3'
+        elin_sub(1,4)  = 4
+        elin_code      = 'QU4'
     else
         ASSERT(ASTER_FALSE)
     end if

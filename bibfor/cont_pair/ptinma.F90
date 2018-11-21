@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -21,7 +21,7 @@ subroutine ptinma(elem_nbnode, elem_dime , elem_code, elem_coor, pair_tole,&
 !
 implicit none
 !
-#include "asterfort/assert.h"  
+#include "asterfort/assert.h"
 !
     integer, intent(in) :: elem_nbnode
     integer, intent(in) :: elem_dime
@@ -60,35 +60,26 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
     test = -1
-    ASSERT(elem_code .eq. 'TR3' .or. elem_code .eq. 'SE2')
-    if (elem_dime .eq. 3) then 
+    ASSERT(elem_code .eq. 'TR3' .or. elem_code .eq. 'SE2'.or. elem_code .eq. 'QU4')
+    if (elem_dime .eq. 3) then
 !
 ! ----- Vectorial basis for element
 !
-        v0(1) = elem_coor(1,2)-elem_coor(1,1)   
+        v0(1) = elem_coor(1,2)-elem_coor(1,1)
         v0(2) = elem_coor(2,2)-elem_coor(2,1)
-        v1(1) = elem_coor(1,elem_nbnode)-elem_coor(1,1)   
-        v1(2) = elem_coor(2,elem_nbnode)-elem_coor(2,1)  
+        v1(1) = elem_coor(1,3)-elem_coor(1,1)
+        v1(2) = elem_coor(2,3)-elem_coor(2,1)
         d00   = v0(1)*v0(1)+v0(2)*v0(2)
         d10   = v0(1)*v1(1)+v0(2)*v1(2)
         d11   = v1(1)*v1(1)+v1(2)*v1(2)
-        m=(d00*d11-d10*d10) 
+        m=(d00*d11-d10*d10)
 !
 ! ----- Degenerated vectorial basis for element (colinear vectors) => exit
 !
-        if (abs(m) .le. pair_tole) then
+        if (abs(m)  .le. pair_tole) then
             test  = -1
             goto 99
         end if
-!
-! ----- Coordinates for test (QUAD4)
-!
-!        if (elem_code .eq. 'QU4') then      
-!            vaux(1) = elem_coor(1,3)-elem_coor(1,1)
-!            vaux(2) = elem_coor(2,3)-elem_coor(2,1)
-!            t1      = v0(1)*vaux(1)+v0(2)*vaux(2)
-!            t2      = v1(1)*vaux(1)+v1(2)*vaux(2)
-!        endif
 !
 ! ----- Coordinates of point in element's basis
 !
@@ -99,36 +90,74 @@ implicit none
 !
 ! ----- Point is in element => exit
 !
-        if (sqrt(v2(1)**2+v2(2)**2) .le. 0.d0+pair_tole) then    
+        if (sqrt(v2(1)**2+v2(2)**2) .le. 0.d0+pair_tole) then
             test = 1
             goto 99
         end if
 !
 ! ----- Extension with pair_tole
 !
-        if (elem_code.eq.'TR3') then
+        u=1/m*(d11*d02-d10*d12)
+        v=1/m*(d00*d12-d10*d02)
+        if (u.ge.(0.d0-pair_tole) .and.&
+            v.ge.(0.d0-pair_tole) .and.&
+            (u+v).le.(1.d0+pair_tole)) then
+            test = 1
+            goto 99
+        else
+            test = 0
+        endif
+!
+! ----- Coordinates for test next(QUAD4)
+!
+        if (elem_code .eq. 'QU4') then
+!
+! --------- Vectorial basis for element
+!
+            v0(1) = elem_coor(1,3)-elem_coor(1,1)
+            v0(2) = elem_coor(2,3)-elem_coor(2,1)
+            v1(1) = elem_coor(1,4)-elem_coor(1,1)
+            v1(2) = elem_coor(2,4)-elem_coor(2,1)
+            d00   = v0(1)*v0(1)+v0(2)*v0(2)
+            d10   = v0(1)*v1(1)+v0(2)*v1(2)
+            d11   = v1(1)*v1(1)+v1(2)*v1(2)
+            m=(d00*d11-d10*d10)
+!
+! --------- Degenerated vectorial basis for element (colinear vectors) => exit
+!
+            if (abs(m)  .le. pair_tole) then
+                write(*,*)"ptinma NOOK"
+                test  = -1
+                goto 99
+            end if
+!
+! --------- Coordinates of point in element's basis
+!
+            v2(1) = poin_coorx-elem_coor(1,1)
+            v2(2) = poin_coory-elem_coor(2,1)
+            d02   = v0(1)*v2(1)+v0(2)*v2(2)
+            d12   = v1(1)*v2(1)+v1(2)*v2(2)
+!
+! --------- Point is in element => exit
+!
+            if (sqrt(v2(1)**2+v2(2)**2) .le. 0.d0+pair_tole) then
+                test = 1
+                goto 99
+            end if
+!
+! --------- Extension with pair_tole
+!
             u=1/m*(d11*d02-d10*d12)
             v=1/m*(d00*d12-d10*d02)
             if (u.ge.(0.d0-pair_tole) .and.&
                 v.ge.(0.d0-pair_tole) .and.&
                 (u+v).le.(1.d0+pair_tole)) then
                 test = 1
+                goto 99
             else
                 test = 0
+
             endif
-        !elseif (elem_code.eq.'QU4') then
-        !    u=d02/t1
-        !    v=d12/t2
-        !    if (u.ge.(0.d0-pair_tole) .and.&
-        !        v.ge.(0.d0-pair_tole) .and.&
-        !        u.le.(1.d0+pair_tole) .and.&
-        !        v.le.(1.d0+pair_tole)) then
-        !        test=1
-        !    else
-        !        test=0
-        !    endif
-        else
-            ASSERT(.false.)        
         endif
     elseif (elem_dime .eq. 2) then
         xpmin = min(elem_coor(1,1), elem_coor(1,2))

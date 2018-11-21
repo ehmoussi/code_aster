@@ -79,7 +79,7 @@ real(kind=8), intent(inout) :: poin_inte(elem_dime-1,16)
         if (elem_dime .eq. 3) then
             ksi(2) = poin_inte (2, i_poin_inte)
         end if
-        if (elem_code.eq.'QU4' .or. elem_code.eq.'QU8' .or. elem_code.eq.'QU9') then
+        if (.false.) then
             if (indx_tria_elem .eq. 1) then
                 node_para(1,1) = -1.d0
                 node_para(2,1) = -1.d0

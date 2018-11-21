@@ -20,8 +20,8 @@ interface
     subroutine apdcma(elem_code,&
                       elin_sub , elin_nbnode, elin_nbsub, elin_code)
         character(len=8), intent(in) :: elem_code
-        integer, intent(out) :: elin_sub(2,3)
-        integer, intent(out) :: elin_nbnode(2)
+        integer, intent(out) :: elin_sub(1,4)
+        integer, intent(out) :: elin_nbnode(1)
         integer, intent(out) :: elin_nbsub
         character(len=8), intent(out) :: elin_code
     end subroutine apdcma

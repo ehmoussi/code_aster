@@ -28,6 +28,7 @@ implicit none
 #include "asterfort/lcodrm.h"
 #include "asterfort/insema.h"
 #include "asterfort/ptinma.h"
+#include "asterfort/reereg.h"
 #include "asterfort/apelem_getvertex.h"
 #include "asterfort/apelem_inside.h"
 #include "asterfort/apinte_weight.h"
@@ -69,8 +70,8 @@ integer, intent(out) :: nb_poin_inte
 !
     aster_logical :: debug
     real(kind=8) :: node_line_coop(elem_dime-1,4)
-    real(kind=8) :: proj_coop(elem_dime-1,4)
-    real(kind=8) :: xpt, ypt
+    real(kind=8) :: proj_coop(elem_dime-1,4), coor(3,4)
+    real(kind=8) :: xpt, ypt, xe(3), pt(3)
     real(kind=8) :: xp1, yp1, xp2, yp2
     integer :: test, list_next(16), nb_node_line
     integer :: i_node
@@ -97,11 +98,12 @@ integer, intent(out) :: nb_poin_inte
 ! - Get parametric coordinates of slave nodes (linear)
 !
     call apelem_getvertex(elem_dime     , elem_slav_code,&
-                          node_line_coop, nb_node_line  , elem_line_code)
+                          node_line_coop, nb_node_line  , elem_line_code,&
+                          elem_slav_coor, proj_tole)
 !
 ! - Save projection of master nodes on slave element in list of intersection points
 !
-    call apelem_inside(proj_tole       , elem_dime, elem_line_code,&
+    call apelem_inside(proj_tole       , elem_dime, elem_line_code,node_line_coop,&
                        elem_mast_nbnode, proj_coop,&
                        nb_poin_inte    , poin_inte)
 !
@@ -117,7 +119,7 @@ integer, intent(out) :: nb_poin_inte
 ! ----- Test if point is inside element
         call ptinma(elem_mast_nbnode, elem_dime, elem_mast_code, proj_coop, proj_tole,&
                     xpt             , ypt      , test)
-        if (test .eq. 1) then    
+        if (test .eq. 1) then
             nb_poin_inte              = nb_poin_inte+1
             poin_inte(1,nb_poin_inte) = xpt
             if (elem_dime .eq. 3) then
@@ -153,6 +155,26 @@ integer, intent(out) :: nb_poin_inte
         end do
         ASSERT(nb_poin_inte .le. 16)
     end if
+!
+! - Return in true parametric space for QUAD slave element
+!
+    if (elem_line_code .eq. "QU4") then
+        do i_node=1, 4
+            coor(1:2,i_node) = node_line_coop(1:2, i_node)
+            coor(3,i_node)   = 0.d0
+        end do
+        do i_node=1,nb_poin_inte
+            pt(1) = poin_inte(1,i_node)
+            pt(2) = poin_inte(2,i_node)
+            pt(3) = 0.d0
+            xe(:) = 0.d0
+            call reereg('S', elem_line_code,  4, coor,&
+                        pt , elem_dime     , xe, test, proj_tole)
+            poin_inte(1,i_node) = xe(1)
+            poin_inte(2,i_node) = xe(2)
+        end do
+    end if
+
 !
 ! - Sort list of intersection points
 !

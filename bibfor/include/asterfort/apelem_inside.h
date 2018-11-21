@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -21,12 +21,13 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine apelem_inside(pair_tole   , elem_dime, elem_code,&
+    subroutine apelem_inside(pair_tole   , elem_dime, elem_code, elem_coor,&
                              nb_poin_coor, poin_coor,&
                              nb_poin_inte, poin_inte)
         real(kind=8), intent(in) :: pair_tole
         integer, intent(in) :: elem_dime
         character(len=8), intent(in) :: elem_code
+        real(kind=8), intent(in) :: elem_coor(elem_dime-1,4)
         integer, intent(in) :: nb_poin_coor
         real(kind=8), intent(in) :: poin_coor(elem_dime-1,4)
         integer, intent(inout) :: nb_poin_inte

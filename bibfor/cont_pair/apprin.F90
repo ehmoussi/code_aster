@@ -75,16 +75,15 @@ integer, intent(out) :: elem_slav_start(nb_elem_slav)
     integer :: elem_slav_nbnode, elem_slav_dime, elem_slav_nume, elem_slav_indx
     character(len=8) :: elem_slav_type, elem_slav_code
     real(kind=8) :: elem_slav_coor(27)
-    integer :: elin_slav_nbsub, elin_slav_sub(2,3), elin_slav_nbnode(2)
+    integer :: elin_slav_nbsub, elin_slav_sub(1,4), elin_slav_nbnode(1)
     integer :: elem_mast_nbnode, elem_mast_dime, elem_mast_nume, elem_mast_indx
     character(len=8) :: elem_mast_type, elem_mast_code, elem_slav_name, elem_mast_name
     real(kind=8) :: elem_mast_coor(27)
-    integer :: elin_mast_nbsub, elin_mast_sub(2,3), elin_mast_nbnode(2)
+    integer :: elin_mast_nbsub, elin_mast_sub(1,4), elin_mast_nbnode(1)
     character(len=8) :: elin_mast_code, elin_slav_code
-    real(kind=8) :: elin_mast_coor(27), elin_slav_coor(27)
     integer :: slav_indx_mini, mast_indx_mini
     integer :: jv_geom
-    integer :: i_elem_slav, i_elem_mast, i_dime, i_elin_mast, i_elin_slav, i_node
+    integer :: i_elem_slav, i_elem_mast
     integer :: nb_poin_inte
     real(kind=8) :: poin_inte(32), inte_weight
     integer, pointer :: v_mesh_typmail(:) => null()
@@ -188,59 +187,30 @@ integer, intent(out) :: elem_slav_start(nb_elem_slav)
                     if (debug) then
                         write(*,*) "Cut master: ", elin_mast_nbsub
                     endif
-!
-! ----------------- Loop on linearized master sub-elements
-!
-                    do i_elin_mast = 1, elin_mast_nbsub
-!
-! --------------------- Get coordinates for current linearized master sub-element
-!
-                        elin_mast_coor(:) = 0.d0
-                        do i_node = 1, elin_mast_nbnode(i_elin_mast)
-                            do i_dime = 1, elem_slav_dime
-                                elin_mast_coor(3*(i_node-1)+i_dime) =&
-                                    elem_mast_coor(3*(elin_mast_sub(i_elin_mast,i_node)-1)+i_dime)
-                            end do
-                        end do
-!
-! --------------------- Loop on linearized slave sub-elements
-!
-                        do i_elin_slav = 1, elin_slav_nbsub
-!
-! ------------------------- Get coordinates for current linearized slave sub-element
-!
-                            elin_slav_coor(:) = 0.d0
-                            do i_node = 1, elin_slav_nbnode(i_elin_slav)
-                                do i_dime = 1, elem_slav_dime
-                                    elin_slav_coor(3*(i_node-1)+i_dime) =&
-                                      elem_slav_coor(3*(elin_slav_sub(i_elin_slav,i_node)-1)+i_dime)
-                                end do
-                            end do
+
 !
 ! ------------------------- Projection/intersection of elements in slave parametric space
 !
-                call prjint(pair_tole     , elem_mast_dime,&
-                            elin_mast_nbnode(i_elin_mast), elin_mast_coor, elin_mast_code,&
-                            elin_slav_nbnode(i_elin_slav), elin_slav_coor, elin_slav_code,&
-                            poin_inte     , inte_weight                  , nb_poin_inte  )
+                    call prjint(pair_tole     , elem_mast_dime,&
+                                elin_mast_nbnode(1), elem_mast_coor, elin_mast_code,&
+                                elin_slav_nbnode(1), elem_slav_coor, elin_slav_code,&
+                                poin_inte     , inte_weight        , nb_poin_inte  )
 !
 ! ------------------------- Set start elements
 !
-                            if (inte_weight .gt. 100*pair_tole) then
-                                elem_mast_start(1)             = elem_mast_nume
-                                nb_mast_start                  = 1
-                                elem_slav_start(1)             = elem_slav_nume
-                                nb_slav_start                  = 1
-                                elem_slav_flag(elem_slav_indx) = 1
-                                call jenuno(jexnum(mesh//'.NOMMAI', elem_mast_nume), elem_mast_name)
-                                call jenuno(jexnum(mesh//'.NOMMAI', elem_slav_nume), elem_slav_name)
-                                if (debug) then
-                                    write(*,*)"Depart trouvé(M/S): ",elem_mast_name,elem_slav_name
-                                endif
-                                goto 100
-                            end if
-                        end do
-                    end do
+                    if (inte_weight .gt. 100*pair_tole) then
+                        elem_mast_start(1)             = elem_mast_nume
+                        nb_mast_start                  = 1
+                        elem_slav_start(1)             = elem_slav_nume
+                        nb_slav_start                  = 1
+                        elem_slav_flag(elem_slav_indx) = 1
+                        call jenuno(jexnum(mesh//'.NOMMAI', elem_mast_nume), elem_mast_name)
+                        call jenuno(jexnum(mesh//'.NOMMAI', elem_slav_nume), elem_slav_name)
+                        if (debug) then
+                            write(*,*)"Depart trouvé(M/S): ",elem_mast_name,elem_slav_name
+                        endif
+                        goto 100
+                    end if
                 else
                     if (debug) then
                         write(*,*) "Master element not yet tracked"
