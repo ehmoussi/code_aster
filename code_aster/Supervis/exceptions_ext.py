@@ -19,11 +19,38 @@
 
 # person_in_charge: mathieu.courtois@edf.fr
 """
-:py:class:`AsterError` --- Base of code_aster exceptions
-********************************************************
+Definition of code_aster exceptions
+***********************************
+
+The exceptions classes are created from C++.
+The module :py:mod:`code_aster.Supervis.exceptions_ext` defines convenient
+methods for formatting and adds them to the base class :py:class:`code_aster.AsterError`.
+
+The class hierarchy for code_aster exceptions is:
+
+.. code-block:: none
+
+    AsterError
+     |
+     +-- ConvergenceError
+     |      Raised in case of convergence problem.
+     |
+     +-- IntegrationError
+     |      Raised during local integration (of the behavior for example).
+     |
+     +-- SolverError
+     |      Raised during solving phases.
+     |
+     +-- ContactError
+     |      Raised during contact algorithms.
+     |
+     +-- TimeLimitError
+            Raised when the time limit is reached.
 """
 
-from libaster import AsterError, TimeLimitError
+import aster
+from libaster import (AsterError, ConvergenceError, IntegrationError,
+                      SolverError, TimeLimitError)
 
 from ..Utilities import convert
 
@@ -74,9 +101,18 @@ AsterError.id_message = property(get_idmess)
 AsterError.message = property(format_exception)
 
 
-import aster
-
+aster.error = AsterError
+aster.NonConvergenceError = ConvergenceError
+aster.EchecComportementError = IntegrationError
+aster.BandeFrequenceVideError = SolverError
+aster.MatriceSinguliereError = SolverError
+aster.TraitementContactError = SolverError
+aster.MatriceContactSinguliereError = SolverError
 aster.ArretCPUError = TimeLimitError
-aster.BandeFrequenceVideError = AsterError
+aster.PilotageError = ConvergenceError
+aster.BoucleGeometrieError = SolverError
+aster.BoucleFrottementError = SolverError
+aster.BoucleContactError = SolverError
 aster.EventError = AsterError
-aster.NonConvergenceError = AsterError
+aster.ActionError = AsterError
+aster.ResolutionError = SolverError

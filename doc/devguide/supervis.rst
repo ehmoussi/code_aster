@@ -33,6 +33,11 @@ Detailed description
    :members:
    :special-members: __init__
 
+.. automodule:: code_aster.Supervis.exceptions_ext
+   :show-inheritance:
+   :members:
+   :special-members: __init__
+
 .. automodule:: code_aster.Supervis.logger
    :show-inheritance:
    :members:

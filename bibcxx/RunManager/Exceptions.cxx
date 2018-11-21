@@ -102,12 +102,31 @@ extern "C" void DEFPSPSPPPP( UEXCEP, uexcep, _IN ASTERINTEGER *exc_id, _IN char 
     std::string idm( trim( std::string( idmess ) ) );
 
     switch ( *exc_id ) {
-    case 22:
+    case 22: // ConvergenceError (ex. NonConvergenceError)
+    case 29: // ConvergenceError (ex. PilotageError)
         throw ErrorCpp< 22 >( idm, argk, argi, argr );
-    case 28:
+
+    case 23: // IntegrationError (ex. EchecComportementError)
+        throw ErrorCpp< 23 >( idm, argk, argi, argr );
+
+    case 24: // SolverError (ex. BandeFrequenceVideError)
+    case 25: // SolverError (ex. MatriceSinguliereError)
+    case 27: // SolverError (ex. MatriceContactSinguliereError)
+    case 35: // SolverError (ex. ResolutionError)
+        throw ErrorCpp< 25 >( idm, argk, argi, argr );
+
+    case 26: // ContactError (ex. TraitementContactError)
+    case 30: // ContactError (ex. BoucleGeometrieError)
+    case 31: // ContactError (ex. BoucleFrottementError)
+    case 32: // ContactError (ex. BoucleContactError)
+        throw ErrorCpp< 26 >( idm, argk, argi, argr );
+
+    case 28: // TimeLimitError
         throw ErrorCpp< 28 >( idm, argk, argi, argr );
 
-    default: // exc_id = 21
+    case 33: // (ex. EventError)
+    case 34: // (ex. ActionError)
+    default: // Generic AsterError (exc_id = 21)
         throw AsterErrorCpp( idm, argk, argi, argr );
     }
 }
