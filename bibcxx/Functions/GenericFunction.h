@@ -28,6 +28,7 @@
 
 #include "astercxx.h"
 #include "DataStructures/DataStructure.h"
+#include "MemoryManager/JeveuxVector.h"
 
 /**
  * @class GenericFunctionInstance
@@ -35,7 +36,23 @@
  * @author Nicolas Sellenet
  */
 class GenericFunctionInstance : public DataStructure {
-  private:
+  protected:
+    // Vecteur Jeveux '.PROL'
+    JeveuxVectorChar24 _property;
+    // Type of Function
+    std::string _funct_type;
+
+    void propertyAllocate() {
+        // Create Jeveux vector ".PROL"
+        _property->allocate( Permanent, 6 );
+        ( *_property )[0] = _funct_type;
+        ( *_property )[1] = "LIN LIN";
+        ( *_property )[2] = "";
+        ( *_property )[3] = "TOUTRESU";
+        ( *_property )[4] = "EE";
+        ( *_property )[5] = getName();
+    };
+
   public:
     /**
      * @typedef GenericFunctionPtr
@@ -46,8 +63,31 @@ class GenericFunctionInstance : public DataStructure {
     /**
      * @brief Constructeur
      */
-    GenericFunctionInstance( const std::string &name, const std::string &type )
-        : DataStructure( name, 19, type ){};
+    GenericFunctionInstance( const std::string &name, const std::string &type,
+                             const std::string& functType ):
+        DataStructure( name, 19, type ),
+        _property( JeveuxVectorChar24( getName() + ".PROL" ) ),
+        _funct_type( functType )
+    {};
+
+    /**
+     * @brief Allocate function
+     */
+    virtual void allocate( JeveuxMemory mem, ASTERINTEGER size ) {};
+
+    /**
+     * @brief Return the properties of the function
+     * @return vector of strings
+     */
+    std::vector< std::string > getProperties() const {
+        _property->updateValuePointer();
+        const auto size = _property->size();
+        std::vector< std::string > prop;
+        for ( int i = 0; i < size; ++i ) {
+            prop.push_back( ( *_property )[i].rstrip() );
+        }
+        return prop;
+    };
 
     /**
      * @brief Get the result name
@@ -59,6 +99,14 @@ class GenericFunctionInstance : public DataStructure {
      * @brief Return the number of points of the function
      */
     virtual ASTERINTEGER maximumSize() const throw( std::runtime_error ) { return 0; };
+
+    /**
+     * @brief Definition of the type of extrapolation
+     * @param extrapolation type of extrapolation
+     * @type  extrapolation string
+     * @todo checking
+     */
+    void setExtrapolation( const std::string type );
 
     /**
      * @brief Return the number of points of the function

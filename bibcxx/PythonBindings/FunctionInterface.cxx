@@ -38,9 +38,7 @@ void exportFunctionToPython() {
         .def( "setParameterName", &FunctionInstance::setParameterName )
         .def( "setResultName", &FunctionInstance::setResultName )
         .def( "setInterpolation", &FunctionInstance::setInterpolation )
-        .def( "setExtrapolation", &FunctionInstance::setExtrapolation )
         .def( "setValues", &FunctionInstance::setValues )
-        .def( "getProperties", &FunctionInstance::getProperties )
         .def( "getValues", &FunctionInstance::getValues );
 
     class_< FunctionInstance, FunctionInstance::FunctionPtr, bases< BaseFunctionInstance > >(

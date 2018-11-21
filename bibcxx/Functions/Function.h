@@ -37,28 +37,10 @@
  */
 class BaseFunctionInstance : public GenericFunctionInstance {
   private:
-    // Nom Jeveux de la SD
-    /** @todo remettre le const */
-    std::string _jeveuxName;
-    // Vecteur Jeveux '.PROL'
-    JeveuxVectorChar24 _property;
-
-    void propertyAllocate() {
-        // Create Jeveux vector ".PROL"
-        _property->allocate( Permanent, 6 );
-        ( *_property )[0] = _funct_type;
-        ( *_property )[1] = "LIN LIN";
-        ( *_property )[2] = "";
-        ( *_property )[3] = "TOUTRESU";
-        ( *_property )[4] = "EE";
-        ( *_property )[5] = _jeveuxName;
-    };
 
   protected:
     // Vecteur Jeveux '.VALE'
     JeveuxVectorDouble _value;
-    // Type of Function
-    std::string _funct_type;
 
   public:
     /**
@@ -70,16 +52,17 @@ class BaseFunctionInstance : public GenericFunctionInstance {
     /**
      * Constructeur
      */
-    BaseFunctionInstance( const std::string type );
+    BaseFunctionInstance( const std::string type, const std::string type2 );
 
-    BaseFunctionInstance( const std::string jeveuxName, const std::string type );
+    BaseFunctionInstance( const std::string jeveuxName, const std::string type,
+                          const std::string type2 );
 
     ~BaseFunctionInstance(){};
 
     /**
      * @brief Allocate function
      */
-    virtual void allocate( JeveuxMemory mem, ASTERINTEGER size ) throw( std::runtime_error );
+    virtual void allocate( JeveuxMemory mem, ASTERINTEGER size );
 
     /**
      * @brief Get the result name
@@ -128,14 +111,6 @@ class BaseFunctionInstance : public GenericFunctionInstance {
     void setInterpolation( const std::string type ) throw( std::runtime_error );
 
     /**
-     * @brief Definition of the type of extrapolation
-     * @param extrapolation type of extrapolation
-     * @type  extrapolation string
-     * @todo checking
-     */
-    void setExtrapolation( const std::string type ) throw( std::runtime_error );
-
-    /**
      * @brief Assign the values of the function
      * @param absc values of the abscissa
      * @type  absc vector of double
@@ -173,19 +148,6 @@ class BaseFunctionInstance : public GenericFunctionInstance {
     virtual ASTERINTEGER size() const throw( std::runtime_error ) { return _value->size() / 2; }
 
     /**
-     * @brief Return the properties of the function
-     * @return vector of strings
-     */
-    std::vector< std::string > getProperties() const {
-        _property->updateValuePointer();
-        std::vector< std::string > prop;
-        for ( int i = 0; i < 6; ++i ) {
-            prop.push_back( ( *_property )[i].rstrip() );
-        }
-        return prop;
-    }
-
-    /**
      * @brief Update the pointers to the Jeveux objects
      * @return Return true if ok
      */
@@ -209,10 +171,10 @@ class FunctionInstance : public BaseFunctionInstance {
     /**
     * Constructeur
     */
-    FunctionInstance() : BaseFunctionInstance( "FONCTION" ){};
+    FunctionInstance() : BaseFunctionInstance( "FONCTION", "FONCTION" ){};
 
     FunctionInstance( const std::string jeveuxName )
-        : BaseFunctionInstance( jeveuxName, "FONCTION" ){};
+        : BaseFunctionInstance( jeveuxName, "FONCTION", "FONCTION" ){};
 };
 
 /**
@@ -233,11 +195,9 @@ class FunctionComplexInstance : public BaseFunctionInstance {
     * Constructeur
     */
     FunctionComplexInstance( const std::string jeveuxName )
-        : BaseFunctionInstance( jeveuxName, "FONCTION_C" ) {
-        _funct_type = "FONCT_C";
-    };
+        : BaseFunctionInstance( jeveuxName, "FONCTION_C", "FONCT_C" ) {};
 
-    FunctionComplexInstance() : BaseFunctionInstance( "FONCTION_C" ) { _funct_type = "FONCT_C"; };
+    FunctionComplexInstance() : BaseFunctionInstance( "FONCTION_C", "FONCT_C" ) {};
 
     /**
      * @brief Allocate function

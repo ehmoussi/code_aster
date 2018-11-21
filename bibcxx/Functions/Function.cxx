@@ -31,16 +31,17 @@
 
 FunctionPtr emptyDoubleFunction( new FunctionInstance( "" ) );
 
-BaseFunctionInstance::BaseFunctionInstance( const std::string jeveuxName, const std::string type )
-    : GenericFunctionInstance( jeveuxName, type ), _jeveuxName( getName() ),
-      _property( JeveuxVectorChar24( getName() + ".PROL" ) ),
-      _value( JeveuxVectorDouble( getName() + ".VALE" ) ), _funct_type( type ) {}
+BaseFunctionInstance::BaseFunctionInstance( const std::string jeveuxName, const std::string type,
+                                            const std::string type2 )
+    : GenericFunctionInstance( jeveuxName, type, type2 ),
+      _value( JeveuxVectorDouble( getName() + ".VALE" ) ) {}
 
-BaseFunctionInstance::BaseFunctionInstance( const std::string type )
-    : BaseFunctionInstance::BaseFunctionInstance( ResultNaming::getNewResultName(), type ) {}
+BaseFunctionInstance::BaseFunctionInstance( const std::string type,
+                                            const std::string type2 )
+    : BaseFunctionInstance::BaseFunctionInstance( ResultNaming::getNewResultName(), type, type2 ) {}
 
 void BaseFunctionInstance::allocate( JeveuxMemory mem,
-                                     ASTERINTEGER size ) throw( std::runtime_error ) {
+                                     ASTERINTEGER size ) {
     if ( _property->exists() )
         _property->deallocate();
     propertyAllocate();
@@ -92,23 +93,6 @@ void BaseFunctionInstance::setInterpolation( const std::string type ) throw( std
         throw std::runtime_error( "Function: invalid interpolation for ordinates." );
 
     ( *_property )[1] = type.c_str();
-}
-
-void BaseFunctionInstance::setExtrapolation( const std::string type ) throw( std::runtime_error ) {
-    if ( !_property->isAllocated() )
-        propertyAllocate();
-
-    if ( type.length() != 2 )
-        throw std::runtime_error( "Function: interpolation must be 2 characters long." );
-
-    std::string auth( "CELI" );
-    if ( auth.find( type[0] ) == std::string::npos )
-        throw std::runtime_error( "Function: invalid extrapolation for abscissa." );
-
-    if ( auth.find( type[1] ) == std::string::npos )
-        throw std::runtime_error( "Function: invalid extrapolation for ordinates." );
-
-    ( *_property )[4] = type.c_str();
 }
 
 void BaseFunctionInstance::setAsConstant() {

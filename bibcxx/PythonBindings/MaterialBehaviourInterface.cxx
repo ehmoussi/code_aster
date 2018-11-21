@@ -36,6 +36,7 @@ void exportMaterialBehaviourToPython() {
         .def( "__init__", make_constructor( &initFactoryPtr< GeneralMaterialBehaviourInstance > ) )
         .def( "getAsterName", &GeneralMaterialBehaviourInstance::getAsterName )
         .def( "hasTractionFunction", &GeneralMaterialBehaviourInstance::hasTractionFunction )
+        .def( "hasEnthalpyFunction", &GeneralMaterialBehaviourInstance::hasEnthalpyFunction )
         .def( "setComplexValue", &GeneralMaterialBehaviourInstance::setComplexValue )
         .def( "setDoubleValue", &GeneralMaterialBehaviourInstance::setDoubleValue )
         .def( "setStringValue", &GeneralMaterialBehaviourInstance::setStringValue )
@@ -157,4 +158,13 @@ void exportMaterialBehaviourToPython() {
         .def( "hasConvertibleValues", &TractionMaterialBehaviourInstance::hasConvertibleValues )
         .staticmethod( "hasConvertibleValues" )
         .def( "hasTractionFunction", &TractionMaterialBehaviourInstance::hasTractionFunction );
+
+    class_< TherNlMaterialBehaviourInstance, TherNlMaterialBehaviourPtr,
+            bases< GeneralMaterialBehaviourInstance > >( "TherNlMaterialBehaviour", no_init )
+        .def( "__init__", make_constructor( &initFactoryPtr< TherNlMaterialBehaviourInstance > ) )
+        .def( "getName", &TherNlMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
+        .def( "hasConvertibleValues", &TherNlMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" )
+        .def( "hasEnthalpyFunction", &TherNlMaterialBehaviourInstance::hasEnthalpyFunction );
 };

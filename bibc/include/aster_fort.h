@@ -355,6 +355,10 @@ void DEFSSSSSSSPPPP(CACHVC,cachvc, const char*, STRING_SIZE, const char*, STRING
                                    const char*, STRING_SIZE, ASTERINTEGER *, ASTERINTEGER *,
                                    ASTERINTEGER *, ASTERINTEGER *);
 
+#define CALLO_FOCAIN(a, b, c, d, e) CALLOOPOO(FOCAIN, focain, a, b, c, d, e)
+void DEFSSPSS(FOCAIN,focain, const char*, STRING_SIZE, const char*, STRING_SIZE,
+                             ASTERDOUBLE*, const char*, STRING_SIZE, const char*, STRING_SIZE);
+
 /* routines d'accès aux OBJETS JEVEUX (vecteurs, collections, champs) */
 #define CALL_GETCON(nomsd,iob,ishf,ilng,ctype,lcon,iaddr,nomob) \
     CALLSPPPPPPS(GETCON,getcon,nomsd,iob,ishf,ilng,ctype,lcon,iaddr,nomob)
