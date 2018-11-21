@@ -176,12 +176,23 @@ BOOST_PYTHON_MODULE( libaster ) {
     py::scope().attr( "finalize" ) = &libaster_finalize;
     py::scope().attr( "debugJeveuxContent" ) = &libaster_debugJeveuxContent;
 
-    // Exceptions
+    // Definition of exceptions, thrown from 'Exceptions.cxx'/uexcep
     ErrorPy[21] = createPyException( "AsterError" );
-    ErrorPy[22] = createPyException( "ConvergenceError", ErrorPy[22] );
-    ErrorPy[28] = createPyException( "TimeLimitError", ErrorPy[21] );
     py::register_exception_translator< ErrorCpp< 21 > >( &translateError< 21 > );
+
+    ErrorPy[22] = createPyException( "ConvergenceError", ErrorPy[22] );
     py::register_exception_translator< ErrorCpp< 22 > >( &translateError< 22 > );
+
+    ErrorPy[23] = createPyException( "IntegrationError", ErrorPy[23] );
+    py::register_exception_translator< ErrorCpp< 23 > >( &translateError< 23 > );
+
+    ErrorPy[25] = createPyException( "SolverError", ErrorPy[25] );
+    py::register_exception_translator< ErrorCpp< 25 > >( &translateError< 25 > );
+
+    ErrorPy[26] = createPyException( "ContactError", ErrorPy[26] );
+    py::register_exception_translator< ErrorCpp< 26 > >( &translateError< 26 > );
+
+    ErrorPy[28] = createPyException( "TimeLimitError", ErrorPy[21] );
     py::register_exception_translator< ErrorCpp< 28 > >( &translateError< 28 > );
 
     py::def( "raiseAsterError", &raiseAsterError, raiseAsterError_overloads() );
