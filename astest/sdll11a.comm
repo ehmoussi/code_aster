@@ -21,6 +21,9 @@
 # ELEMENTS  : HEXA20
 # REFERENCE : GUIDE VPCS
 
+from code_aster import SolverError
+from code_aster.Commands import *
+
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),
       PAR_LOT='NON',MESURE_TEMPS=_F(NIVE_DETAIL=2))
 
@@ -78,7 +81,7 @@ try:
                      SOLVEUR=_F(METHODE='MUMPS'),
                      CALC_FREQ=_F( FREQ = (100., 200.) ) )
 
-except aster.BandeFrequenceVideError:
+except SolverError:
    MODE1=CALC_MODES( MATR_RIGI=K_ASSE,
                      MATR_MASS=M_ASSE,
                      OPTION = 'BANDE',

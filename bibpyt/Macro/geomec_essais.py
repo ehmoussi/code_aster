@@ -2292,10 +2292,10 @@ def essai_TRIA_ND_C_F(self, str_n_essai, DicoEssai, MATER, COMPORTEMENT,
             #          | '1' : CALC_POINT_MAT va jusqu'au bout et
             #          |       critere de liquefaction non atteint
             #          |
-            #          | '2' : CALC_POINT_MAT s'arrete en NonConvergenceError
+            #          | '2' : CALC_POINT_MAT s'arrete en ConvergenceError
             #          |       et critere de liquefaction atteint
             #          |
-            #          | '3' : CALC_POINT_MAT s'arrete en NonConvergenceError
+            #          | '3' : CALC_POINT_MAT s'arrete en ConvergenceError
             #          |       et critere de liquefaction non atteint
             # --------------------------------------------------
             if calc_ok and crit:
@@ -2340,7 +2340,7 @@ def essai_TRIA_ND_C_F(self, str_n_essai, DicoEssai, MATER, COMPORTEMENT,
                 Resu_Essai['DSIGM'][i].append(abs(dsig*3./(1.+2.*KZERO)/sig0))
                 Resu_Essai['NCYCL'][i].append(ncycrit)
 
-            # si CALC_POINT_MAT s'est arrete en NonConvergenceError
+            # si CALC_POINT_MAT s'est arrete en ConvergenceError
             # -> recup du numero de cycle d'arret du calcul
             # --------------------------------------------------
             ncyerro = 0

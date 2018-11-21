@@ -49,8 +49,8 @@ The class hierarchy for code_aster exceptions is:
 """
 
 import aster
-from libaster import (AsterError, ConvergenceError, IntegrationError,
-                      SolverError, TimeLimitError)
+from libaster import (AsterError, ContactError, ConvergenceError,
+                      IntegrationError, SolverError, TimeLimitError)
 
 from ..Utilities import convert
 
@@ -101,18 +101,18 @@ AsterError.id_message = property(get_idmess)
 AsterError.message = property(format_exception)
 
 
-aster.error = AsterError
-aster.NonConvergenceError = ConvergenceError
-aster.EchecComportementError = IntegrationError
-aster.BandeFrequenceVideError = SolverError
-aster.MatriceSinguliereError = SolverError
-aster.TraitementContactError = SolverError
-aster.MatriceContactSinguliereError = SolverError
-aster.ArretCPUError = TimeLimitError
-aster.PilotageError = ConvergenceError
-aster.BoucleGeometrieError = SolverError
-aster.BoucleFrottementError = SolverError
-aster.BoucleContactError = SolverError
-aster.EventError = AsterError
-aster.ActionError = AsterError
-aster.ResolutionError = SolverError
+aster.error = AsterError                            # 21
+aster.NonConvergenceError = ConvergenceError        # 22
+aster.EchecComportementError = IntegrationError     # 23
+aster.BandeFrequenceVideError = SolverError         # 24
+aster.MatriceSinguliereError = SolverError          # 25
+aster.TraitementContactError = ContactError         # 26
+aster.MatriceContactSinguliereError = SolverError   # 27
+aster.ArretCPUError = TimeLimitError                # 28
+aster.PilotageError = ConvergenceError              # 29
+aster.BoucleGeometrieError = ContactError           # 30
+aster.BoucleFrottementError = ContactError          # 31
+aster.BoucleContactError = ContactError             # 32
+aster.EventError = ConvergenceError                 # 33
+aster.ActionError = ConvergenceError                # 34
+aster.ResolutionError = SolverError                 # 35

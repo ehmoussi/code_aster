@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -37,13 +37,13 @@ def fichier_sol(tab, struct, param=None):
     for p in ("NUME_COUCHE", "NUME_MATE", "E", "NU", "RHO", "EPAIS",
               "AMOR_HYST", "RECEPTEUR", "SUBSTRATUM"):
         if not p in tab.para:
-            raise aster.error('TABLE0_2', valk=(p, 'de sol'))
+            UTMESS('F', 'TABLE0_2', valk=(p, 'de sol'))
     nb_couche = len(tab)
     if max(tab.NUME_COUCHE.values()) != nb_couche:
-        raise aster.error('MISS0_5')
+        UTMESS('F', 'MISS0_5')
     tsubstr = (tab.SUBSTRATUM == "OUI")
     if len(tsubstr) != 1:
-        raise aster.error('MISS0_3')
+        UTMESS('F', 'MISS0_3')
 
     # complète la table
     tsol = tab.copy()
@@ -119,7 +119,7 @@ def fichier_sol(tab, struct, param=None):
         sol_homo, vs = verif_sol_homogene(tab)
         if param['SURF'] == "OUI" and sol_homo:
             spec_max_auto = True
-            spec_max = vs/15. 
+            spec_max = vs/15.
         if param['OFFSET_MAX'] is None:
             param['OFFSET_MAX'] = offset_max_auto
         else:
@@ -145,7 +145,7 @@ def fichier_sol(tab, struct, param=None):
                 param['SPEC_MAX'] = spec_max
             else:
                 UTMESS('A', 'MISS0_43', valk='SPEC_MAX')
-        #        
+        #
         print 'Mode automatique :'
         print '-    OFFSET_MAX auto = ',param['OFFSET_MAX']
         print '-    OFFSET_NB auto = ',param['OFFSET_NB']
@@ -156,7 +156,7 @@ def fichier_sol(tab, struct, param=None):
         # Pour Laplace-temps, on ne recalcule les parametre qu'une fois
         if param['_auto_first_LT'] == None:
             param['_auto_first_LT'] = False
-    #    
+    #
     if (param and param.get('OFFSET_MAX')) or (param and param.get('AUTO') == "OUI"):
         # ALGO
         if param and param.get('ALGO'):

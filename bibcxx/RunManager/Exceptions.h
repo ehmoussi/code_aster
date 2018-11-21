@@ -72,8 +72,6 @@ typedef ErrorCpp< 21 > AsterErrorCpp;
 // Translation functions: C++ exception to Python exception
 template < int Id >
 void translateError( const ErrorCpp< Id > &exc ) {
-    assert( ErrorPy[Id] != NULL );
-
     PyObject *py_err = exc.py_attrs();
     PyErr_SetObject( ErrorPy[Id], py_err );
     Py_DECREF( py_err );

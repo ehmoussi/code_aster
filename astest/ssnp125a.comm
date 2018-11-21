@@ -23,6 +23,9 @@
 # ----- PERTE DE COHESION DE 5% DANS LA MAILLE (M1) EN QUESTION. -------
 # ======================================================================
 
+from code_aster import ConvergenceError
+from code_aster.Commands import *
+
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),PAR_LOT='NON',DEBUG=_F(SDVERI='OUI'))
 
 import aster
@@ -159,7 +162,7 @@ try :
                  CONVERGENCE=_F( RESI_GLOB_RELA = 1.E-6,
                                  ITER_GLOB_MAXI =  26,),
                            );
-except aster.NonConvergenceError:
+except ConvergenceError:
      print """\nProbleme de convergence pour cause de localisation\n"""
 # ON RECUPERE LE DERNIER INSTANT PROPREMENT CALCULE DANS STAT_NON_LINE
 # POUR FAIRE UNE VERIFICATION EN NON-REGRESSION SUR CE NUMERO D'ORDRE

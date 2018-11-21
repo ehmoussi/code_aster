@@ -914,8 +914,8 @@ def affiche_alarm_TRIA_ND_C_F(str_n_essai, pres, dsig, codret, NB_CYCLE, \
 
            codret = | 0 : CALC_POINT_MAT va jusqu'au bout et critere atteint -> pas d'alarme
                     | 1 : CALC_POINT_MAT va jusqu'au bout et critere non atteint
-                    | 2 : CALC_POINT_MAT s'arrete en NonConvergenceError et critere atteint
-                    | 3 : CALC_POINT_MAT s'arrete en NonConvergenceError et critere non atteint
+                    | 2 : CALC_POINT_MAT s'arrete en ConvergenceError et critere atteint
+                    | 3 : CALC_POINT_MAT s'arrete en ConvergenceError et critere non atteint
     """
     from Utilitai.Utmess import UTMESS
 

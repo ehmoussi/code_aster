@@ -17,9 +17,10 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-from code_aster import AsterError, onFatalError
+from code_aster import (AsterError, ContactError, ConvergenceError,
+                        IntegrationError, SolverError, TimeLimitError,
+                        onFatalError)
 from code_aster.Commands import *
-
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),
       DEBUG=_F(SDVERI='OUI'),
@@ -49,40 +50,32 @@ print sep
 is_ok = 0
 try:
    raise AsterError("GENERIC_1",
-        valk="""CAS 1 : declencher error car l'exception n'est pas particularisee.""")
+        """CAS 1 : declencher error car l'exception n'est pas particularisee.""")
 
-except aster.NonConvergenceError,err:
+except ConvergenceError as err:
    print "Exception NonConvergence interceptee"
    print "Raison : " + str(err.valk)
 
-except aster.EchecComportementError,err:
+except IntegrationError as err:
    print "Exception EchecComportement interceptee"
    print "Raison : " + str(err.valk)
 
-except aster.BandeFrequenceVideError,err:
+except SolverError as err:
    print "Exception BandeFrequenceVide interceptee"
    print "Raison : " + str(err.valk)
 
-except aster.MatriceSinguliereError,err:
-   print "Exception MatriceSinguliere interceptee"
-   print "Raison : " + str(err.valk)
-
-except aster.TraitementContactError,err:
+except ContactError as err:
    print "Exception TraitementContact interceptee"
    print "Raison : " + str(err.valk)
 
-except aster.MatriceContactSinguliereError,err:
-   print "Exception MatriceContactSinguliere interceptee"
-   print "Raison : " + str(err.valk)
-
-except aster.ArretCPUError,err:
+except TimeLimitError as err:
    print "Exception ArretCPU interceptee"
    print "Raison : " + str(err.valk)
 
-except AsterError,err:
+except AsterError as err:
    is_ok = 1
    print "Exception error interceptee"
-   print "Raison : " + str(err.valk)
+   print "Raison : " + str(err.message)
 
 print sep
 
@@ -106,15 +99,15 @@ print sep
 
 is_ok = 0
 try:
-   raise aster.NonConvergenceError("GENERIC_1",
+   raise ConvergenceError("GENERIC_1",
       'CAS 2 : declencher une exception particularisee plus precise que "error"')
 
-except aster.NonConvergenceError,err:
+except ConvergenceError as err:
    is_ok = 1
    print "Exception NonConvergence interceptee"
    print "Raison : " + str(err.valk)
 
-except AsterError,err:
+except AsterError as err:
    print "Exception error interceptee"
    print "Raison : " + str(err.valk)
 
@@ -140,19 +133,19 @@ print sep
 
 is_ok = 0
 try:
-   raise aster.EchecComportementError("GENERIC_1",
+   raise IntegrationError("GENERIC_1",
       'CAS 3 : ne pas confondre les exceptions particularisees')
 
-except aster.BandeFrequenceVideError,err:
+except SolverError as err:
    print "Exception BandeFrequenceVide interceptee"
    print "Raison : " + str(err.valk)
 
-except aster.EchecComportementError,err:
+except IntegrationError as err:
    is_ok = 1
    print "Exception EchecComportement interceptee"
    print "Raison : " + str(err.valk)
 
-except AsterError,err:
+except AsterError as err:
    print "Exception error interceptee"
    print "Raison : " + str(err.valk)
 
@@ -188,7 +181,7 @@ onFatalError('EXCEPTION')
 print fmt % onFatalError()
 try:
     ma=LIRE_MAILLAGE(FORMAT="ASTER",UNITE=999)   # unite invalide
-except AsterError, err:
+except AsterError as err:
     # on verifie que la bonne exception a ete levee
     assert err.id_message == "MODELISA4_94", 'unexpected id : %s' % err.id_message
     is_ok = 1
@@ -231,7 +224,7 @@ print sep
 #             ON RECUPERE LE DERNIER INSTANT CALCULE
 #             POUR REPRENDRE LE CALCUL A PARTIR DE LA
 #             AVEC UN ITER_GLOB_MAXI PLUS GRAND.
-#             --> exception NonConvergenceError
+#             --> exception ConvergenceError
 #
 #             NOM DE CHAMP ET DE COMPOSANTE INEXISTANT
 #             DANS LE CHAMP A POST-TRAITER DANS POST_RELEVE_T
@@ -248,7 +241,7 @@ try:
                           MODELISATION='DIS_TR',),
                   DISTRIBUTION=_F(METHODE='CENTRALISE',),
 );
-except AsterError, err:
+except AsterError as err:
     # on verifie que la bonne exception a ete levee
     assert err.id_message == "MODELISA6_10", 'unexpected id : %s' % err.id_message
     # on peut aussi verifier les arguments
@@ -348,7 +341,7 @@ try :
                           NEWTON=_F(MATRICE='ELASTIQUE',
                                     REAC_ITER=1,),)
 
-except aster.NonConvergenceError, err:
+except ConvergenceError as err:
      is_ok = 1
      # on verifie que la bonne exception a ete levee
      assert err.id_message == "MECANONLINE9_7", 'unexpected id : %s' % err.id_message
@@ -380,7 +373,7 @@ try:
                                      NOM_CHAM='TEMP',
                                      NOM_CMP='TEMP',
                                      OPERATION='EXTRACTION',),);
-except AsterError, err:
+except AsterError as err:
     # on verifie que la bonne exception a ete levee
     assert err.id_message == "POSTRELE_46", 'unexpected id : %s' % err.id_message
     DETRUIRE(CONCEPT=_F(NOM=TAB_DEPL),)

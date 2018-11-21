@@ -18,9 +18,8 @@
 # --------------------------------------------------------------------
 
 #
-from code_aster import AsterError
+from code_aster import ConvergenceError
 from code_aster.Commands import *
-import aster
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',
               ),
@@ -103,7 +102,7 @@ CHAR2 = DEFI_FONCTION(NOM_PARA = 'INST',
                                 10.*(4*NB_CYCLE), PRES_CONF,),)
 
 # ------------------------------------------------------------------------
-# CALCUL + LEVEE D'EXCEPTION NonConvergenceError
+# CALCUL + LEVEE D'EXCEPTION ConvergenceError
 # SIMU_POINT_MAT / SUPPORT='POINT' = CALC_POINT_MAT
 # ------------------------------------------------------------------------
 
@@ -143,7 +142,7 @@ try:
                            SIYY=PRES_CONF,
                            SIZZ=PRES_CONF,),
                         )
-except aster.NonConvergenceError,err:
+except ConvergenceError:
   if err.id_message == "MECANONLINE9_7":
     is_ok = 1
 
