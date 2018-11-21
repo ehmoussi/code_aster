@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -24,8 +24,8 @@ implicit none
 !
 !
     character(len=8), intent(in) :: elem_code
-    integer, intent(out) :: elin_sub(8,4)
-    integer, intent(out) :: elin_nbnode(8)
+    integer, intent(out) :: elin_sub(1,4)
+    integer, intent(out) :: elin_nbnode(1)
     integer, intent(out) :: elin_nbsub
     character(len=8),intent(out) :: elin_code
 !
@@ -41,9 +41,9 @@ implicit none
 ! SEG3  => 1xSEG2
 ! TRIA3 => 1xTRIA3
 ! TRIA6 => 1xTRIA3
-! QUAD4 => 2xTRIA3
-! QUAD8 => 2xTRIA3
-! QUAD9 => 2xTRIA3
+! QUAD4 => 1xQUAD4
+! QUAD8 => 1xQUAD4
+! QUAD9 => 1xQUAD4
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -55,65 +55,27 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    if (elem_code .eq. 'SE2') then
+    if (elem_code .eq. 'SE2' .or.elem_code .eq. 'SE3') then
         elin_code      = 'SE2'
         elin_nbsub     = 1
         elin_nbnode(1) = 2
         elin_sub(1,1)  = 1
-        elin_sub(1,2)  = 2 
-    elseif (elem_code .eq. 'SE3') then
-        elin_code      = 'SE2'
-        elin_nbsub     = 1
-        elin_nbnode(1) = 2
-        elin_sub(1,1)  = 1
-        elin_sub(1,2)  = 2 
-    elseif (elem_code .eq. 'TR3') then
+        elin_sub(1,2)  = 2
+    elseif (elem_code .eq. 'TR3' .or.elem_code .eq. 'TR6') then
         elin_code      = 'TR3'
         elin_nbsub     = 1
         elin_nbnode(1) = 3
         elin_sub(1,1)  = 1
-        elin_sub(1,2)  = 2           
-        elin_sub(1,3)  = 3       
-    else if (elem_code .eq. 'TR6') then
-        elin_code      = 'TR3'
+        elin_sub(1,2)  = 2
+        elin_sub(1,3)  = 3
+    else if (elem_code .eq. 'QU4' .or. elem_code .eq. 'QU8' .or. elem_code .eq. 'QU9') then
+        elin_code      = 'QU4'
         elin_nbsub     = 1
-        elin_nbnode(1) = 3
+        elin_nbnode(1) = 4
         elin_sub(1,1)  = 1
-        elin_sub(1,2)  = 2           
+        elin_sub(1,2)  = 2
         elin_sub(1,3)  = 3
-    else if (elem_code .eq. 'QU4') then
-        elin_code      = 'TR3'
-        elin_nbsub     = 2
-        elin_nbnode(1) = 3
-        elin_sub(1,1)  = 1
-        elin_sub(1,2)  = 2           
-        elin_sub(1,3)  = 3
-        elin_nbnode(2) = 3
-        elin_sub(2,1)  = 3
-        elin_sub(2,2)  = 4           
-        elin_sub(2,3)  = 1
-    else if (elem_code .eq. 'QU8') then
-        elin_code      = 'TR3'
-        elin_nbsub     = 2
-        elin_nbnode(1) = 3
-        elin_sub(1,1)  = 1
-        elin_sub(1,2)  = 2           
-        elin_sub(1,3)  = 3
-        elin_nbnode(2) = 3
-        elin_sub(2,1)  = 3
-        elin_sub(2,2)  = 4           
-        elin_sub(2,3)  = 1
-    else if (elem_code .eq. 'QU9') then
-        elin_code      = 'TR3'
-        elin_nbsub     = 2
-        elin_nbnode(1) = 3
-        elin_sub(1,1)  = 1
-        elin_sub(1,2)  = 2           
-        elin_sub(1,3)  = 3
-        elin_nbnode(2) = 3
-        elin_sub(2,1)  = 3
-        elin_sub(2,2)  = 4           
-        elin_sub(2,3)  = 1
+        elin_sub(1,4)  = 4
     else
         ASSERT(.false.)
     end if

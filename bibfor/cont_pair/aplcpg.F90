@@ -101,14 +101,13 @@ character(len=24), intent(in) :: pair_method
     character(len=8) :: elem_slav_type, elem_mast_type
     real(kind=8) :: elem_mast_coor(27), elem_slav_coor(27)
     integer :: nb_pair, nb_poin_inte
-    integer :: i_mast_neigh, i_elin_mast, i_elin_slav, i_slav_start, i_mast_start, i_find_mast
-    integer :: i_node, i_dime, i_slav_neigh, i_neigh
+    integer :: i_mast_neigh, i_elin_mast, i_slav_start, i_mast_start, i_find_mast
+    integer :: i_slav_neigh, i_neigh
     integer :: patch_indx
     real(kind=8) :: total_weight, inte_weight, gap_moy, elem_slav_weight
     real(kind=8) :: poin_inte(32)
-    integer :: elin_mast_nbsub, elin_mast_sub(2,3), elin_mast_nbnode(2)
-    integer :: elin_slav_nbsub, elin_slav_sub(2,3), elin_slav_nbnode(2)
-    real(kind=8) :: elin_mast_coor(27), elin_slav_coor(27)
+    integer :: elin_mast_nbsub, elin_mast_sub(1,4), elin_mast_nbnode(1)
+    integer :: elin_slav_nbsub, elin_slav_sub(1,4), elin_slav_nbnode(1)
     character(len=8) :: elin_mast_code, elin_slav_code, elem_slav_name, elem_mast_name, elem_name
     integer :: nb_slav_start, nb_find_mast, nb_mast_start
     integer :: list_find_mast(nb_elem_mast)
@@ -417,99 +416,51 @@ character(len=24), intent(in) :: pair_method
 ! --------- Loop on linearized slave sub-elements
 !
             inte_neigh(1:4) = 0
-            do i_elin_slav = 1, elin_slav_nbsub
 !
-                inte_neigh_aux(1:4) = 0
-!
-! ------------- Coordinates for current linearized slave sub-element
-!
-                elin_slav_coor(:) = 0.d0
-                do i_node = 1, elin_slav_nbnode(i_elin_slav)
-                    do i_dime = 1, elem_slav_dime
-                        elin_slav_coor(3*(i_node-1)+i_dime) =&
-                            elem_slav_coor(3*(elin_slav_sub(i_elin_slav,i_node)-1)+i_dime)
-                    end do
-                end do
-!
-! ------------- Loop on linearized master sub-elements
-!
-                do i_elin_mast = 1, elin_mast_nbsub
-!
-! ----------------- Get coordinates for current linearized master sub-element
-!
-                    elin_mast_coor(:) = 0.d0
-                    do i_node = 1, elin_mast_nbnode(i_elin_mast)
-                        do i_dime = 1,elem_slav_dime
-                             elin_mast_coor(3*(i_node-1)+i_dime) = &
-                                elem_mast_coor(3*(elin_mast_sub(i_elin_mast,i_node)-1)+i_dime)
-                        end do
-                    end do
+            inte_neigh_aux(1:4) = 0
 !
 ! ----------------- Projection/intersection of elements in slave parametric space
 !
-                    call prjint(pair_tole     , elem_slav_dime,&
-                                elin_mast_nbnode(i_elin_mast), elin_mast_coor, elin_mast_code,&
-                                elin_slav_nbnode(i_elin_slav), elin_slav_coor, elin_slav_code,&
-                                poin_inte     , inte_weight                  , nb_poin_inte  ,&
-                                inte_neigh_ = inte_neigh_aux)
-                    if (debug) then
-                        write(*,*) "Intersection - Master: ", elem_mast_name, i_elin_mast
-                        write(*,*) "Intersection - Slave : ", elem_slav_name, i_elin_slav
-                        write(*,*) "Intersection - Poids : ", inte_weight
-                        write(*,*) "Intersection - Nb    : ", nb_poin_inte
-                        write(*,*) "Intersection - Points: ", poin_inte
-                    endif
+            call prjint(pair_tole     , elem_slav_dime,&
+                        elin_mast_nbnode(1), elem_mast_coor, elin_mast_code,&
+                        elin_slav_nbnode(1), elem_slav_coor, elin_slav_code,&
+                        poin_inte     , inte_weight         , nb_poin_inte  ,&
+                        inte_neigh_ = inte_neigh_aux)
+            if (debug) then
+                write(*,*) "Intersection - Master: ", elem_mast_name
+                write(*,*) "Intersection - Slave : ", elem_slav_name
+                write(*,*) "Intersection - Poids : ", inte_weight
+                write(*,*) "Intersection - Nb    : ", nb_poin_inte
+                write(*,*) "Intersection - Points: ", poin_inte
+            endif
 !
 ! ----------------- Non-void intersection
 !
-                    if (inte_weight .gt. pair_tole) then
+            if (inte_weight .gt. pair_tole) then
 !
 ! --------------------- Set neighbours
 !
-                        if (elin_slav_code .ne. elem_slav_code .and.&
-                            (elem_slav_code .eq. 'QU4' .or. &
-                             elem_slav_code .eq. 'QU8' .or. &
-                             elem_slav_code .eq. 'QU9' &
-                            )) then
-                            if (i_elin_slav .eq. 1) then
-                                inte_neigh(1) = inte_neigh_aux(1)
-                                inte_neigh(2) = inte_neigh_aux(2)
-                            elseif (i_elin_slav .eq. 2) then
-                                inte_neigh(3) = inte_neigh_aux(1)
-                                inte_neigh(4) = inte_neigh_aux(2)
-                            else
-                                ASSERT(.false.)
-                            end if
-                        else
-                            do i_neigh = 1,nb_slav_neigh
-                                if (inte_neigh_aux(i_neigh).ne.0) then
-                                    inte_neigh(i_neigh) = inte_neigh_aux(i_neigh)
-                                endif
-                            end do
-                        end if
+                do i_neigh = 1,nb_slav_neigh
+                    if (inte_neigh_aux(i_neigh).ne.0) then
+                        inte_neigh(i_neigh) = inte_neigh_aux(i_neigh)
+                    endif
+                end do
 !
-                        total_weight = total_weight+inte_weight
-!
-! --------------------- Projection from para. space of element into sub-element para. space
-!
-                        call aprtpe(elem_slav_dime, elem_slav_code, i_elin_slav,&
-                                    nb_poin_inte  , poin_inte )
+                total_weight = total_weight+inte_weight
 !
 ! --------------------- Compute mean square gap and weight of intersection
 !
-                        call gapint(pair_tole     , elem_slav_dime,&
-                                    elem_slav_code, elem_slav_nbnode, elem_slav_coor,&
-                                    elem_mast_code, elem_mast_nbnode, elem_mast_coor,&
-                                    nb_poin_inte  , poin_inte                    , &
-                                    gap_moy       , inte_weight                  )
+                call gapint(pair_tole     , elem_slav_dime,&
+                            elem_slav_code, elem_slav_nbnode, elem_slav_coor,&
+                            elem_mast_code, elem_mast_nbnode, elem_mast_coor,&
+                            nb_poin_inte  , poin_inte                    , &
+                            gap_moy       , inte_weight                  )
 !
 ! --------------------- Save values
 !
-                        v_sdappa_gapi(patch_indx)  = v_sdappa_gapi(patch_indx)-gap_moy
-                        patch_weight_c(patch_indx) = patch_weight_c(patch_indx)+inte_weight
-                    end if
-                end do
-            end do
+                v_sdappa_gapi(patch_indx)  = v_sdappa_gapi(patch_indx)-gap_moy
+                patch_weight_c(patch_indx) = patch_weight_c(patch_indx)+inte_weight
+            end if
 !
 ! --------- Add element paired
 !

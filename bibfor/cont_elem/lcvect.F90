@@ -78,10 +78,10 @@ real(kind=8), intent(inout) :: vect(55)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: elin_mast_nbsub, elin_mast_sub(2,3), elin_mast_nbnode(2)
+    integer :: elin_mast_nbsub, elin_mast_sub(1,4), elin_mast_nbnode(1)
     real(kind=8) :: elin_mast_coor(3, 9)
     character(len=8) :: elin_mast_code
-    integer :: elin_slav_nbsub, elin_slav_sub(2,3), elin_slav_nbnode(2)
+    integer :: elin_slav_nbsub, elin_slav_sub(1,4), elin_slav_nbnode(1)
     real(kind=8) :: elin_slav_coor(3, 9)
     character(len=8) :: elin_slav_code
     integer :: i_elin_slav, i_elin_mast
@@ -118,9 +118,9 @@ real(kind=8), intent(inout) :: vect(55)
                    elem_slav_coor((elin_slav_sub(i_elin_slav,i_node)-1)*elem_dime+i_dime)
             end do
         end do
-! ----- Compute normal vector for current linearized slave sub-element       
+! ----- Compute normal vector for current linearized slave sub-element
         call lcnorm_line(elin_slav_code, elin_slav_coor, norm_line)
-! ----- Loop on linearized master sub-elements        
+! ----- Loop on linearized master sub-elements
         do i_elin_mast = 1, elin_mast_nbsub
 ! --------- Get coordinates for current linearized master sub-element
             elin_mast_coor(:, :) = 0.d0
@@ -128,7 +128,7 @@ real(kind=8), intent(inout) :: vect(55)
                 do i_dime = 1, elem_dime
                     elin_mast_coor(i_dime, i_node) = &
                         elem_mast_coor((elin_mast_sub(i_elin_mast,i_node)-1)*elem_dime+i_dime)
-                end do     
+                end do
             end do
 ! --------- Projection/intersection
             call lcpjit(proj_tole                    , elem_dime     ,&
@@ -219,7 +219,7 @@ real(kind=8), intent(inout) :: vect(55)
                                     elem_slav_code,&
                                     poidpg        , gauss_coot    , jacobian, &
                                     norm_g        , vect)
-                    end do             
+                    end do
 ! ----------------- Projection of triangle in master parametric space
                     call lcrtma(elem_dime       , proj_tole,&
                                 tria_coor_aux   , &
@@ -254,5 +254,5 @@ real(kind=8), intent(inout) :: vect(55)
             end if
         end do
     end do
-! 
+!
 end subroutine

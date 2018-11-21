@@ -38,7 +38,7 @@ implicit none
     real(kind=8),intent(in) :: pair_tole
     real(kind=8),intent(out) :: inte_weight
     integer, pointer :: v_mesh_connex(:)
-    integer, pointer :: v_connex_lcum(:) 
+    integer, pointer :: v_connex_lcum(:)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -64,9 +64,9 @@ implicit none
     integer :: elem_slav_nbnode, elem_dime
     real(kind=8) :: elem_slav_coor(27)
     character(len=8) :: elem_slav_code
-    integer :: elin_slav_sub(8,9), elin_mast_sub(8,9)
-    integer :: elin_slav_nbnode(8), elin_mast_nbnode(8)
-    integer :: elin_slav_nbsub, elin_mast_nbsub 
+    integer :: elin_slav_sub(1,4), elin_mast_sub(1,4)
+    integer :: elin_slav_nbnode(1), elin_mast_nbnode(1)
+    integer :: elin_slav_nbsub, elin_mast_nbsub
     real(kind=8) :: elin_slav_coor(27), elin_mast_coor(27)
     character(len=8) :: elin_slav_code, elin_mast_code
     integer :: nb_poin_inte
@@ -91,7 +91,7 @@ implicit none
 ! ----- Cut master element in linearized sub-elements
 !
         call dctest(elem_mast_code, elin_mast_sub, elin_mast_nbnode, elin_mast_nbsub,&
-                    elin_mast_code)  
+                    elin_mast_code)
 !
         inte_weight=0.d0
 !
@@ -101,16 +101,16 @@ implicit none
             elin_slav_coor(:) = 0.d0
 !
 ! --------- Get coordinates for current linearized slave sub-element
-!         
+!
             do i_node = 1, elin_slav_nbnode(i_elin_slav)
                 do i_dime = 1, elem_dime
                     elin_slav_coor(3*(i_node-1)+i_dime) =&
-                        elem_slav_coor(3*(elin_slav_sub(i_elin_slav,i_node)-1)+i_dime) 
-                end do 
+                        elem_slav_coor(3*(elin_slav_sub(i_elin_slav,i_node)-1)+i_dime)
+                end do
             end do
 !
 ! --------- Loop on linearized master sub-elements
-!           
+!
             do i_elin_mast = 1, elin_mast_nbsub
                 elin_mast_coor(:) = 0.d0
 !
@@ -119,19 +119,19 @@ implicit none
                 do i_node = 1, elin_mast_nbnode(i_elin_mast)
                     do i_dime = 1, elem_dime
                         elin_mast_coor(3*(i_node-1)+i_dime) =&
-                            elem_mast_coor(3*(elin_mast_sub(i_elin_mast,i_node)-1)+i_dime) 
-                    end do 
-                end do       
+                            elem_mast_coor(3*(elin_mast_sub(i_elin_mast,i_node)-1)+i_dime)
+                    end do
+                end do
 !
-! ------------- Projection/intersection of elements in slave parametric space     
+! ------------- Projection/intersection of elements in slave parametric space
 !
                 call prjint(pair_tole     , elem_dime,&
                             elin_mast_nbnode(i_elin_mast), elin_mast_coor, elin_mast_code,&
                             elin_slav_nbnode(i_elin_slav), elin_slav_coor, elin_slav_code,&
                             poin_inte     , ints_weight                  , nb_poin_inte  )
-!                       
+!
                 inte_weight = inte_weight+ints_weight
-            end do      
+            end do
         end do
     endif
 end subroutine
