@@ -31,7 +31,7 @@ pipeline {
         }
         stage('Build') {
             steps {
-                sh "( cd $HOME/dev/jenkins/data && hg pull && hg update )"
+                sh "( cd $HOME/dev/jenkins/data && hg pull && hg update asterxx )"
                 sh "[ -e waf_std ] || ln -s waf_variant waf_std"
                 sh "./waf_std configure --with-data=$HOME/dev/jenkins/data --prefix=build/install/std"
                 sh "./waf_std install"
