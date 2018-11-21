@@ -32,8 +32,7 @@
 #include "Utilities/Tools.h"
 
 FormulaInstance::FormulaInstance( const std::string jeveuxName )
-    : GenericFunctionInstance( jeveuxName, "FORMULE" ), _jeveuxName( getName() ),
-      _property( JeveuxVectorChar24( getName() + ".PROL" ) ),
+    : GenericFunctionInstance( jeveuxName, "FORMULE", "FORMULE" ), _jeveuxName( getName() ),
       _variables( JeveuxVectorChar24( getName() + ".NOVA" ) ),
       _pointers( JeveuxVectorLong( getName() + ".ADDR" ) ), _expression( "" ), _code( NULL ),
       _context( NULL ) {

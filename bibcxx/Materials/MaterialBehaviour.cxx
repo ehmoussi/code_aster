@@ -31,8 +31,8 @@ bool GeneralMaterialBehaviourInstance::buildJeveuxVectors(
     JeveuxVectorComplex &complexValues, JeveuxVectorDouble &doubleValues,
     JeveuxVectorChar16 &char16Values, JeveuxVectorChar16 &ordr, JeveuxVectorLong &kOrd,
     std::vector< JeveuxVectorDouble > &userDoubles,
-    std::vector< JeveuxVectorChar8 > &userFunctions ) const
-    throw( std::runtime_error ) {
+    std::vector< JeveuxVectorChar8 > &userFunctions )
+{
     const int nbOfMaterialProperties = getNumberOfPropertiesWithValue();
     complexValues->allocate( Permanent, nbOfMaterialProperties );
     doubleValues->allocate( Permanent, nbOfMaterialProperties );
@@ -287,4 +287,43 @@ int GeneralMaterialBehaviourInstance::getNumberOfPropertiesWithValue() const {
             ++toReturn;
 
     return toReturn;
+};
+
+
+bool TherNlMaterialBehaviourInstance::buildJeveuxVectors(
+    JeveuxVectorComplex &complexValues, JeveuxVectorDouble &doubleValues,
+    JeveuxVectorChar16 &char16Values, JeveuxVectorChar16 &ordr, JeveuxVectorLong &kOrd,
+    std::vector< JeveuxVectorDouble > &userDoubles,
+    std::vector< JeveuxVectorChar8 > &userFunctions )
+{
+    const auto curIter = _mapOfFunctionMaterialProperties.find( "Beta" )->second;
+
+    if( ! curIter.hasValue() )
+    {
+        const auto curIter2 = _mapOfFunctionMaterialProperties.find( "Rho_cp" );
+        const auto name = std::string( complexValues->getName(), 0, 8 );
+        auto func = curIter2->second.getValue();
+        const std::string method( "TRAPEZE" );
+        const std::string nameIn = func->getName();
+        double val = 0.;
+        const std::string nameOut = _enthalpyFunction->getName();
+        const std::string base( "G" );
+        CALLO_FOCAIN( method, nameIn, &val, nameOut, base );
+        setFunctionValue( "Beta", _enthalpyFunction );
+        auto prop = func->getProperties();
+        auto prop2 = _enthalpyFunction->getProperties();
+        std::string prol( prop2[4] );
+        if( prop[4][0] == 'C' )
+            prol[0] = 'L';
+        if( prop[4][1] == 'C' )
+            prol[1] = 'L';
+        _enthalpyFunction->setExtrapolation( prol );
+    }
+    return GeneralMaterialBehaviourInstance::buildJeveuxVectors(complexValues,
+                                                                doubleValues,
+                                                                char16Values,
+                                                                ordr,
+                                                                kOrd,
+                                                                userDoubles,
+                                                                userFunctions);
 };

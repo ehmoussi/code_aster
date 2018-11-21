@@ -43,8 +43,6 @@ class FormulaInstance : public GenericFunctionInstance {
     // Nom Jeveux de la SD
     /** @todo remettre le const */
     std::string _jeveuxName;
-    // Vecteur Jeveux '.PROL'
-    JeveuxVectorChar24 _property;
     // Vecteur Jeveux '.NOVA'
     JeveuxVectorChar24 _variables;
     // Pointers to PyObject

@@ -136,6 +136,9 @@ class MaterialDefinition(ExecuteCommand):
                 if materClass().hasTractionFunction():
                     objects[materName] = materClass()
                     continue
+                if materClass().hasEnthalpyFunction():
+                    objects[materName] = materClass()
+                    continue
             asterNewName = ""
             if materName[-2:] == "FO":
                 asterNewName = materName[:-3]
