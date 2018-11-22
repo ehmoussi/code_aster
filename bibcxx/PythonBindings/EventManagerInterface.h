@@ -1,9 +1,9 @@
-#ifndef FAILURECONVERGENCEMANAGERINTERFACE_H_
-#define FAILURECONVERGENCEMANAGERINTERFACE_H_
+#ifndef EVENTMANAGERINTERFACE_H_
+#define EVENTMANAGERINTERFACE_H_
 
 /**
- * @file FailureConvergenceManagerInterface.h
- * @brief Fichier entete de la classe FailureConvergenceManagerInterface
+ * @file EventManagerInterface.h
+ * @brief Fichier entete de la classe EventManagerInterface
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
@@ -25,8 +25,8 @@
  */
 
 #include "astercxx.h"
-#include "Studies/FailureConvergenceManager.h"
+#include "Studies/EventManager.h"
 
-void exportFailureConvergenceManagerToPython();
+void exportEventManagerToPython();
 
-#endif /* FAILURECONVERGENCEMANAGERINTERFACE_H_ */
+#endif /* EVENTMANAGERINTERFACE_H_ */

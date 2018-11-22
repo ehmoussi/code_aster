@@ -1,9 +1,9 @@
-#ifndef FAILURECONVERGENCEMANAGER_H_
-#define FAILURECONVERGENCEMANAGER_H_
+#ifndef EVENTMANAGER_H_
+#define EVENTMANAGER_H_
 
 /**
- * @file FailureConvergenceManager.h
- * @brief Fichier entete de la classe FailureConvergenceManager
+ * @file EventManager.h
+ * @brief Fichier entete de la classe EventManager
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
@@ -56,12 +56,12 @@ const int nbActions = 8;
 extern const char *ActionNames[nbActions];
 
 /**
- * @enum ConvergenceErrorTypeEnum
+ * @enum EventErrorTypeEnum
  * @brief Types d'action pouvant être détectées dans l'algo de STAT_NON_LINE
  * @author Nicolas Sellenet
  */
-enum ConvergenceErrorTypeEnum {
-    ConvergenceErrorType,
+enum EventErrorTypeEnum {
+    EventErrorType,
     ResidualDivergenceErrorType,
     IncrementOverboundErrorType,
     ContactDetectionErrorType,
@@ -405,12 +405,12 @@ typedef boost::shared_ptr< ChangePenalisationOnErrorInstance > ChangePenalisatio
 typedef boost::shared_ptr< ContinueOnErrorInstance > ContinueOnErrorPtr;
 
 /**
- * @class GenericConvergenceErrorInstance
+ * @class GenericEventErrorInstance
  * @brief Cette classe définit une erreur générique de convergence dont
  *        les autres doivent hériter
  * @author Nicolas Sellenet
  */
-class GenericConvergenceErrorInstance {
+class GenericEventErrorInstance {
   private:
     /** @brief Action à réaliser en cas d'erreur */
     GenericActionPtr _actionOnError;
@@ -423,19 +423,19 @@ class GenericConvergenceErrorInstance {
 
     /**
      * @brief Constructeur
-     * @param type ConvergenceErrorTypeEnum décrivant le type de l'erreur
+     * @param type EventErrorTypeEnum décrivant le type de l'erreur
      */
-    GenericConvergenceErrorInstance( ConvergenceErrorTypeEnum type )
+    GenericEventErrorInstance( EventErrorTypeEnum type )
         : _eventName( "EVENEMENT", std::string( ErrorNames[type] ), true ) {
         _listSyntaxParam.push_back( &_eventName );
     };
 
   public:
     /** @brief Constructeur par défaut */
-    GenericConvergenceErrorInstance()
+    GenericEventErrorInstance()
         : _eventName( "EVENEMENT", std::string( ErrorNames[NoErrorType] ), true ){};
 
-    ~GenericConvergenceErrorInstance(){};
+    ~GenericEventErrorInstance(){};
 
   private:
     /**
@@ -478,11 +478,11 @@ class GenericConvergenceErrorInstance {
 };
 
 /**
- * @class ConvergenceErrorInstance
+ * @class EventErrorInstance
  * @brief Classe décriant l'événement ERREUR
  * @author Nicolas Sellenet
  */
-class ConvergenceErrorInstance : public GenericConvergenceErrorInstance {
+class EventErrorInstance : public GenericEventErrorInstance {
   private:
     /**
      * @brief Fonction permettant de vérifier qu'une action est bien autorisée
@@ -497,9 +497,9 @@ class ConvergenceErrorInstance : public GenericConvergenceErrorInstance {
 
   public:
     /** @brief Constructeur */
-    ConvergenceErrorInstance() : GenericConvergenceErrorInstance( ConvergenceErrorType ){};
+    EventErrorInstance() : GenericEventErrorInstance( EventErrorType ){};
 
-    ~ConvergenceErrorInstance(){};
+    ~EventErrorInstance(){};
 };
 
 /**
@@ -507,7 +507,7 @@ class ConvergenceErrorInstance : public GenericConvergenceErrorInstance {
  * @brief Classe décriant l'événement DIVE_RESI
  * @author Nicolas Sellenet
  */
-class ResidualDivergenceErrorInstance : public GenericConvergenceErrorInstance {
+class ResidualDivergenceErrorInstance : public GenericEventErrorInstance {
   private:
     /**
      * @brief Fonction permettant de vérifier qu'une action est bien autorisée
@@ -522,7 +522,7 @@ class ResidualDivergenceErrorInstance : public GenericConvergenceErrorInstance {
   public:
     /** @brief Constructeur */
     ResidualDivergenceErrorInstance()
-        : GenericConvergenceErrorInstance( ResidualDivergenceErrorType ){};
+        : GenericEventErrorInstance( ResidualDivergenceErrorType ){};
 
     ~ResidualDivergenceErrorInstance(){};
 };
@@ -532,7 +532,7 @@ class ResidualDivergenceErrorInstance : public GenericConvergenceErrorInstance {
  * @brief Classe décriant l'événement DELTA_GRANDEUR
  * @author Nicolas Sellenet
  */
-class IncrementOverboundErrorInstance : public GenericConvergenceErrorInstance {
+class IncrementOverboundErrorInstance : public GenericEventErrorInstance {
   private:
     /** @brief Paramètre VALE_REF */
     GenParam _value;
@@ -554,7 +554,7 @@ class IncrementOverboundErrorInstance : public GenericConvergenceErrorInstance {
   public:
     /** @brief Constructeur */
     IncrementOverboundErrorInstance()
-        : GenericConvergenceErrorInstance( IncrementOverboundErrorType ),
+        : GenericEventErrorInstance( IncrementOverboundErrorType ),
           _value( "VALE_REF", true ), _fieldName( "NOM_CHAM", "", true ),
           _component( "NOM_CMP", true ) {
         _listSyntaxParam.push_back( &_value );
@@ -583,7 +583,7 @@ class IncrementOverboundErrorInstance : public GenericConvergenceErrorInstance {
  * @brief Classe décriant l'événement COLLISION
  * @author Nicolas Sellenet
  */
-class ContactDetectionErrorInstance : public GenericConvergenceErrorInstance {
+class ContactDetectionErrorInstance : public GenericEventErrorInstance {
   private:
     /**
      * @brief Fonction permettant de vérifier qu'une action est bien autorisée
@@ -598,7 +598,7 @@ class ContactDetectionErrorInstance : public GenericConvergenceErrorInstance {
   public:
     /** @brief Constructeur */
     ContactDetectionErrorInstance()
-        : GenericConvergenceErrorInstance( ContactDetectionErrorType ){};
+        : GenericEventErrorInstance( ContactDetectionErrorType ){};
 
     ~ContactDetectionErrorInstance(){};
 };
@@ -608,7 +608,7 @@ class ContactDetectionErrorInstance : public GenericConvergenceErrorInstance {
  * @brief Classe décriant l'événement INTERPENETRATION
  * @author Nicolas Sellenet
  */
-class InterpenetrationErrorInstance : public GenericConvergenceErrorInstance {
+class InterpenetrationErrorInstance : public GenericEventErrorInstance {
   private:
     /** @brief Paramètre PENE_MAXI */
     GenParam _maxPenetration;
@@ -626,7 +626,7 @@ class InterpenetrationErrorInstance : public GenericConvergenceErrorInstance {
   public:
     /** @brief Constructeur */
     InterpenetrationErrorInstance()
-        : GenericConvergenceErrorInstance( InterpenetrationErrorType ),
+        : GenericEventErrorInstance( InterpenetrationErrorType ),
           _maxPenetration( "PENE_MAXI", true ) {
         _listSyntaxParam.push_back( &_maxPenetration );
     };
@@ -645,7 +645,7 @@ class InterpenetrationErrorInstance : public GenericConvergenceErrorInstance {
  * @brief Classe décriant l'événement INSTABILITE
  * @author Nicolas Sellenet
  */
-class InstabilityErrorInstance : public GenericConvergenceErrorInstance {
+class InstabilityErrorInstance : public GenericEventErrorInstance {
   private:
     /**
      * @brief Fonction permettant de vérifier qu'une action est bien autorisée
@@ -661,15 +661,15 @@ class InstabilityErrorInstance : public GenericConvergenceErrorInstance {
     /**
      * @brief Constructeur
      */
-    InstabilityErrorInstance() : GenericConvergenceErrorInstance( InstabilityErrorType ){};
+    InstabilityErrorInstance() : GenericEventErrorInstance( InstabilityErrorType ){};
 
     ~InstabilityErrorInstance(){};
 };
 
-/** @typedef Pointeur intelligent vers un GenericConvergenceErrorInstance */
-typedef boost::shared_ptr< GenericConvergenceErrorInstance > GenericConvergenceErrorPtr;
-/** @typedef Pointeur intelligent vers un ConvergenceErrorInstance */
-typedef boost::shared_ptr< ConvergenceErrorInstance > ConvergenceErrorPtr;
+/** @typedef Pointeur intelligent vers un GenericEventErrorInstance */
+typedef boost::shared_ptr< GenericEventErrorInstance > GenericEventErrorPtr;
+/** @typedef Pointeur intelligent vers un EventErrorInstance */
+typedef boost::shared_ptr< EventErrorInstance > EventErrorPtr;
 /** @typedef Pointeur intelligent vers un ResidualDivergenceErrorInstance */
 typedef boost::shared_ptr< ResidualDivergenceErrorInstance > ResidualDivergenceErrorPtr;
 /** @typedef Pointeur intelligent vers un IncrementOverboundErrorInstance */
@@ -681,11 +681,11 @@ typedef boost::shared_ptr< InterpenetrationErrorInstance > InterpenetrationError
 /** @typedef Pointeur intelligent vers un InstabilityErrorInstance */
 typedef boost::shared_ptr< InstabilityErrorInstance > InstabilityErrorPtr;
 
-/** @typedef std::list de GenericConvergenceErrorPtr */
-typedef std::list< GenericConvergenceErrorPtr > ListConvError;
-/** @typedef Iterateur sur une std::list de GenericConvergenceErrorPtr */
+/** @typedef std::list de GenericEventErrorPtr */
+typedef std::list< GenericEventErrorPtr > ListConvError;
+/** @typedef Iterateur sur une std::list de GenericEventErrorPtr */
 typedef ListConvError::iterator ListConvErrorIter;
-/** @typedef Iterateur constant sur une std::list de GenericConvergenceErrorPtr */
+/** @typedef Iterateur constant sur une std::list de GenericEventErrorPtr */
 typedef ListConvError::const_iterator ListConvErrorCIter;
 
-#endif /* FAILURECONVERGENCEMANAGER_H_ */
+#endif /* EVENTMANAGER_H_ */

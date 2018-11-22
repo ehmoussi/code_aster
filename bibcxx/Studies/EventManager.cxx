@@ -1,6 +1,6 @@
 /**
- * @file FailureConvergenceManager.cxx
- * @brief Implementation de FailureConvergenceManager
+ * @file EventManager.cxx
+ * @brief Implementation de EventManager
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
@@ -21,7 +21,7 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "Studies/FailureConvergenceManager.h"
+#include "Studies/EventManager.h"
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
