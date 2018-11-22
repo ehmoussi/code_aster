@@ -527,7 +527,7 @@ end subroutine free_saddle_point_context
 function get_num_of_constraints( ctxt ) result ( nlag ) 
     type(saddlepoint_ctxt), intent(in)         :: ctxt
     integer                                    :: nlag 
-    nlag = -1
+    nlag = ctxt%idummy
 end function get_num_of_constraints
 !
 #endif

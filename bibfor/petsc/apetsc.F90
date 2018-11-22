@@ -158,11 +158,6 @@ use elg_module
             nosols(k) = ' '
             nonus(k) = ' '
             tblocs(k) = -1
-            if (fictifs(k).eq.1) then
-                deallocate(new_ieqs(k)%pi4)
-                deallocate(old_ieqs(k)%pi4)
-            endif
-            fictifs(k) = -1
         enddo
 #if PETSC_VERSION_LT(3,8,0) 
   xlocal = PETSC_NULL_OBJECT

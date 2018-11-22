@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -165,25 +165,6 @@ Solveur PETSc :
    Il faut utiliser la version MPI avec un seul processeur.
 """),
 
-
-
-
-21 : _(u"""
-Solveur PETSc :
-  Les préconditionneurs 'ML', 'BOOMER' et 'GAMG' exigent que tous les noeuds
-  du modèle portent les mêmes degrés de liberté.
-  Comme ce n'est pas le cas ici, on ajoute des degrés de liberté
-  fictifs au système linéaire pour répondre à cette contrainte.
-  On a ajouté %(i1)d degrés de liberté fictifs (%(i2)d %%)
-"""),
-
-
-22 : _(u"""
-Solveur PETSc :
-  Les préconditionneurs 'ML', 'BOOMER' et 'GAMG' exigent que tous les noeuds
-  du modèle portent les mêmes degrés de liberté.
-  Ce n'est pas le cas ici. On arrête l'exécution.
-"""),
 
 24 : _(u"""
 Solveur PETSc :
