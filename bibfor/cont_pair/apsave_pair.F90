@@ -18,7 +18,9 @@
 
 subroutine apsave_pair(i_zone      , elem_slav_nume,&
                        nb_pair     , list_pair     ,&
-                       nb_pair_zone, list_pair_zone)
+                       li_nbptsl   , li_ptintsl    ,&
+                       nb_pair_zone, list_pair_zone,&
+                       li_nbptsl_zone,li_ptintsl_zone)
 !
 implicit none
 !
@@ -31,8 +33,12 @@ implicit none
     integer, intent(in) :: elem_slav_nume
     integer, intent(in) :: nb_pair
     integer, intent(in) :: list_pair(:)
+    integer, intent(in) :: li_nbptsl(:)
+    real(kind=8), intent(in) :: li_ptintsl(:)
     integer, intent(inout) :: nb_pair_zone
     integer, pointer :: list_pair_zone(:)
+    integer, pointer :: li_nbptsl_zone(:)
+    real(kind=8), pointer :: li_ptintsl_zone(:)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -56,15 +62,18 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
 ! ----- Add new pairs
-! 
+!
     do i_pair = 1, nb_pair
-        list_pair_zone(3*nb_pair_zone+3*(i_pair-1)+1) = elem_slav_nume    
+        list_pair_zone(3*nb_pair_zone+3*(i_pair-1)+1) = elem_slav_nume
         list_pair_zone(3*nb_pair_zone+3*(i_pair-1)+2) = list_pair(i_pair)
         list_pair_zone(3*nb_pair_zone+3*(i_pair-1)+3) = i_zone
+        li_nbptsl_zone(nb_pair_zone+i_pair) = li_nbptsl(i_pair)
+        li_ptintsl_zone(nb_pair_zone*16+1+(i_pair-1)*16:nb_pair_zone*16+i_pair*16) = &
+        li_ptintsl(1+(i_pair-1)*16:i_pair*16)
     end do
 !
 ! - New number of contact pairs
 !
-    nb_pair_zone = nb_pair_zone+nb_pair      
+    nb_pair_zone = nb_pair_zone+nb_pair
 !
 end subroutine

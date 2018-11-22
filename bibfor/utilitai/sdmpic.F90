@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -116,21 +116,21 @@ subroutine sdmpic(typesd, nomsd)
         call asmpi_comm_jev('MPI_SUM', k19//'.DIST')
         call asmpi_comm_jev('MPI_SUM', k19//'.TAU1')
         call asmpi_comm_jev('MPI_SUM', k19//'.TAU2')
-        call asmpi_comm_jev('MPI_SUM', k19//'.PROJ')     
+        call asmpi_comm_jev('MPI_SUM', k19//'.PROJ')
         valk(1)='MPI_COMPLET'
 !
     else if (types2 .eq. 'SD_APPA_TGEL') then
 !     ----------------------------------
         call jeveuo(k19//'.MPIB', 'E', vk16=valk)
         if (valk(1) .eq. 'MPI_COMPLET') goto 999
-        call asmpi_comm_jev('MPI_SUM', k19//'.TGEL')  
+        call asmpi_comm_jev('MPI_SUM', k19//'.TGEL')
         valk(1)='MPI_COMPLET'
 !
     else if (types2 .eq. 'SD_APPA_TGNO') then
 !     ----------------------------------
         call jeveuo(k19//'.MPIC', 'E', vk16=valk)
         if (valk(1) .eq. 'MPI_COMPLET') goto 999
-        call asmpi_comm_jev('MPI_SUM', k19//'.TGNO')  
+        call asmpi_comm_jev('MPI_SUM', k19//'.TGNO')
         valk(1)='MPI_COMPLET'
 !
     else if (types2 .eq. 'SD_APPA_LAC1') then
@@ -140,8 +140,8 @@ subroutine sdmpic(typesd, nomsd)
         call asmpi_comm_jev('MPI_SUM', k19//'.GAPI')
         call asmpi_comm_jev('MPI_SUM', k19//'.PWT ')
         call asmpi_comm_jev('MPI_SUM', k19//'.PWC ')
-        call asmpi_comm_jev('MPI_SUM', k19//'.NAPP')   
-        valk(1)='MPI_COMPLET'       
+        call asmpi_comm_jev('MPI_SUM', k19//'.NAPP')
+        valk(1)='MPI_COMPLET'
 !
 !
 !
@@ -149,16 +149,18 @@ subroutine sdmpic(typesd, nomsd)
 !     ----------------------------------
         call jeveuo(k19//'.MPIE', 'E', vk16=valk)
         if (valk(1) .eq. 'MPI_COMPLET') goto 999
-        call asmpi_comm_jev('MPI_SUM', k19//'.AUX ')  
-        valk(1)='MPI_COMPLET'       
-        
-        
+        call asmpi_comm_jev('MPI_SUM', k19//'.AUX ')
+        call asmpi_comm_jev('MPI_SUM', k19//'.AUX2')
+        call asmpi_comm_jev('MPI_SUM', k19//'.AUX3')
+        valk(1)='MPI_COMPLET'
+
+
     else if (types2 .eq. '&&OP29NL') then
 !     ----------------------------------
         call jeveuo(k24(1:20)//'.MPI', 'E', vk16=valk)
         if (valk(1) .eq. 'MPI_COMPLET') goto 999
-        call asmpi_comm_jev('MPI_SUM', k24)  
-        valk(1)='MPI_COMPLET'       
+        call asmpi_comm_jev('MPI_SUM', k24)
+        valk(1)='MPI_COMPLET'
 !
 !
     else

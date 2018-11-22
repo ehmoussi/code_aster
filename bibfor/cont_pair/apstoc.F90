@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine apstoc(ds_contact, nb_pair, list_pair)
+subroutine apstoc(ds_contact, nb_pair, list_pair, list_nbptit, list_ptitsl)
 !
 use NonLin_Datastructure_type
 !
@@ -35,6 +35,8 @@ implicit none
     type(NL_DS_Contact), intent(inout) :: ds_contact
     integer, intent(in):: nb_pair
     integer, pointer :: list_pair(:)
+    integer, pointer :: list_nbptit(:)
+    real(kind=8), pointer :: list_ptitsl(:)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -50,10 +52,11 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: i_pair
     character(len=19) :: sdappa
     integer, pointer :: v_sdappa_apli(:) => null()
-    character(len=24) :: sdappa_apli
+    integer, pointer :: v_sdappa_apli2(:) => null()
+    real(kind=8), pointer :: v_sdappa_apli3(:) => null()
+    character(len=24) :: sdappa_apli, sdappa_apli2, sdappa_apli3
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -61,12 +64,20 @@ implicit none
     if (nb_pair.ne.0) then
         sdappa = ds_contact%sdcont_solv(1:14)//'.APPA'
         sdappa_apli = sdappa(1:19)//'.APLI'
+        sdappa_apli2 = sdappa(1:19)//'.APNP'
+        sdappa_apli3 = sdappa(1:19)//'.APTS'
         call jedetr(sdappa_apli)
+        call jedetr(sdappa_apli2)
+        call jedetr(sdappa_apli3)
         call wkvect(sdappa_apli,'V V I', 3*nb_pair, vi = v_sdappa_apli)
-        do i_pair = 1, 3*nb_pair
-            v_sdappa_apli(i_pair) = list_pair(i_pair)        
-        end do
+        call wkvect(sdappa_apli2,'V V I', nb_pair, vi = v_sdappa_apli2)
+        call wkvect(sdappa_apli3,'V V R', 16*nb_pair, vr = v_sdappa_apli3)
+        v_sdappa_apli(1:3*nb_pair) = list_pair(1:3*nb_pair)
+        v_sdappa_apli2(1:nb_pair) = list_nbptit(1:nb_pair)
+        v_sdappa_apli3(1:16*nb_pair) = list_ptitsl(1:16*nb_pair)
         AS_DEALLOCATE(vi=list_pair)
+        AS_DEALLOCATE(vi=list_nbptit)
+        AS_DEALLOCATE(vr=list_ptitsl)
         ds_contact%nb_cont_pair = nb_pair
     end if
     call jedema()
