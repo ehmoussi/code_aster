@@ -142,7 +142,7 @@ try:
                            SIYY=PRES_CONF,
                            SIZZ=PRES_CONF,),
                         )
-except ConvergenceError:
+except ConvergenceError as err:
   if err.id_message == "MECANONLINE9_7":
     is_ok = 1
 

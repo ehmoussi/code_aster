@@ -54,23 +54,23 @@ try:
 
 except ConvergenceError as err:
    print "Exception NonConvergence interceptee"
-   print "Raison : " + str(err.valk)
+   print "Raison : " + err.message
 
 except IntegrationError as err:
    print "Exception EchecComportement interceptee"
-   print "Raison : " + str(err.valk)
+   print "Raison : " + err.message
 
 except SolverError as err:
    print "Exception BandeFrequenceVide interceptee"
-   print "Raison : " + str(err.valk)
+   print "Raison : " + err.message
 
 except ContactError as err:
    print "Exception TraitementContact interceptee"
-   print "Raison : " + str(err.valk)
+   print "Raison : " + err.message
 
 except TimeLimitError as err:
    print "Exception ArretCPU interceptee"
-   print "Raison : " + str(err.valk)
+   print "Raison : " + err.message
 
 except AsterError as err:
    is_ok = 1
@@ -105,11 +105,11 @@ try:
 except ConvergenceError as err:
    is_ok = 1
    print "Exception NonConvergence interceptee"
-   print "Raison : " + str(err.valk)
+   print "Raison : " + err.message
 
 except AsterError as err:
    print "Exception error interceptee"
-   print "Raison : " + str(err.valk)
+   print "Raison : " + err.message
 
 print sep
 
@@ -138,16 +138,16 @@ try:
 
 except SolverError as err:
    print "Exception BandeFrequenceVide interceptee"
-   print "Raison : " + str(err.valk)
+   print "Raison : " + err.message
 
 except IntegrationError as err:
    is_ok = 1
    print "Exception EchecComportement interceptee"
-   print "Raison : " + str(err.valk)
+   print "Raison : " + err.message
 
 except AsterError as err:
    print "Exception error interceptee"
-   print "Raison : " + str(err.valk)
+   print "Raison : " + err.message
 
 print sep
 
@@ -245,6 +245,7 @@ except AsterError as err:
     # on verifie que la bonne exception a ete levee
     assert err.id_message == "MODELISA6_10", 'unexpected id : %s' % err.id_message
     # on peut aussi verifier les arguments
+    print err.args
     assert err.valk[0].strip() == "XXX", "unexpected argument : %s" % err.valk[0]
     assert err.valk[1].strip() == "MA", "unexpected argument : %s" % err.valk[1]
     DETRUIRE(CONCEPT=_F(NOM=MO),)
