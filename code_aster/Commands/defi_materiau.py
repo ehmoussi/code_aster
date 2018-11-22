@@ -33,13 +33,16 @@ class MaterialDefinition(ExecuteCommand):
     """
     command_name = "DEFI_MATERIAU"
 
-    def create_result(self, _):
+    def create_result(self, keywords):
         """Initialize the :class:`~code_aster.Objects.Material`.
 
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        self._result = Material()
+        if keywords.get("reuse"):
+            self._result = keywords["MATER"]
+        else:
+            self._result = Material()
 
     def exec_(self, keywords):
         """Execute the command.
@@ -47,6 +50,10 @@ class MaterialDefinition(ExecuteCommand):
         Arguments:
             keywords (dict): User's keywords.
         """
+        mater = keywords.get("MATER")
+        if mater is not None:
+            if mater.getName() != self._result.getName():
+                self._result.setReferenceMaterial(mater)
         classByName = MaterialDefinition._byKeyword()
         materByName = self._buildInstance(keywords, classByName)
         for fkwName, fkw in keywords.iteritems():

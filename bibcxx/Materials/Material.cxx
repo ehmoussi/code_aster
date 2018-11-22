@@ -77,9 +77,38 @@ void MaterialInstance::addMaterialBehaviour( const GeneralMaterialBehaviourPtr& 
     _vecMatBehaviour.push_back( curMaterBehav );
 };
 
+void MaterialInstance::deallocateJeveuxVectors()
+{
+    _materialBehaviourNames->deallocate();
+    _doubleValues->deallocate();
+    int num = 0;
+    for ( const auto &curIter : _vecMatBehaviour )
+    {
+        _vectorOfComplexValues[num]->deallocate();
+        _vectorOfDoubleValues[num]->deallocate();
+        _vectorOfChar16Values[num]->deallocate();
+        _vectorOrdr[num]->deallocate();
+        _vectorKOrdr[num]->deallocate();
+        for( auto curIter2 : _vectorOfUserDoubleValues[num] )
+            curIter2->deallocate();
+        for( auto curIter2 : _vectorOfUserFunctionValues[num] )
+            curIter2->deallocate();
+        ++num;
+    }
+};
+
 bool MaterialInstance::build() throw( std::runtime_error ) {
+    if( _mater != nullptr )
+    {
+        if( getName() == _mater->getName() )
+            deallocateJeveuxVectors();
+        else
+            for( auto curIter : _mater->_vecMatBehaviour )
+                addMaterialBehaviour( curIter );
+    }
+
     // Recuperation du nombre de GeneralMaterialBehaviourPtr ajoutes par l'utilisateur
-    const int nbMCF = _vecMatBehaviour.size();
+    int nbMCF = _vecMatBehaviour.size();
     if ( nbMCF != _vectorOfComplexValues.size() || nbMCF != _vectorOfDoubleValues.size() ||
          nbMCF != _vectorOfChar16Values.size() )
         throw std::runtime_error( "Bad number of material properties" );

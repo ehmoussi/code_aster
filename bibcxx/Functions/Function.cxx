@@ -51,6 +51,12 @@ void BaseFunctionInstance::allocate( JeveuxMemory mem,
     _value->allocate( mem, 2 * size );
 }
 
+void BaseFunctionInstance::deallocate()
+{
+    _property->deallocate();
+    _value->deallocate();
+}
+
 void FunctionComplexInstance::allocate( JeveuxMemory mem,
                                         ASTERINTEGER size ) throw( std::runtime_error ) {
     throw std::runtime_error( "Not yet implemented!" );

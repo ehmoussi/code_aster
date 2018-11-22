@@ -38,6 +38,13 @@
  */
 class MaterialInstance: public DataStructure
 {
+    public:
+        /**
+         * @typedef MaterialPtr
+         * @brief Pointeur intelligent vers un Material
+         */
+        typedef boost::shared_ptr< MaterialInstance > MaterialPtr;
+
     private:
         typedef std::vector< GeneralMaterialBehaviourPtr > VectorOfGeneralMaterialBehaviour;
         typedef VectorOfGeneralMaterialBehaviour::iterator VectorOfGeneralMaterialIter;
@@ -70,14 +77,14 @@ class MaterialInstance: public DataStructure
         std::vector< VectorOfJeveuxVectorChar8 >  _vectorOfUserFunctionValues;
         /** @brief Vector of JeveuxVectorDouble named '.&&RDEP' */
         FunctionPtr                        _doubleValues;
+        MaterialPtr                        _mater;
+
+        /**
+         * @brief Deallocate all Jeveux vector (usefull in reuse mode)
+         */
+        void deallocateJeveuxVectors();
 
     public:
-        /**
-         * @typedef MaterialPtr
-         * @brief Pointeur intelligent vers un Material
-         */
-        typedef boost::shared_ptr< MaterialInstance > MaterialPtr;
-
         /**
          * @brief Constructeur
          */
@@ -91,7 +98,8 @@ class MaterialInstance: public DataStructure
             _materialBehaviourNames( JeveuxVectorChar32( _jeveuxName + ".MATERIAU.NOMRC " ) ),
             _nbMaterialBehaviour( 0 ),
             _nbUserMaterialBehaviour( 0 ),
-            _doubleValues( new FunctionInstance( _jeveuxName + ".&&RDEP" ) )
+            _doubleValues( new FunctionInstance( _jeveuxName + ".&&RDEP" ) ),
+            _mater( nullptr )
         {};
 
         /**
@@ -146,6 +154,14 @@ class MaterialInstance: public DataStructure
         VectorOfJeveuxVectorChar8 getBehviourVectorOfFunctions( int position )
         {
             return _vectorOfUserFunctionValues[ position ];
+        };
+
+        /**
+         * @brief Add a reference to an existing MaterialInstance to enrich
+         */
+        void setReferenceMaterial( const MaterialPtr& curMater )
+        {
+            _mater = curMater;
         };
 };
 
