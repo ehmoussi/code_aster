@@ -65,6 +65,11 @@ class BaseFunctionInstance : public GenericFunctionInstance {
     virtual void allocate( JeveuxMemory mem, ASTERINTEGER size );
 
     /**
+     * @brief Deallocate function
+     */
+    void deallocate();
+
+    /**
      * @brief Get the result name
      * @return  name of the result
      */
