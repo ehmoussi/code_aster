@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -26,6 +26,7 @@ subroutine dismms(questi, nomobz, repi, repkz, ierd)
 #include "asterfort/dismgd.h"
 #include "asterfort/dismme.h"
 #include "asterfort/dismnu.h"
+#include "asterfort/gettco.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jeexin.h"
 #include "asterfort/jelira.h"
@@ -52,12 +53,15 @@ subroutine dismms(questi, nomobz, repi, repkz, ierd)
     character(len=24) :: p1, p2, k24
     character(len=19) :: nomob, solveu
     character(len=2) :: typmat
+    character(len=8) :: nommai
 !-----------------------------------------------------------------------
     integer :: i, ibid, ier
     integer ::  nblime
+    character(len=16) :: typeco
     character(len=24), pointer :: lime(:) => null()
     character(len=24), pointer :: refa(:) => null()
     character(len=24), pointer :: slvk(:) => null()
+    aster_logical :: istop
 !-----------------------------------------------------------------------
     call jemarq()
     repk = ' '
@@ -90,6 +94,16 @@ subroutine dismms(questi, nomobz, repi, repkz, ierd)
         call dismnu(questi, refa(2)(1:14), repi, repk, ierd)
         if (repk.eq.'OUI') then
             ASSERT (refa(11) .eq. 'MATR_DISTR')
+        endif
+
+    else if (questi.eq.'MATR_HPC') then
+        nommai=refa(1)(1:8)
+        istop = .true.
+        call gettco(nommai, typeco, istop)
+        if( typeco.eq.'MAILLAGE_P' ) then
+            repk = 'OUI'
+        else
+            repk = 'NON'
         endif
 
     else if (questi.eq.'SOLVEUR') then

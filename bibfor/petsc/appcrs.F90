@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -151,40 +151,40 @@ use petsc_data_module
                 if (zi(jprddl+jcoll) .eq. rang) ndprop = ndprop+1
             end do
 !
-#if PETSC_VERSION_LT(3,8,0) 
+#if PETSC_VERSION_LT(3,8,0)
             ASSERT( xlocal == PETSC_NULL_OBJECT )
 #else
             ASSERT( xlocal == PETSC_NULL_VEC )
-#endif 
+#endif
             call VecCreateMPI(mpicou, to_petsc_int(ndprop), to_petsc_int(neq), xlocal, ierr)
         else
             call jelira(nonu//'.SMOS.SMDI', 'LONMAX', nsmdi)
             neq=nsmdi
 !
 !
-#if PETSC_VERSION_LT(3,8,0) 
+#if PETSC_VERSION_LT(3,8,0)
             ASSERT( xlocal == PETSC_NULL_OBJECT )
 #else
             ASSERT( xlocal == PETSC_NULL_VEC )
-#endif 
+#endif
             call VecCreateMPI(mpicou, PETSC_DECIDE, to_petsc_int(neq), xlocal, ierr)
         endif
         ASSERT(ierr.eq.0)
 !
-#if PETSC_VERSION_LT(3,8,0) 
+#if PETSC_VERSION_LT(3,8,0)
             ASSERT( xscatt == PETSC_NULL_OBJECT )
 #else
             ASSERT( xscatt == PETSC_NULL_VECSCATTER )
-#endif 
-#if PETSC_VERSION_LT(3,8,0) 
+#endif
+#if PETSC_VERSION_LT(3,8,0)
             ASSERT( xglobal == PETSC_NULL_OBJECT )
 #else
             ASSERT( xglobal == PETSC_NULL_VEC )
 #endif
-#if PETSC_VERSION_LT(3,8,0) 
+#if PETSC_VERSION_LT(3,8,0)
 #else
 ! Ne pas supprimer VecCreate: si xglobal vaut PETSC_NULL_VEC en entrée de VecScatterCreateToAll,
-! il n'est pas alloué en sortie 
+! il n'est pas alloué en sortie
         call VecCreate( mpicou, xglobal, ierr )
         ASSERT( ierr == 0 )
 #endif
