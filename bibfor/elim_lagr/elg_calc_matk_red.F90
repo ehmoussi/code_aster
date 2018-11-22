@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -20,7 +20,7 @@ subroutine elg_calc_matk_red(mat1z, solv1z, mat2z, bas1)
 #include "asterf_petsc.h"
 use aster_petsc_module
     implicit none
-! aslint: disable=W0104
+! aslint: disable=
 ! person_in_charge: natacha.bereux at edf.fr
 #include "asterf_types.h"
 #include "jeveux.h"
@@ -66,7 +66,11 @@ use aster_petsc_module
     solve1=solv1z
 !
     call asmpi_info(rank=rang, size=nbproc)
-    if (nbproc .ne. 1) call utmess('F', 'ELIMLAGR_2')
+!    if (nbproc .ne. 1) call utmess('F', 'ELIMLAGR_2')
+    call jeveuo(matas1//'.REFA', 'L', vk24=refa)
+    if (refa(11)(1:11) .ne. 'MPI_COMPLET') then
+            call utmess('F', 'ELIMLAGR_2')
+    endif
 !
 !     -- quelques garde fous :
     call jelira(matas1//'.VALM', 'TYPE', ibid, ktyp)
@@ -84,7 +88,7 @@ use aster_petsc_module
         call detrsd('MATR_ASSE', refa(19))
     endif
     refa(19)=matas2
-!
+
 !
 !     1. CALCUL DANS PETSC DES MATRICES NECESSAIRES :
 !        Kproj, Tfinal, ...

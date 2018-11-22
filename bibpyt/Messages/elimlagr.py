@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: josselin.delmas at edf.fr
+# person_in_charge: natacha.bereux at edf.fr
 
 
 cata_msg = {
@@ -25,7 +25,6 @@ cata_msg = {
     1 : _(u"""
  Erreur d'utilisation :
    On veut utiliser la fonctionnalité SOLVEUR / ELIM_LAGR='OUI'
-   (ou la commande ELIM_LAGR).
    Mais la version du programme ne dispose pas du solveur PETSC
    qui est nécessaire à cette fonctionnalité.
 
@@ -36,16 +35,15 @@ cata_msg = {
     2 : _(u"""
  Erreur d'utilisation :
    On veut utiliser la fonctionnalité SOLVEUR / ELIM_LAGR='OUI'
-   (ou la commande ELIM_LAGR).
-   Il y a plusieurs processeurs actifs.
+   Il y a plusieurs processeurs actifs. Mais les données du modèle doivent 
+   être centralisées. 
  Risques & conseils :
-   Il faut utiliser la version MPI avec un seul processeur.
+   Il faut utiliser DISTRIBUTION='CENTRALISE' dans la commande AFFE_MODELE.
 """),
 
     3 : _(u"""
  Erreur d'utilisation :
    On veut utiliser la fonctionnalité SOLVEUR / ELIM_LAGR='OUI'
-   (ou la commande ELIM_LAGR).
    La matrice n'est pas réelle (mais sans doute complexe).
    C'est interdit pour l'instant.
  Risques & conseils :
@@ -55,7 +53,6 @@ cata_msg = {
     4 : _(u"""
  Erreur d'utilisation :
    On veut utiliser la fonctionnalité SOLVEUR / ELIM_LAGR='OUI'
-   (ou la commande ELIM_LAGR).
    Certaines conditions aux limites sont réalisées par AFFE_CHAR_CINE.
    C'est interdit pour l'instant.
  Risques & conseils :
@@ -65,7 +62,6 @@ cata_msg = {
     5 : _(u"""
  Erreur d'utilisation :
    On veut utiliser la fonctionnalité SOLVEUR / ELIM_LAGR='OUI'
-   (ou la commande ELIM_LAGR).
    Mais la matrice n'est pas symétrique.
    C'est interdit pour l'instant.
  Risques & conseils :
@@ -75,7 +71,6 @@ cata_msg = {
     6 : _(u"""
  Erreur d'utilisation :
    On veut utiliser la fonctionnalité SOLVEUR / ELIM_LAGR='OUI'
-   (ou la commande ELIM_LAGR).
    Mais la matrice est une matrice généralisée.
    C'est interdit.
  Risques & conseils :
@@ -85,7 +80,6 @@ cata_msg = {
     7 : _(u"""
  Erreur d'utilisation :
    On veut utiliser la fonctionnalité SOLVEUR / ELIM_LAGR='OUI'
-   (ou la commande ELIM_LAGR).
    Mais la matrice "réduite" est de taille nulle.
    (tous les ddls sont imposés)
    C'est interdit pour l'instant.
@@ -96,17 +90,13 @@ cata_msg = {
  8 : _(u"""
  Erreur d'utilisation :
    On veut utiliser la fonctionnalité SOLVEUR / ELIM_LAGR='OUI'
-   (ou la commande ELIM_LAGR).
    Mais une étape du calcul a échoué (calcul du noyau de la matrice des contraintes).
  Risques & conseils :
    Il ne faut pas utiliser SOLVEUR / ELIM_LAGR='OUI'.
 """),
-
-
     10 : _(u"""
  Erreur :
    On veut utiliser la fonctionnalité SOLVEUR / ELIM_LAGR='OUI'
-   (ou la commande ELIM_LAGR).
    Mais les coefficients des relations linéaires sont tous nuls
    dans la matrice %(k1)s .
  Risques & conseils :
@@ -125,6 +115,16 @@ cata_msg = {
    La séquence d'appel doit ressembler à :
       K2=ELIM_LAGR(MATR_RIGI=K1, )
       M2=ELIM_LAGR(MATR_RIGI=K1, MATR_ASSE=M1)
+"""),
+    12 : _(u"""
+    La matrice a %(i1)d  colonnes (au total). 
+    Parmi ces colonnes %(i2)d sont linéairement indépendantes.  
+"""),
+    13 : _(u"""
+    Le noyau de la matrice est un espace de dimension %(i1)d. On a construit une base de cet espace. 
+    Norme de la matrice           : %(r1)f
+    Norme de la base              : %(r2)f
+    Norme du produit matrice-base : %(r3)f  
 """),
 
 }

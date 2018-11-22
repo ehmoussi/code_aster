@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,17 +16,16 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-module elim_lagr_data_module
+module elg_data_module
 !
 #include "asterf_types.h"
 #include "asterf_petsc.h"
 !
 ! person_in_charge: natacha.bereux at edf.fr
-! aslint:disable=W1304
 !
 !
 use aster_petsc_module
-use elim_lagr_context_type
+use elg_context_type
 use petsc_data_module
 use saddle_point_context_type
 !
@@ -34,16 +33,7 @@ implicit none
 !
 private
 #include "asterf.h"
-#include "asterfort/apalmc.h"
-#include "asterfort/apmamc.h"
-#include "asterfort/apmain.h"
 #include "asterfort/assert.h"
-#include "asterfort/compress_sparse_pattern.h"
-#include "asterfort/extract_nonzero_col.h"
-#include "asterfort/dismoi.h"
-#include "asterfort/infniv.h"
-#include "asterfort/nullbasis.h"
-#include "asterfort/utmess.h"
 !
 !----------------------------------------------------------------------
 !  Données globales utilisées par la fonctionnalité ELIM_LAGR='OUI'
@@ -184,7 +174,7 @@ subroutine elg_gest_data (action, mat1, mat2, rigi1)
 !     -----------------------------------------
     if (iprem .eq. 1) then
         do k = 1, nmax_ctxt
-            elg_context(k) = new_elim_lagr_context()
+            elg_context(k) = new_elg_context()
         enddo
         ke=0
     endif
@@ -234,7 +224,7 @@ subroutine elg_gest_data (action, mat1, mat2, rigi1)
   3     continue
         if (ktrou .eq. 0) goto 4
 !
-        call free_elim_lagr_context( elg_context(ktrou) )
+        call free_elg_context( elg_context(ktrou) )
   4     continue
     endif
 !
@@ -245,4 +235,4 @@ subroutine elg_gest_data (action, mat1, mat2, rigi1)
 end subroutine elg_gest_data
 !
 !
-end module elim_lagr_data_module
+end module elg_data_module
