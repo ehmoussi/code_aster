@@ -17,7 +17,8 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-POURSUITE(PAR_LOT='OUI',
+POURSUITE(CODE='OUI',
+          PAR_LOT='OUI',
           DEBUG=_F(SDVERI='OUI'),)
 
 MODES=[None]*nbT
@@ -37,16 +38,16 @@ for j,NTRIM in enumerate(tours):
 
     FREQ=NTRIM/60.
     OM=(FREQ * 2) * NP.pi
-    
+
     KS[j]=ASSE_MATRICE(MATR_ELEM=Ke[j],NUME_DDL=NDDL[j],SYME='OUI');
     MS[j]=ASSE_MATRICE(MATR_ELEM=Me[j],NUME_DDL=NDDL[j],SYME='OUI');
     MODES[j]=CALC_MODES(MATR_RIGI=KS[j],
                                                 MATR_MASS=MS[j],
                                                 VERI_MODE=_F(STOP_ERREUR='NON',),
-                        
+
                                                 OPTION='BANDE',
                                                 CALC_FREQ=_F(FREQ=(-1,3000.0,),),
-                        
+
                                         );
 
 
@@ -72,7 +73,7 @@ for j,NTRIM in enumerate(tours):
                   MATR_RIGI=K[j],
                   MATR_MASS=M[j],
                   MATR_AMOR=GOM[j],
-                
+
                   );
 
 
@@ -133,14 +134,14 @@ for j,NTRIM in enumerate(tours):
                                 SOLVEUR_MODAL=_F(METHODE='QZ',),
                              MATR_RIGI=RIGG[j],
                              MATR_MASS=MASG[j],
-                            
+
                              MATR_AMOR=AMOG[j],
-                            
+
                              VERI_MODE=_F(STOP_ERREUR='NON',),
-                        
+
                                         OPTION='PLUS_PETITE',
                                         CALC_FREQ=_F(NMAX_FREQ=13,),
-                        
+
                               );
 
 
@@ -160,7 +161,7 @@ for j,NTRIM in enumerate(tours):
 
 # RESTITUTION SUR MAILLAGE SQUELETTE (partie reel)
 
-    
+
     MODP[j]=REST_SOUS_STRUC(RESU_GENE=REG0[j],SOUS_STRUC='COTE2',TOUT_ORDRE='OUI',NOM_CHAM=('DEPL', ),);
 
 

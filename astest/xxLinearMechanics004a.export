@@ -5,5 +5,5 @@ P mpi_nbcpu 1
 P mpi_nbnoeud 1
 P testlist asterxx verification sequential
 
-F comm linear_mechanic02a.py D 1
+F comm xxLinearMechanics004a.py D 1
 F mail zzzz295a.mail D 20
