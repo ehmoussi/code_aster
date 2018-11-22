@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -110,7 +110,8 @@ subroutine crsvpe(motfac, solveu,  kellag )
 !   PAS DE PARAMETRES POUR LES AUTRES PRECONDITIONNEURS
     else if (kprec.eq.'JACOBI' .or.&
      &       kprec.eq.'SOR'    .or.&
-     &       kprec.eq.'SANS') then
+     &       kprec.eq.'SANS'    .or.&
+     &       kprec.eq.'FIELDSPLIT') then
 !     RIEN DE PARTICULIER...
 !
     else
