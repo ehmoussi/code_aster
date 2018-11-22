@@ -245,9 +245,8 @@ except AsterError as err:
     # on verifie que la bonne exception a ete levee
     assert err.id_message == "MODELISA6_10", 'unexpected id : %s' % err.id_message
     # on peut aussi verifier les arguments
-    print err.args
-    assert err.valk[0].strip() == "XXX", "unexpected argument : %s" % err.valk[0]
-    assert err.valk[1].strip() == "MA", "unexpected argument : %s" % err.valk[1]
+    assert err.args[1][0].strip() == "XXX", "unexpected arguments: %s" % err.args
+    assert err.args[1][1].strip() == "MA", "unexpected arguments: %s" % err.args
     DETRUIRE(CONCEPT=_F(NOM=MO),)
     MO=AFFE_MODELE(MAILLAGE=MA,
                    AFFE=_F(MAILLE='D1',
