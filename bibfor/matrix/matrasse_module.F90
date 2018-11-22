@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -55,7 +55,7 @@ private
     ! Dummy arguments
     integer, intent(in)                     :: type_dof
     character(len=19), intent(in)           :: matass
-    integer(kind=4),dimension(:), pointer   :: idof
+    integer,dimension(:), pointer           :: idof 
     ! Local variables
     character(len=14) :: nonu
     integer, dimension(:), pointer :: delg => null()
@@ -110,21 +110,24 @@ private
       if (delg(i) .eq. 0) then
         if ( type_dof == physical_dof ) then
           ndof = ndof + 1
-          idof(ndof)= int(i, 4)
+!          idof(ndof)= int(i, 4)
+            idof(ndof)= i
         endif
       endif
       if (delg(i) .eq. -1) then
         nlag1 = nlag1 + 1
         if ( type_dof == lagrange1_dof ) then
             ndof = ndof + 1
-            idof(ndof) = int(i, 4)
+     !       idof(ndof) = int(i, 4)
+            idof(ndof)= i
         endif
       endif
       if (delg(i) .eq. -2) then
         nlag2 = nlag2 + 1
         if ( type_dof == lagrange2_dof ) then
             ndof = ndof + 1
-            idof(ndof) = int(i, 4)
+         !   idof(ndof) = int(i, 4)
+            idof(ndof)= i
         endif
       endif
    end do

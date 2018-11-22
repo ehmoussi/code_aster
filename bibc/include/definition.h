@@ -281,6 +281,7 @@
 #define CALLPPPPP(UN,LN,a,b,c,d,e)              F_FUNC(UN,LN)(a,b,c,d,e)
 #define DEFPPPPPP(UN,LN,a,b,c,d,e,f)               STDCALL(UN,LN)(a,b,c,d,e,f)
 #define CALLPPPPPP(UN,LN,a,b,c,d,e,f)              F_FUNC(UN,LN)(a,b,c,d,e,f)
+#define DEFPPPPPPPP(UN,LN,a,b,c,d,e,f,g,h)          STDCALL(UN,LN)(a,b,c,d,e,f,g,h)
 #define DEFPPPPPPPPPP(UN,LN,a,b,c,d,e,f,g,h,i,j)               STDCALL(UN,LN)(a,b,c,d,e,f,g,h,i,j)
 #define CALLPPPPPPPPPP(UN,LN,a,b,c,d,e,f,g,h,i,j)              F_FUNC(UN,LN)(a,b,c,d,e,f,g,h,i,j)
 #define DEFPPPPPPPPPPPPP(UN,LN,a,b,c,d,e,f,g,h,i,j,k,l,m)               STDCALL(UN,LN)(a,b,c,d,e,f,g,h,i,j,k,l,m)

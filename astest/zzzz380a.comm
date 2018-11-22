@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -85,8 +85,8 @@ LR8=DEFI_LIST_REEL(        DEBUT=0.,
        INTERVALLE=_F(    JUSQU_A = 10.0,   NOMBRE = 1)
                        )
 
-# 0. MULT_FRONT :
-#---------------
+# 0. MUMPS :
+#-----------
 if 1 :
     U0=MECA_STATIQUE(  MODELE=MOME,   CHAM_MATER=CHMAT,
                       EXCIT=(
@@ -94,7 +94,6 @@ if 1 :
                          _F( CHARGE = CHLIAI),
                          _F( CHARGE = CHNEUM),
                       ),
-                      SOLVEUR=_F( METHODE = 'MULT_FRONT', )
                           )
     #IMPR_RESU(FORMAT="RESULTAT",RESU=_F(RESULTAT=U0, NOM_CHAM='DEPL'))
     TB=CREA_TABLE(RESU=_F(RESULTAT=U0,GROUP_NO='B1',NOM_CHAM='DEPL',TOUT_CMP='OUI',INST=0.))
@@ -107,7 +106,7 @@ if 1 :
 # Nombres max d'iterations :
 #----------------------------
 nbiter=[590,375,38,478]  # sans ddls fictifs
-nbiter=[590,50,24,41]    # avec ddls fictifs
+nbiter=[590,120,32,500]    # avec ddls fictifs
 ico=-1
 
 
@@ -141,7 +140,7 @@ for precond in ('GAMG','BOOMER', 'ML') :
                          _F( CHARGE = CHNEUM),
                       ),
                       SOLVEUR=_F( METHODE = 'PETSC', ALGORITHME='GMRES', PRE_COND=precond,
-                                  RESI_RELA=1.e-8,NMAX_ITER=nbiter[ico], ELIM_LAGR='OUI')
+                                  RESI_RELA=1.e-8,NMAX_ITER=nbiter[ico], ELIM_LAGR='OUI'), 
                           )
 
     TEST_RESU(RESU=_F(RESULTAT=U1, INST=0., VALE_REFE=vrefey, REFERENCE='AUTRE_ASTER', PRECISION=1.e-4,

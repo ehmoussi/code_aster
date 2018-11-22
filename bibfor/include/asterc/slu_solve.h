@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,21 +17,14 @@
 ! --------------------------------------------------------------------
 
 !
-#include "asterf_petsc.h"
 !
 interface
-    subroutine nullbasis( mat_c, mat_z, nbnvco, nvco_c)
-# ifdef _HAVE_PETSC
-        use aster_petsc_module
-        Mat, intent(in)                      :: mat_c
-        Mat, intent(out)                     :: mat_z
-        PetscInt, intent(out)                 :: nbnvco
-        PetscInt, dimension(:), intent(inout) :: nvco_c
-# else
-        integer, intent(in)    :: mat_c
-        integer, intent(inout) :: mat_z
-        integer, intent(out)                 :: nbnvco
-        integer, dimension(:), intent(inout) :: nvco_c
-# endif
-    end subroutine nullbasis
+    subroutine slu_solve( f_factors, trans_option, nrhs, b, ldb, info ) 
+        integer                       :: f_factors
+        integer(kind=4)               :: trans_option
+        integer(kind=4)               :: nrhs
+        real(kind=8)                  :: b(*)
+        integer(kind=4)               :: ldb
+        integer(kind=4)               :: info
+    end subroutine slu_solve
 end interface

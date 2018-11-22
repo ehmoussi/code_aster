@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -133,6 +133,8 @@ use petsc_data_module
     if (.not.leliml) then
         call jeveuo(nomat//'.REFA', 'L', vk24=refa)
         if (refa(20).ne.' ') leliml2=.true.
+        tbloc = 1
+        goto 999       
     endif
     if (dbg) write(6,*) 'apbloc leliml2=',leliml2
 
@@ -199,10 +201,10 @@ use petsc_data_module
     nbnomo=0
     nbddlt=0
     ndiff=.false.
+    tbloc2=0
     do ino=1,nbnoma
        nbddl=zi(jprno-1+(nbec+2)*(ino-1)+2)
        if (nbddl.eq.0) cycle
-
        nbnomo=nbnomo+1
        nbddlt=nbddlt+nbddl
        if (ino_model.eq.0) then

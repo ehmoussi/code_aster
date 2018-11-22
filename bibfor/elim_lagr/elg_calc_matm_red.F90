@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -21,7 +21,7 @@ subroutine elg_calc_matm_red(matas1, matas2, bas1)
 #include "asterf_petsc.h"
 !
 use aster_petsc_module
-use elim_lagr_data_module
+use elg_data_module
     implicit none
 ! person_in_charge: jacques.pellet at edf.fr
 ! aslint:disable=W1003
@@ -70,8 +70,6 @@ use elim_lagr_data_module
     integer :: ilig, jcol, jnzcol, jsmdi2, ndiag, k, jsmhc2
     integer :: jvalm2,  j1, ier, ieq1, ieq2, nbnl, nbno
     integer :: nbnom,  jdeeq2, jprno2, nec, icmp, icmpav, ino, inoav
-    integer :: k1ec, k2ec, k3ec, k3ecav
-    integer, allocatable :: nbddl(:), nueq(:), dejavu(:)
     PetscInt :: n1, nterm, mm, nn
     PetscErrorCode :: ierr
     PetscInt, allocatable :: irow(:)
@@ -116,7 +114,9 @@ use elim_lagr_data_module
 !     -- calcul de :
 !       neq2 : nombre de ddls de MATAS2
 !       nnz2 : nombre de termes dans .VALM(1)
-    neq2=size(elg_context(ke)%indred)
+    call MatGetSize( elg_context(ke)%kproj, mm, nn, ierr)
+    ASSERT( ierr == 0)
+    neq2=to_aster_int( mm ) 
     if (neq2 .eq. 0) call utmess('F', 'ELIMLAGR_7')
 !
 !     -- on parcourt la matrice Kproj pour repérer ses termes non nuls
@@ -125,7 +125,7 @@ use elim_lagr_data_module
     call wkvect('&&ELG_CALC_MATM_RED.NZCO', 'V V I', neq2, jnzcol)
     ndiag=0
     nnz2=0
-       call MatGetSize( elg_context(ke)%kproj, mm, nn, ierr)
+
     do ilig = 0, neq2-1
         call MatGetRow(elg_context(ke)%kproj, to_petsc_int(ilig), nterm, irow(1), vrow(1),&
                        ierr)
@@ -172,6 +172,7 @@ use elim_lagr_data_module
     do ilig = 0, neq2-1
         call MatGetRow(elg_context(ke)%kproj,to_petsc_int(ilig), nterm, irow(1), vrow(1),&
                        ierr)
+        ASSERT( ierr == 0 )
         do k = 1, nterm
             jcol=irow(k)
             if (jcol .ge. ilig) then
@@ -188,6 +189,7 @@ use elim_lagr_data_module
         enddo
         call MatRestoreRow(elg_context(ke)%kproj, to_petsc_int(ilig), nterm, irow(1), vrow(1),&
                            ierr)
+        ASSERT( ierr == 0 )
     enddo
 !
 !
@@ -248,12 +250,6 @@ use elim_lagr_data_module
     call jeveuo(nu1//'.NUME.DEEQ', 'L', vi=deeq)
     call jedetr(nu2//'.NUME.DEEQ')
     call wkvect(nu2//'.NUME.DEEQ', bas1//' V I', 2*neq2, jdeeq2)
-    do ieq2 = 1, neq2
-        ieq1=elg_context(ke)%indred(ieq2)
-        ASSERT(deeq(2*(ieq1-1)+1).gt.0)
-        zi(jdeeq2-1+2*(ieq2-1)+1)=deeq(2*(ieq1-1)+1)
-        zi(jdeeq2-1+2*(ieq2-1)+2)=deeq(2*(ieq1-1)+2)
-    enddo
 !
 !     nu2.PRNO (calculé à partir de .DEEQ):
 !     -------------------------------------
@@ -265,58 +261,8 @@ use elim_lagr_data_module
     ASSERT(nbnl.eq.0)
     nbnom = nbno + nbnl
     call jeecra(jexnum(nu2//'.NUME.PRNO', 1), 'LONMAX', nbnom*(nec+2), kbid)
-    call jeveuo(jexnum(nu2//'.NUME.PRNO', 1), 'E', jprno2)
 !
-!     -- On vérifie que les ddls d'un noeud se suivent
-!        dans le bon ordre.
-!        On compte le nombre de ddls par noeud => nbddl(ino)
-!        On calcule nueq pour chaque noeud     => nueq(ino)
-    allocate(nbddl(nbnom)); nbddl=0
-    allocate(nueq(nbnom)) ; nueq=0
-    allocate(dejavu(nbnom)); dejavu=0
-    nbddl=0
-    inoav=0
-    icmpav=0
-    do ieq2 = 1, neq2
-        ino=zi(jdeeq2-1+2*(ieq2-1)+1)
-        icmp=zi(jdeeq2-1+2*(ieq2-1)+2)
-        ASSERT(ino.gt.0)
-        ASSERT(icmp.gt.0)
-        if (ino .ne. inoav) then
-            ASSERT(dejavu(ino).eq.0)
-            dejavu(ino)=1
-            inoav=ino
-            icmpav=icmp
-            nueq(ino)=ieq2
-        else
-            ASSERT(icmp.gt.icmpav)
-            icmpav=icmp
-        endif
-        nbddl(ino)=nbddl(ino)+1
-    enddo
-!
-!     -- remplissage de .PRNO :
-    do ino = 1, nbnom
-        zi(jprno2-1+(2+nec)*(ino-1)+1)=nueq(ino)
-        zi(jprno2-1+(2+nec)*(ino-1)+2)=nbddl(ino)
-    enddo
-!     -- mise à jour des entiers codés :
-    do ieq2 = 1, neq2
-        ino=zi(jdeeq2-1+2*(ieq2-1)+1)
-        icmp=zi(jdeeq2-1+2*(ieq2-1)+2)
-        k1ec=(icmp-1)/30
-        k2ec=mod(icmp,30)
-        if (k2ec .eq. 0) then
-            k2ec=30
-            k1ec=k1ec-1
-        endif
-        k3ecav=zi(jprno2-1+(2+nec)*(ino-1)+2+k1ec+1)
-        k3ec=ior(2**k2ec,k3ecav)
-        zi(jprno2-1+(2+nec)*(ino-1)+2+k1ec+1)=k3ec
-    enddo
-!
-!
-    deallocate(irow,vrow,nbddl,nueq,dejavu)
+    deallocate(irow,vrow)
     call jedetr('&&ELG_CALC_MATM_RED.NZCO')
     call jedema()
 #else
