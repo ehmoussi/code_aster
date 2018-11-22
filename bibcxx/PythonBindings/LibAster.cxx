@@ -54,7 +54,7 @@
 #include "PythonBindings/ElementaryVectorInterface.h"
 #include "PythonBindings/EvolutiveLoadInterface.h"
 #include "PythonBindings/EvolutiveThermalLoadInterface.h"
-#include "PythonBindings/FailureConvergenceManagerInterface.h"
+#include "PythonBindings/EventManagerInterface.h"
 #include "PythonBindings/FiberGeometryInterface.h"
 #include "PythonBindings/FieldOnElementsInterface.h"
 #include "PythonBindings/FieldOnNodesInterface.h"
@@ -278,7 +278,7 @@ BOOST_PYTHON_MODULE( libaster ) {
     exportStaticMechanicalSolverToPython();
     exportStaticModeAnalysisToPython();
     exportStaticNonLinearAnalysisToPython();
-    exportFailureConvergenceManagerToPython();
+    exportEventManagerToPython();
     exportStudyDescriptionToPython();
     exportTimeStepManagerToPython();
     exportCppToFortranGlossaryToPython();

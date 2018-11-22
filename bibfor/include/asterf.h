@@ -33,12 +33,12 @@
 #   define TO_STRING(name)  "?"
 #endif
 
-! Exceptions identifiers
-#define ASTER_ERROR 21
-#define CONVERGENCE_ERROR 22
-#define INTEGRATION_ERROR 23
-#define SOLVER_ERROR 25
-#define CONTACT_ERROR 26
-#define TIMELIMIT_ERROR 28
+! Exceptions identifiers - keep consistency with astercxx.h
+#define ASTER_ERROR 1
+#define CONVERGENCE_ERROR 2
+#define INTEGRATION_ERROR 3
+#define SOLVER_ERROR 4
+#define CONTACT_ERROR 5
+#define TIMELIMIT_ERROR 6
 
 #endif

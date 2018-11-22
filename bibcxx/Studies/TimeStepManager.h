@@ -31,7 +31,7 @@
 #include "DataStructures/DataStructure.h"
 #include "MemoryManager/JeveuxVector.h"
 #include "Results/ResultsContainer.h"
-#include "Studies/FailureConvergenceManager.h"
+#include "Studies/EventManager.h"
 #include "Supervis/ResultNaming.h"
 #include "Utilities/GenericParameter.h"
 
@@ -91,7 +91,7 @@ class TimeStepManagerInstance : public DataStructure {
      * @param currentError erreur à ajouter
      */
     void
-    addErrorManager( const GenericConvergenceErrorPtr &currentError ) {
+    addErrorManager( const GenericEventErrorPtr &currentError ) {
         if ( !currentError->isActionSet() )
             throw std::runtime_error( "Action on error not set" );
         _listErrorManager.push_back( currentError );
