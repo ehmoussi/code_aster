@@ -67,7 +67,7 @@ template < int Id > class ErrorCpp : public AbstractErrorCpp {
         : AbstractErrorCpp( idmess, valk, vali, valr ) {}
 };
 
-typedef ErrorCpp< 21 > AsterErrorCpp;
+typedef ErrorCpp< ASTER_ERROR > AsterErrorCpp;
 
 // Translation functions: C++ exception to Python exception
 template < int Id >

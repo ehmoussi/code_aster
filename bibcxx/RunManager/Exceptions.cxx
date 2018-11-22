@@ -119,7 +119,7 @@ extern "C" void DEFPSPSPPPP( UEXCEP, uexcep, _IN ASTERINTEGER *exc_id, _IN char 
     case TIMELIMIT_ERROR: // ex. ArretCPUError
         throw ErrorCpp< TIMELIMIT_ERROR >( idm, argk, argi, argr );
 
-    case ASTER_ERROR: // AsterError
+    default:
         throw AsterErrorCpp( idm, argk, argi, argr );
     }
 }
