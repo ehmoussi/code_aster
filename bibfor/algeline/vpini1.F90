@@ -292,7 +292,7 @@ subroutine vpini1(eigsol, modes, solveu, typcon, vecblo,&
             if (mod45(1:4).eq.'OP45') then
               if (nfreq .le. 0) then
                 if (arret(1:3) .eq. 'OUI') then
-                  call utmess('Z', 'MODAL_1', num_except=CONVERGENCE_ERROR)
+                  call utmess('Z', 'MODAL_1', num_except=SOLVER_ERROR)
                 else
                   nfreq = 1
                   call rscrsd('G', modes, typcon, nfreq)
