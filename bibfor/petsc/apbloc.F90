@@ -43,19 +43,6 @@ use petsc_data_module
 !----------------------------------------------------------------
 !
 !  * Determination du nombre de ddls par noeud (le "blocksize" de PETSc)
-!  * Eventuel ajout de ddls fictifs pour les preconditionneurs multigrille
-!    dans le cas ou l'utilisateur a demande ELIM_LAGR='OUI'
-!
-!  Le "blocksize" n'est utilisable qu'avec certains preconditionneurs
-!  multigrille : BOOMER, ML, GAMG
-!
-!  in  : kptsc : indice dans le common
-!  out
-!    tblocs(kptsc)   : "blocksize" a utiliser dans PETSc
-!    fictifs(kptsc)  : 0/1  (On a ajoute des ddls fictifs ou non)
-!    si fictifs(kptsc) == 1 :
-!       new_ieqs(kptsc)(ieq1) -> ieq2
-!       old_ieqs(kptsc)(ieq2) -> ieq1
 !----------------------------------------------------------------
 !
 #ifdef _HAVE_PETSC
@@ -69,26 +56,17 @@ use petsc_data_module
     character(len=24) :: precon
     aster_logical :: leliml, ndiff, leliml2
     character(len=24), pointer :: slvk(:) => null()
-    integer, pointer :: smdi(:) => null()
-    integer(kind=4), pointer :: smhc(:) => null()
-
-    integer(kind=4), pointer :: nbterm(:) => null()
-    integer(kind=4), pointer :: pcumu(:) => null()
-    integer(kind=4), pointer :: posterm(:) => null()
-    integer(kind=4), pointer :: new_ieq(:) => null()
-    integer(kind=4), pointer :: old_ieq(:) => null()
     character(len=24), pointer :: refa(:) => null()
 
-    integer:: k,jcol,ilig,neq,nzdeb,nzfin,kec,nbec,nbnoma,nbddl
-    integer:: jprno,n1,ino,ino_model,ecmax(10),ec1,ec2,nnz,pos1,pos2,nbloc
+    integer:: k,ilig,neq,kec,nbec,nbnoma,nbddl
+    integer:: jprno,n1,ino,ino_model,ecmax(10),ec1,ec2,nnz
     integer:: kbloc,i,ilig1,ilig2,k2,pos1_0,ieq,ieq1,ieq2
-    integer:: fictif,jnueq,kcmp,neq2,nbnomo,nbddlt,ico,vali(4)
+    integer:: jnueq,kcmp,neq2,nbnomo,nbddlt,ico,vali(4)
     aster_logical :: dbg=.false.
 !
 !----------------------------------------------------------------
     call jemarq()
     tbloc=1
-    fictif=0
     nomat = nomat_courant
     nonu = nonu_courant
     if (dbg) write(6,*) 'apbloc nomat=',nomat
@@ -124,10 +102,13 @@ use petsc_data_module
         goto 999
     endif
 
-
+!   -- S'il y a des ddls de Lagrange, c'est cuit !
+!   -------------------------------------------------------------------------------
+    if (exilag.eq.'OUI')  call utmess('F', 'PETSC_18')
+!
 !   --  Si ELIM_LAGR='NON', on regarde si la matrice n'est pas la matrice reduite
 !       associee a une matrice qui a utilise ELIM_LAGR='OUI'
-!       Si oui, on autorisera l'ajout de ddls fictifs.  (=> leliml2)
+!       Si oui, on fixe tbloc = 1 
 !   ----------------------------------------------------------------------------------------------
     leliml2=.false.
     if (.not.leliml) then
@@ -136,14 +117,7 @@ use petsc_data_module
         tbloc = 1
         goto 999       
     endif
-    if (dbg) write(6,*) 'apbloc leliml2=',leliml2
-
-
-!   -- S'il y a des ddls de Lagrange, c'est cuit !
-!   -------------------------------------------------------------------------------
-    if (exilag.eq.'OUI')  call utmess('F', 'PETSC_18')
-
-
+!
 !   -- 1. On ne peut utiliser tbloc > 1 que si TOUS les noeuds du maillage portent les memes ddls
 !         (memes entiers codes)
 !         On va calculer :
@@ -181,7 +155,6 @@ use petsc_data_module
            ecmax(kec)=ior(ecmax(kec),ec1)
        enddo
     enddo
-    fictif=1
     if (dbg) write(6,*) 'apbloc ecmax=',ecmax(1:nbec)
 
 !   -- calcul de tbloc :
@@ -220,116 +193,18 @@ use petsc_data_module
            enddo
        endif
     enddo
+! Si les entiers codés ne sont pas les mêmes sur tous le noeuds, on garde tbloc = 1 
+    if ( ndiff ) then 
+       tbloc = 1 
+    endif 
 
-    if (.not.ndiff) then
-!       -- Tous les noeuds portent les memes ddls, on peut remettre fictif a 0 :
-!       ------------------------------------------------------------------------
-        ASSERT(tbloc.eq.tbloc2)
-        fictif=0
-
-    else
-        if (leliml2) then
-!           -- On ajoute des ddls fictifs :
-!           --------------------------------
-            n1=nbnomo*tbloc - nbddlt
-            ASSERT(n1.gt.0)
-            if (dbg) write(6,*) 'apbloc nb_ddl originaux =', nbddlt
-            if (dbg) write(6,*) 'apbloc nb_ddl fictifs   =', n1
-            vali(1)=n1
-            vali(2)=int(100*float(n1)/nbddlt)
-            call utmess('I', 'PETSC_21', ni=2, vali=vali)
-!           fictif=0; tbloc=1
-        else
-!           -- On interdit l'ajout de ddls fictifs :
-!              Pour passer outre, changer l'erreur <F> en <A>larme.
-!           -------------------------------------------------------
-            call utmess('F', 'PETSC_22')
-        endif
-    endif
-    if (dbg) write(6,*) 'apbloc fictif,tbloc =',fictif,tbloc
-
-
-
-    if (tbloc.eq.1) goto 999
-
-
-!   -- 2. Si fictif = 1, On calcule :
-!         * le vecteur new_ieq(ieq1)=ieq2 (>=ieq1) avec :
-!           ieq1 : numero d'equation avant l'ajout des ddls fictifs
-!           ieq2 : numero d'equation apres l'ajout des ddls fictifs
-!         * le vecteur old_ieq(ieq2)=ieq1 (<=ieq2) avec :
-!           ieq1>0 : numero d'equation "avant" correspondant a ieq2
-!           ieq1=0 : l'equation "apres" ieq2 correspond a un ddl fictif
-!   ------------------------------------------------------------------------
-    if (fictif.eq.1) then
-        allocate(new_ieq(neq))
-        ieq1=0
-        ieq2=0
-        do ino=1,nbnoma
-           ico=0
-           do kec=1,nbec
-               ec1=zi(jprno-1+(nbec+2)*(ino-1)+2+kec)
-               if (ec1.gt.0) then
-                   do kcmp=1,30
-                       if (iand(ecmax(kec),2**kcmp).eq.2**kcmp) then
-                           ieq2=ieq2+1
-                           if (iand(ec1,2**kcmp).eq.2**kcmp) then
-                               ieq1=ieq1+1
-!                              -- On verifie que les ddls sont numerotes dans l'ordre des
-!                                 noeuds du maillage.
-!                                 Avec PETSc, on n'a pas le droit d'utiliser le mot cle RENUM
-                               ASSERT(ieq1.eq.zi(jprno-1+(nbec+2)*(ino-1)+1)+ico)
-                               ico=ico+1
-
-                               new_ieq(ieq1)=ieq2
-                           else
-                               if (dbg) write(6,*) 'apbloc ddl fictif ino,kcmp=',ino,kcmp
-                           endif
-                       endif
-                   enddo
-               endif
-           enddo
-        enddo
-        ASSERT(ieq1.eq.neq)
-        neq2=ieq2
-        if (dbg) write(6,*) 'apbloc neq,neq2=',neq,neq2
-
-        ASSERT(mod(neq2,tbloc).eq.0)
-        if (dbg) write(6,*) 'apbloc nb_ddls fictifs=',neq2-neq
-
-        allocate(old_ieq(neq2))
-        old_ieq=0
-        do ieq1=1,neq
-            ieq2=new_ieq(ieq1)
-            old_ieq(ieq2)=ieq1
-        enddo
-
-        if (.false.) then
-            write(6,*) 'apbloc new_ieq=',new_ieq(:)
-            write(6,*) 'apbloc old_ieq=',old_ieq(:)
-        endif
-    endif
-
-
-
-999 continue
+999 continue 
 
 !   -- sauvegarde des informations calculees dans le common :
 !   ---------------------------------------------------------
-    ASSERT(tblocs(kptsc).eq.-1)
-    ASSERT(fictifs(kptsc).eq.-1)
     tblocs(kptsc)=tbloc
-    fictifs(kptsc)=fictif
-    if (fictif.eq.1) then
-        ASSERT(.not.associated(new_ieqs(kptsc)%pi4))
-        ASSERT(.not.associated(old_ieqs(kptsc)%pi4))
-        new_ieqs(kptsc)%pi4 => new_ieq
-        old_ieqs(kptsc)%pi4 => old_ieq
-    endif
-
     call jedema()
-    if (dbg) write(6,*) 'apbloc tbloc,fictif=',tbloc,fictif
-
+    if (dbg) write(6,*) 'apbloc tbloc=',tbloc
 #else
     integer :: idummy
     idummy = kptsc

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 2016 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 2016 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -56,8 +56,8 @@ private
  Vec, public :: b, x
 
 ! Les variables suivantes sont utilisees par les preconditionneurs multigrille
- integer(kind=4), public :: tblocs(nmxins),fictifs(nmxins)
- type(p_int4), target, public :: new_ieqs(nmxins), old_ieqs(nmxins)
+ integer(kind=4), public :: tblocs(nmxins)
+! type(p_int4), target, public :: new_ieqs(nmxins), old_ieqs(nmxins)
 !
 !----------------------------------------------------------------
 ! Variables globales pour la définition d'un preconditionneur
@@ -111,12 +111,7 @@ function get_mat_id( matas ) result ( kptsc )
              call MatGetSize(ap(k), m, n, ierr)
              ASSERT(ierr.eq.0)
              ASSERT(m.eq.n)
-             if (fictifs(k).eq.1) then
-               ASSERT(n.ge.nglo)
-               ASSERT(size(new_ieqs(k)%pi4).eq.nglo)
-             else
-               ASSERT(nglo.eq.n)
-             endif
+             ASSERT(nglo.eq.n)
           endif
 ! la verification a ete effectuee avec succes, on renvoie k
           kptsc = k
@@ -176,10 +171,10 @@ subroutine mat_record ( matas, solveu, kptsc )
     nosols(kptsc) = solveu
 !  Initialisation par défaut
 !  la veritable initialisation sera faite en appelant apbloc
-    tblocs(kptsc) = -1
-    fictifs(kptsc) = -1
-    new_ieqs(kptsc)%pi4 => null()
-    old_ieqs(kptsc)%pi4 => null()
+!    tblocs(kptsc) = -1
+!    fictifs(kptsc) = -1
+!    new_ieqs(kptsc)%pi4 => null()
+!    old_ieqs(kptsc)%pi4 => null()
   else
     !  La matrice est deja enregistree, on ne fait rien
   endif

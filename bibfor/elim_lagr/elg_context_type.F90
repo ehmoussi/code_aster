@@ -39,7 +39,8 @@ private
 !----------------------------------------------------------------------
 
 type, public ::  elim_lagr_ctxt
-!
+!    
+integer :: nphys
 #ifdef _HAVE_PETSC
 ! Projection de la matrice B sur le noyau de la matrice
 ! des contraintes C
@@ -54,7 +55,6 @@ type, public ::  elim_lagr_ctxt
     Vec :: vx0
     Vec :: vecb
     Vec :: vecc
-    integer :: nphys
     integer :: nlag
 ! Nom de la matrice Aster initiale (avec Lagranges)
     character(len=19) :: full_matas
@@ -159,10 +159,12 @@ contains
 !
 function new_elg_context() result ( elg_ctxt )
     type(elim_lagr_ctxt) :: elg_ctxt
+    elg_ctxt%nphys=0
 end function new_elg_context
 !
 subroutine free_elg_context( elg_ctxt )
     type(elim_lagr_ctxt), intent(inout) :: elg_ctxt
+    elg_ctxt%nphys=0
 end subroutine free_elg_context
 #endif
 

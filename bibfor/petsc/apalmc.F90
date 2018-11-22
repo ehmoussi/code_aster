@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -51,13 +51,11 @@ use petsc_data_module
 !
 !     VARIABLES LOCALES
     integer :: rang, nbproc
-    integer :: nsmdi, nsmhc, nz, bs, nblloc2, fictif
+    integer :: nsmdi, nsmhc, nz, bs, nblloc2
     integer :: jidxd, jidxo
-    integer :: i, k, ilig1, jcol1, ilig2,jcol2,nbo, nbd, nzdeb, nzfin, nbterm
+    integer :: i, k, ilig, jcol1,jcol2,nbo, nbd, nzdeb, nzfin, nbterm
     PetscInt :: mm 
     mpi_int :: mpicou
-    integer(kind=4), pointer :: new_ieq(:) => null()
-    integer(kind=4), pointer :: old_ieq(:) => null()
     integer, pointer :: smdi(:) => null()
     integer(kind=4), pointer :: smhc(:) => null()
 !
@@ -72,7 +70,7 @@ use petsc_data_module
 !     Variables PETSc
     PetscInt :: low2, high2, low1, high1, unused_nz
     PetscErrorCode ::  ierr
-    integer :: neq, neq2
+    integer :: neq
     Vec :: vtmp
     Mat :: a
     mpi_int :: mrank, msize
@@ -98,24 +96,7 @@ use petsc_data_module
     bs=tblocs(kptsc)
 
     ASSERT(bs.ge.1)
-
-    fictif=fictifs(kptsc)
-    if (fictif.eq.1) then
-        new_ieq => new_ieqs(kptsc)%pi4
-        old_ieq => old_ieqs(kptsc)%pi4
-        ASSERT(size(new_ieq).eq.neq)
-        neq2=size(old_ieq)
-        ASSERT(neq2.gt.neq)
-    else
-        neq2=neq
-        allocate(new_ieq(neq))
-        allocate(old_ieq(neq))
-        do k=1,neq
-            new_ieq(k)=k
-            old_ieq(k)=k
-        enddo
-    endif
-    ASSERT(mod(neq2,bs).eq.0)
+    ASSERT(mod(neq,bs).eq.0)
 
 !
 !     -- RECUPERE LE RANG DU PROCESSUS ET LE NB DE PROCS
@@ -133,7 +114,7 @@ use petsc_data_module
     ASSERT(ierr.eq.0)
     call VecSetBlockSize(vtmp, to_petsc_int(bs), ierr)
     ASSERT(ierr.eq.0)
-    call VecSetSizes(vtmp, PETSC_DECIDE, to_petsc_int(neq2), ierr)
+    call VecSetSizes(vtmp, PETSC_DECIDE, to_petsc_int(neq), ierr)
     ASSERT(ierr.eq.0)
     call VecSetType(vtmp, VECMPI, ierr)
     ASSERT(ierr.eq.0)
@@ -154,62 +135,46 @@ use petsc_data_module
 
 !   -- On commence par s'occuper du nombre de nz par ligne dans le bloc diagonal
 !      Indices C : jcol2
-!      Indices F : jcol1, ilig1, ilig2
+!      Indices F : jcol1, ilig
 !   -----------------------------------------------------------------------------
     do jcol2 = low2, high2-1
-        jcol1=old_ieq(jcol2+1)
-        nbo = 0
-        nbd = 0
-        if (jcol1.gt.0) then
-!           -- jcol2 est un vrai ddl :
-            if (jcol1.eq.1) then
-                nzdeb = 1
-            else
-                ASSERT(jcol1.ge.2)
-                nzdeb = smdi(jcol1-1) + 1
-            endif
-            nzfin = smdi(jcol1)
-            do k = nzdeb, nzfin
-                ilig1 = smhc(k)
-                ilig2 = new_ieq(ilig1)
-                if (ilig2 .lt. (low2+1)) then
-                    nbo = nbo + 1
-                else
-                    nbd = nbd + 1
-                    zi4(jidxd-1+(ilig2-low2)) = zi4(jidxd-1+(ilig2-low2)) + 1
-                endif
-            end do
-        else
-!           -- jcol2 est un ddl fictif, on ne stocke que le terme diagonal "1" :
-            ilig2=jcol2+1
-            nbo=0
-            nbd=1
-            zi4(jidxd-1+(ilig2-low2)) = zi4(jidxd-1+(ilig2-low2)) + 1
-        endif
-        zi4(jidxd-1+(jcol2+1-low2)) = zi4(jidxd-1+(jcol2+1-low2)) + nbd - 1
-        zi4(jidxo-1+(jcol2+1-low2)) = zi4(jidxo-1+(jcol2+1-low2)) + nbo
+       jcol1=jcol2+1
+       nbo = 0
+       nbd = 0
+       if (jcol1.eq.1) then
+           nzdeb = 1
+       else
+           ASSERT(jcol1.ge.2)
+           nzdeb = smdi(jcol1-1) + 1
+       endif
+       nzfin = smdi(jcol1)
+       do k = nzdeb, nzfin
+           ilig = smhc(k)
+           if (ilig .lt. (low2+1)) then
+               nbo = nbo + 1
+           else
+               nbd = nbd + 1
+               zi4(jidxd-1+(ilig-low2)) = zi4(jidxd-1+(ilig-low2)) + 1
+           endif
+       end do
+       zi4(jidxd-1+(jcol2+1-low2)) = zi4(jidxd-1+(jcol2+1-low2)) + nbd - 1
+       zi4(jidxo-1+(jcol2+1-low2)) = zi4(jidxo-1+(jcol2+1-low2)) + nbo
     end do
-
-
 !   -- Ensuite on complete le tableau du bloc hors diagonal
 !      Indices C : jcol2
-!      Indices F : jcol1, ilig1, ilig2
+!      Indices F : jcol1, ilig
 !   ---------------------------------------------------------
-    do jcol2 = high2, neq2-1
-        jcol1=old_ieq(jcol2+1)
-!       -- les ddls fictifs n'ont pas de termes dans ce bloc :
-        if (jcol1.eq.0) cycle
-
+    do jcol2 = high2, neq-1
+        jcol1= jcol2+1
         ASSERT(jcol1.ge.2)
         nzdeb = smdi(jcol1-1) + 1
         nzfin = smdi(jcol1)
         do k = nzdeb, nzfin
-            ilig1 = smhc(k)
-            ilig2 = new_ieq(ilig1)
-            if (ilig2 .lt. (low2+1)) then
+            ilig = smhc(k)
+            if (ilig .lt. (low2+1)) then
                 continue
-            else if (ilig2.le.high2) then
-                zi4(jidxo-1+(ilig2-low2)) = zi4(jidxo-1+(ilig2-low2)) + 1
+            else if (ilig.le.high2) then
+                zi4(jidxo-1+(ilig-low2)) = zi4(jidxo-1+(ilig-low2)) + 1
             else
                 exit
             endif
@@ -219,7 +184,7 @@ use petsc_data_module
     call MatCreate(mpicou, a, ierr)
     ASSERT(ierr.eq.0)
     call MatSetSizes(a, to_petsc_int(nblloc2), to_petsc_int(nblloc2), &
-                     to_petsc_int(neq2), to_petsc_int(neq2),&
+                     to_petsc_int(neq), to_petsc_int(neq),&
                      ierr)
     ASSERT(ierr.eq.0)
 !
@@ -250,11 +215,6 @@ use petsc_data_module
 !   -----------
     call jedetr(idxo)
     call jedetr(idxd)
-    if (fictif.eq.0) then
-        deallocate(new_ieq)
-        deallocate(old_ieq)
-    endif
-
     call jedema()
 !
 #else

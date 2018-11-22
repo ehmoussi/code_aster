@@ -196,7 +196,7 @@ subroutine get_nullbasis( c_mat, z_mat )
     Mat, intent(in)  :: c_mat
     Mat, intent(out) :: z_mat
     ! Local variables
-    aster_logical :: verbose, debug=.true.
+    aster_logical :: verbose, debug=.false.
     PetscErrorCode :: ierr
     integer :: ifm, niv
     character(len=19) :: matas1
@@ -261,6 +261,8 @@ end subroutine get_nullbasis
 #else
 subroutine build_elg_context( full_matas )
     character(len=19), intent(in) :: full_matas
+    character(len=19)  :: kbid
+    kbid = full_matas
 end subroutine build_elg_context
 #endif
 end module elg_module
