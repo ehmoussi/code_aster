@@ -281,7 +281,7 @@ TEST_TABLE(PRECISION=1.E-2,
            NOM_PARA='DEPL',
            TABLE=MAX_N2A1,
            FILTRE=(_F(NOM_PARA='FONCTION',
-                      VALE_K='N2_DXA1',),
+                      VALE_K='00000027',),
                    _F(NOM_PARA='INST',
                       VALE=0.25,),
                    _F(NOM_PARA='TYPE',
@@ -296,7 +296,7 @@ TEST_TABLE(PRECISION=1.E-2,
            NOM_PARA='DEPL',
            TABLE=MAX_N2A2,
            FILTRE=(_F(NOM_PARA='FONCTION',
-                      VALE_K='N2_DXA2',),
+                      VALE_K='0000002a',),
                    _F(NOM_PARA='INST',
                       VALE=0.25,),
                    _F(NOM_PARA='TYPE',
@@ -311,7 +311,7 @@ TEST_TABLE(PRECISION=1.E-2,
            NOM_PARA='RMS',
            TABLE=RMS_N2A1,
            FILTRE=(_F(NOM_PARA='FONCTION',
-                      VALE_K='N2_DXA1',),
+                      VALE_K='00000027',),
                    _F(NOM_PARA='METHODE',
                       VALE_K='TRAPEZE',),
                    ),
@@ -335,70 +335,3 @@ RMS_NO2R=INFO_FONCTION(RMS=_F(  FONCTION = NO2_DX_R,
 
 IMPR_TABLE(TABLE=MAX_NO2R)
 FIN()
-TEST_TABLE(PRECISION=0.012999999999999999,
-           VALE_CALC= 1.26436566E-06,
-           VALE_REFE=1.266E-06,
-           REFERENCE='NON_DEFINI',
-           NOM_PARA='DEPL',
-           TABLE=MAX_NO2R,
-           FILTRE=(_F(NOM_PARA='FONCTION',
-                      VALE_K='NO2_DX_R',),
-                   _F(NOM_PARA='INST',
-                      VALE=0.70999999999999996,),
-                   _F(NOM_PARA='TYPE',
-                      VALE_K='MAXI',),
-                   ),
-           )
-
-TEST_TABLE(PRECISION=0.012999999999999999,
-           VALE_CALC= 7.89408806E-07,
-           VALE_REFE=7.7975000000000003E-07,
-           REFERENCE='NON_DEFINI',
-           NOM_PARA='RMS',
-           TABLE=RMS_NO2R,
-           FILTRE=(_F(NOM_PARA='FONCTION',
-                      VALE_K='NO2_DX_R',),
-                   _F(NOM_PARA='METHODE',
-                      VALE_K='TRAPEZE',),
-                   ),
-           )
-
-#
-FCHOC=RECU_FONCTION(   RESU_GENE=TRAN_GE1,
-                        NOEUD_CHOC='NO2',    INFO=2,
-                       PARA_X='VINT1',  PARA_Y='VINT7' )
-
-MAXFCHOC=INFO_FONCTION( MAX=_F( FONCTION = FCHOC) )
-
-RMSFCHOC=INFO_FONCTION(RMS=_F(  FONCTION = FCHOC,
-                               METHODE = 'TRAPEZE',
-                               CRITERE = 'ABSOLU',
-                                PRECISION = 1.E-6)
-                         )
-
-TEST_TABLE(PRECISION=1.E-2,
-           VALE_CALC= 7.89397060E+03,
-           VALE_REFE=7912.3000000000002,
-           REFERENCE='NON_DEFINI',
-           NOM_PARA='RMS',
-           TABLE=RMSFCHOC,
-           FILTRE=(_F(NOM_PARA='FONCTION',
-                      VALE_K='FCHOC',),
-                   _F(NOM_PARA='METHODE',
-                      VALE_K='TRAPEZE',),
-                   ),
-           )
-
-TEST_TABLE(PRECISION=1.E-2,
-           VALE_CALC= 1.26596358E+04,
-           VALE_REFE=1.2660E4,
-           REFERENCE='NON_DEFINI',
-           NOM_PARA='FN',
-           TABLE=MAXFCHOC,
-           FILTRE=(_F(NOM_PARA='TYPE',
-                      VALE_K='MAXI',),
-                   ),
-           )
-
-FIN()
-#
