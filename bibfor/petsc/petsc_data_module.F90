@@ -112,7 +112,7 @@ function get_mat_id( matas ) result ( kptsc )
              call MatGetSize(ap(k), m, n, ierr)
              ASSERT(ierr.eq.0)
              ASSERT(m.eq.n)
-             ASSERT(nglo.eq.n)
+             ASSERT(nglo.le.n)
           endif
 ! la verification a ete effectuee avec succes, on renvoie k
           kptsc = k
