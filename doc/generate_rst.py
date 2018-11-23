@@ -93,6 +93,7 @@ def all_objects(destdir):
     for _, obj in sorted(addsect):
         sections.append(obj)
     sections.append(boost_enum)
+    sections.append(Exception)
     # print len(sections), "sections"
 
     # dict of subclasses
@@ -120,11 +121,11 @@ def all_objects(destdir):
         try:
             objs.remove(typename)
         except ValueError:
-            if subtyp != boost_enum:
+            if subtyp not in (boost_enum, Exception):
                 print subtyp
                 raise
         objs.sort()
-        if subtyp != boost_enum:
+        if subtyp not in (boost_enum, Exception):
             objs.insert(0, typename)
 
         if len(objs) > 1:
