@@ -25,6 +25,7 @@ use aster_petsc_module
 use petsc_data_module
 use saddle_point_module
 use lmp_module, only : lmp_update
+!
     implicit none
 !
 !
@@ -587,11 +588,6 @@ use lmp_module, only : lmp_update
         kp(kptsc) = PETSC_NULL_KSP
 #endif
         tblocs(kptsc) = -1
-        if (fictifs(kptsc).eq.1) then
-            deallocate(new_ieqs(kptsc)%pi4)
-            deallocate(old_ieqs(kptsc)%pi4)
-        endif
-        fictifs(kptsc) = -1
 !
 !        -- PRECONDITIONNEUR UTILISE
 !

@@ -17,7 +17,6 @@
 ! --------------------------------------------------------------------
 
 subroutine delete_matrix(matas, typsol)
-use elim_lagr_data_module
 !
 #include "asterf_types.h"
 !
@@ -52,7 +51,6 @@ use elim_lagr_data_module
             call apetsc('DETR_MAT', ' ', matas, [0.d0], ' ',&
                         0, ibid, iret)
         endif
-        call elg_gest_data('EFFACE', ' ', matas, ' ')
     endif
 !
 end subroutine

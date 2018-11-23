@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -53,12 +53,10 @@ use saddle_point_module, only : convert_rhs_to_saddle_point
 !     VARIABLES LOCALES
     integer :: nsmdi, rang, nbproc, jnequ, jnequl
     integer :: iloc, iglo, nloc, nglo, ndprop
-    integer :: bs, i, neq1, neq2, fictif, ieq1, ieq2, k
+    integer :: bs, i, neq, ieq
     integer, dimension(:), pointer         :: nulg => null()
     integer, dimension(:), pointer         :: nlgp => null(), pddl => null()
     integer(kind=4), dimension(:), pointer :: ig_petsc_c => null()
-    integer(kind=4), pointer :: new_ieq(:) => null()
-    integer(kind=4), pointer :: old_ieq(:) => null()
 
     mpi_int :: mpicomm
 !
@@ -87,7 +85,6 @@ use saddle_point_module, only : convert_rhs_to_saddle_point
     nomat = nomat_courant
     nonu = nonu_courant
     bs = tblocs(kptsc)
-    fictif = fictifs(kptsc)
     ASSERT(bs.ge.1)
     nosolv = nosols(kptsc)
 
@@ -96,7 +93,6 @@ use saddle_point_module, only : convert_rhs_to_saddle_point
     precon = slvk(2)
 !
     if (lmd) then
-        ASSERT(fictif.eq.0)
         call asmpi_info(rank=mrank, size=msize)
         rang = to_aster_int(mrank)
         nbproc = to_aster_int(msize)
@@ -139,34 +135,18 @@ use saddle_point_module, only : convert_rhs_to_saddle_point
 !
     else
         call jelira(nonu//'.SMOS.SMDI', 'LONMAX', nsmdi)
-        neq1=nsmdi
-        if (fictif.eq.0) then
-            neq2=neq1
-            allocate(new_ieq(neq2))
-            allocate(old_ieq(neq2))
-            do k=1,neq2
-                new_ieq(k)=k
-                old_ieq(k)=k
-            enddo
-        else
-            new_ieq => new_ieqs(kptsc)%pi4
-            old_ieq => old_ieqs(kptsc)%pi4
-        endif
-        neq2=size(old_ieq)
-
-
-        ASSERT(mod(neq2,bs).eq.0)
+        neq=nsmdi
+        ASSERT(mod(neq,bs).eq.0)
 !
 !       -- allocation de b :
         call VecCreate(mpicomm, b, ierr)
         ASSERT(ierr.eq.0)
         call VecSetBlockSize(b, to_petsc_int(bs), ierr)
         ASSERT(ierr.eq.0)
-        call VecSetSizes(b, PETSC_DECIDE, to_petsc_int(neq2), ierr)
+        call VecSetSizes(b, PETSC_DECIDE, to_petsc_int(neq), ierr)
         ASSERT(ierr.eq.0)
         call VecSetType(b, VECMPI, ierr)
         ASSERT(ierr.eq.0)
-!       -- on met le vecteur a zero a cause des ddls fictifs :
         call VecSet(b, 0.d0, ierr)
         ASSERT(ierr.eq.0)
 !
@@ -178,18 +158,11 @@ use saddle_point_module, only : convert_rhs_to_saddle_point
         ASSERT(ierr.eq.0)
 !
         do i = 1, high2-low2
-            ieq2=low2+i
-            ieq1=old_ieq(ieq2)
-            if (ieq1.gt.0) xx(xidx+i)=rsolu(ieq1)
+            ieq=low2+i
+            if (ieq.gt.0) xx(xidx+i)=rsolu(ieq)
         end do
         call VecRestoreArray(b, xx, xidx, ierr)
         ASSERT(ierr.eq.0)
-
-        if (fictif.eq.0) then
-            deallocate(new_ieq)
-            deallocate(old_ieq)
-        endif
-
     endif
 
     if ( precon == 'BLOC_LAGR' ) then

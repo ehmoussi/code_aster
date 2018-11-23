@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -21,7 +21,7 @@ subroutine elg_calc_solu(matas1, nsecm, rsolu2, rsolu1)
 #include "asterf_petsc.h"
 !
 use aster_petsc_module
-use elim_lagr_data_module
+use elg_data_module
     implicit none
 ! person_in_charge: natacha.bereux at edf.fr
 !
@@ -95,7 +95,9 @@ use elim_lagr_data_module
 !
 !     -- dimensions n1, n2, n3 :
     call MatGetSize(elg_context(ke)%tfinal, n1, n3, ierr)
-    call MatGetSize(elg_context(ke)%ctrans, n1, n2, ierr)
+    ASSERT( ierr==0 )
+    call MatGetSize(elg_context(ke)%matc, n2, n1, ierr)
+    ASSERT( ierr==0 )
     ASSERT(neq2.eq.n3)
     ASSERT(neq1.eq.n1+2*n2)
 !
@@ -103,21 +105,26 @@ use elim_lagr_data_module
 !     allocation et remplissage de Y = RSOLU2
     call elg_allocvr(y, to_aster_int(n3))
     call VecGetArray(y, xx, xidx, ierr)
+    ASSERT( ierr==0 )
     do ieq2 = 1, neq2
         xx(xidx+ieq2)=rsolu2(ieq2)
     end do
     call VecRestoreArray(y, xx, xidx, ierr)
+    ASSERT( ierr==0 )
 !
 !
 !     Calcul de TMP1 =  T*Y :
     call elg_allocvr(tmp1, to_aster_int(n1))
     call MatMult(elg_context(ke)%tfinal, y, tmp1, ierr)
+    ASSERT( ierr==0 )
 !
 !     Calcul de X1= x0 + T*Y :
     call elg_allocvr(x1, int(n1))
     call VecCopy(elg_context(ke)%vx0, x1, ierr)
+    ASSERT( ierr==0 )
     p1=1.
     call VecAXPY(x1, p1, tmp1, ierr)
+    ASSERT( ierr==0 )
 !
 !     calcul des coefficients de Lagrange :
     call elg_allocvr(vlag, to_aster_int(n2))
@@ -126,6 +133,7 @@ use elim_lagr_data_module
 !
 !     -- on recopie X1 dans RSOLU1 :
     call VecGetArray(x1, xx, xidx, ierr)
+    ASSERT( ierr==0 )
     ico=0
     do k1 = 1, neq1
         if (delg(k1) .eq. 0) then
@@ -135,6 +143,7 @@ use elim_lagr_data_module
     enddo
     ASSERT(ico.eq.n1)
     call VecRestoreArray(x1, xx, xidx, ierr)
+    ASSERT( ierr==0 )
 !
 !
 !     -- on recopie VLAG dans RSOLU1 :
@@ -142,6 +151,7 @@ use elim_lagr_data_module
 !                   Lagrange "1"  et "2" :
     call jeveuo(matas1//'.CONL', 'L', vr=conl)
     call VecGetArray(vlag, xx, xidx, ierr)
+    ASSERT( ierr==0 )
     ico=0
     do k1 = 1, neq1
         if (delg(k1) .eq. -1) then
@@ -156,15 +166,17 @@ use elim_lagr_data_module
     enddo
     ASSERT(ico.eq.n2)
     call VecRestoreArray(vlag, xx, xidx, ierr)
-!
-!
-!
+    ASSERT( ierr==0 )
 !
 !     -- ménage :
     call VecDestroy(y, ierr)
+    ASSERT( ierr==0 )
     call VecDestroy(tmp1, ierr)
+    ASSERT( ierr==0 )
     call VecDestroy(x1, ierr)
+    ASSERT( ierr==0 )
     call VecDestroy(tmp1, ierr)
+    ASSERT( ierr==0 )
 !
     call jedema()
 #else

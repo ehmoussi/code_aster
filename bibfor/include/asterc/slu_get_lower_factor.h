@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,16 +17,14 @@
 ! --------------------------------------------------------------------
 
 !
-#include "asterf_types.h"
-#include "asterf_petsc.h"
-interface
-    subroutine compress_sparse_pattern(a)
-# ifdef _HAVE_PETSC
-      use aster_petsc_module
-      Mat, intent(inout)  :: a
-#else
-      integer, intent(inout)  :: a
-#endif
 !
-    end subroutine
+interface
+    subroutine slu_get_lower_factor( f_factors, values, rowind, &
+                                     colptr, info )
+        integer         :: f_factors
+        real(kind=8)    :: values(*)
+        integer(kind=4) :: rowind(*)
+        integer(kind=4) :: colptr(*)
+        integer(kind=4) :: info
+    end subroutine slu_get_lower_factor
 end interface

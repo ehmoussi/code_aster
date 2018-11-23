@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -21,7 +21,7 @@ subroutine elg_calc_rhs_red(matas1, nsecm, secm, solu2)
 #include "asterf_petsc.h"
 !
 use aster_petsc_module
-use elim_lagr_data_module
+use elg_data_module
     implicit none
 ! person_in_charge: natacha.bereux at edf.fr
 !
@@ -90,7 +90,9 @@ use elim_lagr_data_module
 !
 !     -- dimensions n1, n2, n3 :
     call MatGetSize(elg_context(ke)%tfinal, n1, n3, ierr)
-    call MatGetSize(elg_context(ke)%ctrans, n1, n2, ierr)
+    ASSERT( ierr==0 )
+    call MatGetSize(elg_context(ke)%matc, n2, n1, ierr)
+    ASSERT( ierr==0 )
     ASSERT(neq2.eq.n3)
     ASSERT(neq1.eq.n1+2*n2)
 !
@@ -105,7 +107,9 @@ use elim_lagr_data_module
 !     -- calcul de VecB et VecC (extraits de SECM) :
 !     ------------------------------------------------
     call VecGetArray(elg_context(ke)%vecb, xx, xidxb, ierr)
+    ASSERT( ierr==0 )
     call VecGetArray(elg_context(ke)%vecc, xx, xidxc, ierr)
+    ASSERT( ierr==0 )
     call jeveuo(nu1//'.NUME.DELG', 'L', vi=delg)
     call jeveuo(matas1//'.CONL', 'L', vr=conl)
 !
@@ -121,42 +125,56 @@ use elim_lagr_data_module
         endif
     end do
     call VecRestoreArray(elg_context(ke)%vecb, xx, xidxb, ierr)
+    ASSERT( ierr==0 )
     call VecRestoreArray(elg_context(ke)%vecc, xx, xidxc, ierr)
+    ASSERT( ierr==0 )
 !
 !
 !     -- calcul de Vx0 = A \ VecC
     call VecDuplicate(elg_context(ke)%vecb, elg_context(ke)%vx0, ierr)
+    ASSERT( ierr==0 )
 !
     call elg_calcx0()
 !
 !     -- calcul de BX0 = B*Vx0 :
     call VecDuplicate(elg_context(ke)%vecb, bx0, ierr)
+    ASSERT( ierr==0 )
     call MatMult(elg_context(ke)%matb, elg_context(ke)%vx0, bx0, ierr)
+    ASSERT( ierr==0 )
 !
 !
 !     -- calcul de VecTmp = b - B*Vx0 :
     m1=-1.d0
     call VecDuplicate(elg_context(ke)%vecb, vectmp, ierr)
+    ASSERT( ierr==0 )
     call VecCopy(elg_context(ke)%vecb, vectmp, ierr)
+    ASSERT( ierr==0 )
     call VecAXPY(vectmp, m1, bx0, ierr)
+    ASSERT( ierr==0 )
 !
 !     -- calcul de VecB2 = T'*(b - B*Vx0) :
     call MatMultTranspose(elg_context(ke)%tfinal, vectmp, vecb2, ierr)
+    ASSERT( ierr==0 )
 !
 !     -- recopie de VecB2 dans SOLU2 :
     call wkvect(solu2, 'V V R', neq2, jsolu2)
     call VecGetArray(vecb2, xx, xidxb2, ierr)
+    ASSERT( ierr==0 )
     do ieq2 = 1, neq2
         zr(jsolu2-1+ieq2)=xx(xidxb2+ieq2)
     end do
     call VecRestoreArray(vecb2, xx, xidxb2, ierr)
+    ASSERT( ierr==0 )
 !
 !
 !
 !     -- ménage :
     call VecDestroy(vectmp, ierr)
+    ASSERT( ierr==0 )
     call VecDestroy(bx0, ierr)
+    ASSERT( ierr==0 )
     call VecDestroy(vecb2, ierr)
+    ASSERT( ierr==0 )
 !
     call jedema()
 #else

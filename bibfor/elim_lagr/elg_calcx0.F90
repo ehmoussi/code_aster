@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -21,10 +21,10 @@ subroutine elg_calcx0()
 #include "asterf_petsc.h"
 !
 use aster_petsc_module
-use elim_lagr_data_module
+use elg_data_module
     implicit none
 ! person_in_charge: natacha.bereux at edf.fr
-! aslint:disable=
+! aslint:disable=C1308
 #include "jeveux.h"
 #include "asterc/asmpi_comm.h"
 #include "asterfort/asmpi_info.h"
@@ -75,7 +75,7 @@ use elim_lagr_data_module
     PetscInt :: mm, nn
     real(kind=8) :: norm
     PetscScalar, parameter ::  neg_rone = -1.d0
-    aster_logical :: info
+    aster_logical :: info, debug = .false.
     PetscReal :: aster_petsc_real
 !----------------------------------------------------------------
     call jemarq()
@@ -88,26 +88,31 @@ use elim_lagr_data_module
     call asmpi_info(rank=rang, size=nbproc)
 !
 !   -- Le système est-il bien sous-déterminé ?
-    call MatGetSize( elg_context(ke)%ctrans, mm, nn , ierr)
+    call MatGetSize( elg_context(ke)%matc, nn, mm , ierr)
+    ASSERT( ierr == 0 )
     ASSERT( mm > nn )
 !   -- Calcul de CCT = C * transpose(C)
 
 
-    call MatTransposeMatMult(elg_context(ke)%ctrans, elg_context(ke)%ctrans,&
+    call MatMatTransposeMult(elg_context(ke)%matc, elg_context(ke)%matc,&
         MAT_INITIAL_MATRIX, aster_petsc_real, cct, ierr)
+    ASSERT( ierr == 0 )
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !         Create the linear solver and set options
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !
 !  Create linear solver context
-      call KSPCreate(mpicomm,ksp,ierr)
+      call KSPCreate(PETSC_COMM_SELF,ksp,ierr)
+      ASSERT( ierr == 0 )
 !  Set operators. Here the matrix that defines the linear system
 !  also serves as the preconditioning matrix.
 !
     call KSPSetOperators(ksp, cct, cct, ierr)
+    ASSERT( ierr == 0 )
 !
 !  Set linear solver options : here we choose CG solver
       call KSPSetType(ksp, KSPCG, ierr)
+      ASSERT( ierr == 0 )
 !
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !                      Solve the linear system
@@ -117,17 +122,21 @@ use elim_lagr_data_module
 !    y0 = ( A * A' )  \ c
 !
     call VecDuplicate( elg_context(ke)%vecc, y0, ierr)
+    ASSERT( ierr == 0 )
     call KSPSolve( ksp, elg_context(ke)%vecc, y0, ierr)
+    ASSERT( ierr == 0 )
 !
 !  Check the reason why KSP solver ended
     call KSPGetConvergedReason(ksp, reason, ierr)
+    ASSERT( ierr == 0 )
 !  Reason < 0 indicates a problem during the resolution
     if (reason<0) then
       call utmess('F','ELIMLAGR_8')
     endif
 !
 !   x0 = A' * y0
-    call MatMult( elg_context(ke)%ctrans, y0, elg_context(ke)%vx0, ierr)
+    call MatMultTranspose( elg_context(ke)%matc, y0, elg_context(ke)%vx0, ierr)
+    ASSERT( ierr == 0 )
 !
 ! - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 !                     Check solution and clean up
@@ -137,24 +146,33 @@ use elim_lagr_data_module
 !
       if (info) then
       call VecDuplicate(elg_context(ke)%vecc ,vy,ierr)
-      call MatMultTranspose(elg_context(ke)%ctrans,  elg_context(ke)%vx0, vy, ierr)
+      ASSERT( ierr == 0 )
+      call MatMult(elg_context(ke)%matc,  elg_context(ke)%vx0, vy, ierr)
+      ASSERT( ierr == 0 )
       call VecAXPY(vy,neg_rone,elg_context(ke)%vecc ,ierr)
+      ASSERT( ierr == 0 )
       call VecNorm(vy,norm_2,norm,ierr)
+      ASSERT( ierr == 0 )
       call KSPGetIterationNumber(ksp,its,ierr)
+      ASSERT( ierr == 0 )
 
-      if (rang .eq. 0) then
+      if (debug.and.rang==0) then
            write(6,100) norm,its
       endif
-  100 format('CALCX0: Norm of error = ',e11.4,', iterations = ',i5)
+  100 format('  ELG CALCX0: Norm of error = ',e11.4,', iterations = ',i5)
       call VecDestroy(vy,ierr)
+      ASSERT( ierr == 0 )
       endif
 !
 !  Free work space.  All PETSc objects should be destroyed when they
 !  are no longer needed.
 
       call KSPDestroy(ksp,ierr)
+      ASSERT( ierr == 0 )
       call MatDestroy(cct,ierr)
+      ASSERT( ierr == 0 )
       call VecDestroy(y0, ierr)
+      ASSERT( ierr == 0 )
 !
     call jedema()
 !

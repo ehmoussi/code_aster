@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -327,7 +327,7 @@ def C_SOLVEUR(COMMAND, BASE=None):  # COMMUN#
     _BlocGC['PRE_COND'] = SIMP(
         statut='f', typ='TXM', defaut="LDLT_INC", into=("LDLT_INC", "LDLT_SP"), )
     _BlocPE['PRE_COND'] = SIMP(statut='f', typ='TXM', defaut="LDLT_SP",
-                               into=("LDLT_INC", "LDLT_SP", "JACOBI", "SOR", "ML", "BOOMER", "GAMG", "BLOC_LAGR", "SANS", ), )
+                               into=("LDLT_INC", "LDLT_SP", "JACOBI", "SOR", "ML", "BOOMER", "GAMG", "BLOC_LAGR", "FIELDSPLIT", "SANS", ), )
 
 # --------------------------------------------------------------------
 
@@ -397,6 +397,21 @@ def C_SOLVEUR(COMMAND, BASE=None):  # COMMUN#
 
     _BlocXX_Autres['RENUM'] = SIMP(
         statut='f', typ='TXM', defaut="SANS", into=("SANS", "RCMK", ), )
+
+# --------------------------------------------------------------------
+
+    _BlocXX_Autres['NOM_CMP'] = SIMP(
+        statut='f', typ='TXM', max='**',)
+
+# --------------------------------------------------------------------
+
+    _BlocXX_Autres['OPTION_PETSC'] = SIMP(
+        statut='f', typ='TXM', max=1,)
+
+# --------------------------------------------------------------------
+
+    _BlocXX_Autres['PARTITION_CMP'] = SIMP(
+        statut='f', typ='I',  max='**',)
 
 
 # --------------------------------------------------------------------
@@ -480,7 +495,7 @@ def C_SOLVEUR(COMMAND, BASE=None):  # COMMUN#
                                                           **_BlocPE_LAGAUG
                                       ),
                                       b_autres=BLOC(
-                                          condition="""is_in("PRE_COND", ('JACOBI','SOR','SANS'))""",
+                                          condition="""is_in("PRE_COND", ('JACOBI','SOR','FIELDSPLIT', 'SANS'))""",
                                                           **_BlocXX_Autres
                                       ),
                                       **_BlocPE
