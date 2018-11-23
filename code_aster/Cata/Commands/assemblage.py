@@ -34,7 +34,7 @@ def assemblage_prod(self,NUME_DDL,MATR_ASSE,VECT_ASSE,**args):
 
   if ((not MATR_ASSE) and (not VECT_ASSE)):  raise AsException("Aucun concept a assembler")
   if not NUME_DDL :  raise AsException("Impossible de typer les concepts resultats")
-  if NUME_DDL.is_typco():
+  if isinstance(NUME_DDL, CO):
     self.type_sdprod(NUME_DDL,nume_ddl_sdaster)
 
   if MATR_ASSE !=None:
