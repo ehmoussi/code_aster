@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -32,5 +32,13 @@
 #else
 #   define TO_STRING(name)  "?"
 #endif
+
+! Exceptions identifiers - keep consistency with astercxx.h
+#define ASTER_ERROR 1
+#define CONVERGENCE_ERROR 2
+#define INTEGRATION_ERROR 3
+#define SOLVER_ERROR 4
+#define CONTACT_ERROR 5
+#define TIMELIMIT_ERROR 6
 
 #endif

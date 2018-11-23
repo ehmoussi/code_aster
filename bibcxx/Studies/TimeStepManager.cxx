@@ -27,7 +27,7 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-void TimeStepManagerInstance::build() throw( std::runtime_error ) {
+void TimeStepManagerInstance::build() {
     CommandSyntax cmdSt( "DEFI_LIST_INST" );
     cmdSt.setResult( ResultNaming::getCurrentName(), "LIST_INST" );
 

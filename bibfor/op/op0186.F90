@@ -165,8 +165,8 @@ implicit none
         numins=1
     endif
     deltat=-1.d150
-! --- La fonctionnalité Newton-Krylov est-elle active ? 
-    lnkry = ds_algopara%method == 'NEWTON_KRYLOV' 
+! --- La fonctionnalité Newton-Krylov est-elle active ?
+    lnkry = ds_algopara%method == 'NEWTON_KRYLOV'
 
 !
 ! --- CREATION DES OBJETS DE TRAVAIL ET DES STRUCTURES DE DONNEES
@@ -300,7 +300,7 @@ implicit none
                 solver     , l_stat   , time      , tpsthe   , vtemp      ,&
                 vhydr      , varc_curr, dry_prev  , dry_curr , cn2mbr_stat,&
                 cn2mbr_tran, matass   , maprec    , cndiri   , cncine     ,&
-                mediri     , compor   , ds_algorom)   
+                mediri     , compor   , ds_algorom)
 !
 ! ======================================================================
 !                        PHASE DE PREDICTION
@@ -358,7 +358,7 @@ implicit none
                 cnresi, ther_crit_i, ther_crit_r, reasma   , testr,&
                 testm , vnorm(1)   , ds_algorom )
 !
-    vrela(1) = testr 
+    vrela(1) = testr
     vmaxi(1) = testm
     call nmlere(sddisc, 'E', 'VRELA', iterat, vrela)
     call nmlere(sddisc, 'E', 'VMAXI', iterat, vmaxi)
@@ -413,7 +413,7 @@ implicit none
             rtab(1) = tps2(4)
             rtab(2) = tps2(1)
             call utmess('Z', 'DISCRETISATION2_79', si=itab(1), nr=2, valr=rtab,&
-                        num_except=28)
+                        num_except=TIMELIMIT_ERROR)
         else
             goto 20
         endif
@@ -421,7 +421,7 @@ implicit none
         write (ifm,fmt1)
         itab(1) = numins
         itab(2) = iterat
-        call utmess('Z', 'THERNONLINE4_85', ni=2, vali=itab, num_except=22)
+        call utmess('Z', 'THERNONLINE4_85', ni=2, vali=itab, num_except=CONVERGENCE_ERROR)
     endif
     write (ifm,fmt1)
 !
@@ -518,7 +518,7 @@ implicit none
         rtab(1) = tps2(4)
         rtab(2) = tps2(1)
         call utmess('Z', 'DISCRETISATION2_80', si=itab(1), nr=2, valr=rtab,&
-                    num_except=28)
+                    num_except=TIMELIMIT_ERROR)
     endif
 !
     if (finpas) goto 500

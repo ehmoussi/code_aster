@@ -44,48 +44,45 @@ STANLEY
 
 debug = False
 
-import sys
+import copy
+import cPickle
 import os
 import os.path
-import string
-import copy
-import tkFileDialog
-import tkMessageBox
-import cPickle
-import time
 import socket
+import string
+import sys
 import tempfile
+import time
+import Tkinter as Tk
 import types
 from types import *
 
-# import Tix as Tk
-import Tkinter as Tk
-
-from Noyau.N_types import force_tuple
-
-import aster_core
 import as_courbes
-import xmgrace
-import gmsh
-import cata_champs
 import aster
-from Utilitai.Table import Table, merge
-
-import Utilitai
-from Utilitai import sup_gmsh
-from Utilitai.Utmess import UTMESS
-from graphiqueTk import *
+import aster_core
+import cata_champs
+import gmsh
 import ihm_parametres
-
-from code_aster.Commands import (AFFE_MODELE, MODI_MODELE, COPIER, CREA_MAILLAGE,
-    CREA_RESU, DEFI_FICHIER, DETRUIRE, IMPR_FONCTION, IMPR_RESU, DEFI_GROUP,
-    INFO_EXEC_ASTER, POST_RELEVE_T, PROJ_CHAMP, STANLEY)
+import salomeVisu
+import tkFileDialog
+import tkMessageBox
+import Utilitai
+import xmgrace
+from code_aster import AsterError, onFatalError
 from code_aster.Cata.Language import DataStructure
 from code_aster.Cata.Syntax import _F
-
+from code_aster.Commands import (AFFE_MODELE, COPIER, CREA_MAILLAGE, CREA_RESU,
+                                 DEFI_FICHIER, DEFI_GROUP, DETRUIRE,
+                                 IMPR_FONCTION, IMPR_RESU, INFO_EXEC_ASTER,
+                                 MODI_MODELE, POST_RELEVE_T, PROJ_CHAMP,
+                                 STANLEY)
+from graphiqueTk import *
 from Macro.test_fichier_ops import test_file
+from Noyau.N_types import force_tuple
+from Utilitai import sup_gmsh
+from Utilitai.Table import Table, merge
+from Utilitai.Utmess import UTMESS
 
-import salomeVisu
 __salome__ = True
 __rcstanley__ = '.stanley_salome'
 
@@ -102,8 +99,8 @@ cata = cata_champs.CATA_CHAMPS()
 texte_onFatalError = "Une erreur est intervenue. L'operation a ete annulee."
 
 # Pour la gestion des Exceptions
-prev_onFatalError = aster.onFatalError()
-aster.onFatalError('EXCEPTION')
+prev_onFatalError = onFatalError()
+onFatalError('EXCEPTION')
 
 
 # ========================================================================
@@ -1108,7 +1105,7 @@ class ETAT_GEOM:
                        CREA_GROUP_NO=_F(
                            GROUP_MA=ligne, NOM=nom, OPTION='NOEUD_ORDO')
                        )
-        except aster.error, err:
+        except AsterError as err:
             UTMESS('A', 'STANLEY_38', valk=[texte_onFatalError, str(err)])
             return None
         except Exception, err:
@@ -1321,7 +1318,7 @@ class ETAT_RESU:
         for nom_cham in etapes[1:]:
             try:
                 cata[nom_cham].Evalue(self.contexte, numeros, options)
-            except aster.error, err:
+            except AsterError as err:
                 UTMESS('A', 'STANLEY_38', valk=[texte_onFatalError, str(err)])
             except Exception, err:
                 UTMESS('A', 'STANLEY_5', valk=[str(err)])
@@ -1711,7 +1708,7 @@ class STANLEY:
         # Lancement de la commande
         try:
             apply(MODI_MODELE, (), para)
-        except aster.error, err:
+        except AsterError as err:
             UTMESS('A', 'STANLEY_4', valk=[str(err)])
         except Exception, err:
             UTMESS('A', 'STANLEY_5', valk=[str(err)])
@@ -1886,7 +1883,7 @@ class STANLEY:
         self.interface.Kill()
 
         # Pour la gestion des Exceptions
-        aster.onFatalError(prev_onFatalError)
+        onFatalError(prev_onFatalError)
 
     def Clavier(self, event):
         """
@@ -2304,7 +2301,7 @@ class DRIVER:
                                  # a ce niveau ...
                                  )
                                  )
-        except aster.error, err:
+        except AsterError as err:
             return self.erreur.Remonte_Erreur(err, [], 2)
         except Exception, err:
             texte = "Cette action n'est pas realisable.\n" + str(err)
@@ -2327,7 +2324,7 @@ class DRIVER:
                 **motscles
             )
 
-        except aster.error, err:
+        except AsterError as err:
             return self.erreur.Remonte_Erreur(err, [__MO_P], 2)
         except Exception, err:
             texte = "Cette action n'est pas realisable.\n" + str(err)
@@ -2387,7 +2384,7 @@ class DRIVER:
             __MA_G = CREA_MAILLAGE(MAILLAGE=contexte.maillage,
                                    ECLA_PG=para,
                                    )
-        except aster.error, err:
+        except AsterError as err:
             return self.erreur.Remonte_Erreur(err, [], 2)
         except Exception, err:
             texte = "Cette action n'est pas realisable.\n" + str(err)
@@ -2414,7 +2411,7 @@ class DRIVER:
                 OPERATION='ECLA_PG',
                 TYPE_RESU=type_resu,
                 ECLA_PG=para,)
-        except aster.error, err:
+        except AsterError as err:
             return self.erreur.Remonte_Erreur(err, [__MA_G], 2)
         except Exception, err:
             texte = "Cette action n'est pas realisable.\n" + str(err)
@@ -2441,7 +2438,7 @@ class DRIVER:
                     AFFE=_F(TOUT='OUI',
                             PHENOMENE='MECANIQUE',
                             MODELISATION=pmod,))
-            except aster.error, err:
+            except AsterError as err:
                 return self.erreur.Remonte_Erreur(err, [__MA_G, __RESU_G], 2)
             except Exception, err:
                 texte = "Cette action n'est pas realisable.\n" + str(err)
@@ -2651,7 +2648,7 @@ class DRIVER_GMSH(DRIVER_ISOVALEURS):
                       self.stan.parametres['version_fichier_gmsh']),
                       RESU=para,
                       )
-        except aster.error, err:
+        except AsterError as err:
             self.erreur.Remonte_Erreur(err, [], 0)
             DEFI_FICHIER(ACTION='LIBERER', UNITE=ul, INFO=1)
             return
@@ -2775,7 +2772,7 @@ class DRIVER_SALOME_ISOVALEURS(DRIVER_ISOVALEURS):
             IMPR_RESU(FORMAT='MED',
                       UNITE=ul,
                       RESU=para)
-        except aster.error, err:
+        except AsterError as err:
             self.erreur.Remonte_Erreur(err, [], 0)
             DEFI_FICHIER(ACTION='LIBERER', UNITE=ul)
             return
@@ -2857,7 +2854,7 @@ class DRIVER_COURBES(DRIVER):
                 try:
                     __COTMP1 = POST_RELEVE_T(ACTION=para)
                     isOk = True
-                except aster.error, err:
+                except AsterError as err:
                     return self.erreur.Remonte_Erreur(err, [__COTMP1], 1)
                 except Exception, err:
                     texte = "Cette action n'est pas realisable.\n" + str(err)
@@ -2906,7 +2903,7 @@ class DRIVER_COURBES(DRIVER):
                 try:
                     __COTMP1 = POST_RELEVE_T(ACTION=para)
                     isOk = True
-                except aster.error, err:
+                except AsterError as err:
                     return self.erreur.Remonte_Erreur(err, [__COTMP1], 1)
                 except Exception, err:
                     texte = "Cette action n'est pas realisable.\n" + str(err)
@@ -3169,7 +3166,7 @@ class DRIVER_SUP_GMSH(DRIVER):
 
         try:
             __ma = mesh.LIRE_GMSH(UNITE_GMSH=_UL[0], UNITE_MAILLAGE=_UL[1])
-        except aster.error, err:
+        except AsterError as err:
             return self.erreur.Remonte_Erreur(err, [__ma], 1)
         except Exception, err:
             texte = "Cette action n'est pas realisable.\n" + str(err)
@@ -3179,7 +3176,7 @@ class DRIVER_SUP_GMSH(DRIVER):
 
         try:
             _MA[INDICE] = COPIER(CONCEPT=__ma)
-        except aster.error, err:
+        except AsterError as err:
             return self.erreur.Remonte_Erreur(err, [__ma, _MA[INDICE]], 1)
         except Exception, err:
             texte = "Cette action n'est pas realisable.\n" + str(err)
@@ -3210,7 +3207,7 @@ class DRIVER_SUP_GMSH(DRIVER):
         mesh.Physical(nom, L01)
         try:
             ma = mesh.LIRE_GMSH(UNITE_GMSH=_UL[0], UNITE_MAILLAGE=_UL[1])
-        except aster.error, err:
+        except AsterError as err:
             return self.erreur.Remonte_Erreur(err, [ma], 1)
         except Exception, err:
             texte = "Cette action n'est pas realisable.\n" + str(err)
@@ -3220,7 +3217,7 @@ class DRIVER_SUP_GMSH(DRIVER):
 
         try:
             _MA[INDICE] = COPIER(CONCEPT=ma)
-        except aster.error, err:
+        except AsterError as err:
             return self.erreur.Remonte_Erreur(err, [ma, _MA[INDICE]], 1)
         except Exception, err:
             texte = "Cette action n'est pas realisable.\n" + str(err)

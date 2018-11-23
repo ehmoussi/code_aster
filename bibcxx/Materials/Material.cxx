@@ -77,7 +77,7 @@ void MaterialInstance::addMaterialBehaviour( const GeneralMaterialBehaviourPtr& 
     _vecMatBehaviour.push_back( curMaterBehav );
 };
 
-bool MaterialInstance::build() throw( std::runtime_error ) {
+bool MaterialInstance::build() {
     // Recuperation du nombre de GeneralMaterialBehaviourPtr ajoutes par l'utilisateur
     const int nbMCF = _vecMatBehaviour.size();
     if ( nbMCF != _vectorOfComplexValues.size() || nbMCF != _vectorOfDoubleValues.size() ||

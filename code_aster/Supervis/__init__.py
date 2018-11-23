@@ -25,9 +25,8 @@ objects.
 """
 
 from .CommandSyntax import CommandSyntax
+from .exceptions_ext import (AsterError, ContactError, ConvergenceError,
+                             IntegrationError, SolverError, TimeLimitError)
 from .ExecutionParameter import ExecutionParameter
 from .logger import logger
 from .options import Options
-
-# TODO create a module dedicated to error management
-from Execution.E_Exception import error as CodeAsterError

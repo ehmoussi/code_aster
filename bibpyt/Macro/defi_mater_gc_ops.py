@@ -173,56 +173,29 @@ def Mazars_Unil(DMATER, args):
         MATER['UNITE_CONTRAINTE'] = ''
     # L'ordre dans la liste est important à cause des dépendances des relations
     # Les coefficients FCJ , EIJ, FTJ, EPSI_C doivent déjà être définis
-    listepara = ['NU', 'EPSD0', 'K', 'BT',
-                 'AT', 'BC', 'AC', 'SIGM_LIM', 'EPSI_LIM']
-    for xx in listepara:
-        if (MATER.has_key(xx)):
-            if (MATER[xx] != None):
-                if (xx == 'NU'):
-                    NU = MATER[xx]
-                elif (xx == 'EPSD0'):
-                    EPSD0 = MATER[xx]
-                elif (xx == 'K'):
-                    K = MATER[xx]
-                elif (xx == 'BT'):
-                    BT = MATER[xx]
-                elif (xx == 'AT'):
-                    AT = MATER[xx]
-                elif (xx == 'BC'):
-                    BC = MATER[xx]
-                elif (xx == 'AC'):
-                    AC = MATER[xx]
-                elif (xx == 'SIGM_LIM'):
-                    SIGM_LIM = MATER[xx]
-                elif (xx == 'EPSI_LIM'):
-                    EPSI_LIM = MATER[xx]
-            elif (xx == 'NU'):
-                NU = 0.200
-            elif (xx == 'EPSD0'):
-                EPSD0 = FTJ / EIJ
-            elif (xx == 'K'):
-                K = 0.7
-            elif (xx == 'BT'):
-                BT = EIJ / FTJ
-            elif (xx == 'AT'):
-                AT = 0.90
-            elif (xx == 'BC'):
-                BC = 1.0 / (NU * (2.0 ** 0.5) * EPSI_C)
-            elif (xx == 'AC'):
-                NUB = NU * (2.0 ** 0.5)
-                ECNUB = EPSI_C * NUB
-                AC = (FCJ * NUB / EIJ - EPSD0) / (
-                    ECNUB * NP.exp(BC * EPSD0 - BC * ECNUB) - EPSD0)
-            elif (xx == 'SIGM_LIM'):
-                SIGM_LIM = 0.6 * FCJ
-            elif (xx == 'EPSI_LIM'):
-                EPSI_LIM = 3.5 / 1000.0
+    # Optional keywords
+    def mater_value(name, default):
+        return MATER[name] if MATER.get(name) is not None else default
+
+    NU = mater_value('NU', 0.2)
+    EPSD0 = mater_value('EPSD0', FTJ / EIJ)
+    K = mater_value('K', 0.7)
+    BT = mater_value('BT', EIJ / FTJ)
+    AT = mater_value('AT', 0.90)
+    BC = mater_value('BC', 1.0 / (NU * (2.0 ** 0.5) * EPSI_C))
+    NUB = NU * (2.0 ** 0.5)
+    ECNUB = EPSI_C * NUB
+    AC = mater_value('AC',
+        (FCJ * NUB / EIJ - EPSD0) /
+            (ECNUB * NP.exp(BC * EPSD0 - BC * ECNUB) - EPSD0))
+    SIGM_LIM = mater_value('SIGM_LIM', 0.6 * FCJ)
+    EPSI_LIM = mater_value('EPSI_LIM', 3.5 / 1000.0)
 
     # Mot clef MATER
     mclef = elastic_properties(EIJ, NU, args)
-    mclef[
-        'MAZARS'] = {'K': K, 'EPSD0': EPSD0, 'AC': AC, 'AT': AT, 'BC': BC, 'BT': BT,
-                     'SIGM_LIM': SIGM_LIM, 'EPSI_LIM': EPSI_LIM}
+    mclef['MAZARS'] = {
+        'K': K, 'EPSD0': EPSD0, 'AC': AC, 'AT': AT, 'BC': BC, 'BT': BT,
+        'SIGM_LIM': SIGM_LIM, 'EPSI_LIM': EPSI_LIM}
     #
     # On affiche dans tous les cas
     if (len(MATER['UNITE_CONTRAINTE']) > 0):
@@ -262,27 +235,14 @@ def Acier_Cine_Line(DMATER, args):
     E = MATER['E']
     # Obligatoire SY
     SY = MATER['SY']
-    #
-    listepara = ['D_SIGM_EPSI', 'NU', 'SIGM_LIM', 'EPSI_LIM']
-    for xx in listepara:
-        if (MATER.has_key(xx)):
-            if (MATER[xx] != None):
-                if   ( xx == 'D_SIGM_EPSI' ):
-                    D_SIGM_EPSI = MATER[xx]
-                elif ( xx == 'NU' ):
-                    NU = MATER[xx]
-                elif ( xx == 'SIGM_LIM' ):
-                    SIGM_LIM = MATER[xx]
-                elif ( xx == 'EPSI_LIM' ):
-                    EPSI_LIM = MATER[xx]
-            elif (xx == 'NU'):
-                NU = 0.30
-            elif (xx == 'D_SIGM_EPSI'):
-                D_SIGM_EPSI = E / 1.0E+04
-            elif (xx == 'SIGM_LIM'):
-                SIGM_LIM = SY / 1.1
-            elif (xx == 'EPSI_LIM'):
-                EPSI_LIM = 10.0 / 1000.0
+    # Optional keywords
+    def mater_value(name, default):
+        return MATER[name] if MATER.get(name) is not None else default
+
+    NU = mater_value('NU', 0.3)
+    D_SIGM_EPSI = mater_value('D_SIGM_EPSI', E / 1.0E+04)
+    SIGM_LIM = mater_value('SIGM_LIM', SY / 1.1)
+    EPSI_LIM = mater_value('EPSI_LIM', 10.0 / 1000.0)
 
     # Mot clef MATER
     mclef = elastic_properties(E, NU, args)

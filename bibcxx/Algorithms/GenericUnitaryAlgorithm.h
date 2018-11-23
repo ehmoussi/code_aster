@@ -41,10 +41,10 @@ template < class Stepper > class GenericUnitaryAlgorithm {
     typedef typename Stepper::const_iterator AlgorithmStepperIter;
 
     /** @brief Méthode virtuelle pure nécessaire à l'avancée de l'algorithme */
-    virtual void oneStep() throw( AlgoException & ) = 0;
+    virtual void oneStep() = 0;
 
     /** @typedef Méthode virtuelle pure nécessaire à la préparation d'une étape de l'algo */
-    virtual void prepareStep( AlgorithmStepperIter &curStep ) throw( AlgoException & ) = 0;
+    virtual void prepareStep( AlgorithmStepperIter &curStep ) = 0;
 };
 
 #endif /* GENERICUNITARYALGORITHM_H_ */

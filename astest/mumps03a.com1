@@ -27,7 +27,7 @@
 #   RQ. 3 ALARMES NORMALES SI COMPILE AVEC MUMPS5.0.2, 2 AVEC MUMPS5.1.0
 #########################################################################
 
-POURSUITE()
+POURSUITE(CODE='OUI')
 
 # 3EME CALCUL AVEC MUMPS AVEC CHAR_CINE + METIS + TOUTES LES VALEURS D'ACCELERATIONS
 #------------------------------------------------------------------------------------

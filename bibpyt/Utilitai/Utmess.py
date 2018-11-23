@@ -24,18 +24,11 @@ import sys
 import traceback
 import re
 
-# protection pour eficas
-try:
-    import aster
-    import aster_core
-    from aster import error
-    aster_exists = True
-except:
-    aster_exists = False
+from code_aster import AsterError
 
-    class error(Exception):
-        pass
-
+import libaster
+import aster
+import aster_core
 
 from Messages.context_info import message_context_concept
 from Utilitai.string_utils import cut_long_lines, copy_text_to, clean_string
@@ -118,8 +111,6 @@ class MESSAGE_LOGGER(Singleton):
 
     def init_mpi_error(self):
         """Stocke les informations nécessaires pour la gestion des erreurs en MPI."""
-        if not aster_exists:
-            return
         rank = aster_core.MPI_CommRankSize()[0]
         self._mpi_rank = aster_core._USE_MPI and rank or None
         np   = aster_core.MPI_CommRankSize()[1]
@@ -191,7 +182,7 @@ class MESSAGE_LOGGER(Singleton):
                 exc_typ = dictmess.get('exc_typ')
                 if exc_typ:
                     raise exc_typ(id0, valk, vali, valr)
-                raise error(id0, valk, vali, valr)
+                raise AsterError(id0, valk, vali, valr)
         return None
 
     def build_dict_args(self, valk, vali, valr):
@@ -716,17 +707,11 @@ du calcul ont été sauvées dans la base jusqu'au moment de l'arret."""),
     def affiche(self, unite, txt):
         """Affichage du message"""
         txt = convert(txt)
-        if aster_exists:
-            aster.affiche(unite, txt)
-        else:
-            print txt
+        libaster.affich(unite, txt)
 
     def onFatalError(self):
         """Récupérer le comportement en cas d'erreur fatale."""
-        if aster_exists:
-            return aster.onFatalError()
-        else:
-            return 'EXCEPTION'
+        return libaster.onFatalError()
 
 # could be share elsewhere
 def in_testcase():
@@ -748,18 +733,19 @@ def raise_UTMESS(exc):
     Typical usage:
         try:
             ... code with error ...
-            raise aster.error(id_message, valk, vali, valr)
+            raise AsterError(id_message, valk, vali, valr)
             ... or ...
             lerr = [id_message1, valk1, vali1, valr1]
             lerr.append([id_message2, valk2, vali2, valr2])
-            raise aster.error(lerr)
-        except aster.error, exc:
+            raise AsterError(lerr)
+        except AsterError as exc:
             raise_UTMESS(exc)
 
+    .. todo :: several messages is not yet supported ('related' attribute)
     """
-    for err in exc.related:
-        UTMESS('F+', err.id_message, valk=err.valk,
-               vali=err.vali, valr=err.valr)
+    # for err in exc.related:
+    #     UTMESS('F+', err.id_message, valk=err.valk,
+    #            vali=err.vali, valr=err.valr)
     UTMESS('F', exc.id_message, valk=exc.valk, vali=exc.vali, valr=exc.valr)
 
 
@@ -798,11 +784,11 @@ def ASSERT(condition, message=""):
 
 
 def message_exception(code, exc):
-    """Retourne le message associé à une exception aster.error
+    """Retourne le message associé à une exception `AsterError`
     tel qu'il aurait été imprimé par UTMESS selon la valeur de
     `code` ('I', 'A', 'S', 'F', 'Z'...)."""
-    return MessageLog.GetText(code, exc.id_message,
-                              exc.valk, exc.vali, exc.valr)
+    # check order of args in Exception.cxx
+    return MessageLog.GetText(code, *exc.args)
 
 
 def MasquerAlarme(idmess):

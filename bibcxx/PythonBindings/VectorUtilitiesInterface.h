@@ -2,7 +2,7 @@
 #define VECTORUTILITIES_H_
 
 /**
- * @file VectorUtilities.h
+ * @file VectorUtilitiesInterface.h
  * @brief Utilitaires pour convertir un vector en list et inversement
  * @author Nicolas Sellenet
  * @section LICENCE

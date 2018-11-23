@@ -116,10 +116,10 @@ Documentation of all other types.
 
 
 ********************************************************************************
-:py:class:`~code_aster.Objects.GenericConvergenceError` subclasses
+:py:class:`~code_aster.Objects.GenericEventError` subclasses
 ********************************************************************************
 
-.. autoclass:: code_aster.Objects.GenericConvergenceError
+.. autoclass:: code_aster.Objects.GenericEventError
    :show-inheritance:
    :members:
 
@@ -127,7 +127,7 @@ Documentation of all other types.
    :show-inheritance:
    :members:
 
-.. autoclass:: code_aster.Objects.ConvergenceError
+.. autoclass:: code_aster.Objects.EventError
    :show-inheritance:
    :members:
 
@@ -555,6 +555,35 @@ Documentation of all other types.
    :members:
 
 .. autoclass:: code_aster.Objects.Renumbering
+   :show-inheritance:
+   :members:
+
+
+********************************************************************************
+:py:class:`~code_aster.Objects.Exception` subclasses
+********************************************************************************
+
+.. autoclass:: code_aster.Objects.AsterError
+   :show-inheritance:
+   :members:
+
+.. autoclass:: code_aster.Objects.ContactError
+   :show-inheritance:
+   :members:
+
+.. autoclass:: code_aster.Objects.ConvergenceError
+   :show-inheritance:
+   :members:
+
+.. autoclass:: code_aster.Objects.IntegrationError
+   :show-inheritance:
+   :members:
+
+.. autoclass:: code_aster.Objects.SolverError
+   :show-inheritance:
+   :members:
+
+.. autoclass:: code_aster.Objects.TimeLimitError
    :show-inheritance:
    :members:
 

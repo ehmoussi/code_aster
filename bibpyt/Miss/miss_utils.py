@@ -58,17 +58,6 @@ dict_format = {
 }
 
 
-def get_max_dabsc(fonction):
-    """Retourne le maximum et le pas des abscisses de la fonction."""
-    tfunc = fonction.convert()
-    dx = tfunc.vale_x[1:] - tfunc.vale_x[:-1]
-    dxmax = max(dx)
-    dxmin = min(dx)
-    if abs((dxmax - dxmin) / dxmax) > 1.e-3:
-        raise aster.error('MISS0_9', valk=fonction.nom)
-    return max(tfunc.vale_x), dxmax
-
-
 class MISS_PARAMETER(object):
 
     """Stocke les paramètres nécessaires au calcul à partir des mots-clés.
@@ -159,7 +148,7 @@ class MISS_PARAMETER(object):
         if self['TYPE_RESU'] not in ('CHARGE', ):
             if (self['LIST_FREQ'] is not None and
                     self['TYPE_RESU'] not in ('FICHIER', 'HARM_GENE', 'TABLE_CONTROL')):
-                raise aster.error('MISS0_17')
+                UTMESS('F', 'MISS0_17')
 
             # récupération des infos sur les modes
             if self['BASE_MODALE']:
@@ -319,7 +308,7 @@ def copie_fichier(src, dst):
         try:
             shutil.copyfile(src, dst)
         except:
-            raise aster.error('MISS0_6', valk=(src, dst))
+            UTMESS('F', 'MISS0_6', valk=(src, dst))
 
 def l_coor_sort(l_coor):
     """Tri des coordonnees"""

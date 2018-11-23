@@ -114,26 +114,26 @@ template < class ValueType > class DistributedFlowInstance : public UnitaryTherm
                                                                                  _entity, false ) );
     };
 
-    void setNormalFlow( ValueType val = 0.0 ) throw( std::runtime_error ) {
+    void setNormalFlow( ValueType val = 0.0 ) {
         _fluxn = val;
         _toCapyConverter.add(
             new CapyConvertibleValue< double >( true, "FLUX_REP", _fluxn, false ) );
     };
 
-    void setLowerNormalFlow( ValueType val = 0.0 ) throw( std::runtime_error ) {
+    void setLowerNormalFlow( ValueType val = 0.0 ) {
         _fluxnInf = val;
         _toCapyConverter.add(
             new CapyConvertibleValue< double >( true, "FLUN_INF", _fluxnInf, false ) );
     };
 
-    void setUpperNormalFlow( ValueType val = 0.0 ) throw( std::runtime_error ) {
+    void setUpperNormalFlow( ValueType val = 0.0 ) {
         _fluxnSup = val;
         _toCapyConverter.add(
             new CapyConvertibleValue< double >( true, "FLUN_SUP", _fluxnSup, false ) );
     };
 
     void setFlowXYZ( ValueType valx = 0.0, ValueType valy = 0.0,
-                     ValueType valz = 0.0 ) throw( std::runtime_error ) {
+                     ValueType valz = 0.0 ) {
         _fluxx = valx;
         _fluxy = valy;
         _fluxz = valz;
@@ -171,7 +171,7 @@ template < class ValueType > class NonLinearFlowInstance : public UnitaryThermal
                                                                                  _entity, false ) );
     };
 
-    void setFlow( ValueType val = 0.0 ) throw( std::runtime_error ) {
+    void setFlow( ValueType val = 0.0 ) {
         _fluxn = val;
         _toCapyConverter.add(
             new CapyConvertibleValue< double >( true, "FLUX_NL", _fluxn, false ) );
@@ -207,20 +207,20 @@ template < class ValueType > class ExchangeInstance : public UnitaryThermalLoadI
                                                                                  _entity, false ) );
     };
 
-    void setExchangeCoefficient( ValueType val = 0.0 ) throw( std::runtime_error ) {
+    void setExchangeCoefficient( ValueType val = 0.0 ) {
         _coef_h = val;
         _toCapyConverter.add(
             new CapyConvertibleValue< double >( false, "COEF_H", _coef_h, false ) );
     };
 
-    void setExternalTemperature( ValueType val = 0.0 ) throw( std::runtime_error ) {
+    void setExternalTemperature( ValueType val = 0.0 ) {
         _temp_ext = val;
         _toCapyConverter.add(
             new CapyConvertibleValue< double >( false, "TEMP_EXT", _temp_ext, false ) );
     };
 
     void setExchangeCoefficientInfSup( ValueType val1 = 0.0,
-                                       ValueType val2 = 0.0 ) throw( std::runtime_error ) {
+                                       ValueType val2 = 0.0 ) {
         _coef_h_inf = val1;
         _toCapyConverter.add(
             new CapyConvertibleValue< double >( false, "COEF_H_INF", _coef_h_inf, false ) );
@@ -230,7 +230,7 @@ template < class ValueType > class ExchangeInstance : public UnitaryThermalLoadI
     };
 
     void setExternalTemperatureInfSup( ValueType val1 = 0.0,
-                                       ValueType val2 = 0.0 ) throw( std::runtime_error ) {
+                                       ValueType val2 = 0.0 ) {
         _temp_ext_inf = val1;
         _toCapyConverter.add(
             new CapyConvertibleValue< double >( false, "TEMP_EXT_INF", _temp_ext_inf, false ) );
@@ -263,13 +263,13 @@ template < class ValueType > class ExchangeWallInstance : public UnitaryThermalL
      */
     ExchangeWallInstance( ValueType val = 20.0 ) : _coef_h( val ){};
 
-    void setExchangeCoefficient( ValueType val = 0.0 ) throw( std::runtime_error ) {
+    void setExchangeCoefficient( ValueType val = 0.0 ) {
         _coef_h = val;
         _toCapyConverter.add(
             new CapyConvertibleValue< double >( true, "COEF_H", _coef_h, false ) );
     };
 
-    void setTranslation( const VectorDouble &vec ) throw( std::runtime_error ) {
+    void setTranslation( const VectorDouble &vec ) {
         _tran = vec;
         _toCapyConverter.add(
             new CapyConvertibleValue< VectorDouble >( false, "TRAN", _tran, false ) );
@@ -307,7 +307,7 @@ template < class ValueType > class SourceInstance : public UnitaryThermalLoadIns
      */
     SourceInstance( ValueType val = 0.0 ) : _source( val ){};
 
-    void setSource( ValueType val = 0.0 ) throw( std::runtime_error ) {
+    void setSource( ValueType val = 0.0 ) {
         _source = val;
         _toCapyConverter.add( new CapyConvertibleValue< double >( true, "SOUR", _source, false ) );
     };
@@ -341,7 +341,7 @@ template < class ValueType > class NonLinearSourceInstance : public UnitaryTherm
      */
     NonLinearSourceInstance( ValueType val = 0.0 ) : _source( val ){};
 
-    void setSource( ValueType val = 0.0 ) throw( std::runtime_error ) {
+    void setSource( ValueType val = 0.0 ) {
         _source = val;
         _toCapyConverter.add( new CapyConvertibleValue< double >( true, "SOUR", _source, false ) );
     };
@@ -376,19 +376,19 @@ template < class ValueType > class ThermalRadiationInstance : public UnitaryTher
     ThermalRadiationInstance( ValueType val1 = 20.0, ValueType val2 = 1.0, ValueType val3 = 15.0 )
         : _sigma( val1 ), _epsilon( val2 ), _temp_ext( val3 ){};
 
-    void setExternalTemperature( ValueType val = 20.0 ) throw( std::runtime_error ) {
+    void setExternalTemperature( ValueType val = 20.0 ) {
         _temp_ext = val;
         _toCapyConverter.add(
             new CapyConvertibleValue< double >( true, "TEMP_EXT", _temp_ext, false ) );
     };
 
-    void setEpsilon( ValueType val = 0.0 ) throw( std::runtime_error ) {
+    void setEpsilon( ValueType val = 0.0 ) {
         _epsilon = val;
         _toCapyConverter.add(
             new CapyConvertibleValue< double >( true, "EPSILON", _epsilon, false ) );
     };
 
-    void setSigma( ValueType val = 5.67e-8 ) throw( std::runtime_error ) {
+    void setSigma( ValueType val = 5.67e-8 ) {
         _sigma = val;
         _toCapyConverter.add( new CapyConvertibleValue< double >( true, "SIGMA", _sigma, false ) );
     };
@@ -424,7 +424,7 @@ template < class ValueType > class ThermalGradientInstance : public UnitaryTherm
         : _fluxx( val1 ), _fluxy( val2 ), _fluxz( val3 ){};
 
     void setFlowXYZ( ValueType valx = 0.0, ValueType valy = 0.0,
-                     ValueType valz = 0.0 ) throw( std::runtime_error ) {
+                     ValueType valz = 0.0 ) {
         _fluxx = valx;
         _fluxy = valy;
         _fluxz = valz;

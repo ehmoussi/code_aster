@@ -469,7 +469,7 @@ template < class ValueType, PhysicalQuantityEnum PhysicalQuantity > class Physic
         return true;
     }
 
-    void setValue( PhysicalQuantityComponent comp, QuantityType val ) throw( std::runtime_error ) {
+    void setValue( PhysicalQuantityComponent comp, QuantityType val ) {
         if ( !hasComponent( comp ) ) {
             throw std::runtime_error(
                 "This component is not allowed for the current Physical Quantity" );

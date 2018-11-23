@@ -163,7 +163,7 @@ class CalculMiss(object):
             aster.affiche("MESSAGE", miss_out)
         if not is_ok:
             UTMESS('I', 'EXECLOGICIEL0_10', valk=error, print_as='E')
-            raise aster.error('EXECLOGICIEL0_3', vali=[0, iret])
+            UTMESS('F', 'EXECLOGICIEL0_3', vali=[0, iret])
         self._dbg_trace("Stop")
 
     def post_traitement(self):

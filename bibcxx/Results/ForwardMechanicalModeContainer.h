@@ -55,7 +55,7 @@ class ForwardMechanicalModeContainerPtr {
 
     void operator=( const MechanicalModeContainerPtr &ptr );
 
-    MechanicalModeContainerPtr getPointer() throw( std::runtime_error );
+    MechanicalModeContainerPtr getPointer();
 
     bool isSet() const;
 

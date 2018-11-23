@@ -147,7 +147,7 @@ class DrivingInstance {
     /**
     @brief addObservationGroupOfNodes
     */
-    void addObservationGroupOfNodes( const std::string &name ) throw( std::runtime_error ) {
+    void addObservationGroupOfNodes( const std::string &name ) {
         if ( ( _type == MonotonicStrain ) || ( _type == ElasticityLimit ) )
             throw std::runtime_error( "Group of Nodes are not allowed with this type of driving" );
         _zone = MeshEntityPtr( new GroupOfNodes( name ) );
@@ -159,7 +159,7 @@ class DrivingInstance {
      * @brief Restriction de la zone de pilotage à une groupe de mailles
      * par défaut la zone de pilotage inclut tout le modèle
      */
-    void addObservationGroupOfElements( const std::string &name ) throw( std::runtime_error ) {
+    void addObservationGroupOfElements( const std::string &name ) {
         if ( ( _type == DisplacementValue ) || ( _type == DisplacementNorm ) ||
              ( _type == JumpOnCrackValue ) || ( _type == JumpOnCrackNorm ) )
             throw std::runtime_error(
@@ -172,7 +172,7 @@ class DrivingInstance {
     /**
      * @brief définition d'une direction de pilotage sur une fissure XFEM
     */
-    void setDrivingDirectionOnCrack( UnitVectorEnum dir ) throw( std::runtime_error ) {
+    void setDrivingDirectionOnCrack( UnitVectorEnum dir ) {
         if ( ( _type == DisplacementValue ) || ( _type == DisplacementNorm ) ||
              ( _type == MonotonicStrain ) )
             throw std::runtime_error(

@@ -19,7 +19,7 @@
 
 # person_in_charge: mathieu.courtois@edf.fr
 
-import aster
+import libaster
 
 from ..Supervis import ExecutionParameter, logger
 from ..RunManager import saveObjects
@@ -34,7 +34,7 @@ def FIN(**keywords):
         keywords (dict): Ignored
     """
     # Ensure that `saveObjects` has not been already called
-    if aster.jeveux_status():
+    if libaster.jeveux_status():
         saveObjects(level=2)
 
     logger.info(repr(ExecutionParameter().timer))

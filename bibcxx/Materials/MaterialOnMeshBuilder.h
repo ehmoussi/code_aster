@@ -26,10 +26,10 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include <stdexcept>
-#include "astercxx.h"
-#include "Materials/MaterialOnMesh.h"
 #include "Materials/InputVariableDefinition.h"
+#include "Materials/MaterialOnMesh.h"
+#include "astercxx.h"
+#include <stdexcept>
 
 /**
  * @class MaterialOnMeshBuilderInstance
@@ -44,9 +44,8 @@ class MaterialOnMeshBuilderInstance : public DataStructure {
      * @param curMater Material to build
      * @param curInputVariables Input variables to add in MaterialOnMeshPtr
      */
-    static void buildInstance(
-        MaterialOnMeshInstance &curMater,
-        const InputVariableOnMeshPtr &curInputVariables = nullptr ) throw( std::runtime_error );
+    static void buildInstance( MaterialOnMeshInstance &curMater,
+                               const InputVariableOnMeshPtr &curInputVariables = nullptr );
 
   public:
     /**
@@ -60,9 +59,8 @@ class MaterialOnMeshBuilderInstance : public DataStructure {
      * @param curMater Material to build
      * @param curInputVariables Input variables to add in MaterialOnMeshPtr
      */
-    static MaterialOnMeshPtr
-    build( MaterialOnMeshPtr &curMater,
-           const InputVariableOnMeshPtr &curInputVariables = nullptr ) throw( std::runtime_error );
+    static MaterialOnMeshPtr build( MaterialOnMeshPtr &curMater,
+                                    const InputVariableOnMeshPtr &curInputVariables = nullptr );
 };
 
 #endif /* MATERIALONMESHBUILDER_H_ */

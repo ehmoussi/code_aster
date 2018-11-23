@@ -163,7 +163,7 @@ class GenericModalBasisInstance : public DataStructure {
     std::vector< UnitaryModalBasis > _vectorOfModalBasis;
 
   public:
-    bool build() throw( std::runtime_error );
+    bool build() ;
 
     void setLinearSolver( const BaseLinearSolverPtr &solver ) { _solver = solver; };
 };
@@ -239,21 +239,21 @@ class RitzBasisInstance : public GenericModalBasisInstance {
     };
 
     void addModalBasis( const GenericModalBasisPtr &basis,
-                        const VectorInt &vecOfInt = {} ) throw( std::runtime_error ) {
+                        const VectorInt &vecOfInt = {} ) {
         if ( _vectorOfModalBasis.size() == 2 )
             throw std::runtime_error( "Only 2 basis allowed" );
         _vectorOfModalBasis.emplace_back( "RITZ", basis, vecOfInt );
     };
 
     void addModalBasis( const VectorOfMechaModePtr &vecOfMechaMode,
-                        const VectorInt &vecOfInt = {} ) throw( std::runtime_error ) {
+                        const VectorInt &vecOfInt = {} ) {
         if ( _vectorOfModalBasis.size() == 2 )
             throw std::runtime_error( "Only 2 basis allowed" );
         _vectorOfModalBasis.emplace_back( "RITZ", vecOfMechaMode, vecOfInt );
     };
 
     void addModalBasis( const MechanicalModeContainerPtr &interf,
-                        const VectorInt &vecOfInt = {} ) throw( std::runtime_error ) {
+                        const VectorInt &vecOfInt = {} ) {
         if ( _vectorOfModalBasis.size() == 2 )
             throw std::runtime_error( "Only 2 basis allowed" );
         _vectorOfModalBasis.emplace_back( "RITZ", interf, vecOfInt );

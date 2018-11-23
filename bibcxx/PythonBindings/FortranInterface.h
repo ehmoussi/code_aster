@@ -1,10 +1,10 @@
-#ifndef FAILURECONVERGENCEMANAGERINTERFACE_H_
-#define FAILURECONVERGENCEMANAGERINTERFACE_H_
+#ifndef FORTRANINTERFACE_H_
+#define FORTRANINTERFACE_H_
 
 /**
- * @file FailureConvergenceManagerInterface.h
- * @brief Fichier entete de la classe FailureConvergenceManagerInterface
- * @author Nicolas Sellenet
+ * @file FortranInterface.cxx
+ * @brief Python bindings for Fortran interface.
+ * @author Mathieu Courtois
  * @section LICENCE
  *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
  *
@@ -24,9 +24,12 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/* person_in_charge: mathieu.courtois@edf.fr */
+
 #include "astercxx.h"
-#include "Studies/FailureConvergenceManager.h"
+#include "shared_vars.h"
+#include "RunManager/Fortran.h"
 
-void exportFailureConvergenceManagerToPython();
+void exportFortranToPython();
 
-#endif /* FAILURECONVERGENCEMANAGERINTERFACE_H_ */
+#endif /* FORTRANINTERFACE_H_ */

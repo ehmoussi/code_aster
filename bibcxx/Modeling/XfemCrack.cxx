@@ -58,7 +58,7 @@ XfemCrackInstance::XfemCrackInstance( const std::string name, MeshPtr supportMes
 XfemCrackInstance::XfemCrackInstance( MeshPtr supportMesh )
     : XfemCrackInstance( ResultNaming::getNewResultName(), supportMesh ){};
 
-bool XfemCrackInstance::build() throw( std::runtime_error ) {
+bool XfemCrackInstance::build() {
     CommandSyntax cmdSt( "DEFI_FISS_XFEM" );
     cmdSt.setResult( ResultNaming::getCurrentName(), "FISS_XFEM" );
 
@@ -190,7 +190,7 @@ bool XfemCrackInstance::build() throw( std::runtime_error ) {
     return true;
 };
 
-ModelPtr XfemCrackInstance::enrichModelWithXfem( ModelPtr &baseModel ) throw( std::runtime_error ) {
+ModelPtr XfemCrackInstance::enrichModelWithXfem( ModelPtr &baseModel ) {
     CommandSyntax cmdSt( "MODI_MODELE_XFEM" );
 
     // Create empty model and get its name

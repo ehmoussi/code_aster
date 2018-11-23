@@ -582,7 +582,7 @@ implicit none
 !
     if (istop .eq. 1) then
         call utmess('Z', 'DYNAMIQUE_10', ni=2, vali=vali, nr=2,&
-                    valr=valr, num_except=28)
+                    valr=valr, num_except=TIMELIMIT_ERROR)
     endif
 !
 !     --- DESTRUCTION DES OBJETS DE TRAVAIL ---

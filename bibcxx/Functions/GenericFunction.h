@@ -58,12 +58,12 @@ class GenericFunctionInstance : public DataStructure {
     /**
      * @brief Return the number of points of the function
      */
-    virtual ASTERINTEGER maximumSize() const throw( std::runtime_error ) { return 0; };
+    virtual ASTERINTEGER maximumSize() const { return 0; };
 
     /**
      * @brief Return the number of points of the function
      */
-    virtual ASTERINTEGER size() const throw( std::runtime_error ) { return 0; };
+    virtual ASTERINTEGER size() const { return 0; };
 };
 
 /**

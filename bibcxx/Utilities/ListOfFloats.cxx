@@ -25,7 +25,7 @@
 
 #include "Utilities/ListOfFloats.h"
 
-VectorDouble ListOfFloatsInstance::getValues() const throw( std::runtime_error ) {
+VectorDouble ListOfFloatsInstance::getValues() const {
     if ( !_vale->exists() )
         throw std::runtime_error( "No list of values in ListOfFloats" );
 
@@ -37,7 +37,7 @@ VectorDouble ListOfFloatsInstance::getValues() const throw( std::runtime_error )
     return toReturn;
 };
 
-void ListOfFloatsInstance::setVectorValues( const VectorDouble &vec ) throw( std::runtime_error ) {
+void ListOfFloatsInstance::setVectorValues( const VectorDouble &vec ) {
     ( *_vale ) = vec;
 };
 

@@ -91,7 +91,7 @@ struct PhysicsChecker {
      * @brief Fonction statique verifiant qu'une paire physique modelisation est autorisee
      */
     static bool isAllowedModelingForPhysics( Physics phys,
-                                             Modelings model ) throw( std::runtime_error ) {
+                                             Modelings model ) {
         switch ( phys ) {
         case Mechanics:
             return MechanicsModelingsChecker::isAllowedModeling( model );

@@ -41,7 +41,7 @@ StaticNonLinearAnalysisInstance::StaticNonLinearAnalysisInstance()
 /** @brief main routine to run a static, nonlinear analysis
  */
 NonLinearEvolutionContainerPtr
-StaticNonLinearAnalysisInstance::execute() throw( std::runtime_error ) {
+StaticNonLinearAnalysisInstance::execute() {
     // cmdSNL is the command Syntax object associated to Code_Aster STAT_NON_LINE command
     CommandSyntax cmdSNL( "STAT_NON_LINE" );
     // Init name of result
@@ -49,7 +49,7 @@ StaticNonLinearAnalysisInstance::execute() throw( std::runtime_error ) {
     cmdSNL.setResult( resultSNL->getName(), "STAT_NON_LINE" );
     // Build a dictionnary of keywords/values used to define the command syntax object
     SyntaxMapContainer dict;
-    //
+
     if ( !_supportModel )
         throw std::runtime_error( "Support model is undefined" );
     dict.container["MODELE"] = _supportModel->getName();
@@ -100,7 +100,7 @@ StaticNonLinearAnalysisInstance::execute() throw( std::runtime_error ) {
             behaviourFKW.addContainer( toAdd );
         }
     }
-    //
+
     behaviourSyntax.addFactorKeywordValues( behaviourFKW );
     SyntaxMapContainer behaviourTest = behaviourSyntax.toSyntaxMapContainer();
     // On ajoute le SyntaxMapContainer résultant du parcours de la liste des

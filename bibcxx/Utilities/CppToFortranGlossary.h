@@ -72,7 +72,7 @@ class Glossary {
      * @return une valeur dans l'enum PhysicalQuantityComponent
      */
     PhysicalQuantityComponent getComponent( std::string searchComp ) const
-        throw( std::runtime_error ) {
+        {
         MapStrIntIter curIter = _strToInt.find( searchComp );
         if ( curIter == _strToInt.end() )
             throw std::runtime_error( "Unknown component" );
@@ -83,7 +83,7 @@ class Glossary {
      * @brief getIterativeSolverAlgorithm
      */
     IterativeSolverAlgorithm getIterativeSolverAlgorithm( std::string searchMod ) const
-        throw( std::runtime_error ) {
+        {
         MapStrIntIter curIter = _algo.find( searchMod );
         if ( curIter == _algo.end() )
             throw std::runtime_error( "Unknown iterative solver algorithm" );
@@ -94,7 +94,7 @@ class Glossary {
      * @brief getLagrangeTreatment
      */
     LagrangeTreatment getLagrangeTreatment( std::string searchMod ) const
-        throw( std::runtime_error ) {
+        {
         MapStrIntIter curIter = _lagrTreatment.find( searchMod );
         if ( curIter == _lagrTreatment.end() )
             throw std::runtime_error( "Unknown Lagrange treatment" );
@@ -104,7 +104,7 @@ class Glossary {
     /**
      * @brief getMatrixType
      */
-    MatrixType getMatrixType( std::string searchMod ) const throw( std::runtime_error ) {
+    MatrixType getMatrixType( std::string searchMod ) const {
         MapStrIntIter curIter = _matrTyp.find( searchMod );
         if ( curIter == _matrTyp.end() )
             throw std::runtime_error( "Unknown matrix type" );
@@ -115,7 +115,7 @@ class Glossary {
      * @brief getMemoryManagement
      */
     MemoryManagement getMemoryManagement( std::string searchMod ) const
-        throw( std::runtime_error ) {
+        {
         MapStrIntIter curIter = _memManagement.find( searchMod );
         if ( curIter == _memManagement.end() )
             throw std::runtime_error( "Unknown memory management" );
@@ -127,7 +127,7 @@ class Glossary {
      * @param searchMod Nom d'une physique dans le fichier de commande
      * @return une valeur dans l'enum Modelings
      */
-    Modelings getModeling( std::string searchMod ) const throw( std::runtime_error ) {
+    Modelings getModeling( std::string searchMod ) const {
         MapStrIntIter curIter = _strToInt.find( searchMod );
         if ( curIter == _strToInt.end() )
             throw std::runtime_error( "Unknown modeling" );
@@ -138,7 +138,7 @@ class Glossary {
      * @brief getMumpsAcceleration
      */
     MumpsAcceleration getMumpsAcceleration( std::string searchMod ) const
-        throw( std::runtime_error ) {
+        {
         MapStrIntIter curIter = _acce.find( searchMod );
         if ( curIter == _acce.end() )
             throw std::runtime_error( "Unknown acceleration" );
@@ -149,7 +149,7 @@ class Glossary {
      * @brief getMumpsPostTreatment
      */
     MumpsPostTreatment getMumpsPostTreatment( std::string searchMod ) const
-        throw( std::runtime_error ) {
+        {
         MapStrIntIter curIter = _post.find( searchMod );
         if ( curIter == _post.end() )
             throw std::runtime_error( "Unknown post treatment" );
@@ -161,7 +161,7 @@ class Glossary {
      * @param searchPhysics Nom d'une physique dans le fichier de commande
      * @return une valeur dans l'enum Physics
      */
-    Physics getPhysics( std::string searchPhysics ) const throw( std::runtime_error ) {
+    Physics getPhysics( std::string searchPhysics ) const {
         MapStrIntIter curIter = _strToInt.find( searchPhysics );
         if ( curIter == _strToInt.end() )
             throw std::runtime_error( "Unknown physics" );
@@ -173,7 +173,7 @@ class Glossary {
      * @param searchRenum Nom d'un solveur dans le fichier de commande
      * @return une valeur dans l'enum Renumbering
      */
-    Renumbering getRenumbering( std::string searchRenum ) const throw( std::runtime_error ) {
+    Renumbering getRenumbering( std::string searchRenum ) const {
         MapStrIntIter curIter = _renum.find( searchRenum );
         if ( curIter == _renum.end() )
             throw std::runtime_error( "Unknown renumbering" );
@@ -186,7 +186,7 @@ class Glossary {
      * @return une valeur dans l'enum Preconditioning
      */
     Preconditioning getPreconditioning( std::string searchPrecond ) const
-        throw( std::runtime_error ) {
+        {
         MapStrIntIter curIter = _precond.find( searchPrecond );
         if ( curIter == _precond.end() )
             throw std::runtime_error( "Unknown preconditioning" );
@@ -198,7 +198,7 @@ class Glossary {
      * @param searchSol Nom d'un solveur dans le fichier de commande
      * @return une valeur dans l'enum LinearSolverEnum
      */
-    LinearSolverEnum getSolver( std::string searchSol ) const throw( std::runtime_error ) {
+    LinearSolverEnum getSolver( std::string searchSol ) const {
         MapStrIntIter curIter = _strToInt.find( searchSol );
         if ( curIter == _strToInt.end() )
             throw std::runtime_error( "Unknown linear solver" );

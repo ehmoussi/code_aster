@@ -161,7 +161,7 @@ class AssemblyMatrixInstance : public DataStructure {
     /**
      * @brief Assemblage de la matrice
      */
-    bool build() throw( std::runtime_error );
+    bool build() ;
 
     /**
      * @brief Clear all ElementaryMatrixPtr
@@ -181,7 +181,7 @@ class AssemblyMatrixInstance : public DataStructure {
      * @brief Get support MaterialOnMesh
      * @return MaterialOnMesh of the first ElementaryMatrix (all others must be the same)
      */
-    MaterialOnMeshPtr getMaterialOnMesh() const throw( std::runtime_error )
+    MaterialOnMeshPtr getMaterialOnMesh() const
     {
         if ( _elemMatrix.size() != 0 )
             return _elemMatrix[0]->getMaterialOnMesh();
@@ -192,7 +192,7 @@ class AssemblyMatrixInstance : public DataStructure {
      * @brief Get the number of defined ElementaryMatrix
      * @return size of vector containing ElementaryMatrix
      */
-    int getNumberOfElementaryMatrix() const throw( std::runtime_error )
+    int getNumberOfElementaryMatrix() const
     {
         return _elemMatrix.size();
     };
@@ -203,7 +203,7 @@ class AssemblyMatrixInstance : public DataStructure {
      * @brief Conversion to petsc4py
      * @return converted matrix
      */
-    Mat toPetsc4py() throw( std::runtime_error );
+    Mat toPetsc4py() ;
 #endif
 #endif
 
@@ -322,7 +322,7 @@ AssemblyMatrixInstance< ValueType, PhysicalQuantity >::AssemblyMatrixInstance(
       _listOfLoads( ListOfLoadsPtr( new ListOfLoadsInstance() ) ){};
 
 template < class ValueType, PhysicalQuantityEnum PhysicalQuantity >
-bool AssemblyMatrixInstance< ValueType, PhysicalQuantity >::build() throw( std::runtime_error ) {
+bool AssemblyMatrixInstance< ValueType, PhysicalQuantity >::build() {
     if ( _dofNum->isEmpty() )
         throw std::runtime_error( "Numbering is empty" );
 
@@ -358,7 +358,7 @@ bool AssemblyMatrixInstance< ValueType, PhysicalQuantity >::build() throw( std::
 
 template < class ValueType, PhysicalQuantityEnum PhysicalQuantity >
 Mat
-AssemblyMatrixInstance< ValueType, PhysicalQuantity >::toPetsc4py() throw( std::runtime_error ) {
+AssemblyMatrixInstance< ValueType, PhysicalQuantity >::toPetsc4py() {
     Mat myMat;
     PetscErrorCode ierr;
 
