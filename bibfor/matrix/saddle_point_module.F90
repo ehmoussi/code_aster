@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 2016 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 2016 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -76,7 +76,8 @@ subroutine convert_mat_to_saddle_point( matrasse, a_mat )
    ! Récupération du communicateur MPI
    call asmpi_comm('GET', mpicomm)
    ! Init Saddle Point Context
-   sp_context = new_saddle_point_context( matrasse, a_mat )
+   sp_context = new_saddle_point_context( matrasse, distributed_data, &
+                a_mat )
    !
    ! The old matrix and the new one  shall have the same
    ! (global and local) sizes

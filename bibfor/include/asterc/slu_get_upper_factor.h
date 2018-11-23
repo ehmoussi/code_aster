@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,21 +17,13 @@
 ! --------------------------------------------------------------------
 
 !
-#include "asterf_types.h"
-#include "asterf_petsc.h"
-
+!
 interface
-   function check_nullbasis( vec_c, mat_z, tol )
-# ifdef _HAVE_PETSC
-       use aster_petsc_module
-       Vec, intent(in) :: vec_c
-       Mat, intent(in) :: mat_z
-       PetscScalar, optional, intent(in)  :: tol
-# else
-       integer, intent(in) :: vec_c
-       integer, intent(in) :: mat_z
-       real(kind=8), optional, intent(in) :: tol
-# endif
-       aster_logical       :: check_nullbasis
-   end function check_nullbasis
+    subroutine slu_get_upper_factor( f_factors, values, rowind, colptr, info )
+        integer                       :: f_factors
+        real(kind=8)   :: values(*)
+        integer(kind=4):: rowind(*)
+        integer(kind=4):: colptr(*)
+        integer(kind=4):: info
+    end subroutine slu_get_upper_factor
 end interface

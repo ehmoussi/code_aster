@@ -18,7 +18,7 @@
 
 subroutine detrsd(typesd, nomsd)
 !
-use elim_lagr_data_module
+use elg_data_module
 !
 implicit none
 !

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -27,18 +27,12 @@ MATER=DEFI_MATERIAU(  ELAS=_F(  E = 1.,      NU = 0.2) )
 CHMAT=AFFE_MATERIAU(  MAILLAGE=MAILL, AFFE=_F(  TOUT = 'OUI',   MATER = MATER) )
 
 MODEL=AFFE_MODELE(  MAILLAGE=MAILL,
-                    AFFE= _F(TOUT='OUI',  MODELISATION = 'D_PLAN', PHENOMENE = 'MECANIQUE'))
+                    AFFE= _F(TOUT='OUI',  MODELISATION = 'D_PLAN', PHENOMENE = 'MECANIQUE'),
+                    DISTRIBUTION=_F(METHODE='CENTRALISE'),
+                 )
 
 LINST=DEFI_LIST_REEL(VALE=(0. , 1.))
 
-# valeurs ne non-regression :
-vcalc=[
-  2.77142857143,  2.77142857143,  2.77142857143,  2.77142857143,  2.77142857143,  2.77142857143,
-  2.77142829771,  2.77142829771,  2.77142857143,  2.77142857143,  2.77142857143,  2.77142857143,
-  2.77142857143,  2.77142857143,  2.45714285714,  2.45714285714,  2.45714285714,  2.45714285714,
-  2.45714285714,  2.45714285714,  2.45714286707,  2.45714286707,  2.45714285714,  2.45714285714,
-  2.45714285714,  2.45714285714,  2.45714285714,  2.45714285714,
-  ]
 
 
 ico=-1
@@ -48,11 +42,15 @@ for czero in (False, True,) :
          c2=0.
          c3=0.
          c4=0.
+# valeur de non-regression
+         vcalc=2.45714285714; 
       else :
          c1=1.1
          c2=2.2
          c3=3.3
          c4=4.4
+# valeur de non-regression
+         vcalc=2.77142857143;
 
 
       CHAR1=AFFE_CHAR_MECA(MODELE=MODEL,
@@ -74,7 +72,7 @@ for czero in (False, True,) :
                                       RESULTAT = REREF1, NUME_ORDRE=1, NOM_CHAM='DEPL', NOM_CMP = 'DY' ))
          VREF=TN1['DY',1]
 
-         for method1 in ('MUMPS', 'MULT_FRONT', 'LDLT', 'PETSC', 'GCPC') :
+         for method1 in ('MUMPS', 'LDLT', 'PETSC', 'GCPC') :
             for precond in (' ', 'LDLT_SP', 'LDLT_INC',) :
                # precond n'est utile que pour les methodes iteratives :
                if method1 in ('PETSC', 'GCPC') :
@@ -97,10 +95,9 @@ for czero in (False, True,) :
                          SOLVEUR=solv1,
                          EXCIT=_F(CHARGE = CHAR1))
 
-                  ico+=1
                   TEST_RESU(RESU=_F(NUME_ORDRE=1, NOEUD='N3', RESULTAT=RESU1b,  NOM_CHAM='DEPL', NOM_CMP='DY',
                                   REFERENCE='AUTRE_ASTER', VALE_REFE=VREF ,
-                                  VALE_CALC=vcalc[ico], TOLE_MACHINE=3.e-7))
+                                  VALE_CALC=vcalc))
 
                   DETRUIRE(CONCEPT=_F(NOM=RESU1b),INFO=1,)
 
@@ -113,10 +110,9 @@ for czero in (False, True,) :
                         COMPORTEMENT=_F(RELATION='ELAS',), INCREMENT=_F(LIST_INST=LINST,),
                         EXCIT=(_F(CHARGE = CHAR1),  ))
 
-                  ico+=1
                   TEST_RESU(RESU=_F(NUME_ORDRE=1, NOEUD='N3', RESULTAT=RESU3a,  NOM_CHAM='DEPL', NOM_CMP='DY',
                               REFERENCE='AUTRE_ASTER', VALE_REFE=VREF ,
-                              VALE_CALC=vcalc[ico], TOLE_MACHINE=3.e-7))
+                              VALE_CALC=vcalc))
 
                   DETRUIRE(CONCEPT=_F(NOM=RESU3a),INFO=1,)
 
