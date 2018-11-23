@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -404,7 +404,7 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
            NOM_PARA='TOUTRESU',
            TABLE=MXHEXA,
            FILTRE=(_F(NOM_PARA='FONCTION',
-                      VALE_K='ABSHEXA',),
+                      VALE_K='0000001a',),
                    _F(NOM_PARA='TYPE',
                       VALE_K='MAXI',),
                    ),
@@ -417,7 +417,7 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
            NOM_PARA='ETA_PILO',
            TABLE=MXDIFF,
            FILTRE=(_F(NOM_PARA='FONCTION',
-                      VALE_K='ABSDIFF',),
+                      VALE_K='0000001c',),
                    _F(NOM_PARA='TYPE',
                       VALE_K='MAXI',),
                    ),
