@@ -150,13 +150,14 @@ def combinaison_ferraillage_ops(self, **args):
          TYPE_MAXI = 'MAXI',
          TYPE_RESU = 'INST',
         TOUT_ORDRE = 'OUI',
-    );
+    )
 
-    # Adding the field 'FERRAILLAGE' (steel reinforcement) to the MULTI_ELAS result, for all load cases
-    #	 MULTI_ELAS completed by the steel reinforcement field is the OUTPUT of the COMBINAISON_FERRAILLAGE
-    #	 NOTA BENE : CREA_RESU cannot complete the existing NOM_CAS/NUME_ORDRE, it adds new NUME_ORDRE
-    #	 			 see crtype.f90 call rsorac.f90
-    # 	Here we also test CALC_FERRAILLAGE (non-regression), can become analytical
+    # Adding the field 'FERRAILLAGE' (steel reinforcement) to the MULTI_ELAS result,
+    # for all load cases
+    # MULTI_ELAS completed by the steel reinforcement field is the OUTPUT of the COMBINAISON_FERRAILLAGE
+    # NOTA BENE : CREA_RESU cannot complete the existing NOM_CAS/NUME_ORDRE, it adds new NUME_ORDRE
+    #                  see crtype.f90 call rsorac.f90
+    #     Here we also test CALC_FERRAILLAGE (non-regression), can become analytical
     # By Luca
 
     # Build result type EVOL_ELAS from MULTI_ELAS and combo type list in order
@@ -230,37 +231,37 @@ def combinaison_ferraillage_ops(self, **args):
     # Adding COMB_DIME_ACIER and COMB_DIME_ORDRE tu resu
     #
     resu = CREA_RESU(
-					reuse = resu,
-					RESULTAT = resu,
-					OPERATION = 'AFFE',
-					TYPE_RESU = 'MULT_ELAS' ,
-					NOM_CHAM = 'FERRAILLAGE',
-					AFFE = (
-							_F(
-							 NOM_CAS = 'COMB_DIME_ACIER',
-							 CHAM_GD = __maxifer,
-							 MODELE = modele,
-							 CARA_ELEM = caraelem,
-								),
-						),)
+                    reuse = resu,
+                    RESULTAT = resu,
+                    OPERATION = 'AFFE',
+                    TYPE_RESU = 'MULT_ELAS' ,
+                    NOM_CHAM = 'FERRAILLAGE',
+                    AFFE = (
+                            _F(
+                             NOM_CAS = 'COMB_DIME_ACIER',
+                             CHAM_GD = __maxifer,
+                             MODELE = modele,
+                             CARA_ELEM = caraelem,
+                                ),
+                        ),)
 
     # Adding COMB_DIME_ACIER and COMB_DIME_ORDRE tu resu
     #
     resu = CREA_RESU(
-					reuse = resu,
-					RESULTAT = resu,
-					OPERATION = 'AFFE',
-					TYPE_RESU = 'MULT_ELAS' ,
-					NOM_CHAM = 'UT01_ELEM',
-					AFFE = (
-							_F(
-							 NOM_CAS = 'COMB_DIME_ORDRE',
-							 # CHAM_GD = __instfer,
-							 CHAM_GD = __CHORD4,
-							 MODELE = modele,
-							 CARA_ELEM = caraelem,
-								),
-						),)
+                    reuse = resu,
+                    RESULTAT = resu,
+                    OPERATION = 'AFFE',
+                    TYPE_RESU = 'MULT_ELAS' ,
+                    NOM_CHAM = 'UT01_ELEM',
+                    AFFE = (
+                            _F(
+                             NOM_CAS = 'COMB_DIME_ORDRE',
+                             # CHAM_GD = __instfer,
+                             CHAM_GD = __CHORD4,
+                             MODELE = modele,
+                             CARA_ELEM = caraelem,
+                                ),
+                        ),)
 
     nc = resu.LIST_VARI_ACCES()['NOM_CAS']
 
@@ -364,7 +365,7 @@ def lstInst(ncas, comb, resultat):
         for idx_combo, val_combo in enumerate( lst_combo ):
 
             # type combo list couple with instant
-            type_combo [idx_shift] = i_combo.get('TYPE');
+            type_combo [idx_shift] = i_combo.get('TYPE')
 
             if key_name_combo == 'NUME_ORDRE':
                 inst = val_combo
@@ -413,7 +414,7 @@ def evolElasFromMulti(ncas, comb, lst_inst_value, resu, modele, caraelem):
         for idx_combo, val_combo in enumerate( lst_combo ):
 
             # type combo list couple with instant
-            # type_combo [idx_shift] = i_combo.get('TYPE');
+            # type_combo [idx_shift] = i_combo.get('TYPE')
 
             dic_idx_combo = { key_name_combo : val_combo }
 

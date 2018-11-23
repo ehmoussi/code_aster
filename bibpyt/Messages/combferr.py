@@ -34,7 +34,7 @@ cata_msg = {
 """),
 
 3 : _(u"""
- -> Vous avez demandé ....................... TYPE_STRUCTURE = "POUTEAU"
+ -> Vous avez demandé ....................... TYPE_STRUCTURE = "POTEAU"
  -> En cette version la seule valeur disponible est "2D". Le calcul pour
     ne sera pas effectué pour les autres valeurs.
 """),
@@ -48,15 +48,15 @@ cata_msg = {
 """),
 
 6 : _(u"""
- -> Un NOM_CAS indiqué n'appartient pas aux cas disponibles 
+ -> Un NOM_CAS indiqué n'appartient pas aux cas disponibles
 """),
 
 7 : _(u"""
- -> Un NUME_ORDRE indiqué n'appartient pas aux cas disponibles 
+ -> Un NUME_ORDRE indiqué n'appartient pas aux cas disponibles
 """),
 
 8 : _(u"""
- -> L'utilisation de COMBINAISON_FERRAILLAGE n'est possible qu'avec un seul 
+ -> L'utilisation de COMBINAISON_FERRAILLAGE n'est possible qu'avec un seul
  -> MODELE
 """),
 
