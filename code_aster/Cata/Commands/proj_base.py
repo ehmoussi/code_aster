@@ -35,7 +35,7 @@ def proj_base_prod(self,MATR_ASSE_GENE,VECT_ASSE_GENE,
               [None, vect_asse_gene],
               [None, tran_gene])
 
-  if NUME_DDL_GENE is not None and NUME_DDL_GENE.is_typco():
+  if NUME_DDL_GENE is not None and isinstance(NUME_DDL_GENE, CO):
       self.type_sdprod(NUME_DDL_GENE, nume_ddl_gene)
   if MATR_ASSE_GENE != None:
     for m in MATR_ASSE_GENE:

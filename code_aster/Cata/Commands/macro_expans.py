@@ -33,7 +33,7 @@ def macro_expans_prod(self, MODELE_MESURE, RESU_NX=None, RESU_EX=None, RESU_ET=N
     if RESU_NX is not None:
         self.type_sdprod(RESU_NX, mode_meca)
     for res in (RESU_EX, RESU_ET, RESU_RD):
-        if res is not None and res.is_typco():
+        if res is not None and isinstance(res, CO):
             if AsType(RESU_EXP) == mode_meca:
                 self.type_sdprod(res, mode_meca)
             else:
