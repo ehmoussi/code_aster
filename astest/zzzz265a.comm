@@ -274,7 +274,7 @@ TEST_RESU(RESU=(_F(INST=10.5,
 DEPL_LU = LIRE_RESU(TYPE_RESU='EVOL_NOLI', FORMAT='MED', UNITE=81,
                      MODELE=MODELE, TOUT_ORDRE='OUI',
                      FORMAT_MED=(
-                         _F(NOM_RESU='SNL', NOM_CHAM='DEPL'),))
+                         _F(NOM_RESU='0000000e', NOM_CHAM='DEPL'),))
 
 
 FIN();
