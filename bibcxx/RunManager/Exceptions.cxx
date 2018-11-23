@@ -99,7 +99,7 @@ extern "C" void DEFPSPSPPPP( UEXCEP, uexcep, _IN ASTERINTEGER *exc_id, _IN char 
     }
 
     // The identifier of each Python exception is defined in 'LibAster.cxx'
-    std::string idm( trim( std::string( idmess ) ) );
+    std::string idm( trim( std::string( idmess, lidmess ) ) );
 
     switch ( *exc_id ) {
     case CONVERGENCE_ERROR: // ex. NonConvergenceError, PilotageError

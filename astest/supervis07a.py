@@ -60,8 +60,8 @@ with test.assertRaisesRegexp(Exception, "commandes DEBUT et POURSUITE"):
 
 print("Checking AsterErrorCpp thrown from C++ methods "
       "and catched as AsterError...")
+mesh = code_aster.Mesh()
 try:
-    mesh = code_aster.Mesh()
     mesh.readMedFile('xxxx.mmed')
 except AsterError as exc:
     test.assertEqual(exc.id_message, "PREPOST3_10")
