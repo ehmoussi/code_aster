@@ -196,6 +196,10 @@ def block_utils(evaluation_context):
         return AsType(value(name))
     equal_to = is_in
 
+    def size(name):
+        """Get the size of argument of a given keyword"""
+        return len(evaluation_context.get(name))
+
     return locals()
 
 def sorted_dict(kwargs):
