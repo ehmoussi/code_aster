@@ -265,9 +265,9 @@ def macro_elas_mult_ops(self, MODELE, CAS_CHARGE,
                                            **motscle2))
             iocc = iocc + 1
 
-    if self.reuse:
-        motscles['reuse'] = self.reuse
-        motscles['RESULTAT'] = self.reuse
+    if args.get("reuse"):
+        motscles['reuse'] = args.get("reuse")
+        motscles['RESULTAT'] = args.get("reuse")
     nomres = CREA_RESU(OPERATION='AFFE',
                        TYPE_RESU=tyresu,
                        NOM_CHAM='DEPL',
