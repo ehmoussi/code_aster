@@ -205,14 +205,14 @@ class ListOfLoadsInstance : public DataStructure {
      * @brief Construction de la liste de charge
      * @return Booleen indiquant que tout s'est bien passe
      */
-    bool build() throw( std::runtime_error );
+    bool build() ;
 
     /**
     * @brief Construction de la liste des charges pour valoriser le mot-clé facteur EXCIT de
     * STAT_NON_LINE . C'est une méthode temporaire
     * @return listExcit
     */
-    ListSyntaxMapContainer buildListExcit() throw( std::runtime_error );
+    ListSyntaxMapContainer buildListExcit() ;
 
     /**
      * @brief Function de récupération des informations des charges

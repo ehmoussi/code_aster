@@ -79,7 +79,7 @@ class BaseFunctionInstance : public GenericFunctionInstance {
     /**
      * @brief Allocate function
      */
-    virtual void allocate( JeveuxMemory mem, ASTERINTEGER size ) throw( std::runtime_error );
+    virtual void allocate( JeveuxMemory mem, ASTERINTEGER size ) ;
 
     /**
      * @brief Get the result name
@@ -125,7 +125,7 @@ class BaseFunctionInstance : public GenericFunctionInstance {
      * @type  interpolation string
      * @todo checking
      */
-    void setInterpolation( const std::string type ) throw( std::runtime_error );
+    void setInterpolation( const std::string type ) ;
 
     /**
      * @brief Definition of the type of extrapolation
@@ -133,7 +133,7 @@ class BaseFunctionInstance : public GenericFunctionInstance {
      * @type  extrapolation string
      * @todo checking
      */
-    void setExtrapolation( const std::string type ) throw( std::runtime_error );
+    void setExtrapolation( const std::string type ) ;
 
     /**
      * @brief Assign the values of the function
@@ -143,7 +143,7 @@ class BaseFunctionInstance : public GenericFunctionInstance {
      * @type  ord vector of double
      */
     virtual void setValues( const VectorDouble &absc,
-                            const VectorDouble &ord ) throw( std::runtime_error );
+                            const VectorDouble &ord ) ;
 
     /**
      * @brief Return the values of the function as an unidimensional vector
@@ -163,14 +163,14 @@ class BaseFunctionInstance : public GenericFunctionInstance {
     /**
      * @brief Return the number of points of the function
      */
-    virtual ASTERINTEGER maximumSize() const throw( std::runtime_error ) {
+    virtual ASTERINTEGER maximumSize() const {
         return _value->size() / 2;
     }
 
     /**
      * @brief Return the number of points of the function
      */
-    virtual ASTERINTEGER size() const throw( std::runtime_error ) { return _value->size() / 2; }
+    virtual ASTERINTEGER size() const { return _value->size() / 2; }
 
     /**
      * @brief Return the properties of the function
@@ -242,19 +242,19 @@ class FunctionComplexInstance : public BaseFunctionInstance {
     /**
      * @brief Allocate function
      */
-    void allocate( JeveuxMemory mem, ASTERINTEGER size ) throw( std::runtime_error );
+    void allocate( JeveuxMemory mem, ASTERINTEGER size ) ;
 
     /**
      * @brief Return the number of points of the function
      */
-    virtual ASTERINTEGER maximumSize() const throw( std::runtime_error ) {
+    virtual ASTERINTEGER maximumSize() const {
         return _value->size() / 3;
     }
 
     /**
      * @brief Return the number of points of the function
      */
-    ASTERINTEGER size() const throw( std::runtime_error ) { return _value->size() / 3; }
+    ASTERINTEGER size() const { return _value->size() / 3; }
 
     /**
      * @brief Assign the values of the function
@@ -263,7 +263,7 @@ class FunctionComplexInstance : public BaseFunctionInstance {
      * @param ord values of the ordinates (real1, imag1, real2, imag2...)
      * @type  ord vector of double
      */
-    void setValues( const VectorDouble &absc, const VectorDouble &ord ) throw( std::runtime_error );
+    void setValues( const VectorDouble &absc, const VectorDouble &ord ) ;
 
     /**
      * @brief Assign the values of the function
@@ -273,7 +273,7 @@ class FunctionComplexInstance : public BaseFunctionInstance {
      * @type  ord vector of complex
      */
     void setValues( const VectorDouble &absc,
-                    const VectorComplex &ord ) throw( std::runtime_error );
+                    const VectorComplex &ord ) ;
 };
 
 /**

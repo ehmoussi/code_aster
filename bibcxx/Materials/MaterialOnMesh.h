@@ -159,7 +159,7 @@ class MaterialOnMeshInstance: public DataStructure
          * @param nameOfGroup Name of group
          */
         void addBehaviourOnGroupOfElements( BehaviourDefinitionPtr& curBehav,
-                                            std::string nameOfGroup ) throw ( std::runtime_error )
+                                            std::string nameOfGroup )
         {
             if ( ! _supportMesh ) throw std::runtime_error( "Support mesh is not defined" );
             if ( ! _supportMesh->hasGroupOfElements( nameOfGroup ) )
@@ -175,7 +175,7 @@ class MaterialOnMeshInstance: public DataStructure
          * @param nameOfGroup Name of group
          */
         void addBehaviourOnElement( BehaviourDefinitionPtr& curBehav,
-                                            std::string nameOfElement ) throw ( std::runtime_error )
+                                            std::string nameOfElement )
         {
             if ( ! _supportMesh ) throw std::runtime_error( "Support mesh is not defined" );
 
@@ -199,7 +199,7 @@ class MaterialOnMeshInstance: public DataStructure
          * @param nameOfGroup Nom du groupe de mailles
          */
         void addMaterialsOnGroupOfElements( std::vector< MaterialPtr > curMaters,
-                                            VectorString namesOfGroup ) throw ( std::runtime_error )
+                                            VectorString namesOfGroup )
         {
             if ( ! _supportMesh ) throw std::runtime_error( "Support mesh is not defined" );
             for( const auto& nameOfGroup : namesOfGroup )
@@ -216,7 +216,7 @@ class MaterialOnMeshInstance: public DataStructure
          * @param nameOfElement Nom des mailles
          */
         void addMaterialsOnElement( std::vector< MaterialPtr > curMaters,
-                                    VectorString namesOfElement ) throw ( std::runtime_error )
+                                    VectorString namesOfElement )
         {
             if ( ! _supportMesh ) throw std::runtime_error( "Support mesh is not defined" );
 
@@ -240,7 +240,7 @@ class MaterialOnMeshInstance: public DataStructure
          * @param nameOfGroup Nom du groupe de mailles
          */
         void addMaterialOnGroupOfElements( MaterialPtr& curMater,
-                                           VectorString namesOfGroup ) throw ( std::runtime_error )
+                                           VectorString namesOfGroup )
         {
             if ( ! _supportMesh ) throw std::runtime_error( "Support mesh is not defined" );
             for( const auto& nameOfGroup : namesOfGroup )
@@ -257,7 +257,7 @@ class MaterialOnMeshInstance: public DataStructure
          * @param nameOfElement Nom des mailles
          */
         void addMaterialOnElement( MaterialPtr& curMater,
-                                   VectorString namesOfElement ) throw ( std::runtime_error )
+                                   VectorString namesOfElement )
         {
             if ( ! _supportMesh ) throw std::runtime_error( "Support mesh is not defined" );
 
@@ -269,7 +269,7 @@ class MaterialOnMeshInstance: public DataStructure
          * @brief Build MaterialOnMeshPtr without InputVariables
          * @return true
          */
-        bool buildWithoutInputVariables() throw ( std::runtime_error );
+        bool buildWithoutInputVariables() ;
 
         /**
          * @brief Return the PCFieldOnMesh of behaviour
@@ -295,7 +295,7 @@ class MaterialOnMeshInstance: public DataStructure
          * @brief Obtenir le maillage support
          * @return Maillage support du champ de materiau
          */
-        BaseMeshPtr getSupportMesh() throw ( std::runtime_error )
+        BaseMeshPtr getSupportMesh()
         {
             if ( _supportMesh->isEmpty() )
                 throw std::runtime_error( "support mesh of current model is empty" );

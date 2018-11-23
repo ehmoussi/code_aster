@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -23,27 +23,14 @@
 
 """
 
-from functools import partial, wraps
 import os.path as osp
 import re
 import unittest
 import unittest.case as case
+from functools import partial, wraps
 from unittest.util import safe_repr
 
-
-# keep possible usage out of code_aster
-try:
-    import aster
-    writeInMess = partial(aster.affiche, 'MESSAGE')
-    writeInResu = partial(aster.affiche, 'RESULTAT')
-except ImportError:
-    raise
-    def writeInMess(text):
-        print(text)
-
-    def writeInResu(text):
-        pass
-
+import libaster
 
 # TODO use the logger object
 # TODO tell the RunManager to increase the exit status in case of failure
@@ -135,8 +122,7 @@ class TestCase( unittest.TestCase ):
         else:
             self._failure += 1
             fmt = "NOOK {0:>16} failed: {1}"
-        writeInMess(fmt.format(funcTest, msg))
-        writeInResu(fmt.format(funcTest, msg))
+        libaster.write(fmt.format(funcTest, msg))
 
     # just use a derivated context class
     def assertRaises(self, excClass, callableObj=None, *args, **kwargs):

@@ -24,7 +24,7 @@
 #include "PythonBindings/BucklingModeContainerInterface.h"
 #include "PythonBindings/factory.h"
 #include <boost/python.hpp>
-#include "PythonBindings/VariantStiffnessMatrix.h"
+#include "PythonBindings/VariantStiffnessMatrixInterface.h"
 
 void exportBucklingModeContainerToPython() {
     using namespace boost::python;

@@ -2,8 +2,8 @@
 #define LOADINTERFACE_H_
 
 /**
- * @file LoadInterface.h
- * @brief Fichier entete de la classe LoadInterface
+ * @file LoadUtilities.h
+ * @brief Fichier entete de la classe LoadUtilities
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org

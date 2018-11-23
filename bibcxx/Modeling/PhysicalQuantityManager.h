@@ -56,7 +56,7 @@ class PhysicalQuantityManager : public Singleton< PhysicalQuantityManager > {
     ASTERINTEGER getNumberOfEncodedInteger( const ASTERINTEGER &quantityNumber ) const;
 
     std::string getPhysicalQuantityName( const ASTERINTEGER &quantityNumber ) const
-        throw( std::runtime_error );
+        ;
 };
 
 #endif /* PHYSICALQUANTITYMANAGER_H_ */

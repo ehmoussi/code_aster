@@ -44,7 +44,7 @@ class DataStructureNaming {
      * @brief Function membre getNewName
      */
     static std::string getNewName( JeveuxMemory memoryType,
-                                   int lengthName = 8 ) throw( std::runtime_error ) {
+                                   int lengthName = 8 ) {
         if ( memoryType == Permanent ) {
             std::string tmpName = ResultNaming::getNewResultName();
             return std::string( tmpName + "                        ", 0, lengthName );

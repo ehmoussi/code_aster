@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -23,7 +23,6 @@
 
 import numpy as NP
 import numpy.linalg as LA
-import aster
 
 # DEFINITION DE LA METHODE DE CREATION DE MATRICE BLOC DIAGONALE
 def blkdiag(varargin):
@@ -48,6 +47,9 @@ def blkdiag(varargin):
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),
       PAR_LOT='NON',   # PAR_LOT = 'NON' a cause de EXTR_MATR...
       DEBUG=_F(SDVERI='OUI'))
+
+import aster
+
 #******************************
 # DEBUT CLASSIQUE D'UNE ETUDE *
 #******************************
@@ -343,15 +345,15 @@ LSTSSTRUC=MODLGENR.LIST_LIAIS_STRUCT()
 # recuperation du nombre de modes total, dynamique et d'interface
 # pour chaque macro-element
 
-MDYNM1=aster.getvectjev('MODES              .ORDR        ' )
-MSTAM1=aster.getvectjev('MODPHY1            .ORDR        ' )
+MDYNM1=aster.getvectjev(MODES.getName() + '.ORDR' )
+MSTAM1=aster.getvectjev(MODPHY1.getName() + '.ORDR' )
 
 MDYNM1=len(MDYNM1)
 MSTAM1=len(MSTAM1)
 MTOT_M1=MDYNM1+MSTAM1
 
-MDYNM2=aster.getvectjev('MODES              .ORDR        ' )
-MSTAM2=aster.getvectjev('MODPHY2            .ORDR        ' )
+MDYNM2=aster.getvectjev(MODES.getName() + '.ORDR' )
+MSTAM2=aster.getvectjev(MODPHY2.getName() + '.ORDR' )
 
 MDYNM2=len(MDYNM2)
 MSTAM2=len(MSTAM2)

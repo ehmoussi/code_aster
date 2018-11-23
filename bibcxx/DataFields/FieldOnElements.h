@@ -155,7 +155,7 @@ template < class ValueType > class FieldOnElementsInstance : public GenericDataF
     /**
      * @brief Update field and build FiniteElementDescriptor if necessary
      */
-    bool update() throw( std::runtime_error ) {
+    bool update() {
         if ( _dofDescription == nullptr && updateValuePointers() ) {
             if ( _supportModel == nullptr )
                 throw std::runtime_error( "Model is empty" );

@@ -100,7 +100,7 @@ class ElementaryCharacteristicsInstance : public DataStructure {
     /**
      * @brief Get the model
      */
-    const ModelPtr &getModel() const throw( std::runtime_error ) {
+    const ModelPtr &getModel() const {
         if ( _model->isEmpty() )
             throw std::runtime_error( "Support model is empty" );
         return _model;

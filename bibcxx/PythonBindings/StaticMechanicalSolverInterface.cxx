@@ -22,7 +22,7 @@
  */
 
 #include "PythonBindings/StaticMechanicalSolverInterface.h"
-#include "PythonBindings/LoadInterface.h"
+#include "PythonBindings/LoadUtilities.h"
 #include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 

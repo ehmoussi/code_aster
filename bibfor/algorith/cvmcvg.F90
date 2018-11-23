@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -44,6 +44,7 @@ subroutine cvmcvg(dy, ddy, nr, itmax, toler,&
 !            IRTETI = 2:  RE-INTEGRATION
 !            IRTETI = 3:  REDECOUPAGE DU PAS DE TEMPS
 !       ----------------------------------------------------------------
+#include "asterf.h"
 #include "asterfort/codent.h"
 #include "asterfort/codree.h"
 #include "asterfort/lcverr.h"
@@ -159,7 +160,8 @@ subroutine cvmcvg(dy, ddy, nr, itmax, toler,&
                 else
                     vali = intg
                     valr = dp
-                    call utmess('Z', 'ALGORITH16_60', si=vali, sr=valr, num_except=23)
+                    call utmess('Z', 'ALGORITH16_60', si=vali, sr=valr,&
+                                num_except=INTEGRATION_ERROR)
                 endif
             endif
 !

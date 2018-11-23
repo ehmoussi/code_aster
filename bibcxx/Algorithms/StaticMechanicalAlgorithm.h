@@ -47,7 +47,7 @@ class StaticMechanicalAlgorithm {
     /**
      * @brief Avancer d'un pas dans un algorithme
      */
-    static void oneStep( const CurrentContext & ) throw( AlgoException & );
+    static void oneStep( const CurrentContext & );
 };
 
 #endif /* STATICMECHANICALGORITHM_H_ */

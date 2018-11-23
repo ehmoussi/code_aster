@@ -633,7 +633,7 @@ implicit none
             rtab(1) = tps1(4)
             rtab(2) = tps1(1)
             call utmess('Z', 'DYNAMIQUE_13', si=ifreq, nr=2, valr=rtab,&
-                        num_except=28)
+                        num_except=TIMELIMIT_ERROR)
         endif
     end do
 

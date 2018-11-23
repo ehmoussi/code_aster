@@ -65,7 +65,7 @@ template < class ValueType > class JeveuxCollectionObject : private AllowedJeveu
     /**
      * @brief Allocation
      */
-    bool allocate( int size ) throw( std::runtime_error ) {
+    bool allocate( int size ) {
         ASTERINTEGER taille = size, ibid = 0;
 
         std::string nameOfObject( "" );
@@ -227,7 +227,7 @@ template < class ValueType > class JeveuxCollectionObject : private AllowedJeveu
     };
 
     /** @brief Set values of collection object */
-    void setValues( const std::vector< ValueType > &toCopy ) throw( std::runtime_error ) {
+    void setValues( const std::vector< ValueType > &toCopy ) {
         if ( toCopy.size() != size() )
             throw std::runtime_error( "Sizes do not match" );
         int pos = 0;
@@ -238,7 +238,7 @@ template < class ValueType > class JeveuxCollectionObject : private AllowedJeveu
     };
 
     /** @brief Set values of collection object */
-    void setValues( const ValueType &toCopy ) throw( std::runtime_error ) {
+    void setValues( const ValueType &toCopy ) {
         if ( size() != 1 )
             throw std::runtime_error( "Sizes do not match" );
         _valuePtr[0] = toCopy;
@@ -248,7 +248,7 @@ template < class ValueType > class JeveuxCollectionObject : private AllowedJeveu
     int size() const { return _size; };
 
     /** @brief Convert to std::vector */
-    std::vector< ValueType > toVector() const throw( std::runtime_error ) {
+    std::vector< ValueType > toVector() const {
         if ( _valuePtr == nullptr )
             throw std::runtime_error( "Pointer is null" );
         std::vector< ValueType > toReturn;
@@ -347,7 +347,7 @@ class JeveuxCollectionInstance : public JeveuxObjectInstance,
                             JeveuxCollectionMemoryStorageType storage = Sparse,
                             JeveuxCollectionObjectSizes objectSizes = Variable,
                             const std::string &name = "",
-                            int totalSize = 0 ) throw( std::runtime_error ) {
+                            int totalSize = 0 ) {
         ASTERINTEGER taille = size;
         _size = size;
         std::string strJeveuxBase( "V" );
@@ -462,7 +462,7 @@ class JeveuxCollectionInstance : public JeveuxObjectInstance,
     template < typename T1 = PointerType, typename = IsNotSame< T1, int > >
     typename std::enable_if< !std::is_same< T1, int >::value, bool >::type
     allocate( JeveuxMemory mem, int size,
-              JeveuxCollectionObjectSizes objectSizes = Variable ) throw( std::runtime_error ) {
+              JeveuxCollectionObjectSizes objectSizes = Variable ) {
         if ( !_nameMap->exists() )
             _nameMap->allocate( mem, size );
         if ( _nameMap->size() != size )
@@ -481,7 +481,7 @@ class JeveuxCollectionInstance : public JeveuxObjectInstance,
     template < typename T1 = PointerType, typename = IsNotSame< T1, int > >
     typename std::enable_if< !std::is_same< T1, int >::value, bool >::type allocateContiguous(
         JeveuxMemory mem, int size, int totalSize,
-        JeveuxCollectionObjectSizes objectSizes = Variable ) throw( std::runtime_error ) {
+        JeveuxCollectionObjectSizes objectSizes = Variable ) {
         if ( !_nameMap->exists() )
             _nameMap->allocate( mem, size );
         if ( _nameMap->size() != size )
@@ -501,7 +501,7 @@ class JeveuxCollectionInstance : public JeveuxObjectInstance,
     template < typename T1 = PointerType, typename = IsSame< T1, int > >
     typename std::enable_if< std::is_same< T1, int >::value, bool >::type
     allocate( JeveuxMemory mem, int size, JeveuxCollectionAccessType access = Named,
-              JeveuxCollectionObjectSizes objectSizes = Variable ) throw( std::runtime_error ) {
+              JeveuxCollectionObjectSizes objectSizes = Variable ) {
         return genericAllocation( mem, size, access, Sparse, objectSizes, "" );
     };
 
@@ -516,7 +516,7 @@ class JeveuxCollectionInstance : public JeveuxObjectInstance,
     template < typename T1 = PointerType, typename = IsSame< T1, int > >
     typename std::enable_if< std::is_same< T1, int >::value, bool >::type allocateContiguous(
         JeveuxMemory mem, int size, int totalSize, JeveuxCollectionAccessType access = Named,
-        JeveuxCollectionObjectSizes objectSizes = Variable ) throw( std::runtime_error ) {
+        JeveuxCollectionObjectSizes objectSizes = Variable ) {
         return genericAllocation( mem, size, access, Contiguous, objectSizes, "", totalSize );
     };
 
@@ -524,7 +524,7 @@ class JeveuxCollectionInstance : public JeveuxObjectInstance,
      * @brief Allocation of one object by name
      */
     bool allocateObjectByName( const std::string &name,
-                               const int &size ) throw( std::runtime_error ) {
+                               const int &size ) {
         if ( _listObjects.size() == _size )
             throw std::runtime_error( "Out of collection bound" );
 
@@ -537,7 +537,7 @@ class JeveuxCollectionInstance : public JeveuxObjectInstance,
     /**
      * @brief Allocation of one object at the end of a existing collection
      */
-    bool allocateObject( const int &size ) throw( std::runtime_error ) {
+    bool allocateObject( const int &size ) {
         if ( _listObjects.size() == _size )
             throw std::runtime_error( "Out of collection bound" );
 
@@ -582,7 +582,7 @@ class JeveuxCollectionInstance : public JeveuxObjectInstance,
 
     const std::vector< JeveuxCollObjValType > &getVectorOfObjects() const { return _listObjects; };
 
-    const JeveuxCollObjValType &getObject( const int &position ) const throw( std::runtime_error ) {
+    const JeveuxCollObjValType &getObject( const int &position ) const {
         if ( _isEmpty )
             throw std::runtime_error( "Collection not build" );
 
@@ -592,7 +592,7 @@ class JeveuxCollectionInstance : public JeveuxObjectInstance,
         return _listObjects[position - 1];
     };
 
-    JeveuxCollObjValType &getObject( const int &position ) throw( std::runtime_error ) {
+    JeveuxCollObjValType &getObject( const int &position ) {
         if ( _isEmpty )
             throw std::runtime_error( "Collection not build" );
 
@@ -603,7 +603,7 @@ class JeveuxCollectionInstance : public JeveuxObjectInstance,
     };
 
     const JeveuxCollObjValType &getObjectFromName( const std::string &name ) const
-        throw( std::runtime_error ) {
+        {
         if ( _isEmpty )
             throw std::runtime_error( "Collection not build" );
 
@@ -617,7 +617,7 @@ class JeveuxCollectionInstance : public JeveuxObjectInstance,
         return _listObjects[curIter->second];
     };
 
-    JeveuxCollObjValType &getObjectFromName( const std::string &name ) throw( std::runtime_error ) {
+    JeveuxCollObjValType &getObjectFromName( const std::string &name ) {
         if ( _isEmpty )
             throw std::runtime_error( "Collection not build" );
 

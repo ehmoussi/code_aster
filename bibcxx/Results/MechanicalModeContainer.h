@@ -223,15 +223,12 @@ class MechanicalModeContainerInstance : public FullResultsContainerInstance
      * @brief set interf_dyna
      * @param structureInterface objet StructureInterfacePtr
      */
-    bool setStructureInterface( StructureInterfacePtr &structureInterface )
-        throw( std::runtime_error )
-    {
+    bool setStructureInterface( StructureInterfacePtr &structureInterface ) {
         _structureInterface = structureInterface;
         return true;
     };
 
-    bool update() throw( std::runtime_error )
-    {
+    bool update() {
         BaseDOFNumberingPtr numeDdl( nullptr );
         if ( _rigidityDispDMatrix != nullptr )
             numeDdl = _rigidityDispDMatrix->getDOFNumbering();

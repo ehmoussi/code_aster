@@ -31,9 +31,9 @@
 #include "astercxx.h"
 #include "definition.h"
 
+#include "DataFields/MeshCoordinatesField.h"
 #include "DataStructures/DataStructure.h"
 #include "MemoryManager/JeveuxBidirectionalMap.h"
-#include "DataFields/MeshCoordinatesField.h"
 #include "Meshes/MeshEntities.h"
 #include "Meshes/MeshExplorer.h"
 #include "RunManager/LogicalUnitManagerCython.h"
@@ -47,7 +47,8 @@
 class BaseMeshInstance : public DataStructure {
   public:
     typedef MeshExplorer< ElementBuilderFromConnectivity, const JeveuxCollectionLong &,
-                          const JeveuxVectorLong & > ConnectivityMeshExplorer;
+                          const JeveuxVectorLong & >
+        ConnectivityMeshExplorer;
 
   protected:
     typedef JeveuxCollection< ASTERINTEGER, JeveuxBidirectionalMapChar24 >
@@ -81,8 +82,7 @@ class BaseMeshInstance : public DataStructure {
      * @brief Read a Aster Mesh file
      * @return retourne true si tout est ok
      */
-    bool readMeshFile( const std::string &fileName,
-                       const std::string &format ) throw( std::runtime_error );
+    bool readMeshFile( const std::string &fileName, const std::string &format );
 
     /**
      * @brief Constructeur
@@ -116,7 +116,7 @@ class BaseMeshInstance : public DataStructure {
     /**
      * @brief Destructeur
      */
-    ~BaseMeshInstance() throw( std::runtime_error ) {
+    ~BaseMeshInstance() {
 #ifdef __DEBUG_GC__
         std::cout << "Mesh.destr: " << this->getName() << std::endl;
 #endif
@@ -125,8 +125,7 @@ class BaseMeshInstance : public DataStructure {
     /**
      * @brief Get the connectivity
      */
-    const ConnectivityMeshExplorer &getConnectivityExplorer() const
-    {
+    const ConnectivityMeshExplorer &getConnectivityExplorer() const {
         _elementsType->updateValuePointer();
         _connectivity->buildFromJeveux();
         return _explorer;
@@ -146,7 +145,7 @@ class BaseMeshInstance : public DataStructure {
      * @return Objet de collection contenant la liste des noeuds
      */
     const JeveuxCollectionObject< ASTERINTEGER > &getGroupOfNodes( const std::string &name ) const
-        throw( std::runtime_error ) {
+        {
         if ( _groupsOfNodes->size() == -1 )
             _groupsOfNodes->buildFromJeveux();
         return _groupsOfNodes->getObjectFromName( name );
@@ -214,16 +213,13 @@ class BaseMeshInstance : public DataStructure {
      * @brief Fonction permettant de savoir si un maillage est partiel
      * @return retourne true si le maillage est partiel
      */
-    virtual bool isPartial() const
-    {
-        return false;
-    };
+    virtual bool isPartial() const { return false; };
 
     /**
      * @brief Read a MED Mesh file
      * @return retourne true si tout est ok
      */
-    virtual bool readMedFile( const std::string &fileName ) throw( std::runtime_error );
+    virtual bool readMedFile( const std::string &fileName );
 };
 
 /**
@@ -263,7 +259,7 @@ class MeshInstance : public BaseMeshInstance {
      * @return Retourne true si tout s'est bien déroulé
      */
     bool addGroupOfNodesFromNodes( const std::string &name,
-                                   const VectorString &vec ) throw( std::runtime_error );
+                                   const VectorString &vec ) ;
 
     /**
      * @brief Teste l'existence d'un groupe de mailles dans le maillage
@@ -285,19 +281,19 @@ class MeshInstance : public BaseMeshInstance {
      * @brief Read a Aster Mesh file
      * @return retourne true si tout est ok
      */
-    bool readAsterMeshFile( const std::string &fileName ) throw( std::runtime_error );
+    bool readAsterMeshFile( const std::string &fileName ) ;
 
     /**
      * @brief Read a Aster Mesh file
      * @return retourne true si tout est ok
      */
-    bool readGibiFile( const std::string &fileName ) throw( std::runtime_error );
+    bool readGibiFile( const std::string &fileName ) ;
 
     /**
      * @brief Read a Aster Mesh file
      * @return retourne true si tout est ok
      */
-    bool readGmshFile( const std::string &fileName ) throw( std::runtime_error );
+    bool readGmshFile( const std::string &fileName ) ;
 };
 
 /**

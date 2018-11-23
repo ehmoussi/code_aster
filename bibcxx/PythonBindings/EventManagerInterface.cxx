@@ -1,6 +1,6 @@
 /**
- * @file FailureConvergenceManagerInterface.cxx
- * @brief Interface python de FailureConvergenceManager
+ * @file EventManagerInterface.cxx
+ * @brief Interface python de EventManager
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
@@ -24,11 +24,11 @@
 // Not a DataStructure
 // aslint: disable=C3006
 
-#include "PythonBindings/FailureConvergenceManagerInterface.h"
+#include "PythonBindings/EventManagerInterface.h"
 #include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
-void exportFailureConvergenceManagerToPython() {
+void exportEventManagerToPython() {
     using namespace boost::python;
 
     class_< GenericActionInstance, GenericActionPtr >( "GenericAction", no_init );
@@ -75,33 +75,33 @@ void exportFailureConvergenceManagerToPython() {
         .def( "setMaximumPenalisationCoefficient",
               &ChangePenalisationOnErrorInstance::setMaximumPenalisationCoefficient );
 
-    class_< GenericConvergenceErrorInstance, GenericConvergenceErrorPtr, boost::noncopyable >(
-        "GenericConvergenceError", no_init )
-        .def( "setAction", &GenericConvergenceErrorInstance::setAction );
+    class_< GenericEventErrorInstance, GenericEventErrorPtr, boost::noncopyable >(
+        "GenericEventError", no_init )
+        .def( "setAction", &GenericEventErrorInstance::setAction );
 
-    class_< ConvergenceErrorInstance, ConvergenceErrorPtr,
-            bases< GenericConvergenceErrorInstance > >( "ConvergenceError", no_init )
-        .def( "__init__", make_constructor(&initFactoryPtr< ConvergenceErrorInstance >));
+    class_< EventErrorInstance, EventErrorPtr,
+            bases< GenericEventErrorInstance > >( "EventError", no_init )
+        .def( "__init__", make_constructor(&initFactoryPtr< EventErrorInstance >));
 
     class_< ResidualDivergenceErrorInstance, ResidualDivergenceErrorPtr,
-            bases< GenericConvergenceErrorInstance > >( "ResidualDivergenceError", no_init )
+            bases< GenericEventErrorInstance > >( "ResidualDivergenceError", no_init )
         .def( "__init__", make_constructor(&initFactoryPtr< ResidualDivergenceErrorInstance >));
 
     class_< IncrementOverboundErrorInstance, IncrementOverboundErrorPtr,
-            bases< GenericConvergenceErrorInstance > >( "IncrementOverboundError", no_init )
+            bases< GenericEventErrorInstance > >( "IncrementOverboundError", no_init )
         .def( "__init__", make_constructor(&initFactoryPtr< IncrementOverboundErrorInstance >))
         .def( "setValueToInspect", &IncrementOverboundErrorInstance::setValueToInspect );
 
     class_< ContactDetectionErrorInstance, ContactDetectionErrorPtr,
-            bases< GenericConvergenceErrorInstance > >( "ContactDetectionError", no_init )
+            bases< GenericEventErrorInstance > >( "ContactDetectionError", no_init )
         .def( "__init__", make_constructor(&initFactoryPtr< ContactDetectionErrorInstance >));
 
     class_< InterpenetrationErrorInstance, InterpenetrationErrorPtr,
-            bases< GenericConvergenceErrorInstance > >( "InterpenetrationError", no_init )
+            bases< GenericEventErrorInstance > >( "InterpenetrationError", no_init )
         .def( "__init__", make_constructor(&initFactoryPtr< InterpenetrationErrorInstance >))
         .def( "setMaximalPenetration", &InterpenetrationErrorInstance::setMaximalPenetration );
 
     class_< InstabilityErrorInstance, InstabilityErrorPtr,
-            bases< GenericConvergenceErrorInstance > >( "InstabilityError", no_init )
+            bases< GenericEventErrorInstance > >( "InstabilityError", no_init )
         .def( "__init__", make_constructor(&initFactoryPtr< InstabilityErrorInstance >));
 };

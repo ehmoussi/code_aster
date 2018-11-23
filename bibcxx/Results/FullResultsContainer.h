@@ -60,7 +60,7 @@ class FullResultsContainerInstance : public ResultsContainerInstance {
         return _dofNum;
     };
 
-    bool printMedFile( std::string fileName ) const throw( std::runtime_error ) {
+    bool printMedFile( std::string fileName ) const {
         return ResultsContainerInstance::printMedFile( fileName );
     };
 

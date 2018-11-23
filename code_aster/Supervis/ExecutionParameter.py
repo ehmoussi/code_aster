@@ -49,6 +49,7 @@ from ..Utilities import Singleton, convert
 from .logger import logger, setlevel
 from .options import Options
 
+import libaster
 
 RCDIR = osp.abspath(osp.join(osp.dirname(__file__), os.pardir, os.pardir,
                     os.pardir, os.pardir, 'share', 'aster'))
@@ -140,6 +141,8 @@ class ExecutionParameter(object):
         # Options must at least be declared by __init__
         if option in self._args:
             self._args[option] = value
+            if option == "tpmax":
+                libaster.set_option(option, value)
         elif value is not None:
             if value:
                 self.enable(Options.by_name(option))

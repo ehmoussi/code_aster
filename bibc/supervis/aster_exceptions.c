@@ -26,7 +26,6 @@
 
 #include "aster.h"
 #include "aster_fort.h"
-#include "RunManager/Exceptions.h"
 #include "aster_exceptions.h"
 
 /*
@@ -116,9 +115,4 @@ void _end_try()
     /* End if try : `gExcLvl` is decremented
      */
     gExcLvl -= 1;
-}
-
-void DEF0(UEXCEP, uexcep)
-{
-    _raiseException();
 }

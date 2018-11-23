@@ -57,7 +57,7 @@ template < class PhysicalQuantityType > class UnitaryLoad {
      * @param value Valeur du chargement
      */
     UnitaryLoad( MeshEntityPtr supportMeshEntity, PhysicalQuantityComponent curCoord,
-                 ValueType value ) throw( std::runtime_error )
+                 ValueType value )
         : _supportMeshEntity( supportMeshEntity ), _loadCoordinate( curCoord ), _value( value ) {
         if ( !PhysicalQuantityType::hasComponent( curCoord ) )
             throw std::runtime_error( ComponentNames.find( curCoord )->second + " not allowed" );

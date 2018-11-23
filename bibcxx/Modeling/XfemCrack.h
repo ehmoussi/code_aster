@@ -132,14 +132,14 @@ class XfemCrackInstance : public DataStructure {
          * @brief Construction du XfemCrackInstance
          * @return Booleen indiquant que la construction s'est bien deroulee
          */
-    bool build() throw( std::runtime_error );
+    bool build() ;
 
     /**
      * @brief Enrichissement d'un ModelPtr avec la fissure XFEM
      * @param baseModel modèle à enrichir
      * @return Modèle enrichi
      */
-    ModelPtr enrichModelWithXfem( ModelPtr &baseModel ) throw( std::runtime_error );
+    ModelPtr enrichModelWithXfem( ModelPtr &baseModel ) ;
 
     /**
          * @brief Series of getters and setters that check the syntax rules

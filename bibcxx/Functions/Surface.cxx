@@ -26,7 +26,7 @@
 #include "Functions/Surface.h"
 #include <boost/python.hpp>
 
-PyObject *SurfaceInstance::exportExtensionToPython() const throw( std::runtime_error ) {
+PyObject *SurfaceInstance::exportExtensionToPython() const {
     if ( !_property->exists() )
         throw std::runtime_error( getName() + " does not exist" );
 
@@ -43,7 +43,7 @@ PyObject *SurfaceInstance::exportExtensionToPython() const throw( std::runtime_e
     return incref( toReturn.ptr() );
 };
 
-PyObject *SurfaceInstance::exportParametersToPython() const throw( std::runtime_error ) {
+PyObject *SurfaceInstance::exportParametersToPython() const {
     if ( !_parameters->exists() )
         throw std::runtime_error( getName() + " does not exist" );
 
@@ -59,7 +59,7 @@ PyObject *SurfaceInstance::exportParametersToPython() const throw( std::runtime_
     return incref( toReturn.ptr() );
 };
 
-PyObject *SurfaceInstance::exportValuesToPython() const throw( std::runtime_error ) {
+PyObject *SurfaceInstance::exportValuesToPython() const {
     if ( !_value->exists() )
         throw std::runtime_error( getName() + " does not exist" );
 

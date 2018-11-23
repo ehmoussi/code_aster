@@ -94,7 +94,7 @@ class ParallelMeshInstance : public BaseMeshInstance {
     /**
      * @brief Destructeur
      */
-    ~ParallelMeshInstance() throw( std::runtime_error ) {
+    ~ParallelMeshInstance() {
 #ifdef __DEBUG_GC__
         std::cout << "ParallelMesh.destr: " << this->getName() << std::endl;
 #endif
@@ -160,7 +160,7 @@ class ParallelMeshInstance : public BaseMeshInstance {
      * @brief Read a MED ParallelMesh file
      * @return retourne true si tout est ok
      */
-    bool readMedFile( const std::string &fileName ) throw( std::runtime_error );
+    bool readMedFile( const std::string &fileName ) ;
 };
 
 /**

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -33,16 +33,10 @@ try:
 except:
     pass
 
-try:
-    import aster
-    CPU_Exception = aster.ArretCPUError
-    from code_aster.Commands import (INFO_EXEC_ASTER, DEFI_FICHIER,
-                                          IMPR_FONCTION, DETRUIRE)
-    from code_aster.Cata.Syntax import _F
-    from Utilitai.Utmess import UTMESS, MessageLog
-except:
-    CPU_Exception = StandardError
-
+from code_aster.Commands import (INFO_EXEC_ASTER, DEFI_FICHIER,
+                                        IMPR_FONCTION, DETRUIRE)
+from code_aster.Cata.Syntax import _F
+from Utilitai.Utmess import UTMESS
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------
@@ -150,8 +144,7 @@ def temps_CPU(restant_old, temps_iter_old):
                 temps_iter = (temps_iter_old + (restant_old - restant)) / 2.
             if ((temps_iter > 0.96 * restant)or(restant < 0.)):
                 err = 1
-                msg = MessageLog.GetText('F', 'RECAL0_53')
-                raise CPU_Exception, msg
+                UTMESS('F', 'RECAL0_53')
 
     return restant, temps_iter, err
 

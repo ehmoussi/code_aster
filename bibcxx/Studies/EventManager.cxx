@@ -1,6 +1,6 @@
 /**
- * @file VectorUtilities.cxx
- * @brief Utilitaires pour convertir un vector en list et inversement
+ * @file EventManager.cxx
+ * @brief Implementation de EventManager
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
@@ -21,20 +21,13 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "PythonBindings/VectorUtilities.h"
-#include "Loads/PhysicalQuantity.h"
-#include "Materials/Material.h"
-#include "Modeling/FiniteElementDescriptor.h"
-#include "Functions/Function.h"
+#include "Studies/EventManager.h"
 
-void exportVectorUtilitiesToPython() {
-    using namespace boost::python;
+/* person_in_charge: nicolas.sellenet at edf.fr */
 
-    exportVectorUtilities< long >();
-    exportVectorUtilities< double >();
-    exportVectorUtilities< std::string >();
-    exportVectorUtilities< PhysicalQuantityComponent >();
-    exportVectorUtilities< MaterialPtr >();
-    exportVectorUtilities< FiniteElementDescriptorPtr >();
-    exportVectorUtilities< BaseFunctionPtr >();
-};
+const char *ActionNames[nbActions] = {"ARRET",          "DECOUPE",         "DECOUPE",  "ITER_SUPPL",
+                                      "AUTRE_PILOTAGE", "ADAPT_COEF_PENA", "CONTINUE", "INDEFINI"};
+
+const char *ErrorNames[nbErrors] = {"ERREUR",    "DIVE_RESI",        "DELTA_GRANDEUR",
+                                    "COLLISION", "INTERPENETRATION", "INSTABILITE",
+                                    "INDEFINI"};

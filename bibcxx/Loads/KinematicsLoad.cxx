@@ -42,7 +42,7 @@ KinematicsLoadInstance::KinematicsLoadInstance( const std::string &name, const s
       _charParam( JeveuxVectorChar8( getName() + ".AFCK" ) ),
       _doubleParam( JeveuxVectorDouble( getName() + ".AFCV" ) ), _isEmpty( true ){};
 
-bool KinematicsLoadInstance::build() throw( std::runtime_error ) {
+bool KinematicsLoadInstance::build() {
     std::string cmd = "AFFE_CHAR_CINE";
     if ( _listOfFunctionImposedTemperature.size() != 0 )
         cmd += "_F";

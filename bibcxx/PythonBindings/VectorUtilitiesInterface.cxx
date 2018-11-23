@@ -1,6 +1,6 @@
 /**
- * @file MechanicalModeContainerInterface.cxx
- * @brief Interface python de MechanicalModeContainer
+ * @file VectorUtilitiesInterface.cxx
+ * @brief Utilitaires pour convertir un vector en list et inversement
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
@@ -21,18 +21,20 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "PythonBindings/VariantStiffnessMatrix.h"
-#include "PythonBindings/factory.h"
-#include <boost/python.hpp>
-#include <boost/variant.hpp>
+#include "PythonBindings/VectorUtilitiesInterface.h"
+#include "Loads/PhysicalQuantity.h"
+#include "Materials/Material.h"
+#include "Modeling/FiniteElementDescriptor.h"
+#include "Functions/Function.h"
 
-void exportStiffnessMatrixVariantToPython()
-{
+void exportVectorUtilitiesToPython() {
     using namespace boost::python;
 
-    to_python_converter< MatrixVariant, variant_to_object >();
-    implicitly_convertible< AssemblyMatrixDisplacementDoublePtr, MatrixVariant >();
-    implicitly_convertible< AssemblyMatrixDisplacementComplexPtr, MatrixVariant >();
-    implicitly_convertible< AssemblyMatrixTemperatureDoublePtr, MatrixVariant >();
-    implicitly_convertible< AssemblyMatrixPressureDoublePtr, MatrixVariant >();
+    exportVectorUtilities< long >();
+    exportVectorUtilities< double >();
+    exportVectorUtilities< std::string >();
+    exportVectorUtilities< PhysicalQuantityComponent >();
+    exportVectorUtilities< MaterialPtr >();
+    exportVectorUtilities< FiniteElementDescriptorPtr >();
+    exportVectorUtilities< BaseFunctionPtr >();
 };

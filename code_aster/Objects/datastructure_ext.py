@@ -50,6 +50,8 @@ class ExtendedDataStructure(injector(DataStructure), DataStructure):
         """Return the DataStructure catalog."""
         if self.ptr_sdj is None:
             cata_sdj = getattr(self, 'cata_sdj', None)
+            if not cata_sdj:
+                 cata_sdj = DICT_SDJ.get(self.__class__.__name__)
             assert cata_sdj, ("The attribute 'cata_sdj' must be defined in "
                               "the class {}".format(self.__class__.__name__))
             if self.ptr_class_sdj is None:
@@ -71,3 +73,14 @@ class ExtendedDataStructure(injector(DataStructure), DataStructure):
     @deprecated(help="Use 'getName()' instead.")
     def nom(self):
         return self.getName()
+
+
+# This dictionnary avoids to add the DataStructure "_ext.py" file just
+# to define the SD definition.
+DICT_SDJ = {
+    "CrackTip": "SD.sd_fond_fiss.sd_fond_fiss",
+    "DOFNumbering": "SD.sd_nume_ddl.sd_nume_ddl",
+    "DynamicMacroElement": "SD.sd_macr_elem_dyna.sd_macr_elem_dyna",
+    "HarmoGeneralizedResultsContainer": "SD.sd_dyna_gene.sd_dyna_gene",
+    "Material": "SD.sd_mater.sd_mater",
+}

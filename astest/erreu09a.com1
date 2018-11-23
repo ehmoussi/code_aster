@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -22,12 +22,13 @@
 #   - que l'objet aster.error est présent dans le pick.1,
 #   - et qu'on peut donc poursuivre le calcul.
 
-import aster
+from code_aster import AsterError
+from code_aster.Commands import *
 
 POURSUITE(CODE='OUI',
           PAR_LOT='OUI',);
 
-is_ok = int(isinstance(err, aster.error))
+is_ok = int(isinstance(err, AsterError))
 
 TAB1=CREA_TABLE(LISTE=(_F(PARA='TEST',TYPE_K='K8',LISTE_K='VALEUR  ',),
                        _F(PARA='BOOLEEN',LISTE_I=is_ok,),

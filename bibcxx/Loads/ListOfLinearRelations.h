@@ -65,7 +65,7 @@ template < class ValueType > class ListOfLinearRelationsInstance : public DataSt
     /**
         * @brief Constructeur
         */
-    ListOfLinearRelationsInstance( const std::string name ) throw( std::runtime_error )
+    ListOfLinearRelationsInstance( const std::string name )
         : DataStructure( name, 19, "LISTE_RELA" ),
           _coefficients( JeveuxVector< ValueType >( getName() + ".RLCO" ) ),
           _rhs( JeveuxVector< ValueType >( getName() + ".RLBE" ) ),

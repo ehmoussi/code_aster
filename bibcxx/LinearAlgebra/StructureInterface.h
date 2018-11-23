@@ -151,7 +151,7 @@ class StructureInterfaceInstance : public DataStructure {
         _interfDefs.emplace_back( name, type, groupsOfNodes, components );
     };
 
-    bool build() throw( std::runtime_error );
+    bool build() ;
 };
 
 /**

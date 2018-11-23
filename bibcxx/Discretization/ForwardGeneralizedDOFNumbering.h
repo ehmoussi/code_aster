@@ -55,7 +55,7 @@ class ForwardGeneralizedDOFNumberingPtr {
 
     void operator=( const GeneralizedDOFNumberingPtr &ptr );
 
-    GeneralizedDOFNumberingPtr getPointer() throw( std::runtime_error );
+    GeneralizedDOFNumberingPtr getPointer() ;
 
     bool isSet() const;
 

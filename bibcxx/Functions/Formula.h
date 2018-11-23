@@ -99,7 +99,7 @@ class FormulaInstance : public GenericFunctionInstance {
      * @param name name of the parameter
      * @type  name string
      */
-    void setVariables( const std::vector< std::string > &varnames ) throw( std::runtime_error );
+    void setVariables( const std::vector< std::string > &varnames ) ;
 
     /**
      * @brief Return the name of the variables
@@ -120,7 +120,7 @@ class FormulaInstance : public GenericFunctionInstance {
      * @param expression expression of the formula
      * @type  expression string
      */
-    void setExpression( const std::string expression ) throw( std::runtime_error );
+    void setExpression( const std::string expression ) ;
 
     /**
      * @brief Return the expression of the formula.
@@ -128,14 +128,14 @@ class FormulaInstance : public GenericFunctionInstance {
      */
     std::string getExpression() const { return _expression; }
 
-    VectorDouble evaluate( const VectorDouble &values ) const throw( std::runtime_error );
+    VectorDouble evaluate( const VectorDouble &values ) const ;
 
     /**
      * @brief Assign the context for evaluation
      * @param context context containing objects needed for evaluation.
      * @type  context dict object
      */
-    void setContext( PyObject *context ) throw( std::runtime_error ) {
+    void setContext( PyObject *context ) {
         if ( !PyDict_Check( context ) ) {
             throw std::runtime_error( "Formula: 'dict' object is expected." );
         }

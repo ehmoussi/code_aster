@@ -121,7 +121,7 @@ class ModelInstance : public DataStructure {
      * @brief Construction (au sens Jeveux fortran) de la sd_modele
      * @return booleen indiquant que la construction s'est bien deroulee
      */
-    bool buildWithSyntax( SyntaxMapContainer & ) throw( std::runtime_error );
+    bool buildWithSyntax( SyntaxMapContainer & ) ;
 
   public:
     /**
@@ -146,7 +146,7 @@ class ModelInstance : public DataStructure {
      * @param phys Physique a ajouter
      * @param mod Modelisation a ajouter
      */
-    void addModelingOnAllMesh( Physics phys, Modelings mod ) throw( std::runtime_error ) {
+    void addModelingOnAllMesh( Physics phys, Modelings mod ) {
         _modelisations.push_back( listOfModsAndGrpsValue(
             ElementaryModeling( phys, mod ), MeshEntityPtr( new AllMeshEntities() ) ) );
     };
@@ -158,7 +158,7 @@ class ModelInstance : public DataStructure {
      * @param nameOfGroup Nom du groupe de mailles
      */
     void addModelingOnGroupOfElements( Physics phys, Modelings mod,
-                                       std::string nameOfGroup ) throw( std::runtime_error ) {
+                                       std::string nameOfGroup ) {
         if ( !_supportBaseMesh )
             throw std::runtime_error( "Support mesh is not defined" );
         if ( !_supportBaseMesh->hasGroupOfElements( nameOfGroup ) )
@@ -176,7 +176,7 @@ class ModelInstance : public DataStructure {
      * @param nameOfGroup Nom du groupe de noeuds
      */
     void addModelingOnGroupOfNodes( Physics phys, Modelings mod,
-                                    std::string nameOfGroup ) throw( std::runtime_error ) {
+                                    std::string nameOfGroup ) {
         if ( !_supportBaseMesh )
             throw std::runtime_error( "Support mesh is not defined" );
         if ( !_supportBaseMesh->hasGroupOfNodes( nameOfGroup ) )
@@ -190,7 +190,7 @@ class ModelInstance : public DataStructure {
      * @brief Construction (au sens Jeveux fortran) de la sd_modele
      * @return booleen indiquant que la construction s'est bien deroulee
      */
-    virtual bool build() throw( std::runtime_error );
+    virtual bool build() ;
 
     /**
      * @brief Function to know if there is MultiFiberBeam in the Model
@@ -215,7 +215,7 @@ class ModelInstance : public DataStructure {
     GraphPartitioner getGraphPartitioner() const { return _graphPartitioner; };
 
 #ifdef _USE_MPI
-    PartialMeshPtr getPartialMesh() const throw( std::runtime_error ) {
+    PartialMeshPtr getPartialMesh() const {
         if ( ( !_supportPartialMesh ) || _supportPartialMesh->isEmpty() )
             throw std::runtime_error( "Support mesh of current model is empty" );
         return _supportPartialMesh;
@@ -227,7 +227,7 @@ class ModelInstance : public DataStructure {
      */
     ModelSplitingMethod getSplittingMethod() const { return _splitMethod; };
 
-    BaseMeshPtr getSupportMesh() const throw( std::runtime_error ) {
+    BaseMeshPtr getSupportMesh() const {
         if ( ( !_supportBaseMesh ) || _supportBaseMesh->isEmpty() )
             throw std::runtime_error( "Support mesh of current model is empty" );
         return _supportBaseMesh;
@@ -256,7 +256,7 @@ class ModelInstance : public DataStructure {
      * @brief Definition du maillage support
      * @param currentMesh objet MeshPtr sur lequel le modele reposera
      */
-    bool setSupportMesh( MeshPtr &currentMesh ) throw( std::runtime_error ) {
+    bool setSupportMesh( MeshPtr &currentMesh ) {
         if ( currentMesh->isEmpty() )
             throw std::runtime_error( "Mesh is empty" );
         _supportBaseMesh = currentMesh;
@@ -268,7 +268,7 @@ class ModelInstance : public DataStructure {
      * @brief Definition du maillage support
      * @param currentMesh objet SkeletonPtr sur lequel le modele reposera
      */
-    bool setSupportMesh( SkeletonPtr &currentMesh ) throw( std::runtime_error ) {
+    bool setSupportMesh( SkeletonPtr &currentMesh ) {
         if ( currentMesh->isEmpty() )
             throw std::runtime_error( "Skeleton is empty" );
         _supportBaseMesh = currentMesh;
@@ -280,7 +280,7 @@ class ModelInstance : public DataStructure {
  * @param currentMesh objet MeshPtr sur lequel le modele reposera
  */
 #ifdef _USE_MPI
-    bool setSupportMesh( ParallelMeshPtr &currentMesh ) throw( std::runtime_error ) {
+    bool setSupportMesh( ParallelMeshPtr &currentMesh ) {
         if ( currentMesh->isEmpty() )
             throw std::runtime_error( "Mesh is empty" );
         _supportBaseMesh = currentMesh;
@@ -294,7 +294,7 @@ class ModelInstance : public DataStructure {
  * @param currentMesh objet PartialMeshPtr sur lequel le modele reposera
  */
 #ifdef _USE_MPI
-    bool setSupportMesh( PartialMeshPtr &currentMesh ) throw( std::runtime_error ) {
+    bool setSupportMesh( PartialMeshPtr &currentMesh ) {
         if ( currentMesh->isEmpty() )
             throw std::runtime_error( "Mesh is empty" );
         _supportBaseMesh = currentMesh;
@@ -307,7 +307,7 @@ class ModelInstance : public DataStructure {
         * @brief Definition du maillage support
         * @param currentMesh objet BasePtr sur lequel le modele reposera
         */
-    bool setSupportMesh( BaseMeshPtr &currentMesh ) throw( std::runtime_error ) {
+    bool setSupportMesh( BaseMeshPtr &currentMesh ) {
         if ( currentMesh->isEmpty() )
             throw std::runtime_error( "Mesh is empty" );
         _supportBaseMesh = currentMesh;

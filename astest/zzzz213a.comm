@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -26,7 +26,8 @@
 #              DY(E)=1.5       (SOLUTION)
 #--------------------------------------------------------------------------
 
-import aster
+from code_aster.Commands import *
+from code_aster import AsterError
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',), ERREUR=_F(ERREUR_F='EXCEPTION'), PAR_LOT='NON', DEBUG=_F(SDVERI='OUI'))
 
@@ -180,7 +181,7 @@ is_ok = 0
 try :
     XXXX=COMB_MATR_ASSE( COMB_R=(  _F(  MATR_ASSE = matas21a, COEF_R = 1.),
                                    _F(  MATR_ASSE = matas22b, COEF_R = 1.)))
-except aster.error,err:
+except AsterError as err:
    print fmt_raison % str(err)
    # on verifie que l'erreur fatale est bien celle que l'on attendait :
    if err.id_message == "ALGELINE2_28":
@@ -197,7 +198,7 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
                      VALE_K='VALEUR  ',),
            )
 
-DETRUIRE(CONCEPT=_F(NOM=(XXXX, TAB1),),)
+DETRUIRE(CONCEPT=_F(NOM=TAB1,),)
 
 
 # 3.2) RESOUDRE+ AFFE_CHAR_CINE : Il ne faut pas oublier le mot cle CHAM_CINE :
@@ -206,7 +207,7 @@ is_ok = 0
 try :
     XXXX=RESOUDRE( MATR = matas11, CHAM_NO= vecas11 )
 
-except aster.error,err:
+except AsterError as err:
    print fmt_raison % str(err)
    # on verifie que l'erreur fatale est bien celle que l'on attendait :
    if err.id_message == "ALGELINE3_41":
@@ -223,7 +224,7 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
                      VALE_K='VALEUR  ',),
            )
 
-DETRUIRE(CONCEPT=_F(NOM=(XXXX, TAB1),),)
+DETRUIRE(CONCEPT=_F(NOM=TAB1,),)
 
 
 # 3.3) COMB_MATR_ASSE + 2 AFFE_CHAR_CINE incompatibles  :
@@ -236,7 +237,7 @@ try :
       XXXX=COMB_MATR_ASSE( COMB_R=(  _F(  MATR_ASSE = matas33a, COEF_R = 1.),
                                         _F(  MATR_ASSE = matas33b, COEF_R = 1.)))
 
-except aster.error,err:
+except AsterError as err:
    print fmt_raison % str(err)
    # on verifie que l'erreur fatale est bien celle que l'on attendait :
    if err.id_message == "ALGELINE2_10":
@@ -253,7 +254,7 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
                      VALE_K='VALEUR  ',),
            )
 
-DETRUIRE(CONCEPT=_F(NOM=(XXXX, TAB1),),)
+DETRUIRE(CONCEPT=_F(NOM=TAB1,),)
 
 
 # 3.4) RESOUDRE +  AFFE_CHAR_CINE incompatibles  :
@@ -268,7 +269,7 @@ try :
      matas34 = FACTORISER(reuse=matas34,MATR_ASSE=matas34, METHODE= 'MULT_FRONT', RENUM= 'MD');
      u34=RESOUDRE( MATR = matas34, CHAM_NO= vecas34 , CHAM_CINE= vcine34 )
 
-except aster.error,err:
+except AsterError as err:
    print fmt_raison % str(err)
    # on verifie que l'erreur fatale est bien celle que l'on attendait :
    if err.id_message == "ALGELINE_32":

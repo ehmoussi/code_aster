@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,9 @@
 # You should have received a copy of the GNU General Public License
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
-import aster
+
+from code_aster import ConvergenceError
+from code_aster.Commands import *
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'), DEBUG=_F(SDVERI='OUI'),
       ERREUR=_F(ERREUR_F='EXCEPTION'),
@@ -156,6 +158,7 @@ LINST2 = DEFI_LIST_INST(
    ),
 )
 
+import aster
 
 ok_poursuite = 0
 try:
@@ -172,7 +175,7 @@ try:
         NEWTON=_F(MATRICE='TANGENTE',REAC_ITER=1),
         CONVERGENCE=_F(RESI_GLOB_RELA=1.0E-5, ITER_GLOB_MAXI=10,),
     )
-except aster.NonConvergenceError,err:
+except ConvergenceError,err:
     if err.id_message == "MECANONLINE9_7":
         ok_poursuite = 1
 
@@ -193,7 +196,7 @@ if ( ok_poursuite==1 ):
             NEWTON=_F(MATRICE='TANGENTE',),
             CONVERGENCE=_F(RESI_GLOB_RELA=2.0E-4, ITER_GLOB_MAXI=20,),
         )
-    except aster.NonConvergenceError,err:
+    except ConvergenceError,err:
         if err.id_message == "MECANONLINE9_7":
             ok_poursuite = 2
 

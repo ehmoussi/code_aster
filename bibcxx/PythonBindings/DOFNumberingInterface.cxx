@@ -26,7 +26,7 @@
 #include <boost/python.hpp>
 #include <PythonBindings/factory.h>
 #include "PythonBindings/DOFNumberingInterface.h"
-#include "PythonBindings/LoadInterface.h"
+#include "PythonBindings/LoadUtilities.h"
 
 void exportDOFNumberingToPython() {
     using namespace boost::python;

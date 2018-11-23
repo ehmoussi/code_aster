@@ -33,6 +33,7 @@ passed during the initialization to the
 :py:class:`~code_aster.Supervis.ExecutionParameter.ExecutionParameter`.
 """
 
+import libaster
 import aster
 import aster_core
 from Comportement import catalc
@@ -69,9 +70,9 @@ class ExecutionStarter(object):
         cls.params.logical_unit = LogicalUnitFile
         cls.params.syntax = CommandSyntax
         aster_core.register(cls.params)
-        aster.init(0)
+        libaster.jeveux_init()
         if cls.params.option & Options.Abort:
-            aster.onFatalError('ABORT')
+            libaster.onFatalError('ABORT')
         cls._is_initialized = True
         return True
 
@@ -130,7 +131,7 @@ class Starter(ExecuteCommand):
             syntax (*CommandSyntax*): Syntax description with user keywords.
         """
         logger.info("starting the execution...")
-        aster.debut(syntax)
+        libaster.call_debut(syntax)
 
 
 class Restarter(Starter):
@@ -149,7 +150,7 @@ class Restarter(Starter):
             super(Restarter, self)._call_oper(syntax)
         else:
             logger.info("restarting from a previous execution...")
-            aster.poursu(syntax)
+            libaster.call_poursuite(syntax)
             # 1:_call_oper, 2-3:exec_, 4:Restarter.run, 5:ExecuteCmd.run, 6:user
             # 1:_call_oper, 2-3:exec_, 4:run_with_argv, 5:init, 6:user
             loadObjects(level=6)

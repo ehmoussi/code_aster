@@ -54,7 +54,7 @@ class DiscreteProblemInstance {
      * @brief Calcul des matrices elementaires pour une option quelconque
      */
     ElementaryMatrixDisplacementDoublePtr
-    computeMechanicalMatrix( const std::string &optionName ) throw( std::runtime_error );
+    computeMechanicalMatrix( const std::string &optionName ) ;
 
   public:
     /**
@@ -77,7 +77,7 @@ class DiscreteProblemInstance {
     /**
      * @brief Calcul des matrices elementaires pour l'option CHAR_MECA
      */
-    ElementaryVectorPtr buildElementaryMechanicalLoadsVector() throw( std::runtime_error );
+    ElementaryVectorPtr buildElementaryMechanicalLoadsVector() ;
 
     /**
      * @brief Fonction permettant de calculer les vecteurs élémentaires pour les
@@ -102,7 +102,7 @@ class DiscreteProblemInstance {
      * @return Vecteur élémentaire
      */
     ElementaryVectorPtr
-    buildElementaryNeumannVector( const VectorDouble time ) throw( std::runtime_error );
+    buildElementaryNeumannVector( const VectorDouble time ) ;
 
     /**
      * @brief Fonction permettant de calculer les matrices élémentaires de rigidité
@@ -127,7 +127,7 @@ class DiscreteProblemInstance {
     FieldOnNodesDoublePtr buildKinematicsLoad( const BaseDOFNumberingPtr &curDOFNum,
                                                const double &time,
                                                const JeveuxMemory &memType = Permanent ) const
-        throw( std::runtime_error );
+        ;
 
     /**
      * @brief Détermination de la numérotation de ddl
@@ -142,19 +142,19 @@ class DiscreteProblemInstance {
     ElementaryMatrixDisplacementDoublePtr
     computeMechanicalDampingMatrix( const ElementaryMatrixDisplacementDoublePtr &rigidity,
                                     const ElementaryMatrixDisplacementDoublePtr &mass )
-        throw( std::runtime_error );
+        ;
 
     /**
      * @brief Calcul des matrices elementaires pour l'option RIGI_MECA
      */
     ElementaryMatrixDisplacementDoublePtr computeMechanicalStiffnessMatrix()
-        throw( std::runtime_error );
+        ;
 
     /**
      * @brief Calcul des matrices elementaires pour l'option MASS_MECA
      */
     ElementaryMatrixDisplacementDoublePtr computeMechanicalMassMatrix()
-        throw( std::runtime_error );
+        ;
 
     /**
      * @brief Récupération de l'étude

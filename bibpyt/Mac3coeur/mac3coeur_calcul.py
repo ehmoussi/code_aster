@@ -27,8 +27,8 @@ import os.path as osp
 from functools import wraps
 
 import aster_core
-import aster
 
+from code_aster import ConvergenceError
 from code_aster.Cata.DataStructure import modele_sdaster, maillage_sdaster
 from code_aster.Cata.Syntax import _F
 
@@ -742,7 +742,7 @@ class Mac3CoeurDeformation(Mac3CoeurCalcul):
                             k.update(kwds)
                         __res_int[i]=STAT_NON_LINE(**k)
                     break
-                except aster.NonConvergenceError,e :
+                except ConvergenceError:
                     ratio = ratio/10.
                     mater.append(self.cham_mater_contact_progressif(ratio))
                     keywords.append(self.snl(CHAM_MATER=mater[-1],
@@ -813,7 +813,7 @@ class Mac3CoeurDeformation(Mac3CoeurCalcul):
                             k.update(kwds)
                         __res_int[i]=STAT_NON_LINE(**k)
                     break
-                except aster.NonConvergenceError,e :
+                except ConvergenceError:
                     ratio = ratio*10.
                     mater.append(self.cham_mater_contact_progressif(ratio))
                     keywords.append(self.snl(CHAM_MATER=mater[-1],
@@ -1045,7 +1045,7 @@ class Mac3CoeurLame(Mac3CoeurCalcul):
                     # else :
                     __res_int[i]=STAT_NON_LINE(**k)
                 break
-            except aster.NonConvergenceError,e :
+            except ConvergenceError:
                 # print 'erreur : %s'%e
                 # try :
                 # DETRUIRE(CONCEPT=_F(NOM=__RESULT))

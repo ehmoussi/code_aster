@@ -93,7 +93,7 @@ class BehaviourInstance {
         };
     };
     /** @brief Set theta parameter */
-    void setTheta( double theta ) throw( std::runtime_error ) {
+    void setTheta( double theta ) {
         if ( ( theta >= 0.0 ) && ( theta <= 1.0 ) ) {
             _theta = theta;
             _toCapyConverter["PARM_THETA"]->enable();
