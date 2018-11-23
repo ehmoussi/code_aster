@@ -68,17 +68,17 @@ class EvolutionParameterInstance {
 
     FunctionPtr getTimeFunction() { return _foncInst; };
 
-    void prohibitLeftExtension() { _prolDroite = "EXCLU"; };
+    void prohibitLeftExtension() { _prolGauche = "EXCLU"; };
 
     void prohibitRightExtension() { _prolDroite = "EXCLU"; };
 
-    void setConstantLeftExtension() { _prolDroite = "CONSTANT"; };
+    void setConstantLeftExtension() { _prolGauche = "CONSTANT"; };
 
     void setConstantRightExtension() { _prolDroite = "CONSTANT"; };
 
     void setFieldName( const std::string &name ) { _nomCham = name; };
 
-    void setLinearLeftExtension() { _prolDroite = "LINEAIRE"; };
+    void setLinearLeftExtension() { _prolGauche = "LINEAIRE"; };
 
     void setLinearRightExtension() { _prolDroite = "LINEAIRE"; };
 
