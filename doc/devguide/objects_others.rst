@@ -557,3 +557,33 @@ Documentation of all other types.
 .. autoclass:: code_aster.Objects.Renumbering
    :show-inheritance:
    :members:
+
+
+********************************************************************************
+:py:class:`~code_aster.Objects.Exception` subclasses
+********************************************************************************
+
+.. autoclass:: code_aster.Objects.AsterError
+   :show-inheritance:
+   :members:
+
+.. autoclass:: code_aster.Objects.ContactError
+   :show-inheritance:
+   :members:
+
+.. autoclass:: code_aster.Objects.ConvergenceError
+   :show-inheritance:
+   :members:
+
+.. autoclass:: code_aster.Objects.IntegrationError
+   :show-inheritance:
+   :members:
+
+.. autoclass:: code_aster.Objects.SolverError
+   :show-inheritance:
+   :members:
+
+.. autoclass:: code_aster.Objects.TimeLimitError
+   :show-inheritance:
+   :members:
+
