@@ -52,6 +52,7 @@ def mode_iter_simult_prod(TYPE_RESU, **args ):
     vale_amor = args.get('MATR_AMOR')
     if (AsType(vale_amor)== matr_asse_depl_r) : return mode_meca_c
     if (AsType(vale_rigi)== matr_asse_depl_r) : return mode_meca
+    if (AsType(vale_rigi)== matr_asse_elim_r) : return mode_meca
     if (AsType(vale_rigi)== matr_asse_temp_r) : return mode_meca
     if (AsType(vale_rigi)== matr_asse_depl_c) : return mode_meca_c
     if (AsType(vale_rigi)== matr_asse_pres_r) : return mode_acou
@@ -96,8 +97,10 @@ MODE_ITER_SIMULT_CATA=OPER(nom="MODE_ITER_SIMULT",op=  45, sd_prod= mode_iter_si
 
          b_dynam        =BLOC(condition = "TYPE_RESU == 'DYNAMIQUE'",
            MATR_RIGI          =SIMP(statut='o',typ=(matr_asse_depl_r,matr_asse_depl_c,matr_asse_temp_r,
-                                                    matr_asse_gene_r,matr_asse_gene_c,matr_asse_pres_r ) ),
-           MATR_MASS          =SIMP(statut='o',typ=(matr_asse_depl_r,matr_asse_gene_r,matr_asse_pres_r,matr_asse_temp_r ) ),
+                                                    matr_asse_gene_r,matr_asse_gene_c,matr_asse_pres_r, 
+                                                    matr_asse_elim_r, ) ),
+           MATR_MASS          =SIMP(statut='o',typ=(matr_asse_depl_r,matr_asse_gene_r,matr_asse_pres_r,
+                                                    matr_asse_temp_r, matr_asse_elim_r ) ),
            MATR_AMOR          =SIMP(statut='f',typ=(matr_asse_depl_r,matr_asse_gene_r) ),
            CALC_FREQ       =FACT(statut='d',min=0,
              OPTION      =SIMP(statut='f',typ='TXM',defaut="PLUS_PETITE",into=("PLUS_PETITE","PLUS_GRANDE","BANDE","CENTRE","TOUT"),

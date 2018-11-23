@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,9 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
+!
 subroutine op0069()
-use elim_lagr_data_module
+use elg_data_module
     implicit none
 #include "jeveux.h"
 #include "asterc/getres.h"
@@ -35,7 +36,7 @@ use elim_lagr_data_module
 #include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/utmess.h"
-! person_in_charge: jacques.pellet at edf.fr
+! person_in_charge: natacha.bereux at edf.fr
 !     OPERATEUR ELIM_LAGR
 ! ======================================================================
     character(len=19) :: matass, matred, krigi, krigred, solv1, solv2
@@ -44,7 +45,7 @@ use elim_lagr_data_module
     character(len=8) :: k8bid
     character(len=3) :: kellag
     real(kind=8) :: r8bid
-    integer ::  ifm, niv, jrefa, jslvk,  iautre, ibid
+    integer ::  ifm, niv, jrefa, jslvk,  iautre
 !   ------------------------------------------------------------------
     call jemarq()
 

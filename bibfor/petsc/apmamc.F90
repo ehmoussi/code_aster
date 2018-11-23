@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -61,11 +61,9 @@ use petsc_data_module
 !     VARIABLES LOCALES
     integer :: nsmdi, nsmhc, nz, nvalm, nlong
     integer :: jdxi1, jdxi2, jdval1, jdval2, jvalm, jvalm2
-    integer :: k, ilig1, ilig2, nzdeb, nzfin,bs
+    integer :: k, ilig, nzdeb, nzfin,bs
     integer :: iterm, jterm, nbterm, neq2
-    integer :: nbloc, kbloc, k1, k2, k3, fictif
-    integer(kind=4), pointer :: new_ieq(:) => null()
-    integer(kind=4), pointer :: old_ieq(:) => null()
+    integer :: nbloc, kbloc, k1, k2, k3
 !
     character(len=19) :: nomat, nosolv
     character(len=16) :: idxi1, idxi2, trans1, trans2
@@ -104,28 +102,12 @@ use petsc_data_module
     call jelira(nonu//'.SMOS.SMDI', 'LONMAX', nsmdi)
     call jeveuo(nonu//'.SMOS.SMHC', 'L', vi4=smhc)
     call jelira(nonu//'.SMOS.SMHC', 'LONMAX', nsmhc)
-!   neq: nb total de ddls
-    neq=nsmdi
+!   neq2: nb total de ddls
+    neq2=nsmdi
 !   nz: nombre de termes non-nuls (dans la partie triangulaire superieure
 !                                             ou inferieure de la matrice)
-    nz=smdi(neq)
+    nz=smdi(neq2)
 
-    fictif=fictifs(kptsc)
-    if (fictif.eq.1) then
-        new_ieq => new_ieqs(kptsc)%pi4
-        old_ieq => old_ieqs(kptsc)%pi4
-        ASSERT(size(new_ieq).eq.neq)
-        neq2=size(old_ieq)
-        ASSERT(neq2.gt.neq)
-    else
-        neq2=neq
-        allocate(new_ieq(neq))
-        allocate(old_ieq(neq))
-        do k=1,neq
-            new_ieq(k)=k
-            old_ieq(k)=k
-        enddo
-    endif
     ASSERT(mod(neq2,bs).eq.0)
 
 !   la matrice est-elle symetrique ?
@@ -187,7 +169,7 @@ use petsc_data_module
 
 !   -- On commence par s'occuper des blocs C et D
 !      Indices C : jcol2
-!      Indices F : jcol1, ilig1, ilig2
+!      Indices F : jcol1, ilig
 !------------------------------------------------
 
     do jcol2 = low2, high2-1
@@ -196,101 +178,90 @@ use petsc_data_module
 !          dans valm2 (nzdeb:nzfin)
         iterm=0
         jterm=0
-        jcol1=old_ieq(jcol2+1)
-
-        if (jcol1.gt.0) then
-            if (jcol1.eq.1) then
-                nzdeb = 1
-            else
-                nzdeb = smdi(jcol1-1) + 1
-            endif
-            nzfin = smdi(jcol1)
-            do k = nzdeb, nzfin
-!               -- ilig1 : indice ligne (fortran) du terme courant dans la matrice Aster
-                ilig1 = smhc(k)
-                ilig2 = new_ieq(ilig1)
+        jcol1=jcol2+1
+        if (jcol1.eq.1) then
+            nzdeb = 1
+        else
+            nzdeb = smdi(jcol1-1) + 1
+        endif
+        nzfin = smdi(jcol1)
+        do k = nzdeb, nzfin
+!       -- ilig : indice ligne (fortran) du terme courant dans la matrice Aster
+            ilig = smhc(k)
 ! ======
 ! Bloc C
 ! ======
-!               -- Lecture de la ligne C(jcol2,:)
-!               -- Compteur de termes dans la ligne jcol2 de C
-                jterm=jterm+1
-!               -- si A n'est pas symetrique, on lit valm2
-                if (lmnsy) then
-                    valm=zr(jvalm2-1+k)
-                else
-!                   -- si A est symetrique, on lit valm1
-                    valm=zr(jvalm-1+k)
-                endif
-                zr(jdval2+jterm-1)=valm
-!               -- on stocke l'indice C de la ligne, c'est
-!                  l'indice de la colonne transposee
-                zi4(jdxi2+jterm-1)=ilig2-1
+!           -- Lecture de la ligne C(jcol2,:)
+!           -- Compteur de termes dans la ligne jcol2 de C
+            jterm=jterm+1
+!           -- si A n'est pas symetrique, on lit valm2
+            if (lmnsy) then
+                valm=zr(jvalm2-1+k)
+            else
+!           -- si A est symetrique, on lit valm1
+                valm=zr(jvalm-1+k)
+            endif
+            zr(jdval2+jterm-1)=valm
+!           -- on stocke l'indice C de la ligne, c'est
+!              l'indice de la colonne transposee
+            zi4(jdxi2+jterm-1)=ilig-1
 ! ======
 ! bloc D
 ! ======
-!               -- il est lu en colonne depuis valm
-                if (ilig2 .ge. (low2+1)) then
-!                   -- Compteur de termes dans la colonne jcol2 de D
-                    iterm=iterm+1
-                    valm=zr(jvalm-1+k)
-                    zr(jdval1+iterm-1)=valm
-!                   -- on stocke l'indice C de la ligne
-                    zi4(jdxi1+iterm-1)=ilig2-1
-                endif
-            end do
+!           -- il est lu en colonne depuis valm
+            if (ilig .ge. (low2+1)) then
+!              -- Compteur de termes dans la colonne jcol2 de D
+                iterm=iterm+1
+                valm=zr(jvalm-1+k)
+                zr(jdval1+iterm-1)=valm
+!               -- on stocke l'indice C de la ligne
+                zi4(jdxi1+iterm-1)=ilig-1
+            endif
+        end do
 
-!           -- On enleve un terme dans la ligne C(jcol2,:): c'est le terme diagonal
-!              que l'on a stocke deux fois (pour C et pour D)
-            jterm=jterm-1
+!       -- On enleve un terme dans la ligne C(jcol2,:): c'est le terme diagonal
+!         que l'on a stocke deux fois (pour C et pour D)
+        jterm=jterm-1
 
 
-!           -- Valeurs de D => on envoie les valeurs de la colonne jcol2
-            mm = to_petsc_int(iterm)
-            call MatSetValues(a, mm, zi4(jdxi1-1+1:jdxi1-1+mm), ione, [to_petsc_int(jcol2)],&
-                              zr(jdval1-1+1:jdval1-1+mm), INSERT_VALUES, ierr)
-            ASSERT(ierr.eq.0)
+!       -- Valeurs de D => on envoie les valeurs de la colonne jcol2
+        mm = to_petsc_int(iterm)
+        call MatSetValues(a, mm, zi4(jdxi1-1+1:jdxi1-1+mm), ione, [to_petsc_int(jcol2)],&
+                          zr(jdval1-1+1:jdval1-1+mm), INSERT_VALUES, ierr)
+        ASSERT(ierr.eq.0)
 
-!           -- Valeurs de C => on envoie les valeurs de la ligne jcol2
-            nn = to_petsc_int(jterm)
-            call MatSetValues(a, ione, [to_petsc_int(jcol2)], nn , zi4(jdxi2-1+1:jdxi2-1+nn),&
+!       -- Valeurs de C => on envoie les valeurs de la ligne jcol2
+        nn = to_petsc_int(jterm)
+        call MatSetValues(a, ione, [to_petsc_int(jcol2)], nn , zi4(jdxi2-1+1:jdxi2-1+nn),&
                               zr(jdval2-1+1:jdval2-1+nn), INSERT_VALUES, ierr)
-            ASSERT(ierr.eq.0)
-        else
-!           -- pour un ddl fictif, on se contente d'ajouter un 1. sur la diagonale :
-            call MatSetValues(a, ione, [to_petsc_int(jcol2)], ione, [to_petsc_int(jcol2)],&
-                              [1.d0], INSERT_VALUES, ierr)
-        endif
+        ASSERT(ierr.eq.0)
+!
     end do
 
 
 !  -- Ensuite on finit par le bloc hors diagonal E
 !      Indices C : jcol2
-!      Indices F : jcol1, ilig1, ilig2
-!  --------------------------------------------------
+!      Indices F : jcol1, ilig
+!  -------------------------------------------------
 !
 !   -- On lit colonne par colonne upper(A( :,high2:))
     do jcol2 = high2, neq2-1
         iterm=0
-        jcol1=old_ieq(jcol2+1)
-!       -- les ddls fictifs n'ont pas de termes dans le bloc E :
-        if (jcol1.eq.0) cycle
-
+        jcol1=jcol2+1
         ASSERT(jcol1.ge.2)
         nzdeb = smdi(jcol1-1) + 1
         nzfin = smdi(jcol1)
         do k = nzdeb, nzfin
-            ilig1 = smhc(k)
-            ilig2 = new_ieq(ilig1)
+            ilig = smhc(k)
 !           -- On ignore les lignes avant low2
-            if (ilig2 .lt. (low2+1)) then
+            if (ilig .lt. (low2+1)) then
                 continue
 !           -- On lit et on stocke A(low2+1:high2,jcol2)= E(:,jcol2)
-            else if (ilig2.le.high2) then
+            else if (ilig.le.high2) then
                 iterm=iterm+1
                 valm=zr(jvalm-1+k)
                 zr(jdval1+iterm-1)=valm
-                zi4(jdxi1+iterm-1)=ilig2-1
+                zi4(jdxi1+iterm-1)=ilig-1
             else
 !               -- On ignore les lignes après high2
                 exit
@@ -313,10 +284,6 @@ use petsc_data_module
     call jedetr(idxi2)
     call jedetr(trans1)
     call jedetr(trans2)
-    if (fictif.eq.0) then
-        deallocate(new_ieq)
-        deallocate(old_ieq)
-    endif
 
 
     call jedema()
