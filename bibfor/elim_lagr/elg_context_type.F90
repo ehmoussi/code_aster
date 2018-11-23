@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,66 +16,70 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-module elim_lagr_context_type
+module elg_context_type
 !
 #include "asterf_types.h"
 #include "asterf_petsc.h"
 !
 !
 ! person_in_charge: natacha.bereux at edf.fr
-! aslint:disable=W1304,W1003
 !
 use aster_petsc_module
+!
 implicit none
 !
 private
 #include "asterf.h"
 #include "asterfort/assert.h"
+#include "asterfort/utmess.h"
 !
 !----------------------------------------------------------------------
 ! Container regroupant toutes les matrices et tous les vecteurs (PETSc)
 ! nécessaires à la fonctionnalité ELIM_LAGR='OUI' (pour une matrice Aster)
-! Ce type contient un pointeur vers un objet de type saddle_point_context
 !----------------------------------------------------------------------
 
 type, public ::  elim_lagr_ctxt
-!
+!    
+integer :: nphys
 #ifdef _HAVE_PETSC
+! Projection de la matrice B sur le noyau de la matrice
+! des contraintes C
+! Kproj = tTfinal B Tfinal 
     Mat :: kproj
-    Mat :: ctrans
+! Matrice des contraintes
+    Mat :: matc
+! Matrice contenant la base du noyau de la matrice des contraintes
     Mat :: tfinal
+! Matrice initiale B (c'est la matr_asse convertie au format PETSc) 
     Mat :: matb
     Vec :: vx0
     Vec :: vecb
     Vec :: vecc
-    integer :: nphys
     integer :: nlag
-    integer(kind=4), dimension(:), pointer :: indred
-    ! nom de la matrice Aster "complète" (avec Lagranges)
+! Nom de la matrice Aster initiale (avec Lagranges)
     character(len=19) :: full_matas
-    ! nom de la matrice Aster "réduite" (sans Lagranges)
+! Nom de la matrice Aster "réduite" (sans Lagranges)
     character(len=19) :: reduced_matas
-    ! nom de la matrice de rigidité Aster contenant les
-    ! relations lineaires
-    ! c'est utile dans le cas ou on reduit une matrice de masse
-    ! ou d'amortissement qui ne contient pas ces relations lineaires
-    ! il faut alors utiliser la matrice de rigidite du systeme
+! Nom de la matrice de rigidité Aster contenant les
+! relations lineaires
+! c'est utile dans le cas ou on reduit une matrice de masse
+! ou d'amortissement qui ne contient pas ces relations lineaires
+! il faut alors utiliser la matrice de rigidite du systeme
     character(len=19) ::  k_matas
 #else
-    integer :: idummy
 #endif
 end type elim_lagr_ctxt
 !
-public :: new_elim_lagr_context, free_elim_lagr_context
+public :: new_elg_context, free_elg_context
 !
 #ifdef _HAVE_PETSC
-PetscErrorCode, private :: ierr
+PetscErrorCode  :: ierr
 !
 contains
 !
-! Returns a fresh elim_lagr_context
+! Returns a fresh elg_context
 !
-function new_elim_lagr_context() result ( elg_ctxt )
+function new_elg_context() result ( elg_ctxt )
   !
   type(elim_lagr_ctxt) :: elg_ctxt
   !
@@ -84,7 +88,7 @@ function new_elim_lagr_context() result ( elg_ctxt )
   elg_ctxt%k_matas=' '
 #if PETSC_VERSION_LT(3,8,0)
   elg_ctxt%kproj=PETSC_NULL_OBJECT
-  elg_ctxt%ctrans=PETSC_NULL_OBJECT
+  elg_ctxt%matc=PETSC_NULL_OBJECT
   elg_ctxt%tfinal=PETSC_NULL_OBJECT
   elg_ctxt%matb=PETSC_NULL_OBJECT
   elg_ctxt%vx0=PETSC_NULL_OBJECT
@@ -92,21 +96,19 @@ function new_elim_lagr_context() result ( elg_ctxt )
   elg_ctxt%vecc=PETSC_NULL_OBJECT
 #else
   elg_ctxt%kproj=PETSC_NULL_MAT
-  elg_ctxt%ctrans=PETSC_NULL_MAT
+  elg_ctxt%matc=PETSC_NULL_MAT
   elg_ctxt%tfinal=PETSC_NULL_MAT
   elg_ctxt%matb=PETSC_NULL_MAT
   elg_ctxt%vx0=PETSC_NULL_VEC
   elg_ctxt%vecb=PETSC_NULL_VEC
   elg_ctxt%vecc=PETSC_NULL_VEC
 #endif
-  nullify(elg_ctxt%indred)
-  !
-end function new_elim_lagr_context
+end function new_elg_context
 !
 !
 ! Free object elg_ctxt
 !
-subroutine free_elim_lagr_context( elg_ctxt )
+subroutine free_elg_context( elg_ctxt )
 !   Dummy argument
     type(elim_lagr_ctxt), intent(inout) :: elg_ctxt
 !
@@ -116,7 +118,7 @@ subroutine free_elim_lagr_context( elg_ctxt )
 !
     call MatDestroy(elg_ctxt%kproj, ierr)
     ASSERT( ierr == 0 )
-    call MatDestroy(elg_ctxt%ctrans, ierr)
+    call MatDestroy(elg_ctxt%matc, ierr)
     ASSERT( ierr == 0 )
     call MatDestroy(elg_ctxt%tfinal, ierr)
     ASSERT( ierr == 0 )
@@ -129,13 +131,9 @@ subroutine free_elim_lagr_context( elg_ctxt )
     call VecDestroy(elg_ctxt%vecc, ierr)
     ASSERT( ierr == 0 )
 !
-    if (associated(elg_ctxt%indred)) then
-    deallocate(elg_ctxt%indred)
-        nullify(elg_ctxt%indred)
-    endif
 #if PETSC_VERSION_LT(3,8,0)
   elg_ctxt%kproj=PETSC_NULL_OBJECT
-  elg_ctxt%ctrans=PETSC_NULL_OBJECT
+  elg_ctxt%matc=PETSC_NULL_OBJECT
   elg_ctxt%tfinal=PETSC_NULL_OBJECT
   elg_ctxt%matb=PETSC_NULL_OBJECT
   elg_ctxt%vx0=PETSC_NULL_OBJECT
@@ -143,7 +141,7 @@ subroutine free_elim_lagr_context( elg_ctxt )
   elg_ctxt%vecc=PETSC_NULL_OBJECT
 #else
   elg_ctxt%kproj=PETSC_NULL_MAT
-  elg_ctxt%ctrans=PETSC_NULL_MAT
+  elg_ctxt%matc=PETSC_NULL_MAT
   elg_ctxt%tfinal=PETSC_NULL_MAT
   elg_ctxt%matb=PETSC_NULL_MAT
   elg_ctxt%vx0=PETSC_NULL_VEC
@@ -151,7 +149,7 @@ subroutine free_elim_lagr_context( elg_ctxt )
   elg_ctxt%vecc=PETSC_NULL_VEC
 #endif
 !
-end subroutine free_elim_lagr_context
+end subroutine free_elg_context
 !
 !
 #else
@@ -159,17 +157,15 @@ end subroutine free_elim_lagr_context
 ! interfaces des routines publiques
 contains
 !
-function new_elim_lagr_context() result ( elg_ctxt )
+function new_elg_context() result ( elg_ctxt )
     type(elim_lagr_ctxt) :: elg_ctxt
-    elg_ctxt%idummy = 0
-    ASSERT( .false. )
-end function new_elim_lagr_context
+    elg_ctxt%nphys=0
+end function new_elg_context
 !
-subroutine free_elim_lagr_context( elg_ctxt )
+subroutine free_elg_context( elg_ctxt )
     type(elim_lagr_ctxt), intent(inout) :: elg_ctxt
-    elg_ctxt%idummy = 0
-end subroutine free_elim_lagr_context
-
+    elg_ctxt%nphys=0
+end subroutine free_elg_context
 #endif
 
-end module elim_lagr_context_type
+end module elg_context_type

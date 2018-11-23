@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -26,6 +26,7 @@ use augmented_lagrangian_module, only : augmented_lagrangian_apply, &
     augmented_lagrangian_setup, augmented_lagrangian_destroy
 use lmp_module, only : lmp_apply_right, lmp_destroy
 use lmp_data_module, only : reac_lmp
+use aster_fieldsplit_module, only : mfield_setup
 
 implicit none
 #include "asterf.h"
@@ -53,7 +54,7 @@ implicit none
 !----------------------------------------------------------------
 !
 !     VARIABLES LOCALES
-    integer :: rang, nbproc
+    mpi_int :: rang, nbproc
     integer :: dimgeo, dimgeo_b, niremp, istat
     integer :: jnequ, jnequl
     integer :: nloc, neqg, ndprop, ieq, numno, icmp
@@ -395,6 +396,13 @@ implicit none
 !-----------------------------------------------------------------------
     else if (precon == 'SOR') then
         call PCSetType(pc, PCSOR, ierr)
+        ASSERT(ierr == 0)
+!-----------------------------------------------------------------------
+    else if (precon == 'FIELDSPLIT') then
+        call PCSetType(pc, PCFIELDSPLIT, ierr)
+        ASSERT(ierr == 0)
+        call mfield_setup( kptsc, nonu )
+        call PCSetFromOptions(pc, ierr)
         ASSERT(ierr == 0)
 !-----------------------------------------------------------------------
     else if (precon == 'ML') then

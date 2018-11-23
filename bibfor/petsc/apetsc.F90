@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -27,7 +27,7 @@ subroutine apetsc(action, solvez, matasz, rsolu, vcinez,&
 !
 use aster_petsc_module
 use petsc_data_module
-use elim_lagr_comp_module
+use elg_module
 !
     implicit none
 !
@@ -65,10 +65,8 @@ use elim_lagr_comp_module
 !                 (ATTENTION EN // LA CONSTRUCTION DE CERTAINS PC EST
 !                  RETARDEE)
 !     /'RESOUD'  : POUR RESOUDRE LE SYSTEME LINEAIRE
-!     /'ELIM_LAGR[+/-]R'  : CALCULE LES MATRICES NECESSAIRES A
-!                         LA FONCTIONNALITE ELIM_LAGR='OUI'
-!             'ELIM_LAGR+R' : on calcule la matrice R
-!             'ELIM_LAGR-R' : on ne calcule pas la matrice R
+!     /'ELIM_LAGR'  : CALCULE LES MATRICES NECESSAIRES A
+!                     LA FONCTIONNALITE ELIM_LAGR='OUI'
 !     /'FIN'     : POUR FERMER DEFINITIVEMENT PETSC
 !                  NECESSAIRE POUR DECLENCHER L'AFFICHAGE DU PROFILING
 !
@@ -163,11 +161,6 @@ use elim_lagr_comp_module
             nosols(k) = ' '
             nonus(k) = ' '
             tblocs(k) = -1
-            if (fictifs(k).eq.1) then
-                deallocate(new_ieqs(k)%pi4)
-                deallocate(old_ieqs(k)%pi4)
-            endif
-            fictifs(k) = -1
         enddo
 #if PETSC_VERSION_LT(3,8,0) 
   xlocal = PETSC_NULL_OBJECT
@@ -266,7 +259,7 @@ use elim_lagr_comp_module
         ASSERT(refa(3).ne.'ELIML')
 
     else if (action.eq.'ELIM_LAGR') then
-        call build_elim_lagr_context( nomat_courant )
+        call build_elg_context( nomat_courant )
         iret=0
         goto 999
     endif
