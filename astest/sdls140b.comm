@@ -947,6 +947,20 @@ DYNA0B=CALC_CHAMP(reuse =DYNA0B,
                              FORCE=('FORC_NODA','REAC_NODA'),
                             );
 
+IMPR_RESU(RESU=_F(RESULTAT=DYNA0B,NOM_CHAM=('FORC_NODA','REAC_NODA')),FORMAT='MED',UNITE=81);
+
+DYNA1=LIRE_RESU(FORMAT='MED',
+                  UNITE=81,
+                  FORMAT_MED=(
+                              _F(NOM_CHAM='FORC_NODA',
+                                NOM_CHAM_MED='DYNA0B__FORC_NODA',),
+                              _F(NOM_CHAM='REAC_NODA',
+                                NOM_CHAM_MED='DYNA0B__REAC_NODA',),
+                                ),
+                  TYPE_RESU='DYNA_TRANS',
+                  TOUT_ORDRE='OUI',
+                  MODELE=MODELE0,);
+
 XXB=PROJ_CHAMP(RESULTAT=DYNA0B,METHODE='COLLOCATION',  NOM_CHAM=('DEPL','VITE','ACCE','FORC_NODA','REAC_NODA'),
               MODELE_1=MODELE0, MODELE_2=MODELE,
               VIS_A_VIS=(_F(GROUP_MA_2='FOND_RG',GROUP_MA_1='SURF', CAS_FIGURE='2D', TRANSF_GEOM_2=(FX,FY),),
