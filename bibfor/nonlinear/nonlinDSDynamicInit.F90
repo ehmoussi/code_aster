@@ -17,9 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nonlinDSEnergyInit(result, ds_energy)
-!
-use NonLin_Datastructure_type
+subroutine nonlinDSDynamicInit(hval_incr, sddyna)
 !
 implicit none
 !
@@ -27,66 +25,58 @@ implicit none
 #include "asterfort/assert.h"
 #include "asterfort/infdbg.h"
 #include "asterfort/utmess.h"
-#include "asterfort/nonlinDSTableIOCreate.h"
-#include "asterfort/nonlinDSTableIOSetPara.h"
+#include "asterfort/ndynlo.h"
+#include "asterfort/getvid.h"
+#include "asterfort/mginfo.h"
+#include "asterfort/nmchex.h"
+#include "asterfort/dismoi.h"
+#include "asterfort/idensd.h" 
 !
-character(len=8), intent(in) :: result
-type(NL_DS_Energy), intent(inout) :: ds_energy
-!
-! --------------------------------------------------------------------------------------------------
-!
-! MECA_NON_LINE - Energy management
-!
-! Initializations for energy
+character(len=19), intent(in) :: hval_incr(*)
+character(len=19), intent(in) :: sddyna
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  result           : name of results datastructure
-! IO  ds_energy        : datastructure for energy management
+! MECA_NON_LINE - Dynamic management
+!
+! Initializations for dynamic
+!
+! --------------------------------------------------------------------------------------------------
+!
+! In  hval_incr        : hat-variable for incremental values fields
+! In  sddyna           : datastructure for dynamic
 !
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    integer :: i_col
-    character(len=24) :: col_name
-    type(NL_DS_Table) :: table
+    integer :: nbmd, nb_mode, nb_equa
+    aster_logical :: l_damp_moda
+    character(len=19) :: pfcn1, pfcn2, disp_prev
+    character(len=8) :: mode_meca
+    character(len=14) :: nume_ddl
 !
 ! --------------------------------------------------------------------------------------------------
 !
     call infdbg('MECANONLINE', ifm, niv)
     if (niv .ge. 2) then
-        call utmess('I', 'MECANONLINE13_86')
+        call utmess('I', 'MECANONLINE13_13')
     endif
 !
-! - Get table
+! - Active functionnalities
 !
-    table = ds_energy%table
+    l_damp_moda = ndynlo(sddyna,'AMOR_MODAL')
 !
-! - Activate columns
+! - Modal damping
 !
-    do i_col = 1, table%nb_cols
-        col_name = table%cols(i_col)%name
-        if (col_name.eq.'NUME_REUSE') then
-            table%l_cols_acti(i_col) = ASTER_TRUE
-        elseif (col_name.eq.'INST      ') then
-            table%l_cols_acti(i_col) = ASTER_TRUE
-        else
-            if (ds_energy%l_comp) then
-                table%l_cols_acti(i_col) = ASTER_TRUE
-            endif
+    if (l_damp_moda) then
+        call getvid('AMOR_MODAL', 'MODE_MECA', iocc=1, scal=mode_meca, nbret=nbmd)
+        call mginfo(mode_meca, nume_ddl, nb_mode, nb_equa)
+        call nmchex(hval_incr, 'VALINC', 'DEPMOI', disp_prev)
+        call dismoi('PROF_CHNO', disp_prev, 'CHAM_NO', repk=pfcn1)
+        call dismoi('PROF_CHNO', nume_ddl, 'NUME_DDL', repk=pfcn2)
+        if (.not.idensd('PROF_CHNO', pfcn1, pfcn2)) then
+            call utmess('F', 'DYNAMIQUE_54')
         endif
-    end do
-!
-! - Create list of parameters
-!
-    call nonlinDSTableIOSetPara(table)
-!
-! - Create table in results datastructure
-!
-    call nonlinDSTableIOCreate(result, 'PARA_CALC', table%table_io)
-!
-! - Save table
-!
-    ds_energy%table  = table
+    endif
 !
 end subroutine
