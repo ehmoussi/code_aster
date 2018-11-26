@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,12 +15,16 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: j-pierre.lefebvre at edf.fr
+!
 subroutine matcod(chmat, indmat, nbmat, imate, igrp,&
-                  materi, codi)
-    implicit none
+                  materi, codi, l_ther)
+!
+implicit none
+!
 #include "jeveux.h"
 #include "asterc/isnnem.h"
+#include "asterf_types.h"
 #include "asterfort/alfint.h"
 #include "asterfort/assert.h"
 #include "asterfort/codent.h"
@@ -38,10 +42,11 @@ subroutine matcod(chmat, indmat, nbmat, imate, igrp,&
 #include "asterfort/utmess.h"
 #include "asterfort/wkvect.h"
 !
-    character(len=8) :: chmat, materi
-    character(len=19) :: codi
-    integer :: indmat, nbmat, imate, igrp
-! person_in_charge: j-pierre.lefebvre at edf.fr
+character(len=8) :: chmat, materi
+character(len=19) :: codi
+integer :: indmat, nbmat, imate, igrp
+aster_logical, intent(in) :: l_ther
+!
 !-----------------------------------------------------------------------
 !     MATERIAU CODE APPELE PAR RCMACO ET PMMACO
 !-----------------------------------------------------------------------
@@ -135,7 +140,7 @@ subroutine matcod(chmat, indmat, nbmat, imate, igrp,&
     call wkvect('&&RCMACO.NOMR', 'V V I', nbmat, jnomr)
     call wkvect('&&RCMACO.JDIM', 'V V I', nbmat, jjdim)
     call wkvect('&&RCMACO.LCOD', 'V V I', nbmat, jlcod)
-    do 100 l = 1, nbmat
+    do l = 1, nbmat
         nommat=zk8(igrp+indmat+l-1)
         call jeexin(nommat//'.MATERIAU.NOMRC', iret)
         ASSERT(iret .ne. 0)
@@ -145,12 +150,12 @@ subroutine matcod(chmat, indmat, nbmat, imate, igrp,&
         if (zk32(zi(jnomr+l-1)) .eq. 'ELAS_COQMU') nbv = 1
         if (zk32(zi(jnomr+l-1)+nbv) .eq. 'THER_COQMU') nbv = nbv+1
         if (nbv .gt. 0) zi(jnbcm+l-1) = nbv
-100  end do
+    end do
 !
     nbtt = 0
     nbcot = 0
     nbcmt=0
-    do 200 l = 1, nbmat
+    do l = 1, nbmat
         nbco = 0
         nbt = 0
         nommat=zk8(igrp+indmat+l-1)
@@ -160,7 +165,7 @@ subroutine matcod(chmat, indmat, nbmat, imate, igrp,&
         call jedetr('&&RCMACO.DIM'//knuma3)
         call wkvect('&&RCMACO.DIM'//knuma3, 'V V I', lmat*nbcm, zi(jjdim+l-1))
         jdim=zi(jjdim+l-1)
-        do 10 k = 1, nbcm
+        do k = 1, nbcm
             kk = jdim+lmat*(k-1)
             call codent(k, 'D0', k6)
             chma = nommat//'.CPT.'//k6
@@ -192,12 +197,12 @@ subroutine matcod(chmat, indmat, nbmat, imate, igrp,&
                 zi(kk+7)=1
                 zi(kk+8)=1
             endif
-10      continue
+        end do
         zi(jlcod+l-1)=2 + lmat*nbcm+ lfct*nbco + lsup*nbt
         nbcmt=nbcmt+nbcm
         nbtt = nbtt + nbt
         nbcot = nbcot + nbco
-200  end do
+    end do
 !
     lgcodi= 2*nbmat+1+ 2*nbmat + lmat*nbcmt + lfct*nbcot + lsup*nbtt
     call wkvect(codi//'.CODI', 'V V I', lgcodi, jcodi)
@@ -211,7 +216,7 @@ subroutine matcod(chmat, indmat, nbmat, imate, igrp,&
 
     ipi0=2*nbmat+1
     idma=ipi0
-    do 300 imat = 1, nbmat
+    do imat = 1, nbmat
         nommat=zk8(igrp+indmat+imat-1)
         nbcm=zi(jnbcm+imat-1)
         jnomrc=zi(jnomr+imat-1)
@@ -224,7 +229,7 @@ subroutine matcod(chmat, indmat, nbmat, imate, igrp,&
         zi(jcodi+idma+1) = nbcm
         ipi = jcodi+idma+2+nbcm
 !
-        do 20 k = 1, nbcm
+        do k = 1, nbcm
 !
             chma = nommat//'.'//zk32(jnomrc+k-1)(1:10)
 !
@@ -243,21 +248,21 @@ subroutine matcod(chmat, indmat, nbmat, imate, igrp,&
 !
 ! ---       boucle sur les coefficients reels :
 !           ------------------------------------------
-            do 21 l = 0, zi(kk)-1
+            do l = 0, zi(kk)-1
                 ch19 = zk16(zi(kk+5)+l)
                 if (ch19 .eq. 'PRECISION') prec = zr(zi(kk+1)+l)
-21          continue
+            end do
 
-            do 22 l = 0, zi(kk)-1
+            do l = 0, zi(kk)-1
                 ch19 = zk16(zi(kk+5)+l)
                 if (ch19 .eq. 'TEMP_DEF_ALPHA') then
                     tdef = zr(zi(kk+1)+l)
 !
 !                   boucle sur les fonctions :
 !                   ------------------------
-                    do 23 m = 0, zi(kk+4)-1
+                    do m = 0, zi(kk+4)-1
                         ch19 = zk16(zi(kk+5)+zi(kk)+zi(kk+2)+zi(kk+4)+ m)
-                        nopara = zk16(zi(kk+5)+zi(kk)+zi(kk+2)+m)
+                        nopara = zk16(zi(kk+5)+zi(kk)+zi(kk+2)+m)(1:8)
                         if (nopara(1:5) .eq. 'ALPHA' .or. nopara .eq. 'F_ALPHA ' .or.&
                             nopara .eq. 'C_ALPHA ') then
 !
@@ -266,19 +271,18 @@ subroutine matcod(chmat, indmat, nbmat, imate, igrp,&
 !                           -----------------------------------------------------
                             if (chmat .ne. '&chpoint') then
                                 call alfint(chmat, imate, nommat, tdef, nopara,&
-                                            k, prec, ch19)
-                                zk16(zi(kk+5)+zi(kk)+zi(kk+2)+zi(kk+4)+m) = ch19
+                                            k, prec, ch19, l_ther)
+                                zk16(zi(kk+5)+zi(kk)+zi(kk+2)+zi(kk+4)+m) = ch19(1:16)
                             endif
                         endif
-23                  continue
-!
+                    end do
                 endif
-22          continue
+            end do
 
 
 !          -- boucle sur les coefficients fonction/table/lisv :
 !          -----------------------------------------------------------
-            do 25 l = 0, zi(kk+4)-1
+            do l = 0, zi(kk+4)-1
                 ch19 = zk16(zi(kk+5)+zi(kk)+zi(kk+2)+zi(kk+4)+l)
                 call exisd('FONCTION', ch19(1:8), iretf)
                 call exisd('TABLE', ch19(1:8), irett)
@@ -408,24 +412,24 @@ subroutine matcod(chmat, indmat, nbmat, imate, igrp,&
                 else
                     ipif = ipif + lfct
                 endif
-25          continue
+            end do
             ipi = ipif
-20      continue
+        end do
         idma=idma+zi(jlcod+imat-1)
-300  end do
+    end do
 !
 ! --- MENAGE
-    do 400 l = 1, nbmat
+    do l = 1, nbmat
         call codent(l, 'D0', knuma3)
         call jedetr('&&RCMACO.DIM'//knuma3)
-400  end do
+    end do
     call jedetr('&&RCMACO.NBCM')
     call jedetr('&&RCMACO.NOMR')
     call jedetr('&&RCMACO.JDIM')
     call jedetr('&&RCMACO.LCOD')
 !
 !
-999  continue
+999 continue
     call jedema()
 !
 end subroutine

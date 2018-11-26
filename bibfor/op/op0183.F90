@@ -160,7 +160,7 @@ implicit none
     ASSERT(n0.eq.1)
     call getvid(' ', 'CHAM_MATER', scal=materi, nbret=n0)
     if (n0 .gt. 0) then
-        call rcmfmc(materi, mater)
+        call rcmfmc(materi, mater, l_ther_ = ASTER_FALSE)
     else
         mater=' '
     endif

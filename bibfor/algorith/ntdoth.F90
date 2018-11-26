@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -30,15 +30,14 @@ implicit none
 #include "asterfort/rcmfmc.h"
 #include "asterfort/rslesd.h"
 !
-!
-    character(len=24), intent(out) :: model
-    character(len=24), intent(out) :: cara_elem
-    character(len=24), intent(out) :: mate
-    character(len=19), intent(inout) :: list_load
-    character(len=8), optional, intent(in) :: result
-    integer, optional, intent(in) :: nume_store
-    aster_logical, optional, intent(out) :: matcst_
-    aster_logical, optional, intent(out) :: coecst_
+character(len=24), intent(out) :: model
+character(len=24), intent(out) :: cara_elem
+character(len=24), intent(out) :: mate
+character(len=19), intent(inout) :: list_load
+character(len=8), optional, intent(in) :: result
+integer, optional, intent(in) :: nume_store
+aster_logical, optional, intent(out) :: matcst_
+aster_logical, optional, intent(out) :: coecst_
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -98,7 +97,7 @@ implicit none
 ! - Coding material parameters
 !
     if (materi .ne. ' ') then
-        call rcmfmc(materi, mate)
+        call rcmfmc(materi, mate, l_ther_ = ASTER_TRUE)
     endif
 !
 ! - Get loads information and create datastructure

@@ -107,8 +107,7 @@ implicit none
     real(kind=8) :: rval
     character(len=8) :: k8b
     character(len=8) :: blan8
-    character(len=16) :: method
-    character(len=16) :: k16bid, nomcmd
+    character(len=16) :: method, k16bid
     character(len=19) :: channo
 !
 ! --------------------------------------------------------------------------------------------------
@@ -127,7 +126,7 @@ implicit none
 !
 ! 2.1. ==> LE CONCEPT RESULTAT CREE PAR LA COMMANDE
 !
-    call getres(result, k16bid, nomcmd)
+    call getres(result, k16bid, k16bid)
 !
 ! 2.3. ==> CALCUL DES ENERGIES
 !
@@ -281,7 +280,7 @@ implicit none
         materi = ' '
     endif
     if (materi .ne. ' ') then
-        call rcmfmc(materi, mate)
+        call rcmfmc(materi, mate, l_ther_ = ASTER_FALSE)
     endif
 !
 ! 4.2. ==> LECTURE DES PARAMETRES DU MOT CLE FACTEUR SOLVEUR ---

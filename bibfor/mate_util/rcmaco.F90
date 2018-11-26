@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,10 +15,14 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine rcmaco(chmat, indmat, nbmat, imate)
-    implicit none
+! person_in_charge: j-pierre.lefebvre at edf.fr
+!
+subroutine rcmaco(chmat, indmat, nbmat, imate, l_ther)
+!
+implicit none
+!
 #include "jeveux.h"
+#include "asterf_types.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jemarq.h"
@@ -29,26 +33,28 @@ subroutine rcmaco(chmat, indmat, nbmat, imate)
 #include "asterfort/matcod.h"
 #include "asterfort/utmess.h"
 !
-    character(len=8) :: chmat
-    integer :: indmat, nbmat, imate
-! person_in_charge: j-pierre.lefebvre at edf.fr
+character(len=8) :: chmat
+integer :: indmat, nbmat, imate
+aster_logical, intent(in) :: l_ther
+!
+! ----------------------------------------------------------------------
 !
 !     BUT: CREER L'OBJET NOMMAT//'      .CODI' ,LE REMPLIR ET RENVOYER
 !          SON ADRESSE PAR RAPPORT A ZI
 !
 ! ----------------------------------------------------------------------
 !
-!
-!
     integer :: nbcmp,  igrp
     character(len=8) :: nommat, nomgd, materi
     character(len=19) :: codi
     integer, pointer :: desc(:) => null()
 !
+! ----------------------------------------------------------------------
+!
     call jemarq()
 !
     call jeveut(chmat(1:8)//'.MATE_CODE.GRP', 'L', igrp)
-    materi=zk8(igrp+indmat)
+    materi = zk8(igrp+indmat)
     nommat = materi
     call jeveuo(chmat(1:8)//'.CHAMP_MAT .DESC', 'L', vi=desc)
     call jenuno(jexnum('&CATA.GD.NOMCMP', desc(1)), nomgd)
@@ -58,7 +64,7 @@ subroutine rcmaco(chmat, indmat, nbmat, imate)
     endif
 !
     call matcod(chmat, indmat, nbmat, imate, igrp,&
-                nommat, codi)
+                nommat, codi, l_ther)
 !
     call jedema()
 !

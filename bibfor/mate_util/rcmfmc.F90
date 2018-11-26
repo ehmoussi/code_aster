@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,8 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine rcmfmc(chmatz, chmacz, l_thm_)
+!
+subroutine rcmfmc(chmatz, chmacz, l_thm_, l_ther_)
 !
 implicit none
 !
@@ -41,10 +41,9 @@ implicit none
 #include "asterfort/wkvect.h"
 #include "asterfort/varc_prep.h"
 !
-!
-    character(len=*), intent(in) :: chmatz
-    character(len=*), intent(out) :: chmacz
-    aster_logical, intent(in), optional :: l_thm_
+character(len=*), intent(in) :: chmatz
+character(len=*), intent(out) :: chmacz
+aster_logical, intent(in), optional :: l_thm_, l_ther_
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -57,6 +56,7 @@ implicit none
 ! In  chmate           : name of material field (CHAM_MATER)
 ! Out chmace           : name of CODED material field (CHAM_MATER)
 ! In  l_thm            : .true. if THM
+! In  l_ther           : .true. if thermics
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -69,7 +69,7 @@ implicit none
     character(len=19) :: chemat, chmace
     character(len=8), pointer :: v_vale(:) => null()
     integer, pointer :: v_desc(:) => null()
-    aster_logical :: l_thm
+    aster_logical :: l_thm, l_ther
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -79,10 +79,13 @@ implicit none
     chemat = chmat//'.CHAMP_MAT'
     chmace = chmat//'.MATE_CODE'
 !
+    l_thm  = ASTER_FALSE
+    l_ther = ASTER_FALSE
     if (present(l_thm_)) then
         l_thm = l_thm_
-    else
-        l_thm = .false.
+    endif
+    if (present(l_ther_)) then
+        l_ther = l_ther_
     endif
 !
     call exisd('CARTE', chmace, iret)
@@ -143,7 +146,7 @@ implicit none
         do kk = 1, nbgrp
             nbmat=zi(ingrp-1+kk)
             if (nbmat .ne. 0) then
-            call rcmaco(chmat(1:8), icompt, nbmat, kk)
+            call rcmaco(chmat(1:8), icompt, nbmat, kk, l_ther)
             call codent(kk, 'D0', knumat)
 
 !       -- le nom du codi est celui du premier materiau du groupe kk
