@@ -1,6 +1,6 @@
 subroutine matass2petsc(matasz, petscMatz, iret)
 !
-! COPYRIGHT (C) 1991 - 2017  EDF R&D                WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2018  EDF R&D                WWW.CODE-ASTER.ORG
 !
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
@@ -25,7 +25,6 @@ subroutine matass2petsc(matasz, petscMatz, iret)
 #endif
 use aster_petsc_module
 use petsc_data_module
-use elim_lagr_comp_module
 !
     implicit none
 !
