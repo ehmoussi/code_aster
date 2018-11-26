@@ -141,9 +141,9 @@ type(NL_DS_PostTimeStep), intent(in) :: ds_posttimestep
 ! --------------------------------------------------------------------------------------------------
 !
     call jemarq()
-    call infdbg('MECA_NON_LINE', ifm, niv)
+    call infdbg('MECANONLINE', ifm, niv)
     if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE> ...... CALCUL MATRICE'
+        call utmess('I', 'MECANONLINE13_69')
     endif
 !
 ! - Initializations

@@ -128,9 +128,9 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call infdbg('MECA_NON_LINE', ifm, niv)
+    call infdbg('MECANONLINE',ifm, niv)
     if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE> EVALUATION DE LA CONVERGENCE'
+        call utmess('I', 'MECANONLINE13_64')
     endif
 !
 ! --- INITIALISATIONS

@@ -89,7 +89,7 @@ type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 !
 ! ----------------------------------------------------------------------
 !
-    call infdbg('MECA_NON_LINE', ifm, niv)
+    call infdbg('MECANONLINE', ifm, niv)
     if (niv .ge. 2) then
         call utmess('I','MECANONLINE13_18')
     endif

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,12 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine ndpred(sddyna, valinc, solalg)
-!
 ! person_in_charge: mickael.abbas at edf.fr
 !
-    implicit none
+subroutine ndpred(sddyna, valinc, solalg)
+!
+implicit none
+!
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterfort/assert.h"
@@ -35,8 +35,9 @@ subroutine ndpred(sddyna, valinc, solalg)
 #include "asterfort/nmdebg.h"
 #include "asterfort/vtaxpy.h"
 #include "asterfort/vtzero.h"
-    character(len=19) :: sddyna
-    character(len=19) :: solalg(*), valinc(*)
+!
+character(len=19) :: sddyna
+character(len=19) :: solalg(*), valinc(*)
 !
 ! ----------------------------------------------------------------------
 !
@@ -67,10 +68,7 @@ subroutine ndpred(sddyna, valinc, solalg)
 ! ----------------------------------------------------------------------
 !
     call jemarq()
-    call infdbg('MECA_NON_LINE', ifm, niv)
-!
-! --- AFFICHAGE
-!
+    call infdbg('MECANONLINE', ifm, niv)
     if (niv .ge. 2) then
         write (ifm,*) '<MECANONLINE> ... CALCUL PREDICTEURS'
     endif

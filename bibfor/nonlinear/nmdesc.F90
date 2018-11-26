@@ -32,7 +32,9 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/copisd.h"
+#include "asterfort/utmess.h"
 #include "asterfort/infdbg.h"
+#include "asterfort/nonlinDSPrintSepLine.h"
 #include "asterfort/nmacin.h"
 #include "asterfort/nmassc.h"
 #include "asterfort/nmchex.h"
@@ -104,9 +106,10 @@ aster_logical :: lerrit
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call infdbg('MECA_NON_LINE', ifm, niv)
+    call infdbg('MECANONLINE', ifm, niv)
     if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE> CALCUL DIRECTION DE DESCENTE...'
+        call nonlinDSPrintSepLine()
+        call utmess('I', 'MECANONLINE13_67')
     endif
 !
 ! --- INITIALISATIONS

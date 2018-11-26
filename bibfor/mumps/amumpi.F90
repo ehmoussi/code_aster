@@ -37,7 +37,7 @@ subroutine amumpi(option, lquali, ldist, kxmps, type)
 #include "asterc/r4maem.h"
 #include "asterfort/amumpu.h"
 #include "asterfort/assert.h"
-#include "asterfort/infniv.h"
+#include "asterfort/infdbg.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
@@ -75,7 +75,7 @@ subroutine amumpi(option, lquali, ldist, kxmps, type)
     call jemarq()
 ! --- COMMUNICATEUR MPI DE TRAVAIL
     call asmpi_comm('GET', mpicou)
-    call infniv(ifm, niv)
+    call infdbg('SOLVEUR', ifm, niv)
 !
 !       ------------------------------------------------
 !        INITS

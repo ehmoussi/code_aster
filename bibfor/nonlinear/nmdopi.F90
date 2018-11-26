@@ -57,13 +57,13 @@ character(len=24), intent(in) :: numedd
 type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 character(len=19), intent(in) :: sdpilo
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
 ! ROUTINE MECA_NON_LINE (STRUCTURES DE DONNEES)
 !
 ! CONSTRUCTION DE LA SD PILOTAGE
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
 ! IN  MODELE : MODELE
 ! IN  NUMEDD : NUME_DDL
@@ -89,8 +89,7 @@ character(len=19), intent(in) :: sdpilo
 !                (5) = ETA_PILO_R_MIN
 !                (6) = COEF_PILO AU PAS DE TEMPS CONVERGE PRECEDENT
 !
-!
-!
+! --------------------------------------------------------------------------------------------------
 !
     integer :: nbno, numequ, nddl, nb_node_mesh, nb_node_sele
     integer :: nume_node, nume_node_1, nume_node_2, numequ_1, numequ_2
@@ -121,10 +120,10 @@ character(len=19), intent(in) :: sdpilo
     real(kind=8), pointer :: vale(:) => null()
     real(kind=8), pointer :: plsl(:) => null()
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
     call jemarq()
-    call infdbg('MECA_NON_LINE', ifm, niv)
+    call infdbg('MECANONLINE', ifm, niv)
     if (niv .ge. 2) then
         call utmess('I','MECANONLINE13_17')
     endif

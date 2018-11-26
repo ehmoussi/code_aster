@@ -89,7 +89,9 @@ type(NL_DS_Contact), intent(in) :: ds_contact
 !
 ! - Print
 !
-    call utmess('I', 'CONTACT5_8', si=nb_cont_node_c)
+    if (niv .ge. 2) then
+        call utmess('I', 'CONTACT5_8', si=nb_cont_node_c)
+    endif
 !
 ! - Create datastructure for coefficients
 ! 

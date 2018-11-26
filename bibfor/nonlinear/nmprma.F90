@@ -53,6 +53,7 @@ implicit none
 #include "asterfort/sdmpic.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/nmchex.h"
+#include "asterfort/utmess.h"
 #include "asterfort/romAlgoNLCorrEFMatrixModify.h"
 !
 type(NL_DS_AlgoPara), intent(in) :: ds_algopara
@@ -140,9 +141,9 @@ integer :: faccvg, ldccvg
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call infdbg('MECA_NON_LINE', ifm, niv)
+    call infdbg('MECANONLINE', ifm, niv)
     if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE> ... CALCUL MATRICE'
+        call utmess('I', 'MECANONLINE13_35')
     endif
 !
 ! - Active functionnalites
@@ -319,9 +320,15 @@ integer :: faccvg, ldccvg
             call romAlgoNLCorrEFMatrixModify(numedd, matass, ds_algorom)
             call preres(solveu, 'V', faccvg, maprec, matass,&
                         ibid, -9999)
+            if (niv .ge. 2) then
+                call utmess('I', 'MECANONLINE13_42')
+            endif
         else
             call preres(solveu, 'V', faccvg, maprec, matass,&
                         ibid, -9999)
+            if (niv .ge. 2) then
+                call utmess('I', 'MECANONLINE13_42')
+            endif
         endif
         call nmtime(ds_measure, 'Stop', 'Factor')
         call nmrinc(ds_measure, 'Factor')

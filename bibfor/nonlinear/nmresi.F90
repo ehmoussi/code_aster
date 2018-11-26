@@ -54,6 +54,7 @@ implicit none
 #include "asterfort/romAlgoNLMecaResidual.h"
 #include "asterfort/romAlgoNLCorrEFMecaResidual.h"
 #include "asterfort/nmequi.h"
+#include "asterfort/utmess.h"
 !
 character(len=8), intent(in) :: mesh
 integer, intent(in) :: list_func_acti(*)
@@ -135,9 +136,9 @@ real(kind=8), intent(out) :: r_char_vale, r_equi_vale
 ! --------------------------------------------------------------------------------------------------
 !
     call jemarq()
-    call infdbg('MECA_NON_LINE', ifm, niv)
+    call infdbg('MECANONLINE', ifm, niv)
     if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE> ... CALCUL DES RESIDUS'
+        call utmess('I', 'MECANONLINE13_65')
     endif
 !
 ! - Initialisations

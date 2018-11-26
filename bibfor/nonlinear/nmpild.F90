@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,13 +15,13 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine nmpild(numedd, sddyna, solalg, eta, rho,&
                   offset)
 !
-! person_in_charge: mickael.abbas at edf.fr
+implicit none
 !
-    implicit none
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterfort/dismoi.h"
@@ -32,9 +32,11 @@ subroutine nmpild(numedd, sddyna, solalg, eta, rho,&
 #include "asterfort/nmchex.h"
 #include "asterfort/nmdebg.h"
 #include "asterfort/nmpilk.h"
-    character(len=24) :: numedd
-    character(len=19) :: solalg(*), sddyna
-    real(kind=8) :: eta, rho, offset
+#include "asterfort/utmess.h"
+!
+character(len=24) :: numedd
+character(len=19) :: solalg(*), sddyna
+real(kind=8) :: eta, rho, offset
 !
 ! ----------------------------------------------------------------------
 !
@@ -63,18 +65,15 @@ subroutine nmpild(numedd, sddyna, solalg, eta, rho,&
 ! ----------------------------------------------------------------------
 !
     call jemarq()
-    call infdbg('MECA_NON_LINE', ifm, niv)
+    call infdbg('MECANONLINE', ifm, niv)
+    if (niv .ge. 2) then
+        call utmess('I', 'MECANONLINE13_49')
+    endif
 !
 ! --- FONCTIONNALITES ACTIVEES
 !
     ldyna = ndynlo(sddyna,'DYNAMIQUE')
-!
-! --- AFFICHAGE
-!
-    if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE> AJUSTEMENT DIRECTION DE '//&
-        'DESCENTE'
-    endif
+
     call dismoi('NB_EQUA', numedd, 'NUME_DDL', repi=neq)
 !
 ! --- DECOMPACTION VARIABLES CHAPEAUX
@@ -103,27 +102,24 @@ subroutine nmpild(numedd, sddyna, solalg, eta, rho,&
 ! --- AFFICHAGE
 !
     if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE> ... RHO    : ',rho
-        write (ifm,*) '<MECANONLINE> ... ETA    : ',eta
-        write (ifm,*) '<MECANONLINE> ... OFFSET : ',offset
-        write (ifm,*) '<MECANONLINE> ... DEPL. PRED. (1) : '
+        call utmess('I', 'MECANONLINE13_50', sr=rho)
+        call utmess('I', 'MECANONLINE13_51', sr=eta)
+        call utmess('I', 'MECANONLINE13_52', sr=offset)
+        call utmess('I', 'MECANONLINE13_46')
         call nmdebg('VECT', deppr1, ifm)
-        write (ifm,*) '<MECANONLINE> ... DEPL. PRED. (2) : '
         call nmdebg('VECT', deppr2, ifm)
-        write (ifm,*) '<MECANONLINE> ... DEPL. SOLU.     : '
+        call utmess('I', 'MECANONLINE13_53')
         call nmdebg('VECT', ddepla, ifm)
         if (ldyna) then
-            write (ifm,*) '<MECANONLINE> ... VITE. PRED. (1) : '
+            call utmess('I', 'MECANONLINE13_47')
             call nmdebg('VECT', vitpr1, ifm)
-            write (ifm,*) '<MECANONLINE> ... VITE. PRED. (2) : '
             call nmdebg('VECT', vitpr2, ifm)
-            write (ifm,*) '<MECANONLINE> ... VITE. SOLU.     : '
+            call utmess('I', 'MECANONLINE13_54')
             call nmdebg('VECT', dvitla, ifm)
-            write (ifm,*) '<MECANONLINE> ... ACCE. PRED. (1) : '
+            call utmess('I', 'MECANONLINE13_48')
             call nmdebg('VECT', accpr1, ifm)
-            write (ifm,*) '<MECANONLINE> ... ACCE. PRED. (2) : '
             call nmdebg('VECT', accpr2, ifm)
-            write (ifm,*) '<MECANONLINE> ... ACCE. SOLU.     : '
+            call utmess('I', 'MECANONLINE13_55')
             call nmdebg('VECT', daccla, ifm)
         endif
     endif
