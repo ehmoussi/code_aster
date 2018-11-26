@@ -84,7 +84,7 @@ implicit none
 #include "asterfort/nmrini.h"
 #include "asterfort/nonlinDSMaterialInit.h"
 #include "asterfort/utmess.h"
-#include "asterfort/infniv.h"
+#include "asterfort/infdbg.h"
 #include "asterfort/nonlinDSPrintSepLine.h"
 !
 character(len=8), intent(in) :: mesh
@@ -168,7 +168,7 @@ type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call infniv(ifm, niv)
+    call infdbg('MECANONLINE',ifm, niv)
     if (niv .ge. 2) then
         call nonlinDSPrintSepLine()
         call utmess('I', 'MECANONLINE13_1')

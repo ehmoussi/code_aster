@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: ayaovi-dzifa.kudawoo at edf.fr
+!
 subroutine mmchml_c(ds_contact, ligrcf, chmlcf, sddyna, time_incr)
 !
 use NonLin_Datastructure_type
@@ -36,14 +37,11 @@ implicit none
 #include "asterfort/ndynlo.h"
 #include "asterfort/ndynre.h"
 !
-!
-! person_in_charge: ayaovi-dzifa.kudawoo at edf.fr
-!
-    type(NL_DS_Contact), intent(in) :: ds_contact
-    character(len=19), intent(in) :: ligrcf
-    character(len=19), intent(in) :: chmlcf
-    character(len=19), intent(in) :: sddyna
-    real(kind=8), intent(in) :: time_incr
+type(NL_DS_Contact), intent(in) :: ds_contact
+character(len=19), intent(in) :: ligrcf
+character(len=19), intent(in) :: chmlcf
+character(len=19), intent(in) :: sddyna
+real(kind=8), intent(in) :: time_incr
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -155,13 +153,9 @@ implicit none
             zr(vale_indx-1+11) = v_sdcont_tabfin(ztabf*(i_cont_poin-1)+15)
             zr(vale_indx-1+12) = v_sdcont_tabfin(ztabf*(i_cont_poin-1)+23)
             zr(vale_indx-1+13) = v_sdcont_tabfin(ztabf*(i_cont_poin-1)+17)
-!            if (ds_contact%iteration_newton .ge. 3) &
-!                zr(vale_indx-1+13) = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+3)
             zr(vale_indx-1+14) = v_sdcont_jsupco(i_cont_poin)
             zr(vale_indx-1+15) = i_algo_cont
             zr(vale_indx-1+16) = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+2)
-!                if (i_cont_poin .eq. 1) & 
-!                    write (6,*) "coef mmchml", zr(vale_indx-1+16)
 !            A la premiere iteration on ne passe pas par mmalgo
 !            On prend directement la valeur de coef*_cont venant de nmprma
             if (nint(ds_contact%update_init_coefficient) .eq. 1 .and. &
@@ -206,7 +200,6 @@ implicit none
             zr(vale_indx-1+44) = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+50)
             ! alpha_cont_vect
             zr(vale_indx-1+31) = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+56) 
-!            zr(vale_indx-1+31) = 1.0 
             ! Previous tangentials
             zr(vale_indx-1+32) = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+13)
             zr(vale_indx-1+33) = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+14)

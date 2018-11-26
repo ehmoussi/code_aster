@@ -87,7 +87,7 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
     call jemarq()
     call infdbg('MECA_NON_LINE', ifm, niv)
     if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE> ... CREATION DE LA SD RESULTAT LIAISON_UNILATERALE'
+        call utmess('I', 'MECANONLINE13_29')
     endif
 !
 ! --- INITIALISATIONS
@@ -268,6 +268,5 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
        end do
     endif
 !
-! ----------------------------------------------------------------------
     call jedema()
 end subroutine

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine mmligr(mesh, model, ds_contact)
 !
 use NonLin_Datastructure_type
@@ -43,16 +44,14 @@ implicit none
 #include "asterfort/jexnum.h"
 #include "asterfort/mmelem_data_c.h"
 #include "asterfort/mmelem_data_l.h"
-#include "asterfort/mmimp2.h"
 #include "asterfort/mminfl.h"
 #include "asterfort/mmlige.h"
 #include "asterfort/wkvect.h"
+#include "asterfort/utmess.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=8), intent(in) :: mesh
-    character(len=8), intent(in) :: model
-    type(NL_DS_Contact), intent(in) :: ds_contact
+character(len=8), intent(in) :: mesh
+character(len=8), intent(in) :: model
+type(NL_DS_Contact), intent(in) :: ds_contact
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -71,7 +70,7 @@ implicit none
     integer :: ifm, niv
     integer :: nb_type, nb_cont_pair, nb_cont, nb_frot
     integer :: nb_node_elem, nb_node_mast, nb_node_slav, nb_grel, nt_node
-    integer :: jv_liel, jtabf
+    integer :: jv_liel
     integer :: i_elem, i_cont_poin, i_cont_type, i_node, i_zone, i_cont_pair
     integer :: elem_mast_nume, elem_slav_nume, elem_indx
     integer :: ligrcf_liel_lont, typf_cont_nume, typg_cont_nume, typf_frot_nume  
@@ -113,11 +112,11 @@ implicit none
 !
     if (l_renumber) then
         if (niv .ge. 2) then
-            write (ifm,*) '<CONTACT> . Create late elements for contact'
+            call utmess('I', 'CONTACT5_21')
         endif
     else
         if (niv .ge. 2) then
-            write (ifm,*) '<CONTACT> . Don''t create late elements for contact'
+            call utmess('I', 'CONTACT5_22')
         endif
         goto 999
     endif
@@ -302,15 +301,6 @@ implicit none
     call jedupo(model//'.MODELE    .LGRF', 'V', ligrcf//'.LGRF', .false._1)
     call adalig(ligrcf)
     call initel(ligrcf)
-!
-! - Print
-!
-    if (niv .ge. 2) then
-        if (l_cont_cont) then
-            call jeveuo(sdcont_tabfin, 'L', jtabf)
-            call mmimp2(ifm, mesh, ligrcf, jtabf)
-        endif
-    endif
 !
 ! - Clean
 !

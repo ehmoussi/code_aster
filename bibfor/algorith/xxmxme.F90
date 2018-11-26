@@ -33,6 +33,7 @@ implicit none
 #include "asterfort/jedema.h"
 #include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
+#include "asterfort/infdbg.h"
 #include "asterfort/utmess.h"
 #include "asterfort/wkvect.h"
 #include "asterfort/xmele1.h"
@@ -63,7 +64,7 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
     integer :: nfiss
     integer, parameter :: nfismx =100
     character(len=24) :: tabfin
-    integer :: jtabf
+    integer :: jtabf, ifm, niv
     integer :: ntpc
     integer :: ztabf, contac
     character(len=19) :: ligrel
@@ -75,6 +76,10 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
 ! --------------------------------------------------------------------------------------------------
 !
     call jemarq()
+    call infdbg('CONTACT', ifm, niv)
+    if (niv .ge. 2) then
+        call utmess('I','CONTACT5_9')
+    endif
 !
 ! - Active functionnalities
 !
@@ -160,10 +165,8 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
 !
     call vtcreb(ds_contact%cneltc, 'V', 'R', nume_ddlz = nume_dof)
     ds_contact%l_cneltc = ASTER_TRUE
-    !if (lxffm) then
-        call vtcreb(ds_contact%cneltf, 'V', 'R', nume_ddlz = nume_dof)
-        ds_contact%l_cneltf = ASTER_TRUE
-    !endif
+    call vtcreb(ds_contact%cneltf, 'V', 'R', nume_ddlz = nume_dof)
+    ds_contact%l_cneltf = ASTER_TRUE
 !
     call jedema()
 !

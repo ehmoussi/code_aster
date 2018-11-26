@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine cfinit(ds_contact, nume_inst)
 !
 use NonLin_Datastructure_type
@@ -25,15 +26,15 @@ implicit none
 #include "asterf_types.h"
 #include "asterfort/cfdisl.h"
 #include "asterfort/isfonc.h"
+#include "asterfort/infdbg.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/mmbouc.h"
 #include "asterfort/mminit.h"
+#include "asterfort/utmess.h"
 #include "asterfort/vtzero.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    type(NL_DS_Contact), intent(inout) :: ds_contact
-    integer, intent(in) :: nume_inst
+type(NL_DS_Contact), intent(inout) :: ds_contact
+integer, intent(in) :: nume_inst
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -48,10 +49,15 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
+    integer :: ifm, niv
     character(len=24) :: sdcont_autoc1, sdcont_autoc2
 !
 ! --------------------------------------------------------------------------------------------------
 !
+    call infdbg('CONTACT', ifm, niv)
+    if (niv .ge. 2) then
+        call utmess('I', 'CONTACT5_12')
+    endif
     sdcont_autoc1 = ds_contact%sdcont_solv(1:14)//'.REA1'
     sdcont_autoc2 = ds_contact%sdcont_solv(1:14)//'.REA2'
 !

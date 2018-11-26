@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine nmctce(model    , mesh, ds_contact, sddyna, sddisc,&
                   nume_inst)
 !
@@ -27,18 +28,15 @@ implicit none
 #include "asterfort/assert.h"
 #include "asterfort/cfdisi.h"
 #include "asterfort/cfdisl.h"
-#include "asterfort/infdbg.h"
 #include "asterfort/mmchml.h"
 #include "asterfort/xmcart.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=8), intent(in) :: model
-    character(len=8), intent(in) :: mesh
-    type(NL_DS_Contact), intent(in) :: ds_contact
-    character(len=19), intent(in)  :: sddyna
-    character(len=19), intent(in)  :: sddisc
-    integer, intent(in) :: nume_inst
+character(len=8), intent(in) :: model
+character(len=8), intent(in) :: mesh
+type(NL_DS_Contact), intent(in) :: ds_contact
+character(len=19), intent(in)  :: sddyna
+character(len=19), intent(in)  :: sddisc
+integer, intent(in) :: nume_inst
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -57,18 +55,10 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: ifm, niv
     integer :: cont_form
     aster_logical :: l_cont_xfem_gg
 !
 ! --------------------------------------------------------------------------------------------------
-!
-    call infdbg('MECANONLINE', ifm, niv)
-    if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE> Create input fields for contact'
-    endif
-!
-! - Parameters
 !
     cont_form      = cfdisi(ds_contact%sdcont_defi,'FORMULATION')
     l_cont_xfem_gg = cfdisl(ds_contact%sdcont_defi,'CONT_XFEM_GG')

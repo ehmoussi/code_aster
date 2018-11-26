@@ -50,6 +50,8 @@ implicit none
 #include "asterfort/nmvcle.h"
 #include "asterfort/SetResi.h"
 #include "asterfort/nonlinDSMaterialTimeStep.h"
+#include "asterfort/infniv.h"
+#include "asterfort/utmess.h"
 !
 character(len=8) :: mesh
 character(len=24), intent(in) :: model, cara_elem
@@ -102,7 +104,7 @@ character(len=19), intent(in) :: hval_algo(*), hval_incr(*)
 !
     aster_logical :: lgrot, ldyna, lnkry
     aster_logical :: l_cont, l_diri_undead
-    integer :: neq
+    integer :: neq, ifm, niv
     character(len=19) :: depmoi, varmoi
     character(len=19) :: depplu, varplu
     character(len=19) :: depdel
@@ -111,6 +113,10 @@ character(len=19), intent(in) :: hval_algo(*), hval_incr(*)
 !
 ! --------------------------------------------------------------------------------------------------
 !
+    call infniv(ifm, niv)
+    if (niv .ge. 2) then
+        call utmess('I', 'MECANONLINE13_30')
+    endif
     call dismoi('NB_EQUA', nume_dof, 'NUME_DDL', repi=neq)
 !
 ! - Active functionnalites

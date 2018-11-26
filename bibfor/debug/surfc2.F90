@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine surfc2(sdcont, mesh)
 !
 implicit none
@@ -34,10 +35,7 @@ implicit none
 #include "asterfort/mminfr.h"
 #include "asterfort/utmess.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=8), intent(in) :: sdcont
-    character(len=8), intent(in) :: mesh
+character(len=8), intent(in) :: sdcont, mesh
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -61,13 +59,15 @@ implicit none
     integer :: nb_elem_slav
     integer :: ndexfr, nb_poin_inte, vali(3)
     integer :: type_inte, algo_cont, algo_frot, cont_init
-    integer :: i_axi, i_gliss, i_node_excl, i_frot_excl, dire_excl_frot_i
-    real(kind=8) :: coef_cont, coef_frot, coef_coul_frot, seuil_init, seuil_auto
+    integer :: i_axi, i_adapt, i_gliss, i_node_excl, i_frot_excl, dire_excl_frot_i
+    real(kind=8) :: coef_cont, coef_frot, coef_coul_frot, seuil_init, seuil_auto, pene_maxi
     character(len=24) :: sdcont_defi
     character(len=24) :: sdcont_paraci
     integer, pointer :: v_sdcont_paraci(:) => null()
     character(len=24) :: sdcont_caracf
     real(kind=8), pointer :: v_sdcont_caracf(:) => null()
+    character(len=24) :: sdcont_paracr
+    real(kind=8), pointer :: v_sdcont_paracr(:) => null()
     integer :: zcmcf
 !
 ! --------------------------------------------------------------------------------------------------
@@ -77,8 +77,10 @@ implicit none
 ! - Datastructure for contact definition
 !
     sdcont_paraci = sdcont(1:8)//'.PARACI'
+    sdcont_paracR = sdcont(1:8)//'.PARACR'
     sdcont_caracf = sdcont_defi(1:16)//'.CARACF'
     call jeveuo(sdcont_paraci, 'L', vi=v_sdcont_paraci)
+    call jeveuo(sdcont_paracr, 'L', vr=v_sdcont_paracr)
     call jeveuo(sdcont_caracf, 'L', vr=v_sdcont_caracf)
     zcmcf = cfmmvd('ZCMCF')
 !
@@ -95,8 +97,12 @@ implicit none
 ! - Parameters: constants
 !
     call utmess('I', 'CONTACTDEFI0_11')
-    i_axi = v_sdcont_paraci(16)
+    i_axi     = v_sdcont_paraci(16)
+    i_adapt   = v_sdcont_paraci(20)
+    pene_maxi = v_sdcont_paracr(6)
     call utmess('I', 'CONTACTDEFI0_12',si=i_axi)
+    call utmess('I', 'CONTACTDEFI0_13',si=i_adapt)
+    call utmess('I', 'CONTACTDEFI0_14',sr=pene_maxi)
 !
 ! - Parameters: variables
 !
@@ -117,12 +123,13 @@ implicit none
             algo_frot        = nint(v_sdcont_caracf(zcmcf*(i_zone-1)+5))
             coef_coul_frot   = v_sdcont_caracf(zcmcf*(i_zone-1)+6)
             seuil_init       = v_sdcont_caracf(zcmcf*(i_zone-1)+7)
-            seuil_auto       = v_sdcont_caracf(zcmcf*(i_zone-1)+13)
             cont_init        = nint(v_sdcont_caracf(zcmcf*(i_zone-1)+8))
             i_gliss          = nint(v_sdcont_caracf(zcmcf*(i_zone-1)+9))
             i_node_excl      = nint(v_sdcont_caracf(zcmcf*(i_zone-1)+10))
             i_frot_excl      = nint(v_sdcont_caracf(zcmcf*(i_zone-1)+11))
             dire_excl_frot_i = nint(v_sdcont_caracf(zcmcf*(i_zone-1)+12))
+            seuil_auto       = v_sdcont_caracf(zcmcf*(i_zone-1)+13)
+            pene_maxi        = v_sdcont_caracf(zcmcf*(i_zone-1)+14)
             call utmess('I', 'CONTACTDEFI0_26', si = type_inte)
             call utmess('I', 'CONTACTDEFI0_27', sr = coef_cont)
             call utmess('I', 'CONTACTDEFI0_28', si = algo_cont)
@@ -136,6 +143,7 @@ implicit none
             call utmess('I', 'CONTACTDEFI0_36', si = i_node_excl)
             call utmess('I', 'CONTACTDEFI0_37', si = i_frot_excl)
             call utmess('I', 'CONTACTDEFI0_38', si = dire_excl_frot_i)
+            call utmess('I', 'CONTACTDEFI0_39', sr = pene_maxi)
         endif
     end do
 !

@@ -75,4 +75,8 @@ cata_msg = {
 
    28  : _(u""" Initialisations pour les lois de comportement."""),
 
+   29  : _(u""" Initialisations des structures de données pour la résolution des liaisons unilatérales."""),
+
+   30  : _(u""" Initialisations du nouveau pas de temps."""),
+
 }
