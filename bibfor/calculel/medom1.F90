@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,6 +19,7 @@
 subroutine medom1(modele, mate, cara, kcha, ncha,&
                   ctyp, result, nuord)
     implicit none
+#include "asterf_types.h"
 #include "jeveux.h"
 #include "asterc/getexm.h"
 #include "asterc/getfac.h"
@@ -57,12 +58,14 @@ subroutine medom1(modele, mate, cara, kcha, ncha,&
     integer ::    n, n1, n2, n3, n5
 !-----------------------------------------------------------------------
     character(len=8) :: k8b, nomo, materi
+    character(len=4) :: phen
     character(len=8) :: blan8
     character(len=16) :: concep, nomcmd, phenom
     character(len=19) :: excit
     integer, pointer :: infc(:) => null()
     character(len=24), pointer :: fcha(:) => null()
     character(len=24), pointer :: lcha(:) => null()
+    aster_logical :: l_ther
 !
     call jemarq()
 !              12345678
@@ -86,8 +89,14 @@ subroutine medom1(modele, mate, cara, kcha, ncha,&
 !
         call rslesd(result, nuord, modele, materi, cara,&
                     excit, iexcit)
+        call dismoi('PHENOMENE', modele, 'MODELE', repk=phen)
+        l_ther = ASTER_FALSE
+        if (phen .eq. 'THERM') then
+            l_ther = ASTER_TRUE
+        endif
+
         if (materi .ne. blan8) then
-            call rcmfmc(materi, mate)
+            call rcmfmc(materi, mate, l_ther_ = l_ther)
         else
             mate = ' '
         endif
@@ -99,6 +108,11 @@ subroutine medom1(modele, mate, cara, kcha, ncha,&
         if ((n2.eq.0) .and. (k8b(1:3).eq.'OUI')) then
             call utmess('A', 'CALCULEL3_39')
         endif
+        call dismoi('PHENOMENE', modele, 'MODELE', repk=phen)
+        l_ther = ASTER_FALSE
+        if (phen .eq. 'THERM') then
+            l_ther = ASTER_TRUE
+        endif
 !
         call getvid(' ', 'CHAM_MATER', scal=materi, nbret=n3)
         call dismoi('BESOIN_MATER', modele, 'MODELE', repk=k8b)
@@ -107,7 +121,7 @@ subroutine medom1(modele, mate, cara, kcha, ncha,&
         endif
 !
         if (n3 .ne. 0) then
-            call rcmfmc(materi, mate)
+            call rcmfmc(materi, mate, l_ther_ = l_ther)
         else
             mate = ' '
         endif

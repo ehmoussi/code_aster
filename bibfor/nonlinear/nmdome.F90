@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine nmdome(modele, mate, carele, lischa, result,&
                   nuord)
 !
@@ -33,12 +34,10 @@ implicit none
 #include "asterfort/rslesd.h"
 #include "asterfort/utmess.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    integer :: nuord
-    character(len=8) :: result
-    character(len=19) :: lischa
-    character(len=24) :: modele, mate, carele
+integer :: nuord
+character(len=8) :: result
+character(len=19) :: lischa
+character(len=24) :: modele, mate, carele
 !
 ! ----------------------------------------------------------------------
 !
@@ -91,7 +90,7 @@ implicit none
         l_load_user = iexcit.eq.1
 !
         if (materi .ne. k8bla) then
-            call rcmfmc(materi, mate)
+            call rcmfmc(materi, mate, l_ther_ = ASTER_FALSE)
         else
             mate = ' '
         endif
@@ -117,7 +116,7 @@ implicit none
             call utmess('A', 'CALCULEL3_40')
         endif
         if (n1 .ne. 0) then
-            call rcmfmc(materi, mate)
+            call rcmfmc(materi, mate, l_ther_ = ASTER_FALSE)
         else
             mate = ' '
         endif

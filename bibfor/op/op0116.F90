@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -105,7 +105,7 @@ implicit none
 !---------------------------------------------------------------------
     call dismoi('NOM_MODELE', rigthe, 'MATR_ASSE', repk=modele)
     call dismoi('CHAM_MATER', rigthe, 'MATR_ASSE', repk=mater )
-    if (ib .ne. 0) call rcmfmc(mater, mate)
+    if (ib .ne. 0) call rcmfmc(mater, mate, l_ther_ = ASTER_FALSE)
 !---------------------------------------------------------------------
 !---------- NUMEROTATION DES DDL FLUIDES -----------------------------
 !---------------------------------------------------------------------

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,19 +15,24 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine pmmaco(nommat, nbmat, codi)
-    implicit   none
+!
+implicit none
+!
 #include "jeveux.h"
+#include "asterf_types.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jedetr.h"
 #include "asterfort/jemarq.h"
 #include "asterfort/jeveut.h"
 #include "asterfort/matcod.h"
 #include "asterfort/wkvect.h"
-    character(len=8) :: nommat(*)
-    character(len=19) :: codi
-! person_in_charge: jean-michel.proix at edf.fr
+!
+character(len=8) :: nommat(*)
+integer :: nbmat
+character(len=19) :: codi
+
 !-----------------------------------------------------------------------
 ! OPERATEUR CALC_POINT_MAT : MATERIAU CODE COMME RCMACO MAIS SANS MODELE
 !-----------------------------------------------------------------------
@@ -40,13 +45,16 @@ subroutine pmmaco(nommat, nbmat, codi)
 !
 ! ----------------------------------------------------------------------
 !
-!
-!
-    integer :: indmat, nbmat, imate, igrp, ingrp, i
+    aster_logical :: l_ther
+    integer :: indmat, imate, igrp, ingrp, i
     character(len=8) :: nommats, matercod
 ! ----------------------------------------------------------------------
 !
     call jemarq()
+!
+! - Only mechanic !
+!
+    l_ther = ASTER_FALSE
 !
     nommats = '&chpoint'
 
@@ -67,7 +75,7 @@ subroutine pmmaco(nommat, nbmat, codi)
     imate=1
     matercod='matcod'
     call matcod(nommats, indmat, nbmat, imate, igrp,&
-                matercod, codi)
+                matercod, codi, l_ther)
     call jedema()
 !
 end subroutine

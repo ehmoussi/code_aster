@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,20 +15,21 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine ledome(option, nomo, materi, mate, carele)
-!
 ! person_in_charge: mickael.abbas at edf.fr
 !
-    implicit none
+subroutine ledome(option, nomo, materi, mate, carele)
+!
+implicit none
+!
 #include "asterfort/dismoi.h"
 #include "asterfort/getvid.h"
 #include "asterfort/rcmfmc.h"
 #include "asterfort/utmess.h"
-    character(len=8) :: nomo
-    character(len=24) :: mate, carele
-    character(len=8) :: materi
-    character(len=2) :: option
+!
+character(len=8) :: nomo
+character(len=24) :: mate, carele
+character(len=8) :: materi
+character(len=2) :: option
 !
 ! ----------------------------------------------------------------------
 !
@@ -71,7 +72,7 @@ subroutine ledome(option, nomo, materi, mate, carele)
 ! --- CREATION DE LA CARTE DU MATERIAU CODE
 !
     if (n .ne. 0) then
-        call rcmfmc(materi, mate)
+        call rcmfmc(materi, mate, l_ther_ = ASTER_FALSE)
     else
         mate = ' '
     endif
