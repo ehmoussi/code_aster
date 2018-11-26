@@ -91,7 +91,7 @@ character(len=19), intent(in) :: sdpilo
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: nbno, numequ, nddl, nb_node_mesh, nb_node_sele
+    integer :: nbno, numequ, nddl, nb_node_mesh, nb_node_sele, nb_dof_acti
     integer :: nume_node, nume_node_1, nume_node_2, numequ_1, numequ_2
     integer :: ino, iddl
     integer :: jvale
@@ -402,6 +402,7 @@ character(len=19), intent(in) :: sdpilo
 ! --- CREATION SD REPERAGE DES DX/DY/DZ
 !
     if (typpil .eq. 'LONG_ARC') then
+        nb_dof_acti = 0
         selpil = sdpilo(1:14)//'.PLSL'
         call vtcreb(selpil, 'V', 'R', nume_ddlz = numedd, nb_equa_outz = neq)
         call jeveuo(selpil(1:19)//'.VALE', 'E', vr=plsl)
@@ -414,12 +415,16 @@ character(len=19), intent(in) :: sdpilo
             nomcmp = zk8(jlicmp-1+iddl) 
             do ino = 1, nb_node_mesh
                 nume_node = ino
-                call nueqch('I', selpil, nume_node, nomcmp, numequ)
+                call nueqch(' ', selpil, nume_node, nomcmp, numequ)
                 if (numequ .ne. 0) then
                     plsl(numequ) = 1.d0
+                    nb_dof_acti = nb_dof_acti + 1
                 endif
             end do
         end do
+        if (nb_dof_acti .eq. 0) then
+            call utmess('F', 'MECANONLINE5_52')
+        endif
     endif
 !
 ! --- GESTION RECHERCHE LINEAIRE
