@@ -35,14 +35,9 @@ implicit none
 #include "asterfort/mmmpha.h"
 #include "asterfort/mmmsta.h"
 #include "asterfort/mmnsta.h"
-#include "asterfort/mngliss.h"
-#include "asterfort/mmmtas.h"
-#include "asterfort/mmmtdb.h"
-#include "asterfort/mmmtex.h"
-#include "asterfort/mmtape.h"
-#include "asterfort/mmtfpe.h"
-#include "asterfort/mmtgeo.h"
 #include "asterfort/mmtppe.h"
+#include "asterfort/mngliss.h"
+#include "asterfort/mmmtdb.h"
 #include "asterfort/mmCombLineMatr.h"
 #include "asterfort/mmCompMatrCont.h"
 #include "asterfort/mmCompMatrFric.h"
@@ -110,96 +105,16 @@ character(len=16), intent(in) :: option, nomte
     real(kind=8) :: mprt21_prev(3, 3)=0.0, mprt22_prev(3, 3)=0.0
     real(kind=8) :: kappa_prev(2, 2)=0., h_prev(2, 2)=0.0
     real(kind=8) :: vech1_prev(3)=0.0, vech2_prev(3)=0.0
-!
-    real(kind=8) :: matr(81, 81)
-    real(kind=8) :: matr_prev(81, 81)
     real(kind=8) :: matr_cont(81, 81), matr_conp(81, 81)
     real(kind=8) :: matr_fric(81, 81), matr_frip(81, 81)
 !
-    real(kind=8) :: matrcc(9, 9)
-    real(kind=8) :: matrcc_prev(9, 9)
-!
-    real(kind=8) :: matree(27, 27), matrmm(27, 27)
-    real(kind=8) :: matree_prev(27, 27), matrmm_prev(27, 27)
-    real(kind=8) :: matnee(27, 27), matnmm(27, 27)
-    real(kind=8) :: matnee_prev(27, 27), matnmm_prev(27, 27)
-    real(kind=8) :: matfee(27, 27), matfmm(27, 27)
-    real(kind=8) :: matfee_prev(27, 27), matfmm_prev(27, 27)
-!
-    real(kind=8) :: matrem(27, 27), matrme(27, 27)
-    real(kind=8) :: matrem_prev(27, 27), matrme_prev(27, 27)
-    real(kind=8) :: matnem(27, 27), matnme(27, 27)
-    real(kind=8) :: matnem_prev(27, 27), matnme_prev(27, 27)
-    real(kind=8) :: matfem(27, 27), matfme(27, 27)
-    real(kind=8) :: matfem_prev(27, 27), matfme_prev(27, 27)
-!
-    real(kind=8) :: matrce(9, 27), matrcm(9, 27)
-    real(kind=8) :: matrce_prev(9, 27), matrcm_prev(9, 27)
-    real(kind=8) :: matrmc(27, 9), matrec(27, 9)
-    real(kind=8) :: matrmc_prev(27, 9), matrec_prev(27, 9)
-    real(kind=8) :: matrff(18, 18)
-    real(kind=8) :: matrff_prev(18, 18)
-    real(kind=8) :: matrfe(18, 27), matrfm(18, 27)
-    real(kind=8) :: matrfe_prev(18, 27), matrfm_prev(18, 27)
-    real(kind=8) :: matrmf(27, 18), matref(27, 18)
-    real(kind=8) :: matrmf_prev(27, 18), matref_prev(27, 18)
-!
 ! --------------------------------------------------------------------------------------------------
 !
-    matr(:,:)      = 0.d0
-    matr_prev(:,:) = 0.d0
+    debug = ASTER_FALSE
     matr_cont(:,:) = 0.d0
     matr_conp(:,:) = 0.d0
     matr_fric(:,:) = 0.d0
     matr_frip(:,:) = 0.d0
-    matrcc(:,:) = 0.d0
-    matrcc_prev(:,:) = 0.d0
-    matree(:,:) = 0.d0
-    matree_prev(:,:) = 0.d0
-    matnee(:,:) = 0.d0
-    matnee_prev(:,:) = 0.d0
-    matfee(:,:) = 0.d0
-    matfee_prev(:,:) = 0.d0
-    matrmm(:,:) = 0.d0
-    matrmm_prev(:,:) = 0.d0
-    matnmm(:,:) = 0.d0
-    matnmm_prev(:,:) = 0.d0
-    matfmm(:,:) = 0.d0
-    matfmm_prev(:,:) = 0.d0
-    matrem(:,:) = 0.d0
-    matrem_prev(:,:) = 0.d0
-    matnem(:,:) = 0.d0
-    matnem_prev(:,:) = 0.d0
-    matfem(:,:) = 0.d0
-    matfem_prev(:,:) = 0.d0
-    matrme(:,:) = 0.d0
-    matrme_prev(:,:) = 0.d0
-    matnme(:,:) = 0.d0
-    matnme_prev(:,:) = 0.d0
-    matnme(:,:) = 0.d0
-    matnme_prev(:,:) = 0.d0
-    matfme(:,:) = 0.d0
-    matfme_prev(:,:) = 0.d0
-    matrce(:,:) = 0.d0
-    matrce_prev(:,:) = 0.d0
-    matrcm(:,:) = 0.d0
-    matrcm_prev(:,:) = 0.d0
-    matrec(:,:) = 0.d0
-    matrec_prev(:,:) = 0.d0
-    matrmc(:,:) = 0.d0
-    matrmc_prev(:,:) = 0.d0
-    matrff(:,:) = 0.d0
-    matrff_prev(:,:) = 0.d0
-    matrfe(:,:) = 0.d0
-    matrfe_prev(:,:) = 0.d0
-    matrfm(:,:) = 0.d0
-    matrfm_prev(:,:) = 0.d0
-    matref(:,:) = 0.d0
-    matref_prev(:,:) = 0.d0
-    matrmf(:,:) = 0.d0
-    matrmf_prev(:,:) = 0.d0
-!
-    debug = .false.
 !
 ! - Get informations on cell (slave and master)
 !
@@ -319,7 +234,7 @@ character(len=16), intent(in) :: option, nomte
 ! - Select phase to compute
 !
     call mmmpha(leltf, lcont, ladhe, l_fric_no, phase)
-    if (l_previous) then
+    if (l_prev_cont .or. l_prev_fric) then
         call mmmpha(leltf, lcont_prev, ladhe_prev, l_fric_no_p, phase_prev)
     endif
 !
@@ -371,147 +286,50 @@ character(len=16), intent(in) :: option, nomte
 !
 ! - Compute matrices for friction
 !
-    call mmCompMatrFric(phase      , l_large_slip,&
-                        lpenaf     ,&
-                        iresog     , iresof      ,&
-                        nbdm       , nbcps       , ndexfr,&
-                        ndim       , nne         , nnm   , nnl   ,&
-                        wpg        , jacobi      , coefac, coefaf,&
-                        jeu        , dlagrc      ,&
-                        ffe        , ffm         , ffl   , dffm  , ddffm,&
-                        tau1       , tau2        , mprojt,&
-                        rese       , nrese       , lambda, coefff,&
-                        mprt1n     , mprt2n      , mprnt1, mprnt2,&
-                        mprt11     , mprt12      , mprt21, mprt22,&
-                        kappa      , vech1       , vech2 ,&
-                        h          , &
-                        dlagrf     , djeut ,&
-                        matr_fric)
-    if (l_prev_fric) then
-        call mmCompMatrFric(phase_prev , l_large_slip,&
+    if (leltf) then
+        call mmCompMatrFric(phase      , l_large_slip,&
                             lpenaf     ,&
                             iresog     , iresof      ,&
                             nbdm       , nbcps       , ndexfr,&
                             ndim       , nne         , nnm   , nnl   ,&
-                            wpg        , jacobi      , coefac_prev, coefaf_prev,&
-                            jeu_prev   , dlagrc_prev,&
+                            wpg        , jacobi      , coefac, coefaf,&
+                            jeu        , dlagrc      ,&
                             ffe        , ffm         , ffl   , dffm  , ddffm,&
-                            tau1_prev  , tau2        , mprojt_prev,&
-                            rese_prev  , nrese_prev  , lambda_prev, coefff,&
-                            mprt1n_prev, mprt2n_prev , mprnt1_prev, mprnt2_prev,&
-                            mprt11_prev, mprt12_prev , mprt21_prev, mprt22_prev,&
-                            kappa_prev , vech1_prev  , vech2_prev,&
-                            h_prev     , &
-                            dlagrf_prev, djeut_prev,&
-                            matr_frip)
-    endif
-!
-! - Weak form of contact/friction force
-!
-    call mmtfpe(phase , iresof, lpenac, lpenaf,&
-                ndim  , nne   , nnm   , nnl   , nbcps ,&
-                wpg   , jacobi,&
-                ffl   , ffe   , ffm   ,&
-                norm  , tau1  , tau2  , mprojn, mprojt,&
-                rese  , nrese , &
-                lambda, coefff, coefaf, coefac, &
-                dlagrf, djeut ,&
-                matree, matrmm,&
-                matrem, matrme,&
-                matrec, matrmc,&
-                matref, matrmf)
-    if (l_previous) then
-        call mmtfpe(phase_prev , iresof     , lpenac     , lpenaf    ,&
-                    ndim       , nne        , nnm        , nnl        , nbcps      ,&
-                    wpg        , jacobi     ,&
-                    ffl        , ffe        , ffm        ,&
-                    norm       , tau1_prev  , tau2_prev  , mprojn_prev, mprojt_prev,&
-                    rese_prev  , nrese_prev , &
-                    lambda_prev, coefff     , coefaf_prev, coefac_prev, &
-                    dlagrf_prev, djeut_prev ,&
-                    matree_prev, matrmm_prev,&
-                    matrem_prev, matrme_prev,&
-                    matrec_prev, matrmc_prev,&
-                    matref_prev, matrmf_prev)
-    endif
-!
-! - Non-linear contribution for geometric loop
-!
-    if (iresog .eq. 1) then
-        call mmtgeo(phase, l_large_slip,&
-                    ndim  , nne   , nnm   ,&
-                    wpg   , ffe   , ffm   , dffm  , ddffm ,&
-                    jacobi, coefac, coefff, jeu   , dlagrc,&
-                    mprojn,&
-                    mprt1n, mprt2n, mprnt1, mprnt2,&
-                    kappa , vech1 , vech2 , h     , hah,&
-                    mprt11, mprt12, mprt21, mprt22,&
-                    matree, matrmm, matrem, matrme)
-        if (l_previous) then
-            call mmtgeo(phase_prev , l_large_slip,&
-                        ndim       , nne, nnm,&
-                        wpg        , ffe, ffm, dffm, ddffm,&
-                        jacobi     , coefac_prev, coefff, jeu_prev, dlagrc_prev,&
-                        mprojn_prev,&
-                        mprt1n_prev, mprt2n_prev, mprnt1_prev, mprnt2_prev,&
-                        kappa_prev , vech1_prev , vech2_prev , h_prev, hah_prev,&
-                        mprt11_prev, mprt12_prev, mprt21_prev, mprt22_prev,&
-                        matree_prev, matrmm_prev,&
-                        matrem_prev, matrme_prev)
+                            tau1       , tau2        , mprojt,&
+                            rese       , nrese       , lambda, coefff,&
+                            mprt1n     , mprt2n      , mprnt1, mprnt2,&
+                            mprt11     , mprt12      , mprt21, mprt22,&
+                            kappa      , vech1       , vech2 ,&
+                            h          , &
+                            dlagrf     , djeut ,&
+                            matr_fric)
+        if (l_prev_fric) then
+            call mmCompMatrFric(phase_prev , l_large_slip,&
+                                lpenaf     ,&
+                                iresog     , iresof      ,&
+                                nbdm       , nbcps       , ndexfr,&
+                                ndim       , nne         , nnm   , nnl   ,&
+                                wpg        , jacobi      , coefac_prev, coefaf_prev,&
+                                jeu_prev   , dlagrc_prev,&
+                                ffe        , ffm         , ffl   , dffm  , ddffm,&
+                                tau1_prev  , tau2        , mprojt_prev,&
+                                rese_prev  , nrese_prev  , lambda_prev, coefff,&
+                                mprt1n_prev, mprt2n_prev , mprnt1_prev, mprnt2_prev,&
+                                mprt11_prev, mprt12_prev , mprt21_prev, mprt22_prev,&
+                                kappa_prev , vech1_prev  , vech2_prev,&
+                                h_prev     , &
+                                dlagrf_prev, djeut_prev,&
+                                matr_frip)
         endif
-    endif
-!
-! - Weak form of contact/friction force
-!
-    call mmtape(phase , leltf , lpenac, lpenaf,&
-                ndim  , nnl   , nne   , nnm   , nbcps, &
-                wpg   , jacobi,&
-                ffl   , ffe   , ffm   ,&
-                norm  , tau1  , tau2  , mprojt,&
-                rese  , nrese , lambda,&
-                coefff, coefaf, coefac,&
-                matrcc, matrff,&
-                matrce, matrcm, matrfe, matrfm)
-    if (l_previous) then
-        call mmtape(phase_prev , leltf      , lpenac     , lpenaf     ,&
-                    ndim       , nnl        , nne        , nnm        , nbcps, &
-                    wpg        , jacobi     ,&
-                    ffl        , ffe        , ffm        ,&
-                    norm       , tau1_prev  , tau2_prev  , mprojt_prev,&
-                    rese_prev  , nrese_prev , lambda_prev,&
-                    coefff     , coefaf_prev, coefac_prev,&
-                    matrcc_prev, matrff_prev,&
-                    matrce_prev, matrcm_prev, matrfe_prev, matrfm_prev)
-    endif
-!
-! - Excluded nodes
-!
-    call mmmtex(ndexfr, ndim  , nnl   , nne   , nnm   , nbcps,&
-                matrff, matrfe, matrfm, matref, matrmf)
-    if (l_previous) then
-        call mmmtex(ndexfr     , ndim       , nnl        , nne        , nnm        , nbcps,&
-                    matrff_prev, matrfe_prev, matrfm_prev, matref_prev, matrmf_prev)
-    endif
-!
-! - Assembling
-!
-    call mmmtas(nbdm, ndim, nnl, nne, nnm,&
-                nbcps, matrcc, matree, matrmm, matrem,&
-                matrme, matrce, matrcm, matrmc, matrec,&
-                matr,&
-                matrff, matrfe, matrfm, matrmf, matref)
-    if (l_previous) then
-        call mmmtas(nbdm, ndim, nnl, nne, nnm,&
-                    nbcps, matrcc_prev, matree_prev, matrmm_prev, matrem_prev,&
-                    matrme_prev, matrce_prev, matrcm_prev, matrmc_prev, matrec_prev,&
-                    matr_prev,&
-                    matrff_prev, matrfe_prev, matrfm_prev, matrmf_prev, matref_prev)
     endif
 !
 ! - Linear combination of matrix
 !
-    if (l_previous) then
-        call mmCombLineMatr(alpha_cont, matr_prev, matr)
+    if (l_prev_cont) then
+        call mmCombLineMatr(alpha_cont, matr_conp, matr_cont)
+    endif
+    if (l_prev_fric) then
+        call mmCombLineMatr(alpha_cont, matr_frip, matr_fric)
     endif
 !
 ! - Copy
@@ -523,9 +341,9 @@ character(len=16), intent(in) :: option, nomte
         do j = 1, nddl
             do i = 1, nddl
                 ij = j+nddl*(i-1)
-                zr(jv_matr+ij-1) = matr(i,j)
+                zr(jv_matr+ij-1) = matr_cont(i,j) + matr_fric(i,j)
                 if (debug) then
-                    call mmmtdb(matr(i, j), 'IJ', i, j)
+                    call mmmtdb( matr_cont(i,j) + matr_fric(i,j), 'IJ', i, j)
                 endif
             enddo
         enddo
@@ -534,9 +352,9 @@ character(len=16), intent(in) :: option, nomte
         do j = 1, nddl
             do i = 1, j
                 ij = (j-1)*j/2 + i
-                zr(jv_matr+ij-1) = matr(i,j)
+                zr(jv_matr+ij-1) = matr_cont(i,j) + matr_fric(i,j)
                 if (debug) then
-                    call mmmtdb(matr(i, j), 'IJ', i, j)
+                    call mmmtdb( matr_cont(i,j) + matr_fric(i,j), 'IJ', i, j)
                 endif
             end do
         end do
