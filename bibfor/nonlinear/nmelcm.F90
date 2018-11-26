@@ -39,6 +39,7 @@ implicit none
 #include "asterfort/memare.h"
 #include "asterfort/nmelco_prep.h"
 #include "asterfort/reajre.h"
+#include "asterfort/utmess.h"
 !
 character(len=4), intent(in) :: phase
 character(len=8), intent(in) :: mesh
@@ -116,10 +117,10 @@ aster_logical, intent(in) :: l_xthm
     
     if (.not.l_all_verif .and. ((.not.l_cont_lac) .or. ds_contact%nb_cont_pair.ne.0)) then
 !
-! ----- Print
+! ----- Display
 !
         if (niv .ge. 2) then
-            write (ifm,*) '<CONTACT> CALCUL MATRICES ELEMENTAIRES'
+            call utmess('I','CONTACT5_27')
         endif
 !
 ! ----- Init fields

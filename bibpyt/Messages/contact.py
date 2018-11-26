@@ -72,6 +72,11 @@ Le vecteur MAIT_FIXE ou ESCL_FIXE est nul !
 Le vecteur MAIT_VECT_Y ou ESCL_VECT_Y est nul !
 """),
 
+    17 : _(u"""
+La taille d'un bloc vaut %(i1)d, elle est inférieure à la hauteur maximale qui vaut %(i2)d.
+Changez la TAILLE_BLOC (dans la commande DEBUT) des profils. Prenez au moins : %(i3)d.
+"""),
+
     20 : _(u"""
 Contact méthode continue.
   La méthode de Newton généralisée pour la boucle de géométrie exige que le contact soit aussi résolu par le Newton généralisé.

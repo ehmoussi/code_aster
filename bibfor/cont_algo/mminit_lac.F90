@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,7 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine mminit_lac(mesh     , ds_contact, hat_valinc, ds_measure, sdnume,&
                       nume_inst)
 !
@@ -34,14 +34,15 @@ implicit none
 #include "asterfort/nmchex.h"
 #include "asterfort/mmopti_lac.h"
 #include "asterfort/mm_cycl_init_lac.h"
+#include "asterfort/infdbg.h"
+#include "asterfort/utmess.h"
 !
-!
-    character(len=8), intent(in) :: mesh
-    type(NL_DS_Contact), intent(inout) :: ds_contact
-    character(len=19), intent(in) :: hat_valinc(*)
-    type(NL_DS_Measure), intent(inout) :: ds_measure
-    character(len=19), intent(in) :: sdnume
-    integer, intent(in) :: nume_inst
+character(len=8), intent(in) :: mesh
+type(NL_DS_Contact), intent(inout) :: ds_contact
+character(len=19), intent(in) :: hat_valinc(*)
+type(NL_DS_Measure), intent(inout) :: ds_measure
+character(len=19), intent(in) :: sdnume
+integer, intent(in) :: nume_inst
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -60,13 +61,21 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
+    integer :: ifm, niv
     aster_logical :: l_cont_allv, l_step_first
     character(len=19) :: sdcont_depgeo, disp_prev, sdcont_depini, sdcont_stat, sdcont_zeta
     integer, pointer :: v_sdcont_stat(:) => null()
     integer, pointer :: v_sdcont_zeta(:) => null()
 !
 ! --------------------------------------------------------------------------------------------------
-!    
+!
+    call infdbg('CONTACT', ifm, niv)
+    if (niv .ge. 2) then
+        call utmess('I', 'CONTACT5_14')
+    endif
+!
+! - Initializations
+!
     l_cont_allv  = cfdisl(ds_contact%sdcont_defi,'ALL_VERIF')
     ASSERT(.not.l_cont_allv)
 !
@@ -114,7 +123,9 @@ implicit none
     if (.not.l_cont_allv .and. l_step_first) then
        call mmopti_lac(mesh, ds_contact)
     endif
-! Cycling initialization
+!
+! - Cycling initialization
+!
     call mm_cycl_init_lac(mesh,ds_contact)
 !
 end subroutine

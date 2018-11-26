@@ -72,7 +72,7 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
 !
     call infdbg('CONTACT', ifm, niv)
     if (niv .ge. 2) then
-        write (ifm,*) '<CONTACT> . Create contact datastructures for CONTINUE method'
+        call utmess('I','CONTACT5_5')
     endif
 !
 ! - Get parameters

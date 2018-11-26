@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine cfmmma(ds_contact)
 !
 use NonLin_Datastructure_type
@@ -31,9 +32,7 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/wkvect.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    type(NL_DS_Contact), intent(in) :: ds_contact
+type(NL_DS_Contact), intent(in) :: ds_contact
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -64,7 +63,7 @@ implicit none
 !
     call infdbg('CONTACT', ifm, niv)
     if (niv .ge. 2) then
-        write (ifm,*) '<CONTACT> . Create contact datastructures for DISCRETE/CONTINUE methods'
+        call utmess('I','CONTACT5_3')
     endif
 !
 ! - Get parameters
@@ -90,7 +89,7 @@ implicit none
 !
 ! - Print
 !
-    call utmess('I', 'MECANONLINE6_5', si=nb_cont_node_c)
+    call utmess('I', 'CONTACT5_8', si=nb_cont_node_c)
 !
 ! - Create datastructure for coefficients
 ! 
