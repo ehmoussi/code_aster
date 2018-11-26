@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -56,7 +56,7 @@ subroutine amumpp(option, nbsol, kxmps, ldist, type,&
 #include "asterfort/asmpi_comm_vect.h"
 #include "asterfort/assert.h"
 #include "asterfort/csmbgg.h"
-#include "asterfort/infniv.h"
+#include "asterfort/infdbg.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jeexin.h"
 #include "asterfort/jelira.h"
@@ -101,7 +101,7 @@ subroutine amumpp(option, nbsol, kxmps, ldist, type,&
 !
 !-----------------------------------------------------------------------
     call jemarq()
-    call infniv(ifm, niv)
+    call infdbg('SOLVEUR',ifm, niv)
 !
 !     ------------------------------------------------
 !     INITS

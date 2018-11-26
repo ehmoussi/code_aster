@@ -98,7 +98,7 @@ aster_logical :: lerrit
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call infdbg('MECA_NON_LINE', ifm, niv)
+    call infdbg('MECANONLINE', ifm, niv)
     if (niv .ge. 2) then
         write (ifm,*) '<MECANONLINE> CALCUL DE PREDICTION'
     endif

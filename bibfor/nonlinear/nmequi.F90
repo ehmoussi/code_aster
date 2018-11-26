@@ -35,6 +35,7 @@ implicit none
 #include "asterfort/nonlinDSVectCombCompute.h"
 #include "asterfort/nonlinDSVectCombAddAny.h"
 #include "asterfort/nonlinDSVectCombInit.h"
+#include "asterfort/utmess.h"
 !
 aster_logical, intent(in) :: l_disp, l_pilo, l_macr
 character(len=19), intent(in) :: cnequi
@@ -66,9 +67,9 @@ real(kind=8), optional, intent(in) :: eta_
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call infdbg('MECA_NON_LINE', ifm, niv)
+    call infdbg('MECANONLINE', ifm, niv)
     if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE> Compute lack of balance forces'
+        call utmess('I', 'MECANONLINE13_66')
     endif
 !
 ! - Initializations

@@ -87,7 +87,7 @@ type(NL_DS_Contact), optional, intent(in) :: ds_contact_
 ! --------------------------------------------------------------------------------------------------
 !
     call jemarq()
-    call infdbg('MECA_NON_LINE', ifm, niv)
+    call infdbg('MECANONLINE', ifm, niv)
     if (niv .ge. 2) then
         call utmess('I','MECANONLINE13_16')
     endif

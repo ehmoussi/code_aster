@@ -41,6 +41,8 @@ implicit none
 #include "asterfort/nmchex.h"
 #include "asterfort/nmvcex.h"
 #include "asterfort/wkvect.h"
+#include "asterfort/infdbg.h"
+#include "asterfort/utmess.h"
 !
 character(len=*) :: modelz
 character(len=*) :: carele
@@ -90,7 +92,7 @@ character(len=19) :: matele
     character(len=24) :: model
     integer :: jinfc, jchar, jchar2
     integer :: nbchar
-    integer :: i
+    integer :: i, ifm, niv
     character(len=16) :: optmat
     character(len=19) :: disp_prev, sigplu, vite_curr, vite_prev, acce_prev, strplu
     character(len=19) :: disp_cumu_inst, disp_newt_curr, varplu, time_curr
@@ -101,6 +103,7 @@ character(len=19) :: matele
 ! ----------------------------------------------------------------------
 !
     call jemarq()
+    call infdbg('MECANONLINE', ifm, niv)
 !
 ! --- INITIALISATIONS
 !
@@ -152,17 +155,26 @@ character(len=19) :: matele
 !
 ! --- MATR_ELEM DES CL DE DIRICHLET B
 !
+        if (niv .ge. 2) then
+            call utmess('I', 'MECANONLINE13_80')
+        endif
         call medime('V', 'ZERO', model, lischa, matele)
 !
 ! --- MATR_ELEM RIGIDITE GEOMETRIQUE
 !
     else if (typmat.eq.'MEGEOM') then
+        if (niv .ge. 2) then
+            call utmess('I', 'MECANONLINE13_81')
+        endif
         call merige(model(1:8), carele(1:8), sigplu, strplu, matele,&
                     'V', 0, mater=ds_material%field_mate)
 !
 ! --- MATR_ELEM MASSES
 !
     else if (typmat.eq.'MEMASS') then
+        if (niv .ge. 2) then
+            call utmess('I', 'MECANONLINE13_82')
+        endif
         call memame(optmat, model, ds_material%field_mate,&
                     carele, instam, ds_constitutive%compor, matele,&
                     base)
@@ -170,6 +182,9 @@ character(len=19) :: matele
 ! --- MATR_ELEM AMORTISSEMENT
 !
     else if (typmat.eq.'MEAMOR') then
+        if (niv .ge. 2) then
+            call utmess('I', 'MECANONLINE13_83')
+        endif
         call meamme(optmat, model, nbchar, zk8(jchar2), ds_material%field_mate,&
                     carele, instam, 'V', merigi,&
                     memass, matele, varplu)
@@ -177,12 +192,18 @@ character(len=19) :: matele
 ! --- MATR_ELEM POUR CHARGES SUIVEUSES
 !
     else if (typmat.eq.'MESUIV') then
+        if (niv .ge. 2) then
+            call utmess('I', 'MECANONLINE13_84')
+        endif
         call mecgme(model, carele, ds_material%field_mate  , lischa, instap,&
                     disp_prev, disp_cumu_inst, instam, ds_constitutive%compor, matele)
 !
 ! --- MATR_ELEM DES SOUS-STRUCTURES
 !
     else if (typmat.eq.'MESSTR') then
+        if (niv .ge. 2) then
+            call utmess('I', 'MECANONLINE13_85')
+        endif
         call messtr(base  , optmat, model, carele, ds_material%field_mate,&
                     matele)
     else

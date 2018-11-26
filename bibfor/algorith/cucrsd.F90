@@ -82,10 +82,11 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
     integer :: inoe
     character(len=19) :: enat
     aster_logical :: l_unil_pena
+!
 ! --------------------------------------------------------------------------------------------------
 !
     call jemarq()
-    call infdbg('MECA_NON_LINE', ifm, niv)
+    call infdbg('MECANONLINE', ifm, niv)
     if (niv .ge. 2) then
         call utmess('I', 'MECANONLINE13_29')
     endif

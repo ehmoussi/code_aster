@@ -46,20 +46,20 @@ character(len=19) :: sddyna
 !
 ! ----------------------------------------------------------------------
 !
+    integer :: ifm, niv
     character(len=24) :: tsch, psch, losd, nosd, tfor, cfsc
     integer :: jtsch, jpsch, jlosd, jnosd, jtfor, jcfsc
     character(len=24) :: tcha, ncha, veol, vaol
     integer :: jtcha, jncha, jveol, jvaol
     character(len=24) :: vecent, vecabs
     integer :: jvecen, jvecab
-    integer :: ifm, niv
     character(len=16) :: k16bid, nomcmd
     character(len=8) :: k8bid
 !
 ! ----------------------------------------------------------------------
 !
     call jemarq()
-    call infdbg('MECA_NON_LINE', ifm, niv)
+    call infdbg('MECANONLINE', ifm, niv)
 !
 ! --- OPERATEUR APPELANT (STATIQUE OU DYNAMIQUE)
 !

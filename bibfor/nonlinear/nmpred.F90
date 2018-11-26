@@ -37,6 +37,8 @@ implicit none
 #include "asterfort/nmltev.h"
 #include "asterfort/nmprde.h"
 #include "asterfort/nmprta.h"
+#include "asterfort/utmess.h"
+#include "asterfort/nonlinDSPrintSepLine.h"
 !
 integer :: fonact(*)
 integer :: numins
@@ -104,9 +106,10 @@ aster_logical :: lerrit
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call infdbg('MECA_NON_LINE', ifm, niv)
+    call infdbg('MECANONLINE', ifm, niv)
     if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE> CALCUL DE PREDICTION'
+        call nonlinDSPrintSepLine()
+        call utmess('I', 'MECANONLINE13_33')
     endif
 !
 ! --- INITIALISATION CODES RETOURS

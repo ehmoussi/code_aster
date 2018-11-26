@@ -72,7 +72,7 @@ integer :: fonact(*)
 ! ----------------------------------------------------------------------
 !
     call jemarq()
-    call infdbg('MECA_NON_LINE', ifm, niv)
+    call infdbg('MECANONLINE', ifm, niv)
     if (niv .ge. 2) then
         call utmess('I','MECANONLINE13_14')
     endif

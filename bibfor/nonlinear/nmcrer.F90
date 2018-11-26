@@ -15,7 +15,6 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
 ! person_in_charge: mickael.abbas at edf.fr
 !
 subroutine nmcrer(carcri, sdcriq)
@@ -59,7 +58,7 @@ character(len=24) :: sdcriq, carcri
 ! ----------------------------------------------------------------------
 !
     call jemarq()
-    call infdbg('MECA_NON_LINE', ifm, niv)
+    call infdbg('MECANONLINE', ifm, niv)
     if (niv .ge. 2) then
         call utmess('I', 'MECANONLINE12_12')
     endif

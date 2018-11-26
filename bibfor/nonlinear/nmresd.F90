@@ -37,6 +37,7 @@ implicit none
 #include "asterfort/nmreso.h"
 #include "asterfort/nmrinc.h"
 #include "asterfort/nmtime.h"
+#include "asterfort/utmess.h"
 #include "asterfort/romAlgoNLSystemSolve.h"
 #include "asterfort/romAlgoNLCorrEFMatrixModify.h"
 #include "asterfort/romAlgoNLCorrEFResiduModify.h"
@@ -89,9 +90,9 @@ integer :: rescvg
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call infdbg('MECA_NON_LINE', ifm, niv)
+    call infdbg('MECANONLINE', ifm, niv)
     if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE> ... RESOLUTION'
+        call utmess('I', 'MECANONLINE13_77')
     endif
 !
 ! --- EXTRACTION VARIABLES CHAPEAUX

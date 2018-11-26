@@ -46,6 +46,7 @@ implicit none
 #include "asterfort/nmprma.h"
 #include "asterfort/nmresd.h"
 #include "asterfort/vtzero.h"
+#include "asterfort/utmess.h"
 !
 integer :: list_func_acti(*)
 character(len=8), intent(in) :: mesh
@@ -126,9 +127,9 @@ character(len=19) :: hval_meelem(*), hval_measse(*)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call infdbg('MECA_NON_LINE', ifm, niv)
+    call infdbg('MECANONLINE', ifm, niv)
     if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE> PREDICTION TYPE EULER'
+        call utmess('I', 'MECANONLINE13_34')
     endif
 !
 ! - Active functionnalities

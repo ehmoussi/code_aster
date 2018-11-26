@@ -52,6 +52,7 @@ implicit none
 #include "asterfort/preres.h"
 #include "asterfort/mtdscr.h"
 #include "asterfort/romAlgoNLCorrEFMatrixModify.h"
+#include "asterfort/utmess.h"
 !
 type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 integer :: list_func_acti(*)
@@ -137,9 +138,9 @@ integer :: faccvg, ldccvg
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call infdbg('MECA_NON_LINE', ifm, niv)
+    call infdbg('MECANONLINE', ifm, niv)
     if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE> ...... CALCUL MATRICE'
+        call utmess('I', 'MECANONLINE13_68')
     endif
 !
 ! - Initializations
