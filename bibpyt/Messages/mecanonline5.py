@@ -268,6 +268,10 @@ Il faut préciser un concept EVOL_NOLI en prédiction de type 'DEPL_CALCULE'
  Pour utiliser METHODE='NEWTON_KRYLOV', il faut utiliser une méthode itérative (GCPC, PETSC) sous le mot-clé SOLVEUR.
 """),
 
+    52 : _(u"""
+Il n'y a aucun degré de liberté de déplacement sur le modèle.
+"""),
+
     53: _(u"""
    Le critère RESI_COMP_RELA est interdit en dynamique. Utilisez un autre critère de convergence
 """),
