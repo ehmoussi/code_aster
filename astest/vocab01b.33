@@ -1,0 +1,5 @@
+class AsterStudySessionFake(object):
+    def use_cata(self):
+        return True
+
+AsterStudySession = AsterStudySessionFake()

@@ -384,6 +384,9 @@ class matr_asse_depl_c(matr_asse_gd):
 class matr_asse_depl_r(matr_asse_gd):
     pass
 
+class matr_asse_elim_r(matr_asse_gd):
+    pass
+
 class matr_asse_pres_c(matr_asse_gd):
     pass
 

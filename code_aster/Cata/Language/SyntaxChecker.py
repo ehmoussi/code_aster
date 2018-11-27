@@ -145,12 +145,22 @@ def isValidType(obj, expected):
 
 class SyntaxCheckerVisitor(object):
 
-    """This class walks along the tree of a Command object to check its syntax"""
+    """This class walks along the tree of a Command object to check its syntax
 
-    def __init__(self):
+    Attributes:
+        _stack (list): Stack of checked objects for error report.
+        _parent_context (dict): Context of the parent used to evaluate block
+            conditions.
+        _in_place (bool): If *True* the keywords dict is changed in place.
+        _default_command (bool): Marker not to add default keywords several
+            times (for performance).
+    """
+
+    def __init__(self, in_place=False):
         """Initialization"""
         self._stack = []
         self._parent_context = []
+        self._in_place = in_place
         self._default_command = False
 
     @property
@@ -178,7 +188,11 @@ class SyntaxCheckerVisitor(object):
         if step.name in ("_CONVERT_VARIABLE", "_CONVERT_COMMENT",
                          "_RESULT_OF_MACRO"):
             return
-        keywords = mixedcopy(userDict)
+        if self._in_place:
+            keywords = userDict
+        else:
+            keywords = mixedcopy(userDict)
+        # mark that default keywords have already added at command level
         self._default_command = True
         step.addDefaultKeywords(keywords)
         debug_message2("checking syntax of", step.name, "with", keywords)
@@ -377,19 +391,34 @@ class SyntaxCheckerVisitor(object):
                     self.error(KeyError,
                                "Unauthorized keyword: {!r}".format(key))
                 else:
+                    nmax = kwd.definition.get('max', 1)
+                    if nmax == 1:
+                        if (value_is_sequence(value) and len(value) == 1
+                                and not isinstance(value[0], dict)):
+                            value = userOcc[key] = value[0]
+                    else:
+                        if value is not None and not value_is_sequence(value):
+                            value = userOcc[key] = [value]
                     self._stack.append(key)
                     kwd.accept(self, value)
                     self._stack.pop()
 
 
-def checkCommandSyntax(command, keywords, add_default=True):
-    """Check the syntax of a command
-    `keywords` contains the keywords filled by the user"""
-    checker = SyntaxCheckerVisitor()
+def checkCommandSyntax(command, keywords, in_place=True):
+    """Check the syntax of a command `keywords` contains the keywords filled by
+    the user.
+
+    Arguments:
+        command (Command): Command object to be checked.
+        keywords (dict): Dict of the user keywords.
+        in_place (bool): If *True* the default keywords are added in the user
+            dict. *None* values are removed from the user dict.
+    """
+    checker = SyntaxCheckerVisitor(in_place)
     if not isinstance(keywords, dict):
         checker.error(TypeError, "'dict' object is expected")
 
     command.accept(checker, keywords)
-    if add_default:
+    if in_place:
         command.addDefaultKeywords(keywords)
         remove_none(keywords)
