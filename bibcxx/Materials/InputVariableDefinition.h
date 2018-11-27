@@ -204,7 +204,7 @@ class GenericInputVariableInstance {
     /**
      * @brief Get the reference value of input variable
      */
-    double getReferenceValue() const throw( std::runtime_error ) {
+    double getReferenceValue() const {
         if ( !_refValueSet )
             throw std::runtime_error( "Reference value not set" );
         return _refValue;
@@ -213,7 +213,7 @@ class GenericInputVariableInstance {
     /**
      * @brief Get the name of the variable
      */
-    virtual std::string getVariableName() const throw( std::runtime_error ) {
+    virtual std::string getVariableName() const {
         throw std::runtime_error( "Not allowed" );
         return std::string( "NOTHING" );
     };
@@ -274,7 +274,7 @@ class InputVariableDefinitionInstance : public GenericInputVariableInstance {
     /**
      * @brief Get the name of the variable
      */
-    std::string getVariableName() const throw( std::runtime_error ) {
+    std::string getVariableName() const {
         return std::string( _varcName );
     };
 };
@@ -371,7 +371,7 @@ class InputVariableOnMeshInstance {
     template < class InputVariablePtr >
     void addInputVariableOnGroupOfElements(
         const InputVariablePtr &curBehav,
-        const std::string &nameOfGroup ) throw( std::runtime_error ) {
+        const std::string &nameOfGroup ) {
         if ( !_supportMesh )
             throw std::runtime_error( "Support mesh is not defined" );
         if ( !_supportMesh->hasGroupOfElements( nameOfGroup ) )
@@ -386,7 +386,7 @@ class InputVariableOnMeshInstance {
      */
     template < class InputVariablePtr >
     void addInputVariableOnElement( const InputVariablePtr &curBehav,
-                                    const std::string &nameOfElement ) throw( std::runtime_error ) {
+                                    const std::string &nameOfElement ) {
         if ( !_supportMesh )
             throw std::runtime_error( "Support mesh is not defined" );
 

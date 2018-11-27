@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -314,7 +314,7 @@ implicit none
             valr(1) = tps2(4)
             valr(2) = tps2(1)
             call utmess('Z', 'DISCRETISATION2_79', si=vali(1), nr=2, valr=valr,&
-                        num_except=28)
+                        num_except=TIMELIMIT_ERROR)
         endif
 !
 ! - ON VA REFAIRE UNE ITERATION
@@ -328,7 +328,7 @@ implicit none
 !
         if ((parcri(9).eq.0) .and. (iterl.ge.itmaxl)) then
             write (ifm,fmt)
-            call utmess('Z', 'MECANONLINE9_7', num_except=22)
+            call utmess('Z', 'MECANONLINE9_7', num_except=CONVERGENCE_ERROR)
         endif
 !
     endif

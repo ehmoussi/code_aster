@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -79,7 +79,6 @@ if 1 :
                       MATR_MASS=M2,
                       CALC_FREQ=_F( FREQ=(10., 250.) ),
                       VERI_MODE=_F( SEUIL=1e-03 ),
-                      SOLVEUR=_F(METHODE='MULT_FRONT'),
                      )
 
     TEST_RESU(RESU=_F(RESULTAT=MODE2, NUME_MODE=2, PARA='FREQ', VALE_CALC= 85.631015163879, ))

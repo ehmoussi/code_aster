@@ -76,7 +76,7 @@ class MatchingMeshesInstance : public DataStructure {
      */
     MatchingMeshesInstance( const std::string name = ResultNaming::getNewResultName() );
 
-    bool setFirstMesh( MeshPtr &currentMesh ) throw( std::runtime_error ) {
+    bool setFirstMesh( MeshPtr &currentMesh ) {
         if ( currentMesh->isEmpty() )
             throw std::runtime_error( "Mesh is empty" );
         _firstBaseMesh = currentMesh;

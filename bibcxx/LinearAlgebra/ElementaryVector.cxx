@@ -30,7 +30,7 @@
 FieldOnNodesDoublePtr
 ElementaryVectorInstance::assembleVector( const BaseDOFNumberingPtr &currentNumerotation,
                                           const double &time,
-                                          const JeveuxMemory memType ) throw( std::runtime_error ) {
+                                          const JeveuxMemory memType ) {
     if ( _isEmpty )
         throw std::runtime_error( "The ElementaryVector is empty" );
 

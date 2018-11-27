@@ -17,8 +17,6 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-import aster
-
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),
        DEBUG=_F(SDVERI='OUI'),
          )

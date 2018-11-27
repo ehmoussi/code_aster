@@ -176,7 +176,7 @@ template < int lengthT > class JeveuxString {
      */
     inline void unsafeFastCopy( const char *chaine )
 #ifndef NDEBUG
-        throw( std::runtime_error )
+
 #endif
     {
 #ifndef NDEBUG

@@ -118,13 +118,13 @@ void MFrontBehaviour::fillMaterialPropertiesNames() {
         } else {
             string msg( "MFrontBehaviour::fillMaterialPropertiesNames : "
                         "unsupported modelling hypothesis" );
-            throw( runtime_error( msg ) );
+            throw runtime_error( msg );
         }
     } else {
         string msg( "MFrontBehaviour::fillMaterialPropertiesNames : "
                     "unsupported behaviour type "
                     "(neither isotropic nor orthotropic)" );
-        throw( runtime_error( msg ) );
+        throw runtime_error( msg );
     }
     _mpnames.insert( _mpnames.begin(), tmp.begin(), tmp.end() );
     _mpnames_computed = true;

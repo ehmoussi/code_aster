@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -51,7 +51,7 @@ TSec22b=MACR_CARA_POUTRE(
 try:
     TSec22a=MACR_CARA_POUTRE(
         MAILLAGE=MSec22a, TABLE_CARA='OUI', GROUP_MA_BORD='BORDLIB', NOM='TAB22a', NOEUD='N1',)
-except aster.error,err:
+except AsterError as err:
     print fmt_raison % str(err)
     # on vérifie que l'erreur fatale est bien celle que l'on attendait :
     if err.id_message == "POUTRE0_11": is_11 = 1
@@ -82,7 +82,7 @@ try:
             _F(GROUP_FIBRE='GrFib22', GROUP_MA = ('GrSect22',),),
         ),
     )
-except aster.error,err:
+except AsterError as err:
     print fmt_raison % str(err)
     # on vérifie que l'erreur fatale est bien celle que l'on attendait :
     if err.id_message == "MODELISA8_6": is_86 = 1

@@ -46,7 +46,7 @@ class ParallelMechanicalLoadInstance: public DataStructure
 private:
     void transferPCFieldOnMesh( const PCFieldOnMeshDoublePtr& fieldIn,
                                 PCFieldOnMeshDoublePtr& fieldOut )
-        throw( std::runtime_error );
+        ;
 
 protected:
     /** @brief Modèle support */

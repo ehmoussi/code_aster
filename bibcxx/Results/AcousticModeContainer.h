@@ -58,7 +58,7 @@ class AcousticModeContainerInstance : public FullResultsContainerInstance {
         return true;
     };
 
-    bool update() throw( std::runtime_error ) { return ResultsContainerInstance::update(); };
+    bool update() { return ResultsContainerInstance::update(); };
 };
 
 /**

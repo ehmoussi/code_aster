@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,23 +18,35 @@
 
 subroutine opsexe(nuoper)
     implicit none
+#include "asterfort/debut.h"
 #include "asterfort/ops005.h"
 #include "asterfort/ops007.h"
 #include "asterfort/ops026.h"
+#include "asterfort/poursu.h"
 #include "asterfort/utmess.h"
     integer :: nuoper
     integer :: vali
 !     EXECUTION DES PROCEDURES SUPERVISEUR
 !     ------------------------------------------------------------------
-    if (nuoper .eq. 5) then
+    select case (nuoper)
+    case (-1)
+        call debut()
+
+    case (-2)
+        call poursu()
+
+    case (5)
         call ops005()
-    else if (nuoper .eq. 7) then
+
+    case (7)
         call ops007()
-    else if (nuoper .eq. 26) then
+
+    case (26)
         call ops026()
-    else
+
+    case default
         vali = -nuoper
         call utmess('F', 'SUPERVIS_60', si=vali)
-    endif
+    end select
 !
 end subroutine

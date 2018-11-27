@@ -297,7 +297,7 @@ class BaseDOFNumberingInstance : public DataStructure
     /**
      * @brief Determination de la numerotation
      */
-    bool computeNumbering() throw( std::runtime_error );
+    bool computeNumbering() ;
 
     /**
      * @brief Get support FieldOnNodesDescription
@@ -341,7 +341,7 @@ class BaseDOFNumberingInstance : public DataStructure
      * @param currentMatrix objet ElementaryMatrix
      */
     virtual void setElementaryMatrix( const ElementaryMatrixDisplacementDoublePtr &currentMatrix )
-        throw( std::runtime_error )
+
     {
         if ( _supportModel )
             throw std::runtime_error(
@@ -354,7 +354,7 @@ class BaseDOFNumberingInstance : public DataStructure
      * @param currentMatrix objet ElementaryMatrix
      */
     virtual void setElementaryMatrix( const ElementaryMatrixDisplacementComplexPtr &currentMatrix )
-        throw( std::runtime_error )
+
     {
         if ( _supportModel )
             throw std::runtime_error(
@@ -367,7 +367,7 @@ class BaseDOFNumberingInstance : public DataStructure
      * @param currentMatrix objet ElementaryMatrix
      */
     virtual void setElementaryMatrix( const ElementaryMatrixTemperatureDoublePtr &currentMatrix )
-        throw( std::runtime_error )
+
     {
         if ( _supportModel )
             throw std::runtime_error(
@@ -380,7 +380,7 @@ class BaseDOFNumberingInstance : public DataStructure
      * @param currentMatrix objet ElementaryMatrix
      */
     virtual void setElementaryMatrix( const ElementaryMatrixPressureComplexPtr &currentMatrix )
-        throw( std::runtime_error )
+
     {
         if ( _supportModel )
             throw std::runtime_error(
@@ -398,7 +398,7 @@ class BaseDOFNumberingInstance : public DataStructure
      * @brief Methode permettant de definir le modele support
      * @param currentModel Model support de la numerotation
      */
-    virtual void setSupportModel( const ModelPtr &currentModel ) throw( std::runtime_error ) {
+    virtual void setSupportModel( const ModelPtr &currentModel ) {
         if ( _supportMatrix.size() != 0 )
             throw std::runtime_error(
                 "It is not allowed to defined Model and ElementaryMatrix together" );
@@ -443,7 +443,7 @@ class DOFNumberingInstance : public BaseDOFNumberingInstance {
      * @param currentMatrix objet ElementaryMatrix
      */
     void setElementaryMatrix( const ElementaryMatrixDisplacementDoublePtr &currentMatrix )
-        throw( std::runtime_error )
+
     {
         if ( currentMatrix->getSupportModel()->getSupportMesh()->isParallel() )
             throw std::runtime_error( "Support mesh must not be parallel" );
@@ -455,7 +455,7 @@ class DOFNumberingInstance : public BaseDOFNumberingInstance {
      * @param currentMatrix objet ElementaryMatrix
      */
     void setElementaryMatrix( const ElementaryMatrixDisplacementComplexPtr &currentMatrix )
-        throw( std::runtime_error )
+
     {
         if ( currentMatrix->getSupportModel()->getSupportMesh()->isParallel() )
             throw std::runtime_error( "Support mesh must not be parallel" );
@@ -467,7 +467,7 @@ class DOFNumberingInstance : public BaseDOFNumberingInstance {
      * @param currentMatrix objet ElementaryMatrix
      */
     void setElementaryMatrix( const ElementaryMatrixTemperatureDoublePtr &currentMatrix )
-        throw( std::runtime_error )
+
     {
         if ( currentMatrix->getSupportModel()->getSupportMesh()->isParallel() )
             throw std::runtime_error( "Support mesh must not be parallel" );
@@ -479,7 +479,7 @@ class DOFNumberingInstance : public BaseDOFNumberingInstance {
      * @param currentMatrix objet ElementaryMatrix
      */
     void setElementaryMatrix( const ElementaryMatrixPressureComplexPtr &currentMatrix )
-        throw( std::runtime_error )
+
     {
         if ( currentMatrix->getSupportModel()->getSupportMesh()->isParallel() )
             throw std::runtime_error( "Support mesh must not be parallel" );
@@ -490,7 +490,7 @@ class DOFNumberingInstance : public BaseDOFNumberingInstance {
      * @brief Methode permettant de definir le modele support
      * @param currentModel Model support de la numerotation
      */
-    void setSupportModel( const ModelPtr &currentModel ) throw( std::runtime_error ) {
+    void setSupportModel( const ModelPtr &currentModel ) {
         if ( currentModel->getSupportMesh()->isParallel() )
             throw std::runtime_error( "Support mesh must not be parallel" );
         BaseDOFNumberingInstance::setSupportModel( currentModel );

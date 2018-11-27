@@ -36,6 +36,11 @@ Le fichier de paramètres contient les variables suivantes :
    info_mail     : 1 / 0
    info_cmd      : 1 / 2 niveau d'info des commandes
 """
+import code_aster
+from code_aster.Commands import *
+
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),
+      PAR_LOT='NON')
 
 import os
 
@@ -43,30 +48,10 @@ fpara = 'fort.70'
 unite_in    = 71
 unite_out   = 72
 
-opts_debut = {}
-
 # -----------------------------------------------------------------------------
 # version de Code_Aster
-import aster
-try:
-    import aster_core
-    vers = aster_core.__version__
-except ImportError:
-    if hasattr(aster, '__version__'):
-       tv = aster.__version__.split('.')
-       if len(tv) < 3:
-          tv.extend(['x']*(3-len(tv)))
-       elif len(tv) > 3:
-          tv = tv[:3]
-       vers = '%2s.%2s.%2s' % tuple(tv)
-    else:
-       vers = ' 6. x. y'
-
-if vers < ' 8. 2. 0' :
-   raise aster.error, """ <meshtool> doesn't work before version 8.2"""
-
-if vers >= ' 9. 2.18':
-    opts_debut['IGNORE_ALARM'] = 'SUPERVIS_1'
+import aster_core
+vers = aster_core.__version__
 
 # -----------------------------------------------------------------------------
 # lecture du fichier de paramètres
@@ -81,14 +66,10 @@ if os.path.exists(fpara):
 """ % s_para
    execfile(fpara)
 else:
-   raise aster.error, """ <meshtool> File not found : %s
+   raise code_aster.AsterError, """ <meshtool> File not found : %s
             It should have been created by meshtool script...""" % fpara
 
 # -----------------------------------------------------------------------------
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'), 
-      PAR_LOT='NON',
-      **opts_debut)
-
 unite_mail = 20
 if format_in in ('aster', 'med'):
    # lecture directe du fichier IN
@@ -130,21 +111,18 @@ IMPR_RESU(FORMAT=format_out,
 
 # -----------------------------------------------------------------------------
 # analyse du maillage par homard
-aster.onFatalError('EXCEPTION')
+code_aster.onFatalError('EXCEPTION')
 if info_mail:
-   # options
-   opts_info_mail = { 'LANGUE' : lang }
-   if vers >= '11. 3.17':
-      opts_info_mail['ELEMENTS_ACCEPTES'] = 'IGNORE_PYRA'
-   elif vers >= ' 8. 3. 0':
-      opts_info_mail['ELEMENTS_NON_HOMARD'] = 'IGNORER'
-   try:
-      MACR_INFO_MAIL(MAILLAGE=ma,
-                     **opts_info_mail)
-   except (aster.FatalError, aster.error), msg:
-      print """Erreur lors de l'appel à HOMARD..."""
-      print msg
+    # options
+    opts_info_mail = { 'LANGUE' : lang }
+    opts_info_mail['ELEMENTS_ACCEPTES'] = 'IGNORE_PYRA'
+    try:
+        MACR_INFO_MAIL(MAILLAGE=ma,
+                       **opts_info_mail)
+    except code_aster.AsterError as msg:
+        print """Erreur lors de l'appel à HOMARD..."""
+        print msg
 
-aster.onFatalError('ABORT')
+code_aster.onFatalError('ABORT')
 
 FIN()

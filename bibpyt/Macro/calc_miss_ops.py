@@ -19,9 +19,11 @@
 
 # person_in_charge: mathieu.courtois at edf.fr
 
-import sys
 import os
+import sys
 import traceback
+
+from code_aster import AsterError
 
 
 def calc_miss_ops(self, **kwargs):
@@ -43,10 +45,8 @@ def calc_miss_ops(self, **kwargs):
     calcul = CalculMiss.factory(self, param)
 
     try:
-        toReturn = calcul.run()
-        print "toReturn",toReturn
-        return toReturn
-    except aster.error, err:
+        return calcul.run()
+    except AsterError as err:
         UTMESS('F', err.id_message, valk=err.valk,
                vali=err.vali, valr=err.valr)
     except Exception, err:

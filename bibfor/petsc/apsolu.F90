@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -21,9 +21,6 @@ subroutine apsolu(kptsc, lmd, rsolu)
 #include "asterf_types.h"
 #include "asterf_petsc.h"
 !
-!
-! aslint: disable=C1513
-! cf. issue23375
 !
 ! person_in_charge: natacha.bereux at edf.fr
 !
@@ -53,11 +50,9 @@ use saddle_point_module, only : update_double_lagrange
 !
 !     VARIABLES LOCALES
     integer :: jnequ, jnequl, jnuglp, jnugl, jprddl, nloc, nglo, rang
-    integer :: nbproc, lmat, neq1,neq2, fictif, bs,ieq1,ieq2,k
+    integer :: nbproc, lmat, neq, fictif, bs,ieq,k
     integer :: iloc, iglo
     integer, dimension(:), pointer :: nlgp => null(), nulg=> null(), prddl =>null()
-    integer(kind=4), pointer :: new_ieq(:) => null()
-    integer(kind=4), pointer :: old_ieq(:) => null()
 !
     character(len=14) :: nonu
     character(len=19) :: nomat, nosolv
@@ -81,7 +76,6 @@ use saddle_point_module, only : update_double_lagrange
     nonu = nonu_courant
     nosolv = nosols(kptsc)
     bs = tblocs(kptsc)
-    fictif = fictifs(kptsc)
 !
     call jeveuo(nosolv//'.SLVK', 'L', vk24=slvk)
     precon = slvk(2)
@@ -134,21 +128,8 @@ use saddle_point_module, only : update_double_lagrange
         ASSERT(ierr.eq.0)
 !
     else
-        call jelira(nonu//'.SMOS.SMDI', 'LONMAX', neq1)
-        ASSERT(neq1.eq.neqg)
-        if (fictif.eq.0) then
-            neq2=neq1
-            allocate(new_ieq(neq2))
-            allocate(old_ieq(neq2))
-            do k=1,neq2
-                new_ieq(k)=k
-                old_ieq(k)=k
-            enddo
-        else
-            new_ieq => new_ieqs(kptsc)%pi4
-            old_ieq => old_ieqs(kptsc)%pi4
-        endif
-        neq2=size(old_ieq)
+        call jelira(nonu//'.SMOS.SMDI', 'LONMAX', neq)
+        ASSERT(neq.eq.neqg)
 !
 !       -- RECONSTRUCTION DE LA LA SOLUTION SUR CHAQUE PROC
         call VecScatterCreateToAll(x, ctx, xgth, ierr)
@@ -165,14 +146,9 @@ use saddle_point_module, only : update_double_lagrange
 !       -- RECOPIE DE XX DANS RSOLU
         call VecGetArray(xgth, xx, xidx, ierr)
         ASSERT(ierr.eq.0)
-
-! Pour corriger issue23375
-! Probleme possible du compilateur Intel sur athosdev :
-! Version 14.0.2.144 Build 20140120
-!DIR$ NOVECTOR
-        do ieq1 = 1, neq1
-            ieq2=new_ieq(ieq1)
-            rsolu(ieq1)=xx(xidx+ieq2)
+!
+        do ieq = 1, neq
+            rsolu(ieq)=xx(xidx+ieq)
         end do
 !
         call VecRestoreArray(xgth, xx, xidx, ierr)
@@ -181,10 +157,6 @@ use saddle_point_module, only : update_double_lagrange
 !       -- NETTOYAGE
         call VecDestroy(xgth, ierr)
         ASSERT(ierr.eq.0)
-        if (fictif.eq.0) then
-            deallocate(new_ieq)
-            deallocate(old_ieq)
-        endif
 !
     endif
 !

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -20,8 +20,12 @@
 #  IDENTIQUE A SSNA111A JUSQU'A STAT_NON_LINE.
 #  LANCE EN ETUDE SIMPLE, LE DIAGNOSTIC EST CPU_LIMIT
 #
+from code_aster import TimeLimitError
+from code_aster.Commands import *
+from code_aster.Supervis import ExecutionParameter
 import aster
-import aster_core
+
+params = ExecutionParameter()
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),
       PAR_LOT='NON',
@@ -104,11 +108,11 @@ F=DEFI_FONCTION(NOM_PARA='INST',
                       );
 
 
-tpmax = aster_core.get_option("tpmax")
+tpmax = params.get_option("tpmax")
 tpsnl = 7.
 print("Decrease time limit from {0} to {1} s to force STAT_NON_LINE to "
       "interrupt.".format(tpmax, tpsnl))
-aster_core.set_option("tpmax", tpsnl)
+params.set_option("tpmax", tpsnl)
 is_ok = 0
 try:
   RESU=STAT_NON_LINE(
@@ -132,16 +136,17 @@ try:
                               PREDICTION='ELASTIQUE',MATR_RIGI_SYME='OUI',
                               REAC_ITER=1,),
                      ARCHIVAGE=_F(LIST_INST=L_INST,),);
-except aster.ArretCPUError, msg:
+except TimeLimitError as msg:
+   assert msg.id_message in ("MECANONLINE9_1", "MECANONLINE9_2"), msg.id_message
    is_ok = 1
 
 print "Restore time limit to {0} s".format(tpmax)
-aster_core.set_option("tpmax", tpmax)
+params.set_option("tpmax", tpmax)
 
 
 TAB1=CREA_TABLE(LISTE=(_F(PARA='TEST',TYPE_K='K8',LISTE_K='VALEUR  ',),
-                     _F(PARA='BOOLEEN',LISTE_I=is_ok,),
-                     ),
+                       _F(PARA='BOOLEEN',LISTE_I=is_ok,),
+                      ),
                )
 TEST_TABLE(REFERENCE='ANALYTIQUE',
            VALE_CALC_I=1,

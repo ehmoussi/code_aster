@@ -83,7 +83,7 @@ MaterialOnMeshInstance::MaterialOnMeshInstance( const std::string &name,
 {};
 #endif /* _USE_MPI */
 
-bool MaterialOnMeshInstance::buildWithoutInputVariables() throw ( std::runtime_error )
+bool MaterialOnMeshInstance::buildWithoutInputVariables()
 {
     MaterialOnMeshBuilderInstance::buildInstance(*this);
 

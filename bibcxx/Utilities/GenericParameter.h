@@ -78,7 +78,7 @@ template < typename Type > class GenericParameter {
      * @brief Fonction permettant de récupérer la valeur du mot-clé
      * @return la valeur de type Type
      */
-    const Type &getValue() const throw( std::runtime_error ) {
+    const Type &getValue() const {
         if ( !_isSet )
             throw std::runtime_error( "Value of parameter " + _name + " is not set" );
         return _valeur;
@@ -155,6 +155,6 @@ typedef ListGenParam::const_iterator ListGenParamCIter;
  * @return SyntaxMapContainer rempli avec les mots-clés fixés
  */
 SyntaxMapContainer
-buildSyntaxMapFromParamList( const ListGenParam &lParam ) throw( std::runtime_error );
+buildSyntaxMapFromParamList( const ListGenParam &lParam ) ;
 
 #endif /* GENERICPARAMETER_H_ */

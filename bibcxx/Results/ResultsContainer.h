@@ -158,43 +158,43 @@ class ResultsContainerInstance : public DataStructure {
      * @param nbRanks nombre de numéro d'ordre
      * @return true si l'allocation s'est bien passée
      */
-    bool allocate( int nbRanks ) throw( std::runtime_error );
+    bool allocate( int nbRanks ) ;
 
     /**
      * @brief Add elementary characteristics to container
      * @param rank
      */
     void addElementaryCharacteristics( const ElementaryCharacteristicsPtr &,
-                                       int rank ) throw( std::runtime_error );
+                                       int rank ) ;
 
     /**
      * @brief Add elementary characteristics to container
      * @param rank
      */
-    void addListOfLoads( const ListOfLoadsPtr &, int rank ) throw( std::runtime_error );
+    void addListOfLoads( const ListOfLoadsPtr &, int rank ) ;
 
     /**
      * @brief Add material definition
      * @param rank
      */
-    void addMaterialOnMesh( const MaterialOnMeshPtr &, int rank ) throw( std::runtime_error );
+    void addMaterialOnMesh( const MaterialOnMeshPtr &, int rank ) ;
 
     /**
      * @brief Add model
      * @param rank
      */
-    void addModel( const ModelPtr &, int rank ) throw( std::runtime_error );
+    void addModel( const ModelPtr &, int rank ) ;
 
     /**
      * @brief Set model
      */
-    void setMesh( const BaseMeshPtr &mesh ) throw( std::runtime_error ) { _mesh = mesh; };
+    void setMesh( const BaseMeshPtr &mesh ) { _mesh = mesh; };
 
     /**
      * @brief Add time value for one rank
      * @param rank
      */
-    void addTimeValue( double, int rank ) throw( std::runtime_error );
+    void addTimeValue( double, int rank ) ;
 
     /**
      * @brief Append a material on all rank of ResultsContainer
@@ -229,7 +229,7 @@ class ResultsContainerInstance : public DataStructure {
      * @return FieldOnNodesDoublePtr pointant vers le champ
      */
     FieldOnNodesDoublePtr getEmptyFieldOnNodesDouble( const std::string name,
-                                                      const int rank ) throw( std::runtime_error );
+                                                      const int rank ) ;
 
     /**
      * @brief Obtenir le dernier DOFNumbering
@@ -243,30 +243,30 @@ class ResultsContainerInstance : public DataStructure {
      * @brief Add elementary characteristics to container
      * @param rank
      */
-    ListOfLoadsPtr getListOfLoads( int rank ) throw( std::runtime_error );
+    ListOfLoadsPtr getListOfLoads( int rank ) ;
 
     /**
      * @brief Get elementary characteristics
      * @param rank
      */
     ElementaryCharacteristicsPtr
-    getElementaryCharacteristics( int rank ) throw( std::runtime_error );
+    getElementaryCharacteristics( int rank ) ;
 
     /**
      * @brief Get material
      */
-    MaterialOnMeshPtr getMaterialOnMesh() throw( std::runtime_error );
+    MaterialOnMeshPtr getMaterialOnMesh() ;
 
     /**
      * @brief Get material
      * @param rank
      */
-    MaterialOnMeshPtr getMaterialOnMesh( int rank ) throw( std::runtime_error );
+    MaterialOnMeshPtr getMaterialOnMesh( int rank ) ;
 
     /**
      * @brief Get model
      */
-    ModelPtr getModel() throw( std::runtime_error );
+    ModelPtr getModel() ;
 
     /**
      * @brief Obtenir un champ aux noeuds réel à partir de son nom et de son numéro d'ordre
@@ -275,7 +275,7 @@ class ResultsContainerInstance : public DataStructure {
      * @return FieldOnElementsDoublePtr pointant vers le champ
      */
     FieldOnElementsDoublePtr getRealFieldOnElements( const std::string name, const int rank ) const
-        throw( std::runtime_error );
+        ;
 
     /**
      * @brief Obtenir un champ aux noeuds réel à partir de son nom et de son numéro d'ordre
@@ -284,7 +284,7 @@ class ResultsContainerInstance : public DataStructure {
      * @return FieldOnNodesDoublePtr pointant vers le champ
      */
     FieldOnNodesDoublePtr getRealFieldOnNodes( const std::string name, const int rank ) const
-        throw( std::runtime_error );
+        ;
 
     /**
      * @brief Impression de la sd au format MED
@@ -293,7 +293,7 @@ class ResultsContainerInstance : public DataStructure {
      * @todo revoir la gestion des mot-clés par défaut (ex : TOUT_ORDRE)
      * @todo revoir la gestion des unités logiques (notamment si fort.20 existe déjà)
      */
-    bool printMedFile( std::string fileName ) const throw( std::runtime_error );
+    bool printMedFile( std::string fileName ) const ;
 
     /**
     * @brief Get the number of steps stored in the ResultContainer
@@ -324,7 +324,7 @@ class ResultsContainerInstance : public DataStructure {
      * @return true si l'allocation s'est bien passée
      * @todo revoir l'agrandissement de dictOfVectorOfFieldsNodes et dictOfVectorOfFieldsElements
      */
-    bool update() throw( std::runtime_error );
+    bool update() ;
 };
 
 /**

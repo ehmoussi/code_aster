@@ -32,8 +32,6 @@ from .datastructure_ext import DataStructure
 # extend DataStructures using metaclasses
 from .acousticsload_ext import AcousticsLoad
 from .assemblymatrix_ext import AssemblyMatrixDisplacementDouble
-from .cracktip_ext import CrackTip
-from .dynamicmacroelement_ext import DynamicMacroElement
 from .dynamicresults_ext import TransientGeneralizedResultsContainer
 from .elementarycharacteristics_ext import ElementaryCharacteristics
 from .elementarymatrix_ext import ElementaryMatrixDisplacementDouble
@@ -48,9 +46,7 @@ from .generalizedassemblymatrix_ext import GeneralizedAssemblyMatrixComplex
 from .generalizedassemblymatrix_ext import GeneralizedAssemblyMatrixDouble
 from .generalizedassemblyvector_ext import GeneralizedAssemblyVectorComplex
 from .generalizedassemblyvector_ext import GeneralizedAssemblyVectorDouble
-from .harmogeneralizedresultscontainer_ext import HarmoGeneralizedResultsContainer
 from .listoffloats import ListOfFloats
-from .material_ext import Material
 from .materialonmesh_ext import MaterialOnMesh
 from .mechanicalload_ext import GenericMechanicalLoad
 from .mesh_ext import Mesh

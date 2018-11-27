@@ -26,15 +26,16 @@
 #include "astercxx.h"
 
 // emulate_LIRE_MAILLAGE_MED.h is auto-generated and requires Mesh.h and Python.h
-#include "Python.h"
 #include "Meshes/Mesh.h"
-#include "Utilities/CapyConvertibleValue.h"
-#include "Supervis/CommandSyntax.h"
-#include "Supervis/ResultNaming.h"
+#include "Python.h"
 #include "RunManager/LogicalUnitManagerCython.h"
+#include "Supervis/CommandSyntax.h"
+#include "RunManager/Exceptions.h"
+#include "Supervis/ResultNaming.h"
+#include "Utilities/CapyConvertibleValue.h"
 
 bool MeshInstance::addGroupOfNodesFromNodes( const std::string &name,
-                                             const VectorString &vec ) throw( std::runtime_error ) {
+                                             const VectorString &vec ) {
     CommandSyntax cmdSt( "DEFI_GROUP" );
     cmdSt.setResult( ResultNaming::getCurrentName(), "MAILLAGE" );
 
@@ -60,8 +61,7 @@ bool MeshInstance::addGroupOfNodesFromNodes( const std::string &name,
     return true;
 };
 
-bool BaseMeshInstance::readMeshFile( const std::string &fileName,
-                                     const std::string &format ) throw( std::runtime_error ) {
+bool BaseMeshInstance::readMeshFile( const std::string &fileName, const std::string &format ) {
     FileTypeCython type = Ascii;
     if ( format == "MED" )
         type = Binary;
@@ -112,36 +112,32 @@ bool BaseMeshInstance::readMeshFile( const std::string &fileName,
 
         cmdSt.define( syntax );
 
-        try {
-            ASTERINTEGER op = 1;
-            CALL_EXECOP( &op );
-        } catch ( ... ) {
-            throw;
-        }
+        ASTERINTEGER op = 1;
+        CALL_EXECOP( &op );
     }
 
     return true;
 };
 
-bool MeshInstance::readAsterMeshFile( const std::string &fileName ) throw( std::runtime_error ) {
+bool MeshInstance::readAsterMeshFile( const std::string &fileName ) {
     readMeshFile( fileName, "ASTER" );
 
     return true;
 };
 
-bool MeshInstance::readGibiFile( const std::string &fileName ) throw( std::runtime_error ) {
+bool MeshInstance::readGibiFile( const std::string &fileName ) {
     readMeshFile( fileName, "GIBI" );
 
     return true;
 };
 
-bool MeshInstance::readGmshFile( const std::string &fileName ) throw( std::runtime_error ) {
+bool MeshInstance::readGmshFile( const std::string &fileName ) {
     readMeshFile( fileName, "GMSH" );
 
     return true;
 };
 
-bool BaseMeshInstance::readMedFile( const std::string &fileName ) throw( std::runtime_error ) {
+bool BaseMeshInstance::readMedFile( const std::string &fileName ) {
     readMeshFile( fileName, "MED" );
 
     return true;

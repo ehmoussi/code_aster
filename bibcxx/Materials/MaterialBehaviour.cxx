@@ -206,12 +206,12 @@ bool GeneralMaterialBehaviourInstance::buildJeveuxVectors(
 };
 
 bool GeneralMaterialBehaviourInstance::buildTractionFunction( FunctionPtr &doubleValues ) const
-    throw( std::runtime_error ) {
+    {
     return true;
 };
 
 bool TractionMaterialBehaviourInstance::buildTractionFunction( FunctionPtr &doubleValues ) const
-    throw( std::runtime_error ) {
+    {
     ASTERINTEGER maxSize = 0, maxSize2 = 0;
     std::string resName;
     for ( auto curIter : _mapOfFunctionMaterialProperties ) {
@@ -232,7 +232,7 @@ bool TractionMaterialBehaviourInstance::buildTractionFunction( FunctionPtr &doub
 };
 
 bool MetaTractionMaterialBehaviourInstance::buildTractionFunction( FunctionPtr &doubleValues ) const
-    throw( std::runtime_error ) {
+    {
     ASTERINTEGER maxSize = 0, maxSize2 = 0;
     std::string resName;
     for ( auto curIter : _mapOfFunctionMaterialProperties ) {

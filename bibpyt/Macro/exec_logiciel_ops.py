@@ -23,19 +23,20 @@
 This module defines the EXEC_LOGICIEL operator
 """
 
-import sys
 import os
 import os.path as osp
 import re
 import subprocess
-from subprocess import PIPE
+import sys
 import tempfile
 import traceback
+from subprocess import PIPE
 
 import aster_core
-from Utilitai.Utmess import UTMESS
-from Utilitai.UniteAster import UniteAster
+from code_aster import AsterError
 from code_aster.Commands import LIRE_MAILLAGE
+from Utilitai.UniteAster import UniteAster
+from Utilitai.Utmess import UTMESS
 
 
 class CommandLine( object ):
@@ -324,7 +325,7 @@ def exec_logiciel_ops(self, **kwargs):
         action.configure( kwargs )
         action.execute()
         action.post()
-    except aster.error, err:
+    except AsterError as err:
         UTMESS('F', err.id_message, valk=err.valk,
                vali=err.vali, valr=err.valr)
     except Exception, err:

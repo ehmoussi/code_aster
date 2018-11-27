@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -37,13 +37,13 @@ def calc_essai_ops(self,
                    **args):
 
     from Calc_essai.cata_ce import CalcEssaiObjects
-    import aster
+    from code_aster import onFatalError
     ier = 0
 
     # La macro compte pour 1 dans la numerotation des commandes
     self.set_icmd(1)
 
-    prev = aster.onFatalError()
+    prev = onFatalError()
 
     # gestion des concepts sortants de la macro, declares a priori
     table = []
@@ -67,7 +67,7 @@ def calc_essai_ops(self,
 
     # Mode interactif : ouverture d'une fenetre Tk
     if INTERACTIF == "OUI":
-        aster.onFatalError('EXCEPTION')
+        onFatalError('EXCEPTION')
 
         create_interactive_window(self,
                                   out_identification,
@@ -95,7 +95,7 @@ def calc_essai_ops(self,
                       )
 
         mess.close_file()
-    aster.onFatalError(prev)
+    onFatalError(prev)
     return ier
 
 

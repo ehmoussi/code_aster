@@ -132,7 +132,7 @@ class StaticModeDeplInstance : public StaticModeAnalysisInstance {
     /**
      * @brief Lancement de la resolution en appelant op0093
      */
-    ResultsContainerPtr execute() throw( std::runtime_error );
+    ResultsContainerPtr execute() ;
 };
 
 class StaticModeForcInstance : public StaticModeAnalysisInstance {
@@ -146,7 +146,7 @@ class StaticModeForcInstance : public StaticModeAnalysisInstance {
     /**
      * @brief Lancement de la resolution en appelant op0093
      */
-    ResultsContainerPtr execute() throw( std::runtime_error );
+    ResultsContainerPtr execute() ;
 };
 
 class StaticModePseudoInstance : public StaticModeAnalysisInstance {
@@ -187,7 +187,7 @@ class StaticModePseudoInstance : public StaticModeAnalysisInstance {
     /**
      * @brief Lancement de la resolution en appelant op0093
      */
-    ResultsContainerPtr execute() throw( std::runtime_error );
+    ResultsContainerPtr execute() ;
 };
 
 class StaticModeInterfInstance : public StaticModeAnalysisInstance {
@@ -218,7 +218,7 @@ class StaticModeInterfInstance : public StaticModeAnalysisInstance {
     /**
      * @brief Lancement de la resolution en appelant op0093
      */
-    ResultsContainerPtr execute() throw( std::runtime_error );
+    ResultsContainerPtr execute() ;
 };
 /**
  * @typedef StaticNonLinearAnalysisPtr

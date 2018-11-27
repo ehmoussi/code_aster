@@ -35,7 +35,7 @@ ListOfLoadsInstance::ListOfLoadsInstance( const JeveuxMemory memType )
       _list( JeveuxVectorChar24( getName() + ".LCHA" ) ),
       _listOfFunctions( JeveuxVectorChar24( getName() + ".FCHA" ) ), _isEmpty( true ){};
 
-bool ListOfLoadsInstance::build() throw( std::runtime_error ) {
+bool ListOfLoadsInstance::build() {
     if ( !_isEmpty )
         return true;
     CommandSyntax cmdSt( "MECA_STATIQUE" );
@@ -86,7 +86,7 @@ bool ListOfLoadsInstance::build() throw( std::runtime_error ) {
 
 /* buildListExcit : construit la liste des charges utilisées pour valoriser le mot-clé facteur EXCIT
 dans STAT_NON_LINE. C'est une méthode temporaire qui disparaîtra avec la réécriture d'op0070 */
-ListSyntaxMapContainer ListOfLoadsInstance::buildListExcit() throw( std::runtime_error ) {
+ListSyntaxMapContainer ListOfLoadsInstance::buildListExcit() {
     ListSyntaxMapContainer listeExcit;
     int pos = 0;
     for ( ListMecaLoadCIter curIter = _listOfMechanicalLoads.begin();

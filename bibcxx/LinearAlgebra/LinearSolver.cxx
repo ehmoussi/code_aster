@@ -79,7 +79,7 @@ bool BaseLinearSolverInstance::build() {
 };
 
 bool BaseLinearSolverInstance::matrixFactorization(
-    AssemblyMatrixDisplacementDoublePtr currentMatrix ) throw( std::runtime_error ) {
+    AssemblyMatrixDisplacementDoublePtr currentMatrix ) {
     if ( _isEmpty )
         build();
 

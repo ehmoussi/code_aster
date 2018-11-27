@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -19,7 +19,8 @@
 
 # person_in_charge: mathieu.courtois at edf.fr
 
-import aster
+from code_aster import AsterError
+from code_aster.Commands import *
 
 DEBUT(CODE=_F(
               NIV_PUB_WEB='INTERNET',
@@ -96,9 +97,8 @@ try:
                       EXCIT=_F(CHARGE=char,),
                       COMPORTEMENT=_F(RELATION='ELAS',),
                       INCREMENT=_F(LIST_INST=inst),)
-except aster.error:
-   # on verifiera l'etat de 'resu' dans la POURSUITE
-   pass
+except AsterError as err:
+   assert err.id_message == "CALCULEL6_63"
 
 resu = EXTR_RESU(RESULTAT=resu,ARCHIVAGE=_F(NUME_ORDRE=1))
 
