@@ -121,7 +121,8 @@ def combinaison_ferraillage_ops(self, **args):
             pass
 
     # - Build result type EVOL_ELAS from MULTI_ELAS and combo type list in order
-    #   to select the right verify.
+    #   to select the right verify. This because CREA_CHAMP does'nt EXTR the
+    #   MAXI from multi_elas
     __resfer = \
         evolElasFromMulti(nmb_cas,combinaison,lst_inst_value,resu,modele,caraelem)
 
@@ -271,7 +272,6 @@ def combinaison_ferraillage_ops(self, **args):
     return 0
 
 def algo_2D (_resfer, affe, lst_nume_ordre, code, type_combo):
-    print "def option_2D:"
 
     dict_affe = affe.List_F()[0]
     dict_affe.pop('TYPE_STRUCTURE') # print dict_affe
@@ -280,17 +280,33 @@ def algo_2D (_resfer, affe, lst_nume_ordre, code, type_combo):
 
         # seelction of mot-clè TYPE_COMB by [lst_type_combo]
         dic_type_comb = {}
+        
+        # saving dict_affe
+        affe_for_cf = dict_affe.copy();
+
         if type_combo [idx]  == 'ELS_CARACTERISTIQUE':
             dic_type_comb['TYPE_COMB'] = 'ELS'
 
         elif type_combo [idx]  == 'ELU_FONDAMENTAL':
             dic_type_comb['TYPE_COMB'] = 'ELU'
+            
+            affe_for_cf.update({'GAMMA_S':affe_for_cf['GAMMA_S_FOND']})
+            affe_for_cf.update({'GAMMA_C':affe_for_cf['GAMMA_C_FOND']})  
 
         elif type_combo [idx]  == 'ELU_ACCIDENTEL':
             dic_type_comb['TYPE_COMB'] = 'ELU'
+            
+            affe_for_cf.update({'GAMMA_S':affe_for_cf['GAMMA_S_ACCI']})
+            affe_for_cf.update({'GAMMA_C':affe_for_cf['GAMMA_C_ACCI']})            
 
         else:
             dic_type_comb['TYPE_COMB'] = 'ELU'
+
+        # adjusting affe for calc_ferraillage        
+        affe_for_cf.pop('GAMMA_C_FOND')
+        affe_for_cf.pop('GAMMA_S_FOND')
+        affe_for_cf.pop('GAMMA_C_ACCI')
+        affe_for_cf.pop('GAMMA_S_ACCI')
 
         dic_calc_ferraillage = dict(dic_type_comb.items() + [('CODIFICATION', code)])
 
@@ -298,7 +314,7 @@ def algo_2D (_resfer, affe, lst_nume_ordre, code, type_combo):
             reuse = _resfer,
             RESULTAT = _resfer,
             NUME_ORDRE = nume_ordre,
-            AFFE = _F(**dict_affe),
+            AFFE = _F(**affe_for_cf),
             **dic_calc_ferraillage
         )
 

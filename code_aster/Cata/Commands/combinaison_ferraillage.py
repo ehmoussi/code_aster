@@ -75,10 +75,12 @@ COMBINAISON_FERRAILLAGE = MACRO(
             C_INF            = SIMP(statut='o',typ='R'), # enrobage armatures inférieures
             C_SUP            = SIMP(statut='o',typ='R'), # enrobage armatures supérieures
             ALPHA_E          = SIMP(statut='f',typ='R'), # coefficient d'équivalence acier/béton  (pour ELS)
+            GAMMA_S_FOND     = SIMP(statut='f',typ='R'), # coefficient de sécurité sur la résistance du acier 
+            GAMMA_C_FOND     = SIMP(statut='f',typ='R'), # coefficient de sécurité sur la résistance du béton 
+            GAMMA_S_ACCI     = SIMP(statut='f',typ='R'), # coefficient de sécurité sur la résistance du acier 
+            GAMMA_C_ACCI     = SIMP(statut='f',typ='R'), # coefficient de sécurité sur la résistance du béton   
             FYK              = SIMP(statut='f',typ='R'), # contrainte admissible dans l'acier
-            GAMMA_S          = SIMP(statut='f',typ='R'), # coefficient de sécurité sur la résistance de calcul des aciers
             FCK              = SIMP(statut='f',typ='R'), # contrainte admissible dans le béton
-            GAMMA_C          = SIMP(statut='f',typ='R'), # coefficient de sécurité sur la résistance de calcul du béton
             ALPHA_CC         = SIMP(statut='f',typ='R',defaut=1.), # coefficient intervennant à l'ELU
             SIGS_ELS         = SIMP(statut='f',typ='R'), # contrainte ultime de dimensionnement de l'acier pour l'ELS
             SIGC_ELS         = SIMP(statut='f',typ='R'), # contrainte ultime de dimensionnement du béton pour l'ELS
