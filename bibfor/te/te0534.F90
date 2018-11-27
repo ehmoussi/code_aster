@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -51,7 +51,6 @@ subroutine te0534(option, nomte)
 !
 !
 !  OPTION : 'CHAR_MECA_CONT' (CALCUL DU SECOND MEMBRE DE CONTACT)
-!  OPTION : 'CHAR_MECA_FROT' (CALCUL DU SECOND MEMBRE DE FROTTEMENT)
 !
 !  ENTREES  ---> OPTION : OPTION DE CALCUL
 !           ---> NOMTE  : NOM DU TYPE ELEMENT
@@ -272,22 +271,21 @@ subroutine te0534(option, nomte)
 ! --- CALCUL DES SECONDS MEMBRES DE CONTACT
 !     .....................................
 !
-                if (option(1:14) .eq. 'CHAR_MECA_CONT') then
-                    call xvcont(algocr, cohes, jcohes, ncompv,&
-                                coefcp, coefcr, ddlm,&
-                                ddls, ffc, ffp, idepl, idepm,&
-                                ifa, ifiss, zi( jmate), indco, ipgf,&
-                                jac, jheavn, ncompn, jheafa, lact, ncomph,&
-                                nd, nddl, ndim, nfh, nfiss,&
-                                nno, nnol, nnos, nvit, pla,&
-                                rela, reac, singu, fk, tau1,&
-                                tau2, vtmp)
+
+                call xvcont(algocr, cohes, jcohes, ncompv,&
+                            coefcp, coefcr, ddlm,&
+                            ddls, ffc, ffp, idepl, idepm,&
+                            ifa, ifiss, zi( jmate), indco, ipgf,&
+                            jac, jheavn, ncompn, jheafa, lact, ncomph,&
+                            nd, nddl, ndim, nfh, nfiss,&
+                            nno, nnol, nnos, nvit, pla,&
+                            rela, reac, singu, fk, tau1,&
+                            tau2, vtmp)
 !
 ! --- CALCUL DES SECONDS MEMBRES DE FROTTEMENT
 !     ........................................
 !
-                elseif (option.eq.'CHAR_MECA_FROT' .and.&
-                       (rela.eq.0.d0.or.rela.eq.1.d0.or.rela.eq.2.d0)) then
+                if (rela.eq.0.d0 .or. rela.eq.1.d0 .or. rela.eq.2.d0) then
                     call xvfrot(algofr, coeffp, coeffr, ddlm, ddls,&
                                 ffc, ffp, idepl, idepm, ifa,&
                                 ifiss, indco, jac, jheavn, ncompn, jheafa,&
@@ -295,9 +293,6 @@ subroutine te0534(option, nomte)
                                 ndim, nfh, nfiss, nno, nnol,&
                                 nnos, nvit, pla, reac12,&
                                 seuil, singu, fk, tau1, tau2, vtmp)
-!
-                else
-                    ASSERT(option .eq. 'CHAR_MECA_FROT' .or. option(1:14) .eq. 'CHAR_MECA_CONT')
                 endif
 !
 ! --- FIN DE BOUCLE SUR LES POINTS DE GAUSS
