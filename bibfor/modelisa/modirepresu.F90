@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -109,9 +109,8 @@ subroutine modirepresu(resuou, resuin )
        if ( i .eq. 0) then 
           call utmess('F', 'MODELISA3_14')
        endif
-       if (repere .ne. 'COQUE_INTR_UTIL' .and. repere .ne. 'COQUE_UTIL_INTR' &
-                                         .and. repere .ne. 'COQUE_UTIL_CYL' ) then
-          call utmess('F', 'MODELISA3_15')
+       if (repere .ne. 'COQUE_INTR_UTIL' .and. repere .ne. 'COQUE_UTIL_INTR' ) then
+          call utmess('F', 'MODELISA3_15', nk=1, valk=repere )
        endif 
     endif
 !
