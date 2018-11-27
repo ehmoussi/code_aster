@@ -45,6 +45,7 @@ implicit none
 #include "asterfort/mmtppe.h"
 #include "asterfort/mmCombLineMatr.h"
 #include "asterfort/mmCompMatrCont.h"
+#include "asterfort/mmCompMatrFric.h"
 !
 character(len=16), intent(in) :: option, nomte
 !
@@ -113,6 +114,7 @@ character(len=16), intent(in) :: option, nomte
     real(kind=8) :: matr(81, 81)
     real(kind=8) :: matr_prev(81, 81)
     real(kind=8) :: matr_cont(81, 81), matr_conp(81, 81)
+    real(kind=8) :: matr_fric(81, 81), matr_frip(81, 81)
 !
     real(kind=8) :: matrcc(9, 9)
     real(kind=8) :: matrcc_prev(9, 9)
@@ -148,6 +150,8 @@ character(len=16), intent(in) :: option, nomte
     matr_prev(:,:) = 0.d0
     matr_cont(:,:) = 0.d0
     matr_conp(:,:) = 0.d0
+    matr_fric(:,:) = 0.d0
+    matr_frip(:,:) = 0.d0
     matrcc(:,:) = 0.d0
     matrcc_prev(:,:) = 0.d0
     matree(:,:) = 0.d0
@@ -363,6 +367,43 @@ character(len=16), intent(in) :: option, nomte
                             kappa_prev , vech1_prev , vech2_prev ,&
                             h_prev     , hah_prev   , &
                             matr_conp)
+    endif
+!
+! - Compute matrices for friction
+!
+    call mmCompMatrFric(phase      , l_large_slip,&
+                        lpenaf     ,&
+                        iresog     , iresof      ,&
+                        nbdm       , nbcps       , ndexfr,&
+                        ndim       , nne         , nnm   , nnl   ,&
+                        wpg        , jacobi      , coefac, coefaf,&
+                        jeu        , dlagrc      ,&
+                        ffe        , ffm         , ffl   , dffm  , ddffm,&
+                        tau1       , tau2        , mprojt,&
+                        rese       , nrese       , lambda, coefff,&
+                        mprt1n     , mprt2n      , mprnt1, mprnt2,&
+                        mprt11     , mprt12      , mprt21, mprt22,&
+                        kappa      , vech1       , vech2 ,&
+                        h          , &
+                        dlagrf     , djeut ,&
+                        matr_fric)
+    if (l_prev_fric) then
+        call mmCompMatrFric(phase_prev , l_large_slip,&
+                            lpenaf     ,&
+                            iresog     , iresof      ,&
+                            nbdm       , nbcps       , ndexfr,&
+                            ndim       , nne         , nnm   , nnl   ,&
+                            wpg        , jacobi      , coefac_prev, coefaf_prev,&
+                            jeu_prev   , dlagrc_prev,&
+                            ffe        , ffm         , ffl   , dffm  , ddffm,&
+                            tau1_prev  , tau2        , mprojt_prev,&
+                            rese_prev  , nrese_prev  , lambda_prev, coefff,&
+                            mprt1n_prev, mprt2n_prev , mprnt1_prev, mprnt2_prev,&
+                            mprt11_prev, mprt12_prev , mprt21_prev, mprt22_prev,&
+                            kappa_prev , vech1_prev  , vech2_prev,&
+                            h_prev     , &
+                            dlagrf_prev, djeut_prev,&
+                            matr_frip)
     endif
 !
 ! - Weak form of contact/friction force
