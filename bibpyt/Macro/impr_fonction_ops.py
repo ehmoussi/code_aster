@@ -21,7 +21,7 @@
 
 import os.path
 
-# ------------------------------------------------------------------------
+from code_aster import AsterError
 
 
 def impr_fonction_ops(self, FORMAT, COURBE, INFO, **args):
@@ -182,7 +182,7 @@ def impr_fonction_ops(self, FORMAT, COURBE, INFO, **args):
                             pv, lv2 = __ftmp.Valeurs()
                             lx = lv2[0][0]
                             ly = lv2[0][1]
-                        except aster.error,err:
+                        except AsterError as err:
                             # on verifie que la bonne exception a ete levee
                             assert err.id_message == "FONCT0_9", 'unexpected id : %s' % err.id_message
                             continue
@@ -218,7 +218,7 @@ def impr_fonction_ops(self, FORMAT, COURBE, INFO, **args):
                             LIST_PARA=__linter,
                             **dpar
                         )
-                    except aster.error,err:
+                    except AsterError as err:
 
                             # on verifie que la bonne exception a ete levee
                             assert err.id_message == "FONCT0_9", 'unexpected id : %s' % err.id_message
@@ -230,7 +230,7 @@ def impr_fonction_ops(self, FORMAT, COURBE, INFO, **args):
                             LIST_PARA=dCi['LIST_PARA'],
                             **dpar
                         )
-                    except aster.error,err:
+                    except AsterError as err:
                             # on verifie que la bonne exception a ete levee
                             assert err.id_message == "FONCT0_9", 'unexpected id : %s' % err.id_message
                             continue

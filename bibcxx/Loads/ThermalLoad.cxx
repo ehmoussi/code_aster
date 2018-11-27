@@ -28,7 +28,7 @@
 #include "Loads/ThermalLoad.h"
 #include "Supervis/ResultNaming.h"
 
-bool ThermalLoadInstance::build() throw( std::runtime_error ) {
+bool ThermalLoadInstance::build() {
     CapyConvertibleSyntax syntax;
     //    syntax.setSimpleKeywordValues( _toCapyConverter );
 
@@ -43,9 +43,9 @@ bool ThermalLoadInstance::build() throw( std::runtime_error ) {
     SyntaxMapContainer test = syntax.toSyntaxMapContainer();
     //    cmdSt.define( test );
 
-    //
+
     // Maintenant que le fichier de commande est pret, on appelle OP0034
-    //
+
 
     try {
         ASTERINTEGER op = 34;

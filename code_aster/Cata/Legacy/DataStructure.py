@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -33,7 +33,7 @@ from .DS.co_char_meca import char_meca
 from .DS.co_mater_sdaster import mater_sdaster
 from .DS.co_matr_asse import (matr_asse, matr_asse_gd, matr_asse_depl_c,
                            matr_asse_depl_r, matr_asse_pres_c, matr_asse_pres_r,
-                           matr_asse_temp_c, matr_asse_temp_r)
+                           matr_asse_temp_c, matr_asse_temp_r, matr_asse_elim_r)
 from .DS.co_spectre_sdaster import spectre_sdaster
 from .DS.co_fonction_class import (fonction_class, fonction_sdaster, fonction_c,
                                 nappe_sdaster)

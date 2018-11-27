@@ -28,24 +28,19 @@ debug = False
 import os
 import os.path as osp
 import tempfile
+
+
+from code_aster import onFatalError
+from code_aster.Cata.Syntax import _F
+import aster
 import aster_core
-
-
-# Protection pour Eficas
-try:
-    import aster
-    from code_aster.Cata.Syntax import _F
-    from Utilitai.partition import MAIL_PY
-    from Utilitai.Utmess import UTMESS
-    from Calc_epx.calc_epx_utils import tolist
-except:
-    pass
+from Utilitai.partition import MAIL_PY
+from Utilitai.Utmess import UTMESS
+from Calc_epx.calc_epx_utils import tolist
 
 #-----------------------------------------------------------------------
 #----------------------------- Operateur de la Macro-commande ----------
 #-----------------------------------------------------------------------
-
-
 def calc_europlexus_ops(self, EXCIT, COMPORTEMENT, ARCHIVAGE, CALCUL,
                         CARA_ELEM=None, MODELE=None,
                         CHAM_MATER=None, FONC_PARASOL=None,
@@ -74,8 +69,8 @@ def calc_europlexus_ops(self, EXCIT, COMPORTEMENT, ARCHIVAGE, CALCUL,
     DEFI_FICHIER = self.get_cmd('DEFI_FICHIER')
 
     # Pour la gestion des Exceptions
-    prev_onFatalError = aster.onFatalError()
-    aster.onFatalError('EXCEPTION')
+    prev_onFatalError = onFatalError()
+    onFatalError('EXCEPTION')
 
     # Pour masquer certaines alarmes
     from Utilitai.Utmess import MasquerAlarme, RetablirAlarme
@@ -152,7 +147,7 @@ def calc_europlexus_ops(self, EXCIT, COMPORTEMENT, ARCHIVAGE, CALCUL,
     #
 
     # Pour la gestion des Exceptions
-    aster.onFatalError(prev_onFatalError)
+    onFatalError(prev_onFatalError)
 
     # Pour la gestion des alarmes
     RetablirAlarme('MED_1')

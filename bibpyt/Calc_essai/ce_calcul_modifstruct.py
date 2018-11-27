@@ -22,19 +22,15 @@
 # La classe CalcEssaiModifStruct permet de gerer les calculs de modification structurale
 #
 import aster
-from code_aster.Cata.Syntax import _F, ASSD
-
-from code_aster.Commands import MODE_STATIQUE, PROJ_MESU_MODAL
-from Modal.mode_iter_simult import MODE_ITER_SIMULT
-from code_aster.Commands import REST_GENE_PHYS
-from code_aster.Commands import ASSE_MAILLAGE, AFFE_MODELE
-from code_aster.Commands import NUME_DDL, CALC_MATR_ELEM, AFFE_CARA_ELEM
-from code_aster.Commands import ASSE_MATRICE
-from code_aster.Commands import DETRUIRE
-
-from Calc_essai.cata_ce import Resultat, ModeMeca
+from Calc_essai.cata_ce import ModeMeca, Resultat
 from Calc_essai.ce_calcul_expansion import extract_mac_array
-
+from code_aster import AsterError
+from code_aster.Cata.Syntax import _F, ASSD
+from code_aster.Commands import (AFFE_CARA_ELEM, AFFE_MODELE, ASSE_MAILLAGE,
+                                 ASSE_MATRICE, CALC_MATR_ELEM, DETRUIRE,
+                                 MODE_STATIQUE, NUME_DDL, PROJ_MESU_MODAL,
+                                 REST_GENE_PHYS)
+from Modal.mode_iter_simult import MODE_ITER_SIMULT
 from Utilitai.Utmess import MESSAGE_LOGGER
 
 # MESSAGE_LOGGER = classe permettant de formatter et d'afficher les
@@ -358,7 +354,7 @@ class CalcEssaiModifStruct:
                                                      STOP_ERREUR='OUI',),
                                         PARA_ORTHO_SOREN=-0.717,
                                         CALC_FREQ=calc_freq)
-        except aster.error, err:
+        except AsterError as err:
             message = "ERREUR ASTER : " + \
                 mess.GetText('I', err.id_message, err.valk, err.vali, err.valr)
             self.mess.disp_mess(message)
@@ -435,7 +431,7 @@ class CalcEssaiModifStruct:
                                                      NOM_CHAM=nomcham,),
                                     RESOLUTION=self.param_condens
                                     )
-        except aster.error, err:
+        except AsterError as err:
             message = "ERREUR ASTER : " + \
                 mess.GetText('I', err.id_message, err.valk, err.vali, err.valr)
             self.mess.disp_mess(message)
@@ -458,7 +454,7 @@ class CalcEssaiModifStruct:
                                     MASS_MECA=_F(),
                                     AMOR_MECA=_F(),
                                     )
-        except aster.error, err:
+        except AsterError as err:
             message = "ERREUR ASTER : " + \
                 mess.GetText('I', err.id_message, err.valk, err.vali, err.valr)
             self.mess.disp_mess(message)
@@ -591,7 +587,7 @@ class CalcEssaiModifStruct:
                     NOM_CHAM='DEPL',),
                 RESOLUTION=self.param_condens
             )
-        except aster.error, err:
+        except AsterError as err:
             message = "ERREUR ASTER : " + \
                 mess.GetText('I', err.id_message, err.valk, err.vali, err.valr)
             self.mess.disp_mess(message)
@@ -616,7 +612,7 @@ class CalcEssaiModifStruct:
                                   TOUT_ORDRE='OUI',
                                   NUME_DDL=self.i_numint,
                                   )
-        except aster.error, err:
+        except AsterError as err:
             message = "ERREUR ASTER : " + \
                 mess.GetText('I', err.id_message, err.valk, err.vali, err.valr)
             self.mess.disp_mess(message)
@@ -635,7 +631,7 @@ class CalcEssaiModifStruct:
                                   TOUT_ORDRE='OUI',
                                   NUME_DDL=self.i_numint,
                                   )
-        except aster.error, err:
+        except AsterError as err:
             message = "ERREUR ASTER : " + \
                 mess.GetText('I', err.id_message, err.valk, err.vali, err.valr)
             self.mess.disp_mess(message)
@@ -709,7 +705,7 @@ class CalcEssaiModifStruct:
                                                         STOP_ERREUR='OUI',),
                                            PARA_ORTHO_SOREN=-0.717,
                                            CALC_FREQ=calc_freq,)
-            except aster.error, err:
+            except AsterError as err:
                 message = "ERREUR ASTER : " + \
                     mess.GetText(
                         'I', err.id_message, err.valk, err.vali, err.valr)
@@ -721,7 +717,7 @@ class CalcEssaiModifStruct:
                                         MATR_MASS=mcouple,
                                         CALC_FREQ=calc_freq,
                                         )
-            except aster.error, err:
+            except AsterError as err:
                 message = "ERREUR ASTER : " + \
                     mess.GetText(
                         'I', err.id_message, err.valk, err.vali, err.valr)
@@ -740,7 +736,7 @@ class CalcEssaiModifStruct:
         try:
             __MDRETR = DEPL_INTERNE(
                 DEPL_GLOBAL=_MODCPL, SUPER_MAILLE=self.sumail)
-        except aster.error, err:
+        except AsterError as err:
             message = "ERREUR ASTER : " + \
                 mess.GetText('I', err.id_message, err.valk, err.vali, err.valr)
             self.mess.disp_mess(message)

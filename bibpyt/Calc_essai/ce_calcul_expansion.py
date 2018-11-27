@@ -20,13 +20,15 @@
 # person_in_charge: albert.alarcon at edf.fr
 
 import numpy
-import aster
-from code_aster.Cata.Syntax import _F
-from Utilitai.Utmess import UTMESS, MESSAGE_LOGGER
-from code_aster.Cata.DataStructure import modele_sdaster, matr_asse_depl_r
-from code_aster.Cata.DataStructure import mode_meca, dyna_harmo, maillage_sdaster
-from Calc_essai.cata_ce import Resultat, DynaHarmo
 
+import aster
+from Calc_essai.cata_ce import DynaHarmo, Resultat
+from code_aster import AsterError
+from code_aster.Cata.DataStructure import (dyna_harmo, maillage_sdaster,
+                                           matr_asse_depl_r, mode_meca,
+                                           modele_sdaster)
+from code_aster.Cata.Syntax import _F
+from Utilitai.Utmess import MESSAGE_LOGGER, UTMESS
 
 # MESSAGE_LOGGER = classe permettant de formatter et d'afficher les
 # messages d'erreur
@@ -164,7 +166,7 @@ class CalcEssaiExpansion:
                 **args
             )
 
-        except aster.error, err:
+        except AsterError as err:
             message = "ERREUR ASTER : " + \
                 mess.GetText('I', err.id_message, err.valk, err.vali, err.valr)
             self.mess.disp_mess(message)
@@ -196,7 +198,7 @@ class CalcEssaiExpansion:
                               BASE_2=o2,
                               MATR_ASSE=norme,
                               INFO=1)
-        except aster.error, err:
+        except AsterError as err:
             message = "ERREUR ASTER : " + \
                 mess.GetText('I', err.id_message, err.valk, err.vali, err.valr)
             self.mess.disp_mess(message)

@@ -116,7 +116,7 @@ class MaterialInstance: public DataStructure
          * @return Booleen indiquant que la construction s'est bien deroulee
          * @todo pouvoir compléter un matériau (ajout d'un comportement après build)
          */
-        bool build() throw ( std::runtime_error );
+        bool build() ;
 
         /**
          * @brief Get the number of behviours

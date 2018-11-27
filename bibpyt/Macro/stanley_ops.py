@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -25,13 +25,14 @@ def stanley_ops(self, RESULTAT=None, MODELE=None, CHAM_MATER=None, CARA_ELEM=Non
     import os
     import string
     import aster
+    from code_aster import onFatalError
     from code_aster.Cata.Syntax import _F
     from Noyau.N_utils import AsType
     from Utilitai.Utmess import UTMESS
     from Utilitai.UniteAster import UniteAster
 
-    prev_onFatalError = aster.onFatalError()
-    aster.onFatalError('EXCEPTION')
+    prev_onFatalError = onFatalError()
+    onFatalError('EXCEPTION')
 
     # La macro compte pour 1 dans la numerotation des commandes
     self.set_icmd(1)
@@ -72,6 +73,6 @@ def stanley_ops(self, RESULTAT=None, MODELE=None, CHAM_MATER=None, CARA_ELEM=Non
     else:
         UTMESS('A', 'STANLEY_3', valk=['STANLEY'])
 
-    aster.onFatalError(prev_onFatalError)
+    onFatalError(prev_onFatalError)
 
     return

@@ -54,7 +54,7 @@ class GenericLocalizationManager {
 
     std::string getName() const { return _name; };
 
-    CapyValuePtr getCapyConvertibleValuePtr() const throw( std::runtime_error ) { return _skw; };
+    CapyValuePtr getCapyConvertibleValuePtr() const { return _skw; };
 
     void setMandatory( const bool &mandatory ) { _skw->setMandatory( mandatory ); };
 };

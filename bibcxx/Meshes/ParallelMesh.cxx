@@ -30,7 +30,7 @@
 
 #ifdef _USE_MPI
 
-bool ParallelMeshInstance::readMedFile( const std::string &fileName ) throw( std::runtime_error ) {
+bool ParallelMeshInstance::readMedFile( const std::string &fileName ) {
     std::string completeFileName = fileName + "/" + std::to_string( getMPIRank() ) + ".med";
     BaseMeshInstance::readMedFile( completeFileName );
 

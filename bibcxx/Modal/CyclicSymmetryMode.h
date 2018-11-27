@@ -91,18 +91,17 @@ class CyclicSymmetryModeInstance : public DataStructure {
 
               {};
 
-    bool setSupportMesh( MeshPtr &currentMesh ) throw( std::runtime_error ) {
+    bool setSupportMesh( MeshPtr &currentMesh ) {
         if ( currentMesh->isEmpty() )
             throw std::runtime_error( "Mesh is empty" );
         _supportMesh = currentMesh;
         return true;
     };
-    bool setStructureInterface( StructureInterfacePtr &currentStructInterf ) throw(
-        std::runtime_error ) {
+    bool setStructureInterface( StructureInterfacePtr &currentStructInterf ) {
         _structInterf = currentStructInterf;
         return true;
     };
-    bool setModalBasis( StandardModalBasisPtr &currentModalBasis ) throw( std::runtime_error ) {
+    bool setModalBasis( StandardModalBasisPtr &currentModalBasis ) {
         _modalBasis = currentModalBasis;
         return true;
     };

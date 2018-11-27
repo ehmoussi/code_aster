@@ -40,7 +40,7 @@
 //?????
 //{};
 
-ResultsContainerPtr StaticModeDeplInstance::execute() throw( std::runtime_error ) {
+ResultsContainerPtr StaticModeDeplInstance::execute() {
     ResultsContainerPtr resultC( new ResultsContainerInstance( std::string( "MODE_MECA" ) ) );
     std::string nameOfSD = resultC->getName();
 
@@ -101,7 +101,7 @@ ResultsContainerPtr StaticModeDeplInstance::execute() throw( std::runtime_error 
     return resultC;
 };
 
-ResultsContainerPtr StaticModeForcInstance::execute() throw( std::runtime_error ) {
+ResultsContainerPtr StaticModeForcInstance::execute() {
     ResultsContainerPtr resultC( new ResultsContainerInstance( std::string( "MODE_MECA" ) ) );
     std::string nameOfSD = resultC->getName();
 
@@ -163,7 +163,7 @@ ResultsContainerPtr StaticModeForcInstance::execute() throw( std::runtime_error 
     return resultC;
 };
 
-ResultsContainerPtr StaticModePseudoInstance::execute() throw( std::runtime_error ) {
+ResultsContainerPtr StaticModePseudoInstance::execute() {
     ResultsContainerPtr resultC( new ResultsContainerInstance( std::string( "MODE_MECA" ) ) );
     std::string nameOfSD = resultC->getName();
 
@@ -231,7 +231,7 @@ ResultsContainerPtr StaticModePseudoInstance::execute() throw( std::runtime_erro
     return resultC;
 };
 
-ResultsContainerPtr StaticModeInterfInstance::execute() throw( std::runtime_error ) {
+ResultsContainerPtr StaticModeInterfInstance::execute() {
     ResultsContainerPtr resultC( new ResultsContainerInstance( std::string( "MODE_MECA" ) ) );
     std::string nameOfSD = resultC->getName();
 

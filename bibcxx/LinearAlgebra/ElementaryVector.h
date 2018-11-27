@@ -121,7 +121,7 @@ class ElementaryVectorInstance : public DataStructure {
      * @todo prendre en compte les fonctions multiplicatrices
      */
     FieldOnNodesDoublePtr
-    assembleVector( const DOFNumberingPtr &currentNumerotation ) throw( std::runtime_error ) {
+    assembleVector( const DOFNumberingPtr &currentNumerotation ) {
         return assembleVector( currentNumerotation, 0., Permanent );
     };
 
@@ -132,7 +132,7 @@ class ElementaryVectorInstance : public DataStructure {
  */
 #ifdef _USE_MPI
     FieldOnNodesDoublePtr assembleVector(
-        const ParallelDOFNumberingPtr &currentNumerotation ) throw( std::runtime_error ) {
+        const ParallelDOFNumberingPtr &currentNumerotation ) {
         return assembleVector( currentNumerotation, 0., Permanent );
     };
 #endif /* _USE_MPI */
@@ -144,7 +144,7 @@ class ElementaryVectorInstance : public DataStructure {
      */
     FieldOnNodesDoublePtr
     assembleVector( const BaseDOFNumberingPtr &currentNumerotation, const double &time = 0.,
-                    const JeveuxMemory memType = Permanent ) throw( std::runtime_error );
+                    const JeveuxMemory memType = Permanent ) ;
 
     /**
      * @brief Methode permettant de savoir si les matrices elementaires sont vides
@@ -167,7 +167,7 @@ class ElementaryVectorInstance : public DataStructure {
     /**
      * @brief function to update ElementaryResultInstance
      */
-    bool update() throw( std::runtime_error )
+    bool update()
     {
         _listOfElementaryResults->updateValuePointer();
         _realVector.clear();

@@ -52,7 +52,7 @@ ParallelMechanicalLoadInstance::ParallelMechanicalLoadInstance(
 
 void ParallelMechanicalLoadInstance::transferPCFieldOnMesh( const PCFieldOnMeshDoublePtr& fieldIn,
                                                             PCFieldOnMeshDoublePtr& fieldOut )
-    throw( std::runtime_error )
+
 {
     const auto& toKeep = _FEDesc->getDelayedElementsToKeep();
 

@@ -64,7 +64,7 @@ SyntaxMapContainer ModelInstance::buildModelingsSyntaxMapContainer() const {
     return dict;
 };
 
-bool ModelInstance::buildWithSyntax( SyntaxMapContainer &dict ) throw( std::runtime_error ) {
+bool ModelInstance::buildWithSyntax( SyntaxMapContainer &dict ) {
     CommandSyntax cmdSt( "AFFE_MODELE" );
     cmdSt.setResult( ResultNaming::getCurrentName(), "MODELE" );
     cmdSt.define( dict );
@@ -82,7 +82,7 @@ bool ModelInstance::buildWithSyntax( SyntaxMapContainer &dict ) throw( std::runt
     return true;
 };
 
-bool ModelInstance::build() throw( std::runtime_error ) {
+bool ModelInstance::build() {
     SyntaxMapContainer dict = buildModelingsSyntaxMapContainer();
     if ( _supportBaseMesh->isParallel() ) {
         ListSyntaxMapContainer listeDISTRIBUTION;

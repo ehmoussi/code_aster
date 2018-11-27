@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -403,7 +403,9 @@ subroutine tldlg3(metrez, renum, istop, lmat, ildeb,&
         call utmess(codmes, 'FACTOR_12')
     endif
     if (isingu .gt. 0) then
-        call rgndas(nu, isingu, l_print = .true.)
+        if (refa(20) =='') then  
+          call rgndas(nu, isingu, l_print = .true.)
+        endif 
         if (ndeci.eq.-999) then
             call utmess(codmes, 'FACTOR_11', si=isingu)
         else
@@ -430,7 +432,9 @@ subroutine tldlg3(metrez, renum, istop, lmat, ildeb,&
 !       -- ALARME EVENTUELLE SI LE PIVOT DEVIENT TROP GRAND :
         if ((metres.ne.'MUMPS') .and. (ndeci2.ge.ndigi2)) then
             ASSERT(ieq4.gt.0 .and. ieq4.le.neq)
+            if (refa(20) =='') then
             call rgndas(nu, ieq4, l_print = .true.)
+            endif 
             vali(1) = ieq4
             vali(2) = ndeci2
             call utmess('I', 'FACTOR3_15', ni = 2, vali = vali)

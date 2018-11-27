@@ -104,7 +104,7 @@ public:
     /**
      * @brief Get the MaterialOnMesh
      */
-    MaterialOnMeshPtr getMaterialOnMesh() const throw( std::runtime_error ) {
+    MaterialOnMeshPtr getMaterialOnMesh() const {
         if ( _materOnMesh == nullptr )
             throw std::runtime_error( "MaterialOnMesh is not set" );
         return _materOnMesh;
@@ -201,7 +201,7 @@ class ElementaryMatrixInstance : public BaseElementaryMatrixInstance
     /**
      * @brief function to update ElementaryResultInstance
      */
-    bool update() throw( std::runtime_error ) {
+    bool update() {
         _listOfElementaryResults->updateValuePointer();
         _realVector.clear();
         for ( int pos = 0; pos < _listOfElementaryResults->size(); ++pos ) {

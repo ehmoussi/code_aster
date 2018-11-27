@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -73,7 +73,7 @@ def fonction(val):
       f.close()
       fval = float(txt)
    except:
-      raise aster.error,"<F> Probleme : impossible de lire le fichier de la fonction F : %s" % fichier_out
+      raise IOError("<F> Probleme : impossible de lire le fichier de la fonction F : %s" % fichier_out)
 
    # Affichage
    print '  --> fonctionnelle : ' + str(fval)
@@ -86,7 +86,7 @@ def fonction(val):
          f.close()
          gval = [ float(x) for x in txt.split(',') ]
       except:
-         raise aster.error,"<F> Probleme : impossible de lire le fichier de la fonction G: %s" % fichier_grad_out
+         raise IOError("<F> Probleme : impossible de lire le fichier de la fonction G: %s" % fichier_grad_out)
 
       # Affichage
       print '  --> gradient : ' + str(gval)

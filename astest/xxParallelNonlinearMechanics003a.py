@@ -55,7 +55,7 @@ temps = [0., 0.5, 1.]
 timeList = code_aster.TimeStepManager()
 timeList.setTimeList(temps)
 
-error1 = code_aster.ConvergenceError()
+error1 = code_aster.EventError()
 action1 = code_aster.SubstepingOnError()
 action1.setAutomatic(False)
 error1.setAction(action1)

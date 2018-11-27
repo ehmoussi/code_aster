@@ -75,7 +75,7 @@ class StaticNonLinearAlgorithm : public GenericUnitaryAlgorithm< Stepper > {
     /**
      * @brief Avancer d'un pas dans un algorithme
      */
-    void oneStep() throw( AlgoException & );
+    void oneStep();
 
     /** @typedef Rappel du typedef de GenericUnitaryAlgorithm */
     typedef typename Stepper::const_iterator AlgorithmStepperIter;
@@ -84,7 +84,7 @@ class StaticNonLinearAlgorithm : public GenericUnitaryAlgorithm< Stepper > {
      * @brief Préparation de l'itération suivante
      * @param curStep Iterateur courant issu du Stepper
      */
-    void prepareStep( AlgorithmStepperIter &curStep ) throw( AlgoException & );
+    void prepareStep( AlgorithmStepperIter &curStep );
 
     void doPrediction( DiscreteProblemPtr dProblem, BaseLinearSolverPtr linSolv,
                        FieldOnNodesDoublePtr uField );
@@ -93,8 +93,7 @@ class StaticNonLinearAlgorithm : public GenericUnitaryAlgorithm< Stepper > {
                        int nIter );
 };
 
-template < class Stepper >
-void StaticNonLinearAlgorithm< Stepper >::oneStep() throw( AlgoException & ) {
+template < class Stepper > void StaticNonLinearAlgorithm< Stepper >::oneStep() {
     /*
 
        // Préparation du pas courant
@@ -109,12 +108,12 @@ void StaticNonLinearAlgorithm< Stepper >::oneStep() throw( AlgoException & ) {
        FieldOnNodesDoublePtr uField = _results->getEmptyFieldOnNodesDouble( "DEPL", _loadStep );
        // Il est initialisé au déplacement au pas de chargement précédent
        // uField = copy ( _results->getEmptyFieldOnNodesDouble( "DEPL", _lastLoadStep );
-       //
+
        // TODO pour un calcul non linéaire plus compliqué on devra aussi stocker le champ de
    contraintes
        // et le champ de variables internes
        // => utiliser des objets "state" avec 3 champs
-       //
+
        // On crée un champ aux noeuds de même profil que le champ de déplacement.
        // Il contient l'incrément de déplacement
        // duField = uField->clone()
@@ -129,7 +128,7 @@ void StaticNonLinearAlgorithm< Stepper >::oneStep() throw( AlgoException & ) {
        // and check if it is a satisfactory solution
        ConvergenceState status = _nonLinearMethod->check( _discreteProblem, uField, nIter );
        // If uField is not satisfactory, proceed to the correction steps
-       //
+
 
        while ( status == iterate )
            {
@@ -205,8 +204,7 @@ void StaticNonLinearAlgorithm< Stepper >::doCorrection( DiscreteProblemPtr _disc
 }
 
 template < class Stepper >
-void StaticNonLinearAlgorithm< Stepper >::prepareStep( AlgorithmStepperIter &curStep ) throw(
-    AlgoException & ) {
+void StaticNonLinearAlgorithm< Stepper >::prepareStep( AlgorithmStepperIter &curStep ) {
     _loadStep = *curStep;
 };
 

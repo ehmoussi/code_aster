@@ -21,6 +21,10 @@
 #
 import numpy as NP
 import numpy.linalg as LA
+from math import pi, sqrt
+
+from code_aster.Commands import *
+import aster_core
 
 DEBUT( CODE=_F(NIV_PUB_WEB='INTERNET'),
        PAR_LOT='NON', DEBUG=_F(SDVERI='OUI'))

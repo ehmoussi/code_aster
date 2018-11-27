@@ -111,7 +111,7 @@ class StaticNonLinearAnalysisInstance : public GenericSolver {
      * Default value corresponds to set the bahaviour on the whole mesh.
     */
     void addBehaviourOnElements( const BehaviourPtr &behaviour,
-                                 std::string nameOfGroup = "" ) throw( std::runtime_error ) {
+                                 std::string nameOfGroup = "" ) {
         // Check that the pointer to the support model is not empty
         if ( ( !_supportModel ) || _supportModel->isEmpty() )
             throw std::runtime_error( "Model is empty" );
@@ -140,7 +140,7 @@ class StaticNonLinearAnalysisInstance : public GenericSolver {
      *        this function wraps Code_Aster's legacy operator for nonlinear analysis
      *        (op0070)
      */
-    NonLinearEvolutionContainerPtr execute() throw( std::runtime_error );
+    NonLinearEvolutionContainerPtr execute() ;
 
     /** @brief Define the nonlinear method
     */

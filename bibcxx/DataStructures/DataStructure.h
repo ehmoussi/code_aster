@@ -128,7 +128,7 @@ class DataStructure {
     /**
      * @brief Virtual function to update DataStructure
      */
-    virtual bool update() throw( std::runtime_error ) { return true; };
+    virtual bool update() { return true; };
 
   protected:
     /**

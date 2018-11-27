@@ -38,7 +38,7 @@ void ForwardGeneralizedDOFNumberingPtr::operator=( const GeneralizedDOFNumbering
 };
 
 GeneralizedDOFNumberingPtr
-ForwardGeneralizedDOFNumberingPtr::getPointer() throw( std::runtime_error ) {
+ForwardGeneralizedDOFNumberingPtr::getPointer() {
     if ( !_isSet )
         throw std::runtime_error( "No pointer set" );
     return _ptr;

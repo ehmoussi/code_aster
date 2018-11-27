@@ -31,7 +31,7 @@ void updateContextFromStepper< TimeStepperInstance::const_iterator, StaticMechan
     context.setStep( *curStep, curStep.rank );
 };
 
-void StaticMechanicalAlgorithm::oneStep( const CurrentContext &ctx ) throw( AlgoException & ) {
+void StaticMechanicalAlgorithm::oneStep( const CurrentContext &ctx ) {
     BaseDOFNumberingPtr dofNum1 = ctx._results->getLastDOFNumbering();
 
     if ( ctx._rank == 1 || !ctx._isConst ) {

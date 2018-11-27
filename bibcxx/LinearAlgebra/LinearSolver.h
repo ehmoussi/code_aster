@@ -347,8 +347,7 @@ class BaseLinearSolverInstance : public DataStructure {
      * @brief Factorisation d'une matrice
      * @param currentMatrix Matrice assemblee
      */
-    bool matrixFactorization( AssemblyMatrixDisplacementDoublePtr currentMatrix ) throw(
-        std::runtime_error );
+    bool matrixFactorization( AssemblyMatrixDisplacementDoublePtr currentMatrix );
 
     /**
      * @brief Inversion du systeme lineaire
@@ -378,7 +377,7 @@ class BaseLinearSolverInstance : public DataStructure {
         FieldOnNodesDoublePtr result =
             FieldOnNodesDoublePtr( new FieldOnNodesDoubleInstance( Permanent ) ) ) const;
 
-    void disablePreprocessing() throw( std::runtime_error ) {
+    void disablePreprocessing() {
         if ( _linearSolver != Mumps )
             throw std::runtime_error( "Algorithm only allowed with Mumps" );
         _prePro = "SANS";
@@ -390,13 +389,13 @@ class BaseLinearSolverInstance : public DataStructure {
         _acceleration = MumpsAccelerationNames[(int)post];
     };
 
-    void setAlgorithm( IterativeSolverAlgorithm algo ) throw( std::runtime_error ) {
+    void setAlgorithm( IterativeSolverAlgorithm algo ) {
         if ( _linearSolver != Petsc )
             throw std::runtime_error( "Algorithm only allowed with Petsc" );
         _algo = std::string( IterativeSolverAlgorithmNames[(int)algo] );
     };
 
-    void setDistributedMatrix( bool matDist ) throw( std::runtime_error ) {
+    void setDistributedMatrix( bool matDist ) {
         if ( _linearSolver != Petsc && _linearSolver != Mumps )
             throw std::runtime_error( "Distributed matrix only allowed with Mumps or Petsc" );
         if ( matDist )
@@ -412,7 +411,7 @@ class BaseLinearSolverInstance : public DataStructure {
             _stopSingular = "NON";
     };
 
-    void setFilling( double filLevel ) throw( std::runtime_error ) {
+    void setFilling( double filLevel ) {
         if ( _linearSolver != Petsc && _linearSolver != Gcpc )
             throw std::runtime_error( "Filling level only allowed with Gcpc or Petsc" );
         if ( _preconditioning != IncompleteLdlt )
@@ -420,7 +419,7 @@ class BaseLinearSolverInstance : public DataStructure {
         _filling = filLevel;
     };
 
-    void setFillingLevel( ASTERINTEGER filLevel ) throw( std::runtime_error ) {
+    void setFillingLevel( ASTERINTEGER filLevel ) {
         if ( _linearSolver != Petsc && _linearSolver != Gcpc )
             throw std::runtime_error( "Filling level only allowed with Gcpc or Petsc" );
         if ( _preconditioning != IncompleteLdlt )
@@ -440,7 +439,7 @@ class BaseLinearSolverInstance : public DataStructure {
 
     void setMatrixType( MatrixType matType ) { _resolutionType = MatrixTypeNames[(int)matType]; };
 
-    void setMaximumNumberOfIteration( ASTERINTEGER number ) throw( std::runtime_error ) {
+    void setMaximumNumberOfIteration( ASTERINTEGER number ) {
         if ( _linearSolver != Petsc && _linearSolver != Gcpc )
             throw std::runtime_error( "Only allowed with Gcpc or Petsc" );
         _iterNumber = number;
@@ -458,7 +457,7 @@ class BaseLinearSolverInstance : public DataStructure {
         _postPro = MumpsPostTreatmentNames[(int)post];
     };
 
-    void setPrecisionMix( bool precMix ) throw( std::runtime_error ) {
+    void setPrecisionMix( bool precMix ) {
         if ( _linearSolver != Petsc && _linearSolver != Mumps )
             throw std::runtime_error( "Precision mixing only allowed with Mumps or Petsc" );
         if ( precMix )
@@ -467,7 +466,7 @@ class BaseLinearSolverInstance : public DataStructure {
             _precision = "NON";
     };
 
-    void setPreconditioning( Preconditioning precond ) throw( std::runtime_error ) {
+    void setPreconditioning( Preconditioning precond ) {
         if ( _linearSolver != Petsc && _linearSolver != Gcpc )
             throw std::runtime_error( "Preconditionong only allowed with Gcpc or Petsc" );
         _preconditioning = precond;
@@ -493,7 +492,7 @@ class BaseLinearSolverInstance : public DataStructure {
 
     void setSolverResidual( double residual ) { _residual = residual; };
 
-    void setUpdatePreconditioningParameter( ASTERINTEGER value ) throw( std::runtime_error ) {
+    void setUpdatePreconditioningParameter( ASTERINTEGER value ) {
         if ( _linearSolver != Petsc && _linearSolver != Gcpc )
             throw std::runtime_error( "Preconditionong only allowed with Gcpc or Petsc" );
         if ( _preconditioning != SimplePrecisionLdlt )

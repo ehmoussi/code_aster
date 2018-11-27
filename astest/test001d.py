@@ -2,6 +2,7 @@
 # coding: utf-8
 
 import code_aster
+from code_aster import AsterError
 code_aster.init()
 
 test = code_aster.TestCase()
@@ -31,7 +32,7 @@ with test.assertRaises( RuntimeError ):
 
 nameOfGroup = "A"
 CharMeca1.setValue( force, nameOfGroup )
-print "     sur le groupe : ", nameOfGroup
+print "      sur le groupe : ", nameOfGroup
 ret = CharMeca1.build()
 #CharMeca1.debugPrint()
 test.assertTrue( ret )
@@ -48,11 +49,11 @@ print "      Ce chargement est correct pour le catalogue mais conduit à une err
 CharMeca2 = code_aster.NodalStructuralForceDouble(monModel)
 nameOfGroup = "B"
 CharMeca2.setValue( force_pour_structure, nameOfGroup )
-print "     sur le groupe : ", nameOfGroup
+print "      sur le groupe : ", nameOfGroup
 
 # Le Dl MX n'est pas autorisé
 # fortran error
-with test.assertRaises( RuntimeError ):
+with test.assertRaises( AsterError ):
     CharMeca2.build()
 
 #CharMeca2.debugPrint()
@@ -63,7 +64,7 @@ print " >>>> Construction d'un chargement ForceOnFaceDouble"
 CharMeca3 = code_aster.ForceOnFaceDouble(monModel)
 nameOfGroup = "UP"
 CharMeca3.setValue( force, nameOfGroup )
-print "     sur le groupe : ", nameOfGroup
+print "      sur le groupe : ", nameOfGroup
 ret = CharMeca3.build()
 test.assertTrue( ret )
 
@@ -73,7 +74,7 @@ print " >>>> Construction d'un chargement ForceOnEdgeDouble"
 CharMeca4 = code_aster.ForceOnEdgeDouble(monModel)
 nameOfGroup = "UP"
 CharMeca4.setValue( force, nameOfGroup )
-print "     sur le groupe : ", nameOfGroup
+print "      sur le groupe : ", nameOfGroup
 ret = CharMeca4.build()
 test.assertTrue( ret )
 
@@ -83,7 +84,7 @@ print " >>>> Construction d'un chargement StructuralForceOnEdgeDouble"
 CharMeca5 = code_aster.StructuralForceOnEdgeDouble(monModel)
 nameOfGroup = "UP"
 CharMeca5.setValue( force_pour_structure, nameOfGroup )
-print "     sur le groupe : ", nameOfGroup
+print "      sur le groupe : ", nameOfGroup
 ret = CharMeca5.build()
 test.assertTrue( ret )
 
@@ -93,7 +94,7 @@ print " >>>> Construction d'un chargement LineicForceDouble"
 CharMeca6 = code_aster.LineicForceDouble(monModel)
 nameOfGroup = "BOTTOM"
 CharMeca6.setValue( force, nameOfGroup )
-print "     sur le groupe : ", nameOfGroup
+print "      sur le groupe : ", nameOfGroup
 ret = CharMeca6.build()
 test.assertTrue( ret )
 
@@ -103,7 +104,7 @@ print " >>>> Construction d'un chargement InternalForceDouble"
 CharMeca7 = code_aster.InternalForceDouble(monModel)
 nameOfGroup = "BOTTOM"
 CharMeca7.setValue( force, nameOfGroup )
-print "     sur le groupe : ", nameOfGroup
+print "      sur le groupe : ", nameOfGroup
 ret = CharMeca7.build()
 test.assertTrue( ret )
 
@@ -113,7 +114,7 @@ print " >>>> Construction d'un chargement StructuralForceOnBeamDouble"
 CharMeca8 = code_aster.StructuralForceOnBeamDouble(monModel)
 nameOfGroup = "OA"
 CharMeca8.setValue( force_pour_structure, nameOfGroup )
-print "     sur le groupe : ", nameOfGroup
+print "      sur le groupe : ", nameOfGroup
 ret = CharMeca8.build()
 test.assertTrue( ret )
 
@@ -126,7 +127,7 @@ fpoutre.setValue(code_aster.PhysicalQuantityComponent.N, 5.0)
 CharMeca9 = code_aster.LocalForceOnBeamDouble(monModel)
 nameOfGroup = "BOTTOM"
 CharMeca9.setValue( fpoutre, nameOfGroup )
-print "     sur le groupe : ", nameOfGroup
+print "      sur le groupe : ", nameOfGroup
 ret = CharMeca9.build()
 test.assertTrue( ret )
 
@@ -136,7 +137,7 @@ print " >>>> Construction d'un chargement StructuralForceOnShellDouble"
 CharMeca10 = code_aster.StructuralForceOnShellDouble(monModel)
 nameOfGroup = "UP"
 CharMeca10.setValue( force_pour_structure, nameOfGroup )
-print "     sur le groupe : ", nameOfGroup
+print "      sur le groupe : ", nameOfGroup
 ret = CharMeca10.build()
 test.assertTrue( ret )
 
@@ -151,7 +152,7 @@ fshell.setValue(code_aster.PhysicalQuantityComponent.F3, 13.0)
 CharMeca11 = code_aster.LocalForceOnShellDouble(monModel)
 nameOfGroup = "UP"
 CharMeca11.setValue( fshell, nameOfGroup )
-print "     sur le groupe : ", nameOfGroup
+print "      sur le groupe : ", nameOfGroup
 ret = CharMeca11.build()
 test.assertTrue( ret )
 
@@ -164,7 +165,7 @@ pression.setValue(code_aster.PhysicalQuantityComponent.Pres, 14.0)
 CharMeca12 = code_aster.PressureOnShellDouble(monModel)
 nameOfGroup = "UP"
 CharMeca12.setValue( pression, nameOfGroup )
-print "     sur le groupe : ", nameOfGroup
+print "      sur le groupe : ", nameOfGroup
 ret = CharMeca12.build()
 test.assertTrue( ret )
 
@@ -173,9 +174,9 @@ print " >>>> Construction d'un chargement ImposedPressureDouble"
 CharMeca13 = code_aster.ImposedPressureDouble(monModel)
 nameOfGroup = "O"
 CharMeca13.setValue( pression, nameOfGroup )
-print "     sur le groupe : ", nameOfGroup
+print "      sur le groupe : ", nameOfGroup
 # fortran error
-with test.assertRaises( RuntimeError ):
+with test.assertRaises( AsterError ):
     CharMeca13.build()
 
 test.printSummary()

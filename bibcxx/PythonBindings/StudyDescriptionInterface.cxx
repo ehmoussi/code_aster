@@ -24,7 +24,7 @@
 #include <boost/python.hpp>
 #include "PythonBindings/factory.h"
 #include "PythonBindings/StudyDescriptionInterface.h"
-#include "PythonBindings/LoadInterface.h"
+#include "PythonBindings/LoadUtilities.h"
 
 void exportStudyDescriptionToPython() {
     using namespace boost::python;

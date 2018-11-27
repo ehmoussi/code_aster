@@ -35,7 +35,7 @@
  */
 class AlgoException {
   public:
-    virtual const std::string what() const throw() = 0;
+    virtual const std::string what() const noexcept = 0;
 };
 
 #endif /* ALGORITHMEEXCEPTION_H_ */

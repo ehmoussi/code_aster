@@ -26,14 +26,13 @@ from code_aster.Cata.Commons import *
 
 def elim_lagr_prod(MATR_RIGI,**args):
   if args.get('__all__'):
-      return (matr_asse_depl_r, )
+      return (matr_asse_elim_r, )
 
-  if AsType(MATR_RIGI) == matr_asse_depl_r : return matr_asse_depl_r
+  if AsType(MATR_RIGI) == matr_asse_depl_r : return matr_asse_elim_r
   raise AsException("type de concept resultat non prevu")
 
 ELIM_LAGR=OPER(nom="ELIM_LAGR",op=69,sd_prod=elim_lagr_prod,
                fr=tr("Créer une matrice en ayant éliminé les condition cinématiques dualisées."),
-               reentrant='f:MATR_RIGI',
 
          reuse=SIMP(statut='c', typ=CO),
          # Matrice de "rigidité" (celle qui contient les équations dualisées) :

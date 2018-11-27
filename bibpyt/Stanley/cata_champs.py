@@ -19,11 +19,12 @@
 
 '''Catalogue des champs de resultats Aster'''
 
-from code_aster.Commands import CALC_CHAMP, CALC_ERREUR
-from code_aster.Cata.Commons import C_NOM_CHAM_INTO
-
-from Utilitai.Utmess import UTMESS
 import aster
+from code_aster import AsterError
+from code_aster.Cata.Commons import C_NOM_CHAM_INTO
+from code_aster.Commands import CALC_CHAMP, CALC_ERREUR
+from Utilitai.Utmess import UTMESS
+
 
 class CHAMP:
 
@@ -53,7 +54,7 @@ class CHAMP:
         # Lancement de la commande
         try:
             CALC_CHAMP(**para)
-        except aster.error, err:
+        except AsterError as err:
             UTMESS('A', 'STANLEY_4', valk=[str(err)])
         except Exception, err:
             UTMESS('A', 'STANLEY_5', valk=[str(err)])
@@ -82,7 +83,7 @@ class CHAMP:
         # Lancement de la commande
         try:
             CALC_ERREUR(**para)
-        except aster.error, err:
+        except AsterError as err:
             UTMESS('A', 'STANLEY_4', valk=[str(err)])
         except Exception, err:
             UTMESS('A', 'STANLEY_5', valk=[str(err)])

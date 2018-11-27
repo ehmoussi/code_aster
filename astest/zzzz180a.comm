@@ -24,12 +24,12 @@
 
 import numpy as NP
 from math import atan
-import aster
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),
 PAR_LOT='NON',DEBUG=_F(SDVERI='OUI'))
 
-#
+import aster
+
 #################################################################
 # 1.  CAS GENERATION AVEC INTERPOLATION, DUREE IMPOSEE
 #################################################################
@@ -165,7 +165,7 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
 # CALCUL DE L INTERSPECTRE DES FCTS GENEREES
 ##############################
 
-ts =  aster.getvectjev("FONCT1             .VALE        ");
+ts =  aster.getvectjev(FONCT1.getName() + ".VALE");
 nbpoin=(len(ts)/2-1)/nbtir
 tfin=ts[len(ts)/2-1]
 
@@ -271,7 +271,7 @@ MF11=RECU_FONCTION(    INTE_SPEC=INTERS,
                       )
 
 
-tt =  aster.getvectjev("MF11               .VALE        ");
+tt =  aster.getvectjev(MF11.getName() + ".VALE");
 fmin=tt[0]
 fmax=tt[len(tt)/2-1]
 

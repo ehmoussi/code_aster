@@ -109,7 +109,7 @@ template < class ValueType > class SimpleFieldOnElementsInstance : public DataSt
 
     ValueType const &getValue( int nodeNumber, int compNumber ) const
 #ifdef __DEBUG_GC__
-        throw( std::runtime_error )
+
 #endif
     {
 #ifdef __DEBUG_GC__
@@ -124,7 +124,7 @@ template < class ValueType > class SimpleFieldOnElementsInstance : public DataSt
      * @brief Mise a jour des pointeurs Jeveux
      * @return renvoie true si la mise a jour s'est bien deroulee, false sinon
      */
-    bool updateValuePointers() throw( std::runtime_error ) {
+    bool updateValuePointers() {
         bool retour = _descriptor->updateValuePointer();
         retour = ( retour && _size->updateValuePointer() );
         retour = ( retour && _component->updateValuePointer() );

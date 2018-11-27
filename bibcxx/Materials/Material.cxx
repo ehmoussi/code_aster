@@ -97,7 +97,7 @@ void MaterialInstance::deallocateJeveuxVectors()
     }
 };
 
-bool MaterialInstance::build() throw( std::runtime_error ) {
+bool MaterialInstance::build() {
     if( _mater != nullptr )
     {
         if( getName() == _mater->getName() )
@@ -108,7 +108,7 @@ bool MaterialInstance::build() throw( std::runtime_error ) {
     }
 
     // Recuperation du nombre de GeneralMaterialBehaviourPtr ajoutes par l'utilisateur
-    int nbMCF = _vecMatBehaviour.size();
+    const int nbMCF = _vecMatBehaviour.size();
     if ( nbMCF != _vectorOfComplexValues.size() || nbMCF != _vectorOfDoubleValues.size() ||
          nbMCF != _vectorOfChar16Values.size() )
         throw std::runtime_error( "Bad number of material properties" );

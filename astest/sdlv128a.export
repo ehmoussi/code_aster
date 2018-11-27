@@ -1,3 +1,4 @@
+# aslint: disable=E2003
 P time_limit 120
 P memory_limit 768
 P ncpus 1

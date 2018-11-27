@@ -83,7 +83,7 @@ class LogicalUnitFileCython {
      * @brief Recuperer le numéro d'unité logique correspondant
      * @return Unité logique
      */
-    ASTERINTEGER getLogicalUnit( void ) const throw( std::runtime_error ) {
+    ASTERINTEGER getLogicalUnit( void ) const {
         if ( !_isUsable )
             throw std::runtime_error( "File not initialized" );
         return _logicalUnit;

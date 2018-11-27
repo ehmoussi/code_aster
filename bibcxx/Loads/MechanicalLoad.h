@@ -413,7 +413,7 @@ class GenericMechanicalLoadInstance : public DataStructure {
     /**
      * @brief Get the support model
      */
-    const ModelPtr &getSupportModel() const throw( std::runtime_error ) {
+    const ModelPtr &getSupportModel() const {
         if ( ( !_mecaLoad._supportModel ) || _mecaLoad._supportModel->isEmpty() )
             throw std::runtime_error( "Support model of current load is empty" );
         return _mecaLoad._supportModel;
@@ -473,7 +473,7 @@ class MechanicalLoadInstance : public GenericMechanicalLoadInstance {
      * @return bool success/failure index
      */
     bool setValue( PhysicalQuantityPtr physPtr,
-                   std::string nameOfGroup = "" ) throw( std::runtime_error ) {
+                   std::string nameOfGroup = "" ) {
         // Check that the pointer to the support model is not empty
         if ( ( !_mecaLoad._supportModel ) || _mecaLoad._supportModel->isEmpty() )
             throw std::runtime_error( "Model is empty" );
@@ -507,7 +507,7 @@ class MechanicalLoadInstance : public GenericMechanicalLoadInstance {
     /**
      * @brief appel de op0007
      */
-    bool build() throw( std::runtime_error ) {
+    bool build() {
         // std::cout << " build " << std::endl;
         CommandSyntax cmdSt( "AFFE_CHAR_MECA" );
         cmdSt.setResult( ResultNaming::getCurrentName(), "CHAR_MECA" );
