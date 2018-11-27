@@ -40,8 +40,6 @@
  */
 class SurfaceInstance : public GenericFunctionInstance {
   private:
-    // Vecteur Jeveux '.PROL'
-    JeveuxVectorChar24 _property;
     // Vecteur Jeveux '.PARA'
     JeveuxVectorDouble _parameters;
     // Vecteur Jeveux '.VALE'
@@ -63,8 +61,7 @@ class SurfaceInstance : public GenericFunctionInstance {
      * @brief Constructeur
      */
     SurfaceInstance( const std::string name )
-        : GenericFunctionInstance( name, "NAPPE" ),
-          _property( JeveuxVectorChar24( getName() + ".PROL" ) ),
+        : GenericFunctionInstance( name, "NAPPE", "NAPPE" ),
           _parameters( JeveuxVectorDouble( getName() + ".PARA" ) ),
           _value( JeveuxCollectionDouble( getName() + ".VALE" ) ){};
 

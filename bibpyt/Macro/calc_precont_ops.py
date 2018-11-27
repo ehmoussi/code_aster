@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -121,10 +121,10 @@ def calc_precont_ops(self, MODELE, CHAM_MATER, CARA_ELEM, EXCIT,
 
     # Teste si INST_INIT est donné ou bien recalcule __TMIN
     if dIncrement['INST_INIT'] == None:
-        if self.reuse == None:
+        if reuse == None:
             __TMIN = __L1[0]
         else:
-            __dico = self.reuse.LIST_VARI_ACCES()
+            __dico = reuse.LIST_VARI_ACCES()
             __TMIN = __dico['INST'][-1]
     else:
         __TMIN = dIncrement['INST_INIT']
@@ -462,8 +462,8 @@ def calc_precont_ops(self, MODELE, CHAM_MATER, CARA_ELEM, EXCIT,
         dExcit1.append(_F(CHARGE=_F_CA,
                           FONC_MULT=__FCT),)
 
-        if self.reuse:
-            motscle4['reuse'] = self.reuse
+        if reuse:
+            motscle4['reuse'] = reuse
 
         RES = STAT_NON_LINE(
             MODELE=MODELE,
@@ -536,8 +536,8 @@ def calc_precont_ops(self, MODELE, CHAM_MATER, CARA_ELEM, EXCIT,
         motscle6 = {}
         motscle6['DDL_IMPO'] = []
         __ActifActif = False
-        if self.reuse:
-            motscle4['reuse'] = self.reuse
+        if reuse:
+            motscle4['reuse'] = reuse
         # assert (len(CABLE_BP) == 1)
         # traitement des cables inactifs
         if type(CABLE_BP_INACTIF) is not types.NoneType:

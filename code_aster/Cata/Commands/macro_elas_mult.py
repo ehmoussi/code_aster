@@ -30,7 +30,7 @@ def macro_elas_mult_prod(self,NUME_DDL,CAS_CHARGE,**args ):
       return ([mult_elas, fourier_elas],
               [None, nume_ddl_sdaster])
 
-  if NUME_DDL is not None and NUME_DDL.is_typco():
+  if NUME_DDL is not None and isinstance(NUME_DDL, CO):
     self.type_sdprod(NUME_DDL,nume_ddl_sdaster)
   if CAS_CHARGE[0]['NOM_CAS']      != None : return mult_elas
   if CAS_CHARGE[0]['MODE_FOURIER'] != None : return fourier_elas

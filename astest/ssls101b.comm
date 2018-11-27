@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -340,7 +340,7 @@ TEST_TABLE(REFERENCE='NON_DEFINI',
            NOM_PARA='TOTALE',
            TABLE=EPOT_PR,
            FILTRE=_F(NOM_PARA='LIEU',
-                     VALE_K='MAILL',),
+                     VALE_K='00000002',),
            )
 
 # DEPLACEMENTS F3
@@ -352,7 +352,7 @@ TEST_TABLE(REFERENCE='NON_DEFINI',
            NOM_PARA='TOTALE',
            TABLE=EPOT_F3,
            FILTRE=_F(NOM_PARA='LIEU',
-                     VALE_K='MAILL',),
+                     VALE_K='00000002',),
            )
 
 # DEPLACEMENTS PESANTEUR
@@ -364,7 +364,7 @@ TEST_TABLE(REFERENCE='NON_DEFINI',
            NOM_PARA='TOTALE',
            TABLE=EPOT_PE,
            FILTRE=_F(NOM_PARA='LIEU',
-                     VALE_K='MAILL',),
+                     VALE_K='00000002',),
            )
 
 # TEST PRESSION SUR RESULTAT VENANT DE MACRO_ELAS_MULT
@@ -376,7 +376,7 @@ TEST_TABLE(REFERENCE='NON_DEFINI',
            NOM_PARA='TOTALE',
            TABLE=EPOT_PP,
            FILTRE=_F(NOM_PARA='LIEU',
-                     VALE_K='MAILL',),
+                     VALE_K='00000002',),
            )
 
 #--------------------------------------------------------------------

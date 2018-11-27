@@ -609,12 +609,13 @@ class GeneralMaterialBehaviourInstance {
      * @return Booleen valant true si la tache s'est bien deroulee
      * @todo vérifier les valeurs réelles par défaut du .VALR
      */
-    bool buildJeveuxVectors( JeveuxVectorComplex &complexValues, JeveuxVectorDouble &doubleValues,
-                             JeveuxVectorChar16 &char16Values, JeveuxVectorChar16 &ordr,
-                             JeveuxVectorLong &kOrdr,
-                             std::vector< JeveuxVectorDouble >&,
-                             std::vector< JeveuxVectorChar8 >& )
-        const ;
+    virtual bool buildJeveuxVectors( JeveuxVectorComplex &complexValues,
+                                     JeveuxVectorDouble &doubleValues,
+                                     JeveuxVectorChar16 &char16Values,
+                                     JeveuxVectorChar16 &ordr,
+                                     JeveuxVectorLong &kOrdr,
+                                     std::vector< JeveuxVectorDouble >&,
+                                     std::vector< JeveuxVectorChar8 >& );
 
     /**
      * @brief Build ".RDEP" if necessary
@@ -628,6 +629,11 @@ class GeneralMaterialBehaviourInstance {
      * @return true if ".RDEP" is necessary
      */
     virtual bool hasTractionFunction() const { return false; };
+
+    /**
+     * @brief Function to know if material own a function for enthalpy
+     */
+    virtual bool hasEnthalpyFunction() const { return false; };
 
     /**
      * @brief Function to know if behaviour own a list of double parameter
@@ -1286,6 +1292,66 @@ class TractionMaterialBehaviourInstance : public GeneralMaterialBehaviourInstanc
 
 /** @typedef Pointeur intelligent vers un comportement materiau Traction */
 typedef boost::shared_ptr< TractionMaterialBehaviourInstance > TractionMaterialBehaviourPtr;
+
+/**
+ * @class TherNlMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau TherNl
+ * @author Jean-Pierre Lefebvre
+ */
+class TherNlMaterialBehaviourInstance : public GeneralMaterialBehaviourInstance {
+private:
+    FunctionPtr _enthalpyFunction;
+
+  public:
+    /**
+     * @brief Constructeur
+     */
+    TherNlMaterialBehaviourInstance(): _enthalpyFunction( new FunctionInstance() )
+    {
+        // Mot cle "THER_NL" dans Aster
+        _asterName = "THER_NL";
+
+        // Parametres matériau
+        this->addFunctionProperty( "Lambda",
+                                   ElementaryMaterialPropertyDataStructure( "LAMBDA", true ) );
+        this->addFunctionProperty( "Beta",
+                                   ElementaryMaterialPropertyDataStructure( "BETA", false ) );
+        this->addFunctionProperty( "Rho_cp",
+                                   ElementaryMaterialPropertyDataStructure( "RHO_CP", false ) );
+    };
+
+    /**
+     * @brief Get name link to the class
+     * @return name
+     */
+    static std::string getName() { return "THER_NL"; };
+
+    /**
+     * @brief To know if a MaterialBehaviour has ConvertibleValues
+     */
+    static bool hasConvertibleValues() { return false; };
+
+    /**
+     * @brief Function to know if material own a function for enthalpy
+     */
+    bool hasEnthalpyFunction() { return true; };
+
+    /**
+     * @brief Construction du GeneralMaterialBehaviourInstance
+     * @return Booleen valant true si la tache s'est bien deroulee
+     * @todo vérifier les valeurs réelles par défaut du .VALR
+     */
+    bool buildJeveuxVectors( JeveuxVectorComplex &complexValues,
+                             JeveuxVectorDouble &doubleValues,
+                             JeveuxVectorChar16 &char16Values,
+                             JeveuxVectorChar16 &ordr,
+                             JeveuxVectorLong &kOrdr,
+                             std::vector< JeveuxVectorDouble >&,
+                             std::vector< JeveuxVectorChar8 >& );
+};
+
+/** @typedef Pointeur intelligent vers un comportement materiau TherNl */
+typedef boost::shared_ptr< TherNlMaterialBehaviourInstance > TherNlMaterialBehaviourPtr;
 
 /** @typedef Pointeur intellignet vers un comportement materiau quelconque */
 typedef boost::shared_ptr< GeneralMaterialBehaviourInstance > GeneralMaterialBehaviourPtr;
