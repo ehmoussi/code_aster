@@ -399,7 +399,7 @@ TEST_TABLE(VALE_CALC=25000.0,
            NOM_PARA='MASSE',
            TABLE=MASSES,
            FILTRE=_F(NOM_PARA='LIEU',
-                     VALE_K='MA',),
+                     VALE_K='00000001',),
            )
 
 TEST_TABLE(VALE_CALC=130208333.333,
@@ -407,7 +407,7 @@ TEST_TABLE(VALE_CALC=130208333.333,
            NOM_PARA='IX_G',
            TABLE=MASSES,
            FILTRE=_F(NOM_PARA='LIEU',
-                     VALE_K='MA',),
+                     VALE_K='00000001',),
            )
 
 TEST_TABLE(VALE_CALC=20833333.3333,
@@ -415,7 +415,7 @@ TEST_TABLE(VALE_CALC=20833333.3333,
            NOM_PARA='IY_G',
            TABLE=MASSES,
            FILTRE=_F(NOM_PARA='LIEU',
-                     VALE_K='MA',),
+                     VALE_K='00000001',),
            )
 
 TEST_TABLE(VALE_CALC=151041666.667,
@@ -423,7 +423,7 @@ TEST_TABLE(VALE_CALC=151041666.667,
            NOM_PARA='IZ_G',
            TABLE=MASSES,
            FILTRE=_F(NOM_PARA='LIEU',
-                     VALE_K='MA',),
+                     VALE_K='00000001',),
            )
 
 FIN(  )
