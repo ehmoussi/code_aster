@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -70,9 +70,9 @@ subroutine xmmaa0(ndim, nnc, jnne, hpg,&
     ddles=jddle(1)
 !
 ! ---  BOUCLE SUR LES NOEUDS PORTANT DES DDL DE CONTACT
-    do 10 i = 1, nnc
+    do i = 1, nnc
 ! --- BOUCLE SUR LES NOEUDS PORTANT DES DDL DE CONTACT
-        do 20 j = 1, nnc
+        do j = 1, nnc
             call xplma2(ndim, nne, nnes, ddles, i,&
                         nfhe, pli)
             if (lmulti) pli = pli + (heavno(i)-1)*ndim
@@ -80,11 +80,11 @@ subroutine xmmaa0(ndim, nnc, jnne, hpg,&
                         nfhe, plj)
             if (lmulti) plj = plj + (heavno(j)-1)*ndim
             if (lpenac) then
-                mmat(pli,plj) = -hpg*ffc(j)*ffc(i)*jacobi/coefcp
+                mmat(pli,plj) = mmat(pli,plj)-hpg*ffc(j)*ffc(i)*jacobi/coefcp
             else
-                mmat(pli,plj) = -hpg*ffc(j)*ffc(i)*jacobi/coefcr
+                mmat(pli,plj) = mmat(pli,plj)-hpg*ffc(j)*ffc(i)*jacobi/coefcr
             endif
- 20     continue
- 10 continue
+        end do
+    end do
 !
 end subroutine

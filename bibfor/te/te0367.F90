@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -55,8 +55,6 @@ subroutine te0367(option, nomte)
 !  CALCUL DES SECONDS MEMBRES DE CONTACT ET DE FROTTEMENT DE COULOMB STD
 !   POUR LA METHODE XFEM EN GRANDS GLISSEMENTS
 !  OPTION : 'CHAR_MECA_CONT' (CALCUL DU SECOND MEMBRE DE CONTACT)
-!           'CHAR_MECA_FROT' (CALCUL DU SECOND MEMBRE DE
-!                              FROTTEMENT STANDARD )
 !
 !  ENTREES  ---> OPTION : OPTION DE CALCUL
 !           ---> NOMTE  : NOM DU TYPE ELEMENT
@@ -278,104 +276,99 @@ subroutine te0367(option, nomte)
 !
 ! --- CALCUL DES SECOND MEMBRES DE CONTACT/FROTTEMENT
 !
-    if (option .eq. 'CHAR_MECA_CONT') then
-        if (indco .eq. 1) then
+
+    if (indco .eq. 1) then
 !
 ! --- VECTEUR SECOND MEMBRE SI CONTACT
 !
+        call xmmjeu(ndim, nnm, nne, ndeple, nsinge,&
+                    nsingm, ffe, ffm, norm, jgeom,&
+                    jdepde, jdepm, fk_escl, fk_mait, ddle,&
+                    ddlm, nfhe, nfhm, lmulti, zi(jheavn), zi(jheafa),&
+                    jeu)
+!
+        call xmvec1(ndim, nne, ndeple, nnc, nnm,&
+                    hpg, ffc, ffe, ffm,&
+                    jacobi, dlagrc, coefcr,&
+                    coefcp, lpenac, jeu, norm,&
+                    nsinge, nsingm, fk_escl, fk_mait,&
+                    ddle, ddlm, nfhe, nfhm, lmulti,&
+                    zi(jheano), zi(jheavn), zi(jheafa), vtmp)
+!
+    else if (indco .eq. 0) then
+        if (nvit .eq. 1) then
+!
+! --- CALCUL DU VECTEUR - CAS SANS CONTACT
+!
+            call xmvec0(ndim, nne, nnc, dlagrc,&
+                        hpg, ffc, jacobi,&
+                        coefcr, coefcp, lpenac, ddle,&
+                        nfhe, lmulti, zi(jheano), vtmp)
+        endif
+    else
+        ASSERT(ASTER_FALSE)
+    endif
+!
+    if (coefff .eq. 0.d0) indco = 0
+! ON MET LA SECURITE EN PENALISATION EGALEMENT
+    if (dlagrc .eq. 0.d0) indco = 0
+    if (ifrott .ne. 3) indco = 0
+!
+    if (indco .eq. 0) then
+        if (nvit .eq. 1) then
+!
+! --- CALCUL DU VECTEUR - CAS SANS FROTTEMENT
+!
+!
+            call xmvef0(ndim, nne, nnc,&
+                        hpg, ffc, jacobi, lpenac,&
+                        dlagrf, tau1, tau2,&
+                        ddle, nfhe, lmulti, zi(jheano),&
+                        vtmp)
+        endif
+    else if (indco.eq.1) then
+!
+! --- CALCUL DES INCREMENTS - DEPLACEMENTS
+!
+        call xtdepm(ndim, nnm, nne, ndeple, nsinge,&
+                    nsingm, ffe, ffm, jdepde, fk_escl,&
+                    fk_mait, ddle, ddlm, nfhe, nfhm, lmulti,&
+                    zi(jheavn), zi(jheafa),&
+                    ddeple, ddeplm)
+!
+!
+! --- ON CALCULE L'ETAT DE CONTACT ADHERENT OU GLISSANT
+!
+        call ttprsm(ndim, ddeple, ddeplm, dlagrf, coeffr,&
+                    tau1, tau2, mprojt, inadh, rese,&
+                    nrese, coeffp, lpenaf, dvitet)
+!
+! --- CALCUL DU JEU
+!
+        jeu = 0.d0
+        if (ndim .eq. 3 .and. contac .eq. 3) then
             call xmmjeu(ndim, nnm, nne, ndeple, nsinge,&
                         nsingm, ffe, ffm, norm, jgeom,&
                         jdepde, jdepm, fk_escl, fk_mait, ddle,&
                         ddlm, nfhe, nfhm, lmulti, zi(jheavn), zi(jheafa),&
                         jeu)
-!
-            call xmvec1(ndim, nne, ndeple, nnc, nnm,&
-                        hpg, ffc, ffe, ffm,&
-                        jacobi, dlagrc, coefcr,&
-                        coefcp, lpenac, jeu, norm,&
-                        nsinge, nsingm, fk_escl, fk_mait,&
-                        ddle, ddlm, nfhe, nfhm, lmulti,&
-                        zi(jheano), zi(jheavn), zi(jheafa), vtmp)
-!
-        else if (indco .eq. 0) then
-            if (nvit .eq. 1) then
-!
-! --- CALCUL DU VECTEUR - CAS SANS CONTACT
-!
-                call xmvec0(ndim, nne, nnc, dlagrc,&
-                            hpg, ffc, jacobi,&
-                            coefcr, coefcp, lpenac, ddle,&
-                            nfhe, lmulti, zi(jheano), vtmp)
-            endif
-        else
-            call utmess('F', 'ELEMENTS3_80')
         endif
-!
-    else if (option.eq.'CHAR_MECA_FROT') then
-!              ---------------------
-        if (coefff .eq. 0.d0) indco = 0
-! ON MET LA SECURITE EN PENALISATION EGALEMENT
-        if (dlagrc .eq. 0.d0) indco = 0
-        if (ifrott .ne. 3) indco = 0
-!
-        if (indco .eq. 0) then
-            if (nvit .eq. 1) then
-!
-! --- CALCUL DU VECTEUR - CAS SANS FROTTEMENT
-!
-!
-                call xmvef0(ndim, nne, nnc,&
-                            hpg, ffc, jacobi, lpenac,&
-                            dlagrf, tau1, tau2,&
-                            ddle, nfhe, lmulti, zi(jheano),&
-                            vtmp)
-            endif
-        else if (indco.eq.1) then
-!
-! --- CALCUL DES INCREMENTS - DEPLACEMENTS
-!
-            call xtdepm(ndim, nnm, nne, ndeple, nsinge,&
-                        nsingm, ffe, ffm, jdepde, fk_escl,&
-                        fk_mait, ddle, ddlm, nfhe, nfhm, lmulti,&
-                        zi(jheavn), zi(jheafa),&
-                        ddeple, ddeplm)
-!
-!
-! --- ON CALCULE L'ETAT DE CONTACT ADHERENT OU GLISSANT
-!
-            call ttprsm(ndim, ddeple, ddeplm, dlagrf, coeffr,&
-                        tau1, tau2, mprojt, inadh, rese,&
-                        nrese, coeffp, lpenaf, dvitet)
-!
-! --- CALCUL DU JEU
-!
-            jeu = 0.d0
-            if (ndim .eq. 3 .and. contac .eq. 3) then
-                call xmmjeu(ndim, nnm, nne, ndeple, nsinge,&
-                            nsingm, ffe, ffm, norm, jgeom,&
-                            jdepde, jdepm, fk_escl, fk_mait, ddle,&
-                            ddlm, nfhe, nfhm, lmulti, zi(jheavn), zi(jheafa),&
-                            jeu)
-            endif
 !
 ! --- SI GLISSANT, NORMALISATION RESE
 !
-            if (inadh .eq. 0) call normev(rese, nrese)
+        if (inadh .eq. 0) call normev(rese, nrese)
 !
 ! --- VECTEUR FROTTEMENT
 !
-            call xmvef1(ndim, nne, nnm, ndeple, nnc,&
-                        hpg, ffc, ffe,&
-                        ffm, jacobi, dlagrc, dlagrf,&
-                        coeffr, lpenaf, coefff, tau1,&
-                        tau2, rese, mprojt, coefcr,&
-                        jeu, nsinge, nsingm, fk_escl, fk_mait,&
-                        nvit, contac, ddle, ddlm,&
-                        nfhe, nfhm, lmulti,  zi(jheavn), zi(jheafa),&
-                        vtmp)
-        endif
-    else
-        ASSERT(.false.)
+        call xmvef1(ndim, nne, nnm, ndeple, nnc,&
+                    hpg, ffc, ffe,&
+                    ffm, jacobi, dlagrc, dlagrf,&
+                    coeffr, lpenaf, coefff, tau1,&
+                    tau2, rese, mprojt, coefcr,&
+                    jeu, nsinge, nsingm, fk_escl, fk_mait,&
+                    nvit, contac, ddle, ddlm,&
+                    nfhe, nfhm, lmulti,  zi(jheavn), zi(jheafa),&
+                    vtmp)
     endif
 !
 ! --- SUPPRESSION DES DDLS SUPERFLUS (CONTACT ET XHTC)

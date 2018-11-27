@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -68,8 +68,8 @@ subroutine xmmco1(ndim, nno, dsidep, pp, p,&
 !           II.2.3. CALCUL DES MATRICES DE COHESION
 !        ..............................
 !
-    do 216 i = 1, ndim
-        do 217 j = 1, ndim
+    do i = 1, ndim
+        do j = 1, ndim
             ddt1(i,j)=dsidep(1,1)*nd(i)*nd(j)
             if (ndim .eq. 2) then
                 ddt2(i,j)=dsidep(1,2)*nd(i)*tau1(j) +dsidep(2,1)*tau1(&
@@ -87,8 +87,8 @@ subroutine xmmco1(ndim, nno, dsidep, pp, p,&
                 tau1(i)*tau2(j) +dsidep(3,2)*tau2(i)*tau1(j) +dsidep(&
                 3,3)*tau2(i)*tau2(j)
             endif
-217      continue
-216  end do
+        end do
+    end do
 !
     call matcox(ndim, pp, ddt1, ddt2, ddt3,&
                 ddt4, p, nno, nfh*ndim, ddls,&
