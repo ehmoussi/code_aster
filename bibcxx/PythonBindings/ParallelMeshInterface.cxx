@@ -36,6 +36,8 @@ void exportParallelMeshToPython() {
             bases< BaseMeshInstance > >( "ParallelMesh", no_init )
         .def( "__init__", make_constructor(&initFactoryPtr< ParallelMeshInstance >))
         .def( "__init__", make_constructor(&initFactoryPtr< ParallelMeshInstance, std::string >))
+        .def( "hasLocalGroupOfElements", &ParallelMeshInstance::hasLocalGroupOfElements )
+        .def( "hasLocalGroupOfNodes", &ParallelMeshInstance::hasLocalGroupOfNodes )
         .def( "readMedFile", &ParallelMeshInstance::readMedFile );
 };
 
