@@ -193,7 +193,7 @@ class UIDMixing(object):
         return self._id
 
     def __cmp__(self, other):
-        if other is None:
+        if other is None or not hasattr(other, 'uid'):
             return -1
         if self._id < other.uid:
             return -1
@@ -221,11 +221,37 @@ class _F(dict):
         return self.get(keyword)
 
     def cree_dict_valeurs(self, *args, **kwargs):
+        """Return a dict-like object to access to keywords."""
         return self
+
+    def cree_dict_toutes_valeurs(self):
+        """Same as `cree_dict_valeurs()`, for compatibility."""
+        return self.cree_dict_valeurs()
 
     @property
     def mc_liste(self):
         return self.keys()
+
+    def List_F(self):
+        """Return the object itself, for backward compatibility."""
+        return self
+
+class _ListFact(list):
+    """For backward compatibility to add `List_F` method to a list of
+    FactorKeywords."""
+
+    def List_F(self):
+        """Return the object itself, for backward compatibility."""
+        return self
+
+def ListFact(fact):
+    """Add `List_F` method to list of FactorKeywords.
+
+    It only avoids to remove all `List_F` calls that are now useless.
+    """
+    if isinstance(fact, (list, tuple)):
+        return _ListFact(fact)
+    return fact
 
 
 class PartOfSyntax(UIDMixing):
@@ -663,7 +689,7 @@ class Command(PartOfSyntax):
         strict = args.pop("__strict__", ConversionLevel.Syntaxic)
         if strict & ConversionLevel.Syntaxic:
             from .SyntaxChecker import checkCommandSyntax
-            checkCommandSyntax(self, args, add_default=False)
+            checkCommandSyntax(self, args, in_place=False)
             resultType = self.get_type_sd_prod(**args)
         else:
             try:
