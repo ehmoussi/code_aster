@@ -37,5 +37,7 @@ void exportGenericFunctionToPython() {
         //         .def( "__init__", make_constructor(
         //             &initFactoryPtr< GenericFunctionInstance,
         //                              std::string >) )
+        .def( "getProperties", &GenericFunctionInstance::getProperties )
+        .def( "setExtrapolation", &GenericFunctionInstance::setExtrapolation )
         ;
 };

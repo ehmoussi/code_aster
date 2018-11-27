@@ -101,6 +101,15 @@
 
 
 ================================================================================
+:py:class:`~code_aster.Objects.TherNlMaterialBehaviour` object
+================================================================================
+
+.. autoclass:: code_aster.Objects.TherNlMaterialBehaviour
+   :show-inheritance:
+   :members:
+
+
+================================================================================
 :py:class:`~code_aster.Objects.TractionMaterialBehaviour` object
 ================================================================================
 

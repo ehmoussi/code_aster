@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -231,7 +231,7 @@ TEST_TABLE(VALE_CALC=1407.53403673,
            FILTRE=(_F(NOM_PARA='NUME_ORDRE',
                       VALE_I=2,),
                    _F(NOM_PARA='LIEU',
-                      VALE_K='M',),
+                      VALE_K='00000001',),
                    ),
            )
 TEST_TABLE(VALE_CALC=1404.61024322,
@@ -240,7 +240,7 @@ TEST_TABLE(VALE_CALC=1404.61024322,
            FILTRE=(_F(NOM_PARA='NUME_ORDRE',
                       VALE_I=2,),
                    _F(NOM_PARA='LIEU',
-                      VALE_K='M',),
+                      VALE_K='00000001',),
                    ),
            )
 TEST_TABLE(VALE_CALC=1404.42658281,
@@ -249,7 +249,7 @@ TEST_TABLE(VALE_CALC=1404.42658281,
            FILTRE=(_F(NOM_PARA='NUME_ORDRE',
                       VALE_I=2,),
                    _F(NOM_PARA='LIEU',
-                      VALE_K='M',),
+                      VALE_K='00000001',),
                    ),
            )
 
@@ -259,7 +259,7 @@ TEST_TABLE(VALE_CALC=2496.61331174,
            FILTRE=(_F(NOM_PARA='NUME_ORDRE',
                       VALE_I=4,),
                    _F(NOM_PARA='LIEU',
-                      VALE_K='M',),
+                      VALE_K='00000001',),
                    ),
            )
 
@@ -269,7 +269,7 @@ TEST_TABLE(VALE_CALC=3333.27614652 ,
            FILTRE=(_F(NOM_PARA='NUME_ORDRE',
                       VALE_I=6,),
                    _F(NOM_PARA='LIEU',
-                      VALE_K='M',),
+                      VALE_K='00000001',),
                    ),
            )
 
@@ -279,7 +279,7 @@ TEST_TABLE(VALE_CALC=3753.58246426,
            FILTRE=(_F(NOM_PARA='NUME_ORDRE',
                       VALE_I=8,),
                    _F(NOM_PARA='LIEU',
-                      VALE_K='M',),
+                      VALE_K='00000001',),
                    ),
            )
 
@@ -289,7 +289,7 @@ TEST_TABLE(VALE_CALC=4047.46288576,
            FILTRE=(_F(NOM_PARA='NUME_ORDRE',
                       VALE_I=10,),
                    _F(NOM_PARA='LIEU',
-                      VALE_K='M',),
+                      VALE_K='00000001',),
                    ),
            )
 
@@ -300,7 +300,7 @@ TEST_TABLE(VALE_CALC=1406.28037174,
            FILTRE=(_F(NOM_PARA='NUME_ORDRE',
                       VALE_I=2,),
                    _F(NOM_PARA='LIEU',
-                      VALE_K='M',),
+                      VALE_K='00000001',),
                    ),
            )
 
@@ -310,7 +310,7 @@ TEST_TABLE(VALE_CALC=2488.72079771,
            FILTRE=(_F(NOM_PARA='NUME_ORDRE',
                       VALE_I=4,),
                    _F(NOM_PARA='LIEU',
-                      VALE_K='M',),
+                      VALE_K='00000001',),
                    ),
            )
 
@@ -320,7 +320,7 @@ TEST_TABLE(VALE_CALC=3325.55620691,
            FILTRE=(_F(NOM_PARA='NUME_ORDRE',
                       VALE_I=6,),
                    _F(NOM_PARA='LIEU',
-                      VALE_K='M',),
+                      VALE_K='00000001',),
                    ),
            )
 
@@ -330,7 +330,7 @@ TEST_TABLE(VALE_CALC=3744.29558422,
            FILTRE=(_F(NOM_PARA='NUME_ORDRE',
                       VALE_I=8,),
                    _F(NOM_PARA='LIEU',
-                      VALE_K='M',),
+                      VALE_K='00000001',),
                    ),
            )
 
@@ -340,7 +340,7 @@ TEST_TABLE(VALE_CALC=4035.87975341,
            FILTRE=(_F(NOM_PARA='NUME_ORDRE',
                       VALE_I=10,),
                    _F(NOM_PARA='LIEU',
-                      VALE_K='M',),
+                      VALE_K='00000001',),
                    ),
            )
 
@@ -351,7 +351,7 @@ TEST_TABLE(VALE_CALC=1404.03531336,
            FILTRE=(_F(NOM_PARA='NUME_ORDRE',
                       VALE_I=2,),
                    _F(NOM_PARA='LIEU',
-                      VALE_K='M',),
+                      VALE_K='00000001',),
                    ),
            )
 
@@ -361,7 +361,7 @@ TEST_TABLE(VALE_CALC=2482.37793065,
            FILTRE=(_F(NOM_PARA='NUME_ORDRE',
                       VALE_I=4,),
                    _F(NOM_PARA='LIEU',
-                      VALE_K='M',),
+                      VALE_K='00000001',),
                    ),
            )
 
@@ -371,7 +371,7 @@ TEST_TABLE(VALE_CALC=3313.52881313,
            FILTRE=(_F(NOM_PARA='NUME_ORDRE',
                       VALE_I=6,),
                    _F(NOM_PARA='LIEU',
-                      VALE_K='M',),
+                      VALE_K='00000001',),
                    ),
            )
 
@@ -381,7 +381,7 @@ TEST_TABLE(VALE_CALC=3723.13758365,
            FILTRE=(_F(NOM_PARA='NUME_ORDRE',
                       VALE_I=8,),
                    _F(NOM_PARA='LIEU',
-                      VALE_K='M',),
+                      VALE_K='00000001',),
                    ),
            )
 
@@ -391,7 +391,7 @@ TEST_TABLE(VALE_CALC=4003.81872251,
            FILTRE=(_F(NOM_PARA='NUME_ORDRE',
                       VALE_I=10,),
                    _F(NOM_PARA='LIEU',
-                      VALE_K='M',),
+                      VALE_K='00000001',),
                    ),
            )
 

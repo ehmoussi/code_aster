@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -385,28 +385,28 @@ TEST_TABLE(VALE_CALC=3769.9099999999999,
            NOM_PARA='MASSE',
            TABLE=MASSES,
            FILTRE=_F(NOM_PARA='LIEU',
-                     VALE_K='M',),
+                     VALE_K='00000001',),
            )
 
 TEST_TABLE(VALE_CALC=1.885270E6,
            NOM_PARA='IX_G',
            TABLE=MASSES,
            FILTRE=_F(NOM_PARA='LIEU',
-                     VALE_K='M',),
+                     VALE_K='00000001',),
            )
 
 TEST_TABLE(VALE_CALC=1.885270E6,
            NOM_PARA='IY_G',
            TABLE=MASSES,
            FILTRE=_F(NOM_PARA='LIEU',
-                     VALE_K='M',),
+                     VALE_K='00000001',),
            )
 
 TEST_TABLE(VALE_CALC=3.769910E6,
            NOM_PARA='IZ_G',
            TABLE=MASSES,
            FILTRE=_F(NOM_PARA='LIEU',
-                     VALE_K='M',),
+                     VALE_K='00000001',),
            )
 
 # Test NOM_VARI for CREA_TABLE
@@ -419,7 +419,7 @@ TEST_TABLE(VALE_CALC=vale_test,
            TABLE=TB,
            FILTRE=(_F(NOM_PARA='INST',VALE=60.,),
                    _F(NOM_PARA='MAILLE',VALE_K='M1',),
-                   _F(NOM_PARA='POINT' ,VALE_I=1.,),
+                   _F(NOM_PARA='POINT' ,VALE_I=1,),
 
                    )
            )

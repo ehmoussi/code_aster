@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -26,8 +26,6 @@ import numpy as NP
 
 para = U.LIST_PARA()
 var = U.LIST_VARI_ACCES()
-ch = U.LIST_CHAMPS()
-ncmp = U.LIST_NOM_CMP()
 
 # test des numeros d'ordre
 nbord = len(var['NUME_ORDRE'])
@@ -39,7 +37,7 @@ assert var['NUME_ORDRE'] == range(0, nbord), var['NUME_ORDRE']
 smo = set(para['MODELE'])
 assert len(smo) == 1, smo                 # modele unique
 mo = list(smo)[0]
-assert mo.strip() == 'MO', "valeur inattendue : %s" % mo
+assert mo.strip() == '00000002', "valeur inattendue : %s" % mo
 assert len(mo) == 8, "longueur inattendue : %d" % len(mo)
 
 

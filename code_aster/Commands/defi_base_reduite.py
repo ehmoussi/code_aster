@@ -48,7 +48,7 @@ class ReducedBaseDefinition(ExecuteCommand):
             self._result.update()
         elif(keywords.has_key("OPERATION") and
              keywords["OPERATION"] == "TRONCATURE"):
-            self._result.setModel(keywords["MODELE_REDUIT"])
+            self._result.appendModelOnAllRanks(keywords["MODELE_REDUIT"])
         else:
             resultat = keywords["RESULTAT"]
             if(resultat is not None):

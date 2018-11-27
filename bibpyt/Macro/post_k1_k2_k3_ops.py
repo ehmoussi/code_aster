@@ -1817,12 +1817,12 @@ def get_tabout(
 
     if (ino == 0 and iord == 0) and inst == None:
         tabout = CREA_TABLE(LISTE=mcfact, TITRE=titre)
-        get_erreur(self, ndim, tabout, type_para)
+        tabout = get_erreur(self, ndim, tabout, type_para)
     elif iord == 0 and ino == 0 and inst != None:
         mcfact = [_F(PARA='NUME_ORDRE', LISTE_I=nume)] + mcfact
         mcfact = [_F(PARA=type_para, LISTE_R=[inst, ] * 3)] + mcfact
         tabout = CREA_TABLE(LISTE=mcfact, TITRE=titre)
-        get_erreur(self, ndim, tabout, type_para)
+        tabout = get_erreur(self, ndim, tabout, type_para)
     else:
         if inst != None:
             mcfact = [_F(PARA='NUME_ORDRE', LISTE_I=nume)] + mcfact
@@ -1836,7 +1836,7 @@ def get_tabout(
         elif FISSURE and MODELISATION == '3D':
             npara.append('NUM_PT')
 
-        get_erreur(self, ndim, __tabi, type_para)
+        tabout = get_erreur(self, ndim, __tabi, type_para)
         tabout = CALC_TABLE(reuse=tabout,
                             TABLE=tabout,
                             TITRE=titre,
@@ -2419,7 +2419,7 @@ def post_k1_k2_k3_ops(self, RESULTAT, FOND_FISS =None, FISSURE=None, MATER=None,
 # Si le nombre de noeuds dans la direction normale au fond de fissure est
 # insuffisant, on extrapole
     if (ndim == 3) and liste_noeu_a_extr != []:
-        expand_values(self, tabout, liste_noeu_a_extr, TITRE, type_para)
+        tabout = expand_values(self, tabout, liste_noeu_a_extr, TITRE, type_para)
 
 #  Tri de la table si nécessaire
     if len(l_inst) != 1 and ndim == 3:
