@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -169,7 +169,7 @@ subroutine mrmmvr(cumul, lmat, smdi, smhc, lmatd,&
     if (iexi .ne. 0) then
         call jeveuo(nom19//'.CCID', 'L', vi=ccid)
         do jvec = 1, nbvect
-            do ieq = 1, neql
+            do ieq = 1, neq
                 if (lmatd) then
                     keta=ccid(nulg(ieq))
                 else
