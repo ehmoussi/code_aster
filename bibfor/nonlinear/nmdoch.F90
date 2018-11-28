@@ -147,7 +147,7 @@ character(len=19), optional, intent(in) :: list_load_resu_
     if (nb_load .eq. 0) then
         call lisccr('MECA', list_load, 1, 'V')
         call jeveuo(list_load(1:19)//'.INFC', 'E', vi=v_ll_infc)
-        v_ll_infc(1) = nb_load
+        v_ll_infc(1) = 1
     endif
 !
 ! - Access to saved list of loads datastructure
