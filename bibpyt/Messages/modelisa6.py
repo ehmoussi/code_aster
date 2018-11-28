@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -250,7 +250,7 @@ On trouve %(i1)d noeuds.
 """),
 
     58 : _(u"""
- nappe interdite pour les caractéristiques matériau
+ BETA et RHO_CP ne peuvent pas être définies avec des nappes (mot-clé THER_NL).
 """),
 
     64 : _(u"""
