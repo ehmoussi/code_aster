@@ -60,7 +60,7 @@ class Translation(object):
 
     def __call__(self, arg):
         """Return the translated string"""
-        if type(arg) is unicode:
+        if type(arg) is str:
             uarg = arg
         else:
             uarg = arg.decode('utf-8', 'replace')

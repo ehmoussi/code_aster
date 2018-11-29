@@ -32,7 +32,7 @@ def dyna_visco_prod(self,TYPE_RESU,TYPE_MODE,**args):
         return ASSD
 
     if TYPE_RESU == 'HARM':
-        if args.has_key('MODE_MECA'):
+        if 'MODE_MECA' in args:
             MODE_MECA = args['MODE_MECA']
             # in the case 'HARM', the type can be only mode_meca (not mode_meca_c)
             self.type_sdprod(MODE_MECA,mode_meca)

@@ -49,7 +49,7 @@ class maillage_sdaster(ASSD):
           return []
       dimama = [catama[ltyma[ma-1].ljust(24)][0] for ma in self.sdj.TYPMAIL.get()]
       ngpma = []
-      for grp in dic_gpma.keys():
+      for grp in list(dic_gpma.keys()):
          dim = max([dimama[ma-1] for ma in dic_gpma[grp]])
          ngpma.append((grp.strip(), len(dic_gpma[grp]),dim))
       return ngpma

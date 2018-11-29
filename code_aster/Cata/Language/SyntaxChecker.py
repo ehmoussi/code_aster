@@ -26,7 +26,7 @@ legacy operators and pure Python instructions.
 
 import numpy
 
-import DataStructure as DS
+from . import DataStructure as DS
 from .SyntaxUtils import (debug_message2, force_list, mixedcopy, old_complex,
                           remove_none, value_is_sequence)
 
@@ -68,7 +68,7 @@ def fromTypeName(typename):
     Example: 'I' returns [int, ...]"""
     if not hasattr(fromTypeName, "convTypes"):
         convTypes = {
-            'TXM' : [str, unicode],
+            'TXM' : [str, str],
             'I' : [int, numpy.int, numpy.int32, numpy.int64],
         }
         convTypes['R'] = [float, numpy.float, numpy.float32, numpy.float64] \
@@ -123,7 +123,7 @@ def isValidType(obj, expected):
 
     # accept str for MeshEntity
     if issubclass(expected[0], (DS.MeshEntity, DS.GEOM)):
-        if isinstance(obj, basestring):
+        if isinstance(obj, str):
             assert len(expected) == 1, 'several types for MeshEntity ?!'
             return True
     # accept all DataStructures for CO
@@ -288,7 +288,7 @@ class SyntaxCheckerVisitor(object):
                     if not typeobj.checkValue(i):
                         self.error(ValueError, "Unexpected value: %s" % i)
 
-                    if step.definition.has_key("into"):
+                    if "into" in step.definition:
                         into = step.definition["into"]
                         if not typeobj.checkInto(i, into):
                             self.error(ValueError, "Unexpected value: %s" % i)
@@ -309,7 +309,7 @@ class SyntaxCheckerVisitor(object):
                            'Unexpected type: {0}, expecting: {1}'
                            .format(type(i), validType))
             # into
-            if step.definition.has_key("into"):
+            if "into" in step.definition:
                 if i not in step.definition["into"]:
                     self.error(ValueError,
                                "Unexpected value: {0!r}, must be in {1!r}"
@@ -375,7 +375,7 @@ class SyntaxCheckerVisitor(object):
             # check that the required keywords are provided by the user
             step.checkMandatory(userOcc, self._stack, ctxt)
             # loop on keywords provided by the user
-            for key, value in userOcc.iteritems():
+            for key, value in userOcc.items():
                 # print key, value
                 if key == "reuse":
                     reentr = step.definition.get("reentrant", "").split(':')

@@ -33,13 +33,13 @@ def propa_fiss_prod(self,**args):
               [None, maillage_sdaster],
               [None, fiss_xfem])
 
-  if  args.has_key('MAIL_TOTAL')  :
+  if  'MAIL_TOTAL' in args  :
       MAIL_TOTAL = args['MAIL_TOTAL']
       self.type_sdprod(MAIL_TOTAL,maillage_sdaster)
-  if  args.has_key('MAIL_FISS')  :
+  if  'MAIL_FISS' in args  :
       MAIL_FISS = args['MAIL_FISS']
       self.type_sdprod(MAIL_FISS,maillage_sdaster)
-  if args.has_key('FISSURE') :
+  if 'FISSURE' in args :
       FISSURE = args['FISSURE']
       for numfis in FISSURE :
         if (args['METHODE_PROPA']=='MAILLAGE') :

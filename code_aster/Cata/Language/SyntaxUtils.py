@@ -58,7 +58,7 @@ def remove_none(obj):
         for i in obj:
             remove_none(i)
     elif isinstance(obj, dict):
-        for key, value in obj.items():
+        for key, value in list(obj.items()):
             if value is None:
                 del obj[key]
             else:
@@ -79,7 +79,7 @@ def add_none_sdprod(sd_prod, dictargs):
     required = argspec.args
     if argspec.defaults:
         required = required[:-len(argspec.defaults)]
-    args = dictargs.keys()
+    args = list(dictargs.keys())
     # add 'self' for macro
     required.append('self')
     miss = set(required).difference(args)
@@ -100,7 +100,7 @@ def search_for(obj, predicate):
         for i in obj:
             found.extend(search_for(i, predicate))
     elif isinstance(obj, dict):
-        for key, value in obj.items():
+        for key, value in list(obj.items()):
             if predicate(value):
                 found.append(value)
             else:
@@ -139,7 +139,7 @@ def enable_0key(values):
     Arguments:
         dict: Dict of keywords changed in place.
     """
-    for k, kw in values.items():
+    for k, kw in list(values.items()):
         if isinstance(kw, dict):
             kw[0] = kw
 
@@ -149,8 +149,8 @@ def disable_0key(values):
     Arguments:
         dict: Dict of keywords changed in place.
     """
-    for k, kw in values.items():
-        if isinstance(kw, dict) and kw.has_key(0):
+    for k, kw in list(values.items()):
+        if isinstance(kw, dict) and 0 in kw:
             del kw[0]
 
 # Keep consistency with SyntaxUtils.block_utils from AsterStudy, AsterXX
@@ -203,9 +203,9 @@ def sorted_dict(kwargs):
     if not kwargs:
         # empty dict
         return OrderedDict()
-    vk = sorted(zip(kwargs.values(), kwargs.keys()))
-    newv, newk = zip(*vk)
-    return OrderedDict(zip(newk, newv))
+    vk = sorted(zip(list(kwargs.values()), list(kwargs.keys())))
+    newv, newk = list(zip(*vk))
+    return OrderedDict(list(zip(newk, newv)))
 
 def debug_mode():
     """
@@ -245,10 +245,10 @@ def debug_message(*args, **kwargs):
     level = kwargs.get('level', 0)
     if debug_mode() > level:
         if args:
-            print "AsterStudy:" + (" " + "." * level if level else ""),
+            print("AsterStudy:" + (" " + "." * level if level else ""), end=' ')
             for arg in args:
-                print arg,
-            print
+                print(arg, end=' ')
+            print()
 
 # pragma pylint: disable=invalid-name
 debug_message2 = partial(debug_message, level=1)

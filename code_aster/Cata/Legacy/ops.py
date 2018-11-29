@@ -24,7 +24,7 @@ import sys
 import os
 import os.path as osp
 import traceback
-import cPickle as pickle
+import pickle as pickle
 import re
 from math import sqrt, pi, atan2, tan, log, exp
 from glob import glob
@@ -235,7 +235,7 @@ def POURSUITE(self, PAR_LOT, IMPR_MACRO, CODE, DEBUG, IGNORE_ALARM, LANG, INFO, 
         interrupt = []
         count = 0
         UTMESS('I', 'SUPERVIS_65')
-        for elem, co in pickle_context.items():
+        for elem, co in list(pickle_context.items()):
             if isinstance(co, ASSD):
                 count += 1
                 typnam = co.__class__.__name__
@@ -272,7 +272,7 @@ def POURSUITE(self, PAR_LOT, IMPR_MACRO, CODE, DEBUG, IGNORE_ALARM, LANG, INFO, 
         if not interrupt:
             UTMESS('I', 'SUPERVIS_72')
         if self.jdc.info_level > 1:
-            keys = pickle_context.keys()
+            keys = list(pickle_context.keys())
             keys.sort()
             for key in keys:
                 try:
@@ -410,7 +410,7 @@ def _detr_list_co(self, context):
         # longueur <= 8, on cherche les concepts existants
         for nom in force_list(mc['CHAINE']):
             assert type(nom) in (
-                str, unicode), 'On attend une chaine de caractères : %s' % nom
+                str, str), 'On attend une chaine de caractères : %s' % nom
             if len(nom.strip()) <= 8:
                 if self.jdc.sds_dict.get(nom) != None:
                     list_co.add(self.jdc.sds_dict[nom])
@@ -446,7 +446,7 @@ def build_detruire(self, d):
         i = nom.rfind('_')
         if i > 0 and not nom.endswith('_'):
             concept_racine = nom[:i]
-            if d.has_key(concept_racine) and type(d[concept_racine]) is list:
+            if concept_racine in d and type(d[concept_racine]) is list:
                 try:
                     num = int(nom[i + 1:])
                     d[concept_racine][num] = None
@@ -454,9 +454,9 @@ def build_detruire(self, d):
                     # cas : RESU_aaa ou (RESU_8 avec RESU[8] non initialisé)
                     pass
         # pour tous les concepts :
-        if d.has_key(nom):
+        if nom in d:
             del d[nom]
-        if self.jdc.sds_dict.has_key(nom):
+        if nom in self.jdc.sds_dict:
             del self.jdc.sds_dict[nom]
         # "suppression" du concept
         co.supprime()
@@ -508,7 +508,7 @@ def build_formule(self, d):
     self.sd.setFormule(NOM_PARA, texte.strip())
 
     _ctxt = {}
-    keys = self.valeur.keys()
+    keys = list(self.valeur.keys())
     for key in keys:
         if key not in ('VALE', 'VALE_C', 'NOM_PARA'):
             _ctxt[key] = self.valeur[key]
