@@ -35,7 +35,7 @@ except ImportError:
 
 
 def is_int(obj):
-    return isinstance(obj, int) or type(obj) is int
+    return isinstance(obj, (int, NP.integer)) or type(obj) is int
 
 
 def is_float(obj):
