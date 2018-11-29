@@ -272,7 +272,7 @@ for LeDiscret in ListeDiscrets:
       LeD[ii] = RECU_FONCTION(RESULTAT=RESU1, NOM_CHAM='DEPL', NOM_CMP=DDL, NOEUD= LeNoeud,
          INTERPOL='LIN',PROL_DROITE='EXCLU',PROL_GAUCHE='EXCLU',)
       # TESTS DES RESULTATS
-      if ( Force in LesDiscrets[LeDiscret].keys() ):
+      if ( Force in list(LesDiscrets[LeDiscret].keys()) ):
          Lvale = LesDiscrets[LeDiscret][Force]
          motclefs = {}
          motclefs['VALEUR'] = []
@@ -284,7 +284,7 @@ for LeDiscret in ListeDiscrets:
          TEST_FONCTION(**motclefs)
       ii += 1
    # TESTS DES RESULTATS : energie
-   if ( "ENERG" in LesDiscrets[LeDiscret].keys() ):
+   if ( "ENERG" in list(LesDiscrets[LeDiscret].keys()) ):
       LaMaille = LesDiscrets[LeDiscret]['MAILLE']
       Energie  = LesDiscrets[LeDiscret]['ENERG']
       motclefs = {}
@@ -403,7 +403,7 @@ for LeDiscret in ListeDiscrets:
       LeD[ii] = RECU_FONCTION(RESULTAT=RESU2, NOM_CHAM='DEPL', NOM_CMP=DDL, NOEUD= LeNoeud,
          INTERPOL='LIN',PROL_DROITE='EXCLU',PROL_GAUCHE='EXCLU',)
       # TESTS DES RESULTATS
-      if ( Force in LesDiscrets[LeDiscret].keys() ):
+      if ( Force in list(LesDiscrets[LeDiscret].keys()) ):
          Lvale = LesDiscrets[LeDiscret][Force]
          motclefs = {}
          motclefs['VALEUR'] = []
@@ -415,7 +415,7 @@ for LeDiscret in ListeDiscrets:
          TEST_FONCTION(**motclefs)
       ii += 1
    # TESTS DES RESULTATS : energie
-   if ( "ENERG" in LesDiscrets[LeDiscret].keys() ):
+   if ( "ENERG" in list(LesDiscrets[LeDiscret].keys()) ):
       LaMaille = LesDiscrets[LeDiscret]['MAILLE']
       Energie  = LesDiscrets[LeDiscret]['ENERG']
       motclefs = {}

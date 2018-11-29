@@ -163,7 +163,7 @@ diam=aster.getvectjev("DIAM_4             .VALE        ")
 def notzero(n):
    return n !=0
 
-diam=filter(notzero,diam)
+diam=list(filter(notzero,diam))
 
 d = min(diam)
 

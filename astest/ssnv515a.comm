@@ -134,8 +134,8 @@ SIGMA_T = 1.E+3
 K       = YOUNG/3./(1.-2.*POISSON)
 G       = YOUNG/2./(1.+POISSON)
 
-print 'young =',YOUNG,' /// nu    =',POISSON
-print 'g_modu=',G,'     /// k_modu=',K
+print('young =',YOUNG,' /// nu    =',POISSON)
+print('g_modu=',G,'     /// k_modu=',K)
 
 SOL=DEFI_MATERIAU(ELAS   =_F(E =YOUNG, NU =POISSON, ALPHA=0.,),
                   RANKINE=_F(SIGMA_T = SIGMA_T,),

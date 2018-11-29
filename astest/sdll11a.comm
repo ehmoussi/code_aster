@@ -221,7 +221,7 @@ try:
                               #  VERI_MODE=_F(  SEUIL = 1.E-4))
 except aster.EventError:
    # on verifie l'etat de 'MODE2' par le TEST_RESU qui suit
-   print '  Test validation resultats sur erreur VERI_MODE!!! '
+   print('  Test validation resultats sur erreur VERI_MODE!!! ')
    pass
 
 
@@ -356,7 +356,7 @@ try:
                          )
 except aster.EventError:
    # on verifie l'etat de 'MODE4' par le TEST_RESU qui suit
-   print '  Test validation resultats sur erreur VERI_MODE!!! '
+   print('  Test validation resultats sur erreur VERI_MODE!!! ')
    pass
 
 

@@ -46,7 +46,7 @@ Relation[6] = (38,14,17,18,20,27,29,23,26)
 Relation[7] = (39,19,18,15,14,24,23,28,27)
 
 Liaison = {}
-for nb in Relation.keys():
+for nb in list(Relation.keys()):
    Liaison[nb] = ['N%d' %i for i in Relation[nb] ]
 
 DDLS = {}; DDLS['DX'] = ['DX']*9;  DDLS['DY'] = ['DY']*9; DDLS['DZ'] = ['DZ']*9

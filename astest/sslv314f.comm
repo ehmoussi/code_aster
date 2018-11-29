@@ -46,7 +46,7 @@ PRES=-1.E6
 #                 RAFFINEMENT INITIAL
 #--------------------------------------------------------------------
 
-print '_'*3+'INFO'+3*'_'+' raffinement initial'
+print('_'*3+'INFO'+3*'_'+' raffinement initial')
 
 
 # initialisation des concepts pour le raffinement

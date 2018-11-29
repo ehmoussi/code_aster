@@ -249,14 +249,14 @@ for num_calc in range(0,nb_calc1) :
 #     del graphe
 
 # IMPRESSION DANS LE FICHIER MESSAGE DES RESULATS
-   print '**************'
-   print 'CONVERGENCE DE L ENERGIE = ',energie_vs_raff_NUM[:num_calc1]
-   print '**************'
-   print 'CONVERGENCE DE LA FLECHE = ',fleche_vs_raff_NUM[:num_calc1]
-   print '**************'
-   print 'ERREUR EN ENERGIE = ',erenergie_vs_raff_NUM[:num_calc1]
-   print '**************'
-   print 'ERREUR EN FLECHE = ',erfleche_vs_raff_NUM[:num_calc1]
+   print('**************')
+   print(('CONVERGENCE DE L ENERGIE = ',energie_vs_raff_NUM[:num_calc1]))
+   print('**************')
+   print(('CONVERGENCE DE LA FLECHE = ',fleche_vs_raff_NUM[:num_calc1]))
+   print('**************')
+   print(('ERREUR EN ENERGIE = ',erenergie_vs_raff_NUM[:num_calc1]))
+   print('**************')
+   print(('ERREUR EN FLECHE = ',erfleche_vs_raff_NUM[:num_calc1]))
 
 # POUR NE PAS REMAILLER A LA DERNIERE ITERATION
    if num_calc == nb_calc :

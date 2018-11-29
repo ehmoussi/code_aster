@@ -32,7 +32,7 @@ niter = 5000
 mem0 = current_memory_used()
 #message.debug(ALL, "Execution de %d iterations", niter)
 
-for i in xrange(niter):
+for i in range(niter):
     listeR = DEFI_LIST_REEL(DEBUT=1.,
                             INTERVALLE=_F(JUSQU_A=10.,
                                           NOMBRE=50),)

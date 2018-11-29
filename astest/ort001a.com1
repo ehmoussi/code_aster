@@ -33,7 +33,7 @@ diff = abs(valcal - valref)
 
 ttest = CREA_TABLE(LISTE=(
                        _F(PARA='SENSOR',
-                          LISTE_I=range(1, number_of_sensors + 1),),
+                          LISTE_I=list(range(1, number_of_sensors + 1)),),
                        _F(PARA='REFE',
                           LISTE_R=tuple(valref.tolist()),),
                        _F(PARA='CALC',

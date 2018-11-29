@@ -55,7 +55,7 @@ RELV=[None]*10
 interactif  = 0
 
 # Si la variable d'environnement DISPLAY n'est pas definie on desactive l'interactif
-if not os.environ.has_key('DISPLAY'):
+if 'DISPLAY' not in os.environ:
   interactif = 0
 
 # Commande Gmsh (elle ne fait rien si c'est la version batch de Gmsh)
@@ -188,8 +188,8 @@ for k in range(1,10):
 
    SYY=RELV[k]['VMIS',4]
 
-   print " Iteration numero ",k, " RC = ",RC
-   print " VMIS(",k,")=",SYY
+   print(" Iteration numero ",k, " RC = ",RC)
+   print(" VMIS(",k,")=",SYY)
 
    f2.write("RC= %3f "  % RC)
    f2.write("Vmis= %3f \n"  % SYY)
@@ -203,7 +203,7 @@ for k in range(1,10):
   #                  en f2.close)
 
    if abs(SYY)<crit:
-     print "arret des iterations  : iteration numero",k
+     print("arret des iterations  : iteration numero",k)
      break
 
    # Le critere n'est pas respecte, on continue les iterations

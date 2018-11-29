@@ -228,7 +228,7 @@ RMECA = [None]*Npos
 
 # Ecrevisse : parameter ichal>=0
 #
-for icalc in xrange(Npos):
+for icalc in range(Npos):
 
   ichal = lst_ichal[icalc]
   titre = 'IFROT=2, IFLOW=4, ICHAL='+str(ichal)

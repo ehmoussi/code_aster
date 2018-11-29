@@ -284,7 +284,7 @@ SOLNL=CALC_CHAMP(reuse=SOLNL,RESULTAT=SOLNL,DEFORMATION=('EPSG_ELGA'))
 
 nbnum=100
 pas=20
-ORD_MED = DEFI_LIST_ENTI(VALE = range(pas,nbnum+pas,pas),);
+ORD_MED = DEFI_LIST_ENTI(VALE = list(range(pas,nbnum+pas,pas)),);
 
 IMPR_RESU(FORMAT='MED',
           RESU=_F(RESULTAT=SOLNL,
@@ -385,7 +385,7 @@ for i in range(1,13):
                        COULEUR = i,
                        MARQUEUR = i,
                        FREQ_MARQUEUR = 10,
-                       LEGENDE= unicode(system[i],'iso-8859-1').encode('utf-8'),),),
+                       LEGENDE= str(system[i],'iso-8859-1').encode('utf-8'),),),
             UNITE=30,);
 
     IMPR_FONCTION(
@@ -399,7 +399,7 @@ for i in range(1,13):
                        COULEUR= i,
                        MARQUEUR = i,
                        FREQ_MARQUEUR = 10,
-                       LEGENDE= unicode(system[i],'iso-8859-1').encode('utf-8'),),),
+                       LEGENDE= str(system[i],'iso-8859-1').encode('utf-8'),),),
             UNITE=31,);
 
 DEFI_FICHIER(UNITE = 30,

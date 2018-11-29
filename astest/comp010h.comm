@@ -203,7 +203,7 @@ def EXTR_FONC_NAP(nappe,temp,YOUN) :
 #   en sortie, courbe de traction a cette temperature
     epsmax=1.
     npas=200
-    l=N.array(range(0,npas))
+    l=N.array(list(range(0,npas)))
     labs=[]
     lsig=[]
     lepsp=l*epsmax/npas

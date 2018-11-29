@@ -29,7 +29,7 @@ from functools import partial
 from glob import glob
 import traceback
 import multiprocessing as MPR
-import Queue
+import queue
 import time
 import signal
 
@@ -59,7 +59,7 @@ try:
     loginfo = partial(aster.affiche, 'MESSAGE')
 except ImportError:
     def loginfo(msg):
-        print msg
+        print(msg)
 logdbg = None
 
 
@@ -180,8 +180,8 @@ class AspellCall(object):
 
     def _clean(self, string):
         """clean 'string' before passing it to aspell"""
-        if type(string) is not unicode:
-            string = unicode(string, ENCODING)
+        if type(string) is not str:
+            string = str(string, ENCODING)
         uwords = self._rxspl.split(string.strip())
         uwords = [i for i in uwords if i and not i[0].isdigit()]
         string = ' '.join([i.encode(ENCODING) for i in uwords if len(i) > 1])
@@ -201,7 +201,7 @@ class AspellCall(object):
             try:
                 resp.append(self.queue.get_nowait())
                 #logdbg and logdbg('returns: %r' % resp[-1])
-            except Queue.Empty:
+            except queue.Empty:
                 if len(resp) == 0 or resp[-1] != '':
                     continue
                 break
@@ -226,11 +226,11 @@ def get_cata_msg(catamess):
         mod = __import__('Messages.%s' % catamess, d, d, [catamess])
         reload(mod)
         cata_msg = getattr(mod, 'cata_msg', {})
-    except UnicodeDecodeError, exc:
+    except UnicodeDecodeError as exc:
         UTMESS('F', 'CATAMESS_1',
                valk=("Encodage invalide pour le fichier de messages : '%s'" % catamess,
                      traceback.format_exc()))
-    except Exception, exc:
+    except Exception as exc:
         UTMESS('F', 'CATAMESS_1',
                valk=("Nom du fichier de messages : '%s'" % catamess,
                      traceback.format_exc()))
@@ -260,7 +260,7 @@ def check_msg(checker, catamess, msg, key, lang):
     if type(msg) is str:
         if catamess != "vide":
             checker.error("%s is str" % idmess)
-    elif type(msg) is not unicode:
+    elif type(msg) is not str:
         checker.error(lang, "%s has a wrong type" % idmess)
     if msg.strip() == '' and catamess != "vide":
         checker.error("%s is empty : use VIDE_1 for that!" % idmess)
@@ -274,7 +274,7 @@ def check_msg(checker, catamess, msg, key, lang):
     txt = None
     try:
         txt = ufmt(msg, VALUES)
-    except Exception, exc:
+    except Exception as exc:
         trace = repr(exc)
         checker.error("%s can not be formatted :\nmessage: %r\n%s" % (idmess, msg, trace))
     # check arguments
@@ -337,7 +337,7 @@ def check_catamess(checker, lang, l_cata):
         if catamess == 'dvp':
             continue
         cata_msg = get_cata_msg(catamess)
-        for key, msg in cata_msg.items():
+        for key, msg in list(cata_msg.items()):
             if type(msg) == dict:
                 msg  = msg['message']
             check_msg(checker, catamess, msg, key, lang)
@@ -369,7 +369,7 @@ def supv002_ops(self, ERREUR, **kwargs):
     previous_errors = set(ERREUR)
     os.environ['LANG'] = 'fr_FR.utf8'
     # remove all LC_xxxx variables
-    keys = [k for k in os.environ.keys() if k.startswith('LC_')]
+    keys = [k for k in list(os.environ.keys()) if k.startswith('LC_')]
     for k in keys:
         del os.environ[k]
     msgdir = osp.dirname(Messages.__file__)
@@ -380,10 +380,10 @@ def supv002_ops(self, ERREUR, **kwargs):
     do_check = True
     try:
         MPR.Queue()
-    except ImportError, exc:
+    except ImportError as exc:
         if 'sem_open implementation' in str(exc):
             do_check = False
-            print "\n  <A> Problem detected ! supv002a can not run on this machine\n\n"
+            print("\n  <A> Problem detected ! supv002a can not run on this machine\n\n")
     if do_check:
         try:
             aspell = AspellCall(get_personal_dict(), 'fr', ENCODING)
@@ -415,8 +415,8 @@ def supv002_ops(self, ERREUR, **kwargs):
         torm = []
 
     if kwargs.get('unittest'):
-        print warns
-        print errors
+        print(warns)
+        print(errors)
         return 1
 
     if nberr > 0:

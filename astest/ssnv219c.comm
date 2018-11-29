@@ -431,8 +431,8 @@ for Raff in range(0,Nb_Raffinement):
 # Impression de la courbe de convergence
 #================================================================================================
 
-print 'Norme L2 de l erreur sur la surface= %e' %dicResu['NormeL2ErreurU_Surf']
-print 'Norme L2 de l erreur dans le volume= %e' %dicResu['NormeL2ErreurU_Volu']
+print('Norme L2 de l erreur sur la surface= %e' %dicResu['NormeL2ErreurU_Surf'])
+print('Norme L2 de l erreur dans le volume= %e' %dicResu['NormeL2ErreurU_Volu'])
 
 PenteL2U_Surf=-math.log( NormeL2ErreurU_Surf[-1]/NormeL2ErreurU_Surf[-2])/math.log(2.)
 PenteL2U_Volu=-math.log( NormeL2ErreurU_Volu[-1]/NormeL2ErreurU_Volu[-2])/math.log(2.)

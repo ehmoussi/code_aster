@@ -125,7 +125,7 @@ def LIST_CARA_CIRCONF(GROUP_MA,VECT_2,MAILLAGE,**args):
          # Noter que comme GRILLE est un mot-cle facteur, il
          # contient un dictionnaire
          mon_dico={}
-         for cle in args["GRILLE"].keys():
+         for cle in list(args["GRILLE"].keys()):
             mon_dico[cle]=args["GRILLE"][cle]
          mon_dico["MAILLE"]=nom_maille
          mon_dico["ANGL_REP_1"]=(alpha,beta)

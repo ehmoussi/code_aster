@@ -53,7 +53,7 @@ help(aster.get_option_dependency)
 # test que le dictionnaire anglais est disponible
 # Noyau/N_ASSD.py: assd.__convert__
 from code_aster.Cata.Syntax import tr
-translation = tr(u"On attend un objet concept.")
+translation = tr("On attend un objet concept.")
 test = translation == "A concept object is expected."
 
 tab2 = CREA_TABLE(LISTE=(_F(PARA='BOOL',

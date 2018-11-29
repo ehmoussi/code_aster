@@ -39,7 +39,7 @@ Young = 9.e+9 ;
 
 Mu= Young/2./(1+Poisson);
 
-print ' ==> Young =',Young,' Poisson =',Poisson
+print(' ==> Young =',Young,' Poisson =',Poisson)
 
 # propriétés anélastiques (Mohr-Coulomb)
 # ================================================
@@ -58,8 +58,8 @@ else:
   Phi = 17.93 ;
   cohes=1.91e6;
 
-print ' ==> Mohr-Coulomb'
-print '     Psi =',Psi,' Phi =',Phi,' Cohes =',cohes
+print(' ==> Mohr-Coulomb')
+print('     Psi =',Psi,' Phi =',Phi,' Cohes =',cohes)
 
 # DEFINITION DES CONSTANTES
 # ====================================

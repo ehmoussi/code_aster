@@ -63,7 +63,7 @@ except ImportError:
        vers = ' 6. x. y'
 
 if vers < ' 8. 2. 0' :
-   raise aster.error, """ <meshtool> doesn't work before version 8.2"""
+   raise aster.error(""" <meshtool> doesn't work before version 8.2""")
 
 if vers >= ' 9. 2.18':
     opts_debut['IGNORE_ALARM'] = 'SUPERVIS_1'
@@ -72,17 +72,17 @@ if vers >= ' 9. 2.18':
 # lecture du fichier de paramètres
 if os.path.exists(fpara):
    s_para = open(fpara, 'r').read()
-   print """
+   print(("""
 # ========================================= #
 #           FICHIER DE PARAMETRES           #
 
 %s
 # ========================================= #
-""" % s_para
-   execfile(fpara)
+""" % s_para))
+   exec(compile(open(fpara).read(), fpara, 'exec'))
 else:
-   raise aster.error, """ <meshtool> File not found : %s
-            It should have been created by meshtool script...""" % fpara
+   raise aster.error(""" <meshtool> File not found : %s
+            It should have been created by meshtool script...""" % fpara)
 
 # -----------------------------------------------------------------------------
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),
@@ -142,8 +142,8 @@ if info_mail:
       MACR_INFO_MAIL(MAILLAGE=ma,
                      **opts_info_mail)
    except aster.error as msg:
-      print """Erreur lors de l'appel à HOMARD..."""
-      print msg
+      print("""Erreur lors de l'appel à HOMARD...""")
+      print(msg)
 
 aster.onFatalError('ABORT')
 

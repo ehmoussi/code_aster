@@ -468,7 +468,7 @@ Norme25 = POST_ELEM(MODELE=MODELE,
 IMPR_TABLE(TABLE=Norme25, )
 n2 = math.sqrt( Norme25['INTE_X1',1])
 
-print n2
+print(n2)
 
 RES = CALC_CHAMP(
     reuse=RES,

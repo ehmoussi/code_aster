@@ -176,7 +176,7 @@ INTERF1=DEFI_INTERF_DYNA(  NUME_DDL=NUM1,
 #
 BAMO1=DEFI_BASE_MODALE(  CLASSIQUE=_F( INTERF_DYNA = INTERF1,
                                          MODE_MECA = MODES1,
-                                         NMAX_MODE = 05))
+                                         NMAX_MODE = 0o5))
 
 #
 MACRO1=MACR_ELEM_DYNA(  BASE_MODALE=BAMO1,)
@@ -306,7 +306,7 @@ INTERF2=DEFI_INTERF_DYNA(   NUME_DDL=NUM2,
 #
 BAMO2=DEFI_BASE_MODALE(  CLASSIQUE=_F( INTERF_DYNA = INTERF2,
                                          MODE_MECA = MODES2,
-                                         NMAX_MODE = 05))
+                                         NMAX_MODE = 0o5))
 
 #
 MACRO2=MACR_ELEM_DYNA(  BASE_MODALE=BAMO2,)

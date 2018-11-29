@@ -186,11 +186,11 @@ a = []
 b = []
 
 #   FONCTION AMPLITUDE CONSTANTE
-for i in xrange(nb_cy_max) :
+for i in range(nb_cy_max) :
   a.extend((2*i,val_inf,2*i+1,val_sup))
 
 #   FONCTION AMPLITUDE CONSTANTE ET SURCHARGE
-for i in xrange(nb_cy_1) :
+for i in range(nb_cy_1) :
   b.extend((2*i,val_inf,2*i+1,val_sup))
 
 for i in range(nb_cy_1,nb_cy_2) :

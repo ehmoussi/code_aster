@@ -24,7 +24,7 @@ import sys
 import unittest
 
 # to be runnable without aster module
-if not 'DEBUT' in globals().keys():
+if not 'DEBUT' in list(globals().keys()):
     def does_nothing(**kwargs):
         """empty function"""
         return

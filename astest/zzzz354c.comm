@@ -224,7 +224,7 @@ RMECA = [None]*Npos
 # User defined friction coefficient
 #  --> Ecrevisse : parameter -5<ifrot<0
 #
-for icalc in xrange(Npos):
+for icalc in range(Npos):
 
     kgtest = 0.5
     ifrot  = lst_frot[icalc]

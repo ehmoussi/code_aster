@@ -30,10 +30,10 @@ F0=P0/K0
 comment =\
 '_______________________________________________________________________'
 
-print comment
-print ' ----- PARAMETRES DE REDIEMNSIONNEMENT -----\n\n'
-print '>> K0 = %e; P0 = %e; T0 = %e; F0 = %e'  %(K0,P0,T0,F0)
-print comment
+print(comment)
+print(' ----- PARAMETRES DE REDIEMNSIONNEMENT -----\n\n')
+print('>> K0 = %e; P0 = %e; T0 = %e; F0 = %e'  %(K0,P0,T0,F0))
+print(comment)
 
 # Nombre de couches
 # (dont la couche elastique correspondant au BEDROCK)
@@ -98,7 +98,7 @@ for n in range(nbcouche-1):
 
   list_group_ma.append('ELEM'+str(n+1));
   list_group_ma_.append('ELEMS'+str(n+1));
-  print '   n=',n,'; liste=',list_group_ma
+  print('   n=',n,'; liste=',list_group_ma)
 
   MOD[n] = AFFE_MODELE(MAILLAGE=MA,
                        AFFE=(_F(GROUP_MA   =tuple(list_group_ma),
@@ -337,16 +337,16 @@ for n in range(1,nbcouche-1):
              OBJET=_F(CHAINE=('CHLAT','CHPAR','PHAUT','SIEF',),),);
 
     n_couche = n+2
-    print ' > n_couche          =',n_couche
+    print(' > n_couche          =',n_couche)
 
     list_noeu_haut.append(list_no_later_dro[n_couche-1])
 
-    print ' > list_noeu_haut    =',list_noeu_haut
+    print(' > list_noeu_haut    =',list_noeu_haut)
 
     t_init=(n+1)*1.E6 /T0
     t_fin =(n+2)*1.E6 /T0
 
-    print ' > t_init =',t_init,' t_fin =',t_fin
+    print(' > t_init =',t_init,' t_fin =',t_fin)
 
     FONCH = DEFI_FONCTION(NOM_PARA='INST',
                           PROL_DROITE='CONSTANT',
@@ -415,8 +415,8 @@ for n in range(1,nbcouche-1):
                             NOM_CMP =('SIXX','SIYY','SIZZ'),
                             VALE    =(PRES0,PRES0,PRES0,),),);
 
-    print ' > list_group_ma_end =',list_group_ma[:n+1]
-    print '   list_group_ma =',list_group_ma[n+1]
+    print(' > list_group_ma_end =',list_group_ma[:n+1])
+    print('   list_group_ma =',list_group_ma[n+1])
 
     # Initialisation des champs de deplacement et de contrainte dans les couches
     # deja calculees

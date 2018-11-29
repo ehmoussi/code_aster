@@ -3,7 +3,7 @@ import numpy
 def lissGchap(TAB_G, absc='ABSC_CURV', val='G'):
   # Seulement pour des maillages quadratiques et fissure debouchante
   # Cf CR-I20-2010-11
-  resu = TAB_G.EXTR_TABLE().values()
+  resu = list(TAB_G.EXTR_TABLE().values())
   valG = numpy.array(resu[val])
   valAbsCurv = numpy.array(resu[absc])
   valOrdre = numpy.array(resu['NUME_ORDRE'])
@@ -26,7 +26,7 @@ def lissGchap(TAB_G, absc='ABSC_CURV', val='G'):
 def lissGbar(TAB_G, absc='ABSC_CURV', val='G'):
   # Seulement pour des maillages quadratiques et fissure debouchante
   # Cf CR-I20-2010-11
-  resu = TAB_G.EXTR_TABLE().values()
+  resu = list(TAB_G.EXTR_TABLE().values())
   valG = numpy.array(resu[val])
   valAbsCurv = numpy.array(resu[absc])
   valOrdre = numpy.array(resu['NUME_ORDRE'])

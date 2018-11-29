@@ -91,7 +91,7 @@ inst_init = 0
 inst_fix = pas_calcul = 4     # environ 1 min de calcul
 
 # LISTE DES IAMGES PRISES EN COMPTE
-inst2do = [inst_init,inst_fix] + range(inst_fix+pas_calcul,inst_2_reach+1,pas_calcul)
+inst2do = [inst_init,inst_fix] + list(range(inst_fix+pas_calcul,inst_2_reach+1,pas_calcul))
 
 # LISTES DES INCREMENTS DE DEPLACEMENTS 
 XHA = [None]*(nr_img+1)

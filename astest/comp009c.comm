@@ -250,7 +250,7 @@ def EXTR_FONC_NAP(nappe,temp,YOUN) :
 #   en sortie, courbe de traction a cette temperature
     epsmax=1.
     npas=200
-    l=N.array(range(0,npas))
+    l=N.array(list(range(0,npas)))
     labs=[]
     lsig=[]
     lepsp=l*epsmax/npas
@@ -294,7 +294,7 @@ for i in range(1,NCAL+1):
 
           epsimp =DEFI_CONSTANTE(VALE=-ALPH(Ti)*(Ti - TREF));
 
-          print 'i=',i, ' instant=', time, ' Temperature=',Ti
+          print(('i=',i, ' instant=', time, ' Temperature=',Ti))
 
           # variation des coef du comportement avec la temperature
           # correction eventuelle des valeurs initiales du temps ti

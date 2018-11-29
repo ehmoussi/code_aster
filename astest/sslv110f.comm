@@ -57,11 +57,11 @@ if typ_ma == 'grossier' :
    # attention, en python log = ln (logarithme neperien)
    n = (log(h0)-log(hc))/log(2)
    nb_raff = int(n)+1
-   print '***INFO*** : nb_raff = ',nb_raff
+   print('***INFO*** : nb_raff = ',nb_raff)
 
    # taille des mailles apres raffinement
    h = h0/(2.**nb_raff)
-   print '***INFO*** : h = ',h
+   print('***INFO*** : h = ',h)
 
    # rayon du disque de raffinement
    r_raff = 5*h

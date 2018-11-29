@@ -95,7 +95,7 @@ TABFREQ = RECU_TABLE(CO=modes, NOM_PARA=('FREQ','MASS_EFFE_DX','MASS_EFFE_DY','M
 IMPR_TABLE(TABLE=TABFREQ)
 
 w2=(2.*pi*TABFREQ['FREQ',1])**2
-print 'Omega**2', w2
+print(('Omega**2', w2))
 
 # Calcul des matrices de masse et de raideur generalisees 
 

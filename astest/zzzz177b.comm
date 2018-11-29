@@ -25,7 +25,7 @@ DEBUT (CODE=_F(
        DEBUG=_F(SDVERI='OUI'))
 
 tab1 = CREA_TABLE(LISTE=(_F(PARA='NUME_ORDRE',
-                            LISTE_I=range(1, 7)),
+                            LISTE_I=list(range(1, 7))),
                          _F(PARA='FREQ',
                             LISTE_R=(1.35889E+01, 1.35889E+01,
                                      1.98058E+01, 1.9805801E+01,

@@ -230,7 +230,7 @@ tabL2=POST_ERREUR(OPTION='LAGR_RELA',
 
 IMPR_TABLE(TABLE=tabL2)
 
-print "I=", pres_cont*EXP(0.1)*sqrt(2.*math.pi*R2)
+print("I=", pres_cont*EXP(0.1)*sqrt(2.*math.pi*R2))
 
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='ANALYTIQUE',

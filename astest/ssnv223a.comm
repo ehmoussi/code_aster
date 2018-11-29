@@ -113,11 +113,11 @@ TRACTION = AFFE_CHAR_MECA(
     _F(GROUP_NO='G00',DX=dx[00],DY=dy[00]),
     _F(GROUP_NO='G20',DX=dx[20],DY=dy[20]),
     _F(GROUP_NO='G22',DX=dx[22],DY=dy[22]),
-    _F(GROUP_NO='G02',DX=dx[02],DY=dy[02]),
+    _F(GROUP_NO='G02',DX=dx[0o2],DY=dy[0o2]),
     _F(GROUP_NO='G10',DX=dx[10],DY=dy[10]),
     _F(GROUP_NO='G21',DX=dx[21],DY=dy[21]),
     _F(GROUP_NO='G12',DX=dx[12],DY=dy[12]),
-    _F(GROUP_NO='G01',DX=dx[01],DY=dy[01]),
+    _F(GROUP_NO='G01',DX=dx[0o1],DY=dy[0o1]),
     ),
   )
 

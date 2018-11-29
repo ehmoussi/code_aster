@@ -126,7 +126,7 @@ PLATEAU=DEFI_FONCTION(NOM_PARA='INST',
 
 l_inst = [2e-5*i for i in range(10)]
 l_inst.append(0.004)
-l_nume_ordre = range(100,105)
+l_nume_ordre = list(range(100,105))
 
 
 TAB1 = CO('TAB1')

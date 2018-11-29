@@ -33,10 +33,10 @@ proc = Popen(['mtest-3.1.1', 'fort.22'], stdout=PIPE)
 out = proc.communicate()[0]
 
 codret=proc.returncode + 1
-print 'codret=',codret
+print(('codret=',codret))
 
-if codret <> 0 :
-    print out
+if codret != 0 :
+    print(out)
 
 
 Fres=DEFI_FONCTION(NOM_PARA='INST',ABSCISSE=[0.,1.], ORDONNEE=[0.,codret])

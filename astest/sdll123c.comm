@@ -501,16 +501,16 @@ if (variante==1) :
   for vp in fr:
      i=i+1
      if (abs(vp)==0) :
-       print i,'infinity'
+       print((i,'infinity'))
      else       :
        vp1=(1/vp)
        if (sym=='oui') :
          vp1r=sqrt(abs(vp1))/2/pi
-         print i,vp1r
+         print((i,vp1r))
        else :
          vp1r=sqrt(abs(vp1.real))/2/pi
          vp1i=0.5*vp1.imag/vp1.real
-         print i,vp1r,vp1i
+         print((i,vp1r,vp1i))
 
 else :
 # variante 2 : M-1*K U = lambda * U
@@ -522,16 +522,16 @@ else :
   for vp in fr:
      i=i+1
      if (abs(vp)==0) :
-       print i,'zero'
+       print((i,'zero'))
      else       :
        vp1=vp
        if (sym=='oui') :
          vp1r=sqrt(abs(vp1))/2/pi
-         print i,vp1r
+         print((i,vp1r))
        else :
          vp1r=sqrt(abs(vp1.real))/2/pi
          vp1i=0.5*vp1.imag/vp1.real
-         print i,vp1r,vp1i
+         print((i,vp1r,vp1i))
 
 TEST_RESU(RESU=(_F(NUME_ORDRE=1,
                    PARA='FREQ',
@@ -720,11 +720,11 @@ if (variante==1) :
   for vp in fr:
      i=i+1
      if (abs(vp)==0) :
-       print i,'zero'
+       print((i,'zero'))
      else       :
        vp1r=vp.real
        vp1i=vp.imag/2/pi
-       print i,vp1i,-vp1r/abs(vp)
+       print((i,vp1i,-vp1r/abs(vp)))
 
 aster_core.matfpe(+1)
 

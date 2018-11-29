@@ -57,7 +57,7 @@ Relation[0] = (12,3,2,10,9)
 Relation[1] = (15,10,9,7,6)
 
 Liaison = {}
-for nb in Relation.keys():
+for nb in list(Relation.keys()):
    Liaison[nb] = ['N%d' %i for i in Relation[nb] ]
 
 DDLS = {};
@@ -453,7 +453,7 @@ coord= {
 }
 
 Liaison = {}
-for nb in Relation.keys():
+for nb in list(Relation.keys()):
    Liaison[nb]  = ['N%d' %i for i in Relation[nb] ]
    Liaison[nb] += ['N%d' %i for i in Relation[nb][1:] ]
    Liaison[nb] += ['N%d' %i for i in Relation[nb][1:] ]
@@ -463,7 +463,7 @@ DDLS['DY']  = ['DY']*5 + ['DRX']*4 + ['DRZ']*4
 DDLS['DZ']  = ['DZ']*5 + ['DRX']*4 + ['DRY']*4
 
 COEFFS  = {}
-for nb in Relation.keys():
+for nb in list(Relation.keys()):
    COEFFS[nb] = {}
    COEFFS[nb]['DX'] =[-1.0] +  [un4]*4
    COEFFS[nb]['DX']+=[  un4*(coord[Relation[nb][0]][2] - coord[i][2])  for i in Relation[nb][1:] ]

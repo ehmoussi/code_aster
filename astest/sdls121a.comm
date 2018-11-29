@@ -40,7 +40,7 @@ liste_mac=[]
 for i in range(NF):
     liste_mac.append(1.0)
 
-REPEXP2=CREA_TABLE(LISTE=(_F(PARA='NUME_ORDRE',LISTE_I=range(1,NF+1),),
+REPEXP2=CREA_TABLE(LISTE=(_F(PARA='NUME_ORDRE',LISTE_I=list(range(1,NF+1)),),
                           _F(PARA='MAC_EXP',LISTE_R=liste_mac,),
                        ),);
 

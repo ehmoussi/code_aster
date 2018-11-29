@@ -155,7 +155,7 @@ TEST_TABLE(TABLE=MASSE, NOM_PARA='MASSE', VALE_CALC=3.7742851573,)
 
 for ii in range(len(Instant)):
     itemps = Instant[ii]
-    print "Instant   %d " % itemps
+    print(("Instant   %d " % itemps))
     # Matrice elementaire de rigidite
     MELRIG=CALC_MATR_ELEM(
         OPTION='RIGI_MECA',

@@ -117,8 +117,8 @@ try :
                         CONVERGENCE=_F(RESI_GLOB_RELA=1.0E-6,
                                        ITER_GLOB_MAXI=10));
 
-except aster.error,err:
-   print fmt_raison % str(err)
+except aster.error as err:
+   print((fmt_raison % str(err)))
    # on verifie que l'erreur fatale est bien celle que l'on attendait :
    if err.id_message == "CONTACT_93":
       is_ok = 1

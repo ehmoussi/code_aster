@@ -200,10 +200,10 @@ resY=forcY+2.9443664E6*(tan12[1]+tan14[1])
 
 res=numpy.sqrt(resX**2+resY**2)
 
-print 'RESULTANTE'
-print forcX,forcY
-print resX,resY
-print res
+print('RESULTANTE')
+print(forcX,forcY)
+print(resX,resY)
+print(res)
 
 TABREAC = CREA_TABLE(
              LISTE=(_F(

@@ -51,8 +51,8 @@ TSec22b=MACR_CARA_POUTRE(
 try:
     TSec22a=MACR_CARA_POUTRE(
         MAILLAGE=MSec22a, TABLE_CARA='OUI', GROUP_MA_BORD='BORDLIB', NOM='TAB22a', NOEUD='N1',)
-except aster.error,err:
-    print fmt_raison % str(err)
+except aster.error as err:
+    print(fmt_raison % str(err))
     # on vérifie que l'erreur fatale est bien celle que l'on attendait :
     if err.id_message == "POUTRE0_11": is_11 = 1
 
@@ -82,8 +82,8 @@ try:
             _F(GROUP_FIBRE='GrFib22', GROUP_MA = ('GrSect22',),),
         ),
     )
-except aster.error,err:
-    print fmt_raison % str(err)
+except aster.error as err:
+    print(fmt_raison % str(err))
     # on vérifie que l'erreur fatale est bien celle que l'on attendait :
     if err.id_message == "MODELISA8_6": is_86 = 1
 

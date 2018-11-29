@@ -265,7 +265,7 @@ if 0 :
             if xcomp.point[k] in (1,3,6) : dico[(xcomp.maille[k],xcomp.point[k])][1]= xcomp.valeurs[k]
 
         # on trie par x croissant et on fabrique les 2 listes de reels : vx, vy
-        l1=dico.values()
+        l1=list(dico.values())
         l1.sort()
         vx=[]; vy=[]
         for (x,y) in l1 :

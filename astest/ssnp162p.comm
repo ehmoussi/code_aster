@@ -121,7 +121,7 @@ LIAISON=AFFE_CHAR_MECA(
   )
 
 # CREATION DE LISTE D'INSTANT
-L_INST=DEFI_LIST_REEL(VALE=range(insfin+1))
+L_INST=DEFI_LIST_REEL(VALE=list(range(insfin+1)))
 
 
 ###################################################################################

@@ -35,7 +35,7 @@ PASV = 250.0;
 VIT=NP.arange(DEBV,FINV+1,PASV);
 nbV=len(VIT);
 nbF=12;
-print nbV
+print(nbV)
 L_VITROT=[VIT[ii]*pi/30. for ii in range(nbV)];
 
 VA={}

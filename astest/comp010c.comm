@@ -150,7 +150,7 @@ for i in range(NCAL):
 
           tempi= DEFI_FONCTION (NOM_PARA='INST',NOM_RESU='TEMP',
                                 VALE=(timem,Ti,time,Ti));
-          print 'i=',i, ' instant=', time, ' Temperature=',Ti, 'epsimp=',epsimp
+          print(('i=',i, ' instant=', time, ' Temperature=',Ti, 'epsimp=',epsimp))
 
           if i > 0 :
              SXM = SXM *(YOUN(Ti)/YOUN(Tm))

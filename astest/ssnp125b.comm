@@ -161,7 +161,7 @@ try :
                                 ITER_GLOB_MAXI =  26,),
                            );
 except aster.NonConvergenceError:
-     print """\nProbleme de convergence pour cause de localisation\n"""
+     print("""\nProbleme de convergence pour cause de localisation\n""")
 # ON RECUPERE LE DERNIER INSTANT PROPREMENT CALCULE DANS STAT_NON_LINE
 # POUR FAIRE UNE VERIFICATION EN NON-REGRESSION SUR CE NUMERO D'ORDRE
 

@@ -108,26 +108,26 @@ nu=0.3
 # Corps du programme
 # ----------------------------------------------------------------------
 # ----------------------------------------------------------------------
-print "****************************************************************"
-print "****************************************************************"
-print "*                                                              *"
-print "*     Test de validation de l'estimateur d'erreur en residu    *"
-print "*                Calcul des valeurs de reference               *"
-print "*                                                              *"
-print "****************************************************************"
-print "****************************************************************"
-print ""
-print "************************************************"
-print "* Probleme etudie :                            *"
-print "************************************************"
-print ""
-print "/N4********N3---->"
-print "/*       *  *---->"
-print "/* M2  *    *---->"
-print "/*   *  M1  *---->"
-print "/* *        *---->"
-print "/N1********N2---->"
-print ""
+print("****************************************************************")
+print("****************************************************************")
+print("*                                                              *")
+print("*     Test de validation de l'estimateur d'erreur en residu    *")
+print("*                Calcul des valeurs de reference               *")
+print("*                                                              *")
+print("****************************************************************")
+print("****************************************************************")
+print("")
+print("************************************************")
+print("* Probleme etudie :                            *")
+print("************************************************")
+print("")
+print("/N4********N3---->")
+print("/*       *  *---->")
+print("/* M2  *    *---->")
+print("/*   *  M1  *---->")
+print("/* *        *---->")
+print("/N1********N2---->")
+print("")
 
 # Boucle sur les elements
 nbel = 2
@@ -139,31 +139,31 @@ for i in range(nbel) :
 # Dessins
 #
     if (i==0) :
-        print ""
-        print "************************************************"
-        print "* Element n 1 :                                *"
-        print "************************************************"
-        print ""
-        print "          N3"
-        print "        *  *"
-        print "      *    *"
-        print "    *      *"
-        print "  *        *"
-        print "N1********N2"
-        print ""
+        print("")
+        print("************************************************")
+        print("* Element n 1 :                                *")
+        print("************************************************")
+        print("")
+        print("          N3")
+        print("        *  *")
+        print("      *    *")
+        print("    *      *")
+        print("  *        *")
+        print("N1********N2")
+        print("")
     else :
-        print ""
-        print "************************************************"
-        print "* Element n 2 :                                *"
-        print "************************************************"
-        print ""
-        print "N4********N3"
-        print "*       *   "
-        print "*     *     "
-        print "*   *       "
-        print "* *         "
-        print "N1          "
-        print ""
+        print("")
+        print("************************************************")
+        print("* Element n 2 :                                *")
+        print("************************************************")
+        print("")
+        print("N4********N3")
+        print("*       *   ")
+        print("*     *     ")
+        print("*   *       ")
+        print("* *         ")
+        print("N1          ")
+        print("")
 
 # Test sur le type de bord
     if (i==0) :
@@ -214,11 +214,11 @@ for i in range(nbel) :
 # Integration de Gauss sur un point
 #
     norsig[i] = NP.sqrt((spg11**2 + spg22**2 + spg33**2 + spg12**2) * jacob * poids)
-    print "Element(",i+1,"),             norme de sigma =",norsig[i]
+    print("Element(",i+1,"),             norme de sigma =",norsig[i])
     terme1[i] = he**2 * (((forx + dsx)**2 + (fory + dsy)**2) * jacob * poids)**2
-    print "Element(",i+1,"),  valeur absolue du terme 1 =",coef*terme1[i]
+    print("Element(",i+1,"),  valeur absolue du terme 1 =",coef*terme1[i])
     relatif[i,0] = 100. * NP.sqrt( terme1[i]**2 / ( terme1[i]**2 + norsig[i]**2 ) )
-    print "Element(",i+1,"), valeur relative du terme 1 =",relatif[i,0],"%"
+    print("Element(",i+1,"), valeur relative du terme 1 =",relatif[i,0],"%")
 #
 # ----------------------------------------------------------------------
 # Calcul du deuxieme terme
@@ -253,9 +253,9 @@ for i in range(nbel) :
 # Integration de Newton-Cotes sur deux points
 #
     terme2[i] = terme2[i] + 1./2. * hf[i,bord-1] * (NP.sqrt(inte))**2
-    print "Element(",i+1,"),  valeur absolue du terme 2 =",coef*terme2[i]
+    print("Element(",i+1,"),  valeur absolue du terme 2 =",coef*terme2[i])
     relatif[i,1] = 100. * NP.sqrt( terme2[i]**2 / ( terme2[i]**2 + norsig[i]**2 ) )
-    print "Element(",i+1,"), valeur relative du terme 2 =",relatif[i,1],"%"
+    print("Element(",i+1,"), valeur relative du terme 2 =",relatif[i,1],"%")
 #
 # ----------------------------------------------------------------------
 # Calcul du troisieme terme
@@ -279,18 +279,18 @@ for i in range(nbel) :
 # Integration de Newton-Cotes sur deux points
 #
     terme3[i] = terme3[i] + hf[i,listbord-1] * (NP.sqrt(inte))**2
-    print "Element(",i+1,"),  valeur absolue du terme 3 =",coef*terme3[i]
+    print("Element(",i+1,"),  valeur absolue du terme 3 =",coef*terme3[i])
     relatif[i,2] = 100. * NP.sqrt( terme3[i]**2 / ( terme3[i]**2 + norsig[i]**2 ) )
-    print "Element(",i+1,"), valeur relative du terme 3 =",relatif[i,2],"%"
+    print("Element(",i+1,"), valeur relative du terme 3 =",relatif[i,2],"%")
 #
 # ----------------------------------------------------------------------
 # Calcul de l'erreur par element
 # ----------------------------------------------------------------------
 #
     terme[i] = coef*NP.sqrt(terme1[i] + terme2[i] + terme3[i])
-    print "Element(",i+1,"),  valeur absolue de l'erreur =",terme[i]
+    print("Element(",i+1,"),  valeur absolue de l'erreur =",terme[i])
     relatif[i,3] = 100. * NP.sqrt( terme[i]**2 / ( terme[i]**2 + norsig[i]**2 ) )
-    print "Element(",i+1,"), valeur relative de l'erreur =",relatif[i,3],"%"
+    print("Element(",i+1,"), valeur relative de l'erreur =",relatif[i,3],"%")
 #
 # ----------------------------------------------------------------------
 # Calcul de l'erreur globale
@@ -302,15 +302,15 @@ erreur = NP.sqrt(erreur)
 norme = NP.sqrt(norme)
 errela = 100. * NP.sqrt( erreur**2 / ( erreur**2 + norme**2 ) )
 
-print ""
-print ""
-print "************************************************"
-print "* Estimateur d'erreur en residu                *"
-print "************************************************"
-print ""
-print " Erreur absolue estimee =",erreur
-print "Erreur relative estimee =",errela,"%"
-print "Norme de sigma calculee =",norme
+print("")
+print("")
+print("************************************************")
+print("* Estimateur d'erreur en residu                *")
+print("************************************************")
+print("")
+print(" Erreur absolue estimee =",erreur)
+print("Erreur relative estimee =",errela,"%")
+print("Norme de sigma calculee =",norme)
 
 #***********************************************************************
 #***********************************************************************

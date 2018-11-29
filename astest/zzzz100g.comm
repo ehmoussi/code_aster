@@ -97,7 +97,7 @@ X, FM = F_vari1.Valeurs()
 moy = np.mean(FM)
 med = np.median(FM)
 bet  = np.std(np.log(FM))
-print 'Y1D: mean median E vari', moy, med,bet
+print('Y1D: mean median E vari', moy, med,bet)
 #Y1D: mean median log std E_vari 19500425931.2 19297681926.4 0.139115524212
 
 E_vari0 = DEFI_PROP_ALEA ( 
@@ -127,7 +127,7 @@ X, FM = F_vari0.Valeurs()
 moy = np.mean(FM)
 med = np.median(FM)
 bet  = np.std(np.log(FM))
-print 'Y1D 10m: mean median E vari', moy, med,bet
+print('Y1D 10m: mean median E vari', moy, med,bet)
 #Y1D 0: mean median log std E_vari 19062771857.1 18838570323.7 0.19021264557
 
 
@@ -171,7 +171,7 @@ FM = [x[1][0] for x in FM]
 moy = np.mean(FM)
 med = np.median(FM)
 bet  = np.std(np.log(FM))
-print 'X2D: mean median E vari', moy, med,bet
+print('X2D: mean median E vari', moy, med,bet)
 #X2D: mean median log std E vari 18148893896.2 18046666092.3 0.176371239856
 
 FONC_E  = DEFI_FONCTION ( NOM_RESU    = 'ACCE',  NOM_PARA    = 'INST',

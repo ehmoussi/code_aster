@@ -525,7 +525,7 @@ IMPR_RESU(FORMAT='IDEAS',UNITE=38,PROC0='NON',
 l_resi = []
 for i in range(nbmodes_mes):
     l_resi.append(0.0)
-RESI=CREA_TABLE(LISTE=(_F(PARA='ORDRE',LISTE_I=range(nbmodes_mes),),
+RESI=CREA_TABLE(LISTE=(_F(PARA='ORDRE',LISTE_I=list(range(nbmodes_mes)),),
                           _F(PARA='RESI',LISTE_R=l_resi,),
                        ),);
 
@@ -535,7 +535,7 @@ l_resi2 = []
 for i in range(nbmodes_mes*2):
     l_resi2.append(0.0)
 
-RESI2=CREA_TABLE(LISTE=(_F(PARA='ORDRE',LISTE_I=range(nbmodes_mes*2),),
+RESI2=CREA_TABLE(LISTE=(_F(PARA='ORDRE',LISTE_I=list(range(nbmodes_mes*2)),),
                           _F(PARA='RESI',LISTE_R=l_resi2,),
                        ),);
 

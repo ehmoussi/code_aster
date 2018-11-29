@@ -1,3 +1,4 @@
+from functools import reduce
 # coding=utf-8
 # --------------------------------------------------------------------
 # Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
@@ -28,7 +29,7 @@ def POST_GOUJ_ops(self,TABLE):
   CREA_TABLE  =self.get_cmd('CREA_TABLE')
 
   aa1=TABLE.EXTR_TABLE()
-  aaa=aa1.values()
+  aaa=list(aa1.values())
 
   v_DY=aaa['DY']
   v_NU=aaa['NUME_ORDRE']
@@ -37,7 +38,7 @@ def POST_GOUJ_ops(self,TABLE):
   for num in v_NU :
     if num==v_NU[0] : nbv=nbv+1
   if nbv>0 : ninch=NBVAL/nbv
-  else : print "error"
+  else : print("error")
 
   v_F1=[v_DY[i*nbv:(i+1)*nbv] for i in range(ninch)]
   v_FO=[]
@@ -50,7 +51,7 @@ def POST_GOUJ_ops(self,TABLE):
     v_CU.append([reduce(add,liste[:i+1])*100./ftot for i in range(len(liste))])
 
   v_NF=[]
-  for i in range(ninch)    : v_NF=v_NF+range(1,nbv+1)
+  for i in range(ninch)    : v_NF=v_NF+list(range(1,nbv+1))
   v_RE=[]
   for liste in v_FO : v_RE=v_RE+liste
   v_RC=[]

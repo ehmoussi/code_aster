@@ -36,7 +36,7 @@ def ma_macro_ops(self, TABLE, **kwargs):
     # soit en concept principal.
     self.DeclareOut('tabout', TABLE or self.sd)
     tabout = CREA_TABLE(LISTE=_F(PARA='NUME',
-                                 LISTE_I=range(5),),)
+                                 LISTE_I=list(range(5)),),)
     return 0
 
 def ma_macro_prod(self, TABLE, **kwargs):

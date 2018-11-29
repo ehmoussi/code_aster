@@ -145,7 +145,7 @@ for i in range(NCAL):
                    )
 
 
-          print 'i=',i, ' instant=', time, ' Temperature=',Ti, 'epsimp=',epsimp
+          print(('i=',i, ' instant=', time, ' Temperature=',Ti, 'epsimp=',epsimp))
           if i > 0 :
              SXM = SXM *(YOUN(Ti)/YOUN(Tm))
 
