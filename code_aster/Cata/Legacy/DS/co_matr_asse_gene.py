@@ -40,7 +40,7 @@ def VALM_triang2array(dict_VALM, dim, dtype=None):
    valeur=numpy.zeros([dim, dim], dtype=dtype)
    for i in range(1, dim+1):
      for j in range(1, i+1):
-       k = i*(i-1)/2 + j
+       k = i*(i-1)//2 + j
        valeur[i-1, j-1]=triang_inf[k-1]
        valeur[j-1, i-1]=triang_sup[k-1]
    return valeur
