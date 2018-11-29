@@ -174,7 +174,7 @@ int conv_un_c8( _IN PyObject *tup, _OUT ASTERDOUBLE *val)
     double y = 0.0;
     double *rho = &x;
     double *theta = &y;
-    if(PyComplex_Check(tup)||PyFloat_Check(tup)||PyLong_Check(tup)||PyInt_Check(tup)){
+    if(PyComplex_Check(tup)||PyFloat_Check(tup)||PyLong_Check(tup)){
         /* On est dans le cas d'un objet Python complexe */
         /* representation : partie reelle/partie imaginaire */
         *val    =(ASTERDOUBLE)PyComplex_RealAsDouble(tup);
@@ -238,7 +238,7 @@ void convert( _IN int nval, _IN PyObject *tup, _OUT ASTERINTEGER *val)
     }
     for(i=0;i<nval;i++){
         v=PyTuple_GetItem(tup,i);
-        val[i]=(ASTERINTEGER)PyInt_AsLong(v);
+        val[i]=(ASTERINTEGER)PyLong_AsLong(v);
     }
     return;
 }
@@ -265,7 +265,8 @@ void convertxt( _IN int nval, _IN PyObject *tup, _OUT char *val, _IN STRING_SIZE
         for(i=0;i<nval;i++){
             v=PyTuple_GetItem(tup,i);
             /*                               v=PySequence_GetItem(tup,i); */
-            s=PyString_AsString(v);
+            s=PyUnicode_AsUTF8(v);
+            
             if(s == NULL){
                 printf("s : ");
                 PyObject_Print(v, stdout, 0);
@@ -298,7 +299,7 @@ void converltx( _IN int nval, _IN PyObject *tup, _OUT char *val, _IN STRING_SIZE
         for(i=0;i<nval;i++){
             v=PyList_GetItem(tup,i);
             /* v=PySequence_GetItem(tup,i); */
-            s=PyString_AsString(v);
+            s=PyUnicode_AsUTF8(v);
             if(s == NULL){
                 printf("s : ");
                 PyObject_Print(v, stdout, 0);
@@ -340,7 +341,7 @@ PyObject * MakeTupleString(long nbval, char *kval, STRING_SIZE lkval, ASTERINTEG
         } else {
             len = lkval;
         }
-        if( PyTuple_SetItem(tupl,i,PyString_FromStringAndSize(deb,FStrlen(deb,len)))) {
+        if( PyTuple_SetItem(tupl,i,PyUnicode_FromStringAndSize(deb,FStrlen(deb,len)))) {
             Py_DECREF(tupl);
             return NULL;
         }
@@ -366,7 +367,7 @@ PyObject * MakeListString( long nbval,char *kval,STRING_SIZE lkval )
     char *deb=kval;
     PyObject *l=PyList_New((Py_ssize_t)nbval);
     for(i=0;i<nbval;i++){
-        if( PyList_SetItem(l,i,PyString_FromStringAndSize(deb,FStrlen(deb,lkval)))) {
+        if( PyList_SetItem(l,i,PyUnicode_FromStringAndSize(deb,FStrlen(deb,lkval)))) {
             Py_DECREF(l);
             return NULL;
         }
@@ -390,7 +391,7 @@ PyObject * MakeTupleInt(long nbval,ASTERINTEGER* kval)
     PyObject * tupl;
     tupl = PyTuple_New((Py_ssize_t)nbval);
     for(i=0;i<nbval;i++){
-        if(PyTuple_SetItem(tupl,i,PyInt_FromLong((long)kval[i]))) {
+        if(PyTuple_SetItem(tupl,i,PyLong_FromLong((long)kval[i]))) {
             Py_DECREF(tupl);
             return NULL;
         }
@@ -412,7 +413,7 @@ PyObject * MakeListInt(long nbval, ASTERINTEGER * kval)
    int i;
    PyObject *l=PyList_New((Py_ssize_t)nbval);
    for(i=0;i<nbval;i++){
-      if (PyList_SetItem(l,i,PyInt_FromLong((long)kval[i]))) {
+      if (PyList_SetItem(l,i,PyLong_FromLong((long)kval[i]))) {
          Py_DECREF(l);
          return NULL;
       }

@@ -47,17 +47,13 @@
 #include "aster_fonctions_module.h"
 #include "med_aster_module.h"
 
-extern DL_EXPORT(int) Py_Main();
+//extern DL_EXPORT(int) Py_Main();
 
 #ifndef _MAIN_
 #define _MAIN_ main
 #endif
 
-int
-_MAIN_(argc, argv)
-    int argc;
-    char **argv;
-{
+int _MAIN_(int argc, char** argv){
     int ierr;
 
     PyImport_AppendInittab("_aster_core", init_aster_core);
@@ -68,6 +64,10 @@ _MAIN_(argc, argv)
 #ifndef _DISABLE_MED
     PyImport_AppendInittab("med_aster", initmed_aster);
 #endif
-    ierr = Py_Main(argc, argv);
+    wchar_t **wargv = PyMem_Malloc(sizeof(wchar_t*)*argc);
+    for (int i=0; i<argc; i++)
+        wargv[i] = Py_DecodeLocale(argv[i], NULL);
+
+    ierr = Py_Main(argc, wargv);
     return ierr;
 }

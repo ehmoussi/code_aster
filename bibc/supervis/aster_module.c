@@ -182,7 +182,7 @@ void DEFSP(GETFAC,getfac,_IN char *nomfac, _IN STRING_SIZE lfac, _OUT ASTERINTEG
             normalement a l appelant mais FORTRAN ??? */
         if (res == NULL)MYABORT("erreur dans la partie Python");
 
-        *occu=(ASTERINTEGER)PyInt_AsLong(res);
+        *occu=(ASTERINTEGER)PyLong_AsLong(res);
 
         Py_DECREF(res);                /*  decrement sur le refcount du retour */
         FreeStr(mfc);
@@ -496,7 +496,7 @@ void DEFSSPPPPP(GETVC8_WRAP,getvc8_wrap,_IN char *motfac,_IN STRING_SIZE lfac,
         {
                 printf( "<F> GETVC8 : le numero d'occurence (IOCC=%ld) est invalide\n",*iocc) ;
                 printf( "             commande : %s\n",
-                       PyString_AsString(PyObject_CallMethod(get_sh_etape(),"retnom",""))) ;
+                       PyUnicode_AsUTF8(PyObject_CallMethod(get_sh_etape(),"retnom",""))) ;
                 printf( "             mot-cle facteur : %s\n",mfc) ;
                 printf( "             mot-cle simple  : %s\n",mcs) ;
                 MYABORT( "erreur d'utilisation detectee") ;
@@ -569,7 +569,7 @@ void DEFSSPPPPP(GETVR8_WRAP,getvr8_wrap,_IN char *motfac,_IN STRING_SIZE lfac,
         {
                 printf( "<F> GETVR8 : le numero d'occurence (IOCC=%ld) est invalide\n",*iocc) ;
                 printf( "             commande : %s\n",
-                       PyString_AsString(PyObject_CallMethod(get_sh_etape(),"retnom",""))) ;
+                       PyUnicode_AsUTF8(PyObject_CallMethod(get_sh_etape(),"retnom",""))) ;
                 printf( "             mot-cle facteur : %s\n",mfc) ;
                 printf( "             mot-cle simple  : %s\n",mcs) ;
                 MYABORT( "erreur d'utilisation detectee") ;
@@ -618,7 +618,7 @@ void DEFSPSPPSP(FIINTF,fiintf,_IN char *nomfon,_IN STRING_SIZE lfon,
         tup_val = PyTuple_New( (Py_ssize_t)*nbpu ) ;
         for(i=0;i<*nbpu;i++){
            kvar = param + i*lpara;
-           PyTuple_SetItem( tup_par, i, PyString_FromStringAndSize(kvar,(Py_ssize_t)lpara) ) ;
+           PyTuple_SetItem( tup_par, i, PyUnicode_FromStringAndSize(kvar,(Py_ssize_t)lpara) ) ;
         }
         for(i=0;i<*nbpu;i++){
            PyTuple_SetItem( tup_val, i, PyFloat_FromDouble((double)val[i]) ) ;
@@ -631,13 +631,13 @@ void DEFSPSPPSP(FIINTF,fiintf,_IN char *nomfon,_IN STRING_SIZE lfon,
         piret = PyTuple_GetItem(tup2, 0);
         res   = PyTuple_GetItem(tup2, 1);
 
-        *iret = (ASTERINTEGER)PyInt_AsLong(piret);
+        *iret = (ASTERINTEGER)PyLong_AsLong(piret);
         *resu = (ASTERDOUBLE)0.;
         if ( *iret == 0 ) {
            if (PyComplex_Check(res)) {
                *resu    = (ASTERDOUBLE)PyComplex_RealAsDouble(res);
                *(resu+1)= (ASTERDOUBLE)PyComplex_ImagAsDouble(res);
-           } else if (PyFloat_Check(res) || PyLong_Check(res) || PyInt_Check(res)) {
+           } else if (PyFloat_Check(res) || PyLong_Check(res)) {
                *resu    = (ASTERDOUBLE)PyFloat_AsDouble(res);
            } else {
               *iret = 4;
@@ -709,7 +709,7 @@ void DEFSSPPPPP(GETVIS_WRAP,getvis_wrap,_IN char *motfac,_IN STRING_SIZE lfac,
         {
                 printf( "<F> GETVIS : le numero d'occurence (IOCC=%ld) est invalide\n",*iocc) ;
                 printf( "             commande : %s\n",
-                       PyString_AsString(PyObject_CallMethod(get_sh_etape(),"retnom",""))) ;
+                       PyUnicode_AsUTF8(PyObject_CallMethod(get_sh_etape(),"retnom",""))) ;
                 printf( "             mot-cle facteur : %s\n",mfc) ;
                 printf( "             mot-cle simple  : %s\n",mcs) ;
                 MYABORT( "erreur d'utilisation detectee") ;
@@ -785,7 +785,7 @@ void DEFSSPPPSP(GETVTX_WRAP,getvtx_wrap,_IN char *motfac,_IN STRING_SIZE lfac,
         {
                 printf( "<F> GETVTX : le numero d'occurence (IOCC=%ld) est invalide\n",*iocc) ;
                 printf( "             commande : %s\n",
-                       PyString_AsString(PyObject_CallMethod(get_sh_etape(),"retnom",""))) ;
+                       PyUnicode_AsUTF8(PyObject_CallMethod(get_sh_etape(),"retnom",""))) ;
                 printf( "             mot-cle facteur : %s\n",mfc) ;
                 printf( "             mot-cle simple  : %s\n",mcs) ;
                 MYABORT( "erreur d'utilisation detectee") ;
@@ -800,7 +800,7 @@ void DEFSSPPPSP(GETVTX_WRAP,getvtx_wrap,_IN char *motfac,_IN STRING_SIZE lfac,
         {
                 printf( "<F> GETVTX : numero d'occurence (IOCC=%ld) \n",*iocc) ;
                 printf( "             commande : %s\n",
-                       PyString_AsString(PyObject_CallMethod(get_sh_etape(),"retnom",""))) ;
+                       PyUnicode_AsUTF8(PyObject_CallMethod(get_sh_etape(),"retnom",""))) ;
                 printf( "             mot-cle facteur : %s\n",mfc) ;
                 printf( "             mot-cle simple  : %s\n",mcs) ;
                 MYABORT("erreur dans la partie Python");
@@ -869,7 +869,7 @@ void DEFSSPPPSP(GETVID_WRAP,getvid_wrap,_IN char *motfac,_IN STRING_SIZE lfac,
         {
                 printf( "<F> GETVID : le numero d'occurence (IOCC=%ld) est invalide\n",*iocc) ;
                 printf( "             commande : %s\n",
-                       PyString_AsString(PyObject_CallMethod(get_sh_etape(),"retnom",""))) ;
+                       PyUnicode_AsUTF8(PyObject_CallMethod(get_sh_etape(),"retnom",""))) ;
                 printf( "             mot-cle facteur : %s\n",mfc) ;
                 printf( "             mot-cle simple  : %s\n",mcs) ;
                 MYABORT( "erreur d'utilisation detectee") ;
@@ -969,7 +969,7 @@ void DEFSSP(GCUCON,gcucon, _IN char *resul, STRING_SIZE lresul,
    if (res == NULL)
             MYABORT("erreur a l appel de gcucon dans la partie Python");
 
-   *ier = (ASTERINTEGER)PyInt_AsLong(res);
+   *ier = (ASTERINTEGER)PyLong_AsLong(res);
    Py_DECREF(res);
 }
 
@@ -993,7 +993,7 @@ void DEFP(GCECDU,gcecdu, ASTERINTEGER *numint)
         if (res == NULL)
                 MYABORT("erreur a l appel de gcecdu dans la partie Python");
 
-        *numint = (ASTERINTEGER)PyInt_AsLong(res);
+        *numint = (ASTERINTEGER)PyLong_AsLong(res);
         Py_DECREF(res);
 }
 
@@ -1143,7 +1143,7 @@ PyObject *args;
             l = (ASTERINTEGER*)iaddr;
             tup = PyTuple_New( (Py_ssize_t)lcon ) ;
             for(i=0;i<lcon;i++){
-                PyTuple_SetItem( tup, i, PyInt_FromLong((long)l[i]) ) ;
+                PyTuple_SetItem( tup, i, PyLong_FromLong((long)l[i]) ) ;
             }
         }
         else if(ctype == 9){
@@ -1151,7 +1151,7 @@ PyObject *args;
             i4 = (ASTERINTEGER4*)iaddr;
             tup = PyTuple_New( (Py_ssize_t)lcon ) ;
             for(i=0; i<lcon; i++){
-                PyTuple_SetItem( tup, i, PyInt_FromLong((long)i4[i]) ) ;
+                PyTuple_SetItem( tup, i, PyLong_FromLong((long)i4[i]) ) ;
             }
         }
         else if(ctype == 3){
@@ -1174,7 +1174,7 @@ PyObject *args;
             tup = PyTuple_New( (Py_ssize_t)lcon ) ;
             for(i=0; i<lcon; i++){
                 kvar = iaddr + i*ksize;
-                PyTuple_SetItem( tup, i, PyString_FromStringAndSize(kvar, ksize) ) ;
+                PyTuple_SetItem( tup, i, PyUnicode_FromStringAndSize(kvar, ksize) ) ;
             }
         }
         CALL_JEDETR("&&GETCON.PTEUR_NOM");
@@ -1235,10 +1235,10 @@ PyObject *args;
             ilng=0 ;
             CALL_GETCON(nomsd32,&j,&ishf,&ilng,&ctype,&lcon,&iaddr,nomob);
             if(nomob[0] == ' '){
-                key=PyInt_FromLong( (long)j );
+                key=PyLong_FromLong( (long)j );
             }
             else {
-                key=PyString_FromStringAndSize(nomob,24);
+                key=PyUnicode_FromStringAndSize(nomob,24);
             }
             switch ( ctype ) {
                 case 0 :
@@ -1259,7 +1259,7 @@ PyObject *args;
                     l = (ASTERINTEGER*)iaddr;
                     tup = PyTuple_New( (Py_ssize_t)lcon ) ;
                     for(i=0;i<lcon;i++){
-                       PyTuple_SetItem( tup, i, PyInt_FromLong((long)l[i]) ) ;
+                       PyTuple_SetItem( tup, i, PyLong_FromLong((long)l[i]) ) ;
                     }
                     DictSetAndDecRef(dico, key, tup);
                     break;
@@ -1268,7 +1268,7 @@ PyObject *args;
                     i4 = (ASTERINTEGER4*)iaddr;
                     tup = PyTuple_New( (Py_ssize_t)lcon ) ;
                     for(i=0; i<lcon; i++){
-                       PyTuple_SetItem( tup, i, PyInt_FromLong((long)i4[i]) ) ;
+                       PyTuple_SetItem( tup, i, PyLong_FromLong((long)i4[i]) ) ;
                     }
                     DictSetAndDecRef(dico, key, tup);
                     break;
@@ -1298,7 +1298,7 @@ PyObject *args;
                     tup = PyTuple_New( (Py_ssize_t)lcon ) ;
                     for(i=0; i<lcon; i++){
                        kvar = iaddr + i*ksize;
-                       PyTuple_SetItem( tup, i, PyString_FromStringAndSize(kvar, ksize) ) ;
+                       PyTuple_SetItem( tup, i, PyUnicode_FromStringAndSize(kvar, ksize) ) ;
                     }
                     DictSetAndDecRef(dico, key, tup);
                     break;
@@ -1546,17 +1546,17 @@ PyObject *args;
                 CALL_RSACCH(nomsd32, &numch, nomch, &nbord, liord, &nbcmp, liscmp);
                 inbord = (int)nbord;
                 lo = FStrlen(nomch, 16),
-                key = PyString_FromStringAndSize(nomch,lo);
+                key = PyUnicode_FromStringAndSize(nomch,lo);
                 liste = PyList_New(0);
                 if (strcmp(mode,"CHAMPS") == 0) {
                     for (i=0; i<inbord; i++)
-                        PyList_Append(liste,PyInt_FromLong((long)liord[i]));
+                        PyList_Append(liste,PyLong_FromLong((long)liord[i]));
                 }
                 if (strcmp(mode,"COMPOSANTES") == 0) {
                     for (i=0; i<nbcmp; i++) {
                         cmp = &(liscmp[i*8]);
                         lo = FStrlen(cmp, 8);
-                        PyList_Append(liste,PyString_FromStringAndSize(cmp,lo));
+                        PyList_Append(liste,PyUnicode_FromStringAndSize(cmp,lo));
                     }
                 }
                 PyDict_SetItem(dico,key,liste);
@@ -1591,7 +1591,7 @@ PyObject *args;
             if (ier != 0) continue;
 
             lo = FStrlen(nomva, 16);
-            key = PyString_FromStringAndSize(nomva,lo);
+            key = PyUnicode_FromStringAndSize(nomva,lo);
 
             liste = PyList_New(0);
             if(ctype < 0){
@@ -1611,7 +1611,7 @@ PyObject *args;
             else if (ctype == 2) {
                 for (i=0; i<inbord; i++) {
                     if (ival[i] != CALL_ISNNEM() ) {
-                        PyList_Append(liste, PyInt_FromLong((long)ival[i]));
+                        PyList_Append(liste, PyLong_FromLong((long)ival[i]));
                     } else {
                         PyList_Append(liste, Py_None);
                     }
@@ -1628,7 +1628,7 @@ PyObject *args;
                 for (i=0; i<inbord; i++) {
                     kvar = kval + i*ksizemax;
                     if ( strncmp(kvar, blanc, ksize) != 0 ) {
-                        PyList_Append(liste, PyString_FromStringAndSize(kvar, ksize));
+                        PyList_Append(liste, PyUnicode_FromStringAndSize(kvar, ksize));
                     } else {
                         PyList_Append(liste, Py_None);
                     }
@@ -1787,7 +1787,7 @@ PyObject *args;
       if (!PyArg_ParseTuple(args, "|s#:onFatalError",&comport ,&len)) return NULL;
       if (len == -1 || len == 0) {
             CALL_ONERRF(" ", tmp, &lng);
-            res = PyString_FromStringAndSize(tmp, (Py_ssize_t)lng);
+            res = PyUnicode_FromStringAndSize(tmp, (Py_ssize_t)lng);
 
       } else if (strcmp(comport,"ABORT")==0 || strcmp(comport, "EXCEPTION")==0 ||
                  strcmp(comport, "EXCEPTION+VALID")==0 || strcmp(comport, "INIT")==0) {
@@ -1863,7 +1863,7 @@ PyObject *args;
         }
         endTry();
     }
-    res = PyString_FromStringAndSize(result,FStrlen(result,8));
+    res = PyUnicode_FromStringAndSize(result,FStrlen(result,8));
     FreeStr(result);
     FreeStr(Fty);
     return res;
@@ -2068,7 +2068,7 @@ PyObject *args;
         Fnom = MakeFStrFromCStr(nomast, 8);
         CALL_MDNOMA (nomamd,&lnomam,Fnom,&codret);
 
-        temp= PyString_FromStringAndSize(nomamd,FStrlen(nomamd, (Py_ssize_t)lnomam));
+        temp= PyUnicode_FromStringAndSize(nomamd,FStrlen(nomamd, (Py_ssize_t)lnomam));
         FreeStr(nomamd);
         FreeStr(Fnom);
         return temp;
@@ -2096,7 +2096,7 @@ PyObject *args;
     n3 = MakeFStrFromCStr(nopase, 8);
     lresu = (ASTERINTEGER)ilresu;
     CALL_MDNOCH (nochmd,&lnochm,&lresu,n1,n2,n3,&codret);
-    temp = PyString_FromStringAndSize(nochmd,FStrlen(nochmd, (Py_ssize_t)lnochm));
+    temp = PyUnicode_FromStringAndSize(nochmd,FStrlen(nochmd, (Py_ssize_t)lnochm));
     FreeStr(nochmd);
     FreeStr(n1);
     FreeStr(n2);
@@ -2207,7 +2207,7 @@ PyObject *args;
    /* jeveux est parti ! */
    register_sh_jeveux_status(1);
 
-return PyInt_FromLong((long)ier);
+return PyLong_FromLong((long)ier);
 }
 
 /* ------------------------------------------------------------------ */
@@ -2262,7 +2262,7 @@ static PyObject *jeveux_getobjects( PyObject* self, PyObject* args)
 
     the_list = PyList_New( (Py_ssize_t)total);
     for( i=0, ptr=tmp; i<total;++i, ptr+=24 ) {
-        pystr = PyString_FromStringAndSize( ptr, 24 );
+        pystr = PyUnicode_FromStringAndSize( ptr, 24 );
         PyList_SetItem( the_list, i, pystr );
     }
     FreeStr( tmp );
@@ -2343,7 +2343,7 @@ void DEFPSS(LCCREE, lccree, _IN ASTERINTEGER *nbkit,
       MYABORT("Echec lors de la creation du comportement (lccree/create) !");
    }
 
-   scomp = PyString_AsString(res);
+   scomp = PyUnicode_AsUTF8(res);
    CopyCStrToFStr(compor, scomp, lcompor);
 
    Py_XDECREF(res);
@@ -2397,9 +2397,9 @@ void DEFSPPP(LCINFO, lcinfo, _IN char *compor, STRING_SIZE lcompor,
               "comportement (lcinfo/get_info) !");
    }
 
-   *numlc       = (ASTERINTEGER)PyInt_AsLong(PyTuple_GetItem(res, 0));
-   *nbvari      = (ASTERINTEGER)PyInt_AsLong(PyTuple_GetItem(res, 1));
-   *nbvari_exte = (ASTERINTEGER)PyInt_AsLong(PyTuple_GetItem(res, 2));
+   *numlc       = (ASTERINTEGER)PyLong_AsLong(PyTuple_GetItem(res, 0));
+   *nbvari      = (ASTERINTEGER)PyLong_AsLong(PyTuple_GetItem(res, 1));
+   *nbvari_exte = (ASTERINTEGER)PyLong_AsLong(PyTuple_GetItem(res, 2));
 
    Py_XDECREF(res);
    Py_XDECREF(catalc);
@@ -2474,7 +2474,7 @@ void DEFSSSP(LCTEST, lctest, _IN char *compor, STRING_SIZE lcompor,
       MYABORT("Echec lors du test d'une propriete du comportement (lctest/query) !");
    }
 
-   *iret = (ASTERINTEGER)PyInt_AsLong(res);
+   *iret = (ASTERINTEGER)PyLong_AsLong(res);
 
    Py_XDECREF(res);
    Py_XDECREF(catalc);
@@ -2497,7 +2497,7 @@ void DEFSS(LCTYPE, lctype, _IN char *compor, STRING_SIZE lcompor,
       MYABORT("Echec lors du test d'une propriete du comportement (lctype/get_type) !");
    }
 
-   styp = PyString_AsString(res);
+   styp = PyUnicode_AsUTF8(res);
    CopyCStrToFStr(typ, styp, ltyp);
 
    Py_XDECREF(res);
@@ -2683,13 +2683,25 @@ static char aster_module_documentation[] =
 "C implementation of the Python aster module\n"
 "\n";
 
+static struct PyModuleDef aster_moduledef = {
+        PyModuleDef_HEAD_INIT,
+        "aster",
+        aster_module_documentation,
+        -1,
+        aster_methods,
+        NULL,
+        NULL,
+        NULL,
+        NULL
+};
+
 PyMODINIT_FUNC initaster(void)
 {
     PyObject *aster = (PyObject*)0 ;
     PyObject *dict = (PyObject*)0 ;
 
     /* Create the module and add the functions */
-    aster = Py_InitModule3("aster", aster_methods, aster_module_documentation);
+    aster = PyModule_Create(&aster_moduledef);
 
     /* Add some symbolic constants to the module */
     dict = PyModule_GetDict(aster);
@@ -2697,5 +2709,6 @@ PyMODINIT_FUNC initaster(void)
     init_etape_stack();
     /* don't take of mpirun arguments */
     aster_mpi_init(0, NULL);
+    return aster;
 }
 #endif

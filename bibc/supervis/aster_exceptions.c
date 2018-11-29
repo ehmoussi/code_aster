@@ -152,12 +152,12 @@ void DEFPSPSPPPP(UEXCEP,uexcep, _IN ASTERINTEGER *exc_type,
     tup_valk = PyTuple_New( *nbk ) ;
     for(i=0;i<*nbk;i++){
        kvar = valk + i*lvk;
-       PyTuple_SetItem( tup_valk, i, PyString_FromStringAndSize(kvar,lvk) ) ;
+       PyTuple_SetItem( tup_valk, i, PyUnicode_FromStringAndSize(kvar,lvk) ) ;
     }
 
     tup_vali = PyTuple_New( *nbi ) ;
     for(i=0;i<*nbi;i++){
-       PyTuple_SetItem( tup_vali, i, PyInt_FromLong(vali[i]) ) ;
+       PyTuple_SetItem( tup_vali, i, PyLong_FromLong(vali[i]) ) ;
     }
 
     tup_valr = PyTuple_New( *nbr ) ;
@@ -166,7 +166,7 @@ void DEFPSPSPPPP(UEXCEP,uexcep, _IN ASTERINTEGER *exc_type,
     }
 
     gExcArgs = PyTuple_New( 4 );
-    PyTuple_SetItem( gExcArgs, (Py_ssize_t)0, PyString_FromStringAndSize(idmess, lidmess) );
+    PyTuple_SetItem( gExcArgs, (Py_ssize_t)0, PyUnicode_FromStringAndSize(idmess, lidmess) );
     PyTuple_SetItem( gExcArgs, (Py_ssize_t)1, tup_valk );
     PyTuple_SetItem( gExcArgs, (Py_ssize_t)2, tup_vali );
     PyTuple_SetItem( gExcArgs, (Py_ssize_t)3, tup_valr );

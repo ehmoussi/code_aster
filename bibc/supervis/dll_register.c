@@ -144,8 +144,8 @@ PyObject* _libsymb_to_key(const char* libname, const char* symbname)
      */
     PyObject *key;
     key = PyTuple_New( 2 );
-    PyTuple_SetItem( key, 0, PyString_FromString(libname) );
-    PyTuple_SetItem( key, 1, PyString_FromString(symbname) );
+    PyTuple_SetItem( key, 0, PyUnicode_FromString(libname) );
+    PyTuple_SetItem( key, 1, PyUnicode_FromString(symbname) );
     return key;
 }
 
