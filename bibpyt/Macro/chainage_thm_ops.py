@@ -32,9 +32,9 @@ import numpy
 from code_aster.Cata.Syntax import _F
 from Noyau.N_utils import AsType
 from Utilitai.Utmess import UTMESS
-from chainage_init import *
-from chainage_hydr_meca import *
-from chainage_meca_hydr import *
+from .chainage_init import *
+from .chainage_hydr_meca import *
+from .chainage_meca_hydr import *
 
 
 def chainage_thm_ops(self, TYPE_CHAINAGE, **args):
@@ -81,12 +81,12 @@ def chainage_thm_ops(self, TYPE_CHAINAGE, **args):
     motscles = dict()
 
     INST = None
-    if args.has_key('INST'):
+    if 'INST' in args:
         if args['INST'] != None:
             INST = args['INST']
 
     b_type_resu_cham_no = False
-    if args.has_key('TYPE_RESU'):
+    if 'TYPE_RESU' in args:
         if args['TYPE_RESU'] != None:
             TYPE_RESU = args['TYPE_RESU']
         if (TYPE_RESU == "CHAM_NO"):

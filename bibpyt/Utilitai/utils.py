@@ -54,14 +54,14 @@ def _print(*args):
     """Fonction 'print'."""
     l_str = []
     for arg in args:
-        if type(arg) not in (str, unicode):
+        if type(arg) not in (str, str):
             arg = repr(arg)
         l_str.append(arg)
     text = convert(" ".join(l_str))
     if aster_exists:
         aster.affiche('MESSAGE', text)
     else:
-        print text
+        print(text)
 
 
 def _printDBG(*args):
@@ -89,7 +89,7 @@ def _debug(arg, label, dest='RESULTAT'):
                 CONCEPT=_F(NOM=arg),
                 NIVEAU=-1)
     else:
-        if type(arg) in (str, unicode):
+        if type(arg) in (str, str):
             arg = convert(arg)
         else:
             try:
@@ -153,10 +153,10 @@ def fmtF2PY(fformat):
         fmt += '%' + matR.group(2) + re.sub('[dD]+', 'E', matR.group(1))
     try:
         s = fmt % -0.123
-    except (ValueError, TypeError), msg:
+    except (ValueError, TypeError) as msg:
         fmt = '%12.5E'
-        print 'Error :', msg
-        print 'Format par défaut utilisé :', fmt
+        print('Error :', msg)
+        print('Format par défaut utilisé :', fmt)
     return fmt
 
 
@@ -179,7 +179,7 @@ def send_file(fname, dest):
 def get_time():
     """Return the current time with milliseconds"""
     ct =  time.time()
-    msec = (ct - long(ct)) * 1000
+    msec = (ct - int(ct)) * 1000
     return time.strftime('%H:%M:%S') + '.%03d' % msec
 
 def get_shared_tmpdir(prefix, default_dir=None):
@@ -201,4 +201,4 @@ def get_shared_tmpdir(prefix, default_dir=None):
 if __name__ == '__main__':
     npar = ('X', 'Y',)
     nuti = ('DX', 'DY', 'X', 'X')
-    print miss_dble(npar, nuti)
+    print(miss_dble(npar, nuti))

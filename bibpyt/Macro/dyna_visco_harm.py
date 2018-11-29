@@ -70,7 +70,7 @@ def dyna_visco_harm(self, EXCIT, list_FREQ, modes,
             l_force_nodale = True
             no_force = charge[i].sdj.CHME.LIGRE.NEMA.get()
 
-            for j in no_force.keys():
+            for j in list(no_force.keys()):
                 if not ( len(no_force[j])==2 and no_force[j][1]==1 ): # in the dictionary no_force, an imposed nodal force presents as
                                                                       # an entry (a key) having this shape: (node_number, 1)
                                                                       # so one deletes all entries having a different shape

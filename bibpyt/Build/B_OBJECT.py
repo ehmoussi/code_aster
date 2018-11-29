@@ -69,7 +69,7 @@ class OBJECT:
         if taille == 0:
             assert(hasattr(self, 'definition'))
             assert(hasattr(self.definition, 'entites'))
-            if self.definition.entites.has_key(nomfac):
+            if nomfac in self.definition.entites:
                 assert(
                     type(self.definition.entites[nomfac]) == types.InstanceType)
                 assert(hasattr(self.definition.entites[nomfac], 'statut'))

@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-import cPickle
+import pickle
 import string
 
 import numpy as NP
@@ -47,12 +47,12 @@ class TANGENT:
     def Load(self, nom_fichier):
         """lit la matrice depuis un fichier"""
         fichier = file(nom_fichier, 'r')
-        self.__dict__ = cPickle.load(fichier)
+        self.__dict__ = pickle.load(fichier)
 
     def Save(self, nom_fichier):
         """sauvegarde la matrice dans un fichier"""
         fichier = file(nom_fichier, 'w')
-        cPickle.dump(self.__dict__, fichier)
+        pickle.dump(self.__dict__, fichier)
 
     def Aster(self, suffixe='MATA'):
         """lit la matrice depuis l'espace Aster.
@@ -85,7 +85,7 @@ class TANGENT:
         self.nddl = nddl
         if not self.ddl:
             self.ddl = 'D' * nddl
-        elif len(self.ddl) <> nddl:
+        elif len(self.ddl) != nddl:
             raise RuntimeError(
                 'Nommage des DDL incoherents avec la taille de la matrice')
         self.norme = NP.trace(NP.dot(NP.transpose(self.mat), self.mat))
@@ -109,7 +109,7 @@ class TANGENT:
                                'ou tableau numpy)')
         matp = NP.ravel(matp)
         matp = matp.astype(float)
-        if len(matp) <> self.nddl * self.nddl:
+        if len(matp) != self.nddl * self.nddl:
             raise RuntimeError('Matrices de tailles differentes')
         matp.shape = (self.nddl, self.nddl)
         refe = NP.abs(self.mat) + NP.abs(matp)
@@ -184,13 +184,13 @@ def veri_matr_tang_ops(self, SYMETRIE, DIFFERENCE, PRECISION, PREC_ZERO, **args)
     if SYMETRIE == 'OUI':
         symetgt = tgt.Symetrie(prec_diff)[-2]
         symeper = matp.Symetrie(prec_diff)[-2]
-        print 'Symetrie de la matrice tangente', symetgt
-        print 'Symetrie de la matrice pr pertubation', symeper
+        print('Symetrie de la matrice tangente', symetgt)
+        print('Symetrie de la matrice pr pertubation', symeper)
     if DIFFERENCE == 'OUI':
         liste_i, liste_j, liste_matt, liste_matp, liste_diff, nor_diff, max_diff = \
             tgt.Difference(matp, prec_diff)
-        print 'difference entre matrice tangente et matrice par pertubation : norme=', \
-            nor_diff, ' max=', max_diff
+        print('difference entre matrice tangente et matrice par pertubation : norme=', \
+            nor_diff, ' max=', max_diff)
         TAB_MAT = CREA_TABLE(LISTE=(_F(PARA='I', LISTE_I=liste_i),
                                     _F(PARA='J', LISTE_I=liste_j),
                              _F(PARA='MAT_TGTE',

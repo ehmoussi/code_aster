@@ -112,7 +112,7 @@ def calc_precont_ops(self, reuse, MODELE, CHAM_MATER, CARA_ELEM, EXCIT,
     # Traitement de l'etat initial
     if ETAT_INIT:
         dEtatInit = ETAT_INIT[0].cree_dict_valeurs(ETAT_INIT[0].mc_liste)
-        for i in dEtatInit.keys():
+        for i in list(dEtatInit.keys()):
             if dEtatInit[i] == None:
                 del dEtatInit[i]
     else:
@@ -138,7 +138,7 @@ def calc_precont_ops(self, reuse, MODELE, CHAM_MATER, CARA_ELEM, EXCIT,
     if __TMAX <= __TMIN:
         UTMESS('F', 'CABLE0_1')
         
-    for i in dIncrement.keys():
+    for i in list(dIncrement.keys()):
             if dIncrement[i] == None:
                 del dIncrement[i]
 
@@ -160,8 +160,8 @@ def calc_precont_ops(self, reuse, MODELE, CHAM_MATER, CARA_ELEM, EXCIT,
     for mcabl in CABLE_BP:
         __TCAB1 = RECU_TABLE(CO=mcabl, NOM_TABLE='CABLE_GL')
         table_cable = __TCAB1.EXTR_TABLE()
-        __adher = table_cable.ADHERENT.values()[0]
-        __typ_ma = table_cable.TYPE_MAILLE.values()[0]
+        __adher = list(table_cable.ADHERENT.values())[0]
+        __typ_ma = list(table_cable.TYPE_MAILLE.values())[0]
         typ_ma.append(__typ_ma)
         if ii == 0:
             adher = __adher
@@ -205,19 +205,19 @@ def calc_precont_ops(self, reuse, MODELE, CHAM_MATER, CARA_ELEM, EXCIT,
 
         dConvergence = CONVERGENCE[
             0].cree_dict_valeurs(CONVERGENCE[0].mc_liste)
-        for i in dConvergence.keys():
+        for i in list(dConvergence.keys()):
             if dConvergence[i] == None:
                 del dConvergence[i]
 
         dSolveur = SOLVEUR[0].cree_dict_valeurs(SOLVEUR[0].mc_liste)
-        for i in dSolveur.keys():
+        for i in list(dSolveur.keys()):
             if dSolveur[i] == None:
                 del dSolveur[i]
 
         if RECH_LINEAIRE:
             dRech_lin = RECH_LINEAIRE[0].cree_dict_valeurs(
                 RECH_LINEAIRE[0].mc_liste)
-            for i in dRech_lin.keys():
+            for i in list(dRech_lin.keys()):
                 if dRech_lin[i] == None:
                     del dRech_lin[i]
         else:
@@ -232,13 +232,13 @@ def calc_precont_ops(self, reuse, MODELE, CHAM_MATER, CARA_ELEM, EXCIT,
         #     Recuperation des cables dans les concepts CABLE_BP
         #     et CABLE_BP_INACTIF
         # ------------------------------------------------------
-        if type(CABLE_BP) is not types.NoneType:
+        if type(CABLE_BP) is not type(None):
             if not is_sequence(CABLE_BP):
                 CABLE_BP0 = CABLE_BP
                 CABLE_BP = []
                 CABLE_BP.append(CABLE_BP0)
 
-        if type(CABLE_BP_INACTIF) is not types.NoneType:
+        if type(CABLE_BP_INACTIF) is not type(None):
             if not is_sequence(CABLE_BP_INACTIF):
                 CABLE_BP_INACTIF0 = CABLE_BP_INACTIF
                 CABLE_BP_INACTIF = []
@@ -270,9 +270,9 @@ def calc_precont_ops(self, reuse, MODELE, CHAM_MATER, CARA_ELEM, EXCIT,
             col_nom_cable = table_cable.NOM_CABLE
             __typ_ma = typ_ma[ica]
             if __typ_ma.strip() == 'SEG2':
-                set_GROUP_MA_A_SEG2.update(col_nom_cable.values())
+                set_GROUP_MA_A_SEG2.update(list(col_nom_cable.values()))
             elif __typ_ma.strip() == 'SEG3':
-                set_GROUP_MA_A_SEG3.update(col_nom_cable.values())
+                set_GROUP_MA_A_SEG3.update(list(col_nom_cable.values()))
             else:
                 raise Exception('type inconnu')
         __GROUP_MA_A_SEG2 = list(set_GROUP_MA_A_SEG2)
@@ -291,11 +291,11 @@ def calc_precont_ops(self, reuse, MODELE, CHAM_MATER, CARA_ELEM, EXCIT,
                 __TCA0 = RECU_TABLE(CO=mcabl, NOM_TABLE='CABLE_BP')
                 __TCA2 = RECU_TABLE(CO=mcabl, NOM_TABLE='CABLE_GL')
                 col_nom_cable = __TCA0.EXTR_TABLE().NOM_CABLE
-                __typ_ma = __TCA2.EXTR_TABLE().TYPE_MAILLE.values()[0]
+                __typ_ma = list(__TCA2.EXTR_TABLE().TYPE_MAILLE.values())[0]
                 if __typ_ma.strip() == 'SEG2':
-                    set_GROUP_MA_I_SEG2.update(col_nom_cable.values())
+                    set_GROUP_MA_I_SEG2.update(list(col_nom_cable.values()))
                 elif __typ_ma.strip() == 'SEG3':
-                    set_GROUP_MA_I_SEG3.update(col_nom_cable.values())
+                    set_GROUP_MA_I_SEG3.update(list(col_nom_cable.values()))
                 else:
                     raise Exception('type inconnu')
 
@@ -314,7 +314,7 @@ def calc_precont_ops(self, reuse, MODELE, CHAM_MATER, CARA_ELEM, EXCIT,
         dComp_incr = []
         for j in COMPORTEMENT:
             dComp_incr.append(j.cree_dict_valeurs(j.mc_liste))
-            for i in dComp_incr[-1].keys():
+            for i in list(dComp_incr[-1].keys()):
                 if dComp_incr[-1][i] == None:
                     del dComp_incr[-1][i]
         dComp_incr0 = copy.copy(dComp_incr)
@@ -452,7 +452,7 @@ def calc_precont_ops(self, reuse, MODELE, CHAM_MATER, CARA_ELEM, EXCIT,
         dExcit = []
         for j in EXCIT:
             dExcit.append(j.cree_dict_valeurs(j.mc_liste))
-            for i in dExcit[-1].keys():
+            for i in list(dExcit[-1].keys()):
                 if dExcit[-1][i] == None:
                     del dExcit[-1][i]
 
@@ -543,7 +543,7 @@ def calc_precont_ops(self, reuse, MODELE, CHAM_MATER, CARA_ELEM, EXCIT,
             motscle4['reuse'] = self.reuse
         # assert (len(CABLE_BP) == 1)
         # traitement des cables inactifs
-        if type(CABLE_BP_INACTIF) is not types.NoneType:
+        if type(CABLE_BP_INACTIF) is not type(None):
             if not is_sequence(CABLE_BP_INACTIF):
                 CABLE_BP_INACTIF0 = CABLE_BP_INACTIF
                 CABLE_BP_INACTIF = []
@@ -568,21 +568,21 @@ def calc_precont_ops(self, reuse, MODELE, CHAM_MATER, CARA_ELEM, EXCIT,
                                                SIGM_BPEL='NON',
                                                RELA_CINE='OUI',))
 
-            nb_cable = len(__TCAB1.EXTR_TABLE().NOM_ANCRAGE1.values())
+            nb_cable = len(list(__TCAB1.EXTR_TABLE().NOM_ANCRAGE1.values()))
             table_cable = __TCAB1.EXTR_TABLE()
 
-            for icable in xrange(nb_cable):
+            for icable in range(nb_cable):
 
-                __typ_ancr = (table_cable.TYPE_ANCRAGE1.values()[
-                              icable], table_cable.TYPE_ANCRAGE2.values()[icable])
-                __typ_noeu = (table_cable.TYPE_NOEUD1.values()[
-                              icable], table_cable.TYPE_NOEUD2.values()[icable])
-                __nom_noeu = (table_cable.NOM_ANCRAGE1.values()[
-                              icable], table_cable.NOM_ANCRAGE2.values()[icable])
-                __tension = table_cable.TENSION.values()[icable]
-                __recul = table_cable.RECUL_ANCRAGE.values()[icable]
+                __typ_ancr = (list(table_cable.TYPE_ANCRAGE1.values())[
+                              icable], list(table_cable.TYPE_ANCRAGE2.values())[icable])
+                __typ_noeu = (list(table_cable.TYPE_NOEUD1.values())[
+                              icable], list(table_cable.TYPE_NOEUD2.values())[icable])
+                __nom_noeu = (list(table_cable.NOM_ANCRAGE1.values())[
+                              icable], list(table_cable.NOM_ANCRAGE2.values())[icable])
+                __tension = list(table_cable.TENSION.values())[icable]
+                __recul = list(table_cable.RECUL_ANCRAGE.values())[icable]
                 __recul_exists = (__recul != 0)
-                __sens = table_cable.SENS.values()[icable]
+                __sens = list(table_cable.SENS.values())[icable]
 
                 actif = 0
                 ancr1_passif = 1
@@ -670,7 +670,7 @@ def calc_precont_ops(self, reuse, MODELE, CHAM_MATER, CARA_ELEM, EXCIT,
         dExcit = []
         for j in EXCIT:
             dExcit.append(j.cree_dict_valeurs(j.mc_liste))
-            for i in dExcit[-1].keys():
+            for i in list(dExcit[-1].keys()):
                 if dExcit[-1][i] == None:
                     del dExcit[-1][i]
 

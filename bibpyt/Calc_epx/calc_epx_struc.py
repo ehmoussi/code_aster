@@ -217,7 +217,7 @@ class FONCTION:
         self.temps = temps
         self.valeurs = valeurs
         if type(nom_aster) != str and nom_aster is not None:
-            print type(nom_aster)
+            print(type(nom_aster))
             raise Exception(
                 "Le nom aster d'une fonction doit être de type str")
         self.nom_aster = nom_aster

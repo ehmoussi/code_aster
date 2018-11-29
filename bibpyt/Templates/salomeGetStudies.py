@@ -31,10 +31,10 @@ try:
     myStudyManager = obj._narrow(SALOMEDS.StudyManager)
     List_Studies = myStudyManager.GetOpenStudies()
 
-except Exception, e:
+except Exception as e:
     List_Studies = []
-    print "Probleme avec Salome, il n'est peut etre pas lance!"
-    print e
+    print("Probleme avec Salome, il n'est peut etre pas lance!")
+    print(e)
 
 try:
     if 'OUTPUTFILE1':
@@ -42,7 +42,7 @@ try:
         fw = file('OUTPUTFILE1', 'w')
         fw.write('\n'.join(List_Studies))
 
-except Exception, e:
+except Exception as e:
     raise Exception("Erreur : \n%s" % e)
 
-print 62 * '-' + '\n' + '\n'.join(List_Studies) + '\n' + 62 * '-'
+print(62 * '-' + '\n' + '\n'.join(List_Studies) + '\n' + 62 * '-')

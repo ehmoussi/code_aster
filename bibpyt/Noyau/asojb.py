@@ -22,9 +22,9 @@
 """
    Description des OJB jeveux
 """
-from basetype import Type
-from asnom import SDNom
-from ascheckers import CheckLog
+from .basetype import Type
+from .asnom import SDNom
+from .ascheckers import CheckLog
 import traceback
 import sys
 
@@ -84,7 +84,7 @@ class AsBase(Type):
                             'Erreur SDVERI (Attention : vérification incomplète)' + \
                             '\n'
                         mess = mess.join(
-                            traceback.format_tb(sys.exc_traceback))
+                            traceback.format_tb(sys.exc_info()[2]))
                         checker.err(self, mess)
 
         checker.optional = optional

@@ -71,11 +71,11 @@ def post_k_trans_ops(self, RESU_TRANS, K_MODAL, TOUT_ORDRE, NUME_ORDRE,
         n_mode = len((__kgtheta.EXTR_TABLE())['K1'])
         nbno = 1
     else:
-        n_mode = max((__kgtheta.EXTR_TABLE())[
-                     'NUME_MODE'].values()['NUME_MODE'])
-        nbno = max((__kgtheta.EXTR_TABLE())['NUM_PT'].values()['NUM_PT'])
-        labsc = (__kgtheta.EXTR_TABLE())[
-            'ABSC_CURV'].values()['ABSC_CURV'][0:nbno]
+        n_mode = max(list((__kgtheta.EXTR_TABLE())[
+                     'NUME_MODE'].values())['NUME_MODE'])
+        nbno = max(list((__kgtheta.EXTR_TABLE())['NUM_PT'].values())['NUM_PT'])
+        labsc = list((__kgtheta.EXTR_TABLE())[
+            'ABSC_CURV'].values())['ABSC_CURV'][0:nbno]
     if nmodtr != n_mode:
         n_mode = min(nmodtr, n_mode)
         UTMESS('A', 'RUPTURE0_50', valk=nomresu, vali=n_mode)
@@ -196,8 +196,8 @@ def post_k_trans_ops(self, RESU_TRANS, K_MODAL, TOUT_ORDRE, NUME_ORDRE,
                 li.append(l_inst[i])
         tabout = CREA_TABLE(LISTE=(_F(LISTE_I=lo, PARA='NUME_ORDRE'),
                                    _F(LISTE_R=li, PARA='INST'),
-                                   _F(LISTE_I=range(
-                                      nbno) * nbarch, PARA='NUM_PT'),
+                                   _F(LISTE_I=list(range(
+                                      nbno)) * nbarch, PARA='NUM_PT'),
                                    _F(LISTE_R=labsc * nbarch,
                                       PARA='ABSC_CURV'),
                                    _F(LISTE_R=K1t, PARA=k1),

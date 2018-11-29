@@ -36,7 +36,7 @@ import re
 import warnings
 
 # Modules EFICAS
-import V_MCCOMPO
+from . import V_MCCOMPO
 from Noyau import MAXSIZE, MAXSIZE_MSGCHK
 from Noyau.N_Exception import AsException
 from Noyau.N_utils import AsType
@@ -61,7 +61,7 @@ class ETAPE(V_MCCOMPO.MCCOMPO):
         if not test_regles:
             if cr == 'oui':
                 self.cr.fatal(
-                    _(u"Règle(s) non respectée(s) : %s"), text_erreurs)
+                    _("Règle(s) non respectée(s) : %s"), text_erreurs)
             return 0
         return 1
 
@@ -74,20 +74,20 @@ class ETAPE(V_MCCOMPO.MCCOMPO):
                 # ASTER
                 if cr == 'oui':
                     self.cr.fatal(
-                        _(u"Le nom de concept %s est trop long (8 caractères maxi)"),
+                        _("Le nom de concept %s est trop long (8 caractères maxi)"),
                         self.sd.nom)
                 valid = 0
             if self.sd.nom.find('sansnom') != -1:
                 # la SD est 'sansnom' : --> erreur
                 if cr == 'oui':
-                    self.cr.fatal(_(u"Pas de nom pour le concept retourné"))
+                    self.cr.fatal(_("Pas de nom pour le concept retourné"))
                 valid = 0
             elif re.search('^SD_[0-9]*$', self.sd.nom):
                 # la SD est 'SD_' cad son nom = son id donc pas de nom donné
                 # par utilisateur : --> erreur
                 if cr == 'oui':
                     self.cr.fatal(
-                        _(u"Nom de concept invalide ('SD_' est réservé)"))
+                        _("Nom de concept invalide ('SD_' est réservé)"))
                 valid = 0
         return valid
 
@@ -123,7 +123,7 @@ class ETAPE(V_MCCOMPO.MCCOMPO):
 
         """
         if CONTEXT.debug:
-            print "ETAPE.isvalid ", self.nom
+            print("ETAPE.isvalid ", self.nom)
         if self.state == 'unchanged':
             return self.valid
         else:
@@ -133,7 +133,7 @@ class ETAPE(V_MCCOMPO.MCCOMPO):
             if self.reste_val != {}:
                 if cr == 'oui':
                     self.cr.fatal(
-                        _(u"Mots clés inconnus : %s"), ','.join(self.reste_val.keys()))
+                        _("Mots clés inconnus : %s"), ','.join(list(self.reste_val.keys())))
                 valid = 0
 
             if sd == "non":
@@ -147,13 +147,13 @@ class ETAPE(V_MCCOMPO.MCCOMPO):
                 # reentrant
                 if cr == 'oui':
                     self.cr.fatal(
-                        _(u'Opérateur non réentrant : ne pas utiliser reuse'))
+                        _('Opérateur non réentrant : ne pas utiliser reuse'))
                 valid = 0
 
             if self.sd == None:
                 # Le concept produit n'existe pas => erreur
                 if cr == 'oui':
-                    self.cr.fatal(_(u"Concept retourné non défini"))
+                    self.cr.fatal(_("Concept retourné non défini"))
                 valid = 0
             else:
                 valid = valid * self.valid_sdnom(cr)
@@ -181,7 +181,7 @@ class ETAPE(V_MCCOMPO.MCCOMPO):
         if type(sd_prod) == types.FunctionType:  # Type de concept retourné calculé
             d = self.cree_dict_valeurs(self.mc_liste)
             try:
-                sd_prod = apply(sd_prod, (), d)
+                sd_prod = sd_prod(*(), **d)
             except:
                 # Erreur pendant le calcul du type retourné
                 if CONTEXT.debug:
@@ -192,7 +192,7 @@ class ETAPE(V_MCCOMPO.MCCOMPO):
                                                    sys.exc_info()[1],
                                                    sys.exc_info()[2])
                     self.cr.fatal(
-                        _(u'Impossible d affecter un type au résultat\n %s'), ' '.join(l[2:]))
+                        _('Impossible d affecter un type au résultat\n %s'), ' '.join(l[2:]))
                 return 0
         # on teste maintenant si la SD est r\351utilis\351e ou s'il faut la
         # cr\351er
@@ -201,15 +201,15 @@ class ETAPE(V_MCCOMPO.MCCOMPO):
             if AsType(self.reuse) != sd_prod:
                 if cr == 'oui':
                     self.cr.fatal(
-                        _(u'Type de concept réutilisé incompatible avec type produit'))
+                        _('Type de concept réutilisé incompatible avec type produit'))
                 valid = 0
             if self.sdnom != '':
                 if self.sdnom[0] != '_' and self.reuse.nom != self.sdnom:
                     # Le nom de la variable de retour (self.sdnom) doit etre le
                     # meme que celui du concept reutilise (self.reuse.nom)
                     if cr == 'oui':
-                        self.cr.fatal(_(u'Concept réutilisé : le nom de la variable de '
-                                        u'retour devrait être %s et non %s'),
+                        self.cr.fatal(_('Concept réutilisé : le nom de la variable de '
+                                        'retour devrait être %s et non %s'),
                                       self.reuse.nom, self.sdnom)
                     valid = 0
             if valid:
@@ -222,7 +222,7 @@ class ETAPE(V_MCCOMPO.MCCOMPO):
                         break
                 if keyword is None:
                     if cr == 'oui':
-                        self.cr.fatal(_(u'Concept réutilisé : non trouvé sous %s'),
+                        self.cr.fatal(_('Concept réutilisé : non trouvé sous %s'),
                                       "/".join(orig))
                     valid = 0
                 if valid and len(orig) == 2:
@@ -237,19 +237,19 @@ class ETAPE(V_MCCOMPO.MCCOMPO):
                         keyword = None
                     if keyword is None:
                         if cr == 'oui':
-                            self.cr.fatal(_(u'Concept réutilisé : non trouvé sous %s'),
+                            self.cr.fatal(_('Concept réutilisé : non trouvé sous %s'),
                                           "/".join(orig))
                         valid = 0
                 if valid and AsType(keyword) != sd_prod:
                     if cr == 'oui':
-                        self.cr.fatal(_(u'Concept réutilisé : type incorrect '
-                                        u' %s au lieu de %s'),
+                        self.cr.fatal(_('Concept réutilisé : type incorrect '
+                                        ' %s au lieu de %s'),
                                         AsType(keyword), sd_prod)
                     valid = 0
                 if valid and keyword is not self.reuse:
                     if cr == 'oui':
-                        self.cr.fatal(_(u'Concept réutilisé : concept '
-                                        u'inattendu %s au lieu de %s'),
+                        self.cr.fatal(_('Concept réutilisé : concept '
+                                        'inattendu %s au lieu de %s'),
                                         keyword, self.reuse)
                     valid = 0
             if valid:
@@ -262,18 +262,18 @@ class ETAPE(V_MCCOMPO.MCCOMPO):
                 if self.sd:
                     # Un sd existe deja, on change son type
                     if CONTEXT.debug:
-                        print "changement de type:", self.sd, sd_prod
+                        print("changement de type:", self.sd, sd_prod)
                     if self.sd.__class__ != sd_prod:
                         self.sd.change_type(sd_prod)
                 else:
                     # Le sd n existait pas , on ne le crée pas
                     if cr == 'oui':
-                        self.cr.fatal(_(u"Concept retourné non défini"))
+                        self.cr.fatal(_("Concept retourné non défini"))
                     valid = 0
             if self.definition.reentrant[0] == 'o':
                 if cr == 'oui':
                     self.cr.fatal(
-                        _(u'Commande obligatoirement réentrante : spécifier reuse=concept'))
+                        _('Commande obligatoirement réentrante : spécifier reuse=concept'))
                 valid = 0
         return valid
 
@@ -281,23 +281,23 @@ class ETAPE(V_MCCOMPO.MCCOMPO):
         """
             Methode pour generation d un rapport de validite
         """
-        self.cr = self.CR(debut=u'Etape : ' + self.nom
-                          + u'    ligne : ' + `self.appel[0]`
-                          + u'    fichier : ' + `self.appel[1]`,
-                          fin=u'Fin Etape : ' + self.nom)
+        self.cr = self.CR(debut='Etape : ' + self.nom
+                          + '    ligne : ' + repr(self.appel[0])
+                          + '    fichier : ' + repr(self.appel[1]),
+                          fin='Fin Etape : ' + self.nom)
         self.state = 'modified'
         try:
             self.isvalid(cr='oui')
-        except AsException, e:
+        except AsException as e:
             if CONTEXT.debug:
                 traceback.print_exc()
-            self.cr.fatal(_(u'Etape : %s ligne : %r fichier : %r %s'),
+            self.cr.fatal(_('Etape : %s ligne : %r fichier : %r %s'),
                           self.nom, self.appel[0], self.appel[1], e)
         i = 0
         for child in self.mc_liste:
             i += 1
             if i > MAXSIZE:
-                print(MAXSIZE_MSGCHK.format(MAXSIZE, len(self.mc_liste)))
+                print((MAXSIZE_MSGCHK.format(MAXSIZE, len(self.mc_liste))))
                 break
             self.cr.add(child.report())
         return self.cr

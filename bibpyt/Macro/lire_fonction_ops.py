@@ -37,8 +37,8 @@ def lire_blocs(nomfich, SEPAR, INFO=1):
         """Affiche les infos d'un bloc"""
         if INFO < 2:
             return
-        print "   . Bloc %2d : %6d lignes, %6d colonnes" % (ib, nlig, ncol)
-    print "  Lecture des blocs du fichier '%s'..." % nomfich
+        print("   . Bloc %2d : %6d lignes, %6d colonnes" % (ib, nlig, ncol))
+    print("  Lecture des blocs du fichier '%s'..." % nomfich)
     fich = open(nomfich, 'r')
     if SEPAR == 'None':
         SEPAR = None
@@ -53,7 +53,7 @@ def lire_blocs(nomfich, SEPAR, INFO=1):
             if line == '':
                 raise ValueError
             splin = [i for i in line.split(SEPAR) if i != '']
-            lignes.append(map(float, splin))
+            lignes.append(list(map(float, splin)))
             if llen == 0:
                 llen = len(splin)
             elif len(splin) != llen:
@@ -114,8 +114,8 @@ def liste_double(nomfich, INDIC_PARA, INDIC_RESU, SEPAR, INFO=1):
     vale_para = blocs[bloc_para - 1][:, col_para - 1]
     vale_resu = blocs[bloc_resu - 1][:, col_resu - 1]
     if len(vale_para) != len(vale_resu):
-        print 'VALE_PARA =', vale_para
-        print 'VALE_RESU =', vale_resu
+        print('VALE_PARA =', vale_para)
+        print('VALE_RESU =', vale_resu)
         message = """Les deux colonnes extraites n'ont pas la meme longueur
          %d lignes pour PARA
          %d lignes pour RESU""" % (len(vale_para), len(vale_resu))
@@ -166,7 +166,7 @@ def column_values(fmt, filename, idbx, separ=' ', info=0):
     if fmt == 'LIBRE':
         try:
             values = liste_simple(filename, idbx, separ, info)
-        except LectureBlocError, exc:
+        except LectureBlocError as exc:
             UTMESS('F', 'FONCT0_42', valk=exc.args)
     else:
         idx = idbx[1] - 1
@@ -191,7 +191,7 @@ def function_values(fmt, filename, idbx, idby, separ=' ', info=0):
     if fmt == 'LIBRE':
         try:
             values = liste_double(filename, idbx, idby, separ, info)
-        except LectureBlocError, exc:
+        except LectureBlocError as exc:
             UTMESS('F', 'FONCT0_42', valk=exc.args)
     else:
         idx = idbx[1] - 1
@@ -289,12 +289,12 @@ def lire_fonction_ops(self, FORMAT, TYPE, SEPAR, INDIC_PARA, UNITE,
                 indic2 = args['INDIC_PHAS']
             try:
                 liste_vale_r = liste_double(nomfich, INDIC_PARA, indic1, SEPAR, INFO)
-            except LectureBlocError, exc:
+            except LectureBlocError as exc:
                 UTMESS('F', 'FONCT0_42', valk=exc.args)
 
             try:
                 liste_vale_i = liste_double(nomfich, INDIC_PARA, indic2, SEPAR, INFO)
-            except LectureBlocError, exc:
+            except LectureBlocError as exc:
                 UTMESS('F', 'FONCT0_42', valk=exc.args)
 
             liste = []

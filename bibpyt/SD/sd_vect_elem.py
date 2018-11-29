@@ -30,6 +30,6 @@ class sd_vect_elem(sd_matr_elem):
         if not self.RELC.exists:
             return
         lchar = self.RELC.get()
-        for nochar in lchar.keys():
+        for nochar in list(lchar.keys()):
             for k in lchar[nochar]:
                 assert k in (0, 1), lchar

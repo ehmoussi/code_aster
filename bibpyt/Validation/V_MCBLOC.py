@@ -29,7 +29,7 @@
    utilisée par héritage multiple pour composer les traitements.
 """
 # Modules EFICAS
-import V_MCCOMPO
+from . import V_MCCOMPO
 from Noyau.strfunc import ufmt
 
 
@@ -41,7 +41,7 @@ class MCBLOC(V_MCCOMPO.MCCOMPO):
        - txt_nat qui sert pour les comptes-rendus liés à cette classe
     """
 
-    txt_nat = u"Bloc :"
+    txt_nat = "Bloc :"
 
     def isvalid(self, sd='oui', cr='non'):
         """
@@ -70,7 +70,7 @@ class MCBLOC(V_MCCOMPO.MCCOMPO):
             if not test_regles:
                 if cr == 'oui':
                     self.cr.fatal(
-                        _(u"Règle(s) non respectée(s) : %s"), text_erreurs)
+                        _("Règle(s) non respectée(s) : %s"), text_erreurs)
                 valid = 0
             self.valid = valid
             self.state = 'unchanged'

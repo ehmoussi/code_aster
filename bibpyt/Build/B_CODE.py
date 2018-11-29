@@ -24,7 +24,7 @@
     Ce module porte la classe CODE qui porte l'attribut codex
     qui pointe vers le module représentant le code de calcul
 """
-import codex
+from . import codex
 
 
 class CODE:

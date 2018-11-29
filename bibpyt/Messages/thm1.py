@@ -21,102 +21,102 @@
 
 cata_msg = {
 
-    1 : _(u"""
+    1 : _("""
 La loi mécanique <%(k1)s> n'est pas compatible avec la modélisation choisie.
 """),
 
-    2 : _(u"""
+    2 : _("""
 La loi de diffusion n'est pas compatible avec la définition de l'élasticité <%(k1)s>.
 Les deux doivent être du même type: élasticité isotrope avec diffusion isotrope, élasticité anisotrope avec diffusion anisotrope,
 """),
 
-    3 : _(u"""
+    3 : _("""
 On ne peut pas utiliser ELAS_ORTH en 2D, il faut utiliser ELAS_ISTR.
 """),
 
-    4 : _(u"""
+    4 : _("""
 On ne peut pas utiliser ELAS_ISTR en 3D, il faut utiliser ELAS_ORTH.
 """),
 
-    5 : _(u"""
+    5 : _("""
 Le coefficient d'emmagasinement EMMAG n'est pas utilisable avec un couplage mécanique.
 """),
 
-    34 : _(u"""
+    34 : _("""
  Les conditions initiales de DEFI_MATERIAU (THM_INIT) ne sont pas compatibles avec la loi de couplage choisie dans STAT_NON_LINE.
 """),
 
-    36 : _(u"""
+    36 : _("""
 Il y a déjà une loi de couplage.
 """),
 
-    37 : _(u"""
+    37 : _("""
 Il y a déjà une loi hydraulique.
 """),
 
-    38 : _(u"""
+    38 : _("""
 Il y a déjà une loi de mécanique.
 """),
 
-    39 : _(u"""
+    39 : _("""
 Il manque la loi de couplage pour définir le kit <%(k1)s> .
 """),
 
-    40 : _(u"""
+    40 : _("""
 Il manque la loi hydraulique pour définir le kit <%(k1)s> .
 """),
 
-    42 : _(u"""
+    42 : _("""
 La loi de couplage <%(k1)s> est incorrecte pour une modélisation <%(k2)s>.
 """),
 
-    43 : _(u"""
+    43 : _("""
 La loi hydraulique <%(k1)s> n'est pas compatible avec la loi mécanique <%(k2)s>.
 """),
 
-    44 : _(u"""
+    44 : _("""
 La loi mécanique <%(k1)s> est incorrecte pour une modélisation <%(k2)s>.
 """),
 
-    60 : _(u"""
+    60 : _("""
 La loi de couplage <%(k1)s> n'est pas compatible avec la modélisation choisie.
 L'élément a %(i1)d pressions et la loi de couplage en utilise %(i2)d.
 """),
 
-    61 : _(u"""
+    61 : _("""
 La loi de couplage <%(k1)s> n'est pas compatible avec la modélisation choisie.
 L'élément a %(i1)d composantes sur la première pression et la loi de couplage en utilise %(i2)d.
 """),
 
-    62 : _(u"""
+    62 : _("""
 La loi de couplage <%(k1)s> n'est pas compatible avec la modélisation choisie.
 L'élément a %(i1)d composantes sur la première pression et la loi de couplage en utilise %(i2)d.
 """),
 
-    63 : _(u"""
+    63 : _("""
 La loi de couplage <%(k1)s> n'est pas compatible avec la modélisation choisie.
 La modélisation a besoin d'un degré de liberté pour la mécanique.
 """),
 
-    64 : _(u"""
+    64 : _("""
 La loi de couplage <%(k1)s> n'est pas compatible avec la modélisation choisie.
 La modélisation a un degré de liberté pour la mécanique la loi de comportement n'a pas de loi mécanique.
 """),
 
-    65 : _(u"""
+    65 : _("""
 La loi de couplage <%(k1)s> n'est pas compatible avec la modélisation choisie.
 La modélisation a besoin d'un degré de liberté pour la thermique.
 """),
 
-    66 : _(u"""
+    66 : _("""
 La loi de couplage <%(k1)s> n'est pas compatible avec la modélisation choisie.
 La modélisation a un degré de liberté pour la thermique la loi de comportement n'a pas de loi thermique.
 """),
 
-    67 : _(u"""
+    67 : _("""
 La loi mécanique GONF_ELAS n'est utilisable qu'avec une modélisation à deux pressions.
 """),
 
-    94 : _(u"""Il manque les paramètres de Van Genuchten."""),
+    94 : _("""Il manque les paramètres de Van Genuchten."""),
 
 }

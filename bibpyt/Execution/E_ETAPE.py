@@ -29,15 +29,15 @@ from os import times
 
 import aster
 import aster_core
-import checksd
-from code_file import CodeVisitor
-from command_text import CommandTextVisitor
+from . import checksd
+from .code_file import CodeVisitor
+from .command_text import CommandTextVisitor
 from Noyau.N_Exception import AsException
 from Noyau.N_info import SUPERV, message
 from Noyau.N_MACRO_ETAPE import MACRO_ETAPE
 # Modules Eficas
 from Noyau.N_utils import prbanner
-from strfunc import convert
+from .strfunc import convert
 
 
 class ETAPE:
@@ -80,7 +80,7 @@ class ETAPE:
             return 0
 
         assert(type(self.definition.op) == int), "type(self.definition.op)=" + \
-            `type(self.definition.op)`
+            repr(type(self.definition.op))
 
         ier = 0
 

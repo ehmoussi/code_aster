@@ -19,7 +19,7 @@
 
 # person_in_charge: sylvie.granet at edf.fr
 
-from cata_comportement import LoiComportement
+from .cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'LIQU_VAPE_GAZ',

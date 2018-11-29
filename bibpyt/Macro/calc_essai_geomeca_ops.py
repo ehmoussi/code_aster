@@ -17,8 +17,8 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-from geomec_utils import *
-from geomec_essais import *
+from .geomec_utils import *
+from .geomec_essais import *
 
 def calc_essai_geomeca_ops(self, MATER, COMPORTEMENT, CONVERGENCE, INFO,
                            ESSAI_TRIA_DR_M_D,

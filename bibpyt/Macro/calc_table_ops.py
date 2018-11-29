@@ -62,7 +62,7 @@ def calc_table_ops(self, TABLE, ACTION, INFO, **args):
     # Boucle sur les actions à effectuer
     for fOP in ACTION:
         occ = fOP.cree_dict_valeurs(fOP.mc_liste)
-        for mc, val in occ.items():
+        for mc, val in list(occ.items()):
             if val == None:
                 del occ[mc]
 
@@ -72,10 +72,10 @@ def calc_table_ops(self, TABLE, ACTION, INFO, **args):
         if occ['OPERATION'] == 'FILTRE':
             # peu importe le type, c'est la meme méthode d'appel
             opts = [occ[k]
-                    for k in ('VALE', 'VALE_I', 'VALE_C', 'VALE_K') if occ.has_key(k)]
+                    for k in ('VALE', 'VALE_I', 'VALE_C', 'VALE_K') if k in occ]
             kargs = {}
             for k in ('CRITERE', 'PRECISION'):
-                if occ.has_key(k):
+                if k in occ:
                     kargs[k] = occ[k]
 
             col = getattr(tab, occ['NOM_PARA'])
@@ -107,7 +107,7 @@ def calc_table_ops(self, TABLE, ACTION, INFO, **args):
         if occ['OPERATION'] == 'RENOMME':
             try:
                 tab.Renomme(*occ['NOM_PARA'])
-            except KeyError, msg:
+            except KeyError as msg:
                 UTMESS('F', 'TABLE0_3', valk=msg)
 
         # 5. Traitement du TRI
@@ -138,7 +138,7 @@ def calc_table_ops(self, TABLE, ACTION, INFO, **args):
             tab.fromfunction(occ['NOM_PARA'], occ['FORMULE'],
                              l_para=occ.get('NOM_COLONNE'))
             if INFO == 2:
-                vectval = getattr(tab, occ['NOM_PARA']).values()
+                vectval = list(getattr(tab, occ['NOM_PARA']).values())
                 aster.affiche('MESSAGE', 'Ajout de la colonne %s : %s'
                               % (occ['NOM_PARA'], repr(vectval)))
 
@@ -148,7 +148,7 @@ def calc_table_ops(self, TABLE, ACTION, INFO, **args):
             lval = force_list(occ['VALE'])
             if len(lpar) != len(lval):
                 UTMESS('F', 'TABLE0_14', valk=('NOM_PARA', 'VALE'))
-            dnew = dict(zip(lpar, lval))
+            dnew = dict(list(zip(lpar, lval)))
             # ajout de la ligne avec vérification des types
             tab.append(dnew)
             
@@ -182,7 +182,7 @@ def calc_table_ops(self, TABLE, ACTION, INFO, **args):
                 if nom_para in tab.para:
                     UTMESS('F', 'TABLE0_24', valk=nom_para)
             nbVide = 0
-            for col in tab.values().values():
+            for col in list(tab.values()).values():
                 nbVide += sum([1 for i in col if i is None])
             # be care to extract the statistics before changing `tab`!
             tab['STAT_VALE'] = [len(tab), len(tab.para), nbVide]

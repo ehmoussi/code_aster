@@ -22,7 +22,7 @@
 
 from Noyau import N_PROC
 from Build import B_ENTITE
-import A_PROC_ETAPE
+from . import A_PROC_ETAPE
 
 
 class PROC(N_PROC.PROC, B_ENTITE.ENTITE):

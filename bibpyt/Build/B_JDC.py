@@ -29,7 +29,7 @@ from Noyau import N_ASSD
 from Noyau.N_info import message, SUPERV
 
 # Modules Eficas
-from B_CODE import CODE
+from .B_CODE import CODE
 
 
 class JDC(CODE):
@@ -115,7 +115,7 @@ class JDC(CODE):
             JDC lui meme
         """
         if CONTEXT.debug:
-            print "Build_JDC ", self.nom
+            print("Build_JDC ", self.nom)
         self.initexec()
         return 0
 

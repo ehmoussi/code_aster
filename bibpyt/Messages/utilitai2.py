@@ -21,62 +21,62 @@
 
 cata_msg = {
 
-    4 : _(u"""
+    4 : _("""
  Il y a un problème pour récupérer les variables d'accès.
 """),
 
-    5 : _(u"""
+    5 : _("""
  Seules les variables d'accès réelles sont traitées.
 """),
 
-    6 : _(u"""
+    6 : _("""
  Seuls les paramètres réels sont traités.
 """),
 
-    7 : _(u"""
+    7 : _("""
  L'unité logique est inexistante.
 """),
 
-    8 : _(u"""
+    8 : _("""
   Les fonctions à une seule variable sont admises.
 """),
 
-    10 : _(u"""
+    10 : _("""
   Les fonctions de type " %(k1)s " ne sont pas encore imprimées.
 """),
 
-    11 : _(u"""
+    11 : _("""
   Les fonctions de type " %(k1)s " ne sont pas imprimées.
 """),
 
-    13 : _(u"""
+    13 : _("""
  interpolation " %(k1)s " inconnue
 """),
 
-    14 : _(u"""
+    14 : _("""
  " %(k1)s " type de fonction inconnu
 """),
 
-    17 : _(u"""
+    17 : _("""
  on ne connaît pas ce type d'interpolation:  %(k1)s
 """),
 
 
 
 
-    36 : _(u"""
+    36 : _("""
  GROUP_MA_INTERF: un élément n'est ni tria3 ni tria6 ni QUAD4 ni QUAD8
 """),
 
-    37 : _(u"""
+    37 : _("""
  GROUP_MA_FLU_STR: un élément n'est ni tria3 ni tria6 ni QUAD4 ni QUAD8
 """),
 
-    38 : _(u"""
+    38 : _("""
  GROUP_MA_FLU_SOL: un élément n'est ni tria3 ni tria6 ni QUAD4 ni QUAD8
 """),
 
-    39 : _(u"""
+    39 : _("""
  GROUP_MA_SOL_SOL: un élément n'est ni tria3 ni tria6 ni QUAD4 ni QUAD8
 """),
 
@@ -84,85 +84,85 @@ cata_msg = {
 
 
 
-    47 : _(u"""
+    47 : _("""
   Le fichier " %(k1)s " n'est relié a aucune unité logique.
 """),
 
 
 
 
-    52 : _(u"""
+    52 : _("""
  ajout de l'option "SIEF_ELGA", les charges sont-elles correctes ?
 """),
 
-    53 : _(u"""
+    53 : _("""
  Le nombre maximum d'itérations est atteint.
 """),
 
-    54 : _(u"""
+    54 : _("""
   La dimension de l'espace doit être inférieur ou égal à 3.
 """),
 
-    55 : _(u"""
+    55 : _("""
  les points du nuage de départ sont tous en (0.,0.,0.).
 """),
 
-    56 : _(u"""
+    56 : _("""
  le nuage de départ est vide.
 """),
 
-    57 : _(u"""
+    57 : _("""
  les points du nuage de départ sont tous confondus.
 """),
 
-    58 : _(u"""
+    58 : _("""
  les points du nuage de départ sont tous alignes.
 """),
 
-    59 : _(u"""
+    59 : _("""
  les points du nuage de départ sont tous coplanaires.
 """),
 
-    60 : _(u"""
+    60 : _("""
  méthode inconnue :  %(k1)s
 """),
 
-    61 : _(u"""
+    61 : _("""
  le descripteur_grandeur de COMPOR ne tient pas sur un seul entier_code
 """),
 
-    62 : _(u"""
+    62 : _("""
 Ce message est un message d'erreur développeur.
 Contactez le support technique.
 """),
 
-    63 : _(u"""
+    63 : _("""
 La composante n'a pas été affectée pour la grandeur.
 Ce message est un message d'erreur développeur.
 Contactez le support technique.
 """),
 
-    66 : _(u"""
+    66 : _("""
  pas assez de valeurs dans la liste.
 """),
 
-    67 : _(u"""
+    67 : _("""
  il faut des triplets de valeurs.
 """),
 
-    68 : _(u"""
+    68 : _("""
  il n'y a pas un nombre pair de valeurs.
 """),
 
-    69 : _(u"""
+    69 : _("""
  nombre de valeurs différent  pour "NOEUD_PARA" et "VALE_Y"
 """),
 
-    70 : _(u"""
+    70 : _("""
  il manque des valeurs dans  %(k1)s  ,liste plus petite que  %(k2)s
 """),
 
-    71 : _(u"""
+    71 : _("""
 La fonction a des valeurs négatives. Ce n'est pas compatible avec une
 interpolation "LOG".
 
@@ -171,52 +171,52 @@ Conseil :
     avec le mot-clé INTERPOL (ou INTERPOL_FONC quand il s'agit de nappe).
 """),
 
-    72 : _(u"""
+    72 : _("""
 Les paramètres de la nappe ne sont pas croissants !
 """),
 
-    75 : _(u"""
+    75 : _("""
 Les listes NUME_LIGN et LISTE_R/LISTE_K/LISTE_I doivent contenir le même nombre de termes.
 """),
 
-    76 : _(u"""
+    76 : _("""
 Les noms de paramètres doivent être différents
 """),
 
-    77 : _(u"""
+    77 : _("""
  les listes d'abscisses et d'ordonnées doivent être de mêmes longueurs
 """),
 
-    78 : _(u"""
+    78 : _("""
  fonction incompatible avec  %(k1)s
 """),
 
-    79 : _(u"""
+    79 : _("""
  les noms de chaque paramètre doivent être différents
 """),
 
-    84 : _(u"""
+    84 : _("""
  la fonction doit s appuyée sur un maillage pour lequel une abscisse curviligne est définie.
 """),
 
-    85 : _(u"""
+    85 : _("""
  mauvaise définition des noeuds début et fin
 """),
 
-    86 : _(u"""
+    86 : _("""
  le nombre de champs à lire est supérieur a 100
 """),
 
-    94 : _(u"""
+    94 : _("""
   Le champ %(k1)s n'est pas prévu.
   Vous pouvez demander l'évolution.
 """),
 
-    95 : _(u"""
+    95 : _("""
   %(k1)s  et  %(k2)s  : nombre de composantes incompatible.
 """),
 
-    97 : _(u"""
+    97 : _("""
 Erreur Utilisateur :
   On n'a pu lire aucun champ dans le fichier.
   La structure de données créée est vide.

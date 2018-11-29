@@ -21,7 +21,7 @@
 """
 """
 # Modules Python
-from repr import repr as reprlim
+from reprlib import repr as reprlim
 import traceback
 from os import times
 from types import ClassType, TypeType
@@ -34,9 +34,9 @@ from Noyau import N_FACT, N_BLOC, N_SIMP
 from Noyau.N_Exception import AsException
 from Noyau.N_GEOM import GEOM
 from Noyau.N_info import message, SUPERV
-import B_utils
-import B_CODE
-import B_OBJECT
+from . import B_utils
+from . import B_CODE
+from . import B_OBJECT
 
 
 class ETAPE(B_OBJECT.OBJECT, B_CODE.CODE):
@@ -78,7 +78,7 @@ class ETAPE(B_OBJECT.OBJECT, B_CODE.CODE):
             l'objet lui meme
         """
         if CONTEXT.debug:
-            print "ETAPE._Build ", self.nom
+            print("ETAPE._Build ", self.nom)
         # On demande d incrementer le compteur de la commande de 1
         self.set_icmd(1)
         return 0
@@ -102,9 +102,9 @@ class ETAPE(B_OBJECT.OBJECT, B_CODE.CODE):
             type_concept = self.sd.__class__.__name__.upper()
         assert(nom_concept != None), "getres : nom_concept est Vide (None)"
         if CONTEXT.debug:
-            print "\tGETRES : nom_concept =", '"' + nom_concept + '"'
-            print "\tGETRES : type_concept =", '"' + type_concept + '"'
-            print "\tGETRES : nom_cmd =", '"' + nom_cmd + '"'
+            print("\tGETRES : nom_concept =", '"' + nom_concept + '"')
+            print("\tGETRES : type_concept =", '"' + type_concept + '"')
+            print("\tGETRES : nom_cmd =", '"' + nom_cmd + '"')
         # message.debug(SUPERV, "commande : %s, concept : %s, type : %s",
         # nom_cmd, nom_concept, type_concept)
         return nom_concept, type_concept, nom_cmd
@@ -119,7 +119,7 @@ class ETAPE(B_OBJECT.OBJECT, B_CODE.CODE):
         klass = getattr(DataStructure, typaster.lower().strip(), None)
         if klass:
             ctxt = self.parent.get_contexte_avant(self)
-            lconcept = [(co.order, co.nom) for co in ctxt.values()
+            lconcept = [(co.order, co.nom) for co in list(ctxt.values())
                         if issubclass(type(co), klass) and co.executed == 1]
             lconcept.sort()
             lconcept = [nom for order, nom in lconcept]
@@ -155,7 +155,7 @@ class ETAPE(B_OBJECT.OBJECT, B_CODE.CODE):
         if taille == 0:
             assert(hasattr(self, 'definition'))
             assert(hasattr(self.definition, 'entites'))
-            if self.definition.entites.has_key(nomfac):
+            if nomfac in self.definition.entites:
                 assert isinstance(
                     self.definition.entites[nomfac], N_ENTITE.ENTITE)
                 assert(hasattr(self.definition.entites[nomfac], 'statut'))
@@ -169,7 +169,7 @@ class ETAPE(B_OBJECT.OBJECT, B_CODE.CODE):
                                   "dans le catalogue de la commande")
 
         if CONTEXT.debug:
-            print '\tGETFAC : ', "taille =", taille
+            print('\tGETFAC : ', "taille =", taille)
         return taille
 
     def get_mcsimp(self, nom_motfac, nom_motcle):
@@ -224,7 +224,7 @@ class ETAPE(B_OBJECT.OBJECT, B_CODE.CODE):
 
         presence = int(self.get_mcsimp(nom_motfac, nom_motcle) != None)
         if CONTEXT.debug:
-            print '\tGETEXM : ', "presence = ", presence
+            print('\tGETEXM : ', "presence = ", presence)
         return presence
 
     def getvtx(self, nom_motfac, nom_motcle, iocc, mxval):
@@ -242,11 +242,11 @@ class ETAPE(B_OBJECT.OBJECT, B_CODE.CODE):
 
         if not self.check_text(valeur[1]):
             # elements de contexte
-            print '! Etape  :', getattr(self, 'nom', '?'), '/', nom_motfac, '/', nom_motcle
-            print '! Parent :', getattr(self.parent, 'nom', '?')
-            print "! ERREUR incoherence fortran/catalogue de commande, " \
-                  "chaine de caractères attendue et non :"
-            print "!", valeur[1]
+            print('! Etape  :', getattr(self, 'nom', '?'), '/', nom_motfac, '/', nom_motcle)
+            print('! Parent :', getattr(self.parent, 'nom', '?'))
+            print("! ERREUR incoherence fortran/catalogue de commande, " \
+                  "chaine de caractères attendue et non :")
+            print("!", valeur[1])
             raise AssertionError
 
         valeur = self.Traite_value(valeur, "TX")
@@ -270,7 +270,7 @@ class ETAPE(B_OBJECT.OBJECT, B_CODE.CODE):
             retval = B_utils.RETLIST(valeur, mxval)
 
         if CONTEXT.debug:
-            print "\tget_valeur_mc : ", retval
+            print("\tget_valeur_mc : ", retval)
         return retval
 
     def getdef(self, nom_motfac, nom_motcle, iocc):
@@ -308,7 +308,7 @@ class ETAPE(B_OBJECT.OBJECT, B_CODE.CODE):
                 motfac = self.get_mocle(nom_motfac)[iocc]
             except:
                 if CONTEXT.debug:
-                    print "\terreur à la recherche de :", nom_motfac
+                    print("\terreur à la recherche de :", nom_motfac)
                     traceback.print_exc()
                 return None
 
@@ -316,7 +316,7 @@ class ETAPE(B_OBJECT.OBJECT, B_CODE.CODE):
                 return motfac.get_mocle(nom_motcle)
             except:
                 if CONTEXT.debug:
-                    print "\terreur à la recherche de :", nom_motcle
+                    print("\terreur à la recherche de :", nom_motcle)
                     traceback.print_exc()
                 return None
         else:
@@ -324,7 +324,7 @@ class ETAPE(B_OBJECT.OBJECT, B_CODE.CODE):
                 return self.get_mocle(nom_motcle)
             except:
                 if CONTEXT.debug:
-                    print "\terreur à la recherche de :", nom_motcle
+                    print("\terreur à la recherche de :", nom_motcle)
                     traceback.print_exc()
                 return None
 
@@ -339,10 +339,10 @@ class ETAPE(B_OBJECT.OBJECT, B_CODE.CODE):
             chk = self.check_assd(valeur)
             if not chk:
                 # elements de contexte
-                print '! Etape  :', getattr(self, 'nom', '?'), '/', nom_motfac, '/', nom_motcle
-                print '! Parent :', getattr(self.parent, 'nom', '?')
-                print "! ERREUR incoherence fortran/catalogue de commande, concept attendu et non :"
-                print "!", valeur
+                print('! Etape  :', getattr(self, 'nom', '?'), '/', nom_motfac, '/', nom_motcle)
+                print('! Parent :', getattr(self.parent, 'nom', '?'))
+                print("! ERREUR incoherence fortran/catalogue de commande, concept attendu et non :")
+                print("!", valeur)
                 raise AssertionError
             return self.transforme_valeur_nom(valeur)
         else:
@@ -373,7 +373,7 @@ class ETAPE(B_OBJECT.OBJECT, B_CODE.CODE):
                       l'a produite. C'est cette valeur qui est donc renvoyée ici.
         """
         if CONTEXT.debug:
-            print "Traite_value: ", valeur
+            print("Traite_value: ", valeur)
         if valeur[0] == 0:
             return valeur
         tup_avant = valeur[1]
@@ -459,7 +459,7 @@ class ETAPE(B_OBJECT.OBJECT, B_CODE.CODE):
             k = k + 1
         assert k == abs(nbval), (k, nbval, tup)
         if CONTEXT.debug:
-            print "\tGETLTX : isval =", longueurs
+            print("\tGETLTX : isval =", longueurs)
         return nbval, tuple(longueurs)
 
     def getvis(self, nom_motfac, nom_motcle, iocc, mxval):
@@ -559,7 +559,7 @@ class ETAPE(B_OBJECT.OBJECT, B_CODE.CODE):
                 return 4, None
 
         # parameters as dict
-        dval = dict(zip(nom_param, val))
+        dval = dict(list(zip(nom_param, val)))
         # evaluation de la formule
         try:
             res = objet_sd(**dval)
@@ -580,16 +580,16 @@ class ETAPE(B_OBJECT.OBJECT, B_CODE.CODE):
         valeur = self.Traite_value(valeur, "R8")
         if not self.check_float(valeur[1]):
             # elements de contexte
-            print '! Etape  :', getattr(self, 'nom', '?'), '/', nom_motfac, '/', nom_motcle
-            print '! Parent :', getattr(self.parent, 'nom', '?')
-            print "! ERREUR incoherence fortran/catalogue de commande, réel attendu et non :"
-            print "!", valeur[1]
+            print('! Etape  :', getattr(self, 'nom', '?'), '/', nom_motfac, '/', nom_motcle)
+            print('! Parent :', getattr(self.parent, 'nom', '?'))
+            print("! ERREUR incoherence fortran/catalogue de commande, réel attendu et non :")
+            print("!", valeur[1])
             raise AssertionError
 
         if CONTEXT.debug:
             B_utils.TraceGet('GETVR8', nom_motfac, iocc, nom_motcle, valeur)
             for k in valeur[1]:
-                assert is_float_or_int(k), `k` + " n'est pas un float"
+                assert is_float_or_int(k), repr(k) + " n'est pas un float"
         iarg = self.getdef(nom_motfac, nom_motcle, iocc)
         return valeur[0], valeur[1], iarg
 
@@ -629,12 +629,12 @@ class ETAPE(B_OBJECT.OBJECT, B_CODE.CODE):
             nom_motfac, iocc, nom_motcle)
         if valeur == None:
             if CONTEXT.debug:
-                print "\tGETVID : valeur =", None
+                print("\tGETVID : valeur =", None)
             return 0, (), 1
         valeur = B_utils.CONVID(valeur)
         valeur = B_utils.RETLIST(valeur, mxval)
         if CONTEXT.debug:
-            print "\tGETVID : valeur =", valeur
+            print("\tGETVID : valeur =", valeur)
         iarg = self.getdef(nom_motfac, nom_motcle, iocc)
         return valeur[0], valeur[1], iarg
 
@@ -732,7 +732,7 @@ class ETAPE(B_OBJECT.OBJECT, B_CODE.CODE):
             pass
         lmc = []
         lty = []
-        for name, obj in dico_mcsimp.items():
+        for name, obj in list(dico_mcsimp.items()):
             if obj is None:
                 continue
             lmc.append(name)

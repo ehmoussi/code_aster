@@ -60,7 +60,7 @@ class UniteAster:
             unit = int(ul)
         # Si la clé n'existe pas
         ini = False
-        if not self.infos.has_key(unit):
+        if unit not in self.infos:
             self.infos[unit] = {}
             self.infos[unit]['nom'] = ''
             self.infos[unit]['etat'] = '?'
@@ -82,8 +82,8 @@ class UniteAster:
             nomfich = 'fort.' + str(unit)
         else:
             message = "Etat de l'unité inconnu : %s" % self.infos[unit]['etat']
-            print __tab.EXTR_TABLE()
-            raise aster.error, "<F> <UniteAster._setinfo> %s" % message
+            print(__tab.EXTR_TABLE())
+            raise aster.error("<F> <UniteAster._setinfo> %s" % message)
         self.infos[unit]['nom'] = nomfich
         # print 'DEBUG infos[unit] = ', self.infos[unit]
         DETRUIRE(CONCEPT=_F(NOM=__tab), INFO=1)
@@ -99,10 +99,10 @@ class UniteAster:
             nom = 'fort.' + str(unit)
 
         # Si la clé existe, c'est que le fichier n'était pas libre
-        if self.infos.has_key(unit):
+        if unit in self.infos:
             message = "Cette unité est déjà affectée au fichier %s" % \
                 self.infos[unit]['nom']
-            raise aster.error, "<F> <UniteAster.Libre> %s" % message
+            raise aster.error("<F> <UniteAster.Libre> %s" % message)
 
         opts = {}
         if action == 'ASSOCIER':
@@ -123,7 +123,7 @@ class UniteAster:
         except:
             unit = int(ul)
         # Si la clé n'existe pas
-        if not self.infos.has_key(unit):
+        if unit not in self.infos:
             self._setinfo(unit)
         return self.infos[unit]['nom']
 
@@ -131,7 +131,7 @@ class UniteAster:
         """Retourne l'unité logique associée au fichier `nom`.
         On retourne 0 si le nom n'a pas été trouvé."""
         ul = 0
-        for unit, infos in self.infos.items():
+        for unit, infos in list(self.infos.items()):
             if infos['nom'] == nom.strip():
                 ul = unit
                 break
@@ -151,16 +151,16 @@ class UniteAster:
         except:
             unit = int(ul)
         # Si la clé n'existe pas
-        if not self.infos.has_key(unit):
+        if unit not in self.infos:
             self._setinfo(unit)
-        if not kargs.has_key('etat'):
+        if 'etat' not in kargs:
             return self.infos[unit]['etat']
 
         # En fonction de la demande, on bascule son état ou pas
         new = kargs.get('etat')
         if not new in ['R', 'F', 'O']:
             message = "Nouvel état de l'unité incorrect : %s" % new
-            raise aster.error, "<F> <UniteAster.Etat> %s" % message
+            raise aster.error("<F> <UniteAster.Etat> %s" % message)
 
         if self.infos[unit]['etat'] == new:
             pass
@@ -197,10 +197,10 @@ class UniteAster:
         Si 'ul' est omis, toutes les unités sont remises dans leur état initial.
         """
         if ul == None:
-            for uli, vul in self.infos.items():
+            for uli, vul in list(self.infos.items()):
                 self.Etat(uli, etat=vul['etat_init'])
         else:
-            if not type(ul) in [types.ListType, types.TupleType]:
+            if not type(ul) in [list, tuple]:
                 ul = [ul, ]
             for u in ul:
                 # u peut etre un entier Aster
@@ -209,7 +209,7 @@ class UniteAster:
                 except:
                     unit = int(u)
                 # Si la clé n'existe pas
-                if not self.infos.has_key(unit):
+                if unit not in self.infos:
                     self._setinfo(unit)
                 else:
                     self.Etat(unit, etat=self.infos[unit]['etat_init'])

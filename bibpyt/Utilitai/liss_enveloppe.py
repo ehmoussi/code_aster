@@ -791,4 +791,4 @@ def liss_enveloppe(l_nappes, option='CONCEPTION', nb_pts=50, coef_elarg=None,
                                       zpa=zpa)
         return liss_nappe
     else:
-        print "L'option %s n'est pas traitée" % option
+        print("L'option %s n'est pas traitée" % option)

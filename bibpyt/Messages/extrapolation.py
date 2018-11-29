@@ -22,20 +22,20 @@
 
 cata_msg = {
 
-    1: _(u"""On tente une extrapolation linéaire sur les résidus."""),
+    1: _("""On tente une extrapolation linéaire sur les résidus."""),
 
-    2: _(u"""
+    2: _("""
           L'extrapolation sur les résidus n'est pas possible.
           On utilise un autre résidu que RESI_GLOB_RELA ou RESI_GLOB_MAXI pour l'évaluation de la convergence.
           Ce n'est pas prévu.
 """),
 
-    3: _(u"""L'extrapolation sur les résidus n'est pas possible car il n'y a pas assez de valeurs pour la faire."""),
+    3: _("""L'extrapolation sur les résidus n'est pas possible car il n'y a pas assez de valeurs pour la faire."""),
 
-    10: _(u"""L'extrapolation sur les résidus a échoué."""),
+    10: _("""L'extrapolation sur les résidus a échoué."""),
 
-    11: _(u"""L'extrapolation sur les résidus a réussi."""),
+    11: _("""L'extrapolation sur les résidus a réussi."""),
 
-    12: _(u"""On passe en mode de découpe manuelle du pas de temps."""),
+    12: _("""On passe en mode de découpe manuelle du pas de temps."""),
 
 }

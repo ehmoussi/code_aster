@@ -21,7 +21,7 @@
 
 cata_msg = {
 
-    1 : _(u"""
+    1 : _("""
   Temps CPU consommé dans ce pas de temps  : %(k1)s
 """),
 

@@ -20,42 +20,42 @@
 # person_in_charge: josselin.delmas at edf.fr
 
 cata_msg = {
-    1 : _(u"""
+    1 : _("""
 Format SALOME, l'argument 1 doit être le nom du fichier MED produit
 par le script SALOME. Les autres arguments ne sont pas utilisés.
 """),
 
-    2 : _(u"""
+    2 : _("""
 On ne sait pas traiter le format %(k1)s
 """),
 
-    3 : _(u"""
+    3 : _("""
 Code retour incorrect (MAXI %(i1)d) : %(i2)d
 
 """),
 
-    6 : _(u"""
+    6 : _("""
 Le fichier %(k1)s n'existe pas.
 """),
 
-    8 : _(u"""
+    8 : _("""
  Commande :
    %(k1)s
 """),
 
-    9 : _(u"""
+    9 : _("""
 ----- Sortie standard (stdout) ---------------------------------------------------
 %(k1)s
 ----- fin stdout -----------------------------------------------------------------
 """),
 
-    10 : _(u"""
+    10 : _("""
 ----- Sortie erreur standard (stderr) --------------------------------------------
 %(k1)s
 ----- fin stderr -----------------------------------------------------------------
 """),
 
-    11 : _(u"""
+    11 : _("""
  Code retour = %(i2)d      (maximum toléré : %(i1)d)
 """),
 

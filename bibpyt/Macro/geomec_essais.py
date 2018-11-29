@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-from geomec_utils import *
+from .geomec_utils import *
 
 # ----------------------------------------------------------------------- #
 # ----------------------------------------------------------------------- #
@@ -55,7 +55,7 @@ def essai_TRIA_DR_M_D(self, str_n_essai, DicoEssai,
     
     # Recuperation des options d'impression
     # -----------------------------------------
-    if DicoEssai.has_key('COULEUR'):
+    if 'COULEUR' in DicoEssai:
     
        COULEUR_NIV2= DicoEssai['COULEUR']
        
@@ -68,7 +68,7 @@ def essai_TRIA_DR_M_D(self, str_n_essai, DicoEssai,
     else:
        COULEUR_NIV2= [-1]*len(PRES_CONF)
     
-    if DicoEssai.has_key('MARQUEUR'):
+    if 'MARQUEUR' in DicoEssai:
     
        MARQUEUR_NIV2= DicoEssai['MARQUEUR']
        
@@ -80,7 +80,7 @@ def essai_TRIA_DR_M_D(self, str_n_essai, DicoEssai,
     else:
        MARQUEUR_NIV2= [-1]*len(PRES_CONF)
     
-    if DicoEssai.has_key('STYLE'):
+    if 'STYLE' in DicoEssai:
     
        STYLE_NIV2= DicoEssai['STYLE']
        
@@ -95,7 +95,7 @@ def essai_TRIA_DR_M_D(self, str_n_essai, DicoEssai,
     # Recuperation des variables supplementaires a imprimer
     # (si existantes) contenues sous le mot-cle 'NOM_CMP'
     # -----------------------------------------
-    if DicoEssai.has_key('NOM_CMP'):
+    if 'NOM_CMP' in DicoEssai:
        List_Resu_Supp = list(DicoEssai['NOM_CMP'])
     else:
        List_Resu_Supp = None
@@ -122,7 +122,7 @@ def essai_TRIA_DR_M_D(self, str_n_essai, DicoEssai,
           cle+= List_Resu_Supp
     
     for c in cle:
-       Resu_Essai[c] = [[] for k in xrange(len(PRES_CONF))]
+       Resu_Essai[c] = [[] for k in range(len(PRES_CONF))]
     
     # Hors composantes de niveau 1
     # -----------------------------------------
@@ -207,10 +207,10 @@ def essai_TRIA_DR_M_D(self, str_n_essai, DicoEssai,
                          EPXZ=0.,
                          EPYZ=0.,),)
         
-        except (aster.error,aster.onFatalError,), message:
+        except (aster.error,aster.onFatalError,) as message:
    
-           print '\n   !!!(@_@)!!! Arret pour la raison suivante !!!(@_@)!!!\n%s'\
-                     %(message)
+           print('\n   !!!(@_@)!!! Arret pour la raison suivante !!!(@_@)!!!\n%s'\
+                     %(message))
         
            __EVPOST = self.get_last_concept()
            TabRes   = __EVPOST.EXTR_TABLE().values()
@@ -266,12 +266,12 @@ def essai_TRIA_DR_M_D(self, str_n_essai, DicoEssai,
              # Cas ou list_key n existe pas (i=0)
              list_key=[]
              for lr in List_Resu_Supp:
-               if TabRes.has_key(lr):
+               if lr in TabRes:
                   list_key.append(lr)
                   Resu_Essai[lr][i] =TabRes[lr]
                   
            if not i:
-             Resu_Essai['LIST_CMP']=TabRes.keys()
+             Resu_Essai['LIST_CMP']=list(TabRes.keys())
              
         # Impression graphique des composantes supplementaires
         # existantes dans le resultat
@@ -369,7 +369,7 @@ def essai_TRIA_ND_M_D(self, str_n_essai, DicoEssai,\
     
     # Recuperation des options d'impression
     # -----------------------------------------
-    if DicoEssai.has_key('COULEUR'):
+    if 'COULEUR' in DicoEssai:
     
        COULEUR_NIV2= DicoEssai['COULEUR']
        
@@ -382,7 +382,7 @@ def essai_TRIA_ND_M_D(self, str_n_essai, DicoEssai,\
     else:
        COULEUR_NIV2= [-1]*len(PRES_CONF)
     
-    if DicoEssai.has_key('MARQUEUR'):
+    if 'MARQUEUR' in DicoEssai:
     
        MARQUEUR_NIV2= DicoEssai['MARQUEUR']
        
@@ -394,7 +394,7 @@ def essai_TRIA_ND_M_D(self, str_n_essai, DicoEssai,\
     else:
        MARQUEUR_NIV2= [-1]*len(PRES_CONF)
     
-    if DicoEssai.has_key('STYLE'):
+    if 'STYLE' in DicoEssai:
     
        STYLE_NIV2= DicoEssai['STYLE']
        
@@ -409,7 +409,7 @@ def essai_TRIA_ND_M_D(self, str_n_essai, DicoEssai,\
     # Recuperation des variables supplementaires a imprimer
     # (si existantes) contenues sous le mot-cle 'NOM_CMP'
     # -----------------------------------------
-    if DicoEssai.has_key('NOM_CMP'):
+    if 'NOM_CMP' in DicoEssai:
        List_Resu_Supp = list(DicoEssai['NOM_CMP'])
     else:
        List_Resu_Supp = None
@@ -436,7 +436,7 @@ def essai_TRIA_ND_M_D(self, str_n_essai, DicoEssai,\
           cle+= List_Resu_Supp
     
     for c in cle:
-       Resu_Essai[c] = [[] for k in xrange(len(PRES_CONF))]
+       Resu_Essai[c] = [[] for k in range(len(PRES_CONF))]
        
     # Hors composantes de niveau 1
     # -----------------------------------------
@@ -520,10 +520,10 @@ def essai_TRIA_ND_M_D(self, str_n_essai, DicoEssai,\
                          EPXZ=0.,
                          EPYZ=0.,),)
         
-        except (aster.error,aster.onFatalError,), message:
+        except (aster.error,aster.onFatalError,) as message:
    
-           print '\n   !!!(@_@)!!! Arret pour la raison suivante !!!(@_@)!!!\n%s'\
-                     %(message)
+           print('\n   !!!(@_@)!!! Arret pour la raison suivante !!!(@_@)!!!\n%s'\
+                     %(message))
         
            __EVPOST = self.get_last_concept()
            TabRes   = __EVPOST.EXTR_TABLE().values()
@@ -580,12 +580,12 @@ def essai_TRIA_ND_M_D(self, str_n_essai, DicoEssai,\
              # Cas ou list_key n existe pas (i=0)
              list_key=[]
              for lr in List_Resu_Supp:
-               if TabRes.has_key(lr):
+               if lr in TabRes:
                   list_key.append(lr)
                   Resu_Essai[lr][i] =TabRes[lr]
                   
            if not i:
-             Resu_Essai['LIST_CMP']=TabRes.keys()
+             Resu_Essai['LIST_CMP']=list(TabRes.keys())
              
         # Impression graphique des composantes supplementaires
         # existantes dans le resultat
@@ -685,7 +685,7 @@ def essai_CISA_DR_C_D(self, str_n_essai, DicoEssai, MATER, COMPORTEMENT, CONVERG
     
     # Recuperation des options d'impression
     # -----------------------------------------
-    if DicoEssai.has_key('COULEUR_NIV1'):
+    if 'COULEUR_NIV1' in DicoEssai:
     
        COULEUR_NIV1= DicoEssai['COULEUR_NIV1']
        
@@ -698,7 +698,7 @@ def essai_CISA_DR_C_D(self, str_n_essai, DicoEssai, MATER, COMPORTEMENT, CONVERG
     else:
        COULEUR_NIV1= [-1]*len(PRES_CONF)
     
-    if DicoEssai.has_key('MARQUEUR_NIV1'):
+    if 'MARQUEUR_NIV1' in DicoEssai:
     
        MARQUEUR_NIV1= DicoEssai['MARQUEUR_NIV1']
        
@@ -710,7 +710,7 @@ def essai_CISA_DR_C_D(self, str_n_essai, DicoEssai, MATER, COMPORTEMENT, CONVERG
     else:
        MARQUEUR_NIV1= [-1]*len(PRES_CONF)
     
-    if DicoEssai.has_key('STYLE_NIV1'):
+    if 'STYLE_NIV1' in DicoEssai:
     
        STYLE_NIV1= DicoEssai['STYLE_NIV1']
        
@@ -722,7 +722,7 @@ def essai_CISA_DR_C_D(self, str_n_essai, DicoEssai, MATER, COMPORTEMENT, CONVERG
     else:
        STYLE_NIV1= [-1]*len(PRES_CONF)
        
-    if DicoEssai.has_key('COULEUR_NIV2'):
+    if 'COULEUR_NIV2' in DicoEssai:
     
        COULEUR_NIV2= DicoEssai['COULEUR_NIV2']
        
@@ -735,7 +735,7 @@ def essai_CISA_DR_C_D(self, str_n_essai, DicoEssai, MATER, COMPORTEMENT, CONVERG
     else:
        COULEUR_NIV2= [-1]*len(GAMMA_IMPOSE)
     
-    if DicoEssai.has_key('MARQUEUR_NIV2'):
+    if 'MARQUEUR_NIV2' in DicoEssai:
     
        MARQUEUR_NIV2= DicoEssai['MARQUEUR_NIV2']
        
@@ -747,7 +747,7 @@ def essai_CISA_DR_C_D(self, str_n_essai, DicoEssai, MATER, COMPORTEMENT, CONVERG
     else:
        MARQUEUR_NIV2= [-1]*len(GAMMA_IMPOSE)
     
-    if DicoEssai.has_key('STYLE_NIV2'):
+    if 'STYLE_NIV2' in DicoEssai:
     
        STYLE_NIV2= DicoEssai['STYLE_NIV2']
        
@@ -762,7 +762,7 @@ def essai_CISA_DR_C_D(self, str_n_essai, DicoEssai, MATER, COMPORTEMENT, CONVERG
     # Recuperation des variables supplementaires a imprimer
     # (si existantes) contenues sous le mot-cle 'NOM_CMP'
     # -----------------------------------------
-    if DicoEssai.has_key('NOM_CMP'):
+    if 'NOM_CMP' in DicoEssai:
        List_Resu_Supp = list(DicoEssai['NOM_CMP'])
     else:
        List_Resu_Supp = None
@@ -802,7 +802,7 @@ def essai_CISA_DR_C_D(self, str_n_essai, DicoEssai, MATER, COMPORTEMENT, CONVERG
           cle+= List_Resu_Supp
     
     for c in cle:
-       Resu_Essai[c] = [[] for k in xrange(len(PRES_CONF))]
+       Resu_Essai[c] = [[] for k in range(len(PRES_CONF))]
        
     # Hors composantes de niveau 1
     # 'G_SUR_GMAX','DAMPING',
@@ -825,7 +825,7 @@ def essai_CISA_DR_C_D(self, str_n_essai, DicoEssai, MATER, COMPORTEMENT, CONVERG
     __RLIST = DEFI_LIST_REEL(DEBUT=0.,
                              INTERVALLE=[_F(JUSQU_A=10., NOMBRE=NB_INST,), ] +\
                                         [_F(JUSQU_A=10.*(2*k+1), NOMBRE=2*NB_INST,)
-                                            for k in xrange(1, 2*NB_CYCLE+1)],
+                                            for k in range(1, 2*NB_CYCLE+1)],
                              INFO=INFO)
 
     __DLIST = DEFI_LIST_INST(DEFI_LIST=_F(LIST_INST=__RLIST),
@@ -868,11 +868,11 @@ def essai_CISA_DR_C_D(self, str_n_essai, DicoEssai, MATER, COMPORTEMENT, CONVERG
             # ---
             if sinusoidal:
             
-               absc_peak= [10.*(2*k+1) for k in xrange(2*NB_CYCLE+1)]
-               abscisse = [10.*k/3./NB_INST for k in xrange(3*NB_INST)]
+               absc_peak= [10.*(2*k+1) for k in range(2*NB_CYCLE+1)]
+               abscisse = [10.*k/3./NB_INST for k in range(3*NB_INST)]
                
                for inst_peak in absc_peak:
-                  abscisse+= [inst_peak + 10.*kk/3./NB_INST for kk in xrange(6*NB_INST)]
+                  abscisse+= [inst_peak + 10.*kk/3./NB_INST for kk in range(6*NB_INST)]
                
                # absc_sinus varie de 0 a Pi/2 par intervalles de NB_INST=10s
                # (sinus varie de 0 a 1)
@@ -882,8 +882,8 @@ def essai_CISA_DR_C_D(self, str_n_essai, DicoEssai, MATER, COMPORTEMENT, CONVERG
                ordonnee = NP.sin(absc_sinus)*.5*eps0
                
             else:
-               abscisse = [0.]+[10.*(2*k+1) for k in xrange(2*NB_CYCLE+1)]
-               ordonnee = [0.]+[.5*eps0 * (-1.)**(k+1) for k in xrange(2*NB_CYCLE+1)]
+               abscisse = [0.]+[10.*(2*k+1) for k in range(2*NB_CYCLE+1)]
+               ordonnee = [0.]+[.5*eps0 * (-1.)**(k+1) for k in range(2*NB_CYCLE+1)]
             
             __CHAR1 = DEFI_FONCTION(INFO=INFO, NOM_PARA='INST',
                                     ABSCISSE=abscisse,
@@ -933,11 +933,11 @@ def essai_CISA_DR_C_D(self, str_n_essai, DicoEssai, MATER, COMPORTEMENT, CONVERG
                              EPXZ=0.,
                              EPYZ=0.,),)
                              
-            except (aster.error,aster.onFatalError,),mess:
+            except (aster.error,aster.onFatalError,) as mess:
                     
-               print\
+               print(\
       '\n!!!(@_@)!!! Arret pour la raison suivante !!!(@_@)!!!\n\n%s'\
-      %(mess)
+      %(mess))
             
                __EVPOST = self.get_last_concept()
                TabRes   = __EVPOST.LIST_VARI_ACCES()
@@ -1040,12 +1040,12 @@ def essai_CISA_DR_C_D(self, str_n_essai, DicoEssai, MATER, COMPORTEMENT, CONVERG
                  # Cas ou list_key n existe pas (i=0)
                  list_key=[]
                  for lr in List_Resu_Supp:
-                   if TabRes.has_key(lr):
+                   if lr in TabRes:
                       list_key.append(lr)
                       Resu_Essai[lr][i].append(TabRes[lr])
                   
                if not i:
-                 Resu_Essai['LIST_CMP'] =TabRes.keys()
+                 Resu_Essai['LIST_CMP'] =list(TabRes.keys())
 
             # NIVEAU 2: remplissage des graphiques
             # ------------------------------------------------------
@@ -1196,13 +1196,13 @@ def essai_TRIA_ND_C_F(self, str_n_essai, DicoEssai, MATER, COMPORTEMENT,
        
           vale_crit[t]=DicoEssai['VALE_CRIT'][i]
        
-          print '\n   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
-          print '   !                                                  !'
-          print '   !          LE CRITERE DE LIQUEFACTION NO.%1d EST:    !' %(i+1)
-          print '   !                                                  !'
-          print '   !           RU > %.2f                              !' %(vale_crit[t])
-          print '   !                                                  !'
-          print '   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
+          print('\n   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
+          print('   !                                                  !')
+          print('   !          LE CRITERE DE LIQUEFACTION NO.%1d EST:    !' %(i+1))
+          print('   !                                                  !')
+          print('   !           RU > %.2f                              !' %(vale_crit[t]))
+          print('   !                                                  !')
+          print('   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
     
        if t == 'EPSI_ABSO_MAX':
        
@@ -1210,16 +1210,16 @@ def essai_TRIA_ND_C_F(self, str_n_essai, DicoEssai, MATER, COMPORTEMENT,
        
           # Positif en compression
           # ----------------------
-          print '\n   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
-          print '   !                                                  !'
-          print '   !          LE CRITERE DE LIQUEFACTION NO.%1d EST:    !' %(i+1)
-          print '   !                                                  !'
+          print('\n   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
+          print('   !                                                  !')
+          print('   !          LE CRITERE DE LIQUEFACTION NO.%1d EST:    !' %(i+1))
+          print('   !                                                  !')
           if vale_crit[t] >0.:
-             print '   !           EPSI_AXI > %.4e                 !' %(vale_crit[t])
+             print('   !           EPSI_AXI > %.4e                 !' %(vale_crit[t]))
           else:
-             print '   !           EPSI_AXI < %.4e                 !' %(vale_crit[t])
-          print '   !                                                  !'
-          print '   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
+             print('   !           EPSI_AXI < %.4e                 !' %(vale_crit[t]))
+          print('   !                                                  !')
+          print('   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
     
        if t == 'EPSI_RELA_MAX':
        
@@ -1227,18 +1227,18 @@ def essai_TRIA_ND_C_F(self, str_n_essai, DicoEssai, MATER, COMPORTEMENT,
        
           # Positif en compression
           # ----------------------
-          print '\n   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
-          print '   !                                                  !'
-          print '   !          LE CRITERE DE LIQUEFACTION NO.%1d EST:    !' %(i+1)
-          print '   !                                                  !'
-          print '   !    EPSI_AXI_MAXI - EPSI_AXI_MINI > %.4e    !'\
-                    %(vale_crit[t])
-          print '   !                                                  !'
-          print '   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
+          print('\n   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
+          print('   !                                                  !')
+          print('   !          LE CRITERE DE LIQUEFACTION NO.%1d EST:    !' %(i+1))
+          print('   !                                                  !')
+          print('   !    EPSI_AXI_MAXI - EPSI_AXI_MINI > %.4e    !'\
+                    %(vale_crit[t]))
+          print('   !                                                  !')
+          print('   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
     
     # Recuperation des options d'impression
     # -----------------------------------------
-    if DicoEssai.has_key('COULEUR_NIV1'):
+    if 'COULEUR_NIV1' in DicoEssai:
     
        COULEUR_NIV1= DicoEssai['COULEUR_NIV1']
        
@@ -1251,7 +1251,7 @@ def essai_TRIA_ND_C_F(self, str_n_essai, DicoEssai, MATER, COMPORTEMENT,
     else:
        COULEUR_NIV1= [-1]*len(PRES_CONF)
     
-    if DicoEssai.has_key('MARQUEUR_NIV1'):
+    if 'MARQUEUR_NIV1' in DicoEssai:
     
        MARQUEUR_NIV1= DicoEssai['MARQUEUR_NIV1']
        
@@ -1263,7 +1263,7 @@ def essai_TRIA_ND_C_F(self, str_n_essai, DicoEssai, MATER, COMPORTEMENT,
     else:
        MARQUEUR_NIV1= [-1]*len(PRES_CONF)
     
-    if DicoEssai.has_key('STYLE_NIV1'):
+    if 'STYLE_NIV1' in DicoEssai:
     
        STYLE_NIV1= DicoEssai['STYLE_NIV1']
        
@@ -1275,7 +1275,7 @@ def essai_TRIA_ND_C_F(self, str_n_essai, DicoEssai, MATER, COMPORTEMENT,
     else:
        STYLE_NIV1= [-1]*len(PRES_CONF)
        
-    if DicoEssai.has_key('COULEUR_NIV2'):
+    if 'COULEUR_NIV2' in DicoEssai:
     
        COULEUR_NIV2= DicoEssai['COULEUR_NIV2']
        
@@ -1288,7 +1288,7 @@ def essai_TRIA_ND_C_F(self, str_n_essai, DicoEssai, MATER, COMPORTEMENT,
     else:
        COULEUR_NIV2= [-1]*len(SIGM_IMPOSE)
     
-    if DicoEssai.has_key('MARQUEUR_NIV2'):
+    if 'MARQUEUR_NIV2' in DicoEssai:
     
        MARQUEUR_NIV2= DicoEssai['MARQUEUR_NIV2']
        
@@ -1300,7 +1300,7 @@ def essai_TRIA_ND_C_F(self, str_n_essai, DicoEssai, MATER, COMPORTEMENT,
     else:
        MARQUEUR_NIV2= [-1]*len(SIGM_IMPOSE)
     
-    if DicoEssai.has_key('STYLE_NIV2'):
+    if 'STYLE_NIV2' in DicoEssai:
     
        STYLE_NIV2= DicoEssai['STYLE_NIV2']
        
@@ -1315,7 +1315,7 @@ def essai_TRIA_ND_C_F(self, str_n_essai, DicoEssai, MATER, COMPORTEMENT,
     # Recuperation des variables supplementaires a imprimer
     # (si existantes) contenues sous le mot-cle 'NOM_CMP'
     # -----------------------------------------
-    if DicoEssai.has_key('NOM_CMP'):
+    if 'NOM_CMP' in DicoEssai:
        List_Resu_Supp = list(DicoEssai['NOM_CMP'])
     else:
        List_Resu_Supp = None
@@ -1363,10 +1363,10 @@ def essai_TRIA_ND_C_F(self, str_n_essai, DicoEssai, MATER, COMPORTEMENT,
           cle+= List_Resu_Supp
        
        for c in List_Resu_Supp:
-          Vari_Supp[c] = [[] for k in xrange(len(PRES_CONF))]
+          Vari_Supp[c] = [[] for k in range(len(PRES_CONF))]
     
     for c in cle:
-       Resu_Essai[c] = [[] for k in xrange(len(PRES_CONF))]
+       Resu_Essai[c] = [[] for k in range(len(PRES_CONF))]
        
     # Hors composantes de niveau 1:
     # 'NCYCL','DSIGM',
@@ -1399,7 +1399,7 @@ def essai_TRIA_ND_C_F(self, str_n_essai, DicoEssai, MATER, COMPORTEMENT,
     # ---
     __RLIST = DEFI_LIST_REEL(DEBUT=0.,
                              INTERVALLE=[_F(JUSQU_A=10.*(k+1), NOMBRE=NB_INST,)
-                                         for k in xrange(4*NB_CYCLE)],
+                                         for k in range(4*NB_CYCLE)],
                              INFO=INFO)
 
     __DLIST = DEFI_LIST_INST(DEFI_LIST=_F(LIST_INST=__RLIST),
@@ -1450,15 +1450,15 @@ def essai_TRIA_ND_C_F(self, str_n_essai, DicoEssai, MATER, COMPORTEMENT,
             # ---
             if sinusoidal:
 
-               absc_peak= [10. * (2*k+1) for k in xrange(2*NB_CYCLE)] +\
+               absc_peak= [10. * (2*k+1) for k in range(2*NB_CYCLE)] +\
                           [10. * (4*NB_CYCLE)]
                           
-               abscisse = [10.*k/3./NB_INST for k in xrange(3*NB_INST)]
+               abscisse = [10.*k/3./NB_INST for k in range(3*NB_INST)]
    
                for ipeak in absc_peak[:-1]:
-                  abscisse+= [ipeak + 10.*kk/3./NB_INST for kk in xrange(6*NB_INST)]
+                  abscisse+= [ipeak + 10.*kk/3./NB_INST for kk in range(6*NB_INST)]
                   
-               #abscisse+= [absc_peak[-1] + 10.*k/3./NB_INST for k in xrange(3*NB_INST)]
+               #abscisse+= [absc_peak[-1] + 10.*k/3./NB_INST for k in range(3*NB_INST)]
                
                # absc_sinus varie de 0 a Pi/2 par intervalles de NB_INST=10s
                # (sinus varie de 0 a 1)
@@ -1469,11 +1469,11 @@ def essai_TRIA_ND_C_F(self, str_n_essai, DicoEssai, MATER, COMPORTEMENT,
    
             else:
                abscisse = [0.] +\
-                         [10. * (2*k+1) for k in xrange(2*NB_CYCLE)] +\
+                         [10. * (2*k+1) for k in range(2*NB_CYCLE)] +\
                          [10. * (4*NB_CYCLE)]
                
                ordonnee = [-sig0] +\
-                         [-sig0 + dsig*(-1)**k for k in xrange(2*NB_CYCLE)] +\
+                         [-sig0 + dsig*(-1)**k for k in range(2*NB_CYCLE)] +\
                          [-sig0]
 
             __CHAR1 = DEFI_FONCTION(INFO=INFO, NOM_PARA='INST',
@@ -1535,10 +1535,10 @@ def essai_TRIA_ND_C_F(self, str_n_essai, DicoEssai, MATER, COMPORTEMENT,
                                   SIYY=-KZERO*sig0,
                                   SIZZ=-sig0,),)
 
-            except (aster.error,aster.onFatalError,), message:
+            except (aster.error,aster.onFatalError,) as message:
    
-                print '\n   !!!(@_@)!!! Arret pour la raison suivante !!!(@_@)!!!\n%s'\
-                     %(message)
+                print('\n   !!!(@_@)!!! Arret pour la raison suivante !!!(@_@)!!!\n%s'\
+                     %(message))
 
                 calc_ok  = False
                 __EVPOST = self.get_last_concept()
@@ -1594,12 +1594,12 @@ def essai_TRIA_ND_C_F(self, str_n_essai, DicoEssai, MATER, COMPORTEMENT,
                 indx_peak.append(inst.index(t))
 
             if info_dbg:
-              print '\n * INST FINAL    = %f' %(inst[-1])
-              print ' * Q               = %e' %(q[-1])
-              print ' * P               = %e' %(p[-1])
-              print ' * INST PEAK LIST  = ',inst_peak
-              print ' * INDEX PEAK LIST = ',indx_peak
-              print ' * CONVERGENCE     = ',calc_ok
+              print('\n * INST FINAL    = %f' %(inst[-1]))
+              print(' * Q               = %e' %(q[-1]))
+              print(' * P               = %e' %(p[-1]))
+              print(' * INST PEAK LIST  = ',inst_peak)
+              print(' * INDEX PEAK LIST = ',indx_peak)
+              print(' * CONVERGENCE     = ',calc_ok)
 
             indx_init,numcyc,inst_init,=-1,-1,0
 
@@ -1618,27 +1618,27 @@ def essai_TRIA_ND_C_F(self, str_n_essai, DicoEssai, MATER, COMPORTEMENT,
                  ncrit+=1
 
                if info_dbg:
-                 print '\n   + INDEX PEAK = %d' %(n)
-                 print '   + P          = %e' %(p[n])
-                 print '   + Q          = %e' %(q[n])
-                 print '   + DEPM       = %f' %(depzzmax)
-                 print '   + DQDP       = %f' %(dqdpmin)
-                 print '   + CRIT       = %d   NUME_DEPS = %d   NUME_DQDP = %d'\
-                     %(ncrit,nume1,nume2)
+                 print('\n   + INDEX PEAK = %d' %(n))
+                 print('   + P          = %e' %(p[n]))
+                 print('   + Q          = %e' %(q[n]))
+                 print('   + DEPM       = %f' %(depzzmax))
+                 print('   + DQDP       = %f' %(dqdpmin))
+                 print('   + CRIT       = %d   NUME_DEPS = %d   NUME_DQDP = %d'\
+                     %(ncrit,nume1,nume2))
 
                if ncrit>=2:
                
                  indx_init=nume2
                  numcyc   =k
                  
-                 print '\n   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
-                 print '   !                                                   !'
-                 print '   !      INSTABILITE DETECTEE A L INSTANT %.3f     !'\
-                         %(inst[indx_init])
-                 print '   !               AU CYCLE NUMERO %3d               !'\
-                         %(numcyc+1)
-                 print '   !                                                   !'
-                 print '   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n'
+                 print('\n   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
+                 print('   !                                                   !')
+                 print('   !      INSTABILITE DETECTEE A L INSTANT %.3f     !'\
+                         %(inst[indx_init]))
+                 print('   !               AU CYCLE NUMERO %3d               !'\
+                         %(numcyc+1))
+                 print('   !                                                   !')
+                 print('   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n')
                  
                  break
             #
@@ -1656,18 +1656,18 @@ def essai_TRIA_ND_C_F(self, str_n_essai, DicoEssai, MATER, COMPORTEMENT,
                  
                    numcyc=n
                    
-                   print '\n   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
-                   print '   !                                                   !'
-                   print '   !            NON-CONVERGENCE DETECTEE A             !'
-                   print '   !       L INSTANT %.3f AU CYCLE NUMERO %3d       !'\
-                         %(inst[indx_init],numcyc+1)
-                   print '   !                                                   !'
-                   print '   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
+                   print('\n   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
+                   print('   !                                                   !')
+                   print('   !            NON-CONVERGENCE DETECTEE A             !')
+                   print('   !       L INSTANT %.3f AU CYCLE NUMERO %3d       !'\
+                         %(inst[indx_init],numcyc+1))
+                   print('   !                                                   !')
+                   print('   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
             
                    break
                   
             if info_dbg:
-                print '   + NUMCYC     = %d' %(numcyc)
+                print('   + NUMCYC     = %d' %(numcyc))
             
 
             # ========================================================
@@ -1686,14 +1686,14 @@ def essai_TRIA_ND_C_F(self, str_n_essai, DicoEssai, MATER, COMPORTEMENT,
               # Fin ---
               inst_init= inst[indx_init]
 
-              print titre
+              print(titre)
               
               if info_dbg:
-                print ' * ETAT INIT:'
-                print '   =========\n'
-                print '   + CYCLE NUMERO %d SUR %d' %(numcyc+1,NB_CYCLE)
-                print '   + INDEX INIT=%d' %(indx_init)
-                print '   + INST INIT =%f' %(inst_init)
+                print(' * ETAT INIT:')
+                print('   =========\n')
+                print('   + CYCLE NUMERO %d SUR %d' %(numcyc+1,NB_CYCLE))
+                print('   + INDEX INIT=%d' %(indx_init))
+                print('   + INST INIT =%f' %(inst_init))
 
               sigm,epsi,=[0.]*6,[0.]*6,
               for n in range(3):
@@ -1701,8 +1701,8 @@ def essai_TRIA_ND_C_F(self, str_n_essai, DicoEssai, MATER, COMPORTEMENT,
                 epsi[n]=TabRes['EP%s' %(comp[n])][indx_init]
 
                 if info_dbg:
-                  print '   + EP%s =%.6e   SI%s =%.6e'\
-                  %(comp[n],epsi[n],comp[n],sigm[n])
+                  print('   + EP%s =%.6e   SI%s =%.6e'\
+                  %(comp[n],epsi[n],comp[n],sigm[n]))
 
               p = (sigm[0]+sigm[1]+sigm[2]) /3.
               q = sigm[2]-sigm[0]
@@ -1715,20 +1715,20 @@ def essai_TRIA_ND_C_F(self, str_n_essai, DicoEssai, MATER, COMPORTEMENT,
 #                    break
 
               if info_dbg:
-                  print '   + P    =%.6e   Q[-1] =%.6e   Q[-2] =%.6e   Q[-3] =%.6e\n'\
-                  %(p,q,q2,q3,)
+                  print('   + P    =%.6e   Q[-1] =%.6e   Q[-2] =%.6e   Q[-3] =%.6e\n'\
+                  %(p,q,q2,q3,))
 
               vari,nvari =[],0
               for n in range(60):
-                if TabRes.has_key('V%d' %(n+1)):
+                if 'V%d' %(n+1) in TabRes:
                    vari.append(TabRes['V%d' %(n+1)][indx_init])
                    nvari +=1
                 else:
                    break
 
               if info_dbg:
-                print\
-         '\n   <<<< BOUCLE SUR LES CYCLES TRIA_ND_C_F A EPSILON IMPOSE >>>>\n'
+                print(\
+         '\n   <<<< BOUCLE SUR LES CYCLES TRIA_ND_C_F A EPSILON IMPOSE >>>>\n')
 
               indx_max,inst_max,=indx_init,inst_init,
 
@@ -1744,7 +1744,7 @@ def essai_TRIA_ND_C_F(self, str_n_essai, DicoEssai, MATER, COMPORTEMENT,
               list_key__=[]
               if List_Resu_Supp:
                  for lr in List_Resu_Supp:
-                   if TabRes.has_key(lr) and (not (lr in TabResm.keys())):
+                   if lr in TabRes and (not (lr in list(TabResm.keys()))):
                       list_key__.append(lr)
                       TabResm[lr] = []
               
@@ -1773,8 +1773,8 @@ def essai_TRIA_ND_C_F(self, str_n_essai, DicoEssai, MATER, COMPORTEMENT,
               # ----------------------------------
 
               if info_dbg:
-                print\
-         '\n   <<<< DETERMINATION DE LA DIRECTION DE CHARGEMENT >>>>\n'
+                print(\
+         '\n   <<<< DETERMINATION DE LA DIRECTION DE CHARGEMENT >>>>\n')
               
               __EVOLM,calc_ok_mono,=\
                  essai_TRIA_ND_C_D_mono(self, inst_max, sigm, epsi,
@@ -1789,15 +1789,15 @@ def essai_TRIA_ND_C_F(self, str_n_essai, DicoEssai, MATER, COMPORTEMENT,
               DETRUIRE(CONCEPT=_F(NOM=(__EVOLM)), INFO=1)
               
               if info_dbg:
-                print '\n   + Q_ESSAI[-1]               = %e' %(qcalc1)
-                print '   + Q_ESSAI[-2]               = %e' %(qcalc2)
-                print '   + Q_ESSAI[-1] - Q_ESSAI[-2] = %e' %(qcalc1-qcalc2)
-                print '   + Q0                        = %e' %(q0)
-                print '   + DSIG (conv. aster)        = %e' %(dsig)
-                print '   + Q_CALC[-1]                = %e' %(q)
-                print '   + Q_CALC[-2]                = %e' %(q2)
-                print '   + Q_CALC[-3]                = %e' %(q3)
-                print '   + Q_CALC[-1] - Q_CALC[-2]   = %e' %(q-q2)
+                print('\n   + Q_ESSAI[-1]               = %e' %(qcalc1))
+                print('   + Q_ESSAI[-2]               = %e' %(qcalc2))
+                print('   + Q_ESSAI[-1] - Q_ESSAI[-2] = %e' %(qcalc1-qcalc2))
+                print('   + Q0                        = %e' %(q0))
+                print('   + DSIG (conv. aster)        = %e' %(dsig))
+                print('   + Q_CALC[-1]                = %e' %(q))
+                print('   + Q_CALC[-2]                = %e' %(q2))
+                print('   + Q_CALC[-3]                = %e' %(q3))
+                print('   + Q_CALC[-1] - Q_CALC[-2]   = %e' %(q-q2))
                 
               # ==================================================================
               # On dertmine le sens du chargement:
@@ -1809,17 +1809,17 @@ def essai_TRIA_ND_C_F(self, str_n_essai, DicoEssai, MATER, COMPORTEMENT,
                 nbc0=1
                 
                 if info_dbg:
-                  print '\n   @ DQ_ESSAI et DQ_CALC SONT DANS LE MEME SENS => NBC0=%d' %(nbc0)
+                  print('\n   @ DQ_ESSAI et DQ_CALC SONT DANS LE MEME SENS => NBC0=%d' %(nbc0))
                         
               else:
               # dq_calcule est dans le sens oppose a dq_previous
                 nbc0=0
                 
                 if info_dbg:
-                  print '\n   @ DQ_ESSAI et DQ_CALC SONT EN SENS OPPOSE => NBC0=%d' %(nbc0)
+                  print('\n   @ DQ_ESSAI et DQ_CALC SONT EN SENS OPPOSE => NBC0=%d' %(nbc0))
               
-              print '     SIGNE(Q_ESSAI[-1]-Q_ESSAI[-2]) ='+\
-                    ' SIGNE(2*Q_CALC[-1]-Q_CALC[-2]-Q_CALC[-3]) = %.0f' %(NP.sign(q-.5*q2-.5*q3))
+              print('     SIGNE(Q_ESSAI[-1]-Q_ESSAI[-2]) ='+\
+                    ' SIGNE(2*Q_CALC[-1]-Q_CALC[-2]-Q_CALC[-3]) = %.0f' %(NP.sign(q-.5*q2-.5*q3)))
 
               # ==================================================================
               # On dertmine une modification du sens du chargement en fonction
@@ -1833,26 +1833,26 @@ def essai_TRIA_ND_C_F(self, str_n_essai, DicoEssai, MATER, COMPORTEMENT,
                 nbc0+=1
                 
                 if info_dbg:
-                  print '   @ CONSIGNE DEPASSEE :: CHARGEMENT INVERSE ::' +\
+                  print('   @ CONSIGNE DEPASSEE :: CHARGEMENT INVERSE ::' +\
                         ' | Q_ESSAI[-1] - Q0 | = %e > | DSIG | = %e'\
-                       %(abs(qcalc1-q0), abs(dsig))
+                       %(abs(qcalc1-q0), abs(dsig)))
                 
               elif abs(q-q2) < 1.e-4*abs(q):
               # le trajet s'est arrete sur un plateau
                 #nbc0+=0
                 
                 if info_dbg:
-                  print '   @ PLATEAU :: CHARGEMENT COLINEAIRE ::' +\
+                  print('   @ PLATEAU :: CHARGEMENT COLINEAIRE ::' +\
                         ' Q_CALC[-1] - Q_CALC[-2] = %e < 1e-4*Q_CALC = %e'\
-                       %(q-q2, 1.e-4*abs(q))
+                       %(q-q2, 1.e-4*abs(q)))
 #               else:
 #                 nbc0=0
 #                 
 #                 if info_dbg:
-#                   print '\n  @ DECHARGE (NBC=0)'
+#                   print('\n  @ DECHARGE (NBC=0)')
                 
               if info_dbg:
-                  print '\n   * NBC0              =%d' %(nbc0)
+                  print('\n   * NBC0              =%d' %(nbc0))
 
               coef_gamma      =4.
               NB_CYCLE_EPSILON=2*(NB_CYCLE-numcyc)
@@ -1877,11 +1877,11 @@ def essai_TRIA_ND_C_F(self, str_n_essai, DicoEssai, MATER, COMPORTEMENT,
                 gamma =epsi_max*(-1.)**(nbc+nbc0)
 
                 if info_dbg:
-                  print '\n   <<<< 1/2-CYCLE EN DEF. IMPOSEE NUMERO NBC+1=%d SUR %d >>>>\n'\
-                         %(nbc+1,NB_CYCLE_EPSILON)
-                  print '   * GAMMA_MAX =%e' %(gamma)
+                  print('\n   <<<< 1/2-CYCLE EN DEF. IMPOSEE NUMERO NBC+1=%d SUR %d >>>>\n'\
+                         %(nbc+1,NB_CYCLE_EPSILON))
+                  print('   * GAMMA_MAX =%e' %(gamma))
                   
-                  print '   * NB PAS    =%d' %(nb_redec1)
+                  print('   * NB PAS    =%d' %(nb_redec1))
 
                 __EVOLM,calc_ok_mono,=\
                  essai_TRIA_ND_C_D_mono(self, inst_max, sigm, epsi,
@@ -1897,15 +1897,15 @@ def essai_TRIA_ND_C_F(self, str_n_essai, DicoEssai, MATER, COMPORTEMENT,
                 if abs(q-q0) < abs(.95*dsig):
 
                    if info_dbg:
-                      print '\n   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
-                      print '   !                                                   !'
-                      print '   !            NB REDECOUPAGE INITIAL %4d            !' %(nb_redec1)
-                      print '   !         A GAMMA_MAX = %.4e INSUFFISANT      !' %(abs(gamma))
-                      print '   !                                                   !'
-                      print '   !     AUGMENTATION GAMMA_MAX = %.4e           !' %(coef_gamma*abs(gamma))
-                      print '   !     NB PAS DE REDECOUPAGE  = %4d                 !' %(nb_redec2)
-                      print '   !                                                   !'
-                      print '   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
+                      print('\n   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
+                      print('   !                                                   !')
+                      print('   !            NB REDECOUPAGE INITIAL %4d            !' %(nb_redec1))
+                      print('   !         A GAMMA_MAX = %.4e INSUFFISANT      !' %(abs(gamma)))
+                      print('   !                                                   !')
+                      print('   !     AUGMENTATION GAMMA_MAX = %.4e           !' %(coef_gamma*abs(gamma)))
+                      print('   !     NB PAS DE REDECOUPAGE  = %4d                 !' %(nb_redec2))
+                      print('   !                                                   !')
+                      print('   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
 
                    __EVOLM,calc_ok_mono,=\
                    essai_TRIA_ND_C_D_mono(self, inst_max, sigm, epsi,
@@ -1945,12 +1945,12 @@ def essai_TRIA_ND_C_F(self, str_n_essai, DicoEssai, MATER, COMPORTEMENT,
                       break
                       
                 if info_dbg:
-                    print '\n     + nbc+nbc0           =%d' %(nbc+nbc0)
-                    print '     + LON                =%d' %(nlon)
-                    print '     + DSIG (conv. aster) =%e' %(dsig)
-                    print '     + GAMMA              =%e' %(gamma)
-                    print '     + QMAX               =%e' %(q[-1]-q0)
-                    print '     + DQMAX              =%e' %(dqmax)
+                    print('\n     + nbc+nbc0           =%d' %(nbc+nbc0))
+                    print('     + LON                =%d' %(nlon))
+                    print('     + DSIG (conv. aster) =%e' %(dsig))
+                    print('     + GAMMA              =%e' %(gamma))
+                    print('     + QMAX               =%e' %(q[-1]-q0))
+                    print('     + DQMAX              =%e' %(dqmax))
                    
                 indx_max=dq.index(dqmax)
                 inst_max=inst[indx_max]
@@ -1961,20 +1961,20 @@ def essai_TRIA_ND_C_F(self, str_n_essai, DicoEssai, MATER, COMPORTEMENT,
                   epsi[n]=__TabResm['EP%s' %(comp[n])][indx_max]
 
                   if info_dbg:
-                    print '\n   * EP%s =%e   SI%s =%e' %(comp[n],epsi[n],comp[n],sigm[n])
+                    print('\n   * EP%s =%e   SI%s =%e' %(comp[n],epsi[n],comp[n],sigm[n]))
 
                 for n in range(50):
                   vari[n]=__TabResm['V%d' %(n+1)][indx_max]
 
                   if info_dbg:
-                    print '   * V%d  =%e' %(n,vari[n])
+                    print('   * V%d  =%e' %(n,vari[n]))
                 
                 if info_dbg:
-                    print '\n   * INDEX MAX SIGMA=%d' %(indx_max)
-                    print '   * INST MAX SIGMA =%f' %(inst_max)
-                    print '   * MAX P          =%e  Q =%e' %(p[indx_max],q[indx_max])
-                    print '   * DELTA T        =%f' %(inst[-1]-inst[-2])
-                    print '   * INST FINAL     =%f' %(inst[-1])
+                    print('\n   * INDEX MAX SIGMA=%d' %(indx_max))
+                    print('   * INST MAX SIGMA =%f' %(inst_max))
+                    print('   * MAX P          =%e  Q =%e' %(p[indx_max],q[indx_max]))
+                    print('   * DELTA T        =%f' %(inst[-1]-inst[-2]))
+                    print('   * INST FINAL     =%f' %(inst[-1]))
                 
 #                 # On recupere la boucle precedente
 #                 try:
@@ -2000,9 +2000,9 @@ def essai_TRIA_ND_C_F(self, str_n_essai, DicoEssai, MATER, COMPORTEMENT,
                    TabResm[c]+=__TabResm[c][1:nf]
                
                 if info_dbg:
-                   print '\n   * Tabresm key=',TabResm.keys()
+                   print('\n   * Tabresm key=',TabResm.keys())
                    for v in TabResm:
-                      print '       + LEN Tsbresm[%s][%d] = %d' %(v,i,len(TabResm[v]))
+                      print('       + LEN Tsbresm[%s][%d] = %d' %(v,i,len(TabResm[v])))
 
 # ---------------------------------------------------------
 # Modif 27/04/2017:
@@ -2030,7 +2030,7 @@ def essai_TRIA_ND_C_F(self, str_n_essai, DicoEssai, MATER, COMPORTEMENT,
                          rubool[jcrit] = rubool__.any()
               
                          if info_dbg and rubool[jcrit]:
-                            print\
+                            print(\
           '\n   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'+\
           '\n   !!!                                               !!!'+\
           '\n   !!!       CRITERE DE LIQUEFACTION RU > %.2f       !!!' \
@@ -2038,7 +2038,7 @@ def essai_TRIA_ND_C_F(self, str_n_essai, DicoEssai, MATER, COMPORTEMENT,
           '\n   !!!      ATTEINT AU CYCLE NUMERO %3d SUR %3d      !!!' \
           %(M.ceil((nbc+1.)/2.)+numcyc,NB_CYCLE_EPSILON,)+\
           '\n   !!!                                               !!!'+\
-          '\n   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
+          '\n   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
                     
                    if crit=="EPSI_ABSO_MAX":
               
@@ -2051,7 +2051,7 @@ def essai_TRIA_ND_C_F(self, str_n_essai, DicoEssai, MATER, COMPORTEMENT,
                             rubool[jcrit]= rubool__.any()
                          
                             if info_dbg and rubool[jcrit]:
-                               print\
+                               print(\
          '\n   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'+\
          '\n   !!!                                                           !!!'+\
          '\n   !!!     CRITERE DE LIQUEFACTION EPS_ABS_COMPR > %.2e     !!!' \
@@ -2059,7 +2059,7 @@ def essai_TRIA_ND_C_F(self, str_n_essai, DicoEssai, MATER, COMPORTEMENT,
          '\n   !!!           ATTEINT AU CYCLE NUMERO %3d SUR %3d             !!!' \
          %(M.ceil((nbc+1.)/2.)+numcyc,NB_CYCLE_EPSILON,)+\
          '\n   !!!                                                           !!!'+\
-         '\n   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
+         '\n   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
          
                       else:
                          rubool__ = eps_zz >= -vale_crit[crit]
@@ -2069,7 +2069,7 @@ def essai_TRIA_ND_C_F(self, str_n_essai, DicoEssai, MATER, COMPORTEMENT,
                             rubool[jcrit]= rubool__.any()
                          
                             if info_dbg and rubool[jcrit]:
-                               print\
+                               print(\
          '\n   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'+\
          '\n   !!!                                                           !!!'+\
          '\n   !!!     CRITERE DE LIQUEFACTION EPS_ABS_DILAT < %.2e     !!!' \
@@ -2077,7 +2077,7 @@ def essai_TRIA_ND_C_F(self, str_n_essai, DicoEssai, MATER, COMPORTEMENT,
          '\n   !!!           ATTEINT AU CYCLE NUMERO %3d SUR %3d             !!!' \
          %(M.ceil((nbc+1.)/2.)+numcyc,NB_CYCLE_EPSILON,)+\
          '\n   !!!                                                           !!!'+\
-         '\n   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
+         '\n   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
                     
                    if crit=="EPSI_RELA_MAX":
                       
@@ -2103,7 +2103,7 @@ def essai_TRIA_ND_C_F(self, str_n_essai, DicoEssai, MATER, COMPORTEMENT,
                              >= vale_crit[crit]
                          
                          if info_dbg and rubool[jcrit]:
-                            print\
+                            print(\
          '\n   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'+\
          '\n   !!!                                                           !!!'+\
          '\n   !!!   CRITERE DE LIQUEFACTION EPS_MAX - EPS_MIN > %.2e   !!!' \
@@ -2111,7 +2111,7 @@ def essai_TRIA_ND_C_F(self, str_n_essai, DicoEssai, MATER, COMPORTEMENT,
          '\n   !!!           ATTEINT AU CYCLE NUMERO %3d SUR %3d             !!!' \
          %(M.ceil((nbc+1.)/2.)+numcyc,NB_CYCLE_EPSILON,)+\
          '\n   !!!                                                           !!!'+\
-         '\n   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
+         '\n   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
          
                 # La liquefaction est atteinte quand tous les criteres
                 # sont actifs
@@ -2125,12 +2125,12 @@ def essai_TRIA_ND_C_F(self, str_n_essai, DicoEssai, MATER, COMPORTEMENT,
               #
               # ---------------------------------------------------------
             if info_dbg:
-               print\
+               print(\
          '\n   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'+\
          '\n   !!!                                                           !!!'+\
          '\n   !!!        FIN DU CALCUL ET DEBUT DES POST-TRAITEMENTS        !!!'+\
          '\n   !!!                                                           !!!'+\
-         '\n   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
+         '\n   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
 #
 #      Debut des post-traitements
 # ---------------------------------
@@ -2153,7 +2153,7 @@ def essai_TRIA_ND_C_F(self, str_n_essai, DicoEssai, MATER, COMPORTEMENT,
               #for c in list_key:
               if List_Resu_Supp:
                 for lr in List_Resu_Supp:
-                  if TabResm.has_key(lr):
+                  if lr in TabResm:
                     Vari_Supp[lr][i] = TabRes[lr][:indx_init+1]+TabResm[lr]
             else:
 
@@ -2170,23 +2170,23 @@ def essai_TRIA_ND_C_F(self, str_n_essai, DicoEssai, MATER, COMPORTEMENT,
               # ------------------------------------------
               if List_Resu_Supp:
                  for lr in List_Resu_Supp:
-                   if TabRes.has_key(lr):
+                   if lr in TabRes:
                       Vari_Supp[lr][i] = TabRes[lr]
                  
             if info_dbg:
-              print '\n>> INST FINAL = %f\n' %(inst[-1])
-              print '   + LEN(%s[%d])    = %d (REFERENCE)' %('INST',i,len(inst))
-              print '   + LEN(%s[%d])    = %d (REFERENCE)' %('SIXX',i,len(sig_xx))
-              print '   + LEN(%s[%d])    = %d (REFERENCE)' %('SIYY',i,len(sig_yy))
-              print '   + LEN(%s[%d])    = %d (REFERENCE)' %('SIZZ',i,len(sig_zz))
-              print '   + LEN(%s[%d])    = %d (REFERENCE)' %('EPXX',i,len(eps_xx))
-              print '   + LEN(%s[%d])    = %d (REFERENCE)' %('EPYY',i,len(eps_yy))
-              print '   + LEN(%s[%d])    = %d (REFERENCE)' %('EPZZ',i,len(eps_zz))
-              print '   + KEY(Vari_Supp) =',Vari_Supp.keys()
+              print('\n>> INST FINAL = %f\n' %(inst[-1]))
+              print('   + LEN(%s[%d])    = %d (REFERENCE)' %('INST',i,len(inst)))
+              print('   + LEN(%s[%d])    = %d (REFERENCE)' %('SIXX',i,len(sig_xx)))
+              print('   + LEN(%s[%d])    = %d (REFERENCE)' %('SIYY',i,len(sig_yy)))
+              print('   + LEN(%s[%d])    = %d (REFERENCE)' %('SIZZ',i,len(sig_zz)))
+              print('   + LEN(%s[%d])    = %d (REFERENCE)' %('EPXX',i,len(eps_xx)))
+              print('   + LEN(%s[%d])    = %d (REFERENCE)' %('EPYY',i,len(eps_yy)))
+              print('   + LEN(%s[%d])    = %d (REFERENCE)' %('EPZZ',i,len(eps_zz)))
+              print('   + KEY(Vari_Supp) =',Vari_Supp.keys())
               
               for v in Vari_Supp:
-                 print '     - LEN[%s[%d]] = %d (Vari_Supp)'\
-                       %(v,i,len(Vari_Supp[v][i]))
+                 print('     - LEN[%s[%d]] = %d (Vari_Supp)'\
+                       %(v,i,len(Vari_Supp[v][i])))
             
 # --- Fin modifs fiche 23451
 # =================================================================================
@@ -2215,7 +2215,7 @@ def essai_TRIA_ND_C_F(self, str_n_essai, DicoEssai, MATER, COMPORTEMENT,
                      indcrit__[jcr] = 0
                      
                   if rubool[jcr]:
-                     print\
+                     print(\
           '\n   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'+\
           '\n   !!!                                               !!!'+\
           '\n   !!!       CRITERE DE LIQUEFACTION RU > %.2f       !!!' \
@@ -2223,7 +2223,7 @@ def essai_TRIA_ND_C_F(self, str_n_essai, DicoEssai, MATER, COMPORTEMENT,
           '\n   !!!       ATTEINT A L INSTANT %.3e        !!!' \
           %(inst[indcrit__[jcr]])+\
           '\n   !!!                                               !!!'+\
-          '\n   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
+          '\n   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
                   
                if cr=="EPSI_ABSO_MAX":
               
@@ -2241,7 +2241,7 @@ def essai_TRIA_ND_C_F(self, str_n_essai, DicoEssai, MATER, COMPORTEMENT,
                   if rubool[jcr]:
                   
                      if vale_crit[cr] >0.:
-                        print\
+                        print(\
          '\n   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'+\
          '\n   !!!                                                           !!!'+\
          '\n   !!!     CRITERE DE LIQUEFACTION EPS_ABS_COMPR > %.2e     !!!' \
@@ -2249,10 +2249,10 @@ def essai_TRIA_ND_C_F(self, str_n_essai, DicoEssai, MATER, COMPORTEMENT,
           '\n   !!!       ATTEINT A L INSTANT %.3e      !!!' \
           %(inst[indcrit__[jcr]])+\
          '\n   !!!                                                           !!!'+\
-         '\n   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
+         '\n   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
 
                      else:
-                        print\
+                        print(\
          '\n   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'+\
          '\n   !!!                                                           !!!'+\
          '\n   !!!     CRITERE DE LIQUEFACTION EPS_ABS_DILAT < %.2e     !!!' \
@@ -2260,7 +2260,7 @@ def essai_TRIA_ND_C_F(self, str_n_essai, DicoEssai, MATER, COMPORTEMENT,
           '\n   !!!       ATTEINT A L INSTANT %.3e      !!!' \
           %(inst[indcrit__[jcr]])+\
          '\n   !!!                                                           !!!'+\
-         '\n   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
+         '\n   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
                      
                if cr=="EPSI_RELA_MAX":
                #
@@ -2304,12 +2304,12 @@ def essai_TRIA_ND_C_F(self, str_n_essai, DicoEssai, MATER, COMPORTEMENT,
                      indcrit__[jcr] = 0
                      
                   if rubool[jcr]:
-                     print\
+                     print(\
          '\n   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'+\
          '\n   !!!                                                           !!!'+\
          '\n   !!!   CRITERE DE LIQUEFACTION EPS_MAX - EPS_MIN > %.2e    !!!' \
          %(vale_crit[cr])+\
-         '\n   !!!            ATTEINT A L INSTANT %.3e               !!!'
+         '\n   !!!            ATTEINT A L INSTANT %.3e               !!!')
  #         %(inst[indcrit__[jcr]])+\
 #          '\n   !!!                                                           !!!'+\
 #          '\n   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
@@ -2320,8 +2320,8 @@ def essai_TRIA_ND_C_F(self, str_n_essai, DicoEssai, MATER, COMPORTEMENT,
             crit = not any([not r for r in rubool])
             
             if info_dbg:
-              print '\n   * rubool  = ',rubool
-              print '   * indcrit = ',indcrit__
+              print('\n   * rubool  = ',rubool)
+              print('   * indcrit = ',indcrit__)
 
             # codret = | '0' : CALC_POINT_MAT va jusqu'au bout et
             #          |       critere de liquefaction atteint
@@ -2367,11 +2367,11 @@ def essai_TRIA_ND_C_F(self, str_n_essai, DicoEssai, MATER, COMPORTEMENT,
                 n_cyc_table[i][j] = ncycrit
                 
                 if rubool[jcr]:
-                   print\
+                   print(\
          '   !!!            AU CYCLE NO.%2d                                 !!!'\
          %(ncycrit)+\
          '\n   !!!                                                           !!!'+\
-         '\n   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
+         '\n   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
                 
                 # Remarque de M. Jacquet: CRR = dq/2/p0
                 Resu_Essai['DSIGM'][i].append(abs(dsig*3./(1.+2.*KZERO)/sig0))
@@ -2420,12 +2420,12 @@ def essai_TRIA_ND_C_F(self, str_n_essai, DicoEssai, MATER, COMPORTEMENT,
                  # Cas ou list_key n existe pas (i=0)
                  list_key=[]
                  for lr in List_Resu_Supp:
-                   if TabRes.has_key(lr):
+                   if lr in TabRes:
                       list_key.append(lr)
                       Resu_Essai[lr][i].append(Vari_Supp[lr][i])
                   
                if not i:
-                 Resu_Essai['LIST_CMP'] =TabRes.keys()
+                 Resu_Essai['LIST_CMP'] =list(TabRes.keys())
 
             # NIVEAU 2: remplissage des graphiques
             # --------------------------------------------------
@@ -2571,7 +2571,7 @@ def essai_TRIA_DR_C_D(self, str_n_essai, DicoEssai,
     
     # Recuperation des options d'impression
     # -----------------------------------------
-    if DicoEssai.has_key('COULEUR_NIV1'):
+    if 'COULEUR_NIV1' in DicoEssai:
     
        COULEUR_NIV1= DicoEssai['COULEUR_NIV1']
        
@@ -2584,7 +2584,7 @@ def essai_TRIA_DR_C_D(self, str_n_essai, DicoEssai,
     else:
        COULEUR_NIV1= [-1]*len(PRES_CONF)
     
-    if DicoEssai.has_key('MARQUEUR_NIV1'):
+    if 'MARQUEUR_NIV1' in DicoEssai:
     
        MARQUEUR_NIV1= DicoEssai['MARQUEUR_NIV1']
        
@@ -2596,7 +2596,7 @@ def essai_TRIA_DR_C_D(self, str_n_essai, DicoEssai,
     else:
        MARQUEUR_NIV1= [-1]*len(PRES_CONF)
     
-    if DicoEssai.has_key('STYLE_NIV1'):
+    if 'STYLE_NIV1' in DicoEssai:
     
        STYLE_NIV1= DicoEssai['STYLE_NIV1']
        
@@ -2608,7 +2608,7 @@ def essai_TRIA_DR_C_D(self, str_n_essai, DicoEssai,
     else:
        STYLE_NIV1= [-1]*len(PRES_CONF)
        
-    if DicoEssai.has_key('COULEUR_NIV2'):
+    if 'COULEUR_NIV2' in DicoEssai:
     
        COULEUR_NIV2= DicoEssai['COULEUR_NIV2']
        
@@ -2621,7 +2621,7 @@ def essai_TRIA_DR_C_D(self, str_n_essai, DicoEssai,
     else:
        COULEUR_NIV2= [-1]*len(EPSI_IMPOSE)
     
-    if DicoEssai.has_key('MARQUEUR_NIV2'):
+    if 'MARQUEUR_NIV2' in DicoEssai:
     
        MARQUEUR_NIV2= DicoEssai['MARQUEUR_NIV2']
        
@@ -2633,7 +2633,7 @@ def essai_TRIA_DR_C_D(self, str_n_essai, DicoEssai,
     else:
        MARQUEUR_NIV2= [-1]*len(EPSI_IMPOSE)
     
-    if DicoEssai.has_key('STYLE_NIV2'):
+    if 'STYLE_NIV2' in DicoEssai:
     
        STYLE_NIV2= DicoEssai['STYLE_NIV2']
        
@@ -2648,7 +2648,7 @@ def essai_TRIA_DR_C_D(self, str_n_essai, DicoEssai,
     # Recuperation des variables supplementaires a imprimer
     # (si existantes) contenues sous le mot-cle 'NOM_CMP'
     # -----------------------------------------
-    if DicoEssai.has_key('NOM_CMP'):
+    if 'NOM_CMP' in DicoEssai:
        List_Resu_Supp = list(DicoEssai['NOM_CMP'])
     else:
        List_Resu_Supp = None
@@ -2719,7 +2719,7 @@ def essai_TRIA_DR_C_D(self, str_n_essai, DicoEssai,
     __RLIST = DEFI_LIST_REEL(DEBUT=0.,
                              INTERVALLE=[_F(JUSQU_A=10., NOMBRE=NB_INST,),] +\
                                         [_F(JUSQU_A=10.*(2*k+1), NOMBRE=2*NB_INST,)
-                                            for k in xrange(1, 2*NB_CYCLE+1)],
+                                            for k in range(1, 2*NB_CYCLE+1)],
                              INFO=INFO)
 
     __DLIST = DEFI_LIST_INST(DEFI_LIST=_F(LIST_INST=__RLIST),
@@ -2766,11 +2766,11 @@ def essai_TRIA_DR_C_D(self, str_n_essai, DicoEssai,
             # ---
             if sinusoidal:
    
-               absc_peak= [10.*(2*k+1) for k in xrange(2*NB_CYCLE+1)]
-               abscisse = [10.*k/3./NB_INST for k in xrange(3*NB_INST)]
+               absc_peak= [10.*(2*k+1) for k in range(2*NB_CYCLE+1)]
+               abscisse = [10.*k/3./NB_INST for k in range(3*NB_INST)]
    
                for inst_peak in absc_peak:
-                  abscisse+= [inst_peak + 10.*kk/3./NB_INST for kk in xrange(6*NB_INST)]
+                  abscisse+= [inst_peak + 10.*kk/3./NB_INST for kk in range(6*NB_INST)]
    
                # absc_sinus varie de 0 a 2Pi par intervalles de 4*NB_INST=40s
                # (sinus varie de 0 a 1 a -1 a 0)
@@ -2784,7 +2784,7 @@ def essai_TRIA_DR_C_D(self, str_n_essai, DicoEssai,
                ordonnee+= list( epsi_mean + NP.sin(absc_sinus[3*NB_INST:])*depsi )
    
             else:
-               abscisse = [0.]+[10.*(2*k+1) for k in xrange(2*NB_CYCLE+1)]
+               abscisse = [0.]+[10.*(2*k+1) for k in range(2*NB_CYCLE+1)]
                ordonnee = [0.]+[eps0,eps1]*NB_CYCLE + [eps0,]
 
             __CHAR1 = DEFI_FONCTION(INFO=INFO, NOM_PARA='INST',
@@ -2830,10 +2830,10 @@ def essai_TRIA_DR_C_D(self, str_n_essai, DicoEssai,
                              EPXZ=0.,
                              EPYZ=0.,),)
 
-            except (aster.error,aster.onFatalError,), message:
+            except (aster.error,aster.onFatalError,) as message:
    
-               print '\n   !!!(@_@)!!! Arret pour la raison suivante !!!(@_@)!!!\n%s'\
-                     %(message)
+               print('\n   !!!(@_@)!!! Arret pour la raison suivante !!!(@_@)!!!\n%s'\
+                     %(message))
             
                __EVPOST = self.get_last_concept()
                TabRes   = __EVPOST.EXTR_TABLE().values()
@@ -2936,12 +2936,12 @@ def essai_TRIA_DR_C_D(self, str_n_essai, DicoEssai,
                  # Cas ou list_key n existe pas (i=0)
                  list_key=[]
                  for lr in List_Resu_Supp:
-                   if TabRes.has_key(lr):
+                   if lr in TabRes:
                       list_key.append(lr)
                       Resu_Essai[lr][i].append(TabRes[lr])
                   
                if not i:
-                 Resu_Essai['LIST_CMP'] =TabRes.keys()
+                 Resu_Essai['LIST_CMP'] =list(TabRes.keys())
 
             # NIVEAU 2: remplissage des graphiques
             # ------------------------------------------------------
@@ -3085,7 +3085,7 @@ def essai_TRIA_ND_C_D(self, str_n_essai, DicoEssai,
     
     # Recuperation des options d'impression
     # -----------------------------------------
-    if DicoEssai.has_key('COULEUR_NIV1'):
+    if 'COULEUR_NIV1' in DicoEssai:
     
        COULEUR_NIV1= DicoEssai['COULEUR_NIV1']
        
@@ -3098,7 +3098,7 @@ def essai_TRIA_ND_C_D(self, str_n_essai, DicoEssai,
     else:
        COULEUR_NIV1= [-1]*len(PRES_CONF)
     
-    if DicoEssai.has_key('MARQUEUR_NIV1'):
+    if 'MARQUEUR_NIV1' in DicoEssai:
     
        MARQUEUR_NIV1= DicoEssai['MARQUEUR_NIV1']
        
@@ -3110,7 +3110,7 @@ def essai_TRIA_ND_C_D(self, str_n_essai, DicoEssai,
     else:
        MARQUEUR_NIV1= [-1]*len(PRES_CONF)
     
-    if DicoEssai.has_key('STYLE_NIV1'):
+    if 'STYLE_NIV1' in DicoEssai:
     
        STYLE_NIV1= DicoEssai['STYLE_NIV1']
        
@@ -3122,7 +3122,7 @@ def essai_TRIA_ND_C_D(self, str_n_essai, DicoEssai,
     else:
        STYLE_NIV1= [-1]*len(PRES_CONF)
        
-    if DicoEssai.has_key('COULEUR_NIV2'):
+    if 'COULEUR_NIV2' in DicoEssai:
     
        COULEUR_NIV2= DicoEssai['COULEUR_NIV2']
        
@@ -3135,7 +3135,7 @@ def essai_TRIA_ND_C_D(self, str_n_essai, DicoEssai,
     else:
        COULEUR_NIV2= [-1]*len(EPSI_IMPOSE)
     
-    if DicoEssai.has_key('MARQUEUR_NIV2'):
+    if 'MARQUEUR_NIV2' in DicoEssai:
     
        MARQUEUR_NIV2= DicoEssai['MARQUEUR_NIV2']
        
@@ -3147,7 +3147,7 @@ def essai_TRIA_ND_C_D(self, str_n_essai, DicoEssai,
     else:
        MARQUEUR_NIV2= [-1]*len(EPSI_IMPOSE)
     
-    if DicoEssai.has_key('STYLE_NIV2'):
+    if 'STYLE_NIV2' in DicoEssai:
     
        STYLE_NIV2= DicoEssai['STYLE_NIV2']
        
@@ -3162,7 +3162,7 @@ def essai_TRIA_ND_C_D(self, str_n_essai, DicoEssai,
     # Recuperation des variables supplementaires a imprimer
     # (si existantes) contenues sous le mot-cle 'NOM_CMP'
     # -----------------------------------------
-    if DicoEssai.has_key('NOM_CMP'):
+    if 'NOM_CMP' in DicoEssai:
        List_Resu_Supp = list(DicoEssai['NOM_CMP'])
     else:
        List_Resu_Supp = None
@@ -3211,7 +3211,7 @@ def essai_TRIA_ND_C_D(self, str_n_essai, DicoEssai,
           cle+= List_Resu_Supp
     
     for c in cle:
-       Resu_Essai[c] = [[] for k in xrange(len(PRES_CONF))]
+       Resu_Essai[c] = [[] for k in range(len(PRES_CONF))]
        
     # Hors composantes de niveau 1:
     # 'RU_MAX','NCYCL','DEPSI','E_SUR_EMAX'
@@ -3242,7 +3242,7 @@ def essai_TRIA_ND_C_D(self, str_n_essai, DicoEssai,
     __RLIST = DEFI_LIST_REEL(DEBUT=0.,
                              INTERVALLE=[_F(JUSQU_A=10., NOMBRE=NB_INST,),] +\
                                         [_F(JUSQU_A=10.*(2*k+1), NOMBRE=2*NB_INST,)
-                                            for k in xrange(1, 2*NB_CYCLE+1)],
+                                            for k in range(1, 2*NB_CYCLE+1)],
                              INFO=INFO)
 
     __DLIST = DEFI_LIST_INST(DEFI_LIST=_F(LIST_INST=__RLIST),
@@ -3290,11 +3290,11 @@ def essai_TRIA_ND_C_D(self, str_n_essai, DicoEssai,
             # ---
             if sinusoidal:
    
-               absc_peak= [10.*(2*k+1) for k in xrange(2*NB_CYCLE+1)]
-               abscisse = [10.*k/3./NB_INST for k in xrange(3*NB_INST)]
+               absc_peak= [10.*(2*k+1) for k in range(2*NB_CYCLE+1)]
+               abscisse = [10.*k/3./NB_INST for k in range(3*NB_INST)]
    
                for inst_peak in absc_peak:
-                  abscisse+= [inst_peak + 10.*kk/3./NB_INST for kk in xrange(6*NB_INST)]
+                  abscisse+= [inst_peak + 10.*kk/3./NB_INST for kk in range(6*NB_INST)]
    
                # absc_sinus varie de 0 a 2Pi par intervalles de 4*NB_INST=40s
                # (sinus varie de 0 a 1 a -1 a 0)
@@ -3308,7 +3308,7 @@ def essai_TRIA_ND_C_D(self, str_n_essai, DicoEssai,
                ordonnee+= list( epsi_mean + NP.sin(absc_sinus[3*NB_INST:])*depsi )
    
             else:
-               abscisse = [0.]+[10.*(2*k+1) for k in xrange(2*NB_CYCLE+1)]
+               abscisse = [0.]+[10.*(2*k+1) for k in range(2*NB_CYCLE+1)]
                ordonnee = [0.]+[eps0,eps1]*NB_CYCLE + [eps0,]
 
             __CHAR1 = DEFI_FONCTION(INFO=INFO, NOM_PARA='INST',
@@ -3364,10 +3364,10 @@ def essai_TRIA_ND_C_D(self, str_n_essai, DicoEssai,
                              EPXZ=0.,
                              EPYZ=0.,),)
 
-            except ((aster.error,aster.onFatalError,),aster.onFatalError,), message:
+            except ((aster.error,aster.onFatalError,),aster.onFatalError,) as message:
    
-               print '\n   !!!(@_@)!!! Arret pour la raison suivante !!!(@_@)!!!\n%s'\
-                     %(message)
+               print('\n   !!!(@_@)!!! Arret pour la raison suivante !!!(@_@)!!!\n%s'\
+                     %(message))
             
                __EVPOST = self.get_last_concept()
                TabRes   = __EVPOST.EXTR_TABLE().values()
@@ -3493,12 +3493,12 @@ def essai_TRIA_ND_C_D(self, str_n_essai, DicoEssai,
                  # Cas ou list_key n existe pas (i=0)
                  list_key=[]
                  for lr in List_Resu_Supp:
-                   if TabRes.has_key(lr):
+                   if lr in TabRes:
                       list_key.append(lr)
                       Resu_Essai[lr][i].append(TabRes[lr])
                   
                if not i:
-                 Resu_Essai['LIST_CMP'] =TabRes.keys()
+                 Resu_Essai['LIST_CMP'] =list(TabRes.keys())
 
             # NIVEAU 2: remplissage des graphiques
             # ------------------------------------------------------
@@ -3661,7 +3661,7 @@ def essai_OEDO_DR_C_F(self, str_n_essai, DicoEssai, MATER,
     
     # Recuperation des options d'impression
     # -----------------------------------------
-    if DicoEssai.has_key('COULEUR'):
+    if 'COULEUR' in DicoEssai:
     
        COULEUR_NIV2= DicoEssai['COULEUR']
        
@@ -3674,7 +3674,7 @@ def essai_OEDO_DR_C_F(self, str_n_essai, DicoEssai, MATER,
     else:
        COULEUR_NIV2= [-1]*len(PRES_CONF)
     
-    if DicoEssai.has_key('MARQUEUR'):
+    if 'MARQUEUR' in DicoEssai:
     
        MARQUEUR_NIV2= DicoEssai['MARQUEUR']
        
@@ -3686,7 +3686,7 @@ def essai_OEDO_DR_C_F(self, str_n_essai, DicoEssai, MATER,
     else:
        MARQUEUR_NIV2= [-1]*len(PRES_CONF)
     
-    if DicoEssai.has_key('STYLE'):
+    if 'STYLE' in DicoEssai:
     
        STYLE_NIV2= DicoEssai['STYLE']
        
@@ -3701,7 +3701,7 @@ def essai_OEDO_DR_C_F(self, str_n_essai, DicoEssai, MATER,
     # Recuperation des variables supplementaires a imprimer
     # (si existantes) contenues sous le mot-cle 'NOM_CMP'
     # -----------------------------------------
-    if DicoEssai.has_key('NOM_CMP'):
+    if 'NOM_CMP' in DicoEssai:
        List_Resu_Supp = list(DicoEssai['NOM_CMP'])
     else:
        List_Resu_Supp = None
@@ -3740,7 +3740,7 @@ def essai_OEDO_DR_C_F(self, str_n_essai, DicoEssai, MATER,
           cle+= List_Resu_Supp
     
     for c in cle:
-       Resu_Essai[c] = [[] for k in xrange(len(PRES_CONF))]
+       Resu_Essai[c] = [[] for k in range(len(PRES_CONF))]
        
     # Hors composantes de niveau 1
     # -----------------------------------------
@@ -3762,7 +3762,7 @@ def essai_OEDO_DR_C_F(self, str_n_essai, DicoEssai, MATER,
     __RLIST = DEFI_LIST_REEL(DEBUT=0.,
                              INTERVALLE=[_F(JUSQU_A=10., NOMBRE=NB_INST,), ] +\
                                         [_F(JUSQU_A=10.*(2*k+1), NOMBRE=2*NB_INST,)
-                                            for k in xrange(1, 2*NB_CYCLE+2)],
+                                            for k in range(1, 2*NB_CYCLE+2)],
                              INFO=INFO)
 
     __DLIST = DEFI_LIST_INST(DEFI_LIST=_F(LIST_INST=__RLIST),
@@ -3792,12 +3792,12 @@ def essai_OEDO_DR_C_F(self, str_n_essai, DicoEssai, MATER,
         # ---
         if sinusoidal:
    
-           absc_peak= [10.*(2*k+1) for k in xrange(2*NB_CYCLE+1)]
-           abscisse = [10.*k/3./NB_INST for k in xrange(3*NB_INST)]
+           absc_peak= [10.*(2*k+1) for k in range(2*NB_CYCLE+1)]
+           abscisse = [10.*k/3./NB_INST for k in range(3*NB_INST)]
    
            for inst_peak in absc_peak:
               abscisse+= [inst_peak + 10.*kk/3./NB_INST\
-                          for kk in xrange(6*NB_INST)]
+                          for kk in range(6*NB_INST)]
    
            # absc_sinus varie de 0 a Pi/2 par intervalles de NB_INST=10s
            # (sinus varie de 0 a 1)
@@ -3830,7 +3830,7 @@ def essai_OEDO_DR_C_F(self, str_n_essai, DicoEssai, MATER,
                 NP.sin(absc_sinus[(9+12*j)*NB_INST:(9+12*(j+1))*NB_INST])*dsigm )
         else:
         
-           abscisse = [0.]+[10.*(2*k+1) for k in xrange(2*NB_CYCLE+2)]
+           abscisse = [0.]+[10.*(2*k+1) for k in range(2*NB_CYCLE+2)]
            
            ordonnee =[sig0,]
            for j,sigcomp__ in enumerate(SIGM_IMPOSE):
@@ -3911,10 +3911,10 @@ def essai_OEDO_DR_C_F(self, str_n_essai, DicoEssai, MATER,
                           
             VARI_INIT= _F(VALE=[0.]*nb_vari),)
         
-        except (aster.error,aster.onFatalError,), message:
+        except (aster.error,aster.onFatalError,) as message:
    
-           print '\n   !!!(@_@)!!! Arret pour la raison suivante !!!(@_@)!!!\n%s'\
-                     %(message)
+           print('\n   !!!(@_@)!!! Arret pour la raison suivante !!!(@_@)!!!\n%s'\
+                     %(message))
         
            __EVPOST = self.get_last_concept()
            TabRes   = __EVPOST.EXTR_TABLE().values()
@@ -3966,12 +3966,12 @@ def essai_OEDO_DR_C_F(self, str_n_essai, DicoEssai, MATER,
              # Cas ou list_key n existe pas (i=0)
              list_key=[]
              for lr in List_Resu_Supp:
-               if TabRes.has_key(lr):
+               if lr in TabRes:
                   list_key.append(lr)
                   Resu_Essai[lr][i]=TabRes[lr]
               
            if not i:
-             Resu_Essai['LIST_CMP'] =TabRes.keys()
+             Resu_Essai['LIST_CMP'] =list(TabRes.keys())
              
         # NIVEAU 2: remplissage des graphiques
         # ------------------------------------------------------

@@ -43,8 +43,8 @@ def export_mate(epx, CHAM_MATER, COMPORTEMENT, INTERFACES, dicOrthotropie):
 
     # RELATTIONS AUTORISEES
     relations_autorisees = []
-    for rela in cata_compor.keys():
-        if cata_compor[rela].has_key('NOM_EPX'):
+    for rela in list(cata_compor.keys()):
+        if 'NOM_EPX' in cata_compor[rela]:
             relations_autorisees.append(rela)
 
     # ETAPE 1 : Recherche de la relation pour les GROUP_MA déclaré
@@ -60,7 +60,7 @@ def export_mate(epx, CHAM_MATER, COMPORTEMENT, INTERFACES, dicOrthotropie):
         if comp['RELATION'] not in relations_autorisees:
             raise Exception("""La relation %s n'est pas programmée"""
                             % (comp['RELATION']))
-        if not comp in dic_compor_gr.keys():
+        if not comp in list(dic_compor_gr.keys()):
             dic_compor_gr[comp['RELATION']] = []
         for gr in comp['GROUP_MA']:
             dic_compor_gr[comp['RELATION']].append(gr)
@@ -75,7 +75,7 @@ def export_mate(epx, CHAM_MATER, COMPORTEMENT, INTERFACES, dicOrthotropie):
                                     'NOM_MATER': None,
                                     }
             # info complementaire sur la modelisation epx
-            if cata_compor[comp['RELATION']].has_key('MODE_EPX'):
+            if 'MODE_EPX' in cata_compor[comp['RELATION']]:
                 mode_from_compor[gr] = cata_compor[comp['RELATION']]['MODE_EPX']
 
             if comp['RELATION'] == 'GLRC_DAMAGE':
@@ -102,13 +102,13 @@ def export_mate(epx, CHAM_MATER, COMPORTEMENT, INTERFACES, dicOrthotropie):
     # ETAPE 3 : Verification que tous les GROUP_MA ont un materiau
     #           creation des couples MATERIAU/RELATION et des group_ma associés
     dic_mate_rela = {}
-    for gr in dic_comportement.keys():
+    for gr in list(dic_comportement.keys()):
         if dic_comportement[gr]['MATER'] == None:
             UTMESS('F', 'PLEXUS_32', gr)
         relation = dic_comportement[gr]['RELATION']
         nom_mater = dic_comportement[gr]['NOM_MATER']
         nom_mate_rela = nom_mater + '/' + relation
-        if not dic_mate_rela.has_key(nom_mate_rela):
+        if nom_mate_rela not in dic_mate_rela:
             dic_mate_rela[nom_mate_rela] = dic_comportement[gr]
             dic_mate_rela[nom_mate_rela]['GROUP_MA'] = []
         dic_mate_rela[nom_mate_rela]['GROUP_MA'].append(gr)
@@ -119,7 +119,7 @@ def export_mate(epx, CHAM_MATER, COMPORTEMENT, INTERFACES, dicOrthotropie):
     # EC : pas trop joli, sert a savoir le nombre de fonction deja declarees
     # en evitant de passer un argument supplémentaire
     liste_fonc = [' '] * nb_fonc
-    mate_ordo = dic_mate_rela.keys()
+    mate_ordo = list(dic_mate_rela.keys())
     mate_ordo.sort()
     for mate_rela in mate_ordo:
         relation = dic_mate_rela[mate_rela]['RELATION']
@@ -127,7 +127,7 @@ def export_mate(epx, CHAM_MATER, COMPORTEMENT, INTERFACES, dicOrthotropie):
         concept_mater = dic_mate_rela[mate_rela]['MATER']
         l_group = dic_mate_rela[mate_rela]['GROUP_MA']
         mate_epx = cata_compor[relation]['NOM_EPX']
-        if cata_compor[relation].has_key('MC_FACT'):
+        if 'MC_FACT' in cata_compor[relation]:
             cle_bs = cata_compor[relation]['MC_FACT']
         else:
             cle_bs = None
@@ -153,7 +153,7 @@ def export_mate(epx, CHAM_MATER, COMPORTEMENT, INTERFACES, dicOrthotropie):
                 continue
 
             rel_loi = relation + '/' + loi
-            if cata_lois[rel_loi].has_key('NOM_EPX'):
+            if 'NOM_EPX' in cata_lois[rel_loi]:
                 mot_cle_fact = True
                 mot_cle_epx = cata_lois[rel_loi]['NOM_EPX']
             else:
@@ -177,7 +177,7 @@ def export_mate(epx, CHAM_MATER, COMPORTEMENT, INTERFACES, dicOrthotropie):
                                                                 nom_mater, donnees,
                                                                 liste_fonc)
 
-        if cata_ordre_para.has_key(relation):
+        if relation in cata_ordre_para:
             ordre_para = cata_ordre_para[relation]
         else:
             ordre_para = None
@@ -243,12 +243,12 @@ def get_para_loi(loi, relation, l_para, l_vale, l_para1, l_vale1,
         Lecture des paramètres de la loi 'loi'
     """
     cle = relation + '/' + loi
-    if not cata_lois[cle].has_key('POSI_PARA'):
+    if 'POSI_PARA' not in cata_lois[cle]:
         posi_para = False
     else:
         posi_para = True
     for ipar, para in enumerate(cata_lois[cle]['PARA']):
-        if donnees.has_key(para):
+        if para in donnees:
             para_epx = cata_lois[cle]['PARA_EPX'][ipar]
             type_donnee = cata_lois[cle]['TYPE'][ipar]
             if type_donnee == 'fonc':
@@ -292,7 +292,7 @@ def get_para_loi(loi, relation, l_para, l_vale, l_para1, l_vale1,
             if bes_para == 'o':
                 UTMESS('F', 'PLEXUS_31', valk=(para, loi, nom_mater))
 #   vérifcation que l'on utilise pas de mot-clé non pris en charge
-    for para in donnees.keys():
+    for para in list(donnees.keys()):
         if para not in cata_lois[cle]['PARA']:
             UTMESS('A', 'PLEXUS_46', valk=(para, loi, nom_mater))
 
@@ -310,11 +310,11 @@ def get_para_all(loi, relation, l_para, l_vale, l_bs,
     l_posi = True
     l_para1 = []
     l_vale1 = []
-    if not cata_lois[rel_loi].has_key('POSI_PARA'):
+    if 'POSI_PARA' not in cata_lois[rel_loi]:
         posi_para = 0
         l_posi = False
     for ipar, para in enumerate(cata_lois[rel_loi]['PARA']):
-        if donnees.has_key(para):
+        if para in donnees:
             type_para = cata_lois[rel_loi]['TYPE'][ipar]
             para_epx = cata_lois[rel_loi]['PARA_EPX'][ipar]
             if l_posi:
@@ -389,11 +389,11 @@ Pas de traitement special présent pour le couple relation/loi %s."""
             if bes_para == 'o':
                 UTMESS('F', 'PLEXUS_31', valk=(para, loi, nom_mater))
     #   vérifcation que l'on utilise pas de mot-clé non pris en charge
-    for para in donnees.keys():
+    for para in list(donnees.keys()):
         if para not in cata_lois[rel_loi]['PARA']:
             UTMESS('A', 'PLEXUS_46', valk=(para, loi, nom_mater))
 
-    if cata_lois[rel_loi].has_key('NOM_EPX'):
+    if 'NOM_EPX' in cata_lois[rel_loi]:
         nom_epx = cata_lois[rel_loi]['NOM_EPX']
         bloc_s = BLOC_DONNEES(nom_epx, cara=l_para1, vale=l_vale1)
         l_bs.append(bloc_s)

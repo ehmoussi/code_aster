@@ -112,7 +112,7 @@ def defi_char_sol_ops(self, TITRE, INFO, **args):
           if nompar == 'X' :   
             dire = (1., 0., 0.)       
 
-      print 'dime=',dime
+      print('dime=',dime)
       # Possibilite d utiliser une longueur caracteristique :
       # llcara ='OUI' ou 'NON'
       if args['LONG_CARA'] != None :

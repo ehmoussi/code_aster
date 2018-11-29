@@ -24,7 +24,7 @@
 """
 
 # Modules EFICAS
-from strfunc import get_encoding, to_unicode
+from .strfunc import get_encoding, to_unicode
 
 
 class AsException(Exception):
@@ -33,13 +33,13 @@ class AsException(Exception):
         args = []
         for x in self.args:
             ustr = to_unicode(x)
-            if type(ustr) is not unicode:
-                ustr = unicode( repr(x) )
+            if type(ustr) is not str:
+                ustr = str( repr(x) )
             args.append(ustr)
         return " ".join(args)
 
     def __str__(self):
-        return unicode(self).encode(get_encoding())
+        return str(self).encode(get_encoding())
 
 
 class OpsError(AsException):

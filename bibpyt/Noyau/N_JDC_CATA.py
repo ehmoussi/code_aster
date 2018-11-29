@@ -29,9 +29,9 @@ import types
 import string
 import traceback
 
-import N_ENTITE
-import N_JDC
-from strfunc import ufmt
+from . import N_ENTITE
+from . import N_JDC
+from .strfunc import ufmt
 
 
 class JDC_CATA(N_ENTITE.ENTITE):
@@ -56,7 +56,7 @@ class JDC_CATA(N_ENTITE.ENTITE):
         """
         self.code = code
         self.execmodul = execmodul
-        if type(regles) == types.TupleType:
+        if type(regles) == tuple:
             self.regles = regles
         else:
             self.regles = (regles,)
@@ -111,13 +111,13 @@ class JDC_CATA(N_ENTITE.ENTITE):
            Methode pour produire un compte-rendu de validation d'un catalogue de commandes
         """
         self.cr = self.CR(
-            debut=u"Compte-rendu de validation du catalogue " + self.code,
-            fin=u"Fin Compte-rendu de validation du catalogue " + self.code)
+            debut="Compte-rendu de validation du catalogue " + self.code,
+            fin="Fin Compte-rendu de validation du catalogue " + self.code)
         self.verif_cata()
         for commande in self.commandes:
             cr = commande.report()
-            cr.debut = u"Début Commande :" + commande.nom
-            cr.fin = u"Fin commande :" + commande.nom
+            cr.debut = "Début Commande :" + commande.nom
+            cr.fin = "Fin commande :" + commande.nom
             self.cr.add(cr)
         return self.cr
 

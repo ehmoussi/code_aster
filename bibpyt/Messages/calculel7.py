@@ -21,23 +21,23 @@
 
 cata_msg = {
 
-    2 : _(u"""
+    2 : _("""
   option %(k1)s : pour l élément  %(k2)s  il faut ajouter dans le %(k3)s
  le nombre de composante calculées du flux
 """),
 
-    5 : _(u"""
+    5 : _("""
   Pour l'option %(k1)s, le nombre de couches est limité à 1,
   or vous en avez définies %(i1)d !
   Veuillez contacter votre assistance technique.
 """),
 
-    6 : _(u"""
+    6 : _("""
   Pour ce type d'opération, il n'est pas permis d'utiliser la structure de
   données résultat existante %(k1)s derrière le mot clé reuse.
 """),
 
-    7 : _(u"""
+    7 : _("""
   Erreur développeur : le champ n'a pas été créé car aucun type élément
   ne connaît le paramètre %(k1)s de l'option %(k2)s.
 """),

@@ -23,7 +23,7 @@
    Module de conversion des valeurs saisies par l'utilisateur après vérification.
 """
 
-from N_types import is_int, is_float, is_sequence
+from .N_types import is_int, is_float, is_sequence
 
 
 def has_int_value(real):
@@ -60,7 +60,7 @@ class Conversion:
             return tuple(result)
 
     def function(self, o):
-        raise NotImplementedError, 'cette classe doit être dérivée'
+        raise NotImplementedError('cette classe doit être dérivée')
 
 
 class TypeConversion(Conversion):

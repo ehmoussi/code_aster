@@ -24,14 +24,14 @@ cata_msg = {
 
 
 
-    6 : _(u"""
+    6 : _("""
 La température devient négative ou nulle à la maille %(k1)s.
 """),
-    7 : _(u"""
+    7 : _("""
 La pression de gaz est nulle à la maille %(k1)s. Attention à initialiser une valeur non nulle
 """),
 
-    60 : _(u"""
+    60 : _("""
 La porosité donnée dans les paramètres matériaux de %(k1)s doit être la même que dans THM_INIT.
 """),
 

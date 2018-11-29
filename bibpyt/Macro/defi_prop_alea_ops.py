@@ -43,8 +43,8 @@ def defi_prop_alea_ops(self, **kwargs):
     generator = Generator.factory(self, params)
     try:
         generator.run()
-    except Exception, err:
-        trace = ''.join(traceback.format_tb(sys.exc_traceback))
+    except Exception as err:
+        trace = ''.join(traceback.format_tb(sys.exc_info()[2]))
         UTMESS('F', 'SUPERVIS2_5', valk=('DEFI_PROP_ALEA', trace, str(err)))
 
 
@@ -198,14 +198,14 @@ class Generator(object):
             troots = self.find_roots(v, veck)   
         roots = troots[:nbmod]
         lamk = 2. * Lc * (1. + np.array(roots)**2 * Lc**2)**(-1)
-        print 'NUMBER of ROOTS:', len(troots), 'RETAINED EIGENVALUES', nbmod  
+        print('NUMBER of ROOTS:', len(troots), 'RETAINED EIGENVALUES', nbmod)  
         phik =[]
         for (ii, vk) in enumerate(roots):
             if self.is_even(ii): # %even
                 phik.append( np.cos(vk * (x - 0.5)) / np.sqrt(0.5 * (1. + np.sin(vk) / vk)) )
             else:          # %odd
                 phik.append( np.sin(vk * (x - 0.5)) / np.sqrt(0.5 * (1. - np.sin(vk) / vk )) )
-        return zip(lamk, phik)
+        return list(zip(lamk, phik))
 
 
 class Generator1(Generator):
@@ -263,7 +263,7 @@ class Generator2(Generator):
         data = {'user_func': evaluate_KL2D, 'XLISTE': self.data['XLISTE'],
                 'DIM': self.data['DIM'],  'RANGE': self.data['RANGE'], 'Ux' : (self.Ux1, self.Ux2),
                 'mediane':  self.mediane , 'beta' : self.beta, 'seed': self.seed }
-        print 'X,Y', self.coord
+        print('X,Y', self.coord)
         if self.coord == ['X','Y']:
             formule_out = FORMULE(NOM_PARA= ('X','Y'), VALE="user_func(X,Y,DIM,RANGE,XLISTE,Ux,beta,mediane, seed)" )
         elif self.coord == ['X','Z']:

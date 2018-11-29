@@ -19,7 +19,7 @@
 
 # person_in_charge: sofiane.hendili at edf.fr
 
-from cata_comportement import LoiComportement
+from .cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'META_V_IL_PT',

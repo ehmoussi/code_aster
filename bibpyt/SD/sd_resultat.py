@@ -49,7 +49,7 @@ class sd_resultat(sd_titre):
     # indirection vers les champs de .TACH :
     def check_resultat_i_TACH(self, checker):
         tach = self.TACH.get()
-        for nosym in tach.keys():
+        for nosym in list(tach.keys()):
             for kordr in range(len(tach[nosym])):
                 nom = tach[nosym][kordr]
                 if not nom.strip():
@@ -66,7 +66,7 @@ class sd_resultat(sd_titre):
     def check_resultat_i_TAVA(self, checker):
         tava = self.TAVA.get()
         S1 = set()
-        for knova in tava.keys():
+        for knova in list(tava.keys()):
             suffix = tava[knova][0][:5]
             if not suffix.strip():
                 continue       # JP : est-ce possible ?
@@ -132,13 +132,13 @@ class sd_resultat(sd_titre):
                     '==', nbmax_para, 'Incohérence TAVA/NOVA')
 
         # .TACH
-        for ksym in tach.keys():
+        for ksym in list(tach.keys()):
             nosym = desc[ksym - 1].strip()
             sdu_compare(self.TACH, checker, len(
                 tach[ksym]), '==', nbmax_ordr, nosym + ' LONMAX(.TACH) != LONMAX(.ORDR)')
 
         # objets trouvés dans .TAVA
-        for knova in tava.keys():
+        for knova in list(tava.keys()):
             sdu_compare(
                 tava, checker, len(tava[knova]), '==', 4, 'LONMAX(TAVA[ksym]==4')
             suffix = tava[knova][0][:5]
@@ -164,7 +164,7 @@ class sd_resultat(sd_titre):
         nbuti_ordr = self.ORDR.lonuti  # la SD contient réellement nbuti_ordr nume_ordre
 
         # objets trouvés dans .TAVA
-        for knova in tava.keys():
+        for knova in list(tava.keys()):
             nova1 = nova[knova - 1].strip()
             suffix = tava[knova][0][:5]
             if not suffix.strip():

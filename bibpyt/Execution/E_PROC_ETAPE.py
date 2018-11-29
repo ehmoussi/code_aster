@@ -20,7 +20,7 @@
 # person_in_charge: mathieu.courtois at edf.fr
 
 
-import E_ETAPE
+from . import E_ETAPE
 
 
 class PROC_ETAPE(E_ETAPE.ETAPE):

@@ -100,7 +100,7 @@ class Dimension:
 # ------------------------------------------------------------------------
 def cond(matrix):
     e1 = linalg.eigvals(matrix)
-    e = map(abs, e1)
+    e = list(map(abs, e1))
     size = len(e)
     e = NP.sort(e)
     if NP.all(e[0] != 0):

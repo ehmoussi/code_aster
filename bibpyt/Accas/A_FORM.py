@@ -22,7 +22,7 @@
 
 from Noyau import N_FORM
 from Build import B_ENTITE
-import A_FORM_ETAPE
+from . import A_FORM_ETAPE
 
 
 class FORM(N_FORM.FORM, B_ENTITE.ENTITE):

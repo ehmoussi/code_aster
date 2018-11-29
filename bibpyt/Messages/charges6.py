@@ -21,34 +21,34 @@
 
 cata_msg = {
 
-    1 : _(u"""
+    1 : _("""
  Pour le chargement thermique ECHANGE_PAROI, le type de maille utilisé n'est pas possible.
  Vérifiez que vous avez correctement défini la paroi.
 """),
 
-    2 : _(u"""
+    2 : _("""
  Pour le chargement thermique ECHANGE_PAROI, le modèle fourni doit être homogène
  en dimension : 3D, 2D ou AXIS.
 """),
 
-    3 : _(u"""
+    3 : _("""
  Les chargements thermiques de type EVOL_CHAR ne sont pas pris en compte dans cet opérateur.
 """),
 
-    4 : _(u"""
+    4 : _("""
  Erreur lors de l'opération LIAISON_MAIL.
  L'élément %(k1)s n'est pas du bon type. 
  Si cette maille correspond à un élément affecté d'une modélisation de type coque, il faut utiliser l'option TYPE_RACCORD='MASSIF_COQUE' ou TYPE_RACCORD='COQUE_MASSIF'.
 """),
 
-    5 : _(u"""
+    5 : _("""
 Erreur lors de l'opération LIAISON_CYCLE.
 L'élément %(k1)s n'est pas du bon type. 
 Si vous êtes en deux dimensions, les éléments doivent être des segments.
 Si vous êtes en trois dimensions, les éléments doivent être des triangles ou des quadrangles.
 """),
 
-    6 : _(u"""
+    6 : _("""
  Erreur lors de l'opération LIAISON_MAIL.
  Le TYPE_RACCORD='MASSIF_COQUE' n'est pas utilisable avec des COQUE_3D.
 """),

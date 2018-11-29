@@ -46,8 +46,8 @@ for mod in MODULES_RAISING_FPE:
 
 import aster_settings
 import aster_core
-from strfunc import convert, ufmt
-from decorators import jdc_required, stop_on_returncode, never_fail
+from .strfunc import convert, ufmt
+from .decorators import jdc_required, stop_on_returncode, never_fail
 
 
 class Interrupt(Exception):
@@ -97,8 +97,8 @@ class SUPERV:
 
     def format_CR(self, cr):
         """Fonction pour imprimer le rapport"""
-        return ufmt(_(u">> JDC.py : DEBUT RAPPORT\n%s\n"
-                      u">> JDC.py : FIN RAPPORT"), str(cr))
+        return ufmt(_(">> JDC.py : DEBUT RAPPORT\n%s\n"
+                      ">> JDC.py : FIN RAPPORT"), str(cr))
 
     def error(self, *args):
         """Cet enrobage permet de s'assurer que le sys.path a été enrichi
@@ -109,7 +109,7 @@ class SUPERV:
     def set_i18n(self):
         """Met en place les fonctions d'internationalisation."""
         # should be already done by importing aster_settings
-        import i18n
+        from . import i18n
 
     def init_timer(self):
         """Initialise le timer au plus tot
@@ -117,12 +117,12 @@ class SUPERV:
         try:
             from Utilitai.as_timer import ASTER_TIMER
             self.timer = ASTER_TIMER(
-                format='aster', maxlabel=_(u"> %d commandes..."))
+                format='aster', maxlabel=_("> %d commandes..."))
             self.timer.Start('init (jdc)')
             self.timer.Start(' . part Superviseur', num=1.1e6)
             ier = 0
         except:
-            print traceback.print_exc()
+            print(traceback.print_exc())
             ier = 1
         return ier
 
@@ -133,7 +133,7 @@ class SUPERV:
             self.JdC = cata.JdC
             CONTEXT.unset_current_step()
         except:
-            print traceback.print_exc()
+            print(traceback.print_exc())
             return 1
 
     def testeCata(self):
@@ -143,7 +143,7 @@ class SUPERV:
         cr = self.JdC.report()
         if not cr.estvide():
             self.error(
-                _(u"ERREUR A LA VERIFICATION DU CATALOGUE - INTERRUPTION"))
+                _("ERREUR A LA VERIFICATION DU CATALOGUE - INTERRUPTION"))
             self.error(self.format_CR(cr))
             return 1
 
@@ -154,11 +154,11 @@ class SUPERV:
         f = open(fort1, 'r')
         text = f.read()
         dash = "# " + "-" * 90
-        print dash
-        print convert(_(u"""# Impression du contenu du fichier de commandes à exécuter :"""))
-        print dash
-        print convert(text)
-        print dash
+        print(dash)
+        print(convert(_("""# Impression du contenu du fichier de commandes à exécuter :""")))
+        print(dash)
+        print(convert(text))
+        print(dash)
         f.close()
         args = {}
         self.jdc = self.JdC(procedure=text, cata=self.cata, nom=fort1,
@@ -180,7 +180,7 @@ class SUPERV:
         j.compile()
         j.timer.Stop(" . compile")
         if not j.cr.estvide():
-            self.error(_(u"ERREUR DE COMPILATION DANS ACCAS - INTERRUPTION"))
+            self.error(_("ERREUR DE COMPILATION DANS ACCAS - INTERRUPTION"))
             self.error(self.format_CR(j.cr))
             j.supprime()
             return 1
@@ -200,7 +200,7 @@ class SUPERV:
         ier = 0
         if not j.cr.estvide():
             self.error(
-                _(u"ERREUR A L'INTERPRETATION DANS ACCAS - INTERRUPTION"))
+                _("ERREUR A L'INTERPRETATION DANS ACCAS - INTERRUPTION"))
             self.error(self.format_CR(j.cr))
             ier = 1
         if self.coreopts.get_option('interact'):
@@ -219,7 +219,7 @@ class SUPERV:
         j.timer.Stop(" . report")
         if not cr.estvide():
             self.error(
-                _(u"ERREUR A LA VERIFICATION SYNTAXIQUE - INTERRUPTION"))
+                _("ERREUR A LA VERIFICATION SYNTAXIQUE - INTERRUPTION"))
             self.error(self.format_CR(cr))
             return 1
         self.SyntaxCheck()
@@ -230,7 +230,7 @@ class SUPERV:
         if self.jdc.syntax_check():
             self.jdc.traiter_fin_exec("commande")
             self.MESSAGE(
-                _(u"\n  Sortie immédiatement après la vérification de syntaxe.\n"))
+                _("\n  Sortie immédiatement après la vérification de syntaxe.\n"))
             # markers for as_run status
             for fname in ('fort.8', 'fort.9'):
                 open(fname, 'ab').write('\n'
@@ -262,28 +262,28 @@ class SUPERV:
             ier = j.Build()
             if ier or not j.cr.estvide():
                 self.MESSAGE(
-                    _(u"ERREUR A LA CONSTRUCTION DES MACROS - INTERRUPTION"))
-                print convert(self.format_CR(j.cr))
+                    _("ERREUR A LA CONSTRUCTION DES MACROS - INTERRUPTION"))
+                print(convert(self.format_CR(j.cr)))
                 return 1
         except:
-            self.MESSAGE(_(u"ERREUR INOPINEE - INTERRUPTION"))
+            self.MESSAGE(_("ERREUR INOPINEE - INTERRUPTION"))
             traceback.print_exc()
             return 1
         cr = j.report()
         if not cr.estvide():
             self.MESSAGE(
-                _(u"ERREUR A LA VERIFICATION DES MACROS - INTERRUPTION"))
-            print convert(self.format_CR(cr))
+                _("ERREUR A LA VERIFICATION DES MACROS - INTERRUPTION"))
+            print(convert(self.format_CR(cr)))
             return 1
         try:
             ier = j.Exec()
             if ier:
-                self.MESSAGE(_(u"ERREUR A L'EXECUTION - INTERRUPTION"))
+                self.MESSAGE(_("ERREUR A L'EXECUTION - INTERRUPTION"))
                 return 1
         except EOFError:
                 return 0
         except:
-            self.MESSAGE(_(u"ERREUR INOPINEE - INTERRUPTION"))
+            self.MESSAGE(_("ERREUR INOPINEE - INTERRUPTION"))
             traceback.print_exc()
             return 1
 
@@ -297,9 +297,9 @@ class SUPERV:
             j.BuildExec()
             ier = 0
             if not j.cr.estvide():
-                self.MESSAGE(_(u"ERREUR A L'EXECUTION - INTERRUPTION"))
+                self.MESSAGE(_("ERREUR A L'EXECUTION - INTERRUPTION"))
                 ier = 1
-                print convert(self.format_CR(j.cr))
+                print(convert(self.format_CR(j.cr)))
             return ier
         except MemoryError:
             self.MESSAGE("ERREUR INOPINEE - INTERRUPTION")
@@ -316,7 +316,7 @@ class SUPERV:
         """Initialize the environment (language & encoding, paths...)"""
         # import after getting opts as is may change sys.path
         if self.coreopts.get_option('totalview') == 1:
-            from E_utils import copierBase, lierRepertoire
+            from .E_utils import copierBase, lierRepertoire
             curPID = os.getpid()
             pathOrigine = os.getcwd()
             pathDestination = osp.join(pathOrigine, "tv_" + str(curPID))
@@ -339,7 +339,7 @@ class SUPERV:
     @never_fail
     def Finish(self):
         """Allow to call cleanup functions."""
-        from E_utils import supprimerRepertoire
+        from .E_utils import supprimerRepertoire
         if self.coreopts.get_option('totalview') == 1:
             supprimerRepertoire(os.getcwd())
         # post-run for testcases
@@ -362,7 +362,7 @@ class SUPERV:
             self.ExecCompileJDC()
             self._mem_stat_jdc()
             if self.jdc.par_lot == 'NON':
-                print convert(_(u"""--- Fin de l'exécution"""))
+                print(convert(_("""--- Fin de l'exécution""")))
                 self.SyntaxCheck()
                 self.Finish()
                 self.interrupt(0)
@@ -370,7 +370,7 @@ class SUPERV:
             self.ChangeJDC()
             self.Execute(params)
             self.Finish()
-        except Interrupt, exc:
+        except Interrupt as exc:
             return exc.returncode
         return 0
 

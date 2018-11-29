@@ -25,7 +25,7 @@
 # Modules Python
 import types
 # Modules Eficas
-import B_ETAPE
+from . import B_ETAPE
 
 
 class PROC_ETAPE(B_ETAPE.ETAPE):

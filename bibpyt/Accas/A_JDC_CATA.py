@@ -21,7 +21,7 @@
 
 
 from Noyau import N_JDC_CATA
-import A_JDC
+from . import A_JDC
 
 
 class JDC_CATA(N_JDC_CATA.JDC_CATA):

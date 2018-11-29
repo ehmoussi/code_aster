@@ -20,14 +20,14 @@
 # person_in_charge: josselin.delmas at edf.fr
 
 cata_msg = {
-    1: _(u"""
+    1: _("""
 Problème lors de l'utilisation de MACR_CARA_POUTRE
 
 GROUP_MA et GROUP_MA_BORD doivent avoir le même nombre de groupes de mailles.
 À un GROUP_MA doit correspondre un GROUP_MA_BORD.
 """),
 
-    2: _(u"""
+    2: _("""
 Problème lors de l'utilisation de MACR_CARA_POUTRE
 
 Vous avez renseigné NOEUD avec GROUP_MA et GROUP_MA_BORD.
@@ -36,7 +36,7 @@ GROUP_MA_BORD.
 À un NOEUD doit correspondre un GROUP_MA et un GROUP_MA_BORD .
 """),
 
-    3: _(u"""
+    3: _("""
 Problème lors de l'utilisation de MACR_CARA_POUTRE
 
 Vous avez renseigné NOEUD ou GROUP_NO avec GROUP_MA_BORD.
@@ -46,7 +46,7 @@ Si vous avez des groupes de mailles disjoints, il faut également renseigner GRO
 Et dans ce cas à un NOEUD doit correspondre un GROUP_MA et un GROUP_MA_BORD.
 """),
 
-    4: _(u"""
+    4: _("""
 Poutre circulaire à variation de section homothétique.
 
 Le rapport d'homothétie est assez différent entre les rayons et les épaisseurs :
@@ -69,7 +69,7 @@ Risques et conseil:
 """),
 
 
-    5: _(u"""
+    5: _("""
 Problème lors de l'utilisation de MACR_CARA_POUTRE
 
 Vous avez renseigné GROUP_NO avec GROUP_MA et GROUP_MA_BORD.
@@ -78,7 +78,7 @@ donné sous GROUP_MA et GROUP_MA_BORD.
 """),
 
 
-    6: _(u"""
+    6: _("""
 Problème lors de l'utilisation de MACR_CARA_POUTRE
 
 Vous avez renseigné GROUP_MA et GROUP_MA_BORD avec plusieurs groupes de mailles.
@@ -88,7 +88,7 @@ groupe de mailles.
 """),
 
 
-    7: _(u"""
+    7: _("""
 Vous avez renseigné GROUP_MA et GROUP_MA_BORD avec un seul groupe de mailles par
 mot clef.
 Vous avez également renseigné 'LONGUEUR' 'MATERIAU' 'LIAISON', cela est inutile.
@@ -96,25 +96,25 @@ Les valeurs sont ignorées.
 """),
 
 
-    8: _(u"""
+    8: _("""
 Problème lors de l'utilisation de MACR_CARA_POUTRE
 
 Vous avez renseigné GROUP_NO. Le GROUP_NO %(k1)s n'existe pas dans le maillage.
 """),
 
 
-    9: _(u"""
+    9: _("""
 Problème lors de l'utilisation de MACR_CARA_POUTRE
 
 Vous avez renseigné NOEUD. Le noeud %(k1)s n'existe pas dans le maillage.
 """),
 
 
-   10: _(u"""La caractéristique %(k1)8s est négative ou nulle %(r1)e
+   10: _("""La caractéristique %(k1)8s est négative ou nulle %(r1)e
 """),
 
 
-   11: _(u"""
+   11: _("""
 Problème lors de l'utilisation de MACR_CARA_POUTRE
 
 La section présente des caractéristiques mécaniques négatives.
@@ -127,7 +127,7 @@ Conseil : La discrétisation de la section a un impact sur la qualité des résu
 """),
 
 
-   12: _(u"""
+   12: _("""
 Les coordonnées du centre de gravité de la section sont G=(%(r1)e, %(r2)e)
 
 Si vous utilisez des MULTIFIBRES et que le maillage de description des fibres est le même que
@@ -143,7 +143,7 @@ Vous risquez d'avoir des résultats inattendus, si vous ne renseignez pas COOR_A
 """),
 
 
-   13: _(u"""
+   13: _("""
 Le repère principal d'inertie est tourné d'un angle de %(r1)f° par rapport aux axes du maillage.
 
 Si vous utilisez des MULTIFIBRES et que le maillage de description des fibres est le même que
@@ -167,7 +167,7 @@ Vous risquez d'avoir des résultats inattendus, si vous ne renseignez ni :
 """),
 
 
-   20: _(u"""
+   20: _("""
 Problème lors de l'utilisation de MACR_CARA_POUTRE
 
 Vous avez renseigné %(k2)s. Le GROUP_MA %(k1)s n'existe pas dans le maillage.

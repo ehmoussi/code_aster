@@ -71,8 +71,8 @@ def asse_elem_ssd_ops(self, RESU_ASSE_SSD, SOUS_STRUC, LIAISON, VERIF, **args):
         if LIAISON[i]['OPTION']:
             arg_liaison['OPTION'] = LIAISON[i]['OPTION']
             if arg_liaison['OPTION'] == 'CLASSIQUE' and args['METHODE'] == 'ELIMINE':
-                print 'ALARME : methode ELIMINE non adaptee a OPTION : ', \
-                      arg_liaison['OPTION']
+                print('ALARME : methode ELIMINE non adaptee a OPTION : ', \
+                      arg_liaison['OPTION'])
         mcfact.append(_F(SOUS_STRUC_1=LIAISON[i]['SOUS_STRUC_1'],
                          INTERFACE_1=LIAISON[i]['INTERFACE_1'],
                          SOUS_STRUC_2=LIAISON[i]['SOUS_STRUC_2'],

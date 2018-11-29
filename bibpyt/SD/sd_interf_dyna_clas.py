@@ -45,8 +45,8 @@ class sd_interf_dyna_clas(AsBase):
         nb_intf = len(noms)
         assert nb_intf > 0, noms
         assert len(type) == nb_intf, (nb_intf, type)
-        assert len(lino.keys()) == nb_intf, (nb_intf, lino)
-        assert len(ddac.keys()) == nb_intf, (nb_intf, ddac)
+        assert len(list(lino.keys())) == nb_intf, (nb_intf, lino)
+        assert len(list(ddac.keys())) == nb_intf, (nb_intf, ddac)
 
     def check_REFE(self, checker):
         refe = self.IDC_REFE.get()
@@ -81,11 +81,11 @@ class sd_interf_dyna_clas(AsBase):
         ddac = self.IDC_DDAC.get()
         desc = self.IDC_DESC.get()
         nbec = desc[1]
-        nb_intf = len(lino.keys())
+        nb_intf = len(list(lino.keys()))
 
         for kintf in range(nb_intf):
-            llino = lino.values()[kintf]
-            lddac = ddac.values()[kintf]
+            llino = list(lino.values())[kintf]
+            lddac = list(ddac.values())[kintf]
             nbno = len(llino)
             assert len(lddac) == nbno * nbec, (lino, ddac)
             for nuno in llino:

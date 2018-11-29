@@ -26,7 +26,7 @@
     de type ENTITE
 """
 
-import N_MCCOMPO
+from . import N_MCCOMPO
 
 
 class MCFACT(N_MCCOMPO.MCCOMPO):

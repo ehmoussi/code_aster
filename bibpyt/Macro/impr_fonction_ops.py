@@ -80,9 +80,9 @@ def impr_fonction_ops(self, FORMAT, COURBE, INFO, **args):
     for Ci in COURBE:
         iocc += 1
         dC = Ci.cree_dict_valeurs(Ci.mc_liste)
-        if dC.has_key('LIST_PARA') and dC['LIST_PARA'] != None and i0 == 0:
+        if 'LIST_PARA' in dC and dC['LIST_PARA'] != None and i0 == 0:
             i0 = iocc
-        for mc in dC.keys():
+        for mc in list(dC.keys()):
             if dC[mc] == None:
                 del dC[mc]
         Courbe.append(dC)
@@ -97,12 +97,12 @@ def impr_fonction_ops(self, FORMAT, COURBE, INFO, **args):
     if FORMAT == 'TABLEAU':
         interp = True
         dCi = Courbe[i0]
-        if dCi.has_key('LIST_PARA'):
+        if 'LIST_PARA' in dCi:
             __linter = dCi['LIST_PARA']
         else:
             obj = None
             for typi in unparmi:
-                if dCi.has_key(typi):
+                if typi in dCi:
                     obj = dCi[typi]
                     break
             if obj == None:
@@ -135,10 +135,10 @@ def impr_fonction_ops(self, FORMAT, COURBE, INFO, **args):
         # 1.1. Type d'objet à traiter
         obj = None
         for typi in unparmi:
-            if dCi.has_key(typi):
+            if typi in dCi:
                 obj = dCi[typi]
                 break
-        if not dCi.has_key('LEGENDE') and hasattr(obj, 'get_name'):
+        if 'LEGENDE' not in dCi and hasattr(obj, 'get_name'):
             dCi['LEGENDE'] = obj.get_name()
         if obj == None:
             UTMESS('S', 'SUPERVIS_56')
@@ -166,7 +166,7 @@ def impr_fonction_ops(self, FORMAT, COURBE, INFO, **args):
                     if i == 0:
                         if interp:
                             __li = __linter
-                        elif dCi.has_key('LIST_PARA'):
+                        elif 'LIST_PARA' in dCi:
                             __li = dCi['LIST_PARA']
                         else:
                             __li = DEFI_LIST_REEL(VALE=lx)
@@ -174,7 +174,7 @@ def impr_fonction_ops(self, FORMAT, COURBE, INFO, **args):
                     dic = dico.copy()
                     dic.update(ldicf[i])
 
-                    if interp or dCi.has_key('LIST_PARA'):
+                    if interp or 'LIST_PARA' in dCi:
 
                         try:
                             __ftmp = CALC_FONC_INTERP(
@@ -186,7 +186,7 @@ def impr_fonction_ops(self, FORMAT, COURBE, INFO, **args):
                             pv, lv2 = __ftmp.Valeurs()
                             lx = lv2[0][0]
                             ly = lv2[0][1]
-                        except aster.error,err:
+                        except aster.error as err:
                             # on verifie que la bonne exception a ete levee
                             assert err.id_message == "FONCT0_9", 'unexpected id : %s' % err.id_message
                             continue
@@ -222,19 +222,19 @@ def impr_fonction_ops(self, FORMAT, COURBE, INFO, **args):
                             LIST_PARA=__linter,
                             **dpar
                         )
-                    except aster.error,err:
+                    except aster.error as err:
 
                             # on verifie que la bonne exception a ete levee
                             assert err.id_message == "FONCT0_9", 'unexpected id : %s' % err.id_message
                             continue
-                elif dCi.has_key('LIST_PARA'):
+                elif 'LIST_PARA' in dCi:
                     try:
                         __ftmp = CALC_FONC_INTERP(
                             FONCTION=obj,
                             LIST_PARA=dCi['LIST_PARA'],
                             **dpar
                         )
-                    except aster.error,err:
+                    except aster.error as err:
                             # on verifie que la bonne exception a ete levee
                             assert err.id_message == "FONCT0_9", 'unexpected id : %s' % err.id_message
                             continue
@@ -244,7 +244,7 @@ def impr_fonction_ops(self, FORMAT, COURBE, INFO, **args):
                 if isinstance(obj, (fonction_c, formule_c)) and dCi.get('PARTIE') == 'IMAG':
                     lr = lval[2]
                 # on stocke les données dans le Graph
-                if isinstance(obj, (fonction_c, formule_c)) and not dCi.has_key('PARTIE'):
+                if isinstance(obj, (fonction_c, formule_c)) and 'PARTIE' not in dCi:
                     nomresu = dpar['NOM_RESU'].strip() + '_' + str(
                         len(graph.Legendes))
                     dicC = {
@@ -292,11 +292,11 @@ def impr_fonction_ops(self, FORMAT, COURBE, INFO, **args):
             __ftm2 = ob2
             dpa2 = __ftm2.Parametres()
             intloc = False
-            if interp and not dCi.has_key('LIST_PARA'):
+            if interp and 'LIST_PARA' not in dCi:
                 # dans ce cas, __linter contient les ordonnées de FONC_X
                 intloc = False
                 __li = __linter
-            elif dCi.has_key('LIST_PARA'):
+            elif 'LIST_PARA' in dCi:
                 intloc = True
                 __li = dCi['LIST_PARA']
             if intloc:

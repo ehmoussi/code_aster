@@ -26,9 +26,9 @@
 
 import types
 
-import N_ENTITE
-import N_MCSIMP
-from strfunc import ufmt
+from . import N_ENTITE
+from . import N_MCSIMP
+from .strfunc import ufmt
 
 
 class SIMP(N_ENTITE.ENTITE):
@@ -71,7 +71,7 @@ class SIMP(N_ENTITE.ENTITE):
         """
         N_ENTITE.ENTITE.__init__(self, validators)
         # Initialisation des attributs
-        if type(typ) == types.TupleType:
+        if type(typ) == tuple:
             self.type = typ
         else:
             self.type = (typ,)

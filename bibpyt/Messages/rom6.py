@@ -21,53 +21,53 @@
 
 cata_msg = {
 
-   2  : _(u"""Le modèle doit être le même sur les deux bases."""),
+   2  : _("""Le modèle doit être le même sur les deux bases."""),
 
-   3  : _(u"""Initialisations pour le post-traitement du calcul réduit."""),
+   3  : _("""Initialisations pour le post-traitement du calcul réduit."""),
 
-   4  : _(u"""On ne trouve pas la table des coordonnées réduites dans la structure de données résultat. Vérifiez qu'il vient bien d'un calcul réduit."""),
+   4  : _("""On ne trouve pas la table des coordonnées réduites dans la structure de données résultat. Vérifiez qu'il vient bien d'un calcul réduit."""),
 
-   7  : _(u"""Le résultat sur le modèle complet sera de type %(k1)s."""),
+   7  : _("""Le résultat sur le modèle complet sera de type %(k1)s."""),
 
-   8  : _(u"""Le modèle est le même pour la reconstruction que le modèle réduit d'origine."""),
+   8  : _("""Le modèle est le même pour la reconstruction que le modèle réduit d'origine."""),
 
-   9  : _(u"""Le modèle de la base %(k1)s n'est pas celui du modèle complet. Vérifiez que vous n'utilisez pas la base tronquée."""),
+   9  : _("""Le modèle de la base %(k1)s n'est pas celui du modèle complet. Vérifiez que vous n'utilisez pas la base tronquée."""),
 
-   11 : _(u"""Le résultat sur le modèle réduit contient %(i1)d numéros d'ordre."""),
+   11 : _("""Le résultat sur le modèle réduit contient %(i1)d numéros d'ordre."""),
 
-   12 : _(u"""La base empirique est construite sur un maillage différent du modèle. Ce n'est pas possible."""),
+   12 : _("""La base empirique est construite sur un maillage différent du modèle. Ce n'est pas possible."""),
 
-   13 : _(u"""Les deux modèles sont identiques, on ne peut rien tronquer !"""),
+   13 : _("""Les deux modèles sont identiques, on ne peut rien tronquer !"""),
 
-   14 : _(u"""On évalue le champ dual."""),
+   14 : _("""On évalue le champ dual."""),
 
-   15 : _(u"""Correction par le calcul éléments finis."""),
+   15 : _("""Correction par le calcul éléments finis."""),
 
-   20 : _(u"""Reconstruction des champs sur tout le domaine."""),
+   20 : _("""Reconstruction des champs sur tout le domaine."""),
 
-   21 : _(u"""Reconstruction du champ primal."""),
+   21 : _("""Reconstruction du champ primal."""),
 
-   22 : _(u"""Reconstruction du champ dual."""),
+   22 : _("""Reconstruction du champ dual."""),
 
-   30 : _(u"""Construction de la matrice des modes. Dimensions: [%(i1)d,%(i2)d]."""),
+   30 : _("""Construction de la matrice des modes. Dimensions: [%(i1)d,%(i2)d]."""),
 
-   31 : _(u"""Calcul des coordonnées réduites."""),
+   31 : _("""Calcul des coordonnées réduites."""),
 
-   32 : _(u"""Échec lors du calcul des coordonnées réduites."""),
+   32 : _("""Échec lors du calcul des coordonnées réduites."""),
 
-   33 : _(u"""Le mode empirique de numéro d'ordre %(i1)d dans la base est mis à zéro."""),
+   33 : _("""Le mode empirique de numéro d'ordre %(i1)d dans la base est mis à zéro."""),
 
-   34 : _(u"""Création de la liste des noeuds appartenant au domaine réduit."""),
+   34 : _("""Création de la liste des noeuds appartenant au domaine réduit."""),
 
-   35 : _(u"""Le nombre de composantes par noeud n'est pas constant."""),
+   35 : _("""Le nombre de composantes par noeud n'est pas constant."""),
 
-   36 : _(u"""Le modèle est variable pendant le calcul, ce n'est pas possible en réduction de modèle."""),
+   36 : _("""Le modèle est variable pendant le calcul, ce n'est pas possible en réduction de modèle."""),
 
-   37 : _(u"""Préparation de la liste des équations appartenant au domaine réduit."""),
+   37 : _("""Préparation de la liste des équations appartenant au domaine réduit."""),
 
-   38 : _(u"""Initialisations pour le post-traitement du calcul réduit, quantités primales."""),
+   38 : _("""Initialisations pour le post-traitement du calcul réduit, quantités primales."""),
 
-   39 : _(u"""Initialisations pour le post-traitement du calcul réduit, quantités duales."""),
+   39 : _("""Initialisations pour le post-traitement du calcul réduit, quantités duales."""),
 
-   40 : _(u"""Vous avez donné le nom de la base à tronquer (BASE_INIT) alors que vous voulez tronquer une base déjà existante."""),
+   40 : _("""Vous avez donné le nom de la base à tronquer (BASE_INIT) alors que vous voulez tronquer une base déjà existante."""),
 }

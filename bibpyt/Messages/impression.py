@@ -22,11 +22,11 @@
 
 cata_msg = {
 
-    1 : _(u"""
+    1 : _("""
  Il y a trop de colonnes actives (%(i1)d colonnes).
 """),
 
-    2 : _(u"""
+    2 : _("""
  Il y a trop de colonnes à afficher dans le tableau de convergence.
  La largeur maximale affichable est de 256 caractères, donc 14 colonnes au maximum.
  Or vous avez <%(i1)d> caractères !
@@ -34,7 +34,7 @@ cata_msg = {
  Vous pouvez éventuellement désactiver INFO_RESIDU ou INFO_TEMPS.
 """),
 
-    3 : _(u"""
+    3 : _("""
  Il y a trop de colonnes de type SUIVI_DDL (%(i1)d colonnes).
 """),
 

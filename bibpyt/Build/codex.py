@@ -79,34 +79,34 @@ def debut(cmd):
     """
        Fonction d'execution de la macro-commande debut
     """
-    print "codex.debut : ", cmd
+    print("codex.debut : ", cmd)
     concept, type_concept, nom_cmd = cmd.getres()
-    print "codex.debut : ", concept, type_concept, nom_cmd
+    print("codex.debut : ", concept, type_concept, nom_cmd)
     taille = cmd.getfac("IMPRESSION  ")
-    print "codex.debut : ", taille
+    print("codex.debut : ", taille)
 
     taille = cmd.getfac("CODE")
-    print "codex.debut : ", taille
+    print("codex.debut : ", taille)
     if taille == 1:
         valeur = cmd.getvtx("CODE", "NOM", 1, 1, 1)
-        print "codex.debut : ", valeur
+        print("codex.debut : ", valeur)
 
-    print cmd.retnom()
+    print(cmd.retnom())
 
     l, longueurs = cmd.getltx("CODE", "NOM", 1, 1, 1)
-    print "codex.debut : ", longueurs
+    print("codex.debut : ", longueurs)
 
     if taille == 1:
         valeur = cmd.getvis("CODE", "UNITE", 1, 1, 1)
-        print "codex.debut : ", valeur
+        print("codex.debut : ", valeur)
 
-    print cmd.getoper()
+    print(cmd.getoper())
 
     cmd.getvtx("", "PAR_LOT", 1, 1, 1)
-    print "MCS: ", cmd.getvtx("DEBUG", "ENVIMA", 1, 1, 1)
-    print "MCS: ", cmd.getvtx("MEMOIRE", "GESTION", 1, 1, 1)
-    print "MCS: ", cmd.getvis("MEMOIRE", "TYPE_ALLOCATION", 1, 1, 1)
-    print "MCS: ", cmd.getvr8("MEMOIRE", "PARTITION", 1, 1, 1)
+    print("MCS: ", cmd.getvtx("DEBUG", "ENVIMA", 1, 1, 1))
+    print("MCS: ", cmd.getvtx("MEMOIRE", "GESTION", 1, 1, 1))
+    print("MCS: ", cmd.getvis("MEMOIRE", "TYPE_ALLOCATION", 1, 1, 1))
+    print("MCS: ", cmd.getvr8("MEMOIRE", "PARTITION", 1, 1, 1))
 
     return
 
@@ -115,7 +115,7 @@ def ops1(cmd):
     """
        Fonction OPS de la macro INCLUDE
     """
-    print cmd.getres()
+    print(cmd.getres())
     return 0
 
 ops = {

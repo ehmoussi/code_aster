@@ -52,7 +52,7 @@ def stanley_ops(self, RESULTAT, MODELE, CHAM_MATER, CARA_ELEM, DISPLAY, **args):
         FICHIER_VALID = None
 
     # On ne lance Stanley que si la variable DISPLAY est définie
-    if os.environ.has_key('DISPLAY'):
+    if 'DISPLAY' in os.environ:
 
         import Stanley
         from Stanley import stanley_engine

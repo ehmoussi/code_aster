@@ -61,11 +61,11 @@ def COURBES(listcourb, titre=' ', soustitre=' ', legx=' ', legy=' ', bornex=None
 
     if (fichier != None):
         graphe = xmgrace.Xmgr(10, ' -hardcopy -nosafe')
-        print "Nombre de courbes  ", len(listcourb), " sur le fichier :", fichier
+        print("Nombre de courbes  ", len(listcourb), " sur le fichier :", fichier)
 
     else:
         graphe = xmgrace.Xmgr(10, ' -noask')
-        print "Nombre de courbes  ", len(listcourb)
+        print("Nombre de courbes  ", len(listcourb))
 
     graphe.Nouveau_graphe()
 

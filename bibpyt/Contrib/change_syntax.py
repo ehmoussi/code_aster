@@ -182,7 +182,7 @@ class SyntaxVisitor(CommandTextVisitor):
         from glob import glob
         from asrun.profil import AsterProfil
         num = len(glob(FILENAME + '.*')) + 1
-        lfn = [i for i in self.text.keys() if i.startswith('fort.')]
+        lfn = [i for i in list(self.text.keys()) if i.startswith('fort.')]
         assert len(lfn) <= 1, lfn
         if len(lfn) == 0:
             fname = 'fort.1'
@@ -375,7 +375,7 @@ class InfoStorage(object):
         self.last = None
 
     def store(self, key, value):
-        print "DEBUG: store", value
+        print("DEBUG: store", value)
         self.infos[key] = value
         self.last = key
 
@@ -525,5 +525,5 @@ def external_objects(params, formula):
         if len(context) == init:
             break
     if not ok:
-        print "ERROR: can not evaluate '{0}'".format(formula)
+        print("ERROR: can not evaluate '{0}'".format(formula))
     return needed

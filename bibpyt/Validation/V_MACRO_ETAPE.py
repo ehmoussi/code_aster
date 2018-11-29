@@ -34,8 +34,8 @@ import sys
 import traceback
 
 # Modules EFICAS
-import V_MCCOMPO
-import V_ETAPE
+from . import V_MCCOMPO
+from . import V_ETAPE
 from Noyau.N_Exception import AsException
 from Noyau.N_utils import AsType
 from Noyau.strfunc import ufmt
@@ -64,7 +64,7 @@ class MACRO_ETAPE(V_ETAPE.ETAPE):
 
         """
         if CONTEXT.debug:
-            print "ETAPE.isvalid ", self.nom
+            print("ETAPE.isvalid ", self.nom)
         if self.state == 'unchanged':
             return self.valid
         else:
@@ -82,8 +82,8 @@ class MACRO_ETAPE(V_ETAPE.ETAPE):
                     # Pb: La macro-commande a passe le concept a une commande
                     # (macro ?) mal definie
                     if cr == 'oui':
-                        self.cr.fatal(_(u"Macro-commande mal définie : le concept n'a pas été typé par "
-                                        u"un appel à type_sdprod pour %s"), c.nom)
+                        self.cr.fatal(_("Macro-commande mal définie : le concept n'a pas été typé par "
+                                        "un appel à type_sdprod pour %s"), c.nom)
                     valid = 0
 
             valid = valid * self.valid_child()
@@ -93,7 +93,7 @@ class MACRO_ETAPE(V_ETAPE.ETAPE):
             if self.reste_val != {} and self.nom != "FORMULE":
                 if cr == 'oui':
                     self.cr.fatal(
-                        _(u"Mots clés inconnus : %s"), ','.join(self.reste_val.keys()))
+                        _("Mots clés inconnus : %s"), ','.join(list(self.reste_val.keys())))
                 valid = 0
 
             if sd == "non":
@@ -109,7 +109,7 @@ class MACRO_ETAPE(V_ETAPE.ETAPE):
                 # reentrante
                 if cr == 'oui':
                     self.cr.fatal(
-                        _(u'Macro-commande non réentrante : ne pas utiliser reuse'))
+                        _('Macro-commande non réentrante : ne pas utiliser reuse'))
                 valid = 0
 
             if valid:
@@ -150,7 +150,7 @@ class MACRO_ETAPE(V_ETAPE.ETAPE):
                 # les concepts produits dans self.sdprods, il faut le mettre à
                 # zéro
                 self.sdprods = []
-                sd_prod = apply(sd_prod, (self,), d)
+                sd_prod = sd_prod(*(self,), **d)
             except:
                 # Erreur pendant le calcul du type retourné
                 if CONTEXT.debug:
@@ -161,7 +161,7 @@ class MACRO_ETAPE(V_ETAPE.ETAPE):
                                                    sys.exc_info()[1],
                                                    sys.exc_info()[2])
                     self.cr.fatal(
-                        _(u'Impossible d affecter un type au résultat\n%s'), ' '.join(l[2:]))
+                        _('Impossible d affecter un type au résultat\n%s'), ' '.join(l[2:]))
                 return 0
         # on teste maintenant si la SD est r\351utilis\351e ou s'il faut la
         # cr\351er
@@ -171,15 +171,15 @@ class MACRO_ETAPE(V_ETAPE.ETAPE):
             if AsType(self.reuse) != sd_prod:
                 if cr == 'oui':
                     self.cr.fatal(
-                        _(u'Type de concept réutilisé incompatible avec type produit'))
+                        _('Type de concept réutilisé incompatible avec type produit'))
                 valid = 0
             if self.sdnom != '':
                 if self.sdnom[0] != '_' and self.reuse.nom != self.sdnom:
                     # Le nom de la variable de retour (self.sdnom) doit etre le
                     # meme que celui du concept reutilise (self.reuse.nom)
                     if cr == 'oui':
-                        self.cr.fatal(_(u'Concept réutilisé : le nom de la variable de '
-                                        u'retour devrait être %s et non %s'),
+                        self.cr.fatal(_('Concept réutilisé : le nom de la variable de '
+                                        'retour devrait être %s et non %s'),
                                       self.reuse.nom, self.sdnom)
                     valid = 0
             if valid:
@@ -193,7 +193,7 @@ class MACRO_ETAPE(V_ETAPE.ETAPE):
                 if self.sd:
                     # Un sd existe deja, on change son type
                     if CONTEXT.debug:
-                        print "changement de type:", self.sd, sd_prod
+                        print("changement de type:", self.sd, sd_prod)
                     if self.sd.__class__ != sd_prod:
                         self.sd.change_type(sd_prod)
                     self.typret = sd_prod
@@ -201,12 +201,12 @@ class MACRO_ETAPE(V_ETAPE.ETAPE):
                     # Le sd n existait pas , on ne le crée pas
                     self.typret = sd_prod
                     if cr == 'oui':
-                        self.cr.fatal(_(u"Concept retourné non défini"))
+                        self.cr.fatal(_("Concept retourné non défini"))
                     valid = 0
             if self.definition.reentrant[0] == 'o':
                 if cr == 'oui':
                     self.cr.fatal(
-                        _(u'Commande obligatoirement réentrante : spécifier reuse=concept'))
+                        _('Commande obligatoirement réentrante : spécifier reuse=concept'))
                 valid = 0
         return valid
 

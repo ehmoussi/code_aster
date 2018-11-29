@@ -25,10 +25,10 @@
 
 import numpy as NP
 import os
-from post_endo_fiss_utils import unitVector, crea_mail_lin, crea_sd_mail, euler_angles
-from post_endo_fiss_utils import conv_smoothing_arc, conv_smoothing1D
+from .post_endo_fiss_utils import unitVector, crea_mail_lin, crea_sd_mail, euler_angles
+from .post_endo_fiss_utils import conv_smoothing_arc, conv_smoothing1D
 from Utilitai.UniteAster import UniteAster
-from post_endo_fiss_utils import ThresholdTooHighError, NoMaximaError
+from .post_endo_fiss_utils import ThresholdTooHighError, NoMaximaError
 
 
 def cherche_trajet(self, NOM_CMP, NOM_CHAM, dRECHERCHE, __ENDO, __mail, typeChampTrajet, infoPlan, inst):
@@ -79,7 +79,7 @@ def cherche_trajet(self, NOM_CMP, NOM_CHAM, dRECHERCHE, __ENDO, __mail, typeCham
     motclefs1 = {}
     motclefs1['MAILLAGE'] = __mail
 
-    if 'GROUP_MA' in dRECHERCHE.keys():
+    if 'GROUP_MA' in list(dRECHERCHE.keys()):
         groupma = dRECHERCHE['GROUP_MA']
         __ENDOGM = CREA_CHAMP(OPERATION='ASSE',
                               TYPE_CHAM=typeChampTrajet,
@@ -361,7 +361,7 @@ def cherche_trajet(self, NOM_CMP, NOM_CHAM, dRECHERCHE, __ENDO, __mail, typeCham
                                   NUME_ORDRE=1,
                                   **motclefs2)
 
-        except E_Exception.error, e:
+        except E_Exception.error as e:
             # All points outside the material
             if (e.id_message != 'CALCULEL3_97'):
                 if dirRech == 1:
@@ -487,7 +487,7 @@ def calcul_ouverture(self, NOM_CHAM, NOM_CMP, dRECHERCHE, __RESUIN, __mail, info
     import aster
     from Utilitai.Utmess import UTMESS
     from code_aster.Cata.Syntax import _F
-    from post_endo_fiss_utils import versDirMoy, findExtr, crackOpeningStrong, crea_sd_mail
+    from .post_endo_fiss_utils import versDirMoy, findExtr, crackOpeningStrong, crea_sd_mail
     from Macro.macr_lign_coupe_ops import crea_mail_lig_coup
 
     # --------------------------------------------------
@@ -541,7 +541,7 @@ def calcul_ouverture(self, NOM_CHAM, NOM_CMP, dRECHERCHE, __RESUIN, __mail, info
 
     motclefs = {}
     ChampsResu = __RESUIN.LIST_CHAMPS()
-    lstChampsResu = ChampsResu.keys()
+    lstChampsResu = list(ChampsResu.keys())
 
     methodeProj = 'COLLOCATION'
     methodeProjVI = 'COLLOCATION'
@@ -755,7 +755,7 @@ def post_endo_fiss_ops(self,
     l_dRECHERCHE = []
     for recherche in RECHERCHE:
         dRECHERCHE = recherche.cree_dict_valeurs(recherche.mc_liste)
-        for i in dRECHERCHE.keys():
+        for i in list(dRECHERCHE.keys()):
             if dRECHERCHE[i] == None:
                 del dRECHERCHE[i]
         l_dRECHERCHE.append(dRECHERCHE)
@@ -766,7 +766,7 @@ def post_endo_fiss_ops(self,
     motscles = {}
 
     for dRECHERCHE in l_dRECHERCHE:
-        if (OUVERTURE == 'OUI') and ('BORNE_MAX' not in dRECHERCHE.keys()):
+        if (OUVERTURE == 'OUI') and ('BORNE_MAX' not in list(dRECHERCHE.keys())):
             UTMESS('F', 'POST0_44')
 
     if args['CHAM_GD'] != None:
@@ -814,7 +814,7 @@ def post_endo_fiss_ops(self,
     #
     if build == 'resu':
         ChampsResu = __RESUIN.LIST_CHAMPS()
-        lstChampsResu = ChampsResu.keys()
+        lstChampsResu = list(ChampsResu.keys())
         if (NOM_CHAM not in lstChampsResu):
             UTMESS('F', 'POST0_42')
         elif (nume_ordre not in ChampsResu[NOM_CHAM]):
@@ -922,7 +922,7 @@ def post_endo_fiss_ops(self,
         ZcreteTot.append(CozCrete)
         EndocreteTot.append(EndoCrete)
         ConnTot.append(Connex)
-        if 'GROUP_MA' in dRECHERCHE.keys():
+        if 'GROUP_MA' in list(dRECHERCHE.keys()):
             nomFissure = dRECHERCHE['GROUP_MA']
         else:
             nomFissure = 'FISS' + str(idxRech + 1)

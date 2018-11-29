@@ -141,8 +141,8 @@ def macro_expans_ops(self,
                                  RESOLUTION=mfact,
                                  NOM_PARA=paras,
                                  )
-    except Exception, err:
-        raise Exception, err
+    except Exception as err:
+        raise Exception(err)
 
     # Phase de reconstruction des donnees mesurees sur le maillage
     # numerique

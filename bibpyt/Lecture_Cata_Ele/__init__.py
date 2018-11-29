@@ -17,6 +17,6 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-u"""Ce package n'est pas importé depuis Code_Aster.
+"""Ce package n'est pas importé depuis Code_Aster.
 Il est utilisé de manière autonome à l'extérieur de Code_Aster.
 """

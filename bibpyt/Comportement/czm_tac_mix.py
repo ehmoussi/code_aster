@@ -19,7 +19,7 @@
 
 # person_in_charge: kyrylo.kazymyrenko at edf.fr
 
-from cata_comportement import LoiComportement
+from .cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'CZM_TAC_MIX',

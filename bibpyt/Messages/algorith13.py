@@ -21,25 +21,25 @@
 
 cata_msg = {
 
-    8 : _(u"""
+    8 : _("""
  arrêt sur maillage non squelette
 """),
 
-    10 : _(u"""
+    10 : _("""
  problème de duplication de la matrice :  %(k1)s
 """),
 
-    11 : _(u"""
+    11 : _("""
   arrêt problème de factorisation
   présence de modes de corps rigide
 """),
 
-    17 : _(u"""
+    17 : _("""
  arrêt sur problème base modale sans INTERF_DYNA
  base modale -->  %(k1)s
 """),
 
-    26 : _(u"""
+    26 : _("""
  conflit de nom de groupe de maille dans le squelette
  le nom de groupe               :  %(k1)s
  provenant de la sous-structure :  %(k2)s
@@ -48,104 +48,104 @@ cata_msg = {
  %(k4)s
 """),
 
-    27 : _(u"""
+    27 : _("""
  nom de groupe non trouvé
  le groupe :  %(k1)s n'existe pas  %(k2)s dans la sous-structure :  %(k3)s
 """),
 
-    28 : _(u"""
+    28 : _("""
  aucun axe de rotation défini
 """),
 
-    35 : _(u"""
+    35 : _("""
  numéro de mode de votre liste inexistant dans les modes utilisés:
  numéro dans votre liste : %(i1)d
 """),
 
-    39 : _(u"""
+    39 : _("""
  choc mal défini
  la maille définissant le choc  %(k1)s doit être de type  %(k2)s
 """),
 
-    41 : _(u"""
+    41 : _("""
  trop de noeuds dans le GROUP_NO  %(k1)s
  noeud utilisé:  %(k2)s
 """),
 
-    44 : _(u"""
+    44 : _("""
  Aucun des chargements présents ne correspond à une excitation de type MULT_APPUI.
  Aucune correction n'est alors apportée aux résultats, calculés en relatif.
 """),
 
-    46 : _(u"""
+    46 : _("""
  Il manque les modes statiques. Vérifiez que MODE_STAT est bien renseigné.
 """),
 
-    47 : _(u"""
+    47 : _("""
  Il manque les modes corrigés. Vérifiez que MODE_CORR est bien renseigné.
 """),
 
-    48 : _(u"""
+    48 : _("""
  Nombre de modes propres calcules insuffisant.
  Nombre de modes propres de la base limite à : %(i1)d
 """),
 
-    49 : _(u"""
+    49 : _("""
  sous-structure inexistante dans le modèle généralisé
  modèle généralisé       -->  %(k1)s
  sous-structure demandée -->  %(k2)s
 """),
 
-    50 : _(u"""
+    50 : _("""
  sous-structure inexistante dans le modèle généralisé
  modèle généralisé              -->  %(k1)s
  numéro sous-structure demandée -->  %(i1)d
 """),
 
-    69 : _(u"""
+    69 : _("""
 Le noeud %(k1)s n'est pas du bon type
 Ce message est un message d'erreur développeur.
 Contactez le support technique.
     '
 """),
 
-    75 : _(u"""
+    75 : _("""
  détection d'une sous-structure non connectée
  sous-structure de nom: %(k1)s
 """),
 
-    76 : _(u"""
+    76 : _("""
  arrêt sur problème de connexion sous-structure
 """),
 
-    78 : _(u"""
+    78 : _("""
  les intervalles doivent être croissants
  valeur de la borne précédente :  %(i1)d
  valeur de la borne            :  %(i2)d
 """),
 
-    79 : _(u"""
+    79 : _("""
  l'intervalle entre les  deux derniers instants ne sera pas égal au pas courant :  %(i1)d
  pour l'intervalle  %(i2)d
 """),
 
-    80 : _(u"""
+    80 : _("""
  le nombre de pas est trop grand :  %(i1)d , pour l'intervalle  %(i2)d
 """),
 
-    81 : _(u"""
+    81 : _("""
  les valeurs doivent être croissantes
  valeur précédente :  %(i1)d
  valeur            :  %(i2)d
 """),
 
-    82 : _(u"""
+    82 : _("""
  la distance entre les deux derniers réels ne sera pas égale
  au pas courant :  %(r1)f,
  pour l'intervalle  %(i1)d
 """),
 
-    99 : _(u"""
+    99 : _("""
  matrice d'amortissement non créée dans le macro-élément :  %(k1)s
 """),
 

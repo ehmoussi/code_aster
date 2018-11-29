@@ -21,42 +21,42 @@
 
 cata_msg = {
 
-    1: _(u"""
+    1: _("""
  le LIGREL %(k1)s  ne contient pas d éléments finis
 """),
 
-    2: _(u"""
+    2: _("""
  l'option  %(k1)s  n'existe pas.
 """),
 
-    3: _(u"""
+    3: _("""
  Erreur utilisateur :
    Le maillage associé au champ: %(k1)s  (%(k3)s)
    est différent de celui associe au LIGREL:  %(k2)s  (%(k4)s)
 """),
 
-    4: _(u"""
+    4: _("""
   erreur programmeur : appel a calcul, le champ: %(k1)s  est un champ "in" et un champ "out".
 """),
 
-    5: _(u"""
+    5: _("""
  la grandeur associée au champ  %(k1)s : %(k2)s
  n'est pas celle associée au paramètre  %(k3)s : %(k4)s  (option: %(k5)s
 """),
 
-    6: _(u"""
+    6: _("""
   on n'arrive pas a étendre la carte:  %(k1)s
 Ce message est un message d'erreur développeur.
 Contactez le support technique.
 """),
 
-    7: _(u"""
+    7: _("""
  famille de points de Gauss liste interdite: %(k1)s
 Ce message est un message d'erreur développeur.
 Contactez le support technique.
 """),
 
-    8: _(u"""
+    8: _("""
  Erreur :
    Le code cherche à utiliser dans un calcul élémentaire un CHAM_ELEM "étendu" (VARI_R ou sous-points).
    La programmation de la routine ne sait pas encore traiter ce cas.
@@ -64,43 +64,43 @@ Contactez le support technique.
    Il y a peut-être lieu d'émettre une demande d'évolution pour traiter ce cas.
 """),
 
-    9: _(u"""
+    9: _("""
 Problème noeud tardif pour un champ à représentation constante
 Ce message est un message d'erreur développeur.
 Contactez le support technique.
 """),
 
-    10: _(u"""
+    10: _("""
  Le calcul de l'option %(k1)s n'est pas possible. Il manque le CARA_ELEM.
 """),
 
-    11: _(u"""
+    11: _("""
  Le calcul de l'option %(k1)s n'est pas possible. Il manque le CHAM_MATER.
 """),
 
-    12: _(u"""
+    12: _("""
  Le calcul de l'option %(k1)s n'est pas possible. Il manque le MODELE.
 """),
 
-    13: _(u"""
+    13: _("""
   erreur lors d'une extraction:
   le champ associe au paramètre :  %(k1)s  n'est pas dans la liste des champs paramètres.
 """),
 
-    14: _(u"""
+    14: _("""
  Erreur développeur :
  L'option que l'on calcule ne connaît pas le paramètre :  %(k1)s
  Erreur probable dans un catalogue
 """),
-    15: _(u"""
+    15: _("""
  le paramètre: %(k1)s  n'est pas un paramètre de l'option: %(k2)s
 """),
 
-    16: _(u"""
+    16: _("""
  le paramètre: %(k1)s  n'est pas un paramètre de l'option: %(k2)s  pour le type_élément:  %(k3)s
 """),
 
-    17: _(u"""
+    17: _("""
 Pour le calcul de %(k2)s, on ne trouve pas dans les arguments de la routine CALCUL
 de champ à associer au paramètre : %(k1)s
 - option : %(k2)s
@@ -110,7 +110,7 @@ Conseil : Si vous êtes dans CALC_CHAMP, ce problème survient lorsqu'il manque 
 dans la structure de données résultat pour le calcul de l'option %(k2)s.
 """),
 
-    18: _(u"""
+    18: _("""
 Erreur utilisateur dans un calcul élémentaire de forces réparties :
   On n'a pas trouvé toutes les composantes voulues du champ pour le paramètre : %(k1)s
    - option        : %(k2)s
@@ -123,7 +123,7 @@ Risques et conseils :
   Si le champ provient de CREA_CHAMP/AFFE, vérifier que vous avez bien affecté FX,FY [FZ]
 """),
 
-    19: _(u"""
+    19: _("""
 Erreur dans un calcul élémentaire :
   On n'a pas trouvé toutes les composantes voulues du champ pour le paramètre : %(k1)s
    - option        : %(k2)s
@@ -135,7 +135,7 @@ Remarque :
   sur la maille.
 """),
 
-    20: _(u"""
+    20: _("""
 Erreur utilisateur dans un calcul élémentaire :
   Le matériau est nécessaire sur la maille : %(k4)s
   - option de calcul élémentaire : %(k2)s
@@ -146,7 +146,7 @@ Conseils :
   * Dans la commande AFFE_MATERIAU, avez-vous affecté un matériau sur la maille incriminée ?
 """),
 
-    21: _(u"""
+    21: _("""
 Erreur utilisateur dans un calcul élémentaire :
   Des caractéristiques de "coque" sont nécessaires sur la maille : %(k4)s
   - option de calcul élémentaire : %(k2)s
@@ -158,7 +158,7 @@ Conseils :
     sur la maille incriminée ?
 """),
 
-    22: _(u"""
+    22: _("""
 Erreur utilisateur dans un calcul élémentaire :
   Des caractéristiques de "poutre" sont nécessaires sur la maille : %(k4)s
   - option de calcul élémentaire : %(k2)s
@@ -170,7 +170,7 @@ Conseils :
     sur la maille incriminée ?
 """),
 
-    23: _(u"""
+    23: _("""
 Erreur utilisateur dans un calcul élémentaire :
   Des caractéristiques d'"orientation" sont nécessaires sur la maille : %(k4)s
   - option de calcul élémentaire : %(k2)s
@@ -182,7 +182,7 @@ Conseils :
     sur la maille incriminée ?
 """),
 
-    24 : _(u"""
+    24 : _("""
  Erreur d'utilisation :
    On ne trouve pas de variables de commandes ('TEMP', 'HYDR', ...) :
    Option: %(k2)s  type_élément: %(k3)s )
@@ -195,7 +195,7 @@ Conseils :
 
 
 
-    26 : _(u"""
+    26 : _("""
  Erreur utilisateur :
     On ne trouve pas la variable de commande :  %(k1)s
     pour la maille                : %(k2)s
@@ -222,32 +222,32 @@ Conseils :
     à utiliser éventuellement les mots clés PROL_GAUCHE et PROL_DROIT.
 """),
 
-    27 : _(u"""
+    27 : _("""
  On ne trouve pas de routine de calcul élémentaire.
  Le numéro doit être compris entre 1 et 600, or ici le numéro vaut  %(k1)s
 Ce message est un message d'erreur développeur.
 Contactez le support technique.
 """),
 
-    28 : _(u"""
+    28 : _("""
  l'attribut:  %(k1)s  n'existe pas pour le type:  %(k2)s
 Ce message est un message d'erreur développeur.
 Contactez le support technique.
 """),
 
-    29 : _(u"""
+    29 : _("""
  Erreur de programmation ou d'utilisation :
    On ne trouve pas dans les arguments de la routine calcul de champ à associer
    au paramètre: %(k1)s  (option: %(k2)s  type_élément: %(k3)s )
 """),
 
-    30 : _(u"""
+    30 : _("""
  Erreur de programmation :
  on n'a pas pu extraire toutes les composantes voulues du champ global associé
  au paramètre: %(k1)s  (option: %(k2)s  type_élément: %(k3)s )
 """),
 
-    31: _(u"""
+    31: _("""
  Erreur de programmation :
  Pour la variable de commande %(k1)s, on cherche à utiliser la famille
  de points de Gauss '%(k2)s'.
@@ -261,26 +261,26 @@ Ce message est un message d'erreur développeur.
 Contactez le support technique.
 """),
 
-    32: _(u"""
+    32: _("""
  Erreur utilisateur :
    Un calcul élémentaire nécessite une ou plusieurs variables de commandes sur la maille %(k1)s
  Conseil :
    Vérifier les occurrences de AFFE_MATERIAU/AFFE_VARC pour la maille concernée.
 """),
 
-    33 : _(u"""
+    33 : _("""
  le mode_local:  %(k1)s  ne doit pas être vecteur ou matrice.
 Ce message est un message d'erreur développeur.
 Contactez le support technique.
 """),
 
-    34 : _(u"""
+    34 : _("""
  le mode_local:  %(k1)s  ne doit pas être "DIFF__".
 Ce message est un message d'erreur développeur.
 Contactez le support technique.
 """),
 
-    35 : _(u"""
+    35 : _("""
 Erreur utilisateur concernant le parallélisme des calculs élémentaires :
   La partition des éléments du modèle a été faite sur %(i1)d processeurs.
   Mais maintenant, le nombre de processeurs disponibles est de %(i2)d.
@@ -291,11 +291,11 @@ Conseil :
   de processeurs disponibles.
 """),
 
-    36 : _(u"""
+    36 : _("""
   incompatibilité des type_champ ("ELGA"/"ELNO")  pour l option :  %(k1)s  entre les 2 TYPE_ELEM :  %(k2)s  et  %(k3)s
 """),
 
-    37 : _(u"""
+    37 : _("""
 Erreur utilisateur :
   -> Le TYPE_ELEMENT %(k1)s  ne sait pas encore calculer l'option:  %(k2)s.
 
@@ -309,16 +309,16 @@ Erreur utilisateur :
      S'il n'y en a pas, il faut faire une demande d'évolution.
 """),
 
-    38 : _(u"""
+    38 : _("""
  le calcul de l'option :  %(k1)s
  n'est possible pour aucun des types d'éléments du LIGREL.
 """),
 
-    39 : _(u"""
+    39 : _("""
  incohérence des maillages : %(k1)s  et  %(k2)s
 """),
 
-    40 : _(u"""
+    40 : _("""
  Erreur Programmeur:
  Incohérence fortran/catalogue
  TYPE_ELEMENT :  %(k1)s
@@ -328,7 +328,7 @@ Erreur utilisateur :
 
 """),
 
-    41 : _(u"""
+    41 : _("""
 Alarme utilisateur :
   Le TYPE_ELEMENT %(k1)s devrait calculer l'option:  %(k2)s,
   mais il ne le fait pas encore (la programmation est manquante).
@@ -342,7 +342,7 @@ Alarme utilisateur :
      une demande d'évolution.
 """),
 
-    42 : _(u"""
+    42 : _("""
 Erreur :
   Le TYPE_ELEMENT %(k1)s devrait calculer l'option :  %(k2)s,
   mais il ne le fait pas encore (la programmation est manquante).
@@ -353,7 +353,7 @@ Erreur :
      une demande d'évolution.
 """),
 
-    43 : _(u"""
+    43 : _("""
 Erreur de programmation :
     On ne trouve pas le triplet ( %(k1)s )
     correspondant à (terme élémentaire, élément de référence, famille).
@@ -362,20 +362,20 @@ Conseils :
     L'élément de référence ou la famille de points de Gauss ne sont pas définis.
 """),
 
-    44: _(u"""
+    44: _("""
  Erreur lors du calcul de la pression: la maille n'est que partiellement affectée.
 """),
 
-    45 : _(u"""
+    45 : _("""
  Matériau : %(k1)s non affecté par la commande AFFE_MATERIAU.
 """),
 
-    46 : _(u"""
+    46 : _("""
  Il y a une incohérence entre les paramètres matériaux et la loi de comportement.
  On ne trouve pas les paramètres matériaux associés à la relation %(k1)s
 """),
 
-    47 : _(u"""
+    47 : _("""
  pour la maille %(k1)s.
 
  Conseils :
@@ -384,12 +384,12 @@ Conseils :
     Vérifiez que la maille %(k1)s est bien affectée par le matériau.
 """),
 
-    48 : _(u"""
+    48 : _("""
   Les chargements de pression sont interdits pour les modélisations 
   GRILLE_EXCENTRE, GRILLE_MEMBRANE et MEMBRANE (en petites déformations).
 """),
 
-    49 : _(u"""
+    49 : _("""
 --------------------------------------------
 Contexte du message :
    Option         : %(k1)s
@@ -403,7 +403,7 @@ Contexte du message :
       x=%(r1)f y=%(r2)f z=%(r3)f
 """),
 
-    50 : _(u"""
+    50 : _("""
  Erreur utilisateur :
     On ne trouve pas la variable de commande %(k1)s.
 

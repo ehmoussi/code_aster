@@ -177,7 +177,7 @@ def _internal_print(text):
 
 def _internal_mess(a, b):
     """UTMESS replacement for unittest"""
-    print('<{0}> message {1}').format(a, b)
+    print(('<{0}> message {1}').format(a, b))
 
 
 # Creation of the singleton instance
@@ -189,22 +189,22 @@ if __name__ == '__main__':
                    1.e-6, 1.123e-6, 0.0, compare=275.0)
     testresu_print('AUTRE_ASTER', 'DX', False, False, False,
                    1.e-6, 1.123e-6, 0.0)
-    print
+    print()
 
     testresu_print('NON_REGRESSION', 'DX', True, True, False,
                    1.e-6, 1.123e-6, 0.0)
     testresu_print('NON_REGRESSION', 'XXXXX', True, False, False,
                    1.e-6, 1.123e-3, 0.0, compare=275.0)
-    print
+    print()
 
     testresu_print('NON_REGRESSION', 'XXXXX', True, False, True,
                    1.e-6, 1.123e-2, 0.0)
-    print
+    print()
 
     testresu_print('NON_REGRESSION', 'XXXXX', True, False, True,
                    0.02, 456, 458)
-    print
+    print()
 
     testresu_print('ANALYTIQUE', 'DEPL_C', True, False, True,
                    1.e-4, 1. + 1.j, -0.5 + 0.99j)
-    print
+    print()

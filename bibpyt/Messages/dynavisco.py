@@ -19,35 +19,35 @@
 
 cata_msg={
 
-1: _(u"""
+1: _("""
 Dans le cas TYPE_RESU='MODE',
 la liste de fréquences donnée sous le mot-clé FREQ ou LIST_FREQ
 doit contenir exactement 2 valeurs.
 """),
 
-2: _(u"""
+2: _("""
 Dans le cas TYPE_RESU='HARM',
 la liste de fréquences donnée sous le mot-clé FREQ ou LIST_FREQ
 doit contenir au moins 2 valeurs.
 """),
 
-3: _(u"""
+3: _("""
 Les modes propres finaux sont :
 """),
 
-4: _(u"""
+4: _("""
 numéro    fréquence (HZ)
 """),
 
-5: _(u""" %(i1)4d      %(r1)12.5E """),
+5: _(""" %(i1)4d      %(r1)12.5E """),
 
-6: _(u"""
+6: _("""
 numéro    fréquence (HZ)     amortissement
 """),
 
-7: _(u""" %(i1)4d      %(r1)12.5E       %(r2)12.5E """),
+7: _(""" %(i1)4d      %(r1)12.5E       %(r2)12.5E """),
 
-8: _(u"""
+8: _("""
 Aucune excitation au second membre n'a été trouvée.
 Pour le moment, l'opérateur DYNA_VISCO supporte uniquement
 un second membre de type FORCE_NODALE.

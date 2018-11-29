@@ -21,7 +21,7 @@ from code_aster.Cata.Syntax import *
 from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
-from macro_bascule_schema_ops import macro_bascule_schema_ops
+from .macro_bascule_schema_ops import macro_bascule_schema_ops
 
 
 MACRO_BASCULE_SCHEMA = MACRO(
@@ -61,7 +61,7 @@ MACRO_BASCULE_SCHEMA = MACRO(
                     VECT_GENE=SIMP(statut='f', typ=vect_asse_gene, max='**'),
                     ),
     CONTACT=SIMP(statut='f', typ=char_contact),
-    SOUS_STRUC=FACT(statut='f', min=01, max='**',
+    SOUS_STRUC=FACT(statut='f', min=0o1, max='**',
                     regles=(UN_PARMI('TOUT', 'SUPER_MAILLE'),),
                     CAS_CHARGE=SIMP(statut='o', typ='TXM'),
                     TOUT=SIMP(statut='f', typ='TXM', into=("OUI",)),

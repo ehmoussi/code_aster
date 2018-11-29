@@ -19,7 +19,7 @@
 
 # person_in_charge: jean-luc.flejou at edf.fr
 
-from cata_comportement import LoiComportement
+from .cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'IRRAD3M',

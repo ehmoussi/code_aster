@@ -102,14 +102,14 @@ class MCSIMP:
             if self.isoblig() and v == None:
                 if cr == 'oui':
                     self.cr.fatal(
-                        _(u"Mot-clé : %s obligatoire non valorisé"), self.nom)
+                        _("Mot-clé : %s obligatoire non valorisé"), self.nom)
                 valid = 0
 
             lval = listProto.adapt(v)
             if lval is None:
                 valid = 0
                 if cr == 'oui':
-                    self.cr.fatal(_(u"None n'est pas une valeur autorisée"))
+                    self.cr.fatal(_("None n'est pas une valeur autorisée"))
             else:
                 # type,into ...
                 # typeProto=TypeProtocol("type",typ=self.definition.type)
@@ -126,18 +126,18 @@ class MCSIMP:
                     try:
                         for val in lval:
                             typeProto.adapt(val)
-                    except ValError, e:
+                    except ValError as e:
                         valid = 0
                         self.cr.fatal(*e)
                     try:
                         for val in lval:
                             intoProto.adapt(val)
-                    except ValError, e:
+                    except ValError as e:
                         valid = 0
                         self.cr.fatal(*e)
                     try:
                         cardProto.adapt(lval)
-                    except ValError, e:
+                    except ValError as e:
                         valid = 0
                         self.cr.fatal(*e)
                     #
@@ -146,9 +146,9 @@ class MCSIMP:
                     if valid and self.definition.validators:
                         try:
                             self.definition.validators.convert(lval)
-                        except ValError, e:
+                        except ValError as e:
                             self.cr.fatal(
-                                _(u"Mot-clé %s invalide : %s\nCritère de validité: %s"),
+                                _("Mot-clé %s invalide : %s\nCritère de validité: %s"),
                                 self.nom, str(e), self.definition.validators.info())
                             valid = 0
                 else:
@@ -162,7 +162,7 @@ class MCSIMP:
                             if hasattr(self.definition.validators, 'set_MCSimp'):
                                 self.definition.validators.set_MCSimp(self)
                             self.definition.validators.convert(lval)
-                    except ValError, e:
+                    except ValError as e:
                         valid = 0
 
             self.set_valid(valid)
@@ -184,13 +184,13 @@ class MCSIMP:
     def report(self):
         """ génère le rapport de validation de self """
         self.cr = self.CR()
-        self.cr.debut = u"Mot-clé simple : " + self.nom
-        self.cr.fin = u"Fin Mot-clé simple : " + self.nom
+        self.cr.debut = "Mot-clé simple : " + self.nom
+        self.cr.fin = "Fin Mot-clé simple : " + self.nom
         self.state = 'modified'
         try:
             self.isvalid(cr='oui')
-        except AsException, e:
+        except AsException as e:
             if CONTEXT.debug:
                 traceback.print_exc()
-            self.cr.fatal(_(u"Mot-clé simple : %s %s"), self.nom, e)
+            self.cr.fatal(_("Mot-clé simple : %s %s"), self.nom, e)
         return self.cr

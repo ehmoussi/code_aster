@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-from calc_endo_ops import calc_endo_ops
+from .calc_endo_ops import calc_endo_ops
 
 from code_aster.Cata.Syntax import *
 from code_aster.Cata.DataStructure import *

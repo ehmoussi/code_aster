@@ -30,7 +30,7 @@ import locale
 
 from Noyau.N_utils import Singleton
 from Noyau.N_types import force_list
-from strfunc import get_encoding
+from .strfunc import get_encoding
 
 
 def get_language():
@@ -87,7 +87,7 @@ class Language(Singleton):
             lang.extend(variants)
         tr = gettext.translation(
             self.domain, self.localedir, languages=lang, fallback=True)
-        tr.install(unicode=True)
+        tr.install(str=True)
         return tr
 
 localization = Language()

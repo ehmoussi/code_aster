@@ -20,12 +20,12 @@
 # person_in_charge: mathieu.courtois at edf.fr
 
 
-from N_ASSD import ASSD
-from N_Exception import AsException
-from N_VALIDATOR import ValError
-import N_utils
+from .N_ASSD import ASSD
+from .N_Exception import AsException
+from .N_VALIDATOR import ValError
+from . import N_utils
 
-from asojb import AsBase
+from .asojb import AsBase
 
 
 class CO(ASSD, AsBase):
@@ -39,7 +39,7 @@ class CO(ASSD, AsBase):
         if self.parent:
             try:
                 self.parent.NommerSdprod(self, nom)
-            except AsException, e:
+            except AsException as e:
                 appel = N_utils.callee_where(niveau=2)
                 raise AsException(
                     "Concept CO, fichier: ", appel[1], " ligne : ", appel[0], '\n', e)

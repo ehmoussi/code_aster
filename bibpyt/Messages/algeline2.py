@@ -21,43 +21,43 @@
 
 cata_msg = {
 
-    1 : _(u"""
+    1 : _("""
  L'argument de "BLOC_DEBUT" doit être strictement positif,
  il est pris à 1
 """),
 
-    2 : _(u"""
+    2 : _("""
  Calcul des modes en eau au repos :
  une des valeurs propres de la matrice n'est pas réelle
 """),
 
-    3 : _(u"""
+    3 : _("""
  Calcul des modes en eau au repos :
  une des valeurs propres obtenues est nulle
 """),
 
-    4 : _(u"""
+    4 : _("""
  Erreur sur la recherche des multiplicateurs de Lagrange
 """),
 
-    6 : _(u"""
+    6 : _("""
  Type de matrice " %(k1)s " inconnu.
 """),
 
-    7 : _(u"""
+    7 : _("""
  On ne traite pas cette option
 """),
 
-    8 : _(u"""
+    8 : _("""
  L'argument de "BLOC_FIN" est plus grand que le nombre de blocs de la matrice,
  il est ramené à cette valeur
 """),
 
-    9 : _(u"""
+    9 : _("""
  Les matrices à combiner ne sont pas construites sur le même maillage.
 """),
 
-    10 : _(u"""
+    10 : _("""
  Erreur de programmation :
  On cherche à combiner 2 matrices qui n'ont pas les mêmes charges cinématiques.
  Noms des 2 matrices :
@@ -70,55 +70,55 @@ cata_msg = {
        remplacer AFFE_CHAR_CINE par AFFE_CHAR_MECA
 """),
 
-    11 : _(u"""
+    11 : _("""
  Les matrices "%(k1)s"  et  "%(k2)s"  n'ont pas la même structure.
 """),
 
-    12 : _(u"""
+    12 : _("""
  Résolution système linéaire méthode de Crout.
  Attention: une dimension nulle ou incorrecte
 """),
 
-    13 : _(u"""
+    13 : _("""
  Résolution système linéaire méthode de Crout.
  Attention: une dimension négative ou nulle
 """),
 
-    14 : _(u"""
+    14 : _("""
  Résolution système linéaire méthode de Crout.
  Attention: les dimensions des tableaux ne sont pas correctes
 """),
 
-    15 : _(u"""
+    15 : _("""
  Pas de charge critique  dans l'intervalle demandé
 """),
 
-    16 : _(u"""
+    16 : _("""
   %(k1)s charges critiques  dans l'intervalle demandé
 """),
 
-    17 : _(u"""
+    17 : _("""
  Au moins une valeur propre calculée est en dehors de la bande demandée.
  Ces valeurs propres extérieures n'apparaîtront pas dans le résultat de l'opérateur.
 """),
 
-    18 : _(u"""
+    18 : _("""
  Les matrices " %(k1)s " et " %(k2)s " n'ont pas le même domaine de définition
 """),
 
-    19 : _(u"""
+    19 : _("""
  Problèmes a l'allocation des descripteurs de la matrice " %(k1)s "
 """),
 
-    20 : _(u"""
+    20 : _("""
  L'argument de "BLOC_DEBUT" est plus grand que le nombre de blocs de la matrice
 """),
 
-    21 : _(u"""
+    21 : _("""
  L'argument de "BLOC_FIN" doit être strictement positif
 """),
 
-    22 : _(u"""
+    22 : _("""
 Erreur d'utilisation pour AFFE_CHAR_CINE :
  On veut éliminer un degré de liberté de translation (%(k1)s) sur le noeud %(k2)s.
  Mais ce noeud est un noeud XFEM et cette translation correspond à une combinaison
@@ -127,14 +127,14 @@ Erreur d'utilisation pour AFFE_CHAR_CINE :
  Il faut utiliser AFFE_CHAR_MECA.
 """),
 
-    23 : _(u"""
+    23 : _("""
  On a rencontré un problème à la lecture de la table %(k1)s.
 
  --> Conseil:
  Vérifiez que cette carte a bien été générée précédemment par un appel à INFO_MODE.
 """),
 
-    24 : _(u"""
+    24 : _("""
  On a rencontré un problème à la lecture de la table %(k1)s. Elle ne comporte aucune ligne
  dont les bornes sont strictement comprises entre les valeurs de la bande de test:
                                     [ %(r1)f , %(r2)f ]
@@ -149,7 +149,7 @@ Erreur d'utilisation pour AFFE_CHAR_CINE :
  INFO_MODE.
 """),
 
-    25 : _(u"""
+    25 : _("""
  On a rencontré un problème à la lecture de la table %(k1)s. Elle comporte des trous ou des
  recouvrements par  rapport aux bornes choisies. Le solveur modal risque donc de pas calculer
  strictement tous les modes requis.
@@ -167,24 +167,24 @@ Erreur d'utilisation pour AFFE_CHAR_CINE :
  INFO_MODE.
 """),
 
-    26 : _(u"""
+    26 : _("""
  Attention, la bande sélectionnée dans la table %(k1)s comporte au moins une de ses bornes légèrement
  décalée. Ce décalage a été opéré afin de ne pas perturber la méthode de comptage (méthode de
  Sturm). Il a été effectué en se basant sur la paramétrage (NMAX_ITER_SHIFT/PREC_SHIFT/SEUIL_**)
  de l'opérateur INFO_MODE qui a générer la TABLE.
 """),
 
-    27 : _(u"""
+    27 : _("""
  Opérateur INFO_MODE + COMPTAGE/METHODE='AUTO'.
  Compte-tenu des propriétés des matrices fournies (nombre, type, symétrie), on a choisi pour vous la
  méthode de comptage: %(k1)s.
 """),
 
-    28 : _(u"""
+    28 : _("""
  les "MATR_ASSE" %(k1)s "  et  " %(k2)s "  ne sont pas combinables.
 """),
 
-    29 : _(u"""
+    29 : _("""
 Erreur utilisateur dans COMB_MATR_ASSE:
  On cherche à combiner des matrices généralisées qui n'ont pas
  les mêmes dimensions.
@@ -193,62 +193,62 @@ Erreur utilisateur dans COMB_MATR_ASSE:
 
 
 
-    31 : _(u"""
+    31 : _("""
  Cas TYPE_MODE='GENERAL'.
  Compte-tenu des propriétés des matrices fournies (type, symétrie), on bascule automatiquement
  en mode de fonctionnement : %(k1)s.
 """),
 
-    33 : _(u"""
+    33 : _("""
  Type de mode inconnu :  %(k1)s.
  Les modes donnés en entrée doivent être de type MODE_MECA, MODE_MECA_C OU MODE_FLAMB.
 """),
 
-    34 : _(u"""
+    34 : _("""
  Il n'est pas permis de modifier un objet père
 """),
 
-    35 : _(u"""
+    35 : _("""
  Mode non calculé à partir de matrices assemblées
 """),
 
-    36 : _(u"""
+    36 : _("""
  Normalisation impossible, le noeud n'est pas présent dans le modèle.
 """),
 
-    37 : _(u"""
+    37 : _("""
  Normalisation impossible, la composante n'est pas présente dans le modèle.
 """),
 
-    38 : _(u"""
+    38 : _("""
  Il manque des paramètres de type entier.
 """),
 
-    39 : _(u"""
+    39 : _("""
  Il manque des paramètres de type réel.
 """),
 
-    40 : _(u"""
+    40 : _("""
  IL manque des paramètres de type caractère.
 """),
 
-    41 : _(u"""
+    41 : _("""
  Normalisation impossible : aucune composante n'est présente dans le modèle.
 """),
 
 
 
-    43 : _(u"""
+    43 : _("""
  on ne tient pas compte du mot-clé facteur MODE_SIGNE pour une base modale de type MODE_MECA_C.
 """),
 
-    44 : _(u"""
+    44 : _("""
  " %(k1)s "  type de mode non traité
 """),
 
 
 
-    46 : _(u"""
+    46 : _("""
  Le calcul de flambement ne peut pas être mené pour un problème avec une matrice %(k1)s complexe.
 """),
 
@@ -257,7 +257,7 @@ Erreur utilisateur dans COMB_MATR_ASSE:
 
 
 
-    52 : _(u"""
+    52 : _("""
  Avec l'option %(k1)s, il faut au moins deux valeurs sous le mot-clé %(k2)s.
 """),
 
@@ -265,21 +265,21 @@ Erreur utilisateur dans COMB_MATR_ASSE:
 
 
 
-    55 : _(u"""
+    55 : _("""
  Pour un problème généralisé, le mot-clé AMOR_REDUIT ne peut pas être utilisé.
 """),
 
-    56 : _(u"""
+    56 : _("""
  Pour un problème quadratique, si le mot-clé AMOR_REDUIT est présent,
  seule l'option 'PROCHE' est utilisable.
 """),
 
-    57 : _(u"""
+    57 : _("""
  Le mot-clé AMOR_REDUIT étant présent, le nombre de valeurs renseignées sous ce mot-clé
  doit être le même que celui sous le mot-clé FREQ.
 """),
 
-    58 : _(u"""
+    58 : _("""
  Les matrices "%(k1)s" et "%(k2)s" ne sont pas compatibles entre elles.
 
  --> Conseil : vérifier la manière dont elles sont construites
@@ -287,28 +287,28 @@ Erreur utilisateur dans COMB_MATR_ASSE:
  avoir la même numérotation de DDL, avoir les mêmes propriétés de (non) symétrie, ...).
 """),
 
-    59 : _(u"""
+    59 : _("""
  présence de fréquences négatives dans les données.
 """),
 
-    62 : _(u"""
+    62 : _("""
  pas de valeurs propres dans la bande de calcul, le concept ne peut donc pas être créé.
 """),
 
 
 
-    64 : _(u"""
+    64 : _("""
  La valeur de PARAM_ORTHO_SOREN n'est pas valide.
  Elle doit être dans l'intervalle [1,2*epsilon ; 0,83-epsilon]
  où epsilon est la précision machine.
 """),
 
-    65 : _(u"""
+    65 : _("""
  La détection des modes de corps rigide (demandée avec OPTION='MODE_RIGIDE')
  est utilisable uniquement avec la méthode 'TRI_DIAG'.
 """),
 
-    66 : _(u"""
+    66 : _("""
  L'option 'BANDE' n'est pas autorisée pour un problème avec amortissement
  (%(k1)s complexe et/ou présence du mot-clé %(k2)s).
 
@@ -316,37 +316,37 @@ Erreur utilisateur dans COMB_MATR_ASSE:
  utiliser l'option 'CENTRE'.
 """),
 
-    67 : _(u"""
+    67 : _("""
  L'approche imaginaire ou complexe n'est pas compatible avec une borne inférieure nulle de l'intervalle de recherche
  (par exemple, si l'option 'PLUS_PETITE' est utilisée, c'est le cas).
 """),
 
-    68 : _(u"""
+    68 : _("""
  La détection des modes de corps rigide (OPTION='MODE_RIGIDE') n'est pas utilisable pour un problème avec amortissement
  (%(k1)s complexe, et/ou présence du mot-clé %(k2)s).
 """),
 
-    69 : _(u"""
+    69 : _("""
  Pour un problème avec matrice complexe,
  seules les méthodes 'SORENSEN' et 'QZ' sont utilisables.
 """),
 
-    70 : _(u"""
+    70 : _("""
  Pour un problème avec matrice complexe, le calcul ne peut pas être fait si la borne inférieure de l'intervalle de recherche est nulle
  (par exemple, si l'option 'PLUS_PETITE' est utilisée, c'est le cas ; conseil : utiliser l'option 'CENTRE').
 """),
 
-    71 : _(u"""
+    71 : _("""
  Pour un problème quadratique, la méthode de 'SORENSEN' n'est pas utilisable si la borne inférieure de l'intervalle de recherche est nulle
  (par exemple, si l'option 'PLUS_PETITE' est utilisée, c'est le cas ; conseil : utiliser l'option 'CENTRE').
 """),
 
-    72 : _(u"""
+    72 : _("""
  La dimension du sous-espace de travail (mot-clé DIM_SOUS_ESPACE)
  est inférieure au nombre de modes de corps rigide.
 """),
 
-    73 : _(u"""
+    73 : _("""
  Attention : pour l'instant, il n'y a pas de vérification de type STURM (comptage du bon nombre des valeurs propres calculées)
  lorsqu'on est dans le plan complexe :
        problème modal généralisé avec %(k1)s complexe,
@@ -354,7 +354,7 @@ Erreur utilisateur dans COMB_MATR_ASSE:
     ou problème modal quadratique (présence du mot-clé %(k2)s).
    """),
 
-    74 : _(u"""
+    74 : _("""
  Erreur de vérification des modes calculés : au moins un des critères de validation renseignés sous le mot-clé facteur VERI_MODE n'est pas respecté.
 
  Conseils :
@@ -363,55 +363,55 @@ Erreur utilisateur dans COMB_MATR_ASSE:
    - soit en utilisant l'option STOP_ERREUR='NON'.
 """),
 
-    75 : _(u"""
+    75 : _("""
   le problème traité étant quadratique, on double l'espace de recherche
 """),
 
-    76 : _(u"""
+    76 : _("""
  3 ou 6 valeurs pour le mot-clé "DIRECTION"
 """),
 
-    77 : _(u"""
+    77 : _("""
  pour le mot-clé facteur  "PSEUDO_MODE", il faut donner la matrice de masse.
 """),
 
-    78 : _(u"""
+    78 : _("""
  la direction est nulle.
 """),
 
-    79 : _(u"""
+    79 : _("""
  Les NUME_DDL associés aux matrices MATR_RIGI et MATR_MASS sont différents.
 """),
 
-    80 : _(u"""
+    80 : _("""
  bases modales BASE_1 et BASE_2 avec numérotations incompatibles
 """),
 
-    81 : _(u"""
+    81 : _("""
  bases modales et matrice MATR_ASSE avec numérotations incompatibles
 """),
 
-    82 : _(u"""
+    82 : _("""
  nombre de modes et d amortissements différents
 """),
 
-    83 : _(u"""
+    83 : _("""
  nombre de modes et d amortissements de CONNORS différents
 """),
 
-    85 : _(u"""
+    85 : _("""
  inversion valeur min <=> valeur max
 """),
 
-    86 : _(u"""
+    86 : _("""
  type de matrice inconnu
 """),
 
-    87 : _(u"""
+    87 : _("""
   pas de produit car le champ aux noeuds  %(k1)s  existe déjà.
 """),
 
-    88 : _(u"""
+    88 : _("""
   Problème de programmation :
     La matrice globale %(k1)s n'existe pas.
     Elle est nécessaire pour déterminer les degrés de liberté bloqués par AFFE_CHAR_CINE.
@@ -425,47 +425,47 @@ Erreur utilisateur dans COMB_MATR_ASSE:
     Instrumenter la routine de destruction pour déterminer la routine coupable.
 """),
 
-    89 : _(u"""
+    89 : _("""
  le mot-clé MAILLAGE est obligatoire avec le mot-clé CREA_FISS.
 """),
 
-    90 : _(u"""
+    90 : _("""
  le mot-clé MAILLAGE est obligatoire avec le mot-clé LINE_QUAD.
 """),
 
-    91 : _(u"""
+    91 : _("""
  CREA_MAILLAGE : l'option LINE_QUAD ne traite pas les macro-commandes mailles
 """),
 
-    92 : _(u"""
+    92 : _("""
  CREA_MAILLAGE : l'option LINE_QUAD ne traite pas les ABSC_CURV
 """),
 
-    93 : _(u"""
+    93 : _("""
  le mot-clé MAILLAGE est obligatoire avec le mot-clé QUAD_LINE.
 """),
 
-    94 : _(u"""
+    94 : _("""
  CREA_MAILLAGE : l'option QUAD_LINE ne traite pas les macro-commandes mailles
 """),
 
-    95 : _(u"""
+    95 : _("""
  CREA_MAILLAGE : l'option QUAD_LINE ne traite pas les ABSC_CURV
 """),
 
-    96 : _(u"""
+    96 : _("""
  le mot-clé MAILLAGE est obligatoire avec le mot-clé MODI_MAILLE.
 """),
 
-    97 : _(u"""
+    97 : _("""
  une seule occurrence de "QUAD_TRIA3"
 """),
 
-    98 : _(u"""
+    98 : _("""
  le mot-clé MAILLAGE est obligatoire avec le mot-clé COQU_VOLU.
 """),
 
-    99 : _(u"""
+    99 : _("""
  pas de maille a modifier
 """),
 

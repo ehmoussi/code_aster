@@ -434,7 +434,7 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
                     PROL_GAUCHE='CONSTANT',
                      );
       elif dime == "3D":
-          for n in xrange(num_dime):
+          for n in range(num_dime):
               fonc_acce[n] = args['FONC_SIGNAL_'+name_dime[n]]
               __fonc_acce[n] = CALC_FONCTION(COMB=(
                    _F(FONCTION=fonc_acce[n], COEF=1.0),
@@ -524,7 +524,7 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
     __VITEX = [None]*num_dime
     __SAX = [None]*num_dime
 ### Option DSP
-    if args.has_key('DSP')  :
+    if 'DSP' in args  :
 
       if args['LIST_FREQ_SPEC_OSCI'] != None:
         __SAX[0] = CALC_FONCTION(
@@ -553,7 +553,7 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
 #sinon
 
 # for a in range (1,nbacc+1):
-      for n in xrange(num_dime):
+      for n in range(num_dime):
         __ACCEX[n] = CALC_FONCTION(LIST_PARA=__linst,
                             PROL_DROITE='CONSTANT',
                             PROL_GAUCHE='CONSTANT',
@@ -1164,7 +1164,7 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
         E[0].append(__TMAT['E0', k])
         AH[0].append(__TMAT['AH0', k])
 
-    while etat <> 'fin':
+    while etat != 'fin':
         text = ('iter=' + str(iter))
         aster.affiche('MESSAGE', text)
 
@@ -1804,7 +1804,7 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
                     **const_context)
 
         else:
-            for n in xrange(num_dime):
+            for n in range(num_dime):
                 __AHuXrCL[n] = RECU_FONCTION(RESULTAT=__DYNHARM,
                                           NOM_CHAM='ACCE',
                                           NOM_CMP=dire_dime[n],
@@ -1927,7 +1927,7 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
         __VX_BH = [None]*num_dime
         __DX_BH = [None]*num_dime
 
-        for n in xrange(num_dime):
+        for n in range(num_dime):
             if args['CHARGEMENT'] == 'ONDE_PLANE':
               __FDT_RACL[n] = CALC_FONC_INTERP(NOM_PARA='FREQ',
                                           LIST_PARA=__lfreq0,
@@ -2264,7 +2264,7 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
           DETRUIRE(CONCEPT=_F(NOM=(__DSP_CL,__accxcla)), INFO = 1)
 
         else:
-          for n in xrange(num_dime):
+          for n in range(num_dime):
             __accxcla = CALC_FONCTION(ABS=_F(FONCTION=__AX_CL[n]))
             maccxcl[n] = max(__accxcla.Ordo()) / 9.81
             DETRUIRE(CONCEPT=_F(NOM=(__accxcla)), INFO = 1)
@@ -2482,7 +2482,7 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
                                          )), INFO = 1)
 
             elif dime == "3D":
-                for n in xrange(num_dime):
+                for n in range(num_dime):
                     __fthr = RECU_FONCTION(
                             GROUP_NO=('PN' + str(k)), RESULTAT=__DYNHARM, NOM_CHAM='ACCE', NOM_CMP=dire_dime[n], INTERPOL='LIN',
                                       PROL_DROITE='CONSTANT', PROL_GAUCHE='CONSTANT')
@@ -2774,7 +2774,7 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
                     __rGnew, __rGold,
                     __Enew, __AHnew, __TEnew, __TAHnew,
                 ),), INFO = 1)
-                for n in xrange(num_dime):
+                for n in range(num_dime):
                     DETRUIRE(CONCEPT=_F(NOM=(
                     __ONDEX[n],
                     __formFDT[n], __FDT_RACL[n], __mFDTRACL[n],
@@ -2795,7 +2795,7 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
                     __Enew, __AHnew, __TEnew, __TAHnew,
                   ),), INFO = 1)
 
-                for n in xrange(num_dime):
+                for n in range(num_dime):
                     DETRUIRE(CONCEPT=_F(NOM=(
                     __ONDEX[n],
                     __formFDT[n], __FDT_RACL[n], __mFDTRACL[n],
@@ -2826,7 +2826,7 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
                     DETRUIRE(
                         CONCEPT=_F(NOM=(__axa[k] ),), INFO = 1)
               elif dime == "3D":
-                for k in xrange(num_dime):
+                for k in range(num_dime):
                     DETRUIRE(
                         CONCEPT=_F(NOM=(__axa[k],  ),), INFO = 1)
 
@@ -2970,7 +2970,7 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
 
             if veriftmp == 'NON':
 
-                for n in xrange(num_dime):
+                for n in range(num_dime):
 
                     IMPR_FONCTION(UNITE=6,
                                   FORMAT='TABLEAU',
@@ -3623,7 +3623,7 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
                             __Enew, __AHnew,
                             ),), INFO = 1)
 
-            for n in xrange(num_dime):
+            for n in range(num_dime):
                 if 'DSP' in args:
                     DETRUIRE(CONCEPT=_F(NOM=(
                                     __formFDT[n], __FDT_RACL[n], __mFDTRACL[n],
@@ -3659,7 +3659,7 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
                 for k in range(1, NCOU + 1):
                     DETRUIRE(
                         CONCEPT=_F(NOM=(__epxy[k],),), INFO = 1)
-                for k in xrange(num_dime):
+                for k in range(num_dime):
                     if ldevi == 'OUI':
                       DETRUIRE(
                         CONCEPT=_F(NOM=(__vix[k], __dex[k], ),), INFO = 1)

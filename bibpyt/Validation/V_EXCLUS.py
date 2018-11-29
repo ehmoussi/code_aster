@@ -42,9 +42,9 @@ class EXCLUS:
         count = 0
         args = self.liste_to_dico(args)
         for mc in self.mcs:
-            if args.has_key(mc):
+            if mc in args:
                 count = count + 1
         if count > 1:
-            text = u"- Il ne faut qu un mot clé parmi : " + `self.mcs`+'\n'
+            text = "- Il ne faut qu un mot clé parmi : " + repr(self.mcs)+'\n'
             return text, 0
         return text, 1

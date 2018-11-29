@@ -471,7 +471,7 @@ def relativeMaxima(vector, threshold=0, return_indexes=False):
 
     maxima_indexes = []
     maxima = []
-    for index in xrange(len(gradients) - 1):
+    for index in range(len(gradients) - 1):
         current_gradient = gradients[index]
         next_gradient = gradients[index + 1]
         if (current_gradient > threshold and next_gradient + threshold < 0):

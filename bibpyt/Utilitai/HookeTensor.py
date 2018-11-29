@@ -22,7 +22,7 @@ import numpy as N
 
 try:
     import sympy
-    import TensorModule
+    from . import TensorModule
     X, Y, Z = sympy.symbols('X Y Z')
     HAVE_SYMPY = True
 except ImportError:

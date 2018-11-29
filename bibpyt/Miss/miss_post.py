@@ -290,13 +290,13 @@ class PostMiss(object):
         Arguments optionnels supportés : fonc_x, fonc_y, fonc_z."""
         primkey = (gno, cham, para)
         index = self._tline.get(primkey, -1)
-        values = dict([(k, v) for k, v in kwargs.items() \
+        values = dict([(k, v) for k, v in list(kwargs.items()) \
                           if k in self._torder and v is not None])
         if index > 0:
             row = self.tab.rows[index]
             row.update(values)
         else:
-            row = dict(zip(self._tkeys, primkey))
+            row = dict(list(zip(self._tkeys, primkey)))
             row.update(values)
             self._tline[primkey] = len(self.tab)
             self.tab.append(row)
@@ -482,7 +482,7 @@ class PostMissHarm(PostMissTran):
         if self.excit_kw is not None:
           for excit_i in self.excit_kw:
             dExc = excit_i.cree_dict_valeurs(excit_i.mc_liste)
-            for mc in dExc.keys():
+            for mc in list(dExc.keys()):
                 if dExc[mc] is None:
                     del dExc[mc]
             if dExc.get('VECT_ASSE') is not None:
@@ -1079,7 +1079,7 @@ class PostMissFichierTemps(PostMissFichier):
 
     def impr_impe(self, Zdt, unite_type_impe, ibin):
         """Ecriture d'une impédance quelconque dans le fichier de sortie en argument"""
-        print'ibin=',ibin
+        print('ibin=',ibin)
         if ibin == 0:
          if self.param['NB_MODE'] < 6:
             nb_colonne = self.param['NB_MODE']
@@ -1107,11 +1107,11 @@ class PostMissFichierTemps(PostMissFichier):
          lpara.append(float(self.L_points))
          lpara.append(self.dt)
          lpara.append(float(self.nrows))
-         print 'lpara=',lpara
+         print('lpara=',lpara)
          lfreq =[]
          for n in range(0, self.L_points):
             lfreq.append(n*self.dt)
-         print 'lfreq=',lfreq
+         print('lfreq=',lfreq)
          lparaArr = NP.array(lpara)
          lfreqArr = NP.array(lfreq)
          lparaArr.tofile(fid)

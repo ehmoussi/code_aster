@@ -127,7 +127,7 @@ class sd_fonction_aster(sd_titre):
                 assert sdu_monotone(vale[:nbpt]) in (-1, 1), (nbpt, vale, self)
 
         elif typfon == 'NAPPE':
-            nbfonc = len(vale.keys())
+            nbfonc = len(list(vale.keys()))
             for k in range(nbfonc):
                 val1 = vale[k + 1]
                 nbpt = len(val1) / 2
@@ -150,7 +150,7 @@ class sd_fonction_aster(sd_titre):
         if len(para) > 1:
             assert sdu_monotone(para) in (0, 1), (para, self)
         vale = self.VALE.get()
-        assert len(para) == len(vale.keys()), self
+        assert len(para) == len(list(vale.keys())), self
 
 
 class sd_fonction(sd_titre):

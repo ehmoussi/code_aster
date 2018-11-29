@@ -68,13 +68,13 @@ class Xmgr:
                 ' -graph ' + repr(gr_max - 1) + ' -npipe ' + self.nom_pipe
 
         # Teste le DISPLAY avant de lancer xmgrace...
-        if os.environ.has_key('DISPLAY'):
+        if 'DISPLAY' in os.environ:
 
             UTMESS('I', 'STANLEY_9', valk=[cmd])
             self.controle = Popen(cmd, shell=True)
 
             # Mise a l'echelle des graphes
-            for i in xrange(gr_max):
+            for i in range(gr_max):
                 gr = 'G' + repr(i)
                 self.Send('WITH ' + gr)
                 self.Send('VIEW XMIN 0.10')
@@ -154,7 +154,7 @@ class Xmgr:
             self.pipe.write(command + '\n')
             self.pipe.flush()
             if echo:
-                print command
+                print(command)
 
 # --------------------------------------------------------------------
 
@@ -168,7 +168,7 @@ class Xmgr:
             raise 'Graphe inexistant'
 
         # On efface tous les graphes
-        for i in xrange(self.gr_max):
+        for i in range(self.gr_max):
             gr = 'G' + repr(i)
             self.Send(gr + ' OFF')
 

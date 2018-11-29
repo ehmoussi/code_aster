@@ -34,11 +34,11 @@ from Utilitai.Utmess import UTMESS
 import aster_core
 
 
-if not sys.modules.has_key('Table'):
+if 'Table' not in sys.modules:
     try:
         from Utilitai import Table
     except ImportError:
-        import Table
+        from . import Table
 
 
 # ------------------------------------------------------------------------
@@ -229,9 +229,9 @@ class Graph(object):
 
         # verifications : "if not (conditions requises)"
         if not (2 <= nbc <= 3 and
-           type(Val[0]) in (types.ListType, types.TupleType) and
-           type(Val[1]) in (types.ListType, types.TupleType) and
-           (nbc == 2 or type(Val[2]) in (types.ListType, types.TupleType)) and
+           type(Val[0]) in (list, tuple) and
+           type(Val[1]) in (list, tuple) and
+           (nbc == 2 or type(Val[2]) in (list, tuple)) and
            len(Val[0]) == len(Val[1]) and (nbc == 2 or len(Val[0]) == len(Val[2]))):
             UTMESS('F', 'GRAPH0_1', valk='Val')
 
@@ -307,7 +307,7 @@ class Graph(object):
                 kargs['dform'] = dform
             if opts != {}:
                 kargs['opts'] = opts
-        if not FORMAT in para.keys():
+        if not FORMAT in list(para.keys()):
             UTMESS('A', 'GRAPH0_3', valk=FORMAT)
         else:
             kargs['fmod'] = para[FORMAT]['mode']
@@ -355,14 +355,14 @@ class TraceGraph:
            à un format, exemple 'PILOTE' pour Xmgrace).
         """
         # attributs optionnels (au début pour éviter un écrasement maladroit !)
-        for k, v in opts.items():
+        for k, v in list(opts.items()):
             setattr(self, k, v)
 
         # Ouverture du(des) fichier(s)
         self.NomFich = []
-        if type(FICHIER) is types.StringType:
+        if type(FICHIER) is bytes:
             self.NomFich.append(FICHIER)
-        elif type(FICHIER) in (types.ListType, types.TupleType):
+        elif type(FICHIER) in (list, tuple):
             self.NomFich = FICHIER[:]
         else:
             # dans ce cas, on écrira sur stdout (augmenter le 2 éventuellement)
@@ -408,7 +408,7 @@ class TraceGraph:
             'formR': '%12.5E',  # réels
             'formI': '%12d'     # entiers
         }
-        if dform != None and type(dform) == types.DictType:
+        if dform != None and type(dform) == dict:
             self.DicForm.update(dform)
 
         # let's go
@@ -440,13 +440,13 @@ class TraceGraph:
 # ------------------------------------------------------------------------
     def Entete(self):
         """Retourne l'entete"""
-        raise NotImplementedError, "Cette méthode doit être définie par la classe fille."
+        raise NotImplementedError("Cette méthode doit être définie par la classe fille.")
 # ------------------------------------------------------------------------
 
     def DescrCourbe(self, **args):
         """Retourne la chaine de caractères décrivant les paramètres de la courbe.
         """
-        raise NotImplementedError, "Cette méthode doit être définie par la classe fille."
+        raise NotImplementedError("Cette méthode doit être définie par la classe fille.")
 # ------------------------------------------------------------------------
 
     def Trace(self):
@@ -454,7 +454,7 @@ class TraceGraph:
         Met en page l'entete, la description des courbes et les valeurs selon
         le format et ferme le fichier.
         """
-        raise NotImplementedError, "Cette méthode doit être définie par la classe fille."
+        raise NotImplementedError("Cette méthode doit être définie par la classe fille.")
 
 
 # ------------------------------------------------------------------------------
@@ -961,7 +961,7 @@ class TraceXmgrace(TraceGraph):
                 lcmde = '%s %s' % (xmgr, nfwrk)
                 if bg:
                     lcmde += ' &'
-                if not os.environ.has_key('DISPLAY') or os.environ['DISPLAY'] == '':
+                if 'DISPLAY' not in os.environ or os.environ['DISPLAY'] == '':
                     os.environ['DISPLAY'] = ':0.0'
                     UTMESS('I', 'GRAPH0_7')
                 UTMESS('I', 'GRAPH0_8', valk=os.environ['DISPLAY'])
@@ -1204,7 +1204,7 @@ class TraceMatplotlib(TraceGraph):
 
         if len(liss_nappe)>0:
             tablefig = []
-            listAmor = liss_nappe.keys()
+            listAmor = list(liss_nappe.keys())
             listAmor.sort()
             listFreq = liss_nappe[listAmor[0]][0]
             for i in range(len(listFreq)):
@@ -1292,10 +1292,10 @@ def Tri(tri, lx, ly):
     dNumCol = {'X': 0, 'Y': 1}
     tab = numpy.array((lx, ly))
     tab = numpy.transpose(tab)
-    li = range(len(tri))
+    li = list(range(len(tri)))
     li.reverse()
     for i in li:
-        if tri[-i] in dNumCol.keys():
+        if tri[-i] in list(dNumCol.keys()):
             icol = dNumCol[tri[-i]]
             tab = numpy.take(tab, numpy.argsort(tab[:, icol]))
     return [tab[:, 0].tolist(), tab[:, 1].tolist()]
@@ -1316,8 +1316,8 @@ def AjoutParaCourbe(dCourbe, args):
         'FREQ_MARQUEUR': 'FreqM',
         'TRI': 'Tri',
     }
-    for mc, key in keys.items():
-        if args.has_key(mc):
+    for mc, key in list(keys.items()):
+        if mc in args:
             dCourbe[key] = args[mc]
 
 # ------------------------------------------------------------------------

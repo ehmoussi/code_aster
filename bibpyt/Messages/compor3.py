@@ -22,17 +22,17 @@
 cata_msg = {
 
 
-    2 : _(u"""Dans le KIT_DDI, on ne peut pas coupler GRANGER avec %(k1)s."""),
+    2 : _("""Dans le KIT_DDI, on ne peut pas coupler GRANGER avec %(k1)s."""),
 
-    3 : _(u"""Dans le KIT_DDI, on ne peut pas coupler BETON_UMLV avec %(k1)s."""),
+    3 : _("""Dans le KIT_DDI, on ne peut pas coupler BETON_UMLV avec %(k1)s."""),
 
-    4 : _(u"""Dans le KIT_DDI, on ne peut pas coupler GLRC avec %(k1)s."""),
+    4 : _("""Dans le KIT_DDI, on ne peut pas coupler GLRC avec %(k1)s."""),
 
-    6 : _(u"""Dans le KIT_DDI, la loi de fluage %(k1)s n'est pas autorisée."""),
+    6 : _("""Dans le KIT_DDI, la loi de fluage %(k1)s n'est pas autorisée."""),
 
-    8 : _(u"""Vous avez demandé à utiliser un comportement avec des phases métallurgiques de type %(k1)s, mais le matériau est défini avec des variables de commande de type %(k2)s."""),
+    8 : _("""Vous avez demandé à utiliser un comportement avec des phases métallurgiques de type %(k1)s, mais le matériau est défini avec des variables de commande de type %(k2)s."""),
 
-    11 : _(u"""
+    11 : _("""
  Produit scalaire presque nul entre les vecteurs :
                 %(r1)f
                 %(r2)f
@@ -41,42 +41,42 @@ cata_msg = {
                 %(r4)f
 """),
 
-    12 : _(u"""
+    12 : _("""
  Erreur lors de la diagonalisation de la matrice :
                 %(r1)f, %(r2)f, %(r3)f
                 %(r4)f, %(r5)f, %(r6)f
                 %(r7)f, %(r8)f, %(r9)f
 """),
 
-    13 : _(u"""
+    13 : _("""
  Norme nulle, matrice à diagonaliser :
                 %(r1)f, %(r2)f, %(r3)f
                 %(r4)f, %(r5)f, %(r6)f
                 %(r7)f, %(r8)f, %(r9)f
 """),
 
-    14 : _(u"""
+    14 : _("""
  Ne devrait pas être nul
  mise à zéro de la pression capillaire
 """),
 
-    15 : _(u"""
+    15 : _("""
  Attention  %(r1)f
 """),
 
-    16 : _(u"""
+    16 : _("""
  Problème de dimension des variables internes, %(i1)d != %(i2)d
 """),
 
-    17 : _(u"""
+    17 : _("""
  Cas de pression intraporeuse imprévue : %(r1)f %(r2)f
 """),
 
-    18 : _(u"""
+    18 : _("""
  Delta plus grand que la racine carrée de 3 : impossible 
 """),
 
-    19 : _(u"""
+    19 : _("""
  DP atteignable par traction tri-axiale
  Augmenter RC ou diminuer RT effective 
                 RT = %(r1)f
@@ -84,62 +84,62 @@ cata_msg = {
                 RC minimum = %(r3)f
 """),
 
-    20 : _(u"""
+    20 : _("""
  Sous itération radiale désactivée
  contrôler direction écoulement
 """),
 
-    21 : _(u"""
+    21 : _("""
  TAU < TAU limite/1000
  Atteinte du critère DP sans cisaillement
                 valeur réelle = %(r1)f
                 valeur adoptée = %(r2)f
 """),
 
-    22 : _(u"""
+    22 : _("""
  critère DP annulé alors que %(r1)f >%(r2)f
 """),
 
-    23 : _(u"""
+    23 : _("""
  Dilatance excessive > %(r1)f
 """),
 
 
-    25 : _(u"""
+    25 : _("""
  Il est préférable que BG.Mg(%(r1)f) < %(r2)f
 """),
 
-    26 : _(u"""
+    26 : _("""
  Problème lors du tir viscoélastique dans FLUA_ENDO_PORO
 """),
 
-    27 : _(u"""
+    27 : _("""
  Nombre d'itération maximum atteint :  %(i1)d
 """),
 
-    28 : _(u"""
+    28 : _("""
  FLUA_ENDO_PORO : cas élasticité anisotrope
  Changement de base pour la loi de comportement non programmé
 """),
 
-    29 : _(u"""
+    29 : _("""
  FLUA_ENDO_PORO : cas élasticité anisotrope
  Changement de base résistances non programmé
 """),
 
-    30 : _(u"""
+    30 : _("""
   FLUA_ENDO_PORO : problème dans la résolution du retour radial
 """),
 
-    31 : _(u"""
+    31 : _("""
  FLUA_ENDO_PORO : nombre maximum de sous itération atteint : %(i1)d
 """),
 
-    32 : _(u"""
+    32 : _("""
  Critère non prévu dans fluage3d
 """),
 
-    33 : _(u"""
+    33 : _("""
  FLUA_ENDO_PORO : nombre d'itération maximum %(i1)d atteint :
              compteur de sous itération plastique = %(i1)d
              nombre d'itération multiplicateur < 0 = %(i1)d
@@ -148,40 +148,40 @@ cata_msg = {
 
 """),
 
-    34 : _(u"""
+    34 : _("""
  FLUA_ENDO_PORO : erreur 
 """),
 
-    35 : _(u"""
+    35 : _("""
  Taille du problème trop grand %(i1)d et %(i1)d
 """),
 
-    36 : _(u"""
+    36 : _("""
  FLUA_ENDO_PORO : pivot nul dans gauss_3d :
             pivot maximum = %(r1)f
             ligne = %(i1)d
 """),
 
-    37 : _(u"""
+    37 : _("""
  Matrices d'élasticité anisotropes non programmées
 """),
 
-    38 : _(u"""
+    38 : _("""
  Données incohérentes pour l'hydratation
  0<HYDR<1  0<HYDR_S<1 
 """),
 
-    39 : _(u"""
+    39 : _("""
  calcul de 1-DT non vérifié
 """),
 
 
-    83 : _(u"""
+    83 : _("""
  Vous utilisez le modèle BETON_UMLV avec un modèle d'endommagement.
  La mise à jour des contraintes sera faite suivant les déformations totales et non pas suivant un schéma incrémental.
 """),
 
-    91 : _(u"""
+    91 : _("""
    La loi métallurgique META_LEMA_ANI n'est utilisable qu'avec le zirconium.
 """),
 }

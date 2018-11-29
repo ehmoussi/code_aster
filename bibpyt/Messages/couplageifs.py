@@ -19,37 +19,37 @@
 
 cata_msg = {
 
-    1 : _(u"""
+    1 : _("""
  Erreur dans ENV_CINE_YACS :
  il faut donner RESULTAT ou ETAT_INIT, pas les deux en même temps
 """),
 
-    2 : _(u"""
+    2 : _("""
  Erreur dans ENV_CINE_YACS : problème avec VIS_A_VIS
 """),
 
-    3 : _(u"""
+    3 : _("""
  Erreur dans ENV_CINE_YACS : problème avec ETAT_INIT :
  il faut donner DEPL, VITE et ACCE
 """),
 
-    4 : _(u"""
+    4 : _("""
  Erreur dans ENV_CINE_YACS : incohérence entre maillage et champs
 """),
 
-    5 : _(u"""
+    5 : _("""
  Erreur dans MODI_CHAR_YACS : problème avec VIS_A_VIS
 """),
 
-    6 : _(u"""
+    6 : _("""
  Erreur dans MODI_CHAR_YACS : incohérence entre maillage et champs
 """),
 
-    7 : _(u"""
+    7 : _("""
  Erreur dans MODI_CHAR_YACS : erreur lecture
 """),
 
-    8 : _(u"""
+    8 : _("""
  Erreur dans PROJ_CHAMP option COUPLAGE
      Nombre d'interfaces définies dans Code_Saturne : %(i1)i
      Nombre d'interfaces définies dans Code_Aster   : %(i2)i
@@ -58,20 +58,20 @@ cata_msg = {
        Code_Saturne : La définition des structures dans USASTE.F
 """),
 
-    9 : _(u"""
+    9 : _("""
  Erreur dans PROJ_CHAMP option COUPLAGE : type de maille non reconnue : %(k1)s
 """),
 
 
-    10 : _(u"""
+    10 : _("""
  Routine %(k1)s : argument %(k2)s : %(i1)d
 """),
 
-    11 : _(u"""
+    11 : _("""
  Routine %(k1)s : argument %(k2)s : %(k3)s
 """),
 
-    12 : _(u"""
+    12 : _("""
  Erreur dans PROJ_CHAMP option COUPLAGE :
      le nombre de noeuds à l'interface : %(i1)i est supérieur à la limite autorisée : %(i2)i
 """),

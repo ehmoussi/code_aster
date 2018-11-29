@@ -22,7 +22,7 @@
 
 cata_msg = {
 
-    1 : _(u"""
+    1 : _("""
 Cette maille n'est pas valable pour la méthode LAC de contact.
 """),
 }

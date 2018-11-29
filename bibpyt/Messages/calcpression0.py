@@ -21,15 +21,15 @@
 
 
 cata_msg = {
-    1 : _(u"""
+    1 : _("""
 La modélisation contenue dans RESULTAT est différente du MODELE déclaré.
 """),
 
-    2 : _(u"""
+    2 : _("""
 Il y a plusieurs modélisations. Il est donc impossible d'effectuer le calcul.
 """),
 
-    3 : _(u"""
+    3 : _("""
 CALC_PRESSION n'est pas programmé sur des éléments de structures (poutre, plaque, coque, tuyau, poutre multifibre).
 """),
     

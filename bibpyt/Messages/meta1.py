@@ -21,21 +21,21 @@
 
 cata_msg = {
 
-    1  : _(u"""Le résultat thermique doit contenir au moins deux pas de temps."""),
+    1  : _("""Le résultat thermique doit contenir au moins deux pas de temps."""),
 
-    2  : _(u"""Le résultat thermique donné pour l'état initial doit être le même que le résultat de CALC_META."""),
+    2  : _("""Le résultat thermique donné pour l'état initial doit être le même que le résultat de CALC_META."""),
 
-    3  : _(u"""Il n'est pas possible de calculer la dureté (DURT_ELNO) pour les phases de type %(k1)s."""),
+    3  : _("""Il n'est pas possible de calculer la dureté (DURT_ELNO) pour les phases de type %(k1)s."""),
 
-    44 : _(u"""L'état métallurgique initial produit par CREA_CHAMP est incomplet. Pour l'acier, il faut renseigner les cinq phases."""),
+    44 : _("""L'état métallurgique initial produit par CREA_CHAMP est incomplet. Pour l'acier, il faut renseigner les cinq phases."""),
 
-    45 : _(u"""L'état métallurgique initial produit par CREA_CHAMP est incomplet. Pour le Zircaloy, il faut renseigner les trois phases."""),
+    45 : _("""L'état métallurgique initial produit par CREA_CHAMP est incomplet. Pour le Zircaloy, il faut renseigner les trois phases."""),
 
-    46 : _(u"""L'état métallurgique initial produit par CREA_CHAMP est incomplet. Pour l'acier, il faut renseigner la taille de grain."""),
+    46 : _("""L'état métallurgique initial produit par CREA_CHAMP est incomplet. Pour l'acier, il faut renseigner la taille de grain."""),
 
-    47 : _(u"""L'état métallurgique initial produit par CREA_CHAMP est incomplet. Pour le Zircaloy, il faut renseigner l'instant de transition."""),
+    47 : _("""L'état métallurgique initial produit par CREA_CHAMP est incomplet. Pour le Zircaloy, il faut renseigner l'instant de transition."""),
 
-    48 : _(u"""Erreur dans CALC_META: La somme des phases vaut %(r1)12.4E."""),
+    48 : _("""Erreur dans CALC_META: La somme des phases vaut %(r1)12.4E."""),
 
 
 }

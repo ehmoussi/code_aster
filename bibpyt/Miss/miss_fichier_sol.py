@@ -146,13 +146,13 @@ def fichier_sol(tab, struct, param=None):
             else:
                 UTMESS('A', 'MISS0_43', valk='SPEC_MAX')
         #        
-        print 'Mode automatique :'
-        print '-    OFFSET_MAX auto = ',param['OFFSET_MAX']
-        print '-    OFFSET_NB auto = ',param['OFFSET_NB']
-        print '-    DREF auto = ',param['DREF']
-        print '-    RFIC auto = ',param['RFIC']
+        print('Mode automatique :')
+        print('-    OFFSET_MAX auto = ',param['OFFSET_MAX'])
+        print('-    OFFSET_NB auto = ',param['OFFSET_NB'])
+        print('-    DREF auto = ',param['DREF'])
+        print('-    RFIC auto = ',param['RFIC'])
         if spec_max_auto:
-            print '-    SPEC_MAX auto = ',param['SPEC_MAX']
+            print('-    SPEC_MAX auto = ',param['SPEC_MAX'])
         # Pour Laplace-temps, on ne recalcule les parametre qu'une fois
         if param['_auto_first_LT'] == None:
             param['_auto_first_LT'] = False

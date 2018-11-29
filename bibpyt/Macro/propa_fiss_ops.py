@@ -296,11 +296,11 @@ def propa_fiss_ops(self, METHODE_PROPA, INFO, **args):
         Nbfissure = len(Fissures)
         Damax = args['DA_MAX']
 
-        print '-------------------------------------------'
-        print 'NOMBRE DE FISSURES A TRAITER : ', Nbfissure
+        print('-------------------------------------------')
+        print('NOMBRE DE FISSURES A TRAITER : ', Nbfissure)
         for numfis, Fiss in enumerate(Fissures):
-            print 'FISSURE ', numfis + 1, '  : ', Fiss['FISS_ACTUELLE'].get_name()
-        print '-------------------------------------------'
+            print('FISSURE ', numfis + 1, '  : ', Fiss['FISS_ACTUELLE'].get_name())
+        print('-------------------------------------------')
 
 # Recuperation des donnees
         mcsimp = {}
@@ -413,7 +413,7 @@ def propa_fiss_ops(self, METHODE_PROPA, INFO, **args):
 #
 #     Conversion table_sdaster > table langage Python
             tab_conv = __TABDIR.EXTR_TABLE()
-            table_vit = tab_conv.VIT.values()
+            table_vit = list(tab_conv.VIT.values())
 #
 #     cas d'un fond unique
             TABLE_VIT[numfis] = table_vit
@@ -428,7 +428,7 @@ def propa_fiss_ops(self, METHODE_PROPA, INFO, **args):
             # il est necessaire d avoir MATER mais on ne l a pas on s en passe
             tab_sif = __SIF2.EXTR_TABLE()
             # On convertit en radians pour beta
-            table_temp = tab_sif.BETA.values()
+            table_temp = list(tab_sif.BETA.values())
             table_beta = [table_temp[i]*pi/180. for i in range(len(table_temp))]
             # si seulement deux points, alors cas test extrude
             # donc on considere l angle uniforme
@@ -440,13 +440,13 @@ def propa_fiss_ops(self, METHODE_PROPA, INFO, **args):
             # fin de l etape de lissage
             # On convertit en radians egalement pour gamma
             if 'GAMMA' in tab_sif.para :
-                table_temp = tab_sif.GAMMA.values()
+                table_temp = list(tab_sif.GAMMA.values())
                 table_gamma = [table_temp[i]*pi/180. for i in range(len(table_temp))]
             n = len(table_beta)
 #
 #     debut bloc de conversion de la table
             if ('ABSC_CURV' in tab_sif.para):
-                absc = tab_sif.ABSC_CURV.values()
+                absc = list(tab_sif.ABSC_CURV.values())
                 presence_colonne_absc = True
             else:
 #       si la colonne ABSC_CURV n'existe pas, les abscisses curvilignes
@@ -466,11 +466,11 @@ def propa_fiss_ops(self, METHODE_PROPA, INFO, **args):
         Fissures = args['FISSURE']
         Nbfissure = len(Fissures)
 
-        print '-------------------------------------------'
-        print 'NOMBRE DE FISSURES A TRAITER : ', Nbfissure
+        print('-------------------------------------------')
+        print('NOMBRE DE FISSURES A TRAITER : ', Nbfissure)
         for numfis, Fiss in enumerate(Fissures):
-            print 'FISSURE ', numfis + 1, '  : ', Fiss['FISS_ACTUELLE'].get_name()
-        print '-------------------------------------------'
+            print('FISSURE ', numfis + 1, '  : ', Fiss['FISS_ACTUELLE'].get_name())
+        print('-------------------------------------------')
 
 # Recuperation des donnees
         if (OPERATION != 'PROPA_COHESIF'):
@@ -508,14 +508,14 @@ def propa_fiss_ops(self, METHODE_PROPA, INFO, **args):
             if (('K1' or 'G' or 'K2') not in __tabsif.para):
                 UTMESS('F', 'RUPTURE1_44')
 
-            __table = __tabsif.values()
+            __table = list(__tabsif.values())
 
             if (min(__table['G']) < 0.):
                 UTMESS('F', 'RUPTURE1_46')
 
 # Verification que le calcul porte sur seulement un instant
             if 'INST' in __tabsif.para:
-                inst_tab = __tabsif['INST'].values()['INST']
+                inst_tab = list(__tabsif['INST'].values())['INST']
                 l_inst_tab = set(inst_tab)
                 if len(l_inst_tab) > 1:
                     UTMESS('F', 'XFEM2_70', valk=fiss0.get_name())
@@ -598,7 +598,7 @@ def propa_fiss_ops(self, METHODE_PROPA, INFO, **args):
                tab_cumul = __TAB_CUMUL[numfis].EXTR_TABLE()
 
 #         recuperation des vitesses Da/Dt et des angles de bifurcation beta
-               table_vit = tab_cumul.DELTA_A.values()
+               table_vit = list(tab_cumul.DELTA_A.values())
             else:
                 __COPIE_SIF = POST_RUPTURE(TABLE=__COPIE_SIF,
                                            reuse=__COPIE_SIF,
@@ -609,28 +609,28 @@ def propa_fiss_ops(self, METHODE_PROPA, INFO, **args):
                 tab_cumul = __COPIE_SIF.EXTR_TABLE()
 
             if CRITERE_ANGLE not in ['ANGLE_IMPO','ANGLE_IMPO_GAMMA','ANGLE_IMPO_BETA_GAMMA'] :
-               table_temp = tab_cumul.ANGLE_BETA.values()
+               table_temp = list(tab_cumul.ANGLE_BETA.values())
                table_beta = [table_temp[i]*pi/180. for i in range(len(table_temp))]
                if calc_gamma :
-                  table_temp = tab_cumul.ANGLE_GAMMA.values()
+                  table_temp = list(tab_cumul.ANGLE_GAMMA.values())
                   table_gamma = [table_temp[i]*pi/180. for i in range(len(table_temp))]
 
             elif (CRITERE_ANGLE =='ANGLE_IMPO') :
-               table_beta = __tabsif.BETA.values()
+               table_beta = list(__tabsif.BETA.values())
                if calc_gamma :
-                  table_temp = tab_cumul.ANGLE_GAMMA.values()
+                  table_temp = list(tab_cumul.ANGLE_GAMMA.values())
                   table_gamma = [table_temp[i]*pi/180. for i in range(len(table_temp))]
                else :
                   table_gamma = None
 
             elif(CRITERE_ANGLE == 'ANGLE_IMPO_GAMMA') :
-               table_gamma = __tabsif.GAMMA.values()
-               table_temp = tab_cumul.ANGLE_BETA.values()
+               table_gamma = list(__tabsif.GAMMA.values())
+               table_temp = list(tab_cumul.ANGLE_BETA.values())
                table_beta = [table_temp[i]*pi/180. for i in range(len(table_temp))]
 
             elif(CRITERE_ANGLE == 'ANGLE_IMPO_BETA_GAMMA') :
-               table_beta = __tabsif.BETA.values()
-               table_gamma = __tabsif.GAMMA.values()
+               table_beta = list(__tabsif.BETA.values())
+               table_gamma = list(__tabsif.GAMMA.values())
 
             n = len(table_beta)
             if OPERATION == 'PROPA_COHESIF':
@@ -658,7 +658,7 @@ def propa_fiss_ops(self, METHODE_PROPA, INFO, **args):
                 if Fiss['NB_POINT_FOND'] != None:
 
                     if ('ABSC_CURV' in tab_cumul.para):
-                        absc = tab_cumul.ABSC_CURV.values()
+                        absc = list(tab_cumul.ABSC_CURV.values())
                         presence_colonne_absc = True
                     else:
 #           si la colonne ABSC_CURV n'existe pas, les abscisses curvilignes
@@ -668,7 +668,7 @@ def propa_fiss_ops(self, METHODE_PROPA, INFO, **args):
 
                     if 'NUME_FOND' in tab_cumul.para:
 #             cas d'un fond multiple
-                        tab_nume_fond = tab_cumul.NUME_FOND.values()
+                        tab_nume_fond = list(tab_cumul.NUME_FOND.values())
                         list_nume_fond = list(set(tab_nume_fond))
 
                         if calc_gamma :
@@ -704,7 +704,7 @@ def propa_fiss_ops(self, METHODE_PROPA, INFO, **args):
             # Si METHODE_PROPA=='MAILLAGE'
             else:
                 if ('ABSC_CURV' in tab_cumul.para):
-                    absc = tab_cumul.ABSC_CURV.values()
+                    absc = list(tab_cumul.ABSC_CURV.values())
                 else:
                     # si modele 3D: il faut necessairement la colonne
                     # 'ABSC_CURV'
@@ -715,7 +715,7 @@ def propa_fiss_ops(self, METHODE_PROPA, INFO, **args):
 
                 if 'NUME_FOND' in tab_cumul.para:
 #           cas d'un fond multiple
-                    tab_nume_fond = tab_cumul.NUME_FOND.values()
+                    tab_nume_fond = list(tab_cumul.NUME_FOND.values())
                     list_nume_fond = list(set(tab_nume_fond))
 
                     for fond_i in list_nume_fond:
@@ -747,7 +747,7 @@ def propa_fiss_ops(self, METHODE_PROPA, INFO, **args):
                                              for i in range(Nbfissure)],
                                       DELTA_A_MAX=Damax)
 
-            NBCYCLE = __TAB_PILO.EXTR_TABLE().DELTA_CYCLE.values()[0]
+            NBCYCLE = list(__TAB_PILO.EXTR_TABLE().DELTA_CYCLE.values())[0]
 
             DETRUIRE(CONCEPT=_F(NOM=__TAB_PILO), INFO=1)
 
@@ -893,8 +893,8 @@ def propa_fiss_ops(self, METHODE_PROPA, INFO, **args):
 #
     if METHODE_PROPA == 'MAILLAGE':
 
-        print 'AVANCE MAXIMALE DU FOND DE FISSURE', Damax
-        print 'NOMBRE DE CYCLES DE FATIGUE', NBCYCLE
+        print('AVANCE MAXIMALE DU FOND DE FISSURE', Damax)
+        print('NOMBRE DE CYCLES DE FATIGUE', NBCYCLE)
 
         it = args['ITERATION']
         mm = [None] * Nbfissure
@@ -904,9 +904,9 @@ def propa_fiss_ops(self, METHODE_PROPA, INFO, **args):
         for numfis, Fiss in enumerate(Fissures):
             DETRUIRE(CONCEPT=_F(NOM=__TAB_CUMUL[numfis]), INFO=1)
             fiss0 = Fiss['FISS_ACTUELLE']
-            print '-------------------------------------------'
-            print 'TRAITEMENT DE LA FISSURE ', fiss0.get_name()
-            print '-------------------------------------------'
+            print('-------------------------------------------')
+            print('TRAITEMENT DE LA FISSURE ', fiss0.get_name())
+            print('-------------------------------------------')
             MAIL_FISS1 = Fiss['MAIL_ACTUEL']
             dime = MAIL_FISS1.sdj.DIME.get()[5]
             MFOND = Fiss['GROUP_MA_FOND']
@@ -1191,7 +1191,7 @@ def propa_fiss_ops(self, METHODE_PROPA, INFO, **args):
                 nbma = mm[numfis].dime_maillage[2]
                 coord = mm[numfis].cn
                 linomno = list(mm[numfis].correspondance_noeuds)
-                linomno = map(string.rstrip, linomno)
+                linomno = list(map(string.rstrip, linomno))
                 l_coorf = [[linomno[i], coord[i]] for i in range(0, nbno)]
                 d_coorf = dict(l_coorf)
 
@@ -1240,7 +1240,7 @@ def propa_fiss_ops(self, METHODE_PROPA, INFO, **args):
             if INFO == 2:
                 texte = "Maillage produit par l operateur PROPA_FISS"
                 aster.affiche('MESSAGE', texte)
-                print mm[numfis]
+                print(mm[numfis])
 
 # Sauvegarde maillage xfem
             MAIL_FISS2 = Fiss['MAIL_PROPAGE']
@@ -1490,7 +1490,7 @@ def propa_fiss_ops(self, METHODE_PROPA, INFO, **args):
         if INFO == 2:
             texte = "Maillage produit par l operateur PROPA_FISS"
             aster.affiche('MESSAGE', texte)
-            print mm
+            print(mm)
 
 # Sauvegarde (maillage xfem et maillage concatene)
         MAIL_FISS2 = args['MAIL_FISS']

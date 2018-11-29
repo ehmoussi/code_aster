@@ -33,7 +33,7 @@ def CHAINAGE_MECA_HYDR(self, args, motscles):
     PROJ_CHAMP = self.get_cmd('PROJ_CHAMP')
 
     b_info = False
-    if args.has_key('INFO'):
+    if 'INFO' in args:
         if args['INFO'] != None:
             motscles['INFO'] = args['INFO']
             if args['INFO'] == 2:
@@ -48,7 +48,7 @@ def CHAINAGE_MECA_HYDR(self, args, motscles):
     smo = set(para['MODELE'])
 
 # normalement, il ne doit y avoir qu'un modèle ...
-    if len(smo) <> 1:
+    if len(smo) != 1:
         UTMESS('F', 'CHAINAGE_10')
     nom_mo_re = list(smo)[0]
 

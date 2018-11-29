@@ -43,11 +43,11 @@ class PRESENT_PRESENT:
         text = ''
         test = 1
         args = self.liste_to_dico(args)
-        if args.has_key(mc0):
+        if mc0 in args:
             for mc in self.mcs[1:len(self.mcs)]:
-                if not args.has_key(mc):
-                    text = text + u"- Le mot clé " + `mc0`+ \
-                        u" étant présent, il faut que : " + \
-                        mc + u" soit présent" + '\n'
+                if mc not in args:
+                    text = text + "- Le mot clé " + repr(mc0)+ \
+                        " étant présent, il faut que : " + \
+                        mc + " soit présent" + '\n'
                     test = 0
         return text, test

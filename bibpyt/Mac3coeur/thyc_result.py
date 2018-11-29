@@ -200,8 +200,8 @@ def lire_resu_thyc(coeur, MODELE, nom_fic):
     for i in range(0, coeur.NBAC):
         line = f.readline().split()
         line2 = f2.readline().split()
-        print 'line = ',line
-        print 'line2 = ',line2
+        print('line = ',line)
+        print('line2 = ',line2)
         posi_aster1 = coeur.position_fromthyc(int(line[0]),int(line[1]))
         posi_aster2 = coeur.position_fromthyc(int(line2[0]),int(line2[1]))
         if (posi_aster1 != posi_aster2):
@@ -244,7 +244,7 @@ def lire_resu_thyc(coeur, MODELE, nom_fic):
         posi_aster=coeur.position_fromthyc(int(line[0]),int(line[1]))
         idAC = coeur.position_todamac(posi_aster)
 
-        print coeur.collAC.keys()
+        print(list(coeur.collAC.keys()))
 
         ac = coeur.collAC[idAC]
         KTOT = ac.K_GRM * \
