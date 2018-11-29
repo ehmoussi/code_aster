@@ -249,7 +249,7 @@ def post_bordet_ops(self, TOUT, GROUP_MA, INST, PRECISION, CRITERE, NUME_ORDRE,
                                    ACTION=_F(OPERATION='OPER',
                                              FORMULE=__NPY,
                                              NOM_PARA='TSIGY'),)
-                sigy = list(__TAB.EXTR_TABLE().values())['TSIGY']
+                sigy = __TAB.EXTR_TABLE().values()['TSIGY']
                 sigy = NP.array(sigy)
 
             T1 = sigy / sig0 * (PR_BAR[ordre] ** m - sigth ** m)
@@ -264,7 +264,7 @@ def post_bordet_ops(self, TOUT, GROUP_MA, INST, PRECISION, CRITERE, NUME_ORDRE,
                                            FORMULE=__MAXI,
                                            NOM_PARA='T1BIS'),)
 
-            T1 = list(__TABT1.EXTR_TABLE().values())['T1BIS']
+            T1 = __TABT1.EXTR_TABLE().values()['T1BIS']
             T1 = NP.array(T1)
             if PROBA_NUCL == 'OUI':
                 T2 = NP.exp(-sigy / sig0 * EQ_BAR[ordre] / ep0)

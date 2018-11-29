@@ -368,7 +368,7 @@ class composant(OAR_element):
         table_meca = para_resu[label].EXTR_TABLE()
 
         # Utilisation des méthodes de la classe table
-        dictTable = list(table_meca.values())
+        dictTable = table_meca.values()
 
         # récupération des abscisses
         self.getAbscisses(dictTable, tableAbsc, offset)
@@ -441,7 +441,7 @@ class composant(OAR_element):
         table_temp = para_resu[label].EXTR_TABLE()
 
         # Utilisation des méthodes de la classe table
-        dictTable = list(table_temp.values())
+        dictTable = table_temp.values()
 
         # On construit un dictionnaire associant un "instant" avec un couple
         # ("abscisse", "température")
@@ -457,12 +457,12 @@ class composant(OAR_element):
 
         # 2. Récupération des abscisses
         tableAbsc = list()
-        self.getAbscisses(list(listTables[0].values()), tableAbsc, offset)
+        self.getAbscisses(listTables[0].values(), tableAbsc, offset)
 
         # 3. Récupération des températures
         tableTemp = list()  # liste de liste de température (1 par instant)
         for tb in listTables:
-            TEMPERATURE = list(tb.values())['TEMP']
+            TEMPERATURE = tb.values()['TEMP']
             tableTemp.append(TEMPERATURE)
 
         # 4. Construction de dictInstAbscTemp
@@ -485,7 +485,7 @@ class composant(OAR_element):
         # couples ("abscisse", liste de "sigma")
 
         # Utilisation des méthodes de la classe table
-        dictTable = list(table_temp.values())
+        dictTable = table_temp.values()
 
         # On construit un dictionnaire associant un "instant" avec un couple
         # ("abscisse", "température")
@@ -500,7 +500,7 @@ class composant(OAR_element):
             listTables.append(table_temp.INST == inst)
 
         # 2. Récupération des abscisses
-        self.getAbscisses(list(listTables[0].values()), tabAbscisses, offset)
+        self.getAbscisses(listTables[0].values(), tabAbscisses, offset)
 
         # 3. Récupération des listes de sigma
         listListListSigAbscInst = list()
@@ -510,12 +510,12 @@ class composant(OAR_element):
             listListSigAbscInst = list()
 
             # On crée une table pour chaque instant
-            S_XX = list(tbl.values())['SIXX']
-            S_YY = list(tbl.values())['SIYY']
-            S_ZZ = list(tbl.values())['SIZZ']
-            S_XY = list(tbl.values())['SIXY']
-            S_YZ = list(tbl.values())['SIYZ']
-            S_XZ = list(tbl.values())['SIXZ']
+            S_XX = tbl.values()['SIXX']
+            S_YY = tbl.values()['SIYY']
+            S_ZZ = tbl.values()['SIZZ']
+            S_XY = tbl.values()['SIXY']
+            S_YZ = tbl.values()['SIYZ']
+            S_XZ = tbl.values()['SIXZ']
             for v1, v2, v3, v4, v5, v6 in zip(S_XX, S_YY, S_ZZ, S_XY, S_YZ, S_XZ):
                 listSigAbsc = list()  # Liste des sigmas pour une abscisse
                 listSigAbsc.append(v1)
@@ -744,7 +744,7 @@ class tuyauterie(OAR_element):
         table_temp = self.para_resu_meca['TABLE'].EXTR_TABLE()
 
         # Utilisation des méthodes de la classe table
-        dictTable = list(table_temp.values())
+        dictTable = table_temp.values()
 
         # 1. Récupération de la liste des noeuds
         NOEUDS = dictTable['NOEUD']

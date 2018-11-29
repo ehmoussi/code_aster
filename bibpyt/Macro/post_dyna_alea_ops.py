@@ -109,7 +109,7 @@ def post_dyna_alea_ops(self, INTERSPECTRE, FRAGILITE, TITRE, INFO, **args):
         Nba = len(liste_a)
         lpfa = []
         tab2 = FRAGILITE['TABL_RESU'].EXTR_TABLE()
-        dicta = list(tab2.values())
+        dicta = tab2.values()
 
         if 'DEFA' in dicta:
             liste_def = dicta['DEFA']

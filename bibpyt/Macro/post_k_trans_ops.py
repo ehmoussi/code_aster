@@ -71,11 +71,11 @@ def post_k_trans_ops(self, RESU_TRANS, K_MODAL, TOUT_ORDRE, NUME_ORDRE,
         n_mode = len((__kgtheta.EXTR_TABLE())['K1'])
         nbno = 1
     else:
-        n_mode = max(list((__kgtheta.EXTR_TABLE())[
-                     'NUME_MODE'].values())['NUME_MODE'])
-        nbno = max(list((__kgtheta.EXTR_TABLE())['NUM_PT'].values())['NUM_PT'])
-        labsc = list((__kgtheta.EXTR_TABLE())[
-            'ABSC_CURV'].values())['ABSC_CURV'][0:nbno]
+        n_mode = max((__kgtheta.EXTR_TABLE())[
+                     'NUME_MODE'].values()['NUME_MODE'])
+        nbno = max((__kgtheta.EXTR_TABLE())['NUM_PT'].values()['NUM_PT'])
+        labsc = (__kgtheta.EXTR_TABLE())[
+            'ABSC_CURV'].values()['ABSC_CURV'][0:nbno]
     if nmodtr != n_mode:
         n_mode = min(nmodtr, n_mode)
         UTMESS('A', 'RUPTURE0_50', valk=nomresu, vali=n_mode)

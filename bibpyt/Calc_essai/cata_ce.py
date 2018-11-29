@@ -763,9 +763,9 @@ class Tempo:
             "Recuperation des informations sur les temporels " + self.nom)
         self.mess.disp_mess(" ")
         tabl_py = self.obj.EXTR_TABLE()
-        self.nom_fonc = list(tabl_py['FONCTION'].values())['FONCTION']
-        self.nume_ordr = list(tabl_py['NUME_ORDRE_I'].values())['NUME_ORDRE_I']
-        self.nume_mes = list(tabl_py['NUME_MES'].values())['NUME_MES']
+        self.nom_fonc = tabl_py['FONCTION'].values()['FONCTION']
+        self.nume_ordr = tabl_py['NUME_ORDRE_I'].values()['NUME_ORDRE_I']
+        self.nume_mes = tabl_py['NUME_MES'].values()['NUME_MES']
 
     def extr_temps(self):
         """Extraction des instants d'etude dans la Tempo qui contient
@@ -774,7 +774,7 @@ class Tempo:
         from code_aster.Cata.Commands import DETRUIRE
         tabl_py = self.obj.EXTR_TABLE()
         toto = tabl_py['FONCTION']
-        nom_fonc = list(toto.values())['FONCTION'][0]
+        nom_fonc = toto.values()['FONCTION'][0]
         __FONC = RECU_FONCTION(TABLE=self.obj,
                                NOM_PARA_TABL='FONCTION',
                                FILTRE=_F(
@@ -1038,7 +1038,7 @@ class CalcEssaiObjects:
             return
         toto = table_py[type_fonc]
         try:
-            nom_fonc = list(toto.values())[type_fonc][0]
+            nom_fonc = toto.values()[type_fonc][0]
         except IndexError:
             return  # deja vu : des tables avec lacolonne fonction vide...
         __FONC = RECU_FONCTION(TABLE=obj, NOM_PARA_TABL=type_fonc,

@@ -281,7 +281,7 @@ def post_erreur_ops(self, OPTION, CHAM_GD, MODELE, GROUP_MA, **args):
             tab = __TanaDEP.EXTR_TABLE()
 
             col_ref = getattr(tab, 'VALE_NORM')
-            l_ref=list(col_ref.values())
+            l_ref=col_ref.values()
             ref=l_ref[0]
 
             # ajout de la contribution du groupe courant a la liste des normes L2 des champs de déplacement analytiques
@@ -301,7 +301,7 @@ def post_erreur_ops(self, OPTION, CHAM_GD, MODELE, GROUP_MA, **args):
             tab = __TdiffDEP.EXTR_TABLE()
 
             col_diff = getattr(tab, 'VALE_NORM')
-            l_diff=list(col_diff.values())
+            l_diff=col_diff.values()
             diff=l_diff[0]
 
             # ajout de la contribution du groupe courant a la liste des normes L2 des champs de déplacement difference
@@ -560,12 +560,12 @@ def post_erreur_ops(self, OPTION, CHAM_GD, MODELE, GROUP_MA, **args):
 
 
         col_ref = getattr(tab, 'TOTALE')
-        l_ref=list(col_ref.values())
+        l_ref=col_ref.values()
 
         tab = __TdiffSIG.EXTR_TABLE()
 
         col_diff = getattr(tab, 'TOTALE')
-        l_diff=list(col_diff.values())
+        l_diff=col_diff.values()
 
         # assertion: les longueurs de l_ref et l_diff sont egales au nombre de groupes
         ASSERT( len(l_ref) == nb_group and len(l_diff) == nb_group )
@@ -762,7 +762,7 @@ def post_erreur_ops(self, OPTION, CHAM_GD, MODELE, GROUP_MA, **args):
             tab = __TanaP.EXTR_TABLE()
 
             col_ref = getattr(tab, 'VALE_NORM')
-            l_ref=list(col_ref.values())
+            l_ref=col_ref.values()
             ref=l_ref[0]
 
             # ajout de la contribution du groupe courant a la liste des normes L2 des champs de déplacement analytiques
@@ -782,7 +782,7 @@ def post_erreur_ops(self, OPTION, CHAM_GD, MODELE, GROUP_MA, **args):
             tab = __TdiffP.EXTR_TABLE()
 
             col_diff = getattr(tab, 'VALE_NORM')
-            l_diff=list(col_diff.values())
+            l_diff=col_diff.values()
             diff=l_diff[0]
 
             # ajout de la contribution du groupe courant a la liste des normes L2 des champs de déplacement difference

@@ -676,7 +676,7 @@ class Table(TableBase):
         """Renvoie sous forme de NumArray le résultat d'une extraction dans une table
         méthode utile à macr_recal
         """
-        __Rep = list(self[Para, Champ].values())
+        __Rep = self[Para, Champ].values()
         F = numpy.zeros((len(__Rep[Para]), 2))
         for i in range(len(__Rep[Para])):
             F[i][0] = __Rep[Para][i]

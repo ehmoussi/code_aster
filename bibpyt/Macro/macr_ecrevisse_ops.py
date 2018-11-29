@@ -517,7 +517,7 @@ def macr_ecrevisse_ops(self, reuse,
 #         T_DEB_TMP1["INST"]       = [inst_p_un]*_nb_ligne
 
             # Le calcul Ecrevisse c'est bien passe ?
-            EcrevisseExe = (list(T_TABL_TMP1.values())['COTES'][0] != -1)
+            EcrevisseExe = (T_TABL_TMP1.values()['COTES'][0] != -1)
             #
             if (not EcrevisseExe):
                 # Destruction des concepts de sortie, et on arrete tout
@@ -546,8 +546,8 @@ def macr_ecrevisse_ops(self, reuse,
 
             if (not IsInit):
                 # On recupere la liste des temperatures a t et t+1
-                lst_T_0 = list(T_TABL_TMP0.values())['TEMP']
-                lst_T_1 = list(T_TABL_TMP1.values())['TEMP']
+                lst_T_0 = T_TABL_TMP0.values()['TEMP']
+                lst_T_1 = T_TABL_TMP1.values()['TEMP']
                 # Le maximum des ecarts
                 lst_T_diff_01 = []
                 for v1, v2 in zip(lst_T_0, lst_T_1):
@@ -555,8 +555,8 @@ def macr_ecrevisse_ops(self, reuse,
                 max_T_diff_01 = max(lst_T_diff_01)
 
                 # On recupere la liste des pressions a t et t+1
-                lst_P_0 = list(T_TABL_TMP0.values())['PRESSION']
-                lst_P_1 = list(T_TABL_TMP1.values())['PRESSION']
+                lst_P_0 = T_TABL_TMP0.values()['PRESSION']
+                lst_P_1 = T_TABL_TMP1.values()['PRESSION']
                 # Le maximum des ecarts
                 lst_P_diff_01 = []
                 for v1, v2 in zip(lst_P_0, lst_P_1):

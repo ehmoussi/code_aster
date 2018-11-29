@@ -59,12 +59,12 @@ def calc_stabilite_ops(self, reuse, SCHEMA_TEMPS, FILTRE, **args):
             prec = FILTRE[0]['PRECISION']
             l_ordre = []
             for i in range(nbord):
-                frequence = list(t_mnl['FREQUENCE'].values())['FREQUENCE'][i]
+                frequence = t_mnl['FREQUENCE'].values()['FREQUENCE'][i]
                 if frequence > fmin-prec and frequence < fmax+prec:
                     l_ordre.append(
-                        list(t_mnl['NUME_ORDRE'].values())['NUME_ORDRE'][i])
+                        t_mnl['NUME_ORDRE'].values()['NUME_ORDRE'][i])
     else:
-        l_ordre = list(t_mnl['NUME_ORDRE'].values())['NUME_ORDRE']
+        l_ordre = t_mnl['NUME_ORDRE'].values()['NUME_ORDRE']
 
     recup_para = 0
     for num_ordr in l_ordre:
@@ -95,23 +95,23 @@ def calc_stabilite_ops(self, reuse, SCHEMA_TEMPS, FILTRE, **args):
 
             t_choc = __choc.EXTR_TABLE()
 
-            typ = list(t_choc['TYPE_CHOC'].values())['TYPE_CHOC']
-            alpha = list(t_choc['RIGI_NOR'].values())['RIGI_NOR']
-            eta = list(t_choc['PARA_REGUL'].values())['PARA_REGUL']
-            jeu = list(t_choc['JEU'].values())['JEU']
-            noeud1 = list(t_choc['NOEUD_CHOC'].values())['NOEUD_CHOC']
-            ncmp1 = list(t_choc['NOM_CMP_1'].values())['NOM_CMP_1']
-            ncmp2 = list(t_choc['NOM_CMP_2'].values())['NOM_CMP_2']
-            orig1 = list(t_choc['ORIG_OBST_X'].values())['ORIG_OBST_X']
-            orig2 = list(t_choc['ORIG_OBST_Y'].values())['ORIG_OBST_Y']
-            orig3 = list(t_choc['ORIG_OBST_Z'].values())['ORIG_OBST_Z']
+            typ = t_choc['TYPE_CHOC'].values()['TYPE_CHOC']
+            alpha = t_choc['RIGI_NOR'].values()['RIGI_NOR']
+            eta = t_choc['PARA_REGUL'].values()['PARA_REGUL']
+            jeu = t_choc['JEU'].values()['JEU']
+            noeud1 = t_choc['NOEUD_CHOC'].values()['NOEUD_CHOC']
+            ncmp1 = t_choc['NOM_CMP_1'].values()['NOM_CMP_1']
+            ncmp2 = t_choc['NOM_CMP_2'].values()['NOM_CMP_2']
+            orig1 = t_choc['ORIG_OBST_X'].values()['ORIG_OBST_X']
+            orig2 = t_choc['ORIG_OBST_Y'].values()['ORIG_OBST_Y']
+            orig3 = t_choc['ORIG_OBST_Z'].values()['ORIG_OBST_Z']
 
             nchoc = len(t_choc.rows)
             recup_para = 1
 
-        t_freq = list(t_mnl['FREQUENCE'].values())['FREQUENCE']
-        t_ordre = list(t_mnl['NUME_ORDRE'].values())['NUME_ORDRE']
-        t_modes = list(t_mnl['NB_COEF_FOURIER'].values())['NB_COEF_FOURIER']
+        t_freq = t_mnl['FREQUENCE'].values()['FREQUENCE']
+        t_ordre = t_mnl['NUME_ORDRE'].values()['NUME_ORDRE']
+        t_modes = t_mnl['NB_COEF_FOURIER'].values()['NB_COEF_FOURIER']
         for ilig in range(len(t_ordre)):
             if t_ordre[ilig] == num_ordr:
                 freq = t_freq[ilig]
@@ -169,7 +169,7 @@ def calc_stabilite_ops(self, reuse, SCHEMA_TEMPS, FILTRE, **args):
         UTMESS('I', 'MECANONLINE9_67', vali= num_ordr)
         stab = main(u, hu, omega1, rig1, mass1, nchoc, poschoc, orig, typ, alpha1, eta, jeu1, nbpas, eps, info)
 
-        i = list(t_mnl['NUME_ORDRE'].values())['NUME_ORDRE'].index(num_ordr)
+        i = t_mnl['NUME_ORDRE'].values()['NUME_ORDRE'].index(num_ordr)
         if(stab):
             t_mnl.rows[i]['STABILITE'] = 'STABLE'
         else:

@@ -112,7 +112,7 @@ def post_decollement_ops(self, RESULTAT, NOM_CHAM, NOM_CMP, GROUP_MA, INFO, **ar
     __tbSurf0 = POST_ELEM(RESULTAT=__resu0, INST=0.0, MODELE=__model,
                           INTEGRALE=_F(NOM_CHAM='VARI_ELGA', NOM_CMP='X1', GROUP_MA=GROUP_MA, TYPE_MAILLE='2D'),)
 
-    __surf = list(__tbSurf0.EXTR_TABLE().values())['INTE_X1'][0]
+    __surf = __tbSurf0.EXTR_TABLE().values()['INTE_X1'][0]
 
     __linst = RESULTAT.LIST_VARI_ACCES()['INST']
 
@@ -130,11 +130,11 @@ def post_decollement_ops(self, RESULTAT, NOM_CHAM, NOM_CMP, GROUP_MA, INFO, **ar
                 OPERATION='EXTRACTION', GROUP_NO='PDECOL', INTITULE=GROUP_MA,
                 CHAM_GD=__dep, NOM_CMP=NOM_CMP),)
 
-        __col = fctZeroUn(list(__tb1.EXTR_TABLE().values())[NOM_CMP])
+        __col = fctZeroUn(__tb1.EXTR_TABLE().values()[NOM_CMP])
 
         __tb2 = CREA_TABLE(
             LISTE=(
-                _F(LISTE_K=list(__tb1.EXTR_TABLE().values())['NOEUD'], PARA='NOEUD'),
+                _F(LISTE_K=__tb1.EXTR_TABLE().values()['NOEUD'], PARA='NOEUD'),
                 _F(LISTE_R=__col, PARA='X1'),),)
 
         __ch = CREA_CHAMP(
@@ -151,7 +151,7 @@ def post_decollement_ops(self, RESULTAT, NOM_CHAM, NOM_CMP, GROUP_MA, INFO, **ar
         __tb3 = POST_ELEM(RESULTAT=__resu, INST=0.0, MODELE=__model,
                           INTEGRALE=_F(NOM_CHAM='VARI_ELGA', NOM_CMP='X1', GROUP_MA=GROUP_MA, TYPE_MAILLE='2D'),)
 
-        __su2 = list(__tb3.EXTR_TABLE().values())['INTE_X1'][0]
+        __su2 = __tb3.EXTR_TABLE().values()['INTE_X1'][0]
 
         __pct.append(100.0 * __su2 / __surf)
 
