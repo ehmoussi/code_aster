@@ -24,8 +24,6 @@
     qui permet de spécifier les caractéristiques des mots clés facteurs
 """
 
-import types
-
 from . import N_ENTITE
 from . import N_MCFACT
 from . import N_MCLIST

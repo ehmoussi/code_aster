@@ -532,7 +532,6 @@ def fminNCG(f, x0, fprime, fhess_p=None, fhess=None, args=(), avextol=1e-5, maxi
     
 
 if __name__ == "__main__":
-    import string
     import time
 
     

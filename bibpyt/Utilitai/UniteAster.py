@@ -19,8 +19,6 @@
 
 # person_in_charge: mathieu.courtois at edf.fr
 
-import types
-
 import aster
 from code_aster.Cata.Syntax import _F
 from code_aster.Cata.Commands import DEFI_FICHIER, INFO_EXEC_ASTER, DETRUIRE

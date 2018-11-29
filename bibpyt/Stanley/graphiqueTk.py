@@ -23,7 +23,6 @@
 # import Tix as Tk
 import tkinter as Tk
 
-import types
 from . import graphiqueTk as objets
 
 __fontes__ = 'arial 10 normal'

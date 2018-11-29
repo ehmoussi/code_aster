@@ -23,16 +23,15 @@ This module defines objects for the testing feature.
 
 import re
 from functools import partial
-from string import maketrans
 from glob import glob
 
 
-_trans = maketrans('e', 'E')
+_trans = str.maketrans('e', 'E')
 
 
 def _fortran(srepr):
     """for fortran look"""
-    return srepr.translate(_trans, '()')
+    return srepr.translate(_trans)
 
 
 class TestResult(object):

@@ -25,8 +25,6 @@
     qui permet de spécifier les caractéristiques d'une procédure
 """
 
-import types
-import string
 import traceback
 
 from . import N_ENTITE

@@ -22,9 +22,6 @@
 
 """
 """
-# Modules Python
-import string
-import types
 
 # Modules Eficas
 from Noyau.N_MCSIMP import MCSIMP
@@ -48,7 +45,7 @@ class OBJECT:
                         Cette methode est appelee par
                         EXECUTION.getfac (commandes.py)
         """
-        nomfac = string.strip(nom_motfac)
+        nomfac = nom_motfac.strip()
         taille = 0
         # On cherche d'abord dans les mots cles presents a l'exclusion des
         # BLOCs
@@ -70,8 +67,7 @@ class OBJECT:
             assert(hasattr(self, 'definition'))
             assert(hasattr(self.definition, 'entites'))
             if nomfac in self.definition.entites:
-                assert(
-                    type(self.definition.entites[nomfac]) == types.InstanceType)
+                assert(isinstance(self.definition.entites[nomfac], object))
                 assert(hasattr(self.definition.entites[nomfac], 'statut'))
                 if self.definition.entites[nomfac].statut == 'd':
                     taille = 1

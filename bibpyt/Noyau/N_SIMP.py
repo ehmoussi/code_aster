@@ -24,8 +24,6 @@
     qui permet de spécifier les caractéristiques des mots clés simples
 """
 
-import types
-
 from . import N_ENTITE
 from . import N_MCSIMP
 from .strfunc import ufmt

@@ -26,7 +26,6 @@
 
 # Modules Python
 import os
-import string
 import traceback
 import types
 import sys
@@ -162,7 +161,7 @@ NONE = None
             if CONTEXT.debug:
                 traceback.print_exc()
             l = traceback.format_exception_only(SyntaxError, e)
-            self.cr.exception("Compilation impossible : " + string.join(l))
+            self.cr.exception("Compilation impossible : " + " ".join(l))
         except MemoryError as e:
             self.cr.exception(MemoryErrorMsg)
         except SystemError as e:
@@ -189,8 +188,7 @@ Causes possibles :
         # Dans le cas d'une chaine de caractères il faut accéder
         # aux commandes qui sont dans la chaine
         import linecache
-        linecache.cache[self.nom] = 0, 0, string.split(
-            self.procedure, '\n'), self.nom
+        linecache.cache[self.nom] = 0, 0, self.procedure.split('\n'), self.nom
         try:
             exec(self.exec_init, self.g_context)
             # message.debug(SUPERV, "JDC.exec_compile_1 - len(g_context) = %d",
@@ -287,7 +285,7 @@ Causes possibles :
             exc_typ, exc_val, exc_fr = sys.exc_info()
             l = traceback.format_exception(exc_typ, exc_val, exc_fr)
             self.cr.exception(
-                "erreur non prevue et non traitee prevenir la maintenance " + '\n' + string.join(l))
+                "erreur non prevue et non traitee prevenir la maintenance " + '\n' + " ".join(l))
             del exc_typ, exc_val, exc_fr
             CONTEXT.unset_current_step()
 

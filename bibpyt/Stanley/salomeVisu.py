@@ -21,7 +21,6 @@ debug = False
 
 import os
 import subprocess
-import string
 import sys
 import socket
 import getpass

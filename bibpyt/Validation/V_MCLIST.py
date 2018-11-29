@@ -78,8 +78,7 @@ class MCList:
                 self.cr.fatal(
                     _("Nombre de mots clés facteurs insuffisant minimum : %s"),
                     definition.min)
-
-        if definition.max is not None and len(self.data) > definition.max:
+        if definition.max is not None and definition.max != "**" and len(self.data) > definition.max:
             valid = 0
             if cr == 'oui':
                 self.cr.fatal(

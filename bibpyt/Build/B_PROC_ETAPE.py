@@ -22,8 +22,6 @@
 
 """
 """
-# Modules Python
-import types
 # Modules Eficas
 from . import B_ETAPE
 

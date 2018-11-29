@@ -21,12 +21,10 @@
 
 import aster_core
 import aster
-import string
 import os
 import time
 import sys
 import collections
-import types
 import numpy as NP
 
 from code_aster.Cata.Syntax import _F
@@ -240,7 +238,7 @@ class MAIL_PY:
             nom_maillage = nom.nom
         else:
             nom_maillage = nom
-        nom_maillage = string.ljust(nom_maillage, 8)
+        nom_maillage = nom_maillage.ljust(8)
 
         # recuperation de la taille
         self.dime_maillage = aster.getvectjev(nom_maillage + '.DIME')
@@ -503,7 +501,7 @@ class PARTITION:
         l.append('- Niveau INFO    : ' + str(self.OPTIONS['INFO']))
         l.append('- Liste group_ma : ' + str(self.ASTER['GROUP_MA']))
 
-        return string.join(l, '\n')
+        return l.join('\n')
 
 # ---------------------------------------------------------------------------- #
 
@@ -742,7 +740,7 @@ class PARTITION:
 # ---------------------------------------------------------------------------- #
     def Modele_to_Liste_Mailles(self, MODELE):
 
-        nommod = string.ljust(MODELE.nom, 8)
+        nommod = MODELE.nom.ljust(8)
         _DIC_MA = aster.getcolljev(nommod.ljust(8) + '.MODELE    .LIEL')
 
         # Creation de la liste des mailles
@@ -882,7 +880,7 @@ class PARTITION:
 
         if self.OPTIONS['INFO'] >= 5:
             MAILLAGE = self.ASTER['MAILLAGE']
-            nommail = string.ljust(MAILLAGE.nom, 8)
+            nommail = MAILLAGE.nom.ljust(8)
             _LST_MAI = aster.getvectjev(nommail.ljust(8) + '.NOMMAI')
 
         # Le dico maille2nb donne le nombre de noeuds definissant un bord
@@ -906,7 +904,7 @@ class PARTITION:
         i = 0
         for m in _LST4:
             if self.OPTIONS['INFO'] >= 5:
-                print('\n  Maille de dim N-1:', m, ' Aster:', string.strip(_LST_MAI[m]), ' TMA:', self.MAILLAGE_Python.tm[m], ' CO:', self.MAILLAGE_Python.co[m], '(noeuds de cette maille)')
+                print('\n  Maille de dim N-1:', m, ' Aster:', _LST_MAI[m].strip(), ' TMA:', self.MAILLAGE_Python.tm[m], ' CO:', self.MAILLAGE_Python.co[m], '(noeuds de cette maille)')
             nb = maille2nb[self.MAILLAGE_Python.tm[m]]
             ll = self.MAILLAGE_Python.co[m][0:nb]
             ll = NP.sort(ll)
@@ -921,7 +919,7 @@ class PARTITION:
                 _tmp = []
                 for maille in self.MAILLAGE_Python.cia[ll]:
                     if self.OPTIONS['INFO'] >= 5:
-                        print('  Maille N:', maille, 'Aster:', string.strip(_LST_MAI[maille]), ' TMA:', self.MAILLAGE_Python.tm[maille])
+                        print('  Maille N:', maille, 'Aster:', _LST_MAI[maille].strip(), ' TMA:', self.MAILLAGE_Python.tm[maille])
 #        self.liste_mailles_bord.append(m)
             except:
                 if self.OPTIONS['INFO'] >= 5:
@@ -960,7 +958,7 @@ class PARTITION:
                 print('  Mailles concernées=', _LST4)
             for mai in _LST4:
                 if self.OPTIONS['INFO'] >= 5:
-                    print('\n  Maille:', mai, ' Aster:', string.strip(_LST_MAI[mai]), ' TMA:', self.MAILLAGE_Python.tm[mai], ' CO:', self.MAILLAGE_Python.co[mai], '(noeuds de cette maille)')
+                    print('\n  Maille:', mai, ' Aster:', _LST_MAI[mai].strip(), ' TMA:', self.MAILLAGE_Python.tm[mai], ' CO:', self.MAILLAGE_Python.co[mai], '(noeuds de cette maille)')
 
                 nb = maille2nb[self.MAILLAGE_Python.tm[mai]]
                 ll = self.MAILLAGE_Python.co[mai][0:nb]
@@ -1026,7 +1024,7 @@ class PARTITION:
         _LST_TMA = self.MAILLAGE_Python.tm
 
         if self.OPTIONS['INFO'] >= 5:
-            nommail = string.ljust(MAILLAGE.nom, 8)
+            nommail = MAILLAGE.nom.ljust(8)
             _LST_MAI = aster.getvectjev(nommail.ljust(8) + '.NOMMAI')
 
         t0 = time.clock()
@@ -1040,7 +1038,7 @@ class PARTITION:
         i = 0
         for m in _LST_BD:
             if self.OPTIONS['INFO'] >= 5:
-                print('\n  Maille de dim N-1:', m, ' Aster:', string.strip(_LST_MAI[m]), ' TMA:', self.MAILLAGE_Python.tm[m], ' CO:', self.MAILLAGE_Python.co[m], '(noeuds de cette maille)')
+                print('\n  Maille de dim N-1:', m, ' Aster:', _LST_MAI[m].strip(), ' TMA:', self.MAILLAGE_Python.tm[m], ' CO:', self.MAILLAGE_Python.co[m], '(noeuds de cette maille)')
             nb = maille2nb[self.MAILLAGE_Python.tm[m]]
             ll = self.MAILLAGE_Python.co[m][0:nb]
             ll = NP.sort(ll)
@@ -1057,7 +1055,7 @@ class PARTITION:
                     if ll[0] in arete:
                         for maille in self.MAILLAGE_Python.cia[arete]:
                             if self.OPTIONS['INFO'] >= 5:
-                                print('  Maille N+i:', maille, ' Aster:', string.strip(_LST_MAI[maille]), ' Arete:', arete)
+                                print('  Maille N+i:', maille, ' Aster:', _LST_MAI[maille].strip(), ' Arete:', arete)
                             _tmp.append(self.liste_sd[maille])
 
             # Cas particulier des SEG en 3D (ils ne peuvent etre des bords
@@ -1072,7 +1070,7 @@ class PARTITION:
                     if _nb == len(ll):
                         for maille in self.MAILLAGE_Python.cia[arete]:
                             if self.OPTIONS['INFO'] >= 5:
-                                print('  Mailles N+i:', maille, ' Aster:', string.strip(_LST_MAI[maille]), ' Arete:', arete)
+                                print('  Mailles N+i:', maille, ' Aster:', _LST_MAI[maille].strip(), ' Arete:', arete)
                             _tmp.append(self.liste_sd[maille])
 
             # Autres mailles de bord
@@ -1082,7 +1080,7 @@ class PARTITION:
                 _tmp = []
                 for maille in self.MAILLAGE_Python.cia[ll]:
                     if self.OPTIONS['INFO'] >= 5:
-                        print('  Maille N+i:', maille, 'Aster:', string.strip(_LST_MAI[maille]), ' SD:', self.liste_sd[maille], ' TMA:', self.MAILLAGE_Python.tm[maille])
+                        print('  Maille N+i:', maille, 'Aster:', _LST_MAI[maille].strip(), ' SD:', self.liste_sd[maille], ' TMA:', self.MAILLAGE_Python.tm[maille])
                     _tmp.append(self.liste_sd[maille])
 
             # integre la maille au SD le plus faible (pour que des groupes de
@@ -1201,7 +1199,7 @@ class PARTITION:
                                 # Necessaire car metis numerote de 1 à N
                 except:
                     print('on oublie le bord:', t)
-            fw.write(string.join(_tmp, ' ') + '\n')
+            fw.write(' '.join(_tmp) + '\n')
 #      except:
 #        print 'Probleme ecriture graphe! On continue..'
         fw.close()
@@ -1224,7 +1222,7 @@ class PARTITION:
         else:
             _tmp = []
             for l in f.readlines():
-                _tmp.append(int(string.strip(l)))
+                _tmp.append(int(l.strip()))
             f.close()
             _l_domaines = NP.array(_tmp, copy=0)
 
@@ -1297,7 +1295,7 @@ class PARTITION:
         MAILLAGE = self.ASTER['MAILLAGE']
         NB_PART = self.OPTIONS['NB_PART']
 
-        nommail = string.ljust(MAILLAGE.nom, 8)
+        nommail = MAILLAGE.nom.ljust(8)
         _LST_MAI = aster.getvectjev(nommail.ljust(8) + '.NOMMAI')
 
         # Creation du dictionnaire des listes des mailles par SD
@@ -1308,7 +1306,7 @@ class PARTITION:
 
         m = 0
         for sdd in self.liste_sd:
-            d_gma[sdd].append(string.strip(_LST_MAI[self.liste_mailles[m]]))
+            d_gma[sdd].append(_LST_MAI[self.liste_mailles[m]].strip())
                               # voir si le strip coute cher !
             m += 1
 
@@ -1323,7 +1321,7 @@ class PARTITION:
             m = 0
             for sdd in self.liste_sd_bord:
                 d_gma[sdd].append(
-                    string.strip(_LST_MAI[self.liste_mailles_bord[m]]))
+                    _LST_MAI[self.liste_mailles_bord[m]].strip())
                                   # voir si le strip coute cher !
                 m += 1
 
@@ -1331,7 +1329,7 @@ class PARTITION:
             m = 0
             for sdd in self.liste_sd_bord:
                 d_gma_bord[sdd].append(
-                    string.strip(_LST_MAI[self.liste_mailles_bord[m]]))   # voir si le strip coute cher !
+                    _LST_MAI[self.liste_mailles_bord[m]].strip())   # voir si le strip coute cher !
                 m += 1
 
         print("--- FIN creation du dictionnaire des listes des mailles par SD ", time.clock() - t0)

@@ -44,10 +44,10 @@ for mod in MODULES_RAISING_FPE:
     except ImportError:
         pass
 
-import aster_settings
-import aster_core
-from .strfunc import convert, ufmt
-from .decorators import jdc_required, stop_on_returncode, never_fail
+from aster_settings import getargs
+from aster_core import register, get_mem_stat, set_mem_stat
+from Execution.strfunc import convert, ufmt
+from Execution.decorators import jdc_required, stop_on_returncode, never_fail
 
 
 class Interrupt(Exception):
@@ -109,7 +109,7 @@ class SUPERV:
     def set_i18n(self):
         """Met en place les fonctions d'internationalisation."""
         # should be already done by importing aster_settings
-        from . import i18n
+        from Execution import i18n
 
     def init_timer(self):
         """Initialise le timer au plus tot
@@ -164,7 +164,7 @@ class SUPERV:
         self.jdc = self.JdC(procedure=text, cata=self.cata, nom=fort1,
                             context_ini=params, **args)
         # on enregistre les objets dans aster_core dès que le jdc est créé
-        aster_core.register(self.jdc, self.coreopts)
+        register(self.jdc, self.coreopts)
         self.jdc.set_syntax_check(self.coreopts.get_option('syntax'))
 
     @jdc_required
@@ -339,7 +339,7 @@ class SUPERV:
     @never_fail
     def Finish(self):
         """Allow to call cleanup functions."""
-        from .E_utils import supprimerRepertoire
+        from E_utils import supprimerRepertoire
         if self.coreopts.get_option('totalview') == 1:
             supprimerRepertoire(os.getcwd())
         # post-run for testcases
@@ -352,7 +352,7 @@ class SUPERV:
         divers traitements
         """
         if not coreopts:
-            coreopts = aster_settings.getargs()
+            coreopts = getargs()
         self.coreopts = coreopts
         try:
             self.InitEnv()
@@ -376,23 +376,23 @@ class SUPERV:
 
     def _mem_stat_init(self, tag=None):
         """Set the initial memory consumption"""
-        rval, iret = aster_core.get_mem_stat('VMSIZE')
+        rval, iret = get_mem_stat('VMSIZE')
         assert iret == 0
         self._mem_ini = rval[0]
-        aster_core.set_mem_stat(('MEM_INIT', ), (self._mem_ini, ))
+        set_mem_stat(('MEM_INIT', ), (self._mem_ini, ))
 
     def _mem_stat_jdc(self, tag=None):
         """Set the memory"""
-        rval, iret = aster_core.get_mem_stat('VMSIZE')
+        rval, iret = get_mem_stat('VMSIZE')
         assert iret == 0
         mjdc = rval[0] - self._mem_ini
-        aster_core.set_mem_stat(('MEM_JDC', ), (mjdc, ))
+        set_mem_stat(('MEM_JDC', ), (mjdc, ))
 
 
 def main():
     """Main."""
     appli = SUPERV()
-    ier = appli.main(coreopts=aster_settings.getargs(sys.argv))
+    ier = appli.main(coreopts=getargs(sys.argv))
     sys.exit(ier)
 
 

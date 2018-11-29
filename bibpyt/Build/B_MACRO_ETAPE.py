@@ -25,7 +25,6 @@
 # Modules Python
 import traceback
 import sys
-import types
 
 # Modules EFicas
 from . import B_ETAPE

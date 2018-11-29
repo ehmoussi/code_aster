@@ -28,7 +28,6 @@
 # Modules Python
 import types
 import sys
-import string
 import traceback
 from warnings import warn
 
@@ -138,7 +137,7 @@ class MACRO_ETAPE(N_ETAPE.ETAPE):
                 sys.exc_info()[0], sys.exc_info()[1], sys.exc_info()[2])
             raise AsException("Etape ", self.nom, 'ligne : ', self.appel[0],
                               'fichier : ', self.appel[1] + '\n',
-                              string.join(l))
+                              ' '.join(l))
 
         self.Execute()
         return sd

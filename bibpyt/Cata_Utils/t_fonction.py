@@ -18,7 +18,6 @@
 # --------------------------------------------------------------------
 
 import copy
-import types
 from math import exp, log
 
 import numpy as NP

@@ -21,7 +21,6 @@ debug = False
 
 import os
 import subprocess
-import string
 import sys
 import socket
 import getpass
@@ -434,7 +433,7 @@ class COURBES(VISU):
                 data = ""
                 theTableName = "table Stanley"
 
-                newListe = list(map(string.split, liste))
+                newListe = list(map(lambda x: x.strip(), liste))
 
                 m = [[newListe[0][i]] + [newListe[j][i + 1]
                                          for j in range(len(newListe))] for i in range(0, len(newListe[0]), 2)]

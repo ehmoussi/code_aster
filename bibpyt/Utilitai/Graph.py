@@ -23,9 +23,7 @@ __all__ = ['Graph', 'AjoutParaCourbe']
 import sys
 import os
 import os.path
-import string
 import re
-import types
 import time
 import numpy
 
@@ -808,7 +806,7 @@ class TraceXmgrace(TraceGraph):
 
         sn = str(args['NumSet'])
         descr = []
-        descr.append(string.replace("""
+        descr.append("""
 @    s0 hidden false
 @    s0 type xy
 @    s0 symbol size 1.000000
@@ -849,7 +847,7 @@ class TraceXmgrace(TraceGraph):
 @    s0 errorbar riser clip length 0.100000
 
 @    s0 comment ""
-""", ' s0 ', ' s' + sn + ' '))
+""".replace( ' s0 ', ' s' + sn + ' '))
         descr.append('@    s' + sn + ' symbol ' + symbol)
         descr.append('@    s' + sn + ' symbol color ' + color)
         descr.append('@    s' + sn + ' symbol skip ' + freqm)

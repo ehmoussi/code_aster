@@ -37,7 +37,6 @@
 
 # Modules Python
 import re
-import string
 import linecache
 from functools import partial
 
@@ -89,7 +88,7 @@ def _GetNomConceptResultat(ope, level=2):
             list.reverse()
             # On suppose que le concept resultat a bien ete
             # isole en tete de la ligne de source
-            m = evalnom(string.strip(l[0]), f.f_locals)
+            m = evalnom(l[0].strip(), f.f_locals)
             # print "NOMS ",m
             if m != []:
                 return m[-1]

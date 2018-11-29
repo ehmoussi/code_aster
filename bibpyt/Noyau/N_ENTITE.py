@@ -262,7 +262,7 @@ class ENTITE:
             if self.max != '**':
                 self.cr.fatal(
                     _("L'attribut 'max' doit être un entier : %r"), self.max)
-        if self.min > self.max:
+        if self.max != '**' and self.min > self.max:
             self.cr.fatal(
                 _("Nombres d'occurrence min et max invalides : %r %r"),
                 self.min, self.max)

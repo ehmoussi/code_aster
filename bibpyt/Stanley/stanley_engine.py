@@ -47,7 +47,6 @@ debug = False
 import sys
 import os
 import os.path
-import string
 import copy
 import tkinter.filedialog
 import tkinter.messagebox
@@ -55,8 +54,6 @@ import pickle
 import time
 import socket
 import tempfile
-import types
-from types import *
 
 # import Tix as Tk
 import tkinter as Tk
@@ -1543,17 +1540,17 @@ class SELECTION:
         if self.mode in ['Isovaleurs', 'SalomeIsovaleurs']:
             t_geom = ['TOUT_MAILLAGE']
             for nom_group in self.etat_geom.volu:
-                t_geom.append(string.ljust(nom_group, 24) + " (3D)")
+                t_geom.append(nom_group.ljust(24) + " (3D)")
             for nom_group in self.etat_geom.surf:
-                t_geom.append(string.ljust(nom_group, 24) + " (2D)")
+                t_geom.append(nom_group.ljust(24) + " (2D)")
             self.interface.geom.Change(t_geom, 'TOUT_MAILLAGE')
 
         elif self.mode in ['Courbes', 'SalomeCourbes']:
             t_geom = []
             for nom_group in self.etat_geom.lign:
-                t_geom.append(string.ljust(nom_group, 24) + " (1D)")
+                t_geom.append(nom_group.ljust(24) + " (1D)")
             for nom_group in self.etat_geom.poin:
-                t_geom.append(string.ljust(nom_group, 24) + " (0D)")
+                t_geom.append(nom_group.ljust(24) + " (0D)")
             self.interface.geom.Change(t_geom)
 
         else:
@@ -1603,7 +1600,7 @@ class SELECTION:
             type_actu = ''
             liste_actu = []
             for nom in self.interface.geom.courant:
-                nom_group = string.strip(nom[:24])
+                nom_group = nom[:24].strip()
                 type_group = self.etat_geom.Type(nom_group)
                 liste_actu.append(nom_group)
                 if not type_actu:
@@ -1986,9 +1983,9 @@ class INTERFACE:
     # Liste des entites geometriques
         t_geom = ['TOUT_MAILLAGE']
         for nom_group in etat_geom.volu:
-            t_geom.append(string.ljust(nom_group, 24) + " (3D)")
+            t_geom.append(nom_group.ljust(24) + " (3D)")
         for nom_group in etat_geom.surf:
-            t_geom.append(string.ljust(nom_group, 24) + " (2D)")
+            t_geom.append(nom_group.ljust(24) + " (2D)")
 
     # Liste des numeros d'ordre
         t_no = ['TOUT_ORDRE'] + numeros
@@ -2171,15 +2168,15 @@ class INTERFACE:
 
         nom = reponse[0][0]
         nom = nom[0:24]            # pas plus de 24 caracteres dans un GROUP_MA
-        nom = string.strip(nom)   # pas de blancs
-        nom = string.upper(nom)   # en majuscules
+        nom = nom.strip()   # pas de blancs
+        nom = nom.upper()   # en majuscules
         x0 = y0 = z0 = 0
         if reponse[1][0]:
-            x0 = string.atof(reponse[1][0])
+            x0 = float(reponse[1][0])
         if reponse[1][1]:
-            y0 = string.atof(reponse[1][1])
+            y0 = float(reponse[1][1])
         if reponse[1][2]:
-            z0 = string.atof(reponse[1][2])
+            z0 = float(reponse[1][2])
 
         return nom, x0, y0, z0
 
@@ -2207,22 +2204,22 @@ class INTERFACE:
 
         nom = reponse[0][0]
         nom = nom[0:24]            # pas plus de 24 caracteres dans un GROUP_MA
-        nom = string.strip(nom)   # pas de blancs
-        nom = string.upper(nom)   # en majuscules
+        nom = nom.strip()   # pas de blancs
+        nom = nom.upper()   # en majuscules
         x0 = y0 = z0 = x1 = y1 = z1 = 0
         if reponse[1][0]:
-            x0 = string.atof(reponse[1][0])
+            x0 = float(reponse[1][0])
         if reponse[1][1]:
-            y0 = string.atof(reponse[1][1])
+            y0 = float(reponse[1][1])
         if reponse[1][2]:
-            z0 = string.atof(reponse[1][2])
+            z0 = float(reponse[1][2])
         if reponse[2][0]:
-            x1 = string.atof(reponse[2][0])
+            x1 = float(reponse[2][0])
         if reponse[2][1]:
-            y1 = string.atof(reponse[2][1])
+            y1 = float(reponse[2][1])
         if reponse[2][2]:
-            z1 = string.atof(reponse[2][2])
-        nbr = string.atoi(reponse[3][0])
+            z1 = float(reponse[2][2])
+        nbr = int(reponse[3][0])
 
         return nom, x0, y0, z0, x1, y1, z1, nbr
 
@@ -2871,7 +2868,7 @@ class DRIVER_COURBES(DRIVER):
                         courbe.Lire_y(__COTMP1, comp)
                         tmp0 = repr(
                             courbe)   # laisser cette ligne car elle permet de filtrer les cas ou la SD __COTMP1 n'est pas complete
-                        nom = comp + ' --- ' + string.ljust(point, 8)
+                        nom = comp + ' --- ' + point.ljust(8)
                     except Exception as e:
                         print(e)
                     else:
@@ -2970,7 +2967,7 @@ class DRIVER_COURBES(DRIVER):
         lnomTitle = []
         for courbe in l_courbes:
             acourbe = []
-            for l in string.split(repr(courbe[0])):
+            for l in repr(courbe[0]).split():
                 acourbe.append(float(l))
             lx = acourbe[0:len(acourbe):2]
             ly = acourbe[1:len(acourbe):2]
@@ -3058,7 +3055,7 @@ class DRIVER_GRACE(DRIVER_COURBES):
             _tmp = []
             for courbe in l_courbes:
                 acourbe = []
-                for l in string.split(repr(courbe[0])):
+                for l in repr(courbe[0]).split():
                     acourbe.append(float(l))
                 lx = acourbe[0:len(acourbe):2]
                 ly = acourbe[1:len(acourbe):2]
@@ -3440,8 +3437,8 @@ class PRE_STANLEY:
         i = int(self.modele.listbox.curselection()[0])
         modele = self.t_modele[i]
         _maillag = aster.getvectjev(
-            string.ljust(modele, 8) + '.MODELE    .LGRF        ')
-        maillage = string.rstrip(_maillag[0])
+            modele.ljust(8) + '.MODELE    .LGRF        ')
+        maillage = _maillag[0].rstrip()
 
         i = int(self.evol.listbox.curselection()[0])
         evol = self.t_evol[i]
