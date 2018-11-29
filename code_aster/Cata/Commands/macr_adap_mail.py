@@ -36,12 +36,12 @@ def macr_adap_mail_prod(self, MAJ_CHAM, ADD_CHAM, ADAPTATION, **args):
 # 0. Typage des structures produites
 #
   #print args
-  if ( args.has_key('MAILLAGE_NP1') ) :
+  if ( 'MAILLAGE_NP1' in args ) :
     if ( args['MAILLAGE_NP1'] is not None ) :
       maillage_np1=args['MAILLAGE_NP1']
       self.type_sdprod(maillage_np1, maillage_sdaster)
 #
-  if ( args.has_key('MAILLAGE_NP1_ANNEXE') ) :
+  if ( 'MAILLAGE_NP1_ANNEXE' in args ) :
     if ( args['MAILLAGE_NP1_ANNEXE'] is not None ) :
       maillage_np1_annexe=args['MAILLAGE_NP1_ANNEXE']
       self.type_sdprod(maillage_np1_annexe, maillage_sdaster)

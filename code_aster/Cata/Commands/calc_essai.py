@@ -45,7 +45,7 @@ def calc_essai_prod(self,RESU_IDENTIFICATION,
     if args.get('__all__'):
         return ([None],
                 [None, interspectre],
-                [None] + MTYPES.values())
+                [None] + list(MTYPES.values()))
 
     if RESU_IDENTIFICATION != None:
         for res in RESU_IDENTIFICATION:
@@ -53,7 +53,7 @@ def calc_essai_prod(self,RESU_IDENTIFICATION,
 
     if RESU_MODIFSTRU != None:
         for res in RESU_MODIFSTRU:
-            for mc, typ in MTYPES.items():
+            for mc, typ in list(MTYPES.items()):
                 if res[mc]:
                     self.type_sdprod(res[mc], typ)
     return None

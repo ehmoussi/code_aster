@@ -126,14 +126,14 @@ class matr_asse_gene_r(matr_asse_gene):
           k=j*(j-1)/2+i
           tmp[k]=matrice[j-1,i]
       aster.putcolljev('%-19s.VALM' % ncham,len(tmp),tuple((\
-      range(1,len(tmp)+1))),tuple(tmp),tuple(tmp),1)
+      list(range(1,len(tmp)+1)))),tuple(tmp),tuple(tmp),1)
     # Si le stockage est diagonal
     elif desc[2]==1 :
       tmp=numpy.zeros(desc[1])
       for j in range(desc[1]):
           tmp[j]=matrice[j,j]
       aster.putcolljev('%-19s.VALM' % ncham,len(tmp),tuple((\
-      range(1,len(tmp)+1))),tuple(tmp),tuple(tmp),1)
+      list(range(1,len(tmp)+1)))),tuple(tmp),tuple(tmp),1)
     # Sinon on arrete tout
     else:
       raise KeyError
@@ -205,7 +205,7 @@ class matr_asse_gene_c(matr_asse_gene):
           tmpr[k]=matrice[j-1,i].real
           tmpc[k]=matrice[j-1,i].imag
       aster.putvectjev('%-19s.VALM' % ncham, len(tmpr), tuple((\
-                       range(1,len(tmpr)+1))),tuple(tmpr),tuple(tmpc),1)
+                       list(range(1,len(tmpr)+1)))),tuple(tmpr),tuple(tmpc),1)
     # Si le stockage est diagonal
     elif desc[2]==1 :
       tmpr=numpy.zeros(desc[1])
@@ -214,7 +214,7 @@ class matr_asse_gene_c(matr_asse_gene):
           tmpr[j]=matrice[j,j].real
           tmpc[j]=matrice[j,j].imag
       aster.putvectjev('%-19s.VALM' % ncham,len(tmpr),tuple((\
-                       range(1,len(tmpr)+1))),tuple(tmpr),tuple(tmpc),1)
+                       list(range(1,len(tmpr)+1)))),tuple(tmpr),tuple(tmpc),1)
     # Sinon on arrete tout
     else:
       raise KeyError

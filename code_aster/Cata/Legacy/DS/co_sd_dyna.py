@@ -54,7 +54,7 @@ class tran_gene  (dyna_gene) :
         return nbmodes
     def __check_input_inoli(self, inoli):
         if (inoli==-1) :
-            print "Nonlinearity index not specified, by default the first nonlinearity will be considered."
+            print("Nonlinearity index not specified, by default the first nonlinearity will be considered.")
             inoli = 1
         nbnoli = self.__nb_nonl()
         if nbnoli == 0 :
@@ -107,9 +107,9 @@ class tran_gene  (dyna_gene) :
                            'COUPLAGE_EDYOS': [],
                            'RELA_EFFO_DEPL': ['DCMP_N1 ', 'FCMP_LOC', 'IND_NONZ'] ,
                            'RELA_EFFO_VITE': ['VCMP_N1 ', 'FCMP_LOC', 'IND_NONZ']  }
-        print "\n" + "-"*104
-        print "Information regarding the saved internal variables for %s non linearity (index=%d)"%(nltype, inoli)
-        print "-"*104
+        print("\n" + "-"*104)
+        print("Information regarding the saved internal variables for %s non linearity (index=%d)"%(nltype, inoli))
+        print("-"*104)
         vintDesc = [v.center(10) for v in vintDescription[nltype]]
         indices  = [str(i+1).center(10) for i in range(len(vintDesc))]
         sep = " | "
@@ -117,12 +117,12 @@ class tran_gene  (dyna_gene) :
         nblines = len(indices)/8
         if 8*nblines<len(indices) : nblines = nblines + 1
         for i in range(nblines-1):
-            print sep.join(indices [i*8:(i+1)*8])
-            print sep.join(vintDesc[i*8:(i+1)*8])
-            print "-"*104
-        print sep.join(indices [8*(nblines-1):])
-        print sep.join(vintDesc[8*(nblines-1):])
-        print "-"*104
+            print(sep.join(indices [i*8:(i+1)*8]))
+            print(sep.join(vintDesc[i*8:(i+1)*8]))
+            print("-"*104)
+        print(sep.join(indices [8*(nblines-1):]))
+        print(sep.join(vintDesc[8*(nblines-1):]))
+        print("-"*104)
         return vintDesc
 
     # Public Methods
@@ -198,19 +198,19 @@ class tran_gene  (dyna_gene) :
 
         nbnoli  = self.__nb_nonl()
         if nbnoli == 0 :
-            print "Linear calculation, no nonlinearities used or can be printed."
+            print("Linear calculation, no nonlinearities used or can be printed.")
             return None
 
         nltypes = self.__type_nonl()
         inti    = self.sdj.sd_nl.INTI.get()
 
-        print "-"*104
-        print "%sInformation regarding the considered non linearities"%(' '*15)
-        print "-"*104
+        print("-"*104)
+        print("%sInformation regarding the considered non linearities"%(' '*15))
+        print("-"*104)
         #      12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234
         #      ooo-----ooo+++++++++++++++++ooo---------ooo+++++++++ooo---------ooo+++++++++ooo-------------------------
-        print " |  IND  |       TYPE        |    NO1    |    NO2    |   SST1    |    SST2   |           TITLE          |"
-        print "-"*104
+        print(" |  IND  |       TYPE        |    NO1    |    NO2    |   SST1    |    SST2   |           TITLE          |")
+        print("-"*104)
         Output =[None]*nbnoli
         for i in range(nbnoli):
             title, no1, no2, sst1, sst2 = inti[i*5:i*5+5]
@@ -223,10 +223,10 @@ class tran_gene  (dyna_gene) :
             sst1  = sst1.strip().center(9)
             sst2  = sst2.strip().center(9)
             sep = ' | '
-            print "%s%s%s%s%s%s%s%s%s%s%s%s%s%s"%(sep,str(i+1).center(5),sep,nltypes[i].center(17),sep,no1,sep,no2,sep,sst1,sep,sst2,sep,title)
+            print("%s%s%s%s%s%s%s%s%s%s%s%s%s%s"%(sep,str(i+1).center(5),sep,nltypes[i].center(17),sep,no1,sep,no2,sep,sst1,sep,sst2,sep,title))
             add = [nltypes[i]]+list(inti[(i-1)*5:(i-1)*5+5])
             Output[i] = add
-        print "-"*104
+        print("-"*104)
         return Output
 
     def VARI_INTERNE (self, inoli=-1, describe=True):

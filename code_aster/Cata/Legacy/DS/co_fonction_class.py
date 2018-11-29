@@ -178,7 +178,7 @@ class fonction_c(fonction_class):
             ordo = numpy.arctan2(
                 numpy.array(self.OrdoImg()), numpy.array(self.Ordo())) * 180. / pi
         elif arg == 'complex':
-            ordo = map(complex, self.Ordo(), self.OrdoImg())
+            ordo = list(map(complex, self.Ordo(), self.OrdoImg()))
         else:
             assert False, 'unexpected value for arg: %r' % arg
         return class_fonction(self.Absc(), ordo, self.Parametres(), nom=self.nom)

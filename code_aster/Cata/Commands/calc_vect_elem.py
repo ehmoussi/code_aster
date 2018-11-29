@@ -46,7 +46,7 @@ CALC_VECT_ELEM=OPER(nom="CALC_VECT_ELEM",op=8,sd_prod=calc_vect_elem_prod,reentr
               MODE_FOURIER =SIMP(statut='f',typ='I',defaut= 0 ),
            ),
            b_modele     =BLOC(condition = """(exists("MODELE"))""",fr=tr("modèle contenant une sous-structure"),
-              SOUS_STRUC      =FACT(statut='o',min=01,
+              SOUS_STRUC      =FACT(statut='o',min=0o1,
                 regles=(UN_PARMI('TOUT','SUPER_MAILLE'),),
                 CAS_CHARGE  =SIMP(statut='o',typ='TXM' ),
                 TOUT        =SIMP(statut='f',typ='TXM',into=("OUI",) ),

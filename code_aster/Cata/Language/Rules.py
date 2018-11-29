@@ -54,11 +54,11 @@ class Rule(object):
 
     def _firstExists(self, dictSyntax):
         """Filter that tells if the first keyword exists"""
-        return dictSyntax.has_key( self.ruleArgs[0] )
+        return self.ruleArgs[0] in dictSyntax
 
     def _not_none(self, dictSyntax):
         """Filter that returns existing values"""
-        return [dictSyntax.has_key(i) for i in self.ruleArgs]
+        return [i in dictSyntax for i in self.ruleArgs]
 
 
 class AtLeastOne(Rule):

@@ -28,7 +28,7 @@ def calc_essai_geomeca_prod(self, **args):
         return ([None],
                 [None, table_sdaster])
 
-    for key, fact in args.items():
+    for key, fact in list(args.items()):
         if not key.startswith('ESSAI_'):
             continue
         if not fact:

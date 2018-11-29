@@ -56,7 +56,7 @@ class SyntaxId(object):
     two releases of code_aster.
     """
     __slots__ = ('simp', 'fact', 'bloc', 'command')
-    simp, fact, bloc, command = range(4)
+    simp, fact, bloc, command = list(range(4))
 
 IDS = SyntaxId()
 
@@ -153,7 +153,7 @@ class CataDefinition(OrderedDict):
             dict: dict of entities of the requested types.
         """
         entities = CataDefinition()
-        for key, value in self.items():
+        for key, value in list(self.items()):
             if isinstance(value, typeslist):
                 entities[key] = value
             elif with_block and isinstance(value, Bloc):
@@ -163,9 +163,9 @@ class CataDefinition(OrderedDict):
     def iterItemsByType(self):
         """Iterator over dictionary's pairs with respecting order:
         SimpleKeyword, FactorKeyword and Bloc objects"""
-        keysR = [k for k, v in self.items() if type(v) is SimpleKeyword]
-        keysI = [k for k, v in self.items() if type(v) is FactorKeyword]
-        keysS = [k for k, v in self.items() if type(v) is Bloc]
+        keysR = [k for k, v in list(self.items()) if type(v) is SimpleKeyword]
+        keysI = [k for k, v in list(self.items()) if type(v) is FactorKeyword]
+        keysS = [k for k, v in list(self.items()) if type(v) is Bloc]
         for key in keysR + keysI + keysS:
             yield (key, self[key])
 
@@ -230,7 +230,7 @@ class _F(dict):
 
     @property
     def mc_liste(self):
-        return self.keys()
+        return list(self.keys())
 
     def List_F(self):
         """Return the object itself, for backward compatibility."""
@@ -288,8 +288,8 @@ class PartOfSyntax(UIDMixing):
     def udocstring(self):
         """unicode: Documentation of the object."""
         doc = self.docstring
-        if type(doc) is not unicode:
-            doc = unicode(doc, 'utf-8', 'replace')
+        if type(doc) is not str:
+            doc = str(doc, 'utf-8', 'replace')
         return doc
 
     @property
@@ -629,7 +629,7 @@ class Bloc(PartOfSyntax):
         eval_context.update(DS.__dict__)
         eval_context.update(block_utils(eval_context))
         # evaluate Python variables if present
-        for key, value in context.items():
+        for key, value in list(context.items()):
             eval_context[key] = getattr(value, "evaluation", value)
         try:
             enabled = eval(self.getCondition(), {}, eval_context)

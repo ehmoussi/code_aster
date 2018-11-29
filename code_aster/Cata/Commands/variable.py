@@ -27,7 +27,7 @@ The parameters are provided as a pickle file that contains:
 - the list of the parameters values.
 """
 
-from __future__ import print_function
+
 
 import os.path as osp
 import pickle
@@ -77,7 +77,7 @@ class VariableSupport(object):
             float: Value of the parameter.
         """
         params, values = self._get_inputs()
-        inputs = dict(zip(params, values))
+        inputs = dict(list(zip(params, values)))
         value = inputs.get(NOM_PARA)
         if value is None:
             value = VALE

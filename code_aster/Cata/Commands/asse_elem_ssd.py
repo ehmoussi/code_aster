@@ -33,9 +33,9 @@ def asse_elem_ssd_prod(self, RESU_ASSE_SSD, **args):
         'MASS_GENE' : matr_asse_gene_r,
     }
     if args.get('__all__'):
-        return ([None], MTYPES.values())
+        return ([None], list(MTYPES.values()))
 
-    for mc, typ in MTYPES.items():
+    for mc, typ in list(MTYPES.items()):
         if RESU_ASSE_SSD.get(mc):
             self.type_sdprod(RESU_ASSE_SSD[mc], typ)
     return None
