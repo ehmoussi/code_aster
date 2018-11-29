@@ -138,7 +138,7 @@ def calc_table_ops(self, TABLE, ACTION, INFO, **args):
             tab.fromfunction(occ['NOM_PARA'], occ['FORMULE'],
                              l_para=occ.get('NOM_COLONNE'))
             if INFO == 2:
-                vectval = list(getattr(tab, occ['NOM_PARA']).values())
+                vectval = getattr(tab, occ['NOM_PARA']).values()
                 aster.affiche('MESSAGE', 'Ajout de la colonne %s : %s'
                               % (occ['NOM_PARA'], repr(vectval)))
 
@@ -182,7 +182,7 @@ def calc_table_ops(self, TABLE, ACTION, INFO, **args):
                 if nom_para in tab.para:
                     UTMESS('F', 'TABLE0_24', valk=nom_para)
             nbVide = 0
-            for col in list(tab.values()).values():
+            for col in tab.values().values():
                 nbVide += sum([1 for i in col if i is None])
             # be care to extract the statistics before changing `tab`!
             tab['STAT_VALE'] = [len(tab), len(tab.para), nbVide]

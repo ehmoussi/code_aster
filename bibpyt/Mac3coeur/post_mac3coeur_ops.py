@@ -460,7 +460,7 @@ def post_mac3coeur_ops(self, **args):
 
             tab2 = _TAB2.EXTR_TABLE()
             tab2.Renomme(name, 'P_LAME')
-            valjeucu[name] = list(tab2.P_LAME.values())
+            valjeucu[name] = tab2.P_LAME.values()
             k = k + 1
 
         UTMESS('I', 'COEUR0_4')
@@ -490,7 +490,7 @@ def post_mac3coeur_ops(self, **args):
                                        ACTION=(_F(OPERATION='COMB', TABLE=_TABTMP, NOM_PARA='INDICAT')))
                 tab1 = _TAB1.EXTR_TABLE()
                 tab1.Renomme(name, 'P_LAME')
-                valjeuac[name] = list(tab1.P_LAME.values())
+                valjeuac[name] = tab1.P_LAME.values()
                 k = k + 1
 
         valContactCuve = []
@@ -614,9 +614,9 @@ def post_mac3coeur_ops(self, **args):
 
             tab1 = _TAB1.EXTR_TABLE()
 
-            l_x_tmp = list(tab1.COOR_X.values())
-            l_dy_tmp = list(tab1.DY.values())
-            l_dz_tmp = list(tab1.DZ.values())
+            l_x_tmp = tab1.COOR_X.values()
+            l_dy_tmp = tab1.DY.values()
+            l_dz_tmp = tab1.DZ.values()
 
             # on reduit les listes en supprimant les doublons
             nb_grilles = len(l_x_tmp) / 4.

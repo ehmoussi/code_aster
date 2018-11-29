@@ -344,10 +344,10 @@ def tabRelaToEpx(nomchar, concept_charge, mot_cle_epx, MAILLAGE):
     donnees_liaisons = __table.EXTR_TABLE()
     DETRUIRE(CONCEPT=_F(NOM=__table))
     
-    nb_termes = list(donnees_liaisons.NB_TERME.values())
-    noeuds    = list(donnees_liaisons.NOEUD.values())
-    comps     = list(donnees_liaisons.COMP.values())
-    coefs     = list(donnees_liaisons.COEF.values())
+    nb_termes = donnees_liaisons.NB_TERME.values()
+    noeuds    = donnees_liaisons.NOEUD.values()
+    comps     = donnees_liaisons.COMP.values()
+    coefs     = donnees_liaisons.COEF.values()
 
     nb_rela = 0
     list_bloc = []

@@ -759,7 +759,7 @@ class CalcFonction_LISS_ENVELOP(CalcFonctionOper):
                     print('error')
                 nom_para.remove('FREQ')    
                 # print dir(tab.EXTR_TABLE())
-                dico = list(tab.EXTR_TABLE().values())
+                dico = tab.EXTR_TABLE().values()
                 l_fonc_f = []    
                 for para in nom_para:
                     freq = dico['FREQ']

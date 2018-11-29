@@ -97,7 +97,7 @@ def calc_spec_ops(self, TAB_ECHANT, ECHANT, INTERSPE, TRANSFERT, TITRE, INFO, **
         tab_ast = l_t[0][1]['NOM_TAB']
         tab_py = tab_ast.EXTR_TABLE()
 
-        nom_fonc = list(tab_py['FONCTION'].values())['FONCTION']
+        nom_fonc = tab_py['FONCTION'].values()['FONCTION']
         fonc_py = [sd_fonction(fonc) for fonc in nom_fonc]
         temp = fonc_py[0].VALE.get()
         dt = temp[1] - temp[0]
@@ -180,9 +180,9 @@ def calc_spec_ops(self, TAB_ECHANT, ECHANT, INTERSPE, TRANSFERT, TITRE, INFO, **
     num_mes = []
 
     if TAB_ECHANT:  # Cas TAB_ECHANT
-        num_mes_temp = list(tab_py['NUME_MES'].values())['NUME_MES']
+        num_mes_temp = tab_py['NUME_MES'].values()['NUME_MES']
         max_mes = numpy.maximum.reduce(num_mes_temp)
-        num_ord_temp = list(tab_py['NUME_ORDRE_I'].values())['NUME_ORDRE_I']
+        num_ord_temp = tab_py['NUME_ORDRE_I'].values()['NUME_ORDRE_I']
         long_fonc = [len(fonc_py[i1].VALE.get()) for i1 in range(len(fonc_py))]
 
         N_fen = int(

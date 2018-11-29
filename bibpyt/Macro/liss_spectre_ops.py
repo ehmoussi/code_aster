@@ -34,7 +34,7 @@ def recu_val(tab, para, stop=0, typ=None):
         les None + un strip pour les chaines de caracteres
     """
     if para in tab.para:
-        lival = list(tab.values())[para]
+        lival = tab.values()[para]
         if typ=='K':
             lival = [i.strip() for i in lival if i != None]
         else:

@@ -51,7 +51,7 @@ def crea_grp_matiere(self, groupe, newgrp, iocc, m, __remodr, NOM_CHAM, LIGN_COU
     # dictb=table initiale (contenant éventuellement des noeuds hors matière)
     dictb = __tab.EXTR_TABLE()
     # listenoe_b=liste ordonnee des noeuds de la ligne de coupe (avec doublons)
-    listenoe_b = list(dictb.NOEUD.values())
+    listenoe_b = dictb.NOEUD.values()
     # lno_b2=liste des noeuds de la ligne de coupe après élimination des doublons
     # (attention, on perd l'ordre des noeuds)
     lno_b2 = set(listenoe_b)
@@ -72,7 +72,7 @@ def crea_grp_matiere(self, groupe, newgrp, iocc, m, __remodr, NOM_CHAM, LIGN_COU
         lno_c2 = set()
         for comp in new_para.difference(['NOEUD']):
             dictc = getattr(dictb, comp).NON_VIDE()
-            lno_c2.update(list(dictc.NOEUD.values()))
+            lno_c2.update(dictc.NOEUD.values())
 
     # on réordonne la liste des noeuds de lno_c2 (selon leur position dans listenoe_b) => l_matiere
     # l_horsmat=liste des noeuds hors matière
@@ -1089,7 +1089,7 @@ def macr_lign_coupe_ops(self, RESULTAT, CHAM_GD, LIGN_COUPE,
     # Ajout de la colonne theta
     if len(arcgma) > 0 and 'ABSC_CURV' in dictab.para:
         coltab = []
-        val = list(dictab['ABSC_CURV'].values())['ABSC_CURV']
+        val = dictab['ABSC_CURV'].values()['ABSC_CURV']
         nbi = len(val) / nbno
         nba = len(angles)
         tmp = []

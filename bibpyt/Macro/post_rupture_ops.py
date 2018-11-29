@@ -334,7 +334,7 @@ def post_rupture_ops(self, TABLE, OPERATION, **args):
 
         if 'NUME_FOND' in tabin.para:
         # recuperation des numeros des fonds
-            contenu_nume_fond = list(tabin.NUME_FOND.values())
+            contenu_nume_fond = tabin.NUME_FOND.values()
             nume_fond = list(set(contenu_nume_fond))
 
             indice_tmp = 0
@@ -684,7 +684,7 @@ def post_rupture_ops(self, TABLE, OPERATION, **args):
                                            NOM_PARA='NUM_PT'))
 
             tabin = __COPIE_TABIN.EXTR_TABLE()
-            contenu_nume_fond = list(tabin.NUME_FOND.values())
+            contenu_nume_fond = tabin.NUME_FOND.values()
             nume_fond = list(set(contenu_nume_fond))
 
             for j, fond_j in enumerate(nume_fond):
@@ -735,13 +735,13 @@ def post_rupture_ops(self, TABLE, OPERATION, **args):
                                                )
 
                         if i == 0:
-                            nb_cycles_ref = list(__TABC[
-                                i].EXTR_TABLE().CYCLE.values())[-1]
+                            nb_cycles_ref = __TABC[
+                                i].EXTR_TABLE().CYCLE.values()[-1]
                         else:
                             # verif que l'on a bien le meme nb de cycles que la
                             # 1ere quantité
-                            nb_cycles_i = list(__TABC[
-                                i].EXTR_TABLE().CYCLE.values())[-1]
+                            nb_cycles_i = __TABC[
+                                i].EXTR_TABLE().CYCLE.values()[-1]
                             if nb_cycles_ref != nb_cycles_i:
                                 UTMESS('F', 'RUPTURE1_61')
 
@@ -771,7 +771,7 @@ def post_rupture_ops(self, TABLE, OPERATION, **args):
 
                     # on complete la table avec les parametres auxiliaires
                     tab_tmp = tabin.NUM_PT == numpt
-                    tab_tmp = list(tab_tmp.values())
+                    tab_tmp = tab_tmp.values()
                     for para in l_para_aux:
                      # on prend la 1ere valeur (pour bien faire, il faudrait verifier que toutes
                      # les valeurs sont bien identiques)
@@ -848,7 +848,7 @@ def post_rupture_ops(self, TABLE, OPERATION, **args):
             tabin['NUME_FOND'] = [1] * len(tabin)
         if 'NUM_PT' not in tabin.para:
             tabin['NUM_PT'] = [1] * len(tabin)
-        contenu_nume_fond = list(tabin.NUME_FOND.values())
+        contenu_nume_fond = tabin.NUME_FOND.values()
         nume_fond = list(set(contenu_nume_fond))
 
         for i, fond_i in enumerate(nume_fond):
@@ -862,7 +862,7 @@ def post_rupture_ops(self, TABLE, OPERATION, **args):
             for ipt in range(nbpt):
                 numpt = ipt + 1
                 tab = tab_fond_i.NUM_PT == numpt
-                dic = list(tab.values())
+                dic = tab.values()
 
                 # creation de la liste des valeurs des para initiaux
                 l_vale = []
@@ -874,7 +874,7 @@ def post_rupture_ops(self, TABLE, OPERATION, **args):
 
                 # rajout de la derniere colonne : moyenne des valeurs
                 l_para.append(q)
-                da_cycle = NP.array(list(tab.values())[q])
+                da_cycle = NP.array(tab.values()[q])
                 moy = da_cycle.mean()
                 l_vale.append(moy)
 

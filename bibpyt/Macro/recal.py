@@ -290,7 +290,7 @@ def get_tables(tables_calc, tmp_repe_table, prof):
             reader = TableReaderFactory(texte, 'ASTER', ' ')
             table_lue = reader.read(1)
             list_para = table_lue.para
-            tab_lue   = list(table_lue.values())
+            tab_lue   = table_lue.values()
         except Exception as err:
             ier = 1
         else:
@@ -640,7 +640,7 @@ class CALCULS_ASTER:
                 DETRUIRE(OBJET=_F(CHAINE='VEXTR___'), INFO=1)  # Faudrait proteger ce nom ici (VEXTR___ peut etre deja utilise dans l'etude)
                 exec( "VEXTR___ = %s.EXTR_TABLE()" % reponse)
                 list_para = VEXTR___.para
-                tab_lue   = list(VEXTR___.values())
+                tab_lue   = VEXTR___.values()
                 F = table2numpy(tab_lue, list_para, reponses, i)
                 Lrep.append(F)
 

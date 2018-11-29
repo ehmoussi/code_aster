@@ -630,7 +630,7 @@ class Mac3CoeurDeformation(Mac3CoeurCalcul):
                               OPERATION='EXTRACTION',),)
 
         tab2=__SPRING.EXTR_TABLE()
-        valeurs=list(tab2.values())
+        valeurs=tab2.values()
 
         inst=valeurs['INST'][-1]
         fx=valeurs['DX']
