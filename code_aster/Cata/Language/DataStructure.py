@@ -27,7 +27,7 @@ the return of the class method `getType()` of datastructures.
 Ex.: maillage_sdaster.getType() = Mesh().getType() = "MAILLAGE"
 """
 
-import UserDict
+from collections import UserDict
 
 
 class DataStructure(object):
@@ -99,7 +99,7 @@ def AsType(obj):
     return type(obj)
 
 
-class PythonVariable(UserDict.UserDict, DataStructure):
+class PythonVariable(UserDict, DataStructure):
     """Generic type for all Python variables, for conversion only in AsterStudy.
 
     Inheritance from dict allows to support item assignement,
