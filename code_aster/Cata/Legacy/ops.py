@@ -81,7 +81,7 @@ def commun_DEBUT_POURSUITE(jdc, PAR_LOT, IMPR_MACRO, CODE, DEBUG, IGNORE_ALARM, 
             from code_aster.Cata.Syntax import tr
             from Execution.i18n import localization
             translation = localization.install(LANG)
-            tr.set_translator(translation.ugettext)
+            tr.set_translator(translation.gettext)
         # pb en cas d'erreur dans FIN : appeler reset_print_function dans traiter_fin_exec ?
         # from functools import partial
         # asprint = partial(aster.affiche, 'MESSAGE')
