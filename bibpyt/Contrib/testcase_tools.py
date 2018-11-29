@@ -50,9 +50,11 @@ def change_test_resu():
                              '', ''])
     reval = re.compile('^ *(OK|NOOK|SKIP) +NON_REGRESSION +(?P<leg>.+?) +'
                        '(?P<refe>.+?) +(?P<calc>.+?) +(?P<err>.+?) +(?P<tole>.+?) *$', re.M)
-    fort8 = open('fort.8', 'rb').read().decode()
+    with open('fort.8', 'rb') as f:
+        fort8 = f.read().decode()
     results = reval.findall(fort8)
-    fort1 = open('fort.1', 'rb').read().decode()
+    with open('fort.1', 'rb') as f:
+        fort1 = f.read().decode()
     keywords = read_keyword_value('VALE_CALC(|_.)', fort1)
     for i, val in enumerate(results):
         print(i, val)
@@ -88,7 +90,8 @@ def append_to_file(fname, txt, delimiter=None, stdout=None):
     """Append a text at the end of a file"""
     if delimiter:
         txt = os.linesep.join([delimiter, txt, delimiter])
-    open(fname, 'ab').write(txt.encode())
+    with open(fname, 'ab') as f:
+        f.write(txt.encode())
     if stdout:
         print(txt)
 
@@ -120,7 +123,8 @@ def get_dest_filename(fname, nb):
     lexp = glob(osp.join('astest', root + '.export')) \
         + glob(osp.join('../validation/astest', root + '.export'))
     if lexp:
-        export = open(lexp[0], 'rb').read()
+        with open(lexp[0], 'rb')as f:
+            export = f.read()
         lres = _re_comm.findall(export)
         i = len(lres) + 100
     else:
@@ -148,7 +152,8 @@ def extract_from(from_dir, to_dir, pattern='*.mess'):
     if not osp.exists(to_dir):
         os.makedirs(to_dir)
     for fname in lfiles:
-        txt = open(fname, 'rb').read()
+        with open(fname, 'rb') as f:
+            txt = f.read()
         parts = txt.split(DELIMITER)
         if len(parts) % 2 != 1:
             print('%s: expected an odd number of delimiters' % fname)
@@ -161,7 +166,8 @@ def extract_from(from_dir, to_dir, pattern='*.mess'):
                 resname += '.' + osp.basename(fname)
             print('write', resname)
             content = parts[2 * i + 1].strip() + os.linesep
-            open(resname, 'wb').write(content)
+            with open(resname, 'wb') as f:
+                f.write(content)
 
 if __name__ == '__main__':
     args = sys.argv[1:]

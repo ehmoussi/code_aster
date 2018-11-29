@@ -619,7 +619,8 @@ class CALCULS_ASTER:
             # ----------------------------------------------------------------------------
             new = "fort.%s.new" % self.UNITE_INCLUDE
             try:
-                exec(compile(open(new).read(), new, 'exec'))
+                with open(new) as f:
+                    exec(compile(f.read(), new, 'exec'))
             except Exception as e:
                 UTMESS('F', 'RECAL0_85', valk=str(e))
 
@@ -1433,7 +1434,8 @@ if __name__ == '__main__':
             try:
                 if info >= 1:
                     print("Read MR parameters file : %s" % options.mr_parameters)
-                exec(compile(open(options.mr_parameters).read(), options.mr_parameters, 'exec'))
+                with open(options.mr_parameters) as f:
+                    exec(compile(f.read(), options.mr_parameters, 'exec'))
             except:
                 raise Exception("Wrong file for MR Parameters: %s" % options.mr_parameters)
         else:

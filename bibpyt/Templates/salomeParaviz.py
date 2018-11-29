@@ -107,14 +107,16 @@ title = re.compile('^#COLUMN_TITLES: *(.*)$', re.M)
 
 def convert(fname):
     """Convert in place an output file from Stanley for Paravis"""
-    txt = open(fname, 'r').read()
+    with open(fname, 'r') as f:
+        txt = f.read()
     mat = title.search(txt)
     assert mat, "COLUMN_TITLES not found"
     label = mat.group(1).split('|')
     values = nocomment.findall(txt)
     cont = [' '.join(label)]
     cont.extend(values)
-    open(fname, 'w').write(os.linesep.join(cont))
+    with open(fname, 'w') as f:
+        f.write(os.linesep.join(cont))
 
 
 if 'CHOIX' == 'COURBE':

@@ -438,5 +438,6 @@ if __name__ == '__main__':
     txt = tree.get_stats(level=2)
     print(txt)
     cnt = tree.build_graph()
-    open('/tmp/graph.dot', 'w').write(cnt)
+    with open('/tmp/graph.dot', 'w') as f:
+        f.write(cnt)
     # dot -Tpng -o /tmp/graph.png /tmp/graph.dot ; eog /tmp/graph.png

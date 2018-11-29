@@ -214,7 +214,8 @@ class JDC:
         # fichier d'info
         txt = "%10.2f %10.2f %10.2f %10.2f\n" \
             % (elapsed_total, cpu_total_user, cpu_total_syst, cpu_restant)
-        open('info_cpu', 'w').write(txt)
+        with open('info_cpu', 'w') as f:
+            f.write(txt)
 
     def traiter_fin_exec(self, mode, etape=None):
         """ Cette methode realise un traitement final lorsque la derniere commande
@@ -271,8 +272,8 @@ class JDC:
             self.timer_fin.Stop(" . filter")
         # Sauvegarde du pickle dans le fichier pick.1 du repertoire de travail
 
-        file = open('pick.1', 'wb')
-        pickle.dump(context, file, protocol=PICKLE_PROTOCOL)
+        with open('pick.1', 'wb') as f:
+            pickle.dump(context, f, protocol=PICKLE_PROTOCOL)
         if self.info_level > 1:
             self.timer_fin.Stop("pickle")
 

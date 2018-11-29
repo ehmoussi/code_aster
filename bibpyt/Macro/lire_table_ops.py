@@ -44,7 +44,8 @@ def lire_table_ops(self, UNITE, FORMAT, SEPARATEUR, NUME_TABLE, RENOMME_PARA,
     if not osp.isfile(nomfich):
         UTMESS('F', 'FONCT0_41', valk=nomfich)
 
-    texte = open(nomfich, 'r').read()
+    with open(nomfich, 'r') as f:
+        texte = f.read()
     # remet UNITE dans son état initial
     UL.EtatInit()
 

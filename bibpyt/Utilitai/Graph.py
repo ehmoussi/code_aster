@@ -946,7 +946,8 @@ class TraceXmgrace(TraceGraph):
         else:
             xmgr = aster_core.get_option('prog:xmgrace')
             nfwrk = self.NomFich[0] + '.wrk'
-            open(nfwrk, 'w').write('\n'.join(content))
+            with open(nfwrk, 'w') as f:
+                f.write('\n'.join(content))
             nfhard = self.NomFich[0] + '.hardcopy'
             # nom exact du pilote
             bg = pilo == 'INTERACTIF_BG'
@@ -975,8 +976,10 @@ class TraceXmgrace(TraceGraph):
             iret = os.system(lcmde)
             if iret == 0 or os.path.exists(nfhard):
                 if pilo not in ('', 'X11'):
-                    new = open(nfhard, 'rb').read()
-                    open(self.NomFich[0], 'ab').write(new)
+                    with open(nfhard, 'rb') as f:
+                        new = f.read()
+                    with open(self.NomFich[0], 'ab') as f:
+                        f.write(new)
             else:
                 UTMESS('A', 'GRAPH0_9', valk=pilo)
         # menage
