@@ -124,13 +124,17 @@ class ExecProgram( object ):
         """Execute the program"""
         cmd = self.cmdBuilder.build( [self.prog] + self.args, self.shell )
         output, error, exitCode = self.executeCmdLine( cmd, capture, silent )
+        if type(output) is bytes:
+            output = output.decode()
+        if type(error) is bytes:
+            error = error.decode()
         ok = self.isOk( exitCode )
         # print the output
         if self.debug or not silent:
             UTMESS('I', 'EXECLOGICIEL0_11',
                    vali=[self.exitCodeMax, exitCode])
             if capture:
-                UTMESS('I', 'EXECLOGICIEL0_9',  valk=output)
+                UTMESS('I', 'EXECLOGICIEL0_9', valk=output)
         # print error in debug mode or if it failed
         if (self.debug or not ok) and capture:
             UTMESS('I', 'EXECLOGICIEL0_10', valk=error, print_as='E')
