@@ -22,7 +22,6 @@
 # --------------------------------------------------------------------------------
 #       impression des catalogues d'elements au format "jeveux" (ojb)
 # ------------------------------------------------------------------------
-import string
 import copy
 import os
 import os.path as osp
@@ -62,7 +61,7 @@ def txtpad(long, chaine):
     #---------------------------------------
     # retourne une chaine de longueur "long" en completant chaine par des
     # "blancs"
-    return chaine[:int].ljust(int)
+    return chaine[:long].ljust(long)
 
 
 #-------------------------------------------------------------------------
@@ -109,12 +108,12 @@ def imprime_ojb(cel, file, timer, dbgdir):
         # "splite" la chaine comlibr en plusieurs lignes et stocke ces lignes dans TOUCOMLIBR
         indice = len(TOUCOMLIBR.objs)
         if comlibr:
-            l = string.split(comlibr, '\n')
+            l = comlibr.split('\n')
             nblig = len(l)
             ind1 = indice
             for x in l:
                 ind1 = ind1 + 1
-                TOUCOMLIBR.cree_oc(nom=str(ind1), int=1)
+                TOUCOMLIBR.cree_oc(nom=str(ind1), long=1)
                 TOUCOMLIBR.ecri_co(nom=str(ind1), indice=1, valeur=x)
         else:
             nblig = 0
@@ -150,9 +149,9 @@ def imprime_ojb(cel, file, timer, dbgdir):
     for tm in meshTypes:
         notm = tm.name
         NOMTM.ajout_nom(notm)
-        NBNO.cree_oc(nom=notm, int=1)
+        NBNO.cree_oc(nom=notm, long=1)
         NBNO.ecri_co(nom=notm, indice=1, valeur=int(tm.nbNodes))
-        TMDIM.cree_oc(nom=notm, int=1)
+        TMDIM.cree_oc(nom=notm, long=1)
         TMDIM.ecri_co(nom=notm, indice=1, valeur=int(tm.dim))
         for elrf in tm.getElrefe():
             nom = elrf.name
@@ -164,8 +163,8 @@ def imprime_ojb(cel, file, timer, dbgdir):
                 nb_fpg = nb_fpg + 1
                 NOFPG.ajout_nom(nom + nfam)
 
-    TMELRF = JV.cree_os(d, nom='&CATA.TM.TMELRF', tsca='I', int=nb_elrf)
-    TMFPG = JV.cree_os(d, nom='&CATA.TM.TMFPG', tsca='I', int=nb_fpg)
+    TMELRF = JV.cree_os(d, nom='&CATA.TM.TMELRF', tsca='I', long=nb_elrf)
+    TMFPG = JV.cree_os(d, nom='&CATA.TM.TMFPG', tsca='I', long=nb_fpg)
     ifpg = 0
     for tm in meshTypes:
         notm = tm.name
@@ -191,7 +190,7 @@ def imprime_ojb(cel, file, timer, dbgdir):
 
     nbgd = len(l_gdsimp) + len(l_gdelem)
     NOMGD = JV.cree_pn(d, nom='&CATA.GD.NOMGD', tsca='K8')
-    TYPEGD = JV.cree_os(d, nom='&CATA.GD.TYPEGD', tsca='K8', int=nbgd)
+    TYPEGD = JV.cree_os(d, nom='&CATA.GD.TYPEGD', tsca='K8', long=nbgd)
     NOMCMP = JV.cree_co(d, nom='&CATA.GD.NOMCMP', tsca='K8',
                         tsca_pn='K8', contig='CONTIG', acces='NO', longv=0)
     DESCRIGD = JV.cree_co(d, nom='&CATA.GD.DESCRIGD', tsca='I',
@@ -205,8 +204,8 @@ def imprime_ojb(cel, file, timer, dbgdir):
         nogd = gd.name
         NOMGD.ajout_nom(nogd)
         TYPEGD.ecri_os(indice=k, valeur=gd.type)
-        NOMCMP.cree_oc(nom=nogd, int=ncmp)
-        DESCRIGD.cree_oc(nom=nogd, int=7)
+        NOMCMP.cree_oc(nom=nogd, long=ncmp)
+        DESCRIGD.cree_oc(nom=nogd, long=7)
 
         (nblcom, indcom) = split_comlibr(TOUCOMLIBR, gd.comment)
         DESCRIGD.ecri_co(nom=nogd, indice=6, valeur=nblcom)
@@ -216,14 +215,14 @@ def imprime_ojb(cel, file, timer, dbgdir):
             NOMCMP.ecri_co(nom=nogd, indice=icmp + 1, valeur=components[icmp])
 
         DESCRIGD.ecri_co(nom=nogd, indice=1, valeur=1)
-        DESCRIGD.ecri_co(nom=nogd, indice=3, valeur=(ncmp - 1) / 30 + 1)
+        DESCRIGD.ecri_co(nom=nogd, indice=3, valeur=int((ncmp - 1) / 30) + 1)
 
     for gd in l_gdelem:
         k = k + 1
         nogd = gd.name
         NOMGD.ajout_nom(nogd)
-        NOMCMP.cree_oc(nom=nogd, int=0)
-        DESCRIGD.cree_oc(nom=nogd, int=7)
+        NOMCMP.cree_oc(nom=nogd, long=0)
+        DESCRIGD.cree_oc(nom=nogd, long=7)
 
         if gd.dim == 'V':
             ERR.veri_appartient_liste(
@@ -279,9 +278,9 @@ def imprime_ojb(cel, file, timer, dbgdir):
         nbou = len(lpaou)
 
         NOMOP.ajout_nom(nom)
-        DESCOPT.cree_oc(nom=nom, int=6 + 3 * (nbin + nbou))
-        OPTPARA.cree_oc(nom=nom, int=nbin + 2 * nbou)
-        LOCALIS.cree_oc(nom=nom, int=3 * nbin)
+        DESCOPT.cree_oc(nom=nom, long=6 + 3 * (nbin + nbou))
+        OPTPARA.cree_oc(nom=nom, long=nbin + 2 * nbou)
+        LOCALIS.cree_oc(nom=nom, long=3 * nbin)
 
         DESCOPT.ecri_co(nom=nom, indice=2, valeur=nbin)
         DESCOPT.ecri_co(nom=nom, indice=3, valeur=nbou)
@@ -341,7 +340,7 @@ def imprime_ojb(cel, file, timer, dbgdir):
     # fonction de calcul d'une suite d'entiers codes correspondant à une liste
     # de CMPS:
     def entiers_codes(note, lcmp, lcmp_gd):
-        nbec = (len(lcmp_gd) - 1) / 30 + 1
+        nbec = int((len(lcmp_gd) - 1) / 30) + 1
         liec = [0] * nbec
         rangav = -1
         for icmp in range(len(lcmp)):
@@ -353,7 +352,7 @@ def imprime_ojb(cel, file, timer, dbgdir):
                          repr(lcmp) + " type_elem: " + note)
 
             rangav = rangcmp
-            iec = rangcmp / 30
+            iec = int(rangcmp / 30)
             puiss = (rangcmp % 30) + 1
             liec[iec] = liec[iec] | 2 ** puiss
         return liec
@@ -374,17 +373,17 @@ def imprime_ojb(cel, file, timer, dbgdir):
         cel.msg("DEBUG {} {} {}".format(nbte, nblocfpg, nbopte))
 
     NOMTE = JV.cree_pn(d, nom='&CATA.TE.NOMTE', tsca='K16')
-    TYPEMA = JV.cree_os(d, nom='&CATA.TE.TYPEMA', tsca='K8', int=nbte)
+    TYPEMA = JV.cree_os(d, nom='&CATA.TE.TYPEMA', tsca='K8', long=nbte)
     NOMMOLOC = JV.cree_pn(d, nom='&CATA.TE.NOMMOLOC', tsca='K24')
     MODELOC = JV.cree_co(d, nom='&CATA.TE.MODELOC', tsca='I',
                          tsca_pn='K24', contig='CONTIG', acces='NU', longv=0)
-    NBELREFE = JV.cree_os(d, nom='&CATA.TE.NBELREFE', tsca='I', int=2 * nbte)
+    NBELREFE = JV.cree_os(d, nom='&CATA.TE.NBELREFE', tsca='I', long=2 * nbte)
     NOELREFE = JV.cree_os(
-        d, nom='&CATA.TE.NOELREFE', tsca='K8', int=cel.getNbElrefe())
+        d, nom='&CATA.TE.NOELREFE', tsca='K8', long=cel.getNbElrefe())
     PNLOCFPG = JV.cree_os(
-        d, nom='&CATA.TE.PNLOCFPG', tsca='K32', int=nblocfpg)
-    NOLOCFPG = JV.cree_os(d, nom='&CATA.TE.NOLOCFPG', tsca='I', int=nblocfpg)
-    OPTT2 = JV.cree_os(d, nom='&CATA.TE.OPTT2', tsca='I', int=2 * nbopte)
+        d, nom='&CATA.TE.PNLOCFPG', tsca='K32', long=nblocfpg)
+    NOLOCFPG = JV.cree_os(d, nom='&CATA.TE.NOLOCFPG', tsca='I', long=nblocfpg)
+    OPTT2 = JV.cree_os(d, nom='&CATA.TE.OPTT2', tsca='I', long=2 * nbopte)
 
     OPTMOD = JV.cree_co(d, nom='&CATA.TE.OPTMOD', tsca='I',
                         tsca_pn='K8', contig='CONTIG', acces='NU', longv=0)
@@ -406,7 +405,7 @@ def imprime_ojb(cel, file, timer, dbgdir):
     for nofpgl, loc in list(locations.items()):
         NOFPG_LISTE.ajout_nom(nofpgl)
         nbpt = len(loc)
-        FPG_LISTE.cree_oc(nom=nofpgl, int=nbpt)
+        FPG_LISTE.cree_oc(nom=nofpgl, long=nbpt)
         for kk in range(nbpt):
             FPG_LISTE.ecri_co(nom=nofpgl, indice=kk + 1, valeur=loc[kk])
         i += 1
@@ -492,7 +491,7 @@ def imprime_ojb(cel, file, timer, dbgdir):
         # ---------------------------------
         liattr = get_liattr(cel, cata)
         nbattr = len(liattr)
-        CTE_ATTR.cree_oc(nom=note, int=nbattr * 2)
+        CTE_ATTR.cree_oc(nom=note, long=nbattr * 2)
         for iattr in range(nbattr):
             CTE_ATTR.ecri_co(nom=note, indice=2*iattr + 1, valeur=liattr[iattr][0].name)
             CTE_ATTR.ecri_co(nom=note, indice=2*iattr + 2, valeur=liattr[iattr][1])
@@ -566,9 +565,9 @@ def imprime_ojb(cel, file, timer, dbgdir):
                 nbpt3 = nbpt
 
             if typept == "ELGA":
-                MODELOC.cree_oc(nom=nomolo2, int=4 + nec * nbpt3 + 1)
+                MODELOC.cree_oc(nom=nomolo2, long=4 + nec * nbpt3 + 1)
             else:
-                MODELOC.cree_oc(nom=nomolo2, int=4 + nec * nbpt3)
+                MODELOC.cree_oc(nom=nomolo2, long=4 + nec * nbpt3)
 
             if typept == "ELEM":
                 MODELOC.ecri_co(nom=nomolo2, indice=1, valeur=1)
@@ -639,7 +638,7 @@ def imprime_ojb(cel, file, timer, dbgdir):
             nomolo2 = note2 + nomolo
             igd = NOMGD.jenonu(nogd)
             NOMMOLOC.ajout_nom(nomolo2)
-            MODELOC.cree_oc(nom=nomolo2, int=5)
+            MODELOC.cree_oc(nom=nomolo2, long=5)
             MODELOC.ecri_co(nom=nomolo2, indice=1, valeur=4)   # VECTEUR
             MODELOC.ecri_co(nom=nomolo2, indice=2, valeur=igd)
             nbscal = MODELOC.lit_co(nom=note2 + molo1, indice=3)
@@ -665,7 +664,7 @@ def imprime_ojb(cel, file, timer, dbgdir):
             igd = NOMGD.jenonu(nogd)
             type_matrice = DESCRIGD.lit_co(nom=nogd, indice=1)
             NOMMOLOC.ajout_nom(nomolo2)
-            MODELOC.cree_oc(nom=nomolo2, int=5)
+            MODELOC.cree_oc(nom=nomolo2, long=5)
             MODELOC.ecri_co(nom=nomolo2, indice=1, valeur=5)   # MATRICE
             MODELOC.ecri_co(nom=nomolo2, indice=2, valeur=igd)
             nbsca1 = MODELOC.lit_co(nom=note2 + molo1, indice=3)
@@ -673,7 +672,7 @@ def imprime_ojb(cel, file, timer, dbgdir):
             if molo2 != molo1 and type_matrice != 5:
                 raise Exception("Erreur")
             if type_matrice == 4:
-                nbscal = nbsca1 * (nbsca1 + 1) / 2
+                nbscal = int(nbsca1 * (nbsca1 + 1) / 2)
             elif type_matrice == 5:
                 nbscal = nbsca1 * nbsca2
             else:
@@ -715,8 +714,8 @@ def imprime_ojb(cel, file, timer, dbgdir):
             nuop = NOMOP.jenonu(nom=noop)
             OPTT2.ecri_os(indice=2 * (ioptte - 1) + 1, valeur=nuop)
             OPTT2.ecri_os(indice=2 * (ioptte - 1) + 2, valeur=nute)
-            OPTMOD.cree_oc(nom=str(ioptte), int=3 + nbin + nbou)
-            OPTNOM.cree_oc(nom=str(ioptte), int=nbin + nbou)
+            OPTMOD.cree_oc(nom=str(ioptte), long=3 + nbin + nbou)
+            OPTNOM.cree_oc(nom=str(ioptte), long=nbin + nbou)
             OPTMOD.ecri_co(nom=str(ioptte), indice=1, valeur=numte)
             OPTMOD.ecri_co(nom=str(ioptte), indice=2, valeur=nbin)
             OPTMOD.ecri_co(nom=str(ioptte), indice=3, valeur=nbou)
@@ -771,8 +770,8 @@ def imprime_ojb(cel, file, timer, dbgdir):
                 nuop = NOMOP.jenonu(nom=noop)
                 OPTT2.ecri_os(indice=2 * (ioptte - 1) + 1, valeur=nuop)
                 OPTT2.ecri_os(indice=2 * (ioptte - 1) + 2, valeur=nute)
-                OPTMOD.cree_oc(nom=str(ioptte), int=3 + nbin + nbou)
-                OPTNOM.cree_oc(nom=str(ioptte), int=nbin + nbou)
+                OPTMOD.cree_oc(nom=str(ioptte), long=3 + nbin + nbou)
+                OPTNOM.cree_oc(nom=str(ioptte), long=nbin + nbou)
                 OPTMOD.ecri_co(nom=str(ioptte), indice=1, valeur=numte)
                 OPTMOD.ecri_co(nom=str(ioptte), indice=2, valeur=nbin)
                 OPTMOD.ecri_co(nom=str(ioptte), indice=3, valeur=nbou)
@@ -805,7 +804,7 @@ def imprime_ojb(cel, file, timer, dbgdir):
             laffe = modeli.elements
             lattrib = modeli.attrs
             NOMMODELI.ajout_nom(mod)
-            MODELI.cree_oc(nom=mod, int=(nbtm + 2))
+            MODELI.cree_oc(nom=mod, long=(nbtm + 2))
             MODELI.ecri_co(nom=mod, indice=nbtm + 1, valeur=int(d1))
             MODELI.ecri_co(nom=mod, indice=nbtm + 2, valeur=int(d2))
             for (tyma, tyel) in laffe:
@@ -1167,8 +1166,8 @@ def PbOptions(cel):
             for opt in opts:
                 noop = opt[0]
                 numte = opt[1]
-                nbin = len(opt[2]) / 2
-                nbou = len(opt[3]) / 2
+                nbin = int(len(opt[2]) / 2)
+                nbou = int(len(opt[3]) / 2)
                 if not noop in utilise:
                     utilise[noop] = []
                 if numte > 0:

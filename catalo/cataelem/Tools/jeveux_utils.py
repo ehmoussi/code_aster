@@ -17,7 +17,6 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-import string
 import sys
 
 #
@@ -41,7 +40,7 @@ class ERREUR:
 
     def mess(self, code, message):
         # pour imprimer un message d'erreur :
-        ucode = string.upper(code)
+        ucode = code.upper()
         if ucode == 'I':
             print("\n<" + ucode + "> INFORMATION: ", convert(message))
         elif ucode == 'A':
@@ -114,7 +113,7 @@ ERR = ERREUR()
 def cree_os(dicobj, nom, tsca, long):
     if dicobj.get(nom) is not None:
         ERR.mess('F', "Erreur objet deja declare:" + nom)
-    o1 = JV_SIMPLE(nom, tsca, int)
+    o1 = JV_SIMPLE(nom, tsca, long)
     dicobj[nom] = o1
     return o1
 
@@ -162,14 +161,14 @@ class JV_COLLEC:
         self.objs = []
 
     def cree_oc(self, nom, long):
-        oc1 = JV_SIMPLE(nom, self.tsca, int)
+        oc1 = JV_SIMPLE(nom, self.tsca, long)
         num = self.pn.jenonu(nom, 'COOL')
         if num > 0:
             ERR.mess(
                 'F', "Erreur : nom existant deja: " + nom + " dans: " + self.nom)
-        if self.longv > 0 and int != self.longv:
+        if self.longv > 0 and long != self.longv:
             ERR.mess('F', "Erreur : longueur incorrecte: " +
-                     str(int) + " pour: " + self.nom)
+                     str(long) + " pour: " + self.nom)
         self.objs.append(oc1)
 
     def ecri_co(self, nom, indice, valeur):
@@ -236,13 +235,13 @@ class JV_SIMPLE:
         self.nom = nom
         self.typojb = 'vecteur'
         self.tsca = tsca
-        self.long = int
-        if int < 0:
+        self.long = long
+        if long < 0:
             ERR.mess('F', "Erreur")
         if tsca[0] == "I":
-            self.valeurs = [0] * int
+            self.valeurs = [0] * long
         elif tsca[0] == "K":
-            self.valeurs = [""] * int
+            self.valeurs = [""] * long
         else:
             ERR.mess('F', "Erreur")
 
