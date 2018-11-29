@@ -36,8 +36,8 @@ is_ok = 0
 
 try:
    TEST_RESU(TEST_NAN='OUI',)
-except aster.error,err:
-   print fmt_raison % str(err)
+except aster.error as err:
+   print((fmt_raison % str(err)))
    # on verifie que l'erreur fatale est bien celle que l'on attendait :
    if err.id_message == "DVP_2":
       is_ok = 1

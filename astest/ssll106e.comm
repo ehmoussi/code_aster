@@ -762,7 +762,7 @@ PI=math.pi
 IF=PI*(REXT**4-(REXT-EP)**4)/4
 JX=2.0*IF
 SU=PI*(REXT**2-(REXT-EP)**2)
-print 'SU, IF =',SU,IF
+print('SU, IF =',SU,IF)
 
 # Solution analytique chargement 1 Fx local = 500
 EPXX=500./E/SU

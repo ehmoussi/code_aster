@@ -44,7 +44,7 @@ w2_2 = (k2_2/m2_2)**0.5
 f2_2 = w2_2/(2*math.pi)
 w2_3 = (k2_3/m2_3)**0.5
 f2_3 = w2_3/(2*math.pi)
-print f1,f1s,f2_1,f2_2,f2_3
+print((f1,f1s,f2_1,f2_2,f2_3))
 
 amor_supp = 0.07
 amor_equi = 0.05
@@ -54,7 +54,7 @@ c1 = 2*(m1+m2)*amor_supp*w1
 c2_1 = 2*m2_1*amor_equi*w2_1
 c2_2 = 2*m2_2*amor_equi*w2_2
 c2_3 = 2*m2_3*amor_equi*w2_3
-print c1
+print(c1)
 ###
 
 MAILLAG0=LIRE_MAILLAGE(FORMAT='ASTER', )

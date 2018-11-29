@@ -220,7 +220,7 @@ iflow = 5 # Type of ingoing fluid
 # Friction coefficient computed by rugosity
 #  --> Ecrevisse : parameter ifrot>0
 #
-for icalc in xrange(Npos):
+for icalc in range(Npos):
 
     ifrot = lst_frot[icalc]
     kgtest = 0.5

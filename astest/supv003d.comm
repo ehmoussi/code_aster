@@ -37,7 +37,7 @@ assert min(coord) == 0.0, coord
 assert max(coord) == 0.1, coord
 
 conn = aster.getcolljev("MA      .CONNEX         ")
-assert conn.keys() == [1, ], conn
+assert list(conn.keys()) == [1, ], conn
 assert conn[1] == (1, 2), conn
 
 nommai = aster.getvectjev("MA      .NOMMAI                 ")

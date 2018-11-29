@@ -218,7 +218,7 @@ RMECA = [None]*len(lst_frot)
 #  --> Ecrevisse : parameter ifrot>0
 #  --> Rugosity is here the maximal size of concrete aggregates
 
-for icalc in xrange(len(lst_frot)):
+for icalc in range(len(lst_frot)):
     
     ifrot = lst_frot[icalc]
     kgtest = 0.5

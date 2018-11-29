@@ -49,30 +49,30 @@ mat = NP.array([[ 1.83531490-0.j, 1.83502967+0.j],
 a, b = LA.eig(mat)
 store(vale, a)
 store(vale, b)
-print 'EIG : ',  a, b
+print('EIG : ',  a, b)
 
 iv = NP.linalg.inv(mat)
 store(vale, iv)
-print 'INVERSE : ', iv
+print('INVERSE : ', iv)
 
 # cholesky matrice reelle
 matrc = LA.cholesky(mat.real)
 store(vale, matrc)
-print 'TEST CHOL R', matrc
+print('TEST CHOL R', matrc)
 
 # cholesky matrice complexe
 matc = LA.cholesky(mat)
 store(vale, matc)
-print 'TEST CHOL', matc
+print('TEST CHOL', matc)
 
 mati = NP.array([[ 0.31830989-0.j,         0.15522542+0.12818923j],
                  [ 0.15522542-0.12818923j, 0.15915494-0.j]])
 matc = LA.cholesky(mati)
 store(vale, matc)
-print 'TEST CHOL', matc
+print('TEST CHOL', matc)
 
 tab = CREA_TABLE(LISTE=(_F(PARA='I',
-                           LISTE_I=range(len(vale))),
+                           LISTE_I=list(range(len(vale)))),
                         _F(PARA='VALE',
                            LISTE_R=vale)))
 

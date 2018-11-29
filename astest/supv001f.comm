@@ -45,7 +45,7 @@ ma = DEFI_GROUP(
 
 tab = CREA_TABLE(LISTE=(
     _F(PARA='INT',
-       LISTE_I=range(5),),
+       LISTE_I=list(range(5)),),
     _F(PARA='STR',
        LISTE_K=[str(i) for i in range(5)],),
     _F(PARA='NPSTR',

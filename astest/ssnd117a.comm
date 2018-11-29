@@ -87,7 +87,7 @@ def FctRp(p):
     return Sy + Kp*p/pow(1.0+pow(Kp*p/(Su-Sy),Puiss),1.0/Puiss)
 
 Lt_p =NU.arange(0.0,U01*4.0,0.01)
-Lt_rp=map( FctRp , Lt_p )
+Lt_rp=list(map( FctRp , Lt_p ))
 Lt_p += Sy/Kp
 Lt_p=list(Lt_p)
 Lt_p.insert(0, 0.0)
@@ -309,7 +309,7 @@ ResuIntgr={
 }
 
 Lpara=[('DX',1),('N',2),('V1',3),('V4',4),('V7',5),('V9',6),('V8',7)]
-for nume_ordre in ResuIntgr.keys():
+for nume_ordre in list(ResuIntgr.keys()):
     for para,indx in Lpara:
         TEST_TABLE(TABLE=TABRES1,
             FILTRE=_F(NOM_PARA='NUME_ORDRE', CRIT_COMP='EQ', VALE_I= nume_ordre),

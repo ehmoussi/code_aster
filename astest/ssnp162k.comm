@@ -183,7 +183,7 @@ TRAC_1=AFFE_CHAR_MECA(
   )
 
 # CREATION DE LISTE D'INSTANT
-L_INST=DEFI_LIST_REEL(VALE=range(insfin+1))
+L_INST=DEFI_LIST_REEL(VALE=list(range(insfin+1)))
 
 # LISTE D'INSTANTS POUR LES TESTS DE RESULTATS
 linst=[0,insfin/4,insfin/2,3*insfin/4,insfin]

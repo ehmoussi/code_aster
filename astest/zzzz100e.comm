@@ -122,7 +122,7 @@ try:
                         ),
               UNITE  =85)
 except:
-    print "L'impression doit se faire sous Salome-Meca avec la librairie Matplotlib"
+    print("L'impression doit se faire sous Salome-Meca avec la librairie Matplotlib")
     pass
 
 

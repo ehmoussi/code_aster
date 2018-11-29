@@ -78,10 +78,10 @@ MO      = [None]*nb_iter
 CHERR   = [None]*nb_iter
 DIAM    = [None]*(nb_iter+1)
 
-print 'n = %f' % n
-print 'nb_raff = %f' % nb_raff
-print 'nb_iter = %f' % nb_iter
-print 'h = %f' % h
+print('n = %f' % n)
+print('nb_raff = %f' % nb_raff)
+print('nb_iter = %f' % nb_iter)
+print('h = %f' % h)
 
 i_raff=0   
 MA[i_raff]=LIRE_MAILLAGE(FORMAT='MED',);
@@ -350,7 +350,7 @@ def G_Murakami(x):
 s_deb = 0.
 s_fin = 0.354497665
 npt_s = 100
-s_Mur = [s_deb + ipt*(s_fin-s_deb)/npt_s for ipt in xrange(npt_s+1)]
+s_Mur = [s_deb + ipt*(s_fin-s_deb)/npt_s for ipt in range(npt_s+1)]
 G_Mur = [G_Murakami(s) for s in s_Mur]
 
 IMPR_FONCTION(FORMAT='XMGRACE',

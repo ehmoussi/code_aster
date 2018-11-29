@@ -221,7 +221,7 @@ iflow = 5 # Type of ingoing fluid
 # User defined friction coefficient
 #  --> Ecrevisse : parameter -5<ifrot<0
 #
-for icalc in xrange(Npos):
+for icalc in range(Npos):
     kgtest = 0.5
     ifrot  = lst_frot[icalc]
     titre = 'ICHAL=2, IFLOW=5, IFROT='+str(ifrot)

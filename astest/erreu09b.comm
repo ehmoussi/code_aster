@@ -106,8 +106,8 @@ F=DEFI_FONCTION(NOM_PARA='INST',
 
 tpmax = aster_core.get_option("tpmax")
 tpsnl = 7.
-print("Decrease time limit from {0} to {1} s to force STAT_NON_LINE to "
-      "interrupt.".format(tpmax, tpsnl))
+print(("Decrease time limit from {0} to {1} s to force STAT_NON_LINE to "
+      "interrupt.".format(tpmax, tpsnl)))
 aster_core.set_option("tpmax", tpsnl)
 is_ok = 0
 try:
@@ -132,10 +132,10 @@ try:
                               PREDICTION='ELASTIQUE',MATR_RIGI_SYME='OUI',
                               REAC_ITER=1,),
                      ARCHIVAGE=_F(LIST_INST=L_INST,),);
-except aster.ArretCPUError, msg:
+except aster.ArretCPUError as msg:
    is_ok = 1
 
-print "Restore time limit to {0} s".format(tpmax)
+print(("Restore time limit to {0} s".format(tpmax)))
 aster_core.set_option("tpmax", tpmax)
 
 

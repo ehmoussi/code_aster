@@ -72,11 +72,11 @@ hc = b/15.
 # attention, en python log = ln (logarithme neperien)
 n = (log(h0)-log(hc))/log(2)
 nb_raff = int(n)+1
-print '_'*3+'INFO'+3*'_'+' nb_raff = ',nb_raff
+print('_'*3+'INFO'+3*'_'+' nb_raff = ',nb_raff)
 
 # taille des mailles apres raffinement
 h = h0/(2.**nb_raff)
-print '_'*3+'INFO'+3*'_'+' h = ',h
+print('_'*3+'INFO'+3*'_'+' h = ',h)
 
 # rayon du disque de raffinement
 r_raff = 4*h
@@ -123,7 +123,7 @@ MDISTF = FORMULE(VALE='-1.*sqrt(X1**2+X2**2)',
 #                 RAFFINEMENT INITIAL
 #--------------------------------------------------------------------
 
-print '_'*3+'INFO'+3*'_'+' raffinement initial'
+print('_'*3+'INFO'+3*'_'+' raffinement initial')
 
 
 # initialisation des concepts pour le raffinement
@@ -203,9 +203,9 @@ IMPR_RESU(FORMAT='MED',UNITE=100+i_propa,RESU=_F(MAILLAGE=MAIT[i_tot]))
 #           BOUCLE SUR LES PAS DE PROPAGATIONS
 #--------------------------------------------------------------------
 
-for i_propa in xrange(nb_pas) :
+for i_propa in range(nb_pas) :
 
-   print '_'*3+'INFO'+3*'_'+' pas de propagation ',i_propa
+   print('_'*3+'INFO'+3*'_'+' pas de propagation ',i_propa)
 
 
    
@@ -230,10 +230,10 @@ for i_propa in xrange(nb_pas) :
       # RECUPERATION DE LA TABLE CONTENANT LE NOMBRE DE FONDS DE FISSURE
       NB_FOND=RECU_TABLE(CO=FISS[i_propa],NOM_TABLE='NB_FOND_FISS')
 
-      dict = NB_FOND.EXTR_TABLE().values()
+      dict = list(NB_FOND.EXTR_TABLE().values())
       nb_fond = dict['NOMBRE'][0]
       if nb_fond != 1 :
-         print '<F> : erreur fatale : le nombre de fonds de fissure est different de 1'
+         print('<F> : erreur fatale : le nombre de fonds de fissure est different de 1')
          FIN()
 
    
@@ -270,7 +270,7 @@ for i_propa in xrange(nb_pas) :
 
 
    # Resolution
-   print '_'*3+'INFO'+3*'_'+'    resolution '
+   print('_'*3+'INFO'+3*'_'+'    resolution ')
    RESU=MECA_STATIQUE(MODELE=MODX,
                       CHAM_MATER=CHMAT,
                       EXCIT=(_F(CHARGE=AFFE,),
@@ -281,7 +281,7 @@ for i_propa in xrange(nb_pas) :
    #                POST-TRAITEMENT EN MECANIQUE DE LA RUPTURE
    #-----------------------------------------------------------------------------------------
 
-   print '_'*3+'INFO'+3*'_'+'    calcul des K '
+   print('_'*3+'INFO'+3*'_'+'    calcul des K ')
    # LISSAGE LEGENDRE
    # les K sont en Pa.sqrt(m)
    TAB_GK=CALC_G(RESULTAT=RESU,
@@ -300,7 +300,7 @@ for i_propa in xrange(nb_pas) :
    
    FISS[i_propa+1] = CO('FISS_%d'%(i_propa+1))
 
-   print '_'*3+'INFO'+3*'_'+'    mise a jour des level sets'
+   print('_'*3+'INFO'+3*'_'+'    mise a jour des level sets')
    PROPA_FISS(MODELE=MODX,
               METHODE_PROPA='GEOMETRIQUE',
               ZONE_MAJ='TOUT',
@@ -327,7 +327,7 @@ for i_propa in xrange(nb_pas) :
    #                RAFFINEMENT DU MAILLAGE APRES PROPAGATION
    #-----------------------------------------------------------------------------------------
 
-   print '_'*3+'INFO'+3*'_'+'    raffinement de maillage'
+   print('_'*3+'INFO'+3*'_'+'    raffinement de maillage')
    # feinte : il faut que homard reparte du meme maillage (meme nom) que le denier NP1
                     
    # Extraction des level sets

@@ -653,7 +653,7 @@ for i in range(1,13):
                            FONC_Y=rhoi[i],
                            COULEUR = i,
                            MARQUEUR = 0,
-                           LEGENDE= unicode(system[i],'iso-8859-1').encode('utf-8'),),),
+                           LEGENDE= str(system[i],'iso-8859-1').encode('utf-8'),),),
                 UNITE=30,);
 
     IMPR_FONCTION(
@@ -666,7 +666,7 @@ for i in range(1,13):
                            FONC_Y=gammi[i],
                            COULEUR= i,
                            MARQUEUR = 0,
-                           LEGENDE= unicode(system[i],'iso-8859-1').encode('utf-8'),),),
+                           LEGENDE= str(system[i],'iso-8859-1').encode('utf-8'),),),
                 UNITE=31,);
 
 DEFI_FICHIER(UNITE = 30,

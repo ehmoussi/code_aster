@@ -216,7 +216,7 @@ iflow = 5
 RMECA=[None]*Npos
 
 # ICHAL >= 0
-for icalc in xrange(Npos):
+for icalc in range(Npos):
 
     ichal = lst_ichal[icalc]
     titre = 'IFROT=2, IFLOW=5, ICHAL='+str(ichal)

@@ -70,8 +70,8 @@ try :
   NUM130=NUME_DDL(MATR_RIGI=MEL11, );
   MATAS130=ASSE_MATRICE(NUME_DDL=NUM130, MATR_ELEM=MEL11, );
   FACTORISER( reuse=MATAS130,  MATR_ASSE=MATAS130,METHODE='MUMPS', GESTION_MEMOIRE='EVAL')
-except aster.error,err:
-   print fmt_raison % str(err)
+except aster.error as err:
+   print((fmt_raison % str(err)))
    # on verifie que l'erreur fatale est bien celle que l'on attendait :
    if err.id_message == "FACTOR_77":
       is_ok = 1
@@ -96,8 +96,8 @@ try :
   NUM11=NUME_DDL(MATR_RIGI=MEL11, );
   MATAS11=ASSE_MATRICE(NUME_DDL=NUM11, MATR_ELEM=MEL11, );
   FACTORISER( reuse=MATAS11,  MATR_ASSE=MATAS11,METHODE='LDLT', STOP_SINGULIER='OUI', NPREC=8 )
-except aster.error,err:
-   print fmt_raison % str(err)
+except aster.error as err:
+   print((fmt_raison % str(err)))
    # on verifie que l'erreur fatale est bien celle que l'on attendait :
    if err.id_message == "FACTOR_10":
       is_ok = 1
@@ -119,8 +119,8 @@ try :
   NUM12=NUME_DDL(MATR_RIGI=MEL11, );
   MATAS12=ASSE_MATRICE(NUME_DDL=NUM12, MATR_ELEM=MEL11, );
   FACTORISER( reuse=MATAS12,  MATR_ASSE=MATAS12,METHODE='LDLT', STOP_SINGULIER='OUI', NPREC=8  )
-except aster.error,err:
-   print fmt_raison % str(err)
+except aster.error as err:
+   print((fmt_raison % str(err)))
    # on verifie que l'erreur fatale est bien celle que l'on attendait :
    if err.id_message == "FACTOR_10":
       is_ok = 1
@@ -142,8 +142,8 @@ try :
   NUM130=NUME_DDL(MATR_RIGI=MEL11, );
   MATAS130=ASSE_MATRICE(NUME_DDL=NUM130, MATR_ELEM=MEL11, );
   FACTORISER( reuse=MATAS130,  MATR_ASSE=MATAS130,METHODE='MUMPS', STOP_SINGULIER='OUI', NPREC=8  )
-except aster.error,err:
-   print fmt_raison % str(err)
+except aster.error as err:
+   print((fmt_raison % str(err)))
    # on verifie que l'erreur fatale est bien celle que l'on attendait :
    if err.id_message == "FACTOR_11":
       is_ok = 1
@@ -171,8 +171,8 @@ try :
 
   VECTA131=RESOUDRE( reuse=VECTA131,  MATR=MATAS131, CHAM_NO=VECTA131,RESI_RELA=1.E-15,
   POSTTRAITEMENTS='AUTO',INFO=2)
-except aster.error,err:
-   print fmt_raison % str(err)
+except aster.error as err:
+   print((fmt_raison % str(err)))
    # on verifie que l'erreur fatale est bien celle que l'on attendait :
    if err.id_message == "FACTOR_57":
       is_ok = 1
@@ -199,8 +199,8 @@ try :
   NUM21=NUME_DDL(MATR_RIGI=MEL21, );
   MATAS21=ASSE_MATRICE(NUME_DDL=NUM21, MATR_ELEM=MEL21,CHAR_CINE=CHCINE  );
   FACTORISER( reuse=MATAS21,  MATR_ASSE=MATAS21,METHODE='LDLT', STOP_SINGULIER='OUI', NPREC=8 )
-except aster.error,err:
-   print fmt_raison % str(err)
+except aster.error as err:
+   print((fmt_raison % str(err)))
    # on verifie que l'erreur fatale est bien celle que l'on attendait :
    if err.id_message == "FACTOR_11":
       is_ok = 1
@@ -222,8 +222,8 @@ try :
   NUM22=NUME_DDL(MATR_RIGI=MEL21, );
   MATAS22=ASSE_MATRICE(NUME_DDL=NUM22, MATR_ELEM=MEL21,CHAR_CINE=CHCINE );
   FACTORISER( reuse=MATAS22,  MATR_ASSE=MATAS22,METHODE='LDLT', STOP_SINGULIER='OUI', NPREC=8  )
-except aster.error,err:
-   print fmt_raison % str(err)
+except aster.error as err:
+   print((fmt_raison % str(err)))
    # on verifie que l'erreur fatale est bien celle que l'on attendait :
    if err.id_message == "FACTOR_11":
       is_ok = 1
@@ -245,8 +245,8 @@ try :
   NUM230=NUME_DDL(MATR_RIGI=MEL21, );
   MATAS230=ASSE_MATRICE(NUME_DDL=NUM230, MATR_ELEM=MEL21,CHAR_CINE=CHCINE );
   FACTORISER( reuse=MATAS230,  MATR_ASSE=MATAS230,METHODE='MUMPS', STOP_SINGULIER='OUI', NPREC=8  )
-except aster.error,err:
-   print fmt_raison % str(err)
+except aster.error as err:
+   print((fmt_raison % str(err)))
    # on verifie que l'erreur fatale est bien celle que l'on attendait :
    if err.id_message == "FACTOR_11":
       is_ok = 1
@@ -273,8 +273,8 @@ try :
   FACTORISER( reuse=MATAS231,  MATR_ASSE=MATAS231,METHODE='MUMPS', STOP_SINGULIER='OUI', NPREC=-8  )
 
   VECTA231=RESOUDRE( reuse=VECTA231,  MATR=MATAS231, CHAM_NO=VECTA231,RESI_RELA=1.E-6, CHAM_CINE=VCIN231)
-except aster.error,err:
-   print fmt_raison % str(err)
+except aster.error as err:
+   print((fmt_raison % str(err)))
    # on verifie que l'erreur fatale est bien celle que l'on attendait :
    if err.id_message == "FACTOR_42":
       is_ok = 1
@@ -299,8 +299,8 @@ try :
   VECTA232=ASSE_VECTEUR(  VECT_ELEM=VECTE232,   NUME_DDL=NUM232 )
   VCIN232=CALC_CHAR_CINE(   NUME_DDL=NUM232,  CHAR_CINE=CHCINE)
   FACTORISER( reuse=MATAS232,  MATR_ASSE=MATAS232,METHODE='MUMPS', TYPE_RESOL='SYMDEF')
-except aster.error,err:
-   print fmt_raison % str(err)
+except aster.error as err:
+   print((fmt_raison % str(err)))
    # on verifie que l'erreur fatale est bien celle que l'on attendait :
    if err.id_message == "FACTOR_80":
       is_ok = 1

@@ -219,7 +219,7 @@ iflow = 6
 
 #
 # ICHAL >=0
-for icalc in xrange(Npos):
+for icalc in range(Npos):
 
     ichal = lst_ichal[icalc]
     titre = 'IFROT=2, IFLOW=6, ICHAL='+str(ichal)
@@ -308,7 +308,7 @@ for icalc in xrange(Npos):
 
 
 # ICHAL<0 (from Npos +1 to Nessai)
-for icalc in xrange(Npos,Npos+Nneg):
+for icalc in range(Npos,Npos+Nneg):
 
     ichal = lst_ichal[icalc]
     titre = 'IFROT=2, IFLOW=6, ICHAL='+str(ichal)

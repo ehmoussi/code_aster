@@ -310,7 +310,7 @@ RESU1=MECA_STATIQUE(MODELE=MODELEK,
 #------------------------------------------------------------------------
 
 # recuperation du nombre de fonds de fissure
-dict = NB_FOND.EXTR_TABLE().values()
+dict = list(NB_FOND.EXTR_TABLE().values())
 nb_fond = dict['NOMBRE'][0]
 
 n=len(RI)

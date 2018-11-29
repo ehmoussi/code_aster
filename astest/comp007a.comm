@@ -112,7 +112,7 @@ for i in range(NCAL):
 
           epsimp =DEFI_CONSTANTE(VALE=-ALPH(Ti)*(Ti - TREF));
 
-          print 'i=',i, ' instant=', time, ' Temperature=',Ti
+          print(('i=',i, ' instant=', time, ' Temperature=',Ti))
 
           MATER[i]=DEFI_MATERIAU(ELAS =_F(E=YOUN(Ti),
                                           NU=0.,

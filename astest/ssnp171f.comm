@@ -361,7 +361,7 @@ if False and contact :
   tab2 = (tab1.COOR_X > -1.1*cos(ALPHA))
   tab3 = (tab2.COOR_X < 1.1*cos(ALPHA))
   tab3.sort('COOR_X')
-  tab4 = (tab3.LAGS_C != None).values()
+  tab4 = list((tab3.LAGS_C != None).values())
   X    = tab4['COOR_X']
   LAGS = tab4['LAGS_C']
   f=open('/home/G31256/courbe_lag.dat','w')

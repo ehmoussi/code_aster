@@ -146,7 +146,7 @@ ListM1 = []
 ListM2 = []
 ListT1 = []
 
-for il in xrange(n31):
+for il in range(n31):
   lF31 = LinesFile31[il]
   if '&&UTIMSD' in lF31 :
     ind = lF31.index('MODMEX1')
@@ -155,7 +155,7 @@ for il in xrange(n31):
       if ('.CELV' in char) or ('.VALE' in char):
         ListM1.append(lF31)
         break
-for il in xrange(n32):
+for il in range(n32):
   lF32 = LinesFile32[il]
   if '&&UTIMSD' in lF32 :
     ind = lF32.index('MODMEX2')
@@ -164,7 +164,7 @@ for il in xrange(n32):
       if ('.CELV' in char) or ('.VALE' in char):
         ListM2.append(lF32)
         break
-for il in xrange(n41):
+for il in range(n41):
   lF41 = LinesFile41[il]
   if '&&UTIMSD' in lF41 :
     ind = lF41.index('MODTHX1')

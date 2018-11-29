@@ -61,11 +61,11 @@ h = h0/(2.**nb_raff)
 # rayon du disque de raffinement
 r_raff = 5*h
 
-print 'hello h0 ',h0
-print 'hello hc ',hc
-print 'hello nb_raff ',nb_raff
-print 'hello h ',h
-print 'hello r_raff ',r_raff
+print(('hello h0 ',h0))
+print(('hello hc ',hc))
+print(('hello nb_raff ',nb_raff))
+print(('hello h ',h))
+print(('hello r_raff ',r_raff))
 
 
 # initialisation

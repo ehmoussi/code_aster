@@ -135,9 +135,9 @@ am_y = 1.E-8
 am_z = 1.E-8
 
 Lcoef = [am_x, am_y, am_z, 0.0, 0.0, 0.0]
-Lamor = map(lambda x,y: x*y,Lrigi,Lcoef)
+Lamor = list(map(lambda x,y: x*y,Lrigi,Lcoef))
 Lrigi.extend(Lamor)
-print 'Lrigi=',Lrigi
+print(('Lrigi=',Lrigi))
 
 ELEM = AFFE_CARA_ELEM(MODELE = MO,
                       COQUE = COQUE,

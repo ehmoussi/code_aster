@@ -47,7 +47,7 @@ CP = sqrt((Kref+4./3.*Gref)/RHO);
 
 Onde ='P'
 
-print '>> Onde %s CS= %f CP= %f' %(Onde,CS,CP)
+print('>> Onde %s CS= %f CP= %f' %(Onde,CS,CP))
 
 # ------------------------------------------------------------------------------
 
@@ -88,7 +88,7 @@ IMPR_RESU(FORMAT="RESULTAT",RESU=_F(MAILLAGE=MAIL,));
 
 list_group_ma=['ELEM'+str(n) for n in range(nbcouche)];
 
-print '>> list_group_ma=',list_group_ma
+print('>> list_group_ma=',list_group_ma)
 
 MAT1=DEFI_MATERIAU(ELAS=_F(E =YOUNG, NU =NU, RHO =RHO, ALPHA=0.),
                    COMP_THM='LIQU_SATU',

@@ -338,7 +338,7 @@ ResuIntgr = {
 27: (1.996325E+001, -6.9590186410E+001,  1.5958207556E-002, -1.5363419236E+002, -4.5147799692E-003,  3.4978686578E+003,),
 }
 
-for nume_ordre in ResuIntgr.keys():
+for nume_ordre in list(ResuIntgr.keys()):
     TEST_FONCTION(
         VALEUR= (
             _F(FONCTION=ForY, NOM_PARA='INST', VALE_PARA=ResuIntgr[nume_ordre][0],

@@ -100,7 +100,7 @@ previous_errors = [
     ]
 
 # this replaces 'import supv002a.33'
-execfile('fort.33', globals())
+exec(compile(open('fort.33').read(), 'fort.33', 'exec'), globals())
 
 # TEST_TABLE are included in the "macro-command"
 SUPV002(ERREUR=previous_errors,

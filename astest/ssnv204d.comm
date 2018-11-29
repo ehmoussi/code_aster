@@ -39,7 +39,7 @@ YOUNG_F = DEFI_FONCTION(NOM_PARA='Y',
 
 NU_FONC = DEFI_CONSTANTE(VALE=(3.*K-2.*G) /(6.*K+2.*G));
 
-print 'young=',YOUNG_F,' /// nu=',NU_FONC
+print('young=',YOUNG_F,' /// nu=',NU_FONC)
 
 # pression de preconsolidation [en kPa]
 P0=100000.

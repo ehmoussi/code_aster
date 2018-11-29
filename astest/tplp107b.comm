@@ -276,7 +276,7 @@ for remail in range(0,nb_remail):
                   );
 
 
-print 'Norme L2 de l erreur= %e' %dicResu['NormeL2Erreur']
+print('Norme L2 de l erreur= %e' %dicResu['NormeL2Erreur'])
 
 PenteL2=-math.log( NormeL2Erreur[-1]/NormeL2Erreur[-2])/math.log(2.)
 

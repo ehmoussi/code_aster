@@ -170,7 +170,7 @@ resu3 = CALC_FONCTION( COHERENCE = _F( NAPPE_1 = Nappe21, NB_FREQ_LISS = 20,
 
 lfreq = [22., 10., 5.0]
 fc =  np.exp(- (alpha *dist * 2. * pi * np.array(lfreq) / Vs)**2) 
-print fc 
+print(fc) 
 
 TEST_FONCTION(VALEUR=(_F(VALE_CALC= 0.25059038239733 , VALE_REFE = fc[0], REFERENCE='ANALYTIQUE',
                          NOM_PARA=( 'FREQ'), VALE_PARA=( 22.0),PRECISION=0.1,

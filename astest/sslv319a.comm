@@ -72,11 +72,11 @@ hc = b/15.
 # attention, en python log = ln (logarithme neperien)
 n = (log(h0)-log(hc))/log(2)
 nb_raff = int(n)+1
-print '***INFO*** : nb_raff = ',nb_raff
+print('***INFO*** : nb_raff = ',nb_raff)
 
 # taille des mailles apres raffinement
 h = h0/(2.**nb_raff)
-print '***INFO*** : h = ',h
+print('***INFO*** : h = ',h)
 
 # rayon du disque de raffinement
 r_raff = 4*h
@@ -211,7 +211,7 @@ IMPR_RESU(FORMAT='MED',UNITE=100+i_propa,RESU=_F(MAILLAGE=MAIT[i_tot]))
 #           BOUCLE SUR LES PAS DE PROPAGATIONS
 #--------------------------------------------------------------------
 
-for i_propa in xrange(nb_pas) :
+for i_propa in range(nb_pas) :
    
    # ne pas affecter sur tout car le maillage total contient le maillage surfacique de la fissure      
    MO=AFFE_MODELE(MAILLAGE=MAIT[i_tot],
@@ -232,10 +232,10 @@ for i_propa in xrange(nb_pas) :
       # RECUPERATION DE LA TABLE CONTENANT LE NOMBRE DE FONDS DE FISSURE
       NB_FOND=RECU_TABLE(CO=FISS,NOM_TABLE='NB_FOND_FISS')
 
-      dict = NB_FOND.EXTR_TABLE().values()
+      dict = list(NB_FOND.EXTR_TABLE().values())
       nb_fond = dict['NOMBRE'][0]
       if nb_fond != 1 :
-         print '<F> : erreur fatale : le nombre de fonds de fissure est different de 1'
+         print('<F> : erreur fatale : le nombre de fonds de fissure est different de 1')
          FIN()
     
    

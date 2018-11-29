@@ -484,12 +484,12 @@ for i in range(1,13):
                            FONC_Y=rhoia[i],
                            COULEUR = i,
                            MARQUEUR = 1,
-                           LEGENDE= unicode(systema[i],'iso-8859-1').encode('utf-8'),),
+                           LEGENDE= str(systema[i],'iso-8859-1').encode('utf-8'),),
                          _F(FONC_X=epsDIR,
                             FONC_Y=rhoim[i],
                             COULEUR = i+14,
                             MARQUEUR = 0,
-                            LEGENDE= unicode(systemm[i],'iso-8859-1').encode('utf-8'),),
+                            LEGENDE= str(systemm[i],'iso-8859-1').encode('utf-8'),),
                            ),
                 UNITE=30,);
 

@@ -29,7 +29,7 @@ G=238.2E6
 YOUNG = 9.*K*G /(3.*K+G)
 POISSON = (3.*K-2.*G) /(6.*K+2.*G)
 
-print 'young=',YOUNG,' /// nu=',POISSON
+print('young=',YOUNG,' /// nu=',POISSON)
 
 # pression de preconsolidation [en kPa]
 P0=100.E3
@@ -352,14 +352,14 @@ IMPR_TABLE(TABLE=TAB_SIG,
             UNITE=29);
 
 
-tab=TAB_SIG.EXTR_TABLE().values();
+tab=list(TAB_SIG.EXTR_TABLE().values());
 
 values_EPZL=array([-0.01,-0.02,-0.05,-0.1,-0.2])
 
 values_VMIS=interp(values_EPZL,array(tab['EPZZL'][::-1]),array(tab['VMIS'][::-1]))
 values_EPVL=interp(values_EPZL,array(tab['EPZZL'][::-1]),array(tab['EPVL'][::-1]))
 
-tab=TAB_VARI.EXTR_TABLE().values();
+tab=list(TAB_VARI.EXTR_TABLE().values());
 
 values_V1=interp(values_EPZL,array(tab['EPZZL'][::-1]),array(tab['V1'][::-1]))
 values_V4=interp(values_EPZL,array(tab['EPZZL'][::-1]),array(tab['V4'][::-1]))

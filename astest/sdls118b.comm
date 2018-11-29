@@ -241,7 +241,7 @@ ACCE_X2=CALC_FONCTION(COMB=_F(FONCTION=ACCE2,
 #------------------------------------------------------
 #------------------------------------------------------
 #ALPHA=0.0
-print "ALPHA=0.0"
+print("ALPHA=0.0")
 #-----------------------------------------------------------------
 
 ssi_1_a = DYNA_ISS_VARI(
@@ -480,13 +480,13 @@ SRADBX3=CALC_FONCTION(SPEC_OSCI=_F(FONCTION=ssi_2b, LIST_FREQ = L_FREQ,
 
 
 amo, sro_sol = SRADBX0.Valeurs()
-print amo, sro_sol
+print((amo, sro_sol))
 sro_freq = sro_sol[0][0]
 sro_vale0 = sro_sol[0][1]
 amo, sro_sol = SRADBX1.Valeurs()
 sro_vale1 = sro_sol[0][1]
 sro_diff = []
-for i1,i2 in (zip(sro_vale0,sro_vale1)):
+for i1,i2 in (list(zip(sro_vale0,sro_vale1))):
    sro_diff.append(abs(i1-i2))
 
 test_2  = DEFI_FONCTION ( NOM_RESU    = 'ACCE',  NOM_PARA    = 'FREQ',

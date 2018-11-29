@@ -408,7 +408,7 @@ def change_rep(tens2,theta):
 if 0 :  # petit test
     sigcyl=(1.,2.,3.,0.1)
     M=(2,-2,54)
-    print cyl2cart(M,sigcyl)
+    print(cyl2cart(M,sigcyl))
 
 #---------------------------------------------------------------------------------
 def fff(cmp,x,y,sixx,siyy,sizz,sixy):

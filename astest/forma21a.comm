@@ -268,16 +268,16 @@ for num_calc in range(0,nb_calc1) :
 #     del graphe
 
 # IMPRESSION DANS LE FICHIER MESSAGE DES RESULATS
-   print '**************'
-   print 'CONVERGENCE DE L ENERGIE = ',energie_vs_raff_NUM[:num_calc1]
-   print '**************'
-   print 'CONVERGENCE DE LA TEMPERATURE MOYENNE = ',tmoyen_vs_raff_NUM[:num_calc1]
+   print('**************')
+   print(('CONVERGENCE DE L ENERGIE = ',energie_vs_raff_NUM[:num_calc1]))
+   print('**************')
+   print(('CONVERGENCE DE LA TEMPERATURE MOYENNE = ',tmoyen_vs_raff_NUM[:num_calc1]))
 #   print '**************'
 #   print 'NB_DDL = ',nbddl_vs_raff_NUM[:num_calc1]
-   print '**************'
-   print 'ERREUR EN ENERGIE = ',erenergie_vs_raff_NUM[:num_calc1]
-   print '**************'
-   print 'ERREUR EN TEMPERATURE MOYENNE = ',ertmoyen_vs_raff_NUM[:num_calc1]
+   print('**************')
+   print(('ERREUR EN ENERGIE = ',erenergie_vs_raff_NUM[:num_calc1]))
+   print('**************')
+   print(('ERREUR EN TEMPERATURE MOYENNE = ',ertmoyen_vs_raff_NUM[:num_calc1]))
 #   print '**************'
 #   print 'ERREUR RESIDU = ',BR_vs_raff_NUM[:num_calc1]
 

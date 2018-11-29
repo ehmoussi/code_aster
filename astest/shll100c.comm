@@ -325,7 +325,7 @@ MATASM1=ASSE_MATRICE(  MATR_ELEM=MATEL1_M,
 #
 MODES1=CALC_MODES( MATR_RIGI=MATASK1,
                    MATR_MASS=MATASM1,
-                   CALC_FREQ=_F( NMAX_FREQ = 05) )
+                   CALC_FREQ=_F( NMAX_FREQ = 0o5) )
 
 
 #
@@ -340,7 +340,7 @@ INTERF1=DEFI_INTERF_DYNA(  NUME_DDL=NUM1,
 #
 BAMO1=DEFI_BASE_MODALE(  CLASSIQUE=_F( INTERF_DYNA = INTERF1,
                                          MODE_MECA = MODES1,
-                                         NMAX_MODE = 05)
+                                         NMAX_MODE = 0o5)
                             )
 
 #
@@ -412,7 +412,7 @@ VECTAS=ASSE_VECTEUR(  VECT_ELEM=VECTEL,
 #
 MODES2=CALC_MODES( MATR_RIGI=MATASK2,
                    MATR_MASS=MATASM2,
-                   CALC_FREQ=_F( NMAX_FREQ = 05) )
+                   CALC_FREQ=_F( NMAX_FREQ = 0o5) )
 
 
 #
@@ -428,7 +428,7 @@ INTERF2=DEFI_INTERF_DYNA(  NUME_DDL=NUM2,
 #
 BAMO2=DEFI_BASE_MODALE(  CLASSIQUE=_F( INTERF_DYNA = INTERF2,
                                          MODE_MECA = MODES2,
-                                         NMAX_MODE = 05)
+                                         NMAX_MODE = 0o5)
                             )
 
 #

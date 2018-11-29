@@ -229,7 +229,7 @@ M_ASSE1=ASSE_MATRICE(  MATR_ELEM=M_ELEM1,
 #
 MODES1=CALC_MODES(MATR_RIGI=K_ASSE1,
                   MATR_MASS=M_ASSE1,
-                  CALC_FREQ=_F(NMAX_FREQ=04,
+                  CALC_FREQ=_F(NMAX_FREQ=0o4,
                                ),
                   )
 
@@ -244,7 +244,7 @@ INTERF1=DEFI_INTERF_DYNA(   NUME_DDL=NUM1,
 #
 BAMO1=DEFI_BASE_MODALE( CLASSIQUE=_F( INTERF_DYNA = INTERF1,
                                         MODE_MECA = MODES1,
-                                        NMAX_MODE = 04))
+                                        NMAX_MODE = 0o4))
 
 #
 MACRO1=MACR_ELEM_DYNA(  BASE_MODALE=BAMO1)
@@ -302,7 +302,7 @@ V_ASSE2=ASSE_VECTEUR(  VECT_ELEM=V_ELEM2,
 #
 MODES2=CALC_MODES(MATR_RIGI=K_ASSE2,
                   MATR_MASS=M_ASSE2,
-                  CALC_FREQ=_F(NMAX_FREQ=05,
+                  CALC_FREQ=_F(NMAX_FREQ=0o5,
                                ),
                   )
 
@@ -317,7 +317,7 @@ INTERF2=DEFI_INTERF_DYNA(   NUME_DDL=NUM2,
 #
 BAMO2=DEFI_BASE_MODALE( CLASSIQUE=_F( INTERF_DYNA = INTERF2,
                                         MODE_MECA = MODES2,
-                                        NMAX_MODE = 05))
+                                        NMAX_MODE = 0o5))
 
 #
 MACRO2=MACR_ELEM_DYNA(  BASE_MODALE=BAMO2)

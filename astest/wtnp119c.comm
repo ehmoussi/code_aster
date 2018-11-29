@@ -82,13 +82,13 @@ PWAGO0    = PGAGO0+P2THMINIT-PCAGO0
 SIPAGO0   = Sipinit_de_Pg(BIOTAGO,PGAGO0+P2THMINIT)
 SINETAGO0  = Sinetinit(SITOTAGO0,SIPAGO0)
 
-print 'SITOTAGO0 ',  SITOTAGO0
-print 'PWAGO0    ',  PWAGO0
-print 'PGAGO0    ',  PGAGO0
-print 'PCAGO0    ',  PCAGO0
-print 'SATAGO0   ',  SATAGO0
-print 'SIPAGO0   ',  SIPAGO0
-print 'SINETAGO0 ',  SINETAGO0
+print('SITOTAGO0 ',  SITOTAGO0)
+print('PWAGO0    ',  PWAGO0)
+print('PGAGO0    ',  PGAGO0)
+print('PCAGO0    ',  PCAGO0)
+print('SATAGO0   ',  SATAGO0)
+print('SIPAGO0   ',  SIPAGO0)
+print('SINETAGO0 ',  SINETAGO0)
 #
 #
 #***********************************************************************

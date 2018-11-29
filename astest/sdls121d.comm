@@ -278,7 +278,7 @@ l_zero = []
 for i in range(nextra):
     l_zero.append(0.0)
 
-EXTRA=CREA_TABLE(LISTE=(_F(PARA='ORDRE',LISTE_I=range(nextra),),
+EXTRA=CREA_TABLE(LISTE=(_F(PARA='ORDRE',LISTE_I=list(range(nextra)),),
                           _F(PARA='EXTRA',LISTE_R=l_zero,),
                        ),);
 

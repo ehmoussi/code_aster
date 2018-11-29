@@ -168,9 +168,9 @@ K       = YOUNG/3./(1.-2.*POISSON)
 G       = YOUNG/2./(1.+POISSON)
 alpha   = P0/K/3./10.
 
-print 'young =',YOUNG,' /// nu    =',POISSON
-print 'g_modu=',G,'     /// k_modu=',K
-print 'alpha =',alpha
+print('young =',YOUNG,' /// nu    =',POISSON)
+print('g_modu=',G,'     /// k_modu=',K)
+print('alpha =',alpha)
 
 SOL=DEFI_MATERIAU(ELAS   =_F(E =YOUNG, NU =POISSON, ALPHA=alpha,),
                   RANKINE=_F(SIGMA_T = SIGMA_T,),

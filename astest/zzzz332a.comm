@@ -61,7 +61,7 @@ Noeuds={
 
 mclf = {}
 mclf['RESU'] = []
-for ne in Noeuds.keys():
+for ne in list(Noeuds.keys()):
    for temps in [1.0 , 2.0]:
       valeur = temps*Noeuds[ne][0]*Noeuds[ne][1]*Noeuds[ne][2]
       mclf['RESU'].append( _F(RESULTAT=NEUT1,INST=temps,NOM_CHAM='NEUT',NOM_CMP='X1',

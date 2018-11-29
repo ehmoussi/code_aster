@@ -188,7 +188,7 @@ MODEAIRt    = NORM_MODE( reuse = MODEAIRt,
                         );
 
 MODEAIR = EXTR_MODE( FILTRE_MODE = _F( MODE = MODEAIRt,
-                                       NUME_ORDRE = range(1,7)) )
+                                       NUME_ORDRE = list(range(1,7))) )
 
 
 
