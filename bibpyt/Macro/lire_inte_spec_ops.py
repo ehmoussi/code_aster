@@ -176,7 +176,7 @@ def lire_inte_spec_ops(self,
         nume_i = []
         nume_j = []
         l_fonc = []
-        for i in range(dim * (dim + 1) / 2):
+        for i in range(dim * (dim + 1) // 2):
             numi = list_fonc[i][list_fonc[i].index('I =') + 3:]
             numi = numi[:numi.index('\n')]
             nume_i.append(int(numi))
@@ -195,7 +195,7 @@ def lire_inte_spec_ops(self,
             if FORMAT_C == 'REEL_IMAG':
                 liste = vale_fonc
             elif FORMAT_C == 'MODULE_PHASE':
-                for i in range(len(vale_fonc) / 3):
+                for i in range(len(vale_fonc) // 3):
                     module = vale_fonc[3 * i + 1]
                     phase = vale_fonc[3 * i + 2]
                     liste = liste + \
@@ -222,7 +222,7 @@ def lire_inte_spec_ops(self,
         if nume_i != nume_ib or nume_j != nume_jb:
             UTMESS('F', 'SPECTRAL0_3')
         mcfact = []
-        for i in range(dim * (dim + 1) / 2):
+        for i in range(dim * (dim + 1) // 2):
             mcfact.append(_F(NUME_ORDRE_I=nume_i[i],
                              NUME_ORDRE_J=nume_j[i],
                              FONCTION=l_fonc[i],))

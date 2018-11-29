@@ -24,7 +24,6 @@ from Utilitai.Utmess import UTMESS
 
 def Table2vtu(nomfichtar,Reper,LignepvdData):
     #
-    import string
     import os.path as OSP
     import tarfile
     #
@@ -162,7 +161,6 @@ def impr_resu_sp_ops(self,
     import os.path as OSP
     import numpy as NP
     from Utilitai.UniteAster import UniteAster
-    import string as ST
     import tempfile
     from code_aster.Cata.Syntax import _F
     #

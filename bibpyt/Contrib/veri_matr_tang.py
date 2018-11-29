@@ -18,7 +18,6 @@
 # --------------------------------------------------------------------
 
 import pickle
-import string
 
 import numpy as NP
 from numpy import linalg as LA
@@ -59,7 +58,7 @@ class TANGENT:
         nom : suffixe de l'objet jeveux
         """
         import aster
-        nom_obj_jeveux = string.ljust('PYTHON.TANGENT.' + suffixe, 24)
+        nom_obj_jeveux = ('PYTHON.TANGENT.' + suffixe).ljust(24)
         obj_jeveux = aster.getvectjev(nom_obj_jeveux)
         if not obj_jeveux:
             raise RuntimeError('TANGENT : OBJET JEVEUX DE SUFFIXE ' +
@@ -128,7 +127,7 @@ class TANGENT:
         liste_diff = []
         for ind in affi:
             for pos in ind:
-                i = pos / self.nddl
+                i = pos // self.nddl
                 j = pos % self.nddl
                 liste_i.append(i + 1)
                 liste_j.append(j + 1)

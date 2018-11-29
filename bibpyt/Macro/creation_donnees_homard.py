@@ -27,8 +27,7 @@ __all__ = []
 
 import os
 import os.path
-from types import ListType, TupleType
-EnumTypes = (ListType, TupleType)
+EnumTypes = (list, tuple)
 
 try:
     from Utilitai.Utmess import UTMESS

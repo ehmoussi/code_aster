@@ -24,7 +24,6 @@ def post_coque_ops(self, RESULTAT, COOR_POINT, CHAM, NUME_ORDRE, INST,
     """
     import aster
     import os
-    import string
     import Accas
     from code_aster.Cata.Syntax import _F
     from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme

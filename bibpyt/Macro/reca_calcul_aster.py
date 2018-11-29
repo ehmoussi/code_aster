@@ -23,7 +23,6 @@
 debug = False
 
 import copy
-import types
 import os
 import sys
 import pprint

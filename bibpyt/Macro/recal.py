@@ -567,12 +567,11 @@ class CALCULS_ASTER:
 
         try:
             import aster
-            from code_aster.Cata.context import *
             from code_aster.Cata.Syntax import OPER, MACRO
             from code_aster.Cata.Syntax import _F
 
             # Declaration de toutes les commandes Aster
-            from code_aster.Cata.Commands import *
+            from code_aster.Cata.Commands import DETRUIRE
         except Exception as e:
             raise Exception("Le mode INCLUDE doit etre lance depuis Aster : \nErreur : %s" % e)
 

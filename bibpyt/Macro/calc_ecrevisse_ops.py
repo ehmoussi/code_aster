@@ -138,8 +138,6 @@ def calc_ecrevisse_ops(self,
     """
 
     import os
-    import string
-    import types
     import shutil
     import aster
     from code_aster.Cata.Syntax import _F

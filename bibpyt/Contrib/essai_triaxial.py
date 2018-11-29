@@ -36,7 +36,7 @@ def Triaxial_DR(K, G, phi, psi, cohes=0., sigma0=0., depzz=-.000001, epzz_max=-0
     """
 
     import numpy as np
-    from cmath import *
+    from cmath import pi
 
     # Parametres materiaux
     # ------------------------------

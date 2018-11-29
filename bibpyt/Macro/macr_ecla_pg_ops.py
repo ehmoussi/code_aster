@@ -29,7 +29,6 @@ def macr_ecla_pg_ops(self, RESULTAT, MAILLAGE, RESU_INIT, MODELE_INIT,
        Ecriture de la macro macr_ecla_pg
     """
     import os
-    import string
     from code_aster.Cata.Syntax import _F
     from Noyau.N_utils import AsType
     ier = 0
@@ -68,7 +67,7 @@ def macr_ecla_pg_ops(self, RESULTAT, MAILLAGE, RESU_INIT, MODELE_INIT,
         motscles['INST'] = INST
 
     self.DeclareOut('resu2', RESULTAT)
-    resu2 = CREA_RESU(OPERATION='ECLA_PG', TYPE_RESU=string.upper(typ2),
+    resu2 = CREA_RESU(OPERATION='ECLA_PG', TYPE_RESU=typ2.upper(),
                       ECLA_PG=_F(
                       MODELE_INIT=MODELE_INIT, RESU_INIT=RESU_INIT, NOM_CHAM=NOM_CHAM,
                                 MAILLAGE=ma2, **motscles))

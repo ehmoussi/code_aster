@@ -24,13 +24,11 @@ Traitement des macros MACR_ADAP_MAIL/MACR_INFO_MAIL
 """
 __revision__ = "V3.1"
 #
-import string
 import os
 import pickle
 from glob import glob
 import tarfile
-from types import ListType, TupleType
-EnumTypes = (ListType, TupleType)
+EnumTypes = (list, tuple)
 import shutil
 #
 from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
@@ -521,8 +519,8 @@ def version_homard_aster(INFO, VERSION_HOMARD):
     version_perso : vrai/faux si la version est la version personnelle
     """
 #
-    VERSION_HOMARD = string.replace(VERSION_HOMARD, "_", ".")
-    VERSION_HOMARD = string.replace(VERSION_HOMARD, "N", "n")
+    VERSION_HOMARD = VERSION_HOMARD.replace("_", ".")
+    VERSION_HOMARD = VERSION_HOMARD.replace("N", "n")
 #
     if (VERSION_HOMARD[-6:] == ".PERSO"):
         VERSION_HOMARD = VERSION_HOMARD[:-6]

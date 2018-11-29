@@ -25,7 +25,7 @@ def post_liquefaction_ops(self,AXE,RESULTAT,CRITERE,**args):
 
     ier=0
     import aster
-    import os,string,types
+    import os
     from code_aster.Cata.Syntax import _F
 
   # La macro compte pour 1 dans la numerotation des commandes

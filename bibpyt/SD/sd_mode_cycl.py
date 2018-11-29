@@ -83,7 +83,7 @@ class sd_mode_cycl(AsBase):
 
     def check_DIAM(self, checker):
         diam = self.CYCL_DIAM.get()
-        nb_diam = len(diam) / 2
+        nb_diam = len(diam) // 2
         for x in diam[:nb_diam]:
             assert x >= 0, diam
         for x in diam[nb_diam:]:

@@ -54,8 +54,6 @@ def calc_precont_ops(self, reuse, MODELE, CHAM_MATER, CARA_ELEM, EXCIT,
     """
     import copy
     import aster
-    import string
-    import types
     from code_aster.Cata.Syntax import _F
     from code_aster.Cata.DataStructure import listr8_sdaster, list_inst
     from Noyau.N_utils import AsType
@@ -365,10 +363,10 @@ def calc_precont_ops(self, reuse, MODELE, CHAM_MATER, CARA_ELEM, EXCIT,
 
         # 1.5 Modele contenant uniquement les cables de precontrainte
         # ---------------------------------------------------------
-        __MOD = string.ljust(MODELE.nom, 8)
+        __MOD = MODELE.nom.ljust(8)
         __MOD1 = __MOD + '.MODELE    .LGRF        '
         __LMAIL = aster.getvectjev(__MOD1)
-        __MAIL = string.strip(__LMAIL[0])
+        __MAIL = __LMAIL[0].strip()
 
         objma = self.get_sd_avant_etape(__MAIL, self)
         __M_CA = AFFE_MODELE(MAILLAGE=objma,
@@ -588,70 +586,70 @@ def calc_precont_ops(self, reuse, MODELE, CHAM_MATER, CARA_ELEM, EXCIT,
                 ancr1_passif = 1
                 
                 for j in range(2):
-                    if string.strip(__typ_ancr[j]) == 'PASSIF':
+                    if __typ_ancr[j].strip() == 'PASSIF':
                         if j == 0:
                             ancr1_passif = -1
-                        if string.strip(__typ_noeu[j]) == 'NOEUD':
+                        if __typ_noeu[j].strip() == 'NOEUD':
                             motscle2[
-                                'DDL_IMPO'].append(_F(NOEUD=string.strip(__nom_noeu[j]),
+                                'DDL_IMPO'].append(_F(NOEUD=__nom_noeu[j].strip(),
                                                       GLIS=0.))
                             if __recul_exists:
                                 motscle5[
-                                    'DDL_IMPO'].append(_F(NOEUD=string.strip(__nom_noeu[j]),
+                                    'DDL_IMPO'].append(_F(NOEUD=__nom_noeu[j].strip(),
                                                           GLIS=0.))
                         else:
                             motscle2[
-                                'DDL_IMPO'].append(_F(GROUP_NO=string.strip(__nom_noeu[j]),
+                                'DDL_IMPO'].append(_F(GROUP_NO=__nom_noeu[j].strip(),
                                                    GLIS=0.))
                             if __recul_exists:
                                 motscle5[
-                                    'DDL_IMPO'].append(_F(GROUP_NO=string.strip(__nom_noeu[j]),
+                                    'DDL_IMPO'].append(_F(GROUP_NO=__nom_noeu[j].strip(),
                                                           GLIS=0.))
                     else:
                         actif += 1
-                        if string.strip(__typ_noeu[j]) == 'NOEUD':
+                        if __typ_noeu[j].strip() == 'NOEUD':
                             motscle3[
-                                'AFFE'].append(_F(NOEUD=string.strip(__nom_noeu[j]), NOM_CMP='GLIS',
+                                'AFFE'].append(_F(NOEUD=__nom_noeu[j].strip(), NOM_CMP='GLIS',
                                                   VALE=ancr1_passif * __sens * __tension * (-1) ** (j + 1)))
                             if j == 0:
                                 motscle3b[
-                                    'AFFE'].append(_F(NOEUD=string.strip(__nom_noeu[j]), NOM_CMP='GLIS',
+                                    'AFFE'].append(_F(NOEUD=__nom_noeu[j].strip(), NOM_CMP='GLIS',
                                                       VALE=__sens * __tension * (-1) ** (j + 1)))
                                 motscle2a[
-                                    'DDL_IMPO'].append(_F(NOEUD=string.strip(__nom_noeu[j]),
+                                    'DDL_IMPO'].append(_F(NOEUD=__nom_noeu[j].strip(),
                                                           GLIS=0.))
                             else:
                                 motscle3a[
-                                    'AFFE'].append(_F(NOEUD=string.strip(__nom_noeu[j]), NOM_CMP='GLIS',
+                                    'AFFE'].append(_F(NOEUD=__nom_noeu[j].strip(), NOM_CMP='GLIS',
                                                       VALE=ancr1_passif * __sens * __tension * (-1) ** (j + 1)))
                                 motscle2b[
-                                    'DDL_IMPO'].append(_F(NOEUD=string.strip(__nom_noeu[j]),
+                                    'DDL_IMPO'].append(_F(NOEUD=__nom_noeu[j].strip(),
                                                           GLIS=0.))
                             if __recul_exists:
                                 motscle5[
-                                    'DDL_IMPO'].append(_F(NOEUD=string.strip(__nom_noeu[j]),
+                                    'DDL_IMPO'].append(_F(NOEUD=__nom_noeu[j].strip(),
                                                           GLIS=ancr1_passif * __sens * __recul * (-1) ** (j)))
                         else:
                             motscle3[
-                                'AFFE'].append(_F(GROUP_NO=string.strip(__nom_noeu[j]), NOM_CMP='GLIS',
+                                'AFFE'].append(_F(GROUP_NO=__nom_noeu[j].strip(), NOM_CMP='GLIS',
                                                   VALE=ancr1_passif * __sens * __tension * (-1) ** (j + 1)))
                             if j == 0:
                                 motscle3b[
-                                    'AFFE'].append(_F(GROUP_NO=string.strip(__nom_noeu[j]), NOM_CMP='GLIS',
+                                    'AFFE'].append(_F(GROUP_NO=__nom_noeu[j].strip(), NOM_CMP='GLIS',
                                                       VALE=__sens * __tension * (-1) ** (j + 1)))
                                 motscle2a[
-                                    'DDL_IMPO'].append(_F(GROUP_NO=string.strip(__nom_noeu[j]),
+                                    'DDL_IMPO'].append(_F(GROUP_NO=__nom_noeu[j].strip(),
                                                           GLIS=0.))
                             else:
                                 motscle3a[
-                                    'AFFE'].append(_F(GROUP_NO=string.strip(__nom_noeu[j]), NOM_CMP='GLIS',
+                                    'AFFE'].append(_F(GROUP_NO=__nom_noeu[j].strip(), NOM_CMP='GLIS',
                                                       VALE=ancr1_passif * __sens * __tension * (-1) ** (j + 1)))
                                 motscle2b[
-                                    'DDL_IMPO'].append(_F(GROUP_NO=string.strip(__nom_noeu[j]),
+                                    'DDL_IMPO'].append(_F(GROUP_NO=__nom_noeu[j].strip(),
                                                           GLIS=0.))
                             if __recul_exists:
                                 motscle5[
-                                    'DDL_IMPO'].append(_F(GROUP_NO=string.strip(__nom_noeu[j]),
+                                    'DDL_IMPO'].append(_F(GROUP_NO=__nom_noeu[j].strip(),
                                                           GLIS=ancr1_passif * __sens * __recul * (-1) ** (j)))
                 if (actif == 2):
                     __ActifActif = True

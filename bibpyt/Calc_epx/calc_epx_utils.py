@@ -24,7 +24,6 @@ Fonctions utilitaire pour CALC_EUROPLEXUS
 """
 
 from Utilitai.Utmess import UTMESS
-import string
 import numpy
 #----------------------------- Precision -------------------------------
 tst = 1.0E-10
@@ -150,7 +149,7 @@ def lire_fichier(fichier):
     for line in lignes:
         add = 1
         for comment in commentaires:
-            if string.find(line, comment) != -1:
+            if line.find(comment) != -1:
                 add = 0
                 break
         if add:

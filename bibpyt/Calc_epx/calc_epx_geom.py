@@ -28,7 +28,6 @@ from Calc_epx.calc_epx_utils import recupere_structure, tolist, get_group_ma
 from Calc_epx.calc_epx_utils import extract_from_tuple
 from Utilitai.partition import MAIL_PY
 import aster
-import string
 from Utilitai.Utmess import UTMESS
 from code_aster.Cata.Syntax import _F
 from code_aster.Cata.Commands import DEFI_GROUP
@@ -65,7 +64,7 @@ def export_modele(epx, MAILLAGE, MODELE, gmaInterfaces, info_mode_compl):
         if modelisation not in list(cata_modelisa.keys()):
             UTMESS('F', 'PLEXUS_6', valk=modelisation)
         if 'TOUT' in affe:
-            if string.rstrip('TOUT') not in MApyt.gma:
+            if 'TOUT' not in MApyt.gma:
                 DEFI_GROUP(reuse=MAILLAGE, MAILLAGE=MAILLAGE,
                            CREA_GROUP_MA=(_F(NOM='TOUT', TOUT='OUI',),
                            ))
@@ -123,7 +122,7 @@ def export_modele(epx, MAILLAGE, MODELE, gmaInterfaces, info_mode_compl):
                                     'Problème de noms de groupes de mailles')
                         gr_cr_noms_coupes.append(nom_gr)
 
-                    if string.rstrip(nom_gr) not in MApyt.gma:
+                    if nom_gr.rstrip() not in MApyt.gma:
                         DEFI_GROUP(reuse=MAILLAGE, MAILLAGE=MAILLAGE,
                                    CREA_GROUP_MA=(
                                    _F(NOM=nom_gr, GROUP_MA=gr,

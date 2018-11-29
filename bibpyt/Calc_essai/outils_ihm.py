@@ -23,7 +23,6 @@ from tkinter import *
 
 import aster_core
 import aster
-import string
 import os
 from subprocess import Popen
 
@@ -1666,9 +1665,9 @@ class DispFRFDialogue(Toplevel):
         # mesurees
         from code_aster.Cata.Commands import DYNA_VIBRA, AFFE_CHAR_MECA, DEFI_FONCTION
 
-        f_min = string.atof(param['freq_min'].get())
-        f_max = string.atof(param['freq_max'].get())
-        df = string.atof(param['df'].get())
+        f_min = float(param['freq_min'].get())
+        f_max = float(param['freq_max'].get())
+        df = float(param['df'].get())
         nb_freq = int((f_max - f_min) / df)
         freq = [f_min + df * kk for kk in range(nb_freq)]
         noeud = param['noeud'].get()

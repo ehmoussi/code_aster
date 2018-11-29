@@ -421,13 +421,13 @@ class CalcFonction_INTERPOL_FFT(CalcFonctionOper):
 
         # suppression de la partie symetrique du signal
         N = len(ft.vale_x)
-        valex = list(ft.vale_x[:N/2+1])
-        valey = list(ft.vale_y[:N/2+1])
+        valex = list(ft.vale_x[:N//2+1])
+        valey = list(ft.vale_y[:N//2+1])
 
         # zero padding
         dfreq = (valex[1]-valex[0]).real
         last_freq = valex[-1]
-        N_pad = N_sortie/2+1-N/2-1
+        N_pad = N_sortie//2+1-N//2-1
         for i in range(N_pad):
             freq = last_freq + (i+1)* dfreq
             valex.append(freq)

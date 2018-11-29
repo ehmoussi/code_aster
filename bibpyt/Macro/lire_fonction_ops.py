@@ -299,11 +299,11 @@ def lire_fonction_ops(self, FORMAT, TYPE, SEPAR, INDIC_PARA, UNITE,
 
             liste = []
             if 'INDIC_REEL' in args:
-                for i in range(len(liste_vale_r) / 2):
+                for i in range(len(liste_vale_r) // 2):
                     liste.extend(
                         [liste_vale_r[2 * i], liste_vale_r[2 * i + 1], liste_vale_i[2 * i + 1]])
             elif 'INDIC_MODU' in args:
-                for i in range(len(liste_vale_r) / 2):
+                for i in range(len(liste_vale_r) // 2):
                     module = liste_vale_r[2 * i + 1]
                     phase = liste_vale_i[2 * i + 1]
                     liste.extend(

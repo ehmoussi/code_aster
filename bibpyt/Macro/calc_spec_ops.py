@@ -18,7 +18,6 @@
 # --------------------------------------------------------------------
 
 import copy
-import types
 from SD.sd_fonction import sd_fonction
 
 # -----------------------------------------------------------------------------
@@ -48,8 +47,7 @@ def calc_spec_ops(self, TAB_ECHANT, ECHANT, INTERSPE, TRANSFERT, TITRE, INFO, **
 #  a partir de fonctions reelles
 
     import aster
-    from types import ListType, TupleType
-    EnumTypes = (ListType, TupleType)
+    EnumTypes = (list, tuple)
     from code_aster.Cata.Syntax import _F
     from Utilitai.Utmess import UTMESS
     import numpy

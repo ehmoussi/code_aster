@@ -21,8 +21,6 @@
 
 import copy
 import os
-import string
-import types
 import sys
 import glob
 
@@ -96,7 +94,7 @@ def detr_concepts(self):
     """
     liste_concepts = mes_concepts(base=self.parent)
     for e in liste_concepts:
-        nom = string.strip(e)
+        nom = e.strip()
         DETRUIRE(OBJET=self.g_context['_F'](CHAINE=nom), INFO=1)
         if nom in self.jdc.g_context:
             del self.jdc.g_context[nom]
