@@ -43,25 +43,25 @@ class ERREUR:
         # pour imprimer un message d'erreur :
         ucode = string.upper(code)
         if ucode == 'I':
-            print "\n<" + ucode + "> INFORMATION: ", convert(message)
+            print("\n<" + ucode + "> INFORMATION: ", convert(message))
         elif ucode == 'A':
-            print "\n<" + ucode + "> ALARME: ", convert(message)
+            print("\n<" + ucode + "> ALARME: ", convert(message))
         elif ucode == 'E':
-            print "\n<" + ucode + "> ERREUR: ", convert(message)
+            print("\n<" + ucode + "> ERREUR: ", convert(message))
             self.IER = self.IER + 1
         elif ucode == 'F':
-            print "\n<" + ucode + "> ERREUR: ", convert(message)
+            print("\n<" + ucode + "> ERREUR: ", convert(message))
             self.IER = self.IER + 1
         else:
-            raise StandardError
+            raise Exception
 
         if ucode == 'E' or ucode == 'A' or ucode == 'F':
             if len(self.contxt) > 0:
-                print "    CONTEXTE: "
+                print("    CONTEXTE: ")
                 for c in self.contxt:
-                    print "         " + c
+                    print("         " + c)
         if ucode == 'F':
-            raise StandardError(convert(message))
+            raise Exception(convert(message))
 
     def veri_appartient_liste(self, code, element, liste):
         try:
@@ -86,8 +86,8 @@ class ERREUR:
     def fini(self):
         # pour demander l'arret du code si necessaire :
         if self.IER > 0:
-            print "<F> ERREUR FATALE declenchee suite aux erreurs <E> precedentes"
-            raise StandardError
+            print("<F> ERREUR FATALE declenchee suite aux erreurs <E> precedentes")
+            raise Exception
 
     def contexte(self, texte, statut="RAZ"):
         """pour definir le contexte d'un message d'erreur"""
@@ -114,7 +114,7 @@ ERR = ERREUR()
 def cree_os(dicobj, nom, tsca, long):
     if dicobj.get(nom) is not None:
         ERR.mess('F', "Erreur objet deja declare:" + nom)
-    o1 = JV_SIMPLE(nom, tsca, long)
+    o1 = JV_SIMPLE(nom, tsca, int)
     dicobj[nom] = o1
     return o1
 
@@ -162,14 +162,14 @@ class JV_COLLEC:
         self.objs = []
 
     def cree_oc(self, nom, long):
-        oc1 = JV_SIMPLE(nom, self.tsca, long)
+        oc1 = JV_SIMPLE(nom, self.tsca, int)
         num = self.pn.jenonu(nom, 'COOL')
         if num > 0:
             ERR.mess(
                 'F', "Erreur : nom existant deja: " + nom + " dans: " + self.nom)
-        if self.longv > 0 and long != self.longv:
+        if self.longv > 0 and int != self.longv:
             ERR.mess('F', "Erreur : longueur incorrecte: " +
-                     str(long) + " pour: " + self.nom)
+                     str(int) + " pour: " + self.nom)
         self.objs.append(oc1)
 
     def ecri_co(self, nom, indice, valeur):
@@ -236,13 +236,13 @@ class JV_SIMPLE:
         self.nom = nom
         self.typojb = 'vecteur'
         self.tsca = tsca
-        self.long = long
-        if long < 0:
+        self.long = int
+        if int < 0:
             ERR.mess('F', "Erreur")
         if tsca[0] == "I":
-            self.valeurs = [0] * long
+            self.valeurs = [0] * int
         elif tsca[0] == "K":
-            self.valeurs = [""] * long
+            self.valeurs = [""] * int
         else:
             ERR.mess('F', "Erreur")
 
