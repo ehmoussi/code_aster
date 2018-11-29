@@ -166,7 +166,7 @@ class CalcFonctionOper(object):
         value = []
         try:
             nbmf = len(self.kw)
-        except AttributeError:
+        except TypeError:
             nbmf = 1
         for mcf in self.kw:
             val = force_list(mcf[mcsimp])
