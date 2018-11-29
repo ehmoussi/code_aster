@@ -913,8 +913,6 @@ class AbstractEntityStore(object):
 
     """Helper class to give access to entities by name"""
     __slots__ = ('_entities', 'entityType', 'subTypes')
-    entityType = None
-    subTypes = None
 
     def __init__(self, package, ignore_names=[], only_mods=[]):
         """Initialisation: import all entities (of type `entityType`) available
@@ -1020,8 +1018,8 @@ def verif_identificateur(chaine, long):
 #    -- verifie que:
 #      * la chaine a une longueur <= long
 #      * la chaine est en majuscules
-    assert isinstance(chaine, bytes), chaine
-    assert len(chaine) >= 1 and len(chaine) <= int, chaine
+    assert isinstance(chaine, str), chaine
+    assert len(chaine) >= 1 and len(chaine) <= long, chaine
     for c in chaine:
         assert c in string.ascii_uppercase + string.digits + '_'
 
