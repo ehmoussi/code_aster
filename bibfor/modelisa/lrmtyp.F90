@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -99,7 +99,7 @@ subroutine lrmtyp(nbtyp, nomtyp, nnotyp, typgeo, renumd,&
      &              0,         207,       204,       0,&
      &              208,       0,         209,       0,&
      &              304,       310,       306,       315,&
-     &              0,         305,       313,       308,&
+     &              318,       305,       313,       308,&
      &              320,       327,       0,         0,&
      &              0,         0,         0,         0,&
      &              0,         0,         0,         0,&
@@ -266,6 +266,48 @@ subroutine lrmtyp(nbtyp, nomtyp, nnotyp, typgeo, renumd,&
     nuanom(21,13)=10
     nuanom(21,14)=12
     nuanom(21,15)=11
+!
+!       ------ PENTA18 -------
+!
+    modnum(22)=1
+!
+    numnoa(22,1)=1
+    numnoa(22,2)=3
+    numnoa(22,3)=2
+    numnoa(22,4)=4
+    numnoa(22,5)=6
+    numnoa(22,6)=5
+    numnoa(22,7)=9
+    numnoa(22,8)=8
+    numnoa(22,9)=7
+    numnoa(22,10)=13
+    numnoa(22,11)=15
+    numnoa(22,12)=14
+    numnoa(22,13)=12
+    numnoa(22,14)=11
+    numnoa(22,15)=10
+    numnoa(22,16)=18
+    numnoa(22,17)=17
+    numnoa(22,18)=16
+
+    nuanom(22,1)=1
+    nuanom(22,2)=3
+    nuanom(22,3)=2
+    nuanom(22,4)=4
+    nuanom(22,5)=6
+    nuanom(22,6)=5
+    nuanom(22,7)=9
+    nuanom(22,8)=8
+    nuanom(22,9)=7
+    nuanom(22,10)=15
+    nuanom(22,11)=14
+    nuanom(22,12)=13
+    nuanom(22,13)=10
+    nuanom(22,14)=12
+    nuanom(22,15)=11
+    nuanom(22,16)=18
+    nuanom(22,17)=17
+    nuanom(22,18)=16
 !
 !
 ! 3.4. ==> MODIFICATIONS POUR LES PYRAMIDES
