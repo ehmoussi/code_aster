@@ -62,9 +62,9 @@ def check_system_libs(self):
 def configure_pythonpath(self):
     """Insert env.PYTHONPATH at the beginning of sys.path"""
     path = Utils.to_list(self.env['PYTHONPATH'])
-    system_path = _get_default_pythonpath()
-    for i in sys.path:
-        if i in system_path:
+    system_path = _get_default_pythonpath(self.environ["PYTHON"])
+    for i in system_path:
+        if i in sys.path:
             continue
         if osp.basename(i).startswith('.waf'):
             continue
@@ -78,7 +78,7 @@ def configure_pythonpath(self):
 @Configure.conf
 def check_python(self):
     self.load('python')
-    self.check_python_version((2, 7, 0))
+    self.check_python_version((3, 5, 0))
     self.check_python_headers()
 
 @Configure.conf
@@ -145,11 +145,11 @@ def check_optimization_python(self):
     self.setenv('release')
     self.env['PYC'] = self.env['PYO'] = 0
 
-def _get_default_pythonpath():
+def _get_default_pythonpath(python):
     """Default sys.path should be added into PYTHONPATH"""
     env = os.environ.copy()
     env['PYTHONPATH'] = ''
-    proc = Popen([sys.executable, '-c', 'import sys; print sys.path'],
+    proc = Popen([python, '-c', 'import sys; print(sys.path)'],
                  stdout=PIPE, env=env)
     system_path = eval(proc.communicate()[0])
     return system_path

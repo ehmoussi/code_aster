@@ -155,10 +155,22 @@ static PyMethodDef methods[] = {
    { NULL, NULL, 0, NULL }
 };
 
+static struct PyModuleDef moduledef = {
+        PyModuleDef_HEAD_INIT,
+        "aster_fonctions",
+        NULL,
+        -1,
+        methods,
+        NULL,
+        NULL,
+        NULL,
+        NULL
+};
 
 PyMODINIT_FUNC initaster_fonctions(void)
 {
-   Py_InitModule("aster_fonctions", methods);
+   PyObject* aster_fonctions = PyModule_Create(&moduledef);
    import_array();
+   return aster_fonctions;
 }
 #endif
