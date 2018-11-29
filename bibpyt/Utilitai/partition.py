@@ -234,7 +234,7 @@ class MAIL_PY:
 # -------------------------------------------------------------
     def FromAster(self, nom):
         # On accepte le concept Aster ou bien la chaine texte de son nom
-        if type(nom) != bytes:
+        if type(nom) != bytes and type(nom) != str:
             nom_maillage = nom.nom
         else:
             nom_maillage = nom
