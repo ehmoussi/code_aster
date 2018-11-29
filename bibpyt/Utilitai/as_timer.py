@@ -223,7 +223,7 @@ class ASTER_TIMER:
         """
         lnum = [[timer['num'], timer]
                 for timer in list(self.timers.values()) if timer['hide'] is not True]
-        lnum.sort()
+        lnum = sorted(lnum, key=lambda x:x[0])
         return lnum
 
     def StopAll(self):
