@@ -24,7 +24,6 @@
 from reprlib import repr as reprlim
 import traceback
 from os import times
-from types import ClassType, TypeType
 
 # Module Eficas
 from Noyau.N_utils import prbanner, AsType

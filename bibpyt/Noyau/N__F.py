@@ -20,10 +20,10 @@
 # person_in_charge: mathieu.courtois at edf.fr
 
 
-import UserDict
+import collections
 
 
-class _F(UserDict.UserDict):
+class _F(collections.UserDict):
 
     """
         Cette classe a un comportement semblable à un

@@ -246,7 +246,7 @@ class CardProtocol(PProtocol):
 
     def default(self, obj, min, max):
         length = len(obj)
-        if length < min or length > max:
+        if length < min or (max!="**" and length > max):
             raise ValError(
                 ufmt(
                     _("Nombre d'arguments de %s incorrect (min = %s, max = %s)"),
@@ -1564,7 +1564,7 @@ class InstanceVal(ListVal):
         return 1
 
 
-class VerifTypeTuple(Valid, ListVal):
+class VerifTypeTuple(ListVal):
 
     def __init__(self, typeDesTuples):
         self.typeDesTuples = typeDesTuples

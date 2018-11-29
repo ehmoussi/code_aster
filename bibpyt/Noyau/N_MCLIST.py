@@ -28,7 +28,6 @@
 
 from copy import copy
 import collections
-import types
 
 
 class MCList(collections.UserList):

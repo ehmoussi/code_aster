@@ -23,7 +23,6 @@
 """ Ce module contient la classe compte-rendu de validation
 """
 
-import string
 from .strfunc import convert, ufmt
 
 
@@ -122,8 +121,8 @@ class CR:
         """
           Insère en tete de chaque ligne du texte s la chaine self.dec
         """
-        l = string.split(s, '\n')
-        return self.dec + string.join(l, '\n' + self.dec)[:-3]
+        l = s.split('\n')
+        return self.dec + ('\n' + self.dec).join(l)[:-3]
 
     def __unicode__(self):
         """
@@ -131,10 +130,10 @@ class CR:
         """
         s = ''
         self.beautifie_messages()
-        s = s + string.join(self.crok_belle, '')
-        s = s + string.join(self.crwarn_belle, '')
-        s = s + string.join(self.crfatal_belle, '')
-        s = s + string.join(self.crexception_belle, '')
+        s = s + ''.join(self.crok_belle)
+        s = s + ''.join(self.crwarn_belle)
+        s = s + ''.join(self.crfatal_belle)
+        s = s + ''.join(self.crexception_belle)
         for subcr in self.subcr:
             if self.verbeux == 'oui':
                 s = s + str(subcr) + '\n'
@@ -206,7 +205,7 @@ separateurs = (' ', ',', '/')
 
 
 def split(ligne, cesure):
-    ligne = string.rstrip(ligne)
+    ligne = ligne.rstrip()
     if len(ligne) <= cesure:
         return ligne
     else:
@@ -225,10 +224,10 @@ def split(ligne, cesure):
 
 
 def justify_text(texte='', cesure=50):
-    texte = string.strip(texte)
-    liste_lignes = string.split(texte, '\n')
+    texte = texte.strip()
+    liste_lignes = texte.split('\n')
     l = [split(l, cesure) for l in liste_lignes]
-    texte_justifie = string.join(l, '\n')
+    texte_justifie = '\n'.join(l)
     return texte_justifie
 
 
@@ -238,10 +237,10 @@ def encadre_message(texte, motif):
        d'éléments 'motif'
     """
     texte = justify_text(texte, cesure=80)
-    lignes = string.split(texte, '\n')
+    lignes = texte.split('\n')
     longueur = 0
     for ligne in lignes:
-        ligne = string.rstrip(ligne)
+        ligne = ligne.rstrip()
         if len(ligne) > longueur:
             longueur = len(ligne)
     longueur = longueur + 4

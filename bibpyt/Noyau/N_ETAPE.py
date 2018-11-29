@@ -28,7 +28,6 @@
 # Modules Python
 import types
 import sys
-import string
 import os
 import linecache
 import traceback
@@ -153,7 +152,7 @@ class ETAPE(N_MCCOMPO.MCCOMPO):
                 sys.exc_info()[0], sys.exc_info()[1], sys.exc_info()[2])
             raise AsException("Etape ", self.nom, 'ligne : ', self.appel[0],
                               'fichier : ', self.appel[1] + '\n',
-                              string.join(l))
+                              ' '.join(l))
 
         self.Execute()
         return sd

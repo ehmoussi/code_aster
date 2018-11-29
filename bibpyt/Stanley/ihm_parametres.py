@@ -34,7 +34,6 @@ except:
     pass
 
 
-import types
 import tkinter.messagebox
 from . import ihm_parametres as objets
 

@@ -39,9 +39,6 @@
     r.verif({"INFO":v1,"AFFE":v2)
 """
 
-import types
-
-
 class REGLE:
 
     def __init__(self, *args):

@@ -26,8 +26,6 @@
     de type ENTITE
 """
 
-import types
-
 from . import N_MCCOMPO
 
 

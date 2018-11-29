@@ -23,7 +23,6 @@
 from . import E_ETAPE
 from os import times
 import aster
-import string
 from Noyau.N__F import _F
 from Noyau.N_info import message, SUPERV
 from .strfunc import ufmt
@@ -90,8 +89,7 @@ class MACRO_ETAPE(E_ETAPE.ETAPE):
                 self.detruit_sdprod()
                 self.parent.clean(1)
                 raise
-
-            if ier > 0:
+            if ier is not None and ier > 0:
                 # On termine le traitement
                 cr.fatal(_("Erreurs à l'exécution de la macro %s"), self.nom)
                 raise EOFError
@@ -146,7 +144,7 @@ class MACRO_ETAPE(E_ETAPE.ETAPE):
 
         ier = self.Build_alone()
 
-        if ier > 0:
+        if ier is not None and ier > 0:
             # On termine le traitement
             cr.fatal(
                 _("Erreurs dans la construction de la macro %s"), self.nom)
@@ -183,7 +181,7 @@ class MACRO_ETAPE(E_ETAPE.ETAPE):
             # sous commandes ont ete realisees sauf dans le cas des INCLUDE
             ier = self._Build()
 
-            if ier > 0:
+            if ier is not None and ier > 0:
                 # On termine le traitement
                 self.cr.fatal(
                     _("Erreurs dans la construction de la macro %s"), self.nom)

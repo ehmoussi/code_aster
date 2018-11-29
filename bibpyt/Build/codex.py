@@ -23,9 +23,6 @@
    Module emulant un code de calcul dans Accas
 """
 
-# Modules Python
-import string
-
 
 class error(Exception):
     pass
@@ -141,7 +138,7 @@ def gcncon(type):
     """
     global _count
     _count = _count + 1
-    return type + string.zfill(str(_count), 7)
+    return type + str(_count).zfill(7)
 
 
 def affiche(msg, text):

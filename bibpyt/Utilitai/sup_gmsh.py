@@ -18,7 +18,6 @@
 # --------------------------------------------------------------------
 
 import os.path
-import string
 import os
 import copy
 import numpy as NP
@@ -1256,7 +1255,7 @@ class Mesh:
             os.remove(file)
 
         f = open(file, 'w')
-        f.write(string.joinfields(self.command, '\n'))
+        f.write('\n'.join(self.command))
         f.close()
 
     def View(self):
