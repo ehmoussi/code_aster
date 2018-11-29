@@ -154,9 +154,8 @@ NONE = None
             # Python 2.7 compile function does not accept unicode filename, so we encode it
             # with the current locale encoding in order to have a correct
             # traceback
-            encoded_filename = self.nom.encode(get_encoding())
             self.proc_compile = compile(
-                self.procedure, encoded_filename, 'exec')
+                self.procedure, self.nom, 'exec')
         except SyntaxError as e:
             if CONTEXT.debug:
                 traceback.print_exc()

@@ -50,9 +50,9 @@ def change_test_resu():
                              '', ''])
     reval = re.compile('^ *(OK|NOOK|SKIP) +NON_REGRESSION +(?P<leg>.+?) +'
                        '(?P<refe>.+?) +(?P<calc>.+?) +(?P<err>.+?) +(?P<tole>.+?) *$', re.M)
-    fort8 = open('fort.8', 'rb').read()
+    fort8 = open('fort.8', 'rb').read().decode()
     results = reval.findall(fort8)
-    fort1 = open('fort.1', 'rb').read()
+    fort1 = open('fort.1', 'rb').read().decode()
     keywords = read_keyword_value('VALE_CALC(|_.)', fort1)
     for i, val in enumerate(results):
         print(i, val)
@@ -88,7 +88,7 @@ def append_to_file(fname, txt, delimiter=None, stdout=None):
     """Append a text at the end of a file"""
     if delimiter:
         txt = os.linesep.join([delimiter, txt, delimiter])
-    open(fname, 'ab').write(txt)
+    open(fname, 'ab').write(txt.encode())
     if stdout:
         print(txt)
 

@@ -177,9 +177,9 @@ class SYSTEM:
         # execution
         iret = os.system(new_cmd)
         fout.seek(0)
-        output = fout.read()
+        output = fout.read().decode()
         ferr.seek(0)
-        error = ferr.read()
+        error = ferr.read().decode()
         fout.close()
         ferr.close()
 

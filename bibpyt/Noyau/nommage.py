@@ -71,7 +71,7 @@ def _GetNomConceptResultat(ope, level=2):
     lineno = f.f_lineno     # XXX Too bad if -O is used
     # lineno = f_lineno(f)  # Ne marche pas toujours
     co = f.f_code
-    filename = str(co.co_filename, get_encoding())
+    filename = co.co_filename
     name = co.co_name
     # pattern pour identifier le debut de la commande
     pattern_oper = re.compile(regex1 % ope)
