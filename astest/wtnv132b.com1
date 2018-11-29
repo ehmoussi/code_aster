@@ -63,8 +63,8 @@ for n in range(nbcouche):
   noeu_depl[cle[n]] = [0.0]*n_pas_temps_max
 
   tab = T_DEP[n].EXTR_TABLE()
-  t = list(tab.INST.values())
-  dy = list(tab.DY.values())
+  t = tab.INST.values()
+  dy = tab.DY.values()
 
   n_pas_temps  = int(len(t)/(n+1));
 

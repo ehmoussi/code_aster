@@ -232,7 +232,7 @@ for i_propa in range(nb_pas) :
       # RECUPERATION DE LA TABLE CONTENANT LE NOMBRE DE FONDS DE FISSURE
       NB_FOND=RECU_TABLE(CO=FISS,NOM_TABLE='NB_FOND_FISS')
 
-      dict = list(NB_FOND.EXTR_TABLE().values())
+      dict = NB_FOND.EXTR_TABLE().values()
       nb_fond = dict['NOMBRE'][0]
       if nb_fond != 1 :
          print('<F> : erreur fatale : le nombre de fonds de fissure est different de 1')

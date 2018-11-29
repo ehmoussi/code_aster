@@ -463,8 +463,8 @@ TABL2=CREA_TABLE(RESU=_F(RESULTAT=U2,
                         TOUT_CMP='OUI',
                         TOUT='OUI',),);                        
 
-tmp=list(TABL.EXTR_TABLE().values())
-tmp2=list(TABL2.EXTR_TABLE().values())
+tmp=TABL.EXTR_TABLE().values()
+tmp2=TABL2.EXTR_TABLE().values()
 
 FX=tmp['DX']
 FY=tmp['DY']

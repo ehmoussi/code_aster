@@ -54,7 +54,7 @@ masse_el = POST_ELEM(MODELE=MODELE,
 IMPR_TABLE(TABLE=masse_el)
 
 tab = masse_el.EXTR_TABLE()
-tmas = list(tab.MASSE.values())
+tmas = tab.MASSE.values()
 
 # caractéristiques du rotor (cf. AFFE_CARA_ELEM)
 rho = 7800.
