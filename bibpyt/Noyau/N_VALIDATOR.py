@@ -180,7 +180,7 @@ class TypeProtocol(PProtocol):
                         return obj
                 except Exception as err:
                     pass
-            elif type(type_permis) == types.InstanceType or isinstance(type_permis, object):
+            elif isinstance(type_permis, object):
                 try:
                     if type_permis.__convert__(obj):
                         return obj
@@ -1538,10 +1538,7 @@ class InstanceVal(ListVal):
     def __init__(self, aClass):
         # Si aClass est une classe on la memorise dans self.aClass
         # sinon c'est une instance dont on memorise la classe
-        if type(aClass) == types.InstanceType:
-            # instance ancienne mode
-            aClass = aClass.__class__
-        elif type(aClass) == type:
+        if type(aClass) == type:
             # classe ancienne mode
             aClass = aClass
         elif type(aClass) == type:
