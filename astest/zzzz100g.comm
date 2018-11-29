@@ -90,7 +90,7 @@ TEST_FONCTION(VALEUR=_F(VALE_CALC=1.625092549018E+10 ,
 F_vari1  = CALC_FONC_INTERP( FONCTION  = E_vari1,
                         NOM_PARA = 'X',
                         LIST_PARA = LX,
-                       TITRE='FONCTION VARI 1D 60',)
+                       )
 
 
 X, FM = F_vari1.Valeurs()
@@ -107,20 +107,20 @@ E_vari0 = DEFI_PROP_ALEA (
             LONG_CORR_Y     = 20.,
             Y_MINI     = ymin,
             Y_MAXI     = ymax , 
-            NB_TERM_Y  = nbmod,)
+            NB_TERM_Y  = 100,)
 
-TEST_FONCTION(VALEUR=_F(VALE_CALC= 1.516077802079E+10 ,
-                        VALE_REFE= 1.516077802079E+10 ,
+TEST_FONCTION(VALEUR=_F(VALE_CALC= 1.485306854684E+10,
+                        VALE_REFE= 1.485306854684E+10 ,
                         VALE_PARA= (0.0),
                         REFERENCE='SOURCE_EXTERNE',
-                        NOM_PARA= ('X'),
+                        NOM_PARA= ('Y'),
                         FONCTION= E_vari0,),
               )
 
 F_vari0  = CALC_FONC_INTERP( FONCTION  = E_vari0,
                         NOM_PARA = 'Y',
                         LIST_PARA = LY,
-                       TITRE='FONCTION VARI 1D 10',)
+                      )
 
 
 X, FM = F_vari0.Valeurs()
@@ -162,7 +162,7 @@ F_vari2  = CALC_FONC_INTERP( FONCTION  = E_vari2,
                         NOM_PARA = 'X',
 #                        VALE_PARA = 0.0,
                         LIST_PARA = LX,
-                       TITRE='FONCTION VARI',)
+                       )
 
 
 X, FM = F_vari2.Valeurs()
@@ -207,28 +207,16 @@ E_vari3 = DEFI_PROP_ALEA (
 
 
 
-# -------------- VISU------------
-
-"""
-IMPR_FONCTION(FORMAT='XMGRACE', #'TABLEAU',
-              COURBE=(_F(FONCTION= FONC_E, MARQUEUR =0, ),
-                      _F(FONCTION= F_vari1, MARQUEUR =0, ),
-                      _F(FONCTION= F_vari0, MARQUEUR =0, ),
-),
-              UNITE=25,
-              );
-
-"""
-
 
 # ======================================================================
+# Exemple de visualisation du champ
 # ======================================================================
 E_vari = DEFI_PROP_ALEA ( 
             INIT_ALEA       = pseed,
             MEDIANE         = Am_E,
             COEF_VARI       =  cov_E,      
             LONG_CORR_X     = 60.,
-            LONG_CORR_Y     = 60.,
+            LONG_CORR_Y     = 30.,
             X_MINI     = xmin,
             X_MAXI     = xmax,  
             NB_TERM_X  = 60,
@@ -275,7 +263,7 @@ Modulus = CREA_CHAMP(TYPE_CHAM='NOEU_NEUT_R',
                        CHAM_PARA = (F_3, ),
                         INFO=1,)
 
-
+"""
 IMPR_RESU(FORMAT='MED',
            UNITE = 81,
            RESU=(  _F( NOM_CHAM_MED = 'E_modulus',
@@ -283,7 +271,7 @@ IMPR_RESU(FORMAT='MED',
                         ),
                  );
 
-
+"""
 
 
 
