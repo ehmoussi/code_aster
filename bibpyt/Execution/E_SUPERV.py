@@ -233,7 +233,8 @@ class SUPERV:
                 _("\n  Sortie immédiatement après la vérification de syntaxe.\n"))
             # markers for as_run status
             for fname in ('fort.8', 'fort.9'):
-                open(fname, 'ab').write('\n'
+                with open(fname, 'ab') as f:
+                    f.write('\n'
                                         '-- CODE_ASTER -- VERSION \n'
                                         'only the syntax was checked\n'
                                         '<I> <FIN> ARRET NORMAL DANS "FIN" PAR APPEL A "JEFINI".\n')

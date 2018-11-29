@@ -242,7 +242,8 @@ def get_program_path(program):
         prog_cfg = {}
         fname = osp.join(os.environ["ASTER_DATADIR"], "external_programs.js")
         if osp.isfile(fname):
-            prog_cfg = json.load(open(fname, "r"))
+            with open(fname, 'r') as f:
+                prog_cfg = json.load(f)
         get_program_path._cache = prog_cfg
 
     programs = get_program_path._cache

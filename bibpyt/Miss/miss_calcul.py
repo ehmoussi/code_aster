@@ -156,7 +156,8 @@ class CalculMiss(object):
         UTMESS('I', 'EXECLOGICIEL0_9',  valk=output)
         miss_out = ""
         if osp.exists(self._fichier_tmp("OUT")):
-            miss_out = open(self._fichier_tmp("OUT"), "r").read()
+            with open(self._fichier_tmp("OUT"), "r") as f:
+                miss_out = f.read()
         is_ok = iret == 0 and \
             (miss_out.find("INSUFFISAN") < 0 and miss_out.find("*** STOP") < 0)
         if not is_ok or self.verbose:
@@ -251,7 +252,8 @@ class CalculMiss(object):
         """
         self._dbg_trace("Start")
         content = fichier_mvol(self.data)
-        open(self._fichier_tmp("mvol"), "w").write(content)
+        with open(self._fichier_tmp("mvol"), "w") as f:
+            f.write(content)
         self._dbg_trace("Stop")
 
     def cree_fichier_pc(self):
@@ -260,9 +262,11 @@ class CalculMiss(object):
             return
         self._dbg_trace("Start")
         content = fichier_ext(self.data)
-        open(self._fichier_tmp("ext"), "w").write(content)
+        with open(self._fichier_tmp("ext"), "w") as f:
+            f.write(content)
         content = fichier_sign(self.param)
-        open(self._fichier_tmp("01.sign"), "w").write(content)
+        with open(self._fichier_tmp("01.sign"), "w") as f:
+            f.write(content)
         self._dbg_trace("Stop")
 
     def cree_fichier_chp(self):
@@ -270,7 +274,8 @@ class CalculMiss(object):
         """
         self._dbg_trace("Start")
         content = fichier_chp(self.param, self.data)
-        open(self._fichier_tmp("chp"), "w").write(content)
+        with open(self._fichier_tmp("chp"), "w") as f:
+            f.write(content)
         self._dbg_trace("Stop")
 
     def cree_fichier_sol(self):
@@ -282,7 +287,8 @@ class CalculMiss(object):
             sol_content = fichier_sol(tabsol, self.data, self.param)
             if self.verbose:
                 _print('Fichier de sol', sol_content)
-            open(self._fichier_tmp("sol"), 'w').write(sol_content)
+            with open(self._fichier_tmp("sol"), 'w') as f:
+                f.write(sol_content)
         self._dbg_trace("Stop")
 
     def cree_commande_miss(self, ext='in', lapl_temps=False):
@@ -292,7 +298,8 @@ class CalculMiss(object):
         generator = MissCmdeGen(self.param, self.data, self._fichier_tmp_local,
                                 lapl_temps=lapl_temps)
         content = generator.build()
-        open(self._fichier_tmp(ext), "w").write(content)
+        with open(self._fichier_tmp(ext), "w") as f:
+            f.write(content)
         self._dbg_trace("Stop")
 
     def cree_fichier_option(self):
@@ -301,7 +308,8 @@ class CalculMiss(object):
         option_content = fichier_option(self.param)
         if self.verbose:
             _print("Fichier d'option", option_content)
-        open(self._fichier_tmp("optmis"), 'w').write(option_content)
+        with open(self._fichier_tmp("optmis"), 'w') as f:
+            f.write(option_content)
         self._dbg_trace("Stop")
 
     # --- utilitaires internes
@@ -488,7 +496,8 @@ class CalculMissFichierTemps(CalculMiss):
             fd = open(fimpe, 'w')
             for k in self.freq_list:
                 resname = self._fichier_tmp('resu_impe_%04d' % k)
-                fd.write(open(resname, 'r').read())
+                with open(resname, 'r') as f:
+                    fd.write(f.read())
             fd.close()
             for k in range(1, size):
                 UTMESS('I', 'PARALLEL_2', valk=(fimpe, self._results_path[k]))

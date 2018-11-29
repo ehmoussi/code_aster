@@ -295,11 +295,13 @@ def en_ligne(valeurs, format, cols, separateur=" ", format_ligne="%(valeurs)s"):
 
 def convert_double(fich1, fich2):
     """Convertit les 1.D+09 en 1.E+09"""
-    txt = open(fich1, "r").read()
+    with open(fich1, "r") as f:
+        txt = f.read()
     # see python doc (module re)
     expr = re.compile("([\-\+]?\d+(\.\d*)?|\.\d+)([eEdD])([\-\+]?\d+)?")
     new = expr.sub("\\1E\\4", txt)
-    open(fich2, "w").write(new)
+    with open(fich2, "w") as f:
+        f.write(new)
 
 
 def double(string):

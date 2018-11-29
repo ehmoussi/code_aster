@@ -144,7 +144,8 @@ class TestResult(object):
         if not exports:
             # export file not found, return "verification" that is more strict!
             return True
-        text = open(exports[0], "rb").read().decode()
+        with open(exports[0], "rb") as f:
+            text = f.read().decode()
         expr = re.compile("^P +testlist.*validation", re.M)
         isVerif = expr.search(text) is None
         return isVerif

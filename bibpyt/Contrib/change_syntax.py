@@ -189,7 +189,8 @@ class SyntaxVisitor(CommandTextVisitor):
         else:
             fname = lfn[0]
         changes = self.text.get(fname, [])
-        orig = open(fname, 'r').read().splitlines()
+        with open(fname, 'r') as f:
+            orig = f.read().splitlines()
         new = orig[:]
         changes.reverse()
         for chg in changes:

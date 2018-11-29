@@ -139,7 +139,8 @@ def include_materiau_ops(self,
     context['_F'] = _F
 
     # exécution du catalogue
-    exec(compile(open(fmat).read(), fmat, 'exec'), context)
+    with open(fmat) as f:
+        exec(compile(f.read(), fmat, 'exec'), context)
     kwcata = context.get(MOTSCLES)
     if kwcata is None:
         UTMESS('F', 'SUPERVIS2_6', valk=bnmat)
