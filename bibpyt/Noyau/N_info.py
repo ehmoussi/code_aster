@@ -32,13 +32,13 @@ import traceback
 from functools import partial
 from subprocess import Popen, PIPE
 
-from N_utils import Enum, Singleton
-from strfunc import convert
+from .N_utils import Enum, Singleton
+from .strfunc import convert
 
 
 def default_print(text):
     """Basic print function."""
-    print convert(text)
+    print(convert(text))
 
 LEVEL = Enum(
     'DEBUG',
@@ -154,7 +154,7 @@ class InfoLevel(Singleton):
             else:
                 func = self._message_print
             func = self._message_print
-            apply(func, (category, level, msg, args, kwargs))
+            func(*(category, level, msg, args, kwargs))
 
     def _message_print(self, category, level, msg, args, kwargs):
         """Print the message if the level is reached."""
@@ -164,7 +164,7 @@ class InfoLevel(Singleton):
         if len(args) > 0:
             try:
                 msg = msg % args
-            except Exception, err:
+            except Exception as err:
                 msg = repr((msg, args, err))
         self._print(msg)
 

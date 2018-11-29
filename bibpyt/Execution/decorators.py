@@ -54,9 +54,9 @@ def never_fail(func):
         """wrapper"""
         try:
             ret = func(*args, **kwds)
-        except Exception, exc:
+        except Exception as exc:
             traceback.print_exc(file=sys.stdout)
-            print 'continue...'
+            print('continue...')
             ret = None
         return ret
     return wrapper

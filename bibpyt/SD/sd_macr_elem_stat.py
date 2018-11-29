@@ -106,7 +106,7 @@ class sd_macr_elem_stat(AsBase):
                 phi_ie[1]) / nddli   # nombre de lignes de phi_ie par bloc
             assert self.PHI_IE.nmaxoc == (
                 nddle - 1) / nlblph + 1, (nddle, self.PHI_IE.nmaxoc)
-            for ke in phi_ie.keys():
+            for ke in list(phi_ie.keys()):
                 assert len(phi_ie[ke]) == nddli * nlblph, (
                     nddli, nlblph, nddle, len(phi_ie[ke]), ke)
 
@@ -128,12 +128,12 @@ class sd_macr_elem_stat(AsBase):
             assert self.LICA.exists
             assert self.LICA.nmaxoc >= nbcas
             lica = self.LICA.get()
-            for k in lica.keys():
+            for k in list(lica.keys()):
                 assert len(lica[k]) == 2 * (nddli + nddle)
 
             assert self.LICH.exists
             assert self.LICH.nmaxoc == self.LICA.nmaxoc
             assert self.LICH.nutioc == self.LICA.nutioc
             lich = self.LICH.get()
-            for k in lich.keys():
+            for k in list(lich.keys()):
                 assert len(lich[k]) >= nbchar + 1

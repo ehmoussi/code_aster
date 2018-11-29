@@ -18,7 +18,7 @@
 # --------------------------------------------------------------------
 
 from SD import *
-from sd_modele import sd_modele
+from .sd_modele import sd_modele
 
 
 class sd_proj_mesu(AsBase):

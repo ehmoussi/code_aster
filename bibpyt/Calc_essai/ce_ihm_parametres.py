@@ -28,12 +28,12 @@ import weakref
 import os
 import os.path as osp
 import time
-import tkFont
+import tkinter.font
 
-from Tkinter import Tk, Frame, Menubutton, Menu, StringVar, IntVar, BooleanVar, Listbox
-from Tkinter import Scrollbar, Label, Radiobutton, Button, Entry
-from Tkinter import Checkbutton, Canvas, Toplevel
-from Tkinter import NORMAL, DISABLED
+from tkinter import Tk, Frame, Menubutton, Menu, StringVar, IntVar, BooleanVar, Listbox
+from tkinter import Scrollbar, Label, Radiobutton, Button, Entry
+from tkinter import Checkbutton, Canvas, Toplevel
+from tkinter import NORMAL, DISABLED
 
 from code_aster.Cata.Syntax import _F
 from code_aster.Cata.Commands import EXEC_LOGICIEL
@@ -159,7 +159,7 @@ class InterfaceParametres(Frame):
 
         self.columnconfigure(0, weight=1)
         self.rowconfigure(2, weight=1)
-        l = Label(self, text=u" CALC_ESSAI : Paramètres de visualisation",
+        l = Label(self, text=" CALC_ESSAI : Paramètres de visualisation",
                   padx=270, pady=5, font=("Helvetica", "16"))
         l.grid(row=0, sticky='nsew')
 
@@ -213,13 +213,13 @@ class InterfaceParametres(Frame):
         bir2 = Checkbutton(f1, variable=self.is_resu2, command=self.cb_changed)
         bir2.grid(row=1, column=0, sticky='e', padx=20)
 
-        Label(f1, text=u"Résultat 1").grid(row=0, column=1, sticky='w')
+        Label(f1, text="Résultat 1").grid(row=0, column=1, sticky='w')
         self.var_resu1 = StringVar()
         self.menu_resu1 = MyMenu(f1, options=mdo.get_resultats_name(),
                                  var=self.var_resu1, cmd=self.visu1_changed)
         self.menu_resu1.grid(row=0, column=2, sticky='ew', padx=20)
 
-        Label(f1, text=u"Résultat 2").grid(row=1, column=1, sticky='w')
+        Label(f1, text="Résultat 2").grid(row=1, column=1, sticky='w')
         self.var_resu2 = StringVar()
         self.menu_resu2 = MyMenu(f1, options=mdo.get_resultats_name(),
                                  var=self.var_resu2, cmd=self.visu2_changed)
@@ -232,7 +232,7 @@ class InterfaceParametres(Frame):
             f2, text="    MAC    ", command=self.view_macs, state='disabled')
         self.mac_button.grid(row=1, column=2, sticky='ew')
         self.phi_button = Button(
-            f2, text=u"Déformées", command=self.view_modes, state='disabled')
+            f2, text="Déformées", command=self.view_modes, state='disabled')
         self.phi_button.grid(row=2, column=2, sticky='ew')
         self.frf_button = Button(f2, text="    FRF    ", command=self.view_frf)
         self.frf_button.grid(row=3, column=2, sticky='ew')
@@ -298,7 +298,7 @@ class InterfaceParametres(Frame):
         if self.is_resu1.get():
             self.view_obs(self.var_resu1)
         else:
-            self.mess.disp_mess(u"Choisir un résultat")
+            self.mess.disp_mess("Choisir un résultat")
             return
         self.setup()
 
@@ -306,7 +306,7 @@ class InterfaceParametres(Frame):
         if self.is_resu2.get():
             self.view_obs(self.var_resu2)
         else:
-            self.mess.disp_mess(u"Choisir un résultat")
+            self.mess.disp_mess("Choisir un résultat")
             return
         self.setup()
 
@@ -374,11 +374,11 @@ class InterfaceParametres(Frame):
         logiciels_frame = Frame(f, borderwidth=4)
 
         label_parametres_salome = Label(
-            logiciels_frame, text=u"Paramètres Salome")
+            logiciels_frame, text="Paramètres Salome")
         label_parametres_salome.grid(row=2, column=1, columnspan=2)
         self.salome_widgets.append(label_parametres_salome)
 
-        label_port = Label(logiciels_frame, text=u"Port")
+        label_port = Label(logiciels_frame, text="Port")
         label_port.grid(row=3, column=1, sticky='w')
         self.salome_widgets.append(label_port)
 
@@ -390,22 +390,22 @@ class InterfaceParametres(Frame):
         self.ce_salome = None
 
         liste_etudes = StudyList(
-            logiciels_frame, self, u"choix de l'étude Salomé")
+            logiciels_frame, self, "choix de l'étude Salomé")
         liste_etudes.grid(row=4, column=2, sticky='w')
         self.salome_widgets.append(liste_etudes.liste)
         self.salome_widgets.append(liste_etudes.titre)
         liste_etudes.actualiser()
 
         label_choix_logiciel = Label(
-            logiciels_frame, text=u"Choix du logiciel")
+            logiciels_frame, text="Choix du logiciel")
         label_choix_logiciel.grid(row=0, column=0, columnspan=3)
         button_gmsh = Radiobutton(
-            logiciels_frame, text=u"Gmsh/Xmgrace", value="Gmsh/Xmgrace", variable=self.logiciel,
+            logiciels_frame, text="Gmsh/Xmgrace", value="Gmsh/Xmgrace", variable=self.logiciel,
                                   command=self.desactivate_salome_widgets)
         button_gmsh.grid(row=1, column=0, sticky='w')
 
         button_salome = Radiobutton(
-            logiciels_frame, text=u"Salomé", value="Salome", variable=self.logiciel,
+            logiciels_frame, text="Salomé", value="Salome", variable=self.logiciel,
             command=self.activate_salome_widgets)
         button_salome.grid(row=2, column=0, rowspan=3, sticky='w')
 
@@ -455,10 +455,10 @@ class InterfaceParametres(Frame):
                 idx = omniNames_params.index("-start") + 1
                 salome_port = int(omniNames_params[idx])
             except:
-                msg = u"Problème lors de la détermination du port Salome.\n"
-                msg += u"Veuillez déterminer manuellement le port de Salome, en tapant ceci dans l'interpréteur python embarqué de Salome:\n"
-                msg += u"import NSparam\n"
-                msg += u"NSparam.getNSparams()"
+                msg = "Problème lors de la détermination du port Salome.\n"
+                msg += "Veuillez déterminer manuellement le port de Salome, en tapant ceci dans l'interpréteur python embarqué de Salome:\n"
+                msg += "import NSparam\n"
+                msg += "NSparam.getNSparams()"
                 self.mess.disp_mess(msg)
         return salome_port
 
@@ -509,7 +509,7 @@ class InterfaceParametres(Frame):
         self.ce_salome.study_name = study
         self.ce_salome_courbes.study_name = study
         self.mess.disp_mess(
-            u"Les courbes et vues seront affichées dans l'étude Salomé " + study)
+            "Les courbes et vues seront affichées dans l'étude Salomé " + study)
 
     # fonction proxy vers le bon logiciel
     def visu_resu(self, resultat, nume_mode=None):
@@ -805,10 +805,10 @@ class CalcEssaiSalome(CalcEssaiLogiciel):
             script = osp.join(TEMPLATESDIR, 'salomeParaviz.py')
             choix = 'DEPL'
         else:
-            print "Le type de deformee a visualiser n'a pas ete defini"
+            print("Le type de deformee a visualiser n'a pas ete defini")
         if not self.study_name:
             self.mess.disp_mess(
-                u"Choisir l'étude Salomé dans laquelle afficher les résultats")
+                "Choisir l'étude Salomé dans laquelle afficher les résultats")
             return
 
         dSALOME = {'CHEMIN_SCRIPT': script,
@@ -888,7 +888,7 @@ class CalcEssaiSalomeCourbes(CalcEssaiSalome):
         # recuperation des noms des etudes Salome ouvertes
         if not self.study_name:
             self.mess.disp_mess(
-                u"Sélectonner l'étude Salomé dans laquelle afficher les courbes")
+                "Sélectonner l'étude Salomé dans laquelle afficher les courbes")
             return
 
         self.Show('./fort.%s' % self.unite_logique)
@@ -939,7 +939,7 @@ class CalcEssaiXmgrace():
             # XXX color n'est plus uilisé mais est-ce important?
             # Xmgrace applique automatiquement une nouvelle couleur
             # à chaque courbe.
-            couleur = range(1, 15)
+            couleur = list(range(1, 15))
             if len(couleur) > len(l_x):
                 couleur = couleur[0: len(l_x)]
             elif len(couleur) < len(l_x):

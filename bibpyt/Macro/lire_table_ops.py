@@ -55,9 +55,9 @@ def lire_table_ops(self, UNITE, FORMAT, SEPARATEUR, NUME_TABLE, RENOMME_PARA,
     reader = TableReaderFactory(texte, FORMAT, SEPARATEUR, debug=(INFO == 2))
     try:
         tab = reader.read(NUME_TABLE, check_para=check_para)
-    except TypeError, exc:
+    except TypeError as exc:
         UTMESS('F', 'TABLE0_45', valk=str(exc))
-    except aster.error, exc:
+    except aster.error as exc:
         raise_UTMESS(exc)
 
     UTMESS('I', 'TABLE0_44', valk=(self.sd.nom, tab.titr),

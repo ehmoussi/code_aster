@@ -35,7 +35,7 @@ except ImportError:
 
 
 def is_int(obj):
-    return isinstance(obj, int) or type(obj) is long
+    return isinstance(obj, int) or type(obj) is int
 
 
 def is_float(obj):
@@ -57,7 +57,7 @@ def is_number(obj):
 
 
 def is_str(obj):
-    return isinstance(obj, (str, unicode))
+    return isinstance(obj, str)
 
 
 def is_list(obj):
@@ -79,7 +79,7 @@ def is_sequence(obj):
 
 
 def is_assd(obj):
-    from N_ASSD import ASSD
+    from .N_ASSD import ASSD
     return isinstance(obj, ASSD)
 
 

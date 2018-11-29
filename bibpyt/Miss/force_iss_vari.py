@@ -102,7 +102,7 @@ def force_iss_vari(self,imod,MATR_GENE,NOM_CMP,ISSF,INFO,UNITE_RESU_FORC,
 
      # MODEL fonction de cohérence
     MODEL = MATR_COHE['TYPE']
-    print 'MODEL :',   MODEL
+    print('MODEL :',   MODEL)
     Data_Cohe = {}
     Data_Cohe['TYPE'] = MODEL
     Data_Cohe['MAILLAGE'] = nom_mail

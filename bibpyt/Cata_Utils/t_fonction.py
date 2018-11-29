@@ -67,8 +67,8 @@ def interp(typ_i, val, x1, x2, y1, y2, tol=1.e-6):
         return exp(log(y1) + (log(val) - log(x1)) * (log(y2) - log(y1)) / (log(x2) - log(x1)))
     if typ_i == ['LOG', 'LIN']:
         return y1 + (log(val) - log(x1)) * (y2 - y1) / (log(x2) - log(x1))
-    raise InterpolationError, "abscisse = %g, intervalle = [%g, %g]" % (
-        val, x1, x2)
+    raise InterpolationError("abscisse = %g, intervalle = [%g, %g]" % (
+        val, x1, x2))
 
 
 def is_ordo(liste):
@@ -92,26 +92,26 @@ class t_fonction:
         - para est un dictionnaire contenant les entrées PROL_DROITE, PROL_GAUCHE et INTERPOL (cf sd ASTER)
         """
         self.nom = nom
-        pk = para.keys()
+        pk = list(para.keys())
         pk.sort()
         if pk != ['INTERPOL', 'NOM_PARA', 'NOM_RESU', 'PROL_DROITE', 'PROL_GAUCHE']:
-            raise FonctionError, 'fonction : parametres incorrects'
+            raise FonctionError('fonction : parametres incorrects')
         if para['INTERPOL'] not in [['NON', 'NON'], ['LIN', 'LIN'], ['LIN', 'LOG'], ['LOG', 'LOG'], ['LOG', 'LIN'], ]:
-            raise FonctionError, 'fonction : parametre INTERPOL incorrect : %s' % para[
-                'INTERPOL']
+            raise FonctionError('fonction : parametre INTERPOL incorrect : %s' % para[
+                'INTERPOL'])
         if para['PROL_DROITE'] not in ['EXCLU', 'CONSTANT', 'LINEAIRE']:
-            raise FonctionError, 'fonction : parametre PROL_DROITE incorrect : %s' % para[
-                'PROL_DROITE']
+            raise FonctionError('fonction : parametre PROL_DROITE incorrect : %s' % para[
+                'PROL_DROITE'])
         if para['PROL_GAUCHE'] not in ['EXCLU', 'CONSTANT', 'LINEAIRE']:
-            raise FonctionError, 'fonction : parametre PROL_GAUCHE incorrect : %s' % para[
-                'PROL_GAUCHE']
+            raise FonctionError('fonction : parametre PROL_GAUCHE incorrect : %s' % para[
+                'PROL_GAUCHE'])
         self.vale_x = NP.array(vale_x)
         self.vale_y = NP.array(vale_y)
         self.para = para
         if len(self.vale_x) != len(self.vale_y):
-            raise FonctionError, 'fonction : longueur abscisse <> longueur ordonnées'
+            raise FonctionError('fonction : longueur abscisse <> longueur ordonnées')
         if not is_ordo(self.vale_x):
-            raise FonctionError, 'fonction : abscisses non strictement croissantes'
+            raise FonctionError('fonction : abscisses non strictement croissantes')
 
     @property
     def values(self):
@@ -138,8 +138,8 @@ class t_fonction:
             else:
                 return t_fonction(self.vale_x, self.vale_y + other, self.para)
         else:
-            raise FonctionError, 'fonctions : erreur de type dans __add__ : %s %s' % (
-                self, type(other))
+            raise FonctionError('fonctions : erreur de type dans __add__ : %s %s' % (
+                self, type(other)))
 
     def __mul__(self, other):
         """multiplication avec une autre fonction ou un nombre, par surcharge de l'opérateur *
@@ -159,8 +159,8 @@ class t_fonction:
         elif is_complex(other):
             return t_fonction_c(self.vale_x, self.vale_y * other, self.para)
         else:
-            raise FonctionError, 'fonctions : erreur de type dans __mul__%s %s' % (
-                self, type(other))
+            raise FonctionError('fonctions : erreur de type dans __mul__%s %s' % (
+                self, type(other)))
 
     def __repr__(self):
         """affichage de la fonction en double colonne
@@ -175,9 +175,9 @@ class t_fonction:
         """
         para = copy.copy(self.para)
         if other.para['NOM_RESU'] != self.para['NOM_PARA']:
-            raise ParametreError, '''composition de fonctions : NOM_RESU1 et NOM_PARA2 incohérents '''
+            raise ParametreError('''composition de fonctions : NOM_RESU1 et NOM_PARA2 incohérents ''')
         para['NOM_PARA'] == other.para['NOM_PARA']
-        return t_fonction(other.vale_x, map(self, other.vale_y), para)
+        return t_fonction(other.vale_x, list(map(self, other.vale_y)), para)
 
     def __call__(self, val, tol=1.e-6):
         """Evaluation de f(val)
@@ -290,13 +290,13 @@ class t_fonction:
         elif crit == 'RELATIF':
             rinf_tab = NP.greater(abs(self.vale_x - rinf), prec * rinf)
         else:
-            raise FonctionError, 'fonction : cut : critère absolu ou relatif'
+            raise FonctionError('fonction : cut : critère absolu ou relatif')
         if crit == 'ABSOLU':
             rsup_tab = NP.greater(abs(self.vale_x - rsup), prec)
         elif crit == 'RELATIF':
             rsup_tab = NP.greater(abs(self.vale_x - rsup), prec * rsup)
         else:
-            raise FonctionError, 'fonction : cut : critère absolu ou relatif'
+            raise FonctionError('fonction : cut : critère absolu ou relatif')
         if NP.alltrue(rinf_tab):
             i = NP.searchsorted(self.vale_x, rinf)
         else:
@@ -315,7 +315,7 @@ class t_fonction:
         """
         para = copy.copy(self.para)
         if self.para['INTERPOL'] != other.para['INTERPOL']:
-            raise FonctionError, 'concaténation de fonctions à interpolations différentes'
+            raise FonctionError('concaténation de fonctions à interpolations différentes')
         if NP.min(self.vale_x) < NP.min(other.vale_x):
             f1 = self
             f2 = other
@@ -473,7 +473,7 @@ class t_fonction:
     def evalfonc(self, liste_val):
         """renvoie la mm fonction interpolée aux points définis par la liste 'liste_val'
         """
-        return self.__class__(liste_val, map(self, liste_val), self.para)
+        return self.__class__(liste_val, list(map(self, liste_val)), self.para)
 
     def suppr_tend(self):
         """pour les corrections d'accélérogrammes
@@ -502,12 +502,12 @@ class t_fonction:
         para = copy.copy(self.para)
         para['NOM_PARA'] = 'FREQ'
         if self.para['NOM_PARA'] != 'INST':
-            raise ParametreError, 'fonction réelle : FFT : NOM_PARA=INST pour une transformée directe'
+            raise ParametreError('fonction réelle : FFT : NOM_PARA=INST pour une transformée directe')
         pas = self.vale_x[1] - self.vale_x[0]
         for i in range(1, len(self.vale_x)):
             ecart = NP.abs(((self.vale_x[i] - self.vale_x[i - 1]) - pas) / pas)
             if ecart > 1.e-2:
-                raise FonctionError, 'fonction réelle : FFT : la fonction doit etre à pas constant'
+                raise FonctionError('fonction réelle : FFT : la fonction doit etre à pas constant')
         n = get_len_puis2(self.vale_x)
         if methode == 'TRONCATURE':
             vale_y = self.vale_y[:2 ** n]
@@ -552,8 +552,8 @@ class t_fonction_c(t_fonction):
         elif is_number(other):
             res = t_fonction_c(self.vale_x, self.vale_y + other, self.para)
         else:
-            raise FonctionError, 'fonctions : erreur de type dans __add__ : %s %s' % (
-                self, type(other))
+            raise FonctionError('fonctions : erreur de type dans __add__ : %s %s' % (
+                self, type(other)))
         return res
 
     def __mul__(self, other):
@@ -569,8 +569,8 @@ class t_fonction_c(t_fonction):
         elif is_number(other):
             res = t_fonction_c(self.vale_x, self.vale_y * other, self.para)
         else:
-            raise FonctionError, 'fonctions : erreur de type dans __mul__%s %s' % (
-                self, type(other))
+            raise FonctionError('fonctions : erreur de type dans __mul__%s %s' % (
+                self, type(other)))
         return res
 
     def tabul(self):
@@ -601,12 +601,12 @@ class t_fonction_c(t_fonction):
         para = copy.copy(self.para)
         para['NOM_PARA'] = 'INST'
         if self.para['NOM_PARA'] != 'FREQ':
-            raise ParametreError, 'fonction complexe : FFT : NOM_PARA=FREQ pour une transformée directe'
+            raise ParametreError('fonction complexe : FFT : NOM_PARA=FREQ pour une transformée directe')
         pas = self.vale_x[1] - self.vale_x[0]
         for i in range(1, len(self.vale_x)):
             ecart = NP.abs(((self.vale_x[i] - self.vale_x[i - 1]) - pas) / pas)
             if ecart > 1.e-3:
-                raise FonctionError, 'fonction complexe : FFT : la fonction doit etre à pas constant'
+                raise FonctionError('fonction complexe : FFT : la fonction doit etre à pas constant')
         n = get_len_puis2(self.vale_x)
         if syme == 'OUI':
             vale_fonc = self.vale_y
@@ -674,29 +674,29 @@ class t_nappe:
         - l_fonc est la liste des fonctions, de cardinal égal à celui de vale_para
         """
         self.nom = nom
-        pk = para.keys()
+        pk = list(para.keys())
         pk.sort()
         if pk != ['INTERPOL', 'NOM_PARA', 'NOM_PARA_FONC', 'NOM_RESU', 'PROL_DROITE', 'PROL_GAUCHE']:
-            raise FonctionError, 'nappe : parametres incorrects'
+            raise FonctionError('nappe : parametres incorrects')
         if para[
             'INTERPOL'] not in ['NON', 'LIN', 'LOG', ['NON', 'NON'], ['LIN', 'LIN'],
                                 ['LIN', 'LOG'], ['LOG', 'LOG'], ['LOG', 'LIN'], ]:
-            raise FonctionError, 'nappe : parametre INTERPOL incorrect : %s' % para[
-                'INTERPOL']
+            raise FonctionError('nappe : parametre INTERPOL incorrect : %s' % para[
+                'INTERPOL'])
         if para['PROL_DROITE'] not in ['EXCLU', 'CONSTANT', 'LINEAIRE']:
-            raise FonctionError, 'nappe : parametre PROL_DROITE incorrect : %s' % para[
-                'PROL_DROITE']
+            raise FonctionError('nappe : parametre PROL_DROITE incorrect : %s' % para[
+                'PROL_DROITE'])
         if para['PROL_GAUCHE'] not in ['EXCLU', 'CONSTANT', 'LINEAIRE']:
-            raise FonctionError, 'nappe : parametre PROL_GAUCHE incorrect : %s' % para[
-                'PROL_GAUCHE']
+            raise FonctionError('nappe : parametre PROL_GAUCHE incorrect : %s' % para[
+                'PROL_GAUCHE'])
         self.vale_para = NP.array(vale_para)
         if not is_sequence(l_fonc):
-            raise FonctionError, 'nappe : la liste de fonctions fournie n est pas une liste'
+            raise FonctionError('nappe : la liste de fonctions fournie n est pas une liste')
         if len(l_fonc) != len(vale_para):
-            raise FonctionError, 'nappe : nombre de fonctions différent du nombre de valeurs du paramètre'
+            raise FonctionError('nappe : nombre de fonctions différent du nombre de valeurs du paramètre')
         for f in l_fonc:
             if not isinstance(f, t_fonction) and not isinstance(f, t_fonction_c):
-                raise FonctionError, 'nappe : les fonctions fournies ne sont pas du bon type'
+                raise FonctionError('nappe : les fonctions fournies ne sont pas du bon type')
         self.l_fonc = l_fonc
         self.para = para
 
@@ -781,15 +781,15 @@ class t_nappe:
         l_fonc = []
         if isinstance(other, t_nappe):
             if NP.all(self.vale_para != other.vale_para):
-                raise ParametreError, 'nappes à valeurs de paramètres différentes'
+                raise ParametreError('nappes à valeurs de paramètres différentes')
             for i in range(len(self.l_fonc)):
                 l_fonc.append(self.l_fonc[i] + other.l_fonc[i])
         elif is_float_or_int(other):
             for i in range(len(self.l_fonc)):
                 l_fonc.append(self.l_fonc[i] + other)
         else:
-            raise FonctionError, 't_nappe : erreur de type dans __add__ : %s %s' % (
-                other, type(other))
+            raise FonctionError('t_nappe : erreur de type dans __add__ : %s %s' % (
+                other, type(other)))
         return t_nappe(self.vale_para, l_fonc, self.para)
 
     def __mul__(self, other):
@@ -798,15 +798,15 @@ class t_nappe:
         l_fonc = []
         if isinstance(other, t_nappe):
             if NP.all(self.vale_para != other.vale_para):
-                raise ParametreError, 'nappes à valeurs de paramètres différentes'
+                raise ParametreError('nappes à valeurs de paramètres différentes')
             for i in range(len(self.l_fonc)):
                 l_fonc.append(self.l_fonc[i] * other.l_fonc[i])
         elif is_float_or_int(other):
             for i in range(len(self.l_fonc)):
                 l_fonc.append(self.l_fonc[i] * other)
         else:
-            raise FonctionError, 't_nappe : erreur de type dans __mul__ : %s %s' % (
-                other, type(other))
+            raise FonctionError('t_nappe : erreur de type dans __mul__ : %s %s' % (
+                other, type(other)))
         return t_nappe(self.vale_para, l_fonc, self.para)
 
     def __repr__(self):
@@ -845,7 +845,7 @@ class t_nappe:
                     l_fonc.append(
                         t_fonction_c(new_vale_x, new_vale_y, new_para))
             else:
-                raise FonctionError, 'combinaison de nappes : incohérence'
+                raise FonctionError('combinaison de nappes : incohérence')
         return t_nappe(vale_para, l_fonc, self.para)
 
     def extreme(self):
@@ -905,9 +905,9 @@ def func_union(func, l_f):
     vale_x.sort()
     vale_x = NP.array(vale_x)
     # interpolation des fonctions sur l'union des abscisses
-    vale_y = [map(f, vale_x) for f in l_f]
+    vale_y = [list(map(f, vale_x)) for f in l_f]
     # applique la fonction
-    vale_y = map(func, *vale_y)
+    vale_y = list(map(func, *vale_y))
     return t_fonction(vale_x, vale_y, para)
 
 
@@ -919,7 +919,7 @@ def enveloppe(l_f, crit):
     elif crit.upper() == 'INF':
         env = func_union(min, l_f)
     else:
-        raise FonctionError, 'enveloppe : le critère doit etre SUP ou INF !'
+        raise FonctionError('enveloppe : le critère doit etre SUP ou INF !')
     return env
 
 
@@ -939,7 +939,7 @@ def fractile(l_f, fract):
     #
     l_vale_y = []
     for f in l_f:
-        vale_y = map(f, vale_x)
+        vale_y = list(map(f, vale_x))
         l_vale_y.append(vale_y)
     tab_val = NP.transpose(NP.array(l_vale_y))
     tab_val = tab_val.tolist()
@@ -974,7 +974,7 @@ def moyenne(l_f):
     #
     l_vale_y = []
     for f in l_f:
-        vale_y = map(f, vale_x)
+        vale_y = list(map(f, vale_x))
         l_vale_y.append(vale_y)
     vale_y = NP.mean(NP.array(l_vale_y), axis=0)
     return t_fonction(vale_x, vale_y, para)

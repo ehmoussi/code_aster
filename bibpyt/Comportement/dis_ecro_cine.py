@@ -19,7 +19,7 @@
 
 # person_in_charge: francois.voldoire at edf.fr
 
-from cata_comportement import LoiComportement
+from .cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'DIS_ECRO_CINE',

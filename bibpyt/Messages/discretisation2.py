@@ -21,7 +21,7 @@
 
 cata_msg = {
 
-    79 : _(u"""
+    79 : _("""
    Arrêt par manque de temps CPU pendant les itérations de Newton, au numéro d'instant < %(i1)d >
       - Temps moyen par itération de Newton : %(r1)f
       - Temps restant                       : %(r2)f
@@ -29,7 +29,7 @@ cata_msg = {
    La base globale est sauvegardée. Elle contient les pas archivés avant l'arrêt.
 """),
 
-    80 : _(u"""
+    80 : _("""
    Arrêt par manque de temps CPU au numéro d'instant < %(i1)d >
       - Temps moyen par pas de temps        : %(r1)f
       - Temps restant                       : %(r2)f

@@ -174,7 +174,7 @@ def defi_sol_miss_ops(self, MATERIAU, COUCHE, COUCHE_AUTO, TITRE, INFO, **args):
                 nume_substr = dC.get("NUME_MATE_SUBSTRATUM")
             if dC.get("NOMBRE_RECEPTEUR"):
                 nb_recept = dC.get("NOMBRE_RECEPTEUR")
-                if (nb_recept%2 <> 0):
+                if (nb_recept%2 != 0):
                     UTMESS("F", "MISS0_27")
             if dC.get("GROUP_MA_INTERF"):
                 grma_interf = dC.get("GROUP_MA_INTERF")
@@ -185,7 +185,7 @@ def defi_sol_miss_ops(self, MATERIAU, COUCHE, COUCHE_AUTO, TITRE, INFO, **args):
                 Z0 = max_z_input
             if not enfonce:
                 max_z_input = Z0
-            print 'La cote Z vaut : ',Z0
+            print('La cote Z vaut : ',Z0)
             if dC.get("TOLERANCE"):
                tole_verif = dC.get("TOLERANCE")
             if dC.get("DECALAGE_AUTO") == "OUI":
@@ -194,7 +194,7 @@ def defi_sol_miss_ops(self, MATERIAU, COUCHE, COUCHE_AUTO, TITRE, INFO, **args):
                 nomgrmactrl = dC.get("GROUP_MA_CONTROL")
                 l_pt_ctrl = True
                 coor_z_ctrl = recu_coor_z(noma,nomgrmactrl,'group_ma',tole_r)
-                print 'Cotes verticales des points de controle=',coor_z_ctrl
+                print('Cotes verticales des points de controle=',coor_z_ctrl)
                 if coor_z_ctrl[0] > Z0:
                     UTMESS("F", "MISS0_28", valr=Z0)
 
@@ -213,7 +213,7 @@ def defi_sol_miss_ops(self, MATERIAU, COUCHE, COUCHE_AUTO, TITRE, INFO, **args):
             if len(coor_z_sol) == 1:
                 UTMESS("F", "MISS0_29")
             # Verification entre base de l'interface et couches de sol
-            if len(l_epais) <> len(ll_mate):
+            if len(l_epais) != len(ll_mate):
                UTMESS("F", "MISS0_30")
 
         if l_pt_ctrl:
@@ -510,7 +510,7 @@ def defi_sol_miss_ops(self, MATERIAU, COUCHE, COUCHE_AUTO, TITRE, INFO, **args):
         tab.titr = os.linesep.join(TITRE)
 
     if INFO == 2:
-        print tab
+        print(tab)
 
     # 5. création de la table
     dprod = tab.dict_CREA_TABLE()

@@ -21,39 +21,39 @@
 
 cata_msg = {
 
-    1  : _(u"""
+    1  : _("""
    Aucun champ de déplacement ni de vitesse n'est fourni
    pour le calcul de l'option %(k1)s.
 """),
 
-    2  : _(u"""
+    2  : _("""
    La réactualisation de la géométrie pour le chargement de type suiveur n'existe
    pas pour le type d'élément %(k2)s.
    Option concernée : %(k1)s
 """),
 
-    27 : _(u"""
+    27 : _("""
  pas d'intersection trouvé
 """),
 
-    29 : _(u"""
+    29 : _("""
  élément faisceau homogénéisé non prévu
 """),
 
-    31 : _(u"""
+    31 : _("""
 Ce message est un message d'erreur développeur.
 Contactez le support technique.
 """),
 
-    33 : _(u"""
+    33 : _("""
  pas de dilatation thermique orthotrope pour coque_3d
 """),
 
-    34 : _(u"""
+    34 : _("""
  les vecteurs sont au nombre de 1 ou 2
 """),
 
-    38 : _(u"""
+    38 : _("""
   ->  L'option ANGL_AXE n'est pas prise en compte en 2D mais seulement
       en 3D.
   -> Risque & Conseil :
@@ -63,100 +63,100 @@ Contactez le support technique.
      un repère d'orthotropie via ANGL_REP.
 """),
 
-    39 : _(u"""
+    39 : _("""
  La loi %(k1)s n'existe pas pour une utilisation avec des poutres multifibres.
 """),
 
-    40 : _(u"""
+    40 : _("""
  Poutres multifibres. Pas d'intégration possible sur les poutre de type %(i1)d.
 """),
 
 
-    42 : _(u"""
+    42 : _("""
  " %(k1)s "    nom d'élément inconnu.
 """),
 
-    43 : _(u"""
+    43 : _("""
  noeuds confondus pour la maille:  %(k1)s
 """),
 
-    44 : _(u"""
+    44 : _("""
   option de matrice de masse  %(k1)s  inconnue
 """),
 
-    45 : _(u"""
+    45 : _("""
  on n'a pas trouvé de variable interne correspondante a la déformation plastique équivalente cumulée
 """),
 
-    46 : _(u"""
+    46 : _("""
  on ne traite pas les moments
 """),
 
-    47 : _(u"""
+    47 : _("""
  l'option " %(k1)s " est inconnue
 """),
 
-    48 : _(u"""
+    48 : _("""
  type de poutre inconnu
 """),
 
-    50 : _(u"""
+    50 : _("""
  charge répartie variable non admise sur un élément variable.
 """),
 
-    53 : _(u"""
+    53 : _("""
  un champ de vitesse de vent est imposé sans donner un Cx dépendant de la vitesse sur une des poutres.
 """),
 
-    54 : _(u"""
+    54 : _("""
  le module de cisaillement G est nul mais pas le module de Young E
 """),
 
-    55 : _(u"""
+    55 : _("""
  section circulaire uniquement
 """),
 
-    57 : _(u"""
+    57 : _("""
        La modélisation T3G ne permet pas de bien prendre en compte l'excentrement à cause de son interpolation de la flèche.
 """),
 
-    58 : _(u"""
+    58 : _("""
  Échec de convergence dans l'inversion du système par Newton-Raphson.
 """),
 
-    59 : _(u"""
+    59 : _("""
  Les moments répartis ne sont autorisés que sur les poutres droites à section constante.
 """),
 
-    61 : _(u"""
+    61 : _("""
  " %(k1)s "   nom d'option non reconnue
 """),
 
-    62 : _(u"""
+    62 : _("""
 Problème d'interpolation pour RHO_CP
 """),
 
-    63 : _(u"""
+    63 : _("""
  On ne trouve pas le comportement %(k1)s dans le matériau fourni.
 """),
 
-    64 : _(u"""
+    64 : _("""
  Le matériau contient le comportement thermique %(k1)s alors que l'on attend le comportement %(k2)s.
 """),
 
-    65 : _(u"""
+    65 : _("""
  Le matériau contient le comportement thermique %(k1)s alors que l'on attend un des comportements suivants :
  - THER_NL
  - THER_HYDR
 """),
 
-    66 : _(u"""
+    66 : _("""
  On ne trouve pas l'un des comportements suivants dans le matériau :
  - THER_NL
  - THER_HYDR
 """),
 
-    72 : _(u"""
+    72 : _("""
   -> La réactualisation de la géométrie (DEFORMATION='PETIT_REAC') est déconseillée pour les éléments de type plaque.
      Les grandes rotations ne sont pas modélisées correctement.
   -> Risque & Conseil :
@@ -164,36 +164,36 @@ Problème d'interpolation pour RHO_CP
      d'utiliser pour les modélisations type COQUE_3D ou  DKTG  DEFORMATION='GROT_GDEP'
 """),
 
-    73 : _(u"""
+    73 : _("""
  Seule la loi de comportement ELAS est autorisée avec la déformation GROT_GDEP en modélisation DKT.
 """),
 
-    74 : _(u"""
+    74 : _("""
   %(k1)s  non implante.
 """),
 
-    75 : _(u"""
+    75 : _("""
   Les matériaux de coque homogénéisées (ELAS_COQUE) sont interdits en non-linéaire.
 """),
 
-    77 : _(u"""
+    77 : _("""
  option :  %(k1)s  interdite
 """),
 
 
-    81 : _(u"""
+    81 : _("""
  éléments de poutre section variable affine :seul une section rectangle plein est disponible.
 """),
 
-    82 : _(u"""
+    82 : _("""
  éléments de poutre section variable homothétique : l'aire initiale est nulle.
 """),
 
-    84 : _(u"""
+    84 : _("""
  éléments de poutre l'option " %(k1)s " est inconnue
 """),
 
-    90 : _(u"""
+    90 : _("""
  le seul comportement élastique valide est ELAS
 """),
 

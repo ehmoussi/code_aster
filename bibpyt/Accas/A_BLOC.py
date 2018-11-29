@@ -22,7 +22,7 @@
 
 from Noyau import N_BLOC
 from Build import B_ENTITE
-import A_MCBLOC
+from . import A_MCBLOC
 
 
 class BLOC(N_BLOC.BLOC, B_ENTITE.ENTITE):

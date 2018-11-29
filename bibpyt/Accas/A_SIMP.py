@@ -21,7 +21,7 @@
 
 
 from Noyau import N_SIMP
-import A_MCSIMP
+from . import A_MCSIMP
 
 
 class SIMP(N_SIMP.SIMP):

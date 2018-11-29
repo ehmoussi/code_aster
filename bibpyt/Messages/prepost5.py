@@ -21,172 +21,172 @@
 
 cata_msg = {
 
-    1 : _(u"""
+    1 : _("""
  L'option %(k1)s est déjà calculée pour le numéro d'ordre %(k2)s.
  On la recalcule car les données peuvent être différentes.
 """),
 
-    2 : _(u"""
+    2 : _("""
 Champ inexistant SIEF_ELGA ou SIEF_ELGA numéro d'ordre %(k1)s pour le calcul de l'option %(k2)s
 """),
 
-    3 : _(u"""
+    3 : _("""
 Champ inexistant DEPL numéro d'ordre %(k1)s pour le calcul de l'option %(k2)s
 """),
 
-    4 : _(u"""
+    4 : _("""
  Il n'existe aucun noeud lié à la liste de de mailles ou au groupe de mailles fournit à IMPR_RESU.
 
  Conseil : Vérifiez les mots-clés MAILLE ou GROUP_MA fournit à IMPR_RESU.
 """),
 
-    8 : _(u"""
+    8 : _("""
 
  la taille mémoire   nécessaire au vecteur de travail dans   lequel nous stockons les composantes   u et v du vecteur TAU est trop importante   par rapport a la place disponible.
  taille disponible :  %(i1)d
  taille nécessaire :  %(i2)d
 """),
 
-    10 : _(u"""
+    10 : _("""
  le noeud traité n'est associé à aucune maille volumique.
  numéro du noeud =  %(i1)d
  nombre de mailles attachées au noeud =  %(i2)d
 """),
 
-    16 : _(u"""
+    16 : _("""
  appel erroné numéro d'ordre %(i1)d code retour  : %(i2)d
  Problème CHAM_NO %(k1)s
 Séchage moins %(r2)f  Séchage plus %(r3)f
 """),
 
-    19 : _(u"""
+    19 : _("""
  nombre de noeud(s) éliminé(s) du maillage  %(i1)d
 """),
 
-    20 : _(u"""
+    20 : _("""
  nombre de maille(s) éliminée(s) du maillage  %(i1)d
 """),
 
-    21 : _(u"""
+    21 : _("""
  le numéro du groupe de mailles est trop grand:  %(i1)d
   le numéro du groupe doit être inférieur a  %(i2)d
 """),
 
-    25 : _(u"""
+    25 : _("""
   on ne trouve pas la composante  %(k1)s  dans la grandeur  %(k2)s
 """),
 
-    30 : _(u"""
+    30 : _("""
   on ne trouve pas la maille  %(k1)s
 """),
 
-    31 : _(u"""
+    31 : _("""
   On ne trouve pas le groupe %(k1)s.
 """),
 
-    32 : _(u"""
+    32 : _("""
   le groupe  %(k1)s  ne contient aucune maille  %(k2)s
 """),
 
-    38 : _(u"""
+    38 : _("""
   on ne trouve pas le noeud : %(k1)s
 """),
 
-    40 : _(u"""
+    40 : _("""
   le groupe  %(k1)s ne contient aucun noeud  %(k2)s
 """),
 
-    41 : _(u"""
+    41 : _("""
   le paramètre  %(k1)s n'existe pas %(k2)s
 """),
 
-    45 : _(u"""
+    45 : _("""
  noeud inconnu dans le fichier  IDEAS  noeud numéro :  %(i1)d
 """),
 
-    46 : _(u"""
+    46 : _("""
  élément inconnu dans le fichier IDEAS élément numéro :  %(i1)d
 """),
 
-    48 : _(u"""
+    48 : _("""
 Erreur utilisateur dans la commande EXTR_RESU / RESTREINT :
   La structure de donnée contient des champs par éléments.
   Le mot clé MODELE est obligatoire.
 """),
 
-    49 : _(u"""
+    49 : _("""
 Erreur utilisateur dans la commande EXTR_RESU / RESTREINT :
   Le maillage associé à certains champs de %(k1)s est %(k2)s.
   Il devrait être %(k3)s.
 """),
 
-    50 : _(u"""
+    50 : _("""
  Attention : la valeur d'amortissement associée au mode propre %(i1)d est négative ou nulle : %(r1)f.
 """),
  
-    51 : _(u"""
+    51 : _("""
  La valeur d'amortissement associée au mode propre %(i1)d est négative ou nulle : %(r1)f.
  Vous avez demandé qu'elle soit corrigée. Cet amortissement est mis à %(r2)f.
 """),
  
-    52 : _(u"""
+    52 : _("""
  La valeur d'amortissement associée au mode propre %(i1)d est négative ou nulle : %(r1)f.
 """),
  
-    57 : _(u"""
+    57 : _("""
  problème dans  le traitement de l'instant  %(r1)f
   récupération de  %(k1)s
 Ce message est un message d'erreur développeur.
 Contactez le support technique.
 """),
 
-    58 : _(u"""
+    58 : _("""
  problème dans  le traitement de l'instant  %(r1)f
   récupération  pour  %(k1)s
 Ce message est un message d'erreur développeur.
 Contactez le support technique.
 """),
 
-    59 : _(u"""
+    59 : _("""
  problème dans  le traitement de l'instant  %(r1)f
   récupération pour le secteur  %(i1)d
 Ce message est un message d'erreur développeur.
 Contactez le support technique.
 """),
 
-    61 : _(u"""
+    61 : _("""
  la composante  %(k1)s  n'existe dans aucun des champs %(k2)s
 """),
 
-    64 : _(u"""
+    64 : _("""
  la valeur d'amortissement réduit est trop grande
  la valeur d'amortissement :  %(r1)f
   du mode propre  %(i1)d
   est tronquée au seuil :  %(r2)f
 """),
 
-    67 : _(u"""
+    67 : _("""
 
  la taille mémoire   nécessaire au vecteur de travail   est trop importante   par rapport a la place disponible.
  taille disponible :  %(i1)d
  taille nécessaire :  %(i2)d
 """),
 
-    68 : _(u"""
+    68 : _("""
 
  la taille du vecteur  contenant les caractéristiques des   paquets de mailles est trop petite.
  nombre de paquets max :  %(i1)d
  nombre de paquets réels:  %(i2)d
 """),
 
-    70 : _(u"""
+    70 : _("""
 
  la taille du vecteur  contenant les caractéristiques des   paquets de noeuds est trop petite.
  nombre de paquets max :  %(i1)d
  nombre de paquets réels:  %(i2)d
 """),
 
-    73 : _(u"""
+    73 : _("""
  appel erroné  résultat :  %(k1)s   archivage numéro :  %(i1)d
    code retour :  %(i2)d
    problème champ :  %(k2)s
@@ -194,26 +194,26 @@ Ce message est un message d'erreur développeur.
 Contactez le support technique.
 """),
 
-    74 : _(u"""
+    74 : _("""
  on ne trouve pas l'instant  %(r1)f  dans la table  %(k1)s
 """),
 
-    75 : _(u"""
+    75 : _("""
  on trouve   plusieurs instants  %(r1)f  dans la table  %(k1)s
 """),
 
-    76 : _(u"""
+    76 : _("""
  noeud non contenu dans une  maille sachant calculer l" option
  noeud numéro :  %(i1)d
 """),
 
-    77 : _(u"""
+    77 : _("""
 banque de données pour le type de géométrie  %(k1)s
   le couple de matériaux  %(k2)s
   ne se trouve pas dans la banque. %(k3)s
 """),
 
-    78 : _(u"""
+    78 : _("""
  le calcul du rayon n'est pas assez précis.
     %(r1)f
     %(r2)f

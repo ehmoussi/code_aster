@@ -76,9 +76,9 @@ def Triaxial_DR(K, G, phi, psi, cohes=0., sigma0=0., depzz=-.000001, epzz_max=-0
 
     for i, ep1 in enumerate(epsi1[1:]):
 
-        print
-        print '=========================================================='
-        print '> pas i=', i, ' epsi1=', ep1
+        print()
+        print('==========================================================')
+        print('> pas i=', i, ' epsi1=', ep1)
 
         # prediction elastique
         # ----------------------
@@ -122,15 +122,15 @@ def Triaxial_DR(K, G, phi, psi, cohes=0., sigma0=0., depzz=-.000001, epzz_max=-0
 
             ielas = (seuil / cohes < tol)
 
-            print ' -----------'
-            print '  * Newton no.', n, ' seuil =', seuil / cohes, ' si =', si
+            print(' -----------')
+            print('  * Newton no.', n, ' seuil =', seuil / cohes, ' si =', si)
 
             if not ielas:
                 # Cas plastique
                 # ---------------------
-                print
-                print '  ====>>> Plasticite activee <<<===='
-                print
+                print()
+                print('  ====>>> Plasticite activee <<<====')
+                print()
 
                 A = 2. * (K * s + G * (si + s / 3.))
                 B = 2. * (2. * K * s - G * (si + s / 3.))
@@ -146,9 +146,9 @@ def Triaxial_DR(K, G, phi, psi, cohes=0., sigma0=0., depzz=-.000001, epzz_max=-0
             else:
                 # Cas elastique
                 # ---------------------
-                print
-                print '  ====<<< Elastique >>>===='
-                print
+                print()
+                print('  ====<<< Elastique >>>====')
+                print()
 
                 dlambda = 0.
                 depsi1_pla = 0.
@@ -211,7 +211,7 @@ def Triaxial_DR(K, G, phi, psi, cohes=0., sigma0=0., depzz=-.000001, epzz_max=-0
                      [C, E, ]]
                 )
             if n >= 5:
-                print "  ====>>> Non Convergence <<<===="
+                print("  ====>>> Non Convergence <<<====")
                 break
 
     # Post-Traitements

@@ -29,7 +29,7 @@
    utilisée par héritage multiple pour composer les traitements.
 """
 # Modules EFICAS
-import V_MCCOMPO
+from . import V_MCCOMPO
 from Noyau.strfunc import ufmt
 
 
@@ -41,7 +41,7 @@ class MCFACT(V_MCCOMPO.MCCOMPO):
        - txt_nat qui sert pour les comptes-rendus liés à cette classe
     """
 
-    txt_nat = u"Mot clé Facteur :"
+    txt_nat = "Mot clé Facteur :"
 
     def isvalid(self, sd='oui', cr='non'):
         """
@@ -70,14 +70,14 @@ class MCFACT(V_MCCOMPO.MCCOMPO):
             if not test_regles:
                 if cr == 'oui':
                     self.cr.fatal(
-                        _(u"Règle(s) non respectée(s) : %s"), text_erreurs)
+                        _("Règle(s) non respectée(s) : %s"), text_erreurs)
                 valid = 0
             #
             # On verifie les validateurs s'il y en a
             #
             if self.definition.validators and not self.definition.validators.verif(self.valeur):
                 if cr == 'oui':
-                    self.cr.fatal(_(u"Mot-clé : %s devrait avoir %s"),
+                    self.cr.fatal(_("Mot-clé : %s devrait avoir %s"),
                                   self.nom, self.definition.validators.info())
                 valid = 0
             # fin des validateurs
@@ -85,7 +85,7 @@ class MCFACT(V_MCCOMPO.MCCOMPO):
             if self.reste_val != {}:
                 if cr == 'oui':
                     self.cr.fatal(
-                        _(u"Mots clés inconnus : %s"), ','.join(self.reste_val.keys()))
+                        _("Mots clés inconnus : %s"), ','.join(list(self.reste_val.keys())))
                 valid = 0
             self.valid = valid
             self.state = 'unchanged'

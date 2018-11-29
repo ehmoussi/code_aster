@@ -67,7 +67,7 @@ def calc_spectre_ipm_ops(self,EQUIPEMENT,CALCUL,RESU,MAILLAGE=None,RESULTAT=None
     #
     for plancher in dplancher :
         liste_no=[]
-        clefs = plancher.keys()
+        clefs = list(plancher.keys())
         if ( 'NOEUD' in clefs ):
             if plancher['NOEUD'] != None :
                 if type(plancher['NOEUD'])==StringType :
@@ -164,7 +164,7 @@ def calc_spectre_ipm_ops(self,EQUIPEMENT,CALCUL,RESU,MAILLAGE=None,RESULTAT=None
                     for para in lst2: ok2 = ok2 and (para in nomcol)
                     #
                     if ( not ok1 ^ ok2 ):
-                        print nomcol
+                        print(nomcol)
                         assert (ok1 ^ ok2)
                     #
                     if ( ok1 ):
@@ -258,7 +258,7 @@ def calc_spectre_ipm_ops(self,EQUIPEMENT,CALCUL,RESU,MAILLAGE=None,RESULTAT=None
                         nom = 'IPM '+ plancher + ' ' + str(int(AMOR_SPEC[amor]*100)) + '%'
                     dico_global[nom] = __Spec[amor].Valeurs()[1][0][1];
     lListe=[]
-    lkeys = dico_global.keys()
+    lkeys = list(dico_global.keys())
     lkeys.sort()
     for key in lkeys:
         lListe.append(_F(LISTE_R=dico_global[key],PARA=key))

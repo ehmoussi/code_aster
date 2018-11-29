@@ -22,28 +22,28 @@
 cata_msg = {
 
 
-    2: _(u"""
+    2: _("""
   Problème d'extraction : Résultat généralisé %(k1)s
 """),
 
-    3: _(u"""
+    3: _("""
   Le paramètre n'existe pas.
 """),
 
-    4: _(u"""
+    4: _("""
   0 ligne trouvée pour les NOM_PARA.
 """),
 
-    5: _(u"""
+    5: _("""
   Plusieurs lignes trouvées.
 """),
 
-    6: _(u"""
+    6: _("""
 Ce message est un message d'erreur développeur.
 Contactez le support technique.
 """),
 
-    7: _(u"""
+    7: _("""
 Erreur utilisateur dans la commande TEST_TABLE :
   On n'a pas pu trouver dans la table la valeur à tester.
 
@@ -60,31 +60,31 @@ Conseils :
 
 """),
 
-    8: _(u"""
+    8: _("""
   Le type du paramètre (%(k1)s) ne correspond pas au mot-clé VALE_* utilisé.
 """),
 
 
-    10: _(u"""
+    10: _("""
   L'option %(k1)s est inconnue.
 """),
 
-    11: _(u"""
+    11: _("""
   Erreur d'utilisation :
     Vous avez dépassé une des limites de la programmation concernant les champs de matériaux :
     On ne pas utiliser plus de 9999 matériaux différents
 """),
 
-    15: _(u"""
+    15: _("""
   L'élément diagonal u( %(i1)d , %(i2)d ) de la factorisation est nul. %(k1)s
   la solution et les estimations d'erreurs ne peuvent être calculées. %(k2)s
 """),
 
-    17: _(u"""
+    17: _("""
  recherche nombre de composante: erreur:  %(k1)s grandeur numéro  %(i1)d  de nom  %(k2)s
 """),
 
-    20: _(u"""
+    20: _("""
  recherche nombre de composante: erreur: grandeur ligne numéro  %(i1)d  de nom  %(k1)s
  grandeur colonne numéro  %(i2)d
   de nom  %(k2)s
@@ -92,49 +92,49 @@ Conseils :
   de nom  %(k3)s
 """),
 
-    21: _(u"""
+    21: _("""
  recherche nombre de composante: erreur: grandeur %(i1)d a un code inconnu:  %(i2)d
 """),
 
-    22: _(u"""
+    22: _("""
  recherche nombre d entiers codes  %(k1)s grandeur numéro  %(i1)d  de nom  %(k2)s
 """),
 
-    25: _(u"""
+    25: _("""
  recherche nombre d entiers codes grandeur ligne numéro  %(i1)d  de nom  %(k1)s
  grandeur colonne numéro  %(i2)d de nom  %(k2)s
  grandeur mère numéro  %(i3)d de nom  %(k3)s
 """),
 
-    26: _(u"""
+    26: _("""
  recherche nombre d entiers codes grandeur %(i1)d a un code inconnu:  %(i2)d
 """),
 
 
-    42: _(u"""
+    42: _("""
  La prise en compte de l'erreur sur une condition aux limites
  de type ECHANGE_PAROI n'a pas été encore implantée
 """),
 
-    43: _(u"""
+    43: _("""
  le mot clé EXCIT contient plusieurs occurrences de type %(k1)s
  seule la dernière sera prise en compte
 """),
 
-    46: _(u"""
+    46: _("""
  champ de température vide pour le numéro d'ordre : %(i1)d
 """),
 
-    47: _(u"""
+    47: _("""
  champ FLUX_ELNO vide pour numéro d'ordre :  %(i1)d
 """),
 
-    49: _(u"""
+    49: _("""
  erreurs données composante inconnue  %(k1)s  pour la grandeur  %(k2)s
 """),
 
 
-    54: _(u"""
+    54: _("""
  Problème d'utilisation du parallélisme :
    Les fonctionnalités de parallélisme utilisées ici (calculs distribués) conduisent à créer
    des structures de données "incomplètes" (i.e. partiellement calculées sur chaque processeur).
@@ -152,7 +152,7 @@ Conseils :
           MODI_MODELE(reuse=MO, MODELE=MO, DISTRIBUTION=_F(METHODE='CENTRALISE'))
 """),
 
-    55: _(u"""
+    55: _("""
  Problème d'utilisation du parallélisme :
    On cherche à faire la combinaison linéaire de plusieurs matrices. Certaines de ces matrices
    ne sont pas calculées complètement et d'autres le sont. On ne peut donc pas les combiner.
@@ -171,7 +171,7 @@ Conseils :
 
 
 
-    57: _(u"""
+    57: _("""
  Erreur d'utilisation (préparation des variables de commande) :
  Pour la variable de commande %(k1)s, il y a une incohérence du
  nombre de "sous-points" entre le CARA_ELEM %(k2)s (%(i1)d)
@@ -185,46 +185,46 @@ Conseils :
 
 
 
-    61: _(u"""
+    61: _("""
     Le type de la fonction est invalide : %(k1)s
 """),
 
-    62: _(u"""
+    62: _("""
 Erreur lors de l'interpolation de la fonction %(k1)s sur la maille %(k3)s, il manque le paramètre %(k2)s
 """),
 
 
-    63: _(u"""
+    63: _("""
  Erreur lors de l'interpolation de la fonction %(k1)s :
  Code retour: %(i1)d
 """),
 
-    64: _(u"""
+    64: _("""
  Variables internes en nombre différent aux instants '+' et '-' pour la maille %(k1)s
  Instant '-' : %(i1)d
  Instant '+' : %(i2)d
 """),
 
-    68: _(u"""
+    68: _("""
  la liste des composantes fournies est incorrecte.
  composantes dans catalogue:
 Ce message est un message d'erreur développeur.
 Contactez le support technique.
 """),
 
-    69: _(u"""
+    69: _("""
    %(k1)s
 """),
 
-    70: _(u"""
+    70: _("""
  composantes:
 """),
 
-    71: _(u"""
+    71: _("""
    %(k1)s
 """),
 
-    77: _(u"""
+    77: _("""
 Problème lors de la création du champ par éléments (%(k1)s).
   Ce champ est associé au paramètre %(k3)s de l'option: '%(k2)s'
   Certaines valeurs fournies par l'utilisateur n'ont pas été recopiées dans le champ final.
@@ -240,83 +240,83 @@ Risques et conseils :
 
 """),
 
-    78: _(u"""
+    78: _("""
   Problème lors du calcul de la pesanteur sur un élément de "câble poulie" :
   Le chargement doit être déclaré "suiveur".
   Il faut utiliser le mot clé : EXCIT / TYPE_CHARGE='SUIV'
 """),
 
-    80 : _(u"""
+    80 : _("""
   L'amortissement du MACR_ELEM %(k1)s n'a pas encore été calculé.
  """),
 
-    81 : _(u"""
+    81 : _("""
   Il manque des amortissements.
   """),
 
-    82: _(u"""
+    82: _("""
   Le groupe de noeuds %(k1)s n'appartient pas au maillage %(k2)s.
 """),
 
-    83 : _(u"""
+    83 : _("""
   L'option %(k1)s n'est pas traitée pour un résultat de type FOURIER_ELAS
 (produit par MACRO_ELAS_MULT). Il faut faire après MACRO_ELAS_MULT une
  recombinaison de Fourier par l'opérateur COMB_FOURIER.
 """),
 
-    85: _(u"""
+    85: _("""
   Paramètre %(k1)s inexistant dans la table.
 """),
 
-    86: _(u"""
+    86: _("""
   Objet %(k1)s inexistant.
 """),
 
-    87: _(u"""
+    87: _("""
   Objet %(k1)s non testable.
 """),
 
-    89: _(u"""
+    89: _("""
   Le champ %(k1)s est à valeurs de type %(k2)s et la valeur de référence de
   type %(k3)s.
 """),
 
-    90: _(u"""
+    90: _("""
   Le champ de type %(k1)s sont interdits.
 """),
 
-    91: _(u"""
+    91: _("""
   Le ddl %(k1)s n'existe pas dans la grandeur %(k2)s.
 """),
 
-    92: _(u"""
+    92: _("""
   On ne trouve pas le noeud %(k1)s.
 """),
 
-    93: _(u"""
+    93: _("""
   On ne trouve pas le ddl.
 """),
 
-    94: _(u"""
+    94: _("""
   Pas d'accès au résultat.
 """),
 
-    95: _(u"""
+    95: _("""
   Type de la valeur de référence incompatible avec le type des valeurs du champ.
 """),
 
 
 
-    97: _(u"""
+    97: _("""
   Mot-clé POINT interdit pour le champ au noeud issu de %(k1)s à l'ordre %(i1)d:
     -> champ : %(k2)s %(k3)s
 """),
 
-    98: _(u"""
+    98: _("""
   Composante généralisée non trouvée.
 """),
 
-    99: _(u"""
+    99: _("""
   Pas d'accès au résultat généralisé %(k1)s
 """),
 

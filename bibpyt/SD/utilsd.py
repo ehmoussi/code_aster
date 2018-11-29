@@ -47,9 +47,9 @@ def import_sd(nomsd):
     try:
         mod = __import__('SD.%s' % nomsd, globals(), locals(), [nomsd])
         klass = getattr(mod, nomsd)
-    except (ImportError, AttributeError), msg:
-        print msg
-        raise ImportError, "impossible d'importer la SD '%s'" % nomsd
+    except (ImportError, AttributeError) as msg:
+        print(msg)
+        raise ImportError("impossible d'importer la SD '%s'" % nomsd)
     return klass
 
 # -----------------------------------------------------------------------------
@@ -91,4 +91,4 @@ if __name__ == '__main__':
         parser.error('quelle(s) structure(s) de données ?')
 
     if opts.tree:
-        print tree(opts.nom, *l_sd)
+        print(tree(opts.nom, *l_sd))

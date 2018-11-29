@@ -60,7 +60,7 @@ class ResuAsterReader(object):
             self.fobj = open(fich_aster, "r")
             self._read_all()
             self.fobj.close()
-        except (ValueError, IOError, AssertionError), err:
+        except (ValueError, IOError, AssertionError) as err:
             raise AsterError('MISS0_7', vali=self.ln, valk=str(err))
         self.check()
         self.post()
@@ -71,7 +71,7 @@ class ResuAsterReader(object):
         struct = self.struct
         try:
             struct.check()
-        except AssertionError, err:
+        except AssertionError as err:
             raise AsterError('MISS0_8', valk=traceback.format_exc(limit=2))
 
     def post(self):

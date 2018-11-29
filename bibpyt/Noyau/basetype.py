@@ -39,7 +39,7 @@ La classe `Type` hérite de BaseType et y associe la métaclasse MetaType.
 
 """
 
-import cPickle
+import pickle
 
 __docformat__ = "restructuredtext"
 
@@ -73,7 +73,7 @@ class MetaType(type):
         # affecte la classe comme parent des attributs de classe
         # et donne l'occasion aux attributs de se renommer à partir
         # du nom utilisé.
-        for k, v in classdict.items():
+        for k, v in list(classdict.items()):
             if not isinstance(v, BaseType):
                 continue
             v.reparent(new_cls, k)
@@ -88,8 +88,8 @@ class MetaType(type):
         for nam in cls._subtypes:
             obj = getattr(cls, nam)
             # permet de dupliquer completement l'instance
-            cpy = cPickle.dumps(obj)
-            newobj = cPickle.loads(cpy)
+            cpy = pickle.dumps(obj)
+            newobj = pickle.loads(cpy)
             newobj.reparent(inst, None)
             setattr(inst, nam, newobj)
 
@@ -158,5 +158,5 @@ class BaseType(object):
         return self._parent.base()
 
 
-class Type(BaseType):
-    __metaclass__ = MetaType
+class Type(BaseType, metaclass=MetaType):
+    pass

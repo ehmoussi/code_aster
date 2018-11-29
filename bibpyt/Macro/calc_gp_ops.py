@@ -357,9 +357,9 @@ def calc_gp_ops(self, **args):
                                    ENER_ELTR=_F(GROUP_MA=lgroupma)
                                    )
             enerel = __enertemp.EXTR_TABLE()
-            tabenel = [mult * x for x in enerel.TOTALE.values()]
+            tabenel = [mult * x for x in list(enerel.TOTALE.values())]
             tabgp = [tabenel[x] / tablcop[x] for x in range(len(tabenel))]
-            tabinst = enerel.INST.values()
+            tabinst = list(enerel.INST.values())
 
             for i in range(nb_inst):
                 maxinst = max(tabgp[i * nbcop:(i + 1) * nbcop])
@@ -486,7 +486,7 @@ def calc_gp_ops(self, **args):
                                                   DEJA_INTEGRE='NON',
                                                   TYPE_MAILLE='2D'),)
 
-                tabenerel = __tabnrj.EXTR_TABLE().values()
+                tabenerel = list(__tabnrj.EXTR_TABLE().values())
 
                 tabinst = tabinst + [inst] * nbcop
 
@@ -539,9 +539,9 @@ def calc_gp_ops(self, **args):
                                TITRE='Energie elastique de traction',)
 
         enerel = __enertemp.EXTR_TABLE()
-        tabcop = enerel.LIEU.values()
-        tabenel = [mult * x for x in enerel.TOTALE.values()]
-        tabinst = enerel.INST.values()
+        tabcop = list(enerel.LIEU.values())
+        tabenel = [mult * x for x in list(enerel.TOTALE.values())]
+        tabinst = list(enerel.INST.values())
         tablcop = mesure * nb_inst
         tabgp = [tabenel[x] / tablcop[x] for x in range(len(tabenel))]
 

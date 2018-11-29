@@ -125,7 +125,7 @@ def compute_POD(COHE, PRECISION, INFO):
 #  boucle sur les modes statiques
 def compute_mecmode(NOM_CMP, GROUP_NO_INTER, resultat, nbmods, nbmodd):
     dict_modes = {}
-    dict_modes['NUME_MODE'] = range(nbmods)
+    dict_modes['NUME_MODE'] = list(range(nbmods))
     dict_modes['MCMP'] = []
     dict_modes['som'] = []
     dict_modes['maxm'] = []

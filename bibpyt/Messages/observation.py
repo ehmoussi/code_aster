@@ -22,17 +22,17 @@
 
 cata_msg = {
 
-    3 : _(u"""
+    3 : _("""
  Observations: il y aura, au maximum, %(i1)d observations à chaque instant sélectionné pour cela.
 """),
 
-    6 : _(u"""
+    6 : _("""
  Erreur dans les données d'observation
  pour "NOM_CHAM"  %(k1)s , il faut renseigner  %(k2)s ou  %(k3)s
 """),
 
 
-    8 : _(u"""
+    8 : _("""
  Variation de la déformation supérieure au seuil fixé :
     seuil en valeur relative : %(r1)f
     entité : %(k1)s
@@ -40,15 +40,15 @@ cata_msg = {
     numéro ordre : %(i1)d
 """),
 
-    37 : _(u"""
+    37 : _("""
   Observations: %(i1)d réalisations pour ce pas de temps
 """),
 
-    38 : _(u"""
+    38 : _("""
   Observations: une réalisation pour ce pas de temps
 """),
 
-    39 : _(u"""
+    39 : _("""
   Observations: pas de réalisation pour ce pas de temps
 """),
 

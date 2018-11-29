@@ -25,7 +25,7 @@ depuis le fortran.
 """
 
 import os
-from strfunc import convert
+from .strfunc import convert
 
 
 class error(Exception):
@@ -44,7 +44,7 @@ class error(Exception):
                 self.related.append(err)
             err = arg0[-1]
             arg0, valk, vali, valr = err.id_message, err.valk, err.vali, err.valr
-        assert type(arg0) in (str, unicode), arg0
+        assert type(arg0) in (str, str), arg0
         self.id_message = arg0.strip()
         self.valk = valk or ()
         self.vali = vali or ()
@@ -180,7 +180,7 @@ class ExceptionsStore(object):
 
     def add_to_dict_module(self, dictmodule):
         """Add registered exceptions to `dictmodule`."""
-        for name, exc in self._dict_exc.values():
+        for name, exc in list(self._dict_exc.values()):
             if name:
                 dictmodule[name] = exc
 

@@ -54,13 +54,13 @@ def calc_fonction_ops(self, **args):
     operation = CalcFonctionOper.factory(self, ctxt, args)
     try:
         operation.run()
-    except InterpolationError, msg:
+    except InterpolationError as msg:
         UTMESS('F', 'FONCT0_27', valk=(ctxt.f, str(msg)))
-    except ParametreError, msg:
+    except ParametreError as msg:
         UTMESS('F', 'FONCT0_28', valk=(ctxt.f, str(msg)))
-    except ProlongementError, msg:
+    except ProlongementError as msg:
         UTMESS('F', 'FONCT0_29', valk=(ctxt.f, str(msg)))
-    except FonctionError, msg:
+    except FonctionError as msg:
         UTMESS('F', 'FONCT0_30',
                valk=(ctxt.f, str(msg), traceback.format_exc()))
 
@@ -535,7 +535,7 @@ class CalcFonction_COHERENCE(CalcFonctionOper):
         if FREQ_COUP != None:
             if lfreq[-1] > FREQ_COUP:
                 N2 = NP.searchsorted(lfreq, FREQ_COUP)
-                print self.kw['FREQ_COUP'], N2
+                print(self.kw['FREQ_COUP'], N2)
         f_cohe = fcohe[N1:N2]
         l_freq = lfreq[N1:N2]
         self.resu = t_fonction(l_freq, f_cohe.real, para)
@@ -753,13 +753,13 @@ class CalcFonction_LISS_ENVELOP(CalcFonctionOper):
                 if kw['LIST_AMOR']!=None:
                     amor = kw['LIST_AMOR']
                 else:
-                    amor = range(1,len(nom_para))
+                    amor = list(range(1,len(nom_para)))
                 # error
                 if 'FREQ' not in nom_para:
-                    print 'error'
+                    print('error')
                 nom_para.remove('FREQ')    
                 # print dir(tab.EXTR_TABLE())
-                dico = tab.EXTR_TABLE().values()
+                dico = list(tab.EXTR_TABLE().values())
                 l_fonc_f = []    
                 for para in nom_para:
                     freq = dico['FREQ']

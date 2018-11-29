@@ -69,7 +69,7 @@ class Resultat:
         # Si cela ne marche pas, on passe par le maillage
         if not self.modele:
             self.get_maillage()
-            for m, _mod in self.objects.modeles.items():
+            for m, _mod in list(self.objects.modeles.items()):
                 if not _mod.maya_name:
                     _mod.get_maillage()
                 if _mod.maya_name == self.maya_name:
@@ -299,8 +299,8 @@ class DynaHarmo(Resultat):
             pass
 
     def extr_freq(self):
-        vari_acces = zip(self.obj.LIST_VARI_ACCES()['NUME_ORDRE'],
-                         self.obj.LIST_VARI_ACCES()['FREQ'])
+        vari_acces = list(zip(self.obj.LIST_VARI_ACCES()['NUME_ORDRE'],
+                         self.obj.LIST_VARI_ACCES()['FREQ']))
         return vari_acces
 
     def get_maillage(self):
@@ -324,7 +324,7 @@ class DynaHarmo(Resultat):
             possede ce meme maillage"""
 
         self.get_maillage()
-        for nume in self.objects.nume_ddl.keys():
+        for nume in list(self.objects.nume_ddl.keys()):
             refe = nume.ljust(14) + '.NUME.REFN'
             if aster.getvectjev(refe):
                 nom_maya = aster.getvectjev(refe)[
@@ -657,7 +657,7 @@ class InterSpectre:
                                            NOEUD_J=nume_j.split('_')[0], NOM_CMP_J=nume_j.split('_')[1])
             else:
                 self.mess.disp_mess(
-                    u"Erreur dans l'extraction de l'inter-spectre : cas non-traite")
+                    "Erreur dans l'extraction de l'inter-spectre : cas non-traite")
             fonc_py = __fonc.convert('complex')
             ordo = numpy.array(fonc_py.vale_y)
             absc = numpy.array(fonc_py.vale_x)
@@ -763,9 +763,9 @@ class Tempo:
             "Recuperation des informations sur les temporels " + self.nom)
         self.mess.disp_mess(" ")
         tabl_py = self.obj.EXTR_TABLE()
-        self.nom_fonc = tabl_py['FONCTION'].values()['FONCTION']
-        self.nume_ordr = tabl_py['NUME_ORDRE_I'].values()['NUME_ORDRE_I']
-        self.nume_mes = tabl_py['NUME_MES'].values()['NUME_MES']
+        self.nom_fonc = list(tabl_py['FONCTION'].values())['FONCTION']
+        self.nume_ordr = list(tabl_py['NUME_ORDRE_I'].values())['NUME_ORDRE_I']
+        self.nume_mes = list(tabl_py['NUME_MES'].values())['NUME_MES']
 
     def extr_temps(self):
         """Extraction des instants d'etude dans la Tempo qui contient
@@ -774,7 +774,7 @@ class Tempo:
         from code_aster.Cata.Commands import DETRUIRE
         tabl_py = self.obj.EXTR_TABLE()
         toto = tabl_py['FONCTION']
-        nom_fonc = toto.values()['FONCTION'][0]
+        nom_fonc = list(toto.values())['FONCTION'][0]
         __FONC = RECU_FONCTION(TABLE=self.obj,
                                NOM_PARA_TABL='FONCTION',
                                FILTRE=_F(
@@ -829,7 +829,7 @@ class Modele:
            pour lesquels le ddl est pipo.
         """
         if self.nume_ddl == None:
-            for nume_name, nume in self.objects.nume_ddl.items():
+            for nume_name, nume in list(self.objects.nume_ddl.items()):
                 model = aster.getvectjev(nume_name.ljust(14) + ".NUME.LILI")
                 if not model:
                     pass
@@ -847,7 +847,7 @@ class Modele:
            pour lesquels le ddl est pipo.
         """
         if self.mass == None or self.kass == None:
-            for matr_name, matr in self.objects.matrices.items():
+            for matr_name, matr in list(self.objects.matrices.items()):
                 iret, ibid, nom_modele = aster.dismoi(
                     'NOM_MODELE', matr_name, 'MATR_ASSE', 'F')
                 if nom_modele.strip() == self.nom.strip():
@@ -929,7 +929,7 @@ class CalcEssaiObjects:
         self.list_tempo = {}
         self.nume_ddl = {}
 
-        for i, v in ctx.items():
+        for i, v in list(ctx.items()):
             if isinstance(v, modele_sdaster):
                 self.modeles[i] = Modele(
                     objects=self, nom=i, obj_ast=v, mess=self.mess)
@@ -966,17 +966,17 @@ class CalcEssaiObjects:
 
         # self.debug()
         # Liaison des concepts entre eux (resu <=> maillage <=> modele)
-        for modes_name, modes in self.mode_meca.items():
+        for modes_name, modes in list(self.mode_meca.items()):
             modes.get_nume()
             modes.get_modele()
             modes.get_matrices()
             modes.get_maillage()
 
-        for modele_name, modele in self.modeles.items():
+        for modele_name, modele in list(self.modeles.items()):
             modele.get_maillage()
             modele.get_nume()
 
-        for dyna_name, dyna in self.dyna_harmo.items():
+        for dyna_name, dyna in list(self.dyna_harmo.items()):
             dyna.get_nume()
             dyna.get_maillage()
             dyna.get_modele()
@@ -1021,7 +1021,7 @@ class CalcEssaiObjects:
         self.mess.disp_mess(("Matrices" + self.matrices))
         self.mess.disp_mess(("Resultats"))
         self.mess.disp_mess((" "))
-        for v in self.resultats.values():
+        for v in list(self.resultats.values()):
             v.show_linked_concepts()
 
     def test_table(self, obj):
@@ -1038,7 +1038,7 @@ class CalcEssaiObjects:
             return
         toto = table_py[type_fonc]
         try:
-            nom_fonc = toto.values()[type_fonc][0]
+            nom_fonc = list(toto.values())[type_fonc][0]
         except IndexError:
             return  # deja vu : des tables avec lacolonne fonction vide...
         __FONC = RECU_FONCTION(TABLE=obj, NOM_PARA_TABL=type_fonc,
@@ -1054,7 +1054,7 @@ class CalcEssaiObjects:
 
     def get_mode_meca_name(self):
         """!Liste des objets resultat"""
-        return self.mode_meca.keys()
+        return list(self.mode_meca.keys())
 
     def get_mode_meca(self, name):
         """!Renvoie un objet resultat identifie par son nom"""
@@ -1068,21 +1068,21 @@ class CalcEssaiObjects:
 
     def get_model_name(self):
         """!Renvoie les noms de modeles dispos"""
-        return self.modeles.keys()
+        return list(self.modeles.keys())
 
     def get_model(self, name):
         """!Renvoie un modele"""
         return self.modeles[name]
 
     def get_dyna_harmo_name(self):
-        return self.dyna_harmo.keys()
+        return list(self.dyna_harmo.keys())
 
     def get_dyna_harmo(self, name):
         return self.dyna_harmo[name]
 
     def get_inter_spec_name(self):
         inter_spec = []
-        for i in self.inter_spec.keys():
+        for i in list(self.inter_spec.keys()):
             if self.inter_spec[i].intsp == 1:
                 inter_spec.append(i)
         return inter_spec
@@ -1096,29 +1096,29 @@ class CalcEssaiObjects:
 
     def get_resultats_name(self):
         """recup des noms de toutes les sd resus : mode_meca, base_modale, dyna_harmo"""
-        return self.resultats.keys()
+        return list(self.resultats.keys())
 
     def get_resultats(self, name):
         """recup d'une sd resu dans la liste ci-dessus"""
         return self.resultats[name]
 
     def get_matr_norme(self):
-        normes = self.matrices.keys()
+        normes = list(self.matrices.keys())
         normes[0:0] = ["Aucune"]
         return normes
 
     def get_matr_name(self):
-        return self.matrices.keys()
+        return list(self.matrices.keys())
 
     def get_cara_elem_name(self):
-        return self.cara_elem.keys()
+        return list(self.cara_elem.keys())
 
     def get_cara_elem(self, name):
         """recup d'une sd resu dans la liste ci-dessus"""
         return self.cara_elem[name]
 
     def get_cham_mater_name(self):
-        return self.cara_elem.keys()
+        return list(self.cara_elem.keys())
 
     def get_cham_mater(self, name):
         """recup d'une sd resu dans la liste ci-dessus"""

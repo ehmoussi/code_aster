@@ -81,7 +81,7 @@ class ASTER_TIMER:
         self.timers = {}
         self.add_total = add_total
         self._oversize = False
-        self._oversize_name = maxlabel or _(u"after %d timers")
+        self._oversize_name = maxlabel or _("after %d timers")
         try:
             self._oversize_name = self._oversize_name % self.MaxSize
         except TypeError:
@@ -222,14 +222,14 @@ class ASTER_TIMER:
         """Return timers list sorted by timer number.
         """
         lnum = [[timer['num'], timer]
-                for timer in self.timers.values() if timer['hide'] is not True]
+                for timer in list(self.timers.values()) if timer['hide'] is not True]
         lnum.sort()
         return lnum
 
     def StopAll(self):
         """Stop all timers
         """
-        lk = self.timers.keys()
+        lk = list(self.timers.keys())
         if self.add_total:
             lk.remove(self.total_key)
         for timer in lk:
@@ -272,4 +272,4 @@ if __name__ == '__main__':
     chrono.Stop('Compilation')
     chrono.Stop(23)
     chrono.Start('Child')
-    print chrono
+    print(chrono)

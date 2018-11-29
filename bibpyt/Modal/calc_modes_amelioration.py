@@ -46,7 +46,7 @@ def calc_modes_amelioration(self, modes, TYPE_RESU,
         type_vp = 'FREQ'
         matr_A  = 'MATR_RIGI'
         matr_B  = 'MATR_MASS'
-        if args.has_key('MATR_AMOR'):
+        if 'MATR_AMOR' in args:
             matr_C = 'MATR_AMOR'
     elif TYPE_RESU == 'MODE_FLAMB':
         type_vp = 'CHAR_CRIT'
@@ -140,11 +140,11 @@ def calc_modes_amelioration(self, modes, TYPE_RESU,
     #################################################################
     # read the keyword SOLVEUR (linear solver)
     solveur = SOLVEUR[0].cree_dict_valeurs(SOLVEUR[0].mc_liste)
-    if solveur.has_key('TYPE_RESU'): # because TYPE_RESU is a keyword with a 'global' position
+    if 'TYPE_RESU' in solveur: # because TYPE_RESU is a keyword with a 'global' position
         solveur.pop('TYPE_RESU')
-    if solveur.has_key('OPTION'):    # because OPTION is a keyword with a 'global' position
+    if 'OPTION' in solveur:    # because OPTION is a keyword with a 'global' position
         solveur.pop('OPTION')
-    if solveur.has_key('FREQ'):      # because FREQ can be a keyword with a 'global' position
+    if 'FREQ' in solveur:      # because FREQ can be a keyword with a 'global' position
         solveur.pop('FREQ')
     motcles['SOLVEUR']=_F(**solveur) # if this line is commented,
                                       # one will use the default keywords for SOLVEUR

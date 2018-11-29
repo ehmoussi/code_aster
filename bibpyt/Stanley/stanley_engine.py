@@ -49,9 +49,9 @@ import os
 import os.path
 import string
 import copy
-import tkFileDialog
-import tkMessageBox
-import cPickle
+import tkinter.filedialog
+import tkinter.messagebox
+import pickle
 import time
 import socket
 import tempfile
@@ -59,23 +59,23 @@ import types
 from types import *
 
 # import Tix as Tk
-import Tkinter as Tk
+import tkinter as Tk
 
 from Noyau.N_types import force_tuple
 
 import aster_core
-import as_courbes
-import xmgrace
-import gmsh
-import cata_champs
+from . import as_courbes
+from . import xmgrace
+from . import gmsh
+from . import cata_champs
 import aster
 from Utilitai.Table import Table, merge
 
 import Utilitai
 from Utilitai import sup_gmsh
 from Utilitai.Utmess import UTMESS
-from graphiqueTk import *
-import ihm_parametres
+from .graphiqueTk import *
+from . import ihm_parametres
 
 from code_aster.Cata.Commands import (AFFE_MODELE, MODI_MODELE, COPIER, CREA_MAILLAGE,
     CREA_RESU, DEFI_FICHIER, DETRUIRE, IMPR_FONCTION, IMPR_RESU, DEFI_GROUP,
@@ -85,7 +85,7 @@ from code_aster.Cata.Syntax import _F
 
 from Macro.test_fichier_ops import test_file
 
-import salomeVisu
+from . import salomeVisu
 __salome__ = True
 __rcstanley__ = '.stanley_salome'
 
@@ -110,9 +110,9 @@ aster.onFatalError('EXCEPTION')
 def DETR(lnom):
     """ Encapsulation de la commande DETRUIRE """
 
-    if not type(lnom) in [types.TupleType, types.ListType]:
+    if not type(lnom) in [tuple, list]:
         lnom = [lnom]
-    if type(lnom[0]) == types.StringType:
+    if type(lnom[0]) == bytes:
         DETRUIRE(OBJET=_F(CHAINE=lnom), INFO=1)
     else:
         DETRUIRE(CONCEPT=_F(NOM=lnom), INFO=1)
@@ -202,7 +202,7 @@ class PARAMETRES:
                 self.dparam['machine_salome_port']['val'] = machine_salome_port
                 UTMESS('I', 'STANLEY_30', valk=(machine_salome, machine_salome_port))
                 from_salome = True
-            except Exception, e:
+            except Exception as e:
                 UTMESS('I', 'STANLEY_21')
                 # print e
 
@@ -241,10 +241,10 @@ class PARAMETRES:
 
         para = {}
 
-        for section in self.dliste_section.keys():
+        for section in list(self.dliste_section.keys()):
             para[section] = {}
 
-        for cle in dparam.keys():
+        for cle in list(dparam.keys()):
             section = dparam[cle]['section']
             try:
                 para[section][cle] = dparam[cle]['val']
@@ -267,7 +267,7 @@ class PARAMETRES:
         self.para = self.Initialise_para(self.dparam)
 
         # Affecte a para les valeurs de dico
-        for cle in self.dparam.keys():
+        for cle in list(self.dparam.keys()):
             section = self.dparam[cle]['section']
             try:
                 self.para[section][cle] = dico[section][cle]
@@ -276,9 +276,9 @@ class PARAMETRES:
             except:
                 UTMESS('A', 'STANLEY_22', valk=[
                        self.dliste_section[section], self.dparam[cle]['label']])
-                if self.dparam[cle]['type'] == types.FloatType:
+                if self.dparam[cle]['type'] == float:
                     self.para[section][cle] = 0.
-                elif self.dparam[cle]['type'] == types.IntType:
+                elif self.dparam[cle]['type'] == int:
                     self.para[section][cle] = 0
                 else:
                     self.para[section][cle] = ''
@@ -311,93 +311,93 @@ class PARAMETRES:
         dparam = {
             # Mode graphique
             'mode_graphique': {
-                'label': _(u"Mode"),
+                'label': _("Mode"),
                 'val': 'Gmsh/Xmgrace',
                 'type': 'liste',
                 'section': 'MODE_GRAPHIQUE',
                 'val_possible': ["Gmsh/Xmgrace", "Salome"],
-                'bulle': _(u"Mode graphique"),
+                'bulle': _("Mode graphique"),
             },
 
             # Parametres IHM et Serveur Aster
             'fonte': {
-                'label': _(u"Fontes"),
+                'label': _("Fontes"),
                 'val': 'arial 10 normal',
                 'type': 'liste',
                 'section': 'PARAMETRES',
-                'bulle': _(u"Les fontes de l'application"),
+                'bulle': _("Les fontes de l'application"),
                 'val_possible': liste_fontes,
             },
             'grace': {
-                'label':  _(u"Xmgrace"),
+                'label':  _("Xmgrace"),
                 'val': 'xmgrace',
                 'type': 'fichier',
                 'section': 'PARAMETRES',
                 'mode_graphique': ['Gmsh/Xmgrace'],
-                'bulle': _(u"Serveur de calcul : Chemin vers l'application Xmgrace"),
+                'bulle': _("Serveur de calcul : Chemin vers l'application Xmgrace"),
             },
             'smbclient': {
-                'label':  _(u"Smbclient"),
+                'label':  _("Smbclient"),
                 'val': 'smbclient',
                 'type': 'fichier',
                 'section': 'PARAMETRES',
                 'mode_graphique': ['Gmsh/Xmgrace'],
                 'mode': ['WINDOWS'],
-                'bulle': _(u"Serveur de calcul : Chemin vers l'application Smbclient (pour Profil Windows)"),
+                'bulle': _("Serveur de calcul : Chemin vers l'application Smbclient (pour Profil Windows)"),
             },
             'gmsh': {
-                'label':  _(u"Gmsh"),
+                'label':  _("Gmsh"),
                 'val': 'gmsh',
                 'type': 'fichier',
                 'section': 'PARAMETRES',
                 'mode_graphique': ['Gmsh/Xmgrace'],
-                'bulle': _(u"Serveur de calcul : Chemin vers l'application Gmsh"),
+                'bulle': _("Serveur de calcul : Chemin vers l'application Gmsh"),
             },
 
             # Parametres Graphiques specifiques a Gmsh, Xmgrace, Salome
             'TAILLE_MIN': {
-                'label':  _(u"Gmsh : Taille minimale"),
+                'label':  _("Gmsh : Taille minimale"),
                 'val': 0.,
-                'type': types.FloatType,
+                'type': float,
                 'section': 'VISUALISATION',
                 'mode_graphique': ['Gmsh/Xmgrace'],
                 'bulle': '',
             },
             'SHRINK': {
-                'label':  _(u"Gmsh : Shrink"),
+                'label':  _("Gmsh : Shrink"),
                 'val': 1.,
-                'type': types.FloatType,
+                'type': float,
                 'section': 'VISUALISATION',
                 'mode_graphique': ['Gmsh/Xmgrace'],
-                'bulle': _(u"Parametre pour Gmsh : SHRINK\n\n"
-                           u"Facteur de réduction homothétique permettant d'assurer la non interpénétration des mailles."),
+                'bulle': _("Parametre pour Gmsh : SHRINK\n\n"
+                           "Facteur de réduction homothétique permettant d'assurer la non interpénétration des mailles."),
             },
             'SKIN': {
-                'label':  _(u"Gmsh : Affichage sur la peau"),
+                'label':  _("Gmsh : Affichage sur la peau"),
                 'val': 'non',
                 'type': 'liste',
                 'section': 'VISUALISATION',
                 'mode_graphique': ['Gmsh/Xmgrace'],
                 'val_possible': ["oui", "non"],
-                'bulle': _(u"Parametre pour Gmsh : affichage sur la peau uniquement."),
+                'bulle': _("Parametre pour Gmsh : affichage sur la peau uniquement."),
             },
             'version_fichier_gmsh': {
-                'label':  _(u"Gmsh : Version du fichier"),
+                'label':  _("Gmsh : Version du fichier"),
                 'val': '1.2',
                 'type': 'liste',
                 'section': 'VISUALISATION',
                 'mode_graphique': ['Gmsh/Xmgrace'],
                 'val_possible': ["1.0", "1.2"],
-                'bulle': _(u"Parametre pour Gmsh : version du fichier resultat."),
+                'bulle': _("Parametre pour Gmsh : version du fichier resultat."),
             },
             'Visualiseur': {
-                'label':  _(u"Salome : Visualiseur"),
+                'label':  _("Salome : Visualiseur"),
                 'val': 'PARAVIZ',
                 'type': 'liste',
                 'section': 'VISUALISATION',
                 'mode_graphique': ['Salome'],
                 'val_possible': ["POSTPRO", "PARAVIZ"],
-                'bulle': _(u"Parametre pour Salome : visualisation dans POSTPRO ou PARAVIZ."),
+                'bulle': _("Parametre pour Salome : visualisation dans POSTPRO ou PARAVIZ."),
             },
 
             # Parametres du Poste de travail de l'utilisateur, de la machine
@@ -411,131 +411,131 @@ class PARAMETRES:
                 'bulle': '',
             },
             'machine_visu': {
-                'label':  _(u"Machine de visualisation"),
+                'label':  _("Machine de visualisation"),
                 'val': '',
                 'type': 'texte',
                 'section': 'CONFIG',
                 'mode_graphique': ['Gmsh/Xmgrace'],
                 'mode': ['DISTANT'],
-                'bulle': _(u"Adresse du poste de travail"),
+                'bulle': _("Adresse du poste de travail"),
             },
 
             'machine_gmsh': {
-                'label':  _(u"Machine de Gmsh"),
+                'label':  _("Machine de Gmsh"),
                 'val': '',
                 'type': 'texte',
                 'section': 'CONFIG',
                 'mode_graphique': ['Gmsh/Xmgrace'],
                 'mode': ['DISTANT'],
-                'bulle': _(u"Machine hebergeant le service graphique Gmsh."),
+                'bulle': _("Machine hebergeant le service graphique Gmsh."),
             },
             'machine_gmsh_login': {
-                'label':  _(u"Login"),
+                'label':  _("Login"),
                 'val': '',
                 'type': 'texte',
                 'section': 'CONFIG',
                 'mode_graphique': ['Gmsh/Xmgrace'],
                 'mode': ['DISTANT'],
-                'bulle': _(u"Login"),
+                'bulle': _("Login"),
             },
             'machine_gmsh_exe': {
-                'label':  _(u"Machine Gmsh : chemin vers gmsh"),
+                'label':  _("Machine Gmsh : chemin vers gmsh"),
                 'val': 'gmsh',
                 'type': 'texte',
                 'section': 'CONFIG',
                 'mode_graphique': ['Gmsh/Xmgrace'],
                 'mode': ['DISTANT'],
-                'bulle': _(u"Adresse du poste de travail"),
+                'bulle': _("Adresse du poste de travail"),
             },
 
             'machine_salome': {
-                'label':  _(u"Machine de Salome"),
+                'label':  _("Machine de Salome"),
                 'val': '',
                 'type': 'texte',
                 'section': 'CONFIG',
                 'mode_graphique': ['Salome'],
                 'mode': ['DISTANT'],
-                'bulle': _(u"Machine hebergeant le service graphique Salome."),
+                'bulle': _("Machine hebergeant le service graphique Salome."),
             },
             'machine_salome_login': {
-                'label':  _(u"Login"),
+                'label':  _("Login"),
                 'val': '',
                 'type': 'texte',
                 'section': 'CONFIG',
                 'mode_graphique': ['Salome'],
                 'mode': ['DISTANT'],
-                'bulle': _(u"Login"),
+                'bulle': _("Login"),
             },
             'machine_salome_port': {
-                'label':  _(u"Port de Salome"),
+                'label':  _("Port de Salome"),
                 'val': '2810',
                 'type': 'texte',
                 'section': 'CONFIG',
                 'mode_graphique': ['Salome'],
                 'mode': ['LOCAL',
                          'DISTANT'],
-                'bulle': _(u"Port de Salome sur la machine hebergeant le service Salome."),
+                'bulle': _("Port de Salome sur la machine hebergeant le service Salome."),
             },
             'machine_salome_runscript': {
-                'label':  _(u"Lanceur salome"),
+                'label':  _("Lanceur salome"),
                 'val': aster_core.get_option('prog:salome'),
                 'type': 'texte',
                 'section': 'CONFIG',
                 'mode_graphique': ['Salome'],
                 'mode': ['LOCAL',
                          'DISTANT'],
-                'bulle': _(u"Chemin vers le script salome (dans l'arborescence de Salome)."),
+                'bulle': _("Chemin vers le script salome (dans l'arborescence de Salome)."),
             },
 
             'machine_win': {
-                'label':  _(u"Machine Windows/Samba"),
+                'label':  _("Machine Windows/Samba"),
                 'val': '',
                 'type': 'texte',
                 'section': 'CONFIG',
                 'mode_graphique': ['Gmsh/Xmgrace'],
                 'mode': ['WINDOWS'],
-                'bulle': _(u"Machine hebergeant le partage Windows/Samba."),
+                'bulle': _("Machine hebergeant le partage Windows/Samba."),
             },
             'partage_win_nom': {
-                'label':  _(u"Nom de partage Windows/Samba"),
+                'label':  _("Nom de partage Windows/Samba"),
                 'val': '',
                 'type': 'texte',
                 'section': 'CONFIG',
                 'mode_graphique': ['Gmsh/Xmgrace'],
                 'mode': ['WINDOWS'],
-                'bulle': _(u"Nom de partage Windows/Samba"),
+                'bulle': _("Nom de partage Windows/Samba"),
             },
             'partage_win_login': {
-                'label':  _(u"Nom d'utilisateur du partage"),
+                'label':  _("Nom d'utilisateur du partage"),
                 'val': '',
                 'type': 'texte',
                 'section': 'CONFIG',
                 'mode_graphique': ['Gmsh/Xmgrace'],
                 'mode': ['WINDOWS'],
-                'bulle': _(u"Partage Windows/Samba : nom d'utilisateur"),
+                'bulle': _("Partage Windows/Samba : nom d'utilisateur"),
             },
             'partage_win_pass': {
-                'label':  _(u"Mot de passe du partage"),
+                'label':  _("Mot de passe du partage"),
                 'val': '',
                 'type': 'texte',
                 'section': 'CONFIG',
                 'mode_graphique': ['Gmsh/Xmgrace'],
                 'mode': ['WINDOWS'],
-                'bulle': _(u"Partage Windows/Samba : mot de passe"),
+                'bulle': _("Partage Windows/Samba : mot de passe"),
             },
 
             'protocole': {
-                'label':  _(u"Protocole reseau"),
+                'label':  _("Protocole reseau"),
                 'val': 'rcp/rsh',
                 'type': 'liste',
                 'section': 'CONFIG',
                 'val_possible': ["rcp/rsh", "scp/ssh"],
                 'mode': ['DISTANT'],
-                'bulle': _(u"Protocole de transfert reseau. \nLes .rhosts ou clés SSH doivent etre à jours."),
+                'bulle': _("Protocole de transfert reseau. \nLes .rhosts ou clés SSH doivent etre à jours."),
             },
 
             'tmp': {
-                'label':  _(u"Repertoire temporaire"),
+                'label':  _("Repertoire temporaire"),
                 'val': '/tmp',
                 'type': 'texte',
                 'section': 'CONFIG',
@@ -543,14 +543,14 @@ class PARAMETRES:
                                    'Salome'],
                 'mode': ['LOCAL',
                          'DISTANT'],
-                'bulle': _(u"Repertoire temporaire"),
+                'bulle': _("Repertoire temporaire"),
             },
 
         }
 
 # Champs Bulle particulierement longs
         dparam['mode']['bulle'] = _(
-            u"""Mode d'utilisation suivant le profil du poste de travail.
+            """Mode d'utilisation suivant le profil du poste de travail.
 
 LOCAL: pour les utilisateurs qui travaillent sur une version locale d'Aster.
 
@@ -562,7 +562,7 @@ répertoire partagé.
 """)
 
         dparam['mode']['TAILLE_MIN'] = _(
-            u"""Parametre pour Gmsh : TAILLE_MIN
+            """Parametre pour Gmsh : TAILLE_MIN
 
 Ceci permet de fixer la taille minimale d'un cote d'un element. Si cette taille n'est pas atteinte, on
 procede à une transformation geometrique (affinite le long du cote trop petit). L'interet est de
@@ -695,7 +695,7 @@ Ce mode est indisponible car Salome n'existe pas encore sous Windows.
         UTMESS('I', 'STANLEY_23', valk=[fichier])
         try:
             f = open(fichier, 'r')
-            old_para = cPickle.load(f)
+            old_para = pickle.load(f)
             f.close()
             ok_env = True   # Le fichier a ete relu
         except:
@@ -706,8 +706,8 @@ Ce mode est indisponible car Salome n'existe pas encore sous Windows.
 
         if ok_env:
             # on verifie que le fichier d'environnement relu est conforme
-            if old_para.has_key('VERSION'):
-                if old_para['VERSION'].has_key('version_parametres'):
+            if 'VERSION' in old_para:
+                if 'version_parametres' in old_para['VERSION']:
                     if not str(old_para['VERSION']['version_parametres']) == str(__version_parametres__):
                         UTMESS('A', 'STANLEY_25', valk=[__rcstanley__])
                 else:
@@ -745,12 +745,12 @@ Ce mode est indisponible car Salome n'existe pas encore sous Windows.
         UTMESS('I', 'STANLEY_27')
 
         # Recupere le hostname et le display
-        if 'HOSTNAME' in os.environ.keys():
+        if 'HOSTNAME' in list(os.environ.keys()):
             hostname = os.environ['HOSTNAME']
         else:
             hostname = socket.gethostname()
 
-        if 'DISPLAY' in os.environ.keys():
+        if 'DISPLAY' in list(os.environ.keys()):
             display = os.environ['DISPLAY']
             mdisplay = os.environ['DISPLAY'].split(':')[0]
         else:
@@ -766,11 +766,11 @@ Ce mode est indisponible car Salome n'existe pas encore sous Windows.
 
         # Reinitialisation avec des parametres par defaut
         self.para = {}
-        for section in self.dliste_section.keys():
+        for section in list(self.dliste_section.keys()):
             self.para[section] = {}
 
         # On affecte ici les valeurs par defaut prises dans dparam
-        for cle in self.dparam.keys():
+        for cle in list(self.dparam.keys()):
             section = self.dparam[cle]['section']
             try:
                 self.para[section][cle] = self.dparam[cle]['val']
@@ -809,31 +809,31 @@ Ce mode est indisponible car Salome n'existe pas encore sous Windows.
 # ------------------------------------------------------------------------
     def __getitem__(self, cle):
 
-        for nom_classe in self.para.keys():
+        for nom_classe in list(self.para.keys()):
             classe = self.para[nom_classe]
-            if cle in classe.keys():
+            if cle in list(classe.keys()):
                 return classe[cle]
         raise KeyError
 
     def __setitem__(self, cle, s_val):
 
-        for i in self.para.keys():
-            for j in self.para[i].keys():
+        for i in list(self.para.keys()):
+            for j in list(self.para[i].keys()):
                 if cle == j:
                     self.para[i][j] = str(s_val)
 
     def Voir(self, interface):
 
-        for i in self.para.keys():
-            for j in self.para[i].keys():
-                print self.para[i][j]
+        for i in list(self.para.keys()):
+            for j in list(self.para[i].keys()):
+                print(self.para[i][j])
 
 # ------------------------------------------------------------------------
     def Ouvrir_Sous(self, interface):
         '''
            Ouvre les parametres a partir d'un fichier à choisir
         '''
-        fp = tkFileDialog.askopenfile(
+        fp = tkinter.filedialog.askopenfile(
             mode='r', filetypes=[("Fichiers Stanley", "*.stn"), ("Tous", "*")], parent=interface.rootTk,
             title="Sélectionner le fichier contenant la configuration Stanley", initialdir='~/%s' % __rcstanley__)
         if (fp != None):
@@ -875,7 +875,7 @@ Ce mode est indisponible car Salome n'existe pas encore sous Windows.
             os.mkdir(os.path.join(os.environ['HOME'], __rcstanley__))
         except:
             pass
-        fp = tkFileDialog.asksaveasfile(
+        fp = tkinter.filedialog.asksaveasfile(
             filetypes=[("Fichiers Stanley", "*.stn"), ("Tous", "*")], parent=interface.rootTk,
             title="Sélectionner le fichier contenant la configuration Stanley", initialdir='~/%s' % __rcstanley__)
         if (fp != None):
@@ -903,7 +903,7 @@ Ce mode est indisponible car Salome n'existe pas encore sous Windows.
 
             # Ouverture du fichier
             fp = open(fichier, 'w')
-            cPickle.dump(para, fp)
+            pickle.dump(para, fp)
             fp.close()
 
             # Sauvegarde de la derniere configuration connue (fichier
@@ -919,12 +919,12 @@ Ce mode est indisponible car Salome n'existe pas encore sous Windows.
 
         if res:
             self.Saved = True
-            txt = _(u"Nouveaux parametres sauvegardés dans : %s") % fichier
+            txt = _("Nouveaux parametres sauvegardés dans : %s") % fichier
             UTMESS('I', 'STANLEY_28', valk=[fichier])
             interface.ligne_etat.Affecter(txt)
         else:
             txt = _(
-                u"Impossible de sauvegarder les parametres dans : %s") % fichier
+                "Impossible de sauvegarder les parametres dans : %s") % fichier
             UTMESS('A', 'STANLEY_29', valk=[fichier])
             interface.ligne_etat.Affecter(txt)
 
@@ -937,8 +937,8 @@ Ce mode est indisponible car Salome n'existe pas encore sous Windows.
         '''
 
         if self.Saved == False:
-            reponse = tkMessageBox.askokcancel(_(u"Sauvegarde des parametres"), _(
-                u"Les paramètres ont été modifiés. Voulez-vous les sauvegarder?"))
+            reponse = tkinter.messagebox.askokcancel(_("Sauvegarde des parametres"), _(
+                "Les paramètres ont été modifiés. Voulez-vous les sauvegarder?"))
             if reponse == 1:
                 reponse = True
             elif reponse == 0:
@@ -1026,25 +1026,25 @@ class ETAT_GEOM:
 
     # les group_ma de dimension 3
         for gma in info_gma:
-            if gma[2] == 3 and gma[0][0] <> '_':
+            if gma[2] == 3 and gma[0][0] != '_':
                 self.volu.append(gma[0])
         self.volu.sort()
 
     # les group_ma de dimension 2
         for gma in info_gma:
-            if gma[2] == 2 and gma[0][0] <> '_':
+            if gma[2] == 2 and gma[0][0] != '_':
                 self.surf.append(gma[0])
         self.surf.sort()
 
     # les group_ma de dimension 1
         for gma in info_gma:
-            if gma[2] == 1 and gma[0][0] <> '_':
+            if gma[2] == 1 and gma[0][0] != '_':
                 self.lign.append(gma[0])
         self.lign.sort()
 
     # Les points (group_no a un seul noeud)
         for gno in info_gno:
-            if gno[1] == 1 and gno[0][0] <> '_':
+            if gno[1] == 1 and gno[0][0] != '_':
                 self.poin.append(gno[0])
         self.poin.sort()
 
@@ -1057,7 +1057,7 @@ class ETAT_GEOM:
           Nombre   : fournit le nombre d'entites geometriques disponibles
         """
 
-        return len(self.mail.keys())
+        return len(list(self.mail.keys()))
 
     def Type(self, geom):
         """
@@ -1092,11 +1092,11 @@ class ETAT_GEOM:
         if ligne not in self.lign:
             raise Exception("ce n'est pas un chemin (mailles 1D)")
 
-        if ligne in self.orie.keys():
+        if ligne in list(self.orie.keys()):
             num = self.orie[ligne]
             return '_OR' + repr(num)
 
-        num = len(self.orie.keys()) + 1
+        num = len(list(self.orie.keys())) + 1
         nom = '_OR' + repr(num)
         self.orie[ligne] = num
 
@@ -1108,10 +1108,10 @@ class ETAT_GEOM:
                        CREA_GROUP_NO=_F(
                            GROUP_MA=ligne, NOM=nom, OPTION='NOEUD_ORDO')
                        )
-        except aster.error, err:
+        except aster.error as err:
             UTMESS('A', 'STANLEY_38', valk=[texte_onFatalError, str(err)])
             return None
-        except Exception, err:
+        except Exception as err:
             UTMESS('A', 'STANLEY_5', valk=[str(err)])
             return None
 
@@ -1125,8 +1125,8 @@ class ETAT_GEOM:
         """
 
     # Verification qu'il n'y a pas de noms de group en commun
-        for gp in ma.mail.keys():
-            if gp in self.mail.keys():
+        for gp in list(ma.mail.keys()):
+            if gp in list(self.mail.keys()):
                 raise Exception(
                     "Nom de groupe en commun (" + gp + ") : fusion impossible")
 
@@ -1135,11 +1135,11 @@ class ETAT_GEOM:
         self.lign = self.lign + ma.lign
         self.poin = self.poin + ma.poin
 
-        for cle in ma.mail.keys():
+        for cle in list(ma.mail.keys()):
             if cle != 'GM1':
                 self.mail[cle] = ma.mail[cle]
 
-        for cle in ma.orie.keys():
+        for cle in list(ma.orie.keys()):
             if cle != 'GM1':
                 self.orie[cle] = ma.orie[cle]
 
@@ -1223,7 +1223,7 @@ class ETAT_RESU:
         self.cmp = self.contexte.resultat.LIST_NOM_CMP()
         self.ch = self.contexte.resultat.LIST_CHAMPS()
 
-        for nom_cham in self.ch.keys():
+        for nom_cham in list(self.ch.keys()):
             if nom_cham not in cata.Champs_presents():
                 del self.ch[nom_cham]
 # AA : pour ajouter automatiquement une option deja calculée, il faut pouvoir determiner son support geometrique... On laisse pour le moment de coté.
@@ -1238,7 +1238,7 @@ class ETAT_RESU:
         """
 
         resu = 0
-        if nom_cham in self.ch.keys():
+        if nom_cham in list(self.ch.keys()):
             nume_calc = self.ch[nom_cham]
             for num in numeros:
                 if num not in nume_calc:
@@ -1300,7 +1300,7 @@ class ETAT_RESU:
         """
 
         liste_ch = []
-        for nom_cham in self.ch.keys():
+        for nom_cham in list(self.ch.keys()):
             if self.Etapes_calcul(nom_cham, numeros):
                 liste_ch.append(nom_cham)
         return liste_ch
@@ -1321,9 +1321,9 @@ class ETAT_RESU:
         for nom_cham in etapes[1:]:
             try:
                 cata[nom_cham].Evalue(self.contexte, numeros, options)
-            except aster.error, err:
+            except aster.error as err:
                 UTMESS('A', 'STANLEY_38', valk=[texte_onFatalError, str(err)])
-            except Exception, err:
+            except Exception as err:
                 UTMESS('A', 'STANLEY_5', valk=[str(err)])
         self.Refresh()
 
@@ -1497,9 +1497,9 @@ class SELECTION:
 
     # le champ est-il compatible avec les choix geometriques ?
         self.compatible = 0
-        if self.geom and self.statut <> 'INACCESSIBLE':
+        if self.geom and self.statut != 'INACCESSIBLE':
             type_champ = cata[self.nom_cham].type
-            if (type_champ, self.geom[0]) in SELECTION.comb_tracables.keys():
+            if (type_champ, self.geom[0]) in list(SELECTION.comb_tracables.keys()):
                 self.compatible = 1
             if self.geom[0] == 'CHEMIN' and len(self.geom[1]) > 1:
                 self.compatible = 0
@@ -1570,7 +1570,7 @@ class SELECTION:
             liste_cmp = self.etat_resu.cmp[self.nom_cham]
         else:
             liste_cmp = []
-        if liste_cmp <> self.liste_cmp:
+        if liste_cmp != self.liste_cmp:
             self.liste_cmp = liste_cmp
             self.interface.cmp.Change(['TOUT_CMP'] + liste_cmp, 'TOUT_CMP')
 
@@ -1592,7 +1592,7 @@ class SELECTION:
 
     # Mise a jour de la liste des entites geometriques
         nombre = self.etat_geom.Nombre()
-        if nombre <> self.nbr_geom:
+        if nombre != self.nbr_geom:
             self.nbr_geom = nombre
             self.Change_mode(self.mode, force=1)
 
@@ -1608,7 +1608,7 @@ class SELECTION:
                 liste_actu.append(nom_group)
                 if not type_actu:
                     type_actu = type_group
-                elif type_group <> type_actu:
+                elif type_group != type_actu:
                     self.geom = None
                     break
             else:
@@ -1691,7 +1691,7 @@ class STANLEY:
     # Menage
         self.interface.Kill()
 
-        for driver in self.driver.keys():
+        for driver in list(self.driver.keys()):
             try:
                 self.driver[driver].Fermer()
             except AttributeError:
@@ -1710,10 +1710,10 @@ class STANLEY:
 
         # Lancement de la commande
         try:
-            apply(MODI_MODELE, (), para)
-        except aster.error, err:
+            MODI_MODELE(*(), **para)
+        except aster.error as err:
             UTMESS('A', 'STANLEY_4', valk=[str(err)])
-        except Exception, err:
+        except Exception as err:
             UTMESS('A', 'STANLEY_5', valk=[str(err)])
 
     def Calculer(self):
@@ -1768,7 +1768,7 @@ class STANLEY:
                     if len(self.interface.ordre.courant) == 1:
                         liste = ['Animer', 'Ne pas animer']
                         options['animation_mode'] = SAISIE_MODE(
-                            liste, _(u"Animation"))
+                            liste, _("Animation"))
 
         # Trace
         self.driver[self.selection.mode].Tracer(self.selection, options)
@@ -1796,8 +1796,8 @@ class STANLEY:
 
             # Incorporation du nouveau point
             self.etat_geom.Fusion(geom)
-        except Exception, e:
-            print e
+        except Exception as e:
+            print(e)
             self.selection.Refresh()
 
     def Ajout_chemin(self):
@@ -1827,8 +1827,8 @@ class STANLEY:
         self.parametres.Afficher_Config(self.interface)
 
         if self.parametres.change_fonte:
-            reponse = tkMessageBox.askokcancel(_(u"Changement des fontes"), _(
-                u"Pour actualiser les fontes, il faut relancer l'IHM. Voulez-vous relancer Stanley ? Le fichier des paramètres sera modifiés."))
+            reponse = tkinter.messagebox.askokcancel(_("Changement des fontes"), _(
+                "Pour actualiser les fontes, il faut relancer l'IHM. Voulez-vous relancer Stanley ? Le fichier des paramètres sera modifiés."))
             if reponse == 1:
                 reponse = True
             elif reponse == 0:
@@ -1875,7 +1875,7 @@ class STANLEY:
         """
            Fermeture de Stanley : cloture les drivers, efface les concepts temporaires
         """
-        for driver in self.driver.keys():
+        for driver in list(self.driver.keys()):
             try:
                 self.driver[driver].Fermer()
             except AttributeError:
@@ -1994,7 +1994,7 @@ class INTERFACE:
         t_no = ['TOUT_ORDRE'] + numeros
 
     # Liste des variables d'acces
-        l_va = etat_resu.va.keys()
+        l_va = list(etat_resu.va.keys())
 
         self.stan = stan
         self.rootTk = Tk.Tk()
@@ -2120,7 +2120,7 @@ class INTERFACE:
         BOUTON(frame_boutons, 'PaleGreen1', 'TRACER',
                self.stan.Tracer,   x=2, y=0, fonte=fonte)
         self.case_sur_deformee = CASE_A_COCHER(
-            frame_boutons, x=2, y=0, txt=_(u"Sur déformée"), fonte=fonte)
+            frame_boutons, x=2, y=0, txt=_("Sur déformée"), fonte=fonte)
         BOUTON(frame_boutons, 'orange',     'CALCULER',
                self.stan.Calculer, x=2, y=0, fonte=fonte)
         BOUTON(frame_boutons, 'skyblue',    'SELECTION',
@@ -2140,7 +2140,7 @@ class INTERFACE:
         global info
 
         tk = Tk.Tk()
-        tk.title = _(u"A propos de Stanley")
+        tk.title = _("A propos de Stanley")
 
         l = Tk.Label(tk, padx=15, pady=15, text=info)
         l.grid()
@@ -2167,7 +2167,7 @@ class INTERFACE:
             ['Coordonnees', 3]]
         defaut = [[''], [0., 0., 0.]]
 
-        reponse = SAISIE(infos, _(u"Creation d'un point"), defaut, fonte=fonte)
+        reponse = SAISIE(infos, _("Creation d'un point"), defaut, fonte=fonte)
 
         nom = reponse[0][0]
         nom = nom[0:24]            # pas plus de 24 caracteres dans un GROUP_MA
@@ -2203,7 +2203,7 @@ class INTERFACE:
             ['Nombre de points', 1]]
         defaut = [[''], [0., 0., 0.], [1., 0., 0.], [2]]
         reponse = SAISIE(
-            infos, _(u"Creation d'un chemin"), defaut, fonte=fonte)
+            infos, _("Creation d'un chemin"), defaut, fonte=fonte)
 
         nom = reponse[0][0]
         nom = nom[0:24]            # pas plus de 24 caracteres dans un GROUP_MA
@@ -2289,7 +2289,7 @@ class DRIVER:
 
         try:
             DETRUIRE(CONCEPT=_F(NOM=__MO_P), INFO=2)
-        except Exception, e:
+        except Exception as e:
             pass
 
         try:
@@ -2304,9 +2304,9 @@ class DRIVER:
                                  # a ce niveau ...
                                  )
                                  )
-        except aster.error, err:
+        except aster.error as err:
             return self.erreur.Remonte_Erreur(err, [], 2)
-        except Exception, err:
+        except Exception as err:
             texte = "Cette action n'est pas realisable.\n" + str(err)
             return self.erreur.Remonte_Erreur(err, [], 2, texte)
 
@@ -2314,7 +2314,7 @@ class DRIVER:
 
         try:
             DETRUIRE(CONCEPT=_F(NOM=__RESU_P), INFO=2)
-        except Exception, e:
+        except Exception as e:
             pass
 
         try:
@@ -2327,9 +2327,9 @@ class DRIVER:
                 **motscles
             )
 
-        except aster.error, err:
+        except aster.error as err:
             return self.erreur.Remonte_Erreur(err, [__MO_P], 2)
-        except Exception, err:
+        except Exception as err:
             texte = "Cette action n'est pas realisable.\n" + str(err)
             return self.erreur.Remonte_Erreur(err, [__MO_P], 2, texte)
 
@@ -2380,16 +2380,16 @@ class DRIVER:
 
         try:
             DETRUIRE(CONCEPT=_F(NOM=__MA_G), INFO=1)
-        except Exception, e:
+        except Exception as e:
             pass
 
         try:
             __MA_G = CREA_MAILLAGE(MAILLAGE=contexte.maillage,
                                    ECLA_PG=para,
                                    )
-        except aster.error, err:
+        except aster.error as err:
             return self.erreur.Remonte_Erreur(err, [], 2)
-        except Exception, err:
+        except Exception as err:
             texte = "Cette action n'est pas realisable.\n" + str(err)
             return self.erreur.Remonte_Erreur(err, [], 2, texte)
 
@@ -2406,7 +2406,7 @@ class DRIVER:
 
         try:
             DETRUIRE(CONCEPT=_F(NOM=__RESU_G), INFO=1)
-        except Exception, e:
+        except Exception as e:
             pass
 
         try:
@@ -2414,9 +2414,9 @@ class DRIVER:
                 OPERATION='ECLA_PG',
                 TYPE_RESU=type_resu,
                 ECLA_PG=para,)
-        except aster.error, err:
+        except aster.error as err:
             return self.erreur.Remonte_Erreur(err, [__MA_G], 2)
-        except Exception, err:
+        except Exception as err:
             texte = "Cette action n'est pas realisable.\n" + str(err)
             return self.erreur.Remonte_Erreur(err, [__MA_G], 2, texte)
 
@@ -2432,7 +2432,7 @@ class DRIVER:
 
             try:
                 DETRUIRE(CONCEPT=_F(NOM=__MO_G), INFO=1)
-            except Exception, e:
+            except Exception as e:
                 pass
 
             try:
@@ -2441,9 +2441,9 @@ class DRIVER:
                     AFFE=_F(TOUT='OUI',
                             PHENOMENE='MECANIQUE',
                             MODELISATION=pmod,))
-            except aster.error, err:
+            except aster.error as err:
                 return self.erreur.Remonte_Erreur(err, [__MA_G, __RESU_G], 2)
-            except Exception, err:
+            except Exception as err:
                 texte = "Cette action n'est pas realisable.\n" + str(err)
                 return self.erreur.Remonte_Erreur(err, [__MA_G, __RESU_G], 2, texte)
 
@@ -2482,7 +2482,7 @@ class DRIVER:
             txt = mdsum + ' - ' + FICHIER + ' - ' + \
                 ' - '.join(
                     [str(selection.nom_cham), str(selection.nom_cmp), str(selection.numeros), str(selection.geom)])
-        except Exception, err:
+        except Exception as err:
             UTMESS('A', 'STANLEY_31', valk=[str(err)])
 
         try:
@@ -2609,7 +2609,7 @@ class DRIVER_GMSH(DRIVER_ISOVALEURS):
                     {'TYPE_CHAM': 'SCALAIRE', 'NOM_CMP': tuple(selection.nom_cmp)})
 
         # Options supplementaires du IMPR_RESU pour le trace sur deformee
-        if options.has_key('case_sur_deformee'):
+        if 'case_sur_deformee' in options:
             if options['case_sur_deformee'] == 1:
                 if selection.nom_cham != 'DEPL':
                     if type_champ in ['ELGA', 'ELEM']:
@@ -2651,12 +2651,12 @@ class DRIVER_GMSH(DRIVER_ISOVALEURS):
                       self.stan.parametres['version_fichier_gmsh']),
                       RESU=para,
                       )
-        except aster.error, err:
+        except aster.error as err:
             self.erreur.Remonte_Erreur(err, [], 0)
             DEFI_FICHIER(ACTION='LIBERER', UNITE=ul, INFO=1)
             return
             return
-        except Exception, err:
+        except Exception as err:
             texte = "Cette action n'est pas realisable.\n" + str(err)
             self.erreur.Remonte_Erreur(err, [], 0, texte)
             DEFI_FICHIER(ACTION='LIBERER', UNITE=ul, INFO=1)
@@ -2748,7 +2748,7 @@ class DRIVER_SALOME_ISOVALEURS(DRIVER_ISOVALEURS):
                 para.update({'NOM_CMP': tuple(selection.nom_cmp)})
 
         # Options supplementaires du IMPR_RESU pour le trace sur deformee
-        if options.has_key('case_sur_deformee'):
+        if 'case_sur_deformee' in options:
             if options['case_sur_deformee'] == 1:
                 if selection.nom_cham != 'DEPL':
                 # if type_champ in ['ELGA', 'ELEM']:
@@ -2775,11 +2775,11 @@ class DRIVER_SALOME_ISOVALEURS(DRIVER_ISOVALEURS):
             IMPR_RESU(FORMAT='MED',
                       UNITE=ul,
                       RESU=para)
-        except aster.error, err:
+        except aster.error as err:
             self.erreur.Remonte_Erreur(err, [], 0)
             DEFI_FICHIER(ACTION='LIBERER', UNITE=ul)
             return
-        except Exception, err:
+        except Exception as err:
             texte = "Cette action n'est pas realisable.\n" + str(err)
             self.erreur.Remonte_Erreur(err, [], 0, texte)
             DEFI_FICHIER(ACTION='LIBERER', UNITE=ul)
@@ -2857,9 +2857,9 @@ class DRIVER_COURBES(DRIVER):
                 try:
                     __COTMP1 = POST_RELEVE_T(ACTION=para)
                     isOk = True
-                except aster.error, err:
+                except aster.error as err:
                     return self.erreur.Remonte_Erreur(err, [__COTMP1], 1)
-                except Exception, err:
+                except Exception as err:
                     texte = "Cette action n'est pas realisable.\n" + str(err)
                     return self.erreur.Remonte_Erreur(err, [__COTMP1], 1, texte)
 
@@ -2872,8 +2872,8 @@ class DRIVER_COURBES(DRIVER):
                         tmp0 = repr(
                             courbe)   # laisser cette ligne car elle permet de filtrer les cas ou la SD __COTMP1 n'est pas complete
                         nom = comp + ' --- ' + string.ljust(point, 8)
-                    except Exception, e:
-                        print e
+                    except Exception as e:
+                        print(e)
                     else:
                         l_courbes.append((courbe, nom))
 
@@ -2906,9 +2906,9 @@ class DRIVER_COURBES(DRIVER):
                 try:
                     __COTMP1 = POST_RELEVE_T(ACTION=para)
                     isOk = True
-                except aster.error, err:
+                except aster.error as err:
                     return self.erreur.Remonte_Erreur(err, [__COTMP1], 1)
-                except Exception, err:
+                except Exception as err:
                     texte = "Cette action n'est pas realisable.\n" + str(err)
                     return self.erreur.Remonte_Erreur(err, [__COTMP1], 1, texte)
 
@@ -2923,8 +2923,8 @@ class DRIVER_COURBES(DRIVER):
                         nom = comp + ' --- ' + \
                             selection.nom_va + ' = ' + repr(va)
                         # l_courbes.append( (courbe, nom) )
-                    except Exception, e:
-                        print e
+                    except Exception as e:
+                        print(e)
                     else:
                         l_courbes.append((courbe, nom))
                     # l_courbes.append( (courbe, nom) )
@@ -3022,9 +3022,9 @@ COLUMN_UNITS: %s""" % ( title, ctitle, cunit)
             # mettre un '#' devant les noms de paramètres
             _tbl.Impr(
                 FICHIER=datafile, FORMAT='TABLEAU', dform={'ccpara': '#'})
-        except Exception, e:
-            print "Erreur lors de l'ecriture du fichier : %s" % datafile
-            print e
+        except Exception as e:
+            print("Erreur lors de l'ecriture du fichier : %s" % datafile)
+            print(e)
             return None
 
         return datafile
@@ -3169,9 +3169,9 @@ class DRIVER_SUP_GMSH(DRIVER):
 
         try:
             __ma = mesh.LIRE_GMSH(UNITE_GMSH=_UL[0], UNITE_MAILLAGE=_UL[1])
-        except aster.error, err:
+        except aster.error as err:
             return self.erreur.Remonte_Erreur(err, [__ma], 1)
-        except Exception, err:
+        except Exception as err:
             texte = "Cette action n'est pas realisable.\n" + str(err)
             return self.erreur.Remonte_Erreur(err, [__ma], 1, texte)
 
@@ -3179,9 +3179,9 @@ class DRIVER_SUP_GMSH(DRIVER):
 
         try:
             _MA[INDICE] = COPIER(CONCEPT=__ma)
-        except aster.error, err:
+        except aster.error as err:
             return self.erreur.Remonte_Erreur(err, [__ma, _MA[INDICE]], 1)
-        except Exception, err:
+        except Exception as err:
             texte = "Cette action n'est pas realisable.\n" + str(err)
             return self.erreur.Remonte_Erreur(err, [__ma, _MA[INDICE]], 1, texte)
 
@@ -3210,9 +3210,9 @@ class DRIVER_SUP_GMSH(DRIVER):
         mesh.Physical(nom, L01)
         try:
             ma = mesh.LIRE_GMSH(UNITE_GMSH=_UL[0], UNITE_MAILLAGE=_UL[1])
-        except aster.error, err:
+        except aster.error as err:
             return self.erreur.Remonte_Erreur(err, [ma], 1)
-        except Exception, err:
+        except Exception as err:
             texte = "Cette action n'est pas realisable.\n" + str(err)
             return self.erreur.Remonte_Erreur(err, [ma], 1, texte)
 
@@ -3220,9 +3220,9 @@ class DRIVER_SUP_GMSH(DRIVER):
 
         try:
             _MA[INDICE] = COPIER(CONCEPT=ma)
-        except aster.error, err:
+        except aster.error as err:
             return self.erreur.Remonte_Erreur(err, [ma, _MA[INDICE]], 1)
-        except Exception, err:
+        except Exception as err:
             texte = "Cette action n'est pas realisable.\n" + str(err)
             return self.erreur.Remonte_Erreur(err, [ma, _MA[INDICE]], 1, texte)
 
@@ -3276,7 +3276,7 @@ class PRE_STANLEY:
         self.para = PARAMETRES()
 
         self.rootTk = Tk.Tk()
-        self.rootTk.wm_title(_(u"PRE_STANLEY : choix des concepts"))
+        self.rootTk.wm_title(_("PRE_STANLEY : choix des concepts"))
 
         # Récupération des concepts Aster présents dans la base
         self.macro = CONTEXT.get_current_step()
@@ -3288,7 +3288,7 @@ class PRE_STANLEY:
         t_cara_elem = []
 
         current_context = self.macro.get_contexte_courant()
-        for i in current_context.keys():
+        for i in list(current_context.keys()):
 
             concept_exists_and_intypes(i, self.macro,
                                        types=maillage_sdaster, append_to=t_maillage)
@@ -3430,8 +3430,8 @@ class PRE_STANLEY:
         if self.evol.Scan():
             try:
                 self.Change_selections()
-            except Exception, e:
-                print e
+            except Exception as e:
+                print(e)
 
         self.after_id = self.rootTk.after(30, self.Scan_selection)
 

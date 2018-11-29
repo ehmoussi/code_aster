@@ -43,9 +43,9 @@ def post_miss_ops(self, **kwargs):
         post.argument()
         post.execute()
         post.sortie()
-    except aster.error, err:
+    except aster.error as err:
         UTMESS('F', err.id_message, valk=err.valk,
                vali=err.vali, valr=err.valr)
-    except Exception, err:
-        trace = ''.join(traceback.format_tb(sys.exc_traceback))
+    except Exception as err:
+        trace = ''.join(traceback.format_tb(sys.exc_info()[2]))
         UTMESS('F', 'SUPERVIS2_5', valk=('POST_MISS', trace, str(err)))

@@ -36,7 +36,7 @@ def repr_float(valeur):
         5 caractères
         NB : valeur est un réel au format Python ou une chaine de caractères représentant un réel
     """
-    if type(valeur) == types.StringType:
+    if type(valeur) == bytes:
         valeur = eval(valeur)
     if valeur == 0.:
         return '0.0'

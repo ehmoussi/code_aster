@@ -21,27 +21,27 @@
 
 cata_msg = {
 
-    8: _(u"""
+    8: _("""
   Il faut autant d'indices en I et J.
 """),
 
-    9: _(u"""
+    9: _("""
   Il faut autant de composantes en I et J.
 """),
 
-    10: _(u"""
+    10: _("""
   Il faut autant de composantes que de noeuds.
 """),
 
-    11: _(u"""
+    11: _("""
   Nombre de tirages supérieur a la taille de l'échantillon.
 """),
 
-    12: _(u"""
+    12: _("""
   Le facteur de pic vaut %(r1).3f
 """),
 
-    13: _(u"""
+    13: _("""
   -------------------  Tirage %(i1)d  ---------------------
 """),
 

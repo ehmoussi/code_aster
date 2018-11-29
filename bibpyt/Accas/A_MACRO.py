@@ -22,7 +22,7 @@
 
 from Noyau import N_MACRO
 from Build import B_ENTITE
-import A_MACRO_ETAPE
+from . import A_MACRO_ETAPE
 
 
 class MACRO(N_MACRO.MACRO, B_ENTITE.ENTITE):

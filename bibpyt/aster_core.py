@@ -148,7 +148,7 @@ def _print_header():
     # avertissement si la version a plus de 15 mois
     if _aster_core._NO_EXPIR == 0:
         try:
-            d0, m0, y0 = map(int, date_build.split('/'))
+            d0, m0, y0 = list(map(int, date_build.split('/')))
             tbuild = datetime(y0, m0, d0)
             tnow = datetime.today()
             delta = (tnow - tbuild).days
@@ -192,7 +192,7 @@ def checksd(nomsd, typesd):
     iret = 4
     try:
         sd_module = __import__('SD.%s' % typesd, globals(), locals(), [typesd])
-    except ImportError, msg:
+    except ImportError as msg:
         UTMESS('F', 'SDVERI_1', valk=typesd)
         return iret
     # on récupère la classe typesd

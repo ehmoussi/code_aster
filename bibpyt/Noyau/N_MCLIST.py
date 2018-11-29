@@ -27,11 +27,11 @@
 """
 
 from copy import copy
-import UserList
+import collections
 import types
 
 
-class MCList(UserList.UserList):
+class MCList(collections.UserList):
 
     """ Liste semblable a la liste Python
         mais avec quelques methodes en plus
@@ -102,7 +102,7 @@ class MCList(UserList.UserList):
                 if resu != None:
                     return resu
         # Phase 3 : on cherche dans les entites possibles pour les défauts
-        for k, v in obj.definition.entites.items():
+        for k, v in list(obj.definition.entites.items()):
             # if k == name: return v.defaut
             if k == name:
                 if v.defaut != None:
@@ -150,7 +150,7 @@ class MCList(UserList.UserList):
         dico = {}
         for child in self.data:
             daux = child.get_sd_mcs_utilisees()
-            for cle in daux.keys():
+            for cle in list(daux.keys()):
                 dico[cle] = dico.get(cle, [])
                 dico[cle].extend(daux[cle])
         return dico
@@ -238,7 +238,7 @@ class MCList(UserList.UserList):
         dresu = []
         for mcf in self:
             dico = mcf.cree_dict_valeurs(mcf.mc_liste)
-            for i in dico.keys():
+            for i in list(dico.keys()):
                 if dico[i] == None:
                     del dico[i]
             dresu.append(dico)

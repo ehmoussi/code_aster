@@ -19,7 +19,7 @@
 
 # person_in_charge: said.taheri at edf.fr
 
-from cata_comportement import LoiComportement
+from .cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'VISC_TAHERI',

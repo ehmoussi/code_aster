@@ -20,7 +20,7 @@
 # person_in_charge: mathieu.courtois at edf.fr
 
 
-import N_MACRO_ETAPE
+from . import N_MACRO_ETAPE
 
 
 class FORM_ETAPE(N_MACRO_ETAPE.MACRO_ETAPE):

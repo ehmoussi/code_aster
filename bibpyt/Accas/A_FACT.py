@@ -22,8 +22,8 @@
 
 from Noyau import N_FACT
 from Build import B_ENTITE
-import A_MCFACT
-import A_MCLIST
+from . import A_MCFACT
+from . import A_MCLIST
 
 
 class FACT(N_FACT.FACT, B_ENTITE.ENTITE):

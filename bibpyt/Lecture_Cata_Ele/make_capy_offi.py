@@ -81,27 +81,27 @@ def main(rep_cata_offi, nom_capy_offi):
     try:
         _main(rep_cata_offi, nom_capy_offi)
     except:
-        print 60 * '-' + ' debut trace back'
+        print(60 * '-' + ' debut trace back')
         traceback.print_exc(file=sys.stdout)
-        print 60 * '-' + ' fin   trace back'
+        print(60 * '-' + ' fin   trace back')
         raise
     finally:
         os.chdir(dirav)
         shutil.rmtree(trav)
-    print "(I/U) creation du fichier '%s' terminee." % nom_capy_offi
+    print("(I/U) creation du fichier '%s' terminee." % nom_capy_offi)
 
 
 def _main(rep_cata_offi, nom_capy_offi):
     """Script pour construire le catalogue officiel cata_ele.picked"""
-    print "AJACOT rep_cata_offi=",rep_cata_offi
-    print "AJACOT nom_capy_offi=",nom_capy_offi
+    print("AJACOT rep_cata_offi=",rep_cata_offi)
+    print("AJACOT nom_capy_offi=",nom_capy_offi)
     import sys
-    print "ajacot sys.argv=",sys.argv
-    print "ajacot sys.path 1=",sys.path
+    print("ajacot sys.argv=",sys.argv)
+    print("ajacot sys.path 1=",sys.path)
     dir_src=osp.dirname(sys.path[1]) # AJACOT NON !!!
-    print "ajacot dir_src=",dir_src
+    print("ajacot dir_src=",dir_src)
     sys.path.insert(0,dir_src)
-    print "ajacot sys.path 2=",sys.path
+    print("ajacot sys.path 2=",sys.path)
 
     import catalo
     import catalo.Tools.imprime as imprime

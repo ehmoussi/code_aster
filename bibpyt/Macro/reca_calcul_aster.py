@@ -39,8 +39,8 @@ import aster_core
 from Utilitai.System import ExecCommand
 from Utilitai.Utmess import UTMESS
 
-from recal import Affiche_Param, CALCULS_ASTER, CALC_ERROR
-from reca_utilitaires import Random_Tmp_Name
+from .recal import Affiche_Param, CALCULS_ASTER, CALC_ERROR
+from .reca_utilitaires import Random_Tmp_Name
 
 
 # ------------------------------------------------------------------------
@@ -119,7 +119,7 @@ class CALCUL_ASTER:
 
     # ------------------------------------------------------------------------
     def Set_Parameters(self, **args):
-        for cle in args.keys():
+        for cle in list(args.keys()):
             exec("%s=%s" % (cle, args[cle]))
 
     # ------------------------------------------------------------------------
@@ -279,14 +279,14 @@ class CALCUL_ASTER:
         self.norme = NP.sum([x ** 2 for x in self.erreur])
 
         if debug:
-            print "self.reponses=", self.reponses
-            print "F=", E.F
-            print "L_J=", E.L_J
-            print "L_J_init=", E.L_J_init
-            print "J=", E.J
-            print 'erreur=', self.erreur
-            print "norme de l'erreur=", self.norme
-            print "norme de J (fonctionnelle)=", str(E.J)
+            print("self.reponses=", self.reponses)
+            print("F=", E.F)
+            print("L_J=", E.L_J)
+            print("L_J_init=", E.L_J_init)
+            print("J=", E.J)
+            print('erreur=', self.erreur)
+            print("norme de l'erreur=", self.norme)
+            print("norme de J (fonctionnelle)=", str(E.J))
 
         if self.INFO >= 2:
             UTMESS('I', 'RECAL0_30')
@@ -320,10 +320,10 @@ class CALCUL_ASTER:
            Verification que les parametres perturbes sont bien dans l'intervalle defini par l'utilisateur
            Sinon, on colle le parametre a la borne
         """
-        print self.para
-        print self.LIST_PARA
+        print(self.para)
+        print(self.LIST_PARA)
         for i in range(len(val)):
-            print i, val[i], dX[i]
+            print(i, val[i], dX[i])
             # min
         sys.exit()
 
@@ -355,11 +355,11 @@ class CALCUL_ASTER:
             Lcalc=self.Lcalc, val=val, dX=None, pas=self.PARA_DIFF_FINI)
 
         if debug:
-            print "A_nodim=", self.A_nodim
-            print "self.A=", self.A
-            print "self.erreur=", self.erreur
-            print "self.residu=", self.residu
-            print "self.vector_output=", self.vector_output
+            print("A_nodim=", self.A_nodim)
+            print("self.A=", self.A)
+            print("self.erreur=", self.erreur)
+            print("self.residu=", self.residu)
+            print("self.vector_output=", self.vector_output)
 
         if self.vector_output:
             return self.erreur, self.residu, self.A_nodim, self.A
@@ -486,7 +486,7 @@ class CALCUL_ASTER:
                 prof.param['classe'] = self.CLASSE
 
         # xterm
-        if prof.param.has_key('xterm'):
+        if 'xterm' in prof.param:
             del prof.param['xterm']
 
         # fichier/répertoire
@@ -553,9 +553,9 @@ class CALCUL_ASTER:
                                         shutil.copyfile(src, dst)
                                         dico['path'] = user_mach + os.path.join(
                                             tmp_macr_recal, os.path.basename(dico['path']))
-                                    except Exception, e:
+                                    except Exception as e:
                                         if debug:
-                                            print e
+                                            print(e)
                                 else:
                                     dico['path'] = user_mach + os.path.join(
                                         os.getcwd(), 'fort.%s' % dico['ul'])

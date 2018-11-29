@@ -189,7 +189,7 @@ def char_grad_impo_ops(self, RESU_H2, TINIT, TFIN, RESUMECA, GRMAVOL, DIME, Ctot
 #   print "tabdesc",tabdesc
 #   print "tablima",dicolima
 
-    for izone in dicolima.keys():
+    for izone in list(dicolima.keys()):
 
         # chaque maille du groupe est affectee
         for index, ima in enumerate(dicolima[izone]):

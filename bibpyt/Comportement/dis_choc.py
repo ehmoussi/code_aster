@@ -19,7 +19,7 @@
 
 # person_in_charge: Georges-cc.devesa at edf.fr
 
-from cata_comportement import LoiComportement
+from .cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'DIS_CHOC',

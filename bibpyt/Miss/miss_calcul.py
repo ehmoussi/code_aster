@@ -82,7 +82,7 @@ class CalculMiss(object):
     def __init__(self, parent, parameters):
         """Initialisations"""
         if not self.option_calcul:
-            raise NotImplementedError, "option_calcul non défini"
+            raise NotImplementedError("option_calcul non défini")
         self.parent = parent
         self.param = parameters
         self.data = None
@@ -180,7 +180,7 @@ class CalculMiss(object):
         self.menage()
         self._dbg_trace("Stop")
         if self.debug:
-            print self.timer
+            print(self.timer)
 
     def fichier_resultat(self):
         """Copie les fichiers résultats dans les unités logiques."""

@@ -22,7 +22,7 @@
 
 cata_msg = {
 
-    1 : _(u"""
+    1 : _("""
  Erreur d'utilisation :
    On veut utiliser la fonctionnalité SOLVEUR / ELIM_LAGR='OUI'
    Mais la version du programme ne dispose pas du solveur PETSC
@@ -32,7 +32,7 @@ cata_msg = {
    Il faut utiliser la version MPI avec un seul processeur.
 """),
 
-    2 : _(u"""
+    2 : _("""
  Erreur d'utilisation :
    On veut utiliser la fonctionnalité SOLVEUR / ELIM_LAGR='OUI'
    Il y a plusieurs processeurs actifs. Mais les données du modèle doivent 
@@ -41,7 +41,7 @@ cata_msg = {
    Il faut utiliser DISTRIBUTION='CENTRALISE' dans la commande AFFE_MODELE.
 """),
 
-    3 : _(u"""
+    3 : _("""
  Erreur d'utilisation :
    On veut utiliser la fonctionnalité SOLVEUR / ELIM_LAGR='OUI'
    La matrice n'est pas réelle (mais sans doute complexe).
@@ -50,7 +50,7 @@ cata_msg = {
    Il faut ne faut pas utiliser SOLVEUR / ELIM_LAGR='OUI'.
 """),
 
-    4 : _(u"""
+    4 : _("""
  Erreur d'utilisation :
    On veut utiliser la fonctionnalité SOLVEUR / ELIM_LAGR='OUI'
    Certaines conditions aux limites sont réalisées par AFFE_CHAR_CINE.
@@ -59,7 +59,7 @@ cata_msg = {
    Il faut remplacer AFFE_CHAR_CINE par AFFE_CHAR_MECA..
 """),
 
-    5 : _(u"""
+    5 : _("""
  Erreur d'utilisation :
    On veut utiliser la fonctionnalité SOLVEUR / ELIM_LAGR='OUI'
    Mais la matrice n'est pas symétrique.
@@ -68,7 +68,7 @@ cata_msg = {
    Il ne faut pas utiliser SOLVEUR / ELIM_LAGR='OUI'.
 """),
 
-    6 : _(u"""
+    6 : _("""
  Erreur d'utilisation :
    On veut utiliser la fonctionnalité SOLVEUR / ELIM_LAGR='OUI'
    Mais la matrice est une matrice généralisée.
@@ -77,7 +77,7 @@ cata_msg = {
    Il ne faut pas utiliser SOLVEUR / ELIM_LAGR='OUI'.
 """),
 
-    7 : _(u"""
+    7 : _("""
  Erreur d'utilisation :
    On veut utiliser la fonctionnalité SOLVEUR / ELIM_LAGR='OUI'
    Mais la matrice "réduite" est de taille nulle.
@@ -87,14 +87,14 @@ cata_msg = {
    Il ne faut pas utiliser SOLVEUR / ELIM_LAGR='OUI'.
 """),
 
- 8 : _(u"""
+ 8 : _("""
  Erreur d'utilisation :
    On veut utiliser la fonctionnalité SOLVEUR / ELIM_LAGR='OUI'
    Mais une étape du calcul a échoué (calcul du noyau de la matrice des contraintes).
  Risques & conseils :
    Il ne faut pas utiliser SOLVEUR / ELIM_LAGR='OUI'.
 """),
-    10 : _(u"""
+    10 : _("""
  Erreur :
    On veut utiliser la fonctionnalité SOLVEUR / ELIM_LAGR='OUI'
    Mais les coefficients des relations linéaires sont tous nuls
@@ -104,7 +104,7 @@ cata_msg = {
    une matrice de masse.
 """),
 
-    11 : _(u"""
+    11 : _("""
  Erreur utilisateur :
    On veut utiliser la commande ELIM_LAGR pour éliminer les équations
    de Lagrange dans une matrice qui n'est pas une matrice de rigidité.
@@ -116,11 +116,11 @@ cata_msg = {
       K2=ELIM_LAGR(MATR_RIGI=K1, )
       M2=ELIM_LAGR(MATR_RIGI=K1, MATR_ASSE=M1)
 """),
-    12 : _(u"""
+    12 : _("""
     La matrice a %(i1)d  colonnes (au total). 
     Parmi ces colonnes %(i2)d sont linéairement indépendantes.  
 """),
-    13 : _(u"""
+    13 : _("""
     Le noyau de la matrice est un espace de dimension %(i1)d. On a construit une base de cet espace. 
     Norme de la matrice           : %(r1)f
     Norme de la base              : %(r2)f

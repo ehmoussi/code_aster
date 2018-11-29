@@ -19,7 +19,7 @@
 
 # person_in_charge: vinicius.alves-fernandes at edf.fr
 
-from cata_comportement import LoiComportementMFront
+from .cata_comportement import LoiComportementMFront
 
 loi = LoiComportementMFront(
     nom            = 'Iwan',

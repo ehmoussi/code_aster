@@ -21,17 +21,17 @@
 
 cata_msg = {
 
-    1 : _(u"""
+    1 : _("""
   Sélection d'instants.
   Quand le critère de sélection est absolu, il faut obligatoirement donner une précision.
 """),
 
-    2 : _(u"""
+    2 : _("""
   Sélection d'instants.
   Vous n'avez pas donné de précision pour votre critère de sélection. On a pris la valeur %(r1)19.12e par défaut.
 """),
 
-    3 : _(u"""
+    3 : _("""
   Sélection d'instants.
   La précision donnée pour votre critère de sélection est négative ou inférieure à la précision machine.
 """),

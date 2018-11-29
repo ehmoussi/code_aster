@@ -21,98 +21,98 @@
 
 cata_msg = {
 
-    1 : _(u"""
+    1 : _("""
  création/extension de la table %(k1)s
 """),
 
-    2 : _(u"""
+    2 : _("""
  post-traitement numéro :  %(i1)d
  l'instant demandé n'a pas été calculé
  pas de post-traitement
  """),
 
-    3 : _(u"""
+    3 : _("""
  post-traitement numéro :  %(i1)d
  aucune maille ne correspond aux critères demandés
  pas de post-traitement
 """),
 
-    5 : _(u"""
+    5 : _("""
  il manque le vecteur des composantes
 Ce message est un message d'erreur développeur.
 Contactez le support technique.
 """),
 
-    6 : _(u"""
+    6 : _("""
  chemin nul ou défini en un noeud
 """),
 
-    7 : _(u"""
+    7 : _("""
  le nombre de composantes à traiter est limité à 6 pour opération "MOYENNE".
  utiliser "NOM_CMP" avec au plus 6 composantes.
 """),
 
-    8 : _(u"""
+    8 : _("""
  initialisation de la table %(k1)s
 """),
 
-    9 : _(u"""
+    9 : _("""
  pas de champ trouvé pour l'option %(k1)s
 """),
 
-    10 : _(u"""
+    10 : _("""
  paramètre %(k1)s de type %(k2)s
 """),
 
-    11 : _(u"""
+    11 : _("""
  on ne traite que les champs complexes
 """),
 
-    12 : _(u"""
+    12 : _("""
  tableau de travail limité, réduire le nombre de composantes à traiter
 """),
 
-    13 : _(u"""
+    13 : _("""
  plus de 3000 composantes.
  Contactez le support
 """),
 
-    14 : _(u"""
+    14 : _("""
  en repère local, on ne traite pas le champ %(k1)s
 """),
 
-    15 : _(u"""
+    15 : _("""
 Ce message est un message d'erreur développeur.
 Contactez le support technique.
 """),
 
 
 
-    17 : _(u"""
+    17 : _("""
  on ne traite que des champs de type "DEPL_R" pour un changement de repère
 """),
 
-    18 : _(u"""
+    18 : _("""
 Le champ d'intérêt n'a de valeurs pour aucun des noeuds renseignés.
 Vérifiez qu'ils appartiennent au modèle.
 """),
 
-    19 : _(u"""
+    19 : _("""
 Le champ d'intérêt n'a de valeurs pour aucune des mailles renseignées.
 Vérifiez qu'elles appartiennent au modèle.
 """),
 
-    20 : _(u"""
+    20 : _("""
  on ne traite pas ce cas
 Ce message est un message d'erreur développeur.
 Contactez le support technique.
 """),
 
-    21 : _(u"""
+    21 : _("""
  avec VECT_Y, le groupe de noeuds doit contenir au moins 2 noeuds
 """),
 
-    22 : _(u"""
+    22 : _("""
  avec VECT_Y, il faut préciser
    - soit un seul groupe de noeuds
    - soit plusieurs noeuds
@@ -123,41 +123,41 @@ Contactez le support technique.
 
 
 
-    26 : _(u"""
+    26 : _("""
  changement de repère:
  champ non traité %(k1)s
  option de calcul %(k2)s
 """),
 
-    27 : _(u"""
+    27 : _("""
  noeud sur l'AXE_Z
  maille      : %(k1)s
  noeud       : %(k2)s
  coordonnées : %(r1)f
 """),
 
-    28 : _(u"""
+    28 : _("""
  les noeuds du maillage ne sont pas tous dans un même plan Z = CONSTANTE
  changement de repère non traité
 """),
 
 
 
-    30 : _(u"""
+    30 : _("""
  le noeud %(k1)s est confondu avec l'origine
 """),
 
-    31 : _(u"""
+    31 : _("""
  le noeud %(k1)s est sur l'AXE_Z
 """),
 
-    32 : _(u"""
+    32 : _("""
  les noeuds du maillage ne sont pas tous dans un même plan Z = CSTE
  option TRAC_NOR non traitée
  utiliser l'option TRAC_DIR
 """),
 
-    33 : _(u"""
+    33 : _("""
  option non traitée: %(k1)s, post-traitement: %(i1)d
  les invariants tensoriels sont calculés
    pour les options :  %(k2)s
@@ -181,7 +181,7 @@ Contactez le support technique.
                        %(k20)s
 """),
 
-    34 : _(u"""
+    34 : _("""
  option non traitée: %(k1)s, post-traitement: %(i1)d
  les traces normales sont calculées
    pour les options :  %(k2)s
@@ -205,7 +205,7 @@ Contactez le support technique.
                          %(k20)s
 """),
 
-    35 : _(u"""
+    35 : _("""
  option non traitée: %(k1)s, post-traitement: %(i1)d
  les traces directionnelles sont calculées
    pour les options :  %(k2)s
@@ -232,23 +232,23 @@ Contactez le support technique.
                          %(k23)s
 """),
 
-    36 : _(u"""
+    36 : _("""
  trace directionnelle, post-traitement: %(i1)d
  direction nulle, pas de calcul
 """),
 
-    37 : _(u"""
+    37 : _("""
  attention post-traitement %(i1)d
  seules les composantes du tenseur des contraintes sont traitées
 """),
 
-    38 : _(u"""
+    38 : _("""
  post-traitement %(i1)d
  composante non traitée dans un changement de repère
  Contactez le support
 """),
 
-    39 : _(u"""
+    39 : _("""
  post-traitement %(i1)d
  grandeur %(k1)s non traitée dans un changement de repère
  les changements de repère sont possibles
@@ -257,121 +257,121 @@ Contactez le support technique.
    pour les grandeurs %(k7)s  %(k8)s
 """),
 
-    40 : _(u"""
+    40 : _("""
  le noeud numéro %(i1)d n'est pas connecté à la maille de nom %(k1)s
 """),
 
-    41 : _(u"""
+    41 : _("""
  champ inexistant NOM_CHAM: %(k1)s  NUME_ORDRE: %(i1)d
 """),
 
-    42 : _(u"""
+    42 : _("""
  occurrence %(i1)d du mot clé facteur ACTION
  les listes arguments des mots clés RESULTANTE et MOMENT doivent être de même longueur
  cette longueur doit être de 2 ou 3
 """),
 
-    43 : _(u"""
+    43 : _("""
  occurrence %(i1)d du mot clé facteur ACTION
  la liste arguments du mot clé POINT doit être de longueur 2 ou 3
 """),
 
-    44 : _(u"""
+    44 : _("""
  occurrence %(i1)d du mot clé facteur ACTION
  on ne peut accéder au RESULTAT de nom %(k1)s et de type %(k2)s par %(k3)s ou par %(k4)s
 """),
 
-    45 : _(u"""
+    45 : _("""
  occurrence %(i1)d du mot clé facteur ACTION
  on ne peut accéder au RESULTAT de nom %(k1)s et de type %(k2)s par %(k3)s
 """),
 
-    46 : _(u"""
+    46 : _("""
  occurrence %(i1)d du mot clé facteur ACTION
  le NOM_CHAM %(k1)s n'est pas autorisé pour le RESULTAT %(k2)s de type %(k3)s
  ou le NOM_CHAM est autorisé mais aucun champ effectif n'existe.
 """),
 
-    47 : _(u"""
+    47 : _("""
  occurrence %(i1)d du mot clé facteur ACTION
  le ou les champs élémentaires mis en jeu est ou sont donnés aux points de gauss
  ce ou ces champs ne sont pas traités.
 """),
 
-    48 : _(u"""
+    48 : _("""
  occurrence %(i1)d du mot clé facteur ACTION
  la composante %(k1)s n'est pas présente au catalogue des grandeurs.
 """),
 
-    49  : _(u"""
+    49  : _("""
  L'instant %(r1)f ne correspond à aucun numéro d'ordre du résultat fourni.
 """),
 
-    50 : _(u"""
+    50 : _("""
  occurrence %(i1)d du mot clé facteur ACTION
  le groupe de noeuds %(k1)s ne fait pas parti du maillage sous-jacent au champ à traiter.
 """),
 
-    51 : _(u"""
+    51 : _("""
  occurrence %(i1)d du mot clé facteur ACTION
  le noeud %(k1)s ne fait pas parti du maillage sous-jacent au champ à traiter.
 """),
 
-    52 : _(u"""
+    52 : _("""
  on ne traite pas le FORMAT_C %(k1)s
 """),
 
-    53 : _(u"""
+    53 : _("""
 Ce message est un message d'erreur développeur.
 Contactez le support technique.
 """),
 
-    54 : _(u"""
+    54 : _("""
  occurrence %(i1)d du mot clé facteur ACTION
  Impossible de récupérer les composantes du champ.
 """),
 
-    55 : _(u"""
+    55 : _("""
  la composante %(k1)s est en double.
 """),
 
-    56 : _(u"""
+    56 : _("""
  la composante %(k1)s n'est pas une composante de %(k2)s
 """),
 
-    57 : _(u"""
+    57 : _("""
  la grandeur %(k1)s est inconnue au catalogue.
 """),
 
-    59 : _(u"""
+    59 : _("""
  Le contenu de la table n'est pas celui attendu !
  Contactez le support
 """),
 
-    60 : _(u"""
+    60 : _("""
  arrêt sur erreurs
  Contactez le support
 """),
 
-    61 : _(u"""
+    61 : _("""
  Nombre de cycles admissibles négatif,
  vérifiez la courbe de WOHLER
  contrainte calculée =  %(r1)f   Nombre admissible =  %(r2)f
 
 """),
 
-    62 : _(u"""
+    62 : _("""
  Attention lors de la définition de votre liste de noeuds,
  %(i1)d noeud est hors de la matière
 
 """),
 
-    63 : _(u"""
+    63 : _("""
  Attention lors de la définition de votre liste de noeuds,
  %(i1)d noeuds sont hors de la matière
 
 """),
-    64 : _(u"""
+    64 : _("""
 Vous avez demandé à extraire les valeurs d'un champ sur des noeuds.
 Or, ces noeuds ne sont pas présents dans le modèle qui a servi à calculer le champ.
 
@@ -380,29 +380,29 @@ Conseil :
     - Si vous utilisez PROPA_FISS, peut-être s'agit-il de noeuds créés par cet opérateur. 
 """),
 
-    65 : _(u"""
+    65 : _("""
 La composante %(k1)s n'existe pas pour le champ de type %(k2)s
 du résultat %(k3)s
 """),
 
-    66 : _(u"""
+    66 : _("""
 Dans le cas d'un champ de type ELEM, l'utilisation des mots clés NOEUD, GROUP_NO
 n'a pas de sens, seul le mot clé MAILLE ou GROUP_MA est autorisé.
 """),
 
-    67 : _(u"""
+    67 : _("""
 Erreur utilisateur dans la commande POST_RELEVE_T :
    Le mot clé RESULTANTE n'est autorisé que pour OPERATION='EXTRACTION'.
 """),
 
-    68 : _(u"""
+    68 : _("""
 Erreur utilisateur dans la commande POST_RELEVE_T :
   Pour les mots clés ACTION / RESULTANTE (et MOMENT), on ne peut utiliser que le repère
  'GLOBAL' ou le repère 'UTILISATEUR' (avec ANGL_NAUT).
 """),
 
 
-    70 : _(u"""
+    70 : _("""
 Commande POST_RELEVE_T :
 Votre modèle contient des éléments de structures et :
     - vous avez demandé le post-traitement du champ %(k1)s, qui n'a de signification que dans

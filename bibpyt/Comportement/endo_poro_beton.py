@@ -19,7 +19,7 @@
 
 # person_in_charge: etienne.grimal at edf.fr
 
-from cata_comportement import LoiComportement
+from .cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'ENDO_PORO_BETON',

@@ -29,7 +29,7 @@
    utilisée par héritage multiple pour composer les traitements.
 """
 # Modules EFICAS
-import V_MCCOMPO
+from . import V_MCCOMPO
 from Noyau.N_Exception import AsException
 from Noyau.N_utils import AsType
 from Noyau.strfunc import ufmt

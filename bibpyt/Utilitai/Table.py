@@ -30,16 +30,16 @@ import numpy
 
 from Noyau.N_types import is_int, is_float, is_complex, is_number, is_str, is_sequence
 
-import transpose
+from . import transpose
 from Utilitai.Utmess import UTMESS
 from Utilitai.string_utils import cut_long_lines
 from Utilitai.utils import fmtF2PY
 
-if not sys.modules.has_key('Graph'):
+if 'Graph' not in sys.modules:
     try:
         from Utilitai import Graph
     except ImportError:
-        import Graph
+        from . import Graph
 
 # formats de base (identiques à ceux du module Graph)
 DicForm = {
@@ -78,7 +78,7 @@ class TableBase(object):
         return self.ReprTable()
 
     def Croise(self, **kargs):
-        raise NotImplementedError, 'Must be defined in a derived class'
+        raise NotImplementedError('Must be defined in a derived class')
 
     def __len__(self):
         """Retourne le nombre de ligne dans la Table/Colonne.
@@ -127,7 +127,7 @@ class TableBase(object):
             # création des listes des valeurs distinctes
             lvd = []
             for p in ppag:
-                lvp = getattr(self, p).values()
+                lvp = list(getattr(self, p).values())
                 lvn = []
                 for it in lvp:
                     if it != None and lvn.count(it) == 0:
@@ -140,7 +140,7 @@ class TableBase(object):
                 ['for x' + str(i) + ' in lvd[' + str(i) + ']' for i in range(npag)]) + ']'
             try:
                 lnup = eval(s)
-            except SyntaxError, s:
+            except SyntaxError as s:
                 UTMESS('F', 'TABLE0_20')
             # pour chaque n-uplet, on imprime la sous-table
             for nup in lnup:
@@ -174,7 +174,7 @@ class TableBase(object):
             UTMESS('F', 'TABLE0_5', valk=repr(para))
         values = []
         for i in self.para:
-            valp = getattr(self, i).values()
+            valp = list(getattr(self, i).values())
             # replace None by 0.
             valp = [x or 0. for x in valp]
             values.extend(valp)
@@ -184,7 +184,7 @@ class TableBase(object):
         tab = tab.T
         filename = kargs.get('FICHIER')
         if filename is None:
-            print tab
+            print(tab)
         else:
             numpy.save(filename, tab)
             if not filename.endswith(".npy"):
@@ -291,8 +291,8 @@ class TableBase(object):
         # objet Graph
         graph = Graph.Graph()
         dicC = {
-            'Val': [getattr(tnv, tnv.para[0]).values(),
-                    getattr(tnv, tnv.para[1]).values()],
+            'Val': [list(getattr(tnv, tnv.para[0]).values()),
+                    list(getattr(tnv, tnv.para[1]).values())],
             'Lab': tnv.para,
         }
         if args['LEGENDE'] == None:
@@ -359,7 +359,7 @@ class Table(TableBase):
            titr : titre de la table
            nom : nom du concept table_sdaster dont est issue la table
         """
-        self.rows = [r for r in rows if r.values() != [None] * len(r.values())]
+        self.rows = [r for r in rows if list(r.values()) != [None] * len(list(r.values()))]
         self.para = list(para)
         for i in self.para:
             if self.para.count(i) != 1:
@@ -395,7 +395,7 @@ class Table(TableBase):
     def append(self, obj):
         """Ajoute une ligne (type dict) qui peut éventuellement définir un
         nouveau paramètre."""
-        para = obj.keys()
+        para = list(obj.keys())
         for p in para:
             if not p in self.para:
                 self.add_para(p, typaster(obj[p]))
@@ -472,7 +472,7 @@ class Table(TableBase):
         # liste des valeurs des paramètres
         tabpar = []
         for para in l_para:
-            vals = getattr(self, para).values()
+            vals = list(getattr(self, para).values())
             tabpar.append(vals)
         tabpar = transpose.transpose(tabpar)
         # évaluation de la fonction sur ces paramètres
@@ -533,7 +533,7 @@ class Table(TableBase):
             del self.type[ind_item]
             self.para.remove(item)
             for line in self.rows:
-                if line.has_key(item):
+                if item in line:
                     del line[item]
 
     def __getitem__(self, args):
@@ -620,7 +620,7 @@ class Table(TableBase):
         """
         dico = {}
         for column in self.para:
-            dico[column] = Colonne(self, column).values()
+            dico[column] = list(Colonne(self, column).values())
         return dico
 
     def dict_CREA_TABLE(self):
@@ -651,11 +651,11 @@ class Table(TableBase):
             else:
                 UTMESS('F', 'TABLE0_31', valk=self.para[i])
             # valeurs sans trou / avec trou
-            vals = getattr(self, self.para[i]).values()
+            vals = list(getattr(self, self.para[i]).values())
             if typ == 'R':
                 try:
                     check_nan(vals)
-                except ValueError, err:
+                except ValueError as err:
                     UTMESS('F', 'TABLE0_33', valk=(self.para[i], str(err)))
             if vals.count(None) == 0:
                 d[mc] = vals
@@ -676,7 +676,7 @@ class Table(TableBase):
         """Renvoie sous forme de NumArray le résultat d'une extraction dans une table
         méthode utile à macr_recal
         """
-        __Rep = self[Para, Champ].values()
+        __Rep = list(self[Para, Champ].values())
         F = numpy.zeros((len(__Rep[Para]), 2))
         for i in range(len(__Rep[Para])):
             F[i][0] = __Rep[Para][i]
@@ -692,7 +692,7 @@ class Table(TableBase):
             UTMESS('A', 'TABLE0_36')
             return Table()
         py, px, pz = self.para
-        ly, lx, lz = [getattr(self, p).values() for p in self.para]
+        ly, lx, lz = [list(getattr(self, p).values()) for p in self.para]
         new_rows = []
         # lpz='%s=f(%s,%s)' % (pz,px,py)
         lpz = '%s/%s' % (px, py)
@@ -725,9 +725,9 @@ class Table(TableBase):
         """Renomme le paramètre `pold` en `pnew`.
         """
         if not pold in self.para:
-            raise KeyError, 'Paramètre %s inexistant dans cette table' % pold
+            raise KeyError('Paramètre %s inexistant dans cette table' % pold)
         elif self.para.count(pnew) > 0:
-            raise KeyError, 'Le paramètre %s existe déjà dans la table' % pnew
+            raise KeyError('Le paramètre %s existe déjà dans la table' % pnew)
         else:
             self.para[self.para.index(pold)] = pnew
             for lig in self:
@@ -849,13 +849,13 @@ class Colonne(TableBase):
     def MAXI_ABS(self):
         # important pour les performances de récupérer le max une fois pour
         # toutes
-        maxi_abs = max([abs(v) for v in self.values() if is_number(v)])
+        maxi_abs = max([abs(v) for v in list(self.values()) if is_number(v)])
         return self._extract(lambda v: v == maxi_abs or v == -maxi_abs)
 
     def MINI_ABS(self):
         # important pour les performances de récupérer le min une fois pour
         # toutes
-        mini_abs = min([abs(v) for v in self.values() if is_number(v)])
+        mini_abs = min([abs(v) for v in list(self.values()) if is_number(v)])
         # tester le type de v est trop long donc pas de abs(v)
         return self._extract(lambda v: v == mini_abs or v == -mini_abs)
 
@@ -868,7 +868,7 @@ class Colonne(TableBase):
 
     def __getitem__(self, i):
         """Retourne la ième valeur d'une colonne"""
-        return self.values()[i]
+        return list(self.values())[i]
 
     def values(self):
         """Renvoie la liste des valeurs"""
@@ -876,7 +876,7 @@ class Colonne(TableBase):
 
     def not_none_values(self):
         """Renvoie la liste des valeurs non 'None'"""
-        return [val for val in self.values() if val != None]
+        return [val for val in list(self.values()) if val != None]
 
     # équivalences avec les opérateurs dans Aster
     LE = __le__
@@ -1009,14 +1009,14 @@ def merge(tab1, tab2, labels=[], restrict=False, format_r=None):
     # creation de dic1 : dictionnaire de correspondance entre les
     # lignes a merger dans les deux tableaux
     dic1 = {}
-    for cle in dlab1.keys():
+    for cle in list(dlab1.keys()):
         if dlab1[cle] == None or cle == ():
             bid = dlab1.pop(cle)
-    for cle in dlab2.keys():
+    for cle in list(dlab2.keys()):
         if dlab2[cle] == None or cle == ():
             bid = dlab2.pop(cle)
-    for cle in dlab2.keys():
-        if dlab1.has_key(cle):
+    for cle in list(dlab2.keys()):
+        if cle in dlab1:
             dic1[dlab2[cle]] = dlab1[cle]
     # insertion des valeurs de tb2 dans tb1 quand les labels sont communs
     # (et uniques dans chaque table)
@@ -1045,7 +1045,7 @@ def merge(tab1, tab2, labels=[], restrict=False, format_r=None):
 def remove_twins(tab, labels=[], format_r=None):
     """Remove lines if the values of `labels` have already been seen"""
     kept = _unique_values(tab, labels, format_r, keep_first=True)
-    removed = set(range(len(tab))).difference(kept.values())
+    removed = set(range(len(tab))).difference(list(kept.values()))
     todel = reversed(sorted(list(removed)))
     for i in todel:
         del tab.rows[i]
@@ -1065,7 +1065,7 @@ def typaster(obj, prev=None, strict=False):
     }
     if is_float(obj):
         obj = float(obj)
-    if type(obj) in dtyp.keys():
+    if type(obj) in list(dtyp.keys()):
         typobj = dtyp[type(obj)]
         if prev in [None, typobj]:
             return typobj
@@ -1073,19 +1073,19 @@ def typaster(obj, prev=None, strict=False):
             if len(obj) <= int(prev[1:]):
                 return prev
             else:
-                raise TypeError, "La longueur de la chaine %s est incompatible avec le type %s" \
-                    % (repr(obj), repr(prev))
+                raise TypeError("La longueur de la chaine %s est incompatible avec le type %s" \
+                    % (repr(obj), repr(prev)))
         elif strict:   # prev != None et typobj != prev et strict
-            raise TypeError, "La valeur %s n'est pas de type %s" % (
-                repr(obj), repr(prev))
+            raise TypeError("La valeur %s n'est pas de type %s" % (
+                repr(obj), repr(prev)))
         elif prev in ('I', 'R') and typobj in ('I', 'R'):
             return 'R'
         else:
-            raise TypeError, "La valeur %s n'est pas compatible avec le type %s" \
-                % (repr(obj), repr(prev))
+            raise TypeError("La valeur %s n'est pas compatible avec le type %s" \
+                % (repr(obj), repr(prev)))
     else:
-        raise TypeError, 'Une table ne peut contenir que des entiers, réels ' \
-                         'ou chaines de caractères.'
+        raise TypeError('Une table ne peut contenir que des entiers, réels ' \
+                         'ou chaines de caractères.')
 
 
 def _unique_values(tab, params, format_r, keep_first=False):
@@ -1099,7 +1099,7 @@ def _unique_values(tab, params, format_r, keep_first=False):
     rows = tab.rows
     dlab = {}
     for i in range(len(rows)):
-        tup = _reformat(map(rows[i].__getitem__, params))
+        tup = _reformat(list(map(rows[i].__getitem__, params)))
         if dlab.get(tup, '') == '':
             dlab[tup] = i
         elif not keep_first:
@@ -1152,4 +1152,4 @@ def check_nan(values):
     """Raise ValueError exception if nan is found in values."""
     for i, v in enumerate(values):
         if str(v) == 'nan':
-            raise ValueError, 'NaN present at index %d' % i
+            raise ValueError('NaN present at index %d' % i)

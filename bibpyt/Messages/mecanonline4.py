@@ -19,13 +19,13 @@
 
 cata_msg = {
 
-    3 : _(u"""
+    3 : _("""
  Calcul des valeurs propres en grandes déformations
 """),
 
-    4 : _(u"""Le calcul d'un critère de stabilité ou d'un mode vibratoire n'est pas possible avec des éléments de type POU_D_EM."""),
+    4 : _("""Le calcul d'un critère de stabilité ou d'un mode vibratoire n'est pas possible avec des éléments de type POU_D_EM."""),
 
-    14 : _(u"""
+    14 : _("""
  Vous utilisez la méthode CONTINUE pour le traitement du contact et faites une reprise de calcul (mot-clé reuse). De plus, vous n'avez pas activé
  l'initialisation automatique des statuts de contact. L'état initial de contact sera donc non contactant.
  Cela peut entraîner des difficultés de convergence en présence de fortes non-linéarités. En présence de frottement, la solution peut bifurquer
@@ -36,22 +36,22 @@ cata_msg = {
    - activez la détection automatique du contact initial sur toutes les zones (CONTACT_INIT='INTERPENETRE' dans DEFI_CONTACT).
 """),
 
-    15 : _(u"""
+    15 : _("""
  Vous utilisez la méthode CONTINUE pour le traitement du contact et définissez un état initial via le mot-clé ETAT_INIT.  De plus, vous n'avez pas activé
  l'initialisation automatique des statuts de contact. L'état initial de contact sera donc non contactant.
 
  Il est conseillé d'activer la détection automatique du contact initial sur toutes les zones (CONTACT_INIT='INTERPENETRE' dans DEFI_CONTACT).
 """),
 
-    22 : _(u"""
+    22 : _("""
  On suppose qu'on part d'un état a vitesses nulles
 """),
 
-    23 : _(u"""
+    23 : _("""
  On estime une accélération initiale.
 """),
 
-    47 : _(u"""
+    47 : _("""
  Vous faites une reprise de calcul avec PILOTAGE en longueur d'arc et avec l'option ANGL_INCR_DEPL mais il n'y pas assez d'informations dans
  la structure de données résultat. Il vous faut en effet au moins les deux derniers champs déplacements solutions.
  Changer l'option de PILOTAGE (utilisez NORM_INCR_DEPL) ou refaites le premier calcul pour enrichir la structure de données résultat (modifiez vos options du mot-clé ARCHIVAGE).

@@ -29,10 +29,10 @@ import types
 import string
 import traceback
 
-import N_ENTITE
-import N_MACRO_ETAPE
-import nommage
-from strfunc import ufmt
+from . import N_ENTITE
+from . import N_MACRO_ETAPE
+from . import nommage
+from .strfunc import ufmt
 
 
 class MACRO(N_ENTITE.ENTITE):
@@ -106,7 +106,7 @@ class MACRO(N_ENTITE.ENTITE):
         # xxx est donné par la valeur absolue de op. L'execution est egalement effectuée via cette subroutine.
         # - Si op est une fonction Python, la construction de la macro est effectuée par l'appel à cette fonction
         # Suivant le cas on garde l info dans self.op ou dans self.proc
-        if type(op) == types.IntType:
+        if type(op) == int:
             self.proc = None
             self.op = op
         else:
@@ -120,7 +120,7 @@ class MACRO(N_ENTITE.ENTITE):
         assert args.get('UIinfo') is None, '"UIinfo" does not exist anymore'
         self.repetable = repetable
         self.docu = docu
-        if type(regles) == types.TupleType:
+        if type(regles) == tuple:
             self.regles = regles
         else:
             self.regles = (regles,)

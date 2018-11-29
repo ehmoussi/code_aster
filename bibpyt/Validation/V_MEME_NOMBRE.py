@@ -45,8 +45,8 @@ class MEME_NOMBRE:
         size = -1
 
         for mc in self.mcs:
-            if mc not in args.keys():
-                text = u"Une clé dans la règle n'existe pas %s" % mc
+            if mc not in list(args.keys()):
+                text = "Une clé dans la règle n'existe pas %s" % mc
                 return text, 0
 
             val = args[mc].valeur
@@ -59,6 +59,6 @@ class MEME_NOMBRE:
             if size == -1:
                 size = len_val
             elif size != len_val:
-                text = u"Pas la même longeur"
+                text = "Pas la même longeur"
                 return text, 0
         return text, 1

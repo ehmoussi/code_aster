@@ -29,8 +29,8 @@ def transpose(liste):
         warn('prefer use of numpy.transpose instead',
              DeprecationWarning, stacklevel=2)
 
-    n = range(len(liste[0]))
-    m = range(len(liste))
+    n = list(range(len(liste[0])))
+    m = list(range(len(liste)))
     liste_t = [[] for i in n]
     for i in n:
         for j in m:

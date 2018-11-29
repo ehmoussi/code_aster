@@ -68,7 +68,7 @@ class SYSTEM:
         self.verbose = kargs.get('verbose', True)
         self.debug = kargs.get('debug', False)
         self.cc_files = kargs.get('cc_files', None)
-        if kargs.has_key('maxcmdlen'):
+        if 'maxcmdlen' in kargs:
             self.MaxCmdLen = kargs['maxcmdlen']
 
     def _mess(self, msg, cod=''):
@@ -93,7 +93,7 @@ class SYSTEM:
                 f.write(txt.replace(os.linesep + ' ', os.linesep) + term)
                 f.flush()
             else:
-                print _('file object expected : %s / %s') % (type(f), repr(f))
+                print(_('file object expected : %s / %s') % (type(f), repr(f)))
 
     def VerbStart(self, cmd, verbose=None):
         """
@@ -159,7 +159,7 @@ class SYSTEM:
                         bg, 'follow_output : %s' % follow_output)
         self.VerbStart(alt_comment, verbose=verbose)
         if follow_output and verbose:
-            print os.linesep + _('Command output :')
+            print(os.linesep + _('Command output :'))
 
         fout = tempfile.NamedTemporaryFile()
         ferr = tempfile.NamedTemporaryFile()

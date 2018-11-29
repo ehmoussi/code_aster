@@ -64,7 +64,7 @@ def macr_spectre_ops(
     #
     for plancher in dplancher:
         liste_no = []
-        clefs = plancher.keys()
+        clefs = list(plancher.keys())
         if ('NOEUD' in clefs):
             if plancher['NOEUD'] != None:
                 if type(plancher['NOEUD']) == StringType:
@@ -168,7 +168,7 @@ def macr_spectre_ops(
                             ok2 = ok2 and (para in nomcol)
                         #
                         if (not ok1 ^ ok2):
-                            print nomcol
+                            print(nomcol)
                             assert (ok1 ^ ok2)
                         #
                         if (ok1):
@@ -291,7 +291,7 @@ def macr_spectre_ops(
                     motscles = {}
                     dI = IMPRESSION[0].cree_dict_valeurs(
                         IMPRESSION[0].mc_liste)
-                    if dI.has_key('PILOTE'):
+                    if 'PILOTE' in dI:
                         motscles['PILOTE'] = IMPRESSION['PILOTE']
                     if IMPRESSION['FORMAT'] != 'TABLEAU':
                         motscles['ECHELLE_X'] = 'LOG'
@@ -386,7 +386,7 @@ def macr_spectre_ops(
         if NOM_CHAM == 'ACCE' and IMPRESSION != None:
             motscles = {}
             dI = IMPRESSION[0].cree_dict_valeurs(IMPRESSION[0].mc_liste)
-            if dI.has_key('PILOTE'):
+            if 'PILOTE' in dI:
                 motscles['PILOTE'] = IMPRESSION['PILOTE']
             if IMPRESSION['FORMAT'] != 'TABLEAU':
                 motscles['ECHELLE_X'] = 'LOG'
@@ -462,17 +462,17 @@ def macr_spectre_ops(
 
 
     nb_plancher = len(l_plancher)
-    lkeys = dico_glob.keys()
+    lkeys = list(dico_glob.keys())
     lkeys.sort()
     for key in lkeys:
         nb_lignes = len(dico_glob[key])
         lListe.append(_F(LISTE_R=dico_glob[key], PARA=key,
-                         NUME_LIGN=range(nb_amor+nb_plancher+1,nb_amor+nb_plancher+nb_lignes+1)))
+                         NUME_LIGN=list(range(nb_amor+nb_plancher+1,nb_amor+nb_plancher+nb_lignes+1))))
     if NOM_CHAM == 'ACCE':
         lListe.append(_F(LISTE_I=infos_amor['NUME_AMOR'], PARA='NUME_AMOR',
-                         NUME_LIGN=range(nb_plancher+1,nb_plancher+nb_amor+1)))
+                         NUME_LIGN=list(range(nb_plancher+1,nb_plancher+nb_amor+1))))
         lListe.append(_F(LISTE_R=infos_amor['AMOR'], PARA='AMOR',
-                         NUME_LIGN=range(nb_plancher+1,nb_plancher+nb_amor+1)))
+                         NUME_LIGN=list(range(nb_plancher+1,nb_plancher+nb_amor+1))))
 
     lListe.append(_F(LISTE_K=l_plancher, TYPE_K='K24', PARA='NOM'))
     l_bat = [i for i in l_batiment if i != None]

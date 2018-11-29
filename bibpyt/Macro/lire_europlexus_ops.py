@@ -123,11 +123,11 @@ class LireEPX():
         dic_compo_gr = {}
         for dic in self.COMPORTEMENT:
             compo = dic['RELATION']
-            if cata_compor[compo].has_key('NOM_EPX_CH_MED'):
+            if 'NOM_EPX_CH_MED' in cata_compor[compo]:
                 comp_epx = cata_compor[compo]['NOM_EPX_CH_MED'][:4]
             else:
                 comp_epx = cata_compor[compo]['NOM_EPX'][:4]
-            if not dic_compo_gr.has_key(comp_epx):
+            if comp_epx not in dic_compo_gr:
                 dic_compo_gr[comp_epx] = []
             dic_compo_gr[comp_epx].extend(dic['GROUP_MA'])
         self.compor = dic_compo_gr
@@ -151,8 +151,8 @@ class LireEPX():
             return
         cara_elem_struc = recupere_structure(self.CARA_ELEM)
 
-        for mc_cara in dic_mc_cara.keys():
-            if not cara_elem_struc.has_key(mc_cara):
+        for mc_cara in list(dic_mc_cara.keys()):
+            if mc_cara not in cara_elem_struc:
                 continue
             donnees_cara = tolist(cara_elem_struc[mc_cara])
 
@@ -236,14 +236,14 @@ class LireEPX():
                                                      'NOM_CMP': 'X1'})
 
             # CAS NON DEVELOPPES ------------------------------------------
-            elif mc_cara in dic_mc_cara.keys():
+            elif mc_cara in list(dic_mc_cara.keys()):
                 raise Exception("""
 Le passage des contraintes aux efforts n'est pas programmé pour
 le mot-clé %s""" % mc_cara)
 
         # 2- CREATION DES CHAMPS DE CARACTERISTIQUES ET DE FONCTIONS
         # POUR CONTRAINTES
-        nb_cara = len(dic_mc_cara.keys())
+        nb_cara = len(list(dic_mc_cara.keys()))
         __CH_CAR = [None] * nb_cara
         __CH_FON = [None] * nb_cara
         for icar, mc_cara in enumerate(dic_mc_cara.keys()):
@@ -286,7 +286,7 @@ le mot-clé %s""" % mc_cara)
 
         # RECUPERATION DES DEPL, VITE et ACCE DANS LE FICHIER MED
         dic_champ_med = med_aster.get_nom_champ_med(self.fichier_med)
-        if not dic_champ_med.has_key('DEPL_001'):
+        if 'DEPL_001' not in dic_champ_med:
             UTMESS('F', 'PLEXUS_51', valk = 'DEPL_001')
         nb_ddl = len(dic_champ_med['DEPL_001'])
         if nb_ddl == 3:
@@ -315,7 +315,7 @@ le mot-clé %s""" % mc_cara)
             dExcit = []
             for j in self.EXCIT:
                 dExcit.append(j.cree_dict_valeurs(j.mc_liste))
-                for i in dExcit[-1].keys():
+                for i in list(dExcit[-1].keys()):
                     if dExcit[-1][i] == None:
                         del dExcit[-1][i]
 
@@ -349,7 +349,7 @@ le mot-clé %s""" % mc_cara)
         dic_champ_var_int = {'SANS': {}}
 
         modi_repere = {'COQUE': False}
-        for nom_cham_med in dic_champ_med.keys():
+        for nom_cham_med in list(dic_champ_med.keys()):
 
             ch_split = nom_cham_med.split('_')
             if len(ch_split) != 3:
@@ -360,7 +360,7 @@ le mot-clé %s""" % mc_cara)
 
             if type_cham == "CONT":
 
-                if not info_mode_epx.has_key(mode_epx):
+                if mode_epx not in info_mode_epx:
                     UTMESS('A', 'PLEXUS_54', valk=[type_cham, mode_epx])
                     continue
 
@@ -379,7 +379,7 @@ le mot-clé %s""" % mc_cara)
                 if type_modi is not None:
                     modi_repere[type_modi] = True
                 if mc_cara:
-                    if not dic_champ_cont.has_key(mc_cara):
+                    if mc_cara not in dic_champ_cont:
                         dic_champ_cont[mc_cara] = {}
                     dic_champ_cont[mc_cara][nom_cham_med] = mode_epx
                 else:
@@ -388,7 +388,7 @@ le mot-clé %s""" % mc_cara)
 
             if type_cham == "ECRO":
 
-                if not info_mode_epx.has_key(mode_epx):
+                if mode_epx not in info_mode_epx:
                     UTMESS('A', 'PLEXUS_54', valk=[type_cham, mode_epx])
                     continue
 
@@ -396,7 +396,7 @@ le mot-clé %s""" % mc_cara)
                     UTMESS('A', 'PLEXUS_54', valk=[type_cham, mode_epx])
                     continue
 
-                if not info_comp_epx.has_key(loi):
+                if loi not in info_comp_epx:
                     UTMESS('A', 'PLEXUS_55', valk=loi)
                     continue
 
@@ -410,7 +410,7 @@ le mot-clé %s""" % mc_cara)
     Nombre de composantes attendues : %s
     """ % (type_cham, loi, nbcomp, nbcomp_ref))
                 if info_comp_epx[loi]['TRANSFO']:
-                    if not dic_champ_var_int.has_key(loi):
+                    if loi not in dic_champ_var_int:
                         dic_champ_var_int[loi] = {}
                     dic_champ_var_int[loi][nom_cham_med] = loi
                 else:
@@ -426,7 +426,7 @@ le mot-clé %s""" % mc_cara)
         from Calc_epx.trans_var_int import *
 
         dic_transfo = {}
-        nb_compo = len(dic_champ_var_int.keys()) - 1
+        nb_compo = len(list(dic_champ_var_int.keys())) - 1
         __CH_FOV = [None] * nb_compo
         ico = 0
 
@@ -437,7 +437,7 @@ le mot-clé %s""" % mc_cara)
             'PROL_ZERO': 'OUI',
         }
 
-        for compo in dic_champ_var_int.keys():
+        for compo in list(dic_champ_var_int.keys()):
             if compo == 'SANS':
                 continue
 
@@ -478,10 +478,10 @@ présentes%s""" % compo)
         info_comp_epx = self.info_comp_epx
         dic_mc_cara = self.dic_mc_cara
 
-        ll = len(dic_champ_cont.keys()) - 1
-        nb_SIG1 = len(dic_champ_cont['SANS'].keys()) + ll
-        ll = len(dic_champ_var_int.keys()) - 1
-        nb_ECR1 = len(dic_champ_var_int['SANS'].keys()) + ll
+        ll = len(list(dic_champ_cont.keys())) - 1
+        nb_SIG1 = len(list(dic_champ_cont['SANS'].keys())) + ll
+        ll = len(list(dic_champ_var_int.keys())) - 1
+        nb_ECR1 = len(list(dic_champ_var_int['SANS'].keys())) + ll
         itot = len(resu.LIST_PARA()['INST'])
         __EFFG = [None] * itot
         __ECRG = [None] * itot
@@ -504,7 +504,7 @@ présentes%s""" % compo)
             'OPERATION': 'ASSE',
         }
         MasquerAlarme('MED_4')
-        for i in xrange(itot):
+        for i in range(itot):
 
             lc['NUME_PT'] = resu.LIST_PARA()['NUME_ORDRE'][i]
 
@@ -515,10 +515,10 @@ présentes%s""" % compo)
             # CONTRAINTES
 
             lc['TYPE_CHAM'] = 'ELGA_SIEF_R'
-            for mc_cara in dic_champ_cont.keys():
+            for mc_cara in list(dic_champ_cont.keys()):
                 j = 0
                 if mc_cara == 'SANS':
-                    for champ in dic_champ_cont[mc_cara].keys():
+                    for champ in list(dic_champ_cont[mc_cara].keys()):
                         mode_epx = dic_champ_cont[mc_cara][champ]
                         nom_cmp = info_mode_epx[mode_epx]['NOM_CMP']
                         nom_cmp_med = info_mode_epx[mode_epx]['NOM_CMP_MED']
@@ -534,10 +534,10 @@ présentes%s""" % compo)
                                         'CUMUL': 'OUI', 'COEF_R': 1.})
                         j += 1
                 else:
-                    nb_champ_cara = len(dic_champ_cont[mc_cara].keys())
+                    nb_champ_cara = len(list(dic_champ_cont[mc_cara].keys()))
                     dicDetr_cara = []
                     if nb_champ_cara == 1:
-                        champ = dic_champ_cont[mc_cara].keys()[0]
+                        champ = list(dic_champ_cont[mc_cara].keys())[0]
                         mode_epx = dic_champ_cont[mc_cara][champ]
                         nom_cmp = info_mode_epx[mode_epx]['NOM_CMP']
                         nom_cmp_med = info_mode_epx[mode_epx]['NOM_CMP_MED']
@@ -592,10 +592,10 @@ présentes%s""" % compo)
             # VARIABLES INTERNES
             lc['TYPE_CHAM'] = 'ELGA_VARI_R'
 
-            for compo in dic_champ_var_int.keys():
+            for compo in list(dic_champ_var_int.keys()):
                 j = 0
                 if compo == 'SANS':
-                    for champ in dic_champ_var_int[compo].keys():
+                    for champ in list(dic_champ_var_int[compo].keys()):
                         loi = dic_champ_var_int[compo][champ]
                         nb_var_aster = info_comp_epx[loi]['NB_VAR_ASTER']
                         nom_cmp = info_comp_epx[loi][
@@ -613,10 +613,10 @@ présentes%s""" % compo)
                         dicDetr.append({'NOM': __ECR1[j]})
                         j += 1
                 else:
-                    nb_champ_transfo = len(dic_champ_var_int[compo].keys())
+                    nb_champ_transfo = len(list(dic_champ_var_int[compo].keys()))
                     dicDetr_transfo = []
                     if nb_champ_transfo == 1:
-                        champ = dic_champ_var_int[compo].keys()[0]
+                        champ = list(dic_champ_var_int[compo].keys())[0]
                         loi = dic_champ_var_int[compo][champ]
                         nb_var_epx = info_comp_epx[loi]['NB_VAR_EPX']
                         nom_cmp = info_comp_epx[loi]['VAR_ASTER'][:nb_var_epx]
@@ -755,9 +755,9 @@ def build_info_mode_epx():
     info_mode_epx = {}
     prexif_epx_cont = 'SIG'
     dic_mc_cara = {}
-    for mode_aster in cata_modelisa.keys():
+    for mode_aster in list(cata_modelisa.keys()):
         dic_mode = cata_modelisa[mode_aster]
-        if dic_mode.has_key('CONT_ASTER'):
+        if 'CONT_ASTER' in dic_mode:
             nom_cmp = dic_mode['CONT_ASTER']
             nom_cmp_med = []
             for i in range(1, len(dic_mode['CONT_ASTER']) + 1):
@@ -765,16 +765,16 @@ def build_info_mode_epx():
         else:
             nom_cmp = None
             nom_cmp_med = None
-        if dic_mode.has_key('MC_CARA'):
+        if 'MC_CARA' in dic_mode:
             mc_cara = dic_mode['MC_CARA']
-            if not dic_mc_cara.has_key(mc_cara):
+            if mc_cara not in dic_mc_cara:
                 dic_mc_cara[mc_cara] = {'INSTANCE': [],
                                         'NOM_CMP': nom_cmp,
                                         'CH_FONC': None,
                                         'GROUP_MA': []}
         else:
             mc_cara = None
-        if dic_mode.has_key('MODI_REPERE'):
+        if 'MODI_REPERE' in dic_mode:
             type_modi = dic_mode['MODI_REPERE']
         else:
             type_modi = None
@@ -797,15 +797,15 @@ def build_info_comp_epx():
     info_comp_epx = {}
     prexif_epx_vari = 'VAR'
     prexif_aster_vari = 'V'
-    for nom_comp in cata_compor.keys():
+    for nom_comp in list(cata_compor.keys()):
         comp_aster = cata_compor[nom_comp]
-        if not comp_aster.has_key('NOM_EPX'):
+        if 'NOM_EPX' not in comp_aster:
             continue
-        if comp_aster.has_key('NOM_EPX_CH_MED'):
+        if 'NOM_EPX_CH_MED' in comp_aster:
             nom_epx = comp_aster['NOM_EPX_CH_MED'][:4]
         else:
             nom_epx = comp_aster['NOM_EPX'][:4]
-        if not info_comp_epx.has_key(nom_epx):
+        if nom_epx not in info_comp_epx:
             nb_var_aster = comp_aster['NB_VAR_ASTER']
             nb_var_epx = comp_aster['NB_VAR_EPX']
             var_aster = []

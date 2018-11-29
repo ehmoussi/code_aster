@@ -181,10 +181,10 @@ if CHOIXF == 'ISO':
 
     # Recuperation des informations du champ
     for i in range(len(pd)):
-        if pd.values()[i - 1].GetName() == NOM_CHAMP:
-            NB_CMP = pd.values()[i - 1].GetNumberOfComponents()
-            NOM_CMP = pd.values()[i - 1].GetComponentName(0)
-            RANGE_CMP = pd.values()[i - 1].GetRange()
+        if list(pd.values())[i - 1].GetName() == NOM_CHAMP:
+            NB_CMP = list(pd.values())[i - 1].GetNumberOfComponents()
+            NOM_CMP = list(pd.values())[i - 1].GetComponentName(0)
+            RANGE_CMP = list(pd.values())[i - 1].GetRange()
 
     # Attributs de visualisation
     CMP = 'Component'
@@ -209,10 +209,10 @@ if CHOIXF == 'GAUSS':
 
     # Recuperation des informations du champ
     for i in range(len(pd)):
-        if pd.values()[i - 1].GetName() == NOM_CHAMP:
-            NB_CMP = pd.values()[i - 1].GetNumberOfComponents()
-            NOM_CMP = pd.values()[i - 1].GetComponentName(0)
-            RANGE_CMP = pd.values()[i - 1].GetRange()
+        if list(pd.values())[i - 1].GetName() == NOM_CHAMP:
+            NB_CMP = list(pd.values())[i - 1].GetNumberOfComponents()
+            NOM_CMP = list(pd.values())[i - 1].GetComponentName(0)
+            RANGE_CMP = list(pd.values())[i - 1].GetRange()
 
     # Attributs de visualisation
     CMP = 'Component'
@@ -230,9 +230,9 @@ if CHOIXF == 'DEPL':
     pd = resu.PointData
 
     for i in range(len(pd)):
-        if pd.values()[i - 1].GetName() == NOM_CHAMP:
-            RANGE_CMP = pd.values()[i - 1].GetRange()
-            NB_CMP = pd.values()[i - 1].GetNumberOfComponents()
+        if list(pd.values())[i - 1].GetName() == NOM_CHAMP:
+            RANGE_CMP = list(pd.values())[i - 1].GetRange()
+            NB_CMP = list(pd.values())[i - 1].GetNumberOfComponents()
 
     # Filtre calculator si NB_CMP different de 3
 
@@ -295,17 +295,17 @@ if CHOIXF == 'ON_DEFORMED':
         pd = resu.PointData
 
     for i in range(len(pd)):
-        if pd.values()[i - 1].GetName() == NOM_CHAMP:
-            NOM_CMP = pd.values()[i - 1].GetComponentName(0)
-            NB_CMP = pd.values()[i - 1].GetNumberOfComponents()
-            RANGE_CMP = pd.values()[i - 1].GetRange()
+        if list(pd.values())[i - 1].GetName() == NOM_CHAMP:
+            NOM_CMP = list(pd.values())[i - 1].GetComponentName(0)
+            NB_CMP = list(pd.values())[i - 1].GetNumberOfComponents()
+            RANGE_CMP = list(pd.values())[i - 1].GetRange()
 
     # Recuperation des informations du champ DEPL
     pd1 = resu.PointData
     for i in range(len(pd1)):
-        if pd1.values()[i - 1].GetName() == NOM_CHAMP_DEF:
-            NB_CMP_DEF = pd1.values()[i - 1].GetNumberOfComponents()
-            RANGE_CMP_DEF = pd1.values()[i - 1].GetRange()
+        if list(pd1.values())[i - 1].GetName() == NOM_CHAMP_DEF:
+            NB_CMP_DEF = list(pd1.values())[i - 1].GetNumberOfComponents()
+            RANGE_CMP_DEF = list(pd1.values())[i - 1].GetRange()
 
     if NB_CMP_DEF == 2:
         resu = Calculator()

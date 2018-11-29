@@ -21,10 +21,10 @@
 
 
 # import Tix as Tk
-import Tkinter as Tk
+import tkinter as Tk
 
 import types
-import graphiqueTk as objets
+from . import graphiqueTk as objets
 
 __fontes__ = 'arial 10 normal'
 
@@ -71,7 +71,7 @@ class MENU:
             titre.pack(padx=3, pady=1, side=Tk.LEFT)
             self.acces[col] = titre
 
-            if col not in items.keys():
+            if col not in list(items.keys()):
                 titre['state'] = Tk.DISABLED
 
             else:
@@ -167,7 +167,7 @@ class FEU_TRICOLORE:
     def Changer_couleur(self, nouvelle_couleur):
         '''On change la couleur du feu tricolore et on le redessine'''
 
-        if nouvelle_couleur <> self.couleur:
+        if nouvelle_couleur != self.couleur:
 
             # On met a blanc l'ancienne couleur
             position = FEU_TRICOLORE.liste_couleurs[self.couleur]
@@ -279,13 +279,13 @@ class LIST_BOX:
 
     def Scan(self):
 
-        positions = map(int, self.listbox.curselection())
+        positions = list(map(int, self.listbox.curselection()))
         positions.sort()    # on garde la selection du haut vers le bas
 
         nouveau = []
         for pos in positions:
             nouveau.append(self.noms[pos])
-        if nouveau <> self.courant:
+        if nouveau != self.courant:
             different = 1
             self.courant = nouveau
             self.indice = positions
@@ -411,8 +411,8 @@ class C_SAISIE_MODE:
         self.reponse = self.l_infos[items]
 
         if self.type_selec == Tk.EXTENDED:
-            items = map(int, self.listbox.curselection())
-            self.reponse = map(lambda x: self.l_infos[x], items)
+            items = list(map(int, self.listbox.curselection()))
+            self.reponse = [self.l_infos[x] for x in items]
 
         self.root.quit()
 
@@ -466,7 +466,7 @@ class C_SAISIE:
             label.grid(row=row, column=0, sticky=Tk.W)
 
             rep_ligne = []
-            for i in xrange(nbr):
+            for i in range(nbr):
                 var_rep = Tk.StringVar(self.root)
                 if defaut:
                     val_def = defaut[row][i]

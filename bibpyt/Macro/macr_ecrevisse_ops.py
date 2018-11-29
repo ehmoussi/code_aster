@@ -141,7 +141,7 @@ def macr_ecrevisse_ops(self, reuse,
     # Si LIST_INST est un DEFI_LIST_REEL :
     liste_inst = LIST_INST.Valeurs()
     if (debug):
-        print 'liste des instants liste_inst = ', liste_inst
+        print('liste des instants liste_inst = ', liste_inst)
 
     # Drapeaux pour les 1ers calculs et les 1eres definitions
     # si l'execution d'Ecrevisse n'a pas plantee ou a ete realisee
@@ -153,18 +153,18 @@ def macr_ecrevisse_ops(self, reuse,
     # Precision demandee pour converger sur le critere de la macro
     # Nombre de decoupages succesifs d'un pas de temps
     # Pas de temps en dessous duquel on ne decoupe plus
-    if dMacr_Conv.has_key('SUBD_NIVEAU'):
+    if 'SUBD_NIVEAU' in dMacr_Conv:
         MacrNbDecoupage = dMacr_Conv['SUBD_NIVEAU']
-    if dMacr_Conv.has_key('SUBD_PAS_MINI'):
+    if 'SUBD_PAS_MINI' in dMacr_Conv:
         MacrPasMini = dMacr_Conv['SUBD_PAS_MINI']
     MacrTempRef = dMacr_Conv['TEMP_REF']
     MacrPresRef = dMacr_Conv['PRES_REF']
     MacrCritere = dMacr_Conv['CRITERE']
-    if dMacr_Conv.has_key('PREC_CRIT'):
+    if 'PREC_CRIT' in dMacr_Conv:
         MacrPrecisCritere = dMacr_Conv['PREC_CRIT']
     else:
         MacrPrecisCritere = None
-    if dMacr_Conv.has_key('NUME_ORDRE_MIN'):
+    if 'NUME_ORDRE_MIN' in dMacr_Conv:
         MacrNumeOrdre = dMacr_Conv['NUME_ORDRE_MIN']
 
     #
@@ -222,7 +222,7 @@ def macr_ecrevisse_ops(self, reuse,
     while (not FinBoucle):
         inst = liste_inst[nume_ordre]
         if (debug):
-            print 'Instant debut boucle', inst
+            print('Instant debut boucle', inst)
         # On boucle jusqu'a convergence
         NbIter = 0
         while True:
@@ -233,12 +233,12 @@ def macr_ecrevisse_ops(self, reuse,
                 # Construction de la liste des pas
                 __pas = DEFI_LIST_REEL(VALE=liste_inst, )
                 if (debug):
-                    print '=====> ===== ===== ===== <===='
-                    print 'Iteration numero : ', NbIter
-                    print 'Instant          : ', inst
-                    print 'Instant+1        : ', inst_p_un
-                    print 'nume_ordre       : ', nume_ordre + 1
-                    print 'Donnee Ecrevisse : ', EcrevisseExe
+                    print('=====> ===== ===== ===== <====')
+                    print('Iteration numero : ', NbIter)
+                    print('Instant          : ', inst)
+                    print('Instant+1        : ', inst_p_un)
+                    print('nume_ordre       : ', nume_ordre + 1)
+                    print('Donnee Ecrevisse : ', EcrevisseExe)
 
                 # ---------------------
                 #        THERMIQUE
@@ -261,7 +261,7 @@ def macr_ecrevisse_ops(self, reuse,
                     motclefs['ETAT_INIT'] = [
                         _F(VALE=TEMP_INIT, NUME_ORDRE=nume_ordre)]
                     if (debug):
-                        print 'thermique initialise avec tref'
+                        print('thermique initialise avec tref')
                 else:
                     if (IsInit):
                     # if (IsPoursuite) :
@@ -269,18 +269,18 @@ def macr_ecrevisse_ops(self, reuse,
                         motclefs['ETAT_INIT'] = [
                             _F(EVOL_THER=_THINIT, NUME_ORDRE=nume_ordre)]
                         if (debug):
-                            print 'thermique initialise avec etat_initial'
+                            print('thermique initialise avec etat_initial')
                     else:
                         motclefs['reuse'] = RTHERM
                         motclefs['ETAT_INIT'] = [
                             _F(EVOL_THER=RTHERM, NUME_ORDRE=nume_ordre)]
                         if (debug):
-                            print 'thermique initialise avec instant precedent'
+                            print('thermique initialise avec instant precedent')
 
                 if (debug):
-                    print '====> THER_LINEAIRE <===='
-                    print '   Les charges thermiques'
-                    print EXCIT_THER
+                    print('====> THER_LINEAIRE <====')
+                    print('   Les charges thermiques')
+                    print(EXCIT_THER)
 
                 if IsPoursuite:
                     _THINIT = THER_LINEAIRE(
@@ -360,26 +360,26 @@ def macr_ecrevisse_ops(self, reuse,
                         motclefs['ETAT_INIT'] = [
                             _F(EVOL_NOLI=MECANIC, NUME_ORDRE=nume_ordre)]
                         if (debug):
-                            print 'etat meca initial = pas precedent'
+                            print('etat meca initial = pas precedent')
                     else:
                         if (debug):
-                            print 'etat meca initial : vierge'
+                            print('etat meca initial : vierge')
                 else:
                     motclefs['reuse'] = EVINIT
                     motclefs['ETAT_INIT'] = [
                         _F(EVOL_NOLI=EVINIT, NUME_ORDRE=nume_ordre)]
                     if (debug):
-                        print 'etat meca initial dReuseM', motclefs
+                        print('etat meca initial dReuseM', motclefs)
 
                 if ENERGIE:
                     motclefs['ENERGIE'] = ENERGIE[
                         0].cree_dict_valeurs(ENERGIE[0].mc_liste)
 
                 if (debug):
-                    print '====> STAT_NON_LINE <===='
+                    print('====> STAT_NON_LINE <====')
                 if (debug):
-                    print '   Les charges mecaniques'
-                    print _dEXCIT_MECA
+                    print('   Les charges mecaniques')
+                    print(_dEXCIT_MECA)
 
                 MECANIC = STAT_NON_LINE(
                     MODELE=MODELE_MECA,
@@ -431,7 +431,7 @@ def macr_ecrevisse_ops(self, reuse,
             for fonc_name in [
                 "PRES_ENTREE_FO", "PRES_SORTIE_FO", "PRES_PART_FO",
                     "TITR_MASS_FO", "TEMP_ENTREE_FO"]:
-                if dECOULEMENT.has_key(fonc_name):
+                if fonc_name in dECOULEMENT:
                     fonc = dECOULEMENT_ecrevisse.pop(fonc_name)
                     vale_name = fonc_name.replace('_FO', '')
                     dECOULEMENT_ecrevisse[vale_name] = fonc(inst_p_un)
@@ -444,7 +444,7 @@ def macr_ecrevisse_ops(self, reuse,
             DEBIECR1 = CO('DEBIECR1')
 
             if (debug):
-                print '====> ECREVISSE entree dans CALC_ECREVISSE <===='
+                print('====> ECREVISSE entree dans CALC_ECREVISSE <====')
 
             if (not IsPoursuite):
                 CALC_ECREVISSE(
@@ -506,7 +506,7 @@ def macr_ecrevisse_ops(self, reuse,
                 )
 
             if (debug):
-                print '====> ECREVISSE sortie de CALC_ECREVISSE <===='
+                print('====> ECREVISSE sortie de CALC_ECREVISSE <====')
 
             # Recuperation des infos de la table resultat Ecrevisse
             T_TABL_TMP1 = TABLECR1.EXTR_TABLE()
@@ -517,7 +517,7 @@ def macr_ecrevisse_ops(self, reuse,
 #         T_DEB_TMP1["INST"]       = [inst_p_un]*_nb_ligne
 
             # Le calcul Ecrevisse c'est bien passe ?
-            EcrevisseExe = (T_TABL_TMP1.values()['COTES'][0] != -1)
+            EcrevisseExe = (list(T_TABL_TMP1.values())['COTES'][0] != -1)
             #
             if (not EcrevisseExe):
                 # Destruction des concepts de sortie, et on arrete tout
@@ -546,8 +546,8 @@ def macr_ecrevisse_ops(self, reuse,
 
             if (not IsInit):
                 # On recupere la liste des temperatures a t et t+1
-                lst_T_0 = T_TABL_TMP0.values()['TEMP']
-                lst_T_1 = T_TABL_TMP1.values()['TEMP']
+                lst_T_0 = list(T_TABL_TMP0.values())['TEMP']
+                lst_T_1 = list(T_TABL_TMP1.values())['TEMP']
                 # Le maximum des ecarts
                 lst_T_diff_01 = []
                 for v1, v2 in zip(lst_T_0, lst_T_1):
@@ -555,8 +555,8 @@ def macr_ecrevisse_ops(self, reuse,
                 max_T_diff_01 = max(lst_T_diff_01)
 
                 # On recupere la liste des pressions a t et t+1
-                lst_P_0 = T_TABL_TMP0.values()['PRESSION']
-                lst_P_1 = T_TABL_TMP1.values()['PRESSION']
+                lst_P_0 = list(T_TABL_TMP0.values())['PRESSION']
+                lst_P_1 = list(T_TABL_TMP1.values())['PRESSION']
                 # Le maximum des ecarts
                 lst_P_diff_01 = []
                 for v1, v2 in zip(lst_P_0, lst_P_1):

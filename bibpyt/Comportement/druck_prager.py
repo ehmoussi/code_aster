@@ -19,7 +19,7 @@
 
 # person_in_charge: sam.cuvilliez at edf.fr
 
-from cata_comportement import LoiComportement
+from .cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'DRUCK_PRAGER',

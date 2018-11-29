@@ -116,7 +116,7 @@ class CalcEssaiExpansion:
         if not basename:
             basename = 'tmp'
         for suf in suffix:
-            if mdo.resultats.has_key(basename + suf):
+            if basename + suf in mdo.resultats:
                 # Destruction des concepts existants si ils existent deja
                 self.mess.disp_mess("destruction de " + basename + suf)
                 DETRUIRE(CONCEPT=_F(NOM=mdo.resultats[basename + suf].obj))
@@ -164,7 +164,7 @@ class CalcEssaiExpansion:
                 **args
             )
 
-        except aster.error, err:
+        except aster.error as err:
             message = "ERREUR ASTER : " + \
                 mess.GetText('I', err.id_message, err.valk, err.vali, err.valr)
             self.mess.disp_mess(message)
@@ -196,7 +196,7 @@ class CalcEssaiExpansion:
                               BASE_2=o2,
                               MATR_ASSE=norme,
                               INFO=1)
-        except aster.error, err:
+        except aster.error as err:
             message = "ERREUR ASTER : " + \
                 mess.GetText('I', err.id_message, err.valk, err.vali, err.valr)
             self.mess.disp_mess(message)

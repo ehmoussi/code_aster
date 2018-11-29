@@ -31,7 +31,7 @@ def CHAINAGE_HYDR_MECA(self, args, motscles):
     PROJ_CHAMP = self.get_cmd('PROJ_CHAMP')
 
     INST = None
-    if args.has_key('INST'):
+    if 'INST' in args:
         if args['INST'] != None:
             INST = args['INST']
 
@@ -50,7 +50,7 @@ def CHAINAGE_HYDR_MECA(self, args, motscles):
     smo = set(para['MODELE'])
 
 # normalement, il ne doit y avoir qu'un modèle ...
-    if len(smo) <> 1:
+    if len(smo) != 1:
         UTMESS('F', 'CHAINAGE_10')
     nom_mo_re = list(smo)[0]
 

@@ -21,54 +21,54 @@
 
 cata_msg = {
 
-    1  : _(u"""Préparation du second membre pour la prédiction."""),
+    1  : _("""Préparation du second membre pour la prédiction."""),
 
-    2  : _(u"""Préparation du second membre pour la correction."""),
+    2  : _("""Préparation du second membre pour la correction."""),
 
-    3  : _(u"""Préparation du second membre pour l'accélération initiale."""),
+    3  : _("""Préparation du second membre pour l'accélération initiale."""),
 
-    4  : _(u""" Calcul des chargements."""),
+    4  : _(""" Calcul des chargements."""),
 
-    5  : _(u""" Calcul des chargements spécifiques à la dynamique."""),
+    5  : _(""" Calcul des chargements spécifiques à la dynamique."""),
 
-    6  : _(u"""  Calcul de l'impédance (dynamique)."""),
+    6  : _("""  Calcul de l'impédance (dynamique)."""),
 
-    7  : _(u"""  Calcul de l'effet sur le second membre des macro-éléments."""),
+    7  : _("""  Calcul de l'effet sur le second membre des macro-éléments."""),
 
-    8  : _(u""" Calcul des efforts intérieurs (sans intégration du comportement)."""),
+    8  : _(""" Calcul des efforts intérieurs (sans intégration du comportement)."""),
 
-    9  : _(u"""  Calcul des forces de rappel dynamique."""),
+    9  : _("""  Calcul des forces de rappel dynamique."""),
 
-   10  : _(u"""  Calcul des forces d'amortissement modal."""),
+   10  : _("""  Calcul des forces d'amortissement modal."""),
 
-   11  : _(u""" Calcul des réactions d'appui pour les conditions limites de Dirichlet."""),
+   11  : _(""" Calcul des réactions d'appui pour les conditions limites de Dirichlet."""),
 
-   12  : _(u""" Calcul des conditions limites de Dirichlet."""),
+   12  : _(""" Calcul des conditions limites de Dirichlet."""),
 
-   13  : _(u"""Calcul du second membre pour le pas de temps courant."""),
+   13  : _("""Calcul du second membre pour le pas de temps courant."""),
 
-   14  : _(u""" Calcul de la contribution des variables de commande."""),
+   14  : _(""" Calcul de la contribution des variables de commande."""),
 
-   15  : _(u"""Calcul du second membre pour la correction."""),
+   15  : _("""Calcul du second membre pour la correction."""),
 
-   16  : _(u"""Calcul du second membre pour un chargement de Dirichlet donné (EXTRAPOLE ou DEPL_CALCULE)."""),
+   16  : _("""Calcul du second membre pour un chargement de Dirichlet donné (EXTRAPOLE ou DEPL_CALCULE)."""),
 
-   17  : _(u"""Calcul du second membre pour l'accélération initiale."""),
+   17  : _("""Calcul du second membre pour l'accélération initiale."""),
 
-   18  : _(u"""Calcul du second membre pour la dynamique explicite."""),
+   18  : _("""Calcul du second membre pour la dynamique explicite."""),
 
-   19  : _(u"""Calcul du second membre pour la prédiction (statique)."""),
+   19  : _("""Calcul du second membre pour la prédiction (statique)."""),
 
-   20  : _(u"""Calcul du second membre pour la prédiction (dynamique)."""),
+   20  : _("""Calcul du second membre pour la prédiction (dynamique)."""),
 
-   21  : _(u"""Préparation du second membre pour la prédiction (dynamique explicite)."""),
+   21  : _("""Préparation du second membre pour la prédiction (dynamique explicite)."""),
 
-   22  : _(u"""Préparation du second membre pour le pas de temps courant (dynamique explicite)."""),
+   22  : _("""Préparation du second membre pour le pas de temps courant (dynamique explicite)."""),
 
-   25  : _(u"""Intégration de la loi de comportement (calcul des efforts internes élémentaires)."""),
+   25  : _("""Intégration de la loi de comportement (calcul des efforts internes élémentaires)."""),
 
-   27  : _(u"""Calcul des efforts internes en prédiction."""),
+   27  : _("""Calcul des efforts internes en prédiction."""),
 
-   28  : _(u"""Intégration de la loi de comportement (assemblage des efforts internes élémentaires)."""),
+   28  : _("""Intégration de la loi de comportement (assemblage des efforts internes élémentaires)."""),
 
 }

@@ -73,9 +73,9 @@ class REGLE:
 
            Ceci permet d'avoir un traitement identique pour les listes et les dictionnaires
         """
-        if type(args) == types.DictionaryType:
+        if type(args) == dict:
             return args
-        elif type(args) == types.ListType:
+        elif type(args) == list:
             dico = {}
             for arg in args:
                 dico[arg] = 0

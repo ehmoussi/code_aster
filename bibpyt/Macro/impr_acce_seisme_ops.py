@@ -176,7 +176,7 @@ def impr_acce_seisme_ops(
         UTMESS('F','SEISME_88')
     
     if "NOM_PARA" in tab_data.para:
-        lival = tab_data.values()["NOM_PARA"]
+        lival = list(tab_data.values())["NOM_PARA"]
         lival = [val.strip() for val in lival]
         nb_tirage = len(lival)
         # dimension
@@ -187,9 +187,9 @@ def impr_acce_seisme_ops(
         if dim < 2:
             raise Exception("Cas non prevu")
         nb_tirage = nb_tirage/dim
-        lifonc = tab_data.values()["FONCTION"]
+        lifonc = list(tab_data.values())["FONCTION"]
     else:
-        lifonc = tab_data.values()["FONCTION"]
+        lifonc = list(tab_data.values())["FONCTION"]
         nb_tirage = len(lifonc)
         dim = 1
     
@@ -340,25 +340,25 @@ def impr_acce_seisme_ops(
                                      FONCTION = __F_ACCE[ii], PESANTEUR = pesant,
                                      ) )
             tab = __intea.EXTR_TABLE()
-            inte_arias.extend(tab.values()["INTE_ARIAS"])
+            inte_arias.extend(list(tab.values())["INTE_ARIAS"])
 
             __duree = INFO_FONCTION(  NOCI_SEISME=_F(OPTION='DUREE_PHAS_FORT',
                                      FONCTION = __F_ACCE[ii],
                                      PESANTEUR = pesant,
                                     ) )
             tab = __duree.EXTR_TABLE()
-            duree.extend(tab.values()["DUREE_PHAS_FORT"])
+            duree.extend(list(tab.values())["DUREE_PHAS_FORT"])
             
             __cav = INFO_FONCTION(  NOCI_SEISME=_F(FONCTION = __F_ACCE[ii],  OPTION = 'VITE_ABSO_CUMU'))
             tab = __cav.EXTR_TABLE()
-            cav.extend(tab.values()["VITE_ABSO_CUMU"])
+            cav.extend(list(tab.values())["VITE_ABSO_CUMU"])
             
             __maxi = INFO_FONCTION(  NOCI_SEISME=_F(FONCTION = __F_ACCE[ii],  OPTION = 'MAXI'))
             tab = __maxi.EXTR_TABLE()
-            dmaxi.extend(tab.values()["DEPL_MAX"])
-            vmaxi.extend(tab.values()["VITE_MAX"])
-            amaxi.extend(tab.values()["ACCE_MAX"])
-            asv.extend(tab.values()["ACCE_SUR_VITE"])
+            dmaxi.extend(list(tab.values())["DEPL_MAX"])
+            vmaxi.extend(list(tab.values())["VITE_MAX"])
+            amaxi.extend(list(tab.values())["ACCE_MAX"])
+            asv.extend(list(tab.values())["ACCE_SUR_VITE"])
             
 
             DETRUIRE( CONCEPT = _F(NOM = (__intea, __duree, __maxi, __cav )) )

@@ -44,10 +44,10 @@ class UN_PARMI:
         count = 0
         args = self.liste_to_dico(args)
         for mc in self.mcs:
-            if args.has_key(mc):
+            if mc in args:
                 count = count + 1
         if count != 1:
-            text = u"- Il faut un et un seul mot-clé parmi : " + \
-                `self.mcs`+'\n'
+            text = "- Il faut un et un seul mot-clé parmi : " + \
+                repr(self.mcs)+'\n'
             return text, 0
         return text, 1

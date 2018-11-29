@@ -35,7 +35,7 @@ structure de donnée complète.
 c'est ce comportement qui est capturé dans la classe StructType
 """
 
-from basetype import Type
+from .basetype import Type
 
 
 class SDNom(Type):
@@ -96,7 +96,8 @@ class SDNom(Type):
     def __getstate__(self):
         return (self.nomj, self.debut, self.fin, self.justtype)
 
-    def __setstate__(self, (nomj, debut, fin, just)):
+    def __setstate__(self, xxx_todo_changeme):
+        (nomj, debut, fin, just) = xxx_todo_changeme
         self.nomj = nomj
         self.debut = debut
         self.fin = fin
@@ -108,7 +109,8 @@ class SDNom(Type):
             raise ValueError("Justification '%s' invalide" % just)
         self.justtype = just
 
-    def update(self, (nomj, debut, fin, just)):
+    def update(self, xxx_todo_changeme1):
+        (nomj, debut, fin, just) = xxx_todo_changeme1
         if nomj is not None:
             self.nomj = nomj
         if self.debut is None:

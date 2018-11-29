@@ -178,8 +178,8 @@ def macr_recal(self, UNITE_ESCL, RESU_EXP, POIDS, LIST_PARA, RESU_CALC,
         pass
     try:
         from asrun.profil import AsterProfil
-    except Exception, e:
-        print e
+    except Exception as e:
+        print(e)
         UTMESS('F', 'RECAL0_2')
 
     import Macro
@@ -225,17 +225,17 @@ def macr_recal(self, UNITE_ESCL, RESU_EXP, POIDS, LIST_PARA, RESU_CALC,
 
     dESCLAVE = args['CALCUL_ESCLAVE'][0].cree_dict_valeurs(
         args['CALCUL_ESCLAVE'][0].mc_liste)
-    for i in dESCLAVE.keys():
+    for i in list(dESCLAVE.keys()):
         if dESCLAVE[i] == None:
             del dESCLAVE[i]
 
     CALCUL_ESCLAVE[
         'LANCEMENT'] = dESCLAVE['LANCEMENT']
-    if dESCLAVE.has_key('UNITE_SUIVI'):
+    if 'UNITE_SUIVI' in dESCLAVE:
         CALCUL_ESCLAVE['UNITE_SUIVI'] = dESCLAVE['UNITE_SUIVI']
     else:
         CALCUL_ESCLAVE['UNITE_SUIVI'] = None
-    if dESCLAVE.has_key('MODE'):
+    if 'MODE' in dESCLAVE:
         CALCUL_ESCLAVE['MODE'] = dESCLAVE['MODE']
     else:
         CALCUL_ESCLAVE['MODE'] = prof['mode'][0].upper()
@@ -243,25 +243,25 @@ def macr_recal(self, UNITE_ESCL, RESU_EXP, POIDS, LIST_PARA, RESU_CALC,
     LANCEMENT = CALCUL_ESCLAVE['LANCEMENT']
 
     # Parametres de l'algorithme genetique
-    if args.has_key('NB_PARENTS'):
+    if 'NB_PARENTS' in args:
         NB_PARENTS = args['NB_PARENTS']
-    if args.has_key('NB_FILS'):
+    if 'NB_FILS' in args:
         NB_FILS = args['NB_FILS']
-    if args.has_key('ECART_TYPE'):
+    if 'ECART_TYPE' in args:
         ECART_TYPE = args['ECART_TYPE']
-    if args.has_key('ITER_ALGO_GENE'):
+    if 'ITER_ALGO_GENE' in args:
         ITER_ALGO_GENE = args['ITER_ALGO_GENE']
-    if args.has_key('RESI_ALGO_GENE'):
+    if 'RESI_ALGO_GENE' in args:
         RESI_ALGO_GENE = args['RESI_ALGO_GENE']
 
-    if args.has_key('GRAINE'):
+    if 'GRAINE' in args:
         UTMESS('A', 'RECAL0_43')
         GRAINE = args['GRAINE']
     else:
         GRAINE = None
 
     # Parametres concernant le recalage d'un modele dynamique
-    if args.has_key('DYNAMIQUE'):
+    if 'DYNAMIQUE' in args:
         DYNAMIQUE = args['DYNAMIQUE']
     else:
         DYNAMIQUE = None
@@ -273,7 +273,7 @@ def macr_recal(self, UNITE_ESCL, RESU_EXP, POIDS, LIST_PARA, RESU_CALC,
 
     if GRAPHIQUE:
         dGRAPHIQUE = GRAPHIQUE[0].cree_dict_valeurs(GRAPHIQUE[0].mc_liste)
-        if dGRAPHIQUE.has_key('FORMAT') and dGRAPHIQUE['FORMAT'] == 'GNUPLOT':
+        if 'FORMAT' in dGRAPHIQUE and dGRAPHIQUE['FORMAT'] == 'GNUPLOT':
         # On essaie d'importer Gnuplot -> PAS DE GRAPHIQUE
             try:
                 import Gnuplot
@@ -288,11 +288,11 @@ def macr_recal(self, UNITE_ESCL, RESU_EXP, POIDS, LIST_PARA, RESU_CALC,
     if LANCEMENT == 'DISTRIBUTION':
 
         if debug:
-            print prof.param['tpsjob'][0]
-            print prof.args['tpmax']
-            print prof.param['mem_aster'][0]
-            print prof.args['memjeveux']
-            print prof.param['memjob'][0]
+            print(prof.param['tpsjob'][0])
+            print(prof.args['tpmax'])
+            print(prof.param['mem_aster'][0])
+            print(prof.args['memjeveux'])
+            print(prof.param['memjob'][0])
 
         # Pour la conversion mega-mots / mega-octets
         from asrun.common.sysutils import on_64bits
@@ -313,7 +313,7 @@ def macr_recal(self, UNITE_ESCL, RESU_EXP, POIDS, LIST_PARA, RESU_CALC,
         CALCUL_ESCLAVE['mem_aster'] = mem_aster
 
         # Utilisation du mot-cle TEMPS
-        if dESCLAVE.has_key('TEMPS'):
+        if 'TEMPS' in dESCLAVE:
             CALCUL_ESCLAVE['tpsjob'] = int(dESCLAVE['TEMPS'] / 60)
             CALCUL_ESCLAVE['tpmax'] = int(dESCLAVE['TEMPS'])
         else:
@@ -322,7 +322,7 @@ def macr_recal(self, UNITE_ESCL, RESU_EXP, POIDS, LIST_PARA, RESU_CALC,
             CALCUL_ESCLAVE['tpmax'] = prof.args['tpmax']
 
         # Utilisation du mot-cle MEMOIRE
-        if dESCLAVE.has_key('MEMOIRE'):
+        if 'MEMOIRE' in dESCLAVE:
             CALCUL_ESCLAVE['memjob'] = int(dESCLAVE['MEMOIRE'] * 1024)
             # Calcul du parametre memjeveux esclave
             memjeveux = int(dESCLAVE['MEMOIRE'] / facw)
@@ -340,7 +340,7 @@ def macr_recal(self, UNITE_ESCL, RESU_EXP, POIDS, LIST_PARA, RESU_CALC,
             CALCUL_ESCLAVE['memjeveux'] = prof.args['memjeveux']
 
         # Utilisation du mot-cle MPI_NBCPU
-        if dESCLAVE.has_key('MPI_NBCPU'):
+        if 'MPI_NBCPU' in dESCLAVE:
 
             # Verifie que le calcul maitre est bien en MPI sur 1 cpu
             mpi_nbcpu = str(prof['mpi_nbcpu'][0])
@@ -350,14 +350,14 @@ def macr_recal(self, UNITE_ESCL, RESU_EXP, POIDS, LIST_PARA, RESU_CALC,
             CALCUL_ESCLAVE['mpi_nbcpu'] = int(dESCLAVE['MPI_NBCPU'])
 
         # Utilisation du mot-cle MPI_NBNOEUD
-        if dESCLAVE.has_key('MPI_NBNOEUD'):
+        if 'MPI_NBNOEUD' in dESCLAVE:
             CALCUL_ESCLAVE['mpi_nbnoeud'] = int(dESCLAVE['MPI_NBNOEUD'])
 
         # Parametres batch
         if CALCUL_ESCLAVE['MODE'] == 'BATCH':
-            if dESCLAVE.has_key('CLASSE'):
+            if 'CLASSE' in dESCLAVE:
                 CALCUL_ESCLAVE['CLASSE'] = dESCLAVE['CLASSE']
-            if dESCLAVE.has_key('ACTUALISATION'):
+            if 'ACTUALISATION' in dESCLAVE:
                 CALCUL_ESCLAVE['ACTUALISATION'] = dESCLAVE['ACTUALISATION']
 
             # Affichage parametres batch
@@ -614,7 +614,7 @@ def macr_recal(self, UNITE_ESCL, RESU_EXP, POIDS, LIST_PARA, RESU_CALC,
             fprime = CALCUL_ASTER.calcul_G
             warnflag = 0
 
-            if args.has_key('GRADIENT') and args['GRADIENT'] == 'NON_CALCULE':
+            if 'GRADIENT' in args and args['GRADIENT'] == 'NON_CALCULE':
                 f = CALCUL_ASTER.calcul_F
                 fprime = None
 
@@ -671,7 +671,7 @@ def macr_recal(self, UNITE_ESCL, RESU_EXP, POIDS, LIST_PARA, RESU_CALC,
                 ecart_para = reca_algo.calcul_norme2(
                     NP.array(new_val) - NP.array(val))
                 if debug:
-                    print "AA0/ecart para=%s\nAA0/oldpara/newpara=%s %s" % (ecart_para, val, new_val)
+                    print("AA0/ecart para=%s\nAA0/oldpara/newpara=%s %s" % (ecart_para, val, new_val))
                 if ecart_para < TOLE_PARA:
                     UTMESS(
                         'I', 'RECAL0_51', valr=ecart_para, files=Mess.get_filename())
@@ -698,11 +698,11 @@ def macr_recal(self, UNITE_ESCL, RESU_EXP, POIDS, LIST_PARA, RESU_CALC,
                 J = E.J
 
                 if debug:
-                    print "AA0/L_F=", L_F
-                    print "AA0/l=", l
-                    print "AA0/erreur=", erreur
-                    print "AA0/J=", J
-                    print "AA0/A_nodim=", A
+                    print("AA0/L_F=", L_F)
+                    print("AA0/l=", l)
+                    print("AA0/erreur=", erreur)
+                    print("AA0/J=", J)
+                    print("AA0/A_nodim=", A)
 
                 # Calcul de la matrice des sensibilites
                 A = Dim.adim_sensi(A)
@@ -712,9 +712,9 @@ def macr_recal(self, UNITE_ESCL, RESU_EXP, POIDS, LIST_PARA, RESU_CALC,
                     gradient_init, erreur, A, s)
 
                 if debug:
-                    print "AA0/residu=", residu
-                    print "AA0/new_val=", new_val
-                    print "AA0/A=", A
+                    print("AA0/residu=", residu)
+                    print("AA0/new_val=", new_val)
+                    print("AA0/A=", A)
 
                 # On calcule la variation sur la fonctionnelle
                 ecart_fonc = abs(new_J - old_J)
@@ -732,7 +732,7 @@ def macr_recal(self, UNITE_ESCL, RESU_EXP, POIDS, LIST_PARA, RESU_CALC,
                 if (GRAPHIQUE):
                     if GRAPHIQUE['AFFICHAGE'] == 'TOUTE_ITERATION':
                         GRAPHE_UL_OUT = GRAPHIQUE['UNITE']
-                        if dGRAPHIQUE.has_key('FORMAT') and dGRAPHIQUE['FORMAT'] == 'XMGRACE':
+                        if 'FORMAT' in dGRAPHIQUE and dGRAPHIQUE['FORMAT'] == 'XMGRACE':
                             pilote = GRAPHIQUE['PILOTE']
                         else:
                             pilote = 'INTERACTIF'
@@ -784,9 +784,9 @@ def macr_recal(self, UNITE_ESCL, RESU_EXP, POIDS, LIST_PARA, RESU_CALC,
 # (ecart_para < TOLE_PARA):
 
     if debug:
-        print "residu, RESI_GLOB_RELA=", residu, RESI_GLOB_RELA, (residu > RESI_GLOB_RELA)
-        print "ecart_fonc, TOLE_FONC=", ecart_fonc, TOLE_FONC, (ecart_fonc > TOLE_FONC)
-        print "ecart_para, TOLE_PARA=", ecart_para, TOLE_PARA, (ecart_para > TOLE_PARA)
+        print("residu, RESI_GLOB_RELA=", residu, RESI_GLOB_RELA, (residu > RESI_GLOB_RELA))
+        print("ecart_fonc, TOLE_FONC=", ecart_fonc, TOLE_FONC, (ecart_fonc > TOLE_FONC))
+        print("ecart_para, TOLE_PARA=", ecart_para, TOLE_PARA, (ecart_para > TOLE_PARA))
 
     if (residu > RESI_GLOB_RELA):
         from code_aster.Cata.Commands import CREA_TABLE, TEST_TABLE

@@ -21,7 +21,7 @@
 
 cata_msg = {
 
-    2 : _(u"""
+    2 : _("""
 
 Attention :
   Vous avez demandé l'impression d'un CHAM_ELEM de VARI_R :
@@ -30,85 +30,85 @@ Attention :
 
 """),
 
-    3 : _(u"""
+    3 : _("""
  Dans le cas d'un défaut SEMI_ELLIPSE, les mots-clés suivants doivent être présents :
 
    - EPAIS_MDB : épaisseur du métal de base
    - MATER_MDB : matériau constituant le métal de base
 """),
 
-    4 : _(u"""
+    4 : _("""
  La méthode %(k1)s est illicite
 """),
 
-    5 : _(u"""
+    5 : _("""
  Dans le cas d'un défaut de type ELLIPSE, la longueur du défaut n'est pas en accord :
 
    - Décalage >= 0 : avec la table coté métal de base,
    - Décalage <  0 : avec les tables définies cote revêtement et coté métal de base.
 """),
 
-    6 : _(u"""
+    6 : _("""
  Attention: le nombre de points de la table TABL_MECA_MDB est de %(i1)d. Il doit
  être égale a 5.
 """),
 
-    7 : _(u"""
+    7 : _("""
   Dans le cas d'un défaut ELLIPSE le mot-clé TABL_MECA_REV est obligatoire.
 """),
 
-    8 : _(u"""
+    8 : _("""
  prolongement à gauche exclu
 """),
 
-    9 : _(u"""
+    9 : _("""
  prolongement à droite exclu
 """),
 
-    10 : _(u"""
+    10 : _("""
  phénomène non valide
 """),
 
-    11 : _(u"""
+    11 : _("""
  la macro-commande POST_ERREUR prend en charge seulement le phénomène MECANIQUE.
 """),
 
-    12 : _(u"""
+    12 : _("""
  une et une seule fonction doit être associée à chaque GROUP_MA, pour la composante %(k1)s.
 """),
 
-    13 : _(u"""
+    13 : _("""
  Les valeurs non existantes du champ %(k1)s lues sur le maillage donné
  sont considérées nulles.
 """),
 
-    14 : _(u"""
+    14 : _("""
  Le NUME_DDL a été déterminé à partir de la matrice de rigidité %(k1)s.
 """),
 
-    21 : _(u"""
+    21 : _("""
  Intersection Droite / Cercle
  pas d'intersection trouvée
 """),
 
-    28 : _(u"""
+    28 : _("""
  volume supérieur à 1.d6
 """),
 
-    31 : _(u"""
+    31 : _("""
  structure de données RESULTAT inconnue  %(k1)s
 """),
 
-    36 : _(u"""
+    36 : _("""
  Le champ de:  %(k1)s  a des éléments ayant des sous-points.
  Ces éléments ne seront pas traités.
 """),
 
-    38 : _(u"""
+    38 : _("""
  le vecteur défini sous le mot clé ACTION/AXE_Z a une norme nulle.
 """),
 
-    39 : _(u"""
+    39 : _("""
  Le résultat généralisé en entrée (%(k1)s) est issu d'un calcul en sous-structuration,
  et non pas d'un calcul standard avec une simple projection sur base modale.
 
@@ -120,7 +120,7 @@ Attention :
  base physique vos résultats en coordonnées généralisées.
 """),
 
-    40 : _(u"""
+    40 : _("""
  La base modale de projection %(k1)s, référencée dans le résultat généralisé, est
  différente de celle donnée en entrée sous le mot-clé MODE_MECA (%(k2)s).
 
@@ -128,7 +128,7 @@ Attention :
  base.
 """),
 
-    41 : _(u"""
+    41 : _("""
  Pour l'observation %(i1)d :
 
  La restitution du champ %(k1)s n'est possible que si il a préalablement été calculé sur
@@ -138,7 +138,7 @@ Attention :
  Essayez d'enrichir la base %(k3)s avec un appel préalable à CREA_CHAMP, option %(k2)s.
 """),
 
-    42 : _(u"""
+    42 : _("""
  Pour l'observation %(i1)d :
 
  Il n'a pas été possible de trouver le composant %(k1)s dans le champ demandé %(k2)s.
@@ -148,7 +148,7 @@ Attention :
  l'opérateur sans spécifier le mot-clé NOM_CMP. Cela permet d'en restituer la totalité.
 """),
 
-    43 : _(u"""
+    43 : _("""
  Pour l'observation no. %(i1)d :
 
  Vous avez demandé le champ : %(k2)s. Néanmoins, il n'existe aucune information
@@ -162,7 +162,7 @@ Attention :
  Le résultat obtenu correspond donc au champ %(k3)s, en relatif.
 """),
 
-    44 : _(u"""
+    44 : _("""
  Pour l'observation no. %(i1)d :
 
  Vous avez demandé le champ : %(k2)s. Néanmoins, il n'existe aucune information
@@ -176,7 +176,7 @@ Attention :
  Le résultat obtenu correspond donc au champ %(k3)s, en relatif.
 """),
 
-    45 : _(u"""
+    45 : _("""
  Pour l'observation no. %(i1)d :
 
  Vous avez demandé de restituer l'accélération absolue (ACCE_ABSOLU) en précisant la
@@ -188,7 +188,7 @@ Attention :
 """),
 
 
-    46 : _(u"""
+    46 : _("""
  erreur dans la création du fichier de maillage au format GIBI.
  Celui-ci ne contient pas d'objet de type maillage.
 
@@ -196,110 +196,110 @@ Attention :
  Assurez vous que votre procédure GIBI sauvegarde bien les objets du maillage (pile 32 dans le formalisme GIBI)
 """),
 
-    51 : _(u"""
+    51 : _("""
  l'option de calcul " %(k1)s " n'existe pas dans la structure de données %(k2)s
 """),
 
-    52 : _(u"""
+    52 : _("""
  le champ " %(k1)s " pour l'option de calcul " %(k2)s ", n'a pas été notée
  dans la structure de données %(k3)s
 """),
 
-    53 : _(u"""
+    53 : _("""
  la dimension du problème est invalide : il faut : 1d, 2d ou 3d.
 """),
 
-    54 : _(u"""
+    54 : _("""
  nombre de noeuds supérieur au maximum autorisé : 27.
 """),
 
-    55 : _(u"""
+    55 : _("""
 Problème à la lecture des points
 Ce message est un message d'erreur développeur.
 Contactez le support technique.
 """),
 
-    56 : _(u"""
+    56 : _("""
  type de maille :  %(k1)s  inconnu de la commande PRE_GIBI.
 """),
 
-    57 : _(u"""
+    57 : _("""
  nombre d'objets supérieur au maximum autorisé : 99999.
 """),
 
-    59 : _(u"""
+    59 : _("""
  le maillage GIBI est peut être erroné :
  on continue quand même, mais si vous avez des problèmes plus loin ...
 """),
 
-    60 : _(u"""
+    60 : _("""
  arrêt sur erreur(s)
 """),
 
-    69 : _(u"""
+    69 : _("""
  problème à l'ouverture du fichier
 """),
 
-    70 : _(u"""
+    70 : _("""
  problème à la fermeture du fichier
 """),
 
-    74 : _(u"""
+    74 : _("""
  la variable  %(k1)s  n'existe pas
 """),
 
-    75 : _(u"""
+    75 : _("""
  pas d'impression du champ
 """),
 
-    80 : _(u"""
+    80 : _("""
  on traite les TRIA7 QUAD9 en oubliant le noeud centre
 """),
 
-    83: _(u"""
+    83: _("""
  Certaines composantes sélectionnées ne font pas partie du LIGREL
 """),
 
-    84 : _(u"""
+    84 : _("""
  Élément PYRAM5 non disponible dans IDEAS
 """),
 
-    85 : _(u"""
+    85 : _("""
  Élément PYRAM13 non disponible dans IDEAS
 """),
 
-    86 : _(u"""
+    86 : _("""
  On traite les PENTA18 en oubliant le(s) noeud(s)
  au centre et les SEG4 en oubliant les 2 noeuds centraux.
 """),
 
-    87 : _(u"""
+    87 : _("""
  On ne sait pas imprimer le champ de type:  %(k1)s
  champ :  %(k2)s
 """),
 
-    90 : _(u"""
+    90 : _("""
  On ne sait pas imprimer le champ  %(k1)s  au format  %(k2)s
 """),
 
-    91 : _(u"""
+    91 : _("""
  On ne sait pas imprimer au format 'MED' les cartes de type %(k1)s
 """),
 
-    92 : _(u"""
+    92 : _("""
  On ne sait pas imprimer au format 'RESULTAT' les champs de type "carte".
 """),
 
-    97 : _(u"""
+    97 : _("""
  On ne sait pas imprimer les champs de type " %(k1)s "
 """),
 
-    98 : _(u"""
+    98 : _("""
  Le champ:  %(k1)s  a des éléments ayant des sous-points.
  Il est écrit avec un format différent.
 """),
 
-    99 : _(u"""
+    99 : _("""
  Le champ:  %(k1)s  a des éléments ayant des sous-points.
  Ces éléments ne seront pas écrits.
 """),

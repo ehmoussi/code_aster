@@ -21,11 +21,11 @@
 
 cata_msg = {
 
-    1 : _(u"""
+    1 : _("""
 Fichier inexistant : '%(k1)s'
 """),
 
-    2 : _(u"""
+    2 : _("""
 La lecture du fichier a échoué.
 Soit le fichier '%(k1)s' n'existe pas, soit son contenu est invalide.
 

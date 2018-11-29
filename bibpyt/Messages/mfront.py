@@ -21,25 +21,25 @@
 
 cata_msg = {
 
-    1 : _(u"""
+    1 : _("""
   Une erreur a été détectée par MFront. Le calcul ne peut pas continuer.
 
   Conseil : Vérifiez le nombre de propriété matériau fournit à la loi
   de comportement.
 """),
 
-    2 : _(u"""
+    2 : _("""
   Une variable utilisée ou produite par MFront a dépassée les bornes physiques
   ou les bornes de corrélation de la loi de comportement.
 
   Conseils : Vérifiez les coefficients matériau donnés à la loi de comportement.
 """),
 
-    3 : _(u"""
+    3 : _("""
   Erreur générique dans MFront, le calcul ne peut pas continuer.
 """),
 
-    4 : _(u"""
+    4 : _("""
   Le fichier de sortie de MFront %(k1)s n'a pas pu être produit.
 
   Conseil : Vérifiez l'existence du fichier fourni au mot-clé UNITE_MFRONT.

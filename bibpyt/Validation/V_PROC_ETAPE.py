@@ -28,7 +28,7 @@
    utilisée par héritage multiple pour composer les traitements.
 """
 # Modules EFICAS
-import V_ETAPE
+from . import V_ETAPE
 from Noyau.N_Exception import AsException
 from Noyau.N_utils import AsType
 from Noyau.strfunc import ufmt
@@ -58,7 +58,7 @@ class PROC_ETAPE(V_ETAPE.ETAPE):
             - propager l'éventuel changement d'état au parent
         """
         if CONTEXT.debug:
-            print "ETAPE.isvalid ", self.nom
+            print("ETAPE.isvalid ", self.nom)
         if self.state == 'unchanged':
             return self.valid
         else:
@@ -67,7 +67,7 @@ class PROC_ETAPE(V_ETAPE.ETAPE):
             if self.reste_val != {}:
                 if cr == 'oui':
                     self.cr.fatal(
-                        _(u"Mots clés inconnus : %s"), ','.join(self.reste_val.keys()))
+                        _("Mots clés inconnus : %s"), ','.join(list(self.reste_val.keys())))
                 valid = 0
             self.set_valid(valid)
             return self.valid

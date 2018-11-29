@@ -26,7 +26,7 @@ from Utilitai.Utmess import UTMESS
 def FaitMessage(Dico):
     message = ""
     cpt = 1
-    for xk, xv in Dico.iteritems():
+    for xk, xv in Dico.items():
         message += " %s = %15.8E," % (xk, xv)
         if (len(message) > 80 * cpt):
             message += "\n  "
@@ -176,7 +176,7 @@ def Mazars_Unil(DMATER, args):
     listepara = ['NU', 'EPSD0', 'K', 'BT',
                  'AT', 'BC', 'AC', 'SIGM_LIM', 'EPSI_LIM']
     for xx in listepara:
-        if (MATER.has_key(xx)):
+        if (xx in MATER):
             if (MATER[xx] != None):
                 if (xx == 'NU'):
                     NU = MATER[xx]
@@ -327,7 +327,7 @@ def Acier_Cine_Line(DMATER, args):
     #
     listepara = ['D_SIGM_EPSI', 'NU', 'SIGM_LIM', 'EPSI_LIM']
     for xx in listepara:
-        if (MATER.has_key(xx)):
+        if (xx in MATER):
             if (MATER[xx] != None):
                 if   ( xx == 'D_SIGM_EPSI' ):
                     D_SIGM_EPSI = MATER[xx]
@@ -449,7 +449,7 @@ def Endo_Fiss_Exp(DMATER, args):
     (sig0, tau) = Ident_Endo_Fiss_Exp(FT, FC, beta)
     sigc = ConfinedTension(NU, sig0, tau, beta)
     # Paramètres de la fonction d'adoucissement
-    if MATER['P'] <> None:
+    if MATER['P'] != None:
         P = float(MATER['P'])
     else:
         G1 = float(MATER['G_INIT'])
@@ -457,9 +457,9 @@ def Endo_Fiss_Exp(DMATER, args):
         if P < 1:
             UTMESS('F', 'COMPOR1_93')
     #
-    if MATER['Q'] <> None:
+    if MATER['Q'] != None:
         Q = float(MATER['Q'])
-    elif MATER['Q_REL'] <> None:
+    elif MATER['Q_REL'] != None:
         qmax = (1.11375 + 0.565239 * P - 0.003322 * P ** 2) * \
             (1 - NP.exp(-1.98935 * P)) - 0.01
         Q = qmax * float(MATER['Q_REL'])

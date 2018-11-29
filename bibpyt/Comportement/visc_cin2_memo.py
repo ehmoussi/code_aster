@@ -18,7 +18,7 @@
 # --------------------------------------------------------------------
 
 
-from cata_comportement import LoiComportement
+from .cata_comportement import LoiComportement
 
 loi = LoiComportement(
     nom            = 'VISC_CIN2_MEMO',

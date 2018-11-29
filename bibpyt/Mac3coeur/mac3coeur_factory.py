@@ -58,7 +58,7 @@ class Mac3Factory(object):
         """Importe la classe d'un type d'objet."""
         fname = self._get_obj_fname(objname)
         ctxt = self._context_init()
-        execfile(fname, ctxt)
+        exec(compile(open(fname).read(), fname, 'exec'), ctxt)
         obj = ctxt.get(objname)
         assert obj, "No object named '%s' has been defined in the " \
                     "catalog '%s'" % (objname, fname)

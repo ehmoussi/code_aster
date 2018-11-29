@@ -24,7 +24,7 @@
 """
 
 import string
-from strfunc import convert, ufmt
+from .strfunc import convert, ufmt
 
 
 class CR:
@@ -137,10 +137,10 @@ class CR:
         s = s + string.join(self.crexception_belle, '')
         for subcr in self.subcr:
             if self.verbeux == 'oui':
-                s = s + unicode(subcr) + '\n'
+                s = s + str(subcr) + '\n'
             else:
                 if not subcr.estvide():
-                    s = s + unicode(subcr)
+                    s = s + str(subcr)
         if s != '':
             s = self.debut + '\n' + self.indent(s) + self.fin + '\n'
         else:

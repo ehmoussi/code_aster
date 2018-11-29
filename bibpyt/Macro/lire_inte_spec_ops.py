@@ -187,7 +187,7 @@ def lire_inte_spec_ops(self,
                 vale_fonc = list_fonc[i][
                     list_fonc[i].index('VALEUR =\n') + 9:list_fonc[i].index('FINSF\n')]
                 vale_fonc = vale_fonc.replace('\n', ' ')
-                vale_fonc = map(float, vale_fonc.split())
+                vale_fonc = list(map(float, vale_fonc.split()))
             except ValueError:
                 UTMESS('F', 'SPECTRAL0_7')
 
@@ -256,4 +256,4 @@ def comp(ddlno):
     elif ddlno == .6:
         return sens, 'DRZ'
     else:
-        print "Probleme pour l'attribution des composantes"
+        print("Probleme pour l'attribution des composantes")

@@ -554,7 +554,7 @@ def test_compor_ops(
                        FILTRE=_F(NOM_PARA='INST', VALE=time),
                        REFERENCE='AUTRE_ASTER',)
             if (NB_VARI > 0):
-                if VARI_TEST <> None:
+                if VARI_TEST != None:
                     for j in range(len(VARI_TEST)):
                         nomvari = VARI_TEST[j]
                         if abs(__U[nomvari, i + 1]) > epsi:

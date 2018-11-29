@@ -21,21 +21,21 @@
 
 cata_msg = {
 
-    60 : _(u"""
+    60 : _("""
 Appel à CALCUL
 Le nom du paramètre de champ d'entrée numéro %(i1)d est vide.
 """),
 
-    61 : _(u"""
+    61 : _("""
 Appel à CALCUL
 Le champ d'entrée numéro %(i1)d est vide.
 """),
 
-    62 : _(u"""
+    62 : _("""
 Appel à CALCUL. Le nom du paramètre de champ de sortie numéro %(i1)d est vide.
 """),
 
-    63 : _(u"""
+    63 : _("""
 Appel à CALCUL. Le champ de sortie numéro %(i1)d est vide.
 """),
 

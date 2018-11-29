@@ -30,8 +30,8 @@ from Noyau import MAXSIZE, MAXSIZE_MSGKEEP
 from Noyau.N_ASSD import ASSD
 from Noyau.N_types import force_list, is_float
 
-from E_Visitor import JDCVisitor
-from E_utils import repr_float
+from .E_Visitor import JDCVisitor
+from .E_utils import repr_float
 
 
 class CommandTextVisitor(JDCVisitor):
@@ -91,7 +91,7 @@ class CommandTextVisitor(JDCVisitor):
         self._newline()
         self.curline.append("[...]")
         self._newline()
-        print(MAXSIZE_MSGKEEP.format(MAXSIZE, 'unknown'))
+        print((MAXSIZE_MSGKEEP.format(MAXSIZE, 'unknown')))
 
     def _add_indent(self):
         """Set the next indent spacing."""
@@ -169,7 +169,7 @@ class CommandTextVisitor(JDCVisitor):
             return
         to_add = {}
         i = 0
-        for key, obj in node.definition.entites.items():
+        for key, obj in list(node.definition.entites.items()):
             i += 1
             if i > MAXSIZE:
                 self._break()
@@ -182,7 +182,7 @@ class CommandTextVisitor(JDCVisitor):
         if numb > 0 and icount > 0:
             self._newline()
         i = 0
-        for key, obj in to_add.items():
+        for key, obj in list(to_add.items()):
             mc = obj(obj.defaut, key, parent=node)
             mc.accept(self)
             if i + 1 < numb:

@@ -50,7 +50,7 @@ class sd_resu_dyna(AsBase):
         REFDColl = self.REFD.get()
         # Convert into a simple python list by looping over the dictionnary
         # keys
-        REFDColl = [REFDColl[i] for i in REFDColl.keys()]
+        REFDColl = [REFDColl[i] for i in list(REFDColl.keys())]
         # assert (True in [Val != None for Val in REFDColl])
         # Check each of the REFD entries, one by one
         for REFDEntry in REFDColl:
@@ -178,7 +178,7 @@ def CheckInterfStat(InterfSName, checker, **args):
         if IsResuDyna(InterfSName):
             CheckResuDyna(InterfSName, checker)
     else:
-        print "A generalized numbering for a static interface reference result! Aborting."
+        print("A generalized numbering for a static interface reference result! Aborting.")
         assert(False)
 
 

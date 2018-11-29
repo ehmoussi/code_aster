@@ -41,7 +41,7 @@ def export_charge(epx, EXCIT, MAILLAGE):
 
     for excit in excit_list:
         concept_charge = excit['CHARGE']
-        if excit.has_key('FONC_MULT'):
+        if 'FONC_MULT' in excit:
             fonction = excit['FONC_MULT']
             nom_fonc_aster = fonction.get_name()
         else:
@@ -50,7 +50,7 @@ def export_charge(epx, EXCIT, MAILLAGE):
         l_link_fonc = False
 
         list_char = recupere_structure(concept_charge)
-        list_char_key = list_char.keys()
+        list_char_key = list(list_char.keys())
         
         liaison_epx=False
         for char in list_char_key:
@@ -63,7 +63,7 @@ def export_charge(epx, EXCIT, MAILLAGE):
         for char in list_char_key:
             if char in ['INFO', 'MODELE','LIAISON_EPX']:
                 continue
-            elif char in cata_charge.keys():
+            elif char in list(cata_charge.keys()):
                 directive = 'CHARGE'
                 cata = cata_charge
                 l_char_fact = True
@@ -86,7 +86,7 @@ def export_charge(epx, EXCIT, MAILLAGE):
                     objet = epx[directive].add_mcfact(type_char)
                 else:
                     objet = epx[directive].get_mcfact(type_char)
-            elif char in cata_liais.keys():
+            elif char in list(cata_liais.keys()):
                 directive = 'LINK'
                 cata = cata_liais
                 objet = epx[directive]
@@ -150,7 +150,7 @@ def export_charge(epx, EXCIT, MAILLAGE):
                     l_cara = []
                     l_vale = []
                     nb_cle = 0
-                    for cle in ch.keys():
+                    for cle in list(ch.keys()):
                         if cle in mot_cle_verif:
                             ind = mot_cle_verif.index(cle)
                             if ch[cle] not in  tolist(vale_verif[ind]):
@@ -166,7 +166,7 @@ def export_charge(epx, EXCIT, MAILLAGE):
                             if cle != cle_aster[0]:
                                 raise Exception('Erreur avec RELA_CINE_BP')
                             cable_bp = ch[cle]
-                            if ch.has_key('TYPE_EPX'):
+                            if 'TYPE_EPX' in ch:
                                 type_epx = ch['TYPE_EPX']
                             else:
                                 type_epx = 'ADHE'
@@ -229,7 +229,7 @@ def recu_val(ch, cata, char, key, mot_cle_epx):
         Récupère la valeur dans le cata.
         ch = 'o' si la clé key est forcément présente
     """
-    if cata[char].has_key(key):
+    if key in cata[char]:
         if type(cata[char][key]) is dict:
             if mot_cle_epx is None:
                 raise Exception("""Cas non prévu : pas de dictionnaire
@@ -344,10 +344,10 @@ def tabRelaToEpx(nomchar, concept_charge, mot_cle_epx, MAILLAGE):
     donnees_liaisons = __table.EXTR_TABLE()
     DETRUIRE(CONCEPT=_F(NOM=__table))
     
-    nb_termes = donnees_liaisons.NB_TERME.values()
-    noeuds    = donnees_liaisons.NOEUD.values()
-    comps     = donnees_liaisons.COMP.values()
-    coefs     = donnees_liaisons.COEF.values()
+    nb_termes = list(donnees_liaisons.NB_TERME.values())
+    noeuds    = list(donnees_liaisons.NOEUD.values())
+    comps     = list(donnees_liaisons.COMP.values())
+    coefs     = list(donnees_liaisons.COEF.values())
 
     nb_rela = 0
     list_bloc = []

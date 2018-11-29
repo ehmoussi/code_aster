@@ -20,7 +20,7 @@
 # person_in_charge: josselin.delmas at edf.fr
 
 cata_msg = {
-    1: _(u"""
+    1: _("""
 MATR_ASSE et MATR_ASSE_GENE absents.
 """),
 

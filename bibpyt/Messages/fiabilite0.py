@@ -20,7 +20,7 @@
 # person_in_charge: josselin.delmas at edf.fr
 
 cata_msg = {
-    1: _(u"""
+    1: _("""
 Le nombre d'éléments du mot clé MATRICE doit être égal à : %(i1)d
 """),
 

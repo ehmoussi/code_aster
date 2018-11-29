@@ -96,7 +96,7 @@ class MissCmdeGenerator(object):
             dtmp = tempfile.mkdtemp(prefix=self.param["PROJET"] + '_')
             open(osp.join(dtmp, 'command'), 'wb').write(text)
             open(osp.join(dtmp, 'para'), 'wb').write(pformat(self.param))
-            print '#dbg command file:', osp.join(dtmp, 'command')
+            print('#dbg command file:', osp.join(dtmp, 'command'))
         return text
 
     def build_data(self):

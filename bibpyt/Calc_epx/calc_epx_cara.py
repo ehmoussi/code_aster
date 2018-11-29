@@ -50,8 +50,8 @@ def bloc_cara(typ_carel, l_elem, epx, group, select, directive, mot_cle_aster,
         for i_dic, sele in enumerate(select):
             # sélection de la bonne traduction
             good_trad = True
-            for cle in sele.keys():
-                if elem.has_key(cle):
+            for cle in list(sele.keys()):
+                if cle in elem:
                     if sele[cle] is not None:
                         valcle = elem[cle]
                         if type(elem[cle]) is list or type(elem[cle]) is tuple:
@@ -64,10 +64,10 @@ def bloc_cara(typ_carel, l_elem, epx, group, select, directive, mot_cle_aster,
                 continue
             # la traduction est sélectionnée
             mot_cle_ok = []
-            mot_cle_ok.extend(sele.keys())
+            mot_cle_ok.extend(list(sele.keys()))
             if mot_cle_aster[i_dic]:
                 # le mot-clé est présent en tant que mot-clé
-                if elem.has_key(mot_cle_aster[i_dic]):
+                if mot_cle_aster[i_dic] in elem:
                     val_cle = elem[mot_cle_aster[i_dic]]*coef_mult[i_dic]
                     vale = []
                     cara = []
@@ -135,8 +135,8 @@ def bloc_cara(typ_carel, l_elem, epx, group, select, directive, mot_cle_aster,
 #           verif des mots-clés autorisés
             mc_verif = []
             if verif[i_dic]:
-                mc_verif = verif[i_dic].keys()
-            for key in elem.keys():
+                mc_verif = list(verif[i_dic].keys())
+            for key in list(elem.keys()):
                 if key in mot_cle_ok:
                     continue
                 elif key in mot_cle_ignor:
@@ -156,7 +156,7 @@ def bloc_cara(typ_carel, l_elem, epx, group, select, directive, mot_cle_aster,
                         if car in l_cara:
                             cara[i] = None
                             continue
-                        if not dic_gr_cara_supp.has_key(group):
+                        if group not in dic_gr_cara_supp:
                             UTMESS(
                                 'F', 'PLEXUS_12', valk=(car, typ_carel, group))
                         if not car in dic_gr_cara_supp[group]:
@@ -171,10 +171,10 @@ def bloc_cara(typ_carel, l_elem, epx, group, select, directive, mot_cle_aster,
                 vale.remove(None)
             #
             if verif[i_dic]:
-                for mc_aster in verif[i_dic].keys():
+                for mc_aster in list(verif[i_dic].keys()):
                     if verif[i_dic][mc_aster] is None:
                         continue
-                    elif elem.has_key(mc_aster):
+                    elif mc_aster in elem:
                         if elem[mc_aster] not in verif[i_dic][mc_aster]:
                             liste_ok = ', '.join(verif[i_dic][mc_aster])
                             UTMESS('F', 'PLEXUS_4', valk=(typ_carel, mc_aster,
@@ -204,7 +204,7 @@ def bloc_cara(typ_carel, l_elem, epx, group, select, directive, mot_cle_aster,
                                 cara=l_cara, vale=l_vale, titre=titre_select)
     epx[directive_select].add_bloc(bloc_donnees)
     if mode_epx_select is not None:
-        if not mode_from_cara.has_key(group):
+        if group not in mode_from_cara:
             mode_from_cara[group] = mode_epx_select
         else:
             if mode_from_cara[group] != mode_epx_select:
@@ -233,11 +233,11 @@ def export_cara(cle, epx, donnees_cle, MAILLAGE, CARA_ELEM,
         for elem in donnees_cle:
             l_group = get_group_ma(elem, mcfact='AFFE_CARA_ELEM/' + cle)
             for group in l_group:
-                if not group in dic_gr_donnees.keys():
+                if not group in list(dic_gr_donnees.keys()):
                     dic_gr_donnees[group] = []
                 dic_gr_donnees[group].append(elem)
 
-        for group in dic_gr_donnees.keys():
+        for group in list(dic_gr_donnees.keys()):
             l_elem = dic_gr_donnees[group]
             epx, mode_from_cara = bloc_cara(cle, l_elem, epx, group,
                                             select, directive, mot_cle_aster, mot_cle_epx,
@@ -273,7 +273,7 @@ def export_cara(cle, epx, donnees_cle, MAILLAGE, CARA_ELEM,
             # info complementaire de modelisation
             index = mot_cle_aster[0].index(car)
             if mode_epx[0][index] is not None:
-                if not mode_from_cara.has_key(group_ma_poi1):
+                if group_ma_poi1 not in mode_from_cara:
                     mode_from_cara[group_ma_poi1] = mode_epx[0][index]
                 else:
                     if mode_from_cara[group_ma_poi1] != mode_epx[0][index]:
@@ -281,7 +281,7 @@ def export_cara(cle, epx, donnees_cle, MAILLAGE, CARA_ELEM,
                             'Une modélisation existe déjà pour le groupe %s dans mode_from_cara' % group_ma_poi1)
 
 
-        if not dic_gr_cara_supp.has_key(group_ma_poi1):
+        if group_ma_poi1 not in dic_gr_cara_supp:
             UTMESS('F', 'PLEXUS_12', valk=('NKFT ou NFAT', cle, group_ma_poi1))
         for car in l_cara:
             if car.startswith('NF'):
@@ -291,8 +291,8 @@ def export_cara(cle, epx, donnees_cle, MAILLAGE, CARA_ELEM,
         ressorts, amorts = CARA_ELEM.toEPX()
         crea_gr_ma = []
         li_mailles = []
-        li_mailles.extend(ressorts.keys())
-        li_mailles.extend(amorts.keys())
+        li_mailles.extend(list(ressorts.keys()))
+        li_mailles.extend(list(amorts.keys()))
         li_mailles = list(set(li_mailles))
 
         for maille in li_mailles:
@@ -303,7 +303,7 @@ def export_cara(cle, epx, donnees_cle, MAILLAGE, CARA_ELEM,
                 continue
             #
             group_ma = 'G_%s' % maille
-            if not MApyt.gma.has_key(string.rstrip(group_ma)):
+            if string.rstrip(group_ma) not in MApyt.gma:
                 crea_gr_ma.append({"MAILLE": maille, "NOM": group_ma})
             else:
                 UTMESS('A', 'PLEXUS_35', valk=(group_ma, maille))
@@ -360,10 +360,10 @@ def get_FONC_PARASOL(epx, FONC_PARASOL, dic_gr_cara_supp):
     for inst_fonc in list_FONC_PARASOL:
         dic_gr = {}
         for cle in cles:
-            if inst_fonc.has_key(cle):
+            if cle in inst_fonc:
                 fonction = inst_fonc[cle]
                 nom_aster = fonction.get_name()
-                if not nom_aster in dic_fonc.keys():
+                if not nom_aster in list(dic_fonc.keys()):
                     ifonc += 1
                     dic_fonc[nom_aster] = ifonc
                     (temps, valeurs) = fonction.Valeurs()
@@ -375,7 +375,7 @@ def get_FONC_PARASOL(epx, FONC_PARASOL, dic_gr_cara_supp):
         for gr in l_gr_ma:
             if gr in l_group:
                 UTMESS('F', 'PLEXUS_41', valk=gr)
-            if dic_gr_cara_supp.has_key(gr):
+            if gr in dic_gr_cara_supp:
                 dic_gr_cara_supp[gr].update(dic_gr)
             else:
                 dic_gr_cara_supp[gr] = dic_gr
@@ -391,7 +391,7 @@ def recu_cara_cata(cle):
         catalogue cata_cara_elem pour la clé 'cle'.
     """
 
-    if not cata_cara_elem.has_key(cle):
+    if cle not in cata_cara_elem:
         UTMESS('F', 'PLEXUS_44', valk=cle)
     select = []
     titre = []
@@ -410,37 +410,37 @@ def recu_cara_cata(cle):
         directive.append(dic['DIRECTIVE'])
         mot_cle_epx.append(dic['MOT_CLE_EPX'])
 
-        if dic.has_key('MOT_CLE_ASTER'):
+        if 'MOT_CLE_ASTER' in dic:
             mot_cle_aster.append(dic['MOT_CLE_ASTER'])
             cara_aster.append(None)
-            if dic.has_key('IS_VALE_ASTER'):
+            if 'IS_VALE_ASTER' in dic:
                 is_vale_aster.append(dic['IS_VALE_ASTER'])
             else:
                 is_vale_aster.append(None)
         else:
             mot_cle_aster.append(None)
-            if dic.has_key('CARA_ASTER'):
+            if 'CARA_ASTER' in dic:
                 cara_aster.append(dic['CARA_ASTER'])
             else:
                 raise Exception('MOT_CLE_ASTER absent => CARA_ASTER  présent')
-        if dic.has_key('CARA_EPX'):
+        if 'CARA_EPX' in dic:
             cara_epx.append(dic['CARA_EPX'])
         else:
             cara_epx.append(None)
-        if dic.has_key('COEF_MULT'):
+        if 'COEF_MULT' in dic:
             coef_mult.append(dic['COEF_MULT'])
         else:
-            if dic.has_key('CARA_EPX'):
+            if 'CARA_EPX' in dic:
                 co = [1.]*len(dic['CARA_EPX'])
                 coef_mult.append(co)
             else:
                 coef_mult.append(1.)
 
-        if dic.has_key('MODE_EPX'):
+        if 'MODE_EPX' in dic:
             mode_epx.append(dic['MODE_EPX'])
         else:
             mode_epx.append(None)
-        if dic.has_key('VERIF'):
+        if 'VERIF' in dic:
             verif.append(dic['VERIF'])
         else:
             verif.append(None)

@@ -22,7 +22,7 @@
 
 from Noyau import N_OPER
 from Build import B_ENTITE
-import A_ETAPE
+from . import A_ETAPE
 
 
 class OPER(N_OPER.OPER, B_ENTITE.ENTITE):

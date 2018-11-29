@@ -22,10 +22,10 @@
 # La classe InterfaceModifStruct dirige les objets graphiques
 #
 
-import tkFont
-from Tkinter import Frame, Toplevel
-from Tkinter import Label, Button, Entry, Checkbutton
-from Tkinter import StringVar, IntVar
+import tkinter.font
+from tkinter import Frame, Toplevel
+from tkinter import Label, Button, Entry, Checkbutton
+from tkinter import StringVar, IntVar
 
 
 from Calc_essai.outils_ihm import ModeFreqList, SelectionNoeuds, DispFRFDialogue
@@ -68,8 +68,8 @@ class InterfaceModifStruct(Frame):
         self.modifstruct = CalcEssaiModifStruct(
             macro, ce_objects, self.mess, outputs)
         self.main = self
-        self.font1 = tkFont.Font(family='Helvetica', size=16)
-        self.font2 = tkFont.Font(family='Helvetica', size=14)
+        self.font1 = tkinter.font.Font(family='Helvetica', size=16)
+        self.font2 = tkinter.font.Font(family='Helvetica', size=14)
         self.interface_modifstruct()
 
     def setup(self):
@@ -198,7 +198,7 @@ class InterfaceExpansion(Frame):
             "LMME": "Expansion statique projetee",
         }
 
-        self.menu_condens_meth = MyMenu(f, self.dic_condens_meth.keys(),
+        self.menu_condens_meth = MyMenu(f, list(self.dic_condens_meth.keys()),
                                         self.condens_meth,
                                         self.condens_changed)
         self.menu_condens_meth.grid(row=3, column=1, sticky='ew')
@@ -307,7 +307,7 @@ class InterfaceExpansion(Frame):
         obj_dict = CONTEXT.get_current_step().get_contexte_courant()
         modsup = self.var_modl_sup.get()
         # choix des matrices de raideur assemblees de ce modele support
-        mat_asse = self.root.objects.matrices.items()
+        mat_asse = list(self.root.objects.matrices.items())
         mat_rigi = []
         for name, obj in mat_asse:
             LIME = obj.sdj.LIME.get()
@@ -397,8 +397,8 @@ class InterfaceExpansion(Frame):
         objects = self.modif_struct.objects
         matr_rig = objects.get_matr(self.var_raid_name.get())
         if matr_rig == None:
-            disp_mess((u"Il faut selectionner une matrice raideur "
-                       u"parmi celles proposées!"))
+            disp_mess(("Il faut selectionner une matrice raideur "
+                       "parmi celles proposées!"))
             retour = False
         else:
             self.modif_struct.set_stiffness_matrix(matr_rig)
@@ -613,7 +613,7 @@ class InterfaceCouplage(Frame):
 
         Label(f5, text="Critere").grid(row=1, column=0, sticky='w')
         self.mac_meth = StringVar()
-        self.menu_mac_meth = MyMenu(f5, self.dic_mac_meth.keys(),
+        self.menu_mac_meth = MyMenu(f5, list(self.dic_mac_meth.keys()),
                                     self.mac_meth,
                                     self.mac_changed)
         self.menu_mac_meth.grid(row=1, column=1, sticky='e')
@@ -704,16 +704,16 @@ class InterfaceCouplage(Frame):
 
         modes_ide = expans.liste_exp.get_selection()
         if not modes_ide:
-            disp_mess(u"Il faut sélectionner des modes "
-                      u"du modèle experimental pour la condensation")
+            disp_mess("Il faut sélectionner des modes "
+                      "du modèle experimental pour la condensation")
             retour = False
         else:
             self.modif_struct.set_modes_ide(modes_ide)
 
         modes_expansion = [int(m) for m in expans.liste_sup.get_selection()]
         if not modes_expansion:
-            disp_mess(u"Il faut sélectionner des modes "
-                      u"de la base d'expansion pour la condensation")
+            disp_mess("Il faut sélectionner des modes "
+                      "de la base d'expansion pour la condensation")
             retour = False
         else:
             self.modif_struct.set_modes_expansion(modes_expansion)

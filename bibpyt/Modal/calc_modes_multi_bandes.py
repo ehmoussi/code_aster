@@ -61,22 +61,22 @@ def calc_modes_multi_bandes( self, SOLVEUR_MODAL, SOLVEUR,
 
     # Recuperation parametres solveur lineaire
     dSolveur = SOLVEUR[0].cree_dict_valeurs(SOLVEUR[0].mc_liste)
-    for i in dSolveur.keys():
+    for i in list(dSolveur.keys()):
         if dSolveur[i] == None:
             del dSolveur[i]
-    if dSolveur.has_key('TYPE_RESU'):  # because TYPE_RESU is a keyword with a 'global' position
+    if 'TYPE_RESU' in dSolveur:  # because TYPE_RESU is a keyword with a 'global' position
         del dSolveur['TYPE_RESU']
-    if dSolveur.has_key('OPTION'):    # because OPTION is a keyword with a 'global' position
+    if 'OPTION' in dSolveur:    # because OPTION is a keyword with a 'global' position
         del dSolveur['OPTION']
-    if dSolveur.has_key('FREQ'):      # because FREQ can be a keyword with a 'global' position
+    if 'FREQ' in dSolveur:      # because FREQ can be a keyword with a 'global' position
         del dSolveur['FREQ']
     solveur_lineaire = dSolveur.get('METHODE').strip()
     dSolveur_infomode = dSolveur
     # pour INFO_MODE, le mot-clé facteur SOLVEUR ne doit pas contenir les
     # mot-clés POSTTRAITEMENTS et RESI_RELA
-    if dSolveur_infomode.has_key('POSTTRAITEMENTS'):
+    if 'POSTTRAITEMENTS' in dSolveur_infomode:
         del dSolveur_infomode['POSTTRAITEMENTS']
-    if dSolveur_infomode.has_key('RESI_RELA'):
+    if 'RESI_RELA' in dSolveur_infomode:
         del dSolveur_infomode['RESI_RELA']
 
     nompro = None
@@ -232,36 +232,36 @@ def calc_modes_multi_bandes( self, SOLVEUR_MODAL, SOLVEUR,
 
             OPTION = 'SANS'  # option for detecting rigid body modes
             if METHODE == 'TRI_DIAG':
-                if args.has_key('NMAX_ITER_ORTHO'):
+                if 'NMAX_ITER_ORTHO' in args:
                     motscit['NMAX_ITER_ORTHO'] = SOLVEUR_MODAL[
                         'NMAX_ITER_ORTHO']
-                if args.has_key('PREC_ORTHO'):
+                if 'PREC_ORTHO' in args:
                     motscit['PREC_ORTHO'] = SOLVEUR_MODAL['PREC_ORTHO']
-                if args.has_key('PREC_LANCZOS'):
+                if 'PREC_LANCZOS' in args:
                     motscit['PREC_LANCZOS'] = SOLVEUR_MODAL['PREC_LANCZOS']
-                if args.has_key('MAX_ITER_QR'):
+                if 'MAX_ITER_QR' in args:
                     motscit['NMAX_ITER_QR'] = SOLVEUR_MODAL['NMAX_ITER_QR']
                     if SOLVEUR_MODAL['MODE_RIGIDE'] == 'OUI':
                         OPTION = 'MODE_RIGIDE'
             elif METHODE == 'JACOBI':
-                if args.has_key('NMAX_ITER_BATHE'):
+                if 'NMAX_ITER_BATHE' in args:
                     motscit['NMAX_ITER_BATHE'] = SOLVEUR_MODAL[
                         'NMAX_ITER_BATHE']
-                if args.has_key('PREC_BATHE'):
+                if 'PREC_BATHE' in args:
                     motscit['PREC_BATHE'] = SOLVEUR_MODAL['PREC_BATHE']
-                if args.has_key('NMAX_ITER_JACOBI'):
+                if 'NMAX_ITER_JACOBI' in args:
                     motscit['NMAX_ITER_JACOBI'] = SOLVEUR_MODAL[
                         'NMAX_ITER_JACOBI']
-                if args.has_key('PREC_JACOBI'):
+                if 'PREC_JACOBI' in args:
                     motscit['PREC_JACOBI'] = SOLVEUR_MODAL['PREC_JACOBI']
             elif METHODE == 'SORENSEN':
-                if args.has_key('NMAX_ITER_SOREN'):
+                if 'NMAX_ITER_SOREN' in args:
                     motscit['NMAX_ITER_SOREN'] = SOLVEUR_MODAL[
                         'NMAX_ITER_SOREN']
-                if args.has_key('PARA_ORTHO_SOREN'):
+                if 'PARA_ORTHO_SOREN' in args:
                     motscit['PARA_ORTHO_SOREN'] = SOLVEUR_MODAL[
                         'PARA_ORTHO_SOREN']
-                if args.has_key('PREC_SOREN'):
+                if 'PREC_SOREN' in args:
                     motscit['PREC_SOREN'] = SOLVEUR_MODAL['PREC_SOREN']
             elif METHODE == 'QZ':
                 motscit['TYPE_QZ'] = SOLVEUR_MODAL['TYPE_QZ']

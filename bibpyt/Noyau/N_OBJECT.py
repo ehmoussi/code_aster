@@ -24,8 +24,8 @@
     Ce module contient la classe OBJECT classe mère de tous les objets
     servant à controler les valeurs par rapport aux définitions
 """
-from N_CR import CR
-from strfunc import ufmt
+from .N_CR import CR
+from .strfunc import ufmt
 
 
 class OBJECT:
@@ -131,8 +131,8 @@ class ErrorObj(OBJECT):
     def report(self):
         """ génère le rapport de validation de self """
         self.cr = CR()
-        self.cr.debut = u"Mot-clé invalide : " + self.nom
-        self.cr.fin = u"Fin Mot-clé invalide : " + self.nom
-        self.cr.fatal(_(u"Type non autorisé pour le mot-clé %s : '%s'"),
+        self.cr.debut = "Mot-clé invalide : " + self.nom
+        self.cr.fin = "Fin Mot-clé invalide : " + self.nom
+        self.cr.fatal(_("Type non autorisé pour le mot-clé %s : '%s'"),
                       self.nom, self.valeur)
         return self.cr

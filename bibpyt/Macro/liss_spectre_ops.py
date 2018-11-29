@@ -34,7 +34,7 @@ def recu_val(tab, para, stop=0, typ=None):
         les None + un strip pour les chaines de caracteres
     """
     if para in tab.para:
-        lival = tab.values()[para]
+        lival = list(tab.values())[para]
         if typ=='K':
             lival = [i.strip() for i in lival if i != None]
         else:
@@ -176,7 +176,7 @@ def liss_spectre_ops(
             
                     if list_defi_fonc != []:
                         dir_pl = '%s_%s'%(dire,pl)
-                        if not dir_pl in dic_dir_planchers.keys():
+                        if not dir_pl in list(dic_dir_planchers.keys()):
                             dic_dir_planchers[dir_pl] = {'liste_nappes' : [],
                                                          'batiment' : 'inconnu',
                                                          'commentaire' : 'pas de commentaire',
@@ -219,7 +219,7 @@ def liss_spectre_ops(
                 nb_freq_max=nb_freq
             
             dir_pl = '%s_%s'%(dire,pl)
-            if not dir_pl in dic_dir_planchers.keys():
+            if not dir_pl in list(dic_dir_planchers.keys()):
                 dic_dir_planchers[dir_pl] = {'liste_nappes' : [],
                                              'batiment' : 'inconnu',
                                              'commentaire' : 'pas de commentaire',
@@ -239,7 +239,7 @@ def liss_spectre_ops(
     
     
     unite = get_unite_libre()
-    for dir_pl in  dic_dir_planchers.keys():
+    for dir_pl in  list(dic_dir_planchers.keys()):
         dico = dic_dir_planchers[dir_pl]
         motscles = {}
         if NB_FREQ_LISS is not None:

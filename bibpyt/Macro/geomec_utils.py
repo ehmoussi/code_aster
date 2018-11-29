@@ -217,7 +217,7 @@ def verif_essais(COMPORTEMENT,
             char = "<PRES_CONF>, <EPSI_IMPOSE>"
             test = len(DicoEssai['PRES_CONF']) == len(DicoEssai['EPSI_IMPOSE'])
             
-            if DicoEssai.has_key('TABLE_RESU'):
+            if 'TABLE_RESU' in DicoEssai:
             
                 char += ", <TABLE_RESU>"
                 
@@ -229,7 +229,7 @@ def verif_essais(COMPORTEMENT,
 
             # on s'assure que tous les PRES_CONF et EPSI_IMPOSE sont bien > 0.
             # ------------------------------------------------------------------------
-            for i in xrange(len(DicoEssai['PRES_CONF'])):
+            for i in range(len(DicoEssai['PRES_CONF'])):
             
                 if DicoEssai['PRES_CONF'][i] <= 0.:
                 
@@ -269,7 +269,7 @@ def verif_essais(COMPORTEMENT,
             char = "<PRES_CONF>, <EPSI_IMPOSE>"
             test = len(DicoEssai['PRES_CONF']) == len(DicoEssai['EPSI_IMPOSE'])
             
-            if DicoEssai.has_key('TABLE_RESU'):
+            if 'TABLE_RESU' in DicoEssai:
             
                 char += ", <TABLE_RESU>"
                 test = test and\
@@ -282,7 +282,7 @@ def verif_essais(COMPORTEMENT,
 
             # on s'assure que tous les PRES_CONF et EPSI_IMPOSE sont bien > 0.
             # ------------------------------------------------------------------------
-            for i in xrange(len(DicoEssai['PRES_CONF'])):
+            for i in range(len(DicoEssai['PRES_CONF'])):
             
                 if DicoEssai['PRES_CONF'][i] == 0.:
                 
@@ -328,7 +328,7 @@ def verif_essais(COMPORTEMENT,
 
             # coherence du nbre de TABLE_RESU avec le nbre de PRES_CONF
             # ------------------------------------------------------------------------
-            if DicoEssai.has_key('TABLE_RESU'):
+            if 'TABLE_RESU' in DicoEssai:
             
                 n1 = len(DicoEssai['PRES_CONF'])
                 n2 = len(DicoEssai['TABLE_RESU'])
@@ -398,7 +398,7 @@ def verif_essais(COMPORTEMENT,
 
             # coherence du nbre de TABLE_RESU avec le nbre de PRES_CONF
             # ------------------------------------------------------------------------
-            if DicoEssai.has_key('TABLE_RESU'):
+            if 'TABLE_RESU' in DicoEssai:
             
                 n1 = len(DicoEssai['PRES_CONF'])
                 n2 = len(DicoEssai['TABLE_RESU'])
@@ -528,7 +528,7 @@ def verif_essais(COMPORTEMENT,
 
             # coherence du nbre de TABLE_RESU avec le nbre de PRES_CONF
             # ------------------------------------------------------------------------
-            if DicoEssai.has_key('TABLE_RESU'):
+            if 'TABLE_RESU' in DicoEssai:
             
                 n1 = len(DicoEssai['PRES_CONF'])
                 n2 = len(DicoEssai['TABLE_RESU'])
@@ -615,7 +615,7 @@ def verif_essais(COMPORTEMENT,
 
             # coherence du nbre de TABLE_RESU avec le nbre de PRES_CONF
             # ------------------------------------------------------------------------
-            if DicoEssai.has_key('TABLE_RESU'):
+            if 'TABLE_RESU' in DicoEssai:
             
                 n1 = len(DicoEssai['PRES_CONF'])
                 n2 = len(DicoEssai['TABLE_RESU'])
@@ -699,7 +699,7 @@ def verif_essais(COMPORTEMENT,
             char = "<PRES_CONF>, <SIGM_DECH>"
             test = len(DicoEssai['PRES_CONF']) == len(DicoEssai['SIGM_DECH'])
             
-            if DicoEssai.has_key('TABLE_RESU'):
+            if 'TABLE_RESU' in DicoEssai:
             
                 char += ", <TABLE_RESU>"
                 test = test and\
@@ -788,7 +788,7 @@ def verif_essais(COMPORTEMENT,
             char = "<PRES_CONF>, <SIGM_DECH>"
             test = len(DicoEssai['PRES_CONF']) == len(DicoEssai['SIGM_DECH'])
             
-            if DicoEssai.has_key('TABLE_RESU'):
+            if 'TABLE_RESU' in DicoEssai:
             
                 char += ", <TABLE_RESU>"
                 test = test and\
@@ -856,7 +856,7 @@ def verif_essais(COMPORTEMENT,
     # --------------------------------------------------------------
     for DicoEssai in List_essais:
     
-        if DicoEssai.has_key('TABLE_REF'):
+        if 'TABLE_REF' in DicoEssai:
         
             for table_tmp in DicoEssai['TABLE_REF']:
 
@@ -1299,7 +1299,7 @@ def impr_graphique(self, DicoEssai, Courbes, NomsFich,
     
     # Recuperation des options d'impression
     # -----------------------------------------
-    if DicoEssai.has_key('PREFIXE_FICHIER'):
+    if 'PREFIXE_FICHIER' in DicoEssai:
        prefixe= DicoEssai['PREFIXE_FICHIER']
     else:
        prefixe= None
@@ -1310,7 +1310,7 @@ def impr_graphique(self, DicoEssai, Courbes, NomsFich,
     #    hors de ce domaine de validite...
     # ------------------------------------------
     unite = None
-    for iul in xrange(10, 90+1):
+    for iul in range(10, 90+1):
         __ULINFO = INFO_EXEC_ASTER(LISTE_INFO='ETAT_UNITE', UNITE=iul)
         if __ULINFO['ETAT_UNITE', 1] == 'FERME   ':
             unite = iul
@@ -1338,7 +1338,7 @@ def impr_graphique(self, DicoEssai, Courbes, NomsFich,
         # superposition aux resultats
         # des courbes issues de TABLE_REF
         # ------------------------------------------
-        if DicoEssai.has_key('TABLE_REF'):
+        if 'TABLE_REF' in DicoEssai:
         
            for table_tmp in DicoEssai['TABLE_REF']:
             
@@ -1365,7 +1365,7 @@ def impr_graphique(self, DicoEssai, Courbes, NomsFich,
                      FICHIER   ='./%s' %('tmp_%d' %(number),),
                      UNITE     =unite,)
 
-        if Ech_x.has_key(cle) and Ech_y.has_key(cle):
+        if cle in Ech_x and cle in Ech_y:
 
             IMPR_FONCTION(FORMAT='XMGRACE', UNITE=unite,
                           COURBE   =curve,
@@ -1434,14 +1434,14 @@ def remplir_tables(self, typ_essai, str_n_essai, DicoEssai, Resu_in):
     from Accas import _F
     from numpy import array
     
-    if DicoEssai.has_key('TABLE_RESU'):
+    if 'TABLE_RESU' in DicoEssai:
 
         CREA_TABLE = self.get_cmd('CREA_TABLE')
         
         # Recuperation des variables supplementaires a imprimer
         # (si existantes) contenues sous le mot-cle 'NOM_CMP'
         # -----------------------------------------------------------
-        if DicoEssai.has_key('NOM_CMP'):
+        if 'NOM_CMP' in DicoEssai:
 
            List_Resu_Supp = list(DicoEssai['NOM_CMP'])
            
@@ -1498,9 +1498,9 @@ def remplir_tables(self, typ_essai, str_n_essai, DicoEssai, Resu_in):
                         message +=\
   '  !                                                               !\n' +\
   '  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
-                      print
-                      print message
-                      print
+                      print()
+                      print(message)
+                      print()
                 
                 TABLRES = CREA_TABLE(TITRE=titre_table,
                                      LISTE=LdicoRes,)
@@ -1554,9 +1554,9 @@ def remplir_tables(self, typ_essai, str_n_essai, DicoEssai, Resu_in):
                         message +=\
   '  !                                                               !\n' +\
   '  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
-                      print
-                      print message
-                      print
+                      print()
+                      print(message)
+                      print()
                 
                 TABLRES = CREA_TABLE(TITRE=titre_table,
                                      LISTE=LdicoRes,)
@@ -1616,9 +1616,9 @@ def remplir_tables(self, typ_essai, str_n_essai, DicoEssai, Resu_in):
                            message +=\
   '  !                                                               !\n' +\
   '  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
-                         print
-                         print message
-                         print
+                         print()
+                         print(message)
+                         print()
                         
                 TABLRES = CREA_TABLE(TITRE=titre_table, LISTE=(LdicoRes))
 
@@ -1713,9 +1713,9 @@ def remplir_tables(self, typ_essai, str_n_essai, DicoEssai, Resu_in):
                            message +=\
   '  !                                                               !\n' +\
   '  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
-                         print
-                         print message
-                         print
+                         print()
+                         print(message)
+                         print()
                         
                 TABLRES = CREA_TABLE(TITRE=titre_table, LISTE=(LdicoRes))
 
@@ -1809,9 +1809,9 @@ def remplir_tables(self, typ_essai, str_n_essai, DicoEssai, Resu_in):
                            message +=\
   '  !                                                               !\n' +\
   '  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
-                         print
-                         print message
-                         print
+                         print()
+                         print(message)
+                         print()
                 
                 TABLRES = CREA_TABLE(TITRE=titre_table, LISTE=(LdicoRes))
                 
@@ -1913,9 +1913,9 @@ def remplir_tables(self, typ_essai, str_n_essai, DicoEssai, Resu_in):
                            message +=\
   '  !                                                               !\n' +\
   '  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
-                         print
-                         print message
-                         print
+                         print()
+                         print(message)
+                         print()
                         
                 TABLRES = CREA_TABLE(TITRE=titre_table, LISTE=(LdicoRes))
 
@@ -1997,9 +1997,9 @@ def remplir_tables(self, typ_essai, str_n_essai, DicoEssai, Resu_in):
                        message +=\
   '  !                                                               !\n' +\
   '  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
-                     print
-                     print message
-                     print
+                     print()
+                     print(message)
+                     print()
                     
                 # si il n'y a aucun resultat ds LdicoRes on cree une table vide
                 # ----------------------------------------------------------
@@ -2229,7 +2229,7 @@ def essai_TRIA_ND_C_D_mono(self, inst_init, sigm, epsi, vari, DicoEssai,
     if sinusoidal:
        
        abscisse = [inst_init +\
-                   inst_epsi*k/3./nombre for k in xrange(3*nombre+1)]
+                   inst_epsi*k/3./nombre for k in range(3*nombre+1)]
        
        # absc_cos varie de 0 a Pi sur l'intervalle
        # [inst_init ; inst_init+inst_epsi]
@@ -2301,10 +2301,10 @@ def essai_TRIA_ND_C_D_mono(self, inst_init, sigm, epsi, vari, DicoEssai,
                       
         VARI_INIT= _F(VALE=vari,),);
 
-    except aster.error, message:
+    except aster.error as message:
    
-      print '\n   !!!(@_@)!!! Arret pour la raison suivante !!!(@_@)!!!\n%s'\
-            %(message)
+      print('\n   !!!(@_@)!!! Arret pour la raison suivante !!!(@_@)!!!\n%s'\
+            %(message))
                      
       calc_ok = False
       __EVOLM = self.get_last_concept()

@@ -83,11 +83,11 @@ def ouvFiss(DIR_FISS, beta, Xa, Ya, Xb, Yb):
     from math import sin, cos, sqrt, radians
 
     if DIR_FISS == 'X':
-        Ouv = map(lambda y1, y2: abs(y2 - y1), Ya, Yb)
-        Gli = map(lambda x1, x2: abs(x2 - x1), Xa, Xb)
+        Ouv = list(map(lambda y1, y2: abs(y2 - y1), Ya, Yb))
+        Gli = list(map(lambda x1, x2: abs(x2 - x1), Xa, Xb))
     elif DIR_FISS == 'Y':
-        Ouv = map(lambda x1, x2: abs(x2 - x1), Xa, Xb)
-        Gli = map(lambda y1, y2: abs(y2 - y1), Ya, Yb)
+        Ouv = list(map(lambda x1, x2: abs(x2 - x1), Xa, Xb))
+        Gli = list(map(lambda y1, y2: abs(y2 - y1), Ya, Yb))
     else:
         xi = (Xa[0] + Xb[0]) * 0.5
         yi = (Ya[0] + Yb[0]) * 0.5
@@ -103,8 +103,8 @@ def ouvFiss(DIR_FISS, beta, Xa, Ya, Xb, Yb):
                for (x, y) in zip(Xb, Yb)]
         Yb2 = [-x * sin(radians(beta)) + y * cos(radians(beta))
                for (x, y) in zip(Xb, Yb)]
-        Ouv = map(lambda x, y: abs(y - x), Ya2, Yb2)
-        Gli = map(lambda x, y: abs(y - x), Xa2, Xb2)
+        Ouv = list(map(lambda x, y: abs(y - x), Ya2, Yb2))
+        Gli = list(map(lambda x, y: abs(y - x), Xa2, Xb2))
     return Ouv, Gli
 
 
@@ -200,28 +200,28 @@ def calc_ecrevisse_ops(self,
     
     # RECUPERATION DES MOTS-CLES FACTEURS
     dRESULTAT = RESULTAT[0].cree_dict_valeurs(RESULTAT[0].mc_liste)
-    for i in dRESULTAT.keys():
+    for i in list(dRESULTAT.keys()):
         if dRESULTAT[i] == None:
             del dRESULTAT[i]
 
     dECOULEMENT = ECOULEMENT[0].cree_dict_valeurs(ECOULEMENT[0].mc_liste)
-    for i in dECOULEMENT.keys():
+    for i in list(dECOULEMENT.keys()):
         if dECOULEMENT[i] == None:
             del dECOULEMENT[i]
 
     dMODELE_ECRE = MODELE_ECRE[0].cree_dict_valeurs(MODELE_ECRE[0].mc_liste)
-    for i in dMODELE_ECRE.keys():
+    for i in list(dMODELE_ECRE.keys()):
         if dMODELE_ECRE[i] == None:
             dMODELE_ECRE[i] = None  # del dMODELE_ECRE[i]
 
     dCONVERGENCE = CONVERGENCE[0].cree_dict_valeurs(CONVERGENCE[0].mc_liste)
-    for i in dCONVERGENCE.keys():
+    for i in list(dCONVERGENCE.keys()):
         if dCONVERGENCE[i] == None:
             del dCONVERGENCE[i]
 
     # INSTANTS
     _l_inst = dRESULTAT['MECANIQUE'].LIST_VARI_ACCES()
-    if dRESULTAT.has_key('INST'):
+    if 'INST' in dRESULTAT:
         Inst_Ecrevisse = dRESULTAT['INST']
     else:
         pass
@@ -244,11 +244,11 @@ def calc_ecrevisse_ops(self,
 
     # ON CREE LES GROUP_NO ORDONNES DES LEVRES DE FISSURE
     #     Liste des noms des groupes de noeuds du maillage :
-    _lgno = map(lambda x: x[0], MODELE_MECA['MAILLAGE'].LIST_GROUP_NO())
+    _lgno = [x[0] for x in MODELE_MECA['MAILLAGE'].LIST_GROUP_NO()]
 
     for k, fissure in enumerate(FISSURE):
         dFISSURE = fissure.cree_dict_valeurs(fissure.mc_liste)
-        for i in dFISSURE.keys():
+        for i in list(dFISSURE.keys()):
             if dFISSURE[i] == None:
                 del dFISSURE[i]
 
@@ -338,14 +338,14 @@ def calc_ecrevisse_ops(self,
                                            OPERATION='EXTRACTION',),)
 
         if (debug):
-            print '_T_DPL ==================================================='
-            print _T_DPL.EXTR_TABLE()
-            print '_T_DPL_B ================================================='
-            print _T_DPL_B.EXTR_TABLE()
-            print '_T_TEMP ================================================='
-            print _T_TEMP.EXTR_TABLE()
-            print '_T_TEMP_B ==============================================='
-            print _T_TEMPB.EXTR_TABLE()
+            print('_T_DPL ===================================================')
+            print(_T_DPL.EXTR_TABLE())
+            print('_T_DPL_B =================================================')
+            print(_T_DPL_B.EXTR_TABLE())
+            print('_T_TEMP =================================================')
+            print(_T_TEMP.EXTR_TABLE())
+            print('_T_TEMP_B ===============================================')
+            print(_T_TEMPB.EXTR_TABLE())
 
         # Extraction des tables Temperatures + deplacement levres fissure
         _tbl_temp = _T_TEMP.EXTR_TABLE()
@@ -357,26 +357,26 @@ def calc_ecrevisse_ops(self,
 
         # --Determination des cotes a donner a ecrevisse--
         #   a partir des resultats mecanique et thermique :
-        _l_tang = _tbl_dpl.values()['ABSC_CURV']
-        _l_tang_b = _tbl_dpl_b.values()['ABSC_CURV']
+        _l_tang = list(_tbl_dpl.values())['ABSC_CURV']
+        _l_tang_b = list(_tbl_dpl_b.values())['ABSC_CURV']
         try:
-            _l_absz_m = map(lambda x, y: 0.5 * (x + y), _l_tang, _l_tang_b)
+            _l_absz_m = list(map(lambda x, y: 0.5 * (x + y), _l_tang, _l_tang_b))
         except TypeError:
             UTMESS('F', 'ECREVISSE0_40')
         #
-        _l_tang_t = _tbl_temp.values()['ABSC_CURV']
-        _l_tang_t_b = _tbl_temp_b.values()['ABSC_CURV']
-        _l_absz_t = map(lambda x, y: 0.5 * (x + y), _l_tang_t, _l_tang_t_b)
+        _l_tang_t = list(_tbl_temp.values())['ABSC_CURV']
+        _l_tang_t_b = list(_tbl_temp_b.values())['ABSC_CURV']
+        _l_absz_t = list(map(lambda x, y: 0.5 * (x + y), _l_tang_t, _l_tang_t_b))
 
        # Coordonnees des points des levres (initiales et a l instant actuel
-        _X0 = _tbl_dpl.values()['COOR_X']
-        _Y0 = _tbl_dpl.values()['COOR_Y']
-        _X0_b = _tbl_dpl_b.values()['COOR_X']
-        _Y0_b = _tbl_dpl_b.values()['COOR_Y']
-        _X = [x + y for (x, y) in zip(_tbl_dpl.values()['DX'], _X0)]
-        _Y = [x + y for (x, y) in zip(_tbl_dpl.values()['DY'], _Y0)]
-        _X_b = [x + y for (x, y) in zip(_tbl_dpl_b.values()['DX'], _X0_b)]
-        _Y_b = [x + y for (x, y) in zip(_tbl_dpl_b.values()['DY'], _Y0_b)]
+        _X0 = list(_tbl_dpl.values())['COOR_X']
+        _Y0 = list(_tbl_dpl.values())['COOR_Y']
+        _X0_b = list(_tbl_dpl_b.values())['COOR_X']
+        _Y0_b = list(_tbl_dpl_b.values())['COOR_Y']
+        _X = [x + y for (x, y) in zip(list(_tbl_dpl.values())['DX'], _X0)]
+        _Y = [x + y for (x, y) in zip(list(_tbl_dpl.values())['DY'], _Y0)]
+        _X_b = [x + y for (x, y) in zip(list(_tbl_dpl_b.values())['DX'], _X0_b)]
+        _Y_b = [x + y for (x, y) in zip(list(_tbl_dpl_b.values())['DY'], _Y0_b)]
 
         # Determination de la direction de la fissure
         (DIR_FISS, DIR_PREV, beta, theta, _xi,
@@ -398,8 +398,7 @@ def calc_ecrevisse_ops(self,
 
         (_l_ouv, _l_gli) = ouvFiss(DIR_FISS, beta, _X, _Y, _X_b, _Y_b)
         if dFISSURE['OUVERT_REMANENTE']:
-            _l_ouv = map(
-                lambda x: max(dFISSURE['OUVERT_REMANENTE'], x), _l_ouv)
+            _l_ouv = [max(dFISSURE['OUVERT_REMANENTE'], x) for x in _l_ouv]
             if info2:
                 nbOuvRem = _l_ouv.count(dFISSURE['OUVERT_REMANENTE'])
                 if nbOuvRem != 0:
@@ -416,9 +415,9 @@ def calc_ecrevisse_ops(self,
 
         # -- Calcul de la temperature sur le materiau (levres de la fissure) --
         #     on fait la moyenne des temperatures des deux levres
-        _l_t2 = _tbl_temp.values()['TEMP']
-        _l_t2_b = _tbl_temp_b.values()['TEMP']
-        _l_temp_aster = map(lambda x, y: 0.5 * (x + y), _l_t2_b, _l_t2)
+        _l_t2 = list(_tbl_temp.values())['TEMP']
+        _l_t2_b = list(_tbl_temp_b.values())['TEMP']
+        _l_temp_aster = list(map(lambda x, y: 0.5 * (x + y), _l_t2_b, _l_t2))
 
         # Infos / Debug : fichier .mess ou .resu
         if (info2):
@@ -430,30 +429,30 @@ def calc_ecrevisse_ops(self,
                    valr=[Inst_Ecrevisse, min(_l_absz_t), max(_l_absz_t), min(_l_temp_aster), max(_l_temp_aster), min(_l_absz_m), max(_l_absz_m), min(_l_ouv), max(_l_ouv), min(_l_gli), max(_l_gli)])
 
         if (debug):
-            print "\n INFORMATIONS DE DEBUG: "
-            print 'Inst_Ecrevisse=', Inst_Ecrevisse
-            print 'theta:', theta
-            print 'beta:', beta
-            print 'DIR_FISS:', DIR_FISS
-            print 'DIR_PREV:', DIR_PREV
-            print 'point initial de la fissure: (xi,yi) :', _xi, _yi
-            print len(_X0),   '_X0  =', _X0
-            print len(_X0_b), '_X0_b=', _X0_b
-            print len(_Y0),   '_Y0  =', _Y0
-            print len(_Y0_b), '_Y0_b=', _Y0_b
-            print len(_X),    '_X   =', _X
-            print len(_Y),    '_Y   =', _Y
-            print len(_X_b),  '_X_b =', _X_b
-            print len(_Y_b),  '_Y_b =', _Y_b
-            print 'Controle sur les abszisses curvilignes (mecaniques/thermiques) '
-            print '_l_absz_m==_l_absz_t?', _l_absz_m == _l_absz_t
-            print '_l_absz_m=', len(_l_absz_m), _l_absz_m
-            print '_l_absz_t=', len(_l_absz_t), _l_absz_t
-            print '_l_temp_aster=', len(_l_temp_aster), _l_temp_aster
-            print '_l_ouv=', len(_l_ouv), _l_ouv
-            print '_l_gli=', len(_l_gli), _l_gli
-            print '_l_tang=', _l_tang
-            print '_l_tang_b=', _l_tang
+            print("\n INFORMATIONS DE DEBUG: ")
+            print('Inst_Ecrevisse=', Inst_Ecrevisse)
+            print('theta:', theta)
+            print('beta:', beta)
+            print('DIR_FISS:', DIR_FISS)
+            print('DIR_PREV:', DIR_PREV)
+            print('point initial de la fissure: (xi,yi) :', _xi, _yi)
+            print(len(_X0),   '_X0  =', _X0)
+            print(len(_X0_b), '_X0_b=', _X0_b)
+            print(len(_Y0),   '_Y0  =', _Y0)
+            print(len(_Y0_b), '_Y0_b=', _Y0_b)
+            print(len(_X),    '_X   =', _X)
+            print(len(_Y),    '_Y   =', _Y)
+            print(len(_X_b),  '_X_b =', _X_b)
+            print(len(_Y_b),  '_Y_b =', _Y_b)
+            print('Controle sur les abszisses curvilignes (mecaniques/thermiques) ')
+            print('_l_absz_m==_l_absz_t?', _l_absz_m == _l_absz_t)
+            print('_l_absz_m=', len(_l_absz_m), _l_absz_m)
+            print('_l_absz_t=', len(_l_absz_t), _l_absz_t)
+            print('_l_temp_aster=', len(_l_temp_aster), _l_temp_aster)
+            print('_l_ouv=', len(_l_ouv), _l_ouv)
+            print('_l_gli=', len(_l_gli), _l_gli)
+            print('_l_tang=', _l_tang)
+            print('_l_tang_b=', _l_tang)
 
 # ----------------------------------------------------------------------------
 #       PREPARATION ET LANCEMENT D ECREVISSE
@@ -512,7 +511,7 @@ def calc_ecrevisse_ops(self,
             except ZeroDivisionError:
                 UTMESS('F', 'ECREVISSE0_42')
 
-            if dFISSURE.has_key('LISTE_COTES_BL'):
+            if 'LISTE_COTES_BL' in dFISSURE:
                 __LISTE_COTES_BL = dFISSURE['LISTE_COTES_BL']
             else:
                 __LISTE_COTES_BL = (0., max(_l_absz_m))
@@ -607,7 +606,7 @@ def calc_ecrevisse_ops(self,
             nb_lignes_table = len(__TABFISS_i["COTES"])
             # Re-definition des cotes utilisateur (on elimine l effet de la
             # tortuosite)
-            _lst_c = __TABFISS_i.COTES.values()
+            _lst_c = list(__TABFISS_i.COTES.values())
             _l_cotes = [x * tort for x in _lst_c]
             dictTab = __TABFISS_i.dict_CREA_TABLE()['LISTE']
 
@@ -785,11 +784,11 @@ def calc_ecrevisse_ops(self,
 
             # Recuperation des valeurs dans la table (voir si il y a plus
             # simple)
-            _lst_c = __TABFISS_i.COTES.values()
-            _lst_f = __TABFISS_i.FLUX.values()
-            _lst_p = __TABFISS_i.PRESSION.values()
-            _lst_t = __TABFISS_i.TEMP.values()
-            _lst_cc = __TABFISS_i.COEF_CONV.values()
+            _lst_c = list(__TABFISS_i.COTES.values())
+            _lst_f = list(__TABFISS_i.FLUX.values())
+            _lst_p = list(__TABFISS_i.PRESSION.values())
+            _lst_t = list(__TABFISS_i.TEMP.values())
+            _lst_cc = list(__TABFISS_i.COEF_CONV.values())
 
             try:
                 a = len(_lst_c)
@@ -1075,23 +1074,23 @@ def calc_ecrevisse_ops(self,
             # ----------------------------------------------------------
 
         if debug:
-            print ('FISSURE-' + str(k + 1))
-            print '_lst_c:', len(_lst_c),        _lst_c
-            print '_lst_f:', len(_lst_f),        _lst_f
-            print '_lst_p:', len(_lst_p),        _lst_p
-            print '_lst_t:',  len(_lst_t),       _lst_t
-            print '_lst_cc:', len(_lst_cc),      _lst_cc
-            print '_lst_x0:', len(_lst_x0),      _lst_x0
-            print '_lst_x0_b :', len(_lst_x0_b), _lst_x0_b
-            print '_lst_y0:', len(_lst_y0),      _lst_y0
-            print '_lst_y0_b :', len(_lst_y0_b), _lst_y0_b
-            print '_tmp1 :', len(_tmp1),     _tmp1
-            print '_tmp2 :', len(_tmp2),     _tmp2
-            print '_tmp3 :', len(_tmp3),     _tmp3
+            print(('FISSURE-' + str(k + 1)))
+            print('_lst_c:', len(_lst_c),        _lst_c)
+            print('_lst_f:', len(_lst_f),        _lst_f)
+            print('_lst_p:', len(_lst_p),        _lst_p)
+            print('_lst_t:',  len(_lst_t),       _lst_t)
+            print('_lst_cc:', len(_lst_cc),      _lst_cc)
+            print('_lst_x0:', len(_lst_x0),      _lst_x0)
+            print('_lst_x0_b :', len(_lst_x0_b), _lst_x0_b)
+            print('_lst_y0:', len(_lst_y0),      _lst_y0)
+            print('_lst_y0_b :', len(_lst_y0_b), _lst_y0_b)
+            print('_tmp1 :', len(_tmp1),     _tmp1)
+            print('_tmp2 :', len(_tmp2),     _tmp2)
+            print('_tmp3 :', len(_tmp3),     _tmp3)
             if (not oldVersion):
-                print '_tmp4 :', len(_tmp4),  _tmp4
-                print '_tmp5 :', len(_tmp5),  _tmp5
-                print '_tmp6 :', len(_tmp6),  _tmp6
+                print('_tmp4 :', len(_tmp4),  _tmp4)
+                print('_tmp5 :', len(_tmp5),  _tmp5)
+                print('_tmp6 :', len(_tmp6),  _tmp6)
 
         # Fin du boucle sur la fissure for k
 

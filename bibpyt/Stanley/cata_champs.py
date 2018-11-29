@@ -47,15 +47,15 @@ class CHAMP:
 
         # Options supplementaires passees a la commande
         if options:
-            for cle in options.keys():
+            for cle in list(options.keys()):
                 para[cle] = options[cle]
 
         # Lancement de la commande
         try:
             CALC_CHAMP(**para)
-        except aster.error, err:
+        except aster.error as err:
             UTMESS('A', 'STANLEY_4', valk=[str(err)])
-        except Exception, err:
+        except Exception as err:
             UTMESS('A', 'STANLEY_5', valk=[str(err)])
 
     # ------------------------------------------------------------------------
@@ -76,15 +76,15 @@ class CHAMP:
 
         # Options supplementaires passees a la commande
         if options:
-            for cle in options.keys():
+            for cle in list(options.keys()):
                 para[cle] = options[cle]
 
         # Lancement de la commande
         try:
             CALC_ERREUR(**para)
-        except aster.error, err:
+        except aster.error as err:
             UTMESS('A', 'STANLEY_4', valk=[str(err)])
-        except Exception, err:
+        except Exception as err:
             UTMESS('A', 'STANLEY_5', valk=[str(err)])
 
     # ------------------------------------------------------------------------
@@ -155,7 +155,7 @@ class CATA_CHAMPS:
             nom_cham, type_cham, heredite, comment, phenomene, fonc)
 
     def Champs_presents(self, type_resu='evol_noli'):
-        return self.cata.keys()
+        return list(self.cata.keys())
 
     def Ajoute_Champs(self, champ, typech='NOEU'):
         try:
@@ -168,5 +168,5 @@ class CATA_CHAMPS:
             typech = None
 
         if typech:
-            print 'Ajout de :', champ
+            print('Ajout de :', champ)
             self(champ, typech, [], "")

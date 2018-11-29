@@ -33,7 +33,7 @@ certains types d'assemblages.
 
 from math import pi
 
-from mac3coeur_factory import Mac3Factory
+from .mac3coeur_factory import Mac3Factory
 
 
 class Assemblage(object):
@@ -145,7 +145,7 @@ class Assemblage(object):
         """Définition des paramètres.
         On peut appeler plusieurs fois, notamment quand certains paramètres
         dépendent de la valeur d'autres."""
-        for para, value in params.items():
+        for para, value in list(params.items()):
             if not self._keys.get(para):
                 raise KeyError("unknown parameter : '%s'" % para)
             self._para[para] = value
@@ -486,7 +486,7 @@ class ACFactory(Mac3Factory):
     def build_supported_types(self):
         """Construit la liste des types autorisés."""
         ctxt = {}
-        for obj, val in globals().items():
+        for obj, val in list(globals().items()):
             if type(val) is type and issubclass(val, Assemblage):
                 ctxt[obj] = val
         return ctxt

@@ -19,7 +19,7 @@
 
 cata_msg = {
 
-    1  : _(u"""
+    1  : _("""
  Le comportement ne peut être qu'élastique sur une modélisation de type 3D_FLUIDE, AXIS_FLUIDE ou 2D_FLUIDE.
 """),
 

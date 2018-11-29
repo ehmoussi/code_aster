@@ -28,8 +28,8 @@ import os
 from Noyau.N_ASSD import ASSD
 from Noyau.N_types import force_list, is_float, is_int
 
-from E_Visitor import JDCVisitor
-from E_utils import repr_float
+from .E_Visitor import JDCVisitor
+from .E_utils import repr_float
 
 MCFACT_VIDE = '--'
 
@@ -91,7 +91,7 @@ class CodeVisitor(JDCVisitor):
                 repr_value = repr_float(value)
             elif is_int(value):
                 repr_value = str(value)
-            elif type(value) in (str, unicode):
+            elif type(value) in (str, str):
                 repr_value = repr(value)
             svalues.append(repr_value)
         if as_list and len(svalues) == 1:

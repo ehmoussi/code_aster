@@ -51,7 +51,7 @@ def crea_grp_matiere(self, groupe, newgrp, iocc, m, __remodr, NOM_CHAM, LIGN_COU
     # dictb=table initiale (contenant éventuellement des noeuds hors matière)
     dictb = __tab.EXTR_TABLE()
     # listenoe_b=liste ordonnee des noeuds de la ligne de coupe (avec doublons)
-    listenoe_b = dictb.NOEUD.values()
+    listenoe_b = list(dictb.NOEUD.values())
     # lno_b2=liste des noeuds de la ligne de coupe après élimination des doublons
     # (attention, on perd l'ordre des noeuds)
     lno_b2 = set(listenoe_b)
@@ -72,7 +72,7 @@ def crea_grp_matiere(self, groupe, newgrp, iocc, m, __remodr, NOM_CHAM, LIGN_COU
         lno_c2 = set()
         for comp in new_para.difference(['NOEUD']):
             dictc = getattr(dictb, comp).NON_VIDE()
-            lno_c2.update(dictc.NOEUD.values())
+            lno_c2.update(list(dictc.NOEUD.values()))
 
     # on réordonne la liste des noeuds de lno_c2 (selon leur position dans listenoe_b) => l_matiere
     # l_horsmat=liste des noeuds hors matière
@@ -400,7 +400,7 @@ def crea_resu_local(self, dime, NOM_CHAM, m, resin, mail, nomgrma):
                 motscles = {}
                 motscles['MODI_CHAM'] = []
                 motscles['AFFE'] = []
-                noeu = dictu.keys()
+                noeu = list(dictu.keys())
                 motscles['MODI_CHAM'].append(
                     _F(NOM_CHAM=NOM_CHAM, NOM_CMP=LCMP, TYPE_CHAM=TYPE_CHAM,),)
                 ANGL_NAUT = []
@@ -835,7 +835,7 @@ def macr_lign_coupe_ops(self, RESULTAT, CHAM_GD, LIGN_COUPE,
         elif m['TYPE'] == 'GROUP_NO':
             ngrno = m['GROUP_NO'].ljust(24)
             collgrno = aster.getcolljev(n_mailla.ljust(8) + '.GROUPENO')
-            if ngrno not in collgrno.keys():
+            if ngrno not in list(collgrno.keys()):
                 UTMESS('F', 'POST0_13', valk=[ngrno, n_mailla])
             grpn = collgrno[ngrno]
             l_coor_group = [ngrno, ]
@@ -846,7 +846,7 @@ def macr_lign_coupe_ops(self, RESULTAT, CHAM_GD, LIGN_COUPE,
 
         elif m['TYPE'] == 'GROUP_MA':
             ngrma = m['GROUP_MA'].ljust(24)
-            if ngrma not in collgrma.keys():
+            if ngrma not in list(collgrma.keys()):
                 UTMESS('F', 'POST0_14', valk=[ngrma, n_mailla])
             grpm = collgrma[ngrma]
             for ma in grpm:
@@ -955,7 +955,7 @@ def macr_lign_coupe_ops(self, RESULTAT, CHAM_GD, LIGN_COUPE,
 
     if (l_mode_meca_sans_modele == False):
         # on utilise le modèle pour projeter le champ
-        if n_modele in self.get_global_contexte().keys():
+        if n_modele in list(self.get_global_contexte().keys()):
             MODELE_1 = self.get_global_contexte()[n_modele]
         else:
             MODELE_1 = self.jdc.current_context[n_modele]
@@ -972,7 +972,7 @@ def macr_lign_coupe_ops(self, RESULTAT, CHAM_GD, LIGN_COUPE,
     else:
         # on utilise directement le maillage (ou squelette) pour projeter le
         # champ
-        if n_mailla in self.get_global_contexte().keys():
+        if n_mailla in list(self.get_global_contexte().keys()):
             MAILLAGE_1 = self.get_global_contexte()[n_mailla]
         else:
             MAILLAGE_1 = self.jdc.current_context[n_mailla]
@@ -1089,7 +1089,7 @@ def macr_lign_coupe_ops(self, RESULTAT, CHAM_GD, LIGN_COUPE,
     # Ajout de la colonne theta
     if len(arcgma) > 0 and 'ABSC_CURV' in dictab.para:
         coltab = []
-        val = dictab['ABSC_CURV'].values()['ABSC_CURV']
+        val = list(dictab['ABSC_CURV'].values())['ABSC_CURV']
         nbi = len(val) / nbno
         nba = len(angles)
         tmp = []

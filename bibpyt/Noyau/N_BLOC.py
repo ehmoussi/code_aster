@@ -30,12 +30,12 @@ import string
 import sys
 import traceback
 
-import N_ENTITE
-import N_MCBLOC
-from N_Exception import AsException
-from N_types import force_list
-from N_utils import AsType
-from strfunc import ufmt
+from . import N_ENTITE
+from . import N_MCBLOC
+from .N_Exception import AsException
+from .N_types import force_list
+from .N_utils import AsType
+from .strfunc import ufmt
 
 
 class BLOC(N_ENTITE.ENTITE):
@@ -74,7 +74,7 @@ class BLOC(N_ENTITE.ENTITE):
         assert args.get(
             'ang') is None, '"ang" attribute does not exist anymore'
         self.docu = docu
-        if type(regles) == types.TupleType:
+        if type(regles) == tuple:
             self.regles = regles
         else:
             self.regles = (regles,)
@@ -129,7 +129,7 @@ class BLOC(N_ENTITE.ENTITE):
                 if CONTEXT.debug:
                     l = traceback.format_exception(
                         sys.exc_info()[0], sys.exc_info()[1], sys.exc_info()[2])
-                    print "WARNING : Erreur a l'evaluation de la condition " + string.join(l)
+                    print("WARNING : Erreur a l'evaluation de la condition " + string.join(l))
                 return 0
             except SyntaxError:
                 # le texte de la condition n'est pas du Python correct -->

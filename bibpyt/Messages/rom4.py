@@ -21,37 +21,37 @@
 
 cata_msg = {
 
-    7 : _(u"""Échec lors du calcul des modes empiriques pour l'estimation du domaine réduit."""),    
+    7 : _("""Échec lors du calcul des modes empiriques pour l'estimation du domaine réduit."""),    
 
-    9 : _(u"""Les bases ne sont pas définies sur le même maillage."""),
+    9 : _("""Les bases ne sont pas définies sur le même maillage."""),
 
-   10 : _(u"""Les bases ne sont pas définies sur le même maillage que le résultat."""),
+   10 : _("""Les bases ne sont pas définies sur le même maillage que le résultat."""),
 
-   11 : _(u"""Le modèle doit être le même sur tous les modes des bases."""),
+   11 : _("""Le modèle doit être le même sur tous les modes des bases."""),
 
-   12 : _(u"""Le GROUP_NO %(k1)s fait déjà partie du maillage."""),
+   12 : _("""Le GROUP_NO %(k1)s fait déjà partie du maillage."""),
 
-   13 : _(u"""Le GROUP_MA %(k1)s fait déjà partie du maillage."""),
+   13 : _("""Le GROUP_MA %(k1)s fait déjà partie du maillage."""),
 
-   16 : _(u"""Les modes empiriques ne sont pas des champs du type attendu."""),
+   16 : _("""Les modes empiriques ne sont pas des champs du type attendu."""),
 
-   17 : _(u"""Les modes empiriques ne sont pas des champs gradients du type attendu (on attend %(k1)s). """),
+   17 : _("""Les modes empiriques ne sont pas des champs gradients du type attendu (on attend %(k1)s). """),
 
-   20 : _(u"""Calcul du domaine réduit. """),
+   20 : _("""Calcul du domaine réduit. """),
 
-   21 : _(u"""Création des groupes dans le maillage pour l'estimation du domaine réduit."""),  
+   21 : _("""Création des groupes dans le maillage pour l'estimation du domaine réduit."""),  
 
-   22 : _(u"""Nombre d'éléments dans le domaine réduit: %(i1)d"""), 
+   22 : _("""Nombre d'éléments dans le domaine réduit: %(i1)d"""), 
 
-   23 : _(u"""Nombre de noeuds sur l'interface du domaine réduit: %(i1)d"""),
+   23 : _("""Nombre de noeuds sur l'interface du domaine réduit: %(i1)d"""),
 
-   25 : _(u"""Nombre total de points magiques pour l'estimation du domaine réduit: %(i1)d"""),
+   25 : _("""Nombre total de points magiques pour l'estimation du domaine réduit: %(i1)d"""),
 
-   26 : _(u"""Nombre de noeuds dans la zone rigide pour le correcteur éléments finis : %(i1)d"""),
+   26 : _("""Nombre de noeuds dans la zone rigide pour le correcteur éléments finis : %(i1)d"""),
 
-   27 : _(u"""Il n'y a aucun noeud dans la zone d'interface."""),
+   27 : _("""Il n'y a aucun noeud dans la zone d'interface."""),
 
-   28 : _(u"""Il n'y a aucun noeud dans la zone rigide pour le correcteur éléments finis."""),
+   28 : _("""Il n'y a aucun noeud dans la zone rigide pour le correcteur éléments finis."""),
 
-   29 : _(u"""Nombre de noeuds dans le domaine réduit: %(i1)d"""), 
+   29 : _("""Nombre de noeuds dans le domaine réduit: %(i1)d"""), 
 }

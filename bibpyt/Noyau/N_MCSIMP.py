@@ -30,9 +30,9 @@ from copy import copy
 
 from Noyau.N_ASSD import ASSD
 from Noyau.N_CO import CO
-import N_OBJECT
-from N_CONVERT import ConversionFactory
-from N_types import force_list, is_sequence
+from . import N_OBJECT
+from .N_CONVERT import ConversionFactory
+from .N_types import force_list, is_sequence
 
 
 class MCSIMP(N_OBJECT.OBJECT):

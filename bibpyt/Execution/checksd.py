@@ -49,7 +49,7 @@ def check(checker, co, l_before, etape):
     type_concept = type(co).__name__
     sd = co.sdj
     if 0:
-        print "AJACOT checksd " + type_concept + " >" + sd.nomj.nomj + '<'
+        print("AJACOT checksd " + type_concept + " >" + sd.nomj.nomj + '<')
 
     # l_new = objets créés par la commande courante
     l_after = get_list_objects()

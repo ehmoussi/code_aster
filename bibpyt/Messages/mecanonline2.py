@@ -21,7 +21,7 @@
 
 cata_msg = {
 
-    3 : _(u"""
+    3 : _("""
 
  Le résidu global converge plus vite que la condition des contraintes planes.
  La convergence de la condition des contraintes planes peut être améliorée en
@@ -29,7 +29,7 @@ cata_msg = {
 
 """),
 
-    27 : _(u"""
+    27 : _("""
  La prédiction par DEPL_CALCULE à l'instant de calcul %(r1)f à partir du concept %(k1)s n'a pas pu être construite.
  Explications possibles :
   - le concept ne contient pas de champs de déplacement
@@ -39,18 +39,18 @@ cata_msg = {
  - vérifiez que le concept fourni sous le mot-clé EVOL_NOLI contient suffisamment d'instants pour interpoler le champ souhaité
 """),
 
-    28 : _(u"""
+    28 : _("""
  La prédiction par DEPL_CALCULE à l'instant de calcul %(r1)f à partir du concept %(k1)s n'a pas pu être construite car les maillages sont différents et vous utilisez des conditions limites de type Lagrange (AFFE_CHAR_MECA).
  Conseil : essayez avec des conditions limites de type AFFE_CHAR_CINE si c'est possible. Mais dans ce cas, le champ de déplacements n'étant plus cinématiquement admissible au premier pas de temps, vous risquez d'avoir des problèmes de convergence.
 """),
 
-    37 : _(u"""
+    37 : _("""
     ARRET=NON donc poursuite du calcul sans avoir eu convergence.
 """),
 
 
 
-    39 : _(u"""
+    39 : _("""
     DEFI_CONTACT/ALGO_CONT=PENALISATION/ADAPTATION=ADAPT_COEF ou TOUT. Il est possible que vous demandez un critère trop sévère pour la pénétration. La valeur de coefficient de pénalisation adaptée prend des valeurs inattendues.  
     
     Conseils :
@@ -61,11 +61,11 @@ cata_msg = {
     
 """),
 
-    67 : _(u"""
+    67 : _("""
  Le code %(i1)d retourné lors de l'intégration de la loi de comportement n'est pas traité.
 """),
 
-    93 : _(u"""
+    93 : _("""
   -> Risque et conseils : dans le cas d'une résolution incrémentale, on ne prend pas en compte
      les éventuelles contraintes incompatibles dues à ces variables de commande initiales.
      Pour tenir compte de ces contraintes vous pouvez :
@@ -77,26 +77,26 @@ cata_msg = {
      (mot-clé AFFE_VARC).
 """),
 
-    94 : _(u"""
+    94 : _("""
   -> Indications supplémentaires : pour la variable de commande :  %(k1)s
      et la composante :  %(k2)s
      Valeur maximum : %(r1)f sur la maille : %(k3)s
      Valeur minimum : %(r2)f sur la maille : %(k4)s
 """),
 
-    95 : _(u"""
+    95 : _("""
   -> Indications supplémentaires : pour la variable de commande :  %(k1)s
      et la composante :  %(k2)s
      Valeur maximum de la valeur absolue de ( %(k2)s - %(k5)s_REF) : %(r1)f sur la maille : %(k3)s
      Valeur minimum de la valeur absolue de ( %(k2)s - %(k5)s_REF) : %(r2)f sur la maille : %(k4)s
 """),
 
-    96 : _(u"""
+    96 : _("""
  Le résidu RESI_COMP_RELA est inutilisable au premier instant de calcul (pas de référence)
  On bascule automatiquement en RESI_GLOB_RELA.
 """),
 
-    97 : _(u"""
+    97 : _("""
   -> A l'état initial (avant le premier instant de calcul) les variables 
      de commande (température, hydratation, séchage...) entraînent une 
      déformation anélastique non nulle.
@@ -104,7 +104,7 @@ cata_msg = {
      utilisé.
 """),
 
-    98 : _(u"""
+    98 : _("""
   -> Les forces extérieures (chargement imposé et réactions d'appui) sont détectées comme quasiment nulles (%(r1)g).
      Or vous avez demandé une convergence avec le critère relatif (RESI_GLOB_RELA).
      Pour éviter une division par zéro, le code est passé automatiquement en mode de convergence

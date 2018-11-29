@@ -21,10 +21,10 @@
 
 cata_msg = {
 
-    1: _(u"""
+    1: _("""
 Arrêt du calcul des modes : pas de mode propre dans la bande de fréquence demandée.
 """),
-    2: _(u"""
+    2: _("""
 Opérateur CALC_MODES sur plusieurs sous-bandes
 Pas de test de Sturm demandé (VERI_MODE=_F(STURM='NON')).
 Donc, à l'issu de chaque calcul modal sur une sous-bande, on vérifie seulement que:
@@ -32,7 +32,7 @@ Donc, à l'issu de chaque calcul modal sur une sous-bande, on vérifie seulement
    - chaque fréquence est bien incluse dans la bande spécifiée (VERI_MODE/PREC_SHIFT).
 Pas de test de Sturm local ou global.
 """),
-    3: _(u"""
+    3: _("""
 Opérateur CALC_MODES sur plusieurs sous-bandes
 Test de Sturm local demandé (VERI_MODE=_F(STURM='LOCAL')).
 Donc, à l'issu de chaque calcul modal sur une sous-bande, on vérifie que:
@@ -40,7 +40,7 @@ Donc, à l'issu de chaque calcul modal sur une sous-bande, on vérifie que:
     - chaque fréquence est bien incluse dans la bande spécifiée (VERI_MODE/PREC_SHIFT),
     - le test de Sturm est valide.
 """),
-    4: _(u"""
+    4: _("""
 Opérateur CALC_MODES sur plusieurs sous-bandes
 Test de Sturm global demandé (VERI_MODE=_F(STURM='GLOBAL')).
 Donc, à l'issu de chaque calcul modal sur une sous-bande, on vérifie que:
@@ -52,7 +52,7 @@ de Sturm global:
   Dans l'intervalle (%(r1)f,%(r2)f), il y a théoriquement %(i1)d fréquence(s) et on
   en a bien calculé %(i2)d.
 """),
-    5: _(u"""
+    5: _("""
 Opérateur CALC_MODES sur plusieurs sous-bandes, test de Sturm global:
   Dans l'intervalle (%(r1)f,%(r2)f), il y a théoriquement %(i1)d fréquence(s) et on
   en a calculé %(i2)d.
@@ -68,20 +68,20 @@ Opérateur CALC_MODES sur plusieurs sous-bandes, test de Sturm global:
     * Vous pouvez aussi relancez un INFO_MODE et/ou des CALC_MODES sur une sous-partie pour
       corroborer (ou non) les résultats précédent.
 """),
-    6: _(u"""
+    6: _("""
 Opérateur CALC_MODES sur plusieurs sous-bandes,
 la sous-bande n %(i1)d est vide, on passe à la suivante.
 """),
-    7: _(u"""
+    7: _("""
 Opérateur CALC_MODES sur plusieurs sous-bandes: Test de Sturm global.
   On n'a pas pu faire ce test car la bande de fréquence demandée (%(r1)f,%(r2)f) est vide !
 """),
-    8: _(u"""
+    8: _("""
 Opérateur CALC_MODES sur plusieurs sous-bandes:
   Pas de mode propre dans la bande de fréquence demandée (%(r1)f,%(r2)f) !
   Le concept résultat sera vide.
 """),
-    9: _(u"""
+    9: _("""
 Opérateur CALC_MODES sur plusieurs sous-bandes, en mode parallèle:
   Le nombre de processeurs, %(i1)d, et le nombre de sous-bandes fréquentielles non vides, %(i2)d,
   sont incompatibles !
@@ -97,7 +97,7 @@ Opérateur CALC_MODES sur plusieurs sous-bandes, en mode parallèle:
       Il suffit de le limiter au seul solveur linéaire. Pour cela paramétrer le mot-clé NIVEAU_PARALLELISME à
       'PARTIEL' et choisissez le solveur linéaire MUMPS.
 """),
-    10: _(u"""
+    10: _("""
 Opérateurs INFO_MODE ou CALC_MODES sur plusieurs sous-bandes, en mode parallèle:
   Le nombre de processeurs, %(i1)d, et le nombre de sous-bandes fréquentielles, %(i2)d, sont incompatibles !
   Avec le solveur linéaire MUMPS, ce nombre de processeurs peut être supérieur ou égale
@@ -112,7 +112,7 @@ Opérateurs INFO_MODE ou CALC_MODES sur plusieurs sous-bandes, en mode parallèl
       Il suffit de le limiter au seul solveur linéaire. Pour cela paramétrer le mot-clé NIVEAU_PARALLELISME à
       'PARTIEL' et choisissez le solveur linéaire MUMPS.
 """),
-    11: _(u"""
+    11: _("""
 Opérateurs INFO_MODE ou CALC_MODES sur plusieurs sous-bandes, en mode parallèle:
   Chacune des %(i1)d fréquences (autre que l'initiale) utilise le solveur linéaire
   MUMPS sur son propre paquet de processeurs.
@@ -124,7 +124,7 @@ Opérateurs INFO_MODE ou CALC_MODES sur plusieurs sous-bandes, en mode parallèl
     * Ajuster le nombre de processeurs et/ou la distribution des sous-bandes
       en conséquence. Par exemple, un nombre de processeurs = %(i1)d  x 2, 4 ou 8.
 """),
-    12: _(u"""
+    12: _("""
 Opérateur CALC_MODES sur plusieurs sous-bandes en mode parallèle:
   Chacune des %(i1)d sous-bandes fréquentielles non vides utilise, indépendamment des autres,
   le solveur linéaire parallèle MUMPS.
@@ -136,7 +136,7 @@ Opérateur CALC_MODES sur plusieurs sous-bandes en mode parallèle:
     * Ajuster le nombre de processeurs et/ou la distribution des sous-bandes
       en conséquence. Par exemple, un nombre de processeurs = %(i1)d  x 2, 4 ou 8.
 """),
-    13: _(u"""
+    13: _("""
 Opérateur CALC_MODES sur plusieurs sous-bandes en mode parallèle:
   Chacune des 2 fréquences du test de Sturm de post-vérification utilise le solveur linéaire
   MUMPS sur son propre paquet de processeurs.
@@ -147,7 +147,7 @@ Opérateur CALC_MODES sur plusieurs sous-bandes en mode parallèle:
   Conseil:
     * Idéalement, le nombre de processeurs devrait être pair.
 """),
-    14: _(u"""
+    14: _("""
 Opérateurs INFO_MODE ou CALC_MODES sur plusieurs sous-bandes, en mode parallèle:
   Vous avez demandé la parallélisation, sur %(i1)d processeurs, de la partie solveur linéaire
    de votre calcul. Mais vous avez paramétré un solveur linéaire séquentiel: %(k1)s !
@@ -159,19 +159,19 @@ Opérateurs INFO_MODE ou CALC_MODES sur plusieurs sous-bandes, en mode parallèl
     * Changez le niveau de parallélisme (mot-clé NIVEAU_PARALLELISME='COMPLET').
 """),
 
-    15: _(u"""
+    15: _("""
 L'amélioration des modes propres ne peut pas être effectuée,
 car au moins une des matrices d'entrée est non symétrique,
 ce qui est incompatible avec l'algorithme des puissances inverses utilisé pour l'amélioration.
 """),
 
-    16: _(u"""
+    16: _("""
 L'amélioration des modes propres ne peut pas être effectuée,
 car la matrice renseignée sous %(k1)s est complexe,
 ce qui est incompatible avec l'algorithme des puissances inverses utilisé pour l'amélioration.
 """),
 
-    17: _(u"""
+    17: _("""
 L'amélioration des modes propres ne peut pas être effectuée,
 car des valeurs propres très proches ont été détectées dans le concept %(k1)s
 (modes multiples ou plusieurs modes de corps rigide),
@@ -179,12 +179,12 @@ ce qui est incompatible avec l'algorithme des puissances inverses utilisé pour 
 
 """),
 
-    18: _(u"""
+    18: _("""
 L'utilisation du parallélisme dans CALC_MODES avec OPTION='BANDES' et des matrices
 généralisées n'est pas possible.
 """),
 
-    19: _(u"""
+    19: _("""
 Opérateur CALC_MODES sur plusieurs sous-bandes:
   Votre calcul semble déséquilibré: la sous-bande n°%(i1)d comporte %(i2)d mode(s) propre(s) alors
   que la n°%(i3)d en comporte %(i4)d !
@@ -198,7 +198,7 @@ Opérateur CALC_MODES sur plusieurs sous-bandes:
       dans un pré-calcul séparé. C'est généralement très rapide (surtout en parallèle) et cela
       fournit des informations concrètes pour proposer un découpage homogène et réaliste.
 """),
-   20: _(u"""
+   20: _("""
 Opérateur CALC_MODES sur plusieurs sous-bandes:
   La sous-bande n°%(i1)d comporte %(i2)d mode(s) propre(s). Ce n'est pas assez !
   Vous pouvez sans doute optimiser les performances de votre calcul en la groupant avec une
@@ -211,7 +211,7 @@ Opérateur CALC_MODES sur plusieurs sous-bandes:
       dans un pré-calcul séparé. C'est généralement très rapide (surtout en parallèle) et cela
       fournit des informations concrètes pour proposer un découpage homogène et réaliste.
 """),
-   21: _(u"""
+   21: _("""
 Opérateur CALC_MODES sur plusieurs sous-bandes:
   La sous-bande n°%(i1)d comporte %(i2)d modes propres. C'est un peu trop !
   Vous pouvez sans doute optimiser les performances et la robustesse de votre calcul ainsi que
@@ -224,7 +224,7 @@ Opérateur CALC_MODES sur plusieurs sous-bandes:
       dans un pré-calcul séparé. C'est généralement très rapide (surtout en parallèle) et cela
       fournit des informations concrètes pour proposer un découpage homogène et réaliste.
 """),
-   22: _(u"""
+   22: _("""
 Opérateur CALC_MODES:
   Votre calcul cherche à déterminer %(i1)d modes propres à la fois. C'est un peu trop !
   Vous pouvez sans doute optimiser les performances, la robustesse de votre calcul ainsi que
@@ -241,7 +241,7 @@ Opérateur CALC_MODES:
       concrètes pour ensuite paramétrer un découpage homogène et réaliste.
 """),
 
-   23: _(u"""
+   23: _("""
 Opérateurs CALC_MODES ou NORM_MODES:
   La norme calculée pour le mode %(i1)d est nulle ou presque nulle.
   Valeur calculée :  %(r1)f

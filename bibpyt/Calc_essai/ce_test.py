@@ -25,8 +25,8 @@
 import aster
 from code_aster.Cata.Syntax import _F, ASSD
 
-from ce_calcul_expansion import CalcEssaiExpansion
-from ce_calcul_identification import CalcEssaiIdentification, CalculInverse
+from .ce_calcul_expansion import CalcEssaiExpansion
+from .ce_calcul_identification import CalcEssaiIdentification, CalculInverse
 from Utilitai.Utmess import UTMESS
 from numpy import take
 
@@ -244,7 +244,7 @@ def get_ddl_extract(nom_resu):
             else:
                 pass
             for dico in grp_no_ma:
-                for ind1, ind2 in dico.items():
+                for ind1, ind2 in list(dico.items()):
                     if type(ind2) != list and type(ind2) != tuple:
                         dico[ind1] = [ind2]
 

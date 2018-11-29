@@ -21,7 +21,7 @@
 
 cata_msg = {
 
-    1 : _(u"""
+    1 : _("""
   Il y a trop de chargements pour le calcul de l'option %(k1)s.
 """),
 

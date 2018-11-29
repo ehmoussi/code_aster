@@ -31,7 +31,7 @@ from Noyau.N_ASSD import ASSD
 from Noyau.N_types import force_list
 from Noyau.N_utils import Enum
 
-from E_Visitor import JDCVisitor
+from .E_Visitor import JDCVisitor
 
 STAT = Enum('NBCMD', 'NBRES', 'NBDEP', 'NBUNUSED', 'NBNODE',
             'UNUSED', 'CMD', 'RESULT', 'DEPEND')
@@ -287,23 +287,23 @@ class ConceptTree(object):
         s_deps = ', '.join(deps)
         # key : order, level, value
         self._stats = {
-            STAT.NBCMD: (0, len(commands),    _(u'Nombre de commandes')),
-            STAT.NBRES: (0, len(all_results), _(u"Nombre de résultats")),
-            STAT.NBDEP: (0, len(all_deps),    _(u"Nombre de dépendances")),
-            STAT.NBUNUSED: (0, len(never_used),  _(u"Nombre de résultats non utilisés")),
-            STAT.NBNODE: (0, len(all_nodes),   _(u"Nombre de noeuds")),
-            STAT.UNUSED: (1, s_unused,         _(u"Concepts jamais utilisés")),
-            STAT.CMD: (2, s_commands,       _(u"Commandes utilisées")),
-            STAT.RESULT: (2, s_results,        _(u"Résultats")),
-            STAT.DEPEND: (2, s_deps,           _(u"Dépendances")),
+            STAT.NBCMD: (0, len(commands),    _('Nombre de commandes')),
+            STAT.NBRES: (0, len(all_results), _("Nombre de résultats")),
+            STAT.NBDEP: (0, len(all_deps),    _("Nombre de dépendances")),
+            STAT.NBUNUSED: (0, len(never_used),  _("Nombre de résultats non utilisés")),
+            STAT.NBNODE: (0, len(all_nodes),   _("Nombre de noeuds")),
+            STAT.UNUSED: (1, s_unused,         _("Concepts jamais utilisés")),
+            STAT.CMD: (2, s_commands,       _("Commandes utilisées")),
+            STAT.RESULT: (2, s_results,        _("Résultats")),
+            STAT.DEPEND: (2, s_deps,           _("Dépendances")),
         }
 
     def get_stats(self, level=1):
         """Return some statistics."""
-        lines = [_(u"  <I> Dépendance des concepts - statistiques")]
+        lines = [_("  <I> Dépendance des concepts - statistiques")]
         self._update_stats()
         lstat = []
-        for order, opts in self._stats.items():
+        for order, opts in list(self._stats.items()):
             lv, value, title = opts
             lstat.append((order, title, lv, value))
         lstat.sort()
@@ -352,8 +352,8 @@ class ConceptDependenciesVisitor(JDCVisitor):
 
     def _pick_tree(self, fileobj):
         """Dump the tree object into 'fname'."""
-        import cPickle
-        cPickle.dump(self.tree, fileobj)
+        import pickle
+        pickle.dump(self.tree, fileobj)
 
     def _write_dot(self, fileobj, **kwargs):
         """Write the dot file into 'fname'."""
@@ -436,7 +436,7 @@ if __name__ == '__main__':
     tree.add_result(NodeSD('cham_mater'), NodeSD('fissure'))
 
     txt = tree.get_stats(level=2)
-    print txt
+    print(txt)
     cnt = tree.build_graph()
     open('/tmp/graph.dot', 'w').write(cnt)
     # dot -Tpng -o /tmp/graph.png /tmp/graph.dot ; eog /tmp/graph.png

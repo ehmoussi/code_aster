@@ -94,7 +94,7 @@ class Sim_exp:
                     # nombre de points sur la courbe expérimentale num.i
         stockage = NP.ones(n_exp)
                            # matrice de stockage des erreurs en chaque point
-        for j in xrange(n_exp):
+        for j in range(n_exp):
             d = self.DistVertAdimPointLigneBrisee(experience[j], resu_num)
             if NP.all(experience[j][1] != 0.):
                 stockage[n] = d / experience[j][1]
@@ -104,7 +104,7 @@ class Sim_exp:
             n = n + 1         # on totalise le nombre de points valables
         err = NP.ones(n, dtype=float)
 
-        for i in xrange(n):
+        for i in range(n):
             err[i] = poids * stockage[i]
         return err
 

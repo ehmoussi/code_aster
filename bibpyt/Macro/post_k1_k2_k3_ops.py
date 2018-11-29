@@ -147,20 +147,20 @@ def expand_values(self, tabout, liste_noeu_a_extr, titre, type_para):
     DETRUIRE(CONCEPT=_F(NOM=tabout), INFO=1)
 
     # Recuperation des points
-    points_expand = extrtabout.values()['NUM_PT']
+    points_expand = list(extrtabout.values())['NUM_PT']
     # Recuperation des abscisses
-    abscisses_expand = extrtabout.values()['ABSC_CURV']
+    abscisses_expand = list(extrtabout.values())['ABSC_CURV']
     # Recuperation des instants
-    instants_expand = extrtabout.values()[type_para]
+    instants_expand = list(extrtabout.values())[type_para]
     # Recuperation des K1,K2,K3,ERR_K1,ERR_K2,ERR_K1,
     size = len(abscisses_expand)
-    K1 = extrtabout.values()['K1']
-    ERR_K1 = extrtabout.values()['ERR_K1']
-    K2 = extrtabout.values()['K2']
-    ERR_K2 = extrtabout.values()['ERR_K2']
-    K3 = extrtabout.values()['K3']
-    ERR_K3 = extrtabout.values()['ERR_K3']
-    G = extrtabout.values()['G']
+    K1 = list(extrtabout.values())['K1']
+    ERR_K1 = list(extrtabout.values())['ERR_K1']
+    K2 = list(extrtabout.values())['K2']
+    ERR_K2 = list(extrtabout.values())['ERR_K2']
+    K3 = list(extrtabout.values())['K3']
+    ERR_K3 = list(extrtabout.values())['ERR_K3']
+    G = list(extrtabout.values())['G']
 
     for i in range(size):
         if points_expand[i] - 1 in liste_noeu_a_extr:
@@ -193,17 +193,17 @@ def expand_values(self, tabout, liste_noeu_a_extr, titre, type_para):
             G[i] = G[k_retenu[0]]
             liste_noeu_a_extr.remove(points_expand[i] - 1)
 
-    if 'FISSURE' in extrtabout.values().keys():
+    if 'FISSURE' in list(extrtabout.values()).keys():
         tabout = CREA_TABLE(
-            TITRE=titre, LISTE=(_F(LISTE_K=extrtabout.values()['FISSURE'],
+            TITRE=titre, LISTE=(_F(LISTE_K=list(extrtabout.values())['FISSURE'],
                                    PARA='FISSURE'),
-                                _F(LISTE_I=extrtabout.values()['NUME_FOND'],
+                                _F(LISTE_I=list(extrtabout.values())['NUME_FOND'],
                                    PARA='NUME_FOND'),
-                                _F(LISTE_R=extrtabout.values()[type_para],
+                                _F(LISTE_R=list(extrtabout.values())[type_para],
                                    PARA=type_para),
-                                _F(LISTE_I=extrtabout.values()['NUM_PT'],
+                                _F(LISTE_I=list(extrtabout.values())['NUM_PT'],
                                    PARA='NUM_PT'),
-                                _F(LISTE_R=extrtabout.values()['ABSC_CURV'],
+                                _F(LISTE_R=list(extrtabout.values())['ABSC_CURV'],
                                    PARA='ABSC_CURV'),
                                 _F(LISTE_R=K1,
                                    PARA='K1'),
@@ -221,17 +221,17 @@ def expand_values(self, tabout, liste_noeu_a_extr, titre, type_para):
                                    PARA='G'),))
     else:
         tabout = CREA_TABLE(
-            TITRE=titre, LISTE=(_F(LISTE_K=extrtabout.values()['FOND_FISS'],
+            TITRE=titre, LISTE=(_F(LISTE_K=list(extrtabout.values())['FOND_FISS'],
                                    PARA='FOND_FISS'),
-                                _F(LISTE_I=extrtabout.values()['NUME_FOND'],
+                                _F(LISTE_I=list(extrtabout.values())['NUME_FOND'],
                                    PARA='NUME_FOND'),
-                                _F(LISTE_R=extrtabout.values()[type_para],
+                                _F(LISTE_R=list(extrtabout.values())[type_para],
                                    PARA=type_para),
-                                _F(LISTE_K=extrtabout.values()['NOEUD_FOND'],
+                                _F(LISTE_K=list(extrtabout.values())['NOEUD_FOND'],
                                    PARA='NOEUD_FOND'),
-                                _F(LISTE_I=extrtabout.values()['NUM_PT'],
+                                _F(LISTE_I=list(extrtabout.values())['NUM_PT'],
                                    PARA='NUM_PT'),
-                                _F(LISTE_R=extrtabout.values()['ABSC_CURV'],
+                                _F(LISTE_R=list(extrtabout.values())['ABSC_CURV'],
                                    PARA='ABSC_CURV'),
                                 _F(LISTE_R=K1,
                                    PARA='K1'),
@@ -283,7 +283,7 @@ def get_noeud_fond_fiss(FOND_FISS):
     Lnoff = FOND_FISS.sdj.FOND_NOEU.get()
     if Lnoff == None:
         UTMESS('F', 'RUPTURE0_11')
-    Lnoff = map(S.rstrip, Lnoff)
+    Lnoff = list(map(S.rstrip, Lnoff))
     return Lnoff
 
 #-------------------------------------------------------------------------
@@ -324,13 +324,13 @@ def get_noeud_a_calculer(Lnoff, ndim, FOND_FISS, MAILLAGE, EnumTypes, args):
             cnom = MAILLAGE.sdj.NOMNOE.get()
             if type(GROUP_NO) not in EnumTypes:
                 GROUP_NO = (GROUP_NO,)
-            for m in xrange(len(GROUP_NO)):
+            for m in range(len(GROUP_NO)):
                 ngrno = GROUP_NO[m].ljust(24).upper()
-                if ngrno not in collgrno.keys():
+                if ngrno not in list(collgrno.keys()):
                     UTMESS('F', 'RUPTURE0_13', valk=ngrno)
-                for i in xrange(len(collgrno[ngrno])):
+                for i in range(len(collgrno[ngrno])):
                     NO_AVEC.append(cnom[collgrno[ngrno][i] - 1])
-            NO_AVEC = map(S.rstrip, NO_AVEC)
+            NO_AVEC = list(map(S.rstrip, NO_AVEC))
         if NOEUD != None:
             if type(NOEUD) not in EnumTypes:
                 NO_AVEC = (NOEUD,)
@@ -341,13 +341,13 @@ def get_noeud_a_calculer(Lnoff, ndim, FOND_FISS, MAILLAGE, EnumTypes, args):
             cnom = MAILLAGE.sdj.NOMNOE.get()
             if type(SANS_GROUP_NO) not in EnumTypes:
                 SANS_GROUP_NO = (SANS_GROUP_NO,)
-            for m in xrange(len(SANS_GROUP_NO)):
+            for m in range(len(SANS_GROUP_NO)):
                 ngrno = SANS_GROUP_NO[m].ljust(24).upper()
-                if ngrno not in collgrno.keys():
+                if ngrno not in list(collgrno.keys()):
                     UTMESS('F', 'RUPTURE0_13', valk=ngrno)
-                for i in xrange(len(collgrno[ngrno])):
+                for i in range(len(collgrno[ngrno])):
                     NO_SANS.append(cnom[collgrno[ngrno][i] - 1])
-            NO_SANS = map(S.rstrip, NO_SANS)
+            NO_SANS = list(map(S.rstrip, NO_SANS))
         if SANS_NOEUD != None:
             if type(SANS_NOEUD) not in EnumTypes:
                 NO_SANS = (SANS_NOEUD,)
@@ -397,15 +397,15 @@ def get_coor_libre(self, Lnoff, RESULTAT, ndim):
 
     tcoorf = __NCOFON.EXTR_TABLE()
     DETRUIRE(CONCEPT=_F(NOM=__NCOFON), INFO=1)
-    nbt = len(tcoorf['NOEUD'].values()['NOEUD'])
-    xs = NP.array(tcoorf['COOR_X'].values()['COOR_X'][:nbt])
-    ys = NP.array(tcoorf['COOR_Y'].values()['COOR_Y'][:nbt])
+    nbt = len(list(tcoorf['NOEUD'].values())['NOEUD'])
+    xs = NP.array(list(tcoorf['COOR_X'].values())['COOR_X'][:nbt])
+    ys = NP.array(list(tcoorf['COOR_Y'].values())['COOR_Y'][:nbt])
     if ndim == 2:
         zs = NP.zeros(nbt,)
     elif ndim == 3:
-        zs = NP.array(tcoorf['COOR_Z'].values()['COOR_Z'][:nbt])
-    ns = tcoorf['NOEUD'].values()['NOEUD'][:nbt]
-    ns = map(S.rstrip, ns)
+        zs = NP.array(list(tcoorf['COOR_Z'].values())['COOR_Z'][:nbt])
+    ns = list(tcoorf['NOEUD'].values())['NOEUD'][:nbt]
+    ns = list(map(S.rstrip, ns))
     l_coorf = [[ns[i], xs[i], ys[i], zs[i]] for i in range(0, nbt)]
     l_coorf = [(i[0], i[1:]) for i in l_coorf]
     return dict(l_coorf)
@@ -475,7 +475,7 @@ def get_tab_dep(self, Lnocal, Nnocal, d_coorf, dicVDIR, RESULTAT, MODEL,
     dmax = hmax * PREC_VIS_A_VIS
 
     mcfact = []
-    for i in xrange(Nnocal):
+    for i in range(Nnocal):
         Porig = NP.array(d_coorf[Lnocal[i]])
         Pextr = Porig - hmax * dicVDIR[Lnocal[i]]
 
@@ -514,7 +514,7 @@ def get_dico_levres(lev, FOND_FISS, ndim, Lnoff, Nnoff):
     elif lev == 'inf':
         Nnorm = FOND_FISS.sdj.INFNORM_NOEU.get()
 
-    Nnorm = map(S.rstrip, Nnorm)
+    Nnorm = list(map(S.rstrip, Nnorm))
 # pourquoi modifie t-on Nnoff dans ce cas, alors que rien n'est fait pour
 # les maillages libres ?
     if Lnoff[0] == Lnoff[-1] and ndim == 3:
@@ -564,16 +564,16 @@ def get_coor_regle(self, RESULTAT, ndim, Lnoff, Lnocal, dicoS, syme_char, dicoI)
 
     tcoor = __NCOOR.EXTR_TABLE().NUME_ORDRE == dico['NUME_ORDRE'][0]
 
-    nbt = len(tcoor['NOEUD'].values()['NOEUD'])
-    xs = NP.array(tcoor['COOR_X'].values()['COOR_X'][:nbt])
-    ys = NP.array(tcoor['COOR_Y'].values()['COOR_Y'][:nbt])
+    nbt = len(list(tcoor['NOEUD'].values())['NOEUD'])
+    xs = NP.array(list(tcoor['COOR_X'].values())['COOR_X'][:nbt])
+    ys = NP.array(list(tcoor['COOR_Y'].values())['COOR_Y'][:nbt])
     if ndim == 2:
         zs = NP.zeros(nbt)
     elif ndim == 3:
-        zs = NP.array(tcoor['COOR_Z'].values()['COOR_Z'][:nbt])
-    ns = tcoor['NOEUD'].values()['NOEUD'][:nbt]
-    ns = map(S.rstrip, ns)
-    l_coor = [[ns[i], xs[i], ys[i], zs[i]] for i in xrange(nbt)]
+        zs = NP.array(list(tcoor['COOR_Z'].values())['COOR_Z'][:nbt])
+    ns = list(tcoor['NOEUD'].values())['NOEUD'][:nbt]
+    ns = list(map(S.rstrip, ns))
+    l_coor = [[ns[i], xs[i], ys[i], zs[i]] for i in range(nbt)]
     l_coor = [(i[0], i[1:]) for i in l_coor]
     return (dict(l_coor), __NCOOR.EXTR_TABLE())
 
@@ -584,7 +584,7 @@ def get_absfon(Lnoff, Nnoff, d_coor):
     """ retourne le dictionnaire des Abscisses curvilignes du fond"""
     import numpy as NP
     absfon = [0, ]
-    for i in xrange(Nnoff - 1):
+    for i in range(Nnoff - 1):
         Pfon1 = NP.array(
             [d_coor[Lnoff[i]][0], d_coor[Lnoff[i]][1], d_coor[Lnoff[i]][2]])
         Pfon2 = NP.array(
@@ -592,7 +592,7 @@ def get_absfon(Lnoff, Nnoff, d_coor):
         absf = NP.sqrt(
             NP.dot(NP.transpose(Pfon1 - Pfon2), Pfon1 - Pfon2)) + absfon[i]
         absfon.append(absf)
-    return dict([(Lnoff[i], absfon[i]) for i in xrange(Nnoff)])
+    return dict([(Lnoff[i], absfon[i]) for i in range(Nnoff)])
 
 #-------------------------------------------------------------------------
 
@@ -620,7 +620,7 @@ def get_noeuds_perp_regle(Lnocal, d_coor, dicoS, dicoI, Lnoff, PREC_VIS_A_VIS, h
         itoti = 0
         NBTRLS = 0
         NBTRLI = 0
-        for k in xrange(20):
+        for k in range(20):
             if dicoS[ino][k] != '':
                 itots = itots + 1
                 Nsup = dicoS[ino][k]
@@ -767,7 +767,7 @@ def get_coor_xfem(args, FISSURE, ndim):
         absmax = Listfo[-1]
         Coorfo = [None] * 4 * Nnoff
         Vpropa = [None] * 3 * Nnoff
-        for i in xrange(Nnoff):
+        for i in range(Nnoff):
             absci = i * absmax / (Nnoff - 1)
             Coorfo[(4 * i):(4 * (i + 1))] = InterpolFondFiss(absci, Listfo)
             Vpropa[(6 * i):(6 * (i + 1))] = InterpolBaseFiss(
@@ -797,7 +797,7 @@ def get_direction_xfem(Nnoff, Vpropa, Coorfo, ndim):
     if ndim == 3:
         VNOR[0] = NP.array([Vpropa[0], Vpropa[1], Vpropa[2]])
         VDIR[0] = NP.array([Vpropa[3 + 0], Vpropa[3 + 1], Vpropa[3 + 2]])
-        for i in xrange(1, Nnoff - 1):
+        for i in range(1, Nnoff - 1):
             absf = Coorfo[4 * i + 3]
             absfon.append(absf)
             VNOR[i] = NP.array(
@@ -832,7 +832,7 @@ def get_sauts_xfem(self, Nnoff, Coorfo, VDIR, hmax, NB_NOEUD_COUPE, dmax, __RESX
     MACR_LIGN_COUPE = self.get_cmd('MACR_LIGN_COUPE')
 
     mcfact = []
-    for i in xrange(Nnoff):
+    for i in range(Nnoff):
         Porig = NP.array([Coorfo[4 * i], Coorfo[4 * i + 1], Coorfo[4 * i + 2]])
         Pextr = Porig - hmax * VDIR[i]
 
@@ -861,19 +861,19 @@ def affiche_xfem(self, INFO, Nnoff, VNOR, VDIR):
 
     if INFO == 2:
         mcfact = []
-        mcfact.append(_F(PARA='NUM_PT', LISTE_I=range(Nnoff)))
+        mcfact.append(_F(PARA='NUM_PT', LISTE_I=list(range(Nnoff))))
         mcfact.append(
-            _F(PARA='VN_X', LISTE_R=[VNOR[i][0] for i in xrange(Nnoff)]))
+            _F(PARA='VN_X', LISTE_R=[VNOR[i][0] for i in range(Nnoff)]))
         mcfact.append(
-            _F(PARA='VN_Y', LISTE_R=[VNOR[i][1] for i in xrange(Nnoff)]))
+            _F(PARA='VN_Y', LISTE_R=[VNOR[i][1] for i in range(Nnoff)]))
         mcfact.append(
-            _F(PARA='VN_Z', LISTE_R=[VNOR[i][2] for i in xrange(Nnoff)]))
+            _F(PARA='VN_Z', LISTE_R=[VNOR[i][2] for i in range(Nnoff)]))
         mcfact.append(
-            _F(PARA='VP_X', LISTE_R=[VDIR[i][0] for i in xrange(Nnoff)]))
+            _F(PARA='VP_X', LISTE_R=[VDIR[i][0] for i in range(Nnoff)]))
         mcfact.append(
-            _F(PARA='VP_Y', LISTE_R=[VDIR[i][1] for i in xrange(Nnoff)]))
+            _F(PARA='VP_Y', LISTE_R=[VDIR[i][1] for i in range(Nnoff)]))
         mcfact.append(
-            _F(PARA='VP_Z', LISTE_R=[VDIR[i][2] for i in xrange(Nnoff)]))
+            _F(PARA='VP_Z', LISTE_R=[VDIR[i][2] for i in range(Nnoff)]))
         __resu2 = CREA_TABLE(LISTE=mcfact,
                              TITRE=' ' * 13 + 'VECTEUR NORMAL A LA FISSURE    -   DIRECTION DE PROPAGATION')
         aster.affiche('MESSAGE', __resu2.EXTR_TABLE().__repr__())
@@ -924,14 +924,14 @@ def get_liste_inst(tabsup, args):
     from Utilitai.Utmess import UTMESS
 
     l_inst = None
-    l_inst_tab = tabsup['INST'].values()['INST']
-    l_inst_tab = dict([(i, 0)
-                      for i in l_inst_tab]).keys()  # elimine les doublons
+    l_inst_tab = list(tabsup['INST'].values())['INST']
+    l_inst_tab = list(dict([(i, 0)
+                      for i in l_inst_tab]).keys())  # elimine les doublons
     l_inst_tab.sort()
     if args['LIST_ORDRE'] != None or args['NUME_ORDRE'] != None:
-        l_ord_tab = tabsup['NUME_ORDRE'].values()['NUME_ORDRE']
+        l_ord_tab = list(tabsup['NUME_ORDRE'].values())['NUME_ORDRE']
         l_ord_tab.sort()
-        l_ord_tab = dict([(i, 0) for i in l_ord_tab]).keys()
+        l_ord_tab = list(dict([(i, 0) for i in l_ord_tab]).keys())
         d_ord_tab = [[l_ord_tab[i], l_inst_tab[i]]
                      for i in range(0, len(l_ord_tab))]
         d_ord_tab = [(i[0], i[1]) for i in d_ord_tab]
@@ -984,14 +984,14 @@ def get_liste_freq(tabsup, args):
     from Utilitai.Utmess import UTMESS
 
     l_freq = None
-    l_freq_tab = tabsup['FREQ'].values()['FREQ']
-    l_freq_tab = dict([(i, 0)
-                      for i in l_freq_tab]).keys()  # elimine les doublons
+    l_freq_tab = list(tabsup['FREQ'].values())['FREQ']
+    l_freq_tab = list(dict([(i, 0)
+                      for i in l_freq_tab]).keys())  # elimine les doublons
     l_freq_tab.sort()
     if args['LIST_ORDRE'] != None or args['NUME_ORDRE'] != None:
-        l_ord_tab = tabsup['NUME_ORDRE'].values()['NUME_ORDRE']
+        l_ord_tab = list(tabsup['NUME_ORDRE'].values())['NUME_ORDRE']
         l_ord_tab.sort()
-        l_ord_tab = dict([(i, 0) for i in l_ord_tab]).keys()
+        l_ord_tab = list(dict([(i, 0) for i in l_ord_tab]).keys())
         d_ord_tab = [(l_ord_tab[i], l_freq_tab[i])
                      for i in range(0, len(l_ord_tab))]
         d_ord_tab = dict(d_ord_tab)
@@ -1008,9 +1008,9 @@ def get_liste_freq(tabsup, args):
         PRECISION = 1.E-6
         CRITERE = 'ABSOLU'
     elif args['LIST_MODE'] != None or args['NUME_MODE'] != None:
-        l_mod_tab = tabsup['NUME_MODE'].values()['NUME_MODE']
+        l_mod_tab = list(tabsup['NUME_MODE'].values())['NUME_MODE']
         l_mod_tab.sort()
-        l_mod_tab = dict([(i, 0) for i in l_mod_tab]).keys()
+        l_mod_tab = list(dict([(i, 0) for i in l_mod_tab]).keys())
         d_mod_tab = [(l_mod_tab[i], l_freq_tab[i])
                      for i in range(0, len(l_mod_tab))]
         d_mod_tab = dict(d_mod_tab)
@@ -1123,7 +1123,7 @@ def get_propmat_varc_fem(self, RESULTAT, MAILLAGE, MATER, MODELISATION, Lnofon, 
     nomgd_2_nomcmp  = {'TEMP_R' : 'TEMP' ,
                        'NEUT_R' : 'X1'   ,}
     iret, ibid, nomgd = aster.dismoi('NOM_GD', __CHNOVRC.nom, 'CHAM_NO', 'F')
-    assert nomgd in nomgd_2_nompar.keys()
+    assert nomgd in list(nomgd_2_nompar.keys())
     ChnoVrcExtr = __CHNOVRC.EXTR_COMP(topo=1)
     ChnoVrcNoeu = ChnoVrcExtr.noeud
     ChnoVrcComp = ChnoVrcExtr.comp
@@ -1150,7 +1150,7 @@ def get_propmat_varc_fem(self, RESULTAT, MAILLAGE, MATER, MODELISATION, Lnofon, 
     nompar = nomgd_2_nompar[nomgd]
     nomcmp = nomgd_2_nomcmp[nomgd]
     varcno = tabvarc.NOEUD == Lnofon[ino]
-    varcno = varcno.values()
+    varcno = list(varcno.values())
     valpar = varcno[nomcmp][0]
     assert type(valpar) is float
 
@@ -1208,7 +1208,7 @@ def get_propmat_varc_xfem(self, args, RESULTAT, MAILLAGE, MATER, MODELISATION, F
     nomgd_2_nompar  = {'TEMP_R' : 'TEMP' ,
                        'NEUT_R' : 'NEUT1',}
     iret, ibid, nomgd = aster.dismoi('NOM_GD', __CHNOVRC.nom, 'CHAM_NO', 'F')
-    assert nomgd in nomgd_2_nompar.keys()
+    assert nomgd in list(nomgd_2_nompar.keys())
     ChnoVrcExtr = __CHNOVRC.EXTR_COMP(topo=1)
     DETRUIRE(CONCEPT=_F(NOM=__CHNOVRC))
     ChnoVrcVale = ChnoVrcExtr.valeurs
@@ -1237,7 +1237,7 @@ def get_propmat_varc_xfem(self, args, RESULTAT, MAILLAGE, MATER, MODELISATION, F
     for i in range(0,len(Listfo)/4) :
         vale = 0.
         NbNoFa = 3
-        for k in xrange(NbNoFa):
+        for k in range(NbNoFa):
             vale += ChnoVrcVale[L_NoFacPtFon[k+4*i]-1]
         # si la face est quadrangulaire
         if L_NoFacPtFon[3+4*i] > 0 :
@@ -1267,7 +1267,7 @@ def get_propmat_varc_xfem(self, args, RESULTAT, MAILLAGE, MATER, MODELISATION, F
         Nnoff = NB_POINT_FOND
         absmax = Listfo[-1]
         ValeVrc = [None] * Nnoff
-        for i in xrange(Nnoff):
+        for i in range(Nnoff):
             absci = i * absmax / (Nnoff - 1)
             ValeVrc[i] = InterpolScalFiss(absci, ValeVrc_Listfo, Listfo)
     # Sinon : on utilise directement ValeVrc_Listfo
@@ -1316,19 +1316,19 @@ def get_depl_sup(FOND_FISS, tabsupi, ndim, Lnofon, d_coor, ino, TYPE_MAILLAGE):
     import copy
     from Utilitai.Utmess import UTMESS
 
-    abscs = getattr(tabsupi, 'ABSC_CURV').values()
+    abscs = list(getattr(tabsupi, 'ABSC_CURV').values())
 
     if FOND_FISS:
 
         nbval = len(abscs)
 
         if TYPE_MAILLAGE != 'LIBRE':
-            coxs = NP.array(tabsupi['COOR_X'].values()['COOR_X'][:nbval])
-            coys = NP.array(tabsupi['COOR_Y'].values()['COOR_Y'][:nbval])
+            coxs = NP.array(list(tabsupi['COOR_X'].values())['COOR_X'][:nbval])
+            coys = NP.array(list(tabsupi['COOR_Y'].values())['COOR_Y'][:nbval])
             if ndim == 2:
                 cozs = NP.zeros(nbval)
             elif ndim == 3:
-                cozs = NP.array(tabsupi['COOR_Z'].values()['COOR_Z'][:nbval])
+                cozs = NP.array(list(tabsupi['COOR_Z'].values())['COOR_Z'][:nbval])
 
             Pfon = NP.array(
                 [d_coor[Lnofon[ino]][0], d_coor[Lnofon[ino]][1], d_coor[Lnofon[ino]][2]])
@@ -1336,16 +1336,16 @@ def get_depl_sup(FOND_FISS, tabsupi, ndim, Lnofon, d_coor, ino, TYPE_MAILLAGE):
                 (coxs - Pfon[0]) ** 2 + (coys - Pfon[1]) ** 2 + (cozs - Pfon[2]) ** 2)
             tabsupi['Abs_fo'] = abscs
             tabsupi.sort('Abs_fo')
-            abscs = getattr(tabsupi, 'Abs_fo').values()
+            abscs = list(getattr(tabsupi, 'Abs_fo').values())
 
         abscs = NP.array(abscs[:nbval])
 
-        dxs = NP.array(tabsupi['DX'].values()['DX'][:nbval])
-        dys = NP.array(tabsupi['DY'].values()['DY'][:nbval])
+        dxs = NP.array(list(tabsupi['DX'].values())['DX'][:nbval])
+        dys = NP.array(list(tabsupi['DY'].values())['DY'][:nbval])
         if ndim == 2:
             dzs = NP.zeros(nbval)
         elif ndim == 3:
-            dzs = NP.array(tabsupi['DZ'].values()['DZ'][:nbval])
+            dzs = NP.array(list(tabsupi['DZ'].values())['DZ'][:nbval])
 
 #     ---  CAS FISSURE X-FEM ---
     else:
@@ -1353,14 +1353,14 @@ def get_depl_sup(FOND_FISS, tabsupi, ndim, Lnofon, d_coor, ino, TYPE_MAILLAGE):
 #   on néglige les termes singuliers en interpolant le champ de déplacement
 #   compte-tenu du shift des fonctions singulières, cela revient à mettre les termes
 #   singuliers à zéro
-        H1 = getattr(tabsupi, 'H1X').values()
+        H1 = list(getattr(tabsupi, 'H1X').values())
         nbval = len(H1)
         H1 = complete(H1)
         dxs = 2. * (H1 + NP.zeros(nbval))
-        H1 = getattr(tabsupi, 'H1Y').values()
+        H1 = list(getattr(tabsupi, 'H1Y').values())
         H1 = complete(H1)
         dys = 2. * (H1 + NP.zeros(nbval))
-        H1 = getattr(tabsupi, 'H1Z').values()
+        H1 = list(getattr(tabsupi, 'H1Z').values())
         H1 = complete(H1)
         dzs = 2. * (H1 + NP.zeros(nbval))
         abscs = NP.array(abscs[:nbval])
@@ -1379,16 +1379,16 @@ def get_depl_inf(FOND_FISS, tabinfi, ndim, Lnofon, syme_char, d_coor, ino, TYPE_
     from Utilitai.Utmess import UTMESS
 
     if syme_char == 'NON' and FOND_FISS:
-        absci = getattr(tabinfi, 'ABSC_CURV').values()
+        absci = list(getattr(tabinfi, 'ABSC_CURV').values())
 
         nbval = len(absci)
         if TYPE_MAILLAGE != 'LIBRE':
-            coxi = NP.array(tabinfi['COOR_X'].values()['COOR_X'][:nbval])
-            coyi = NP.array(tabinfi['COOR_Y'].values()['COOR_Y'][:nbval])
+            coxi = NP.array(list(tabinfi['COOR_X'].values())['COOR_X'][:nbval])
+            coyi = NP.array(list(tabinfi['COOR_Y'].values())['COOR_Y'][:nbval])
             if ndim == 2:
                 cozi = NP.zeros(nbval)
             elif ndim == 3:
-                cozi = NP.array(tabinfi['COOR_Z'].values()['COOR_Z'][:nbval])
+                cozi = NP.array(list(tabinfi['COOR_Z'].values())['COOR_Z'][:nbval])
 
             Pfon = NP.array(
                 [d_coor[Lnofon[ino]][0], d_coor[Lnofon[ino]][1], d_coor[Lnofon[ino]][2]])
@@ -1396,16 +1396,16 @@ def get_depl_inf(FOND_FISS, tabinfi, ndim, Lnofon, syme_char, d_coor, ino, TYPE_
                 (coxi - Pfon[0]) ** 2 + (coyi - Pfon[1]) ** 2 + (cozi - Pfon[2]) ** 2)
             tabinfi['Abs_fo'] = absci
             tabinfi.sort('Abs_fo')
-            absci = getattr(tabinfi, 'Abs_fo').values()
+            absci = list(getattr(tabinfi, 'Abs_fo').values())
 
         absci = NP.array(absci[:nbval])
 
-        dxi = NP.array(tabinfi['DX'].values()['DX'][:nbval])
-        dyi = NP.array(tabinfi['DY'].values()['DY'][:nbval])
+        dxi = NP.array(list(tabinfi['DX'].values())['DX'][:nbval])
+        dyi = NP.array(list(tabinfi['DY'].values())['DY'][:nbval])
         if ndim == 2:
             dzi = NP.zeros(nbval)
         elif ndim == 3:
-            dzi = NP.array(tabinfi['DZ'].values()['DZ'][:nbval])
+            dzi = NP.array(list(tabinfi['DZ'].values())['DZ'][:nbval])
 
         di = NP.asarray([dxi, dyi, dzi])
 
@@ -1652,7 +1652,7 @@ def get_erreur(self, ndim, __tabi, type_para):
         index = 3
     py_tab = __tabi.EXTR_TABLE()
 
-    nlines = len(py_tab.values()[py_tab.values().keys()[0]])
+    nlines = len(list(py_tab.values())[list(py_tab.values()).keys()[0]])
     err = NP.zeros((index, nlines / 3))
     kmax = [0.] * index
     kmin = [0.] * index
@@ -1699,7 +1699,7 @@ def get_erreur(self, ndim, __tabi, type_para):
             LISTE=(
                 _F(LISTE_R=(
                     tuple(
-                        __tabi.EXTR_TABLE().values()['G_MIN'])), PARA='G_MIN'),
+                        list(__tabi.EXTR_TABLE().values())['G_MIN'])), PARA='G_MIN'),
                 _F(LISTE_R=(
                    tuple(
                    err[0].tolist())), PARA='ERR_K1'),
@@ -1709,7 +1709,7 @@ def get_erreur(self, ndim, __tabi, type_para):
             LISTE=(
                 _F(LISTE_R=(
                     tuple(
-                        __tabi.EXTR_TABLE().values()['G_MIN'])), PARA='G_MIN'),
+                        list(__tabi.EXTR_TABLE().values())['G_MIN'])), PARA='G_MIN'),
                 _F(LISTE_R=(
                    tuple(
                    err[0].tolist())), PARA='ERR_K1'),
@@ -1957,7 +1957,7 @@ def post_k1_k2_k3_ops(self, FOND_FISS, FISSURE, RESULTAT,
     compor = sd_compor1('%-8s.CPT.%s' % (MATER.nom, ns))
     valk = [s.strip() for s in compor.VALK.get()]
     valr = compor.VALR.get()
-    dicmat = dict(zip(valk, valr))
+    dicmat = dict(list(zip(valk, valr)))
 
     e = dicmat['E']
     nu = dicmat['NU']

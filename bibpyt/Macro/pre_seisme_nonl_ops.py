@@ -56,7 +56,7 @@ def pre_seisme_nonl_ops(self, **args):
     calcul = PreSeismeNonL.Factory(self, param)
     try:
         calcul.run()
-    except aster.error, err:
+    except aster.error as err:
         UTMESS('F', err.id_message, valk=err.valk,
                vali=err.vali, valr=err.valr)
 
@@ -77,7 +77,7 @@ class PreSeismeNonL(object):
         elif param['STAT_DYNA']:
             return StatDyna(parent, param)
         else:
-            raise NotImplementedError, "option calcul non défini"
+            raise NotImplementedError("option calcul non défini")
 
     def __init__(self, parent, param):
         """initializations"""
@@ -253,7 +253,7 @@ class BaseModale(object):
         for key in charge:
             if key == 'LIAISON_SOLIDE':
                 msg_error = "\n\nLe mot-clé GROUP_NO_CENT est obligatoire lorsqu'une LIAISON_SOLIDE est définie"
-                assert self.param['PRE_CALC_MISS'].has_key('GROUP_NO_CENT') == True, msg_error
+                assert ('GROUP_NO_CENT' in self.param['PRE_CALC_MISS']) == True, msg_error
                 return True
         return False
 
@@ -343,7 +343,7 @@ class BaseModale(object):
 
     def DefineOut(self):
         """Define output depending on user choices"""
-        if self.param['RESULTAT'].has_key('BASE_MODALE'):
+        if 'BASE_MODALE' in self.param['RESULTAT']:
             self.parent.DeclareOut('_BAMO', self.param['RESULTAT']['BASE_MODALE'])
         _BAMO = DEFI_BASE_MODALE(**self.cmd_bamo)
         self.bamo = _BAMO
@@ -408,7 +408,7 @@ class Properties(object):
     def __init__(self, **kwargs):
         """initializations"""
         self._keywords = {}
-        for key in kwargs.keys():
+        for key in list(kwargs.keys()):
             if hasattr(kwargs[key], 'List_F'):
                 self._keywords[key] = kwargs[key].List_F()[0]
             else:
@@ -424,7 +424,7 @@ class Properties(object):
         """Get a value from a nested dictionary"""
         diction = self._keywords
         for key in path:
-            if key not in diction.keys():
+            if key not in list(diction.keys()):
                 diction[key] = {}
             diction = diction[key]
         return diction
@@ -436,7 +436,7 @@ class Properties(object):
     def add_MCFACT(self, path, addedKey):
         """Add new Mot-Clé Facteur into a nested dictionary"""
         diction = self._keywords[path[0]]
-        if path[1] not in diction.keys():
+        if path[1] not in list(diction.keys()):
             self.set_key(path, [])
         self._keywords[path[0]][path[1]].insert(0, addedKey)
 
@@ -471,7 +471,7 @@ class Model(object):
     def __init__(self, parent, mail, properties):
         """initializations"""
         if not self.option_calcul:
-            raise NotImplementedError, "option_calcul non défini"
+            raise NotImplementedError("option_calcul non défini")
         self.parent = parent
         self.args = properties.copy()
         self.mesh = mail
@@ -526,15 +526,15 @@ class Model(object):
 
     def DefineOut(self):
         """Define output depending on user choices"""
-        if self.args['RESULTAT'].has_key('CHAM_MATER'):
+        if 'CHAM_MATER' in self.args['RESULTAT']:
             self.parent.DeclareOut('_AMa', self.args['RESULTAT']['CHAM_MATER'])
         _AMa = AFFE_MATERIAU(**self.args['AFFE_MATERIAU'])
         self.mate = _AMa
-        if self.args['RESULTAT'].has_key('CARA_ELEM'):
+        if 'CARA_ELEM' in self.args['RESULTAT']:
             self.parent.DeclareOut('_ACa', self.args['RESULTAT']['CARA_ELEM'])
         _ACa = AFFE_CARA_ELEM(**self.args['AFFE_CARA_ELEM'])
         self.cara_elem = _ACa
-        if self.args['RESULTAT'].has_key('CHARGE'):
+        if 'CHARGE' in self.args['RESULTAT']:
             for mcfact in self.args['RESULTAT']['CHARGE']:
                 if mcfact['OPTION'] == 'LAPL_TEMPS':
                     self.parent.DeclareOut('ACh_LT', mcfact['NOM'])
@@ -722,7 +722,7 @@ class StatDyna(object):
         """Initialization of the RIGI_PARASOL damping values"""
         val = coef * 1.E16
         lvalues = self.cara_elem.sdj.CARAMOXV.get()
-        p_ind = range(1, len(lvalues)+1)
+        p_ind = list(range(1, len(lvalues)+1))
         p_real = len(lvalues)*(val,)
         p_imag = len(lvalues)*(0.0,)
         self.cara_elem.sdj.CARAMOXV.changeJeveuxValues(len(lvalues),tuple(p_ind),
@@ -802,7 +802,7 @@ class StatDyna(object):
                 p_imag.append(NP.imag(maelk[n1,n2]))
 
         last_ind = nbmod*(nbmod+1)/2
-        p_ind = range(1, last_ind +1)
+        p_ind = list(range(1, last_ind +1))
 
         aster.putvectjev(nom_mael + (8 - len(nom_mael)) * ' '+ '.MAEL_RAID_VALE         ', last_ind, tuple(
                    p_ind), tuple(p_real), tuple(p_imag), 1)
@@ -855,7 +855,7 @@ class StatDyna(object):
                 p_imag.append(NP.imag(maelZ[n1,n2]))
 
         last_ind = nbmod*(nbmod+1)/2
-        p_ind = range(1, last_ind +1)
+        p_ind = list(range(1, last_ind +1))
 
         aster.putvectjev(nom_mael + (8 - len(nom_mael)) * ' '+ '.MAEL_RAID_VALE         ', last_ind, tuple(
                    p_ind), tuple(p_real), tuple(p_imag), 1)
@@ -887,7 +887,7 @@ class ModelMacrElem(Model):
         self.parasol_model()
         self.args.set_key(
             ('AFFE_MODELE', 'MAILLAGE'), self.mesh.get_new_mesh())
-        if self.args['RESULTAT'].has_key('MODELE'):
+        if 'MODELE' in self.args['RESULTAT']:
             self.parent.DeclareOut('_Modele', self.args['RESULTAT']['MODELE'])
         _Modele = AFFE_MODELE(**self.args['AFFE_MODELE'])
         self.modele = _Modele
@@ -933,13 +933,13 @@ class ModelMacrElem(Model):
         for mm in mcfact:
             if mm['OPTION'] == 'LAPL_TEMPS':
                 cmd_charge = {'SUPER_MAILLE': 'STAT1'}
-                if self.args['POST_CALC_MISS'].has_key('UNITE_RESU_RIGI'):
+                if 'UNITE_RESU_RIGI' in self.args['POST_CALC_MISS']:
                     UL_rigi = self.args['POST_CALC_MISS']['UNITE_RESU_RIGI']
                     cmd_charge['UNITE_RESU_RIGI'] = UL_rigi
-                if self.args['POST_CALC_MISS'].has_key('UNITE_RESU_MASS'):
+                if 'UNITE_RESU_MASS' in self.args['POST_CALC_MISS']:
                     UL_mass = self.args['POST_CALC_MISS']['UNITE_RESU_MASS']
                     cmd_charge['UNITE_RESU_MASS'] = UL_mass
-                if self.args['POST_CALC_MISS'].has_key('UNITE_RESU_AMOR'):
+                if 'UNITE_RESU_AMOR' in self.args['POST_CALC_MISS']:
                     UL_amor = self.args['POST_CALC_MISS']['UNITE_RESU_AMOR']
                     cmd_charge['UNITE_RESU_AMOR'] = UL_amor
                 charge_sol = _F(**cmd_charge)
@@ -1085,7 +1085,7 @@ class Mesh(object):
     def DefineOut(self):
         """Define output depending on user choices"""
         if self.__builded:
-            if self.param['RESULTAT'].has_key('MAILLAGE'):
+            if 'MAILLAGE' in self.param['RESULTAT']:
                 self.parent.DeclareOut(
                     '_NewMesh', self.param['RESULTAT']['MAILLAGE'])
             _MeshTmp = ASSE_MAILLAGE(**self.asse_mail)

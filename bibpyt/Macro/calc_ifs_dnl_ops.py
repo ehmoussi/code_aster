@@ -144,17 +144,17 @@ def calc_ifs_dnl_ops(self, GROUP_MA_IFS, NOM_CMP_IFS, UNITE_NOEUD, UNITE_ELEM, M
 
     for i in range(len(motCleSimpTuple)):
         cle = motCleSimpTuple[i]
-        if args.has_key(cle):
+        if cle in args:
             motscles[cle] = args[cle]
 
     for i in range(len(motCleFactTuple)):
         cle = motCleFactTuple[i]
-        if args.has_key(cle):
+        if cle in args:
             if args[cle] != None:
                 dMotCle = []
                 for j in args[cle]:
                     dMotCle.append(j.cree_dict_valeurs(j.mc_liste))
-                    for k in dMotCle[-1].keys():
+                    for k in list(dMotCle[-1].keys()):
                         if dMotCle[-1][k] == None:
                             del dMotCle[-1][k]
                 motscles[cle] = dMotCle
@@ -183,11 +183,11 @@ def calc_ifs_dnl_ops(self, GROUP_MA_IFS, NOM_CMP_IFS, UNITE_NOEUD, UNITE_ELEM, M
     # =============================================================================#
     # RECUPERATION DU MAILLAGE COUPLE POUR LES DEPLACEMENTS (NOEUDS Code_Saturne) #  !!! YACS COMMUNICATION !!!
     # --------------------------------------------------------------------------- #
-    print "IMPR_MAIL_YACS MAILLAGE NOEUDS"
+    print("IMPR_MAIL_YACS MAILLAGE NOEUDS")
     IMPR_MAIL_YACS(UNITE_MAILLAGE=UNITE_NOEUD, TYPE_MAILLAGE='SOMMET',),
-    print "LIRE_MAILLAGE MAILLAGE NOEUDS"
+    print("LIRE_MAILLAGE MAILLAGE NOEUDS")
     _fluidNodeMesh = LIRE_MAILLAGE(FORMAT='ASTER',UNITE=UNITE_NOEUD)
-    print "DEFI_GROUP MAILLAGE NOEUDS"
+    print("DEFI_GROUP MAILLAGE NOEUDS")
     # print "grpProjMocle=",grpProjMocle
     _fluidNodeMesh = DEFI_GROUP(reuse=_fluidNodeMesh,
                                 MAILLAGE=_fluidNodeMesh,
@@ -196,11 +196,11 @@ def calc_ifs_dnl_ops(self, GROUP_MA_IFS, NOM_CMP_IFS, UNITE_NOEUD, UNITE_ELEM, M
     # ====================================================================================#
     # RECUPERATION DU MAILLAGE COUPLE POUR LES FORCES (CENTRE DES ELEMENTS Code_Saturne) #  !!! YACS COMMUNICATION !!!
     # ---------------------------------------------------------------------------------- #
-    print "IMPR_MAIL_YACS MAILLAGE ELEMENTS"
+    print("IMPR_MAIL_YACS MAILLAGE ELEMENTS")
     IMPR_MAIL_YACS(UNITE_MAILLAGE=UNITE_ELEM, TYPE_MAILLAGE='MILIEU',)
-    print "LIRE_MAILLAGE MAILLAGE ELEMENTS"
+    print("LIRE_MAILLAGE MAILLAGE ELEMENTS")
     _fluidElemMesh = LIRE_MAILLAGE(FORMAT='ASTER',UNITE=UNITE_ELEM)
-    print "DEFI_GROUP MAILLAGE ELEMENTS"
+    print("DEFI_GROUP MAILLAGE ELEMENTS")
     # print "grpProjMocle=",grpProjMocle
     _fluidElemMesh = DEFI_GROUP(reuse=_fluidElemMesh,
                                 MAILLAGE=_fluidElemMesh,
@@ -210,7 +210,7 @@ def calc_ifs_dnl_ops(self, GROUP_MA_IFS, NOM_CMP_IFS, UNITE_NOEUD, UNITE_ELEM, M
     # CALCUL DES PROJECTEURS POUR LES DEPLACEMENTS #
     # ASTER -> CODE COUPLE                         #
     # -------------------------------------------- #
-    print "PROJ_CHAMP MAILLAGE NOEUDS"
+    print("PROJ_CHAMP MAILLAGE NOEUDS")
     # print "MAILLAGE_1=",_strucMesh.nom
     # print "MAILLAGE_2=",_fluidNodeMesh.nom
     _fluidNodePoids = PROJ_CHAMP(PROJECTION='NON',
@@ -223,7 +223,7 @@ def calc_ifs_dnl_ops(self, GROUP_MA_IFS, NOM_CMP_IFS, UNITE_NOEUD, UNITE_ELEM, M
     # CALCUL DES PROJECTEURS POUR LES FORCES #
     # CODE COUPLE -> ASTER                   #
     # -------------------------------------- #
-    print "PROJ_CHAMP MAILLAGE ELEMENTS"
+    print("PROJ_CHAMP MAILLAGE ELEMENTS")
     # print "MAILLAGE_1=",_strucMesh
     # print "MAILLAGE_2=",_fluidElemMesh
     _fluidElemPoids = PROJ_CHAMP(PROJECTION='NON',
@@ -235,14 +235,14 @@ def calc_ifs_dnl_ops(self, GROUP_MA_IFS, NOM_CMP_IFS, UNITE_NOEUD, UNITE_ELEM, M
     # ====================================================================================#
     # CREATION DE LA CARTES DES FORCES NODALES AVEC UNE INITIALISATION DES FORCES A ZERO #
     # ---------------------------------------------------------------------------------- #
-    print "AFFE_CHAR_MECA"
+    print("AFFE_CHAR_MECA")
     _ifsCharMeca = AFFE_CHAR_MECA(MODELE=MODELE,
                                   FORCE_NODALE=_F(**ifsCharMocle),)
     dExcit = []
     if (EXCIT != None):
         for j in EXCIT:
             dExcit.append(j.cree_dict_valeurs(j.mc_liste))
-            for i in dExcit[-1].keys():
+            for i in list(dExcit[-1].keys()):
                 if dExcit[-1][i] == None:
                     del dExcit[-1][i]
     dExcit.append(_F(CHARGE=_ifsCharMeca),)
@@ -261,17 +261,17 @@ def calc_ifs_dnl_ops(self, GROUP_MA_IFS, NOM_CMP_IFS, UNITE_NOEUD, UNITE_ELEM, M
             dExtrInit['ACCE'] = ETAT_INIT['ACCE']
         for j in ETAT_INIT:
             dEtatInit.append(j.cree_dict_valeurs(j.mc_liste))
-            for i in dEtatInit[-1].keys():
+            for i in list(dEtatInit[-1].keys()):
                 if dEtatInit[-1][i] == None:
                     del dEtatInit[-1][i]
 
     # ======================================#
     # RECUPERATION DES DONNEES TEMPORELLES #  !!! YACS COMMUNICATION !!!
     # ------------------------------------ #
-    print "Appel initialisation"
+    print("Appel initialisation")
 
     _timeStepAster = PAS_INIT
-    print "PAS=", _timeStepAster
+    print("PAS=", _timeStepAster)
     _timeV = RECU_PARA_YACS(DONNEES='INITIALISATION',
                             PAS=_timeStepAster,)
     # print "__timeValues=",_timeV.Valeurs()
@@ -292,13 +292,13 @@ def calc_ifs_dnl_ops(self, GROUP_MA_IFS, NOM_CMP_IFS, UNITE_NOEUD, UNITE_ELEM, M
     _tInitial = _timeValues[5]
     _timeStep = _timeValues[6]
     _StartImp = _tInitial
-    print '_nbTimeStep  = ', _nbTimeStep
-    print '_timeStep    = ', _timeStep
-    print '_tInitial    = ', _tInitial
-    print '_nbSsIterMax = ', _nbSsIterMax
-    print '_impMed  = ', _impMed
-    print '_PeriodImp   = ', _PeriodImp
-    print '_StartImp   = ', _StartImp
+    print('_nbTimeStep  = ', _nbTimeStep)
+    print('_timeStep    = ', _timeStep)
+    print('_tInitial    = ', _tInitial)
+    print('_nbSsIterMax = ', _nbSsIterMax)
+    print('_impMed  = ', _impMed)
+    print('_PeriodImp   = ', _PeriodImp)
+    print('_StartImp   = ', _StartImp)
     if (_nbSsIterMax == 0):
         _nbSsIterMax = 1
 
@@ -337,7 +337,7 @@ def calc_ifs_dnl_ops(self, GROUP_MA_IFS, NOM_CMP_IFS, UNITE_NOEUD, UNITE_ELEM, M
         # ---------------------------------- #
         # Affectation de l'instant de calcul #
         # ---------------------------------- #
-        print "RECU_PARA_YACS 1"
+        print("RECU_PARA_YACS 1")
         _tStart = _tInitial
         _pastps = RECU_PARA_YACS(DONNEES='PAS',
                                  NUME_ORDRE_YACS=_numpas,
@@ -345,11 +345,11 @@ def calc_ifs_dnl_ops(self, GROUP_MA_IFS, NOM_CMP_IFS, UNITE_NOEUD, UNITE_ELEM, M
                                  PAS=_timeStepAster,
                                  )
         _pastps0 = _pastps.Valeurs()
-        print "_pastps0[0]=", _pastps0[0]
+        print("_pastps0[0]=", _pastps0[0])
         _timeStep = _pastps0[0]
-        print "DEFI_LIST_REEL"
+        print("DEFI_LIST_REEL")
         _tEnd = _tInitial + _timeStep
-        print "_tStart=", _tStart, " ; _tEnd=", _tEnd
+        print("_tStart=", _tStart, " ; _tEnd=", _tEnd)
         _liste = DEFI_LIST_REEL(DEBUT=_tStart,
                                 INTERVALLE=_F(JUSQU_A=_tEnd,
                                               NOMBRE=1,),)
@@ -365,7 +365,7 @@ def calc_ifs_dnl_ops(self, GROUP_MA_IFS, NOM_CMP_IFS, UNITE_NOEUD, UNITE_ELEM, M
 
             # Reception des forces nodales et projection !!! YACS COMMUNICATION !!!
             # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            print "MODI_CHAR_YACS"
+            print("MODI_CHAR_YACS")
             _ifsCharMeca = MODI_CHAR_YACS(reuse=_ifsCharMeca,
                                           CHAR_MECA=_ifsCharMeca,
                                           MATR_PROJECTION=_fluidElemPoids,
@@ -377,7 +377,7 @@ def calc_ifs_dnl_ops(self, GROUP_MA_IFS, NOM_CMP_IFS, UNITE_NOEUD, UNITE_ELEM, M
 
             # Resolution non-lineaire
             # ~~~~~~~~~~~~~~~~~~~~~~~
-            print "DYNA_NON_LINE NUMPAS=", _numpas
+            print("DYNA_NON_LINE NUMPAS=", _numpas)
             #__rescur=DYNA_NON_LINE(
             __rescur = DYNA_NON_LINE(
                 ETAT_INIT = dEtatInit,
@@ -393,11 +393,11 @@ def calc_ifs_dnl_ops(self, GROUP_MA_IFS, NOM_CMP_IFS, UNITE_NOEUD, UNITE_ELEM, M
                                    PAS=_timeStep,)
             __icv = _ticv.Valeurs()
             icv = int(__icv[0])
-            print "Convergence=", icv
+            print("Convergence=", icv)
             if (icv == 1 or _SousIterations == _nbSsIterMax):
                 # Envoi des deplacements
                 # ~~~~~~~~~~~~~~~~~~~~~~
-                print "ENV_CINE_YACS ", _numpas
+                print("ENV_CINE_YACS ", _numpas)
                 ENV_CINE_YACS(RESULTAT=_F(RESU=__rescur,
                                           # ENV_CINE_YACS(RESULTAT = _F(RESU
                                           # = resdnl,
@@ -409,7 +409,7 @@ def calc_ifs_dnl_ops(self, GROUP_MA_IFS, NOM_CMP_IFS, UNITE_NOEUD, UNITE_ELEM, M
                               **poidsMocle)
 
                 _SousIterations = _nbSsIterMax
-                print "EXTR_RESU"
+                print("EXTR_RESU")
                 resdnl = EXTR_RESU(RESULTAT=__rescur,
                                    ARCHIVAGE=_F(NUME_ORDRE=(0, 1),))
                 # resdnl = __rescur
@@ -440,10 +440,10 @@ def calc_ifs_dnl_ops(self, GROUP_MA_IFS, NOM_CMP_IFS, UNITE_NOEUD, UNITE_ELEM, M
                                  PAS=_timeStepAster,
                                  )
         _pastps0 = _pastps.Valeurs()
-        print "_pastps0[0]=", _pastps0[0]
+        print("_pastps0[0]=", _pastps0[0])
         _timeStep = _pastps0[0]
         _tEnd = _tStart + _timeStep
-        print "_tStart=", _tStart, " ; _tEnd=", _tEnd
+        print("_tStart=", _tStart, " ; _tEnd=", _tEnd)
         _liste = DEFI_LIST_REEL(DEBUT=_tStart,
                                 INTERVALLE=_F(JUSQU_A=_tEnd,
                                               NOMBRE=1,),)
@@ -459,7 +459,7 @@ def calc_ifs_dnl_ops(self, GROUP_MA_IFS, NOM_CMP_IFS, UNITE_NOEUD, UNITE_ELEM, M
 
             # Reception des forces nodales et projection !!! YACS COMMUNICATION !!!
             # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            print "MODI_CHAR_YACS_BOUCLE"
+            print("MODI_CHAR_YACS_BOUCLE")
             _ifsCharMeca = MODI_CHAR_YACS(reuse=_ifsCharMeca,
                                           CHAR_MECA=_ifsCharMeca,
                                           MATR_PROJECTION=_fluidElemPoids,
@@ -471,7 +471,7 @@ def calc_ifs_dnl_ops(self, GROUP_MA_IFS, NOM_CMP_IFS, UNITE_NOEUD, UNITE_ELEM, M
 
             # Resolution non-lineaire
             # ~~~~~~~~~~~~~~~~~~~~~~~
-            print "DYNA_NON_LINE_BOUCLE"
+            print("DYNA_NON_LINE_BOUCLE")
             resdnl = DYNA_NON_LINE(reuse=resdnl,
                                    MODELE=MODELE,
                                    ETAT_INIT=_F(EVOL_NOLI=resdnl,),
@@ -481,7 +481,7 @@ def calc_ifs_dnl_ops(self, GROUP_MA_IFS, NOM_CMP_IFS, UNITE_NOEUD, UNITE_ELEM, M
 
             # test de convergence
             # ~~~~~~~~~~~~~~~~~~~
-            print "CONVERGENCE ", _SousIterations
+            print("CONVERGENCE ", _SousIterations)
             # icv = cocas_fonctions.CONVERGENCE()
             _ticv = RECU_PARA_YACS(DONNEES='CONVERGENCE',
                                    NUME_ORDRE_YACS=_ntcast,
@@ -489,13 +489,13 @@ def calc_ifs_dnl_ops(self, GROUP_MA_IFS, NOM_CMP_IFS, UNITE_NOEUD, UNITE_ELEM, M
                                    PAS=_timeStep,)
             __icv = _ticv.Valeurs()
             icv = int(__icv[0])
-            print "Convergence=", icv
+            print("Convergence=", icv)
             _ntcat = _ntcast + 1
             if (icv == 1 or _SousIterations == _nbSsIterMax):
                 _SousIterations = _nbSsIterMax
                 # Envoi des deplacements !!! YACS COMMUNICATION !!!
                 # ~~~~~~~~~~~~~~~~~~~~~~
-                print "ENV_CINE_YACS_BOUCLE"
+                print("ENV_CINE_YACS_BOUCLE")
                 ENV_CINE_YACS(RESULTAT=_F(RESU=resdnl,
                                           NUME_ORDRE=_numpas),
                               MATR_PROJECTION=_fluidNodePoids,
@@ -520,13 +520,13 @@ def calc_ifs_dnl_ops(self, GROUP_MA_IFS, NOM_CMP_IFS, UNITE_NOEUD, UNITE_ELEM, M
 #     _nbTimeStep = _endValue
         _numpas = _numpas + 1
 
-        print "NUMPAS : ", _numpas, "nbTimeStep=", _nbTimeStep
+        print("NUMPAS : ", _numpas, "nbTimeStep=", _nbTimeStep)
 
     # ========================================================================#
     # Impression Med si demandee                                             #
     # (premier et dernier pas d'impression pour coherence avec Code_Saturne) #
     # ---------------------------------------------------------------------- #
-    print "impression med : ", _impMed
+    print("impression med : ", _impMed)
     if (_impMed == 1):
 
         impEnsiMocle = {}
@@ -563,10 +563,10 @@ def calc_ifs_dnl_ops(self, GROUP_MA_IFS, NOM_CMP_IFS, UNITE_NOEUD, UNITE_ELEM, M
                 impEnsiDico['PAS'] = _reste
                 impEnsiMocle['INTERVALLE'].append(impEnsiDico)
 
-        print "Liste impEnsiMocle=", impEnsiMocle
+        print("Liste impEnsiMocle=", impEnsiMocle)
         _listImp = DEFI_LIST_ENTI(DEBUT=_StartImp,
                                   **impEnsiMocle)
-        print "Liste impression=", _listImp
+        print("Liste impression=", _listImp)
         IMPR_RESU(FORMAT='MED',
                   RESU=_F(MAILLAGE=_strucMesh,
                           RESULTAT=resdnl,

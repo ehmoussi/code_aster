@@ -57,7 +57,7 @@ def dyna_visco_ops(self,MODELE,CARA_ELEM,
 
 
     coef_fmax = 1.
-    if args.has_key('COEF_FREQ_MAX'):
+    if 'COEF_FREQ_MAX' in args:
         coef_fmax = args['COEF_FREQ_MAX']
   
   

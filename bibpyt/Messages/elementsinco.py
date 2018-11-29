@@ -20,7 +20,7 @@
 
 cata_msg = {
 
-    1 : _(u"""
+    1 : _("""
  Cet élément incompressible n'est utilisable qu'avec un comportement ELAS ou un comportement plastique de type VMIS_*.
 """),
 

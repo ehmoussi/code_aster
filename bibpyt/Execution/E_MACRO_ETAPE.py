@@ -20,13 +20,13 @@
 # person_in_charge: mathieu.courtois at edf.fr
 
 
-import E_ETAPE
+from . import E_ETAPE
 from os import times
 import aster
 import string
 from Noyau.N__F import _F
 from Noyau.N_info import message, SUPERV
-from strfunc import ufmt
+from .strfunc import ufmt
 
 
 class MACRO_ETAPE(E_ETAPE.ETAPE):
@@ -93,7 +93,7 @@ class MACRO_ETAPE(E_ETAPE.ETAPE):
 
             if ier > 0:
                 # On termine le traitement
-                cr.fatal(_(u"Erreurs à l'exécution de la macro %s"), self.nom)
+                cr.fatal(_("Erreurs à l'exécution de la macro %s"), self.nom)
                 raise EOFError
 
             E_ETAPE.ETAPE.Exec(self)
@@ -149,7 +149,7 @@ class MACRO_ETAPE(E_ETAPE.ETAPE):
         if ier > 0:
             # On termine le traitement
             cr.fatal(
-                _(u"Erreurs dans la construction de la macro %s"), self.nom)
+                _("Erreurs dans la construction de la macro %s"), self.nom)
             raise EOFError
 
         E_ETAPE.ETAPE.Exec(self)
@@ -166,8 +166,8 @@ class MACRO_ETAPE(E_ETAPE.ETAPE):
         # (compte-rendu) pour stocker les erreurs eventuelles
         # et doit l'ajouter au cr de l'etape parent pour construire un
         # compte-rendu hierarchique
-        self.cr = self.CR(debut='Etape : ' + self.nom + '    ligne : ' + `self.appel[0]` +
-                          '    fichier : ' + `self.appel[1]`,
+        self.cr = self.CR(debut='Etape : ' + self.nom + '    ligne : ' + repr(self.appel[0]) +
+                          '    fichier : ' + repr(self.appel[1]),
                           fin='Fin Etape : ' + self.nom)
 
         # Si la liste des etapes est remplie avant l'appel à Build
@@ -186,7 +186,7 @@ class MACRO_ETAPE(E_ETAPE.ETAPE):
             if ier > 0:
                 # On termine le traitement
                 self.cr.fatal(
-                    _(u"Erreurs dans la construction de la macro %s"), self.nom)
+                    _("Erreurs dans la construction de la macro %s"), self.nom)
                 raise EOFError
 
             # La macro de type INCLUDE doit etre executee avant ses sous etapes

@@ -76,7 +76,7 @@ class JDCVisitor(object):
         """Visit the default values of 'node' not already seen."""
         if not self.with_default:
             return
-        for key, obj in node.definition.entites.items():
+        for key, obj in list(node.definition.entites.items()):
             has_default = getattr(obj, 'defaut', None) is not None \
                 or getattr(obj, 'statut', None) == 'd'
             if not key in seen and has_default:

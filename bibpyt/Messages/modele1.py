@@ -21,46 +21,46 @@
 
 cata_msg = {
 
-    1 : _(u"""
+    1 : _("""
 Pour affecter une liste de modélisations, il faut qu'elles soient de même dimension topologique.
 """),
 
-    2 : _(u"""
+    2 : _("""
 La maille %(k1)s de type %(k2)s n'a pas pu être affectée.
 """),
 
-    3 : _(u"""
+    3 : _("""
 Probable erreur de l'utilisateur :
   La modélisation choisie est axisymétrique ou plane.
   Il faut que le maillage soit dans le plan z=0.
   Ce n'est pas le cas.
 """),
 
-    4 : _(u"""
+    4 : _("""
 Sur les %(i1)d mailles du maillage %(k1)s, on a demandé l'affectation de %(i2)d, on a pu en affecter %(i3)d
 """),
 
 
-    5 : _(u"""
+    5 : _("""
 Votre modèle doit contenir au moins un élément fini car il n'est pas possible de n'avoir que des macro-éléments si le maillage est lu par LIRE_MAILLAGE.
   -> Risque & Conseil :
 Si vous voulez définir entièrement un modèle avec des macro-éléments, il faut définir ces derniers avec DEFI_MAILLAGE.
 """),
 
-    6 : _(u"""
+    6 : _("""
 Aucune maille du maillage %(k1)s n'a été affectée par des éléments finis.
 """),
 
-    7 : _(u"""
+    7 : _("""
 Attention l'élément HEXA8 en 3D_SI ne fonctionne correctement que sur les parallélépipèdes.
 Sur les éléments quelconques on peut obtenir des résultats faux.
 """),
 
-    8 : _(u"""Liste des noeuds affectés pour la modélisation:"""),
+    8 : _("""Liste des noeuds affectés pour la modélisation:"""),
 
-    9 : _(u"""Liste des mailles affectées pour la modélisation:"""),
+    9 : _("""Liste des mailles affectées pour la modélisation:"""),
 
-    14 : _(u"""
+    14 : _("""
 Le modèle contient un mélange d'éléments finis 2D (plan Oxy) et 3D
 
   -> Risque & Conseil :
@@ -68,13 +68,13 @@ Le modèle contient un mélange d'éléments finis 2D (plan Oxy) et 3D
      Parfois, cela empêche de faire le "bon choix".
 """),
 
-    20 : _(u""" Modélisation     Type maille  Élément fini     Nombre"""),
+    20 : _(""" Modélisation     Type maille  Élément fini     Nombre"""),
 
-    21 : _(u""" %(k1)-16s %(k2)-12s %(k3)-16s %(i1)d"""),
+    21 : _(""" %(k1)-16s %(k2)-12s %(k3)-16s %(i1)d"""),
 
-    38 : _(u"""%(k1)-8s %(k2)-8s %(k3)-8s %(k4)-8s %(k5)-8s %(k6)-8s %(k7)-8s %(k8)-8s"""),
+    38 : _("""%(k1)-8s %(k2)-8s %(k3)-8s %(k4)-8s %(k5)-8s %(k6)-8s %(k7)-8s %(k8)-8s"""),
 
-    53 : _(u"""
+    53 : _("""
   -> Le maillage est 3D (tous les noeuds ne sont pas dans le même plan Z = constante),
      mais les éléments du modèle sont de dimension 2.
 
@@ -85,12 +85,12 @@ Le modèle contient un mélange d'éléments finis 2D (plan Oxy) et 3D
      modélisation souhaitée dans la commande AFFE_MODELE.
 """),
 
-    54 : _(u"""
+    54 : _("""
 Il est interdit de mélanger des éléments discrets 2D et 3D dans le même modèle.
 """),
 
 
-    58 : _(u"""
+    58 : _("""
  -> Bizarre :
      Les éléments du modèle sont de dimension 2.
      Mais les noeuds du maillage sont un même plan Z = a avec a != 0.,
@@ -99,7 +99,7 @@ Il est interdit de mélanger des éléments discrets 2D et 3D dans le même mod�
      Il est d'usage d'utiliser un maillage Z=0. pour les modélisations planes ou Axis.
 """),
 
-    63: _(u"""
+    63: _("""
   -> La maille %(k1)s porte un élément fini de bord, mais elle ne borde
      aucun élément ayant une "rigidité".
 
@@ -111,7 +111,7 @@ Il est interdit de mélanger des éléments discrets 2D et 3D dans le même mod�
      de l'opérande TOUT='OUI'.
 """),
 
-    64: _(u"""
+    64: _("""
   -> Le modèle %(k1)s n'a pas d'éléments sachant calculer la rigidité.
 
   -> Risque & Conseil :
@@ -125,7 +125,7 @@ Il est interdit de mélanger des éléments discrets 2D et 3D dans le même mod�
          (par exemple 'PLAN_DIAG' en thermique, 'AXIS_SI' en mécanique)
 """),
 
-    70 : _(u"""
+    70 : _("""
  Possible erreur utilisateur dans la commande AFFE_MODELE :
    Un problème a été détecté lors de l'affectation des éléments finis.
    Pour l'occurrence AFFE de numéro %(i1)d, certaines mailles de même dimension topologique

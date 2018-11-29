@@ -41,7 +41,7 @@ try:
     from code_aster.Cata.Syntax import _F
     from Utilitai.Utmess import UTMESS, MessageLog
 except:
-    CPU_Exception = StandardError
+    CPU_Exception = Exception
 
 
 # ------------------------------------------------------------------------------
@@ -98,7 +98,7 @@ def detr_concepts(self):
     for e in liste_concepts:
         nom = string.strip(e)
         DETRUIRE(OBJET=self.g_context['_F'](CHAINE=nom), INFO=1)
-        if self.jdc.g_context.has_key(nom):
+        if nom in self.jdc.g_context:
             del self.jdc.g_context[nom]
     del(liste_concepts)
 
@@ -111,7 +111,7 @@ def Random_Tmp_Name(prefix=None):
         if prefix:
             fic = prefix + str(nombre)
         else:
-            if os.environ.has_key('TEMP'):
+            if 'TEMP' in os.environ:
                 fic = os.path.join(os.environ['TEMP'], 'file%s' % str(nombre))
             else:
                 fic = '/tmp/file' + str(nombre)
@@ -151,7 +151,7 @@ def temps_CPU(restant_old, temps_iter_old):
             if ((temps_iter > 0.96 * restant)or(restant < 0.)):
                 err = 1
                 msg = MessageLog.GetText('F', 'RECAL0_53')
-                raise CPU_Exception, msg
+                raise CPU_Exception(msg)
 
     return restant, temps_iter, err
 
@@ -255,5 +255,5 @@ def graphique(FORMAT, L_F, res_exp, reponses, iter, UL_out, pilote, fichier=None
                 impr.plot(Gnuplot.Data(L_F[i], title='Calcul'), Gnuplot.Data(
                     res_exp[i], title='Experimental'))
 
-    except Exception, err:
+    except Exception as err:
         UTMESS('A', 'RECAL0_42', valk=str(err))

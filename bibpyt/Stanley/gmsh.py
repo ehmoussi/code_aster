@@ -36,7 +36,7 @@ def GMSH(mode, fichier, param, options=[]):
       param    : parametres d'environnement
     """
 
-    if not options.has_key('animation_mode'):
+    if 'animation_mode' not in options:
         options['animation_mode'] = None
 
     if param['mode'] == 'LOCAL':

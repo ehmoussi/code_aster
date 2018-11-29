@@ -25,6 +25,6 @@ Définition de la méthode UTMESS pour reca_xxxx.py, Graph.py, Table.py
 
 def UTMESS(code, sprg, texte):
     fmt = '\n <%s> <%s> %s\n\n'
-    print fmt % (code, sprg, texte)
+    print(fmt % (code, sprg, texte))
     if code == 'F':
         sys.exit()

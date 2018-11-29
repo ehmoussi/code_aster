@@ -38,7 +38,7 @@ def calc_modes_inv(self, TYPE_RESU, OPTION, SOLVEUR_MODAL,
         type_vp = 'FREQ'
         matrices['MATR_RIGI'] = args['MATR_RIGI']
         matrices['MATR_MASS'] = args['MATR_MASS']
-        if args.has_key('MATR_AMOR'):
+        if 'MATR_AMOR' in args:
             matrices['MATR_AMOR'] = args['MATR_AMOR']
 
     elif TYPE_RESU == 'MODE_FLAMB':
@@ -89,11 +89,11 @@ def calc_modes_inv(self, TYPE_RESU, OPTION, SOLVEUR_MODAL,
     #
     # read the keyword SOLVEUR (linear solver)
     solveur = SOLVEUR[0].cree_dict_valeurs(SOLVEUR[0].mc_liste)
-    if solveur.has_key('TYPE_RESU'):  # because TYPE_RESU is a keyword with a 'global' position
+    if 'TYPE_RESU' in solveur:  # because TYPE_RESU is a keyword with a 'global' position
         solveur.pop('TYPE_RESU')
-    if solveur.has_key('OPTION'):    # because OPTION is a keyword with a 'global' position
+    if 'OPTION' in solveur:    # because OPTION is a keyword with a 'global' position
         solveur.pop('OPTION')
-    if solveur.has_key('FREQ'):      # because FREQ can be a keyword with a 'global' position
+    if 'FREQ' in solveur:      # because FREQ can be a keyword with a 'global' position
         solveur.pop('FREQ')
     motcles['SOLVEUR'] = _F(**solveur)
 

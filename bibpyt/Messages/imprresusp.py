@@ -22,39 +22,39 @@
 
 cata_msg = {
 
-1: _(u"""
+1: _("""
   Visualisation aux sous-points :
   Le numéro d'ordre %(i1)d n'existe pas pour le résultat %(k1)s.
 """),
 
-2: _(u"""
+2: _("""
   Visualisation aux sous-points :
   L'instant %(r1)e n'existe pas pour le résultat %(k1)s.
 """),
 
-3: _(u"""
+3: _("""
   Visualisation aux sous-points :
   Le champ %(k2)s n'existe pas pour le résultat %(k1)s.
 """),
 
-4: _(u"""
+4: _("""
   Visualisation aux sous-points :
   La composante %(k3)s du champ %(k2)s
   n'existe pas pour le résultat %(k1)s.
 """),
 
-5: _(u"""
+5: _("""
   Visualisation aux sous-points :
   Le numéro d'ordre %(i1)d correspondant à l'instant %(r1)e,
   n'existe pas pour le champ %(k2)s du résultat %(k1)s.
 """),
 
-6: _(u"""
+6: _("""
   Visualisation aux sous-points :
   La composante %(k1)s du champ %(k2)s n'existe pas.
 """),
 
-7: _(u"""
+7: _("""
   Visualisation aux sous-points :
   Une maille du GROUP_MA ne porte pas une des composantes du champ %(k1)s.
 """),

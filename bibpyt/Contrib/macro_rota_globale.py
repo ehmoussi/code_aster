@@ -85,8 +85,8 @@ def macr_rota_globale_ops(self, RESULTAT, GROUP_NO_ORIG, GROUP_NO_EXTR, **args):
         livalr.append(ROTG[i, 1])
         livali.append(DRXC[i, 0])
 
-    print livalr
-    print livali
+    print(livalr)
+    print(livali)
     __LROTG = DEFI_LIST_REEL(VALE=livalr)
     __LINST = DEFI_LIST_REEL(VALE=livali)
     ROTGD = DEFI_FONCTION(NOM_PARA='INST',

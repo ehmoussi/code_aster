@@ -100,7 +100,7 @@ def recupere_structure(concept, mot_cle=None):
     except:
         UTMESS('F', 'PLEXUS_1')
     if mot_cle:
-        if structure.has_key(mot_cle):
+        if mot_cle in structure:
             return structure[mot_cle]
         else:
             return None
@@ -196,7 +196,7 @@ def ctime(fact):
 
     blocs_ctime = []
 
-    for cle in cata_inst.keys():
+    for cle in list(cata_inst.keys()):
         val = get_motcle(fact, cle, code_mess=None)
         if val is not None:
             cle_epx = cata_inst[cle]
