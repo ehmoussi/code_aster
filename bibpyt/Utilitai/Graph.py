@@ -358,7 +358,7 @@ class TraceGraph:
 
         # Ouverture du(des) fichier(s)
         self.NomFich = []
-        if type(FICHIER) is bytes:
+        if type(FICHIER) is bytes or type(FICHIER) is str:
             self.NomFich.append(FICHIER)
         elif type(FICHIER) in (list, tuple):
             self.NomFich = FICHIER[:]
@@ -975,8 +975,8 @@ class TraceXmgrace(TraceGraph):
             iret = os.system(lcmde)
             if iret == 0 or os.path.exists(nfhard):
                 if pilo not in ('', 'X11'):
-                    new = open(nfhard, 'r').read()
-                    open(self.NomFich[0], 'a').write(new)
+                    new = open(nfhard, 'rb').read()
+                    open(self.NomFich[0], 'ab').write(new)
             else:
                 UTMESS('A', 'GRAPH0_9', valk=pilo)
         # menage

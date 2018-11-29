@@ -82,7 +82,7 @@ def convert(content, encoding=None, errors='replace'):
         content = str(content)
     if type(content) == str:
         content = to_unicode(content)
-    return from_unicode(content, encoding or get_encoding(), errors)
+    return content
 
 
 def ufmt(uformat, *args):
