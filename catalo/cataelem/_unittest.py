@@ -60,7 +60,7 @@ class TestCataElem(unittest.TestCase):
             subTypes = (InputParameter, OutputParameter)
 
         self.OP = OptionStore("Options", only_mods=['sieq_elga', 'existe_ddl'])
-        for name, obj in self.OP.getDict().items():
+        for name, obj in list(self.OP.getDict().items()):
             obj.setName(name)
 
     def test01_attribute(self):

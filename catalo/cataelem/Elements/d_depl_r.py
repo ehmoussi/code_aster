@@ -123,5 +123,5 @@ for cmp in ( 'DH', 'DRX', 'DRY', 'DRZ', 'DX', 'DY', 'DZ', 'K1', 'K2', 'K3',
             )
         )
 
-    exec name + " = TempClass"
+    exec(name + " = TempClass")
     del TempClass

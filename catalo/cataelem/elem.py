@@ -68,11 +68,11 @@ class CataElem(object):
 
     def _getAll(self, klass):
         """Return a list of all the objects of a given type"""
-        return self._store[klass].values()
+        return list(self._store[klass].values())
 
     def _sortByName(self, klass):
         """Sort the store items by names to ease the comparison"""
-        self._store[klass] = OrderedDict(sorted(self._store[klass].items(),
+        self._store[klass] = OrderedDict(sorted(list(self._store[klass].items()),
                                          key=lambda i: i[1].name))
 
     def _sortObjects(self):
@@ -99,7 +99,7 @@ class CataElem(object):
 
     def registerAll(self, objects):
         """Register (and name) all the objects passed as dict [name, object]"""
-        sortedObjects = sorted(objects.items(), key=lambda item: item[1].idx)
+        sortedObjects = sorted(list(objects.items()), key=lambda item: item[1].idx)
         for name, obj in sortedObjects:
             try:
                 obj.setName(self.register(obj, name))
@@ -188,7 +188,7 @@ class CataElem(object):
         size = 0
         for elt in self.getElements():
             for elrefe in elt.elrefe:
-                size += len(elrefe.gauss.keys())
+                size += len(list(elrefe.gauss.keys()))
                 if len(elrefe.mater) > 0:
                     size += 1
         self._cache['nbLocations'] = size
@@ -233,7 +233,7 @@ class CataElem(object):
         """Build a dict to return the Modelisations that contain an Element"""
         delem = self._store['ElemModel']
         for pheno in self.getPhenomenons():
-            for modname, modeli in pheno.modelisations.items():
+            for modname, modeli in list(pheno.modelisations.items()):
                 for mesh, elem in modeli.elements or []:
                     delem[elem.name] = delem.get(elem.name, []) + [(pheno, modeli)]
 

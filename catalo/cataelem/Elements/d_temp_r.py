@@ -104,5 +104,5 @@ for cmp in ('TEMP', 'TEMP_INF', 'TEMP_MIL', 'TEMP_SUP', 'E1', 'H1',):
                            ),
         )
 
-    exec name + " = TempClass"
+    exec(name + " = TempClass")
     del TempClass
