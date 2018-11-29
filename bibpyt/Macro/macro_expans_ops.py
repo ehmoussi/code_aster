@@ -34,7 +34,6 @@ def macro_expans_ops(self,
     from code_aster.Cata.Syntax import _F, CO
     from code_aster.Cata.DataStructure import mode_meca, dyna_harmo
     from Utilitai.Utmess import UTMESS
-    from types import ListType, TupleType
     ier = 0
 
     import aster

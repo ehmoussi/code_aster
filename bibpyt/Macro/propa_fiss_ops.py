@@ -20,7 +20,6 @@
 from math import atan, atan2, cos, sin, log, sqrt, acos, pi
 
 import numpy as NP
-from types import ListType, TupleType
 
 
 def InterpolationLineaire(x0, points):
@@ -246,13 +245,12 @@ def propa_fiss_ops(self, METHODE_PROPA, INFO, **args):
     """
 
     import aster
-    import string
     from code_aster.Cata.Syntax import _F
     from Utilitai.Utmess import UTMESS
     from Utilitai.partition import MAIL_PY
     from Internal.detec_front import DETEC_FRONT
 
-    EnumTypes = (ListType, TupleType)
+    EnumTypes = (list, tuple)
 
     macro = 'PROPA_FISS'
     ier = 0
@@ -781,7 +779,7 @@ def propa_fiss_ops(self, METHODE_PROPA, INFO, **args):
                 NbPointFond = Fiss['NB_POINT_FOND']
 
                 Fondmult = Fiss['FISS_ACTUELLE'].sdj.FONDMULT.get()
-                Nbfond = len(Fondmult) / 2
+                Nbfond = len(Fondmult) // 2
 
                 if (len(Fiss['NB_POINT_FOND']) != Nbfond):
                     UTMESS('F', 'XFEM2_78')
@@ -846,7 +844,7 @@ def propa_fiss_ops(self, METHODE_PROPA, INFO, **args):
             if (OPERATION != 'DETECT_COHESIF'):
                 if (not 'K3' in __tabsif.para) and (not CRITERE_ANGLE == 'ANGLE_IMPO_BETA_GAMMA') :
                     Basefond = Fiss['FISS_ACTUELLE'].sdj.BASEFOND.get()
-                    for fond in range(len(Basefond) / 4):
+                    for fond in range(len(Basefond) // 4):
                         VNOR = (Basefond[4 * fond + 0], Basefond[4 * fond + 1])
                         VDIR = (Basefond[4 * fond + 2], Basefond[4 * fond + 3])
         #           produit vectoriel
@@ -1191,7 +1189,7 @@ def propa_fiss_ops(self, METHODE_PROPA, INFO, **args):
                 nbma = mm[numfis].dime_maillage[2]
                 coord = mm[numfis].cn
                 linomno = list(mm[numfis].correspondance_noeuds)
-                linomno = list(map(string.rstrip, linomno))
+                linomno = list(map(lambda x: x.rstrip(), linomno))
                 l_coorf = [[linomno[i], coord[i]] for i in range(0, nbno)]
                 d_coorf = dict(l_coorf)
 

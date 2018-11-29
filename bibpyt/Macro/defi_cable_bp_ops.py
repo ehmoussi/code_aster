@@ -54,8 +54,6 @@ def defi_cable_bp_ops(self, MODELE, CHAM_MATER, CARA_ELEM, GROUP_MA_BETON,
     """
     from code_aster.Cata.Syntax import _F
     import aster
-    import string
-    import types
     from Utilitai.Utmess import UTMESS
     ier = 0
 
@@ -95,7 +93,7 @@ def defi_cable_bp_ops(self, MODELE, CHAM_MATER, CARA_ELEM, GROUP_MA_BETON,
 
         # RECUPERATION DU MAILLAGE A PARTIR DU MODELE
         __MAIL = aster.getvectjev(
-            string.ljust(MODELE.nom, 8) + '.MODELE    .LGRF        ')
+            MODELE.nom.ljust(8) + '.MODELE    .LGRF        ')
         __MAIL = __MAIL[0].strip()
         MAILLAGE = self.get_sd_avant_etape(__MAIL, self)
 

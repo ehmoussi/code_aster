@@ -218,7 +218,7 @@ class MAIL_PY:
         assert self.ndim != None, """Dimension réelle du maillage non initialisée."""
         lcoord = aster.getvectjev(nom)
         coordonnees_noeuds = NP.array(lcoord)
-        nno = len(coordonnees_noeuds) / 3
+        nno = len(coordonnees_noeuds) // 3
         assert nno == nombre_noeuds, """Données incohérentes."""
         coordonnees_noeuds.shape = (nno, 3)
         cn = coordonnees_noeuds[:, :self.ndim]

@@ -36,13 +36,11 @@ def raff_xfem_ops(self, FISSURE, TYPE, **args):
     1 dans la zone d'interet
     """
     import aster
-    import string
     import copy
     import math
-    from types import ListType, TupleType
     from code_aster.Cata.Syntax import _F
     from SD.sd_xfem import sd_fiss_xfem
-    EnumTypes = (ListType, TupleType)
+    EnumTypes = (list, tuple)
 
     macro = 'RAFF_XFEM'
     from code_aster.Cata.Syntax import _F

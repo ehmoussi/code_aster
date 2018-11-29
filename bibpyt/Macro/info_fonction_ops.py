@@ -58,7 +58,7 @@ def info_fonction_ops(self, RMS, NOCI_SEISME, MAX, NORME, ECART_TYPE, INFO, **ar
             if nbv % 2 != 0:
                 UTMESS('F', 'FONCT0_55')
             tint = NP.array(mc_interv)
-            tint.shape = (nbv / 2, 2)
+            tint.shape = (nbv // 2, 2)
             dx = tint[:, 1] - tint[:, 0]
             if min(dx) < 0.:
                 UTMESS('F', 'FONCT0_56')

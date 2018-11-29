@@ -167,7 +167,7 @@ def acce_filtre_CP(vale_acce, dt, fcorner, amoc=1.0):
     # discrectisation
     OM = pi / dt
     dw = 2. * OM / N
-    N2 = N / 2 + 1
+    N2 = N // 2 + 1
     ws0 = NP.arange(0.0, (N2 + 1) * dw, dw)
     ws = ws0[:N2]
     im = csqrt(-1)
@@ -828,7 +828,7 @@ def ACCE2SRO(f_in, xig, l_freq, ideb=2):
     # discrectisation
     OM = pi / dt
     dw = 2. * OM / N
-    N2 = N / 2 + 1
+    N2 = N // 2 + 1
     ws0 = NP.arange(0.0, (N2 + 1) * dw, dw)
     ws = ws0[: N2]
     vale_sro = []

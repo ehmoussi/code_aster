@@ -55,7 +55,7 @@ def SEUIL(X, Y, X0, Y0, R, lc, Nume_cop, ccos, ssin):
 #
 def raff_gp_ops(self, **args):
     """Corps de RAFF_GP"""
-    from numpy import *
+    from numpy import cos, sin, pi
     import aster
     from code_aster.Cata.Syntax import _F
     from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme

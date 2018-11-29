@@ -35,10 +35,8 @@ def calc_spectre_ipm_ops(self,EQUIPEMENT,CALCUL,RESU,MAILLAGE=None,RESULTAT=None
                         AMOR_SPEC=None,LIST_INST=None,FREQ=None, LIST_FREQ=None, NORME=None, TOLE_INIT=None, CORR_INIT=None, **args):
     import numpy as NP
     import math
-    import string
-    from types import ListType, TupleType, StringType
     ier=0;
-    EnumType=(ListType, TupleType)
+    EnumType=(list, tuple)
 
     ### Comptage commandes + déclaration concept sortant
     self.set_icmd(1);
@@ -70,19 +68,19 @@ def calc_spectre_ipm_ops(self,EQUIPEMENT,CALCUL,RESU,MAILLAGE=None,RESULTAT=None
         clefs = list(plancher.keys())
         if ( 'NOEUD' in clefs ):
             if plancher['NOEUD'] != None :
-                if type(plancher['NOEUD'])==StringType :
+                if type(plancher['NOEUD'])==str:
                     liste_no.append(plancher['NOEUD'])
                 else :
                     for noeud in plancher['NOEUD'] : liste_no.append(noeud)
         if ( 'GROUP_NO' in clefs ):
             if plancher['GROUP_NO'] != None :
                 assert ( MAILLAGE != None )
-                if type(plancher['GROUP_NO'])==StringType :
-                    noms_no =[string.strip(l_nodes[n-1]) for n in dic_gpno[plancher['GROUP_NO'].ljust(24)]]
+                if type(plancher['GROUP_NO'])==str:
+                    noms_no =[l_nodes[n-1].strip() for n in dic_gpno[plancher['GROUP_NO'].ljust(24)]]
                     liste_no=liste_no+noms_no
                 else :
                     for group_no in plancher['GROUP_NO'] :
-                        noms_no =[string.strip(l_nodes[n-1]) for n in dic_gpno[group_no.ljust(24)]]
+                        noms_no =[l_nodes[n-1].strip() for n in dic_gpno[group_no.ljust(24)]]
                         liste_no=liste_no+noms_no
         planch_nodes[plancher['NOM']]=liste_no
         l_plancher.append(plancher['NOM'])

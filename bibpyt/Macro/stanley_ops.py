@@ -23,7 +23,6 @@ def stanley_ops(self, RESULTAT, MODELE, CHAM_MATER, CARA_ELEM, DISPLAY, **args):
     """
 
     import os
-    import string
     import aster
     from code_aster.Cata.Syntax import _F
     from Noyau.N_utils import AsType
@@ -59,8 +58,8 @@ def stanley_ops(self, RESULTAT, MODELE, CHAM_MATER, CARA_ELEM, DISPLAY, **args):
 
         if (RESULTAT and MODELE and CHAM_MATER):
             _MAIL = aster.getvectjev(
-                string.ljust(MODELE.nom, 8) + '.MODELE    .LGRF        ')
-            _MAIL = string.strip(_MAIL[0])
+                MODELE.nom.ljust(8) + '.MODELE    .LGRF        ')
+            _MAIL = _MAIL[0].strip()
             MAILLAGE = self.jdc.g_context[_MAIL]
             if CARA_ELEM:
                 stanley_engine.STANLEY(

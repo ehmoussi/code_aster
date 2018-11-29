@@ -1090,7 +1090,7 @@ def macr_lign_coupe_ops(self, RESULTAT, CHAM_GD, LIGN_COUPE,
     if len(arcgma) > 0 and 'ABSC_CURV' in dictab.para:
         coltab = []
         val = dictab['ABSC_CURV'].values()['ABSC_CURV']
-        nbi = len(val) / nbno
+        nbi = len(val) // nbno
         nba = len(angles)
         tmp = []
         for k in range(nba):

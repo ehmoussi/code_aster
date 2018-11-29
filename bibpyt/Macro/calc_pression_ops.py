@@ -30,7 +30,6 @@ def calc_pression_ops(self, MAILLAGE, RESULTAT, GROUP_MA, INST,GEOMETRIE, **args
            uniquement pour les modèles massif. On exclut du périmètre d'utilisation
            les éléments de structures types discret, poutre, plaque, coques,...
     """
-    from numpy import *
     import aster
     from code_aster.Cata.Syntax import _F
     from Utilitai.Utmess import UTMESS

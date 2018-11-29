@@ -475,7 +475,7 @@ class Sampler(object):
         # pour cause d'erreur num si valeurs reeles
         liste_temps = liste_temps[0: self.NB_POIN]
         l_w = l_w[0: self.NB_POIN]
-        l_w2 = l_w2[0: self.NB_POIN / 2]
+        l_w2 = l_w2[0: self.NB_POIN // 2]
         nbfreq = 2 * len(l_w2)
         assert self.NB_POIN == nbfreq
         assert len(liste_temps) == self.NB_POIN

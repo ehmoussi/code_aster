@@ -25,8 +25,6 @@ def macr_cara_poutre_ops(self, MAILLAGE, SYME_Y, SYME_Z, GROUP_MA_BORD,
     """
        Ecriture de la macro MACR_CARA_POUTRE
     """
-    import types
-    import string
     from code_aster.Cata.Syntax import _F
     import aster
     from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
@@ -119,7 +117,7 @@ def macr_cara_poutre_ops(self, MAILLAGE, SYME_Y, SYME_Z, GROUP_MA_BORD,
         #
         # les groupes doivent exister
         collgrma = aster.getcolljev('%-8s.GROUPEMA' % __nomlma.nom)
-        collgrma = list(map( string.strip, collgrma))
+        collgrma = list(map(lambda x: x.strip(), collgrma))
         if type(GROUP_MA_BORD) == bytes:
             l_group_ma_bord = [ GROUP_MA_BORD,  ]
         else:
@@ -253,10 +251,10 @@ def macr_cara_poutre_ops(self, MAILLAGE, SYME_Y, SYME_Z, GROUP_MA_BORD,
         if args['NOEUD'] != None:
             if len( args['NOEUD'] ) != 1:
                 UTMESS('F', 'POUTRE0_3')
-            nthno = string.strip(args['NOEUD'][0])
+            nthno = args['NOEUD'][0].strip()
             # nthno est-il dans le maillage ?
             nomnoe = aster.getvectjev('%-8s.NOMNOE' % __nomlma.nom)
-            nomnoe = list(map( string.strip, nomnoe))
+            nomnoe = list(map(lambda x: x.strip(), nomnoe))
             if ( not nthno in nomnoe ):
                 UTMESS('F', 'POUTRE0_9',valk=nthno)
 
@@ -270,7 +268,7 @@ def macr_cara_poutre_ops(self, MAILLAGE, SYME_Y, SYME_Z, GROUP_MA_BORD,
             nomnoe = aster.getvectjev('%-8s.NOMNOE' % __nomapi.nom)
             # Plantage si grthno n'existe pas dans le maillage
             try:
-                l_no = collgrno[string.ljust(grthno, 24)]
+                l_no = collgrno[grthno.ljust(24)]
             except:
                 UTMESS('F', 'POUTRE0_8',valk=grthno)
             if len(l_no) != 1:
@@ -549,7 +547,7 @@ def macr_cara_poutre_ops(self, MAILLAGE, SYME_Y, SYME_Z, GROUP_MA_BORD,
         #
         # les groupes doivent exister
         collgrma = aster.getcolljev('%-8s.GROUPEMA' % __nomlma.nom)
-        collgrma = list(map( string.strip, collgrma))
+        collgrma = list(map(lambda x: x.strip(), collgrma))
         for igr in l_group_ma_bord:
             if ( not igr.strip() in collgrma):
                 UTMESS('F', 'POUTRE0_20',valk=[igr,'GROUP_MA_BORD'])
@@ -569,12 +567,12 @@ def macr_cara_poutre_ops(self, MAILLAGE, SYME_Y, SYME_Z, GROUP_MA_BORD,
                         UTMESS('F', 'POUTRE0_20',valk=[igr,'GROUP_MA_INTE'])
 
         if args['NOEUD'] != None:
-            l_noeud = list(map( string.strip, args['NOEUD'] ))
+            l_noeud = list(map(lambda x: x.strip(), args['NOEUD'] ))
             if (len(l_group_ma) != len(l_noeud)):
                 UTMESS('F', 'POUTRE0_2')
             # Les noeuds doivent faire partie du maillage
             nomnoe = aster.getvectjev('%-8s.NOMNOE' % __nomlma.nom)
-            nomnoe = list(map( string.strip, nomnoe))
+            nomnoe = list(map(lambda x: x.strip(), nomnoe))
             for ino in l_noeud:
                 if ( not ino in nomnoe ):
                     UTMESS('F', 'POUTRE0_9',valk=ino)
@@ -584,7 +582,7 @@ def macr_cara_poutre_ops(self, MAILLAGE, SYME_Y, SYME_Z, GROUP_MA_BORD,
             l_nu_no = []
             for grno in args['GROUP_NO']:
                 try:
-                    l_nu_no.extend(collgrno[string.ljust(grno, 24)])
+                    l_nu_no.extend(collgrno[grno.ljust(24)])
                 except:
                     UTMESS('F', 'POUTRE0_8',valk=grno)
             l_noeud = [nomnoe[no_i - 1] for no_i in l_nu_no]

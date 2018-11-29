@@ -18,7 +18,6 @@
 # --------------------------------------------------------------------
 
 from Accas import _F
-import string
 import os
 import numpy as np
 

@@ -18,11 +18,9 @@
 # --------------------------------------------------------------------
 
 import random
-import string
-from types import ListType, TupleType
 from math import pi, sqrt, log, exp
 
-EnumTypes = (ListType, TupleType)
+EnumTypes = (list, tuple)
 
 
 def post_dyna_alea_ops(self, INTERSPECTRE, FRAGILITE, TITRE, INFO, **args):

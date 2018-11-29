@@ -23,13 +23,11 @@ def post_k_trans_ops(self, RESU_TRANS, K_MODAL, TOUT_ORDRE, NUME_ORDRE,
        Ecriture de la macro post_k_trans
     """
     import aster
-    import string
     from code_aster.Cata.Syntax import _F
     from Utilitai.Utmess import UTMESS
-    from types import ListType, TupleType
     from Utilitai.Table import Table, merge
     from Utilitai.utils import get_titre_concept
-    EnumTypes = (ListType, TupleType)
+    EnumTypes = (list, tuple)
 
     macro = 'POST_K_TRANS'
     ier = 0
@@ -104,7 +102,7 @@ def post_k_trans_ops(self, RESU_TRANS, K_MODAL, TOUT_ORDRE, NUME_ORDRE,
                 NUME_ORDRE = (NUME_ORDRE,)
             ltmp = list(NUME_ORDRE)
         elif LIST_ORDRE:
-            ltmp = aster.getvectjev(string.ljust(LIST_ORDRE.nom, 19) + '.VALE')
+            ltmp = aster.getvectjev(LIST_ORDRE.nom.ljust(19) + '.VALE')
         for ord in ltmp:
             if ord in l0_ord:
                 l_ord.append(ord)
@@ -119,7 +117,7 @@ def post_k_trans_ops(self, RESU_TRANS, K_MODAL, TOUT_ORDRE, NUME_ORDRE,
                 INST = (INST,)
             ltmp = list(INST)
         elif LIST_INST:
-            ltmp = aster.getvectjev(string.ljust(LIST_INST.nom, 19) + '.VALE')
+            ltmp = aster.getvectjev(LIST_INST.nom.ljust(19) + '.VALE')
         for ins in ltmp:
             if CRITERE == 'RELATIF' and ins != 0.:
                 match = [

@@ -26,8 +26,6 @@ def macro_bascule_schema_ops(self, MODELE, CHAM_MATER, CARA_ELEM,
     ier = 0
     import copy
     import aster
-    import string
-    import types
     from code_aster.Cata.Syntax import _F
     from Noyau.N_utils import AsType
     from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme

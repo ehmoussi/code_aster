@@ -39,8 +39,6 @@ def macr_ecre_calc_ops(
     """
 
     import os
-    import string
-    import types
     import shutil
     import aster_core
     import aster

@@ -210,12 +210,11 @@ def verif_type_fond_fiss(ndim, FOND_FISS):
 
 def get_noeud_fond_fiss(FOND_FISS):
     """ retourne la liste des noeuds de FOND_FISS"""
-    import string as S
     from Utilitai.Utmess import UTMESS
     Lnoff = FOND_FISS.sdj.FOND_NOEU.get()
     if Lnoff == None:
         UTMESS('F', 'RUPTURE0_11')
-    Lnoff = list(map(S.rstrip, Lnoff))
+    Lnoff = list(map(lambda x: x.rstrip(), Lnoff))
     return Lnoff
 
 #-------------------------------------------------------------------------
@@ -224,7 +223,6 @@ def get_noeud_fond_fiss(FOND_FISS):
 
 def get_noeud_a_calculer(Lnoff, ndim, FOND_FISS, MAILLAGE, EnumTypes, args):
     """ retourne la liste des noeuds de FOND_FISS a calculer"""
-    import string as S
     from Utilitai.Utmess import UTMESS
 
     NOEUD = args['NOEUD']
@@ -263,7 +261,7 @@ def get_noeud_a_calculer(Lnoff, ndim, FOND_FISS, MAILLAGE, EnumTypes, args):
                     UTMESS('F', 'RUPTURE0_13', valk=ngrno)
                 for i in range(len(collgrno[ngrno])):
                     NO_AVEC.append(cnom[collgrno[ngrno][i] - 1])
-            NO_AVEC = list(map(S.rstrip, NO_AVEC))
+            NO_AVEC = list(map(lambda x: x.rstrip(), NO_AVEC))
         if NOEUD != None:
             if type(NOEUD) not in EnumTypes:
                 NO_AVEC = (NOEUD,)
@@ -280,7 +278,7 @@ def get_noeud_a_calculer(Lnoff, ndim, FOND_FISS, MAILLAGE, EnumTypes, args):
                     UTMESS('F', 'RUPTURE0_13', valk=ngrno)
                 for i in range(len(collgrno[ngrno])):
                     NO_SANS.append(cnom[collgrno[ngrno][i] - 1])
-            NO_SANS = list(map(S.rstrip, NO_SANS))
+            NO_SANS = list(map(lambda x: x.rstrip(), NO_SANS))
         if SANS_NOEUD != None:
             if type(SANS_NOEUD) not in EnumTypes:
                 NO_SANS = (SANS_NOEUD,)
@@ -312,7 +310,6 @@ def get_coor_libre(self, Lnoff, RESULTAT, ndim):
 
     import numpy as NP
     from Accas import _F
-    import string as S
 
     POST_RELEVE_T = self.get_cmd('POST_RELEVE_T')
     DETRUIRE = self.get_cmd('DETRUIRE')
@@ -336,7 +333,7 @@ def get_coor_libre(self, Lnoff, RESULTAT, ndim):
     elif ndim == 3:
         zs = NP.array(tcoorf['COOR_Z'].values()['COOR_Z'][:nbt])
     ns = tcoorf['NOEUD'].values()['NOEUD'][:nbt]
-    ns = list(map(S.rstrip, ns))
+    ns = list(map(lambda x: x.rstrip(), ns))
     l_coorf = [[ns[i], xs[i], ys[i], zs[i]] for i in range(0, nbt)]
     l_coorf = [(i[0], i[1:]) for i in l_coorf]
 
@@ -544,7 +541,6 @@ def get_tab_dep(self, Lnocal, Nnocal, d_coorf, dicVDIR, dicVNOR, RESULTAT, MODEL
 #-------------------------------------------------------------------------
 def get_dico_levres(lev, FOND_FISS, ndim, Lnoff, Nnoff):
     "retourne ???"""
-    import string as S
     from Utilitai.Utmess import UTMESS
     if lev == 'sup':
         Nnorm = FOND_FISS.sdj.SUPNORM_NOEU.get()
@@ -553,7 +549,7 @@ def get_dico_levres(lev, FOND_FISS, ndim, Lnoff, Nnoff):
     elif lev == 'inf':
         Nnorm = FOND_FISS.sdj.INFNORM_NOEU.get()
 
-    Nnorm = list(map(S.rstrip, Nnorm))
+    Nnorm = list(map(lambda x: x.rstrip(), Nnorm))
 # pourquoi modifie t-on Nnoff dans ce cas, alors que rien n'est fait pour
 # les maillages libres ?
     if Lnoff[0] == Lnoff[-1] and ndim == 3:
@@ -569,7 +565,6 @@ def get_dico_levres(lev, FOND_FISS, ndim, Lnoff, Nnoff):
 def get_coor_regle(self, RESULTAT, ndim, Lnoff, Lnocal, dicoS, syme_char, dicoI):
     """retourne le dictionnaire des coordonnees des noeuds des lèvres pour les maillages regles"""
     import numpy as NP
-    import string as S
     import copy
     from Accas import _F
 
@@ -632,7 +627,7 @@ def get_coor_regle(self, RESULTAT, ndim, Lnoff, Lnocal, dicoS, syme_char, dicoI)
     elif ndim == 3:
         zs = NP.array(tcoor['COOR_Z'].values()['COOR_Z'][:nbt])
     ns = tcoor['NOEUD'].values()['NOEUD'][:nbt]
-    ns = list(map(S.rstrip, ns))
+    ns = list(map(lambda x: x.rstrip(), ns))
     l_coor = [[ns[i], xs[i], ys[i], zs[i]] for i in range(nbt)]
     l_coor = [(i[0], i[1:]) for i in l_coor]
 
@@ -951,7 +946,6 @@ def affiche_traitement(FOND_FISS, Lnofon, ino):
 # Returns the table displacements perpendicular nodes """
 def get_tab(self, lev, ino, Tlib, Lno, TTSo, FOND_FISS, TYPE_MAILLAGE, tabl_depl, syme_char):
     """retourne la table des deplacements des noeuds perpendiculaires"""
-    import string as S
 
     if lev == 'sup' or (lev == 'inf' and syme_char == 'NON' and FOND_FISS):
 
@@ -960,7 +954,7 @@ def get_tab(self, lev, ino, Tlib, Lno, TTSo, FOND_FISS, TYPE_MAILLAGE, tabl_depl
                 tab = Tlib.INTITULE == 'l.coupe%i' % (ino + 1)
             else:
 #                Ls = [S.ljust(Lno[ino][i], 8) for i in range(len(Lno[ino]))]
-                Ls = [S.ljust(Lno[ino][i], 15) for i in range(len(Lno[ino]))]
+                Ls = [Lno[ino][i].ljust(15) for i in range(len(Lno[ino]))]
                 tab = tabl_depl.NOEUD == Ls
 
         else:
@@ -1637,7 +1631,6 @@ def get_erreur(self, ndim, __tabi, type_para):
     En FEM/X-FEM, on ne retient que le K_MAX de la méthode 1."""
     from Accas import _F
     import aster
-    import string
     import numpy as NP
 
     CREA_TABLE = self.get_cmd('CREA_TABLE')
@@ -1833,17 +1826,15 @@ def post_t_q_ops(self, MODELISATION, FOND_FISS, FISSURE, MATER, RESULTAT,
 
     """
     import aster
-    import string as S
     import numpy as NP
     from math import pi
-    from types import ListType, TupleType
     from Accas import _F
     from Utilitai.Table import Table, merge
     from SD.sd_mater import sd_compor1
     from code_aster.Cata.DataStructure import mode_meca
     from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme
 
-    EnumTypes = (ListType, TupleType)
+    EnumTypes = (list, tuple)
 
     ier = 0
     # La macro compte pour 1 dans la numerotation des commandes
@@ -1965,7 +1956,7 @@ def post_t_q_ops(self, MODELISATION, FOND_FISS, FISSURE, MATER, RESULTAT,
 # variable de commande)
         ndim = 3
         Tempe3D = True
-        resuth = S.ljust(EVOL_THER.nom, 8).rstrip()
+        resuth = EVOL_THER.nom.ljust(8).rstrip()
 
     if not Tempe3D:
 

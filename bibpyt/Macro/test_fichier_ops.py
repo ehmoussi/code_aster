@@ -19,6 +19,7 @@
 
 import sys
 import os
+import tempfile
 import re
 
 # hashlib only exists in python>=2.5
@@ -198,7 +199,7 @@ def regexp_filter(file_in, regexp_ignore, debug=False):
         else:
             l_regexp.append(obj)
     # filtre du fichier
-    file_out = os.tmpfile()
+    file_out = tempfile.NamedTemporaryFile()
     file_in.seek(0)
     for i, line in enumerate(file_in):
         if debug:
@@ -211,7 +212,7 @@ def regexp_filter(file_in, regexp_ignore, debug=False):
                     print(' >>>>>>>>>> IGNOREE <<<<<<<<<<')
                 break
         if keep:
-            file_out.write(line)
+            file_out.write(line.encode())
             if debug:
                 print()
     file_out.seek(0)
@@ -254,16 +255,15 @@ def test_iter(obj, function, verbose=False):
     #     50 Mo      17 s      48 s      17 s
     #    100 Mo      34 s      96 s      35 s
     # l'itérateur est l'objet file lui-même ou on le crée sur la liste
-    if type(obj) is file:
-        obj.seek(0)
-        iterator = obj
-    else:
-        iterator = iter(obj)
+    obj.seek(0)
+    iterator = iter(obj)
     ok = True
     buff = []
     while ok:
         try:
             text = next(iterator)
+            if type(text) is bytes:
+                text = text.decode()
         except StopIteration:
             ok = False
             text = ''
@@ -288,7 +288,7 @@ def test_iter(obj, function, verbose=False):
         vali = function(vali, l_int)
         # add text
         text = ''.join([s.strip() for s in text.split()])
-        hfile.update(text)
+        hfile.update(text.encode())
         if verbose:
             print('Nombres réels :', nbvalr)
             print(l_float)

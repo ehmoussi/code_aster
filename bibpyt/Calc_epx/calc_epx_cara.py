@@ -25,7 +25,6 @@ Traitement du modèle
 from Calc_epx.calc_epx_cata import cata_cara_elem
 from Calc_epx.calc_epx_utils import get_group_ma, tolist
 from Calc_epx.calc_epx_utils import float2str
-import string
 from Utilitai.Utmess import UTMESS, ASSERT
 from Calc_epx.calc_epx_struc import BLOC_DONNEES
 from Utilitai.partition import MAIL_PY
@@ -303,7 +302,7 @@ def export_cara(cle, epx, donnees_cle, MAILLAGE, CARA_ELEM,
                 continue
             #
             group_ma = 'G_%s' % maille
-            if string.rstrip(group_ma) not in MApyt.gma:
+            if group_ma.rstrip() not in MApyt.gma:
                 crea_gr_ma.append({"MAILLE": maille, "NOM": group_ma})
             else:
                 UTMESS('A', 'PLEXUS_35', valk=(group_ma, maille))

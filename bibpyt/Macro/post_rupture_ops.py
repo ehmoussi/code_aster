@@ -213,8 +213,8 @@ def caract_mater(self, mater):
 
 #    E et nu definis avec defi_fonction
         if young == 0.0 and poisson == 0.0:
-            list_oper = valk[: len(valk) / 2]
-            list_fonc = valk[len(valk) / 2:]
+            list_oper = valk[: len(valk) // 2]
+            list_fonc = valk[len(valk) // 2:]
 
 #    valk contient les noms des operandes mis dans defi_materiau dans une premiere partie et
 #    et les noms des concepts de type [fonction] (ecrits derriere les operandes) dans une

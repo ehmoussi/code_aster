@@ -20,7 +20,6 @@
 # person_in_charge: samuel.geniaut at edf.fr
 
 import os.path as osp
-import string
 from pprint import pformat
 
 import aster_core
