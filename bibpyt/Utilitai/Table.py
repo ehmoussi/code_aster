@@ -24,7 +24,6 @@ import sys
 import os
 import re
 from copy import copy
-from types import IntType, FloatType, StringType, UnicodeType, NoneType
 
 import numpy
 
@@ -922,11 +921,8 @@ def sort_table(rows, l_para, w_para, reverse=False):
                 del row[p]
             except:
                 pass
-    # sort
-    new_rows.sort()
-    # reversed sort
-    if reverse:
-        new_rows.reverse()
+    # sort, workaround for python3
+    new_rows = sorted(new_rows, key=lambda d:[d[key] if d[key] is not None else 0 for key in sorted(d.keys())])
     for i, p in enumerate(w_para):
         old_key = '__%03d%s' % (i, p)
         for row in new_rows:
@@ -1058,10 +1054,10 @@ def typaster(obj, prev=None, strict=False):
     tous les deux numériques ; dans ce cas, on retourne le "type enveloppe" 'R'.
     """
     dtyp = {
-        IntType: 'I',
-        FloatType: 'R',
-        StringType: Kdef, UnicodeType: Kdef,
-        NoneType: 'I',
+        int: 'I',
+        float: 'R',
+        str: Kdef,
+        type(None): 'I',
     }
     if is_float(obj):
         obj = float(obj)
