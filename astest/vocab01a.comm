@@ -36,7 +36,7 @@ exec(compile(open('fort.33').read(), 'fort.33', 'exec'), globals())
 # read the previous 'fort.34'
 import re
 try:
-    text = open( 'fort.34', 'rb' ).read()
+    text = open( 'fort.34', 'rb' ).read().decode()
     recmt = re.compile('^#')
     existing_keywords = [line for line in text.splitlines() if not recmt.search(line)]
 except IOError:

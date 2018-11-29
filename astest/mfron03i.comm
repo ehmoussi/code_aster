@@ -525,12 +525,12 @@ for i in range(1,13):
                            FONC_Y=rhom[i],
                            COULEUR = i,
                            MARQUEUR = 0,
-                           LEGENDE= str(systemm[i],'iso-8859-1').encode('utf-8'),),
+                           LEGENDE= str(systemm[i]),),
                         _F(FONC_X=epsDIRA,
                            FONC_Y=rhoa[i],
                            COULEUR = i+14,
                            MARQUEUR = 1,
-                           LEGENDE= str(systema[i],'iso-8859-1').encode('utf-8'),),  ),
+                           LEGENDE= str(systemm[i]),),  ),
                 UNITE=30,);
 
 DEFI_FICHIER(UNITE = 30,ACTION = 'LIBERER');

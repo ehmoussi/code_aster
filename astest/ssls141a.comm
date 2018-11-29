@@ -65,7 +65,7 @@ M=-T*L
 # nombre de couches
 ncou = 1
 # sous-point pour la fibre neutre
-nssp_neutre = 2*ncou-(int(ncou)/2)
+nssp_neutre = 2*ncou-(int(ncou)//2)
 # sous-point sur fibre sup
 nssp_sup = ncou*3
 #
