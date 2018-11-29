@@ -29,7 +29,7 @@ def POST_GOUJ_ops(self,TABLE):
   CREA_TABLE  =self.get_cmd('CREA_TABLE')
 
   aa1=TABLE.EXTR_TABLE()
-  aaa=list(aa1.values())
+  aaa=aa1.values()
 
   v_DY=aaa['DY']
   v_NU=aaa['NUME_ORDRE']

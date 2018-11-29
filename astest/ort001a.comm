@@ -184,7 +184,7 @@ for i in range(len(coupe_orig)):
     #text = (tab.COOR_Y > (y_ext[i] - eps)).COOR_Y < (y_ext[i] + eps)
     text = (tab.COOR_Y > (y_ext[i] - eps)) & (tab.COOR_Y < (y_ext[i] + eps)) \
          & (tab.COOR_X > (x_ext[i] - eps)) & (tab.COOR_X < (x_ext[i] + eps))
-    temp = list(text.TEMP.values())
+    temp = text.TEMP.values()
     assert len(temp) == number_of_timesteps, len(temp)
     T_out.extend(temp)
 

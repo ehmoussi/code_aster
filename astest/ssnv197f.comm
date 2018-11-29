@@ -352,14 +352,14 @@ IMPR_TABLE(TABLE=TAB_SIG,
             UNITE=29);
 
 
-tab=list(TAB_SIG.EXTR_TABLE().values());
+tab=TAB_SIG.EXTR_TABLE().values();
 
 values_EPZL=array([-0.01,-0.02,-0.05,-0.1,-0.2])
 
 values_VMIS=interp(values_EPZL,array(tab['EPZZL'][::-1]),array(tab['VMIS'][::-1]))
 values_EPVL=interp(values_EPZL,array(tab['EPZZL'][::-1]),array(tab['EPVL'][::-1]))
 
-tab=list(TAB_VARI.EXTR_TABLE().values());
+tab=TAB_VARI.EXTR_TABLE().values();
 
 values_V1=interp(values_EPZL,array(tab['EPZZL'][::-1]),array(tab['V1'][::-1]))
 values_V4=interp(values_EPZL,array(tab['EPZZL'][::-1]),array(tab['V4'][::-1]))
