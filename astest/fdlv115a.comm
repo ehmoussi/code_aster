@@ -23,7 +23,6 @@ def calc_matr_ifs_ops(self,MAILLAGE, MODELE,CHAR_CINE,NUME_DDL,
                       MASS_E,MASS_F,MASS_FI,RIGI_E, RIGI_F, RIGI_V, IMPE_R, IMPE_I, **args):
 
     from Accas import _F
-    import types
     import aster
     from Utilitai.Utmess import UTMESS
 
