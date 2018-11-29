@@ -87,7 +87,7 @@ class Language(Singleton):
             lang.extend(variants)
         tr = gettext.translation(
             self.domain, self.localedir, languages=lang, fallback=True)
-        tr.install(str=True)
+        tr.install()
         return tr
 
 localization = Language()
