@@ -506,7 +506,7 @@ class ETAPE(B_OBJECT.OBJECT, B_CODE.CODE):
         """
         from random import Random
         self.jdc.alea = Random(100)
-        self.jdc.alea.jumpahead(jump)
+        self.jdc.alea.seed(jump)
         return None
 
     def fiintf(self, coderr, nom_fonction, nom_param, val):
