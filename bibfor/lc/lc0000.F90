@@ -119,7 +119,7 @@ implicit none
 #include "asterfort/lc0168.h"
 #include "asterfort/lc1002.h"
 #include "asterfort/lc1015.h"
-#include "asterfort/lc1036.h"
+#include "asterfort/lc1037.h"
 #include "asterfort/lc1137.h"
 #include "asterfort/lc1058.h"
 #include "asterfort/lc2001.h"
@@ -907,9 +907,9 @@ integer :: codret
                     sigp, vip, typmod, icomp,&
                     nvi, dsidep, codret)
 
-    case (1036)
+    case (1037)
 !     ROUSSELIER
-        call lc1036(fami, kpg, ksp, ndim, imate,&
+        call lc1037(fami, kpg, ksp, ndim, imate,&
                     compor, carcri, instam, instap, epsm,&
                     deps, sigm, vim, option, angmas,&
                     sigp, vip, typmod, icomp,&

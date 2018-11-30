@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine lc1036(fami, kpg, ksp, ndim, imate,&
+subroutine lc1037(fami, kpg, ksp, ndim, imate,&
                   compor, carcri, instam, instap, epsm,&
                   deps, sigm, vim, option, angmas,&
                   sigp, vip, typmod, icomp,&
