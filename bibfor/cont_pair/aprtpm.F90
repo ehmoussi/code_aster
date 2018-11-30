@@ -19,15 +19,19 @@
 subroutine aprtpm(pair_tole       , elem_dime     , &
                   elem_mast_nbnode, elem_mast_coor, elem_mast_code,&
                   elem_slav_nbnode, elem_slav_coor, elem_slav_code,&
-                  poin_inte_sl    , nb_poin_inte  ,poin_inte_ma, iret)
+                  poin_inte_sl    , nb_poin_inte  , poin_inte_ma  , iret)
 !
 implicit none
 !
 #include "asterfort/reerel.h"
 #include "asterfort/assert.h"
-#include "asterfort/jacsur.h"
+#include "asterfort/mmdonf.h"
+#include "asterfort/mmtang.h"
+#include "asterfort/mmnorm.h"
 #include "asterfort/mmnewd.h"
+#include "asterfort/apdist.h"
 !
+
 real(kind=8), intent(in) :: pair_tole
 integer, intent(in) :: elem_dime
 integer, intent(in) :: elem_mast_nbnode
@@ -50,9 +54,10 @@ integer, intent(out) :: iret
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: i_poin_inte
-    real(kind=8) :: node_real(3), ksi(2), ksi_ma(2), jacobian
-    real(kind=8) :: tau1(3), tau2(3), norm(3)
+    integer :: i_poin_inte, i_node, i_dime
+    real(kind=8) :: node_real(3), ksi(2), ksi_ma(2)
+    real(kind=8) :: tau1(3), tau2(3), norm(3), elem_slav_coot(27)
+    real(kind=8) :: dff(2, 9), dist, vect_pm(3)
     character(len=8) :: elin_slav_code
     integer :: elin_slav_nbnode
     character(len=8) :: elin_mast_code
@@ -61,6 +66,7 @@ integer, intent(out) :: iret
 ! --------------------------------------------------------------------------------------------------
 !
     iret = 0
+    poin_inte_ma(:,:) = 0.d0
     if (elem_slav_code .eq. "QU8" .or. elem_slav_code .eq. "QU9") then
         elin_slav_code = "QU4"
         elin_slav_nbnode =  4
@@ -89,42 +95,61 @@ integer, intent(out) :: iret
         elin_mast_nbnode = elem_mast_nbnode
     end if
 !
+! - Transform the format of slave element coordinates
+!
+    do i_node = 1,elem_slav_nbnode
+        do i_dime = 1, elem_dime
+            elem_slav_coot(elem_dime*(i_node-1)+i_dime) = &
+                elem_slav_coor(i_dime, i_node)
+        end do
+    end do
+!
 ! - Loop on intersection points
 !
     do i_poin_inte = 1, nb_poin_inte
-        norm(1:3) = 0.d0
-        tau1(1:3) = 0.d0
-        tau2(1:3) = 0.d0
-        ksi(:)    = 0.d0
-        ksi_ma(:) = 0.d0
+        norm(1:3)      = 0.d0
+        tau1(1:3)      = 0.d0
+        tau2(1:3)      = 0.d0
+        ksi(:)         = 0.d0
+        ksi_ma(:)      = 0.d0
+        node_real(1:3) = 0.d0
         ksi(1) = poin_inte_sl (1, i_poin_inte)
         if (elem_dime .eq. 3) then
             ksi(2) = poin_inte_sl (2, i_poin_inte)
         endif
-
-!
+!0
 ! --------- Transfert slave intersection coordinates in real space
 !
-        call reerel(elem_slav_code, elem_slav_nbnode, elem_dime, elem_slav_coor,&
+        call reerel(elin_slav_code, elin_slav_nbnode, elem_dime, elem_slav_coot,&
                     ksi           , node_real)
 !
-! --------- Compute jacobian and normal
+! --------- Compute normal
 !
-        call jacsur(elem_slav_coor, elin_slav_nbnode, elin_slav_code, elem_dime,&
-                    ksi(1) ,ksi(2), jacobian        , norm)
+        call mmdonf(elem_dime, elin_slav_nbnode, elin_slav_code,&
+                    ksi(1), ksi(2),&
+                    dff)
+        call mmtang(elem_dime, elin_slav_nbnode, elem_slav_coor, dff, tau1,&
+                    tau2)
+        call mmnorm(elem_dime, tau1, tau2, norm)
 
+!
+! ----- Project in parametric space
+!
         call mmnewd(elin_mast_code, elin_mast_nbnode, elem_dime, elem_mast_coor,&
-                    node_real     , 70              , pair_tole, norm          ,&
+                    node_real     , 100             , pair_tole, norm          ,&
                     ksi_ma(1)     , ksi_ma(2)       , tau1     , tau2          ,&
                     iret_)
         if (iret_.eq. 1) then
             iret = 1
             ASSERT(.false.)
         endif
-
+        call apdist(elem_mast_code, elem_mast_coor, elem_mast_nbnode,&
+                    ksi_ma(1), ksi_ma(2),&
+                    node_real , dist , vect_pm)
         poin_inte_ma(1,i_poin_inte) = ksi_ma(1)
         if (elem_dime .eq. 3) then
             poin_inte_ma(2,i_poin_inte) = ksi_ma(2)
         endif
     end do
+    write(*,*)poin_inte_ma(:,:)
 end subroutine
