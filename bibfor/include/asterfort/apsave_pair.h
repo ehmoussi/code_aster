@@ -21,20 +21,23 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine apsave_pair(i_zone      , elem_slav_nume,&
-                           nb_pair     , list_pair     ,&
-                           li_nbptsl   , li_ptintsl    ,&
-                           nb_pair_zone, list_pair_zone,&
-                           li_nbptsl_zone,li_ptintsl_zone)
+    subroutine apsave_pair(i_zone         , elem_slav_nume,&
+                           nb_pair        , list_pair     ,&
+                           li_nbptsl      , li_ptintsl    ,&
+                           li_ptintma     , nb_pair_zone  ,&
+                           list_pair_zone , li_nbptsl_zone,&
+                           li_ptintsl_zone, li_ptintma_zone)
         integer, intent(in) :: i_zone
         integer, intent(in) :: elem_slav_nume
         integer, intent(in) :: nb_pair
         integer, intent(in) :: list_pair(:)
         integer, intent(in) :: li_nbptsl(:)
         real(kind=8), intent(in) :: li_ptintsl(:)
+        real(kind=8), intent(in) :: li_ptintma(:)
         integer, intent(inout) :: nb_pair_zone
         integer, pointer :: list_pair_zone(:)
         integer, pointer :: li_nbptsl_zone(:)
         real(kind=8), pointer :: li_ptintsl_zone(:)
+        real(kind=8), pointer :: li_ptintma_zone(:)
     end subroutine apsave_pair
 end interface

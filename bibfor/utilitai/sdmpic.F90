@@ -150,6 +150,7 @@ subroutine sdmpic(typesd, nomsd)
         call asmpi_comm_jev('MPI_SUM', k19//'.AUX ')
         call asmpi_comm_jev('MPI_SUM', k19//'.AUX2')
         call asmpi_comm_jev('MPI_SUM', k19//'.AUX3')
+        call asmpi_comm_jev('MPI_SUM', k19//'.AUX4')
         valk(1)='MPI_COMPLET'
 
 

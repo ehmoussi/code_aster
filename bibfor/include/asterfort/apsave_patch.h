@@ -21,11 +21,11 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine apsave_patch(mesh             ,  sdappa         ,  i_zone       ,&
-                            patch_weight_t   , nb_proc         , list_pair_zmpi,&
-                            list_nbptit_zmpi , list_ptitsl_zmpi,                &
-                            nb_pair_zmpi     , list_pair_zone  , list_nbptit_zone,&
-                            list_ptitsl_zone , nb_pair_zone    , i_proc)
+    subroutine apsave_patch(mesh          , sdappa        , i_zone,&
+                            patch_weight_t, nb_proc, list_pair_zmpi,&
+                            list_nbptit_zmpi,list_ptitsl_zmpi,list_ptitma_zmpi,&
+                            nb_pair_zmpi, list_pair_zone,list_nbptit_zone, list_ptitsl_zone,&
+                            list_ptitma_zone,nb_pair_zone, i_proc)
         character(len=8), intent(in) :: mesh
         character(len=19), intent(in) :: sdappa
         integer, intent(in) :: i_zone
@@ -34,10 +34,12 @@ interface
         integer, pointer :: list_pair_zone(:)
         integer, pointer :: list_nbptit_zone(:)
         real(kind=8), pointer :: list_ptitsl_zone(:)
+        real(kind=8), pointer :: list_ptitma_zone(:)
         integer, pointer :: nb_pair_zmpi(:)
         integer, pointer :: list_pair_zmpi(:)
         integer, pointer :: list_nbptit_zmpi(:)
         real(kind=8), pointer :: list_ptitsl_zmpi(:)
+        real(kind=8), pointer :: list_ptitma_zmpi(:)
         integer, intent(in) :: nb_proc
         integer, intent(in) :: i_proc
     end subroutine apsave_patch

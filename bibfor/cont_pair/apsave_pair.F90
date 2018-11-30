@@ -16,11 +16,12 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine apsave_pair(i_zone      , elem_slav_nume,&
-                       nb_pair     , list_pair     ,&
-                       li_nbptsl   , li_ptintsl    ,&
-                       nb_pair_zone, list_pair_zone,&
-                       li_nbptsl_zone,li_ptintsl_zone)
+subroutine apsave_pair(i_zone         , elem_slav_nume,&
+                       nb_pair        , list_pair     ,&
+                       li_nbptsl      , li_ptintsl    ,&
+                       li_ptintma     , nb_pair_zone  ,&
+                       list_pair_zone , li_nbptsl_zone,&
+                       li_ptintsl_zone, li_ptintma_zone)
 !
 implicit none
 !
@@ -35,10 +36,12 @@ implicit none
     integer, intent(in) :: list_pair(:)
     integer, intent(in) :: li_nbptsl(:)
     real(kind=8), intent(in) :: li_ptintsl(:)
+    real(kind=8), intent(in) :: li_ptintma(:)
     integer, intent(inout) :: nb_pair_zone
     integer, pointer :: list_pair_zone(:)
     integer, pointer :: li_nbptsl_zone(:)
     real(kind=8), pointer :: li_ptintsl_zone(:)
+    real(kind=8), pointer :: li_ptintma_zone(:)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -70,6 +73,8 @@ implicit none
         li_nbptsl_zone(nb_pair_zone+i_pair) = li_nbptsl(i_pair)
         li_ptintsl_zone(nb_pair_zone*16+1+(i_pair-1)*16:nb_pair_zone*16+i_pair*16) = &
         li_ptintsl(1+(i_pair-1)*16:i_pair*16)
+        li_ptintma_zone(nb_pair_zone*16+1+(i_pair-1)*16:nb_pair_zone*16+i_pair*16) = &
+        li_ptintma(1+(i_pair-1)*16:i_pair*16)
     end do
 !
 ! - New number of contact pairs
