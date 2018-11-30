@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,20 +19,24 @@
 !
 !
 interface
-    subroutine clcels(cequi, effm, effn, ht, enrobs, enrobi,&
-                      sigaci, sigbet, dnsinf, dnssup, sigmab,&
-                      ierr)
-        real(kind=8) :: cequi
+    subroutine cafelu(typco, alphacc, effm, effn, ht, enrobs,&
+                      enrobi, facier, fbeton, gammas, gammac,&
+                      clacier, uc, dnsinf, dnssup, ierr)
+        integer :: typco
+        real(kind=8) :: alphacc
         real(kind=8) :: effm
         real(kind=8) :: effn
         real(kind=8) :: ht
         real(kind=8) :: enrobs
         real(kind=8) :: enrobi
-        real(kind=8) :: sigaci
-        real(kind=8) :: sigbet
+        real(kind=8) :: facier
+        real(kind=8) :: fbeton
+        real(kind=8) :: gammas
+        real(kind=8) :: gammac
+        integer :: clacier
+        integer :: uc
         real(kind=8) :: dnsinf
         real(kind=8) :: dnssup
-        real(kind=8) :: sigmab
         integer :: ierr
-    end subroutine clcels
+    end subroutine cafelu
 end interface

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,24 +19,19 @@
 !
 !
 interface
-subroutine clctra(typco, effrts, effn, effm, efft,  ht, enrobs, enrobi, facier,&
-                  fbeton, sigaci, coeff1, gammac, gammas, uc, dnstra, ierr)
-        integer :: typco
-        real(kind=8) :: effrts(8)
-        real(kind=8) :: effn
+    subroutine cafels(cequi, effm, effn, ht, enrobs, enrobi, sigaci,&
+                      sigbet, uc, dnsinf, dnssup, ierr)
+        real(kind=8) :: cequi
         real(kind=8) :: effm
-        real(kind=8) :: efft
+        real(kind=8) :: effn
         real(kind=8) :: ht
         real(kind=8) :: enrobs
         real(kind=8) :: enrobi
-        real(kind=8) :: facier
-        real(kind=8) :: fbeton
         real(kind=8) :: sigaci
-        real(kind=8) :: coeff1
-        real(kind=8) :: gammac
-        real(kind=8) :: gammas
+        real(kind=8) :: sigbet
         integer :: uc
-        real(kind=8) :: dnstra
+        real(kind=8) :: dnsinf
+        real(kind=8) :: dnssup
         integer :: ierr
-    end subroutine clctra
+    end subroutine cafels
 end interface
