@@ -26,7 +26,7 @@ subroutine lc0000(fami, kpg, ksp, ndim, typmod,&
                   sigp, vip, ndsde, dsidep, icomp,&
                   nvi, nwkout, wkout, codret)
 !
-use calcul_module, only : calcul_status
+use calcul_module, only : calcul_status, ca_nbcvrc_
 !
 implicit none
 !
@@ -301,6 +301,12 @@ integer :: codret
 !    -> If defo_ldc = 'MECANIQUE', prepare mechanical strain
 !    -> If defo_ldc = 'TOTALE' or 'OLD', keep total strain
 !
+!       * Check for external state variable
+!
+    if (ca_nbcvrc_ .eq. 0) then
+        goto 999
+    endif
+    
     read (compor(21),'(A16)') defo_ldc
     defo_comp = compor(3)
     l_large_strains = (defo_comp .eq. 'SIMO_MIEHE') .or. (defo_comp .eq. 'GROT_GDEP')
@@ -323,6 +329,8 @@ integer :: codret
         endif
 
     endif
+!
+999 continue
 !
 ! - Prepare index of behaviour law
 !
@@ -1205,8 +1213,8 @@ integer :: codret
 !
 ! - Restore total strain
 !
-    if (defo_ldc .eq. 'MECANIQUE') then 
-        if (.not. l_large_strains) then
+    if (ca_nbcvrc_ .ne. 0) then
+        if ((defo_ldc .eq. 'MECANIQUE') .and. (.not. l_large_strains)) then
             call lcRestoreStrain(option, typmod,&
                                  neps , epsth , depsth,&
                                  epsm , deps)
