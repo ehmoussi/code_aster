@@ -18,10 +18,10 @@
 
 ! aslint: disable=W1306
 !
-subroutine aplcpg(mesh        , newgeo        , sdappa      , i_zone        , pair_tole,&
-                  nb_elem_mast, list_elem_mast, nb_elem_slav, list_elem_slav, &
-                  nb_pair_zone, list_pair_zone, list_nbptit_zone, list_ptitsl_zone,&
-                  i_proc      , nb_proc, pair_method)
+subroutine aplcpg(mesh            , newgeo        , sdappa          , i_zone        , pair_tole,&
+                  nb_elem_mast    , list_elem_mast, nb_elem_slav    , list_elem_slav, &
+                  nb_pair_zone    , list_pair_zone, list_nbptit_zone, list_ptitsl_zone,&
+                  list_ptitma_zone, i_proc        , nb_proc         , pair_method)
 !
 implicit none
 !
@@ -29,6 +29,7 @@ implicit none
 #include "jeveux.h"
 #include "asterc/r8nnem.h"
 #include "asterfort/jecrec.h"
+#include "asterfort/aprtpm.h"
 #include "asterfort/jexatr.h"
 #include "asterfort/jeexin.h"
 #include "asterfort/jedema.h"
@@ -70,6 +71,7 @@ integer, intent(inout) :: nb_pair_zone
 integer, pointer :: list_pair_zone(:)
 integer, pointer :: list_nbptit_zone(:)
 real(kind=8), pointer :: list_ptitsl_zone(:)
+real(kind=8), pointer :: list_ptitma_zone(:)
 integer, intent(in) :: i_proc
 integer, intent(in) :: nb_proc
 character(len=24), intent(in) :: pair_method
@@ -97,7 +99,7 @@ character(len=24), intent(in) :: pair_method
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: list_pair(nb_elem_mast),li_nb_pt_inte_sl(nb_elem_mast), nbpatch_t, iret
-    real(kind=8) :: li_pt_inte_sl(nb_elem_mast*16)
+    real(kind=8) :: li_pt_inte_sl(nb_elem_mast*16), li_pt_inte_ma(nb_elem_mast*16)
     integer :: elem_slav_nbnode, elem_slav_nume, elem_slav_dime, elem_slav_indx
     integer :: elem_mast_nbnode, elem_mast_nume, elem_mast_dime, elem_mast_indx
     character(len=8) :: elem_mast_code, elem_slav_code
@@ -107,8 +109,9 @@ character(len=24), intent(in) :: pair_method
     integer :: i_mast_neigh, i_slav_start, i_mast_start, i_find_mast
     integer :: i_slav_neigh
     integer :: patch_indx
-    real(kind=8) :: total_weight, inte_weight, elem_slav_weight
-    real(kind=8) :: poin_inte(32)
+    real(kind=8) :: inte_weight, elem_slav_weight
+    real(kind=8) :: poin_inte_sl(32)
+    real(kind=8) :: poin_inte_ma(32)
     integer :: elin_mast_nbsub, elin_mast_sub(1,4), elin_mast_nbnode(1)
     integer :: elin_slav_nbsub, elin_slav_sub(1,4), elin_slav_nbnode(1)
     character(len=8) :: elin_mast_code, elin_slav_code, elem_slav_name, elem_mast_name, elem_name
@@ -138,6 +141,7 @@ character(len=24), intent(in) :: pair_method
     integer, pointer :: list_pair_zmpi(:) => null()
     integer, pointer :: li_nbptsl_zmpi(:) => null()
     real(kind=8), pointer :: li_ptintsl_zmpi(:) => null()
+    real(kind=8), pointer :: li_ptintma_zmpi(:) => null()
     integer, pointer :: v_mesh_connex(:)  => null()
     integer, pointer :: v_connex_lcum(:)  => null()
     character(len=16), pointer :: valk(:) => null()
@@ -180,6 +184,7 @@ character(len=24), intent(in) :: pair_method
     AS_ALLOCATE(vi=list_pair_zmpi, size= 3*nb_elem_slav*nb_elem_mast)
     AS_ALLOCATE(vi=li_nbptsl_zmpi, size= nb_elem_slav*nb_elem_mast)
     AS_ALLOCATE(vr=li_ptintsl_zmpi, size= 16*nb_elem_slav*nb_elem_mast)
+    AS_ALLOCATE(vr=li_ptintma_zmpi, size= 16*nb_elem_slav*nb_elem_mast)
 !
 ! - Access to updated geometry
 !
@@ -255,7 +260,6 @@ character(len=24), intent(in) :: pair_method
         elem_slav_indx = elem_slav_nume +1 - slav_indx_mini
         elem_type_nume = v_mesh_typmail(elem_slav_nume)
         call jenuno(jexnum('&CATA.TM.NOMTM', elem_type_nume), elem_slav_type)
-        call jenuno(jexnum(mesh//'.NOMMAI', elem_slav_nume), elem_slav_name)
 !
 ! ----- Shift list of slave element start
 !
@@ -278,6 +282,7 @@ character(len=24), intent(in) :: pair_method
                     elem_slav_code, elem_slav_dime, v_mesh_connex   ,&
                     v_connex_lcum)
         if (debug) then
+            call jenuno(jexnum(mesh//'.NOMMAI', elem_slav_nume), elem_slav_name)
             write(*,*) "Current slave element: ", elem_slav_nume, elem_slav_name,&
                        '(type : ', elem_slav_code, ')'
         endif
@@ -361,7 +366,7 @@ character(len=24), intent(in) :: pair_method
 !
         do while(nb_find_mast .gt. 0)
 !
-            total_weight = 0.d0
+            inte_weight = 0.d0
 !
 ! --------- Get master element
 !
@@ -420,36 +425,40 @@ character(len=24), intent(in) :: pair_method
             call prjint(pair_tole     , elem_slav_dime,&
                         elin_mast_nbnode(1), elem_mast_coor, elin_mast_code,&
                         elin_slav_nbnode(1), elem_slav_coor, elin_slav_code,&
-                        poin_inte     , inte_weight         , nb_poin_inte  ,&
+                        poin_inte_sl       , inte_weight   , nb_poin_inte  ,&
                         inte_neigh_ = inte_neigh)
             if (debug) then
                 write(*,*) "Intersection - Master: ", elem_mast_name
                 write(*,*) "Intersection - Slave : ", elem_slav_name
                 write(*,*) "Intersection - Poids : ", inte_weight
                 write(*,*) "Intersection - Nb    : ", nb_poin_inte
-                write(*,*) "Intersection - Points: ", poin_inte
+                write(*,*) "Intersection - Points: ", poin_inte_sl
             endif
 !
 ! ----------------- Non-void intersection
 !
             if (inte_weight .gt. pair_tole) then
-                total_weight = total_weight+inte_weight
+                call aprtpm(pair_tole       , elem_slav_dime, &
+                            elem_mast_nbnode, elem_mast_coor, elem_mast_code,&
+                            elem_slav_nbnode, elem_slav_coor, elem_slav_code,&
+                            poin_inte_sl    , nb_poin_inte  ,poin_inte_ma, iret)
             end if
 !
 ! --------- Add element paired
 !
-            if (total_weight .gt. pair_tole) then
+            if (inte_weight .gt. pair_tole .and. iret .eq.0) then
                 nb_pair                        = nb_pair+1
                 list_pair(nb_pair)             = elem_mast_nume
-                li_nb_pt_inte_sl(nb_pair)       = nb_poin_inte
+                li_nb_pt_inte_sl(nb_pair)      = nb_poin_inte
                 ASSERT(nb_poin_inte.le.8)
-                li_pt_inte_sl(1+(nb_pair-1)*16:(nb_pair-1)*16+16) = poin_inte(1:16)
+                li_pt_inte_ma(1+(nb_pair-1)*16:(nb_pair-1)*16+16) = poin_inte_ma(1:16)
+                li_pt_inte_sl(1+(nb_pair-1)*16:(nb_pair-1)*16+16) = poin_inte_sl(1:16)
                 elem_mast_flag(elem_mast_indx) = 1
             end if
 !
 ! --------- Find neighbour of current master element
 !
-            if (total_weight .gt. pair_tole .or. l_recup) then
+            if (inte_weight .gt. pair_tole .or. l_recup) then
 !
 ! ------------- Number of neighbours
 !
@@ -510,9 +519,9 @@ character(len=24), intent(in) :: pair_method
         if (nb_pair .ne. 0) then
             call apsave_pair(i_zone      , elem_slav_nume,&
                              nb_pair     , list_pair     ,&
-                             li_nb_pt_inte_sl, li_pt_inte_sl,&
+                             li_nb_pt_inte_sl, li_pt_inte_sl,li_pt_inte_ma,&
                              nb_pair_zmpi(i_proc+1), list_pair_zmpi,&
-                             li_nbptsl_zmpi,li_ptintsl_zmpi)
+                             li_nbptsl_zmpi,li_ptintsl_zmpi, li_ptintma_zmpi)
         end if
 !
 ! ----- Next elements
@@ -553,9 +562,9 @@ character(len=24), intent(in) :: pair_method
 !
     call apsave_patch(mesh          , sdappa        , i_zone,&
                       patch_weight_t, nb_proc, list_pair_zmpi,&
-                      li_nbptsl_zmpi,li_ptintsl_zmpi,&
+                      li_nbptsl_zmpi,li_ptintsl_zmpi,li_ptintma_zmpi,&
                       nb_pair_zmpi, list_pair_zone,list_nbptit_zone, list_ptitsl_zone,&
-                      nb_pair_zone, i_proc)
+                      list_ptitma_zone,nb_pair_zone, i_proc)
     !write(*,*)"Fin APSAVE_PATCH", i_proc
     !write(*,*)"NB_pair_zone: ",nb_pair_zone ,i_proc
     !write(*,*)"list_pair_zone: ",list_pair_zone(:) ,i_proc
@@ -566,6 +575,7 @@ character(len=24), intent(in) :: pair_method
     AS_DEALLOCATE(vi=list_pair_zmpi)
     AS_DEALLOCATE(vi=li_nbptsl_zmpi)
     AS_DEALLOCATE(vr=li_ptintsl_zmpi)
+    AS_DEALLOCATE(vr=li_ptintma_zmpi)
     call jedetr(njv_weight_t)
     call jedetr(njv_nb_pair_zmpi)
     call jedema()

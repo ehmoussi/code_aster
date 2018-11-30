@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -24,7 +24,7 @@ subroutine gapint(pair_tole     , elem_dime       ,&
 !
 implicit none
 !
-#include "asterf_types.h" 
+#include "asterf_types.h"
 #include "jeveux.h"
 #include "asterfort/assert.h"
 #include "asterfort/jecrec.h"
@@ -136,16 +136,16 @@ implicit none
 ! ----- Get integration scheme
 !
         call lcptga(elem_dime, tria_coor , gauss_family,&
-                    nb_gauss      , gauss_coor, gauss_weight)           
+                    nb_gauss      , gauss_coor, gauss_weight)
 !
 ! ----- Loop on Gauss points
-!       
+!
         do i_gauss = 1, nb_gauss
 !
-            jacobian            = 0.d0
-            dist               = 0.d0
-            dire_norm(1:3)        = 0.d0
-            gauss_coou(1:3)       = 0.d0
+            jacobian        = 0.d0
+            dist            = 0.d0
+            dire_norm(1:3)  = 0.d0
+            gauss_coou(1:3) = 0.d0
             gauss_coot(1:2) = 0.d0
 !
 ! --------- Transform the format of Gauss coordinates
@@ -167,7 +167,7 @@ implicit none
             jaco_weight = gauss_weight(i_gauss)*jacobian
 !
 ! --------- Projection along given direction
-!    
+!
             call mmnewd(elem_mast_code, elem_mast_nbnode, elem_dime, elem_mast_coor,&
                         gauss_coou    , 200             , pair_tole, dire_norm     ,&
                         ksi1          , ksi2            , tau1     , tau2          ,&
@@ -186,15 +186,15 @@ implicit none
                 sig = vect_pm(1)*dire_norm(1)+vect_pm(2)*dire_norm(2)
             else
                 ASSERT(.false.)
-            end if 
-            dist_sign = -sign(dist,sig)      
+            end if
+            dist_sign = -sign(dist,sig)
 !
-! --------- Total integration weight and mean square gap                 
+! --------- Total integration weight and mean square gap
 !
             gap_moy     = gap_moy+jaco_weight*dist_sign
             inte_weight = inte_weight+jaco_weight
-            
+
         enddo
     enddo
-   
-end subroutine                     
+
+end subroutine
