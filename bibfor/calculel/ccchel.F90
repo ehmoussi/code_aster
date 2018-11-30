@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,13 +15,15 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: nicolas.sellenet at edf.fr
+!
 subroutine ccchel(option, modele, resuin, resuou, numord,&
                   nordm1, mateco, carael, typesd, ligrel,&
-                  exipou, exitim, lischa, nbchre, ioccur,&
+                  l_poux, exitim, lischa, nbchre, ioccur,&
                   suropt, basopt, resout)
-    implicit none
-!     --- ARGUMENTS ---
+!
+implicit none
+!
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterfort/ccaccl.h"
@@ -31,18 +33,22 @@ subroutine ccchel(option, modele, resuin, resuou, numord,&
 #include "asterfort/ccpoux.h"
 #include "asterfort/detrsd.h"
 #include "asterfort/meceuc.h"
-    aster_logical :: exipou, exitim
-    integer :: nbchre, ioccur, numord, nordm1
-    character(len=1) :: basopt
-    character(len=8) :: modele, resuin, resuou, carael
-    character(len=16) :: option, typesd
-    character(len=19) :: lischa
-    character(len=24) :: mateco, ligrel, resout, suropt
-!  CALC_CHAMP - CALCUL D'UN CHAMP ELNO ET ELGA
-!  -    -                   --    --
-! ----------------------------------------------------------------------
 !
-!  ROUTINE DE CALCUL D'UN CHAMP DE CALC_CHAMP
+aster_logical, intent(in) :: l_poux, exitim
+integer :: nbchre, ioccur, numord, nordm1
+character(len=1) :: basopt
+character(len=8) :: modele, resuin, resuou, carael
+character(len=16) :: option, typesd
+character(len=19) :: lischa
+character(len=24) :: mateco, ligrel, resout, suropt
+!
+! --------------------------------------------------------------------------------------------------
+!
+! CALC_CHAMP
+!
+! Compute ELEM, ELNO and ELGA fields
+!
+! --------------------------------------------------------------------------------------------------
 !
 ! IN  :
 !   OPTION  K16  NOM DE L'OPTION
@@ -65,38 +71,39 @@ subroutine ccchel(option, modele, resuin, resuou, numord,&
 !
 ! OUT :
 !   RESOUT  K24  NOM DU CHAMP OUT
-! ----------------------------------------------------------------------
-! person_in_charge: nicolas.sellenet at edf.fr
+!
+! --------------------------------------------------------------------------------------------------
 !
     integer :: iret, nbpaou, nbpain
-!
-    character(len=8) :: poux, lipain(100), lipaou(1)
+    character(len=8) :: lipain(100), lipaou(1)
     character(len=24) :: lichin(100), lichou(2)
+!
+! --------------------------------------------------------------------------------------------------
 !
     resout = ' '
 !
-    if (exipou) then
-        poux = 'OUI'
-    else
-        poux = 'NON'
-    endif
+! - Create generic input fields
 !
     call ccpara(option, modele, resuin, resuou, numord,&
                 nordm1, exitim, mateco(1:8), carael)
 !
+! - Construct list of input fields
+!
     call cclpci(option, modele, resuin, resuou, mateco(1:8),&
                 carael, ligrel, numord, nbpain, lipain,&
                 lichin, iret)
-!
     if (iret .ne. 0) then
         goto 999
     endif
 !
+! - Construct list of output fields
+!
     call cclpco(option, resuou, numord, nbpaou, lipaou,&
                 lichou)
 !
-!     A PARTIR D'ICI, ON TRAITE LES CAS PARTICULIERS
-    if (exipou) then
+! - Special for POUX beams
+!
+    if (l_poux) then
         call ccpoux(resuin, typesd, numord, nbchre, ioccur,&
                     lischa, modele, nbpain, lipain, lichin,&
                     suropt, iret)
@@ -105,19 +112,23 @@ subroutine ccchel(option, modele, resuin, resuou, numord,&
         endif
     endif
 !
+! - Special
+!
     call ccaccl(option, modele, mateco(1:8), carael, ligrel,&
                 typesd, nbpain, lipain, lichin, lichou,&
                 iret)
     if (iret .ne. 0) then
         goto 999
     endif
-!     FIN DES CAS PARTICULIERS
 !
-    call meceuc('C', poux, option, carael, ligrel,&
+! - Compute option with complex case
+!
+    call meceuc('C', option, carael, ligrel,&
                 nbpain, lichin, lipain, nbpaou, lichou,&
                 lipaou, basopt)
-!
     resout = lichou(1)
+!
+! - Clean
 !
     call detrsd('CHAM_ELEM', '&&CALCOP.INT_0')
 !
