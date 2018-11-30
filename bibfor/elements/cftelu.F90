@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,35 +16,38 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine clctra(typco, effrts, effn, effm, efft, ht, enrobs, enrobi, facier,&
-                  fbeton, sigaci, coeff1, gammac, gammas, uc, dnstra, ierr)
+subroutine cftelu(typco, effrts, effn, effm, efft, ht, enrobs, enrobi, facier,&
+                  fbeton, alphacc, gammac, gammas, uc, compress, dnstra, ierr)
 !______________________________________________________________________
 !
-!     CC_TRA
-!      I TYPCO   CODIFICATION UTILISEE
-!                (0 = UTILISATEUR, 1 = BAEL91, 2 = EC2)
-!      I EFFRTS  (DIM 8) TORSEUR DES EFFORTS, MOMENTS, ...
-!      I EFFN    EFFORT NORMAL
-!      I EFFT    EFFORT TRANCHANT DANS CETTE DIRECTION
-!      I HT      EPAISSEUR DE LA COQUE
-!      I ENROBS  ENROBAGE DES ARMATURES SUPERIEURES
-!      I ENROBI  ENROBAGE DES ARMATURES INFERIEURES
-!      I FACIER  LIMITE D'ELASTICITE DES ACIERS (CONTRAINTE)
-!      I FBETON  RESISTANCE EN COMPRESSION DU BETON (CONTRAINTE)
-!      I SIGACI  CONTRAINTE ADMISSIBLE DANS L'ACIER
-!      I COEFF1  SI TYPCO = UTILISATEUR :
-!                    COEFF1 = VALEUR DU PIVOT A
-!                SI TYPCO = BAEL91 ou EC2 :
-!                    COEFF1 = COEFFICIENT ALPHA_CC
-!      I GAMMAC  COEFFICIENT DE SECURITE SUR LA RESISTANCE
-!                DE CALCUL DU BETON
-!      I GAMMAS  COEFFICIENT DE SECURITE SUR LA RESISTANCE
-!                DE CALCUL DES ACIERS
-!      I UC      UNITE DES CONTRAINTES :
-!                    UC = 0 CONTRAINTES EN Pa
-!                    UC = 1 CONTRAINTES EN MPa
-!      O DNSTRA  DENSITE DE FERRAILLAGE TRANSVERSAL
-!      O IERR    CODE RETOUR (0 = OK)
+!     CFTELU
+!
+!      CALCUL DU FERRAILLAGE TRANSVERSAL A L'ELU
+!
+!      I TYPCO    CODIFICATION UTILISEE (1 = BAEL91, 2 = EC2)
+!      I EFFRTS   (DIM 8) TORSEUR DES EFFORTS, MOMENTS, ...
+!      I EFFN     EFFORT NORMAL
+!      I EFFT     EFFORT TRANCHANT
+!      I HT       EPAISSEUR DE LA COQUE
+!      I ENROBS   ENROBAGE DES ARMATURES SUPERIEURES
+!      I ENROBI   ENROBAGE DES ARMATURES INFERIEURES
+!      I FACIER   LIMITE D'ELASTICITE DES ACIERS (CONTRAINTE)
+!      I FBETON   RESISTANCE EN COMPRESSION DU BETON (CONTRAINTE)
+!      I ALPHACC  COEFFICIENT DE SECURITE SUR LA RESISTANCE
+!                 DE CALCUL DU BETON EN COMPRESSION
+!      I GAMMAC   COEFFICIENT DE SECURITE SUR LA RESISTANCE
+!                 DE CALCUL DU BETON
+!      I GAMMAS   COEFFICIENT DE SECURITE SUR LA RESISTANCE
+!                 DE CALCUL DES ACIERS
+!      I UC       UNITE DES CONTRAINTES :
+!                     UC = 0 CONTRAINTES EN Pa
+!                     UC = 1 CONTRAINTES EN MPa
+!      I COMPRESS PRISE EN COMPTE DE LA COMPRESSION
+!                     COMPRESS = 0 NON
+!                     COMPRESS = 1 OUI
+!
+!      O DNSTRA   DENSITE DE FERRAILLAGE TRANSVERSAL
+!      O IERR     CODE RETOUR (0 = OK)
 !
 !______________________________________________________________________
 !
@@ -65,11 +68,11 @@ subroutine clctra(typco, effrts, effn, effm, efft, ht, enrobs, enrobi, facier,&
     real(kind=8) :: enrobi
     real(kind=8) :: facier
     real(kind=8) :: fbeton
-    real(kind=8) :: sigaci
-    real(kind=8) :: coeff1
+    real(kind=8) :: alphacc
     real(kind=8) :: gammac
     real(kind=8) :: gammas
     integer :: uc
+    integer :: compress
     real(kind=8) :: dnstra
     integer :: ierr
 !
@@ -77,12 +80,15 @@ subroutine clctra(typco, effrts, effn, effm, efft, ht, enrobs, enrobi, facier,&
 !       NORME DES EFFORTS DE CISAILLEMENT
     real(kind=8) :: sigmat
 !       COEFFICIENT LIE A L'UNITE CHOISIE (Pa OU MPa)
-    real(kind=8) :: unite
+    real(kind=8) :: unite_pa, unite_m
 !       COEFFICIENT DE REDUCTION DE LA RESISTANCE DU BETON
 !       FISSURE A L'EFFORT TRANCHANT
     real(kind=8) :: nu_1
 !       CONTRAINTE DE CONCEPTION DU BETON
     real(kind=8) :: fcd
+!       CONTRAINTE DANS LE BETON MOYENNEE SUR TOUTE LA HAUTEUR DE
+!       LA SECTION DUE A L'EFFORT NORMAL DE CALCUL
+    real(kind=8) :: sigma_cp
 !       NOTATION SILMPLIFIEE : SIGMA_CP / FCD
     real(kind=8) :: ratio
 !       PARAMETRE D'ETAT DE CONTRAINTE DANS LA MEMBRANE COMPRIMEE
@@ -95,16 +101,12 @@ subroutine clctra(typco, effrts, effn, effm, efft, ht, enrobs, enrobi, facier,&
 !       COTANGENTE DE L'ANGLE D'INCLINAISON DES BIELLES
     real(kind=8) :: cotheta
 !
-!   CALCUL POUR CODIFICATION = UTILISATEUR
+    dnstra = 0.d0
 !
-    if (typco.eq.0) then
-        z = 0.9*(ht-enrobi)
-        sigmat = sqrt(effrts(7)*effrts(7)+effrts(8)*effrts(8))/z
-        dnstra = sigmat / sigaci
 !
 !   CALCUL POUR CODIFICATION = BAEL91
 !
-    else if (typco.eq.1) then
+    if (typco.eq.1) then
         if (effm.ge.0.d0) then
             z = 0.9*(ht-enrobi)
         else
@@ -119,17 +121,24 @@ subroutine clctra(typco, effrts, effn, effm, efft, ht, enrobs, enrobi, facier,&
 !
 !       CALCULS INTERMEDIAIRES
         if (uc.eq.0) then
-            unite = 1.e6
+            unite_pa = 1.e6
+            unite_m = 1.
         else if (uc.eq.1) then
-            unite = 1.
+            unite_pa = 1.
+            unite_m = 1e-3
         endif
         if (gammas.gt.1.25) then
-            nu_1 = min(0.6,max(0.9-(fbeton/(200.d0*unite)),0.5))
+            nu_1 = min(0.6,max(0.9-(fbeton/(200.d0*unite_pa)),0.5))
         else
-            nu_1 = 0.6*(1.-(fbeton/(250.d0*unite)))
+            nu_1 = 0.6*(1.-(fbeton/(250.d0*unite_pa)))
         endif
-        fcd = fbeton*coeff1/gammac
-        ratio = -effn/(ht*fcd)
+        fcd = fbeton*alphacc/gammac
+        if (compress.eq.0) then
+            sigma_cp = 0.d0
+        else
+            sigma_cp = -effn/ht
+        endif
+        ratio = sigma_cp/(fcd*unite_m)
         if (ratio.le.0.) then
             alpha_cw = 1.d0
         else if (ratio.lt.0.25) then
@@ -154,10 +163,10 @@ subroutine clctra(typco, effrts, effn, effm, efft, ht, enrobs, enrobi, facier,&
         else
 !           SECTION TROP CISAILLEE
             ierr = 1040
-            goto 999
+            goto 997
         endif
         dnstra = efft/((facier/gammas)*z*cotheta)
    endif
 !
-999  continue
+997  continue
 end subroutine
