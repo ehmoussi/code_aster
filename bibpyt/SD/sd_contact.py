@@ -51,8 +51,8 @@ class sd_contact(AsBase):
 
 #   Objets présents quelle que soit la formulation
     MODELE = AsVK8(SDNom(nomj='.CHME.MODEL.NOMO'), lonmax=1,)
-    PARACI = AsVI(SDNom(nomj='.CONTACT.PARACI'), lonmax=zpari,)
-    PARACR = AsVR(SDNom(nomj='.CONTACT.PARACR'), lonmax=zparr,)
+    PARACI = AsVI(SDNom(nomj='.PARACI'), lonmax=zpari,)
+    PARACR = AsVR(SDNom(nomj='.PARACR'), lonmax=zparr,)
     TYPE = AsVK8(SDNom(nomj='.TYPE'), lonmax=1,)
 
 # --------------------------------------------------------------------------------------------------#
@@ -67,7 +67,7 @@ class sd_contact(AsBase):
         return self.type_form() == 1
 
     def formulation_cont(self):
-        return self.type_form() == 2 or  self.type_form() == 5 
+        return self.type_form() == 2 or  self.type_form() == 5
 
     def formulation_xfem(self):
         return self.type_form() == 3
@@ -273,8 +273,8 @@ class sd_contact(AsBase):
 
 #   Pointeur d'index DECOUPE_LAC<=>DEFI_CONTACT
     PTRDCLC = Facultatif(AsVI(SDNom(nomj='.CONTACT.PTRDCLC')))
-    
-    
+
+
 # --------------------------------------------------------------------------------------------------#
 
 #   Formulation XFEM

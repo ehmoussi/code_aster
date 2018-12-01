@@ -63,7 +63,7 @@ type(ROM_DS_AlgoPara), optional, intent(inout) :: ds_algorom_
 !
     call infniv(ifm, niv)
     if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE> . Read parameters for algorithm parameters'
+        call utmess('I', 'MECANONLINE12_6')
     endif
 !
 ! - Get method

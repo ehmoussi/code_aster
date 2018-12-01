@@ -15,17 +15,15 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-! aslint: disable=W1504
 !
 interface
-    subroutine nmelco_prep(phase    , calc_type,&
+    subroutine nmelco_prep(calc_type,&
                            mesh     , model    , ds_material, ds_contact,&
                            disp_prev, vite_prev, acce_prev, vite_curr , disp_cumu_inst,&
                            disp_newt_curr,nbin     , lpain    , lchin    ,&
                            option   , time_prev, time_curr , ds_constitutive,&
                            ccohes_  , xcohes_)
         use NonLin_Datastructure_type
-        character(len=4), intent(in) :: phase
         character(len=4), intent(in) :: calc_type
         character(len=8), intent(in) :: mesh
         character(len=24), intent(in) :: model

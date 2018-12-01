@@ -29,12 +29,14 @@ implicit none
 #include "asterfort/nmlect.h"
 #include "asterfort/getvid.h"
 #include "asterfort/getvis.h"
+#include "asterfort/infniv.h"
 #include "asterfort/nonlinDSConstitutiveCreate.h"
 #include "asterfort/nmdorc.h"
 #include "asterfort/nonlinDSConstitutiveInit.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/isOptionPossible.h"
 #include "asterfort/utmess.h"
+#include "asterfort/comp_info.h"
 !
 character(len=19), intent(out) :: list_load
 character(len=24), intent(out) :: model
@@ -72,7 +74,7 @@ integer, intent(out) :: nume_harm
 !
     character(len=8) :: result
     aster_logical :: l_etat_init
-    integer :: nocc
+    integer :: nocc, ifm, niv
     character(len=19) :: ligrmo
 !
 ! --------------------------------------------------------------------------------------------------
@@ -86,6 +88,7 @@ integer, intent(out) :: nume_harm
     disp_prev      = ' '
     disp_cumu_inst = ' '
     l_elem_nonl    = .false._1
+    call infniv(ifm, niv)
 !
 ! - Get parameters from command file
 !
@@ -142,6 +145,9 @@ integer, intent(out) :: nume_harm
                     ds_constitutive%compor, ds_constitutive%carcri, ds_constitutive%mult_comp,&
                     l_implex_ = .false._1)
         call nonlinDSConstitutiveInit(model, cara_elem, ds_constitutive)
+        if (niv .ge. 2) then
+            call comp_info(model(1:8), ds_constitutive%compor)
+        endif
     endif
 !
 end subroutine

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -183,10 +183,6 @@ cata_msg = {
     76 : _(u"""
 Couplage fluage/fissuration :
 La loi BETON_DOUBLE_DP ne peut être couplée qu'avec une loi de fluage de GRANGER
-"""),
-
-    80 : _(u"""
- situation de contact impossible
 """),
 
     85 : _(u"""

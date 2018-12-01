@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,11 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine ndmuap(numins, numedd, sddyna, sddisc)
 ! person_in_charge: mickael.abbas at edf.fr
 !
-    implicit none
+subroutine ndmuap(numins, numedd, sddyna, sddisc)
+!
+implicit none
+!
 #include "jeveux.h"
 #include "asterfort/diinst.h"
 #include "asterfort/dismoi.h"
@@ -32,9 +33,10 @@ subroutine ndmuap(numins, numedd, sddyna, sddisc)
 #include "asterfort/ndynkk.h"
 #include "asterfort/nmdebg.h"
 #include "asterfort/r8inir.h"
-    integer :: numins
-    character(len=24) :: numedd
-    character(len=19) :: sddyna, sddisc
+!
+integer :: numins
+character(len=24) :: numedd
+character(len=19) :: sddyna, sddisc
 !
 ! ----------------------------------------------------------------------
 !
@@ -53,8 +55,7 @@ subroutine ndmuap(numins, numedd, sddyna, sddisc)
 !
 !
 !
-    real(kind=8) :: zero
-    parameter    (zero = 0.d0)
+    real(kind=8), parameter :: zero = 0.d0
 !
     integer :: neq, ie, iex
     real(kind=8) :: instap
@@ -71,10 +72,7 @@ subroutine ndmuap(numins, numedd, sddyna, sddisc)
 ! ----------------------------------------------------------------------
 !
     call jemarq()
-    call infdbg('MECA_NON_LINE', ifm, niv)
-!
-! --- AFFICHAGE
-!
+    call infdbg('MECANONLINE', ifm, niv)
     if (niv .ge. 2) then
         write (ifm,*) '<MECANONLINE> ... INIT. MULTI-APPUI'
     endif

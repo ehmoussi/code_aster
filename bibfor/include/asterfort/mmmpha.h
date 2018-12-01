@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,20 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 #include "asterf_types.h"
 !
 interface
-    subroutine mmmpha(loptf, lcont, ladhe, ndexfr, lpenac,&
-                      lpenaf, phasep)
-        aster_logical :: loptf
-        aster_logical :: lcont
-        aster_logical :: ladhe
-        integer :: ndexfr
-        aster_logical :: lpenac
-        aster_logical :: lpenaf
-        character(len=9) :: phasep
+    subroutine mmmpha(leltf, lcont, ladhe, l_fric_no, phase)
+        aster_logical, intent(in) :: leltf, lcont, l_fric_no, ladhe
+        character(len=4), intent(out) :: phase
     end subroutine mmmpha
 end interface

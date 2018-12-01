@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine asmari(list_func_acti, hval_meelem, nume_dof, list_load, ds_algopara,&
                   matr_rigi)
 !
@@ -31,14 +32,12 @@ implicit none
 #include "asterfort/jeexin.h"
 #include "asterfort/matr_asse_syme.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    integer, intent(in) :: list_func_acti(*)
-    character(len=19), intent(in) :: hval_meelem(*)
-    character(len=24), intent(in) :: nume_dof
-    character(len=19), intent(in) :: list_load
-    character(len=19), intent(in) :: matr_rigi
-    type(NL_DS_AlgoPara), intent(in) :: ds_algopara
+integer, intent(in) :: list_func_acti(*)
+character(len=19), intent(in) :: hval_meelem(*)
+character(len=24), intent(in) :: nume_dof
+character(len=19), intent(in) :: list_load
+character(len=19), intent(in) :: matr_rigi
+type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -58,9 +57,9 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: nb_matr_elem, iexi
-    character(len=19) :: merigi, mediri, meeltc, meeltf
+    character(len=19) :: merigi, mediri, meeltc
     character(len=19) :: list_matr_elem(8)
-    aster_logical :: l_cont_elem, l_frot_elem, l_cont_all_verif, lxthm
+    aster_logical :: l_cont_elem, l_cont_all_verif
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -69,7 +68,6 @@ implicit none
 ! - Active functionnalities
 !
     l_cont_elem      = isfonc(list_func_acti,'ELT_CONTACT')
-    l_frot_elem      = isfonc(list_func_acti,'ELT_FROTTEMENT')
     l_cont_all_verif = isfonc(list_func_acti,'CONT_ALL_VERIF')
 !
 ! - Rigidity MATR_ELEM
@@ -77,10 +75,6 @@ implicit none
     call nmchex(hval_meelem, 'MEELEM', 'MERIGI', merigi)
     nb_matr_elem = nb_matr_elem + 1
     list_matr_elem(nb_matr_elem) = merigi
-!
-! - HM-XFEM model?
-!
-    lxthm = isfonc(list_func_acti,'THM')
 !
 ! - Boundary conditions MATR_ELEM
 !
@@ -93,22 +87,17 @@ implicit none
     if (l_cont_elem) then
         if (.not.l_cont_all_verif) then
             call nmchex(hval_meelem, 'MEELEM', 'MEELTC', meeltc)
-            call jeexin(meeltc//".RERR", iexi)
+            call jeexin(meeltc//'.RERR', iexi)
             if (iexi.ne.0) then
                 nb_matr_elem = nb_matr_elem + 1
                 list_matr_elem(nb_matr_elem) = meeltc
             end if
-            if (l_frot_elem.and.(.not.lxthm)) then
-                call nmchex(hval_meelem, 'MEELEM', 'MEELTF', meeltf)
-                nb_matr_elem = nb_matr_elem + 1
-                list_matr_elem(nb_matr_elem) = meeltf
-            endif
         endif
     endif
 !
 ! - Assembly MATR_ELEM
 !
-    ASSERT(nb_matr_elem.le.8)
+    ASSERT(nb_matr_elem .le. 8)
     call asmatr(nb_matr_elem, list_matr_elem, ' ', nume_dof, &
                 list_load, 'ZERO', 'V', 1, matr_rigi)
 !

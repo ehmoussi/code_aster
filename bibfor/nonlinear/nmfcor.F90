@@ -48,6 +48,7 @@ implicit none
 #include "asterfort/nmltev.h"
 #include "asterfort/nmrigi.h"
 #include "asterfort/nmtime.h"
+#include "asterfort/utmess.h"
 !
 integer :: list_func_acti(*)
 integer :: iter_newt, nume_inst
@@ -113,9 +114,9 @@ aster_logical :: lerrit
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call infdbg('MECA_NON_LINE', ifm, niv)
+    call infdbg('MECANONLINE', ifm, niv)
     if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE> CORRECTION DES FORCES'
+        call utmess('I', 'MECANONLINE13_63')
     endif
 !
 ! --- INITIALISATIONS CODES RETOURS

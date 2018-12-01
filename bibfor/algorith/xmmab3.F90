@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -80,62 +80,50 @@ subroutine xmmab3(ndim, nno, nnos, nnol, pla,&
 !
 !     II.3.1. CALCUL DE B ET DE BT
 !
-    do 160 i = 1, nnol
+    do i = 1, nnol
         pli=pla(i)
         ffi=ffc(i)
         nli=lact(i)
-        if (nli .eq. 0) goto 160
+        if (nli .eq. 0) cycle
 !
 !     CALCUL DE TAU.KN.P
-        do 161 j = 1, ndim
+        do j = 1, ndim
             tauknp(1,j) = 0.d0
-            do 162 k = 1, ndim
+            do k = 1, ndim
                 tauknp(1,j) = tauknp(1,j) + tau1(k) * knp(k,j)
-162          continue
-161      end do
+            end do
+        end do
 !
         if (ndim .eq. 3) then
-            do 163 j = 1, ndim
+            do j = 1, ndim
                 tauknp(2,j) = 0.d0
-                do 164 k = 1, ndim
+                do k = 1, ndim
                     tauknp(2,j) = tauknp(2,j) + tau2(k) * knp(k,j)
-164              continue
-163          continue
+                end do
+            end do
         endif
 !
-        do 165 j = 1, nno
+        do j = 1, nno
             call indent(j, ddls, ddlm, nnos, jn)
-            do 166 k = 1, ndim-1
-                do 167 l = 1, nfh*ndim
-                    mmat(pli+k,jn+ndim+l) = mmat(pli+k,jn+ndim+l) + coefj*mu*seuil*ffi*ffp(j)*tauk&
-                                            &np(k,l)*jac
+            do k = 1, ndim-1
+                do l = 1, nfh*ndim
+                    mmat(pli+k,jn+ndim+l) = mmat(pli+k,jn+ndim+l) +&
+                                            coefj*mu*seuil*ffi*ffp(j)*tauknp(k,l)*jac
+                    mmat(jn+ndim+l,pli+k) = mmat(jn+ndim+l,pli+k) +&
+                                            coefj*mu*seuil*ffi*ffp(j)*tauknp(k,l)*jac
+                end do
 !
-                    mmat(jn+ndim+l,pli+k) = mmat(jn+ndim+l,pli+k) + coefj*mu*seuil*ffi*ffp(j)*tauk&
-                                            &np(k,l)*jac
+                do l = 1, singu*ndim
+                    do alpj = 1, ndim
+                        mmat(pli+k,jn+ndim*(1+nfh)+alpj) = mmat(pli+k,jn+ ndim*(1+nfh)+alpj) +&
+                            2.d0*fk(j,alpj,l)*mu*seuil*ffi*tauknp(k,l)*jac
 !
-!
-167              continue
-!
-                do 168 l = 1, singu*ndim
-                  do alpj = 1, ndim
-                    mmat(pli+k,jn+ndim*(1+nfh)+alpj) = mmat(&
-                                                    pli+k,&
-                                                    jn+ ndim*(1+nfh)+alpj) + 2.d0*fk(j,alpj,l)*&
-                                              mu*seuil*ffi*&
-                                                    tauknp(k,&
-                                                    l&
-                                                    )*jac
-!
-                    mmat(jn+ndim*(1+nfh)+alpj,pli+k) = mmat(&
-                                                    jn+ndim*(1+ nfh)+alpj,&
-                                                    pli+k) + 2.d0*fk(j,alpj,l)*mu*seuil*ffi*&
-                                                    tauknp(k,&
-                                                    l&
-                                                    )*jac
+                        mmat(jn+ndim*(1+nfh)+alpj,pli+k) = mmat(jn+ndim*(1+ nfh)+alpj,pli+k) +&
+                            2.d0*fk(j,alpj,l)*mu*seuil*ffi*tauknp(k,l)*jac
                    enddo
-168              continue
-166          continue
-165      continue
-160  continue
+                end do
+            end do
+        end do
+    end do
 !
 end subroutine

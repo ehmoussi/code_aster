@@ -16,9 +16,8 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
-! aslint: disable=W1504
 !
-subroutine nmelco_prep(phase    , calc_type,&
+subroutine nmelco_prep(calc_type,&
                        mesh     , model    , ds_material, ds_contact,&
                        disp_prev, vite_prev, acce_prev, vite_curr , disp_cumu_inst,&
                        disp_newt_curr,nbin     , lpain    , lchin    ,&
@@ -37,7 +36,6 @@ implicit none
 #include "asterfort/jeveuo.h"
 #include "asterfort/xmchex.h"
 !
-character(len=4), intent(in) :: phase
 character(len=4), intent(in) :: calc_type
 character(len=8), intent(in) :: mesh
 character(len=24), intent(in) :: model
@@ -67,7 +65,6 @@ character(len=19), optional, intent(out) :: xcohes_
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  phase            : phase (contact or friction)
 ! In  calc_type        : type of computation (vector or matrix)
 ! In  mesh             : name of mesh
 ! In  model            : name of model
@@ -116,57 +113,23 @@ character(len=19), optional, intent(out) :: xcohes_
 ! - Select option
 !
     if (calc_type.eq.'VECT') then
-        if (phase .eq. 'CONT') then
-            if (l_cont_xfem) then
-                call jeveuo(model(1:8)//'.XFEM_CONT', 'L', vi = v_model_xfemcont)
-                if (v_model_xfemcont(1) .eq. 1) then
-                    option = 'CHAR_MECA_CONT'
-                elseif (v_model_xfemcont(1) .eq. 2) then
-                    option = 'CHAR_MECA_CONT_M'
-                elseif (v_model_xfemcont(1) .eq. 3) then
-                    option = 'CHAR_MECA_CONT' 
-                else
-                    ASSERT(.false.)
-                endif
-            elseif (l_cont_cont) then
-                option = 'CHAR_MECA_CONT'
-            elseif (l_cont_lac) then
-                option = 'CHAR_MECA_CONT'
-            else
-                ASSERT(.false.)
+        option = 'CHAR_MECA_CONT'
+        if (l_cont_xfem) then
+            call jeveuo(model(1:8)//'.XFEM_CONT', 'L', vi = v_model_xfemcont)
+            if (v_model_xfemcont(1) .eq. 2) then
+                option = 'CHAR_MECA_CONT_M'
             endif
-        else if (phase.eq.'FROT') then
-            option = 'CHAR_MECA_FROT'
-        else
-            ASSERT(.false.)
         endif
     elseif (calc_type.eq.'MATR') then
-        if (phase .eq. 'CONT') then
-            if (l_cont_xfem) then
-                call jeveuo(model(1:8)//'.XFEM_CONT', 'L', vi = v_model_xfemcont)
-                if (v_model_xfemcont(1) .eq. 1) then
-                    option = 'RIGI_CONT'
-                elseif (v_model_xfemcont(1) .eq. 2) then
-                    option = 'RIGI_CONT_M'
-                elseif (v_model_xfemcont(1) .eq. 3) then
-                    option = 'RIGI_CONT' 
-                else
-                    ASSERT(.false.)
-                endif
-            elseif (l_cont_cont) then
-                option = 'RIGI_CONT'
-            elseif (l_cont_lac) then
-                option = 'RIGI_CONT'
-            else
-                ASSERT(.false.)
+        option = 'RIGI_CONT'
+        if (l_cont_xfem) then
+            call jeveuo(model(1:8)//'.XFEM_CONT', 'L', vi = v_model_xfemcont)
+            if (v_model_xfemcont(1) .eq. 2) then
+                option = 'RIGI_CONT_M'
             endif
-        else if (phase.eq.'FROT') then
-            option = 'RIGI_FROT'
-        else
-            ASSERT(.false.)
         endif
     else
-        ASSERT(.false.)
+        ASSERT(ASTER_FALSE)
     endif
 !
 ! - Geometry field
@@ -284,7 +247,7 @@ character(len=19), optional, intent(out) :: xcohes_
       lpain(15) = 'PLSNGG'
       lchin(15) = lnno
       lpain(30) = 'PBASLOC'
-      lchin(30) =  basefo   
+      lchin(30) =  basefo
     else
       lpain(15) = 'PLSN'
       lchin(15) = lnno

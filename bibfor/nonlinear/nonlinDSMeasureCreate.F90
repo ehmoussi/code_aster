@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -27,7 +27,6 @@ implicit none
 #include "asterfort/nonlinDSColumnVoid.h"
 #include "asterfort/nonlinDSTableVoid.h"
 #include "asterfort/assert.h"
-#include "asterfort/infdbg.h"
 !
 type(NL_DS_Measure), intent(out) :: ds_measure
 !
@@ -43,7 +42,6 @@ type(NL_DS_Measure), intent(out) :: ds_measure
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: ifm, niv
     integer, parameter :: nb_device_defi = 23
     integer, parameter :: nb_timer_defi = 7
     integer :: i_device, i_timer, i_col
@@ -127,13 +125,6 @@ type(NL_DS_Measure), intent(out) :: ds_measure
                     23, 23,  0,  0/)
 !
 ! --------------------------------------------------------------------------------------------------
-!
-    call infdbg('MECANONLINE', ifm, niv)
-    if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE> . Create measure and statistics management datastructure'
-    endif
-!
-! - Main parameters
 !
     ds_measure%l_table          = ASTER_FALSE
     ds_measure%nb_timer         = nb_timer_defi

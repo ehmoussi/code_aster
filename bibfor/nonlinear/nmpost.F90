@@ -141,7 +141,7 @@ integer :: fonact(*)
                         numedd         , numfix    ,&
                         ds_constitutive, &
                         sddisc         , numins    ,&
-                        sddyna         , sderro    , ds_contact, ds_algopara,&
+                        sddyna         , sderro    , ds_algopara,&
                         ds_measure     ,&
                         valinc         , solalg    ,&
                         meelem         , measse    ,&

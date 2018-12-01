@@ -89,7 +89,7 @@ subroutine medomg(result, numord, modele, mate, lischa)
 !
 ! - CODAGE DU MATERIAU
 !
-    if (materi .ne. ' ') call rcmfmc(materi, mate)
+    if (materi .ne. ' ') call rcmfmc(materi, mate, l_ther_ = ASTER_FALSE)
 !
 ! - ON PREND LE CHARGEMENT DANS LA SD
 !

@@ -15,12 +15,13 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine caliun(charz, nomaz, nomoz)
-!
 ! person_in_charge: mickael.abbas at edf.fr
 !
-    implicit      none
+subroutine caliun(sdcont_, mesh_, model_)
+!
+!
+implicit none
+!
 #include "jeveux.h"
 #include "asterc/getfac.h"
 #include "asterfort/caraun.h"
@@ -32,124 +33,106 @@ subroutine caliun(charz, nomaz, nomoz)
 #include "asterfort/jemarq.h"
 #include "asterfort/listun.h"
 #include "asterfort/surfun.h"
+#include "asterfort/jeveuo.h"
 #include "asterfort/wkvect.h"
-    character(len=*) :: charz
-    character(len=*) :: nomaz
-    character(len=*) :: nomoz
 !
-! ----------------------------------------------------------------------
+character(len=*), intent(in) :: sdcont_, mesh_, model_
 !
-! ROUTINE CONTACT
+! --------------------------------------------------------------------------------------------------
 !
-! TRAITEMENT DE LIAISON_UNILATERALE DANS DEFI_CONTACT
+! DEFI_CONTACT
 !
-! ----------------------------------------------------------------------
+! Get informations for LIAISON_UNILATER in command
 !
+! --------------------------------------------------------------------------------------------------
 !
-! IN  CHAR   : NOM UTILISATEUR DU CONCEPT DE CHARGE
-! IN  NOMA   : NOM DU MAILLAGE
-! IN  NOMO   : NOM DU MODELE
+! In  sdcont           : name of contact concept (DEFI_CONTACT)
+! In  model            : name of model
+! In  mesh             : name of mesh
 !
+! --------------------------------------------------------------------------------------------------
 !
-!
-!
-    character(len=8) :: char, noma, nomo
-    character(len=16) :: motfac
+    character(len=8) :: sdcont, mesh, model
+    character(len=16) :: keywf
     integer :: iform
-    integer :: nzocu, nnocu, ntcmp
+    integer :: nb_unil_zone, nnocu, ntcmp
     character(len=24) :: nolino, nopono
     character(len=24) :: lisnoe, poinoe
     character(len=24) :: nbgdcu, coefcu, compcu, multcu, penacu
-    character(len=24) :: deficu, defico
-    character(len=24) :: paraci, paracr, ndimcu
-    integer :: jparci, jparcr, jdim
-    integer :: zpari, zparr
+    character(len=24) :: sdunil_defi, sdcont_defi
+    character(len=24) :: ndimcu
+    integer :: jdim
+    character(len=24) :: sdcont_paraci
+    integer, pointer :: v_sdcont_paraci(:) => null()
+    character(len=24) :: sdcont_paracr
+    real(kind=8), pointer :: v_sdcont_paracr(:) => null()
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
     call jemarq()
 !
-! --- INITIALISATIONS
+! - Initializations
 !
-    nomo = nomoz(1:8)
-    char = charz
-    noma = nomaz
-    iform = 4
-    motfac = 'ZONE'
-    defico = char(1:8)//'.CONTACT'
-    deficu = char(1:8)//'.UNILATE'
+    model       = model_(1:8)
+    sdcont      = sdcont_
+    mesh        = mesh_
+    iform       = 4
+    keywf       = 'ZONE'
+    sdcont_defi = sdcont(1:8)//'.CONTACT'
+    sdunil_defi = sdcont(1:8)//'.UNILATE'
 !
-! --- RECUPERATION DU NOMBRE D'OCCURENCES
+! - Datastructure for contact definition
 !
-    call getfac(motfac, nzocu)
+    sdcont_paraci = sdcont(1:8)//'.PARACI'
+    call jeveuo(sdcont_paraci, 'E', vi=v_sdcont_paraci)
+    sdcont_paracr = sdcont(1:8)//'.PARACR'
+    call jeveuo(sdcont_paracr, 'E', vr=v_sdcont_paracr)
 !
-    if (nzocu .eq. 0) then
-        goto 999
+! - Number of zones
+!
+    call getfac(keywf, nb_unil_zone)
+    if (nb_unil_zone .ne. 0) then
+! ----- Create datastructure for general parameters
+        v_sdcont_paraci(4) = iform
+        ndimcu = sdunil_defi(1:16)//'.NDIMCU'
+        call wkvect(ndimcu, 'G V I', 2, jdim)
+! ----- Set datastructure for general parameters
+        nbgdcu = '&&CALIUN.NBGDCU'
+        compcu = '&&CARAUN.COMPCU'
+        multcu = '&&CARAUN.MULTCU'
+        coefcu = '&&CARAUN.COEFCU'
+        penacu = '&&CARAUN.PENACU'
+        call caraun(sdcont, nb_unil_zone, nbgdcu, coefcu,&
+                    compcu, multcu, penacu, ntcmp)
+! ----- Get list of nodes
+        nopono = '&&CALIUN.PONOEU'
+        nolino = '&&CALIUN.LINOEU'
+        call listun(mesh, keywf, nb_unil_zone, nopono, nnocu,&
+                    nolino)
+! ----- Clean list of nodes
+        lisnoe = '&&CALIUN.LISNOE'
+        poinoe = '&&CALIUN.POINOE'
+        call elimun(mesh, model, keywf, nb_unil_zone, nbgdcu,&
+                    compcu, nopono, nolino, lisnoe, poinoe,&
+                    nnocu)
+! ----- Get list of components
+        call creaun(sdcont, mesh, model, nb_unil_zone, nnocu,&
+                    lisnoe, poinoe, nbgdcu, coefcu, compcu,&
+                    multcu, penacu)
+! ----- Debug
+        call surfun(sdcont, mesh)
+! ----- Clean
+        call jedetr(nolino)
+        call jedetr(nopono)
+        call jedetr(lisnoe)
+        call jedetr(poinoe)
+        call jedetr(nbgdcu)
+        call jedetr(coefcu)
+        call jedetr(compcu)
+        call jedetr(multcu)
+        call jedetr(penacu)
+!
     endif
-!
-! --- CREATION SD PARAMETRES GENERAUX (NE DEPENDANT PAS DE LA ZONE)
-!
-    paraci = defico(1:16)//'.PARACI'
-    zpari = cfmmvd('ZPARI')
-    call wkvect(paraci, 'G V I', zpari, jparci)
-    paracr = defico(1:16)//'.PARACR'
-    zparr = cfmmvd('ZPARR')
-    call wkvect(paracr, 'G V R', zparr, jparcr)
-    zi(jparci+4-1) = iform
-!
-    ndimcu = deficu(1:16)//'.NDIMCU'
-    call wkvect(ndimcu, 'G V I', 2, jdim)
-!
-! --- RECUPERATION CARACTERISTIQUES ELEMENTAIRES
-!
-    nbgdcu = '&&CALIUN.NBGDCU'
-    compcu = '&&CARAUN.COMPCU'
-    multcu = '&&CARAUN.MULTCU'
-    coefcu = '&&CARAUN.COEFCU'
-    penacu = '&&CARAUN.PENACU'
-    call caraun(char, motfac, nzocu, nbgdcu, coefcu,&
-                compcu, multcu, penacu, ntcmp)
-!
-! --- EXTRACTION DES NOEUDS
-!
-    nopono = '&&CALIUN.PONOEU'
-    nolino = '&&CALIUN.LINOEU'
-    call listun(noma, motfac, nzocu, nopono, nnocu,&
-                nolino)
-!
-! --- ELIMINATION DES NOEUDS
-!      SUPPRESSION DES DOUBLONS ENTRE MAILLE, GROUP_MA, NOEUD,GROUP_NO
-!      SUPPRESSION DES NOEUDS DEFINIS DANS SANS_NOEUD ET SANS_GROUP_NO
-!
-    lisnoe = '&&CALIUN.LISNOE'
-    poinoe = '&&CALIUN.POINOE'
-    call elimun(noma, nomo, motfac, nzocu, nbgdcu,&
-                compcu, nopono, nolino, lisnoe, poinoe,&
-                nnocu)
-!
-! --- ELIMINATION DES COMPOSANTES ET CREATION FINALE DES SD
-!
-    call creaun(char, noma, nomo, nzocu, nnocu,&
-                lisnoe, poinoe, nbgdcu, coefcu, compcu,&
-                multcu, penacu)
-!
-! --- AFFICHAGE DES INFORMATIONS
-!
-    call surfun(char, noma)
-!
-! --- MENAGE
-!
-    call jedetr(nolino)
-    call jedetr(nopono)
-    call jedetr(lisnoe)
-    call jedetr(poinoe)
-    call jedetr(nbgdcu)
-    call jedetr(coefcu)
-    call jedetr(compcu)
-    call jedetr(multcu)
-    call jedetr(penacu)
-!
-999  continue
 !
     call jedema()
 !

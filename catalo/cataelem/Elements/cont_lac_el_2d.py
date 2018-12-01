@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -83,7 +83,7 @@ class LCS2S2C(Element):
             para_in=((SP.PCONFR, LC.CCONFR),(SP.PDEPL_M, DDL_MECA),
                      (SP.PDEPL_P, DDL_MECA),(SP.PGEOMER, NGEOMER),
                      (SP.PSNO, NGEOMER), (SP.PDDEPLA, DDL_MECA ),),
-            para_out=((SP.PVECTUR, MVECTUR),),
+            para_out=((SP.PVECTCR, MVECTUR), (SP.PVECTFR, MVECTUR),),
         ),
         OP.EXISTE_DDL(te=99,
             para_out=((OP.EXISTE_DDL.PDEPL_R, DDL_MECA), ),

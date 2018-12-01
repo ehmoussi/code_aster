@@ -37,6 +37,7 @@ implicit none
 #include "asterfort/lac_crsd.h"
 #include "asterfort/wkvect.h"
 #include "asterfort/xxmxme.h"
+#include "asterfort/utmess.h"
 !
 character(len=*), intent(in) :: mesh_
 character(len=*), intent(in) :: model_
@@ -71,7 +72,7 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
 !
     call infdbg('CONTACT', ifm, niv)
     if (niv .ge. 2) then
-        write (ifm,*) '<CONTACT> Create contact datastructures for solving'
+        call utmess('I', 'MECANONLINE13_27')
     endif
 !
 ! - Initializations

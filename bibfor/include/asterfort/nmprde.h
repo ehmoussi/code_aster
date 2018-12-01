@@ -15,10 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-! aslint: disable=W1504
 !
 interface
-    subroutine nmprde(modele, numedd         , numfix    , ds_material, carele    ,&
+    subroutine nmprde(mesh, modele, numedd         , numfix    , ds_material, carele    ,&
                       ds_constitutive, lischa    , ds_algopara, solveu    ,&
                       fonact, ds_print       , ds_measure, ds_algorom ,sddisc     , numins    ,&
                       valinc, solalg         , matass    , maprec     , ds_contact,&
@@ -26,6 +25,7 @@ interface
                       ldccvg, faccvg         , rescvg)
         use NonLin_Datastructure_type  
         use Rom_Datastructure_type
+        character(len=8), intent(in) :: mesh
         character(len=24) :: modele
         character(len=24) :: numedd
         character(len=24) :: numfix

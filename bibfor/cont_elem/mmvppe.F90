@@ -19,18 +19,19 @@
 ! person_in_charge: ayaovi-dzifa.kudawoo at edf.fr
 ! aslint: disable=W1504
 !
-subroutine mmvppe(typmae, typmam, iresog, ndim, nne,&
-                  nnm, nnl, nbdm, laxis, ldyna,&
-                  jeusup, ffe, ffm, dffm, ffl,&
-                  norm, tau1, tau2, mprojt, jacobi,&
-                  wpg, dlagrc, dlagrf, jeu, djeu,&
-                  djeut, mprojn,&
-                  mprt1n, mprt2n, mprnt1, mprnt2,&
-                  gene11, gene21,&
-                  gene22, kappa, h, vech1, vech2,&
-                  a, ha, hah, mprt11, mprt12, mprt21,&
-                  mprt22,taujeu1, taujeu2, &
-                  dnepmait1,dnepmait2, l_previous,l_large_slip)
+subroutine mmvppe(ndim     , nne      , nnm     , nnl   , nbdm  ,&
+                  iresog   , l_large_slip ,&
+                  jeusup  ,&
+                  tau1     , tau2     ,&
+                  ffe      , ffm      , ffl     , dffm  , ddffm ,&
+                  jeu      , djeu    , djeut ,&
+                  dlagrc   , dlagrf   ,&
+                  norm     , mprojt   ,&
+                  mprt1n   , mprt2n   , &
+                  mprt11   , mprt12   , mprt21  , mprt22,&
+                  kappa    , &
+                  taujeu1  , taujeu2  ,&
+                  dnepmait1, dnepmait2)
 !
 implicit none
 !
@@ -45,232 +46,152 @@ implicit none
 #include "asterfort/mmmjeu.h"
 #include "asterfort/mmcalg.h"
 #include "asterfort/mmreac.h"
-#include "asterfort/mmvitm.h"
 #include "asterfort/utmess.h"
-character(len=8) :: typmae, typmam
-integer :: iresog
-integer :: ndim, nne, nnm, nnl, nbdm
-real(kind=8) :: ppe
-real(kind=8) :: ffe(9), ffm(9), ffl(9)
-real(kind=8) :: tau1(3), tau2(3)
-real(kind=8) :: norm(3)
-real(kind=8) :: mprojt(3, 3)
-aster_logical :: laxis, ldyna, l_previous
+!
+integer, intent(in) :: ndim, nne, nnm, nnl, nbdm
+integer, intent(in) :: iresog
 aster_logical, intent(in) :: l_large_slip
-real(kind=8) :: jacobi, wpg
-real(kind=8) :: jeusup
-real(kind=8) :: dlagrc, dlagrf(2)
-real(kind=8) :: jeu, djeu(3), djeut(3), ddepmam(9, 3)
-real(kind=8) :: dnepmait1 ,dnepmait2 ,taujeu1,taujeu2
+real(kind=8), intent(in) :: jeusup
+real(kind=8), intent(in) :: tau1(3), tau2(3)
+real(kind=8), intent(in) :: ffe(9), ffm(9), ffl(9), dffm(2,9), ddffm(3,9)
+real(kind=8), intent(out) :: jeu
+real(kind=8), intent(out) :: djeut(3), djeu(3), dlagrc, dlagrf(2)
+real(kind=8), intent(out) :: norm(3)
+real(kind=8), intent(out) :: mprojt(3, 3)
+real(kind=8), intent(out) :: mprt1n(3, 3), mprt2n(3, 3)
 real(kind=8), intent(out) :: mprt11(3, 3), mprt12(3, 3), mprt21(3, 3), mprt22(3, 3)
-real(kind=8), intent(out) :: mprt1n(3, 3), mprt2n(3, 3), mprnt1(3, 3), mprnt2(3, 3)
-real(kind=8) :: gene11(3, 3), gene21(3, 3), gene22(3, 3)
-real(kind=8) :: kappa(2, 2), a(2, 2), h(2, 2), ha(2, 2), hah(2, 2)
-real(kind=8) :: vech1(3), vech2(3)
+real(kind=8), intent(out) :: kappa(2, 2)
+real(kind=8), intent(out) :: dnepmait1, dnepmait2, taujeu1, taujeu2
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
-! ROUTINE CONTACT (METHODE CONTINUE - CALCUL)
+! Contact - Elementary computations
 !
-! PREPARATION DES CALCULS DES VECTEURS - CALCUL DES QUANTITES
-! CAS POIN_ELEM
+! Compute quantities (for vector)
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
+! In  ndim             : dimension of problem (2 or 3)
+! In  nne              : number of slave nodes
+! In  nnm              : number of master nodes
+! In  nnl              : number of nodes with Lagrange multiplicators (contact and friction)
+! In  nbdm             : number of components by node for all dof
+! In  iresog           : algorithm for geometry
+!                        0 - Fixed point
+!                        1 - Newton
+! In  l_large_slip     : flag for GRAND_GLISSEMENT
+! In  jeusup           : gap from DIST_ESCL/DIST_MAIT
+! In  tau1             : first tangent at current contact point
+! In  tau2             : second tangent at current contact point
+! In  ffe              : shape function for slave nodes
+! In  ffm              : shape function for master nodes
+! In  ffl              : shape function for Lagrange dof
+! In  dffm             : first derivative of shape function for master nodes
+! In  ddffm            : second derivative of shape function for master nodes
+! Out jeu              : normal gap
+! Out djeut            : increment of tangent gaps
+! Out dlagrc           : increment of contact Lagrange from beginning of time step
+! Out dlagrf           : increment of friction Lagrange from beginning of time step
+! Out norm             : normal at current contact point
+! Out tau1             : first tangent at current contact point
+! Out tau2             : second tangent at current contact point
+! Out mprojt           : matrix of tangent projection
+! Out mprt1n           : projection matrix first tangent/normal
+! Out mprt2n           : projection matrix second tangent/normal
+! Out mprt11           : projection matrix first tangent/first tangent
+!                        tau1*TRANSPOSE(tau1)(matrice 3*3)
+! Out mprt12           : projection matrix first tangent/second tangent
+!                        tau1*TRANSPOSE(tau2)(matrice 3*3)
+! Out mprt21           : Projection matrix second tangent/first tangent
+!                        tau2*TRANSPOSE(tau1)(matrice 3*3)
+! Out mprt22           : Projection matrix second tangent/second tangent
+!                        tau2*TRANSPOSE(tau2)(matrice 3*3)
+! Out kappa            : scalar matrix for sliding kinematic
+!                        KAPPA(i,j) = INVERSE[tau_i.tau_j-JEU*(ddFFM*geomm)](matrice 2*2)
+! Out dnepmait1, dnepmait2, taujeu1, taujeu2
 !
-! IN  IRESOG : ALGO. DE RESOLUTION POUR LA GEOMETRIE
-!              0 - POINT FIXE
-!              1 - NEWTON
-! IN  TYPMAE : TYPE DE LA MAILLE ESCLAVE
-! IN  TYPMAM : TYPE DE LA MAILLE MAITRE
-! IN  NDIM   : DIMENSION DE LA MAILLE DE CONTACT
-! IN  NNE    : NOMBRE DE NOEUDS DE LA MAILLE ESCLAVE
-! IN  NNM    : NOMBRE DE NOEUDS DE LA MAILLE MAITRE
-! IN  NNL    : NOMBRE DE NOEUDS PORTANT UN LAGRANGE DE CONTACT/FROTT
-! IN  NBDM   : NOMBRE DE COMPOSANTES/NOEUD DES DEPL+LAGR_C+LAGR_F
-! IN  LAXIS  : .TRUE. SI AXISYMETRIE
-! IN  LDYNA  : .TRUE. SI DYNAMIQUE
-! IN  JEUSUP : JEU SUPPLEMENTAIRE PAR DIST_ESCL/DIST_MAIT
-! OUT FFE    : FONCTIONS DE FORMES DEPL_ESCL
-! OUT FFM    : FONCTIONS DE FORMES DEPL_MAIT
-! OUT FFL    : FONCTIONS DE FORMES LAGR.
-! OUT NORM   : NORMALE
-! OUT TAU1   : PREMIER VECTEUR TANGENT
-! OUT TAU2   : SECOND VECTEUR TANGENT
-! OUT MPROJT : MATRICE DE PROJECTION TANGENTE [Pt]
-! OUT JACOBI : JACOBIEN DE LA MAILLE AU POINT DE CONTACT
-! OUT WPG    : POIDS DU POINT INTEGRATION DU POINT DE CONTACT
-! OUT DLAGRC : INCREMENT DEPDEL DU LAGRANGIEN DE CONTACT
-! OUT DLAGRF : INCREMENT DEPDEL DES LAGRANGIENS DE FROTTEMENT
-! OUT JEU    : JEU NORMAL ACTUALISE
-! OUT DJEU   : INCREMENT DEPDEL DU JEU
-! OUT DJEUT  : INCREMENT DEPDEL DU JEU TANGENT
+! --------------------------------------------------------------------------------------------------
 !
-! ----------------------------------------------------------------------
-!
-    integer :: jpcf, i_node, i_dime
     integer :: jgeom, jdepde, jdepm
-    integer :: jaccm, jvitm, jvitp
+    real(kind=8) :: ppe
+    real(kind=8) :: ddepmam(9, 3)
     real(kind=8) :: geomae(9, 3), geomam(9, 3)
-    real(kind=8) :: slav_coor_init(3,9)
     real(kind=8) :: geomm(3), geome(3)
     real(kind=8) :: ddeple(3), ddeplm(3)
     real(kind=8) :: deplme(3), deplmm(3)
-    real(kind=8) :: accme(3), vitme(3), accmm(3), vitmm(3)
-    real(kind=8) :: vitpe(3), vitpm(3)
-    real(kind=8) :: dffe(2, 9), ddffe(3, 9)
-    real(kind=8) :: dffm(2, 9), ddffm(3, 9)
-    real(kind=8) :: dffl(2, 9), ddffl(3, 9)
-    real(kind=8) :: xpc, ypc, xpr, ypr
     real(kind=8) :: mprojn(3, 3)
-    aster_logical :: l_axis_warn
+    real(kind=8) :: gene11(3,3), gene21(3,3), gene22(3,3)
+    real(kind=8) :: a(2, 2), ha(2, 2), h(2, 2), hah(2, 2)
+    real(kind=8) :: mprnt1(3, 3), mprnt2(3, 3)
+    real(kind=8) :: vech1(3), vech2(3)
 !
-! ----------------------------------------------------------------------
-!
-    call jevech('PCONFR', 'L', jpcf)
-    xpc = zr(jpcf-1+1)
-    ypc = zr(jpcf-1+2)
-    xpr = zr(jpcf-1+3)
-    ypr = zr(jpcf-1+4)
-    tau1(1) = zr(jpcf-1+5)
-    tau1(2) = zr(jpcf-1+6)
-    tau1(3) = zr(jpcf-1+7)
-    tau2(1) = zr(jpcf-1+8)
-    tau2(2) = zr(jpcf-1+9)
-    tau2(3) = zr(jpcf-1+10)
-    wpg = zr(jpcf-1+11)
-    ppe = 0.d0
-    djeut = 0.
-    ddeple = 0.
-    ddeplm = 0.
-    ddepmam = 0.
-!
-! TRAITEMENT CYCLAGE : ON REMPLACE LES VALEURS DE JEUX et DE NORMALES
-!                      POUR AVOIR UNE MATRICE CONSISTANTE
-!     
-    if (l_previous) then 
-        if (iresog .eq. 1) then
-            xpc = zr(jpcf-1+38)
-            ypc = zr(jpcf-1+39)
-            xpr = zr(jpcf-1+40)
-            ypr = zr(jpcf-1+41)
-        endif
-        tau1(1) = zr(jpcf-1+32)
-        tau1(2) = zr(jpcf-1+33)
-        tau1(3) = zr(jpcf-1+34)
-        tau2(1) = zr(jpcf-1+35)
-        tau2(2) = zr(jpcf-1+36)
-        tau2(3) = zr(jpcf-1+37)
-        wpg = zr(jpcf-1+11)
-        ppe = 0.d0
-    endif
-!
-! --- RECUPERATION DE LA GEOMETRIE ET DES CHAMPS DE DEPLACEMENT
+! --------------------------------------------------------------------------------------------------
 !
     call jevech('PGEOMER', 'L', jgeom)
     call jevech('PDEPL_P', 'L', jdepde)
     call jevech('PDEPL_M', 'L', jdepm)
-    if (ldyna) then
-        call jevech('PVITE_P', 'L', jvitp)
-        call jevech('PVITE_M', 'L', jvitm)
-        call jevech('PACCE_M', 'L', jaccm)
-    endif
+!
+! - Coefficient to update geometry
+!
+    ppe = 0.d0
     if (iresog .eq. 1) then
-        ppe = 1.0d0
+        ppe = 1.d0
     endif
 !
-! --- FONCTIONS DE FORMES ET DERIVEES
+! - Update geometry
 !
-    call mmform(ndim, typmae, typmam, nne, nnm,&
-                xpc, ypc, xpr, ypr, ffe,&
-                dffe, ddffe, ffm, dffm, ddffm,&
-                ffl, dffl, ddffl)
+    call mmreac(nbdm  , ndim  ,&
+                nne   , nnm   ,&
+                jgeom , jdepm , jdepde , ppe,&
+                geomae, geomam, ddepmam)
 !
-! - Initial coordinates
+! - Compute local basis
 !
-    do i_node = 1, nne
-        do i_dime = 1, ndim
-            slav_coor_init(i_dime, i_node) = zr(jgeom+(i_node-1)*ndim+i_dime-1)
-        end do
-    end do
+    call mmgeom(ndim  ,&
+                nne   , nnm   ,&
+                ffe   , ffm   ,&
+                geomae, geomam,&
+                tau1  , tau2  ,&
+                norm  , mprojn, mprojt,&
+                geome , geomm )
 !
-! - Compute jacobian on slave element
+! - Compute increment of Lagrange multipliers
 !
-    call mmmjac(laxis , nne           , ndim,&
-                typmae, slav_coor_init,&
-                ffe   , dffe,&
-                jacobi, l_axis_warn)
-    if (l_axis_warn) then
-        call utmess('A', 'CONTACT2_14')
-    endif
-!
-! --- REACTUALISATION DE LA GEOMETRIE  (MAILLAGE+DEPMOI)+PPE*DEPDEL
-!     POINT_FIXE          --> PPE=0.0d0
-!     NEWTON_GENE         --> PPE=1.0d0
-!     NEWTON_GENE INEXACT --> 0.0d0<PPE<1.0d0
-!
-    call mmreac(nbdm, ndim, nne, nnm, jgeom,&
-                jdepm, jdepde, ppe, geomae, geomam, ddepmam)
-!
-! --- CALCUL DES COORDONNEES ACTUALISEES
-!
-    call mmgeom(ndim, nne, nnm, ffe, ffm,&
-                geomae, geomam, tau1, tau2, norm,&
-                mprojn, mprojt, geome, geomm)
-!
-! --- CALCUL DES INCREMENTS - LAGRANGE DE CONTACT ET FROTTEMENT
-!
-    call mmlagm(nbdm, ndim, nnl, jdepde, ffl,&
+    call mmlagm(nbdm  , ndim  , nnl, jdepde, ffl,&
                 dlagrc, dlagrf)
 
 !
+! - Compute increment of displacements
 !
-! --- MISE A JOUR DES CHAMPS INCONNUS INCREMENTAUX - DEPLACEMENTS
-!
-    call mmdepm(nbdm, ndim, nne, nnm, jdepm,&
-                jdepde, ffe, ffm, ddeple, ddeplm,&
+    call mmdepm(nbdm  , ndim  ,&
+                nne   , nnm   ,&
+                jdepm , jdepde,&
+                ffe   , ffm   ,&
+                ddeple, ddeplm,&
                 deplme, deplmm)
 !
-! --- CALCUL DES VITESSES/ACCELERATIONS
+! - Compute gaps
 !
-    if (ldyna) then
-        call mmvitm(nbdm, ndim, nne, nnm, ffe,&
-                    ffm, jvitm, jaccm, jvitp, vitme,&
-                    vitmm, vitpe, vitpm, accme, accmm)
-    endif
+    call mmmjeu(ndim  , iresog, jeusup,&
+                geome , geomm ,&
+                ddeple, ddeplm,&
+                norm  , mprojt,&
+                jeu   , djeu  , djeut )
 !
-! --- CALCUL DU JEU NORMAL
-!
-    call mmmjeu(ndim, jeusup, norm, geome, geomm,&
-                ddeple, ddeplm, mprojt, jeu, djeu,&
-                djeut, iresog)
-
-
-
-!
-! TRAITEMENT CYCLAGE : ON REMPLACE LES VALEURS DE JEUX et DE NORMALES
-!                      POUR AVOIR UNE MATRICE CONSISTANTE
-!     
-    
-    if (l_previous) then 
-        jeu    = zr(jpcf-1+29)
-        dlagrc = zr(jpcf-1+26)
-    endif
-!
-! - Compute geometric quantities for second variation of gap
+! - Compute projection matrices for second variation of gap
 !
     call mmcalg(ndim     , l_large_slip,&
-                nnm      , dffm     , ddffm ,&
-                geomam   , ddepmam  ,&
-                tau1     , tau2     , norm  ,&
-                jeu      , djeu     ,&
-                gene11   , gene21   , gene22,&
-                kappa    , h        ,&
-                vech1    , vech2    ,&
-                a        , ha       , hah   ,&
-                mprt11   , mprt12   , mprt21, mprt22,&
-                mprt1n   , mprt2n   , mprnt1, mprnt2,&
-                taujeu1  , taujeu2  ,&
+                nnm      , dffm        , ddffm ,&
+                geomam   , ddepmam     ,&
+                tau1     , tau2        , norm  ,&
+                jeu      , djeu        ,&
+                gene11   , gene21      , gene22,&
+                kappa    , h           ,&
+                vech1    , vech2       ,&
+                a        , ha          , hah   ,&
+                mprt11   , mprt12      , mprt21, mprt22,&
+                mprt1n   , mprt2n      , mprnt1, mprnt2,&
+                taujeu1  , taujeu2     ,&
                 dnepmait1, dnepmait2)
 !
 end subroutine

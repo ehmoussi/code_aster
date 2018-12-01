@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine nmassm(fonact, lischa, numedd, numfix, ds_algopara,&
                   typmat, optasz, meelem, matass)
 !
@@ -35,26 +36,24 @@ implicit none
 #include "asterfort/mtdscr.h"
 #include "asterfort/nmchex.h"
 #include "asterfort/nmdebg.h"
+#include "asterfort/utmess.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
+character(len=19) :: lischa
+character(len=24) :: numedd, numfix
+type(NL_DS_AlgoPara), intent(in) :: ds_algopara
+character(len=6) :: typmat
+character(len=*) :: optasz
+character(len=19) :: meelem(8)
+character(len=19) :: matass
+integer :: fonact(*)
 !
-    character(len=19) :: lischa
-    character(len=24) :: numedd, numfix
-    type(NL_DS_AlgoPara), intent(in) :: ds_algopara
-    character(len=6) :: typmat
-    character(len=*) :: optasz
-    character(len=19) :: meelem(8)
-    character(len=19) :: matass
-    integer :: fonact(*)
-!
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
 ! ROUTINE MECA_NON_LINE (CALCUL)
 !
 ! ASSEMBLAGE DES MATRICES ELEMENTAIRES
 !
-! ----------------------------------------------------------------------
-!
+! --------------------------------------------------------------------------------------------------
 !
 ! IN  FONACT : FONCTIONNALITES ACTIVEES (VOIR NMFONC)
 ! IN  LISCHA : LISTE DES CHARGEMENTS
@@ -65,27 +64,20 @@ implicit none
 ! In  ds_algopara      : datastructure for algorithm parameters
 ! OUT MATASS : MATR_ASSE CALCULEE
 !
-!
-!
+! --------------------------------------------------------------------------------------------------
 !
     character(len=19) :: mediri, memass, meamor, messtr
     integer :: ifm, niv
     character(len=16) :: optass
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
     call jemarq()
-    call infdbg('MECA_NON_LINE', ifm, niv)
+    call infdbg('MECANONLINE', ifm, niv)
 !
 ! --- INITIALISATIONS
 !
     optass = optasz
-!
-! --- AFFICHAGE
-!
-    if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE><MATR> ASSEMBLAGE DES MATR_ELEM DE TYPE <',typmat,'>'
-    endif
 !
 ! --- DECOMPACTION DES VARIABLES CHAPEAUX
 !
@@ -99,12 +91,21 @@ implicit none
 ! --- ASSEMBLAGE MATRICES ELEMENTAIRES
 !
     if (typmat .eq. 'MERIGI') then
+        if (niv .ge. 2) then
+            call utmess('I', 'MECANONLINE13_70')
+        endif
         call asmari(fonact, meelem, numedd, lischa, ds_algopara,&
                     matass)
     else if (typmat.eq.'MEAMOR') then
+        if (niv .ge. 2) then
+            call utmess('I', 'MECANONLINE13_71')
+        endif
         call asmaam(meamor, numedd, lischa, matass)
         call mtdscr(matass)
     else if (typmat.eq.'MEMASS') then
+        if (niv .ge. 2) then
+            call utmess('I', 'MECANONLINE13_72')
+        endif
         if (optass .eq. ' ') then
             call asmama(memass, ' ', numfix, lischa,&
                         matass)
@@ -113,19 +114,21 @@ implicit none
                         matass)
         endif
     else if (typmat.eq.'MESSTR') then
+        if (niv .ge. 2) then
+            call utmess('I', 'MECANONLINE13_73')
+        endif
         call asmatr(1, messtr, ' ', numfix, &
                     lischa, 'ZERO', 'V', 1, matass)
         call mtdscr(matass)
     else
-        ASSERT(.false.)
+        ASSERT(ASTER_FALSE)
     endif
 !
-! --- DEBUG
+! - DEBUG
 !
     if (niv .eq. 2) then
         call nmdebg('MATA', matass, ifm)
     endif
-!
 !
     call jedema()
 !

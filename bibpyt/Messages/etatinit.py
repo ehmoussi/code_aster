@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -43,29 +43,23 @@ cata_msg = {
  totale entre l'instant courant et l'instant initial.
 """),
 
-    10 : _(u"""
- Lecture de l'état initial
-"""),
+    10 : _(u"""    Lecture de l'état initial"""),
 
-    11 : _(u""" L'état initial a été récupéré dans la structure de données résultat de nom <%(k1)s> pour le numéro d'ordre %(i1)d et à l'instant %(r1)19.12e
-"""),
+    11 : _(u"""      L'état initial a été récupéré dans la structure de données résultat de nom <%(k1)s> pour le numéro d'ordre %(i1)d et à l'instant %(r1)19.12e"""),
 
-    12 : _(u""" L'instant initial est défini par INST_ETAT_INIT et vaut %(r1)19.12e """),
+    12 : _(u"""      L'instant initial est défini par INST_ETAT_INIT et vaut %(r1)19.12e """),
 
-    20 : _(u"""
- Il n'y a pas d'état initial défini. On prend un état initial nul.
-"""),
+    20 : _(u"""      Il n'y a pas d'état initial défini. On prend un état initial nul."""),
 
     30 : _(u"""
   Le champ %(k1)s n'est pas trouvé dans ETAT_INIT et on ne sait pas l'initialiser à zéro.
 """),
 
-    31 : _(u"""  Le champ <%(k1)s> est initialisé a zéro"""),
+    31 : _(u"""      Le champ <%(k1)s> est initialisé a zéro"""),
 
-    32 : _(u"""  Le champ <%(k1)s> est lu dans ETAT_INIT dans la structure de données
-résultats de nom <%(k2)s>"""),
+    32 : _(u"""      Le champ <%(k1)s> est lu dans ETAT_INIT dans la structure de données résultats de nom <%(k2)s>"""),
 
-    33 : _(u"""  Le champ <%(k1)s> est lu dans ETAT_INIT, par un champ donné explicitement"""),
+    33 : _(u"""      Le champ <%(k1)s> est lu dans ETAT_INIT, par un champ donné explicitement"""),
 
     34 : _(u"""  Le champ de température initiale est calculé par un état stationnaire"""),
 
