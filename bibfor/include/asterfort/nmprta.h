@@ -18,7 +18,7 @@
 ! aslint: disable=W1504
 !
 interface
-    subroutine nmprta(model          , nume_dof , numfix     , ds_material, cara_elem,&
+    subroutine nmprta(mesh, model          , nume_dof , numfix     , ds_material, cara_elem,&
                       ds_constitutive, list_load, ds_algopara, solveu     ,&
                       list_func_acti , ds_print , ds_measure , ds_algorom , sddisc,&
                       nume_inst      , hval_incr, hval_algo  , matass     , maprec,&
@@ -27,6 +27,7 @@ interface
                       rescvg    )
         use NonLin_Datastructure_type
         use ROM_Datastructure_type
+        character(len=8), intent(in) :: mesh
         integer :: list_func_acti(*)
         integer :: nume_inst, faccvg, rescvg, ldccvg
         type(NL_DS_Constitutive), intent(in) :: ds_constitutive

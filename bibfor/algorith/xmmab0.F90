@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -68,41 +68,37 @@ subroutine xmmab0(ndim, nnc, jnne,&
     nnes=jnne(2)
     ddles=jddle(1)
 !
-    do 300 i = 1, 2
-        do 290 j = 1, 2
-            tt(i,j) = 0.d0
-290     continue
-300 continue
+    tt(:,:) = 0.d0
 !
 ! --- MATRICE
 !
-    do 301 i = 1, ndim
+    do i = 1, ndim
         tt(1,1) = tau1(i)*tau1(i) + tt(1,1)
         tt(1,2) = tau1(i)*tau2(i) + tt(1,2)
         tt(2,1) = tau2(i)*tau1(i) + tt(2,1)
         tt(2,2) = tau2(i)*tau2(i) + tt(2,2)
-301 continue
+    end do
 !
-    do 284 i = 1, nnc
-        do 283 j = 1, nnc
+    do i = 1, nnc
+        do j = 1, nnc
             call xplma2(ndim, nne, nnes, ddles, i,&
                         nfhe, pli)
             if (lmulti) pli = pli + (heavno(i)-1)*ndim
             call xplma2(ndim, nne, nnes, ddles, j,&
                         nfhe, plj)
             if (lmulti) plj = plj + (heavno(j)-1)*ndim
-            do 282 l = 1, ndim-1
-                do 281 k = 1, ndim-1
+            do l = 1, ndim-1
+                do k = 1, ndim-1
                     ii = pli+l
                     jj = plj+k
                     if (lpenac) then
-                        mmat(ii,jj) = hpg*ffc(i)*ffc(j)* jacobi*tt(l, k)
+                        mmat(ii,jj) = mmat(ii,jj) + hpg*ffc(i)*ffc(j)* jacobi*tt(l, k)
                     else
-                        mmat(ii,jj) = hpg*ffc(i)*ffc(j)* jacobi*tt(l, k)
+                        mmat(ii,jj) = mmat(ii,jj) + hpg*ffc(i)*ffc(j)* jacobi*tt(l, k)
                     endif
-281             continue
-282         continue
-283     continue
-284 continue
+                end do
+            end do
+        end do
+    end do
 !
 end subroutine

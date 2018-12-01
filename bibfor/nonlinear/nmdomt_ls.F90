@@ -57,9 +57,6 @@ type(NL_DS_AlgoPara), intent(inout) :: ds_algopara
 ! --------------------------------------------------------------------------------------------------
 !
     call infniv(ifm, niv)
-    if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE> ... Read parameters for algorithm parameters (Line search)'
-    endif
 !
     keywf          = 'RECH_LINEAIRE'
     reli_meth      = 'CORDE'
@@ -80,6 +77,9 @@ type(NL_DS_AlgoPara), intent(inout) :: ds_algopara
         call getvr8(keywf, 'RHO_MIN'       , iocc=1, scal=reli_rho_mini)
         call getvr8(keywf, 'RHO_MAX'       , iocc=1, scal=reli_rho_maxi)
         call getvr8(keywf, 'RHO_EXCL'      , iocc=1, scal=reli_rho_excl)
+        if (niv .ge. 2) then
+            call utmess('I', 'MECANONLINE12_7')
+        endif
     endif
 !
     ds_algopara%line_search%method    = reli_meth

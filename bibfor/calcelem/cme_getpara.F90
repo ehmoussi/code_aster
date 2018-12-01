@@ -81,6 +81,7 @@ character(len=8), intent(out) :: disp
 !
     integer :: nocc, ier
     character(len=8) :: chmate, answer
+    aster_logical :: l_ther
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -139,8 +140,14 @@ character(len=8), intent(out) :: disp
         call utmess('A', 'MECHANICS1_40')
         chmate = ' '
     endif
+
+    l_ther = ASTER_FALSE
+    if (option .eq. 'MASS_THER' .or. option.eq. 'RIGI_THER') then
+        l_ther = ASTER_TRUE
+    endif
+
     if (chmate .ne. ' ') then
-        call rcmfmc(chmate, mate)
+        call rcmfmc(chmate, mate, l_ther_ = l_ther)
     else
         mate = ' '
     endif

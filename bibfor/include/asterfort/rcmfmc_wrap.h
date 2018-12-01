@@ -1,5 +1,5 @@
 !
-! COPYRIGHT (C) 1991 - 2017  EDF R&D                WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2018  EDF R&D                WWW.CODE-ASTER.ORG
 !
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
@@ -18,10 +18,10 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine rcmfmc(chmatz, chmacz, l_thm_, basename, base)
+    subroutine rcmfmc(chmatz, chmacz, l_thm_, l_ther_, basename, base)
         character(len=*), intent(in) :: chmatz
         character(len=*), intent(out) :: chmacz
-        integer, intent(in) :: l_thm_
+        integer, intent(in) :: l_thm_, l_ther_
         character(len=*), intent(in) :: basename
         character(len=1), intent(in), optional :: base
     end subroutine rcmfmc

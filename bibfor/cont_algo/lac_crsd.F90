@@ -57,7 +57,7 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
 !
     call infdbg('CONTACT', ifm, niv)
     if (niv .ge. 2) then
-        write (ifm,*) '<CONTACT> . Create contact datastructures for LAC method'
+        call utmess('I','CONTACT5_6')
     endif
 !
 ! - Get parameters
@@ -69,7 +69,7 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
 !
     vali(1) = nt_patch
     vali(2) = nt_elem_slav
-    call utmess('I', 'MECANONLINE6_7', ni = 2, vali = vali)
+    call utmess('I', 'CONTACT5_7', ni = 2, vali = vali)
 !
 ! - Create objects 
 !

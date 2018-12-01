@@ -25,7 +25,6 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/assert.h"
-#include "asterfort/infdbg.h"
 #include "asterfort/nonlinDSColumnVoid.h"
 !
 type(NL_DS_Print), intent(out) :: ds_print
@@ -44,7 +43,6 @@ type(NL_DS_Print), intent(out) :: ds_print
 !
     integer, parameter :: nb_cols_defi = 30
     integer, parameter :: nb_cols_dof_defi = 9
-    integer :: ifm, niv
     integer :: i_col, i_cols_dof
     character(len=1) :: indsui
     type(NL_DS_Table) :: table_cvg
@@ -110,10 +108,7 @@ type(NL_DS_Print), intent(out) :: ds_print
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call infdbg('MECANONLINE', ifm, niv)
-    if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE> . Create printing management datastructure'
-    endif
+
 !
 ! - Set list of columns in convergence table
 !

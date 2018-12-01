@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: daniele.colombo at ifpen.fr
+!
 subroutine te0557(option, nomte)
 !
 use THM_type
@@ -35,7 +36,6 @@ implicit none
 #include "asterfort/tecach.h"
 #include "asterfort/tecael.h"
 #include "asterfort/teattr.h"
-#include "asterfort/vecini.h"
 #include "asterfort/xasshv_frac.h"
 #include "asterfort/xhmini.h"
 #include "asterfort/xhmddl.h"
@@ -44,10 +44,9 @@ implicit none
 #include "asterfort/thmGetElemModel.h"
 #include "asterfort/utmess.h"
 !
-    character(len=16) :: option, nomte
+character(len=16) :: option, nomte
 !
-! person_in_charge: daniele.colombo at ifpen.fr
-!
+! --------------------------------------------------------------------------------------------------
 !
 !         CALCUL DES SECONDS MEMBRES DE CONTACT POUR MODELE HM-XFEM
 !
@@ -56,7 +55,7 @@ implicit none
 !  ENTREES  ---> OPTION : OPTION DE CALCUL
 !           ---> NOMTE  : NOM DU TYPE ELEMENT
 !
-!......................................................................
+! --------------------------------------------------------------------------------------------------
 !
     integer :: i, j
     integer :: nfh, ddld, ddlm, ddlp, ddlc, nddls, nddlm
@@ -66,13 +65,13 @@ implicit none
     integer :: igeom, idepm, idepd, jlsn, jfisco
     integer :: jptint, jaint, jcface, jlonch, jbasec, jdonco
     integer :: iinstm, iinstp, icompo, icarcr, jmate, jcohes
-    integer :: jtab(7), iret, ncompv, nnol, pla(27), ivect, ncompp
+    integer :: jtab(7), iret, ncompv, nnol, pla(27), jv_cont, ncompp
     integer :: npgf, ipoidf, ivff, idfdef, jstno, jfisno, jheano
     integer :: ninter, nface, nptf, nnof, cface(30,6), ncompd
     integer :: nint, ninteg, ifiss, nfiss, ncompa, ncompb, ncompc
     integer :: jfiss, nfisc2, kfiss
     aster_logical :: lelim
-    real(kind=8) :: rela, vect(560), mat(1)
+    real(kind=8) :: rela, vcont(560), mat(1)
     character(len=8) :: elrefp, elrefc, elc, fpg, typma
     character(len=16) :: enr
 !
@@ -80,7 +79,7 @@ implicit none
     parameter    (nfimax=10)
     integer :: fisc(2*nfimax), fisco(2*nfimax)
 !
-!......................................................................
+! --------------------------------------------------------------------------------------------------
 !
     call jemarq()
 !
@@ -103,7 +102,7 @@ implicit none
 !   INITIALISATION DU NOMBRE DE DDL PAR NEOUD, DU TYPE DE CONTACT ET
 !   DES ADRESSES POUR LES DIFFERENTS TERMES DE L'OPERATEUR TANGENT
 !   (CAS DE LA FRACTURE UNIQUEMENT) 
-    call vecini(560, 0.d0, vect)
+    vcont(:) = 0.d0
     call xhmini(nomte, nfh, ddld, ddlm, ddlp, nfiss, ddlc, contac)
 !
 !   INITIALISATION DE LA DIMENSION DE L'ELEMENT PRINCIPAL, DU NOMBRE DE 
@@ -168,25 +167,20 @@ implicit none
     call jevech('PINSTPR', 'L', iinstp)
     call jevech('PCOMPOR', 'L', icompo)
     call jevech('PCARCRI', 'L', icarcr)
-    call jevech('PVECTUR', 'E', ivect)
+
     call jevech('PSTANO', 'L', jstno)
 !
 !     NB COMPOSANTES DES MODES LOCAUX
 !     ASSOCIES AUX CHAMPS DANS LE CATALOGUE
-    call tecach('OOO', 'PDONCO', 'L', iret, nval=2,&
-                itab=jtab)
+    call tecach('OOO', 'PDONCO', 'L', iret, nval=2, itab=jtab)
     ncompd = jtab(2)
-    call tecach('OOO', 'PPINTER', 'L', iret, nval=2,&
-                itab=jtab)
+    call tecach('OOO', 'PPINTER', 'L', iret, nval=2, itab=jtab)
     ncompp = jtab(2)
-    call tecach('OOO', 'PAINTER', 'L', iret, nval=2,&
-                itab=jtab)
+    call tecach('OOO', 'PAINTER', 'L', iret, nval=2, itab=jtab)
     ncompa = jtab(2)
-    call tecach('OOO', 'PBASECO', 'L', iret, nval=2,&
-                itab=jtab)
+    call tecach('OOO', 'PBASECO', 'L', iret, nval=2, itab=jtab)
     ncompb = jtab(2)
-    call tecach('OOO', 'PCFACE', 'L', iret, nval=2,&
-                itab=jtab)
+    call tecach('OOO', 'PCFACE', 'L', iret, nval=2, itab=jtab)
     ncompc = jtab(2)
 !
 !   ON RECUPERE L'ELEMENT PRINCIPAL ...
@@ -312,7 +306,7 @@ implicit none
        call elrefe_info(elrefe=elc,fami=fpg,nno=nnof,&
                         npg=npgf,jpoids=ipoidf,jvf=ivff,jdfde=idfdef)  
                 
-!   DEFINTION DE LA CONNECTIVITE DES FACTETTES DE CONTACT
+!   DEFINTION DE LA CONNECTIVITE DES FACETTES DE CONTACT
 !
        do i= 1,30
           do j= 1,6
@@ -334,7 +328,7 @@ implicit none
                         jcohes, jptint, igeom, jbasec,&
                         nlact, cface, zr(iinstp),&
                         zr(iinstm), zr(icarcr), fpg, ncompv,&
-                        vect, zk16(icompo), jmate, ndim, idepm,&
+                        vcont, zk16(icompo), jmate, ndim, idepm,&
                         idepd, pla, algocr, rela, jheavn, ncompn,&
                         ifiss, nfiss, nfh, jheafa, ncomph, pos)
 !
@@ -347,8 +341,9 @@ implicit none
        jcface = jcface + ncompc
     end do
 !
+    call jevech('PVECTCR', 'E', jv_cont)
     do i = 1, dimuel
-       zr(ivect-1+i) = vect(i)
+       zr(jv_cont-1+i) = vcont(i)
     end do
 !
 !   SUPPRESSION DES DDLS DE DEPLACEMENT ET DE PRESSION HPRE1
@@ -356,7 +351,7 @@ implicit none
     if (nfh.ne.0) then
        call xhmddl(ndim, nfh, nddls, dimuel, nnop, nnops,&
                    zi(jstno), .false._1, option, nomte,&
-                   mat, zr(ivect), nddlm, nfiss, jfisno, .false._1, contac)
+                   mat, zr(jv_cont), nddlm, nfiss, jfisno, .false._1, contac)
     endif 
     
 !   SUPPRESSION DES DDLS DE CONTACT
@@ -364,7 +359,7 @@ implicit none
     if (lelim) then 
        call xhmddl(ndim, nfh, nddls, dimuel, nnop, nnops,&
                    vstnc, .false._1, option, nomte,&
-                   mat, zr(ivect), nddlm, nfiss, jfisno, .true._1, contac)
+                   mat, zr(jv_cont), nddlm, nfiss, jfisno, .true._1, contac)
     endif
 !
     call jedema()

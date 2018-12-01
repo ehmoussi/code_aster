@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: ayaovi-dzifa.kudawoo at edf.fr
+!
 subroutine mminit(mesh  , ds_contact, sddyna  , hat_valinc, ds_measure,&
                   sdnume, nume_inst)
 !
@@ -36,16 +37,16 @@ implicit none
 #include "asterfort/ndynlo.h"
 #include "asterfort/nmchex.h"
 #include "asterfort/mmapin.h"
+#include "asterfort/infdbg.h"
+#include "asterfort/utmess.h"
 !
-! person_in_charge: ayaovi-dzifa.kudawoo at edf.fr
-!
-    character(len=8), intent(in) :: mesh
-    type(NL_DS_Contact), intent(inout) :: ds_contact
-    character(len=19), intent(in) :: hat_valinc(*)
-    type(NL_DS_Measure), intent(inout) :: ds_measure
-    character(len=19), intent(in) :: sddyna
-    character(len=19), intent(in) :: sdnume
-    integer, intent(in) :: nume_inst
+character(len=8), intent(in) :: mesh
+type(NL_DS_Contact), intent(inout) :: ds_contact
+character(len=19), intent(in) :: hat_valinc(*)
+type(NL_DS_Measure), intent(inout) :: ds_measure
+character(len=19), intent(in) :: sddyna
+character(len=19), intent(in) :: sdnume
+integer, intent(in) :: nume_inst
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -74,9 +75,16 @@ implicit none
     character(len=24) :: sdcont_etatct
     real(kind=8), pointer :: v_sdcont_etatct(:) => null()
     integer :: ztabf, zetat
-    integer :: ipc, nb_inte_poin
+    integer :: ipc, nb_inte_poin, ifm, niv
 !
 ! --------------------------------------------------------------------------------------------------
+!
+    call infdbg('CONTACT', ifm, niv)
+    if (niv .ge. 2) then
+        call utmess('I', 'CONTACT5_13')
+    endif
+!
+! - Initializations
 !
     l_cont_allv  = cfdisl(ds_contact%sdcont_defi,'ALL_VERIF')
     l_geom_sans  = cfdisl(ds_contact%sdcont_defi, 'REAC_GEOM_SANS')
@@ -159,7 +167,9 @@ implicit none
     if (.not.l_cont_allv.and.l_step_first) then
         call mmopti(mesh, ds_contact)
     endif
-! Cycling initialization
+!
+! - Cycling initialization
+!
     call mm_cycl_init(ds_contact)
 !
 end subroutine

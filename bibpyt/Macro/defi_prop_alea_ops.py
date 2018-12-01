@@ -187,12 +187,18 @@ class Generator(object):
         return roots
 
     def eval_eigfunc(self, x, Lc , nbmod):
-        v = np.arange(1.0, 200., 0.01)
+        vmax = nbmod * 4.
+        v = np.arange(1.0, vmax, 0.01)
         veck = [  (1- Lc * vale * np.tan(0.5*vale)) * (Lc * vale + np.tan(0.5*vale))    for vale in v]
         troots = self.find_roots(v, veck)
+        while len(troots) < nbmod:
+            vmax = vmax * 1.5
+            v = np.arange(1.0, vmax, 0.01)
+            veck = [  (1- Lc * vale * np.tan(0.5*vale)) * (Lc * vale + np.tan(0.5*vale))    for vale in v]
+            troots = self.find_roots(v, veck)   
         roots = troots[:nbmod]
         lamk = 2. * Lc * (1. + np.array(roots)**2 * Lc**2)**(-1)
-        print 'NUMBER of ROOTS:', len(troots), 'RETAINED ', nbmod  , 'EIGENVALUES :', lamk
+        print 'NUMBER of ROOTS:', len(troots), 'RETAINED EIGENVALUES', nbmod  
         phik =[]
         for (ii, vk) in enumerate(roots):
             if self.is_even(ii): # %even

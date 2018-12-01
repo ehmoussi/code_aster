@@ -53,21 +53,19 @@ character(len=19) :: depdel
 character(len=8) :: modele
 type(NL_DS_Contact), intent(in) :: ds_contact
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
 ! ROUTINE CONTACT (METHODE XFEM - POST-TRAITEMENT)
 !
 ! CREER LE CHAM_NO_S POUR L ARCHIVAGE DU CONTACT PAR NMARCH
 !
-! ----------------------------------------------------------------------
-!
+! --------------------------------------------------------------------------------------------------
 !
 ! IN  DEPDEL : DEPLACEMENT AU PAS DE TEMPS COURANT
 ! IN  MODELE : NOM DU MODELE
 ! OUT CNSINR : CHAM_NO_S POUR L'ARCHIVAGE DU CONTACT
 !
-!
-!
+! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
     integer :: jcesl1, jcesl2, jcesl3, jcesl4, jcesl5,  ndime
@@ -80,8 +78,8 @@ type(NL_DS_Contact), intent(in) :: ds_contact
     integer :: zxain
     integer :: nbno
     character(len=8) :: noma, typma
-    character(len=19) :: depdes, depcn, fcont, fconts
-    character(len=19) :: fctcn, ffrot, ffrots, ffrocn, lagcn
+    character(len=19) :: depdes, depcn, cneltc, fconts
+    character(len=19) :: fctcn, cneltf, ffrots, ffrocn, lagcn
     character(len=19) :: faclos, aintes, pintes, basecs
     character(len=19) :: faclon, ainter, pinter, baseco
     character(len=19) :: lst, lstno
@@ -109,8 +107,7 @@ type(NL_DS_Contact), intent(in) :: ds_contact
     character(len=8), pointer :: cesk(:) => null()
     integer, pointer :: connex(:) => null()
 !
-!
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
     call jemarq()
     call infdbg('CONTACT', ifm, niv)
@@ -131,8 +128,8 @@ type(NL_DS_Contact), intent(in) :: ds_contact
 !
     zresu = cfmmvd('ZRESU')
     zxain = xxmmvd('ZXAIN')
-    fcont = ds_contact%cneltc
-    ffrot = ds_contact%cneltf
+    cneltc = ds_contact%cneltc
+    cneltf = ds_contact%cneltf
 !
 ! --- ACCES SD XFEM
 !
@@ -199,7 +196,7 @@ type(NL_DS_Contact), intent(in) :: ds_contact
 ! --- TRANSFORMATION ET REDUCTION DES CHAM_NOEU
 !
     call xmmred(ndim, depdel, depdes, lagcn, depcn,&
-                fcont, fconts, fctcn, ffrot, ffrots,&
+                cneltc, fconts, fctcn, cneltf, ffrots,&
                 ffrocn)
 !
 ! --- ACCES CHAM_NO
@@ -477,10 +474,10 @@ type(NL_DS_Contact), intent(in) :: ds_contact
 100     continue
     end do
 !
-    call jedetr(fcont)
+    call jedetr(cneltc)
     call detrsd('CHAMP', fconts)
     call detrsd('CHAMP', fctcn)
-    call jedetr(ffrot)
+    call jedetr(cneltf)
     call jedetr(dejcal)
     call detrsd('CHAMP', ffrots)
     call detrsd('CHAMP', ffrocn)

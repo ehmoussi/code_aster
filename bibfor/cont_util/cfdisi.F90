@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 function cfdisi(sdcont_defi_, question_)
 !
 implicit none
@@ -23,11 +24,9 @@ implicit none
 #include "asterfort/assert.h"
 #include "asterfort/jeveuo.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    integer :: cfdisi
-    character(len=*), intent(in) :: sdcont_defi_
-    character(len=*), intent(in) :: question_
+integer :: cfdisi
+character(len=*), intent(in) :: sdcont_defi_
+character(len=*), intent(in) :: question_
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -58,7 +57,7 @@ implicit none
 ! - Access to contact datastructure
 !
     sdcont_ndimco = sdcont_defi(1:16)//'.NDIMCO'
-    sdcont_paraci = sdcont_defi(1:16)//'.PARACI'
+    sdcont_paraci = sdcont_defi(1:8)//'.PARACI'
 !
 ! - Get parameter
 !

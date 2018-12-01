@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,31 +15,21 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine mmform(ndim, nommae, nommam, nne, nnm,&
-                      xpc, ypc, xpr, ypr, ffe,&
-                      dffe, ddffe, ffm, dffm, ddffm,&
-                      ffl, dffl, ddffl)
-        integer :: ndim
-        character(len=8) :: nommae
-        character(len=8) :: nommam
-        integer :: nne
-        integer :: nnm
-        real(kind=8) :: xpc
-        real(kind=8) :: ypc
-        real(kind=8) :: xpr
-        real(kind=8) :: ypr
-        real(kind=8) :: ffe(9)
-        real(kind=8) :: dffe(2, 9)
-        real(kind=8) :: ddffe(3, 9)
-        real(kind=8) :: ffm(9)
-        real(kind=8) :: dffm(2, 9)
-        real(kind=8) :: ddffm(3, 9)
-        real(kind=8) :: ffl(9)
-        real(kind=8) :: dffl(2, 9)
-        real(kind=8) :: ddffl(3, 9)
+    subroutine mmform(ndim  ,&
+                      typmae, typmam,&
+                      nne   , nnm   ,&
+                      xpc   , ypc   , xpr  , ypr,&
+                      ffe   , dffe  , ddffe,&
+                      ffm   , dffm  , ddffm,&
+                      ffl   , dffl  , ddffl)
+        integer, intent(in) :: ndim
+        character(len=8), intent(in) :: typmae, typmam
+        integer, intent(in) :: nne, nnm
+        real(kind=8), intent(in) :: xpc, ypc, xpr, ypr
+        real(kind=8), intent(out) :: ffe(9), dffe(2, 9), ddffe(3, 9)
+        real(kind=8), intent(out) :: ffm(9), dffm(2, 9), ddffm(3, 9)
+        real(kind=8), intent(out) :: ffl(9), dffl(2, 9), ddffl(3, 9)
     end subroutine mmform
 end interface

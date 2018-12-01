@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -73,29 +73,21 @@ implicit none
     l_cont_allv = cfdisl(ds_contact%sdcont_defi,'ALL_VERIF')
 !    
     if (.not.l_cont_allv) then
-!
 ! ----- For discrete contact
-!
         if (l_cont_disc) then
             call cfinit(ds_contact, nume_inst)
         endif
-!
 ! ----- For continue contact
-!
         if (l_cont_cont) then
             call mminit(mesh  , ds_contact, sddyna, hat_valinc, ds_measure,&
                         sdnume, nume_inst)
         endif
-!
 ! ----- For continue contact (LAC method)
-!
         if (l_cont_lac) then
-            call mminit_lac(mesh     , ds_contact, hat_valinc, ds_measure, sdnume,&
-                            nume_inst)
+            call mminit_lac(mesh  , ds_contact, hat_valinc, ds_measure,&
+                            sdnume, nume_inst)
         endif
-!
 ! ----- For XFEM contact
-!
         if (l_cont_xfem) then
             call xminit(mesh  , model , ds_contact, nume_inst, ds_measure,&
                         sddyna, hat_valinc, list_func_acti)

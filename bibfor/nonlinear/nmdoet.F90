@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine nmdoet(model , compor, list_func_acti, nume_ddl   , sdpilo  ,&
                   sddyna, sdcriq, hval_algo     , l_acce_zero, ds_inout)
 !
@@ -43,19 +44,18 @@ implicit none
 #include "asterfort/rsexch.h"
 #include "asterfort/utmess.h"
 #include "asterfort/vtcopy.h"
+#include "asterfort/infdbg.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=24), intent(in) :: model
-    character(len=24), intent(in) :: compor
-    character(len=24), intent(in) :: sdcriq
-    character(len=24), intent(in) :: nume_ddl
-    character(len=19), intent(in) :: sddyna
-    character(len=19), intent(in) :: sdpilo
-    character(len=19), intent(in) :: hval_algo(*)
-    integer, intent(in) :: list_func_acti(*)
-    aster_logical, intent(out) :: l_acce_zero
-    type(NL_DS_InOut), intent(inout) :: ds_inout
+character(len=24), intent(in) :: model
+character(len=24), intent(in) :: compor
+character(len=24), intent(in) :: sdcriq
+character(len=24), intent(in) :: nume_ddl
+character(len=19), intent(in) :: sddyna
+character(len=19), intent(in) :: sdpilo
+character(len=19), intent(in) :: hval_algo(*)
+integer, intent(in) :: list_func_acti(*)
+aster_logical, intent(out) :: l_acce_zero
+type(NL_DS_InOut), intent(inout) :: ds_inout
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -78,6 +78,7 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
+    integer :: ifm, niv
     integer :: nb_field
     character(len=24) :: field_type
     aster_logical :: l_stin_evol, l_state_init
@@ -100,6 +101,10 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
     call jemarq()
+    call infdbg('MECANONLINE', ifm, niv)
+    if (niv .ge. 2) then
+        call utmess('I', 'MECANONLINE13_26')
+    endif
 !
 ! - Initializations
 !

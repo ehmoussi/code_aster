@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,6 +16,8 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine nmdorc(model, chmate, l_etat_init, compor, carcri, mult_comp_, l_implex_)
 !
 implicit none
@@ -24,16 +26,16 @@ implicit none
 #include "asterfort/nmdocc.h"
 #include "asterfort/nmdocm.h"
 #include "asterfort/nmdocr.h"
+#include "asterfort/utmess.h"
+#include "asterfort/infniv.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=*), intent(in) :: model
-    character(len=*), intent(in) :: chmate
-    aster_logical, intent(in) :: l_etat_init
-    character(len=*), intent(in) :: compor
-    character(len=*), intent(out) :: carcri
-    character(len=*), optional, intent(in) :: mult_comp_
-    aster_logical, optional, intent(in) :: l_implex_
+character(len=*), intent(in) :: model
+character(len=*), intent(in) :: chmate
+aster_logical, intent(in) :: l_etat_init
+character(len=*), intent(in) :: compor
+character(len=*), intent(out) :: carcri
+character(len=*), optional, intent(in) :: mult_comp_
+aster_logical, optional, intent(in) :: l_implex_
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -53,11 +55,19 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
+    integer :: ifm, niv
     aster_logical :: l_implex
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    l_implex    = .false.
+    call infniv(ifm, niv)
+    if (niv .ge. 2) then
+        call utmess('I', 'MECANONLINE12_2')
+    endif
+!
+! - Initialisations
+!
+    l_implex    = ASTER_FALSE
     if (present(l_implex_)) then
         l_implex = l_implex_
     endif

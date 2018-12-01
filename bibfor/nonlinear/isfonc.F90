@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -73,7 +73,6 @@ character(len=*), intent(in) :: func_name_z
 !       CONT_ALL_VERIF     :  CONTACT SANS CALCUL SUR TOUTES LES ZONES
 !       LIAISON_UNILATER   :  LIAISON UNILATERALE
 !       ELT_CONTACT        :  ELEMENTS DE CONTACT (CONTINU/XFEM)
-!       ELT_FROTTEMENT     :  ELEMENTS DE FROTTEMENT (CONTINU/XFEM)
 !       DIS_CHOC           :  ELEMENTS DIS_CHOC
 !       GD_ROTA            :  ELEMENTS DE STRUCTURE EN GRANDES ROTATIONS
 !       XFEM               :  ELEMENTS XFEM
@@ -130,8 +129,6 @@ character(len=*), intent(in) :: func_name_z
         isfonc = list_func_acti(12).eq.1
     else if (func_name.eq.'ELT_CONTACT') then
         isfonc = list_func_acti(26).eq.1
-    else if (func_name.eq.'ELT_FROTTEMENT') then
-        isfonc = list_func_acti(27).eq.1
     else if (func_name.eq.'CONT_DISCRET') then
         isfonc = list_func_acti(4).eq.1
     else if (func_name.eq.'CONT_CONTINU') then

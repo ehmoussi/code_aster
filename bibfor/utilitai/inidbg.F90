@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -41,8 +41,8 @@ subroutine inidbg()
 #include "asterfort/jemarq.h"
 #include "asterfort/wkvect.h"
     integer :: ifm, niv, n, i, jdbg
-    character(len=16) :: czcont, czmeca, czpilo, czfact, czappa
-    common /czdbg/czcont,czmeca,czpilo,czfact,czappa
+    character(len=16) :: czcont, czmeca, czpilo, czfact, czappa, czsolv
+    common /czdbg/czcont,czmeca,czpilo,czfact,czappa, czsolv
 !
     call jemarq()
 !
@@ -53,7 +53,7 @@ subroutine inidbg()
     czappa=' '
 !
     call infniv(ifm, niv)
-    if (niv .ne. 2) goto 9999
+    if (niv .ne. 2) goto 999
 !
     call getvtx(' ', 'INFO_DBG', nbval=0, nbret=n)
     if (n .ne. 0) then
@@ -61,32 +61,34 @@ subroutine inidbg()
         n=-n
         call wkvect('&&INIDBG', 'V V K16', n, jdbg)
         call getvtx(' ', 'INFO_DBG', nbval=n, vect=zk16(jdbg))
-        do 10 i = 1, n
-            if (zk16(jdbg+i-1)(1:7) .eq. 'CONTACT') then
+        do i = 1, n
+            if (zk16(jdbg+i-1) .eq. 'CONTACT') then
                 czcont='CONTACT'
-                else if(zk16(jdbg+i-1).eq.'MECA_NON_LINE' .or. zk16(jdbg+&
-            i-1).eq.'MECANONLINE')then
-                czmeca='MECA_NON_LINE'
-            else if (zk16(jdbg+i-1).eq.'PILOTAGE') then
+            else if (zk16(jdbg+i-1) .eq. 'MECANONLINE')then
+                czmeca='MECANONLINE'
+            else if (zk16(jdbg+i-1) .eq. 'PILOTAGE') then
                 czpilo='PILOTAGE'
-            else if (zk16(jdbg+i-1).eq.'APPARIEMENT') then
+            else if (zk16(jdbg+i-1) .eq. 'APPARIEMENT') then
                 czappa='APPARIEMENT'
-            else if (zk16(jdbg+i-1).eq.'FACTORISATION') then
-                czfact='FACTORISATION'
+            else if (zk16(jdbg+i-1) .eq. 'SOLVEUR') then
+                czsolv='SOLVEUR'
+            else if (zk16(jdbg+i-1) .eq. 'FACTOR') then
+                czfact='FACTOR'
             endif
-10      continue
+        end do
     else
 !        -- ON IMPRIME TOUT SANS RESTRICTION --
         czcont='CONTACT'
-        czmeca='MECA_NON_LINE'
-        czpilo='PILOTE'
-        czfact='FACTORISATION'
+        czmeca='MECANONLINE'
+        czpilo='PILOTAGE'
+        czsolv='SOLVEUR'
         czappa='APPARIEMENT'
+        czfact='FACTOR'
     endif
 !
     call jedetr('&&INIDBG')
 !
-9999  continue
+999  continue
 !
     call jedema()
 !

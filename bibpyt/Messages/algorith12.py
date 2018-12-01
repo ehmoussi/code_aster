@@ -177,12 +177,6 @@ Contactez le support technique.
   la méthode de Mac-Neal ne fonctionne pas en présence de modes de corps rigide
 """),
 
-    41 : _(u"""
-  la taille bloc  : %(i1)d est < HAUTEUR_MAX : %(i2)d
-  changez la TAILLE_BLOC des profils: %(k1)s
-  prenez au moins : %(i3)d
-"""),
-
     42 : _(u"""
  le mot-clé  %(k1)s est incompatible avec le champ %(k2)s
  utilisez 'GROUP_MA' ou 'MAILLE'  pour restreindre le changement de repère

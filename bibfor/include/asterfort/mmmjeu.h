@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,24 +15,18 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine mmmjeu(ndim  ,jeusup,norm  ,geome ,geomm , &
-                      ddeple,ddeplm,mprojt,jeu   ,djeu  , &
-                      djeut ,iresog)
-        integer :: ndim
-        integer :: iresog
-        real(kind=8) :: jeusup
-        real(kind=8) :: norm(3)
-        real(kind=8) :: geome(3)
-        real(kind=8) :: geomm(3)
-        real(kind=8) :: ddeple(3)
-        real(kind=8) :: ddeplm(3)
-        real(kind=8) :: mprojt(3, 3)
-        real(kind=8) :: jeu
-        real(kind=8) :: djeu(3)
-        real(kind=8) :: djeut(3)
+    subroutine mmmjeu(ndim  , iresog, jeusup,&
+                      geome , geomm ,&
+                      ddeple, ddeplm,&
+                      norm  , mprojt,&
+                      jeu   , djeu  , djeut )
+        integer, intent(in) :: ndim, iresog
+        real(kind=8), intent(in) :: jeusup,  norm(3)
+        real(kind=8), intent(in):: geomm(3), geome(3)
+        real(kind=8), intent(in) :: ddeple(3), ddeplm(3)
+        real(kind=8), intent(in) :: mprojt(3, 3)
+        real(kind=8), intent(out) :: jeu, djeu(3), djeut(3)
     end subroutine mmmjeu
 end interface

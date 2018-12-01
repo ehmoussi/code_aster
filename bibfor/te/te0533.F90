@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,9 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: samuel.geniaut at edf.fr
+!
 subroutine te0533(option, nomte)
-    implicit none
+!
+implicit none
+!
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterfort/assert.h"
@@ -39,17 +42,13 @@ subroutine te0533(option, nomte)
 #include "asterfort/xteini.h"
 #include "asterfort/xkamat.h"
 !
-    character(len=16) :: option, nomte
-!
-! person_in_charge: samuel.geniaut at edf.fr
-!
+character(len=16) :: option, nomte
 !
 !         CALCUL DES MATRICES DE CONTACT FROTTEMENT POUR X-FEM
 !                       (METHODE CONTINUE)
 !
 !
-!  OPTION : 'RIGI_CONT' (CALCUL DES MATRICES DE CONTACT)
-!  OPTION : 'RIGI_FROT' (CALCUL DES MATRICES DE FROTTEMENT)
+!  OPTION : 'RIGI_CONT'
 !
 !  ENTREES  ---> OPTION : OPTION DE CALCUL
 !           ---> NOMTE  : NOM DU TYPE ELEMENT
@@ -146,20 +145,15 @@ subroutine te0533(option, nomte)
     endif
 !     NB COMPOSANTES DES MODES LOCAUX
 !     ASSOCIES AUX CHAMPS DANS LE CATALOGUE
-    call tecach('OOO', 'PDONCO', 'L', iret, nval=2,&
-                itab=jtab)
+    call tecach('OOO', 'PDONCO', 'L', iret, nval=2, itab=jtab)
     ncompd = jtab(2)
-    call tecach('OOO', 'PPINTER', 'L', iret, nval=2,&
-                itab=jtab)
+    call tecach('OOO', 'PPINTER', 'L', iret, nval=2, itab=jtab)
     ncompp = jtab(2)
-    call tecach('OOO', 'PAINTER', 'L', iret, nval=2,&
-                itab=jtab)
+    call tecach('OOO', 'PAINTER', 'L', iret, nval=2, itab=jtab)
     ncompa = jtab(2)
-    call tecach('OOO', 'PBASECO', 'L', iret, nval=2,&
-                itab=jtab)
+    call tecach('OOO', 'PBASECO', 'L', iret, nval=2, itab=jtab)
     ncompb = jtab(2)
-    call tecach('OOO', 'PCFACE', 'L', iret, nval=2,&
-                itab=jtab)
+    call tecach('OOO', 'PCFACE', 'L', iret, nval=2, itab=jtab)
     ncompc = jtab(2)
     if (nfe.gt.0) then
        call jevech('PMATERC', 'L', jmate)
@@ -182,7 +176,7 @@ subroutine te0533(option, nomte)
         vstnc(i) = 1
     end do
 !
-! --- BOUCLE SUR LES FISSURES
+! - Loop on cracks
 !
     do ifiss = 1, nfiss
 !
@@ -209,9 +203,7 @@ subroutine te0533(option, nomte)
 !
 !           CAS CHAMP ELNO
             if(contac.eq.2) ncompv = jta2(2)/jta2(3)
-            if (option(1:9) .eq. 'RIGI_CONT') then
-                call jevech('PCOHESO', 'E', jcoheo)
-            endif
+            Call jevech('PCOHESO', 'E', jcoheo)
         endif
 !
 ! --- RECUP MULTIPLICATEURS ACTIFS ET LEURS INDICES
@@ -254,36 +246,34 @@ subroutine te0533(option, nomte)
 ! --- CALCUL DES MATRICES DE CONTACT
 !     ..............................
 !
-                if (option(1:9) .eq. 'RIGI_CONT') then
-!
-                    call xmcont(algocr, coefcr, coefcp, cohes, coheo,&
-                                jcohes, jcoheo, ncompv,&
-                                ddlm, ddls, ffc, ffp, idepd,&
-                                idepm, ifa, ifiss, jmate, indco,&
-                                ipgf, jac, jheavn, ncompn, jheafa, mmat,&
-                                lact, ncomph, nd, nddl, ndim,&
-                                nfh, nfiss, nno, nnol, nnos,&
-                                nvit, pla, rela, singu, fk,&
-                                tau1, tau2)
+                call xmcont(algocr, coefcr, coefcp, cohes, coheo,&
+                            jcohes, jcoheo, ncompv,&
+                            ddlm, ddls, ffc, ffp, idepd,&
+                            idepm, ifa, ifiss, jmate, indco,&
+                            ipgf, jac, jheavn, ncompn, jheafa, mmat,&
+                            lact, ncomph, nd, nddl, ndim,&
+                            nfh, nfiss, nno, nnol, nnos,&
+                            nvit, pla, rela, singu, fk,&
+                            tau1, tau2)
+
 !
 ! --- SI COHESIF CLASSIQUE ON ACTUALISE LA VARIABLE INTERNE
 !
-                    if (algocr .eq. 3.and.(contac.eq.1.or.contac.eq.3)) then
-                        do i = 1, ncompv
-                            zr(jcoheo+ncompv*(nbspg+isspg-1)-1+i) = coheo(i)
-                        end do
-                    endif
-                elseif (option.eq.'RIGI_FROT'.and.&
-                        (rela.eq.0.d0.or.rela.eq.1.d0.or.rela.eq.2.d0)) then
-!
+                if (algocr .eq. 3.and.(contac.eq.1.or.contac.eq.3)) then
+                    do i = 1, ncompv
+                        zr(jcoheo+ncompv*(nbspg+isspg-1)-1+i) = coheo(i)
+                    end do
+                endif
+                if (rela.eq.0.d0 .or. rela.eq.1.d0 .or. rela.eq.2.d0) then
                     call xmfrot(algofr, coeffr, coeffp, ddlm, ddls,&
                                 ffc, ffp, idepd, idepm, indco,&
                                 jac, lact, mmat, mu, nd,&
                                 ndim, nfh, nfiss, nno, nnol,&
                                 nnos, nvit, pla, seuil,&
                                 singu, fk, tau1, tau2)
-!
                 endif
+
+!
 ! --- FIN DE BOUCLE SUR LES POINTS DE GAUSS
             end do
 !
@@ -302,8 +292,8 @@ subroutine te0533(option, nomte)
 !     COPIE DES CHAMPS DE SORTIES ET FIN
 !-----------------------------------------------------------------------
 !
-    if (algocr .eq. 2 .or. algofr .eq. 2 .or. &
-        (algocr.eq.3.and.option.eq.'RIGI_FROT')) then
+    if (algocr .eq. 2 .or. algofr .eq. 2 .or. algocr .eq. 3&
+        .and. rela .ne. 5.d0 .and. rela .ne. 4.d0) then
 ! --- RECUPERATION DE LA MATRICE 'OUT' NON SYMETRIQUE
         matsym=.false.
         call jevech('PMATUNS', 'E', imatt)

@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nonlinIntegratePrepare(list_func_acti , sddyna,&
+subroutine nonlinIntegratePrepare(list_func_acti , sddyna, model,&
                                   ds_constitutive)
 !
 use NonLin_Datastructure_type
@@ -30,9 +30,11 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/isfonc.h"
 #include "asterfort/ndynlo.h"
+#include "asterfort/comp_info.h"
 !
 integer, intent(in) :: list_func_acti(*)
 character(len=19), intent(in) :: sddyna
+character(len=8), intent(in) :: model
 type(NL_DS_Constitutive), intent(inout) :: ds_constitutive
 !
 ! --------------------------------------------------------------------------------------------------
@@ -45,6 +47,7 @@ type(NL_DS_Constitutive), intent(inout) :: ds_constitutive
 !
 ! In  list_func_acti   : list of active functionnalities
 ! In  sddyna           : dynamic parameters datastructure
+! In  model            : name of model
 ! IO  ds_constitutive  : datastructure for constitutive laws management
 !
 ! --------------------------------------------------------------------------------------------------
@@ -56,7 +59,7 @@ type(NL_DS_Constitutive), intent(inout) :: ds_constitutive
 !
     call infdbg('MECANONLINE', ifm, niv)
     if (niv .ge. 2) then
-        call utmess('I', 'MECANONLINE11_26')
+        call utmess('I', 'MECANONLINE13_28')
     endif
 !
 ! - Active functionnalities
@@ -79,6 +82,10 @@ type(NL_DS_Constitutive), intent(inout) :: ds_constitutive
     endif
     if (l_dyna) then
         ds_constitutive%l_pred_cnfint = ASTER_TRUE
+    endif
+!
+    if (niv .ge. 2) then
+        call comp_info(model, ds_constitutive%compor)
     endif
 !
 end subroutine

@@ -15,249 +15,225 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine te0365(option, nomte)
-!
 ! person_in_charge: ayaovi-dzifa.kudawoo at edf.fr
 !
-    implicit none
+subroutine te0365(option, nomte)
+!
+implicit none
+!
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterfort/assert.h"
 #include "asterfort/jevech.h"
 #include "asterfort/mmelem.h"
 #include "asterfort/mmlagc.h"
-#include "asterfort/mmmlav.h"
-#include "asterfort/mmmlcf.h"
+#include "asterfort/mmGetAlgo.h"
+#include "asterfort/mmGetCoefficients.h"
+#include "asterfort/mmGetProjection.h"
+#include "asterfort/mmGetStatus.h"
+#include "asterfort/mmGetShapeFunctions.h"
 #include "asterfort/mmmpha.h"
+#include "asterfort/mmmsta.h"
 #include "asterfort/mmnsta.h"
 #include "asterfort/mngliss.h"
-#include "asterfort/mmmsta.h"
 #include "asterfort/mmmvas.h"
 #include "asterfort/mmmvex.h"
 #include "asterfort/mmvape.h"
 #include "asterfort/mmvfpe.h"
 #include "asterfort/mmvppe.h"
-#include "asterfort/vecini.h"
-    character(len=16) :: option, nomte
 !
-! ----------------------------------------------------------------------
+character(len=16), intent(in) :: option, nomte
 !
-!  CALCUL DES SECONDS MEMBRES DE CONTACT ET DE FROTTEMENT DE COULOMB STD
-!        AVEC LA METHODE CONTINUE
+! --------------------------------------------------------------------------------------------------
 !
-!  OPTION : 'CHAR_MECA_CONT' (CALCUL DU SECOND MEMBRE DE CONTACT)
-!           'CHAR_MECA_FROT' (CALCUL DU SECOND MEMBRE DE
-!                              FROTTEMENT STANDARD )
+! Elementary computation
 !
-!  ENTREES  ---> OPTION : OPTION DE CALCUL
-!           ---> NOMTE  : NOM DU TYPE ELEMENT
+! Options: CHAR_MECA_CONT
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
-    integer :: iddl
+    integer :: iddl, jvect
     integer :: nne, nnm, nnl
     integer :: nddl, ndim, nbcps, nbdm
-    integer :: jvect, jpcf
-    integer :: iresof, iresog
+    integer :: iresof, iresog, ialgoc, ialgof
     integer :: ndexfr
-!    
-    real(kind=8) :: norm(3)=0.0, tau1(3)=0.0, tau2(3)=0.0
-    real(kind=8) :: mprojt(3, 3)=0.0,mprojn(3, 3)=0.0
-    real(kind=8) :: rese(3)=0.0, nrese=0.0
+    integer :: indco
+    character(len=8) :: typmae, typmam
+    character(len=4) :: phase
+    aster_logical :: laxis = .false. , leltf = .false.
+    aster_logical :: l_pena_cont = .false. , l_pena_fric = .false.
+    aster_logical :: lcont = .false., ladhe = .false., l_fric_no = .false.
+    aster_logical :: debug = .false.
+    real(kind=8) :: coefff = 0.0
+    real(kind=8) :: lambda = 0.0, lambds = 0.0
+    real(kind=8) :: coefac = 0.0, coefaf = 0.0
     real(kind=8) :: wpg, jacobi
-    real(kind=8) :: coefff=0.0, lambda=0.0, lambds=0.0
-    real(kind=8) :: coefac=0.0, coefaf=0.0
+    real(kind=8) :: norm(3) = 0.0, tau1(3) = 0.0, tau2(3) = 0.0
     real(kind=8) :: jeusup=0.0
     real(kind=8) :: dlagrc=0.0, dlagrf(2)=0.0
-    real(kind=8) :: jeu=0.0, djeu(3)=0.0, djeut(3)=0.0
-    character(len=8) :: typmae, typmam
-    character(len=9) :: phasep
-    real(kind=8) :: alpha_cont=1.0
-!    
-    aster_logical :: laxis = .false. , leltf = .false. 
-    aster_logical :: lpenac = .false. , lpenaf = .false. 
-    aster_logical :: loptf = .false. , ldyna = .false. ,  lcont = .false. 
-    aster_logical :: ladhe = .false. , l_large_slip = ASTER_FALSE
-    aster_logical :: l_previous_cont = .false. , l_previous_frot = .false. , l_previous = .false. 
-!    
-    aster_logical :: debug = .false. 
-    real(kind=8) :: ffe(9), ffm(9), ffl(9), dffm(2, 9)
+    real(kind=8) :: jeu=0.0, djeut(3)=0.0
+    real(kind=8) :: rese(3)=0.0, nrese=0.0
+    real(kind=8) :: mprojt(3, 3)=0.0
+    real(kind=8) :: mprt1n(3, 3)=0.0, mprt2n(3, 3)=0.0
+    real(kind=8) :: mprt11(3, 3)=0.0, mprt12(3, 3)=0.0, mprt21(3, 3)=0.0, mprt22(3, 3)=0.0
+    real(kind=8) :: kappa(2, 2)=0.0
+    real(kind=8) :: ffe(9), ffm(9), ffl(9)
+    real(kind=8) :: ddffm(3, 9), dffm(2, 9)
+    real(kind=8) :: alpha_cont=0.0
+    real(kind=8) :: dnepmait1, dnepmait2, taujeu1, taujeu2
+    real(kind=8) :: xpc, ypc, xpr, ypr
+    aster_logical :: l_large_slip = ASTER_FALSE
+    real(kind=8) :: djeu(3)=0.0
 !
     real(kind=8) :: vectcc(9)
     real(kind=8) :: vectff(18)
-    real(kind=8) :: vectee(27), vectmm(27)
-    real(kind=8) :: vtmp(81)
+    real(kind=8) :: vectce(27), vectcm(27), vectfe(27), vectfm(27)
+    real(kind=8) :: vcont(81), vfric(81)
 !
-    character(len=24) :: typelt
-    real(kind=8) :: dnepmait1 ,dnepmait2 ,taujeu1,taujeu2
+! --------------------------------------------------------------------------------------------------
 !
-    real(kind=8) :: mprt1n(3, 3), mprt2n(3, 3)
-    real(kind=8) :: mprnt1(3, 3), mprnt2(3, 3)
-    real(kind=8) :: mprt11(3, 3), mprt12(3, 3), mprt21(3, 3), mprt22(3, 3)
-!
-    real(kind=8) :: gene11(3, 3), gene21(3, 3), gene22(3, 3)
-    real(kind=8) :: kappa(2, 2), a(2, 2), h(2, 2), ha(2, 2), hah(2, 2)
-!
-    real(kind=8) :: vech1(3), vech2(3)
-    
-!
-! ----------------------------------------------------------------------
-!
-!
-! --- INITIALISATIONS
-!
-    call vecini(81, 0.d0, vtmp)
-    call vecini(9, 0.d0, vectcc)
-    call vecini(18, 0.d0, vectff)
-    call vecini(27, 0.d0, vectee)
-    call vecini(27, 0.d0, vectmm)
-    
-    dnepmait1 =0.0
-    dnepmait2 =0.0
-    taujeu1   =0.0
-    taujeu2   =0.0
-    
+    vcont(:)  = 0.d0
+    vfric(:)  = 0.d0
+    vectcc(:) = 0.d0
+    vectff(:) = 0.d0
+    vectce(:) = 0.d0
+    vectcm(:) = 0.d0
+    vectfe(:) = 0.d0
+    vectfm(:) = 0.d0
     debug = ASTER_FALSE
-    l_large_slip = ASTER_FALSE
 !
-! --- TYPE DE MAILLE DE CONTACT
+! - Get informations on cell (slave and master)
 !
-    typelt = 'POIN_ELEM'
-    loptf = option.eq.'CHAR_MECA_FROT'
-    call jevech('PCONFR', 'L', jpcf)
-    l_previous_cont = (nint(zr(jpcf-1+30)) .eq. 1 )
-    l_previous_frot = (nint(zr(jpcf-1+44)) .eq. 1 ) .and. .false.
-    if (option .eq. 'RIGI_CONT') l_previous = l_previous_cont
-    if (option .eq. 'RIGI_FROT') l_previous = l_previous_frot
-    l_large_slip = nint(zr(jpcf-1+48)).eq. 1
-    
+    call mmelem(nomte , ndim , nddl,&
+                typmae, nne  ,&
+                typmam, nnm  ,&
+                nnl   , nbcps, nbdm,&
+                laxis , leltf)
 !
-! --- PREPARATION DES CALCULS - INFOS SUR LA MAILLE DE CONTACT
+! - Get coefficients
 !
-    call mmelem(nomte, ndim, nddl, typmae, nne,&
-                typmam, nnm, nnl, nbcps, nbdm,&
-                laxis, leltf)
+    call mmGetCoefficients(coefff, coefac, coefaf, alpha_cont)
 !
-! --- PREPARATION DES CALCULS - LECTURE DES COEFFICIENTS 
-!                             - LECTURE FONCTIONNALITES AVANCEES
+! - Get projections datas
 !
-    call mmmlcf(coefff, coefac, coefaf, lpenac, lpenaf,&
-                iresof, iresog, lambds, .false._1)
-                
-    call mmmlav(ldyna, jeusup, ndexfr)
-                
-
+    call mmGetProjection(iresog, wpg,&
+                         xpc   , ypc, xpr, ypr, tau1, tau2)
 !
-! --- PREPARATION DES DONNEES
+! - Get algorithms
 !
-    if (typelt .eq. 'POIN_ELEM') then
+    call mmGetAlgo(l_large_slip, ndexfr, jeusup, lambds,&
+                   ialgoc      , ialgof, iresof, iresog,&
+                   l_pena_cont , l_pena_fric)
 !
-! ----- CALCUL DES QUANTITES
+! - Get status
 !
-        call mmvppe(typmae, typmam, iresog, ndim, nne,&
-                  nnm, nnl, nbdm, laxis, ldyna,&
-                  jeusup, ffe, ffm, dffm, ffl,&
-                  norm, tau1, tau2, mprojt, jacobi,&
-                  wpg, dlagrc, dlagrf, jeu, djeu,&
-                  djeut, mprojn,&
-                  mprt1n, mprt2n, mprnt1, mprnt2,&
-                  gene11, gene21,&
-                  gene22, kappa, h, vech1, vech2,&
-                  a, ha, hah, mprt11, mprt12, mprt21,&
-                  mprt22,taujeu1, taujeu2, &
-                  dnepmait1,dnepmait2, l_previous,l_large_slip)
-
-!  --- PREPARATION DES DONNEES - CHOIX DU LAGRANGIEN DE CONTACT
+    call mmGetStatus(indco)
 !
-        call mmlagc(lambds, dlagrc, iresof, lambda)
-
+! - Get shape functions
 !
-! ----- STATUTS
+    call mmGetShapeFunctions(laxis, typmae, typmam, &
+                             ndim , nne   , nnm   , &
+                             xpc  , ypc   , xpr   , ypr  ,&
+                             ffe  , ffm   , dffm  , ddffm,&
+                             ffl  , jacobi)
 !
-        call mmmsta(ndim, leltf, lpenaf, loptf, djeut,&
-                    dlagrf, coefaf, tau1, tau2, lcont,&
-                    ladhe, lambda, rese, nrese,.false._1)
+! - Compute quantities (for vector)
 !
-! ----- PHASE DE CALCUL : current
+    call mmvppe(ndim     , nne      , nnm     , nnl    , nbdm ,&
+                iresog   , l_large_slip,&
+                jeusup   ,&
+                tau1     , tau2     ,&
+                ffe      , ffm      , ffl     , dffm   , ddffm,&
+                jeu      , djeu    , djeut ,&
+                dlagrc   , dlagrf   , &
+                norm     , mprojt   ,&
+                mprt1n   , mprt2n   , &
+                mprt11   , mprt12   , mprt21  , mprt22,&
+                kappa    , &
+                taujeu1  , taujeu2  ,&
+                dnepmait1, dnepmait2)
 !
-        call mmmpha(loptf, lcont, ladhe, ndexfr, lpenac,&
-                    lpenaf, phasep)
-                    
-
-
+! - Get contact pressure
 !
-! Modification du jeu tangent pour le grand glissement
+    call mmlagc(lambds, dlagrc, iresof, lambda)
 !
-
-     if (lcont .and.  (phasep(1:4) .eq. 'GLIS') .and. (l_large_slip)&
-         .and. (abs(jeu) .lt. 1.d-6 )) then
-        call mngliss(tau1  ,tau2  ,djeut,kappa ,taujeu1, taujeu2, &
-                     dnepmait1,dnepmait2,ndim )
-        call mmnsta(ndim, leltf, lpenaf, loptf, djeut,&
-                    dlagrf, coefaf, tau1, tau2, lcont,&
-                    ladhe, lambda, rese, nrese)
-      endif
-    else
-        ASSERT(.false.)
+! - Compute state of contact and friction
+!
+    call mmmsta(ndim       , leltf , indco,&
+                ialgoc     , ialgof,&
+                l_pena_fric, coefaf,&
+                lambda     , djeut , dlagrf,&
+                tau1       , tau2  ,&
+                lcont      , ladhe , l_fric_no,&
+                rese       , nrese)
+!
+! - Select phase to compute
+!
+    call mmmpha(leltf, lcont, ladhe, l_fric_no, phase)
+!
+! - Large sliding hypothesis
+!
+    if (lcont .and. (phase .eq. 'GLIS') .and. (l_large_slip) .and. (abs(jeu) .lt. 1.d-6 )) then
+        call mngliss(ndim     , kappa    ,&
+                     tau1     , tau2     ,&
+                     taujeu1  , taujeu2  ,&
+                     dnepmait1, dnepmait2,&
+                     djeut )
+        call mmnsta(ndim  , leltf ,&
+                    l_pena_fric, coefaf,&
+                    indco ,&
+                    lambda, djeut , dlagrf,&
+                    tau1  , tau2  ,&
+                    lcont , ladhe ,&
+                    rese  , nrese)
     endif
 !
-! --- CALCUL FORME FAIBLE FORCE DE CONTACT/FROTTEMENT
+! - Weak form of contact/friction force
 !
-    if (typelt .eq. 'POIN_ELEM') then
-        call mmvfpe(phasep, ndim, nne, nnm, norm,&
-                    tau1, tau2, mprojt, wpg, ffe,&
-                    ffm, jacobi, jeu, coefac, coefaf,&
-                    lambda, coefff, dlagrc, dlagrf, djeu,&
-                    rese, nrese, &
-                    vectee, vectmm,mprt11,mprt21,mprt22,mprt1n,mprt2n,kappa,l_large_slip)
-    else
-        ASSERT(.false.)
-    endif
+    call mmvfpe(phase , l_pena_cont, l_pena_fric, l_large_slip,&
+                ndim  , nne   , nnm   ,&
+                norm  , tau1  , tau2  , mprojt,&
+                wpg   , ffe   , ffm   , dffm  , jacobi, jeu   ,&
+                coefac, coefaf, lambda, coefff,&
+                dlagrc, dlagrf, djeu  ,&
+                rese  , nrese ,&
+                mprt1n, mprt2n,&
+                mprt11, mprt12, mprt21, mprt22, kappa,&
+                vectce, vectcm, vectfe, vectfm)
 !
-! --- CALCUL FORME FAIBLE LOI DE CONTACT/FROTTEMENT
+! - Weak form of contact/friction law
 !
-    if (typelt .eq. 'POIN_ELEM') then
-        call mmvape(phasep, leltf, ndim, nnl, nbcps,&
-                    coefac, coefaf, coefff, ffl, wpg,&
-                    jeu, jacobi, lambda, tau1, tau2,&
-                    mprojt, dlagrc, dlagrf, djeu, rese,&
-                    vectcc, vectff)
-    else
-        ASSERT(.false.)
-    endif
+    call mmvape(phase , leltf , l_pena_cont, l_pena_fric,&
+                ndim  , nnl   , nbcps      ,&
+                ffl   ,&
+                wpg   , jacobi, jeu   , djeu, lambda,&
+                coefac, coefaf, coefff, &
+                tau1  , tau2  , mprojt, &
+                dlagrc, dlagrf, rese,&
+                vectcc, vectff)
 !
-! --- MODIFICATIONS EXCLUSION
+! - Excluded nodes
 !
     call mmmvex(nnl, nbcps, ndexfr, vectff)
 !
-! --- ASSEMBLAGE FINAL
+! - Assembling
 !
-    call mmmvas(ndim, nne, nnm, nnl, nbdm,&
-                nbcps, vectee, vectmm, vectcc, vectff,&
-                vtmp)
-    
-!---------------------------------------------------------------
-!-------------- RECOPIE DANS LA BASE DE TRAVAIL ----------------
-!---------------------------------------------------------------
-
-    alpha_cont = zr(jpcf-1+31)
-
+    call mmmvas(ndim  , nne   , nnm   , nnl   , nbdm, nbcps,&
+                vectce, vectcm, vectfe, vectfm,&
+                vectcc, vectff,&
+                vcont , vfric)
 !
-! --- RECUPERATION DES VECTEURS 'OUT' (A REMPLIR => MODE ECRITURE)
+! - Copy
 !
-    call jevech('PVECTUR', 'E', jvect)
-!
-! --- RECOPIE VALEURS FINALES
-!
+    call jevech('PVECTCR', 'E', jvect)
     do iddl = 1, nddl
-            zr(jvect-1+iddl) = 1.0d0 * vtmp(iddl)
-        
-!        if (debug) then
-!            if (vtmp(iddl) .ne. 0.d0) then
-!                write(6,*) 'TE0365: ',iddl,vtmp(iddl)
-!            endif
-!        endif
+        zr(jvect-1+iddl) = vcont(iddl)
     end do
+    if (leltf) then
+        call jevech('PVECTFR', 'E', jvect)
+        do iddl = 1, nddl
+            zr(jvect-1+iddl) = vfric(iddl)
+        end do
+    endif
 !
 end subroutine

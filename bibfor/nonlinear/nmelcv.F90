@@ -17,9 +17,13 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nmelcv(phase    , mesh     , model    , ds_material, ds_contact    ,&
-                  disp_prev, vite_prev, acce_prev, vite_curr      , disp_cumu_inst,&
-                  disp_newt_curr,vect_elem, time_prev, time_curr, ds_constitutive)
+subroutine nmelcv(mesh          , model         ,&
+                  ds_material   , ds_contact    , ds_constitutive,&
+                  disp_prev     , vite_prev     ,&
+                  acce_prev     , vite_curr     ,&
+                  time_prev     , time_curr     ,&
+                  disp_cumu_inst, disp_newt_curr,&
+                  vect_elem_cont, vect_elem_fric)
 !
 use NonLin_Datastructure_type
 !
@@ -39,22 +43,17 @@ implicit none
 #include "asterfort/nmelco_prep.h"
 #include "asterfort/memare.h"
 #include "asterfort/reajre.h"
+#include "asterfort/utmess.h"
 !
-character(len=4), intent(in) :: phase
 character(len=8), intent(in) :: mesh
 character(len=24), intent(in) :: model
 type(NL_DS_Material), intent(in) :: ds_material
 type(NL_DS_Contact), intent(in) :: ds_contact
-character(len=19), intent(in) :: disp_prev
-character(len=19), intent(in) :: vite_prev
-character(len=19), intent(in) :: acce_prev
-character(len=19), intent(in) :: vite_curr
-character(len=19), intent(in) :: disp_cumu_inst
-character(len=19), intent(in) :: disp_newt_curr
-character(len=19), intent(out) :: vect_elem
-character(len=19), intent(in) :: time_prev
-character(len=19), intent(in) :: time_curr
 type(NL_DS_Constitutive), intent(in) :: ds_constitutive
+character(len=19), intent(in) :: disp_prev, vite_prev, acce_prev, vite_curr
+character(len=19), intent(in) :: time_prev, time_curr
+character(len=19), intent(in) :: disp_cumu_inst, disp_newt_curr
+character(len=19), intent(out) :: vect_elem_cont, vect_elem_fric
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -64,25 +63,26 @@ type(NL_DS_Constitutive), intent(in) :: ds_constitutive
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  phase            : phase (contact or friction)
 ! In  mesh             : name of mesh
 ! In  model            : name of model
 ! In  ds_material      : datastructure for material parameters
 ! In  ds_contact       : datastructure for contact management
+! In  ds_constitutive  : datastructure for constitutive laws management
 ! In  disp_prev        : displacement at beginning of current time
 ! In  vite_prev        : speed at beginning of current time
 ! In  vite_curr        : speed at current time
 ! In  acce_prev        : acceleration at beginning of current time
-! In  disp_cumu_inst   : displacement increment from beginning of current time
 ! In  time_prev        : previous time
 ! In  time_curr        : current time
-! In  ds_constitutive  : datastructure for constitutive laws management
-! Out vect_elem        : elementary vectors
+! In  disp_cumu_inst   : displacement increment from beginning of current time
+! In  disp_newt_curr   : displacement solution for current Newton step
+! Out vect_elem_cont   : elementary vectors for contact
+! Out vect_elem_cont   : elementary vectors for friction
 !
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    integer, parameter :: nbout = 3
+    integer, parameter :: nbout = 2
     integer, parameter :: nbin  = 36
     character(len=8) :: lpaout(nbout), lpain(nbin)
     character(len=19) :: lchout(nbout), lchin(nbin)
@@ -112,48 +112,37 @@ type(NL_DS_Constitutive), intent(in) :: ds_constitutive
 ! --- TYPE DE CONTACT
 !
     if (.not.l_all_verif .and. ((.not.l_cont_lac) .or. ds_contact%nb_cont_pair.ne.0)) then
-!
-! ----- Print
-!
+! ----- Display
         if (niv .ge. 2) then
-            write (ifm,*) '<CONTACT> CALCUL DES SECDS MEMBRES ELEMENTAIRES'
+            call utmess('I','CONTACT5_28')
         endif
-!
 ! ----- Init fields
-!
         call inical(nbin, lpain, lchin, nbout, lpaout, lchout)
-!
 ! ----- Prepare input fields
-!
-        call nmelco_prep(phase    , 'VECT'   ,&
+        call nmelco_prep('VECT'   ,&
                          mesh     , model    , ds_material, ds_contact,&
                          disp_prev, vite_prev, acce_prev, vite_curr , disp_cumu_inst,&
                          disp_newt_curr,nbin     , lpain    , lchin    ,&
                          option   , time_prev, time_curr , ds_constitutive)
-!
 ! ----- <LIGREL> for contact elements
-!
         ligrel = ds_contact%ligrel_elem_cont
-!
-! ----- Preparation of elementary vector
-!
-        call detrsd('VECT_ELEM', vect_elem)
-        call memare('V', vect_elem, model, ' ', ' ', 'CHAR_MECA')
-!
+! ----- Preparation of elementary vectors
+        call detrsd('VECT_ELEM', vect_elem_cont)
+        call memare('V', vect_elem_cont, model, ' ', ' ', 'CHAR_MECA')
+        call detrsd('VECT_ELEM', vect_elem_fric)
+        call memare('V', vect_elem_fric, model, ' ', ' ', 'CHAR_MECA')
 ! ----- Prepare output fields
-!
-        lpaout(1) = 'PVECTUR'
-        lchout(1) = vect_elem
-!
+        lpaout(1) = 'PVECTCR'
+        lchout(1) = vect_elem_cont
+        lpaout(2) = 'PVECTFR'
+        lchout(2) = vect_elem_fric
 ! ----- Computation
-!
-        call calcul('S', option, ligrel, nbin, lchin,&
-                    lpain, nbout, lchout, lpaout, base,&
+        call calcul('S'  , option, ligrel, nbin  , lchin,&
+                    lpain, nbout , lchout, lpaout, base ,&
                     'OUI')
-!
 ! ----- Copy output fields
-!
-        call reajre(vect_elem, lchout(1), base)
+        call reajre(vect_elem_cont, lchout(1), base)
+        call reajre(vect_elem_fric, lchout(2), base)
     endif
 !
     call jedema()

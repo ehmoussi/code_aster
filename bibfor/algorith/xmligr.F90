@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,7 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine xmligr(mesh, model, ds_contact)
 !
 use NonLin_Datastructure_type
@@ -40,16 +40,15 @@ implicit none
 #include "asterfort/jexatr.h"
 #include "asterfort/jexnom.h"
 #include "asterfort/jexnum.h"
-#include "asterfort/mmimp2.h"
 #include "asterfort/wkvect.h"
 #include "asterfort/xmelel.h"
 #include "asterfort/as_deallocate.h"
 #include "asterfort/as_allocate.h"
+#include "asterfort/utmess.h"
 !
-!
-    character(len=8), intent(in) :: model
-    character(len=8), intent(in) :: mesh
-    type(NL_DS_Contact), intent(in) :: ds_contact
+character(len=8), intent(in) :: model
+character(len=8), intent(in) :: mesh
+type(NL_DS_Contact), intent(in) :: ds_contact
 !
 ! ----------------------------------------------------------------------
 !
@@ -73,8 +72,7 @@ implicit none
     integer :: jlgrf, jtymai, jmail,  ilcnx1
     integer :: nummam, nummae, jnbno, long, jad, ityte
     integer :: nndel, numtyp, compt(nbtyp), jtabf, ztabf
-    integer :: ifm, niv
-    integer :: imod, iatt(2), imail(2), nno(2), ndim
+    integer :: imod, iatt(2), imail(2), nno(2), ndim, ifm, niv
     character(len=24) :: tabfin
     character(len=19) :: ligrxf
     character(len=16) :: nomte, nomtm, nomte2(nbtyp), mail3(2, 8)
@@ -105,7 +103,7 @@ implicit none
     call jemarq()
     call infdbg('CONTACT', ifm, niv)
     if (niv .ge. 2) then
-        write (ifm,*) '<CONTACT> CREATION DU LIGREL DES ELEMENTS DE CONTACT'
+        call utmess('I', 'CONTACT5_21')
     endif
 !
 ! --- ACCES OBJETS
@@ -244,12 +242,6 @@ implicit none
             endif
         end do
     end do
-!
-! --- IMPRESSIONS
-!
-    if (niv .ge. 2) then
-        call mmimp2(ifm, mesh, ligrxf, jtabf)
-    endif
 !
 ! --- INITIALISATION DU LIGREL
 !

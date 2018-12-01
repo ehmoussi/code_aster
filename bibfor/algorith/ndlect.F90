@@ -139,7 +139,7 @@ character(len=19) :: lischa
 ! ----------------------------------------------------------------------
 !
     call jemarq()
-    call infdbg('MECA_NON_LINE', ifm, niv)
+    call infdbg('MECANONLINE', ifm, niv)
 !
 ! --- OPERATEUR APPELANT (STATIQUE OU DYNAMIQUE)
 !
