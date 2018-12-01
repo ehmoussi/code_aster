@@ -228,7 +228,7 @@ class TemplateElement(Element):
                      (OP.CHAR_MECA_CONT.PSEUIL, LC.E1NEUTR), (OP.CHAR_MECA_CONT.PSTANO, STANO_I),
                      (SP.PINSTMR, CTEMPSR), (SP.PINSTPR, CTEMPSR), (OP.CHAR_MECA_CONT.PCOMPOR, LC.CCOMPOR),
                      (SP.PCARCRI, LC.CCARCRI), (OP.CHAR_MECA_CONT.PHEA_NO, LC.N5NEUTI), ),
-            para_out=((SP.PVECTUR, MVECTUR), ),
+            para_out=((SP.PVECTCR, MVECTUR), (SP.PVECTFR, MVECTUR),),
         ),
 
         OP.CHAR_MECA_CONT_M(te=557,
@@ -241,7 +241,7 @@ class TemplateElement(Element):
                      (OP.CHAR_MECA_CONT_M.PSEUIL, LC.E1NEUTR), (OP.CHAR_MECA_CONT_M.PSTANO, STANO_I),
                      (SP.PINSTMR, CTEMPSR), (SP.PINSTPR, CTEMPSR), (OP.CHAR_MECA_CONT_M.PCOMPOR, LC.CCOMPOR),
                      (SP.PCARCRI, LC.CCARCRI), (OP.CHAR_MECA_CONT_M.PHEA_NO, LC.N5NEUTI), ),
-            para_out=((SP.PVECTUR, MVECTUR), ),
+            para_out=((SP.PVECTCR, MVECTUR), (SP.PVECTFR, MVECTUR),),
         ),
 
         OP.FULL_MECA(te=588,

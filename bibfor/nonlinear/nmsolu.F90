@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,12 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmsolu(sddyna, solalg)
-!
 ! person_in_charge: mickael.abbas at edf.fr
 !
-    implicit none
+subroutine nmsolu(sddyna, solalg)
+!
+implicit none
+!
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterfort/assert.h"
@@ -32,8 +32,10 @@ subroutine nmsolu(sddyna, solalg)
 #include "asterfort/nmchex.h"
 #include "asterfort/nmdebg.h"
 #include "asterfort/nmincr.h"
-    character(len=19) :: sddyna
-    character(len=19) :: solalg(*)
+#include "asterfort/utmess.h"
+!
+character(len=19) :: sddyna
+character(len=19) :: solalg(*)
 !
 ! ----------------------------------------------------------------------
 !
@@ -61,13 +63,9 @@ subroutine nmsolu(sddyna, solalg)
 ! ----------------------------------------------------------------------
 !
     call jemarq()
-    call infdbg('MECA_NON_LINE', ifm, niv)
-!
-! --- AFFICHAGE
-!
+    call infdbg('MECANONLINE', ifm, niv)
     if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE> CONVERSION DES INCREMENTS '//&
-        'SUIVANT SCHEMA'
+        call utmess('I', 'MECANONLINE13_45')
     endif
 !
 ! --- FONCTIONNALITES ACTIVEES
@@ -110,18 +108,15 @@ subroutine nmsolu(sddyna, solalg)
 ! --- AFFICHAGE
 !
     if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE> INCR. DEPL. SOLU. (1) : '
+        call utmess('I', 'MECANONLINE13_46')
         call nmdebg('VECT', deppr1, ifm)
-        write (ifm,*) '<MECANONLINE> INCR. DEPL. SOLU. (2) : '
         call nmdebg('VECT', deppr2, ifm)
         if (ldyna) then
-            write (ifm,*) '<MECANONLINE> INCR. VITE. SOLU. (1) : '
+            call utmess('I', 'MECANONLINE13_47')
             call nmdebg('VECT', vitpr1, ifm)
-            write (ifm,*) '<MECANONLINE> INCR. VITE. SOLU. (2) : '
             call nmdebg('VECT', vitpr2, ifm)
-            write (ifm,*) '<MECANONLINE> INCR. ACCE. SOLU. (1) : '
+            call utmess('I', 'MECANONLINE13_48')
             call nmdebg('VECT', accpr1, ifm)
-            write (ifm,*) '<MECANONLINE> INCR. ACCE. SOLU. (2) : '
             call nmdebg('VECT', accpr2, ifm)
         endif
     endif

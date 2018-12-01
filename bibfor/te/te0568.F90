@@ -59,7 +59,7 @@ character(len=16), intent(in) :: nomte
     real(kind=8) :: elem_mast_init(27), elem_slav_init(27)
     real(kind=8) :: elem_mast_coop(27), elem_slav_coop(27)
     character(len=8) :: elga_fami_slav, elga_fami_mast 
-    real(kind=8) :: vtmp(55), vtmp_prev(55), vtmp_(55)
+    real(kind=8) :: vcont(55), vcont_prev(55), vcont_(55)
     real(kind=8) :: gap_curr,gap_prev
     aster_logical :: l_previous
     real(kind=8) :: alpha, max_value
@@ -70,8 +70,8 @@ character(len=16), intent(in) :: nomte
 !
 ! - Initializations
 !
-    vtmp(1:55)           = 0.d0
-    vtmp_prev(1:55)      = 0.d0
+    vcont(1:55)           = 0.d0
+    vcont_prev(1:55)      = 0.d0
     elem_mast_coor(1:27) = 0.d0
     elem_slav_coor(1:27) = 0.d0
     elem_mast_coop(1:27) = 0.d0
@@ -130,10 +130,10 @@ character(len=16), intent(in) :: nomte
                     nb_lagr     , indi_lagc     , lagrc         ,&
                     nb_node_slav, elem_slav_code, elem_slav_init, elga_fami_slav, elem_slav_coor,&
                     nb_node_mast, elem_mast_code, elem_mast_init, elga_fami_mast, elem_mast_coor,&
-                    vtmp)
+                    vcont)
         if (l_previous) then 
             call lcsena(elem_dime, nb_lagr, nb_node_slav, indi_lagc, &
-                        lagrc_prev    , vtmp_prev)
+                        lagrc_prev    , vcont_prev)
             if ((abs(lagrc_prev+100.d0*gap_prev)+abs(lagrc+100.d0*gap_curr)) .gt. 1.d-6 ) then
                 alpha = 1.0-abs(lagrc+100.d0*gap_curr)/&
                         (abs(lagrc_prev+100.d0*gap_prev)+abs(lagrc+100.d0*gap_curr))
@@ -143,20 +143,20 @@ character(len=16), intent(in) :: nomte
             alpha = max(alpha,max_value)
             52 continue
             alpha = 0.5*(alpha+1.0)
-            vtmp_ = alpha*vtmp+(1-alpha)*vtmp_prev
-            if ( norm2(vtmp -vtmp) .gt. 1.d-12*norm2(vtmp) ) goto 52
+            vcont_ = alpha*vcont+(1-alpha)*vcont_prev
+            if ( norm2(vcont -vcont) .gt. 1.d-12*norm2(vcont) ) goto 52
 
         endif
     elseif (indi_cont .eq. 0) then
         call lcsena(elem_dime, nb_lagr, nb_node_slav, indi_lagc, &
-                    lagrc    , vtmp)
+                    lagrc    , vcont)
         if (l_previous) then 
         call lcvect(elem_dime   ,&
                     l_axis      , l_upda_jaco   , l_norm_smooth ,&
                     nb_lagr     , indi_lagc     , lagrc         ,&
                     nb_node_slav, elem_slav_code, elem_slav_init, elga_fami_slav, elem_slav_coop,&
                     nb_node_mast, elem_mast_code, elem_mast_init, elga_fami_mast, elem_mast_coop,&
-                    vtmp_prev)
+                    vcont_prev)
             if ((abs(lagrc_prev+100.d0*gap_prev)+abs(lagrc+100.d0*gap_curr)) .gt. 1.d-6 ) then
                 alpha = 1.0-abs(lagrc+100.d0*gap_curr)/&
                         (abs(lagrc_prev+100.d0*gap_prev)+abs(lagrc+100.d0*gap_curr))
@@ -166,8 +166,8 @@ character(len=16), intent(in) :: nomte
             alpha = max(alpha,max_value)
             51 continue
             alpha = 0.5*(alpha+1.0)
-            vtmp_ = alpha*vtmp+(1-alpha)*vtmp_prev
-            if ( norm2(vtmp -vtmp) .gt. 1.d-12*norm2(vtmp) ) goto 51
+            vcont_ = alpha*vcont+(1-alpha)*vcont_prev
+            if ( norm2(vcont -vcont) .gt. 1.d-12*norm2(vcont) ) goto 51
         endif
     else
 !
@@ -175,9 +175,9 @@ character(len=16), intent(in) :: nomte
 !
 ! - Write vector
 !
-    call jevech('PVECTUR', 'E', jvect)
+    call jevech('PVECTCR', 'E', jvect)
     do i = 1, nb_dof
-        zr(jvect-1+i) = vtmp(i)
+        zr(jvect-1+i) = vcont(i)
     end do
 !
     call jedema()

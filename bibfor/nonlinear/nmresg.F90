@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,12 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmresg(numedd, sddyna, instap, cndonn, accsol)
-!
 ! person_in_charge: mickael.abbas at edf.fr
 !
-    implicit none
+subroutine nmresg(numedd, sddyna, instap, cndonn, accsol)
+!
+implicit none
+!
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterfort/assert.h"
@@ -37,19 +37,19 @@ subroutine nmresg(numedd, sddyna, instap, cndonn, accsol)
 #include "asterfort/nmdebg.h"
 #include "asterfort/vtzero.h"
 #include "blas/ddot.h"
-    real(kind=8) :: instap
-    character(len=19) :: cndonn, sddyna
-    character(len=24) :: numedd
-    character(len=19) :: accsol
 !
-! ----------------------------------------------------------------------
+real(kind=8) :: instap
+character(len=19) :: cndonn, sddyna
+character(len=24) :: numedd
+character(len=19) :: accsol
+!
+! --------------------------------------------------------------------------------------------------
 !
 ! ROUTINE MECA_NON_LINE (ALGORITHME - CALCUL)
 !
 ! RESOLUTION SUR DDLS GENERALISES
 !
-! ----------------------------------------------------------------------
-!
+! --------------------------------------------------------------------------------------------------
 !
 ! IN  INSTAP : INSTANT COURANT
 ! IN  NUMEDD : NUME_DDL
@@ -57,8 +57,7 @@ subroutine nmresg(numedd, sddyna, instap, cndonn, accsol)
 ! IN  SDDYNA : SD DEDIEE A LA DYNAMIQUE
 ! I/O ACCSOL : ACCELERATION CALCULEE
 !
-!
-!
+! --------------------------------------------------------------------------------------------------
 !
     integer :: ier
     integer :: ifonc, imode, imode2
@@ -77,13 +76,10 @@ subroutine nmresg(numedd, sddyna, instap, cndonn, accsol)
     integer :: jacccn
     integer :: ifm, niv
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
     call jemarq()
-    call infdbg('MECA_NON_LINE', ifm, niv)
-!
-! --- AFFICHAGE
-!
+    call infdbg('MECANONLINE', ifm, niv)
     if (niv .ge. 2) then
         write (ifm,*) '<MECANONLINE><RESO> RESOLUTION SUR BASE MODALE'
     endif

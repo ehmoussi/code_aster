@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine mmlige(mesh        , ds_contact, &
                   nb_cont_pair, v_list_pair,&
                   nb_type     , v_list_type,&
@@ -43,17 +44,16 @@ implicit none
 #include "asterfort/mmelem_data_c.h"
 #include "asterfort/mmelem_data_l.h"
 #include "asterfort/mminfl.h"
+#include "asterfort/utmess.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=8), intent(in) :: mesh
-    type(NL_DS_Contact), intent(in) :: ds_contact
-    integer, intent(out) :: nb_cont_pair
-    integer, pointer :: v_list_pair(:)
-    integer, intent(out) :: nb_type
-    integer, pointer :: v_list_type(:)
-    integer, intent(out) :: nt_node
-    integer, intent(out) :: nb_grel
+character(len=8), intent(in) :: mesh
+type(NL_DS_Contact), intent(in) :: ds_contact
+integer, intent(out) :: nb_cont_pair
+integer, pointer :: v_list_pair(:)
+integer, intent(out) :: nb_type
+integer, pointer :: v_list_type(:)
+integer, intent(out) :: nt_node
+integer, intent(out) :: nb_grel
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -85,12 +85,12 @@ implicit none
     integer :: i_cont_pair, i_cont_type, i_cont_poin, i_zone, i_elem_slav
     integer :: nb_node_elem, nb_cont_poin, nb_elem_slav
     integer :: elem_mast_nume, elem_slav_nume
-    integer :: model_ndim
+    integer :: model_ndim, vali(6)
     integer :: typg_cont_nume, elem_indx, typf_cont_nume, typf_frot_nume, typf_slav_nume
     character(len=19) :: ligrel_elem_slav
     integer :: typg_slav_nume, typg_mast_nume
     character(len=8) :: typg_slav_name, typg_mast_name, elem_slav_name, elem_mast_name
-    character(len=16) :: typf_slav_name, typg_cont_name,typf_cont_name
+    character(len=16) :: typf_slav_name, typg_cont_name,typf_cont_name, valk(6)
     character(len=24) :: linuma = '&&MMLIGE.LINUMA'
     integer, pointer :: v_linuma(:) => null()
     character(len=24) :: linute = '&&MMLIGE.LINUTE'
@@ -161,10 +161,10 @@ implicit none
 !
     nb_cont_pair = ds_contact%nb_cont_pair
 !
-! - Print
+! - Display
 !
     if (niv .ge. 2) then
-        write (ifm,*) '<CONTACT> ... Total number of contact elements :', nb_cont_pair
+        call utmess('I', 'CONTACT5_23', si = nb_cont_pair)
     endif
 !
 ! - Total number of contact elements defined
@@ -239,10 +239,17 @@ implicit none
         if (niv .ge. 2) then
             call jenuno(jexnum('&CATA.TM.NOMTM', typg_cont_nume), typg_cont_name)
             call jenuno(jexnum('&CATA.TE.NOMTE', typf_cont_nume), typf_cont_name)
-            WRITE(6,*) 'MMLIGE: ',i_cont_pair
-            WRITE(6,*) 'MMLIGE - Master  : ',elem_mast_nume, elem_mast_name, typg_mast_name
-            WRITE(6,*) 'MMLIGE - Slave   : ',elem_slav_nume, elem_slav_name, typg_slav_name
-            WRITE(6,*) 'MMLIGE - Contact : ',nb_node_elem  , typg_cont_name, typf_cont_name
+            vali(1) = i_cont_pair
+            vali(2) = nb_node_elem
+            vali(3) = elem_mast_nume
+            vali(4) = elem_slav_nume
+            valk(1) = typg_cont_name
+            valk(2) = typf_cont_name
+            valk(3) = elem_mast_name
+            valk(4) = typg_mast_name
+            valk(5) = elem_slav_name
+            valk(6) = typg_slav_name
+            call utmess('I', 'CONTACT5_24', ni = 4, vali = vali, nk=6, valk=valk)
         endif
 !
 ! ----- Save contact/friction element geometry parameters
@@ -275,8 +282,11 @@ implicit none
         nt_node = nt_node + &
                   (v_list_type(5*(elem_indx-1)+1)+v_list_type(5*(elem_indx-1)+2))*(nb_node_elem)
     end do
+!
+! - Display
+!
     if (niv .ge. 2) then
-        write (ifm,*) '<CONTACT> ... Total number of nodes (slave+master) :', nt_node
+        call utmess('I', 'CONTACT5_25', si = nt_node)
     endif
 !
 ! - Number of groups of elements (GREL)

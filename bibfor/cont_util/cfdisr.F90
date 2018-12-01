@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 function cfdisr(sdcont_defi_, question_)
 !
 implicit none
@@ -24,11 +25,9 @@ implicit none
 #include "asterfort/jeveuo.h"
 #include "asterfort/mminfr.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    real(kind=8) :: cfdisr
-    character(len=*), intent(in) :: sdcont_defi_
-    character(len=*), intent(in) :: question_
+real(kind=8) :: cfdisr
+character(len=*), intent(in) :: sdcont_defi_
+character(len=*), intent(in) :: question_
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -54,9 +53,9 @@ implicit none
     question    = question_
     cfdisr      = 0.d0
 !
-! - Access to datastructure
+! - Access to contact datastructure
 !
-    sdcont_paracr = sdcont_defi(1:16)//'.PARACR'
+    sdcont_paracr = sdcont_defi(1:8)//'.PARACR'
     call jeveuo(sdcont_paracr, 'L', vr = v_sdcont_paracr)
 !
 ! - Get parameter
@@ -76,9 +75,10 @@ implicit none
     else if (question.eq.'PROJ_NEWT_RESI') then
         cfdisr = 1d-4
     else if (question.eq.'PENE_MAXI') then
-     cfdisr = v_sdcont_paracr(6)
-!     if (nint(cfdisr) .eq. -1) cfdisr = 1.d-2 --> do not work on 32-bits machine
-     if (cfdisr .le. 0.d0) cfdisr = 1.d-2
+        cfdisr = v_sdcont_paracr(6)
+        if (cfdisr .le. 0.d0) then
+            cfdisr = 1.d-2
+        endif
     else
         write(6,*) 'QUESTION: ',question
         ASSERT(.false.)

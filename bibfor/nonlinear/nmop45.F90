@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -28,7 +28,6 @@ implicit none
 #include "asterfort/detrsd.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/elmddl.h"
-#include "asterfort/infdbg.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jedetr.h"
 #include "asterfort/jelira.h"
@@ -73,7 +72,7 @@ integer, optional, intent(out) :: nfreq_calibr_
     parameter (nbpari=8,nbparr=16,nbpark=3)
 !
     integer           :: iret, ibid, npivot, neqact, mxresf, nblagr,nbddl, nbddl2, un, lresur
-    integer           :: nconv, ifm, niv, neq, lraide, eddl, eddl2, jstab, iauxr
+    integer           :: nconv, neq, lraide, eddl, eddl2, jstab, iauxr
     integer           :: nsta, nddle, nfreq_calibr
     real(kind=8)      :: omemin, omemax, omeshi, vpinf, vpmax, r8bid, csta
     complex(kind=8)   :: cbid
@@ -89,7 +88,6 @@ integer, optional, intent(out) :: nfreq_calibr_
 !
 ! DIVERS
     call jemarq()
-    call infdbg('MECA_NON_LINE', ifm, niv)
     cbid=(0.d0,0.d0)
     nconv=0 
     nsta  = 0
@@ -277,9 +275,5 @@ integer, optional, intent(out) :: nfreq_calibr_
     endif      
 !
     call jedema()
-!
-!     ------------------------------------------------------------------
-!
-!     FIN DE NMOP45
 !
 end subroutine

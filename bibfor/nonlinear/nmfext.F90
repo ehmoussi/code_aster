@@ -40,6 +40,7 @@ implicit none
 #include "asterfort/nmdebg.h"
 #include "asterfort/vtaxpy.h"
 #include "asterfort/vtzero.h"
+#include "asterfort/utmess.h"
 !
 real(kind=8) :: eta
 integer :: fonact(*)
@@ -77,12 +78,9 @@ character(len=19) :: cnfext
 ! --------------------------------------------------------------------------------------------------
 !
     call jemarq()
-    call infdbg('MECA_NON_LINE', ifm, niv)
-!
-! --- AFFICHAGE
-!
+    call infdbg('MECANONLINE', ifm, niv)
     if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE> CALCUL DES FORCES EXTERNES'
+        call utmess('I', 'MECANONLINE13_44')
     endif
 !
 ! --- FONCTIONNALITES ACTIVEES

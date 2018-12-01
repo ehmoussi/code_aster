@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,13 +15,13 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine ndxdep(numedd, fonact, numins, sddisc, sddyna,&
                   sdnume, valinc, solalg, veasse)
 !
-! person_in_charge: mickael.abbas at edf.fr
+implicit none
 !
-    implicit none
 #include "jeveux.h"
 #include "asterfort/copisd.h"
 #include "asterfort/diinst.h"
@@ -33,12 +33,13 @@ subroutine ndxdep(numedd, fonact, numins, sddisc, sddyna,&
 #include "asterfort/nmfext.h"
 #include "asterfort/nmmajc.h"
 #include "asterfort/nmsolu.h"
-    integer :: fonact(*)
-    integer :: numins
-    character(len=19) :: sddisc, sdnume, sddyna
-    character(len=24) :: numedd
-    character(len=19) :: veasse(*)
-    character(len=19) :: solalg(*), valinc(*)
+!
+integer :: fonact(*)
+integer :: numins
+character(len=19) :: sddisc, sdnume, sddyna
+character(len=24) :: numedd
+character(len=19) :: veasse(*)
+character(len=19) :: solalg(*), valinc(*)
 !
 ! ----------------------------------------------------------------------
 !
@@ -75,10 +76,7 @@ subroutine ndxdep(numedd, fonact, numins, sddisc, sddyna,&
 ! ----------------------------------------------------------------------
 !
     call jemarq()
-    call infdbg('MECA_NON_LINE', ifm, niv)
-!
-! --- AFFICHAGE
-!
+    call infdbg('MECANONLINE', ifm, niv)
     if (niv .ge. 2) then
         write (ifm,*) '<MECANONLINE> CORRECTION INCR. DEPL.'
     endif

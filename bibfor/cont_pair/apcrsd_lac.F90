@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine apcrsd_lac(ds_contact  , sdappa      , mesh        ,&
                       nt_poin     , nb_cont_elem, nb_cont_node,&
                       nt_elem_node, nb_node_mesh)
@@ -27,7 +28,6 @@ implicit none
 #include "asterfort/assert.h"
 #include "asterfort/apcinv.h"
 #include "asterfort/gtlima.h"
-#include "asterfort/infdbg.h"
 #include "asterfort/jecrec.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jeecra.h"
@@ -41,16 +41,14 @@ implicit none
 #include "asterfort/jeveuo.h"
 #include "asterfort/jelira.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    type(NL_DS_Contact), intent(in) :: ds_contact
-    character(len=19), intent(in) :: sdappa
-    character(len=8), intent(in) :: mesh
-    integer, intent(in) :: nt_poin
-    integer, intent(in) :: nb_cont_elem
-    integer, intent(in) :: nb_cont_node
-    integer, intent(in) :: nt_elem_node
-    integer, intent(in) :: nb_node_mesh
+type(NL_DS_Contact), intent(in) :: ds_contact
+character(len=19), intent(in) :: sdappa
+character(len=8), intent(in) :: mesh
+integer, intent(in) :: nt_poin
+integer, intent(in) :: nb_cont_elem
+integer, intent(in) :: nb_cont_node
+integer, intent(in) :: nt_elem_node
+integer, intent(in) :: nb_node_mesh
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -71,7 +69,6 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: ifm, niv
     integer :: nt_patch, nb_cont_zone, nb_elem, nb_elem_patch
     integer :: i_elem, i_zone, i_cont_elem
     character(len=16) :: sdcont_defi
@@ -126,10 +123,6 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
     call jemarq()
-    call infdbg('APPARIEMENT', ifm, niv)
-    if (niv .ge. 2) then
-        write (ifm,*) '<PAIRING> Create datastructure'
-    endif
 !
 ! - Get parameters
 !
@@ -217,26 +210,18 @@ implicit none
     sdappa_poid = sdappa(1:19)//'.POID'
     call wkvect(sdappa_poid, 'V V R', nt_patch, vr = v_sdappa_coef)
     call wkvect(sdappa_coef, 'V V R', nt_patch, vr = v_sdappa_poid)
-    
-
-
+!
 ! - Datastructures for adaptation rho_n
- 
+!
     sdappa_gpre = sdappa(1:19)//'.GPRE'
     call wkvect(sdappa_gpre, 'V V R', nt_patch, vr = v_sdappa_gpre)
-
-
 !
 ! - Loop on contact zones
 !
     do i_zone = 1, nb_cont_zone
-!
 ! ----- Create list of elements for current contact zone
-!
         call gtlima(sdappa, ds_contact%sdcont_defi, i_zone)
-!
 ! ----- Create objects for inverse connectivity
-!
         if (pair_method(1:4).eq.'PANG') then
             call apcinv(mesh, sdappa, i_zone)
         endif

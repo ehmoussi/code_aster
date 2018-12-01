@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -82,7 +82,7 @@ subroutine sschge(nomacr)
     nomo= refm(1)
     materi = refm(3)
     if (materi .ne. '        ') then
-        call rcmfmc(materi, mate)
+        call rcmfmc(materi, mate, l_ther_ = ASTER_FALSE)
     else
         mate = ' '
     endif

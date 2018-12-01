@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -71,7 +71,8 @@ implicit none
     character(len=16) :: repons
     character(len=19) :: knum
     character(len=8) :: crit
-    aster_logical :: lrdm, lmater
+    character(len=4) :: phen
+    aster_logical :: lrdm, lmater, l_ther
     integer :: lfour
     integer, pointer :: v_list_store(:) => null()
 !
@@ -94,6 +95,11 @@ implicit none
         call getvid(' ', 'MODELE', scal=modele, nbret=n1)
         if (n1 .eq. 0) then
             call utmess('F', 'POSTELEM_20')
+        endif
+        call dismoi('PHENOMENE', modele, 'MODELE', repk=phen)
+        l_ther = ASTER_FALSE
+        if (phen .eq. 'THERM') then
+            l_ther = ASTER_TRUE
         endif
         call dismoi('EXI_RDM', modele, 'MODELE', repk=repons)
         lrdm = repons.eq.'OUI'
@@ -156,7 +162,7 @@ implicit none
 !
     if (present(mate)) then
         mate = ' '
-        if (materi .ne. ' ') call rcmfmc(materi, mate)
+        if (materi .ne. ' ') call rcmfmc(materi, mate, l_ther_ = l_ther)
     endif
 !
 ! --- CARA_ELEM SI NECESSAIRE

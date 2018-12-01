@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,33 +15,36 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine xtedd2(ndim, jnne, ndeple, jnnm, nddl,&
                   option, lesclx, lmaitx, lcontx, stano,&
                   lact, jddle, jddlm, nfhe, nfhm,&
                   lmulti, heavno, mmat, vtmp)
 !
-! person_in_charge: patrick.massin at edf.fr
+implicit none
+!
+#include "asterf_types.h"
+#include "jeveux.h"
+#include "asterfort/assert.h"
+#include "asterfort/indent.h"
+#include "asterfort/is_enr_line.h"
+!
+integer, intent(in) :: ndim, jnnm(3), nddl, stano(*), lact(8)
+character(len=16), intent(in) :: option
+aster_logical, intent(in) :: lesclx, lmaitx, lcontx, lmulti
+integer, intent(in) :: jnne(3), ndeple, jddle(2)
+integer, intent(in) :: jddlm(2), nfhe, nfhm, heavno(8)
+real(kind=8), optional, intent(out) :: mmat(336, 336)
+real(kind=8), optional, intent(out) :: vtmp(336)
+!
+! --------------------------------------------------------------------------------------------------
 !
 !     BUT: SUPPRIMER LES DDLS "EN TROP" (VOIR BOOK III 09/06/04
 !     ET  BOOK IV  30/07/07) POUR LE CONTACT XFEM GRAND GLISSEMENT
 !
 !     TRAVAIL EFFECTUE EN COLLABORATION AVEC I.F.P.
 !
-    implicit none
-#include "asterf_types.h"
-#include "jeveux.h"
-!
-#include "asterfort/assert.h"
-#include "asterfort/indent.h"
-#include "asterfort/is_enr_line.h"
-    integer, intent(in) :: ndim, jnnm(3), nddl, stano(*), lact(8)
-    character(len=16), intent(in) :: option
-    aster_logical, intent(in) :: lesclx, lmaitx, lcontx, lmulti
-    integer, intent(in) :: jnne(3), ndeple, jddle(2)
-    integer, intent(in) :: jddlm(2), nfhe, nfhm, heavno(8)
-    real(kind=8), optional, intent(out) :: mmat(336, 336)
-    real(kind=8), optional, intent(out) :: vtmp(336)
+! --------------------------------------------------------------------------------------------------
 !
 ! IN   NDIM   : DIMENSION DE L'ESPACE
 ! IN   NNES   : NOMBRE DE NOEUDS SOMMETS DE LA MAILLE ESCLAVE
@@ -57,32 +60,25 @@ subroutine xtedd2(ndim, jnne, ndeple, jnnm, nddl,&
 ! IN/OUT  MAT : MATRICE DE RIGIDITÉ
 ! IN/OUT VECT : VECTEUR SECOND MEMBRE
 !
+! --------------------------------------------------------------------------------------------------
 !
-!
-!
-    integer :: i, j, nddle, in, nnes, nnem, ddles, ddlem, nnm, ddlmax
-    parameter     (ddlmax=336)
+    integer :: i, j, nddle, in, nnes, nnem, ddles, ddlem, nnm
+    integer, parameter :: ddlmax = 336
     integer :: ddlms, ddlmm, ifh, posddl(ddlmax)
     real(kind=8) :: dmax
     aster_logical :: lmat, lvec, lctlin
 !
-!----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
-!
-!-------------------------------------------------------------
-!   NOMS DES OPTIONS AUTORISEES
-!-------------------------------------------------------------
-!
-    lmat = .false.
-    lvec = .false.
-    lctlin=is_enr_line()
+    lmat   = .false.
+    lvec   = .false.
+    lctlin = is_enr_line()
 !
 !   OPTIONS RELATIVES A UNE MATRICE
-    if (option .eq. 'RIGI_CONT' .or. option .eq. 'RIGI_FROT') then
+    if (option .eq. 'RIGI_CONT' ) then
         lmat = .true.
 !   OPTIONS RELATIVES A UN VECTEUR
-        elseif (     option .eq. 'CHAR_MECA_CONT'&
-            .or. option .eq. 'CHAR_MECA_FROT') then
+    elseif (option .eq. 'CHAR_MECA_CONT') then
         lvec = .true.
     else
         ASSERT(.false.)
@@ -101,8 +97,6 @@ subroutine xtedd2(ndim, jnne, ndeple, jnnm, nddl,&
         ASSERT(.false.)
     endif
 !
-!----------------------------------------------------------------------
-!
     nnes=jnne(2)
     nnem=jnne(3)
     nnm=jnnm(1)
@@ -115,92 +109,90 @@ subroutine xtedd2(ndim, jnne, ndeple, jnnm, nddl,&
 ! --- REMPLISSAGE DU VECTEUR POS : POSITION DES DDLS A SUPPRIMER
 !
     ASSERT(nddl.le.ddlmax)
-    do 9 i = 1, ddlmax
-        posddl(i)=0
-  9 end do
+    posddl(:) = 0
 !
     if (lesclx) then
-        do 10 i = 1, ndeple
+        do i = 1, ndeple
             call indent(i, ddles, ddlem, nnes, in)
 !
             if (stano(i) .eq. 1) then
 ! --- NOEUD HEAVISIDE, ON ELIMINE LES DDL CRACK-TIP
-                do 20 j = 1, ndim
-                    posddl(in+2*ndim+j)=1
- 20             continue
-            else if (abs(stano(i)).eq.2) then
-! --- NOEUD CRACK-TIP, ON ELIMINE LES DDL HEAVISIDE
-                do 30 j = 1, ndim
-                    posddl(in+ndim+j)=1
- 30             continue
-!           ON SUPPRIME LES DDLS VECTORIELS DES NOEUDS MILIEUX
-                if (i.gt.nnes.and.lctlin) then
                 do j = 1, ndim
                     posddl(in+2*ndim+j)=1
-                enddo
+                end do
+            else if (abs(stano(i)).eq.2) then
+! --- NOEUD CRACK-TIP, ON ELIMINE LES DDL HEAVISIDE
+                do j = 1, ndim
+                    posddl(in+ndim+j)=1
+                end do
+!           ON SUPPRIME LES DDLS VECTORIELS DES NOEUDS MILIEUX
+                if (i.gt.nnes.and.lctlin) then
+                    do j = 1, ndim
+                        posddl(in+2*ndim+j)=1
+                    enddo
                 endif
             else if (stano(i).eq.3) then
 !           ON SUPPRIME LES DDLS VECTORIELS DES NOEUDS MILIEUX
                 if (i.gt.nnes.and.lctlin) then
-                do j = 1, ndim
-                    posddl(in+2*ndim+j)=1
-                enddo
+                    do j = 1, ndim
+                        posddl(in+2*ndim+j)=1
+                    enddo
                 endif
             endif
- 10     continue
+        end do
     else
-        do 130 i = 1, ndeple
+        do i = 1, ndeple
             call indent(i, ddles, ddlem, nnes, in)
-            do 135 ifh = 1, nfhe
+            do ifh = 1, nfhe
                 if (stano(nfhe*(i-1)+ifh) .eq. 0) then
 ! --- DANS LE CAS DE MAILLE HEAVISIDE, ON ELIMINE LE DDL HEAVISIDE
-                    do 140 j = 1, ndim
+                    do j = 1, ndim
                         posddl(in+ndim*ifh+j)=1
-140                 continue
+                    end do
                 endif
-135         continue
-130     continue
+            end do
+        end do
     endif
     if (lmaitx) then
-        do 40 i = 1, nnm
+        do i = 1, nnm
             call indent(i, ddlms, ddlmm, nnm, in)
             in = in + nddle
             if (stano(ndeple+i) .eq. 1) then
 ! --- NOEUD HEAVISIDE, ON ELIMINE LES DDL CRACK-TIP
-                do 50 j = 1, ndim
+                do j = 1, ndim
                     posddl(in+2*ndim+j)=1
- 50             continue
+                end do
             else if (abs(stano(ndeple+i)).eq.2) then
 ! --- LE NOEUD EST CRACK-TIP, ON ELIMINE HEAVISIDE
-                do 60 j = 1, ndim
+                do j = 1, ndim
                     posddl(in+ndim+j)=1
- 60             continue
+                end do
             endif
- 40     continue
+        end do
     else
-        do 150 i = 1, nnm
+        do i = 1, nnm
             call indent(i, ddlms, ddlmm, nnm, in)
             in = in + nddle
-            do 155 ifh = 1, nfhm
+            do ifh = 1, nfhm
                 if (stano(nfhe*ndeple+nfhm*(i-1)+ifh) .eq. 0) then
 ! --- DANS LE CAS DE MAILLE HEAVISIDE, ON ELIMINE LE DDL HEAVISIDE
-                    do 160 j = 1, ndim
+                    do j = 1, ndim
                         posddl(in+ndim*ifh+j)=1
-160                 continue
+                    end do
                 endif
-155         continue
-150     continue
+            end do
+        end do
     endif
     if (lcontx) then
-        do 110 i = 1, nnes
+        do i = 1, nnes
             if (lact(i) .eq. 0) then
 ! --- CONTACT NON ACTIF POUR CE NOEUD, ON ELIMINE LES DDL DE CONTACT
-                do 120 j = 1, ndim
+                do j = 1, ndim
                     if (.not.lmulti) posddl(ddles*i-ndim+j)=1
                     if (lmulti) posddl(ddles*(i-1)+ndim*(nfhe+heavno(i)) +j)=1
-120             continue
+                end do
             endif
-110     continue
+        end do
     endif
 !
 ! --- POUR LES OPTIONS RELATIVES AUX MATRICES
@@ -211,27 +203,24 @@ subroutine xtedd2(ndim, jnne, ndeple, jnnm, nddl,&
 ! --- ET MISE A UN DES TERMES DIAGONAUX (I,I)
 !        DMIN=R8MAEM()
         dmax=1.d0
-!          DO 70 I = 1, NDDL
-!            DMAX = DMAX + ABS(MMAT(I,I))
-!  70      CONTINUE
-        do 80 i = 1, nddl
-            if (posddl(i) .eq. 0) goto 80
-            do 90 j = 1, nddl
+        do i = 1, nddl
+            if (posddl(i) .eq. 0) cycle
+            do j = 1, nddl
                 if (j .ne. i) then
                     mmat(i,j) = 0.d0
                     mmat(j,i) = 0.d0
                 endif
                 if (j .eq. i) mmat(i,j) = dmax
- 90         continue
- 80     continue
+            end do
+        end do
 !
 ! --- POUR LES OPTIONS RELATIVES AUX VECTEURS
     else if (lvec) then
 ! --- MISE A ZERO DES TERMES I
-        do 100 i = 1, nddl
-            if (posddl(i) .eq. 0) goto 100
+        do i = 1, nddl
+            if (posddl(i) .eq. 0) cycle
             vtmp(i) = 0.d0
-100     continue
+        end do
     endif
 !
 end subroutine

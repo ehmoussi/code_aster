@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -164,7 +164,7 @@ subroutine op0152()
         do 200 i = 1, nbmode
             do j=1,i
               kterm=kterm+1
-              zi4(jsmhc-1+kterm)=j
+              zi4(jsmhc-1+kterm)=int(j,4)
             end do
 200     continue
 
@@ -185,7 +185,7 @@ subroutine op0152()
 !
 !--------- RECUPERATION DU MATERIAU FLUIDE----------------------------
     if (n4 .ne. 0) then
-        call rcmfmc(materi, mate)
+        call rcmfmc(materi, mate, l_ther_ = ASTER_FALSE)
     else
         mate = ' '
     endif

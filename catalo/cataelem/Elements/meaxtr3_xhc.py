@@ -191,27 +191,7 @@ class MEAXTR3_XHC(Element):
                           (OP.CHAR_MECA_CONT.PSEUIL, LC.E1NEUTR), (
                           OP.CHAR_MECA_CONT.PSTANO, STANO_I),
                           ),
-                          para_out=((SP.PVECTUR, MVECTUR), ),
-                          ),
-
-        OP.CHAR_MECA_FROT(te=534,
-                          para_in=(
-                          (OP.CHAR_MECA_FROT.PAINTER, LC.E35NEUTR), (
-                          OP.CHAR_MECA_FROT.PBASECO, LC.E28NEUTR),
-                          (OP.CHAR_MECA_FROT.PCFACE, LC.E9NEUTI), (
-                          SP.PCOHES, LC.E3NEUTR),
-                          (SP.PDEPL_M, DDL_MECA), (SP.PDEPL_P, DDL_MECA),
-                          (SP.PDONCO, CONTX_R), (SP.PGEOMER, NGEOMER),
-                          (OP.CHAR_MECA_FROT.PHEA_NO, LC.N5NEUTI), (
-                          SP.PINDCOI, LC.I1NEUT_I),
-                          (OP.CHAR_MECA_FROT.PLONGCO, LC.E3NEUTI), (
-                          OP.CHAR_MECA_FROT.PLST, LC.N1NEUT_R),
-                          (SP.PMATERC, LC.CMATERC), (
-                          OP.CHAR_MECA_FROT.PPINTER, LC.E14NEUTR),
-                          (OP.CHAR_MECA_FROT.PSEUIL, LC.E1NEUTR), (
-                          OP.CHAR_MECA_FROT.PSTANO, STANO_I),
-                          ),
-                          para_out=((SP.PVECTUR, MVECTUR), ),
+                          para_out=((SP.PVECTCR, MVECTUR), (SP.PVECTFR, MVECTUR),),
                           ),
 
         OP.CHAR_MECA_PRES_F(te=37,
@@ -460,27 +440,6 @@ class MEAXTR3_XHC(Element):
                      para_out=(
                      (OP.RIGI_CONT.PCOHESO, LC.E3NEUTR), (SP.PMATUNS, MMATUNS),
                      (SP.PMATUUR, MMATUUR), ),
-                     ),
-
-        OP.RIGI_FROT(te=533,
-                     para_in=(
-                     (OP.RIGI_FROT.PAINTER, LC.E35NEUTR), (
-                     OP.RIGI_FROT.PBASECO, LC.E28NEUTR),
-                     (OP.RIGI_FROT.PCFACE, LC.E9NEUTI), (
-                     SP.PCOHES, LC.E3NEUTR),
-                     (SP.PDEPL_M, DDL_MECA), (SP.PDEPL_P, DDL_MECA),
-                     (SP.PDONCO, CONTX_R), (SP.PGEOMER, NGEOMER),
-                     (OP.RIGI_FROT.PHEA_NO, LC.N5NEUTI), (
-                     SP.PINDCOI, LC.I1NEUT_I),
-                     (OP.RIGI_FROT.PLONGCO, LC.E3NEUTI), (
-                     OP.RIGI_FROT.PLSN, LC.N1NEUT_R),
-                     (OP.RIGI_FROT.PLST, LC.N1NEUT_R), (
-                     SP.PMATERC, LC.CMATERC),
-                     (OP.RIGI_FROT.PPINTER, LC.E14NEUTR), (
-                     OP.RIGI_FROT.PSEUIL, LC.E1NEUTR),
-                     (OP.RIGI_FROT.PSTANO, STANO_I), ),
-                     para_out=((SP.PMATUNS, MMATUNS), (SP.PMATUUR, MMATUUR),
-                               ),
                      ),
 
         OP.RIGI_MECA_TANG(te=539,

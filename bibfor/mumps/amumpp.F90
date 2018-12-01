@@ -57,7 +57,7 @@ subroutine amumpp(option, nbsol, kxmps, ldist, type,&
 #include "asterfort/asmpi_comm_vect.h"
 #include "asterfort/assert.h"
 #include "asterfort/csmbgg.h"
-#include "asterfort/infniv.h"
+#include "asterfort/infdbg.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jedetr.h"
 #include "asterfort/jeexin.h"
@@ -111,7 +111,7 @@ subroutine amumpp(option, nbsol, kxmps, ldist, type,&
 !
 !-----------------------------------------------------------------------
     call jemarq()
-    call infniv(ifm, niv)
+    call infdbg('SOLVEUR',ifm, niv)
 !
 !     ------------------------------------------------
 !     INITS

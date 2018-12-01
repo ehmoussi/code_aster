@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,13 +15,13 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine nmchap(valinc, solalg, meelem, veelem, veasse,&
                   measse)
 !
-! person_in_charge: mickael.abbas at edf.fr
+implicit none
 !
-    implicit     none
 #include "asterfort/infdbg.h"
 #include "asterfort/nmch1p.h"
 #include "asterfort/nmch2p.h"
@@ -29,9 +29,10 @@ subroutine nmchap(valinc, solalg, meelem, veelem, veasse,&
 #include "asterfort/nmch4p.h"
 #include "asterfort/nmch5p.h"
 #include "asterfort/nmch6p.h"
-    character(len=19) :: veelem(*), meelem(*)
-    character(len=19) :: veasse(*), measse(*)
-    character(len=19) :: solalg(*), valinc(*)
+!
+character(len=19) :: veelem(*), meelem(*)
+character(len=19) :: veasse(*), measse(*)
+character(len=19) :: solalg(*), valinc(*)
 !
 ! ----------------------------------------------------------------------
 !
@@ -54,17 +55,6 @@ subroutine nmchap(valinc, solalg, meelem, veelem, veasse,&
 !
 ! ----------------------------------------------------------------------
 !
-    integer :: ifm, niv
-!
-! ----------------------------------------------------------------------
-!
-    call infdbg('MECA_NON_LINE', ifm, niv)
-!
-! --- AFFICHAGE
-!
-    if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE> ... CREATION VARIABLES CHAPEAUX'
-    endif
 !
 ! --- VARIABLE CHAPEAU POUR INCREMENTS VARIABLES
 !

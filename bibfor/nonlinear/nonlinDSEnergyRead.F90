@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -24,6 +24,7 @@ use NonLin_Datastructure_type
 implicit none
 !
 #include "asterfort/infniv.h"
+#include "asterfort/utmess.h"
 #include "asterc/getfac.h"
 !
 type(NL_DS_Energy), intent(inout) :: ds_energy
@@ -46,7 +47,7 @@ type(NL_DS_Energy), intent(inout) :: ds_energy
 !
     call infniv(ifm, niv)
     if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE> . Read parameters for energy parameters'
+        call utmess('I', 'MECANONLINE12_11')
     endif
 !
 ! - Activation ?

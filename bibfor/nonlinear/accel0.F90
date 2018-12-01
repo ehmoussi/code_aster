@@ -51,14 +51,13 @@ character(len=19) :: solalg(*), valinc(*)
 integer :: fonact(*)
 type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
 ! ROUTINE MECA_NON_LINE (DYNAMIQUE)
 !
 ! CALCUL DE L'ACCELERATION INITIALE
 !
-! ----------------------------------------------------------------------
-!
+! --------------------------------------------------------------------------------------------------
 !
 !     ==> ON SUPPOSE QUE LA VITESSE INITIALE EST NULLE
 !                    QUE LES DEPLACEMENTS IMPOSES SONT NULS
@@ -80,7 +79,7 @@ type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 ! IN  SOLALG : VARIABLE CHAPEAU POUR INCREMENTS SOLUTIONS
 ! In  ds_algopara      : datastructure for algorithm parameters
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
     integer :: neq
@@ -89,9 +88,9 @@ type(NL_DS_AlgoPara), intent(in) :: ds_algopara
     character(len=19) :: cncine, cncinx, cndonn, k19bla
     character(len=19) :: disp_prev, acce_prev
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
-    call infdbg('MECA_NON_LINE', ifm, niv)
+    call infdbg('MECANONLINE', ifm, niv)
     if (niv .ge. 2) then
         write (ifm,*) '<MECANONLINE> ... CALCUL DE L''ACCELERATION INITIALE'
     endif

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine nueqch(error, chamno, nume_node, cmp_name, nueq)
 !
 implicit none
@@ -26,13 +27,11 @@ implicit none
 #include "asterfort/as_allocate.h"
 #include "asterfort/as_deallocate.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=19), intent(in) :: chamno
-    character(len=1), intent(in) :: error
-    integer, intent(in) :: nume_node
-    character(len=8), intent(in) :: cmp_name
-    integer, intent(inout) :: nueq
+character(len=19), intent(in) :: chamno
+character(len=1), intent(in) :: error
+integer, intent(in) :: nume_node
+character(len=8), intent(in) :: cmp_name
+integer, intent(inout) :: nueq
 !
 ! ----------------------------------------------------------------------
 !
@@ -73,7 +72,9 @@ implicit none
 ! - Check
 !
     if (list_idx_dof(1).eq.0) then
-        call utmess(error, 'MECANONLINE5_50', sk = cmp_name)
+        if (error .ne. ' ') then
+            call utmess(error, 'MECANONLINE5_50', sk = cmp_name)
+        endif
     endif
 !
 ! - Copy

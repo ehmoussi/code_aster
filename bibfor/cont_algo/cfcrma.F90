@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,14 +15,13 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine cfcrma(neqmat, noma, resoco)
 !
+implicit none
 !
-    implicit none
 #include "jeveux.h"
 #include "asterfort/assert.h"
-#include "asterfort/infdbg.h"
 #include "asterfort/jecrec.h"
 #include "asterfort/jecroc.h"
 #include "asterfort/jedema.h"
@@ -33,9 +32,9 @@ subroutine cfcrma(neqmat, noma, resoco)
 #include "asterfort/utmess.h"
 #include "asterfort/wkvect.h"
 !
-    integer :: neqmat
-    character(len=8) :: noma
-    character(len=24) :: resoco
+integer :: neqmat
+character(len=8) :: noma
+character(len=24) :: resoco
 !
 ! ----------------------------------------------------------------------
 !
@@ -54,13 +53,11 @@ subroutine cfcrma(neqmat, noma, resoco)
 !
 !
 !
-!
-    integer :: ifm, niv
+
     integer :: vali(3)
     real(kind=8) :: tmax, tvala, tvmax, tv
     integer :: itbloc, hmax, ivala, ntblc, nblc, nbcol, tbmax
     character(len=19) :: stoc, macont
-    character(len=24) :: valk
     integer :: ieq, icol, icompt, iblc
     integer :: jschc, jscdi, jscbl, jscib, jscde
     integer :: jrefa, jlime
@@ -68,7 +65,6 @@ subroutine cfcrma(neqmat, noma, resoco)
 ! ----------------------------------------------------------------------
 !
     call jemarq()
-    call infdbg('CONTACT', ifm, niv)
 !
 ! --- TAILLE MAXI D'UN BLOC
 !
@@ -109,11 +105,10 @@ subroutine cfcrma(neqmat, noma, resoco)
 ! --- POUR CONTENIR AU MOINS LA DERNIERE COLONNE
 !
     if (hmax .gt. itbloc) then
-        vali (1) = itbloc
-        vali (2) = hmax
-        vali (3) = hmax/1024+1
-        valk = ' '
-        call utmess('F', 'ALGORITH12_41', sk=valk, ni=3, vali=vali)
+        vali(1) = itbloc
+        vali(2) = hmax
+        vali(3) = hmax/1024+1
+        call utmess('F', 'CONTACT_17', ni=3, vali=vali)
     endif
 !
 ! --- ON FAIT LA PREMIERE COLONNE (DU 1ER BLOC) A PART
@@ -169,18 +164,6 @@ subroutine cfcrma(neqmat, noma, resoco)
 !
     if (zi(jscdi-1+neqmat) .ge. tbmax) then
         tbmax = zi(jscdi-1+neqmat)
-    endif
-!
-! --- AFFICHAGES
-!
-    if (niv .ge. 2) then
-        write (ifm,*) '--- TAILLE MAXI DES BLOCS              : ',itbloc
-        write (ifm,*) '--- HAUTEUR MAXIMUM D''UNE COLONNE     : ',hmax
-        write (ifm,*) '--- TAUX DE VIDE MAXI DANS UN BLOC     : ',tvmax
-        write (ifm,*) '--- TAILLE MAXI UTILISEE POUR UN BLOC  : ',tbmax
-        write (ifm,*) '--- NOMBRE DE BLOCS UTILISES           : ',nblc
-        write (ifm,*) '--- TAUX DE VIDE PROVOQUANT ALARME     : ',tvala
-        write (ifm,*) '--- NOMBRE DE BLOCS ALARMANT           : ',ivala
     endif
 !
 ! --- CREATION .SCBL
@@ -242,13 +225,11 @@ subroutine cfcrma(neqmat, noma, resoco)
 !
 ! --- CREATION .UALF
 !
-    call jecrec(macont(1:19)//'.UALF', 'V V R', 'NU', 'DISPERSE', 'CONSTANT',&
-                nblc)
+    call jecrec(macont(1:19)//'.UALF', 'V V R', 'NU', 'DISPERSE', 'CONSTANT', nblc)
     call jeecra(macont(1:19)//'.UALF', 'LONMAX', ival=tbmax)
     do iblc = 1, nblc
         call jecroc(jexnum(macont(1:19)//'.UALF', iblc))
     end do
 !
-! ----------------------------------------------------------------------
     call jedema()
 end subroutine

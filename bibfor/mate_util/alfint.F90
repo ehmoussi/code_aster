@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,15 +15,14 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine alfint(chmatz   , imate, mate_namz, tdef, para_namz,&
-                  mate_nume, prec , func_name)
+!
+subroutine alfint(chmatz   , imate, mate_namz, tdef  , para_namz,&
+                  mate_nume, prec , func_name, l_ther)
 !
 implicit none
 !
 #include "jeveux.h"
 #include "asterf_types.h"
-#include "asterc/getres.h"
 #include "asterc/r8nnem.h"
 #include "asterfort/gettco.h"
 #include "asterfort/assert.h"
@@ -41,15 +40,15 @@ implicit none
 #include "asterfort/rccome.h"
 #include "asterfort/get_tref.h"
 !
-!
-    character(len=*), intent(in) :: chmatz
-    integer, intent(in) :: imate
-    character(len=*), intent(in) :: mate_namz
-    real(kind=8), intent(in) :: tdef
-    character(len=*), intent(in) :: para_namz
-    integer, intent(in) :: mate_nume
-    real(kind=8), intent(in) :: prec
-    character(len=19), intent(inout) :: func_name
+character(len=*), intent(in) :: chmatz
+integer, intent(in) :: imate
+character(len=*), intent(in) :: mate_namz
+real(kind=8), intent(in) :: tdef
+character(len=*), intent(in) :: para_namz
+integer, intent(in) :: mate_nume
+real(kind=8), intent(in) :: prec
+character(len=19), intent(inout) :: func_name
+aster_logical, intent(in) :: l_ther
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -72,9 +71,9 @@ implicit none
 !
     aster_logical :: l_thm, l_tref_is_nan, l_empty
     integer :: icodre(1),codret
-    character(len=8) :: k8dummy, chmate, mate_name, valk(2)
+    character(len=8) :: chmate, mate_name, valk(2)
     character(len=32) :: phenom
-    character(len=16) :: typres, nomcmd, para_name
+    character(len=16) :: typres, para_name
     character(len=19) :: chwork
     integer :: i, nbpts, jv_nomrc
     real(kind=8) :: undemi, tref, alfref(1), alphai, ti, tim1, tip1
@@ -92,10 +91,13 @@ implicit none
 !
 ! - Not for thermic
 !
-    call getres(k8dummy, k8dummy, nomcmd)
-    if (nomcmd(1:5) .eq. 'THER_') then
+    if (l_ther) then
         goto 100
     endif
+    !call getres(k8dummy, k8dummy, nomcmd)
+    !if (nomcmd(1:5) .eq. 'THER_') then
+    !    goto 100
+    !endif
 !
 ! - Get phenomen for material
 !

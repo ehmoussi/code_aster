@@ -236,9 +236,8 @@ implicit none
 
 
 !
-    call infniv(ifm, niv)
+    call infniv(ifm,niv)
     nume_ddl = nume_ddlz
-!ASSERT(.false.)
 !
 ! - Local mode
 !

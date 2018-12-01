@@ -18,7 +18,7 @@
 ! aslint: disable=W1504
 !
 interface
-    subroutine nmprca(modele, numedd         , numfix     , ds_material, carele    ,&
+    subroutine nmprca(mesh, modele, numedd         , numfix     , ds_material, carele    ,&
                       ds_constitutive, lischa     , ds_algopara, solveu    ,&
                       fonact, ds_print       , ds_measure , ds_algorom, sddisc     , numins    ,&
                       valinc, solalg         , matass     , maprec     , ds_contact,&
@@ -26,6 +26,7 @@ interface
                       depest, ldccvg         , faccvg     , rescvg)
         use NonLin_Datastructure_type
         use Rom_Datastructure_type
+        character(len=8), intent(in) :: mesh
         character(len=24) :: modele
         character(len=24) :: numedd
         character(len=24) :: numfix

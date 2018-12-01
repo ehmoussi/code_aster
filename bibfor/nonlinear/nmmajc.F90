@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,13 +15,13 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine nmmajc(fonact, sddyna, sdnume, deltat, numedd,&
                   valinc, solalg)
 !
-! person_in_charge: mickael.abbas at edf.fr
+implicit none
 !
-    implicit none
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterfort/assert.h"
@@ -41,11 +41,13 @@ subroutine nmmajc(fonact, sddyna, sdnume, deltat, numedd,&
 #include "asterfort/nmmaji.h"
 #include "asterfort/vtaxpy.h"
 #include "asterfort/vtzero.h"
-    integer :: fonact(*)
-    character(len=19) :: sdnume, sddyna
-    character(len=24) :: numedd
-    character(len=19) :: solalg(*), valinc(*)
-    real(kind=8) :: deltat
+#include "asterfort/utmess.h"
+!
+integer :: fonact(*)
+character(len=19) :: sdnume, sddyna
+character(len=24) :: numedd
+character(len=19) :: solalg(*), valinc(*)
+real(kind=8) :: deltat
 !
 ! ----------------------------------------------------------------------
 !
@@ -80,12 +82,9 @@ subroutine nmmajc(fonact, sddyna, sdnume, deltat, numedd,&
 ! ----------------------------------------------------------------------
 !
     call jemarq()
-    call infdbg('MECA_NON_LINE', ifm, niv)
-!
-! --- AFFICHAGE
-!
+    call infdbg('MECANONLINE', ifm, niv)
     if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE> MISE A JOUR DES INCONNUES'
+        call utmess('I', 'MECANONLINE13_56')
     endif
 !
 ! --- DECOMPACTION VARIABLES CHAPEAUX
@@ -212,18 +211,18 @@ subroutine nmmajc(fonact, sddyna, sdnume, deltat, numedd,&
 !
 999 continue
     if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE> ...... DEPPLU : '
+        call utmess('I', 'MECANONLINE13_57')
         call nmdebg('VECT', depplu, 6)
-        write (ifm,*) '<MECANONLINE> ...... DEPDEL : '
+        call utmess('I', 'MECANONLINE13_58')
         call nmdebg('VECT', depdel, 6)
         if (ldyna) then
-            write (ifm,*) '<MECANONLINE> ...... VITPLU : '
+            call utmess('I', 'MECANONLINE13_59')
             call nmdebg('VECT', vitplu, 6)
-            write (ifm,*) '<MECANONLINE> ...... VITDEL : '
+            call utmess('I', 'MECANONLINE13_60')
             call nmdebg('VECT', vitdel, 6)
-            write (ifm,*) '<MECANONLINE> ...... ACCPLU : '
+            call utmess('I', 'MECANONLINE13_61')
             call nmdebg('VECT', accplu, 6)
-            write (ifm,*) '<MECANONLINE> ...... ACCDEL : '
+            call utmess('I', 'MECANONLINE13_62')
             call nmdebg('VECT', accdel, 6)
         endif
     endif

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,16 +15,16 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: samuel.geniaut at edf.fr
+! aslint: disable=W1306
+!
 subroutine xteddl(ndim, nfh, nfe, ddls, nddl,&
                   nno, nnos, stano, lcontx, matsym,&
                   option, nomte, ddlm, nfiss, jfisno,&
                   mat, vect)
 !
-! person_in_charge: samuel.geniaut at edf.fr
+implicit none
 !
-! aslint: disable=W1306
-    implicit none
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterc/r8maem.h"
@@ -32,12 +32,16 @@ subroutine xteddl(ndim, nfh, nfe, ddls, nddl,&
 #include "asterfort/indent.h"
 #include "asterfort/teattr.h"
 #include "asterfort/is_enr_line.h"
-    integer, intent(in) :: ndim, nfh, nfe, ddls, nddl, nno, nnos, stano(*)
-    aster_logical, intent(in) :: matsym, lcontx
-    character(len=16), intent(in) :: option, nomte
-    integer, intent(in) :: ddlm, nfiss, jfisno
-    real(kind=8), optional, intent(inout) :: mat(*)
-    real(kind=8), optional, intent(out) :: vect(*)
+!
+integer, intent(in) :: ndim, nfh, nfe, ddls, nddl, nno, nnos, stano(*)
+aster_logical, intent(in) :: matsym, lcontx
+character(len=16), intent(in) :: option, nomte
+integer, intent(in) :: ddlm, nfiss, jfisno
+real(kind=8), optional, intent(inout) :: mat(*)
+real(kind=8), optional, intent(out) :: vect(*)
+!
+! --------------------------------------------------------------------------------------------------
+!
 !     BUT: SUPPRIMER LES DDLS "EN TROP" (VOIR BOOK III 09/06/04
 !                                         ET  BOOK IV  30/07/07)
 !
@@ -61,8 +65,7 @@ subroutine xteddl(ndim, nfh, nfe, ddls, nddl,&
 !
 ! IN   DDLM   : NOMBRE DE DDL (DEPL+CONTACT) A CHAQUE NOEUD MILIEU
 !
-!-----------------------------------------------------------------------
-!---------------- DECLARATION DES VARIABLES LOCALES  -------------------
+! --------------------------------------------------------------------------------------------------
 !
     integer :: ier, istatu, ino, k, i, j, ielim, in, ddlmax
     integer :: ifh, fisno(nno, nfiss)
@@ -72,34 +75,33 @@ subroutine xteddl(ndim, nfh, nfe, ddls, nddl,&
     aster_logical :: lelim, lmultc, lmat, lvec, lctlin
     real(kind=8) :: dmax, dmin, codia
 !
-!-------------------------------------------------------------
-!
-!
-!-------------------------------------------------------------
-!   NOMS DES OPTIONS AUTORISEES
-!-------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
     lmat = .false.
     lvec = .false.
     lctlin = is_enr_line()
 !
 !   OPTIONS RELATIVES A UNE MATRICE
-    if (option .eq. 'FULL_MECA' .or. option .eq. 'RIGI_MECA_GE' .or. option .eq.&
-        'RIGI_MECA_TANG' .or. option .eq. 'RIGI_MECA' .or. option .eq. 'RIGI_CONT' .or. option&
-        .eq. 'RIGI_FROT' .or. option .eq. 'MASS_MECA'&
-        .or. option .eq. 'RIGI_CONT_M') lmat = .true.
+    if (option .eq. 'FULL_MECA' .or. option .eq. 'RIGI_MECA_GE' .or.&
+        option .eq. 'RIGI_MECA_TANG' .or. option .eq. 'RIGI_MECA' .or.&
+        option .eq. 'RIGI_CONT' .or. option .eq. 'MASS_MECA'.or.&
+        option .eq. 'RIGI_CONT_M') then
+        lmat = .true.
+    endif
 !
 !   OPTIONS RELATIVES A UN VECTEUR
-    if (option .eq. 'FULL_MECA' .or. option .eq. 'RAPH_MECA' .or. option .eq. 'FORC_NODA' .or.&
-        option .eq. 'CHAR_MECA_PRES_R' .or. option .eq. 'CHAR_MECA_PRES_F' .or. option .eq.&
-        'CHAR_MECA_FR2D3D' .or. option .eq. 'CHAR_MECA_FR1D2D' .or. option .eq.&
-        'CHAR_MECA_FF2D3D' .or. option .eq. 'CHAR_MECA_FF1D2D' .or. option .eq.&
-        'CHAR_MECA_CONT' .or. option .eq. 'CHAR_MECA_FROT' .or. option .eq. 'CHAR_MECA_FR3D3D'&
-        .or. option .eq. 'CHAR_MECA_FR2D2D' .or. option .eq. 'CHAR_MECA_FF3D3D' .or. option&
-        .eq. 'CHAR_MECA_FF2D2D' .or. option .eq. 'CHAR_MECA_PESA_R' .or. option .eq.&
-        'CHAR_MECA_ROTA_R' .or. option .eq. 'CHAR_MECA_TEMP_R' .or. option .eq.&
-        'CHAR_MECA_EFON_R' .or. option .eq. 'CHAR_MECA_EFON_F'&
-        .or. option .eq. 'CHAR_MECA_CONT_M') lvec = .true.
+    if (option .eq. 'FULL_MECA' .or. option .eq. 'RAPH_MECA' .or.&
+        option .eq. 'FORC_NODA' .or. option .eq. 'CHAR_MECA_PRES_R' .or.&
+        option .eq. 'CHAR_MECA_PRES_F' .or. option .eq. 'CHAR_MECA_FR2D3D' .or.&
+        option .eq. 'CHAR_MECA_FR1D2D' .or. option .eq. 'CHAR_MECA_FF2D3D' .or.&
+        option .eq. 'CHAR_MECA_FF1D2D' .or. option .eq. 'CHAR_MECA_CONT' .or.&
+        option .eq. 'CHAR_MECA_FR3D3D' .or. option .eq. 'CHAR_MECA_FR2D2D' .or.&
+        option .eq. 'CHAR_MECA_FF3D3D' .or. option .eq. 'CHAR_MECA_FF2D2D' .or.&
+        option .eq. 'CHAR_MECA_PESA_R' .or. option .eq. 'CHAR_MECA_ROTA_R' .or.&
+        option .eq. 'CHAR_MECA_TEMP_R' .or. option .eq. 'CHAR_MECA_EFON_R' .or.&
+        option .eq. 'CHAR_MECA_EFON_F' .or. option .eq. 'CHAR_MECA_CONT_M') then
+        lvec = .true.
+    endif
 !
     ASSERT(lmat .or. lvec)
 !
@@ -301,7 +303,9 @@ subroutine xteddl(ndim, nfh, nfe, ddls, nddl,&
 !        MISE A ZERO DES TERMES I
 !
         do i = 1, nddl
-            if (posddl(i) .eq. 0) goto 199
+            if (posddl(i) .eq. 0) then
+                cycle
+            endif
             if (lmat) then
                 do j = 1, nddl
                     if (matsym) then
@@ -316,7 +320,6 @@ subroutine xteddl(ndim, nfh, nfe, ddls, nddl,&
                 enddo
             endif
             if (lvec) vect(i) = 0.d0
-199         continue
         enddo
 !
     endif

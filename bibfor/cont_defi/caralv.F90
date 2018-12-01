@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: ayaovi-dzifa.kudawoo at edf.fr
+!
 subroutine caralv(sdcont, nb_cont_zone, cont_form)
 !
 implicit none
@@ -27,11 +28,9 @@ implicit none
 #include "asterfort/mminfl.h"
 #include "asterfort/utmess.h"
 !
-! person_in_charge: ayaovi-dzifa.kudawoo at edf.fr
-!
-    character(len=8), intent(in) :: sdcont
-    integer, intent(in) :: cont_form
-    integer, intent(in) :: nb_cont_zone
+character(len=8), intent(in) :: sdcont
+integer, intent(in) :: cont_form
+integer, intent(in) :: nb_cont_zone
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -62,7 +61,7 @@ implicit none
 !
 ! - Datastructure for contact definition
 !
-    sdcont_paraci = sdcont_defi(1:16)//'.PARACI'
+    sdcont_paraci = sdcont(1:8)//'.PARACI'
     call jeveuo(sdcont_paraci, 'E', vi=v_sdcont_paraci)
 !
 ! - All zones are only contact verification ?
@@ -100,7 +99,7 @@ implicit none
 ! - At least one zone is contact verification ?
 !
     if ((cont_form .eq. 1).or.(cont_form .eq. 2)) then
-        l_exist = .false.
+        l_exist = ASTER_FALSE
         do i_zone = 1, nb_cont_zone
             l_verif = mminfl(sdcont_defi,'VERIF',i_zone)
             l_exist = l_exist.or.l_verif
@@ -113,7 +112,7 @@ implicit none
 ! - Penalization ? (non-symmetric matrix)
 !
     if ((cont_form .eq. 2) .or. (cont_form .eq. 3)) then
-        l_exist = .false.
+        l_exist = ASTER_FALSE
         do i_zone = 1, nb_cont_zone
             l_pena = (&
                     mminfl(sdcont_defi,'ALGO_CONT_PENA',i_zone) .or.&
@@ -146,7 +145,7 @@ implicit none
 ! - Bilateral contact ?
 !
     if (cont_form .eq. 2) then
-        l_exist = .false.
+        l_exist = ASTER_FALSE
         do i_zone = 1, nb_cont_zone
             l_glis_zone  = mminfl(sdcont_defi,'GLISSIERE_ZONE',i_zone)
             l_exist      = l_exist.or.l_glis_zone
@@ -159,7 +158,7 @@ implicit none
 ! - At least one zone with XFEM+CZM ?
 !
     if (cont_form .eq. 3) then
-        l_exist = .false.
+        l_exist = ASTER_FALSE
         do i_zone = 1, nb_cont_zone
             l_cont_xczm = mminfl(sdcont_defi,'CONT_XFEM_CZM',i_zone)
             l_exist     = l_exist.or.l_cont_xczm
@@ -172,7 +171,7 @@ implicit none
 ! - All zones ares CONTACT_INIT INTERPENETRE ?
 !
     if (cont_form .eq. 2) then
-        l_all = .true.
+        l_all = ASTER_TRUE
         do i_zone = 1, nb_cont_zone
             i_cont_init = mminfi(sdcont_defi,'CONTACT_INIT',i_zone)
             l_all       = l_all .and.(i_cont_init.eq.2)

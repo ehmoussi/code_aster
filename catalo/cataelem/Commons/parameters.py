@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -1607,8 +1607,13 @@ PVECTUC = OutputParameter(phys=PHY.VDEP_C, type='RESL',
                           comment="""""")
 
 PVECTUR = OutputParameter(phys=PHY.VDEP_R, type='RESL',
-                          comment=""" VECTEUR FORCES INTERNES + BT.LAMBDA
-""")
+                          comment="""""")
+
+PVECTCR = OutputParameter(phys=PHY.VDEP_R, type='RESL',
+                          comment="""Vector for contact""")
+
+PVECTFR = OutputParameter(phys=PHY.VDEP_R, type='RESL',
+                          comment="""Vector for friction""")
 
 PWEIBUL = OutputParameter(phys=PHY.WEIBULL, type='ELEM',
                           comment="""""")

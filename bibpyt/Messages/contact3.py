@@ -45,13 +45,9 @@ Le frottement n'est autorisé qu'avec une formulation pénalisée sur la partie 
   de contact
 """),
 
-    5 : _(u"""
-Il y a %(i1)d points initialement en contact et %(i2)d points exclus.
-"""),
+    5 : _(u"""   Il y a %(i1)d points initialement en contact et %(i2)d points exclus."""),
 
-    6 : _(u"""
-Il y a %(i1)d éléments initialement en contact.
-"""),
+    6 : _(u"""   Il y a %(i1)d éléments initialement en contact."""),
 
     15 : _(u"""
 La direction d'appariement fixe données par le vecteur DIRE_APPA est nulle !

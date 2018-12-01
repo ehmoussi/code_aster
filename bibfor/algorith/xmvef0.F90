@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -69,32 +69,30 @@ subroutine xmvef0(ndim, jnne, nnc,&
     nnes=jnne(2)
     ddles=jddle(1)
 !
-    do 100 i = 1, 2
-        tt(i) = 0.d0
-100 continue
+    tt(:) = 0.d0
 !
 ! --- CALCUL DE T.T
 !
-    do 200 i = 1, ndim
+    do i = 1, ndim
         t = dlagrf(1)*tau1(i)+dlagrf(2)*tau2(i)
         tt(1) = t*tau1(i)+tt(1)
         if (ndim .eq. 3) tt(2) = t*tau2(i)+tt(2)
-200 continue
+    end do
 !
 ! --------------------- CALCUL DE {L3_FROT}----------------------------
 !
-    do 500 i = 1, nnc
+    do i = 1, nnc
         call xplma2(ndim, nne, nnes, ddles, i,&
                     nfhe, pl)
         if (lmulti) pl = pl + (heavno(i)-1)*ndim
-        do 600 l = 1, ndim-1
+        do l = 1, ndim-1
             ii = pl+l
             if (lpenac) then
-                vtmp(ii)= jacobi*hpg*ffc(i)*tt(l)
+                vtmp(ii)= vtmp(ii)+jacobi*hpg*ffc(i)*tt(l)
             else
-                vtmp(ii)= jacobi*hpg*ffc(i)*tt(l)
+                vtmp(ii)= vtmp(ii)+jacobi*hpg*ffc(i)*tt(l)
             endif
-600     continue
-500 continue
+        end do
+    end do
 !
 end subroutine

@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine nmmatr(phasez, fonact    , lischa, numedd, sddyna,&
                   numins, ds_contact, meelem, measse, matass)
 !
@@ -37,26 +38,25 @@ implicit none
 #include "asterfort/nmasun.h"
 #include "asterfort/nmchex.h"
 #include "asterfort/lccmst.h"
+#include "asterfort/utmess.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
+character(len=*) :: phasez
+character(len=19) :: matass
+character(len=19) :: sddyna
+type(NL_DS_Contact), intent(in) :: ds_contact
+integer :: fonact(*)
+integer :: numins
+character(len=19) :: meelem(*), measse(*)
+character(len=24) :: numedd
+character(len=19) :: lischa
 !
-    character(len=*) :: phasez
-    character(len=19) :: matass
-    character(len=19) :: sddyna
-    type(NL_DS_Contact), intent(in) :: ds_contact
-    integer :: fonact(*)
-    integer :: numins
-    character(len=19) :: meelem(*), measse(*)
-    character(len=24) :: numedd
-    character(len=19) :: lischa
-!
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
 ! ROUTINE MECA_NON_LINE (ALGORITHME - CALCUL)
 !
 ! ASSEMBLAGE DE LA MATRICE GLOBALE
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
 ! IN  PHASE  : PHASE DE CALCUL
 !                'PREDICTION'
@@ -71,7 +71,7 @@ implicit none
 ! IN  MEELEM : VARIABLE CHAPEAU POUR NOM DES MATR_ELEM
 ! OUT MATASS : MATRICE ASSEMBLEE RESULTANTE
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
     aster_logical :: ldyna, lctcd, lexpl, lamor, l_neum_undead, lshima, lprem, l_cont_lac
@@ -88,11 +88,11 @@ implicit none
     character(len=19) :: rigid, masse, amort
     aster_logical :: lunil, l_unil_pena
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
-    call infdbg('MECA_NON_LINE', ifm, niv)
+    call infdbg('MECANONLINE', ifm, niv)
     if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE><CALC> CALCUL MATRICE GLOBALE'
+        call utmess('I', 'MECANONLINE13_41')
     endif
 !
 ! --- INITIALISATIONS

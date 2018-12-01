@@ -15,35 +15,27 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
+#include "asterf_types.h"
 !
 interface
-    subroutine mmmtuu(phasep,ndim  ,nne   ,nnm   ,mprojn, &
-              mprojt,wpg   ,ffe   ,ffm, &
-          jacobi,coefac,coefaf,coefff,rese  , &
-          nrese ,lambda,matree, &
-          matrmm, matrem, matrme)
-
-        character(len=9) :: phasep
-        integer :: ndim
-        integer :: nne
-        integer :: nnm
-        real(kind=8) :: mprojn(3, 3)
-        real(kind=8) :: mprojt(3, 3)
-        real(kind=8) :: wpg
-        real(kind=8) :: ffe(9)
-        real(kind=8) :: ffm(9)
-        real(kind=8) :: jacobi
-        real(kind=8) :: coefac
-        real(kind=8) :: coefaf
-        real(kind=8) :: coefff
-        real(kind=8) :: rese(3)
-        real(kind=8) :: nrese
-        real(kind=8) :: lambda
-        real(kind=8) :: matree(27, 27)
-        real(kind=8) :: matrmm(27, 27)
-        real(kind=8) :: matrem(27, 27)
-        real(kind=8) :: matrme(27, 27)
+    subroutine mmmtuu(phase , l_pena_cont, l_pena_fric,&
+                      ndim  , nne        , nnm   ,&
+                      mprojn, mprojt     ,&
+                      wpg   , ffe        , ffm   , jacobi,&
+                      coefac, coefaf     , coefff, lambda,&
+                      rese  , nrese      ,&
+                      matree, matrmm     ,&
+                      matrem, matrme)
+        character(len=4), intent(in) :: phase
+        aster_logical, intent(in) :: l_pena_cont, l_pena_fric
+        integer, intent(in) :: ndim, nne, nnm
+        real(kind=8), intent(in) :: mprojn(3, 3), mprojt(3, 3)
+        real(kind=8), intent(in) :: ffe(9), ffm(9)
+        real(kind=8), intent(in) :: wpg, jacobi
+        real(kind=8), intent(in) :: rese(3), nrese
+        real(kind=8), intent(in) :: coefac, coefaf
+        real(kind=8), intent(in) :: lambda, coefff
+        real(kind=8), intent(out) :: matrem(27, 27), matrme(27, 27)
+        real(kind=8), intent(out) :: matree(27, 27), matrmm(27, 27)
     end subroutine mmmtuu
 end interface

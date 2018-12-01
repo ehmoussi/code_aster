@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine apcrsd(ds_contact  , sdappa      ,&
                   nt_poin     , nb_cont_elem, nb_cont_node,&
                   nt_elem_node, nb_node_mesh)
@@ -25,7 +26,6 @@ use NonLin_Datastructure_type
 implicit none
 !
 #include "asterfort/assert.h"
-#include "asterfort/infdbg.h"
 #include "asterfort/jecrec.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jeecra.h"
@@ -35,15 +35,13 @@ implicit none
 #include "asterfort/jexnum.h"
 #include "asterfort/wkvect.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    type(NL_DS_Contact), intent(in) :: ds_contact
-    character(len=19), intent(in) :: sdappa
-    integer, intent(in) :: nt_poin
-    integer, intent(in) :: nb_cont_elem
-    integer, intent(in) :: nb_cont_node
-    integer, intent(in) :: nt_elem_node
-    integer, intent(in) :: nb_node_mesh
+type(NL_DS_Contact), intent(in) :: ds_contact
+character(len=19), intent(in) :: sdappa
+integer, intent(in) :: nt_poin
+integer, intent(in) :: nb_cont_elem
+integer, intent(in) :: nb_cont_node
+integer, intent(in) :: nt_elem_node
+integer, intent(in) :: nb_node_mesh
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -63,7 +61,6 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: ifm, niv
     integer :: i_cont_elem, longt, elem_indx, longc, elem_nbnode
     character(len=24) :: sdappa_poin
     real(kind=8), pointer :: v_sdappa_poin(:) => null()
@@ -91,10 +88,6 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
     call jemarq()
-    call infdbg('APPARIEMENT', ifm, niv)
-    if (niv .ge. 2) then
-        write (ifm,*) '<PAIRING> Create datastructure'
-    endif
 !
 ! - Datastructure for pairing results
 !

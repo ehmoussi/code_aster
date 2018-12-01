@@ -18,7 +18,7 @@
 ! person_in_charge: mickael.abbas at edf.fr
 ! aslint: disable=W1504
 !
-subroutine nmprca(modele, numedd         , numfix     , ds_material, carele    ,&
+subroutine nmprca(mesh, modele, numedd         , numfix     , ds_material, carele    ,&
                   ds_constitutive, lischa     , ds_algopara, solveu    ,&
                   fonact, ds_print       , ds_measure , ds_algorom, sddisc     , numins    ,&
                   valinc, solalg         , matass     , maprec     , ds_contact,&
@@ -49,6 +49,7 @@ implicit none
 #include "asterfort/romCoefComputeFromField.h"
 !
 integer :: fonact(*)
+character(len=8), intent(in) :: mesh
 integer :: numins, ldccvg, faccvg, rescvg
 type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 type(NL_DS_Material), intent(in) :: ds_material
@@ -158,7 +159,7 @@ character(len=19) :: depest
 !
 ! --- CALCUL DE LA MATRICE GLOBALE
 !
-    call nmprma(modele     , ds_material, carele, ds_constitutive,&
+    call nmprma(mesh       , modele     , ds_material, carele, ds_constitutive,&
                 ds_algopara, lischa  , numedd, numfix, solveu,&
                 ds_print, ds_measure, ds_algorom, sddisc,&
                 sddyna     , numins  , fonact, ds_contact,&

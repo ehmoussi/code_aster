@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,54 +15,43 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmchra(sddyna, l_renumber, optamo, lcamor)
-!
 ! person_in_charge: mickael.abbas at edf.fr
 !
-    implicit none
-#include "asterf_types.h"
-#include "jeveux.h"
-#include "asterfort/infdbg.h"
-#include "asterfort/jedema.h"
-#include "asterfort/jemarq.h"
-#include "asterfort/ndynlo.h"
-    character(len=19) :: sddyna
-    aster_logical :: l_renumber
-    character(len=16) :: optamo
-    aster_logical :: lcamor
+subroutine nmchra(sddyna, l_renumber, optamo, lcamor)
 !
-! ----------------------------------------------------------------------
+implicit none
+!
+#include "asterf_types.h"
+#include "asterfort/infdbg.h"
+#include "asterfort/ndynlo.h"
+#include "asterfort/utmess.h"
+!
+character(len=19) :: sddyna
+aster_logical :: l_renumber
+character(len=16) :: optamo
+aster_logical :: lcamor
+!
+! --------------------------------------------------------------------------------------------------
 !
 ! ROUTINE MECA_NON_LINE (CALCUL)
 !
 ! CHOIX DE REASSEMBLAGE DE LA MATRICE D'AMORTISSEMENT
 !
-! ----------------------------------------------------------------------
-!
+! --------------------------------------------------------------------------------------------------
 !
 ! IN  SDDYNA : SD DYNAMIQUE
 ! In  l_renumber       : .true. if renumber
 ! OUT OPTAMO : OPTION POUR L'AMORTISSEMENT
 ! OUT LCAMOR : .TRUE. SI CALCUL MATRICE D'AMORTISSEMENT
 !
-!
-!
+! --------------------------------------------------------------------------------------------------
 !
     aster_logical :: lktan
     integer :: ifm, niv
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
-    call jemarq()
-    call infdbg('MECA_NON_LINE', ifm, niv)
-!
-! --- AFFICHAGE
-!
-    if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE><CALC> CHOIX D''ASSEMBLAGE DE '//&
-        'MATRICE AMORTISSEMENT'
-    endif
+    call infdbg('MECANONLINE', ifm, niv)
 !
 ! --- INITIALISATIONS
 !
@@ -79,18 +68,14 @@ subroutine nmchra(sddyna, l_renumber, optamo, lcamor)
         lcamor = .true.
     endif
 !
-! --- AFFICHAGE
+! - Print
 !
     if (niv .ge. 2) then
         if (lcamor) then
-            write (ifm,*) '<MECANONLINE><CALC> ON ASSEMBLE LA MATRICE' //&
-     &                  ' D''AMORTISSEMENT'
+            call utmess('I', 'MECANONLINE13_37')
         else
-            write (ifm,*) '<MECANONLINE><CALC> ON N''ASSEMBLE PAS '//&
-            'LA MATRICE D''AMORTISSEMENT'
+            call utmess('I', 'MECANONLINE13_38')
         endif
     endif
-!
-    call jedema()
 !
 end subroutine

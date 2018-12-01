@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine ndxmat(fonact, lischa, numedd, sddyna, numins,&
                   meelem, measse, matass)
 !
@@ -33,15 +34,13 @@ implicit none
 #include "asterfort/ndynre.h"
 #include "asterfort/nmchex.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=19) :: matass
-    character(len=19) :: sddyna
-    integer :: fonact(*)
-    integer :: numins
-    character(len=19) :: meelem(*), measse(*)
-    character(len=24) :: numedd
-    character(len=19) :: lischa
+character(len=19) :: matass
+character(len=19) :: sddyna
+integer :: fonact(*)
+integer :: numins
+character(len=19) :: meelem(*), measse(*)
+character(len=24) :: numedd
+character(len=19) :: lischa
 !
 ! ----------------------------------------------------------------------
 !
@@ -77,7 +76,7 @@ implicit none
 !
 ! ----------------------------------------------------------------------
 !
-    call infdbg('MECA_NON_LINE', ifm, niv)
+    call infdbg('MECANONLINE', ifm, niv)
     if (niv .ge. 2) then
         write (ifm,*) '<MECANONLINE><CALC> CALCUL MATRICE GLOBALE'
     endif

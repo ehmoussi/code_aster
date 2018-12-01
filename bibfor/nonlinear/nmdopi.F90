@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine nmdopi(modelz, numedd, ds_algopara, sdpilo)
 !
 use NonLin_Datastructure_type
@@ -51,20 +52,18 @@ implicit none
 #include "asterfort/vtcreb.h"
 #include "asterfort/wkvect.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
+character(len=*), intent(in) :: modelz
+character(len=24), intent(in) :: numedd
+type(NL_DS_AlgoPara), intent(in) :: ds_algopara
+character(len=19), intent(in) :: sdpilo
 !
-    character(len=*), intent(in) :: modelz
-    character(len=24), intent(in) :: numedd
-    type(NL_DS_AlgoPara), intent(in) :: ds_algopara
-    character(len=19), intent(in) :: sdpilo
-!
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
 ! ROUTINE MECA_NON_LINE (STRUCTURES DE DONNEES)
 !
 ! CONSTRUCTION DE LA SD PILOTAGE
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
 ! IN  MODELE : MODELE
 ! IN  NUMEDD : NUME_DDL
@@ -90,10 +89,9 @@ implicit none
 !                (5) = ETA_PILO_R_MIN
 !                (6) = COEF_PILO AU PAS DE TEMPS CONVERGE PRECEDENT
 !
+! --------------------------------------------------------------------------------------------------
 !
-!
-!
-    integer :: nbno, numequ, nddl, nb_node_mesh, nb_node_sele
+    integer :: nbno, numequ, nddl, nb_node_mesh, nb_node_sele, nb_dof_acti
     integer :: nume_node, nume_node_1, nume_node_2, numequ_1, numequ_2
     integer :: ino, iddl
     integer :: jvale
@@ -122,12 +120,12 @@ implicit none
     real(kind=8), pointer :: vale(:) => null()
     real(kind=8), pointer :: plsl(:) => null()
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
     call jemarq()
-    call infdbg('MECA_NON_LINE', ifm, niv)
+    call infdbg('MECANONLINE', ifm, niv)
     if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE> ... CREATION SD PILOTAGE'
+        call utmess('I','MECANONLINE13_17')
     endif
 !
 ! --- INITIALISATIONS
@@ -404,6 +402,7 @@ implicit none
 ! --- CREATION SD REPERAGE DES DX/DY/DZ
 !
     if (typpil .eq. 'LONG_ARC') then
+        nb_dof_acti = 0
         selpil = sdpilo(1:14)//'.PLSL'
         call vtcreb(selpil, 'V', 'R', nume_ddlz = numedd, nb_equa_outz = neq)
         call jeveuo(selpil(1:19)//'.VALE', 'E', vr=plsl)
@@ -416,12 +415,16 @@ implicit none
             nomcmp = zk8(jlicmp-1+iddl) 
             do ino = 1, nb_node_mesh
                 nume_node = ino
-                call nueqch('I', selpil, nume_node, nomcmp, numequ)
+                call nueqch(' ', selpil, nume_node, nomcmp, numequ)
                 if (numequ .ne. 0) then
                     plsl(numequ) = 1.d0
+                    nb_dof_acti = nb_dof_acti + 1
                 endif
             end do
         end do
+        if (nb_dof_acti .eq. 0) then
+            call utmess('F', 'MECANONLINE5_52')
+        endif
     endif
 !
 ! --- GESTION RECHERCHE LINEAIRE

@@ -72,7 +72,7 @@ integer, intent(in) :: nume_inst
 !
     call infdbg('MECANONLINE', ifm, niv)
     if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE> ... Update material parameters for new time step'
+        call utmess('I', 'MECANONLINE13_32')
     endif
 !
 ! - Current time

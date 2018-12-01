@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine nmnume(model     , mesh    , result, compor, list_load, &
                   ds_contact, nume_dof, sdnume)
 !
@@ -29,17 +30,17 @@ implicit none
 #include "asterfort/nunuco.h"
 #include "asterfort/nunuco_l.h"
 #include "asterfort/nurota.h"
+#include "asterfort/infdbg.h"
+#include "asterfort/utmess.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=8), intent(in) :: mesh
-    character(len=24), intent(in) :: model
-    character(len=8), intent(in) :: result
-    character(len=24), intent(in) :: compor
-    character(len=19), intent(in) :: list_load
-    type(NL_DS_Contact), intent(in) :: ds_contact
-    character(len=24), intent(out) :: nume_dof
-    character(len=19), intent(in) :: sdnume
+character(len=8), intent(in) :: mesh
+character(len=24), intent(in) :: model
+character(len=8), intent(in) :: result
+character(len=24), intent(in) :: compor
+character(len=19), intent(in) :: list_load
+type(NL_DS_Contact), intent(in) :: ds_contact
+character(len=24), intent(out) :: nume_dof
+character(len=19), intent(in) :: sdnume
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -60,11 +61,16 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
+    integer :: ifm, niv
     character(len=24) :: sdnuro, sdnuen, sdnuco
 !
 ! --------------------------------------------------------------------------------------------------
 !
 
+    call infdbg('MECANONLINE', ifm, niv)
+    if (niv .ge. 2) then
+        call utmess('I', 'MECANONLINE13_12')
+    endif
 !
 ! - Create numbering 
 !
@@ -87,13 +93,9 @@ implicit none
     if (ds_contact%l_form_cont) then
         call nunuco(nume_dof, sdnuco)
     endif
-!
-! - Get position of contact dof 
-!
-    sdnuco = sdnume(1:19)//'.NUCO'
     if (ds_contact%l_form_lac) then
         call nunuco(nume_dof, sdnuco)
         call nunuco_l(mesh, ds_contact, nume_dof, sdnume)
-    endif  
+    endif
 !
 end subroutine

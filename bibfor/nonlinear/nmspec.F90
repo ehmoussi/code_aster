@@ -16,13 +16,12 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
-! aslint: disable=W1504
 !
-subroutine nmspec(model          , ds_material  , cara_elem , list_load  , list_func_acti,& 
+subroutine nmspec(model          , ds_material  , cara_elem  , list_load  , list_func_acti,& 
                   nume_dof       , nume_dof_inva,&
                   ds_constitutive,&
                   sddisc         , nume_inst    ,&
-                  sddyna         , sderro       , ds_contact, ds_algopara,&
+                  sddyna         , sderro       , ds_algopara,&
                   ds_measure     , &
                   hval_incr      , hval_algo    ,&
                   hval_meelem    , hval_measse  ,&
@@ -51,7 +50,6 @@ character(len=19), intent(in) :: sddisc
 integer, intent(in) :: nume_inst
 character(len=19), intent(in) :: sddyna
 character(len=24), intent(in) :: sderro
-type(NL_DS_Contact), intent(in) :: ds_contact
 type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 type(NL_DS_Measure), intent(inout) :: ds_measure
 character(len=19), intent(in) :: hval_incr(*), hval_algo(*)
@@ -78,7 +76,6 @@ type(NL_DS_PostTimeStep), intent(inout) :: ds_posttimestep
 ! In  nume_inst        : index of current time step
 ! In  sddyna           : datastructure for dynamic
 ! In  sderro           : datastructure for error management (events)
-! In  ds_contact       : datastructure for contact management
 ! In  ds_algopara      : datastructure for algorithm parameters
 ! IO  ds_measure       : datastructure for measure and statistics management
 ! In  hval_incr        : hat-variable for incremental values fields
@@ -125,7 +122,7 @@ type(NL_DS_PostTimeStep), intent(inout) :: ds_posttimestep
                         nume_dof       , nume_dof_inva,&
                         ds_constitutive,&
                         sddisc         , nume_inst    ,& 
-                        sddyna         , sderro       , ds_contact, ds_algopara,& 
+                        sddyna         , sderro       , ds_algopara,& 
                         ds_measure     ,&
                         hval_incr      , hval_algo    ,&
                         hval_meelem    , hval_measse  ,&
@@ -148,7 +145,7 @@ type(NL_DS_PostTimeStep), intent(inout) :: ds_posttimestep
                         nume_dof       , nume_dof_inva,&
                         ds_constitutive,&
                         sddisc         , nume_inst    ,& 
-                        sddyna         , sderro       , ds_contact, ds_algopara,& 
+                        sddyna         , sderro       , ds_algopara,& 
                         ds_measure     ,&
                         hval_incr      , hval_algo    ,&
                         hval_meelem    , hval_measse  ,&
