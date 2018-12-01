@@ -27,7 +27,7 @@ interface
                       kappa , vech1 , vech2 , h     , hah   ,&
                       mprt11, mprt12, mprt21, mprt22,&
                       matree, matrmm, matrem, matrme)
-        character(len=9), intent(in) :: phase
+        character(len=4), intent(in) :: phase
         aster_logical, intent(in) :: l_large_slip
         integer, intent(in) :: ndim, nne, nnm
         real(kind=8), intent(in) :: wpg, ffe(9), ffm(9), dffm(2,9), ddffm(3,9)

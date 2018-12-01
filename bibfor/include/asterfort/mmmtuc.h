@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,36 +15,25 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
+! aslint: disable=W1504
 !
 interface
-    subroutine mmmtuc(phasep, ndim, nnl, nne, nnm,&
-                      norm, tau1, tau2, mprojt, wpg,&
-                      ffl, ffe, ffm, jacobi, coefff,&
-                      coefaf, dlagrf, djeut, rese, nrese,&
+    subroutine mmmtuc(phase , l_pena_cont, l_pena_fric,&
+                      ndim  , nnl        , nne        , nnm,&
+                      norm  , tau1       , tau2       , mprojt,&
+                      wpg   , ffl        , ffe        , ffm   , jacobi,&
+                      coefff, coefaf,&
+                      dlagrf, djeut ,&
+                      rese  , nrese ,&
                       matrec, matrmc)
-        character(len=9) :: phasep
-        integer :: ndim
-        integer :: nnl
-        integer :: nne
-        integer :: nnm
-        real(kind=8) :: norm(3)
-        real(kind=8) :: tau1(3)
-        real(kind=8) :: tau2(3)
-        real(kind=8) :: mprojt(3, 3)
-        real(kind=8) :: wpg
-        real(kind=8) :: ffl(9)
-        real(kind=8) :: ffe(9)
-        real(kind=8) :: ffm(9)
-        real(kind=8) :: jacobi
-        real(kind=8) :: coefff
-        real(kind=8) :: coefaf
-        real(kind=8) :: dlagrf(2)
-        real(kind=8) :: djeut(3)
-        real(kind=8) :: rese(3)
-        real(kind=8) :: nrese
-        real(kind=8) :: matrec(27, 9)
-        real(kind=8) :: matrmc(27, 9)
+        character(len=4), intent(in) :: phase
+        aster_logical, intent(in) :: l_pena_cont, l_pena_fric
+        integer, intent(in) :: ndim, nne, nnl, nnm
+        real(kind=8), intent(in) :: norm(3), tau1(3), tau2(3), mprojt(3, 3)
+        real(kind=8), intent(in) :: wpg, ffl(9), ffe(9), ffm(9), jacobi
+        real(kind=8), intent(in) :: coefff, coefaf
+        real(kind=8), intent(in) :: dlagrf(2), djeut(3)
+        real(kind=8), intent(in) :: rese(3), nrese
+        real(kind=8), intent(out) :: matrec(27, 9), matrmc(27, 9)
     end subroutine mmmtuc
 end interface

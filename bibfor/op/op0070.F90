@@ -139,6 +139,7 @@ implicit none
     call titre()
     call infmaj()
     call inidbg()
+    fonact(:) = 0
 !
 ! ======================================================================
 !     RECUPERATION DES OPERANDES ET INITIALISATION
@@ -152,16 +153,18 @@ implicit none
 !
 ! - Creation of datastructures
 !
-    call nmini0(fonact    , eta      , numins         , matass     , zmeelm    ,&
-                zmeass    , zveelm   , zveass         , zsolal     , zvalin    ,&
-                ds_print  , ds_conv  , ds_algopara    , ds_inout   , ds_contact,&
-                ds_measure, ds_energy, ds_constitutive, ds_material)
+    call nmini0(eta       , numins   , matass     ,&
+                zmeelm    , zmeass   , zveelm     ,&
+                zveass    , zsolal   , zvalin     ,&
+                ds_print  , ds_conv  , ds_algopara    , ds_inout   , ds_contact ,&
+                ds_measure, ds_energy, ds_constitutive, ds_material,&
+                sderro)
 !
 ! - Read parameters
 !
-    call nmdata(model    , mesh      , mate      , cara_elem , ds_constitutive,&
-                list_load, solver    , ds_conv   , sddyna    , ds_posttimestep,&
-                sderro   , ds_energy , sdcriq    , ds_print  , ds_algopara    ,&
+    call nmdata(model    , mesh      , mate      , cara_elem  , ds_constitutive,&
+                list_load, solver    , ds_conv   , sddyna     , ds_posttimestep,&
+                ds_energy, sdcriq    , ds_print  , ds_algopara,&
                 ds_inout , ds_contact, ds_measure, ds_algorom)
 !
 ! - Initializations of datastructures

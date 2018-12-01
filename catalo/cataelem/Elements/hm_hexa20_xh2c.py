@@ -305,7 +305,7 @@ class TemplateElement(Element):
                      (SP.PHEAVNO, LC.FISNO_I), (SP.PFISCO, LC.FISCO_I),
                      (OP.CHAR_MECA_CONT.PLSN, LC.N1NEUT_R),
                      ),
-            para_out=((SP.PVECTUR, MVECTUR), ),
+            para_out=((SP.PVECTCR, MVECTUR), (SP.PVECTFR, MVECTUR),),
         ),
 
         OP.CHAR_MECA_CONT_M(te=557,
@@ -323,7 +323,7 @@ class TemplateElement(Element):
                      (SP.PHEAVNO, LC.FISNO_I), (SP.PFISCO, LC.FISCO_I),
                      (OP.CHAR_MECA_CONT_M.PLSN, LC.N1NEUT_R),
                      ),
-            para_out=((SP.PVECTUR, MVECTUR), ),
+            para_out=((SP.PVECTCR, MVECTUR), (SP.PVECTFR, MVECTUR),),
         ),
 
         OP.FULL_MECA(te=588,

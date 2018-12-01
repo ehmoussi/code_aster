@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -21,7 +21,8 @@ subroutine xmvef2(ndim, nno, nnos, ffp, jac,&
                   coeffp, coeffr, mu, algofr, nd,&
                   ddls, ddlm, idepl, pb, vtmp)
 !
-    implicit none
+implicit none
+!
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterfort/indent.h"
@@ -29,12 +30,12 @@ subroutine xmvef2(ndim, nno, nnos, ffp, jac,&
 #include "asterfort/xadher.h"
 #include "asterfort/xmafr1.h"
 #include "asterfort/xcalc_saut.h"
-    integer :: ndim, nno, nnos, ddls, ddlm, nfh, singu, idepl
-    integer :: algofr
-    real(kind=8) :: vtmp(400), nd(3)
-    real(kind=8) :: ffp(27), jac, pb(3), reac12(3)
-    real(kind=8) :: coeffp, coeffr, seuil, mu
-    real(kind=8) :: fk(27,3,3)
+integer :: ndim, nno, nnos, ddls, ddlm, nfh, singu, idepl
+integer :: algofr
+real(kind=8) :: vtmp(400), nd(3)
+real(kind=8) :: ffp(27), jac, pb(3), reac12(3)
+real(kind=8) :: coeffp, coeffr, seuil, mu
+real(kind=8) :: fk(27,3,3)
 !
 !
 !
@@ -95,21 +96,20 @@ subroutine xmvef2(ndim, nno, nnos, ffp, jac,&
 !
 !     PBOUL SELON L'ÉTAT D'ADHERENCE DU PG (AVEC DEPDEL)
     call vecini(3, 0.d0, saut)
-    do 175 ino = 1, nno
+    do ino = 1, nno
         call indent(ino, ddls, ddlm, nnos, in)
-        do 176 j = 1, ndim
-          do ig = 1, nfh          
-            saut(j) = saut(j) - coefj * ffp(ino) * zr(idepl-1+in+ndim*(1+ig-1)+ j)
-          enddo
-176     continue
-        do 177 j = 1, singu*ndim
-          do alpi = 1, ndim
-            saut(j) = saut(j) - 2.d0 * fk(ino,alpi,j) * &
-                                        zr(idepl-1+in+ndim*(1+nfh)+alpi)
-          enddo
-!
-177     continue
-175 end do
+        do j = 1, ndim
+            do ig = 1, nfh          
+                saut(j) = saut(j) - coefj * ffp(ino) * zr(idepl-1+in+ndim*(1+ig-1)+ j)
+            enddo
+        end do
+        do j = 1, singu*ndim
+            do alpi = 1, ndim
+                saut(j) = saut(j) - 2.d0 * fk(ino,alpi,j) * &
+                                            zr(idepl-1+in+ndim*(1+nfh)+alpi)
+            enddo
+        end do
+    end do
 !
     call xadher(p, saut, reac12, coeffr, coeffp,&
                 algofr, vitang, pb, rbid, r2bid,&
@@ -117,43 +117,42 @@ subroutine xmvef2(ndim, nno, nnos, ffp, jac,&
 !
     if (adher) then
 !               CALCUL DE PT.REAC12
-        do 188 i = 1, ndim
+        do i = 1, ndim
             ptpb(i)=0.d0
             if (algofr .eq. 2) then
-                do 190 k = 1, ndim
+                do k = 1, ndim
                     ptpb(i)=ptpb(i)+p(k,i)*coeffp*vitang(k)
-190             continue
+                end do
             else
-                do 189 k = 1, ndim
-                    ptpb(i)=ptpb(i)+p(k,i)*(reac12(k)+coeffr*vitang(k)&
-                    )
-189             continue
+                do k = 1, ndim
+                    ptpb(i)=ptpb(i)+p(k,i)*(reac12(k)+coeffr*vitang(k))
+                end do
             endif
-188     continue
+        end do
     else
 !     CALCUL DE PT.PBOUL
-        do 182 i = 1, ndim
+        do i = 1, ndim
             ptpb(i)=0.d0
-            do 183 k = 1, ndim
+            do k = 1, ndim
                 ptpb(i)=ptpb(i) + p(k,i)*pb(k)
-183         continue
-182     continue
+            end do
+        end do
     endif
 !
-    do 185 i = 1, nno
+    do i = 1, nno
         call indent(i, ddls, ddlm, nnos, in)
-!
-        do 186 j = 1, ndim
-          do ig = 1, nfh        
-            vtmp(in+ndim*(1+ig-1)+j) = vtmp(in+ndim*(1+ig-1)+j) + coefj*mu*seuil*ptpb(j)*ffp(i)*jac
-          enddo
-186     continue
-        do 187 j = 1, singu*ndim
-          do alpi = 1, ndim
-            vtmp(in+ndim*(1+nfh)+alpi) = vtmp(in+ndim*(1+nfh)+alpi) + 2.d0*fk(i,alpi,j)*&
-                                                    mu*seuil* ptpb(j)*jac
-          enddo
-187     continue
-185 end do
+        do j = 1, ndim
+            do ig = 1, nfh        
+                vtmp(in+ndim*(1+ig-1)+j) = vtmp(in+ndim*(1+ig-1)+j) +&
+                                           coefj*mu*seuil*ptpb(j)*ffp(i)*jac
+            enddo
+        end do
+        do j = 1, singu*ndim
+            do alpi = 1, ndim
+                vtmp(in+ndim*(1+nfh)+alpi) = vtmp(in+ndim*(1+nfh)+alpi) +&
+                                             2.d0*fk(i,alpi,j)*mu*seuil* ptpb(j)*jac
+            enddo
+        end do
+    end do
 !
 end subroutine

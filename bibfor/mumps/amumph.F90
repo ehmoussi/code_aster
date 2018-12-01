@@ -82,7 +82,7 @@ subroutine amumph(action, solvez, matasz, rsolu, csolu,&
 #include "asterfort/amumpz.h"
 #include "asterfort/assert.h"
 #include "asterfort/dismoi.h"
-#include "asterfort/infniv.h"
+#include "asterfort/infdbg.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jedetr.h"
 #include "asterfort/jeexin.h"
@@ -127,7 +127,7 @@ subroutine amumph(action, solvez, matasz, rsolu, csolu,&
     call jemarq()
 !
     iretz=0
-    call infniv(ifm, niv)
+    call infdbg('SOLVEUR', ifm, niv)
     if ((action(1:6).ne.'PRERES') .and. (action(1:6).ne.'RESOUD') .and.&
         (action(1:8).ne.'DETR_OCC') .and. (action(1:8).ne.'DETR_MAT') .and.&
         (action(1:7).ne.'VERSION')) then

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -35,6 +35,7 @@ subroutine xasdpl(celmod, prol0, chou)
 ! CELMOD IN/JXIN  K19 : NOM D'UN CHAM_ELEM "MODELE" SI TYPE='EL..'
 !
 #include "jeveux.h"
+#include "asterf_types.h"
 #include "asterfort/as_allocate.h"
 #include "asterfort/as_deallocate.h"
 #include "asterfort/assert.h"
@@ -85,7 +86,7 @@ subroutine xasdpl(celmod, prol0, chou)
     integer :: iel, kpg
     integer :: k, ifiss
     character(len=3) :: exixfm
-    character(len=4) :: tychi
+    character(len=4) :: tychi, phen
     character(len=8) :: ma, ma2, nomgd, param, mo
     character(len=8) :: noma, chmat, nomfis
     character(len=8), pointer :: typma(:) => null()
@@ -93,7 +94,7 @@ subroutine xasdpl(celmod, prol0, chou)
     character(len=19) :: chin, cns, mnoga, ligrel, cesout, cesdpl, mate
     character(len=19) :: chhno, chxpg, chdpx, chsdpx, chsnpg
     character(len=24) :: valk(4)
-    aster_logical :: lxfem, ok, yathm, perman, lfiss
+    aster_logical :: lxfem, ok, yathm, perman, lfiss, l_ther
     integer, pointer :: cesvnpg(:) => null()
     real(kind=8), pointer :: cesvdpl(:) => null()
     real(kind=8), pointer :: cesv(:) => null()
@@ -125,6 +126,11 @@ subroutine xasdpl(celmod, prol0, chou)
     call dismoi('NOM_LIGREL', celmod, 'CHAM_ELEM', repk=ligrel)
     call dismoi('NOM_MODELE', ligrel, 'LIGREL', repk=mo)
     call dismoi('NOM_MAILLA', ligrel, 'LIGREL', repk=ma2)
+    call dismoi('PHENOMENE', mo, 'MODELE', repk=phen)
+    l_ther = ASTER_FALSE
+    if (phen .eq. 'THERM') then
+        l_ther = ASTER_TRUE
+    endif
 
 !   verification de la coherence entre le maillage sur lequel s'appuie
 !   le champ d'entree et le maillage sur lequel s'appuie le modele
@@ -173,7 +179,7 @@ subroutine xasdpl(celmod, prol0, chou)
        if (iret.eq.0) then 
          call utmess('F', 'XFEM_100')
        else
-         call rcmfmc(chmat, mate)
+         call rcmfmc(chmat, mate, l_ther_ = l_ther)
        endif
     endif
 !

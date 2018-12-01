@@ -44,8 +44,10 @@ bool CodedMaterialInstance::allocate() {
     ASTERINTEGER thm = 0;
     if ( _model->existsThm() )
         thm = 1;
+    // TODO existsTher ?
+    ASTERINTEGER ther = 0;
     std::string strJeveuxBase( "G" );
-    CALLO_RCMFMC_WRAP( materName, mate, &thm, getName(), strJeveuxBase );
+    CALLO_RCMFMC_WRAP( materName, mate, &thm, &ther, getName(), strJeveuxBase );
 
     auto vecOfMater = _mater->getVectorOfMaterial();
     int compteur = 0;

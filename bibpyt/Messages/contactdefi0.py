@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -22,97 +22,56 @@
 cata_msg = {
 
 
-    10: _(u"""
- <CONTACT> Informations spécifiques sur la formulation continue.
-"""),
+    10: _(u"""Informations spécifiques sur la formulation continue."""),
 
-    11: _(u"""
- <CONTACT>     Paramètres constants sur toutes les zones.
-"""),
+    11: _(u"""Paramètres constants sur toutes les zones."""),
 
-    12: _(u"""
- <CONTACT>     Axisymétrie: %(i1)d
-"""),
+    12: _(u""" Axisymétrie: %(i1)d"""),
 
-    21: _(u"""
- <CONTACT>     Paramètres variables suivant les zones.
-"""),
+    13: _(u""" Adaptation: %(i1)d"""),
 
-    22: _(u"""
- <CONTACT>     Zone de contact: %(i1)d
-"""),
+    14: _(u""" Pénétration maximale: %(r1)12.5E"""),
 
-    23: _(u"""
- <CONTACT>     Zone de vérification.
-"""),
+    21: _(u"""Paramètres variables suivant les zones."""),
 
-    24: _(u"""
- <CONTACT>     Paramètre TOLE_INTERP: %(r1)12.5E
-"""),
+    22: _(u""" Zone de contact: %(i1)d"""),
 
-    25: _(u"""
- <CONTACT>     Zone de calcul.
-"""),
+    23: _(u""" Zone de vérification."""),
 
-    26: _(u"""
- <CONTACT>     Paramètre INTEGRATION   : %(r1)12.5E
-"""),
+    24: _(u""" Paramètre TOLE_INTERP: %(r1)12.5E"""),
 
-    27: _(u"""
- <CONTACT>     Paramètre COEF_CONT     : %(r1)12.5E
-"""),
+    25: _(u""" Zone de calcul."""),
 
-    28: _(u"""
- <CONTACT>     Paramètre ALGO_CONT     : %(r1)12.5E
-"""),
+    26: _(u""" Paramètre INTEGRATION   : %(r1)12.5E"""),
 
-    29: _(u"""
- <CONTACT>     Paramètre COEF_FROT     : %(r1)12.5E
-"""),
+    27: _(u""" Paramètre COEF_CONT     : %(r1)12.5E"""),
 
-    30: _(u"""
- <CONTACT>     Paramètre ALGO_FROT     : %(r1)12.5E
-"""),
+    28: _(u""" Paramètre ALGO_CONT     : %(r1)12.5E"""),
 
-    31: _(u"""
- <CONTACT>     Paramètre COULOMB       : %(r1)12.5E
-"""),
+    29: _(u""" Paramètre COEF_FROT     : %(r1)12.5E"""),
 
-    32: _(u"""
- <CONTACT>     Paramètre SEUIL_INIT    : %(r1)12.5E
-"""),
+    30: _(u""" Paramètre ALGO_FROT     : %(r1)12.5E"""),
 
-    33: _(u"""
- <CONTACT>     Paramètre SEUIL_AUTO    : %(r1)12.5E
-"""),
+    31: _(u""" Paramètre COULOMB       : %(r1)12.5E"""),
 
-    34: _(u"""
- <CONTACT>     Paramètre CONTACT_INIT  : %(r1)12.5E
-"""),
+    32: _(u""" Paramètre SEUIL_INIT    : %(r1)12.5E"""),
 
-    35: _(u"""
- <CONTACT>     Paramètre GLISSIERE     : %(r1)12.5E
-"""),
+    33: _(u""" Paramètre SEUIL_AUTO    : %(r1)12.5E"""),
 
-    36: _(u"""
- <CONTACT>     Paramètre SANS_NOEUD    : %(r1)12.5E
-"""),
+    34: _(u""" Paramètre CONTACT_INIT  : %(r1)12.5E"""),
 
-    37: _(u"""
- <CONTACT>     Paramètre SANS_NOEUD_FR : %(r1)12.5E
-"""),
+    35: _(u""" Paramètre GLISSIERE     : %(r1)12.5E"""),
 
-    38: _(u"""
- <CONTACT>     Paramètre EXCL_FROT_X   : %(r1)12.5E
-"""),
+    36: _(u""" Paramètre SANS_NOEUD    : %(r1)12.5E"""),
 
-    40: _(u"""
- <CONTACT>     Informations sur les mailles esclaves:
-"""),
+    37: _(u""" Paramètre SANS_NOEUD_FR : %(r1)12.5E"""),
 
-    41: _(u"""
- <CONTACT>     Maille %(k1)-8s - Zone: %(i1)d - Nombre de points d'intégration: %(i2)d - EXCL_FROT :
-%(i3)d 
-"""),
+    38: _(u""" Paramètre EXCL_FROT_X   : %(r1)12.5E"""),
+
+    39: _(u""" Paramètre PENE_MAXI     : %(r1)12.5E"""),
+
+    40: _(u"""Informations sur les mailles esclaves:"""),
+
+    41: _(u""" Maille %(k1)-8s - Zone: %(i1)d - Nombre de points d'intégration: %(i2)d - EXCL_FROT :%(i3)d """),
 
 }

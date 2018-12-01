@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -26,7 +26,6 @@ implicit none
 #include "asterf_types.h"
 #include "asterc/r8vide.h"
 #include "asterfort/assert.h"
-#include "asterfort/infdbg.h"
 !
 type(NL_DS_InOut), intent(inout) :: ds_inout
 !
@@ -42,7 +41,6 @@ type(NL_DS_InOut), intent(inout) :: ds_inout
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: ifm, niv
     integer, parameter :: nb_field_defi = 19
     integer :: i_field
 ! - Name of field (type) in results datastructure (add one -> don't forget to modify rscrsd.F90)
@@ -147,13 +145,6 @@ type(NL_DS_InOut), intent(inout) :: ds_inout
               'XXXXXXXXXXXXXXXX'/)
 !
 ! --------------------------------------------------------------------------------------------------
-!
-    call infdbg('MECANONLINE', ifm, niv)
-    if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE> . Create input/output management datastructure'
-    endif
-!
-! - Check
 !
     ds_inout%nb_field = nb_field_defi
     ASSERT(ds_inout%nb_field.le.ds_inout%nb_field_maxi)

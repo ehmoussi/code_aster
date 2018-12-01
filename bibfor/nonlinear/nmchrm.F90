@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine nmchrm(phasis     , ds_algopara, list_func_acti, sddisc   , sddyna   ,&
                   nume_inst  , iter_newt  , ds_contact    , type_pred, type_corr,&
                   l_matr_asse)
@@ -33,19 +34,17 @@ implicit none
 #include "asterfort/ndynlo.h"
 #include "asterfort/utmess.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=10), intent(in) :: phasis
-    type(NL_DS_AlgoPara), intent(in) :: ds_algopara
-    character(len=19), intent(in) :: sddisc
-    character(len=19), intent(in) :: sddyna
-    integer, intent(in) :: nume_inst
-    integer, intent(in) :: iter_newt
-    type(NL_DS_Contact), intent(in) :: ds_contact
-    integer, intent(in) :: list_func_acti(*)
-    character(len=16), intent(out) :: type_corr
-    character(len=16), intent(out) :: type_pred
-    aster_logical, intent(out) :: l_matr_asse
+character(len=10), intent(in) :: phasis
+type(NL_DS_AlgoPara), intent(in) :: ds_algopara
+character(len=19), intent(in) :: sddisc
+character(len=19), intent(in) :: sddyna
+integer, intent(in) :: nume_inst
+integer, intent(in) :: iter_newt
+type(NL_DS_Contact), intent(in) :: ds_contact
+integer, intent(in) :: list_func_acti(*)
+character(len=16), intent(out) :: type_corr
+character(len=16), intent(out) :: type_pred
+aster_logical, intent(out) :: l_matr_asse
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -82,10 +81,7 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call infdbg('MECA_NON_LINE', ifm, niv)
-    if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE><CALC> CHOIX D''ASSEMBLAGE DE MATRICE GLOBALE'
-    endif
+    call infdbg('MECANONLINE', ifm, niv)
 !
 ! - Initializations
 !
@@ -231,9 +227,9 @@ implicit none
 !
     if (niv .ge. 2) then
         if (l_matr_asse) then
-            write (ifm,*) '<MECANONLINE><CALC> ON ASSEMBLE LA MATRICE'
+            call utmess('I', 'MECANONLINE13_39')
         else
-            write (ifm,*) '<MECANONLINE><CALC> ON N''ASSEMBLE PAS LA MATRICE'
+            call utmess('I', 'MECANONLINE13_40')
         endif
     endif
 !

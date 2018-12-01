@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -29,7 +29,6 @@ implicit none
 #include "asterfort/compr8.h"
 #include "asterfort/diadap.h"
 #include "asterfort/diinst.h"
-#include "asterfort/infdbg.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jedetr.h"
 #include "asterfort/jemarq.h"
@@ -47,25 +46,22 @@ character(len=19) :: valinc(*)
 character(len=19) :: sddisc
 integer :: numins, nbiter
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
 ! ROUTINE MECA_NON_LINE (ALGORITHME)
 !
 ! GESTION DE L'ADAPTATION DE PAS DE TEMPS
 !   CALCUL DE DTPLUS
 !
-! ----------------------------------------------------------------------
-!
+! --------------------------------------------------------------------------------------------------
 !
 ! In  sddisc           : datastructure for time discretization
 ! IN  NUMINS : NUMERO D'INSTANT
 ! IN  NBITER : NOMBRE D'ITERATIONS DE NEWTON
 ! IN  VALINC : VARIABLE CHAPEAU POUR INCREMENTS VARIABLES
 !
+! --------------------------------------------------------------------------------------------------
 !
-!
-!
-    integer :: ifm, niv
     integer :: nb_adap, i_adap, jdt
     character(len=19) :: metlis, dtplus
     real(kind=8) :: r8bid, dt, min, pasmin, pasmax, dtm, jalon
@@ -79,10 +75,9 @@ integer :: numins, nbiter
     character(len=24) :: tpsext
     integer :: jtpsex, action_type
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
     call jemarq()
-    call infdbg('MECA_NON_LINE', ifm, niv)
 !
 ! --- INITIALISATIONS
 !

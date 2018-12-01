@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -64,16 +64,16 @@ subroutine xmmbp5(ndim, nnol, pla, ffc, jac,&
 !
 ! ----------------------------------------------------------------------
 !
-    do 180 i = 1, nnol
+    do i = 1, nnol
         pli=pla(i)
         ffi=ffc(i)
         nli=lact(i)
-        if (nli .eq. 0) goto 180
-        do 181 j = 1, nnol
+        if (nli .eq. 0) cycle
+        do j = 1, nnol
             plj=pla(j)
             ffj=ffc(j)
             nlj=lact(j)
-            if (nlj .eq. 0) goto 181
+            if (nlj .eq. 0) cycle
 !
 !         PENALISATION SEULE, TAIKTA=TAUT.ID.TAU
             call matini(3, 3, 0.d0, id)
@@ -82,13 +82,13 @@ subroutine xmmbp5(ndim, nnol, pla, ffc, jac,&
             id(3,3)=1.0d0
             call xmafr2(tau1, tau2, id, taikta)
 !
-            do 182 k = 1, ndim-1
-                do 183 l = 1, ndim-1
-                    mmat(pli+k,plj+l) = mmat(pli+k,plj+l) + (mu*seuil/ coeffp)* ffi*ffj*taikta(k,&
-                                        &l)*jac
-183              continue
-182          continue
-181      continue
-180  end do
+            do k = 1, ndim-1
+                do l = 1, ndim-1
+                    mmat(pli+k,plj+l) = mmat(pli+k,plj+l) +&
+                            (mu*seuil/ coeffp)* ffi*ffj*taikta(k,l)*jac
+                end do
+            end do
+        end do
+    end do
 !
 end subroutine

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -59,18 +59,17 @@ subroutine xmmab6(ndim, nnol, pla, ffc, jac,&
 !
 ! ----------------------------------------------------------------------
 !
-!
-    do 150 i = 1, nnol
+    do i = 1, nnol
         pli=pla(i)
         ffi=ffc(i)
         nli=lact(i)
-        if (nli .eq. 0) goto 150
+        if (nli .eq. 0) cycle
 !
-        do 151 j = 1, nnol
+        do j = 1, nnol
             plj=pla(j)
             ffj=ffc(j)
             nlj=lact(j)
-            if (nlj .eq. 0) goto 151
+            if (nlj .eq. 0) cycle
 !
 ! --- MÉTRIQUE DE LA BASE COVARIANTE AUX PTS D'INTERSECT
 !
@@ -81,12 +80,12 @@ subroutine xmmab6(ndim, nnol, pla, ffc, jac,&
                 metr(2,2)=ddot(ndim,tau2(1),1,tau2(1),1)
             endif
 !
-            do 152 k = 1, ndim-1
-                do 153 l = 1, ndim-1
-                    mmat(pli+k,plj+l) = mmat(pli+k,plj+l)+ ffi*ffj* metr(k,l)*jac
-153              continue
-152          continue
-151      continue
-150  end do
+            do k = 1, ndim-1
+                do l = 1, ndim-1
+                    mmat(pli+k,plj+l) = mmat(pli+k,plj+l)+ffi*ffj*metr(k,l)*jac
+                end do
+            end do
+        end do
+    end do
 !
 end subroutine

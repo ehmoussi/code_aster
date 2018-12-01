@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -25,7 +25,6 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/assert.h"
-#include "asterfort/infdbg.h"
 #include "asterfort/isfonc.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/SetTableColumn.h"
@@ -50,7 +49,6 @@ type(NL_DS_Print), intent(inout) :: ds_print
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: ifm, niv
     integer :: i_col, i_dof_monitor, nb_dof_monitor, line_width, i, nb_cols_active
     type(NL_DS_Table) :: table_cvg
     aster_logical :: l_line_search, l_pilo, l_cont_disc, l_cont_cont, l_hrom
@@ -67,10 +65,6 @@ type(NL_DS_Print), intent(inout) :: ds_print
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call infdbg('MECANONLINE', ifm, niv)
-    if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE> . Initializations of convergence table'
-    endif
     sep_line = ' '
 !
 ! - Get convergence table

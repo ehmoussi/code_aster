@@ -65,7 +65,7 @@ subroutine amumpu(option, type, kxmps, usersm, nprec,&
 #include "asterc/asmpi_comm.h"
 #include "asterfort/asmpi_comm_jev.h"
 #include "asterfort/assert.h"
-#include "asterfort/infniv.h"
+#include "asterfort/infdbg.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jeexin.h"
 #include "asterfort/jemarq.h"
@@ -111,7 +111,7 @@ subroutine amumpu(option, type, kxmps, usersm, nprec,&
     call jemarq()
 ! --- COMMUNICATEUR MPI DE TRAVAIL
     call asmpi_comm('GET', mpicou)
-    call infniv(ifm, niv)
+    call infdbg('SOLVEUR',ifm, niv)
 !
 !       ------------------------------------------------
 ! ---   INITS

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine nmevco(sddisc, nume_inst, ds_contact, i_echec, i_echec_acti)
 !
 use NonLin_Datastructure_type
@@ -34,21 +35,19 @@ implicit none
 #include "asterfort/jeveuo.h"
 #include "asterfort/utdidt.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
+character(len=19), intent(in) :: sddisc
+integer, intent(in) :: nume_inst
+type(NL_DS_Contact), intent(in) :: ds_contact
+integer, intent(in) :: i_echec
+integer, intent(out) :: i_echec_acti
 !
-    character(len=19), intent(in) :: sddisc
-    integer, intent(in) :: nume_inst
-    type(NL_DS_Contact), intent(in) :: ds_contact
-    integer, intent(in) :: i_echec
-    integer, intent(out) :: i_echec_acti
-!
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
 ! ROUTINE MECA_NON_LINE (ALGORITHME - EVENEMENTS)
 !
 ! DETECTION DE L'EVENEMENT COLLISION - CAS DISCRET
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
 ! In  sddisc           : datastructure for time discretization TEMPORELLE
 ! In  ds_contact       : datastructure for contact management
@@ -57,7 +56,7 @@ implicit none
 ! OUT IEVDAC : VAUT IECHEC SI EVENEMENT DECLENCHE
 !                   0 SINON
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
     integer :: nbliai, ip
@@ -70,10 +69,10 @@ implicit none
     aster_logical :: levent
     integer :: zeven
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
     call jemarq()
-    call infdbg('MECA_NON_LINE', ifm, niv)
+    call infdbg('MECANONLINE', ifm, niv)
     if (niv .ge. 2) then
         write (ifm,*) '<MECANONLINE> ... COLLISION'
     endif

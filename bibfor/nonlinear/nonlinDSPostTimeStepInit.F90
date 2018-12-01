@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -70,7 +70,7 @@ type(NL_DS_PostTimeStep), intent(inout) :: ds_posttimestep
 !
     call infdbg('MECANONLINE', ifm, niv)
     if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE> ... Initializations for post-treatment at each time step'
+        call utmess('I', 'MECANONLINE13_4')
     endif
 !
 ! - Parameters for CRIT_STAB

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine nmimpr(ds_print)
 !
 use NonLin_Datastructure_type
@@ -23,12 +24,10 @@ use NonLin_Datastructure_type
 implicit none
 !
 #include "asterf_types.h"
-#include "asterfort/PrintTableLine.h"
+#include "asterfort/nonlinDSPrintTableLine.h"
 #include "asterfort/iunifi.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    type(NL_DS_Print), intent(in) :: ds_print
+type(NL_DS_Print), intent(in) :: ds_print
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -64,14 +63,14 @@ implicit none
 !
     row_sep = '|'
     if (ds_print%l_print) then
-        call PrintTableLine(table_cvg, row_sep, unit_mess)
+        call nonlinDSPrintTableLine(table_cvg, row_sep, unit_mess)
     endif
 !
 ! - Print in file
 !
     if (l_csv) then
         row_sep = ','
-        call PrintTableLine(table_cvg, row_sep, unit_csv)
+        call nonlinDSPrintTableLine(table_cvg, row_sep, unit_csv)
     endif
 !
 end subroutine

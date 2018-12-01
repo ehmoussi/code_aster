@@ -15,12 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-! aslint: disable=W1504
-!
 #include "asterf_types.h"
 !
 interface
-    subroutine nmdesc(modele  , numedd         , numfix    , ds_material, carele     ,&
+    subroutine nmdesc(mesh, modele  , numedd         , numfix    , ds_material, carele     ,&
                       ds_constitutive, lischa    , ds_contact, ds_algopara,&
                       solveu  , fonact         , numins    , iterat    , sddisc     ,&
                       ds_print, ds_measure     , ds_algorom, sddyna    , sdnume     ,&
@@ -28,6 +26,7 @@ interface
                       meelem  , measse         , veasse    , veelem    , lerrit  )
         use NonLin_Datastructure_type
         use ROM_Datastructure_type
+        character(len=8), intent(in) :: mesh
         character(len=24) :: modele
         character(len=24) :: numedd
         character(len=24) :: numfix

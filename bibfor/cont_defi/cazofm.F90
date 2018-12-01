@@ -56,7 +56,6 @@ character(len=16), intent(in) :: keywf
     character(len=16) :: s_algo_cont, s_formul, s_frott
     integer :: algo_cont, algo_frot, izone
     aster_logical :: l_frot, lmunul
-    character(len=24) :: sdcont_defi
     character(len=24) :: sdcont_paraci
     integer, pointer :: v_sdcont_paraci(:) => null()
     real(kind=8) :: coefff
@@ -69,7 +68,7 @@ character(len=16), intent(in) :: keywf
 !
     algo_cont   = 0
     algo_frot   = 0
-    l_frot      = .false.
+    l_frot      = ASTER_FALSE
     s_formul    = ' '
     s_frott     = ' '
     s_algo_cont = ' '
@@ -82,13 +81,12 @@ character(len=16), intent(in) :: keywf
     else if (cont_form.eq.5) then
         s_formul = 'LAC'
     else
-        ASSERT(.false.)
+        ASSERT(ASTER_FALSE)
     endif
 !
 ! - Datastructure for contact definition
 !
-    sdcont_defi   = sdcont(1:8)//'.CONTACT'
-    sdcont_paraci = sdcont_defi(1:16)//'.PARACI'
+    sdcont_paraci = sdcont(1:8)//'.PARACI'
     call jeveuo(sdcont_paraci, 'E', vi=v_sdcont_paraci)
 !
 ! - Formulation
@@ -121,20 +119,20 @@ character(len=16), intent(in) :: keywf
             else if (s_algo_cont .eq. 'PENALISATION') then
                 algo_cont = 4
             else
-                ASSERT(.false.)
+                ASSERT(ASTER_FALSE)
             endif
         endif
     else if (cont_form .eq. 2) then
         algo_cont = 6
         if (l_frot) then
-            lmunul = .false.
+            lmunul = ASTER_FALSE
             do izone = 1, cont_nbzone
                 call getvr8(keywf, 'COULOMB', iocc=izone, scal=coefff)
                 lmunul = lmunul.or.(coefff.ne.0.d0)
             end do
             if (.not.lmunul) then
                 call utmess('A', 'CONTACT3_1')
-                l_frot = .false.
+                l_frot = ASTER_FALSE
             endif
         endif
         if (l_frot) then
@@ -149,17 +147,10 @@ character(len=16), intent(in) :: keywf
         else
             algo_frot = 0
         endif
-    else if (cont_form.eq.5) then
+    else if (cont_form .eq. 5) then
         algo_cont = 8
-        if (l_frot) then 
-            do izone = 1, cont_nbzone
-                call getvr8(keywf, 'COULOMB', iocc=izone, scal=coefff)
-                if (coefff .ne. 0.0d0) call utmess('F', 'CONTACT4_6')
-            end do
-        endif
-!        ASSERT(.not.l_frot)
     else
-        ASSERT(.false.)
+        ASSERT(ASTER_FALSE)
     endif
 !
 ! - Save methods

@@ -15,10 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-! aslint: disable=W1504
 !
 interface
-    subroutine nmcoma(modelz   , ds_material   , cara_elem , ds_constitutive, ds_algopara,&
+    subroutine nmcoma(mesh ,modelz   , ds_material   , cara_elem , ds_constitutive, ds_algopara,&
                       lischa   , numedd        , numfix    , solveu         , &
                       sddisc   , sddyna        , ds_print  , ds_measure     , ds_algorom, numins,&
                       iter_newt, list_func_acti, ds_contact, hval_incr       , hval_algo     ,&
@@ -26,6 +25,7 @@ interface
                       matass, faccvg, ldccvg    , sdnume)
         use NonLin_Datastructure_type
         use Rom_Datastructure_type
+        character(len=8), intent(in) :: mesh
         character(len=*) :: modelz
         type(NL_DS_Material), intent(in) :: ds_material
         character(len=24) :: cara_elem

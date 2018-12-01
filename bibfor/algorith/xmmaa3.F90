@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -83,14 +83,14 @@ subroutine xmmaa3(ndim, nno, nnos, nnol, pla,&
       hea_fa(2)=xcalc_code(1,he_inte=[+1])
     endif
 ! I.1 CALCUL DE A
-    do 130 i = 1, nnol
+    do i = 1, nnol
 !
         pli=pla(i)
         ffi=ffc(i)
 !
-        do 131 j = 1, nno
+        do j = 1, nno
             call indent(j, ddls, ddlm, nnos, jn)
-            do 134 jfh = 1, nfh
+            do jfh = 1, nfh
                 if (lmultc) then
                     coefj = xcalc_saut(zi(jheavn-1+ncompn*(j-1)+jfh),&
                                        zi(jheafa-1+ncomph*(ifiss-1)+2*ifa-1), &
@@ -102,42 +102,34 @@ subroutine xmmaa3(ndim, nno, nnos, nnol, pla,&
                                        hea_fa(2),&
                                        zi(jheavn-1+ncompn*(j-1)+ncompn))
                 endif
-                do 132 l = 1, ndim
-                    mmat(pli,jn+ndim*jfh+l) = mmat(pli,jn+ndim*jfh+l) + coefj * ffi * ffp(j) * nd&
-                                              &(l) * jac
+                do l = 1, ndim
+                    mmat(pli,jn+ndim*jfh+l) = mmat(pli,jn+ndim*jfh+l) +&
+                        coefj * ffi * ffp(j) * nd(l) * jac
 !
 ! TERME SYMETRIQUE
 !
-                    mmat(jn+ndim*jfh+l,pli) = mmat(jn+ndim*jfh+l,pli) + coefj * ffi * ffp(j) * nd&
-                                              &(l) * jac
-132             continue
-!
-134         continue
-            do 133 l = 1, singu*ndim
-              do alpj = 1 , ndim
-                mmat(pli,jn+ndim*(1+nfh)+alpj) = mmat(&
-                                              pli,&
-                                              jn+ndim*(1+nfh) +alpj) + coefj * ffi * &
-                                              fk(j,alpj,l) * n&
-                                              &d(l&
-                                              ) * jac
-!
-                mmat(jn+ndim*(1+nfh)+alpj,pli)= mmat(jn+ndim*(1+nfh)+alpj,&
-                pli) + 2.d0 * ffi * fk(j,alpj,l) * nd(l) * jac
-              enddo
-133         continue
-!
-131     continue
-!
-130 end do
+                    mmat(jn+ndim*jfh+l,pli) = mmat(jn+ndim*jfh+l,pli) +&
+                        coefj * ffi * ffp(j) * nd(l) * jac
+                end do
+            end do
+            do l = 1, singu*ndim
+                do alpj = 1 , ndim
+                    mmat(pli,jn+ndim*(1+nfh)+alpj) = mmat(pli,jn+ndim*(1+nfh) +alpj) +&
+                        coefj * ffi * fk(j,alpj,l) * nd(l) * jac
+                    mmat(jn+ndim*(1+nfh)+alpj,pli)= mmat(jn+ndim*(1+nfh)+alpj,pli) +&
+                        2.d0 * ffi * fk(j,alpj,l) * nd(l) * jac
+                enddo
+            end do
+        end do
+    end do
 !
 !     I.2. CALCUL DE A_U
 !
-    do 140 i = 1, nno
+    do i = 1, nno
         call indent(i, ddls, ddlm, nnos, in)
-        do 141 j = 1, nno
+        do j = 1, nno
             call indent(j, ddls, ddlm, nnos, jn)
-            do 148 ifh = 1, nfh
+            do ifh = 1, nfh
                 if (lmultc) then
                     coefi = xcalc_saut(zi(jheavn-1+ncompn*(i-1)+ifh),&
                                        zi(jheafa-1+ncomph*(ifiss-1)+2*ifa-1), &
@@ -149,7 +141,7 @@ subroutine xmmaa3(ndim, nno, nnos, nnol, pla,&
                                        hea_fa(2),&
                                        zi(jheavn-1+ncompn*(i-1)+ncompn))
                 endif
-                do 149 jfh = 1, nfh
+                do jfh = 1, nfh
                     if (lmultc) then
                         coefj = xcalc_saut(zi(jheavn-1+ncompn*(j-1)+jfh),&
                                            zi(jheafa-1+ncomph*(ifiss-1)+2*ifa-1), &
@@ -161,49 +153,48 @@ subroutine xmmaa3(ndim, nno, nnos, nnol, pla,&
                                            hea_fa(2),&
                                            zi(jheavn-1+ncompn*(j-1)+ncompn))
                     endif
-                    do 142 k = 1, ndim
-                        do 143 l = 1, ndim
+                    do k = 1, ndim
+                        do l = 1, ndim
                             mmat(in+ndim*ifh+k,jn+ndim*jfh+l) =&
                             mmat(in+ndim*ifh+k,jn+ndim*jfh+l) +&
                             coefi*coefj*cstaco*ffp(i)*ffp(j)*nd(k)*nd(&
                             l)*jac
-143                     continue
-!
-                        do 144 l = 1, singu*ndim
-                          do alpj = 1 , ndim
+                        end do
+                        do l = 1, singu*ndim
+                            do alpj = 1 , ndim
                             mmat(in+ndim+k,jn+ndim*(1+nfh)+alpj) =&
                             mmat(in+ndim+k,jn+ndim*(1+nfh)+alpj) +&
                             coefi*2.d0*cstaco*ffp(i)*fk(j,alpj,l)*nd(k)*nd(l)*&
                             jac
-                          enddo
-144                     continue
-142                 continue
-149             continue
-148         continue
+                            enddo
+                        end do
+                    end do
+                end do
+            end do
 !
-            do 145 k = 1, singu*ndim
+            do k = 1, singu*ndim
               do alpi = 1 , ndim
-                do 146 l = 1, nfh*ndim
+                do l = 1, nfh*ndim
                     mmat(in+ndim*(1+nfh)+alpi,jn+ndim+l) = mmat(&
                                                         in+ndim*(1+nfh)+alpi,&
                                                    jn+ndim+l) + coefj*2.d0*cstaco*fk(i,alpi,k)&
                                               *ffp(j)*&
                                                         &nd(k)*nd(l&
                                                         )*jac
-146             continue
+                end do
 !
-                do 147 l = 1, singu*ndim
-                  do alpj = 1 , ndim
+                do l = 1, singu*ndim
+                    do alpj = 1 , ndim
                     mmat(in+ndim*(1+nfh)+alpi,jn+ndim*(1+nfh)+alpj) =&
                     mmat(in+ndim*(1+nfh)+alpi,jn+ndim*(1+nfh)+alpj) +&
                     4.d0*cstaco*fk(i,alpi,k)*fk(j,alpj,l)*nd(k)*nd(l)&
                     *jac
-                  enddo
-147             continue
-              enddo
-145         continue
+                    enddo
+                end do
+            enddo
+            end do
 !
-141     continue
-140 continue
+        end do
+    end do
 !
 end subroutine

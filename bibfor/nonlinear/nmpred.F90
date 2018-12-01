@@ -18,7 +18,7 @@
 ! person_in_charge: mickael.abbas at edf.fr
 ! aslint: disable=W1504
 !
-subroutine nmpred(modele, numedd         , numfix    , ds_material, carele  ,&
+subroutine nmpred(mesh, modele, numedd         , numfix    , ds_material, carele  ,&
                   ds_constitutive, lischa    , ds_algopara, solveu  ,&
                   fonact, ds_print       , ds_measure, ds_algorom , sddisc  ,&
                   sdnume, sderro         , numins    , valinc     , solalg  ,&
@@ -37,9 +37,12 @@ implicit none
 #include "asterfort/nmltev.h"
 #include "asterfort/nmprde.h"
 #include "asterfort/nmprta.h"
+#include "asterfort/utmess.h"
+#include "asterfort/nonlinDSPrintSepLine.h"
 !
 integer :: fonact(*)
 integer :: numins
+character(len=8), intent(in) :: mesh
 type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 character(len=19) :: matass, maprec
 type(NL_DS_Measure), intent(inout) :: ds_measure
@@ -103,9 +106,10 @@ aster_logical :: lerrit
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call infdbg('MECA_NON_LINE', ifm, niv)
+    call infdbg('MECANONLINE', ifm, niv)
     if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE> CALCUL DE PREDICTION'
+        call nonlinDSPrintSepLine()
+        call utmess('I', 'MECANONLINE13_33')
     endif
 !
 ! --- INITIALISATION CODES RETOURS
@@ -118,7 +122,7 @@ aster_logical :: lerrit
 !
     if ((ds_algopara%matrix_pred .eq. 'ELASTIQUE').or.&
         (ds_algopara%matrix_pred .eq. 'TANGENTE')) then
-        call nmprta(modele    , numedd         , numfix     , ds_material, carele,&
+        call nmprta(mesh      , modele    , numedd         , numfix     , ds_material, carele,&
                     ds_constitutive, lischa    , ds_algopara, solveu,&
                     fonact    , ds_print       , ds_measure , ds_algorom , sddisc,&
                     numins    , valinc         , solalg     , matass     , maprec,&
@@ -131,7 +135,7 @@ aster_logical :: lerrit
 !
     elseif ((ds_algopara%matrix_pred .eq. 'EXTRAPOLE').or.&
             (ds_algopara%matrix_pred .eq.'DEPL_CALCULE')) then
-        call nmprde(modele, numedd         , numfix    , ds_material, carele    ,&
+        call nmprde(mesh, modele, numedd         , numfix    , ds_material, carele    ,&
                     ds_constitutive, lischa    , ds_algopara, solveu    ,&
                     fonact, ds_print       , ds_measure, ds_algorom, sddisc     , numins    ,&
                     valinc, solalg         , matass    , maprec     , ds_contact,&

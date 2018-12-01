@@ -48,6 +48,8 @@ implicit none
 #include "asterfort/nmrepl.h"
 #include "asterfort/nmsolm.h"
 #include "asterfort/nmsolu.h"
+#include "asterfort/utmess.h"
+#include "asterfort/nonlinDSPrintSepLine.h"
 !
 integer :: fonact(*)
 integer :: iterat, numins
@@ -114,9 +116,10 @@ aster_logical :: lerrit
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call infdbg('MECA_NON_LINE', ifm, niv)
+    call infdbg('MECANONLINE', ifm, niv)
     if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE> CORRECTION INCR. DEPL.'
+        call nonlinDSPrintSepLine()
+        call utmess('I', 'MECANONLINE13_43')
     endif
 !
 ! --- INITIALISATIONS CODES RETOURS

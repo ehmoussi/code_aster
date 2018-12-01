@@ -32,13 +32,12 @@ implicit none
 #include "asterfort/comp_meca_cvar.h"
 #include "asterfort/comp_meca_elas.h"
 #include "asterfort/comp_meca_full.h"
-#include "asterfort/comp_meca_pvar.h"
 #include "asterfort/comp_meca_read.h"
 #include "asterfort/comp_meca_save.h"
 #include "asterfort/dismoi.h"
-#include "asterfort/imvari.h"
 #include "asterfort/nocart.h"
 #include "asterfort/utmess.h"
+#include "asterfort/infniv.h"
 !
 character(len=8), intent(in) :: model
 character(len=8), intent(in) :: chmate
@@ -62,18 +61,24 @@ character(len=19), intent(in) :: compor
 !
 ! --------------------------------------------------------------------------------------------------
 !
+    integer :: ifm, niv
     aster_logical :: l_auto_elas, l_auto_deborst, l_comp_erre
     integer :: nb_cmp
     character(len=8) :: mesh
     character(len=19) :: comp_elas, full_elem_s
-    character(len=19) :: compor_info
     type(Behaviour_PrepPara) :: ds_compor_prep
 !
 ! --------------------------------------------------------------------------------------------------
 !
+    call infniv(ifm, niv)
+    if (niv .ge. 2) then
+        call utmess('I', 'MECANONLINE12_4')
+    endif
+!
+! - Initialisations
+!
     comp_elas   = '&&NMDOCC.COMP_ELAS'
     full_elem_s = '&&NMDOCC.FULL_ELEM'
-    compor_info = '&&NMDOCC.INFO'
     call dismoi('NOM_MAILLA', model, 'MODELE', repk=mesh)
 !
 ! - Create datastructure to prepare comportement
@@ -132,14 +137,6 @@ character(len=19), intent(in) :: compor
 !
     call comp_meca_save(model         , mesh, chmate, compor, nb_cmp,&
                         ds_compor_prep)
-!
-! - Prepare informations about internal variables
-!
-    call comp_meca_pvar(model_ = model, compor_cart_ = compor, compor_info = compor_info)
-!
-! - Print informations about internal variables
-!
-    call imvari(compor_info)
 !
 ! - Cleaning
 !
