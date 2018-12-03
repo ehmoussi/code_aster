@@ -16,11 +16,9 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine lcsegp(elem_dime    , nb_lagr       , indi_lagc     ,&
-                  nb_node_mast , elin_mast_coor, elin_mast_code,&
-                  nb_node_slav , elin_slav_coor, elin_slav_code,&
-                  poidspg      , gauss_coot    , jacobian      ,&
-                  norm_g       , vtmp)
+subroutine lcsegp(elem_dime    , nb_lagr, indi_lagc,&
+                  nb_node_slav , nmcp   , gapi     ,&
+                  vtmp)
 !
 implicit none
 !
@@ -36,16 +34,9 @@ implicit none
 integer, intent(in) :: elem_dime
 integer, intent(in) :: nb_lagr
 integer, intent(in) :: indi_lagc(10)
-integer, intent(in) :: nb_node_mast
-real(kind=8), intent(in) :: elin_mast_coor(elem_dime,nb_node_mast)
-character(len=8), intent(in) :: elin_mast_code
 integer, intent(in) :: nb_node_slav
-real(kind=8), intent(in) :: elin_slav_coor(elem_dime,nb_node_slav)
-character(len=8), intent(in) :: elin_slav_code
-real(kind=8), intent(in) :: poidspg
-real(kind=8), intent(in) :: gauss_coot(2)
-real(kind=8), intent(in) :: jacobian
-real(kind=8), intent(in) :: norm_g(3)
+integer, intent(in) :: nmcp
+real(kind=8), intent(in) :: gapi
 real(kind=8), intent(inout) :: vtmp(55)
 !
 ! --------------------------------------------------------------------------------------------------
@@ -59,95 +50,33 @@ real(kind=8), intent(inout) :: vtmp(55)
 ! In  elem_dime        : dimension of elements
 ! In  nb_lagr          : total number of Lagrangian dof on contact element
 ! In  indi_lagc        : PREVIOUS node where Lagrangian dof is present (1) or not (0)
-! In  nb_node_mast     : number of nodes of for master side from contact element
-! In  elin_mast_coor   : coordinates of sub-elements in master element
-! In  elin_mast_code   : code of all sub-elements in master element
 ! In  nb_node_slav     : number of nodes of for slave side from contact element
-! In  elin_slav_coor   : coordinates of sub-elements in slave element
+! In  gapi             : gap integral on patch
+! In  nmcp             : number of contact elements associated to the concerned patch
 ! In  elin_slav_code   : code of all sub-elements in slave element
-! In  poidspg          : weight at integration point
-! In  gauss_coot       : coordiantes of current integration point
-! In  jacobian         : jacobian at integration point
-! In  norm_g           : normal vector at integration point
 ! IO  vtmp             : vector
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: i_node, i_dime, jj, shift, niverr
-    real(kind=8) :: tau1(3), tau2(3), gauss_coor(3), proj_tole
-    real(kind=8) :: vect_pm(3), ksi1, ksi2, sig, pdgr
-    real(kind=8) :: dist, r_lagr_c
-    real(kind=8) :: slav_coor(3,9),mast_coor(3,9)
+    integer :: i_node, jj, shift
+    real(kind=8) :: r_lagr_c, r_nmcp
 !
 ! --------------------------------------------------------------------------------------------------
 !
     jj=0
-    proj_tole=1.d-9
-    gauss_coor(1:3) = 0.d0
-    tau1(1:3) = 0.d0
-    tau2(1:3) = 0.d0
-    vect_pm(1:3) = 0.d0
     shift = 0
     r_lagr_c=real(nb_lagr,kind=8)
-    slav_coor(1:3,1:9) = 0.d0
-    mast_coor(1:3,1:9) = 0.d0
-!
-! - Get coordinates of elements
-!
-    do i_node = 1,nb_node_slav
-        do i_dime = 1,elem_dime
-            slav_coor(i_dime,i_node) = elin_slav_coor(i_dime,i_node)
-        enddo
-    enddo
-    do i_node = 1,nb_node_mast
-        do i_dime = 1,elem_dime
-            mast_coor(i_dime,i_node) = elin_mast_coor(i_dime,i_node)
-        enddo
-    enddo
-!
-! - Project slave element into real space
-!
-    call reerel(elin_slav_code, nb_node_slav, elem_dime, elin_slav_coor, gauss_coot,&
-                gauss_coor) 
-
-    pdgr=jacobian*poidspg
-!
-! - Projection of slave point on master element
-!
-    call mmnewd(elin_mast_code, nb_node_mast, elem_dime, mast_coor, &
-                gauss_coor, 75,&
-                proj_tole, norm_g, ksi1, ksi2,&
-                tau1, tau2, niverr)
-    if (niverr.eq.1) then
-       write(*,*)"mmnewd failed"
-       ASSERT(.false.)
-    end if
-!
-! - Compute distance
-!
-    call apdist(elin_mast_code, mast_coor, nb_node_mast, ksi1, ksi2,&
-                gauss_coor, dist, vect_pm)
-!
-! - Compute _algebrical_ distance
-!
-    if (elem_dime .eq. 3) then
-        sig = vect_pm(1)*norm_g(1)+vect_pm(2)*norm_g(2)+vect_pm(3)*norm_g(3)
-    elseif (elem_dime .eq. 2) then
-        sig = vect_pm(1)*norm_g(1)+vect_pm(2)*norm_g(2)
-    else
-        ASSERT(.false.)
-    end if
-    dist=sign(dist,sig)
+    r_nmcp = real(nmcp, kind=8)
 !
 ! - Compute vector
 !
-    do i_node = 1, nb_node_slav 
-        shift=shift+indi_lagc(i_node) 
-        if (indi_lagc(i_node+1).eq. 1) then
-            jj=elem_dime*(i_node-1)+shift+elem_dime+1
-               vtmp(jj)=vtmp(jj)-pdgr*dist/(r_lagr_c)
-        end if
+    r_lagr_c=real(nb_lagr,kind=8)
+    do i_node = 1, nb_node_slav
+            shift=shift+indi_lagc(i_node)
+            if (indi_lagc(i_node+1).eq. 1) then
+                jj=elem_dime*(i_node-1)+shift+elem_dime+1
+                vtmp(jj)=gapi/(r_nmcp*r_lagr_c)
+            end if
     end do
 !
 end subroutine
-        

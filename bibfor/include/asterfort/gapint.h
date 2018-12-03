@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -25,7 +25,8 @@ interface
                       elem_slav_code, elem_slav_nbnode, elem_slav_coor,&
                       elem_mast_code, elem_mast_nbnode, elem_mast_coor,&
                       nb_poin_inte  , poin_inte       ,&
-                      gap_moy       , inte_weight     )
+                      gap_moy       , inte_weight     ,&
+                      l_axis)
         real(kind=8), intent(in) :: pair_tole
         integer, intent(in) :: elem_dime
         character(len=8), intent(in) :: elem_slav_code
@@ -38,5 +39,6 @@ interface
         real(kind=8), intent(in) :: poin_inte(elem_dime-1,nb_poin_inte)
         real(kind=8), intent(out) :: gap_moy
         real(kind=8), intent(out) :: inte_weight
+        aster_logical, intent(in) :: l_axis
     end subroutine gapint
 end interface

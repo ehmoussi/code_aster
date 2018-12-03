@@ -19,7 +19,8 @@
 subroutine lcstco(l_previous, l_upda_jaco  ,&
                   lagrc_prev, lagrc_curr   ,&
                   gap_prev  , gap_curr     ,&
-                  indi_cont , l_norm_smooth)
+                  indi_cont , l_norm_smooth,&
+                  gapi, nmcp)
 !
 implicit none
 !
@@ -29,9 +30,9 @@ implicit none
 !
 aster_logical, intent(out) :: l_previous
 real(kind=8), intent(out) :: lagrc_curr, lagrc_prev
-real(kind=8), intent(out) :: gap_curr, gap_prev
+real(kind=8), intent(out) :: gap_curr, gap_prev, gapi
 aster_logical, intent(out) :: l_upda_jaco
-integer, intent(out) :: indi_cont
+integer, intent(out) :: indi_cont, nmcp
 aster_logical, intent(out) :: l_norm_smooth
 !
 ! --------------------------------------------------------------------------------------------------
@@ -64,13 +65,15 @@ aster_logical, intent(out) :: l_norm_smooth
 !
     l_previous     = nint(zr(jpcf-1+10 )) .eq. 1
     lagrc_prev     =     (zr(jpcf-1+13+25))
-    gap_prev       =     (zr(jpcf-1+15+25)) 
+    gap_prev       =     (zr(jpcf-1+15+25))
     indi_cont      = nint(zr(jpcf-1+12))
     lagrc_curr     =     (zr(jpcf-1+13))
     l_upda_jaco    = nint(zr(jpcf-1+2 )) .eq. 1
     gap_curr       =     (zr(jpcf-1+15))
+    gapi           =     (zr(jpcf-1+4))
+    nmcp           = nint(zr(jpcf-1+3))
     l_norm_smooth  = nint(zr(jpcf-1+1)) .eq. 1
-! On s'assure que le patch n'a pas change de maille maitre. 
+! On s'assure que le patch n'a pas change de maille maitre.
     l_previous     = l_previous  .and. (nint(zr(jpcf-1+28 )) .eq. 1)
 !
 end subroutine

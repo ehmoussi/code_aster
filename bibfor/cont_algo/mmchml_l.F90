@@ -72,7 +72,7 @@ character(len=19), intent(in) :: chmlcf
     real(kind=8), pointer :: v_sdappa_coef(:) => null()
     character(len=24) :: sdcont_stat
     integer, pointer :: v_sdcont_stat(:) => null()
-    character(len=24) :: sdcont_lagc 
+    character(len=24) :: sdcont_lagc
     real(kind=8), pointer :: v_sdcont_lagc(:) => null()
     character(len=24) :: sdappa_apli
     integer, pointer :: v_sdappa_apli(:) => null()
@@ -81,6 +81,12 @@ character(len=19), intent(in) :: chmlcf
     real(kind=8), pointer :: v_sdcont_cyclac_hist(:) => null()
     character(len=24) :: sdcont_cyclac_etat
     integer, pointer :: v_sdcont_cyclac_etat(:) => null()
+    character(len=24) :: sdappa_poid
+    real(kind=8), pointer :: v_sdappa_poid(:) => null()
+    character(len=24) :: sdappa_gapi
+    real(kind=8), pointer :: v_sdappa_gapi(:) => null()
+    character(len=24) :: sdappa_nmcp
+    integer, pointer :: v_sdappa_nmcp(:) => null()
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -120,13 +126,19 @@ character(len=19), intent(in) :: chmlcf
 !
     sdcont_stat = ds_contact%sdcont_solv(1:14)//'.STAT'
     sdcont_lagc = ds_contact%sdcont_solv(1:14)//'.LAGC'
+    sdappa_gapi = sdappa(1:19)//'.GAPI'
+    sdappa_poid = sdappa(1:19)//'.POID'
+    sdappa_nmcp = sdappa(1:19)//'.NMCP'
     call jeveuo(sdcont_stat, 'L', vi = v_sdcont_stat)
     call jeveuo(sdcont_lagc, 'L', vr = v_sdcont_lagc)
+    call jeveuo(sdappa_gapi, 'L', vr = v_sdappa_gapi)
+    call jeveuo(sdappa_nmcp, 'L', vi = v_sdappa_nmcp)
+    call jeveuo(sdappa_poid, 'L', vr = v_sdappa_poid)
     sdappa_coef = sdappa(1:19)//'.COEF'
     sdappa_apli = sdappa(1:19)//'.APLI'
     call jeveuo(sdappa_coef, 'L', vr = v_sdappa_coef)
     call jeveuo(sdappa_apli, 'L', vi = v_sdappa_apli)
-    sdcont_cyclac_etat = ds_contact%sdcont_solv(1:14)//'.CYCE' 
+    sdcont_cyclac_etat = ds_contact%sdcont_solv(1:14)//'.CYCE'
    call jeveuo(sdcont_cyclac_etat, 'L', vi = v_sdcont_cyclac_etat)
     sdcont_cyclac_hist = ds_contact%sdcont_solv(1:14)//'.CYCH'
     call jeveuo(sdcont_cyclac_hist, 'L', vr = v_sdcont_cyclac_hist)
@@ -147,9 +159,9 @@ character(len=19), intent(in) :: chmlcf
             patch_nume     = v_mesh_comapa(elem_slav_nume)
             ! Pour le cyclage : Numero de maille maitre correspondant
             v_sdcont_cyclac_hist(22*(patch_nume-1)+11) = v_sdappa_apli(3*(i_cont_pair-1)+2)
-            !On fait le cyclage ou pas 
+            !On fait le cyclage ou pas
             if (v_sdcont_cyclac_hist(22*(patch_nume-1)+11) .ne. &
-                v_sdcont_cyclac_hist(22*(patch_nume-1)+22) ) then 
+                v_sdcont_cyclac_hist(22*(patch_nume-1)+22) ) then
                 v_sdcont_cyclac_hist(22*(patch_nume-1)+10) = 1
             endif
             jacobian_type  = typ_jaco(i_zone)
@@ -158,8 +170,8 @@ character(len=19), intent(in) :: chmlcf
 ! --------- Set values in CHAM_ELEM
             zr(vale_indx-1+1)  = r_smooth
             zr(vale_indx-1+2)  = jacobian_type
-            zr(vale_indx-1+3)  = 0.d0
-            zr(vale_indx-1+4)  = 0.d0
+            zr(vale_indx-1+3)  = v_sdappa_nmcp(patch_nume)
+            zr(vale_indx-1+4)  = v_sdappa_gapi(patch_nume)*v_sdappa_poid(patch_nume)
             zr(vale_indx-1+5)  = 0.d0
             zr(vale_indx-1+6)  = 0.d0
             zr(vale_indx-1+7)  = 0.d0

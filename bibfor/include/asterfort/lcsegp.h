@@ -17,24 +17,15 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine lcsegp(elem_dime   , nb_lagr       , indi_lagc     ,&
-                      nb_node_mast, elin_mast_coor, elin_mast_code,&
-                      nb_node_slav, elin_slav_coor, elin_slav_code,&
-                      poidspg     , gauss_coot    , jacobian      ,&
-                      norm_g      , vtmp)
+    subroutine lcsegp(elem_dime    , nb_lagr, indi_lagc,&
+                      nb_node_slav , nmcp   , gapi     ,&
+                      vtmp)
         integer, intent(in) :: elem_dime
         integer, intent(in) :: nb_lagr
         integer, intent(in) :: indi_lagc(10)
-        integer, intent(in) :: nb_node_mast
-        real(kind=8), intent(in) :: elin_mast_coor(elem_dime,nb_node_mast)
-        character(len=8), intent(in) :: elin_mast_code
         integer, intent(in) :: nb_node_slav
-        real(kind=8), intent(in) :: elin_slav_coor(elem_dime,nb_node_slav)
-        character(len=8), intent(in) :: elin_slav_code
-        real(kind=8), intent(in) :: poidspg
-        real(kind=8), intent(in) :: gauss_coot(2)
-        real(kind=8), intent(in) :: jacobian
-        real(kind=8), intent(in) :: norm_g(3)
+        integer, intent(in) :: nmcp
+        real(kind=8), intent(in) :: gapi
         real(kind=8), intent(inout) :: vtmp(55)
     end subroutine lcsegp
 end interface

@@ -22,12 +22,15 @@ interface
     subroutine lcstco(l_previous, l_upda_jaco  ,&
                       lagrc_prev, lagrc_curr   ,&
                       gap_prev  , gap_curr     ,&
-                      indi_cont , l_norm_smooth)
+                      indi_cont , l_norm_smooth,&
+                      gapi, nmcp)
         aster_logical, intent(out) :: l_previous
         real(kind=8), intent(out) :: lagrc_curr, lagrc_prev
         real(kind=8), intent(out) :: gap_curr, gap_prev
         aster_logical, intent(out) :: l_upda_jaco
         integer, intent(out) :: indi_cont
         aster_logical, intent(out) :: l_norm_smooth
+        real(kind=8), intent(out) :: gapi
+        integer, intent(out) :: nmcp
     end subroutine lcstco
 end interface
