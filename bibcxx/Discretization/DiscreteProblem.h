@@ -102,7 +102,8 @@ class DiscreteProblemInstance {
      * @return Vecteur élémentaire
      */
     ElementaryVectorPtr
-    buildElementaryNeumannVector( const VectorDouble time ) ;
+    buildElementaryNeumannVector( const VectorDouble time,
+                                  CalculationInputVariablesPtr ) ;
 
     /**
      * @brief Fonction permettant de calculer les matrices élémentaires de rigidité

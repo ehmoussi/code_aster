@@ -410,6 +410,10 @@ extern void DEFSPPSPPPSP(RSACPA,rsacpa,char *, STRING_SIZE, ASTERINTEGER *, ASTE
 extern void DEFSSSP(RCSTOC_VERIF, rcstoc_verif, const char *, STRING_SIZE,
                     const char *,  STRING_SIZE, const char *,  STRING_SIZE, ASTERINTEGER *);
 
+#define CALLO_DETRSD(a,b,c,d) CALLOO(DETRSD,detrsd,a,b)
+extern void DEFSS(DETRSD, detrsd, const char *, STRING_SIZE,
+                  const char *,  STRING_SIZE);
+
 /* particulier car on passe les longueurs des chaines en dur */
 extern void DEFSPSPPPS(RSACCH,rsacch,char *, STRING_SIZE, ASTERINTEGER *, char *,STRING_SIZE,
     ASTERINTEGER *, ASTERINTEGER *, ASTERINTEGER *, char *,STRING_SIZE);

@@ -26,18 +26,19 @@
 #include "Materials/CalculationInputVariables.h"
 
 CalculationInputVariablesInstance::CalculationInputVariablesInstance(
-    const ModelPtr &model, const MaterialOnMeshPtr &mater, const ElementaryCharacteristicsPtr &cara,
-    const CodedMaterialPtr &codMater )
-    : DataStructure( "VARI_COM", Permanent, 14 ), _model( model ), _mater( mater ),
-      _codMater( codMater ), _elemCara( cara ),
-      _varRef( new FieldOnElementsDoubleInstance( _model->getName() + ".CHVCREF" ) ),
-      _varInst( new FieldOnElementsDoubleInstance( getName() + ".TOUT" ) ),
-      _timeValue(
+    const ModelPtr &model, const MaterialOnMeshPtr &mater,
+    const ElementaryCharacteristicsPtr &cara, const CodedMaterialPtr &codMater ):
+        DataStructure( "VARI_COM", Permanent, 14 ), _model( model ), _mater( mater ),
+        _codMater( codMater ), _elemCara( cara ),
+        _varRef( new FieldOnElementsDoubleInstance( _model->getName() + ".CHVCREF" ) ),
+        _varInst( new FieldOnElementsDoubleInstance( getName() + ".TOUT" ) ),
+        _timeValue(
           new PCFieldOnMeshDoubleInstance( getName() + ".INST", _model->getSupportMesh() ) ),
-      _currentTime( -1.0 ), _pTot( _mater->existsCalculationInputVariable( "PTOT" ) ),
-      _hydr( _mater->existsCalculationInputVariable( "HYDR" ) ),
-      _sech( _mater->existsCalculationInputVariable( "SECH" ) ),
-      _temp( _mater->existsCalculationInputVariable( "TEMP" ) ) {
+        _currentTime( -1.0 ), _pTot( _mater->existsCalculationInputVariable( "PTOT" ) ),
+        _hydr( _mater->existsCalculationInputVariable( "HYDR" ) ),
+        _sech( _mater->existsCalculationInputVariable( "SECH" ) ),
+        _temp( _mater->existsCalculationInputVariable( "TEMP" ) )
+{
     std::string modName( _model->getName(), 0, 8 ), matName( _mater->getName(), 0, 8 );
     std::string carName( ' ', 8 );
     if ( _elemCara != nullptr )
@@ -45,7 +46,8 @@ CalculationInputVariablesInstance::CalculationInputVariablesInstance(
     CALLO_VRCREF( modName, matName, carName, _varRef->getName() );
 };
 
-void CalculationInputVariablesInstance::compute( const double &time ) {
+void CalculationInputVariablesInstance::compute( const double &time )
+{
     _currentTime = time;
     _varInst->deallocate();
     _timeValue->deallocate();
@@ -65,7 +67,8 @@ void CalculationInputVariablesInstance::compute( const double &time ) {
 };
 
 FieldOnNodesDoublePtr
-CalculationInputVariablesInstance::computeMechanicalLoads( const BaseDOFNumberingPtr &dofNUM ) {
+CalculationInputVariablesInstance::computeMechanicalLoads( const BaseDOFNumberingPtr &dofNUM )
+{
     const auto &codedMater = _codMater->getCodedMaterialField();
     std::string modName( _model->getName(), 0, 8 );
     std::string carName( 8, ' ' );
