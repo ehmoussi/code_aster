@@ -490,7 +490,10 @@ class BaseLinearSolverInstance : public DataStructure {
 
     void setSingularityDetectionThreshold( ASTERINTEGER nprec ) { _nPrec = nprec; };
 
-    void setSolverResidual( double residual ) { _residual = residual; };
+    void setSolverResidual( double residual )
+    {
+        _residual = residual;
+    };
 
     void setUpdatePreconditioningParameter( ASTERINTEGER value ) {
         if ( _linearSolver != Petsc && _linearSolver != Gcpc )
@@ -526,10 +529,12 @@ template < typename linSolvWrap > class LinearSolverInstance : public BaseLinear
      * @brief Constructeur
      */
     LinearSolverInstance( const Renumbering currentRenumber = Metis )
-        : LinearSolverInstance( ResultNaming::getNewResultName() ){};
+        : LinearSolverInstance( ResultNaming::getNewResultName(), currentRenumber )
+    {};
 
     LinearSolverInstance( const std::string name, const Renumbering currentRenumber = Metis )
-        : BaseLinearSolverInstance( name, linSolvWrap::solverType, currentRenumber ) {
+        : BaseLinearSolverInstance( name, linSolvWrap::solverType, currentRenumber )
+    {
         RenumberingChecker< linSolvWrap >::isAllowedRenumbering( currentRenumber );
     };
 

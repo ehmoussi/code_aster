@@ -57,18 +57,21 @@ void StaticMechanicalAlgorithm::oneStep( const CurrentContext &ctx ) {
     ElementaryVectorPtr vectElem2 = ctx._discreteProblem->buildElementaryLaplaceVector();
     FieldOnNodesDoublePtr chNoLap = vectElem2->assembleVector( dofNum1, ctx._time, Temporary );
 
+    ctx._varCom->compute( ctx._time );
+
     // Build Neumann loads
     VectorDouble times;
     times.push_back( ctx._time );
     times.push_back( 0. );
     times.push_back( 0. );
-    ElementaryVectorPtr vectElem3 = ctx._discreteProblem->buildElementaryNeumannVector( times );
+    ElementaryVectorPtr vectElem3 = ctx._discreteProblem->buildElementaryNeumannVector( times,
+                                                                                        ctx._varCom
+                                                                                      );
     FieldOnNodesDoublePtr chNoNeu = vectElem3->assembleVector( dofNum1, ctx._time, Temporary );
 
     chNoDir->addFieldOnNodes( *chNoLap );
     chNoDir->addFieldOnNodes( *chNoNeu );
 
-    ctx._varCom->compute( ctx._time );
     if ( ctx._varCom->existsMechanicalLoads() ) {
         auto varComLoad = ctx._varCom->computeMechanicalLoads( dofNum1 );
         chNoDir->addFieldOnNodes( *varComLoad );

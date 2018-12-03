@@ -93,7 +93,7 @@ ElementaryVectorPtr DiscreteProblemInstance::buildElementaryLaplaceVector() {
 };
 
 ElementaryVectorPtr DiscreteProblemInstance::buildElementaryNeumannVector(
-    const VectorDouble time ) {
+    const VectorDouble time, CalculationInputVariablesPtr varCom ) {
     if ( time.size() != 3 )
         throw std::runtime_error( "Invalid number of parameter" );
 
@@ -112,6 +112,9 @@ ElementaryVectorPtr DiscreteProblemInstance::buildElementaryNeumannVector(
     const double &inst = time[0];
     std::string stop( "S" );
     std::string blanc( "        " );
+    std::string varCName( blanc );
+    if( varCom != nullptr )
+        varCName = varCom->getName() + ".TOUT";
     std::string resultName( retour->getName() );
     std::string materName( curMater->getName() + "                " );
 
@@ -125,7 +128,7 @@ ElementaryVectorPtr DiscreteProblemInstance::buildElementaryNeumannVector(
     cmdSt.setResult( resultName, "AUCUN" );
 
     CALLO_VECHME_WRAP( stop, modelName, nameLcha, nameInfc, &inst, caraName, materName,
-                       retour->getName(), blanc );
+                       retour->getName(), varCName );
     retour->setEmpty( false );
 
     retour->setListOfLoads( _study->getListOfLoads() );
