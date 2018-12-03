@@ -65,9 +65,9 @@ class ResultCreator(ExecuteCommand):
             elif typ == "MODE_MECA_C":
                 self._result = MechanicalModeComplexContainer()
             elif typ == "DYNA_TRANS":
-                self.result = FullTransientResultsContainer()
+                self._result = FullTransientResultsContainer()
             elif typ == "DYNA_HARMO":
-                self.result = FullHarmonicResultsContainer()
+                self._result = FullHarmonicResultsContainer()
             else:
                 raise NotImplementedError("Type of result {0!r} not yet "
                                         "implemented".format(typ))
