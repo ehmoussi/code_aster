@@ -62,7 +62,7 @@ bool BaseLinearSolverInstance::build() {
     newName.resize( 19, ' ' );
 
     // Definition du bout de fichier de commande pour SOLVEUR
-    CommandSyntax cmdSt( "SOLVEUR" );
+    CommandSyntax cmdSt( _commandName );
     cmdSt.setResult( getName(), getType() );
 
     SyntaxMapContainer dict;

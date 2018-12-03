@@ -66,6 +66,7 @@ ElasticEvolutionContainerPtr StaticMechanicalSolverInstance::execute() {
             throw std::runtime_error( "ParallelMesh not allowed with this preconditioning" );
     }
     // Build the linear solver (sd_solver)
+    _linearSolver->_commandName = "MECA_STATIQUE";
     _linearSolver->build();
 
     BaseDOFNumberingPtr dofNum1;
@@ -76,8 +77,6 @@ ElasticEvolutionContainerPtr StaticMechanicalSolverInstance::execute() {
 #endif /* _USE_MPI */
         dofNum1 = resultC->getEmptyDOFNumbering();
     dofNum1 = dProblem->computeDOFNumbering( dofNum1 );
-    FieldOnNodesDoublePtr vecass( new FieldOnNodesDoubleInstance( Temporary ) );
-    vecass->allocateFromDOFNumering( dofNum1 );
 
     StaticMechanicalContext currentContext( dProblem, _linearSolver, resultC );
     typedef Algorithm< TimeStepperInstance, StaticMechanicalContext, StaticMechanicalAlgorithm >
