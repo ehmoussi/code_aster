@@ -61,8 +61,8 @@ import inspect
 import re
 from collections import namedtuple
 
-import libaster
 import aster
+import libaster
 
 from ..Cata import Commands
 from ..Cata.Language.SyntaxObjects import _F
@@ -70,7 +70,7 @@ from ..Cata.SyntaxChecker import CheckerError, checkCommandSyntax
 from ..Cata.SyntaxUtils import mixedcopy, remove_none, search_for
 from ..Objects import DataStructure, ResultNaming
 from ..Supervis import CommandSyntax, ExecutionParameter, Options, logger
-from ..Utilities import Singleton, deprecated, import_object
+from ..Utilities import Singleton, deprecated, import_object, no_new_attributes
 from ..Utilities.outputs import (command_header, command_result,
                                  command_separator, command_text, command_time,
                                  decorate_name)
@@ -106,6 +106,8 @@ class ExecuteCommand(object):
     command_name = command_op = command_cata = None
 
     _cata = _op = _result = _counter = _caller = None
+
+    __setattr__ = no_new_attributes(object.__setattr__)
 
     def __init__(self):
         """Initialization"""
