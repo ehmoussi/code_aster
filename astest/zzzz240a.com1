@@ -88,9 +88,6 @@ IMPR_TABLE(TABLE=ttest,
 IMPR_TABLE(TABLE=tab2,
            UNITE=55,);
 
-DEFI_FICHIER(ACTION='LIBERER',
-             UNITE=55,);
-
 # RELECTURE POUR COMPARAISON DES TABLES FILTREES DANS CALC_TABLE OU IMPR_TABLE
 
 tlu2=LIRE_TABLE(UNITE=55,
@@ -205,10 +202,10 @@ fc5=RECU_FONCTION(TABLE=ttest,
 tabf=CALC_TABLE(TABLE=tab1,
                 ACTION=(_F(OPERATION='AJOUT_COLONNE',
                            NOM_PARA='FONCT',
-                           VALE='ft3',),
+                           VALE=ft3.getName(),),
                         _F(OPERATION='AJOUT_LIGNE',
                            NOM_PARA=('ABSC_CURV','COL','FONCT',),
-                           VALE=(-3.0,1.0,'fc5',),),),);
+                           VALE=(-3.0,1.0,fc5.getName(),),),),);
 
 IMPR_TABLE(TABLE=tabf,);
 
