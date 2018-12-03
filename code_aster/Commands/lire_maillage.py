@@ -79,7 +79,7 @@ class MeshReader(ExecuteCommand):
                       CREA_GROUP_COUL=coul)
 
         if fmt in need_conversion:
-            tmpfile.release_from_number(unit_op)
+            tmpfile.release()
 
         keywords['UNITE'] = unit_op
 
