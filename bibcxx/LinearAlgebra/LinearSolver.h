@@ -38,6 +38,12 @@
 #include "Utilities/GenericParameter.h"
 #include "astercxx.h"
 
+/**
+ * @struct StaticMechanicalSolverInstance predefinition
+ * @todo to remove
+ */
+class StaticMechanicalSolverInstance;
+
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 // Ces wrappers sont la pour autoriser que les set soient const
@@ -171,6 +177,7 @@ class BaseLinearSolverInstance : public DataStructure {
     GenParam _acceleration;
     ListGenParam _listOfParameters;
     AssemblyMatrixDisplacementDoublePtr _matrixPrec;
+    std::string _commandName;
 
   public:
     /**
@@ -218,7 +225,9 @@ class BaseLinearSolverInstance : public DataStructure {
           _stopSingular( "STOP_SINGULIER", false ), _resolutionType( "TYPE_RESOL", false ),
           _acceleration( "ACCELERATION", false ),
           _matrixPrec( new AssemblyMatrixDisplacementDoubleInstance(
-              ResultNaming::getNewResultName() + ".PREC" ) ) {
+              ResultNaming::getNewResultName() + ".PREC" ) ),
+          _commandName( "SOLVEUR" )
+    {
         _renum = RenumberingNames[(int)_renumber];
 
         _method = std::string( LinearSolverNames[(int)_linearSolver] );
@@ -503,6 +512,8 @@ class BaseLinearSolverInstance : public DataStructure {
                 "Update preconditioning parameter only allowed with IncompleteLdlt" );
         _reac = value;
     };
+
+    friend class StaticMechanicalSolverInstance;
 };
 
 /**
