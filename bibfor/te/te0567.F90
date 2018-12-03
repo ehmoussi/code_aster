@@ -53,7 +53,7 @@ character(len=16), intent(in) :: nomte
     integer :: elem_dime
     integer :: jmatt
     real(kind=8) :: lagrc, lagrc_prev
-    integer :: indi_cont
+    integer :: indi_cont, nmcp
     aster_logical :: l_norm_smooth
     aster_logical :: l_axis, debug, l_upda_jaco
     character(len=8) :: elem_slav_code, elem_mast_code
@@ -62,7 +62,7 @@ character(len=16), intent(in) :: nomte
     real(kind=8) :: elem_mast_coop(27), elem_slav_coop(27)
     character(len=8) :: elga_fami_slav, elga_fami_mast
     real(kind=8) :: mmat(55, 55), mmat_prev(55, 55), mmat_(55,55)
-    real(kind=8) :: gap_curr, gap_prev
+    real(kind=8) :: gap_curr, gap_prev, gapi
     aster_logical :: l_previous
     real(kind=8) :: alpha
 !
@@ -96,7 +96,8 @@ character(len=16), intent(in) :: nomte
     call lcstco(l_previous, l_upda_jaco  ,&
                 lagrc_prev, lagrc        ,&
                 gap_prev  , gap_curr     ,&
-                indi_cont , l_norm_smooth)
+                indi_cont , l_norm_smooth,&
+                gapi, nmcp)
 !
 ! - Get initial coordinates
 !
@@ -140,7 +141,7 @@ character(len=16), intent(in) :: nomte
                     nb_node_slav, elem_slav_code, elem_slav_init, elga_fami_slav, elem_slav_coor,&
                     nb_node_mast, elem_mast_code, elem_mast_init, elga_fami_mast, elem_mast_coor,&
                     mmat)
-        if (l_previous) then
+        if (.false.) then
             call lclaze(elem_dime, nb_lagr, nb_node_slav, indi_lagc,&
                         mmat_prev)
             if ((abs(lagrc_prev+100.d0*gap_prev)+abs(lagrc+100.d0*gap_curr)) .gt. 1.d-6 ) then
@@ -162,7 +163,7 @@ character(len=16), intent(in) :: nomte
     elseif (indi_cont .eq. 0) then
         call lclaze(elem_dime, nb_lagr, nb_node_slav, indi_lagc,&
                     mmat     )
-        if (l_previous) then
+        if (.false.) then
             call lcmatr(elem_dime   ,&
                         l_axis      , l_upda_jaco   , l_norm_smooth ,&
                         nb_lagr     , indi_lagc     ,&

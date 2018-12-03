@@ -57,7 +57,7 @@ integer, intent(out) :: iret
     integer :: i_poin_inte, i_node, i_dime
     real(kind=8) :: node_real(3), ksi(2), ksi_ma(2)
     real(kind=8) :: tau1(3), tau2(3), norm(3), elem_slav_coot(27)
-    real(kind=8) :: dff(2, 9), dist, vect_pm(3)
+    real(kind=8) :: dff(2, 9)
     character(len=8) :: elin_slav_code
     integer :: elin_slav_nbnode
     character(len=8) :: elin_mast_code
@@ -143,13 +143,11 @@ integer, intent(out) :: iret
             iret = 1
             ASSERT(.false.)
         endif
-        call apdist(elem_mast_code, elem_mast_coor, elem_mast_nbnode,&
-                    ksi_ma(1), ksi_ma(2),&
-                    node_real , dist , vect_pm)
+
         poin_inte_ma(1,i_poin_inte) = ksi_ma(1)
         if (elem_dime .eq. 3) then
             poin_inte_ma(2,i_poin_inte) = ksi_ma(2)
         endif
     end do
-    write(*,*)poin_inte_ma(:,:)
+
 end subroutine

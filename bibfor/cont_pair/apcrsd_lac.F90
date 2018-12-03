@@ -121,6 +121,8 @@ integer, intent(in) :: nb_node_mesh
     integer, pointer :: v_contcylac_etat(:) => null()
     character(len=24) :: contcylac_hist
     real(kind=8), pointer :: v_contcylac_hist(:) => null()
+    character(len=24) :: sdappa_nmcp
+    integer, pointer :: v_sdappa_nmcp(:) => null()
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -211,11 +213,11 @@ integer, intent(in) :: nb_node_mesh
     sdappa_coef = sdappa(1:19)//'.COEF'
     sdappa_poid = sdappa(1:19)//'.POID'
     sdappa_wpat = sdappa(1:19)//'.WPAT'
+    sdappa_nmcp = sdappa(1:19)//'.NMCP'
     call wkvect(sdappa_poid, 'V V R', nt_patch, vr = v_sdappa_coef)
     call wkvect(sdappa_coef, 'V V R', nt_patch, vr = v_sdappa_poid)
     call wkvect(sdappa_wpat, 'V V R', nt_patch, vr = v_sdappa_wpat)
-
-
+    call wkvect(sdappa_nmcp, 'V V I', nt_patch, vi = v_sdappa_nmcp)
 
 ! - Datastructures for adaptation rho_n
 !

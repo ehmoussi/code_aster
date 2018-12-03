@@ -51,16 +51,16 @@ character(len=16), intent(in) :: nomte
     integer :: elem_dime
     integer :: jvect
     real(kind=8) :: lagrc, lagrc_prev
-    integer :: indi_cont
+    integer :: indi_cont, nmcp
     aster_logical :: l_norm_smooth
     aster_logical :: l_axis, debug, l_upda_jaco
     character(len=8) :: elem_slav_code, elem_mast_code
     real(kind=8) :: elem_mast_coor(27), elem_slav_coor(27)
     real(kind=8) :: elem_mast_init(27), elem_slav_init(27)
     real(kind=8) :: elem_mast_coop(27), elem_slav_coop(27)
-    character(len=8) :: elga_fami_slav, elga_fami_mast 
+    character(len=8) :: elga_fami_slav, elga_fami_mast
     real(kind=8) :: vcont(55), vcont_prev(55), vcont_(55)
-    real(kind=8) :: gap_curr,gap_prev
+    real(kind=8) :: gap_curr,gap_prev, gapi
     aster_logical :: l_previous
     real(kind=8) :: alpha, max_value
 !
@@ -94,7 +94,8 @@ character(len=16), intent(in) :: nomte
     call lcstco(l_previous, l_upda_jaco  ,&
                 lagrc_prev, lagrc        ,&
                 gap_prev  , gap_curr     ,&
-                indi_cont , l_norm_smooth)
+                indi_cont , l_norm_smooth,&
+                gapi, nmcp)
 !
 ! - Get initial coordinates
 !
@@ -113,7 +114,7 @@ character(len=16), intent(in) :: nomte
 !
 ! - S'il y a du cyclage, on calcul la géométrie à n-1 :
 !
-    if (l_previous) then 
+    if (l_previous) then
         call lcgeog(ASTER_TRUE    ,&
                     elem_dime     , nb_lagr       , indi_lagc ,&
                     nb_node_slav  , nb_node_mast  ,&
@@ -130,8 +131,8 @@ character(len=16), intent(in) :: nomte
                     nb_lagr     , indi_lagc     , lagrc         ,&
                     nb_node_slav, elem_slav_code, elem_slav_init, elga_fami_slav, elem_slav_coor,&
                     nb_node_mast, elem_mast_code, elem_mast_init, elga_fami_mast, elem_mast_coor,&
-                    vcont)
-        if (l_previous) then 
+                    vcont, gapi, nmcp)
+        if (.false.) then
             call lcsena(elem_dime, nb_lagr, nb_node_slav, indi_lagc, &
                         lagrc_prev    , vcont_prev)
             if ((abs(lagrc_prev+100.d0*gap_prev)+abs(lagrc+100.d0*gap_curr)) .gt. 1.d-6 ) then
@@ -150,13 +151,13 @@ character(len=16), intent(in) :: nomte
     elseif (indi_cont .eq. 0) then
         call lcsena(elem_dime, nb_lagr, nb_node_slav, indi_lagc, &
                     lagrc    , vcont)
-        if (l_previous) then 
+        if (.false.) then
         call lcvect(elem_dime   ,&
                     l_axis      , l_upda_jaco   , l_norm_smooth ,&
                     nb_lagr     , indi_lagc     , lagrc         ,&
                     nb_node_slav, elem_slav_code, elem_slav_init, elga_fami_slav, elem_slav_coop,&
                     nb_node_mast, elem_mast_code, elem_mast_init, elga_fami_mast, elem_mast_coop,&
-                    vcont_prev)
+                    vcont_prev, gapi, nmcp)
             if ((abs(lagrc_prev+100.d0*gap_prev)+abs(lagrc+100.d0*gap_curr)) .gt. 1.d-6 ) then
                 alpha = 1.0-abs(lagrc+100.d0*gap_curr)/&
                         (abs(lagrc_prev+100.d0*gap_prev)+abs(lagrc+100.d0*gap_curr))

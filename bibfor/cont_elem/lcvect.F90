@@ -21,7 +21,7 @@ subroutine lcvect(elem_dime   ,&
                   nb_lagr     , indi_lagc     , lagrc         ,&
                   nb_node_slav, elem_slav_code, elem_slav_init, elga_fami_slav, elem_slav_coor,&
                   nb_node_mast, elem_mast_code, elem_mast_init, elga_fami_mast, elem_mast_coor,&
-                  vect)
+                  vect, gapi, nmcp)
 !
 implicit none
 !
@@ -43,9 +43,9 @@ implicit none
 integer, intent(in) :: elem_dime
 aster_logical, intent(in) :: l_axis, l_upda_jaco, l_norm_smooth
 integer, intent(in) :: nb_lagr, indi_lagc(10)
-real(kind=8), intent(in) :: lagrc
+real(kind=8), intent(in) :: lagrc, gapi
 character(len=8), intent(in) :: elem_slav_code, elem_mast_code
-integer, intent(in) :: nb_node_slav, nb_node_mast
+integer, intent(in) :: nb_node_slav, nb_node_mast, nmcp
 real(kind=8), intent(in):: elem_mast_init(27), elem_slav_init(27)
 real(kind=8), intent(in) :: elem_mast_coor(27), elem_slav_coor(27)
 character(len=8), intent(in) :: elga_fami_slav, elga_fami_mast
@@ -212,13 +212,8 @@ real(kind=8), intent(inout) :: vect(55)
                                     indi_lagc    , lagrc       ,&
                                     poidpg       , shape_func  , jacobian,&
                                     vect)
-                        call lcsegp(elem_dime   , nb_lagr       , indi_lagc     ,&
-                                    nb_node_mast, elem_mast_coor,&
-                                    elem_mast_code,&
-                                    nb_node_slav, elem_slav_coor,&
-                                    elem_slav_code,&
-                                    poidpg        , gauss_coot    , jacobian, &
-                                    norm_g        , vect)
+                        call lcsegp(elem_dime   , nb_lagr, indi_lagc,&
+                                    nb_node_slav, nmcp   , gapi     , vect)
                     end do
 ! ----------------- Projection of triangle in master parametric space
                     call lcrtma(elem_dime       , proj_tole,&

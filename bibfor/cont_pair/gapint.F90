@@ -20,7 +20,8 @@ subroutine gapint(pair_tole     , elem_dime       ,&
                   elem_slav_code, elem_slav_nbnode, elem_slav_coor,&
                   elem_mast_code, elem_mast_nbnode, elem_mast_coor,&
                   nb_poin_inte  , poin_inte       ,&
-                  gap_moy       , inte_weight     )
+                  gap_moy       , inte_weight     ,&
+                  l_axis)
 !
 implicit none
 !
@@ -36,13 +37,14 @@ implicit none
 #include "asterfort/jedetr.h"
 #include "asterfort/wkvect.h"
 #include "asterfort/lctria.h"
-#include "asterfort/jacsur.h"
 #include "asterfort/mmnewd.h"
 #include "asterfort/apdist.h"
 #include "asterfort/reerel.h"
 #include "asterfort/lcptga.h"
 #include "asterfort/mmnorm.h"
 #include "asterfort/mmdonf.h"
+#include "asterfort/mmnonf.h"
+#include "asterfort/mmmjac.h"
 #include "asterfort/mmtang.h"
 !
 !
@@ -58,6 +60,7 @@ implicit none
     real(kind=8), intent(in) :: poin_inte(elem_dime-1,nb_poin_inte)
     real(kind=8), intent(out) :: gap_moy
     real(kind=8), intent(out) :: inte_weight
+    aster_logical, intent(in) :: l_axis
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -88,11 +91,14 @@ implicit none
     real(kind=8) :: tau1(3), tau2(3), ksi1, ksi2, jacobian, sig, elem_slav_coot(27)
     integer :: tria_node(6,3)
     character(len=8) :: gauss_family
+    real(kind=8) :: shape_func(9), shape_dfunc(2, 9)
 !
 ! --------------------------------------------------------------------------------------------------
 !
     gap_moy     = 0.d0
     inte_weight = 0.d0
+    shape_func(:)    = 0.d0
+    shape_dfunc(:,:) = 0.d0
 !
 ! - Transform the format of slave element coordinates
 !
@@ -130,7 +136,7 @@ implicit none
             tria_coor(2,1) = 0.d0
             tria_coor(1,2) = poin_inte(1,2)
             tria_coor(2,2) = 0.d0
-            gauss_family         = 'FPG3'
+            gauss_family         = 'FPG4'
         end if
 !
 ! ----- Get integration scheme
@@ -147,6 +153,8 @@ implicit none
             dire_norm(1:3)  = 0.d0
             gauss_coou(1:3) = 0.d0
             gauss_coot(1:2) = 0.d0
+            tau1(:)         = 0.d0
+            tau2(:)         = 0.d0
 !
 ! --------- Transform the format of Gauss coordinates
 !
@@ -159,11 +167,31 @@ implicit none
 !
             call reerel(elem_slav_code, elem_slav_nbnode, elem_dime, elem_slav_coot,&
                         gauss_coot    , gauss_coou)
+
 !
-! --------- Compute jacobian
+! - Get shape functions and first derivative only (for perf)
 !
-            call jacsur(elem_slav_coor, elem_slav_nbnode, elem_slav_code, elem_dime,&
-                        gauss_coot(1) , gauss_coot(2)   , jacobian      , dire_norm)
+            call mmnonf(elem_dime    , elem_slav_nbnode      , elem_slav_code,&
+                        gauss_coot(1), gauss_coot(2),&
+                        shape_func )
+            call mmdonf(elem_dime    , elem_slav_nbnode      , elem_slav_code,&
+                        gauss_coot(1), gauss_coot(2),&
+                        shape_dfunc)
+!
+! - Compute normal at integration point
+!
+            call mmtang(elem_dime,  elem_slav_nbnode, elem_slav_coor, shape_dfunc,&
+                        tau1, tau2)
+
+            call mmnorm(elem_dime, tau1, tau2, dire_norm)
+
+            dire_norm=-dire_norm
+
+            call mmmjac(l_axis    ,  elem_slav_nbnode    , elem_dime,&
+                        elem_slav_code , elem_slav_coor ,&
+                        shape_func, shape_dfunc,&
+                        jacobian)
+
             jaco_weight = gauss_weight(i_gauss)*jacobian
 !
 ! --------- Projection along given direction

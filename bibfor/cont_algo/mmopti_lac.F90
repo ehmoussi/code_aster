@@ -82,6 +82,8 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
     real(kind=8), pointer :: v_sdappa_wpat(:) => null()
     character(len=24) :: sdappa_poid
     real(kind=8), pointer :: v_sdappa_poid(:) => null()
+    character(len=24) :: sdappa_nmcp
+    integer, pointer :: v_sdappa_nmcp(:) => null()
     integer, pointer :: v_mesh_lpatch(:) => null()
     integer :: nb_poin_inte, patch_indx, i_pair, nb_pair, jv_geom,elem_type_nume
     integer, pointer :: v_mesh_connex(:)  => null()
@@ -95,6 +97,7 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
     character(len=8) :: elem_slav_type, elem_mast_type
     real(kind=8) :: elem_mast_coor(27), elem_slav_coor(27), poin_inte(16), gap_moy
     real(kind=8) :: inte_weight, pair_tole
+    aster_logical :: l_axis
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -115,6 +118,7 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
     armini = armin(mesh)
     epsint = 1.d-6*armini
     ds_contact%arete_min  = armini
+    l_axis       = cfdisi(ds_contact%sdcont_defi,'AXISYMETRIQUE').eq.1
 !
 ! - Get parameters
 !
@@ -144,9 +148,11 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
     sdappa_apts = sdappa(1:19)//'.APTS'
     sdappa_wpat = sdappa(1:19)//'.WPAT'
     sdappa_poid = sdappa(1:19)//'.POID'
+    sdappa_nmcp = sdappa(1:19)//'.NMCP'
     call jeveuo(sdappa_gapi, 'E', vr = v_sdappa_gapi)
     call jeveuo(sdappa_coef, 'E', vr = v_sdappa_coef)
     call jeveuo(sdappa_wpat, 'L', vr = v_sdappa_wpat)
+    call jeveuo(sdappa_nmcp, 'E', vi = v_sdappa_nmcp)
     call jeveuo(sdappa_poid, 'E', vr = v_sdappa_poid)
     call jeveuo(sdappa_apli, 'L', vi = v_sdappa_apli)
     call jeveuo(sdappa_apnp, 'L', vi = v_sdappa_apnp)
@@ -155,6 +161,7 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
     nb_pair = ds_contact%nb_cont_pair
     v_sdappa_gapi(:) = 0.d0
     v_sdappa_coef(:) = 0.d0
+    v_sdappa_nmcp(:) = 0
     do i_pair=1,nb_pair
         !get master and slave element number
         elem_slav_nume = v_sdappa_apli(3*(i_pair-1)+1)
@@ -168,6 +175,7 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
                     v_connex_lcum)
         !get patch number
         patch_indx = v_mesh_comapa(elem_slav_nume)
+        v_sdappa_nmcp(patch_indx) = v_sdappa_nmcp(patch_indx) + 1
         !get master coor
         elem_type_nume = v_mesh_typmail(elem_mast_nume)
         call jenuno(jexnum('&CATA.TM.NOMTM', elem_type_nume), elem_mast_type)
@@ -184,7 +192,7 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
                     elem_slav_code, elem_slav_nbnode, elem_slav_coor,&
                     elem_mast_code, elem_mast_nbnode, elem_mast_coor,&
                     nb_poin_inte  , poin_inte                    , &
-                    gap_moy       , inte_weight                  )
+                    gap_moy       , inte_weight, l_axis)
         !save gap
         v_sdappa_gapi(patch_indx)  = v_sdappa_gapi(patch_indx)-gap_moy
         patch_weight_c(patch_indx) = patch_weight_c(patch_indx)+inte_weight
