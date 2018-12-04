@@ -21,7 +21,14 @@
 # macro commande de post-traitement (ex POST_GOUJ2E)
 # calcul des reactions cumulees suivant les filets
 
-def POST_GOUJ_ops(self,TABLE):
+from code_aster.Commands import *
+from code_aster.Cata.Syntax import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Commons import *
+from code_aster.Commands.ExecuteCommand import ExecuteMacro
+
+def POST_GOUJ_ops(self,a,**args):
+  TABLE = args["TABLE"]
   ier=0
   self.set_icmd(1)
   ### On importe les definitions des commandes a utiliser dans la macro
@@ -66,10 +73,19 @@ def POST_GOUJ_ops(self,TABLE):
                            _F(PARA    = 'REACTION_CUMU' ,
                               LISTE_R = v_RC ),
                  ))
-  return 0
+  return tab3
 
-POST_GOUJ=MACRO(nom="POST_GOUJ",op=POST_GOUJ_ops,sd_prod=table_sdaster,reentrant='n',fr="",
-                TABLE=SIMP(statut='o',typ=table_sdaster),)
+POST_GOUJ_CATA=MACRO(nom="POST_GOUJ",op=POST_GOUJ_ops,sd_prod=table_sdaster,reentrant='n',fr="",
+                     TABLE=SIMP(statut='o',typ=table_sdaster),)
+
+
+class PostGouj(ExecuteMacro):
+    """Internal (non public) command to call the underlying operator."""
+    command_name = "POST_GOUJ"
+    command_cata = POST_GOUJ_CATA
+    command_op = POST_GOUJ_ops
+
+POST_GOUJ = PostGouj.run
 ########################################################################
 
 POURSUITE(CODE='OUI')
