@@ -24,6 +24,7 @@ interface
                       nb_lagr     , indi_lagc     ,&
                       nb_node_slav, elem_slav_code, elem_slav_init, elga_fami_slav, elem_slav_coor,&
                       nb_node_mast, elem_mast_code, elem_mast_init, elga_fami_mast, elem_mast_coor,&
+                      nb_poin_inte, poin_inte_sl, poin_inte_ma,&
                       matr)
         integer, intent(in) :: elem_dime
         aster_logical, intent(in) :: l_axis, l_upda_jaco, l_norm_smooth
@@ -33,6 +34,9 @@ interface
         real(kind=8), intent(in):: elem_mast_init(27), elem_slav_init(27)
         real(kind=8), intent(in) :: elem_mast_coor(27), elem_slav_coor(27)
         character(len=8), intent(in) :: elga_fami_slav, elga_fami_mast
+        real(kind=8), intent(in) :: poin_inte_sl(16)
+        real(kind=8), intent(in) :: poin_inte_ma(16)
+        integer, intent(in) :: nb_poin_inte
         real(kind=8), intent(inout) :: matr(55, 55)
     end subroutine lcmatr
 end interface

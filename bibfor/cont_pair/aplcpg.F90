@@ -48,7 +48,6 @@ implicit none
 #include "asterfort/apdcma.h"
 #include "asterfort/ap_infast.h"
 #include "asterfort/apprin.h"
-#include "asterfort/aprtpe.h"
 #include "asterfort/cncinv.h"
 #include "asterfort/wkvect.h"
 #include "asterfort/codent.h"

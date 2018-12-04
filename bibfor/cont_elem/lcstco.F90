@@ -20,7 +20,8 @@ subroutine lcstco(l_previous, l_upda_jaco  ,&
                   lagrc_prev, lagrc_curr   ,&
                   gap_prev  , gap_curr     ,&
                   indi_cont , l_norm_smooth,&
-                  gapi, nmcp)
+                  gapi, nmcp, nb_poin_inte ,&
+                  poin_inte_sl, poin_inte_ma)
 !
 implicit none
 !
@@ -29,10 +30,17 @@ implicit none
 #include "asterf_types.h"
 !
 aster_logical, intent(out) :: l_previous
-real(kind=8), intent(out) :: lagrc_curr, lagrc_prev
-real(kind=8), intent(out) :: gap_curr, gap_prev, gapi
+real(kind=8), intent(out) :: lagrc_curr
+real(kind=8), intent(out) :: lagrc_prev
+real(kind=8), intent(out) :: gap_curr
+real(kind=8), intent(out) :: gap_prev
+real(kind=8), intent(out) :: gapi
+real(kind=8), intent(out) :: poin_inte_sl(16)
+real(kind=8), intent(out) :: poin_inte_ma(16)
 aster_logical, intent(out) :: l_upda_jaco
-integer, intent(out) :: indi_cont, nmcp
+integer, intent(out) :: indi_cont
+integer, intent(out) :: nmcp
+integer, intent(out) :: nb_poin_inte
 aster_logical, intent(out) :: l_norm_smooth
 !
 ! --------------------------------------------------------------------------------------------------
@@ -58,22 +66,27 @@ aster_logical, intent(out) :: l_norm_smooth
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: jpcf
-!
+
 ! --------------------------------------------------------------------------------------------------
 !
     call jevech('PCONFR', 'L', jpcf)
 !
+    poin_inte_sl(:) = 0.d0
     l_previous     = nint(zr(jpcf-1+10 )) .eq. 1
-    lagrc_prev     =     (zr(jpcf-1+13+25))
-    gap_prev       =     (zr(jpcf-1+15+25))
-    indi_cont      = nint(zr(jpcf-1+12))
-    lagrc_curr     =     (zr(jpcf-1+13))
+    !lagrc_prev     =     (zr(jpcf-1+13+25))
+    !gap_prev       =     (zr(jpcf-1+15+25))
+    indi_cont      = nint(zr(jpcf-1+5))
+    lagrc_curr     =     (zr(jpcf-1+6))
     l_upda_jaco    = nint(zr(jpcf-1+2 )) .eq. 1
     gap_curr       =     (zr(jpcf-1+15))
     gapi           =     (zr(jpcf-1+4))
     nmcp           = nint(zr(jpcf-1+3))
     l_norm_smooth  = nint(zr(jpcf-1+1)) .eq. 1
+    nb_poin_inte   = nint(zr(jpcf-1+8))
+    poin_inte_sl(1:nb_poin_inte*2) = zr(jpcf-1+8+1:jpcf-1+8+2*nb_poin_inte)
+    poin_inte_ma(1:nb_poin_inte*2) = zr(jpcf-1+24+1:jpcf-1+24+2*nb_poin_inte)
+
 ! On s'assure que le patch n'a pas change de maille maitre.
-    l_previous     = l_previous  .and. (nint(zr(jpcf-1+28 )) .eq. 1)
+    !l_previous     = l_previous  .and. (nint(zr(jpcf-1+28 )) .eq. 1)
 !
 end subroutine
