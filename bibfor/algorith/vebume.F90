@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -133,9 +133,11 @@ implicit none
 ! - Computation
 !
     do i_load = 1, nb_load
-        load_name = v_load_name(i_load)(1:8) 
-        if (      ischar_iden(v_load_info, i_load, nb_load, 'DIRI', 'DUAL') .and.&
-            .not. ischar_iden(v_load_info, i_load, nb_load, 'DIRI', 'SUIV')) then
+        load_name = v_load_name(i_load)(1:8)
+        if (      ischar_iden(v_load_info, i_load, nb_load, 'DIRI', 'DUAL',&
+                              load_name=v_load_name(i_load)) .and.&
+            .not. ischar_iden(v_load_info, i_load, nb_load, 'DIRI', 'SUIV',&
+                              load_name=v_load_name(i_load))) then
             ligrch = load_name//'.CHME.LIGRE'
             call jeexin(load_name//'.CHME.LIGRE.LIEL', iret)
             if (iret .le. 0) cycle

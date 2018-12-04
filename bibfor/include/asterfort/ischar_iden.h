@@ -21,12 +21,13 @@
 #include "asterf_types.h"
 !
 interface
-    function ischar_iden(v_load_info, i_load, nb_load, load_type_1, load_type_2)
+    function ischar_iden(v_load_info, i_load, nb_load, load_type_1, load_type_2, load_name)
         integer, pointer :: v_load_info(:)
         integer, intent(in) :: i_load
         integer, intent(in) :: nb_load
         aster_logical :: ischar_iden
         character(len=4), intent(in) :: load_type_1
         character(len=4), intent(in) :: load_type_2
+        character(len=24), optional, intent(in) :: load_name
     end function ischar_iden
 end interface

@@ -17,12 +17,14 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-function ischar_iden(v_load_info, i_load, nb_load, load_type_1, load_type_2)
+function ischar_iden(v_load_info, i_load, nb_load, load_type_1, load_type_2, load_name)
 !
 implicit none
 !
+#include "jeveux.h"
 #include "asterf_types.h"
 #include "asterfort/assert.h"
+#include "asterfort/jeveuo.h"
 !
 aster_logical :: ischar_iden
 integer, pointer :: v_load_info(:)
@@ -30,6 +32,7 @@ integer, intent(in) :: i_load
 integer, intent(in) :: nb_load
 character(len=4), intent(in) :: load_type_1
 character(len=4), intent(in) :: load_type_2
+character(len=24), optional, intent(in) :: load_name
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -62,9 +65,10 @@ character(len=4), intent(in) :: load_type_2
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: load_nume_diri, load_nume_neum
+    integer :: load_nume_diri, load_nume_neum, jafci
     aster_logical :: ldiri, lelim, ldual, ldidi, lneum
     aster_logical :: londe, llapl, lsigm, lelem, lsuiv, lpilo
+    character(len=19) :: char19
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -83,15 +87,17 @@ character(len=4), intent(in) :: load_type_2
 !
     load_nume_diri = v_load_info(i_load+1)
     load_nume_neum = v_load_info(i_load+nb_load+1)
-    if (load_nume_diri .eq. -1) then
-        ldiri = ASTER_TRUE
-        lelim = ASTER_TRUE
-    else if (load_nume_diri .eq. -2) then
-        ldiri = ASTER_TRUE
-        lelim = ASTER_TRUE
-    else if (load_nume_diri .eq. -3) then
-        ldiri = ASTER_TRUE
-        lelim = ASTER_TRUE
+    if ((load_nume_diri .eq. -1).or.(load_nume_diri .eq. -2).or.(load_nume_diri .eq. -3)) then
+        if (present(load_name)) then
+            char19=load_name
+            call jeveuo(char19//'.AFCI','L',jafci)
+            if (zi(jafci-1+1).gt.0) then
+                ldiri  = ASTER_TRUE
+                lelim  = ASTER_TRUE
+            endif
+        else
+            ASSERT(.false.)
+        endif
     else if (load_nume_diri .eq. 1) then
         ldiri = ASTER_TRUE
         ldual = ASTER_TRUE
