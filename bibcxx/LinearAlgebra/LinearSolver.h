@@ -38,6 +38,12 @@
 #include "Utilities/GenericParameter.h"
 #include "astercxx.h"
 
+/**
+ * @struct StaticMechanicalSolverInstance predefinition
+ * @todo to remove
+ */
+class StaticMechanicalSolverInstance;
+
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 // Ces wrappers sont la pour autoriser que les set soient const
@@ -171,6 +177,7 @@ class BaseLinearSolverInstance : public DataStructure {
     GenParam _acceleration;
     ListGenParam _listOfParameters;
     AssemblyMatrixDisplacementDoublePtr _matrixPrec;
+    std::string _commandName;
 
   public:
     /**
@@ -218,7 +225,9 @@ class BaseLinearSolverInstance : public DataStructure {
           _stopSingular( "STOP_SINGULIER", false ), _resolutionType( "TYPE_RESOL", false ),
           _acceleration( "ACCELERATION", false ),
           _matrixPrec( new AssemblyMatrixDisplacementDoubleInstance(
-              ResultNaming::getNewResultName() + ".PREC" ) ) {
+              ResultNaming::getNewResultName() + ".PREC" ) ),
+          _commandName( "SOLVEUR" )
+    {
         _renum = RenumberingNames[(int)_renumber];
 
         _method = std::string( LinearSolverNames[(int)_linearSolver] );
@@ -490,7 +499,10 @@ class BaseLinearSolverInstance : public DataStructure {
 
     void setSingularityDetectionThreshold( ASTERINTEGER nprec ) { _nPrec = nprec; };
 
-    void setSolverResidual( double residual ) { _residual = residual; };
+    void setSolverResidual( double residual )
+    {
+        _residual = residual;
+    };
 
     void setUpdatePreconditioningParameter( ASTERINTEGER value ) {
         if ( _linearSolver != Petsc && _linearSolver != Gcpc )
@@ -500,6 +512,8 @@ class BaseLinearSolverInstance : public DataStructure {
                 "Update preconditioning parameter only allowed with IncompleteLdlt" );
         _reac = value;
     };
+
+    friend class StaticMechanicalSolverInstance;
 };
 
 /**
@@ -526,10 +540,12 @@ template < typename linSolvWrap > class LinearSolverInstance : public BaseLinear
      * @brief Constructeur
      */
     LinearSolverInstance( const Renumbering currentRenumber = Metis )
-        : LinearSolverInstance( ResultNaming::getNewResultName() ){};
+        : LinearSolverInstance( ResultNaming::getNewResultName(), currentRenumber )
+    {};
 
     LinearSolverInstance( const std::string name, const Renumbering currentRenumber = Metis )
-        : BaseLinearSolverInstance( name, linSolvWrap::solverType, currentRenumber ) {
+        : BaseLinearSolverInstance( name, linSolvWrap::solverType, currentRenumber )
+    {
         RenumberingChecker< linSolvWrap >::isAllowedRenumbering( currentRenumber );
     };
 
