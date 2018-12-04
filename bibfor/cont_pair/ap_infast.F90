@@ -32,7 +32,6 @@ implicit none
 #include "asterfort/jeveuo.h"
 #include "asterfort/jexnum.h"
 #include "asterfort/apcoor.h"
-#include "asterfort/apdcma.h"
 #include "asterfort/prjint.h"
 #include "asterfort/gt_linoma.h"
 #include "asterfort/gtctma.h"
@@ -87,11 +86,11 @@ integer, intent(in) :: i_zone
     character(len=24) :: conx_inve
     character(len=8) :: elem_slav_type, elem_slav_code, knuzo
     real(kind=8) :: elem_slav_coor(27)
-    integer :: elin_slav_nbsub, elin_slav_sub(1,4), elin_slav_nbnode(1)
+    integer ::  elin_slav_nbnode
     integer :: elem_mast_nbnode, elem_mast_dime, elem_mast_nume, elem_mast_indx
     character(len=8) :: elem_mast_type, elem_mast_code, elem_slav_name, elem_mast_name
     real(kind=8) :: elem_mast_coor(27)
-    integer :: elin_mast_nbsub, elin_mast_sub(1,4), elin_mast_nbnode(1)
+    integer :: elin_mast_nbnode
     character(len=8) :: elin_mast_code, elin_slav_code
     integer :: slav_indx_mini, mast_indx_mini
     integer :: jv_geom
@@ -171,10 +170,18 @@ integer, intent(in) :: i_zone
 !
 ! --------- Cut slave element in linearized sub-elements (SEG2 or TRIA3)
 !
-            call apdcma(elem_slav_code,&
-                        elin_slav_sub, elin_slav_nbnode, elin_slav_nbsub, elin_slav_code)
-            if (debug) then
-                write(*,*) "Cut slave: ", elin_slav_nbsub
+            if (elem_slav_code .eq. "TR6") then
+                elin_slav_code   = "TR3"
+                elin_slav_nbnode = 3
+            elseif(elem_slav_code .eq. "QU8" .or. elem_slav_code .eq. "QU9") then
+                elin_slav_code   = "QU4"
+                elin_slav_nbnode = 4
+            elseif(elem_slav_code .eq. "SE3") then
+                elin_slav_code   = "SE2"
+                elin_slav_nbnode = 2
+            else
+                elin_slav_code   = elem_slav_code
+                elin_slav_nbnode = elem_slav_nbnode
             endif
 !
 ! --------- Find the closest master node from center
@@ -216,10 +223,18 @@ integer, intent(in) :: i_zone
 !
 ! ----------------- Cut master element in linearized sub-elements (SEG2 or TRIA3)
 !
-                    call apdcma(elem_mast_code,&
-                                elin_mast_sub , elin_mast_nbnode, elin_mast_nbsub, elin_mast_code)
-                    if (debug) then
-                        write(*,*) "Cut master: ", elin_mast_nbsub
+                    if (elem_mast_code .eq. "TR6") then
+                        elin_mast_code   = "TR3"
+                        elin_mast_nbnode = 3
+                    elseif(elem_mast_code .eq. "QU8" .or. elem_mast_code .eq. "QU9") then
+                        elin_mast_code   = "QU4"
+                        elin_mast_nbnode = 4
+                    elseif(elem_mast_code .eq. "SE3") then
+                        elin_mast_code   = "SE2"
+                        elin_mast_nbnode = 2
+                    else
+                        elin_mast_code   = elem_mast_code
+                        elin_mast_nbnode = elem_mast_nbnode
                     endif
 !
 ! ----------------- Loop on linearized master sub-elements
@@ -228,8 +243,8 @@ integer, intent(in) :: i_zone
 ! ------------------------- Projection/intersection of elements in slave parametric space
 !
                     call prjint(pair_tole     , elem_mast_dime,&
-                                elin_slav_nbnode(1) , elem_slav_coor, elin_slav_code,&
-                                elin_mast_nbnode(1) , elem_mast_coor, elin_mast_code,&
+                                elin_slav_nbnode, elem_slav_coor, elin_slav_code,&
+                                elin_mast_nbnode, elem_mast_coor, elin_mast_code,&
                                 poin_inte     , inte_weight   , nb_poin_inte)
 
 ! ------------------------- Set start elements
@@ -240,9 +255,9 @@ integer, intent(in) :: i_zone
                         elem_slav_start(1)             = elem_slav_nume
                         nb_slav_start                  = 1
                         elem_slav_flag(elem_slav_indx) = 1
-                        call jenuno(jexnum(mesh//'.NOMMAI', elem_mast_nume), elem_mast_name)
-                        call jenuno(jexnum(mesh//'.NOMMAI', elem_slav_nume), elem_slav_name)
                         if (debug) then
+                            call jenuno(jexnum(mesh//'.NOMMAI', elem_mast_nume), elem_mast_name)
+                            call jenuno(jexnum(mesh//'.NOMMAI', elem_slav_nume), elem_slav_name)
                             write(*,*)"Depart trouvé(M/S): ",elem_mast_name,elem_slav_name
                         endif
                         goto 100

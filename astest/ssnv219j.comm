@@ -191,7 +191,7 @@ def NormeAster(RESULTAT, Depl_Ana, P_ana, MAIL, MODELE, GROUP_MA_VOL, GROUP_MA_S
      # ========================================================================================
      #          Creation de la pression calculee en deplacement aux points d'integration
      # ========================================================================================
- 
+
      Pcalc1=CREA_CHAMP(OPERATION='ASSE',
                        TYPE_CHAM='CART_NEUT_R',
                        MAILLAGE=MAIL,
@@ -275,7 +275,7 @@ def NormeAster(RESULTAT, Depl_Ana, P_ana, MAIL, MODELE, GROUP_MA_VOL, GROUP_MA_S
                        _F(NOM=Pcalc1),
                        _F(NOM=UcalcG),
                        _F(NOM=PcalcG),
-                       _F(NOM=DIFFUG), 
+                       _F(NOM=DIFFUG),
                        _F(NOM=tabU),
                        _F(NOM=tabP),
                        ),
@@ -338,7 +338,7 @@ MA0[0]=MODI_MAILLAGE(reuse=MA0[0],
                                    _F(GROUP_MA='BORDMX'),
                                    _F(GROUP_MA='BORDY'),
                                    _F(GROUP_MA='BORDMY'),));
-                     
+
 MALine[0]=CREA_MAILLAGE(MAILLAGE=MA0[0],
                         QUAD_LINE=_F(GROUP_MA=('ESCLAVE','BORDX','BORDMX','BORDY','BORDMY','HAUT','VOLUME'),),);
 MA[0]=CREA_MAILLAGE(MAILLAGE=MALine[0],
@@ -497,22 +497,22 @@ TEST_TABLE (TABLE = PenteLST,
             REFERENCE='ANALYTIQUE',
             VALE_CALC= 1.98820777562,   # raffinement=5
             VALE_REFE=2.0,              # taux de convergence
-            PRECISION=0.006,            # 
+            PRECISION=0.006,            #
             )
 
 
 TEST_TABLE (TABLE = PenteLST,
             NOM_PARA= 'PP',
             REFERENCE='ANALYTIQUE',
-            VALE_CALC=1.86639417336,    # raffinement=5
+            VALE_CALC=1.86635688107,    # raffinement=5
             VALE_REFE=0.5,              # taux de convergence
             PRECISION=2.733,            # surconvergence: mélange de convergence de géométrie
             )                           # (surface de contact courbée)
 
 sous_titreU='Ordres de convergence: cas PYRAM5= %f '%(PenteL2U)
 sous_titreP='Ordres de convergence: cas PYRAM5= %f '%(PenteL2P)
-    
-    
+
+
 
 IMPR_FONCTION(FORMAT='XMGRACE',
                UNITE=29,
@@ -576,11 +576,11 @@ DETRUIRE(CONCEPT=(_F(NOM=modl,),
                   _F(NOM=DIFFPG),
                   _F(NOM=RAMPE),
                   _F(NOM=LINST),
-                  _F(NOM=acier),  
+                  _F(NOM=acier),
                   ),
            INFO=1,);
 
-for n in range(0,Nb_Raffinement):     
+for n in range(0,Nb_Raffinement):
     DETRUIRE(CONCEPT=(_F(NOM=MA0[n],),
                     _F(NOM=MALine[n]),
                     _F(NOM=MA[n]),

@@ -191,7 +191,7 @@ def NormeAster(RESULTAT, Depl_Ana, P_ana, MAIL, MODELE, GROUP_MA_VOL, GROUP_MA_S
      # ========================================================================================
      #          Creation de la pression calculee en deplacement aux points d'integration
      # ========================================================================================
- 
+
      Pcalc1=CREA_CHAMP(OPERATION='ASSE',
                        TYPE_CHAM='CART_NEUT_R',
                        MAILLAGE=MAIL,
@@ -275,7 +275,7 @@ def NormeAster(RESULTAT, Depl_Ana, P_ana, MAIL, MODELE, GROUP_MA_VOL, GROUP_MA_S
                        _F(NOM=Pcalc1),
                        _F(NOM=UcalcG),
                        _F(NOM=PcalcG),
-                       _F(NOM=DIFFUG), 
+                       _F(NOM=DIFFUG),
                        _F(NOM=tabU),
                        _F(NOM=tabP),
                        ),
@@ -299,7 +299,7 @@ DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),
 # Definition des caracteristiques du materiau
 #================================================================================================
 E=1;
-NU=0.;  
+NU=0.;
 
 #================================================================================================
 # Calcul de la solution de reference
@@ -338,14 +338,14 @@ MA0[0]=MODI_MAILLAGE(reuse=MA0[0],
                                    _F(GROUP_MA='BORDMX'),
                                    _F(GROUP_MA='BORDY'),
                                    _F(GROUP_MA='BORDMY'),));
-        
+
 MALine[0]=CREA_MAILLAGE(MAILLAGE=MA0[0],
                         QUAD_LINE=_F(GROUP_MA=('ESCLAVE','BORDX','BORDMX','BORDY','BORDMY','HAUT','VOLUME'),),);
 
 MA[0]=CREA_MAILLAGE(MAILLAGE=MALine[0],
                     DECOUPE_LAC=_F(GROUP_MA_ESCL='ESCLAVE',
-                                   DECOUPE_HEXA="HEXA",),);   
-                                        
+                                   DECOUPE_HEXA="HEXA",),);
+
 
 #Definition du materiau cas isotrope
 acier=DEFI_MATERIAU(ELAS=_F(E=E, NU=NU,),);
@@ -459,7 +459,7 @@ for Raff in range(0,Nb_Raffinement):
                         QUAD_LINE=_F(GROUP_MA=('ESCLAVE','BORDX','BORDMX','BORDY','BORDMY','HAUT','VOLUME'),),);
         MA[Raff+1]=CREA_MAILLAGE(MAILLAGE=MALine[Raff+1],
                     DECOUPE_LAC=_F(GROUP_MA_ESCL='ESCLAVE',DECOUPE_HEXA="HEXA",),);
-    
+
 
      # DESTRUCTION DES CONCEPTS INUTILISES DANS LES PROCHAINES ETAPES DE LA BOUCLE
         DETRUIRE(CONCEPT=(_F(NOM=modl,),
@@ -499,19 +499,19 @@ PenteLST=CREA_TABLE( LISTE= (
 TEST_TABLE (TABLE = PenteLST,
             NOM_PARA= 'PU',
             REFERENCE='ANALYTIQUE',
-            VALE_CALC= 1.95254847608,  # raffiement=5,
+            VALE_CALC= 1.95251207759,  # raffiement=5,
             VALE_REFE=2.0,             # vitesse de convergence
-            PRECISION=0.024,           # 
+            PRECISION=0.024,           #
             )
 
 
 TEST_TABLE (TABLE = PenteLST,
             NOM_PARA= 'PP',
             REFERENCE='ANALYTIQUE',
-            VALE_CALC=1.28169479876,   # raffiement=5,
+            VALE_CALC=1.28200774331,   # raffiement=5,
             VALE_REFE=0.5,             # vitesse de convergence
-            PRECISION=1.564,           # surconvergence
-            )            
+            PRECISION=1.565,           # surconvergence
+            )
 
 sous_titreU='Ordres de convergence: cas TETRA4= %f'%(PenteL2U)
 sous_titreP='Ordres de convergence: cas TETRA4= %f'%(PenteL2P)
@@ -562,7 +562,7 @@ IMPR_RESU(FORMAT='MED',
             _F(CHAM_GD=dicResu['DIFFUN'],GROUP_MA='VOLUME',NOM_CMP=('DX','DY','DZ'),),
             _F(RESULTAT=EVOLNOLI),
            ),);
-          
+
 DETRUIRE(CONCEPT=(_F(NOM=modl,),
                   _F(NOM=chmat),
                   _F(NOM=BlocBase),
@@ -579,16 +579,16 @@ DETRUIRE(CONCEPT=(_F(NOM=modl,),
                   _F(NOM=DIFFPG),
                   _F(NOM=RAMPE),
                   _F(NOM=LINST),
-                  _F(NOM=acier),  
+                  _F(NOM=acier),
                   ),
            INFO=1,);
-    
 
-for n in range(0,Nb_Raffinement):            
+
+for n in range(0,Nb_Raffinement):
     DETRUIRE(CONCEPT=(_F(NOM=MA0[n],),
                     _F(NOM=MALine[n]),
                     _F(NOM=MA[n]),
                     ),
-            INFO=1,);            
+            INFO=1,);
 
 FIN();
