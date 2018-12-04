@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine mmapin(mesh, ds_contact, ds_measure)
 !
 use NonLin_Datastructure_type
@@ -25,12 +26,12 @@ implicit none
 #include "asterf_types.h"
 #include "asterfort/cfdisl.h"
 #include "asterfort/mmctcg.h"
+#include "asterfort/infdbg.h"
+#include "asterfort/utmess.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=8), intent(in) :: mesh
-    type(NL_DS_Contact), intent(inout) :: ds_contact
-    type(NL_DS_Measure), intent(inout) :: ds_measure
+character(len=8), intent(in) :: mesh
+type(NL_DS_Contact), intent(inout) :: ds_contact
+type(NL_DS_Measure), intent(inout) :: ds_measure
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -46,9 +47,17 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
+    integer :: ifm, niv
     aster_logical :: l_cont_allv
 !
 ! --------------------------------------------------------------------------------------------------
+!
+    call infdbg('CONTACT', ifm, niv)
+    if (niv .ge. 2) then
+        call utmess('I','CONTACT5_15')
+    endif
+!
+! - Initializations
 !
     l_cont_allv  = cfdisl(ds_contact%sdcont_defi,'ALL_VERIF')
 !

@@ -31,7 +31,6 @@ implicit none
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterfort/cfdisl.h"
-#include "asterfort/infdbg.h"
 #include "asterfort/isfonc.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jemarq.h"
@@ -77,7 +76,6 @@ integer, intent(out) :: r_char_indx
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: ifm, niv
     aster_logical :: l_dyna, l_load_cine, l_cont_cont, l_cont_lac, l_macr
     character(len=19) :: cniner
     integer :: i_equa
@@ -100,7 +98,6 @@ integer, intent(out) :: r_char_indx
 ! --------------------------------------------------------------------------------------------------
 !
     call jemarq()
-    call infdbg('MECA_NON_LINE', ifm, niv)
 !
 ! - Initializations
 !

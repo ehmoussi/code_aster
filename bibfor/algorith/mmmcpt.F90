@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,15 +15,17 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine mmmcpt(noma, ds_measure, ds_contact, cnsinr)
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine mmmcpt(mesh, ds_measure, ds_contact, cnsinr)
 !
 use NonLin_Datastructure_type
 !
 implicit none
 !
 #include "asterf_types.h"
-#include "jeveux.h"
+#include "asterfort/as_allocate.h"
+#include "asterfort/as_deallocate.h"
 #include "asterfort/cfdisi.h"
 #include "asterfort/cfdisl.h"
 #include "asterfort/cfmmvd.h"
@@ -36,143 +38,104 @@ implicit none
 #include "asterfort/mminfl.h"
 #include "asterfort/mminfm.h"
 #include "asterfort/nmrvai.h"
-#include "asterfort/wkvect.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
+character(len=8), intent(in) :: mesh
+type(NL_DS_Measure), intent(inout) :: ds_measure
+character(len=19), intent(in) :: cnsinr
+type(NL_DS_Contact), intent(in) :: ds_contact
 !
-    character(len=8) :: noma
-    type(NL_DS_Measure), intent(inout) :: ds_measure
-    character(len=19) :: cnsinr
-    type(NL_DS_Contact), intent(in) :: ds_contact
+! --------------------------------------------------------------------------------------------------
 !
-! ----------------------------------------------------------------------
+! Contact - Post-treatment
 !
-! ROUTINE CONTACT (METHODE CONTINUE - POST-TRAITEMENT)
+! Count contact status
 !
-! DECOMPTE DES LIAISONS
+! --------------------------------------------------------------------------------------------------
 !
-! ----------------------------------------------------------------------
-!
-! IN  NOMA   : NOM DU MAILLAGE
+! In  mesh             : name of mesh
 ! IO  ds_measure       : datastructure for measure and statistics management
 ! In  ds_contact       : datastructure for contact management
-! IN  CNSINR : CHAM_NO_S POUR L'ARCHIVAGE DU CONTACT
+! In  cnsinr           : nodal field (CHAM_NO_S) for CONT_NOEU 
 !
+! --------------------------------------------------------------------------------------------------
 !
-    integer :: iptc, izone, imae, iptm
-    integer :: nptm, nbmae, nzoco, nbno
+    integer :: i_poin, i_zone, i_elem_slav, i_poin_elem
+    integer :: nb_poin_elem, nb_elem_slav, nb_cont_zone, nb_node_mesh
     integer :: ztabf, zresu
-    integer :: numnoe
-    integer :: posmae
+    integer :: node_slav_nume
+    integer :: elem_slav_indx
     integer :: jdecme
-    integer :: cont
-    character(len=24) :: tabfin
-    integer :: jtabf
-    aster_logical :: lveri, lnoeu
-    integer :: jcnslr
+    integer :: node_status
+    character(len=24) :: sdcont_tabfin
+    real(kind=8), pointer :: v_sdcont_tabfin(:) => null()
+    real(kind=8), pointer :: v_cnsinr_cnsv(:) => null()
+    integer, pointer :: v_work(:) => null()
+    aster_logical :: lveri
     integer :: nbliac, nbliaf
-    character(len=24) :: dejcal
-    integer :: jdejca
-    real(kind=8), pointer :: cnsv(:) => null()
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
     call jemarq()
 !
-! --- INITIALISATIONS
+! - Initialisations
 !
-    nzoco = cfdisi(ds_contact%sdcont_defi,'NZOCO' )
+    nb_cont_zone = cfdisi(ds_contact%sdcont_defi,'NZOCO' )
     nbliac = 0
     nbliaf = 0
 !
-! --- SD TEMPORAIRE POUR VERIF NOEUDS DEJA CALCULES
+! - Working vector
 !
-    call dismoi('NB_NO_MAILLA', noma, 'MAILLAGE', repi=nbno)
-    dejcal = '&&XMMRES.DEJCAL'
-    call wkvect(dejcal, 'V V I', nbno, jdejca)
+    call dismoi('NB_NO_MAILLA', mesh, 'MAILLAGE', repi=nb_node_mesh)
+    AS_ALLOCATE(vi = v_work, size = nb_node_mesh)
 !
-! --- TOUTES LES ZONES EN INTEGRATION AUX NOEUDS ?
-!
-    lnoeu = cfdisl(ds_contact%sdcont_defi,'ALL_INTEG_NOEUD')
-    if (.not.lnoeu) then
-        nbliac = 0
-        nbliaf = 0
-        goto 999
-    endif
-!
-! --- LECTURE DES STRUCTURES DE DONNEES DE CONTACT
-!
-    tabfin = ds_contact%sdcont_solv(1:14)//'.TABFIN'
-    call jeveuo(tabfin, 'L', jtabf)
+! - Acces to contact objects
 !
     ztabf = cfmmvd('ZTABF')
     zresu = cfmmvd('ZRESU')
+    sdcont_tabfin = ds_contact%sdcont_solv(1:14)//'.TABFIN'
+    call jeveuo(sdcont_tabfin, 'L', vr = v_sdcont_tabfin)
+    call jeveuo(cnsinr(1:19)//'.CNSV', 'L', vr = v_cnsinr_cnsv)
 !
-! --- ACCES AU CHAM_NO_S POUR LE CONTACT
+! - Loop on contact zones
 !
-    call jeveuo(cnsinr(1:19)//'.CNSV', 'L', vr=cnsv)
-    call jeveuo(cnsinr(1:19)//'.CNSL', 'L', jcnslr)
-!
-! --- BOUCLE SUR LES ZONES
-!
-    iptc = 1
-    do izone = 1, nzoco
-!
-! --- OPTIONS SUR LA ZONE DE CONTACT
-!
-        lveri = mminfl(ds_contact%sdcont_defi,'VERIF' ,izone )
-        nbmae = mminfi(ds_contact%sdcont_defi,'NBMAE' ,izone )
-        jdecme = mminfi(ds_contact%sdcont_defi,'JDECME',izone )
-!
-! ----- MODE VERIF: ON SAUTE LES POINTS
-!
+    i_poin = 1
+    do i_zone = 1, nb_cont_zone
+! ----- Get parameters on current zone
+        lveri        = mminfl(ds_contact%sdcont_defi, 'VERIF' , i_zone)
+        nb_elem_slav = mminfi(ds_contact%sdcont_defi, 'NBMAE' , i_zone)
+        jdecme       = mminfi(ds_contact%sdcont_defi, 'JDECME', i_zone)
+! ----- No computation
         if (lveri) then
-            goto 25
+            cycle
         endif
-!
-! ----- BOUCLE SUR LES MAILLES ESCLAVES
-!
-        do imae = 1, nbmae
-!
-! ------- POSITION DE LA MAILLE ESCLAVE
-!
-            posmae = jdecme + imae
-!
-! ------- NOMBRE DE POINTS SUR LA MAILLE ESCLAVE
-!
-            call mminfm(posmae, ds_contact%sdcont_defi, 'NPTM', nptm)
-!
-! ------- BOUCLE SUR LES POINTS
-!
-            do iptm = 1, nptm
-!
-! --------- INFOS
-!
-                numnoe = nint(zr(jtabf+ztabf*(iptc-1)+24))
-                if (numnoe .gt. 0) then
-                    if (zi(jdejca+numnoe-1) .eq. 0) then
-                        cont = nint(cnsv(1+zresu*(numnoe-1)+1 -1))
-                        if (cont .ge. 1) then
+        do i_elem_slav = 1, nb_elem_slav
+! --------- Get current slave element
+            elem_slav_indx = jdecme + i_elem_slav
+! --------- Number of contact (integration) points on current slave element
+            call mminfm(elem_slav_indx, ds_contact%sdcont_defi, 'NPTM', nb_poin_elem)
+! --------- Loop on contact (integration) points
+            do i_poin_elem = 1, nb_poin_elem
+                node_slav_nume = nint(v_sdcont_tabfin(ztabf*(i_poin-1)+25))
+                if (node_slav_nume .gt. 0) then
+                    if (v_work(node_slav_nume) .eq. 0) then
+                        node_status = nint(v_cnsinr_cnsv(zresu*(node_slav_nume-1)+1))
+                        if (node_status .ge. 1) then
                             nbliac = nbliac + 1
-                            if (cont .eq. 1) then
+                            if (node_status .eq. 1) then
                                 nbliaf = nbliaf + 1
                             endif
                         endif
-                        zi(jdejca+numnoe-1) = 1
+                        v_work(node_slav_nume) = 1
                     endif
                 endif
-!
-! --------- LIAISON DE CONTACT SUIVANTE
-!
-                iptc = iptc + 1
+! ------------- Next point
+                i_poin = i_poin + 1
             end do
         end do
- 25     continue
+
     end do
 !
-999 continue
-!
-    call jedetr(dejcal)
+    AS_DEALLOCATE(vi = v_work)
     call nmrvai(ds_measure, 'Cont_NCont', input_count = nbliac)
     call nmrvai(ds_measure, 'Cont_NFric', input_count = nbliaf)
 !

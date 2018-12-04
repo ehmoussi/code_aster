@@ -25,7 +25,6 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/assert.h"
-#include "asterfort/infdbg.h"
 !
 type(NL_DS_Contact), intent(out) :: ds_contact
 !
@@ -41,17 +40,13 @@ type(NL_DS_Contact), intent(out) :: ds_contact
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: ifm, niv
     integer :: i_loop
     integer, parameter :: nb_loop_defi = 3
     character(len=4), parameter :: loop_type(nb_loop_defi) = (/'Geom','Fric','Cont'/)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call infdbg('MECANONLINE', ifm, niv)
-    if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE> . Create contact management datastructure'
-    endif
+
 !
 ! - Main parameters
 !

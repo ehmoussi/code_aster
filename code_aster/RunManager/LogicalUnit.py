@@ -198,6 +198,10 @@ class LogicalUnitFile(object):
         """Attributes that holds the file name"""
         return self._filename
 
+    def release(self):
+        """Close and free a logical unit."""
+        LogicalUnitFile.register(self.unit, self.filename, Action.Close)
+
     @classmethod
     def filename_from_unit(cls, unit):
         """Return the filename associated to a unit number.
@@ -212,7 +216,11 @@ class LogicalUnitFile(object):
         logicalUnit = cls.from_number(unit)
         if unit == 6:
             return None
-        return logicalUnit.filename if logicalUnit else "fort.{0}".format(unit)
+        if logicalUnit and logicalUnit.filename:
+            filename = logicalUnit.filename
+        else:
+            filename = "fort.{0}".format(unit)
+        return filename
 
     @classmethod
     def from_number(cls, unit):

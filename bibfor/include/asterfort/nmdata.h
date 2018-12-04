@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,9 +17,9 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine nmdata(model    , mesh      , mate      , cara_elem , ds_constitutive,&
-                      list_load, solver    , ds_conv   , sddyna    , ds_posttimestep,&
-                      sderro   , ds_energy , sdcriq    , ds_print  , ds_algopara    ,&
+    subroutine nmdata(model    , mesh      , mate      , cara_elem  , ds_constitutive,&
+                      list_load, solver    , ds_conv   , sddyna     , ds_posttimestep,&
+                      ds_energy, sdcriq    , ds_print  , ds_algopara,&
                       ds_inout , ds_contact, ds_measure, ds_algorom)
         use NonLin_Datastructure_type
         use Rom_Datastructure_type
@@ -33,7 +33,6 @@ interface
         type(NL_DS_Conv), intent(inout) :: ds_conv
         character(len=19) :: sddyna
         type(NL_DS_PostTimeStep), intent(inout) :: ds_posttimestep
-        character(len=24) :: sderro
         type(NL_DS_Energy), intent(inout) :: ds_energy
         character(len=24) :: sdcriq
         type(NL_DS_Print), intent(inout) :: ds_print

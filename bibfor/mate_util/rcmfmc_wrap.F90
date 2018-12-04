@@ -1,4 +1,4 @@
-subroutine rcmfmc_wrap(chmatz, chmacz, l_thm_, basename, base)
+subroutine rcmfmc_wrap(chmatz, chmacz, l_thm_, l_ther_, basename, base)
 !
 implicit none
 !
@@ -7,7 +7,7 @@ implicit none
 #include "asterfort/rcmfmc.h"
 !
 ! ======================================================================
-! COPYRIGHT (C) 1991 - 2017  EDF R&D                  WWW.CODE-ASTER.ORG
+! COPYRIGHT (C) 1991 - 2018  EDF R&D                  WWW.CODE-ASTER.ORG
 ! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
 ! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
 ! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
@@ -25,14 +25,15 @@ implicit none
 !
     character(len=*), intent(in) :: chmatz
     character(len=*), intent(out) :: chmacz
-    integer, intent(in) :: l_thm_
+    integer, intent(in) :: l_thm_, l_ther_
     character(len=*), intent(inout) :: basename
     character(len=1), intent(in), optional :: base
-    aster_logical :: l_thm
+    aster_logical :: l_thm, l_ther
 !
 ! --------------------------------------------------------------------------------------------------
 !
     l_thm = l_thm_ .eq. 1
-    call rcmfmc(chmatz, chmacz, l_thm, basename, base)
+    l_ther = l_ther_ .eq. 1
+    call rcmfmc(chmatz, chmacz, l_thm, l_ther, basename, base)
 
 end subroutine

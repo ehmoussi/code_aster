@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -42,16 +42,8 @@ cata_msg = {
    - ou bien choisissez un autre schéma d'adaptation du pas de temps (DEFI_LIST_INST/MODE_CALCUL_TPLUS).
  """),
 
-    5 : _(u"""
- Nombre total de noeuds esclaves pour le contact: %(i1)d
-"""),
-
     6 : _(u"""
  Instant de calcul: %(r1)19.12e
-"""),
-
-    7 : _(u"""
- Nombre total de macro-éléments pour le contact: %(i1)d soit %(i2)d éléments en contact.
 """),
 
     10 : _(u"""  Le mode vibratoire de numéro d'ordre %(i1)d a pour fréquence %(r1)19.12e."""),

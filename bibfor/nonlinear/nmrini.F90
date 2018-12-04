@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine nmrini(ds_measure, phasis)
 !
 use NonLin_Datastructure_type
@@ -25,10 +26,8 @@ implicit none
 #include "asterf_types.h"
 #include "asterfort/assert.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    type(NL_DS_Measure), intent(inout) :: ds_measure
-    character(len=1), intent(in) :: phasis
+type(NL_DS_Measure), intent(inout) :: ds_measure
+character(len=1), intent(in) :: phasis
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -62,7 +61,7 @@ implicit none
         elseif (phasis .eq. 'N') then
             ds_measure%device(i_device)%time_iter = 0.d0
         else
-            ASSERT(.false.)
+            ASSERT(ASTER_FALSE)
         endif
     end do
 !
@@ -79,7 +78,7 @@ implicit none
         elseif (phasis .eq. 'N') then
             ds_measure%device(i_device)%count_iter = 0
         else
-            ASSERT(.false.)
+            ASSERT(ASTER_FALSE)
         endif
     end do
 !

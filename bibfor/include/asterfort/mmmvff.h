@@ -15,30 +15,25 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
+#include "asterf_types.h"
 !
 interface
-    subroutine mmmvff(phasep, ndim, nnl, nbcps, wpg,&
-                      ffl, tau1, tau2, jacobi, coefaf,&
-                      dlagrf, rese, lambda, coefff, dvite,&
-                      mprojt, vectff)
-        character(len=9) :: phasep
-        integer :: ndim
-        integer :: nnl
-        integer :: nbcps
-        real(kind=8) :: wpg
-        real(kind=8) :: ffl(9)
-        real(kind=8) :: tau1(3)
-        real(kind=8) :: tau2(3)
-        real(kind=8) :: jacobi
-        real(kind=8) :: coefaf
-        real(kind=8) :: dlagrf(2)
-        real(kind=8) :: rese(3)
-        real(kind=8) :: lambda
-        real(kind=8) :: coefff
-        real(kind=8) :: dvite(3)
-        real(kind=8) :: mprojt(3, 3)
-        real(kind=8) :: vectff(18)
+    subroutine mmmvff(phase , l_pena_cont, l_pena_fric,&
+                      ndim  , nnl        , nbcps      ,&
+                      ffl   ,&
+                      wpg   , jacobi     , djeu       , lambda,&
+                      coefaf, coefff     , &
+                      tau1  , tau2       , mprojt     , &
+                      dlagrf, rese       , &
+                      vectff)
+        character(len=4), intent(in) :: phase
+        aster_logical, intent(in) :: l_pena_cont, l_pena_fric
+        integer, intent(in) :: ndim, nnl, nbcps
+        real(kind=8), intent(in) :: ffl(9)
+        real(kind=8), intent(in) :: wpg, jacobi, djeu(3),lambda
+        real(kind=8), intent(in) :: coefaf, coefff
+        real(kind=8), intent(in) :: tau1(3), tau2(3), mprojt(3, 3)
+        real(kind=8), intent(in) :: dlagrf(2), rese(3)
+        real(kind=8), intent(out) :: vectff(18)
     end subroutine mmmvff
 end interface

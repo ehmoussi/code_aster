@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -27,7 +27,6 @@ implicit none
 #include "asterc/ismaem.h"
 #include "asterc/r8vide.h"
 #include "asterfort/assert.h"
-#include "asterfort/infdbg.h"
 #include "asterfort/nonlinDSColumnVoid.h"
 #include "asterfort/nonlinDSTableIOVoid.h"
 !
@@ -45,7 +44,6 @@ type(NL_DS_Energy), intent(out) :: ds_energy
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: ifm, niv
     integer :: i_col
     integer, parameter :: nb_col_defi = 8
     type(NL_DS_Table) :: table
@@ -63,10 +61,7 @@ type(NL_DS_Energy), intent(out) :: ds_energy
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call infdbg('MECANONLINE', ifm, niv)
-    if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE> . Create energy management datastructure'
-    endif
+
 !
 ! - Create table
 !

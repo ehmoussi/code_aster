@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -113,35 +113,31 @@ subroutine xmvef1(ndim, jnne, jnnm, ndeple, nnc,&
     ddlmm=jddlm(2)
     nddle = ddles*nnes+ddlem*nnem
 !
-    do 100 i = 1, 3
-        vectt(i) = 0.d0
-100 continue
-    do 110 i = 1, 2
-        tt(i) = 0.d0
-110 continue
+    vectt(:) = 0.d0
+    tt(:) = 0.d0
 !
 ! --- CALCUL DE RESE.C(*,I)
 !
-    do 120 i = 1, ndim
-        do 130 k = 1, ndim
+    do i = 1, ndim
+        do k = 1, ndim
             vectt(i) = rese(k)*mproj(k,i) + vectt(i)
-130     continue
-120 continue
+        end do
+    end do
 !
 ! --- CALCUL DE T.(T-P)
 !
-    do 140 i = 1, ndim
+    do i = 1, ndim
         t = dlagrf(1)*tau1(i)+dlagrf(2)*tau2(i)-rese(i)
         tt(1)= t*tau1(i)+tt(1)
         if (ndim .eq. 3) tt(2)= t*tau2(i)+tt(2)
-140 continue
+    end do
 !
 ! --------------------- CALCUL DE [L1_FROT]-----------------------------
 !
     if (nnm .ne. 0) then
 !
-        do 10 j = 1, ndim
-            do 20 i = 1, ndeple
+        do j = 1, ndim
+            do i = 1, ndeple
                 if (lmulti) then
                     iescl(2)=xcalc_heav(heavn(nfhe*(i-1)+1),&
                                             heavfa(1),&
@@ -159,15 +155,15 @@ subroutine xmvef1(ndim, jnne, jnnm, ndeple, nnc,&
                 endif
                 call indent(i, ddles, ddlem, nnes, iin)
                 ii = iin + j
-                vtmp(ii) = -vv*ffe(i)
+                vtmp(ii) = vtmp(ii)-vv*ffe(i)
                 ii = ii + ndim
-                vtmp(ii) = -vv*iescl(2)*ffe(i)
-                do 25 alp = 1, nsinge*ndim
+                vtmp(ii) = vtmp(ii)-vv*iescl(2)*ffe(i)
+                do alp = 1, nsinge*ndim
                     ii = iin + 2*ndim + alp
                     vtmp(ii) = vtmp(ii)+fk_escl(i,alp,j)* vv
- 25             continue
- 20         continue
-            do 30 i = 1, nnm
+                end do
+            end do
+            do i = 1, nnm
                 if (lmulti) then
                     imait(2)=xcalc_heav(heavn(nfhe*nne+nfhm*(i-1)+1),&
                                             heavfa(2),&
@@ -184,19 +180,19 @@ subroutine xmvef1(ndim, jnne, jnnm, ndeple, nnc,&
                 endif
                 call indent(i, ddlms, ddlmm, nnms, iin)
                 ii = nddle + iin + j
-                vtmp(ii) = vv*ffm(i)
+                vtmp(ii) = vtmp(ii)+vv*ffm(i)
                 ii = ii + ndim
-                vtmp(ii) = vv*imait(2)*ffm(i)
-                do 35 alp = 1, nsingm*ndim
+                vtmp(ii) = vtmp(ii)+vv*imait(2)*ffm(i)
+                do alp = 1, nsingm*ndim
                     ii = ii + 2*ndim + alp
                     vtmp(ii) = vtmp(ii)+vv*fk_mait(i,alp,j)
- 35             continue
- 30         continue
- 10     continue
+                end do
+            end do
+        end do
     else
 !
-        do 60 j = 1, ndim
-            do 70 i = 1, ndeple
+        do j = 1, ndim
+            do i = 1, ndeple
 ! --- BLOCS ES,SI
                 if (nconta .eq. 3 .and. ndim .eq. 3) then
                     vv = jacobi*hpg*coefff* (dlagrc-coefcr*jeu)*vectt( j)
@@ -208,29 +204,29 @@ subroutine xmvef1(ndim, jnne, jnnm, ndeple, nnc,&
                   ii = iin + alp
                   vtmp(ii) = vtmp(ii)+fk_escl(i,alp,j)* vv
                 enddo
- 70         continue
- 60     continue
+            end do
+        end do
     endif
 !
 ! --------------------- CALCUL DE [L3]----------------------------------
 !
     if (nvit .eq. 1) then
-        do 40 i = 1, nnc
+        do i = 1, nnc
             call xplma2(ndim, nne, nnes, ddles, i,&
                         nfhe, pli)
-            do 50 j = 1, ndim-1
+            do j = 1, ndim-1
                 ii = pli+j
                 if (lpenaf) then
-                    vtmp(ii) = jacobi*hpg*tt(j)*ffc(i)
+                    vtmp(ii) = vtmp(ii)+jacobi*hpg*tt(j)*ffc(i)
                 else
                     if (nconta .eq. 3 .and. ndim .eq. 3) then
-                        vtmp(ii) = jacobi*hpg*tt(j)*ffc(i)/coeffr
+                        vtmp(ii) = vtmp(ii)+jacobi*hpg*tt(j)*ffc(i)/coeffr
                     else
-                        vtmp(ii) = jacobi*hpg*tt(j)*ffc(i)*coefff* dlagrc/coeffr
+                        vtmp(ii) = vtmp(ii)+jacobi*hpg*tt(j)*ffc(i)*coefff* dlagrc/coeffr
                     endif
                 endif
- 50         continue
- 40     continue
+            end do
+        end do
     endif
 !
 end subroutine

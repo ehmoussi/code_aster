@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -44,11 +44,6 @@ Contact LAC
          Conseil :
              Cette erreur est probablement dû au fait que vous avez inversé les rôles maîtres et esclaves. 
              Vérifiez que votre GROUP_MA_ESCL est bien celui utilisé par DECOUPE_LAC de CREA_MAILLAGE.  
-"""),
-
-    6 : _(u"""
-Contact LAC
-         Le frottement n'est pas autorisé (COULOMB=0.0).   
 """),
 
 }

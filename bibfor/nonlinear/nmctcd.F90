@@ -57,7 +57,7 @@ character(len=24), intent(in) :: nume_dof
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call infdbg('MECA_NON_LINE', ifm, niv)
+    call infdbg('CONTACT', ifm, niv)
 !
 ! - Active functionnalites
 !

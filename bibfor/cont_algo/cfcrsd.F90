@@ -40,6 +40,7 @@ implicit none
 #include "asterfort/jemarq.h"
 #include "asterfort/jexnum.h"
 #include "asterfort/vtcreb.h"
+#include "asterfort/utmess.h"
 #include "asterfort/wkvect.h"
 !
 character(len=8), intent(in) :: mesh
@@ -88,9 +89,9 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
 ! --------------------------------------------------------------------------------------------------
 !
     call jemarq()
-    call infdbg('MECA_NON_LINE', ifm, niv)
+    call infdbg('CONTACT', ifm, niv)
     if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE> ... CREATION DE LA SD RESULTAT CONTACT DISCRET'
+        call utmess('I','CONTACT5_4')
     endif
 !
 ! - Get contact parameters

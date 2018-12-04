@@ -21,19 +21,15 @@
 
 cata_msg = {
 
-    1: _(u"""
-Le système linéaire à résoudre a %(i1)d degrés de liberté:
+    1: _(u"""  Le système linéaire à résoudre a %(i1)d degrés de liberté:
    - %(i2)d sont des degrés de liberté physiques
      (ils sont portés par %(i3)d noeuds du maillage)
    - %(i4)d sont les couples de paramètres de Lagrange associés
-     aux %(i5)d relations linéaires dualisées.
-"""),
+     aux %(i5)d relations linéaires dualisées."""),
 
-    2: _(u"""
-La matrice est de taille %(i1)d équations.
-Elle contient %(i2)d termes non nuls si elle est symétrique et %(i3)d termes non nuls si elle n'est pas symétrique.
-Soit un taux de remplissage de  %(r1)6.3f %%.
-"""),
+    2: _(u"""  La matrice est de taille %(i1)d équations.
+  Elle contient %(i2)d termes non nuls si elle est symétrique et %(i3)d termes non nuls si elle n'est pas symétrique.
+  Soit un taux de remplissage de  %(r1)6.3f %%."""),
 
 
     10: _(u"""

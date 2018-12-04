@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine nmrenu(modelz  , list_func_acti, list_load, ds_contact, nume_dof,&
                   l_renumber)
 !
@@ -31,15 +32,14 @@ implicit none
 #include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/numer3.h"
+#include "asterfort/utmess.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=*), intent(in) :: modelz
-    character(len=24), intent(inout) :: nume_dof
-    character(len=19), intent(in) :: list_load
-    type(NL_DS_Contact), intent(inout) :: ds_contact
-    integer, intent(in) :: list_func_acti(*)
-    aster_logical, intent(out) :: l_renumber
+character(len=*), intent(in) :: modelz
+character(len=24), intent(inout) :: nume_dof
+character(len=19), intent(in) :: list_load
+type(NL_DS_Contact), intent(inout) :: ds_contact
+integer, intent(in) :: list_func_acti(*)
+aster_logical, intent(out) :: l_renumber
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -64,7 +64,7 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call infdbg('MECA_NON_LINE', ifm, niv)
+    call infdbg('MECANONLINE', ifm, niv)
 !
 ! - Initializations
 !
@@ -104,7 +104,7 @@ implicit none
 !
     if (l_renumber) then
         if (niv .ge. 2) then
-            write (ifm,*) '<MECANONLINE> ...... RE-CREATION DU NUME_DDL '
+            call utmess('I', 'MECANONLINE13_36')
         endif
         call numer3(modelz, list_load, nume_dof, sd_iden_rela)
     endif

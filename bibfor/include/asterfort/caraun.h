@@ -15,20 +15,13 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine caraun(char, motfac, nzocu, nbgdcu, coefcu,&
+    subroutine caraun(sdcont, nzocu , nbgdcu, coefcu,&
                       compcu, multcu, penacu, ntcmp)
-        character(len=8) :: char
-        character(len=16) :: motfac
-        integer :: nzocu
-        character(len=24) :: nbgdcu
-        character(len=24) :: coefcu
-        character(len=24) :: compcu
-        character(len=24) :: multcu
-        character(len=24) :: penacu
-        integer :: ntcmp
+        character(len=8), intent(in) :: sdcont
+        integer, intent(in) :: nzocu
+        character(len=24), intent(in) :: nbgdcu, coefcu, compcu, multcu, penacu
+        integer, intent(out) :: ntcmp
     end subroutine caraun
 end interface

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,17 +15,17 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine nmreso(fonact, cndonn, cnpilo, cncine, solveu,&
                   maprec, matass, depso1, depso2, rescvg)
 !
-! person_in_charge: mickael.abbas at edf.fr
+implicit none
 !
-    implicit none
 #include "asterf_types.h"
 #include "jeveux.h"
-#include "asterfort/infdbg.h"
 #include "asterfort/isfonc.h"
+#include "asterfort/infdbg.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jedetr.h"
 #include "asterfort/jeexin.h"
@@ -35,10 +35,11 @@ subroutine nmreso(fonact, cndonn, cnpilo, cncine, solveu,&
 #include "asterfort/resoud.h"
 #include "asterfort/vtzero.h"
 #include "asterfort/wkvect.h"
-    integer :: fonact(*)
-    character(len=19) :: maprec, matass
-    character(len=19) :: solveu, cndonn, cnpilo
-    character(len=19) :: cncine, depso1, depso2
+!
+integer :: fonact(*)
+character(len=19) :: maprec, matass
+character(len=19) :: solveu, cndonn, cnpilo
+character(len=19) :: cncine, depso1, depso2
 !
 ! ----------------------------------------------------------------------
 !
@@ -65,8 +66,7 @@ subroutine nmreso(fonact, cndonn, cnpilo, cncine, solveu,&
 !
 !
     aster_logical :: lpilo
-    integer :: ifm, niv
-    integer :: rescvg
+    integer :: rescvg, ifm, niv
     complex(kind=8) :: c16bid
     character(len=19) :: crgc
     c16bid = dcmplx(0.d0, 0.d0)
@@ -74,13 +74,7 @@ subroutine nmreso(fonact, cndonn, cnpilo, cncine, solveu,&
 ! ----------------------------------------------------------------------
 !
     call jemarq()
-    call infdbg('MECA_NON_LINE', ifm, niv)
-!
-! --- AFFICHAGE
-!
-    if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE><RESO> RESOLUTION K.U = F'
-    endif
+    call infdbg('MECANONLINE', ifm, niv)
 !
 ! --- INITIALISATIONS
 !
@@ -95,7 +89,6 @@ subroutine nmreso(fonact, cndonn, cnpilo, cncine, solveu,&
 ! --- SECOND MEMBRE FIXE
 !
     if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE><RESO> -> SECOND MEMBRE DONNE'
         call nmdebg('VECT', cndonn, 6)
     endif
 !
@@ -103,13 +96,11 @@ subroutine nmreso(fonact, cndonn, cnpilo, cncine, solveu,&
 !
     if (lpilo) then
         if (niv .ge. 2) then
-            write (ifm,*) '<MECANONLINE><RESO> -> SECOND MEMBRE PILOTE'
             call nmdebg('VECT', cnpilo, 6)
         endif
     endif
 !
     if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE><RESO> -> MATRICE'
         call nmdebg('MATA', matass, 6)
     endif
 !
@@ -132,24 +123,20 @@ subroutine nmreso(fonact, cndonn, cnpilo, cncine, solveu,&
         if (rescvg .eq. 1) goto 999
     endif
 !
-! --- AFFICHAGE DES SOLUTIONS
+! - Print solution
 !
     if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE><RESO> -> SOLUTION 1:'
         call nmdebg('VECT', depso1, 6)
         if (lpilo) then
-            write (ifm,*) '<MECANONLINE><RESO> -> SOLUTION 2:'
             call nmdebg('VECT', depso2, 6)
         endif
     endif
-!
 !
 999 continue
 !
     call jedetr(crgc//'.CRTI')
     call jedetr(crgc//'.CRTR')
     call jedetr(crgc//'.CRDE')
-!
 !
     call jedema()
 end subroutine

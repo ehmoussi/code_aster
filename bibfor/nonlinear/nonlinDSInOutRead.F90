@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -63,7 +63,7 @@ type(NL_DS_InOut), intent(inout) :: ds_inout
 !
     call infniv(ifm, niv)
     if (niv .ge. 2) then
-        write (ifm,*) '<           > . Read parameters input/output management'
+        call utmess('I', 'MECANONLINE12_3')
     endif
 !
 ! - Initializations
@@ -134,9 +134,6 @@ type(NL_DS_InOut), intent(inout) :: ds_inout
 !
     do i_field = 1, ds_inout%nb_field
         init_keyw = ds_inout%field(i_field)%init_keyw
-        if (niv .ge. 2) then
-            write(6,*) "ReadInOut:", i_field, '>', init_keyw, '<'
-        endif
         if (getexm(keywf,init_keyw) .eq. 1 .and. ds_inout%field(i_field)%l_read_init) then
             call getvid(keywf, init_keyw, scal = field, iocc=1, nbret=nocc)
             if (nocc.eq.1) then

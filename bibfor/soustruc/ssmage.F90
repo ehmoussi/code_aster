@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -75,7 +75,7 @@ subroutine ssmage(nomu, option)
     if (materi .eq. '        ') then
         mate = ' '
     else
-        call rcmfmc(materi, mate)
+        call rcmfmc(materi, mate, l_ther_ = ASTER_FALSE)
     endif
     nu= zk8(iarefm-1+5)
     if (nu(1:8) .ne. nomu) then

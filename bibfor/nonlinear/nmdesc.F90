@@ -18,7 +18,7 @@
 ! person_in_charge: mickael.abbas at edf.fr
 ! aslint: disable=W1504
 !
-subroutine nmdesc(modele  , numedd         , numfix    , ds_material, carele     ,&
+subroutine nmdesc(mesh, modele  , numedd         , numfix    , ds_material, carele     ,&
                   ds_constitutive, lischa    , ds_contact, ds_algopara,&
                   solveu  , fonact         , numins    , iterat    , sddisc     ,&
                   ds_print, ds_measure     , ds_algorom, sddyna    , sdnume     ,&
@@ -32,7 +32,9 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/copisd.h"
+#include "asterfort/utmess.h"
 #include "asterfort/infdbg.h"
+#include "asterfort/nonlinDSPrintSepLine.h"
 #include "asterfort/nmacin.h"
 #include "asterfort/nmassc.h"
 #include "asterfort/nmchex.h"
@@ -43,6 +45,7 @@ implicit none
 #include "asterfort/vtzero.h"
 !
 integer :: numins, iterat
+character(len=8), intent(in) :: mesh
 type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 character(len=19) :: matass, maprec
 type(NL_DS_Measure), intent(inout) :: ds_measure
@@ -103,9 +106,10 @@ aster_logical :: lerrit
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call infdbg('MECA_NON_LINE', ifm, niv)
+    call infdbg('MECANONLINE', ifm, niv)
     if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE> CALCUL DIRECTION DE DESCENTE...'
+        call nonlinDSPrintSepLine()
+        call utmess('I', 'MECANONLINE13_67')
     endif
 !
 ! --- INITIALISATIONS
@@ -130,7 +134,7 @@ aster_logical :: lerrit
 !
 ! --- CALCUL DE LA MATRICE GLOBALE
 !
-    call nmcoma(modele, ds_material, carele    , ds_constitutive, ds_algopara,&
+    call nmcoma(mesh, modele, ds_material, carele    , ds_constitutive, ds_algopara,&
                 lischa, numedd, numfix    , solveu         , &
                 sddisc, sddyna, ds_print  , ds_measure     , ds_algorom ,numins     ,&
                 iterat, fonact, ds_contact, valinc         , solalg     ,&

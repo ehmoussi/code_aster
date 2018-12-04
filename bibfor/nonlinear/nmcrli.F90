@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,6 +16,8 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine nmcrli(inst_init, list_inst, sddisc)
 !
 implicit none
@@ -27,7 +29,7 @@ implicit none
 #include "asterfort/assert.h"
 #include "asterfort/diinst.h"
 #include "asterfort/getvr8.h"
-#include "asterfort/infniv.h"
+#include "asterfort/infdbg.h"
 #include "asterfort/jedetr.h"
 #include "asterfort/jedup1.h"
 #include "asterfort/jedupo.h"
@@ -41,11 +43,9 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/wkvect.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=19), intent(in) :: sddisc
-    character(len=19), intent(in) :: list_inst
-    real(kind=8), intent(in) :: inst_init
+character(len=19), intent(in) :: sddisc
+character(len=19), intent(in) :: list_inst
+real(kind=8), intent(in) :: inst_init
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -86,9 +86,9 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call infniv(ifm, niv)
+    call infdbg('MECANONLINE', ifm, niv)
     if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE> ... CREATION SD DISCRETISATION'
+        call utmess('I','MECANONLINE13_15')
     endif
 !
 ! - Initializations

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -20,8 +20,8 @@
 subroutine nmcrga(sderro)
 !
 implicit none
+!
 #include "jeveux.h"
-#include "asterfort/infdbg.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jemarq.h"
 #include "asterfort/wkvect.h"
@@ -142,7 +142,6 @@ character(len=24) :: sderro
             '                ','                ','                ',&
             'MECANONLINE10_12','                ','                '/)
 !
-    integer :: ifm, niv
     integer :: ieven
     character(len=24) :: errecn, errecv, erreni, erreno, erraac, errfct, errmsg
     integer :: jeecon, jeecov, jeeniv, jeenom, jeeact, jeefct, jeemsg
@@ -152,13 +151,6 @@ character(len=24) :: sderro
 ! ----------------------------------------------------------------------
 !
     call jemarq()
-    call infdbg('MECA_NON_LINE', ifm, niv)
-!
-! --- AFFICHAGE
-!
-    if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE> ... LECTURE GESTION ALGORITHME'
-    endif
 !
 ! --- GENERAL
 !

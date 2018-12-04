@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -50,16 +50,14 @@ subroutine xmmaa4(nnol, pla, ffc, jac, cstaco,&
 !
 ! ----------------------------------------------------------------------
 !
-    do 120 i = 1, nnol
+    do i = 1, nnol
         pli=pla(i)
         ffi=ffc(i)
-!
-        do 121 j = 1, nnol
+        do j = 1, nnol
             plj=pla(j)
             ffj=ffc(j)
-!
             mmat(pli,plj) = mmat(pli,plj) - ffj * ffi * jac / cstaco
-121      continue
-120  end do
+        end do
+     end do
 !
 end subroutine

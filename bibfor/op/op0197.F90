@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -415,7 +415,7 @@ subroutine op0197()
         call jedetc('V', '.MATE_CODE', 9)
         call jedetc('V', '.CODI', 20)
         mate = ' '
-        call rcmfmc(chcop1, mate)
+        call rcmfmc(chcop1, mate, l_ther_ = ASTER_FALSE)
 !
 !
 !       DETERMINATION DU NOM DES 2 TABLES A CREER:

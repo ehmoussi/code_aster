@@ -231,7 +231,7 @@ def complex_values(filename, idbx, idbr, idbi, module_phase=False):
     return cols.ravel()
 
 
-def lire_fonction_ops(self, UNITE, NOM_PARA, FORMAT=None, TYPE=None, SEPAR=None, INDIC_PARA=None, 
+def lire_fonction_ops(self, UNITE, NOM_PARA, FORMAT=None, TYPE=None, SEPAR=None, INDIC_PARA=None,
                       NOM_RESU=None, INTERPOL=None, PROL_DROITE=None,
                       PROL_GAUCHE=None, VERIF=None, INFO=None, TITRE=None, **args):
     """Méthode corps de la macro
@@ -239,7 +239,7 @@ def lire_fonction_ops(self, UNITE, NOM_PARA, FORMAT=None, TYPE=None, SEPAR=None,
     from code_aster.Cata.Syntax import _F
     from Utilitai.Utmess import UTMESS
     from Utilitai.UniteAster import UniteAster
-    from code_aster.RunManager import ReservedUnitUsed
+    from code_aster.RunManager import LogicalUnitFile, ReservedUnitUsed
 
     ier = 0
     # La macro compte pour 1 dans la numerotation des commandes
@@ -254,11 +254,8 @@ def lire_fonction_ops(self, UNITE, NOM_PARA, FORMAT=None, TYPE=None, SEPAR=None,
     DEFI_NAPPE = self.get_cmd('DEFI_NAPPE')
     assert FORMAT in ('LIBRE', 'NUMPY')
 
-    nompro = 'LIRE_FONCTION'
-
     # Lecture de la fonction dans un fichier d unité logique UNITE
-    UL = UniteAster()
-    nomfich = UL.Nom(UNITE)
+    nomfich = LogicalUnitFile.filename_from_unit(UNITE)
     if not osp.isfile(nomfich):
         UTMESS('F', 'FONCT0_41', valk=nomfich)
 

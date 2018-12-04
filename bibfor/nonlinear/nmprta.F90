@@ -18,7 +18,7 @@
 ! person_in_charge: mickael.abbas at edf.fr
 ! aslint: disable=W1504
 !
-subroutine nmprta(model          , nume_dof , numfix     , ds_material, cara_elem,&
+subroutine nmprta(mesh, model          , nume_dof , numfix     , ds_material, cara_elem,&
                   ds_constitutive, list_load, ds_algopara, solveu     ,&
                   list_func_acti , ds_print , ds_measure , ds_algorom , sddisc,&
                   nume_inst      , hval_incr, hval_algo  , matass     , maprec,&
@@ -46,8 +46,10 @@ implicit none
 #include "asterfort/nmprma.h"
 #include "asterfort/nmresd.h"
 #include "asterfort/vtzero.h"
+#include "asterfort/utmess.h"
 !
 integer :: list_func_acti(*)
+character(len=8), intent(in) :: mesh
 integer :: nume_inst, faccvg, rescvg, ldccvg
 type(NL_DS_Constitutive), intent(in) :: ds_constitutive
 type(NL_DS_AlgoPara), intent(in) :: ds_algopara
@@ -125,9 +127,9 @@ character(len=19) :: hval_meelem(*), hval_measse(*)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call infdbg('MECA_NON_LINE', ifm, niv)
+    call infdbg('MECANONLINE', ifm, niv)
     if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE> PREDICTION TYPE EULER'
+        call utmess('I', 'MECANONLINE13_34')
     endif
 !
 ! - Active functionnalities
@@ -161,7 +163,7 @@ character(len=19) :: hval_meelem(*), hval_measse(*)
 !
 ! --- CALCUL DE LA MATRICE GLOBALE
 !
-    call nmprma(model      , ds_material, cara_elem, ds_constitutive,&
+    call nmprma(mesh, model      , ds_material, cara_elem, ds_constitutive,&
                 ds_algopara, list_load  , nume_dof, numfix, solveu,&
                 ds_print   , ds_measure , ds_algorom, sddisc,&
                 sddyna     , nume_inst  , list_func_acti, ds_contact,&

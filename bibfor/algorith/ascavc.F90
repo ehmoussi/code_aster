@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,11 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine ascavc(lchar, infcha, fomult, numedd, inst, vci)
-    implicit none
 !
-! person_in_charge: jacques.pellet at edf.fr
+subroutine ascavc(lchar, infcha, fomult, numedd, inst, vci)
+!
+implicit none
 !
 #include "jeveux.h"
 #include "asterfort/ascova.h"
@@ -35,14 +34,13 @@ subroutine ascavc(lchar, infcha, fomult, numedd, inst, vci)
 #include "asterfort/jeexin.h"
 #include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
-#include "asterfort/rgndas.h"
-#include "asterfort/utmess.h"
 #include "asterfort/vtcreb.h"
 #include "asterfort/wkvect.h"
 !
-    character(len=24) :: lchar, infcha, fomult
-    character(len=*) :: vci, numedd
-    real(kind=8) :: inst
+character(len=24) :: lchar, infcha, fomult
+character(len=*) :: vci, numedd
+real(kind=8) :: inst
+!
 ! ----------------------------------------------------------------------
 ! BUT  :  CALCUL DU CHAM_NO CONTENANT LE VECTEUR LE CINEMATIQUE
 ! ---     ASSOCIE A LA LISTE DE CHAR_CINE_* LCHAR A UN INSTANT INST
@@ -62,7 +60,6 @@ subroutine ascavc(lchar, infcha, fomult, numedd, inst, vci)
     integer :: idchar, jinfc, idfomu, nchtot, nchci, ichar, icine, ilchno
     integer :: ichci, ibid, ifm, niv, neq, ieq, jdlci2,  ieqmul
     character(len=8) :: newnom
-    character(len=1) :: tyddl
     character(len=19) :: charci, chamno, vci2
     character(len=24) :: vachci
     character(len=8) :: charge
@@ -146,12 +143,12 @@ subroutine ascavc(lchar, infcha, fomult, numedd, inst, vci)
     endif
 !
 !     -- SI UN DDL A ETE ELIMINE PLUSIEURS FOIS :
-    if (ieqmul .gt. 0) then
-        call utmess('A', 'CALCULEL3_37')
-        call rgndas(numedd, ieqmul, l_print = .true.,&
-                    type_equaz = tyddl)
-        ASSERT(tyddl.eq.'A')
-    endif
+    !if (ieqmul .gt. 0) then
+    !    call utmess('A', 'CALCULEL3_37')
+    !    call rgndas(numedd, ieqmul, l_print = .true.,&
+    !                type_equaz = tyddl)
+    !    ASSERT(tyddl.eq.'A')
+    !endif
 !
 !
 !
