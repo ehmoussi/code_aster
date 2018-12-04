@@ -23,14 +23,20 @@ interface
                       lagrc_prev, lagrc_curr   ,&
                       gap_prev  , gap_curr     ,&
                       indi_cont , l_norm_smooth,&
-                      gapi, nmcp)
+                      gapi, nmcp, nb_poin_inte ,&
+                      poin_inte_sl, poin_inte_ma)
         aster_logical, intent(out) :: l_previous
-        real(kind=8), intent(out) :: lagrc_curr, lagrc_prev
-        real(kind=8), intent(out) :: gap_curr, gap_prev
+        real(kind=8), intent(out) :: lagrc_curr
+        real(kind=8), intent(out) :: lagrc_prev
+        real(kind=8), intent(out) :: gap_curr
+        real(kind=8), intent(out) :: gap_prev
+        real(kind=8), intent(out) :: gapi
+        real(kind=8), intent(out) :: poin_inte_sl(16)
+        real(kind=8), intent(out) :: poin_inte_ma(16)
         aster_logical, intent(out) :: l_upda_jaco
         integer, intent(out) :: indi_cont
-        aster_logical, intent(out) :: l_norm_smooth
-        real(kind=8), intent(out) :: gapi
         integer, intent(out) :: nmcp
+        integer, intent(out) :: nb_poin_inte
+        aster_logical, intent(out) :: l_norm_smooth
     end subroutine lcstco
 end interface

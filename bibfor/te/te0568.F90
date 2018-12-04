@@ -58,6 +58,9 @@ character(len=16), intent(in) :: nomte
     real(kind=8) :: elem_mast_coor(27), elem_slav_coor(27)
     real(kind=8) :: elem_mast_init(27), elem_slav_init(27)
     real(kind=8) :: elem_mast_coop(27), elem_slav_coop(27)
+    real(kind=8) :: poin_inte_sl(16)
+    real(kind=8) :: poin_inte_ma(16)
+    integer :: nb_poin_inte
     character(len=8) :: elga_fami_slav, elga_fami_mast
     real(kind=8) :: vcont(55), vcont_prev(55), vcont_(55)
     real(kind=8) :: gap_curr,gap_prev, gapi
@@ -95,7 +98,8 @@ character(len=16), intent(in) :: nomte
                 lagrc_prev, lagrc        ,&
                 gap_prev  , gap_curr     ,&
                 indi_cont , l_norm_smooth,&
-                gapi, nmcp)
+                gapi, nmcp, nb_poin_inte ,&
+                poin_inte_sl, poin_inte_ma)
 !
 ! - Get initial coordinates
 !
@@ -114,7 +118,7 @@ character(len=16), intent(in) :: nomte
 !
 ! - S'il y a du cyclage, on calcul la géométrie à n-1 :
 !
-    if (l_previous) then
+    if (.false.) then
         call lcgeog(ASTER_TRUE    ,&
                     elem_dime     , nb_lagr       , indi_lagc ,&
                     nb_node_slav  , nb_node_mast  ,&
@@ -130,7 +134,8 @@ character(len=16), intent(in) :: nomte
                     l_axis      , l_upda_jaco   , l_norm_smooth ,&
                     nb_lagr     , indi_lagc     , lagrc         ,&
                     nb_node_slav, elem_slav_code, elem_slav_init, elga_fami_slav, elem_slav_coor,&
-                    nb_node_mast, elem_mast_code, elem_mast_init, elga_fami_mast, elem_mast_coor,&
+                    nb_node_mast, elem_mast_code, elem_mast_init, elga_fami_mast,&
+                    elem_mast_coor, nb_poin_inte, poin_inte_sl,poin_inte_ma,&
                     vcont, gapi, nmcp)
         if (.false.) then
             call lcsena(elem_dime, nb_lagr, nb_node_slav, indi_lagc, &
@@ -156,7 +161,8 @@ character(len=16), intent(in) :: nomte
                     l_axis      , l_upda_jaco   , l_norm_smooth ,&
                     nb_lagr     , indi_lagc     , lagrc         ,&
                     nb_node_slav, elem_slav_code, elem_slav_init, elga_fami_slav, elem_slav_coop,&
-                    nb_node_mast, elem_mast_code, elem_mast_init, elga_fami_mast, elem_mast_coop,&
+                    nb_node_mast, elem_mast_code, elem_mast_init, elga_fami_mast,&
+                    elem_mast_coop, nb_poin_inte, poin_inte_sl,poin_inte_ma,&
                     vcont_prev, gapi, nmcp)
             if ((abs(lagrc_prev+100.d0*gap_prev)+abs(lagrc+100.d0*gap_curr)) .gt. 1.d-6 ) then
                 alpha = 1.0-abs(lagrc+100.d0*gap_curr)/&
