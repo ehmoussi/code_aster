@@ -74,7 +74,7 @@ def combinaison_ferraillage_ops(self, **args):
     # Counting numbers of load combinations.
     #
     nmb_cas = countCase(combinaison)
-    aster.affiche( 'MESSAGE', 'number cases = %d' % nmb_cas)
+    UTMESS('I', 'COMBFERR_10', vali=nmb_cas)
 
     # Build instant list (lst_inst_value of float) and instant index
     # and control about existing or duplicates NUM_CAS and NUME_ORDRE.
@@ -82,23 +82,21 @@ def combinaison_ferraillage_ops(self, **args):
     lst_inst_index, lst_inst_value, resu_nom_cas, resu_num_ord, lst_type_combo = \
         lstInst(nmb_cas,combinaison,resu)
 
-    aster.affiche( 'MESSAGE', '         instant   value = ' + \
-        string.join( [str(i) for i in lst_inst_value], '-') )
-    aster.affiche( 'MESSAGE', 'seelected from   NOM_CAS = ' + \
-        string.join( [str(i) for i in resu_nom_cas], '*') )
-    aster.affiche( 'MESSAGE', 'seelected from NUMEORDRE = ' + \
-        string.join( [str(i) for i in resu_num_ord], '*') )
+    UTMESS('I', 'COMBFERR_11', valk=(
+        '-'.join([str(i) for i in lst_inst_value]),
+        '*'.join([str(i) for i in resu_nom_cas]),
+        '*'.join([str(i) for i in resu_num_ord]),
+    ))
 
     # Controlling overwriting results
     #
     if 'COMB_DIME_ORDRE' in resu_nom_cas:
-        UTMESS('A', 'COMBFERR_9')
+        UTMESS('A', 'COMBFERR_9', valk='COMB_DIME_ORDRE')
 
     if 'COMB_DIME_ACIER' in resu_nom_cas:
-        UTMESS('A', 'COMBFERR_10')
+        UTMESS('A', 'COMBFERR_9', valk='COMB_DIME_ACIER')
 
-    aster.affiche( 'MESSAGE', ' type combo = ' + \
-    '\n' + string.join( [str(i) for i in lst_type_combo], '\n') )
+    UTMESS('I', 'COMBFERR_12', valk='\n    '.join(lst_type_combo))
 
     for i_affe in affe :
         structure_type = i_affe.get('TYPE_STRUCTURE')
@@ -265,10 +263,7 @@ def combinaison_ferraillage_ops(self, **args):
                         ),)
 
     nc = resu.LIST_VARI_ACCES()['NOM_CAS']
-
-    aster.affiche( 'MESSAGE', ' name case = ' + \
-    '\n' + string.join( [str(i) for i in nc], '\n') )
-
+    UTMESS('I', 'COMBFERR_13', valk='\n    '.join(nc))
     return 0
 
 def algo_2D (_resfer, affe, lst_nume_ordre, code, type_combo):
@@ -280,7 +275,7 @@ def algo_2D (_resfer, affe, lst_nume_ordre, code, type_combo):
 
         # seelction of mot-clè TYPE_COMB by [lst_type_combo]
         dic_type_comb = {}
-        
+
         # saving dict_affe
         affe_for_cf = dict_affe.copy();
 
@@ -289,20 +284,20 @@ def algo_2D (_resfer, affe, lst_nume_ordre, code, type_combo):
 
         elif type_combo [idx]  == 'ELU_FONDAMENTAL':
             dic_type_comb['TYPE_COMB'] = 'ELU'
-            
+
             affe_for_cf.update({'GAMMA_S':affe_for_cf['GAMMA_S_FOND']})
-            affe_for_cf.update({'GAMMA_C':affe_for_cf['GAMMA_C_FOND']})  
+            affe_for_cf.update({'GAMMA_C':affe_for_cf['GAMMA_C_FOND']})
 
         elif type_combo [idx]  == 'ELU_ACCIDENTEL':
             dic_type_comb['TYPE_COMB'] = 'ELU'
-            
+
             affe_for_cf.update({'GAMMA_S':affe_for_cf['GAMMA_S_ACCI']})
-            affe_for_cf.update({'GAMMA_C':affe_for_cf['GAMMA_C_ACCI']})            
+            affe_for_cf.update({'GAMMA_C':affe_for_cf['GAMMA_C_ACCI']})
 
         else:
             dic_type_comb['TYPE_COMB'] = 'ELU'
 
-        # adjusting affe for calc_ferraillage        
+        # adjusting affe for calc_ferraillage
         affe_for_cf.pop('GAMMA_C_FOND')
         affe_for_cf.pop('GAMMA_S_FOND')
         affe_for_cf.pop('GAMMA_C_ACCI')
@@ -322,12 +317,12 @@ def algo_2D (_resfer, affe, lst_nume_ordre, code, type_combo):
 
 def algo_POUTRE ():
     print "def option_POUTRE:"
-    UTMESS('A', 'COMBFERR_2')
+    UTMESS('A', 'COMBFERR_2', valk='POUTRE')
     return None
 
 def algo_POTEAU ():
     print "def option_POTEAU:"
-    UTMESS('A', 'COMBFERR_3')
+    UTMESS('A', 'COMBFERR_2', valk='POTEAU')
     return None
 
 
