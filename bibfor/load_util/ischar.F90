@@ -104,14 +104,16 @@ integer, optional, intent(in) :: i_load_
 ! - Choice: all loads or not ?
 !
     if (present(i_load_)) then
-        ischar_iload = ischar_iden(v_load_info, i_load_, nb_load, load_type_1, load_type_2)
+        ischar_iload = ischar_iden(v_load_info, i_load_, nb_load, load_type_1, load_type_2,&
+                                   load_name=v_load_name(i_load_))
         ischar = ischar_iload
     else
         do i_load = 1, nb_load
 !
 ! --------- Identify type of load 
 !
-            ischar_iload = ischar_iden(v_load_info, i_load, nb_load, load_type_1, load_type_2)
+            ischar_iload = ischar_iden(v_load_info, i_load, nb_load, load_type_1, load_type_2,&
+                                       load_name=v_load_name(i_load))
 !
 ! --------- Flag for function
 !    
