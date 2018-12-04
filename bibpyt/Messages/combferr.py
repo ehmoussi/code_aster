@@ -22,49 +22,54 @@
 
 cata_msg = {
 1 : _(u"""
- -> Vous avez demandé ...................... CODIFICATION = "UTILISATEUR"
- -> En cette version la seule valeur disponible est "EC2". Le calcun
-    ne sera pas effectué pour les autres valeurs.
+Vous avez demandé ...................... CODIFICATION = "UTILISATEUR"
+Dans cette version, la seule valeur disponible est "EC2". Le calcul ne sera pas
+effectué pour les autres valeurs.
 """),
 
 2 : _(u"""
- -> Vous avez demandé ........................ TYPE_STRUCTURE = "POUTRE"
- -> En cette version la seule valeur disponible est "2D". Le calcul pour
-    ne sera pas effectué pour les autres valeurs.
-"""),
-
-3 : _(u"""
- -> Vous avez demandé ....................... TYPE_STRUCTURE = "POTEAU"
- -> En cette version la seule valeur disponible est "2D". Le calcul pour
-    ne sera pas effectué pour les autres valeurs.
+Vous avez demandé ........................ TYPE_STRUCTURE = "%(k1)s"
+Dans cette version, la seule valeur disponible est "2D". Le calcul ne sera pas
+effectué pour les autres valeurs.
 """),
 
 4 : _(u"""
- -> La liste NUME_ORDRE contient au moins une valeur répétée.
+ La liste NUME_ORDRE contient au moins une valeur répétée.
 """),
 
 5 : _(u"""
- -> La liste NOM_CAS contient au moins une valeur répétée.
+La liste NOM_CAS contient au moins une valeur répétée.
 """),
 
 6 : _(u"""
- -> Un NOM_CAS indiqué n'appartient pas aux cas disponibles
+Un NOM_CAS indiqué n'appartient pas aux cas disponibles
 """),
 
 7 : _(u"""
- -> Un NUME_ORDRE indiqué n'appartient pas aux cas disponibles
+Un NUME_ORDRE indiqué n'appartient pas aux cas disponibles
 """),
 
 8 : _(u"""
- -> L'utilisation de COMBINAISON_FERRAILLAGE n'est possible qu'avec un seul
- -> MODELE
+L'utilisation de COMBINAISON_FERRAILLAGE n'est possible qu'avec un seul MODELE
 """),
 
 9 : _(u"""
- -> Le cas COMB_DIME_ORDRE existe déjà. Il sera écrasé !!!
+Le cas '%(k1)s' existe déjà. Il sera écrasé.
 """),
 
-10 : _(u"""
- -> Le cas COMB_DIME_ACIER existe déjà. Il sera écrasé !!!
+10 : _(u"""Nombre de cas : %(i1)d"""),
+
+11 : _(u"""
+Liste d'instants       : %(k1)s
+correspondants aux cas : %(k2)s
+et aux numéros d'ordre : %(k3)s
 """),
+
+12 : _(u"""
+Type de combinaison :
+    %(k1)s"""),
+
+13 : _(u"""
+Noms des cas présents :
+    %(k1)s"""),
 }

@@ -52,7 +52,7 @@ COMBINAISON_FERRAILLAGE = MACRO(
         NUME_ORDRE = SIMP ( statut = 'f', typ = 'I', min = 1, max = '**' ),
     ),
 
-    CODIFICATION  = SIMP ( statut = 'd', typ = 'TXM', defaut = 'EC2' ,
+    CODIFICATION  = SIMP ( statut = 'f', typ = 'TXM', defaut = 'EC2' ,
                            into = ('EC2','UTILISATEUR') ),
 
     b_ec2 = BLOC (
@@ -75,10 +75,10 @@ COMBINAISON_FERRAILLAGE = MACRO(
             C_INF            = SIMP(statut='o',typ='R'), # enrobage armatures inférieures
             C_SUP            = SIMP(statut='o',typ='R'), # enrobage armatures supérieures
             ALPHA_E          = SIMP(statut='f',typ='R'), # coefficient d'équivalence acier/béton  (pour ELS)
-            GAMMA_S_FOND     = SIMP(statut='f',typ='R'), # coefficient de sécurité sur la résistance du acier 
-            GAMMA_C_FOND     = SIMP(statut='f',typ='R'), # coefficient de sécurité sur la résistance du béton 
-            GAMMA_S_ACCI     = SIMP(statut='f',typ='R'), # coefficient de sécurité sur la résistance du acier 
-            GAMMA_C_ACCI     = SIMP(statut='f',typ='R'), # coefficient de sécurité sur la résistance du béton   
+            GAMMA_S_FOND     = SIMP(statut='f',typ='R'), # coefficient de sécurité sur la résistance du acier
+            GAMMA_C_FOND     = SIMP(statut='f',typ='R'), # coefficient de sécurité sur la résistance du béton
+            GAMMA_S_ACCI     = SIMP(statut='f',typ='R'), # coefficient de sécurité sur la résistance du acier
+            GAMMA_C_ACCI     = SIMP(statut='f',typ='R'), # coefficient de sécurité sur la résistance du béton
             FYK              = SIMP(statut='f',typ='R'), # contrainte admissible dans l'acier
             FCK              = SIMP(statut='f',typ='R'), # contrainte admissible dans le béton
             ALPHA_CC         = SIMP(statut='f',typ='R',defaut=1.), # coefficient intervennant à l'ELU
