@@ -23,7 +23,7 @@ from math import log, sqrt, floor, pi, sin
 from numpy import sqrt as nsqrt
 
 
-def defi_char_sol_ops(self, TITRE, INFO, **args):
+def defi_char_sol_ops(self, TITRE=None, INFO=None, **args):
     """
        Macro DEFI_SOL_EQUI
     """
@@ -35,8 +35,6 @@ def defi_char_sol_ops(self, TITRE, INFO, **args):
     # from math import log, sqrt, floor, pi, sin
     from numpy import sqrt as nqsrt
     import numpy as np
-    #from SD.sd_maillage      import sd_maillage
-    #from code_aster.Cata.DataStructure import maillage_sdaster
 
   #--------------------------------------------------------------------------------
   # On importe les definitions des commandes a utiliser dans la macro
@@ -55,13 +53,8 @@ def defi_char_sol_ops(self, TITRE, INFO, **args):
     MODI_MAILLAGE = self.get_cmd('MODI_MAILLAGE')
     DETRUIRE = self.get_cmd('DETRUIRE')
     DEFI_NAPPE = self.get_cmd('DEFI_NAPPE')
-    ier = 0
-    # La macro compte pour 1 dans la numerotation des commandes
-    self.set_icmd(1)
-    self.DeclareOut("charout", self.sd)
 
-    # Le concept sortant (de type char_meca)
-
+    args = _F(args)
     modele = args['MODELE']
 
     lforcn = 'NON'
@@ -95,7 +88,7 @@ def defi_char_sol_ops(self, TITRE, INFO, **args):
                 nompar='Y'
             else:
               nompar=args['AXE']
-        
+
           if args['NOM_CMP'] == 'DY':
             if lforcn != 'OUI' :
               nompar=args['AXE']
@@ -107,10 +100,10 @@ def defi_char_sol_ops(self, TITRE, INFO, **args):
                 if args['NOM_PARA']=='Y'  :
                   nompar='Y'
           dire = (0., 0., 1.)
-          if nompar == 'Y' :   
-            dire = (0., 1., 0.)  
-          if nompar == 'X' :   
-            dire = (1., 0., 0.)       
+          if nompar == 'Y' :
+            dire = (0., 1., 0.)
+          if nompar == 'X' :
+            dire = (1., 0., 0.)
 
       print 'dime=',dime
       # Possibilite d utiliser une longueur caracteristique :
@@ -119,15 +112,6 @@ def defi_char_sol_ops(self, TITRE, INFO, **args):
         llcara = 'OUI'
     if args['RESU_INIT'] != None :
       lresu = 'OUI'
-
-# Groupes de mailles et maillage
-    iret,ibid,nom_mail = aster.dismoi('NOM_MAILLA',modele.nom,'MODELE','F')
-    mail0 = self.get_concept(nom_mail)
-    
-    #if dime == "3D":
-    #    grma_tot = args['GROUP_MA_LIGNE']
-
-#
 
     if ltranin == 'OUI' :
       utranin = args['UNITE_TRAN_INIT']
@@ -165,14 +149,14 @@ def defi_char_sol_ops(self, TITRE, INFO, **args):
                INDIC_PARA=[6,1],INDIC_RESU=[6,NPC+1-k],
                    );
             l_para.append(z0-1.0*__TMAT['Y',NPC-1-k])
-                   
+
           else:
             __faccex0=LIRE_FONCTION(UNITE=utranin,NOM_PARA='INST',
                INTERPOL = 'LIN',PROL_DROITE = 'CONSTANT',
                INDIC_PARA=[6,1],INDIC_RESU=[6,2],
                    );
             l_para.append(z0)
-               
+
           __ffy1=CALC_FONCTION(COMB=(
                        _F(FONCTION=__faccex0,COEF=coef,),
                              ),
@@ -185,15 +169,15 @@ def defi_char_sol_ops(self, TITRE, INFO, **args):
 
           l_foncy1.append(__ffy1)
           l_foncy2.append(__ffy2)
-  
+
         __NSEISM1 = DEFI_NAPPE(NOM_PARA=nompar,
-          PARA= tuple(l_para),    
-          FONCTION=tuple(l_foncy1), 
+          PARA= tuple(l_para),
+          FONCTION=tuple(l_foncy1),
           );
 
         __NSEISM2 = DEFI_NAPPE(NOM_PARA=nompar,
-          PARA= tuple(l_para),    
-          FONCTION=tuple(l_foncy2), 
+          PARA= tuple(l_para),
+          FONCTION=tuple(l_foncy2),
           );
 
       else:
@@ -230,21 +214,21 @@ def defi_char_sol_ops(self, TITRE, INFO, **args):
                  INTERPOL = 'LIN',PROL_DROITE = 'CONSTANT',
                  INDIC_PARA=[3,1],INDIC_RESU=[3,2],
                    );
-             l_para.append(z0)           
+             l_para.append(z0)
           l_vitex.append(__fvitex)
           if llcara == 'OUI' :
             l_deplx.append(__fdeplx)
 
-        __FONCVX = DEFI_NAPPE(NOM_PARA='X', INTERPOL=('LIN','LIN',),                     
+        __FONCVX = DEFI_NAPPE(NOM_PARA='X', INTERPOL=('LIN','LIN',),
                                PROL_GAUCHE='CONSTANT', PROL_DROITE='CONSTANT',
                                PARA= tuple(l_para), FONCTION=tuple(l_vitex),);
         if llcara == 'OUI' :
-          __FONCDX = DEFI_NAPPE(NOM_PARA='X', INTERPOL=('LIN','LIN',),                     
+          __FONCDX = DEFI_NAPPE(NOM_PARA='X', INTERPOL=('LIN','LIN',),
                                PROL_GAUCHE='CONSTANT', PROL_DROITE='CONSTANT',
                                PARA= tuple(l_para), FONCTION=tuple(l_deplx),);
 
       #if ltranin == 'OUI' :
-      if dime == "2D": 
+      if dime == "2D":
             if args['NOM_CMP'] == 'DX':
                   if lforcn == 'OUI' :
                     Force_Nodale = []
@@ -258,14 +242,14 @@ def defi_char_sol_ops(self, TITRE, INFO, **args):
                   else:
                     if llcara == 'OUI' :
                       charout=AFFE_CHAR_MECA_F(  MODELE=modele,
-                        ONDE_PLANE=_F( DIRECTION = (0., 1., 0.,), 
+                        ONDE_PLANE=_F( DIRECTION = (0., 1., 0.,),
                         TYPE_ONDE = 'S',
                         DEPL_IMPO=__FONCDX,
                         FONC_SIGNAL = __FONCVX, GROUP_MA=tuple(l_group),) #(grma_gauch,grma_droit))
                           );
                     else:
                       charout=AFFE_CHAR_MECA_F(  MODELE=modele,
-                        ONDE_PLANE=_F( DIRECTION = (0., 1., 0.,), 
+                        ONDE_PLANE=_F( DIRECTION = (0., 1., 0.,),
                         TYPE_ONDE = 'S',
                         FONC_SIGNAL = __FONCVX, GROUP_MA=tuple(l_group),) #(grma_gauch,grma_droit))
                           );
@@ -283,18 +267,18 @@ def defi_char_sol_ops(self, TITRE, INFO, **args):
                   else:
                     if llcara == 'OUI' :
                       charout=AFFE_CHAR_MECA_F(  MODELE=modele,
-                        ONDE_PLANE=_F( DIRECTION = (0., 1., 0.,), 
+                        ONDE_PLANE=_F( DIRECTION = (0., 1., 0.,),
                         TYPE_ONDE = 'P',
                         DEPL_IMPO=__FONCDX,
                         FONC_SIGNAL = __FONCVX, GROUP_MA=(grma_gauch,grma_droit))
                           );
                     else:
                       charout=AFFE_CHAR_MECA_F(  MODELE=modele,
-                        ONDE_PLANE=_F( DIRECTION = (0., 1., 0.,), 
+                        ONDE_PLANE=_F( DIRECTION = (0., 1., 0.,),
                         TYPE_ONDE = 'P',
                         FONC_SIGNAL = __FONCVX, GROUP_MA=(grma_gauch,grma_droit))
                           );
-      if dime == "3D": 
+      if dime == "3D":
             if args['NOM_CMP'] == 'DX':
                   if lforcn == 'OUI' :
                     Force_Nodale = []
@@ -319,14 +303,14 @@ def defi_char_sol_ops(self, TITRE, INFO, **args):
                   else:
                     if llcara == 'OUI' :
                       charout=AFFE_CHAR_MECA_F(  MODELE=modele,
-                        ONDE_PLANE=_F( DIRECTION = dire, #(0., 0., 1.,), 
+                        ONDE_PLANE=_F( DIRECTION = dire, #(0., 0., 1.,),
                         TYPE_ONDE = typs, #'S',
                         DEPL_IMPO=__FONCDX,
                         FONC_SIGNAL = __FONCVX, GROUP_MA=tuple(l_group),) #(grma_gauch,grma_droit))
                           );
                     else:
                       charout=AFFE_CHAR_MECA_F(  MODELE=modele,
-                        ONDE_PLANE=_F( DIRECTION = dire, #(0., 0., 1.,),  
+                        ONDE_PLANE=_F( DIRECTION = dire, #(0., 0., 1.,),
                         TYPE_ONDE = typs, #'S',
                         FONC_SIGNAL = __FONCVX, GROUP_MA=tuple(l_group),) #(grma_gauch,grma_droit))
                           );
@@ -341,7 +325,7 @@ def defi_char_sol_ops(self, TITRE, INFO, **args):
                         Force_Nodale.append(_F(GROUP_MA=grma_droit,FX=__NSEISM2,),)
                       charout=AFFE_CHAR_MECA_F(MODELE=modele,
                         FORCE_ARETE=Force_Nodale,
-                        );   
+                        );
                     if args['AXE']=='Y'  :
                       Force_Nodale = []
                       if grma_gauch != None:
@@ -363,14 +347,14 @@ def defi_char_sol_ops(self, TITRE, INFO, **args):
                   else:
                     if llcara == 'OUI' :
                       charout=AFFE_CHAR_MECA_F(  MODELE=modele,
-                        ONDE_PLANE=_F( DIRECTION = dire, #(0., 0., 1.,),  
+                        ONDE_PLANE=_F( DIRECTION = dire, #(0., 0., 1.,),
                         TYPE_ONDE = 'P',
                         DEPL_IMPO=__FONCDX,
                         FONC_SIGNAL = __FONCVX, GROUP_MA=tuple(l_group),) #(grma_gauch,grma_droit))
                           );
                     else:
                       charout=AFFE_CHAR_MECA_F(  MODELE=modele,
-                        ONDE_PLANE=_F( DIRECTION = dire, #(0., 0., 1.,), 
+                        ONDE_PLANE=_F( DIRECTION = dire, #(0., 0., 1.,),
                         TYPE_ONDE = 'P',
                         FONC_SIGNAL = __FONCVX, GROUP_MA=tuple(l_group),) #(grma_gauch,grma_droit))
                           );
@@ -401,7 +385,7 @@ def defi_char_sol_ops(self, TITRE, INFO, **args):
                 );
 
         else:
-          if args['MATR_RIGI'] != None: 
+          if args['MATR_RIGI'] != None:
             __resuon=CREA_RESU(OPERATION='KUCV',
                   TYPE_RESU='EVOL_CHAR', #'DYNA_TRANS',
                   KUCV=_F(MATR_RIGI=args['MATR_RIGI'],
@@ -411,7 +395,7 @@ def defi_char_sol_ops(self, TITRE, INFO, **args):
                           LIST_INST=args['LIST_INST'],
                           RESU_INIT=args['RESU_INIT'],),
                 );
-          else: 
+          else:
             __resuon=CREA_RESU(OPERATION='KUCV',
                   TYPE_RESU='EVOL_CHAR', #'DYNA_TRANS',
                   KUCV=_F(
@@ -423,4 +407,4 @@ def defi_char_sol_ops(self, TITRE, INFO, **args):
                 );
 
         charout=AFFE_CHAR_MECA(MODELE=modele, EVOL_CHAR=__resuon,);
-    return ier
+    return charout
