@@ -45,7 +45,6 @@ implicit none
 #include "asterfort/jecroc.h"
 #include "asterfort/clpoma.h"
 #include "asterfort/assert.h"
-#include "asterfort/apdcma.h"
 #include "asterfort/ap_infast.h"
 #include "asterfort/apprin.h"
 #include "asterfort/cncinv.h"
@@ -111,8 +110,8 @@ character(len=24), intent(in) :: pair_method
     real(kind=8) :: inte_weight, elem_slav_weight
     real(kind=8) :: poin_inte_sl(32)
     real(kind=8) :: poin_inte_ma(32)
-    integer :: elin_mast_nbsub, elin_mast_sub(1,4), elin_mast_nbnode(1)
-    integer :: elin_slav_nbsub, elin_slav_sub(1,4), elin_slav_nbnode(1)
+    integer ::  elin_mast_nbnode
+    integer ::  elin_slav_nbnode
     character(len=8) :: elin_mast_code, elin_slav_code, elem_slav_name, elem_mast_name, elem_name
     integer :: nb_slav_start, nb_find_mast, nb_mast_start
     integer :: list_find_mast(nb_elem_mast)
@@ -288,17 +287,24 @@ character(len=24), intent(in) :: pair_method
 !
 ! ----- Cut element in linearized sub-elements
 !
-        call apdcma(elem_slav_code,&
-                    elin_slav_sub, elin_slav_nbnode, elin_slav_nbsub, elin_slav_code)
+        if (elem_slav_code .eq. "TR6") then
+            elin_slav_code   = "TR3"
+            elin_slav_nbnode = 3
+        elseif(elem_slav_code .eq. "QU8" .or. elem_slav_code .eq. "QU9") then
+            elin_slav_code   = "QU4"
+            elin_slav_nbnode = 4
+        elseif(elem_slav_code .eq. "SE3") then
+            elin_slav_code   = "SE2"
+            elin_slav_nbnode = 2
+        else
+            elin_slav_code   = elem_slav_code
+            elin_slav_nbnode = elem_slav_nbnode
+        endif
 !
 ! ----- Compute weight of element
 !
         call clpoma(elem_slav_dime  , elem_slav_code, elem_slav_coor, elem_slav_nbnode,&
                     elem_slav_weight)
-        if (debug) then
-            write(*,*) "Current slave element is cut: ", elin_slav_nbsub,&
-                       "- Weight: ", elem_slav_weight
-        endif
 !
 ! ----- Total weight for patch
 !
@@ -373,8 +379,8 @@ character(len=24), intent(in) :: pair_method
             elem_mast_indx = elem_mast_nume+1-mast_indx_mini
             elem_type_nume = v_mesh_typmail(elem_mast_nume)
             call jenuno(jexnum('&CATA.TM.NOMTM', elem_type_nume), elem_mast_type)
-            call jenuno(jexnum(mesh//'.NOMMAI', elem_mast_nume), elem_mast_name)
             if (debug) then
+                call jenuno(jexnum(mesh//'.NOMMAI', elem_mast_nume), elem_mast_name)
                 write(*,*) "Current master element: ", elem_mast_nume, elem_mast_name,&
                            '(type : ', elem_mast_type, ')'
             endif
@@ -409,10 +415,18 @@ character(len=24), intent(in) :: pair_method
 !
 ! --------- Cut master element in linearized sub-elements
 !
-            call apdcma(elem_mast_code,&
-                        elin_mast_sub, elin_mast_nbnode, elin_mast_nbsub, elin_mast_code)
-            if (debug) then
-                write(*,*) "Current slave element is cut: ", elin_mast_nbsub
+            if (elem_mast_code .eq. "TR6") then
+                elin_mast_code   = "TR3"
+                elin_mast_nbnode = 3
+            elseif(elem_mast_code .eq. "QU8" .or. elem_mast_code .eq. "QU9") then
+                elin_mast_code   = "QU4"
+                elin_mast_nbnode = 4
+            elseif(elem_mast_code .eq. "SE3") then
+                elin_mast_code   = "SE2"
+                elin_mast_nbnode = 2
+            else
+                elin_mast_code   = elem_mast_code
+                elin_mast_nbnode = elem_mast_nbnode
             endif
 !
 ! --------- Loop on linearized slave sub-elements
@@ -422,8 +436,8 @@ character(len=24), intent(in) :: pair_method
 ! ----------------- Projection/intersection of elements in slave parametric space
 !
             call prjint(pair_tole     , elem_slav_dime,&
-                        elin_mast_nbnode(1), elem_mast_coor, elin_mast_code,&
-                        elin_slav_nbnode(1), elem_slav_coor, elin_slav_code,&
+                        elin_mast_nbnode, elem_mast_coor, elin_mast_code,&
+                        elin_slav_nbnode, elem_slav_coor, elin_slav_code,&
                         poin_inte_sl       , inte_weight   , nb_poin_inte  ,&
                         inte_neigh_ = inte_neigh)
             if (debug) then

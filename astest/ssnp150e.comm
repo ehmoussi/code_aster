@@ -188,7 +188,7 @@ def NormeAster(RESULTAT, Depl_Ana, P_ana, MAIL, MODELE, GROUP_MA_VOL, GROUP_MA_S
                                 NOM_CMP = 'PRES',
                                 NOM_CMP_RESU = 'X1',),
                              ),);
-     
+
 
      PcalcG=CREA_CHAMP(OPERATION='DISC',
                        TYPE_CHAM='ELGA_NEUT_R',
@@ -491,17 +491,17 @@ TEST_TABLE (TABLE = PenteLST,
             REFERENCE='ANALYTIQUE',
             VALE_CALC= 2.00221480429,  # raffiement=6,
             VALE_REFE=2.0,             # taux de convergence
-            PRECISION=0.002,           # 
+            PRECISION=0.002,           #
             )
 
 
 TEST_TABLE (TABLE = PenteLST,
             NOM_PARA= 'PP',
             REFERENCE='ANALYTIQUE',
-            VALE_CALC=1.01326300018,   # raffiement=6,
+            VALE_CALC=1.01326727416,   # raffiement=6,
             VALE_REFE=0.5,             # taux de convergence
             PRECISION=1.027,
-            ) 
+            )
 
 sous_titreU='Ordres de convergence: cas QUAD4= %f'%(PenteL2U)
 sous_titreP='Ordres de convergence: cas QUAD4= %f'%(PenteL2P)
@@ -586,11 +586,11 @@ DETRUIRE(CONCEPT=(_F(NOM=modl,),
                   _F(NOM=DIFFPG),
                   _F(NOM=RAMPE),
                   _F(NOM=LINST),
-                  _F(NOM=acier),  
+                  _F(NOM=acier),
                   ),
            INFO=1,);
 for n in range(0,Nb_Raffinement):
- 
+
     DETRUIRE(CONCEPT=(_F(NOM=MA0[n],),
                       _F(NOM=MALine[n]),
                       _F(NOM=MA[n]),

@@ -191,7 +191,7 @@ def NormeAster(RESULTAT, Depl_Ana, P_ana, MAIL, MODELE, GROUP_MA_VOL, GROUP_MA_S
      # ========================================================================================
      #          Creation de la pression calculee en deplacement aux points d'integration
      # ========================================================================================
- 
+
      Pcalc1=CREA_CHAMP(OPERATION='ASSE',
                        TYPE_CHAM='CART_NEUT_R',
                        MAILLAGE=MAIL,
@@ -275,7 +275,7 @@ def NormeAster(RESULTAT, Depl_Ana, P_ana, MAIL, MODELE, GROUP_MA_VOL, GROUP_MA_S
                        _F(NOM=Pcalc1),
                        _F(NOM=UcalcG),
                        _F(NOM=PcalcG),
-                       _F(NOM=DIFFUG), 
+                       _F(NOM=DIFFUG),
                        _F(NOM=tabU),
                        _F(NOM=tabP),
                        ),
@@ -492,7 +492,7 @@ PenteLST=CREA_TABLE( LISTE= (
 TEST_TABLE (TABLE = PenteLST,
             NOM_PARA= 'PU',
             REFERENCE='ANALYTIQUE',
-            VALE_CALC= 3.66962808612,   # raffinement=4,
+            VALE_CALC= 3.66986265524,   # raffinement=4,
             VALE_REFE=2.5,              # taux de convergence
             PRECISION=0.468,            # surconvergence: mélange de convergence de géométrie
             )                           # (surface de contact courbée)
@@ -501,13 +501,13 @@ TEST_TABLE (TABLE = PenteLST,
 TEST_TABLE (TABLE = PenteLST,
             NOM_PARA= 'PP',
             REFERENCE='ANALYTIQUE',
-            VALE_CALC=1.08926994033,    # raffinement=4,
+            VALE_CALC= 1.09023168237,    # raffinement=4,
             VALE_REFE=1.0,              # taux de convergence
-            PRECISION=0.090,            # surconvergence: mélange de convergence de géométrie
+            PRECISION=0.1,            # surconvergence: mélange de convergence de géométrie
             )                           # (surface de contact courbée)
 
 sous_titreU='Ordres de convergence: cas PIRAM13 %f'%(PenteL2U)
-sous_titreP='Ordres de convergence: cas PYRAM13= %f'%(PenteL2P)        
+sous_titreP='Ordres de convergence: cas PYRAM13= %f'%(PenteL2P)
 
 IMPR_FONCTION(FORMAT='XMGRACE',
                UNITE=29,
@@ -571,7 +571,7 @@ DETRUIRE(CONCEPT=(_F(NOM=modl,),
                   _F(NOM=DIFFPG),
                   _F(NOM=RAMPE),
                   _F(NOM=LINST),
-                  _F(NOM=acier),  
+                  _F(NOM=acier),
                   ),
            INFO=1,);
 for n in range(0,Nb_Raffinement):

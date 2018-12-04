@@ -187,7 +187,7 @@ def NormeAster(RESULTAT, Depl_Ana, P_ana, MAIL, MODELE, GROUP_MA_VOL, GROUP_MA_S
                                 NOM_CMP = 'PRES',
                                 NOM_CMP_RESU = 'X1',),
                              ),);
-     
+
 
      PcalcG=CREA_CHAMP(OPERATION='DISC',
                        TYPE_CHAM='ELGA_NEUT_R',
@@ -447,7 +447,7 @@ for Raff in range(0,Nb_Raffinement):
                        MAILLAGE_N =MA0[Raff],
                        MAILLAGE_NP1 =MA0[Raff+1],
                        )
-        
+
         MALine[Raff+1]=CREA_MAILLAGE(MAILLAGE=MA0[Raff+1],
                                 QUAD_LINE=_F(GROUP_MA=('BAS','GAUCHE','DROITE','HAUT','SURFACE'),),);
         MA[Raff+1]=CREA_MAILLAGE(MAILLAGE=MALine[Raff+1],
@@ -492,17 +492,17 @@ TEST_TABLE (TABLE = PenteLST,
             REFERENCE='ANALYTIQUE',
             VALE_CALC= 1.9976453888,  # raffiement=6,
             VALE_REFE=2.0,             # taux de convergence
-            PRECISION=0.002,           # 
+            PRECISION=0.002,           #
             )
 
 
 TEST_TABLE (TABLE = PenteLST,
             NOM_PARA= 'PP',
             REFERENCE='ANALYTIQUE',
-            VALE_CALC=1.04123030275,   # raffiement=6,
+            VALE_CALC=1.04123265161,   # raffiement=6,
             VALE_REFE=0.5,             # taux de convergence
             PRECISION=1.083,
-            ) 
+            )
 
 sous_titreU='Ordres de convergence: cas TRIA3= %f'%(PenteL2U)
 sous_titreP='Ordres de convergence: cas TRIA3= %f'%(PenteL2P)
@@ -587,7 +587,7 @@ DETRUIRE(CONCEPT=(_F(NOM=modl,),
                   _F(NOM=DIFFPG),
                   _F(NOM=RAMPE),
                   _F(NOM=LINST),
-                  _F(NOM=acier),  
+                  _F(NOM=acier),
                   ),
            INFO=1,);
 for n in range(0,Nb_Raffinement):
