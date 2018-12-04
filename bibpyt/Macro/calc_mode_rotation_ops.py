@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -68,6 +68,7 @@ def calc_mode_rotation_ops(self, MATR_RIGI, MATR_MASS, MATR_AMOR, MATR_GYRO,
     _mod = [None] * NBV
 
     tab = Table()
+    toSave = []
     for ii in range(0, NBV):
         OM = VITE_ROTA[ii]
 
@@ -89,7 +90,10 @@ def calc_mode_rotation_ops(self, MATR_RIGI, MATR_MASS, MATR_AMOR, MATR_GYRO,
         tab.append({'NUME_VITE': ii, 'VITE_ROTA': OM, 'NOM_OBJET':
                     'MODE_MECA', 'TYPE_OBJET': 'MODE_MECA',
                     'NOM_SD': _mod[ii].nom})
+        toSave.append(_mod[ii])
 
     motcles = tab.dict_CREA_TABLE()
     tab_out = CREA_TABLE(TYPE_TABLE='TABLE_CONTENEUR', **motcles)
+    for mod in toSave:
+        tab_out.addReference(mod)
     return tab_out
