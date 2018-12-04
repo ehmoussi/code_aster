@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,25 +15,15 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine mmmtcu(phasep, ndim, nnl, nne, nnm,&
-                      norm, wpg, ffl, ffe, ffm,&
-                      jacobi, matrce, matrcm)
-        character(len=9) :: phasep
-        integer :: ndim
-        integer :: nnl
-        integer :: nne
-        integer :: nnm
-        real(kind=8) :: norm(3)
-        real(kind=8) :: wpg
-        real(kind=8) :: ffl(9)
-        real(kind=8) :: ffe(9)
-        real(kind=8) :: ffm(9)
-        real(kind=8) :: jacobi
-        real(kind=8) :: matrce(9, 27)
-        real(kind=8) :: matrcm(9, 27)
+    subroutine mmmtcu(ndim  , nnl   , nne   , nnm,&
+                      ffl   , ffe   , ffm   ,&
+                      norm  , wpg   , jacobi,&
+                      matrce, matrcm)
+        integer, intent(in) :: ndim, nne, nnl, nnm
+        real(kind=8), intent(in) :: ffe(9), ffl(9), ffm(9)
+        real(kind=8), intent(in) :: norm(3), wpg, jacobi
+        real(kind=8), intent(out) :: matrce(9, 27), matrcm(9, 27)
     end subroutine mmmtcu
 end interface

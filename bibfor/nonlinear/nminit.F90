@@ -84,6 +84,8 @@ implicit none
 #include "asterfort/nmrini.h"
 #include "asterfort/nonlinDSMaterialInit.h"
 #include "asterfort/utmess.h"
+#include "asterfort/infdbg.h"
+#include "asterfort/nonlinDSPrintSepLine.h"
 !
 character(len=8), intent(in) :: mesh
 character(len=24), intent(in) :: model
@@ -158,13 +160,21 @@ type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: iret
+    integer :: iret, ifm, niv
     real(kind=8) :: r8bid3(3)
     real(kind=8) :: instin
     character(len=19) :: varc_prev, disp_prev, strx_prev
     aster_logical :: lacc0, lpilo, lmpas, lsstf, lerrt, lviss, lrefe, ldidi, l_obsv, l_ener
 !
 ! --------------------------------------------------------------------------------------------------
+!
+    call infdbg('MECANONLINE',ifm, niv)
+    if (niv .ge. 2) then
+        call nonlinDSPrintSepLine()
+        call utmess('I', 'MECANONLINE13_1')
+    endif
+!
+! - Initialisations
 !
     lacc0 = ASTER_FALSE
 !
@@ -190,10 +200,9 @@ type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
     call nmnume(model     , mesh  , ds_inout%result, ds_constitutive%compor, list_load,&
                 ds_contact, numedd, sdnume)
 !
-! --- CREATION DE VARIABLES "CHAPEAU" POUR STOCKER LES NOMS
+! - Create "hat" variables
 !
-    call nmchap(valinc, solalg, meelem, veelem, veasse,&
-                measse)
+    call nmchap(valinc, solalg, meelem, veelem, veasse, measse)
 !
 ! - Prepare active functionnalities information
 !
@@ -301,13 +310,13 @@ type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
 !
 ! - Prepare integration of constitutive laws
 !
-    call nonlinIntegratePrepare(fonact, sddyna, ds_constitutive)
+    call nonlinIntegratePrepare(fonact, sddyna, model, ds_constitutive)
 !
 ! --- PRE-CALCUL DES MATR_ELEM CONSTANTES AU COURS DU CALCUL
 !
-    call nminmc(fonact, list_load  , sddyna    , model      , ds_constitutive,&
-                numedd, numfix     , ds_contact, ds_algopara, solalg         ,&
-                valinc, ds_material, cara_elem , sddisc     , ds_measure     ,&
+    call nminmc(fonact, list_load  , sddyna     , model , ds_constitutive,&
+                numedd, numfix     , ds_algopara, solalg,&
+                valinc, ds_material, cara_elem  , sddisc, ds_measure     ,&
                 meelem, measse     , veelem)
 !
 ! - Compute reference vector for RESI_REFE_RELA

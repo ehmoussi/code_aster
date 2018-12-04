@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -23,6 +23,7 @@ subroutine op0008()
 !
 ! ......................................................................
 #include "jeveux.h"
+#include "asterf_types.h"
 #include "asterc/getres.h"
 #include "asterfort/assert.h"
 #include "asterfort/dismoi.h"
@@ -55,6 +56,7 @@ subroutine op0008()
     character(len=16) :: type, oper, suropt
     character(len=19) :: matel, resuel
     character(len=24) :: time2, mate
+    aster_logical :: l_ther
     character(len=24), pointer :: relr(:) => null()
     data nomcmp/'INST    ','DELTAT  ','THETA   ','KHI     ',&
      &     'R       ','RHO     '/
@@ -69,6 +71,10 @@ subroutine op0008()
     matel=matez
 !
     call getvtx(' ', 'OPTION', scal=suropt, nbret=n3)
+    l_ther = ASTER_FALSE
+    if (suropt .eq. 'CHAR_THER') then
+        l_ther = ASTER_TRUE
+    endif
 !
 !     - ON VERIFIE LE NOM DU MODELE:
 !     -------------------------------
@@ -105,7 +111,7 @@ subroutine op0008()
     call getvid(' ', 'CARA_ELEM', scal=cara, nbret=n5)
     call getvid(' ', 'CHAM_MATER', scal=materi, nbret=n4)
     if (n4 .ne. 0) then
-        call rcmfmc(materi, mate)
+        call rcmfmc(materi, mate, l_ther_ = l_ther)
     else
         mate = ' '
     endif

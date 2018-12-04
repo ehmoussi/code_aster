@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,24 +15,18 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine mmdepm(nbdm, ndim, nne, nnm, jdepm,&
-                      jdepde, ffe, ffm, ddeple, ddeplm,&
+    subroutine mmdepm(nbdm  , ndim  ,&
+                      nne   , nnm   ,&
+                      jdepm , jdepde,&
+                      ffe   , ffm   ,&
+                      ddeple, ddeplm,&
                       deplme, deplmm)
-        integer :: nbdm
-        integer :: ndim
-        integer :: nne
-        integer :: nnm
-        integer :: jdepm
-        integer :: jdepde
-        real(kind=8) :: ffe(9)
-        real(kind=8) :: ffm(9)
-        real(kind=8) :: ddeple(3)
-        real(kind=8) :: ddeplm(3)
-        real(kind=8) :: deplme(3)
-        real(kind=8) :: deplmm(3)
+        integer, intent(in) :: nbdm, ndim, nne, nnm
+        integer, intent(in) :: jdepde, jdepm
+        real(kind=8), intent(in) :: ffe(9), ffm(9)
+        real(kind=8), intent(out) :: ddeple(3), deplme(3)
+        real(kind=8), intent(out) :: ddeplm(3), deplmm(3)
     end subroutine mmdepm
 end interface

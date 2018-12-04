@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,18 +15,13 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine mmlagm(nbdm, ndim, nnl, jdepde, ffl,&
+    subroutine mmlagm(nbdm  , ndim  , nnl, jdepde, ffl,&
                       dlagrc, dlagrf)
-        integer :: nbdm
-        integer :: ndim
-        integer :: nnl
-        integer :: jdepde
-        real(kind=8) :: ffl(9)
-        real(kind=8) :: dlagrc
-        real(kind=8) :: dlagrf(2)
+        integer, intent(in) :: nbdm, ndim, nnl
+        integer, intent(in) :: jdepde
+        real(kind=8), intent(in) :: ffl(9)
+        real(kind=8), intent(out) :: dlagrc, dlagrf(2)
     end subroutine mmlagm
 end interface

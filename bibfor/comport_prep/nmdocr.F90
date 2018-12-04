@@ -31,6 +31,8 @@ implicit none
 #include "asterfort/carc_save.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/nocart.h"
+#include "asterfort/utmess.h"
+#include "asterfort/infniv.h"
 !
 character(len=8), intent(in)   :: model
 character(len=24), intent(out) :: carcri
@@ -50,11 +52,19 @@ aster_logical, intent(in) :: l_implex
 !
 ! --------------------------------------------------------------------------------------------------
 !
+    integer :: ifm, niv
     character(len=8) :: mesh
     integer :: nb_cmp
     type(Behaviour_PrepCrit) :: ds_compor_para
 !
 ! --------------------------------------------------------------------------------------------------
+!
+    call infniv(ifm, niv)
+    if (niv .ge. 2) then
+        call utmess('I', 'MECANONLINE12_5')
+    endif
+!
+! - Initialisations
 !
     carcri = '&&NMDOCR.CARCRI'
     call dismoi('NOM_MAILLA', model, 'MODELE', repk=mesh)

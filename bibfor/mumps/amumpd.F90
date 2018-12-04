@@ -62,7 +62,7 @@ subroutine amumpd(action, kxmps, rsolu, vcine, nbsol,&
 #include "asterfort/amumpu.h"
 #include "asterfort/assert.h"
 #include "asterfort/dismoi.h"
-#include "asterfort/infniv.h"
+#include "asterfort/infdbg.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jedetr.h"
 #include "asterfort/jeexin.h"
@@ -108,7 +108,7 @@ subroutine amumpd(action, kxmps, rsolu, vcine, nbsol,&
 ! --- ON DESACTIVE LA LEVEE D'EXCEPTION FPE DANS LA BIBLIOTHEQUE MKL
 ! --  CAR CES EXCEPTIONS NE SONT PAS JUSTIFIEES
     call matfpe(-1)
-    call infniv(ifm, niv)
+    call infdbg('SOLVEUR', ifm, niv)
 
 !
 ! --- PARAMETRE POUR IMPRESSION FICHIER
@@ -148,7 +148,7 @@ subroutine amumpd(action, kxmps, rsolu, vcine, nbsol,&
 !
 ! --- POUR "ELIMINER" LE 2EME LAGRANGE:
 ! --- OPTION DEBRANCHEE SI CALCUL DE DETERMINANT
-        klag2=slvk(6)
+        klag2=slvk(6)(1:5)
         lbis=klag2(1:5).eq.'LAGR2'
 !
 ! --- TRES PROBABLEMENT COMMANDE FACTORISER (POSTTRAITEMENTS
@@ -161,7 +161,7 @@ subroutine amumpd(action, kxmps, rsolu, vcine, nbsol,&
         endif
 !
 ! --- TYPE DE RESOLUTION
-        ktypr=slvk(3)
+        ktypr=slvk(3)(1:8)
 !
 ! --- PARAMETRE NPREC
         nprec=slvi(1)
@@ -182,7 +182,7 @@ subroutine amumpd(action, kxmps, rsolu, vcine, nbsol,&
         epsmat=slvr(1)
 !
 ! --- STRATEGIE MEMOIRE POUR MUMPS
-        usersm=slvk(9)
+        usersm=slvk(9)(1:12)
         nbfact=slvi(6)
     endif
 !
@@ -590,7 +590,8 @@ subroutine amumpd(action, kxmps, rsolu, vcine, nbsol,&
     endif
 !
 !     -- ON REACTIVE LA LEVEE D'EXCEPTION
-    99 call matfpe(1)
+99  continue
+    call matfpe(1)
     call jedema()
 !
 #endif

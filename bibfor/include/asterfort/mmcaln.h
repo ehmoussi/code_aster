@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,17 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine mmcaln(ndim, tau1, tau2, norm, mprojn,&
-                      mprojt)
-        integer :: ndim
-        real(kind=8) :: tau1(3)
-        real(kind=8) :: tau2(3)
-        real(kind=8) :: norm(3)
-        real(kind=8) :: mprojn(3, 3)
-        real(kind=8) :: mprojt(3, 3)
+    subroutine mmcaln(ndim, tau1  , tau2  ,&
+                      norm, mprojn, mprojt)
+        integer, intent(in) :: ndim
+        real(kind=8), intent(in) :: tau1(3), tau2(3)
+        real(kind=8), intent(out) :: norm(3), mprojn(3, 3), mprojt(3, 3)
     end subroutine mmcaln
 end interface

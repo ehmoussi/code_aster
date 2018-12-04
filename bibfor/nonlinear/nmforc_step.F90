@@ -41,6 +41,7 @@ implicit none
 #include "asterfort/diinst.h"
 #include "asterfort/ndynlo.h"
 #include "asterfort/isfonc.h"
+#include "asterfort/nonlinDSPrintSepLine.h"
 !
 integer, intent(in) :: list_func_acti(*)
 character(len=24), intent(in) :: model, cara_elem, nume_dof
@@ -89,6 +90,7 @@ character(len=19), intent(in) :: hval_veelem(*), hval_veasse(*)
 !
     call infdbg('MECANONLINE', ifm, niv)
     if (niv .ge. 2) then
+        call nonlinDSPrintSepLine()
         call utmess('I', 'MECANONLINE11_13')
     endif
 !

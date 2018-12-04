@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,18 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine mmmtcc(phasep, nnl, wpg, ffl, jacobi,&
-                      coefac, matrcc)
-        character(len=9) :: phasep
-        integer :: nnl
-        real(kind=8) :: wpg
-        real(kind=8) :: ffl(9)
-        real(kind=8) :: jacobi
-        real(kind=8) :: coefac
-        real(kind=8) :: matrcc(9, 9)
+    subroutine mmmtcc(nnl, wpg, ffl, jacobi, coefac, matrcc)
+        integer, intent(in) :: nnl
+        real(kind=8), intent(in) :: wpg, ffl(9), jacobi
+        real(kind=8), intent(in) :: coefac
+        real(kind=8), intent(out) :: matrcc(9, 9)
     end subroutine mmmtcc
 end interface

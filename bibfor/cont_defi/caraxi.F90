@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine caraxi(sdcont, model, mesh, model_ndim)
 !
 implicit none
@@ -26,12 +27,10 @@ implicit none
 #include "asterfort/cfdisi.h"
 #include "asterfort/mmmaxi.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=8), intent(in) :: sdcont
-    character(len=8), intent(in) :: model
-    character(len=8), intent(in) :: mesh
-    integer, intent(in) :: model_ndim
+character(len=8), intent(in) :: sdcont
+character(len=8), intent(in) :: model
+character(len=8), intent(in) :: mesh
+integer, intent(in) :: model_ndim
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -60,18 +59,18 @@ implicit none
 !
 ! - Datastructure for contact definition
 !
-    sdcont_paraci = sdcont_defi(1:16)//'.PARACI'
+    sdcont_paraci = sdcont(1:8)//'.PARACI'
     call jeveuo(sdcont_paraci, 'E', vi=v_sdcont_paraci)
 !
 ! - Parameters
 !
-    l_verif_all  = cfdisl(sdcont_defi,'ALL_VERIF')
-    nb_cont_elem = cfdisi(sdcont_defi,'NMACO')
+    l_verif_all  = cfdisl(sdcont     , 'ALL_VERIF')
+    nb_cont_elem = cfdisi(sdcont_defi, 'NMACO')
 !
 ! - Only if not verification on all zones !
 !
     if (.not.l_verif_all) then
-        l_elem_axis = .false.
+        l_elem_axis = ASTER_FALSE
         if (model_ndim .eq. 2) then
             l_elem_axis = mmmaxi(sdcont_defi, model, mesh)
         endif

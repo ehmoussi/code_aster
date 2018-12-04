@@ -61,7 +61,7 @@ type(NL_DS_Constitutive), intent(inout) :: ds_constitutive
 !
     call infdbg('MECANONLINE', ifm, niv)
     if (niv .ge. 2) then
-        call utmess('I', 'MECANONLINE11_24')
+        call utmess('I', 'MECANONLINE13_2')
     endif
 !
 ! - Construct CHAM_ELEM_S

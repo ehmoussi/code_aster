@@ -19,8 +19,7 @@
 !
 subroutine nmcalm(typmat         , modelz, lischa, ds_material, carele,&
                   ds_constitutive, instam, instap, valinc     , solalg,&
-                  optmaz         , base  , meelem, ds_contact , matele,&
-                  l_xthm)
+                  optmaz         , base  , meelem, matele)
 !
 use NonLin_Datastructure_type
 !
@@ -29,7 +28,6 @@ implicit none
 #include "jeveux.h"
 #include "asterfort/assert.h"
 #include "asterfort/dismoi.h"
-#include "asterfort/infdbg.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jedetr.h"
 #include "asterfort/jemarq.h"
@@ -42,23 +40,21 @@ implicit none
 #include "asterfort/merige.h"
 #include "asterfort/nmchex.h"
 #include "asterfort/nmvcex.h"
-#include "asterfort/nmdebg.h"
-#include "asterfort/nmelcm.h"
 #include "asterfort/wkvect.h"
+#include "asterfort/infdbg.h"
+#include "asterfort/utmess.h"
 !
 character(len=*) :: modelz
 character(len=*) :: carele
 type(NL_DS_Material), intent(in) :: ds_material
 type(NL_DS_Constitutive), intent(in) :: ds_constitutive
 real(kind=8) :: instam, instap
-type(NL_DS_Contact), intent(in) :: ds_contact
 character(len=19) :: lischa
 character(len=6) :: typmat
 character(len=*) :: optmaz
 character(len=1) :: base
 character(len=19) :: meelem(*), solalg(*), valinc(*)
 character(len=19) :: matele
-aster_logical, intent(in) :: l_xthm
 !
 ! ----------------------------------------------------------------------
 !
@@ -92,13 +88,11 @@ aster_logical, intent(in) :: l_xthm
 ! In  l_xthm           : contact with THM and XFEM (!)
 !
 !
-!
-    integer :: ifm, niv
     character(len=19) :: memass, merigi
     character(len=24) :: model
     integer :: jinfc, jchar, jchar2
     integer :: nbchar
-    integer :: i
+    integer :: i, ifm, niv
     character(len=16) :: optmat
     character(len=19) :: disp_prev, sigplu, vite_curr, vite_prev, acce_prev, strplu
     character(len=19) :: disp_cumu_inst, disp_newt_curr, varplu, time_curr
@@ -109,19 +103,13 @@ aster_logical, intent(in) :: l_xthm
 ! ----------------------------------------------------------------------
 !
     call jemarq()
-    call infdbg('MECA_NON_LINE', ifm, niv)
+    call infdbg('MECANONLINE', ifm, niv)
 !
 ! --- INITIALISATIONS
 !
     optmat = optmaz
     model = modelz
     call dismoi('NOM_MAILLA', model, 'MODELE', repk=mesh)
-!
-! --- AFFICHAGE
-!
-    if (niv .ge. 2) then
-        write (ifm,*) '<MECANONLINE><MATR> CALCUL DES MATR_ELEM DE TYPE <',typmat,'>'
-    endif
 !
 ! --- DECOMPACTION DES VARIABLES CHAPEAUX
 !
@@ -167,17 +155,26 @@ aster_logical, intent(in) :: l_xthm
 !
 ! --- MATR_ELEM DES CL DE DIRICHLET B
 !
+        if (niv .ge. 2) then
+            call utmess('I', 'MECANONLINE13_80')
+        endif
         call medime('V', 'ZERO', model, lischa, matele)
 !
 ! --- MATR_ELEM RIGIDITE GEOMETRIQUE
 !
     else if (typmat.eq.'MEGEOM') then
+        if (niv .ge. 2) then
+            call utmess('I', 'MECANONLINE13_81')
+        endif
         call merige(model(1:8), carele(1:8), sigplu, strplu, matele,&
                     'V', 0, mater=ds_material%field_mate)
 !
 ! --- MATR_ELEM MASSES
 !
     else if (typmat.eq.'MEMASS') then
+        if (niv .ge. 2) then
+            call utmess('I', 'MECANONLINE13_82')
+        endif
         call memame(optmat, model, ds_material%field_mate,&
                     carele, instam, ds_constitutive%compor, matele,&
                     base)
@@ -185,6 +182,9 @@ aster_logical, intent(in) :: l_xthm
 ! --- MATR_ELEM AMORTISSEMENT
 !
     else if (typmat.eq.'MEAMOR') then
+        if (niv .ge. 2) then
+            call utmess('I', 'MECANONLINE13_83')
+        endif
         call meamme(optmat, model, nbchar, zk8(jchar2), ds_material%field_mate,&
                     carele, instam, 'V', merigi,&
                     memass, matele, varplu)
@@ -192,36 +192,22 @@ aster_logical, intent(in) :: l_xthm
 ! --- MATR_ELEM POUR CHARGES SUIVEUSES
 !
     else if (typmat.eq.'MESUIV') then
+        if (niv .ge. 2) then
+            call utmess('I', 'MECANONLINE13_84')
+        endif
         call mecgme(model, carele, ds_material%field_mate  , lischa, instap,&
                     disp_prev, disp_cumu_inst, instam, ds_constitutive%compor, matele)
 !
 ! --- MATR_ELEM DES SOUS-STRUCTURES
 !
     else if (typmat.eq.'MESSTR') then
+        if (niv .ge. 2) then
+            call utmess('I', 'MECANONLINE13_85')
+        endif
         call messtr(base  , optmat, model, carele, ds_material%field_mate,&
                     matele)
-!
-! --- MATR_ELEM DES ELTS DE CONTACT (XFEM+CONTINUE)
-!
-    else if (typmat.eq.'MEELTC') then
-        call nmelcm('CONT'   , mesh     , model    , ds_material     , ds_contact    ,&
-                    disp_prev, vite_prev, acce_prev, vite_curr, disp_cumu_inst,&
-                    disp_newt_curr,matele   , time_prev, time_curr, ds_constitutive, l_xthm)
-!
-! --- MATR_ELEM DES ELTS DE FROTTEMENT (XFEM+CONTINUE)
-!
-    else if (typmat.eq.'MEELTF') then
-        call nmelcm('FROT'   , mesh     , model    , ds_material, ds_contact    ,&
-                    disp_prev, vite_prev, acce_prev, vite_curr, disp_cumu_inst,&
-                    disp_newt_curr,matele   , time_prev, time_curr, ds_constitutive, l_xthm)
     else
         ASSERT(.false.)
-    endif
-!
-! --- DEBUG
-!
-    if (niv .eq. 2) then
-        call nmdebg(' ', matele, ifm)
     endif
 !
 ! --- MENAGE

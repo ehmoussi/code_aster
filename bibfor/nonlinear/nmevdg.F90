@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,12 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmevdg(sddisc, vale, i_echec, i_echec_acti)
-!
 ! person_in_charge: mickael.abbas at edf.fr
 !
-    implicit     none
+subroutine nmevdg(sddisc, vale, i_echec, i_echec_acti)
+!
+implicit none
+!
 #include "jeveux.h"
 #include "asterfort/assert.h"
 #include "asterfort/extdch.h"
@@ -30,17 +30,17 @@ subroutine nmevdg(sddisc, vale, i_echec, i_echec_acti)
 #include "asterfort/tbacce.h"
 #include "asterfort/tbliva.h"
 #include "asterfort/utdidt.h"
-    integer :: i_echec, i_echec_acti
-    character(len=19) :: sddisc, vale(*)
 !
-! ----------------------------------------------------------------------
+integer :: i_echec, i_echec_acti
+character(len=19) :: sddisc, vale(*)
+!
+! --------------------------------------------------------------------------------------------------
 !
 ! ROUTINE MECA_NON_LINE (ALGORITHME - EVENEMENTS)
 !
 ! GESTION DE L'EVENEMENT DELTA_GRANDEUR
 !
-! ----------------------------------------------------------------------
-!
+! --------------------------------------------------------------------------------------------------
 !
 ! In  sddisc           : datastructure for time discretization TEMPORELLE
 ! IN  VALE   : INCREMENTS DES VARIABLES
@@ -50,8 +50,7 @@ subroutine nmevdg(sddisc, vale, i_echec, i_echec_acti)
 ! OUT IEVDAC : VAUT IECHEC SI EVENEMENT DECLENCHE
 !                   0 SINON
 !
-!
-!
+! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv, ier
     real(kind=8) :: valref, dval, r8bid
@@ -61,13 +60,10 @@ subroutine nmevdg(sddisc, vale, i_echec, i_echec_acti)
     character(len=16) :: nocham, nocmp
     parameter   (typext = 'MAX_ABS')
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
     call jemarq()
-    call infdbg('MECA_NON_LINE', ifm, niv)
-!
-! --- AFFICHAGE
-!
+    call infdbg('MECANONLINE', ifm, niv)
     if (niv .ge. 2) then
         write (ifm,*) '<MECANONLINE> ... DELTA_GRANDEUR'
     endif

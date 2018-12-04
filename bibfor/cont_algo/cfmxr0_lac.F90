@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine cfmxr0_lac(mesh, ds_contact, ds_measure_)
 !
 use NonLin_Datastructure_type
@@ -34,12 +35,11 @@ implicit none
 #include "asterfort/jelira.h"
 #include "asterfort/jexnum.h"
 #include "asterfort/detrsd.h"
+#include "asterfort/utmess.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=8), intent(in) :: mesh
-    type(NL_DS_Contact), intent(in) :: ds_contact
-    type(NL_DS_Measure), optional, intent(inout) :: ds_measure_
+character(len=8), intent(in) :: mesh
+type(NL_DS_Contact), intent(in) :: ds_contact
+type(NL_DS_Measure), optional, intent(inout) :: ds_measure_
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -87,7 +87,7 @@ implicit none
     call jemarq()
     call infdbg('CONTACT', ifm, niv)
     if (niv .ge. 2) then
-        write (ifm,*) '<CONTACT> . Create contact field for post-treatment'
+        call utmess('I','CONTACT5_10')
     endif
 !
 ! - Get pairing datastructure

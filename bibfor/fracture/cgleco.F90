@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: samuel.geniaut at edf.fr
+!
 subroutine cgleco(resu, modele, mate, iord0, compor,&
                   incr)
 implicit none
@@ -26,6 +27,7 @@ implicit none
 #include "asterfort/cgvein.h"
 #include "asterfort/cgvtem.h"
 #include "asterfort/comp_init.h"
+#include "asterfort/comp_info.h"
 #include "asterfort/comp_meca_elas.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/gverlc.h"
@@ -33,16 +35,15 @@ implicit none
 #include "asterfort/jemarq.h"
 #include "asterfort/nmdocc.h"
 #include "asterfort/rsexch.h"
+#include "asterfort/infniv.h"
 #include "asterfort/utmess.h"
 !
-! person_in_charge: samuel.geniaut at edf.fr
-!
-    integer, intent(in) :: iord0
-    character(len=8), intent(in) :: resu
-    character(len=8), intent(in) :: modele
-    character(len=8), intent(in) :: mate
-    character(len=19), intent(out) :: compor
-    aster_logical, intent(out) :: incr
+integer, intent(in) :: iord0
+character(len=8), intent(in) :: resu
+character(len=8), intent(in) :: modele
+character(len=8), intent(in) :: mate
+character(len=19), intent(out) :: compor
+aster_logical, intent(out) :: incr
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -61,6 +62,7 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
+    integer :: ifm, niv
     integer :: nbcomp, iret, nb_cmp, nbetin
     character(len=16) :: keywordfact
     character(len=24) :: repk
@@ -70,6 +72,7 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
     call jemarq()
+    call infniv(ifm, niv)
 !
 ! - Initializations
 !
@@ -104,11 +107,11 @@ implicit none
             call comp_meca_elas(compor, nb_cmp, l_etat_init)
         endif
     else
-!
 ! ----- Get COMPORTEMENT from command file
-!
         call nmdocc(modele, mate, l_etat_init, l_implex, compor)
-!
+        if (niv .ge. 2) then
+            call comp_info(modele, compor)
+        endif
     endif
 !
 ! - Incremental comportement or not ?
@@ -131,20 +134,22 @@ implicit none
 !
     if (nbcomp .gt. 0) then
         call utmess('A', 'RUPTURE1_41')
-        end if
+    end if
 !
 ! - Check is CALG_G COMPOR <CARTE> is coherent with result COMPOR <CARTE>
 !
-        call gverlc(resu, compor, iord0)
+    call gverlc(resu, compor, iord0)
 !
 ! - Check if TEMP is present or not in result cham_mater
 !
-        l_temp = cgvtem(resu, iord0)
+    l_temp = cgvtem(resu, iord0)
 !
 ! - Check COMPORTEMENT / RELATION in result for incremental comportement 
 !
-        if (incr) call cgvein(compor, l_temp)
+    if (incr) then
+        call cgvein(compor, l_temp)
+    endif
 !
-        call jedema()
+    call jedema()
 !
     end subroutine

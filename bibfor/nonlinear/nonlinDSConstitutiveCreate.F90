@@ -16,6 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
+! aslint: disable=W1403
 !
 subroutine nonlinDSConstitutiveCreate(ds_constitutive)
 !
@@ -25,8 +26,6 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/assert.h"
-#include "asterfort/infdbg.h"
-#include "asterfort/utmess.h"
 !
 type(NL_DS_Constitutive), intent(out) :: ds_constitutive
 !
@@ -41,17 +40,6 @@ type(NL_DS_Constitutive), intent(out) :: ds_constitutive
 ! Out ds_constitutive  : datastructure for constitutive laws management
 !
 ! --------------------------------------------------------------------------------------------------
-!
-    integer :: ifm, niv
-!
-! --------------------------------------------------------------------------------------------------
-!
-    call infdbg('MECANONLINE', ifm, niv)
-    if (niv .ge. 2) then
-        call utmess('I', 'MECANONLINE11_23')
-    endif
-!
-! - Initializations
 !
     ds_constitutive%compor        = '&&OP00XX.COMPOR'
     ds_constitutive%carcri        = '&&OP00XX.CARCRI'

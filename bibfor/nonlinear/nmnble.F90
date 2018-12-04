@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine nmnble(numins, modele, noma, numedd, ds_measure,&
                   sddyna, sddisc, fonact, ds_contact,&
                   valinc, solalg)
@@ -38,18 +39,18 @@ implicit none
 #include "asterfort/nmrinc.h"
 #include "asterfort/nmtime.h"
 #include "asterfort/r8inir.h"
+#include "asterfort/utmess.h"
+#include "asterfort/infdbg.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    integer :: fonact(*)
-    character(len=8) :: noma
-    character(len=24) :: modele
-    character(len=24) :: numedd
-    type(NL_DS_Contact), intent(in) :: ds_contact
-    type(NL_DS_Measure), intent(inout) :: ds_measure
-    character(len=19) :: sddyna, sddisc
-    character(len=19) :: solalg(*), valinc(*)
-    integer :: numins
+integer :: fonact(*)
+character(len=8) :: noma
+character(len=24) :: modele
+character(len=24) :: numedd
+type(NL_DS_Contact), intent(in) :: ds_contact
+type(NL_DS_Measure), intent(inout) :: ds_measure
+character(len=19) :: sddyna, sddisc
+character(len=19) :: solalg(*), valinc(*)
+integer :: numins
 !
 ! ----------------------------------------------------------------------
 !
@@ -74,6 +75,7 @@ implicit none
 ! ----------------------------------------------------------------------
 !
     integer :: neq
+    integer :: ifm, niv
     character(len=19) :: depmoi, depplu
     character(len=19) :: depdel, ddepla
     character(len=19) :: vitini, accini, vitplu, accplu
@@ -83,6 +85,7 @@ implicit none
 !
 ! ----------------------------------------------------------------------
 !
+    call infdbg('CONTACT', ifm, niv)
     leltc = isfonc(fonact,'ELT_CONTACT')
     ldyna = ndynlo(sddyna,'DYNAMIQUE')
     if (.not.leltc) goto 999
@@ -102,6 +105,12 @@ implicit none
     call nmchex(valinc, 'VALINC', 'ACCPLU', accplu)
     call nmchex(solalg, 'SOLALG', 'DEPDEL', depdel)
     call nmchex(solalg, 'SOLALG', 'DDEPLA', ddepla)
+!
+! - Display
+!
+    if (niv .ge. 2) then
+        call utmess('I', 'CONTACT5_20')
+    endif
 !
 ! --- INITIALISATION DES CHAMPS DE DEPLACEMENT
 !

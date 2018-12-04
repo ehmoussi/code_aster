@@ -15,10 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-! aslint: disable=W1504
 !
 interface
-    subroutine nmprma(modelz     , ds_material, carele, ds_constitutive,&
+    subroutine nmprma(mesh       , modelz     , ds_material, carele, ds_constitutive,&
                       ds_algopara, lischa  , numedd, numfix, solveu,&
                       ds_print, ds_measure, ds_algorom, sddisc,&
                       sddyna     , numins  , fonact, ds_contact,&
@@ -26,6 +25,7 @@ interface
                       maprec     , matass  , faccvg, ldccvg)
         use NonLin_Datastructure_type
         use Rom_Datastructure_type
+        character(len=8), intent(in) :: mesh
         character(len=*) :: modelz
         character(len=24) :: carele
         type(NL_DS_Material), intent(in) :: ds_material

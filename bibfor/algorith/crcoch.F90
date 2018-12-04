@@ -266,7 +266,7 @@ subroutine crcoch()
     call dismoi('NB_EQUA', numedd, 'NUME_DDL', repi=neq)
     call dismoi('CHAM_MATER', matr, 'MATR_ASSE', repk=materi)
     call dismoi('CARA_ELEM', matr, 'MATR_ASSE', repk=carele)
-    call rcmfmc(materi, mate)
+    call rcmfmc(materi, mate, l_ther_ = ASTER_FALSE)
     typmat='R'
     if ( typres(1:10)  .eq. 'DYNA_TRANS') then
        nsymb = 'DEPL'

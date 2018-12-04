@@ -15,7 +15,6 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-! aslint: disable=W1504
 !
 #include "asterf_types.h"
 !
@@ -26,7 +25,7 @@ interface
                       numedd, numfix, ds_measure, ds_algopara,&
                       nbmatr, ltypma, loptme     , loptma,&
                       lcalme, lassme, lcfint, meelem     , measse,&
-                      veelem, ldccvg, ds_contact_)
+                      veelem, ldccvg)
         use NonLin_Datastructure_type        
         character(len=*) :: modelz
         type(NL_DS_Material), intent(in) :: ds_material
@@ -55,6 +54,5 @@ interface
         character(len=19) :: veelem(*)
         integer :: ldccvg
         type(NL_DS_AlgoPara), intent(in) :: ds_algopara
-        type(NL_DS_Contact), optional, intent(in) :: ds_contact_
     end subroutine nmxmat
 end interface

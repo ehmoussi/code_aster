@@ -127,7 +127,7 @@ type(NL_DS_Conv), intent(inout) :: ds_conv
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call infdbg('MECA_NON_LINE', ifm, niv)
+    call infdbg('MECANONLINE', ifm, niv)
     if (niv .ge. 2) then
         write (ifm,*) '<MECANONLINE> ... RECHERCHE LINEAIRE'
     endif

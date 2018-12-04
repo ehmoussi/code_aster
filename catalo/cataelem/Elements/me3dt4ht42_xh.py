@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -124,19 +124,7 @@ class ME3DT4HT42_XH(Element):
                      (OP.CHAR_MECA_CONT.PSTANO, STANO_I),
                      (SP.PMATERC, LC.CMATERC), (OP.CHAR_MECA_CONT.PLSN, LSN_R),
                      (OP.CHAR_MECA_CONT.PBASLOC, BASLO_R),),
-            para_out=((SP.PVECTUR, MVECTUR), ),
-        ),
-
-        OP.CHAR_MECA_FROT(te=367,
-            para_in=((SP.PCAR_AI, CCONAI), (SP.PCAR_CF, CCONCF),
-                     (SP.PCAR_PI, CCONPI), (SP.PCAR_PT, LC.CCONPT),
-                     (SP.PDEPL_M, DDL_MECA), (SP.PDEPL_P, DDL_MECA),
-                     (SP.PGEOMER, NGEOMER), (SP.PHEAVNO, PLALA_I),
-                     (OP.CHAR_MECA_FROT.PHEA_FA, CCONHE), (OP.CHAR_MECA_FROT.PHEA_NO, LC.N80NEUI),
-                     (OP.CHAR_MECA_FROT.PSTANO, STANO_I), 
-                     (SP.PMATERC, LC.CMATERC), (OP.CHAR_MECA_FROT.PLSN, LSN_R),
-                     (OP.CHAR_MECA_FROT.PBASLOC, BASLO_R),),
-            para_out=((SP.PVECTUR, MVECTUR), ),
+            para_out=((SP.PVECTCR, MVECTUR), (SP.PVECTFR, MVECTUR),),
         ),
 
         OP.RIGI_CONT(te=366,
@@ -148,19 +136,6 @@ class ME3DT4HT42_XH(Element):
                      (OP.RIGI_CONT.PSTANO, STANO_I), (OP.RIGI_CONT.PLSN, LSN_R),
                      (SP.PMATERC, LC.CMATERC), (OP.RIGI_CONT.PBASLOC, BASLO_R),
                      ),
-            para_out=((SP.PMATUNS, MMATUNS), (SP.PMATUUR, MMATUUR),
-                     ),
-        ),
-
-        OP.RIGI_FROT(te=366,
-            para_in=((SP.PCAR_AI, CCONAI), (SP.PCAR_CF, CCONCF),
-                     (SP.PCAR_PI, CCONPI), (SP.PCAR_PT, LC.CCONPT),
-                     (SP.PDEPL_M, DDL_MECA), (SP.PDEPL_P, DDL_MECA),
-                     (SP.PGEOMER, NGEOMER), (SP.PHEAVNO, PLALA_I),
-                     (OP.RIGI_FROT.PHEA_FA, CCONHE), (OP.RIGI_FROT.PHEA_NO, LC.N80NEUI),
-                     (OP.RIGI_FROT.PSTANO, STANO_I),
-                     (SP.PMATERC, LC.CMATERC), (OP.RIGI_FROT.PLSN, LSN_R),
-                     (OP.RIGI_FROT.PBASLOC, BASLO_R),),
             para_out=((SP.PMATUNS, MMATUNS), (SP.PMATUUR, MMATUUR),
                      ),
         ),

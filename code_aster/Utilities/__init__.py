@@ -25,14 +25,13 @@ This module gives common utilities.
 No external import of other :py:mod:`code_aster` packages.
 """
 
-from .Tester import TestCase
-
-from .base_utils import (accept_array, array_to_list, force_list, force_tuple,
-                         import_object, is_complex, is_float, is_int, is_str,
-                         Singleton, value_is_sequence)
+from .base_utils import (Singleton, accept_array, array_to_list, force_list,
+                         force_tuple, import_object, is_complex, is_float,
+                         is_int, is_str, no_new_attributes, value_is_sequence)
 from .compatibility import (compat_listr8, deprecated, remove_keyword,
                             required, unsupported)
 from .general import initial_context
-from .injector import injector
 from .i18n import localization
+from .injector import injector
 from .strfunc import convert, from_unicode, get_encoding, to_unicode
+from .Tester import TestCase

@@ -19,17 +19,17 @@
 !
 interface
     subroutine mmcalg(ndim     , l_large_slip,&
-                      nnm      , dffm     , ddffm ,&
-                      geomam   , ddepmam  ,&
-                      tau1     , tau2     , norm  ,&
-                      jeu      , djeu     ,&
-                      gene11   , gene21   , gene22,&
-                      kappa    , h        ,&
-                      vech1    , vech2    ,&
-                      a        , ha       , hah   ,&
-                      mprt11   , mprt12   , mprt21, mprt22,&
-                      mprt1n   , mprt2n   , mprnt1, mprnt2,&
-                      taujeu1  , taujeu2  ,&
+                      nnm      , dffm        , ddffm ,&
+                      geomam   , ddepmam     ,&
+                      tau1     , tau2        , norm  ,&
+                      jeu      , djeu        ,&
+                      gene11   , gene21      , gene22,&
+                      kappa    , h           ,&
+                      vech1    , vech2       ,&
+                      a        , ha          , hah   ,&
+                      mprt11   , mprt12      , mprt21, mprt22,&
+                      mprt1n   , mprt2n      , mprnt1, mprnt2,&
+                      taujeu1  , taujeu2     ,&
                       dnepmait1, dnepmait2)
         integer, intent(in) :: ndim, nnm
         aster_logical, intent(in) :: l_large_slip

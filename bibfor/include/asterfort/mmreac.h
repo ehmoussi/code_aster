@@ -15,21 +15,15 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine mmreac(nbdm, ndim, nne, nnm, jgeom,&
-                      jdepm,jdepde,ppe, geomae, geomam,ddepmam)
-        integer :: nbdm
-        integer :: ndim
-        integer :: nne
-        integer :: nnm
-        integer :: jgeom
-        integer :: jdepm
-    integer :: jdepde
-        real(kind=8) :: ppe
-        real(kind=8) :: geomae(9, 3),ddepmam(9, 3)
-        real(kind=8) :: geomam(9, 3)
+    subroutine mmreac(nbdm  , ndim  ,&
+                      nne   , nnm   ,&
+                      jgeom , jdepm , jdepde , ppe,&
+                      geomae, geomam, ddepmam)
+        integer, intent(in) :: nbdm, ndim, nne, nnm
+        integer, intent(in) :: jgeom, jdepm, jdepde
+        real(kind=8), intent(in) :: ppe
+        real(kind=8), intent(out) :: geomae(9, 3), geomam(9, 3), ddepmam(9, 3)
     end subroutine mmreac
 end interface
