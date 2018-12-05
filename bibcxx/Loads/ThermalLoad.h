@@ -154,6 +154,11 @@ class ThermalLoadInstance : public DataStructure {
      * @brief Get the support finite element descriptor
      */
     FiniteElementDescriptorPtr getFiniteElementDescriptor() const { return _therLoad._FEDesc; };
+
+    /**
+     * @brief Get the support model
+     */
+    ModelPtr getModel() const { return _supportModel; };
 };
 
 /**

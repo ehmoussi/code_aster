@@ -35,5 +35,6 @@ void exportThermalLoadToPython() {
               make_constructor(&initFactoryPtr< ThermalLoadInstance, std::string, ModelPtr & >))
         .def( "addUnitaryThermalLoad", &ThermalLoadInstance::addUnitaryThermalLoad )
         .def( "build", &ThermalLoadInstance::build )
-        .def( "getFiniteElementDescriptor", &ThermalLoadInstance::getFiniteElementDescriptor );
+        .def( "getFiniteElementDescriptor", &ThermalLoadInstance::getFiniteElementDescriptor )
+        .def( "getModel", &ThermalLoadInstance::getModel );
 };

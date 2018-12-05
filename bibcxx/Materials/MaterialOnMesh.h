@@ -73,6 +73,8 @@ class MaterialOnMeshInstance: public DataStructure
 
         /** @brief Maillage sur lequel repose la sd_cham_mater */
         BaseMeshPtr            _supportMesh;
+        /** @brief Support model */
+        ModelPtr               _supportModel;
         /** @brief Carte '.CHAMP_MAT' */
         PCFieldOnMeshChar8Ptr  _listOfMaterials;
         /** @brief Carte '.TEMPE_REF' */
@@ -300,6 +302,14 @@ class MaterialOnMeshInstance: public DataStructure
             if ( _supportMesh->isEmpty() )
                 throw std::runtime_error( "support mesh of current model is empty" );
             return _supportMesh;
+        };
+
+        /**
+         * @brief Set the support model
+         */
+        void setModel( ModelPtr model )
+        {
+            _supportModel = model;
         };
 };
 
