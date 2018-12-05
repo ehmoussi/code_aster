@@ -327,13 +327,23 @@ class AsterPickler(pickle.Pickler):
             obj (*misc*): Object to save.
         """
         if main and isinstance(obj, (list, tuple)):
-            if obj and isinstance(obj[0], DataStructure):
+            hasDs = False
+            for item in obj:
+                if isinstance(item, DataStructure):
+                    hasDs = True
+                    break
+            if obj and hasDs:
                 self.dump(LIST)
                 self.dump(len(obj))
                 for item in obj:
                     self.save_one(item)
         elif main and isinstance(obj, dict):
-            if obj and isinstance(obj.values()[0], DataStructure):
+            hasDs = False
+            for item in obj.values():
+                if isinstance(item, DataStructure):
+                    hasDs = True
+                    break
+            if obj and hasDs:
                 self.dump(DICT)
                 self.dump(len(obj))
                 for item in obj.values():
