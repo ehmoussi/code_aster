@@ -41,10 +41,9 @@ class CombFourier(ExecuteCommand):
         Arguments:
             keywords (dict): User's keywords.
         """
-        try:
-            self._result.appendModelOnAllRanks(keywords["RESULTAT"].getModel())
-        except:
-            pass
+        model = keywords["RESULTAT"].getModel()
+        if model is not None:
+            self._result.appendModelOnAllRanks(model)
         self._result.update()
 
 
