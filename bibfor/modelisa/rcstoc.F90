@@ -245,7 +245,7 @@ subroutine rcstoc(nommat, nomrc, noobrc, nbobj, valr, valc,&
     !
     !   Glute : On traite les TX qu'on convertit en R8
     !       META_MECA* , BETON_DOUBLE_DP , RUPT_FRAG , CZM_LAB_MIX
-    !       DIS_ECRO_TRAC
+    !       DIS_ECRO_TRAC, CABLE_GAINE
     ! --------------------------------------------------------------------
     dis_ecro_trac = 0
     if (nomrc(1:13).eq.'DIS_ECRO_TRAC') then
@@ -328,6 +328,23 @@ subroutine rcstoc(nommat, nomrc, noobrc, nbobj, valr, valc,&
                             valr(nbr) = 1.0D0
                         else if (valtx.eq.'CINEMATIQUE') then
                             valr(nbr) = 2.0D0
+                        else
+                            ASSERT(.false.)
+                        endif
+                    endif
+                endif
+            else if (nomrc(1:16).eq.'CABLE_GAINE_FROT') then
+                call getvtx(nomrc, nomobj(i), iocc=1, scal=valtx, nbret=n)
+                if (n .eq. 1) then
+                    if (nomobj(i) .eq. 'TYPE') then
+                        nbr = nbr + 1
+                        valk(nbr) = 'TYPE'
+                        if      (valtx.eq.'FROTTANT') then
+                            valr(nbr) = 1.0D0
+                        else if (valtx.eq.'GLISSANT') then
+                            valr(nbr) = 2.0D0
+                        else if (valtx.eq.'ADHERENT') then
+                            valr(nbr) = 3.0D0
                         else
                             ASSERT(.false.)
                         endif

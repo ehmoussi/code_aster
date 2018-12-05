@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -54,13 +54,13 @@ subroutine lccgad(fami, kpg, ksp, mat, option,&
 !-----------------------------------------------------------------------
 !
     aster_logical :: resi, rigi, elas, adh
-    integer :: cod(3)
-    real(kind=8) :: val(3), n, courb, de, sut
+    integer :: cod(4)
+    real(kind=8) :: val(4), n, courb, de, sut
     real(kind=8) :: frot, r, mult, frotc
-    character(len=16) :: nom(3)
+    character(len=16) :: nom(4)
     character(len=1) :: poum
 !
-    data nom /'FROT_LINE','PENA_LAGR','FROT_COURB'/
+    data nom /'TYPE','PENA_LAGR','FROT_LINE','FROT_COURB'/
 !-----------------------------------------------------------------------
 !
 ! ---------------------------
@@ -101,14 +101,22 @@ subroutine lccgad(fami, kpg, ksp, mat, option,&
 !
     call rcvalb(fami, kpg, ksp, poum, mat,&
                 ' ', 'CABLE_GAINE_FROT', 0, ' ', [0.d0],&
-                3, nom, val, cod, 2)
+                4, nom, val, cod, 0)
 !
 !    PARAMETRE DU COMPORTEMENT DE LA LOI DE TALON-CURNIER
-    frot = val(1)
     r = val(2)
-    frotc = val(3)
-!
-    adh=(frot.eq.-1.d0)
+    adh = .false.
+    if (nint(val(1)) .eq. 1)then
+        frot = val(3)
+        frotc = val(4)
+    elseif (nint(val(1)) .eq. 2)then
+        frot = 0.d0
+        frotc = 0.d0
+    elseif (nint(val(1)) .eq. 3)then
+        frot = 0.d0
+        frotc = 0.d0
+        adh=.true.
+    endif
 !
     frot=frot+frotc*courb
 !    DETERMINATION DU REGIME DE COMPORTEMENT
