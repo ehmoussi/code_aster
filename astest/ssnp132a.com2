@@ -119,7 +119,7 @@ TEST_RESU(RESU=_F(POINT=1,
                   VALE_REFE=(-256.06598386635, ),
                   PRECISION=2.E-08,
                   VALE_ABS='NON',),
-          TEST_NAN='NON',)  
+          TEST_NAN='NON',)
 
 TEST_RESU(RESU=_F(POINT=1,
                   NOM_CMP='SIYY',
@@ -248,8 +248,8 @@ TEST_RESU(RESU=_F(POINT=1,
                   VALE_ABS='NON',),
           TEST_NAN='NON',)
 
- 
- 
+
+
 
 TEST_RESU(RESU=_F(POINT=1,
                   NOM_CMP='V4',
