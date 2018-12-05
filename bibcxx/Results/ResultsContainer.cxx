@@ -72,6 +72,8 @@ ResultsContainerInstance::getElementaryCharacteristics( int rank ) {
 
 void ResultsContainerInstance::addMaterialOnMesh( const MaterialOnMeshPtr &mater,
                                                   int rank ) {
+    if( !mater )
+        throw std::runtime_error( "MaterialOnMesh is empty" );
     _mapMaterial[rank] = mater;
     ASTERINTEGER rang = rank;
     std::string type( "CHAMPMAT" );
@@ -80,6 +82,8 @@ void ResultsContainerInstance::addMaterialOnMesh( const MaterialOnMeshPtr &mater
 
 void ResultsContainerInstance::addModel( const ModelPtr &model,
                                          int rank ) {
+    if( !model )
+        throw std::runtime_error( "Model is empty" );
     _mapModel[rank] = model;
     ASTERINTEGER rang = rank;
     std::string type( "MODELE" );
