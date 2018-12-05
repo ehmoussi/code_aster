@@ -55,6 +55,7 @@ from .model_ext import Model
 from .resultscontainer_ext import ResultsContainer
 from .surface_ext import Surface
 from .table_ext import Table
+from .thermalload_ext import ThermalLoad
 from .timestepmanager_ext import TimeStepManager
 from .xfemcrack_ext import XfemCrack
 
