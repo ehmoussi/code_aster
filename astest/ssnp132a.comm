@@ -28,7 +28,12 @@ MODEL=AFFE_MODELE(MAILLAGE=MAIL,
 )
 
 INCLUDE(DONNEE='ssnp132a_mater.comm')
-          TEST_NAN='NON',)
+
 FIN();
 
-
+# Solution de Reference
+# Liste d'instant
+#    _F(JUSQU_A=100.0, NOMBRE= 50, ),
+#    _F(JUSQU_A=200.0, NOMBRE=1000,),),);
+# DEFI_MATERIAU, par defaut c'est 1.0E-02
+#  Toler_ET           0.1E-02
