@@ -52,6 +52,7 @@ from .mechanicalload_ext import GenericMechanicalLoad
 from .mesh_ext import Mesh
 from .meshcoordinatesfield_ext import MeshCoordinatesField
 from .model_ext import Model
+from .pcfieldonmesh_ext import PCFieldOnMeshDouble
 from .resultscontainer_ext import ResultsContainer
 from .surface_ext import Surface
 from .table_ext import Table

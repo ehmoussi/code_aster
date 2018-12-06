@@ -360,6 +360,14 @@ template < class ValueType > class PCFieldOnMeshInstance : public GenericDataFie
     };
 
     /**
+     * @brief Get support mesh
+     */
+    BaseMeshPtr getMesh() const
+    {
+        return _supportMesh;
+    };
+
+    /**
      * @brief Get values of a zone
      */
     PCFieldValues< ValueType > getValues( const int &position ) const {

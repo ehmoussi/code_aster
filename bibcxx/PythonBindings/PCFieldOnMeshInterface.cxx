@@ -37,5 +37,6 @@ void exportPCFieldOnMeshToPython() {
               make_constructor(&initFactoryPtr< PCFieldOnMeshDoubleInstance, BaseMeshPtr >))
         .def( "__init__",
               make_constructor(
-                  &initFactoryPtr< PCFieldOnMeshDoubleInstance, std::string, BaseMeshPtr >));
+                  &initFactoryPtr< PCFieldOnMeshDoubleInstance, std::string, BaseMeshPtr >))
+        .def( "getMesh", &PCFieldOnMeshDoubleInstance::getMesh );
 };
