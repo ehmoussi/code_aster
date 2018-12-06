@@ -93,6 +93,7 @@ class Serializer(object):
         for fname in (cls._base, cls._pick_filename, cls._info_filename,
                       cls._sha_filename):
             if not osp.exists(fname):
+                logger.error("Can not restart, no such file: {0}".format(fname))
                 return False
 
         sign = read_signature(cls._sha_filename)

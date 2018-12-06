@@ -105,7 +105,7 @@ class HgStreamHandler(logging.StreamHandler):
         return logging.StreamHandler.emit(self, record)
 
 
-def build_logger(level=logging.INFO):
+def build_logger(level=logging.INFO, raise_exception=True):
     """Initialize the logger with its handlers.
 
     Arguments:
@@ -123,6 +123,17 @@ def build_logger(level=logging.INFO):
     term = HgStreamHandler(sys.stdout)
     term.setFormatter(PerLevelFormatter())
     logger.addHandler(term)
+
+    if raise_exception:
+        from .exceptions_ext import AsterError
+        logger._error_orig = logger.error
+
+        def _error(self, *args, **kwargs):
+            logger._error_orig(self, *args, **kwargs)
+            raise AsterError('SUPERVIS_99')
+
+        logger.error = _error
+
     return logger
 
 

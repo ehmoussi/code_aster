@@ -148,14 +148,13 @@ class Restarter(Starter):
             syntax (*CommandSyntax*): Syntax description with user keywords.
         """
         if not Serializer.canRestart():
-            ExecutionStarter.params.disable(Options.Continue)
-            super(Restarter, self)._call_oper(syntax)
-        else:
-            logger.info("restarting from a previous execution...")
-            libaster.call_poursuite(syntax)
-            # 1:_call_oper, 2-3:exec_, 4:Restarter.run, 5:ExecuteCmd.run, 6:user
-            # 1:_call_oper, 2-3:exec_, 4:run_with_argv, 5:init, 6:user
-            loadObjects(level=6)
+            logger.error("restart aborted!")
+
+        logger.info("restarting from a previous execution...")
+        libaster.call_poursuite(syntax)
+        # 1:_call_oper, 2-3:exec_, 4:Restarter.run, 5:ExecuteCmd.run, 6:user
+        # 1:_call_oper, 2-3:exec_, 4:run_with_argv, 5:init, 6:user
+        loadObjects(level=6)
 
 
 DEBUT = Starter.run
