@@ -363,7 +363,9 @@ class AsterPickler(pickle.Pickler):
             else:
                 state = ()
             self.dump(STATE)
-            self.save_one(state)
+            self.dump(len(state))
+            for item in state:
+                self.save_one(item)
 
         self.dump(obj)
 
@@ -527,8 +529,11 @@ class AsterUnpickler(pickle.Unpickler):
             # expecting the STATE mark
             assert self.load_one() == STATE
             try:
-                buffer.state = self.load_one()
-                assert isinstance(buffer.state, (list, tuple)), buffer.state
+                nbObj = self.load_one()
+                new_state = []
+                for num in range(nbObj):
+                    new_state.append(self.load_one())
+                buffer.state = new_state
             except:
                 logger.debug("internal state can not be loaded\n{0}"
                              .format(traceback.format_exc()))
