@@ -16,7 +16,7 @@ if parallel:
     MAIL.readMedFile("xxFieldsplit001a")
 else:
     MAIL = code_aster.Mesh()
-    MAIL.readMedFile("xxFieldsplit001a.mmed")
+    MAIL.readMedFile("xxFieldsplit001a.med")
 
 model = AFFE_MODELE(
                     AFFE=_F(MODELISATION=('3D_INCO_UP', ), PHENOMENE='MECANIQUE', TOUT='OUI'),
