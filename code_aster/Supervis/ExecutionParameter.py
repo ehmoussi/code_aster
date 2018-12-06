@@ -45,7 +45,7 @@ import aster_pkginfo
 import libaster
 from Utilitai.as_timer import ASTER_TIMER
 
-from ..Utilities import Singleton, convert
+from ..Utilities import Singleton, convert, no_new_attributes
 from .logger import DEBUG, INFO, logger
 from .options import Options
 
@@ -72,6 +72,8 @@ class ExecutionParameter(object):
     _args = _bool = None
     _timer = _command_counter = None
     _catalc = _unit = _syntax = None
+
+    __setattr__ = no_new_attributes(object.__setattr__)
 
     def __init__(self):
         """Initialization of attributes"""

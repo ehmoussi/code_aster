@@ -336,4 +336,6 @@ Ce comportement est peut-être anormal.
 """), 'flags' : 'DECORATED',
            },
 
+    99 : _(u"""Une erreur s'est produite."""),
+
 }
