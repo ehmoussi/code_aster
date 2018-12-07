@@ -152,10 +152,12 @@ class ExecuteCommand(object):
 
         timer.Start(str(cmd._counter), name=cmd.command_name)
         cmd.print_syntax(keywords)
-        cmd.exec_(keywords)
-        cmd.add_references(keywords)
-        cmd.post_exec(keywords)
-        cmd.print_result()
+        try:
+            cmd.exec_(keywords)
+        finally:
+            cmd.add_references(keywords)
+            cmd.post_exec(keywords)
+            cmd.print_result()
         return cmd._result
 
     def _call_oper(self, syntax):
