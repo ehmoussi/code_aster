@@ -200,6 +200,10 @@ def block_utils(evaluation_context):
         """Get the size of argument of a given keyword"""
         return len(evaluation_context.get(name))
 
+    def less_than(name, test_value):
+        """Return True if the value of keyword is less than test_value."""
+        return value(name) < test_value
+
     return locals()
 
 def sorted_dict(kwargs):
