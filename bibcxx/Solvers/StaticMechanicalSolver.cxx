@@ -47,7 +47,7 @@ StaticMechanicalSolverInstance::StaticMechanicalSolverInstance(
 ElasticEvolutionContainerPtr StaticMechanicalSolverInstance::execute() {
     ElasticEvolutionContainerPtr resultC( new ElasticEvolutionContainerInstance() );
 
-    _study->getCodedMaterial()->allocate();
+    _study->getCodedMaterial()->allocate(true);
 
     if ( !_timeStep )
         throw std::runtime_error( "No time list" );
