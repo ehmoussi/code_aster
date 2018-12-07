@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -105,7 +105,7 @@ subroutine ircmpr(nofimd, typech, nbimpr, ncaimi, ncaimk,&
     parameter ( nompro = 'IRCMPR' )
 !
     integer :: ifm, nivinf, j, i
-    integer :: iaux, ima, nbno, nbma, ipe18, ipe15
+    integer :: iaux, ima, nbno, nbma
     integer :: nbmail, iadcnx, ilcnx
     integer :: codret,  jco
     integer ::  adefma
@@ -154,9 +154,6 @@ subroutine ircmpr(nofimd, typech, nbimpr, ncaimi, ncaimk,&
 !
 ! 1.3.1. ==> COMPLEMENTS POUR UN CHAMP AUX NOEUDS
 !
-    call jenonu(jexnom('&CATA.TM.NOMTM', 'PENTA15'), ipe15)
-    call jenonu(jexnom('&CATA.TM.NOMTM', 'PENTA18'), ipe18)
-!
     if (typech(1:4) .eq. 'NOEU') then
 !
         nbimpr = 1
@@ -179,15 +176,6 @@ subroutine ircmpr(nofimd, typech, nbimpr, ncaimi, ncaimk,&
             noeu_centr(i)=0
         end do
 !
-        do i = 1, nbma
-            if (dtyp(i) .eq. ipe18) then
-                jco=iadcnx+zi(ilcnx+i-1)-1
-                do j = 1, 3
-                    noeu_centr(1+zi(jco+15+j-1)-1)=1
-                end do
-            endif
-        end do
-!
 ! 1.3.2. ==> COMPLEMENTS POUR DES CHAMPS AUX ELEMENTS
 !
     else if (typech(1:2).eq.'EL') then
@@ -196,11 +184,7 @@ subroutine ircmpr(nofimd, typech, nbimpr, ncaimi, ncaimk,&
         call jelira(nomaas//'.TYPMAIL', 'LONMAX', nbmail)
         call wkvect('&&IRCMPR.TYPMA', 'V V I', nbmail, adtyp2)
         do ima = 1, nbmail
-            if (nadtypm(ima) .eq. ipe18) then
-                zi(adtyp2+ima-1)=ipe15
-            else
-                zi(adtyp2+ima-1)=nadtypm(ima)
-            endif
+            zi(adtyp2+ima-1)=nadtypm(ima)
         end do
         if (typech(1:4) .eq. 'ELGA') then
             call jeveuo(modele//'.MAILLE', 'L', adefma)

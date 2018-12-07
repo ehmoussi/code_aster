@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -103,8 +103,8 @@ subroutine focain(method, nomfon, cste, sortie, base)
 !       --- RECOPIE DES VARIABLES ---
         zr(lres) = zr(lvar)
         zr(lres+1) = zr(lvar)+1.d0
-        zr(lres+2) = 0.d0
-        zr(lres+3) = zr(lvar+1)
+        zr(lres+2) = cste
+        zr(lres+3) = cste + zr(lvar+1)
     endif
 !
 !     --- AFFECTATION DU .PROL ---

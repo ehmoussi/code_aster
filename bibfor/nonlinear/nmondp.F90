@@ -56,7 +56,7 @@ aster_logical :: londe
     call jeveuo(lload_info, 'L', vi   = v_load_info)
     nb_load = v_load_info(1)
     do i_load = 1, nb_load
-        if (ischar_iden(v_load_info, i_load, nb_load, 'NEUM', 'ONDE')) then
+        if (ischar_iden(v_load_info, i_load, nb_load, 'NEUM', 'ONDE' , v_load_name(i_load))) then
             nondp = nondp + 1
         endif
     end do
@@ -70,7 +70,7 @@ aster_logical :: londe
         call wkvect(chondp, 'V V K8', nondp, iondp)
         nond = 0
         do i_load = 1, nb_load
-            if (ischar_iden(v_load_info, i_load, nb_load, 'NEUM', 'ONDE')) then
+            if (ischar_iden(v_load_info, i_load, nb_load, 'NEUM', 'ONDE', v_load_name(i_load))) then
                 nond = nond + 1
                 zk8(iondp+nond-1) = v_load_name(i_load)(1:8)
             endif
