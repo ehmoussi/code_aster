@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -94,14 +94,22 @@ MODI_REPERE / CHAMP_GD
  
     14: _(u"""
 MODI_REPERE / RESULTAT / concept réentrant
-    Le mot clé REPERE est obligatoire et doit valoir "COQUE_INTR_UTIL" ou "COQUE_UTIL_INTR" ou "COQUE_UTIL_CYL"
+    Le mot clé REPERE est obligatoire et doit valoir "COQUE_INTR_UTIL" ou "COQUE_UTIL_INTR"
 """),
 
     15: _(u"""
 MODI_REPERE / RESULTAT / concept réentrant
-    Le mot clé REPERE doit prendre une des valeurs "COQUE_INTR_UTIL" ou "COQUE_UTIL_INTR" ou "COQUE_UTIL_CYL"
+    Le mot clé REPERE vaut %(k1)s. Il est interdit d'utiliser le même concept résultat en entrée et en sortie de
+    la commande MODI_REPERE pour ce type de changement de repère.
+    
+    Conseils : Définissez un concept résultat différent en sortie de la commande.
 """),
+2 : _(u"""
+  Une variable utilisée ou produite par MFront a dépassée les bornes physiques
+  ou les bornes de corrélation de la loi de comportement.
 
+  Conseils : Vérifiez les coefficients matériau donnés à la loi de comportement.
+"""),
 
     18: _(u"""
  la table "CARA_GEOM" n'existe pas dans le maillage

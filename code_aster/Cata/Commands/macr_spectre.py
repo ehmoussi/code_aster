@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -31,7 +31,7 @@ MACR_SPECTRE=MACRO(nom="MACR_SPECTRE",
                    reentrant='n',
                    fr=tr("Calcul de spectre, post-traitement de séisme"),
          MAILLAGE      =SIMP(statut='f',typ=maillage_sdaster,),
-         
+
          b_maillage=BLOC( condition = """exists("MAILLAGE")""",
             PLANCHER      =FACT(statut='o',max='**',
                NOM           =SIMP(statut='o',typ='TXM',),
@@ -50,10 +50,10 @@ MACR_SPECTRE=MACRO(nom="MACR_SPECTRE",
                NOEUD         =SIMP(statut='o',typ=no  ,validators=NoRepeat(),max='**'),
             ),
          ), # fin b_not_maillage
-        
+
          NOM_CHAM      =SIMP(statut='o',typ='TXM' ,into=('ACCE','DEPL')),
          CALCUL        =SIMP(statut='o',typ='TXM' ,into=('ABSOLU','RELATIF')),
-         
+
          b_acce_rela  =BLOC( condition = """equal_to("NOM_CHAM", 'ACCE') and equal_to("CALCUL", 'RELATIF')""",
            regles=(UN_PARMI('LIST_FREQ','FREQ'),),
            AMOR_SPEC     =SIMP(statut='o',typ='R',max='**'),
@@ -70,7 +70,7 @@ MACR_SPECTRE=MACRO(nom="MACR_SPECTRE",
                 ACCE_Y        =SIMP(statut='o',typ=fonction_sdaster),
                 ACCE_Z        =SIMP(statut='o',typ=fonction_sdaster), ),
          ), # fin b_acce_rela
-         
+
          b_acce_abso  =BLOC( condition = """equal_to("NOM_CHAM", 'ACCE') and equal_to("CALCUL", 'ABSOLU')""",
            regles=(UN_PARMI('LIST_FREQ','FREQ'),),
            AMOR_SPEC     =SIMP(statut='o',typ='R',max='**'),
@@ -86,8 +86,8 @@ MACR_SPECTRE=MACRO(nom="MACR_SPECTRE",
            ),
            MULT_APPUI    =SIMP(statut='f',typ='TXM', into=("OUI",),),
          ), # fin b_acce_abso
-                   
-         b_impr  =BLOC( condition = """equal_to("NOM_CHAM", 'ACCE') """,                 
+
+         b_impr  =BLOC( condition = """equal_to("NOM_CHAM", 'ACCE') """,
            IMPRESSION    =FACT(statut='f',
                 TRI           =SIMP(statut='f',typ='TXM',defaut='AMOR_SPEC',into=("AMOR_SPEC","DIRECTION",),),
                 FORMAT        =SIMP(statut='f',typ='TXM',defaut='TABLEAU',into=("TABLEAU","XMGRACE",),),
@@ -102,17 +102,17 @@ MACR_SPECTRE=MACRO(nom="MACR_SPECTRE",
 
          b_depl_rela  =BLOC( condition = """equal_to("NOM_CHAM", 'DEPL') and equal_to("CALCUL", 'RELATIF')""",
            LIST_INST     =SIMP(statut='f',typ=listr8_sdaster),
-           RESU          =FACT(statut='o',max=3,
+           RESU          =FACT(statut='o',max='**',
                 regles=(UN_PARMI('RESU_GENE','RESULTAT','TABLE'),),
                 TABLE         =SIMP(statut='f',typ=table_sdaster),
                 RESU_GENE     =SIMP(statut='f',typ=tran_gene),
                 RESULTAT      =SIMP(statut='f',typ=(dyna_trans,evol_noli)),
            ),
          ), # fin b_depl_rela
-        
+
          b_depl_abso  =BLOC( condition = """equal_to("NOM_CHAM", 'DEPL') and equal_to("CALCUL", 'ABSOLU')""",
            LIST_INST     =SIMP(statut='f',typ=listr8_sdaster),
-           RESU          =FACT(statut='o',max=3,
+           RESU          =FACT(statut='o',max='**',
                 regles=(UN_PARMI('RESU_GENE','RESULTAT','TABLE'),),
                 TABLE         =SIMP(statut='f',typ=table_sdaster),
                 RESU_GENE     =SIMP(statut='f',typ=tran_gene),
