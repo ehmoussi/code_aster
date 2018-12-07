@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -88,7 +88,7 @@ def macr_spectre_ops(
         l_plancher.append(plancher['NOM'])
         l_batiment.append(plancher['BATIMENT'])
         l_commentaire.append(plancher['COMMENTAIRE'])
-            
+
     if AMOR_SPEC != None and type(AMOR_SPEC) not in EnumType:
         AMOR_SPEC = (AMOR_SPEC,)
     #
@@ -121,8 +121,8 @@ def macr_spectre_ops(
                     # Etape 1: Récupération des fonctions
                     motscles = {}
                     if resu['RESU_GENE'] != None:
-                        if CALCUL == 'ABSOLU':
-                            motscles['MULT_APPUI'] = args['MULT_APPUI']
+                        if CALCUL == 'ABSOLU' and NOM_CHAM == 'ACCE':
+                            motscles['MULT_APPUI'] = args.get('MULT_APPUI')
                         #
                         motscles['RESU_GENE'] = resu['RESU_GENE']
                         __spo = RECU_FONCTION(NOM_CHAM=NOM_CHAM,
@@ -459,21 +459,21 @@ def macr_spectre_ops(
         for i in range(len(AMOR_SPEC)):
            infos_amor['NUME_AMOR'].append(i)
            infos_amor['AMOR'].append(AMOR_SPEC[i])
-    
-    
+
+
     nb_plancher = len(l_plancher)
     lkeys = dico_glob.keys()
     lkeys.sort()
     for key in lkeys:
-        nb_lignes = len(dico_glob[key]) 
-        lListe.append(_F(LISTE_R=dico_glob[key], PARA=key, 
+        nb_lignes = len(dico_glob[key])
+        lListe.append(_F(LISTE_R=dico_glob[key], PARA=key,
                          NUME_LIGN=range(nb_amor+nb_plancher+1,nb_amor+nb_plancher+nb_lignes+1)))
     if NOM_CHAM == 'ACCE':
         lListe.append(_F(LISTE_I=infos_amor['NUME_AMOR'], PARA='NUME_AMOR',
                          NUME_LIGN=range(nb_plancher+1,nb_plancher+nb_amor+1)))
         lListe.append(_F(LISTE_R=infos_amor['AMOR'], PARA='AMOR',
                          NUME_LIGN=range(nb_plancher+1,nb_plancher+nb_amor+1)))
-        
+
     lListe.append(_F(LISTE_K=l_plancher, TYPE_K='K24', PARA='NOM'))
     l_bat = [i for i in l_batiment if i != None]
     l_com = [i for i in l_commentaire if i != None]
@@ -483,6 +483,6 @@ def macr_spectre_ops(
     if l_com !=[]:
         l_com2 = ['-' if i == None else i for i in l_commentaire]
         lListe.append(_F(LISTE_K=l_com2,TYPE_K='K24', PARA='COMMENTAIRE'))
-        
+
     tab = CREA_TABLE(LISTE=lListe, TITRE=titre)
     return ier
