@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -284,12 +284,6 @@ subroutine ircam1(nofimd, nochmd, existc, ncmprf, numpt,&
                 nbco = caimpi(4,nrimpr)
                 nbse = caimpi(5,nrimpr)
                 nbfi = caimpi(6,nrimpr)
-                if ((nbpg.eq.18) .and. (typech.eq.'ELNO    ')) then
-                    nompb(1) = nochmd(9:22)
-                    nompb(2) = 'PENTA18'
-                    call utmess('A', 'PREPOST2_84', nk=2, valk=nompb(1))
-                    goto 41
-                endif
                 if (nivinf .gt. 1) then
                     write (ifm,4002) nomtyp(tymast), tygeom
                 endif

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -53,15 +53,11 @@ subroutine rcfode(ifon, temp, f, df)
         goto 101
     else if (zk24(jpro)(1:1).eq.'I') then
         call utmess('F', 'MODELISA6_31')
-    endif
-    isave = zi(ifon+indfct)
-    if (zk24(jpro)(1:1) .eq. 'N') then
-!
-!---- NAPPE - IMPOSSIBLE
-!
+    else if (zk24(jpro)(1:1) .eq. 'N') then
         call utmess('F', 'MODELISA6_58')
     endif
     nbvf = zi(ifon)
+    isave = zi(ifon+indfct)
 !
     deja = temp.ge.zr(jvalf+isave-1) .and. temp.le.zr(jvalf+isave)
     avant = temp.lt.zr(jvalf+isave-1)
