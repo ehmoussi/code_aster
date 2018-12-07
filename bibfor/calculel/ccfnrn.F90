@@ -316,8 +316,8 @@ subroutine ccfnrn(option, resuin, resuou, lisord, nbordr,&
 !
 ! Initialisation
         partps(1) = time
-        partps(1) = time    
-        partps(1) = 0.D0
+        partps(2) = time    
+        partps(3) = 0.D0
 !
 !
 ! separation reel imag si dyna_harmo

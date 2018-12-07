@@ -24,7 +24,7 @@ subroutine rcstoc(nommat, nomrc, noobrc, nbobj, valr, valc,&
 #include "asterc/getmjm.h"
 #include "asterfort/gettco.h"
 #include "asterfort/assert.h"
-#include "asterfort/focain.h"
+#include "asterfort/create_enthalpy.h"
 #include "asterfort/foverf.h"
 #include "asterfort/fonbpa.h"
 #include "asterfort/gcncon.h"
@@ -78,12 +78,12 @@ subroutine rcstoc(nommat, nomrc, noobrc, nbobj, valr, valc,&
     character(len=19) :: rdep, nomfct, nomint
     character(len=8) :: num_lisv
     character(len=16) :: nom_lisv
-    character(len=24) :: prol1, prol2, valkk(2)
+    character(len=24) :: valkk(2)
     character(len=16) :: typeco
     complex(kind=8) :: valc8
     integer ::   ibk, nbmax, vali, itrou, n1, posi, kr, kc, kf
     integer :: i, k, ii,  jrpv, jvale, nbcoup, n, jlisvr, jlisvf,nmcs
-    integer :: iret, nbfct, nbpts, jprol, nbptm, lpro1, lpro2, nbpf
+    integer :: iret, nbfct, nbpts, jprol, nbptm, nbpf
     integer :: dis_ecro_trac
     character(len=32), pointer :: nomobj(:) => null()
     character(len=8), pointer :: typobj(:) => null()
@@ -494,18 +494,10 @@ subroutine rcstoc(nommat, nomrc, noobrc, nbobj, valr, valc,&
         enddo
         goto 651
 661     continue
+
         call gcncon('_', nomint)
-        call focain('TRAPEZE', nomfct, 0.d0, nomint, 'G')
-!
-!       si prolongement constant pour rho_cp : on affecte prol lineaire a beta
-        prol1 = nomfct//'.PROL'
-        call jeveuo(prol1, 'L', lpro1)
-        prol2 = nomint//'.PROL'
-        ASSERT(lxlgut(nomint).le.24)
-        call jeveuo(prol2, 'E', lpro2)
-        if (zk24(lpro1+4)(1:1) .eq. 'C') zk24(lpro2+4)(1:1)='L'
-        if (zk24(lpro1+4)(2:2) .eq. 'C') zk24(lpro2+4)(2:2)='L'
-!
+        call create_enthalpy(nomfct, nomint)
+
         do i = nbk, 1, -1
             valk(nbr+nbc+nbk+i+1) = valk(nbr+nbc+nbk+i)
         enddo

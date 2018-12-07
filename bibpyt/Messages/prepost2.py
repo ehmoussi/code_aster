@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -162,13 +162,6 @@ Le filtre TYPE_MAILLE a éliminée %(i1)d mailles .
 
     83 : _(u"""
  élément PYRAM13 non disponible dans IDEAS
-"""),
-
-    84 : _(u"""
- Le champ %(k1)s est un champ aux noeuds par éléments
- contenant des %(k2)s
- Or l'impression de ce type de champ n'est pas encore possible au format MED
- On n'imprimera donc pas ce champ dans le fichier MED
 """),
 
     85 : _(u"""

@@ -32,7 +32,7 @@ integer, intent(in) :: i_load
 integer, intent(in) :: nb_load
 character(len=4), intent(in) :: load_type_1
 character(len=4), intent(in) :: load_type_2
-    character(len=24), optional, intent(in) :: load_name
+character(len=24), optional, intent(in) :: load_name
 !
 ! --------------------------------------------------------------------------------------------------
 !
