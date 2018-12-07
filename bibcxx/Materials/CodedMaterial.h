@@ -74,7 +74,7 @@ public:
      * @brief Function to allocate the coded material
      * @return return false if coded material already exists
      */
-    bool allocate();
+    bool allocate( bool force = false );
 
     /**
      * @brief Function to know if elastic properties depend of a function

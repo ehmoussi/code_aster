@@ -34,9 +34,18 @@ CodedMaterialInstance::CodedMaterialInstance( const MaterialOnMeshPtr &mater,
       _grp( JeveuxVectorChar8( getName() + ".MATE_CODE.GRP" ) ),
       _nGrp( JeveuxVectorLong( getName() + ".MATE_CODE.NGRP" ) ){};
 
-bool CodedMaterialInstance::allocate() {
-    if ( _field->exists() )
+bool CodedMaterialInstance::allocate(bool force) {
+    if( ! force && _field->exists() )
         return false;
+    if( _field->exists() )
+    {
+        _field->deallocate();
+        _grp->deallocate();
+        _nGrp->deallocate();
+        _vecOfCodiVectors.clear();
+        _vecOfR8.clear();
+        _vecOfIa.clear();
+    }
     std::string blanc( 24, ' ' );
     std::string materName = _mater->getName();
     materName.resize( 24, ' ' );
