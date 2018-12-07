@@ -42,6 +42,50 @@
 class MaterialOnMeshBuilderInstance;
 
 /**
+ * @class PartOfMaterialOnMeshInstance
+ * @brief It contains a BehaviourDefinitionPtr and a MeshEntityPtr
+ * @author Nicolas Sellenet
+ */
+class PartOfMaterialOnMeshInstance
+{
+private:
+    std::vector< MaterialPtr > _vecOfMater;
+    MeshEntityPtr              _entity;
+
+public:
+    PartOfMaterialOnMeshInstance(): _entity( nullptr )
+    {};
+
+    PartOfMaterialOnMeshInstance( const std::vector< MaterialPtr >& vecOfMater,
+                                  const MeshEntityPtr& entity ):
+        _vecOfMater( vecOfMater ),
+        _entity( entity )
+    {};
+
+    /**
+     * @brief Get the VectorOfMaterial of PartOfMaterialOnMesh
+     */
+    std::vector< MaterialPtr > getVectorOfMaterial() const
+    {
+        return _vecOfMater;
+    };
+
+    /**
+     * @brief Get the support MeshEntity of PartOfMaterialOnMesh
+     */
+    MeshEntityPtr getMeshEntity() const
+    {
+        return _entity;
+    };
+};
+
+/**
+ * @typedef PartOfMaterialOnMeshPtr
+ * @brief Smart pointer on PartOfMaterialOnMeshInstance
+ */
+typedef boost::shared_ptr< PartOfMaterialOnMeshInstance > PartOfMaterialOnMeshPtr;
+
+/**
  * @class MaterialOnMeshInstance
  * @brief produit une sd identique a celle produite par AFFE_MATERIAU
  * @author Nicolas Sellenet
@@ -286,6 +330,11 @@ class MaterialOnMeshInstance: public DataStructure
          * @brief Return a vector of MaterialPtr
          */
         std::vector< MaterialPtr > getVectorOfMaterial() const;
+
+        /**
+         * @brief Return a vector of MaterialPtr
+         */
+        std::vector< PartOfMaterialOnMeshPtr > getVectorOfPartOfMaterialOnMesh() const;
 
         /**
          * @brief Function to know if a given Calculation Input Variables exists

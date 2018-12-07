@@ -32,6 +32,16 @@ from ..Utilities import injector
 class ExtendedMesh(injector(Mesh), Mesh):
     cata_sdj = "SD.sd_maillage.sd_maillage"
 
+    def LIST_GROUP_NO(self) :
+        """ retourne la liste des groupes de noeuds sous la forme :
+            [ (gno1, nb noeuds  gno1), ...] """
+        if not self.accessible():
+            raise AsException("Erreur dans maillage.LIST_GROUP_NO en PAR_LOT='OUI'")
+        dic_gpno = self.sdj.GROUPENO.get()
+        if dic_gpno is None:
+            return []
+        return [(gpno.strip(),len(dic_gpno[gpno])) for gpno in dic_gpno]
+
     def LIST_GROUP_MA(self) :
         """ retourne la liste des groupes de mailles sous la forme :
             [ (gma1, nb mailles gma1, dime max des mailles gma1), ...] """

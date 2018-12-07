@@ -17,22 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-def macr_ecre_calc_ops(
-    self,
-    TABLE,
-    DEBIT,
-    FISSURE,
-    ECOULEMENT,
-    TEMPERATURE,
-    MODELE_ECRE,
-    CONVERGENCE,
-    LOGICIEL,
-    VERSION,
-    ENTETE,
-    # COURBES,
-    IMPRESSION,
-    INFO,
-        **args):
+def macr_ecre_calc_ops(self, **args):
     """
        Procedure de couplage Aster-Ecrevisse
        Generation par Aster du fichier de donnees d'Ecrevisse et lancement d'Ecrevisse
@@ -48,6 +33,19 @@ def macr_ecre_calc_ops(
     # from Noyau.N_utils import AsType
     from Utilitai.Utmess import UTMESS
     from Utilitai.System import ExecCommand
+
+    TABLE = args.get("TABLE")
+    DEBIT = args.get("DEBIT")
+    FISSURE = args.get("FISSURE")
+    ECOULEMENT = args.get("ECOULEMENT")
+    TEMPERATURE = args.get("TEMPERATURE")
+    MODELE_ECRE = args.get("MODELE_ECRE")
+    CONVERGENCE = args.get("CONVERGENCE")
+    LOGICIEL = args.get("LOGICIEL")
+    VERSION = args.get("VERSION")
+    ENTETE = args.get("ENTETE")
+    IMPRESSION = args.get("IMPRESSION")
+    INFO = args.get("INFO")
 
     ier = 0
 
@@ -74,6 +72,11 @@ def macr_ecre_calc_ops(
     # IMPORTATION DE COMMANDES ASTER
     CREA_TABLE = self.get_cmd("CREA_TABLE")
 
+    FISSURE = _F(FISSURE)
+    ECOULEMENT = _F(ECOULEMENT)
+    TEMPERATURE = _F(TEMPERATURE)
+    MODELE_ECRE = _F(MODELE_ECRE)
+    CONVERGENCE = _F(CONVERGENCE)
     # RECUPERATION DES MOTS-CLES FACTEURS
     dFISSURE = FISSURE[0].cree_dict_valeurs(FISSURE[0].mc_liste)
     for i in dFISSURE.keys():
@@ -390,7 +393,9 @@ def macr_ecre_calc_ops(
         _dair = _lis[1:len(_lis):5]
         _dvap = _lis[2:len(_lis):5]
         _dliq = _lis[3:len(_lis):5]
-        _ecou = _lis[4:len(_lis):5]
+        _ecou2 = _lis[4:len(_lis):5]
+        _ecou = []
+        for value in _ecou2: _ecou.append(int(value))
 
     except:
         UTMESS('A', 'ECREVISSE0_18')
@@ -413,6 +418,7 @@ def macr_ecre_calc_ops(
                        _F(LISTE_R=_ecr_cc,
                           PARA='COEF_CONV'),
                            ))
+    self.register_result(__TAB, TABLE)
 
     __DEB = CREA_TABLE(LISTE=(_F(LISTE_R=_dtot,
                                  PARA='DEBTOT'),
@@ -425,6 +431,7 @@ def macr_ecre_calc_ops(
                        _F(LISTE_I=_ecou,
                           PARA='ECOULEMENT'),
                            ))
+    self.register_result(__DEB, DEBIT)
 
 # ---------------------------------------------------------------------
 # DEBUG
@@ -452,7 +459,7 @@ def macr_ecre_calc_ops(
 #  lst_fic = os.listdir(tmp_ecrevisse)
 # ---------------------------------------------------------------------
 # FIN MACR_ECRE_CALC
-    return ier
+    return
 
 
 # ---------------------------------------------------------------------

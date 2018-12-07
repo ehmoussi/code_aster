@@ -29,6 +29,16 @@ void exportMaterialOnMeshToPython()
 {
     using namespace boost::python;
 
+    class_< PartOfMaterialOnMeshInstance,
+            PartOfMaterialOnMeshPtr > c2( "PartOfMaterialOnMesh", no_init );
+    c2.def( "__init__", make_constructor(
+            &initFactoryPtr< PartOfMaterialOnMeshInstance > ) );
+    c2.def( "__init__", make_constructor(
+            &initFactoryPtr< PartOfMaterialOnMeshInstance,
+                             std::vector< MaterialPtr >, MeshEntityPtr > ) );
+    c2.def( "getVectorOfMaterial", &PartOfMaterialOnMeshInstance::getVectorOfMaterial );
+    c2.def( "getMeshEntity", &PartOfMaterialOnMeshInstance::getMeshEntity );
+
     class_< MaterialOnMeshInstance, MaterialOnMeshInstance::MaterialOnMeshPtr,
             bases< DataStructure > > c1( "MaterialOnMesh", no_init );
     c1.def( "__init__", make_constructor(
@@ -68,5 +78,7 @@ void exportMaterialOnMeshToPython()
     c1.def( "buildWithoutInputVariables", &MaterialOnMeshInstance::buildWithoutInputVariables );
     c1.def( "getSupportMesh", &MaterialOnMeshInstance::getSupportMesh );
     c1.def( "getVectorOfMaterial", &MaterialOnMeshInstance::getVectorOfMaterial );
+    c1.def( "getVectorOfPartOfMaterialOnMesh",
+            &MaterialOnMeshInstance::getVectorOfPartOfMaterialOnMesh );
     c1.def( "setModel", &MaterialOnMeshInstance::setModel );
 };
