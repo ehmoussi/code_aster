@@ -102,6 +102,19 @@ std::vector< MaterialPtr > MaterialOnMeshInstance::getVectorOfMaterial() const
     return toReturn;
 };
 
+std::vector< PartOfMaterialOnMeshPtr >
+MaterialOnMeshInstance::getVectorOfPartOfMaterialOnMesh() const
+{
+    std::vector< PartOfMaterialOnMeshPtr > toReturn;
+    for( const auto& curIter : _materialsOnMeshEntity )
+    {
+        PartOfMaterialOnMeshPtr toPush( new PartOfMaterialOnMeshInstance( curIter.first,
+                                                                          curIter.second ) );
+        toReturn.push_back( toPush );
+    }
+    return toReturn;
+};
+
 bool MaterialOnMeshInstance::existsCalculationInputVariable( const std::string& name )
 {
     if( _cvrcVarc->exists() )

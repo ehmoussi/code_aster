@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -111,26 +111,7 @@ def ouvFiss(DIR_FISS, beta, Xa, Ya, Xb, Yb):
 # ------------------DEBUT MACRO ------------------------------
 # Debut de la macro, on impose en parametre les donnees placer
 #     dans T_EC, l'appel a ecrevisse
-def calc_ecrevisse_ops(self,
-                       CHARGE_MECA,
-                       CHARGE_THER1,
-                       CHARGE_THER2,
-                       TABLE,
-                       DEBIT,
-                       MODELE_MECA,
-                       MODELE_THER,
-                       RESULTAT,
-                       FISSURE,
-                       ECOULEMENT,
-                       MODELE_ECRE,
-                       CONVERGENCE,
-                       LOGICIEL,
-                       VERSION,
-                       ENTETE,
-                       IMPRESSION,
-                       INFO,
-                       COURBES,
-                       **args):
+def calc_ecrevisse_ops(self, **args):
     """
         Procedure de couplage Aster-Ecrevisse
         Recuperation du profil de la fissure , appel de MACR_ECRE_CALC,
@@ -148,6 +129,25 @@ def calc_ecrevisse_ops(self,
     from Utilitai.Table import Table, merge
     from copy import copy
     from math import atan, pi, sqrt, atan2, degrees, sin, cos
+
+    CHARGE_MECA = args.get("CHARGE_MECA")
+    CHARGE_THER1 = args.get("CHARGE_THER1")
+    CHARGE_THER2 = args.get("CHARGE_THER2")
+    TABLE = args.get("TABLE")
+    DEBIT = args.get("DEBIT")
+    MODELE_MECA = args.get("MODELE_MECA")
+    MODELE_THER = args.get("MODELE_THER")
+    RESULTAT = args.get("RESULTAT")
+    FISSURE = args.get("FISSURE")
+    ECOULEMENT = args.get("ECOULEMENT")
+    MODELE_ECRE = args.get("MODELE_ECRE")
+    CONVERGENCE = args.get("CONVERGENCE")
+    LOGICIEL = args.get("LOGICIEL")
+    VERSION = args.get("VERSION")
+    ENTETE = args.get("ENTETE")
+    IMPRESSION = args.get("IMPRESSION")
+    INFO = args.get("INFO")
+    COURBES = args.get("COURBES")
 
     ier = 0
 
@@ -244,7 +244,8 @@ def calc_ecrevisse_ops(self,
 
     # ON CREE LES GROUP_NO ORDONNES DES LEVRES DE FISSURE
     #     Liste des noms des groupes de noeuds du maillage :
-    _lgno = map(lambda x: x[0], MODELE_MECA['MAILLAGE'].LIST_GROUP_NO())
+    mesh = MODELE_MECA.getSupportMesh()
+    _lgno = map(lambda x: x[0], mesh.LIST_GROUP_NO())
 
     for k, fissure in enumerate(FISSURE):
         dFISSURE = fissure.cree_dict_valeurs(fissure.mc_liste)
@@ -255,13 +256,13 @@ def calc_ecrevisse_ops(self,
         # On cree les group_no correspondant aux group_ma des levres de la
         # fissure dans le cas ou ils n'existent pas deja
         if not dFISSURE['GROUP_MA'][0] in _lgno:
-            DEFI_GROUP(reuse=MODELE_MECA['MAILLAGE'],
-                       MAILLAGE=MODELE_MECA['MAILLAGE'],
+            DEFI_GROUP(reuse=MODELE_MECA.getSupportMesh(),
+                       MAILLAGE=MODELE_MECA.getSupportMesh(),
                        CREA_GROUP_NO=_F(GROUP_MA=(dFISSURE['GROUP_MA'][0]),),)
 
         if not dFISSURE['GROUP_MA'][1] in _lgno:
-            DEFI_GROUP(reuse=MODELE_MECA['MAILLAGE'],
-                       MAILLAGE=MODELE_MECA['MAILLAGE'],
+            DEFI_GROUP(reuse=MODELE_MECA.getSupportMesh(),
+                       MAILLAGE=MODELE_MECA.getSupportMesh(),
                        CREA_GROUP_NO=_F(GROUP_MA=(dFISSURE['GROUP_MA'][1]),),)
 
         # Test sur le nombre de caracteres du nom des group_ma
@@ -271,8 +272,8 @@ def calc_ecrevisse_ops(self,
         # Creation des group_no ordonnes des levres des fissures
         _nom_gno_1 = '_' + dFISSURE['GROUP_MA'][0]
         if not _nom_gno_1 in _lgno:
-            DEFI_GROUP(reuse=MODELE_MECA['MAILLAGE'],
-                       MAILLAGE=MODELE_MECA['MAILLAGE'],
+            DEFI_GROUP(reuse=MODELE_MECA.getSupportMesh(),
+                       MAILLAGE=MODELE_MECA.getSupportMesh(),
                        CREA_GROUP_NO=_F(OPTION='SEGM_DROI_ORDO',
                                         NOM=_nom_gno_1,
                                         GROUP_NO=dFISSURE['GROUP_MA'][0],
@@ -286,8 +287,8 @@ def calc_ecrevisse_ops(self,
 
         _nom_gno_2 = '_' + dFISSURE['GROUP_MA'][1]
         if not _nom_gno_2 in _lgno:
-            DEFI_GROUP(reuse=MODELE_MECA['MAILLAGE'],
-                       MAILLAGE=MODELE_MECA['MAILLAGE'],
+            DEFI_GROUP(reuse=MODELE_MECA.getSupportMesh(),
+                       MAILLAGE=MODELE_MECA.getSupportMesh(),
                        CREA_GROUP_NO=_F(OPTION='SEGM_DROI_ORDO',
                                         NOM=_nom_gno_2,
                                         GROUP_NO=dFISSURE['GROUP_MA'][1],
@@ -558,10 +559,10 @@ def calc_ecrevisse_ops(self,
 
             motscle2 = {'ECOULEMENT': txt, 'MODELE_ECRE': txt2}
 
-            DETRUIRE(OBJET=_F(CHAINE='_TAB2'), INFO=1)
-            DETRUIRE(OBJET=_F(CHAINE='_DEB2'), INFO=1)
-            __TAB_i = CO('_TAB2')
-            __DEB_i = CO('_DEB2')
+            DETRUIRE(OBJET=_F(CHAINE='TAB2'), INFO=1)
+            DETRUIRE(OBJET=_F(CHAINE='DEB2'), INFO=1)
+            __TAB_i = CO('TAB2')
+            __DEB_i = CO('DEB2')
 
             MACR_ECRE_CALC(TABLE=__TAB_i,
                            DEBIT=__DEB_i,
@@ -602,7 +603,7 @@ def calc_ecrevisse_ops(self,
 #-------------------------------------------------------------
 #           EXTRACTION DES RESULTATS D ECREVISSE
             # Creation de la table
-            __TABFISS_i = __TAB_i.EXTR_TABLE()
+            __TABFISS_i = TAB2.EXTR_TABLE()
 
             nb_lignes_table = len(__TABFISS_i["COTES"])
             # Re-definition des cotes utilisateur (on elimine l effet de la
@@ -765,7 +766,7 @@ def calc_ecrevisse_ops(self,
             #  Nom de la fissure
             nom_fiss = dFISSURE['GROUP_MA'][0] + "-" + dFISSURE['GROUP_MA'][1]
             __TABFISS_i = __TABFISS_i.EXTR_TABLE()
-            __DEBFISS_i = __DEB_i.EXTR_TABLE()
+            __DEBFISS_i = DEB2.EXTR_TABLE()
             __TABFISS_i["FISSURE"] = [nom_fiss] * nb_lignes_table
             __DEBFISS_i["FISSURE"] = [nom_fiss]
 
@@ -1099,24 +1100,32 @@ def calc_ecrevisse_ops(self,
     if(oldVersion):
         __ECR_F1 = AFFE_CHAR_THER_F(MODELE=MODELE_THER,
                                     FLUX_REP=l_FLUX_REP_F1)
+        self.register_result(__ECR_F1, CHARGE_THER1)
 
         __ECR_F2 = AFFE_CHAR_THER_F(MODELE=MODELE_THER,
                                     FLUX_REP=l_FLUX_REP_F2)
+        self.register_result(__ECR_F2, CHARGE_THER2)
     else:
         __ECR_F1 = AFFE_CHAR_THER_F(MODELE=MODELE_THER,
                                     ECHANGE=l_ECHANGE_F1)
+        self.register_result(__ECR_F1, CHARGE_THER1)
 
         __ECR_F2 = AFFE_CHAR_THER_F(MODELE=MODELE_THER,
                                     ECHANGE=l_ECHANGE_F2)
+        self.register_result(__ECR_F2, CHARGE_THER2)
 
     __ECR_P = AFFE_CHAR_MECA_F(MODELE=MODELE_MECA,
                                PRES_REP=l_PRES_REP)
+    self.register_result(__ECR_P, CHARGE_MECA)
 
     # Table resultat
     try:
         dprod = __TABFISS_tot.dict_CREA_TABLE()
         __TAB = CREA_TABLE(**dprod)
+        self.register_result(__TAB, TABLE)
+
         debprod = __DEBFISS_tot.dict_CREA_TABLE()
         __DEB = CREA_TABLE(**debprod)
+        self.register_result(__DEB, DEBIT)
     except:
         UTMESS('F', 'ECREVISSE0_9', valr=[Inst_Ecrevisse])
