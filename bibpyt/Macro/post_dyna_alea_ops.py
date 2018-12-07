@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -240,7 +240,7 @@ def post_dyna_alea_ops(self, INFO, **args):
 
         #   fin FRAGILITE
         tabout = CREA_TABLE(
-            LISTE=mcfact, TITRE='POST_DYNA_ALEA concept : ' + self._result_name())
+            LISTE=mcfact, TITRE='POST_DYNA_ALEA concept : ' + self.result_name)
 
 #  ------------------------------------------------------------------
 
@@ -261,7 +261,7 @@ def post_dyna_alea_ops(self, INFO, **args):
         FRACTILE = INTERSPECTRE['FRACTILE']
 
         # table résultat
-        tabres = Table(titr='POST_DYNA_ALEA concept : %s' % self._result_name())
+        tabres = Table(titr='POST_DYNA_ALEA concept : %s' % self.result_name)
 
 #     ------------------------------------------------------------------
 #     Liste des moments spectraux
@@ -484,7 +484,7 @@ def post_dyna_alea_ops(self, INFO, **args):
                         (1 - exp(-(deltau) ** 1.2 * sqrt(pi * log(2. * Nu))))
                     val_peak = sqrt(2. * log(valNd))
                     dlign[
-                        'FACT_PIC'] = val_peak   # -- facteur de peak 
+                        'FACT_PIC'] = val_peak   # -- facteur de peak
                     if FRACTILE == 0.5:
                         Titre_lign = 'MAX_MOY'
                     else :
