@@ -208,6 +208,7 @@ def macr_ecrevisse_ops(self, **args):
     #
     # Debut boucle sur la liste d'instant
     #
+    RTHERM = None
     FinBoucle = False
     while (not FinBoucle):
         inst = liste_inst[nume_ordre]
@@ -672,7 +673,8 @@ def macr_ecrevisse_ops(self, **args):
     #     Fin boucle sur les pas de temps
     #
 
-    self.register_result(RTHERM, TEMPER)
+    if RTHERM is not None and TEMPER is not None:
+        self.register_result(RTHERM, TEMPER)
 
     # Creation du concept de la table en sortie
     if (T_TABL_RES != None):
