@@ -43,9 +43,9 @@ TEMP_EX3 = CREA_CHAMP(TYPE_CHAM = 'CART_TEMP_R',
 EVOL_RE = CREA_RESU(OPERATION='AFFE',
                     TYPE_RESU='EVOL_CHAR',
                     NOM_CHAM='T_EXT',
-                    AFFE=(_F( CHAM_GD=TEMP_EX1, INST=0., PRECISION=0.0, CRITERE='RELATIF'),
-                          _F( CHAM_GD=TEMP_EX2, INST=0.5, PRECISION=0.0, CRITERE='RELATIF'),
-                          _F( CHAM_GD=TEMP_EX3, INST=1.0, PRECISION=0.0, CRITERE='RELATIF'),
+                    AFFE=(_F( CHAM_GD=TEMP_EX1, INST=0.),
+                          _F( CHAM_GD=TEMP_EX2, INST=0.5),
+                          _F( CHAM_GD=TEMP_EX3, INST=1.0),
                           ),
                     )
 
@@ -61,7 +61,7 @@ TEMP_EX4 = CREA_CHAMP(TYPE_CHAM = 'NOEU_TEMP_R',
 EVOL_RE = CREA_RESU(OPERATION='AFFE',
                     TYPE_RESU='EVOL_THER',
                     NOM_CHAM='TEMP',
-                    AFFE=(_F( CHAM_GD=TEMP_EX4, INST=0., PRECISION=0.0, CRITERE='RELATIF'),
+                    AFFE=(_F( CHAM_GD=TEMP_EX4, INST=0.),
                           ),
                     )
 
