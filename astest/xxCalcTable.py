@@ -18,4 +18,6 @@ TX2 = CALC_TABLE(TABLE = TX,
                               FORMULE = X2,
                               NOM_PARA = ('X2')))
 
+test.assertEqual(X2.userName, "X2")
+test.assertEqual(TX2.userName, "TX2")
 test.assertTrue( True )

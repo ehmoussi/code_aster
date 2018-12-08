@@ -105,6 +105,7 @@ class ExecuteCommand(object):
     """
     # class attributes
     command_name = command_op = command_cata = None
+    level = 0
 
     _cata = _op = _result = _result_name = _counter = _caller = None
 
@@ -136,6 +137,7 @@ class ExecuteCommand(object):
             logger.debug("ignore command {0}".format(cmd.name))
             return
 
+        ExecuteCommand.level += 1
         cmd._counter = ExecutionParameter().incr_command_counter()
         timer.Start(" . check syntax", num=1.1e6)
         cmd.adapt_syntax(keywords)
@@ -144,6 +146,7 @@ class ExecuteCommand(object):
         except CheckerError as exc:
             # in case of syntax error, show the syntax and raise the exception
             cmd.print_syntax(keywords)
+            ExecuteCommand.level -= 1
             if ExecutionParameter().option & Options.Debug:
                 logger.error(exc.msg)
                 raise
@@ -162,7 +165,18 @@ class ExecuteCommand(object):
             cmd.add_references(keywords)
             cmd.post_exec(keywords)
             cmd.print_result()
+        ExecuteCommand.level -= 1
         return cmd._result
+
+    @classmethod
+    def show_syntax(cls):
+        """Tell if the current command syntax should be printed.
+
+        Returns:
+            bool: *True* if the syntax should be printed.
+        """
+        return (cls.level <= 1 or
+                ExecutionParameter().option & Options.ShowChildCmd)
 
     def _call_oper(self, syntax):
         """Call fortran operator.
@@ -217,6 +231,8 @@ class ExecuteCommand(object):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
+        if not self.show_syntax():
+            return
         printed_args = mixedcopy(keywords)
         remove_none(printed_args)
         filename = self._caller["filename"]
@@ -232,6 +248,8 @@ class ExecuteCommand(object):
 
     def print_result(self):
         """Print an echo of the result of the command."""
+        if not self.show_syntax():
+            return
         if self._result and type(self._result) is not int:
             logger.info(command_result(self._counter, self.name,
                                        self._result))
@@ -444,6 +462,9 @@ class ExecuteMacro(ExecuteCommand):
             "OPS must now return results, not 'int'."
         if ExecutionParameter().option & Options.UseLegacyMode:
             self._result = output
+            # re-assign the user variable name
+            if hasattr(self._result, "userName"):
+                self._result.userName = self.result_name
             if self._add_results:
                 publish_in(self._caller["context"], self._add_results)
             return

@@ -96,7 +96,7 @@ class Starter(ExecuteCommand):
 
     @classmethod
     def run_with_argv(cls, **keywords):
-        """Run the macro-command with the arguments from the command line.
+        """Run the command with the arguments from the command line.
 
         Arguments:
             keywords (dict): User keywords
@@ -112,6 +112,9 @@ class Starter(ExecuteCommand):
             keywords (dict): User's keywords.
         """
         from Utilitai.Utmess import MessageLog
+
+        if keywords.get('IMPR_MACRO') == 'OUI':
+            ExecutionParameter().enable(Options.ShowChildCmd)
 
         if keywords.get('LANG'):
             from ..Utilities.i18n import localization
