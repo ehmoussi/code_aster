@@ -168,8 +168,8 @@ class CommandRepresentation(object):
         elif hasattr(value, "getName"):
             if hasattr(value, 'value_repr'):
                 self._curline.append(value.value_repr)
-            elif value.user_name:
-                self._curline.append(value.user_name)
+            elif value.userName:
+                self._curline.append(value.userName)
             else:
                 self._curline.append(decorate_name(value.getName()))
         elif isinstance(value, numpy.ndarray):
@@ -260,8 +260,8 @@ def command_result(counter, command_name, result):
     show_type = ""
     if hasattr(result, "getName"):
         show_name = decorate_name(result.getName().strip())
-        if result.user_name:
-            show_name = "{0} ({1})".format(result.user_name.strip(), show_name)
+        if result.userName:
+            show_name = "{0} ({1})".format(result.userName.strip(), show_name)
         show_type = " of type <{0}>".format(type(result).__name__)
     elif isinstance(result, str):
         show_name = decorate_name(result)

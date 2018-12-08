@@ -27,8 +27,8 @@
 #include "aster_fort.h"
 
 #include "DataStructures/DataStructure.h"
-#include "MemoryManager/JeveuxString.h"
 #include "DataStructures/TemporaryDataStructureName.h"
+#include "MemoryManager/JeveuxString.h"
 #include "Utilities/Tools.h"
 
 TemporaryDataStructure tempName = TemporaryDataStructure();
@@ -54,8 +54,7 @@ DataStructure::DataStructure( const std::string type, const JeveuxMemory memType
     : DataStructure::DataStructure( DataStructureNaming::getNewName( memType, nameLength ),
                                     nameLength, type, memType ) {}
 
-DataStructure::~DataStructure()
-{
+DataStructure::~DataStructure() {
 #ifdef __DEBUG_GC__
     std::cout << "DataStructure.destr: " << this->getName() << std::endl;
 #endif
@@ -110,3 +109,5 @@ void DataStructure::setType( const std::string newType ) {
     else
         ( *_tco )[0] = newType;
 };
+
+void DataStructure::setUserName( const std::string name ) { _user_name = name; }
