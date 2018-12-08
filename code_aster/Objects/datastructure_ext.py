@@ -34,7 +34,6 @@ class ExtendedDataStructure(injector(DataStructure), DataStructure):
     cata_sdj = None
     ptr_class_sdj = None
     ptr_sdj = None
-    _user_name = None
 
     def __getinitargs__(self):
         """Returns the argument required to reinitialize a derivated
@@ -59,17 +58,6 @@ class ExtendedDataStructure(injector(DataStructure), DataStructure):
                 self.ptr_class_sdj = import_object(cata_sdj)
             self.ptr_sdj = self.ptr_class_sdj(nomj=self.getName())
         return self.ptr_sdj
-
-    @property
-    def user_name(self):
-        """Holds the variable name used by the user or the internal name
-        if it has not been defined."""
-        return self._user_name if self._user_name else self.getName()
-
-    @user_name.setter
-    def user_name(self, name):
-        """Define the user name."""
-        self._user_name = name
 
     # transitional functions - to remove later
     @staticmethod

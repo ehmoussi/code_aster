@@ -151,8 +151,8 @@ class ExecuteCommand(object):
         finally:
             timer.Stop(" . check syntax")
         cmd.create_result(keywords)
-        if hasattr(cmd._result, "user_name"):
-            cmd._result.user_name = cmd.result_name
+        if hasattr(cmd._result, "userName"):
+            cmd._result.userName = cmd.result_name
 
         timer.Start(str(cmd._counter), name=cmd.command_name)
         cmd.print_syntax(keywords)
@@ -537,7 +537,7 @@ def UserMacro(name, cata, ops):
 class CO(object):
 
     """Object that identify an auxiliary result of a Macro-Command."""
-    _name = _user_name = None
+    _name = None
 
     def __init__(self, name):
         """Initialization"""
@@ -548,20 +548,14 @@ class CO(object):
         return self._name
 
     @property
-    def user_name(self):
-        """Holds the variable name used by the user or the internal name
-        if it has not been defined."""
-        return self._user_name if self._user_name else self.getName()
-
-    @user_name.setter
-    def user_name(self, name):
-        """Define the user name."""
-        self._user_name = name
+    def userName(self):
+        """Same as 'getName' for a CO."""
+        return self.getName()
 
     @property
     def value_repr(self):
         """Returns the representation as a keyword value."""
-        return "CO('{0}')".format(self.user_name)
+        return "CO('{0}')".format(self.userName)
 
     def is_typco(self):
         """Tell if it is an auxiliary result."""

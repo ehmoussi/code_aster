@@ -38,6 +38,10 @@ void exportDataStructureToPython() {
         // fake initFactoryPtr: created by subclasses
         .def( "addReference", &DataStructure::addReference )
         .def( "getName", &DataStructure::getName, return_value_policy< return_by_value >() )
+        .add_property(
+            "userName",
+            make_function( &DataStructure::getUserName, return_value_policy< return_by_value >() ),
+            &DataStructure::setUserName )
         .def( "getType", &DataStructure::getType, return_value_policy< return_by_value >() )
         .def( "debugPrint", c1 )
         .def( "debugPrint", c2 )
