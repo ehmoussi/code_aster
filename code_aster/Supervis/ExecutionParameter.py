@@ -34,7 +34,6 @@ object.
 """
 
 import json
-import logging
 import os
 import os.path as osp
 import platform
@@ -43,13 +42,12 @@ import sys
 import warnings
 
 import aster_pkginfo
+import libaster
 from Utilitai.as_timer import ASTER_TIMER
 
 from ..Utilities import Singleton, convert
-from .logger import logger, setlevel
+from .logger import DEBUG, INFO, logger
 from .options import Options
-
-import libaster
 
 RCDIR = osp.abspath(osp.join(osp.dirname(__file__), os.pardir, os.pardir,
                     os.pardir, os.pardir, 'share', 'aster'))
@@ -184,7 +182,7 @@ class ExecutionParameter(object):
 
         # for options that required an action
         if option == Options.Debug:
-            setlevel()
+            logger.setLevel(DEBUG)
         elif option == Options.ShowDeprecated:
             # disabled by default in python2.7
             warnings.simplefilter('default')
@@ -199,7 +197,7 @@ class ExecutionParameter(object):
 
         # for options that required an action
         if option == Options.Debug:
-            setlevel(level=logging.INFO)
+            logger.setLevel(INFO)
         elif option == Options.ShowDeprecated:
             warnings.resetwarnings()
 

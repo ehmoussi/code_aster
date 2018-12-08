@@ -40,7 +40,6 @@ from Comportement import catalc
 
 from ..RunManager import LogicalUnitFile, Serializer, loadObjects
 from ..Supervis import CommandSyntax, ExecutionParameter, Options, logger
-from ..Supervis.logger import setlevel
 
 from .ExecuteCommand import ExecuteCommand
 
