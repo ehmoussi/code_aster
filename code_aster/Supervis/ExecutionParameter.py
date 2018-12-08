@@ -82,7 +82,6 @@ class ExecutionParameter(object):
         self._args['dbgjeveux'] = 0
         self._args['jxveri'] = 0
         self._args['sdveri'] = 0
-        self._args['impr_macro'] = 0
         self._args['icode'] = 0
         self._args['jeveux_sysaddr'] = 0
 
@@ -247,9 +246,9 @@ class ExecutionParameter(object):
         parser.add_argument('--sdveri',
             action='store_const', const=1, default=0,
             help="")
-        parser.add_argument('--impr_macro',
+        parser.add_argument('--impr_macro', dest='ShowChildCmd',
             action='store_const', const=1, default=0,
-            help="")
+            help="show syntax of commands called by macro-commands")
         parser.add_argument('--icode',
             action='store_const', const=1, default=0,
             help="turn on running mode for testcase")
