@@ -40,15 +40,17 @@ import tempfile
 
 # using these values allows to use them as `lvl` in `logger.log(lvl, ...)`
 ERROR = logging.ERROR
-WARN = logging.WARNING
+WARNING = logging.WARNING
 INFO = logging.INFO
 OK = INFO
 DEBUG = logging.DEBUG
 
-RETURNCODE = { OK : 0, DEBUG : 0, WARN : 2, ERROR : 4 }
-assert OK < WARN < ERROR, (OK, WARN, ERROR)
+RETURNCODE = {OK: 0, DEBUG: 0, WARNING: 2, ERROR: 4}
+assert OK < WARNING < ERROR, (OK, WARNING, ERROR)
+
 
 class PerLevelFormatter(logging.Formatter):
+
     """Formatter for messages"""
 
     def _adjust_format(self, level):
@@ -66,6 +68,7 @@ class PerLevelFormatter(logging.Formatter):
 
 
 class PerLevelColorFormatter(PerLevelFormatter):
+
     """Formatter for messages"""
 
     def _adjust_color(self, level):
@@ -73,7 +76,7 @@ class PerLevelColorFormatter(PerLevelFormatter):
         func = lambda message: message
         if level >= logging.ERROR:
             func = red
-        elif level >= logging.WARN:
+        elif level >= logging.WARNING:
             func = blue
         return func
 
@@ -84,6 +87,7 @@ class PerLevelColorFormatter(PerLevelFormatter):
 
 
 class HgStreamHandler(logging.StreamHandler):
+
     """StreamHandler switching between sys.stdout and sys.stderr
     like the mercurial ui does"""
 
@@ -102,22 +106,31 @@ class HgStreamHandler(logging.StreamHandler):
 
 
 def build_logger(level=logging.INFO):
-    """Initialize the logger with its handlers"""
+    """Initialize the logger with its handlers.
+
+    Arguments:
+        level (int): Logging level.
+        raise_exception (bool): If *True* (default), an exception is raised in
+            case of error.
+
+    Returns:
+        Logger: logger object.
+    """
     logger = logging.getLogger("code_aster")
+    # keep only debug, info and error
+    logger.critical = logger.fatal = None
     logger.setLevel(level)
     term = HgStreamHandler(sys.stdout)
     term.setFormatter(PerLevelFormatter())
     logger.addHandler(term)
     return logger
 
-def setlevel(*dummy, **kwargs):
-    """Callback for verbose/debug option"""
-    lvl = kwargs.get('level', logging.DEBUG)
-    logger.setLevel(lvl)
 
 logger = build_logger()
 
 _logfile = None
+
+
 def tracelog(dir=None):
     """Open the log file for detailed output"""
     global _logfile
@@ -126,6 +139,7 @@ def tracelog(dir=None):
                                             suffix='.log').name
         _logfile = open(fname, 'wb')
     return _logfile
+
 
 def close_tracelog(write=None):
     """Close (and remove) the log file"""
@@ -137,20 +151,21 @@ def close_tracelog(write=None):
         _logfile = None
 
 COLOR = {
-    'red' : r'\033[1;31m',
-    'green' : r'\033[1;32m',
-    'blue' : r'\033[1;34m',
-    'grey' : r'\033[1;30m',
-    'magenta' : r'\033[1;35m',
-    'cyan' : r'\033[1;36m',
-    'yellow' : r'\033[1;33m',
-    'endc' : r'\033[1;m',
+    'red': r'\033[1;31m',
+    'green': r'\033[1;32m',
+    'blue': r'\033[1;34m',
+    'grey': r'\033[1;30m',
+    'magenta': r'\033[1;35m',
+    'cyan': r'\033[1;36m',
+    'yellow': r'\033[1;33m',
+    'endc': r'\033[1;m',
 }
 
 try:
     _colored = sys.stdout.isatty()
 except AttributeError:
     _colored = False
+
 
 def _colorize(color, string):
     """Return the colored `string`"""

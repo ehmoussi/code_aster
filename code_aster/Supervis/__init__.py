@@ -28,5 +28,5 @@ from .CommandSyntax import CommandSyntax
 from .exceptions_ext import (AsterError, ContactError, ConvergenceError,
                              IntegrationError, SolverError, TimeLimitError)
 from .ExecutionParameter import ExecutionParameter
-from .logger import logger
+from .logger import logger, DEBUG, INFO, WARNING, ERROR
 from .options import Options
