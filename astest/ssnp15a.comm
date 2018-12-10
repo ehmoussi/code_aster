@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -691,6 +691,28 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
                       VALE_K='MA',),
                    ),
            )
+
+
+# Test VARI_ELGA for energy (issue7461)
+ENER_ELA=POST_ELEM(
+                   RESULTAT=U,
+                   INST=1.0,
+                   ENER_ELAS=_F( TOUT = 'OUI')
+                  )
+
+TEST_TABLE(
+           VALE_CALC=0.11640314359,
+           NOM_PARA='TOTALE',
+           TABLE=ENER_ELA,)
+
+TEST_RESU(RESU=_F(INST=1.0,
+                  RESULTAT=U,
+                  MAILLE='CUBE',
+                  POINT=1,
+                  NOM_CHAM='VARI_ELGA',
+                  NOM_CMP='V1',
+                  VALE_CALC=0.0205472654636,
+                  ),)
 
 FIN();
 

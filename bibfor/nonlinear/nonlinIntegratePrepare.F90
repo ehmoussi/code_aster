@@ -84,8 +84,6 @@ type(NL_DS_Constitutive), intent(inout) :: ds_constitutive
         ds_constitutive%l_pred_cnfint = ASTER_TRUE
     endif
 !
-    if (niv .ge. 2) then
-        call comp_info(model, ds_constitutive%compor)
-    endif
+    call comp_info(model, ds_constitutive%compor)
 !
 end subroutine
