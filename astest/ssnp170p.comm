@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -94,7 +94,7 @@ for i in range(2):
                                 PRES_REP=_F(GROUP_MA='Group_4',
                                 PRES=25,), );
     
-    RES[i]=STAT_NON_LINE(INFO=2,
+    RES[i]=STAT_NON_LINE(
                     AFFICHAGE=_F(INFO_RESIDU='OUI',),
                     MODELE=MODI[i],
                     CHAM_MATER=AFFE[i],

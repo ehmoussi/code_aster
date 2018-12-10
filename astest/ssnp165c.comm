@@ -127,7 +127,7 @@ LINST=DEFI_LIST_INST(METHODE='MANUEL',DEFI_LIST=_F(LIST_INST=L_INST,),
 ### RESOLUTION ###
 ##################
 
-RESU=STAT_NON_LINE(MODELE=MO,INFO=2,
+RESU=STAT_NON_LINE(MODELE=MO,
                    CHAM_MATER=CHMAT,
                    EXCIT=_F(CHARGE=CHA1,
                             FONC_MULT=RAMPE,),
