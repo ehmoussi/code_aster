@@ -275,7 +275,7 @@ def saveObjects(level=1, delete=True):
     pickler = Serializer(context)
     saved = pickler.save()
     # close Jeveux files (should not be done before pickling)
-    libaster.finalize(True)
+    libaster.jeveux_finalize(True)
     pickler.sign()
 
     if delete:

@@ -82,8 +82,8 @@ extern void DEFP(EXECOP,execop, ASTERINTEGER*);
 #define CALL_OPSEXE(a)  CALLP(OPSEXE,opsexe,a)
 extern void DEFP(OPSEXE,opsexe, ASTERINTEGER*) ;
 
-#define CALL_OP9999() CALL0(OP9999,op9999)
-extern void DEF0(OP9999,op9999);
+#define CALL_OP9999(a) CALLP(OP9999,op9999,a)
+extern void DEFP(OP9999,op9999, ASTERINTEGER*);
 
 #define CALL_IMPERS() CALL0(IMPERS,impers)
 extern void DEF0(IMPERS,impers);

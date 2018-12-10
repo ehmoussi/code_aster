@@ -30,6 +30,7 @@
 #include "shared_vars.h"
 
 #include "RunManager/Exceptions.h"
+#include "RunManager/Fortran.h"
 
 // Please keep '*Interface.h' files in alphabetical order to ease merging
 #include "PythonBindings/AcousticModeContainerInterface.h"
@@ -141,16 +142,6 @@
 
 namespace py = boost::python;
 
-static void libaster_finalize( const bool from_save = false ) {
-    if ( get_sh_jeveux_status() != 1 ) {
-        std::cout << "#DEBUG Jeveux is already closed!" << std::endl;
-        return;
-    }
-    std::cout << "#DEBUG finalize called from saveObjects ? " << from_save << std::endl;
-    CALL_OP9999();
-    register_sh_jeveux_status( 0 );
-};
-
 static void libaster_debugJeveuxContent( const std::string message ) {
     ASTERINTEGER unit_out = 6;
     std::string base( "G" );
@@ -160,7 +151,7 @@ static void libaster_debugJeveuxContent( const std::string message ) {
 struct LibAsterInitializer {
     LibAsterInitializer() { initAsterModules(); };
 
-    ~LibAsterInitializer() { libaster_finalize(); };
+    ~LibAsterInitializer() { jeveux_finalize(); };
 };
 
 BOOST_PYTHON_FUNCTION_OVERLOADS( raiseAsterError_overloads, raiseAsterError, 0, 1 )
@@ -175,7 +166,6 @@ BOOST_PYTHON_MODULE( libaster ) {
         "LibAsterInitializer", py::no_init );
 
     py::scope().attr( "__libguard" ) = libGuard;
-    py::scope().attr( "finalize" ) = &libaster_finalize;
     py::scope().attr( "debugJeveuxContent" ) = &libaster_debugJeveuxContent;
 
     // Definition of exceptions, thrown from 'Exceptions.cxx'/uexcep
