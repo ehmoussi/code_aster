@@ -39,12 +39,10 @@ void jeveux_init() {
 
 void jeveux_finalize( const bool from_save ) {
     if ( get_sh_jeveux_status() != 1 ) {
-        std::cout << "#DEBUG Jeveux is already closed!" << std::endl;
         return;
     }
     ASTERINTEGER isave;
     isave = ( ASTERINTEGER ) int( from_save );
-    std::cout << "#DEBUG finalize called from saveObjects ? " << from_save << std::endl;
     CALL_OP9999( &isave );
     register_sh_jeveux_status( 0 );
 }
