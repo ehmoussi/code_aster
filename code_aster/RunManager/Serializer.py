@@ -261,7 +261,7 @@ def saveObjects(level=1, delete=True):
         delete (bool): If *True* the saved objects are deleted from the context.
     """
     caller = inspect.currentframe()
-    for i in range(level):
+    for _ in range(level):
         caller = caller.f_back
     try:
         context = caller.f_globals
@@ -275,7 +275,7 @@ def saveObjects(level=1, delete=True):
     pickler = Serializer(context)
     saved = pickler.save()
     # close Jeveux files (should not be done before pickling)
-    libaster.finalize()
+    libaster.finalize(True)
     pickler.sign()
 
     if delete:
@@ -303,6 +303,22 @@ def loadObjects(level=1):
     Serializer(context).load()
 
 
+def contains_datastructure(sequence):
+    """Tell if a sequence contains a DataStructure.
+
+    Arguments:
+        sequence (*iterable*): List-like object.
+
+    Returns:
+        bool: *True* if *sequence* contains a *DataStructure*,
+        *False* otherwise.
+    """
+    for item in sequence:
+        if isinstance(item, DataStructure):
+            return True
+    return False
+
+
 class AsterPickler(pickle.Pickler):
 
     """Adapt pickling of DataStructure objects.
@@ -327,14 +343,15 @@ class AsterPickler(pickle.Pickler):
         Arguments:
             obj (*misc*): Object to save.
         """
+
         if main and isinstance(obj, (list, tuple)):
-            if obj and isinstance(obj[0], DataStructure):
+            if obj and contains_datastructure(obj):
                 self.dump(LIST)
                 self.dump(len(obj))
                 for item in obj:
                     self.save_one(item)
         elif main and isinstance(obj, dict):
-            if obj and isinstance(obj.values()[0], DataStructure):
+            if obj and contains_datastructure(obj.values()):
                 self.dump(DICT)
                 self.dump(len(obj))
                 for item in obj.values():
@@ -354,7 +371,9 @@ class AsterPickler(pickle.Pickler):
             else:
                 state = ()
             self.dump(STATE)
-            self.save_one(state)
+            self.dump(len(state))
+            for item in state:
+                self.save_one(item)
 
         self.dump(obj)
 
@@ -518,8 +537,11 @@ class AsterUnpickler(pickle.Unpickler):
             # expecting the STATE mark
             assert self.load_one() == STATE
             try:
-                buffer.state = self.load_one()
-                assert isinstance(buffer.state, (list, tuple)), buffer.state
+                nbobj = self.load_one()
+                new_state = []
+                for _ in range(nbobj):
+                    new_state.append(self.load_one())
+                buffer.state = new_state
             except:
                 logger.debug("internal state can not be loaded\n{0}"
                              .format(traceback.format_exc()))
