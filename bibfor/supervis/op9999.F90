@@ -51,17 +51,17 @@ subroutine op9999()
 #include "asterfort/asmpi_info.h"
     mpi_int :: mrank, msize
     integer :: info, nbenre, nboct, iret, nbrank
-    integer :: ifm, iunerr, iunres, iunmes
+    integer :: ifm, iunres, iunmes
     integer :: i, jco, nbco
     integer :: nbext, nfhdf, nproc
     aster_logical :: bool
     character(len=8) :: k8b, ouinon, infr, proc
-    character(len=16) :: fchier, fhdf, typres
+    character(len=16) :: fhdf, typres
     character(len=80) :: fich
 !-----------------------------------------------------------------------
 !
     call jemarq()
-    info = 0
+    info = 1
 
     call asmpi_info(rank=mrank, size=msize)
     nbrank = to_aster_int(mrank)
@@ -86,12 +86,7 @@ subroutine op9999()
 !
     infr = 'NON'
     if (infr.eq.'OUI') then
-        ifm = 0
-        fchier = ' '
-        ifm = 6
-        if (.not. ulexis( ifm )) then
-            call ulopen(ifm, ' ', fchier, 'NEW', 'O')
-        endif
+        ifm = iunifi('MESSAGE')
 !
         typres = 'RESULTAT_SDASTER'
         nbco = 0
@@ -167,7 +162,7 @@ subroutine op9999()
 !
 ! --- IMPRESSION DES STATISTIQUES ( AVANT CLOTURE DE JEVEUX )
 !
-      !call utmess('I', 'SUPERVIS2_97')
+      call utmess('I', 'SUPERVIS2_97')
       if (iunres .gt. 0) write(iunres, *) '<I> <FIN> ARRET NORMAL DANS "FIN" PAR APPEL A "JEFINI".'
     endif
     call jedema()

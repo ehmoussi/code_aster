@@ -141,9 +141,12 @@
 
 namespace py = boost::python;
 
-static void libaster_finalize() {
-    if ( get_sh_jeveux_status() != 1 )
+static void libaster_finalize( const bool from_save = false ) {
+    if ( get_sh_jeveux_status() != 1 ) {
+        std::cout << "#DEBUG Jeveux is already closed!" << std::endl;
         return;
+    }
+    std::cout << "#DEBUG finalize called from saveObjects ? " << from_save << std::endl;
     CALL_OP9999();
     register_sh_jeveux_status( 0 );
 };

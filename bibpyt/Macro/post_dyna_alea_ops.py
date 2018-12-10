@@ -39,7 +39,6 @@ def post_dyna_alea_ops(self, INFO, **args):
     self.set_icmd(1)
 
     # Le concept sortant (de type table_sdaster ou dérivé) est tab
-    print "Ouille", self.sd, dir(self),self._result_type
     self.DeclareOut('tabout', self.sd)
 
     # On importe les définitions des commandes a utiliser dans la macro
