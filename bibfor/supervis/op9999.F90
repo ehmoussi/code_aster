@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine op9999()
+subroutine op9999(isave)
     use parameters_module
     implicit none
 !     ------------------------------------------------------------------
@@ -49,6 +49,11 @@ subroutine op9999()
 #include "asterfort/utmess.h"
 #include "asterfort/wkvect.h"
 #include "asterfort/asmpi_info.h"
+
+!   isave = 1 : The objects must be saved properly.
+!   isave = 0 : The objects can be wiped out.
+    integer, intent(in) :: isave
+
     mpi_int :: mrank, msize
     integer :: info, nbenre, nboct, iret, nbrank
     integer :: ifm, iunres, iunmes
