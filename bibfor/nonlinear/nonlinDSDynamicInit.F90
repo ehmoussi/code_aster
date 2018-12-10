@@ -30,7 +30,7 @@ implicit none
 #include "asterfort/mginfo.h"
 #include "asterfort/nmchex.h"
 #include "asterfort/dismoi.h"
-#include "asterfort/idensd.h" 
+#include "asterfort/iden_nume.h" 
 !
 character(len=19), intent(in) :: hval_incr(*)
 character(len=19), intent(in) :: sddyna
@@ -74,7 +74,7 @@ character(len=19), intent(in) :: sddyna
         call nmchex(hval_incr, 'VALINC', 'DEPMOI', disp_prev)
         call dismoi('PROF_CHNO', disp_prev, 'CHAM_NO', repk=pfcn1)
         call dismoi('PROF_CHNO', nume_ddl, 'NUME_DDL', repk=pfcn2)
-        if (.not.idensd('PROF_CHNO', pfcn1, pfcn2)) then
+        if (.not.iden_nume(pfcn1, pfcn2)) then
             call utmess('F', 'DYNAMIQUE_54')
         endif
     endif
