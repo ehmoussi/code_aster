@@ -58,6 +58,7 @@ Base classes
 """
 
 import inspect
+import linecache
 import re
 from collections import namedtuple
 
@@ -104,8 +105,9 @@ class ExecuteCommand(object):
     """
     # class attributes
     command_name = command_op = command_cata = None
+    level = 0
 
-    _cata = _op = _result = _counter = _caller = None
+    _cata = _op = _result = _result_name = _counter = _caller = None
 
     __setattr__ = no_new_attributes(object.__setattr__)
 
@@ -115,6 +117,7 @@ class ExecuteCommand(object):
         self._cata = self.command_cata or getattr(Commands, self.command_name)
         self._op = self.command_op or self._cata.definition['op']
         self._result = None
+        self._result_name = ""
         self._counter = 0
 
     @classmethod
@@ -128,12 +131,13 @@ class ExecuteCommand(object):
         keywords = mixedcopy(kwargs)
         cmd.keep_caller_infos(keywords)
         timer = ExecutionParameter().timer
-        if cls.command_name not in ("DEBUT", "POURSUITE"):
+        if cls.command_name not in ("DEBUT", "POURSUITE", "FIN"):
             check_jeveux()
         if cmd._op is None:
             logger.debug("ignore command {0}".format(cmd.name))
             return
 
+        ExecuteCommand.level += 1
         cmd._counter = ExecutionParameter().incr_command_counter()
         timer.Start(" . check syntax", num=1.1e6)
         cmd.adapt_syntax(keywords)
@@ -142,6 +146,7 @@ class ExecuteCommand(object):
         except CheckerError as exc:
             # in case of syntax error, show the syntax and raise the exception
             cmd.print_syntax(keywords)
+            ExecuteCommand.level -= 1
             if ExecutionParameter().option & Options.Debug:
                 logger.error(exc.msg)
                 raise
@@ -149,14 +154,29 @@ class ExecuteCommand(object):
         finally:
             timer.Stop(" . check syntax")
         cmd.create_result(keywords)
+        if hasattr(cmd._result, "userName"):
+            cmd._result.userName = cmd.result_name
 
         timer.Start(str(cmd._counter), name=cmd.command_name)
         cmd.print_syntax(keywords)
-        cmd.exec_(keywords)
-        cmd.add_references(keywords)
-        cmd.post_exec(keywords)
-        cmd.print_result()
+        try:
+            cmd.exec_(keywords)
+        finally:
+            cmd.add_references(keywords)
+            cmd.post_exec(keywords)
+            cmd.print_result()
+        ExecuteCommand.level -= 1
         return cmd._result
+
+    @classmethod
+    def show_syntax(cls):
+        """Tell if the current command syntax should be printed.
+
+        Returns:
+            bool: *True* if the syntax should be printed.
+        """
+        return (cls.level <= 1 or
+                ExecutionParameter().option & Options.ShowChildCmd)
 
     def _call_oper(self, syntax):
         """Call fortran operator.
@@ -211,6 +231,8 @@ class ExecuteCommand(object):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
+        if not self.show_syntax():
+            return
         printed_args = mixedcopy(keywords)
         remove_none(printed_args)
         filename = self._caller["filename"]
@@ -221,11 +243,13 @@ class ExecuteCommand(object):
             self._caller["identifier"]))
         logger.info(command_separator())
         logger.info(command_header(self._counter, filename, lineno))
-        logger.info(command_text(self.name, printed_args, self._res_syntax(),
+        logger.info(command_text(self.name, printed_args, self.result_name,
                                  limit=500))
 
     def print_result(self):
         """Print an echo of the result of the command."""
+        if not self.show_syntax():
+            return
         if self._result and type(self._result) is not int:
             logger.info(command_result(self._counter, self.name,
                                        self._result))
@@ -236,17 +260,6 @@ class ExecuteCommand(object):
         timer = ExecutionParameter().timer
         logger.info(command_time(*timer.StopAndGet(str(self._counter))))
         logger.info(command_separator())
-
-    def _res_syntax(self):
-        """Return the name of the result for the echo of the Command.
-
-        Returns:
-            str: Automatically built name.
-        """
-        if self._result is None or type(self._result) is int:
-            return ""
-        return self._result.getName()
-        # return "obj{:05x}".format(self._counter)
 
     def check_syntax(self, keywords):
         """Check the syntax passed to the command. *keywords* will contain
@@ -309,23 +322,14 @@ class ExecuteCommand(object):
             keywords (dict): Keywords arguments of user's keywords.
         """
 
-    def _result_name(self):
+    @property
+    def result_name(self):
         """Return the name of the result of the Command.
-
-        .. todo:: Helper method to change the supervisor in legacy version.
 
         Returns:
             str: Name of the result returned by the Command.
         """
-        from functools import partial
-        from Noyau.nommage import GetNomConceptResultat as get_name
-        # use *legacy* naming system that reads the command file
-        get_name.use_naming_function(partial(get_name.native, level=5))
-        sd_name = get_name(self.name)
-        if sd_name is None:
-            # use an automatic naming
-            sd_name = ResultNaming.getNewResultName()
-        return sd_name
+        return self._result_name
 
     def keep_caller_infos(self, keywords, level=2):
         """Register the caller frame infos.
@@ -339,11 +343,14 @@ class ExecuteCommand(object):
                         "identifier": ""}
         try:
             caller = inspect.currentframe()
-            for i in range(level):
+            for _ in range(level):
                 caller = caller.f_back
             self._caller["filename"] = caller.f_code.co_filename
             self._caller["lineno"] = caller.f_lineno
             self._caller["context"] = caller.f_globals
+            self._result_name = get_user_name(self.command_name,
+                                              self._caller["filename"],
+                                              self._caller["lineno"])
         finally:
             del caller
 
@@ -455,6 +462,9 @@ class ExecuteMacro(ExecuteCommand):
             "OPS must now return results, not 'int'."
         if ExecutionParameter().option & Options.UseLegacyMode:
             self._result = output
+            # re-assign the user variable name
+            if hasattr(self._result, "userName"):
+                self._result.userName = self.result_name
             if self._add_results:
                 publish_in(self._caller["context"], self._add_results)
             return
@@ -558,6 +568,16 @@ class CO(object):
         """Return the CO name."""
         return self._name
 
+    @property
+    def userName(self):
+        """Same as 'getName' for a CO."""
+        return self.getName()
+
+    @property
+    def value_repr(self):
+        """Returns the representation as a keyword value."""
+        return "CO('{0}')".format(self.userName)
+
     def is_typco(self):
         """Tell if it is an auxiliary result."""
         return True
@@ -598,3 +618,33 @@ def publish_in(context, dict_objects):
                 continue
 
         context[name] = value
+
+
+def get_user_name(command, filename, lineno):
+    """Parse the caller syntax to extract the name used by the user.
+
+    Arguments:
+        command (str): Command name.
+        filename (str): Filename of the caller
+        lineno (int): Line number in the file.
+
+    Returns:
+        str: Variable name used by the user, empty if not found.
+    """
+    re_comment = re.compile(r"^\s*#.*")
+    re_oper = re.compile(r"\b{0}\s*\(".format(command))
+    re_name = re.compile(r"^\s*(?P<name>\w+)\s*"
+                         r"=\s*{0}\s*\(".format(command))
+
+    while lineno > 0:
+        line = linecache.getline(filename, lineno)
+        lineno = lineno - 1
+        if re_comment.match(line):
+            continue
+        if re_oper.search(line):
+            mat = re_name.search(line)
+            if mat:
+                return mat.group("name")
+            break
+
+    return ""

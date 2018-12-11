@@ -33,6 +33,7 @@ class Options(object):
     StrictUnpickling = 0x0008
     UseLegacyMode = 0x0010
     ShowDeprecated = 0x0020
+    ShowChildCmd = 0x0040
 
     @classmethod
     def by_name(cls, name):

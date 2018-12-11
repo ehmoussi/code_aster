@@ -94,7 +94,7 @@ class CommandRepresentation(object):
         """
         self._newline()
         if result:
-            self._curline.extend([decorate_name(result), " = "])
+            self._curline.extend([result, " = "])
         self._curline.extend([name, "("])
         self._add_indent()
         self.repr_keywords(keywords)
@@ -166,7 +166,12 @@ class CommandRepresentation(object):
         if isinstance(value, basestring):
             self._curline.append("{0!r}".format(convert(value)))
         elif hasattr(value, "getName"):
-            self._curline.append(decorate_name(value.getName()))
+            if hasattr(value, 'value_repr'):
+                self._curline.append(value.value_repr)
+            elif value.userName:
+                self._curline.append(value.userName)
+            else:
+                self._curline.append(decorate_name(value.getName()))
         elif isinstance(value, numpy.ndarray):
             self._curline.append("{0!r}".format(value))
         elif isinstance(value, (list, tuple)):
@@ -255,6 +260,8 @@ def command_result(counter, command_name, result):
     show_type = ""
     if hasattr(result, "getName"):
         show_name = decorate_name(result.getName().strip())
+        if result.userName:
+            show_name = "{0} ({1})".format(result.userName.strip(), show_name)
         show_type = " of type <{0}>".format(type(result).__name__)
     elif isinstance(result, str):
         show_name = decorate_name(result)

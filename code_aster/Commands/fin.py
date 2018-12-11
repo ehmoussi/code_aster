@@ -21,20 +21,26 @@
 
 import libaster
 
-from ..Supervis import ExecutionParameter, logger
 from ..RunManager import saveObjects
+from ..Supervis import ExecutionParameter, logger
+from .ExecuteCommand import ExecuteCommand
 
 
-def FIN(**keywords):
-    """Save objects that exist in the context of the caller.
+class Closer(ExecuteCommand):
+    """Command that closes the execution."""
+    command_name = "FIN"
 
-    The memory manager is closed when :mod:`libaster` is unloaded.
+    def _call_oper(self, dummy):
+        """Save objects that exist in the context of the caller.
 
-    Arguments:
-        keywords (dict): Ignored
-    """
-    # Ensure that `saveObjects` has not been already called
-    if libaster.jeveux_status():
-        saveObjects(level=2)
+        The memory manager is closed when :mod:`libaster` is unloaded.
+        """
+        # Ensure that `saveObjects` has not been already called
+        if libaster.jeveux_status():
+            # 1: here, 2: exec_, 3: run, 4: user space
+            saveObjects(level=4)
 
-    logger.info(repr(ExecutionParameter().timer))
+        logger.info(repr(ExecutionParameter().timer))
+
+
+FIN = Closer.run
