@@ -89,8 +89,8 @@ resu=STAT_NON_LINE( MODELE=monModel,
 test.assertTrue( True )
 test.printSummary()
 
-if (parallel):
-    rank = code_aster.getMPIRank()
-    resu.printMedFile('/tmp/par_%d.resu.med'%rank)
-else:
-    resu.printMedFile('/tmp/seq.resu.med')
+# if (parallel):
+#     rank = code_aster.getMPIRank()
+#     resu.printMedFile('/tmp/par_%d.resu.med'%rank)
+# else:
+#     resu.printMedFile('/tmp/seq.resu.med')

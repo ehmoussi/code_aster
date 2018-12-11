@@ -19,7 +19,7 @@
 
 # person_in_charge: mathieu.courtois at edf.fr
 
-from code_aster import AsterError
+from code_aster import AsterError, NonLinearEvolutionContainer
 from code_aster.Commands import *
 
 DEBUT(CODE=_F(
@@ -91,14 +91,18 @@ l_inst=DEFI_LIST_REEL(VALE=(0., 3., 6.),)
 
 inst=DEFI_LIST_INST(DEFI_LIST=_F(LIST_INST=l_inst,),)
 
+
+resu = NonLinearEvolutionContainer()
 try:
-   resu=STAT_NON_LINE(MODELE=model,
+   resu=STAT_NON_LINE(reuse=resu, RESULTAT=resu,
+                      MODELE=model,
                       CHAM_MATER=chmat,
                       EXCIT=_F(CHARGE=char,),
                       COMPORTEMENT=_F(RELATION='ELAS',),
                       INCREMENT=_F(LIST_INST=inst),)
 except AsterError as err:
    assert err.id_message == "CALCULEL6_63"
+
 
 resu = EXTR_RESU(RESULTAT=resu,ARCHIVAGE=_F(NUME_ORDRE=1))
 

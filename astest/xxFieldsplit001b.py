@@ -64,8 +64,8 @@ resnonl = STAT_NON_LINE(
 test.assertTrue(True)
 test.printSummary()
 
-if parallel:
-    rank = code_aster.getMPIRank()
-    resnonl.printMedFile('/tmp/par_%d.resu.med'%rank)
-else:
-    resnonl.printMedFile('/tmp/seq.resu.med')
+# if parallel:
+#     rank = code_aster.getMPIRank()
+#     resnonl.printMedFile('/tmp/par_%d.resu.med'%rank)
+# else:
+#     resnonl.printMedFile('/tmp/seq.resu.med')

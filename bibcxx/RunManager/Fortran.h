@@ -30,6 +30,8 @@
 
 void jeveux_init();
 
+void jeveux_finalize( const bool from_save = false );
+
 void call_oper( PyObject *syntax, int jxveri );
 
 void call_ops( PyObject *syntax, int ops );

@@ -49,11 +49,6 @@ use superv_module, only: superv_before, superv_after
         call gcecdu(nuoper)
     endif
 !
-    if (nuoper .eq. 9999) then
-        call op9999()
-        goto 999
-    endif
-!
 !     -- ON NOTE LA MARQUE AVANT D'APPELER LA PROCHAINE COMMANDE :
     call jevema(imaav)
 !
@@ -72,7 +67,7 @@ use superv_module, only: superv_before, superv_after
         call opsexe(nuop2)
     else if (nuoper.lt. 200) then
         call ex0000(nuoper)
-    else if (nuoper.ne.9999) then
+    else
         call utmess('E', 'SUPERVIS_61', si=nuoper)
     endif
 !
@@ -98,7 +93,5 @@ use superv_module, only: superv_before, superv_after
     call uttcpg('IMPR', 'CUMU')
 !
     call superv_after()
-!
-999 continue
 !
 end subroutine

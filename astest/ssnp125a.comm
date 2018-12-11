@@ -23,7 +23,7 @@
 # ----- PERTE DE COHESION DE 5% DANS LA MAILLE (M1) EN QUESTION. -------
 # ======================================================================
 
-from code_aster import ConvergenceError
+from code_aster import ConvergenceError, NonLinearEvolutionContainer
 from code_aster.Commands import *
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),PAR_LOT='NON',DEBUG=_F(SDVERI='OUI'))
@@ -145,28 +145,30 @@ DEFLIST =DEFI_LIST_INST(DEFI_LIST=_F(LIST_INST =TEMPS ),
                                  SUBD_NIVEAU   = 4,
                                  SUBD_PAS_MINI = 0.000001),)
 
+U = NonLinearEvolutionContainer()
 try :
-     U=STAT_NON_LINE(MODELE=MODELE,
+     U=STAT_NON_LINE(reuse=U,
+                     RESULTAT=U,
+                     MODELE=MODELE,
                      CHAM_MATER=CHMAT,
-                 EXCIT=( _F( CHARGE=CHAR_DR,  ),
-                         _F( CHARGE=CHAR_GA,  ),
-                         _F( CHARGE = DEPL_BA, ),
-                         _F( CHARGE = DEPL_GA,),
-                         _F( CHARGE = DEPL_HA,
-                             FONC_MULT = COEF,),),
-                 COMPORTEMENT=_F( RELATION = 'DRUCK_PRAGER'),
-                 INCREMENT=_F( LIST_INST = DEFLIST),
-                 NEWTON=_F( MATRICE = 'TANGENTE',
-                            REAC_ITER = 1,),
-                 ETAT_INIT   = _F( SIGM  = SIGINIT,),
-                 CONVERGENCE=_F( RESI_GLOB_RELA = 1.E-6,
-                                 ITER_GLOB_MAXI =  26,),
-                           );
+                     EXCIT=(_F(CHARGE=CHAR_DR,  ),
+                            _F(CHARGE=CHAR_GA,  ),
+                            _F(CHARGE = DEPL_BA, ),
+                            _F(CHARGE = DEPL_GA,),
+                            _F(CHARGE = DEPL_HA,
+                               FONC_MULT = COEF,),),
+                     COMPORTEMENT=_F( RELATION = 'DRUCK_PRAGER'),
+                     INCREMENT=_F( LIST_INST = DEFLIST),
+                     NEWTON=_F( MATRICE = 'TANGENTE',
+                                REAC_ITER = 1,),
+                     ETAT_INIT   = _F( SIGM  = SIGINIT,),
+                     CONVERGENCE=_F( RESI_GLOB_RELA = 1.E-6,
+                                     ITER_GLOB_MAXI =  26,),
+                     )
 except ConvergenceError:
      print """\nProbleme de convergence pour cause de localisation\n"""
 # ON RECUPERE LE DERNIER INSTANT PROPREMENT CALCULE DANS STAT_NON_LINE
 # POUR FAIRE UNE VERIFICATION EN NON-REGRESSION SUR CE NUMERO D'ORDRE
-
      last_iter=U.LIST_VARI_ACCES()['NUME_ORDRE'][-1]
 
 U=CALC_CHAMP(reuse=U,CRITERES=('INDL_ELGA','PDIL_ELGA'),RESULTAT=U,NUME_ORDRE=(19,last_iter))
