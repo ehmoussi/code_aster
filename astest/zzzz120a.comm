@@ -27,7 +27,7 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 from code_aster.Commands.ExecuteCommand import ExecuteMacro
 
-def POST_GOUJ_ops(self,a,**args):
+def POST_GOUJ_ops(self,**args):
   TABLE = args["TABLE"]
   ier=0
   self.set_icmd(1)
@@ -78,14 +78,7 @@ def POST_GOUJ_ops(self,a,**args):
 POST_GOUJ_CATA=MACRO(nom="POST_GOUJ",op=POST_GOUJ_ops,sd_prod=table_sdaster,reentrant='n',fr="",
                      TABLE=SIMP(statut='o',typ=table_sdaster),)
 
-
-class PostGouj(ExecuteMacro):
-    """Internal (non public) command to call the underlying operator."""
-    command_name = "POST_GOUJ"
-    command_cata = POST_GOUJ_CATA
-    command_op = POST_GOUJ_ops
-
-POST_GOUJ = PostGouj.run
+POST_GOUJ = ExecuteCommand.UserMacro("POST_GOUJ", POST_GOUJ_CATA, POST_GOUJ_ops)
 ########################################################################
 
 POURSUITE(CODE='OUI')
