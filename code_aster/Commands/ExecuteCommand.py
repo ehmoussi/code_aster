@@ -131,7 +131,7 @@ class ExecuteCommand(object):
         keywords = mixedcopy(kwargs)
         cmd.keep_caller_infos(keywords)
         timer = ExecutionParameter().timer
-        if cls.command_name not in ("DEBUT", "POURSUITE"):
+        if cls.command_name not in ("DEBUT", "POURSUITE", "FIN"):
             check_jeveux()
         if cmd._op is None:
             logger.debug("ignore command {0}".format(cmd.name))
