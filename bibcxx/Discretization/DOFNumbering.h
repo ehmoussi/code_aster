@@ -322,6 +322,7 @@ class BaseDOFNumberingInstance : public DataStructure
             if( _supportMatrix.size() != 0 )
                 return boost::apply_visitor( ElementaryMatrixGetModel(), _supportMatrix[0] );
         }
+        return ModelPtr( nullptr );
     };
 
     /**
