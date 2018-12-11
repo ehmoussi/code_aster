@@ -958,7 +958,6 @@ class Mac3CoeurLame(Mac3CoeurCalcul):
 
         __RESFIN = CREA_RESU(**self.cr(_pdt_ini_out,depl_tot_ini))
         CREA_RESU(**self.cr(_pdt_fin_out,depl_tot_fin,reuse=__RESFIN))
-        self.res_def=__RESFIN
         self.macro.register_result(__RESFIN, self.res_def)
 
 
