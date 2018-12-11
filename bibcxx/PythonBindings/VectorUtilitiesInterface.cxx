@@ -39,6 +39,5 @@ void exportVectorUtilitiesToPython() {
     exportVectorUtilities< MaterialPtr >();
     exportVectorUtilities< FiniteElementDescriptorPtr >();
     exportVectorUtilities< BaseFunctionPtr >();
-    exportVectorUtilities< MaterialPtr >();
     exportVectorUtilities< PartOfMaterialOnMeshPtr >();
 };

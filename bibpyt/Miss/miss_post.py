@@ -471,6 +471,7 @@ class PostMissHarm(PostMissTran):
         super(PostMissHarm, self).__init__(parent, param)
         self.methode_fft = 'COMPLET'
         self._suppr_matr = False
+        self.sd = None
 
     def argument(self):
         """Vérification des arguments d'entrée."""
@@ -497,11 +498,13 @@ class PostMissHarm(PostMissTran):
     def sortie(self):
         """Prépare et produit les concepts de sortie."""
         self.initco()
-        return self.parent.sd
+        return self.sd
 
     def dyna_vibra_harm(self, **kwargs):
         """Execution de DYNA_VIBRA. Produit le concept définitif."""
         trangene = DYNA_VIBRA(**kwargs)
+        help(self.parent)
+        self.sd = trangene
         return trangene
 
 

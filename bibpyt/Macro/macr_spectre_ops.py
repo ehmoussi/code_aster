@@ -130,7 +130,7 @@ def macr_spectre_ops(
                     # Etape 1: Récupération des fonctions
                     motscles = {}
                     if resu['RESU_GENE'] != None:
-                        if CALCUL == 'ABSOLU':
+                        if CALCUL == 'ABSOLU' and args.get('MULT_APPUI') is not None:
                             motscles['MULT_APPUI'] = args['MULT_APPUI']
                         #
                         motscles['RESU_GENE'] = resu['RESU_GENE']
