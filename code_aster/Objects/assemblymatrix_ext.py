@@ -34,6 +34,23 @@ class ExtendedAssemblyMatrixDisplacementDouble(injector(AssemblyMatrixDisplaceme
                                    AssemblyMatrixDisplacementDouble):
     cata_sdj = "SD.sd_matr_asse.sd_matr_asse"
 
+    def __getstate__(self):
+        """Return internal state.
+
+        Returns:
+            dict: Internal state.
+        """
+        return (self.getDOFNumbering(), )
+
+    def __setstate__(self, state):
+        """Restore internal state.
+
+        Arguments:
+            state (dict): Internal state.
+        """
+        if state[0] is not None:
+            self.setDOFNumbering(state[0])
+
     def getType(self):
         """Returns the type of the matrix object.
 
