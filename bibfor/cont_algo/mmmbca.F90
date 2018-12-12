@@ -126,6 +126,7 @@ implicit none
     real(kind=8)  :: vale_pene = 0.0, glis_maxi = 0., resi_cont=-1.0
     real(kind=8)  :: sum_cont_press=-1.0,resi_press_curr=1.D6
     real(kind=8)  :: coor_escl_curr(3) = 0.0,coor_proj_curr(3) = 0.0
+    real(kind=8)  :: wpg_old
     aster_logical :: l_coef_adap
     character(len=8) :: iptxt
     integer :: hist_index,n_cychis,coun_bcle_geom,nb_cont_poin
@@ -289,6 +290,7 @@ implicit none
                 ksipc2 = v_sdcont_tabfin(ztabf*(i_cont_poin-1)+5)
                 ksipc1_old = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+19)
                 ksipc2_old = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+20)
+                wpg_old    = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+74)
 !
 ! ------------- Get coordinates of the projection of contact point 
 !
@@ -305,6 +307,8 @@ implicit none
                 tau2(1) = v_sdcont_tabfin(ztabf*(i_cont_poin-1)+11)
                 tau2(2) = v_sdcont_tabfin(ztabf*(i_cont_poin-1)+12)
                 tau2(3) = v_sdcont_tabfin(ztabf*(i_cont_poin-1)+13)
+                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+74) = &
+                v_sdcont_tabfin(ztabf*(i_cont_poin-1)+15)
 !
 ! ------------- Store current local basis :
 !               needed for previous cycling matrices and vectors computrations
@@ -325,6 +329,8 @@ implicit none
                 v_sdcont_cychis(n_cychis*(i_cont_poin-1)+65)
                 v_sdcont_cychis(n_cychis*(i_cont_poin-1)+66+6) =&
                 v_sdcont_cychis(n_cychis*(i_cont_poin-1)+66)
+                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+75) =&
+                wpg_old
                 
                 v_sdcont_cychis(n_cychis*(i_cont_poin-1)+13) = tau1(1) 
                 v_sdcont_cychis(n_cychis*(i_cont_poin-1)+14) = tau1(2) 
@@ -476,17 +482,11 @@ implicit none
 ! Moyenne des pressions de contact
     sum_cont_press = sum_cont_press/nb_cont_poin
 !   Critere specifique au contact en mode : RESI_CONT ne -1
-    if (resi_cont .gt. r8prem()) then
-        if (max(ds_contact%cont_pressure,abs(sum_cont_press)) .gt. 1.d-15) then 
-            resi_press_curr = abs(ds_contact%cont_pressure-abs(sum_cont_press))/&
-                abs(max(ds_contact%cont_pressure,abs(sum_cont_press)))
-        else
-            resi_press_curr = abs(ds_contact%cont_pressure-abs(sum_cont_press))
-        endif
-        if ((ds_contact%resi_press_glob .lt. resi_cont*ds_contact%cont_pressure) .and. & 
-            .not. l_loop_cont) then 
-                loop_cont_conv = .true.
-        endif
+    if (resi_cont .lt. r8prem()) resi_cont=1.d-10
+    resi_press_curr = abs(ds_contact%cont_pressure-abs(sum_cont_press))
+    if  (resi_press_curr .lt. resi_cont*abs(sum_cont_press) .and. .not. loop_cont_conv  &
+         .and. .not. l_loop_cont ) then
+         loop_cont_conv = .true.
     endif
     ds_contact%resi_press_glob = resi_press_curr
     ds_contact%cont_pressure = abs(sum_cont_press)

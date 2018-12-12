@@ -19,7 +19,8 @@
 !
 subroutine mmGetProjection(iresog   , wpg      ,&
                            xpc      , ypc      , xpr      , ypr      , tau1      , tau2      ,&
-                           xpc_prev_, ypc_prev_, xpr_prev_, ypr_prev_, tau1_prev_, tau2_prev_)
+                           xpc_prev_, ypc_prev_, xpr_prev_, ypr_prev_, tau1_prev_, tau2_prev_,&
+                           wpg_prev_)
 !
 implicit none
 !
@@ -32,6 +33,7 @@ real(kind=8), intent(out) :: xpc, ypc, xpr, ypr
 real(kind=8), intent(out) :: tau1(3), tau2(3)
 real(kind=8), optional, intent(out) :: xpc_prev_, ypc_prev_, xpr_prev_, ypr_prev_
 real(kind=8), optional, intent(out) :: tau1_prev_(3), tau2_prev_(3)
+real(kind=8), optional, intent(out) :: wpg_prev_
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -104,5 +106,6 @@ real(kind=8), optional, intent(out) :: tau1_prev_(3), tau2_prev_(3)
     if (present(ypc_prev_)) ypc_prev_ = ypc_prev
     if (present(xpr_prev_)) xpr_prev_ = xpr_prev
     if (present(ypr_prev_)) ypr_prev_ = ypr_prev
+    if (present(wpg_prev_)) wpg_prev_ = zr(jpcf-1+49)
 !
 end subroutine

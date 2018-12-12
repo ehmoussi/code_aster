@@ -225,6 +225,8 @@ real(kind=8), intent(in) :: time_incr
             else
                 zr(vale_indx-1+48) = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+73)
             endif
+            !wpg old
+            zr(vale_indx-1+49) = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+75)
         enddo
         nt_liel = nt_liel + nb_liel
     enddo
