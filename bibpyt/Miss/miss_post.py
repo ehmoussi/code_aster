@@ -56,6 +56,8 @@ from Utilitai.utils import set_debug, _print, _printDBG
 from Miss.force_iss_vari import force_iss_vari
 
 from Miss.miss_resu_miss import MissCsolReader
+from code_aster.RunManager.LogicalUnit import LogicalUnitFile
+from code_aster import DataStructure
 
 
 # correspondance
@@ -90,7 +92,8 @@ class PostMiss(object):
     def _fichier_aster(self, unite):
         """Nom du fichier d'unité logique unite dans le répertoire d'exécution
         de Code_Aster"""
-        filename = osp.join(self.param['_INIDIR'], self.param.UL.Nom(unite))
+        filename = LogicalUnitFile.filename_from_unit(unite)
+        filename = osp.join(self.param['_INIDIR'], filename)
         return filename
 
     def run(self):
@@ -271,8 +274,10 @@ class PostMiss(object):
 
     def check_datafile_exist(self):
         """Vérifie l'existence des fichiers."""
-        assert osp.exists(self.param.UL.Nom( self.param['UNITE_RESU_IMPE'] ))
-        assert osp.exists(self.param.UL.Nom( self.param['UNITE_RESU_FORC'] ))
+        filename1 = LogicalUnitFile.filename_from_unit(self.param['UNITE_RESU_IMPE'])
+        filename2 = LogicalUnitFile.filename_from_unit(self.param['UNITE_RESU_FORC'])
+        assert osp.exists(filename1)
+        assert osp.exists(filename2)
 
     def init_table(self):
         """Initialise la table"""
@@ -290,7 +295,10 @@ class PostMiss(object):
         Arguments optionnels supportés : fonc_x, fonc_y, fonc_z."""
         primkey = (gno, cham, para)
         index = self._tline.get(primkey, -1)
-        values = dict([(k, v) for k, v in kwargs.items() \
+        for val in kwargs.values():
+            if isinstance(val, DataStructure):
+                self.tab.referenceToDataStructure.append(val)
+        values = dict([(k, v.getName()) for k, v in kwargs.items() \
                           if k in self._torder and v is not None])
         if index > 0:
             row = self.tab.rows[index]
@@ -542,6 +550,8 @@ class PostMissTabl(PostMiss):
         # type de la table de sortie
         tabout = CREA_TABLE(TYPE_TABLE='TABLE',
                             **dprod)
+        for val in self.tab.referenceToDataStructure:
+            tabout.addReference(val)
         self.initco()
         return tabout
 
@@ -610,13 +620,13 @@ class PostMissTabl(PostMiss):
         """Recombinaison des réponses unitaires."""
         # stockage des accéléro et leur fft
         self.add_line('', 'ACCE', 'INST',
-                      FONC_X=getattr(self.acce_x, 'nom', None),
-                      FONC_Y=getattr(self.acce_y, 'nom', None),
-                      FONC_Z=getattr(self.acce_z, 'nom', None))
+                      FONC_X=self.acce_x,
+                      FONC_Y=self.acce_y,
+                      FONC_Z=self.acce_z)
         self.add_line('', 'ACCE', 'FREQ',
-                      FONC_X=getattr(self.xff, 'nom', None),
-                      FONC_Y=getattr(self.yff, 'nom', None),
-                      FONC_Z=getattr(self.zff, 'nom', None))
+                      FONC_X=self.xff,
+                      FONC_Y=self.yff,
+                      FONC_Z=self.zff,)
 
         # conversion faite une fois
         if self.acce_x:
@@ -685,9 +695,9 @@ class PostMissTabl(PostMiss):
                                            AMOR_REDUIT=self.param['AMOR_SPEC_OSCI'],
                                            **opts),)
         DETRUIRE(CONCEPT=_F(NOM=tuple(to_del),),)
-        self.add_line(gno, cham, 'INST', **{ FKEY[dir] : _reptemp.nom })
-        self.add_line(gno, cham, 'FREQ', **{ FKEY[dir] : _repfreq.nom })
-        self.add_line(gno, cham, 'SPEC_OSCI', **{ FKEY[dir] : _spec.nom })
+        self.add_line(gno, cham, 'INST', **{ FKEY[dir] : _reptemp })
+        self.add_line(gno, cham, 'FREQ', **{ FKEY[dir] : _repfreq })
+        self.add_line(gno, cham, 'SPEC_OSCI', **{ FKEY[dir] : _spec })
 
 class PostMissFichier(PostMiss):
     """Pas de post-traitement, car on ne sort que les fichiers."""
@@ -734,9 +744,9 @@ class PostMissControl(PostMiss):
                     fct.append(self._fonct_transfert('FREQ', lfreq, *valpc))
                 if cham == 'ACCE':
                     self.add_line(nompc, 'TRANSFERT', 'FREQ',
-                                  FONC_X=fct[0].nom,
-                                  FONC_Y=fct[1].nom,
-                                  FONC_Z=fct[2].nom)
+                                  FONC_X=fct[0],
+                                  FONC_Y=fct[1],
+                                  FONC_Z=fct[2])
                 if self.acce_x:
                     self.gen_funct(nompc, cham, 'FONC_X', fct[0], self.tf_xff)
                 if self.acce_y:
@@ -762,13 +772,13 @@ class PostMissControl(PostMiss):
         # ici il n'y a pas de recombinaison - par similitude avec TABLE
         # stockage des accéléro et leur fft
         self.add_line('', 'ACCE', 'INST',
-                      FONC_X=getattr(self.acce_x, 'nom', None),
-                      FONC_Y=getattr(self.acce_y, 'nom', None),
-                      FONC_Z=getattr(self.acce_z, 'nom', None))
+                      FONC_X=self.acce_x,
+                      FONC_Y=self.acce_y,
+                      FONC_Z=self.acce_z)
         self.add_line('', 'ACCE', 'FREQ',
-                      FONC_X=getattr(self.xff, 'nom', None),
-                      FONC_Y=getattr(self.yff, 'nom', None),
-                      FONC_Z=getattr(self.zff, 'nom', None))
+                      FONC_X=self.xff,
+                      FONC_Y=self.yff,
+                      FONC_Z=self.zff)
         # conversion faite une fois
         if self.acce_x:
             self.tf_xff = self.xff.convert('complex')
@@ -817,9 +827,9 @@ class PostMissControl(PostMiss):
                                            NORME=self.param['NORME'],
                                            AMOR_REDUIT=self.param['AMOR_SPEC_OSCI'],
                                            **opts),)
-        self.add_line(nompc, cham, 'INST', **{ fonct_i : _reptemp.nom })
-        self.add_line(nompc, cham, 'FREQ', **{ fonct_i : _repfreq.nom })
-        self.add_line(nompc, cham, 'SPEC_OSCI', **{ fonct_i : _spec.nom })
+        self.add_line(nompc, cham, 'INST', **{ fonct_i : _reptemp })
+        self.add_line(nompc, cham, 'FREQ', **{ fonct_i : _repfreq })
+        self.add_line(nompc, cham, 'SPEC_OSCI', **{ fonct_i : _spec })
 
 class PostMissFichierTemps(PostMissFichier):
     """Pas de post-traitement, car on ne sort que les fichiers."""
