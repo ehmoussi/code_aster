@@ -32,4 +32,6 @@ MODEL=AFFE_MODELE(MAILLAGE=MAIL,
                           PHENOMENE='MECANIQUE',
                           MODELISATION='AXIS'));
 
+from ssna117b_mater import *
+
 FIN()

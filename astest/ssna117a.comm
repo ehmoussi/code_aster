@@ -29,4 +29,6 @@ MODEL=AFFE_MODELE(
    AFFE=_F(TOUT='OUI', PHENOMENE='MECANIQUE', MODELISATION='AXIS',),
 )
 
+from ssna117a_mater import *
+
 FIN();
