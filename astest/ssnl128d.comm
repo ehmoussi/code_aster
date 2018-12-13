@@ -21,6 +21,8 @@
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTRANET'),DEBUG=_F(SDVERI='OUI'))
 
+from ssnl128d_mater import *
+
 # Lecture du maillage
 MA = LIRE_MAILLAGE(FORMAT="ASTER",)
 

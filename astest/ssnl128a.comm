@@ -24,6 +24,7 @@ DEBUT(CODE=_F(NIV_PUB_WEB='INTRANET'),DEBUG=_F(SDVERI='OUI'),)
 # Lecture du maillage
 MA = LIRE_MAILLAGE(FORMAT="ASTER",)
 
+from ssnl128a_mater import *
 
 MA=DEFI_GROUP( reuse=MA,   MAILLAGE=MA,
   CREA_GROUP_MA=_F(  NOM = 'TOUT', TOUT = 'OUI',),)
