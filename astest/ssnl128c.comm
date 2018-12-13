@@ -25,6 +25,7 @@ EP = 0.001;
 
 REXT = 0.1;
 
+from ssnl128c_mater import *
 
 M1=LIRE_MAILLAGE(FORMAT="ASTER",);
 

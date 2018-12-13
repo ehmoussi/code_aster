@@ -21,6 +21,8 @@
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTRANET'), DEBUG=_F(SDVERI='OUI'))
 
+from ssnl128b_mater import *
+
 MA=LIRE_MAILLAGE(FORMAT='MED',);
 
 MA=DEFI_GROUP(reuse =MA,
