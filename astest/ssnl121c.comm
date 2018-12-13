@@ -22,6 +22,8 @@
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTRANET'), DEBUG=_F(SDVERI='OUI'))
 
+from ssnl121c_mater import *
+
 EP=0.001
 
 REXT=0.1
