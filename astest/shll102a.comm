@@ -22,7 +22,7 @@
 #             M. LALANNE, G. FERRARIS - WILEY, pp 68-75
 import numpy as NP
 import numpy.linalg as LA
-from math import pi
+from math import *
 
 from code_aster.Commands import *
 
