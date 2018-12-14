@@ -32,7 +32,7 @@ POURSUITE(CODE='OUI',
 l_para = resu.LIST_VARI_ACCES()
 ref = 1
 val = len(l_para['NUME_ORDRE'])
-aster.affiche("MESSAGE", """
+print("""
    Nombre de pas de temps attendu : %d
    Nombre de pas de temps calculé : %d
 """ % (ref, val))
@@ -57,7 +57,7 @@ resu=STAT_NON_LINE(reuse=resu,
 l_para = resu.LIST_VARI_ACCES()
 ref += 1
 val = len(l_para['NUME_ORDRE'])
-aster.affiche("MESSAGE", """
+print("""
    Nombre de pas de temps attendu : %d
    Nombre de pas de temps calculé : %d
 """ % (ref, val))

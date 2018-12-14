@@ -93,6 +93,7 @@ class Serializer(object):
         for fname in (cls._base, cls._pick_filename, cls._info_filename,
                       cls._sha_filename):
             if not osp.exists(fname):
+                logger.error("Can not restart, no such file: {0}".format(fname))
                 return False
 
         sign = read_signature(cls._sha_filename)
@@ -260,7 +261,7 @@ def saveObjects(level=1, delete=True):
         delete (bool): If *True* the saved objects are deleted from the context.
     """
     caller = inspect.currentframe()
-    for i in range(level):
+    for _ in range(level):
         caller = caller.f_back
     try:
         context = caller.f_globals
@@ -274,7 +275,7 @@ def saveObjects(level=1, delete=True):
     pickler = Serializer(context)
     saved = pickler.save()
     # close Jeveux files (should not be done before pickling)
-    libaster.finalize()
+    libaster.jeveux_finalize(True)
     pickler.sign()
 
     if delete:
@@ -302,6 +303,22 @@ def loadObjects(level=1):
     Serializer(context).load()
 
 
+def contains_datastructure(sequence):
+    """Tell if a sequence contains a DataStructure.
+
+    Arguments:
+        sequence (*iterable*): List-like object.
+
+    Returns:
+        bool: *True* if *sequence* contains a *DataStructure*,
+        *False* otherwise.
+    """
+    for item in sequence:
+        if isinstance(item, DataStructure):
+            return True
+    return False
+
+
 class AsterPickler(pickle.Pickler):
 
     """Adapt pickling of DataStructure objects.
@@ -326,24 +343,15 @@ class AsterPickler(pickle.Pickler):
         Arguments:
             obj (*misc*): Object to save.
         """
+
         if main and isinstance(obj, (list, tuple)):
-            hasDs = False
-            for item in obj:
-                if isinstance(item, DataStructure):
-                    hasDs = True
-                    break
-            if obj and hasDs:
+            if obj and contains_datastructure(obj):
                 self.dump(LIST)
                 self.dump(len(obj))
                 for item in obj:
                     self.save_one(item)
         elif main and isinstance(obj, dict):
-            hasDs = False
-            for item in obj.values():
-                if isinstance(item, DataStructure):
-                    hasDs = True
-                    break
-            if obj and hasDs:
+            if obj and contains_datastructure(obj.values()):
                 self.dump(DICT)
                 self.dump(len(obj))
                 for item in obj.values():
@@ -529,9 +537,9 @@ class AsterUnpickler(pickle.Unpickler):
             # expecting the STATE mark
             assert self.load_one() == STATE
             try:
-                nbObj = self.load_one()
+                nbobj = self.load_one()
                 new_state = []
-                for num in range(nbObj):
+                for _ in range(nbobj):
                     new_state.append(self.load_one())
                 buffer.state = new_state
             except:

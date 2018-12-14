@@ -22,6 +22,11 @@ class FakeDS(object):
         """Return the object name."""
         return self._name
 
+    @property
+    def userName(self):
+        return self._name
+
+
 obj1 = FakeDS("object1")
 obj2 = FakeDS("object2")
 

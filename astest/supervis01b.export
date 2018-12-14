@@ -5,4 +5,4 @@ P mpi_nbcpu 1
 P mpi_nbnoeud 1
 P testlist verification sequential asterxx
 
-F comm xxCalcTable.py D 1
+F comm supervis01b.py D 1

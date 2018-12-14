@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-from code_aster import ConvergenceError
+from code_aster import ConvergenceError, NonLinearEvolutionContainer
 from code_aster.Commands import *
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'), DEBUG=_F(SDVERI='OUI'),
@@ -161,8 +161,11 @@ LINST2 = DEFI_LIST_INST(
 import aster
 
 ok_poursuite = 0
+U1MAZAR = NonLinearEvolutionContainer()
 try:
     U1MAZAR=STAT_NON_LINE(
+        reuse=U1MAZAR,
+        RESULTAT=U1MAZAR,
         MODELE=MOPOU,
         CHAM_MATER=MATMAZAR,
         CARA_ELEM=POUCA,

@@ -33,8 +33,6 @@ subroutine jefini(cond,arg_rank)
 #include "asterfort/utgtme.h"
 #include "asterfort/utmess.h"
 
-#include "asterc/rmfile.h"
-
     character(len=*) :: cond
     integer, intent(in), optional :: arg_rank
 ! ======================================================================

@@ -37,6 +37,10 @@ void exportFortranToPython() {
 Initialize the memory manager (Jeveux).
         )" );
 
+    def( "jeveux_finalize", &jeveux_finalize, R"(
+Finalize the memory manager (Jeveux).
+        )" );
+
     def( "call_oper", &call_oper, R"(
 Call a Fortran operator ('op' subroutine).
 
