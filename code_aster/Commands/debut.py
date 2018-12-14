@@ -40,7 +40,6 @@ from Comportement import catalc
 
 from ..RunManager import LogicalUnitFile, Serializer, loadObjects
 from ..Supervis import CommandSyntax, ExecutionParameter, Options, logger
-from ..Supervis.logger import setlevel
 
 from .ExecuteCommand import ExecuteCommand
 
@@ -96,7 +95,7 @@ class Starter(ExecuteCommand):
 
     @classmethod
     def run_with_argv(cls, **keywords):
-        """Run the macro-command with the arguments from the command line.
+        """Run the command with the arguments from the command line.
 
         Arguments:
             keywords (dict): User keywords
@@ -112,6 +111,9 @@ class Starter(ExecuteCommand):
             keywords (dict): User's keywords.
         """
         from Utilitai.Utmess import MessageLog
+
+        if keywords.get('IMPR_MACRO') == 'OUI':
+            ExecutionParameter().enable(Options.ShowChildCmd)
 
         if keywords.get('LANG'):
             from ..Utilities.i18n import localization
@@ -146,14 +148,13 @@ class Restarter(Starter):
             syntax (*CommandSyntax*): Syntax description with user keywords.
         """
         if not Serializer.canRestart():
-            ExecutionStarter.params.disable(Options.Continue)
-            super(Restarter, self)._call_oper(syntax)
-        else:
-            logger.info("restarting from a previous execution...")
-            libaster.call_poursuite(syntax)
-            # 1:_call_oper, 2-3:exec_, 4:Restarter.run, 5:ExecuteCmd.run, 6:user
-            # 1:_call_oper, 2-3:exec_, 4:run_with_argv, 5:init, 6:user
-            loadObjects(level=6)
+            logger.error("restart aborted!")
+
+        logger.info("restarting from a previous execution...")
+        libaster.call_poursuite(syntax)
+        # 1:_call_oper, 2-3:exec_, 4:Restarter.run, 5:ExecuteCmd.run, 6:user
+        # 1:_call_oper, 2-3:exec_, 4:run_with_argv, 5:init, 6:user
+        loadObjects(level=6)
 
 
 DEBUT = Starter.run

@@ -27,16 +27,16 @@
 
 #ifdef __cplusplus
 
+#include <map>
 #include <stdexcept>
 #include <string>
-#include <map>
 
-#include "astercxx.h"
 #include "aster_fort.h"
+#include "astercxx.h"
 
-#include "MemoryManager/JeveuxVector.h"
-#include "MemoryManager/JeveuxAllowedTypes.h"
 #include "DataStructures/DataStructureNaming.h"
+#include "MemoryManager/JeveuxAllowedTypes.h"
+#include "MemoryManager/JeveuxVector.h"
 
 /**
  * @class DataStructure
@@ -53,6 +53,8 @@ class DataStructure {
     /** @brief Nom de la sd */
     /** @todo remettre le const */
     std::string _name;
+    /** @brief User variable name */
+    std::string _user_name;
     /** @brief Type of memory allocation */
     JeveuxMemory _memoryType;
     /** @brief Object that stores the DataStructure type for jeveux requests */
@@ -88,10 +90,7 @@ class DataStructure {
      * @brief Function to add a reference to another datastructure
      * @param ds datastructure to reference
      */
-    void addReference( const DataStructurePtr &ds )
-    {
-        _referenceVector.push_back( ds );
-    };
+    void addReference( const DataStructurePtr &ds ) { _referenceVector.push_back( ds ); };
 
     /**
      * @brief Function membre debugPrint
@@ -115,6 +114,14 @@ class DataStructure {
      * @return une chaine contenant le nom de la sd
      */
     const std::string &getName() const { return _name; };
+
+    /**
+     * @brief Property userName
+     * @return the user variable name
+     */
+    const std::string &getUserName() const { return _user_name; };
+
+    void setUserName( const std::string );
 
     /**
      * @brief Function membre getType

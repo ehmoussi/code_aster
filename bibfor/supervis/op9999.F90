@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine op9999()
+subroutine op9999(isave)
     use parameters_module
     implicit none
 !     ------------------------------------------------------------------
@@ -28,8 +28,10 @@ subroutine op9999()
 #include "jeveux.h"
 #include "asterc/gettyp.h"
 #include "asterc/jdcset.h"
+#include "asterc/rmfile.h"
 #include "asterfort/assert.h"
 #include "asterfort/fin999.h"
+#include "asterfort/get_jvbasename.h"
 #include "asterfort/iunifi.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jedetc.h"
@@ -49,33 +51,35 @@ subroutine op9999()
 #include "asterfort/utmess.h"
 #include "asterfort/wkvect.h"
 #include "asterfort/asmpi_info.h"
+
+!   isave = 1 : The objects must be saved properly.
+!   isave = 0 : The objects can be wiped out.
+    integer, intent(in) :: isave
+
     mpi_int :: mrank, msize
-    integer :: info, nbenre, nboct, iret, nbrank
-    integer :: ifm, iunerr, iunres, iunmes
+    integer :: info, nbenre, nboct, iret, rank
+    integer :: ifm, iunres, iunmes
     integer :: i, jco, nbco
-    integer :: nbext, nfhdf, nproc
-    aster_logical :: bool
+    integer :: nbext, nfhdf
+    aster_logical :: bool, close_base
     character(len=8) :: k8b, ouinon, infr, proc
-    character(len=16) :: fchier, fhdf, typres
+    character(len=16) :: fhdf, typres
     character(len=80) :: fich
+    character(len=256) :: fbase
 !-----------------------------------------------------------------------
 !
     call jemarq()
-    info = 0
+    info = 1
 
     call asmpi_info(rank=mrank, size=msize)
-    nbrank = to_aster_int(mrank)
+    rank = to_aster_int(mrank)
 !
 !   --- PROC0 = 'OUI' pour effectuer les ecritures uniquement sur le processeur de rang 0 ---
-!       si PROC0 = 'NON' on force nbrank=0
+!       si PROC0 = 'NON' on force rank=0
     proc = 'OUI'
-    if ( proc .eq. 'NON' ) then
-      nbrank = 0
-    endif
+    close_base = isave .eq. 1 .and. (proc.eq.'NON' .or. rank.eq.0)
+
     iret = 0
-    bool = iret == ST_ER .or. iret == ST_OK .or. iret == ST_ER_PR0 .or. &
-           iret == ST_ER_OTH .or. iret == ST_UN_OTH .or. iret == ST_EXCEPT
-    ASSERT(bool)
     call ststat(iret)
 
 ! --- MENAGE DANS LES BIBLIOTHEQUES, ALARMES, ERREURS, MPI
@@ -86,12 +90,7 @@ subroutine op9999()
 !
     infr = 'NON'
     if (infr.eq.'OUI') then
-        ifm = 0
-        fchier = ' '
-        ifm = 6
-        if (.not. ulexis( ifm )) then
-            call ulopen(ifm, ' ', fchier, 'NEW', 'O')
-        endif
+        ifm = iunifi('MESSAGE')
 !
         typres = 'RESULTAT_SDASTER'
         nbco = 0
@@ -111,7 +110,7 @@ subroutine op9999()
 !
 ! --- SUPPRESSION DES CONCEPTS TEMPORAIRES DES MACRO
 !
-    if ( nbrank .eq. 0 ) then
+    if ( close_base ) then
       call jedetc('G', '.', 1)
 !
 ! --- IMPRESSION DE LA TAILLE DES CONCEPTS DE LA BASE GLOBALE
@@ -147,7 +146,7 @@ subroutine op9999()
 !
 ! --- APPEL JXVERI POUR VERIFIER LA BONNE FIN D'EXECUTION
 !
-    if ( nbrank .eq. 0 ) then
+    if ( close_base ) then
       call jxveri()
 !
 ! --- CLOTURE DES FICHIERS
@@ -167,17 +166,31 @@ subroutine op9999()
 !
 ! --- IMPRESSION DES STATISTIQUES ( AVANT CLOTURE DE JEVEUX )
 !
-      !call utmess('I', 'SUPERVIS2_97')
-      if (iunres .gt. 0) write(iunres, *) '<I> <FIN> ARRET NORMAL DANS "FIN" PAR APPEL A "JEFINI".'
+      call utmess('I', 'SUPERVIS2_97')
     endif
+    if (iunres .gt. 0) write(iunres, *) '<I> <FIN> ARRET NORMAL DANS "FIN" PAR APPEL A "JEFINI".'
     call jedema()
 !
 ! --- CLOTURE DE JEVEUX
 !
-    call jefini('NORMAL' , arg_rank=nbrank)
-!
-!-----------------------------------------------------------------------
-!
+    if ( close_base ) then
+        rank = 1
+    endif
+    call jefini('NORMAL' , arg_rank=rank)
+
+    if ( isave .eq. 0 ) then
+        do i=1,99
+            call get_jvbasename('glob', i, fbase)
+            inquire (file=fbase, exist=bool)
+            if (.not. bool) then
+                stop
+            endif
+            call rmfile(fbase, 0)
+            call get_jvbasename('vola', i, fbase)
+            call rmfile(fbase, 0)
+        end do
+    endif
+
     100 format(/,1x,'======>')
 !
 end subroutine

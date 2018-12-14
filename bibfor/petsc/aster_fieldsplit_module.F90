@@ -192,8 +192,8 @@ contains
 ! We clear the options database and only maitain the options from the command file
         call PetscOptionsClear(PETSC_NULL_OPTIONS, ierr)
         ASSERT(ierr == 0)
-        call PetscOptionsInsertString(PETSC_NULL_OPTIONS, '-skip_petscrc', ierr)
-        ASSERT(ierr == 0)
+        call PetscLogDefaultBegin(ierr)
+        ASSERT(ierr.eq.0)
         call PetscOptionsInsertString(PETSC_NULL_OPTIONS, myopt, ierr)
         ASSERT(ierr == 0)
 !

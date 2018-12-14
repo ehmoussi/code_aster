@@ -34,7 +34,6 @@ object.
 """
 
 import json
-import logging
 import os
 import os.path as osp
 import platform
@@ -43,13 +42,12 @@ import sys
 import warnings
 
 import aster_pkginfo
+import libaster
 from Utilitai.as_timer import ASTER_TIMER
 
-from ..Utilities import Singleton, convert
-from .logger import logger, setlevel
+from ..Utilities import Singleton, convert, no_new_attributes
+from .logger import DEBUG, INFO, logger
 from .options import Options
-
-import libaster
 
 RCDIR = osp.abspath(osp.join(osp.dirname(__file__), os.pardir, os.pardir,
                     os.pardir, os.pardir, 'share', 'aster'))
@@ -75,6 +73,8 @@ class ExecutionParameter(object):
     _timer = _command_counter = None
     _catalc = _unit = _syntax = None
 
+    __setattr__ = no_new_attributes(object.__setattr__)
+
     def __init__(self):
         """Initialization of attributes"""
         self._args = {}
@@ -82,7 +82,6 @@ class ExecutionParameter(object):
         self._args['dbgjeveux'] = 0
         self._args['jxveri'] = 0
         self._args['sdveri'] = 0
-        self._args['impr_macro'] = 0
         self._args['icode'] = 0
         self._args['jeveux_sysaddr'] = 0
 
@@ -185,7 +184,7 @@ class ExecutionParameter(object):
 
         # for options that required an action
         if option == Options.Debug:
-            setlevel()
+            logger.setLevel(DEBUG)
         elif option == Options.ShowDeprecated:
             # disabled by default in python2.7
             warnings.simplefilter('default')
@@ -200,7 +199,7 @@ class ExecutionParameter(object):
 
         # for options that required an action
         if option == Options.Debug:
-            setlevel(level=logging.INFO)
+            logger.setLevel(INFO)
         elif option == Options.ShowDeprecated:
             warnings.resetwarnings()
 
@@ -247,9 +246,9 @@ class ExecutionParameter(object):
         parser.add_argument('--sdveri',
             action='store_const', const=1, default=0,
             help="")
-        parser.add_argument('--impr_macro',
+        parser.add_argument('--impr_macro', dest='ShowChildCmd',
             action='store_const', const=1, default=0,
-            help="")
+            help="show syntax of commands called by macro-commands")
         parser.add_argument('--icode',
             action='store_const', const=1, default=0,
             help="turn on running mode for testcase")

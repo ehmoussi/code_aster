@@ -39,6 +39,15 @@ class KinematicsLoadDefinition(ExecuteCommand):
             self._result = KinematicsThermalLoad()
         elif keywords.get( "ACOU_IMPO" ) is not None:
             self._result = KinematicsAcousticLoad()
+        elif keywords.get( "EVOL_IMPO" ) is not None:
+            if (keywords.get( "EVOL_IMPO" ).getType() in ('EVOL_ELAS', 'EVOL_NOLI') ):
+                self._result = KinematicsMechanicalLoad()
+            elif keywords.get( "EVOL_IMPO" ).getType() == 'EVOL_THER':
+                self._result = KinematicsThermalLoad()
+            elif keywords.get( "EVOL_IMPO" ).getType() == 'EVOL_ACOU':
+                self._result = KinematicsAcousticLoad()
+            else:
+                raise NotImplementedError("Must be implemented")
         else:
             raise NotImplementedError("Must be implemented")
         self._result.setSupportModel(keywords["MODELE"])

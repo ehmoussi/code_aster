@@ -1,0 +1,296 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+# AUTEUR : L. DALL OLIO (AlterEgo), L. PAONE (Kobe Innovation Engineering)
+#          VALIDATION DE COMBINAISON_FERRAILLAGE et CALC_FERRAILLAGE
+#
+#  DETAILS : MODELISATION DKT
+#            Mailles TRIA3
+#
+# Based on the results of ssls126c
+#     Slab under uniform pressure
+#      Computation with macr_elas_mult
+#      Applied pressure for macr_elas_mult-CAS_2 is double than for CAS_1
+#      macr_elas_mult-CAS_2 must be the governing combination for density DNSXS
+
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),
+      DEBUG=_F(SDVERI='OUI',),
+      IGNORE_ALARM=('SUPERVIS_9','CALCULEL6_77'))
+
+print_results = True
+
+# Cases MULTI_ELAS
+lst_nomcas = ('cas_1','cas_2',)
+lst_numeordre = (1,2)
+
+# Values for Validation
+# lst_resudepl = (0.000267385577441, 0.000267385577441*2)
+lst_resudepl = (0.000265563007834, 0.000265563007834*2)
+lst_refedepl = (0.0002658, 0.0002658*2)
+
+# lst_resuefge = (4032.58126727, 2*4032.58126727)
+lst_resuefge = (4050.30942908, 2*4050.30942908)
+lst_refeefge = (4050.0, 2*4050.0)
+
+lst_resudege = (0.000784426794909, 2*0.000784426794909)
+lst_refedege = (0.0007878, 2*0.0007878)
+
+# lst_resudnsxs= (9.20753009222E-05, 0.000185984915564)
+lst_resudnsxs= (9.20753009222E-05, 0.000189045803149)
+
+#~ Units
+Pa=1.
+sec=1.
+m=1.
+N=1.
+
+MPa = 1.E6
+GPa = 1.E9
+mm  = 1.E-3
+
+# Slab thickness
+EP = 0.12
+
+# Concrete properties
+EB  = 35700000000.0; # Young Modulus
+NUB = 0.0; # Poisson ration equal to 0.0
+fck = 35*MPa
+
+# Steel rebars properties
+E   = 2.1e+11; # Young Modulus
+NU  = 0.0; # Poisson ration equal to 0.0
+fyk = 450*MPa
+
+# Mesh, finite element type, elastic material properties
+# ---------------------------------------------------------
+MAIL=LIRE_MAILLAGE(FORMAT='MED',)
+
+MAIL=DEFI_GROUP(reuse =MAIL,
+                MAILLAGE=MAIL,
+                CREA_GROUP_NO=(_F(GROUP_MA='LCONTY',),
+                               _F(GROUP_MA='LCONTX',),
+                               _F(GROUP_MA='LSYMY',),
+                               _F(GROUP_MA='LSYMX',),),)
+
+MOD=AFFE_MODELE(
+    MAILLAGE=MAIL,
+    AFFE=_F(
+        TOUT='OUI',
+        PHENOMENE='MECANIQUE',
+#       MODELISATION='Q4GG',
+        MODELISATION='DKT',
+    ),
+)
+
+MAIL=MODI_MAILLAGE(reuse =MAIL,
+                   MAILLAGE=MAIL,
+                   ORIE_NORM_COQUE=_F(GROUP_MA='DALLE',
+                                      VECT_NORM=(0.0,0.0,1.0,),
+                                      GROUP_NO='A1',),)
+
+MAT=DEFI_MATERIAU(ELAS=_F(E=EB,
+                          NU=0.0,),)
+
+CHMAT = AFFE_MATERIAU(
+    # MAILLAGE = MAIL,
+    AFFE = _F(
+        TOUT='OUI',
+        MATER=MAT,
+    ),
+    MODELE = MOD,
+)
+
+CARA_ELE = AFFE_CARA_ELEM(
+    MODELE=MOD,
+    COQUE=_F(
+    GROUP_MA='MESH',
+    EPAIS=EP,
+    ANGL_REP=(0.0,0.0,),
+    ),
+)
+
+# Boundary conditions
+# ---------------------------------------------------------
+COND_LIM=AFFE_CHAR_MECA(MODELE=MOD,
+                        DDL_IMPO=(_F(GROUP_NO='LCONTY',
+                                     DZ=0.0,),
+                                  _F(GROUP_NO='LSYMX',
+                                     DY=0.0,
+                                     DRX=0.0,),
+                                  _F(GROUP_NO='LSYMY',
+                                     DX=0.0,
+                                     DRY=0.0,),),)
+
+# Pressure for STAT_NON_LINE and CAS_1 of MACR_ELAS_MULT
+PRES=AFFE_CHAR_MECA(MODELE=MOD,
+                    FORCE_COQUE=_F(GROUP_MA='DALLE',
+                                   PRES=-10000.0,),)
+
+# Double pressure for CAS_2 of MACR_ELAS_MULT
+PRESD=AFFE_CHAR_MECA(MODELE=MOD,
+                    FORCE_COQUE=_F(GROUP_MA='DALLE',
+                                   PRES=-20000.0,),)
+
+# Computation of multiple results
+RESUMULT = MACRO_ELAS_MULT (
+                        #~ reuse = RESU,
+                        MODELE = MOD,
+                        CHAM_MATER = CHMAT,
+                        CARA_ELEM = CARA_ELE,
+                        CHAR_MECA_GLOBAL = COND_LIM,
+                        CAS_CHARGE=(
+                            _F(NOM_CAS = lst_nomcas[0],
+                                CHAR_MECA = PRES,
+                                OPTION = 'SANS',
+                                SOUS_TITRE = 'depl'+lst_nomcas[0],),
+                            _F(NOM_CAS = lst_nomcas[1],
+                                CHAR_MECA = PRESD,
+                                OPTION = 'SANS',
+                                SOUS_TITRE = 'depl'+lst_nomcas[1],),
+                                    ),
+                        TITRE = 'Valid1',
+                        )
+
+# VALIDATION OF COMBINAISON_FERRAILLAGE (with MACR_ELAS_MULT)
+
+# Computation of the field of internal efforts EFGE_ELNO for CALC_FERRAILLAGE
+RESUMULT=CALC_CHAMP(
+    reuse= RESUMULT,
+    MODELE = MOD,
+    RESULTAT = RESUMULT,
+    CONTRAINTE=('EFGE_ELNO',),
+)
+
+
+# TEST_RESU :
+# Results of case 2 must be double than those of case 1 (from modelisation c)
+TEST_RESU(RESU=(_F(
+                  RESULTAT=RESUMULT,
+                  NOM_CAS = lst_nomcas[1],
+                  NOM_CHAM = 'DEPL',
+                  CRITERE='RELATIF',
+                  NOM_CMP='DZ',
+                  GROUP_NO='A1',
+                  PRECISION=1.E-2,
+                  VALE_CALC=lst_resudepl[1],
+                  VALE_REFE=lst_refedepl[1],
+                  REFERENCE='ANALYTIQUE',),
+              _F(
+                RESULTAT=RESUMULT,
+                NOM_CAS = lst_nomcas[1],
+                NOM_CHAM = 'EFGE_ELNO',
+                CRITERE='RELATIF',
+                NOM_CMP='MXX',
+                MAILLE='M266',
+                GROUP_NO='A1',
+                PRECISION=0.005,
+                REFERENCE='ANALYTIQUE',
+                VALE_CALC=lst_resuefge[1],
+                VALE_REFE=lst_refeefge[1], ),
+                  ),)
+
+
+ferrDatSlu = dict(
+    TOUT = 'OUI',
+    C_INF = 0.04,
+    C_SUP = 0.04,
+    FCK = fck,
+    FYK = fyk,
+    E_S = E,
+    GAMMA_S_FOND = 1.15,
+    GAMMA_C_FOND  = 1.5,
+    GAMMA_S_ACCI = 1.15,
+    GAMMA_C_ACCI  = 1.5,
+    SIGS_ELS = 0.8*fyk,
+    SIGC_ELS = 0.6*fck,
+    ALPHA_E  =  15,
+    CLASSE_ACIER = 'B',
+    ALPHA_CC = 1.0 ,
+    UNITE_CONTRAINTE = 'Pa',
+    TYPE_STRUCTURE = '2D',
+)
+
+RESUMULT = COMBINAISON_FERRAILLAGE (
+    reuse = RESUMULT,
+    RESULTAT = RESUMULT,
+    CODIFICATION = 'EC2',
+    COMBINAISON = (
+        _F (
+            TYPE = 'ELU_FONDAMENTAL',
+            # NOM_CAS = lst_nomcas
+            NUME_ORDRE = lst_numeordre
+         ),
+    ),
+    AFFE = ( _F ( **ferrDatSlu ), ),
+    )
+
+TEST_RESU(RESU=(_F(
+                  RESULTAT=RESUMULT,
+                  NOM_CAS = 'COMB_DIME_ACIER',
+                  NOM_CHAM = 'FERRAILLAGE',
+                  CRITERE='RELATIF',
+                  NOM_CMP='DNSXS',
+                  MAILLE='M124',
+                  POINT=1,
+                  PRECISION=1.E-6,
+                  VALE_CALC=lst_resudnsxs[1],
+                  VALE_REFE=lst_resudnsxs[1],
+                  REFERENCE='ANALYTIQUE',),
+#                _F(
+#                  RESULTAT=RESUMULT,
+#                  NOM_CAS = 'COMB_DIME_ORDRE',
+#                  NOM_CHAM = 'FERRAILLAGE',
+#                  NOM_CHAM = 'UT01_ELEM',
+#                  CRITERE='RELATIF',
+#                  NOM_CMP='DNSXS',
+#                  NOM_CMP='X2',
+#                  MAILLE='M124',
+#                  POINT=1,
+#                  PRECISION=1.E-6,
+#                  VALE_CALC=2.,
+#                  VALE_REFE=2.,
+#                  REFERENCE='ANALYTIQUE',),
+            )
+)
+
+TOTEST = CREA_CHAMP (
+    OPERATION ='EXTR',
+    RESULTAT = RESUMULT,
+    TYPE_CHAM = 'CART_NEUT_R',
+    NOM_CHAM ='UT01_ELEM',
+    NOM_CAS = 'COMB_DIME_ORDRE',
+)
+
+TEST_RESU(
+    CARTE = _F(
+        CHAM_GD = TOTEST,
+        MAILLE='M124',
+        NOM_CMP='X2',
+        REFERENCE='ANALYTIQUE',
+        PRECISION=1.E-6,
+        VALE_CALC=2.,
+        VALE_REFE=2.,
+    )
+)
+
+if print_results :
+    IMPR_RESU(UNITE=80, FORMAT='MED', RESU=_F(RESULTAT=RESUMULT),)
+    IMPR_RESU(UNITE=8, FORMAT='RESULTAT', RESU=_F(RESULTAT=RESUMULT,),)
+
+FIN()
