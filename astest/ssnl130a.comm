@@ -21,6 +21,8 @@
 #
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET', ), DEBUG=_F(SDVERI='OUI'))
 
+from ssnl130a import *
+
 mail=LIRE_MAILLAGE(FORMAT='MED',);
 
 model=AFFE_MODELE(

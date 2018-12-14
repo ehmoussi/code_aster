@@ -21,24 +21,9 @@
 # CAS_TEST__:SSNL130A
 #
 
-def Pression(t,x,y,z):
-   Pressy = 5.0*(y-2.0)**2
-   if ( t <= 1.0 ): return Pressy*t
-   return Pressy
-
-def Deplacer(t,x,y,z):
-   if ( t<= 1.0): return 0.0
-   return (t-1.0)*0.5E-02
-
+from ssnl130a import *
 
 POURSUITE(CODE='OUI',FORMAT_HDF='OUI')
-
-PRESS = FORMULE(VALE='Pression(INST,X,Y,Z)',
-                Pression=Pression,
-                NOM_PARA=['INST', 'X', 'Y', 'Z'],)
-DEPLA = FORMULE(VALE='Deplacer(INST,X,Y,Z)',
-                Deplacer=Deplacer,
-                NOM_PARA=['INST', 'X', 'Y', 'Z'],)
 
 Aresu=STAT_NON_LINE(
    MODELE=model,
