@@ -6,9 +6,9 @@ P mpi_nbcpu 1
 P mpi_nbnoeud 1
 P testlist verification sequential
 
+F comm sdls121a.comm D 1
 F datg sdls121a.datg D 16
-F comm sdls121a.com1 D 1
-F comm sdls121a.com2 D 1
+F nom sdls121a.py D 0
 F libr sdls121a.21 D 21
 F libr sdls121a.22 D 22
 F libr sdls121a.3 D 3

@@ -19,7 +19,12 @@
 
 import numpy as NP
 
-POURSUITE(CODE='OUI',DEBUG=_F(SDVERI='OUI'))
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),
+IGNORE_ALARM=('RECAL0_43'),PAR_LOT='NON',DEBUG=_F(SDVERI='OUI'),IMPR_MACRO='OUI')
+
+
+# On ajoute les commandes correspondant au modeles experimental
+from sdls121a import *
 
 # Nombre de frequences utiles
 NF=8

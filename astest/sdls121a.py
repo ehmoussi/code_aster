@@ -1,29 +1,13 @@
 # coding=utf-8
-# --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
-# This file is part of code_aster.
-#
-# code_aster is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# code_aster is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
-# --------------------------------------------------------------------
+# le modèle "expérimental"
 
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),
-      PAR_LOT='NON',
-      DEBUG=_F(SDVERI='OUI'))
+from code_aster.Commands import *
 
 EP=0.5
 MP=50000.
 
+
+#PRE_GIBI(UNITE_GIBI=23);
 
 PRE_IDEAS(UNITE_IDEAS=21);
 
@@ -36,12 +20,12 @@ MODEXP=AFFE_MODELE(MAILLAGE=MAILEXP2,
                         _F(GROUP_MA = 'MASS',
                           PHENOMENE='MECANIQUE',
                           MODELISATION='DIS_T',),
-
+  
                           ),);
 
 #
 #---------------------------------------------------------------------
-#                     CARACTERISTIQUES ELEMENTAIRES
+#                     CARACTERISTIQUES ELEMENTAIRES 
 #---------------------------------------------------------------------
 
 CAREXP=AFFE_CARA_ELEM(MODELE=MODEXP,
@@ -52,9 +36,9 @@ CAREXP=AFFE_CARA_ELEM(MODELE=MODEXP,
                                      VALE = MP,),
                                   _F(  GROUP_MA = 'MASS',
                                      CARA = 'K_T_D_N',
-                                     VALE = (0.,0.,0.,),)
+                                     VALE = (0.,0.,0.,),)           
                         ));
-
+                         
 
 #
 
@@ -112,4 +96,3 @@ MODMES=LIRE_RESU(TYPE_RESU='MODE_MECA',
                                  NOM_CMP=('DX','DY','DZ','DRX','DRY','DRZ'),),
                  TOUT_ORDRE='OUI',);
 
-FIN()
