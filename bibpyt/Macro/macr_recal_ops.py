@@ -155,14 +155,14 @@ def macr_recal_ops(self, UNITE_ESCL, RESU_EXP=None, LIST_POIDS=None, LIST_PARA=N
             LIST_TMP.append(m['VALE_MAX'])
             LIST_PARA.append(LIST_TMP)
 
-    macr_recal(
+    nomres = macr_recal(
         self, UNITE_ESCL, force_list(RESU_EXP, NP.ndarray), LIST_POIDS, force_list(
             LIST_PARA), force_list(RESU_CALC),
         ITER_MAXI, ITER_FONC_MAXI, RESI_GLOB_RELA, UNITE_RESU, PARA_DIFF_FINI,
         GRAPHIQUE, METHODE, INFO, **args)
 
     onFatalError(prev_onFatalError)
-    return
+    return nomres
 
 
 # ------------------------------------------------------------------------
@@ -523,7 +523,7 @@ def macr_recal(self, UNITE_ESCL, RESU_EXP, POIDS, LIST_PARA, RESU_CALC,
         Mess.affiche_fonctionnelle(fval)
         Mess.affiche_valeurs(val)
         nomres = Sortie(LIST_NOM_PARA, LIST_PARA, val, CALCUL_ASTER, Mess)
-        return
+        return nomres
 
     #-------------------------------------------------------------------------------
     # Algorithme GENETIQUE (pas d'adimensionnement car n'utilise pas de gradient)
@@ -541,7 +541,7 @@ def macr_recal(self, UNITE_ESCL, RESU_EXP, POIDS, LIST_PARA, RESU_CALC,
         val = evolutivo(CALCUL_ASTER, val, nb_iter, err_min,
                         nb_parents, nb_fils, sigma, borne_inf, borne_sup, graine)
         nomres = Sortie(LIST_NOM_PARA, LIST_PARA, val, CALCUL_ASTER, Mess)
-        return
+        return nomres
 
     #-------------------------------------------------------------------------------
     # Pour tous les autres methodes, on adimensionne
@@ -813,4 +813,4 @@ def macr_recal(self, UNITE_ESCL, RESU_EXP, POIDS, LIST_PARA, RESU_CALC,
     # LES VALEURS DES PARAMETRES A CONVERGENCE
     #_____________________________________________
     nomres = Sortie(LIST_NOM_PARA, LIST_PARA, val, CALCUL_ASTER, Mess)
-    return
+    return nomres
