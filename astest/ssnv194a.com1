@@ -436,7 +436,7 @@ TEST_TABLE(
            NOM_PARA='DISTRIBUTION',
            TABLE=VSIXX,
            FILTRE=(_F(NOM_PARA='CHAM_GD',
-                      VALE_K='CSIXX',),
+                      VALE_K='0000002c',),
                    _F(NOM_PARA='INTERVALLE',
                       VALE_I=3,),
                    ),
