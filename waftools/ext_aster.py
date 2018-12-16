@@ -131,6 +131,15 @@ def safe_remove(self, var, value):
         self.env[var].remove(value)
 
 @Configure.conf
+def remove_optflags(self, type_flags):
+    """Remove optimisation flags from the `type_flags`/* variables,
+    remove duplicates"""
+    for var in self.env:
+        if var.startswith(type_flags):
+            self.env[var] = self.remove_duplicates(self.env[var])
+            self.env[var] = [i for i in self.env[var] if not i.startswith("-O")]
+
+@Configure.conf
 def remove_duplicates(self, list_in):
     """Return the list by removing the duplicated elements
     and by keeping the order"""

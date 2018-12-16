@@ -405,7 +405,8 @@ def check_optimization_fcflags(self):
     Check if it must be fixed using the 'VOLATILE' statement.
     """
     self.setenv('debug')
-    flags = ['-g'] + Utils.to_list(self.env['FCFLAGS_ASTER_DEBUG'])
+    self.remove_optflags("FCFLAGS")
+    flags = ['-g', '-O0'] + Utils.to_list(self.env['FCFLAGS_ASTER_DEBUG'])
     self.start_msg('Setting fortran debug flags')
     self.env.append_unique('FCFLAGS', flags)
     self.end_msg(flags)
