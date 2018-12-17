@@ -7,6 +7,4 @@ P testlist verification sequential
 
 F comm ssnv219g.comm D 1
 F mmed ssnv219d.mmed D 20
-F comm ssnv219a.com1 D 1
-F comm ssnv219g.com2 D 1
-
+F nom ssnv219e.py D 0
