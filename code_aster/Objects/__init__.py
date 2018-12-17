@@ -32,6 +32,7 @@ from .datastructure_ext import DataStructure
 # extend DataStructures using metaclasses
 from .acousticsload_ext import AcousticsLoad
 from .assemblymatrix_ext import AssemblyMatrixDisplacementDouble
+from .assemblymatrix_ext import AssemblyMatrixDisplacementComplex
 from .dofnumbering_ext import DOFNumbering
 from .dynamicresults_ext import TransientGeneralizedResultsContainer
 from .elementarycharacteristics_ext import ElementaryCharacteristics
