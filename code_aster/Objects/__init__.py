@@ -34,6 +34,7 @@ from .acousticsload_ext import AcousticsLoad
 from .assemblymatrix_ext import AssemblyMatrixDisplacementDouble
 from .assemblymatrix_ext import AssemblyMatrixDisplacementComplex
 from .dofnumbering_ext import DOFNumbering
+from .dynamicmacroelement_ext import DynamicMacroElement
 from .dynamicresults_ext import TransientGeneralizedResultsContainer
 from .elementarycharacteristics_ext import ElementaryCharacteristics
 from .elementarymatrix_ext import ElementaryMatrixDisplacementDouble
@@ -48,6 +49,7 @@ from .generalizedassemblymatrix_ext import GeneralizedAssemblyMatrixComplex
 from .generalizedassemblymatrix_ext import GeneralizedAssemblyMatrixDouble
 from .generalizedassemblyvector_ext import GeneralizedAssemblyVectorComplex
 from .generalizedassemblyvector_ext import GeneralizedAssemblyVectorDouble
+from .generalizedmodel_ext import GeneralizedModel
 from .listoffloats import ListOfFloats
 from .materialonmesh_ext import MaterialOnMesh
 from .mechanicalload_ext import GenericMechanicalLoad
