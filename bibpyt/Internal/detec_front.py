@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -21,9 +21,11 @@
 
 from code_aster.Cata.Syntax import OPER, SIMP
 from code_aster.Cata.DataStructure import table_sdaster, evol_noli, fiss_xfem
+from code_aster.Commands.ExecuteCommand import ExecuteCommand
+from code_aster import Table
 
 
-DETEC_FRONT = OPER(
+DETEC_FRONT_CATA = OPER(
     nom="DETEC_FRONT", op=139, sd_prod=table_sdaster, reentrant='n',
     fr="Detection de front cohesif avec X-FEM",
 
@@ -32,3 +34,19 @@ DETEC_FRONT = OPER(
     RESULTAT=SIMP(statut='o', typ=evol_noli),
 
 )
+
+class DetecFront(ExecuteCommand):
+    """Command that defines :class:`~code_aster.Objects.Table`.
+    """
+    command_name = "DETEC_FRONT"
+    command_cata = DETEC_FRONT_CATA
+
+    def create_result(self, keywords):
+        """Initialize the result.
+
+        Arguments:
+            keywords (dict): Keywords arguments of user's keywords.
+        """
+        self._result = Table()
+
+DETEC_FRONT = DetecFront.run
