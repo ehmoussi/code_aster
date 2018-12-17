@@ -76,8 +76,12 @@ def dyna_visco_harm(self, EXCIT, list_FREQ, modes,
                                                                       # so one deletes all entries having a different shape
                     no_force.pop(j)
 
-            iret,ibid,nom_mail = aster.dismoi('NOM_MAILLA',__num.nom,'NUME_DDL','F')
-            maillage = self.get_concept(nom_mail)
+            model = __num.getSupportModel()
+            maillage = None
+            if model is not None:
+                maillage = model.getSupportMesh()
+            else:
+                raise NameError("No support mesh")
 
             direction = array( [tuple(array(ddl[i*12:(i+1)*12]).nonzero()[0]) for i in range(0, len(ddl)/12)] )
             # array which contains, for each node having an imposed force, the list of the imposed directions
@@ -102,7 +106,7 @@ def dyna_visco_harm(self, EXCIT, list_FREQ, modes,
                         ddl_phys[i_nf].append('DRZ')
 
 
-            no_mail = maillage.sdj.NOMNOE.get()  # name of the nodes presents in the mesh
+            no_mail = maillage.sdj.NOMNOE.get()  # name of the nodes presents in the maillage
 
             for i in range(1, len(no_force)+1):
                 mc_composante={}
