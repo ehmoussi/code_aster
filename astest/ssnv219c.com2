@@ -17,6 +17,8 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+import math
+
 # ================================================================================================================================================================================
 def NormeAster(RESULTAT, Depl_Ana, P_ana, MAIL, MODELE, GROUP_MA_VOL, GROUP_MA_SUR):
      """ RESULTAT  : SD Resultat contenant la solution calculee
@@ -380,25 +382,6 @@ for Raff in range(0,Nb_Raffinement):
                         MAILLAGE_NP1 =MA[Raff+1],
                         )
 
-         # DESTRUCTION DES CONCEPTS INUTILISES DANS LES PROCHAINES ETAPES DE LA BOUCLE
-         DETRUIRE(CONCEPT=(_F(NOM=modl,),
-                           _F(NOM=chmat),
-                           _F(NOM=BlocEscl),
-                           _F(NOM=Neumann),
-                           _F(NOM=Dirich),
-                           _F(NOM=Contact),
-                           _F(NOM=ForceInt),
-                           _F(NOM=EVOLNOLI),
-                           _F(NOM=Uana),
-                           _F(NOM=Ucalc),
-                           _F(NOM=UcalcG),
-                           _F(NOM=DIFFUN),
-                           _F(NOM=Pana),
-                           _F(NOM=Pcalc),
-                           ),
-                   INFO=1,
-                  );
-
 
 
 #================================================================================================
@@ -476,7 +459,7 @@ IMPR_RESU(FORMAT='MED',
 TEST_RESU(CHAM_NO=_F(REFERENCE='ANALYTIQUE',
                      PRECISION=1.E-6,
                      TYPE_TEST='MAX',
-                     CHAM_GD=DIFFUN,
+                     CHAM_GD=dicResu['DIFFUN'],
                      VALE_CALC=4.2588191102E-05,
                      VALE_REFE=4.25881911029E-05,
                      ),
