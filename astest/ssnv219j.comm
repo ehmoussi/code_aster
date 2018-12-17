@@ -16,13 +16,8 @@
 # You should have received a copy of the GNU General Public License
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
-import math
 
-POURSUITE(CODE='OUI',
-      DEBUG=_F(SDVERI='OUI'),
-      PAR_LOT='NON',
-      IGNORE_ALARM = ('SUPERVIS_1', 'MODELE1_63', 'SUPERVIS_25'),
-      )
+import math
 
 # ================================================================================================================================================================================
 def NormeAster(RESULTAT, Depl_Ana, P_ana, MAIL, MODELE, GROUP_MA_VOL, GROUP_MA_SUR):
@@ -282,6 +277,28 @@ def NormeAster(RESULTAT, Depl_Ana, P_ana, MAIL, MODELE, GROUP_MA_VOL, GROUP_MA_S
      return {'NormeL2ErreurU':NormeL2ErreurU,'NormeL2ErreurP':NormeL2ErreurP,'Ucalc':Ucalc,'Uana':Uana,'Pcalc':Pcalc,'Pana':Pana, 'DIFFUN':DIFFUN, 'DIFFPG': DIFFPG}
 # ================================================================================================================================================================================
 
+
+
+
+
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),
+      DEBUG=_F(SDVERI='OUI'),
+      PAR_LOT='NON',
+      IGNORE_ALARM = ('MODELISA4_1', 'SUPERVIS_1', 'MODELE1_63', 'SUPERVIS_25'),
+      )
+
+#================================================================================================
+# Definition des caracteristiques du materiau
+#================================================================================================
+E=1;
+NU=0.;
+
+#================================================================================================
+# Calcul de la solution de reference
+#================================================================================================
+
+from ssnv219e import *
+
 #================================================================================================
 # Debut de l'etude de la convergence
 # Nombre de Test
@@ -432,25 +449,6 @@ for Raff in range(0,Nb_Raffinement):
         MA[Raff+1]=CREA_MAILLAGE(MAILLAGE=MALine[Raff+1],
                     DECOUPE_LAC=_F(GROUP_MA_ESCL='ESCLAVE',DECOUPE_HEXA="PYRA",),);
 
-     # DESTRUCTION DES CONCEPTS INUTILISES DANS LES PROCHAINES ETAPES DE LA BOUCLE
-        DETRUIRE(CONCEPT=(_F(NOM=modl,),
-                       _F(NOM=chmat),
-                       _F(NOM=BlocBase),
-                       _F(NOM=Neumann),
-                       _F(NOM=Dirich),
-                       _F(NOM=Contact),
-                       _F(NOM=ForceInt),
-                       _F(NOM=EVOLNOLI),
-                       _F(NOM=dicResu['Uana']),
-                       _F(NOM=dicResu['Ucalc']),
-                       _F(NOM=dicResu['DIFFUN']),
-                       _F(NOM=dicResu['DIFFPG']),
-                       _F(NOM=dicResu['Pana']),
-                       _F(NOM=dicResu['Pcalc']),
-                       ),
-               INFO=1,
-              );
-
 
 
     #================================================================================================
@@ -535,25 +533,6 @@ IMPR_RESU(FORMAT='MED',
             _F(CHAM_GD=dicResu['DIFFUN'],GROUP_MA='VOLUME',NOM_CMP=('DX','DY','DZ'),),
             _F(RESULTAT=EVOLNOLI),
            ),);
-DETRUIRE(CONCEPT=(_F(NOM=modl,),
-                  _F(NOM=chmat),
-                  _F(NOM=BlocBase),
-                  _F(NOM=Neumann),
-                  _F(NOM=Dirich),
-                  _F(NOM=Contact),
-                  _F(NOM=ForceInt),
-                  _F(NOM=EVOLNOLI),
-                  _F(NOM=dicResu['Uana']),
-                  _F(NOM=dicResu['Ucalc']),
-                  _F(NOM=dicResu['DIFFUN']),
-                  _F(NOM=dicResu['Pana']),
-                  _F(NOM=dicResu['Pcalc']),
-                  _F(NOM=dicResu['DIFFPG']),
-                  _F(NOM=RAMPE),
-                  _F(NOM=LINST),
-                  _F(NOM=acier),  
-                  ),
-           INFO=1,);
 
 for n in range(0,Nb_Raffinement):     
     DETRUIRE(CONCEPT=(_F(NOM=MA0[n],),
