@@ -688,12 +688,7 @@ def verif_resxfem(self, RESULTAT):
     import aster
     from Utilitai.Utmess import UTMESS
 
-    iret, ibid, n_modele = aster.dismoi(
-        'MODELE', RESULTAT.nom, 'RESULTAT', 'F')
-    n_modele = n_modele.rstrip()
-    if len(n_modele) == 0:
-        UTMESS('F', 'RUPTURE0_18')
-    MODEL = self.get_concept(n_modele)
+    MODEL = RESULTAT.getModel()
     xcont = MODEL.sdj.xfem.XFEM_CONT.get()
     return (xcont, MODEL)
 
