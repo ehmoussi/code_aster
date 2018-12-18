@@ -54,13 +54,14 @@ subroutine lccgad(fami, kpg, ksp, mat, option,&
 !-----------------------------------------------------------------------
 !
     aster_logical :: resi, rigi, elas, adh
-    integer :: cod(4)
-    real(kind=8) :: val(4), n, courb, de, sut
+    integer :: cod(2)
+    real(kind=8) :: val(2), n, courb, de, sut, val2(2)
     real(kind=8) :: frot, r, mult, frotc
-    character(len=16) :: nom(4)
+    character(len=16) :: nom(2), nom2(2)
     character(len=1) :: poum
 !
-    data nom /'TYPE','PENA_LAGR','FROT_LINE','FROT_COURB'/
+    data nom /'TYPE','PENA_LAGR'/
+    data nom2 /'FROT_LINE','FROT_COURB'/
 !-----------------------------------------------------------------------
 !
 ! ---------------------------
@@ -101,14 +102,17 @@ subroutine lccgad(fami, kpg, ksp, mat, option,&
 !
     call rcvalb(fami, kpg, ksp, poum, mat,&
                 ' ', 'CABLE_GAINE_FROT', 0, ' ', [0.d0],&
-                4, nom, val, cod, 0)
+                2, nom, val, cod, 1)
 !
 !    PARAMETRE DU COMPORTEMENT DE LA LOI DE TALON-CURNIER
     r = val(2)
     adh = .false.
     if (nint(val(1)) .eq. 1)then
-        frot = val(3)
-        frotc = val(4)
+        call rcvalb(fami, kpg, ksp, poum, mat,&
+                ' ', 'CABLE_GAINE_FROT', 0, ' ', [0.d0],&
+                2, nom2, val2, cod, 1)
+        frot = val2(1)
+        frotc = val2(2)
     elseif (nint(val(1)) .eq. 2)then
         frot = 0.d0
         frotc = 0.d0
