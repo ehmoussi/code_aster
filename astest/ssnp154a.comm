@@ -149,10 +149,11 @@ PRES=RECU_FONCTION(TABLE=RELE,
 
 # champ de contraintes de Cauchy aux noeuds
 p_appr_F=CALC_PRESSION(MAILLAGE=MESH,
-                             RESULTAT=RESU,
-                                GROUP_MA=('Bottom_C','Top_B',),
-                            INST=1.0,
-                    );
+                       RESULTAT=RESU,
+                       GEOMETRIE='INITIALE',
+                       GROUP_MA=('Bottom_C','Top_B',),
+                       INST=1.0,
+                   );
 
 p_appr_2 = CALC_PRESSION(GROUP_MA=('Bottom_C', 'Top_B'),
                            MAILLAGE=MESH,

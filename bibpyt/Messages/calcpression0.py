@@ -22,7 +22,7 @@
 
 cata_msg = {
     1 : _(u"""
-La modélisation contenue dans RESULTAT est differente du MODELE déclaré.
+La modélisation contenue dans RESULTAT est différente du MODELE déclaré.
 """),
 
     2 : _(u"""
