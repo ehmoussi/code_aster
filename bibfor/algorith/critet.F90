@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -62,10 +62,10 @@ subroutine critet(epsp, epsd, eta, lambda, deuxmu,&
     rac2=sqrt(2.d0)
 ! -- ON DIAGONALISE LE TENSEUR DE DEFORMATION
     tr(1) = epsp(1)+eta*epsd(1)
-    tr(2) = epsp(4)+eta*epsd(4)
-    tr(3) = epsp(5)+eta*epsd(5)
+    tr(2) = (epsp(4)+eta*epsd(4))/rac2
+    tr(3) = (epsp(5)+eta*epsd(5))/rac2
     tr(4) = epsp(2)+eta*epsd(2)
-    tr(5) = epsp(6)+eta*epsd(6)
+    tr(5) = (epsp(6)+eta*epsd(6))/rac2
     tr(6) = epsp(3)+eta*epsd(3)
 !
     call diagp3(tr, vecp, epm)
@@ -114,13 +114,9 @@ subroutine critet(epsp, epsd, eta, lambda, deuxmu,&
 51  end do
     do 52 i = 4, 6
         dfde(i)=deuxmu*fpd*ppeps(i)*rac2
-        epsd(i)=epsd(i)*rac2
 52  end do
 !
     critp=ddot(6,dfde,1,epsd,1)
 !
-    do 53 i = 4, 6
-        epsd(i)=epsd(i)/rac2
-53  end do
-!
+
 end subroutine
