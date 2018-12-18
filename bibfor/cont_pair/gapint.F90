@@ -35,7 +35,6 @@ implicit none
 #include "asterfort/jedetr.h"
 #include "asterfort/wkvect.h"
 #include "asterfort/lctria.h"
-#include "asterfort/mmnewd.h"
 #include "asterfort/apdist.h"
 #include "asterfort/reerel.h"
 #include "asterfort/lcptga.h"

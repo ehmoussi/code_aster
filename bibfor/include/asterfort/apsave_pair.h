@@ -27,10 +27,15 @@ interface
                            li_ptintma     , li_ptgausma    ,&
                            nb_pair_zone   , list_pair_zone ,&
                            li_nbptsl_zone , li_ptintsl_zone,&
-                           li_ptintma_zone, li_ptgausma_zone)
+                           li_ptintma_zone, li_ptgausma_zone,&
+                           nb_elem_slav   , nb_elem_mast    ,&
+                           nb_next_alloc)
         integer, intent(in) :: i_zone
         integer, intent(in) :: elem_slav_nume
         integer, intent(in) :: nb_pair
+        integer, intent(in) :: nb_elem_slav
+        integer, intent(in) :: nb_elem_mast
+        integer, intent(inout) :: nb_next_alloc
         integer, intent(in) :: list_pair(:)
         integer, intent(in) :: li_nbptsl(:)
         real(kind=8), intent(in) :: li_ptintsl(:)
