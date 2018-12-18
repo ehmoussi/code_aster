@@ -126,7 +126,6 @@ implicit none
 ! --------- Degenerated vectorial basis for element (colinear vectors) => exit
 !
             if (abs(m)  .le. pair_tole) then
-                write(*,*)"ptinma NOOK"
                 test  = -1
                 goto 99
             end if

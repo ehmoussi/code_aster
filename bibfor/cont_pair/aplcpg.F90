@@ -108,7 +108,7 @@ character(len=24), intent(in) :: pair_method
     integer :: nb_pair, nb_poin_inte
     integer :: i_mast_neigh, i_slav_start, i_mast_start, i_find_mast
     integer :: i_slav_neigh
-    integer :: patch_indx
+    integer :: patch_indx, nb_next_alloc
     real(kind=8) :: inte_weight, elem_slav_weight
     real(kind=8) :: poin_inte_sl(32)
     real(kind=8) :: poin_inte_ma(32)
@@ -180,14 +180,6 @@ character(len=24), intent(in) :: pair_method
     slav_indx_maxi = maxval(list_elem_slav)
     mast_indx_mini = minval(list_elem_mast)
     slav_indx_mini = minval(list_elem_slav)
-!
-! - Allocate pairing saving vectors
-!
-    AS_ALLOCATE(vi=list_pair_zmpi, size= 3*nb_elem_slav*nb_elem_mast)
-    AS_ALLOCATE(vi=li_nbptsl_zmpi, size= nb_elem_slav*nb_elem_mast)
-    AS_ALLOCATE(vr=li_ptintsl_zmpi, size= 16*nb_elem_slav*nb_elem_mast)
-    AS_ALLOCATE(vr=li_ptintma_zmpi, size= 16*nb_elem_slav*nb_elem_mast)
-    AS_ALLOCATE(vr=li_ptgausma_zmpi, size= 72*nb_elem_slav*nb_elem_mast)
 !
 ! - Access to updated geometry
 !
@@ -543,7 +535,8 @@ character(len=24), intent(in) :: pair_method
                              li_pt_gaus_ma,&
                              nb_pair_zmpi(i_proc+1), list_pair_zmpi,&
                              li_nbptsl_zmpi,li_ptintsl_zmpi, li_ptintma_zmpi,&
-                             li_ptgausma_zmpi)
+                             li_ptgausma_zmpi, nb_elem_slav, nb_elem_mast,&
+                             nb_next_alloc)
         end if
 !
 ! ----- Next elements

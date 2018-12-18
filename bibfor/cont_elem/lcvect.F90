@@ -28,7 +28,6 @@ implicit none
 #include "asterf_types.h"
 #include "asterfort/assert.h"
 #include "asterfort/lcnorm_line.h"
-#include "asterfort/lcpjit.h"
 #include "asterfort/lcptga.h"
 #include "asterfort/lcsees.h"
 #include "asterfort/lcsegp.h"
