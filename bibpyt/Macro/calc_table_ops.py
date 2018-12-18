@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -31,8 +31,9 @@ def calc_table_ops(self, TABLE, ACTION, INFO, **args):
     from Noyau.N_types import force_list
     from code_aster.Cata.DataStructure import table_fonction, table_container
     from Utilitai.Utmess import UTMESS
-    from Utilitai.Table import merge
+    from Utilitai.Table import merge, Table
     from Utilitai.utils import get_titre_concept
+    import numpy as np
 
     ier = 0
     # La macro compte pour 1 dans la numerotation des commandes
@@ -150,7 +151,7 @@ def calc_table_ops(self, TABLE, ACTION, INFO, **args):
             dnew = dict(zip(lpar, lval))
             # ajout de la ligne avec vérification des types
             tab.append(dnew)
-
+            
         # 9. Traitement de AJOUT_COLONNE
         if occ['OPERATION'] == 'AJOUT_COLONNE':
             lpar = force_list(occ['NOM_PARA'])
@@ -186,6 +187,74 @@ def calc_table_ops(self, TABLE, ACTION, INFO, **args):
             # be care to extract the statistics before changing `tab`!
             tab['STAT_VALE'] = [len(tab), len(tab.para), nbVide]
             tab['STAT_NOM'] = ['NB_LIGNES', 'NB_COLONNES', 'NB_VIDE']
+            
+        # 12. Traitement de CALCUL # NOM_PARA, TYPE_CALCUL
+        if occ['OPERATION'] == 'CALCUL':
+            lpar = force_list(occ['NOM_PARA'])
+            lcalc = force_list(occ['TYPE_CALCUL'])
+
+            # vérifier le type des variables dans les colonnes
+            for ipar in lpar :
+                if tab[ipar].type[0] not in ['R', 'I'] :
+                    UTMESS('F', 'TABLE0_16')
+            
+            # décider le format de la nouvelle table
+            if self.reuse is not None:
+                tab.add_para('TYPE_CALCUL','K8')
+                tab_new = tab
+            else :
+                tab_new = Table([],tab.para, tab.type)
+                for ipar in tab.para :
+                    if ipar not in lpar : del tab_new[ipar]
+                tab_new.add_para('TYPE_CALCUL','K8')
+
+            val_new =[]
+            # Boucle de calcul pour chaque colonne        
+            for ipar in lpar :
+                # vérifier les vides dans la colonne
+                lval = tab[ipar].values()[ipar]
+                
+                # supprimer les vides
+                lval2 = [x for x in lval if x is not None]
+                lval3 = []
+                # lcalc_new = []
+                for icalc in lcalc :
+                    if icalc == 'MAXI' :
+                        lval3.append( max(lval2) )
+                    elif icalc == 'MINI' :
+                        lval3.append( min(lval2) )
+                    elif icalc == 'SOMM' :
+                        lval3.append( sum(lval2) ) 
+                    elif icalc == 'MOY' :
+                        lval3.append( np.mean(lval2) )
+                    elif icalc == 'MAXI_ABS' :
+                        lval4 = []
+                        for ival in range(len(lval2)):
+                            lval4.append(abs(lval2[ival]))
+                        lval3.append( max(lval4) )
+                    elif icalc == 'MINI_ABS' :
+                        lval4 = []
+                        for ival in range(len(lval2)):
+                            lval4.append(abs(lval2[ival]))
+                        lval3.append( min(lval4) )
+                    elif icalc == 'SOMM_ABS' :
+                        lval4 = []
+                        for ival in range(len(lval2)):
+                            lval4.append(abs(lval2[ival]))
+                        lval3.append( sum(lval4) )  
+                    
+                val_new.append(lval3)
+                  
+            val_new.append(lcalc)
+            # mettre les valeurs calculées dans la nouvelle table
+            lpar.append('TYPE_CALCUL')
+            for icalc in range(len(lcalc)) :
+                ilval = [val_new[x][icalc] for x in range(len(lpar))]
+                dnew = dict(zip(lpar, ilval))
+                tab_new.append(dnew) 
+   
+            tab = tab_new     
+                          
 
     # 99. Création de la table_sdaster résultat
     # cas réentrant : il faut détruire l'ancienne table_sdaster
