@@ -23,3 +23,5 @@ list_inst =DEFI_LIST_INST(DEFI_LIST=_F(LIST_INST=list_r),)
 test.assertEqual(list_inst.getType(), "LIST_INST")
 
 test.printSummary()
+
+FIN()

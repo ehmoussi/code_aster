@@ -65,3 +65,5 @@ test.assertEqual( parameters, [0.01, 0.02] )
 
 # DN1.debugPrint()
 test.printSummary()
+
+FIN()

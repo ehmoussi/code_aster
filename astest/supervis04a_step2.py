@@ -38,3 +38,5 @@ TEST_RESU(RESU=_F(RESULTAT=MODE1, NUME_MODE=2,
                   PARA='FREQ', VALE_CALC=85.631015163879, ))
 
 test.printSummary()
+
+FIN()

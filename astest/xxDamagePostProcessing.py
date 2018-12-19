@@ -112,3 +112,5 @@ TEST_TABLE(CRITERE='ABSOLU',
            TABLE=TAB_FISS,)
 
 test.printSummary()
+
+FIN()

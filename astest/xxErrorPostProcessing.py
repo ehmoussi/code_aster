@@ -214,3 +214,5 @@ TEST_TABLE(CRITERE='ABSOLU',
 
 
 test.printSummary()
+
+FIN()

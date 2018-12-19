@@ -116,3 +116,5 @@ IMPR_OAR(TYPE_CALC  = 'COMPOSANT',
                         TABLE_S = T_MECA_R),)
 
 test.assertTrue( True )
+
+FIN()

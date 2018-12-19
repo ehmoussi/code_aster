@@ -75,3 +75,5 @@ CHA.addUnitaryThermalLoad(e)
 # at least it pass here!
 test.assertTrue( True )
 test.printSummary()
+
+FIN()

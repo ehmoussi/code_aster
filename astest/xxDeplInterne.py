@@ -124,3 +124,5 @@ U1S_123=DEPL_INTERNE(   DEPL_GLOBAL=U1,    SUPER_MAILLE='S_123',
                             NOM_CAS='CHF1' )
 
 test.assertTrue( True )
+
+FIN()

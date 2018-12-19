@@ -22,3 +22,5 @@ nu11    = NUME_DDL(MATR_RIGI = rigiel);
 vcine11 = CALC_CHAR_CINE(NUME_DDL=nu11, CHAR_CINE=chcine)
 
 test.assertTrue( True )
+
+FIN()

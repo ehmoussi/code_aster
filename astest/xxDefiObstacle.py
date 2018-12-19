@@ -8,3 +8,5 @@ test = code_aster.TestCase()
 OBSTACLE=DEFI_OBSTACLE(TYPE='CERCLE')
 
 test.assertTrue( True )
+
+FIN()

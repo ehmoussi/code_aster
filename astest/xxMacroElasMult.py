@@ -44,3 +44,5 @@ FO_ELAS1=MACRO_ELAS_MULT(            MODELE=MO,
                           )
 
 test.assertTrue( True )
+
+FIN()

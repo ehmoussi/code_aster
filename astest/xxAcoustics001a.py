@@ -25,3 +25,5 @@ load.debugPrint(8)
 
 # Test trivial
 test.assertTrue( True )
+
+FIN()

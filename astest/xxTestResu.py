@@ -15,3 +15,5 @@ TEST_RESU(MAILLAGE = _F(MAILLAGE    = MA,
                         VALE_REFE_I = 6,
                         VALE_CALC_I = 6,)
           )
+
+FIN()

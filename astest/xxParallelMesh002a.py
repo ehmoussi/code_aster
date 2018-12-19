@@ -100,3 +100,5 @@ else:
 test.assertTrue( True )
 
 test.printSummary()
+
+FIN()

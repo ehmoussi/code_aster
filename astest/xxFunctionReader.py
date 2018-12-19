@@ -17,3 +17,5 @@ CTRAC = LIRE_FONCTION(UNITE=21,
 test.assertEqual(CTRAC.getType(), "FONCTION_SDASTER")
 
 test.printSummary()
+
+FIN()

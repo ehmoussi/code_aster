@@ -162,3 +162,5 @@ test.printSummary()
 #     MESTAT.printMedFile('/tmp/par_%d.resu.med'%rank)
 # else:
 #     MESTAT.printMedFile('/tmp/seq.resu.med')
+
+FIN()

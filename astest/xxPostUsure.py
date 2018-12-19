@@ -15,3 +15,5 @@ T1=POST_USURE(  PUIS_USURE=0.5,
                 COEF_INST=31536000.)
 
 test.assertTrue( True )
+
+FIN()

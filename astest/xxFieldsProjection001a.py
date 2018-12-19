@@ -17,3 +17,5 @@ MATPROJ=PROJ_CHAMP(METHODE='COLLOCATION',  MAILLAGE_1=MA1, MAILLAGE_2=MA2, PROJE
 
 # Test trivial
 test.assertTrue( True )
+
+FIN()

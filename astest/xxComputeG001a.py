@@ -74,3 +74,5 @@ TEST_TABLE(PRECISION=0.02,
 test.assertEqual(G0.getType(), "TABLE_SDASTER")
 
 test.printSummary()
+
+FIN()

@@ -83,3 +83,5 @@ MODE_20 = REST_MODE_NONL(MODE_NON_LINE=MNL,
                      NUME_ORDRE = 10,)
 
 test.assertTrue( True )
+
+FIN()

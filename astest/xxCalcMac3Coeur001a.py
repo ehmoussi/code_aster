@@ -40,3 +40,5 @@ MA1.readMedFile("mac3c01a.mmed")
 test.assertTrue( True )
 
 test.printSummary()
+
+FIN()

@@ -15,3 +15,5 @@ MA22=LIRE_MAILLAGE(FORMAT="ASTER",UNITE=22)
 test.assertEqual(MA22.getType(),"MAILLAGE_SDASTER")
 
 test.printSummary()
+
+FIN()

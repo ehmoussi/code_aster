@@ -147,3 +147,5 @@ FANL1=CALC_FATIGUE( TYPE_CALCUL   = 'FATIGUE_MULTI',
                   )
 
 test.assertTrue( True )
+
+FIN()

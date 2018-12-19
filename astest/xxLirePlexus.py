@@ -35,3 +35,5 @@ PRESPLEX=LIRE_PLEXUS(          UNITE=18,
                         )
 
 test.assertTrue( True )
+
+FIN()

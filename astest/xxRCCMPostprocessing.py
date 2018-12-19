@@ -36,3 +36,4 @@ test.assertEqual(PMPB1.getType(), "TABLE_SDASTER")
 
 test.printSummary()
 
+FIN()

@@ -48,3 +48,5 @@ T_RESU=MACR_LIGN_COUPE(RESULTAT=RESU,NOM_CHAM='SIGM_ELNO',
                   ))
 
 test.assertTrue( True )
+
+FIN()

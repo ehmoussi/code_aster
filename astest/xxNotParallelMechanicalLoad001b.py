@@ -59,3 +59,5 @@ sfon.updateValuePointers()
 
 test.assertAlmostEqual(sfon.getValue(2, 0), 1.14977255749554)
 test.assertAlmostEqual(sfon.getValue(3, 0), 1.14977255749554)
+
+FIN()
