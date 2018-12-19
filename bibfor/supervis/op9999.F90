@@ -148,27 +148,26 @@ subroutine op9999(isave)
 !
     if ( close_base ) then
       call jxveri()
-!
-! --- CLOTURE DES FICHIERS
-!
+      !
+      ! --- CLOTURE DES FICHIERS
+      !
       call jelibf('SAUVE', 'G', info)
-!
+      !
       call jelibf('DETRUIT', 'V', info)
-!
-! --- RETASSAGE EFFECTIF
-!
+      !
+      ! --- RETASSAGE EFFECTIF
+      !
       if (ouinon .eq. 'OUI') then
         call jxcopy('G', 'GLOBALE', 'V', 'VOLATILE', nbext)
         if (iunres .gt. 0) write(iunres, '(A,I2,A)'&
-                           ) ' <I> <FIN> RETASSAGE DE LA BASE "GLOBALE" EFFECTUEE, ',&
-                           nbext, ' FICHIER(S) UTILISE(S).'
+        ) ' <I> <FIN> RETASSAGE DE LA BASE "GLOBALE" EFFECTUEE, ',&
+        nbext, ' FICHIER(S) UTILISE(S).'
       endif
-!
-! --- IMPRESSION DES STATISTIQUES ( AVANT CLOTURE DE JEVEUX )
-!
-      call utmess('I', 'SUPERVIS2_97')
+
+      ! the diagnosis of the execution is OK thanks to the message
+      call utmess('I', 'SUPERVIS2_99')
     endif
-    if (iunres .gt. 0) write(iunres, *) '<I> <FIN> ARRET NORMAL DANS "FIN" PAR APPEL A "JEFINI".'
+
     call jedema()
 !
 ! --- CLOTURE DE JEVEUX
