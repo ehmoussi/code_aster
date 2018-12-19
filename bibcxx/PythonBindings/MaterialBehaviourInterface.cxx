@@ -37,6 +37,18 @@ void exportMaterialBehaviourToPython() {
         .def( "getAsterName", &GeneralMaterialBehaviourInstance::getAsterName )
         .def( "hasTractionFunction", &GeneralMaterialBehaviourInstance::hasTractionFunction )
         .def( "hasEnthalpyFunction", &GeneralMaterialBehaviourInstance::hasEnthalpyFunction )
+        .def( "getComplexValue", &GeneralMaterialBehaviourInstance::getComplexValue )
+        .def( "getDoubleValue", &GeneralMaterialBehaviourInstance::getDoubleValue )
+        .def( "getStringValue", &GeneralMaterialBehaviourInstance::getStringValue )
+        .def( "getGenericFunctionValue",
+              &GeneralMaterialBehaviourInstance::getGenericFunctionValue )
+        .def( "getTableValue", &GeneralMaterialBehaviourInstance::getTableValue )
+        .def( "hasComplexValue", &GeneralMaterialBehaviourInstance::hasComplexValue )
+        .def( "hasDoubleValue", &GeneralMaterialBehaviourInstance::hasDoubleValue )
+        .def( "hasStringValue", &GeneralMaterialBehaviourInstance::hasStringValue )
+        .def( "hasGenericFunctionValue",
+              &GeneralMaterialBehaviourInstance::hasGenericFunctionValue )
+        .def( "hasTableValue", &GeneralMaterialBehaviourInstance::hasTableValue )
         .def( "setComplexValue", &GeneralMaterialBehaviourInstance::setComplexValue )
         .def( "setDoubleValue", &GeneralMaterialBehaviourInstance::setDoubleValue )
         .def( "setStringValue", &GeneralMaterialBehaviourInstance::setStringValue )

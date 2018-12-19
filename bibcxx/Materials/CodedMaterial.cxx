@@ -84,8 +84,8 @@ bool CodedMaterialInstance::allocate(bool force) {
         const int nbMB = curIter->getNumberOfUserMaterialBehviour();
         for( int i = 0; i < nbMB; ++i )
         {
-            auto vecVec1 = curIter->getBehviourVectorOfDoubleValues( i );
-            auto vecVec2 = curIter->getBehviourVectorOfFunctions( i );
+            auto vecVec1 = curIter->getBehaviourVectorOfDoubleValues( i );
+            auto vecVec2 = curIter->getBehaviourVectorOfFunctions( i );
             for( auto vec1 : vecVec1 )
                 if( vec1->exists() )
                 {

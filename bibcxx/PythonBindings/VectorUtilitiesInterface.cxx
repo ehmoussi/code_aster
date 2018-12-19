@@ -28,6 +28,7 @@
 #include "Functions/Function.h"
 #include "Materials/Material.h"
 #include "Materials/MaterialOnMesh.h"
+#include "Materials/MaterialBehaviour.h"
 
 void exportVectorUtilitiesToPython() {
     using namespace boost::python;
@@ -40,4 +41,5 @@ void exportVectorUtilitiesToPython() {
     exportVectorUtilities< FiniteElementDescriptorPtr >();
     exportVectorUtilities< BaseFunctionPtr >();
     exportVectorUtilities< PartOfMaterialOnMeshPtr >();
+    exportVectorUtilities< GeneralMaterialBehaviourPtr >();
 };
