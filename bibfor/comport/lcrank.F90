@@ -122,7 +122,6 @@ subroutine lcrank(ndim, typmod, imate, option, tmpm, tmpp,&
     data  mxiter / 50 /
 !
 ! Declaration of Common space variables
-    common / tdim  / ndt, ndi
     common / debug / epflag
 !
 ! Is the problem tridimensional?
@@ -135,6 +134,16 @@ subroutine lcrank(ndim, typmod, imate, option, tmpm, tmpp,&
 ! Modelisation type:
 ! 3D, D_PLAN, C_PLAN, AXIS
     mod = typmod(1)
+! =================================================================
+! --- NOMBRE DE COMPOSANTES ---------------------------------------
+! =================================================================
+    if (mod(1:2) .eq. '3D' .or. mod(1:6).eq.'C_PLAN') then
+        ndt = 6
+        ndi = 3
+    else if (mod(1:6).eq.'D_PLAN' .or. mod(1:4).eq.'AXIS') then
+        ndt = 4
+        ndi = 3
+    endif
 !
     if (mod(1:6) .eq. 'C_PLAN') then
         outofp=.false.
