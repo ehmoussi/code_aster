@@ -204,7 +204,7 @@ def caract_mater(self, mater):
         valpar = (dicmat['TEMP_DEF'],)
         UTMESS('A', 'XFEM2_85', valr=valpar)
         nomres = ['E', 'NU']
-        valres, codret = MATER.RCVALE('ELAS', nompar, valpar, nomres, 2)
+        valres, codret = mater.RCVALE('ELAS', nompar, valpar, nomres, 2)
         young = valres[0]
         poisson = valres[1]
     else:
@@ -244,8 +244,15 @@ def caract_mater(self, mater):
             except ValueError:
                 pass
 
-            nom_fonc_e = self.get_concept(list_fonc[list_oper.index("E")])
-            nom_fonc_nu = self.get_concept(list_fonc[list_oper.index("NU")])
+            nom_fonc_e = None
+            nom_fonc_nu = None
+            for matBehav in mater.getVectorOfMaterialBehaviours():
+                if matBehav.hasGenericFunctionValue( "E" ):
+                    nom_fonc_e = matBehav.getGenericFunctionValue( "E" )
+                if matBehav.hasGenericFunctionValue( "Nu" ):
+                    nom_fonc_nu = matBehav.getGenericFunctionValue( "Nu" )
+            nom_fonc_e_prol = nom_fonc_e.sdj.PROL.get()[0].strip()
+            nom_fonc_nu_prol = nom_fonc_nu.sdj.PROL.get()[0].strip()
 
             if (nom_fonc_e.sdj.PROL.get()[0].strip() == 'CONSTANT' and
                     nom_fonc_nu.sdj.PROL.get()[0].strip() == 'CONSTANT'):
@@ -590,7 +597,7 @@ def post_rupture_ops(self, TABLE, OPERATION, **args):
         COMPTAGE = args['COMPTAGE']
 
         # quantites sur lesquelles s'effectue le comptage
-        list_q = args['NOM_PARA']
+        list_q = list(args['NOM_PARA'])
 
         for q in list_q:
             verif_exi(tabin, q)
