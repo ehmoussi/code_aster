@@ -47,3 +47,5 @@ TRANSD = DYNA_LINE(TYPE_CALCUL="TRAN",
                                PAS=(0.002),),)
 
 test.assertTrue( True )
+
+FIN()

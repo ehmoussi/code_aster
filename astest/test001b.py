@@ -29,3 +29,5 @@ affectMat.debugPrint( 8 )
 # just check it pass here!
 test.assertTrue( True )
 test.printSummary()
+
+FIN()

@@ -36,3 +36,4 @@ test.assertEqual(MA_XFEM.getType(), "MAILLAGE_SDASTER")
 
 test.printSummary()
 
+FIN()

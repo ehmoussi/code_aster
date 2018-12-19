@@ -15,3 +15,5 @@ grille=DEFI_GRILLE(MAILLAGE=box)
 
 # Test trivial
 test.assertTrue( True )
+
+FIN()

@@ -36,3 +36,5 @@ TAB_1=POST_FATIGUE(    CHARGEMENT='UNIAXIAL',
                              INFO=2                 )
                              
 test.assertTrue( True )
+
+FIN()

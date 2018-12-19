@@ -150,3 +150,5 @@ test.assertEqual(PK1.getType(), "TABLE_ASTERSD")
 
 
 test.printSummary()
+
+FIN()

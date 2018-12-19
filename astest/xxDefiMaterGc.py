@@ -11,3 +11,5 @@ ACIER=DEFI_MATER_GC(
 )
 
 test.assertTrue( True )
+
+FIN()

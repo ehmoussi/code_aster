@@ -71,3 +71,5 @@ retour = matrAsse.getDOFNumbering()
 test.assertEqual(retour.isParallel(), True)
 
 test.printSummary()
+
+FIN()

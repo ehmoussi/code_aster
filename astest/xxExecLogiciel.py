@@ -10,3 +10,5 @@ EXEC_LOGICIEL(LOGICIEL='ls -la', SHELL='OUI')
 EXEC_LOGICIEL(LOGICIEL='pwd', SHELL='NON')
 
 test.assertTrue( True )
+
+FIN()

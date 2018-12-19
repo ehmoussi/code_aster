@@ -52,3 +52,5 @@ MODEE=EXTR_MODE(FILTRE_MODE=_F(MODE=MODES,
                 IMPRESSION=_F(CUMUL='OUI',),);
 
 test.assertTrue( True )
+
+FIN()

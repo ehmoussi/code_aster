@@ -24,3 +24,5 @@ test.assertEqual(mesh_assembler.getType(), "MAILLAGE_SDASTER")
 
 
 test.printSummary()
+
+FIN()

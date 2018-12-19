@@ -55,3 +55,5 @@ test.assertIn("DIRECTION=(0.0, 1.0, ...)", text)
 test.assertEqual(len(text.splitlines()), 5)
 
 test.printSummary()
+
+FIN()

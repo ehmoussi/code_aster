@@ -151,3 +151,5 @@ ASSE_ELEM_SSD(RESU_ASSE_SSD=_F(MODELE=CO('MODGEN'),
                        );
 
 test.assertTrue( True )
+
+FIN()

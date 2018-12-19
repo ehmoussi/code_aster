@@ -45,3 +45,5 @@ tup = tuple(func)
 code_aster.saveObjects()
 
 test.printSummary()
+
+FIN()

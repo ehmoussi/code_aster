@@ -232,3 +232,5 @@ TEST_TABLE(  TABLE=T_SPEC,
 
 
 test.printSummary()
+
+FIN()

@@ -60,3 +60,5 @@ test.assertEqual(fone(pi / 6.), 1.)
 test.assertEqual(fone(12.3456), 1.)
 
 test.printSummary()
+
+FIN()

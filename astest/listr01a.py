@@ -34,3 +34,5 @@ test.assertEqual(len(values), 4)
 test.assertAlmostEqual(np.max(values - np.arange(4.)), 0.)
 
 test.printSummary()
+
+FIN()

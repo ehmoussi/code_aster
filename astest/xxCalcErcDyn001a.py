@@ -282,3 +282,5 @@ TEST_TABLE( TABLE   = F_COUT,
             CRITERE   = 'RELATIF',)
 
 test.printSummary()
+
+FIN()

@@ -58,3 +58,5 @@ value = [0.0712953407513, 0.0609114486676, -0.00116776983364, 0.000584732584462]
 test.assertAlmostEqual(sfon.getValue(240, 0), value[rank])
 
 test.printSummary()
+
+FIN()

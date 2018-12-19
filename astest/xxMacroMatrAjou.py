@@ -97,3 +97,5 @@ MACRO_MATR_AJOU(MAILLAGE=MA,
                   NUME_DDL_GENE=NUMGEN)
 
 test.assertTrue( True )
+
+FIN()

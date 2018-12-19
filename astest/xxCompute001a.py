@@ -227,3 +227,5 @@ test.assertEqual(CONT1M.getType(), "TABLE_SDASTER")
 
 
 test.printSummary()
+
+FIN()

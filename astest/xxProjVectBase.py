@@ -67,3 +67,5 @@ VITINI=PROJ_VECT_BASE(  BASE=MODES,  VECT_ASSE=VITEPHYS,
                           TYPE_VECT='VITE')
 
 test.assertTrue( True )
+
+FIN()

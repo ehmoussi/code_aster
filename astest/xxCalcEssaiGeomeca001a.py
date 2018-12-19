@@ -826,3 +826,5 @@ TEST_TABLE(CRITERE='RELATIF',
                      VALE=110.0,),);
 
 test.printSummary()
+
+FIN()

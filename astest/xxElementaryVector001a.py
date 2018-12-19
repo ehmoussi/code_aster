@@ -70,3 +70,5 @@ y2=resu2.EXTR_COMP().valeurs
 # Comparaison des 2 solutions
 [test.assertAlmostEqual(y1[i], y2[i]) for i,_ in enumerate(y1)]
 test.printSummary()
+
+FIN()

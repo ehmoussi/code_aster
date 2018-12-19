@@ -114,3 +114,5 @@ TEST_RESU(CHAM_NO=(_F(NOEUD='N31',
                       REFERENCE='ANALYTIQUE',),
                    ),
           )
+
+FIN()

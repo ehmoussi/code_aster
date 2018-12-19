@@ -31,3 +31,5 @@ with test.assertRaises( RuntimeError ):
                                                0., "Haut")
 
 charCine.build()
+
+FIN()

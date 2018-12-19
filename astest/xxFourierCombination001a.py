@@ -170,3 +170,5 @@ TEST_RESU(RESU=(_F(RESULTAT=U_1,
           )
 
 test.printSummary()
+
+FIN()

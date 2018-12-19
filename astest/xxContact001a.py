@@ -24,3 +24,5 @@ z1 = code_aster.ContactDefinition()
 # just check it pass here!
 test.assertTrue( True )
 test.printSummary()
+
+FIN()
