@@ -32,6 +32,7 @@
 void MaterialInstance::addMaterialBehaviour( const GeneralMaterialBehaviourPtr& curMaterBehav )
 {
     ++_nbMaterialBehaviour;
+    _vecMatBehaviour.push_back( curMaterBehav );
 
     std::ostringstream numString;
     numString << std::setw( 6 ) << std::setfill( '0' ) << _nbMaterialBehaviour;
@@ -73,8 +74,6 @@ void MaterialInstance::addMaterialBehaviour( const GeneralMaterialBehaviourPtr& 
         auto o2 = JeveuxVectorChar8( "EMPTY" );
         _vectorOfUserFunctionValues[cP].push_back( o2 );
     }
-
-    _vecMatBehaviour.push_back( curMaterBehav );
 };
 
 void MaterialInstance::deallocateJeveuxVectors()

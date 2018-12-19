@@ -34,5 +34,6 @@ void exportMaterialToPython() {
         .def( "__init__", make_constructor(&initFactoryPtr< MaterialInstance, std::string >))
         .def( "addMaterialBehaviour", &MaterialInstance::addMaterialBehaviour )
         .def( "build", &MaterialInstance::build )
+        .def( "getVectorOfMaterialBehaviours", &MaterialInstance::getVectorOfMaterialBehaviours )
         .def( "setReferenceMaterial", &MaterialInstance::setReferenceMaterial );
 };
