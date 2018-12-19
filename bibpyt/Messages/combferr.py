@@ -72,4 +72,9 @@ Type de combinaison :
 13 : _(u"""
 Noms des cas présents :
     %(k1)s"""),
+
+14 : _(u"""
+Le mot clé facteur TYPE_STRUCTURE '%(k1)s' indiqué n'appartient pas aux cas disponibles
+"""),
+
 }
