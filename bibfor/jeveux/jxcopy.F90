@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -86,7 +86,7 @@ subroutine jxcopy(clsinz, nominz, clsouz, nmoutz, nbext)
     character(len=1) :: kclas
     character(len=8) :: nomba1, nomba2
     character(len=512) :: noml1, noml2
-    integer :: itp(1), jitp, iaditp, lgbl1, lgbl2, info
+    integer :: itp(1), jitp, iaditp, lgbl1, lgbl2, info, iret
 ! DEB ------------------------------------------------------------------
     nomin = nominz
     clasin = clsinz
@@ -103,7 +103,7 @@ subroutine jxcopy(clsinz, nominz, clsouz, nmoutz, nbext)
     lbloc= longbl(ici)
     call get_jvbasename(nomout(1:4), -1, noml1)
     info = 1
-    call rmfile(noml1, info)
+    call rmfile(noml1, info, iret)
     call jeinif('DEBUT', 'SAUVE', nomout, kclas, nrep,&
                 nbloc, lbloc)
     ico = index ( classe , kclas)
@@ -147,7 +147,7 @@ subroutine jxcopy(clsinz, nominz, clsouz, nmoutz, nbext)
 ! Destruction de tous les receptacles avant recopie.
 !
     call get_jvbasename(nomba1, -2, noml1)
-    call rmfile(noml1, info)
+    call rmfile(noml1, info, iret)
 !
     do 300 k = 1, nbext
         call get_jvbasename(nomba1, k, noml1)

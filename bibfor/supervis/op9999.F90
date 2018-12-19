@@ -180,16 +180,15 @@ subroutine op9999(isave)
     if ( isave .eq. 0 ) then
         do i=1,99
             call get_jvbasename('glob', i, fbase)
-            inquire (file=fbase, exist=bool)
-            if (.not. bool) then
-                stop
+            call rmfile(fbase, 1, iret)
+            if (iret .ne. 0) then
+                exit
             endif
-            call rmfile(fbase, 0)
             call get_jvbasename('vola', i, fbase)
-            call rmfile(fbase, 0)
+            call rmfile(fbase, 1, iret)
         end do
     endif
 
-    100 format(/,1x,'======>')
+100 format(/,1x,'======>')
 !
 end subroutine
