@@ -32,4 +32,4 @@ with test.assertRaises( RuntimeError ):
 
 charCine.build()
 
-FIN()
+code_aster.close()

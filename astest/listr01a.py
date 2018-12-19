@@ -35,4 +35,4 @@ test.assertAlmostEqual(np.max(values - np.arange(4.)), 0.)
 
 test.printSummary()
 
-FIN()
+code_aster.close()

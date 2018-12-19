@@ -30,4 +30,4 @@ traction.debugPrint()
 
 test.printSummary()
 
-FIN()
+code_aster.close()

@@ -68,4 +68,4 @@ code_aster.saveObjects()
 
 test.printSummary()
 
-FIN()
+code_aster.close()

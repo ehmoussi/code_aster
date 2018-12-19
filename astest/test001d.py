@@ -181,4 +181,4 @@ with test.assertRaises( AsterError ):
 
 test.printSummary()
 
-FIN()
+code_aster.close()

@@ -107,4 +107,4 @@ test.assertTrue(syntax.getexm("EXCIT", "CHARGE"))
 
 test.printSummary()
 
-FIN()
+code_aster.close()
