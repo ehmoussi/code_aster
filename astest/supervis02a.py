@@ -56,4 +56,4 @@ test.assertEqual(len(text.splitlines()), 5)
 
 test.printSummary()
 
-FIN()
+code_aster.close()

@@ -41,4 +41,4 @@ test.assertEqual( coord[3], 1.0 )
 
 test.printSummary()
 
-FIN()
+code_aster.close()
