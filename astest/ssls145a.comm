@@ -302,8 +302,6 @@ ferrDatSlu = dict(
     TYPE_STRUCTURE = '2D',
 )
 
-# INCLUDE(UNITE=45, INFO=2)
-
 reslin = COMBINAISON_FERRAILLAGE (
     reuse = reslin,
     RESULTAT = reslin,
@@ -415,9 +413,7 @@ IMPR_RESU(
             NOM_CHAM = ('SIEF_NOEU',),
         ),
     ),
-    ######################################################
-    # Per visualizzare i riferimenti locali degli elementi
-    ######################################################
+    # Display local ref
     CONCEPT =_F(
         CARA_ELEM = elemprop,
         REPERE_LOCAL = 'ELEM',
