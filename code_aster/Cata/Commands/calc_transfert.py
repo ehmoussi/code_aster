@@ -32,6 +32,8 @@ def calc_transfert_prod(self,SIGNAL,**args):
 
 #   self.type_sdprod(tabfrf,table_sdaster)
    if SIGNAL !=None:
+      if type(SIGNAL) not in (list, tuple):
+          SIGNAL = SIGNAL,
       for sign in SIGNAL:
           self.type_sdprod(sign['TABLE_RESU'],table_sdaster)
    return table_sdaster
