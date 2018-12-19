@@ -61,7 +61,7 @@ subroutine op9999(isave)
     integer :: ifm, iunres, iunmes
     integer :: i, jco, nbco
     integer :: nbext, nfhdf
-    aster_logical :: bool, close_base
+    aster_logical :: close_base
     character(len=8) :: k8b, ouinon, infr, proc
     character(len=16) :: fhdf, typres
     character(len=80) :: fich
@@ -180,12 +180,12 @@ subroutine op9999(isave)
     if ( isave .eq. 0 ) then
         do i=1,99
             call get_jvbasename('glob', i, fbase)
-            call rmfile(fbase, 1, iret)
+            call rmfile(fbase, 0, iret)
             if (iret .ne. 0) then
                 exit
             endif
             call get_jvbasename('vola', i, fbase)
-            call rmfile(fbase, 1, iret)
+            call rmfile(fbase, 0, iret)
         end do
     endif
 

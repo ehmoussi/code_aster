@@ -35,18 +35,17 @@ void DEFSPP( RMFILE, rmfile, char *nom1, STRING_SIZE lnom1, ASTERINTEGER *info,
 
     fname = MakeCStrFromFStr( nom1, lnom1 );
     if ( *info == 1 ) {
-        printf( "\nDeleting file '%s'... ", fname );
     }
 
     *iret = (ASTERINTEGER)remove( fname );
-    FreeStr( fname );
 
     if ( *info == 1 ) {
         if ( *iret == 0 ) {
-            printf( "done\n" );
+            fprintf( stderr, "Deleted: '%s'\n", fname );
         } else {
-            printf( "\n" );
+            fprintf( stderr, "Deleting '%s':", fname );
             perror( "" );
         }
     }
+    FreeStr( fname );
 }
