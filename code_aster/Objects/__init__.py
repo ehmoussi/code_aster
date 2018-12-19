@@ -51,6 +51,7 @@ from .generalizedassemblyvector_ext import GeneralizedAssemblyVectorComplex
 from .generalizedassemblyvector_ext import GeneralizedAssemblyVectorDouble
 from .generalizedmodel_ext import GeneralizedModel
 from .listoffloats import ListOfFloats
+from .material_ext import Material
 from .materialonmesh_ext import MaterialOnMesh
 from .mechanicalload_ext import GenericMechanicalLoad
 from .mesh_ext import Mesh
