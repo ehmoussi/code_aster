@@ -16,52 +16,37 @@
 /* along with code_aster.  If not, see <http://www.gnu.org/licenses/>.  */
 /* -------------------------------------------------------------------- */
 
-/* appel de la commande systeme de destruction de fichier */
-/* rm ou del suivant les plates-formes                    */
-/* si info  = 1 mode bavard                               */
-/* si info != 1 mode silencieux                           */
+/*
+Remove a file
+    nom1 (char): Filename
+    info (int): Enable verbosity if equal to 1.
+    iret (int, out): Exit code, 0 means ok.
+*/
+
 #include "aster.h"
 #include "aster_utils.h"
 
-#include <stdlib.h>
 #include <stdio.h>
-#include <string.h>
+#include <stdlib.h>
 
-void DEFSP(RMFILE, rmfile, char *nom1, STRING_SIZE lnom1, ASTERINTEGER *info)
-{
-    char *cmdline, *fname;
-    size_t ldeb;
-    int ier;
+void DEFSPP( RMFILE, rmfile, char *nom1, STRING_SIZE lnom1, ASTERINTEGER *info,
+             ASTERINTEGER *iret ) {
+    char *fname;
 
-#if defined _POSIX
-    char ncmd[] = "rm -f ";
-#else
-    char ncmd[] = "del ";
-#endif
-    ldeb = strlen(ncmd);
+    fname = MakeCStrFromFStr( nom1, lnom1 );
+    if ( *info == 1 ) {
+        printf( "\nDeleting file '%s'... ", fname );
+    }
 
-    if ( lnom1 == 0 || nom1[0] == ' ') return;
-
-    cmdline = (char*)malloc((ldeb + lnom1 + 1) * sizeof(char));
-    fname = MakeCStrFromFStr(nom1, lnom1);
-    strncpy(cmdline, ncmd, (size_t)ldeb);
-    strcpy(cmdline + ldeb, fname);
+    *iret = (ASTERINTEGER)remove( fname );
+    FreeStr( fname );
 
     if ( *info == 1 ) {
-        printf("\n\nLancement de la commande : %s\n\n", cmdline);
+        if ( *iret == 0 ) {
+            printf( "done\n" );
+        } else {
+            printf( "\n" );
+            perror( "" );
+        }
     }
-
-    ier = system(cmdline);
-    free(cmdline);
-    FreeStr(fname);
-
-    if ( *info == 1 && ier == -1 ) {
-        perror("\n<rmfile> code retour system");
-    }
-#if defined _POSIX
-    fflush(stderr);
-    fflush(stdout);
-#else
-    _flushall();
-#endif
 }
