@@ -74,7 +74,7 @@ class GenericGeneralizedAssemblyMatrixInstance: public DataStructure
     GeneralizedDOFNumberingPtr getGeneralizedDOFNumbering() {
         if ( _dofNum.isSet() )
             return _dofNum.getPointer();
-        throw std::runtime_error( "GeneralizedDOFNumbering is empty" );
+        return GeneralizedDOFNumberingPtr( nullptr );
     };
 
     /**
@@ -84,7 +84,7 @@ class GenericGeneralizedAssemblyMatrixInstance: public DataStructure
     {
         if ( _mecaModeC.isSet() )
             return _mecaModeC.getPointer();
-        throw std::runtime_error( "MechanicalModeContainer is empty" );
+        return MechanicalModeContainerPtr( nullptr );
     };
 
     /**
