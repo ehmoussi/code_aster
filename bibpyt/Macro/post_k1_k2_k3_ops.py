@@ -705,14 +705,12 @@ def get_resxfem(self, xcont, RESULTAT, MODELISATION, MODEL):
     DETRUIRE = self.get_cmd('DETRUIRE')
     CREA_MAILLAGE = self.get_cmd('CREA_MAILLAGE')
 
-    iret, ibid, nom_ma = aster.dismoi(
-        'NOM_MAILLA', RESULTAT.nom, 'RESULTAT', 'F')
     if xcont[0] != 3:
         __RESX = RESULTAT
 
 #     XFEM + contact : il faut reprojeter sur le maillage lineaire
     elif xcont[0] == 3:
-        __mail1 = self.get_concept(nom_ma.strip())
+        __mail1 = RESULTAT.getModel().getSupportMesh()
         __mail2 = CREA_MAILLAGE(MAILLAGE=__mail1,
                                 QUAD_LINE=_F(TOUT='OUI',),)
 
@@ -1121,7 +1119,7 @@ def get_propmat_varc_fem(self, RESULTAT, MAILLAGE, MATER, MODELISATION, Lnofon, 
                        'NEUT_R' : 'NEUT1',}
     nomgd_2_nomcmp  = {'TEMP_R' : 'TEMP' ,
                        'NEUT_R' : 'X1'   ,}
-    iret, ibid, nomgd = aster.dismoi('NOM_GD', __CHNOVRC.nom, 'CHAM_NO', 'F')
+    iret, ibid, nomgd = aster.dismoi('NOM_GD', __CHNOVRC.getName(), 'CHAM_NO', 'F')
     assert nomgd in nomgd_2_nompar.keys()
     ChnoVrcExtr = __CHNOVRC.EXTR_COMP(topo=1)
     ChnoVrcNoeu = ChnoVrcExtr.noeud
@@ -1206,14 +1204,14 @@ def get_propmat_varc_xfem(self, args, RESULTAT, MAILLAGE, MATER, MODELISATION, F
     # seules les varc TEMP et NEUT1 sont autorisees
     nomgd_2_nompar  = {'TEMP_R' : 'TEMP' ,
                        'NEUT_R' : 'NEUT1',}
-    iret, ibid, nomgd = aster.dismoi('NOM_GD', __CHNOVRC.nom, 'CHAM_NO', 'F')
+    iret, ibid, nomgd = aster.dismoi('NOM_GD', __CHNOVRC.getName(), 'CHAM_NO', 'F')
     assert nomgd in nomgd_2_nompar.keys()
     ChnoVrcExtr = __CHNOVRC.EXTR_COMP(topo=1)
     DETRUIRE(CONCEPT=_F(NOM=__CHNOVRC))
     ChnoVrcVale = ChnoVrcExtr.valeurs
     ChnoVrcNoeu = ChnoVrcExtr.noeud
     ChnoVrcComp = ChnoVrcExtr.comp
-    assert list(set(ChnoVrcComp)) in [['TEMP    '], ['X1      ']]
+    assert list(set(ChnoVrcComp)) in [['TEMP'], ['X1']]
 
     # blindage sur le nombre de noeuds du champ / nombre de noeuds du maillage
     # -> permet de se premunir de l'oubli du couple (OP.INIT_VARC.PVARCNO, LC.ZVARCNO)
@@ -2028,8 +2026,13 @@ def post_k1_k2_k3_ops(self, RESULTAT, FOND_FISS =None, FISSURE=None, MATER=None,
         except ValueError:
             pass
 
-        nom_fonc_e = self.get_concept(list_fonc[list_oper.index("E")])
-        nom_fonc_nu = self.get_concept(list_fonc[list_oper.index("NU")])
+        nom_fonc_e = None
+        nom_fonc_nu = None
+        for matBehav in MATER.getVectorOfMaterialBehaviours():
+            if matBehav.hasGenericFunctionValue( "E" ):
+                nom_fonc_e = matBehav.getGenericFunctionValue( "E" )
+            if matBehav.hasGenericFunctionValue( "Nu" ):
+                nom_fonc_nu = matBehav.getGenericFunctionValue( "Nu" )
         nom_fonc_e_prol = nom_fonc_e.sdj.PROL.get()[0].strip()
         nom_fonc_nu_prol = nom_fonc_nu.sdj.PROL.get()[0].strip()
 
