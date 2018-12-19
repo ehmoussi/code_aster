@@ -91,8 +91,7 @@ class DynaLineFEM:
         return self.keywords["MODELE"]
     def getMaillage(self):
         """return the mesh"""
-        iret, ibid, nom_ma = aster.dismoi('NOM_MAILLA', self.getModele().nom, 'MODELE', 'F')
-        return self.parent.get_concept(nom_ma.strip())
+        return self.getModele().getSupportMesh()
     def getNumeddl(self):
         """return dof numbering associated to elementary stiffnesses"""
         if hasattr(self, "_DynaLineFEM__numeddl"):
@@ -696,7 +695,7 @@ class DynaLineBasis:
             __numeDdlGene = NUME_DDL_GENE(BASE=__dynaModes,
                                           STOCKAGE=self.getStockageType())
             CO = self.parent.get_cmd("CO")
-            __addedMass = CO('__addedMass')
+            addedMassCo = CO('addedMass')
             MACRO_MATR_AJOU(MAILLAGE=self.dynaLineFEM.getMaillage(),
                             MODELISATION=self.modelisation_flu,
                             GROUP_MA_FLUIDE=self.group_ma_fluide,
@@ -705,7 +704,7 @@ class DynaLineBasis:
                             DDL_IMPO=self.pression_flu_impo,
                             MODE_MECA=__dynaModes,
                             NUME_DDL_GENE=__numeDdlGene,
-                            MATR_MASS_AJOU=__addedMass,
+                            MATR_MASS_AJOU=addedMassCo,
                             )
             __rigiGen=PROJ_MATR_BASE(BASE=__dynaModes,
                                      NUME_DDL_GENE=__numeDdlGene,
@@ -715,7 +714,7 @@ class DynaLineBasis:
                                      MATR_ASSE=self.dynaLineFEM.getMassPhy());
             __massGen=COMB_MATR_ASSE(COMB_R=(_F(MATR_ASSE=__massGen,
                                                 COEF_R=1.0,),
-                                             _F(MATR_ASSE=__addedMass,
+                                             _F(MATR_ASSE=addedMass,
                                                 COEF_R=1.0,),),)
             __dynaModes=CALC_MODES(OPTION='BANDE',
                                    VERI_MODE=_F(STOP_ERREUR="NON"),
@@ -745,16 +744,16 @@ class DynaLineBasis:
     def __getAddedMassAndForces(self):
         """return the added mass and forces for IFS with sismic load
         computed on self.__modalBasis"""
-        if hasattr(self, "_DynaLineBasis__addedMass"):
-            return self.__addedMass, self.__excitForcAjou
+        if hasattr(self, "_DynaLineBasisaddedMass"):
+            return self.addedMass, self.__excitForcAjou
         if not self.ifs:
-            self.__addedMass = None
+            self.addedMass = None
             self.__excitForcAjou = []
-            return self.__addedMass, self.__excitForcAjou
+            return self.addedMass, self.__excitForcAjou
         CO = self.parent.get_cmd("CO")
-        __addedMass = CO('__addedMass')
-        self.__excitForcAjou = []
+        addedMassCo = CO('addedMass')
         keywords = {}
+        tmp = []
         if self.forc_ajou:
             monoAppuiLoadings = filter(lambda x: x.has_key("TYPE_APPUI") and x["TYPE_APPUI"]=="MONO", self.charges)
             multiAppuiLoadings = filter(lambda x: x.has_key("TYPE_APPUI") and x["TYPE_APPUI"]=="MULTI", self.charges)
@@ -766,9 +765,11 @@ class DynaLineBasis:
                 keywords['MODE_STAT'] = self.getStaticMultiModes()
             if keywords:
                 keywords['FORC_AJOU'] = []
+                count = 0
                 for loading in AppuiLoadings:
                     charge = loading.copy()
-                    __addeforce = CO('__addefx')
+                    nameToSave = 'adfx' + str(count)
+                    __addeforce = CO(nameToSave)
                     d_forc_ajou = {'DIRECTION' : charge['DIRECTION'],
                                    'VECTEUR' : __addeforce}
                     for key in ['NOEUD','GROUP_NO']:
@@ -780,11 +781,12 @@ class DynaLineBasis:
                     if not 'MODE_STAT' in keywords:
                         del charge['TYPE_APPUI']
                         del charge['DIRECTION']
-                    d_excit = {'VECT_ASSE_GENE' : __addeforce}
+                    d_excit = {'VECT_ASSE_GENE' : nameToSave}
                     for key in charge:
                         d_excit[key] = charge[key]
                     keywords['FORC_AJOU'].append(d_forc_ajou)
-                    self.__excitForcAjou.append(d_excit)
+                    tmp.append(d_excit)
+                    count = count + 1
         MACRO_MATR_AJOU(MAILLAGE=self.dynaLineFEM.getMaillage(),
                         MODELISATION=self.modelisation_flu,
                         GROUP_MA_FLUIDE=self.group_ma_fluide,
@@ -793,10 +795,15 @@ class DynaLineBasis:
                         DDL_IMPO=self.pression_flu_impo,
                         MODE_MECA=self.get(),
                         NUME_DDL_GENE=self.__getNumeDdlGene(),
-                        MATR_MASS_AJOU=__addedMass,
+                        MATR_MASS_AJOU=addedMassCo,
                         **keywords)
-        self.__addedMass = __addedMass
-        return self.__addedMass, self.__excitForcAjou
+        self.__excitForcAjou = []
+        for d_excit in tmp:
+            objToAdd = globals()[d_excit['VECT_ASSE_GENE']]
+            d_excit['VECT_ASSE_GENE'] = objToAdd
+            self.__excitForcAjou.append(d_excit)
+        self.addedMass = addedMass
+        return self.addedMass, self.__excitForcAjou
 
     def __getElasModes(self):
         """perform static linear analysis to retrieve the static elas modes"""
