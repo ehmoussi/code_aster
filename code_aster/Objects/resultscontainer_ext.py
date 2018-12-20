@@ -39,7 +39,7 @@ class ExtendedResultsContainer(injector(ResultsContainer), ResultsContainer):
         Returns:
             dict: Internal state.
         """
-        return (True, self.getModel(), )
+        return (True, self.getModel(), self.getMaterialOnMesh(),)
 
     def __setstate__(self, state):
         """Restore internal state.
@@ -49,6 +49,8 @@ class ExtendedResultsContainer(injector(ResultsContainer), ResultsContainer):
         """
         if state[1] is not None:
             self.appendModelOnAllRanks(state[1])
+        if state[2] is not None:
+            self.appendMaterialOnMeshOnAllRanks(state[2])
 
     def LIST_VARI_ACCES (self):
         if not self.accessible():
