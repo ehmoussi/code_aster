@@ -91,12 +91,17 @@ class ResultCreator(ExecuteCommand):
                 self._result.appendModelOnAllRanks(modele)
             else:
                 chamGd = fkw[0].get("CHAM_GD")
-                if chamGd is not None:
-                    try:
-                        modele = chamGd.getModel()
-                        self._result.appendModelOnAllRanks(modele)
-                    except:
-                        pass
+                modele = fkw[0].get("MODELE")
+                if modele is not None:
+                    self._result.appendModelOnAllRanks(modele)
+                else:
+                    if chamGd is not None:
+                        model = None
+                        try:
+                            modele = chamGd.getModel()
+                            self._result.appendModelOnAllRanks(modele)
+                        except:
+                            pass
 
         self._result.update()
 
