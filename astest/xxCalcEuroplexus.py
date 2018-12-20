@@ -97,3 +97,5 @@ FONCCB=DEFI_FONCTION(NOM_PARA='INST',
 test.assertTrue( True )
 
 test.printSummary()
+
+FIN()

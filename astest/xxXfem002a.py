@@ -387,3 +387,4 @@ TEST_RESU(RESU=(_F(RESULTAT=TEMPEXF,
 
 test.printSummary()
 
+FIN()

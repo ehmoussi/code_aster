@@ -56,3 +56,5 @@ test.assertEqual(K2.getType(), "MATR_ASSE_DEPL_R")
 test.assertEqual(M2.getType(), "MATR_ASSE_DEPL_R")
 
 test.printSummary()
+
+FIN()

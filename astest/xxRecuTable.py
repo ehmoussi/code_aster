@@ -12,3 +12,5 @@ TABG=RECU_TABLE(CO=MA,
                 NOM_TABLE='CARA_GEOM')
 
 test.assertTrue( True )
+
+FIN()

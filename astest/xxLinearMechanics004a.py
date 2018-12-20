@@ -63,3 +63,5 @@ sfon = fieldOnElem.exportToSimpleFieldOnElements()
 test.assertAlmostEqual(sfon.getValue(0, 0), -325.03920740223253)
 
 test.printSummary()
+
+FIN()

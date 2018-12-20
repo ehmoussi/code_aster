@@ -62,3 +62,5 @@ SINOM=CALC_FONC_INTERP(LIST_PARA=inst,
 #                                 );
 
 test.assertTrue( True )
+
+FIN()

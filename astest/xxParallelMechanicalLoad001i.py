@@ -66,3 +66,5 @@ if rank == 0:
     test.assertAlmostEqual(sfon.getValue(1, 0), 1.2740478066719205)
 elif rank == 1:
     test.assertAlmostEqual(sfon.getValue(1, 0), 1.2740478066719205)
+
+FIN()

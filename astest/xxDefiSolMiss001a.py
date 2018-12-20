@@ -228,3 +228,5 @@ test.assertEqual(TBSOL.getType(), "TABLE_SDASTER")
 
 
 test.printSummary()
+
+FIN()

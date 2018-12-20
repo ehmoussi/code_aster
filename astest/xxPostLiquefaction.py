@@ -36,3 +36,5 @@ POSTLIQ = POST_LIQUEFACTION(RESU_REF = RESUREF,
                     RESULTAT = RESU,)
 
 test.assertTrue( True )
+
+FIN()

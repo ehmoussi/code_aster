@@ -16,9 +16,10 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine jefini(cond,arg_rank)
+subroutine jefini(cond,close)
 ! person_in_charge: j-pierre.lefebvre at edf.fr
     implicit none
+#include "asterf_types.h"
 #include "jeveux_private.h"
 #include "asterc/asabrt.h"
 #include "asterc/xfini.h"
@@ -34,7 +35,7 @@ subroutine jefini(cond,arg_rank)
 #include "asterfort/utmess.h"
 
     character(len=*) :: cond
-    integer, intent(in), optional :: arg_rank
+    aster_logical, intent(in), optional :: close
 ! ======================================================================
 !
     integer :: i, n
@@ -63,19 +64,17 @@ subroutine jefini(cond,arg_rank)
     real(kind=8) :: mxdyn, mcdyn, mldyn, vmxdyn, vmet, lgio, cuvtrav
     common /r8dyje/ mxdyn, mcdyn, mldyn, vmxdyn, vmet, lgio(2), cuvtrav
 !     ==================================================================
-    integer :: vali(7), info, ifm, ires, iret, rank
+    integer :: vali(7), info, ifm, ires, iret
+    aster_logical :: close_base
     character(len=8) :: kcond, staou, k8tab(3)
     character(len=24) :: ladate
     real(kind=8) :: rval(3)
 !     ------------------------------------------------------------------
 !
-    if (present(arg_rank)) then
-       rank=arg_rank
+    if (present(close)) then
+       close_base = close
     else
-!
-!   SI L'ARGUMENT N'EST PAS PRESENT, ON N'EFFECTUE PAS D'ECRITURE rank=1
-!
-       rank=1
+       close_base = ASTER_FALSE
     endif
 !
 
@@ -113,7 +112,7 @@ subroutine jefini(cond,arg_rank)
     endif
 !     -------------  LIBERATION FICHIER --------------------------------
     if (kcond .ne. 'ERREUR  ') then
-        if (rank.eq.0) then
+        if ( close_base ) then
             info = 0
             do i = 1, nbfic
                 if (classe(i:i) .ne. ' ') then

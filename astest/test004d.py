@@ -77,3 +77,5 @@ statNonLine1.setLoadStepManager( timeList )
 
 test.assertTrue( True )
 test.printSummary()
+
+FIN()

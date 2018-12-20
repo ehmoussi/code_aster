@@ -55,3 +55,4 @@ TEST_RESU(CHAM_NO=(_F(CHAM_GD=CHAM27_2,
 
 test.printSummary()
 
+FIN()

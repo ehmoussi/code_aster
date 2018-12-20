@@ -202,3 +202,5 @@ TEST_RESU(CHAM_NO=(_F(NOEUD='N157',
           )
 
 test.printSummary()
+
+FIN()

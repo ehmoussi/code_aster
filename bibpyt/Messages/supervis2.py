@@ -210,11 +210,9 @@ dernière au format HDF (mot clé FORMAT_HDF="OUI" dans la commande FIN).
   Mémoire (Mo) : %(r3)8.2f / %(r4)8.2f (Optimum / Minimum)
 """),
 
-    97 : _(u"""
- <FIN> Arrêt normal dans "FIN".
-"""),
-
     98 : _(u"""
  <INFO> Démarrage de l'exécution.
 """),
+
+    99 : _(u"""<I> <FIN> ARRET NORMAL DANS "FIN" PAR APPEL A "JEFINI"."""),
 }

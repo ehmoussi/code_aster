@@ -84,3 +84,5 @@ MAT_T=DEFI_GLRC(RELATION='GLRC_DM',
 test.assertEqual(MAT_T.getType(), "MATER_SDASTER")
 
 test.printSummary()
+
+FIN()

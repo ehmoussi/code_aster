@@ -89,3 +89,5 @@ tab2=POST_COQUE(RESULTAT=RESU,
                             _F(COOR=(0.1,0.1,0.0,),),),);
 
 test.assertTrue( True )
+
+FIN()

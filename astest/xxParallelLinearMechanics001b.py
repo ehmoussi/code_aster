@@ -63,3 +63,5 @@ print rank, sfon.getValue(4, 1)
 test.assertAlmostEqual(sfon.getValue(4, 1), val[rank])
 
 test.printSummary()
+
+FIN()

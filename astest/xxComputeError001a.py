@@ -132,3 +132,5 @@ TEST_RESU(RESU=_F(NUME_ORDRE=1,
 test.assertEqual(RESUPRIM.getType(), "EVOL_ELAS")
 
 test.printSummary()
+
+FIN()

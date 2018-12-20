@@ -29,3 +29,5 @@ traction.setValue(code_aster.PhysicalQuantityComponent.Fy, 4.0 )
 traction.debugPrint()
 
 test.printSummary()
+
+code_aster.close()

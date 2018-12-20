@@ -54,3 +54,5 @@ TEMPE=THER_LINEAIRE(MODELE=MODTH,
 test.assertEqual(TEMPE.getType(), "EVOL_THER")
 
 test.printSummary()
+
+FIN()

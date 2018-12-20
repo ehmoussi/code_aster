@@ -67,3 +67,5 @@ EVOL_RE = CREA_RESU(OPERATION='AFFE',
 
 # Test trivial
 test.assertTrue( True )
+
+FIN()

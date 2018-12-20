@@ -21,3 +21,5 @@ interspec = CALC_INTE_SPEC(INST_INIT=0.,
 test.assertEqual(interspec.getType(), "INTERSPECTRE")
 
 test.printSummary()
+
+FIN()

@@ -91,3 +91,5 @@ PGP_MOA= POST_GENE_PHYS(RESU_GENE=TRANMONO,
                         ),)
 
 test.assertTrue( True )
+
+FIN()

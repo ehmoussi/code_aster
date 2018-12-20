@@ -193,4 +193,4 @@ test.assertEqual(impe0.getType(), "MATR_ASSE_GENE_C")
 
 test.printSummary()
 
-
+FIN()

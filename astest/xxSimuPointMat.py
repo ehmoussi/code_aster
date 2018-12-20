@@ -68,3 +68,5 @@ TSIGPERT=SIMU_POINT_MAT(INFO=2,
                                EPYZ=0.,),);
 
 test.assertTrue( True )
+
+FIN()

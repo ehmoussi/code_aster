@@ -82,3 +82,5 @@ test.assertEqual(CHARGE.getType(), "CHAR_MECA")
 test.assertEqual(CHARGC.getType(), "CHAR_MECA")
 
 test.printSummary()
+
+FIN()

@@ -80,3 +80,5 @@ MELES=CALC_FLUI_STRU(VITE_FLUI  = _F(VITE_MIN  = 1.,
                      )
 
 test.assertTrue( True )
+
+FIN()

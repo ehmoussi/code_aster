@@ -52,3 +52,5 @@ CARAEPX0=AFFE_CARA_ELEM(
 test.assertTrue( True )
 
 test.printSummary()
+
+FIN()

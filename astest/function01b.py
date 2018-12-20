@@ -102,3 +102,5 @@ with test.assertRaisesRegexp(TypeError, "Unexpected type.*str"):
                          INTERPOL=("LIN", "LOG"),)
 
 test.printSummary()
+
+FIN()

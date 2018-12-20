@@ -57,3 +57,5 @@ MACR_ECLA_PG( RESULTAT = CO('MEST_PG'),
              )
 
 test.assertTrue( True )
+
+FIN()

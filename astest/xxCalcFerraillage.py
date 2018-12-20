@@ -92,3 +92,5 @@ RESU=CALC_FERRAILLAGE(reuse =RESU,
 
 
 test.assertTrue( True )
+
+FIN()

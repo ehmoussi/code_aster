@@ -47,3 +47,5 @@ tab = mycalc.create_table()
 logger.setLevel(prev)
 
 test.assertEqual(tab.userName, "result")
+
+FIN()

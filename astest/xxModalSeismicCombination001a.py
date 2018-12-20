@@ -358,3 +358,5 @@ TEST_RESU(RESU=(_F(RESULTAT=SISM_SPE,
           )
 
 test.printSummary()
+
+FIN()

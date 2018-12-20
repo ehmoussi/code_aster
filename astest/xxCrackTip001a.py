@@ -19,3 +19,5 @@ FISS0=DEFI_FOND_FISS(MAILLAGE=MA,
 
 # Test trivial
 test.assertTrue( True )
+
+FIN()

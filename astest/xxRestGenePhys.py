@@ -82,3 +82,5 @@ RESPHYA = REST_GENE_PHYS(ACCE_MONO_APPUI=ACCELER1,
 
 
 test.assertTrue( True )
+
+FIN()

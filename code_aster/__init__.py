@@ -65,3 +65,4 @@ from .Algorithms import (ConstitutiveLaw, IntegrationAlgorithm, StrainType,
 # localization.install()
 
 from .Commands.debut import init
+from .Commands.fin import FIN as close
