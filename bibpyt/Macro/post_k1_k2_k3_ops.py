@@ -1909,6 +1909,8 @@ def post_k1_k2_k3_ops(self, RESULTAT, FOND_FISS =None, FISSURE=None, MATER=None,
     # le materiau et on emet une alarme.
     CHAM_MATER = None
     if MATER == None:
+        if RESULTAT.getNumberOfRanks() == 0:
+            RESULTAT.update()
         if RESULTAT.getNumberOfRanks() > 0:
             cham_maters = []
             for j in RESULTAT.getRanks():
