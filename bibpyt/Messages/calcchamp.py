@@ -69,6 +69,10 @@ le résultat %(k1)s n'est actuellement pas possible.
 Conseil : Il faut renseigner le mot clef EXCIT de la commande CALC_CHAMP,
 """),
 
+7 : _(u"""
+Le champ STRX_ELGA n'est pas possible sur une modélisation XFEM.
+"""),
+
 19 : _(u"""
 Problème lors de l'appel de l'option %(k1)s.
 
