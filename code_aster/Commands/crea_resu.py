@@ -86,22 +86,22 @@ class ResultCreator(ExecuteCommand):
         if fkw is None:
             fkw = keywords.get("PREP_VRC1")
         if fkw is not None:
+            chamMater = fkw[0].get("CHAM_MATER")
+            if chamMater is not None:
+                self._result.appendMaterialOnMeshOnAllRanks(chamMater)
+
             modele = fkw[0].get("MODELE")
             if modele is not None:
                 self._result.appendModelOnAllRanks(modele)
             else:
                 chamGd = fkw[0].get("CHAM_GD")
-                modele = fkw[0].get("MODELE")
-                if modele is not None:
-                    self._result.appendModelOnAllRanks(modele)
-                else:
-                    if chamGd is not None:
-                        model = None
-                        try:
-                            modele = chamGd.getModel()
-                            self._result.appendModelOnAllRanks(modele)
-                        except:
-                            pass
+                if chamGd is not None:
+                    model = None
+                    try:
+                        modele = chamGd.getModel()
+                        self._result.appendModelOnAllRanks(modele)
+                    except:
+                        pass
 
         self._result.update()
 
