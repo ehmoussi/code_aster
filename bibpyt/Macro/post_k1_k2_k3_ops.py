@@ -1829,13 +1829,13 @@ def get_tabout(
         elif FISSURE and MODELISATION == '3D':
             npara.append('NUM_PT')
 
-        tabout = get_erreur(self, ndim, __tabi, type_para)
+        tabout2 = get_erreur(self, ndim, __tabi, type_para)
         tabout = CALC_TABLE(reuse=tabout,
                             TABLE=tabout,
                             TITRE=titre,
                             ACTION=_F(OPERATION='COMB',
                                       NOM_PARA=npara,
-                                      TABLE=__tabi,))
+                                      TABLE=tabout2,))
 
     return tabout
 
