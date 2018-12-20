@@ -324,10 +324,7 @@ def propa_fiss_ops(self, METHODE_PROPA, INFO, **args):
         __Fis = [None] * (StepTot * len(FissAct))
         __Mod = [None] * StepTot
 
-        nom_mod_xfem = mcsimp['MODELE'].nom.ljust(8)
-        nom_mod_sain = aster.getvectjev(nom_mod_xfem + '.MODELE_SAIN')
-        nom_mod_sain = nom_mod_sain[0]
-        MOD_SAIN = self.get_concept(nom_mod_sain.strip())
+        MOD_SAIN = mcsimp['MODELE'].getSaneModel()
 
         FissNou = [Fiss['FISS_PROPAGEE'] for Fiss in Fissures]
 
