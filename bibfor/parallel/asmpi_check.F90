@@ -60,9 +60,9 @@ subroutine asmpi_check(iret)
     integer :: i, nbterm, nbproc, np1, resp0
     mpi_int :: nbpro4, rank, istat, mpicou, wki(1), nbv, ip4
     real(kind=8) :: tres, timeout, t0, tf
-    aster_logical, pointer :: isterm(:) => null()
-    mpi_int, pointer :: diag(:) => null()
-    mpi_int, pointer :: request(:) => null()
+    aster_logical, allocatable :: isterm(:)
+    mpi_int, allocatable :: diag(:)
+    mpi_int, allocatable :: request(:)
 
 !   Current mpi communicator
     call asmpi_comm('GET', mpicou)
@@ -80,9 +80,9 @@ subroutine asmpi_check(iret)
 
 !   On the processor #0
     if (rank == 0) then
-        AS_ALLOCATE(vl=isterm, size=nbproc)
-        AS_ALLOCATE(vi4=diag, size=nbproc)
-        AS_ALLOCATE(vi4=request, size=nbproc)
+        allocate(isterm(nbproc))
+        allocate(diag(nbproc))
+        allocate(request(nbproc))
 
         call uttrst(tres)
         timeout = tres * 0.2d0
@@ -166,9 +166,9 @@ subroutine asmpi_check(iret)
                 call asmpi_stop(2)
             endif
         endif
-        AS_DEALLOCATE(vl=isterm)
-        AS_DEALLOCATE(vi4=diag)
-        AS_DEALLOCATE(vi4=request)
+        deallocate(isterm)
+        deallocate(diag)
+        deallocate(request)
 
 !   On all others processors (not #0)
     else
