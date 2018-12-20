@@ -48,7 +48,7 @@ implicit none
 #include "asterfort/jelira.h"
 #include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
-#include "asterfort/mecalc.h"
+#include "asterfort/compStrx.h"
 #include "asterfort/mecham.h"
 #include "asterfort/mechti.h"
 #include "asterfort/rsadpa.h"
@@ -71,7 +71,7 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: nveca, nchar
-    integer :: imat(3), nume, niv, ibid, ifm, iondp, ladpa, numrep
+    integer :: imat(3), nume, niv, ifm, iondp, ladpa, numrep
     integer :: ialifo, iaadve, nondp, ifexte, ifamor, ifliai
     integer :: neq, idepl0, ivite0, iacce0, iwk, iordr
     integer :: iinteg, iret, nbpas, nbpas_min, nbpas_max
@@ -92,7 +92,7 @@ implicit none
     character(len=24) :: numedd, chamgd
     character(len=24) :: infoch, criter
     character(len=24) :: chgeom, chcara(18), chharm, chtime
-    character(len=24) :: chvarc, chvref, chstru, k24bla, compor
+    character(len=24) :: chvarc, chvref, chstru, compor
     complex(kind=8) :: calpha
     character(len=19) :: force0, force1
     character(len=46) :: champs
@@ -125,7 +125,6 @@ implicit none
     typcoe = ' '
     charep = ' '
     chtime = ' '
-    k24bla = ' '
     base = 'G'
 !
 ! - Names of datastructures
@@ -358,18 +357,18 @@ implicit none
     call jelira(result//'           .ORDR', 'LONUTI', nbord)
     do iordr = 1, nbord
         call rsadpa(result, 'E', 1, 'MODELE', ordr(iordr),&
-                    0, sjv=ladpa, styp=k8b)
+                    0, sjv=ladpa)
         zk8(ladpa)=modele(1:8)
         if (materi .ne. ' ') then
             call rsadpa(result, 'E', 1, 'CHAMPMAT', ordr(iordr),&
-                        0, sjv=ladpa, styp=k8b)
+                        0, sjv=ladpa)
             zk8(ladpa)=materi
         else
             call utmess('A', 'CHAMPS_21')
         endif
 
         call rsadpa(result, 'E', 1, 'CARAELEM', ordr(iordr),&
-                    0, sjv=ladpa, styp=k8b)
+                    0, sjv=ladpa)
         zk8(ladpa)=carael
     end do
 !
@@ -398,39 +397,34 @@ implicit none
             typcoe = 'R'
             alpha = 1.d0
         endif
-        do 62 , iordr = 0 , nbord
-        call rsexch(' ', result, 'DEPL', iordr, chamgd,&
-                    iret)
-        if (iret .gt. 0) goto 62
-        call mecham('STRX_ELGA', modele, carael, 0, chgeom,&
-                    chcara, chharm, iret)
-        if (iret .ne. 0) goto 62
-        call rsadpa(result, 'L', 1, 'INST', iordr,&
-                    0, sjv=ladpa, styp=k8b)
-        time = zr(ladpa)
-        call mechti(chgeom(1:8), time, rundf, rundf, chtime)
-        call vrcins(modele, mate, carael, time, chvarc(1:19),&
-                    codret)
-        call vrcref(modele(1:8), mate(1:8), carael(1:8), chvref(1: 19))
-        if (exipou .and. nfon .ne. 0) then
-            call fointe('F ', nomfon, 1, ['INST'], [time],&
-                        alpha, iret)
-        endif
-        call rsexch(' ', result, 'STRX_ELGA', iordr, chstru,&
-                    iret)
-        if (iret .eq. 0) goto 62
-        ibid = 0
-        call mecalc('STRX_ELGA', modele, chamgd, chgeom, mate,&
-                    chcara, k24bla, k24bla, chtime,&
-                    chharm, ' ', ' ', ' ', ' ',&
-                    k24bla, charep, typcoe, alpha, calpha,&
-                    k24bla, k24bla, chstru, k24bla, ligrel,&
-                    base, chvarc, chvref, k24bla, compor,&
-                    k24bla, iret)
-!
-        call rsnoch(result, 'STRX_ELGA', iordr)
-!
- 62     continue
+        do iordr = 0 , nbord
+            call rsexch(' ', result, 'DEPL', iordr, chamgd,&
+                        iret)
+            if (iret .gt. 0) cycle
+            call mecham('STRX_ELGA', modele, carael, 0, chgeom,&
+                        chcara, chharm, iret)
+            if (iret .ne. 0) cycle
+            call rsadpa(result, 'L', 1, 'INST', iordr,&
+                        0, sjv=ladpa)
+            time = zr(ladpa)
+            call mechti(chgeom(1:8), time, rundf, rundf, chtime)
+            call vrcins(modele, mate, carael, time, chvarc(1:19),&
+                        codret)
+            call vrcref(modele(1:8), mate(1:8), carael(1:8), chvref(1: 19))
+            if (exipou .and. nfon .ne. 0) then
+                call fointe('F ', nomfon, 1, ['INST'], [time],&
+                            alpha, iret)
+            endif
+            call rsexch(' ', result, 'STRX_ELGA', iordr, chstru,&
+                        iret)
+            if (iret .ne. 0) cycle
+            call compStrx(modele, ligrel, compor,&
+                          chamgd, chgeom, mate  , chcara ,&
+                          chvarc, chvref, &
+                          base  , chstru, iret  ,&
+                          exipou, charep, typcoe, alpha, calpha)
+            call rsnoch(result, 'STRX_ELGA', iordr)
+        end do
     endif
 !
     call nonlinDSEnergyClean(ds_energy)

@@ -40,7 +40,7 @@ implicit none
 #include "asterfort/jelira.h"
 #include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
-#include "asterfort/mecalc.h"
+#include "asterfort/compStrx.h"
 #include "asterfort/mecham.h"
 #include "asterfort/mechti.h"
 #include "asterfort/mestat.h"
@@ -80,9 +80,7 @@ implicit none
     character(len=24) :: chamel, chstrx
     character(len=24) :: chgeom, chcara(18), chharm
     character(len=24) :: chvarc, chvref
-    character(len=24) :: mate
-    character(len=24) :: k24bla, noobj
-    character(len=24) :: compor
+    character(len=24) :: mate, noobj, compor
     aster_logical :: exipou
     complex(kind=8) :: calpha
     real(kind=8), pointer :: vale(:) => null()
@@ -108,7 +106,6 @@ implicit none
     nh = 0
     typcoe = ' '
     charep = ' '
-    k24bla = ' '
     k8bla = ' '
     chstrx = ' '
     alpha = 0.d0
@@ -214,13 +211,11 @@ implicit none
                         iret)
 !         -- SI LE CHAMP A DEJE ETE CALCULE :
             if (iret .eq. 0) goto 62
-            call mecalc('STRX_ELGA', nomode, chamgd, chgeom, mate,&
-                        chcara, k24bla, k24bla, chtime,&
-                        chharm, k24bla, k24bla, k24bla, k24bla,&
-                        k24bla, charep, typcoe, alpha, calpha,&
-                        k24bla, k24bla, chstrx, k24bla, ligrel,&
-                        base, chvarc, chvref, k24bla, compor,&
-                        k24bla, iret)
+            call compStrx(nomode, ligrel, compor,&
+                          chamgd, chgeom, mate  , chcara ,&
+                          chvarc, chvref, &
+                          base  , chstrx, iret  ,&
+                          exipou, charep, typcoe, alpha, calpha)
 !
             call rsnoch(result, 'STRX_ELGA', iordr)
         endif
