@@ -136,9 +136,6 @@ character(len=8), intent(in) :: model
         else
             ASSERT(ASTER_FALSE)
         endif
-        if (l_cont_lac) then
-            call utmess('F', 'CONTACT4_1')
-        endif
     else if (algo_reso_geom .eq. 'NEWTON') then
         call getvr8(' ', 'RESI_GEOM', scal=geom_resi)
         v_sdcont_paraci(1) = 0
