@@ -1124,7 +1124,7 @@ def get_propmat_varc_fem(self, RESULTAT, MAILLAGE, MATER, MODELISATION, Lnofon, 
     ChnoVrcExtr = __CHNOVRC.EXTR_COMP(topo=1)
     ChnoVrcNoeu = ChnoVrcExtr.noeud
     ChnoVrcComp = ChnoVrcExtr.comp
-    assert list(set(ChnoVrcComp)) in [['TEMP    '], ['X1      ']]
+    assert list(set(ChnoVrcComp)) in [['TEMP'], ['X1']]
 
     # blindage sur le nombre de noeuds du champ / nombre de noeuds du maillage
     # -> permet de se premunir de l'oubli du couple (OP.INIT_VARC.PVARCNO, LC.ZVARCNO)
