@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,8 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-def post_k_trans_ops(self, RESU_TRANS, K_MODAL, TOUT_ORDRE, NUME_ORDRE,
-                     LIST_ORDRE, INST, LIST_INST, INFO, **args):
+def post_k_trans_ops(self, **args):
     """
        Ecriture de la macro post_k_trans
     """
@@ -30,6 +29,15 @@ def post_k_trans_ops(self, RESU_TRANS, K_MODAL, TOUT_ORDRE, NUME_ORDRE,
     from Utilitai.Table import Table, merge
     from Utilitai.utils import get_titre_concept
     EnumTypes = (ListType, TupleType)
+
+    RESU_TRANS = args.get("RESU_TRANS")
+    K_MODAL = args.get("K_MODAL")
+    TOUT_ORDRE = args.get("TOUT_ORDRE")
+    NUME_ORDRE = args.get("NUME_ORDRE")
+    LIST_ORDRE = args.get("LIST_ORDRE")
+    INST = args.get("INST")
+    LIST_INST = args.get("LIST_INST")
+    INFO = args.get("INFO")
 
     macro = 'POST_K_TRANS'
     ier = 0
@@ -207,4 +215,4 @@ def post_k_trans_ops(self, RESU_TRANS, K_MODAL, TOUT_ORDRE, NUME_ORDRE,
                             )
 
 #------------------------------------------------------------------
-    return ier
+    return tabout
