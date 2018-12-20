@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -52,7 +52,7 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/vrcins.h"
 #include "asterfort/vrcref.h"
-!
+#include "asterfort/compStress.h"
 !
 
 !
@@ -62,7 +62,7 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: ibid, nh, nbchre, n1, n4, n5, n7
+    integer :: nh, nbchre, n1, n4, n5, n7
     integer :: iordr, nbmax, nchar, jchar
     integer :: iocc, nfon, iret, i, nbuti
     integer :: ifm, niv, ier
@@ -210,7 +210,6 @@ implicit none
         endif
 !
         if (kstr(1:3) .eq. 'OUI') then
-            ibid = 0
             call rsexch(' ', result, 'STRX_ELGA', iordr, chstrx,&
                         iret)
 !         -- SI LE CHAMP A DEJE ETE CALCULE :
@@ -231,14 +230,11 @@ implicit none
                         iret)
 !           -- SI LE CHAMP A DEJE ETE CALCULE :
             if (iret .eq. 0) goto 13
-            ibid = 0
-            call mecalc(nosy, nomode, chamgd, chgeom, mate,&
-                        chcara, k24bla, k24bla, chtime,&
-                        chharm, k24bla, k24bla, k24bla, k24bla,&
-                        k24bla, charep, typcoe, alpha, calpha,&
-                        k24bla, k24bla, chamel, k24bla, ligrel,&
-                        base, chvarc, chvref, k24bla, compor,&
-                        chstrx, iret)
+            call compStress(nomode, ligrel, compor,&
+                            chamgd, chgeom, mate  ,&
+                            chcara, chtime, chharm,&
+                            chvarc, chvref, chstrx,&
+                            base  , chamel, iret  )
             call rsnoch(result, nosy, iordr)
         endif
  13     continue

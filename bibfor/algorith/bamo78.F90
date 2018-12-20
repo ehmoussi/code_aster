@@ -353,7 +353,7 @@ character(len=19) :: trange
                 call compStress(modele, ligrel, compor,&
                                 chamgd, chgeom, mate  ,&
                                 chcara, chtime, chharm,&
-                                chvarc, chvref,&
+                                chvarc, chvref, ' ',&
                                 'V'   , chel2 , iret)
                 call celces(chel2, 'V', ches2)
                 nc = 2
