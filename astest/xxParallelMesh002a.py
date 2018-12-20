@@ -71,7 +71,7 @@ matrAsse.build()
 retour = vect_elem.assembleVector( numeDDL )
 
 # FIXME matrixFactorization seems corrupt memory
-if True:
+if False:
     monSolver.matrixFactorization( matrAsse )
     resu = monSolver.solveDoubleLinearSystem( matrAsse, retour )
     #resu.debugPrint(6)
