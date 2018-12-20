@@ -20,12 +20,12 @@ interface
     subroutine compStress(modelz , ligrel , compor,&
                           chdispz, chgeom , chmate,&
                           chcara , chtime , chharm,&
-                          chvarc , chvref ,&
+                          chvarc , chvref , chstrx,&
                           basez  , chelemz, codret)
         character(len=*), intent(in) :: modelz, ligrel, compor
         character(len=*), intent(in) :: chdispz, chgeom, chmate
         character(len=*), intent(in) :: chcara(*), chtime, chharm
-        character(len=*), intent(in) :: chvarc, chvref
+        character(len=*), intent(in) :: chvarc, chvref, chstrx
         character(len=*), intent(in) :: chelemz, basez
         integer, intent(out) :: codret
     end subroutine compStress

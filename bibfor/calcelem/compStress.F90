@@ -19,7 +19,7 @@
 subroutine compStress(modelz , ligrel , compor,&
                       chdispz, chgeom , chmate,&
                       chcara , chtime , chharm,&
-                      chvarc , chvref , &
+                      chvarc , chvref , chstrx,&
                       basez  , chelemz, codret)
 !
 implicit none
@@ -38,7 +38,7 @@ implicit none
 character(len=*), intent(in) :: modelz, ligrel, compor
 character(len=*), intent(in) :: chdispz, chgeom, chmate
 character(len=*), intent(in) :: chcara(*), chtime, chharm
-character(len=*), intent(in) :: chvarc, chvref
+character(len=*), intent(in) :: chvarc, chvref, chstrx
 character(len=*), intent(in) :: chelemz, basez
 integer, intent(out) :: codret
 !
@@ -130,6 +130,7 @@ integer, intent(out) :: codret
 !
     call ajchca('PNBSP_I', cara_elem//'.CANBSP', lpain, lchin, nbin, maxin, 'N')
     call ajchca('PFIBRES', cara_elem//'.CAFIBR', lpain, lchin, nbin, maxin, 'N')
+    call ajchca('PSTRXRR', chstrx, lpain, lchin, nbin, maxin, 'N')
     call ajchca('PCAARPO', chcara(9), lpain, lchin, nbin, maxin, 'N')
     call ajchca('PCACOQU', chcara(7), lpain, lchin, nbin, maxin, 'N')
     call ajchca('PCINFDI', chcara(15), lpain, lchin, nbin, maxin, 'N')
