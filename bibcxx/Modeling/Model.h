@@ -73,6 +73,12 @@ extern const char *const GraphPartitionerNames[nbGraphPartitioner];
  * @author Nicolas Sellenet
  */
 class ModelInstance : public DataStructure {
+  public:
+    /**
+     * @brief Forward declaration for the XFEM enrichment
+     */
+    typedef boost::shared_ptr< ModelInstance > ModelPtr;
+
   protected:
     // On redefinit le type MeshEntityPtr afin de pouvoir stocker les MeshEntity
     // dans la list
@@ -97,6 +103,8 @@ class ModelInstance : public DataStructure {
     listOfModsAndGrps _modelisations;
     /** @brief Maillage sur lequel repose la modelisation */
     BaseMeshPtr _supportBaseMesh;
+    /** @brief Maillage sur lequel repose la modelisation */
+    ModelPtr _saneModel;
 /**
  * @brief Maillage sur lequel repose la modelisation
  * @todo a supprimer en templatisant Model etc.
@@ -125,21 +133,18 @@ class ModelInstance : public DataStructure {
 
   public:
     /**
-     * @brief Forward declaration for the XFEM enrichment
-     */
-    typedef boost::shared_ptr< ModelInstance > ModelPtr;
-
-    /**
      * @brief Constructeur
      */
-    ModelInstance( const std::string name = ResultNaming::getNewResultName() )
-        : DataStructure( name, 8, "MODELE" ),
-          _typeOfElements( JeveuxVectorLong( getName() + ".MAILLE    " ) ),
-          _typeOfNodes( JeveuxVectorLong( getName() + ".NOEUD     " ) ),
-          _partition( JeveuxVectorChar8( getName() + ".PARTIT    " ) ),
-          _supportBaseMesh( MeshPtr() ), _splitMethod( SubDomain ),
-          _graphPartitioner( MetisPartitioner ), _ligrel( new FiniteElementDescriptorInstance(
-                                                     getName() + ".MODELE", _supportBaseMesh ) ){};
+    ModelInstance( const std::string name = ResultNaming::getNewResultName() ):
+    DataStructure( name, 8, "MODELE" ),
+        _typeOfElements( JeveuxVectorLong( getName() + ".MAILLE    " ) ),
+        _typeOfNodes( JeveuxVectorLong( getName() + ".NOEUD     " ) ),
+        _partition( JeveuxVectorChar8( getName() + ".PARTIT    " ) ),
+        _saneModel( nullptr ),
+        _supportBaseMesh( MeshPtr() ), _splitMethod( SubDomain ),
+        _graphPartitioner( MetisPartitioner ), _ligrel( new FiniteElementDescriptorInstance(
+                                                    getName() + ".MODELE", _supportBaseMesh ) )
+    {};
 
     /**
      * @brief Ajout d'une nouvelle modelisation sur tout le maillage
@@ -223,6 +228,14 @@ class ModelInstance : public DataStructure {
 #endif /* _USE_MPI */
 
     /**
+     * @brief Get the sane base model
+     */
+    ModelPtr getSaneModel() const
+    {
+        return _saneModel;
+    };
+
+    /**
      * @brief Obtention de la methode de partition
      */
     ModelSplitingMethod getSplittingMethod() const { return _splitMethod; };
@@ -238,6 +251,14 @@ class ModelInstance : public DataStructure {
      * @return true si le modele est vide
      */
     bool isEmpty() const { return !_typeOfElements->exists(); };
+
+    /**
+     * @brief Set the sane base model
+     */
+    void setSaneModel( ModelPtr saneModel )
+    {
+        _saneModel = saneModel;
+    };
 
     /**
      * @brief Definition de la methode de partition

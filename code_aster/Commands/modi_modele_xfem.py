@@ -43,6 +43,7 @@ class XfemModelModication(ExecuteCommand):
         """
         if "MODELE_IN" in keywords:
             modeleIn = keywords["MODELE_IN"]
+            self._result.setSaneModel(modeleIn)
             if type(modeleIn) is tuple:
                 modeleIn = modeleIn[0]
             self._result.setSupportMesh(modeleIn.getSupportMesh())
