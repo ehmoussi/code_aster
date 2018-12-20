@@ -1306,3 +1306,5 @@ TEST_RESU(RESU=(_F(GROUP_NO='P3',
 
 #
 test.printSummary()
+
+FIN()

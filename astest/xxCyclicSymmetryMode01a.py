@@ -76,3 +76,5 @@ structInterf.addInterface( "Gauche_interf", code_aster.InterfaceType.CraigBampto
 # at least it pass here!
 test.assertTrue( True )
 test.printSummary()
+
+FIN()

@@ -18,3 +18,5 @@ model = AFFE_MODELE( MAILLAGE = mail1,
 # at least check that it passes here
 test.assertTrue( True )
 test.printSummary()
+
+FIN()

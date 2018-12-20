@@ -26,3 +26,5 @@ arrabs = fabs.getValuesAsArray()
 test.assertTrue( np.alltrue( arrabs[:, 1] >= 0. ) )
 
 test.printSummary()
+
+FIN()

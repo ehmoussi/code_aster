@@ -34,3 +34,5 @@ vale = LACAR.sdj.CARCOQUE.VALE.get()
 test.assertEqual(vale[0], 0.2)
 
 test.printSummary()
+
+FIN()

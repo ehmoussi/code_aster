@@ -37,3 +37,5 @@ pytab2 = tab2.EXTR_TABLE()
 test.assertSequenceEqual(pytab2.NUMERO.values(), [1])
 
 test.printSummary()
+
+FIN()

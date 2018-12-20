@@ -8,3 +8,5 @@ test = code_aster.TestCase()
 CREA_LIB_MFRONT(UNITE_MFRONT=38,UNITE_LIBRAIRIE=39)
 
 test.assertTrue( True )
+
+FIN()

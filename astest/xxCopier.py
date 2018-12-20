@@ -12,3 +12,4 @@ MA2= COPIER(CONCEPT= MA)
 
 test.assertTrue( True )
 
+FIN()

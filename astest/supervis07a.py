@@ -80,3 +80,7 @@ except AsterError as exc:
 
 
 test.printSummary()
+
+FIN()
+
+FIN()

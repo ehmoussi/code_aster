@@ -41,3 +41,5 @@ test.assertEqual(SIYY(0, 0, 0), 2.0e6)
 code_aster.saveObjects()
 
 test.printSummary()
+
+FIN()

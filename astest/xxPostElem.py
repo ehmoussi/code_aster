@@ -52,3 +52,5 @@ TABL_MAS=POST_ELEM(  MODELE=MOD,
                                                  'MAS_INTE', ))) )
 
 test.assertTrue( True )
+
+FIN()

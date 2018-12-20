@@ -177,3 +177,5 @@ TEST_RESU(RESU=(_F(NUME_ORDRE=12,
 
 
 test.printSummary()
+
+FIN()

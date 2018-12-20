@@ -40,3 +40,5 @@ monModel = 1
 test.assertEqual( coord[3], 1.0 )
 
 test.printSummary()
+
+code_aster.close()

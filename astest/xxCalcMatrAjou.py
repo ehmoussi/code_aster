@@ -94,3 +94,5 @@ MATRAJ=CALC_MATR_AJOU( MODELE_FLUIDE=FLUIDE1,
                         MODE_MECA=MODES)
 
 test.assertTrue( True )
+
+FIN()

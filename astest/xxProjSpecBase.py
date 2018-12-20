@@ -94,3 +94,5 @@ SPPROJ=PROJ_SPEC_BASE( SPEC_TURB=SPECTRE1,
                        MODE_MECA=MODES );
 
 test.assertTrue( True )
+
+FIN()

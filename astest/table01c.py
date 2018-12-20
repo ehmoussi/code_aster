@@ -16,3 +16,5 @@ IMPR_TABLE(UNITE=88, TABLE=table)
 IMPR_TABLE(UNITE=6, TABLE=table)
 
 test.printSummary()
+
+FIN()

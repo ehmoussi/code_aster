@@ -59,3 +59,5 @@ sfon = MyFieldOnNodes.exportToSimpleFieldOnNodes()
 test.assertAlmostEqual(sfon.getValue(5, 3), 971.7384412373856)
 
 test.printSummary()
+
+FIN()

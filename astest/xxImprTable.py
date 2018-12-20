@@ -14,3 +14,5 @@ TX=CREA_TABLE(LISTE=_F(LISTE_R=LISTE.getValuesAsArray(),PARA=('X')))
 IMPR_TABLE(TABLE=TX)
 
 test.assertTrue( True )
+
+FIN()

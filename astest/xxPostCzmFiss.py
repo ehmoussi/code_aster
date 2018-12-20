@@ -136,3 +136,5 @@ L_CZM_E = POST_CZM_FISS(RESULTAT = U_ELAS,
                       VECT_TANG  = (99.9154700538, 0.0288675134595))
 
 test.assertTrue( True )
+
+FIN()

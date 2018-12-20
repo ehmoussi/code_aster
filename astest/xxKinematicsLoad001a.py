@@ -29,3 +29,5 @@ load2 = AFFE_CHAR_CINE( MODELE = model,
 # at least check that it passes here
 test.assertTrue( True )
 test.printSummary()
+
+FIN()

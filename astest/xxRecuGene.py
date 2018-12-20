@@ -76,3 +76,5 @@ RECGENE=RECU_GENE(RESU_GENE=TRANMONO,
                   NOM_CHAM='DEPL')
 
 test.assertTrue( True )
+
+FIN()

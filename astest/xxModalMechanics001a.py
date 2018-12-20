@@ -73,3 +73,5 @@ A_ELEM1 = dProblem.computeMechanicalDampingMatrix(K_ELEM1, M_ELEM1)
 # at least it pass here!
 test.assertTrue( True )
 test.printSummary()
+
+FIN()

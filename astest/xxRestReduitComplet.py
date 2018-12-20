@@ -78,3 +78,5 @@ reduR = REST_REDUIT_COMPLET(
     INFO             = 2,)
 
 test.assertTrue( True )
+
+FIN()

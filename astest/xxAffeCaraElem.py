@@ -20,3 +20,5 @@ CARAELEM=AFFE_CARA_ELEM(
                                EPAIS = 6.0E-1),)
 
 test.assertTrue( True )
+
+FIN()

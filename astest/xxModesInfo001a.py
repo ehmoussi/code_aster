@@ -81,3 +81,5 @@ TEST_TABLE(
 #FIN();
 
 test.printSummary()
+
+FIN()

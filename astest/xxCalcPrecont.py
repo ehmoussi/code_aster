@@ -120,3 +120,5 @@ RES0=CALC_PRECONT (MODELE=MO,
                    NEWTON=_F(),);
 
 test.assertTrue( True )
+
+FIN()

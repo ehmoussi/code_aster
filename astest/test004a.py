@@ -90,3 +90,5 @@ test.assertEqual(len(z.valeurs),64)
 # at least it pass here!
 test.assertTrue( True )
 test.printSummary()
+
+FIN()

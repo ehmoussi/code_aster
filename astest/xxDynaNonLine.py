@@ -62,3 +62,5 @@ RESU=DYNA_NON_LINE(MODELE=MODELE,
                                    FORMULATION='DEPLACEMENT',),)
 
 test.assertTrue( True )
+
+FIN()

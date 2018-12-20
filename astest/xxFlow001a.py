@@ -89,3 +89,5 @@ SPECTR7=DEFI_SPEC_TURB(
 # at least it pass here!
 test.assertTrue( True )
 test.printSummary()
+
+FIN()

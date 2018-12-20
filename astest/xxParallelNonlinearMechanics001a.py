@@ -89,3 +89,5 @@ test.printSummary()
 #     resu.printMedFile('/tmp/par_%d.resu.med'%rank)
 # else:
 #     resu.printMedFile('/tmp/seq.resu.med')
+
+FIN()

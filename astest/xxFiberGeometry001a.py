@@ -23,3 +23,5 @@ GF_REF=DEFI_GEOM_FIBRE(
 
 # Test trivial
 test.assertTrue( True )
+
+FIN()

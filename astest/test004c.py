@@ -111,3 +111,5 @@ statNonLine2.setDriving( pilotage )
 # at least it pass here!
 test.assertTrue( True )
 test.printSummary()
+
+FIN()

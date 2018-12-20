@@ -92,3 +92,4 @@ test.assertEqual(mesh.getType(), "MAILLAGE_SDASTER")
 
 test.printSummary()
 
+FIN()
