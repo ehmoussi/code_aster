@@ -22,13 +22,13 @@
 
 cata_msg = {
 1 : _(u"""
-Vous avez demandé ...................... CODIFICATION = "UTILISATEUR"
+Vous avez demandé CODIFICATION = "UTILISATEUR"
 Dans cette version, la seule valeur disponible est "EC2". Le calcul ne sera pas
 effectué pour les autres valeurs.
 """),
 
 2 : _(u"""
-Vous avez demandé ........................ TYPE_STRUCTURE = "%(k1)s"
+Vous avez demandé TYPE_STRUCTURE = "%(k1)s"
 Dans cette version, la seule valeur disponible est "2D". Le calcul ne sera pas
 effectué pour les autres valeurs.
 """),

@@ -60,7 +60,7 @@ COMBINAISON_FERRAILLAGE = MACRO(
         fr = tr ("Paramètres de la méthode EC2"),
         AFFE = FACT ( statut = 'o', min = 1 , max = '**',
             regles = ( UN_PARMI ( 'TOUT', 'GROUP_MA' ), ),
-                TOUT = SIMP ( statut = 'f', typ = 'TXM', defaut='OUI', into = ('OUI',) ),
+                TOUT = SIMP ( statut = 'f', typ = 'TXM', into = ('OUI',) ),
 
             GROUP_MA = SIMP ( statut = 'f', typ = grma,
                               validators=NoRepeat() , max='**'),
@@ -94,7 +94,7 @@ COMBINAISON_FERRAILLAGE = MACRO(
         fr = tr ("Paramètres de la méthode UTILISATEUR"),
         AFFE = FACT ( statut = 'o', min = 1 , max = '**',
             regles = ( UN_PARMI ( 'TOUT', 'GROUP_MA' ), ),
-                TOUT = SIMP ( statut = 'f', typ = 'TXM', defaut='OUI', into = ('OUI',) ),
+                TOUT = SIMP ( statut = 'f', typ = 'TXM', into = ('OUI',) ),
                                   
             GROUP_MA = SIMP ( statut = 'f', typ = grma,
                               validators=NoRepeat() , max='**'),
