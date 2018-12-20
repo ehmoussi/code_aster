@@ -33,12 +33,16 @@ class TableCreation(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        typ = keywords["TYPE_TABLE"]
-        if typ == "TABLE_FONCTION":
-            self._result = TableOfFunctions()
-        elif typ == "TABLE_CONTENEUR":
-            self._result = TableContainer()
+        reuse = keywords.get("reuse")
+        if reuse is not None:
+            self._result = reuse
         else:
-            self._result = Table()
+            typ = keywords["TYPE_TABLE"]
+            if typ == "TABLE_FONCTION":
+                self._result = TableOfFunctions()
+            elif typ == "TABLE_CONTENEUR":
+                self._result = TableContainer()
+            else:
+                self._result = Table()
 
 CREA_TABLE = TableCreation.run
