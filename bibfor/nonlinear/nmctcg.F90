@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -39,7 +39,7 @@ implicit none
 !
 ! MECA_NON_LINE - Continue/XFEM method
 !
-! Geometric loop: geometric actualisation and pairing 
+! Geometric loop: geometric actualisation and pairing
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -61,7 +61,7 @@ implicit none
 ! - Geometric loop: geometric actualisation and pairing
 !
     if (.not.l_cont_allv) then
-        if (cont_form .eq. 2) then
+        if (cont_form .eq. 2 .or. cont_form .eq. 5) then
             call mmctcg(mesh , ds_contact, ds_measure)
         elseif (cont_form .eq. 3) then
             call xmctcg(model, mesh, ds_contact, ds_measure)

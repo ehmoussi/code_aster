@@ -79,7 +79,7 @@ integer :: numins
     character(len=19) :: depmoi, depplu
     character(len=19) :: depdel, ddepla
     character(len=19) :: vitini, accini, vitplu, accplu
-    aster_logical :: lallv, leltc, ldyna
+    aster_logical :: lallv, leltc, ldyna, l_cont_lac
     real(kind=8), pointer :: ddepl(:) => null()
     real(kind=8), pointer :: depde(:) => null()
 !
@@ -95,7 +95,12 @@ integer :: numins
     call dismoi('NB_EQUA', numedd, 'NUME_DDL', repi=neq)
 !
     lallv = cfdisl(ds_contact%sdcont_defi,'ALL_VERIF')
+     l_cont_lac  = cfdisl(ds_contact%sdcont_defi,'FORMUL_LAC')
     if (lallv) goto 999
+!
+! --- CHECK FOR LAC METHODE
+!
+    l_cont_lac  = cfdisl(ds_contact%sdcont_defi,'FORMUL_LAC')
 !
 ! --- DECOMPACTION DES VARIABLES CHAPEAUX
 !
@@ -114,10 +119,14 @@ integer :: numins
 !
 ! --- INITIALISATION DES CHAMPS DE DEPLACEMENT
 !
-    call copisd('CHAMP_GD', 'V', depmoi, depplu)
+    if (.not.l_cont_lac) then
+        call copisd('CHAMP_GD', 'V', depmoi, depplu)
+    endif
     call jeveuo(depdel(1:19)//'.VALE', 'E', vr=depde)
     call jeveuo(ddepla(1:19)//'.VALE', 'E', vr=ddepl)
-    call r8inir(neq, 0.d0, depde, 1)
+    if (.not.l_cont_lac) then
+        call r8inir(neq, 0.d0, depde, 1)
+    endif
     call r8inir(neq, 0.d0, ddepl, 1)
 !
 ! --- AFIN QUE LE VECTEUR DES FORCES D'INERTIE NE SOIT PAS MODIFIE AU

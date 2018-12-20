@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -65,7 +65,7 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    aster_logical :: l_cont_cont, l_cont_disc, l_cont_xfem
+    aster_logical :: l_cont_cont, l_cont_disc, l_cont_xfem, l_cont_lac
     aster_logical :: l_geom_sans, l_geom_manu, l_geom_auto
     integer :: nb_iter_geom, iter_geom_maxi
     integer :: loop_geom_count
@@ -95,6 +95,7 @@ implicit none
 ! - Get contact parameters
 !
     l_cont_cont = cfdisl(ds_contact%sdcont_defi,'FORMUL_CONTINUE')
+    l_cont_lac  = cfdisl(ds_contact%sdcont_defi,'FORMUL_LAC')
     l_cont_disc = cfdisl(ds_contact%sdcont_defi,'FORMUL_DISCRETE')
     l_cont_xfem = cfdisl(ds_contact%sdcont_defi,'FORMUL_XFEM')
 !
@@ -109,7 +110,7 @@ implicit none
 !
 ! - Update triggers
 !
-    if (l_cont_cont .or. l_cont_xfem) then
+    if (l_cont_cont .or. l_cont_xfem .or. l_cont_lac) then
 !
 ! ----- Compute geometry criterion
 !
@@ -119,7 +120,7 @@ implicit none
 ! ----- Get values
 !
         call mmbouc(ds_contact, 'Geom', 'Read_Counter'  , loop_geom_count)
-        call mmbouc(ds_contact, 'Geom', 'Is_Convergence', loop_state_ = loop_geom_conv)         
+        call mmbouc(ds_contact, 'Geom', 'Is_Convergence', loop_state_ = loop_geom_conv)
 !
 ! ----- For REAC_GEOM = 'MANU'
 !
@@ -177,7 +178,7 @@ implicit none
 !
 ! - Set values in convergence table for contact geoemtry informations
 !
-    if (l_cont_cont .or. l_cont_xfem) then
+    if (l_cont_cont .or. l_cont_xfem .or. l_cont_lac) then
         call nmimck(ds_print, 'BOUC_NOEU', loop_geom_node, .true._1)
         call nmimcr(ds_print, 'BOUC_VALE', loop_geom_vale, .true._1)
     endif
