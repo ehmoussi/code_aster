@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 
 subroutine op9999(isave)
-    use parameters_module
+    use parameters_module, only : ST_OK
     implicit none
 !     ------------------------------------------------------------------
 ! person_in_charge: j-pierre.lefebvre at edf.fr
@@ -79,8 +79,7 @@ subroutine op9999(isave)
     proc = 'OUI'
     close_base = isave .eq. 1 .and. (proc.eq.'NON' .or. rank.eq.0)
 
-    iret = 0
-    call ststat(iret)
+    call ststat(ST_OK)
 
 ! --- MENAGE DANS LES BIBLIOTHEQUES, ALARMES, ERREURS, MPI
 !
@@ -172,10 +171,7 @@ subroutine op9999(isave)
 !
 ! --- CLOTURE DE JEVEUX
 !
-    if ( close_base ) then
-        rank = 1
-    endif
-    call jefini('NORMAL' , arg_rank=rank)
+    call jefini('NORMAL', close_base)
 
     if ( isave .eq. 0 ) then
         do i=1,99
