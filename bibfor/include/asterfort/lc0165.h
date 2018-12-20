@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,9 +15,6 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
-! aslint: disable=W1504
 !
 interface
     subroutine lc0165(fami, kpg, ksp, ndim, imate,&
@@ -42,7 +39,7 @@ interface
         real(kind=8), intent(in) :: angmas(*)
         real(kind=8), intent(out) :: sigp(6)
         real(kind=8), intent(out) :: vip(*)
-        real(kind=8), intent(out) :: wkin(*)
+        real(kind=8), intent(in) :: wkin(*)
         character(len=8), intent(in) :: typmod(*)
         integer, intent(in) :: nvi
         real(kind=8), intent(out) :: dsidep(6,6)
