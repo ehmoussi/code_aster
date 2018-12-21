@@ -22,11 +22,11 @@
 
 cata_msg = {
     1 : _(u"""
-Le mot-clef MODELE est absent dans CALC_PRESSION.
+La modélisation contenue dans RESULTAT est différente du MODELE déclaré.
 """),
 
     3 : _(u"""
 CALC_PRESSION n'est pas programmé sur des éléments de structures (poutre, plaque, coque, tuyau, poutre multifibre).
 """),
-
+    
 }

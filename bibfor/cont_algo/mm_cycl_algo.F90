@@ -113,7 +113,7 @@ implicit none
     real(kind=8) :: alpha_cont_matr=0.0, alpha_cont_vect=0.0
     real(kind=8) :: alpha_frot_matr=0.0, alpha_frot_vect=0.0
     real(kind=8) :: coef_opt=0.0,pres_cont(2)=0.0, dist_cont(2)=0.0
-    real(kind=8) :: coef_bussetta=0.0, dist_max=0.0
+    real(kind=8) :: coef_bussetta=0.0, dist_max=0.0, coe1=0.
     integer      ::  i_algo_cont=0
     integer :: i_reso_frot=0
     integer :: n_cychis
@@ -150,7 +150,7 @@ implicit none
 ! ALGO_CONT = PENALISATION, type_adap=7
 ! CAS 5 : tous les autres cas du moment ou adaptation .eq. 'TOUT' actif, type_adap=4
     treatment =  ((type_adap .eq. 4) .or. (type_adap .eq. 5) .or. &
-                  (type_adap .eq. 6) .or. (type_adap .eq. 7 ) .or.&
+                  (type_adap .eq. 6) .or.&
                   (type_adap .eq. 7 ) .or. (type_adap .eq. 11 ))
     i_reso_cont  = cfdisi(ds_contact%sdcont_defi,'ALGO_RESO_CONT')
     
@@ -441,31 +441,34 @@ implicit none
         if (mode_cycl .eq. 1 .and. &
             ds_contact%iteration_newton .gt. ds_contact%it_cycl_maxi+3 ) then  
             ! On fait la projection sur le cône négatif des valeurs admissibles
-!              if (dist_cont_curr .gt. 1.d-6 )  dist_cont_curr = 0.0
-!              if (pres_cont_curr .gt. 1.d-6 )  pres_cont_curr = -1.d-15
-!              if (dist_cont_prev .gt. 1.d-6 )  dist_cont_prev = 0.0
-!              if (pres_cont_prev .gt. 1.d-6 )  pres_cont_prev = -1.d-15
+              if (dist_cont_curr .gt. 1.d-6 )  dist_cont_curr = 0.0
+              if (pres_cont_curr .gt. 1.d-6 )  pres_cont_curr = -1.d-15
+              if (dist_cont_prev .gt. 1.d-6 )  dist_cont_prev = 0.0
+              if (pres_cont_prev .gt. 1.d-6 )  pres_cont_prev = -1.d-15
              if (i_reso_cont .ne. 0) then
-                 call mmstac(dist_cont_curr, pres_cont_curr,1.d-12,indi_cont_curr)
-                 call mmstac(dist_cont_prev, pres_cont_prev,1.d-12,indi_cont_prev)
+                 call mmstac(dist_cont_curr, pres_cont_curr,coe1,indi_cont_curr)
+                 call mmstac(dist_cont_prev, pres_cont_prev,coe1,indi_cont_prev)
                  v_sdcont_cychis(n_cychis*(i_cont_poin-1)+1)    = indi_cont_curr
                  v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+1) = indi_cont_prev
              endif       
-!              v_sdcont_cychis(n_cychis*(i_cont_poin-1)+3)    = pres_cont_curr
-!              v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+3) = pres_cont_prev
-!              v_sdcont_cychis(n_cychis*(i_cont_poin-1)+4)    = dist_cont_curr
-!              v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+4) = dist_cont_prev      
-!             if (pres_cont_curr .lt. 1.d-2*ds_contact%cont_pressure) then 
-                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+57) = 1.0
-                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+59) = 0.99
-                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+56) = 1.0
-                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+51) = 4.0
-                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+52) = 4.0
-                v_sdcont_cyceta(4*(i_cont_poin-1)+1)   = 10
-                coef_tmp =max(1.d0/ds_contact%arete_min,&
-                              v_sdcont_cychis(n_cychis*(i_cont_poin-1)+2))
+             v_sdcont_cychis(n_cychis*(i_cont_poin-1)+3)    = pres_cont_curr
+             v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+3) = pres_cont_prev
+             v_sdcont_cychis(n_cychis*(i_cont_poin-1)+4)    = dist_cont_curr
+             v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+4) = dist_cont_prev      
+             v_sdcont_cychis(n_cychis*(i_cont_poin-1)+57) = 1.0
+             v_sdcont_cychis(n_cychis*(i_cont_poin-1)+59) = 0.99
+             v_sdcont_cychis(n_cychis*(i_cont_poin-1)+56) = 1.0
+             v_sdcont_cychis(n_cychis*(i_cont_poin-1)+51) = 4.0
+             v_sdcont_cychis(n_cychis*(i_cont_poin-1)+52) = 4.0
+             v_sdcont_cyceta(4*(i_cont_poin-1)+1)   = 10
+             if (.not. l_pena_cont) then
+                !coef_tmp =max(1.d0/ds_contact%arete_min,&
+                !              v_sdcont_cychis(n_cychis*(i_cont_poin-1)+2))
+                 coef_tmp =1.d0/ds_contact%arete_min
+
                 v_sdcont_cychis(n_cychis*(i_cont_poin-1)+2)    = coef_tmp
                 v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+2) = coef_tmp
+             endif
                 mmcvca =  indi_cont_prev .eq. indi_cont_curr
         endif
     endif

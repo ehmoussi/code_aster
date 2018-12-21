@@ -1,0 +1,10 @@
+P time_limit 280
+P memory_limit 512
+P ncpus 1
+P mpi_nbcpu 1
+P mpi_nbnoeud 1
+P testlist verification sequential
+
+F comm zzzz113a.comm D 1
+F comm zzzz113a.com0 D 1
+F mmed zzzz113a.mmed D 20

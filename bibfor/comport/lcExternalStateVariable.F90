@@ -34,9 +34,9 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/verift.h"
 #include "asterfort/get_elas_id.h"
-#include "asterfort/comp_meca_l.h"
 #include "asterfort/mfrontExternalStateVariable.h"
 #include "asterfort/umatExternalStateVariable.h"
+#include "asterfort/testExternalBehaviour.h"
 !
 real(kind=8), intent(in) :: carcri(*)
 character(len=16), intent(in) :: compor(*)
@@ -88,7 +88,7 @@ real(kind=8), intent(out) :: predef(*), dpred(*)
     real(kind=8)      :: epsthp, epsth_anisp(3), epsth_metap
     character(len=6), parameter :: epsa(6) = (/'EPSAXX','EPSAYY','EPSAZZ','EPSAXY','EPSAXZ',&
                                             'EPSAYZ'/)
-    aster_logical     :: l_mfront_proto, l_mfront_offi
+    aster_logical     :: l_mfront, l_umat
     real(kind=8)      :: rac2
 !
 ! --------------------------------------------------------------------------------------------------
@@ -232,18 +232,17 @@ real(kind=8), intent(out) :: predef(*), dpred(*)
 !
 ! - Prepare predef and dpred variables for MFront and UMAT
 !
-    rela_comp = compor(RELA_NAME)
+    call testExternalBehaviour(carcri, l_mfront, l_umat)
 !     * For MFront
-    call comp_meca_l(rela_comp, 'MFRONT_PROTO', l_mfront_proto)
-    call comp_meca_l(rela_comp, 'MFRONT_OFFI' , l_mfront_offi)
-    if (l_mfront_proto .or. l_mfront_offi) then
+    if (l_mfront) then
+        rela_comp = compor(RELA_NAME)
         call mfrontExternalStateVariable(carcri, rela_comp, fami, kpg, ksp, &
                                          irets, ireth, &
                                          sechm, sechp, hydrm, hydrp, &
                                          predef, dpred)
     endif
 !     * For UMAT
-    if (rela_comp .eq. 'UMAT') then
+    if (l_umat) then
         call umatExternalStateVariable(fami, kpg, ksp, &
                                          irets, ireth, &
                                          sechm, sechp, hydrm, hydrp, &

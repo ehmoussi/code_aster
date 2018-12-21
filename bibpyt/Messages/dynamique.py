@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -264,6 +264,12 @@ On n'a pas de structure de données résultat dans le mot-clef ETAT_INIT parce q
 On ignore donc le calcul du second membre pour cet instant.
 """),
 
+   54: _(u"""
+  -> La numérotation des modes pour l'amortissement modal est incohérente avec la numérotation utilisée pour la dynamique transitoire
+  -> Risque & Conseil :
+     Soit le modèle n'est pas le même, soit, plus probablement, vous n'utilisez pas les mêmes conditions limites de Dirichlet dualisées (AFFE_CHAR_MECA) entre le calcul modal et la dynamique transitoire.
+"""),
+
     55 : _(u"""
 --------------------------------------------------------------------------------------
 
@@ -473,4 +479,3 @@ Avancement du calcul
     99 : _(u"""    >> nombre de modélisations de palier : %(i1)d"""),
 
 }
-

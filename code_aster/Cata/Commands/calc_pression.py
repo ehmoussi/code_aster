@@ -39,6 +39,6 @@ CALC_PRESSION=MACRO(nom="CALC_PRESSION",
          GROUP_MA        =SIMP(statut='o',typ=grma ,validators=NoRepeat(),max='**'),
          INST            =SIMP(statut='o',typ='R',max='**'),
          MODELE          =SIMP(statut='f',typ=modele_sdaster),
-         GEOMETRIE      = SIMP(statut='f',typ='TXM',defaut="INITIALE",into=("INITIALE","DEFORMEE")),
+         GEOMETRIE      = SIMP(statut='f',typ='TXM',defaut="DEFORMEE",into=("INITIALE","DEFORMEE")),
          INFO            =SIMP(statut='f',typ='I',defaut=1,into=(1,2)),
 );

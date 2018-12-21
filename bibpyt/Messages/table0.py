@@ -86,6 +86,12 @@ Il ne satisfait pas l'expression régulière :
     %(k2)s
 """),
 
+    16 : (u"""
+Les variables dans au moins d'une colonne ne sont pas de type réel ou entier.
+Les calculs demandés ne sont pas possibles.
+"""),
+
+
     19 : _(u"""La formule dépend de %(i1)d paramètre(s).
 Vous devez fournir autant de nom de colonne dans NOM_COLONNE."""),
 

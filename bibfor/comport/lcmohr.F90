@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -131,17 +131,8 @@ subroutine lcmohr(fami, kpg, ksp, ndim,&
           1.4142135623730951d0                            /
     data  mxiter / 50 /
 !
-! Declaration of Common space variables
-    common / tdim  / ndt, ndi
-
-
     codret = 0
 !
-! - Get temperatures
-!
-    call get_varc(fami , kpg  , ksp , 'T',&
-                  tm, tp, tref)
-
     if (option(1:14) .eq. 'RIGI_MECA_TANG') then
         nomres(1)= 'E       '
         nomres(2)= 'NU      '
@@ -161,6 +152,17 @@ subroutine lcmohr(fami, kpg, ksp, ndim,&
 ! Modelisation type:
 ! 3D, D_PLAN, C_PLAN, AXIS
     mod = typmod(1)
+!
+! =================================================================
+! --- NOMBRE DE COMPOSANTES ---------------------------------------
+! =================================================================
+    if (mod(1:2) .eq. '3D' .or. mod(1:6).eq.'C_PLAN') then
+        ndt = 6
+        ndi = 3
+    else if (mod(1:6).eq.'D_PLAN' .or. mod(1:4).eq.'AXIS') then
+        ndt = 4
+        ndi = 3
+    endif
 !
     if (mod(1:6) .eq. 'C_PLAN') then
         outofp=.false.
@@ -183,8 +185,7 @@ subroutine lcmohr(fami, kpg, ksp, ndim,&
     endif
 !
 ! Reading material linear elastic properties
-!    nomres(1)= 'ALPHA   '
-    nomres(1)= 'E       '
+    nomres(1)= 'ALPHA   '
     nomres(2)= 'E       '
     nomres(3)= 'NU      '
     call rcvala(imate, ' ', 'ELAS', 0, '   ', &
@@ -195,7 +196,20 @@ subroutine lcmohr(fami, kpg, ksp, ndim,&
     nomres(2)= 'ANGDIL  '
     nomres(3)= 'COHESION'
     call rcvala(imate, ' ', 'MOHR_COULOMB', 0, '   ', &
-                [tm], 3, nomres, rprops(4), icode(4), 2)
+                [tp], 3, nomres, rprops(4), icode(4), 2)
+!
+! Thermal deformation rate
+! -------------------------
+    if ((.not.isnan(tm)) .and. (.not.isnan(tp)) &
+         .and. (rprops(1).gt.r0)) then
+        
+        call get_varc('RIGI' , 1  , 1 , 'T', tm, tp, tref)
+        
+        do i = 1, ndi
+            dstrai(i) = dstrai(i) - rprops(1)*(tp-tm)
+        enddo
+        
+    endif
 !
 ! Initialize some algorithmic and internal variables
     dgama =r0
