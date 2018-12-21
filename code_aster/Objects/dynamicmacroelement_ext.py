@@ -35,13 +35,6 @@ class ExtendedDynamicMacroElement(injector(DynamicMacroElement), DynamicMacroEle
     cata_sdj = "SD.sd_macr_elem_dyna.sd_macr_elem_dyna"
 
     def EXTR_MATR_GENE(self,typmat) :
-        """ retourne les valeurs des matrices generalisees reelles
-        dans un format numpy
-         typmat='MASS_GENE' pour obtenir la matrice de masse generalisee
-         typmat='RIGI_GENE' pour obtenir la matrice de raideur generalisee
-         typmat='AMOR_GENE' pour obtenir la matrice d'amortissement generalisee
-         Attributs retourne
-            - self.valeurs : numpy.array contenant les valeurs """
         import numpy
         if not self.accessible():
             raise AsException("Erreur dans macr_elem_dyna.EXTR_MATR_GENE en PAR_LOT='OUI'")
@@ -66,12 +59,6 @@ class ExtendedDynamicMacroElement(injector(DynamicMacroElement), DynamicMacroEle
         return matrice
 
     def RECU_MATR_GENE(self,typmat,matrice) :
-        """ envoie les valeurs d'un tableau numpy dans des matrices generalisees
-        reelles definies dans jeveux
-         typmat='MASS_GENE' pour obtenir la matrice de masse generalisee
-         typmat='RIGI_GENE' pour obtenir la matrice de raideur generalisee
-         typmat='AMOR_GENE' pour obtenir la matrice d'amortissement generalisee
-         Attributs ne retourne rien """
         import numpy
         if not self.accessible():
             raise AsException("Erreur dans macr_elem_dyna.RECU_MATR_GENE en PAR_LOT='OUI'")

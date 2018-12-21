@@ -32,9 +32,6 @@ _orig_getType = GeneralizedAssemblyMatrixDouble.getType
 
 
 def VALM_triang2array(dict_VALM, dim, dtype=None):
-    """Conversion (par recopie) de l'objet .VALM decrivant une matrice pleine
-    par sa triangulaire inf (et parfois triang sup) en numpy.array plein.
-    """
     import numpy
     # stockage symetrique ou non (triang inf+sup)
     sym = len(dict_VALM) == 1
@@ -54,9 +51,6 @@ def VALM_triang2array(dict_VALM, dim, dtype=None):
     return valeur
 
 def VALM_diag2array(dict_VALM, dim, dtype=None):
-    """Conversion (par recopie) de l'objet .VALM decrivant une matrice
-    diagonale en numpy.array plein.
-    """
     import numpy
     diag = numpy.array(dict_VALM[1])
     assert dim == len(diag), 'Dimension incorrecte : %d != %d' % (dim, len(diag))
@@ -89,10 +83,6 @@ class ExtendedGeneralizedAssemblyMatrixComplex(injector(GeneralizedAssemblyMatri
             self.setModalBasis(state[2])
 
     def EXTR_MATR_GENE(self) :
-        """ retourne les valeurs de la matrice generalisee complexe
-            dans un format numpy
-            Attributs retourne
-            - self.valeurs : numpy.array contenant les valeurs """
         import numpy
         if not self.accessible():
             raise AsException("Erreur dans matr_asse_gene_c.EXTR_MATR_GENE en PAR_LOT='OUI'")
@@ -117,9 +107,6 @@ class ExtendedGeneralizedAssemblyMatrixComplex(injector(GeneralizedAssemblyMatri
         return valeur
 
     def RECU_MATR_GENE(self,matrice) :
-        """ envoie les valeurs d'un tableau numpy dans des matrices
-        generalisees reelles definies dans jeveux
-            Attributs ne retourne rien """
         import numpy, aster
         if not self.accessible():
             raise AsException("Erreur dans matr_asse_gene_c.RECU_MATR_GENE en PAR_LOT='OUI'")
@@ -192,16 +179,6 @@ class ExtendedGeneralizedAssemblyMatrixDouble(injector(GeneralizedAssemblyMatrix
             self.setModalBasis(state[2])
 
     def EXTR_MATR(self, sparse=False):
-        """Retourne les valeurs de la matrice dans un format numpy
-        Si sparse=True, la valeur de retour est un triplet de numpy.array.
-        Attributs retourne si sparse=False:
-        - valeurs : numpy.array contenant les valeurs
-        ou si sparse=True:
-        - valeurs : numpy.array contenant les valeurs
-        - lignes : numpy.array numpy.array contenant les indices des lignes
-        - colonnes : numpy.array contenant les indices des colonnes
-        - dim : int qui donne la dimension de la matrice
-        """
         import numpy as NP
         if not self.accessible():
             raise Accas.AsException(
@@ -233,10 +210,6 @@ class ExtendedGeneralizedAssemblyMatrixDouble(injector(GeneralizedAssemblyMatrix
             return make_sym_matrix(dim,triang_sup,ntype)
 
     def EXTR_MATR_GENE(self):
-        """ retourne les valeurs de la matrice generalisee reelle
-            dans un format numpyal Array
-            Attributs retourne
-            - self.valeurs : numpy.array contenant les valeurs """
         if not self.accessible():
             raise AsException("Erreur dans matr_asse_gene.EXTR_MATR_GENE en PAR_LOT='OUI'")
         import numpy
@@ -262,9 +235,6 @@ class ExtendedGeneralizedAssemblyMatrixDouble(injector(GeneralizedAssemblyMatrix
         return valeur
 
     def RECU_MATR_GENE(self,matrice) :
-        """ envoie les valeurs d'un tableau numpy dans des matrices
-        generalisees reelles definies dans jeveux
-            Attributs ne retourne rien """
         import numpy, aster
         if not self.accessible():
             raise AsException("Erreur dans matr_asse_gene.RECU_MATR_GENE en PAR_LOT='OUI'")
