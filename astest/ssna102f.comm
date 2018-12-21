@@ -201,7 +201,6 @@ RESU=STAT_NON_LINE(
                                         RESI_GLOB_RELA = 1.E-6,
                                         ITER_GLOB_MAXI = 50,
                                         ARRET = 'OUI'),
-                          INFO=2
                        )
 
 #

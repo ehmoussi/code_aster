@@ -1,0 +1,234 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+# person_in_charge: jean-luc.flejou at edf.fr
+# GEOMETRIE PROCHE DU CPP N4
+
+from Contrib.macro_rota_globale import MACR_ROTA_GLOBALE
+
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
+
+MOMENTMZ=1.
+
+PRESSION=0.
+
+EP=0.077
+
+RMOY=0.3955
+
+RMOYN=- RMOY
+
+REXT=RMOY + (EP/2.)
+
+RC=1.25
+
+YOUNG=2.E11
+
+POISSON=0.3
+
+SIGY=200.E6
+
+H=2.E10
+
+MLSURMLS=0.8
+
+RINT=RMOY - (EP/2.)
+
+LAMBDA=EP*RC/RMOY/RMOY
+
+SURF=pi* (REXT*REXT-RINT*RINT)
+
+IY=pi*(REXT**4-RINT**4)/4.
+
+IZ=IY
+
+IX=IY + IZ
+
+MEDR=SIGY*IY/REXT
+
+MPDR=4.0*MEDR/pi
+
+MPX=SIGY*IX/REXT
+
+GAMMA=RC/RMOY
+
+STHETA1=1.89/(LAMBDA**(0.666667))
+
+STHETA2=0.96/(LAMBDA**(0.333333))/GAMMA
+
+STHETA=STHETA1 - STHETA2
+
+MEFL=MEDR / STHETA
+
+MPFL=MPDR * MLSURMLS
+
+MA=LIRE_MAILLAGE(VERI_MAIL=_F(VERIF='OUI'),)
+
+
+MO=AFFE_MODELE(        MAILLAGE=MA,
+     AFFE=(_F(  GROUP_MA = ('POUTRE'),   PHENOMENE = 'MECANIQUE',
+               MODELISATION = 'POU_D_T'),
+           _F(  GROUP_MA = ('3D','FACE_X224', 'FACE_Y224',
+                            'FACE_X125','FACE_Y125'),   
+                PHENOMENE = 'MECANIQUE',
+               MODELISATION = '3D'),
+           _F(  GROUP_MA = ('POI_X125','POI_Y125'),   PHENOMENE = 'MECANIQUE',
+                MODELISATION = 'DIS_TR'),
+               )
+               )
+
+CAREL=AFFE_CARA_ELEM(   MODELE=MO,
+                        POUTRE=( _F( GROUP_MA = ('POUTRE'), 
+                                     SECTION = 'CERCLE', 
+                                     CARA = (   'R',  'EP', ), 
+                                     VALE = (  REXT,  EP, ),
+                                     MODI_METRIQUE = 'OUI'),
+                               ),
+                        DISCRET=( _F(GROUP_MA=('POI_X125', 'POI_Y125'), 
+                                     CARA='K_TR_D_N',
+                                     #VALE=(1.E-3,1.E-3,1.E-3,
+                                           #1.E-3,1.E-3,1.E-3,),
+                                     VALE=(0.,0.,0.,
+                                           0.,0.,0.,),
+                                ),
+                               ),
+                     )
+
+MAT=DEFI_MATERIAU(    ELAS=_F( E = YOUNG, NU = POISSON),
+                      ECRO_LINE=_F( D_SIGM_EPSI = H, SY = SIGY)
+                        )
+
+CHMAT=AFFE_MATERIAU(   MAILLAGE=MA,
+                       AFFE=_F( GROUP_MA = ('POUTRE', '3D'), MATER = MAT))
+
+
+CHART=AFFE_CHAR_MECA(  MODELE=MO,
+     DDL_IMPO=_F( GROUP_NO = 'A', DX = 0., DY = 0., DZ = 0., DRX = 0., DRY = 0., DRZ = 0.),
+     FORCE_NODALE=_F( GROUP_NO = 'D', MZ = MOMENTMZ)
+    )
+
+L_3D_POU=AFFE_CHAR_MECA(   MODELE=MO,
+        LIAISON_ELEM=(_F(OPTION = '3D_POU', GROUP_NO_2 = 'DM', GROUP_MA_1 = 'FACE_X224'),
+                      _F(OPTION = '3D_POU', GROUP_NO_2 = 'AM', GROUP_MA_1 = 'FACE_Y224'),
+                      _F(OPTION = '3D_POU', GROUP_NO_2 = 'C', GROUP_MA_1 = 'FACE_X125'),
+                      _F(OPTION = '3D_POU', GROUP_NO_2 = 'B', GROUP_MA_1 = 'FACE_Y125'),
+                     ),
+
+                  )
+
+FONCT=DEFI_FONCTION(   NOM_PARA='INST',
+                      VALE=( 0., 0., MPFL, MPFL, ) )
+
+LINST=DEFI_LIST_REEL(DEBUT=0.,INTERVALLE=(
+               _F( JUSQU_A = MEFL, NOMBRE = 1),
+               _F( JUSQU_A = MPFL, NOMBRE = 10))
+                        )
+
+U1=STAT_NON_LINE(
+                MODELE=MO,
+                CHAM_MATER=CHMAT,
+                CARA_ELEM=CAREL,
+                EXCIT=(_F(CHARGE = CHART,
+                          FONC_MULT = FONCT),
+                       _F(CHARGE = L_3D_POU),
+                      ),
+                
+                INCREMENT=_F(LIST_INST = LINST,
+                             NUME_INST_FIN = 8
+                             ),
+                COMPORTEMENT=(_F( GROUP_MA = ( 'POUTRE',  '3D',), RELATION = 'ELAS', ),
+                              _F( GROUP_MA = 'CURVE',  RELATION = 'VMIS_ISOT_LINE',
+                                  RESI_INTE_RELA = 1.E-6 ),
+                              _F( GROUP_MA = ('POI_X125', 'POI_Y125'),  RELATION = 'ELAS',),
+                             ),
+                NEWTON=_F(MATRICE = 'TANGENTE',
+                          REAC_ITER = 3),
+                CONVERGENCE=_F(RESI_GLOB_RELA = 1.E-4,
+                               ITER_GLOB_MAXI = 100),
+                               RECH_LINEAIRE=_F(
+                               ITER_LINE_MAXI = 3)
+                )
+
+U1=CALC_CHAMP(reuse=U1,CONTRAINTE=('EFGE_ELNO'),VARI_INTERNE=('VARI_ELNO'),RESULTAT=U1)
+
+
+U1=CALC_CHAMP(reuse=U1,FORCE='FORC_NODA', RESULTAT=U1, )
+
+
+
+
+
+RG = MACR_ROTA_GLOBALE( RESULTAT=U1,
+                        GROUP_NO_ORIG='B',
+                        GROUP_NO_EXTR='C',
+                      )
+
+TEST_FONCTION(VALEUR=_F(VALE_CALC=9.399065942030E-03,
+                        VALE_PARA=5.889810E6,
+                        FONCTION=RG,),
+              )
+
+
+IMPR_RESU(FORMAT='RESULTAT', UNITE=6, 
+          RESU=_F(RESULTAT=U1, GROUP_NO = 'D', 
+                  NOM_CHAM=('FORC_NODA'),
+                                              ))
+
+IMPR_RESU(FORMAT='RESULTAT', UNITE=6, 
+          RESU=_F(RESULTAT=U1, GROUP_NO = 'D', 
+                  NOM_CHAM=('DEPL'),
+                                              ))
+
+
+TEST_RESU(RESU=(
+                _F(NUME_ORDRE=1,
+                   GROUP_NO='D',
+                   RESULTAT=U1,
+                   NOM_CHAM='DEPL',
+                   NOM_CMP='DY',
+                   VALE_CALC=0.0109256725345,
+                   ),
+                _F(NUME_ORDRE=8,
+                   GROUP_NO='D',
+                   RESULTAT=U1,
+                   NOM_CHAM='DEPL',
+                   NOM_CMP='DY',
+                   VALE_CALC=0.0220208935036,
+                   ),
+                ),
+          )
+
+TEST_RESU(RESU=(_F(NUME_ORDRE=1,
+                   GROUP_NO='A',
+                   RESULTAT=U1,
+                   NOM_CHAM='FORC_NODA',
+                   NOM_CMP='DRZ',
+                   VALE_CALC=-3086702.15209,
+                   ),
+                _F(NUME_ORDRE=8,
+                   GROUP_NO='A',
+                   RESULTAT=U1,
+                   NOM_CHAM='FORC_NODA',
+                   NOM_CMP='DRZ',
+                   VALE_CALC=-5889813.26111,
+                   ),
+                ),
+          )
+
+FIN( )

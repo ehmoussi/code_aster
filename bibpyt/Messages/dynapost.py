@@ -17,16 +17,16 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge : ayaovi-dzifa.kudawoo at edf.fr
-
 
 cata_msg = {
-    1 : _(u"""
-La modélisation contenue dans RESULTAT est différente du MODELE déclaré.
-"""),
 
-    3 : _(u"""
-CALC_PRESSION n'est pas programmé sur des éléments de structures (poutre, plaque, coque, tuyau, poutre multifibre).
-"""),
-    
+    1 : _(u"""Les poutres ne sont pas utilisables dans la commande REST_COND_TRAN."""),
+
+    2 : _(u"""Vous n'avez pas renseigné NOM_CHAM dans REST_COND_TRAN."""),
+
+    3 : _(u"""On a rencontré un problème lors de la lecture de la discrétisation (instants ou fréquences )."""),
+
+    4 : _(u"""La SD EVOL_NOLI utilisée dans REST_COND_TRAN ne contient pas les champs généralisés.
+Vérifiez qu'il s'agit du même concept que celui utilisé dans le DYNA_NON_LINE,
+option PROJ_MODAL et que l'archivage a été fait (mot-clef ARCHIVAGE de DYNA_NON_LINE)."""),
 }

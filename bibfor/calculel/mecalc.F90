@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -426,7 +426,7 @@ subroutine mecalc(option, modele, chdepl, chgeom, chmate,&
         call ajchca('PTEREF', chtref, lpain, lchin, nbin,&
                     maxin, 'N')
 !
-        call meceuc('C', poux, optio2, carel, ligrel,&
+        call meceuc('C', optio2, carel, ligrel,&
                     nbin, lchin, lpain, nbout, lchout,&
                     lpaout, base2)
         call exisd('CHAMP_GD', lchout(1), iret)

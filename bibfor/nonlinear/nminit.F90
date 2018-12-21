@@ -86,6 +86,7 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/infdbg.h"
 #include "asterfort/nonlinDSPrintSepLine.h"
+#include "asterfort/nonlinDSDynamicInit.h"
 !
 character(len=8), intent(in) :: mesh
 character(len=24), intent(in) :: model
@@ -164,7 +165,7 @@ type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
     real(kind=8) :: r8bid3(3)
     real(kind=8) :: instin
     character(len=19) :: varc_prev, disp_prev, strx_prev
-    aster_logical :: lacc0, lpilo, lmpas, lsstf, lerrt, lviss, lrefe, ldidi, l_obsv, l_ener
+    aster_logical :: lacc0, lpilo, lmpas, lsstf, lerrt, lviss, lrefe, ldidi, l_obsv, l_ener, l_dyna
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -223,6 +224,7 @@ type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
     lrefe = isfonc(fonact,'RESI_REFE')
     ldidi = isfonc(fonact,'DIDI')
     l_ener = isfonc(fonact,'ENERGIE')
+    l_dyna = ndynlo(sddyna,'DYNAMIQUE')
 !
 ! - Initialization for reduced method
 !
@@ -269,6 +271,10 @@ type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
 !
     call nmcrch(numedd, fonact, sddyna, ds_contact, valinc,&
                 solalg, veasse)
+!
+! - Initializations for dynamic
+!
+    call nonlinDSDynamicInit(valinc, sddyna)
 !
 ! --- CONSTRUCTION DU CHAM_NO ASSOCIE AU PILOTAGE
 !

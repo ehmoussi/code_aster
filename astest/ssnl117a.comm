@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -160,12 +160,12 @@ U1=CALC_CHAMP(reuse=U1,FORCE='FORC_NODA', RESULTAT=U1, )
 
 TEST_RESU(RESU=(_F(NUME_ORDRE=1,
                    GROUP_NO='D',
-                   REFERENCE='AUTRE_ASTER',
+                   REFERENCE='ANALYTIQUE',# force appliquée
                    RESULTAT=U1,
                    NOM_CHAM='FORC_NODA',
                    NOM_CMP='DRZ',
                    VALE_CALC= 3.08670215E+06,
-                   VALE_REFE=3.086700E6,),
+                   VALE_REFE=3.086702E6,),
                 _F(NUME_ORDRE=1,
                    GROUP_NO='D',
                    REFERENCE='AUTRE_ASTER',
@@ -173,16 +173,16 @@ TEST_RESU(RESU=(_F(NUME_ORDRE=1,
                    NOM_CHAM='DEPL',
                    NOM_CMP='DY',
                    VALE_CALC=0.011198591,
-                   VALE_REFE=0.010934899999999999,
+                   VALE_REFE=0.0109256725345,
                    PRECISION=0.03,),
                 _F(NUME_ORDRE=8,
                    GROUP_NO='D',
-                   REFERENCE='AUTRE_ASTER',
+                   REFERENCE='ANALYTIQUE',# force appliquée
                    RESULTAT=U1,
                    NOM_CHAM='FORC_NODA',
                    NOM_CMP='DRZ',
                    VALE_CALC= 5.88981326E+06,
-                   VALE_REFE=5.889810E6,),
+                   VALE_REFE=5.889813E6,),
                 _F(NUME_ORDRE=8,
                    GROUP_NO='D',
                    REFERENCE='AUTRE_ASTER',
@@ -190,8 +190,8 @@ TEST_RESU(RESU=(_F(NUME_ORDRE=1,
                    NOM_CHAM='DEPL',
                    NOM_CMP='DY',
                    VALE_CALC=0.022715198,
-                   VALE_REFE=0.022083599999999998,
-                   PRECISION=0.03,),
+                   VALE_REFE=0.0220208935036,
+                   PRECISION=0.032,),
                 ),
           )
 
@@ -202,7 +202,7 @@ TEST_RESU(RESU=(_F(NUME_ORDRE=1,
                    NOM_CHAM='FORC_NODA',
                    NOM_CMP='DRZ',
                    VALE_CALC=-3.08661769E+06,
-                   VALE_REFE=-3.086700E6,),
+                   VALE_REFE=-3086702.15209,),
                 _F(NUME_ORDRE=8,
                    GROUP_NO='A',
                    REFERENCE='AUTRE_ASTER',
@@ -210,7 +210,7 @@ TEST_RESU(RESU=(_F(NUME_ORDRE=1,
                    NOM_CHAM='FORC_NODA',
                    NOM_CMP='DRZ',
                    VALE_CALC=-5.88964685E+06,
-                   VALE_REFE=-5.889810E6,),
+                   VALE_REFE=-5889813.26111,),
                 ),
           )
 

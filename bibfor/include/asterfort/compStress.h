@@ -15,29 +15,18 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-#include "asterf_types.h"
 !
 interface
-    subroutine ccchel(option, modele, resuin, resuou, numord,&
-                      nordm1, mateco, carael, typesd, ligrel,&
-                      l_poux, exitim, lischa, nbchre, ioccur,&
-                      suropt, basopt, resout)
-        character(len=16) :: option
-        character(len=8) :: modele
-        character(len=8) :: resuin
-        character(len=8) :: resuou
-        integer :: numord
-        integer :: nordm1
-        character(len=24) :: mateco
-        character(len=8) :: carael
-        character(len=16) :: typesd
-        character(len=24) :: ligrel
-        aster_logical, intent(in) :: l_poux, exitim
-        character(len=19) :: lischa
-        integer :: nbchre
-        integer :: ioccur
-        character(len=24) :: suropt
-        character(len=1) :: basopt
-        character(len=24) :: resout
-    end subroutine ccchel
+    subroutine compStress(modelz , ligrel , compor,&
+                          chdispz, chgeom , chmate,&
+                          chcara , chtime , chharm,&
+                          chvarc , chvref ,&
+                          basez  , chelemz, codret)
+        character(len=*), intent(in) :: modelz, ligrel, compor
+        character(len=*), intent(in) :: chdispz, chgeom, chmate
+        character(len=*), intent(in) :: chcara(*), chtime, chharm
+        character(len=*), intent(in) :: chvarc, chvref
+        character(len=*), intent(in) :: chelemz, basez
+        integer, intent(out) :: codret
+    end subroutine compStress
 end interface
