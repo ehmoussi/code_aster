@@ -131,8 +131,6 @@ MaterialOnMeshPtr ResultsContainerInstance::getMaterialOnMesh() {
         if ( name != curIter.second->getName() )
             throw std::runtime_error( "Error: multiple materials" );
     }
-    if ( toReturn == nullptr )
-        throw std::runtime_error( "Error: no material on mesh" );
     return toReturn;
 };
 
