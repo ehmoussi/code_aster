@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -79,7 +79,7 @@ implicit none
 !
 ! -----
 !
-    nb_seuil = 100000
+    nb_seuil = 10000
     if (nb_pair_zone.eq. 0) then
         if (nb_elem_mast*nb_elem_slav .lt. nb_seuil) then
 !
@@ -92,7 +92,7 @@ implicit none
             AS_ALLOCATE(vr=li_ptgausma_zone, size= 72*nb_elem_slav*nb_elem_mast)
             nb_next_alloc = 0
         else
-            nb_next_alloc = int(5*nb_elem_slav*nb_elem_mast/100)
+            nb_next_alloc = int(4*nb_elem_slav*nb_elem_mast/100)
             AS_ALLOCATE(vi=list_pair_zone, size= 3*nb_next_alloc)
             AS_ALLOCATE(vi=li_nbptsl_zone, size= nb_next_alloc)
             AS_ALLOCATE(vr=li_ptintsl_zone, size= 16*nb_next_alloc)
@@ -136,7 +136,7 @@ implicit none
             AS_DEALLOCATE(vr=li_ptintsl_zone)
             AS_DEALLOCATE(vr=li_ptintma_zone)
             AS_DEALLOCATE(vr=li_ptgausma_zone)
-            nb_next_alloc = 2*nb_next_alloc
+            nb_next_alloc = nb_next_alloc + int(4*nb_elem_slav*nb_elem_mast/100)
             AS_ALLOCATE(vi=list_pair_zone, size= 3*nb_next_alloc)
             AS_ALLOCATE(vi=li_nbptsl_zone, size= nb_next_alloc)
             AS_ALLOCATE(vr=li_ptintsl_zone, size= 16*nb_next_alloc)

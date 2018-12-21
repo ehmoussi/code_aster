@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -79,7 +79,7 @@ integer, optional, intent(inout) :: inte_neigh_(4)
     real(kind=8) :: xpt, ypt, xe(3), pt(3)
     real(kind=8) :: xp1, yp1, xp2, yp2
     integer :: test, list_next(16), nb_node_line
-    integer :: i_node
+    integer :: i_node, iret
     character(len=8) :: elem_line_code
     real(kind=8) :: mast_norm(3), slav_norm(3)
     integer :: list_prev(16)
@@ -112,7 +112,10 @@ integer, optional, intent(inout) :: inte_neigh_(4)
     call apinte_prsl(proj_tole       , elem_dime     , &
                      elem_mast_nbnode, elem_mast_coor, &
                      elem_slav_nbnode, elem_slav_coor, elem_slav_code,&
-                     proj_coop       )
+                     proj_coop       , iret)
+    if (iret .eq. 1) then
+        goto 99
+    endif
 !
 ! - Check if intersection is void or not
 !
@@ -221,7 +224,11 @@ integer, optional, intent(inout) :: inte_neigh_(4)
             call reereg('S', elem_line_code,  4, coor,&
                         pt , elem_dime     , xe, test, proj_tole)
             if (test .eq. 1) then
-                write(*,*) "dead"
+                iret = 1
+                nb_poin_inte                  = 0
+                poin_inte(1:elem_dime-1,1:16) = 0.d0
+                inte_neigh(1:4)               = 0
+                goto 99
             end if
             poin_inte(1,i_node) = xe(1)
             poin_inte(2,i_node) = xe(2)
@@ -246,6 +253,9 @@ integer, optional, intent(inout) :: inte_neigh_(4)
 ! - No intersection exit
 !
 99  continue
+    if (debug) then
+        ASSERT(iret .eq. 0)
+    end if
 !
 ! - Copy
 !
