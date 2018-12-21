@@ -35,7 +35,7 @@ DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),
       ERREUR=_F(ERREUR_F='EXCEPTION'),
       PAR_LOT='NON',
       IGNORE_ALARM=(
-        'SUPERVIS_1',        
+        'SUPERVIS_1',
         'SUPERVIS_9',
         'CALCULEL6_77',
         'CALCULEL_79',
@@ -472,7 +472,7 @@ TOTEST = CREA_CHAMP (
 )
 
 TEST_RESU(
-    CARTE = 
+    CARTE =
         _F(
             CHAM_GD = TOTEST,
             MAILLE='M230',
@@ -485,7 +485,7 @@ TEST_RESU(
 )
 
 TEST_RESU(
-    CARTE = 
+    CARTE =
         _F(
             CHAM_GD = TOTEST,
             MAILLE='M221',
@@ -715,7 +715,7 @@ try:
         ),
         AFFE = ( _F ( **ferrDatSlu ), ),
         )
-except (aster.FatalError, aster.error), message:
+except aster.error as message:
     if message.id_message == 'COMBFERR_1':
         print("COMBFERR_1 intercepted")
 
