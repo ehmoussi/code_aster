@@ -216,3 +216,5 @@ MACRO_EXPANS( MODELE_CALCUL = _F(MODELE = MODFEM,
              );
 
 test.assertTrue( True )
+
+FIN()

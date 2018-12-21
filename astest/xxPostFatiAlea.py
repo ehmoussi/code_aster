@@ -65,3 +65,5 @@ TAB1=POST_FATI_ALEA(    MOMENT_SPEC_0=182.5984664,
                                   MATER=MAT0          )
 
 test.assertTrue( True )
+
+FIN()

@@ -20,3 +20,5 @@ MACR_ADAP_MAIL(ADAPTATION='RAFF_DERA_ZONE',
                   )
 
 test.assertTrue( True )
+
+FIN()

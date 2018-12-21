@@ -71,7 +71,8 @@ character(len=16), intent(in) :: option, nomte
     real(kind=8) :: lambda = 0.0, lambds = 0.0
     real(kind=8) :: lambda_prev = 0.0 , lambds_prev =0.0
     real(kind=8) :: coefac = 0.0, coefaf = 0.0
-    real(kind=8) :: wpg, jacobi
+    real(kind=8) :: wpg=0.0, jacobi=0.0
+    real(kind=8) :: wpg_prev=0.0, jacobi_prev=0.0
     real(kind=8) :: norm(3) = 0.0, tau1(3) = 0.0, tau2(3) = 0.0
     real(kind=8) :: jeusup=0.0
     real(kind=8) :: dlagrc=0.0, dlagrf(2)=0.0
@@ -85,7 +86,9 @@ character(len=16), intent(in) :: option, nomte
     real(kind=8) :: kappa(2, 2)=0.0
     real(kind=8) :: mprojn(3, 3)=0.0, h(2, 2)=0.d0
     real(kind=8) :: vech1(3)=0.0, vech2(3)=0.0
-    real(kind=8) :: ffe(9), ffm(9), ffl(9)
+    real(kind=8) :: ffe(9)=0.0, ffm(9)=0.0, ffl(9)=0.0, dffm(2, 9)=0.0,ddffm(3, 9)
+    real(kind=8) :: ffe_prev(9)=0.0, ffm_prev(9)=0.0, ffl_prev(9)=0.0
+    real(kind=8) :: dffm_prev(2, 9)=0.0,ddffm_prev(3, 9)
     real(kind=8) :: alpha_cont=0.0
     real(kind=8) :: dnepmait1, dnepmait2, taujeu1, taujeu2
     real(kind=8) :: xpc, ypc, xpr, ypr
@@ -98,7 +101,6 @@ character(len=16), intent(in) :: option, nomte
     real(kind=8) :: hah(2,2)=0.0, hah_prev(2,2)=0.0
     real(kind=8) :: jeu_prev=0.0, djeut_prev(3) = 0.0
     real(kind=8) :: dnepmait1_prev, dnepmait2_prev, taujeu1_prev, taujeu2_prev
-    real(kind=8) :: ddffm(3, 9), dffm(2, 9)
     real(kind=8) :: mprt1n_prev(3, 3)=0.0, mprt2n_prev(3, 3)=0.0
     real(kind=8) :: mprnt1_prev(3, 3)=0.0, mprnt2_prev(3, 3)=0.0
     real(kind=8) :: mprt11_prev(3, 3)=0.0, mprt12_prev(3, 3)=0.0
@@ -146,7 +148,7 @@ character(len=16), intent(in) :: option, nomte
 !
     call mmGetProjection(iresog  , wpg     ,&
                          xpc     , ypc     , xpr     , ypr     , tau1     , tau2     ,&
-                         xpc_prev, ypc_prev, xpr_prev, ypr_prev, tau1_prev, tau2_prev)
+                         xpc_prev, ypc_prev, xpr_prev, ypr_prev, tau1_prev, tau2_prev,wpg_prev)
 !
 ! - Get algorithms
 !
@@ -157,18 +159,19 @@ character(len=16), intent(in) :: option, nomte
 !
 ! - Get shape functions
 !
-    if (l_prev_cont .or. l_prev_fric) then
-        call mmGetShapeFunctions(laxis   , typmae  , typmam  , &
-                                 ndim    , nne     , nnm     , &
-                                 xpc_prev, ypc_prev, xpr_prev, ypr_prev,&
-                                 ffe     , ffm     , dffm    , ddffm   ,&
-                                 ffl     , jacobi)
-    endif
     call mmGetShapeFunctions(laxis, typmae, typmam, &
                              ndim , nne   , nnm   , &
                              xpc  , ypc   , xpr   , ypr  ,&
                              ffe  , ffm   , dffm  , ddffm,&
                              ffl  , jacobi)
+
+    if (l_prev_cont .or. l_prev_fric) then
+        call mmGetShapeFunctions(laxis   , typmae  , typmam  , &
+                                 ndim    , nne     , nnm     , &
+                                 xpc_prev, ypc_prev, xpr_prev, ypr_prev,&
+                                 ffe_prev     , ffm_prev     , dffm_prev    , ddffm_prev   ,&
+                                 ffl_prev     , jacobi_prev)
+    endif
 !
 ! - Compute quantities
 !
@@ -191,7 +194,7 @@ character(len=16), intent(in) :: option, nomte
                     iresog        , l_large_slip, &
                     jeusup   ,&
                     tau1_prev     , tau2_prev,&
-                    ffe           , ffm      , dffm    , ddffm   , ffl   ,&
+                    ffe_prev           , ffm_prev      , dffm_prev    , ddffm_prev   , ffl_prev   ,&
                     jeu_prev , djeut_prev,&
                     dlagrc_prev   , dlagrf_prev,&
                     norm_prev     , mprojn_prev, mprojt_prev,&
@@ -273,10 +276,10 @@ character(len=16), intent(in) :: option, nomte
         call mmCompMatrCont(phase_prev , lpenac     , iresog, &
                             nbdm       , &
                             ndim       , nne        , nnm        , nnl,&
-                            wpg        , jacobi     , coefac_prev,&
+                            wpg_prev        , jacobi_prev     , coefac_prev,&
                             jeu_prev   , dlagrc_prev,&
-                            ffe        , ffm        , ffl        , dffm    ,&
-                            norm       , mprojn_prev,&
+                            ffe_prev        , ffm_prev        , ffl_prev        , dffm_prev    ,&
+                            norm_prev       , mprojn_prev,&
                             mprt1n_prev, mprt2n_prev, mprnt1_prev, mprnt2_prev,&
                             mprt11_prev, mprt12_prev, mprt21_prev, mprt22_prev,&
                             kappa_prev , vech1_prev , vech2_prev ,&
@@ -309,10 +312,11 @@ character(len=16), intent(in) :: option, nomte
                                 iresog     , iresof      ,&
                                 nbdm       , nbcps       , ndexfr,&
                                 ndim       , nne         , nnm   , nnl   ,&
-                                wpg        , jacobi      , coefac_prev, coefaf_prev,&
+                                wpg_prev        , jacobi_prev      , coefac_prev, coefaf_prev,&
                                 jeu_prev   , dlagrc_prev,&
-                                ffe        , ffm         , ffl   , dffm  , ddffm,&
-                                tau1_prev  , tau2        , mprojt_prev,&
+                                ffe_prev        , ffm_prev         , ffl_prev   , dffm_prev  , &
+                                ddffm_prev,&
+                                tau1_prev  , tau2_prev        , mprojt_prev,&
                                 rese_prev  , nrese_prev  , lambda_prev, coefff,&
                                 mprt1n_prev, mprt2n_prev , mprnt1_prev, mprnt2_prev,&
                                 mprt11_prev, mprt12_prev , mprt21_prev, mprt22_prev,&
@@ -361,4 +365,3 @@ character(len=16), intent(in) :: option, nomte
     endif
 !
 end subroutine
-

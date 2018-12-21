@@ -91,3 +91,5 @@ result = CALC_CHAM_FLUI(RIGI_THER = RIGITH,
                         EXCIT = _F(CHARGE=PRESIMPO,))
 
 test.assertTrue( True )
+
+FIN()

@@ -692,6 +692,28 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
                    ),
            )
 
+
+# Test VARI_ELGA for energy (issue7461)
+ENER_ELA=POST_ELEM(
+                   RESULTAT=U,
+                   INST=1.0,
+                   ENER_ELAS=_F( TOUT = 'OUI')
+                  )
+
+TEST_TABLE(
+           VALE_CALC=0.11640314359,
+           NOM_PARA='TOTALE',
+           TABLE=ENER_ELA,)
+
+TEST_RESU(RESU=_F(INST=1.0,
+                  RESULTAT=U,
+                  MAILLE='CUBE',
+                  POINT=1,
+                  NOM_CHAM='VARI_ELGA',
+                  NOM_CMP='V1',
+                  VALE_CALC=0.0205472654636,
+                  ),)
+
 FIN();
 
 #

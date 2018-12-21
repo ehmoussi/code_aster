@@ -17,3 +17,5 @@ CHAMEL7=CALC_CHAM_ELEM(    MODELE=MO,
                              OPTION='COOR_ELGA' )
 
 test.assertTrue( True )
+
+FIN()

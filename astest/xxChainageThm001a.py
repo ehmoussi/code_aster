@@ -214,3 +214,5 @@ test.assertEqual(DEFVHY.getType(), "EVOL_VARC")
 
 
 test.printSummary()
+
+FIN()

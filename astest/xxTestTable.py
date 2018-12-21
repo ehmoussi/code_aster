@@ -17,3 +17,5 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
            NOM_PARA='X',
            TABLE=TX,
            )
+
+FIN()

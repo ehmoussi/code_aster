@@ -30,3 +30,5 @@ RESUREF = LIRE_RESU(TYPE_RESU  = 'EVOL_NOLI',
 test.assertEqual(RESUREF.getType(), "EVOL_NOLI")
 test.assertTrue( True )
 test.printSummary()
+
+FIN()

@@ -11,3 +11,5 @@ MA.readMedFile("zzzz395e.mmed")
 IMPR_RESU(RESU = _F(MAILLAGE    = MA))
 
 test.assertTrue( True )
+
+FIN()

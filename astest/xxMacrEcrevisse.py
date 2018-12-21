@@ -189,3 +189,5 @@ L_INST = DEFI_LIST_REEL(
 test.assertTrue( True )
 
 test.printSummary()
+
+FIN()

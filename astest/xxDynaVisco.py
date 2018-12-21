@@ -70,3 +70,5 @@ modes=DYNA_VISCO(MODELE=MODELE,
                  );
 
 test.assertTrue( True )
+
+FIN()

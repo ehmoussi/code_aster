@@ -25,6 +25,7 @@
 #include <string>
 
 #include "aster_fort.h"
+#include "shared_vars.h"
 
 #include "DataStructures/DataStructure.h"
 #include "DataStructures/TemporaryDataStructureName.h"
@@ -59,7 +60,8 @@ DataStructure::~DataStructure() {
     std::cout << "DataStructure.destr: " << this->getName() << std::endl;
 #endif
     std::string nameWithoutBlanks = trim( _name );
-    if ( nameWithoutBlanks == "" )
+    // empty name or no memory manager : skip silently
+    if ( nameWithoutBlanks == "" || get_sh_jeveux_status() != 1 )
         return;
 #ifdef _DEBUG_CXX
     _tco->deallocate();

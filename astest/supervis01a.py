@@ -106,3 +106,5 @@ test.assertTrue(syntax.getexm("IMPRESSION", "NIVEAU"))
 test.assertTrue(syntax.getexm("EXCIT", "CHARGE"))
 
 test.printSummary()
+
+code_aster.close()

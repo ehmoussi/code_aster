@@ -40,3 +40,5 @@ test.assertEqual(thermal_load_f.getType(), "CHAR_THER")
 
 
 test.printSummary()
+
+FIN()

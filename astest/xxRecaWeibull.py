@@ -218,3 +218,5 @@ T1=RECA_WEIBULL(   LIST_PARA=('SIGM_REFE','M',),
                    )
 
 test.assertTrue( True )
+
+FIN()

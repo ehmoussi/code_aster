@@ -98,3 +98,5 @@ TT=POST_DYNA_MODA_T(    RESU_GENE=DYNAMODA,
                        )
 
 test.assertTrue( True )
+
+FIN()

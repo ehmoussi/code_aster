@@ -84,3 +84,5 @@ BORDET=POST_BORDET(
             COEF_MULT=2*3.14)
 
 test.assertTrue( True )
+
+FIN()

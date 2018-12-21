@@ -79,3 +79,5 @@ MNL = MODE_NON_LINE(MATR_RIGI=K,   INFO=1,
                  )
 
 test.assertTrue( True )
+
+FIN()

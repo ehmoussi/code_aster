@@ -36,7 +36,6 @@ subroutine fetskp(mod,meth,nbpart)
 #include "asterc/getfac.h"
 #include "asterc/gpmetis_aster.h"
 #include "asterc/gtoptk.h"
-#include "asterc/rmfile.h"
 #include "asterfort/asmpi_comm_jev.h"
 #include "asterfort/asmpi_info.h"
 #include "asterfort/creaco.h"

@@ -10,3 +10,5 @@ test = code_aster.TestCase()
 test.assertTrue( True )
 
 test.printSummary()
+
+FIN()

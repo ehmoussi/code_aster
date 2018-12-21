@@ -12,3 +12,5 @@ PRE_GMSH(UNITE_GMSH=60,UNITE_MAILLAGE=22)
 
 test.assertTrue( True )
 test.printSummary()
+
+FIN()

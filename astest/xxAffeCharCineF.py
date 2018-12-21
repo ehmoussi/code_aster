@@ -23,3 +23,5 @@ CHT3=AFFE_CHAR_CINE_F(  MODELE=MOTH,THER_IMPO=(
 print CHT3
 
 test.assertTrue( True )
+
+FIN()

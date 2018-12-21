@@ -26,3 +26,5 @@ INTKTJ1=DEFI_INTE_SPEC(    DIMENSION=1,
 
 # Test trivial
 test.assertTrue( True )
+
+FIN()

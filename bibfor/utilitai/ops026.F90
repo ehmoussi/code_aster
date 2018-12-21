@@ -35,7 +35,7 @@ subroutine ops026()
 #include "asterfort/ulnume.h"
 #include "asterfort/ulopen.h"
 #include "asterfort/utmess.h"
-    integer :: unite, ifm, niv, n1, nf, nu
+    integer :: unite, ifm, niv, n1, nf, nu, iret
     aster_logical :: sortie
     character(len=1) :: kacc, ktyp
     character(len=8) :: action, acces, type
@@ -105,7 +105,7 @@ subroutine ops026()
 !
     if (ktyp .ne. 'A') then
         if (kacc .eq. 'N') then
-            call rmfile(fichie, 1)
+            call rmfile(fichie, 1, iret)
         endif
     endif
 !

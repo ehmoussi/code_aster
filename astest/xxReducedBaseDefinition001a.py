@@ -216,3 +216,5 @@ TEST_RESU(RESU=(
           );
 
 test.printSummary()
+
+FIN()

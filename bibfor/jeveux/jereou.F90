@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -60,7 +60,7 @@ subroutine jereou(clas, pcent)
 ! DEB ------------------------------------------------------------------
     character(len=1) :: klas
     character(len=8) :: kstin, kstou, nom, nomb
-    integer :: ic, nrep, lbloc, nbloc, info, vali(3)
+    integer :: ic, nrep, lbloc, nbloc, info, vali(3), iret
     real(kind=8) :: valr(2)
 !
     klas = clas
@@ -86,7 +86,7 @@ subroutine jereou(clas, pcent)
         info = 0
         call jelibf('DETRUIT', klas, info)
         call lxmins(nom)
-        call rmfile(nom, 0)
+        call rmfile(nom, 0, iret)
         call jeinif(kstin, kstou, nomb, klas, nrep,&
                     nbloc, lbloc)
     endif

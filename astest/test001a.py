@@ -67,3 +67,5 @@ del coord
 code_aster.saveObjects()
 
 test.printSummary()
+
+code_aster.close()

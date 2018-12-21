@@ -34,3 +34,5 @@ test.assertIsNone(fcos)
 test.assertIsNone(fsin)
 
 test.printSummary()
+
+FIN()

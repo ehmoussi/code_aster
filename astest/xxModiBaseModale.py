@@ -152,3 +152,5 @@ MODES=MODI_BASE_MODALE( reuse=MODES,
                              )
 
 test.assertTrue( True )
+
+FIN()

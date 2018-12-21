@@ -47,3 +47,5 @@ test.assertAlmostEqual(tangentialLevelSet[1000],36.744175568087485)
 test.assertAlmostEqual(tangentialLevelSet[10000],64.4660377352206)
 
 test.printSummary()
+
+code_aster.close()

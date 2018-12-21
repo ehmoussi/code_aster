@@ -22,3 +22,5 @@ test.assertEqual(MAT.getType(), "MATER_SDASTER")
 
 
 test.printSummary()
+
+FIN()

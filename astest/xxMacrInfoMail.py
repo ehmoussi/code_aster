@@ -19,3 +19,5 @@ MACR_INFO_MAIL(
                )
 
 test.assertTrue( True )
+
+FIN()

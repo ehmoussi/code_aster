@@ -22,3 +22,5 @@ POS_N17 = POST_RELEVE_T(ACTION=_F(INTITULE = 'POSITION',
                                  TOUT_CMP ='OUI'))
 
 test.assertTrue( True )
+
+FIN()

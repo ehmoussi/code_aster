@@ -105,3 +105,5 @@ statNonLine2.setLoadStepManager( timeList )
 # at least it pass here!
 test.assertTrue( True )
 test.printSummary()
+
+FIN()

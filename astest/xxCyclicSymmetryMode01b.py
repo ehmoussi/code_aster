@@ -107,3 +107,5 @@ MODCYC=MODE_ITER_CYCL(  BASE_MODALE=BAMO,
 # at least it pass here!
 test.assertTrue( True )
 test.printSummary()
+
+FIN()

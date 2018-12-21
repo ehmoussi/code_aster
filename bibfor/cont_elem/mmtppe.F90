@@ -129,21 +129,59 @@ real(kind=8), intent(out) :: dnepmait1, dnepmait2, taujeu1, taujeu2
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: jgeom, jdepde, jdepm
-    real(kind=8) :: ppe
-    real(kind=8) :: ddepmam(9, 3)
-    real(kind=8) :: geomae(9, 3), geomam(9, 3)
-    real(kind=8) :: geomm(3), geome(3)
-    real(kind=8) :: ddeple(3), ddeplm(3)
-    real(kind=8) :: deplme(3), deplmm(3)
-    real(kind=8) :: djeu(3)
+    real(kind=8) :: ppe=0.0
+    real(kind=8) :: ddepmam(9, 3)=0.0
+    real(kind=8) :: geomae(9, 3)=0.0, geomam(9, 3)=0.0
+    real(kind=8) :: geomm(3)=0.0, geome(3)=0.0
+    real(kind=8) :: ddeple(3)=0.0, ddeplm(3)=0.0
+    real(kind=8) :: deplme(3)=0.0, deplmm(3)=0.0
+    real(kind=8) :: djeu(3)=0.0
     real(kind=8) :: gene11(3,3)=0.0, gene21(3,3)=0.0, gene22(3,3)=0.0
-    real(kind=8) :: a(2, 2), ha(2, 2)
+    real(kind=8) :: a(2, 2)=0.0, ha(2, 2)=0.0
 !
 ! --------------------------------------------------------------------------------------------------
 !
     call jevech('PGEOMER', 'L', jgeom)
     call jevech('PDEPL_P', 'L', jdepde)
     call jevech('PDEPL_M', 'L', jdepm)
+
+!
+! -------------------------Initialisation---------------------
+!
+
+
+
+jeu=0
+djeu=0
+djeut=0
+norm=0
+mprojn=0
+mprojt=0
+mprt1n=0
+mprt2n=0
+mprt11=0
+mprt21=0
+mprt22=0
+gene11=0 
+gene21=0
+gene22=0
+kappa=0
+a=0
+h=0
+ha=0
+hah=0
+vech1=0 
+vech2=0
+geomae=0
+geomam=0
+geomm=0
+geome=0
+ddeple=0
+ddeplm=0
+deplme=0
+deplmm=0
+
+
 !
 ! - Coefficient to update geometry
 !

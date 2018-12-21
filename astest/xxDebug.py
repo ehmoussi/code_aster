@@ -10,3 +10,5 @@ DEBUG(SDVERI='OUI')
 DEBUG(SDVERI='NON')
 
 test.assertTrue( True )
+
+FIN()

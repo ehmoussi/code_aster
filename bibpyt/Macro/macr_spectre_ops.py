@@ -97,7 +97,7 @@ def macr_spectre_ops(
         l_plancher.append(plancher['NOM'])
         l_batiment.append(plancher['BATIMENT'])
         l_commentaire.append(plancher['COMMENTAIRE'])
-            
+
     if AMOR_SPEC != None and type(AMOR_SPEC) not in EnumType:
         AMOR_SPEC = (AMOR_SPEC,)
     #

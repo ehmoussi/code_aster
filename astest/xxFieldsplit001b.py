@@ -69,3 +69,5 @@ test.printSummary()
 #     resnonl.printMedFile('/tmp/par_%d.resu.med'%rank)
 # else:
 #     resnonl.printMedFile('/tmp/seq.resu.med')
+
+FIN()

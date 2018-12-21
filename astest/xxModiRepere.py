@@ -50,3 +50,5 @@ RESU1=MODI_REPERE(
                    AFFE = _F( ORIGINE    = (0.0, 0.0)))
 
 test.assertTrue( True )
+
+FIN()

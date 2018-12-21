@@ -152,3 +152,5 @@ resunl = CALC_FORC_NONL( RESULTAT = EVOL , TOUT_ORDRE = 'OUI'    ,
                    )
 
 test.assertTrue( True )
+
+FIN()
