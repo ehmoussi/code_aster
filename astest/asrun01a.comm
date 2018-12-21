@@ -85,7 +85,7 @@ else:
             It should have been created by meshtool script...""" % fpara
 
 # -----------------------------------------------------------------------------
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'), 
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),
       PAR_LOT='NON',
       **opts_debut)
 
@@ -141,7 +141,7 @@ if info_mail:
    try:
       MACR_INFO_MAIL(MAILLAGE=ma,
                      **opts_info_mail)
-   except (aster.FatalError, aster.error), msg:
+   except aster.error as msg:
       print """Erreur lors de l'appel à HOMARD..."""
       print msg
 
