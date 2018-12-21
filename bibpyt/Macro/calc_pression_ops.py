@@ -48,12 +48,11 @@ def calc_pression_ops(self, MAILLAGE, RESULTAT, GROUP_MA, INST,GEOMETRIE, **args
 
     # BLINDAGE : on poursuit le calcul uniquement que si le modèle n'est pas
     # un élément de structure
-    iret, ibid, test_structure = aster.dismoi(
-        'EXI_RDM', model.getName(), 'MODELE', 'F')
+    test_structure = aster.dismoi('EXI_RDM', model.getName(), 'MODELE', 'F')[-1]
     if test_structure == 'OUI':
         UTMESS('F', 'CALCPRESSION0_3')
-    else:
-        iret, dim, rbid = aster.dismoi('DIM_GEOM', model.getName(), 'MODELE', 'F')
+
+    dim = aster.dismoi('DIM_GEOM', model.getName(), 'MODELE', 'F')[1]
 
 # Corps de la commande
 # Champ de contraintes de Cauchy aux noeuds
@@ -80,22 +79,22 @@ def calc_pression_ops(self, MAILLAGE, RESULTAT, GROUP_MA, INST,GEOMETRIE, **args
 
     # Normale sur la configuration finale
     if GEOMETRIE == 'DEFORMEE' :
-        Mail = MODI_MAILLAGE(reuse=MAILLAGE,
-                             MAILLAGE=MAILLAGE,
-                             DEFORME=_F(OPTION='TRAN',
-                                        DEPL=__depl,),)
+        MODI_MAILLAGE(reuse=MAILLAGE,
+                      MAILLAGE=MAILLAGE,
+                      DEFORME=_F(OPTION='TRAN',
+                                 DEPL=__depl,),)
 
     __NormaleF = CREA_CHAMP(TYPE_CHAM='NOEU_GEOM_R',
                             OPERATION='NORMALE',
                             MODELE=model,
                             GROUP_MA=GROUP_MA,
                             )
+
     if GEOMETRIE == 'DEFORMEE' :
-        Mail = MODI_MAILLAGE(reuse=MAILLAGE,
-                         MAILLAGE=MAILLAGE,
-                         DEFORME=_F(OPTION='TRAN',
-                                    DEPL=__mdepl,),)
-        self.register_result(Mail, MAILLAGE)
+        MODI_MAILLAGE(reuse=MAILLAGE,
+                  MAILLAGE=MAILLAGE,
+                  DEFORME=_F(OPTION='TRAN',
+                             DEPL=__mdepl,),)
     # Pression à l'interface
     if dim == 3:
     # Formule en dimension 3 :
