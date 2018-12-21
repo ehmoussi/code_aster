@@ -15,9 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine bamo78(nomres, trange, typres)
-    implicit none
+!
+implicit none
+!
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterc/r8vide.h"
@@ -42,7 +44,7 @@ subroutine bamo78(nomres, trange, typres)
 #include "asterfort/jeveuo.h"
 #include "asterfort/mdgeph.h"
 #include "asterfort/mecact.h"
-#include "asterfort/mecalc.h"
+#include "asterfort/compStress.h"
 #include "asterfort/mecara.h"
 #include "asterfort/mechti.h"
 #include "asterfort/megeom.h"
@@ -65,9 +67,9 @@ subroutine bamo78(nomres, trange, typres)
 #include "asterfort/as_deallocate.h"
 #include "asterfort/as_allocate.h"
 !
-    character(len=8) :: nomres
-    character(len=16) :: typres
-    character(len=19) :: trange
+character(len=8) :: nomres
+character(len=16) :: typres
+character(len=19) :: trange
 ! IN  : NOMRES : NOM UTILISATEUR POUR LA COMMANDE REST_COND_TRAN
 ! IN  : TYPRES : TYPE DE RESULTAT : 'DYNA_TRANS'
 ! IN  : TRANGE : NOM UTILISATEUR DU CONCEPT TRAN_GENE AMONT
@@ -91,19 +93,17 @@ subroutine bamo78(nomres, trange, typres)
     character(len=14) :: numddl
     character(len=24) :: numedd
     character(len=19) :: chamel, chamgd, chamno, chgene, ligrel, chs(2)
-    character(len=19) :: ches1, chel1, ches2, chel2, ches3
+    character(len=19) :: ches1, chel1, ches2, chel2, ches3, ligrmo
     character(len=16) :: nosy, option, opti(2)
     character(len=24) :: chgeom, chcara(18), chharm, chtime
-    character(len=24) :: k24bla
     character(len=24) :: chvarc, chvref
     character(len=19) :: knume, kinst, krefe
     integer :: jnume, jinst
-    character(len=8) :: ctype, sdnoli, k8bla, modele, materi, crit, mesh
+    character(len=8) :: ctype, sdnoli, k8bla, modele, materi, crit, mesh, answer
     character(len=1) :: typcoe
     character(len=2) :: codret
     character(len=24) :: trgene
     integer :: jtrgen, tmod(1)
-    complex(kind=8) :: calpha, cbid
     character(len=24) :: mate, compor, carele
     real(kind=8) :: lcoer(2)
     complex(kind=8) :: lcoec(2)
@@ -111,13 +111,12 @@ subroutine bamo78(nomres, trange, typres)
 !-----------------------------------------------------------------------
     integer :: iarc2, ievnew, iopt, lpar, n, nbins2
     integer :: nbtrou, nc, nh, nncp, num0, nume0
-    real(kind=8) :: alpha, epsi, rundf, time
+    real(kind=8) :: epsi, rundf, time
     real(kind=8), pointer :: base(:) => null()
     integer, pointer :: ordr(:) => null()
 !
 ! ----------------------------------------------------------------------
 !
-    cbid = dcmplx(0.d0, 0.d0)
     call jemarq()
 !
 ! --- INITIALISATIONS
@@ -163,6 +162,14 @@ subroutine bamo78(nomres, trange, typres)
     call copmod(basemo, bmodr=base, numer=numddl)
 !
     call dismoi('NOM_MODELE', numddl, 'NUME_DDL', repk=modele)
+    call dismoi('NOM_LIGREL', modele, 'MODELE', repk=ligrmo)
+!
+! - No POUX beams
+!
+    call dismoi('EXI_POUX', ligrmo, 'LIGREL', repk=answer)
+    if (answer .eq. 'OUI') then
+        call utmess('F', 'DYNAPOST_1')
+    endif
 !
 ! --- CHAMPS SUR LESQUELS ON RESTITUE
 !
@@ -181,7 +188,7 @@ subroutine bamo78(nomres, trange, typres)
             endif
             call getvtx(' ', 'NOM_CHAM', nbval=nbcham, vect=champ, nbret=n1)
         else
-            call utmess('A', 'ALGORITH10_93')
+            call utmess('A', 'DYNAPOST_2')
             goto 999
         endif
     endif
@@ -193,7 +200,7 @@ subroutine bamo78(nomres, trange, typres)
     call rstran('NON', trange, ' ', 1, kinst,&
                 knume, nbinst, iretou)
     if (iretou .ne. 0) then
-        call utmess('F', 'UTILITAI4_24')
+        call utmess('F', 'DYNAPOST_3')
     endif
     call jeexin(kinst, iret)
     if (iret .gt. 0) then
@@ -243,13 +250,13 @@ subroutine bamo78(nomres, trange, typres)
             else if (champ(icham) .eq. 'ACCE') then
                 chgene = trgene(1:18)//'A'
             else
-                call utmess('A', 'ALGORITH10_94')
+                call utmess('A', 'DYNAPOST_2')
                 goto 300
             endif
 !
             call jeexin(chgene, iret)
             if (iret .eq. 0) then
-                call utmess('F', 'MECANONLINE5_32')
+                call utmess('F', 'DYNAPOST_4')
             else
                 call jeveuo(chgene, 'L', jrestr)
             endif
@@ -312,10 +319,7 @@ subroutine bamo78(nomres, trange, typres)
     chtime = ' '
     nh = 0
     typcoe = ' '
-    k24bla = ' '
     k8bla = ' '
-    alpha = 0.d0
-    calpha = (0.d0 , 0.d0)
     chvarc='&&BAMO78.VARC'
     chvref='&&BAMO78.VREF'
     rundf=r8vide()
@@ -340,26 +344,17 @@ subroutine bamo78(nomres, trange, typres)
         do iopt = 1, 2
 !
             option = opti(iopt)
-!
-            call rsexch(' ', sdnoli, option, nume, chel1,&
-                        iret)
-!
-            call rsexch(' ', nomres, option, iarc2, chamel,&
-                        iret)
-!
+            call rsexch(' ', sdnoli, option, nume, chel1, iret)
+            call rsexch(' ', nomres, option, iarc2, chamel, iret)
 !
             if (iopt .eq. 1) then
-                call rsexch(' ', nomres, 'DEPL', iarc2, chamgd,&
-                            iret)
-                ibid = 0
-                nosy='SIEF_ELGA'
-                call mecalc(nosy, modele, chamgd, chgeom, mate,&
-                            chcara, k24bla, k24bla, chtime, &
-                            chharm, k24bla, k24bla, k24bla, k24bla,&
-                            k24bla, k24bla, typcoe, alpha, calpha,&
-                            k24bla, k24bla, chel2, k24bla, ligrel,&
-                            'V', chvarc, chvref, k24bla, compor,&
-                            k24bla, iret)
+                nosy = 'SIEF_ELGA'
+                call rsexch(' ', nomres, 'DEPL', iarc2, chamgd, iret)
+                call compStress(modele, ligrel, compor,&
+                                chamgd, chgeom, mate  ,&
+                                chcara, chtime, chharm,&
+                                chvarc, chvref,&
+                                'V'   , chel2 , iret)
                 call celces(chel2, 'V', ches2)
                 nc = 2
                 chs(1) = ches2
@@ -383,10 +378,8 @@ subroutine bamo78(nomres, trange, typres)
             call rsnoch(nomres, option, iarc2)
         end do
 !
-        call rsexch('F', sdnoli, 'COMPORTEMENT', nume, chel1,&
-                    iret)
-        call rsexch(' ', nomres, 'COMPORTEMENT', iarc2, chamel,&
-                    iret)
+        call rsexch('F', sdnoli, 'COMPORTEMENT', nume, chel1, iret)
+        call rsexch(' ', nomres, 'COMPORTEMENT', iarc2, chamel, iret)
         if (iret .eq. 0) call detrsd('CHAMP_GD', chamel)
 !
         call dyna_comp_fuse(mesh, chel1, chamel)

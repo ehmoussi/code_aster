@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,12 +16,13 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine meceuc(stop, poux, option, caraez, ligrel,&
+! aslint: disable=W1306
+!
+subroutine meceuc(stop, option, caraez, ligrel,&
                   nin, lchin, lpain, nou, lchou,&
                   lpaou, base)
 !
-! aslint: disable=W1306
-    implicit none
+implicit none
 !
 #include "asterf_types.h"
 #include "jeveux.h"
@@ -39,17 +40,20 @@ subroutine meceuc(stop, poux, option, caraez, ligrel,&
 #include "asterfort/jemarq.h"
 #include "asterfort/sepach.h"
 !
-    integer :: nin, nou
-    character(len=1) :: stop
-    character(len=8) :: poux, carael
-    character(len=*) :: base, option
-    character(len=*) :: lchin(*), lchou(*), lpain(*), lpaou(*), ligrel, caraez
+integer :: nin, nou
+character(len=1) :: stop
+character(len=8) :: carael
+character(len=*) :: base, option
+character(len=*) :: lchin(*), lchou(*), lpain(*), lpaou(*), ligrel, caraez
+!
+! --------------------------------------------------------------------------------------------------
 !
 !  BUT : CETTE ROUTINE EST UN INTERMEDIAIRE VERS LA ROUTINE CALCUL.F
 !        POUR CERTAINES OPTIONS DONT LE RESULTAT EST COMPLEXE, ON
 !        APPELLE 2 FOIS CALCUL EN AYANT SEPARE LES CHAMPS COMPLEXES"IN"
 !        EN 2 : PARTIE REELLE ET PARTIE IMAGINAIRE
 !
+! --------------------------------------------------------------------------------------------------
 !
 !     ENTREES:
 !        STOP   :  /'S' : ON S'ARRETE SI AUCUN ELEMENT FINI DU LIGREL
@@ -71,8 +75,8 @@ subroutine meceuc(stop, poux, option, caraez, ligrel,&
 !       ALLOCATION ET CALCUL DES OBJETS CORRESPONDANT AUX CHAMPS "OUT"
 !     CETTE ROUTINE MET EN FORME LES CHAMPS EVENTUELLEMENT COMPLEXE
 !     POUR L APPEL A CALCUL
-!-----------------------------------------------------------------------
 !
+! --------------------------------------------------------------------------------------------------
 !
     character(len=19) :: chdecr(nin), chdeci(nin), ch19, chr, chi, ch1, ch2
     character(len=19) :: lchinr(nin), lchini(nin)
@@ -81,7 +85,8 @@ subroutine meceuc(stop, poux, option, caraez, ligrel,&
     integer :: k, iexi, iexi1, iexi2
     integer :: inddec(nin)
     aster_logical :: lcmplx, lsspt, ldbg, lopdec
-! ----------------------------------------------------------------------
+!
+! --------------------------------------------------------------------------------------------------
 !
     call jemarq()
 !
@@ -116,24 +121,22 @@ subroutine meceuc(stop, poux, option, caraez, ligrel,&
         goto 999
     endif
 !
-!
 !     -- 1. Y-A-T-IL DES CHAMPS "IN" COMPLEXES ?
 !           SI OUI, IL FAUT LES DECOUPER
 !     -----------------------------------------------------------
     lcmplx=.false.
     do k = 1, nin
         inddec(k)=0
-        if (lpain(k) .eq. ' ') goto 1
+        if (lpain(k) .eq. ' ') cycle
         ch19=lchin(k)
-        if (ch19 .eq. ' ') goto 1
+        if (ch19 .eq. ' ') cycle
         if (ldbg) call chlici(ch19, 19)
         call exisd('CHAMP', ch19, iexi)
-        if (iexi .eq. 0) goto 1
+        if (iexi .eq. 0) cycle
         call dismoi('NOM_GD', ch19, 'CHAMP', repk=nomgd)
 !        -- MECHPO CREE PARFOIS UN CHAMP DE FORC_C
 !           IL M'EMBETE ! COMMENT SAVOIR S'IL EST PERTINENT ?
-        if (nomgd .eq. 'FORC_C') goto 1
-!
+        if (nomgd .eq. 'FORC_C') cycle
         if (nomgd(5:6) .eq. '_C') then
             lcmplx=.true.
             inddec(k)=1
@@ -145,7 +148,6 @@ subroutine meceuc(stop, poux, option, caraez, ligrel,&
             chdecr(k)=chr
             chdeci(k)=chi
         endif
-  1     continue
     end do
 !
 !
@@ -202,7 +204,7 @@ subroutine meceuc(stop, poux, option, caraez, ligrel,&
         call exisd('CHAM_ELEM', ch2, iexi2)
         if (iexi1 .eq. 0) then
             ASSERT(iexi2.eq.0)
-            goto 9998
+            goto 888
         endif
     endif
 !
@@ -215,20 +217,17 @@ subroutine meceuc(stop, poux, option, caraez, ligrel,&
         .or. (optio2.eq.'EPSI_ELGA') .or. (optio2.eq.'STRX_ELGA') .or.&
         (optio2.eq.'SIEF_ELGA')) then
         call assach(ch1, ch2, base, lchou(1))
-!
-        elseif ((optio2.eq.'EPOT_ELEM') .or. (optio2.eq.'ENEL_ELGA') .or.&
-    (optio2.eq.'ENEL_ELNO') .or. (optio2.eq.'ECIN_ELEM')) then
+    elseif ((optio2.eq.'EPOT_ELEM') .or. (optio2.eq.'ENEL_ELGA') .or.&
+            (optio2.eq.'ENEL_ELNO') .or. (optio2.eq.'ECIN_ELEM')) then
         call barych(ch1, ch2, 1.d0, 1.d0, lchou(1),&
                     'G')
     else
         ASSERT(.false.)
     endif
 !
-!
-!
 !     -- 7. MENAGE :
 !     --------------
-9998 continue
+888 continue
     do k = 1, nin
         if (inddec(k) .ne. 0) then
             call detrsd('CHAMP', chdecr(k))
@@ -240,7 +239,6 @@ subroutine meceuc(stop, poux, option, caraez, ligrel,&
     call detrsd('CHAMP', ch2)
     call detrsd('CHAM_ELEM_S', ch1)
     call detrsd('CHAM_ELEM_S', ch2)
-!
 !
 999 continue
     call jedema()

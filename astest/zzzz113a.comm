@@ -1,0 +1,92 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'), DEBUG=_F(SDVERI='OUI'))
+
+# Definition of model (cube in steel)
+mesh = LIRE_MAILLAGE(UNITE=20)
+
+model = AFFE_MODELE(AFFE=_F(MODELISATION=('3D', ), PHENOMENE='MECANIQUE', TOUT='OUI'), MAILLAGE=mesh)
+
+steel = DEFI_MATERIAU(ELAS=_F(E=2.1e+11, NU=0.3, RHO=7800.0))
+
+fieldmat = AFFE_MATERIAU(AFFE=_F(MATER=(steel, ), TOUT='OUI'), MAILLAGE=mesh)
+
+EBottom = AFFE_CHAR_MECA(DDL_IMPO=_F(GROUP_MA=('Bottom', ), LIAISON='ENCASTRE'), MODELE=model)
+
+ELeft = AFFE_CHAR_MECA(DDL_IMPO=_F(GROUP_MA=('Left', ), LIAISON='ENCASTRE'), MODELE=model)
+
+ETop = AFFE_CHAR_MECA(DDL_IMPO=_F(DZ=0.1, GROUP_MA=('Top', )), MODELE=model)
+
+EModal = AFFE_CHAR_MECA(DDL_IMPO=(_F(GROUP_MA=('Left', 'Bottom'), LIAISON='ENCASTRE'), _F(DZ=0.1, GROUP_MA=('Top', ))), MODELE=model)
+
+# Compute modes with BC: EModal
+
+ASSEMBLAGE(CHAM_MATER=fieldmat, 
+           CHARGE=(EModal,),
+           MODELE=model,
+           MATR_ASSE=(_F(MATRICE=CO('AsseK'), OPTION='RIGI_MECA'), 
+                      _F(MATRICE=CO('AsseM'), OPTION='MASS_MECA')),  
+           NUME_DDL=CO('numedof'))
+
+modes = CALC_MODES(MATR_MASS=AsseM, MATR_RIGI=AsseK)
+
+# Compute new matrixes with BC: EBottom and ETop
+ASSEMBLAGE(CHAM_MATER=fieldmat, 
+           CHARGE=(EBottom, ETop), 
+           MODELE=model,
+           MATR_ASSE=(_F(MATRICE=CO('AsseK2'), OPTION='RIGI_MECA'), 
+                      _F(MATRICE=CO('AsseM2'), OPTION='MASS_MECA')),  
+           NUME_DDL=CO('nume2'))
+
+# Projection of modes on BC: EModal
+
+mode2 = DEFI_BASE_MODALE(NUME_REF=nume2, 
+                         RITZ=(_F(MODE_MECA=(modes, ), NMAX_MODE=(0, )), 
+                               _F(MODE_INTF=modes, NMAX_MODE=(1999, ))))
+
+numegene = NUME_DDL_GENE(BASE=mode2, STOCKAGE='PLEIN')
+
+GeneK = PROJ_MATR_BASE(BASE=mode2, MATR_ASSE=AsseK2, NUME_DDL_GENE=numegene)
+
+GeneM = PROJ_MATR_BASE(BASE=mode2, MATR_ASSE=AsseM2, NUME_DDL_GENE=numegene)
+
+modegene = CALC_MODES(CALC_FREQ=_F(FREQ=(-0.0001, 1000.0)), MATR_MASS=GeneM, MATR_RIGI=GeneK, OPTION='BANDE', VERI_MODE=_F(STOP_ERREUR='NON'))
+
+modemodi = REST_GENE_PHYS(NOM_CHAM=('DEPL', ), RESU_GENE=modegene, TOUT_INST='OUI')
+
+modes1 = NORM_MODE(MASSE=AsseM2, MODE=modemodi, NORME='MASS_GENE', RAIDE=AsseK2)
+
+# Non-linear dynamic with modal damping
+
+listr = DEFI_LIST_REEL(DEBUT=0.0, INTERVALLE=_F(JUSQU_A=1.0, NOMBRE=5))
+
+rampe = DEFI_FONCTION(NOM_PARA='INST', VALE=(0.0, 0.0, 1.0, 1.0))
+
+resu = DYNA_NON_LINE(AMOR_MODAL=_F(AMOR_REDUIT=(0.05, ), MODE_MECA=modes1, NB_MODE=1), 
+                     CHAM_MATER=fieldmat, 
+                     COMPORTEMENT=_F(DEFORMATION='PETIT', RELATION='ELAS', TOUT='OUI'), 
+                     CONVERGENCE=_F(RESI_GLOB_MAXI=1e-05), 
+                     EXCIT=(_F(CHARGE=EBottom), _F(CHARGE=ETop, FONC_MULT=rampe)), 
+                     INCREMENT=_F(LIST_INST=listr), 
+                     MODELE=model, 
+                     SCHEMA_TEMPS=_F(FORMULATION='DEPLACEMENT', SCHEMA='NEWMARK'))
+
+
+FIN();

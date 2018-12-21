@@ -38,6 +38,15 @@
 
 
 ================================================================================
+:py:class:`~code_aster.Objects.CableGaineFrotMaterialBehaviour` object
+================================================================================
+
+.. autoclass:: code_aster.Objects.CableGaineFrotMaterialBehaviour
+   :show-inheritance:
+   :members:
+
+
+================================================================================
 :py:class:`~code_aster.Objects.DisEcroTracMaterialBehaviour` object
 ================================================================================
 
