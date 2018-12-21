@@ -49,7 +49,8 @@ MO=AFFE_MODELE(
 MATE=DEFI_MATERIAU(
      ELAS=_F(
              E =  200000.0,
-             NU = 0.3),
+             NU = 0.3,
+             ALPHA = 1.e-4),
         MOHR_COULOMB  =_F(
                 PHI    = 33.,
                 ANGDIL   = 27.,
@@ -90,7 +91,7 @@ INS_ARCH=DEFI_LIST_REEL(DEBUT   = 0.0,
 FCT_E = DEFI_FONCTION(
   NOM_PARA = 'INST',
   VALE     = (-1,0 ,  0,0,   1.0 , 1.1 ),
-  
+
                 )
 DEFLIST =DEFI_LIST_INST(DEFI_LIST=_F(LIST_INST = L_INST ),
                         ECHEC=_F(
@@ -129,9 +130,9 @@ U_ELAS = CALC_CHAMP(reuse = U_ELAS,
                )
 
 
-L_CZM_E = POST_CZM_FISS(RESULTAT = U_ELAS, 
-                      OPTION='LONGUEUR', 
-                      GROUP_MA='DCBJ', 
+L_CZM_E = POST_CZM_FISS(RESULTAT = U_ELAS,
+                      OPTION='LONGUEUR',
+                      GROUP_MA='DCBJ',
                       POINT_ORIG = (0.0 , -0.0433379036959),
                       VECT_TANG  = (99.9154700538, 0.0288675134595))
 
