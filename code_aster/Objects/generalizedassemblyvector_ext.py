@@ -72,10 +72,6 @@ class ExtendedGeneralizedAssemblyVectorDouble(injector(GeneralizedAssemblyVector
     cata_sdj = "SD.sd_cham_gene.sd_cham_gene"
 
     def EXTR_VECT_GENE_R(self) :
-      """ retourne les valeurs du vecteur generalisee
-      dans un format numpy
-         Attributs retourne
-            - self.valeurs : numpy.array contenant les valeurs """
       import numpy
       if not self.accessible():
          raise AsException("Erreur dans vect_asse_gene_r.EXTR_VECT_GENE en PAR_LOT='OUI'")
