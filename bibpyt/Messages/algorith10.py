@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -200,10 +200,6 @@ cata_msg = {
 
     93 : _(u"""
  il faut un nom de champ
-"""),
-
-    94 : _(u"""
- pas de champ autre que DEPL ou VITE ou ACCE
 """),
 
     95 : _(u"""

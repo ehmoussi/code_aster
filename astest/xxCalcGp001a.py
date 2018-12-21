@@ -223,3 +223,5 @@ TEST_TABLE(CRITERE='RELATIF',
            )
 
 test.printSummary()
+
+FIN()

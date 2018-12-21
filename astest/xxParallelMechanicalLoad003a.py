@@ -58,3 +58,5 @@ resu1 = [0.6980073863837113, 1.0]
 test.assertAlmostEqual(sfon.getValue(1, 0), resu1[rank])
 resu2 = [0.5461603079530792, 0.5461603079530792]
 test.assertAlmostEqual(sfon.getValue(1, 2), resu2[rank])
+
+FIN()

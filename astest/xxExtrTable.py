@@ -15,3 +15,5 @@ func = EXTR_TABLE(
         NOM_PARA='X',)
 
 test.assertTrue( True )
+
+FIN()

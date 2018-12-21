@@ -58,3 +58,5 @@ test.assertEqual(TYPEFLUI.getType(), "TYPE_FLUI_STRU")
 test.assertEqual(FONC_CM.getType(), "FONCTION_SDASTER")
 
 test.printSummary()
+
+FIN()

@@ -147,7 +147,7 @@ MESTAT = STAT_NON_LINE(
                         EXCIT=_F(CHARGE=CHAR0,FONC_MULT=RAMPE,),
                         INCREMENT=_F(LIST_INST=LI),
                         MODELE=MODELE,
-                        NEWTON=_F(MATRICE='TANGENTE', REAC_ITER=1,MATR_RIGI_SYME='OUI',),
+                        NEWTON=_F(MATRICE='TANGENTE', REAC_ITER=1,),
                         SOLVEUR=_F(MATR_DISTRIBUEE='OUI', METHODE='PETSC', PRE_COND='FIELDSPLIT',RESI_RELA=1.e-8,
                                    NOM_CMP=('DX','DY','DZ','PRE1','TEMP',), PARTITION_CMP=(3,1,1,), OPTION_PETSC=myOptions),
                         INFO=1,
@@ -163,3 +163,5 @@ test.printSummary()
 #     MESTAT.printMedFile('/tmp/par_%d.resu.med'%rank)
 # else:
 #     MESTAT.printMedFile('/tmp/seq.resu.med')
+
+FIN()

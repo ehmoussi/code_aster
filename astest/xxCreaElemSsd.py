@@ -89,3 +89,4 @@ BRAS=CREA_ELEM_SSD(MODELE=MO_BRAS,
 
 test.assertTrue( True )
 
+FIN()

@@ -25,3 +25,5 @@ RECAL=MACR_RECAL(
 )
 
 test.assertTrue( True )
+
+FIN()

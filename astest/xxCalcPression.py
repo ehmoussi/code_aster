@@ -107,3 +107,5 @@ p_appr_F=CALC_PRESSION(MAILLAGE=MESH,
                        INST=1.0)
 
 test.assertTrue( True )
+
+FIN()

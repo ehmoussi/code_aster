@@ -69,3 +69,5 @@ RESU2=POST_CHAMP(RESULTAT=RESU,
                                NIVE_COUCHE='SUP',),);
 
 test.assertTrue( True )
+
+FIN()

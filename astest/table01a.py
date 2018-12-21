@@ -27,3 +27,5 @@ pytab = tab.EXTR_TABLE()
 test.assertEqual(len(pytab), 3)
 
 test.printSummary()
+
+FIN()

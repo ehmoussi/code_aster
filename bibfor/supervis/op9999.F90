@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 
 subroutine op9999(isave)
-    use parameters_module
+    use parameters_module, only : ST_OK
     implicit none
 !     ------------------------------------------------------------------
 ! person_in_charge: j-pierre.lefebvre at edf.fr
@@ -61,7 +61,7 @@ subroutine op9999(isave)
     integer :: ifm, iunres, iunmes
     integer :: i, jco, nbco
     integer :: nbext, nfhdf
-    aster_logical :: bool, close_base
+    aster_logical :: close_base
     character(len=8) :: k8b, ouinon, infr, proc
     character(len=16) :: fhdf, typres
     character(len=80) :: fich
@@ -79,8 +79,7 @@ subroutine op9999(isave)
     proc = 'OUI'
     close_base = isave .eq. 1 .and. (proc.eq.'NON' .or. rank.eq.0)
 
-    iret = 0
-    call ststat(iret)
+    call ststat(ST_OK)
 
 ! --- MENAGE DANS LES BIBLIOTHEQUES, ALARMES, ERREURS, MPI
 !
@@ -148,49 +147,44 @@ subroutine op9999(isave)
 !
     if ( close_base ) then
       call jxveri()
-!
-! --- CLOTURE DES FICHIERS
-!
+      !
+      ! --- CLOTURE DES FICHIERS
+      !
       call jelibf('SAUVE', 'G', info)
-!
+      !
       call jelibf('DETRUIT', 'V', info)
-!
-! --- RETASSAGE EFFECTIF
-!
+      !
+      ! --- RETASSAGE EFFECTIF
+      !
       if (ouinon .eq. 'OUI') then
         call jxcopy('G', 'GLOBALE', 'V', 'VOLATILE', nbext)
         if (iunres .gt. 0) write(iunres, '(A,I2,A)'&
-                           ) ' <I> <FIN> RETASSAGE DE LA BASE "GLOBALE" EFFECTUEE, ',&
-                           nbext, ' FICHIER(S) UTILISE(S).'
+        ) ' <I> <FIN> RETASSAGE DE LA BASE "GLOBALE" EFFECTUEE, ',&
+        nbext, ' FICHIER(S) UTILISE(S).'
       endif
-!
-! --- IMPRESSION DES STATISTIQUES ( AVANT CLOTURE DE JEVEUX )
-!
-      call utmess('I', 'SUPERVIS2_97')
+
+      ! the diagnosis of the execution is OK thanks to the message
+      call utmess('I', 'SUPERVIS2_99')
     endif
-    if (iunres .gt. 0) write(iunres, *) '<I> <FIN> ARRET NORMAL DANS "FIN" PAR APPEL A "JEFINI".'
+
     call jedema()
 !
 ! --- CLOTURE DE JEVEUX
 !
-    if ( close_base ) then
-        rank = 1
-    endif
-    call jefini('NORMAL' , arg_rank=rank)
+    call jefini('NORMAL', close_base)
 
     if ( isave .eq. 0 ) then
         do i=1,99
             call get_jvbasename('glob', i, fbase)
-            inquire (file=fbase, exist=bool)
-            if (.not. bool) then
-                stop
+            call rmfile(fbase, 0, iret)
+            if (iret .ne. 0) then
+                exit
             endif
-            call rmfile(fbase, 0)
             call get_jvbasename('vola', i, fbase)
-            call rmfile(fbase, 0)
+            call rmfile(fbase, 0, iret)
         end do
     endif
 
-    100 format(/,1x,'======>')
+100 format(/,1x,'======>')
 !
 end subroutine

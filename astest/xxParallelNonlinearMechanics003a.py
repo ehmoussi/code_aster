@@ -92,3 +92,5 @@ test.printSummary()
 
 # rank = code_aster.getMPIRank()
 # resu.printMedFile('/tmp/par_%d.resu.med'%rank)
+
+FIN()

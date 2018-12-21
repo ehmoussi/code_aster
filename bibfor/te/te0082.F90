@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,12 +17,19 @@
 ! --------------------------------------------------------------------
 
 subroutine te0082(option, nomte)
-    implicit none
+!
+use THM_type
+use THM_module
+!
+implicit none
+!
+#include "asterf_types.h"
 #include "jeveux.h"
 #include "asterfort/assert.h"
 #include "asterfort/dfdm2d.h"
 #include "asterfort/elrefe_info.h"
 #include "asterfort/thmGetGene.h"
+#include "asterfort/thmGetElemModel.h"
 #include "asterfort/jevech.h"
 #include "asterfort/lteatt.h"
 #include "asterfort/pmavec.h"
@@ -32,8 +39,11 @@ subroutine te0082(option, nomte)
 #include "asterfort/utmess.h"
 #include "asterfort/vecma.h"
 #include "blas/ddot.h"
-    character(len=16) :: option, nomte
-! ......................................................................
+!
+character(len=16) :: option, nomte
+!
+! --------------------------------------------------------------------------------------------------
+!
 !
 !    - CALCULE DES MATRICES ELEMENTAIRES
 !                          OPTION : 'MASS_MECA'
@@ -45,35 +55,48 @@ subroutine te0082(option, nomte)
 !    - ARGUMENTS:
 !        DONNEES:      OPTION       -->  OPTION DE CALCUL
 !                      NOMTE        -->  NOM DU TYPE ELEMENT
-! ......................................................................
 !
+! --------------------------------------------------------------------------------------------------
 !
     character(len=16) :: phenom
     character(len=3) :: stopz
     integer :: icodre(1)
-!      CHARACTER*4        FAMI
     real(kind=8) :: valres(1), poids, r, vfi, vfj
     real(kind=8) :: matp(18, 18), matv(171), masvit(18), masdep(18)
     real(kind=8) :: vect1(18), vect2(18)
-    integer :: nno, kp, nnos, npg2, ii, jj, i, j, k, imatuu, jgano
+    integer :: nno, kp, nnos, npg2, ii, jj, i, j, k, imatuu
     integer :: l, n1, n2, i2, j2
     integer :: ipoids, ivf, idfde, igeom, imate
-    integer :: kd1, kd2, ij1, ij2, nddl, nvec, iacce, ivect, ndim
+    integer :: kd1, kd2, ij1, ij2, nddl, nvec, iacce, ivect
     integer :: idepl, ivite, ifreq, iecin
     integer :: mecani(5), press1(7), press2(7), tempe(5)
     integer :: idec, iret
-! ......................................................................
+    aster_logical :: l_axi
 !
-    call elrefe_info(fami='MASS',ndim=ndim,nno=nno,nnos=nnos,&
-  npg=npg2,jpoids=ipoids,jvf=ivf,jdfde=idfde,jgano=jgano)
+! --------------------------------------------------------------------------------------------------
+!
+    call elrefe_info(fami='MASS',nno=nno,nnos=nnos,&
+                     npg=npg2,jpoids=ipoids,jvf=ivf,jdfde=idfde)
     nddl = 2 * nno
     nvec = nddl * ( nddl + 1 ) / 2
+!
+! - Module initialization
+!
+    call thmModuleInit()
+!
+! - Get model of finite element
+!
+    call thmGetElemModel(l_axi_ = l_axi)
 !
 ! - Get generalized coordinates
 !
     call thmGetGene(.false._1, .false._1, 2,&
                     mecani, press1, press2, tempe)
-    idec = press1(1) + press2(1) + tempe(1)
+    if (lteatt('TYPMOD2','THM')) then
+        idec = press1(1) + press2(1) + tempe(1)
+    else
+        idec = 0
+    endif
 !
     call jevech('PGEOMER', 'L', igeom)
     call jevech('PMATERC', 'L', imate)
@@ -83,9 +106,7 @@ subroutine te0082(option, nomte)
                 ' ', phenom, 0, ' ', [0.d0],&
                 1, 'RHO', valres, icodre(1), 1)
 !
-    do k = 1, nvec
-        matv(k) = 0.0d0
-    end do
+    matv(:) = 0.d0
 !
     do kp = 1, npg2
         k = (kp-1)*nno
@@ -211,8 +232,7 @@ subroutine te0082(option, nomte)
         endif
 !
     else
-!C OPTION DE CALCUL INVALIDE
-        ASSERT(.false.)
+        ASSERT(ASTER_FALSE)
     endif
 !
 end subroutine

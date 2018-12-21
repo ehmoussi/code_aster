@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -65,6 +65,9 @@ use petsc_data_module
     integer :: jcolg, iligg, jnugll, nucmp2, procol, jprddl
     integer :: jnequ, nloc, nglo, jdeeq, prolig, rang, ibid
     integer(kind=4) :: tmp, jterm, un, jcolg4(1), iterm
+    integer :: jrefn, jmlogl
+    character(len=8) :: noma
+    character(len=24) :: nonulg
     mpi_int :: mrank, msize
 !
     character(len=19) :: nomat, nosolv
@@ -72,7 +75,7 @@ use petsc_data_module
     character(len=14) :: nonu
     character(len=4) :: kbid
 !
-    logical :: lmnsy, lgive
+    logical :: lmnsy, lgive,ldebug
 !
     real(kind=8) :: valm, valm2
 !
@@ -93,6 +96,7 @@ use petsc_data_module
     nonu = nonu_courant
     nosolv = nosols(kptsc)
     a = ap(kptsc)
+    ldebug=.false.
 !
     call jeveuo(nonu//'.SMOS.SMDI', 'L', jsmdi)
     call jelira(nonu//'.SMOS.SMDI', 'LONMAX', nsmdi)
@@ -111,11 +115,18 @@ use petsc_data_module
     neqg = nglo
     nz = zi(jsmdi-1+nloc)
 !
+!   Adresses needed to get the stiffness matrix wrt nodes and dof numbers (see below)
+    if (ldebug) then
+        call jeveuo(nonu//'.NUME.REFN', 'L', jrefn)
+        noma = zk24(jrefn)
+        nonulg = noma//'.NULOGL'
+        call jeveuo(nonulg, 'L', jmlogl)
+    endif
+!
     call jelira(nomat//'.VALM', 'NMAXOC', nvalm)
     if (nvalm .eq. 1) then
         lmnsy=.false.
     else if (nvalm.eq.2) then
-        ASSERT(.false.)
         lmnsy=.true.
     else
         ASSERT(.false.)
@@ -186,6 +197,14 @@ use petsc_data_module
             if( zi(jdeeq + (iligl - 1) * 2).gt.0 ) then
                 nuno1 = 1
             endif
+!           Writings to get the stiffness matrix wrt nodes and dof numbers
+            if (ldebug) then
+                nuno1 = zi(jmlogl + zi(jdeeq+2*(iligl-1)) - 1) + 1
+                nucmp1 = zi(jdeeq +2*(iligl-1) + 1)
+                nuno2 = zi(jmlogl + zi(jdeeq+2*(jcoll-1)) - 1) + 1
+                nucmp2 = zi(jdeeq +2*(jcoll-1)+1)
+                write(11+rang,*) nuno1, nucmp1, nuno2, nucmp2, valm, zi(jdeeq+2*(jcoll-1)), rang
+            endif 
             if( nuno1.ne.0.and.nuno2.ne.0 ) then
                 if( prolig .eq. rang ) then
                     jterm = jterm + 1
@@ -200,7 +219,7 @@ use petsc_data_module
                     endif
                 else if( procol .eq. rang ) then
                     iterm = iterm + 1
-                    zr(jdval1 + iterm - 1) = valm
+                    zr(jdval1 + iterm - 1) = valm2
                     zi4(jdxi1 + iterm - 1) = iligg
                 endif
             else

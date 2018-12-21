@@ -450,4 +450,87 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
                      VALE_K='N100',),
            )
 
+# test de l'opération 'POST_COL'
+# pour tous les types de calcul 'MAXI', 'MINI', 'SOMM', 'MOY'
+#                               'MAXI_ABS', 'MINI_ABS', 'SOMM_ABS' 
+tcc1 = CALC_TABLE(TABLE = t1,
+                  ACTION=_F(OPERATION = 'CALCUL',
+                            NOM_PARA  = ('ALPHA','GAMMA'),
+                            TYPE_CALCUL = ('MAXI', 'MINI', 'SOMM', 'MOY', 'MAXI_ABS', 'MINI_ABS', 'SOMM_ABS' ),
+                            ), 
+                  )
+                  
+t1 =  CALC_TABLE( reuse = t1,
+                  TABLE = t1,
+                  ACTION=_F(OPERATION = 'CALCUL',
+                            NOM_PARA  = ('ALPHA','GAMMA'),
+                            TYPE_CALCUL = ('MAXI', 'MINI', 'SOMM', 'MOY', 'MAXI_ABS', 'MINI_ABS', 'SOMM_ABS' ),
+                            ), 
+                  )
+                                          
+
+# validationS par TEST_TABLE
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           NOM_PARA='GAMMA',
+           FILTRE=_F(NOM_PARA='TYPE_CALCUL',
+                     VALE_K='MAXI',),
+           VALE_CALC=2.5,
+           VALE_REFE=2.5,
+           TABLE=tcc1,
+           )     
+                       
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           NOM_PARA='GAMMA',
+           FILTRE=_F(NOM_PARA='TYPE_CALCUL',
+                     VALE_K='MINI',),
+           VALE_CALC=-3.4,
+           VALE_REFE=-3.4,
+           TABLE=tcc1,
+           )  
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           NOM_PARA='GAMMA',
+           FILTRE=_F(NOM_PARA='TYPE_CALCUL',
+                     VALE_K='SOMM',),
+           VALE_CALC=0.6,
+           VALE_REFE=0.6,
+           TABLE=tcc1,
+           )  
+              
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           NOM_PARA='GAMMA',
+           FILTRE=_F(NOM_PARA='TYPE_CALCUL',
+                     VALE_K='MOY',),
+           VALE_CALC=0.2,
+           VALE_REFE=0.2,
+           TABLE=tcc1,
+           )  
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           NOM_PARA='GAMMA',
+           FILTRE=_F(NOM_PARA='TYPE_CALCUL',
+                     VALE_K='MAXI_ABS',),
+           VALE_CALC=3.4,
+           VALE_REFE=3.4,
+           TABLE=tcc1,
+           )  
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           NOM_PARA='GAMMA',
+           FILTRE=_F(NOM_PARA='TYPE_CALCUL',
+                     VALE_K='MINI_ABS',),
+           VALE_CALC=1.5,
+           VALE_REFE=1.5,
+           TABLE=tcc1,
+           )  
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           NOM_PARA='GAMMA',
+           FILTRE=_F(NOM_PARA='TYPE_CALCUL',
+                     VALE_K='SOMM_ABS',),
+           VALE_CALC=7.4,
+           VALE_REFE=7.4,
+           TABLE=tcc1,
+           )  
+                                          
 FIN();

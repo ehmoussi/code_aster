@@ -31,15 +31,17 @@
 #include <sstream>
 #include <string>
 
-#include "astercxx.h"
-#include "MemoryManager/JeveuxVector.h"
-#include "aster_utils.h"
+#include "DataFields/Table.h"
+#include "Functions/Formula.h"
 #include "Functions/Function.h"
 #include "Functions/Surface.h"
-#include "Functions/Formula.h"
-#include "DataFields/Table.h"
+#include "MemoryManager/JeveuxVector.h"
+#include "aster_utils.h"
+#include "astercxx.h"
 
-extern "C" { void CopyCStrToFStr( char *, char *, STRING_SIZE ); }
+extern "C" {
+void CopyCStrToFStr( char *, char *, STRING_SIZE );
+}
 
 typedef std::vector< FunctionPtr > VectorFunction;
 
@@ -691,18 +693,15 @@ class GeneralMaterialBehaviourInstance {
      */
     virtual bool buildJeveuxVectors( JeveuxVectorComplex &complexValues,
                                      JeveuxVectorDouble &doubleValues,
-                                     JeveuxVectorChar16 &char16Values,
-                                     JeveuxVectorChar16 &ordr,
-                                     JeveuxVectorLong &kOrdr,
-                                     std::vector< JeveuxVectorDouble >&,
-                                     std::vector< JeveuxVectorChar8 >& );
+                                     JeveuxVectorChar16 &char16Values, JeveuxVectorChar16 &ordr,
+                                     JeveuxVectorLong &kOrdr, std::vector< JeveuxVectorDouble > &,
+                                     std::vector< JeveuxVectorChar8 > & );
 
     /**
      * @brief Build ".RDEP" if necessary
      * @return true
      */
-    virtual bool buildTractionFunction( FunctionPtr &doubleValues ) const
-        ;
+    virtual bool buildTractionFunction( FunctionPtr &doubleValues ) const;
 
     /**
      * @brief Function to know if ".RDEP" is necessary
@@ -1043,6 +1042,50 @@ class DisEcroTracMaterialBehaviourInstance : public GeneralMaterialBehaviourInst
 typedef boost::shared_ptr< DisEcroTracMaterialBehaviourInstance > DisEcroTracMaterialBehaviourPtr;
 
 /**
+ * @class CableGaineFrotMaterialBehaviourInstance
+ * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau CableGaineFrot
+ */
+class CableGaineFrotMaterialBehaviourInstance : public GeneralMaterialBehaviourInstance {
+  public:
+    /**
+     * @brief Constructeur
+     */
+    CableGaineFrotMaterialBehaviourInstance() {
+        // Mot cle "CABLE_GAINE_FROT" dans Aster
+        _asterName = "CABLE_GAINE_FROT";
+
+        // Parametres matériau
+        this->addConvertibleProperty(
+            "Type",
+            ElementaryMaterialPropertyConvertible(
+                "TYPE",
+                StringToDoubleValue( {{"FROTTANT", 1.}, {"GLISSANT", 2.}, {"ADHERENT", 3.}} ),
+                true ) );
+        this->addDoubleProperty( "Frot_line",
+                                 ElementaryMaterialPropertyDouble( "FROT_LINE", 0., false ) );
+        this->addDoubleProperty( "Frot_courb",
+                                 ElementaryMaterialPropertyDouble( "FROT_COURB", 0., false ) );
+        this->addDoubleProperty( "Pena_lagr",
+                                 ElementaryMaterialPropertyDouble( "PENA_LAGR", true ) );
+    };
+
+    /**
+     * @brief Get name link to the class
+     * @return name
+     */
+    static std::string getName() { return "CABLE_GAINE_FROT"; };
+
+    /**
+     * @brief To know if a MaterialBehaviour has ConvertibleValues
+     */
+    static bool hasConvertibleValues() { return true; };
+};
+
+/** @typedef Pointeur intelligent vers un comportement materiau CableGaineFrot */
+typedef boost::shared_ptr< CableGaineFrotMaterialBehaviourInstance >
+    CableGaineFrotMaterialBehaviourPtr;
+
+/**
  * @class ElasMetaMaterialBehaviourInstance
  * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau ElasMeta
  * @author Jean-Pierre Lefebvre
@@ -1204,7 +1247,7 @@ class MetaTractionMaterialBehaviourInstance : public GeneralMaterialBehaviourIns
      * @brief Build ".RDEP"
      * @return true
      */
-    bool buildTractionFunction( FunctionPtr &doubleValues ) const ;
+    bool buildTractionFunction( FunctionPtr &doubleValues ) const;
 
     /**
      * @brief Get name link to the class
@@ -1350,7 +1393,7 @@ class TractionMaterialBehaviourInstance : public GeneralMaterialBehaviourInstanc
      * @brief Build ".RDEP"
      * @return true
      */
-    bool buildTractionFunction( FunctionPtr &doubleValues ) const ;
+    bool buildTractionFunction( FunctionPtr &doubleValues ) const;
 
     /**
      * @brief Get name link to the class
@@ -1379,15 +1422,14 @@ typedef boost::shared_ptr< TractionMaterialBehaviourInstance > TractionMaterialB
  * @author Jean-Pierre Lefebvre
  */
 class TherNlMaterialBehaviourInstance : public GeneralMaterialBehaviourInstance {
-private:
+  private:
     FunctionPtr _enthalpyFunction;
 
   public:
     /**
      * @brief Constructeur
      */
-    TherNlMaterialBehaviourInstance(): _enthalpyFunction( new FunctionInstance() )
-    {
+    TherNlMaterialBehaviourInstance() : _enthalpyFunction( new FunctionInstance() ) {
         // Mot cle "THER_NL" dans Aster
         _asterName = "THER_NL";
 
@@ -1421,13 +1463,10 @@ private:
      * @return Booleen valant true si la tache s'est bien deroulee
      * @todo vérifier les valeurs réelles par défaut du .VALR
      */
-    bool buildJeveuxVectors( JeveuxVectorComplex &complexValues,
-                             JeveuxVectorDouble &doubleValues,
-                             JeveuxVectorChar16 &char16Values,
-                             JeveuxVectorChar16 &ordr,
-                             JeveuxVectorLong &kOrdr,
-                             std::vector< JeveuxVectorDouble >&,
-                             std::vector< JeveuxVectorChar8 >& );
+    bool buildJeveuxVectors( JeveuxVectorComplex &complexValues, JeveuxVectorDouble &doubleValues,
+                             JeveuxVectorChar16 &char16Values, JeveuxVectorChar16 &ordr,
+                             JeveuxVectorLong &kOrdr, std::vector< JeveuxVectorDouble > &,
+                             std::vector< JeveuxVectorChar8 > & );
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau TherNl */

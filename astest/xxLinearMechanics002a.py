@@ -72,3 +72,5 @@ resu.debugPrint( 8 )
 # at least it pass here!
 test.assertTrue( True )
 test.printSummary()
+
+FIN()

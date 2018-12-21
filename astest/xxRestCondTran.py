@@ -227,3 +227,5 @@ RESUGLOB=REST_COND_TRAN( RESULTAT=EVOLB,
                        );
                   
 test.assertTrue( True )
+
+FIN()

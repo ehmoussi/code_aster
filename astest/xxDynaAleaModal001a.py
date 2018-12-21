@@ -263,3 +263,5 @@ TEST_FONCTION(VALEUR=(_F(VALE_REFE=0.040298,
 test.assertEqual(DYNALEA1.getType(), "INTERSPECTRE")
 
 test.printSummary()
+
+FIN()

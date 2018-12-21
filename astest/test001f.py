@@ -128,3 +128,5 @@ resu.printMedFile( "fort.med" )
 
 
 test.printSummary()
+
+FIN()

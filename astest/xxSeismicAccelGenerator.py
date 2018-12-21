@@ -343,3 +343,5 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
 #
 
 test.printSummary()
+
+FIN()

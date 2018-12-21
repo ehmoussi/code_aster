@@ -145,3 +145,5 @@ TB=POST_DECOLLEMENT(RESULTAT=EVOL,
                     GROUP_MA='DAL1',NOM_CMP='DY');
 
 test.assertTrue( True )
+
+FIN()

@@ -84,3 +84,5 @@ DYNA=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='PHYS',
 # print global_sum[0]
 
 test.assertTrue(True)
+
+FIN()

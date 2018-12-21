@@ -78,8 +78,9 @@ def check_cxx_compiler_flags(self):
 @Configure.conf
 def check_optimization_cxxflags(self):
     self.setenv('debug')
-    flags = ['-g'] + Utils.to_list(self.env['CXXFLAGS_ASTER_DEBUG'])
     self.define('_DEBUG_CXX', 1)
+    self.remove_optflags("CXXFLAGS")
+    flags = ['-g', '-O0'] + Utils.to_list(self.env['CXXFLAGS_ASTER_DEBUG'])
     self.start_msg('Setting C++ debug flags')
     self.env.append_unique('CXXFLAGS', flags)
     self.end_msg(flags)

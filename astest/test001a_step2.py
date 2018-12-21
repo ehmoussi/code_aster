@@ -26,3 +26,5 @@ support = model.getSupportMesh()
 test.assertIsNotNone(support)
 
 test.printSummary()
+
+FIN()

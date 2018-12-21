@@ -233,3 +233,5 @@ test.assertEqual(REPTOT.getType(), "EVOL_VARC")
 
 
 test.printSummary()
+
+FIN()

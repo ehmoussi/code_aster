@@ -94,3 +94,5 @@ tabl_spe = CALC_SPECTRE_IPM(MAILLAGE = MA,
 )
 
 test.assertTrue( True )
+
+FIN()

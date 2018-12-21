@@ -14,3 +14,5 @@ MAT=DEFI_COMPOSITE(COUCHE=(
             _F(  EPAIS = 0.5,  MATER = MAT1,  ORIENTATION = 0.)) )
 
 test.assertTrue( True )
+
+FIN()

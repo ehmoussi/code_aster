@@ -73,3 +73,5 @@ test.assertEqual(DIFF(0.025), 0.)
 test.assertEqual(DIFF(0.095), 0.)
 
 test.printSummary()
+
+FIN()

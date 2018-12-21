@@ -72,3 +72,5 @@ comb_matrix = COMB_MATR_ASSE(COMB_R=_F(MATR_ASSE=matr_asse_k, COEF_R=1.0))
 test.assertEqual(comb_matrix.getType(), "MATR_ASSE_DEPL_R")
 
 test.printSummary()
+
+FIN()

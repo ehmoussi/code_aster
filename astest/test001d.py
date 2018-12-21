@@ -180,3 +180,5 @@ with test.assertRaises( AsterError ):
     CharMeca13.build()
 
 test.printSummary()
+
+code_aster.close()

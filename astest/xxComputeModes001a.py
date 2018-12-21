@@ -72,3 +72,4 @@ IMPR_CO(CONCEPT=_F(NOM=BAMODA))
 
 test.printSummary()
 
+FIN()

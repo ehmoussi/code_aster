@@ -310,3 +310,5 @@ test.assertEqual(l_mod.getType(), "TABLE_SDASTER")
 #           )
 
 test.printSummary()
+
+FIN()

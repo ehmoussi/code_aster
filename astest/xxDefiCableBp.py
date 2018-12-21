@@ -96,3 +96,5 @@ CAB_BP=DEFI_CABLE_BP(MODELE=MO,
                       RECUL_ANCRAGE=0.001,);
 
 test.assertTrue( True )
+
+FIN()

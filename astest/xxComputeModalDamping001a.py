@@ -68,3 +68,4 @@ test.assertEqual(amor_modal.getType(), "LISTR8_SDASTER")
 
 test.printSummary()
 
+FIN()

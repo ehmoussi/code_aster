@@ -8,3 +8,5 @@ test = code_aster.TestCase()
 TCPU=INFO_EXEC_ASTER(LISTE_INFO='TEMPS_RESTANT')
 
 test.assertTrue( True )
+
+FIN()
