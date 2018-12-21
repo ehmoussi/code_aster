@@ -114,6 +114,17 @@ void exportMaterialBehaviourToPython() {
         .def( "hasConvertibleValues", &ElasMetaMaterialBehaviourInstance::hasConvertibleValues )
         .staticmethod( "hasConvertibleValues" );
 
+    class_< CableGaineFrotMaterialBehaviourInstance, CableGaineFrotMaterialBehaviourPtr,
+            bases< GeneralMaterialBehaviourInstance > >( "CableGaineFrotMaterialBehaviour",
+                                                                no_init )
+        .def( "__init__",
+              make_constructor( &initFactoryPtr< CableGaineFrotMaterialBehaviourInstance > ) )
+        .def( "getName", &CableGaineFrotMaterialBehaviourInstance::getName )
+        .staticmethod( "getName" )
+        .def( "hasConvertibleValues",
+              &CableGaineFrotMaterialBehaviourInstance::hasConvertibleValues )
+        .staticmethod( "hasConvertibleValues" );
+
     class_< ElasMetaFoMaterialBehaviourInstance, ElasMetaFoMaterialBehaviourPtr,
             bases< GeneralMaterialBehaviourInstance > >( "ElasMetaFoMaterialBehaviour", no_init )
         .def( "__init__",
