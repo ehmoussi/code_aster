@@ -175,13 +175,7 @@ On part donc de DEPL/VITE/ACCE généralisés nuls.
 """),
 
 
-    32 : _(u"""
-La SD EVOL_NOLI utilisée dans REST_COND_TRAN ne contient pas les
-champs généralisés.
-Vérifiez qu'il s'agit du même concept que celui utilisé dans le DYNA_NON_LINE,
-option PROJ_MODAL et que l'archivage a été fait (mot-clef ARCHIVAGE de DYNA_NON_LINE)
 
-"""),
 
     33 : _(u"""
 Dynamique non-linéaire

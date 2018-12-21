@@ -17,10 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nonlinIntegratePrepare(list_func_acti , sddyna, model,&
-                                  ds_constitutive)
-!
-use NonLin_Datastructure_type
+subroutine nonlinDSDynamicInit(hval_incr, sddyna)
 !
 implicit none
 !
@@ -28,62 +25,58 @@ implicit none
 #include "asterfort/assert.h"
 #include "asterfort/infdbg.h"
 #include "asterfort/utmess.h"
-#include "asterfort/isfonc.h"
 #include "asterfort/ndynlo.h"
-#include "asterfort/comp_info.h"
+#include "asterfort/getvid.h"
+#include "asterfort/mginfo.h"
+#include "asterfort/nmchex.h"
+#include "asterfort/dismoi.h"
+#include "asterfort/iden_nume.h" 
 !
-integer, intent(in) :: list_func_acti(*)
+character(len=19), intent(in) :: hval_incr(*)
 character(len=19), intent(in) :: sddyna
-character(len=8), intent(in) :: model
-type(NL_DS_Constitutive), intent(inout) :: ds_constitutive
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! MECA_NON_LINE - Constitutive laws
+! MECA_NON_LINE - Dynamic management
 !
-! Prepare integration of constitutive laws
+! Initializations for dynamic
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  list_func_acti   : list of active functionnalities
-! In  sddyna           : dynamic parameters datastructure
-! In  model            : name of model
-! IO  ds_constitutive  : datastructure for constitutive laws management
+! In  hval_incr        : hat-variable for incremental values fields
+! In  sddyna           : datastructure for dynamic
 !
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    aster_logical :: l_implex, l_resi_comp, l_stat, l_dyna
+    integer :: nbmd, nb_mode, nb_equa
+    aster_logical :: l_damp_moda
+    character(len=19) :: pfcn1, pfcn2, disp_prev
+    character(len=8) :: mode_meca
+    character(len=14) :: nume_ddl
 !
 ! --------------------------------------------------------------------------------------------------
 !
     call infdbg('MECANONLINE', ifm, niv)
     if (niv .ge. 2) then
-        call utmess('I', 'MECANONLINE13_28')
+        call utmess('I', 'MECANONLINE13_13')
     endif
 !
 ! - Active functionnalities
 !
-    l_implex    = isfonc(list_func_acti,'IMPLEX')
-    l_resi_comp = isfonc(list_func_acti,'RESI_COMP')
-    l_stat      = ndynlo(sddyna,'STATIQUE')
-    l_dyna      = ndynlo(sddyna,'DYNAMIQUE')
+    l_damp_moda = ndynlo(sddyna,'AMOR_MODAL')
 !
-! - Activation
+! - Modal damping
 !
-    if (l_resi_comp) then
-        ds_constitutive%l_pred_cnfnod = ASTER_TRUE
+    if (l_damp_moda) then
+        call getvid('AMOR_MODAL', 'MODE_MECA', iocc=1, scal=mode_meca, nbret=nbmd)
+        call mginfo(mode_meca, nume_ddl, nb_mode, nb_equa)
+        call nmchex(hval_incr, 'VALINC', 'DEPMOI', disp_prev)
+        call dismoi('PROF_CHNO', disp_prev, 'CHAM_NO', repk=pfcn1)
+        call dismoi('PROF_CHNO', nume_ddl, 'NUME_DDL', repk=pfcn2)
+        if (.not.iden_nume(pfcn1, pfcn2)) then
+            call utmess('F', 'DYNAMIQUE_54')
+        endif
     endif
-    if (l_implex) then
-        ds_constitutive%l_pred_cnfnod = ASTER_TRUE
-    endif
-    if (l_stat) then
-        ds_constitutive%l_pred_cnfnod = ASTER_TRUE
-    endif
-    if (l_dyna) then
-        ds_constitutive%l_pred_cnfint = ASTER_TRUE
-    endif
-!
-    call comp_info(model, ds_constitutive%compor)
 !
 end subroutine

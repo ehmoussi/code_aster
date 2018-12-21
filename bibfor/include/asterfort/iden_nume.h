@@ -18,26 +18,8 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine ccchel(option, modele, resuin, resuou, numord,&
-                      nordm1, mateco, carael, typesd, ligrel,&
-                      l_poux, exitim, lischa, nbchre, ioccur,&
-                      suropt, basopt, resout)
-        character(len=16) :: option
-        character(len=8) :: modele
-        character(len=8) :: resuin
-        character(len=8) :: resuou
-        integer :: numord
-        integer :: nordm1
-        character(len=24) :: mateco
-        character(len=8) :: carael
-        character(len=16) :: typesd
-        character(len=24) :: ligrel
-        aster_logical, intent(in) :: l_poux, exitim
-        character(len=19) :: lischa
-        integer :: nbchre
-        integer :: ioccur
-        character(len=24) :: suropt
-        character(len=1) :: basopt
-        character(len=24) :: resout
-    end subroutine ccchel
+    function iden_nume(pchn1, pchn2)
+        character(len=*), intent(in) :: pchn1, pchn2
+        logical :: iden_nume
+    end function iden_nume
 end interface

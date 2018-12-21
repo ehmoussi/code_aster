@@ -89,16 +89,16 @@ implicit none
 ! ----------------------------------------------------------------------
     character(len=16) :: cmp1, cmp2
     aster_logical :: resi, rigi
-    integer :: nddl, g, cod(27), n, i, m, j, kk, codm(3), nbvifr, nbvica
+    integer :: nddl, g, cod(27), n, i, m, j, kk, codm(1), nbvifr, nbvica
     integer :: nbvi
     real(kind=8) :: r, mu, epsm, deps, wg, l(3), de(1), ddedt, t1
     real(kind=8) :: b(4, 3), gliss
     real(kind=8) :: sigcab, dsidep, dde(2), ddedn, courb
-    real(kind=8) :: angmas(3), val(3), rphi, frotc, wkin(2), wkout(1)
-    character(len=16) :: nom(3)
+    real(kind=8) :: angmas(3), val(1), wkin(2), wkout(1)
+    character(len=16) :: nom(1)
     character(len=1) :: poum
 !
-    data nom /'FROT_LINE','PENA_LAGR','FROT_COURB'/
+    data nom /'PENA_LAGR'/
 ! ----------------------------------------------------------------------
 !
 !
@@ -209,10 +209,8 @@ implicit none
 !
         call rcvalb('RIGI', g, 1, poum, mat,&
                     ' ', 'CABLE_GAINE_FROT', 0, ' ', [0.d0],&
-                    3, nom, val, codm, 2)
-        rphi=val(1)
-        r=val(2)
-        frotc = val(3)
+                    1, nom, val, codm, 2)
+        r=val(1)
         wkin(1)=a*sigcab
         wkin(2)=courb
 !

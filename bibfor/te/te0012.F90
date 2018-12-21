@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,8 +17,32 @@
 ! --------------------------------------------------------------------
 
 subroutine te0012(option, nomte)
-    implicit none
-!.......................................................................
+!
+use THM_type
+use THM_module
+!
+implicit none
+!
+#include "asterf_types.h"
+#include "jeveux.h"
+#include "asterfort/assert.h"
+#include "asterfort/dfdm3d.h"
+#include "asterfort/elrefe_info.h"
+#include "asterfort/thmGetGene.h"
+#include "asterfort/thmGetElemModel.h"
+#include "asterfort/jevech.h"
+#include "asterfort/lteatt.h"
+#include "asterfort/pmavec.h"
+#include "asterfort/rccoma.h"
+#include "asterfort/rcvalb.h"
+#include "asterfort/tecach.h"
+#include "asterfort/utmess.h"
+#include "asterfort/vecma.h"
+#include "blas/ddot.h"
+!
+character(len=16) :: option, nomte
+!
+! --------------------------------------------------------------------------------------------------
 !
 !     BUT: CALCUL DES MATRICES DE MASSE ELEMENTAIRES EN MECANIQUE
 !          ELEMENTS ISOPARAMETRIQUES 3D
@@ -31,67 +55,58 @@ subroutine te0012(option, nomte)
 !
 !     ENTREES  ---> OPTION : OPTION DE CALCUL
 !              ---> NOMTE  : NOM DU TYPE ELEMENT
-!.......................................................................
 !
-!
-#include "jeveux.h"
-#include "asterfort/assert.h"
-#include "asterfort/dfdm3d.h"
-#include "asterfort/elrefe_info.h"
-#include "asterfort/thmGetGene.h"
-#include "asterfort/jevech.h"
-#include "asterfort/pmavec.h"
-#include "asterfort/rccoma.h"
-#include "asterfort/rcvalb.h"
-#include "asterfort/tecach.h"
-#include "asterfort/utmess.h"
-#include "asterfort/vecma.h"
-#include "blas/ddot.h"
+! --------------------------------------------------------------------------------------------------
 !
     integer :: icodre(1)
-!
-    character(len=16) :: nomte, option, phenom
+    character(len=16) :: phenom
     character(len=4) :: fami
     character(len=3) :: stopz
     real(kind=8) :: a(3, 3, 27, 27), matp(81, 81), matv(3321)
     real(kind=8) :: poids, rho(1)
     integer :: ipoids, ivf, idfde, igeom, imate
-    integer :: jgano, nno, kp, i, j, k, imatuu, iacce, ivect
-    integer :: ijkl, ik, l, ndim, npg, nddl, nvec
+    integer :: nno, kp, i, j, k, imatuu, iacce, ivect
+    integer :: ijkl, ik, l, npg, nddl, nvec
     integer :: n1, n2, i2, j2, k2
     integer :: idiag, nnos, iret
     integer :: idepl, ivite, iecin, ifreq
     real(kind=8) :: trace, alfa, wgt, masvit(81), masdep(81)
     real(kind=8) :: vect1(81), vect2(81)
     integer :: mecani(5), press1(7), press2(7), tempe(5), idec
-!.......................................................................
+!
+! --------------------------------------------------------------------------------------------------
 !
     fami='MASS'
-    call elrefe_info(fami=fami,ndim=ndim,nno=nno,nnos=nnos,&
-  npg=npg,jpoids=ipoids,jvf=ivf,jdfde=idfde,jgano=jgano)
+    call elrefe_info(fami=fami,nno=nno,nnos=nnos,&
+                     npg=npg,jpoids=ipoids,jvf=ivf,jdfde=idfde)
     nddl = 3*nno
     nvec = nddl* (nddl+1)/2
+!
+! - Module initialization
+!
+    call thmModuleInit()
+!
+! - Get model of finite element
+!
+    call thmGetElemModel()
 !
 ! - Get generalized coordinates
 !
     call thmGetGene(.false._1, .false._1, 3,&
                     mecani, press1, press2, tempe)
 
-    idec = press1(1) + press2(1) + tempe(1)
+    if (lteatt('TYPMOD2','THM')) then
+        idec = press1(1) + press2(1) + tempe(1)
+    else
+        idec = 0
+    endif
 !
     call jevech('PGEOMER', 'L', igeom)
     call jevech('PMATERC', 'L', imate)
     call rccoma(zi(imate), 'ELAS', 1, phenom, icodre(1))
 !
-    do k = 1, 3
-        do l = 1, 3
-            do i = 1, nno
-                do j = 1, i
-                    a(k,l,i,j) = 0.0d0
-                end do
-            end do
-        end do
-    end do
+
+    a(:,:,:,:) = 0.0d0
 !
 !    BOUCLE SUR LES POINTS DE GAUSS
 !
@@ -316,8 +331,7 @@ subroutine te0012(option, nomte)
         endif
 !
     else
-!C OPTION DE CALCUL INVALIDE
-        ASSERT(.false.)
+        ASSERT(ASTER_FALSE)
     endif
 !
 end subroutine

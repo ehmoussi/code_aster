@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -81,5 +81,18 @@ Contactez le support technique.
 
 24: _(u"""Le chargement doit être le même sur tous les pas de temps pour ce post-traitement.
       Conseil : il faut séparer le post-traitement en le découpant pour garder le même chargement"""),
+
+89: _(u"""
+ Le champ  %(k1)s  n'a pas pu être calculé.
+ Risques & conseils :
+   * Si le champ est un champ par éléments, c'est que le calcul élémentaire n'est pas disponible
+     pour les éléments finis utilisés. Cela peut se produire soit parce que ce
+     calcul n'a pas été encore programmé, soit parce que ce calcul n'a pas de sens.
+     Par exemple, le champ EFGE_ELNO n'a pas de sens pour les éléments de la modélisation '3D'.
+   * Si le champ est un champ aux noeuds (XXXX_NOEU), cela veut dire que le champ XXXX_ELNO
+     n'existe pas sur les éléments spécifiés.
+     Par exemple, le calcul de SIGM_NOEU sur les éléments de bord est impossible.
+
+"""),
 
 }

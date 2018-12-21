@@ -171,4 +171,7 @@ cata_msg = {
    84  : _(u"""  Calcul des matrices élémentaires pour les charges suiveuses."""),
 
    85  : _(u"""  Calcul des matrices élémentaires des macro-éléments."""),
+
+   86  : _(u""" Initialisations pour la gestion de l'énergie."""),
+
 }
