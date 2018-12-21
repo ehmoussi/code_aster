@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -24,6 +24,7 @@ subroutine aprtpm(pair_tole       , elem_dime     , &
 !
 implicit none
 !
+#include "asterf_types.h"
 #include "asterfort/reerel.h"
 #include "asterfort/assert.h"
 #include "asterfort/lctria.h"
@@ -64,13 +65,14 @@ integer, intent(out) :: iret
     real(kind=8) :: dff(2, 9)
     integer :: iret_
     real(kind=8) :: tria_coor_es(2,3)
-    integer :: i_tria, i_gauss, nb_tria, nb_gauss, niverr, i_node, i_dime
+    integer :: i_tria, i_gauss, nb_tria, nb_gauss, i_node, i_dime
     real(kind=8) :: gauss_weight_es(12), gauss_coor_es(2,12)
     real(kind=8) :: gauss_coou(3), dire_norm(3), gauss_coot(2)
     real(kind=8) :: tau1(3), tau2(3), ksi1, ksi2, elem_slav_coot(27)
     integer :: tria_node(6,3)
     character(len=8) :: gauss_family
     real(kind=8) :: shape_dfunc(2, 9)
+    aster_logical :: debug
 
 !
 ! --------------------------------------------------------------------------------------------------
@@ -79,6 +81,7 @@ integer, intent(out) :: iret
     poin_inte_ma(:,:) = 0.d0
     shape_dfunc(:,:)  = 0.d0
     poin_gaus_ma(:,:) = 0.d0
+    debug = ASTER_FALSE
 !
 ! - Transform the format of slave element coordinates
 !
@@ -126,7 +129,7 @@ integer, intent(out) :: iret
                     iret_)
         if (iret_.eq. 1) then
             iret = 1
-            ASSERT(.false.)
+            go to 99
         endif
 
         poin_inte_ma(1,i_poin_inte) = ksi_ma(1)
@@ -211,10 +214,11 @@ integer, intent(out) :: iret
             call mmnewd(elem_mast_code, elem_mast_nbnode, elem_dime, elem_mast_coor,&
                         gauss_coou    , 200             , pair_tole, dire_norm     ,&
                         ksi1          , ksi2            , tau1     , tau2          ,&
-                        niverr)
-            if (niverr.eq.1) then
-                ASSERT(.false.)
-            end if
+                        iret_)
+            if (iret_.eq. 1) then
+                iret = 1
+                go to 99
+            endif
             poin_gaus_ma(1,nb_poin_gaus+i_gauss) = ksi1
             if (elem_dime .eq. 3) then
                 poin_gaus_ma(2,nb_poin_gaus+i_gauss) = ksi2
@@ -222,6 +226,8 @@ integer, intent(out) :: iret
         end do
         nb_poin_gaus = nb_gauss + nb_poin_gaus
     end do
-
-
+99  continue
+    if (debug) then
+        ASSERT(iret .eq. 0)
+    end if
 end subroutine

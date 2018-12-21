@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,12 +19,11 @@
 subroutine apinte_prsl(proj_tole       , elem_dime     , &
                        elem_mast_nbnode, elem_mast_coor, &
                        elem_slav_nbnode, elem_slav_coor, elem_slav_code,&
-                       proj_coor       )
+                       proj_coor       , iret)
 !
 implicit none
 !
 #include "asterf_types.h"
-#include "asterfort/assert.h"
 #include "asterfort/mmnewt.h"
 !
 real(kind=8), intent(in) :: proj_tole
@@ -35,6 +34,7 @@ integer, intent(in) :: elem_slav_nbnode
 real(kind=8), intent(in) :: elem_slav_coor(3,9)
 character(len=8), intent(in) :: elem_slav_code
 real(kind=8), intent(out) :: proj_coor(elem_dime-1,4)
+integer, intent(out) :: iret
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -57,7 +57,6 @@ real(kind=8), intent(out) :: proj_coor(elem_dime-1,4)
 !
     aster_logical :: debug, l_reli
     integer :: i_node, i_dime
-    integer :: niverr
     real(kind=8) :: noma_coor(3)
     real(kind=8) :: ksi1, ksi2, tau1(3), tau2(3)
     character(len=8) :: elin_slav_code
@@ -91,9 +90,9 @@ real(kind=8), intent(out) :: proj_coor(elem_dime-1,4)
                     elem_slav_coor, noma_coor       , 75       ,&
                     proj_tole     , ksi1            , ksi2     ,&
                     tau1          , tau2            ,&
-                    niverr        , l_reli)
+                    iret        , l_reli)
 ! ----- Get parametric coordinates of projection
-        if (niverr .eq. 0) then
+        if (iret .eq. 0) then
             proj_coor(1, i_node) = ksi1
             if (elem_dime .eq. 3) then
                 proj_coor(2, i_node) = ksi2
@@ -105,17 +104,17 @@ real(kind=8), intent(out) :: proj_coor(elem_dime-1,4)
                         elem_slav_coor, noma_coor       , 75       ,&
                         proj_tole     , ksi1            , ksi2     ,&
                         tau1          , tau2            ,&
-                        niverr        , l_reli)
-            if (niverr .eq. 0) then
+                        iret        , l_reli)
+            if (iret .eq. 0) then
                 proj_coor(1, i_node) = ksi1
                 if (elem_dime .eq. 3) then
                     proj_coor(2, i_node) = ksi2
                 end if
             else
-                write(*,*) "mmnewt failed"
-                ASSERT(ASTER_FALSE)
+                go to 99
             endif
         endif
     end do
 !
+99 continue
 end subroutine
