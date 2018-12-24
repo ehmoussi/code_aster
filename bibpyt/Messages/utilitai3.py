@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -268,11 +268,6 @@ L'opération  %(k1)s est incompatible avec TYPE_CHAM %(k2)s
     64 : _(u"""
  il faut donner le nom d'un résultat de type EVOL_THER
  après le mot-clé LAPL_PHI_Z du mot-clé facteur "CARA_POUTRE".
-"""),
-
-    68 : _(u"""
- On attend un concept "MODE_MECA" ou "EVOL_ELAS" ou "EVOL_THER" ou "DYNA_TRANS"
- ou "EVOL_NOLI"
 """),
 
     69 : _(u"""
