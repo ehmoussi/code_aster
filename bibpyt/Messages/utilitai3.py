@@ -290,11 +290,6 @@ L'opération  %(k1)s est incompatible avec TYPE_CHAM %(k2)s
  type de champ inconnu.
 """),
 
-    75 : _(u"""
- On attend un concept "MODE_MECA" ou "EVOL_ELAS" ou "MULT_ELAS" ou "EVOL_THER"
- ou "DYNA_TRANS" ou "EVOL_NOLI"
-"""),
-
     76 : _(u"""
  Pour calculer les indicateurs globaux d'énergie, il faut donner un résultat
  issu de STAT_NON_LINE .
