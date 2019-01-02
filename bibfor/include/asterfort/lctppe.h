@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -27,9 +27,9 @@ interface
         integer, intent(in) :: elem_dime
         aster_logical, intent(in) :: l_axis, l_upda_jaco
         integer, intent(in) :: nb_node
-        real(kind=8), intent(in) :: elem_init(elem_dime,nb_node)
-        real(kind=8), intent(in) :: elem_coor(elem_dime,nb_node)
-        character(len=8), intent(in) :: elem_code   
+        real(kind=8), intent(in) :: elem_init(nb_node, elem_dime)
+        real(kind=8), intent(in) :: elem_coor(nb_node, elem_dime)
+        character(len=8), intent(in) :: elem_code
         real(kind=8), intent(in) :: gauss_coor(2)
         real(kind=8), intent(out) :: shape_func(9), shape_dfunc(2, 9)
         real(kind=8), intent(out) :: jacobian 
