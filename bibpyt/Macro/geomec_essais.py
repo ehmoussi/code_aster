@@ -1535,7 +1535,7 @@ def essai_TRIA_ND_C_F(self, str_n_essai, DicoEssai, MATER, COMPORTEMENT,
                                   SIYY=-KZERO*sig0,
                                   SIZZ=-sig0,),)
 
-            except (aster.error,aster.onFatalError,) as message:
+            except aster.error as message:
    
                 print('\n   !!!(@_@)!!! Arret pour la raison suivante !!!(@_@)!!!\n%s'\
                      %(message))

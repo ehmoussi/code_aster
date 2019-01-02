@@ -27,23 +27,23 @@ import aster
 ################  Bilan energetique  #######################
 ############################################################
 tmpd = aster.getvectjev('D_EULER            .VALE        ');
-t = NP.array(tmpd[0:len(tmpd)/2])
+t = NP.array(tmpd[0:len(tmpd)//2])
 fext = Fa*NP.sin(2*NP.pi*f*t)  # formule qui definit le chargement exterieur
 
 # Euler:
-d_euler = NP.array(tmpd[len(tmpd)/2:len(tmpd)])
+d_euler = NP.array(tmpd[len(tmpd)//2:len(tmpd)])
 del tmpd
 
 tmpv = aster.getvectjev('V_EULER            .VALE        ');
-v_euler = NP.array(tmpv[len(tmpv)/2:len(tmpv)])
+v_euler = NP.array(tmpv[len(tmpv)//2:len(tmpv)])
 del tmpv
 
 tmpa = aster.getvectjev('A_EULER            .VALE        ');
-a_euler = NP.array(tmpa[len(tmpa)/2:len(tmpa)])
+a_euler = NP.array(tmpa[len(tmpa)//2:len(tmpa)])
 del tmpa
 
 # tmpf = aster.getvectjev('FC_EULER           .VALE        ');
-# fchoc_euler = NP.array(tmpf[len(tmpf)/2:len(tmpf)])
+# fchoc_euler = NP.array(tmpf[len(tmpf)//2:len(tmpf)])
 # del tmpf
 
 E_pot_euler = 1./2 * k_rappel * d_euler**2
@@ -61,20 +61,20 @@ err_globale_E_euler = NP.sqrt( NP.sum((E_inj_euler-E_tot_euler)**2) / NP.sum(E_i
 
 # Adapt:
 tmpd = aster.getvectjev('D_ADAPT            .VALE        ');
-t = NP.array(tmpd[0:len(tmpd)/2])
-d_adapt = NP.array(tmpd[len(tmpd)/2:len(tmpd)])
+t = NP.array(tmpd[0:len(tmpd)//2])
+d_adapt = NP.array(tmpd[len(tmpd)//2:len(tmpd)])
 del tmpd
 
 tmpv = aster.getvectjev('V_ADAPT            .VALE        ');
-v_adapt = NP.array(tmpv[len(tmpv)/2:len(tmpv)])
+v_adapt = NP.array(tmpv[len(tmpv)//2:len(tmpv)])
 del tmpv
 
 tmpa = aster.getvectjev('A_ADAPT            .VALE        ');
-a_adapt = NP.array(tmpa[len(tmpa)/2:len(tmpa)])
+a_adapt = NP.array(tmpa[len(tmpa)//2:len(tmpa)])
 del tmpa
 
 # tmpf = aster.getvectjev('FC_ADAPT           .VALE        ');
-# fchoc_adapt = NP.array(tmpf[len(tmpf)/2:len(tmpf)])
+# fchoc_adapt = NP.array(tmpf[len(tmpf)//2:len(tmpf)])
 # del tmpf
 
 E_pot_adapt = 1./2 * k_rappel * d_adapt**2
@@ -89,11 +89,11 @@ err_globale_E_adapt = NP.sqrt( NP.sum((E_inj_adapt-E_tot_adapt)**2) / NP.sum(E_i
 # Verification de la coherence entre la force de choc et la cinematique:
 ############################################################
 tmpd = aster.getvectjev('D_ADAP2            .VALE        ');
-d_adap2 = NP.array(tmpd[len(tmpd)/2:len(tmpd)])
+d_adap2 = NP.array(tmpd[len(tmpd)//2:len(tmpd)])
 del tmpd
 
 tmpf = aster.getvectjev('FC_ADAP2           .VALE        ');
-fchoc_adap2 = NP.array(tmpf[len(tmpf)/2:len(tmpf)])
+fchoc_adap2 = NP.array(tmpf[len(tmpf)//2:len(tmpf)])
 del tmpf
 
 fchoc_cine = kn_choc * (((d_adap2-jeu_choc)+NP.abs(d_adap2-jeu_choc))/2)

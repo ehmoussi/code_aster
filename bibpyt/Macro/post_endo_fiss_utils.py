@@ -192,7 +192,7 @@ True
 >>> smoothed[0] < smoothed[1] and smoothed[1] > smoothed[2]
 True
     """
-    Absc = curvilinearAbsissa(Coorx, Coory, len(Coorx) / 2)
+    Absc = curvilinearAbsissa(Coorx, Coory, len(Coorx) // 2)
     Gauss = NP.exp(-Absc ** 2 / (2. * lreg ** 2))
     area = NP.convolve(Gauss, NP.ones(len(Gauss)), 'valid')
     area = float(area)
@@ -218,7 +218,7 @@ def conv_smoothing_arc(lreg, Coorx, Coory, Fun0):
     for i in range(len(Fun0)):
         Fun_I = NP.concatenate((Fun0[i:], Fun0[0:i]), axis=0)
         Fun_I = NP.concatenate(
-            (Fun_I[len(Fun_I) / 2 + 1:], Fun_I[0:len(Fun_I) / 2 + 1]), axis=0)
+            (Fun_I[len(Fun_I) // 2 + 1:], Fun_I[0:len(Fun_I) // 2 + 1]), axis=0)
         zreg = NP.convolve(Fun_I, Gauss, 'valid')
         FunReg = NP.append(FunReg, float(zreg))
     FunReg = FunReg / area
@@ -525,11 +525,11 @@ array([-2., -1.,  0.])
 #   errPerc : errors expressed as pourcentage (NP array)
 def crackOpeningStrong(lreg, Coorx, Coory, Epsi):
     import numpy as NP
-    Absc = curvilinearAbsissa(Coorx, Coory, len(Coorx) / 2)
+    Absc = curvilinearAbsissa(Coorx, Coory, len(Coorx) // 2)
     Gauss = NP.exp(-Absc ** 2 / (2. * lreg ** 2))
     area = NP.trapz(Gauss, x=Absc)
     EpsiReg = conv_smoothing1D(lreg, Coorx, Coory, Epsi)
-    idxMax, epsMax = nearestMax(EpsiReg, len(Coorx) / 2)
+    idxMax, epsMax = nearestMax(EpsiReg, len(Coorx) // 2)
     gauss0 = 1.
     Itheo = lreg * NP.sqrt(2. * NP.pi)
     CO = epsMax * Itheo / gauss0

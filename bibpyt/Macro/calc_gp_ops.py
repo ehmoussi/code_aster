@@ -200,7 +200,7 @@ def Calcul_mesure_3D(maya, nbcop, l_copo_tot, ltyma, nd_fiss, normale):
 #
 def calc_gp_ops(self, **args):
     """Corps de CALC_GP"""
-    from numpy import *
+    from numpy import pi, cos, sin
     import aster
     from code_aster.Cata.Syntax import _F
     from Utilitai.Utmess import UTMESS, MasquerAlarme, RetablirAlarme

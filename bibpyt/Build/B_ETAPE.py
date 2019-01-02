@@ -118,7 +118,7 @@ class ETAPE(B_OBJECT.OBJECT, B_CODE.CODE):
         klass = getattr(DataStructure, typaster.lower().strip(), None)
         if klass:
             ctxt = self.parent.get_contexte_avant(self)
-            lconcept = [(co.order, co.nom) for co in list(ctxt.values())
+            lconcept = [(co.order or -1, co.nom) for co in list(ctxt.values())
                         if issubclass(type(co), klass) and co.executed == 1]
             lconcept.sort()
             lconcept = [nom for order, nom in lconcept]

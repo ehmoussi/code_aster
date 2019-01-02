@@ -30,6 +30,7 @@ __all__ = ["SYSTEM", "ExecCommand"]
 import sys
 import os
 import re
+import io
 import tempfile
 
 
@@ -88,7 +89,7 @@ class SYSTEM:
         if self.cc_files:
             files.add(self.cc_files)
         for f in files:
-            if type(f) is file:
+            if isinstance(f, io.IOBase):
                 txt = ' '.join(['%s' % a for a in args])
                 f.write(txt.replace(os.linesep + ' ', os.linesep) + term)
                 f.flush()

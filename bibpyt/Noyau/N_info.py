@@ -252,7 +252,7 @@ def memory_used(pid):
     """Return the current VmPeak value."""
     p = Popen(['cat', '/proc/%s/status' % pid], stdout=PIPE)
     output = p.communicate()[0]
-    mat = RE_VMPEAK.search(output)
+    mat = RE_VMPEAK.search(output.decode())
     mem = mat and int(mat.group(1)) or 0.
     return mem / 1024.
 

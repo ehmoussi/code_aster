@@ -80,7 +80,7 @@ def CoordFibre(ifib):
     Rint = Rext-Ep
     # index des coordonnées
     numAng = ((ifib-1)%(2*Nsect+1))/(2.0*Nsect)
-    numCou = ((ifib-1)/(2*Nsect+1))/(2.0*Ncou)
+    numCou = ((ifib-1)//(2*Nsect+1))/(2.0*Ncou)
     y =  (Rint+Ep*numCou)*NP.cos(2.0*NP.pi*numAng)
     z = -(Rint+Ep*numCou)*NP.sin(2.0*NP.pi*numAng)
     return y,z

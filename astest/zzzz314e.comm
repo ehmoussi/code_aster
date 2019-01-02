@@ -43,7 +43,7 @@ vdirX=[]
 vdirY=[]
 vdirZ=[]
 
-for i in range(0,len(basefond0)/6):
+for i in range(0,len(basefond0)//6):
   ndfon.append(i+1)
   vnorX.append(basefond0[6*i])
   vnorY.append(basefond0[6*i+1])

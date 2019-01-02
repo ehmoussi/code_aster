@@ -323,7 +323,7 @@ def calc_spec_ops(self, TAB_ECHANT, ECHANT, INTERSPE, TRANSFERT, TITRE, INFO, **
                     nume_j1.append(list_ord[j1])
 
         mcfact = []
-        for i in range(nb_ord * (nb_ord + 1) / 2):
+        for i in range(nb_ord * (nb_ord + 1) // 2):
             mcfact.append(_F(NUME_ORDRE_I=nume_i1[i],
                              NUME_ORDRE_J=nume_j1[i],
                              FONCTION=l_fc[i]),)

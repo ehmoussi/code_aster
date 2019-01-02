@@ -230,7 +230,7 @@ def calc_spectre_ipm_ops(self,EQUIPEMENT,CALCUL,RESU,MAILLAGE=None,RESULTAT=None
                 #
                 # methode 2: CALC_FONCTION pour FFT
                 val_c=[]
-                for i in range(len(X)/2):
+                for i in range(len(X)//2):
                     val_c+=[X[i],RES[i].real,RES[i].imag]
                 __FRESULT  = DEFI_FONCTION(VALE_C =val_c, NOM_PARA='FREQ' )
                 __ACCEAcor = CALC_FONCTION(FFT = _F(FONCTION = __FRESULT, METHODE='COMPLET', SYME='NON'));

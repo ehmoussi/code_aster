@@ -388,6 +388,9 @@ except aster.error as err:
                                      NOM_CHAM='DEPL',
                                      NOM_CMP='DY',
                                      OPERATION='EXTRACTION',),);
+    # bypass garbage collector in Python3
+    e = err
+err = e
 STATNL=CALC_CHAMP(reuse=STATNL,RESULTAT=STATNL,CONTRAINTE=('SIEF_ELNO'),VARI_INTERNE=('VARI_ELNO'))
 
 #
@@ -495,7 +498,6 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
            )
 
 DETRUIRE(CONCEPT=_F(NOM=TAB1))
-
 
 FIN();
 #

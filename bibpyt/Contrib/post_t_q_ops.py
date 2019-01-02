@@ -50,7 +50,7 @@ def moy(t):
 # Output : XYZA = Coordinates of the point and Easting
 
 def InterpolFondFiss(s0, Coorfo):
-    n = len(Coorfo) / 4
+    n = len(Coorfo) // 4
     if (s0 < Coorfo[3]):
         xyz = [Coorfo[0], Coorfo[1], Coorfo[2], s0]
         return xyz
@@ -1612,7 +1612,7 @@ def get_meth1(self, abscs, absch, abscq, coetd, isig, tgsig,isigt,ttgsig, isigtt
     sh = abs(th) * isigtt[:, 4:-1]
     sq = abs(tq) * isigtt[:, 4:-1]
 
-    tg1 = [max(vt[1.,:]), min(vt[1.,:]), max(vt[1.,:]), min(vt[1.,:]), max(vt[1.,:]), min(vt[1.,:]), max(vt[1,:]), min(vt[1,:]), max(vt[1,:]), min(vt[1.,:]),]
+    tg1 = [max(vt[1,:]), min(vt[1,:]), max(vt[1,:]), min(vt[1,:]), max(vt[1,:]), min(vt[1,:]), max(vt[1,:]), min(vt[1,:]), max(vt[1,:]), min(vt[1,:]),]
 
     if INFO == 2:
         mcfact = []
@@ -1644,12 +1644,12 @@ def get_erreur(self, ndim, __tabi, type_para):
 
     py_tab = __tabi.EXTR_TABLE()
 
-    nlines = len(py_tab.values()[py_tab.values().keys()[0]])
-    err = NP.zeros((index, nlines / 3))
+    nlines = len(py_tab.values()[list(py_tab.values().keys())[0]])
+    err = NP.zeros((index, nlines // 3))
     kmax = [0.] * index
     kmin = [0.] * index
 
-    for i in range(nlines / 3):
+    for i in range(nlines // 3):
         for j in range(index):
             kmax[j] = max(__tabi[labels[2 * j], 3 * i + 1], __tabi[
                           labels[2 * j], 3 * i + 2], __tabi[labels[2 * j], 3 * i + 3])

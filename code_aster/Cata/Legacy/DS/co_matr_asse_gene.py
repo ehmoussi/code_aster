@@ -123,7 +123,7 @@ class matr_asse_gene_r(matr_asse_gene):
       tmp=numpy.zeros([int(taille)])
       for j in range(desc[1]+1):
         for i in range(j):
-          k=j*(j-1)/2+i
+          k=j*(j-1)//2+i
           tmp[k]=matrice[j-1,i]
       aster.putcolljev('%-19s.VALM' % ncham,len(tmp),tuple((\
       list(range(1,len(tmp)+1)))),tuple(tmp),tuple(tmp),1)
@@ -201,7 +201,7 @@ class matr_asse_gene_c(matr_asse_gene):
       tmpc=numpy.zeros([int(taille)])
       for j in range(desc[1]+1):
         for i in range(j):
-          k=j*(j-1)/2+i
+          k=j*(j-1)//2+i
           tmpr[k]=matrice[j-1,i].real
           tmpc[k]=matrice[j-1,i].imag
       aster.putvectjev('%-19s.VALM' % ncham, len(tmpr), tuple((\

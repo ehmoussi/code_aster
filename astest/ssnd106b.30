@@ -18,7 +18,7 @@ def char_rota_ops(self,ANGLE_DEGRES,TINI,TFIN,RESU,MAIL,**args):
     angle=ANGLE_DEGRES*pi/180.0
     coordo=MAIL.sdj.COORDO.VALE.get()
     nomnoe=MAIL.sdj.NOMNOE.get()
-    coordo=NP.reshape(coordo,[len(coordo)/3,3])
+    coordo=NP.reshape(coordo,[len(coordo)//3,3])
     X=coordo[:,0]
     Y=coordo[:,1]
 

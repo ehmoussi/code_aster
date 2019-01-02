@@ -71,7 +71,7 @@ def LIST_CARA_CIRCONF(GROUP_MA,VECT_2,MAILLAGE,**args):
   groupma=MAILLAGE.sdj.GROUPEMA.get()[GROUP_MA.ljust(24)]
 
   # On met en forme les coordonnees : matrice 3 colonnes
-  coordo=NP.reshape(coordo,[len(coordo)/3,3])
+  coordo=NP.reshape(coordo,[len(coordo)//3,3])
   # On recupere chacune des coordonnees
   X=coordo[:,0]
   Y=coordo[:,1]

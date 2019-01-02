@@ -1228,7 +1228,7 @@ def get_propmat_varc_xfem(self, args, RESULTAT, MAILLAGE, MATER, MODELISATION, F
     # calcul de ValeVrc_Listfo : valeur de la varc en tous les points de Listfo
     # -> moyenne arithmetique des valeurs nodales sur la face contenant le point
     ValeVrc_Listfo = []
-    for i in range(0,len(Listfo)/4) :
+    for i in range(0,len(Listfo)//4) :
         vale = 0.
         NbNoFa = 3
         for k in range(NbNoFa):
@@ -1968,8 +1968,8 @@ def post_k1_k2_k3_ops(self, FOND_FISS, FISSURE, RESULTAT,
 #       valk contient les noms des operandes mis dans defi_materiau dans une premiere partie et
 #       et les noms des concepts de type [fonction] (ecrits derriere les operandes) dans une
 #       une seconde partie
-        list_oper = valk[: len(valk) / 2]
-        list_fonc = valk[len(valk) / 2:]
+        list_oper = valk[: len(valk) // 2]
+        list_fonc = valk[len(valk) // 2:]
 
         try:
             list_oper.remove("B_ENDOGE")
