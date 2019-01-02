@@ -54,7 +54,6 @@ def InterpolFondFiss(s0, Coorfo):
     # Coorfo = Coordonnees du fond (extrait de la sd fiss_xfem)
     # xyz = Coordonnees du point
 
-    n = len(Coorfo) / 4
     if (s0 < Coorfo[3]):
         xyz = [Coorfo[0], Coorfo[1], Coorfo[2]]
         return xyz
@@ -223,7 +222,7 @@ def nom_points_fonds(n_taille):
                     tab_alphabet =  tab_alphabet + \
                         [tab_alphabet[
                             (l_let1 - 1) * 26 + l_let2] + alphabet[l_let3]]
-        reste1 = int(n_taille - len(tab_alphabet)) / 26
+        reste1 = int(n_taille - len(tab_alphabet)) // 26
         for l_let2 in range(reste1):
             for l_let3 in range(26):
                 tab_alphabet =  tab_alphabet + \
@@ -351,7 +350,7 @@ def propa_fiss_ops(self, METHODE_PROPA, INFO, **args):
                 mcsimp['FISS_PROP'] = fiss
 
                 Coorfo = fiss.sdj.FONDFISS.get()
-                nb_pt_fiss = len(Coorfo) / 4
+                nb_pt_fiss = len(Coorfo) // 4
 
                 TABLE_BETA = nb_pt_fiss * [0.]
                 TABLE_GAMMA = nb_pt_fiss * [0.]
@@ -520,7 +519,7 @@ def propa_fiss_ops(self, METHODE_PROPA, INFO, **args):
 
 # Recuperation du nombre de fonds de fissure
             Fondmult = fiss0.sdj.FONDMULT.get()
-            Nbfond = len(Fondmult) / 2
+            Nbfond = len(Fondmult) // 2
 
             if (('NUME_FOND' in __tabsif.para and
                 (max(__table['NUME_FOND']) != Nbfond or len(set(__table['NUME_FOND'])) != Nbfond))
@@ -833,11 +832,11 @@ def propa_fiss_ops(self, METHODE_PROPA, INFO, **args):
 # il doit y avoir autant de valeurs de beta et de gamma que de points au fond de
 # fissure
                 if calc_gamma :
-                   if ((len(TABLE_BETA[numfis]) != len(Coorfo)/4) or (len(TABLE_GAMMA[numfis]) != len(Coorfo)/4)):
+                   if ((len(TABLE_BETA[numfis]) != len(Coorfo)//4) or (len(TABLE_GAMMA[numfis]) != len(Coorfo)//4)):
                       UTMESS('F','XFEM2_80')
 
                 else :
-                   if (len(TABLE_BETA[numfis]) != len(Coorfo)/4):
+                   if (len(TABLE_BETA[numfis]) != len(Coorfo)//4):
                       UTMESS('F','XFEM2_80')
 
 #       Si 2D: verification de l'orientation du repere (VNOR,VDIR)
@@ -922,7 +921,7 @@ def propa_fiss_ops(self, METHODE_PROPA, INFO, **args):
                 nbma = mm[numfis].dime_maillage[2]
                 groupma = mm[numfis].gma
                 Fondmult = fiss0.sdj.FONDMULT.get()
-                Nbfond = len(Fondmult) / 2
+                Nbfond = len(Fondmult) // 2
                 Coorfo = fiss0.sdj.FONDFISS.get()
 
 # Recuperation de la liste des noeuds du fond

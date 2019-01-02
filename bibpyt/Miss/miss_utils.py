@@ -350,7 +350,7 @@ def calc_param_auto(l_coor_x,l_coor_y,l_coor_z,surf,coef_offset):
     dy = abs(max(l_coor_y) - min(l_coor_y))
     long = (dx*dx+dy*dy)**.5
     if surf == "OUI":
-        dref = round(int / 6.,1)
+        dref = round(long / 6.,1)
         rfic = 0.
     else:
         dz = abs(max(l_coor_z) - min(l_coor_z))
@@ -359,10 +359,10 @@ def calc_param_auto(l_coor_x,l_coor_y,l_coor_z,surf,coef_offset):
             rfic = dref
         else:
             UTMESS('F', 'MISS0_42')
-    if round(int,0) < int:
-        offset_max = int(round(int,0)+1.)
+    if round(long,0) < long:
+        offset_max = int(round(long,0)+1.)
     else:
-        offset_max = int(round(int,0))
+        offset_max = int(round(long,0))
     taille_elem = round(0.5*(dx/(len(l_coor_x)-1)+dy/(len(l_coor_y)-1)),2)
     offset_nb = int(round(offset_max*coef_offset/taille_elem,0))
     return dref, rfic, offset_max, offset_nb

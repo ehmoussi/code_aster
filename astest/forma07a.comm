@@ -181,7 +181,7 @@ IMPR_FONCTION(FORMAT='XMGRACE',
               GRILLE_X=0.5,
               GRILLE_Y=1.0,
               LEGENDE_X='s (m)',
-              LEGENDE_Y='G (J.m\S-2\N)',);
+              LEGENDE_Y='G (J.m\S-2\\N)',);
 
 K1ref = 1.5957e6
 TEST_TABLE(REFERENCE='ANALYTIQUE',

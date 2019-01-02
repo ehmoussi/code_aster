@@ -48,7 +48,7 @@ def mon_include_ops(self, UNITE, INTERNE, TABLE, **kwargs):
     # cela suppose que l'on sache ce qui va être produit par l'INCLUDE !
     # concept temporaire que l'on veut utiliser ici :
     for nomco in intern:
-        print '<DBG> %s a ete produit sous le nom %s' % (nomco, d_incname[nomco])
+        print('<DBG> %s a ete produit sous le nom %s' % (nomco, d_incname[nomco]))
         fff = self.get_concept(d_incname[nomco])
         assert fff is not None
 

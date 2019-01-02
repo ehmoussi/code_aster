@@ -385,7 +385,7 @@ for i in range(1,13):
                        COULEUR = i,
                        MARQUEUR = i,
                        FREQ_MARQUEUR = 10,
-                       LEGENDE= str(system[i],'iso-8859-1').encode('utf-8'),),),
+                       LEGENDE= str(system[i]),),),
             UNITE=30,);
 
     IMPR_FONCTION(
@@ -399,7 +399,7 @@ for i in range(1,13):
                        COULEUR= i,
                        MARQUEUR = i,
                        FREQ_MARQUEUR = 10,
-                       LEGENDE= str(system[i],'iso-8859-1').encode('utf-8'),),),
+                       LEGENDE= str(system[i]),),),
             UNITE=31,);
 
 DEFI_FICHIER(UNITE = 30,

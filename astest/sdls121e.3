@@ -341,7 +341,7 @@ for i in range(nbmodes_mes):
     l_1.append(val.real)
 # la partie imag de val est egale a zero
     
-T1 = CREA_TABLE(LISTE=(_F(LISTE_I=range(len(l_1)),PARA='ORDRE',),
+T1 = CREA_TABLE(LISTE=(_F(LISTE_I=list(range(len(l_1))),PARA='ORDRE',),
                          _F(LISTE_R=l_1,PARA='TY_BM_Y',),),
                  )
 
@@ -354,7 +354,7 @@ for i in range(nbmodes_mes):
     l_2.append(val.real)
 # la partie imag de val est egale a zero
 
-T2 = CREA_TABLE(LISTE=(_F(LISTE_I=range(len(l_2)),PARA='ORDRE',),
+T2 = CREA_TABLE(LISTE=(_F(LISTE_I=list(range(len(l_2))),PARA='ORDRE',),
                          _F(LISTE_R=l_2,PARA='TY_MK_Y',),),
                  )
 
@@ -367,7 +367,7 @@ for i in range(nbmodes_mes):
     l_3.append(val.real)
     l_3.append(val.imag)
 
-T3 = CREA_TABLE(LISTE=(_F(LISTE_I=range(len(l_3)),PARA='ORDRE',),
+T3 = CREA_TABLE(LISTE=(_F(LISTE_I=list(range(len(l_3))),PARA='ORDRE',),
                          _F(LISTE_R=l_3,PARA='TY_MBK_Y',),),
                  )
 

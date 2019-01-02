@@ -27,9 +27,9 @@ import aster
 ################  Transitions Phasis    ####################
 ############################################################
 tmpd = aster.getvectjev('FT_FRICT           .VALE        ');
-t = NP.array(tmpd[0:len(tmpd)/2])
+t = NP.array(tmpd[0:len(tmpd)//2])
 # Euler:
-force_tangentielle = NP.array(tmpd[len(tmpd)/2:len(tmpd)])
+force_tangentielle = NP.array(tmpd[len(tmpd)//2:len(tmpd)])
 del tmpd
 # Definition de la force tangentielle de transition
 force_tangentielle_transition = -2e3

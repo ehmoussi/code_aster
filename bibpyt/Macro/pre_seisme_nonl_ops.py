@@ -801,7 +801,7 @@ class StatDyna(object):
                 p_real.append(NP.real(maelk[n1,n2]))
                 p_imag.append(NP.imag(maelk[n1,n2]))
 
-        last_ind = nbmod*(nbmod+1)/2
+        last_ind = nbmod*(nbmod+1)//2
         p_ind = list(range(1, last_ind +1))
 
         aster.putvectjev(nom_mael + (8 - len(nom_mael)) * ' '+ '.MAEL_RAID_VALE         ', last_ind, tuple(
@@ -854,7 +854,7 @@ class StatDyna(object):
                 p_real.append(NP.real(maelZ[n1,n2]))
                 p_imag.append(NP.imag(maelZ[n1,n2]))
 
-        last_ind = nbmod*(nbmod+1)/2
+        last_ind = nbmod*(nbmod+1)//2
         p_ind = list(range(1, last_ind +1))
 
         aster.putvectjev(nom_mael + (8 - len(nom_mael)) * ' '+ '.MAEL_RAID_VALE         ', last_ind, tuple(

@@ -423,7 +423,7 @@ le mot-clé %s""" % mc_cara)
         """
             Création des champs pour transformation des variables internes
         """
-        from Calc_epx.trans_var_int import *
+        from Calc_epx.trans_var_int import tr_e2a_glrc_damage, tr_e2a_vmis_isot_trac, tr_e2a_vmis_john_cook
 
         dic_transfo = {}
         nb_compo = len(list(dic_champ_var_int.keys())) - 1

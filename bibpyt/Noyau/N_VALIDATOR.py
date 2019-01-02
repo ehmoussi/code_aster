@@ -178,14 +178,14 @@ class TypeProtocol(PProtocol):
                 try:
                     if self.is_object_from(obj, type_permis):
                         return obj
-                except Exception as err:
-                    pass
+                except Exception as e:
+                    err = e
             elif isinstance(type_permis, object):
                 try:
                     if type_permis.__convert__(obj):
                         return obj
-                except Exception as err:
-                    pass
+                except Exception as e:
+                    err = e
             else:
                 print(convert(ufmt(_("Type non encore géré %s"), repr(type_permis))))
         raise ValError(

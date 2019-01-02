@@ -37,7 +37,6 @@ from math import log10, sqrt
 
 import numpy as NP
 
-
 # Importation de commandes Aster
 try:
     import aster_core
@@ -603,7 +602,6 @@ class CALCULS_ASTER:
                 valpara = params[nompara]
                 exec( "%s=%s" % (nompara, valpara) )    #  YOUN__ = X0[0], DSDE__ = X0[1], ...
 
-
             # ----------------------------------------------------------------------------
             # Affichage des parametres du calcul courant
             # ----------------------------------------------------------------------------
@@ -620,7 +618,8 @@ class CALCULS_ASTER:
             new = "fort.%s.new" % self.UNITE_INCLUDE
             try:
                 with open(new) as f:
-                    exec(compile(f.read(), new, 'exec'))
+                    exec(compile(f.read(), new, 'exec'), self.jdc.get_global_contexte(), locals())
+                    globals().update(self.jdc.get_global_contexte())
             except Exception as e:
                 UTMESS('F', 'RECAL0_85', valk=str(e))
 
@@ -638,7 +637,7 @@ class CALCULS_ASTER:
             for i in range(len(liste_reponses)):
                 reponse = liste_reponses[i]
                 DETRUIRE(OBJET=_F(CHAINE='VEXTR___'), INFO=1)  # Faudrait proteger ce nom ici (VEXTR___ peut etre deja utilise dans l'etude)
-                exec( "VEXTR___ = %s.EXTR_TABLE()" % reponse)
+                VEXTR___ = globals()[reponse].EXTR_TABLE()
                 list_para = VEXTR___.para
                 tab_lue   = VEXTR___.values()
                 F = table2numpy(tab_lue, list_para, reponses, i)
@@ -1015,13 +1014,13 @@ class CALCULS_ASTER:
                 col = [ (y-x) for x, y in zip(FY, FY_X0) ]
                 gradient.append(col)
                 # print 'Calcul numero: %s - Diagnostic: %s' % (n, self.list_diag[idx])
-                if info >= 1:
+                if info and info >= 1:
                     UTMESS('I', 'RECAL0_74', valk=(str(n), self.list_diag[idx]) )
 
         # ----------------------------------------------------------------------------
         # Affichages
         # ----------------------------------------------------------------------------
-        if info >= 2:
+        if info and info >= 2:
             UTMESS('I', 'RECAL0_72', valk=str(fonctionnelle))
             import pprint
             if CalcGradient:
@@ -1097,7 +1096,7 @@ class CALCULS_ASTER:
         else:
             txt.append( "for i in range(nb_freq): l_mac.append(_mac[i,i])\n" )
         txt.append( "DETRUIRE(CONCEPT=_F(NOM="+str(reponse[0])+"),)\n" )
-        txt.append( str(reponse[0]) + "=CREA_TABLE(LISTE=(_F(PARA='NUME_ORDRE',LISTE_I=range(1,nb_freq+1),),_F(PARA='MAC',LISTE_R=l_mac,),),)\n" )
+        txt.append( str(reponse[0]) + "=CREA_TABLE(LISTE=(_F(PARA='NUME_ORDRE',LISTE_I=list(range(1,nb_freq+1)),),_F(PARA='MAC',LISTE_R=l_mac,),),)\n" )
         return '\n'.join(txt)
 
 

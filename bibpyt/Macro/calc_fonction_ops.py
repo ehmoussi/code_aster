@@ -630,7 +630,7 @@ class CalcFonction_SPEC_OSCI(CalcFonctionOper):
             for i in range(10):
                 l_freq.append(22.0 + 1.500 * i)
             texte = []
-            for i in range(len(l_freq) / 5):
+            for i in range(len(l_freq) // 5):
                 texte.append(' %f %f %f %f %f' % tuple(l_freq[i * 5:i * 5 + 5]))
             UTMESS('I', 'FONCT0_32', vali=len(l_freq), valk=os.linesep.join(texte))
         if min(l_freq) < 1.E-10:

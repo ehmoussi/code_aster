@@ -313,9 +313,9 @@ INCLUDE(UNITE=38)
 # nbtest=5
 # Nombre de remaillage
 Nb_Raffinement=4;
-TitreU      ='Erreur ||\qU\sh\N-\2U\N\Q || en norme L\s2\N, maillages en hexa\xe8dres'
+TitreU      ='Erreur ||\qU\sh\\N-\2U\\N\Q || en norme L\s2\\N, maillages en hexa\xe8dres'
 
-TitreP      ='Erreur ||\qP\sh\N-\2P\N\Q || en norme L\s2\N, maillages en hexa\xe8dres'
+TitreP      ='Erreur ||\qP\sh\\N-\2P\\N\Q || en norme L\s2\\N, maillages en hexa\xe8dres'
 
 Legende      ='Cas HEXA 20'
 
@@ -521,7 +521,7 @@ IMPR_FONCTION(FORMAT='XMGRACE',
                TITRE=TitreU,
                SOUS_TITRE=sous_titreU,
                LEGENDE_X='h',
-               LEGENDE_Y='L\s2\N(Erreur)',
+               LEGENDE_Y='L\s2\\N(Erreur)',
                ECHELLE_X='LOG',
                ECHELLE_Y='LOG',
                INFO=1,)
@@ -538,7 +538,7 @@ IMPR_FONCTION(FORMAT='XMGRACE',
                TITRE=TitreP,
                SOUS_TITRE=sous_titreP,
                LEGENDE_X='h',
-               LEGENDE_Y='L\s2\N(Erreur)',
+               LEGENDE_Y='L\s2\\N(Erreur)',
                ECHELLE_X='LOG',
                ECHELLE_Y='LOG',
                INFO=1,)

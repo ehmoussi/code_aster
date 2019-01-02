@@ -179,11 +179,11 @@ for i in range(len(l_extra_m)):
    l_m.append(l_extra_m[i]/deno)
 
 #tables pour les termes extra-diagonaux 
-TEXTRA_K = CREA_TABLE(LISTE=(_F(LISTE_I=range(len(l_k)),PARA='ORDRE',),
+TEXTRA_K = CREA_TABLE(LISTE=(_F(LISTE_I=list(range(len(l_k))),PARA='ORDRE',),
                          _F(LISTE_R=l_k,PARA='EXTRA',),),
                  )
 
-TEXTRA_M = CREA_TABLE(LISTE=(_F(LISTE_I=range(len(l_m)),PARA='ORDRE',),
+TEXTRA_M = CREA_TABLE(LISTE=(_F(LISTE_I=list(range(len(l_m))),PARA='ORDRE',),
                          _F(LISTE_R=l_m,PARA='EXTRA',),),
                  )
 

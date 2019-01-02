@@ -56,8 +56,8 @@ class VariableSupport(object):
         else:
             print("Settings variables values...")
             with open('inputs.pick', 'rb') as pick:
-                params = pickle.load(pick)
-                values = pickle.load(pick)
+                params = pickle.load(pick, encoding='latin1')
+                values = pickle.load(pick, encoding='latin1')
 
         self._cache = params, values
         assert len(params) == len(values), (params, values)

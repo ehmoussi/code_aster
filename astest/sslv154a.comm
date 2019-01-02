@@ -491,7 +491,7 @@ IMPR_FONCTION(FORMAT='XMGRACE',
               GRILLE_X=20,
               GRILLE_Y=1.0,
               LEGENDE_X='angle (degre)',
-              LEGENDE_Y='G (J.m\S-2\N)',);
+              LEGENDE_Y='G (J.m\S-2\\N)',);
 
 
 # courbe de K1
@@ -545,7 +545,7 @@ IMPR_FONCTION(FORMAT='XMGRACE',
               GRILLE_X=20,
               GRILLE_Y=1e5,
               LEGENDE_X='angle (degre)',
-              LEGENDE_Y='KI (Pa.m\S-1/2\N)',)
+              LEGENDE_Y='KI (Pa.m\S-1/2\\N)',)
 
 # courbe de K2
 C_K2_REF=RECU_FONCTION(TABLE=CG,
@@ -598,7 +598,7 @@ IMPR_FONCTION(FORMAT='XMGRACE',
               GRILLE_X=20,
               GRILLE_Y=1e5,
               LEGENDE_X='angle (degre)',
-              LEGENDE_Y='KII (Pa.m\S-1/2\N)',)
+              LEGENDE_Y='KII (Pa.m\S-1/2\\N)',)
 
 # courbe de K3
 C_K3_REF=RECU_FONCTION(TABLE=CG,
@@ -651,7 +651,7 @@ IMPR_FONCTION(FORMAT='XMGRACE',
               GRILLE_X=20,
               GRILLE_Y=1e5,
               LEGENDE_X='angle (degre)',
-              LEGENDE_Y='KIII (Pa.m\S-1/2\N)',)
+              LEGENDE_Y='KIII (Pa.m\S-1/2\\N)',)
 
 
 FIN()

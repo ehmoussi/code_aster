@@ -145,13 +145,13 @@ def lire_inte_spec_ops(self,
         # Verification a posteriori de la dimension de l'inter-spectre
         tmp = 0.5 * (-1 + sqrt(1 + 8 * len(l_fonc)))
         dim = int(tmp)
-        nb_fonc = dim * (dim + 1) / 2
+        nb_fonc = dim * (dim + 1) // 2
 
         if dim != tmp:
             UTMESS('F', 'SPECTRAL0_6')
 
         mcfact = []
-        for i in range(dim * (dim + 1) / 2):
+        for i in range(dim * (dim + 1) // 2):
             mcfact.append(_F(NOEUD_I=l_noi[i],
                              NOM_CMP_I=l_cmpi[i],
                              NOEUD_J=l_noj[i],
@@ -170,7 +170,7 @@ def lire_inte_spec_ops(self,
         except ValueError:
             UTMESS('F', 'SPECTRAL0_5')
 
-        if len(list_fonc) != (dim * (dim + 1) / 2):
+        if len(list_fonc) != (dim * (dim + 1) // 2):
             UTMESS('F', 'SPECTRAL0_6')
 
         nume_i = []

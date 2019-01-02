@@ -497,7 +497,7 @@ class DynaLineFrequencyBand:
                                     "A FONCTION should be pass as FONC_MULT instead, you can use CALC_FONC_INTERP to convert your FORMULE to a discret FONCTION")
                 # compute fft
                 __fonc = CALC_FONCTION(FFT=_F(FONCTION=fonction))
-                len_fonc = len(__fonc.Absc())/2 # remove negative frequencies of the spectrum
+                len_fonc = len(__fonc.Absc())//2 # remove negative frequencies of the spectrum
                 l_freq = __fonc.Absc()[:len_fonc]
                 l_real2 = [x**2 for x in __fonc.Ordo()[:len_fonc]]
                 l_imag2 = [x**2 for x in __fonc.OrdoImg()[:len_fonc]]

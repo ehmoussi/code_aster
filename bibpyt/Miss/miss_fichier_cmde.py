@@ -1022,7 +1022,7 @@ rXffxK/nhVQeQ/4A5Lekkg==
 
     def _diffcompress(self, refe, new):
         """Compare files without comment"""
-        sref = remove_comments(test_utils.uncompress64(refe))
+        sref = remove_comments((test_utils.uncompress64(refe.encode())).decode())
         snew = remove_comments(new)
         diff = test_utils.difftxt(sref, snew)
         if diff and self._debug:
