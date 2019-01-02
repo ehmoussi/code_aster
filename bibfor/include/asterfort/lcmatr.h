@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -31,8 +31,10 @@ interface
         integer, intent(in) :: nb_lagr, indi_lagc(10)
         character(len=8), intent(in) :: elem_slav_code, elem_mast_code
         integer, intent(in) :: nb_node_slav, nb_node_mast
-        real(kind=8), intent(in):: elem_mast_init(27), elem_slav_init(27)
-        real(kind=8), intent(in) :: elem_mast_coor(27), elem_slav_coor(27)
+        real(kind=8), intent(in) :: elem_mast_init(nb_node_mast, elem_dime)
+        real(kind=8), intent(in) :: elem_slav_init(nb_node_slav, elem_dime)
+        real(kind=8), intent(in) :: elem_mast_coor(nb_node_mast, elem_dime)
+        real(kind=8), intent(in) :: elem_slav_coor(nb_node_slav, elem_dime)
         character(len=8), intent(in) :: elga_fami_slav, elga_fami_mast
         real(kind=8), intent(in) :: poin_inte_sl(16)
         real(kind=8), intent(in) :: poin_inte_ma(16)
