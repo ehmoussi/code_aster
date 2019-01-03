@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -99,7 +99,6 @@ implicit none
     l_exis_pena       = cfdisl(ds_contact%sdcont_defi,'EXIS_PENA')
     l_cont_cont       = cfdisl(ds_contact%sdcont_defi,'FORMUL_CONTINUE')
     time_curr = ds_contact%time_curr
-
 !
 ! - Print
 !
@@ -126,7 +125,7 @@ implicit none
 !
 ! ----- MISE A JOUR DE LA GEOMETRIE
 !
-        call mreacg(noma, ds_contact)
+        call mreacg(noma, ds_contact, ds_contact%sdcont_solv(1:14)//'.DEPG')
 !
 ! ----- CALCUL RESIDU DE GEOMETRIE
 !

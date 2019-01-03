@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -40,7 +40,7 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
 !
 ! Contact - Solve
 !
-! Continue method - Pairing 
+! LAC and continue methods - Pairing 
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -67,33 +67,23 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
 ! - Pairing
 !
     if (l_cont_cont) then
-!
 ! ----- Set pairing datastructure
-!
         call mmpoin(mesh, ds_contact)
-!
 ! ----- Pairing
-!
         call apcalc('N_To_S', mesh, ds_contact)
-!
 ! ----- Save pairing in contact datastructures
-!
         call mmapre(mesh, ds_contact)
+!
     elseif (l_cont_lac) then
-!
 ! ----- Set pairing datastructure (MPI)
-!
-        call mmptch(ds_contact)    
-!
+        call mmptch(ds_contact)
 ! ----- Pairing
-!
         call apcalc('S_To_S', mesh, ds_contact)
-!
 ! ----- Need new contact elements
+        ds_contact%l_renumber = ASTER_TRUE
 !
-        ds_contact%l_renumber = .true.
     else
-        ASSERT(.false.)
+        ASSERT(ASTER_FALSE)
     endif
 !
 end subroutine

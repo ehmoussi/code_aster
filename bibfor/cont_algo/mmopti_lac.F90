@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -25,7 +25,6 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterc/r8prem.h"
-#include "asterfort/armin.h"
 #include "asterfort/assert.h"
 #include "asterfort/cfdisi.h"
 #include "asterfort/infdbg.h"
@@ -64,7 +63,7 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
     integer :: i_cont_zone, i_patch, nb_patch, nb_cont_zone, nb_cont_init
     integer :: j_patch, cont_init
     integer :: indi_cont_curr, indi_cont_prev
-    real(kind=8) :: tole_inter, gap, armini, epsint
+    real(kind=8) :: tole_inter, gap, epsint
     character(len=19) :: sdappa, newgeo
     character(len=24) :: sdcont_stat
     integer, pointer :: v_sdcont_stat(:) => null()
@@ -112,15 +111,13 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
 ! - Initializations
 !
     tole_inter   = 1.d-5
-    pair_tole      = 1.d-8
+    pair_tole    = 1.d-8
     nb_cont_init = 0
 !
 ! - Tolerance for CONTACT_INIT
 !
-    armini = armin(mesh)
-    epsint = 1.d-6*armini
-    ds_contact%arete_min  = armini
-    l_axis       = cfdisi(ds_contact%sdcont_defi,'AXISYMETRIQUE').eq.1
+    epsint = 1.d-6*ds_contact%arete_min
+    l_axis = cfdisi(ds_contact%sdcont_defi,'AXISYMETRIQUE').eq.1
 !
 ! - Get parameters
 !
