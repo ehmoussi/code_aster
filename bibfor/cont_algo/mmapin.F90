@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -37,7 +37,7 @@ type(NL_DS_Measure), intent(inout) :: ds_measure
 !
 ! Contact - Solve
 !
-! Continue method - Initial pairing
+! LAC and continue methods - Initial pairing
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -48,7 +48,7 @@ type(NL_DS_Measure), intent(inout) :: ds_measure
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    aster_logical :: l_cont_allv
+    aster_logical :: l_all_verif
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -59,11 +59,11 @@ type(NL_DS_Measure), intent(inout) :: ds_measure
 !
 ! - Initializations
 !
-    l_cont_allv  = cfdisl(ds_contact%sdcont_defi,'ALL_VERIF')
+    l_all_verif = cfdisl(ds_contact%sdcont_defi,'ALL_VERIF')
 !
 ! - Geometric actualisation and pairing 
 !
-    if (.not.l_cont_allv) then
+    if (.not.l_all_verif) then
         call mmctcg(mesh, ds_contact, ds_measure)
     endif
 !

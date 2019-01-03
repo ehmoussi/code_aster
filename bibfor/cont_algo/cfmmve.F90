@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine cfmmve(mesh, ds_contact, hval_incr, time_curr)
 !
 use NonLin_Datastructure_type
@@ -37,12 +38,10 @@ implicit none
 #include "asterfort/nmchex.h"
 #include "asterfort/mreacg.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=8), intent(in) :: mesh
-    type(NL_DS_Contact), intent(inout) :: ds_contact
-    character(len=19), intent(in) :: hval_incr(*)
-    real(kind=8), intent(in) :: time_curr
+character(len=8), intent(in) :: mesh
+type(NL_DS_Contact), intent(inout) :: ds_contact
+character(len=19), intent(in) :: hval_incr(*)
+real(kind=8), intent(in) :: time_curr
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -80,7 +79,7 @@ implicit none
 ! - Geometry update
 !
     if (l_cont_allv) then
-        call mreacg(mesh, ds_contact, field_update_ = disp_curr)
+        call mreacg(mesh, ds_contact, disp_curr)
     endif
 !
 ! - Create pairing datastructure
@@ -110,7 +109,7 @@ implicit none
         call cfveri(mesh        , ds_contact  , time_curr    , nt_ncomp_poin,&
                     v_ncomp_jeux, v_ncomp_loca, v_ncomp_enti , v_ncomp_zone)
     else
-        ASSERT(.false.)
+        ASSERT(ASTER_FALSE)
     endif
 !
 ! - To print interpenetrations

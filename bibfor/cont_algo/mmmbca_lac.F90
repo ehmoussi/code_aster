@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine mmmbca_lac(mesh, disp_curr, ds_contact)
 !
 use NonLin_Datastructure_type
@@ -41,17 +42,14 @@ implicit none
 #include "asterfort/detrsd.h"
 #include "asterfort/mreacg.h"
 #include "asterfort/mmbouc.h"
-#include "asterfort/mmfield_prep.h"
 #include "asterfort/mminfi.h"
 #include "asterfort/search_opt_coef.h"
 #include "asterfort/as_deallocate.h"
 #include "asterfort/as_allocate.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=8), intent(in) :: mesh
-    character(len=19), intent(in) :: disp_curr
-    type(NL_DS_Contact), intent(inout) :: ds_contact
+character(len=8), intent(in) :: mesh
+character(len=19), intent(in) :: disp_curr
+type(NL_DS_Contact), intent(inout) :: ds_contact
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -69,10 +67,10 @@ implicit none
 !
     integer :: ifm, niv, hist_index
     integer :: i_cont_zone, i_patch, nb_patch, nb_cont_zone
-    integer :: j_patch, node_nume
+    integer :: j_patch
     integer :: indi_cont_curr, indi_cont_prev, loop_cont_vali, indi_cont_prev2
     aster_logical :: loop_cont_conv
-    character(len=19) :: oldgeo, newgeo, cnscon
+    character(len=19) :: oldgeo, newgeo
     real(kind=8) :: tole_inter, gap,gap_prev, lagc,lagc_prev, coefint, loop_cont_vale
     character(len=24) :: sdcont_stat
     integer, pointer :: v_sdcont_stat(:) => null()
@@ -88,7 +86,6 @@ implicit none
     integer, pointer :: v_mesh_patch(:) => null()
     integer, pointer :: v_mesh_lpatch(:) => null()
     integer, pointer :: v_pa_lcum(:) => null()
-    real(kind=8), pointer :: v_cnscon_cnsv(:) => null()
     character(len=24) :: sdappa_poid
     real(kind=8), pointer :: v_sdappa_poid(:) => null()
     character(len=24) :: sdappa_apli
@@ -113,7 +110,7 @@ implicit none
     real(kind=8) :: coef_opt=0.0,pres_cont(2)=0.0, dist_cont(2)=0.0
     real(kind=8) :: bound_coef(2)
     aster_logical:: coef_found=.false._1
-    integer :: indi(2)=0
+    integer :: indi(2)=0,loop_geom_count,iter_newt
     integer :: type_adap, nb_poin_inte, patch_indx, i_pair, nb_pair, jv_geom,elem_type_nume
     integer, pointer :: v_mesh_connex(:)  => null()
     integer, pointer :: v_connex_lcum(:)  => null()
@@ -127,8 +124,10 @@ implicit none
     real(kind=8) :: elem_mast_coor(27), elem_slav_coor(27), poin_inte(16), gap_moy
     real(kind=8) :: inte_weight, pair_tole, poin_gaus_ma(72)
     aster_logical:: l_axis
-
-
+    character(len=24) :: sdcont_ddlc
+    integer, pointer :: v_sdcont_ddlc(:) => null()
+    real(kind=8), pointer :: v_disp_curr(:)  => null()
+    integer :: nume_equa
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -140,12 +139,12 @@ implicit none
 !
 ! - Initializations
 !
-    loop_cont_conv = .true.
+    loop_cont_conv = ASTER_TRUE
     loop_cont_vali = 0
     tole_inter     = 1.d-5
     pair_tole      = 1.d-8
-    bound_coef(1)     = 1.d-8
-    bound_coef(2)     = 1.d8
+    bound_coef(1)  = 1.d-8
+    bound_coef(2)  = 1.d8
 !
 ! - Get parameters
 !
@@ -165,17 +164,16 @@ implicit none
 !
     sdcont_stat = ds_contact%sdcont_solv(1:14)//'.STAT'
     sdcont_lagc = ds_contact%sdcont_solv(1:14)//'.LAGC'
+    sdcont_ddlc = ds_contact%sdcont_solv(1:14)//'.DDLC'
+    call jeveuo(sdcont_stat, 'E', vi = v_sdcont_stat)
+    call jeveuo(sdcont_lagc, 'E', vr = v_sdcont_lagc)
+    call jeveuo(sdcont_ddlc, 'L', vi = v_sdcont_ddlc)
     sdcont_stat_prev = ds_contact%sdcont_solv(1:14)//'.CYCL'
     contcylac_etat = ds_contact%sdcont_solv(1:14)//'.CYCE'
     contcylac_hist = ds_contact%sdcont_solv(1:14)//'.CYCH'
-    call jeveuo(sdcont_stat, 'E', vi = v_sdcont_stat)
-    call jeveuo(sdcont_lagc, 'E', vr = v_sdcont_lagc)
-
     call jeveuo(sdcont_stat_prev, 'E', vi = v_sdcont_stat_pr)
     call jeveuo(contcylac_etat, 'E', vi = v_contcylac_etat)
     call jeveuo(contcylac_hist, 'E', vr = v_contcylac_hist)
-
-
 !
 ! - Get pairing datastructure
 !
@@ -206,7 +204,7 @@ implicit none
 !
     oldgeo = mesh//'.COORDO'
     newgeo = ds_contact%sdcont_solv(1:14)//'.NEWG'
-    call mreacg(mesh, ds_contact, field_update_ = disp_curr)
+    call mreacg(mesh, ds_contact, disp_curr)
 !
 ! - Access to mesh
 !
@@ -215,14 +213,15 @@ implicit none
     call jeveuo(mesh//'.COMAPA','L', vi = v_mesh_comapa)
     call jeveuo(mesh//'.CONNEX', 'L', vi = v_mesh_connex)
     call jeveuo(jexatr(mesh//'.CONNEX', 'LONCUM'), 'L', vi = v_connex_lcum)
-
 !
-! - Prepare displacement field to get contact Lagrangien multiplier
+! - Access to displacement field to get contact Lagrangien multiplier
 !
-    cnscon = '&&MMMBCA.CNSCON'
-    call mmfield_prep(disp_curr, cnscon,&
-                      l_sort_ = .true._1, nb_cmp_ = 1, list_cmp_ = ['LAGS_C  '])
-    call jeveuo(cnscon//'.CNSV', 'L', vr = v_cnscon_cnsv)
+    call jeveuo(disp_curr(1:19)//'.VALE', 'E', vr = v_disp_curr)
+!
+! - Get status of loops
+!
+    call mmbouc(ds_contact, 'Geom', 'Read_Counter', loop_geom_count)
+    iter_newt = ds_contact%iteration_newton
 !
 ! - Get current patch
 
@@ -288,17 +287,20 @@ implicit none
         nb_patch = v_mesh_lpatch((i_cont_zone-1)*2+2)
         j_patch  = v_mesh_lpatch((i_cont_zone-1)*2+1)
         jacobian_type= mminfi(ds_contact%sdcont_defi, 'TYPE_JACOBIEN', i_cont_zone)
-
 !
 ! ----- Loop on patches
 !
         do i_patch = 1, nb_patch
-
 !
 ! --------- Get/Set LAGS_C
 !
-            node_nume = v_mesh_patch(v_pa_lcum(j_patch+i_patch-1)+2-1)
-            lagc      = v_cnscon_cnsv(node_nume)
+            nume_equa = v_sdcont_ddlc(i_patch)
+            if (iter_newt .eq. 0 .and. loop_geom_count .gt. 1) then
+                lagc      = v_sdcont_lagc(j_patch-2+i_patch)
+                v_disp_curr(nume_equa) = lagc
+            else
+                lagc = v_disp_curr(nume_equa)
+            endif
             v_sdcont_lagc(j_patch-2+i_patch) = lagc
 !
 ! --------- Get previous parameters
@@ -311,11 +313,8 @@ implicit none
 !
 ! --------- Compute new status
 !
-
             if (isnan(gap)) then
                 indi_cont_curr = -1
-!            elseif (v_contcylac_etat(j_patch-2+i_patch) .eq. 1) then
-!                indi_cont_curr = indi_cont_prev
             else
                 if ((lagc+gap) .le. r8prem() .and.&
                     v_sdappa_coef(j_patch-2+i_patch).ge.tole_inter) then
@@ -323,9 +322,7 @@ implicit none
                 else
                     indi_cont_curr = 0
                 endif
-
-
-    ! --------- Cycling ?
+! ------------- Cycling ?
                 etatcyc = indi_cont_curr+2*indi_cont_prev+4*indi_cont_prev2
                 if (type_adap .ne. 4) etatcyc = 0
                 if( (ds_contact%iteration_newton .ge. 3 ).and.&
@@ -374,8 +371,6 @@ implicit none
 !
             v_sdcont_stat_pr(j_patch-2+i_patch) = indi_cont_prev
 !
-
-!
 ! --------- Change status ?
 !
             if (indi_cont_curr .ne. indi_cont_prev )  then
@@ -420,7 +415,6 @@ implicit none
 ! - Cleaning
 !
     call jedetr(newgeo)
-    call detrsd('CHAM_NO_S', cnscon)
     AS_DEALLOCATE(vr=patch_weight_c)
 !
     call jedema()
