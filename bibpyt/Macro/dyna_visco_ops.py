@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -221,19 +221,11 @@ def dyna_visco_ops(self, MODELE, EXCIT, MATER_ELAS_FO,
 # FREQUENCY RESPONSE COMPUTATION
     if TYPE_RESU=='HARM':
 
-        if args['MODE_MECA']!=None:
+        if args.get('MODE_MECA')!=None:
             self.register_result(_modes, args['MODE_MECA'])
 
-#       DATASTRUCTURE VERIFICATION (SDVERI) MUST BE TEMPORARY DEACTIVATED, IT IS OTHERWISE
-#       COSTLY AS THE FINAL RESULT IS CONSTRUCTED FIELD-BY-FIELD, ONCE THE RESULT CONCEPT
-#       IS FINISHED, THE VERIFICATION PARAMETER IS SET BACK TO ITS ORIGINAL VALUE
-        PreviousCheck = 'NON'
-        if self.jdc.sdveri : PreviousCheck = 'OUI'
-       
-        DEBUG(SDVERI='NON')
         dyna_harm=dyna_visco_harm(self, EXCIT, list_FREQ, _modes,
                                         MATER_ELAS_FO, __asseKg, __asseKgr, __asseMg, __listKv, e0, eta0, __num, **args)
-        DEBUG(SDVERI=PreviousCheck)
         
         return dyna_harm
     

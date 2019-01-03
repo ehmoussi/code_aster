@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -50,8 +50,9 @@ class ReducedBaseDefinition(ExecuteCommand):
              keywords["OPERATION"] == "TRONCATURE"):
             self._result.appendModelOnAllRanks(keywords["MODELE_REDUIT"])
         else:
-            resultat = keywords["RESULTAT"]
-            if(resultat is not None):
-                self._result.appendModelOnAllRanks(resultat.getModel())
+            if keywords.get("RESULTAT"):
+                resultat = keywords["RESULTAT"]
+                if(resultat is not None):
+                    self._result.appendModelOnAllRanks(resultat.getModel())
 
 DEFI_BASE_REDUITE = ReducedBaseDefinition.run

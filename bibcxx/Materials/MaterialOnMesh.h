@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe MaterialOnMesh
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -42,6 +42,50 @@
 class MaterialOnMeshBuilderInstance;
 
 /**
+ * @class PartOfMaterialOnMeshInstance
+ * @brief It contains a BehaviourDefinitionPtr and a MeshEntityPtr
+ * @author Nicolas Sellenet
+ */
+class PartOfMaterialOnMeshInstance
+{
+private:
+    std::vector< MaterialPtr > _vecOfMater;
+    MeshEntityPtr              _entity;
+
+public:
+    PartOfMaterialOnMeshInstance(): _entity( nullptr )
+    {};
+
+    PartOfMaterialOnMeshInstance( const std::vector< MaterialPtr >& vecOfMater,
+                                  const MeshEntityPtr& entity ):
+        _vecOfMater( vecOfMater ),
+        _entity( entity )
+    {};
+
+    /**
+     * @brief Get the VectorOfMaterial of PartOfMaterialOnMesh
+     */
+    std::vector< MaterialPtr > getVectorOfMaterial() const
+    {
+        return _vecOfMater;
+    };
+
+    /**
+     * @brief Get the support MeshEntity of PartOfMaterialOnMesh
+     */
+    MeshEntityPtr getMeshEntity() const
+    {
+        return _entity;
+    };
+};
+
+/**
+ * @typedef PartOfMaterialOnMeshPtr
+ * @brief Smart pointer on PartOfMaterialOnMeshInstance
+ */
+typedef boost::shared_ptr< PartOfMaterialOnMeshInstance > PartOfMaterialOnMeshPtr;
+
+/**
  * @class MaterialOnMeshInstance
  * @brief produit une sd identique a celle produite par AFFE_MATERIAU
  * @author Nicolas Sellenet
@@ -73,6 +117,8 @@ class MaterialOnMeshInstance: public DataStructure
 
         /** @brief Maillage sur lequel repose la sd_cham_mater */
         BaseMeshPtr            _supportMesh;
+        /** @brief Support model */
+        ModelPtr               _supportModel;
         /** @brief Carte '.CHAMP_MAT' */
         PCFieldOnMeshChar8Ptr  _listOfMaterials;
         /** @brief Carte '.TEMPE_REF' */
@@ -286,6 +332,11 @@ class MaterialOnMeshInstance: public DataStructure
         std::vector< MaterialPtr > getVectorOfMaterial() const;
 
         /**
+         * @brief Return a vector of MaterialPtr
+         */
+        std::vector< PartOfMaterialOnMeshPtr > getVectorOfPartOfMaterialOnMesh() const;
+
+        /**
          * @brief Function to know if a given Calculation Input Variables exists
          * @return true if exists
          */
@@ -300,6 +351,14 @@ class MaterialOnMeshInstance: public DataStructure
             if ( _supportMesh->isEmpty() )
                 throw std::runtime_error( "support mesh of current model is empty" );
             return _supportMesh;
+        };
+
+        /**
+         * @brief Set the support model
+         */
+        void setModel( ModelPtr model )
+        {
+            _supportModel = model;
         };
 };
 

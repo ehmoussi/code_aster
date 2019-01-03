@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -35,22 +35,25 @@ class VibrationDynamics(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        base = keywords["BASE_CALCUL"]
-        typ = keywords["TYPE_CALCUL"]
-        matrRigi = keywords["MATR_RIGI"]
-        if base == "PHYS":
-            if typ == "TRAN":
-                self._result = FullTransientResultsContainer()
-                return
-            if isinstance(matrRigi, AssemblyMatrixPressureComplex):
-                self._result = FullAcousticHarmonicResultsContainer()
-                return
-            self._result = FullHarmonicResultsContainer()
+        if keywords.get("reuse") != None:
+            self._result = keywords["reuse"]
         else:
-            if typ == "TRAN":
-                self._result = TransientGeneralizedResultsContainer()
+            base = keywords["BASE_CALCUL"]
+            typ = keywords["TYPE_CALCUL"]
+            matrRigi = keywords["MATR_RIGI"]
+            if base == "PHYS":
+                if typ == "TRAN":
+                    self._result = FullTransientResultsContainer()
+                    return
+                if isinstance(matrRigi, AssemblyMatrixPressureComplex):
+                    self._result = FullAcousticHarmonicResultsContainer()
+                    return
+                self._result = FullHarmonicResultsContainer()
             else:
-                self._result = HarmoGeneralizedResultsContainer()
+                if typ == "TRAN":
+                    self._result = TransientGeneralizedResultsContainer()
+                else:
+                    self._result = HarmoGeneralizedResultsContainer()
 
     def post_exec(self, keywords):
         """Execute the command.

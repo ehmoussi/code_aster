@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -199,6 +199,10 @@ def block_utils(evaluation_context):
     def size(name):
         """Get the size of argument of a given keyword"""
         return len(evaluation_context.get(name))
+
+    def less_than(name, test_value):
+        """Return True if the value of keyword is less than test_value."""
+        return value(name) < test_value
 
     return locals()
 

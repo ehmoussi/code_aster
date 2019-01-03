@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -20,6 +20,8 @@ POURSUITE(CODE='OUI',
       DEBUG=_F(SDVERI='OUI'),
       PAR_LOT='NON',
       IGNORE_ALARM=('MODELE1_63','SUPERVIS_1'))
+
+import math
 
 # ================================================================================================================================================================================
 def NormeAster(RESULTAT, Depl_Ana, P_ana, MAIL, MODELE, GROUP_MA_VOL, GROUP_MA_SUR):
@@ -384,25 +386,6 @@ for Raff in range(0,Nb_Raffinement):
          MA[Raff+1]= CREA_MAILLAGE(MAILLAGE=MAini[Raff+1],
                                    HEXA20_27=_F(TOUT='OUI',),);
 
-         # DESTRUCTION DES CONCEPTS INUTILISES DANS LES PROCHAINES ETAPES DE LA BOUCLE
-         DETRUIRE(CONCEPT=(_F(NOM=modl,),
-                           _F(NOM=chmat),
-                           _F(NOM=BlocEscl),
-                           _F(NOM=Neumann),
-                           _F(NOM=Dirich),
-                           _F(NOM=Contact),
-                           _F(NOM=ForceInt),
-                           _F(NOM=EVOLNOLI),
-                           _F(NOM=Uana),
-                           _F(NOM=Ucalc),
-                           _F(NOM=UcalcG),
-                           _F(NOM=DIFFUN),
-                           _F(NOM=Pana),
-                           _F(NOM=Pcalc),
-                           ),
-                   INFO=1,
-                  );
-
 
 
 #================================================================================================
@@ -481,7 +464,7 @@ TEST_RESU(CHAM_NO=_F(CRITERE='ABSOLU',
                      REFERENCE='ANALYTIQUE',
                      PRECISION=9.9999999999999995E-07,
                      TYPE_TEST='MAX',
-                     CHAM_GD=DIFFUN,
+                     CHAM_GD=dicResu['DIFFUN'],
                      VALE_CALC= 7.53949100E-07,
                      VALE_REFE=0,),
           )

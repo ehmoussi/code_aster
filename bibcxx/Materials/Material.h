@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe Material
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -45,12 +45,12 @@ class MaterialInstance: public DataStructure
          */
         typedef boost::shared_ptr< MaterialInstance > MaterialPtr;
 
-    private:
         typedef std::vector< GeneralMaterialBehaviourPtr > VectorOfGeneralMaterialBehaviour;
         typedef VectorOfGeneralMaterialBehaviour::iterator VectorOfGeneralMaterialIter;
         typedef std::vector< JeveuxVectorDouble > VectorOfJeveuxVectorDouble;
         typedef std::vector< JeveuxVectorChar8 > VectorOfJeveuxVectorChar8;
 
+    private:
         /** @brief Nom Jeveux de la SD */
         const std::string                  _jeveuxName;
         /** @brief Vecteur Jeveux '.MATERIAU.NOMRC' */
@@ -116,7 +116,7 @@ class MaterialInstance: public DataStructure
          * @return Booleen indiquant que la construction s'est bien deroulee
          * @todo pouvoir compléter un matériau (ajout d'un comportement après build)
          */
-        bool build() ;
+        bool build();
 
         /**
          * @brief Get the number of behviours
@@ -141,7 +141,7 @@ class MaterialInstance: public DataStructure
          * @param position number of the material behaviour
          * @return jeveux vector of double values
          */
-        VectorOfJeveuxVectorDouble getBehviourVectorOfDoubleValues( int position )
+        VectorOfJeveuxVectorDouble getBehaviourVectorOfDoubleValues( int position )
         {
             return _vectorOfUserDoubleValues[ position ];
         };
@@ -151,9 +151,17 @@ class MaterialInstance: public DataStructure
          * @param position number of the material behaviour
          * @return jeveux vector of double values
          */
-        VectorOfJeveuxVectorChar8 getBehviourVectorOfFunctions( int position )
+        VectorOfJeveuxVectorChar8 getBehaviourVectorOfFunctions( int position )
         {
             return _vectorOfUserFunctionValues[ position ];
+        };
+
+        /**
+         * @brief Get vector of material behaviours
+         */
+        VectorOfGeneralMaterialBehaviour getVectorOfMaterialBehaviours()
+        {
+            return _vecMatBehaviour;
         };
 
         /**

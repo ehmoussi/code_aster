@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -43,6 +43,7 @@ class XfemModelModication(ExecuteCommand):
         """
         if "MODELE_IN" in keywords:
             modeleIn = keywords["MODELE_IN"]
+            self._result.setSaneModel(modeleIn)
             if type(modeleIn) is tuple:
                 modeleIn = modeleIn[0]
             self._result.setSupportMesh(modeleIn.getSupportMesh())

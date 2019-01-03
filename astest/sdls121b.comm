@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -19,9 +19,13 @@
 
 import numpy as NP
 
-POURSUITE(CODE='OUI',DEBUG=_F(SDVERI='OUI'))
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),
+PAR_LOT='NON',DEBUG=_F(SDVERI='OUI'))
 
-# Nombre de frequences utiles
+# On ajoute les commandes correspondant au modeles experimental
+from sdls121b import *
+
+#nombre de frequences utiles
 NF=8
 
 # le tableau des frequences experimentales
@@ -44,44 +48,34 @@ REPEXP2=CREA_TABLE(LISTE=(_F(PARA='NUME_ORDRE',LISTE_I=range(1,NF+1),),
 data1 = REPEXP1.EXTR_TABLE().Array('NUME_ORDRE','FREQ')
 data2 = REPEXP2.EXTR_TABLE().Array('NUME_ORDRE','MAC_EXP')
 
-parametres =[['EP__',0.15,0.1,1.0],['MP__',3.0E4,2.E4,7.E4]]
+
+parametres =[['EP__',0.25,0.1,1.0],['MP__',3.0E4,2.E4,7.E4]]
 
 calcul = [['REPONSE1','NUME_ORDRE','FREQ'],['REPONSE2','NUME_ORDRE','MAC']]
 
-experience= [NP.array(data1),NP.array(data2)]
+experience= [NP.array(data1), NP.array(data2)]
 
 poids =NP.array([3.0, 1.0])
 
 # LANCEMENT DE L'IDENTIFICATION
 
 RESU=MACR_RECAL(
-         UNITE_ESCL       = 3,
-         RESU_EXP         = experience,
-         LIST_PARA        = parametres,
-         RESU_CALC        = calcul,
-         LIST_POIDS       = poids,
-         UNITE_RESU       = 91,
-
-         METHODE          = 'HYBRIDE',
-         NB_PARENTS       = 10,
-         NB_FILS          = 5,
-         ECART_TYPE       = 10.,
-         ITER_ALGO_GENE   = 2,
-#Attention: l'utilisation de la GRAINE n'est pas indiquee pour les etudes.
-#On l'utilise seulement dans les cas-tests pour assurer la repetitivite de la
-#solution.
-         GRAINE           = 1,
+         UNITE_ESCL       =3,
+         RESU_EXP         =experience,
+         LIST_PARA        =parametres,
+         RESU_CALC        =calcul,
+         LIST_POIDS       =poids,
+         METHODE          ='LEVENBERG',
 
          CALCUL_ESCLAVE=_F(
-#               LANCEMENT  = 'INCLUSION',
-               LANCEMENT  = 'DISTRIBUTION',
-               MODE       = 'BATCH',
-                           ),
+             LANCEMENT   = 'DISTRIBUTION',
+             MODE        = 'BATCH',
+                   ),
          DYNAMIQUE =_F(
-              MODE_EXP           = 'MODMES',
-              MODE_CALC          = 'MODNUM',
-              APPARIEMENT_MANUEL = 'NON',
-                      ),
+              MODE_EXP='MODMES',
+              MODE_CALC='MODNUM',
+              APPARIEMENT_MANUEL='NON',
+                               ),
 )  ;
 
 
@@ -94,17 +88,17 @@ OPTIM=DEFI_FONCTION(NOM_PARA='INST',
                     VALE_PARA=BIDON,
                     VALE_FONC=RESU);
 
-TEST_FONCTION(VALEUR=(_F(VALE_CALC=0.50419188,
+TEST_FONCTION(VALEUR=(_F(VALE_CALC=0.50295095,
                          VALE_REFE=0.5,
                          VALE_PARA=1.0,
                          REFERENCE='ANALYTIQUE',
-                         PRECISION=1.E-2,
+                         PRECISION=0.05,
                          FONCTION=OPTIM,),
-                      _F(VALE_CALC=49737.38,
+                      _F(VALE_CALC=48193.69,
                          VALE_REFE=5.E4,
                          VALE_PARA=2.0,
                          REFERENCE='ANALYTIQUE',
-                         PRECISION=0.040000000000000001,
+                         PRECISION=0.05,
                          FONCTION=OPTIM,),
                       ),
               )

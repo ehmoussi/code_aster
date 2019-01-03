@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -128,8 +128,6 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
                      VALE_K='VALEUR  ',),
            )
 
-DETRUIRE(CONCEPT=_F(NOM=(RESU11, TAB11),),)
-
 is_ok = 0
 try :
   RESU12=MECA_STATIQUE(MODELE=MO, CHAM_MATER=CHAM_MAT, INFO=1,
@@ -151,8 +149,6 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
            FILTRE=_F(NOM_PARA='TEST',
                      VALE_K='VALEUR  ',),
            )
-
-DETRUIRE(CONCEPT=_F(NOM=(RESU12, TAB12),),)
 
 is_ok = 0
 try :
@@ -176,8 +172,6 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
                      VALE_K='VALEUR  ',),
            )
 
-DETRUIRE(CONCEPT=_F(NOM=(RESU130, TAB130),),)
-
 is_ok = 0
 try :
   RESU131=MECA_STATIQUE(MODELE=MO, CHAM_MATER=CHAM_MAT, INFO=1,
@@ -199,8 +193,6 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
            FILTRE=_F(NOM_PARA='TEST',
                      VALE_K='VALEUR  ',),
            )
-
-DETRUIRE(CONCEPT=_F(NOM=(RESU131, TAB131),),)
 
 
 # 2 : REDONDANCE DE BLOCAGES DETECTE VIA LE MECANISME NPREC/STOP_SINGULIER
@@ -229,8 +221,6 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
                      VALE_K='VALEUR  ',),
            )
 
-DETRUIRE(CONCEPT=_F(NOM=(RESU21, TAB21),),)
-
 is_ok = 0
 try :
   RESU22=MECA_STATIQUE(MODELE=MO, CHAM_MATER=CHAM_MAT, INFO=1,
@@ -252,8 +242,6 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
            FILTRE=_F(NOM_PARA='TEST',
                      VALE_K='VALEUR  ',),
            )
-
-DETRUIRE(CONCEPT=_F(NOM=(RESU22, TAB22),),)
 
 is_ok = 0
 try :
@@ -277,8 +265,6 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
                      VALE_K='VALEUR  ',),
            )
 
-DETRUIRE(CONCEPT=_F(NOM=(RESU230, TAB230),),)
-
 is_ok = 0
 try :
   RESU231=MECA_STATIQUE(MODELE=MO, CHAM_MATER=CHAM_MAT, INFO=2,
@@ -300,8 +286,6 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
            FILTRE=_F(NOM_PARA='TEST',
                      VALE_K='VALEUR  ',),
            )
-
-DETRUIRE(CONCEPT=_F(NOM=(RESU231, TAB231),),)
 
 is_ok = 0
 try :
@@ -325,5 +309,4 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
                      VALE_K='VALEUR  ',),
            )
 
-DETRUIRE(CONCEPT=_F(NOM=(RESU232, TAB232),),)
 FIN();

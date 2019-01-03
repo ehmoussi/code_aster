@@ -3,7 +3,7 @@
  * @brief Interface python de Model
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -58,9 +58,11 @@ void exportModelToPython() {
         .def( "build", &ModelInstance::build )
         .def( "existsThm", &ModelInstance::existsThm )
         .def( "existsMultiFiberBeam", &ModelInstance::existsMultiFiberBeam )
+        .def( "getSaneModel", &ModelInstance::getSaneModel )
         .def( "getSupportMesh", &ModelInstance::getSupportMesh )
         .def( "getSplittingMethod", &ModelInstance::getSplittingMethod )
         .def( "getGraphPartitioner", &ModelInstance::getGraphPartitioner )
+        .def( "setSaneModel", &ModelInstance::setSaneModel )
         .def( "setSupportMesh", c1 )
         .def( "setSupportMesh", c4 )
         .def( "setSplittingMethod", split1 )

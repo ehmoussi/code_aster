@@ -3,7 +3,7 @@
  * @brief Implementation de CodedMaterialInstance
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -34,9 +34,18 @@ CodedMaterialInstance::CodedMaterialInstance( const MaterialOnMeshPtr &mater,
       _grp( JeveuxVectorChar8( getName() + ".MATE_CODE.GRP" ) ),
       _nGrp( JeveuxVectorLong( getName() + ".MATE_CODE.NGRP" ) ){};
 
-bool CodedMaterialInstance::allocate() {
-    if ( _field->exists() )
+bool CodedMaterialInstance::allocate(bool force) {
+    if( ! force && _field->exists() )
         return false;
+    if( _field->exists() )
+    {
+        _field->deallocate();
+        _grp->deallocate();
+        _nGrp->deallocate();
+        _vecOfCodiVectors.clear();
+        _vecOfR8.clear();
+        _vecOfIa.clear();
+    }
     std::string blanc( 24, ' ' );
     std::string materName = _mater->getName();
     materName.resize( 24, ' ' );
@@ -75,8 +84,8 @@ bool CodedMaterialInstance::allocate() {
         const int nbMB = curIter->getNumberOfUserMaterialBehviour();
         for( int i = 0; i < nbMB; ++i )
         {
-            auto vecVec1 = curIter->getBehviourVectorOfDoubleValues( i );
-            auto vecVec2 = curIter->getBehviourVectorOfFunctions( i );
+            auto vecVec1 = curIter->getBehaviourVectorOfDoubleValues( i );
+            auto vecVec2 = curIter->getBehaviourVectorOfFunctions( i );
             for( auto vec1 : vecVec1 )
                 if( vec1->exists() )
                 {

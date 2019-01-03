@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -28,7 +28,8 @@ RESU=[None]*Ncal
 #npas_par_cycle1=360
 npas_par_cycle1=48
 
-temps_ca=DEFI_LIST_REEL(DEBUT=0,INTERVALLE=_F(JUSQU_A=tmax,NOMBRE=npas_par_cycle1*nbcycle1*nbcycle2),);
+temps_ca=DEFI_LIST_REEL(DEBUT=0,INTERVALLE=_F(JUSQU_A=tmax,
+                                              NOMBRE=int(npas_par_cycle1*nbcycle1*nbcycle2)),);
 
 deflist=DEFI_LIST_INST(INFO=1,METHODE='MANUEL',
                          DEFI_LIST=_F(LIST_INST=temps_ca,),

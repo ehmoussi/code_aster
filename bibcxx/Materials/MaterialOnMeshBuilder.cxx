@@ -3,7 +3,7 @@
  * @brief Implementation de MaterialOnMeshBuilderInstance::build
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -39,6 +39,8 @@ void MaterialOnMeshBuilderInstance::buildInstance( MaterialOnMeshInstance &curMa
     if ( !curMater._supportMesh )
         throw std::runtime_error( "Support mesh is undefined" );
     dict.container["MAILLAGE"] = curMater._supportMesh->getName();
+    if( curMater._supportModel )
+        dict.container["MODELE"] = curMater._supportModel->getName();
 
     ListSyntaxMapContainer listeAFFE;
     for ( auto &curIter : curMater._materialsOnMeshEntity ) {

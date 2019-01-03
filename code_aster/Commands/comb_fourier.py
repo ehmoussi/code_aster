@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -41,10 +41,9 @@ class CombFourier(ExecuteCommand):
         Arguments:
             keywords (dict): User's keywords.
         """
-        try:
-            self._result.appendModelOnAllRanks(keywords["RESULTAT"].getModel())
-        except:
-            pass
+        model = keywords["RESULTAT"].getModel()
+        if model is not None:
+            self._result.appendModelOnAllRanks(model)
         self._result.update()
 
 

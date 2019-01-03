@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -21,9 +21,11 @@
 
 from code_aster.Cata.Syntax import OPER, SIMP
 from code_aster.Cata.DataStructure import cham_no_sdaster, evol_noli, evol_elas
+from code_aster.Commands.ExecuteCommand import ExecuteCommand
+from code_aster import FieldOnNodesDouble
 
 
-POST_K_VARC = OPER(
+POST_K_VARC_CATA = OPER(
     nom="POST_K_VARC", op=48, sd_prod=cham_no_sdaster, reentrant='n',
     fr="Récuperation d'un champ de variable de commande a un instant donné à partir d'un résultat",
 
@@ -31,3 +33,19 @@ POST_K_VARC = OPER(
     INST=SIMP(statut='o',typ='R'),
     NOM_VARC=SIMP(statut='o',typ='TXM',into=("TEMP","NEUT1")),
 )
+
+class PostKVarc(ExecuteCommand):
+    """Command that defines :class:`~code_aster.Objects.Table`.
+    """
+    command_name = "POST_K_VARC"
+    command_cata = POST_K_VARC_CATA
+
+    def create_result(self, keywords):
+        """Initialize the result.
+
+        Arguments:
+            keywords (dict): Keywords arguments of user's keywords.
+        """
+        self._result = FieldOnNodesDouble()
+
+POST_K_VARC = PostKVarc.run

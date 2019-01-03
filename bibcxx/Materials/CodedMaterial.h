@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe CodedMaterial
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -74,7 +74,7 @@ public:
      * @brief Function to allocate the coded material
      * @return return false if coded material already exists
      */
-    bool allocate();
+    bool allocate( bool force = false );
 
     /**
      * @brief Function to know if elastic properties depend of a function

@@ -7,5 +7,6 @@ P testlist verification sequential
 
 F comm ssnl130a.comm D 1
 F comm ssnl130a.com1 D 1
+F nom ssnl130a.py D 0
 F datg ssnl130a.datg D 16
 F mmed ssnl130a.mmed D 20

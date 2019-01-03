@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -32,9 +32,6 @@ _orig_getType = GeneralizedAssemblyMatrixDouble.getType
 
 
 def VALM_triang2array(dict_VALM, dim, dtype=None):
-    """Conversion (par recopie) de l'objet .VALM decrivant une matrice pleine
-    par sa triangulaire inf (et parfois triang sup) en numpy.array plein.
-    """
     import numpy
     # stockage symetrique ou non (triang inf+sup)
     sym = len(dict_VALM) == 1
@@ -51,6 +48,15 @@ def VALM_triang2array(dict_VALM, dim, dtype=None):
             k = i*(i-1)/2 + j
             valeur[i-1, j-1]=triang_inf[k-1]
             valeur[j-1, i-1]=triang_sup[k-1]
+    return valeur
+
+def VALM_diag2array(dict_VALM, dim, dtype=None):
+    import numpy
+    diag = numpy.array(dict_VALM[1])
+    assert dim == len(diag), 'Dimension incorrecte : %d != %d' % (dim, len(diag))
+    valeur=numpy.zeros([dim, dim], dtype=dtype)
+    for i in range(dim):
+        valeur[i,i] =  diag[i]
     return valeur
 
 class ExtendedGeneralizedAssemblyMatrixComplex(injector(GeneralizedAssemblyMatrixComplex),
@@ -77,10 +83,6 @@ class ExtendedGeneralizedAssemblyMatrixComplex(injector(GeneralizedAssemblyMatri
             self.setModalBasis(state[2])
 
     def EXTR_MATR_GENE(self) :
-        """ retourne les valeurs de la matrice generalisee complexe
-            dans un format numpy
-            Attributs retourne
-            - self.valeurs : numpy.array contenant les valeurs """
         import numpy
         if not self.accessible():
             raise AsException("Erreur dans matr_asse_gene_c.EXTR_MATR_GENE en PAR_LOT='OUI'")
@@ -103,6 +105,55 @@ class ExtendedGeneralizedAssemblyMatrixComplex(injector(GeneralizedAssemblyMatri
         else:
             raise KeyError
         return valeur
+
+    def RECU_MATR_GENE(self,matrice) :
+        import numpy, aster
+        if not self.accessible():
+            raise AsException("Erreur dans matr_asse_gene_c.RECU_MATR_GENE en PAR_LOT='OUI'")
+
+        numpy.asarray(matrice)
+        ncham=self.get_name()
+        desc = self.sdj.DESC.get()
+        # On teste si le DESC de la matrice existe
+        if not desc:
+            raise AsException("L'objet matrice {0!r} n'existe pas"
+                            .format(self.sdj.DESC.nomj()))
+        desc = numpy.array(desc)
+        numpy.asarray(matrice)
+
+        # On teste si la dimension de la matrice python est 2
+        if (len(numpy.shape(matrice)) != 2) :
+            raise AsException("La dimension de la matrice est incorrecte ")
+
+        # On teste si la taille de la matrice jeveux et python est identique
+        if (tuple([desc[1],desc[1]]) != numpy.shape(matrice)) :
+            raise AsException("La taille de la matrice est incorrecte ")
+
+        # Si le stockage est plein
+        if desc[2]==2 :
+            taille=desc[1]*desc[1]/2.0+desc[1]/2.0
+            tmpr=numpy.zeros([int(taille)])
+            tmpc=numpy.zeros([int(taille)])
+            for j in range(desc[1]+1):
+                for i in range(j):
+                    k=j*(j-1)/2+i
+                    tmpr[k]=matrice[j-1,i].real
+                    tmpc[k]=matrice[j-1,i].imag
+            aster.putvectjev('%-19s.VALM' % ncham, len(tmpr), tuple((\
+                            range(1,len(tmpr)+1))),tuple(tmpr),tuple(tmpc),1)
+        # Si le stockage est diagonal
+        elif desc[2]==1 :
+            tmpr=numpy.zeros(desc[1])
+            tmpc=numpy.zeros(desc[1])
+            for j in range(desc[1]):
+                tmpr[j]=matrice[j,j].real
+                tmpc[j]=matrice[j,j].imag
+            aster.putvectjev('%-19s.VALM' % ncham,len(tmpr),tuple((\
+                            range(1,len(tmpr)+1))),tuple(tmpr),tuple(tmpc),1)
+        # Sinon on arrete tout
+        else:
+            raise KeyError
+        return
 
 class ExtendedGeneralizedAssemblyMatrixDouble(injector(GeneralizedAssemblyMatrixDouble),
                                    GeneralizedAssemblyMatrixDouble):
@@ -128,16 +179,6 @@ class ExtendedGeneralizedAssemblyMatrixDouble(injector(GeneralizedAssemblyMatrix
             self.setModalBasis(state[2])
 
     def EXTR_MATR(self, sparse=False):
-        """Retourne les valeurs de la matrice dans un format numpy
-        Si sparse=True, la valeur de retour est un triplet de numpy.array.
-        Attributs retourne si sparse=False:
-        - valeurs : numpy.array contenant les valeurs
-        ou si sparse=True:
-        - valeurs : numpy.array contenant les valeurs
-        - lignes : numpy.array numpy.array contenant les indices des lignes
-        - colonnes : numpy.array contenant les indices des colonnes
-        - dim : int qui donne la dimension de la matrice
-        """
         import numpy as NP
         if not self.accessible():
             raise Accas.AsException(
@@ -169,10 +210,6 @@ class ExtendedGeneralizedAssemblyMatrixDouble(injector(GeneralizedAssemblyMatrix
             return make_sym_matrix(dim,triang_sup,ntype)
 
     def EXTR_MATR_GENE(self):
-        """ retourne les valeurs de la matrice generalisee reelle
-            dans un format numpyal Array
-            Attributs retourne
-            - self.valeurs : numpy.array contenant les valeurs """
         if not self.accessible():
             raise AsException("Erreur dans matr_asse_gene.EXTR_MATR_GENE en PAR_LOT='OUI'")
         import numpy
@@ -196,3 +233,49 @@ class ExtendedGeneralizedAssemblyMatrixDouble(injector(GeneralizedAssemblyMatrix
         else:
             raise KeyError
         return valeur
+
+    def RECU_MATR_GENE(self,matrice) :
+        import numpy, aster
+        if not self.accessible():
+            raise AsException("Erreur dans matr_asse_gene.RECU_MATR_GENE en PAR_LOT='OUI'")
+
+        ncham=self.get_name()
+
+        desc = self.sdj.DESC.get()
+        # On teste si le DESC de la matrice existe
+        if not desc:
+            raise AsException("L'objet matrice {0!r} n'existe pas"
+                            .format(self.sdj.DESC.nomj()))
+        desc = numpy.array(desc)
+
+        numpy.asarray(matrice)
+
+        # On teste si la dimension de la matrice python est 2
+        if (len(numpy.shape(matrice)) != 2) :
+            raise AsException("La dimension de la matrice est incorrecte ")
+
+        # On teste si les tailles des matrices jeveux et python sont identiques
+        if (tuple([desc[1],desc[1]]) != numpy.shape(matrice)) :
+            raise AsException("La taille de la matrice est incorrecte ")
+
+        # Si le stockage est plein
+        if desc[2]==2 :
+            taille=desc[1]*desc[1]/2.0+desc[1]/2.0
+            tmp=numpy.zeros([int(taille)])
+            for j in range(desc[1]+1):
+                for i in range(j):
+                    k=j*(j-1)/2+i
+                    tmp[k]=matrice[j-1,i]
+            aster.putcolljev('%-19s.VALM' % ncham,len(tmp),tuple((\
+            range(1,len(tmp)+1))),tuple(tmp),tuple(tmp),1)
+        # Si le stockage est diagonal
+        elif desc[2]==1 :
+            tmp=numpy.zeros(desc[1])
+            for j in range(desc[1]):
+                tmp[j]=matrice[j,j]
+            aster.putcolljev('%-19s.VALM' % ncham,len(tmp),tuple((\
+            range(1,len(tmp)+1))),tuple(tmp),tuple(tmp),1)
+        # Sinon on arrete tout
+        else:
+            raise KeyError
+        return

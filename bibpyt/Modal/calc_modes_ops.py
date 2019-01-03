@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -144,7 +144,8 @@ def calc_modes_ops(self, TYPE_RESU, OPTION, AMELIORATION, INFO, **args):
         if isinstance(modes, GeneralizedModeContainer):
             modes.setGeneralizedDOFNumbering(matrRigi.getGeneralizedDOFNumbering())
         elif isinstance(modes, MechanicalModeContainer):
-            pass
+            model = matrRigi.getDOFNumbering().getSupportModel()
+            modes.appendModelOnAllRanks(model)
         else:
             modes.setDOFNumbering(matrRigi.getDOFNumbering())
         modes.setStiffnessMatrix(matrRigi)

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -23,7 +23,7 @@
 ****************************************************
 """
 
-from libaster import AssemblyMatrixDisplacementDouble
+from libaster import AssemblyMatrixDisplacementDouble, AssemblyMatrixDisplacementComplex
 
 from ..Utilities import injector
 
@@ -33,6 +33,23 @@ _orig_getType = AssemblyMatrixDisplacementDouble.getType
 class ExtendedAssemblyMatrixDisplacementDouble(injector(AssemblyMatrixDisplacementDouble),
                                    AssemblyMatrixDisplacementDouble):
     cata_sdj = "SD.sd_matr_asse.sd_matr_asse"
+
+    def __getstate__(self):
+        """Return internal state.
+
+        Returns:
+            dict: Internal state.
+        """
+        return (self.getDOFNumbering(), )
+
+    def __setstate__(self, state):
+        """Restore internal state.
+
+        Arguments:
+            state (dict): Internal state.
+        """
+        if state[0] is not None:
+            self.setDOFNumbering(state[0])
 
     def getType(self):
         """Returns the type of the matrix object.
@@ -46,32 +63,36 @@ class ExtendedAssemblyMatrixDisplacementDouble(injector(AssemblyMatrixDisplaceme
         typ = _orig_getType(self).replace("_DEPL_R_DEPL_R", "_DEPL_R")
         return typ
 
-    def EXTR_MATR(self, sparse=False):
-        """Retourne les valeurs de la matrice dans un format numpy
-        Si sparse=True, la valeur de retour est un triplet de numpy.array.
-        Attributs retourne si sparse=False:
-        - valeurs : numpy.array contenant les valeurs
-        ou si sparse=True:
-        - valeurs : numpy.array contenant les valeurs
-        - lignes : numpy.array numpy.array contenant les indices des lignes
-        - colonnes : numpy.array contenant les indices des colonnes
-        - dim : int qui donne la dimension de la matrice
+    def EXTR_MATR(self, sparse=False, epsilon=None) :
+        """Returns the matrix values as `numpy.array`.
+
+        Arguments:
+            sparse (bool): By default, the returned matrix is dense. If *True*
+                the returned matrix is sparse.
+            epsilon (float): Terms less than this value is considered null.
+                By default, it is 10^-8 * the mean of the absolute values.
+                Only used if *sparse=True*.
+
+        Returns:
+            misc: A single `numpy.array` of the dense matrix if *sparse=False*.
+            Or if *sparse=True* a tuple `(data, rows, cols, dim)`. `data`
+            contains the values, `rows` the rows indices, `cols` the columns
+            indices and `dim` the number of terms.
         """
         import numpy as NP
         from SD.sd_stoc_morse import sd_stoc_morse
         if not self.accessible():
-            raise Accas.AsException(
-                "Erreur dans matr_asse.EXTR_MATR en PAR_LOT='OUI'")
+            raise AsException("Erreur dans matr_asse.EXTR_MATR en PAR_LOT='OUI'")
         refa = NP.array(self.sdj.REFA.get())
         ma = refa[0]
         nu = refa[1]
-        smos = sd_stoc_morse(nu[:14] + '.SMOS')
+        smos = sd_stoc_morse(nu[:14]+'.SMOS')
         valm = self.sdj.VALM.get()
         smhc = smos.SMHC.get()
         smdi = smos.SMDI.get()
-        sym = len(valm) == 1
+        sym = refa[8].strip() == "MS"
         dim = len(smdi)
-        nnz = smdi[dim - 1]
+        nnz = len(smhc)
         triang_sup = NP.array(valm[1])
         if sym:
             triang_inf = triang_sup
@@ -79,17 +100,14 @@ class ExtendedAssemblyMatrixDisplacementDouble(injector(AssemblyMatrixDisplaceme
             triang_inf = NP.array(valm[2])
         if type(valm[1][0]) == complex:
             dtype = complex
-        else:
+        else :
             dtype = float
 
-        if sparse:
-            smhc = NP.array(smhc) - 1
-            smdi = NP.array(smdi) - 1
-
+        if sparse :
+            rows = NP.array(smhc) - 1
+            diag = NP.array(smdi) - 1
             class SparseMatrixIterator:
-
                 """classe d'itération pour la liste de la colonne"""
-
                 def __init__(self):
                     self.jcol = 0
                     self.kterm = 0
@@ -101,34 +119,144 @@ class ExtendedAssemblyMatrixDisplacementDouble(injector(AssemblyMatrixDisplaceme
                     if self.kterm == 0:
                         self.kterm += 1
                         return self.jcol
-                    if smdi[self.jcol] < self.kterm:
+                    if diag[self.jcol] < self.kterm:
                         self.jcol += 1
                     self.kterm += 1
                     return self.jcol
 
             col_iter = SparseMatrixIterator()
-            # générer la liste de colonnes
+            # generate the columns indices
             cols = NP.fromiter(col_iter, count=nnz, dtype=int)
-            # entrées filtre de pivot de triang_inf
-            helper = smhc - cols
-            indices_to_filter = NP.where(helper == 0)[0]
-            smdi_inf = NP.copy(smhc)
-            smdi_inf = NP.delete(smdi_inf, indices_to_filter)
-            smhc_inf = NP.copy(cols)
-            smhc_inf = NP.delete(smhc_inf, indices_to_filter)
-            triang_inf = NP.delete(triang_inf, indices_to_filter)
-            # joindre les listes
-            lignes = NP.concatenate((cols, smdi_inf))
-            colonnes = NP.concatenate((smhc, smhc_inf))
-            valeurs = NP.concatenate((triang_sup, triang_inf))
-            return valeurs, lignes, colonnes, dim
-        else:
-            valeur = NP.zeros([dim, dim], dtype=dtype)
+
+            # diag is where "row == col"
+            helper = rows - cols
+            diag_indices = NP.where(helper == 0)[0]
+
+            # transpose indices in 'inf' part and remove diagonal terms
+            cols_inf = NP.delete(rows, diag_indices)
+            rows_inf = NP.delete(cols, diag_indices)
+            triang_inf = NP.delete(triang_inf, diag_indices)
+
+            # join 'sup' and 'inf' parts
+            rows = NP.concatenate((rows, rows_inf))
+            cols = NP.concatenate((cols, cols_inf))
+            data = NP.concatenate((triang_sup, triang_inf))
+
+            if epsilon is None:
+                epsilon = abs(data).mean() * 1e-8
+            nulls = NP.where(abs(data) < epsilon)
+            rows = NP.delete(rows, nulls)
+            cols = NP.delete(cols, nulls)
+            data = NP.delete(data, nulls)
+            return data, rows, cols, dim
+        else :
+            data = NP.zeros([dim, dim], dtype=dtype)
             jcol = 1
-            for kterm in xrange(1, nnz + 1):
-                ilig = smhc[kterm - 1]
-                if smdi[jcol - 1] < kterm:
+            for kterm in xrange(1,nnz+1):
+                ilig = smhc[kterm-1]
+                if smdi[jcol-1] < kterm:
                     jcol += 1
-                valeur[jcol - 1, ilig - 1] = triang_inf[kterm - 1]
-                valeur[ilig - 1, jcol - 1] = triang_sup[kterm - 1]
-            return valeur
+                data[jcol-1, ilig-1] = triang_inf[kterm-1]
+                data[ilig-1, jcol-1] = triang_sup[kterm-1]
+            return data
+
+class ExtendedAssemblyMatrixDisplacementComplex(injector(AssemblyMatrixDisplacementComplex),
+                                   AssemblyMatrixDisplacementComplex):
+    cata_sdj = "SD.sd_matr_asse.sd_matr_asse"
+
+    def EXTR_MATR(self, sparse=False, epsilon=None) :
+        """Returns the matrix values as `numpy.array`.
+
+        Arguments:
+            sparse (bool): By default, the returned matrix is dense. If *True*
+                the returned matrix is sparse.
+            epsilon (float): Terms less than this value is considered null.
+                By default, it is 10^-8 * the mean of the absolute values.
+                Only used if *sparse=True*.
+
+        Returns:
+            misc: A single `numpy.array` of the dense matrix if *sparse=False*.
+            Or if *sparse=True* a tuple `(data, rows, cols, dim)`. `data`
+            contains the values, `rows` the rows indices, `cols` the columns
+            indices and `dim` the number of terms.
+        """
+        import numpy as NP
+        from SD.sd_stoc_morse import sd_stoc_morse
+        if not self.accessible():
+            raise AsException("Erreur dans matr_asse.EXTR_MATR en PAR_LOT='OUI'")
+        refa = NP.array(self.sdj.REFA.get())
+        ma = refa[0]
+        nu = refa[1]
+        smos = sd_stoc_morse(nu[:14]+'.SMOS')
+        valm = self.sdj.VALM.get()
+        smhc = smos.SMHC.get()
+        smdi = smos.SMDI.get()
+        sym = refa[8].strip() == "MS"
+        dim = len(smdi)
+        nnz = len(smhc)
+        triang_sup = NP.array(valm[1])
+        if sym:
+            triang_inf = triang_sup
+        else:
+            triang_inf = NP.array(valm[2])
+        if type(valm[1][0]) == complex:
+            dtype = complex
+        else :
+            dtype = float
+
+        if sparse :
+            rows = NP.array(smhc) - 1
+            diag = NP.array(smdi) - 1
+            class SparseMatrixIterator:
+                """classe d'itération pour la liste de la colonne"""
+                def __init__(self):
+                    self.jcol = 0
+                    self.kterm = 0
+
+                def __iter__(self):
+                    return self
+
+                def next(self):
+                    if self.kterm == 0:
+                        self.kterm += 1
+                        return self.jcol
+                    if diag[self.jcol] < self.kterm:
+                        self.jcol += 1
+                    self.kterm += 1
+                    return self.jcol
+
+            col_iter = SparseMatrixIterator()
+            # generate the columns indices
+            cols = NP.fromiter(col_iter, count=nnz, dtype=int)
+
+            # diag is where "row == col"
+            helper = rows - cols
+            diag_indices = NP.where(helper == 0)[0]
+
+            # transpose indices in 'inf' part and remove diagonal terms
+            cols_inf = NP.delete(rows, diag_indices)
+            rows_inf = NP.delete(cols, diag_indices)
+            triang_inf = NP.delete(triang_inf, diag_indices)
+
+            # join 'sup' and 'inf' parts
+            rows = NP.concatenate((rows, rows_inf))
+            cols = NP.concatenate((cols, cols_inf))
+            data = NP.concatenate((triang_sup, triang_inf))
+
+            if epsilon is None:
+                epsilon = abs(data).mean() * 1e-8
+            nulls = NP.where(abs(data) < epsilon)
+            rows = NP.delete(rows, nulls)
+            cols = NP.delete(cols, nulls)
+            data = NP.delete(data, nulls)
+            return data, rows, cols, dim
+        else :
+            data = NP.zeros([dim, dim], dtype=dtype)
+            jcol = 1
+            for kterm in xrange(1,nnz+1):
+                ilig = smhc[kterm-1]
+                if smdi[jcol-1] < kterm:
+                    jcol += 1
+                data[jcol-1, ilig-1] = triang_inf[kterm-1]
+                data[ilig-1, jcol-1] = triang_sup[kterm-1]
+            return data

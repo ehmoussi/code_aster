@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe MaterialBehaviour
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -436,6 +436,86 @@ class GeneralMaterialBehaviourInstance {
      */
     int getNumberOfListOfFunctionProperties() const {
         return _mapOfVectorFunctionMaterialProperties.size();
+    };
+
+    double getDoubleValue( std::string nameOfProperty )
+    {
+        auto curIter = _mapOfDoubleMaterialProperties.find( nameOfProperty );
+        if ( curIter != _mapOfDoubleMaterialProperties.end() )
+            return ( *curIter ).second.getValue();
+        throw std::runtime_error( nameOfProperty + " is not a double value" );
+    };
+
+    DoubleComplex getComplexValue( std::string nameOfProperty )
+    {
+        auto curIter = _mapOfComplexMaterialProperties.find( nameOfProperty );
+        if ( curIter != _mapOfComplexMaterialProperties.end() )
+            return ( *curIter ).second.getValue();
+        throw std::runtime_error( nameOfProperty + " is not a complex value" );
+    };
+
+    std::string getStringValue( std::string nameOfProperty )
+    {
+        auto curIter = _mapOfStringMaterialProperties.find( nameOfProperty );
+        if ( curIter != _mapOfStringMaterialProperties.end() )
+            return ( *curIter ).second.getValue();
+        throw std::runtime_error( nameOfProperty + " is not a string value" );
+    };
+
+    GenericFunctionPtr getGenericFunctionValue( std::string nameOfProperty )
+    {
+        auto curIter = _mapOfFunctionMaterialProperties.find( nameOfProperty );
+        if ( curIter != _mapOfFunctionMaterialProperties.end() )
+            return ( *curIter ).second.getValue();
+        throw std::runtime_error( nameOfProperty + " is not a function value" );
+    };
+
+    TablePtr getTableValue( std::string nameOfProperty )
+    {
+        auto curIter = _mapOfTableMaterialProperties.find( nameOfProperty );
+        if ( curIter != _mapOfTableMaterialProperties.end() )
+            return ( *curIter ).second.getValue();
+        throw std::runtime_error( nameOfProperty + " is not a table value" );
+    };
+
+    double hasDoubleValue( std::string nameOfProperty )
+    {
+        auto curIter = _mapOfDoubleMaterialProperties.find( nameOfProperty );
+        if ( curIter == _mapOfDoubleMaterialProperties.end() )
+            return false;
+        return true;
+    };
+
+    bool hasComplexValue( std::string nameOfProperty )
+    {
+        auto curIter = _mapOfComplexMaterialProperties.find( nameOfProperty );
+        if ( curIter == _mapOfComplexMaterialProperties.end() )
+            return false;
+        return true;
+    };
+
+    bool hasStringValue( std::string nameOfProperty )
+    {
+        auto curIter = _mapOfStringMaterialProperties.find( nameOfProperty );
+        if ( curIter == _mapOfStringMaterialProperties.end() )
+            return false;
+        return true;
+    };
+
+    bool hasGenericFunctionValue( std::string nameOfProperty )
+    {
+        auto curIter = _mapOfFunctionMaterialProperties.find( nameOfProperty );
+        if ( curIter == _mapOfFunctionMaterialProperties.end() )
+            return false;
+        return true;
+    };
+
+    bool hasTableValue( std::string nameOfProperty )
+    {
+        auto curIter = _mapOfTableMaterialProperties.find( nameOfProperty );
+        if ( curIter == _mapOfTableMaterialProperties.end() )
+            return false;
+        return true;
     };
 
     /**
