@@ -3,7 +3,7 @@
  * @brief Interface python de PCFieldOnMesh
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -37,5 +37,6 @@ void exportPCFieldOnMeshToPython() {
               make_constructor(&initFactoryPtr< PCFieldOnMeshDoubleInstance, BaseMeshPtr >))
         .def( "__init__",
               make_constructor(
-                  &initFactoryPtr< PCFieldOnMeshDoubleInstance, std::string, BaseMeshPtr >));
+                  &initFactoryPtr< PCFieldOnMeshDoubleInstance, std::string, BaseMeshPtr >))
+        .def( "getMesh", &PCFieldOnMeshDoubleInstance::getMesh );
 };

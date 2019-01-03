@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,182 +17,245 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-POURSUITE(CODE='OUI',)
+POURSUITE(CODE='OUI')
 
-#
-#  ACCELEROGRAMMES NORMES A 0.1G
-#
-#
-#
+SAX1 = EXTR_TABLE(
+    TABLE     = tabmis,
+    TYPE_RESU = 'NAPPE_SDASTER',
+    NOM_PARA  = 'FONC_X',
+    FILTRE = (_F(NOM_PARA = 'GROUP_NO',
+                 VALE_K   = 'CENT_RAD'),
+              _F(NOM_PARA = 'NOM_CHAM',
+                 VALE_K   = 'ACCE'),
+              _F(NOM_PARA = 'NOM_PARA',
+                 VALE_K   = 'SPEC_OSCI'),),)
+
+SAY1 = EXTR_TABLE(
+    TABLE     = tabmis,
+    TYPE_RESU = 'NAPPE_SDASTER',
+    NOM_PARA  = 'FONC_Y',
+    FILTRE = (_F(NOM_PARA = 'GROUP_NO',
+                 VALE_K   = 'CENT_RAD'),
+              _F(NOM_PARA = 'NOM_CHAM',
+                 VALE_K   = 'ACCE'),
+              _F(NOM_PARA = 'NOM_PARA',
+                 VALE_K   = 'SPEC_OSCI'),),)
+
+SAX2 = EXTR_TABLE(
+    TABLE     = tabmis,
+    TYPE_RESU = 'NAPPE_SDASTER',
+    NOM_PARA  = 'FONC_X',
+    FILTRE = (_F(NOM_PARA = 'GROUP_NO',
+                 VALE_K   = 'SOMMET'),
+              _F(NOM_PARA = 'NOM_CHAM',
+                 VALE_K   = 'ACCE'),
+              _F(NOM_PARA = 'NOM_PARA',
+                 VALE_K   = 'SPEC_OSCI'),),)
+
+SAY2 = EXTR_TABLE(
+    TABLE     = tabmis,
+    TYPE_RESU = 'NAPPE_SDASTER',
+    NOM_PARA  = 'FONC_Y',
+    FILTRE = (_F(NOM_PARA = 'GROUP_NO',
+                 VALE_K   = 'SOMMET'),
+              _F(NOM_PARA = 'NOM_CHAM',
+                 VALE_K   = 'ACCE'),
+              _F(NOM_PARA = 'NOM_PARA',
+                 VALE_K   = 'SPEC_OSCI'),),)
 
 
-ACCELERX=CALC_FONCTION(COMB=_F(FONCTION=LBNS,
-                               COEF=1.5,),);
+TEST_FONCTION(VALEUR=(_F(VALE_CALC=0.69592632310870,
+                         VALE_REFE=0.70640000000000003,
+                         VALE_PARA=(0.050000000000000003, 1.6499999999999999),
+                         REFERENCE='NON_DEFINI',
+                         PRECISION=1.6E-2,
+                         NOM_PARA=('AMOR', 'FREQ'),
+                         FONCTION=SAX1,
+                         ),
+                      _F(VALE_CALC=0.59618245111477 ,
+                         VALE_REFE=0.60260000000000002,
+                         VALE_PARA=(0.050000000000000003, 3.23),
+                         REFERENCE='NON_DEFINI',
+                         PRECISION=1.2E-2,
+                         NOM_PARA=('AMOR', 'FREQ'),
+                         FONCTION=SAX1,
+                         ),
+                      _F(VALE_CALC=0.44257132042327,
+                         VALE_REFE=0.44740000000000002,
+                         VALE_PARA=(0.050000000000000003, 5.5599999999999996),
+                         REFERENCE='NON_DEFINI',
+                         PRECISION=1.2E-2,
+                         NOM_PARA=('AMOR', 'FREQ'),
+                         FONCTION=SAX1,
+                         ),
+                      _F(VALE_CALC=0.85312599388396,
+                         VALE_REFE=0.78800000000000003,
+                         VALE_PARA=(0.050000000000000003, 1.5900000000000001),
+                         REFERENCE='NON_DEFINI',
+                         PRECISION=1.E-1,
+                         NOM_PARA=('AMOR', 'FREQ'),
+                         FONCTION=SAY1,
+                         ),
+                      _F(VALE_CALC=0.69926863755692,
+                         VALE_REFE=0.68930000000000002,
+                         VALE_PARA=(0.050000000000000003, 3.0),
+                         REFERENCE='NON_DEFINI',
+                         PRECISION=1.E-1,
+                         NOM_PARA=('AMOR', 'FREQ'),
+                         FONCTION=SAY1,
+                         ),
+                      _F(VALE_CALC=0.54860399359373,
+                         VALE_REFE=0.54790000000000005,
+                         VALE_PARA=(0.050000000000000003, 4.5800000000000001),
+                         REFERENCE='NON_DEFINI',
+                         PRECISION=2.E-3,
+                         NOM_PARA=('AMOR', 'FREQ'),
+                         FONCTION=SAY1,
+                         ),
+                      _F(VALE_CALC=2.626469593876,
+                         VALE_REFE=2.6859999999999999,
+                         VALE_PARA=(0.050000000000000003, 1.74),
+                         REFERENCE='NON_DEFINI',
+                         PRECISION=2.4E-2,
+                         NOM_PARA=('AMOR', 'FREQ'),
+                         FONCTION=SAX2,
+                         ),
+                      _F(VALE_CALC=1.646125355712,
+                         VALE_REFE=1.6960999999999999,
+                         VALE_PARA=(0.050000000000000003, 2.4399999999999999),
+                         REFERENCE='NON_DEFINI',
+                         PRECISION=3.E-2,
+                         NOM_PARA=('AMOR', 'FREQ'),
+                         FONCTION=SAX2,
+                         ),
+                      _F(VALE_CALC=4.235456990133,
+                         VALE_PARA=(0.050000000000000003, 1.6499999999999999),
+                         NOM_PARA=('AMOR', 'FREQ'),
+                         FONCTION=SAY2,
+                         ),
+                      ),
+              )
 
-ACCELERY=CALC_FONCTION(COMB=_F(FONCTION=LBEW,
-                               COEF=1.5,),);
-#
-#
-# PRE-TRAITEMENT DE MISS3D:
-#--------------------------
-# MAILLAGE ET IMPEDANCES D INTERFACE
-#
-#
-
-ACCE1=CALC_FONCTION(COMB=_F(FONCTION=LBNS,
-                               COEF=1.5,),)
-
-ACCE2=CALC_FONCTION(COMB=_F(FONCTION=LBEW,
-                               COEF=1.5,),)
-
-ACCE3=CALC_FONCTION(COMB=_F(FONCTION=LBEW,
-                               COEF=1.5,),)
-
-TBSOL = DEFI_SOL_MISS(
-   TITRE="SOL STRATIFIE",
-   MATERIAU=(
-      _F(E=2.67e8,   NU=0.49, RHO=2650., AMOR_HYST=0.05),
-      _F(E=3.35e8,   NU=0.49, RHO=2650., AMOR_HYST=0.05),
-      _F(E=9.21e8,   NU=0.47, RHO=2710., AMOR_HYST=0.05),
-      _F(E=1.39e9,   NU=0.47, RHO=2710., AMOR_HYST=0.05),
-      _F(E=1.96e9,   NU=0.47, RHO=2710., AMOR_HYST=0.05),
-      _F(E=3.02e9,   NU=0.45, RHO=2710., AMOR_HYST=0.05),
-      _F(E=5.95e9,   NU=0.45, RHO=2710., AMOR_HYST=0.05),
-      _F(E=4.23e10,  NU=0.25, RHO=2710., AMOR_HYST=0.02),
-   ),
-   COUCHE=(
-      _F(EPAIS=7.6, NUME_MATE=1, RECEPTEUR="OUI", SOURCE="OUI"),
-      _F(EPAIS=7.6, NUME_MATE=2,),
-      _F(EPAIS=33., NUME_MATE=3,),
-      _F(EPAIS=34., NUME_MATE=4,),
-      _F(EPAIS=34., NUME_MATE=5,),
-      _F(EPAIS=5.5, NUME_MATE=6,),
-      _F(EPAIS=5.5, NUME_MATE=7,),
-      _F(SUBSTRATUM="OUI", NUME_MATE=8,),
-   ),
-   INFO=2,
+IMPR_FONCTION(
+    FORMAT = 'XMGRACE',
+    COURBE = (_F(FONCTION = SAX1, MARQUEUR=0, LEGENDE='CENT_RAD'),
+              _F(FONCTION = SAX2, MARQUEUR=0, LEGENDE='SOMMET'),),
 )
 
-L_FREQ = DEFI_LIST_REEL(DEBUT=0.2,  
-                        INTERVALLE=(_F(JUSQU_A=3.0, PAS=0.05,),
-                        _F(JUSQU_A=3.6 , PAS=0.075,),
-                        _F(JUSQU_A=5.0 , PAS=0.1,),
-                        _F(JUSQU_A=8.0 , PAS=0.125,),
-                        _F(JUSQU_A=15.0, PAS=0.25,),
-                        _F(JUSQU_A=18.0, PAS=0.5,),
-                        _F(JUSQU_A=22.0, PAS=1.,),
-                        _F(JUSQU_A=35.5, PAS=1.5,),
-                      ),);
+
+# tests sur table avec signaux en frequence
+
+SAX1FR = EXTR_TABLE(
+    TABLE     = tabmisfr,
+    TYPE_RESU = 'NAPPE_SDASTER',
+    NOM_PARA  = 'FONC_X',
+    FILTRE = (_F(NOM_PARA = 'GROUP_NO',
+                 VALE_K   = 'CENT_RAD'),
+              _F(NOM_PARA = 'NOM_CHAM',
+                 VALE_K   = 'ACCE'),
+              _F(NOM_PARA = 'NOM_PARA',
+                 VALE_K   = 'SPEC_OSCI'),),)
+
+SAY1FR = EXTR_TABLE(
+    TABLE     = tabmisfr,
+    TYPE_RESU = 'NAPPE_SDASTER',
+    NOM_PARA  = 'FONC_Y',
+    FILTRE = (_F(NOM_PARA = 'GROUP_NO',
+                 VALE_K   = 'CENT_RAD'),
+              _F(NOM_PARA = 'NOM_CHAM',
+                 VALE_K   = 'ACCE'),
+              _F(NOM_PARA = 'NOM_PARA',
+                 VALE_K   = 'SPEC_OSCI'),),)
+
+SAX2FR = EXTR_TABLE(
+    TABLE     = tabmisfr,
+    TYPE_RESU = 'NAPPE_SDASTER',
+    NOM_PARA  = 'FONC_X',
+    FILTRE = (_F(NOM_PARA = 'GROUP_NO',
+                 VALE_K   = 'SOMMET'),
+              _F(NOM_PARA = 'NOM_CHAM',
+                 VALE_K   = 'ACCE'),
+              _F(NOM_PARA = 'NOM_PARA',
+                 VALE_K   = 'SPEC_OSCI'),),)
+
+SAY2FR = EXTR_TABLE(
+    TABLE     = tabmisfr,
+    TYPE_RESU = 'NAPPE_SDASTER',
+    NOM_PARA  = 'FONC_Y',
+    FILTRE = (_F(NOM_PARA = 'GROUP_NO',
+                 VALE_K   = 'SOMMET'),
+              _F(NOM_PARA = 'NOM_CHAM',
+                 VALE_K   = 'ACCE'),
+              _F(NOM_PARA = 'NOM_PARA',
+                 VALE_K   = 'SPEC_OSCI'),),)
 
 
-tabmis = CALC_MISS(
-    TYPE_RESU = 'TABLE',
-    VERSION='V6.6',
+TEST_FONCTION(VALEUR=(_F(VALE_CALC=0.69592632310870,
+                         VALE_REFE=0.69592632310870,
+                         VALE_PARA=(0.050000000000000003, 1.6499999999999999),
+                         REFERENCE='AUTRE_ASTER',
+                         NOM_PARA=('AMOR', 'FREQ'),
+                         FONCTION=SAX1FR,
+                         ),
+                      _F(VALE_CALC=0.59618245111477 ,
+                         VALE_REFE=0.59618245111477 ,
+                         VALE_PARA=(0.050000000000000003, 3.23),
+                         REFERENCE='AUTRE_ASTER',
+                         NOM_PARA=('AMOR', 'FREQ'),
+                         FONCTION=SAX1FR,
+                         ),
+                      _F(VALE_CALC=0.44257132042327,
+                         VALE_REFE=0.44257132042327,
+                         VALE_PARA=(0.050000000000000003, 5.5599999999999996),
+                         REFERENCE='AUTRE_ASTER',
+                         NOM_PARA=('AMOR', 'FREQ'),
+                         FONCTION=SAX1FR,
+                         ),
+                      _F(VALE_CALC=0.85312599388396,
+                         VALE_REFE=0.85312599388396,
+                         VALE_PARA=(0.050000000000000003, 1.5900000000000001),
+                         REFERENCE='AUTRE_ASTER',
+                         NOM_PARA=('AMOR', 'FREQ'),
+                         FONCTION=SAY1FR,
+                         ),
+                      _F(VALE_CALC=0.69926863755692,
+                         VALE_REFE=0.69926863755692,
+                         VALE_PARA=(0.050000000000000003, 3.0),
+                         REFERENCE='AUTRE_ASTER',
+                         NOM_PARA=('AMOR', 'FREQ'),
+                         FONCTION=SAY1FR,
+                         ),
+                      _F(VALE_CALC=0.54860399359373,
+                         VALE_REFE=0.54860399359373,
+                         VALE_PARA=(0.050000000000000003, 4.5800000000000001),
+                         REFERENCE='AUTRE_ASTER',
+                         NOM_PARA=('AMOR', 'FREQ'),
+                         FONCTION=SAY1FR,
+                         ),
+                      _F(VALE_CALC=2.626469593876,
+                         VALE_REFE=2.626469593876,
+                         VALE_PARA=(0.050000000000000003, 1.74),
+                         REFERENCE='AUTRE_ASTER',
+                         NOM_PARA=('AMOR', 'FREQ'),
+                         FONCTION=SAX2FR,
+                         ),
+                      _F(VALE_CALC=1.646125355712,
+                         VALE_REFE=1.646125355712,
+                         VALE_PARA=(0.050000000000000003, 2.4399999999999999),
+                         REFERENCE='AUTRE_ASTER',
+                         NOM_PARA=('AMOR', 'FREQ'),
+                         FONCTION=SAX2FR,
+                         ),
+                      _F(VALE_CALC=4.235456990133,
+                         VALE_REFE=4.235456990133,
+                         VALE_PARA=(0.050000000000000003, 1.6499999999999999),
+                         NOM_PARA=('AMOR', 'FREQ'),
+                         FONCTION=SAY2FR,
+                         REFERENCE='AUTRE_ASTER',
+                         ),
+                      ),
+              )
 
-    TABLE_SOL = TBSOL,
-    BASE_MODALE = BAMO,
-    MATR_RIGI = MATRRIGI,
-    MATR_MASS = MATRMASS,
-    AMOR_REDUIT = (0.07,),
-    GROUP_MA_INTERF = 'RADIER',
 
-    UNITE_IMPR_ASTER=26,
-    PARAMETRE=_F(
-        FREQ_MIN = 0.1,
-        FREQ_MAX = 20.,
-        FREQ_PAS = 0.2,
-        TYPE='BINAIRE',
-        Z0= -5.80,
-        SURF='OUI',
-        ALGO = 'DEPL',
-        OFFSET_MAX=40,
-        OFFSET_NB=400,
-        SPEC_MAX=0.075,
-        SPEC_NB=16384,
-    ),
-
-    MODELE         = STICKMOD,
-    GROUP_NO       = ('CENT_RAD', 'SOMMET'),
-    ACCE_X         = ACCE1, # ACCE3, ACCE2,
-    ACCE_Y         = ACCE2, # ACCE1, ACCE3,
-    ACCE_Z         = ACCE3, # ACCE2, ACCE1,
-    INST_FIN       = 18.,   #  20.,   20.,
-    PAS_INST       = 0.02,  #  0.1,   0.1,
-
-    NORME          = 9.81,
-    AMOR_SPEC_OSCI = (0.02, 0.05, 0.07),
-    LIST_FREQ_SPEC_OSCI     = L_FREQ ,
-
-    INFO        = 2,
-)
-
-
-
-# même calcul avec signaux d'entrée en fréquence
-
-
-tmax = 18. # INST_FIN
-pasdt = 0.02 # PAS_INST
-
-# interpolation
-
-linst = DEFI_LIST_REEL(DEBUT=0.,
-                       INTERVALLE=_F(JUSQU_A=tmax - pasdt,
-                                     PAS=pasdt),)
-
-ACXCO = CALC_FONCTION(COMB=_F(FONCTION=ACCE1, COEF=1.0,),
-                      LIST_PARA=linst)
-
-ACYCO = CALC_FONCTION(COMB=_F(FONCTION=ACCE2, COEF=1.0,),
-                      LIST_PARA=linst)
-
-ACZCO = CALC_FONCTION(COMB=_F(FONCTION=ACCE3, COEF=1.0,),
-                     LIST_PARA=linst)
-
-
-ACCE1FR = CALC_FONCTION(FFT=_F(FONCTION=ACXCO, METHODE='COMPLET',),)
-
-ACCE2FR = CALC_FONCTION(FFT=_F(FONCTION=ACYCO, METHODE='COMPLET',),)
-
-ACCE3FR = CALC_FONCTION(FFT=_F(FONCTION=ACZCO, METHODE='COMPLET',),)
-
-tabmisfr = CALC_MISS(
-    TYPE_RESU = 'TABLE',
-    VERSION='V6.6',
-
-    TABLE_SOL = TBSOL,
-    BASE_MODALE = BAMO,
-    MATR_RIGI = MATRRIGI,
-    MATR_MASS = MATRMASS,
-    AMOR_REDUIT = (0.07,),
-    GROUP_MA_INTERF = 'RADIER',
-
-    UNITE_IMPR_ASTER=26,
-    PARAMETRE=_F(
-        FREQ_MIN = 0.1,
-        FREQ_MAX = 20.,
-        FREQ_PAS = 0.2,
-        TYPE='BINAIRE',
-        Z0= -5.80,
-        SURF='OUI',
-        ALGO = 'DEPL',
-        OFFSET_MAX=40,
-        OFFSET_NB=400,
-        SPEC_MAX=0.075,
-        SPEC_NB=16384,
-    ),
-
-    MODELE         = STICKMOD,
-    GROUP_NO       = ('CENT_RAD', 'SOMMET'),
-    ACCE_X         = ACCE1FR,
-    ACCE_Y         = ACCE2FR,
-    ACCE_Z         = ACCE3FR,
-
-    NORME          = 9.81,
-    AMOR_SPEC_OSCI = (0.02, 0.05, 0.07),
-    LIST_FREQ_SPEC_OSCI     = L_FREQ ,
-
-    INFO        = 2,
-)
 
 FIN()

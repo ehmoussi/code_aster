@@ -6,6 +6,5 @@ P mpi_nbnoeud 1
 P testlist verification sequential
 
 F comm ssnv113a.comm D 1
-F comm ssnv113a_mater.comm D 1
-F comm ssnv113a.com2 D 1
+F nom ssnv113a_mater.py D 0
 F mail ssnv113a.mail D 20

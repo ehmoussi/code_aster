@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -80,5 +80,120 @@ CAREG=AFFE_CARA_ELEM(MODELE=MO,
                                 CARA='VECT_Y',
                                 VALE=(0.,0.,1.),),),
                         );
+
+from ssnl131b_mater import *
+
+
+CHMATG=AFFE_MATERIAU(MAILLAGE=MA,
+                     AFFE=_F(  GROUP_MA = ('LI1'), MATER = MAT_G),
+                     );
+
+RESG=STAT_NON_LINE(MODELE=MO,
+                   CHAM_MATER=CHMATG,
+                   CARA_ELEM=CAREG,
+                       EXCIT=( _F(CHARGE = CHART,
+                                  FONC_MULT = FONCT),
+                               _F(CHARGE = BLOC,),
+                              ),
+                   COMPORTEMENT=(_F(RELATION = 'ELAS',
+                                 TOUT = 'OUI'  ),
+                              _F(RELATION = 'DIS_GRICRA',
+                                 GROUP_MA = ('LI1'),  ),
+                                 ),
+                   INCREMENT=_F(LIST_INST = LINST,
+                                ),
+                   NEWTON=_F(MATRICE = 'TANGENTE',
+                             REAC_ITER=1,
+                              ),
+                   CONVERGENCE=_F(ITER_GLOB_MAXI=100,)
+              );
+
+RESG=CALC_CHAMP(reuse =RESG,
+            RESULTAT=RESG,
+            FORCE='FORC_NODA',
+
+            GROUP_MA=('LI1'),);
+
+TABDEP=POST_RELEVE_T(
+   ACTION=_F(
+      INTITULE='DEPLACEMENTS DE N2',
+      NOEUD='N2',
+      RESULTAT=RESG,
+      NOM_CHAM='DEPL',
+      NOM_CMP=('DRX'),
+      OPERATION='EXTRACTION',),);
+
+DEPN2=RECU_FONCTION(TABLE=TABDEP,
+                    PARA_X='INST',
+                    PARA_Y='DRX',
+                    PROL_DROITE='CONSTANT',
+                    PROL_GAUCHE='CONSTANT',);
+
+TABFOR=POST_RELEVE_T(
+   ACTION=_F(
+      INTITULE='FORCE EN N2',
+      NOEUD='N2',
+      RESULTAT=RESG,
+      NOM_CHAM='FORC_NODA',
+      NOM_CMP=('DRX'),
+      OPERATION='EXTRACTION',),);
+
+FORN2=RECU_FONCTION(TABLE=TABFOR,
+                    PARA_X='INST',
+                    PARA_Y='DRX',
+                    PROL_DROITE='CONSTANT',
+                    PROL_GAUCHE='CONSTANT',);
+
+
+TEST_RESU(RESU=(_F(INST=0.10000000000000001,
+                   RESULTAT=RESG,
+                   NOM_CHAM='DEPL',
+                   NOEUD='N2',
+                   NOM_CMP='DRX',
+                   VALE_CALC=0.001,
+                   TOLE_MACHINE=1.E-3,
+                   ),
+                _F(INST=0.10000000000000001,
+                   RESULTAT=RESG,
+                   NOM_CHAM='FORC_NODA',
+                   NOEUD='N2',
+                   NOM_CMP='DRX',
+                   VALE_CALC=1.0,
+                   TOLE_MACHINE=1.E-3,
+                   ),
+                _F(INST=0.29999999999999999,
+                   RESULTAT=RESG,
+                   NOM_CHAM='DEPL',
+                   NOEUD='N2',
+                   NOM_CMP='DRX',
+                   VALE_CALC=0.003,
+                   TOLE_MACHINE=1.E-3,
+                   ),
+                _F(INST=0.29999999999999999,
+                   RESULTAT=RESG,
+                   NOM_CHAM='FORC_NODA',
+                   NOEUD='N2',
+                   NOM_CMP='DRX',
+                   VALE_CALC=1.500000075,
+                   TOLE_MACHINE=1.E-3,
+                   ),
+                _F(INST=1.0,
+                   RESULTAT=RESG,
+                   NOM_CHAM='DEPL',
+                   NOEUD='N2',
+                   NOM_CMP='DRX',
+                   VALE_CALC=0.01,
+                   TOLE_MACHINE=1.E-3,
+                   ),
+                _F(INST=1.0,
+                   RESULTAT=RESG,
+                   NOM_CHAM='FORC_NODA',
+                   NOEUD='N2',
+                   NOM_CMP='DRX',
+                   VALE_CALC=1.6930006,
+                   TOLE_MACHINE=1.E-3,
+                   ),
+                ),
+          )
 
 FIN()

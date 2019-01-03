@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -32,6 +32,9 @@ from .datastructure_ext import DataStructure
 # extend DataStructures using metaclasses
 from .acousticsload_ext import AcousticsLoad
 from .assemblymatrix_ext import AssemblyMatrixDisplacementDouble
+from .assemblymatrix_ext import AssemblyMatrixDisplacementComplex
+from .dofnumbering_ext import DOFNumbering
+from .dynamicmacroelement_ext import DynamicMacroElement
 from .dynamicresults_ext import TransientGeneralizedResultsContainer
 from .elementarycharacteristics_ext import ElementaryCharacteristics
 from .elementarymatrix_ext import ElementaryMatrixDisplacementDouble
@@ -46,15 +49,20 @@ from .generalizedassemblymatrix_ext import GeneralizedAssemblyMatrixComplex
 from .generalizedassemblymatrix_ext import GeneralizedAssemblyMatrixDouble
 from .generalizedassemblyvector_ext import GeneralizedAssemblyVectorComplex
 from .generalizedassemblyvector_ext import GeneralizedAssemblyVectorDouble
+from .generalizedmodel_ext import GeneralizedModel
+from .listofintegers_ext import ListOfIntegers
 from .listoffloats import ListOfFloats
+from .material_ext import Material
 from .materialonmesh_ext import MaterialOnMesh
 from .mechanicalload_ext import GenericMechanicalLoad
 from .mesh_ext import Mesh
 from .meshcoordinatesfield_ext import MeshCoordinatesField
 from .model_ext import Model
+from .pcfieldonmesh_ext import PCFieldOnMeshDouble
 from .resultscontainer_ext import ResultsContainer
 from .surface_ext import Surface
 from .table_ext import Table
+from .thermalload_ext import ThermalLoad
 from .timestepmanager_ext import TimeStepManager
 from .xfemcrack_ext import XfemCrack
 

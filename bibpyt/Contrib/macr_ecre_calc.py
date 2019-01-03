@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -20,6 +20,8 @@
 from code_aster.Cata.Syntax import *
 from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
+from code_aster.Commands.ExecuteCommand import ExecuteMacro
+from code_aster import Table
 
 
 def macr_ecre_calc_prod(self,TABLE,DEBIT,**args):
@@ -30,11 +32,11 @@ def macr_ecre_calc_prod(self,TABLE,DEBIT,**args):
   self.type_sdprod(DEBIT,table_sdaster)
   return None
 
-MACR_ECRE_CALC=MACRO(nom="MACR_ECRE_CALC",
-                     op=OPS('Macro.macr_ecre_calc_ops.macr_ecre_calc_ops'),
-                     sd_prod=macr_ecre_calc_prod,
-                     reentrant='n',
-                     fr=tr("Procedure de couplage avec Ecrevisse"),
+MACR_ECRE_CALC_CATA=MACRO(nom="MACR_ECRE_CALC",
+                          op=OPS('Macro.macr_ecre_calc_ops.macr_ecre_calc_ops'),
+                          sd_prod=macr_ecre_calc_prod,
+                          reentrant='n',
+                          fr=tr("Procedure de couplage avec Ecrevisse"),
 
                      regles = (UN_PARMI('LOGICIEL','VERSION'),),
 
@@ -187,3 +189,9 @@ MACR_ECRE_CALC=MACRO(nom="MACR_ECRE_CALC",
          INFO               =SIMP(statut='f',typ='I',defaut= 1,into=(1,2) ),
 
 )  ;
+
+class MacrEcreCalc(ExecuteMacro):
+    command_name = "MACR_ECRE_CALC"
+    command_cata = MACR_ECRE_CALC_CATA
+
+MACR_ECRE_CALC = MacrEcreCalc.run

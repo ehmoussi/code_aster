@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe MeshEntities
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -86,12 +86,15 @@ public:
      * @brief Get the names inside the entity
      * @return vector of strings
      */
-    const VectorString& getNames()
+    VectorString getNames()
     {
         return _names;
     };
 
-    virtual EntityType getType() const = 0;
+    EntityType getType() const
+    {
+        return _type;
+    };
 };
 
 /**
@@ -115,11 +118,6 @@ public:
      */
     GroupOfNodes( const VectorString& names): VirtualMeshEntity( names, GroupOfNodesType )
     {};
-
-    EntityType getType() const
-    {
-        return _type;
-    };
 };
 
 /**
@@ -143,11 +141,6 @@ public:
      */
     GroupOfElements( const VectorString& names ): VirtualMeshEntity( names, GroupOfElementsType )
     {};
-
-    EntityType getType() const
-    {
-        return _type;
-    };
 };
 
 /**
@@ -165,11 +158,6 @@ public:
      */
     AllMeshEntities(): VirtualMeshEntity( "OUI", AllMeshEntitiesType )
     {};
-
-    EntityType getType() const
-    {
-        return _type;
-    };
 };
 
 /**
@@ -193,11 +181,6 @@ public:
      */
     Element( const VectorString& names ): VirtualMeshEntity( names, ElementType )
     {};
-
-    EntityType getType() const
-    {
-        return _type;
-    };
 };
 
 /**
@@ -221,11 +204,6 @@ public:
      */
     Node( const VectorString& names ): VirtualMeshEntity( names, NodeType )
     {};
-
-    EntityType getType() const
-    {
-        return _type;
-    };
 };
 
 typedef boost::shared_ptr< VirtualMeshEntity > MeshEntityPtr;
@@ -236,6 +214,9 @@ typedef std::vector< GroupOfNodesPtr > VectorOfGroupOfNodesPtr;
 
 typedef boost::shared_ptr< GroupOfElements > GroupOfElementsPtr;
 typedef std::vector< GroupOfElementsPtr > VectorOfGroupOfElementsPtr;
+
+typedef boost::shared_ptr< AllMeshEntities > AllMeshEntitiesPtr;
+typedef std::vector< AllMeshEntitiesPtr > VectorOfAllMeshEntitiesPtr;
 
 typedef boost::shared_ptr< Element > ElementPtr;
 typedef std::vector< ElementPtr > VectorOfElementPtr;

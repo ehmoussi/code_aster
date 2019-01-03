@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -20,6 +20,8 @@
 from code_aster.Cata.Syntax import *
 from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
+from code_aster.Commands.ExecuteCommand import ExecuteMacro
+from code_aster import GenericMechanicalLoad, ThermalLoad, Table
 
 
 def calc_ecrevisse_prod(self,CHARGE_MECA,CHARGE_THER1,CHARGE_THER2,TABLE,DEBIT,**args):
@@ -36,11 +38,11 @@ def calc_ecrevisse_prod(self,CHARGE_MECA,CHARGE_THER1,CHARGE_THER2,TABLE,DEBIT,*
 
 
 
-CALC_ECREVISSE=MACRO(nom="CALC_ECREVISSE",
-                     op=OPS('Macro.calc_ecrevisse_ops.calc_ecrevisse_ops'),
-                     sd_prod=calc_ecrevisse_prod,
-                     reentrant='n',
-                     regles   = (UN_PARMI('LOGICIEL','VERSION'),),
+CALC_ECREVISSE_CATA=MACRO(nom="CALC_ECREVISSE",
+                          op=OPS('Macro.calc_ecrevisse_ops.calc_ecrevisse_ops'),
+                          sd_prod=calc_ecrevisse_prod,
+                          reentrant='n',
+                          regles   = (UN_PARMI('LOGICIEL','VERSION'),),
 
 #      CONCEPTS SORTANTS : 2 CHARGEMENTS THERMIQUE + 1 MECANIQUE + 2 TABLES POUR LE POST-TRAITEMENT
 #      ********************************************
@@ -178,3 +180,9 @@ CALC_ECREVISSE=MACRO(nom="CALC_ECREVISSE",
          INFO               =SIMP(statut='f',typ='I',defaut= 1,into=(1,2) ),
 
 )  ;
+
+class CalcEcrevisse(ExecuteMacro):
+    command_name = "CALC_ECREVISSE"
+    command_cata = CALC_ECREVISSE_CATA
+
+CALC_ECREVISSE = CalcEcrevisse.run

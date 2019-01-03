@@ -3,7 +3,7 @@
  * @brief Interface python de ThermalLoad
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -35,5 +35,6 @@ void exportThermalLoadToPython() {
               make_constructor(&initFactoryPtr< ThermalLoadInstance, std::string, ModelPtr & >))
         .def( "addUnitaryThermalLoad", &ThermalLoadInstance::addUnitaryThermalLoad )
         .def( "build", &ThermalLoadInstance::build )
-        .def( "getFiniteElementDescriptor", &ThermalLoadInstance::getFiniteElementDescriptor );
+        .def( "getFiniteElementDescriptor", &ThermalLoadInstance::getFiniteElementDescriptor )
+        .def( "getModel", &ThermalLoadInstance::getModel );
 };

@@ -3,7 +3,7 @@
  * @brief Interface python de MaterialBehaviour
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -37,6 +37,18 @@ void exportMaterialBehaviourToPython() {
         .def( "getAsterName", &GeneralMaterialBehaviourInstance::getAsterName )
         .def( "hasTractionFunction", &GeneralMaterialBehaviourInstance::hasTractionFunction )
         .def( "hasEnthalpyFunction", &GeneralMaterialBehaviourInstance::hasEnthalpyFunction )
+        .def( "getComplexValue", &GeneralMaterialBehaviourInstance::getComplexValue )
+        .def( "getDoubleValue", &GeneralMaterialBehaviourInstance::getDoubleValue )
+        .def( "getStringValue", &GeneralMaterialBehaviourInstance::getStringValue )
+        .def( "getGenericFunctionValue",
+              &GeneralMaterialBehaviourInstance::getGenericFunctionValue )
+        .def( "getTableValue", &GeneralMaterialBehaviourInstance::getTableValue )
+        .def( "hasComplexValue", &GeneralMaterialBehaviourInstance::hasComplexValue )
+        .def( "hasDoubleValue", &GeneralMaterialBehaviourInstance::hasDoubleValue )
+        .def( "hasStringValue", &GeneralMaterialBehaviourInstance::hasStringValue )
+        .def( "hasGenericFunctionValue",
+              &GeneralMaterialBehaviourInstance::hasGenericFunctionValue )
+        .def( "hasTableValue", &GeneralMaterialBehaviourInstance::hasTableValue )
         .def( "setComplexValue", &GeneralMaterialBehaviourInstance::setComplexValue )
         .def( "setDoubleValue", &GeneralMaterialBehaviourInstance::setDoubleValue )
         .def( "setStringValue", &GeneralMaterialBehaviourInstance::setStringValue )

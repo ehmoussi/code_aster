@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -110,7 +110,7 @@ def calc_transfert_ops(
 
 
 
-#................................................................................................
+##................................................................................................
 #Extraction des parties reelles et imaginaires des fonctions obtenues via les calculs dynamiques
 #................................................................................................
     E_Lfreq=[]
@@ -192,8 +192,10 @@ def calc_transfert_ops(
     Ab_L_Im=[]
     LTEST=[]
     if REPERE=='RELATIF' :
-        for mentr in args.get('ENTRAINEMENT'):
-            s_entr = mentr.val
+        entrainement = args.get('ENTRAINEMENT'),
+        for mentr in entrainement:
+            print "mentr", mentr
+            s_entr = mentr
             for mm in entrain :
                 if s_entr[mm].getType()=="FONCTION_C":
                    _test=s_entr[mm]
@@ -244,6 +246,7 @@ def calc_transfert_ops(
 
 
     #les listes valent zero tout le temps
+    self.DeclareOut('tabfrf', self.sd)
     dim_0=len(l_resu)
     dim=len(l_resu)**2
     kk=nn=ll=0
@@ -332,8 +335,9 @@ def calc_transfert_ops(
              d_signal['LIm_%d' %ff]=[]
              d_signal['Lff_%d' %ff]=[]
 
-        for sign in SIGNAL:
-            s_sign=sign.val
+        signal = SIGNAL,
+        for sign in signal:
+            s_sign=sign
             for ss in l_signal:
                 if s_sign[ss].getType()=="FONCTION_C":
                    _test=s_sign[ss]
@@ -438,6 +442,6 @@ def calc_transfert_ops(
 
         motssign['LISTE'] = mcsign
         table_s=CREA_TABLE(TYPE_TABLE='TABLE',**motssign)
-        return table_s
-    else:
-        return tabfrf
+        self.register_result(table_s, SIGNAL[0]['TABLE_RESU'])
+
+    return tabfrf

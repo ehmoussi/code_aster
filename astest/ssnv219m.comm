@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -16,13 +16,8 @@
 # You should have received a copy of the GNU General Public License
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
-import math
 
-POURSUITE(CODE='OUI',
-      DEBUG=_F(SDVERI='OUI'),
-      PAR_LOT='NON',
-      IGNORE_ALARM = ('SUPERVIS_1', 'MODELE1_63', 'SUPERVIS_25'),
-      )
+import math
 
 # ================================================================================================================================================================================
 def NormeAster(RESULTAT, Depl_Ana, P_ana, MAIL, MODELE, GROUP_MA_VOL, GROUP_MA_SUR):
@@ -282,22 +277,41 @@ def NormeAster(RESULTAT, Depl_Ana, P_ana, MAIL, MODELE, GROUP_MA_VOL, GROUP_MA_S
      return {'NormeL2ErreurU':NormeL2ErreurU,'NormeL2ErreurP':NormeL2ErreurP,'Ucalc':Ucalc,'Uana':Uana,'Pcalc':Pcalc,'Pana':Pana, 'DIFFUN':DIFFUN, 'DIFFPG': DIFFPG}
 # ================================================================================================================================================================================
 
+
+
+
+
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),
+      DEBUG=_F(SDVERI='OUI'),
+      PAR_LOT='NON',
+      IGNORE_ALARM = ('SUPERVIS_1', 'MODELE1_63', 'SUPERVIS_25'),
+      )
+
+#================================================================================================
+# Definition des caracteristiques du materiau
+#================================================================================================
+E=1;
+NU=0.;
+
+#================================================================================================
+# Calcul de la solution de reference
+#================================================================================================
+
+from ssnv219e import *
+
 #================================================================================================
 # Debut de l'etude de la convergence
 # Nombre de Test
-# nbtest=5
 # Nombre de remaillage
-Nb_Raffinement=5;
-TitreU      ='Erreur ||\qU\sh\N-\2U\N\Q || en norme L\s2\N, maillages en hexa\xe8dres (pyramide pour le contact LAC)'
+Nb_Raffinement=4;
+TitreU='Erreur ||\qU\sh\N-\2U\N\Q || en norme L\s2\N, maillages en t\xe9tra\xe8dres'
+TitreP='Erreur ||\qP\sh\N-\2P\N\Q || en norme L\s2\N, maillages en t\xe9tra\xe8dres'
+Legende='Cas PENTA 15'
 
-TitreP      ='Erreur ||\qP\sh\N-\2P\N\Q || en norme L\s2\N, maillages en hexa\xe8dres (pyramide pour le contact LAC)'
-
-Legende      ='Cas PYRAM 5'
 
 # Initialisation des listes
 MA                  =[None]*(Nb_Raffinement);
 MA0                 =[None]*(Nb_Raffinement);
-MALine              =[None]*(Nb_Raffinement);
 NormeL2ErreurU      =[None]*(Nb_Raffinement);
 NormeL2ErreurP      =[None]*(Nb_Raffinement);
 
@@ -313,12 +327,9 @@ MA0[0]=MODI_MAILLAGE(reuse=MA0[0],
                                    _F(GROUP_MA='BORDMX'),
                                    _F(GROUP_MA='BORDY'),
                                    _F(GROUP_MA='BORDMY'),));
-                     
-MALine[0]=CREA_MAILLAGE(MAILLAGE=MA0[0],
-                        QUAD_LINE=_F(GROUP_MA=('ESCLAVE','BORDX','BORDMX','BORDY','BORDMY','HAUT','VOLUME'),),);
-MA[0]=CREA_MAILLAGE(MAILLAGE=MALine[0],
-                    DECOUPE_LAC=_F(GROUP_MA_ESCL='ESCLAVE',
-                                   DECOUPE_HEXA="PYRA",),);
+
+MA[0]=CREA_MAILLAGE(MAILLAGE=MA0[0],
+                    DECOUPE_LAC=_F(GROUP_MA_ESCL='ESCLAVE',DECOUPE_HEXA="PYRA",),);
 
 #Definition du materiau cas isotrope
 acier=DEFI_MATERIAU(ELAS=_F(E=E, NU=NU,),);
@@ -396,8 +407,8 @@ for Raff in range(0,Nb_Raffinement):
                                   _F(CHARGE=BlocBase,),),
                            SOLVEUR=_F(#SYME='OUI',
                                       METHODE="MUMPS"
-#                                      METHODE='GCPC',PRE_COND='LDLT_INC',RENUM='SANS',
-#                                      METHODE='GCPC',PRE_COND='LDLT_SP',
+#                                     METHODE='GCPC',PRE_COND='LDLT_INC',RENUM='SANS',
+#                                     METHODE='GCPC',PRE_COND='LDLT_SP',
                                  ),
                       INFO=1,
                       );
@@ -427,35 +438,14 @@ for Raff in range(0,Nb_Raffinement):
                            MAILLAGE_N =MA0[Raff],
                            MAILLAGE_NP1 =MA0[Raff+1],)
 
-        MALine[Raff+1]=CREA_MAILLAGE(MAILLAGE=MA0[Raff+1],
-                        QUAD_LINE=_F(GROUP_MA=('ESCLAVE','BORDX','BORDMX','BORDY','BORDMY','HAUT','VOLUME'),),);
-        MA[Raff+1]=CREA_MAILLAGE(MAILLAGE=MALine[Raff+1],
+        MA[Raff+1]=CREA_MAILLAGE(MAILLAGE=MA0[Raff+1],
                     DECOUPE_LAC=_F(GROUP_MA_ESCL='ESCLAVE',DECOUPE_HEXA="PYRA",),);
 
-     # DESTRUCTION DES CONCEPTS INUTILISES DANS LES PROCHAINES ETAPES DE LA BOUCLE
-        DETRUIRE(CONCEPT=(_F(NOM=modl,),
-                       _F(NOM=chmat),
-                       _F(NOM=BlocBase),
-                       _F(NOM=Neumann),
-                       _F(NOM=Dirich),
-                       _F(NOM=Contact),
-                       _F(NOM=ForceInt),
-                       _F(NOM=EVOLNOLI),
-                       _F(NOM=dicResu['Uana']),
-                       _F(NOM=dicResu['Ucalc']),
-                       _F(NOM=dicResu['DIFFUN']),
-                       _F(NOM=dicResu['DIFFPG']),
-                       _F(NOM=dicResu['Pana']),
-                       _F(NOM=dicResu['Pcalc']),
-                       ),
-               INFO=1,
-              );
 
 
-
-    #================================================================================================
-    # Impression de la courbe de convergence
-    #================================================================================================
+#================================================================================================
+# Impression de la courbe de convergence
+#================================================================================================
 
 
 
@@ -470,25 +460,24 @@ PenteLST=CREA_TABLE( LISTE= (
 TEST_TABLE (TABLE = PenteLST,
             NOM_PARA= 'PU',
             REFERENCE='ANALYTIQUE',
-            VALE_CALC= 1.98820777562,   # raffinement=5
-            VALE_REFE=2.0,              # taux de convergence
-            PRECISION=0.006,            # 
-            )
+            VALE_CALC= 3.93327482127,   # raffinement=4
+            VALE_REFE=2.5,              # taux de convergence
+            PRECISION=0.574,            # surconvergence: mélange de convergence de géométrie
+            )                           # (surface de contact courbée)
 
 
 TEST_TABLE (TABLE = PenteLST,
             NOM_PARA= 'PP',
             REFERENCE='ANALYTIQUE',
-            VALE_CALC=1.86639417336,    # raffinement=5
-            VALE_REFE=0.5,              # taux de convergence
-            PRECISION=2.733,            # surconvergence: mélange de convergence de géométrie
+            VALE_CALC=2.04894266862,    # raffinement=4 
+            VALE_REFE=1.0,              # taux de convergence
+            PRECISION=1.049,            # surconvergence: mélange de convergence de géométrie
             )                           # (surface de contact courbée)
 
-sous_titreU='Ordres de convergence: cas PYRAM5= %f '%(PenteL2U)
-sous_titreP='Ordres de convergence: cas PYRAM5= %f '%(PenteL2P)
-    
-    
+sous_titreU='Ordres de convergence: cas PENTA15= %f'%(PenteL2U)
+sous_titreP='Ordres de convergence: cas PENTA15= %f'%(PenteL2P)
 
+    
 IMPR_FONCTION(FORMAT='XMGRACE',
                UNITE=29,
                BORNE_X=(min(TailleMaille)*0.7,max(TailleMaille)*1.3),
@@ -535,32 +524,11 @@ IMPR_RESU(FORMAT='MED',
             _F(CHAM_GD=dicResu['DIFFUN'],GROUP_MA='VOLUME',NOM_CMP=('DX','DY','DZ'),),
             _F(RESULTAT=EVOLNOLI),
            ),);
-DETRUIRE(CONCEPT=(_F(NOM=modl,),
-                  _F(NOM=chmat),
-                  _F(NOM=BlocBase),
-                  _F(NOM=Neumann),
-                  _F(NOM=Dirich),
-                  _F(NOM=Contact),
-                  _F(NOM=ForceInt),
-                  _F(NOM=EVOLNOLI),
-                  _F(NOM=dicResu['Uana']),
-                  _F(NOM=dicResu['Ucalc']),
-                  _F(NOM=dicResu['DIFFUN']),
-                  _F(NOM=dicResu['Pana']),
-                  _F(NOM=dicResu['Pcalc']),
-                  _F(NOM=dicResu['DIFFPG']),
-                  _F(NOM=RAMPE),
-                  _F(NOM=LINST),
-                  _F(NOM=acier),  
-                  ),
-           INFO=1,);
 
-for n in range(0,Nb_Raffinement):     
+for n in range(0,Nb_Raffinement):
     DETRUIRE(CONCEPT=(_F(NOM=MA0[n],),
-                    _F(NOM=MALine[n]),
-                    _F(NOM=MA[n]),
-                    ),
-         INFO=1,);
-
+                      _F(NOM=MA[n]),
+                      ),
+             INFO=1,);
 
 FIN();

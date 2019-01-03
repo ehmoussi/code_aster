@@ -3,7 +3,7 @@
  * @brief Interface python de Mesh
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -25,12 +25,47 @@
 
 #include <boost/python.hpp>
 #include <PythonBindings/factory.h>
+#include <Meshes/MeshEntities.h>
 #include "PythonBindings/MeshInterface.h"
 #include "PythonBindings/factory.h"
 #include "PythonBindings/ConstViewerUtilities.h"
 
 void exportMeshToPython() {
     using namespace boost::python;
+
+    enum_< EntityType >( "EntityType" )
+        .value( "GroupOfNodesType", GroupOfNodesType )
+        .value( "GroupOfElementsType", GroupOfElementsType )
+        .value( "AllMeshEntitiesType", AllMeshEntitiesType )
+        .value( "ElementType", ElementType )
+        .value( "NodeType", NodeType )
+        .value( "NoType", NoType );
+
+    class_< VirtualMeshEntity, MeshEntityPtr >( "MeshEntity", no_init )
+        .def( "__init__", make_constructor(&initFactoryPtr< VirtualMeshEntity,
+                                                            std::string, EntityType >))
+        // fake initFactoryPtr: created by subclass
+        .def( "getType", &VirtualMeshEntity::getType )
+        .def( "getNames", &VirtualMeshEntity::getNames );
+
+    class_< GroupOfElements, GroupOfElementsPtr,
+            bases< VirtualMeshEntity > >( "GroupOfElements", no_init )
+        // fake initFactoryPtr: created by subclass
+        // fake initFactoryPtr: created by subclass
+    ;
+
+    class_< Element, ElementPtr,
+            bases< VirtualMeshEntity > >( "Element", no_init )
+        // fake initFactoryPtr: created by subclass
+        // fake initFactoryPtr: created by subclass
+    ;
+
+    class_< AllMeshEntities, AllMeshEntitiesPtr,
+            bases< VirtualMeshEntity > >( "AllMeshEntities", no_init )
+        // fake initFactoryPtr: created by subclass
+        // fake initFactoryPtr: created by subclass
+    ;
+
     class_< BaseMeshInstance, BaseMeshInstance::BaseMeshPtr, bases< DataStructure > >( "BaseMesh",
                                                                                        no_init )
         // fake initFactoryPtr: created by subclass

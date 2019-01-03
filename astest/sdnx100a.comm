@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -229,7 +229,7 @@ BAMO=DEFI_BASE_MODALE(CLASSIQUE=_F(INTERF_DYNA=INTERDYN,
 #
 
 from sdnx100a import F_FONC
-LBNS, LBEW= F_FONC()
+LBEW, LBNS= F_FONC()
 
 #
 #  ACCELEROGRAMMES NORMES A 0.1G

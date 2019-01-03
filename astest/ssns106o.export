@@ -6,7 +6,5 @@ P mpi_nbnoeud 1
 P testlist verification sequential
 
 F comm ssns106o.comm D 1
-F comm ssns106o.com1 D 1
-F comm ssns106o.com2 D 1
 F mail ssns106a.mail D 20
-
+F nom ssns106o.py D 0

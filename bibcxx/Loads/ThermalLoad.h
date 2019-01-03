@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe ThermalLoad
  * @author Jean-Pierre Lefebvre
  * @section LICENCE
- *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -154,6 +154,11 @@ class ThermalLoadInstance : public DataStructure {
      * @brief Get the support finite element descriptor
      */
     FiniteElementDescriptorPtr getFiniteElementDescriptor() const { return _therLoad._FEDesc; };
+
+    /**
+     * @brief Get the support model
+     */
+    ModelPtr getModel() const { return _supportModel; };
 };
 
 /**

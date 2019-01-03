@@ -3,7 +3,7 @@
  * @brief Utilitaires pour convertir un vector en list et inversement
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -26,6 +26,9 @@
 #include "Materials/Material.h"
 #include "Modeling/FiniteElementDescriptor.h"
 #include "Functions/Function.h"
+#include "Materials/Material.h"
+#include "Materials/MaterialOnMesh.h"
+#include "Materials/MaterialBehaviour.h"
 
 void exportVectorUtilitiesToPython() {
     using namespace boost::python;
@@ -37,4 +40,6 @@ void exportVectorUtilitiesToPython() {
     exportVectorUtilities< MaterialPtr >();
     exportVectorUtilities< FiniteElementDescriptorPtr >();
     exportVectorUtilities< BaseFunctionPtr >();
+    exportVectorUtilities< PartOfMaterialOnMeshPtr >();
+    exportVectorUtilities< GeneralMaterialBehaviourPtr >();
 };

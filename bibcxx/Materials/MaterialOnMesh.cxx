@@ -3,7 +3,7 @@
  * @brief Implementation de MaterialOnMesh
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -36,6 +36,7 @@
 MaterialOnMeshInstance::MaterialOnMeshInstance( const std::string &name,
                                                 const MeshPtr& mesh ):
     _supportMesh( mesh ),
+    _supportModel( nullptr ),
     DataStructure( name, 8, "CHAM_MATER" ),
     _listOfMaterials( PCFieldOnMeshChar8Ptr(
         new PCFieldOnMeshChar8Instance( getName() + ".CHAMP_MAT ", mesh ) ) ),
@@ -52,6 +53,7 @@ MaterialOnMeshInstance::MaterialOnMeshInstance( const std::string &name,
 MaterialOnMeshInstance::MaterialOnMeshInstance( const std::string &name,
                                                 const SkeletonPtr& mesh ):
     _supportMesh( mesh ),
+    _supportModel( nullptr ),
     DataStructure( name, 8, "CHAM_MATER" ),
     _listOfMaterials( PCFieldOnMeshChar8Ptr(
         new PCFieldOnMeshChar8Instance( getName() + ".CHAMP_MAT ", mesh ) ) ),
@@ -69,6 +71,7 @@ MaterialOnMeshInstance::MaterialOnMeshInstance( const std::string &name,
 MaterialOnMeshInstance::MaterialOnMeshInstance( const std::string &name,
                                                 const ParallelMeshPtr& mesh ):
     _supportMesh( mesh ),
+    _supportModel( nullptr ),
     DataStructure( name, 8, "CHAM_MATER" ),
     _listOfMaterials( PCFieldOnMeshChar8Ptr(
         new PCFieldOnMeshChar8Instance( getName() + ".CHAMP_MAT ", mesh ) ) ),
@@ -96,6 +99,19 @@ std::vector< MaterialPtr > MaterialOnMeshInstance::getVectorOfMaterial() const
     for( const auto& curIter : _materialsOnMeshEntity )
         for( const auto& curIter2 : curIter.first )
             toReturn.push_back( curIter2 );
+    return toReturn;
+};
+
+std::vector< PartOfMaterialOnMeshPtr >
+MaterialOnMeshInstance::getVectorOfPartOfMaterialOnMesh() const
+{
+    std::vector< PartOfMaterialOnMeshPtr > toReturn;
+    for( const auto& curIter : _materialsOnMeshEntity )
+    {
+        PartOfMaterialOnMeshPtr toPush( new PartOfMaterialOnMeshInstance( curIter.first,
+                                                                          curIter.second ) );
+        toReturn.push_back( toPush );
+    }
     return toReturn;
 };
 

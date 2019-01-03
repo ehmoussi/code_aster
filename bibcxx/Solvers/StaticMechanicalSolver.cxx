@@ -3,7 +3,7 @@
  * @brief Fichier source contenant le source du solveur de mecanique statique
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -47,7 +47,7 @@ StaticMechanicalSolverInstance::StaticMechanicalSolverInstance(
 ElasticEvolutionContainerPtr StaticMechanicalSolverInstance::execute() {
     ElasticEvolutionContainerPtr resultC( new ElasticEvolutionContainerInstance() );
 
-    _study->getCodedMaterial()->allocate();
+    _study->getCodedMaterial()->allocate(true);
 
     if ( !_timeStep )
         throw std::runtime_error( "No time list" );

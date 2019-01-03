@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -28,7 +28,12 @@ MODEL=AFFE_MODELE(MAILLAGE=MAIL,
 )
 
 INCLUDE(DONNEE='ssnp132a_mater.comm')
-          TEST_NAN='NON',)
+
 FIN();
 
-
+# Solution de Reference
+# Liste d'instant
+#    _F(JUSQU_A=100.0, NOMBRE= 50, ),
+#    _F(JUSQU_A=200.0, NOMBRE=1000,),),);
+# DEFI_MATERIAU, par defaut c'est 1.0E-02
+#  Toler_ET           0.1E-02

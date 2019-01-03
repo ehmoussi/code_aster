@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -28,11 +28,12 @@ def macr_ecrevisse_ops(self, **args):
     from code_aster.Cata.Syntax import _F
     from Contrib.calc_ecrevisse import CALC_ECREVISSE
     import copy
+    from code_aster import EntityType
 
     # ASSD.__getitem__ was deprecated, now it didn't work anymore!
-    import warnings
-    warnings.warn("MACR_ECREVISSE must be refactored!", RuntimeWarning)
-    return
+    #import warnings
+    #warnings.warn("MACR_ECREVISSE must be refactored!", RuntimeWarning)
+    #return
 
     #
     # La macro compte pour 1 dans la numerotation des commandes
@@ -207,6 +208,7 @@ def macr_ecrevisse_ops(self, **args):
     #
     # Debut boucle sur la liste d'instant
     #
+    RTHERM = None
     FinBoucle = False
     while (not FinBoucle):
         inst = liste_inst[nume_ordre]
@@ -314,10 +316,23 @@ def macr_ecrevisse_ops(self, **args):
                 # note : on doit le faire a chaque fois car le nom de concept _RTHMPJ
                 #        est different a chaque passage
                 motclefmater = {}
+                vecTmp = CHAM_MATER.getVectorOfPartOfMaterialOnMesh()
                 motclefmater['AFFE'] = []
-                for j in CHAM_MATER['AFFE']:
-                    motclefmater['AFFE'].append(j.cree_dict_toutes_valeurs())
-                motclefmater['MAILLAGE'] = CHAM_MATER['MAILLAGE']
+                for item in vecTmp:
+                    dictToAdd = {}
+                    meshEntity = item.getMeshEntity()
+                    entityType = meshEntity.getType()
+                    if entityType is EntityType.GroupOfElementsType:
+                        dictToAdd["GROUP_MA"] = meshEntity.getNames()
+                    elif entityType is EntityType.ElementType:
+                        dictToAdd["MAILLE"] = meshEntity.getNames()
+                    elif entityType is EntityType.AllMeshEntitiesType:
+                        dictToAdd["TOUT"] = "OUI"
+                    else:
+                        raise TypeError("Unexpected type for mesh entity: {0}".format(meshEntity))
+                    dictToAdd["MATER"] = item.getVectorOfMaterial()
+                    motclefmater['AFFE'].append(dictToAdd)
+                motclefmater['MAILLAGE'] = CHAM_MATER.getSupportMesh()
 
                 # Set external state variables
                 motclefmater['AFFE_VARC'] = []
@@ -424,23 +439,16 @@ def macr_ecrevisse_ops(self, **args):
                     vale_name = fonc_name.replace('_FO', '')
                     dECOULEMENT_ecrevisse[vale_name] = fonc(inst_p_un)
 
-            # Initialisation des concepts en sortie
-            MECAECR1 = CO('MECAECR1')
-            FLU1ECR1 = CO('FLU1ECR1')
-            FLU2ECR1 = CO('FLU2ECR1')
-            TABLECR1 = CO('TABLECR1')
-            DEBIECR1 = CO('DEBIECR1')
-
             if (debug):
                 print '====> ECREVISSE entree dans CALC_ECREVISSE <===='
 
             if (not IsPoursuite):
                 CALC_ECREVISSE(
-                    CHARGE_MECA=MECAECR1,
-                    CHARGE_THER1=FLU1ECR1,
-                    CHARGE_THER2=FLU2ECR1,
-                    TABLE=TABLECR1,
-                    DEBIT=DEBIECR1,
+                    CHARGE_MECA=CO('MECAECR1'),
+                    CHARGE_THER1=CO('FLU1ECR1'),
+                    CHARGE_THER2=CO('FLU2ECR1'),
+                    TABLE=CO('TABLECR1'),
+                    DEBIT=CO('DEBIECR1'),
                     MODELE_MECA=MODELE_MECA,
                     MODELE_THER=MODELE_THER,
                     ENTETE=ENTETE,
@@ -465,11 +473,11 @@ def macr_ecrevisse_ops(self, **args):
                 )
             else:
                 CALC_ECREVISSE(
-                    CHARGE_MECA=MECAECR1,
-                    CHARGE_THER1=FLU1ECR1,
-                    CHARGE_THER2=FLU2ECR1,
-                    TABLE=TABLECR1,
-                    DEBIT=DEBIECR1,
+                    CHARGE_MECA=CO('MECAECR1'),
+                    CHARGE_THER1=CO('FLU1ECR1'),
+                    CHARGE_THER2=CO('FLU2ECR1'),
+                    TABLE=CO('TABLECR1'),
+                    DEBIT=CO('DEBIECR1'),
                     MODELE_MECA=MODELE_MECA,
                     MODELE_THER=MODELE_THER,
                     ENTETE=ENTETE,
@@ -665,7 +673,8 @@ def macr_ecrevisse_ops(self, **args):
     #     Fin boucle sur les pas de temps
     #
 
-    self.register_result(RTHERM, TEMPER)
+    if RTHERM is not None and TEMPER is not None:
+        self.register_result(RTHERM, TEMPER)
 
     # Creation du concept de la table en sortie
     if (T_TABL_RES != None):

@@ -3,7 +3,7 @@
  * @brief Implementation de ResultsContainer
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -72,6 +72,8 @@ ResultsContainerInstance::getElementaryCharacteristics( int rank ) {
 
 void ResultsContainerInstance::addMaterialOnMesh( const MaterialOnMeshPtr &mater,
                                                   int rank ) {
+    if( !mater )
+        throw std::runtime_error( "MaterialOnMesh is empty" );
     _mapMaterial[rank] = mater;
     ASTERINTEGER rang = rank;
     std::string type( "CHAMPMAT" );
@@ -80,6 +82,8 @@ void ResultsContainerInstance::addMaterialOnMesh( const MaterialOnMeshPtr &mater
 
 void ResultsContainerInstance::addModel( const ModelPtr &model,
                                          int rank ) {
+    if( !model )
+        throw std::runtime_error( "Model is empty" );
     _mapModel[rank] = model;
     ASTERINTEGER rang = rank;
     std::string type( "MODELE" );
@@ -127,8 +131,6 @@ MaterialOnMeshPtr ResultsContainerInstance::getMaterialOnMesh() {
         if ( name != curIter.second->getName() )
             throw std::runtime_error( "Error: multiple materials" );
     }
-    if ( toReturn == nullptr )
-        throw std::runtime_error( "Error: no material on mesh" );
     return toReturn;
 };
 

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -16,10 +16,15 @@
 # You should have received a copy of the GNU General Public License
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
+
 import numpy as NP
 
-POURSUITE(CODE='OUI',
-PAR_LOT='NON',DEBUG=_F(SDVERI='OUI'))
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),
+IGNORE_ALARM=('RECAL0_43'),PAR_LOT='NON',DEBUG=_F(SDVERI='OUI'))
+
+
+# On ajoute les commandes correspondant au modeles experimental
+from sdls121c import *
 
 #nombre de frequences utiles
 NF=8
@@ -44,8 +49,7 @@ REPEXP2=CREA_TABLE(LISTE=(_F(PARA='NUME_ORDRE',LISTE_I=range(1,NF+1),),
 data1 = REPEXP1.EXTR_TABLE().Array('NUME_ORDRE','FREQ')
 data2 = REPEXP2.EXTR_TABLE().Array('NUME_ORDRE','MAC_EXP')
 
-
-parametres =[['EP__',0.25,0.1,1.0],['MP__',3.0E4,2.E4,7.E4]]
+parametres =[['EP__',0.35,0.3,0.7]]
 
 calcul = [['REPONSE1','NUME_ORDRE','FREQ'],['REPONSE2','NUME_ORDRE','MAC']]
 
@@ -61,12 +65,24 @@ RESU=MACR_RECAL(
          LIST_PARA        =parametres,
          RESU_CALC        =calcul,
          LIST_POIDS       =poids,
-         METHODE          ='LEVENBERG',
+         METHODE          ='GENETIQUE',
+
+
+         NB_PARENTS       =10,
+         NB_FILS          =5,
+         ECART_TYPE       =10.,
+#Attention: l'utilisation de la GRAINE n'est pas indiquee pour les etudes.
+#On l'utilise seulement dans les cas-tests pour assurer la repetitivite de la
+#solution.
+         GRAINE           =0,
+         ITER_ALGO_GENE   =10,
+         RESI_ALGO_GENE   =1.E-2,
 
          CALCUL_ESCLAVE=_F(
              LANCEMENT   = 'DISTRIBUTION',
              MODE        = 'BATCH',
                    ),
+
          DYNAMIQUE =_F(
               MODE_EXP='MODMES',
               MODE_CALC='MODNUM',
@@ -77,26 +93,18 @@ RESU=MACR_RECAL(
 
 # On cree une liste bidon pour pouvoir
 # definir une fonction testable par TEST_RESU
-BIDON=DEFI_LIST_REEL(DEBUT=1.,
-                     INTERVALLE=_F(JUSQU_A = 2., NOMBRE=1));
+BIDON=DEFI_LIST_REEL(VALE=(1.),);
 
 OPTIM=DEFI_FONCTION(NOM_PARA='INST',
                     VALE_PARA=BIDON,
                     VALE_FONC=RESU);
 
-TEST_FONCTION(VALEUR=(_F(VALE_CALC=0.50295095,
-                         VALE_REFE=0.5,
-                         VALE_PARA=1.0,
-                         REFERENCE='ANALYTIQUE',
-                         PRECISION=0.05,
-                         FONCTION=OPTIM,),
-                      _F(VALE_CALC=48193.69,
-                         VALE_REFE=5.E4,
-                         VALE_PARA=2.0,
-                         REFERENCE='ANALYTIQUE',
-                         PRECISION=0.05,
-                         FONCTION=OPTIM,),
-                      ),
+TEST_FONCTION(VALEUR=_F(VALE_CALC=0.501660264155,
+                        VALE_REFE=0.5,
+                        VALE_PARA=1.0,
+                        REFERENCE='ANALYTIQUE',
+                        PRECISION=1.E-2,
+                        FONCTION=OPTIM,),
               )
 
 FIN()

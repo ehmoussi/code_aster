@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe GeneralizedAssemblyMatrix
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -74,7 +74,7 @@ class GenericGeneralizedAssemblyMatrixInstance: public DataStructure
     GeneralizedDOFNumberingPtr getGeneralizedDOFNumbering() {
         if ( _dofNum.isSet() )
             return _dofNum.getPointer();
-        throw std::runtime_error( "GeneralizedDOFNumbering is empty" );
+        return GeneralizedDOFNumberingPtr( nullptr );
     };
 
     /**
@@ -84,7 +84,7 @@ class GenericGeneralizedAssemblyMatrixInstance: public DataStructure
     {
         if ( _mecaModeC.isSet() )
             return _mecaModeC.getPointer();
-        throw std::runtime_error( "MechanicalModeContainer is empty" );
+        return MechanicalModeContainerPtr( nullptr );
     };
 
     /**

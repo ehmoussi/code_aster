@@ -300,6 +300,27 @@ Documentation of all other types.
 
 
 ********************************************************************************
+:py:class:`~code_aster.Objects.MeshEntity` subclasses
+********************************************************************************
+
+.. autoclass:: code_aster.Objects.MeshEntity
+   :show-inheritance:
+   :members:
+
+.. autoclass:: code_aster.Objects.AllMeshEntities
+   :show-inheritance:
+   :members:
+
+.. autoclass:: code_aster.Objects.Element
+   :show-inheritance:
+   :members:
+
+.. autoclass:: code_aster.Objects.GroupOfElements
+   :show-inheritance:
+   :members:
+
+
+********************************************************************************
 :py:class:`~code_aster.Objects.NonLinearMethod` object
 ********************************************************************************
 
@@ -322,6 +343,15 @@ Documentation of all other types.
 ********************************************************************************
 
 .. autoclass:: code_aster.Objects.NormalSpeedDouble
+   :show-inheritance:
+   :members:
+
+
+********************************************************************************
+:py:class:`~code_aster.Objects.PartOfMaterialOnMesh` object
+********************************************************************************
+
+.. autoclass:: code_aster.Objects.PartOfMaterialOnMesh
    :show-inheritance:
    :members:
 
@@ -479,6 +509,10 @@ Documentation of all other types.
    :members:
 
 .. autoclass:: code_aster.Objects.DrivingType
+   :show-inheritance:
+   :members:
+
+.. autoclass:: code_aster.Objects.EntityType
    :show-inheritance:
    :members:
 
