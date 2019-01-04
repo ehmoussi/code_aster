@@ -41,6 +41,7 @@ implicit none
 #include "asterfort/jeveuo.h"
 #include "asterfort/jexnum.h"
 #include "asterfort/apcoor.h"
+#include "asterfort/aptype.h"
 #include "asterfort/prjint.h"
 #include "asterfort/jecroc.h"
 #include "asterfort/clpoma.h"
@@ -272,10 +273,14 @@ character(len=24), intent(in) :: pair_method
 !
 ! ----- Get informations about slave element
 !
-        call apcoor(jv_geom       , elem_slav_type  ,&
-                    elem_slav_nume, elem_slav_coor, elem_slav_nbnode,&
-                    elem_slav_code, elem_slav_dime, v_mesh_connex   ,&
-                    v_connex_lcum)
+        call aptype(elem_slav_type  ,&
+                    elem_slav_nbnode, elem_slav_code, elem_slav_dime)
+!
+! ----- Get coordinates of slave element
+!
+        call apcoor(v_mesh_connex , v_connex_lcum   , jv_geom       ,&
+                    elem_slav_nume, elem_slav_nbnode, elem_slav_dime,&
+                    elem_slav_coor)
         if (debug) then
             call jenuno(jexnum(mesh//'.NOMMAI', elem_slav_nume), elem_slav_name)
             write(*,*) "Current slave element: ", elem_slav_nume, elem_slav_name,&
@@ -405,10 +410,14 @@ character(len=24), intent(in) :: pair_method
 !
 ! --------- Get informations about master element
 !
-            call apcoor(jv_geom       , elem_mast_type  ,&
-                        elem_mast_nume, elem_mast_coor, elem_mast_nbnode,&
-                        elem_mast_code, elem_mast_dime, v_mesh_connex   ,&
-                        v_connex_lcum)
+            call aptype(elem_mast_type  ,&
+                        elem_mast_nbnode, elem_mast_code, elem_mast_dime)
+!
+! --------- Get coordinates of master element
+!
+            call apcoor(v_mesh_connex , v_connex_lcum   , jv_geom       ,&
+                        elem_mast_nume, elem_mast_nbnode, elem_mast_dime,&
+                        elem_mast_coor)
 !
 ! --------- Cut master element in linearized sub-elements
 !

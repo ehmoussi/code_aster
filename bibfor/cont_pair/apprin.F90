@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -30,6 +30,7 @@ implicit none
 #include "asterfort/jeveuo.h"
 #include "asterfort/jexnum.h"
 #include "asterfort/apcoor.h"
+#include "asterfort/aptype.h"
 #include "asterfort/prjint.h"
 !
 character(len=8), intent(in) :: mesh
@@ -137,10 +138,14 @@ integer, intent(out) :: elem_slav_start(nb_elem_slav)
 ! --------- Get informations about slave element
 !
             call jenuno(jexnum('&CATA.TM.NOMTM', elem_type_nume), elem_slav_type)
-            call apcoor(jv_geom       , elem_slav_type  ,&
-                        elem_slav_nume, elem_slav_coor, elem_slav_nbnode,&
-                        elem_slav_code, elem_slav_dime, v_mesh_connex   ,&
-                        v_connex_lcum)
+            call aptype(elem_slav_type  ,&
+                        elem_slav_nbnode, elem_slav_code, elem_slav_dime)
+!
+! --------- Get coordinates of slave element
+!
+            call apcoor(v_mesh_connex , v_connex_lcum   , jv_geom       ,&
+                        elem_slav_nume, elem_slav_nbnode, elem_slav_dime,&
+                        elem_slav_coor)
 !
 ! --------- Cut slave element in linearized sub-elements (SEG2 or TRIA3)
 !
@@ -182,10 +187,14 @@ integer, intent(out) :: elem_slav_start(nb_elem_slav)
 ! ----------------- Get informations about master element
 !
                     call jenuno(jexnum('&CATA.TM.NOMTM', elem_type_nume), elem_mast_type)
-                    call apcoor(jv_geom       , elem_mast_type  ,&
-                                elem_mast_nume, elem_mast_coor, elem_mast_nbnode,&
-                                elem_mast_code, elem_mast_dime, v_mesh_connex   ,&
-                                v_connex_lcum)
+                    call aptype(elem_mast_type  ,&
+                                elem_mast_nbnode, elem_mast_code, elem_mast_dime)
+!
+! ----------------- Get coordinates of master element
+!
+                    call apcoor(v_mesh_connex , v_connex_lcum   , jv_geom       ,&
+                                elem_mast_nume, elem_mast_nbnode, elem_mast_dime,&
+                                elem_mast_coor)
 !
 ! ----------------- Cut master element in linearized sub-elements (SEG2 or TRIA3)
 !
@@ -202,16 +211,15 @@ integer, intent(out) :: elem_slav_start(nb_elem_slav)
                         elin_mast_code   = elem_mast_code
                         elin_mast_nbnode = elem_mast_nbnode
                     endif
-
 !
-! ------------------------- Projection/intersection of elements in slave parametric space
+! ----------------- Projection/intersection of elements in slave parametric space
 !
                     call prjint(pair_tole     , elem_mast_dime,&
                                 elin_mast_nbnode, elem_mast_coor, elin_mast_code,&
                                 elin_slav_nbnode, elem_slav_coor, elin_slav_code,&
                                 poin_inte     , inte_weight        , nb_poin_inte  )
 !
-! ------------------------- Set start elements
+! ----------------- Set start elements
 !
                     if (inte_weight .gt. 100*pair_tole) then
                         elem_mast_start(1)             = elem_mast_nume

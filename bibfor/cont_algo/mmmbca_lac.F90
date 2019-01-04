@@ -30,6 +30,7 @@ implicit none
 #include "asterfort/jenuno.h"
 #include "asterfort/jexatr.h"
 #include "asterfort/apcoor.h"
+#include "asterfort/aptype.h"
 #include "asterfort/gapint.h"
 #include "asterfort/jelira.h"
 #include "asterfort/cfdisi.h"
@@ -212,20 +213,22 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
         !get slave coor
         elem_type_nume = v_mesh_typmail(elem_slav_nume)
         call jenuno(jexnum('&CATA.TM.NOMTM', elem_type_nume), elem_slav_type)
-        call apcoor(jv_geom       , elem_slav_type  ,&
-                    elem_slav_nume, elem_slav_coor, elem_slav_nbnode,&
-                    elem_slav_code, elem_slav_dime, v_mesh_connex   ,&
-                    v_connex_lcum)
+        call aptype(elem_slav_type  ,&
+                    elem_slav_nbnode, elem_slav_code, elem_slav_dime)
+        call apcoor(v_mesh_connex , v_connex_lcum   , jv_geom       ,&
+                    elem_slav_nume, elem_slav_nbnode, elem_slav_dime,&
+                    elem_slav_coor)
         !get patch number
         patch_indx = v_mesh_comapa(elem_slav_nume)
         v_sdappa_nmcp(patch_indx) = v_sdappa_nmcp(patch_indx) + 1
         !get master coor
         elem_type_nume = v_mesh_typmail(elem_mast_nume)
         call jenuno(jexnum('&CATA.TM.NOMTM', elem_type_nume), elem_mast_type)
-        call apcoor(jv_geom       , elem_mast_type  ,&
-                    elem_mast_nume, elem_mast_coor, elem_mast_nbnode,&
-                    elem_mast_code, elem_mast_dime, v_mesh_connex   ,&
-                    v_connex_lcum)
+        call aptype(elem_mast_type  ,&
+                    elem_mast_nbnode, elem_mast_code, elem_mast_dime)
+        call apcoor(v_mesh_connex , v_connex_lcum   , jv_geom       ,&
+                    elem_mast_nume, elem_mast_nbnode, elem_mast_dime,&
+                    elem_mast_coor)
         !get number of intersection nodes
         nb_poin_inte = v_sdappa_apnp(i_pair)
         !get intersection nodes

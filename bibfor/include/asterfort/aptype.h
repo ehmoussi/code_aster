@@ -17,12 +17,10 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine apcoor(v_connex , v_connex_lcum, jv_geom  ,&
-                      elem_nume, elem_nbnode  , elem_dime,&
-                      elem_coor)
-        integer, pointer :: v_connex(:)
-        integer, pointer :: v_connex_lcum(:) 
-        integer, intent(in) :: jv_geom, elem_nume, elem_nbnode, elem_dime
-        real(kind=8), intent(out) :: elem_coor(27)
-    end subroutine apcoor
+    subroutine aptype(elem_type, elem_nbnode, elem_code, elem_dime)
+        character(len=8), intent(in) :: elem_type
+        integer, intent(out) :: elem_nbnode
+        character(len=8), intent(out) :: elem_code
+        integer, intent(out) :: elem_dime
+    end subroutine aptype
 end interface

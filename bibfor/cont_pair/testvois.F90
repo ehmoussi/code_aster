@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,7 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine testvois(jv_geom       , elem_slav_type,&
                     elem_mast_coor, elem_mast_code, elem_slav_nume,&
                     pair_tole     , inte_weight ,    v_mesh_connex,&
@@ -25,20 +25,20 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/apcoor.h"
+#include "asterfort/aptype.h"
 #include "asterfort/prjint.h"
 #include "asterfort/assert.h"
 #include "asterfort/dctest.h"
 !
-!
-    integer, intent(in) :: jv_geom
-    character(len=8), intent(in) :: elem_slav_type
-    real(kind=8),intent(in) :: elem_mast_coor(27)
-    character(len=8),intent(in) :: elem_mast_code
-    integer,intent(in) :: elem_slav_nume
-    real(kind=8),intent(in) :: pair_tole
-    real(kind=8),intent(out) :: inte_weight
-    integer, pointer :: v_mesh_connex(:)
-    integer, pointer :: v_connex_lcum(:)
+integer, intent(in) :: jv_geom
+character(len=8), intent(in) :: elem_slav_type
+real(kind=8),intent(in) :: elem_mast_coor(27)
+character(len=8),intent(in) :: elem_mast_code
+integer,intent(in) :: elem_slav_nume
+real(kind=8),intent(in) :: pair_tole
+real(kind=8),intent(out) :: inte_weight
+integer, pointer :: v_mesh_connex(:)
+integer, pointer :: v_connex_lcum(:)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -55,7 +55,6 @@ implicit none
 ! In  elem_mast_code   : code of master element
 ! In  elem_slav_nume   : index of slave element
 ! In  pair_tole        : tolerance for pairing
-! In  elem_dime        : dimension of elements
 ! Out inte_weight      : weight of intersection
 !
 ! --------------------------------------------------------------------------------------------------
@@ -79,9 +78,14 @@ implicit none
 !
 ! ----- Get informations about slave element
 !
-        call apcoor(jv_geom       , elem_slav_type  ,&
-                    elem_slav_nume, elem_slav_coor, elem_slav_nbnode,&
-                    elem_slav_code, elem_dime, v_mesh_connex, v_connex_lcum)
+        call aptype(elem_slav_type,&
+                    elem_slav_nbnode, elem_slav_code, elem_dime)
+!
+! ----- Get coordinates of slave element
+!
+        call apcoor(v_mesh_connex , v_connex_lcum   , jv_geom  ,&
+                    elem_slav_nume, elem_slav_nbnode, elem_dime,&
+                    elem_slav_coor)
 !
 ! ----- Cut slave element in linearized sub-elements
 !
