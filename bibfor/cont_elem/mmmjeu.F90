@@ -26,6 +26,7 @@ subroutine mmmjeu(ndim  , i_reso_geom, jeusup,&
 implicit none
 !
 #include "asterfort/assert.h"
+#include "Contact_type.h"
 !
 integer, intent(in) :: ndim, i_reso_geom
 real(kind=8), intent(in) :: jeusup,  norm(3)
@@ -58,12 +59,20 @@ real(kind=8), intent(out) :: jeu, djeu(3), djeut(3)
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: idim, i, j
+    real(kind=8) :: ppe
 !
 ! --------------------------------------------------------------------------------------------------
 !
     djeu(:)  = 0.d0
     djeut(:) = 0.d0
     jeu      = 0.d0
+!
+! - Coefficient to update gap
+!
+    ppe = 0.d0
+    if (i_reso_geom .eq. ALGO_NEWT) then
+        ppe = 1.d0
+    endif
 !
 ! - Increment of normal gap
 !
@@ -75,8 +84,8 @@ real(kind=8), intent(out) :: jeu, djeu(3), djeut(3)
 !
     jeu = jeusup
     do idim = 1, ndim
-        jeu = jeu + (geome(idim)+(1-i_reso_geom)*ddeple(idim) &
-                  -  geomm(idim)-(1-i_reso_geom)*ddeplm(idim))*norm(idim)
+        jeu = jeu + (geome(idim)+(1.d0-ppe)*ddeple(idim) &
+                  -  geomm(idim)-(1.d0-ppe)*ddeplm(idim))*norm(idim)
     end do
 !
 ! - Increment of tangent gaps
