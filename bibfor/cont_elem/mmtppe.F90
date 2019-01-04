@@ -19,8 +19,8 @@
 ! aslint: disable=W1504
 !
 subroutine mmtppe(ndim       , nne      , nnm     , nnl   , nbdm  ,&
-                  iresog     , l_large_slip, &
-                  jeusup   ,&
+                  i_reso_geom, l_large_slip, &
+                  jeusup     ,&
                   tau1       , tau2     ,&
                   ffe        , ffm      , dffm    , ddffm , ffl   ,&
                   jeu      , djeut   ,&
@@ -48,9 +48,10 @@ implicit none
 #include "asterfort/mmreac.h"
 #include "asterfort/mmcalg.h"
 #include "asterfort/utmess.h"
+#include "Contact_type.h"
 !
 integer, intent(in) :: ndim, nne, nnm, nnl, nbdm
-integer, intent(in) :: iresog
+integer, intent(in) :: i_reso_geom
 aster_logical, intent(in) :: l_large_slip
 real(kind=8), intent(in) :: jeusup
 real(kind=8), intent(in) :: tau1(3), tau2(3)
@@ -78,12 +79,7 @@ real(kind=8), intent(out) :: dnepmait1, dnepmait2, taujeu1, taujeu2
 ! In  nnm              : number of master nodes
 ! In  nnl              : number of nodes with Lagrange multiplicators (contact and friction)
 ! In  nbdm             : number of components by node for all dof
-! In  iresog           : algorithm for geometry
-!                        0 - Fixed point
-!                        1 - Newton
-! In  iresof           : algorithm for friction
-!                        0 - Fixed point
-!                        1 - Newton
+! In  i_reso_geom      : algorithm for geometry
 ! In  l_large_slip     : flag for GRAND_GLISSEMENT
 ! In  jeusup           : gap from DIST_ESCL/DIST_MAIT
 ! In  lambds           : contact pressure (fixed trigger)
@@ -184,7 +180,7 @@ real(kind=8), intent(out) :: dnepmait1, dnepmait2, taujeu1, taujeu2
 ! - Coefficient to update geometry
 !
     ppe = 0.d0
-    if (iresog .eq. 1) then
+    if (i_reso_geom .eq. ALGO_NEWT) then
         ppe = 1.d0
     endif
 !
@@ -249,7 +245,7 @@ real(kind=8), intent(out) :: dnepmait1, dnepmait2, taujeu1, taujeu2
 !
 ! - Compute gaps
 !
-    call mmmjeu(ndim  , iresog, jeusup,&
+    call mmmjeu(ndim  , i_reso_geom, jeusup,&
                 geome , geomm ,&
                 ddeple, ddeplm,&
                 norm  , mprojt,&
