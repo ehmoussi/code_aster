@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,7 +19,7 @@
 interface
     subroutine mmCompMatrFric(phase      , l_large_slip,&
                               l_pena_fric,&
-                              iresog     , iresof      ,&
+                              i_reso_geom, i_reso_fric ,&
                               nbdm       , nbcps       , ndexfr,&
                               ndim       , nne         , nnm   , nnl   ,&
                               wpg        , jacobi      , coefac, coefaf,&
@@ -35,7 +35,7 @@ interface
                               matr_fric)
         character(len=4), intent(in) :: phase
         aster_logical, intent(in) :: l_large_slip, l_pena_fric
-        integer, intent(in) :: iresog, iresof
+        integer, intent(in) :: i_reso_geom, i_reso_fric
         integer, intent(in) :: nbdm, nbcps, ndexfr
         integer, intent(in) :: ndim, nne, nnm, nnl
         real(kind=8), intent(in) :: wpg, jacobi, coefac, coefaf

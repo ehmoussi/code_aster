@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -55,7 +55,7 @@ character(len=16), intent(in) :: option, nomte
     integer :: iddl, jvect
     integer :: nne, nnm, nnl
     integer :: nddl, ndim, nbcps, nbdm
-    integer :: iresof, iresog, ialgoc, ialgof
+    integer :: i_reso_fric, i_reso_geom, ialgoc, ialgof
     integer :: ndexfr
     integer :: indco
     character(len=8) :: typmae, typmam
@@ -116,13 +116,13 @@ character(len=16), intent(in) :: option, nomte
 !
 ! - Get projections datas
 !
-    call mmGetProjection(iresog, wpg,&
+    call mmGetProjection(i_reso_geom, wpg,&
                          xpc   , ypc, xpr, ypr, tau1, tau2)
 !
 ! - Get algorithms
 !
     call mmGetAlgo(l_large_slip, ndexfr, jeusup, lambds,&
-                   ialgoc      , ialgof, iresof, iresog,&
+                   ialgoc      , ialgof, i_reso_fric, i_reso_geom,&
                    l_pena_cont , l_pena_fric)
 !
 ! - Get status
@@ -140,7 +140,7 @@ character(len=16), intent(in) :: option, nomte
 ! - Compute quantities (for vector)
 !
     call mmvppe(ndim     , nne      , nnm     , nnl    , nbdm ,&
-                iresog   , l_large_slip,&
+                i_reso_geom, l_large_slip,&
                 jeusup   ,&
                 tau1     , tau2     ,&
                 ffe      , ffm      , ffl     , dffm   , ddffm,&
@@ -155,7 +155,7 @@ character(len=16), intent(in) :: option, nomte
 !
 ! - Get contact pressure
 !
-    call mmlagc(lambds, dlagrc, iresof, lambda)
+    call mmlagc(lambds, dlagrc, i_reso_fric, lambda)
 !
 ! - Compute state of contact and friction
 !

@@ -16,17 +16,8 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-interface
-    subroutine mmmjeu(ndim  , i_reso_geom, jeusup,&
-                      geome , geomm ,&
-                      ddeple, ddeplm,&
-                      norm  , mprojt,&
-                      jeu   , djeu  , djeut )
-        integer, intent(in) :: ndim, i_reso_geom
-        real(kind=8), intent(in) :: jeusup,  norm(3)
-        real(kind=8), intent(in):: geomm(3), geome(3)
-        real(kind=8), intent(in) :: ddeple(3), ddeplm(3)
-        real(kind=8), intent(in) :: mprojt(3, 3)
-        real(kind=8), intent(out) :: jeu, djeu(3), djeut(3)
-    end subroutine mmmjeu
-end interface
+! Contact data structure : Parameters <-> integer definitions
+! -------------------------------------------------------------------------
+!
+#define ALGO_FIXE   0
+#define ALGO_NEWT   1
