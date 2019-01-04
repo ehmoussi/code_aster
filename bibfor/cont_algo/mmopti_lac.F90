@@ -25,6 +25,7 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterc/r8prem.h"
+#include "asterc/r8nnem.h"
 #include "asterfort/assert.h"
 #include "asterfort/cfdisi.h"
 #include "asterfort/infdbg.h"
@@ -38,7 +39,6 @@ implicit none
 #include "asterfort/apcoor.h"
 #include "asterfort/gapint.h"
 #include "asterfort/jelira.h"
-#include "asterc/r8nnem.h"
 #include "asterfort/as_deallocate.h"
 #include "asterfort/as_allocate.h"
 #include "asterfort/jenuno.h"
@@ -60,10 +60,12 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    integer :: i_cont_zone, i_patch, nb_patch, nb_cont_zone, nb_cont_init
-    integer :: j_patch, cont_init
+    integer :: i_cont_zone, i_patch, nb_patch, nb_cont_zone
+    integer :: j_patch
     integer :: indi_cont_curr, indi_cont_prev
-    real(kind=8) :: tole_inter, gap, epsint
+    real(kind=8) :: tole_inter, gap
+    integer :: nb_cont_init, cont_init
+    real(kind=8) :: epsint
     character(len=19) :: sdappa, newgeo
     character(len=24) :: sdcont_stat
     integer, pointer :: v_sdcont_stat(:) => null()
@@ -114,31 +116,38 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
     pair_tole    = 1.d-8
     nb_cont_init = 0
 !
-! - Tolerance for CONTACT_INIT
-!
-    epsint = 1.d-6*ds_contact%arete_min
-    l_axis = cfdisi(ds_contact%sdcont_defi,'AXISYMETRIQUE').eq.1
-!
 ! - Get parameters
 !
     nb_cont_zone = cfdisi(ds_contact%sdcont_defi,'NZOCO')
+    l_axis       = cfdisi(ds_contact%sdcont_defi,'AXISYMETRIQUE').eq.1
+    nb_patch     = ds_contact%nt_patch
+    nb_pair      = ds_contact%nb_cont_pair
+    epsint       = 1.d-6*ds_contact%arete_min
 !
-! - Access to mesh (patch)
+! - Access to mesh (patches)
 !
     call jeveuo(jexnum(mesh//'.PATCH',1), 'L', vi = v_mesh_lpatch)
-    newgeo = ds_contact%sdcont_solv(1:14)//'.NEWG'
-    call jeveuo(newgeo(1:19)//'.VALE', 'L', jv_geom)
     call jeveuo(mesh//'.TYPMAIL', 'L', vi = v_mesh_typmail)
     call jeveuo(mesh//'.COMAPA','L', vi = v_mesh_comapa)
     call jeveuo(mesh//'.CONNEX', 'L', vi = v_mesh_connex)
     call jeveuo(jexatr(mesh//'.CONNEX', 'LONCUM'), 'L', vi = v_connex_lcum)
-    nb_patch = ds_contact%nt_patch
+!
+! - Working vector
+!
     AS_ALLOCATE(vr=patch_weight_c,size=nb_patch)
 !
-! - Get pairing datastructure
+! - Access to geometry
+!
+    newgeo = ds_contact%sdcont_solv(1:14)//'.NEWG'
+    call jeveuo(newgeo(1:19)//'.VALE', 'L', jv_geom)
+!
+! - Acces to contact objects
 !
     sdcont_stat = ds_contact%sdcont_solv(1:14)//'.STAT'
     call jeveuo(sdcont_stat, 'E', vi = v_sdcont_stat)
+!
+! - Get pairing datastructure
+!
     sdappa = ds_contact%sdcont_solv(1:14)//'.APPA'
     sdappa_gapi = sdappa(1:19)//'.GAPI'
     sdappa_coef = sdappa(1:19)//'.COEF'
@@ -159,7 +168,9 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
     call jeveuo(sdappa_apts, 'L', vr = v_sdappa_apts)
     call jeveuo(sdappa_ap2m, 'L', vr = v_sdappa_ap2m)
     call jeveuo(sdappa_apli, 'L', vi = v_sdappa_apli)
-    nb_pair = ds_contact%nb_cont_pair
+!
+! - Compute integrated gap
+!
     v_sdappa_gapi(:) = 0.d0
     v_sdappa_coef(:) = 0.d0
     v_sdappa_nmcp(:) = 0
@@ -212,18 +223,12 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
 ! - Loop on contact zones
 !
     do i_cont_zone = 1, nb_cont_zone
-!
-! ----- Get access to patch
-!
+! ----- Access to patch
         nb_patch = v_mesh_lpatch((i_cont_zone-1)*2+2)
         j_patch  = v_mesh_lpatch((i_cont_zone-1)*2+1)
-!
-! ----- Get parameters
-!
+! ----- Get parameters on current zone
         cont_init = mminfi(ds_contact%sdcont_defi, 'CONTACT_INIT', i_cont_zone)
-!
 ! ----- Loop on patches
-!
         do i_patch = 1, nb_patch
 !
             gap            = v_sdappa_gapi(j_patch-2+i_patch)
