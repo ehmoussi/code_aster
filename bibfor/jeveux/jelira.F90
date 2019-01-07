@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -22,6 +22,7 @@ subroutine jelira(nomlu, catr, ival, cval)
 #include "jeveux_private.h"
 #include "asterfort/codent.h"
 #include "asterfort/jjallc.h"
+#include "asterfort/jjagod.h"
 #include "asterfort/jjcroc.h"
 #include "asterfort/jjlide.h"
 #include "asterfort/jjlirs.h"
@@ -64,6 +65,11 @@ subroutine jelira(nomlu, catr, ival, cval)
 !
     integer :: ipgc, kdesma(2), lgd, lgduti, kposma(2), lgp, lgputi
     common /iadmje/  ipgc,kdesma,   lgd,lgduti,kposma,   lgp,lgputi
+    integer :: nblmax, nbluti, longbl, kitlec, kitecr, kiadm, iitlec, iitecr
+    integer :: nitecr, kmarq
+    common /ificje/  nblmax(n) , nbluti(n) , longbl(n) ,&
+     &                 kitlec(n) , kitecr(n) ,             kiadm(n) ,&
+     &                 iitlec(n) , iitecr(n) , nitecr(n) , kmarq(n)
 !     ------------------------------------------------------------------
     integer :: ivnmax, iddeso, idiadd, idiadm, idnom, idlong, idlono, idluti
     integer :: idnum
@@ -314,6 +320,11 @@ subroutine jelira(nomlu, catr, ival, cval)
     if (lcol) then
         call jjlide('JELIBE', noml32(1:24), 2)
     endif
+    if (iret .eq. 1 ) then 
+      if ((100*nbluti(ic))/nblmax(ic) .gt. 50 ) then 
+         call jjagod (ic, 2*nblmax(ic) )
+      endif  
+    endif 
     ipgc = ipgcex
 !
 end subroutine
