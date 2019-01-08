@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -63,7 +63,7 @@ class DynamicMacroElementDefinition(ExecuteCommand):
             self._result.setImpedanceStiffnessMatrix(matrImpeRigi)
         matrImpeMass = keywords.get("MATR_IMPE_MASS")
         if matrImpeMass is not None:
-            self._result.setMassMatrix(matrImpeMass)
+            self._result.setImpedanceMassMatrix(matrImpeMass)
         matrImpeAmor = keywords.get("MATR_IMPE_AMOR")
         if matrImpeAmor is not None:
             self._result.setImpedanceDampingMatrix(matrImpeAmor)
