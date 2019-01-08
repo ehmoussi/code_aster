@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -341,8 +341,8 @@ class ExecuteCommand(object):
         """
         self._caller = {"filename": "unknown", "lineno": 0, "context": {},
                         "identifier": ""}
+        caller = inspect.currentframe()
         try:
-            caller = inspect.currentframe()
             for _ in range(level):
                 caller = caller.f_back
             self._caller["filename"] = caller.f_code.co_filename
@@ -644,7 +644,8 @@ def get_user_name(command, filename, lineno):
         if re_oper.search(line):
             mat = re_name.search(line)
             if mat:
-                return mat.group("name")
+                # str() because of linecache in ipython, remove it in py3
+                return str(mat.group("name"))
             break
 
     return ""
