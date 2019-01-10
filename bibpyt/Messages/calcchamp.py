@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -67,6 +67,10 @@ Le mot clef EXCIT de la commande n'est pas renseigné et la récupération des c
 le résultat %(k1)s n'est actuellement pas possible.
 
 Conseil : Il faut renseigner le mot clef EXCIT de la commande CALC_CHAMP,
+"""),
+
+7 : _(u"""
+Le champ STRX_ELGA n'est pas possible sur une modélisation XFEM.
 """),
 
 19 : _(u"""

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -73,14 +73,11 @@ subroutine jjagod(iclas, nblnew)
     common /ienvje/  lbis , lois , lols , lor8 , loc8
     integer :: ipgc, kdesma(2), lgd, lgduti, kposma(2), lgp, lgputi
     common /iadmje/  ipgc,kdesma,   lgd,lgduti,kposma,  lgp,lgputi
-    integer :: ldyn, lgdyn, nbdyn, nbfree
-    common /idynje/  ldyn , lgdyn , nbdyn , nbfree
-    integer :: indiq_jjldyn
-    common /idynqq/ indiq_jjldyn
-    integer :: indiq_jjagod
-    common /idagod/ indiq_jjagod
+    integer :: indiq_jjagod, indiq_jjldyn
+    common /idagod/ indiq_jjagod, indiq_jjldyn
+    
 ! ----------------------------------------------------------------------
-    integer :: iad14, kat14, kdy14, iad15, kat15, kdy15, ldynol, l
+    integer :: iad14, kat14, kdy14, iad15, kat15, kdy15, l
     integer :: lon, lonoi, irt, iadmi, iadyn, imq(2)
 ! DEB ------------------------------------------------------------------
     ic = iclas
@@ -90,16 +87,10 @@ subroutine jjagod(iclas, nblnew)
     irt = 0
     indiq_jjagod = 1
 !
-! --- ON INTERDIT L'APPEL A JJLDYN AVEC LE PARAMETRE MODE=1 LORS DE
-! --- L'ALLOCATION DYNAMIQUE  (ET LES APPELS RECURSIFS)
-!
-    ldynol = ldyn
-    if (ldyn .eq. 1) then
-       ldyn = 2
-    endif
-!
 ! --- ALLOCATION DU SEGMENT DE VALEURS POUR LE NOUVEL OBJET USADI (14) ET 
 ! --- RECOPIE DU CONTENU DE L'ANCIEN OBJET
+! --- LA VARIABLE indiq_jjagod PERMET DE FORCER L'ALLOCATION MEME SI ON
+! --- DEPASSE LA VALEUR vmxdyn
 !
     lon = 3*nblnew*lois
     call jjalls(lon, ic, 'V', 'I', lois, 'INIT', iusadi, iad14, kat14, kdy14)
@@ -168,7 +159,6 @@ subroutine jjagod(iclas, nblnew)
 !
     nblmax(ic)=nblnew
 !
-    ldyn = ldynol
     ipgc = ipgca
     indiq_jjagod = 0 
 ! FIN ------------------------------------------------------------------
