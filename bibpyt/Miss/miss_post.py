@@ -763,6 +763,8 @@ class PostMissControl(PostMiss):
         # type de la table de sortie
         tabout = CREA_TABLE(TYPE_TABLE='TABLE',
                             **dprod)
+        for val in self.tab.referenceToDataStructure:
+            tabout.addReference(val)
         self.initco()
         return tabout
 
