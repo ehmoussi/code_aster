@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -102,6 +102,12 @@ subroutine xpoini(maxfem, modele, malini, modvis, licham,&
 !       MODELE DE VISU ET MAILLAGE DE VISU (X-FEM)
         call getvid(' ', 'MODELE_VISU', scal=modvis, nbret=iret)
         call dismoi('NOM_MAILLA', modvis, 'MODELE', repk=maxfem)
+!
+!       VERIFICATION QUE LE MODELE de VISU N'EST PAS X-FEM
+        call exixfe(modvis,ibid)
+        if (ibid.eq.1) then
+            call utmess('F', 'XFEM2_30')
+        endif
 !
 !       NOM ET TYPE DE LA SD RESULTAT EN ENTREE : RESUCO
         call getvid(' ', 'RESULTAT', scal=resuco, nbret=ibid)

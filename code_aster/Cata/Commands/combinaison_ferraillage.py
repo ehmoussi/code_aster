@@ -2,7 +2,7 @@
 # --------------------------------------------------------------------
 # Copyright (C) 2018 Aether Engineering Solutions - www.aethereng.com
 # Copyright (C) 2018 Kobe Innovation Engineering - www.kobe-ie.com
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -60,14 +60,14 @@ COMBINAISON_FERRAILLAGE = MACRO(
         fr = tr ("Paramètres de la méthode EC2"),
         AFFE = FACT ( statut = 'o', min = 1 , max = '**',
             regles = ( UN_PARMI ( 'TOUT', 'GROUP_MA' ), ),
-                TOUT = SIMP ( statut = 'f', typ = 'TXM',
-                              into = ('OUI','NON') ),
+                TOUT = SIMP ( statut = 'f', typ = 'TXM', into = ('OUI',) ),
+
             GROUP_MA = SIMP ( statut = 'f', typ = grma,
                               validators=NoRepeat() , max='**'),
             TYPE_STRUCTURE = SIMP ( statut = 'o', typ = 'TXM',
                           into = (
-                                   'POUTRE',
-                                   'POTEAU',
+                                   # 'POUTRE', TODO: next release 
+                                   # 'POTEAU', TODO: next release 
                                    '2D',
                                   )
                         ),
@@ -94,14 +94,14 @@ COMBINAISON_FERRAILLAGE = MACRO(
         fr = tr ("Paramètres de la méthode UTILISATEUR"),
         AFFE = FACT ( statut = 'o', min = 1 , max = '**',
             regles = ( UN_PARMI ( 'TOUT', 'GROUP_MA' ), ),
-              TOUT = SIMP ( statut = 'f', typ = 'TXM',
-                              into = ('OUI','NON') ),
+                TOUT = SIMP ( statut = 'f', typ = 'TXM', into = ('OUI',) ),
+                                  
             GROUP_MA = SIMP ( statut = 'f', typ = grma,
                               validators=NoRepeat() , max='**'),
             TYPE_STRUCTURE = SIMP ( statut = 'o', typ = 'TXM',
                           into = (
-                                   'POUTRE',
-                                   'POTEAU',
+                                   # 'POUTRE', TODO: next release 
+                                   # 'POTEAU', TODO: next release 
                                    '2D',
                                   )
                         ),
@@ -109,9 +109,9 @@ COMBINAISON_FERRAILLAGE = MACRO(
             CEQUI      = SIMP(statut='f',typ='R'), # coefficient d'équivalence acier/béton  (pour ELS)
             SIGM_ACIER = SIMP(statut='o',typ='R'), # contrainte admissible dans l'acier
             SIGM_BETON = SIMP(statut='o',typ='R'), # contrainte admissible dans le béton
-            PIVA       =SIMP(statut='f',typ='R'), # valeur du pivot a  (pour ELU)
-            PIVB       =SIMP(statut='f',typ='R'), # valeur du pivot b  (pour ELU)
-            ES         =SIMP(statut='f',typ='R'), # valeur du Module d'Young de l'acier (pour ELU)
+            PIVA       = SIMP(statut='f',typ='R'), # valeur du pivot a  (pour ELU)
+            PIVB       = SIMP(statut='f',typ='R'), # valeur du pivot b  (pour ELU)
+            ES         = SIMP(statut='f',typ='R'), # valeur du Module d'Young de l'acier (pour ELU)
         ),
     ),
 )

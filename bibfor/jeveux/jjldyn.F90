@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -83,21 +83,21 @@ subroutine jjldyn(imode, lmin, ltot)
     common /idynje/  ldyn , lgdyn , nbdyn , nbfree
     integer :: icdyn, mxltot
     common /xdynje/  icdyn , mxltot
-    integer :: indiq_jjldyn
-    common /idynqq/ indiq_jjldyn
     real(kind=8) :: mxdyn, mcdyn, mldyn, vmxdyn, vmet, lgio, cuvtrav
     common /r8dyje/ mxdyn, mcdyn, mldyn, vmxdyn, vmet, lgio(2), cuvtrav
     integer :: lbis, lois, lols, lor8, loc8
     common /ienvje/  lbis , lois , lols , lor8 , loc8
     integer :: datei
     common /iheuje/  datei
+    integer :: indiq_jjagod, indiq_jjldyn
+    common /idagod/ indiq_jjagod, indiq_jjldyn
 ! ----------------------------------------------------------------------
     integer :: ivnmax, iddeso, idiadd, idiadm, idlono
     parameter    ( ivnmax = 0 , iddeso = 1 , idiadd = 2 , idiadm = 3 ,idlono = 8    )
 ! ----------------------------------------------------------------------
     character(len=1) :: cgenr
     character(len=8) :: nomk(5)
-!     CHARACTER*32   NOM32
+!    CHARACTER*32   NOM32
     integer :: iaddi(2), lgs, nbioav(2)
     integer :: rang, nbproc, iret, iret2
     real(kind=8) :: graine, valp(5), vx(2), v0
@@ -107,7 +107,7 @@ subroutine jjldyn(imode, lmin, ltot)
 !
     indiq_jjldyn = 1
     call uttcpu('CPU.MEMD.1', 'DEBUT', ' ')
-!
+!   
 !     ON LISTE LES OBJETS ALLOUES DYNAMIQUEMENT EN BALAYANT
 !     L'ENSEMBLE DES OBJETS, EN COMMENCANT PAR LA BASE VOLATILE
 !
@@ -144,7 +144,7 @@ subroutine jjldyn(imode, lmin, ltot)
             if (iadmi .eq. 0) goto 205
             iadyn = iadm(jiadm(ic)+2*j )
             cgenr = genr(jgenr(ic)+j)
-!          NOM32 = RNOM(JRNOM(IC)+J)
+!            NOM32 = RNOM(JRNOM(IC)+J)
 !
 !    ISD DESIGNE LE STATUT DE LA COLLECTION
 !        =U ON PASSE PAR LES ROUTINES HABITUELLES (JJALLC, JJLIDE)
