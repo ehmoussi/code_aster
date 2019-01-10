@@ -942,10 +942,8 @@ GABK_Y=CALC_FONCTION(LIST_PARA=L_INST,
 #
 
 
-GARADB_X.debugPrint()
 SRADBX5=CALC_FONCTION(SPEC_OSCI=_F(FONCTION=GARADB_X,
                                    NORME=9.81, AMOR_REDUIT=(0.05),),);
-SRADBX5.debugPrint()
 #
 #
 
