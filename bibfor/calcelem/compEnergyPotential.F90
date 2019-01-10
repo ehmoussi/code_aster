@@ -16,11 +16,11 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine compStress(modelz , ligrel , compor,&
-                      chdispz, chgeom , chmate,&
-                      chcara , chtime , chharm,&
-                      chvarc , chvref , chstrx,&
-                      basez  , chelemz, codret)
+subroutine compEnergyPotential(option , modelz , ligrel, compor, l_temp,&
+                               chdispz, chtempz,&
+                               chharm , chgeom , chmate, chcara, chtime,&
+                               chvarc , chvref , &
+                               basez  , chelemz, codret)
 !
 implicit none
 !
@@ -35,10 +35,11 @@ implicit none
 #include "asterfort/meceuc.h"
 #include "asterfort/utmess.h"
 !
-character(len=*), intent(in) :: modelz, ligrel, compor
-character(len=*), intent(in) :: chdispz, chgeom, chmate
-character(len=*), intent(in) :: chcara(*), chtime, chharm
-character(len=*), intent(in) :: chvarc, chvref, chstrx
+character(len=*), intent(in) :: option, modelz, ligrel, compor
+aster_logical, intent(in) :: l_temp
+character(len=*), intent(in) :: chdispz, chtempz
+character(len=*), intent(in) :: chharm, chgeom, chmate, chcara(*), chtime
+character(len=*), intent(in) :: chvarc, chvref
 character(len=*), intent(in) :: chelemz, basez
 integer, intent(out) :: codret
 !
@@ -46,7 +47,7 @@ integer, intent(out) :: codret
 !
 ! Fields computation
 !
-! Utility to compute SIEF_ELGA
+! Utility to compute ETHE_ELEM and EPOT_ELEM
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -58,84 +59,47 @@ integer, intent(out) :: codret
     character(len=24) :: lchin(maxin), lchout(maxout)
     character(len=1) :: base
     character(len=8) :: model, cara_elem
-    character(len=16) :: option
-    character(len=19) :: canbsp, chxfem(12)
-    character(len=24) :: chdisp, chelem
-    integer :: iret1, nbin, nbout, iret
-    integer :: ifiss
+    character(len=24) :: chdisp, chelem, chtemp
+    integer :: iret
+    integer :: nbin, nbout
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    chdisp   = chdispz
-    chelem   = chelemz
-    codret   = 0
-    base     = basez
-    model    = modelz
-    option   = 'SIEF_ELGA'
-    lpain(:) = ' '
-    lchin(:) = ' '
+    cara_elem = chcara(1)
+    chtemp    = chtempz
+    chdisp    = chdispz
+    chelem    = chelemz
+    codret    = 0
+    base      = basez
+    model     = modelz
+    lpain(:)  = ' '
+    lchin(:)  = ' '
 !
 ! - Output field
 !
     nbout     = 1
     lchout(1) = chelem
-    lpaout(1) = 'PCONTRR'
-!
-! - Preparation for dynamic fields ('sub-points')
-!
-    cara_elem = chcara(1)
-    canbsp = '&&MECALC.NBSP'
-    call exisd('CHAM_ELEM_S', canbsp, iret1)
-    if (iret1 .ne. 1) then
-        call cesvar(cara_elem, ' ', ligrel, canbsp)
-    endif
-    call copisd('CHAM_ELEM_S', 'V', canbsp, chelem)
+    lpaout(1) = 'PENERDR'
 !
 ! - Add input fields
 !
-    nbin      = 1
-    lpain(1)  = 'PDEPLAR'
-    lchin(1)  = chdisp
-    call ajchca('PABSCUR', chgeom(1:8)//'.ABSC_CURV', lpain, lchin, nbin, maxin, 'N')
-!
-! - Fields for XFEM
-!
-    call jeexin(modelz(1:8)//'.FISS', ifiss)
-    if (ifiss .ne. 0) then
-        chxfem(1) = model(1:8)//'.TOPOSE.PIN'
-        chxfem(2) = model(1:8)//'.TOPOSE.CNS'
-        chxfem(3) = model(1:8)//'.TOPOSE.HEA'
-        chxfem(4) = model(1:8)//'.TOPOSE.LON'
-        chxfem(5) = model(1:8)//'.TOPOSE.PMI'
-        chxfem(6) = model(1:8)//'.BASLOC'
-        chxfem(7) = model(1:8)//'.LNNO'
-        chxfem(8) = model(1:8)//'.LTNO'
-        chxfem(9) = model(1:8)//'.STNO'
-        chxfem(10) = model(1:8)//'.FISSNO'
-        chxfem(12) = model(1:8)//'.TOPONO.HNO'
-        call ajchca('PPINTTO', chxfem(1), lpain, lchin, nbin, maxin, 'N')
-        call ajchca('PCNSETO', chxfem(2), lpain, lchin, nbin, maxin, 'N')
-        call ajchca('PHEAVTO', chxfem(3), lpain, lchin, nbin, maxin, 'N')
-        call ajchca('PLONCHA', chxfem(4), lpain, lchin, nbin, maxin, 'N')
-        call ajchca('PPMILTO', chxfem(5), lpain, lchin, nbin, maxin, 'N')
-        call ajchca('PBASLOR', chxfem(6), lpain, lchin, nbin, maxin, 'N')
-        call ajchca('PLSN', chxfem(7), lpain, lchin, nbin, maxin, 'N')
-        call ajchca('PLST', chxfem(8), lpain, lchin, nbin, maxin, 'N')
-        call ajchca('PSTANO', chxfem(9), lpain, lchin, nbin, maxin, 'N')
-        call ajchca('PFISNO', chxfem(10), lpain, lchin, nbin, maxin, 'N')
-        call ajchca('PHEA_NO', chxfem(12), lpain, lchin, nbin, maxin, 'N')
+    nbin     = 1
+    
+    if (l_temp) then
+        lpain(1) = 'PTEMPER'
+        lchin(1) = chtemp
+    else
+        lpain(1) = 'PDEPLAR'
+        lchin(1) = chdisp
     endif
 !
 ! - Fields for structural elements
 !
     call ajchca('PNBSP_I', cara_elem//'.CANBSP', lpain, lchin, nbin, maxin, 'N')
     call ajchca('PFIBRES', cara_elem//'.CAFIBR', lpain, lchin, nbin, maxin, 'N')
-    call ajchca('PSTRXRR', chstrx, lpain, lchin, nbin, maxin, 'N')
-    call ajchca('PCAARPO', chcara(9), lpain, lchin, nbin, maxin, 'N')
     call ajchca('PCACOQU', chcara(7), lpain, lchin, nbin, maxin, 'N')
     call ajchca('PCINFDI', chcara(15), lpain, lchin, nbin, maxin, 'N')
     call ajchca('PCADISK', chcara(2), lpain, lchin, nbin, maxin, 'N')
-    call ajchca('PCAGEPO', chcara(5), lpain, lchin, nbin, maxin, 'N')
     call ajchca('PCAGNBA', chcara(11), lpain, lchin, nbin, maxin, 'N')
     call ajchca('PCAGNPO', chcara(6), lpain, lchin, nbin, maxin, 'N')
     call ajchca('PCAMASS', chcara(12), lpain, lchin, nbin, maxin, 'N')

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,14 +15,16 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine peepot(resu, modele, mate, cara, nh,&
-                  nbocc)
-    implicit none
+!
+subroutine peepot(resu, modele, mate, cara, nh, nbocc)
+!
+implicit none
+!
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterfort/gettco.h"
 #include "asterc/r8vide.h"
+#include "asterfort/assert.h"
 #include "asterfort/chpve2.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/exlim3.h"
@@ -30,7 +32,6 @@ subroutine peepot(resu, modele, mate, cara, nh,&
 #include "asterfort/getvid.h"
 #include "asterfort/getvr8.h"
 #include "asterfort/getvtx.h"
-#include "asterfort/infniv.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jedetr.h"
 #include "asterfort/jeexin.h"
@@ -40,7 +41,7 @@ subroutine peepot(resu, modele, mate, cara, nh,&
 #include "asterfort/jerecu.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/jexnom.h"
-#include "asterfort/mecalc.h"
+#include "asterfort/compEnergyPotential.h"
 #include "asterfort/mecham.h"
 #include "asterfort/mechti.h"
 #include "asterfort/meharm.h"
@@ -65,20 +66,20 @@ subroutine peepot(resu, modele, mate, cara, nh,&
 !
     integer :: nd, nr, ni, iret, np, nc, jord, jins, jad, nbordr, iord, numord, iainst, jnmo, ibid
     integer :: ire1, ire2, nt, nm, ng, nbgrma, ig, jgr, nbma, nume, im, nbparr, nbpard, nbpaep
-    integer :: iocc, jma, icheml, ifm, niv, ier
+    integer :: iocc, jma, icheml, ier
     parameter (nbpaep=2,nbparr=6,nbpard=4)
-    real(kind=8) :: prec, varpep(nbpaep), alpha, inst, valer(3), rundf
+    real(kind=8) :: prec, varpep(nbpaep), inst, valer(3), rundf
     character(len=1) :: base
     character(len=2) :: codret
     character(len=8) :: k8b, noma, resul, crit, nommai, typarr(nbparr), typard(nbpard), valk(2)
     character(len=8) :: nomgd
     character(len=16) :: typres, option, optio2, noparr(nbparr), nopard(nbpard)
-    character(len=19) :: chelem, knum, kins, depla, ligrel, tabtyp(3), chvarc, chvref
-    character(len=24) :: chtime, chamgd, typcha, chgeom, chcara(18), chtemp, chharm
-    character(len=24) :: compor, mlggma, mlgnma, k24b, nomgrm, valk2(2)
-!
-    aster_logical :: exitim
-    complex(kind=8) :: c16b, calpha
+    character(len=19) :: chelem, knum, kins, ligrel, tabtyp(3), chvarc, chvref
+    character(len=19) :: field_node, field_elem
+    character(len=24) :: chtime, typcha, chgeom, chcara(18), chtemp, chharm, chdisp
+    character(len=24) :: compor, mlggma, mlgnma, nomgrm, valk2(2)
+    aster_logical :: exitim, l_temp
+    complex(kind=8) :: c16b
     integer :: iarg
 !
     data noparr/'NUME_ORDRE','INST','LIEU','ENTITE','TOTALE',&
@@ -92,22 +93,20 @@ subroutine peepot(resu, modele, mate, cara, nh,&
 !     ------------------------------------------------------------------
     call jemarq()
     c16b=(0.d0,0.d0)
+
 !
-! --- RECUPERATION DU NIVEAU D'IMPRESSION
-    call infniv(ifm, niv)
-!
-    base = 'V'
-    k24b = ' '
-    rundf = r8vide()
+    base   = 'V'
+    rundf  = r8vide()
     exitim = .false.
-    inst = 0.d0
-    alpha = 1.d0
-    calpha = (1.d0,1.d0)
-    chtemp= ' '
-!
-    call getvid(' ', 'CHAM_GD', scal=depla, nbret=nd)
+    inst   = 0.d0
+    chtemp = ' '
+    chdisp = ' '
+    typres = ' '
+    call getvid(' ', 'CHAM_GD', scal=field_node, nbret=nd)
     if (nd .ne. 0) then
-        call chpve2(depla, 3, tabtyp, ier)
+        call chpve2(field_node, 3, tabtyp, ier)
+        call dismoi('TYPE_SUPERVIS', field_node, 'CHAMP', repk=typcha)
+        call dismoi('NOM_GD', field_node, 'CHAMP', repk=nomgd)
     endif
     call getvid(' ', 'RESULTAT', scal=resul, nbret=nr)
     call getvr8(' ', 'INST', scal=inst, nbret=ni)
@@ -116,12 +115,12 @@ subroutine peepot(resu, modele, mate, cara, nh,&
         call gettco(resul, typres)
         if (typres(1:9) .eq. 'MODE_MECA') then
             noparr(2) = 'FREQ'
-            else if (typres(1:9).eq.'EVOL_THER' .or. typres(1:9)&
-        .eq.'EVOL_ELAS' .or. typres(1:9).eq.'MULT_ELAS' .or. typres(1:&
-        9).eq.'EVOL_NOLI' .or. typres(1:10).eq.'DYNA_TRANS') then
+        else if (typres(1:9) .eq. 'EVOL_THER' .or. typres(1:9) .eq. 'EVOL_ELAS' .or.&
+                 typres(1:9) .eq. 'MULT_ELAS' .or. typres(1:9) .eq. 'EVOL_NOLI' .or.&
+                 typres(1:10) .eq. 'DYNA_TRANS') then
             noparr(2) = 'INST'
         else
-            call utmess('F', 'UTILITAI3_75')
+            ASSERT(ASTER_FALSE)
         endif
     endif
 !
@@ -137,7 +136,7 @@ subroutine peepot(resu, modele, mate, cara, nh,&
 !
     knum = '&&PEEPOT.NUME_ORDRE'
     kins = '&&PEEPOT.INSTANT'
-    typres = ' '
+
     if (nd .ne. 0) then
         nbordr = 1
         call wkvect(knum, 'V V I', nbordr, jord)
@@ -149,8 +148,7 @@ subroutine peepot(resu, modele, mate, cara, nh,&
     else
         call getvr8(' ', 'PRECISION', scal=prec, nbret=np)
         call getvtx(' ', 'CRITERE', scal=crit, nbret=nc)
-        call rsutnu(resul, ' ', 0, knum, nbordr,&
-                    prec, crit, iret)
+        call rsutnu(resul, ' ', 0, knum, nbordr, prec, crit, iret)
         if (iret .ne. 0) goto 80
         call jeveuo(knum, 'L', jord)
 !        --- ON RECUPERE LES INSTANTS ---
@@ -161,7 +159,7 @@ subroutine peepot(resu, modele, mate, cara, nh,&
             do iord = 1, nbordr
                 numord = zi(jord+iord-1)
                 call rsadpa(resul, 'L', 1, 'INST', numord,&
-                            0, sjv=iainst, styp=k8b)
+                            0, sjv=iainst)
                 zr(jins+iord-1) = zr(iainst)
             end do
         else
@@ -169,8 +167,7 @@ subroutine peepot(resu, modele, mate, cara, nh,&
             if (iret .ne. 0) then
                 do iord = 1, nbordr
                     numord = zi(jord+iord-1)
-                    call rsadpa(resul, 'L', 1, 'FREQ', numord,&
-                                0, sjv=iainst, styp=k8b)
+                    call rsadpa(resul, 'L', 1, 'FREQ', numord, 0, sjv=iainst)
                     zr(jins+iord-1) = zr(iainst)
                 end do
             endif
@@ -187,46 +184,46 @@ subroutine peepot(resu, modele, mate, cara, nh,&
         inst = zr(jins+iord-1)
         valer(1) = inst
         if (typres .eq. 'FOURIER_ELAS') then
-            call rsadpa(resul, 'L', 1, 'NUME_MODE', numord,&
-                        0, sjv=jnmo, styp=k8b)
+            call rsadpa(resul, 'L', 1, 'NUME_MODE', numord, 0, sjv=jnmo)
             call meharm(modele, zi(jnmo), chharm)
         endif
         chtime = ' '
         if (exitim) call mechti(noma, inst, rundf, rundf, chtime)
 !
         if (nr .ne. 0) then
-            call rsexch(' ', resul, 'EPOT_ELEM', numord, depla,&
-                        iret)
+            call rsexch(' ', resul, 'EPOT_ELEM', numord, field_elem, iret)
             if (iret .gt. 0) then
-                call rsexch(' ', resul, 'DEPL', numord, depla,&
-                            ire1)
+                call rsexch(' ', resul, 'DEPL', numord, field_node, ire1)
                 if (ire1 .gt. 0) then
-                    call rsexch(' ', resul, 'TEMP', numord, depla,&
-                                ire2)
+                    call rsexch(' ', resul, 'TEMP', numord, field_node, ire2)
                     if (ire2 .gt. 0) goto 72
+                    call dismoi('TYPE_SUPERVIS', field_node, 'CHAMP', repk=typcha)
+                    call dismoi('NOM_GD', field_node, 'CHAMP', repk=nomgd)
+                else
+                    call dismoi('TYPE_SUPERVIS', field_node, 'CHAMP', repk=typcha)
+                    call dismoi('NOM_GD', field_node, 'CHAMP', repk=nomgd)
                 endif
+            else
+                call dismoi('TYPE_SUPERVIS', field_elem, 'CHAMP', repk=typcha)
+                call dismoi('NOM_GD', field_elem, 'CHAMP', repk=nomgd)
             endif
         endif
 !
-        call dismoi('TYPE_SUPERVIS', depla, 'CHAMP', repk=typcha)
-        call dismoi('NOM_GD', depla, 'CHAMP', repk=nomgd)
         if (typcha(1:7) .eq. 'CHAM_NO') then
             if (nomgd(1:4) .eq. 'DEPL') then
-                chamgd = depla
                 optio2 = 'EPOT_ELEM'
-                call vrcins(modele, mate, cara, inst, chvarc,&
-                            codret)
+                call vrcins(modele, mate, cara, inst, chvarc, codret)
                 call vrcref(modele(1:8), mate(1:8), cara(1:8), chvref(1: 19))
+                l_temp = ASTER_FALSE
             else if (nomgd(1:4).eq.'TEMP') then
                 optio2 = 'ETHE_ELEM'
-                chamgd = ' '
-                chtemp = depla
+                l_temp = ASTER_TRUE
             else
                 call utmess('F', 'UTILITAI3_73')
             endif
         else if (typcha(1:9).eq.'CHAM_ELEM') then
             if (nomgd(1:4) .eq. 'ENER') then
-                chelem = depla
+                chelem = field_elem
                 goto 30
             else
                 call utmess('F', 'UTILITAI3_73')
@@ -238,13 +235,18 @@ subroutine peepot(resu, modele, mate, cara, nh,&
         chelem = '&&PEEPOT.CHAM_ELEM'
         compor = mate(1:8)//'.COMPOR'
         ibid = 0
-        call mecalc(optio2, modele, chamgd, chgeom, mate,&
-                    chcara, chtemp, k24b, chtime,&
-                    chharm, k24b, k24b, k24b, k24b,&
-                    k24b, k24b, k24b, alpha, calpha,&
-                    k24b, k24b, chelem, k24b, ligrel,&
-                    base, chvarc, chvref, k24b, compor,&
-                    k24b, iret)
+        if (l_temp) then
+            chtemp = field_node
+            chdisp = ' '
+        else
+            chdisp = field_node
+            chtemp = ' '
+        endif
+        call compEnergyPotential(optio2, modele, ligrel, compor, l_temp,&
+                                 chdisp, chtemp,&
+                                 chharm, chgeom, mate  , chcara, chtime,&
+                                 chvarc, chvref, &
+                                 base  , chelem, iret)
  30     continue
 !
 !        --- ON CALCULE L'ENERGIE TOTALE ---

@@ -15,11 +15,19 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
+#include "asterf_types.h"
 !
 interface
-    subroutine rsexc1(nomsd, nomsy, nume_store, chextr)
-        character(len=*), intent(in) :: nomsd, nomsy
-        integer, intent(in) :: nume_store
-        character(len=*), intent(out) :: chextr
-    end subroutine rsexc1
+    subroutine compEnergyKinetic(modelz , ligrel , l_modal,&
+                                 chdispz, chvitez, chfreqz, chgeom , chmate,&
+                                 chcara , chmasd , chvarc , &
+                                 basez  , chelemz, codret)
+        character(len=*), intent(in) :: modelz, ligrel
+        aster_logical, intent(in) :: l_modal
+        character(len=*), intent(in) :: chdispz, chvitez, chgeom, chmate, chmasd
+        character(len=*), intent(in) :: chcara(*), chfreqz
+        character(len=*), intent(in) :: chvarc
+        character(len=*), intent(in) :: chelemz, basez
+        integer, intent(out) :: codret
+    end subroutine compEnergyKinetic
 end interface
