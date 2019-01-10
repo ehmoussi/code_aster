@@ -1,0 +1,454 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'), DEBUG=_F(SDVERI='OUI'))
+
+
+#####################
+##CALCUL THERMIQUE
+#####################
+
+#Maillage mecanique
+MAILMECA=LIRE_MAILLAGE(UNITE=20,
+                       FORMAT='MED',
+                        );
+
+# Barsoum pour les 2 fonds de fissure
+MAILMECA=MODI_MAILLAGE(reuse =MAILMECA,
+                       MAILLAGE=MAILMECA,
+                       MODI_MAILLE=_F(OPTION='NOEUD_QUART',GROUP_NO_FOND='G',),)
+
+MAILMECA=MODI_MAILLAGE(reuse =MAILMECA,
+                       MAILLAGE=MAILMECA,
+                       MODI_MAILLE=_F(OPTION='NOEUD_QUART',GROUP_NO_FOND='H',),)
+
+TEMPVARX=DEFI_FONCTION(NOM_PARA='X',VALE=(-100,260,
+                                           0,130,
+                                           22,100,
+                                           100,200),);
+
+CHP_TEMP=CREA_CHAMP( OPERATION='AFFE', TYPE_CHAM='NOEU_TEMP_F',
+                     MAILLAGE=MAILMECA,
+                     AFFE=_F(TOUT = 'OUI',
+                     NOM_CMP = 'TEMP',
+                     VALE_F = TEMPVARX))
+
+CTE250=DEFI_CONSTANTE(VALE=250.);
+
+CHTEMP0=CREA_CHAMP( OPERATION='AFFE',
+                    TYPE_CHAM='NOEU_TEMP_F',
+                    MAILLAGE=MAILMECA,
+                    AFFE=_F(TOUT = 'OUI',
+                            NOM_CMP = 'TEMP',
+                            VALE_F = CTE250))
+
+#Calcul thermique
+LIST1=DEFI_LIST_REEL(DEBUT=0,
+                     INTERVALLE=_F(JUSQU_A=2,NOMBRE=2,),);
+
+RESUTHER=CREA_RESU(OPERATION='AFFE',
+                   TYPE_RESU='EVOL_THER',
+                   NOM_CHAM='TEMP',
+                   AFFE=(_F(INST = -1,
+                            CHAM_GD = CHTEMP0),
+                         _F(LIST_INST = LIST1,
+                            CHAM_GD = CHP_TEMP),)
+                   )
+                   
+##CALCUL MECANIQUE AVEC TEMPERATURE, FISSURE FERMEE => RESUMECA, pour champs
+#de contrainte initiale
+
+MO=AFFE_MODELE(MAILLAGE=MAILMECA,
+               AFFE=_F(TOUT='OUI',
+                       PHENOMENE='MECANIQUE',
+                       MODELISATION='D_PLAN',),);
+
+##Materiau dependant de la temperature
+E_T=DEFI_FONCTION(NOM_PARA='TEMP',VALE=(0., 210000.0, 1000., 210000.0))
+NU_T=DEFI_FONCTION(NOM_PARA='TEMP',VALE=(0., 0.3, 1000., 0.3))
+ALPHA_T=DEFI_FONCTION(NOM_PARA='TEMP',VALE=(0., 10e-6, 1000., 10e-6))
+
+MAMEC=DEFI_MATERIAU(ELAS_FO=_F(E=E_T,
+                            NU=NU_T,
+                            ALPHA=ALPHA_T,
+                            TEMP_DEF_ALPHA=20.
+                            ),);
+
+MAMECA=AFFE_MATERIAU(MAILLAGE=MAILMECA,
+                     AFFE=_F(TOUT='OUI',
+                             MATER=MAMEC,),
+                     AFFE_VARC=_F(TOUT='OUI',
+                                  NOM_VARC='TEMP',
+                                  EVOL = RESUTHER,
+                                  VALE_REF=250,),);
+
+##Chargement : encastrement
+ENCASTRE=AFFE_CHAR_MECA(MODELE=MO,
+                        DDL_IMPO=_F(GROUP_NO='Contour',
+                                    DX=0,
+                                    DY=0,),);
+##Chargement : fissure fermee
+BLOCFISS=AFFE_CHAR_MECA(MODELE=MO,
+                        LIAISON_GROUP=(_F(GROUP_NO_1='lev_sup',
+                                          GROUP_NO_2='lev_inf',
+                                          DDL_1='DX',
+                                          COEF_MULT_1=1,
+                                          DDL_2='DX',
+                                          COEF_MULT_2=-1,
+                                          COEF_IMPO=0,),
+                                       _F(GROUP_NO_1='lev_sup',
+                                          GROUP_NO_2='lev_inf',
+                                          DDL_1='DY',
+                                          COEF_MULT_1=1,
+                                          DDL_2='DY',
+                                          COEF_MULT_2=-1,
+                                          COEF_IMPO=0,),),);
+
+INSTMECA=DEFI_LIST_REEL(DEBUT=-1,
+                        INTERVALLE=(_F(JUSQU_A=0,PAS=1,),
+                                    _F(JUSQU_A=1,PAS=1,),),);
+
+##Calcul thermomecanique avec fissure fermee pour extraction des contraintes
+RESUMECA=STAT_NON_LINE(MODELE=MO,
+                       CHAM_MATER=MAMECA,
+                       EXCIT=(_F(CHARGE=ENCASTRE,),
+                              _F(CHARGE=BLOCFISS,),),
+                       COMPORTEMENT=_F(RELATION='ELAS',),
+                       INCREMENT=_F(LIST_INST=INSTMECA,),);
+
+RESUMECA=CALC_CHAMP(reuse=RESUMECA,
+                    RESULTAT=RESUMECA,
+                    CONTRAINTE=('SIEF_ELNO','SIEF_NOEU',),
+                    DEFORMATION=('EPSI_ELGA','EPSP_ELNO',),
+                    VARI_INTERNE=('VARI_ELNO',),);
+
+##Extraction des contraintes au noeuds et points de Gauss
+SIEFELGA=CREA_CHAMP(TYPE_CHAM='ELGA_SIEF_R',
+                    OPERATION='EXTR',
+                    RESULTAT=RESUMECA,
+                    NOM_CHAM='SIEF_ELGA',
+                    INST=1,);
+
+SIEFELNO=CREA_CHAMP(TYPE_CHAM='ELNO_SIEF_R',
+                    OPERATION='EXTR',
+                    RESULTAT=RESUMECA,
+                    NOM_CHAM='SIEF_ELNO',
+                    INST=1,);
+
+SIEFNOEU=CREA_CHAMP(TYPE_CHAM='NOEU_SIEF_R',
+                    OPERATION='EXTR',
+                    RESULTAT=RESUMECA,
+                    NOM_CHAM='SIEF_NOEU',
+                    INST=1,);
+
+##Calcul thermomecanique sans etat init ouverture de la fissure
+RESOUVFI=STAT_NON_LINE(MODELE=MO,
+                       CHAM_MATER=MAMECA,
+                       EXCIT=(_F(CHARGE=ENCASTRE,),),
+                       COMPORTEMENT=_F(RELATION='ELAS',),
+                       INCREMENT=_F(LIST_INST=INSTMECA,),);
+
+RESOUVFI=CALC_CHAMP(reuse=RESOUVFI,
+                    RESULTAT=RESOUVFI,
+                    CONTRAINTE=('SIEF_ELNO',),
+                    DEFORMATION=('EPSI_ELGA','EPSP_ELNO',),
+                    VARI_INTERNE=('VARI_ELNO',),);
+
+
+## Affectation du materiau mecanique (sans chargement thermique)
+LIST2=DEFI_LIST_REEL(DEBUT=0,
+                        INTERVALLE=(_F(JUSQU_A=1,PAS=1,),),);
+                        
+RESTHCT=CREA_RESU(OPERATION='AFFE',
+                   TYPE_RESU='EVOL_THER',
+                   NOM_CHAM='TEMP',
+                   AFFE=(_F(LIST_INST = LIST2,
+                            CHAM_GD = CHTEMP0),)
+                   )
+MAMECACT=AFFE_MATERIAU(MAILLAGE=MAILMECA,
+                     AFFE=_F(TOUT='OUI',
+                             MATER=MAMEC,),
+                     AFFE_VARC=_F(TOUT='OUI',
+                                  NOM_VARC='TEMP',
+                                  EVOL = RESTHCT,
+                                  VALE_REF=250,),);
+                   
+## Resolution ouverture de la fissure en presence d'un champ de contrainte residuelle
+
+RESUINI=STAT_NON_LINE(MODELE=MO,
+                      CHAM_MATER=MAMECACT,
+                      EXCIT=(_F(CHARGE=ENCASTRE,),),
+                      COMPORTEMENT=_F(RELATION='ELAS',),
+                      ETAT_INIT=_F(SIGM=SIEFELGA,),
+                      INCREMENT=_F(LIST_INST=LIST2,),
+                      );
+
+## Calcul postraitement
+RESUINI=CALC_CHAMP(reuse=RESUINI,
+                   RESULTAT=RESUINI,
+                   DEFORMATION=('EPSI_ELGA','EPSP_ELNO',),
+                   VARI_INTERNE=('VARI_ELNO',),);
+
+## Calcul de G en utilisant les couronnes precedemment definies (dans le calcul thermique)
+# et les differentes possibilites de l'etat initial.
+##Definition du fond de fissure et des couronnes pour reutilisation dans resuini
+FISS1=DEFI_FOND_FISS(MAILLAGE=MAILMECA, SYME='NON',
+                     FOND_FISS=_F(GROUP_NO='G',),
+                     LEVRE_SUP=_F(GROUP_MA='lev_sup',),
+                     LEVRE_INF=_F(GROUP_MA='lev_inf',),);
+
+# defintion de 3 couronnes pour le champ theta
+#---------------------------------------------
+
+Rinf1 = 0.
+Rsup1 = 0.5
+
+Rinf2 = 2.05
+Rsup2 = 4.228
+
+Rinf3 = 4.228
+Rsup3 = 9.0
+
+# Calcul de G pour les 3 couronnes, a partir de SIEF_ELGA
+#--------------------------------------------------------
+
+GINGA1=CALC_G(THETA=_F(
+                       R_INF=Rinf1,
+                       FOND_FISS=FISS1,
+                       MODULE=1,
+                       R_SUP=Rsup1,
+                       DIRECTION=(-1,0,0,)),
+              RESULTAT=RESUINI,
+              INST=1,
+              ETAT_INIT =_F(SIGM=SIEFELGA),
+              OPTION='CALC_G')
+
+GINGA2=CALC_G(THETA=_F(
+                       R_INF=Rinf2,
+                       FOND_FISS=FISS1,
+                       MODULE=1,
+                       R_SUP=Rsup2,
+                       DIRECTION=(-1,0,0,)),
+              RESULTAT=RESUINI,
+              INST=1,
+              ETAT_INIT =_F(SIGM=SIEFELGA),
+              OPTION='CALC_G')
+
+GINGA3=CALC_G(THETA=_F(
+                       R_INF=Rinf3,
+                       FOND_FISS=FISS1,
+                       MODULE=1,
+                       R_SUP=Rsup3,
+                       DIRECTION=(-1,0,0,)),
+              RESULTAT=RESUINI,
+              INST=1,
+              ETAT_INIT =_F(SIGM=SIEFELGA),
+              OPTION='CALC_G')
+
+# Calcul de G pour les 3 couronnes, a partir de SIEF_NOEU
+#--------------------------------------------------------
+
+GINNO1=CALC_G(THETA=_F(
+                       R_INF=Rinf1,
+                       FOND_FISS=FISS1,
+                       MODULE=1,
+                       R_SUP=Rsup1,
+                       DIRECTION=(-1,0,0,)),
+             RESULTAT=RESUINI,
+             INST=1,
+             ETAT_INIT =_F(SIGM=SIEFNOEU),
+             OPTION='CALC_G')
+
+GINNO2=CALC_G(THETA=_F(
+                       R_INF=Rinf2,
+                       FOND_FISS=FISS1,
+                       MODULE=1,
+                       R_SUP=Rsup2,
+                       DIRECTION=(-1,0,0,)),
+             RESULTAT=RESUINI,
+             INST=1,
+             ETAT_INIT =_F(SIGM=SIEFNOEU),
+             OPTION='CALC_G')
+
+GINNO3=CALC_G(THETA=_F(
+                       R_INF=Rinf3,
+                       FOND_FISS=FISS1,
+                       MODULE=1,
+                       R_SUP=Rsup3,
+                       DIRECTION=(-1,0,0,)),
+              RESULTAT=RESUINI,
+              INST=1,
+              ETAT_INIT =_F(SIGM=SIEFNOEU),
+              OPTION='CALC_G')
+
+# Calcul de G pour les 3 couronnes, a partir de SIEF_ELNO
+#--------------------------------------------------------
+
+GINELNO1=CALC_G(THETA=_F(
+                         R_INF=Rinf1,
+                         FOND_FISS=FISS1,
+                         MODULE=1,
+                         R_SUP=Rsup1,
+                         DIRECTION=(-1,0,0,)),
+                RESULTAT=RESUINI,
+                INST=1,
+                ETAT_INIT=_F(SIGM=SIEFELNO),
+                OPTION='CALC_G')
+
+GINELNO2=CALC_G(THETA=_F(
+                         R_INF=Rinf2,
+                         FOND_FISS=FISS1,
+                         MODULE=1,
+                         R_SUP=Rsup2,
+                         DIRECTION=(-1,0,0,)),
+                RESULTAT=RESUINI,
+                INST=1,
+                ETAT_INIT=_F(SIGM=SIEFELNO),
+                OPTION='CALC_G')
+
+GINELNO3=CALC_G(THETA=_F(
+                         R_INF=Rinf3,
+                         FOND_FISS=FISS1,
+                         MODULE=1,
+                         R_SUP=Rsup3,
+                         DIRECTION=(-1,0,0,)),
+                RESULTAT=RESUINI,
+                INST=1,
+                ETAT_INIT=_F(SIGM=SIEFELNO),
+                OPTION='CALC_G')
+
+# Calcul de G et K pour les 3 couronnes, a partir de SIEF_ELNO
+#------------------------------------------------------------
+
+GINELNK1=CALC_G(THETA=_F(FOND_FISS=FISS1,
+                        R_INF=Rinf1,
+                        R_SUP=Rsup1),
+                RESULTAT=RESUINI,
+                INST=1,
+                ETAT_INIT =_F(SIGM=SIEFELNO),
+                OPTION='CALC_K_G')
+
+GINELNK2=CALC_G(THETA=_F(FOND_FISS=FISS1,
+                        R_INF=Rinf2,
+                        R_SUP=Rsup2),
+                RESULTAT=RESUINI,
+                INST=1,
+                ETAT_INIT =_F(SIGM=SIEFELNO),
+                OPTION='CALC_K_G')
+
+GINELNK3=CALC_G(THETA=_F(FOND_FISS=FISS1,
+                        R_INF=Rinf3,
+                        R_SUP=Rsup3),
+                RESULTAT=RESUINI,
+                INST=1,
+                ETAT_INIT =_F(SIGM=SIEFELNO),
+                OPTION='CALC_K_G')
+
+# Calcul de G et K pour les 3 couronnes, a partir de SIEF_ELGA
+#------------------------------------------------------------
+
+GINGAK1=CALC_G(THETA=_F(FOND_FISS=FISS1,
+                        R_INF=Rinf1,
+                        R_SUP=Rsup1),
+                RESULTAT=RESUINI,
+                INST=1,
+                ETAT_INIT =_F(SIGM=SIEFELGA),
+                OPTION='CALC_K_G')
+
+GINGAK2=CALC_G(THETA=_F(FOND_FISS=FISS1,
+                        R_INF=Rinf2,
+                        R_SUP=Rsup2),
+                RESULTAT=RESUINI,
+                INST=1,
+                ETAT_INIT =_F(SIGM=SIEFELGA),
+                OPTION='CALC_K_G')
+
+GINGAK3=CALC_G(THETA=_F(FOND_FISS=FISS1,
+                        R_INF=Rinf3,
+                        R_SUP=Rsup3),
+                RESULTAT=RESUINI,
+                INST=1,
+                ETAT_INIT =_F(SIGM=SIEFELGA),
+                OPTION='CALC_K_G')
+                
+# Calcul de G a partir du RESOUVFI
+#---------------------------------
+
+GTHER3=CALC_G(THETA=_F(
+                       R_INF=Rinf3,
+                       FOND_FISS=FISS1,
+                       MODULE=1,
+                       R_SUP=Rsup3,
+                       DIRECTION=(-1,0,0,)),
+              RESULTAT=RESOUVFI,
+              INST=1,
+              OPTION='CALC_G')
+
+
+# POST_K1_K2_K3
+#--------------
+
+KTHER=POST_K1_K2_K3(FOND_FISS=FISS1,
+                    RESULTAT=RESOUVFI)
+
+KMECA=POST_K1_K2_K3(FOND_FISS=FISS1,
+                    RESULTAT=RESUINI)
+
+## Verification des resultats
+
+TEST_TABLE(PRECISION=0.02,
+           VALE_CALC=55.3956139743,
+           VALE_REFE=55.359999999999999,
+           REFERENCE='SOURCE_EXTERNE',
+           NOM_PARA='G',
+           TABLE=GINGA1,)
+
+TEST_TABLE(PRECISION=0.02,
+           VALE_CALC=55.3956139599,
+           VALE_REFE=55.359999999999999,
+           REFERENCE='SOURCE_EXTERNE',
+           NOM_PARA='G',
+           TABLE=GINELNK1,)
+
+TEST_TABLE(PRECISION=0.02,
+           VALE_CALC=3575.49668679,
+           VALE_REFE=3576,
+           REFERENCE='SOURCE_EXTERNE',
+           NOM_PARA='K1',
+           TABLE=GINELNK1,)
+
+TEST_TABLE(PRECISION=0.02,
+           VALE_CALC=55.3651253306,
+           VALE_REFE=55.359999999999999,
+           REFERENCE='SOURCE_EXTERNE',
+           NOM_PARA='G',
+           TABLE=GINNO2,)
+
+TEST_TABLE(PRECISION=0.02,
+           VALE_CALC=55.3700925586,
+           VALE_REFE=55.359999999999999,
+           REFERENCE='SOURCE_EXTERNE',
+           NOM_PARA='G',
+           TABLE=GINELNO3,)
+
+TEST_TABLE(VALE_CALC=55.3650585586,
+           NOM_PARA='G',
+           TABLE=GTHER3,)
+
+FIN();

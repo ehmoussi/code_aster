@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -117,6 +117,15 @@ On ne peut pas appliquer de chargement de pression ou de condition d'échange th
      Veuillez vérifier la présence de cette colonne.
 """),
 
+    30 : _(u"""
+     Le modèle de visualisation (mot-clé MODELE_VISU) utilisé est un
+     modèle X-FEM.
+     
+     Risque & Conseil:
+     Veuillez créer un modèle FEM sur un maillage de visualisation fissuré
+     par l'utilisation des commandes POST_MAIL_XFEM puis AFFE_MODELE
+
+"""),
 
 
     50 : _(u"""

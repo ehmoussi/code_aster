@@ -2,7 +2,7 @@
 # --------------------------------------------------------------------
 # Copyright (C) 2018 Aether Engineering Solutions - www.aethereng.com
 # Copyright (C) 2018 Kobe Innovation Engineering - www.kobe-ie.com
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -116,7 +116,7 @@ def combinaison_ferraillage_ops(self, **args):
             algo_POTEAU()
 
         else:
-            pass
+            UTMESS('F', 'COMBFERR_14', valk=structure_type)
 
     # - Build result type EVOL_ELAS from MULTI_ELAS and combo type list in order
     #   to select the right verify. This because CREA_CHAMP does'nt EXTR the
@@ -316,12 +316,10 @@ def algo_2D (_resfer, affe, lst_nume_ordre, code, type_combo):
     return _resfer
 
 def algo_POUTRE ():
-    print "def option_POUTRE:"
     UTMESS('A', 'COMBFERR_2', valk='POUTRE')
     return None
 
 def algo_POTEAU ():
-    print "def option_POTEAU:"
     UTMESS('A', 'COMBFERR_2', valk='POTEAU')
     return None
 
