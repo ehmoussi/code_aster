@@ -531,13 +531,18 @@ IMPR_RESU(
             NOM_CHAM = ('SIEF_NOEU',),
         ),
     ),
+    UNITE=3
+)
+
+IMPR_CONCEPT(
+    FORMAT='MED',
     # Display local ref
     CONCEPT =_F(
         CARA_ELEM = elemprop,
         REPERE_LOCAL = 'ELEM',
         MODELE = model,
         ),
-    UNITE=3
+    UNITE=4
 )
 
 ferrDatSlu['CLASSE_ACIER'] = 'A'
