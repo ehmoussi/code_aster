@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -79,7 +79,7 @@ implicit none
 !
     aster_logical :: grand, axi, resi, rigi, matsym, cplan, lintbo
     parameter (grand = .true._1)
-    integer :: g, nddl, cod(27), ivf, jvariexte
+    integer :: g, nddl, cod(27), ivf, jvariext1
     integer :: ndim, nno, npg, mate, lgpg, codret, iw, idff
     character(len=8) :: typmod(*)
     character(len=*) :: fami
@@ -118,13 +118,13 @@ implicit none
 !
 ! - Get coded integer for external state variable
 !
-    jvariexte = nint(carcri(IVARIEXTE))
+    jvariext1 = nint(carcri(IVARIEXT1))
 !
 ! - Compute intrinsic external state variables
 !
     call lcegeo(nno   , npg      , ndim ,&
                 iw    , ivf      , idff ,&
-                typmod, jvariexte,&
+                typmod, jvariext1,&
                 geomi ,&
                 deplm , depld)
 !

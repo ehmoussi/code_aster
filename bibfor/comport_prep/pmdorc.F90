@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,8 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-! aslint: disable=W1003
 ! person_in_charge: mickael.abbas at edf.fr
+! aslint: disable=W1003
 !
 subroutine pmdorc(compor, carcri, nb_vari, incela, mult_comp)
 !
@@ -47,9 +47,10 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/setBehaviourValue.h"
 #include "asterfort/setMFrontPara.h"
+#include "asterfort/Behaviour_type.h"
 !
-character(len=16), intent(out) :: compor(21)
-real(kind=8), intent(out) :: carcri(22)
+character(len=16), intent(out) :: compor(*)
+real(kind=8), intent(out) :: carcri(*)
 integer, intent(out) :: nb_vari
 integer, intent(out) :: incela
 character(len=16), intent(out) :: mult_comp
@@ -78,7 +79,7 @@ character(len=16), intent(out) :: mult_comp
     aster_logical :: l_etat_init, l_implex, plane_stress, l_comp_external
     aster_logical :: l_kit_thm, l_mfront_proto, l_mfront_offi
     real(kind=8) :: algo_inte_r, iter_inte_maxi, resi_inte_rela
-    integer :: iveriborne, jvariexte
+    integer :: iveriborne, jvariext1
     type(Behaviour_PrepPara) :: ds_compor_prep
     type(Behaviour_PrepCrit) :: ds_compor_para
     integer :: cptr_nbvarext=0, cptr_namevarext=0, cptr_fct_ldc=0
@@ -89,10 +90,12 @@ character(len=16), intent(out) :: mult_comp
 !
     call jemarq()
 !
-    compor_info  = '&&PMDORC.LIST_VARI'
-    keywordfact  = 'COMPORTEMENT'
-    compor(1:21) = 'VIDE'
-    l_implex     = .false.
+! - Initializations
+!
+    compor_info           = '&&PMDORC.LIST_VARI'
+    keywordfact           = 'COMPORTEMENT'
+    compor(1:COMPOR_SIZE) = 'VIDE'
+    l_implex              = ASTER_FALSE
 !
 ! - Initial state
 !
@@ -144,7 +147,7 @@ character(len=16), intent(out) :: mult_comp
     else if (type_comp.eq.'COMP_INCR') then
         incela = 1
     else
-        ASSERT(.false.)
+        ASSERT(ASTER_FALSE)
     endif
 !  
 ! - Save in list
@@ -152,7 +155,7 @@ character(len=16), intent(out) :: mult_comp
     call setBehaviourValue(rela_comp, defo_comp   , type_comp, type_cpla,&
                            mult_comp, post_iter   , defo_ldc, kit_comp ,&
                            nb_vari  , nb_vari_comp, nume_comp,&
-                           l_compor_ = compor)
+                           l_compor_ = compor(1:COMPOR_SIZE))
 !
 ! - Prepare informations about internal variables
 !
@@ -222,39 +225,41 @@ character(len=16), intent(out) :: mult_comp
     call getExternalStateVariable(rela_comp    , comp_code_py   ,&
                                   l_mfront_offi, l_mfront_proto ,&
                                   cptr_nbvarext, cptr_namevarext,&
-                                  jvariexte)
-    if (jvariexte .ne. 0) then
+                                  jvariext1)
+    if (jvariext1 .ne. 0) then
         call utmess('A', 'COMPOR2_12')
-        jvariexte = 0
+        jvariext1 = 0
     endif
 !  
 ! - Save in list
 !
-    carcri(:) = 0.d0
-    carcri(1)  = iter_inte_maxi
-    carcri(2)  = ds_compor_para%v_para(i_comp)%type_matr_t
-    carcri(3)  = resi_inte_rela
-    carcri(4)  = ds_compor_para%v_para(i_comp)%parm_theta
-    carcri(5)  = ds_compor_para%v_para(i_comp)%iter_inte_pas
-    carcri(6)  = algo_inte_r
-    carcri(7)  = ds_compor_para%v_para(i_comp)%vale_pert_rela
-    carcri(8)  = ds_compor_para%v_para(i_comp)%resi_deborst_max
-    carcri(9)  = ds_compor_para%v_para(i_comp)%iter_deborst_max
-    carcri(10) = ds_compor_para%v_para(i_comp)%resi_radi_rela
-    carcri(IVARIEXTE) = jvariexte
-    carcri(13) = ds_compor_para%v_para(i_comp)%ipostiter
-    carcri(14) = cptr_nbvarext
-    carcri(15) = cptr_namevarext
-    carcri(16) = cptr_fct_ldc
-    carcri(19) = cptr_nameprop
-    carcri(20) = cptr_nbprop
+    carcri(1:CARCRI_SIZE) = 0.d0
+    carcri(1)              = iter_inte_maxi
+    carcri(2)              = ds_compor_para%v_para(i_comp)%type_matr_t
+    carcri(3)              = resi_inte_rela
+    carcri(4)              = ds_compor_para%v_para(i_comp)%parm_theta
+    carcri(5)              = ds_compor_para%v_para(i_comp)%iter_inte_pas
+    carcri(6)              = algo_inte_r
+    carcri(7)              = ds_compor_para%v_para(i_comp)%vale_pert_rela
+    carcri(8)              = ds_compor_para%v_para(i_comp)%resi_deborst_max
+    carcri(9)              = ds_compor_para%v_para(i_comp)%iter_deborst_max
+    carcri(10)             = ds_compor_para%v_para(i_comp)%resi_radi_rela
+    carcri(IVARIEXT1)      = jvariext1
+    carcri(PARM_THETA_THM) = 0.d0
+    carcri(13)             = ds_compor_para%v_para(i_comp)%ipostiter
+    carcri(14)             = cptr_nbvarext
+    carcri(15)             = cptr_namevarext
+    carcri(16)             = cptr_fct_ldc
     if (ds_compor_para%v_para(i_comp)%l_matr_unsymm) then
         carcri(17) = 1
     else
         carcri(17) = 0
     endif
-    carcri(18) = 0
-    carcri(21) = ds_compor_para%v_para(i_comp)%ipostincr
+    carcri(PARM_ALPHA_THM) = 0
+    carcri(19)             = cptr_nameprop
+    carcri(20)             = cptr_nbprop
+    carcri(21)             = ds_compor_para%v_para(i_comp)%ipostincr
+    carcri(ISTRAINEXTE)    = 0
 !
 ! - Discard
 !
