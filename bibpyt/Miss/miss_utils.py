@@ -99,7 +99,8 @@ class MISS_PARAMETER(object):
             self._keywords.update(mcfact)
         # autres mots-clés
         others = kwargs.keys()
-        others.remove('PARAMETRE')
+        if kwargs.has_key('PARAMETRE'):
+            others.remove('PARAMETRE')
         for key in others + self._defaults.keys():
             val = kwargs.get(key)
             if val is None:
