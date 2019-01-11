@@ -29,6 +29,7 @@ implicit none
 #include "asterc/lcdiscard.h"
 #include "asterfort/assert.h"
 #include "asterfort/carc_info.h"
+#include "asterfort/carc_chck.h"
 #include "asterfort/carc_read.h"
 #include "asterfort/comp_meca_code.h"
 #include "asterfort/comp_meca_cvar.h"
@@ -158,6 +159,10 @@ character(len=16), intent(out) :: type_comp, mult_comp
 ! - Read informations from command file
 !
     call carc_read(ds_compor_para, l_implex_ = l_implex)
+!
+! - Some checks
+!
+    call carc_chck(ds_compor_para)
 !
 ! - Coding comportment (Python)
 !
