@@ -58,7 +58,7 @@ integer, intent(out) :: nb_cmp
 ! --------------------------------------------------------------------------------------------------
 !
     nb_cmp  = 0
-    name_gd = 'CARCRI'  
+    name_gd = 'CARCRI'
 !
 ! - Read catalog
 !

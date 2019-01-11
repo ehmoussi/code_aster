@@ -92,7 +92,7 @@ aster_logical :: matsym
 !
     aster_logical :: grand, axi
 !
-    integer :: kpg, kk, kkd, n, i, m, j, j1, kl, jvariext1
+    integer :: kpg, kk, kkd, n, i, m, j, j1, kl, jvariext1, jvariext2
 !
     real(kind=8) :: dsidep(6, 6), f(3, 3), eps(6), deps(6), r, sigma(6), sign(6)
     real(kind=8) :: poids, tmp, sig(6), rbid(1)
@@ -105,15 +105,16 @@ aster_logical :: matsym
     grand = .false.
     axi = typmod(1) .eq. 'AXIS'
 !
-! - Get coded integer for external state variable
+! - Get coded integers for external state variables
 !
     jvariext1 = nint(carcri(IVARIEXT1))
+    jvariext2 = nint(carcri(IVARIEXT2))
 !
 ! - Compute intrinsic external state variables
 !
-    call lcegeo(nno   , npg      , 2    ,&
-                ipoids, ivf      , idfde,&
-                typmod, jvariext1,&
+    call lcegeo(nno   , npg      , 2        ,&
+                ipoids, ivf      , idfde    ,&
+                typmod, jvariext1, jvariext2,&
                 geom  ,&
                 zr(ideplm), zr(ideplp))
 !

@@ -98,11 +98,12 @@
 !
 ! Size
 !
-#define CARCRI_SIZE    22
+#define CARCRI_SIZE    23
 !
 ! Slots: for external state variables
 !
 #define IVARIEXT1      11
+#define IVARIEXT2      23
 !
 !        type of external state variables
 !
@@ -136,6 +137,7 @@
 #define ZMARTENS  28
 #define ZALPHPUR  29
 #define ZALPHBET  30
+#define TIME      31
 !
 ! Slots: for THM parameters
 !

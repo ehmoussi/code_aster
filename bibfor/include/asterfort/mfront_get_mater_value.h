@@ -17,15 +17,13 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine mfront_get_mater_value(rela_comp, jvariext1,&
+    subroutine mfront_get_mater_value(rela_comp, jvariext1, jvariext2,&
                                       fami     , kpg      , ksp, imate, &
                                       nprops   , props)
         character(len=16), intent(in) :: rela_comp
-        integer, intent(in) :: jvariext1
+        integer, intent(in) :: jvariext1, jvariext2
         character(len=*), intent(in) :: fami
-        integer, intent(in) :: kpg
-        integer, intent(in) :: ksp
-        integer, intent(in) :: imate
+        integer, intent(in) :: kpg, ksp, imate
         integer, intent(inout) :: nprops
         real(kind=8), intent(out) :: props(*)
     end subroutine mfront_get_mater_value

@@ -79,7 +79,7 @@ implicit none
 !
     aster_logical :: grand, axi, resi, rigi, matsym, cplan, lintbo
     parameter (grand = .true._1)
-    integer :: g, nddl, cod(27), ivf, jvariext1
+    integer :: g, nddl, cod(27), ivf, jvariext1, jvariext2
     integer :: ndim, nno, npg, mate, lgpg, codret, iw, idff
     character(len=8) :: typmod(*)
     character(len=*) :: fami
@@ -116,15 +116,16 @@ implicit none
     resi = option(1:4).eq.'RAPH' .or. option(1:4).eq.'FULL'
     rigi = option(1:4).eq.'RIGI' .or. option(1:4).eq.'FULL'
 !
-! - Get coded integer for external state variable
+! - Get coded integers for external state variables
 !
     jvariext1 = nint(carcri(IVARIEXT1))
+    jvariext2 = nint(carcri(IVARIEXT2))
 !
 ! - Compute intrinsic external state variables
 !
-    call lcegeo(nno   , npg      , ndim ,&
-                iw    , ivf      , idff ,&
-                typmod, jvariext1,&
+    call lcegeo(nno   , npg      , ndim     ,&
+                iw    , ivf      , idff     ,&
+                typmod, jvariext1, jvariext2,&
                 geomi ,&
                 deplm , depld)
 !

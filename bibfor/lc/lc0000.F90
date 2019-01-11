@@ -270,7 +270,7 @@ integer :: codret
 !             RETURN1 EN CAS DE NON CONVERGENCE LOCALE
 !     ----------------------------------------------------------------
 !
-    integer :: tabcod(30), variextecode(1)
+    integer :: tabcod(60), variextecode(2)
     integer, parameter :: npred = 8
     character(len=16) :: defo_ldc, defo_comp
     real(kind=8) :: epsth(neps), depsth(neps)
@@ -292,7 +292,8 @@ integer :: codret
 !
     tabcod(:) = 0
     variextecode(1) = nint(carcri(IVARIEXT1))
-    call isdeco(variextecode(1), tabcod, 30)
+    variextecode(2) = nint(carcri(IVARIEXT2))
+    call isdeco(variextecode, tabcod, 60)
     if (tabcod(HYGR) .eq. 1) then
         call calcExternalStateVariable5(fami, kpg, ksp, imate)
     endif
@@ -315,10 +316,10 @@ integer :: codret
         if (.not. l_large_strains) then
 !
 !       * Compute "thermic" strains for some external state variables
-            call lcExternalStateVariable(carcri, compor, &
-                                         fami  , kpg      , ksp, imate, &
-                                         neps  , epsth    , depsth, &
-                                         temp  , dtemp, &
+            call lcExternalStateVariable(carcri, compor, instap, &
+                                         fami  , kpg   , ksp   , imate, &
+                                         neps  , epsth , depsth, &
+                                         temp  , dtemp  , &
                                          predef, dpred )
 !
 !       * Subtract to get mechanical strain

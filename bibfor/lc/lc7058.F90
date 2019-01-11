@@ -100,7 +100,7 @@ integer, intent(out) :: codret
 ! --------------------------------------------------------------------------------------------------
 !
     integer, parameter :: npropmax = 197
-    integer :: nprops, nstatv, j, i, pfcmfr, nummod, jvariext1
+    integer :: nprops, nstatv, j, i, pfcmfr, nummod, jvariext1, jvariext2
 !    integer :: iadzi, iazk24, nume_elem
     real(kind=8), parameter :: rac2 = sqrt(2.d0)
     real(kind=8), parameter :: usrac2 = sqrt(2.d0)*0.5d0
@@ -125,6 +125,7 @@ integer, intent(out) :: codret
     defo_comp      = compor(DEFO)
     pfcmfr         = nint(carcri(16))
     jvariext1      = nint(carcri(IVARIEXT1))
+    jvariext2      = nint(carcri(IVARIEXT2))
     l_simomiehe    = defo_comp .eq. 'SIMO_MIEHE'
     l_grotgdep     = ASTER_FALSE
     l_czm          = typmod(2).eq.'ELEMJOIN'
@@ -136,8 +137,8 @@ integer, intent(out) :: codret
 !
 ! - Get material properties
 !
-    call mfront_get_mater_value(rela_comp, jvariext1, &
-                                fami     , kpg      , ksp, imate,&
+    call mfront_get_mater_value(rela_comp, jvariext1, jvariext2,&
+                                fami     , kpg      , ksp      , imate,&
                                 nprops   , props)
 !
 ! - Get type of modelization

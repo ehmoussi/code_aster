@@ -16,9 +16,9 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine lcegeo(nno     , npg      , ndim    ,&
-                  jv_poids, jv_func  , jv_dfunc,&
-                  typmod  , jvariext1,&
+subroutine lcegeo(nno     , npg      , ndim     ,&
+                  jv_poids, jv_func  , jv_dfunc ,&
+                  typmod  , jvariext1, jvariext2,&
                   geom    , deplm_   , ddepl_)
 !
 implicit none
@@ -35,7 +35,7 @@ implicit none
 integer, intent(in) :: nno, npg, ndim
 integer, intent(in) :: jv_poids, jv_func, jv_dfunc
 character(len=8), intent(in) :: typmod(2)
-integer, intent(in) :: jvariext1
+integer, intent(in) :: jvariext1, jvariext2
 real(kind=8), intent(in) :: geom(ndim, nno)
 real(kind=8), optional, intent(in) :: deplm_(ndim, nno), ddepl_(ndim, nno)
 !
@@ -55,19 +55,21 @@ real(kind=8), optional, intent(in) :: deplm_(ndim, nno), ddepl_(ndim, nno)
 ! In  jv_dfunc         : JEVEUX adress for derivative of shape functions
 ! In  typmod           : type of modelization (TYPMOD2)
 ! In  jvariext1        : first coded integer for external state variable
+! In  jvariext2        : second coded integer for external state variable
 ! In  geom             : initial coordinates of nodes
 ! In  deplm            : displacements of nodes at beginning of time step
 ! In  ddepl            : displacements of nodes since beginning of time step
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: tabcod(30), variextecode(1)
+    integer :: tabcod(60), variextecode(2)
 !
 ! --------------------------------------------------------------------------------------------------
 !
     tabcod(:) = 0
     variextecode(1) = jvariext1
-    call isdeco(variextecode(1), tabcod, 30)
+    variextecode(2) = jvariext2
+    call isdeco(variextecode, tabcod, 60)
 !
 ! - Element size 1
 !

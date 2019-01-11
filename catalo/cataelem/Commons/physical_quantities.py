@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -438,7 +438,7 @@ CARCRI   = PhysicalQuantity(type='R',
        'TOLDEBO',
        'ITEDEBO',
        'RESIRADI',
-       'VARIEXTE',
+       'VARIEXT1',
        'THETATHM',
        'POSTITER',
        'LC_EXT[3]',
@@ -447,6 +447,7 @@ CARCRI   = PhysicalQuantity(type='R',
        'LC_EXT2[2]',
        'POSTINCR',
        'STRAIN',
+       'VARIEXT2',
     ),
     comment="""  CARCRI Type :R Critere de convergence d'un probleme non-lineaire materiel
     (pour 1 point de Gauss)
@@ -460,7 +461,7 @@ CARCRI   = PhysicalQuantity(type='R',
        TOLDEBO  : tolerance pour la verification de DEBORST
        ITEDEBO  : nb iterations maxi pour DEBORST (ITER_MAXI_DEBORST == ITEDEBO)
        RESIRADI : valeur pour RESI_RADI_RELA
-       VARIEXTE : entier code pour les variables d'etat externe (MFront)
+       VARIEXT1 : entier code 1 pour les variables d'etat externe (MFront)
        THETATHM : parametre THETA pour la THM
        POSTITER : type de critere POST_ITER : 0=rien, 1=CRIT_RUPT
        LC_EXT[3]: pointeurs vers routines externes (UMAT / MFRONT) 
@@ -469,6 +470,7 @@ CARCRI   = PhysicalQuantity(type='R',
        LC_EXT[2]: pointeurs vers routines externes (UMAT / MFRONT) => materiaux
        POSTINCR : type de critere POST_INCR : 0=rien, 1=REST_ECRO
        STRAIN   : modele de deformation pour MFront
+       VARIEXT2 : entier code 2 pour les variables d'etat externe (MFront)
 """)
 
 
