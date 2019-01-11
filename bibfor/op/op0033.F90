@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -62,6 +62,7 @@ implicit none
 #include "asterfort/wkvect.h"
 #include "asterfort/nonlinDSConvergenceCreate.h"
 #include "asterfort/nonlinDSAlgoParaCreate.h"
+#include "asterfort/Behaviour_type.h"
 #include "blas/daxpy.h"
 #include "blas/dcopy.h"
 #include "blas/dscal.h"
@@ -74,23 +75,17 @@ implicit none
 !
     integer :: ndim, iret, nbmat, nbvari, nbpar, i, incela, ier
     integer :: imate, kpg, ksp, iter, pred, ncmp, imptgt
-    integer :: ntamax, matrel, irota, defimp, liccvg(5)
+    integer :: matrel, irota, defimp, liccvg(5)
     integer :: indimp(9), numins, actite, action, itgt, iforta
 !     NOMBRE MAXI DE COLONNES DANS UNE TABLE 9999 (CF D4.02.05)
-    parameter    ( ntamax = 9999 )
-    integer :: ncmpma, dimaki, dimanv, igrad, nbvita
-!    DIMAKI = DIMENSION MAX DE LA LISTE DES RELATIONS KIT
-    parameter    (dimaki=9)
-!    DIMANV = DIMENSION MAX DE LA LISTE DU NOMBRE DE VAR INT EN THM
-    parameter    (dimanv=4)
-    parameter    (ncmpma=8+dimaki+dimanv)
+    integer, parameter ::  ntamax = 9999
+    integer :: igrad, nbvita
     character(len=4) :: fami, cargau
     character(len=8) :: typmod(2), mater(30), table, fonimp(9), typpar(ntamax)
-    character(len=16) :: option, compor(ncmpma), nompar(ntamax), opt2, mult_comp
+    character(len=16) :: option, compor(COMPOR_SIZE), nompar(ntamax), opt2, mult_comp
     character(len=19) :: codi, sddisc, k19b, sdcrit
     character(len=24) :: sderro
-    integer, parameter :: carsiz=22
-    real(kind=8) :: instam, instap, ang(7), r8b, carcri(carsiz), fem(9)
+    real(kind=8) :: instam, instap, ang(7), r8b, carcri(CARCRI_SIZE), fem(9)
     real(kind=8) :: deps(9), sigm(6), sigp(6), epsm(9), eps(9), vr(ntamax)
     real(kind=8) :: valimp(9), r(12), rini(12), dy(12), ddy(12), y(12), rac2
     real(kind=8) :: dsidep(6, 9), drdy(12, 12), kel(6, 6), cimpo(6, 12), ym(12)
@@ -179,7 +174,7 @@ implicit none
 ! - Message if PETIT_REAC
 !
     if (defimp.gt.0) then
-        if (compor(3).eq.'PETIT_REAC') then
+        if (compor(DEFO).eq.'PETIT_REAC') then
             call utmess('I', 'COMPOR2_93')
         endif
     endif
@@ -215,7 +210,7 @@ implicit none
             if (indimp(i) .eq. 0) valimp(i)=valimp(i)/coef
         end do
 !            NORMALEMENT DEJA VERIFIE PAR SIMU_POINT_MAT_OPS
-        ASSERT(compor(3).eq.'PETIT')
+        ASSERT(compor(DEFO).eq.'PETIT')
     else if (defimp.eq.2) then
         igrad=1
 !           VALEURS IMPOSEES DE GRADIENTS F
@@ -260,7 +255,7 @@ implicit none
                         zr(lvim2), opt2, ang, 10, work,&
                         sigp, zr(lvip), 6*ncmp, dsidep, 1,&
                         rbid, iret, mult_comp)
-            if (compor(3) .eq. 'SIMO_MIEHE') then
+            if (compor(DEFO) .eq. 'SIMO_MIEHE') then
                 call dscal(2*ndim, 1.d0/jp, sigp, 1)
             endif
         else if (incela.eq.2) then

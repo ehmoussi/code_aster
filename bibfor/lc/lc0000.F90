@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -291,7 +291,7 @@ integer :: codret
 ! - Prepare some external state variables
 !
     tabcod(:) = 0
-    variextecode(1) = nint(carcri(IVARIEXTE))
+    variextecode(1) = nint(carcri(IVARIEXT1))
     call isdeco(variextecode(1), tabcod, 30)
     if (tabcod(HYGR) .eq. 1) then
         call calcExternalStateVariable5(fami, kpg, ksp, imate)
@@ -580,11 +580,11 @@ integer :: codret
     case (58)
 !     MFRONT
         call lc0058(fami , kpg   , ksp   , ndim  , typmod,&
-                      imate, compor, carcri, instam, instap,&
-                      neps , epsm  , deps  , nsig  , sigm  ,&
-                      nvi  , vim   , option, angmas, icomp ,&
-                      temp , dtemp , predef, dpred ,&
-                      sigp , vip   , dsidep, codret)
+                    imate, compor, carcri, instam, instap,&
+                    neps , epsm  , deps  , nsig  , sigm  ,&
+                    nvi  , vim   , option, angmas, &
+                    temp , dtemp , predef, dpred ,&
+                    sigp , vip   , dsidep, codret)
     case (59)
         call lc0059(fami, kpg, ksp, imate,&
                     compor, carcri, instam, instap, neps, epsm,&
@@ -920,7 +920,7 @@ integer :: codret
         call lc1058(fami , kpg   , ksp   , ndim  , typmod,&
                     imate, compor, carcri, instam, instap,&
                     neps , epsm  , deps  , nsig  , sigm  ,&
-                    nvi  , vim   , option, angmas, icomp ,&
+                    nvi  , vim   , option, angmas,&
                     temp , dtemp , predef, dpred ,&
                     sigp , vip   , dsidep, codret)
 
@@ -1111,7 +1111,7 @@ integer :: codret
         call lc7058(fami , kpg   , ksp   , ndim  , typmod,&
                     imate, compor, carcri, instam, instap,&
                     neps , epsm  , deps  , nsig  , sigm  ,&
-                    nvi  , vim   , option, angmas, icomp ,&
+                    nvi  , vim   , option, angmas, &
                     temp , dtemp , predef, dpred ,&
                     sigp , vip   , dsidep, codret)
 !

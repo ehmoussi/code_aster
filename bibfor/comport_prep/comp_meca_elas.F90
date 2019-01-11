@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine comp_meca_elas(comp_elas, nb_cmp, l_etat_init)
 !
 implicit none
@@ -26,11 +27,9 @@ implicit none
 #include "asterfort/nocart.h"
 #include "asterfort/Behaviour_type.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=19), intent(in) :: comp_elas
-    integer, intent(in) :: nb_cmp
-    aster_logical, intent(in) :: l_etat_init
+character(len=19), intent(in) :: comp_elas
+integer, intent(in) :: nb_cmp
+aster_logical, intent(in) :: l_etat_init
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -58,7 +57,7 @@ implicit none
 !
 ! - Init <CARTE>
 !
-    p_compelas_valv(1:NB_COMP_MAXI) = 'VIDE'
+    p_compelas_valv(1:COMPOR_SIZE) = 'VIDE'
 !
 ! - Set for ELASTIQUE
 !

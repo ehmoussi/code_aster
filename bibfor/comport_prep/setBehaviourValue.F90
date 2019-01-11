@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine setBehaviourValue(rela_comp, defo_comp   , type_comp, type_cpla,&
                              mult_comp, post_iter   , defo_ldc, kit_comp ,&
                              nb_vari  , nb_vari_comp, nume_comp,&
@@ -29,21 +30,19 @@ implicit none
 #include "asterfort/comp_meca_l.h"
 #include "asterfort/Behaviour_type.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=16), intent(in) :: rela_comp
-    character(len=16), intent(in) :: defo_comp
-    character(len=16), intent(in) :: type_comp
-    character(len=16), intent(in) :: type_cpla
-    character(len=16), intent(in) :: mult_comp
-    character(len=16), intent(in) :: post_iter
-    character(len=16), intent(in) :: defo_ldc
-    character(len=16), intent(in) :: kit_comp(4)
-    integer, intent(in)  :: nb_vari
-    integer, intent(in)  :: nb_vari_comp(4)
-    integer, intent(in)  :: nume_comp(4)
-    character(len=16), intent(out), optional :: l_compor_(:)
-    character(len=16), pointer, optional :: v_compor_(:)
+character(len=16), intent(in) :: rela_comp
+character(len=16), intent(in) :: defo_comp
+character(len=16), intent(in) :: type_comp
+character(len=16), intent(in) :: type_cpla
+character(len=16), intent(in) :: mult_comp
+character(len=16), intent(in) :: post_iter
+character(len=16), intent(in) :: defo_ldc
+character(len=16), intent(in) :: kit_comp(4)
+integer, intent(in)  :: nb_vari
+integer, intent(in)  :: nb_vari_comp(4)
+integer, intent(in)  :: nume_comp(4)
+character(len=16), intent(out), optional :: l_compor_(:)
+character(len=16), pointer, optional :: v_compor_(:)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -80,7 +79,7 @@ implicit none
     call comp_meca_l(rela_comp, 'KIT_CG'  , l_kit_cg)
 !
     if (present(v_compor_)) then
-        v_compor_(1:NB_COMP_MAXI) = 'VIDE'
+        v_compor_(1:COMPOR_SIZE) = 'VIDE'
         v_compor_(RELA_NAME) = rela_comp
         write (v_compor_(NVAR),'(I16)') nb_vari
         v_compor_(DEFO) = defo_comp
@@ -125,7 +124,7 @@ implicit none
             v_compor_(SHEATH_NAME)  = kit_comp(2)
         endif
     elseif (present(l_compor_)) then
-        l_compor_(1:NB_COMP_MAXI) = 'VIDE'
+        l_compor_(1:COMPOR_SIZE) = 'VIDE'
         l_compor_(RELA_NAME) = rela_comp
         write (l_compor_(NVAR),'(I16)') nb_vari
         l_compor_(DEFO) = defo_comp

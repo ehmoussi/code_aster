@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -195,34 +195,32 @@ type(Behaviour_PrepCrit), intent(in) :: ds_compor_para
 !
 ! ----- Set in <CARTE>
 !
-        p_carc_valv(1)  = iter_inte_maxi
-        p_carc_valv(2)  = type_matr_t
-        p_carc_valv(3)  = resi_inte_rela
-        p_carc_valv(4)  = parm_theta
-        p_carc_valv(5)  = iter_inte_pas
-        p_carc_valv(6)  = algo_inte_r
-        p_carc_valv(7)  = vale_pert_rela
-        p_carc_valv(8)  = resi_deborst_max
-        p_carc_valv(9)  = iter_deborst_max
-        p_carc_valv(10) = resi_radi_rela
-        p_carc_valv(IVARIEXTE)   = jvariexte
-        p_carc_valv(ISTRAINEXTE) = jstrainexte
-        p_carc_valv(13) = post_iter
-        p_carc_valv(21) = post_incr
-!       exte_comp UMAT / MFRONT
-        p_carc_valv(14) = cptr_nbvarext
-        p_carc_valv(15) = cptr_namevarext
-        p_carc_valv(16) = cptr_fct_ldc
-        p_carc_valv(19) = cptr_nameprop
-        p_carc_valv(20) = cptr_nbprop
-!       cf. CALC_POINT_MAT / PMDORC
+        p_carc_valv(1)              = iter_inte_maxi
+        p_carc_valv(2)              = type_matr_t
+        p_carc_valv(3)              = resi_inte_rela
+        p_carc_valv(4)              = parm_theta
+        p_carc_valv(5)              = iter_inte_pas
+        p_carc_valv(6)              = algo_inte_r
+        p_carc_valv(7)              = vale_pert_rela
+        p_carc_valv(8)              = resi_deborst_max
+        p_carc_valv(9)              = iter_deborst_max
+        p_carc_valv(10)             = resi_radi_rela
+        p_carc_valv(IVARIEXT1)      = jvariexte
+        p_carc_valv(PARM_THETA_THM) = parm_theta_thm
+        p_carc_valv(13)             = post_iter
+        p_carc_valv(14)             = cptr_nbvarext
+        p_carc_valv(15)             = cptr_namevarext
+        p_carc_valv(16)             = cptr_fct_ldc
         if (l_matr_unsymm) then
             p_carc_valv(17) = 1
         else
             p_carc_valv(17) = 0
         endif
         p_carc_valv(PARM_ALPHA_THM) = parm_alpha_thm
-        p_carc_valv(PARM_THETA_THM) = parm_theta_thm
+        p_carc_valv(19)             = cptr_nameprop
+        p_carc_valv(20)             = cptr_nbprop
+        p_carc_valv(21)             = post_incr
+        p_carc_valv(ISTRAINEXTE)    = jstrainexte
 !
 ! ----- Affect in <CARTE>
 !
