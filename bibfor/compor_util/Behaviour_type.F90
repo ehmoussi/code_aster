@@ -104,6 +104,7 @@ implicit none
         integer                   :: cptr_nbprop = 0
         integer                   :: cptr_nameprop = 0
         integer                   :: jvariext1 = 0
+        integer                   :: jvariext2 = 0
         integer                   :: jstrainexte = 0
 ! ----- Keyword RELATION
         character(len=16)         :: rela_comp = ' '

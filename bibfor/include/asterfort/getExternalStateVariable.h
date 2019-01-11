@@ -15,17 +15,16 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-!
 #include "asterf_types.h"
 !
 interface
     subroutine getExternalStateVariable(rela_comp    , comp_code_py   ,&
                                         l_mfront_offi, l_mfront_proto ,&
                                         cptr_nbvarext, cptr_namevarext,&
-                                        jvariext1)
+                                        jvariext1    , jvariext2)
         aster_logical, intent(in) :: l_mfront_offi, l_mfront_proto
         character(len=16), intent(in) :: rela_comp, comp_code_py
         integer, intent(in) :: cptr_nbvarext, cptr_namevarext
-        integer, intent(out) :: jvariext1
+        integer, intent(out) :: jvariext1, jvariext2
     end subroutine getExternalStateVariable
 end interface

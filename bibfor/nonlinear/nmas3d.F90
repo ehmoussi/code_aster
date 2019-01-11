@@ -98,7 +98,7 @@ real(kind=8) :: matuu(*), vectu(3, nno), angmas(3)
 !
     aster_logical :: grand, calbn, axi
     integer :: kpg, i, ii, ino, ia, j, k, kl, proj, cod(9), nbpg2
-    integer :: ndim, nnos, jgano, kp, iaa, jvariext1
+    integer :: ndim, nnos, jgano, kp, iaa, jvariext1, jvariext2
     real(kind=8) :: d(6, 6), f(3, 3), eps(6), deps(6), r, s, sigma(6), sign(6)
     real(kind=8) :: poids, poipg2(8), rbid(1)
     real(kind=8) :: elgeom(10, 9)
@@ -135,15 +135,16 @@ real(kind=8) :: matuu(*), vectu(3, nno), angmas(3)
     grand = .false.
     calbn = .false.
 !
-! - Get coded integer for external state variable
+! - Get coded integers for external state variables
 !
     jvariext1 = nint(carcri(IVARIEXT1))
+    jvariext2 = nint(carcri(IVARIEXT2))
 !
 ! - Compute intrinsic external state variables
 !
-    call lcegeo(nno   , nbpg1    , 3    ,&
-                ipoids, ivf      , idfde,&
-                typmod, jvariext1,&
+    call lcegeo(nno   , nbpg1    , 3        ,&
+                ipoids, ivf      , idfde    ,&
+                typmod, jvariext1, jvariext2,&
                 geom  ,&
                 deplm , deplp)
 !

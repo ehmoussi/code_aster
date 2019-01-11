@@ -17,14 +17,14 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine lcegeo(nno     , npg      , ndim    ,&
-                      jv_poids, jv_func  , jv_dfunc,&
-                      typmod  , jvariext1,&
+    subroutine lcegeo(nno     , npg      , ndim     ,&
+                      jv_poids, jv_func  , jv_dfunc ,&
+                      typmod  , jvariext1, jvariext2,&
                       geom    , deplm_   , ddepl_)
         integer, intent(in) :: nno, npg, ndim
         integer, intent(in) :: jv_poids, jv_func, jv_dfunc
         character(len=8), intent(in) :: typmod(2)
-        integer, intent(in) :: jvariext1
+        integer, intent(in) :: jvariext1, jvariext2
         real(kind=8), intent(in) :: geom(ndim, nno)
         real(kind=8), optional, intent(in) :: deplm_(ndim, nno), ddepl_(ndim, nno)
     end subroutine lcegeo

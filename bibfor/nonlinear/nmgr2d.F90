@@ -103,7 +103,7 @@ integer, intent(inout) :: codret
 ! --------------------------------------------------------------------------------------------------
 !
     aster_logical :: grand, axi, cplan
-    integer :: kpg, j, jvariext1, jstrainexte, ndim
+    integer :: kpg, j, jvariext1, jvariext2, jstrainexte, ndim
     real(kind=8) :: dsidep(6, 6)
     real(kind=8) :: f_prev(3, 3), f_curr(3, 3)
     real(kind=8) :: epsg_prev(6), epsg_incr(6), epsg_curr(6)
@@ -131,13 +131,14 @@ integer, intent(inout) :: codret
 ! - Get coded integer for external state variable
 !
     jvariext1   = nint(carcri(IVARIEXT1))
+    jvariext2   = nint(carcri(IVARIEXT2))
     jstrainexte = nint(carcri(ISTRAINEXTE))
 !
 ! - Compute intrinsic external state variables
 !
-    call lcegeo(nno      , npg      , ndim ,&
-                ipoids   , ivf      , idfde,&
-                typmod   , jvariext1, &
+    call lcegeo(nno      , npg      , ndim     ,&
+                ipoids   , ivf      , idfde    ,&
+                typmod   , jvariext1, jvariext2,&
                 geom_init, disp_prev, disp_incr)
 !
 ! - Only isotropic material !

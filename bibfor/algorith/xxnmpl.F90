@@ -51,7 +51,7 @@ implicit none
 #include "asterfort/Behaviour_type.h"
 !
 integer :: ndim, igeom, imate, lgpg, codret, nnop, npg
-integer :: nfh, ddlc, ddlm, nfe, idepl, ivectu, ideplp, jvariext1
+integer :: nfh, ddlc, ddlm, nfe, idepl, ivectu, ideplp
 integer :: nfiss, heavn(nnop, 5), idecpg
 integer :: jstno
 character(len=8) :: elrefp, typmod(*)
@@ -99,7 +99,7 @@ real(kind=8) :: instam, instap, sigm(2*ndim, npg), sign(6)
     integer :: i, ig, j, j1, kkd, kl, kpg, l, m, n, nn, mn
     integer :: ddls, ddld, cpt, idfde, ipoids, ivf, dec(nnop)
     integer :: jcoopg, jdfd2, jgano, ndimb, nno, nnops, nnos, npgbis, hea_se
-    integer :: singu, alp, ii, jj
+    integer :: singu, alp, ii, jj, jvariext1, jvariext2
     real(kind=8) :: dsidep(6, 6), f(3, 3), eps(6), deps(6), sigma(6), ftf, detf
     real(kind=8) :: tmp1, tmp2, sigp(6)
     real(kind=8) :: xg(ndim), xe(ndim), ff(nnop), jac
@@ -142,15 +142,16 @@ real(kind=8) :: instam, instap, sigm(2*ndim, npg), sign(6)
 !
     ASSERT(npg.eq.npgbis.and.ndim.eq.ndimb)
 !
-! - Get coded integer for external state variable
+! - Get coded integers for external state variables
 !
     jvariext1 = nint(carcri(IVARIEXT1))
+    jvariext2 = nint(carcri(IVARIEXT2))
 !
 ! - Compute intrinsic external state variables
 !
-    call lcegeo(nno      , npg      , ndim ,&
-                ipoids   , ivf      , idfde,&
-                typmod   , jvariext1,&
+    call lcegeo(nno      , npg      , ndim     ,&
+                ipoids   , ivf      , idfde    ,&
+                typmod   , jvariext1, jvariext2,&
                 zr(igeom))
 !
     do n = 1, nnop

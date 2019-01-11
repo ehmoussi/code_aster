@@ -47,7 +47,7 @@ character(len=16) :: option, nomte
     character(len=16) :: compor, pilo
 !
     integer :: jgano, ndim, nno, nnos, npg, lgpg, jtab(7), itype
-    integer :: ipoids, ivf, idfde, igeom, imate, jvariext1, icarcr
+    integer :: ipoids, ivf, idfde, igeom, imate, jvariext1, jvariext2, icarcr
     integer :: icontm, ivarim, icopil, iborne, ictau
     integer :: ideplm, iddepl, idepl0, idepl1, icompo, iret
 !
@@ -108,9 +108,10 @@ character(len=16) :: option, nomte
 !
     if (compor .eq. 'BETON_DOUBLE_DP') then
         jvariext1 = nint(zr(icarcr-1+IVARIEXT1))
-        call lcegeo(nno      , npg      , ndim ,&
-                    ipoids   , ivf      , idfde,&
-                    typmod   , jvariext1,&
+        jvariext2 = nint(zr(icarcr-1+IVARIEXT2))
+        call lcegeo(nno      , npg      , ndim     ,&
+                    ipoids   , ivf      , idfde    ,&
+                    typmod   , jvariext1, jvariext2,&
                     zr(igeom),&
                     zr(ideplm), zr(iddepl))
     endif

@@ -91,7 +91,7 @@ aster_logical, intent(in), optional :: l_implex_
     integer :: nb_elem_affe
     integer :: cptr_nbvarext=0, cptr_namevarext=0, cptr_fct_ldc=0
     integer :: cptr_nameprop=0, cptr_nbprop=0
-    integer :: jvariext1 = 0, jstrainexte = 0
+    integer :: jvariext1 = 0, jvariext2 = 0, jstrainexte = 0
     character(len=16) :: texte(3)=(/ ' ',' ',' '/)
     integer, pointer :: v_model_elem(:) => null()
     character(len=16) :: algo_inte
@@ -357,10 +357,11 @@ aster_logical, intent(in), optional :: l_implex_
 ! ----- Get external state variables
 !
         jvariext1 = 0
+        jvariext2 = 0
         call getExternalStateVariable(rela_comp    , comp_code_py   ,&
                                       l_mfront_offi, l_mfront_proto ,&
                                       cptr_nbvarext, cptr_namevarext,&
-                                      jvariext1)
+                                      jvariext1    , jvariext2)
 !
 ! ----- Get model of strains for external programs (MFRONT)
 !
@@ -399,6 +400,7 @@ aster_logical, intent(in), optional :: l_implex_
         ds_compor_para%v_para(i_comp)%cptr_nbprop      = cptr_nbprop
         ds_compor_para%v_para(i_comp)%cptr_nameprop    = cptr_nameprop
         ds_compor_para%v_para(i_comp)%jvariext1        = jvariext1
+        ds_compor_para%v_para(i_comp)%jvariext2        = jvariext2
         ds_compor_para%v_para(i_comp)%jstrainexte      = jstrainexte
         ds_compor_para%v_para(i_comp)%comp_exte        = comp_exte
     end do
