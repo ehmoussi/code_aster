@@ -17,12 +17,8 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine comp_meca_chck(model, mesh, full_elem_s, l_etat_init, ds_compor_prep)
+    subroutine carc_chck(ds_compor_para)
         use Behaviour_type
-        character(len=8), intent(in) :: model
-        character(len=8), intent(in) :: mesh
-        character(len=19), intent(in) :: full_elem_s
-        aster_logical, intent(in) :: l_etat_init
-        type(Behaviour_PrepPara), intent(inout) :: ds_compor_prep
-    end subroutine comp_meca_chck
+        type(Behaviour_PrepCrit), intent(in) :: ds_compor_para
+    end subroutine carc_chck
 end interface

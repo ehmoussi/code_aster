@@ -34,7 +34,6 @@ implicit none
 #include "asterfort/jeveuo.h"
 #include "asterfort/nocart.h"
 #include "asterfort/exicp.h"
-#include "asterfort/utmess.h"
 #include "asterfort/getBehaviourAlgo.h"
 #include "asterfort/getBehaviourPara.h"
 #include "asterfort/getExternalBehaviourPntr.h"
@@ -138,14 +137,6 @@ type(Behaviour_PrepCrit), intent(in) :: ds_compor_para
                             rela_code_py_ = rela_code_py,&
                             defo_code_py_ = defo_code_py,&
                             meca_code_py_ = meca_code_py)
-!
-! ----- Ban if RELATION = MFRONT and ITER_INTE_PAS negative
-!
-        if (iter_inte_pas .lt. 0.d0) then
-            if (l_mfront_offi .or. l_mfront_proto) then
-                call utmess('F', 'COMPOR1_95')
-            end if
-        end if
 !
 ! ----- Get list of elements where comportment is defined
 !

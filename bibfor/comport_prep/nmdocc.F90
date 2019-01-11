@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -62,7 +62,6 @@ character(len=19), intent(in) :: compor
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    aster_logical :: l_auto_elas, l_auto_deborst, l_comp_erre
     integer :: nb_cmp
     character(len=8) :: mesh
     character(len=19) :: comp_elas, full_elem_s
@@ -86,9 +85,6 @@ character(len=19), intent(in) :: compor
     call comp_meca_info(l_implex, ds_compor_prep)
     if (ds_compor_prep%nb_comp .eq. 0) then
         call utmess('I', 'COMPOR4_64')
-        l_auto_elas    = .false.
-        l_auto_deborst = .false.
-        l_comp_erre    = .false.
     endif
     if (ds_compor_prep%nb_comp .ge. 99999) then
         call utmess('A', 'COMPOR4_65')
@@ -116,18 +112,7 @@ character(len=19), intent(in) :: compor
 !
 ! - Check informations in COMPOR <CARTE>
 !
-    call comp_meca_chck(model         , mesh          , full_elem_s, l_etat_init,&
-                        ds_compor_prep,&
-                        l_auto_elas   , l_auto_deborst, l_comp_erre)
-    if (l_auto_deborst) then
-        call utmess('I', 'COMPOR5_20')
-    endif
-    if (l_auto_elas) then
-        call utmess('I', 'COMPOR5_21')
-    endif
-    if (l_comp_erre) then
-        call utmess('I', 'COMPOR5_22')
-    endif
+    call comp_meca_chck(model, mesh, full_elem_s, l_etat_init, ds_compor_prep)
 !
 ! - Count internal variables
 !
@@ -135,8 +120,7 @@ character(len=19), intent(in) :: compor
 !
 ! - Save informations in COMPOR <CARTE>
 !
-    call comp_meca_save(model         , mesh, chmate, compor, nb_cmp,&
-                        ds_compor_prep)
+    call comp_meca_save(model, mesh, chmate, compor, nb_cmp, ds_compor_prep)
 !
 ! - Cleaning
 !
