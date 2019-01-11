@@ -41,7 +41,7 @@ implicit none
 #include "asterfort/jemarq.h"
 #include "asterfort/utmess.h"
 #include "asterfort/setBehaviourTypeValue.h"
-#include "asterfort/setMFrontPara.h"
+#include "asterfort/setBehaviourParaValue.h"
 #include "asterfort/Behaviour_type.h"
 !
 character(len=16), intent(out) :: compor(*)
@@ -151,43 +151,14 @@ character(len=16), intent(out) :: type_comp, mult_comp
         call utmess('A', 'COMPOR2_12')
         ds_compor_para%v_para(1)%jvariext1 = 0
     endif
-!  
-! - Save in list
+!
+! - Set in <CARTE>
 !
     carcri(1:CARCRI_SIZE) = 0.d0
-    carcri(1)              = ds_compor_para%v_para(1)%iter_inte_maxi
-    carcri(2)              = ds_compor_para%v_para(1)%type_matr_t
-    carcri(3)              = ds_compor_para%v_para(1)%resi_inte_rela
-    carcri(4)              = ds_compor_para%v_para(1)%parm_theta
-    carcri(5)              = ds_compor_para%v_para(1)%iter_inte_pas
-    carcri(6)              = ds_compor_para%v_para(1)%algo_inte_r
-    carcri(7)              = ds_compor_para%v_para(1)%vale_pert_rela
-    carcri(8)              = ds_compor_para%v_para(1)%resi_deborst_max
-    carcri(9)              = ds_compor_para%v_para(1)%iter_deborst_max
-    carcri(10)             = ds_compor_para%v_para(1)%resi_radi_rela
-    carcri(IVARIEXT1)      = ds_compor_para%v_para(1)%jvariext1
-    carcri(PARM_THETA_THM) = ds_compor_para%parm_theta_thm
-    carcri(13)             = ds_compor_para%v_para(1)%ipostiter
-    carcri(14)             = ds_compor_para%v_para(1)%cptr_nbvarext
-    carcri(15)             = ds_compor_para%v_para(1)%cptr_namevarext
-    carcri(16)             = ds_compor_para%v_para(1)%cptr_fct_ldc
-    if (ds_compor_para%v_para(1)%l_matr_unsymm) then
-        carcri(17) = 1
-    else
-        carcri(17) = 0
-    endif
-    carcri(PARM_ALPHA_THM) = ds_compor_para%parm_alpha_thm
-    carcri(19)             = ds_compor_para%v_para(1)%cptr_nameprop
-    carcri(20)             = ds_compor_para%v_para(1)%cptr_nbprop
-    carcri(21)             = ds_compor_para%v_para(1)%ipostincr
-    carcri(ISTRAINEXTE)    = ds_compor_para%v_para(1)%jstrainexte
-!
-! - Set values for MFRONT
-!
-    call setMFrontPara(ds_compor_para%v_para(1)%comp_exte,&
-                       ds_compor_para%v_para(1)%iter_inte_maxi,&
-                       ds_compor_para%v_para(1)%resi_inte_rela,&
-                       ds_compor_para%v_para(1)%iveriborne)
+    call setBehaviourParaValue(ds_compor_para%v_para,&
+                               ds_compor_para%parm_theta_thm,&
+                               ds_compor_para%parm_alpha_thm,&
+                               l_carcri_ = carcri(1:CARCRI_SIZE))
 !
 ! - Cleaning
 !
