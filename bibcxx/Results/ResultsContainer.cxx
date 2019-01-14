@@ -148,6 +148,20 @@ ModelPtr ResultsContainerInstance::getModel() {
     return toReturn;
 };
 
+const int ResultsContainerInstance::getNumberOfRanks() const
+{
+    return _serialNumber->usedSize();
+};
+
+std::vector< long > ResultsContainerInstance::getRanks() const
+{
+    std::vector< long > v;
+    for ( int j = 0; j < _serialNumber->usedSize(); ++j ) {
+        v.push_back( ( *_serialNumber )[j] );
+    }
+    return v;
+};
+
 void ResultsContainerInstance::addTimeValue( double value, int rank ) {
     ASTERINTEGER rang = rank;
     std::string type( "INST" );

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -302,8 +302,6 @@ CALC_MISS(
                   ),
              );
 
-DEFI_FICHIER(ACTION='LIBERER',UNITE=31,);
-
 
 KS0 = COMB_MATR_ASSE(COMB_C=(
                              _F(MATR_ASSE=rito,
@@ -446,7 +444,7 @@ PESAZ=AFFE_CHAR_MECA(MODELE=MODELB,
                                  DIRECTION=(0.0,0.0,-1.0,),),);
 
 from sdnx100a import F_FONC
-LBNS, LBEW= F_FONC()
+LBEW, LBNS = F_FONC()
 
 N=2000
 dt=0.01

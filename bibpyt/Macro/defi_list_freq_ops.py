@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,11 +17,14 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-def defi_list_freq_ops(self, RAFFINEMENT, INFO, TITRE, **args):
+def defi_list_freq_ops(self, **args):
 
     from Accas import MCList
     from Utilitai.Utmess import UTMESS
     from math import fmod, sqrt
+
+    RAFFINEMENT = args.get("RAFFINEMENT")
+    if RAFFINEMENT is not None: args.pop("RAFFINEMENT")
 
     self.set_icmd(1)
     ier = 0
@@ -40,20 +43,20 @@ def defi_list_freq_ops(self, RAFFINEMENT, INFO, TITRE, **args):
     l_freq0 = __co_l_freq0.Valeurs()
 
     # 2. Récuperation des données liées au raffinement
-    if RAFFINEMENT['CRITERE'] in ('RELATIF', 'ABSOLU'):
-        dispersion = RAFFINEMENT['DISPERSION']
+    if RAFFINEMENT.get('CRITERE') in ('RELATIF', 'ABSOLU'):
+        dispersion = RAFFINEMENT.get('DISPERSION')
 
     haveAmor = False
-    if RAFFINEMENT['CRITERE'] == 'LARGEUR_3DB':
+    if RAFFINEMENT.get('CRITERE') == 'LARGEUR_3DB':
         haveAmor = True
-        if self['RAFFINEMENT']['AMOR_REDUIT']:
-            l_amor = list(RAFFINEMENT['AMOR_REDUIT'])
+        if RAFFINEMENT.get('AMOR_REDUIT') is not None:
+            l_amor = list(RAFFINEMENT.get('AMOR_REDUIT'))
         else:
-            l_amor = RAFFINEMENT['LIST_AMOR'].Valeurs()
+            l_amor = RAFFINEMENT.get('LIST_AMOR').Valeurs()
 
-    dfMin = RAFFINEMENT['PAS_MINI']
-    nbPtsRaf = RAFFINEMENT['NB_POINTS']
-    l_freq = RAFFINEMENT['LIST_RAFFINE']
+    dfMin = RAFFINEMENT.get('PAS_MINI')
+    nbPtsRaf = RAFFINEMENT.get('NB_POINTS')
+    l_freq = RAFFINEMENT.get('LIST_RAFFINE')
 
     # Si le nombre d'amortissements donnés est inférieur au nombre de fréquences données
     # dans LIST_RAFFINE, les amortissements des fréquences supplémentaires sont
@@ -94,9 +97,9 @@ def defi_list_freq_ops(self, RAFFINEMENT, INFO, TITRE, **args):
                 df = 2 * l_amor[i] * l_freq[i]
             else:
                 df = 0.01 * l_freq[i]
-        elif RAFFINEMENT['CRITERE'] == 'RELATIF':
+        elif RAFFINEMENT.get('CRITERE') == 'RELATIF':
             df = dispersion * l_freq[i]
-        elif RAFFINEMENT['CRITERE'] == 'ABSOLU':
+        elif RAFFINEMENT.get('CRITERE') == 'ABSOLU':
             df = dispersion
 
         ltemp = [l_freq[i] - df / 2. + j * df / (nbPtsRaf - 1)
@@ -149,4 +152,4 @@ def defi_list_freq_ops(self, RAFFINEMENT, INFO, TITRE, **args):
     # 6. Création de la sd_listr8 de sortie
     co_l_freq = DEFI_LIST_REEL(VALE=l_raf)
 
-    return ier
+    return co_l_freq

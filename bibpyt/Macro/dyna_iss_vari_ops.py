@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -233,14 +233,14 @@ class GeneratorTRANS(Generator):
         for k in range(NB_FREQ):
             self.liste_freq_sig.append(FREQ_INIT + FREQ_PAS * k)
         # si frequences de calcul donnees par l utilisateur
-        FREQ_FIN = self.calc_params['FREQ_MAX']
+        FREQ_FIN = self.calc_params.get('FREQ_MAX')
         if FREQ_FIN != None:
             if FREQ_FIN < FREQ_COUP:
                 text = ('FREQ_FIN =' + str(FREQ_FIN) + 'Hz < '
                         + 'FREQUENCE DE COUPURE ='
                         + str(FREQ_COUP) + 'Hz on complete par zero')
                 aster.affiche('MESSAGE', text)
-            FREQ_PAS = self.calc_params['FREQ_PAS']
+            FREQ_PAS = self.calc_params.get('FREQ_PAS')
             NB_FREQ = int(ceil(FREQ_FIN / FREQ_PAS)) + 1
             FREQ_INIT = 0.0
             FMAX = ((NB_FREQ - 1) * FREQ_PAS)
@@ -287,7 +287,7 @@ class GeneratorTRANS(Generator):
 
             # si tous les point on été calculés: pas d'interpolation
             vale_fre, vale_re, vale_im = self.excit_params[dire].Valeurs()
-            if self.calc_params['FREQ_MAX'] == None:
+            if self.calc_params.get('FREQ_MAX') == None:
                 inul = 0
                 for k, freqk in enumerate(self.liste_freq_sig):
                     omegk = 2.0 * pi * freqk
@@ -326,7 +326,7 @@ class GeneratorTRANS(Generator):
                 for k, freqk in enumerate(self.liste_freq_sig):
                     coef_a = (vale_re[k] + vale_im[k] * 1.j)
                     omegk = 2.0 * pi * freqk
-                    if freqk >= self.calc_params['FREQ_MAX']:
+                    if freqk >= self.calc_params.get('FREQ_MAX'):
                     # interpolation du vecteur POD VEC(NB_FREQ, nbmodt)
                         if i == 0:
                             tup_re.append(VEC[-1].real * 0.0)
@@ -400,10 +400,10 @@ class GeneratorTRANS(Generator):
     # on cree la SD resultat - factice
     # (le champ ACCE sera remplace dans la suite par celui calcule)
         __impe = LIRE_IMPE_MISS(BASE = self.mat_gene_params['BASE'],
-                       TYPE = self.calc_params['TYPE'],
+                       TYPE = self.calc_params.get('TYPE'),
                        NUME_DDL_GENE = self.mat_gene_params['NUME_DDL'],
-                       UNITE_RESU_IMPE = self.calc_params['UNITE_RESU_IMPE'],
-                       ISSF = self.calc_params['ISSF'],
+                       UNITE_RESU_IMPE = self.calc_params.get('UNITE_RESU_IMPE'),
+                       ISSF = self.calc_params.get('ISSF'),
                        FREQ_EXTR = self.FREQ_PAS, )
         __rito = COMB_MATR_ASSE(COMB_C=(
                        _F(MATR_ASSE = __impe, COEF_C = 1.0 + 0.j,),
@@ -413,8 +413,8 @@ class GeneratorTRANS(Generator):
         __fosi = LIRE_FORC_MISS(BASE = self.mat_gene_params['BASE'],
                        NUME_DDL_GENE = self.mat_gene_params['NUME_DDL'],
                        NOM_CMP = 'DX', NOM_CHAM = 'DEPL',
-                       ISSF = self.calc_params['ISSF'],
-                       UNITE_RESU_FORC = self.calc_params['UNITE_RESU_FORC'],
+                       ISSF = self.calc_params.get('ISSF'),
+                       UNITE_RESU_FORC = self.calc_params.get('UNITE_RESU_FORC'),
                        FREQ_EXTR = self.FREQ_PAS,)
 
         __dyge0 = DYNA_VIBRA(
@@ -454,9 +454,9 @@ class GeneratorTRANS(Generator):
         freqk = self.FREQ_INIT + self.FREQ_PAS * k
         __impe = LIRE_IMPE_MISS(
                       BASE = self.mat_gene_params['BASE'],
-                      TYPE = self.calc_params['TYPE'],
+                      TYPE = self.calc_params.get('TYPE'),
                       NUME_DDL_GENE = self.mat_gene_params['NUME_DDL'],
-                      UNITE_RESU_IMPE = self.calc_params['UNITE_RESU_IMPE'],
+                      UNITE_RESU_IMPE = self.calc_params.get('UNITE_RESU_IMPE'),
                       ISSF = 'NON',
                       FREQ_EXTR = freqk,);
         __fosi = LIRE_FORC_MISS(
@@ -464,7 +464,7 @@ class GeneratorTRANS(Generator):
                       NUME_DDL_GENE = self.mat_gene_params['NUME_DDL'],
                       NOM_CMP = dict_modes['NOM_CMP'],
                       NOM_CHAM = 'DEPL',
-                      UNITE_RESU_FORC = self.calc_params['UNITE_RESU_FORC'],
+                      UNITE_RESU_FORC = self.calc_params.get('UNITE_RESU_FORC'),
                       ISSF = 'NON',
                       FREQ_EXTR = freqk,);
         __rito = COMB_MATR_ASSE(COMB_C = (
@@ -524,9 +524,9 @@ class GeneratorSPEC(Generator):
     def sampling(self):
         """ sampling for spec"""
        # discretisation temps et freq
-        self.FREQ_INIT = self.calc_params['FREQ_INIT']
-        self.FREQ_PAS = self.calc_params['FREQ_PAS']
-        self.NB_FREQ = self.calc_params['NB_FREQ']
+        self.FREQ_INIT = self.calc_params.get('FREQ_INIT')
+        self.FREQ_PAS = self.calc_params.get('FREQ_PAS')
+        self.NB_FREQ = self.calc_params.get('NB_FREQ')
         self.FMAX = self.FREQ_INIT + self.FREQ_PAS * (self.NB_FREQ - 1)
         for k in range(self.NB_FREQ):
             self.liste_freq.append(self.FREQ_INIT + self.FREQ_PAS * k)
@@ -544,9 +544,9 @@ class GeneratorSPEC(Generator):
 
         __impe = LIRE_IMPE_MISS(
                       BASE = self.mat_gene_params['BASE'],
-                      TYPE = self.calc_params['TYPE'],
+                      TYPE = self.calc_params.get('TYPE'),
                       NUME_DDL_GENE = self.mat_gene_params['NUME_DDL'],
-                      UNITE_RESU_IMPE = self.calc_params['UNITE_RESU_IMPE'],
+                      UNITE_RESU_IMPE = self.calc_params.get('UNITE_RESU_IMPE'),
                       ISSF = 'NON',
                       FREQ_EXTR = freqk,);
         __fosi = LIRE_FORC_MISS(
@@ -554,7 +554,7 @@ class GeneratorSPEC(Generator):
                       NUME_DDL_GENE = self.mat_gene_params['NUME_DDL'],
                       NOM_CMP = dict_modes['NOM_CMP'],
                       NOM_CHAM = 'DEPL',
-                      UNITE_RESU_FORC = self.calc_params['UNITE_RESU_FORC'],
+                      UNITE_RESU_FORC = self.calc_params.get('UNITE_RESU_FORC'),
                       ISSF = 'NON',
                       FREQ_EXTR = freqk,);
         __rito = COMB_MATR_ASSE(COMB_C = (
@@ -610,7 +610,7 @@ class GeneratorSPEC(Generator):
         nbmodt = self.mat_gene_params['NBMODT']
         mcfact = []
         for k2 in range(nbmodt):
-            if self.calc_params['OPTION'] == 'DIAG':
+            if self.calc_params.get('OPTION') == 'DIAG':
             # on ecrit uniquement les termes diagonaux
             #        (autospectres) de la matrice
                 foncc = []
