@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -120,7 +120,7 @@ subroutine refe99(nomres)
 !               Incoherence in the input data
                 vali(1) = nbmome
                 vali(2) = nbli
-                call utmess('F+', 'ALGORITH14_31', ni=2, vali=vali)
+                call utmess('F+', 'DEFIBASEMODALE1_31', ni=2, vali=vali)
                 call utmess('F', 'ALGORITH14_32')
             endif
         endif
@@ -192,7 +192,7 @@ subroutine refe99(nomres)
 !       Reference numbering is required in case more than one modal base is given
         call getvid('    ', 'NUME_REF', iocc=1, scal=numddl, nbret=ier)
         if ((ier.eq.0) .and. noseul) then
-            call utmess('F', 'ALGORITH17_9')
+            call utmess('F', 'DEFIBASEMODALE1_9')
         endif
 !
         intf = ' '
@@ -241,7 +241,7 @@ subroutine refe99(nomres)
 !               Incoherence in the input data
                 vali(1) = nbmome
                 vali(2) = nbli
-                call utmess('F', 'ALGORITH14_31', ni=2, vali=vali)
+                call utmess('F', 'DEFIBASEMODALE1_31', ni=2, vali=vali)
             endif
 !
             nbmod1 = 0
@@ -298,7 +298,7 @@ subroutine refe99(nomres)
 !
         nbtot = nbmod1 + nbmod2
         if (nbtot .le. 0) then
-            call utmess('F', 'ALGORITH14_50')
+            call utmess('F', 'DEFIBASEMODALE1_50')
         endif
 !
         call dismoi('REF_INTD_DERN', nomres, 'RESU_DYNA', repk=intfb, arret='C',&
