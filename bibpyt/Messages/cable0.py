@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -48,6 +48,12 @@ Si vous avez renseigné l'opérande INST_FIN du mot-clé facteur INCREMENT, alor
 cette valeur est prise en compte comme instant final. Sinon l'instant final
 est la dernière valeur de la liste d'instants fournie.
 
+"""),
+
+    5: _(u"""
+Pour que CALC_PRECONT puisse traiter correctement la mise en tension de câbles frottants
+avec deux ancrages actifs, il est nécessaire de définir les noeuds d'ancrage à l'aide du mot-clé
+GROUP_NO_ANCRAGE (et non NOEUD_ANCRAGE) dans DEFI_CABLE_BP.
 """),
 
 }

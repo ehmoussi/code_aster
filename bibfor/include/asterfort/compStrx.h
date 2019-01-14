@@ -15,18 +15,23 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
+#include "asterf_types.h"
 !
 interface
-    subroutine compStress(modelz , ligrel , compor,&
-                          chdispz, chgeom , chmate,&
-                          chcara , chtime , chharm,&
-                          chvarc , chvref , chstrx,&
-                          basez  , chelemz, codret)
+    subroutine compStrx(modelz , ligrel , compor    ,&
+                        chdispz, chgeom , chmate    , chcara,&
+                        chvarc , chvref , &
+                        basez  , chelemz, codret    ,&
+                        l_poux_, load_d_, coef_type_, coef_real_, coef_cplx_)
         character(len=*), intent(in) :: modelz, ligrel, compor
         character(len=*), intent(in) :: chdispz, chgeom, chmate
-        character(len=*), intent(in) :: chcara(*), chtime, chharm
-        character(len=*), intent(in) :: chvarc, chvref, chstrx
+        character(len=*), intent(in) :: chcara(*)
+        character(len=*), intent(in) :: chvarc, chvref
         character(len=*), intent(in) :: chelemz, basez
         integer, intent(out) :: codret
-    end subroutine compStress
+        aster_logical, intent(in), optional :: l_poux_
+        character(len=*), intent(in), optional :: load_d_, coef_type_
+        real(kind=8), intent(in), optional :: coef_real_
+        complex(kind=8), intent(in), optional :: coef_cplx_
+    end subroutine compStrx
 end interface

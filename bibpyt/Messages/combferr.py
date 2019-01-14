@@ -2,7 +2,7 @@
 # --------------------------------------------------------------------
 # Copyright (C) 2018 Aether Engineering Solutions - www.aethereng.com
 # Copyright (C) 2018 Kobe Innovation Engineering - www.kobe-ie.com
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -22,13 +22,13 @@
 
 cata_msg = {
 1 : _(u"""
-Vous avez demandé ...................... CODIFICATION = "UTILISATEUR"
+Vous avez demandé CODIFICATION = "UTILISATEUR"
 Dans cette version, la seule valeur disponible est "EC2". Le calcul ne sera pas
 effectué pour les autres valeurs.
 """),
 
 2 : _(u"""
-Vous avez demandé ........................ TYPE_STRUCTURE = "%(k1)s"
+Vous avez demandé TYPE_STRUCTURE = "%(k1)s"
 Dans cette version, la seule valeur disponible est "2D". Le calcul ne sera pas
 effectué pour les autres valeurs.
 """),
@@ -72,4 +72,9 @@ Type de combinaison :
 13 : _(u"""
 Noms des cas présents :
     %(k1)s"""),
+
+14 : _(u"""
+Le mot clé facteur TYPE_STRUCTURE '%(k1)s' indiqué n'appartient pas aux cas disponibles
+"""),
+
 }

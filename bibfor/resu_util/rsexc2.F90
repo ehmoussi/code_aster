@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,7 +18,9 @@
 
 subroutine rsexc2(i1, i2, nomsd, nomsy, iordr,&
                   chextr, option, iret)
-    implicit none
+!
+implicit none
+!
 !-----------------------------------------------------------------------
 #include "asterf_types.h"
 #include "asterc/getres.h"
@@ -40,6 +42,9 @@ subroutine rsexc2(i1, i2, nomsd, nomsy, iordr,&
     character(len=8) :: concep
     character(len=16) :: typcon
     integer :: vali
+!
+! --------------------------------------------------------------------------------------------------
+!
 !      RECUPERATION DU NOM DU CHAMP-GD  CORRESPONDANT A:
 !          NOMSD(IORDR,NOMSY).
 !      IL S'AGIT D'UN APPEL A RSEXCH COMPLETE PAR DES VERIFICATIONS
@@ -56,9 +61,9 @@ subroutine rsexc2(i1, i2, nomsd, nomsy, iordr,&
 !      LA COHERENCE ENTRE LES DIFFERENTS APPELS EST VERIFIEE ET
 !      UN EVENTUEL MESSAGE D'ALARME EST PRODUIT PAR LE DERNIER APPEL
 !      CE MODULE EST DESTINE A ETRE APPELE PAR UN OPERATEUR
-!      PAR EXEMPLE OP0058 AFIN DE PREPARER LES NOMS DE CHAMP-GD
-!      AVANT L'APPEL A MECALC
-! ----------------------------------------------------------------------
+!
+! --------------------------------------------------------------------------------------------------
+!
 ! IN  : I1,I2  : INDICE COURANT, INDICE MAXIMUM
 ! IN  : NOMSD  : NOM DE LA STRUCTURE "RESULTAT"
 ! IN  : NOMSY  : NOM SYMBOLIQUE DU CHAMP A CHERCHER.
@@ -66,38 +71,39 @@ subroutine rsexc2(i1, i2, nomsd, nomsy, iordr,&
 ! OUT : CHEXTR : NOM DU CHAMP EXTRAIT.
 ! IN  : OPTION : NOM DE L'OPTION
 ! OUT : IRET   : CODE RETOUR
-! ----------------------------------------------------------------------
+!
+! --------------------------------------------------------------------------------------------------
+!
     if (i1 .eq. 1) then
-        iprec=0
-        iretg=10000
+        iprec = 0
+        iretg = 10000
     endif
 !
     ASSERT((iprec.eq.0.or.nb.eq.i2).and.(iprec+1.eq.i1))
     ASSERT(i2.le.nmax)
-    iprec=i1
-    if (iretg .le. 0) goto 20
-    noms(i1)=nomsy
-    if (i1 .eq. 1) alarme=.true.
-    nb=i2
-    call rsexch(' ', nomsd, nomsy, iordr, chextr,&
-                icode)
-    alarme=alarme.and.icode.gt.0
-    if (alarme .and. i1 .eq. i2) then
-        call getres(concep, typcon, nomcmd)
-        valk(1) = nomsd
-        valk(2) = noms(1)
-        call utmess('A+', 'UTILITAI8_13', nk=2, valk=valk)
-        do 10 j = 2, i2
-            valk(1) = noms(j)
-            call utmess('A+', 'UTILITAI8_14', sk=valk(1))
- 10     continue
-        call utmess('A+', 'UTILITAI8_15')
-        vali = iordr
-        valk(1) = option
-        valk(2) = nomsd
-        call utmess('A', 'UTILITAI8_16', nk=2, valk=valk, si=vali)
+    iprec = i1
+    if (iretg .gt. 0) then
+        noms(i1)=nomsy
+        if (i1 .eq. 1) alarme=.true.
+        nb = i2
+        call rsexch(' ', nomsd, nomsy, iordr, chextr, icode)
+        alarme=alarme.and.icode.gt.0
+        if (alarme .and. i1 .eq. i2) then
+            call getres(concep, typcon, nomcmd)
+            valk(1) = nomsd
+            valk(2) = noms(1)
+            call utmess('A+', 'UTILITAI8_13', nk=2, valk=valk)
+            do j = 2, i2
+                valk(1) = noms(j)
+                call utmess('A+', 'UTILITAI8_14', sk=valk(1))
+            end do
+            call utmess('A+', 'UTILITAI8_15')
+            vali = iordr
+            valk(1) = option
+            valk(2) = nomsd
+            call utmess('A', 'UTILITAI8_16', nk=2, valk=valk, si=vali)
+        endif
+        iretg=min(icode,iretg)
     endif
-    iretg=min(icode,iretg)
- 20 continue
     iret=iretg
 end subroutine
