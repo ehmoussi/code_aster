@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -72,23 +72,20 @@ def post_newmark_ops(self,**args):
   ay = ky*g
 
  ### RECUPERATION DU MAILLAGE DANS LE RESULTAT
-  iret, ibid, n_modele = aster.dismoi('MODELE', RESULTAT.nom, 'RESULTAT', 'F')
-  if n_modele == '#AUCUN' :
-    iret, ibid, numddl = aster.dismoi('NUME_DDL', RESULTAT.nom, 'RESU_DYNA', 'F')
-    iret, ibid, nom_ma = aster.dismoi('NOM_MAILLA', numddl, 'NUME_DDL', 'F')
-  else :
-    __model = self.get_concept(n_modele.strip())
-    iret, ibid, nom_ma = aster.dismoi('NOM_MAILLA', n_modele.strip(), 'MODELE', 'F')
-  __mail = self.get_concept(nom_ma.strip())
+  __model = None
+  try:
+    __model = RESULTAT.getModel()
+  except:
+    raise NameError("No model")
+  __mail = __model.getSupportMesh()
 
   iret, dim, rbid = aster.dismoi('DIM_GEOM', __mail.nom, 'MAILLAGE', 'F')
   if dim == 3:
     UTMESS('F', 'POST0_51')
 
-  iret, ibid, nom_chamat = aster.dismoi('CHAM_MATER', RESULTAT.nom, 'RESULTAT', 'F')
   ## possiblement à gérer par la suite le cas de plusieurs champs matériaux dans
   ## le RESULTAT
-  __ch_mat = self.get_concept(nom_chamat.strip())
+  __ch_mat = RESULTAT.getMaterialOnMesh()
 
 
  ### AJOUT DU GROUPE GLISSE DANS LE MAILLAGE 
@@ -261,4 +258,4 @@ def post_newmark_ops(self,**args):
   tabout = CALC_TABLE(reuse=tabout , TABLE=tabout ,
                       ACTION=act_table)
 
-  return ier
+  return tabout

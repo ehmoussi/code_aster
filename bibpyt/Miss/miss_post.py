@@ -491,7 +491,7 @@ class PostMissHarm(PostMissTran):
         super(PostMissHarm, self).concepts_communs()
         if self.excit_kw is not None:
           for excit_i in self.excit_kw:
-            dExc = excit_i.cree_dict_valeurs(excit_i.mc_liste)
+            dExc = excit_i
             for mc in dExc.keys():
                 if dExc[mc] is None:
                     del dExc[mc]
@@ -511,7 +511,6 @@ class PostMissHarm(PostMissTran):
     def dyna_vibra_harm(self, **kwargs):
         """Execution de DYNA_VIBRA. Produit le concept définitif."""
         trangene = DYNA_VIBRA(**kwargs)
-        help(self.parent)
         self.sd = trangene
         return trangene
 
@@ -764,6 +763,8 @@ class PostMissControl(PostMiss):
         # type de la table de sortie
         tabout = CREA_TABLE(TYPE_TABLE='TABLE',
                             **dprod)
+        for val in self.tab.referenceToDataStructure:
+            tabout.addReference(val)
         self.initco()
         return tabout
 
@@ -1205,7 +1206,7 @@ class PostMissChar(PostMiss):
             nom_MODELE = self.MODELE.get_name()
             iret, ibid, nomsd = aster.dismoi('NOM_MAILLA', nom_MODELE, 'MODELE', 'F')
             nomsd = nomsd.strip()
-            mail = macro.get_concept(nomsd)
+            mail = self.MODELE.getSupportMesh()
             mm = MAIL_PY()
             mm.FromAster(mail)
             # groupes de noeuds

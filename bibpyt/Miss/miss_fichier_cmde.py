@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -458,6 +458,10 @@ class MissCmdeGenerator(object):
         """Définition des sources dans le sol"""
         lines = []
         src = self.param.get('SOURCE_SOL')
+        if type(src) in (list, tuple):
+            if len(src) > 0:
+                assert len(src) == 1
+                src = src[0]
         if not src:
             z0 = self.param['Z0']
             lines.extend(['*',
@@ -592,6 +596,10 @@ class MissCmdeGeneratorISSF(MissCmdeGenerator):
         """Définition des sources dans le fluide"""
         lines = []
         src = self.param.get('SOURCE_FLUIDE')
+        if type(src) in (list, tuple):
+            if len(src) > 0:
+                assert len(src) == 1
+                src = src[0]
         if src:
             lines.extend(['*',
                           '* Definition de source dans le fluide',

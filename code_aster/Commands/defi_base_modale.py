@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -47,8 +47,11 @@ class ModalBasisDef(ExecuteCommand):
         if classique is not None:
             self._result.setStructureInterface(classique[0]["INTERF_DYNA"])
             self._result.setDOFNumbering(classique[0]["MODE_MECA"][0].getDOFNumbering())
-        elif ritz is not None and ritz[0].has_key("INTERF_DYNA"):
-            self._result.setStructureInterface(ritz[0]["INTERF_DYNA"])
+        elif ritz is not None:
+            if ritz[0].has_key("INTERF_DYNA"):
+                self._result.setStructureInterface(ritz[0]["INTERF_DYNA"])
+            if ritz[0].has_key("MODE_MECA"):
+                self._result.setDOFNumbering(ritz[0]["MODE_MECA"][0].getDOFNumbering())
         self._result.update()
 
 

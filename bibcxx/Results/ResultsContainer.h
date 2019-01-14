@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe ResultsContainer
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2018  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -299,19 +299,13 @@ class ResultsContainerInstance : public DataStructure {
     * @brief Get the number of steps stored in the ResultContainer
     * @return nbRanks
     */
-    const int getNumberOfRanks() const { return _nbRanks; };
+    const int getNumberOfRanks() const;
 
     /**
     * @brief Get the number of steps stored in the ResultContainer
     * @return nbRanks
     */
-    std::vector< long > getRanks() const {
-        std::vector< long > v;
-        for ( int j = 0; j < _serialNumber->size(); ++j ) {
-            v.push_back( ( *_serialNumber )[j] );
-        }
-        return v;
-    };
+    std::vector< long > getRanks() const;
 
     /**
     * @brief Print all the fields stored in the ResultContainer

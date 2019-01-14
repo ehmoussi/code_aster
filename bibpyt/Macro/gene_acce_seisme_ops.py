@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -78,13 +78,15 @@ class GeneAcceParameters(object):
         self.seed = kwargs.get('INIT_ALEA')
         self.norme = kwargs.get('PESANTEUR')
   #  # ModulationKeys
+        modulation = kwargs.get('MODULATION')
+        if modulation is not None and type(modulation) not in (list, tuple):
+            modulation = modulation,
         modkeys = kwargs.get('MODULATION')[0]
-        keys = self.modulation_keys = modkeys.cree_dict_valeurs(
-            modkeys.mc_liste)
+        keys = self.modulation_keys = modkeys
         keys.update({'DUREE_PHASE_FORTE': kwargs.get('DUREE_PHASE_FORTE'), })
         keys.update({'NORME': kwargs.get('PESANTEUR'), })
         keys.update({'INFO': kwargs.get('INFO'), })
-        if keys.has_key('ECART_TYPE'):
+        if kwargs.has_key('DSP'):
             if keys['ECART_TYPE']:
                 keys['ECART_TYPE'] = keys['ECART_TYPE'] * self.norme
                 if keys.has_key("ACCE_MAX"): del keys['ACCE_MAX']
@@ -342,8 +344,11 @@ class GeneratorSpectrum(Generator):
             elif  self.simu_params['TYPE_ITER'] == 'MOYENNE': 
                 self.SRO_args.update({'TYPE_ITER' : 'SPEC_MOYENNE',})
 
+        import numpy
         spec_osci = self.method_params.get('SPEC_OSCI')
         l_freq_sro, sro_ref = spec_osci.Valeurs()
+        l_freq_sro = l_freq_sro.tolist()
+        sro_ref = sro_ref.tolist()
         ZPA = sro_ref[-1]
         F_MIN = l_freq_sro[0]
         if self.sampler.FREQ_COUP > l_freq_sro[-1]:
@@ -369,6 +374,7 @@ class GeneratorSpectrum(Generator):
             self.SRO_args.update({'PAS': self.method_params.get('FREQ_PAS')})
         elif 'LIST_FREQ' in self.method_params:
             L_FREQ = self.method_params.get('LIST_FREQ').Valeurs()
+            L_FREQ = L_FREQ.tolist()
             assert L_FREQ[0] > 0.0, "LIST_FREQ: il faut des valeurs >0.0"
             self.SRO_args.update({'LIST_FREQ': L_FREQ})
         else:
@@ -412,6 +418,8 @@ class GeneratorSpectrum(Generator):
         #--- Creation du concept (table) en sortie
         dict_keywords = self.tab.dict_CREA_TABLE()
         tab_out = CREA_TABLE(TYPE_TABLE='TABLE_FONCTION', **dict_keywords)
+        for func in self.tab.referenceToDataStructure:
+            tab_out.addReference(func)
         return tab_out
 
 
@@ -1249,7 +1257,7 @@ class SimulatorDSPPhase(Simulator):
         if 'FREQ_PENTE' in generator.DSP_args:
             Xt = gene_traj_gauss_evol1D(generator, **generator.DSP_args)
         else:
-            Xt = DSP2ACCE1D(generator.DSP_args['FONC_DSP'])        
+            Xt = DSP2ACCE1D(generator.DSP_args['FONC_DSP'])
         Xt = self.process_TimeHistory(generator, Xt)
         Xtl = calc_phase_delay(generator.sampler.liste_temps, Xt, Data_phase)
         return Xtl
