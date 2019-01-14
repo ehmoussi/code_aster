@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -131,6 +131,10 @@ class PreSeismeNonL(object):
     def DeclareOut(self, *args):
         """Define output depending on user choices"""
         self.parent.DeclareOut(*args)
+
+    def register_result(self, *args):
+        """Define output depending on user choices"""
+        self.parent.register_result(*args)
 
 
 class PreCalcMiss(PreSeismeNonL):
@@ -345,9 +349,9 @@ class BaseModale(object):
 
     def DefineOut(self):
         """Define output depending on user choices"""
-        if self.param['RESULTAT'].has_key('BASE_MODALE'):
-            self.parent.DeclareOut('_BAMO', self.param['RESULTAT']['BASE_MODALE'])
         _BAMO = DEFI_BASE_MODALE(**self.cmd_bamo)
+        if self.param['RESULTAT'].has_key('BASE_MODALE'):
+            self.parent.register_result(_BAMO, self.param['RESULTAT']['BASE_MODALE'])
         self.bamo = _BAMO
 
 
@@ -395,11 +399,11 @@ class MacroElement(object):
     def DefineOut(self):
         """Define output depending on user choices"""
         Bamo = self.bamo.get_bamo()
-        self.parent.DeclareOut(
-            '_Mael', self.param['RESULTAT']['MACR_ELEM_DYNA'])
         _Mael = MACR_ELEM_DYNA(
             BASE_MODALE=Bamo, MATR_RIGI=self.bamo.get_rigi(),
             MATR_MASS=self.bamo.get_mass(), SANS_GROUP_NO=self.bamo.get_grno_interf(),)
+        self.parent.register_result(
+            _Mael, self.param['RESULTAT']['MACR_ELEM_DYNA'])
 
 
 class Properties(object):
@@ -417,7 +421,7 @@ class Properties(object):
                 self._keywords[key] = kwargs[key]
 
     def __getitem__(self, key):
-        return self._keywords[key]
+        return self._keywords.get(key)
 
     def __setitem__(self, key):
         return self._keywords[key]
@@ -440,6 +444,7 @@ class Properties(object):
         diction = self._keywords[path[0]]
         if path[1] not in diction.keys():
             self.set_key(path, [])
+        self._keywords[path[0]][path[1]] = list(self._keywords[path[0]][path[1]])
         self._keywords[path[0]][path[1]].insert(0, addedKey)
 
     def copy(self):
@@ -528,22 +533,22 @@ class Model(object):
 
     def DefineOut(self):
         """Define output depending on user choices"""
-        if self.args['RESULTAT'].has_key('CHAM_MATER'):
-            self.parent.DeclareOut('_AMa', self.args['RESULTAT']['CHAM_MATER'])
         _AMa = AFFE_MATERIAU(**self.args['AFFE_MATERIAU'])
+        if self.args['RESULTAT'].has_key('CHAM_MATER'):
+            self.parent.register_result(_AMa, self.args['RESULTAT']['CHAM_MATER'])
         self.mate = _AMa
-        if self.args['RESULTAT'].has_key('CARA_ELEM'):
-            self.parent.DeclareOut('_ACa', self.args['RESULTAT']['CARA_ELEM'])
         _ACa = AFFE_CARA_ELEM(**self.args['AFFE_CARA_ELEM'])
+        if self.args['RESULTAT'].has_key('CARA_ELEM'):
+            self.parent.register_result(_ACa, self.args['RESULTAT']['CARA_ELEM'])
         self.cara_elem = _ACa
+        _ACh_CL = AFFE_CHAR_MECA(**self.args['AFFE_CHAR_MECA'])
         if self.args['RESULTAT'].has_key('CHARGE'):
             for mcfact in self.args['RESULTAT']['CHARGE']:
                 if mcfact['OPTION'] == 'LAPL_TEMPS':
-                    self.parent.DeclareOut('ACh_LT', mcfact['NOM'])
                     ACh_LT = AFFE_CHAR_MECA(**self.args['LAPL_TEMPS'])
+                    self.parent.register_result(ACh_LT, mcfact['NOM'])
                 elif mcfact['OPTION'] == 'COND_LIM':
-                    self.parent.DeclareOut('_ACh_CL', mcfact['NOM'])
-        _ACh_CL = AFFE_CHAR_MECA(**self.args['AFFE_CHAR_MECA'])
+                    self.parent.register_result(_ACh_CL, mcfact['NOM'])
         self.cond_lim = _ACh_CL
 
 
@@ -671,7 +676,6 @@ class StatDyna(object):
         N_stab1 = int(0.75*self.nb_inst)
         TFIN1 = N_stab1 * self.pas_inst_impe
 
-        self.parent.DeclareOut('_ResuDNL', self.args['RESULTAT']['RESULTAT'])
         self.init_amor(self.coef_amor)
         alpha_HHT = -7.0
         _ResuDNL = DYNA_NON_LINE(**self.non_line(
@@ -699,6 +703,7 @@ class StatDyna(object):
                                   ARCHIVAGE=_F(LIST_INST = _larch,),
                                 )
                              );
+        self.parent.register_result(_ResuDNL, self.args['RESULTAT']['RESULTAT'])
 
         self.init_amor(0.0)
 
@@ -889,9 +894,9 @@ class ModelMacrElem(Model):
         self.parasol_model()
         self.args.set_key(
             ('AFFE_MODELE', 'MAILLAGE'), self.mesh.get_new_mesh())
-        if self.args['RESULTAT'].has_key('MODELE'):
-            self.parent.DeclareOut('_Modele', self.args['RESULTAT']['MODELE'])
         _Modele = AFFE_MODELE(**self.args['AFFE_MODELE'])
+        if self.args['RESULTAT'].has_key('MODELE'):
+            self.parent.register_result(_Modele, self.args['RESULTAT']['MODELE'])
         self.modele = _Modele
 
     def fiction_model(self):
@@ -1087,14 +1092,14 @@ class Mesh(object):
     def DefineOut(self):
         """Define output depending on user choices"""
         if self.__builded:
-            if self.param['RESULTAT'].has_key('MAILLAGE'):
-                self.parent.DeclareOut(
-                    '_NewMesh', self.param['RESULTAT']['MAILLAGE'])
             _MeshTmp = ASSE_MAILLAGE(**self.asse_mail)
             _NewMesh = CREA_MAILLAGE(MAILLAGE = _MeshTmp,
                                      CREA_POI1 =_F(NOM_GROUP_MA = 'PARA_SOL',
                                      GROUP_MA = self.param['POST_CALC_MISS']['GROUP_MA_INTERF']),
                                         );
+            if self.param['RESULTAT'].has_key('MAILLAGE'):
+                self.parent.register_result(
+                    _NewMesh, self.param['RESULTAT']['MAILLAGE'])
 
             self.new_mesh = _NewMesh
 
