@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,9 +15,33 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine iradhs(versio)
-    implicit none
+!
+implicit none
+!
+#include "jeveux.h"
+#include "MeshTypes_type.h"
+#include "asterfort/inistb.h"
+#include "asterfort/jecreo.h"
+#include "asterfort/jedema.h"
+#include "asterfort/jedetr.h"
+#include "asterfort/jeecra.h"
+#include "asterfort/jeexin.h"
+#include "asterfort/jelira.h"
+#include "asterfort/jemarq.h"
+#include "asterfort/jenonu.h"
+#include "asterfort/jenuno.h"
+#include "asterfort/jeveuo.h"
+#include "asterfort/jexnom.h"
+#include "asterfort/jexnum.h"
+#include "asterfort/utidea.h"
+#include "asterfort/wkvect.h"
+!
+integer, intent(in) :: versio
+!
+! --------------------------------------------------------------------------------------------------
+!
 !                BUT: TRAITER LES "ADHERENCES SUPERTAB":
 !     OBJETS JEVEUX CREES:
 !        &&IRADHS.CODEGRA : TABLEAU D'ENTIERS DIMENSIONNE
@@ -38,45 +62,30 @@ subroutine iradhs(versio)
 !
 !   IN:  VERSIO = VERSION D'IDEAS 4 OU 5(DEFAUT)
 !
-#include "jeveux.h"
+! --------------------------------------------------------------------------------------------------
 !
-#include "asterfort/inistb.h"
-#include "asterfort/jecreo.h"
-#include "asterfort/jedema.h"
-#include "asterfort/jedetr.h"
-#include "asterfort/jeecra.h"
-#include "asterfort/jeexin.h"
-#include "asterfort/jelira.h"
-#include "asterfort/jemarq.h"
-#include "asterfort/jenonu.h"
-#include "asterfort/jenuno.h"
-#include "asterfort/jeveuo.h"
-#include "asterfort/jexnom.h"
-#include "asterfort/jexnum.h"
-#include "asterfort/utidea.h"
-#include "asterfort/wkvect.h"
-    character(len=2) :: axdpcp(4)
+    character(len=2), parameter :: axdpcp(4) = (/'AX','DP','CP','PL'/)
     character(len=5) :: phe(2), mot
-    integer :: versio
     character(len=8) :: nommai
     character(len=16) :: nomele
-!
-!-----------------------------------------------------------------------
     integer ::  iax, iel, ima, imper, ino, inos
     integer :: iphe, iret1, iret2, iret3, iret4, iret5, iret6
     integer :: isu, itel,   jcodd,  jpefsu
-    integer :: jpermu, jpersu, maxfa, maxnod, nbn, nbtyel, nbtyma
-    integer :: nbtyms, ntymax
-!-----------------------------------------------------------------------
-    parameter (maxnod=32,ntymax=69,maxfa=6)
-    character(len=8) :: nomail(ntymax), nomtm
-    integer :: limail(ntymax), indic(ntymax), indicf(ntymax), icas
+    integer :: jpermu, jpersu, nbn, nbtyel, nbtyma
+    integer :: nbtyms
+    integer, parameter :: maxnod=32
+    integer, parameter :: maxfa=6
+    character(len=8) :: nomtm
+    integer :: icas
     integer, pointer :: codephy(:) => null()
     character(len=8), pointer :: typema(:) => null()
     integer, pointer :: codegra(:) => null()
     integer, pointer :: nbno(:) => null()
 !
-    data axdpcp/'AX','DP','CP','PL'/
+    character(len=8) :: nomail(MT_NTYMAX)
+    integer :: limail(MT_NTYMAX), indic(MT_NTYMAX), indicf(MT_NTYMAX)
+!
+! --------------------------------------------------------------------------------------------------
 !
     call jemarq()
     call jeexin('&&IRADHS.PERMSUP', iret1)
@@ -85,14 +94,14 @@ subroutine iradhs(versio)
     call jeexin('&&IRADHS.PERMUTA', iret4)
     call jeexin('&&IRADHS.CODEPHY', iret5)
     call jeexin('&&IRADHS.CODEPHD', iret6)
-    if (iret1*iret2*iret3*iret4*iret5*iret6 .ne. 0) goto 9999
+    if (iret1*iret2*iret3*iret4*iret5*iret6 .ne. 0) goto 999
 !
     if (iret1 .eq. 0) then
-        call wkvect('&&IRADHS.PERMSUP', 'V V I', maxnod*ntymax, jpersu)
+        call wkvect('&&IRADHS.PERMSUP', 'V V I', maxnod*MT_NTYMAX, jpersu)
     endif
     call jeveuo('&&IRADHS.PERMSUP', 'E', jpersu)
     if (iret2 .eq. 0) then
-        call wkvect('&&IRADHS.PERFSUP', 'V V I', maxfa*ntymax, jpefsu)
+        call wkvect('&&IRADHS.PERFSUP', 'V V I', maxfa*MT_NTYMAX, jpefsu)
     endif
     call jeveuo('&&IRADHS.PERFSUP', 'E', jpefsu)
     call inistb(maxnod, nbtyms, nomail, indic, zi(jpersu),&
@@ -103,30 +112,31 @@ subroutine iradhs(versio)
         call jeecra('&&IRADHS.CODEGRA', 'LONMAX', nbtyma)
     endif
     call jeveuo('&&IRADHS.CODEGRA', 'E', vi=codegra)
-    do 1 ima = 1, nbtyma
+    do ima = 1, nbtyma
         call jenuno(jexnum('&CATA.TM.NOMTM', ima), nomtm)
         if (nomtm .eq. 'HEXA27') nomtm = 'HEXA20'
         if (nomtm .eq. 'PENTA18') nomtm = 'PENTA15'
         if (nomtm .eq. 'TRIA7') nomtm = 'TRIA6'
         if (nomtm .eq. 'QUAD9') nomtm = 'QUAD8'
         if (nomtm .eq. 'SEG4') nomtm = 'SEG2'
-        do 2 isu = 1, nbtyms
+        do isu = 1, nbtyms
             if (nomtm .eq. nomail(isu)) then
                 codegra(ima)=isu
                 goto 1
             endif
- 2      continue
- 1  end do
+        end do
+ 1      continue
+    end do
     if (iret4 .eq. 0) then
-        call wkvect('&&IRADHS.PERMUTA', 'V V I', maxnod*ntymax+1, jpermu)
-        zi(jpermu-1+maxnod*ntymax+1)=maxnod
+        call wkvect('&&IRADHS.PERMUTA', 'V V I', maxnod*MT_NTYMAX+1, jpermu)
+        zi(jpermu-1+maxnod*MT_NTYMAX+1)=maxnod
     endif
     if (iret6 .eq. 0) then
         call wkvect('&&IRADHS.CODEPHD', 'V V I', nbtyma, jcodd)
     endif
     call jeveuo('&&IRADHS.PERMUTA', 'E', jpermu)
     call jeveuo('&CATA.TM.NBNO', 'L', vi=nbno)
-    do 4 ima = 1, nbtyma
+    do ima = 1, nbtyma
         nbn=nbno(ima)
         isu=codegra(ima)
         if (isu .eq. 0) then
@@ -136,27 +146,28 @@ subroutine iradhs(versio)
         endif
 !
         if (icas .lt. 0) then
-            do 41 ino = 1, nbn
+            do ino = 1, nbn
                 zi(jpermu-1+maxnod*(ima-1)+ino)=0
-41          continue
+            end do
         else if (icas.eq.0) then
-            do 42 ino = 1, nbn
+            do ino = 1, nbn
                 zi(jpermu-1+maxnod*(ima-1)+ino)=ino
-42          continue
+            end do
         else
-            do 43 ino = 1, nbn
-                do 44 inos = 1, nbn
+            do ino = 1, nbn
+                do inos = 1, nbn
                     imper=zi(jpersu-1+maxnod*(isu-1)+inos)
                     if (ino .eq. imper) then
                         zi(jpermu-1+maxnod*(ima-1)+ino)=inos
                         goto 43
                     endif
-44              continue
-43          continue
+                end do
+43              continue
+            end do
         endif
         call jenuno(jexnum('&CATA.TM.NOMTM', ima), nommai)
         call utidea(nommai, zi(jcodd-1+ima), versio)
- 4  end do
+    end do
     call jelira('&CATA.TE.NOMTE', 'NOMMAX', nbtyel)
     if (iret5 .eq. 0) then
         call jecreo('&&IRADHS.CODEPHY', 'V V I')
@@ -164,10 +175,10 @@ subroutine iradhs(versio)
         call jeveuo('&CATA.TE.TYPEMA', 'L', vk8=typema)
     endif
     call jeveuo('&&IRADHS.CODEPHY', 'E', vi=codephy)
-    do 55 itel = 1, nbtyel
+    do itel = 1, nbtyel
         call jenuno(jexnum('&CATA.TE.NOMTE', itel), nomele)
         call utidea(typema(itel), codephy(itel), versio)
-55  end do
+    end do
     call jenonu(jexnom('&CATA.TE.NOMTE', 'MEDKQU4'), iel)
     if (iel .ne. 0) codephy(iel)=94
     call jenonu(jexnom('&CATA.TE.NOMTE', 'MEDKTR3'), iel)
@@ -180,9 +191,8 @@ subroutine iradhs(versio)
     if (iel .ne. 0) codephy(iel)=94
     phe(1)='MECA_'
     phe(2)='THER_'
-    do 3 iphe = 1, 2
-!
-        do 5 iax = 1, 4
+    do iphe = 1, 2
+        do iax = 1, 4
             mot=phe(iphe)(1:2)//axdpcp(iax)
             call jenonu(jexnom('&CATA.TE.NOMTE', mot(1:4)//'QU4'), iel)
             if (iel .ne. 0 .and. axdpcp(iax) .eq. 'AX') codephy(iel)=84
@@ -206,10 +216,10 @@ subroutine iradhs(versio)
             if (iel .ne. 0 .and. axdpcp(iax) .eq. 'PL') codephy(iel)=42
             call jenonu(jexnom('&CATA.TE.NOMTE', mot(1:4)//'SE2'), iel)
             if (iel .ne. 0) codephy(iel)=21
- 5      continue
- 3  end do
+        end do
+    end do
     call jedetr('&&IRADHS.PERMSUP')
     call jedetr('&&IRADHS.PERFSUP')
-9999  continue
+999 continue
     call jedema()
 end subroutine

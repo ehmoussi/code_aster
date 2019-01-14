@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,16 +15,39 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: nicolas.sellenet at edf.fr
+!
 subroutine ircmva(numcmp, ncmpve, ncmprf, nvalec, nbpg,&
                   nbsp, adsv, adsd, adsl, adsk,&
                   partie, tymast, modnum, nuanom, typech,&
                   val, profas, ideb, ifin, codret)
-! person_in_charge: nicolas.sellenet at edf.fr
-!_______________________________________________________________________
+implicit none
+!
+#include "asterf_types.h"
+#include "MeshTypes_type.h"
+#include "jeveux.h"
+#include "asterfort/cesexi.h"
+#include "asterfort/dismoi.h"
+#include "asterfort/infniv.h"
+#include "asterfort/utmess.h"
+!
+integer :: ncmpve, ncmprf, nvalec, nbpg, nbsp
+integer :: numcmp(ncmprf)
+integer :: adsv, adsd, adsl, adsk
+integer :: tymast, codret
+integer :: modnum(MT_NTYMAX), nuanom(MT_NTYMAX, *)
+integer :: profas(*)
+integer :: ideb, ifin
+real(kind=8) :: val(ncmpve, nbsp, nbpg, nvalec)
+character(len=8) :: typech
+character(len=*) :: partie
+!
+! --------------------------------------------------------------------------------------------------
+!
 !     ECRITURE D'UN CHAMP -  FORMAT MED - CREATION DES VALEURS
-!        -  -       -               -                  --
-!_______________________________________________________________________
+!
+! --------------------------------------------------------------------------------------------------
+!
 !     ENTREES :
 !       NUMCMP : NUMEROS DES COMPOSANTES
 !       NCMPVE : NOMBRE DE COMPOSANTES VALIDES EN ECRITURE
@@ -52,51 +75,18 @@ subroutine ircmva(numcmp, ncmpve, ncmprf, nvalec, nbpg,&
 !       VAL    : VALEURS EN MODE ENTRELACE
 !       CODRET : CODE RETOUR, S'IL VAUT 100, IL Y A DES COMPOSANTES
 !                 MISES A ZERO
-!_______________________________________________________________________
 !
-    implicit none
-!
-#include "asterf_types.h"
-#include "jeveux.h"
-#include "asterfort/cesexi.h"
-#include "asterfort/dismoi.h"
-#include "asterfort/infniv.h"
-#include "asterfort/utmess.h"
-    integer :: ntymax
-    parameter (ntymax = 69)
-!
-! 0.1. ==> ARGUMENTS
-!
-    integer :: ncmpve, ncmprf, nvalec, nbpg, nbsp
-    integer :: numcmp(ncmprf)
-    integer :: adsv, adsd, adsl, adsk
-    integer :: tymast, codret
-    integer :: modnum(ntymax), nuanom(ntymax, *)
-    integer :: profas(*)
-    integer :: ideb, ifin
-!
-    real(kind=8) :: val(ncmpve, nbsp, nbpg, nvalec)
-!
-    character(len=8) :: typech
-    character(len=*) :: partie
-!
-! 0.2. ==> COMMUNS
-!
-!
-! 0.3. ==> VARIABLES LOCALES
-!
+! --------------------------------------------------------------------------------------------------
 !
     character(len=8) :: part, gd, valk(2), typcha
     integer :: iaux, jaux, kaux, itype
     integer :: adsvxx, adslxx
     integer :: ino, ima, nrcmp, nrcmpr, nrpg, nrsp
-    integer :: ifm, nivinf
-!
+    integer :: ifm, niv
     aster_logical :: logaux, lprolz
 !
-!====
-! 1. PREALABLES
-!====
+! --------------------------------------------------------------------------------------------------
+!
     lprolz=.false.
     part=partie
     gd=zk8(adsk-1+2)
@@ -122,17 +112,15 @@ subroutine ircmva(numcmp, ncmpve, ncmprf, nvalec, nbpg,&
 !
 ! 1.1. ==> RECUPERATION DU NIVEAU D'IMPRESSION
 !
-    call infniv(ifm, nivinf)
+    call infniv(ifm, niv)
 !
 ! 1.2. ==> INFORMATION
 !
-    if (nivinf .gt. 1) then
+    if (niv .gt. 1) then
         call utmess('I', 'MED_47')
-        write (ifm,13001) nvalec, ncmpve, nbpg, nbsp, typech
+        write (ifm,130) nvalec, ncmpve, nbpg, nbsp, typech
     endif
-    13001 format('  NVALEC =',i8,', NCMPVE =',i8,&
-     &       ', NBPG   =',i8,', NBSP   =',i8,/,&
-     &       '  TYPECH =',a8)
+130 format('  NVALEC =',i8,', NCMPVE =',i8,', NBPG   =',i8,', NBSP   =',i8,/,'  TYPECH =',a8)
 !
 !====
 ! 2. CREATION DU CHAMP DE VALEURS AD-HOC
@@ -156,36 +144,31 @@ subroutine ircmva(numcmp, ncmpve, ncmprf, nvalec, nbpg,&
 ! 2.1. ==> POUR LES NOEUDS : ON PREND TOUT CE QUI FRANCHIT LE FILTRE
 !
     if (tymast .eq. 0) then
-!GN        PRINT *,'PREMIER NOEUD : ',PROFAS(IDEB)
-!GN        PRINT *,'DERNIER NOEUD : ',PROFAS(IFIN)
-!
-        do 21 , nrcmp = 1 , ncmpve
-!
-        adsvxx = adsv-1+numcmp(nrcmp)-ncmprf
-        adslxx = adsl-1+numcmp(nrcmp)-ncmprf
-        jaux = 0
-        do 211 , iaux = ideb, ifin
-        ino = profas(iaux)
-        jaux = jaux + 1
-        kaux = ino*ncmprf
-        if (zl(adslxx+kaux)) then
-            if (itype .eq. 1) then
-                val(nrcmp,1,1,jaux) = zr(adsvxx+kaux)
-            else if (itype.eq.2) then
-                val(nrcmp,1,1,jaux) = dble(zc(adsvxx+kaux))
-            else if (itype.eq.3) then
-                val(nrcmp,1,1,jaux) = dimag(zc(adsvxx+kaux))
-            endif
-        else
-            lprolz=.true.
-            val(nrcmp,1,1,jaux) = 0.d0
+        do nrcmp = 1 , ncmpve
+            adsvxx = adsv-1+numcmp(nrcmp)-ncmprf
+            adslxx = adsl-1+numcmp(nrcmp)-ncmprf
+            jaux = 0
+            do iaux = ideb, ifin
+                ino = profas(iaux)
+                jaux = jaux + 1
+                kaux = ino*ncmprf
+                if (zl(adslxx+kaux)) then
+                    if (itype .eq. 1) then
+                        val(nrcmp,1,1,jaux) = zr(adsvxx+kaux)
+                    else if (itype.eq.2) then
+                        val(nrcmp,1,1,jaux) = dble(zc(adsvxx+kaux))
+                    else if (itype.eq.3) then
+                        val(nrcmp,1,1,jaux) = dimag(zc(adsvxx+kaux))
+                    endif
+                else
+                    lprolz=.true.
+                    val(nrcmp,1,1,jaux) = 0.d0
+                endif
+            end do
+        end do
+        if (lprolz) then
+            codret = 100
         endif
-211     continue
-!
- 21     continue
-!
-        if (lprolz) codret = 100
-!
     else
 !
 ! 2.2. ==> POUR LES MAILLES : ON PREND TOUT CE QUI FRANCHIT LE FILTRE
@@ -215,7 +198,7 @@ subroutine ircmva(numcmp, ncmpve, ncmprf, nvalec, nbpg,&
 !
         if (logaux) then
             if (nbsp .gt. 1) then
-                write (ifm,13001) nvalec, ncmpve, nbpg, nbsp
+                write (ifm,130) nvalec, ncmpve, nbpg, nbsp
                 call utmess('F', 'MED_48')
             endif
         endif
@@ -225,65 +208,48 @@ subroutine ircmva(numcmp, ncmpve, ncmprf, nvalec, nbpg,&
 !            AUTANT DE FOIS QUE DE COMPOSANTES A TRANSFERER. AU-DELA, CE
 !            SERAIT AUTANT DE FOIS QUE DE MAILLES, DONC COUTEUX
 !
-        do 22 , nrcmp = 1 , ncmpve
-!
-        nrcmpr = numcmp(nrcmp)
-        jaux = 0
-        if (logaux) then
-!
-            nrsp = 1
-            do 221 , iaux = ideb, ifin
-            ima = profas(iaux)
-            jaux = jaux + 1
-            do 2211 , nrpg = 1 , nbpg
-            call cesexi('C', adsd, adsl, ima, nrpg,&
-                        nrsp, nrcmpr, kaux)
-            if ((kaux.gt.0)) then
-                if (itype .eq. 1) then
-                    val(nrcmp,nrsp,nuanom(tymast,nrpg),&
-                                jaux)= zr(adsv-1+kaux)
-                else if (itype.eq.2) then
-                    val(nrcmp,nrsp,nuanom(tymast,nrpg),&
-                                jaux)= dble(zc(adsv-1+kaux))
-                else if (itype.eq.3) then
-                    val(nrcmp,nrsp,nuanom(tymast,nrpg),&
-                                jaux)= dimag(zc(adsv-1+kaux))
-                endif
+        do nrcmp = 1 , ncmpve
+            nrcmpr = numcmp(nrcmp)
+            jaux = 0
+            if (logaux) then
+                nrsp = 1
+                do iaux = ideb, ifin
+                    ima = profas(iaux)
+                    jaux = jaux + 1
+                    do nrpg = 1 , nbpg
+                        call cesexi('C', adsd, adsl, ima, nrpg, nrsp, nrcmpr, kaux)
+                        if ((kaux.gt.0)) then
+                            if (itype .eq. 1) then
+                                val(nrcmp,nrsp,nuanom(tymast,nrpg),jaux)= zr(adsv-1+kaux)
+                            else if (itype.eq.2) then
+                                val(nrcmp,nrsp,nuanom(tymast,nrpg),jaux)= dble(zc(adsv-1+kaux))
+                            else if (itype.eq.3) then
+                                val(nrcmp,nrsp,nuanom(tymast,nrpg),jaux)= dimag(zc(adsv-1+kaux))
+                            endif
+                        endif
+                    end do
+                end do
+            else
+                do iaux = ideb, ifin
+                    ima = profas(iaux)
+                    jaux = jaux + 1
+                    do nrpg = 1 , nbpg
+                        do  nrsp = 1 , nbsp
+                            call cesexi('C', adsd, adsl, ima, nrpg, nrsp, nrcmpr, kaux)
+                            if ((kaux.gt.0)) then
+                                if (itype .eq. 1) then
+                                    val(nrcmp,nrsp,nrpg,jaux)=zr(adsv-1+kaux)
+                                else if (itype.eq.2) then
+                                    val(nrcmp,nrsp,nrpg,jaux)=dble(zc(adsv-1+kaux))
+                                else if (itype.eq.3) then
+                                    val(nrcmp,nrsp,nrpg,jaux)=dimag(zc(adsv-1+kaux))
+                                endif
+                            endif
+                        end do
+                    end do
+                end do
             endif
-2211         continue
-!
-221         continue
-!
-        else
-!
-            do 222 , iaux = ideb, ifin
-            ima = profas(iaux)
-            jaux = jaux + 1
-            do 2221 , nrpg = 1 , nbpg
-            do 2222 , nrsp = 1 , nbsp
-            call cesexi('C', adsd, adsl, ima, nrpg,&
-                        nrsp, nrcmpr, kaux)
-            if ((kaux.gt.0)) then
-                if (itype .eq. 1) then
-                    val(nrcmp,nrsp,nrpg,jaux)=zr(adsv-&
-                                    1+kaux)
-                else if (itype.eq.2) then
-                    val(nrcmp,nrsp,nrpg,jaux)=dble(zc(&
-                                    adsv-1+kaux))
-                else if (itype.eq.3) then
-                    val(nrcmp,nrsp,nrpg,jaux)=dimag(&
-                                    zc(adsv-1+kaux))
-                endif
-            endif
-2222         continue
-2221         continue
-!
-222         continue
-!
-        endif
-!
- 22     continue
-!
+        end do
     endif
 !
 end subroutine

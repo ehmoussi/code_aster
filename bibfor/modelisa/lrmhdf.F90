@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,31 +15,15 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine lrmhdf(nomamd, nomu, ifm, nrofic, nivinf,&
-                  infmed, nbnoeu, nbmail, nbcoor)
-!     ------------------------------------------------------------------
 ! person_in_charge: nicolas.sellenet at edf.fr
-!     LECTURE DU MAILLAGE - FORMAT MED/HDF
-!     -    -                       -   ---
-!-----------------------------------------------------------------------
-!     ENTREES :
-!        NOMAMD : NOM MED DU MAILLAGE A LIRE
-!                 SI ' ' : ON LIT LE PREMIER MAILLAGE DU FICHIER
-!        NOMU   : NOM ASTER SOUS LEQUEL LE MAILLAGE SERA STOCKE
-! ...
-!     SORTIES:
-!        NBNOEU : NOMBRE DE NOEUDS
-! ...
-!     ------------------------------------------------------------------
 !
-    implicit none
+subroutine lrmhdf(nomamd, nomu, ifm, nrofic, niv,&
+                  infmed, nbnoeu, nbmail, nbcoor)
 !
-! 0.1. ==> ARGUMENTS
-!
-!     IN
+implicit none
 !
 #include "asterf_types.h"
+#include "MeshTypes_type.h"
 #include "asterc/utflsh.h"
 #include "asterfort/as_mficlo.h"
 #include "asterfort/as_mficom.h"
@@ -62,54 +46,54 @@ subroutine lrmhdf(nomamd, nomu, ifm, nrofic, nivinf,&
 #include "asterfort/sdmail.h"
 #include "asterfort/ulisog.h"
 #include "asterfort/utmess.h"
-    integer :: ifm, nivinf
-    integer :: nrofic, infmed
-    character(len=*) :: nomamd
-    character(len=8) :: nomu
 !
-!     OUT
+integer :: ifm, niv
+integer :: nrofic, infmed
+character(len=*) :: nomamd
+character(len=8) :: nomu
+integer :: nbnoeu, nbmail, nbcoor
 !
-    integer :: nbnoeu, nbmail, nbcoor
+! --------------------------------------------------------------------------------------------------
 !
-! 0.2. ==> COMMUNS
+!     LECTURE DU MAILLAGE - FORMAT MED/HDF
 !
-! 0.3. ==> VARIABLES LOCALES
+! --------------------------------------------------------------------------------------------------
 !
-    character(len=6) :: nompro
-    parameter ( nompro = 'LRMHDF' )
+!     ENTREES :
+!        NOMAMD : NOM MED DU MAILLAGE A LIRE
+!                 SI ' ' : ON LIT LE PREMIER MAILLAGE DU FICHIER
+!        NOMU   : NOM ASTER SOUS LEQUEL LE MAILLAGE SERA STOCKE
+! ...
+!     SORTIES:
+!        NBNOEU : NOMBRE DE NOEUDS
 !
-    integer :: ntymax
-    parameter (ntymax = 69)
-    integer :: nnomax
-    parameter (nnomax=27)
-    integer :: edlect
-    parameter (edlect=0)
+! --------------------------------------------------------------------------------------------------
 !
+    character(len=6), parameter :: nompro = 'LRMHDF'
+    integer, parameter :: edlect=0
     integer :: iaux, ifimed
-    integer :: nmatyp(ntymax)
-    integer :: nnotyp(ntymax), typgeo(ntymax), nuanom(ntymax, nnomax)
-    integer :: renumd(ntymax), modnum(ntymax), numnoa(ntymax, nnomax)
+    integer :: nmatyp(MT_NTYMAX)
+    integer :: nnotyp(MT_NTYMAX), typgeo(MT_NTYMAX), nuanom(MT_NTYMAX, MT_NNOMAX)
+    integer :: renumd(MT_NTYMAX), modnum(MT_NTYMAX), numnoa(MT_NTYMAX, MT_NNOMAX)
     integer :: nbtyp
     integer :: ndim, fid, codret
     integer :: nbnoma
     integer :: nbltit, nbgrno, nbgrma
     integer :: vlib(3), vfic(3), iret
     integer :: vali(3), hdfok, medok
-!
     character(len=1) :: saux01
     character(len=6) :: saux06
-    character(len=8) :: nomtyp(ntymax)
+    character(len=8) :: nomtyp(MT_NTYMAX)
     character(len=8) :: saux08
     character(len=24) :: cooval, coodsc, cooref, grpnoe, grpmai, connex
     character(len=24) :: titre, nommai, nomnoe, typmai, adapma, gpptnn, gpptnm
     character(len=64) :: valk(2)
-    character(len=200) :: nofimd
-    character(len=255) :: kfic
-    character(len=200) :: descfi
-!
+    character(len=200) :: nofimd, descfi
+    character(len=255) :: kfic 
     aster_logical :: existm
 !
-!     ------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
+!
     call jemarq()
 !
     call sdmail(nomu, nommai, nomnoe, cooval, coodsc,&
@@ -122,11 +106,11 @@ subroutine lrmhdf(nomamd, nomu, ifm, nrofic, nivinf,&
 ! 1. PREALABLES
 !====
 !
-    if (nivinf .gt. 1) then
+    if (niv .gt. 1) then
         call utflsh(codret)
-        write (ifm,1001) 'DEBUT DE '//nompro
+        write (ifm,101) 'DEBUT DE '//nompro
     endif
-    1001 format(/,10('='),a,10('='),/)
+101 format(/,10('='),a,10('='),/)
 !
 ! 1.1. ==> NOM DU FICHIER MED
 !
@@ -138,7 +122,7 @@ subroutine lrmhdf(nomamd, nomu, ifm, nrofic, nivinf,&
         nofimd = kfic(1:200)
     endif
 !
-    if (nivinf .gt. 1) then
+    if (niv .gt. 1) then
         write (ifm,*) '<',nompro,'> NOM DU FICHIER MED : ',nofimd
     endif
 !
@@ -287,7 +271,7 @@ subroutine lrmhdf(nomamd, nomu, ifm, nrofic, nivinf,&
 !
     saux06 = nompro
 !
-    call lrmmfa(fid, nomamd, nbnoeu, nbmail, grpnoe,&
+    call lrmmfa(fid, nomamd, nbnoeu, grpnoe,&
                 gpptnn, grpmai, gpptnm, nbgrno, nbgrma,&
                 typgeo, nomtyp, nmatyp, saux06, infmed)
 !
@@ -318,8 +302,8 @@ subroutine lrmhdf(nomamd, nomu, ifm, nrofic, nivinf,&
 !
     call jedema()
 !
-    if (nivinf .gt. 1) then
-        write (ifm,1001) 'FIN DE '//nompro
+    if (niv .gt. 1) then
+        write (ifm,101) 'FIN DE '//nompro
         call utflsh(codret)
     endif
 !

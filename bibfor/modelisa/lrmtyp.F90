@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,13 +15,36 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: nicolas.sellenet at edf.fr
+! aslint: disable=W1502
+!
 subroutine lrmtyp(nbtyp, nomtyp, nnotyp, typgeo, renumd,&
                   modnum, nuanom, numnoa)
-!_____________________________________________________________________
-! person_in_charge: nicolas.sellenet at edf.fr
+!
+implicit none
+!
+#include "jeveux.h"
+#include "MeshTypes_type.h"
+#include "asterfort/jedema.h"
+#include "asterfort/jelira.h"
+#include "asterfort/jemarq.h"
+#include "asterfort/jenuno.h"
+#include "asterfort/jeveuo.h"
+#include "asterfort/jexnum.h"
+#include "asterfort/utmess.h"
+!
+integer :: nbtyp
+integer :: nnotyp(MT_NTYMAX), typgeo(MT_NTYMAX), renumd(MT_NTYMAX)
+integer :: modnum(MT_NTYMAX)
+integer :: nuanom(MT_NTYMAX, MT_NNOMAX), numnoa(MT_NTYMAX, MT_NNOMAX)
+character(len=8) :: nomtyp(MT_NTYMAX)
+!
+! --------------------------------------------------------------------------------------------------
+!
 !     RECUP DES NOMS/NBNO DES TYPES DE MAILLES DANS LE CATALOGUE
 !     ET RECUP DES TYPE GEO CORRESPONDANT POUR MED
+!
+! --------------------------------------------------------------------------------------------------
 !
 !     SORTIE:
 !       MODNUM : INDICATEUR SI LA SPECIFICATION DE NUMEROTATION DES
@@ -35,95 +58,70 @@ subroutine lrmtyp(nbtyp, nomtyp, nnotyp, typgeo, renumd,&
 !                NUMNOA(ITYP,J) : NUMERO DANS MED DU J IEME NOEUD
 !                DE LA MAILLE DE TYPE ITYP D'ASTER
 !
-! ---------------------------------------------------------------------
-    implicit none
+! --------------------------------------------------------------------------------------------------
 !
-#include "jeveux.h"
-#include "asterfort/jedema.h"
-#include "asterfort/jelira.h"
-#include "asterfort/jemarq.h"
-#include "asterfort/jenuno.h"
-#include "asterfort/jeveuo.h"
-#include "asterfort/jexnum.h"
-#include "asterfort/utmess.h"
+    integer :: iaux, jaux, ityp
+    character(len=8), parameter :: nomast(MT_NTYMAX) = (/'POI1    ','SEG2    ','SEG22   ',&
+                                                         'SEG3    ','SEG33   ','SEG4    ',&
+                                                         'TRIA3   ','TRIA33  ','TRIA6   ',&
+                                                         'TRIA66  ','TRIA7   ','QUAD4   ',&
+                                                         'QUAD44  ','QUAD8   ','QUAD88  ',&
+                                                         'QUAD9   ','QUAD99  ','TETRA4  ',&
+                                                         'TETRA10 ','PENTA6  ','PENTA15 ',&
+                                                         'PENTA18 ','PYRAM5  ','PYRAM13 ',&
+                                                         'HEXA8   ','HEXA20  ','HEXA27  ',&
+                                                         'TR3QU4  ','QU4TR3  ','TR6TR3  ',&
+                                                         'TR3TR6  ','TR6QU4  ','QU4TR6  ',&
+                                                         'TR6QU8  ','QU8TR6  ','TR6QU9  ',&
+                                                         'QU9TR6  ','QU8TR3  ','TR3QU8  ',&
+                                                         'QU8QU4  ','QU4QU8  ','QU8QU9  ',&
+                                                         'QU9QU8  ','QU9QU4  ','QU4QU9  ',&
+                                                         'QU9TR3  ','TR3QU9  ','SEG32   ',&
+                                                         'SEG23   ','QU4QU4  ','TR3TR3  ',&
+                                                         'HE8HE8  ','PE6PE6  ','TE4TE4  ',&
+                                                         'QU8QU8  ','TR6TR6  ','SE2TR3  ',&
+                                                         'SE2TR6  ','SE2QU4  ','SE2QU8  ',&
+                                                         'SE2QU9  ','SE3TR3  ','SE3TR6  ',&
+                                                         'SE3QU4  ','SE3QU8  ','SE3QU9  ',&
+                                                         'H20H20  ','P15P15  ','T10T10  '/)
+    integer, parameter :: nummed(MT_NTYMAX) = (/1  , 102, 0  ,&
+                                                103, 0  , 104,&
+                                                203, 0  , 206,&
+                                                0  , 207, 204,&
+                                                0  , 208, 0  ,&
+                                                209, 0  , 304,&
+                                                310, 306, 315,&
+                                                318, 305, 313,&
+                                                308, 320, 327,&
+                                                0  , 0  , 0  ,&
+                                                0  , 0  , 0  ,&
+                                                0  , 0  , 0  ,&
+                                                0  , 0  , 0  ,&
+                                                0  , 0  , 0  ,&
+                                                0  , 0  , 0  ,&
+                                                0  , 0  , 0  ,&
+                                                0  , 0  , 0  ,&
+                                                0  , 0  , 0  ,&
+                                                0  , 0  , 0  ,&
+                                                0  , 0  , 0  ,&
+                                                0  , 0  , 0  ,&
+                                                0  , 0  , 0  ,&
+                                                0  , 0  , 0  /)
 !
-    integer :: ntymax
-    parameter (ntymax = 69)
-    integer :: nnomax
-    parameter (nnomax=27)
+! --------------------------------------------------------------------------------------------------
 !
-! 0.1. ==> ARGUMENTS
-!
-    integer :: nbtyp
-    integer :: nnotyp(ntymax), typgeo(ntymax), renumd(ntymax)
-    integer :: modnum(ntymax)
-    integer :: nuanom(ntymax, nnomax), numnoa(ntymax, nnomax)
-    character(len=8) :: nomtyp(ntymax)
-!
-! 0.2. ==> COMMUNS
-!
-!
-! 0.3. ==> VARIABLES LOCALES
-!
-!
-    integer :: nummed(ntymax)
-    integer :: iaux, jaux
-    integer :: ityp
-    character(len=8) :: nomast(ntymax)
-!
-! 0.4. ==> INITIALISATIONS
-!
-!     CORRESPONDANCE DES NUMEROS DE TYPE DE GEOMETRIE ENTRE ASTER ET MED
-!     (LIE A LORDRE DEFINI DANS LE CATALOGUE TYPE_MAILLE.CATA)
-    data nomast  /'POI1    ','SEG2    ','SEG22   ','SEG3    ',&
-     &              'SEG33   ','SEG4    ',&
-     &                         'TRIA3   ','TRIA33  ','TRIA6   ',&
-     &              'TRIA66  ','TRIA7   ','QUAD4   ','QUAD44  ',&
-     &              'QUAD8   ','QUAD88  ','QUAD9   ','QUAD99  ',&
-     &              'TETRA4  ','TETRA10 ','PENTA6  ','PENTA15 ',&
-     &              'PENTA18 ','PYRAM5  ','PYRAM13 ','HEXA8   ',&
-     &              'HEXA20  ','HEXA27  ','TR3QU4  ','QU4TR3  ',&
-     &              'TR6TR3  ','TR3TR6  ','TR6QU4  ','QU4TR6  ',&
-     &              'TR6QU8  ','QU8TR6  ','TR6QU9  ','QU9TR6  ',&
-     &              'QU8TR3  ','TR3QU8  ','QU8QU4  ','QU4QU8  ',&
-     &              'QU8QU9  ','QU9QU8  ','QU9QU4  ','QU4QU9  ',&
-     &              'QU9TR3  ','TR3QU9  ','SEG32   ','SEG23   ',&
-     &              'QU4QU4  ','TR3TR3  ','HE8HE8  ','PE6PE6  ',&
-     &              'TE4TE4  ','QU8QU8  ','TR6TR6  ','SE2TR3  ',&
-     &              'SE2TR6  ','SE2QU4  ','SE2QU8  ','SE2QU9  ',&
-     &              'SE3TR3  ','SE3TR6  ','SE3QU4  ','SE3QU8  ',&
-     &              'SE3QU9  ','H20H20  ','P15P15  ','T10T10  '/
-    data nummed  /1,         102,       0,         103,&
-     &              0,         104,&
-     &                         203,       0,         206,&
-     &              0,         207,       204,       0,&
-     &              208,       0,         209,       0,&
-     &              304,       310,       306,       315,&
-     &              318,       305,       313,       308,&
-     &              320,       327,       0,         0,&
-     &              0,         0,         0,         0,&
-     &              0,         0,         0,         0,&
-     &              0,         0,         0,         0,&
-     &              0,         0,         0,         0,&
-     &              0,         0,         0,         0,&
-     &              0,         0,         0,         0,&
-     &              0,         0,         0,         0,&
-     &              0,         0,         0,         0,&
-     &              0,         0,         0,         0,&
-     &              0,         0,         0,         0/
-!     ------------------------------------------------------------------
     call jemarq()
 !
 !     VERIFICATION QUE LE CATALOGUE EST ENCORE COHERENT AVEC LE FORTRAN
 !
     call jelira('&CATA.TM.NOMTM', 'NOMMAX', iaux)
-    if (ntymax .ne. iaux) then
+    if (MT_NTYMAX .ne. iaux) then
         call utmess('F', 'MED_38')
     endif
 !
 !     NOM / NBNO PAR TYPE DE MAILLE
 !
-    do ityp = 1, ntymax
+    do ityp = 1, MT_NTYMAX
         call jenuno(jexnum('&CATA.TM.NOMTM', ityp), nomtyp(ityp))
         if (nomast(ityp) .ne. nomtyp(ityp)) then
             call utmess('F', 'MED_39')
@@ -135,7 +133,7 @@ subroutine lrmtyp(nbtyp, nomtyp, nnotyp, typgeo, renumd,&
     end do
 !
     nbtyp = 0
-    do ityp = 1 , ntymax
+    do ityp = 1 , MT_NTYMAX
         if (nummed(ityp) .ne. 0) then
             do iaux = 1 , nbtyp
                 if (nummed(ityp) .lt. nummed(renumd(iaux))) then
@@ -159,15 +157,12 @@ subroutine lrmtyp(nbtyp, nomtyp, nnotyp, typgeo, renumd,&
 !
 ! 3.1. ==> PAR DEFAUT, LES DEUX NUMEROTATIONS SONT IDENTIQUES
 !
-    do iaux = 1 , ntymax
-!
+    do iaux = 1 , MT_NTYMAX
         modnum(iaux) = 0
-!
-        do jaux = 1 , nnomax
+        do jaux = 1 , MT_NNOMAX
             nuanom(iaux,jaux) = 0
             numnoa(iaux,jaux) = 0
         end do
-!
     end do
 !
 ! 3.2. ==> MODIFICATIONS POUR LES TETRAEDRES
@@ -175,7 +170,6 @@ subroutine lrmtyp(nbtyp, nomtyp, nnotyp, typgeo, renumd,&
 !
     modnum(18)=1
 !
-
     numnoa(18,1)=1
     numnoa(18,2)=3
     numnoa(18,3)=2
