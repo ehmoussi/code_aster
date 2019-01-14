@@ -302,8 +302,6 @@ CALC_MISS(
                   ),
              );
 
-DEFI_FICHIER(ACTION='LIBERER',UNITE=31,);
-
 
 KS0 = COMB_MATR_ASSE(COMB_C=(
                              _F(MATR_ASSE=rito,
